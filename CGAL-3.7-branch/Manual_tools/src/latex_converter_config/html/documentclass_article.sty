@@ -1,0 +1,29 @@
+% ___________________________________________________________________________
+% |#########################################################################|
+% |                                                                         |
+% | Latex Converter Style File: documentclass_article.sty                   |
+% | ------------------------------------------------------------------      |
+% | LaTeX macros tailored for the article document class.                   |
+% |                                                                         |
+% | (c) 2004   Lutz Kettner                                                 |
+% | $Id$                                                       |
+% | $Date$                                            |
+% |_________________________________________________________________________|
+% |#########################################################################|
+
+% eventually table of contents etc.
+
+% We have no chapters in articles, remove chapter number from sections
+\newcounter{section}
+\lciNewCounter{subsection}{section}
+\lciNewCounter{figure}{section}
+\lciNewCounter{table}{section}
+\lciNewCounter{subsubsection}{subsection}
+\lciNewCounter{paragraph}{subsubsection}
+\lciNewCounter{subparagraph}{paragraph}
+
+
+% ___________________________________________________________________________
+% ###########################################################################
+% | EOF
+% ###########################################################################

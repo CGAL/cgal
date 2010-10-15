@@ -1,0 +1,84 @@
+% +------------------------------------------------------------------------+
+% | Reference manual page: Euclidean_distance_sphere_point.tex
+% +------------------------------------------------------------------------+
+% | 1.07.2001   Johan W.H. Tangelder
+% | Package: ASPAS
+% | 
+\RCSdef{\RCSEuclideandistancespherepointRev}{$Id$}
+\RCSdefDate{\RCSEuclideandistancespherepointDate}{$Date$}
+% |
+%%RefPage: end of header, begin of main body
+% +------------------------------------------------------------------------+
+
+
+\begin{ccRefClass}{Euclidean_distance_sphere_point<Traits>}  %% add template arg's if necessary
+
+%% \ccHtmlCrossLink{}     %% add further rules for cross referencing links
+%% \ccHtmlIndexC[class]{} %% add further index entries
+
+\ccDefinition
+  
+The class \ccRefName\ provides an implementation of the
+\ccc{GeneralDistance} concept for the Euclidean distance ($l_2$
+metric) between a $d$-dimensional sphere and a point, and the
+Euclidean distance between a $d$-dimensional sphere and a
+$d$-dimensional iso-rectangle defined as a $k$-$d$ tree rectangle.
+
+
+\ccInclude{CGAL/Euclidean_distance_sphere_point.h}
+
+\ccParameters
+Expects for the template argument a model of the concept \ccc{SearchTraits}, 
+for example \ccc{CGAL::Cartesian_d<double>}.
+
+
+\ccIsModel
+
+\ccc{GeneralDistance}
+
+\ccTypes
+
+\ccTypedef{Traits::FT FT;}{Number type.}
+\ccTypedef{Traits::Point_d Point_d;}{Point type.}
+\ccTypedef{Traits::Sphere_d Sphere_d;}{Query item type.}
+
+
+\ccCreation
+\ccCreationVariable{ed}  %% choose variable name
+
+
+\ccConstructor{Euclidean_distance_sphere_point();}
+{Default constructor.}
+
+\ccOperations
+
+\ccMethod{NT transformed_distance(Query_item s, Point_d p);}{Returns the distance between \ccc{s} and \ccc{p}.}
+
+\ccMethod{NT min_distance_to_rectangle(Query_item s, Kd_tree_rectangle<Traits> r);}
+{Returns the minimal distance between a point from the sphere \ccc{s} and a point from
+\ccc{r}.}
+
+\ccMethod{NT max_distance_to_rectangle(Query_item s, Kd_tree_rectangle<Traits> r);}
+{Returns the maximal distance between the sphere \ccc{s} and
+a point from \ccc{r} furthest to \ccc{s}. }
+
+\ccMethod{NT transformed_distance(NT d);} {Returns $d^2$.}
+
+\ccMethod{NT inverse_of_transformed_distance(NT d);} {Returns $d^{1/2}$.}
+
+
+\ccSeeAlso
+
+\ccc{GeneralDistance}
+
+%% \ccHtmlCrossLink{}     %% add further rules for cross referencing links
+%% \ccHtmlIndexC[class]{} %% add further index entries
+
+
+\end{ccRefClass}
+
+% +------------------------------------------------------------------------+
+%%RefPage: end of main body, begin of footer
+% EOF
+% +------------------------------------------------------------------------+
+

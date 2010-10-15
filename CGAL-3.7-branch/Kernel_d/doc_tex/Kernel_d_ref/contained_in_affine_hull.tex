@@ -1,0 +1,14 @@
+\begin{ccRefFunction}{contained_in_affine_hull}
+\ccInclude{CGAL/predicates_d.h}
+\ccHtmlNoLinks
+
+\ccFunction{template <class ForwardIterator> bool
+  contained_in_affine_hull( ForwardIterator first, ForwardIterator
+  last, const Point_d<R>& p);}{determines whether $p$ is contained in
+  the affine hull of the points in \ccc{A = tuple [first,last)}.
+  \ccPrecond The objects in \ccc{A} are of the same dimension.
+  \ccRequire The value type of \ccc{ForwardIterator} is
+  \ccc{Point_d<R>}.}
+
+\end{ccRefFunction}
+

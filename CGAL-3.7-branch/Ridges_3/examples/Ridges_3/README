@@ -1,0 +1,53 @@
+Program Compute_Ridges_Umbilics
+-----------------
+takes a polyhedron (filename.off file) as input,
+it computes a jet fitting to set the monge data at each vertex 
+   computes the ridge lines and the umbilics
+
+it outputs the results in :
+1. filename.offRIDGES-d?-m?-t?-a?-p?.4ogl.txt  which can be visualized with 
+	the demo program ridges_viewer.exe
+2. if option -vtrue, filename.offRIDGES-d?-m?-t?-a?-p?.verb.txt contains human readable results
+
+
+Allowed options:
+  -h [ --help ]                                        produce help message.
+  -f [ --input-file ] arg (=data/ellipsoid_u_0.02.off) name of the input off 
+                                                       file
+  -d [ --degree-jet ] arg (=3)                         degree of the jet,  3 <=
+                                                       degre-jet <= 4
+  -m [ --degree-monge ] arg (=3)                       degree of the Monge rep,
+                                                       3<= degree-monge <= 
+                                                       degree-jet
+  -a [ --nb-rings ] arg (=0)                           number of rings to 
+                                                       collect neighbors. 0 
+                                                       means collect enough 
+                                                       rings to make appro 
+                                                       possible a>=1 fixes the 
+                                                       nb of rings to be 
+                                                       collected
+  -p [ --nb-points ] arg (=0)                          number of neighbors to 
+                                                       use.  0 means this 
+                                                       option is not 
+                                                       considered, this is the 
+                                                       default p>=1 fixes the 
+                                                       nb of points to be used
+  -t [ --tag_order ] arg (=3)                          Order of differential 
+                                                       quantities used, must be
+                                                       3 or 4
+  -u [ --umbilic-patch-size ] arg (=2)                 size of umbilic patches 
+                                                       (as multiple of 1ring 
+                                                       size)
+  -v [ --verbose ] arg (=0)                            verbose output on text 
+                                                       file
+
+
+Note : if the nb of collected points is less than the required min number of 
+   points to make the approxiamtion possible (which is constrained by the deg)
+   then the program exits.
+
+ 
+EXAMPLES
+---------------------------------------------------------
+./Compute_Ridges_Umbilics -f data/poly2x^2+y^2-0.062500.off -d4 -m4 -a4 -t3 -v0 
+

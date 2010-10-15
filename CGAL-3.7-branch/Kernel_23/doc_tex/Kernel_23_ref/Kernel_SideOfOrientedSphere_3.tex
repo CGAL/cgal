@@ -1,0 +1,33 @@
+\begin{ccRefFunctionObjectConcept}{Kernel::SideOfOrientedSphere_3}
+A model for this must provide:
+
+\ccCreationVariable{fo}
+
+\ccMemberFunction{Oriented_side operator()(const Kernel::Point_3&p, 
+                                          const Kernel::Point_3&q, 
+                                          const Kernel::Point_3&r, 
+                                          const Kernel::Point_3&s, 
+                                          const Kernel::Point_3&t);}
+         {returns the relative position of point \ccStyle{t}
+          to the oriented sphere defined by $p$, $q$, $r$ and $s$.
+          The order of the points $p$, $q$, $r$, and $s$ is important,
+          since it determines the orientation of the implicitly
+          constructed sphere. If the points $p$, $q$, $r$ and $s$
+          are positive oriented, positive side is the bounded interior
+          of the sphere. 
+
+In case of degeneracies, \ccStyle{ON_ORIENTED_BOUNDARY} is returned
+if all points are coplanar. Otherwise, there is a cyclic permutation of the five points
+that puts four non coplanar points first, it is used to answer the predicate:
+e.g. \ccc{side_of_oriented_sphere(q, r, s, t, p)} is returned if $q$, $r$, $s$,
+and $t$ are non coplanar. }
+
+
+\ccRefines
+\ccc{AdaptableFunctor} (with five arguments)
+
+\ccSeeAlso
+\ccRefIdfierPage{CGAL::side_of_oriented_sphere} \\
+
+
+\end{ccRefFunctionObjectConcept}

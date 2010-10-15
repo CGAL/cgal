@@ -1,0 +1,49 @@
+% +------------------------------------------------------------------------+
+% | Reference manual page: Nef_nary_intersection_3.tex
+% +------------------------------------------------------------------------+
+% | 15.07.2008   Peter Hachenberger
+% | Package: Nef_3
+% | 
+\RCSdef{\RCSNef_nary_intersection_3Rev}{$Id: $}
+\RCSdefDate{\RCSNef_nary_intersection_3Date}{$Date: $}
+% +------------------------------------------------------------------------+
+
+\begin{ccRefClass}{Nef_nary_intersection_3<Nef_polyhedron_3>}
+
+\ccDefinition
+
+This class helps to perform the intersection of a set of 3D Nef polyhedra
+efficiently. It succesively applies the binary intersection operation of
+\ccc{Nef_polyhedron_3}, but schedules these intersection operations in an
+opportune way.
+
+\ccInclude{CGAL/Nef_nary_intersection_3.h}
+
+\ccParameters
+
+\begin{tabbing}
+\ccc{template <} \=\ccc{class Nef_polyhedron_3,}\\
+    \ccc{class Nef_nary_intersection_3;}
+\end{tabbing}
+
+As a template parameter an instantiation of the template class Nef
+polyhedra is needed.
+
+\ccCreation
+\ccCreationVariable{U}
+
+\ccThree{Nef_nary_intersection_3<Nef_polyhedron_3>;}{U}{}
+\ccThreeToTwo
+\ccConstructor{Nef_nary_intersection_3<Nef_polyhedron_3>();} {initialization only.}
+
+\ccHeading{Member Functions}
+
+\ccMethod{Nef_polyhedron_3 get_intersection() const;}
+{returns the intersection of the polyhedra previously added to the class.}
+
+\ccMethod{void add_polyhedron(const Nef_polyhedron_3& N);} 
+{adds a polyhedron.}
+
+\ccRefIdfierPage{CGAL::Nef_polyhedron_3<Traits>}
+
+\end{ccRefClass}

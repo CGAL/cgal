@@ -1,0 +1,42 @@
+\section{A Short Introduction to the Boost Property Maps Library}
+
+The Boost Property Map Library consists mainly of interface specifications in the form of concepts. These interface specifications are intended for use by implementors of generic libraries in communicating requirements on template parameters to their users. In particular, the Boost Property Map concepts define a general purpose interface for mapping key objects to corresponding value objects, thereby hiding the details of how the mapping is implemented from algorithms. The implementation of types fulfilling the property map interface is up to the client of the algorithm to provide.
+
+The Boost Property Map Library also contains a few adaptors that convert commonly used data-structures that implement a mapping operation, such as builtin arrays (pointers), iterators, and std::map, to have the property map interface.
+
+Free functions \ccc{get} and \ccc{put} allow getting and putting information through a property map.
+The data themselves may be stored in the element, or they may
+be stored in an external data structure, or they may be computed on
+the fly. This is an ``implementation detail'' of the particular property map.
+
+\smallskip
+Property maps in the Boost manuals: \path|http://www.boost.org/libs/property_map/doc/property_map.html|
+
+
+
+\section{CGAL and Boost Property Maps}
+
+Some algorithms in \cgal\ take as input parameters iterator ranges and property maps to access information attached to elements of the sequence.
+
+For example, the algorithms of chapters \ccc{Point_set_processing_3} \ref{chap:point_set_processing_3} and \ccc{Surface_reconstruction_points_3} \ref{chap:surface_reconstruction_points_3} take as input parameters iterator ranges and property maps to access each point's position and normal.
+Position and normal might be represented in various ways, e.g., as a class derived from the \cgal\ point class, or as a \ccc{std::pair<Point_3<K>, Vector_3<K> >}, or as a \ccc{boost::tuple<..,Point_3<K>, ..., Vector_3<K> >}.
+
+This component provides property maps to support these cases:  \\
+\ccc{CGAL::Dereference_property_map<T>}  \\
+\ccc{CGAL::First_of_pair_property_map<Pair>} and \ccc{CGAL::Second_of_pair_property_map<Pair>}  \\
+\ccc{CGAL::Nth_of_tuple_property_map<N, Tuple>}  \\
+
+\subsection{Example with Dereference\_property\_map}
+
+The following example reads a point set and removes 5\% of the points. It uses \ccc{CGAL::Dereference_property_map<Point_3>} as position property map.
+\ccIncludeExampleCode{Point_set_processing_3/remove_outliers_example.cpp}
+
+\subsection{Example with Pairs}
+
+The following example reads a point set from an input file and writes it to a file, both in the xyz format. Position and normal are stored in pairs and accessed through property maps.
+\ccIncludeExampleCode{Point_set_processing_3/read_write_xyz_point_set_example.cpp}
+
+\subsection{Example with Tuples}
+
+The following example reads a point set in the \ccc{xyz} format and computes the average spacing. Index, position and color are stored in a tuple and accessed through property maps.
+\ccIncludeExampleCode{Point_set_processing_3/average_spacing_example.cpp}

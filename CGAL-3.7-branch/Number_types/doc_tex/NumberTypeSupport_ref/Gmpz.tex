@@ -1,0 +1,87 @@
+\begin{ccRefClass} {Gmpz}
+\label{Gmpz}
+
+\ccDefinition
+
+An object of the class \ccStyle{Gmpz} is an arbitrary precision integer
+based on the {\sc Gnu} Multiple Precision Arithmetic Library.
+
+\ccInclude{CGAL/Gmpz.h}
+
+\ccIsModel
+\ccc{EuclideanRing}\\
+\ccc{RealEmbeddable}
+
+\ccCreation
+\ccCreationVariable{z}
+
+\ccTwo{xxxxxxxxxxxxxxxxxxxxx}{}
+
+\ccConstructor{Gmpz();}
+             {creates an uninitialized multiple precision integer \ccVar.}\ccGlue
+
+\ccHidden \ccConstructor{Gmpz(const Gmpz& q);}
+            {copy constructor.}
+
+\ccConstructor{Gmpz(int i)}
+            {creates a multiple-precision integer initialized with
+             \ccStyle{i}.}\ccGlue
+
+\ccConstructor{Gmpz(double d)}
+            {creates a multiple-precision integer initialized with
+             the integral part of \ccStyle{d}.}\ccGlue
+
+\ccOperations
+
+\ccThree{xxxxxxxxxxxxxx}{xxxxxxxxxxxxxxxxxxxxxxx}{}
+
+\ccMethod{Gmpz & operator++();}{prefix increment.}\ccGlue
+\ccMethod{Gmpz   operator++(int);}{postfix increment.}\ccGlue
+\ccMethod{Gmpz & operator--();}{prefix decrement.}\ccGlue
+\ccMethod{Gmpz   operator--(int);}{postfix decrement.}
+
+\ccFunction{Gmpz operator>>(const Gmpz& a, unsigned long i);}{rightshift by $i$.}\ccGlue
+\ccFunction{Gmpz operator<<(const Gmpz& a, unsigned long i);}{leftshift by $i$.}\ccGlue
+\ccMethod{Gmpz & operator>>=(const long& i);}{rightshift by i, where $i>=0$.}\ccGlue
+\ccMethod{Gmpz & operator<<=(const long& i);}{leftshift by i, where $i>=0$.}
+
+
+\ccFunction{Gmpz operator&(const Gmpz& a, const Gmpz& b);}{bitwise AND.}\ccGlue
+\ccFunction{Gmpz operator|(const Gmpz& a, const Gmpz& b);}{bitwise IOR.}\ccGlue
+\ccFunction{Gmpz operator^(const Gmpz& a, const Gmpz& b);}{bitwise XOR.}\ccGlue
+\ccMethod{Gmpz & operator&=(const Gmpz& b);}{bitwise AND.}\ccGlue
+\ccMethod{Gmpz & operator|=(const Gmpz& b);}{bitwise IOR.}\ccGlue
+\ccMethod{Gmpz & operator^=(const Gmpz& b);}{bitwise XOR.}
+
+\ccMethod{Sign sign() const;}
+        {Returns the sign of \ccVar.}
+
+\ccMethod{size_t bit_size() const;}
+        {Returns the bit-size (that is, the number of bits needed to
+        represent the mantissa) of \ccVar.}
+
+\ccMethod{size_t size() const;}
+        {Returns the size in limbs of \ccVar. A limb is the type used by
+        {\sc Gmp} to represent the integer (usually \ccc{long}).}
+
+\ccMethod{size_t approximate_decimal_length() const;}
+        {Returns the approximate number of decimal digits needed to
+        represent \ccVar. Approximate means either a correct result, either
+        the correct result plus one.}
+
+\ccMethod{double to_double() const;}
+        {Returns a double approximation of \ccVar. The integer is truncated
+        if needed. If the exponent of the conversion is too big, the result
+        is system dependent (returning infinity where it is supported).}
+
+\ccFunction{std::ostream& operator<<(std::ostream& out, const Gmpz& z);}
+{writes \ccc{z} to the ostream \ccc{out}.}\ccGlue
+
+\ccFunction{std::istream& operator>>(std::istream& in, Gmpz& z);}
+{reads an integer from \ccc{in}, then converts it to a \ccc{Gmpz}.}
+
+\ccImplementation
+\ccc{Gmpz}s are reference counted.
+
+\end{ccRefClass}
+\ccDefGlobalScope{CGAL::}

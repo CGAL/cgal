@@ -1,0 +1,50 @@
+\ccDefGlobalScope{CGAL::}
+\begin{ccRefClass}[Qt::]{GraphicsViewPolylineInput<K>}
+
+\ccDefinition
+An object of type \ccRefName\ creates a list of points. A new 
+vertex is inserted every time the left mouse button is pressed.
+The list of points is emitted on a right click or when the number of
+points specified in the constructor is reached. You can use the 'Del'
+or 'Backspace' key if you want to remove your last entered point in the polygon,
+and the 'Esc' key if you want to remove all points.
+
+The tool can serve at the same time for entering a single point,
+a polyline with a given number of points, and for open as well as closed
+polylines.
+
+\ccInclude{CGAL/Qt/GraphicsViewPolylineInput.h}
+
+\ccParameters
+
+The template parameter of \ccc{GraphicsViewPolylineInput<K>} must be a \cgal\ \ccc{Kernel}. 
+
+\ccInheritsFrom
+\ccc{Qt::GraphicsViewInput}
+
+\ccGlue
+
+\ccCreation
+\ccCreationVariable{in}
+\ccSetTwoColumns{GraphicsViewPolylineInput}{}
+
+\ccConstructor{GraphicsViewPolylineInput<T>(QObject *p, QGraphicsScene* s, int n = 0,
+  bool closed = true);}
+{\ccc{p} is a parent object. \ccc{s} is the scene where the polyline is generated. \ccc{n} is the
+  number of points of the polyline to be generated. If \ccc{c} is equal to 0,
+  the default value, the number of points of the polyline is not
+  limited. When \ccc{closed} is \ccc{true} the function displays a
+  polygon.}
+
+\ccHeading{Signals}
+
+\ccMethod{void generate(CGAL::Object o);}{The object \ccc{o} contains a \ccc{std:list<K::Point_2>}.}
+
+\end{ccRefClass}
+
+
+
+
+
+
+

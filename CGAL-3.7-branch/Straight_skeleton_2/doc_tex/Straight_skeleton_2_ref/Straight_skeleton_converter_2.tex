@@ -1,0 +1,73 @@
+%% Copyright (c) 2004  SciSoft.  All rights reserved.
+%%
+%% This file is part of CGAL (www.cgal.org); you may redistribute it under
+%% the terms of the Q Public License version 1.0.
+%% See the file LICENSE.QPL distributed with CGAL.
+%%
+%% Licensees holding a valid commercial license may use this file in
+%% accordance with the commercial license agreement provided with the software.
+%%
+%% This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
+%% WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
+%%
+%% 
+%%
+%% Author(s)     : Fernando Cacciola <fernando_cacciola@hotmail.com>
+
+
+\begin{ccRefClass}{Straight_skeleton_converter_2<SrcSs,TgtSs,ItemsCvt>}
+
+%% add template arg's if necessary
+
+%% \ccHtmlCrossLink{}     %% add further rules for cross referencing links
+%% \ccHtmlIndexC[class]{} %% add further index entries
+\ccDefinition
+
+The class \ccRefName\ converts a straight skeleton instantiated using certain traits into another straight skeleton instantiated using a different traits.
+
+The first and second template parameters are the source and target straight skeleton types, resp.
+
+The third template parameter \ccc{ItemsConverter} is a function object that must
+model the concept \ccc{StraightSkeletonItemsConverter_2}. The default value of this parameter is \ccc{CGAL::Straight_skeleton_items_converter_2<SrcSs,TgtSs>}.
+
+This conversion can be used to produce a straight skeleton with the fast
+\ccc{Exact_predicates_inexact_constructions_kernel} but then input that skeleton
+into \ccc{Polygon_offset_builder<Ss,Gt,Container>} instantiated with the slower \ccc{Exact_predicates_exact_constructions_kernel} obtaining only simple offset
+polygons without paying the runtime overhead of exact constructions for the straight 
+skeleton itself.
+
+\ccTypes
+\ccTypedef{SrcSs Source_skeleton;}
+  {The \ccc{SrcSs} template parameter corresponding to the source straight skeleton.}
+\ccGlue
+\ccTypedef{TgtSs Target_skeleton;}
+  {The \ccc{TgtSs} template parameter corresponding to the target straight skeleton.}
+\ccGlue
+\ccTypedef{ItemsCvt Items_converter;}
+  {The \ccc{ItemsCvt} template parameter corresponding to the items converter.}
+
+\ccInclude{CGAL/Straight_skeleton_converter_2.h}
+
+\ccCreation
+\ccCreationVariable{c}
+
+\ccConstructor{Straight_skeleton_converter_2( Items_converter const& c );}{Default constructor}
+
+\ccOperations
+
+\ccTagFullDeclarations
+\ccMemberFunction{boost::shared_ptr<Target_skeleton> operator()( Source_skeleton const& s) const;}
+{ returns a new straight skeleton data structure with the same combinatorial and geometric data as $s$ using the items converter to convert the geometric embeeding to the types of the target traits.}
+
+\ccSeeAlso
+\ccc{StraightSkeletonItemsConverter_2}\\
+\ccc{Straight_skeleton_items_converter_2<SrcSs,TgtSs,NTConverter>}\\
+\ccc{convert_straight_skeleton_2<SrcSs,TgtSs,NTConverter>}\\
+
+\end{ccRefClass}
+
+% +------------------------------------------------------------------------+
+%%RefPage: end of main body, begin of footer
+% EOF
+% +------------------------------------------------------------------------+
+

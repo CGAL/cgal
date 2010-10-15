@@ -1,0 +1,20 @@
+\begin{ccRefFunction}{is_one}
+
+\ccDefinition
+
+The function \ccRefName\ determines if a value is equal to 1 or not.\\
+The function is guaranteed to be well defined in case the argument type 
+is a model of the \ccc{IntegralDomainWithoutDivision} concept. 
+
+\ccInclude{CGAL/number_utils.h}
+
+\ccFunction{template <class NT> result_type is_one(const NT& x);} 
+        { The \ccc{result_type} is convertible to \ccc{bool}. }
+
+
+\ccSeeAlso
+
+\ccRefConceptPage{IntegralDomainWithoutDivision}\\
+\ccRefConceptPage{AlgebraicStructureTraits::IsOne}\\
+
+\end{ccRefFunction}

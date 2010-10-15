@@ -1,0 +1,80 @@
+\begin{ccRefClass}{Quadratic_program<NT>}
+
+\ccInclude{CGAL/QP_models.h}
+
+\ccDefinition
+An object of class \ccRefName\ describes a convex quadratic program of the form
+\input{QP_solver_ref/_qp_description.tex}
+
+If $D=0$, the program is
+a linear program; if the variable bounds are $x\geq 0$, we have a 
+nonnegative program.
+
+This class allows you to build your program entry by entry, using
+the set-methods below. 
+
+If you only need to wrap existing (random-access)
+iterators over your own data, then you may use any of the four models
+\ccc{Quadratic_program_from_iterators<A_it, B_it, R_it, FL_it, L_it, FU_it, U_it, D_it, C_it>}, 
+\ccc{Linear_program_from_iterators<A_it, B_it, R_it, FL_it, L_it, FU_it, U_it, C_it>}, 
+\ccc{Nonnegative_quadratic_program_from_iterators<A_it, B_it, R_it, D_it, C_it>}, and
+\ccc{Nonnegative_linear_program_from_iterators<A_it, B_it, R_it, C_it>}. 
+
+If you want to read a quadratic program in \ccc{MPSFormat} from a stream, 
+please use the model \ccc{Quadratic_program_from_mps<NT>}.
+
+\ccIsModel
+\ccc{QuadraticProgram}\\
+\ccc{LinearProgram}\\
+\ccc{NonnegativeQuadraticProgram}\\
+\ccc{NonnegativeLinearProgram}
+
+\ccTypes
+
+\ccNestedType{NT}{The number type of the program entries.}
+
+\ccCreation
+\ccIndexClassCreation
+\ccCreationVariable{qp}
+
+\ccConstructor{
+  Quadratic_program
+  (CGAL::Comparison_result default_r = CGAL::EQUAL,
+   bool default_fl = true,
+   const NT& default_l = 0,
+   bool default_fu = false,
+   const NT& default_u = 0);}
+{constructs a quadratic program with no variables and no constraints, ready
+for data to be added.  Unless relations are explicitly set, they will 
+be of type \ccc{default_r}. Unless bounds are explicitly set, they
+will be as specified by \ccc{default_fl} (finite lower bound?), 
+\ccc{default_l} (lower bound value if lower bound is finite),
+\ccc{default_fu} (finite upper bound?), and
+\ccc{default_l} (upper bound value if upper bound is finite). If all
+parameters take their default values, we thus get equality constraints 
+and bounds $x\geq 0$ by default. Numerical entries that are not 
+explicitly set will default to $0$.\ccPrecond if 
+  $\ccc{default_fl}=\ccc{default_fu}=\ccc{true}$, then
+  $\ccc{default_l}\leq\ccc{default_u}$}
+
+\ccOperations
+
+\ccCreationVariable{qp}
+
+\input{QP_solver_ref/_set_methods.tex}
+
+\ccExample
+
+\ccReferToExampleCode{QP_solver/first_qp.cpp}\\
+\ccReferToExampleCode{QP_solver/first_lp.cpp}\\
+\ccReferToExampleCode{QP_solver/first_nonnegative_qp.cpp}\\
+\ccReferToExampleCode{QP_solver/first_nonnegative_lp.cpp}\\
+\ccReferToExampleCode{QP_solver/invert_matrix.cpp}
+\ccSeeAlso
+\ccc{Quadratic_program_from_iterators<A_it, B_it, R_it, FL_it, L_it, FU_it, U_it, D_it, C_it>}\\
+\ccc{Linear_program_from_iterators<A_it, B_it, R_it, FL_it, L_it, FU_it, U_it, C_it>}\\
+\ccc{Nonnegative_quadratic_program_from_iterators<A_it, B_it, R_it, D_it, C_it>}\\
+\ccc{Nonnegative_linear_program_from_iterators<A_it, B_it, R_it, C_it>}\\ 
+\ccc{Quadratic_program_from_mps<NT>}
+
+\end{ccRefClass}

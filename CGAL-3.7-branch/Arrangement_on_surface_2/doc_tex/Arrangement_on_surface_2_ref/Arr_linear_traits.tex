@@ -1,0 +1,127 @@
+% +------------------------------------------------------------------------+
+% | Reference manual page: Arr_linear_traits.tex
+% +------------------------------------------------------------------------+
+% | 
+% | Package: Arrangement_2
+% | 
+% +------------------------------------------------------------------------+
+
+\ccRefPageBegin
+
+\begin{ccRefClass}{Arr_linear_traits_2<Kernel>}
+    
+\ccDefinition 
+%============
+
+The traits class \ccRefName\ is a model of the \ccc{ArrangementTraits_2}
+concept that allows for the construction and maintenance of arrangements of
+linear objects which may be bounded (line segments) or unbounded (rays
+and lines). The traits class is parameterized with a \cgal-kernel model;
+see the reference page of \ccc{Arr_segment_traits_2<Kernel>}
+(\ccRefPage{CGAL::Arr_segment_traits_2<Kernel>}) for further explanations
+and recommendations on choosing a kernel.
+
+\ccRefName\ defines \ccc{Kernel::Point_2} as its point type. The nested
+\ccc{X_monotone_curve_2} and \ccc{Curve_2} types defined by the traits class
+(as is the case with the various segment-traits classes, both types
+refer to the same class, as {\sl every} linear object is (weakly) $x$-monotone),
+are constructible from a point, a line segment, a ray and from a line
+(objects of types \ccc{Kernel::Point_2}, \ccc{Kernel::Segment_2},
+\ccc{Kernel::Ray_2} and \ccc{Kernel::Line_2}, respectively). On the other
+hand, when we are given a curve we can find out its actual type and convert
+it to the respective kernel object (say, to a \ccc{Kernel::Ray_2}).
+
+\ccInclude{CGAL/Arr_linear_traits_2.h}
+ 
+\ccIsModel
+    \ccc{ArrangementTraits_2} \\
+    \ccc{ArrangementLandmarkTraits_2}
+
+\subsection*{Class 
+        Arr\_linear\_traits\_2$<$Kernel$>$::Curve\_2}
+%====================================================
+
+The \ccc{Curve_2} (and the \ccc{X_monotone_curve_2}) class nested within
+the linear-traits can represent all types of linear objects. The class
+supports the copy and default constructor and the assignment operator.
+In addition, the \ccc{operator<<} and \ccc{operator>>} for linear objects
+are defined for standard output and input streams.
+
+\begin{ccClass}{Arr_linear_traits_2<Kernel>::Curve_2}
+
+\ccTypes
+%-------
+
+\ccTypedef{typedef typename Kernel::Point_2 Point_2;}{}
+\ccGlue
+\ccTypedef{typedef typename Kernel::Segment_2 Segment_2;}{}
+\ccGlue
+\ccTypedef{typedef typename Kernel::Ray_2 Ray_2;}{}
+\ccGlue
+\ccTypedef{typedef typename Kernel::Line_2 Line_2;}{}
+
+\ccCreation
+\ccCreationVariable{c}
+%---------------------
+
+\ccConstructor{Curve_2 (const Point_2& p);}
+    {constructs an degenerate curve equivalent to the point \ccc{p}.}
+
+\ccConstructor{Curve_2 (const Segment_2& seg);}
+    {constructs an line segment.}
+
+\ccConstructor{Curve_2 (const Ray_2& ray);}
+    {constructs a ray.}
+
+\ccConstructor{Curve_2 (const Line_2& ln);}
+    {constructs a line.}
+
+\ccAccessFunctions
+%-----------------
+
+\ccMethod{bool is_point() const;}
+  {returns whether \ccVar\ is a point (a degenerate curve).}
+\ccGlue
+\ccMethod{Point_2 point() const;}
+  {returns a point object equivalent to \ccVar.
+   \ccPrecond{\ccVar\ is a point.}}
+
+\ccMethod{bool is_segment() const;}
+  {returns whether \ccVar\ is a segment (has two bounded endpoints).}
+\ccGlue
+\ccMethod{Segment_2 segment() const;}
+  {returns a segment object equivalent to \ccVar.
+   \ccPrecond{\ccVar\ is a segment.}}
+
+\ccMethod{bool is_ray() const;}
+  {returns whether \ccVar\ is a ray (has a bounded source point and its
+   other end is unbounded).}
+\ccGlue
+\ccMethod{Ray_2 ray() const;}
+  {returns a ray object equivalent to \ccVar.
+   \ccPrecond{\ccVar\ is a ray.}}
+
+\ccMethod{bool is_line() const;}
+  {returns whether \ccVar\ is a line (has only unbounded ends).}
+\ccGlue
+\ccMethod{Line_2 line() const;}
+  {returns a line object equivalent to \ccVar.
+   \ccPrecond{\ccVar\ is a line.}}
+
+\ccMethod{Line_2 supporting_line() const;}
+  {returns the supporting line of \ccVar.
+   \ccPrecond{\ccVar\ is not a point (a degenerate curve).}}
+
+\ccMethod{Point_2 source() const;}
+  {returns \ccVar's source point.
+   \ccPrecond{\ccVar\ is a point, a segment or a ray.}}
+\ccGlue
+\ccMethod{Point_2 target() const;}
+  {returns \ccVar's target point.
+   \ccPrecond{\ccVar\ is a point or a segment.}}
+
+\end{ccClass}
+
+\end{ccRefClass}
+
+\ccRefPageEnd

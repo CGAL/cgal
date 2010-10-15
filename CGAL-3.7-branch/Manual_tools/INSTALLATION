@@ -1,0 +1,42 @@
+Installation
+============
+
+System Requirements:
+
+     *  C/C++ Compiler (tested: Gnu g++ 3.3 and 3.4)
+     *  flex and bison (NOTE: flex versions >  2.5.4 are NOT yet supported)
+     *  perl 5
+     *  Unix environment with tools like grep, sed, awk, ...
+     *  GNU make
+
+
+There is an install script called `install.sh' that installs the 
+Manual_tools in a default location, specified in `install.config'. 
+If you dislike the default paths, feel free to change them. Some 
+interactive work is still required:
+
+(1)  The default location for TeX style files is 
+     ${HOME}/local/Manual_tools/sty. You have to ensure that TeX has 
+     access to this path, by setting the $TEXINPUTS environment 
+     variable:
+
+     $ export TEXINPUTS=".:`pwd`/format:$TEXINPUTS"          
+     
+       
+(2)  The directory `scripts/' contains scripts that assume csh and perl
+     to be located at /bin/csh and /usr/bin/perl. These scripts may need 
+     to be edited (before installing them, of course) to reflect the proper 
+     locations.
+
+     An example file `cc_ref_wizard_rc' is provided for user configurations
+     in `$HOME/.cc_ref_wizard_rc'.
+
+(3)  If you use the Manual_tools in the CGAL context, make sure that the 
+     cgal_manual script (found in Manual/developer_scripts/cgal_manual) 
+     is in the PATH, either by copying it to ~/local/bin or by other means.
+
+(4)  The directory `src/' contains the supporting tools. See src/INSTALLATION
+     for further details (not required for basic setup).
+     
+ 
+EOF

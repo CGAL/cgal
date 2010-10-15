@@ -1,0 +1,106 @@
+\section{How To Speed Up Your Computation\label{arr_sec:tips}}
+%=======================================
+Before the specific tips, we remind you that compiling programs with
+debug flags disabled and with optimization flags enabled significantly
+reduces the running time.
+
+\begin{enumerate}
+\item
+When the curves to be inserted into an arrangement are $x$-monotone
+and pairwise disjoint in their interior to start with, then it is more
+efficient (in running time) and less demanding (in traits-class
+functionality) to use the non-intersection insertion-functions instead
+of the general ones; e.g., \ccc{insert()}.
+
+\item
+When the curves to be inserted into an arrangement are segments that
+are pairwise disjoint in their interior, it is more efficient to use
+the traits class \ccc{Arr_non_caching_segment_traits_2} rather then
+the default one (\ccc{Arr_segment_traits_2}).
+
+If the segments may intersect each other, the default traits class
+\ccc{Arr_segment_traits_2} can be safely used with the somehow limited
+number type \ccc{Quotient<MP_float>}.
+
+On rare occasions the traits class \ccc{Arr_non_caching_segment_traits_2}
+exhibits slightly better performance than the default one
+(\ccc{Arr_segment_traits_2}
+even when the segments intersect each other, due to the small overhead
+of the latter (optimized) traits class. (For example, when the so
+called {\sc Leda} rational kernel is used).
+
+\item
+Prior knowledge of the combinatorial structure of the arrangement can
+be used to accelerate operations that insert $x$-monotone curves,
+whose interior is disjoint from existing edges and vertices of the
+arrangement. The specialized insertion functions, i.e., 
+\ccc{insert_in_face_interior()}, \ccc{insert_from_left_vertex()}, 
+\ccc{insert_from_right_vertex()}, and \ccc{insert_at_vertices()}
+can be used according to the available information. These functions
+hardly involve any geometric operations, if at all. They accept
+topologically related parameters, and use them to operate directly on
+the \dcel\ records, thus saving algebraic operations, which are
+especially expensive when high-degree curves are involved.
+
+A polygon, represented by a list of segments along its boundary, can
+be inserted into an empty arrangement as follows. First, one segment
+is inserted using \ccc{insert_in_face_interior()} into the unbounded
+face. Then, a segment with a common end point is inserted using either
+\ccc{insert_from_left_vertex()} or \ccc{insert_from_right_vertex()},
+and so on with the rest of the segments except for the last, which is
+inserted using \ccc{insert_at_vertices()}, as both endpoints of which
+are the mapping of known vertices.
+
+\item
+The main trade-off among point-location strategies, is between time
+and storage. Using the naive or walk strategies, for example, takes
+more query time but does not require preprocessing or maintenance of
+auxiliary structures and saves storage space.
+
+\item
+If point-location queries are not performed frequently, but other
+modifying functions, such as removing, splitting, or merging edges
+are, then using a point-location strategy that does not require the
+maintenance of auxiliary structures, such as the naive or walk
+strategies, is preferable.
+
+\item
+There is a trade-off between two modes of the trapezoidal RIC strategy
+that enables the user to choose whether preprocessing should be
+performed or not. If preprocessing is not used, the creation of the
+structure is faster. However, for some input sequences the structure
+might be unbalanced and therefore queries and updates might take
+longer, especially, if many removal and split operations are
+performed.
+
+\item
+When the curves to be inserted into an arrangement are available in
+advance (as opposed to supplied on-line), it is advised to use the
+more efficient aggregate (sweep-based) insertion over the incremental
+insertion; e.g., \ccc{insert()}.
+
+
+\item
+The various traits classes should be instantiated with an exact number
+type to ensure robustness, when the input of the operations to be
+carried out might be degenerate, although inexact number types could
+be used at the user's own risk.
+
+\item
+Maintaining short bit-lengths of coordinate representations may
+drastically decrease the time consumption of arithmetic operations on
+the coordinates. This can be achieved by caching certain information
+or normalization (of rational numbers). However, both solutions should
+be used cautiously, as the former may lead to an undue space
+consumption, and indiscriminate normalization may considerably slow
+down the overall process.
+
+\item
+Geometric functions (e.g., traits methods) dominate the time
+consumption of most operations. Thus, calls to such function should be
+avoided or at least their number should be decreased, perhaps at the
+expense of increased combinatorial-function calls or increased space
+consumption. For example, repetition of geometric-function calls could
+be avoided by storing the results obtained by the first call, and
+reusing them when needed.
+\end{enumerate}

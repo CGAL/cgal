@@ -1,0 +1,54 @@
+\ccRefChapter{Geometric Object Generators\label{sec:generators_ref}}
+\ccChapterAuthor{Susan Hert \and Michael Hoffmann \and Lutz Kettner
+  \and Sven Sch\"onherr} 
+
+This chapter describes the functions and classes provided in \cgal\ that
+are useful for generating synthetic test data sets, \textit{e.g.,} for 
+testing algorithms on degenerate object sets and for performance analysis.
+These include a class for generating random numbers and function for selecting
+random items from a set of objects,
+generators for two-dimensional and three-dimensional points sets, a generator
+for random convex sets and one for simple polygons.  The \stl\ algorithm
+\ccc{std::random_shuffle} is useful with these functions and classes to
+to achieve random permutations for otherwise regular generators (
+\textit{e.g.}, points on a grid or segment).
+
+
+\section{Classified Reference Pages}
+
+\subsection*{Concepts}
+\ccRefConceptPage{PointGenerator} \\
+\ccRefConceptPage{RandomConvexSetTraits_2} \\
+\ccRefConceptPage{RandomPolygonTraits_2} \\
+
+\subsection*{Functions}
+
+\ccRefIdfierPage{CGAL::default_random} \\
+\ccRefIdfierPage{CGAL::perturb_points_2} \\
+\ccRefIdfierPage{CGAL::points_on_segment_2} \\
+\ccRefIdfierPage{CGAL::points_on_square_grid_2} \\
+\ccRefIdfierPage{CGAL::points_on_cube_grid_3} \\
+\ccRefIdfierPage{CGAL::random_collinear_points_2} \\
+\ccRefIdfierPage{CGAL::random_convex_set_2} \\
+\ccRefIdfierPage{CGAL::random_polygon_2} \\
+\ccRefIdfierPage{CGAL::random_selection} \\
+
+\subsection*{Classes}
+
+\ccRefIdfierPage{CGAL::Random} \\
+\ccRefIdfierPage{CGAL::Points_on_segment_2<Point_2>} \\
+\ccRefIdfierPage{CGAL::Random_points_in_cube_3<Point_3, Creator>} \\
+\ccRefIdfierPage{CGAL::Random_points_in_disc_2<Point_2, Creator>} \\
+\ccRefIdfierPage{CGAL::Random_points_in_sphere_3<Point_3, Creator>} \\
+\ccRefIdfierPage{CGAL::Random_points_in_square_2<Point_2, Creator>} \\
+\ccRefIdfierPage{CGAL::Random_points_on_circle_2<Point_2, Creator>} \\
+\ccRefIdfierPage{CGAL::Random_points_on_segment_2<Point_2, Creator>} \\
+\ccRefIdfierPage{CGAL::Random_points_on_sphere_3<Point_3, Creator>} \\
+\ccRefIdfierPage{CGAL::Random_points_on_square_2<Point_2, Creator>} \\
+\ccRefIdfierPage{CGAL::Random_points_in_iso_box_d<Point_d>}
+
+\subsection*{Traits Class}
+
+\ccRefIdfierPage{CGAL::Random_convex_set_traits_2<Kernel>} \\
+
+%% EOF

@@ -1,0 +1,19 @@
+test points
+   1 1
+   2 2
+   3 3
+   4 4
+   5 5
+test first set   (5,0),(10,10)
+test operator = (5,0),(10,10)
+test cctor      (5,0),(10,10)
+test list insertion:
+  number of successfully inserted points is 5
+  LER is  (5,0),(10,10)
+test default ctor    (0,0),(1,0.5)
+test after removal   (4,0),(10,10)
+test successful insertion 1
+test after clear (0,0),(5,10)
+test unsuccessful insertion 0
+test bounding box (0,0),(10,10)
+test left_bottom_right_top is 0 10,  0 0,  5 5,  10 10

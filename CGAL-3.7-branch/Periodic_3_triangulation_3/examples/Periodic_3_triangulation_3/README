@@ -1,0 +1,53 @@
+
+------- simple_example --------------------------------------------------------
+
+This example shows the incremental construction of a 3D Delaunay triangulation,
+the location of a point, and how perform elementary operations on indices in a
+cell. It uses the default parameter of the Periodic_3_Delaunay_triangulation_3
+class for the triangulation data structure.
+
+-------------------------------------------------------------------------------
+
+------- colored_vertices ------------------------------------------------------
+
+If the user does not need to add a type in a vertex that depends on the
+TriangulationDataStructure_3 (e.g. a Vertex_handle or Cell_handle), then he can
+use the Triangulation_vertex_base_with_info_3 class to add his own information
+easily in the vertices. This example shows how to add a CGAL::Color this way.
+
+-------------------------------------------------------------------------------
+
+------- adding_handles --------------------------------------------------------
+
+If the user needs to add a type in a vertex that depends on the
+TriangulationDataStructure_3 (e.g. a Vertex_handle or Cell_handle), then he has
+to derive his own vertex base class, as this example shows.
+
+-------------------------------------------------------------------------------
+
+------- covering --------------------------------------------------------------
+
+In this example we construct a triangulation that can be converted to the
+1-sheeted covering. However, we can insert new points such that the point set
+does not have a Delaunay triangulation in the 1-sheeted covering anymore, so
+the triangulation is not extensible.
+
+-------------------------------------------------------------------------------
+
+------- large_point_set -------------------------------------------------------
+
+For large point sets there are two optimizations available. This example
+demonstrates how to use them.
+
+-------------------------------------------------------------------------------
+
+------- geometric_access ------------------------------------------------------
+
+There are geometric iterators to have access to the geometric primitives
+without the combinatorial information. This is especially useful in case the
+point set does not have a triangulation in the 1-sheeted covering but the user
+does not want to deal with periodic copies of geometric primitives. This
+example demonstrates how to use the geometric access functions.
+
+-------------------------------------------------------------------------------
+

@@ -1,0 +1,380 @@
+% +------------------------------------------------------------------------+
+% | Reference manual page: Nef_polyhedron_3.tex
+% +------------------------------------------------------------------------+
+% | 26.02.2004   Peter Hachenberger
+% | Package: Nef_3
+% | 
+\RCSdef{\RCSNefThreeRev}{$Id$}
+\RCSdefDate{\RCSNefThreeDate}{$Date$}
+% +------------------------------------------------------------------------+
+
+\begin{ccRefClass}{Nef_polyhedron_3<Traits>}
+
+\ccDefinition
+
+A 3D Nef polyhedron is a subset of the 3-dimensional space that is the
+result of forming complements and intersections starting from a finite
+set \ccc{H} of 3-dimensional halfspaces. Nef polyhedra are closed
+under all binary set operations, i.e., intersection, union,
+difference, complement, and under the topological operations boundary,
+closure, and interior.
+
+A 3D Nef polyhedron can be represented by the local pyramids of the minimal
+elements of its incidence structure. Without going into to much detail, a local
+pyramid essentially reflects the topologic and geometric situation at a certain
+location in a point set. For finite polyhedra the minimal elements 
+of the incidence structure are vertices only. This means, that it suffices to 
+model the topological and geometric situation of the vertices. For 
+3D Nef polyhedra, the local pyramid of a vertex is represented by 
+a planar Nef polyhedra embedded on a sphere.
+
+A \ccc{Nef_polyhedron_3} consists of vertices \emph{V}, a sphere map for each
+vertex in \emph{V}, edges \emph{E}, facets \emph{F}, volumes \emph{C}, a mark
+for every item, and an incidence relation on them. Each edge and each facet
+is represented by two halfedges or two halffacets, respectively.
+
+\ccInclude{CGAL/Nef_polyhedron_3.h}
+
+\ccParameters
+
+\begin{tabbing}
+\ccc{template <} \=\ccc{class Nef_polyhedronTraits_3,}\\
+                 \>\ccc{class Nef_polyhedronItems_3 = CGAL::Default_items<Nef_polyhedronTraits_3>,}\\
+                 \>\ccc{class Nef_polyhedronMarks = bool >}\\
+    \ccc{class Nef_polyhedron_3;}
+\end{tabbing}
+
+The first parameter requires one of the following exact kernels:
+\ccc{Homogeneous}, \ccc{Simple_homogeneous}, \ccc{Extended_homogeneous} 
+parametrized with \ccc{Gmpz}, \ccc{leda_integer} or any other number type
+modeling \Z, or \ccc{Cartesian}, \ccc{Simple_cartesian}, 
+\ccc{Extended_cartesian} parametrized with \ccc{Gmpq}, \ccc{leda_rational},
+\ccc{Quotient<Gmpz>} or any other number type modeling \Q.
+
+The second parameter and the third parameter are for future considerations.
+Neither \ccc{Nef_polyhedronItems_3} nor \ccc{Nef_polyhedronMarks} is
+specifed, yet. Do not use any other than the default types for these two 
+template parameters.
+
+\ccTypes
+
+\ccTwo{Nef_polyhedron_3<Traits>::SHalfedge_const_iterator;}{}
+
+\ccNestedType{Traits}{traits class selected for \ccc{Nef_polyhedronTraits_3}.}
+\ccGlue
+\ccNestedType{Mark}{All object (vertices, edges, etc.) are attributed by a Mark. 
+  Mark equals bool.} 
+
+\ccNestedType{size_type}{size type of \ccc{Nef_polyhedron_3}.}
+
+\ccNestedType{Vertex_const_handle}{non-mutable handle to a vertex.}
+\ccGlue
+\ccNestedType{Halfedge_const_handle}{non-mutable handle to a halfedge.}
+\ccGlue
+\ccNestedType{Halffacet_const_handle}{non-mutable handle to a halffacet.}
+\ccGlue
+\ccNestedType{Volume_const_handle}{non-mutable handle to a volume.}
+\ccGlue
+\ccNestedType{SVertex_const_handle}{non-mutable handle to a svertex.}
+\ccGlue
+\ccNestedType{SHalfedge_const_handle}{non-mutable handle to a shalfedge.}
+\ccGlue
+\ccNestedType{SHalfloop_const_handle}{non-mutable handle to a shalfloop.}
+\ccGlue
+\ccNestedType{SFace_const_handle}{non-mutable handle to a sface.}
+
+\ccNestedType{Vertex_const_iterator}{non-mutable iterator over all vertices.}
+\ccGlue
+\ccNestedType{Halfedge_const_iterator}{non-mutable iterator over all halfeges.}
+\ccGlue
+\ccNestedType{Halffacet_const_iterator}{non-mutable iterator over all halffacets.}
+\ccGlue
+\ccNestedType{Volume_const_iterator}{non-mutable iterator over all volumes.}
+\ccGlue
+\ccNestedType{SVertex_const_iterator}{non-mutable iterator over all svertices.}
+\ccGlue
+\ccNestedType{SHalfedge_const_iterator}{non-mutable iterator over all shalfedges.}
+\ccGlue
+\ccNestedType{SHalfloop_const_iterator}{non-mutable iterator over all shalfloops.}
+\ccGlue
+\ccNestedType{SFace_const_iterator}{non-mutable iterator over all sfaces.}
+
+\ccTwo{Nef_polyhedron_3<Traits>::Object_handle;;;}{}
+
+\ccNestedType{SHalfedge_around_svertex_const_circulator}{non-mutable circulator of shalfedges around a svertex (cw).}
+\ccGlue
+\ccNestedType{SHalfedge_around_sface_const_circulator}{non-mutable circulator of shalfedges around a sface (ccw).}
+\ccGlue
+\ccNestedType{SHalfedge_aroud_facet_const_circulator}{non-mutable circulator of shalfedges around a halffacet (ccw).}
+\ccGlue
+\ccNestedType{SFace_cycle_const_iterator}{non-mutable iterator over the cylces of a sface.}
+\ccGlue
+\ccNestedType{Halffacet_cycle_const_iterator}{non-mutable iterator over the cylces of a halffacet.}
+\ccGlue
+\ccNestedType{Shell_entry_const_iterator}{non-mutable iterator providing an entry to each shell. }
+
+\ccNestedType{Object_handle}{a generic handle to an object. 
+  The kind of object \ccc{(vertex, halfedge, halffacet, volume, 
+    svertex, shalfedge, shalfloop, sface)} can 
+  be determined and the object can be assigned to a corresponding
+  constant handle by one of the following functions:\\
+  \ccc{bool assign(Vertex_const_handle& h, Object_handle)}\\
+  \ccc{bool assign(Halfedge_const_handle& h, Object_handle)}\\
+  \ccc{bool assign(Halffacet_const_handle& h, Object_handle)}\\
+  \ccc{bool assign(Volume_const_handle& h, Object_handle)}\\
+  \ccc{bool assign(SVertex_const_handle& h, Object_handle)}\\
+  \ccc{bool assign(SHalfedge_const_handle& h, Object_handle)}\\
+  \ccc{bool assign(SHalfloop_const_handle& h, Object_handle)}\\
+  \ccc{bool assign(SFace_const_handle& h, Object_handle)}\\
+  where each function returns \ccc{true} iff the assignment to
+  \ccc{h} could be accomplished. }
+
+\ccNestedType{Point_3}{location of vertices.}
+\ccGlue
+\ccNestedType{Segment_3}{segment represented by a halfedge.}
+\ccGlue
+\ccNestedType{Vector_3}{direction of a halfedge.}
+\ccGlue
+\ccNestedType{Plane_3}{plane of a halffacet lies in.}
+\ccGlue
+\ccNestedType{Aff_transformation_3}{affine transformation.}
+
+\ccNestedType{Polylines_tag}{tag for calling polyline constructor.}
+
+\ccEnum{enum Boundary { EXCLUDED,  INCLUDED }}{construction selection.}
+\ccGlue
+\ccEnum{enum Content { EMPTY,  COMPLETE }}{construction selection.}
+\ccGlue
+\ccEnum{enum Intersection_mode { CLOSED_HALFSPACE, OPEN_HALFSPACE,
+    PLANE_ONLY }}{intersection selection.}
+\ccNestedType{Nef_polyhedron_S2}{a sphere map.}
+\ccGlue
+\ccNestedType{Polyhedron}{a polyhedral surface.}
+
+
+\ccCreation
+\ccCreationVariable{N}
+
+\ccThree{Nef_polyhedron_3<Traits>;}{N}{}
+\ccThreeToTwo
+
+\ccConstructor{Nef_polyhedron_3(Content space = EMPTY);} {
+  creates a Nef polyhedron and initializes it to the empty 
+  set if \ccc{plane == EMPTY}
+  and to the whole space if \ccc{space == COMPLETE}.}
+
+\ccConstructor{Nef_polyhedron_3(const Plane_3& p, 
+                                Boundary b = INCLUDED);}{ creates a
+  Nef polyhedron containing the halfspace on the negative side of
+  \ccc{p} including \ccc{p} if \ccc{b==INCLUDED}, excluding \ccc{p} if
+  \ccc{b==EXCLUDED}.}
+
+\ccConstructor{Nef_polyhedron_3(Polyhedron& P);}{
+  creates a Nef polyhedron, which represents the same point set as 
+  the polyhedral surface \ccc{P} does.}
+
+\ccConstructor{Nef_polyhedron_3(Input_iterator begin, Input_iterator end);}
+              {creates a Nef polyhedron consisting of a single polygon
+              spanned by the list of points in the iterator range
+              \ccc{[begin,end)}. If the points do not on a common
+              supporting plane, the constructor tries to triangulate
+              the polygon into multiple facets.If the construction does
+              not succeed, the empty set is created.}
+
+\ccConstructor{template <class Forward_iterator>
+Nef_polyhedron_3(Forward_iterator it, Forward_iterator end,
+Polylines_tag)}{The iterator range [it, end) defines a set point
+ranges, each of which defines a polyline.}
+
+%\ccConstructor{Nef_polyhedron_3(const char* filename);}{
+%  loads a Nef polyhedron from \ccc{filename}.}
+
+
+\ccHeading{Access Member Functions}
+
+\ccThree{Nef_polyhedron_3<Traits>}{N.number_of_halffacets();}{}
+
+\ccMethod{bool is_simple() const;}{returns true, if \ccVar\ is a 2-manifold.}
+\ccGlue
+\ccMethod{bool is_valid() const;}{checks the integrity of \ccVar\ .}
+
+%\ccThree{Size_type}{N.number_of_halffacets();}{}
+
+\ccMethod{Size_type number_of_vertices() const;}
+{returns the number of vertices.}
+\ccGlue
+\ccMethod{Size_type number_of_halfedges() const;}
+{return the number of halfedges.} 
+\ccGlue
+\ccMethod{Size_type number_of_edges() const;}
+{returns the number of halfedge pairs.}     
+\ccGlue
+\ccMethod{Size_type number_of_halffacets() const;}
+{returns the number of halffacets.}   
+\ccGlue
+\ccMethod{Size_type number_of_facets() const;}
+{returns the number of halffacet pairs.}    
+\ccGlue
+\ccMethod{Size_type number_of_volumes() const;}
+{returns the number of volumes.}   
+
+\ccMethod{Vertex_const_iterator   vertices_begin() const;}{iterator over all vertices.}
+\ccGlue
+\ccMethod{Vertex_const_iterator   vertices_end()   const;}{past-the-end iterator.}
+\ccMethod{Halfedge_const_iterator halfedges_begin()const;}{iterator over all halfedges.}
+\ccGlue
+\ccMethod{Halfedge_const_iterator halfedges_end()  const;}{past-the-end iterator.}
+\ccMethod{Halffacet_const_iterator halffacets_begin() const;}{iterator over all halffacets.}
+\ccGlue
+\ccMethod{Halffacet_const_iterator halffacets_end() const;}{past-the-end iterator.}
+\ccMethod{Volume_const_iterator   volumes_begin() const;}{iterator over all volumes.}
+\ccGlue
+\ccMethod{Volume_const_iterator   volumes_end()   const;}{past-the-end iterator.}
+
+The following macros are provided: \ccc{CGAL_forall_vertices(v,N)},
+\ccc{CGAL_forall_halfedges(e,N)}, \ccc{CGAL_forall_edges(e,N)},
+\ccc{CGAL_forall_halffacets(f,N)}, \ccc{CGAL_forall_facets(f,N)},
+\ccc{CGAL_forall_volumes(c,N)} where \ccc{N} is a \ccc{Nef_polyhedron_3}.
+
+\ccMethod{Object_handle locate(const Point_3& p) const;}
+{returns a generic handle to the object (vertex, edge, facet or volume) which contains the point p in its relative interior.}
+%\ccMethod{bool contains(Object_handle h) const;}{}
+%\ccMethod{bool contained_in_boundary(Object_handle h) const;}{}
+
+\ccMethod{Nef_polyhedron_S2 get_sphere_map(Vertex_const_iterator v) const;}
+{returns the neighborhood of a vertex modeled by a \ccc{Nef_polyhedron_S2}.}
+
+\ccHeading{Point Set Predicates}
+
+\ccThree{Nef_polyhedron_3<Traits>}{N.intersection(N1);}{}
+
+\ccMethod{bool is_empty() const;}{returns true, if \ccVar\ is the 
+                                  empty point set.}
+\ccGlue
+\ccMethod{bool is_space() const;}{returns true, if \ccVar\ is the 
+                                  complete 3D space.}
+
+\ccMethod{bool operator==(const Nef_polyhedron_3<Traits>& N1) const;}
+{returns true, if \ccVar\ and N1 comprise the same point sets.}
+\ccGlue
+\ccMethod{bool operator!=(const Nef_polyhedron_3<Traits>& N1) const;}
+{returns true, if \ccVar\ and N1 comprise different point sets. }
+\ccGlue
+\ccMethod{bool operator<(const Nef_polyhedron_3<Traits>& N1) const;}
+{returns true, if \ccVar\ is a proper subset of N1. }
+\ccGlue
+\ccMethod{bool operator>(const Nef_polyhedron_3<Traits>& N1) const;}
+{returns true, if \ccVar\ is a proper superset of N1. }
+\ccGlue
+\ccMethod{bool operator<=(const Nef_polyhedron_3<Traits>& N1) const;}
+{returns true, if \ccVar\ is a subset of N1. }
+\ccGlue
+\ccMethod{bool operator>=(const Nef_polyhedron_3<Traits>& N1) const;}
+{returns true, if \ccVar\ is a superset of N1. }
+
+\ccHeading{Unary Set Operations}
+
+\ccMethod{Nef_polyhedron_3<Traits> complement() const;}
+{returns the complement of \ccVar\ .}
+\ccGlue
+\ccMethod{Nef_polyhedron_3<Traits> interior() const;}
+{returns the interior of \ccVar\ .}
+\ccGlue
+\ccMethod{Nef_polyhedron_3<Traits> boundary() const;}
+{returns the boundary of \ccVar\ .}
+\ccGlue
+\ccMethod{Nef_polyhedron_3<Traits> closure() const;}
+{returns the closure of \ccVar\ .}
+\ccGlue
+\ccMethod{Nef_polyhedron_3<Traits> regularization() const;}
+{returns the regularization, i.e. the closure of the interior, of \ccVar\ .}
+
+\ccMethod{Nef_polyhedron_3<Traits> operator!() const;}
+{returns the complement of \ccVar\ .}
+
+\ccHeading{Binary Set Operations}
+
+\ccMethod{Nef_polyhedron_3<Traits> intersection(const Nef_polyhedron_3<Traits>& N1) const;}
+{return the intersection of \ccVar\ and N1.}
+\ccGlue
+\ccMethod{Nef_polyhedron_3<Traits> join(const Nef_polyhedron_3<Traits>& N1) const;}
+{return the union of \ccVar\ and N1. (Note that ''union'' is a C++ keyword and cannot be used for this operation.)}
+\ccGlue
+\ccMethod{Nef_polyhedron_3<Traits> difference(const Nef_polyhedron_3<Traits>& N1) const;}
+{return the difference between \ccVar\ and N1.}
+\ccGlue
+\ccMethod{Nef_polyhedron_3<Traits> symmetric_difference(const Nef_polyhedron_3<Traits>& N1) const;}
+{return the symmetric difference of \ccVar\ and N1.}
+\ccGlue
+\ccMethod{Nef_polyhedron_3<Traits> intersection(const Plane_3& p, Intersection_mode im) const;}
+  {returns intersection of \ccVar\ with
+  plane (\ccc{im=PLANE_ONLY}), open halfspace (\ccc{im=OPEN_HALFSPACE}), or closed
+  halfspace (\ccc{im=CLOSED_HALFSPACE}). In the latter two cases, the
+  halfspaces are on the negative side of the plane \ccc{p}. The function is
+  written for the use with standard kernels, where halfspaces are not
+  part of the domain. The function does not work in combination with
+  an extended kernels or with an unbounded polyhedron.}
+
+\ccMethod{Nef_polyhedron_3<Traits> operator*(const Nef_polyhedron_3<Traits>& N1) const;}
+{return the intersection of \ccVar\ and N1.}
+\ccGlue
+\ccMethod{Nef_polyhedron_3<Traits> operator+(const Nef_polyhedron_3<Traits>& N1) const;}
+{return the union of \ccVar\ and N1.}
+\ccGlue
+\ccMethod{Nef_polyhedron_3<Traits> operator-(const Nef_polyhedron_3<Traits>& N1) const;}
+{return the difference between \ccVar\ and N1.}
+\ccGlue
+\ccMethod{Nef_polyhedron_3<Traits> operator^(const Nef_polyhedron_3<Traits>& N1) const;}
+{return the symmetric difference of \ccVar\ and N1.}
+
+\ccMethod{void operator*=(const Nef_polyhedron_3<Traits>& N1);}{intersects \ccVar\ and N1.}
+\ccGlue
+\ccMethod{void operator+=(const Nef_polyhedron_3<Traits>& N1);}{unites \ccVar\ with N1.}
+\ccGlue
+\ccMethod{void operator-=(const Nef_polyhedron_3<Traits>& N1);}{subtracts N1 from \ccVar\ .}
+\ccGlue
+\ccMethod{void operator^=(const Nef_polyhedron_3<Traits>& N1);}{performs a symmetric intersection of \ccVar\ and N1.}
+
+\ccHeading{Operations}
+
+\ccThree{void}{N}{}
+\ccThreeToTwo
+
+\ccMethod{void clear(Content space = EMPTY);}
+{make \ccVar\ the empty set if \ccc{space == EMPTY} and
+ the complete 3D space if \ccc{space == COMPLETE}.}
+
+\ccMethod{void transform(const Aff_transformation_3& aff);}{applies an affine transformation to \ccVar\ .}
+
+%\ccMethod{void dump() const;}{}
+\ccMethod{void convert_to_polyhedron(Polyhedron& P) const;}
+{converts \ccVar\ into a Polyhedron.~\ccPrecond \ccVar\ is simple.}
+
+\ccMethod{void visit_shell_objects(SFace_const_handle f, Visitor& V) const;}
+{calls the visit function of V for every item which belongs to the same shell as sf.}
+
+%\ccMethod{static bool is_standard(const Vertex_const_handle v);}{}
+%\ccMethod{static bool is_standard(const Halffacet_const_handle v);}{}
+%\ccMethod{static bool is_standard_kernel() { return Infi_box::standard_kernel();}{}
+%\ccMethod{static bool is_extended_kernel() { return Infi_box::extended_kernel();}{}
+%\ccMethod{static void set_size_of_infimaximal_box(const typename Infi_box::NT& size);}{}
+
+\ccSeeAlso
+
+\ccRefIdfierPage{CGAL::Nef_polyhedron_3<Traits>::Vertex}\\
+\ccRefIdfierPage{CGAL::Nef_polyhedron_3<Traits>::Halfedge}\\
+\ccRefIdfierPage{CGAL::Nef_polyhedron_3<Traits>::Halffacet}\\
+\ccRefIdfierPage{CGAL::Nef_polyhedron_3<Traits>::Volume}\\
+\ccRefIdfierPage{CGAL::Nef_polyhedron_3<Traits>::SHalfedge}\\
+\ccRefIdfierPage{CGAL::Nef_polyhedron_3<Traits>::SHalfloop}\\
+\ccRefIdfierPage{CGAL::Nef_polyhedron_3<Traits>::SFace}\\
+\ccRefIdfierPage{CGAL::Nef_polyhedron_S2<Traits>}\\
+\ccRefIdfierPage{CGAL::Polyhedron_3<Traits>}
+
+
+
+\end{ccRefClass}
+
+% +------------------------------------------------------------------------+
+% EOF
+% +------------------------------------------------------------------------+

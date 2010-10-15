@@ -1,0 +1,143 @@
+\begin{ccRefClass}{Exponent_vector}
+
+\ccDefinition
+
+For a given (multivariate) monomial the vector of its exponents is called the 
+exponent vector. The class \ccClassName\ is meant to represent 
+such a vector.
+
+A vector is considered as valid, in case it represents a valid monomial. 
+that is, it should not contain negative exponents. 
+We decided to use int as the value type, 
+since negative exponents may appear in intermediate results.
+The set of exponent vectors with elementwise 
+addition forms an {\em Abelian Group}. 
+
+Beside the constructors \ccClassName\ has almost the same interface as an  
+\ccc{std::vector<int>}. Moreover the comparison is changed such that 
+the lexicographic order starts the comparison at the last entry.  
+This reflects the fact that the last entry corresponds to the 
+outermost variable of a multivariate polynomial. 
+
+%\footnote{Should we add a scalar multiplication? }
+
+
+\ccInclude{CGAL/Exponent_vector.h}
+
+\ccIsModel
+
+\ccc{Random Access Container}\\
+\ccc{Back Insertion Sequence}\\
+
+\ccc{DefaultConstructible}\\
+\ccc{Assignable}\\
+\ccc{CopyConstructible}\\
+
+\ccc{EqualityComparable}\\
+\ccc{LessThanComparable}\\
+
+\ccCreation
+\ccCreationVariable{fo}
+
+%\ccc{DefaultConstructible}\\
+\ccConstructor{Exponent_vector();}
+        {introduces an uninitialized variable \ccVar.
+        }\ccGlue
+%\ccc{CopyConstructible}\\
+\ccConstructor{Exponent_vector(const Exponent_vector & ev_);} 
+        {The copy constructor
+        }\ccGlue
+% OLD CONSTRUCTORS
+%\ccConstructor{Exponent_vector(size_type n);} 
+%        {Creates a vector with \ccc{n} elements.
+%        }\ccGlue
+%\ccConstructor{Exponent_vector(size_type n, int i);} 
+%        {Creates a vector with \ccc{n} copies of \ccc{i}. 
+%        }\ccGlue
+
+\ccConstructor{Exponent_vector(int e1);} 
+        {Creates a vector containing the given element. 
+        }\ccGlue
+\ccConstructor{Exponent_vector(int e1, int e2);} 
+        {Creates a vector containing the given elements. 
+        }\ccGlue
+\ccConstructor{Exponent_vector(int e1, int e2, int e3);} 
+        {Creates a vector containing the given elements. 
+        }\ccGlue
+\ccConstructor{Exponent_vector(int e1, int e2, int e3, int e4);} 
+        {Creates a vector containing the given elements. 
+        }\ccGlue
+
+\ccConstructor{        
+        template < class InputIterator >         
+        Exponent_vector(InputIterator begin, InputIterator end);}{
+        Creates a vector with a copy of the given range.         
+        \ccPrecond \ccc{InputIterator} must allow the value type \ccc{int}. \\
+        }\ccGlue
+
+\ccOperations
+
+\ccGlue
+\ccFunction{bool is_valid(ev);}        
+       { Returns true if all entries of ev are not negative. }        
+
+\ccOperations
+
+Group Operation: 
+
+\ccFunction{Exponent_vector operator+(const Exponent_vector &ev1);}{}\ccGlue
+\ccFunction{Exponent_vector operator-(const Exponent_vector &ev1);}{}\ccGlue
+
+\ccFunction{Exponent_vector 
+        operator+(const Exponent_vector &ev1, 
+                  const Exponent_vector &ev2);}{
+                \ccPrecond ev1.size() == ev2.size()
+        }
+\ccGlue
+\ccFunction{Exponent_vector 
+            operator-(const Exponent_vector &ev1, 
+                      const Exponent_vector &ev2);}{
+                \ccPrecond ev1.size() == ev2.size()
+        }
+\ccGlue
+\ccMethod{Exponent_vector 
+            operator+=(const Exponent_vector &ev2);}{
+                \ccPrecond \ccVar.size() == ev2.size()
+        }
+\ccGlue
+\ccMethod{Exponent_vector 
+            operator-=(const Exponent_vector &ev2);}{
+                \ccPrecond \ccVar.size() == ev2.size()
+        }
+
+%\begin{ccAdvanced}
+%TODO: Should we add these functions? what about operator $/$ ? 
+%\ccMethod{Exponent_vector operator*=(int i);}{}
+%\ccGlue
+%\ccFunction{Exponent_vector operator*(const Exponent_vector &ev, int i);}{}
+%\ccGlue
+%\ccFunction{Exponent_vector operator*(int i ,const Exponent_vector &ev);}{}
+%\end{ccAdvanced}
+
+\ccc{EqualityComparable}: 
+\ccFunction{bool 
+            operator==(const Exponent_vector &ev1, 
+                       const Exponent_vector &ev2);}{}
+\ccGlue
+\ccFunction{bool 
+            operator!=(const Exponent_vector &ev1, 
+                       const Exponent_vector &ev2);}{}
+
+\ccc{LessThanComparable}: 
+\ccFunction{bool 
+            operator<(const Exponent_vector &ev1, 
+                      const Exponent_vector &ev2);}{ 
+        Lexicographic compare, starting with the {\em last} variable.  }
+\ccGlue
+
+\ccSeeAlso
+
+\ccRefIdfierPage{Polynomial_d}\\
+\ccRefIdfierPage{PolynomialTraits_d}\\
+
+\end{ccRefClass} 

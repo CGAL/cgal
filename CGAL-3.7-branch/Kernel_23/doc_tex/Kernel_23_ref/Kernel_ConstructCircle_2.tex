@@ -1,0 +1,60 @@
+\begin{ccRefFunctionObjectConcept}{Kernel::ConstructCircle_2}
+A model for this must provide:
+
+\ccCreationVariable{fo}
+
+
+\ccHidden
+\ccMemberFunction{Kernel::Circle_2 operator()( );}{
+        introduces an uninitialized variable  of type
+        \ccClassTemplateName.}
+
+\ccMemberFunction{Kernel::Circle_2 operator()( Kernel::Point_2  const& center, 
+                               Kernel::FT  const& squared_radius,
+                               Orientation const& orientation
+                                                    = COUNTERCLOCKWISE);}{
+        introduces a variable  of type \ccc{Kernel::Circle_2}.
+        It is initialized to the circle with center \ccc{center},
+        squared radius \ccc{squared_radius} and orientation
+        \ccc{orientation}.
+        \ccPrecond \ccc{orientation} $\neq$ \ccc{COLLINEAR}, and further,
+                   \ccc{squared_radius} $\geq$ 0.}
+
+\ccMemberFunction{Kernel::Circle_2 operator()( Kernel::Point_2 const& p,
+                               Kernel::Point_2 const& q,
+                               Kernel::Point_2 const& r);}{
+        introduces a variable  of type \ccc{Kernel::Circle_2}.
+        It is initialized to the unique circle which passes through
+        the points \ccc{p}, \ccc{q} and \ccc{r}. The orientation of
+        the circle is the orientation of the point triple \ccc{p},
+        \ccc{q}, \ccc{r}.
+        \ccPrecond \ccc{p}, \ccc{q}, and \ccc{r} are not collinear.}
+
+\ccMemberFunction{Kernel::Circle_2 operator()( Kernel::Point_2  const& p, 
+                               Kernel::Point_2  const& q,
+                               Orientation const& orientation 
+                                                    = COUNTERCLOCKWISE);}{
+        introduces a variable  of type \ccc{Kernel::Circle_2}.
+        It is initialized to the circle with diameter $\overline{pq}$
+        and orientation \ccc{orientation}.
+        \ccPrecond \ccc{orientation} $\neq$ \ccc{COLLINEAR}.}
+
+\ccMemberFunction{Kernel::Circle_2 operator()( Kernel::Point_2  const& center,
+                               Orientation const& orientation
+                                                    = COUNTERCLOCKWISE);}{
+        introduces a variable  of type \ccc{Kernel::Circle_2}.
+        It is initialized to the circle with center \ccc{center}, squared
+        radius zero and orientation \ccc{orientation}.
+        \ccPrecond \ccc{orientation} $\neq$ \ccc{COLLINEAR}.
+        \ccPostcond .\ccc{is_degenerate()} = \ccc{true}.}
+
+\ccHidden
+\ccMemberFunction{Kernel::Circle_2 operator()( Kernel::Circle_2 const&);}{copy constructor.}
+
+\ccRefines
+\ccc{AdaptableFunctor} (with three arguments)
+
+\ccSeeAlso
+\ccRefIdfierPage{CGAL::Circle_2<Kernel>}  \\
+
+\end{ccRefFunctionObjectConcept}

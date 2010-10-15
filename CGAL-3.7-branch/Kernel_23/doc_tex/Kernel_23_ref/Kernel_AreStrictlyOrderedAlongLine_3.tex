@@ -1,0 +1,22 @@
+\begin{ccRefFunctionObjectConcept}{Kernel::AreStrictlyOrderedAlongLine_3}
+A model for this must provide:
+
+\ccCreationVariable{fo}
+
+\ccMemberFunction{bool operator()(const Kernel::Point_3&p, 
+                                  const Kernel::Point_3&q, 
+                                  const Kernel::Point_3&r);}
+          {returns \ccStyle{true}, iff the three points are collinear and 
+          \ccStyle{q} lies strictly between \ccStyle{p} and \ccStyle{r}.
+          Note that \ccStyle{false} is returned, if \ccStyle{q==p} or
+          \ccStyle{q==r}.}
+
+\ccRefines
+\ccc{AdaptableFunctor} (with three arguments)
+
+\ccSeeAlso
+\ccRefIdfierPage{CGAL::are_strictly_ordered_along_line}  \\
+
+
+\end{ccRefFunctionObjectConcept}         
+

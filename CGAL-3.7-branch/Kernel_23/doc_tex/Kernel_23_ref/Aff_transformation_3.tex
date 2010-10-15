@@ -1,0 +1,189 @@
+\begin{ccRefClass}{Aff_transformation_3<Kernel>}
+
+\ccDefinition
+The class \ccRefName\ represents three-dimensional affine transformations. 
+The general form of an affine transformation is based on a homogeneous
+representation of points. Thereby all transformations can be realized by
+matrix multiplication. 
+
+Multiplying the transformation matrix by a scalar does not change the
+represented transformation. Therefore, any transformation represented
+by a matrix with rational entries can be represented by a
+transformation matrix with integer entries as well. (Multiply the
+matrix with the common denominator of the rational entries.) Hence, it
+is sufficient to use the number type \ccStyle{Kernel::RT} to represent
+the entries of the transformation matrix.
+
+{\cgal} offers several specialized affine transformations. Different
+constructors are provided to create them. They are parameterized with
+a symbolic name to denote the transformation type, followed by
+additional parameters. The symbolic name tags solve ambiguities in the
+function overloading and they make the code more readable, i.e., what
+type of transformation is created.
+
+In three-dimensional space we have a $4\times 4$ matrix
+${(m_{ij})}_{i,\,j=0\ldots 3}$.  Entries $m_{30}$, $m_{31}$, and
+$m_{32}$ are always zero and therefore do not appear in the
+constructors.
+
+\ccCreation
+\ccCreationVariable{t}
+
+\ccConstructor{Aff_transformation_3(const Identity_transformation& );}
+            {introduces an identity transformation.}
+
+
+\ccConstructor{Aff_transformation_3(const Translation,
+                                    const Vector_3<Kernel> &v);}
+            {introduces a translation by a vector $v$.}
+ 
+\ccConstructor{Aff_transformation_3(const Scaling,
+                                    const Kernel::RT &s,
+                                    const Kernel::RT &hw = RT(1));}
+            {introduces a scaling by a scale factor $s/hw$.}
+
+\newsavebox{\arrthree}
+\newsavebox{\arrlinthree}
+\newsavebox{\transvecthree}
+
+\savebox{\arrthree}{\small $\left(\begin{array}{cccc}
+                 m_{00} & m_{01} & m_{02} & m_{03}\\
+                 m_{10} & m_{11} & m_{12} & m_{13}\\
+                 m_{20} & m_{21} & m_{22} & m_{23}\\
+                  0     &  0     &      0 & hw
+              \end{array}\right)$}
+
+\savebox{\arrlinthree}{\small $\left(\begin{array}{ccc}
+                 m_{00} & m_{01} & m_{02}\\
+                 m_{10} & m_{11} & m_{12}\\
+                 m_{20} & m_{21} & m_{22}\\
+              \end{array}\right)$}
+
+\savebox{\transvecthree}{\small $\left(\begin{array}{c}
+                 m_{03}\\
+                 m_{13}\\
+                 m_{23}
+              \end{array}\right)$}
+
+\ccConstructor{Aff_transformation_3(
+    const Kernel::RT &m00, const Kernel::RT &m01, const Kernel::RT &m02, const Kernel::RT &m03,
+    const Kernel::RT &m10, const Kernel::RT &m11, const Kernel::RT &m12, const Kernel::RT &m13,
+    const Kernel::RT &m20, const Kernel::RT &m21, const Kernel::RT &m22, const Kernel::RT &m23,
+                const Kernel::RT &hw = RT(1));}
+            {introduces a general affine transformation of the matrix
+             form \ccTexHtml{\usebox{\arrthree}.}{<IMG ALIGN=CENTER 
+             SRC="fig/arrthree.gif"> .} The part \ccTexHtml{$1\over hw$
+             \usebox{\arrlinthree}}{<span class="math">hw<SUP>-1</SUP></span> 
+             <IMG ALIGN=CENTER SRC="fig/arrlinthree.gif">}
+             defines the scaling and rotational part of the transformation, 
+             while the vector \ccTexHtml{$1\over hw$\usebox{\transvecthree}}%
+             {<span class="math">hw<SUP>-1</SUP></span> <IMG ALIGN=CENTER 
+             SRC="fig/transvecthree.gif">} contains the translational part.}
+
+\savebox{\arrthree}{\small $\left(\begin{array}{cccc}
+                 m_{00} & m_{01} & m_{02} & 0\\
+                 m_{10} & m_{11} & m_{12} & 0\\
+                 m_{20} & m_{21} & m_{22} & 0\\
+                  0     &  0     &  0     &hw
+              \end{array}\right)$}
+
+\ccConstructor{Aff_transformation_3(
+                        const Kernel::RT &m00, const Kernel::RT &m01, const Kernel::RT& m02,
+                        const Kernel::RT &m10, const Kernel::RT &m11, const Kernel::RT& m12,
+                        const Kernel::RT &m20, const Kernel::RT &m21, const Kernel::RT& m22,
+                                                      const Kernel::RT &hw = RT(1));}
+            {introduces a general linear transformation of the 
+             matrix form \ccTexHtml{\usebox{\arrthree},}{<IMG ALIGN=CENTER 
+             SRC="fig/arrthree2.gif"> ,} i.e.\ an affine
+             transformation without translational part.}
+
+
+\ccOperations
+
+Each class \ccStyle{Class_3<Kernel>} representing
+a geometric object in 3D has a member function:
+
+\ccStyle{Class_3<Kernel>  transform(Aff_transformation_3<Kernel> t)}.
+
+
+The transformation classes provide a member function \ccStyle{transform()}
+for points, vectors, directions, and planes:
+
+\ccMethod{Point_3<Kernel>  transform(const Point_3<Kernel> &p) const;}
+       {}
+\ccGlue
+\ccMethod{Vector_3<Kernel>  transform(const Vector_3<Kernel> &p) const;}
+       {}
+\ccGlue
+\ccMethod{Direction_3<Kernel>  transform(const Direction_3<Kernel> &p) const;}
+       {}
+\ccGlue
+\ccMethod{Plane_3<Kernel>  transform(const Plane_3<Kernel> &p) const;}
+       {}
+
+\cgal\ provides four function operators for these member functions:
+
+\ccMethod{Point_3<Kernel>  operator()(const Point_3<Kernel> &p) const;}
+       {}
+\ccGlue
+\ccMethod{Vector_3<Kernel>  operator()(const Vector_3<Kernel> &p) const;}
+       {}
+\ccGlue
+\ccMethod{Direction_3<Kernel>  operator()(const Direction_3<Kernel> &p) const;}
+       {}
+\ccGlue
+\ccMethod{Plane_3<Kernel>  operator()(const Plane_3<Kernel> &p) const;}
+       {}
+
+
+\ccMethod{Aff_transformation_3<Kernel> 
+          operator*(const Aff_transformation_3<Kernel> &s) const;}
+       {composes two affine transformations.}
+
+\ccMethod{Aff_transformation_3<Kernel>  inverse() const;}
+       {gives the inverse transformation.}
+
+%\ccMethod{Aff_transformation_3<Kernel>  transpose() const;}
+%       {returns the affine transformation defined by transposing
+%       the linear transformation in \ccVar\ and setting the
+%       translational part to zero.}
+
+\ccMethod{bool                 is_even() const;}
+       {returns \ccStyle{true}, if the transformation is not reflecting,
+        i.e.\ the determinant of the involved linear transformation is
+        non-negative.}
+
+\ccMethod{bool                 is_odd() const;}
+       {returns \ccStyle{true}, if the transformation is reflecting.}
+
+
+%\ccMethod{Aff_transformation_3<Kernel>  general_form() const;}
+%       {returns the affine transformation in matrix form.}
+
+The matrix entries of a matrix representation of a \ccStyle{Aff_transformation_3<Kernel>}
+can be accessed trough the following member functions:
+
+\ccMethod{Kernel::FT          cartesian(int i, int j) const;}
+                      {}
+\ccGlue
+\ccMethod{Kernel::FT          m(int i, int j) const;}
+       {returns entry $m_{ij}$ in a matrix representation in which $m_{33}$ is 1.}
+
+\ccMethod{Kernel::RT          homogeneous(int i, int j) const;}
+                      {}
+\ccGlue
+\ccMethod{Kernel::RT          hm(int i, int j) const;}
+       {returns entry $m_{ij}$ in some fixed matrix representation.} 
+
+For affine transformations  no I/O operators are defined.
+
+\ccSeeAlso
+\ccRefIdfierPage{CGAL::Aff_transformation_2<Kernel>} \\
+\ccRefIdfierPage{CGAL::Identity_transformation} \\
+\ccRefIdfierPage{CGAL::Reflection} \\
+\ccRefIdfierPage{CGAL::Rotation} \\
+\ccRefIdfierPage{CGAL::Scaling} \\
+\ccRefIdfierPage{CGAL::Translation} \\
+
+
+\end{ccRefClass} 

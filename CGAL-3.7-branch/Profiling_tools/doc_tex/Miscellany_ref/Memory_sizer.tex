@@ -1,0 +1,44 @@
+% +------------------------------------------------------------------------+
+% | CGAL Reference Manual:  Memory_sizer.tex
+% +------------------------------------------------------------------------+
+
+\begin{ccRefClass}{Memory_sizer}
+
+\ccDefinition
+
+The class \ccRefName\ allows to measure the memory size used by the process.
+Both the virtual memory size and the resident size are available (the resident
+size does not account for swapped out memory nor for the memory which is not
+yet paged-in).
+
+\ccInclude{CGAL/Memory_sizer.h}
+\ccCreationVariable{m}
+
+\ccTypes
+\ccThreeToTwo
+
+\ccTypedef{typedef std::size_t   size_type;}{}
+
+\ccCreation
+
+\ccSetThreeColumns{Timer&}{t.is_running();}{}
+\ccPropagateThreeToTwoColumns
+%\ccSetTwoColumns{Timer t( Timer r);}{}
+
+\ccConstructor{Memory_sizer();}{Default constructor.}
+
+\ccOperations
+
+\ccMethod{size_type virtual_size() const;}{Returns the virtual memory size in bytes.}
+\ccGlue
+\ccMethod{size_type resident_size() const;}{Returns the resident memory size in bytes.}
+
+
+\ccImplementation
+
+Accessing this information requires the use of non-portable code.
+Currently, there is support for Linux platforms, the Microsoft and Intel
+compiler on Windows, as well as Mac OS X.  If a platform is not supported, the
+two member functions return 0.
+
+\end{ccRefClass}

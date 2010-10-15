@@ -1,0 +1,388 @@
+% =============================================================================
+% The CGAL Developers' Manual
+% Chapter: Testing
+% -----------------------------------------------------------------------------
+% file   : testing.tex
+% authors: Mathair Baeskin <baeskin@infsn2.informatik.uni-halle.de>
+% -----------------------------------------------------------------------------
+% $Id$
+% $Date$
+% =============================================================================
+
+\chapter{Testing\label{chap:testing}}
+\ccChapterRelease{Chapter Version: 1.2}
+\ccChapterAuthor{Matthias B\"asken ({\tt baesken@infsn2.informatik.uni-halle.de})}
+\ccIndexMainItemBegin{test suite}
+
+%\section{Introduction}
+
+
+The \cgal\ test suite is a way to test the compilation and execution of \cgal\ 
+programs automatically (\ie, without user interaction) on a number of 
+different platforms.  Developers should, of course, thoroughly test their 
+code on their own development platform(s) \textbf{before} submitting it.
+The test suite serves as a way to test on additional platforms not available
+to the developer.  
+
+\section{What a test suite for a package should contain\label{sec:whats_in_test_suite}}
+
+The test suite helps the developer(s) of a package to 
+\begin{itemize}
+\item detect compilation problems on the various platforms
+\item detect runtime problems
+\item check the correctness of the algorithms in the package
+\end{itemize}
+
+That does not mean that the test suite is a platform for initial testing of 
+code.  New code should be tested on different platforms by the developer
+before submission.
+
+It is strongly recommended for a test suite of a package to
+\begin {itemize}
+\item Cover the complete code of the package; every (member) function
+      should be called at least once. (See Section~\ref{sec:gcov} for
+      a description of a tool you can use to test for code coverage.)
+\item Use more than one instantiation of templated functions or classes.
+\item A lot of classes in CGAL can be parametrized by traits classes, so 
+      that they are usable with different kernels. In such cases more than one
+      kernel should be used for testing.
+\item Use pre- and postcondition checkers wherever it is possible in the
+      main code.  In the test-suite code itself, the macro \ccc{assert}
+      should be used in place of \ccc{CGAL_assertion} to check 
+      all conditions, since \ccc{assert} is not disabled by \ccc{CGAL_NDEBUG}. 
+\end {itemize}
+
+\section{Using the code coverage tool \texttt{gcov}}
+\label{sec:gcov}
+
+The tool {\tt gcov} can be used together with the GNU C++ compiler to test 
+for code coverage in your programs and may be helpful when you create your 
+\cgal\ test suite programs.  You can find a complete guide to this tool 
+in the GNU on-line documentation at
+\path|http://gcc.gnu.org/onlinedocs/gcc-2.95.2/gcc_6.html|.
+If you want to use the code coverage tool {\tt gcov}, you have to compile 
+your programs with the options \texttt{-fprofile-arcs} and 
+\texttt{-ftest-coverage}.
+Here is a simple example:\\
+\begin{verbatim}
+   #include<iostream>
+
+   using namespace std;
+
+   void fu(int val)
+   {
+    int w,v=0;
+    if (val==0) {
+     cout << "val == 0!\n";
+     for(w=0;w<100;w++) v=v+w;
+    }
+    else {
+     cout << "val != 0!\n";
+     for(w=0;w<10;w++) v=v+w;  
+    }
+ 
+    cout << "v:" << v << "\n";
+   }
+
+   int main()
+   {
+     fu(0);
+     return 0;
+   }
+\end{verbatim}
+First you have to compile the example program \texttt{test.cpp} with the special 
+options. Then you have to execute it, and, after this, \texttt{gcov} can be 
+used.
+\begin{verbatim}
+   g++ -fprofile-arcs -ftest-coverage -o test test.cpp
+   test
+   gcov test.cpp  
+\end{verbatim}
+\texttt{gcov} will create a file \texttt{test.cpp.gcov} containing output 
+from \texttt{gcov}:
+\begin{verbatim}
+                #include<iostream>
+                
+                using namespace std;
+                
+                void fu(int val)
+           1    {
+           1     int w,v=0;
+           1     if (val==0) {
+           1      cout << "val == 0!\n";
+           1      for(w=0;w<100;w++) v=v+w;
+                 }
+      ######     else {
+      ######      cout << "val != 0!\n";
+      ######      for(w=0;w<10;w++) v=v+w;  
+                }
+                 
+           1     cout << "v:" << v << "\n";
+                }
+                
+                int main()
+           1    {
+           1      fu(0);
+           1      return 0;
+                }
+\end{verbatim}
+The lines that were not executed will be marked with \verb|######|,
+so you will see what should be added in the (\cgal) test suite programs.
+
+\section{Test suite directory\label{sec:test_suite_directory}}
+
+The test suite is located in the directory {\tt test} of the internal 
+releases of \cgal. This directory is not part of external releases. The 
+directory {\tt test}\index{test directory@{\tt test} directory!for test suite} 
+contains:
+\begin{itemize}
+   \item a script {\tt run\_testsuite}
+         \index{run_testsuite script@{\tt run\_testsuite} script}
+         that is (not surprisingly) used to run the test suite.
+   \item a subdirectory for every package included in the internal release.
+         These subdirectories are created from the {\tt test} directories
+         of the packages by copying the source, include, and input files from 
+         these directories and adding makefiles and {\tt cgal\_test} scripts 
+         where needed.  See Section~\ref{sec:test_subdirectory} for more
+         information about the proper structure of the {\tt test} directory
+         for a package.
+         \index{test directory@{\tt test} directory!for packages}
+   \item a subdirectory with a name that ends in {\tt \_Examples} for every 
+         package that was submitted with an {\tt examples} directory 
+         (Section~\ref{sec:examples_subdirectory})
+         \index{examples directory@{\tt examples} directory}
+         \ccIndexSubitem{test suite}{examples in}
+         \ccIndexSubitem{example programs}{in test suite}
+   \item a subdirectory with a name that ends in {\tt \_Demo} for every
+         package that was submitted with a {\tt demo} directory
+         (Section~\ref{sec:demo_subdirectory})
+         \index{demo directory@{\tt demo} directory}
+         \ccIndexSubitem{test suite}{demos in}
+         \ccIndexSubitem{demo programs}{in test suite}
+\end{itemize}
+
+The test suite will attempt to compile all the programs in the
+subdirectories of {\tt test} and to run all except
+the demo programs (which usually require user interaction) by using the 
+{\tt cgal\_test} scripts 
+(Sections~\ref{sec:test_subdirectory} and~\ref{sec:create_cgal_test})
+\index{cgal_test script@{\tt cgal\_test} script}
+and will save the results in files in the package subdirectories
+(Section~\ref{sec:test_suite_output}). 
+Even if a program fails to compile or run, the test suite will continue.
+
+
+\section{Test suite input\label{sec:test_suite_input}}
+\ccIndexSubitemBegin{test suite}{input}
+
+Input to programs in the test suite can be supplied in three different
+ways:
+\begin{description}
+   \item[data files in the {\tt data} directory]
+        \index{data directory@{\tt data} directory}
+        \ccIndexSubsubitem{test suite}{input}{from files}
+         As described in Section~\ref{sec:test_subdirectory}, a package's
+         {\tt test} directory may contain a subdirectory {\tt data} that
+         contains input files for the test programs.
+   \item[{\tt *.cin} files]
+        \index{test\ suite!input!from {\tt cin}}
+         If a test program \texttt{program.cpp} requires input from standard 
+         input (\ie, {\tt cin}), you should put a file called 
+         \texttt{program.cin} in the test directory. 
+         The test suite will then execute the program using the command
+         \begin{verbatim}
+         ./program < program.cin
+         \end{verbatim}
+   \item[command-line arguments supplied in the {\tt cgal\_test} script]
+        \ccIndexSubsubitem{test suite}{input}{from command-line}
+        {\em You are discouraged from using this option to give input values
+        to your programs} since it requires you to edit and submit a 
+        {\tt cgal\_test} script; see Section~\ref{sec:create_cgal_test}.
+
+        \index{cgal_test script@{\tt cgal\_test} script}
+         However, if a test program \texttt{program.cpp} absolutely requires 
+         command-line parameters, you should do the following. Use
+         \texttt{create\_cgal\_test} to create the script \texttt{cgal\_test}.
+         This file contains an entry of the form 
+         \begin{verbatim}
+         compile_and_run program 
+         \end{verbatim}
+         Just put the command-line 
+         parameters for \texttt{program} at the end of this line: 
+         \begin{verbatim}
+         compile_and_run program  arg1 arg2 ..
+         \end{verbatim}
+         The test suite will then execute the program using the command
+
+         \begin{verbatim}
+         ./program <arg1> <arg2> ...
+         \end{verbatim}
+\end{description}
+\ccIndexSubitemEnd{test suite}{input}
+
+
+\section{Running the test suite\label{sec:running_test_suite}}
+\index{run_testsuite script@{\tt run\_testsuite} script|(}
+
+The test suite is run using the {\tt run\_testsuite} script that is distributed
+with every internal release in the {\tt test} directory.  There are several
+ways you can customize this script to meet you needs:
+
+\begin{itemize}
+\item Add additional compiler and linker flags by setting the variables
+      {\tt TESTSUITE\_CXXFLAGS}%
+      \index{TESTSUITE_CXXFLAGS variable@{\tt TESTSUITE\_CXXFLAGS} variable} 
+      and {\tt TESTSUITE\_LDFLAGS} 
+      \index{TESTSUITE_LDFLAGS variable@{\tt TESTSUITE\_LDFLAGS} variable} 
+      \ccIndexSubitem{header files}{overriding}
+      at the top of the
+      script.  These variables are prepended to {\tt CXX\_FLAGS} and
+      {\tt LDFLAGS}, respectively, in the test suite makefiles.  So, for
+      example, if you have a directory \verb|experimental/include/CGAL| 
+      containing new or experimental \cgal\ files,  you can do the following:
+      \begin{center}
+      \verb|TESTSUITE_CXXFLAGS="-Iexperimental/include"|
+      \end{center}
+      and in this way test with your new files without overwriting
+      the originals.
+ 
+\item Export additional environment variables by ading lines to the 
+      \ccIndexSubitem{enviornment variables}{test suite}
+      \ccIndexSubitem{test suite}{environment variables}
+      {\tt run\_testsuite} script. As an example, it will be demonstrated 
+      how to export the {\tt LD\_LIBRARY\_PATH} by editing \texttt{run\_testsuite}.%
+      \index{LD_LIBRARY_PATH variable@{\tt LD\_LIBRARY\_PATH} variable}
+      \begin{enumerate}
+      \item Add the line
+            \begin{center}
+               \verb|LD_LIBRARY_PATH=<your library path>|
+            \end{center}
+            to the script.
+      \item Append {\tt LD\_LIBRARY\_PATH} to the line
+            \begin{center}
+            \verb|export PLATFORM CGAL_MAKEFILE TESTSUITE_CXXFLAGS TESTSUITE_LDFLAGS|
+            \end{center}
+            in the script.
+      \end{enumerate}
+
+      After this, the programs from the test suite will be run using the
+      {\tt LD\_LIBRARY\_PATH} that was specified in step 1. 
+
+\item Run the test suite on more than one platform by adding a line at the 
+      bottom of the script of the form
+      \begin{verbatim}
+           run_testsuite <include makefile>
+      \end{verbatim}
+      for every platform that you wish to test. Just substitute for
+      \verb|<include makefile>| the appropriate include makefiles that
+      were generated during installation. (Don't forgot to use the
+      full path name for the makefile!)  By default, the last line in the
+      file is
+      \begin{verbatim}
+           run_testsuite $CGAL_MAKEFILE
+      \end{verbatim}
+      so you need not make any changes if you run the testsuite on only one
+      platform and have set the {\tt CGAL\_MAKEFILE} environment variable
+      properly.%
+      \index{CGAL_MAKEFILE variable@{\tt CGAL\_MAKEFILE} variable!and test suite}
+\end{itemize}
+
+After these steps you are ready to run the test suite. It can be run in two
+different ways:
+\begin{verbatim}
+./run_testsuite
+\end{verbatim}
+
+The test suite will run the tests from all test directories. This may take a
+considerable amount of time.
+
+\begin{verbatim}
+./run_testsuite <dir1> <dir2> ...
+\end{verbatim}
+
+The test suite will run only the test programs in the test directories
+\begin{verbatim}<dir1> <dir2> ... \end{verbatim}
+\index{run_testsuite script@{\tt run\_testsuite} script|)}
+
+To run an entire \cgal\ test suite automatically, including downloading of
+an internal release, configuration, and installation of the library, you 
+can use the {\tt autotest\_cgal} script described in 
+Section~\ref{sec:autotest_cgal}.
+
+
+\section{Files generated by the test suite\label{sec:test_suite_output}}
+\ccIndexSubitemBegin{test suite}{output files}
+
+The testsuite will generate the following output files:
+
+\begin{itemize}
+\item \verb|<testdir>/ErrorOutput_<platform>|
+\index{ErrorOutput files@{\tt ErrorOutput} files}
+
+This file contains two lines for every program that was tested on
+platform \texttt{<platform>} in the test directory \texttt{<testdir>}. 
+The first line
+tells if the compilation was successful and the second line tells if
+the execution was successful (\ie, the program returned the value 0).
+(See Section~\ref{sec:test_subdirectory} for more details.)
+
+\item \verb|<testdir>/ProgramOutput.<program>.<platform>|
+\index{ProgramOutput files@{\tt ProgramOutput} files}
+
+This file contains the console output from the test program
+\texttt{<program.cpp>} run on platform \texttt{<platform>}.
+
+\item \verb|<testdir>/CompilerOutput_<platform>|
+\index{CompilerOutput files@{\tt CompilerOutput} files}
+
+This file contains the compiler output from platform 
+\texttt{<platform>} for all programs.
+
+\item \verb|error.txt|
+\index{error.txt@{\tt error.txt}}
+
+This is just a concatenation of all the \texttt{ErrorOutput} files that were
+generated during the last run of the test suite.
+\end{itemize}
+\ccIndexSubitemEnd{test suite}{output files}
+
+
+\section{Test suite results\label{sec:test_suite_results}}
+\ccIndexSubitemBegin{test suite}{results}
+The results of test suites run on the various supported or soon-to-be-supported
+platforms are posted on the 
+\ccAnchor{http://cgal.geometryfactory.com/CGAL/Members/testsuite/}%
+{test suite results} 
+page 
+\lcTex{(\path|http://cgal.geometryfactory.com/CGAL/Members/testsuite/|)}.
+\ccIndexSubitemEnd{test suite}{results}
+
+\section{Requirements and recommendations\label{sec:testing_req_and_rec}}
+
+\noindent
+Requirements:
+\begin{itemize}
+   \item Test your code thoroughly \textbf{before} submitting it.
+   \item Obey the directory structure detailed in Section~\ref{sec:test_subdirectory}
+   \item Check the test suite results for your package regularly. 
+\end{itemize}
+
+\noindent
+Recommendations:
+\begin{itemize}
+   \item Write test suite programs that use more than one instantiation of
+         templated functions and classes, call every member function at least
+         once, and use more than one kernel. 
+   \item Use pre- and postcondition checkers.
+   \item Use \texttt{gcov} to test your code for coverage.
+   \item Don't submit a makefile for your test suite unless you need to do
+         something very special to compile or link your program.  If you find
+         you want to do something very special in your makefile, think long
+         and hard about whether it's really necessary or not.
+   \item Don't submit the script \texttt{cgal\_test} with your package.
+\end{itemize}
+
+
+\ccIndexMainItemEnd{test suite}
+
+

@@ -1,0 +1,22 @@
+Snap Rounding (SR, for short) is a well known method for converting
+arbitrary-precision arrangements of segments into a fixed-precision
+representation [Good,Guib,Hobb]. In the study of robust geometric
+computing, it can be classified as a finite precision approximation
+technique. Iterated Snap Rounding (ISR, for short) is a modification
+of SR in which each vertex is at least half-the-width-of-a-pixel away
+from any non-incident edge [Halp]. This package supports both
+methods. Algorithmic details and experimental results are given in [Halp].
+
+[Good] M. Goodrich, L. J. Guibas, J. Hershberger, and P. Tanenbaum,
+  "Snap Rounding Line Segments Efficiently in Two and Three Dimensions"
+  in Proc. 13th Annu. ACM Sympos. Comput. Geom., 1997, 284-293.
+
+[Guib] Leonidas Guibas and David Marimont, "Rounding Arrangements
+  Dynamically" Internat. J. Comput. Geom. Appl., 8, 1998, 157-176.
+
+[Hobb] J. D. Hobby, "Practical Segment Intersection with Finite
+  Precision Output", Comput. Geom. Theory Appl., 13, 4, 1999, 199-214.
+
+[Halp] D. Halperin and E. Packer, "Iterated Snap Rounding",
+  Computational Geometry: Theory and Applications, 23, 2, 2002, 209-225.
+  

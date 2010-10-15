@@ -1,0 +1,12 @@
+\begin{ccRefFunction}{affine_rank}
+\ccInclude{CGAL/predicates_d.h}
+\ccHtmlNoLinks
+
+\ccFunction{template <class ForwardIterator> int
+  affine_rank(ForwardIterator first, ForwardIterator last);} {computes
+  the affine rank of the points in \ccc{A = tuple [first,last)}.
+  \ccPrecond The objects in $A$ are of the same dimension.  \ccRequire
+  The value type of \ccc{ForwardIterator} is \ccc{Point_d<R>}. }
+
+\end{ccRefFunction}
+

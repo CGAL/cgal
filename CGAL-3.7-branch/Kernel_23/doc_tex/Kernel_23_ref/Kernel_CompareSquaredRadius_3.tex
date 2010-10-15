@@ -1,0 +1,39 @@
+\begin{ccRefFunctionObjectConcept}{Kernel::CompareSquaredRadius_3}
+A model for this must provide:
+
+\ccCreationVariable{fo}
+
+\ccMemberFunction{Comparison_result operator()(const Kernel::Point_3& p,
+                                               const Kernel::FT& sr);}
+      {compares the squared radius of the sphere of radius 0 centered
+       at \ccc{p} to \ccc{sr}. 
+       This returns the opposite sign of \ccc{sr}.}
+
+\ccMemberFunction{Comparison_result operator()(const Kernel::Point_3&p,
+                                               const Kernel::Point_3&q, 
+                                               const Kernel::FT& sr);}
+      {compares the squared radius of the sphere defined by the
+       points \ccc{p} and \ccc{q} to \ccc{sr}.}
+
+\ccMemberFunction{Comparison_result operator()(const Kernel::Point_3&p,
+                                               const Kernel::Point_3&q, 
+                                               const Kernel::Point_3&r, 
+                                               const Kernel::FT& sr);}
+      {compares the squared radius of the sphere defined by the
+       points \ccc{p}, \ccc{q}, and \ccc{r} to \ccc{sr}.}
+
+\ccMemberFunction{Comparison_result operator()(const Kernel::Point_3&p,
+                                               const Kernel::Point_3&q, 
+                                               const Kernel::Point_3&r,
+                                               const Kernel::Point_3&s, 
+                                               const Kernel::FT& sr);}
+      {compares the squared radius of the sphere defined by the
+       points \ccc{p}, \ccc{q}, , \ccc{r}, and \ccc{s} to \ccc{sr}.}
+
+\ccRefines
+\ccc{AdaptableFunctor} (with three arguments)
+
+\ccSeeAlso
+\ccRefIdfierPage{CGAL::compare_squared_radius}
+
+\end{ccRefFunctionObjectConcept}

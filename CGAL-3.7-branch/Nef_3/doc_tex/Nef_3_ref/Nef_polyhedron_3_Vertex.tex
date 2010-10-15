@@ -1,0 +1,66 @@
+% +------------------------------------------------------------------------+
+% | Reference manual page: Halfedge.tex
+% +------------------------------------------------------------------------+
+% | 14.05.2004   Peter Hachenberger
+% | Package: Nef_3
+% | 
+\RCSdef{\RCSVertexRev}{$Id$}
+\RCSdefDate{\RCSVertexDate}{$Date$}
+% +------------------------------------------------------------------------+
+
+\ccRefPageBegin
+
+%%RefPage: end of header, begin of main body
+% +------------------------------------------------------------------------+
+
+
+\begin{ccRefClass}[Nef_polyhedron_3<Traits>::]{Vertex}
+
+\ccDefinition
+
+A vertex is a point in the 3-dimensional space. Its incidence
+structure can be accessed creating a sphere map of the vertex. 
+This is done by the member function \ccc{get_sphere_map} of
+the class \ccc{Nef_polyhedron_3}.
+
+\ccInclude{CGAL/Nef_polyhedron_3.h}
+
+\ccTypes
+\ccThree{Vertex_const_handle}{h.halfedge() const;;}{}
+\ccThreeToTwo
+
+The following types are the same as in \ccc{Nef_polyhedron_3<Traits>}.
+
+\ccNestedType{Mark}{type of mark.}
+\ccNestedType{Point_3}{point type stored in Vertex.}
+
+\ccCreation
+\ccCreationVariable{v}
+
+There is no need for a user to create a \ccc{Vertex} explicitly. The
+class \ccc{Nef_polyhedron_3<Traits>} manages the needed vertices internally.
+
+%\ccConstructor{Vertex();}{default constructor.}
+
+%\ccConstructor{Vertex(Mark m);}
+%{creates Vertex with an initial value for its mark.}
+
+\ccOperations
+
+\ccMethod{const Mark& mark() const;}{the mark of \ccVar\ .}
+
+\ccMethod{const Point_3& point() const;}{the point of \ccVar\ .}
+
+%\ccSeeAlso
+
+\ccRefIdfierPage{CGAL::Nef_polyhedron_3<Traits>}\\
+\ccRefIdfierPage{CGAL::Nef_polyhedron_S2<Traits>}
+
+\ccTagDefaults
+\end{ccRefClass}
+
+% +------------------------------------------------------------------------+
+%%RefPage: end of main body, begin of footer
+\ccRefPageEnd
+% EOF
+% +------------------------------------------------------------------------+

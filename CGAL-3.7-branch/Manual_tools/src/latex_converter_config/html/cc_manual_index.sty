@@ -1,0 +1,1069 @@
+% ======================================================================== 
+%  CGAL reference manual indexing style file    
+%
+% ___________________________________________________________________________
+% |#########################################################################|
+% |                                                                         |
+% | Latex Converter Style File: cc_manual_index.sty                         |
+% | ------------------------------------------------------------------      |
+% | Macros available with the cc_manual_dindex                      .       |
+% |                                                                         |
+% | 17.05.2000   Susan Hert   hert@mpi-sb.mpg.de                            |
+% | Saarbruecken, Germany                                                   |
+% | $Id$                                                        |
+% | $Date$                                            |
+% |_________________________________________________________________________|
+
+% ========================================================================
+% Definitions of fonts for the different categories of non-C++ items 
+% ========================================================================
+\def\ccIndexAbbreviationFont{}
+\def\ccIndexConceptFont{}
+\def\ccIndexFunctionalityFont{}
+\def\ccIndexDSFont{}
+\def\ccIndexHintFont{}
+\def\ccIndexLibraryFont{}
+\def\ccIndexPackageFont{}
+\def\ccIndexTermFont{}
+
+
+\def\ccIndex{\ccTrue}%
+\def\ccAutoIndex{\ccTrue}%
+\def\ccIndexCrossRef{\ccTrue}%
+\def\ccIndexModifierCrossRef{\ccTrue}%
+
+% ========================================================================
+% Text that is between a pair of ccIndexingOff and ccIndexingOn commands 
+% will not produce any entries in the index, automatically or otherwise
+% ========================================================================
+\newcommand{\ccIndexingOff}{\def\ccIndex{\ccFalse}}%
+\newcommand{\ccIndexingOn}{\def\ccIndex{\ccTrue}}%
+
+% ========================================================================
+% Text that is between a pair of ccAutoIndexingOff and ccAutoIndexingOn
+% commands will not produce any entries in the index automatically. 
+% You can do indexing manually, though, using any of the commands. 
+% ========================================================================
+\newcommand{\ccAutoIndexingOff}{\def\ccAutoIndex{\ccFalse}}%
+\newcommand{\ccAutoIndexingOn}{\def\ccAutoIndex{\ccTrue}}%
+
+% ========================================================================
+% Text that is between a pair of ccModifierCrossRefOff and 
+% ccModifierCrossRefOn commands will not produce cross referencing entries 
+% automatically for main item text that contains a comma. 
+% ========================================================================
+\newcommand{\ccModifierCrossRefOff}{\def\ccIndexModifierCrossRef{\ccFalse}}%
+\newcommand{\ccModifierCrossRefOn}{\def\ccIndexModifierCrossRef{\ccTrue}}%
+
+% ========================================================================
+% Text that is between a pair of ccNonmodifierCrossRefOff and
+% ccNonmodifierCrossRefOn commands will produce cross referencing entries 
+% automatically only for main item text that contains a comma. 
+% ========================================================================
+\newcommand{\ccNonmodifierCrossRefOff}{\def\ccIndexCrossRef{\ccFalse}}%
+\newcommand{\ccNonmodifierCrossRefOn}{\def\ccIndexCrossRef{\ccTrue}}%
+
+% ========================================================================
+% Text that is between a pair of ccCrossRefOff and ccCrossRefOn commands
+% will not produce ANY cross referencing entries automatically. 
+% ========================================================================
+\newcommand{\ccCrossRefOff}{\def\ccIndexModifierCrossRef{\ccFalse}%
+                            \def\ccIndexCrossRef{\ccFalse}}%
+\newcommand{\ccCrossRefOn}{\def\ccIndexModifierCrossRef{\ccTrue}%
+                           \def\ccIndexCrossRef{\ccTrue}}%
+
+% ------------------------------------------------------------------------
+%  Commands needed for including indexing characters in the index
+% ------------------------------------------------------------------------
+\def\doubleVerticalBar{||}
+\def\singleVerticalBar{|}
+\def\verticalBarEqual{|=}
+\def\doubleExclamation{!!}
+\def\singleExclamation{!}
+\def\doubleAmpersand{\&\&}
+\def\singleAmpersand{\&}
+\def\ampersandEqual{\&=}
+\def\exclamationEqual{!=}
+\def\singleAt{@}
+
+% ========================================================================
+%  Generic indexing macros
+%
+% The following 14 commands are generic commands for producing main items,
+% subitems, and subsubitems in the index.  For each of these three types of 
+% entries, there are four kinds of commands:
+%
+% 1. produce a single page number entry
+% 2. begin an entry with a range of pages associated with it
+% 3. end an entry with a range of pages associated with it
+% 4. produce a definition entry (single page number in bold face type)
+%
+% There are also 2 commands, one for subitems and one for subsubitems,
+%  for producing "see also <text>" entries 
+%
+% Each of these commands requires some number of arguments which supply
+% the text to be used in indexing.  Main item commands require 1 argument; 
+% subitem commands require 2 arguments (main item and subitem text); 
+% subsubitem commands require 3 arguments (main item, subitem, and subsubitem
+% text).  
+%
+% All 14 commands have an optional argument, which is the category of
+% the main item being indexed.  The valid values for this category argument 
+% are:
+%      C -- for class or other C++ name 
+%      c -- for concept 
+%      d -- for data structure
+%      f -- for functionality
+%      h -- for hint
+%      l -- for library
+%      p -- for package
+%      t -- for term
+% The default value of this argument is empty, indicating an entry that
+% does not fall into any of the established categories for the index.
+% Depending on the category specified, the appropriate font will be used
+% to format the main item text.  Fonts can also be supplied in the
+% text arguments and these fonts override any font indicated by the
+% category argument.
+% ========================================================================
+
+
+
+% ------------------------------------------------------------------------
+%  Main item generic indexing macros
+% ------------------------------------------------------------------------
+
+
+\gdef\lciMainItemFile{tmp_index_main_file}
+\gdef\lciSubItemFile{tmp_index_sub_file}
+\gdef\lciSubSubItemFile{tmp_index_sub_sub_file}
+\gdef\lciWhichItem{}
+\gdef{\lciItem}{}
+
+\newcommand{\ccFonts}[2]{%
+   \lciIfEqualExpanded{a}{#1}{{\ccIndexAbbreviationFont \lcRawHtmlExpanded{#2}}}{%
+   \lciIfEqualExpanded{C}{#1}{{\ccc{#2}}}{%
+   \lciIfEqualExpanded{c}{#1}{{\ccIndexConceptFont \lcRawHtmlExpanded{#2}}}{%
+   \lciIfEqualExpanded{d}{#1}{{\ccIndexDSFont \lcRawHtmlExpanded{#2}}}{%
+   \lciIfEqualExpanded{f}{#1}{{\ccIndexFunctionalityFont \lcRawHtmlExpanded{#2}}}{%
+   \lciIfEqualExpanded{h}{#1}{{\ccIndexHintFont \lcRawHtmlExpanded{#2}}}{%
+   \lciIfEqualExpanded{l}{#1}{{\ccIndexLibraryFont \lcRawHtmlExpanded{#2}}}{%
+   \lciIfEqualExpanded{p}{#1}{{\ccIndexPackageFont \lcRawHtmlExpanded{#2}}}{%
+   \lciIfEqualExpanded{t}{#1}{{\ccIndexTermFont \lcRawHtmlExpanded{#2}}}{
+   {#2}}}}}}}}}}%
+}
+
+
+%
+% Usage:  \ccIndexMainItem[category]{item}
+%
+\newcommand{\ccIndexMainItem}[1]{%
+   \lciIf{\ccIndex}{% 
+     \gdef\lciWhichItem{MainItem} 
+     \lciOpenFileforIndex {#C1}\lciCloseFileforIndex
+     \lciIndex 
+     \gdef\lciWhichItem{} 
+   }{}
+}
+\newcommand{\ccIndexMainItem@om}{%
+   \lciIf{\ccIndex}{% 
+     \gdef\lciWhichItem{MainItem}%
+     \lciOpenFileforIndex%
+     \ccFonts{#1}{#C2}%
+     \lciCloseFileforIndex
+     \lciIndex 
+     \gdef\lciWhichItem{}%
+   }{}%
+}
+
+
+
+
+
+%
+% Usage:  \ccIndexMainItemBegin[category]{item with range}
+%         ... <item description> ...
+%         \ccIndexMainItemEnd[cateogry]{item with range}
+%
+
+\newcommand{\ccIndexMainItemBegin}[1]{%
+   \ccIndexMainItem{#1}% 
+}
+\newcommand{\ccIndexMainItemBegin@om}{%
+   \ccIndexMainItem[#1]{#2}%
+}
+
+
+\newcommand{\ccIndexMainItemEnd}[1]{%
+}
+\newcommand{\ccIndexMainItemEnd@om}{%
+}
+
+%
+% Usage:  \ccIndexMainItemDef[category]{item}
+%
+\newcommand{\ccIndexMainItemDef}[1]{%
+   \ccIndexMainItem{#1}%
+}
+\newcommand{\ccIndexMainItemDef@om}{%
+   \ccIndexMainItem[#1]{#2}%
+ }
+
+% ------------------------------------------------------------------------
+%  Subitem generic indexing macros
+% ------------------------------------------------------------------------
+
+%
+% Usage:  \ccIndexSubitem[category]{item}{subitem}
+%
+
+\newcommand{\ccIndexSubitem}[2]{%
+   \lciIf{\ccIndex}{% 
+     \gdef\lciWhichItem{MainItem}   
+     \lciOpenFileforIndex {#C1}\lciCloseFileforIndex
+     \gdef\lciWhichItem{SubItem}
+     \lciOpenFileforIndex {#C2}\lciCloseFileforIndex
+     \lciIndex 
+     \gdef\lciWhichItem{}
+   }{}
+}
+\newcommand{\ccIndexSubitem@omm} {
+   \lciIf{\ccIndex}{%  
+     \gdef\lciWhichItem{MainItem}
+     \lciOpenFileforIndex% 
+     \ccFonts{#1}{#C2}%
+     \lciCloseFileforIndex
+     \gdef\lciWhichItem{SubItem}
+     \lciOpenFileforIndex {#C3}\lciCloseFileforIndex
+     \lciIndex 
+     \gdef\lciWhichItem{}
+   }{}
+}
+
+
+
+%
+% Usage:  \ccIndexOperatorSubitem{item}{subitem}
+%
+\newcommand{\ccIndexOperatorSubitem}[2]{%
+   \lciIf{\ccIndex}{% 
+      \ccIndexSubitem{#1}{#2}%
+   }{}
+}
+
+%
+% Usage:  \ccIndexSubitemBegin[category]{item}{subitem}
+%         ... <subitem description> ...
+%         \ccIndexSubitemEnd[category]{item}{subitem}
+%
+\newcommand{\ccIndexSubitemBegin}[2]{%
+   \ccIndexSubitem{#1}{#2}
+}
+\newcommand{\ccIndexSubitemBegin@omm}{%
+   \ccIndexSubitem[#1]{#2}{#3}%
+}
+
+\newcommand{\ccIndexSubitemEnd}[2]{%
+}
+\newcommand{\ccIndexSubitemEnd@omm}{%
+}
+
+%
+% Usage:  \ccIndexSubitemDef[category]{item}{subitem}
+%
+\newcommand{\ccIndexSubitemDef}[2]{%
+   \ccIndexSubitem{#1}{#2}
+}
+\newcommand{\ccIndexSubitemDef@omm}{%
+   \ccIndexSubitem[#1]{#2}{#3}
+}
+
+\gdef\lciIfSeeAlso{\lcFalse}
+
+%
+% Usage:  \ccIndexSubitemSeeAlso[category]{item}{subitem}
+%
+\newcommand{\ccIndexSubitemSeeAlso}[2]{%
+   \gdef\lciIfSeeAlso{\lcTrue}
+   \ccIndexSubitem{#1}{{\em see also} #2}
+   \gdef\lciIfSeeAlso{\lcFalse}
+}
+\newcommand{\ccIndexSubitemSeeAlso@omm}{%
+   \gdef\lciIfSeeAlso{\lcTrue}
+   \ccIndexSubitem[#1]{#2}{{\em see also} #3}
+   \gdef\lciIfSeeAlso{\lcFalse}
+}
+
+% ------------------------------------------------------------------------
+%  Subsubitem generic indexing macros
+% ------------------------------------------------------------------------
+
+
+%
+% Usage:  \ccIndexSubsubitem[category]{item}{subitem}{subsubitem}
+%
+
+
+\newcommand{\ccIndexSubsubitem}[3]{%
+   \lciIf{\ccIndex}{% 
+     \gdef\lciWhichItem{MainItem}   
+     \lciOpenFileforIndex {#C1}\lciCloseFileforIndex
+     \gdef\lciWhichItem{SubItem}
+     \lciOpenFileforIndex {#C2}\lciCloseFileforIndex
+     \gdef\lciWhichItem{SubSubItem}
+     \lciOpenFileforIndex {#C3}\lciCloseFileforIndex
+     \lciIndex
+     \gdef\lciWhichItem{}
+   }{}
+}
+\newcommand{\ccIndexSubsubitem@ommm}{%
+   \lciIf{\ccIndex}{%  
+     \gdef\lciWhichItem{MainItem}
+     \lciOpenFileforIndex%
+     \ccFonts{#1}{#C2}%
+     \lciCloseFileforIndex
+     \gdef\lciWhichItem{SubItem}
+     \lciOpenFileforIndex {#C3}\lciCloseFileforIndex
+     \gdef\lciWhichItem{SubSubItem}
+     \lciOpenFileforIndex {#C4}\lciCloseFileforIndex
+     \lciIndex 
+     \gdef\lciWhichItem{}
+   }{}
+}
+
+
+
+%
+% Usage:  \ccIndexSubsubitemBegin[category]{item}{subitem}{subsubitem}
+%          ... <subsubitem description> ...
+%         \ccIndexSubsubitemEnd[category]{item}{subitem}{subsubitem}
+%
+\newcommand{\ccIndexSubsubitemBegin}[3]{%
+   \ccIndexSubsubitem{#1}{#2}{#3}%
+}
+\newcommand{\ccIndexSubsubitemBegin@ommm}{%
+   \ccIndexSubsubitem[#1]{#2}{#3}{#4}%
+}
+
+
+\newcommand{\ccIndexSubsubitemEnd}[3]{%
+}
+\newcommand{\ccIndexSubsubitemEnd@ommm}{%
+}
+
+%
+% Usage:  \ccIndexSubsubitemDef[category]{item}{subitem}{subsubitem}
+%
+\newcommand{\ccIndexSubsubitemDef}[3]{%
+   \ccIndexSubsubitem{#1}{#2}{#3}% 
+}
+\newcommand{\ccIndexSubsubitemDef@ommm}{%
+   \ccIndexSubsubitem[#1]{#2}{#3}{#4}% 
+}
+
+%
+% Usage:  \ccIndexSubsubitemSeeAlso[category]{item}{subitem}{subsubitem}
+%
+\newcommand{\ccIndexSubsubitemSeeAlso}[3]{%
+   \gdef\lciIfSeeAlso{\lcTrue}
+   \ccIndexSubsubitem{#1}{#2}{{\em see also} #3}%
+   \gdef\lciIfSeeAlso{\lcFalse}
+}
+\newcommand{\ccIndexSubsubitemSeeAlso@ommm}{%
+   \gdef\lciIfSeeAlso{\lcTrue}
+   \ccIndexSubsubitem[#1]{#2}{#3}{{\em see also} #4}%
+   \gdef\lciIfSeeAlso{\lcFalse}
+}
+
+% ========================================================================
+%  Assertion flag macros
+% ========================================================================
+
+% 
+%  Usage: \ccIndexAssertionFlagsUse
+% 
+\newcommand{\ccIndexAssertionFlagsUse}{%
+   \lciIf{\ccIndex}{% 
+     \ccIndexMainItem{assertion flags}%
+   }{}
+}
+
+%
+% Usage: \ccIndexAssertionFlagName{flag_name}
+%
+\newcommand{\ccIndexAssertionFlagName}[1]{%
+   \lciIf{\ccIndex}{% 
+     \ccIndexMainItem[C]{#1}%
+   }{}
+}
+
+
+% ========================================================================
+%  Enums, enum tags, global structs, global variables, global constants
+%  global functions, typedefs
+% ========================================================================
+
+% 
+% Usage: \ccIndexEnum{enum}
+% 
+\newcommand{\ccIndexEnum}[1]{%
+   \lciIf{\ccIndex}{% 
+     \ccIndexMainItem[C]{#1}%
+%   \ccIndexMainItem{\ccc{#1}}%
+   }{}
+}
+
+
+%
+% Usage: \ccIndexEnum{enum_tag}
+%
+\newcommand{\ccIndexEnumTag}[1]{%
+   \lciIf{\ccIndex}{% 
+     \ccIndexMainItem[C]{#1}%
+   }{}
+}
+
+%
+% Usage: \ccIndexGlobalStruct{struct}
+%
+\newcommand{\ccIndexGlobalStruct}[1]{%
+   \lciIf{\ccIndex}{% 
+     \ccIndexMainItem[C]{#1}%
+   }{}
+}
+
+%
+% Usage: \ccIndexGlobalVariable{variable}
+%
+\newcommand{\ccIndexGlobalVariable}[1]{%
+   \lciIf{\ccIndex}{% 
+     \ccIndexMainItem[C]{#1}%
+   }{}
+}
+
+%
+% Usage: \ccIndexGlobalConstant{constant}
+%
+\newcommand{\ccIndexGlobalConstant}[1]{%
+   \lciIf{\ccIndex}{% 
+      \ccIndexMainItem[C]{#1}%
+   }{}
+}
+
+%
+% Usage: \ccIndexMacro{macro_name}
+%
+\newcommand{\ccIndexMacro}[1]{%
+   \lciIf{\ccIndex}{% 
+      \ccIndexMainItem[C]{#1}%
+   }{}
+}
+
+
+%
+% Usage: \ccIndexGlobalFunction{function}
+%
+\newcommand{\ccIndexGlobalFunction}[1]{%
+   \lciIf{\ccIndex}{% 
+      \ccIndexMainItem[C]{#1}%
+   }{}
+}
+
+% Usage: \ccIndexGlobalFunctionBegin{function}
+%        <function description>
+%        \ccIndexGlobalFunctionEnd{function}
+%
+\newcommand{\ccIndexGlobalFunctionBegin}[1]{%
+   \lciIf{\ccIndex}{% 
+      \ccIndexMainItemBegin[C]{#1}%
+   }{}
+}
+
+\newcommand{\ccIndexGlobalFunctionEnd}[1]{%
+}
+
+%
+% Usage: \ccIndexGlobalOperator{operator}{class name}
+%
+% Note: operator must not contain one of the "special" index charcters.
+%       In other words, it should have already passed through 
+%       \escapeIndexOperatorSymbols
+\newcommand{\ccIndexGlobalOperator}[2]{%
+   \lciIf{\ccIndex}{% 
+       \ccIndexOperatorSubitem{\em #1}{\ccc{#2}}%
+   }{}
+}
+
+%
+% Usage: \ccIndexTypedef{typedef}
+%
+\newcommand{\ccIndexTypedef}[1]{%
+   \lciIf{\ccIndex}{% 
+     \ccIndexMainItem[C]{#1}%
+   }{}
+}
+
+% ========================================================================
+%  Member functions
+% ========================================================================
+%  
+%  Usage: \ccIndexMemberFunction{function_name}
+%  
+\newcommand{\ccIndexMemberFunction}[1]{%
+   \lciIf{\ccIndex}{% 
+     \ccIndexSubitem[C]{#1}{\ccIndexClassName}%
+   }{}
+}
+
+%
+%  Usage: \ccIndexMemberFunctionBegin{function_name}
+%         <member function description>
+%         \ccIndexMemberFunctionEnd{function_name}
+%  
+\newcommand{\ccIndexMemberFunctionBegin}[1]{%
+   \ccIndexMemberFunction{#1}
+}
+
+\newcommand{\ccIndexMemberFunctionEnd}[1]{%
+}
+
+% ========================================================================
+%  Abbreviations
+% ========================================================================
+%
+%  Usage: \ccIndexAbbreviation{abbr}{unabbreviated term}
+%
+\newcommand{\ccIndexAbbreviation}[2]{%
+   \lciIf{\ccIndex}{% 
+     \gdef\lciIfSeeAlso{\lcTrue}
+     \ccIndexSubitem{#1}{{\em see} #2}%
+     \gdef\lciIfSeeAlso{\lcFalse}
+     \lciIf{\ccIndexCrossRef}{%
+       \ccIndexMainItem{#2}% 
+     }{} 
+   }{}
+}
+
+% ========================================================================
+%  Hints as subitems and subsubitems
+% ========================================================================
+
+%
+%  Usage: \ccIndexHintAsSubitem[category]{item}{hint}
+%    where category is an optional argument with the following possible
+%    values
+%      C -- for class or other C++ name
+%      c -- for concept
+%      d -- for data structure
+%      f -- for functionality
+%      h -- for hint
+%      l -- for library
+%      p -- for package
+%      t -- for term
+% 
+\newcommand{\ccIndexHintAsSubitem}[2]{%
+   \lciIf{\ccIndex}{% 
+     \ccIndexSubitem{#1}{\ccIndexHintFont #2}%
+   }{}
+}
+\newcommand{\ccIndexHintAsSubitem@omm}{%
+   \lciIf{\ccIndex}{% 
+     \ccIndexSubitem[#1]{#2}{\ccIndexHintFont #3}%
+   }{}
+}
+
+% 
+%  Usage: \ccIndexHintAsSubitem[category]{item}{subitem}{hint}
+% 
+\newcommand{\ccIndexHintAsSubsubitem}[3]{%
+   \lciIf{\ccIndex}{% 
+     \ccIndexSubsubitem{#1}{#2}{\ccIndexHintFont #3}%
+   }{}
+}
+\newcommand{\ccIndexHintAsSubsubitem@ommm}{%
+   \lciIf{\ccIndex}{% 
+     \ccIndexSubsubitem[#1]{#2}{#3}{\ccIndexHintFont #4}%
+   }{}
+}
+
+
+% ========================================================================
+%  Classes
+% ========================================================================
+\newcommand{\ccIndexClassName}{}%
+
+% ------------------------------------------------------------------------
+%  Environment to be used for indexing classes if the automatic indexing
+%  doesn't do the right thing.
+%
+%
+%  Usage: \begin{ccIndexClass}{class name}
+%         ...<class description>...
+%         \end{ccIndexClass}
+%
+% ------------------------------------------------------------------------
+\newenvironment{ccIndexClass}[1]{%
+   \lciIf{\ccIndex}{% 
+     \lciIfEmpty{#1}{%
+       \lciError{The class name for indexing cannot be empty}}{}% 
+     \gdef\ccIndexClassName{\ccc{#1}}% 
+     \ccIndexMainItem{\ccIndexClassName}%
+   }{}% 
+}
+{%
+   \gdef\ccIndexClassName{}
+}
+
+% ========================================================================
+%    These macros MUST be used inside either a ccClass, ccClassTemplate or
+%    ccIndexClass environment since they employ the ccIndexClassName 
+%    variable defined in these environments.
+% ========================================================================
+%
+%  Usage: \ccIndexClassCreation
+% 
+\newcommand{\ccIndexClassCreation}{%
+   \lciIf{\ccIndex}{% 
+     \lciIfEqualExpanded{\ccIndexClassName}{}{%
+       \lciError{This command must be used inside a ccIndexClass, ccClass,
+                 or ccClassTemplate environment.  I'm going to ignore it}}{%
+       \ccIndexSubitem{\ccIndexClassName}{creation}%
+   }}{}
+}
+
+
+%
+%  Usage: \ccIndexClassDefault
+%
+\newcommand{\ccIndexClassDefault}{%
+   \lciIf{\ccIndex}{% 
+     \lciIfEqualExpanded{\ccIndexClassName}{}{%
+       \lciError{This command must be used inside a ccIndexClass, ccClass,
+                 or ccClassTemplate environment.  I'm going to ignore it}}{%
+       \ccIndexSubitem{\ccIndexClassName}{default}%
+   }}{}
+}
+
+%
+%  Usage: \begin{ccIndexMemberFunctions}
+%         ...<member function descriptions>
+%         \end{ccIndexMemberFunctions}
+%
+\newenvironment{ccIndexMemberFunctions}{%
+   \lciIf{\ccIndex}{% 
+     \lciIfEqualExpanded{\ccIndexClassName}{}{%
+       \lciError{This command must be used inside a ccIndexClass, ccClass,
+                 or ccClassTemplate environment.  I'm going to ignore it}}{%
+       \ccIndexSubitem{\ccIndexClassName}{member functions}%
+   }}{}
+}
+{%
+}
+
+%
+%  Usage: \ccIndexMemberFunctionGroup{group}
+%
+\newcommand{\ccIndexMemberFunctionGroup}[1]{% 
+   \lciIf{\ccIndex}{% 
+     \lciIfEqualExpanded{\ccIndexClassName}{}{%
+       \lciError{This command must be used inside a ccIndexClass, ccClass,
+                 or ccClassTemplate environment.  I'm going to ignore it}}{%
+       \ccIndexSubsubitem{\ccIndexClassName}{member functions}{#1}%
+       \lciIf{\ccIndexCrossRef}{%
+         \ccIndexSubitem{#1}{\ccIndexClassName}% 
+       }{} 
+   }}{}
+}
+
+%
+%  Usage: \ccIndexNestedClasses
+%
+\newcommand{\ccIndexNestedClasses}{%
+   \lciIf{\ccIndex}{% 
+     \lciIfEqualExpanded{\ccIndexClassName}{}{%
+       \lciError{This command must be used inside a ccIndexClass, ccClass,
+                 or ccClassTemplate environment.  I'm going to ignore it}}{%
+       \ccIndexSubitem{\ccIndexClassName}{nested classes}%
+   }}{}
+}
+
+%
+%  Usage: \ccIndexClassTypes
+%
+\newcommand{\ccIndexClassTypes}{%
+  \lciIf{\ccIndex}{% 
+     \lciIfEqualExpanded{\ccIndexClassName}{}{%
+       \lciError{This command must be used inside a ccIndexClass, ccClass,
+                 or ccClassTemplate environment.  I'm going to ignore it}}{%
+       \ccIndexSubitem{\ccIndexClassName}{types}%
+   }}{}
+}
+
+
+% ========================================================================
+%  Packages
+% ========================================================================
+\newcommand{\ccIndexPackageName}{}%
+
+\newenvironment{ccPackage}[1]{% 
+   \lciIfEmpty{#1}{%
+       \lciError{Package name cannot be empty}}
+   {% 
+       \gdef\ccIndexPackageName{#1}% 
+       \ccIndexMainItem[p]{\ccIndexPackageName}%
+   }% 
+}
+{%
+   \gdef\ccIndexPackageName{}
+}
+
+
+
+
+% ========================================================================
+%  Classes or Packages
+%     These macros MUST be used inside either a ccClass, ccClassTemplate,
+%     ccTraitsClass, ccTraitsClassTemplate, ccIndexClass, or ccPackage 
+%     environment.  They check first for inclusion in a class environment 
+%     and then for inclusion in a package environment and if you are in 
+%     both, only the class entry will be generated.
+% ========================================================================
+%
+%
+%  Usage: \ccIndexAssertionFlag[package name]
+%
+
+\newcommand{\ccIndexAssertionFlag}{%
+   \lciIf{\ccIndex}{%
+       \lciIfEqualExpanded{\ccIndexClassName}{}{%
+           \lciIfEqualExpanded{\ccIndexPackageName}{}{%
+              \lciError{You must be inside a package or a class  
+                       environment to use this command.  Go
+                       on and I'll ignore this command}
+           }{%
+              \ccIndexSubitem[p]{\ccIndexPackageName}{assertion flags}%
+              \lciIf{\ccIndexCrossRef}{%
+               \ccIndexSubitem{assertion flags}{\ccIndexPackageName}}{}%
+           }
+       }{%
+          \lciError{You must supply a package name for class
+                           \ccIndexClassName. I'm going to ignore this
+                           command}}{%  
+       } 
+   }{} 
+}
+\newcommand{\ccIndexAssertionFlag@o}{%
+   \lciIf{\ccIndex}{%
+       \lciIfEqualExpanded{\ccIndexClassName}{}{%
+           \lciIfEqualExpanded{\ccIndexPackageName}{}{%
+              \lciError{You must be inside a package or a class  
+                       environment to use this command.  Go
+                       on and I'll ignore this command}
+           }{%
+              \ccIndexSubitem[p]{\ccIndexPackageName}{assertion flags}%
+              \lciIf{\ccIndexCrossRef}{%
+               \ccIndexSubitem{assertion flags}{\ccIndexPackageName}}{}%
+           }
+       }{%
+           \lciIfEmpty{#1}{%
+                  \lciError{You must supply a package name for class
+                           \ccIndexClassName. I'm going to ignore this
+                           command}}{% 
+                  \ccIndexSubitem{\ccIndexClassName}{assertion flags}%
+                  \lciIf{\ccIndexCrossRef}{%
+                     \ccIndexSubitem{assertion flags}{#1}}{}%     
+           }  
+       } 
+   }{} 
+}
+
+
+
+
+
+
+%
+%  Usage: \ccIndexDesign
+%
+
+\newcommand{\ccIndexDesign}{%
+   \lciIf{\ccIndex}{%
+       \lciIfEqualExpanded{\ccIndexClassName}{}{%
+           \lciIfEqualExpanded{\ccIndexPackageName}{}{%
+              \lciError{You must be inside a package or a class  
+                       environment to use this command.  Go
+                       on and I'll ignore this command}
+           }{%
+              \ccIndexSubitem[p]{\ccIndexPackageName}{design}%
+           }
+       }{%
+           \ccIndexSubitem{\ccIndexClassName}{design}%
+       } 
+   }{} 
+}
+
+
+
+
+%
+%  Usage: \begin{ccIndexGlobalFunctions}
+%         ... <global function descriptions> ...
+%         \end{ccIndexGlobalFunctions}
+
+\newenvironment{ccIndexGlobalFunctions}{%
+  \lciIf{\ccIndex}{%
+       \lciIfEqualExpanded{\ccIndexClassName}{}{%
+           \lciIfEqualExpanded{\ccIndexPackageName}{}{%
+              \lciError{You must be inside a package or a class  
+                       environment to use this command.  Go
+                       on and I'll ignore this command}
+           }{%
+              \ccIndexSubitemBegin[p]{\ccIndexPackageName}{global functions}%
+           }
+       }{%
+           \ccIndexSubitemBegin{\ccIndexClassName}{global functions}%
+       } 
+   }{} 
+}
+{
+}
+
+
+
+%
+%  Usage: \ccIndexGlobalFunctionGroup{group}
+%
+
+\newcommand{\ccIndexGlobalFunctionGroup}[1]{%
+   \lciIf{\ccIndex}{%
+       \lciIfEqualExpanded{\ccIndexClassName}{}{%
+           \lciIfEqualExpanded{\ccIndexPackageName}{}{%
+              \lciError{You must be inside a package or a class  
+                       environment to use this command.  Go
+                       on and I'll ignore this command}
+           }{%
+              \ccIndexSubsubitem[p]{\ccIndexPackageName}{global functions}{#1}%
+              \lciIf{\ccIndexCrossRef}{%
+                 \ccIndexSubitem{#1}{\ccIndexPackageFont \ccIndexPackageName}%
+              }{}%
+           }
+        }{%
+           
+              \ccIndexSubsubitem{\ccIndexClassName}{global functions}{#1}%
+              \lciIf{\ccIndexCrossRef}{%
+                 \ccIndexSubitem{#1}{\ccIndexClassName}}{}%     
+        }  
+    }{}  
+}
+
+
+
+
+%
+%  Usage: \ccIndexImplementation
+%
+
+\newcommand{\ccIndexImplementation}{%
+   \lciIf{\ccIndex}{%
+       \lciIfEqualExpanded{\ccIndexClassName}{}{%
+           \lciIfEqualExpanded{\ccIndexPackageName}{}{%
+              \lciError{You must be inside a package or a class  
+                       environment to use this command.  Go
+                       on and I'll ignore this command}
+           }{%
+              \ccIndexSubitem[p]{\ccIndexPackageName}{implementation}%
+           }
+       }{%
+           \ccIndexSubitem{\ccIndexClassName}{implementation}%
+       } 
+   }{} 
+}
+
+
+
+
+%
+%  Usage: \ccIndexRequirements
+%
+
+\newcommand{\ccIndexRequirements}{%
+   \lciIf{\ccIndex}{%
+       \lciIfEqualExpanded{\ccIndexClassName}{}{%
+           \lciIfEqualExpanded{\ccIndexPackageName}{}{%
+              \lciError{You must be inside a package or a class  
+                       environment to use this command.  Go
+                       on and I'll ignore this command}
+           }{%
+              \ccIndexSubitem[p]{\ccIndexPackageName}{requirements}%
+           }
+       }{%
+           \ccIndexSubitem{\ccIndexClassName}{requirements}%
+       } 
+   }{} 
+}
+
+
+
+% ------------------------------------------------------------------------
+%  Traits classes associated with a class or package
+% ------------------------------------------------------------------------
+
+% #1 name of traits class
+% #2 semicolon-separated list of associated classes
+% #3 semicolon-separated list of associated packages
+
+\newcommand{\ccIndexTraitsClassBegin}[3]{
+   \lciIf{\ccIndex}{%
+      \gdef\ccIndexClassName{\ccc{#1}}%
+      \ccIndexMainItemBegin{\ccIndexClassName}%
+      \lciIf{\ccIndexCrossRef}{%
+         \lciIfEmpty{#2}{}{\ccIndexTraitsClassForClasses{\ccc{#2}}}%    
+         \lciIfEmpty{#3}{}{\ccIndexTraitsClassForPackages{\ccc{#3}}}%
+      }{}
+   }{}
+}
+
+\newcommand\ccIndexTraitsClassEnd{
+   \gdef\ccIndexClassName{}
+}
+
+
+\newcommand\lciIfPackage{\ccFalse}
+
+\newcommand\ccIndexTraitsClassForClasses[1]{
+    \gdef\lciWhichItem{MainItem}
+    \gdef\lciIfSeeAlso{\lcTrue}
+    \lciOpenFileforIndex {#1} \lciCloseFileforIndex
+    \gdef\lciWhichItem{SubItem}
+    \lciOpenFileforIndex {\ccIndexClassName} \lciCloseFileforIndex
+    \lciIndexTraitsClass
+    \gdef\lciWhichItem{}
+    \gdef\lciIfSeeAlso{\lcFalse}
+}
+
+
+\newcommand\ccIndexTraitsClassForPackages[1]{
+    \gdef{\lciIfPackage}{\ccTrue}
+    \ccIndexTraitsClassForClasses{#1}
+    \gdef{\lciIfPackage}{\ccFalse}
+}
+
+
+%
+%  Usage: 
+%  \ccIndexTraitsClassDefault[p_or_C]{associated package or class}
+%
+
+\newcommand{\ccIndexTraitsClassDefault}[1]{%
+   \lciIf{\ccIndex}{%
+      \lciIfEmpty{#1}{%
+          \lciError{Associated package or class name empty.  
+                    I'm going to ignore this command}
+      }{%
+          \ccIndexSubsubitem[C]{#1}{traits class}{default}%
+      } 
+   }{}
+}
+\newcommand{\ccIndexTraitsClassDefault@om}{%
+   \lciIf{\ccIndex}{%
+      \lciIfEmpty{#1}{%
+          \lciError{Associated package or class name empty.  
+                    I'm going to ignore this command}
+      }{%
+          \ccIndexSubsubitem[#1]{#2}{traits class}{default}%
+      } 
+    }{}
+}
+
+
+
+
+%
+%  Usage: 
+%  \ccIndexTraitsClassRequirements[p_or_C]{associated package or class}
+%
+
+\newcommand{\ccIndexTraitsClassRequirements}[1]{%
+   \lciIf{\ccIndex}{%
+      \lciIfEmpty{#1}{%
+          \lciError{Associated package or class name empty.  
+                    I'm going to ignore this command}
+      }{%
+          \ccIndexSubsubitem[C]{#1}{traits class}{requirements}%
+      } 
+   }{}
+}
+\newcommand{\ccIndexTraitsClassRequirements@om}{%
+   \lciIf{\ccIndex}{%
+      \lciIfEmpty{#1}{%
+          \lciError{Associated package or class name empty.  
+                    I'm going to ignore this command}
+      }{%
+          \ccIndexSubsubitem[#1]{#2}{traits class}{requirements}%
+      } 
+    }{}
+}
+
+
+
+% ========================================================================
+%  Internal commands  
+% ========================================================================
+
+\def\noFont{}
+\newcommand{\none}[1]{}
+
+% variables to hold the various pieces of text 
+\newcommand{\mainFont}{}
+\newcommand{\mainModifier}{}
+\newcommand{\mainUnmodifiedText}{}
+\newcommand{\mainText}{}
+\newcommand{\mainSeeText}{}
+\newcommand{\subitemFont}{}
+\newcommand{\subitemModifier}{}
+\newcommand{\subitemUnmodifiedText}{}
+\newcommand{\subitemText}{}
+\newcommand{\subitemSeeAlsoText}{}
+\newcommand{\subsubitemFont}{}
+\newcommand{\subsubitemModifier}{}
+\newcommand{\subsubitemUnmodifiedText}{}
+\newcommand{\subsubitemText}{}
+\newcommand{\subsubitemSeeAlsoText}{}
+
+
+% #1 = local scope (may be empty)
+% #2 = classname (functioname etc.) 
+% #3 = Ref category
+\newcommand{\ccIndexRefName}[3] {
+   \lciIf{\ccIndex}{% 
+     \gdef\lciWhichItem{MainItem}   
+     \lciOpenFileforIndex {#C1}\lciCloseFileforIndex
+     \gdef\lciWhichItem{SubItem}
+     \lciOpenFileforIndex {#C2}\lciCloseFileforIndex
+     \gdef\lciWhichItem{SubSubItem}
+     \lciOpenFileforIndex {#C3}\lciCloseFileforIndex
+     \lciIndexRefName
+     \gdef\lciWhichItem{}
+   }{}
+}
+
+
+
+% #1 - category
+% #2 - text in the form [\font] text[, modifier]
+\newcommand{\mainTextParse}[2]{%
+   \lciIfEmpty{#1}{% \gdef\lciMainIndexItem{asia} \lciIndex
+   } 
+%   \parseTextWithCategory #1\ccEnd{#2}{\mainFont}{\mainModifier}%
+%        {\mainUnmodifiedText}%
+%   \makeIndexText{\mainFont}{\mainModifier}{\mainUnmodifiedText}%
+%        {\mainText}{\mainSeeText}%
+}
+
+
+\gdef\removeTrailingSpaces{}
+
+% ___________________________________________________________________________
+% ###########################################################################
+% | EOF
+% ###########################################################################
+

@@ -1,0 +1,125 @@
+\begin{ccRefConcept}{AlgebraicKernelForSpheres::CompareX}
+
+\ccCreationVariable{fo}
+
+A model \ccVar\ of this concept must provide:
+
+\ccMethod{CGAL::Comparison_result
+    operator()(const AlgebraicKernelForSpheres::Root_for_spheres_2_3 & r1,
+	     const AlgebraicKernelForSpheres::Root_for_spheres_2_3 & r2);}
+{Compares the \ccc{x} (first) variables of two \ccc{Root_for_spheres_2_3}.}
+
+\ccSeeAlso
+
+\ccRefIdfierPage{AlgebraicKernelForSpheres::CompareY}\\
+\ccRefIdfierPage{AlgebraicKernelForSpheres::CompareZ}\\
+\ccRefIdfierPage{AlgebraicKernelForSpheres::CompareXY}\\
+\ccRefIdfierPage{AlgebraicKernelForSpheres::CompareXYZ}
+
+\end{ccRefConcept}
+\begin{ccRefConcept}{AlgebraicKernelForSpheres::CompareY}
+
+\ccDefinition
+
+\ccCreationVariable{fo}
+
+A model \ccVar\ of this concept must provide:
+
+\ccMethod{CGAL::Comparison_result
+    operator()(const AlgebraicKernelForSpheres::Root_for_spheres_2_3 & r1,
+	     const AlgebraicKernelForSpheres::Root_for_spheres_2_3 & r2);}
+{Compares the \ccc{y} (second) variables of two \ccc{Root_for_spheres_2_3}.}
+
+\ccSeeAlso
+
+\ccRefIdfierPage{AlgebraicKernelForSpheres::CompareX}\\
+\ccRefIdfierPage{AlgebraicKernelForSpheres::CompareZ}\\
+\ccRefIdfierPage{AlgebraicKernelForSpheres::CompareXY}\\
+\ccRefIdfierPage{AlgebraicKernelForSpheres::CompareXYZ}
+
+\end{ccRefConcept}
+\begin{ccRefConcept}{AlgebraicKernelForSpheres::CompareZ}
+
+\ccDefinition
+
+\ccCreationVariable{fo}
+
+A model \ccVar\ of this concept must provide:
+
+\ccMethod{CGAL::Comparison_result
+    operator()(const AlgebraicKernelForSpheres::Root_for_spheres_2_3 & r1,
+	     const AlgebraicKernelForSpheres::Root_for_spheres_2_3 & r2);}
+{Compares the \ccc{z} (third) variables of two \ccc{Root_for_spheres_2_3}.}
+
+\ccSeeAlso
+
+\ccRefIdfierPage{AlgebraicKernelForSpheres::CompareX}\\
+\ccRefIdfierPage{AlgebraicKernelForSpheres::CompareY}\\
+\ccRefIdfierPage{AlgebraicKernelForSpheres::CompareXY}\\
+\ccRefIdfierPage{AlgebraicKernelForSpheres::CompareXYZ}
+
+\end{ccRefConcept}
+\begin{ccRefConcept}{AlgebraicKernelForSpheres::CompareXY}
+
+\ccDefinition
+
+\ccCreationVariable{fo}
+
+A model \ccVar\ of this concept must provide:
+
+\ccMethod{CGAL::Comparison_result
+    operator()(const AlgebraicKernelForSpheres::Root_for_spheres_2_3 & r1,
+	     const AlgebraicKernelForSpheres::Root_for_spheres_2_3 & r2);}
+{Compares the \ccc{x} and \ccc{y} (the two first) variables of 
+two \ccc{Root_for_spheres_2_3} lexicographically.}
+
+\ccSeeAlso
+
+\ccRefIdfierPage{AlgebraicKernelForSpheres::CompareX}\\
+\ccRefIdfierPage{AlgebraicKernelForSpheres::CompareY}\\
+\ccRefIdfierPage{AlgebraicKernelForSpheres::CompareZ}\\
+\ccRefIdfierPage{AlgebraicKernelForSpheres::CompareXYZ}
+
+\end{ccRefConcept}
+\begin{ccRefConcept}{AlgebraicKernelForSpheres::CompareXYZ}
+
+\ccDefinition
+
+\ccCreationVariable{fo}
+
+A model \ccVar\ of this concept must provide:
+
+\ccMethod{CGAL::Comparison_result
+    operator()(const AlgebraicKernelForSpheres::Root_for_spheres_2_3 & r1,
+	     const AlgebraicKernelForSpheres::Root_for_spheres_2_3 & r2);}
+{Compares two \ccc{Root_for_spheres_2_3} lexicographically.}
+
+\ccSeeAlso
+
+\ccRefIdfierPage{AlgebraicKernelForSpheres::CompareX}\\
+\ccRefIdfierPage{AlgebraicKernelForSpheres::CompareY}\\
+\ccRefIdfierPage{AlgebraicKernelForSpheres::CompareZ}\\
+\ccRefIdfierPage{AlgebraicKernelForSpheres::CompareXY}
+
+\end{ccRefConcept}
+
+\begin{ccRefConcept}{AlgebraicKernelForSpheres::SignAt}
+
+\ccDefinition
+
+\ccCreationVariable{fo}
+
+A model \ccVar\ of this concept must provide:
+
+\ccMethod{CGAL::Sign
+    operator()(const AlgebraicKernelForSpheres::Polynomial_1_3 & p,
+	     const AlgebraicKernelForSpheres::Root_for_spheres_2_3 & r);}
+{Computes the sign of polynomial \ccc{p} evaluated at a root \ccc{r}.}
+
+\ccMethod{CGAL::Sign
+    operator()(const AlgebraicKernelForSpheres::Polynomial_for_spheres_2_3 & p,
+	     const AlgebraicKernelForSpheres::Root_for_spheres_2_3 & r);}
+{Same as previous.}
+
+\end{ccRefConcept}
+

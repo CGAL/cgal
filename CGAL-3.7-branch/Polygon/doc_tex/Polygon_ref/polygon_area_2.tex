@@ -1,0 +1,66 @@
+% +------------------------------------------------------------------------+
+% | Reference manual page: polygon_area_2.tex
+% +------------------------------------------------------------------------+
+% | 21.06.2001   Author
+% | Package: Polygon
+% | 
+\RCSdef{\RCSareaRev}{$Id$}
+\RCSdefDate{\RCSareaDate}{$Date$}
+% |
+%%RefPage: end of header, begin of main body
+% +------------------------------------------------------------------------+
+
+
+\begin{ccRefFunction}{polygon_area_2}  %% add template arg's if necessary
+
+%% \ccHtmlCrossLink{}     %% add further rules for cross referencing links
+%% \ccHtmlIndexC[function]{} %% add further index entries
+
+\ccDefinition
+  
+The function \ccRefName\ computes the signed area of a polygon.
+
+\ccInclude{CGAL/Polygon_2_algorithms.h}
+
+\ccGlobalFunction{
+template <class ForwardIterator, class Traits>
+typename Traits::FT
+polygon_area_2( ForwardIterator first, ForwardIterator last,
+        const Traits& traits);}
+{
+Computes the signed area of the polygon defined by the range of points
+\ccc{first} \ldots\ \ccc{last}.
+The sign is positive for counterclockwise polygons, negative for
+clockwise polygons. If the polygon is not simple, the area is not well defined.
+}
+
+\ccHeading{Requirements}
+\ccIndexSubitem[C]{bottom_vertex_2}{requirements}
+\begin{enumerate}
+    \item \ccc{Traits} is a model of the concept 
+	  \ccc{PolygonTraits_2}\ccIndexMainItem[c]{PolygonTraits_2}.
+	  Only the following members of this traits class are used:
+          \begin{itemize}
+	    \item \ccc{Compute_area_2} : Computes the signed area of the
+	    oriented triangle defined by 3 \ccc{Point_2} passed as arguments.
+            \item \ccc{FT}
+            \item \ccc{compute_area_2_object}
+          \end{itemize}
+    \item \ccc{ForwardIterator::value_type} should be \ccc{Traits::Point_2},
+\end{enumerate}
+
+\ccSeeAlso
+
+\ccRefIdfierPage{PolygonTraits_2} \\
+\ccRefIdfierPage{CGAL::orientation_2} \\
+\ccRefIdfierPage{CGAL::Polygon_2<PolygonTraits_2, Container>} \\
+
+%% \ccIncludeExampleCode{Polygon/polygon_area_2_prog.cpp}
+
+\end{ccRefFunction}
+
+% +------------------------------------------------------------------------+
+%%RefPage: end of main body, begin of footer
+% EOF
+% +------------------------------------------------------------------------+
+

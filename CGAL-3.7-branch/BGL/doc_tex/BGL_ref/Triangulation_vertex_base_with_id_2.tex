@@ -1,0 +1,46 @@
+
+
+\begin{ccRefClass}{Triangulation_vertex_base_with_id_2<TriangulationTraits_2, TriangulationVertexBase_2>}
+
+\ccDefinition
+
+The class \ccc{Triangulation_vertex_base_with_id_2} is a model of the concept
+\ccc{TriangulationVertexBase_2}, the base vertex of a 2D-triangulation.
+It provides an integer field that can be used to index vertices for {\sc Bgl}
+algorithms.
+
+Note that the user is in charge to set the index correctly before
+running a graph algorithm.
+
+\ccInclude{CGAL/Triangulation_vertex_base_with_id_2.h}
+
+\ccParameters
+
+The first template argument is the geometric traits class
+\ccc{TriangulationTraits_2} which provides the \ccc{Point_2}.
+
+The second template argument is a vertex base class from which
+\ccc{Triangulation_vertex_base_with_id_2} derives.  It has the default
+value \ccc{Triangulation_vertex_base_2<TriangulationTraits_2>}.
+
+\ccIsModel \ccc{TriangulationVertexBase_2}
+
+\ccInheritsFrom \ccc{TriangulationVertexBase_2}
+
+\ccCreationVariable{v}
+
+\ccAccessFunctions
+\ccThree{const Id&}{Facetxxxxxxxxxx}{}
+\ccTagFullDeclarations
+
+\ccMethod{int id() const;}
+{Returns the index.}
+\ccGlue
+\ccMethod{int& id();}
+{Returns a reference to the index stored in the vertex.}
+
+\ccSeeAlso
+
+\ccc{CGAL::Triangulation_vertex_base_2}
+
+\end{ccRefClass}

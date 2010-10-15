@@ -1,0 +1,26 @@
+\begin{ccRefFunctionObjectConcept}{Kernel::HasOnUnboundedSide_2}
+A model for this must provide:
+
+\ccCreationVariable{fo}
+
+\ccMemberFunction{bool operator()(const Kernel::Circle_2&c,
+                                  const Kernel::Point_2&p);}
+{returns true iff $p$ lies on the unbounded side of $c$.}
+
+\ccMemberFunction{bool operator()(const Kernel::Iso_rectangle_2&i,
+                                  const Kernel::Point_2&p);}
+{returns true iff $p$ lies on the unbounded side of $i$.}
+
+\ccMemberFunction{bool operator()(const Kernel::Triangle_2&t,
+                                  const Kernel::Point_2&p);}
+{returns true iff $p$ lies on the unbounded side of $t$.}
+
+\ccRefines
+\ccc{AdaptableFunctor} (with two arguments)
+
+\ccSeeAlso
+\ccRefIdfierPage{CGAL::Circle_2<Kernel>} \\
+\ccRefIdfierPage{CGAL::Iso_rectangle_2<Kernel>}\\
+\ccRefIdfierPage{CGAL::Triangle_2<Kernel>}\\
+
+\end{ccRefFunctionObjectConcept}

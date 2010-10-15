@@ -1,0 +1,554 @@
+\begin{ccRefFunction}{intersection}
+
+Depending on which \cgal\ \ccHtmlNoLinksFrom{kernel} is used,
+different versions of this global function are available. This is
+described below.
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\paragraph{With the basic 2D and 3D Kernel} (see Chapter~\ref{chapter-kernel-23})
+
+\ccInclude{CGAL/intersections.h}
+
+\ccUnchecked{
+\ccRefLabel{Kernel::intersection}
+\ccFunction{Object intersection(Type1<Kernel> obj1, Type2<Kernel> obj2);}
+{Two objects \ccStyle{obj1} and \ccStyle{obj2} intersect if there is a point
+\ccStyle{p} that is part of both \ccStyle{obj1} and \ccStyle{obj2}.
+The \ccHtmlNoLinksFrom{intersection} region of those two objects is defined as the set of all
+points \ccStyle{p} that are part of both \ccStyle{obj1} and \ccStyle{obj2}.
+Note that for objects like triangles and polygons that enclose a
+bounded region, this region is considered part of the object.
+If a segment lies completely inside a triangle, then those two objects
+intersect and the \ccHtmlNoLinksFrom{intersection} region is the complete segment.
+}}
+
+The possible value for types \ccStyle{Type1} and \ccStyle{Type2} and the
+possible return values wrapped in \ccc{Object} are the
+following:
+
+
+\begin{ccTexOnly}
+\begin{longtable}[c]{|l|l|l|}
+%\caption{All available intersection computations}\\
+\multicolumn{3}{l}{\sl \ \ }
+\endfirsthead
+\multicolumn{3}{l}{\sl continued}
+\endhead
+\hline
+type A & type B & \parbox{4 cm}{\vspace{1 mm}{return type}} \\
+\hline
+\ccStyle{Line_2} & \ccStyle{Line_2} & \parbox{4 cm}{\vspace{1 mm}
+    \ccStyle{Point_2}
+    \\ \ccStyle{Line_2}
+  \vspace{1 mm}} \\
+\hline
+\ccStyle{Segment_2} & \ccStyle{Line_2} & \parbox{4 cm}{\vspace{1 mm}
+    \ccStyle{Point_2}
+    \\ \ccStyle{Segment_2}
+  \vspace{1 mm}} \\
+\hline
+\ccStyle{Segment_2} & \ccStyle{Segment_2} & \parbox{4 cm}{\vspace{1 mm}
+    \ccStyle{Point_2}
+    \\ \ccStyle{Segment_2}
+  \vspace{1 mm}} \\
+\hline
+\ccStyle{Ray_2} & \ccStyle{Line_2} & \parbox{4 cm}{\vspace{1 mm}
+    \ccStyle{Point_2}
+    \\ \ccStyle{Ray_2}
+  \vspace{1 mm}} \\
+\hline
+\ccStyle{Ray_2} & \ccStyle{Segment_2} & \parbox{4 cm}{\vspace{1 mm}
+    \ccStyle{Point_2}
+    \\ \ccStyle{Segment_2}
+  \vspace{1 mm}} \\
+\hline
+\ccStyle{Ray_2} & \ccStyle{Ray_2} & \parbox{4 cm}{\vspace{1 mm}
+    \ccStyle{Point_2}
+    \\ \ccStyle{Segment_2}
+    \\ \ccStyle{Ray_2}
+  \vspace{1 mm}} \\
+\hline
+\ccStyle{Triangle_2} & \ccStyle{Line_2} & \parbox{4 cm}{\vspace{1 mm}
+    \ccStyle{Point_2}
+    \\ \ccStyle{Segment_2}
+  \vspace{1 mm}} \\
+\hline
+\ccStyle{Triangle_2} & \ccStyle{Segment_2} & \parbox{4 cm}{\vspace{1 mm}
+    \ccStyle{Point_2}
+    \\ \ccStyle{Segment_2}
+  \vspace{1 mm}} \\
+\hline
+\ccStyle{Triangle_2} & \ccStyle{Ray_2} & \parbox{4 cm}{\vspace{1 mm}
+    \ccStyle{Point_2}
+    \\ \ccStyle{Segment_2}
+  \vspace{1 mm}} \\
+\hline
+\ccStyle{Triangle_2} & \ccStyle{Triangle_2} & \parbox{4 cm}{\vspace{1 mm}
+    \ccStyle{Point_2}
+    \\ \ccStyle{Segment_2}
+    \\ \ccStyle{Triangle_2}
+    \\ \ccStyle{std::vector<Point_2>}
+  \vspace{1 mm}} \\
+\hline
+\ccStyle{Iso_rectangle_2} & \ccStyle{Line_2} & \parbox{4 cm}{\vspace{1 mm}
+    \ccStyle{Point_2}
+    \\ \ccStyle{Segment_2}
+  \vspace{1 mm}} \\
+\hline
+\ccStyle{Iso_rectangle_2} & \ccStyle{Segment_2} & \parbox{4 cm}{\vspace{1 mm}
+    \ccStyle{Point_2}
+    \\ \ccStyle{Segment_2}
+  \vspace{1 mm}} \\
+\hline
+\ccStyle{Iso_rectangle_2} & \ccStyle{Ray_2} & \parbox{4 cm}{\vspace{1 mm}
+    \ccStyle{Point_2}
+    \\ \ccStyle{Segment_2}
+  \vspace{1 mm}} \\
+\hline
+\ccStyle{Iso_rectangle_2} & \ccStyle{Iso_rectangle_2} & \parbox{4 cm}{\vspace{1 mm}
+    \ccStyle{Iso_rectangle_2}
+  \vspace{1 mm}} \\
+\hline
+{\ccStyle{Line_3}} & {\ccStyle{Line_3}} & \parbox{4 cm}{\vspace{1 mm}
+\ccStyle{Point_3} \\
+ \ccStyle{Line_3} 
+\vspace{1 mm}} \\
+\hline
+{\ccStyle{Plane_3}} & {\ccStyle{Line_3}} & \parbox{4 cm}{\vspace{1 mm}
+\ccStyle{Point_3} \\
+ \ccStyle{Line_3} 
+\vspace{1 mm}} \\
+\hline
+{\ccStyle{Plane_3}} & {\ccStyle{Ray_3}} & \parbox{4 cm}{\vspace{1 mm}
+\ccStyle{Point_3} \\
+ \ccStyle{Ray_3}
+\vspace{1 mm}}  \\
+\hline
+{\ccStyle{Plane_3}} & {\ccStyle{Segment_3}} & \parbox{4 cm}{\vspace{1 mm}
+\ccStyle{Point_3} \\
+ \ccStyle{Segment_3}
+\vspace{1 mm}}  \\
+\hline
+{\ccStyle{Plane_3}} & {\ccStyle{Plane_3}} & \parbox{4 cm}{\vspace{1 mm}
+\ccStyle{Line_3} \\
+ \ccStyle{Plane_3}
+\vspace{1 mm}}  \\
+\hline
+{\ccStyle{Plane_3}} & {\ccStyle{Sphere_3}} & \parbox{4 cm}{\vspace{1 mm}
+\ccStyle{Point_3} \\
+ \ccStyle{Circle_3}
+\vspace{1 mm}}  \\
+\hline
+{\ccStyle{Sphere_3}} & {\ccStyle{Sphere_3}} & \parbox{4 cm}{\vspace{1 mm}
+\ccStyle{Point_3} \\
+ \ccStyle{Circle_3} \\
+ \ccStyle{Sphere_3}
+\vspace{1 mm}}  \\
+\hline
+{\ccStyle{Triangle_3}} & {\ccStyle{Line_3}} & \parbox{4 cm}{\vspace{1 mm}
+\ccStyle{Point_3} \\
+ \ccStyle{Segment_3}
+\vspace{1 mm}}  \\
+\hline
+{\ccStyle{Triangle_3}} & {\ccStyle{Ray_3}} & \parbox{4 cm}{\vspace{1 mm}
+\ccStyle{Point_3} \\
+ \ccStyle{Segment_3}
+\vspace{1 mm}}  \\
+\hline
+{\ccStyle{Triangle_3}} & {\ccStyle{Segment_3}} & \parbox{4 cm}{\vspace{1 mm}
+\ccStyle{Point_3} \\
+ \ccStyle{Segment_3}
+\vspace{1 mm}}  \\
+\hline
+\end{longtable}
+\end{ccTexOnly}
+
+\begin{ccHtmlOnly}
+<DIV ALIGN="CENTER">
+<TABLE CELLPADDING=3 BORDER="1">
+<TR> <TH> type A </TH>
+ <TH> type B </TH>
+ <TH> return type </TH>
+</TR>
+<TR>
+    <TD VALIGN="CENTER" > Line_2 </TD>
+    <TD VALIGN="CENTER" > Line_2 </TD>
+    <TD><TABLE>
+	<TR><TD>Point_2</TD></TR>
+	<TR><TD>Line_2</TD></TR>
+        </TABLE></TD>
+</TR>
+<TR>
+    <TD VALIGN="CENTER" > Segment_2 </TD>
+    <TD VALIGN="CENTER" > Line_2 </TD>
+    <TD><TABLE>
+	<TR><TD>Point_2</TD></TR>
+	<TR><TD>Segment_2</TD></TR>
+      </TABLE></TD>
+</TR>
+<TR>
+    <TD VALIGN="CENTER" > Segment_2 </TD>
+    <TD VALIGN="CENTER" > Segment_2 </TD>
+    <TD><TABLE>
+	<TR><TD>Point_2</TD></TR>
+	<TR><TD>Segment_2</TD></TR>
+      </TABLE></TD>
+</TR>
+<TR>
+    <TD VALIGN="CENTER" > Ray_2 </TD>
+    <TD VALIGN="CENTER" > Line_2 </TD>
+    <TD><TABLE>
+	<TR><TD>Point_2</TD></TR>
+	<TR><TD>Ray_2</TD></TR>
+      </TABLE></TD>
+</TR>
+<TR>
+    <TD VALIGN="CENTER" > Ray_2 </TD>
+    <TD VALIGN="CENTER" > Segment_2 </TD>
+    <TD><TABLE>
+	<TR><TD>Point_2</TD></TR>
+	<TR><TD>Segment_2</TD></TR>
+      </TABLE></TD>
+</TR>
+<TR>
+    <TD VALIGN="CENTER" > Ray_2 </TD>
+    <TD VALIGN="CENTER" > Ray_2 </TD>
+    <TD><TABLE>
+	<TR><TD>Point_2</TD></TR>
+	<TR><TD>Segment_2</TD></TR>
+	<TR><TD>Ray_2</TD></TR>
+      </TABLE></TD>
+</TR>
+<TR>
+    <TD VALIGN="CENTER" > Triangle_2 </TD>
+    <TD VALIGN="CENTER" > Line_2 </TD>
+    <TD><TABLE>
+	<TR><TD>Point_2</TD></TR>
+	<TR><TD>Segment_2</TD></TR>
+      </TABLE></TD>
+</TR>
+<TR>
+    <TD VALIGN="CENTER" > Triangle_2 </TD>
+    <TD VALIGN="CENTER" > Segment_2 </TD>
+    <TD><TABLE>
+	<TR><TD>Point_2</TD></TR>
+	<TR><TD>Segment_2</TD></TR>
+      </TABLE></TD>
+</TR>
+<TR>
+    <TD VALIGN="CENTER" > Triangle_2 </TD>
+    <TD VALIGN="CENTER" > Ray_2 </TD>
+    <TD><TABLE>
+	<TR><TD>Point_2</TD></TR>
+	<TR><TD>Segment_2</TD></TR>
+      </TABLE></TD>
+</TR>
+<TR>
+    <TD VALIGN="CENTER" > Triangle_2 </TD>
+    <TD VALIGN="CENTER" > Triangle_2 </TD>
+    <TD><TABLE>
+	<TR><TD>Point_2</TD></TR>
+	<TR><TD>Segment_2</TD></TR>
+	<TR><TD>Triangle_2</TD></TR>
+	<TR><TD>std::vector&lt;Point_2&gt;</TD></TR>
+      </TABLE></TD>
+</TR>
+<TR>
+    <TD VALIGN="CENTER" > Iso_rectangle_2 </TD>
+    <TD VALIGN="CENTER" > Line_2 </TD>
+    <TD><TABLE>
+	<TR><TD>Point_2</TD></TR>
+	<TR><TD>Segment_2</TD></TR>
+      </TABLE></TD>
+</TR>
+<TR>
+    <TD VALIGN="CENTER" > Iso_rectangle_2 </TD>
+    <TD VALIGN="CENTER" > Segment_2 </TD>
+    <TD><TABLE>
+	<TR><TD>Point_2</TD></TR>
+	<TR><TD>Segment_2</TD></TR>
+      </TABLE></TD>
+</TR>
+<TR>
+    <TD VALIGN="CENTER" > Iso_rectangle_2 </TD>
+    <TD VALIGN="CENTER" > Ray_2 </TD>
+    <TD><TABLE>
+	<TR><TD>Point_2</TD></TR>
+	<TR><TD>Segment_2</TD></TR>
+      </TABLE></TD>
+</TR>
+<TR>
+    <TD VALIGN="CENTER" > Iso_rectangle_2 </TD>
+    <TD VALIGN="CENTER" > Iso_rectangle_2 </TD>
+    <TD><TABLE>
+	<TR><TD>Iso_rectangle_2</TD></TR>
+      </TABLE></TD>
+</TR>
+<TR>
+    <TD VALIGN="CENTER" > Line_3 </TD>
+    <TD VALIGN="CENTER" > Line_3 </TD>
+    <TD><TABLE>
+	<TR><TD>Point_3</TD></TR>
+	<TR><TD>Line_3</TD></TR>
+        </TABLE></TD>
+</TR>
+<TR>
+    <TD VALIGN="CENTER" > Plane_3 </TD>
+    <TD VALIGN="CENTER" > Line_3 </TD>
+    <TD><TABLE>
+	<TR><TD>Point_3</TD></TR>
+	<TR><TD>Line_3</TD></TR>
+        </TABLE></TD>
+</TR>
+<TR>
+    <TD VALIGN="CENTER" > Plane_3 </TD>
+    <TD VALIGN="CENTER" > Ray_3 </TD>
+    <TD><TABLE>
+	<TR><TD>Point_3</TD></TR>
+	<TR><TD>Ray_3</TD></TR>
+        </TABLE></TD>
+</TR>
+<TR>
+    <TD VALIGN="CENTER" > Plane_3 </TD>
+    <TD VALIGN="CENTER" > Segment_3 </TD>
+    <TD><TABLE>
+	<TR><TD>Point_3</TD></TR>
+	<TR><TD>Segment_3</TD></TR>
+        </TABLE></TD>
+</TR>
+<TR>
+    <TD VALIGN="CENTER" > Plane_3 </TD>
+    <TD VALIGN="CENTER" > Plane_3 </TD>
+    <TD><TABLE>
+	<TR><TD>Line_3</TD></TR>
+	<TR><TD>Plane_3</TD></TR>
+        </TABLE></TD>
+</TR>
+<TR>
+    <TD VALIGN="CENTER" > Plane_3 </TD>
+    <TD VALIGN="CENTER" > Sphere_3 </TD>
+    <TD><TABLE>
+	<TR><TD>Point_3</TD></TR>
+	<TR><TD>Circle_3</TD></TR>
+        </TABLE></TD>
+</TR>
+<TR>
+    <TD VALIGN="CENTER" > Sphere_3 </TD>
+    <TD VALIGN="CENTER" > Sphere_3 </TD>
+    <TD><TABLE>
+	<TR><TD>Point_3</TD></TR>
+	<TR><TD>Circle_3</TD></TR>
+	<TR><TD>Sphere_3</TD></TR>
+        </TABLE></TD>
+</TR>
+<TR>
+    <TD VALIGN="CENTER" > Triangle_3 </TD>
+    <TD VALIGN="CENTER" > Line_3 </TD>
+    <TD><TABLE>
+	<TR><TD>Point_3</TD></TR>
+	<TR><TD>Segment_3</TD></TR>
+        </TABLE></TD>
+</TR>
+<TR>
+    <TD VALIGN="CENTER" > Triangle_3 </TD>
+    <TD VALIGN="CENTER" > Ray_3 </TD>
+    <TD><TABLE>
+	<TR><TD>Point_3</TD></TR>
+	<TR><TD>Segment_3</TD></TR>
+        </TABLE></TD>
+</TR>
+<TR>
+    <TD VALIGN="CENTER" > Triangle_3 </TD>
+    <TD VALIGN="CENTER" > Segment_3 </TD>
+    <TD><TABLE>
+	<TR><TD>Point_3</TD></TR>
+	<TR><TD>Segment_3</TD></TR>
+        </TABLE></TD>
+</TR>
+</TABLE>
+</DIV>
+\end{ccHtmlOnly}
+
+There is also an intersection function between 3 planes.
+
+\ccFunction{Object intersection(const Plane_3<Kernel>& pl1,
+                                const Plane_3<Kernel>& pl2,
+                                const Plane_3<Kernel>& pl3);}
+{returns the intersection of 3 planes, which can be either a point, a line,
+a plane, or empty.}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\paragraph{With the 2D Circular Kernel} (see Chapter~\ref{chapter-circular-kernel}) 
+
+\ccInclude{CGAL/Circular_kernel_intersections.h}
+
+If this kernel is used, in addition to the function and the
+combination of 2D types described above, another version of the function
+is provided.
+
+Since both the number of intersections, if any, and their type,
+depend on the arguments, the function returns an output
+iterator on \ccc{Object}'s, as presented below. 
+
+\ccFunction{template < class OutputIterator >
+OutputIterator
+intersection(const  Type1 &obj1, const Type2 &obj2,
+		OutputIterator intersections);}
+{Copies in the output iterator the intersection elements between the
+two objects. \ccc{intersections} iterates on
+elements of type \ccc{CGAL::Object}, in lexicographic order,}
+
+where \ccStyle{Type1} and \ccStyle{Type2} can both be either
+\begin{itemize}
+\item {} \ccStyle{Line_2<CircularKernel>} or
+\item {} \ccStyle{Line_arc_2<CircularKernel>} or
+\item {} \ccStyle{Circle_2<CircularKernel>} or
+\item {} \ccStyle{Circular_arc_2<CircularKernel>}.
+\end{itemize} 
+
+Depending on the types \ccStyle{Type1} and \ccStyle{Type2}, these
+elements can be assigned to
+\begin{itemize}
+\item {} \ccStyle{std::pair<Circular_arc_point_2<CircularKernel>, unsigned>},
+where the unsigned integer is the multiplicity of the corresponding
+intersection point between \ccc{obj1} and \ccc{obj2},
+\item {} \ccStyle{Circular_arc_2<CircularKernel>} in case of an overlap of 
+two circular arcs,
+\item {} \ccStyle{Line_arc_2<CircularKernel>} in case of an overlap of two 
+line segments or
+\item {} \ccStyle{Line_2<CircularKernel>} or 
+\ccStyle{Circle_2<CircularKernel>} in case of two equal input lines or circles.
+\end{itemize} 
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\paragraph{With the 3D Spherical Kernel} (see Chapter~\ref{chapter-spherical-kernel}) 
+
+\ccInclude{CGAL/Spherical_kernel_intersections.h}
+
+If this kernel is used, in addition to the function and the
+combination of 3D types described above, two other versions of the function
+are provided.
+
+Since both the number of intersections, if any, and their type,
+depend on the arguments, the functions return an output
+iterator on \ccStyle{Object}'s, as presented below. 
+
+The \textbf{first function} is:
+
+\ccFunction{template < class OutputIterator >
+OutputIterator
+intersection(const  Type1 &obj1, const Type2 &obj2,
+		OutputIterator intersections);}
+{Copies in the output iterator the intersection elements between the
+two objects. \ccc{intersections} iterates on
+elements of type \ccStyle{CGAL::Object}, in lexicographic order,
+when this ordering is defined on the computed objects,}
+
+where \ccStyle{Type1} and \ccStyle{Type2} can both be either:
+\begin{itemize}
+\item {} \ccStyle{Sphere_3<SphericalKernel>},
+\item {} \ccStyle{Plane_3<SphericalKernel>},
+\item {} \ccStyle{Line_3<SphericalKernel>},
+\item {} \ccStyle{Circle_3<SphericalKernel>},
+\item {} \ccStyle{Line_arc_3<SphericalKernel>} or
+\item {} \ccStyle{Circular_arc_3<SphericalKernel>},
+\end{itemize} 
+
+and depending on the types \ccStyle{Type1} and \ccStyle{Type2}, the computed 
+\ccStyle{CGAL::Object}s can be assigned to 
+\begin{itemize}
+\item {} \ccStyle{std::pair<Circular_arc_point_3<SphericalKernel>, unsigned>},
+where the unsigned integer is the multiplicity of the corresponding
+intersection point between \ccc{obj1} and \ccc{obj2},
+\item {} \ccStyle{Type1}, when \ccStyle{Type1} and \ccStyle{Type2} are equal, 
+and if the two objets \ccc{obj1} and \ccc{obj2} are equal,
+\item {} \ccStyle{Line_3<SphericalKernel>} or 
+\ccStyle{Circle_3<SphericalKernel>} when \ccStyle{Type1} and \ccStyle{Type2} 
+are two-dimensional objets intersecting along a curve (2 planes, or 2
+spheres, or one plane and one sphere),
+\item {} \ccStyle{Circular_arc_3<SphericalKernel>} in case of an overlap of 
+two circular arcs or
+\item {} \ccStyle{Line_arc_3<SphericalKernel>} in case of an overlap of two 
+line segments. 
+\end{itemize} 
+
+The \textbf{second function} is:
+
+\ccFunction{template < class OutputIterator >
+OutputIterator
+intersection(const Type1 &obj1, const Type2 &obj2, const Type3 &obj3,
+	OutputIterator intersections);}
+{Copies in the output iterator the intersection elements between the
+three objects. \ccc{intersections} iterates on
+elements of type \ccStyle{CGAL::Object}, in lexicographic order 
+when this ordering is defined on the computed objects}
+
+where \ccStyle{Type1}, \ccStyle{Type2} and \ccStyle{Type3}
+can be either
+\begin{itemize}
+\item {} \ccStyle{Sphere_3<SphericalKernel>} or
+\item {} \ccStyle{Plane_3<SphericalKernel>}
+\end{itemize}
+
+and depending of these types, the computed \ccStyle{CGAL::Object}s can be 
+assigned to 
+\begin{itemize}
+\item {} \ccStyle{std::pair<Circular_arc_point_3<SphericalKernel>, unsigned>},
+where the unsigned integer is the multiplicity of the corresponding
+intersection point,
+\item {} \ccStyle{Circle_3<SphericalKernel>} or
+\item {} \ccStyle{Type1}, when \ccStyle{Type1}, \ccStyle{Type2} and 
+\ccc{Type3} are equal, and if the three objets \ccc{obj1} and \ccc{obj2} 
+and \ccc{obj3} are equal.
+\end{itemize} 
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\ccExample
+
+The following example demonstrates the most common use of 
+\ccc{intersection} routines with the basic 2D and 3D Kernels.
+\begin{verbatim}
+#include <CGAL/intersections.h>
+
+void foo(CGAL::Segment_2<Kernel> seg, CGAL::Line_2<Kernel> line)
+{
+    CGAL::Object result = CGAL::intersection(seg, line);
+    if (const CGAL::Point_2<Kernel> *ipoint = CGAL::object_cast<CGAL::Point_2<Kernel> >(&result)) {
+\end{verbatim}%
+\ccHtmlLinksOff%
+\begin{verbatim}
+        // handle the point intersection case with *ipoint.
+\end{verbatim}%
+\ccHtmlLinksOn%
+\begin{verbatim}
+    } else
+        if (const CGAL::Segment_2<Kernel> *iseg = CGAL::object_cast<CGAL::Segment_2<Kernel> >(&result)) {
+\end{verbatim}%
+\ccHtmlLinksOff%
+\begin{verbatim}
+            // handle the segment intersection case with *iseg.
+\end{verbatim}%
+\ccHtmlLinksOn%
+\begin{verbatim}
+        } else {
+\end{verbatim}%
+\ccHtmlLinksOff%
+\begin{verbatim}
+            // handle the no intersection case.
+        }
+}
+\end{verbatim}%
+\ccHtmlLinksOn%
+
+Examples illustrating the use of this function in the case of the 2D
+Circular Kernel and the 3D Spherical Kernel are presented respectively
+in Chapters~\ref{chapter-circular-kernel}
+and~\ref{chapter-spherical-kernel}.
+
+\ccSeeAlso
+% \ccRefIdfierPage{CGAL::assign} \\
+\ccRefIdfierPage{CGAL::do_intersect} \\ 
+\ccRefIdfierPage{CGAL::Object} \\
+
+\end{ccRefFunction}

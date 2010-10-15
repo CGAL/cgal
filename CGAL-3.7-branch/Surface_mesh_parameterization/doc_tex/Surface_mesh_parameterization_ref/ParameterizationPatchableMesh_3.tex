@@ -1,0 +1,158 @@
+% +------------------------------------------------------------------------+
+% | Reference manual page: ParameterizationPatchableMesh_3.tex
+% +------------------------------------------------------------------------+
+% | 29.08.2005   Laurent Saboret, Pierre Alliez, Bruno Levy
+% | Package: Surface_mesh_parameterization
+% |
+\RCSdef{\RCSParameterizationPatchableMeshRev}{$Id$}
+\RCSdefDate{\RCSParameterizationPatchableMeshDate}{$Date$}
+% |
+\ccRefPageBegin
+%%RefPage: end of header, begin of main body
+% +------------------------------------------------------------------------+
+
+
+\begin{ccRefConcept}{ParameterizationPatchableMesh_3}
+
+%% \ccHtmlCrossLink{}     %% add further rules for cross referencing links
+%% \ccHtmlIndexC[concept]{} %% add further index entries
+
+
+\ccDefinition
+
+% The section below is automatically generated. Do not edit!
+%START-AUTO(\ccDefinition)
+
+\ccc{ParameterizationPatchableMesh_3} inherits from concept \ccc{ParameterizationMesh_3}, thus is a concept of a 3D surface mesh.
+
+\ccc{ParameterizationPatchableMesh_3} adds the ability to support patches and virtual seams. {\em Patches} are a subset of a 3D mesh. {\em Virtual seams} are the ability to behave exactly as if the surface was cut following a certain path.
+
+This mainly means that: vertices can be tagged as inside or outside the patch to parameterize. the fields specific to parameterizations (index, u, v, \ccc{is_parameterized}) can be set per {\em corner} (aka half-edge).
+
+
+The main purpose of this feature is to allow the \ccc{Surface_mesh_parameterization} package to parameterize any 3D surface by decomposing it as a list of topological disks.
+
+%END-AUTO(\ccDefinition)
+
+
+\ccHeading{Design Pattern}
+
+% The section below is automatically generated. Do not edit!
+%START-AUTO(\ccHeading{Design Pattern})
+
+\ccc{ParameterizationPatchableMesh_3} is an Adaptor \cite{cgal:ghjv-dpero-95}: it changes the interface of a 3D mesh to match the interface expected by class \ccc{Parameterization_mesh_patch_3}.
+
+%END-AUTO(\ccHeading{Design Pattern})
+
+
+\ccRefines
+
+% The section below is automatically generated. Do not edit!
+%START-AUTO(\ccRefines)
+
+\ccc{ParameterizationMesh_3}
+
+%END-AUTO(\ccRefines)
+
+In addition to the requirements described in the concept \ccc{ParameterizationMesh_3},
+\ccc{ParameterizationPatchableMesh_3} provides the following:
+
+
+\ccCreation
+\ccCreationVariable{mesh}  %% define variable name used by \ccMethod below
+
+Construction and destruction are undefined.
+
+% The section below is automatically generated. Do not edit!
+%START-AUTO(\ccCreation)
+%END-AUTO(\ccCreation)
+
+
+\ccOperations
+
+% The section below is automatically generated. Do not edit!
+%START-AUTO(\ccOperations)
+
+\ccMethod{int get_vertex_seaming(Vertex_const_handle vertex) const;}
+{
+Get/set vertex seaming flag. Default value is undefined.
+}
+\ccGlue
+\ccMethod{void set_vertex_seaming(Vertex_handle vertex, int seaming);}
+{
+}
+\ccGlue
+\ccMethod{int get_halfedge_seaming(Vertex_const_handle source, Vertex_const_handle target) const;}
+{
+Get/set oriented edge's seaming flag, i.e. position of the oriented edge w.r.t. to the UNIQUE main border.
+}
+\ccGlue
+\ccMethod{void set_halfedge_seaming(Vertex_handle source, Vertex_handle target, int seaming);}
+{
+}
+\ccGlue
+\ccMethod{Point_2 get_corners_uv(Vertex_const_handle vertex, Vertex_const_handle prev_vertex, Vertex_const_handle next_vertex) const;}
+{
+Get/set the 2D position (= (u, v) pair) of corners at the {\em right} of the \ccc{prev_vertex} -$>$ vertex -$>$ \ccc{next_vertex} line. Default value is undefined.
+}
+\ccGlue
+\ccMethod{void set_corners_uv(Vertex_handle vertex, Vertex_const_handle prev_vertex, Vertex_const_handle next_vertex, const Point_2& uv);}
+{
+}
+\ccGlue
+\ccMethod{bool are_corners_parameterized(Vertex_const_handle vertex, Vertex_const_handle prev_vertex, Vertex_const_handle next_vertex) const;}
+{
+Get/set {\em is parameterized} field of corners at the {\em right} of the \ccc{prev_vertex} -$>$ vertex -$>$ \ccc{next_vertex} line. Default value is undefined.
+}
+\ccGlue
+\ccMethod{void set_corners_parameterized(Vertex_handle vertex, Vertex_const_handle prev_vertex, Vertex_const_handle next_vertex, bool parameterized);}
+{
+}
+\ccGlue
+\ccMethod{int get_corners_index(Vertex_const_handle vertex, Vertex_const_handle prev_vertex, Vertex_const_handle next_vertex) const;}
+{
+Get/set index of corners at the {\em right} of the \ccc{prev_vertex} -$>$ vertex -$>$ \ccc{next_vertex} line. Default value is undefined.
+}
+\ccGlue
+\ccMethod{void set_corners_index(Vertex_handle vertex, Vertex_const_handle prev_vertex, Vertex_const_handle next_vertex, int index);}
+{
+}
+\ccGlue
+\ccMethod{int get_corners_tag(Vertex_const_handle vertex, Vertex_const_handle prev_vertex, Vertex_const_handle next_vertex) const;}
+{
+Get/set all purpose tag of corners at the {\em right} of the \ccc{prev_vertex} -$>$ vertex -$>$ \ccc{next_vertex} line. Default value is undefined.
+}
+\ccGlue
+\ccMethod{void set_corners_tag(Vertex_handle vertex, Vertex_const_handle prev_vertex, Vertex_const_handle next_vertex, int tag);}
+{
+}
+\ccGlue
+
+%END-AUTO(\ccOperations)
+
+
+\ccHasModels
+
+% The section below is automatically generated. Do not edit!
+%START-AUTO(\ccHasModels)
+
+Adaptator for \ccc{Polyhedron_3} is provided.
+
+%END-AUTO(\ccHasModels)
+
+\ccRefIdfierPage{CGAL::Parameterization_polyhedron_adaptor_3<Polyhedron_3_>} \\
+
+
+\ccSeeAlso
+
+\ccRefIdfierPage{ParameterizationMesh_3}
+
+
+\end{ccRefConcept}
+
+% +------------------------------------------------------------------------+
+%%RefPage: end of main body, begin of footer
+\ccRefPageEnd
+% EOF
+% +------------------------------------------------------------------------+
+

@@ -1,0 +1,30 @@
+\begin{ccRefFunctionObjectConcept}{Kernel::ConstructBisector_3}
+A model for this must provide:
+
+\ccCreationVariable{fo}
+
+\ccMemberFunction{Kernel::Plane_3 operator()(const Kernel::Point_3&p, 
+                                             const Kernel::Point_3&q );}
+{constructs the bisector plane of $p$ and $q$.
+The bisector is oriented in such a way that \ccc{p} lies on its
+positive side. \ccPrecond{\ccc{p} and \ccc{q} are not equal.}}
+
+\ccMemberFunction{Kernel::Plane_3 operator()(const Kernel::Plane_3&h1,
+                                             const Kernel::Plane_3&h2);}
+{constructs the bisector of the two planes $h1$ and $h2$.
+In the general case, the bisector has a normal vector which has the same
+direction as the sum of the normalized normal vectors of the two planes, and
+passes through the intersection of \ccc{h1} and \ccc{h2}.
+If \ccc{h1} and \ccc{h2} are parallel, then the bisector is defined as the
+plane which has the same oriented normal vector as \ccc{l1}, and which is at
+the same distance from \ccc{h1} and \ccc{h2}.
+This function requires that \ccc{Kernel::RT} supports the \ccc{sqrt()}
+operation.}
+
+\ccRefines
+\ccc{AdaptableFunctor} (with two arguments)
+
+\ccSeeAlso
+\ccRefIdfierPage{CGAL::bisector}
+
+\end{ccRefFunctionObjectConcept}

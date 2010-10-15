@@ -1,0 +1,81 @@
+% +------------------------------------------------------------------------+
+% | Reference manual page: Plane_separator.tex
+% +------------------------------------------------------------------------+
+% | 1.07.2001   Johan W.H. Tangelder
+% | Package: ASPAS
+% | 
+\RCSdef{\RCSPlaneseparatorRev}{$Id$}
+\RCSdefDate{\RCSPlaneseparatorDate}{$Date$}
+% |
+%%RefPage: end of header, begin of main body
+% +------------------------------------------------------------------------+
+
+
+\begin{ccRefClass}{Plane_separator<FT>}  %% add template arg's if necessary
+
+%% \ccHtmlCrossLink{}     %% add further rules for cross referencing links
+%% \ccHtmlIndexC[class]{} %% add further index entries
+
+\begin{ccAdvanced}
+
+\ccDefinition
+  
+The class \ccRefName\ implements a plane separator, i.e., a hyperplane that is used to separate two half spaces.
+This hyperplane is defined by a cutting dimension $d$ and a cutting value $v$
+as $x_d=v$, where $v$ denotes the $d^{th}$ coordinate value.
+
+\ccInclude{CGAL/Plane_separator.h}
+
+\ccIsModel
+
+\ccc{SpatialSeparator}
+
+\ccCreation
+\ccCreationVariable{s}  %% choose variable name
+
+
+
+\ccConstructor{Plane_separator(int d, FT v);}
+{Constructs a separator that separates two half spaces by a hyperplane
+defined by $x_d=v$, where $v$ denotes the $d^{th}$ coordinate value.}
+
+\ccConstructor{Plane_separator(Plane_separator<FT> p);}
+{Copy constructor.}
+
+\ccOperations
+
+\ccMethod{
+void set_cutting_dimension(int d);}
+{Sets the cutting dimension to \ccc{d}. }
+
+\ccMethod{
+void set_cutting_value(FT v);}
+{Sets the cutting value to \ccc{v}. }
+
+\ccMethod{int cutting_dimension();}{Returns the number of the cutting dimension.}
+
+\ccMethod{FT cutting_value();}{Returns the cutting value.}
+
+\ccMethod{template <class SpatialPoint>
+bool has_on_negative_side(SpatialPoint p);}
+{Returns true if and only if the coordinate of \ccc{p} in the cutting dimension is smaller than the cutting value.}
+
+\ccMethod{ 
+Plane_separator<FT> operator=(Plane_separator<FT> s2);}
+{Assignment operator.}
+
+\ccHeading{Output Operators}
+
+\ccFunction{ template<class FT>
+std::ostream& operator<<(std::ostream& os, Plane_separator<FT> s);}
+{Inserts the plane separator \ccc{s} in the output stream \ccc{os} and returns~\ccc{os}.}
+
+\end{ccAdvanced}
+
+\end{ccRefClass}
+
+% +------------------------------------------------------------------------+
+%%RefPage: end of main body, begin of footer
+% EOF
+% +------------------------------------------------------------------------+
+

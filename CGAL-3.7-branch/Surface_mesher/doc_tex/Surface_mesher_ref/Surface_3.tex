@@ -1,0 +1,87 @@
+% +------------------------------------------------------------------------+
+% | Reference manual page: Surface_3.tex
+% +------------------------------------------------------------------------+
+% | 23.03.2006   Author
+% | Package: Package
+% | 
+\RCSdef{\RCSSurfaceRev}{$Id$}
+\RCSdefDate{\RCSSurfaceDate}{$Date$}
+% |
+%%RefPage: end of header, begin of main body
+% +------------------------------------------------------------------------+
+
+
+\begin{ccRefConcept}{Surface_3}
+
+%% \ccHtmlCrossLink{}     %% add further rules for cross referencing links
+%% \ccHtmlIndexC[concept]{} %% add further index entries
+
+\ccDefinition
+  
+The concept \ccRefName\ describes the types of surfaces to be meshed.
+The surface types 
+are    required to be copy constructible
+and assignable.
+
+%\ccRefines
+
+%ThisConcept \\
+%ThatConcept
+
+\ccTypes
+
+In addition, surface types are required
+\begin{itemize}
+\item 
+either to provide a nested type:
+\ccNestedType{Surface_mesher_traits_3}{a model of \ccc{SurfaceMesherTraits_3}}
+%\ccc{Surface::Surface_mesher_traits_3}
+%that is a model of \ccc{SurfaceMeshTraits_3}
+\item or to be a surface type for which a specialization
+of the traits generator \ccc{Surface_mesh_traits_generator_3<Surface>}
+exists.
+\end{itemize}
+
+%\ccCreation
+%\ccCreationVariable{a}  %% choose variable name
+
+%\ccConstructor{Surface_3();}{default constructor.}
+
+%\ccOperations
+
+%\ccMethod{void foo();}{some member functions}
+
+\ccHasModels
+
+\ccc{Implicit_surface_3<Traits, Function>}
+
+
+\ccSeeAlso
+\ccc{make_surface_mesh},\\
+\ccc{SurfaceMeshTraits_3} \\
+\ccc{Surface_mesh_traits_generator_3<Surface>}
+
+
+%\ccExample
+
+%A short example program.
+%Instead of a short program fragment, a full running program can be
+%included using the 
+%\verb|\ccIncludeExampleCode{Package/Surface_3.cpp}| 
+%macro. The program example would be part of the source code distribution and
+%also part of the automatic test suite.
+
+%\begin{ccExampleCode}
+%void your_example_code() {
+%}
+%\end{ccExampleCode}
+
+%%% \ccIncludeExampleCode{Package/Surface_3.cpp}
+
+\end{ccRefConcept}
+
+% +------------------------------------------------------------------------+
+%%RefPage: end of main body, begin of footer
+% EOF
+% +------------------------------------------------------------------------+
+

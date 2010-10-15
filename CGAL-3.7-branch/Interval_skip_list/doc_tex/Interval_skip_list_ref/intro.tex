@@ -1,0 +1,88 @@
+% ======================================================================
+%
+% Copyright (c) 2003 GeometryFactory
+%
+% This software and related documentation is part of the
+% Computational Geometry Algorithms Library (CGAL).
+%
+% Every use of CGAL requires a license. Licenses come in three kinds:
+%
+% - For academic research and teaching purposes, permission to use and
+%   copy the software and its documentation is hereby granted free of  
+%   charge, provided that
+%   (1) it is not a component of a commercial product, and
+%   (2) this notice appears in all copies of the software and
+%       related documentation.
+% - Development licenses grant access to the source code of the library 
+%   to develop programs. These programs may be sold to other parties as 
+%   executable code. To obtain a development license, please contact
+%   the GALIA Consortium (at cgal@cs.uu.nl).
+% - Commercialization licenses grant access to the source code and the
+%   right to sell development licenses. To obtain a commercialization 
+%   license, please contact the GALIA Consortium (at cgal@cs.uu.nl).
+%
+% This software and documentation is provided "as-is" and without
+% warranty of any kind. In no event shall the CGAL Consortium be
+% liable for any damage of any kind.
+%
+% The GALIA Consortium consists of Utrecht University (The Netherlands),
+% ETH Zurich (Switzerland), Free University of Berlin (Germany),
+% INRIA Sophia-Antipolis (France), Martin-Luther-University Halle-Wittenberg
+% (Germany), Max-Planck-Institute Saarbruecken (Germany),
+% and Tel-Aviv University (Israel).
+%
+% ----------------------------------------------------------------------
+%
+% package       : Interval_skip_list
+% author(s)     : Andreas Fabri <Andreas.Fabri@geometryfactory.com>
+%
+% coordinator   : GeometryFactory (<Andreas.Fabri@geometryfactory.com>)
+%
+% ======================================================================
+
+\RCSdef{\intervalskiplistRevision}{$Id$}
+\RCSdefDate{\intervalskiplistDate}{$Date$}
+
+%----------------------------------------------------------------------
+
+%\clearpage
+%\section{Reference Pages for Interval Skip List}
+
+\ccRefChapter{Interval Skip List\label{chap:interval_skip_list_ref}}
+
+\ccChapterAuthor{Andreas Fabri}
+
+This chapter presents the interval skip list introduced by Hanson~\cite{h-islds-91},
+and derived from the skip list data structure~\cite{p-slpab-90}.
+
+The data structure stores intervals and allows to perform stabbing queries,
+that is to test whether a point is covered by any of the intervals.
+It further allows to find all intervals that contain a point.
+
+The interval skip list is, as far as its functionality is concerned,
+related to the \ccc{Segment_tree}. Both allow to do stabbing queries
+and both allow to find all intervals that contain a given point.  The
+implementation of segment trees in \cgal\ works in higher
+dimensions, whereas the interval skip list is limited to the 1D
+case. However, this interval skip list implementation is fully
+dynamic, whereas the segment tree implementation in \cgal\ is
+static, that is all intervals must be known in advance.
+
+This package has one concept, namely for the interval with which 
+the interval skip list class is parameterized.
+
+
+
+\section{Classified Reference Pages}
+
+\subsection*{Concepts}
+
+\ccRefConceptPage{Interval}\\
+
+
+\subsection*{Classes}
+
+\ccRefIdfierPage{CGAL::Interval_skip_list<Interval>}\\
+\ccRefIdfierPage{CGAL::Interval_skip_list_interval<Value>}\\
+\ccRefIdfierPage{CGAL::Level_interval<FaceHandle>}\\
+

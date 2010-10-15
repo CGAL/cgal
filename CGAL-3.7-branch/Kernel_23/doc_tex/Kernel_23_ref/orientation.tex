@@ -1,0 +1,45 @@
+%\ccHtmlNoRefLinks
+\begin{ccRefFunction}{orientation}
+
+\ccHtmlNoLinks
+\ccFunction{Orientation orientation(const Point_2<Kernel>& p,
+                                    const Point_2<Kernel>& q,
+                                    const Point_2<Kernel>& r);}
+{returns \ccStyle{LEFT_TURN}, if $r$ lies to the left of the oriented 
+line $l$ defined by $p$ and $q$, returns \ccStyle{RIGHT_TURN} if $r$ 
+lies to the right of $l$, and returns \ccStyle{COLLINEAR} if $r$ lies
+on $l$.}
+
+\ccHtmlNoLinks
+\ccFunction{Orientation orientation(const Vector_2<Kernel>& u,
+                                    const Vector_2<Kernel>& v);}
+{returns \ccStyle{LEFT_TURN} if $u$ and $v$ form a left turn,
+returns \ccStyle{RIGHT_TURN} if $u$ and $v$ form a right turn,
+and returns \ccStyle{COLLINEAR} if $u$ and $v$ are collinear.}
+
+
+\ccHtmlNoLinks
+\ccFunction{Orientation orientation(const Point_3<Kernel> &p,
+                                   const Point_3<Kernel>&q,
+                                   const Point_3<Kernel>&r,
+                                   const Point_3<Kernel>&s);}
+{returns \ccStyle{POSITIVE}, if $s$ lies on the positive side of the oriented 
+plane $h$ defined by $p$, $q$, and $r$, returns \ccStyle{NEGATIVE} if $s$ 
+lies on the negative side of $h$, and returns \ccStyle{COPLANAR} if $s$ lies
+on $h$.}
+
+\ccHtmlNoLinks
+\ccFunction{Orientation orientation(const Vector_3<Kernel> &u,
+                                    const Vector_3<Kernel> &v,
+                                    const Vector_3<Kernel> &w);}
+{returns \ccStyle{POSITIVE} if $u$, $v$ and $w$ are positively oriented,
+returns \ccStyle{NEGATIVE} if $u$, $v$ and $w$ are negatively oriented,
+and returns \ccStyle{COPLANAR} if $u$, $v$ and $w$ are coplanar.}
+
+
+\ccSeeAlso
+\ccRefIdfierPage{CGAL::collinear}\\
+\ccRefIdfierPage{CGAL::left_turn}\\
+\ccRefIdfierPage{CGAL::right_turn}
+
+\end{ccRefFunction}

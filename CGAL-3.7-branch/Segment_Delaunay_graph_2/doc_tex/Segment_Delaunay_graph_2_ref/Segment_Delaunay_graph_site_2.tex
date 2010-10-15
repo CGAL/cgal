@@ -1,0 +1,79 @@
+%% Copyright (c) 2003,2004,2005  INRIA Sophia-Antipolis (France) and
+%% Notre Dame University (U.S.A.).  All rights reserved.
+%%
+%% This file is part of CGAL (www.cgal.org); you may redistribute it under
+%% the terms of the Q Public License version 1.0.
+%% See the file LICENSE.QPL distributed with CGAL.
+%%
+%% Licensees holding a valid commercial license may use this file in
+%% accordance with the commercial license agreement provided with the software.
+%%
+%% This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
+%% WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
+%%
+%% $URL$
+%% $Id$
+%% 
+%%
+%% Author(s)     : Menelaos Karavelas <mkaravel@cse.nd.edu>
+
+
+
+
+\begin{ccRefClass}{Segment_Delaunay_graph_site_2<K>}
+%% add template arg's if necessary
+
+%% \ccHtmlCrossLink{}     %% add further rules for cross referencing links
+%% \ccHtmlIndexC[class]{} %% add further index entries
+
+\ccDefinition
+  
+The class \ccRefName\ is a model for the concept
+\ccc{SegmentDelaunayGraphSite_2}. It is parametrized by a template
+parameter \ccc{K} which must be a model of the \ccc{Kernel} concept.
+
+\ccInclude{CGAL/Segment_Delaunay_graph_site_2.h}
+
+\ccIsModel
+\ccc{SegmentDelaunayGraphSite_2}
+
+\ccTypes
+
+The class \ccRefName\ introduces the following type in addition to the
+types in the concept \ccc{SegmentDelaunayGraphSite_2}.
+
+\ccTypedef
+{typedef K Kernel;}{A type for the template parameter \ccc{K}.}
+
+%% \ccTwo{Segment_Delaunay_graph_site_2<K> s(Point_2 p1, Point_2 p2)+}{}
+
+%% \ccCreation
+%% \ccCreationVariable{s}  %% choose variable name
+%% \ccConstructor{Segment_Delaunay_graph_site_2<K>(Point_2 p)}{}
+%% %\ccGlue
+%% \ccConstructor{Segment_Delaunay_graph_site_2<K>(Point_2 p1, Point_2 p2)}{}
+%% %\ccGlue
+%% \ccConstructor{Segment_Delaunay_graph_site_2<K>(Point_2 p1, Point_2
+%%   p2, Point_2 q1, Point_2 q2)}{}
+%% %\ccGlue
+%% \ccConstructor{Segment_Delaunay_graph_site_2<K>(Point_2 p1, Point_2
+%%   p2, Point_2 q1, Point_2 q2, bool b)}{}
+%% %\ccGlue
+%% \ccConstructor{Segment_Delaunay_graph_site_2<K>(Point_2 p1, Point_2
+%%   p2, Point_2 q1, Point_2 q2, Point_2 r1, Point_2 r2)}{}
+
+\ccSeeAlso
+\ccc{Kernel}\\
+\ccc{SegmentDelaunayGraphSite_2}\\
+\ccc{CGAL::Segment_Delaunay_graph_traits_2<K,MTag>}\\
+\ccc{CGAL::Segment_Delaunay_graph_traits_without_intersections_2<K,MTag>}\\
+\ccc{CGAL::Segment_Delaunay_graph_filtered_traits_2<CK,CM,EK,EM,FK,FM>}\\
+\ccc{CGAL::Segment_Delaunay_graph_filtered_traits_without_intersections_2<CK,CM,EK,EM,FK,FM>}
+
+\end{ccRefClass}
+
+% +------------------------------------------------------------------------+
+%%RefPage: end of main body, begin of footer
+% EOF
+% +------------------------------------------------------------------------+
+

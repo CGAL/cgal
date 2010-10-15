@@ -1,0 +1,46 @@
+% +------------------------------------------------------------------------+
+% | Reference manual page: Regular_triangulation_filtered_traits_3.tex
+% +------------------------------------------------------------------------+
+% | September 2004   Sylvain Pion
+% | Package: Triangulation_3
+% | 
+\RCSdef{\RCSRegulartriangulationfilteredtraitsRev}{$Id$}
+\RCSdefDate{\RCSRegulartriangulationfilteredtraitsDate}{$Date$}
+% |
+%%RefPage: end of header, begin of main body
+% +------------------------------------------------------------------------+
+
+
+\begin{ccRefClass}{Regular_triangulation_filtered_traits_3<FK>}
+
+\begin{ccDeprecated}
+
+{\em Note} : this class is deprecated since \cgal\ 3.6.
+The class \ccc{CGAL::Regular_triangulation_euclidean_traits_3} should be used instead.
+Filtered predicates are automatically used if the boolean \ccc{Has_filtered_predicates}
+in the kernel provided as template parameter of that class is set to \ccc{true}.
+
+\ccDefinition
+  
+The class \ccRefName\ is designed as a traits class for the
+class \ccc{Regular_triangulation_3<RegularTriangulationTraits_3,TriangulationDataStructure_3>}. 
+Its difference with \ccc{Regular_triangulation_euclidean_traits_3} is that it
+provides filtered predicates which are meant to be fast and exact.
+
+The first argument \ccc{FK} must be a model of the \ccc{Kernel} concept, and
+it is also restricted to be a instance of the \ccc{Filtered_kernel} template.
+
+\ccInclude{CGAL/Regular_triangulation_filtered_traits_3.h}
+
+\ccIsModel
+\ccc{RegularTriangulationTraits_3}
+
+\ccInheritsFrom{\ccc{Regular_triangulation_euclidean_traits_3<FK>}}
+
+\ccSeeAlso
+
+\ccc{CGAL::Regular_triangulation_euclidean_traits_3}.
+
+\end{ccDeprecated}
+
+\end{ccRefClass}

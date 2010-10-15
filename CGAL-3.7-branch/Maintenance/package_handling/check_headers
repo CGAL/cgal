@@ -1,0 +1,356 @@
+#!/sw/bin/perl -w
+
+use strict;
+#use Cwd;
+use File::Copy;
+#use File::Basename;
+#use File::Find;
+use Getopt::Std;
+
+#
+# This script Checks if a file header complies to the CGAL rules.
+
+sub usage()
+{
+    print STDERR<<"EOF";
+usage:
+  $0 (-h|-u|-c) [-v version] [-d date] [-p package] [-m maintainer] file1 ...
+
+Exactly one of the options -h, -u and -c must be present.
+    -h show this message and quit
+    -u update headers
+    -c check but do no updates
+
+The following options are only effective in combination with -u.
+They give some data that is filled in in the header.     
+    -v version of the release (default: empty string)
+    -d date of the release (default: today)
+    -p package (default: leave it as specified in the file)
+    -m maintainer (default: no maintainer line)
+
+EOF
+}
+
+sub gjmove($$)
+{
+    return 1 if rename($_[0], $_[1] );
+    return (system('mv', "$_[0]", "$_[1]") == 0);
+}
+
+#----------------------------------------------------------------#
+#                     initialization                             #
+#----------------------------------------------------------------#
+
+my $TEMPFILE;
+
+
+sub print_license()
+{
+    print TEMPFILE <<'END_OF_LICENSE';
+//
+// This software and related documentation is part of an INTERNAL release
+// of the Computational Geometry Algorithms Library (CGAL). It is not
+// intended for general use.
+//
+END_OF_LICENSE
+}
+
+#----------------------------------------------------------------#
+#                     add_header                                 #
+#
+#
+#----------------------------------------------------------------#
+
+sub add_header($$$$$)
+{
+    my ($version, $date, $package, $maintainer, $filename) = @_;
+    $version = "" if (!defined($version));
+    $package = "" if (!defined($package));
+    $maintainer = "" if (!defined($maintainer));
+    my $year = `date '+%Y'`;
+    chomp $year;
+    print TEMPFILE "// ", '=' x 70,"\n";
+    print TEMPFILE "//\n";
+    print TEMPFILE "// Copyright \(c\) $year The CGAL Consortium\n";
+    print_license;
+    print TEMPFILE "// ", '-' x 70,"\n";
+    print TEMPFILE <<"END_OF_HEADER";
+//
+// release       : $version
+// release_date  : $date
+//
+// file          : ?/$filename
+// package       : $package
+// maintainer    : $maintainer
+// author(s)     : ?
+// coordinator   : ?
+//
+END_OF_HEADER
+    print TEMPFILE "// ", '=' x 70,"\n";
+    while(<SOURCE_FILE>) {
+	print TEMPFILE $_;
+    }
+}
+
+#----------------------------------------------------------------#
+#                     check_and_update_2                         #
+#----------------------------------------------------------------#
+
+sub check_and_update_2($$$$$)
+{
+    my ($version, $date, $package, $maintainer, $filename) = @_;
+    my $warnings = 0;
+    my $header_position = 1;
+# 1:before header; 2: in first part; 3: in second part 4: after header.
+
+    my $text_before_header = 0;
+    while ( <SOURCE_FILE> ) {
+	if ( m|^\s*//\s*={10,}\s*$| ) {
+	    $header_position = 2;
+	    last;
+	}
+	if ( $_ !~ m|^\s*$| ) {
+	    $text_before_header = 1;
+	}
+	print TEMPFILE $_;
+    }
+    if ($header_position != 2) {
+	print FILE_CHECKS "$filename has no header.\n";
+	return 0;
+    }
+    if ($text_before_header) {
+	print FILE_CHECKS "$filename has text before the header.\n";
+    }
+    print TEMPFILE "// ", '=' x 70,"\n";
+    print TEMPFILE "//\n";
+    $_ = <SOURCE_FILE>;
+    $_ = <SOURCE_FILE> while (m|^\s*//\s*$|);
+    if ($_ !~ m<^\s*//\s*Copyright\s*\(c\)\s*\d{4}([-,]\s?\d{4})*\s+(t|T)he CGAL Consortium\s*$> ) {
+	print FILE_CHECKS "$filename has no valid copyright notice.\n";
+	return 0;
+    }
+    print TEMPFILE $_;
+    print_license;
+    while ( <SOURCE_FILE> ) {
+	if (m|^\s*//\s*-{10,}\s*$|) {
+	    $header_position = 3;
+	    last;
+	}
+    }
+    if ($header_position != 3) {
+	print FILE_CHECKS "$filename has an incorrect header.\n";
+	print FILE_CHECKS "The line with dashes (----) is missing.\n";
+	return 0;
+    }
+    print TEMPFILE "// ", '-' x 70,"\n";
+
+    my ($release_seen, $release_date_seen, $file_seen, $package_seen,
+	$authors_seen, $coordinator_seen) = (0,0,0,0,0,0);
+    while ( <SOURCE_FILE> ) {
+	if ( m|^\s*//\s*={10,}\s*$| ) {
+	    $header_position = 4;
+	    last;
+	}
+	next if ($_ !~ m|^\s*//| );
+	if ( m<^\s*//\s*release\s*:> ) {
+	    ++$release_seen;
+	    print TEMPFILE "// release       : $version\n";
+	    next;
+	}
+	if ( m<^\s*//\s*release_date\s*:> ) {
+	    ++$release_date_seen;
+	    print TEMPFILE "// release_date  : $date\n";
+	    next;
+	}
+	if ( m<^\s*//\s*file\s*:\s*(.*?)\s*$> ) {
+	    ++$file_seen;
+	    my ($short_filename1, $short_filename2) = ($1,$filename);
+	    $short_filename1 =~ s|^.*/||;
+	    $short_filename1 =~ s|\s*$||;
+	    $short_filename2 =~ s|^.*/||;
+	    $short_filename2 =~ s|\s*$||;
+	    if ($short_filename1 ne $short_filename2) {
+		$warnings = 1;
+		print FILE_CHECKS
+		    "$filename: File name mentioned in header",
+		    " ($short_filename1) is incorrect.\n";
+	    }
+	    print TEMPFILE $_;
+	    if (defined($package) and $file_seen==1) {
+		print TEMPFILE "// package       : $package\n";
+		if (defined($maintainer)) {
+		    print TEMPFILE "// maintainer    : $maintainer\n";
+		}
+	    }
+	    next;
+	}
+	if ( m<^\s*//\s*package\s*:>i ) {
+	    ++$package_seen;
+	    if (!defined($package)) {
+		print TEMPFILE $_;
+	    }
+	    next;
+	}
+	if ( m<^\s*//\s*maintainer\s*:>i ) {
+	    next;
+	}
+	++$authors_seen if m<^\s*//\s*author(s|\(s\))?\s*:>;
+	++$coordinator_seen if m<^\s*//\s*coordinator\s*:>;
+	print TEMPFILE $_;
+    }
+    if ($header_position != 4) {
+	print FILE_CHECKS "Header of $filename does not end.\n";
+	return 0;
+    }
+
+    if ($release_seen == 0) {
+	print FILE_CHECKS
+	    "$filename: release field missing in header.\n";
+	$warnings = 1;
+	print TEMPFILE "// release       : $version\n";
+    } elsif ($release_seen > 1) {
+	print FILE_CHECKS
+	    "$filename: Multiple release fields in header.\n";
+	$warnings = 1;
+    }
+    if ($release_date_seen == 0) {
+	print FILE_CHECKS
+	    "$filename: release_date field missing in header.\n";
+	$warnings = 1;
+	print TEMPFILE "// release_date  : $date\n";
+    } elsif ($release_date_seen > 1) {
+	print FILE_CHECKS
+	    "$filename: Multiple release_date fields in header.\n";
+	$warnings = 1;
+    }
+    if ($file_seen == 0) {
+	print FILE_CHECKS
+	    "$filename: file field missing in header.\n";
+	$warnings = 1;
+	print TEMPFILE "// file         : ?\n";
+	if (defined($package)) {
+	    print TEMPFILE "// package       : $package\n";
+	} elsif ($package_seen == 0) {
+	    print FILE_CHECKS "$filename: Unknown package.\n";
+	    print TEMPFILE "// package       : ?\n";
+	}
+    } elsif ($file_seen > 1) {
+	print FILE_CHECKS
+	    "$filename: Multiple file fields in header.\n";
+	$warnings = 1;
+    }
+    if ($package_seen > 1) {
+	print FILE_CHECKS
+	    "$filename: Multiple package fields in header.\n";
+	$warnings = 1;
+    }
+    if ($authors_seen == 0) {
+	print FILE_CHECKS
+	    "$filename: authors field missing in header.\n";
+	$warnings = 1;
+	print TEMPFILE "// author(s)     : ?\n";
+    } elsif ($authors_seen > 1) {
+	print FILE_CHECKS
+	    "$filename: Multiple authors fields in header.\n";
+	$warnings = 1;
+    }
+    if ($coordinator_seen == 0) {
+	print FILE_CHECKS
+	    "$filename: coordinator field missing in header.\n";
+	$warnings = 1;
+	print TEMPFILE "// coordinator   : ?\n";
+    } elsif ($coordinator_seen > 1) {
+	print FILE_CHECKS
+	    "$filename: Multiple coordinator fields in header.\n";
+	$warnings = 1;
+    }
+    print TEMPFILE "// ", '=' x 70,"\n";
+
+
+    my ($lines_exceeding_length, $has_line_directives) = (0, 0);
+    while ( <SOURCE_FILE> ) {
+	$lines_exceeding_length +=1 if length $_ > 80;
+	$has_line_directives = 1 if m|^\s*#\s*line\s|;
+	print TEMPFILE $_;
+    }
+    if ($lines_exceeding_length) {
+	print FILE_CHECKS
+	    "$filename has $lines_exceeding_length",
+	    " lines over 80 characters.\n";
+    }
+    if ($has_line_directives) {
+	print FILE_CHECKS "$filename has line directives.\n";
+    }
+    return ($warnings ? 1 : 2);
+}
+
+sub check_and_update_file($$$$$)
+{
+    my ($filename, $version, $date, $package, $maintainer) = @_;
+    my $check_status;
+    open SOURCE_FILE, "<$filename" || die "Error opening $filename: $!\n";
+    open TEMPFILE, ">$TEMPFILE" || die;
+    $check_status =check_and_update_2(
+			$version, $date, $package, $maintainer, $filename);
+    close SOURCE_FILE || die "Error closing $filename: $!";
+    close TEMPFILE || die "Error closing temporary file: $!\n";
+    if ($check_status == 0) {
+	print FILE_CHECKS "Header check failed for $filename.\n";
+	print FILE_CHECKS "Creating a default header.\n";
+	open SOURCE_FILE, "<$filename"
+	    || die "Error opening $filename: $!\n";
+	open TEMPFILE, ">$TEMPFILE" || die;
+	add_header($version, $date, $package, $maintainer, $filename);
+	close SOURCE_FILE || die "Error closing $filename: $!";
+	close TEMPFILE || die "Error closing temporary file: $!\n";
+    }
+    if ($::opt_u) {
+	gjmove($TEMPFILE, $filename )
+	|| warn "Could not update file $filename\n";
+    }
+}
+
+
+#$::PARENT_DIR=cwd();
+
+sub main()
+{
+    umask(002);
+    
+    getopts('hucv:d:p:m:');
+    if ($::opt_h ) {
+	usage;
+	return;
+    }
+    $::opt_h = 0;
+    if ($::opt_u and $::opt_c) {
+	usage;
+	die "Both -c and -u option present\n";
+    }
+    if ($::opt_u ) {
+	$TEMPFILE="tmp.$$";
+	$::opt_v = "" if !$::opt_v;
+	if ( ! $::opt_d ) {
+	    $::opt_d = `date '+%Y, %B %d'`;
+	    chomp $::opt_d;
+	}
+    } else {  # no updates, only checking
+	die if !$::opt_c; # mainly put here for shutting up warnings
+	$TEMPFILE="/dev/null";
+	$::opt_v = "";
+	$::opt_d = "";
+	undef $::opt_p;
+	undef $::opt_m;
+    }
+    
+    open FILE_CHECKS, ">-";
+    my $filename;
+    foreach $filename (@ARGV) {
+	check_and_update_file($filename, $::opt_v, $::opt_d,
+		$::opt_p, $::opt_m);
+    }
+    close  FILE_CHECKS;
+}
+
+main;
+

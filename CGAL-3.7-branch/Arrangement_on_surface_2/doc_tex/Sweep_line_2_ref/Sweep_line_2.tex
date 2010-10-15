@@ -1,0 +1,71 @@
+% +------------------------------------------------------------------------+
+% | Reference manual page: Sweep_line_2.tex
+% +------------------------------------------------------------------------+
+% | 
+% | Package: Arrangement_2
+% | 
+% +------------------------------------------------------------------------+
+
+\ccRefPageBegin
+
+\begin{ccRefClass}{Sweep_line_2<Traits, Visitor>}
+%\label{arr_ref:arr_obs}
+
+\ccDefinition
+%============
+
+\ccClassTemplateName\ 
+
+\ccInclude{CGAL/Sweep_line_2.h}
+
+\ccInheritsFrom\ccc{Basic_sweep_line_2<Traits, Visitor>}
+
+\ccTypes
+%=======
+
+
+\ccTypedef{typedef typename Sweep_line_2<Traits, Visitor>::Traits_2 Traits_2;}
+    {the traits type.}
+\ccGlue
+
+\ccTypedef{typedef typename Sweep_line_2<Traits, Visitor>::X_monotone_curve_2 X_monotone_curve_2;}
+    {the $x$-monotone curve type.}
+\ccGlue
+\ccTypedef{typedef typename Sweep_line_2<Traits, Visitor>::Point_2 Point_2;}
+    {the point type.}
+\ccGlue
+
+\ccTypedef{typedef typename Sweep_line_2<Traits, Visitor>::Event Event;}
+    {the event type.}
+\ccGlue
+
+\ccTypedef{typedef typename Sweep_line_2<Traits, Visitor>::Subcurve Subcurve;}
+    {the subcurve type.}
+\ccGlue
+
+\ccTypedef{typedef typename Sweep_line_2<Traits, Visitor>::Status_line_iterator Status_line_iterator;}
+{the iterator type of the status line, its value type is  \ccc{Subcurve*}.}
+\ccGlue
+\ccTypedef{typedef typename Sweep_line_2<Traits, Visitor>::Event_queue_iterator Event_queue_iterator;}
+{the iterator type of the event queue, its value type is  \ccc{Event*}.}
+\ccGlue
+
+\ccTypedef{typedef typename Sweep_line_2<Traits, Visitor>::Visitor Visitor;}
+    {the visitor type.}
+\ccGlue
+
+\ccCreation
+\ccCreationVariable{obs}
+%=======================
+
+\ccConstructor{Sweep_line_2 (Visitor *visitor);} 
+    {constructs a sweep line object with a pointer to a sweep line visitor.}
+ 
+\ccConstructor{Sweep_line_2 (Traits_2 *traits, Visitor *visitor);} 
+    {constructs a sweep line object with pointer to a triats object and a pointer to a sweep-line visitor.}
+
+
+
+\end{ccRefClass}
+
+\ccRefPageEnd

@@ -1,0 +1,70 @@
+% +------------------------------------------------------------------------+
+% | Reference manual page: Moving_object_inserter.tex
+% +------------------------------------------------------------------------+
+% | 20.03.2005   Author
+% | Package: Kinetic_data_structures
+% | 
+\RCSdef{\RCSMovingobjectinserterRev}{$Id$}
+\RCSdefDate{\RCSMovingobjectinserterDate}{$Date$}
+% |
+%%RefPage: end of header, begin of main body
+% +------------------------------------------------------------------------+
+
+
+\begin{ccRefClass}{Kinetic::Erase_event<ActiveObjectsTable>}  %% add template arg's if necessary
+
+%% \ccHtmlCrossLink{}     %% add further rules for cross referencing links
+%% \ccHtmlIndexC[class]{} %% add further index entries
+
+\ccDefinition
+  
+This event erases a point from the \ccc{ActiveObjectsTable} when it
+is processed.
+
+\ccInclude{CGAL/Kinetic/Erase_event.h}
+
+\ccIsModel
+\ccc{Kinetic::Simulator::Event}
+
+\ccCreation
+\ccCreationVariable{i}  %% choose variable name
+
+\ccConstructor{Insert_event(ActiveObjectsTable::Key k,
+  ActiveObjectsTable::Handle t);}{Erase the object \ccc{k} from the table \ccc{t} when processed.}
+
+
+\ccSeeAlso
+
+\ccc{Kinetic::ActiveObjectsTable},
+\ccc{Kinetic::Active_objects_vector<MovingObject>}.
+
+\ccExample
+
+\begin{ccExampleCode}
+typedef CGAL::Kinetic::Exact_simulation_traits Simulation_traits;
+typedef Simulation_traits::Kinetic_kernel::Point_2 Moving_point_2;
+typedef CGAL::Kinetic::Insert_event<Simulation_traits::Active_points_2_table> Insert_event;
+typedef CGAL::Kinetic::Delaunay_triangulation_2<Simulation_traits> KDel;
+
+Simulation_traits tr;
+
+KDel kdel(tr);
+
+Moving_point_2 mp(Moving_point_2::NT(0),
+                  Moving_point_2::NT(0));
+tr.simulator_handle()->new_event(Simulation_traits::Simulator::Time(3), 
+                                 Erase_event(*tr.active_objects_table_handle()->keys_begin(),
+			                      tr.active_points_2_table_handle()));
+
+\end{ccExampleCode}
+
+
+
+
+\end{ccRefClass}
+
+% +------------------------------------------------------------------------+
+%%RefPage: end of main body, begin of footer
+% EOF
+% +------------------------------------------------------------------------+
+

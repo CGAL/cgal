@@ -1,0 +1,52 @@
+%% Copyright (c) 2004  SciSoft.  All rights reserved.
+%%
+%% This file is part of CGAL (www.cgal.org); you may redistribute it under
+%% the terms of the Q Public License version 1.0.
+%% See the file LICENSE.QPL distributed with CGAL.
+%%
+%% Licensees holding a valid commercial license may use this file in
+%% accordance with the commercial license agreement provided with the software.
+%%
+%% This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
+%% WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
+%%
+%% 
+%%
+%% Author(s)     : Fernando Cacciola <fernando_cacciola@hotmail.com>
+
+
+\begin{ccRefFunction}{convert_straight_skeleton_2<TgtSs,SrcSs,ItemsCvt>}
+
+%% add template arg's if necessary
+
+%% \ccHtmlCrossLink{}     %% add further rules for cross referencing links
+%% \ccHtmlIndexC[class]{} %% add further index entries
+\ccDefinition
+
+The function \ccRefName\ converts a straight skeleton instantiated using certain traits into another straight skeleton instantiated using a different traits.
+
+\ccInclude{CGAL/Straight_skeleton_converter_2.h}
+
+\ccFunction
+{boost::shared_ptr<Target_skeleton, Source_skeleton, Items_converter>
+ convert_straight_skeleton_2( Source_skeleton const& s
+                            , Items_converted const& ic = Items_converter()
+                            );
+}
+{ returns a new straight skeleton data structure with the same combinatorial and geometric data as $s$ using the items converter $ic$ to convert the geometric embedding to the types of the target skeleton.
+
+The first template parameter is the type of the target straight skeleton. This template parameter is not bound to a function argument so it must be explicitly specified.
+}
+
+\ccSeeAlso
+\ccc{StraightSkeletonItemsConverter_2}\\
+\ccc{Straight_skeleton_items_converter_2<SrcSs,TgtSs,NTConverter>}\\
+\ccc{Straight_skeleton_converter_2<SrcSs,TgtSs,ItemsConverter>}\\
+
+\end{ccRefFunction}
+
+% +------------------------------------------------------------------------+
+%%RefPage: end of main body, begin of footer
+% EOF
+% +------------------------------------------------------------------------+
+

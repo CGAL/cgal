@@ -1,0 +1,56 @@
+% +------------------------------------------------------------------------+
+% | Reference manual page: ConvexHullPolyhedronVertex_3.tex
+% +------------------------------------------------------------------------+
+% | 17.03.1999   Lutz Kettner
+% | Package: Polyhedron
+% | 
+\RCSdef{\RCSVertexRev}{$Id$}
+\RCSdefDate{\RCSVertexDate}{$Date$}
+% +------------------------------------------------------------------------+
+
+\ccRefPageBegin
+
+%%RefPage: end of header, begin of main body
+% +------------------------------------------------------------------------+
+
+
+\begin{ccRefConcept}{ConvexHullPolyhedronVertex_3}
+
+\ccDefinition
+
+The requirements of the vertex type of the polyhedron to be built by the
+function \ccc{convex_hull_3}.  
+
+\ccHasModels
+
+\ccRefIdfierPage{CGAL::Polyhedron_3<Traits>::Vertex}.
+
+\ccCreation
+\ccCreationVariable{v}
+
+\ccConstructor{Vertex();}{default constructor.}
+%\ccGlue
+%\ccConstructor{Vertex( const Point& p);}{vertex initialized with a point.}
+
+\ccOperations
+
+\ccTagFullDeclarations
+\ccMethod{Point&       point();}{}
+\ccGlue
+\ccMethod{const Point& point() const;}{the point.}
+
+\ccSeeAlso
+
+\ccRefIdfierPage{CGAL::Polyhedron_3<Traits>} \\
+\ccRefConceptPage{ConvexHullPolyhedronFacet_3} \\
+\ccRefConceptPage{ConvexHullPolyhedronHalfedge_3} 
+
+\ccTagDefaults
+\end{ccRefConcept}
+
+% +------------------------------------------------------------------------+
+%%RefPage: end of main body, begin of footer
+\ccRefPageEnd
+% EOF
+% +------------------------------------------------------------------------+
+

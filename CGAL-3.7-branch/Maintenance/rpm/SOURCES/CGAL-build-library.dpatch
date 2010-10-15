@@ -1,0 +1,56 @@
+#! /bin/sh /usr/share/dpatch/dpatch-run
+## library-soname.dpatch by Joachim Reichel <joachim.reichel@gmx.de>
+##
+## All lines beginning with `## DP:' are a description of the patch.
+## DP: No description.
+
+@DPATCH@
+diff -urNad cgal/install_cgal cgal/install_cgal
+--- cgal/install_cgal	2006-04-17 22:33:03.000000000 +0200
++++ cgal/install_cgal	2006-04-17 22:33:06.000000000 +0200
+@@ -4156,7 +4156,7 @@
+ 	    MAKE_OPTION="${MAKE_OPTION} CXXFLAGS=\$(CGAL_SHARED_LIB_CXXFLAGS) shared_lib";;
+     esac
+ 
+-    if make ${MAKE_OPTION} >"${COMPILE_LOGFILE}" 2>&1; then
++    if make ${MAKE_OPTION} | tee "${COMPILE_LOGFILE}" 2>&1; then
+ 	log_print "Compilation of $1 $2 ${_libname} succeeded."
+ 	${_printf} "%s\n" " done."
+ 	ANY_LIB_COMPILED='y'
+diff -urNad cgal/src/CGAL/makefile cgal/src/CGAL/makefile
+--- cgal/src/CGAL/makefile	2006-04-17 22:33:03.000000000 +0200
++++ cgal/src/CGAL/makefile	2006-04-17 22:33:28.000000000 +0200
+@@ -74,11 +74,14 @@
+ #                    target entries
+ #---------------------------------------------------------------------#
+ 
++SOVERSION=2.0.0
++SOMAJOR=2
++
+ shared_lib: $(CGAL_OBJECTS)
+-	$(CGAL_SHARED_LIB_CREATE)$(CGAL_SHARED_LIB) \
++	$(CGAL_SHARED_LIB_CREATE)$(CGAL_SHARED_LIB).$(SOVERSION) -Wl,-soname,$(CGAL_SHARED_LIB).${SOMAJOR} \
+ 	`ls *$(OBJ_EXT) | awk '{for (i=1; i<=NF;++i){printf "$(CGAL_OBJ_PREFIX)";print $$i}}'`\
+ 		$(CGAL_SHARED_LIB_LDFLAGS)
+-	mv $(CGAL_SHARED_LIB) '$(CGAL_LIB_DESTINATION)'
++	mv $(CGAL_SHARED_LIB).$(SOVERSION) '$(CGAL_LIB_DESTINATION)'
+ 	rm $(CGAL_OBJECTS)
+ 
+ static_lib: static_lib_no_install
+@@ -99,5 +102,5 @@
+ #---------------------------------------------------------------------#
+ 
+ .cpp$(OBJ_EXT):
+-	$(CGAL_CXX)  $(CXXFLAGS)  -c $<
++	$(CGAL_CXX)  $(CXXFLAGS) -D_REENTRANT -c $<
+ 
+diff -urNad cgal/src/CGALQt/makefile cgal/src/CGALQt/makefile
+--- cgal/src/CGALQt/makefile	2006-04-17 21:00:25.000000000 +0200
++++ cgal/src/CGALQt/makefile	2006-04-17 22:33:53.000000000 +0200
+@@ -125,5 +125,5 @@
+ 	$(CGAL_CXX) $(CXXFLAGS) -c Qt_widget_OpenGL.cpp
+ 
+ .cpp$(OBJ_EXT):
+-	$(CGAL_CXX)  $(CXXFLAGS) -c $<
++	$(CGAL_CXX)  $(CXXFLAGS) -D_REENTRANT -c $<
+ 

@@ -1,0 +1,72 @@
+% +------------------------------------------------------------------------+
+% | Cbp Reference Manual:  intro.tex
+% +------------------------------------------------------------------------+
+% | Polyhedron reference manual pages
+% |
+% | 14.05.1998   Lutz Kettner
+\RCSdef{\polyhedronRefRev}{$Id$}
+\RCSdefDate{\polyhedronRefDate}{$Date$}
+% +------------------------------------------------------------------------+
+
+\ccRefChapter{3D Polyhedral Surfaces\label{chapterPolyhedronRef}}
+\ccChapterRelease{\polyhedronRefRev. \ \polyhedronRefDate}
+\ccChapterAuthor{Lutz Kettner}
+
+
+% +------------------------------------------------------------------------+
+
+Polyhedral surfaces in three dimensions are composed of vertices,
+edges, facets and an incidence relationship on them. The organization
+beneath is a halfedge data structure, which restricts the class of
+representable surfaces to orientable 2-manifolds -- with and without
+boundary. If the surface is closed we call it a {\em polyhedron}.
+
+The polyhedral surface is realized as a container class managing
+vertices, halfedges, facets with their incidences, and maintaining the
+combinatorial integrity of them. Its local types for the vertices,
+halfedges and facets are documented separately.  A default traits
+class, a default items class and an incremental builder conclude the
+references. The polyhedral surface is based on the highly flexible
+design of the halfedge data structure, see the reference for
+\ccc{HalfedgeDS} in Chapter~\ref{chapterHalfedgeDSRef}
+or~\cite{k-ugpdd-99}, but the default instantiation of the polyhedral
+surface can be used without knowing the halfedge data structure.
+
+\section{Classified Reference Pages}
+
+\subsection*{Concepts}
+
+\ccRefIdfierPage{PolyhedronTraits_3}\\ 
+\ccRefIdfierPage{PolyhedronItems_3}
+
+\subsection*{Classes}
+
+\ccRefIdfierPage{CGAL::Polyhedron_3<Traits>}\\ 
+\ccRefIdfierPage{CGAL::Polyhedron_3<Traits>::Vertex}\\ 
+\ccRefIdfierPage{CGAL::Polyhedron_3<Traits>::Halfedge}\\ 
+\ccRefIdfierPage{CGAL::Polyhedron_3<Traits>::Facet}\\ 
+\ccRefIdfierPage{CGAL::Polyhedron_traits_3<Kernel>}\\ 
+\ccRefIdfierPage{CGAL::Polyhedron_traits_with_normals_3<Kernel>}\\ 
+\ccRefIdfierPage{CGAL::Polyhedron_items_3}\\ 
+\ccRefIdfierPage{CGAL::Polyhedron_min_items_3}\\ 
+\ccRefIdfierPage{CGAL::Polyhedron_incremental_builder_3<HDS>}
+
+\subsection*{Functions}
+\ccThree{ostream&}{}{page 999.}
+
+\ccHtmlNoLinks\ccHtmlNoIndex
+\ccFunction{template <class Traits>
+            ostream& operator<<( ostream& out, 
+                                 const CGAL::Polyhedron_3<Traits>& P);}
+    {\lcRawHtml{<A HREF="Function_operator.html">(go there)</A>}
+     \lcTex{\hfill page~\pageref{refPolyhedron_operator_leftshift}}}
+
+\ccHtmlNoLinks\ccHtmlNoIndex
+\ccFunction{template <class Traits>
+            istream& operator>>( istream& in, 
+                                 CGAL::Polyhedron_3<Traits>& P);}
+    {\lcRawHtml{<A HREF="Function_operator--.html">(go there)</A>}
+     \lcTex{\hfill page~\pageref{refPolyhedron_operator_rightshift}}}
+
+
+%% EOF %%

@@ -1,0 +1,19 @@
+\begin{ccRefFunctionObjectConcept}{Kernel::ComputeSquaredLength_3}
+A model for this must provide:
+
+\ccCreationVariable{fo}
+
+\ccMemberFunction{Kernel::FT operator()(const Kernel::Vector_3& v);}
+       {returns the squared length of $v$. }
+
+\ccMemberFunction{Kernel::FT operator()(const Kernel::Segment_3& s);}
+       {returns the squared length of $s$. }
+
+\ccRefines
+\ccc{AdaptableFunctor} (with one argument)
+
+\ccSeeAlso
+\ccRefIdfierPage{CGAL::Vector_3<Kernel>} \\
+\ccRefIdfierPage{CGAL::Segment_3<Kernel>} \\
+
+\end{ccRefFunctionObjectConcept}

@@ -1,0 +1,121 @@
+\RCSdef{\RCSCandSSurfaceMeshCTRev}{$Id$}
+\RCSdefDate{\RCSCandSSurfaceMeshCTDate}{$Date$}
+% |
+%%RefPage: end of header, begin of main body
+% +------------------------------------------------------------------------+
+
+
+\begin{ccRefConcept}{PiecewiseSmoothSurfaceMeshComplex_2InTriangulation_3}
+
+%% \ccHtmlCrossLink{}     %% add further rules for cross referencing links
+%% \ccHtmlIndexC[concept]{} %% add further index entries
+
+\ccDefinition
+  
+The concept \ccRefName\ describes a data structure
+designed  to represent a  two dimensional pure complex 
+embedded in a three dimensional triangulation. It refines the concept
+\ccc{SurfaceMeshComplex_2InTriangulation_3} and adds a few requirements
+needed to mesh piecewise smooth surfaces. In addition to the types and methods
+of \ccc{SurfaceMeshComplex_2InTriangulation_3}, \ccRefName\ adds methods to mark
+certain edges of the complex, and attach some information to marked edges.
+
+\ccRefines
+\ccc{SurfaceMeshComplex_2InTriangulation_3}
+
+\ccTypes
+\ccNestedType{Edge_info}{The type of info that can be attached to marked
+  edges. That type must to have at least two members \ccc{is_cached} of
+  type \ccc{bool} and \ccc{lineic_center} of type
+  \ccc{Triangulation::Point_3} (\ccc{Triangulation} is defined in
+  \ccc{SurfaceMeshComplex_2InTriangulation_3}).}
+
+\ccCreationVariable{c2t3}  %% choose variable name
+
+\ccHeading{Queries}
+
+\ccMethod{bool is_marked(Edge e);}{Returns \ccc{true} iff the edge \ccc{e}
+  is marked.}
+\ccGlue
+\ccMethod{bool is_marked(Cell_handle c, int i, int j);}{Returns \ccc{true}
+  iff the edge \ccc{(c,i,j)} is marked.}
+
+\ccMethod{size_type number_of_marked_edges() const;}
+{Returns the number of marked edges of the 2D complex.}
+
+\ccMethod{Edge_info get_info(Edge e);}
+{Get info attached
+to edge \ccc{e} in the 2D complex.
+\ccPrecond Edge \ccc{e} has to be a marked edge.}
+\ccGlue
+\ccMethod{Edge_info get_info(Cell_handle c, int i, int j);}
+{Get info attached
+to edge \ccc{(c,i,j)} in the 2D complex.
+\ccPrecond Edge \ccc{(c,i,j)} has a marked edge.}
+
+
+
+\ccHeading{Modification}
+
+\ccMethod{void remove_from_complex(Edge e);}{Removes edge \ccc{e} from the 2D
+complex, if the edge is ISOLATED. It the edge \ccc{e} is a BOUNDARY,  
+REGULAR or SINGULAR edge, does nothing.}
+\ccGlue
+\ccMethod{void remove_from_complex(Cell_handle c, int i, int j);}
+{Removes edge
+\ccc{(c,i,j)} from the 2D complex, if the edge is ISOLATED. It the edge
+\ccc{(c,i,j)} is a BOUNDARY, REGULAR or SINGULAR edge, does nothing.}
+
+\ccMethod{void mark(Edge e);}{Marks edge \ccc{e} of the 2D
+complex. If \ccc{e} is not in the complex, inserts it.}
+\ccGlue
+\ccMethod{void mark(Cell_handle c, int i, int j);}
+{Marks edge \ccc{(c,i,j)} of  the 2D complex. If \ccc{e} is not in the
+  complex, inserts it.}
+\ccGlue
+\ccMethod{bool unmark(Edge e);}{Unmarks edge \ccc{e} of the 2D
+complex (but do not remove it from the complex).
+ Returns \ccc{true} iff \ccc{e} was marked.}
+\ccGlue
+\ccMethod{bool unmark(Cell_handle c, int i, int j);}
+{Unmarks edge \ccc{(c,i,j)} of  the 2D complex (but do not remove it from
+  the complex).
+Returns \ccc{true} iff \ccc{e} was marked.}
+
+\ccMethod{void set_info(Edge e, Edge_info ei);}
+{Sets info attached to edge \ccc{e} in the 2D complex.
+\ccPrecond Edge \ccc{e} has to be a marked edge.}
+\ccGlue
+\ccMethod{void set_info(Cell_handle c, int i, int j, Edge_info ei);}
+{Sets info attached to edge \ccc{(c,i,j)} in the 2D complex.
+\ccPrecond Edge \ccc{(c,i,j)} has to be a marked edge.}
+
+\ccMethod{void mark(Edge e, Edge_info ei);}{Marks edge \ccc{e} of the 2D
+complex. If \ccc{e} is not in the complex, inserts it. Then sets the info
+attached to the edge \ccc{e}.}
+\ccGlue
+\ccMethod{void mark(Cell_handle c, int i, int j, Edge_info ei);}
+{Marks edge \ccc{(c,i,j)} of  the 2D complex. If \ccc{e} is not in the
+  complex, inserts it. Then sets the info attached to the edge \ccc{(c,i,j)}.}
+
+\ccHasModels
+
+\ccc{Surface_mesh_complex_2_in_triangulation_3<Tr, Edge_info>}, when
+\ccc{Edge_info} has two data members \ccc{is_cached} of type \ccc{bool}
+and \ccc{lineic_center} of type \ccc{Triangulation::Point_3}.
+
+
+\ccSeeAlso
+
+%\ccc{Complex_2InTriangulation\_3}, \\
+%\ccc{PureComplex_2InTriangulation_3}\\
+\ccc{make_curves_and_surface_mesh}.
+
+
+\end{ccRefConcept}
+
+% +------------------------------------------------------------------------+
+%%RefPage: end of main body, begin of footer
+% EOF
+% +------------------------------------------------------------------------+
+

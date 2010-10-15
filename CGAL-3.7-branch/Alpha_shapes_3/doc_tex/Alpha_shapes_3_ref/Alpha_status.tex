@@ -1,0 +1,87 @@
+% +------------------------------------------------------------------------+
+% | Reference manual page: Alpha_status.tex
+% +------------------------------------------------------------------------+
+% | 13.08.2004   Author Mariette Yvinec
+% | Package: Alpha_shapes_3
+% | 
+\RCSdef{\RCSAlphastatusRev}{$Id$}
+\RCSdefDate{\RCSAlphastatusDate}{$Date$}
+% |
+%%RefPage: end of header, begin of main body
+% +------------------------------------------------------------------------+
+
+
+\begin{ccRefClass}{Alpha_status<NT>}  %% add template arg's if necessary
+
+%% \ccHtmlCrossLink{}     %% add further rules for cross referencing links
+%% \ccHtmlIndexC[class]{} %% add further index entries
+
+\ccDefinition
+  
+The class \ccRefName\ is a small data structure to store
+the critical alpha values of faces of an alpha shape.
+Each face has three critical alpha values, called
+\ccc{alpha_min}, \ccc{alpha_mid} and \ccc{alpha_max} in increasing order.
+The face will be exterior for any $\alpha < $ \ccc{alpha_min},
+singular for \ccc{alpha_min} $\leq  \alpha  < $ \ccc{alpha_mid},
+regular for  \ccc{alpha_mid} $\leq  \alpha < $ \ccc{alpha_max}
+and interior for \ccc{alpha_max} $ \leq alpha$.
+The value \ccc{alpha_min} is undefined for faces which are not Gabriel
+faces and therefore do not appear in the alpha complex
+without any of their
+including face. The value \ccc{alpha_max} is undefined
+for convex hull faces which can never be interior,
+The data structure also includes two Boolean to mark
+if the face is a Gabriel face or a convex hull face.
+
+The class \ccRefName\ is parameterized by a number type \ccc{NT}.
+
+\ccInclude{CGAL/Alpha_shape_cell_base_3.h}
+
+
+
+
+\ccCreation
+\ccCreationVariable{a}  %% choose variable name
+
+\ccConstructor{Alpha_status();}{default constructor.}
+
+\ccModifiers
+\ccMethod{  void set_is_Gabriel(bool yesorno);} { sets Gabriel marker;}
+\ccGlue
+\ccMethod{ void set_is_on_chull(bool yesorno);} {sets convex hull marker;}
+\ccGlue
+\ccMethod{ void set_alpha_min(NT alpha);} {sets \ccc{alpha_min}.}
+\ccGlue
+\ccMethod{ void set_alpha_mid(NT alpha);} {sets \ccc{alpha_mid}.}
+\ccGlue
+\ccMethod{  void set_alpha_max(NT alpha);} {sets \ccc{alpha_max}.}
+
+
+\ccAccessFunctions
+\ccMethod{  bool is_Gabriel() const ;}{Returns true for Gabriel faces;}
+\ccGlue
+\ccMethod{  bool is_on_chull() const;} {Returns true for convex hull faces;}
+\ccGlue
+\ccMethod{  NT alpha_min() const;} 
+{ Returns the \ccc{alpha_min}
+\ccPrecond \ccc{is_Gabriel()} returns false;}
+\ccGlue
+\ccMethod{  NT alpha_mid() const;} { Returns the \ccc{alpha_mid};}
+\ccGlue
+\ccMethod{  NT alpha_max() const; } 
+{ Returns \ccc{alpha_max}.
+\ccPrecond \ccc{is_on_chull()} returns false.}
+
+\ccSeeAlso
+\ccc{AlphaShapeCellBase_3} \\
+\ccc{AlphaShapeVertexBase_3}
+
+
+\end{ccRefClass}
+
+% +------------------------------------------------------------------------+
+%%RefPage: end of main body, begin of footer
+% EOF
+% +------------------------------------------------------------------------+
+

@@ -1,0 +1,172 @@
+Subject: CGAL 3.2 Released, Computational Geometry Algorithms Library
+Body: 
+
+The CGAL Open Source Project is pleased to announce the release 3.2 of 
+CGAL, the Computational Geometry Algorithms Library.  
+
+
+Besides improvements of existing packages this release offers
+the following new algorithms and data structures.
+
+ o 2D Regularized Boolean Set-Operations
+
+   This package consists of the implementation of Boolean
+   set-operations on point sets bounded by weakly x-monotone curves in
+   2-dimensional Euclidean space. In particular, it contains the
+   implementation of regularized Boolean set-operations, intersection
+   predicates, and point containment predicates.
+
+ o 2D Straight Skeleton and Polygon Offsetting
+
+   This package implements an algorithm to construct a halfedge data
+   structure representing the straight skeleton in the interior of 2D
+   polygons with holes and an algorithm to construct inward offset
+   polygons at any offset distance given a straight skeleton.
+   
+   
+ o 2D Voronoi Diagram
+
+   The 2D Voronoi diagram package provides an adaptor that adapts a
+   2-dimensional triangulated Delaunay graph to the corresponding
+   Voronoi diagram, represented as a doubly connected edge list (DCEL)
+   data structure. The adaptor has the ability to automatically
+   eliminate, in a consistent manner, degenerate features of the 
+   Voronoi diagram, that are artifacts of the requirement that 
+   Delaunay graphs should be triangulated even in degenerate 
+   configurations. Depending on the type of operations that the 
+   underlying Delaunay graph supports, the adaptor allows for the 
+   incremental or dynamic construction of Voronoi diagrams and can 
+   support point location queries.
+
+
+ o 3D Surface Mesher
+
+   This package provides functions to generate surface meshes that
+   interpolate smooth surfaces. The meshing algorithm is based on
+   Delaunay refinement and provides some guarantees on the resulting
+   mesh: the user is able to control the size and shape of the mesh
+   elements and the accuracy of the surface approximation. There is no
+   restriction on the topology and number of components of input
+   surfaces. The surface mesher may also be used for non smooth 
+   surfaces but without guarantee.
+
+   Currently, implementations are provided for implicit surfaces
+   described as the zero level set of some function and surfaces
+   described as a gray level set in a three-dimensional image.
+
+
+ o 3D Surface Subdivision Methods
+
+   Subdivision methods recursively refine a control mesh and generate
+   points approximating the limit surface. This package consists of 
+   four popular subdivision methods and their refinement hosts. 
+   Supported subdivision methods include Catmull-Clark, Loop, Doo-Sabin 
+   and sqrt(3) subdivisions. Their respective refinement hosts are 
+   PQQ, PTQ, DQQ and sqrt(3) refinements. Variations of those methods 
+   can be easily extended by substituting the geometry computation of
+   the refinement host.
+
+
+ o Planar Parameterization of Triangulated Surface Meshes
+
+   Parameterizing a surface amounts to finding a one-to-one mapping 
+   from a suitable domain to the surface. In this package, we focus 
+   on triangulated surfaces that are homeomorphic to a disk and on 
+   piecewise linear mappings into a planar domain. This package 
+   implements some of the state-of-the-art surface mesh 
+   parameterization methods, such as least squares conformal maps, 
+   discrete conformal map, discrete authalic parameterization, 
+   Floater mean value coordinates or Tutte barycentric mapping.
+
+
+ o Principal Component Analysis
+
+   This package provides functions to compute global informations on 
+   the shape of a set of 2D or 3D objects such as points. It provides 
+   the computation of axis-aligned bounding boxes, centroids of point 
+   sets, barycenters of weighted point sets, as well as linear least 
+   squares fitting for point sets in 2D, and point sets as well as 
+   triangle sets in 3D.
+
+
+ o 2D Placement of Streamlines
+   
+   Visualizing vector fields is important for many application domains. 
+   A good way to do it is to generate streamlines that describe the 
+   flow behavior. This package implements the "Farthest Point Seeding"
+   algorithm for placing streamlines in 2D vector fields. It generates 
+   a list of streamlines corresponding to an input flow using a 
+   specified separating distance. The algorithm uses a Delaunay 
+   triangulation to model objects and adress different queries, and 
+   relies on choosing the centers of the biggest empty circles to start 
+   the integration of the streamlines.
+
+
+ o  Kinetic Data Structures
+
+   Kinetic data structures allow combinatorial structures to be
+   maintained as the primitives move. The package provides
+   implementations of kinetic data structures for Delaunay 
+   triangulations in two and three dimensions, sorting of points in 
+   one dimension and regular triangulations in three dimensions. 
+   The package supports exact or inexact operations on primitives 
+   which move along polynomial trajectories.
+
+
+ o Kinetic Framework
+
+   Kinetic data structures allow combinatorial geometric structures 
+   to be maintained as the primitives move. The package provides a 
+   framework to ease implementing and debugging kinetic data 
+   structures. The package supports exact or inexact operations on 
+   primitives which move along polynomial trajectories.
+
+
+ o  Smallest Enclosing Ellipsoid 
+   
+   An approximative algorithm for constructing the smallest enclosing 
+   ellipsoid in d-dimensional Euclidean space.
+
+
+
+See http://www.cgal.org/releases_frame.html for a complete list of changes.
+
+
+
+The CGAL project is a collaborative effort to develop a robust,
+easy-to-use, and efficient C++ software library of geometric data
+structures and algorithms, like 
+- triangulations (2D constrained triangulations and Delaunay 
+  triangulations in 2D and 3D), 
+- Voronoi diagrams (for 2D and 3D points, 2D additively weighted 
+  Voronoi diagrams, and segment Voronoi diagrams),
+- Boolean operations on polygons and polyhedra,
+- arrangements of curves, 
+- mesh algorithms (2D Delaunay mesh generation and 3D surface mesh 
+  generation, surface mesh subdivision and parameterization), 
+- alpha shapes, 
+- convex hull algorithms (in 2D, 3D and dD), 
+- operations on polygons (straight skeleton and offset polygon), 
+- search structures (kd trees for nearest neighbor search, and 
+  range and segment trees), 
+- interpolation (natural neighbor interpolation and placement of 
+  streamlines), 
+- optimisation algorithms (smallest enclosing sphere of points or 
+  spheres, smallest enclosing ellipsoid of points, principal 
+  component analysis), 
+- kinetic data structures.
+
+
+
+
+Some modules are distributed under the terms of the LGPL Open Source 
+license(GNU Lesser General Public License v2.1).  
+Most modules are distributed under the terms of the QPL Open Source
+license (Q Public License v1.0).
+If your intended usage does not meet the criteria of the
+aforementioned licenses, a commercial license must be purchased from
+GeometryFactory (www.geometryfactory.com).
+
+
+For further information and for downloading the library and its 
+documentation, please visit the CGAL web site: http://www.cgal.org/

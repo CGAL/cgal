@@ -1,0 +1,81 @@
+% +------------------------------------------------------------------------+
+% | Reference manual page: Event.tex
+% +------------------------------------------------------------------------+
+% | 20.03.2005   Author
+% | Package: Kinetic_data_structures
+% | 
+\RCSdef{\RCSEventRev}{$Id$}
+\RCSdefDate{\RCSEventDate}{$Date$}
+% |
+%%RefPage: end of header, begin of main body
+% +------------------------------------------------------------------------+
+
+\ccDefGlobalScope{CGAL::}
+\begin{ccRefConcept}[Kinetic::FunctionKernel::]{Function}
+
+%% \ccHtmlCrossLink{}     %% add further rules for cross referencing links
+%% \ccHtmlIndexC[concept]{} %% add further index entries
+
+\ccDefinition
+  
+The concept \ccClassName\ represents a function. 
+
+\ccCreationVariable{a}  %% choose variable name
+
+
+\ccTypes
+
+\ccNestedType{NT}{The number type used in describing the function.}
+
+\ccConstructor{Function(NT);}{Construct a constant function from a number.}
+
+
+\ccOperations
+
+\ccMethod{NT operator()(NT);} {Evaluate the function at an \ccc{NT}.}
+
+\ccSeeAlso
+
+\ccc{FunctionKernel},
+\ccc{FunctionKernel::ConstructFunction}
+
+\ccExample
+
+Several ways to create functions:
+
+Using \ccc{Kinetic::ConstructFunction}:
+\begin{ccExampleCode}
+Traits::Function_kernel::Construct_function cf= traits.function_kernel_object().construct_function_object();
+Traits::Kinetic_kernel::Motion_function x= cf(0.0,1.0,2.0);
+Traits::Kinetic_kernel::Motion_function y= cf(0.0,1.0,2.0);
+Traits::Kinetic_kernel::Point_2 pt(x,y);
+\end{ccExampleCode}
+
+Using the constructor:
+\begin{ccExampleCode}
+double coefs[]={1.0, 2.0, 3.0};
+Traits::Kinetic_kernel::Motion_function z(coefs, coefs+3);
+\end{ccExampleCode}
+
+Using ring operations:
+\begin{ccExampleCode}
+Traits::Kinetic_kernel::Motion_function z= x*z+y;
+\end{ccExampleCode}
+
+\end{ccRefConcept}
+
+% +------------------------------------------------------------------------+
+%%RefPage: end of main body, begin of footer
+% EOF
+% +------------------------------------------------------------------------+
+
+
+%%% Local Variables: 
+%%% mode: latex
+%%% TeX-master: t
+%%% End: 
+
+%%% Local Variables: 
+%%% mode: latex
+%%% TeX-master: "ConstructFunction"
+%%% End: 

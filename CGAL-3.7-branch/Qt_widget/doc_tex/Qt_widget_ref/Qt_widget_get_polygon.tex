@@ -1,0 +1,69 @@
+% +------------------------------------------------------------------------+
+% | CGAL Reference Manual: Reference manual for Qt_widget.tex
+% +------------------------------------------------------------------------+
+% |
+% | 03.01.2001  Radu Ursu
+% | 
+% | \RCSdef{\qtwidgetRev}{$Id$}
+% | \RCSdefDate{\qtwidgetDate}{$Date$}
+% +------------------------------------------------------------------------+
+
+% +-----------------------------------------------------+
+\begin{ccRefClass}{Qt_widget_get_polygon<Polygon>}
+
+\ccDefinition
+An object of type \ccRefName\ creates a \cgal\ polygon. A new 
+vertex is inserted every time the left mouse button is pressed.
+The polygon is returned on a right click. You can use the \ccc{Escape}
+key if you want to remove your last entered point in the polygon.
+The use of \ccRefName\ requires that the mouse tracking is
+enabled for widgets attaching it.
+
+\ccInclude{CGAL/IO/Qt_widget_get_polygon.h}
+
+\ccParameters
+
+The full template declaration of \ccc{Qt_widget_get_polygon} states one parameter:
+
+\begin{tabbing}
+\ccc{template <} \=\ccc{class Polygon >}\\
+        \ccc{class Qt_widget_get_polygon;}
+\end{tabbing}
+
+Polygon should be a \cgal\ Polygon, or should provide the following
+types:
+
+\ccTypes
+\ccTypedef{typedef Polygon::Point_2 Point_2;}{}
+\ccTypedef{typedef Polygon::Segment_2 Segment2;}{}
+\ccTypedef{typedef Polygon::Edge_const_iterator ECI;}{}
+\ccTypedef{typedef Polygon::Vertex_iterator VI;}{}
+\ccTypedef{typedef Polygon::FT FT;}{}
+
+\ccInheritsFrom
+\ccc{Qt_widget_tool}
+
+\ccGlue
+
+\ccCreation
+\ccCreationVariable{getpoly}
+\ccSetTwoColumns{Qt_widget_get_polygon}{}
+
+\ccConstructor{Qt_widget_get_polygon<T>(const QCursor
+c=QCursor(Qt::crossCursor), QObject* parent = 0, const char* name =
+0);}{\ccc{c} is the cursor that this layer will use when is
+active. \ccc{parent} is the parent widget and \ccc{name} is the name you 
+give to this layer.}
+
+\end{ccRefClass}
+
+% +-----------------------------------------------------+
+% EOF
+
+
+
+
+
+
+
+

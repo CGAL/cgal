@@ -1,0 +1,301 @@
+%% =============================================================================
+%% The CGAL Reference Manual
+%% Chapter: STL Extensions - The Reference Part
+%% -----------------------------------------------------------------------------
+%% file  : doc_tex/support/STL_Extension/STL_Extension_ref/in_place_list.tex
+%% author: Lutz Kettner 
+%% -----------------------------------------------------------------------------
+%% $CGAL_Chapter: STL_Extension $
+%% $Id$
+%% $Date$
+%% =============================================================================
+
+%% +=========================================================================+
+
+\begin{ccRefClass}{In_place_list_base<T>}
+  
+  \ccDefinition The node base classes provides pointers to build
+  linked lists. The class \ccStyle{In_place_sl_list_base<T>} provides
+  a pointer \ccStyle{next_link} for a single linked list. The class
+  \ccStyle{In_place_list_base<T>} provides an additional pointer
+  \ccStyle{prev_link} for doubly linked lists. These names conform to
+  the default parameters used in the template argument lists of the
+  container classes. The pointers are public members.
+
+  \ccInclude{CGAL/In_place_list.h}
+  \ccSetThreeColumns{T*}{next_link ;}{}
+
+  \ccHeading{Variables}
+  \ccVariable{T* next_link;}{forward pointer}
+  \ccGlue
+  \ccVariable{T* prev_link;}{backward pointer}
+\end{ccRefClass}
+
+%% +--------------------------------------------------------+
+\begin{ccRefClass}{In_place_list<T,bool>}
+  
+  \ccDefinition An object of the class \ccClassTemplateName\ 
+  represents a sequence of items of type \ccc{T} that supports
+  bidirectional iterators and allows constant time insert and erase
+  operations anywhere within the sequence. The functionality is
+  similar to the \ccStyle{list<T>} in the \stl.
+  
+  The \ccClassTemplateName\ manages the items in place, i.e., inserted
+  items are not copied. Two pointers of type \ccStyle{T*} are expected
+  to be reserved in \ccc{T} for the list management. The base class
+  \ccStyle{In_place_list_base<T>} can be used to obtain such pointers.
+  
+  The \ccClassTemplateName\ does not copy element items during
+  insertion (unless otherwise stated for a function). On removal of an
+  item or destruction of the list the items are not deleted by
+  default.  The second template parameter \ccStyle{bool} is set to
+  \ccStyle{false} in this case. If the \ccClassTemplateName\ should
+  take the responsibility for the stored objects the \ccStyle{bool}
+  parameter could be set to \ccStyle{true}, in which case the list
+  will delete removed items and will delete all remaining items on
+  destruction. In any case, the \ccStyle{destroy()} member function
+  deletes all items.  Note that these two possible versions of
+  \ccClassTemplateName\ are not assignable to each other to avoid
+  confusions between the different storage responsibilities.
+
+  \ccInclude{CGAL/In_place_list.h}
+
+  %% +-----------------------------------+
+  \ccParameters
+  
+  The full class name is \ccStyle{In_place_list<T, bool managed =
+    false, class Alloc = CGAL_ALLOCATOR(T)>}.
+  
+  The parameter \ccStyle{T} is supposed to have a default constructor,
+  a copy constructor and an assignment operator. The copy constructor
+  and the assignment may copy the pointers in \ccc{T} for the list
+  management, but they do not have to. The equality test and the
+  relational order require the operators \ccStyle{==} and \ccStyle{<}
+  for $T$ respectively. These operators must not compare the pointers
+  in \ccc{T}.
+
+  %% +-----------------------------------+
+  \ccTypes
+  \ccSetThreeColumns{In_place_list<T,bool> &}{l.swap( l1);}{}
+  \ccPropagateThreeToTwoColumns
+  
+  \ccNestedType{iterator}{}
+  \ccGlue
+  \ccNestedType{const_iterator}{}
+  
+  \ccNestedType{value_type}{}
+  \ccGlue
+  \ccNestedType{reference}{}
+  \ccGlue
+  \ccNestedType{const_reference}{}
+  \ccGlue
+  \ccNestedType{size_type}{}
+  \ccGlue
+  \ccNestedType{difference_type}{}
+  
+  \ccNestedType{reverse_iterator}{}
+  \ccGlue
+  \ccNestedType{const_reverse_iterator}{}
+  
+  \ccNestedType{allocator_type}{}
+
+  %% +-----------------------------------+
+  \ccCreation
+  \ccCreationVariable{l}
+  
+  \ccConstructor{In_place_list();}{introduces an empty list.}
+  
+  \ccConstructor{In_place_list(const list<T> &l1);}{copy constructor.
+    Each item in \ccStyle{l1} is copied.}
+  
+  \ccConstructor{In_place_list(size_type n, const T& t = T()
+    );}{introduces a list with $n$ items, all initialized with copies
+    of $t$.}
+  
+  \ccConstructor{template <class InputIterator> In_place_list(
+    InputIterator first, InputIterator last);}{a list with copies from
+    the range [\ccStyle{first,last}).}
+  
+  \ccConstructor{In_place_list( const T* first, const T*
+    last);}{non-member-template version.}
+  
+  \ccMethod{In_place_list<T,bool> & operator=(const
+    In_place_list<T,bool> &l1);}{assignment. Each item in \ccStyle{l1}
+    is copied. Each item in \ccVar\ is deleted if the \ccStyle{bool}
+    parameter is \ccStyle{true}.}
+  
+  \ccMethod{void swap( const In_place_list<T,bool> &l1);}{swaps the
+    contents of \ccVar\ with \ccStyle{l1}.}
+  
+  \ccMethod{void destroy();}{all items in \ccVar\ are deleted
+    regardless of the \ccStyle{bool} parameter.}
+
+
+  %% +-----------------------------------+
+  \ccHeading{Comparison Operations}
+  \ccSetThreeColumns{const_iterator}{l.erase( iterator pos);}{}
+  
+  \ccMethod{bool operator==(const In_place_list<T,bool> &l1)
+    const;}{test for equality: Two lists are equal, iff they have the
+    same size and if their corresponding elements are equal.}
+  
+  \ccMethod{bool operator<(const In_place_list<T,bool> &l1)
+    const;}{compares in lexicographical order.}
+
+
+  %% +-----------------------------------+
+  \ccHeading{Access Member Functions}
+  
+  \def\ccTagRmTrailingConst{\ccFalse} \ccMethod{iterator
+    begin();}{returns a mutable iterator referring to the first
+    element in~\ccVar.}
+  
+  \ccGlue\ccMethod{const_iterator begin() const;}{returns a constant
+    iterator referring to the first element in~\ccVar.}
+  
+  \ccGlue\ccMethod{iterator end();}{returns a mutable iterator which
+    is the past-end-value of~\ccVar.}
+  
+  \ccGlue\ccMethod{const_iterator end() const;}{returns a constant
+    iterator which is the past-end-value of~\ccVar.}
+  \def\ccTagRmTrailingConst{\ccTrue}
+  
+  \ccMethod{bool empty() const;}{returns \ccStyle{true} if \ccVar\ is
+    empty.}
+  
+  \ccGlue\ccMethod{size_type size() const;}{returns the number of
+    items in list~\ccVar.}
+  
+  \ccGlue\ccMethod{size_type max_size() const;} {returns the maximum
+    possible size of the list~\ccVar.}
+
+  \ccMethod{T& front();}{returns the first item in list~\ccVar.}
+  
+  \ccGlue\ccMethod{T& back();}{returns the last item in list~\ccVar.}
+
+  \ccHidden\ccMethod{const T& back() const;}{}
+  \ccHidden\ccMethod{const T& front() const;}{}
+
+  \ccMethod{allocator_type get_allocator() const;}{returns the allocator.}
+
+  %% +-----------------------------------+
+  \ccHeading{Insertion}
+  
+  \ccMethod{void push_front( T&);}{inserts an item in front of
+    list~\ccVar.}
+  
+  \ccGlue\ccMethod{void push_back( T&);}{inserts an item at the back
+    of list~\ccVar.}
+
+  \ccMethod{iterator insert(iterator pos, T& t);}{}
+  
+  \ccGlue\ccMethod{iterator insert(T* pos, T& t);}{inserts \ccStyle{t}
+    in front of \ccStyle{pos}.  The return value points to the
+    inserted item.}
+
+  \ccMethod{void insert(iterator pos, size_type n, const T& t = T());}{}
+  
+  \ccGlue\ccMethod{void insert(T* pos, size_type n, const T& t =
+    T());}{inserts $n$ copies of \ccStyle{t} in front of
+    \ccStyle{pos}.}
+  
+  \ccMethod{template <class InputIterator> void insert(iterator pos,
+    InputIterator first, InputIterator last);}{}
+  
+  \ccMethod{template <class InputIterator> void insert(T* pos,
+    InputIterator first, InputIterator last);}{inserts the range
+    [\ccStyle{first, last}) in front of iterator \ccStyle{pos}.}
+  
+  As long as member templates are not supported, member functions
+  using \ccStyle{T*} instead of the general \ccStyle{InputIterator}
+  are provided.
+  
+  \ccHidden\ccMethod{void insert(iterator pos, const T* first, const
+    T* last);}{non-member-template version.}
+  
+  \ccHidden\ccMethod{void insert(T* pos, const T* first, const T*
+    last);}{non-member-template version.}
+
+
+  %% +-----------------------------------+
+  \ccHeading{Removal}
+  
+  \ccMethod{void pop_front();}{removes the first item from
+    list~\ccVar.}
+  
+  \ccGlue\ccMethod{void pop_back();}{removes the last item from
+    list~\ccVar.}
+  
+  \ccGlue\ccMethod{void erase(iterator pos);}{removes the item from
+    list~\ccVar, where \ccStyle{pos} refers to.}
+  
+  \ccGlue\ccMethod{void erase(T* pos);}{removes the item from
+    list~\ccVar, where \ccStyle{pos} refers to.}
+
+  \ccMethod{void erase(iterator first, iterator last);}{}
+  
+  \ccGlue\ccMethod{void erase(T* first, T* last);}{removes the items
+    in the range [\ccStyle{first, last}) from~\ccVar.}
+
+  %% +-----------------------------------+
+  \ccHeading{Special List Operations}
+
+  \ccSetThreeColumns{const_iterator}{l.erase( iterator pos);}{}
+
+  \ccMethod{void splice(iterator pos, In_place_list<T,bool>& x);}{}
+  
+  \ccGlue\ccMethod{void splice(T* pos, In_place_list<T,bool>&
+    x);}{inserts the list $x$ before position \ccStyle{pos} and $x$
+    becomes empty. It takes constant time.  \ccPrecond \ccc{&} \ccVar
+    \ccc{!= &x}.}
+  
+  \ccMethod{void splice(iterator pos, In_place_list<T,bool>& x,
+    iterator i);}{}
+  
+  \ccGlue\ccMethod{ void splice(T* pos, In_place_list<T,bool>& x, T*
+    i);}{inserts an element pointed to by $i$ from list $x$ before
+    position \ccStyle{pos} and removes the element from $x$. It takes
+    constant time. $i$ is a valid dereferenceable iterator of $x$.
+    The result is unchanged if \ccStyle{pos == i} or \ccStyle{pos ==
+      ++i}.}
+  
+  \ccMethod{void splice(iterator pos, In_place_list<T,bool>& x,
+    iterator first, iterator last);}{}
+  
+  \ccGlue\ccMethod{void splice(T* pos, In_place_list<T,bool>& x, T*
+    first, T* last);}{inserts elements in the range [\ccStyle{first,
+      last}) before position \ccStyle{pos} and removes the elements
+    from $x$. It takes constant time if \ccStyle{&x == &}\ccVar;
+    otherwise, it takes linear time. [\ccStyle{first, last}) is a
+    valid range in $x$.  \ccPrecond \ccStyle{pos} is not in the range
+    [\ccStyle{first, last}).}
+  
+  \ccMethod{void remove(const T& value);}{erases all elements $e$ in
+    the list \ccVar\ for which \ccStyle{e == value}. It is stable.
+    \ccPrecond a suitable \ccStyle{operator==} for the type $T$.}
+  
+  \ccMethod{void unique();}{erases all but the first element from
+    every consecutive group of equal elements in the list \ccVar.
+    \ccPrecond a suitable \ccStyle{operator==} for the type $T$.}
+  
+  \ccMethod{void merge(In_place_list<T,bool>& x);}{merges the list $x$
+    into the list \ccVar\ and $x$ becomes empty. It is stable.
+    \ccPrecond Both lists are increasingly sorted. A suitable
+    \ccStyle{operator<} for the type $T$.}
+  
+  \ccMethod{void reverse();}{reverses the order of the elements in
+    \ccVar\ in linear time.}
+  
+  \ccMethod{void sort();}{sorts the list \ccVar\ according to the
+    \ccStyle{operator<} in time $O(n \log n)$ where \ccStyle{n =
+      size()}. It is stable. \ccPrecond a suitable \ccStyle{operator<}
+    for the type $T$.}
+
+  \newpage
+  \ccExample
+  
+  \ccIncludeExampleCode{STL_Extension/in_place_list_prog.cpp}
+
+\end{ccRefClass}
+
+%% EOF

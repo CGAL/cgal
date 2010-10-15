@@ -1,0 +1,19 @@
+\begin{ccRefFunctionObjectConcept}{Kernel::ConstructPerpendicularDirection_2}
+A model for this must provide:
+
+\ccCreationVariable{fo}
+
+\ccMemberFunction{Kernel::Direction_2 operator()(const Kernel::Direction_2& d,
+                                                 Orientation o);}
+            {introduces a direction orthogonal to \ccc{d}. If \ccc{o} is
+             \ccc{CLOCKWISE}, \ccc{d} is rotated clockwise; if \ccc{o} is
+             \ccc{COUNTERCLOCKWISE}, \ccc{d} is rotated counterclockwise.
+             \ccPrecond \ccc{o} is not \ccc{COLLINEAR}.}
+
+\ccRefines
+\ccc{AdaptableFunctor} (with two arguments)
+
+\ccSeeAlso
+\ccRefIdfierPage{CGAL::Direction_2<Kernel>} \\
+
+\end{ccRefFunctionObjectConcept}

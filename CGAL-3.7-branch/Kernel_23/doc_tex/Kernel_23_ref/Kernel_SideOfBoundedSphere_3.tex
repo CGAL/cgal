@@ -1,0 +1,37 @@
+\begin{ccRefFunctionObjectConcept}{Kernel::SideOfBoundedSphere_3}
+A model for this must provide:
+
+\ccCreationVariable{fo}
+
+\ccMemberFunction{Bounded_side operator()(const Kernel::Point_3&p, 
+                                          const Kernel::Point_3&q, 
+                                          const Kernel::Point_3&r, 
+                                          const Kernel::Point_3&s, 
+                                          const Kernel::Point_3&t);}
+         {returns the relative position of point \ccStyle{t}
+          to the sphere defined by $p$, $q$, $r$, and $s$. The order
+          of the points $p$, $q$, $r$, and $s$ does not matter.
+          \ccPrecond \ccStyle{p, q, r} and \ccStyle{s} are not coplanar.}
+
+\ccMemberFunction{Bounded_side operator()(const Kernel::Point_3&p, 
+                                          const Kernel::Point_3&q, 
+                                          const Kernel::Point_3&r, 
+                                          const Kernel::Point_3&t);}
+   {returns the position of the point \ccStyle{t} relative to the sphere
+    passing through $p$, $q$, and $r$ and whose center is in the plane defined
+    by these three points.}
+
+\ccMemberFunction{Bounded_side operator()(const Kernel::Point_3&p, 
+                                          const Kernel::Point_3&q, 
+                                          const Kernel::Point_3&t);}
+         {returns the position of the point \ccStyle{t} relative to the sphere
+          that has $pq$ as its diameter.}
+
+\ccRefines
+\ccc{AdaptableFunctor} (with five arguments)
+
+\ccSeeAlso
+\ccRefIdfierPage{CGAL::side_of_bounded_sphere} \\
+
+
+\end{ccRefFunctionObjectConcept}

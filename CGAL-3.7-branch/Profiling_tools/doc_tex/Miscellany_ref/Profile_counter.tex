@@ -1,0 +1,54 @@
+% +------------------------------------------------------------------------+
+% | CGAL Reference Manual:  Profile_counter.tex
+% +------------------------------------------------------------------------+
+
+\begin{ccRefClass}{Profile_counter}
+
+\ccDefinition
+
+\ccInclude{CGAL/Profile_counter.h}
+\ccCreationVariable{pc}
+
+The class \ccRefName\ provides a way to count the number of times a given
+line of code is executed during the execution of a program, and print this
+number at the end of the execution of the program.  Such counters can be added
+at critical places in the code, and at the end of the execution of a program,
+the count is printed on \ccc{std::cerr}, together with an identification
+string passed to the constructor.  The macro \ccc{CGAL_PROFILER} can be
+used to conveniently place these counters anywhere.  They are disabled by
+default and activated by the global macro \ccc{CGAL_PROFILE}.
+
+
+\ccCreation
+
+\ccSetThreeColumns{Profile_counter&}{t.is_running();}{}
+\ccPropagateThreeToTwoColumns
+
+\ccConstructor{Profile_counter(std::string s);}{The internal counter is
+initialized to 0, and the string \ccc{s} is stored for further printing
+by the destructor.}
+
+\ccConstructor{~Profile_counter();}{The value of the counter is printed
+to \ccc{std::cerr} together with the string.}
+
+\ccOperations
+
+\ccMethod{void operator++();}{Increments the internal counter.}
+
+%%  XXX TODO : Use a \ccRefMacro
+%%             - CGAL_PROFILE and CGAL_PROFILER need to end up in the index.
+%%             - rename CGAL_PROFILER to CGAL_PROFILE_COUNTER ?
+\ccc{\#define CGAL_PROFILER(MSG)}
+{If \ccc{CGAL_PROFILE} is not defined, then \ccc{CGAL_PROFILER} is defined
+to an empty statement.  Otherwise, it is defined to \ccc{static
+CGAL::Profile_counter tmp(MSG); ++tmp;}.}
+
+\ccIncludeExampleCode{Profiling_tools/Profile_counter.cpp}
+
+will print at exit:
+
+\begin{ccExampleCode}
+[CGAL::Profile_counter]     10 iterations of the for-loop
+\end{ccExampleCode}
+
+\end{ccRefClass}

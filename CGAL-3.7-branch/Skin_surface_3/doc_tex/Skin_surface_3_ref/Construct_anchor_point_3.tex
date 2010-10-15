@@ -1,0 +1,60 @@
+% +------------------------------------------------------------------------+
+% | Reference manual page: Construct_anchor_point_3.tex
+% +------------------------------------------------------------------------+
+% | 27.09.2005   Nico Kruithof
+% | Package: Skin_surface
+% | 
+\RCSdef{\RCSComputeanchorRev}{$Id$}
+\RCSdefDate{\RCSComputeanchorDate}{$Date$}
+% +------------------------------------------------------------------------+
+\ccRefPageBegin
+%%RefPage: end of header, begin of main body
+% +------------------------------------------------------------------------+
+
+\begin{ccRefClass}{Construct_anchor_point_3<Kernel>}
+
+\ccDefinition
+
+This functor constructs a vertex of the triangulated mixed complex
+from the centers of a Delaunay simplex and a Voronoi cell.
+
+\ccInclude{CGAL/Skin_surface_traits_3.h}
+
+\ccTypes
+\ccThree{typedef Triangulation_simplex_3<RegularTriangulation_3>xxx}{Simplex;xxx}{}
+\ccThreeToTwo
+
+\ccTypedef{  typedef Kernel::RT            RT;}{}
+\ccGlue
+\ccTypedef{    typedef Kernel::Point_3       Point;}{}
+
+
+\ccCreation
+\ccCreationVariable{c}  %% choose variable name
+
+\ccThree{Construct_anchor_point_3(RT shrink)xx}{xxxx}{} 
+\ccThreeToTwo
+
+
+\ccConstructor{Construct_anchor_point_3(RT shrink);}{The function object is
+  initialized with the shrink factor.}
+
+\ccOperations
+
+\ccThree{Point}{Construct_anchor_point_3(RT shrink)}{} 
+\ccThreeToTwo
+\ccMethod{Point operator()(const Point &center_del, const Point
+  &center_vor);}{Constructs the vertex of the mixed complex from the
+  center of the Delaunay simplex and the Voronoi cell}
+
+%\ccSeeAlso
+%\ccRefIdfierPage{CGAL::SkinSurfaceTraits_3<Traits>}
+
+\end{ccRefClass}
+
+% +------------------------------------------------------------------------+
+%%RefPage: end of main body, begin of footer
+\ccRefPageEnd
+% EOF
+% +------------------------------------------------------------------------+
+

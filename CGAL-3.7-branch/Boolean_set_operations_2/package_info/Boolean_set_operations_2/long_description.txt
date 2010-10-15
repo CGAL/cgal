@@ -1,0 +1,18 @@
+This package consists of the implementation of Boolean set-operations
+on point sets bounded by weakly x-monotone curves in 2-dimensional
+Euclidean space. (Continuous planar curves or vertical segments.} In
+particular, it contains the implementation of regularized Boolean
+set-operations, intersection predicates, and point containment predicates.
+
+A regularized Boolean set-operation op* can be obtained by first
+taking the interior of the resultant point set of an ordinary Boolean
+set-operation (P op Q) and then by taking the closure. That is,
+(P op* Q = closure(interior(P op Q)). Regularized Boolean
+set-operations appear in Constructive Solid Geometry (CSG), because
+regular sets are closed under regularized Boolean set-operations, and
+because regularization eliminates lower dimensional features, namely
+isolated vertices and antennas, thus simplifying and restricting the
+representation to physically meaningful solids. Our package provides
+regularized operations on polygons and general polygons, where the
+edges of a general polygon may be general x-monotone curves, rather
+than being simple line segments.

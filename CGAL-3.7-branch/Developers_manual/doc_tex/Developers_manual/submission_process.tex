@@ -1,0 +1,126 @@
+% =============================================================================
+% The CGAL Developers' Manual
+% Chapter: Submitting Packages
+% -----------------------------------------------------------------------------
+% file   : submission_process.tex
+% authors: Geert-Jan Giezeman <geert@cs.uu.nl> & Susan Hert <hert@mpi-sb.mpg.de>
+% -----------------------------------------------------------------------------
+% $Id$
+% $Date$
+% =============================================================================
+
+\InternalOnly{
+\chapter{Submitting Packages\label{chap:submission}}
+\ccChapterRelease{Chapter Version: 1.0}
+\ccChapterAuthor{Geert-Jan Giezeman ({\tt geert@cs.uu.nl})\\
+Susan Hert ({\tt hert@mpi-sb.mpg.de})}
+
+\section{Editorial committee\label{sec:editorial_board}}
+}
+
+\ExternalOnly{
+\chapter{Editorial Committee}
+}
+\ccIndexMainItemBegin{editorial committee}
+
+
+The editorial committee is in charge of approving the inclusion of new packages
+in the library.  This means that they assure that new contributions
+\begin{itemize}
+   \item are in keeping with the philosophy of \cgal\ (Chapter~\ref{chap:intro});
+   \item are generic and fit seamlessly with other parts of the library;
+   \item satisfy the coding conventions of \cgal\ (Chapter~\ref{chap:code_format});
+   \item carefully and efficiently treat robustness issues
+         (Chapter~\ref{chap:robustness});
+   \item are designed in a flexible, extensible, and easy-to-use fashion;
+   \item and are designed to be technically feasible for the platforms
+         supported by \cgal.
+\end{itemize}
+
+Software specifications and implementations should be submitted to the
+editorial committee for approval.  This can be done by sending mail to
+the \ccAnchor{mailto:cgal-editorial-board@lists-sop.inria.fr}{committee}
+\lcTex{(\texttt{cgal-editorial-board@lists-sop.inria.fr})} indicating
+where the (PDF) documentation and code can be found.  After
+some reasonable amount of time, you should receive feedback from
+the committee about the specification and what, if anything, needs to
+be changed. The usual procedure is that someone from the committee is
+assigned to be (or volunteers to be) the primary reviewer and sends
+comments on the submitted package to the committee and to the authors of
+the package.  Discussion then proceeds among the committee members and the
+authors until a consensus is reached about how the package should be
+modified before being accepted.  When the package has been modified,
+the authors should again notify the editorial committee to let them
+know what has changed so a decision about acceptance of the package
+can be taken.
+
+One should write a specification for a new package
+\InternalOnly{(Chapter~\ref{chap:specification})}
+and submit it to the editorial committee for
+approval before submitting the package for inclusion in the internal
+releases (and ideally before implementation of the package).  This
+ensures that time is not wasted in fixing code that may later be changed
+due to the recommendations of the committee.
+However, since it can take some time for the committee to process
+submissions, packages that are to become part of the library
+can be submitted
+\InternalOnly{as detailed in
+Section~\ref{sec:electronic_submission}} before approval.
+Inclusion in an internal release does not ensure inclusion in a public
+release.  Only after approval by the committee will packages be included in new
+public releases and then only if they pass the test suite, of course.
+
+The current list of members of the editorial committee can be found on the web site.
+
+\InternalOnly{
+\section{Electronic submission\label{sec:electronic_submission}}
+\ccIndexMainItemBegin{submitting}
+
+Whether you produce library code, demos, documentation or something else,
+if you want it to become part of \cgal, you'll have to submit it in the form
+of a package which has to be a folder under SVN trunk.
+The directory structure required for a package is described in
+Chapter~\ref{chap:directory_structure}.
+
+Here we focus on how to submit a package.
+
+\ccIndexSubitem{naming scheme}{package}
+A package has a name, which identifies it.  This name should obey the same
+rules as for C identifiers: it consists of letters, digits and underscores and
+it does not start with a digit.  Choose a name that is descriptive, yet not
+too long (under 25 characters).  If a package deals with objects of a
+particular dimension, then use the suffixes \_2, \_3, and \_d, especially if
+there exists (or may exist in the future) a package with similar
+functionality in different dimensions.  Examples of good package names are
+\texttt{Triangulation\_2} for a package dealing with triangulations of points
+in the plane and \texttt{Min\_ellipse\_2}, which contains an algorithm that
+finds the minimal enclosing ellipse of a set of points in the plane. The
+package names \texttt{pm} and \texttt{arr} are a bit too terse.
+\texttt{Planar\_map} and \texttt{Arrangement} (or
+\texttt{Arrangement\_2}) are better.
+
+Make sure your package does not have any file clashing with any other packages.
+Please also make sure the information such as the maintainer email adress is
+up to date under the \texttt{package\_info} directory.
+\ccIndexSubitem{submitting}{file for}
+
+\ccIndexMainItemEnd{submitting}
+
+
+\section{Requirements and recommendations\label{sec:submission_req_and_rec}}
+
+\noindent
+Requirements:
+\begin{itemize}
+   \item Submit specifications to the editorial committee before submitting
+         packages for internal releases.
+   \item Obey the directory structure outlined in Chapter~\ref{chap:directory_structure}.
+\end{itemize}
+
+\noindent
+Recommendations:
+\begin{itemize}
+    \item Wait for approval from the editorial committee before submitting packages
+          for internal releases.
+\end{itemize}
+}

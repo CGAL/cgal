@@ -1,0 +1,32 @@
+\begin{ccRefFunctionObjectConcept}{RealEmbeddableTraits::ToInterval}
+
+\ccDefinition
+
+\ccc{AdaptableUnaryFunction} computes for a given real embeddable 
+number $x$ a double interval containing $x$. 
+This interval is represented by \ccc{std::pair<double,double>}. %\ccc{CGAL::Interval_nt}. 
+ 
+\ccRefines 
+
+\ccc{AdaptableUnaryFunction} 
+
+\ccTypes
+\ccNestedType{result_type} 
+        { Is \ccc{std::pair<double,double>}.}
+\ccNestedType{argument_type}
+        { Is \ccc{RealEmbeddableTraits::Type}.}
+
+\ccOperations
+\ccCreationVariable{to_interval}
+\ccThree{xxxxxxxxxxx}{xxxxxxxxxxx}{}
+
+\ccMethod{result_type operator()(argument_type  x);}
+        { computes a double interval containing $x$.}
+
+%\ccHasModels
+
+\ccSeeAlso
+
+\ccRefIdfierPage{RealEmbeddableTraits}\\
+
+\end{ccRefFunctionObjectConcept} 

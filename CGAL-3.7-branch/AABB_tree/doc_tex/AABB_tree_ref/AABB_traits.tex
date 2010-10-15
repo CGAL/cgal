@@ -1,0 +1,61 @@
+% +------------------------------------------------------------------------+
+% | Reference manual page: AABB_traits_base.tex
+% +------------------------------------------------------------------------+
+% | 21.02.2009   Author
+% | Package: Package
+% |
+\RCSdef{\RCSAABBtraitsbaseRev}{$Id: header.tex 40270 2007-09-07 15:29:10Z lsaboret $}
+\RCSdefDate{\RCSAABBtraitsbaseDate}{$Date: 2007-09-07 17:29:10 +0200 (Ven, 07 sep 2007) $}
+% |
+\ccRefPageBegin
+%%RefPage: end of header, begin of main body
+% +------------------------------------------------------------------------+
+
+
+\begin{ccRefClass}{AABB_traits<GeomTraits,Primitive>}
+
+%% \ccHtmlCrossLink{}     %% add further rules for cross referencing links
+%% \ccHtmlIndexC[class]{} %% add further index entries
+
+\ccDefinition
+  
+The class \ccRefName\ is a model of the concept \ccc{AABBTraits}. This traits class handles any type of 3D geometric primitives provided that the proper intersection tests and constructions are implemented. It handles points, rays, lines and segments as query types for intersection detection and computations, and it handles points as query type for distance queries. 
+
+\ccParameters
+The template parameter \ccc{GeomTraits} provides the geometric types as well as the intersection tests and computations required. This type must be a model of the concept \ccc{AABBGeomTraits}. The template parameter \ccc{Primitive} provides the type of primitives stored in the AABB tree. This parameter must be a model of the concept \ccc{AABBPrimitive}.
+
+\ccInclude{CGAL/AABB_traits.h}
+Note that this file must be included before the kernel so that the compiler parses all intersection functions available in folder \ccc{AABB_intersections}.
+
+\ccTypes
+
+\ccTypedef{typedef GeomTraits::Point_3 Point_3;}{Point query type.}
+\ccGlue
+\ccTypedef{typedef GeomTraits::Ray_3  Ray_3;}{Ray query type.}
+\ccGlue
+\ccTypedef{typedef GeomTraits::Line_3 Line_3;}{Line query type.}
+\ccGlue
+\ccTypedef{typedef GeomTraits::Segment_3 Segment_3;}{Segment query type.}
+\ccGlue
+\ccNestedType{size_type}{Unsigned integral type.}
+
+%\ccCreation
+\ccCreationVariable{traits} 
+
+\ccConstructor{AABB_traits(GeomTraits gt = GeomTraits());}{Default constructor.}
+
+\ccSeeAlso
+
+\ccc{AABBTraits},\\
+\ccc{AABB_tree<AT>}, \\
+\ccc{AABBPrimitive}\\
+
+
+\end{ccRefClass}
+
+% +------------------------------------------------------------------------+
+%%RefPage: end of main body, begin of footer
+\ccRefPageEnd
+% EOF
+% +------------------------------------------------------------------------+
+

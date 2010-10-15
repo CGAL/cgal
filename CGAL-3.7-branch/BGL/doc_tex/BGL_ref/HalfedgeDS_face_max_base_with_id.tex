@@ -1,0 +1,50 @@
+
+
+\begin{ccRefClass}{HalfedgeDS_face_max_base_with_id<Refs>}
+  
+\ccDefinition
+
+The class \ccRefName\ is a model of the \ccc{HalfedgeDSFace}
+concept. \ccc{Refs} is an instantiation of a \ccc{HalfedgeDS}.  It is
+equivalent to \ccc{CGAL::HalfedgeDS_face_base< Refs, CGAL::Tag_true>}
+with an added integer field which can be used to index faces
+in {\sc Bgl} algorithms.. 
+The class contains support for the incident halfedge pointer
+and the required type definitions.
+It can be used for deriving own faces.
+
+Note that the user is in charge to set the index correctly before
+running a graph algorithm.
+
+
+\ccInclude{CGAL/HalfedgeDS_face_max_base_with_id.h}
+
+\ccIsModel
+
+\ccRefConceptPage{HalfedgeDSFace}
+
+\ccCreation
+\ccCreationVariable{f}
+
+\ccConstructor{HalfedgeDS_face_max_base_with_id();}{default constructor.}
+
+\ccMethod{int id() const;}
+{Returns the index.}
+\ccGlue
+\ccMethod{int& id();}
+{Returns a reference to the index stored in the face.}
+
+\ccSeeAlso
+
+\ccRefConceptPage{HalfedgeDS<Traits,Items,Alloc>}\\
+\ccRefConceptPage{HalfedgeDSItems}\\
+\ccRefConceptPage{PolyhedronItems_3}\\
+\ccRefIdfierPage{CGAL::HalfedgeDS_min_items}\\
+\ccRefIdfierPage{CGAL::HalfedgeDS_vertex_min_base<Refs>}\\
+\ccRefIdfierPage{CGAL::HalfedgeDS_halfedge_min_base<Refs>}\\
+\ccRefIdfierPage{CGAL::HalfedgeDS_face_base<Refs>}\\
+\ccRefIdfierPage{CGAL::HalfedgeDS_vertex_max_base_with_id<Refs>}\\
+\ccRefIdfierPage{CGAL::HalfedgeDS_halfedge_max_base_with_id<Refs>}\\
+\ccRefIdfierPage{CGAL::Polyhedron_items_with_id_3}\\
+
+\end{ccRefClass}

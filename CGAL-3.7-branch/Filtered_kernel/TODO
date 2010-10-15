@@ -1,0 +1,72 @@
+[See also the file TODO_static_filters]
+
+Concerning the main code:
+-------------------------
+- Policy for overlapping comparisons : another good (faster) solution
+  would be to set a static boolean variable to indicate a buggy comparison
+  happenned (a la IEEE inexact flags).  Drawback is that it's not thread safe,
+  but could be made safe with pthread_key_create()...
+  Clearly, all this stuff is policy.
+    struct overlap_throw {
+      void operator() const { throw(ce_qui_faut); }
+    };
+  Or :
+    class overlap_static {
+      static bool pipo = false;
+    public:
+      void operator() const { pipo = true; }
+      void reset() const { pipo = false; }
+    };
+- Use expression templates for Interval_nt<> and Lazy_exact_nt<>.
+- Specializations for is_zero() and co, and make use of them in the kernel.
+  [Filtered_exact<> doesn't define them either, it's a bug...]
+- SunPro 5.x supports Interval arithmetic...
+  http://docs.sun.com/htmlcoll/coll.693.1/iso-8859-1/CPPARITHPROG/iapg_bookTOC.html
+  http://www.sun.com/forte/cplusplus/interval/index.html;$sessionid$GSXJDFYAABWVTAMTA1FU45Q
+- Try to get rid of the libc5 compatible version (make benchmarks first).
+- Have determinant_by_formula() overloading for Lazy_exact_nt<> ?
+  And what about for Interval_nt<> too ?
+- Turn CGAL_IA_CHECK_RESTRICT into an [expensive] assertion ?
+- Handle in_smallest_orthogonalcircle_ftC2.h correctly (needs an include)
+- Bench -fbranch-probabilities ?  Use __builtin_expect() for GCC 3 ?
+- Mark the cache as "mutable" (see Stroustrup, page 232) ?
+- Filter_Cache: Faire des benchs, et une test-suite qui soit raisonnable.
+  Hum, rajouter un booléen pour calculer le cache seulement sur demande ?
+  (ça évite de le faire inutilement pour les variables intermédiaires,
+  mais ça prend un chouia plus de place... mais en comparaison du reste...)
+- Replace CGAL_IA_MAX_DOUBLE by standard DBL_MAX in <cfloat>, if portable
+  (add a test).  Not possible for CGAL_IA_MIN_DOUBLE, since DBL_MIN is the
+  _normalized_ minimum.
+- See the C++ Standard numeric_limits<>, section 18.2.
+? See ISO C99 and http://http.cs.berkeley.edu/~fateman/fp98/korenF/node3.html.
+- "C9x FP unordered compares":
+  +  /* ISO C99 IEEE Unordered compares.  */
+  +  builtin_function ("__builtin_isgreater", default_function_type,
+  +                   BUILT_IN_ISGREATER, BUILT_IN_NORMAL, NULL_PTR);
+  +  builtin_function ("__builtin_isgreaterequal", default_function_type,
+  +                   BUILT_IN_ISGREATEREQUAL, BUILT_IN_NORMAL, NULL_PTR);
+  +  builtin_function ("__builtin_isless", default_function_type,
+  +                   BUILT_IN_ISLESS, BUILT_IN_NORMAL, NULL_PTR);
+  +  builtin_function ("__builtin_islessequal", default_function_type,
+  +                   BUILT_IN_ISLESSEQUAL, BUILT_IN_NORMAL, NULL_PTR);
+  +  builtin_function ("__builtin_islessgreater", default_function_type,
+  +                   BUILT_IN_ISLESSGREATER, BUILT_IN_NORMAL, NULL_PTR);
+  +  builtin_function ("__builtin_isunordered", default_function_type,
+  +                   BUILT_IN_ISUNORDERED, BUILT_IN_NORMAL, NULL_PTR);
+  [voir le draft C99 ce que c'est]
+
+Concerning the doc:
+-------------------
+- In the 2.0 HTML doc, my enums are indexed twice.
+  probably a cc_manual compliance bug from me.
+  Idem, my fct to_double(Ia) is not the same as the others...
+- add a pointer to my MISC'99 paper.
+- DOCUMENT the new boolean template parameter, the script, the static filters.
+
+Concerning the test-suite:
+--------------------------
+- Check it with GCOV again before the next public release.
+- Make a more extensive test-suite for the filtered predicates.
+  The script could output information to test them generically somehow.
+- Test NaN propagation.  Comparisons with these should throw the exception...
+  Check that they are correctly propagated (by min(), max(), even operator*...)

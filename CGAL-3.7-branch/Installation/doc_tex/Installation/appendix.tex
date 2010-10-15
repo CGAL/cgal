@@ -1,0 +1,68 @@
+%%
+%%  *** CGAL Installation Guide ***
+%%
+%% file:     appendix.tex
+%%
+%% authors:  Michael Hoffmann, Dima Pasechnik and Wieger Wesselink
+%%
+%% $Id$
+%%
+
+
+\section{Compiler Workarounds}
+\index{compilers!workarounds}\index{workaround flags}
+
+A number of boolean flags are used to workaround compiler bugs and
+limitations. They all  start
+with the prefix \texttt{CGAL\_CFG}. These flags are used to work
+around compiler bugs and limitations. For example, the flag
+\texttt{CGAL\_CFG\_NO\_CPP0X\_LONG\_LONG} denotes that the compiler does not
+know the type \texttt{long long}.
+
+For each compiler a file \texttt{<CGAL/compiler\_config.h>}
+\index{files!\texttt{compiler\_config.h}} is defined, with the correct
+settings of all flags. This file is generated automatically by 
+\cmake, and it is located in the \texttt{include} directory of
+where you run \cmake. For an in-source configuration this means
+\texttt{CGAL-3.x/include}.
+
+The test programs used to generate the \texttt{compiler\_config.h}
+file can be found in \texttt{config/testfiles}.
+\index{directories!config/testfiles@\texttt{config/testfiles}} Both
+\texttt{compiler\_config.h} and the test programs contain a short
+description of the problem. In case of trouble with one of the
+\texttt{CGAL\_CFG} flags, it is a good idea to take a look at it.
+
+The file \texttt{CGAL/compiler\_config.h} is included from
+\texttt{<CGAL/config.h>}.\index{files!\texttt{config.h}}
+which is included by all \cgal\ header files.
+
+\section{Compiler Optimizations\label{sec:compiler-optimisations}}
+\index{compilers!optimization}
+\index{optimization compiler flags}
+
+By default \cmake\ generates makefiles for Release mode, with 
+optimization flags switched on, and vcproj files for Release
+and Debug modes.
+
+
+
+\section{Scripts}
+
+\subsection{\texttt{cgal\_create\_cmake\_script\label{sec:create_cgal_cmake_script}}}
+\TTindex{cgal\_create\_cmake\_script}\index{scripts!\texttt{cgal\_create\_cmake\_script}}
+
+The Bourne-shell script \texttt{cgal\_create\_cmake\_script} is contained in the
+\cgaldir\texttt{/scripts} directory. It can be used to create
+\texttt{CmakeLists.txt} files for compiling \cgal\ applications. Executing
+\texttt{cgal\_create\_cmake\_script} in an application directory creates a
+\texttt{CMakeLists.txt} containing rules for every \texttt{*.cpp} file
+there. Currently, that script only works for applications that only need
+the CGAL and CGALCore libraries.
+
+
+%%
+%% EOF
+%%
+
+

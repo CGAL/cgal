@@ -1,0 +1,50 @@
+\begin{ccRefClass} {Bbox_2}
+\ccInclude{CGAL/Bbox_2.h}
+
+\ccDefinition  An object \ccStyle{b} of the class \ccRefName\ is a bounding 
+box in the two-dimensional Euclidean plane $\E^2$. This class is not templated.
+
+\ccCreation
+\ccCreationVariable{b}
+
+\ccConstructor{Bbox_2(double x_min, double y_min,
+                      double x_max, double y_max);}
+            {introduces a bounding box \ccVar\ with lower left corner at 
+             \ccStyle{(xmin, ymin)} and with upper right corner at 
+             \ccStyle{(xmax, ymax)}.}
+
+
+\ccOperations
+
+\ccMethod{bool operator==(const Bbox_2 &c) const;}
+       {Test for equality.}
+
+\ccMethod{bool operator!=(const Bbox_2 &q) const;}
+       {Test for inequality.}
+
+\ccMethod{int dimension() const;}{ Returns 2. }
+
+\ccMethod{double                 xmin() const;}{}
+\ccGlue
+\ccMethod{double                 ymin() const;}{}
+\ccGlue
+\ccMethod{double                 xmax() const;}{}
+\ccGlue
+\ccMethod{double                 ymax() const;}{}
+
+\ccMethod{double                 min(int i) const;}
+         {Returns \ccStyle{xmin()} if \ccStyle{i==0} or \ccStyle{ymin()} if \ccStyle{i==1}.
+          \ccPrecond{i==0 or i==1}}
+\ccGlue
+\ccMethod{double                 max(int i) const;}
+         {Returns \ccStyle{xmax()} if \ccStyle{i==0} or \ccStyle{ymax()} if \ccStyle{i==1}.
+          \ccPrecond{i==0 or i==1}}
+
+\ccMethod{Bbox_2              operator+(const Bbox_2 &c) const;}
+       {returns a bounding box of \ccVar\ and \ccStyle{c}.}
+
+\ccSeeAlso
+\ccRefIdfierPage{CGAL::Bbox_3} \\
+\ccRefIdfierPage{CGAL::do_overlap} \\
+
+\end{ccRefClass} 

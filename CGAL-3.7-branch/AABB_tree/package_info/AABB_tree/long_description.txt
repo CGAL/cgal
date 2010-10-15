@@ -1,0 +1,1 @@
+This component implements a hierarchy of axis-aligned bounding boxes (a AABB tree) for efficient intersection and distance computations between 3D queries and sets of input 3D geometric objects. 

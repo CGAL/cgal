@@ -1,0 +1,27 @@
+% +------------------------------------------------------------------------+
+\begin{ccRefClass}{Ostream_iterator<T,Stream>}
+\ccThree{OutputIterator}{rand}{}
+
+\ccDefinition
+
+The class \ccRefName\ is an output iterator adaptor for the
+output stream class \ccc{Stream} and value type $T$.
+
+\ccInclude{CGAL/IO/Ostream_iterator.h}
+
+\ccCreation
+\ccCreationVariable{o}
+
+\ccConstructor{Ostream_iterator( Stream& s);}{creates an output
+  iterator \ccVar\ writing to $s$.}
+
+\ccOperations
+
+\ccVar\ fulfills the requirements for an output iterator.
+
+\ccImplementation
+
+The \ccc{operator*()} in class \ccRefName\ uses a proxy class. 
+
+\end{ccRefClass}
+%% EOF

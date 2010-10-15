@@ -1,0 +1,47 @@
+%% Copyright (c) 2003,2004,2005  INRIA Sophia-Antipolis (France) and
+%% Notre Dame University (U.S.A.).  All rights reserved.
+%%
+%% This file is part of CGAL (www.cgal.org); you may redistribute it under
+%% the terms of the Q Public License version 1.0.
+%% See the file LICENSE.QPL distributed with CGAL.
+%%
+%% Licensees holding a valid commercial license may use this file in
+%% accordance with the commercial license agreement provided with the software.
+%%
+%% This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
+%% WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
+%%
+%% $URL$
+%% $Id$
+%% 
+%%
+%% Author(s)     : Menelaos Karavelas <mkaravel@cse.nd.edu>
+
+\section{Examples\label{sec:sdg2-examples}}
+
+\subsection{First Example}
+
+The following example shows how to use the segment Delaunay graph traits
+in conjunction with the \ccc{Filtered_exact<CT,ET>} mechanism. In
+addition it shows how to use a few of the iterators provided by the
+\ccc{Segment_Delaunay_graph_2} class in order to count a few
+site-related quantities.
+
+\ccIncludeExampleCode{Segment_Delaunay_graph_2/sdg-count-sites.cpp}
+
+\subsection{Second Example}
+
+The following example shows how to use the segment Delaunay graph
+hierarchy along with the filtered traits class that supports
+intersecting sites.
+
+\ccIncludeExampleCode{Segment_Delaunay_graph_2/sdg-filtered-traits.cpp}
+
+\subsection{Third Example}
+
+The following example demonstrates how to recover the defining sites
+for the edges of the Voronoi diagram (which are the duals of the
+edges of the segment Delaunay graph computed).
+
+\ccIncludeExampleCode{Segment_Delaunay_graph_2/sdg-voronoi-edges.cpp}
+

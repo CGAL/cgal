@@ -1,0 +1,20 @@
+\pspicture[](-3.5,-2.5)(3.5,2.5)
+\psset{unit=1cm,linewidth=1pt}
+\psellipse*[linecolor=lightgray](0,0)(3,1)
+\psclip{%
+  \pscustom[linestyle=none]{%
+    \psplot{-3}{3}{2 1 2 div x x mul mul sub}
+    \lineto(-3,-3)
+   }
+   \pscustom[linestyle=none]{%
+     \psplot{-3}{3}{1 2 div x x mul mul 2 sub}
+     \lineto(3,3)
+   }
+}
+\psframe*[linecolor=gray](-2,-3.0)(3,3.0)
+\endpsclip
+\psplot{-2}{2}{2 1 2 div x x mul mul sub}
+\psplot{-2}{2}{1 2 div x x mul mul 2 sub}
+\psellipse(0,0)(3,1)
+\psaxes{<->}(0,0)(-3.5,-2.5)(3.5,2.5)
+\endpspicture

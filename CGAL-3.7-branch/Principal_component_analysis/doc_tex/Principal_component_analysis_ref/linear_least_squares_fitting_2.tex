@@ -1,0 +1,51 @@
+% +------------------------------------------------------------------------+
+% | Reference manual page: linear_least_squares_fitting_2.tex
+% +------------------------------------------------------------------------+
+% | 
+% | March 2005  Pierre Alliez and Sylvain Pion and Ankit Gupta
+% | Package:   Principal Component Analysis
+% | 
+% |
+% +------------------------------------------------------------------------+
+
+\begin{ccRefFunction}{linear_least_squares_fitting_2}  
+%% add template arg's if necessary
+
+\ccDefinition
+  
+The function \ccRefName\ computes the 2D best fitting line (in the least squares sense) of a set of 2D objects such as points, segments, triangles, iso rectangles, circles or disks.\\
+
+The best fitting line minimizes the sum of squared distances from all points comprising these objects to their orthogonal projections onto the line. It can be shown that this line goes through the centroid of the set. This problem is equivalent to search for the linear sub-space which maximizes the variance of projected points (sum of squared distances to the centroid). Internally we solve this problem by eigen decomposition of the  covariance matrix of the whole set. Note that the $2 \times 2$ covariance matrix is computed internally in closed form and not by point sampling the objects. Eigenvectors corresponding to large eigenvalues are the directions in which the data has strong component, or equivalently large variance. If one eigenvalue is null the fit is perfect as the sum of squared distance from all points to their projection onto the best line is null. If the two eigenvalues are the same there is no preferable sub-space and all lines going through the centroid share the same fitting property. \\
+
+
+\ccInclude{CGAL/linear_least_squares_fitting_2.h}
+
+\ccFunction{template < typename InputIterator, typename K, typename Tag > 
+            typename K::FT 
+             linear_least_squares_fitting_2(InputIterator first,
+                                            InputIterator beyond,
+                                            typename K::Line_2 & line,
+                                            typename K::Point_2 & centroid,     
+                                            const K & k,
+					                                  const Tag& tag);}
+{ computes the best fitting 2D line of a 2D object set in the range [\ccc{first},\ccc{beyond}). The value returned is a fitting quality between $0$ and $1$, where $0$ means that the variance is the same along any line (a horizontal line going through the centroid is output by default), and $1$ means that the variance is null orthogonally to the best fitting line (hence the fit is perfect).
+\ccPrecond{first != beyond.} }
+
+The class \ccc{K} is the kernel in which the type \ccc{InputIterator::value_type} is defined. It can be omitted and deduced automatically from the value type.\\
+
+The tag \ccc{tag} identifies the dimension to be considered from the objects. For point sets it should be 0. For segments it can be 1 or 0 according to whether one wants to fit the whole segment or just their end points. For triangles it can range from 0 to 2 according to whether one wants to fit either the triangle points, the segments or the whole triangles. For rectangles it can range from 0 to 2 according to whether one wants to fit either the corner points, the segments, or the whole rectangles. For circles it can be 1 or 2 according to whether one wants to fit either the circles or the whole discs. For triangles it ranges from 0 to 2 according to whether one wants to fit either the points, the segments or the whole triangles.
+
+
+\ccHeading{Requirements}
+
+\begin{enumerate}
+   \item  \ccc{InputIterator::value_type} is equivalent to \ccc{K::Point_2} or 
+          \ccc{K::Segment_2} or \ccc{K::Triangle_2} or \ccc{K::Rectangle_2} or
+          \ccc{K::Circle_2}.
+   \item  \ccc{line} is the best fitting line computed.
+   \item  \ccc{centroid} is the centroid computed. This parameter is optional and can be
+          omitted.
+   \item  \ccc{t} is the tag identifying the dimension to be considered from the objects. It should be one of \ccc{Dimension_tag<0>}, \ccc{Dimension_tag<1>} or \ccc{Dimension_tag<2>}. Also, it should not be of dimension greater than the geometry of the object. For example, a \ccc{Segment} can not have a \ccc{Dimension_tag<2>} tag.
+\end{enumerate}
+
+\end{ccRefFunction}

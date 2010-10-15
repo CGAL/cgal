@@ -1,0 +1,30 @@
+\begin{ccRefConcept}{FieldNumberType}
+
+\ccDefinition
+
+The concept \ccRefName\ combines the requirements of the concepts 
+\ccc{Field} and \ccc{RealEmbeddable}. 
+A model of \ccRefName\ can be used as a template parameter 
+for Cartesian kernels.
+
+\ccRefines
+\ccc{Field}\\
+\ccc{RealEmbeddable} 
+
+\ccHasModels
+\ccc{float} \\
+\ccc{double} \\
+\ccc{CGAL::Gmpq} \\
+\ccc{CGAL::Interval_nt} \\
+\ccc{CGAL::Interval_nt_advanced} \\
+\ccc{CGAL::Lazy_exact_nt<FieldNumberType>} \\
+\ccc{CGAL::Quotient<RingNumberType>} \\
+\ccc{leda_rational} \\
+\ccc{leda_bigfloat} \\
+\ccc{leda_real} \\
+
+\ccSeeAlso
+\ccRefConceptPage{RingNumberType} \\
+\ccRefConceptPage{Kernel} \\
+
+\end{ccRefConcept}

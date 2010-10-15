@@ -1,0 +1,48 @@
+% begin cgal manual page
+
+\begin{ccRefClass}[Nef_polyhedron_S2<Traits>::]{Sphere_point}
+\ccCreationVariable{p}
+
+\ccDefinition
+
+An object \ccc{p} of type \ccc{Sphere_point<R>} is a point on the
+surface of a unit sphere. Such points correspond to the nontrivial
+directions in space and similarly to the equivalence classes of all
+nontrivial vectors under normalization.
+
+\ccSetOneOfTwoColumns{5cm}
+
+\ccTypes
+
+\ccNestedType{RT}{ring number type.}
+
+\ccSetOneOfTwoColumns{5cm}
+
+\ccCreation
+
+\ccConstructor{Sphere_point()}{ creates some sphere point.  }
+
+\ccConstructor{Sphere_point(RT x, RT y, RT z)}{ creates a sphere
+  point corresponding to the point of intersection of the ray starting
+  at the origin in direction $(x,y,z)$ and the surface of $S_2$.  }
+
+\ccSetTwoOfThreeColumns{4cm}{2cm}
+
+\ccOperations
+
+Access to the coordinates is provided by the following operations.
+Note that the vector $(x,y,z)$ is not normalized.
+
+\ccMethod{RT x() ;}{ the $x$-coordinate.  }
+
+\ccMethod{RT y() ;}{ the $y$-coordinate.  }
+
+\ccMethod{RT z() ;}{ the $z$-coordinate.  }
+
+\ccMethod{bool operator==(const Nef_polyhedron_S2<Traits>::Sphere_point& q) ;}{Equality.}
+
+\ccMethod{bool operator!=(const Nef_polyhedron_S2<Traits>::Sphere_point& q) ;}{Inequality.}
+
+\ccMethod{Sphere_point antipode() ;}{returns the antipode of \ccc{p}.}
+
+\end{ccRefClass}

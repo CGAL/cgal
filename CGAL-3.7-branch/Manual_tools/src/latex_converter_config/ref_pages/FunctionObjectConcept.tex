@@ -1,0 +1,57 @@
+include(CONFIG_PATH/header.tex)
+\begin{ccRefFunctionObjectConcept}{ITEM}
+
+%% \ccHtmlCrossLink{}     %% add further rules for cross referencing links
+%% \ccHtmlIndexC[concept]{} %% add further `index' entries
+
+\ccDefinition
+  
+The function object concept \ccRefName\ does this and that.
+
+\ccGeneralizes
+
+ThisConcept \\
+ThatConcept
+
+\ccTypes
+
+\ccNestedType{TYPE}{some nested types}
+
+\ccCreation
+\ccCreationVariable{a}  %% choose variable name
+
+\ccConstructor{ITEM`'();}{default constructor.}
+
+\ccOperations
+
+\ccMethod{void foo();}{some member functions}
+
+\ccHasModels
+
+\ccc{Some_class},
+\ccc{Some_other_class}.
+
+\ccSeeAlso
+
+Some\_other\_concept,
+\ccc{some_other_function}.
+
+\ccExample
+
+A short example program.
+Instead of a short program fragment, a full running program can be
+included using the 
+\verb|\ccIncludeExampleCode{PACKAGE/ITEM`'.C}| 
+macro. The program example would be part of the source code distribution and
+also part of the automatic test suite.
+
+\begin{ccExampleCode}
+void your_example_code() {
+}
+\end{ccExampleCode}
+
+%% \ccIncludeExampleCode{PACKAGE/ITEM`'.C}
+
+\end{ccRefFunctionObjectConcept}
+
+include(CONFIG_PATH/footer.tex)

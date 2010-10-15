@@ -1,0 +1,64 @@
+% +------------------------------------------------------------------------+
+% | Reference manual page: Triangulation_hierarchy_vertex_base_2.tex
+% +------------------------------------------------------------------------+
+% | 16.08.2000   Author
+% | Package: Package
+% | 
+\RCSdef{\RCSTriangulationhierarchyvertexbaseRev}{$Id$}
+\RCSdefDate{\RCSTriangulationhierarchyvertexbaseDate}{$Date$}
+% |
+%%RefPage: end of header, begin of main body
+% +------------------------------------------------------------------------+
+
+
+\begin{ccRefClass}{Triangulation_hierarchy_vertex_base_2<Vb>}
+%% add template arg's if necessary
+
+%% \ccHtmlCrossLink{}     %% add further rules for cross referencing links
+%% \ccHtmlIndexC[class]{} %% add further index entries
+
+\ccDefinition
+  
+The class \ccRefName\ is designed to be used as a vertex base class
+of a triangulation plugged into a
+\ccc{Triangulation_hierarchy_2<Tr>}.
+
+It is 
+a model of the concept
+\ccc{TriangulationHierarchyVertexBase_2} which refines
+the concept
+\ccc{TriangulationVertexBase_2}.
+
+This class is templated by a parameter \ccc{Vb}
+which is to be instantiated by a model of  the concept
+\ccc{TriangulationVertexBase_2}.
+The class \ccc{Triangulation_hierarchy_vertex_base_2<Vb>} inherits
+from the class \ccc{Vb}.
+This design allows to use either the default
+vertex base class or a user customized
+vertex base with additional functionalities.
+
+\ccInclude{CGAL/Triangulation_hierarchy_2.h}
+
+\ccIsModel
+\ccc{TriangulationHierarchyVertexBase_2}
+
+\ccInheritsFrom
+\ccc{Vb}
+
+
+\ccSeeAlso
+\ccc{TriangulationVertexBase_2} \\
+\ccc{TriangulationHierarchyVertexBase_2} \\
+\ccc{CGAL::Triangulation_vertex_base_2<Traits>}
+
+
+
+
+\end{ccRefClass}
+
+% +------------------------------------------------------------------------+
+%%RefPage: end of main body, begin of footer
+% EOF
+% +------------------------------------------------------------------------+
+

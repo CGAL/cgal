@@ -1,0 +1,154 @@
+% +------------------------------------------------------------------------+
+% | Reference manual page: PolyhedronItems_3.tex
+% +------------------------------------------------------------------------+
+% | 17.03.1999   Lutz Kettner
+% | Package: Polyhedron
+% | 
+\RCSdef{\RCSPolyhedronItemsRev}{$Id$}
+\RCSdefDate{\RCSPolyhedronItemsDate}{$Date$}
+% +------------------------------------------------------------------------+
+
+\ccRefPageBegin
+
+%%RefPage: end of header, begin of main body
+% +------------------------------------------------------------------------+
+
+
+\begin{ccRefConcept}{PolyhedronItems_3}
+\ccDefinition
+
+The \ccRefName\ concept extends the \ccc{HalfedgeDSItems} concept on
+page~\pageref{pageHalfedgeDSitemsRef}. In addition to the requirements
+stated there, a model for this concept must fulfill the following
+requirements for the local
+\ccc{PolyhedronItems_3::Vertex_wrapper<Refs,Traits>::Vertex} type and
+\ccc{PolyhedronItems_3::Face_wrapper<Refs,Traits>::Face} type
+in order to support the point for vertices and the optional plane
+equation for facets. Note that the items class uses face instead of
+facet. Only the polyhedral surface renames faces to facets.
+
+\ccRefines
+
+\ccRefIdfierPage{HalfedgeDSItems}
+
+\begin{ccClass}{Vertex}
+\ccCreationVariable{v}
+
+\ccHeading{%
+  Types in \ccc{PolyhedronItems_3::Vertex_wrapper<Refs,Traits>::Vertex}}
+
+\ccNestedType{Point}{point type stored in vertices. A \ccc{HalfedgeDS}
+    has no dimension, so this type is named \ccc{Point} and not \ccc{Point_3}.}
+
+\ccNestedType{Supports_vertex_point}{$\equiv$ \ccc{CGAL::Tag_true}.
+    A point is always required.}
+
+\ccTagFullDeclarations
+\ccOperations
+
+\ccMethod{Point&       point();}{}
+\ccGlue
+\ccMethod{const Point& point() const;}{point.}
+
+\ccTagDefaults
+\end{ccClass}
+
+\begin{ccClass}{Face}
+\ccCreationVariable{f}
+
+\ccHeading{Types in \ccc{PolyhedronItems_3::Face_wrapper<Refs,Traits>::Face}}
+
+Types for (optionally) associated geometry in faces. If it is not
+supported the respective type has to be defined, although it can be
+an arbitrary dummy type, such as \ccc{void*} or \ccc{Tag_false}.
+
+%\ccNestedType{Normal}{surface normal vector stored in faces.}
+%\ccGlue
+
+\ccNestedType{Plane}{plane type stored in faces.  A \ccc{HalfedgeDS}
+    has no dimension, so this type is named \ccc{Plane} and not \ccc{Plane_3}.}
+
+\ccNestedType{Supports_face_plane}{either \ccc{CGAL::Tag_true}
+    or \ccc{CGAL::Tag_false}.}
+
+%\ccGlue
+%\ccNestedType{Supports_face_normal}{\~{}}
+
+\ccTagFullDeclarations
+\ccHeading{Operations required if \ccc{Supports_face_plane} $\equiv$ 
+           \ccc{CGAL::Tag_true}}
+         
+%Note, this implies \ccc{Supports_face_normal} $\equiv$
+%\ccc{CGAL::Tag_true}, but the return type of the \ccc{normal()} member
+%function will not be by reference.
+
+\ccMethod{Plane&       plane();}{}
+\ccGlue
+\ccMethod{const Plane& plane() const;}{plane equation.}
+
+%\ccGlue
+%\ccMethod{Normal normal() const;}{normal vector.}
+
+%\ccHeading{Operations required if \ccc{Supports_face_normal} $\equiv$ 
+%           \ccc{CGAL::Tag_true}}
+%
+%\ccMethod{Normal&       normal();}{}
+%\ccGlue
+%\ccMethod{const Normal& normal() const;}{normal vector.}
+
+\ccTagDefaults
+
+\end{ccClass}
+
+\ccHasModels
+
+\ccRefIdfierPage{CGAL::Polyhedron_items_3}\\
+\ccRefIdfierPage{CGAL::Polyhedron_min_items_3}
+
+\ccSeeAlso
+
+\ccRefIdfierPage{CGAL::Polyhedron_3<Traits>}\\
+\ccRefConceptPage{HalfedgeDSItems}\\
+\ccRefIdfierPage{CGAL::HalfedgeDS_items_2}\\
+\ccRefIdfierPage{CGAL::HalfedgeDS_vertex_base<Refs>}\\
+\ccRefIdfierPage{CGAL::HalfedgeDS_halfedge_base<Refs>}\\
+\ccRefIdfierPage{CGAL::HalfedgeDS_face_base<Refs>}
+
+\ccExample
+
+We define our own items class based on the available
+\ccc{CGAL::HalfedgeDS_face_base} base class for faces. We derive the
+the \ccc{Halfedge_wrapper} without further modifications from the
+\ccc{CGAL::HalfedgeDS_items_2}, replace the \ccc{Face_wrapper}
+definition with our new definition, and also replace the
+\ccc{Vertex_wrapper} with a definition that uses \ccc{Point_3} instead
+of \ccc{Point_2} as point type. The result is a model for the
+\ccc{PolyhedronItems_3} concept similar to the available
+\ccc{CGAL::Polyhedron_items_3} class. See also there for another
+illustrative example.
+
+\begin{ccExampleCode}
+#include <CGAL/HalfedgeDS_bases.h>
+
+struct My_items : public CGAL::HalfedgeDS_items_2 {
+    template < class Refs, class Traits>
+    struct Vertex_wrapper {
+        typedef typename Traits::Point_3 Point;
+        typedef CGAL::HalfedgeDS_vertex_base< Refs, CGAL::Tag_true, Point> Vertex;
+    };
+    template < class Refs, class Traits>
+    struct Face_wrapper {
+        typedef typename Traits::Plane_3 Plane;
+        typedef CGAL::HalfedgeDS_face_base< Refs, CGAL::Tag_true, Plane>   Face;
+    };
+};
+\end{ccExampleCode}
+
+\end{ccRefConcept}
+
+% +------------------------------------------------------------------------+
+%%RefPage: end of main body, begin of footer
+\ccRefPageEnd
+% EOF
+% +------------------------------------------------------------------------+
+

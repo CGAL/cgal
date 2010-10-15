@@ -1,0 +1,130 @@
+% +------------------------------------------------------------------------+
+% | Reference manual page: TriangulationDSVertexBase_2.tex
+% +------------------------------------------------------------------------+
+% | 13.08.2003   Author
+% | Package: Package
+% | 
+\RCSdef{\RCSTriangulationDSVertexBaseRev}{$Id$}
+\RCSdefDate{\RCSTriangulationDSVertexBaseDate}{$Date$}
+% |
+%%RefPage: end of header, begin of main body
+% +------------------------------------------------------------------------+
+
+
+\begin{ccRefConcept}{TriangulationDSVertexBase_2}
+
+%% \ccHtmlCrossLink{}     %% add further rules for cross referencing links
+%% \ccHtmlIndexC[concept]{} %% add further index entries
+
+\ccDefinition
+  
+The concept \ccRefName\ describes the requirements for the
+vertex base class of a \ccc{Triangulation_data_structure_2<Vb,Fb>}.
+
+Note that if  the \ccc{Triangulation_data_structure_2} 
+is plugged  into a triangulation class, 
+the vertex base class has additional geometric
+requirements depending on the triangulation class.
+
+At the base level,  
+provides access to one of its incident
+face through a \ccc{Face_handle}.
+
+Since the \ccc{Triangulation_data_structure_2} is the class 
+which defines the handle
+types, the vertex base class has to be somehow 
+parameterized by the triangulation
+data structure.  But since the \ccc{Triangulation_data_structure_2}
+itself is parameterized by the face and vertex
+base classes, there is a cycle in the definition of these classes.  
+In order
+to break the cycle, the base classes for faces and vertices
+ which are plugged in to instantiate a
+\ccc{Triangulation_data_structure_2}
+use a \ccc{void} as triangulation
+data structure parameter. Then,
+the \ccc{Triangulation_data_structure_2}
+uses a {\it rebind}  mechanism (similar to the one specified in
+\ccc{std::allocator}) in order to plug itself 
+as parameter in the face and vertex  base classes. 
+This mechanism requires that the base class  provides
+a templated nested class \ccc{Rebind_TDS} that
+itself provides 
+the subtype \ccc{Rebind_TDS<TDS2>::Other}
+which is the {\it rebound} version of the base class.
+ This {\it rebound} base class is  the class
+that the   \ccc{Triangulation_data_structure_2}
+ actually  uses  as a base class for the class
+of \ccc{Triangulation_data_structure_2::Vertex}.
+
+
+
+\ccRefines{\ccc{TriangulationDataStructure_2::Vertex}}
+
+
+\ccTypes
+\ccThree{typedef TriangulationDataStructure_2::Vertex_handle}{}{}
+\ccThreeToTwo
+The concept \ccRefName\ has to provide the following types.
+
+\ccNestedType{
+  template <typename TDS2>
+  struct Rebind_TDS}
+{This nested template class has to define a type \ccc{Other} which is the
+{\it rebound} vertex base , where the actual 
+\ccc{Triangulation_data_structure_2} is  plugged in.
+This type  \ccc{Other}  will be the actual base
+of the class \ccc{Triangulation_data_structure_2::Vertex}.}
+
+
+\ccTypedef{typedef TriangulationDataStructure_2 Triangulation_data_structure;}{}
+\ccGlue
+\ccTypedef{typedef TriangulationDataStructure_2::Vertex_handle Vertex_handle;}{}
+\ccGlue
+\ccTypedef{typedef TriangulationDataStructure_2::Face_handle Face_handle;}{}
+
+
+\ccCreation
+\ccCreationVariable{v}  %% choose variable name
+
+\ccThree{Vertex_handle}{Facetxxxxxxxxxxxxxxxxxxxxxxxxx}{}
+
+\ccConstructor{TriangulationDSVertexBase_2();}{default constructor.}
+\ccGlue
+\ccConstructor{TriangulationDSVertexBase_2(Face_handle f);}
+{Constructs a vertex pointing to face  \ccc{f}.}
+
+
+\ccHeading{Various}
+
+\ccMethod{void * for_compact_container() const;}{}
+\ccGlue
+\ccMethod{void * & for_compact_container();}{}
+{ These member functions are required by \ccc{Triangulation_data_structure_2}
+  because it uses \ccc{Compact_container} to store its faces.  See the
+  documentation of \ccc{Compact_container} for the exact requirements.}
+
+
+\ccHasModels
+
+\ccc{CGAL::Triangulation_ds_vertex_base_2<Tds>}\\
+\ccc{CGAL::Triangulation_vertex_base_2<Traits,Vb>}\\
+\ccc{CGAL::Regular_triangulation_vertex_base_2<Traits,Vb>} \\
+\ccc{CGAL::Triangulation_hierarchy_vertex_base_2<Vb>} \\
+\ccc{CGAL::Triangulation_vertex_base_with_info_2<Info,Traits,vb>}
+
+\ccSeeAlso
+\ccc{TriangulationVertexBase_2}\\
+\ccc{TriangulationDSFaceBase_2}\\
+\ccc{TriangulationFaceBase_2} \\
+\ccc{TriangulationDataStructure_2::Vertex} \\
+\ccc{Triangulation_data_structure_2<Vb,Fb>} \\
+
+
+\end{ccRefConcept}
+
+% +------------------------------------------------------------------------+
+%%RefPage: end of main body, begin of footer
+% EOF
+% +------------------------------------------------------------------------+
+

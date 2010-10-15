@@ -1,0 +1,40 @@
+\begin{ccRefConcept}{AlgebraicKernelForSpheres::Polynomial_1_3}
+
+\ccDefinition
+
+Concept to represent trivariate polynomials of degree 1 whose
+coefficients are of a type that is a model of the concept
+\ccc{RingNumberType}.
+
+\ccRefines
+CopyConstructible, Assignable, DefaultConstructible
+
+%\ccAccessFunctions
+
+%\ccFunction{const RT & a() const;}{}
+%\ccGlue
+
+%\ccOperations
+
+%The comparison operator \ccc{==} must be provided. 
+
+% also proportional polynomials
+
+\ccHasModels
+
+\ccc{CGAL::Polynomial_1_3}
+
+\ccSeeAlso
+
+\ccRefIdfierPage{AlgebraicKernelForSpheres}
+
+\end{ccRefConcept}
+\begin{ccRefClass}{Polynomial_1_3<RT>}
+
+\ccInclude{CGAL/Polynomials_1_3.h}
+
+\ccIsModel
+
+\ccc{AlgebraicKernelForSpheres::Polynomial_1_3}
+
+\end{ccRefClass}

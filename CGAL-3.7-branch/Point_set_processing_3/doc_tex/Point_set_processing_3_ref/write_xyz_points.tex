@@ -1,0 +1,88 @@
+% +------------------------------------------------------------------------+
+% | Reference manual page: write_xyz_points.tex
+% +------------------------------------------------------------------------+
+% | 07.01.2009   Pierre Alliez, Laurent Saboret, Gael Guennebaud
+% | Package: Point_set_processing_3
+% |
+\RCSdef{\RCSwritexyzpointsetRev}{$Id$}
+\RCSdefDate{\RCSwritexyzpointsetDate}{$Date$}
+% |
+\ccRefPageBegin
+%%RefPage: end of header, begin of main body
+% +------------------------------------------------------------------------+
+
+
+\begin{ccRefFunction}{write_xyz_points}  %% add template arg's if necessary
+
+%% \ccHtmlCrossLink{}     %% add further rules for cross referencing links
+%% \ccHtmlIndexC[function]{} %% add further index entries
+
+\ccDefinition
+
+\ccc{CGAL::write_xyz_points()} saves points (positions only) to a .xyz ASCII stream.
+\ccc{CGAL::write_xyz_points_and_normals()} saves points (positions + normals) to a .xyz ASCII stream.
+
+\ccInclude{CGAL/IO/write_xyz_points.h}
+
+% The section below is automatically generated. Do not edit!
+%START-AUTO(\ccDefinition)
+
+% Reduce left margin
+\ccThree{123456789012345}{6789012}{}
+
+\ccFunction{template<typename ForwardIterator, typename PointPMap, typename Kernel> bool write_xyz_points(std::ostream& stream, ForwardIterator first, ForwardIterator beyond, PointPMap point_pmap, const Kernel& kernel);}
+{
+Saves the [first, beyond) range of points (positions only) to a .xyz ASCII stream. The function writes for each point a line with the x y z position.
+\ccCommentHeading{Template Parameters}  \\
+\ccc{ForwardIterator}: iterator over input points. \ccc{PointPMap}: is a model of \ccc{boost::ReadablePropertyMap} with a \ccc{value_type} = \ccc{Point_3<Kernel>}. It can be omitted if \ccc{ForwardIterator} \ccc{value_type} is convertible to \ccc{Point_3<Kernel>}. \ccc{Kernel}: Geometric traits class. It can be omitted and deduced automatically from \ccc{PointPMap} \ccc{value_type}.
+\ccCommentHeading{Returns} true on success.
+\ccCommentHeading{Parameters}  \\
+\ccc{stream}: output stream. \ccc{first}: iterator over the first input point. \ccc{beyond}: past-the-end iterator over the input points. \ccc{point_pmap}: property map \ccc{ForwardIterator} -$>$ \ccc{Point_3}. \ccc{kernel}: geometric traits.
+}
+\ccGlue
+
+%END-AUTO(\ccDefinition)
+
+% UGLY HACK to have both functions documented on the same page:
+% uncomment 2 lines below to run generate_reference_manual, comment them out to run cgal_manual.
+% \end{ccRefFunction}
+% \begin{ccRefFunction}{write_xyz_points_and_normals}  %% add template arg's if necessary
+
+% The section below is automatically generated. Do not edit!
+%START-AUTO(\ccDefinition)
+
+% Reduce left margin
+\ccThree{123456789012345}{6789012}{}
+
+\ccFunction{template<typename ForwardIterator, typename PointPMap, typename NormalPMap, typename Kernel> bool write_xyz_points_and_normals(std::ostream& stream, ForwardIterator first, ForwardIterator beyond, PointPMap point_pmap, NormalPMap normal_pmap, const Kernel& kernel);}
+{
+Saves the [first, beyond) range of points (positions + normals) to a .xyz ASCII stream. The function writes for each point a line with the x y z position followed by the nx ny nz normal.
+\ccPrecond normals must be unit vectors.
+\ccCommentHeading{Template Parameters}  \\
+\ccc{ForwardIterator}: iterator over input points. \ccc{PointPMap}: is a model of \ccc{boost::ReadablePropertyMap} with a \ccc{value_type} = \ccc{Point_3<Kernel>}. It can be omitted if \ccc{ForwardIterator} \ccc{value_type} is convertible to \ccc{Point_3<Kernel>}. \ccc{NormalPMap}: is a model of \ccc{boost::WritablePropertyMap} with a \ccc{value_type} = \ccc{Vector_3<Kernel>}. \ccc{Kernel}: Geometric traits class. It can be omitted and deduced automatically from \ccc{PointPMap} \ccc{value_type}.
+\ccCommentHeading{Returns} true on success.
+\ccCommentHeading{Parameters}  \\
+\ccc{stream}: output stream. \ccc{first}: iterator over the first input point. \ccc{beyond}: past-the-end iterator over the input points. \ccc{point_pmap}: property map \ccc{ForwardIterator} -$>$ \ccc{Point_3}. \ccc{normal_pmap}: property map \ccc{ForwardIterator} -$>$ \ccc{Vector_3}. \ccc{kernel}: geometric traits.
+}
+\ccGlue
+
+%END-AUTO(\ccDefinition)
+
+\ccSeeAlso
+
+\ccRefIdfierPage{CGAL::read_xyz_points}  \\
+\ccRefIdfierPage{CGAL::read_off_points}  \\
+\ccRefIdfierPage{CGAL::write_off_points}  \\
+
+\ccExample
+
+See \ccc{read_write_xyz_point_set_example.cpp}.
+
+\end{ccRefFunction}
+
+% +------------------------------------------------------------------------+
+%%RefPage: end of main body, begin of footer
+\ccRefPageEnd
+% EOF
+% +------------------------------------------------------------------------+
+

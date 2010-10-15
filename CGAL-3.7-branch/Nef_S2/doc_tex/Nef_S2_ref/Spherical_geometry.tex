@@ -1,0 +1,29 @@
+\ccHeading{Restricted Spherical Geometry}
+
+We introduce geometric objects that are part of the spherical surface
+$S_2$ and operations on them. We define types \ccc{Sphere_point},
+\ccc{Sphere_circle}, \ccc{Sphere_segment}, and \ccc{Sphere_direction}.
+\ccc{Sphere_point}s are points on $S_2$, \ccc{Sphere_circle}s are
+oriented great circles of $S_2$, \ccc{Sphere_segment}s are oriented
+parts of \ccc{Sphere_circles} bounded by a pair of
+\ccc{Sphere_point}s, and \ccc{Sphere_direction}s are directions that
+are part of great circles. (a direction is usually defined to be a
+vector without length, that floats around in its underlying space and
+can be used to specify a movement at any point of the underlying
+space; in our case we use directions only at points that are part of
+the great circle that underlies also the direction.)
+
+Note that we have to consider special geometric properties of the
+objects. For example two points that are part of a great circle define
+two \ccc{Sphere_segment}s, and two arbitrary \ccc{Sphere_segment}s can
+intersect in two points.
+
+If we restrict our geometric objects to a so-called perfect hemisphere
+of $S_2$\footnote{A perfect hemisphere of $S_2$ is an open half-sphere
+  plus an open half-circle in the boundary of the open half-sphere
+  plus one endpoint of the half-circle.} then the restricted objects
+behave like in classical geometry, e.g., two points define exactly one
+segment, two segments intersect in at most one interior point
+(non-degenerately), or three non-cocircular sphere points can be
+qualified as being positively or negatively oriented.
+

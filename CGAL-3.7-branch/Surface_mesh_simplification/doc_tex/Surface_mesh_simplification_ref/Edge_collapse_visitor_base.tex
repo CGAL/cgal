@@ -1,0 +1,46 @@
+%% Copyright (c) 2007 GeometryFactory (France).  All rights reserved.
+%%
+%% This file is part of CGAL (www.cgal.org); you may redistribute it under
+%% the terms of the Q Public License version 1.0.
+%% See the file LICENSE.QPL distributed with CGAL.
+%%
+%% Licensees holding a valid commercial license may use this file in
+%% accordance with the commercial license agreement provided with the software.
+%%
+%% This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
+%% WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
+%%
+%% 
+%%
+%% Author(s)     : Fernando Cacciola <fernando.cacciola@geometryfactory.com>
+
+\begin{ccRefClass}{Surface_mesh_simplification::Edge_collapse_visitor_base<ECM>}
+
+%% \ccHtmlCrossLink{}     %% add further rules for cross referencing links
+%% \ccHtmlIndexC[concept]{} %% add further index entries
+
+\ccCreationVariable{v} 
+\ccDefinition
+
+The class \ccRefName\ provides a base class for models of the \ccc{EdgeCollapseSimplificationVisitor} concept.
+It has one template argument: the type of surface being simplified,
+which must be a model of the \ccc{EdgeCollapsableMesh} concept.
+
+This base class implements all of the visitor's callbacks. 
+This way, users need only override the callbacks they are interested in.
+The callbacks {\em are not virtual} because this is not a dynamically polymorphic base class
+and the derived visitor will never be used polymorphically at runtime (is perfectly fine to override 
+and hide a non-virtual method in the context of the static polymorphism used in the simplification algorithm).
+
+\ccInclude{CGAL/Surface_mesh_simplification/Edge_collapse_visitor_base.h}
+
+\ccIsModel
+\ccc{EdgeCollapseSimplificationVisitor}
+
+  
+\end{ccRefClass}
+
+% +------------------------------------------------------------------------+
+%%RefPage: end of main body, begin of footer
+% EOF
+% +------------------------------------------------------------------------+

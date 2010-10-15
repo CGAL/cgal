@@ -1,0 +1,187 @@
+%% Copyright (c) 2003,2004,2005  INRIA Sophia-Antipolis (France) and
+%% Notre Dame University (U.S.A.).  All rights reserved.
+%%
+%% This file is part of CGAL (www.cgal.org); you may redistribute it under
+%% the terms of the Q Public License version 1.0.
+%% See the file LICENSE.QPL distributed with CGAL.
+%%
+%% Licensees holding a valid commercial license may use this file in
+%% accordance with the commercial license agreement provided with the software.
+%%
+%% This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
+%% WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
+%%
+%% $URL$
+%% $Id$
+%% 
+%%
+%% Author(s)     : Menelaos Karavelas <mkaravel@cse.nd.edu>
+
+
+
+\begin{ccRefClass}{Segment_Delaunay_graph_hierarchy_2<Gt,STag,DS>}
+%% add template arg's if necessary
+
+%% \ccHtmlCrossLink{}     %% add further rules for cross referencing links
+%% \ccHtmlIndexC[class]{} %% add further index entries
+\ccDefinition
+
+We provide an alternative to the class
+\ccc{Segment_Delaunay_graph_2<Gt,DS>} for the incremental
+construction of the segment Delaunay graph. The \ccRefName\ class
+maintains a hierarchy of Delaunay graphs. There are two possibilities
+as to how this hierarchy is constructed.
+
+In the first case the bottom-most level of the hierarchy contains the
+full segment Delaunay graph. The upper levels of the hierarchy
+contain only points that are either point sites or endpoints of
+segment sites in the bottom-most Delaunay graph. 
+A point that is in level $i$ (either as an individdual point or as the
+endpoint of a segment), is inserted in level $i+1$ with probability
+$1/\alpha$ where $\alpha>1$ is some constant.
+In the second case the upper levels of the hierarchy contains not only
+points but also segments. A site that is in level $i$, is in level
+$i+1$ with probability $1/\beta$ where $\beta > 1$ is some constant.
+
+The difference between the \ccc{Segment_Delaunay_graph_2<Gt,DS>}
+class and the \ccRefName\ class (both versions of it) is on how the
+nearest neighbor location is done. Given a point $p$ the location is
+done as follows: at the top most level we find the nearest neighbor of
+$p$ as in the \ccc{Segment_Delaunay_graph_2<Gt,DS>} class. At
+every subsequent level $i$ we use the nearest neighbor found at level
+$i+1$ to find the nearest neighbor at level $i$. This is a variant of
+the corresponding hierarchy for points found in \cite{cgal:d-dh-02}. The
+details are described in \cite{cgal:k-reisv-04}.
+
+The class has three template parameters. The first and third
+have essentially the same semantics as in the
+\ccc{Segment_Delaunay_graph_2<Gt,DS>} class. The
+first template parameter must be a model of the
+\ccc{SegmentDelaunayGraphTraits_2} concept. The third template
+parameter must be a model of the
+\ccc{SegmentDelaunayGraphDataStructure_2} concept. However, the
+vertex base class that is to be used in the segment Delaunay graph
+data structure must be a model of the
+\ccc{SegmentDelaunayGraphHierarchyVertexBase_2}
+concept. The third template parameter defaults to
+\ccc{Triangulation_data_structure_2<
+Segment_Delaunay_graph_hierarchy_vertex_base_2< 
+Segment_Delaunay_graph_vertex_base_2<Gt> >,
+Triangulation_face_base_2<Gt> >}. The second template
+parameter controls whether or not segments are added in the upper
+levels of the hierarchy. It's possible values are \ccc{CGAL::Tag_true}
+and \ccc{CGAL::Tag_false}. If it is set to \ccc{CGAL::Tag_true},
+segments are also inserted in the upper levels of the hierarchy. The
+value \ccc{CGAL::Tag_false} indicates that only points are to be
+inserted in the upper levels of the hierarchy. The default value for
+the second template parameter is \ccc{CGAL::Tag_false}.
+
+
+The \ccRefName\ class derives publicly from the
+\ccc{Segment_Delaunay_graph_2<Gt,DS>} class. The interface is
+the same with its base class. In the sequel only additional types
+and methods defined are documented.
+
+
+\ccInclude{CGAL/Segment_Delaunay_graph_hierarchy_2.h}
+
+
+\ccIsModel
+\ccc{DefaultConstructible}\\
+\ccc{CopyConstructible}\\
+\ccc{Assignable}
+
+\ccInheritsFrom
+\ccc{CGAL::Segment_Delaunay_graph_2<Gt,DS>}
+
+
+\ccTypes
+\ccRefName\ introduces the following types in addition to those
+introduced by its base class \ccc{Segment_Delaunay_graph_2<Gt,DS>}.
+
+\ccThree{typedef CGAL::Segment_Delaunay_graph_2<Gt,DS>}{Base+}{}
+\ccThreeToTwo
+\ccTypedef{typedef STag Segments_in_hierarchy_tag;}{A type for the
+  \ccc{STag} template parameter.}
+\ccGlue
+\ccTypedef{typedef CGAL::Segment_Delaunay_graph_2<Gt,DS> Base;}
+          {A type for the base class.}
+
+\ccCreation
+\ccCreationVariable{sdgh}
+%
+\ccThree{Segment_Delaunay_graph_hierarchy_2<Gt,STag,DS>}
+{sdgh(Gt gt=Gt());}{}
+\ccThreeToTwo
+\ccTwo{Segment_Delaunay_graph_hierarchy}{}
+
+In addition to the default and copy constructors, the following
+constructors are defined:
+
+\ccConstructor{Segment_Delaunay_graph_hierarchy_2(Gt
+gt=Gt())}{Creates a hierarchy of segment Delaunay graphs using
+  \ccc{gt} as geometric traits.}
+%
+\ccGlue
+\ccConstructor{template< class Input_iterator >
+Segment_Delaunay_graph_hierarchy_2<Gt,STag,DS>(Input_iterator
+first, Input_iterator beyond, Gt gt=Gt())}
+{Creates a segment Delaunay graph hierarchy using 
+\ccc{gt} as geometric traits and inserts all sites in the
+range [\ccc{first}, \ccc{beyond}). \ccc{Input_iterator} must be a
+  model of \ccc{InputIterator}. The value type of \ccc{Input_iterator}
+  must be either \ccc{Point_2} or \ccc{Site_2}.}
+%
+%% \ccGlue
+%% \ccConstructor{Segment_Delaunay_graph_hierarchy_2<Gt,STag,DS>
+%% (Segment_Delaunay_graph_hierarchy_2<Gt,STag,DS> other)}
+%% {Copy constructor. All faces, vertices and inter-level pointers
+%% are duplicated. After the construction, \ccVar\ and \ccc{other} refer
+%% to two different hierarchies: if \ccc{other} is modified, \ccVar\ is
+%% not.}
+%% %
+%% \ccThree{Segment_Delaunay_graph_hierarchy<Gt,STag,PC,DS>++}{svdh = other;}{}
+%% \ccThreeToTwo
+%% \ccGlue
+%% \ccMethod{Segment_Delaunay_graph_hierarchy_2<Gt,STag,DS>
+%% operator=(Segment_Delaunay_graph_hierarchy_2<Gt,STag,DS>
+%% other);}{Assignment. All faces, vertices and inter-level pointers
+%% are duplicated. After the construction, \ccVar\ and \ccc{other} refer
+%% to two different hierarchies: if \ccc{other} is modified, \ccVar\ is
+%% not.}
+
+\ccHeading{I/O}
+\ccThree{std::ostream&}{std::ostream& os ++ sdgh+}{}
+\ccThreeToTwo
+%
+\ccFunction{std::ostream& operator<<(std::ostream& os,
+  Segment_Delaunay_graph_hierarchy_2<Gt,STag,DS> svdh);}
+{Writes the current state of the segment Delaunay graph hierarchy to
+  an output stream. In particular, all sites in the diagram are
+  written to the stream (represented through appropriate input sites),
+  as well as the underlying combinatorial hierarchical data structure.}
+\ccGlue
+\ccFunction{std::istream& operator>>(std::istream& is,
+  Segment_Delaunay_graph_hierarchy_2<Gt,STag,DS> svdh);}
+{Reads the state of the segment Delaunay graph hierarchy from an
+  input stream.}
+
+
+\ccSeeAlso
+\ccc{SegmentDelaunayGraphDataStructure_2}\\
+\ccc{SegmentDelaunayGraphTraits_2}\\
+\ccc{SegmentDelaunayGraphHierarchyVertexBase_2}\\
+\ccc{CGAL::Segment_Delaunay_graph_2<Gt,DS>}\\
+\ccc{CGAL::Triangulation_data_structure_2<Vb,Fb>}\\
+\ccc{CGAL::Segment_Delaunay_graph_traits_2<K,MTag>}\\
+\ccc{CGAL::Segment_Delaunay_graph_traits_without_intersections_2<K,MTag>}\\
+\ccc{CGAL::Segment_Delaunay_graph_filtered_traits_2<CK,CM,EK,EM,FK,FM>}\\
+\ccc{CGAL::Segment_Delaunay_graph_filtered_traits_without_intersections_2<CK,CM,EK,EM,FK,FM>}\\
+\ccc{CGAL::Segment_Delaunay_graph_hierarchy_vertex_base_2<Vbb>}
+
+\end{ccRefClass}
+
+% +------------------------------------------------------------------------+
+%%RefPage: end of main body, begin of footer
+% EOF
+% +------------------------------------------------------------------------+

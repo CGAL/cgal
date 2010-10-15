@@ -1,0 +1,82 @@
+% +------------------------------------------------------------------------+
+% | Reference manual page: DataKernel.tex
+% +------------------------------------------------------------------------+
+% | 09.02.2006   Marc Pouget and Frédéric Cazals
+% | Package: Jet_fitting_3
+% | 
+\RCSdef{\RCSDataKernelRev}{$Id$}
+\RCSdefDate{\RCSDataKernelDate}{$Date$}
+% |
+%%RefPage: end of header, begin of main body
+% +------------------------------------------------------------------------+
+
+
+\begin{ccRefConcept}{DataKernel}
+
+%% \ccHtmlCrossLink{}     %% add further rules for cross referencing links
+%% \ccHtmlIndexC[concept]{} %% add further index entries
+
+\ccDefinition
+  
+The concept \ccRefName\ describes the set of requirements to be
+fulfilled by any class used to instantiate first template parameter of
+the class
+\ccc{Monge_via_jet_fitting<DataKernel,LocalKernel,SvdTraits>}.
+
+  
+%\ccRefines
+
+%ThisConcept \\
+%ThatConcept
+
+\ccTypes
+% +------------------------------------------------------------------
+\ccNestedType{FT}{The scalar type.}
+\ccGlue
+\ccNestedType{Point_3}{The  point type.}
+\ccGlue
+\ccNestedType{Vector_3}{The vector  type.}
+
+
+
+%\ccCreation
+%\ccCreationVariable{a}  %% choose variable name
+
+%\ccConstructor{DataKernel();}{default constructor.}
+
+\ccOperations
+% +------------------------------------------------------------------
+Only constructors (from 3 scalars and copy constructors) and access
+methods to coordinates \ccc{x()}, \ccc{y()}, \ccc{z()} are needed.
+
+\ccHasModels
+% +------------------------------------------------------------------
+\ccc{CGAL::Cartesian<FieldNumberType>}
+
+\ccSeeAlso
+% +------------------------------------------------------------------
+The \ccc{LocalKernel} concept.
+
+%\ccExample
+
+%A short example program.
+%Instead of a short program fragment, a full running program can be
+%included using the 
+%\verb|\ccIncludeExampleCode{Jet_fitting_3/DataKernel.cpp}| 
+%macro. The program example would be part of the source code distribution and
+%also part of the automatic test suite.
+
+%\begin{ccExampleCode}
+%void your_example_code() {
+%}
+%\end{ccExampleCode}
+
+%% \ccIncludeExampleCode{Jet_fitting_3/DataKernel.cpp}
+
+\end{ccRefConcept}
+
+% +------------------------------------------------------------------------+
+%%RefPage: end of main body, begin of footer
+% EOF
+% +------------------------------------------------------------------------+
+

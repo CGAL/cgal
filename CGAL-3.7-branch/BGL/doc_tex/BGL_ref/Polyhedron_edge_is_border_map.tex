@@ -1,0 +1,52 @@
+
+
+\begin{ccRefClass}{Polyhedron_edge_is_border_property_map<Traits>}
+
+%% add template arg's if necessary
+
+%% \ccHtmlCrossLink{}     %% add further rules for cross referencing links
+%% \ccHtmlIndexC[class]{} %% add further index entries
+\ccDefinition
+
+The class \ccRefName\ provides a {\sc Bgl} 
+\ccAnchor{http://www.boost.org/libs/property_map/ReadablePropertyMap.html}{readable property map} 
+for the {\em internal property} \ccc{edge_is_border} 
+required by the \ccc{HalfedgeGraph} concept.
+
+It indicates if a \ccc{CGAL::Polyhedron_3} halfedge is a border halfedge.
+
+The template parameter \ccc{Traits} is the same \ccc{Traits} parameter of 
+\ccc{CGAL::Polyhedron_3<Traits>}.
+
+
+\ccInclude{CGAL/boost/graph/Polyhedron_BGL_properties.h}
+
+\ccTypes
+  \ccTypedef{boost::readable_property_map_tag category;}
+    {Indicates that this property is read-only.}
+  
+  \ccTypedef{bool value_type;}
+    {The type of the property.}
+    
+  \ccTypedef{bool reference;}
+    {The result type of the map operator.}
+
+  \ccTypedef{typename boost::graph_traits< CGAL::Polyhedron_3<Traits> const>::edge_descriptor key_type;}
+  {The key type of the property map: A \ccc{CGAL::Polyhedron_3::Halfedge_const_handle}.}
+
+\ccCreation
+\ccCreationVariable{pm}  %% choose variable name
+
+\ccConstructor{CGAL::Polyhedron_edge_is_border_property_map<Traits>(); }
+{Default constructor.}
+
+\ccOperations
+
+\ccMethod
+  {reference operator[]( key_type const& edge ) const;}
+  {Returns the value of \ccc{edge->is_border()}.}  
+    
+\ccIsModel
+\ccAnchor{http://www.boost.org/libs/property_map/ReadablePropertyMap.html}{ReadablePropertyMap} 
+
+\end{ccRefClass}

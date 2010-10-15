@@ -1,0 +1,14 @@
+\section{Real Number Types}
+Every CGAL \ccc{Kernel} comes with two \emph{real number types}
+(number types embeddable into the real numbers). One of them is a
+\ccc{FieldNumberType}, and the other a \ccc{RingNumberType}.  The
+coordinates of the basic kernel objects (points, vectors, etc.) come
+from one of these types (the \ccc{FieldNumberType} in case of Cartesian
+kernels, and the \ccc{RingNumberType} for Homogeneous kernels). 
+
+The concept \ccc{FieldNumberType} combines the requirements of the
+concepts \ccc{Field} and \ccc{RealEmbeddable}, while
+\ccc{RingNumberType} combines \ccc{IntegralDomainWithoutDivision} and
+\ccc{RealEmbeddable}. Algebraically, the real number types do not form
+distinct structures and are therefore not listed in the concept
+hierarchy of Figure~\ref{fig::ConceptHierarchyOfAlgebraicStructures}.

@@ -1,0 +1,86 @@
+% +------------------------------------------------------------------------+
+% | Reference manual page: SpatialSortingTraits_3.tex
+% +------------------------------------------------------------------------+
+
+
+\begin{ccRefConcept}{SpatialSortingTraits_3}
+
+\ccDefinition
+  
+All 3D spatial sorting algorithms provided in \cgal{} are parameterized
+by a traits class \ccStyle{Traits}, which defines the
+primitives (objects and predicates) that the sorting algorithms use.
+\ccRefName\ defines the complete set of primitives required in these
+functions and functors.
+
+\ccTypes
+\ccAutoIndexingOff
+\ccSetTwoColumns{SpatialSortingTraits_3::Less_x_3}{}
+
+\ccNestedType{Point_3}%
+       {The point type on which the sorting algorithms operate.}
+
+
+\ccNestedType{Less_x_3}%
+       {Binary predicate object type comparing \ccc{Point_3}s
+        along the $x$ coordinate.
+        Must provide 
+        \ccc{bool operator()(Point_3 p, Point_3 q)} where \ccc{true}
+        is returned iff $p_x < q_x$,
+        where $p_x$ and $q_x$ denote $x$ coordinate of point $p$ and $q$,
+        respectively.
+       }
+
+\ccNestedType{Less_y_3}%
+       {Binary predicate object type comparing \ccc{Point_3}s
+        along the $y$ coordinate.
+        Must provide 
+        \ccc{bool operator()(Point_3 p, Point_3 q)} where \ccc{true}
+        is returned iff $p_y < q_y$,
+        where $p_y$ and $q_y$ denote $y$ coordinate of point $p$ and $q$,
+        respectively.
+       }
+
+\ccNestedType{Less_z_3}%
+       {Binary predicate object type comparing \ccc{Point_3}s
+        along the $z$ coordinate.
+        Must provide 
+        \ccc{bool operator()(Point_3 p, Point_3 q)} where \ccc{true}
+        is returned iff $p_z < q_z$,
+        where $p_z$ and $q_z$ denote $z$ coordinate of point $p$ and $q$,
+        respectively.
+       }
+
+
+\ccCreation
+\ccCreationVariable{traits}  %% choose variable name
+
+Only a copy constructor is required.
+
+\ccConstructor{SpatialSortingTraits_3(const SpatialSortingTraits_3& t);}{}
+
+\ccOperations
+
+The following member functions to create instances of the above predicate
+object types must exist. 
+
+\setlength\parskip{0mm}
+\ccMemberFunction{Less_x_3 less_x_3_object(); }{}
+\ccGlue
+\ccMemberFunction{Less_y_3 less_y_3_object(); }{}
+\ccGlue
+\ccMemberFunction{Less_z_3 less_z_3_object(); }{}
+
+\ccParDims
+\ccHasModels
+
+Any \cgal{} kernel.
+
+\ccParDims
+\end{ccRefConcept}
+
+% +------------------------------------------------------------------------+
+%%RefPage: end of main body, begin of footer
+% EOF
+% +------------------------------------------------------------------------+
+

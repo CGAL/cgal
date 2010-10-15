@@ -1,0 +1,25 @@
+* Number-type: rational
+* Description: Test
+* Generated-by: data2mps
+NAME Test
+ROWS
+  N obj
+  E c0
+COLUMNS
+  x0  obj  -2/3
+  x0  c0  1/1
+  x1  obj  -2/3
+  x1  c0  1/1
+  x2  obj  -2/3
+  x2  c0  1/1
+RHS
+  rhs c0  1/1
+BOUNDS
+  MI  BND  x0
+  MI  BND  x1
+  MI  BND  x2
+QMATRIX
+  x0  x0  2/1
+  x1  x1  2/1
+  x2  x2  2/1
+ENDATA

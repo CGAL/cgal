@@ -1,0 +1,44 @@
+% +------------------------------------------------------------------------+
+% | Reference manual page: Simulator.tex
+% +------------------------------------------------------------------------+
+% | 20.03.2005   Daniel Russel
+% | Package: Kinetic_data_structures
+% | 
+\RCSdef{\RCSSimulatorRev}{$Id$}
+\RCSdefDate{\RCSSimulatorDate}{$Date$}
+% |
+%%RefPage: end of header, begin of main body
+% +------------------------------------------------------------------------+
+
+
+\begin{ccRefClass}{Kinetic::Default_simulator<FunctionKernel, EventQueue>}  %% add template arg's if necessary
+
+%% \ccHtmlCrossLink{}     %% add further rules for cross referencing links
+%% \ccHtmlIndexC[class]{} %% add further index entries
+
+\ccDefinition
+  
+The class \ccRefName\ controls kinetic data structures by maintaining
+a concept of time and ensuring that events are processed when
+necessary. 
+
+\ccInclude{CGAL/Kinetic/Default_simulator.h}
+
+\ccIsModel
+
+\ccc{Kinetic::Simulator}.
+
+
+\ccCreation
+\ccCreationVariable{sim}  %% choose variable name
+
+\ccConstructor{Default_simulator(const Time start=Time(0), const Time end= Time::infinity());}{Construct a \ccRefName\ which will process events between times start and end (events outside this window will be discarded).}
+
+
+\end{ccRefClass}
+
+% +------------------------------------------------------------------------+
+%%RefPage: end of main body, begin of footer
+% EOF
+% +------------------------------------------------------------------------+
+

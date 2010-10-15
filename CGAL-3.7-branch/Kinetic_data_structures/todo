@@ -1,0 +1,24 @@
+Future Daniel Russel
+- move rbr for doubles to the middle, what it is.
+- when using numeric solvers, evaluate the static predicates first before solving?
+- make adding points to table optional, they just control notification. Keys are the same as points (so points are ref counted pointers.
+- move table to a list and make key the same as object (i.e. the key is the Point_2) this will help filtering and things and mean the table can be ignored if de
+sired. Make the tables simply an event manager rather than owning the points (so points have internal pointer which can be used in a map and copied cheaply). Need easy mapping of point to data--property maps?
+- have Sturm first try to prove there are no roots-- say Descartes once or interval
+- link kinetic and instantnaeous predicates-how?
+- make sorting general- solve linking first
+- times can generate certificate func and solve. Queue checks if they are dirty (a point changed--when check? that is hard--maybe collapse to front of interval if need exact and is dirty) and reinserts them if they are. Points are ref counted pointers. With interval rep and way to generate exact. Then just insert notifications. Dirty is keept by generation count per point. Time is k ints, k points, inexact func, interval--broken-what if time moves up? Need linear scans.
+- Delaunay/Regular 3D does all sorts of extra walking around the mesh. 
+- resolve IK using sign_after. probably should be sign_at with a flag
+- pull edge data into faces (since those must be empty and it is just as easy
+	        to walk around them)-- this does not work trivially, perhaps not
+at all as there can be more than one edge certificate per cell, and they
+mostly collide
+
+Easy:
+- pull static_pred/IP into kinetic pred to get result types right and things
+- numeric solver based on lapack instead of TNT
+- document macro changes
+
+known bugs:
+

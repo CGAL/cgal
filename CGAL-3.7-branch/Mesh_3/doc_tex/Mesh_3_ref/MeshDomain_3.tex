@@ -1,0 +1,196 @@
+% +------------------------------------------------------------------------+
+% | Reference manual page: MeshDomain_3.tex
+% +------------------------------------------------------------------------+
+% | 18.05.2008   Laurent Rineau
+% | Package: Mesh_3
+% |
+\RCSdef{\RCSMeshDomainRev}{$Id$}
+\RCSdefDate{\RCSMeshDomainDate}{$Date$}
+% |
+\ccRefPageBegin
+%%RefPage: end of header, begin of main body
+% +------------------------------------------------------------------------+
+
+
+\begin{ccRefConcept}{MeshDomain_3}
+
+%% \ccHtmlCrossLink{}     %% add further rules for cross referencing links
+%% \ccHtmlIndexC[concept]{} %% add further index entries
+
+\ccDefinition
+  
+The concept \ccRefName\ describes the knowledge required on the
+object to be discretized. 
+%Its generalize the concept \ccc{SurfaceMeshTraits_3}. 
+%The concept \ccRefName\ 
+More specifically the concept provides 
+a method to localize a point with regards to the  input domain.
+Moreover, as the concept \ccc{SurfaceMeshTraits_3}, 
+it also provides  
+ predicates which test whether a query segment
+(or a ray,  or a line) intersects the boundary of the domain or 
+of some subdomains, and constructors 
+ to compute some intersection point if any. 
+It also includes a method able to provide
+a small set of initial points on the boundary. 
+
+In the following we consider only proper intersection with the domain and
+subdomain boundaries. 
+A segment, ray or line is said to intersect properly the domain boundary
+(resp. a subdomain boundary)
+if it includes points which are strictly inside
+and strictly outside  the domain (resp. the subdomain).
+
+
+
+
+% \ccRefines
+
+% \ccc{SurfaceMeshTraits_3}
+
+\ccTypes
+
+\ccNestedType{R}{Geometric traits class. This type is defined to ensure compatibility with class \ccc{CGAL::Kernel_traits<T>}.}
+
+\ccNestedType{Point_3}{Point type.}
+\ccGlue
+\ccNestedType{Segment_3}{Segment type.}
+\ccGlue
+\ccNestedType{Ray_3}{Ray type.}
+\ccGlue
+\ccNestedType{Line_3}{Line type.}
+
+\ccNestedType{Subdomain_index}{Type of indices for subdomains of the
+  input domain. Must be a model of CopyConstructible,
+  Assignable, DefaultConstructible and EqualityComparable.
+  The default constructed value must match the label of the exterior of
+  the domain (which contains at least the unbounded component).}
+\ccGlue
+\ccNestedType{Surface_index}{Type of indices for surface patches
+  (boundaries and interfaces) of the
+  input domain. Must be a model of CopyConstructible,
+  Assignable, DefaultConstructible and EqualityComparable.
+  The default constructed value must be the index value assigned 
+  to a non surface facet.}
+\ccGlue
+\ccNestedType{Index}{Type of indices to be stored at mesh vertices
+to characterize the lowest dimensional face of the input complex
+on which the vertex lies. Must be a model of CopyConstructible,
+Assignable, DefaultConstructible and EqualityComparable.
+%
+% Moreover, \ccc{Index} must be constructible from \ccc{Subdomain_index} and
+% from \ccc{Surface_index}.
+%
+% It must define the following methods:\\
+% \ccc{Surface_index surface_index()}\\
+% \ccc{Subdomain_index subdomain_index()}\\
+% which return respectively \ccc{Surface_index} and
+% \ccc{Subdomain_index} which correspond to \ccc{Index} object
+% if it exists (default value otherwise).
+}
+
+\ccNestedType{Subdomain}{Return type of \ccc{Is_in_domain} queries. Must
+  be convertible to \ccc{bool}. If it converts to \ccc{false}, the
+  query point is outside the domain. Otherwise the query point
+  subdomain index must be accessible using \ccc{operator*()}.
+  Note that \ccc{boost::optional<Subdomain_index>} is a natural model of this concept.}%boost::optional
+\ccGlue
+\ccNestedType{Surface_patch}{Return type of \ccc{Do_intersect_surface} queries. Must
+  be convertible to \ccc{bool}. If it converts to \ccc{false}, no
+  surface is intersected by the query. Otherwise the surface index of
+  one of the intersected surface patches must be accessible using \ccc{operator*()}.
+  Note that \ccc{boost::optional<Surface_index>} is a natural model of this concept.}%boost::optional
+\ccGlue
+\ccTypedef{typedef CGAL::cpp0x::tuple<Point_3, Index, int> Intersection;}
+{Return type of \ccc{Construct_intersection} queries.
+  \ccc{int} represents the
+  dimension of the lower dimensionnal face of the input  complex on which the
+  point lies and \ccc{Index} is the index of this face.}
+
+\ccNestedType{Construct_initial_points}{A function object to construct
+a set of initial points on the surface of the domain. Provides the
+following operators:\\
+\ccc{template<typename OutputIterator>\\
+ OutputIterator operator()(OutputIterator pts)}\\
+\ccc{template<typename OutputIterator>\\
+ OutputIterator operator()(int n, OutputIterator pts)}\\
+Those two operators output a set of (\ccc{n}) surface points to the
+output iterator \ccc{pts}, as objects of type \ccc{std::pair<Point_3,
+  Index}. If \ccc{n} is not given, the functor must provide enough
+points to initialize the mesh generation process.}
+
+
+\ccNestedType{Is_in_domain}{A function object to query if a point is in
+  the input domain or not. In the positive case, it outputs the
+  subdomain which includes the query point. Provides the operator:\\
+\ccc{Subdomain operator()(Point_3 p)}}
+
+\ccNestedType{Do_intersect_surface}{A function object which answers
+  intersection queries between the surface patches of the domain and
+  objects of type \ccc{Segment_3}, \ccc{Ray_3} or
+  \ccc{Line_3}. Provides the operators:\\
+\ccc{Surface_patch operator()(Segment_3 s)}\\
+\ccc{Surface_patch operator()(Ray_3 r)}\\
+\ccc{Surface_patch operator()(Line_3 l)}\\
+The \ccc{Surface_patch} output tells whether or not the query intersects a
+surface patch. In the positive case, it yields  the \ccc{Surface_index}
+of one of the intersected surface patches.}
+
+
+\ccNestedType{Construct_intersection}{A function object to construct the
+  intersection between an object of type \ccc{Segment_3}, \ccc{Ray_3} or
+  \ccc{Line_3} and an interface. Provides the operators:\\
+\ccc{Intersection operator()(Segment_3 s)}\\
+\ccc{Intersection operator()(Ray_3 r)}\\
+\ccc{Intersection operator()(Line_3 l)}
+\ccPrecond{do\_intersect\_surface(s/r/l) == true}}
+
+
+\ccCreationVariable{domain}  %% choose variable name
+
+\ccOperations
+The following functions give access to the function objects:
+
+\ccMethod{Construct_initial_points construct_initial_points_object();}{}
+\ccGlue
+\ccMethod{Is_in_domain is_in_domain_object();}{}
+\ccGlue
+\ccMethod{Do_intersect_surface do_intersect_surface_object();}{}
+\ccGlue
+\ccMethod{Construct_intersection construct_intersection_object();}{}
+
+These methods are designed to convert indices:
+
+\ccMethod{Index index_from_surface_index(Surface_index surface_index);}{Returns
+ the index to be stored at a vertex lying on the surface patch identified by \ccc{surface_index}.}
+\ccGlue
+\ccMethod{Index index_from_subdomain_index(Subdomain_index subdomain_index);}{Returns
+ the index to be stored at a vertex lying in  the subdomain identified by \ccc{subdomain_index}.}
+\ccGlue
+\ccMethod{Surface_index surface_index(Index index);}
+{Returns the \ccc{Surface_index} of the surface patch 
+where lies a vertex with dimension 2 and  index  \ccc{index}.} 
+\ccGlue
+\ccMethod{Subdomain_index subdomain_index(Index index);}{Returns the index 
+of the subdomain containing a vertex with dimension 3 and  index \ccc{index}.}
+
+\ccHasModels
+\ccc{Polyhedral_mesh_domain_3<Polyhedron,IGT,TriangleAccessor>} \\
+\ccc{Implicit_mesh_domain_3<Function,BGT>} \\
+\ccc{Labeled_image_mesh_domain_3<Image,BGT>}
+ 
+\ccSeeAlso
+\ccc{MeshVertexBase_3}\\
+\ccc{MeshCellBase_3} \\
+\ccc{make_mesh_3} \\
+\ccc{refine_mesh_3}
+
+
+\end{ccRefConcept}
+
+% +------------------------------------------------------------------------+
+%%RefPage: end of main body, begin of footer
+\ccRefPageEnd
+% EOF
+% +------------------------------------------------------------------------+
+

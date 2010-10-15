@@ -1,0 +1,153 @@
+\begin{ccRefConcept}{AlgebraicKernelForCircles::ConstructPolynomial_1_2}
+
+\ccDefinition
+
+\ccCreationVariable{cpol}
+
+A model \ccVar\ of this type must provide:
+
+\ccMethod{AlgebraicKernelForCircles::Polynomial_1_2
+	operator()(const AlgebraicKernelForCircles::RT a,
+		const AlgebraicKernelForCircles::RT b,
+		const AlgebraicKernelForCircles::RT c);}
+{Constructs polynomial \ccc{ax+by+c}.}
+
+\end{ccRefConcept}
+
+\begin{ccRefConcept}{AlgebraicKernelForCircles::ConstructPolynomialForCircles_2_2}
+
+\ccCreationVariable{cpol}
+
+A model \ccVar\ of this type must provide:
+
+\ccMethod{AlgebraicKernelForCircles::PolynomialForCircles_2_2
+	operator()(const AlgebraicKernelForCircles::FT a,
+		const AlgebraicKernelForCircles::FT b,
+		const AlgebraicKernelForCircles::FT rsq);}
+{Constructs polynomial \ccc{(x-a)^2 + (y-b)^2 - rsq}.}
+
+\end{ccRefConcept}
+
+\begin{ccRefConcept}{AlgebraicKernelForCircles::Solve}
+
+\ccDefinition
+
+\ccCreationVariable{sol}
+
+A model \ccVar\ of this type must provide:
+
+\ccMethod{template < class OutputIterator >
+    OutputIterator
+    operator()(const AlgebraicKernelForCircles::Polynomial_1_2 &p1,
+	     const AlgebraicKernelForCircles::Polynomial_1_2 &p2,
+	     OutputIterator res);}
+{Copies in the output iterator the common roots of \ccc{p1} and \ccc{p2}, with their multiplicity, as objects of type \ccc{std::pair< AlgebraicKernelForCircles::RootForCircles_2_2, int>}.} \footnote{???}
+
+\ccMethod{template < class OutputIterator >
+    OutputIterator
+    operator()(const AlgebraicKernelForCircles::Polynomial1_2 &p1,
+	     const AlgebraicKernelForCircles::PolynomialForCircles_2_2 &p2,
+	     OutputIterator res);}
+{Same as previous.} 
+
+\ccMethod{template < class OutputIterator >
+    OutputIterator
+    operator()(const AlgebraicKernelForCircles::PolynomialForCircles_2_2 &p1,
+	     const AlgebraicKernelForCircles::PolynomialForCircles_2_2 &p2,
+	     OutputIterator res);}
+{Same as previous.} 
+
+\ccHasModels
+
+\ccc{Algebraic_kernel_for_circles_2_2::Solve;}
+
+\ccSeeAlso
+
+\ccRefIdfierPage{CGAL::solve}
+
+\end{ccRefConcept}
+\begin{ccRefConcept}{AlgebraicKernel_4_2::Solve}
+
+\ccDefinition
+
+\ccCreationVariable{sol}
+
+A model \ccVar\ of this type must provide:
+
+\ccMethod{template < class OutputIterator >
+    OutputIterator
+    operator()(const AlgebraicKernel_4_2::Polynomial_2_2 &p1,
+	     const AlgebraicKernel_4_2::Polynomial_2_2 &p2,
+	     OutputIterator res);}
+{Copies in the output iterator the common roots of \ccc{p1} and \ccc{p2}, with their multiplicity, as objects of type \ccc{std::pair< AlgebraicKernel_4_2::RootOf_4, int>}.} 
+
+\ccHasModels
+
+\ccc{Algebraic_kernel_for_circles_2_2::Solve;}
+
+\ccSeeAlso
+
+\ccRefIdfierPage{CGAL::solve}
+
+\end{ccRefConcept}
+
+\begin{ccRefConcept}{AlgebraicKernelForCircles::XCriticalPoints}
+
+\ccDefinition
+
+\ccCreationVariable{xcrit}
+
+A model \ccVar\ of this type must provide:
+
+\ccMethod{template < class OutputIterator >
+    OutputIterator
+    operator()(const AlgebraicKernelForCircles::PolynomialForCircles_2_2 &p,
+	     OutputIterator res);}
+{Copies in the output iterator the \ccc{x}-critical points of polynomial 
+\ccc{p}, as objects of type \ccc{AlgebraicKernelForCircles::RootForCircles_2_2}.} 
+
+\ccMethod{template < class OutputIterator >
+    AlgebraicKernelForCircles::RootForCircles_2_2
+    operator()(const AlgebraicKernelForCircles::PolynomialForCircles_2_2 &p,
+	     bool i);}
+{Computes the \ccc{i}th \ccc{x}-critical point of polynomial \ccc{p}.} 
+
+\ccHasModels
+
+\ccc{Algebraic_kernel_for_circles_2_2::X_critical_points;}
+
+\ccSeeAlso
+
+\ccRefIdfierPage{CGAL::x_critical_points}
+
+\end{ccRefConcept}
+\begin{ccRefConcept}{AlgebraicKernelForCircles::YCriticalPoints}
+
+\ccDefinition
+
+\ccCreationVariable{ycrit}
+
+A model \ccVar\ of this type must provide:
+
+\ccMethod{template < class OutputIterator >
+    OutputIterator
+    operator()(const AlgebraicKernelForCircles::PolynomialForCircles_2_2 &p,
+	     OutputIterator res);}
+{Copies in the output iterator the \ccc{y}-critical points of polynomial 
+\ccc{p}, as objects of type \ccc{AlgebraicKernelForCircles::RootForCircles_2_2}.} 
+
+\ccMethod{template < class OutputIterator >
+    AlgebraicKernelForCircles::RootForCircles_2_2
+    operator()(const AlgebraicKernelForCircles::PolynomialForCircles_2_2 &p,
+	     bool i);}
+{Computes the \ccc{i}th \ccc{y}-critical point of polynomial \ccc{p}.} 
+
+\ccHasModels
+
+\ccc{Algebraic_kernel_for_circles_2_2::Y_critical_points;}
+
+\ccSeeAlso
+
+\ccRefIdfierPage{CGAL::y_critical_points}
+
+\end{ccRefConcept}

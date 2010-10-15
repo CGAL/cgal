@@ -1,0 +1,67 @@
+% +------------------------------------------------------------------------+
+% | Reference manual page: Triangulated_mixed_complex_observer_3.tex
+% +------------------------------------------------------------------------+
+% | 27.09.2005   Nico Kruithof
+% | Package: Skin_surface
+% | 
+\RCSdef{\RCSTriangulatedmixedcomplexobserverRev}{$Id$}
+\RCSdefDate{\RCSTriangulatedmixedcomplexobserverDate}{$Date$}
+% +------------------------------------------------------------------------+
+
+\ccRefPageBegin
+
+%%RefPage: end of header, begin of main body
+% +------------------------------------------------------------------------+
+
+
+\begin{ccRefClass}{Triangulated_mixed_complex_observer_3<SkinSurfaceTraits_3, TriangulatedMixedComplex_3, RegularTriangulation_3>}
+\label{refTriangulatedmixedcomplexobserver}
+
+\ccDefinition
+  
+Default implementation of the \ccc{TriangulatedMixedComplexObserver_3}
+concept.
+
+\ccInclude{CGAL/Triangulated_mixed_complex_observer_3.h}
+
+\ccIsModel
+
+\ccRefConceptPage{TriangulatedMixedComplexObserver_3}
+
+\ccThree{Skin}{Triang}{}
+\ccThreeToTwo
+\ccTypes
+
+\ccTypedef{typedef Simplex<RegularTriangulation_3> Rt_Simplex;}{}
+
+\ccTypedef{typedef TriangulatedMixedComplex_3::Vertex_handle
+  TMC_Vertex_handle;}{} 
+
+\ccTypedef{typedef TriangulatedMixedComplex_3::Cell_handle
+  TMC_Cell_handle;}{} 
+
+
+\ccCreation
+\ccCreationVariable{observer}
+
+\ccConstructor{TriangulatedMixedComplexObserver_3();}{}
+
+\ccHasModels
+
+\ccRefIdfierPage{CGAL::Triangulated_mixed_complex_observer_3<SkinSurfaceTraits_3, TriangulatedMixedComplex_3, RegularTriangulation_3>}
+
+
+\ccOperations
+
+\ccMethod{void after_vertex_insertion( const Rt_Simplex &sDel, const
+  Rt_Simplex &sVor, TMC_Vertex_handle &vh);}{Empty function}
+
+\ccMethod{void after_cell_insertion( const Rt_Simplex &s,
+  TMC_Cell_handle &ch);}{Constructs the quadratic surface defined within the tetrahedron and assigns it to the pointer defined in the cell.}
+
+\ccSeeAlso
+\ccRefIdfierPage{CGAL::Triangulated_mixed_complex_observer_3<SkinSurfaceTraits_3, TriangulatedMixedComplex_3, RegularTriangulation_3>}
+\ccRefIdfierPage{CGAL::Triangulated_mixed_complex_3<SkinSurfaceTraits_3,GT,PolyhedronKernel_3,Tds>}
+\ccRefIdfierPage{CGAL::Triangulated_mixed_complex_cell_3<GT,SurfaceKernel,Cb>}
+
+\end{ccRefClass}

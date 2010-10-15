@@ -1,0 +1,170 @@
+% =============================================================================
+% The CGAL Developers' Manual
+% Chapter: Introduction
+% -----------------------------------------------------------------------------
+% file   : philosophy.tex
+% authors: Stefan Schirra <stschirr@mpi-sb.mpg.de>
+% -----------------------------------------------------------------------------
+% $Id$
+% $Date$
+% =============================================================================
+
+\section{Primary design goals\label{sec:design_goals}}
+\ccIndexSubitemBegin{design}{goals}
+The primary design goals of \cgal\ are \cite{fgkss-dccga-00}:
+
+\subsection*{Correctness}
+\ccIndexMainItem{correctness}
+A library component is correct if it behaves according to its
+specification. 
+Basically, correctness is therefore a matter of 
+verification that documentation and implementation coincide.
+In a modularized program the correctness of a module is determined 
+by its own correctness and the correctness of all the modules it depends on.  
+Clearly, in order to get correct results, correct algorithms and data 
+structures must be used. 
+
+\ccIndexSubitem{correctness}{vs. exactness}
+\ccIndexMainItem{exactness}
+Exactness should not be confused with correctness in the sense of
+reliability. There is nothing wrong with algorithms computing approximate 
+solutions instead of exact solutions, as long as their 
+behavior is clearly documented and they do behave as specified.
+Also, an algorithm handling only non-degenerate cases can be
+correct with respect to its specification, although in \cgal\ we would
+like to provide algorithms handling degeneracies.\ccIndexMainItem{degeneracies} 
+
+\subsection*{Robustness}
+\ccIndexMainItem{robustness}
+A design goal particularly relevant for the implementation of
+geometric algorithms is robustness.  Many implementations of geometric
+algorithms lack robustness because of precision problems; see 
+Chapter~\ref{chap:robustness} for a discussion of robustness issues within 
+\cgal.
+
+\subsection*{Flexibility}
+\ccIndexMainItem{flexibility}
+The different needs of the potential application areas demand 
+flexibility in the library. Four sub-issues of flexibility can be identified.
+
+{\bf Modularity.}
+\ccIndexMainItem{modularity}
+A clear structuring of \cgal\ into modules with as few dependencies as
+possible helps a user in learning and using \cgal, since the overall
+structure can be grasped more easily and the focus can be narrowed to
+those modules that are actually of interest. 
+
+{\bf Adaptability.}
+\ccIndexMainItem{adaptability}
+\cgal\ might be used in an already established environment with
+geometric classes and algorithms in which case the modules will 
+most probably need adaptation before they can be used. 
+
+{\bf Extensibility.}
+\ccIndexMainItem{extensibility}
+Not all wishes can be fulfilled with \cgal. Users may want to
+extend the library. It should be possible to integrate new 
+classes and algorithms into \cgal.
+
+{\bf Openness.}
+\ccIndexMainItem{openness}
+\cgal\ should be open to coexist with other libraries, or better, to
+work together with other libraries and programs. The \CC\ 
+Standard~\cite{cgal:ansi-is14882-98}
+\index{C++ standard@\CC\ standard}
+\ccIndexMainItem{\stl}
+defines with the \CC\ Standard Library a common
+foundation for all \CC\ platforms. 
+So it is easy and natural to gain openness by following this standard.
+There are important libraries outside the standard, and \cgal\
+should be easily adaptable to them as well.
+
+\subsection*{Ease of Use}
+\ccIndexMainItem{ease of use}
+Many different qualities can contribute to the ease of use of a
+library. Which qualities are most important differs according to 
+the experience of the user.
+The above-mentioned correctness and robustness issues are among
+these qualities. Of general importance is the length of time required
+before the library becomes useful. Another issue is the number of 
+new concepts and
+exceptions to general rules that must be learned and remembered.
+
+Ease of use tends to conflict with flexibility, but in many
+situations a solution can be found.
+The flexibility of \cgal\ should not distract a novice who takes the 
+first steps with \cgal.
+\ccIndexSubitem{ease of use}{vs. flexibility}
+\ccIndexSubitem{flexibility}{vs. ease of use}
+
+{\bf Uniformity.}
+\ccIndexMainItem{uniformity}
+A uniform look and feel of the design in \cgal\ will help in learning
+and memorizing. A concept once learned should be applicable in all
+places where one would wish to apply it. 
+A function name once learned for a specific
+class should not be named differently for another class. 
+
+\index{C++ standard@\CC\ standard} \ccIndexMainItem{\stl} \cgal\ is
+based in many places on concepts borrowed from \stl\ (Standard
+Template Library) or the other parts of the \CC\ Standard Library. An
+example is the use of streams and stream operators in \cgal. Another
+example is the use of container classes and algorithms from the
+\stl. So these concepts should be used uniformly.
+
+{\bf Complete and Minimal Interfaces.}
+\ccIndexMainItem{completeness}
+\ccIndexSubitem{interfaces}{designing}
+A goal with similar implications as uniformity is a design
+with complete and minimal interfaces, see for example Item 18 
+in Ref.~\cite{cgal:m-ec-97}.
+An object or module should be complete in its 
+functionality, but should
+not provide additional decorating functionality. Even if a certain
+function might look like it contributes to the ease of use for a certain 
+class, in a more global picture it might hinder the understanding of 
+similarities and differences among classes, and make it harder to learn 
+and memorize.
+
+{\bf Rich and Complete Functionality.}
+\ccIndexMainItem{completeness}
+\ccIndexMainItem{functionality}
+We aim for a useful and rich collection of geometric classes, data
+structures and algorithms. \cgal\ is supposed to be a foundation for
+algorithmic research in computational geometry and therefore needs a
+certain breadth and depth. The standard techniques in the field are
+supposed to appear in \cgal. 
+
+Completeness is also related to robustness.
+\ccIndexMainItem{completeness}
+\ccIndexMainItem{robustness}
+We aim for general-purpose
+solutions that are, for example, not restricted by assumptions on
+general positions. Algorithms in \cgal\ should be able to handle
+special cases and degeneracies. 
+\ccIndexMainItem{general position}
+\ccIndexMainItem{degeneracies}
+In those cases where handling of degeneracies turns out to be
+inefficient, special variants that are more efficient but less general
+should be provided in the library in addition to the general 
+algorithms handling all degeneracies. Of course, it needs to be
+clearly documented which degeneracies are handled and which are not.
+
+\subsection*{Efficiency}
+\ccIndexMainItem{efficiency}
+For most geometric algorithms theoretical results for the time and space
+complexity are known. Also, the theoretic interest in efficiency for
+realistic inputs, as opposed to worst-case situations, is
+growing~\cite{v-ffrim-97}.
+For practical purposes, insight into the constant factors hidden in the
+$O$-notation is necessary, especially if there are several competing
+algorithms.
+\ccModifierCrossRefOff
+\ccIndexMainItem{implementations, multiple}
+\ccModifierCrossRefOn
+Therefore, different implementations should be supplied if there is 
+not one best solution, as, for example, when there is a tradeoff between 
+time and space or a more efficient implementation when there are no or few 
+degeneracies. 
+\ccIndexMainItem{time-space tradeoff}
+\ccIndexSubitemEnd{design}{goals}

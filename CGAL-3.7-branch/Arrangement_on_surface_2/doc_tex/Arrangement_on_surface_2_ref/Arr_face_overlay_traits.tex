@@ -1,0 +1,44 @@
+% +------------------------------------------------------------------------+
+% | Reference manual page: Arr_face_overlay_traits.tex
+% +------------------------------------------------------------------------+
+% | 
+% | Package: Arrangement_2
+% | 
+% +------------------------------------------------------------------------+
+
+\ccRefPageBegin
+
+\begin{ccRefClass}{Arr_face_overlay_traits<Arr_A,Arr_B,Arr_R,OvlFaceData>}
+
+\ccDefinition
+%============
+
+An instance of \ccRefName\ should be used for overlaying two arrangements
+of types \ccc{Arr_A} and \ccc{Arr_B}, which are instantiated using the same
+geometric traits-class and with the \dcel\ classes \ccc{Dcel_A} and
+\ccc{Dcel_B} respetively, in order to store their overlay in an arrangement
+of type \ccc{Arr_R}, which is instantiated using a third \dcel\ class
+\ccc{Dcel_R}. All three \dcel\ classes are assumed to be instantiations of the
+\ccc{Arr_face_extended_dcel} template with types \ccc{FaceData_A},
+\ccc{FaceData_B} and \ccc{FaceData_R}, respectively.
+
+This class gives empty implementation for all overlay traits-class functions,
+except the function that computes the overlay of two faces. In this case,
+it uses the functor \ccc{OvlFaceData}, which accepts a \ccc{FaceData_A} object
+and a \ccc{FaceData_B} object and computes a corresponding \ccc{FaceData_R}
+object, in order to set the auxiliary data of the overlay face.
+
+\ccInclude{CGAL/Arr_default_overlay_traits.h}
+
+\ccIsModel
+    \ccc{OverlayTraits}
+
+\ccSeeAlso
+    \ccc{overlay}\lcTex{
+     (\ccRefPage{CGAL::overlay})} \\
+    \ccc{CGAL::Arr_face_extended_dcel<Traits,FData,V,H,F>}\lcTex{
+     (\ccRefPage{CGAL::Arr_face_extended_dcel<Traits,FData,V,H,F>})} \\
+
+\end{ccRefClass}
+
+\ccRefPageEnd

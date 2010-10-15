@@ -1,0 +1,72 @@
+\begin{ccRefConcept}{ConformingDelaunayTriangulationTraits_2}
+
+\ccDefinition
+
+The concept \ccRefName\ refines the concept
+\ccc{ConstrainedDelaunayTriangulationTraits_2} by providing a numeric
+field type \ccc{FT}, a type \ccc{Vector_2} and several constructors on
+\ccc{Vector_2}, \ccc{Point_2}, and a predicate on angles.
+The field type has to be a model of
+the concept \ccc{SqrtFieldNumberType}. This field type and the
+constructors are used by the conforming algorithm to compute Steiner
+points on constrained edges.
+
+\ccRefines
+
+\ccc{DelaunayTriangulationTraits_2}
+
+\ccTypes
+
+\ccNestedType{FT}{The field type. It must be a model of
+  \ccc{SqrtFieldNumberType}, that is must be a number type
+  supporting the operations $+$, $-$, $*$, $/$, and $\sqrt{\cdot}$.}
+\ccNestedType{Vector_2}{The vector type.}
+\ccNestedType{Construct_vector_2}{Constructor object. Must
+  provide the operator \ccc{Vector_2 operator()(Point a, Point b)}
+  that computes the vector $b-a$.}
+\ccNestedType{Construct_scaled_vector_2}{Constructor object. Must
+  provide the operator \ccc{Vector_2 operator()(Vector_2 v, FT scale)}
+  that computes the vector $scale \cdot \mathbf{v}$.}
+\ccNestedType{Construct_translated_point_2}{Constructor object. Must
+  provide the operator \ccc{Point_2 operator()(Point_2 p, Vector_2 v)}
+  that computes the point $p + \mathbf{v}$.}
+\ccNestedType{Construct_midpoint_2}{Constructor object. Must provide
+  the operator \ccc{Point_2 operator()(Point_2 a, Point_2 b)} that
+  computes the midpoint of the segment $ab$.}
+\ccNestedType{Compute_squared_distance_2}{Constructor object. Must
+  provide the operator \ccc{FT operator()(Point_2 a, Point_2 b)} that
+  computes the squared distance between $a$ and $b$.}
+\ccNestedType{Angle_2}{Predicate object. Must provide the operator
+  \ccc{CGAL::Angle operator()(Point_2 p, Point_2 q, Point_2 r)} that
+  returns OBTUSE, RIGHT or ACUTE depending on the angle formed by the three
+  points p, q, r (q being the vertex of the angle).}
+
+\ccCreationVariable{traits}
+
+\ccHeading{Access to predicate and constructor objects}
+
+\ccThree{Construct_translated_point_2xx}{construct_translated_point_2_object()}{}
+\ccMethod{Construct_vector_2 construct_vector_2_object();}{}
+\ccGlue
+\ccMethod{Construct_scaled_vector_2 construct_scaled_vector_2_object();}{}
+\ccGlue
+\ccMethod{Construct_translated_point_2
+  construct_translated_point_2_object();}{}
+\ccGlue
+\ccMethod{Constructor_midpoint_2 construct_midpoint_2_object();}{}
+\ccGlue
+\ccMethod{Compute_squared_distance_2
+  compute_squared_distance_2_object();}{}
+\ccGlue
+\ccMethod{Angle_2 angle_2_object();}{}
+
+\ccHasModels
+Any model of \ccc{Kernel} concept. In particular, all CGAL kernels.
+
+\end{ccRefConcept}
+
+%%% For emacs/AucTeX:
+%%% Local Variables: ***
+%%% mode:latex ***
+%%% TeX-master: "../Mesh_2.tex"  ***
+%%% End: ***

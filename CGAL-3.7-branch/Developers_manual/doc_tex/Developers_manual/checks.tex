@@ -1,0 +1,288 @@
+% =============================================================================
+% The CGAL Developers' Manual
+% Chapter: Checks: Pre- and Postconditions, Assertions, and Warnings
+% -----------------------------------------------------------------------------
+% file   : checks.tex
+% authors: Sven Schönherr <sven@inf.ethz.ch>
+% -----------------------------------------------------------------------------
+% $Id$
+% $Date$
+% =============================================================================
+
+\index{preconditions!\seealso{checks}|none}
+\index{postconditions!\seealso{checks}|none}
+\index{assertions!\seealso{checks}|none}
+\index{warnings!\seealso{checks}|none}
+
+\chapter{Checks: Pre- and Postconditions, Assertions, and Warnings\label{chap:checks}}
+\ccIndexMainItemBegin{checks}
+
+\ccChapterRelease{Chapter Version: 1.1}
+\ccChapterAuthor{Sven Sch{\"o}nherr ({\tt sven@inf.ethz.ch})}
+
+%
+Much of the {\cgal} code contains checks.  Some are there to check if
+the code behaves correctly, others check if the user calls routines in
+an acceptable manner. We describe the different categories of checks
+(Section~\ref{sec:checks_categories}), the usage of checks
+(Section~\ref{sec:checks_using}), and a more selective means of controlling
+checks (Section~\ref{sec:checks_controlling}). Finally, a statement
+about exception handling is given
+(Section~\ref{sec:exception_handling}).
+
+The default behavior of these checks is to throw exceptions for reporting
+failures.  It is also forbidden to call \ccc{std::abort}, \ccc{std::exit}
+or \ccc{assert} directly from \cgal, as these do not allow the user code to
+react after the error (application processes are killed).
+
+% -----------------------------------------------------------------------------
+\section{Categories of checks\label{sec:checks_categories}}
+\ccIndexSubitemBegin{checks}{types of}
+
+There are four types of checks.
+%
+\begin{itemize}
+\item \textbf{Preconditions}\ccIndexMainItemDef{preconditions}
+      check if a routine has been called
+      in a proper fashion. If a precondition fails it is the
+      responsibility of the caller (usually the user of the library) to fix
+      the problem.
+\item \textbf{Postconditions}\ccIndexMainItemDef{postconditions}
+      check if a routine does what it promises
+      to do.  If a postcondition fails it is the fault of this routine, so
+      the author of the code is responsible.
+\item \textbf{Assertions}\ccIndexMainItemDef{assertions}
+      are other checks that do not fit in the above
+      two categories, \eg~they can be used to check invariants.
+\item \textbf{Warnings}\ccIndexMainItemDef{warnings}
+      are checks for which it is not so severe if they fail.
+\end{itemize}
+
+The addording macro names all have the format \ccc{CGAL_<check_type>} where
+\ccc{<check_type>} can be one of
+\begin{itemize}
+ \item \ccc{precondition}
+ \item \ccc{postcondition}
+ \item \ccc{assertion}
+ \item \ccc{warning}
+\end{itemize}
+
+%
+Failures of the first three types are errors and lead to a halt of the
+program, failures of the last one only lead to a warning.  Checks of
+all four categories can be marked with one or both of the following
+attributes:
+%
+\begin{itemize}
+\item \textbf{Expensive}\ccIndexSubitemDef{checks}{expensive}
+      checks take considerable time to compute.
+      ``Considerable'' is an imprecise phrase.  Checks that add less than 10
+      percent to the execution time of their routine are not expensive.
+      Checks that can double the execution time are. Somewhere in between
+      lies the border line.
+\item \textbf{Exactness}\ccIndexSubitemDef{checks}{exactness}%
+      \ccIndexSubitem{exactness}{checking}
+      checks rely on exact arithmetic. For example,
+      if the intersection of two lines is computed, the postcondition of
+      this routine may state that the intersection point lies on both
+      lines.  However, if the computation is done with \ccc{double}s as
+      the number type, this may not be the case, due to roundoff errors.
+\end{itemize}
+
+The format is one of
+\begin{itemize}
+ \item \ccc{CGAL_expensive_<check_type>}
+ \item \ccc{CGAL_exactness_<check_type>}
+ \item \ccc{CGAL_expensive_exactness_<check_type>}
+\end{itemize}
+
+\ccIndexSubitem{checks}{default}
+By default, all standard checks (without any attribute) are enabled,
+while expensive and exactness checks are disabled. How this can be
+changed and how checks are actually used in the code are described in
+the next section.
+\ccIndexSubitemEnd{checks}{types of}
+
+Additionally, we provide macros \ccc{CGAL_error()} and \ccc{CGAL_error_msg(MSG_TEXT)}
+which are equivalent to always-failing assertions. However,
+they cannot be disabled.
+
+
+% -----------------------------------------------------------------------------
+\section{Using checks\label{sec:checks_using}}
+\ccIndexSubitemBegin{checks}{using}
+
+The checks are implemented as preprocessor macros;
+\ccIndexSubitem{macros}{for checks}
+\ie,~\ccc{CGAL_<check_type>(<Cond>)} realizes a check of type \ccc{<check_type>}
+that asserts the condition \ccc{<Cond>}. For example,
+%
+\begin{verbatim}
+  CGAL_precondition( first != last);
+\end{verbatim}
+%
+checks the precondition that a given iterator range is not empty. If
+the check fails, an error message similar to
+%
+\begin{verbatim}
+  CGAL error: precondition violation!
+  Expr: first != last
+  File: <file name>
+  Line: <source code line>
+\end{verbatim}
+%
+is written to the standard error stream and the program is aborted. If
+an additional explanantion should be given to the user,%
+\ccIndexSubitem{checks}{adding failure message to}
+macros \ccc{CGAL_<check_type>_msg(<Cond>,<Msg>)} can be used. The text in
+\ccc{<Msg>} is just appended to the failure message given above.
+
+\ccIndexSubitem{checks}{multiple-statement}
+In case a check is more complicated and the computation does not fit
+into a single statement, the additional code can be encapsulated using
+\ccc{CGAL_<check_type>_code(<Code>)}.  This has the advantage that the
+computation is not done if the corresponding category is disabled.  For
+an example, suppose an algorithm computes a convex polygon. Thus we
+want to check the postcondition that the polygon is indeed convex,
+which we consider an expensive check. The code would look like this.
+%
+\begin{verbatim}
+  CGAL_expensive_postcondition_code( bool is_convex; )
+  CGAL_expensive_postcondition_code( /* compute convexity */ )
+  CGAL_expensive_postcondition_code( /* ... */ )
+  CGAL_expensive_postcondition_msg ( is_convex, \
+                                     "The computed polygon is NOT convex!" );
+\end{verbatim}
+
+\ccIndexSubitemBegin{checks}{disabling}
+As already mentioned above, the standard checks are enabled by
+default.  This can be changed through the use of compile-time flags.
+\ccIndexSubitem{compile-time flags}{for checks}
+By setting the flag \ccc{CGAL_NO_<CHECK_TYPE>} all checks of type
+\ccc{<CHECK_TYPE>} are disabled, \eg~adding \ccc{-DCGAL_NO_ASSERTIONS}%
+\index{CGAL_NO_<CHECK_TYPE> flag@{\tt CGAL\_NO\_$<$CHECK\_TYPE$>$} flag}
+to the compiler call switches off all checks for assertions. To disable
+all checks in the library, the flag \ccc{CGAL_NDEBUG} can be set.
+Note that the standard flag \ccc{NDEBUG} sets \ccc{CGAL_NDEBUG},
+but it also affects the \ccc{assert} macro.
+\ccIndexSubitemEnd{checks}{disabling}
+
+To enable expensive and exactness checks, respectively, the compile-time
+flags \ccc{CGAL_CHECK_EXPENSIVE}%
+\index{CGAL_CHECK_EXPENSIVE flag@{\tt CGAL\_CHECK\_EXPENSIVE} flag}
+\ccIndexSubsubitem{checks}{expensive}{enabling}
+and \ccc{CGAL_CHECK_EXACTNESS}
+\index{CGAL_CHECK_EXACTNESS flag@{\tt CGAL\_CHECK\_EXACTNESS} flag}
+\ccIndexSubsubitem{checks}{exactness}{enabling}
+have to be supplied. However, exactness checks should only be turned on if
+the computation is done with some exact number type.%
+\ccIndexSubitem{exactness}{checking}
+\ccIndexSubitemEnd{checks}{using}
+
+
+% -----------------------------------------------------------------------------
+\section{Controlling checks at a finer granularity\label{sec:checks_controlling}}
+\ccIndexSubitemBegin{checks}{package-level}
+
+The macros and related compile-time flags described so far all operate
+on the whole library. Sometimes the user may want to have a more
+selective control.  \cgal\ offers the possibility to turn checks on
+and off on a per-package basis. Therefore a package-specific term is
+inserted in the macro names directly after the \cgal\ prefix,
+\eg,~\ccc{CGAL_kernel_assertion(<Cond>)}. Similarly, the uppercase
+term is used for the compile-time flags;
+\eg,~\ccc{CGAL_KERNEL_NO_WARNINGS} switches off the warnings
+in \emph{only} the kernel. Other packages have their own specific
+terms as documented in the corresponding chapters of the
+reference manual.
+
+\InternalOnly{
+
+%
+For a new package you will first have to create a suitable header file
+with all macro definitions.  This is done with the shell script
+\texttt{create\_assertions.sh} (Section~\ref{sec:create_assertions}).
+\index{create_assertions.sh script@{\tt create\_assertions.sh} script}
+The following command will create a file {\tt optimisation\_assertions.h}.
+
+{\centerline{\tt  sh create\_assertions.sh optimisation}}
+
+You should place the generated file in the proper directory (and possibly
+rename it).  Then you can use the checks in the following fashion.
+
+\lcTex{
+\begin{tabbing}
+xxx\=xx\=\kill
+\>  \texttt{\#include $<$CGAL/optimisation\_assertions.h$>$} \\ \\
+
+\>  \texttt{void optimisation\_foo( int i)} \\
+\>  \texttt{\{} \\
+\>\>\texttt{   CGAL\_optimisation\_precondition\_msg( i == 42, "Only 42 allowed!");} \\
+\>\>\texttt{    // ...} \\
+\>  \texttt{\}}
+\end{tabbing}
+}
+\lcHtml{
+\begin{verbatim}
+ #include <CGAL/optimisation\_assertions.h>
+
+ void optimisation\_foo( int i)
+ {
+   CGAL_optimisation_precondition_msg( i == 42, "Only 42 allowed!");
+   // ...
+ }
+\end{verbatim}
+}
+
+}
+
+\ccIndexSubsubitem{checks}{package-level}{documenting}
+\ccIndexSubitem{documentation}{of checks}
+The documentation of your new package has to name the term chosen to be
+part of the package-specific macros in
+order to enable the user to selectively turn off and on the checks of
+your package. For example, in the documentation of the optimisation
+package you can find a sentence similar to the following.
+\begin{quote}
+  The optimisation code uses the term OPTIMISATION for the checks;
+  \eg,~setting the compile time flag
+  \ccc{CGAL_OPTIMISATION_NO_PRECONDITIONS} switches off precondition
+  checking in the optimisation code.
+\end{quote}
+\ccIndexSubitemEnd{checks}{package-level}
+
+
+% -----------------------------------------------------------------------------
+\section{Exception handling\label{sec:exception_handling}}
+\ccIndexMainItem{exception handling}
+
+Some parts of the library use exceptions, but there is no general specific
+policy concerning exception handling in \cgal.  It is nevertheless good to
+target exception safety, as much as possible.  Good references on exception
+safety are: Appendix E of~\cite{cgal:s-cpl-97} (also available at
+\path|http://www.research.att.com/~bs/3rd_safe0.html|),
+and~\cite{cgal:a-esgc-98} (also available at
+\path|http://www.boost.org/more/generic_exception_safety.html|).
+
+\InternalOnly{
+
+\section{Requirements and recommendations\label{sec:checks_req_and_rec}}
+
+\noindent
+Requirements:
+\begin{itemize}
+   \item Write pre- and postcondition checkers for your functions wherever
+         possible.
+   \item Use the \cgal\ preprocessor macros (Sections~\ref{sec:checks_using}
+         and~\ref{sec:checks_controlling})
+         exclusively throughout your code (instead of,
+         for example, the \ccc{assert} macro or the \ccc{std::abort} or
+         \ccc{std::exit} functions) for all checks
+         to assure that all \cgal\ invariant tests can be handled in a uniform
+         way.
+\end{itemize}
+
+}
+
+\ccIndexMainItemEnd{checks}
+% ===== EOF ===================================================================

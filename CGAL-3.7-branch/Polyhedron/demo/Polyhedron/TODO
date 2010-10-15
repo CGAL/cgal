@@ -1,0 +1,4 @@
+- The following file has not yet been ported to the plugin stuff:
+    MainWindow_curvature_estimation.cpp
+- The cut plugin has memory leaks. And the AABB tree item should be updated
+  when the corresponding items are changed().

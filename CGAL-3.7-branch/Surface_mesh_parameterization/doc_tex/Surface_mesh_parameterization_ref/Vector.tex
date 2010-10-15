@@ -1,0 +1,118 @@
+% +------------------------------------------------------------------------+
+% | Reference manual page: Vector.tex
+% +------------------------------------------------------------------------+
+% | 21.09.2005   Laurent Saboret, Pierre Alliez, Bruno Levy
+% | Package: Surface_mesh_parameterization
+% |
+\RCSdef{\RCSVectorRev}{$Id$}
+\RCSdefDate{\RCSVectorDate}{$Date$}
+% |
+\ccRefPageBegin
+%%RefPage: end of header, begin of main body
+% +------------------------------------------------------------------------+
+
+
+\begin{ccRefConcept}[SparseLinearAlgebraTraits_d::]{Vector}
+
+%% \ccHtmlCrossLink{}     %% add further rules for cross referencing links
+%% \ccHtmlIndexC[concept]{} %% add further index entries
+
+\ccDefinition
+
+% The section below is automatically generated. Do not edit!
+%START-AUTO(\ccDefinition)
+
+\ccc{SparseLinearAlgebraTraits_d::Vector} is a concept of a vector that can be multiplied by a sparse matrix.
+
+%END-AUTO(\ccDefinition)
+
+\ccRefines
+
+% The section below is automatically generated. Do not edit!
+%START-AUTO(\ccRefines)
+
+\ccc{LinearAlgebraTraits_d::Vector}
+
+%END-AUTO(\ccRefines)
+
+\ccTypes
+
+% The section below is automatically generated. Do not edit!
+%START-AUTO(\ccTypes)
+
+\ccNestedType{NT}
+{
+}
+\ccGlue
+
+%END-AUTO(\ccTypes)
+
+\ccCreation
+\ccCreationVariable{v}  %% variable name for \ccMethod
+
+% FIXME: The scope from above has to appear also before function/operator arguments
+% otherwise, the operator will not be formatted nicely
+
+% The section below is automatically generated. Do not edit!
+%START-AUTO(\ccCreation)
+
+\ccConstructor{Vector(int rows);}
+{
+Create a vector initialized with zeros.
+}
+\ccGlue
+\ccConstructor{Vector(const Vector& toCopy);}
+{
+Copy constructor.
+}
+\ccGlue
+
+%END-AUTO(\ccCreation)
+
+\ccOperations
+
+% The section below is automatically generated. Do not edit!
+%START-AUTO(\ccOperations)
+
+\ccMethod{int dimension() const;}
+{
+Return the vector's number of coefficients.
+}
+\ccGlue
+\ccMethod{NT operator[](int row) const;}
+{
+Read/write access to a vector coefficient.
+\ccPrecond 0 $<$= row $<$ dimension().
+}
+\ccGlue
+\ccMethod{NT& operator[](int row);}
+{
+}
+\ccGlue
+
+%END-AUTO(\ccOperations)
+
+\ccHasModels
+
+% The section below is automatically generated. Do not edit!
+%START-AUTO(\ccHasModels)
+
+\ccc{Taucs_vector<T>}  \\
+\ccc{OpenNL::FullVector<T>} in \ccc{OpenNL} package
+
+%END-AUTO(\ccHasModels)
+
+
+\ccSeeAlso
+
+\ccRefIdfierPage{SparseLinearAlgebraTraits_d}  \\
+\ccRefIdfierPage{SparseLinearAlgebraTraits_d::Matrix}  \\
+
+\end{ccRefConcept}
+
+% +------------------------------------------------------------------------+
+%%RefPage: end of main body, begin of footer
+\ccRefPageEnd
+% EOF
+% +------------------------------------------------------------------------+
+

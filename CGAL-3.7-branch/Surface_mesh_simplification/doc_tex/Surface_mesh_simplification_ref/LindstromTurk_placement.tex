@@ -1,0 +1,60 @@
+%% Copyright (c) 2007 GeometryFactory (France).  All rights reserved.
+%%
+%% This file is part of CGAL (www.cgal.org); you may redistribute it under
+%% the terms of the Q Public License version 1.0.
+%% See the file LICENSE.QPL distributed with CGAL.
+%%
+%% Licensees holding a valid commercial license may use this file in
+%% accordance with the commercial license agreement provided with the software.
+%%
+%% This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
+%% WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
+%%
+%% 
+%%
+%% Author(s)     : Fernando Cacciola <fernando.cacciola@geometryfactory.com>
+
+
+\begin{ccRefFunctionObjectClass}{Surface_mesh_simplification::LindstromTurk_placement<ECM>}
+
+%% add template arg's if necessary
+
+%% \ccHtmlCrossLink{}     %% add further rules for cross referencing links
+%% \ccHtmlIndexC[class]{} %% add further index entries
+\ccDefinition
+
+The class \ccRefName\ provides a model for the \ccc{GetPlacement} concept. 
+It computes the placement, that is, the new position for the remaining vertex after
+a halfedge-collapse, following the Lindstrom-Turk strategy
+(Section~\ref{SurfaceMeshSimplification:LindstromTurkStrategy}).
+
+The class \ccRefName\ has one template argument: the type of surface being simplified. 
+It must be a model of the \ccc{EdgeCollapsableMesh} concept.
+
+\ccInclude{CGAL/Surface_mesh_simplification/Policies/Edge_collapse/LindstromTurk_placement.h}
+
+\ccIsModel
+\ccc{GetPlacement}
+
+\ccCreation
+\ccCreationVariable{gp} 
+\ccConstructor{LindstromTurk_placement<ECM>( FT const& factor = FT(0.5) );}
+{Initializes the policy with the given {\em weighting unit factor}.
+See \ref{SurfaceMeshSimplification:LindstromTurkStrategy} for details on the meaning of this factor.} 
+
+\ccOperations
+\ccCreationVariable{gp} 
+  \ccTagFullDeclarations
+  \ccMemberFunction{result_type operator()( Profile const& edge_profile ) const;}
+  {Returns the new position for the remaining vertex after collapsing the edge
+  (represented by its profile).}
+
+\ccSeeAlso
+\ccc{CGAL::Surface_mesh_simplification::LindstromTurk_cost<ECM>}
+\end{ccRefFunctionObjectClass}
+
+% +------------------------------------------------------------------------+
+%%RefPage: end of main body, begin of footer
+% EOF
+% +------------------------------------------------------------------------+
+

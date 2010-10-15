@@ -1,0 +1,167 @@
+\begin{ccRefConcept}{AlgebraicKernelForSpheres::ConstructPolynomial_1_3}
+
+\ccCreationVariable{fo}
+
+A model \ccVar\ of this concept must provide:
+
+\ccMethod{AlgebraicKernelForSpheres::Polynomial_1_3
+	operator()(const AlgebraicKernelForSpheres::RT &a,
+		const AlgebraicKernelForSpheres::RT &b,
+		const AlgebraicKernelForSpheres::RT &c,
+		const AlgebraicKernelForSpheres::RT &d);}
+{Constructs polynomial \ccc{ax+by+cz+d}.}
+
+\ccSeeAlso
+
+\ccRefIdfierPage{SphericalKernel::ConstructPlane_3}\\
+\ccRefIdfierPage{SphericalKernel::GetEquation}
+
+\end{ccRefConcept}
+
+\begin{ccRefConcept}{AlgebraicKernelForSpheres::ConstructPolynomialForSpheres_2_3}
+
+\ccCreationVariable{fo}
+
+A model \ccVar\ of this concept must provide:
+
+\ccMethod{AlgebraicKernelForSpheres::PolynomialForSpheres_2_3
+	operator()(const AlgebraicKernelForSpheres::FT &a,
+		const AlgebraicKernelForSpheres::FT &b,
+		const AlgebraicKernelForSpheres::FT &c,
+		const AlgebraicKernelForSpheres::FT &rsq);}
+{Constructs polynomial \ccc{(x-a)^2 + (y-b)^2 + (z-c)^2 - rsq}.}
+
+\ccSeeAlso
+
+\ccRefIdfierPage{SphericalKernel::ConstructSphere_3}\\
+\ccRefIdfierPage{SphericalKernel::GetEquation}
+
+\end{ccRefConcept}
+
+\begin{ccRefConcept}{AlgebraicKernelForSpheres::ConstructPolynomialsForLines_3}
+
+\ccCreationVariable{fo}
+
+A model \ccVar\ of this concept must provide:
+
+\ccMethod{AlgebraicKernelForSpheres::Polynomials_for_line_3
+	operator()(const AlgebraicKernelForSpheres::FT &a1,
+		const AlgebraicKernelForSpheres::FT &a2,
+		const AlgebraicKernelForSpheres::FT &b1,
+		const AlgebraicKernelForSpheres::FT &b2,
+		const AlgebraicKernelForSpheres::FT &c1,
+		const AlgebraicKernelForSpheres::FT &c2);}
+{Constructs polynomials \ccc{a1.t+a2}, \ccc{b1.t+b2}, \ccc{c1.t+c2}.}
+
+\ccSeeAlso
+
+\ccRefIdfierPage{SphericalKernel::ConstructLine_3}\\
+\ccRefIdfierPage{SphericalKernel::GetEquation}
+
+\end{ccRefConcept}
+
+\begin{ccRefConcept}{AlgebraicKernelForSpheres::Solve}
+
+\ccDefinition
+
+\ccCreationVariable{fo}
+
+A model \ccVar\ of this concept must provide:
+
+\ccMethod{template < class OutputIterator >
+    OutputIterator
+    operator()(const Type1 &p1,
+	     const Type2 &p2,
+	     const Type3 &p3,
+	     OutputIterator res);}
+{Copies in the output iterator the common roots of \ccc{p1}, \ccc{p2}, 
+and \ccc{p3}, with their multiplicity, as objects of type 
+\ccc{std::pair< AlgebraicKernelForSpheres::Root_for_spheres_2_3, int>}.
+\ccPrecond{The set of solutions of the system is 0-dimensional.}}
+
+Here, \ccc{Type1}, \ccc{Type2}, and \ccc{Type3} can all be either 
+\ccc{AlgebraicKernelForSpheres::Polynomial_1_3} or
+\ccc{AlgebraicKernelForSpheres::Polynomial_for_spheres_2_3}. 
+
+\end{ccRefConcept}
+\begin{ccRefConcept}{AlgebraicKernelForSpheres::XCriticalPoints}
+
+\ccDefinition
+
+\ccCreationVariable{fo}
+
+A model \ccVar\ of this concept must provide:
+
+\ccMethod{template < class OutputIterator >
+    OutputIterator
+    operator()(const AlgebraicKernelForSpheres::Polynomial_for_spheres_2_3 &p,
+	     OutputIterator res);}
+{Copies in the output iterator the \ccc{x}-critical points of polynomial 
+\ccc{p}, as objects of type \ccc{AlgebraicKernelForSpheres::Root_for_spheres_2_3}.} 
+
+\ccMethod{template < class OutputIterator >
+    AlgebraicKernelForSpheres::Root_for_spheres_2_3
+    operator()(const AlgebraicKernelForSpheres::Polynomial_for_spheres_2_3 &p,
+	     bool i);}
+{Computes the \ccc{i}th \ccc{x}-critical point of polynomial \ccc{p}.} 
+
+\ccSeeAlso
+
+\ccRefIdfierPage{AlgebraicKernelForSpheres::YCriticalPoints}\\
+\ccRefIdfierPage{AlgebraicKernelForSpheres::ZCriticalPoints}
+
+\end{ccRefConcept}
+\begin{ccRefConcept}{AlgebraicKernelForSpheres::YCriticalPoints}
+
+\ccDefinition
+
+\ccCreationVariable{fo}
+
+A model \ccVar\ of this concept must provide:
+
+\ccMethod{template < class OutputIterator >
+    OutputIterator
+    operator()(const AlgebraicKernelForSpheres::Polynomial_for_spheres_2_3 &p,
+	     OutputIterator res);}
+{Copies in the output iterator the \ccc{y}-critical points of polynomial 
+\ccc{p}, as objects of type \ccc{AlgebraicKernelForSpheres::Root_for_spheres_2_3}.} 
+
+\ccMethod{template < class OutputIterator >
+    AlgebraicKernelForSpheres::Root_for_spheres_2_3
+    operator()(const AlgebraicKernelForSpheres::Polynomial_for_spheres_2_3 &p,
+	     bool i);}
+{Computes the \ccc{i}th \ccc{y}-critical point of polynomial \ccc{p}.} 
+
+\ccSeeAlso
+
+\ccRefIdfierPage{AlgebraicKernelForSpheres::XCriticalPoints}\\
+\ccRefIdfierPage{AlgebraicKernelForSpheres::ZCriticalPoints}
+
+\end{ccRefConcept}
+\begin{ccRefConcept}{AlgebraicKernelForSpheres::ZCriticalPoints}
+
+\ccDefinition
+
+\ccCreationVariable{fo}
+
+A model \ccVar\ of this concept must provide:
+
+\ccMethod{template < class OutputIterator >
+    OutputIterator
+    operator()(const AlgebraicKernelForSpheres::Polynomial_for_spheres_2_3 &p,
+	     OutputIterator res);}
+{Copies in the output iterator the \ccc{z}-critical points of polynomial 
+\ccc{p}, as objects of type \ccc{AlgebraicKernelForSpheres::Root_for_spheres_2_3}.} 
+
+\ccMethod{template < class OutputIterator >
+    AlgebraicKernelForSpheres::Root_for_spheres_2_3
+    operator()(const AlgebraicKernelForSpheres::Polynomial_for_spheres_2_3 &p,
+	     bool i);}
+{Computes the \ccc{i}th \ccc{z}-critical point of polynomial \ccc{p}.} 
+
+\ccSeeAlso
+
+\ccRefIdfierPage{AlgebraicKernelForSpheres::XCriticalPoints}\\
+\ccRefIdfierPage{AlgebraicKernelForSpheres::YCriticalPoints}
+
+\end{ccRefConcept}

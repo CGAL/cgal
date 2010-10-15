@@ -1,0 +1,31 @@
+\begin{ccRefFunction}{nearest_neighbor}
+
+\ccDefinition
+
+The function \ccRefName\ is the function template version of the nearest neighbor search on Delaunay
+triangulations.
+  
+
+\ccInclude{CGAL/nearest_neighbor_delaunay_2.h}
+
+
+\ccFunction{template<class Dt>
+            Dt::Vertex_handle  nearest_neighbor(const Dt& delau, Dt::Vertex_handle v);}
+{computes a handle to a vertex $w$ of $delau$ that is closest to $v$.
+If $v$ is the only vertex in $delau$ , $NULL$ is returned. }
+
+
+\ccHeading{Requirements}
+\ccc{Dt} is a \cgal\ Delaunay triangulation and contains the following subset of types from the concept \ccc{PointSetTraits} and from
+the Delaunay triangulation data type:
+\begin{itemize}
+  \item \ccc{Dt::Geom_traits}
+  \item \ccc{Dt::Point}                 
+  \item \ccc{Dt::Vertex_circulator}            
+  \item \ccc{Dt::Vertex_handle}             
+  \item \ccc{Dt::Geom_traits::Compare_distance_2}          
+\end{itemize}
+\end{ccRefFunction}
+
+
+

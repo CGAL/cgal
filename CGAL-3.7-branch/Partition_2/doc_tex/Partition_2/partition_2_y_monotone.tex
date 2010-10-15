@@ -1,0 +1,17 @@
+\ccIndexSubitem{polygon partitioning}{y-monotone}
+A {\em $y$-monotone polygon}\ccIndexMainItemDef{y-monotone polygon}
+is a polygon whose vertices $v_1, \ldots, v_n$ can be divided into two chains 
+$v_1, \ldots, v_k$ and $v_k, \ldots, v_n, v_1$, such that any horizontal line 
+intersects either chain at most once.  For producing a $y$-monotone partition 
+of a given polygon, the sweep-line algorithm 
+presented in \cite{bkos-cgaa-97} is implemented by the function
+\ccc{y_monotone_partition_2}\ccIndexGlobalFunction{y_monotone_partition_2}.  
+This algorithm runs in $O(n \log n)$ time and requires $O(n)$ space.
+This algorithm does not guarantee a bound on the number of polygons 
+produced with respect to the optimal number.
+
+For checking the validity of the partitions produced by 
+\ccc{y_monotone_partition_2}, we provide a function \ccc{is_y_monotone_2}, 
+which determines if a sequence of points in 2D defines a $y$-monotone
+polygon or not.  For examples of the use of these functions, see the
+corresponding reference pages.

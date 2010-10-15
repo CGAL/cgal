@@ -1,0 +1,3 @@
+Point Set Processing
+
+This CGAL component implements a set of algorithms for analysis, processing, and normal estimation and orientation of point sets.

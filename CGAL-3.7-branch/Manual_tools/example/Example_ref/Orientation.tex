@@ -1,0 +1,62 @@
+% +------------------------------------------------------------------------+
+% | Reference manual page: Orientation.tex
+% +------------------------------------------------------------------------+
+% | 03.09.1999   Lutz Kettner
+% | Package: Example
+% | 
+\RCSdef{\RCSOrientationRev}{$Id$}
+\RCSdefDate{\RCSOrientationDate}{$Date$}
+% |
+%%RefPage: end of header, begin of main body
+% +------------------------------------------------------------------------+
+
+
+\begin{ccRefEnum}{Orientation}  %% add template arg's if necessary
+
+\ccRefLabel{CGAL::NEGATIVE}  %% add label for table-of-contents in intro.tex.
+\ccRefLabel{CGAL::POSITIVE}  %% add label for table-of-contents in intro.tex.
+\ccHtmlCrossLink{NEGATIVE}     %% add further rules for cross referencing links
+\ccHtmlCrossLink{POSITIVE}     %% add further rules for cross referencing links
+\ccHtmlIndexC[enum_tags]{NEGATIVE} %% add further index entries
+\ccHtmlIndexC[enum_tags]{POSITIVE} %% add further index entries
+
+\ccDefinition
+  
+The enum \ccRefName\ does this and that.
+
+\ccInclude{DIR/Orientation.h}
+
+\ccGlobalEnum{enum Orientation { NEGATIVE, POSITIVE };}
+
+\ccIsModel
+
+\ccc{Concept}
+
+\ccSeeAlso
+
+\ccc{Some_other_enum},
+\ccc{some_other_function}.
+
+\ccExample
+
+A short example program.
+Instead of a short program fragment, a full running program can be
+included using the 
+\verb|\ccIncludeExampleCode{Example/Orientation_prog.C}| 
+macro. The program example would be part of the source code distribution and
+also part of the automatic test suite.
+
+\begin{ccExampleCode}
+void your_example_code() {
+}
+\end{ccExampleCode}
+
+%% \ccIncludeExampleCode{Example/Orientation_prog.C}
+
+\end{ccRefEnum}
+
+% +------------------------------------------------------------------------+
+%%RefPage: end of main body, begin of footer
+% EOF
+% +------------------------------------------------------------------------+
+

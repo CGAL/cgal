@@ -1,0 +1,68 @@
+% +------------------------------------------------------------------------+
+% | Reference manual page: Arr_dcel_hole.tex
+% +------------------------------------------------------------------------+
+% | 
+% | Package: Arrangement_2
+% | 
+% +------------------------------------------------------------------------+
+
+\ccRefPageBegin
+
+\begin{ccRefConcept}{ArrangementDcelHole}
+
+\ccDefinition
+
+A hole record in a \dcel\ data structure, which stores the face that contains
+the hole in its interior, along with an iterator for the hole in the holes'
+container of this face.
+
+\ccCreationVariable{ho}
+
+\ccTypes
+%=======
+
+\ccNestedType{Face}{the corresponding \dcel\ face type.}
+
+\ccTypedef{typedef Face::Hole_iterator Hole_iterator;} {}
+
+\ccCreation
+%==========
+
+\ccConstructor{Arr_dcel_hole();}
+   {default constructor.}
+
+\ccHtmlNoLinksFrom{   % to avoid linkage of Vertex, etc to HDS::Vertex
+
+\ccAccessFunctions
+%=================
+
+All functions below also have \ccc{const} counterparts, returning non-mutable
+pointers or iterators:
+
+\ccMethod{Face* face ();}
+    {returns the incident face, which contains \ccVar{} in its interior.}
+
+\ccMethod{Hole_iterator iterator();}
+    {returns an iterator for the hole.}
+
+\ccModifiers
+%===========
+
+  \ccMethod{void set_face (Face* f);}
+    {sets the incident face.}
+
+  \ccMethod{void set_iterator (Hole_iterator it);}
+    {sets the hole iterator.}
+
+} % ccHtmlNoLinksFrom
+
+\ccSeeAlso
+
+\ccc{ArrangementDcel}\lcTex{ 
+     (\ccRefPage{ArrangementDcel})}\\
+\ccc{ArrangementDcelFace}\lcTex{
+     (\ccRefPage{ArrangementDcelFace})}
+
+\end{ccRefConcept}  
+
+\ccRefPageEnd

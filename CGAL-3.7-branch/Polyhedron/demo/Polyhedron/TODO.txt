@@ -1,0 +1,3 @@
+- merge all -> merge all polyhedra into one (with several connected components)
+- use the signal QMenu::aboutToShow() to enable/disable some menu entries.
+- check that display list is deleted when destroys one entry

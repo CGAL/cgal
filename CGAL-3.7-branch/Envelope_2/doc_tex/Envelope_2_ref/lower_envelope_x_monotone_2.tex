@@ -1,0 +1,28 @@
+% +------------------------------------------------------------------------+
+% | Reference manual page: lower_envelope_x_monotone_2.tex
+% +------------------------------------------------------------------------+
+% | 
+% | Package: Envelope_2
+% | 
+% +------------------------------------------------------------------------+
+
+\ccRefPageBegin
+
+\begin{ccRefFunction}{lower_envelope_x_monotone_2}
+
+\ccInclude{CGAL/envelope_2.h}
+
+\ccFunction{template<class InputIterator, class EnvelopeDiagram>
+            void lower_envelope_x_monotone_2 
+	                          (InputIterator begin, InputIterator end,
+                                   EnvelopeDiagram& diag);}
+   {Computes the lower envelope of a set of $x$-monotone curves in 
+     $\mathbb{R}^2$, as given by the range \ccc{[begin, end)}. The lower 
+     envelope is represented using the output minimization diagram \ccc{diag},
+    which must be a model of the \ccc{EnvelopeDiagram_1} concept.
+    \ccPrecond{The value-type of \ccc{InputIterator} is
+               \ccc{EnvelopeDiagram::X_monotone_curve_2}.}}
+
+\end{ccRefFunction}
+
+\ccRefPageEnd

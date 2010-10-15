@@ -1,0 +1,16 @@
+\begin{ccRefFunctionObjectClass}{To_interval<NT>}
+
+\ccDefinition
+
+The function \ccRefName\ computes an enclosing interval of a number.
+
+\ccInclude{CGAL/number_utils_classes.h}
+
+\ccIsModel
+\ccRefConceptPage{AdaptableFunctor}
+
+\ccCreationVariable{f}
+\ccMethod{std::pair<double, double> operator()(const NT& ntval);}
+{returns an enclosing interval of \ccc{ntval}}
+
+\end{ccRefFunctionObjectClass}

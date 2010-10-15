@@ -1,0 +1,210 @@
+#!/usr/local/bin/perl -w
+
+use strict;
+#use Cwd;
+use File::Copy;
+#use File::Basename;
+#use File::Find;
+use Getopt::Std;
+
+# This script updated (a) file(s) to the new style header.
+# The precondition is that is has a valid (old) header.
+
+sub usage()
+{
+    print STDERR<<"EOF";
+usage:
+  $0 [-h] [-q owner] file1 ...
+
+    -h show this message and quit
+    -q owner (default: LGPL,
+              otherwise it's QPL, with choices among :
+              UU, INRIA, ETHZ, FUB, MPI, RISC, TAU, TRIER, HW,
+              which will be expanded)
+EOF
+}
+
+my $lgpl_owner="Utrecht University (The Netherlands),
+// ETH Zurich (Switzerland), Freie Universitaet Berlin (Germany),
+// INRIA Sophia-Antipolis (France), Martin-Luther-University Halle-Wittenberg
+// (Germany), Max-Planck-Institute Saarbruecken (Germany), RISC Linz (Austria),
+// and Tel-Aviv University (Israel).";
+
+my %qpl_owners=("UU"    => "Utrecht University (The Netherlands)",
+                "INRIA" => "INRIA Sophia-Antipolis (France)",
+                "ETHZ"  => "ETH Zurich (Switzerland)",
+                "FUB"   => "Freie Universitaet Berlin (Germany)",
+                "MPI"   => "Max-Planck-Institute Saarbruecken (Germany)",
+                "RISC"  => "RISC Linz (Austria)",
+                "TAU"   => "Tel-Aviv University (Israel)",
+                "TRIER" => "University of Trier (Germany)",
+                "HW"    => "Martin-Luther-University Halle-Wittenberg (Germany)"
+);
+
+sub gjmove($$)
+{
+    return 1 if rename($_[0], $_[1] );
+    return (system('mv', "$_[0]", "$_[1]") == 0);
+}
+
+#----------------------------------------------------------------#
+#                     initialization                             #
+#----------------------------------------------------------------#
+
+my $TEMPFILE;
+
+
+sub print_qpl_license()
+{
+    print TEMPFILE <<'END_OF_LICENSE';
+// This file is part of CGAL (www.cgal.org); you may redistribute it under
+// the terms of the Q Public License version 1.0.
+// See the file LICENSE.QPL distributed with CGAL.
+//
+// Licensees holding a valid commercial license may use this file in
+// accordance with the commercial license agreement provided with the software.
+END_OF_LICENSE
+}
+
+sub print_lgpl_license()
+{
+    print TEMPFILE <<'END_OF_LICENSE';
+// This file is part of CGAL (www.cgal.org); you can redistribute it and/or
+// modify it under the terms of the GNU Lesser General Public License as
+// published by the Free Software Foundation; version 2.1 of the License.
+// See the file LICENSE.LGPL distributed with CGAL.
+//
+// Licensees holding a valid commercial license may use this file in
+// accordance with the commercial license agreement provided with the software.
+END_OF_LICENSE
+}
+
+#----------------------------------------------------------------#
+#                     check_and_update_2                         #
+#----------------------------------------------------------------#
+
+sub check_and_update_2($$)
+{
+    my ($filename, $owner) = @_;
+    my $header_position = 1;
+# 1:before header; 2: in first part; 3: in second part 4: after header.
+
+    my $text_before_header = 0;
+    while ( <SOURCE_FILE> ) {
+	if ( m|^\s*//\s*={10,}\s*$| ) {
+	    $header_position = 2;
+	    last;
+	}
+	if ( $_ !~ m|^\s*$| ) {
+	    $text_before_header = 1;
+	}
+	print TEMPFILE $_;
+    }
+    if ($header_position != 2) {
+	print FILE_CHECKS "$filename has no header.\n";
+	return 0;
+    }
+    if ($text_before_header) {
+	print FILE_CHECKS "$filename has text before the header.\n";
+    }
+    $_ = <SOURCE_FILE>;
+    $_ = <SOURCE_FILE> while (m|^\s*//\s*$|);
+    if ($_ !~ m<^\s*//\s*Copyright\s*\(c\)\s*\d{4}([-,]\s?\d{4})*\s+(t|T)he CGAL Consortium\s*$> ) {
+	print FILE_CHECKS "$filename has no valid copyright notice.\n";
+	return 0;
+    }
+
+    if (defined($owner)) {
+      # QPL case.
+      my $qpl_owner=$qpl_owners{$owner};
+      s/(t|T)he CGAL Consortium\s*$/ $qpl_owner/;
+      print TEMPFILE $_;
+      print TEMPFILE ".\n// All rights reserved.\n//\n";
+      print_qpl_license;
+    } else {
+      # LGPL case.
+      s/(t|T)he CGAL Consortium\s*$/ $lgpl_owner/;
+      print TEMPFILE $_;
+      print TEMPFILE "  All rights reserved.\n//\n";
+      print_lgpl_license;
+    }
+
+    print TEMPFILE <<'END_OF_DISCLAIMER';
+//
+// This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
+// WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
+//
+// $URL$
+// $Id$
+// 
+//
+END_OF_DISCLAIMER
+
+    my ($authors_seen) = (0);
+    while ( <SOURCE_FILE> ) {
+	next if ($_ !~ m|^\s*//| );
+	++$authors_seen if m<^\s*//\s*author(s|\(s\))?\s*:>;
+	if ($authors_seen > 0) {
+	  if (m<^\s*//\s*(coordinator|package|release|maintainer)(s|\(s\))?\s*:>) {
+          --$authors_seen;
+          } else {
+            if (! m|//\s*$|) {
+              s/author/Author/;
+              print TEMPFILE $_; # we keep the authors
+            }
+          }
+        }
+        last if /======/;
+    }
+
+    while ( <SOURCE_FILE> ) {
+	print TEMPFILE $_;
+    }
+
+    return 0;
+}
+
+sub check_and_update_file($$)
+{
+    my ($filename, $owner) = @_;
+    open SOURCE_FILE, "<$filename" || die "Error opening $filename: $!\n";
+    open TEMPFILE, ">$TEMPFILE" || die;
+    check_and_update_2($filename, $owner);
+    close SOURCE_FILE || die "Error closing $filename: $!";
+    close TEMPFILE || die "Error closing temporary file: $!\n";
+    gjmove($TEMPFILE, $filename )
+    || warn "Could not update file $filename\n";
+}
+
+
+#$::PARENT_DIR=cwd();
+
+sub main()
+{
+    umask(002);
+
+    getopts('hq:');
+    if ($::opt_h ) {
+	usage;
+	return;
+    }
+    $::opt_h = 0;
+
+    if ($::opt_q and not $qpl_owners{$::opt_q}) {
+      print "Unknown QPL owner\n";
+      return;
+    }
+
+    $TEMPFILE="tmp.$$";
+
+    open FILE_CHECKS, ">-";
+    my $filename;
+    foreach $filename (@ARGV) {
+        print "new_headers acting on $filename.\n";
+	check_and_update_file($filename, $::opt_q);
+    }
+    close  FILE_CHECKS;
+}
+
+main;
+

@@ -1,0 +1,17 @@
+\begin{ccRefFunctionObjectConcept}{Kernel::Side_of_oriented_sphere_d}
+A model for this must provide:
+
+\ccCreationVariable{fo}
+
+\ccMemberFunction{template <class ForwardIterator> Bounded_side
+  operator()( ForwardIterator first, ForwardIterator last, const
+  Kernel::Point_d& p);} {returns the relative position of point
+  \ccStyle{p} to the oriented sphere defined by the points in \ccc{A =
+    tuple [first,last)} The order of the points in $A$ is important,
+  since it determines the orientation of the implicitly constructed
+  sphere.  If the points in $A$ are positively oriented, the positive
+  side is the bounded interior of the sphere.  \ccPrecond \ccStyle{A}
+  contains $d+1$ points in $d$-space.  \ccRequire The value type of
+  \ccc{ForwardIterator} is \ccc{Kernel::Point_d}.}
+
+\end{ccRefFunctionObjectConcept}

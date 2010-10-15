@@ -1,0 +1,22 @@
+\begin{ccRefFunction}{sign}
+
+\ccDefinition
+
+The template function \ccRefName\ returns the sign of a number.
+
+The function is guaranteed to be well defined in case the argument type 
+is a model of the \ccc{RealEmbeddable} concept. 
+
+\ccInclude{CGAL/number_utils.h}
+
+\ccFunction{template <class NT> result_type sign(const NT& x);}{
+        returns the sign of the argument. 
+        The \ccc{result_type} is convertible to \ccc{CGAL::Sign}. 
+        }
+
+\ccSeeAlso
+
+\ccRefConceptPage{RealEmbeddable}\\
+\ccRefConceptPage{RealEmbeddableTraits::Sgn}\\
+
+\end{ccRefFunction}

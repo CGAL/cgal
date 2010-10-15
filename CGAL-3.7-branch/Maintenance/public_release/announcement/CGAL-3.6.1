@@ -1,0 +1,92 @@
+Subject: CGAL 3.6.1 Released, Computational Geometry Algorithms Library
+Body:
+
+The CGAL Open Source Project is pleased to announce the release 3.6.1 of
+CGAL, the Computational Geometry Algorithms Library.
+
+Version 3.6.1 is a bug-fix release for version 3.6. No new feature has 
+been added in 3.6.1.  The following corrections have been made:
+
+
+1. General
+
+  - Fix compilation errors with recent Boost versions (since 1.40).
+
+  - Initial support for the Microsoft Visual C++ compiler 10.0 (MSVC
+    2010).
+    For that support, CMake>=2.8.2 is required.  Note also that the
+    compiler option "/bigobj" is necessary to compile some CGAL programs
+    with MSVC 2010.  The Windows installer CGAL-3.6.1-Setup.exe does not
+    support VC++10. The source tarball must be downloaded instead and unpacked
+    manually. Precompiled binaries of GMP and MPFR must be downloaded from
+    GForge:
+        https://gforge.inria.fr/frs/?group_id=52
+    Download either gmp-5.0.1_and_mpfr-3.0.0_precompiled_i686.zip (for 
+    32 bits compilers) or gmp-5.0.1_and_mpfr-3.0.0_precompiled_x64.zip (for
+    64 bits compilers) and unpack that zip file directly into the
+    sub-directory auxiliary/gmp/ of the unpacked sources directory
+    CGAL-3.6.1/. So that the files are put in
+    CGAL-3.6.1/auxilary/gmp/include/ and CGAL-3.6.1/auxilary/gmp/lib/. Then
+    continue with the CMake configuration and the compilation, as
+    instructed in the installation manual.
+
+
+2. Polynomial
+
+  - Fix compilation errors with the Microsoft Visual C++ compiler and the
+    Intel C++ compiler.
+
+
+3. Polyhedron
+
+  - Fix a compilation errors in demo/Polyhedron/:
+     - issue with the location of qglobal.h of Qt4 on MacOS X,
+     - missing texture.cpp, if TAUCS is used,
+  - Fix the location of built plugins of demo/Polyhedron/, when CGAL is
+    configured with WITH_demos=ON
+  - Fix a bug in test_facet function of the incremental builder:    
+    the function did not test if while a new facet makes a vertex manifold,
+    no other facet incident to that vertex breaks the manifold property.
+
+
+4. 3D Periodic Triangulations
+
+  - Fixed bug in the triangulation hierarchy for periodic triangulations.
+
+
+5. 2D Mesh Generation
+
+  - Fix a bug that lead to precondition violation.
+  - Improve the user manual about the member function is_in_domain() of the
+    Face type.
+  - The 2D meshing process is now deterministic (sorting of bad faces no
+    longer relies on pointers comparisons).
+
+
+6. 3D Mesh Generation
+
+  - Fix a linking errors (duplicate symbols) when <CGAL/refine_mesh_3.h> is
+    included in different compilation units.
+
+
+7. Spatial Searching
+
+  - Fix a bug in <CGAL/Orthogonal_k_neighbor_search.h> when several
+    nearest neighbors are at the same distance from the query point.
+
+8. IO Streams
+
+  - Fix a bug in <CGAL/IO/VRML_2_ostream.h> that generated VRML 2 files with
+    an invalid syntax for IndexedFaceSet nodes.
+    
+9. Triangulation_2
+
+  - Add missing Compare_distance_2 functor in trait classes
+    Triangulation_euclidean_traits_xy_3 Triangulation_euclidean_traits_yz_3
+    and Triangulation_euclidean_traits_xz_3.  This was preventing calling
+    member function nearest_vertex of Delaunay_triangulation_2 instantiated
+    with one of these traits.
+   
+
+For further information and for downloading the library and its
+documentation, please visit the CGAL web site: http://www.cgal.org/

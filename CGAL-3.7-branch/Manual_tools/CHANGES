@@ -1,0 +1,389 @@
+\begin{description}
+    % ----------------------------------------------------
+    \item[Revision: 3.11~~~Date: 2001/08/20]~\\[-3mm]
+    \begin{itemize}
+       \item added \verb|\ccRefPageNumAtMargin| that allows you to change the
+             appearance of page numbers produced by the commands. 
+             \verb|\ccRefIdfierPage| and \verb|\ccRefConceptPage|.
+             If this is set to true (default), the page numbers appear at the 
+             right margin with the space in between filled using 
+             \verb+\ccRefPageFill+.  When false, the page numbers appear
+             directly after the name using the following format ``(pg. \#)''.
+       \item added command \verb|\ccRefPageBreak| that can be used to turn off
+             and on page breaks that occur at the beginning and end of each
+             \verb|\ccRef*| section.
+       \item added \verb|\ccRequire| and \verb|\ccRequirements| commands.
+             The first is like \verb|\ccPrecond| and generates a comment 
+             heading with text ``Requirement''. The second generates a 
+             boldface heading like \verb|\ccDefinition| with the text 
+             ``Requirements''.
+       \item added command \verb|\listofrefpages|, analogous to the
+             \verb|\listoffigures| command, which produces a listing of
+             all refernece pages in the PostScript manual.  The listing 
+             can be made alphabetical using the Unix \verb|sort| command.
+       \item added commands \verb|\ccMultiplePartsToc| and 
+             \verb|\ccNumberChaptersByPart|
+             to allow manuals with separate parts.  The first tells the
+             HTML converter that its table of contents should be formatted
+             properly for a manual with multiple parts and the second
+             tells both HTML and \LaTeX to start numbering chapters at
+             1 with each new part.
+    \end{itemize}
+    % ----------------------------------------------------
+    \item[Revision: 3.10~~~Date: 2001/04/02]~\\[-3mm]
+    \begin{itemize}
+       \item added the command \verb|\ccRefines| that creates a new
+             heading for a class
+       \item added the commands \verb|\ccHtmlNoRefLinks|
+             and \verb|\ccHtmlNoRefIndex| that turn off, respectively,
+             linking and indexing of reference page identifiers.
+       \item added command \verb|\ccRefPageFill|, which is the command used
+             by \verb|\ccRefIdfierPage| and \verb|\ccRefConceptPage| to fill 
+             the space between a reference page identifier name and
+             the page number (default is \verb|\dotfill|).
+       \item fixed bug in HTML converter that duplicated the local scopes
+             given in the headings of reference pages in the prefixes of
+             nested types, {\em etc.}
+       \item fixed bug that caused operators to disappear in the
+             PostScript manual when \verb|ccTagOperatorLayout| was set to false.
+    \end{itemize}
+    % ----------------------------------------------------
+    \item[Revision: 3.9~~~Date: 2000/09/01]~\\[-3mm]
+    \begin{itemize}
+       \item added commands \verb|\ccHtmlLinksOff|, \verb|\ccHtmlLinksOn|,
+             and \verb|\ccHtmlNoLinksFrom| that allow one to cause links not 
+             to be created in the HTML manual for the text delimited by 
+             these commands.
+    \end{itemize}
+    % ----------------------------------------------------
+    \item[Revision: 3.8~~~Date: 2000/08/02]~\\[-3mm]
+    \begin{itemize}
+        \item Fixed bug in \verb|\ccRefConceptPage| for HTML conversion
+        \item Fixed bug in HTML converter that did not attach the local scope
+              to reference page labels, files, {\em etc.}
+        \item Fixed HTML converter so it does not generate file names 
+              containing $<$, $>$ or $:$ (which Microsoft doesn't like).
+    \end{itemize}
+    % ----------------------------------------------------
+    \item[Revision: 3.7~~~Date: 2000/07/31]~\\[-3mm]
+    \begin{itemize}
+        \item Fixed bugs in {\tt cc\_manual\_index.sty} causing problems with
+              modified items and concepts as subitems.
+        \item Fixed bug in {\tt ccInclude} macro in {\tt latex\_converter.sty} 
+              that caused the item following such a command not to be linked
+              when include files were not linked.
+        \item Changed the tabs for the new manual style so they are now in 
+              color.
+        \item Changed {\tt ccAdvanced} envrionment brackets to include the
+              word "advanced". 
+        \item Added environments {\tt ccRefConstant}, 
+              {\tt ccRefFunctionObjectConcept}, and 
+              {\tt ccRefFunctionObjectClass}. 
+        \item Added heading commands \verb|\ccGeneralizes| and 
+              \verb|\ccQueryFunctions|.
+        \item Added \verb|\ccRefConceptPage| command to be used instead of
+              \verb|\ccRefIdfierPage| for concepts so the font for the concepts
+              is correct.
+        \item Added commands \verb|\ccSaveThreeColumns|, 
+              \verb|\ccRestoreThreeColumns|, \verb|\ccSaveTwoColumns|,
+              and \verb|\ccRestoreTwoColumns| that save and restore column
+              widths for help in temporarily changing formatting.
+    \end{itemize}
+    % ----------------------------------------------------
+    \item[Revision: 3.6~~~Date: 2000/05/17]~\\[-3mm]
+    \begin{itemize}
+       \item  Modified \verb|cc_extract_html| so it now uses the environment
+              variable \verb|LATEX_CONV_INPUTS| to search for input files.
+              This is analogous to the \verb|TEXINPUTS| environment variable
+              used by \LaTeX.  If 
+              \verb|LATEX_CONV_INPUTS| is set, files are searched for in the
+              indicated directories in the indicated order; if not set, files
+              are searched for in the current directory.
+       \item  Modified the indexing and fromatting commands for \LaTeX, so
+              now underscores are allowed in concept names but no other 
+              ``special'' characters.  Concept names are displayed in the 
+              default font in both the body and the index. (Note: This
+              is true only for the PostScript manual; in the HTML manual,
+              concept names are still displayed in italics.)
+       \item  Changed test suite and {\tt cc\_check} script so they do
+              not assume the current directory is in your path.
+       \item  Fixed a bug in \verb|cc_manual.sty| that was placing the global
+              scope string ({\em e.g.} ``CGAL::'') before concept names in page 
+              headers.
+       \item  Fixed a bug in \verb|cc_manual_index.sty| for index entries 
+              produced by the \verb|\ccRef...| environments that were not
+              formatted using \verb|\ccFont| when the optional scope argument
+              was used.
+       \item  Made \verb|cc_manual.sty| include the package \verb|graphicx| if
+              the new manual style is used, since this is where the 
+              \verb|\includegraphics| command that is used to include the side 
+              tabs for the reference pages is defined.
+       \item  Made \verb|cc_manual_index.sty| include the \verb|makeindex| 
+              package.
+       \item  Added the do-nothing command \verb|\printindex| to 
+              the HTML version of \verb|latex.sty|.
+       \item  Added a \verb|\cc_manual_index.sty| file to the HTML style files.
+              This simply defines all the indexing commands that might appear
+              in the text, but they currently do nothing.
+    \end{itemize}
+
+
+    % ----------------------------------------------------
+    \item[Revision: 3.5~~~Date: 2000/01/27]~\\[3mm]
+    %
+    The following bugs and problems are remedied with this release:
+    \begin{itemize}
+       \item In the \verb|\parseText| macro of \verb|cc_manual_index.sty| the
+             variable \verb|\text| was renamed to \verb|\indexText| to avoid
+             a conflict with the existing AMS-\LaTeX\ \verb|\text| command.
+       \item In \verb|cc_extract_html| (in \verb|cpp_formatting.C|), fixed a 
+             formatting problem that left off the template parameters from 
+             nested types and typedefs in the HTML index.
+       \item Added missing command \verb|\galia| to HTML \verb|cc_manual.sty| 
+             file.
+       \item Added a new style file {\tt nonlinkedpath.sty} in the release.
+             This file defines the command \verb|\nonlinkedpath|, which
+             behaves the same as the \verb|\path| command, except it 
+             does not create a link in the HTML manual. 
+       \item Modified {\tt cc\_manual.sty} to include the 
+             {\tt cc\_manual\_index.sty} and {\tt alltt.sty} style files upon 
+             which it depends.  Similarly modified {\tt cc\_manual\_index.sty} 
+             to include {\tt cc\_manual.sty} since it uses commands defined 
+             there.
+       \item Fixed a problem with the figure and table environments for
+             the {\tt latex.sty} file that caused problems when optional
+             arguments indicating placement preferences were used.
+       \item Changed the names of the HTML files created to remove the
+             special characters (such as \verb|<| and \verb|>|) that are 
+             not supported under Microsoft windows.
+       \item Updated the documentation of {\tt cc\_manual.sty} and 
+             {\tt cc\_manual\_index.sty} to include
+             appendices that summarize all commands and to fix a few
+             inconsistencies with the style files.
+    \end{itemize}
+
+    % ----------------------------------------------------
+    \item[Revision: 3.4~~~Date: 1999/09/27]~\\[3mm]
+    %
+    Added new \LaTeX\ style file \verb|cc_manual_index.sty| that contains
+    macros for producing an index for the PostScript version of the manual.  
+    This style file is documented separately.
+    The style file \verb|cc_manual.sty| has been modified to allow for
+    automatic indexing of most of the \CC\ names that are formatted with the
+    macros in this style file.
+
+    % ----------------------------------------------------
+    \item[Revision: 3.3~~~Date: 1999/09/07]~\\[3mm]
+    %
+    Updated documentation and a new example directory showing the new
+    style of reference manual pages. The documentation is split into
+    three manuals. The documentation could still be enhanced for the 
+    \LaTeX\ to HTML converter. A few bug fixes and some heavy cleanups 
+    are done in the source code and other distributed files. The old
+    slides are no longer distributed. Maintenance for \cgal\ is taken
+    over by Susan Hert.
+
+    % ----------------------------------------------------
+    \item[Revision: 3.2~~~Date: 1999/08/24]~\\[3mm]
+    %
+    HTML converter and \verb+cc_manual.sty+ support the new manual 
+    reference manual style (incl.~tabs at the side margins) and
+    the style for the intermediate transition period. Several bugs 
+    have been fixed. The documentation lacks all the new features 
+    and will be updated for the next release.
+
+    % ----------------------------------------------------
+    \item[Revision: 3.1~~~Date: 1998/08/05]~\\[3mm]
+    %
+    Major rewrite of the HTML converter. New features: Full support of
+    \LaTeX\ macro definitions with newcommand/newenvironment/newtheorem
+    including parameters and a mechanism for optional parameter support.
+    Support for \TeX-style macro definitions, except where pattern
+    matching is used. Better support for math symbols. All symbols listed
+    in the Leslie Lamport book are available. If not directly supported in
+    HTML, they are included as inline GIF images. In addition
+    \verb+\mathcal+ and \verb+\mathbb+ are supported with uppercase letters.
+    Font style changes are fully supported including font size changes and
+    small caps font shape (small caps may produce unpredictable results 
+    if other non-trivial macros are used within a small caps text).
+    Only limited table and formula support. No figure or PostScript
+    picture support.
+
+    Further extensions of the converter can be provided with style files,
+    quite similar to \LaTeX-style files.
+
+    The installation procedure has changed in favor of a single Makefile and
+    support of environment variables, which allows the installation of future
+    releases without configuring the Makefile and several scripts again and
+    again.
+
+
+    % ----------------------------------------------------
+    \item[Revision: 2.16~~~Date: 1998/07/24]~\\[3mm]
+    %
+    Major rewrite of the HTML converter. This is the beta release of the
+    upcoming 3.1 \LaTeX\ converter.
+
+    % ----------------------------------------------------
+    \item[Revision: 2.15~~~Date: 1998/04/08]~\\[3mm]
+    %
+    Removal of own class name fixed, such that it gets not removed
+    if it is only a part of a larger idfier.
+
+    % ----------------------------------------------------
+    \item[Revision: 2.14~~~Date: 1998/04/01]~\\[3mm]
+    %
+    New macro \verb+\ccHtmlNoClassToc+ introduced.
+
+    % ----------------------------------------------------
+    \item[Revision: 2.13~~~Date: 1998/03/19]~\\[3mm]
+    %
+    Bug in {\tt cc\_manual.sty} with template declarations fixed. 
+    Parentheses removed from bibliography keys for HTML conversion.
+
+    % ----------------------------------------------------
+    \item[Revision: 2.12~~~Date: 1998/03/06]~\\[3mm]
+    %
+    Minor extensions and modifications: New macro \verb+\ccIncludeVerbatim+.
+    The \TeX\ capacity error has been removed in the context of certain
+    template function declarations.  HTML conversion enhanced, for example
+    $\sqrt[k]{n}$ converts to something like root$_k(n)$. Wider format in HTML.
+
+    % ----------------------------------------------------
+    \item[Revision: 2.11a~~~Date: 1998/02/05]~\\[3mm]
+    %
+    Bug fix for the HTML converter. New release 2.12 of {\tt
+    cc\_extract\_html}.
+
+    % ----------------------------------------------------
+    \item[Revision: 2.11~~~Date: 1997/12/19]~\\[3mm]
+    %
+    Minor extensions and modifications. New subsection \verb+\ccSeeAlso+.
+
+    % ----------------------------------------------------
+    \item[Revision: 2.10~~~Date: 1997/09/13]~\\[3mm]
+    %
+    The LEDA page dimension settings has been commented out. They were
+    responsible for the faulty behavior of the \verb+\begin{verbatim}+
+    environment where the space had no longer fixed size. The
+    \ccc{operator()} and the type conversion operator are now correctly
+    formatted when using \verb+\ccTagFullDeclarations+.  A \verb+\label+
+    was automatically defined by the \verb+\ccSection+ macro. This has
+    been removed. The new \verb+\ccChapterRelease+ macro with the
+    corresponding \verb+\ccTagChapterRelease+ flag works like
+    \verb+\ccChapterAuthor+. Both are switched off by default now.
+    \verb+\ccNestedClass+ can be used in the global scope.
+
+    Better configuration options are provided for the HTML conversion.
+    The macros \verb+\ccHtmlNoLinks+ and \verb+\ccHtmlNoClassLinks+
+    suppress the automatic generation of index entries.
+
+
+    % ----------------------------------------------------
+    \item[Revision: 2.9~~~Date: 1997/06/19]~\\[3mm]
+    %
+    A macro \verb+\stl+ for \stl\ has been added. A bug fix for the
+    footnote placement in the HTML converter. It could have happened that
+    footnotes appeared in wrong files and that the hyper-links to them
+    failed.
+
+    % ----------------------------------------------------
+    \item[Revision: 2.8~~~Date: 1997/05/27]~\\[3mm]
+    %
+    The \verb+\ccEmptyParameter+ has been replaced by the
+    \verb+\ccClassTemplateName+ in cases where necessary. Small extensions
+    and a couple of bug fixes for the HTML support, including:
+    \verb+\ref{}+ handling more robust. \verb+\ccc{}+ in math mode
+    allowed. \verb+\ccHtmlNoClassIndex+ also inhibits member declarations
+    from writing index entries. Single letter classes are no longer
+    automatically cross linked. Math spacing like \verb+\;+ works again. Line
+    numbers in error messages corrected. 
+
+    % ----------------------------------------------------
+    \item[Revision: 2.7~~~Date: 1997/05/08]~\\[3mm]
+    %
+    Major extensions for the {\tt HTML} support. The mechanisms around the
+    class environments are more flexible and can be used separately (file
+    creation, indexing, cross linking), see
+    Section~\ref{sectionHTMLsupport}. The {\tt HTML} converter supports
+    now an additional file model for the manual with multiple
+    subdirectories to avoid name clashes of class filenames and the cross
+    referencing, see~\cite{k-lhcll-99}. The support for
+    the automatic bibliography generation uses now the {\tt *.aux} file
+    from \LaTeX\ to get the proper labels for the citation tags. The
+    \verb+ccInclude+ macro converts to an anchor pointing to the actual
+    header file. The \LaTeX\ style file {\tt path.sty} is supported
+    with the \verb+\path+ macro to format URL's.
+
+
+    % ----------------------------------------------------
+    \item[Revision: 2.5~~~Date: 1997/04/24]~\\[3mm]
+    %
+    Bug fix for {\tt cc\_manual.sty}. The \verb+ccHtmlOnly+ environment
+    failed. The \verb+\ccPrecond+ and \verb+\ccPostcond+ macros 
+    sometimes did not format in a separate line as they should. Long class
+    names caused the \verb+\ccNestedClass+ macro to forget the type name.
+
+    New section titles to structure a manual page. A new \verb+\ccInclude+
+    macro and a script \verb+cc_extract_include+ extracting it. An
+    environment \verb+ccAdvanced+ to mark paragraphs of advanced material.
+    New method to glue multiple declarations together with
+    \verb+\ccGlueBegin+ and \verb+\ccGlueEnd+.
+
+
+    % ----------------------------------------------------
+    \item[Revision: 2.4~~~Date: 1997/03/25]~\\[3mm]
+    %
+    Bug fix for {\tt cc\_manual.sty}. The keyword \verb+\end+ from \LaTeX\ 
+    environments might have caused trouble with the {\tt cc\_manual.sty}
+    internal parsing technique. Operators were not able to format argument
+    lists with extra parentheses like for function pointer types.
+
+    A few new abbreviations for often used macros: \verb+\ccc+
+    for \verb+\ccStyle+, \verb+\ccThree+ for \verb+\ccSetThreeColumns+,
+    \verb+\ccTwo+ for \verb+\ccSetTwoColumns+, \verb+\ccThreeToTwo+ for
+    \verb+\ccPropagateThreeToTwoColumns+, and \verb+\ccGlue+ for
+    \verb+\ccGlueDeclarations+.
+
+
+    % ----------------------------------------------------
+    \item[Revision: 2.3~~~Date: 1997/02/19]~\\[3mm]
+    %
+    Bug fix for {\tt cc\_manual.sty}. The removal of the class name in
+    function argument lists failed with template classes (the template
+    argument remained).  Member template constructors had not worked. No
+    new manual release.
+
+    % ----------------------------------------------------
+    \item[Revision: 2.2~~~Date: 1997/02/16]~\\[3mm]
+    %
+    The default has changed that the style is no longer compatible with
+    the revision 1.14. This can be  easily changed back. In the style file
+    \verb+cc_manual.sty+ is a  macro \verb+\ccPortability+ in the first
+    lines. It must be set to the value \verb+\ccTrue+ to activate the old
+    names again. However, the supporting tools cannot support the old
+    names. See below for scripts to help in renaming old
+    files.\ccIndexEntry{Portability} 
+
+    The style has been extended with the \verb+\ccChapterSubTitle+ and 
+    \verb+\RCSdefDate+ macro. The handling of template declarations is
+    made more flexible with the \verb+\ccTagTemplateInline+ and
+    \verb+\ccTagRmTemplate+ tags. Small changes in the layout were made.
+
+    The tools have been purified. A bug in the dynamic memory management
+    of \verb+cc_extract+ and \verb+cc_build_checker+ has been removed. The
+    {\tt cc\_manual\_to\_html} script uses now the {\tt CC} environment
+    variable for the C compiler.
+
+    The \verb+cc_manual_to_html+ converter handles now user defined macros
+    (without parameters) and footnotes.
+
+    % ----------------------------------------------------
+    \item[Revision: 2.1~~~Date: 1997/01/22]~\\[3mm]
+    %
+    Major new release. If you still have to upgrade old documentations
+    from revision 1.14 based on {\tt cgal\_manual.sty}, a \Dindex{Perl 
+    script}\index{scripts, Perl} helps in upgrading: 
+    {\tt cc\_update\_2.1} renames all of the older 
+    macros.\index{renaming macros}
+\end{description}

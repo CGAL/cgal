@@ -1,0 +1,13 @@
+Index: src/cc_extract_html.cpp
+===================================================================
+--- src/cc_extract_html.cpp	(revision 29890)
++++ src/cc_extract_html.cpp	(working copy)
+@@ -178,7 +178,7 @@
+        config_path = s;
+     s = getenv("LATEX_CONV_INPUTS");
+     if( s )
+-       latex_conv_inputs = s;
++      latex_conv_inputs = s + latex_conv_inputs;
+ 
+     int i;
+     int nParameters = 0;

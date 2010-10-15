@@ -1,0 +1,73 @@
+% +------------------------------------------------------------------------+
+% | Reference manual page: Polyhedron_min_items_3.tex
+% +------------------------------------------------------------------------+
+% | 26.03.2004   Lutz Kettner
+% | Package: Polyhedron
+% | 
+\RCSdef{\RCSPolyhedronMinItemsRev}{$Id$}
+\RCSdefDate{\RCSPolyhedronMinItemsDate}{$Date$}
+% +------------------------------------------------------------------------+
+
+\ccRefPageBegin
+
+%%RefPage: end of header, begin of main body
+% +------------------------------------------------------------------------+
+
+
+\begin{ccRefClass}{Polyhedron_min_items_3}
+
+\ccDefinition
+  
+The class \ccRefName\ is a minimal model of the
+\ccc{PolyhedronItems_3} concept.  It provides definitions for vertices
+containing points, halfedges, and faces. The polyhedron traits class
+must provide the respective type for the point. Vertices and facets
+both do \emph{not\/} contain a halfedge handle to an incident
+halfedge.
+
+
+\ccInclude{CGAL/Polyhedron_min_items_3.h}
+
+\ccIsModel
+
+\ccRefIdfierPage{PolyhedronItems_3}
+
+\ccHeading{Types in 
+   \ccc{Polyhedron_min_items_3::Vertex_wrapper<Refs,Traits>::Vertex}}
+\ccThree{CGAL::Polyhedron_min_items_3}{items;;;;}{}
+\ccThreeToTwo
+%%\ccTwo{CGAL::Polyhedron_items_3 items;;;}{}
+
+\ccTypedef{typedef Traits::Point_3 Point;}{}
+\ccGlue
+\ccTypedef{typedef CGAL::Tag_true Supports_vertex_point;}{}
+
+
+\ccHeading{Types in \ccc{Polyhedron_min_items_3::Face_wrapper<Refs,Traits>::Face}}
+
+\ccTypedef{typedef CGAL::Tag_false Supports_face_plane;}{}
+
+\ccCreation
+\ccCreationVariable{items}  %% choose variable name
+
+\ccConstructor{Polyhedron_min_items_3();}{default constructor.}
+
+\ccOperations
+
+Supported as required by the \ccc{PolyhedronItems_3} concept.
+
+\ccSeeAlso
+
+\ccRefIdfierPage{CGAL::Polyhedron_3<Traits>}\\
+\ccRefIdfierPage{CGAL::Polyhedron_items_3}\\
+\ccRefIdfierPage{CGAL::HalfedgeDS_min_items}\\
+\ccRefIdfierPage{CGAL::HalfedgeDS_items_2}
+
+\end{ccRefClass}
+
+% +------------------------------------------------------------------------+
+%%RefPage: end of main body, begin of footer
+\ccRefPageEnd
+% EOF
+% +------------------------------------------------------------------------+
+

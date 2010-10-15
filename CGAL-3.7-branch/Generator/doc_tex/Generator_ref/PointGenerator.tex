@@ -1,0 +1,40 @@
+\begin{ccRefConcept}{PointGenerator}
+\ccCreationVariable{pg} \ccTagFullDeclarations
+    
+\ccModifierCrossRefOff
+\ccIndexMainItem{generator classes, requirements}
+\ccModifierCrossRefOn
+    
+\ccDefinition 
+
+The concept \ccRefName\ defines the requirements for a point generator,
+which can be used in places where input iterators are called for.
+
+\ccRefines
+
+InputIterator
+
+\ccHasModels
+
+\ccRefIdfierPage{CGAL::Random_points_in_disc_2<Point_2, Creator>} \\
+\ccRefIdfierPage{CGAL::Random_points_in_square_2<Point_2, Creator>} \\
+\ccRefIdfierPage{CGAL::Random_points_on_circle_2<Point_2, Creator>} \\
+\ccRefIdfierPage{CGAL::Random_points_on_segment_2<Point_2, Creator>} \\
+\ccRefIdfierPage{CGAL::Random_points_on_square_2<Point_2, Creator>} \\
+\ccRefIdfierPage{CGAL::Random_points_in_cube_3<Point_3, Creator>} \\
+\ccRefIdfierPage{CGAL::Random_points_in_sphere_3<Point_3, Creator>} \\
+\ccRefIdfierPage{CGAL::Random_points_on_sphere_3<Point_3, Creator>}\\
+\ccRefIdfierPage{CGAL::Random_points_in_iso_box_d<Point_d>}
+
+\ccTypes
+    
+\ccNestedType{value_type}{the type of point being generated.}  
+%\ccGlue    
+%\ccNestedType{FT}{field number tape of the point coordinates}
+
+\ccOperations
+    
+\ccMemberFunction{double range() const;}{return an absolute bound for
+                                     the coordinates of all generated points.}
+    
+\end{ccRefConcept}

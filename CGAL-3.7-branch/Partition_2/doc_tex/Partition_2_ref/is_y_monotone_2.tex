@@ -1,0 +1,60 @@
+\begin{ccRefFunction}{is_y_monotone_2}
+
+\ccDefinition
+
+Function for testing the $y$-monotonicity of a sequence of points.
+\ccIndexSubitem{polygon partitioning}{y-monotone}
+\ccIndexMainItem{y-monotone polygon}
+
+\ccInclude{CGAL/is_y_monotone_2.h}
+
+\ccFunction{
+template<class InputIterator, class Traits>
+bool
+is_y_monotone_2(InputIterator first, InputIterator beyond,
+                const Traits& traits);
+}
+{
+Determines if the sequence of points in the range 
+[\ccc{first}, \ccc{beyond}) define a $y$-monotone 
+polygon or not. If so, the function returns \ccc{true}, otherwise it
+returns \ccc{false}. 
+}
+
+\ccHeading{Requirements}
+\ccIndexSubitem[C]{is_y_monotone_2}{preconditions}
+\begin{enumerate}
+    \item \ccc{Traits} is a model of the concept \ccc{IsYMonotoneTraits_2}.%
+          \ccIndexMainItem[c]{IsYMonotoneTraits_2}
+    \item \ccc{InputIterator::value_type} should be \ccc{Traits::Point_2}.
+\end{enumerate}
+
+The default traits class \ccc{Default_traits} is the kernel in which the
+type \ccc{InputIterator::value_type} is defined.%
+\ccIndexTraitsClassDefault{is_y_monotone_2}
+
+\ccSeeAlso
+\ccRefIdfierPage{CGAL::Is_y_monotone_2<Traits>} \\
+\ccRefIdfierPage{CGAL::y_monotone_partition_2} \\
+\ccRefIdfierPage{CGAL::y_monotone_partition_is_valid_2}
+
+\ccImplementation
+
+This function requires $O(n)$ time for a polygon with $n$ vertices.
+
+\ccExample
+
+The following program computes a $y$-monotone partitioning
+of a polygon using the default
+traits class and stores the partition polygons in the list 
+\ccc{partition_polys}.  It then asserts that each of the partition 
+polygons is, in fact, a $y$-monotone polygon and that the partition
+is valid.  (Note that the
+assertions are superfluous unless the postcondition checking done
+by \ccc{y_monotone_partition_2} has been turned off during compilation.)
+
+\ccIncludeExampleCode{Partition_2/y_monotone_partition_2.cpp}
+
+
+
+\end{ccRefFunction}

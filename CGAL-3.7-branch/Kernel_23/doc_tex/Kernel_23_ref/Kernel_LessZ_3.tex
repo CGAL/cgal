@@ -1,0 +1,17 @@
+\begin{ccRefFunctionObjectConcept}{Kernel::LessZ_3}
+A model for this must provide:
+
+\ccCreationVariable{fo}
+
+\ccMemberFunction{bool operator()(const Kernel::Point_3&p, 
+                                  const Kernel::Point_3&q);}
+{returns true iff the $z$-coordinate of $p$ is smaller than the
+$z$-coordinate of $q$.}
+
+\ccRefines
+\ccc{AdaptableFunctor} (with two arguments)
+
+\ccSeeAlso
+\ccRefIdfierPage{CGAL::compare_z}\\
+
+\end{ccRefFunctionObjectConcept}

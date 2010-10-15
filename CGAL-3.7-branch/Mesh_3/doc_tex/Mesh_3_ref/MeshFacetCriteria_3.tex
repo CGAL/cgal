@@ -1,0 +1,81 @@
+% +------------------------------------------------------------------------+
+% | Reference manual page: MeshFacetCriteria_3.tex
+% +------------------------------------------------------------------------+
+% | 13.02.2009   Author
+% | Package: Mesh_3
+% |
+\RCSdef{\RCSMeshFacetCriteriaRev}{$Id$}
+\RCSdefDate{\RCSMeshFacetCriteriaDate}{$Date$}
+% |
+\ccRefPageBegin
+%%RefPage: end of header, begin of main body
+% +------------------------------------------------------------------------+
+
+
+\begin{ccRefFunctionObjectConcept}{MeshFacetCriteria_3}
+
+%% \ccHtmlCrossLink{}     %% add further rules for cross referencing links
+%% \ccHtmlIndexC[concept]{} %% add further index entries
+
+\ccDefinition
+  
+The Delaunay refinement process involved in the 
+templated functions \ccc{make_mesh_3} and \ccc{refine_mesh_3}
+is guided by a set of elementary refinement criteria
+that concern either mesh tetrahedra or surface facets.
+The concept \ccRefName\ describes the types that
+handle the refinement criteria for boundary facets.
+
+
+\ccTypes
+
+\ccNestedType{Facet}{Type for the facets of the
+  triangulation. Must match the \ccc{Facet} type in the
+  triangulation type used by the mesh generation function.}
+
+\ccNestedType{Cell_handle}{Handle type for the cells of the
+  triangulation. Must match the \ccc{Cell_handle} type in the
+  triangulation type used by the mesh generation function.}
+
+\ccNestedType{Facet_quality}{Type representing the quality of a
+  facet. Must be a model of CopyConstructible and
+  LessThanComparable. Between two facets, the one which has the lower
+  quality must have the lower \ccc{Facet_quality}.}
+
+\ccNestedType{Facet_badness}{Type representing if a facet is bad or not. This type
+must be convertible to \ccc{bool}. If it converts to \ccc{true} then the facet is bad, otherwise
+the facet is good with regard to the criteria.
+
+In addition, an object of this type must contain an object of type
+\ccc{Facet_quality} if it represents
+a bad facet. \ccc{Facet_quality} must be accessible by
+\ccc{operator*()}. Note that \ccc{boost::optional<Facet_quality>} is 
+a natural model of this concept} % boost::optional
+
+\ccCreationVariable{facet_criteria}
+
+\ccOperations
+
+\ccMethod{Facet_badness operator()(Facet f);}
+{Returns \ccc{Facet_badness} value of facet \ccc{f}.}
+\ccMethod{Facet_badness operator()(Cell_handle c, int i);}
+{Same as above with \ccc{f=(c,i)}.}
+
+
+\ccHasModels
+\ccc{Mesh_facet_criteria_3<Tr>}
+
+\ccSeeAlso
+\ccc{MeshCellCriteria_3}\\
+\ccc{MeshCriteria_3} \\
+\ccc{make_mesh_3} \\
+\ccc{refine_mesh_3}\\
+
+
+\end{ccRefFunctionObjectConcept}
+
+% +------------------------------------------------------------------------+
+%%RefPage: end of main body, begin of footer
+\ccRefPageEnd
+% EOF
+% +------------------------------------------------------------------------+

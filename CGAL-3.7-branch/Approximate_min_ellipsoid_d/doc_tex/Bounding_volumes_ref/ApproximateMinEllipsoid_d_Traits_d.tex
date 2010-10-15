@@ -1,0 +1,73 @@
+
+\begin{ccRefConcept}{ApproximateMinEllipsoid_d_Traits_d}
+
+% -----------------------------------------------------------------------------
+\ccDefinition
+
+This concept defines the requirements for traits classes of
+\ccGlobalScope\ccc{Approximate_min_ellipsoid_d<Traits>}.
+
+\ccRefines
+
+\ccc{DefaultConstructible} \\%
+\ccc{CopyConstructible}\\%
+\ccc{Assignable}
+
+% -----------------------------------------------------------------------------
+\ccTypes
+
+\ccNestedType{FT}{\ccc{typedef double FT}}
+
+\ccNestedType{ET}{Some model of concept \ccc{RingNumberType} that
+        provides exact arithmetic, meaning that
+        \ccc{CGAL::Number_type_traits<ET>::Has_exact_ring_operations}
+        must be \ccc{CGAL::Tag_true}.  In addition, \ccc{ET} must be
+        able to exactly represent any finite \ccc{double} value.  (An
+        example for such a type is \ccc{CGAL::MP_Float}.). \\ The type
+        \ccc{ET} is to be used by the
+        \ccc{Approximate_min_ellipsoid_d<Traits>} class for internal,
+        exact computations.}
+
+\ccNestedType{Point}{Type of the input points. \ccc{Point} must
+        provide the default and copy constructor, and must be a model
+        of \ccc{DefaultConstructible}, \ccc{CopyConstructible}, and
+        \ccc{Assignable}.}
+
+\ccNestedType{Cartesian_const_iterator}{Model for the STL concept
+\ccc{RandomAccessIterator} whose value type must be convertible to
+\ccc{double}.  This type is used to iterate over the Cartesian
+coordinates of an instance of type \ccc{Point}, see
+\ccc{cartesian_begin()} below.}
+
+\ccAccessFunctions
+
+\ccCreationVariable{traits}
+
+\ccMemberFunction{ int dimension(const Point& p);}{ returns the
+    dimension of a point \ccc{p}.}
+
+\ccMemberFunction{Cartesian_const_iterator cartesian_begin(const
+Point& p);}{ returns an input iterator over the Euclidean coordinates
+of the point $p$.  The range of the iterator must have size
+\ccc{dimension(p)}.}
+
+% -----------------------------------------------------------------------------
+\ccHasModels
+
+\ccRefIdfierPage{CGAL::Approximate_min_ellipsoid_d_traits_2<K,ET>}
+\ccRefIdfierPage{CGAL::Approximate_min_ellipsoid_d_traits_3<K,ET>}
+\ccRefIdfierPage{CGAL::Approximate_min_ellipsoid_d_traits_d<K,ET>}%
+
+% -----------------------------------------------------------------------------
+\ccSeeAlso
+
+\ccIndexTraitsClassRequirements[C]{Approximate_min_ellipsoid_d_traits_d}
+\ccRefIdfierPage{CGAL::Min_ellipse_2<Traits>}\\[1ex]
+
+
+% -----------------------------------------------------------------------------
+
+\end{ccRefConcept}
+\ccAutoIndexingOn
+
+

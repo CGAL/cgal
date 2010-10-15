@@ -1,0 +1,161 @@
+
+\begin{ccRefConcept}{MinEllipse2Traits}
+
+% -----------------------------------------------------------------------------
+\ccDefinition
+
+This concept defines the requirements for traits classes of
+\ccGlobalScope\ccc{Min_ellipse_2<Traits>}.
+
+% -----------------------------------------------------------------------------
+\ccTypes
+
+\ccNestedType{Point}{
+        The point type must provide default and copy constructor,
+        assignment and equality test.}
+
+\ccNestedType{Ellipse}{
+        The ellipse type must fulfill the requirements listed below
+        in the next section.}
+
+% -----------------------------------------------------------------------------
+\ccHeading{Variables}
+
+\ccVariable{ Ellipse  ellipse;}{
+        The current ellipse. This variable is maintained by the algorithm,
+        the user should neither access nor modify it directly.}
+
+% -----------------------------------------------------------------------------
+\ccCreation
+\ccCreationVariable{traits}
+
+Only default and copy constructor are required.
+
+\ccConstructor{ Traits( );}{}
+\ccConstructor{ Traits( const Traits&);}{}
+
+% -----------------------------------------------------------------------------
+\ccHasModels
+
+\ccRefIdfierPage{CGAL::Min_ellipse_2_traits_2<K>}
+
+% -----------------------------------------------------------------------------
+\ccSeeAlso
+
+\ccIndexTraitsClassRequirements[C]{Min_ellipse_2}
+\ccRefIdfierPage{CGAL::Min_ellipse_2<Traits>}
+
+% -----------------------------------------------------------------------------
+
+\end{ccRefConcept}
+
+% =============================================================================
+
+\ccAutoIndexingOff
+\ccHtmlNoClassToc
+\ccHtmlNoClassLinks
+\ccHtmlNoClassIndex
+\begin{ccClass}{Ellipse}
+\subsection*{Ellipse Type (\ccClassTemplateName)}
+
+% -----------------------------------------------------------------------------
+\ccDefinition
+ 
+An object of the class \ccClassName\ is an ellipse in two-dimensional
+Euclidean plane $\E^2$. Its boundary splits the plane into a bounded
+and an unbounded side. By definition, an empty \ccClassName\ has no
+boundary and no bounded side, i.e.\ its unbounded side equals the
+whole plane $\E^2$.
+
+% -----------------------------------------------------------------------------
+\ccTypes
+ 
+\ccNestedType{Point}{Point type.}
+
+% -----------------------------------------------------------------------------
+\ccCreation
+\ccCreationVariable{ellipse}
+ 
+\ccMemberFunction{ void  set( );}{
+        sets \ccVar\ to the empty ellipse.}
+
+\ccMemberFunction{ void  set( const Point& p);}{
+        sets \ccVar\ to the ellipse containing exactly $\{\mbox{\ccc{p}}\}$.}
+
+\ccMemberFunction{ void  set( const Point& p,
+                              const Point& q);}{
+        sets \ccVar\ to the ellipse containing exactly the segment
+        connecting \ccc{p} and \ccc{q}. The algorithm guarantees
+        that \ccc{set} is never called with two equal points.}
+
+\ccMemberFunction{ void  set( const Point& p,
+                              const Point& q,
+                              const Point& r);}{
+        sets \ccVar\ to the smallest ellipse through \ccc{p},\ccc{q},\ccc{r}.
+        The algorithm guarantees that \ccc{set} is never called with
+        three collinear points.}
+
+\ccMemberFunction{ void  set( const Point& p,
+                              const Point& q,
+                              const Point& r,
+                              const Point& s);}{
+        sets \ccVar\ to the smallest ellipse through
+        \ccc{p},\ccc{q},\ccc{r},\ccc{s}. The algorithm guarantees that
+        this ellipse exists.}
+
+\ccMemberFunction{ void  set( const Point& p,
+                              const Point& q,
+                              const Point& r,
+                              const Point& s,
+                              const Point& t);}{
+        sets \ccVar\ to the unique conic through
+        \ccc{p},\ccc{q},\ccc{r},\ccc{s},\ccc{t}. The algorithm
+        guarantees that this conic is an ellipse.}
+
+% -----------------------------------------------------------------------------
+\ccPredicates
+
+\ccMemberFunction{ bool  has_on_unbounded_side( const Point& p) const;}{
+        returns \ccc{true}, iff \ccc{p} lies properly outside of \ccVar.}
+
+Each of the following predicates is only needed, if the corresponding
+predicate of \ccc{Min_ellipse_2} is used.
+
+\ccMemberFunction{ CGAL::Bounded_side
+                   bounded_side( const Point& p) const;}{
+        returns \ccGlobalScope\ccc{ON_BOUNDED_SIDE},
+        \ccGlobalScope\ccc{ON_BOUNDARY}, or
+        \ccGlobalScope\ccc{ON_UNBOUNDED_SIDE} iff \ccc{p} lies properly
+        inside, on the boundary, or properly outside of \ccVar, resp.}
+
+\ccMemberFunction{ bool  has_on_bounded_side( const Point& p) const;}{
+        returns \ccc{true}, iff \ccc{p} lies properly inside \ccVar.}
+
+\ccMemberFunction{ bool  has_on_boundary( const Point& p) const;}{
+        returns \ccc{true}, iff \ccc{p} lies on the boundary
+        of \ccVar.}
+
+\ccMemberFunction{ bool  is_empty( ) const;}{
+        returns \ccc{true}, iff \ccVar\ is empty (this implies
+        degeneracy).}
+
+\ccMemberFunction{ bool  is_degenerate( ) const;}{
+        returns \ccc{true}, iff \ccVar\ is degenerate, i.e.\ if
+        \ccVar\ is empty or equal to a single point.}
+
+% -----------------------------------------------------------------------------
+\ccHeading{I/O}
+
+The following I/O operator is only needed, if the corresponding I/O
+operator of \ccc{Min_ellipse_2} is used.
+
+\ccHtmlNoIndex
+\ccFunction{ ostream& operator << ( ostream& os, const Ellipse& ellipse);}{
+        writes \ccVar\ to output stream \ccc{os}.}
+
+% -----------------------------------------------------------------------------
+
+\end{ccClass}
+\ccAutoIndexingOn
+
+

@@ -1,0 +1,385 @@
+//=====================================================================
+//	Revision History for package Matrix_search
+//=====================================================================
+
+
+//---------------------------------------------------------------------
+//	revision 159
+//---------------------------------------------------------------------
+
+ALL : Removed old workarounds.
+
+//---------------------------------------------------------------------
+//	revision 158
+//---------------------------------------------------------------------
+
+
+//---------------------------------------------------------------------
+//	revision 157
+//---------------------------------------------------------------------
+
+ALL : Removed some MSC_VER macros.
+
+//---------------------------------------------------------------------
+//	revision 156
+//---------------------------------------------------------------------
+
+ALL : - G++ 3.4 fixes.
+
+//---------------------------------------------------------------------
+//	revision 155
+//---------------------------------------------------------------------
+
+ALL : - Rename has_smaller_dist_to_point to has_smaller_distance_to_point.
+GLOB: remove Susan as maintainer
+
+//---------------------------------------------------------------------
+//	revision 154
+//---------------------------------------------------------------------
+
+ALL : Removed Sqrt.
+ALL : Fixed demos for LEDA namespace (as suggested by Matthias).
+
+//---------------------------------------------------------------------
+//	revision 153
+//---------------------------------------------------------------------
+
+ALL : K::FT -> K::R::FT. (<- Sylvain)
+
+//---------------------------------------------------------------------
+//	revision 152
+//---------------------------------------------------------------------
+
+SRC : Fixed rectangle construction bug.
+
+//---------------------------------------------------------------------
+//	revision 151
+//---------------------------------------------------------------------
+
+ALL : Fixed sunpro problems.
+
+//---------------------------------------------------------------------
+//	revision 150
+//---------------------------------------------------------------------
+
+ALL : Some fixes for sunpro 5.3.
+
+//---------------------------------------------------------------------
+//	revision 149
+//---------------------------------------------------------------------
+
+GLOB: moved Optimisation_ref directory up one level
+
+//---------------------------------------------------------------------
+//	revision 148
+//---------------------------------------------------------------------
+
+SRC : Added typedefs for Construct_iso_rectangle and Construct_vertex.
+
+//---------------------------------------------------------------------
+//	revision 147
+//---------------------------------------------------------------------
+
+ALL : Use new functor adaptors.
+ALL : Worked over traits classes -> Kernel Traits.
+SRC : Fixed warning on gcc3.
+SRC : Minimum_enclosing_* -> Min_*
+SRC : maximum_*_inscribed_k_gon -> maximum_*_inscribed_k_gon_2
+SRC : extremal_polygon -> extremal_polygon_2
+SRC : all_furthest_neighbors -> all_furthest_neighbors_2
+SRC : Removed side-effect from expensive assertion in 3center.
+SRC : Use CGAL_NTS for number type utilities.
+SRC : Use Construct_iso_rectangle_2 from Kernel Traits.
+SRC : Fixed more ledaing underscores.
+SRC : Fixed leading underscore names.
+SRC : Fixed bug in maximum_perimeter k-gon::min_k_gon.
+SRC : Use CGAL compose functions.
+SRC : Do not use non-std iterators (std::output_iterator etc.).
+SRC : Several fixes for Borland.
+SRC : Fixed bug in four-center computation.
+SRC : Fixed range bug in expensive_assertion in extremal_polygon.
+SRC : Workaround for peculiar egcs-1.* bug with pcenter_random tests.
+SRC : Fixed two little bugs in 3cover (greater_equal ==> greater).
+SRC : Fixed expensive checks.
+SRC : Fixed internal compiler error on egcs-1.
+SRC : Completely new four-center implementation.
+SRC : Completely new four-cover implementation.
+SRC : Unified traits classes.
+SRC : Worked around some MSVC using-bugs.
+SRC : Added std:: to vector in several places in extremal_polygon_2.h.
+SRC : Removed CGAL::sqrt (now in double.h/leda_real.h).
+SRC : added some return 0;
+SRC : MSVBC workaround for TYPENAME_BUGs.
+SRC : New linear 2- and 3-center algorithm.
+SRC : added std:: in a number of places where it was missing
+SRC : use namespace std and CGAL
+SRC : use standard header files
+SRC : fix signed <-> unsigned comparison warning on gcc.
+SRC : some minor changes to prevent warnings for gcc -Wall.
+SRC : fixed a bug in Rectangle_partition::first_left_of.
+SRC : Initial revision
+SRC : Matrix_search
+
+//---------------------------------------------------------------------
+//	revision 145
+//---------------------------------------------------------------------
+
+ALL : Changed concept names.
+ALL : Added help button to pcenter demo.
+ALL : Restricted options in pcenter demo to reasonable values.
+
+//---------------------------------------------------------------------
+//	revision 144
+//---------------------------------------------------------------------
+
+ALL : Fixed warning on gcc3.
+
+//---------------------------------------------------------------------
+//	revision 143
+//---------------------------------------------------------------------
+
+
+//---------------------------------------------------------------------
+//	revision 142
+//---------------------------------------------------------------------
+
+
+//---------------------------------------------------------------------
+//	revision 141
+//---------------------------------------------------------------------
+
+ALL : Minimum_enclosing_* -> Min_*
+ALL : maximum_*_inscribed_k_gon -> maximum_*_inscribed_k_gon_2
+ALL : extremal_polygon -> extremal_polygon_2
+ALL : all_furthest_neighbors -> all_furthest_neighbors_2
+
+//---------------------------------------------------------------------
+//	revision 140
+//---------------------------------------------------------------------
+
+SRC : Removed side-effect from expensive assertion in 3center.
+
+//---------------------------------------------------------------------
+//	revision 139
+//---------------------------------------------------------------------
+
+DEMO: Fixed sprintf problem on msvc.
+DEMO: Fixed kcc warning.
+
+//---------------------------------------------------------------------
+//	revision 138
+//---------------------------------------------------------------------
+
+
+//---------------------------------------------------------------------
+//	revision 137
+//---------------------------------------------------------------------
+
+ALL : Use CGAL_NTS for number type utilities.
+
+//---------------------------------------------------------------------
+//	revision 136
+//---------------------------------------------------------------------
+
+SRC : Use Construct_iso_rectangle_2 from Kernel Traits.
+
+//---------------------------------------------------------------------
+//	revision 135
+//---------------------------------------------------------------------
+
+ALL : Fixed _Random_generator stuff (now without leading underscore).
+
+//---------------------------------------------------------------------
+//	revision 134
+//---------------------------------------------------------------------
+
+SRC : Fixed more ledaing underscores.
+
+//---------------------------------------------------------------------
+//	revision 133
+//---------------------------------------------------------------------
+
+SRC : Fixed leading underscore names.
+SRC : Fixed bug in maximum_perimeter k-gon::min_k_gon.
+
+//---------------------------------------------------------------------
+//	revision 132
+//---------------------------------------------------------------------
+
+DEMO: Added check for CGAL_USE_LEDA.
+SRC : Use CGAL compose functions.
+SRC : Do not use non-std iterators (std::output_iterator etc.).
+
+//---------------------------------------------------------------------
+//	revision 131
+//---------------------------------------------------------------------
+
+ALL : Several fixes for Borland.
+
+//---------------------------------------------------------------------
+//	revision 130
+//---------------------------------------------------------------------
+
+DEMO: Fixed MSVC problems.
+TEST: Initial revision
+SRC : Fixed bug in four-center computation.
+
+//---------------------------------------------------------------------
+//	revision 129
+//---------------------------------------------------------------------
+
+SRC : Fixed range bug in expensive_assertion in extremal_polygon.
+SRC : Workaround for peculiar egcs-1.* bug with pcenter_random tests.
+SRC : Fixed two little bugs in 3cover (greater_equal ==> greater).
+
+//---------------------------------------------------------------------
+//	revision 128
+//---------------------------------------------------------------------
+
+SRC : Fixed expensive checks.
+SRC : Fixed internal compiler error on egcs-1.
+
+//---------------------------------------------------------------------
+//	revision 127
+//---------------------------------------------------------------------
+
+TEST: Fixed some MSVC #ifdefs.
+
+//---------------------------------------------------------------------
+//	revision 126
+//---------------------------------------------------------------------
+
+
+//---------------------------------------------------------------------
+//	revision 125
+//---------------------------------------------------------------------
+
+DEMO: Fixed a few things for VC++.
+SRC : Completely new four-center implementation.
+
+//---------------------------------------------------------------------
+//	revision 124
+//---------------------------------------------------------------------
+
+SRC : Completely new four-cover implementation.
+SRC : Unified traits classes.
+SRC : Added std:: to vector in several places in extremal_polygon_2.h.
+SRC : Removed CGAL::sqrt (now in double.h/leda_real.h).
+SRC : added some return 0;
+SRC : MSVBC workaround for TYPENAME_BUGs.
+SRC : New linear 2- and 3-center algorithm.
+SRC : added std:: in a number of places where it was missing
+SRC : use namespace std and CGAL
+SRC : use standard header files
+SRC : fix signed <-> unsigned comparison warning on gcc.
+SRC : some minor changes to prevent warnings for gcc -Wall.
+SRC : fixed a bug in Rectangle_partition::first_left_of.
+SRC : Initial revision
+SRC : Matrix_search
+
+//---------------------------------------------------------------------
+//	revision 123
+//---------------------------------------------------------------------
+
+SRC : Worked around some MSVC using-bugs.
+SRC : Removed, --> Rectangular_p_center_traits_2.h.
+SRC : added std:: in a number of places where it was missing
+SRC : use namespace std and CGAL
+SRC : use standard header files
+SRC : fix signed <-> unsigned comparison warning on gcc.
+SRC : some minor changes to prevent warnings for gcc -Wall.
+SRC : fixed a bug in Rectangle_partition::first_left_of.
+SRC : Initial revision
+SRC : Matrix_search
+
+//---------------------------------------------------------------------
+//	revision 122
+//---------------------------------------------------------------------
+
+ALL : Replaced selfmade timer by CGAL::Timer.
+TEST: Removed "warning" from program output.
+
+//---------------------------------------------------------------------
+//	revision 121
+//---------------------------------------------------------------------
+
+SRC : Added std:: to vector in several places in extremal_polygon_2.h.
+
+//---------------------------------------------------------------------
+//	revision 120
+//---------------------------------------------------------------------
+
+DEMO: Prefixed leda_drawing_mode.
+SRC : Removed CGAL::sqrt (now in double.h/leda_real.h).
+
+//---------------------------------------------------------------------
+//	revision 119
+//---------------------------------------------------------------------
+
+ALL : added some return 0;
+ALL : MSVBC workaround for TYPENAME_BUGs.
+
+//---------------------------------------------------------------------
+//	revision 118
+//---------------------------------------------------------------------
+
+DEMO: New User-Interface with different Generators.
+SRC : New linear 2- and 3-center algorithm.
+TEST: Use Intervall_arithmetic number type.
+
+//---------------------------------------------------------------------
+//	revision 117
+//---------------------------------------------------------------------
+
+DEMO: fixed for LEDA-3.8 (the point_set<I> data structure vanished)
+DEMO: Now nearest neighbor queries are done brute-force.
+
+//---------------------------------------------------------------------
+//	revision 116
+//---------------------------------------------------------------------
+
+
+//---------------------------------------------------------------------
+//	revision 115
+//---------------------------------------------------------------------
+
+
+//---------------------------------------------------------------------
+//	revision 114
+//---------------------------------------------------------------------
+
+ALL : added std:: in a number of places where it was missing
+
+//---------------------------------------------------------------------
+//	revision 113
+//---------------------------------------------------------------------
+
+DEMO: Fixed MSVC problems.
+DEMO: New User-Interface with different Generators.
+ALL : Initial revision
+TEST: added some return 0;
+TEST: MSVBC workaround for TYPENAME_BUGs.
+TEST: Added LONG_NAME_PROBLEM flags to makefile
+
+//---------------------------------------------------------------------
+//	revision 112
+//---------------------------------------------------------------------
+
+ALL : use namespace std and CGAL
+ALL : use standard header files
+
+//---------------------------------------------------------------------
+//	revision 111
+//---------------------------------------------------------------------
+
+
+//---------------------------------------------------------------------
+//	revision 110
+//---------------------------------------------------------------------
+
+
+//---------------------------------------------------------------------
+//	revision 19
+//---------------------------------------------------------------------
+
+SRC : fix signed <-> unsigned comparison warning on gcc.

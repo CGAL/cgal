@@ -1,0 +1,24 @@
+Circulator Package
+---------------------------------------------------------------------
+
+-  CGAL/circulator.h
+
+     Support for circulator definitions (base classes, tags etc.).     
+     Incluces circulator_bases.h for base classes and tags.
+     Functions on circulators (size and distance). 
+     Adaptors between circulators and iterators.
+     Support to write programs for circulators and iterators
+     simultaneously.
+
+-  CGAL/circulator_bases.h
+
+     Circulator base classes and tags.     
+
+-  CGAL/circulator_impl.h
+
+     Adaptors that provide circulators for common types of 
+     data structures like circular linked lists or arrays.
+     No longer supported in the documentation. Please refer 
+     to the CGAL 0.9 Support Library manual.
+
+Lutz Kettner

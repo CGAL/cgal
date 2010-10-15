@@ -1,0 +1,215 @@
+<html>
+    <head>
+	<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+	<title>Menu</title>
+        <a name="File">
+    </head>
+    <body style="font-size:12pt;font-family:helvetica">
+
+	<p><h3><a name="File">File</a></h3></p>
+
+        <table cellspacing="16">
+	  <tr>
+	    <td width="32" align="center" valign="top">
+	      <img src="../icons/fileOpen.png" />  
+	    </td>
+	    <td>
+	  <b><i>Load Points</i></b><br>
+	  Shows a "Open file" dialog. A readable file is supposed to
+	  consist of a list of points that are separated by white
+	  spaces. A point has to be represented as a list of three
+	  coordinates that again are separated by white spaces.
+	    </td>
+	  </tr>
+	</table>
+
+	<p><h3><a name="Initialization">Initialization</a></h3></p>
+
+	<table cellspacing="16">
+	  <tr>
+	    <td valign="top">
+	      <img src="../icons/init0.png" width="32" />  
+	    </td>
+	  <td><b><i>Empty scene</i></b><br>
+	  Deletes the current triangulation and initializes it with
+	  the empty triangulation.</td></tr>
+	  
+	  <tr>
+	    <td valign="top">
+	      <img src="../icons/init1.png" width="32" />  
+	    </td>
+	  <td><b><i>Single point</i></b><br>
+	  Deletes the current triangulation and computes a new
+	  triangulation of one random point.</td></tr>
+	  <tr>
+ 	    <td valign="top">
+	      <img src="../icons/initRand.png" width="32" />  
+	    </td>
+	  <td><b><i>Random point set</i></b><br>
+	  Deletes the current triangulation and computes a new
+	  triangulation of 30 random points that are uniformly
+	  distributed inside the random cube.
+	  </td></tr>
+	  <tr>
+	    <td valign="top">
+	      <img src="../icons/initRandPlanar.png" width="32" />  
+	    </td>
+	  <td><b><i>Random planar point set</i></b><br>
+	  Deletes the current triangulation and computes a new
+	  triangulation of 10 random points that are uniformly
+	  distributed inside the side of the fundamental cube of
+	  z=0.</td></tr>
+	  <tr>
+	    <td valign="top">
+	      <img src="../icons/initGrid.png" width="32" />  
+	    </td>
+	  <td><b><i>Point grid</i></b><br>
+	  Deletes the current triangulation and computes a new
+	  triangulation of a grid of 36 points. This is exactly the
+	  grid for which we know that it has a triangulation in
+	  1-sheeted covering space. So this triangulation is the only
+	  one amongst the five initial triangulations that is
+	  represented in 1-sheeted covering.</td></tr>
+        </table>
+
+	<p><h3><a name="Actions">Actions</a></h3></p>
+
+	<table cellspacing="16">
+	  <tr>
+ 	    <td valign="top">
+	      <img src="../icons/ball.png" width="32" />  
+	    </td>
+	  <td><b><i>Flying ball</i></b><br>
+	  Shows a ball that flies along a constant vector through the
+	  fundamental cube to show the periodicity.</td></tr>
+	  <tr>
+ 	    <td valign="top">
+	      <img src="../icons/pause.png" width="32" />  
+	    </td>
+	  <td><b><i>Pause</i></b><br>
+	  Stops the ball.</td></tr>
+	  <tr>
+ 	    <td valign="top">
+	      <img src="../icons/inputPointBall.png" width="32" />  
+	    </td>
+	  <td><b><i>Insert point</i></b><br>
+	  Inserts a point at the current position of the ball. It does
+	  not matter whether the ball is shown or not.</td></tr>
+	  <tr>
+ 	    <td valign="top">
+	      <img src="../icons/inputPointRandom.png" width="32" />  
+	    </td>
+	  <td><b><i>Insert random point</i></b><br>
+	  Inserts a point at a random position inside the fundamental
+	  cube.</td></tr>
+	  <tr>
+ 	    <td valign="top">
+	      <img src="../icons/camera.png" width="32" />  
+	    </td>
+	  <td><b><i>Grab image</i></b><br>
+	  Stores a screenshot of what is currently displayed.</td></tr>
+	</table>
+
+
+	<p><h3><a name="Features">Features</a></h3></p>
+
+	<table cellspacing="16">
+	  <tr>
+ 	    <td valign="top">
+	      <img src="../icons/locate.png" width="32" />  
+	    </td>
+	  <td><b><i>Point location</i></b><br>
+	  Shows the tetrahedron that currently contains the flying
+	  ball. If several periodic copies of this tetrahedron are
+	  shown then all of them will be marked.</td></tr>
+	  <tr>
+ 	    <td valign="top">
+	      <img src="../icons/conflict.png" width="32" />  
+	    </td>
+	  <td><b><i>Conflict region</i></b><br>
+	  Shows the tetrahedra whose circumscribing balls currently
+	  contain the flying ball. If several periodic copies of a
+	  marked tetrahedron are shown then all of them will be
+	  marked.</td></tr>
+	</table>
+
+	
+	<p><h3><a name="Options">Options</a></h3></p>
+
+	<table cellspacing="16">
+	  <tr>
+ 	    <td valign="top">
+	      <img src="../icons/wireframe.png" width="32" />  
+	    </td>
+	  <td><b><i>Wireframe</i></b><br>
+	  Draws lines and points instead of the GLU spheres and
+	  cylinders. This can accelerate the drawing of large scenes
+	  considerably.</td></tr>
+	  <tr>
+ 	    <td valign="top">
+	      <img src="../icons/planar.png" width="32" />  
+	    </td>
+	  <td><b><i>Planar triangulation</i></b><br>
+	  Shows only the simplices that are completely contained in
+	  the plane z=0. In this mode the flying ball will always be
+	  inside the plane z=0 as well as all randomly inserted points.
+	  </td></tr>
+	  <tr>
+ 	    <td valign="top">
+	      <img src="../icons/cover1.png" width="32" />
+	    </td>
+	  <td><b><i>Draw 1-sheeted covering</i></b><br>
+	  Draw each simplex exactly once, i.e. without periodic copies
+	  of itself. Note that the result of this does not necessarily
+	  show a triangulation and followingly does not necessarily
+	  correspond to the internal representation of the
+	  triangulation. This option is activated by default.</td></tr>
+	  <tr>
+ 	    <td valign="top">
+	      <img src="../icons/multiple.png" width="32" />  
+	    </td>
+	  <td><b><i>Draw bordering cells multiply</i></b><br>
+	  Draw all simplices that have a non-empty intersection with
+	  the fundamental cube. This option is activated by default.</td></tr>
+	  <tr>
+ 	    <td valign="top">
+	    </td>
+	  <td><b><i>Draw segments</i></b><br>
+	  Decide per segment whether or not to draw a simplex. This
+	  uses the <i>Periodic_segment_iterator</i>.</td></tr>
+	  <tr>
+ 	    <td valign="top">
+	    </td>
+	  <td><b><i>Draw triangles</i></b><br>
+	  Decide per triangle whether or not to draw a simplex. This
+	  uses the <i>Periodic_triangle_iterator</i>.</td></tr>
+	  <tr>
+ 	    <td valign="top">
+	    </td>
+	  <td><b><i>Draw tetrahedra</i></b><br>
+	  Decide per tetrahedron whether or not to draw a
+	  simplex. This uses the
+	  <i>Periodic_tetrahedron_iterator<i>. This is the default.</td></tr>
+	  <tr>
+ 	    <td valign="top">
+	    </td>
+	  <td><b><i>Draw domain (cube/square)</i></b><br>
+	  Toggle the drawing of the fundamental cube or square in case
+	  of a planar triangulation.</td></tr>
+	  <tr>
+ 	    <td valign="top">
+	      <img src="../icons/clipping.png" width="32" />  
+	    </td>
+	  <td><b><i>Clip along the cube/square</i></b><br>
+	  Toggle clipping of simplices that are outside of the
+	  fundamental cube or square in case of a planar triangulation.</td></tr>
+	  <tr>
+ 	    <td valign="top">
+	      <img src="../icons/twoColorClipping.png" width="32" />  
+	    </td>
+	  <td><b><i>2-color clipping</i></b><br>
+	  Show the clipped part of edges in a different color. This
+	  option is only active if clipping takes place.</td></tr>
+	</table>
+
+    </body>

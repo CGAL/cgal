@@ -1,0 +1,78 @@
+\begin{ccRefFunctionObjectConcept}{SphericalKernel::Intersect_3}
+
+\ccRefines
+
+\ccc{Kernel::Intersect_3}
+
+\ccCreationVariable{fo}
+
+A model \ccVar\ of this concept must provide:
+
+\ccMemberFunction{template < class OutputIterator >
+    OutputIterator
+    operator()(const Type1 &obj1, const Type2 &obj2,
+	OutputIterator intersections);}
+{Copies in the output iterator the intersection elements between the
+two objects. \ccc{intersections} iterates on
+elements of type \ccc{CGAL::Object}, in lexicographic order 
+when this ordering is defined on the computed objects.}
+
+\ccMemberFunction{template < class OutputIterator >
+    OutputIterator
+    operator()(const Type1 &obj1, const Type2 &obj2,
+	const Type3 &obj3,
+	OutputIterator intersections);}
+{Copies in the output iterator the intersection elements between the
+three objects. \ccc{intersections} iterates on
+elements of type \ccc{CGAL::Object}, in lexicographic order 
+when this ordering is defined on the computed objects.}
+
+For the \textbf{first operator}, \ccc{Type1} and \ccc{Type2} can both 
+be either
+
+\begin{itemize}
+\item {} \ccc{SphericalKernel::Sphere_3},
+\item {} \ccc{SphericalKernel::Plane_3},
+\item {} \ccc{SphericalKernel::Line_3},
+\item {} \ccc{SphericalKernel::Circle_3},
+\item {} \ccc{SphericalKernel::Line_arc_3} or
+\item {} \ccc{SphericalKernel::Circular_arc_3},
+\end{itemize} 
+
+depending on the types \ccc{Type1} and \ccc{Type2}, the computed 
+\ccc{CGAL::Object}s can be assigned to 
+\begin{itemize}
+\item {} \ccc{std::pair<SphericalKernel::Circular_arc_point_3, unsigned>},
+where the unsigned integer is the multiplicity of the corresponding
+intersection point between \ccc{obj_1} and \ccc{obj_2},
+\item {} \ccc{Type1}, when \ccc{Type1} and \ccc{Type2} are equal, and 
+if the two objects \ccc{obj1} and \ccc{obj2} are equal,
+\item {} \ccc{SphericalKernel::Line_3} or \ccc{SphericalKernel::Circle_3} 
+when \ccc{Type1} and \ccc{Type2} are two-dimensional objects intersecting 
+along a curve (2 planes, or 2 spheres, or one plane and one sphere),
+\item {} \ccc{SphericalKernel::Circular_arc_3} in case of an overlap of 
+two circular arcs or
+\item {} \ccc{SphericalKernel::Line_arc_3} in case of an overlap of two 
+line segments. 
+\end{itemize} 
+
+For the \textbf{second operator}, \ccc{Type1}, \ccc{Type2} and \ccc{Type3}
+can be either
+\begin{itemize}
+\item {} \ccc{SphericalKernel::Sphere_3} or
+\item {} \ccc{SphericalKernel::Plane_3}
+\end{itemize}
+
+and depending of these types, the computed \ccc{CGAL::Object}s can be 
+assigned to 
+\begin{itemize}
+\item {} \ccc{std::pair<SphericalKernel::Circular_arc_point_3, unsigned>},
+where the unsigned integer is the multiplicity of the corresponding
+intersection point,
+\item {} \ccc{SphericalKernel::Circle_3} or
+\item {} \ccc{Type1}, when \ccc{Type1}, \ccc{Type2} and \ccc{Type3} 
+are equal, and if the three objects \ccc{obj1} and \ccc{obj2} and \ccc{obj3}
+are equal.
+\end{itemize} 
+
+\end{ccRefFunctionObjectConcept}

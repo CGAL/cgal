@@ -1,0 +1,36 @@
+\begin{ccRefFunctionObjectConcept}{Kernel::BoundedSide_2}
+A model for this must provide:
+
+\ccCreationVariable{fo}
+
+\ccMemberFunction{Bounded_side operator()(const Kernel::Circle_2&c, 
+                                           const Kernel::Point_2&p);} 
+{returns either \ccc{ON_UNBOUNDED_SIDE},
+ \ccc{ON_BOUNDED_SIDE}, or the constant
+ \ccc{ON_BOUNDARY}, depending on where point \ccc{p} is relative to
+circle \ccc{c}.}
+
+\ccMemberFunction{Bounded_side operator()(const Kernel::Triangle_2& t, 
+                                           const Kernel::Point_2&p);} 
+{returns either \ccc{ON_UNBOUNDED_SIDE},
+ \ccc{ON_BOUNDED_SIDE}, or the constant
+ \ccc{ON_BOUNDARY}, depending on where point \ccc{p} is relative to
+triangle \ccc{t}.}
+
+\ccMemberFunction{Bounded_side operator()(const Kernel::Iso_rectangle_2& r, 
+                                          const Kernel::Point_2&p);} 
+{returns either \ccc{ON_UNBOUNDED_SIDE},
+ \ccc{ON_BOUNDED_SIDE}, or the constant
+ \ccc{ON_BOUNDARY}, depending on where point \ccc{p} is relative to
+rectangle \ccc{r}.}
+
+\ccRefines
+\ccc{AdaptableFunctor} (with two arguments)
+
+\ccSeeAlso
+\ccRefIdfierPage{CGAL::Circle_2<Kernel>} \\
+\ccRefIdfierPage{CGAL::Triangle_2<Kernel>} \\
+\ccRefIdfierPage{CGAL::Iso_rectangle_2<Kernel>}  \\
+
+
+\end{ccRefFunctionObjectConcept}

@@ -1,0 +1,156 @@
+%% =============================================================================
+%% The CGAL Manual
+%% Chapter: STL Extensions
+%% -----------------------------------------------------------------------------
+%% file  : doc_tex/support/STL_Extension/main.tex
+%% author: Michael Hoffmann 
+%% -----------------------------------------------------------------------------
+%% $CGAL_Chapter: STL_Extension $
+%% $Id$
+%% $Date$
+
+\ccUserChapter{STL Extensions for CGAL}
+\ccChapterAuthor{Michael Hoffmann, Lutz Kettner, Sylvain Pion, and Ron Wein}
+
+\input{STL_Extension/PkgDescription.tex}
+
+\minitoc
+
+\cgal\ is designed in the spirit of the generic programming paradigm
+to work together with the Standard Template Library (\stl)
+\cite{cgal:ansi-is14882-98,cgal:a-gps-98}. This chapter documents non-geometric
+\stl-like components that are not provided in the \stl\ standard but
+in \cgal: a doubly-connected list managing items in place (where
+inserted items are not copied), a compact container, a multi-set class that
+uses three-valued comparisons and offers additional functionality,
+generic algorithms, iterators, functor adaptors for binding and swapping
+arguments and for composition, functors for projection and creation and
+adaptor classes around iterators and circulators. See also circulators in
+Chapter~\ref{chapterCirculators}.  A class storing polymorphic objects
+is also provided, as well as a class to manage the uncertainty of some values.
+Finally, tags and policy classes to specify complexity trade-offs of data-structures,
+and a class which helps specifying that the default types in template
+parameter lists are desired is also provided.
+
+\section{Doubly-Connected List Managing Items in Place}
+
+The class \ccc{In_place_list<T,bool>} manages a
+sequence of items in place in a doubly-connected list. Its goals are
+the flexible handling of memory management and performance
+optimization. The item type has to provide the two necessary
+pointers \ccc{&T::next_link} and \ccc{&T::prev_link}. One possibility
+to obtain these pointers is to inherit them from the base class
+\ccStyle{In_place_list_base<T>}.
+
+The class \ccc{In_place_list<T,bool>} is a container quite similar
+to \stl\ containers, with the advantage that it is able to handle the
+stored elements by reference instead of copying them. It is possible
+to delete an element only knowing its address and no iterator to it.
+This used to simplify mutually pointed data structures like a halfedge
+data structure for planar maps or polyhedral surfaces (the current design
+does not need this anymore). The usual iterators are also available.
+
+\section{Compact Container}
+The class \ccStyle{Compact_container<T, Allocator>} is an \stl\ like container
+which provides a very compact storage for its elements.  It achieves this goal
+by requiring \ccc{T} to provide access to a pointer in it, which is going to be
+used by \ccStyle{Compact_container<T, Allocator>} for its internal management.
+The traits class \ccStyle{Compact_container_traits<T>} specifies the way to
+access that pointer.  The class \ccStyle{Compact_container_base} can be
+used as a base class to provide the pointer, although in this case you do not
+get the most compact representation.  The values that this pointer can have
+during valid use of the object are valid pointer values to 4 bytes aligned
+objects (i.e., the two least significant bits of the pointer need to be zero
+when the object is constructed). Another interesting property of this
+container is that iterators are not invalidated during \ccc{insert} or
+\ccc{erase} operations.
+
+The main deviation from the \stl\ container concept is that the \ccc{++} and
+\ccc{--} operators of the iterator do not have a constant time complexity in
+all cases.  The actual complexity is related to the maximum size that the
+container has had during its life time compared to its current size, because
+the iterator has to go over the "erased" elements as well, so the bad case is
+when the container used to contain lots of elements, but now has far less.  In
+this case, we suggest to do a copy of the container in order to "defragment"
+the internal representation.
+
+This container has been developed in order to efficiently handle large data
+structures like the triangulation and halfedge data structures.  It can
+probably be useful for other kinds of graphs as well.
+
+\section{Multiset with Extended Functionality}
+
+The class \ccStyle{Multiset<Type,Compare,Allocator>} represents a
+multi-set of elements of type \ccc{Type}, represented as a red-black tree
+(see~\cite[Chapter~13]{clrs-ia-01} for an excellent introduction to red-black
+trees). It differs from the \stl's \ccc{multiset} class-template mainly due
+to the fact that it is parameterized by a comparison functor \ccc{Compare}
+that returns the three-valued \ccc{Comparison_result} (namely it returns
+either \ccc{SMALLER}, \ccc{EQUAL}, or \ccc{LARGER}), rather than a {\em less}
+functor returning \ccc{bool}. Thus, it is possible to maintain
+the underlying red-black tree with less invocations of the comparison functor,
+which can considerably decrease running times, especially when comparing
+elements of type \ccc{Type} is an expensive operation.
+
+\ccStyle{Multiset<Type,Compare,Allocator>} also guarantees that the order of
+elements sent to the comparison functor is fixed. For example, if we insert
+a new element \ccc{x} into the set (or erase an element from the set), then
+we always invoke \ccc{Compare() (x, y)} (and never \ccc{Compare() (y, x)}),
+where \ccc{y} is an element already stored in the set. This behavior, not
+supported by \ccc{std::multiset}, is sometimes crucial for designing more
+efficient comparison predicates.
+
+
+The interface of \ccStyle{Multiset<Type,Compare,Allocator>} is in general
+derived from \ccc{std::multiset}. However, it extends the interface by
+offering some additional operations, such as: inserting of an element into
+the set given its {\em exact} position (and not just using an insertion hint);
+looking up keys whose type may differ from \ccc{Type}, as long as users supply
+a comparison functor \ccc{CompareKey}, between the keys and set elements;
+and catenating and splitting sets.
+
+\section{Polymorphic Object}
+
+The class \ccStyle{Object} can store an object of whatever other type.
+It can be used by a function to return objects of different types.
+A mechanism to extract the stored object based on its type is also provided.
+This class is similar to \ccc{boost::any}.
+
+\section{Uncertainty Management}
+
+The class \ccStyle{Uncertain<T>} represents a range of values of type \ccc{T}.
+\ccc{T} is allowed to stand for \ccc{bool}, or \cgal's enumeration types
+\ccc{Sign}, \ccc{Comparison_result}, \ccc{Orientation}, \ccc{Oriented_side},
+\ccc{Bounded_side} and \ccc{Angle}.
+
+The idea is that sometimes you are not sure of the result of a function,
+and you would like to communicate that to the caller.  \ccc{Uncertain<T>}
+allows just that.  It also provides functions to naturally extend the
+Boolean operations for \ccc{Uncertain<bool>} for example.
+
+\ccc{Uncertain<T>} is used in \cgal\ as the return type of geometric predicates
+when the number type used is interval arithmetic like \ccc{Interval_nt}.
+End users typically do not see it as it is hidden in the implementation
+of the filtered predicates provided by the various filtered kernels,
+but it is important that providers of predicates that are meant to be
+filtered by \ccc{Filtered_predicate}, know about it.
+
+It can also be used in other contexts as well, as it is a general tool.
+
+\section{Complexity tags and policies}
+
+Some data structures and algorithms can be implemented with different
+complexity trade-offs between memory usage and time complexity. \cgal\ provides
+the tags \ccc{Fast} and \ccc{Compact} which can be used to select between those
+variants.  For example, the \ccc{Location_policy} class is parameterized by
+these tags and allows to specify the complexity of point location (currently in
+\ccc{Delaunay_triangulation_3} only).  Convenient typedefs \ccc{Fast_location}
+and \ccc{Compact_location} are also provided.
+
+\section{Default Arguments in Template Parameter Lists}
+
+In \CC, it is possible to specify defaults at the end of a template parameter
+list.  Specifying that one wishes to use the default is simply done by omitting
+it.  This is however possible only at the end of the list.  \ccc{CGAL::Default}
+provides a simple mechanism that performs something equivalent anywhere in the
+sequence.

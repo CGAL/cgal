@@ -1,0 +1,16 @@
+\begin{ccRefFunctionObjectConcept}{Kernel::ComputeScalarProduct_2}
+A model for this must provide:
+
+\ccCreationVariable{fo}
+
+\ccMemberFunction{Kernel::FT operator()(const Kernel::Vector_2& v,
+                                        const Kernel::Vector_2& w);}
+{returns the scalar (inner) product of the two vectors \ccc{v} and \ccc{w}.}
+
+\ccRefines
+\ccc{AdaptableFunctor} (with two arguments)
+
+\ccSeeAlso
+\ccRefIdfierPage{CGAL::Vector_2<Kernel>}\\
+
+\end{ccRefFunctionObjectConcept}

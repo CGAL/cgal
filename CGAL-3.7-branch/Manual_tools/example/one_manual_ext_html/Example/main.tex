@@ -1,0 +1,27 @@
+% +------------------------------------------------------------------------+
+% | main.tex
+% +------------------------------------------------------------------------+
+% | chapter title, some introduction and a kind of table-of-contents
+% +------------------------------------------------------------------------+
+
+\chapter{Example User Manual}
+\ccChapterRelease{\ccRevision. \ \ccDate}\\
+\ccChapterAuthor{Lutz Kettner and Susan Hert}
+
+This small example illustrates the creation of a single manual with different
+chapters for the user manual and reference manual parts.  See the 
+\texttt{Makefile} for the commands used to create the manuals.
+
+The file \texttt{html\_wrapper.tex} is used to define formatting commands
+used throughout the manual.  There is a link to the file in the parent
+directory from each subidirectory so a global change in formatting can
+be accomplished by editing a single file.  This wrapper file is
+required for such global settings since each file given as an argument to
+\texttt{cc\_manual\_to\_html} is converted independently when the
+\texttt{-extended} option is used until the end, when information is gathered 
+together about all files processed in order to produce hyperlinks and such. 
+
+See the directory \texttt{../two\_manuals\_ext\_html} for an
+example of the creation of two manuals in one document using the
+\texttt{-ref\_manual} option together with the \texttt{-extended}
+option. 

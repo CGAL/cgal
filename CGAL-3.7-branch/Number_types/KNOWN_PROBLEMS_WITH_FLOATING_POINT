@@ -1,0 +1,41 @@
+Here is a list of problems I found wrt the correct handling of IEEE 754 doubles,
+with the rounding modes used in this package.
+
+1/ Constant propagation:
+------------------------
+
+  Compilers usually propagate the value at compile time, for the variables for
+  which he knows the values.  The is rarely the case for predicates, as well
+  as any real stuff.  But it can happen, just like in the test-suite.
+
+  Solution:
+  - stopping propagation by disabling optimization (=> slow).
+  - put the constant in a global variable.
+  - using a macro with "volatile" in the Interval_nt constructor, which stops
+    any propagation at the entry.  The drawback is that it also stops many
+    other optimizations.  We now use this macro only just before it is needed.
+
+2/ std::sqrt() on Windows (GCC/CygWin and VC++):
+------------------------------------------------
+
+  When you don't optimize, std::sqrt() calls a library routine instead of the
+  assembly instruction "fsqrt".
+  This is plain stupid, and moreover this library routine appears to be buggy !
+  GCC/CygWin and VC++ use inline assembly to fix it.
+  
+3/ is_valid() bug with VC++:
+----------------------------
+
+  This nice compiler returns "true" for the comparison "NaN == NaN".
+  This is plain buggy, and breaks is_valid().
+
+  It also breaks all other places where we could rely on this property,
+  which could be a lot of places in operator*() or operator/() for example.
+  This code review (NaN propagation) has not been done yet, so it's not
+  more a problem on VC++ as on the other platforms.
+
+  These kind of problem could be handled by the wrapper class Double_IEEE,
+  but with a speed penalty.
+
+--
+Sylvain

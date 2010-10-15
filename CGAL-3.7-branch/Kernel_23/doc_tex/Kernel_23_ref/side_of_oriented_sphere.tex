@@ -1,0 +1,26 @@
+\begin{ccRefFunction}{side_of_oriented_sphere}
+
+\ccFunction{Oriented_side side_of_oriented_sphere(
+                                   const Point_3<Kernel> &p, 
+                                   const Point_3<Kernel> &q,
+                                   const Point_3<Kernel> &r, 
+                                   const Point_3<Kernel> &s, 
+                                   const Point_3<Kernel> &test);}
+         {returns the relative position of point $test$ to the oriented sphere defined
+by $p$, $q$, $r$ and $s$. The order of the points $p$, $q$, $r$, and $s$ is important,
+since it determines the orientation of the implicitly constructed
+sphere. If the points $p$, $q$, $r$ and $s$ are positive oriented, positive side
+is the bounded interior of the sphere.
+
+In case of degeneracies, \ccStyle{ON_ORIENTED_BOUNDARY} is returned
+if all points are coplanar. Otherwise, there is a cyclic permutation of the five points
+that puts four non coplanar points first, it is used to answer the predicate:
+e.g. \ccc{side_of_oriented_sphere(q, r, s, test, p)} is returned if $q$, $r$, $s$,
+and $test$ are non coplanar. }
+
+\ccSeeAlso
+
+\ccRefIdfierPage{CGAL::side_of_bounded_sphere} \\
+
+\end{ccRefFunction}
+

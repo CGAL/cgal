@@ -1,0 +1,32 @@
+\begin{ccRefFunctionObjectConcept}{Kernel::ConstructRay_3}
+A model for this must provide:
+
+\ccCreationVariable{fo}
+
+\ccMemberFunction{Kernel::Ray_3 operator()(const Kernel::Point_3 &p,
+                                           const Kernel::Point_3 &q);}
+            {introduces a ray  
+             with source $p$ and passing through point $q$.}
+
+\ccMemberFunction{Kernel::Ray_3 operator()(const Kernel::Point_3 &p,
+                                           const Kernel::Vector_3 &v);}
+            {introduces a ray with source $p$ and with 
+             the direction given by $v$.}
+
+\ccMemberFunction{Kernel::Ray_3 operator()(const Kernel::Point_3 &p,
+                                           const Kernel::Direction_3 &d);}
+            {introduces a ray with source $p$ and with 
+             direction $d$.}
+
+\ccMemberFunction{Kernel::Ray_3 operator()(const Kernel::Point_3 &p,
+                                           const Kernel::Line_3 &l);}
+            {introduces a ray with source $p$ and with 
+             the same direction as $l$.}
+
+\ccRefines
+\ccc{AdaptableFunctor} (with two arguments)
+
+\ccSeeAlso
+\ccRefIdfierPage{CGAL::Ray_3<Kernel>}\\
+
+\end{ccRefFunctionObjectConcept}

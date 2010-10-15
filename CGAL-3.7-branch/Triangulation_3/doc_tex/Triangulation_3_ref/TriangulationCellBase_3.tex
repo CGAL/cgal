@@ -1,0 +1,49 @@
+% +------------------------------------------------------------------------+
+% | Reference manual page: TriangulationCellBase_3.tex
+% +------------------------------------------------------------------------+
+% | 29.3.2000   Monique Teillaud
+% | Package: Triangulation3
+% | 
+\RCSdef{\RCSTriangulationcbRev}{$Id$}
+\RCSdefDate{\RCSTriangulationcbDate}{$Date$}
+% |
+%%RefPage: end of header, begin of main body
+% +------------------------------------------------------------------------+
+
+
+\begin{ccRefConcept}{TriangulationCellBase_3}
+
+\ccDefinition
+
+The cell base required by the basic triangulation does not need to store any
+geometric information, so only the requirements of the triangulation data
+structure apply.
+
+However, for the Delaunay triangulation, the ability to store the circumcenter
+is provided (for optimization reasons), hence an additional requirement only
+in this case, and only when the dual functions are called.
+
+\ccRefines \ccc{TriangulationDSCellBase_3}
+
+\ccCreationVariable{c}
+
+\ccMethod{const DelaunayTriangulationTraits_3::Point_3& circumcenter(
+  const DelaunayTriangulationTraits_3&gt = DelaunayTriangulationTraits_3()) const;}
+{Returns the circumcenter.}
+
+
+\ccHasModels
+
+\ccc{CGAL::Triangulation_cell_base_3}\\
+\ccc{CGAL::Triangulation_cell_base_with_info_3}\\
+\ccc{CGAL::Triangulation_cell_base_with_circumcenter_3}
+
+\ccSeeAlso
+
+\ccc{TriangulationVertexBase_3}
+
+%% \ccExample
+
+%% \ccIncludeExampleCode{Triangulation3/Triangulation_cb_3_prog.cpp}
+
+\end{ccRefConcept}

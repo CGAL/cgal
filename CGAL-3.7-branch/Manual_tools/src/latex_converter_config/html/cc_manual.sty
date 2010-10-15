@@ -1,0 +1,1280 @@
+
+% ___________________________________________________________________________
+% |#########################################################################|
+% |                                                                         |
+% | Latex Converter Style File: cc_manual.sty                               |
+% | ------------------------------------------------------------------      |
+% | Macros available with the cc_manual Style for formatting manuals.       |
+% |                                                                         |
+% | 24.07.1998   Lutz Kettner   kettner@acm.org                             |
+% | Zurich, Switzerland                                                     |
+% | $Id$                                                       |
+% | $Date$                                            |
+% |_________________________________________________________________________|
+% |#########################################################################|
+% |                                                                         |
+% | Table of Contents:                                                      |
+% |                                                                         |
+% |   o   Page Layout and Page Dimensions                                   |
+% |   o   Advanced Customization of the Layout                              |
+% |   o   Common Abbreviations                                              |
+% |   o   Structuring Macros                                                |
+% |   o   C++ Declarations                                                  |
+% |   o   Reference Page Declarations                                       |
+% |   o   Class and Class Member Declarations                               |
+% |   o   Global C++ Declarations                                           |
+% |   o   HTML Language Support in the Style File                           |
+% |                                                                         |
+% |#########################################################################|
+
+
+\newcommand{\ccFalse}{\lcFalse}
+\newcommand{\ccTrue}{\lcTrue}
+\newcommand{\ccAuto}{\lcAuto}
+
+
+\newcommand{\lciIfHowToCite}{\lcFalse}
+\newcommand{\lcEnableHowToCite}{\gdef\lciIfHowToCite{\lcTrue}}
+
+
+% ###########################################################################
+% |
+% |   o
+% |
+% ###########################################################################
+
+
+\newcommand{\lciIfRef}{\ccFalse}
+
+\gdef\lciInsideListOfRefPages{\lcFalse}
+
+\gdef\lciInsideComment{\ccFalse}%
+\gdef\lciCloseCommentHeadingTable{}
+
+
+
+\newcommand{\lcEnableNewTocLayout}{%
+  \gdef\lciTocNewLayout{\lcTrue}%
+  \setcounter{tocdepth}{2}%
+}
+\newcommand{\lcDisableNewTocLayout}{%
+  \gdef\lciTocNewLayout{\lcFalse}%
+}
+\lcDisableNewTocLayout
+
+\newcommand{\ccUserChapter}[1]{\chapter{#1}\lciHtmlChapterPartToc{User Manual}}
+\newcommand{\ccRefChapter}[1]{%
+ %\chapter[#1 Reference~Manual]{#1\\
+%\textit{Reference~Manual}}%
+ \lciSplitChapter{Reference Manual}{#1 Reference~Manual}{#1\\
+\textit{Reference~Manual}}
+ \ccEnableSortedListOfRefpages
+}
+
+\newcommand{\ccEnableRawListOfRefpages}{%
+  \gdef\lciIfPrintRawListOfRefpages{\lcTrue}%
+}
+\newcommand{\ccEnableSortedListOfRefpages}{%
+  \gdef\lciIfPrintRawListOfRefpages{\lcFalse}%
+}
+
+\ccEnableSortedListOfRefpages
+\newcommand{\ccHowToCiteCgal}[1]{%
+  \lcRawHtml{<a href="}\lciOutputUppath\lcRawHtml{Biblio/how_to_cite_cgal.html##}#GC1%
+  \lcRawHtml{">Citation Entry</a>}%
+}
+
+% ___________________________________________________________________________
+% ###########################################################################
+% |
+% |   o   Page Layout and Page Dimensions
+% |
+% ###########################################################################
+
+\newcommand{\ccwIndent}{}
+\newcommand{\ccwRightMargin}{}
+\newcommand{\ccwFirst}{}
+\newcommand{\ccwFirstLong}{}
+\newcommand{\ccwSecond}{}
+\newcommand{\ccwSecondLong}{}
+\newcommand{\ccwComment}{}
+\newcommand{\ccwBetween}{}
+\newcommand{\ccwParam}{}
+\newcommand{\ccwParamIndent}{}
+\newcommand{\ccwAdditionalReturnSkip}{}
+\newcommand{\ccwAdditionalMiddleSkip}{}
+
+\newcommand{\ccwFunctionFirst}{}
+\newcommand{\ccwFunctionSecond}{}
+\newcommand{\ccwConstructorFirst}{}
+\newcommand{\ccwConstructorSecond}{}
+\newcommand{\ccSaveThreeColumns}{}
+\newcommand{\ccRestoreThreeColumns}{}
+\newcommand{\ccSaveTwoColumns}{}
+\newcommand{\ccRestoreTwoColumns}{}
+
+\newcommand{\ccOriginalParDims}{}
+\newcommand{\ccParDims}{}
+
+\newcommand{\ccInitWidths}{}
+\newcommand{\ccInitFunctionWidths}{}
+\newcommand{\ccInitConstructorWidths}{}
+
+\newcommand{\ccTopSkip}{\smallskip}
+\newcommand{\ccBottomSkip}{\par\smallskip}
+\newcommand{\ccBottomBigSkip}{\par\bigskip}
+
+\newcommand{\ccReverseTopSkip}{}
+\newcommand{\ccReturnSkip}{\par}
+\newcommand{\ccMiddleSkip}{\par}
+\newcommand{\ccReverseBottomSkip}{}
+\newcommand{\ccReverseBottomBigSkip}{}
+
+\newcommand{\ccGlueDeclarations}{\lcRawHtml{<!GLUE>}}
+\newcommand{\ccGlueBegin}{\newcommand{\lciIfGlueEnvironment}{\lcTrue}%
+    \newcommand{\lciGlueEnvironmentElement}{}}
+\newcommand{\ccGlueEnd}{\newcommand{\lciIfGlueEnvironment}{\lcFalse}}
+
+\newcommand{\lciIfGlueEnvironment}{\lcFalse}
+\newcommand{\lciGlueEnvironmentElement}{}
+
+\newcommand{\lciGluePostProcessing}{\lciIfGlueEnvironment
+  {\lciGlueEnvironmentElement\newcommand{\lciGlueEnvironmentElement}{\ccGlue}}
+  {}}
+
+% abbreviations
+\newcommand{\ccGlue}{\ccGlueDeclarations}
+
+% ___________________________________________________________________________
+% ###########################################################################
+% |
+% |   o   Advanced Customization of the Layout
+% |
+% ###########################################################################
+% +--------------------------------------------------------------------------
+% | Customization tags for the style: here are the defaults defined.
+% +--------------------------------------------------------------------------
+
+\newcommand{\ccTagDefaults}{%
+    \def\ccTagChapterAuthor{\ccTrue}%
+    \def\ccTagChapterRelease{\ccFalse}%
+    \def\ccTagReplacePrefix{\ccFalse}%
+    \def\ccTagReplaceInclude{\ccFalse}%
+    \def\ccLongParamLayout{\ccFalse}%
+    % Declaration Layout tags
+    \def\ccTagRmTrailingConst{\ccTrue}%
+    \def\ccTagRmEigenClassName{\ccTrue}%
+    \def\ccTagRmConstRefPair{\ccTrue}%
+    \def\ccTagOperatorLayout{\ccTrue}%
+    \def\ccTagRmTemplate{\ccFalse}%
+    \def\ccTagTemplateInline{\ccFalse}%
+    % portability namings
+    \def\ccAlternateThreeColumn{\ccTrue}%
+}
+
+\newcommand{\ccTagFullDeclarations}{%
+    \def\ccTagRmTrailingConst{\ccFalse}%
+    \def\ccTagRmEigenClassName{\ccFalse}%
+    \def\ccTagRmConstRefPair{\ccFalse}%
+    \def\ccTagOperatorLayout{\ccFalse}%
+    \def\ccTagRmTemplate{\ccFalse}%
+}
+\ccTagDefaults
+
+% +--------------------------------------------------------------------------
+% | Customization of the three columns or two columns layout
+% +--------------------------------------------------------------------------
+\newcommand{\ccSetTwoOfThreeColumns}[2]{}
+
+\newcommand{\ccSetThreeColumns}[3]{}
+\newcommand{\ccSetOneOfTwoColumns}[1]{}
+\newcommand{\ccSetTwoColumns}[2]{}
+\newcommand{\ccPropagateThreeToTwoColumns}{}
+
+% abbreviations
+\newcommand{\ccThree}{\ccSetThreeColumns}
+\newcommand{\ccTwo}[2]{}
+\newcommand{\ccThreeToTwo}{\ccPropagateThreeToTwoColumns}
+
+% +--------------------------------------------------------------------------
+% | \ccMakeAllVisible:
+% | The invisible declarational parts in the manual that are written
+% | with \ccDeclaration and \lciidden are made visible with this macro.
+% +--------------------------------------------------------------------------
+% If these non visible parts of the code should be made visible once,
+% the following macro switches it on.
+\newcommand{\ccMakeAllVisible}{%
+    \renewcommand{\ccDeclaration}{\ccStyle}%
+    \renewcommand{\lciidden}{}%
+}
+
+% +--------------------------------------------------------------------------
+% | Formatting styles:
+% |
+% | The style of the C++ formatting can be customized by redefining the
+% | following macros.
+% +--------------------------------------------------------------------------
+\newcommand{\ccFont}{\it}   % font or style changing command in which all C++
+                        % tokens will be typeset, including the variable names.
+\newcommand{\ccEndFont}{\/} % will be used after a C++ text. For slanted fonts,
+                        % here should stay \/ macro. The C++ code will be
+                        % grouped, so this macros has not to restore the old
+                        % font.
+
+% The special characters in typical C++ declarations:
+\newcommand{\ccOpenAngle }{\ccEndFont {\tt <}}
+\newcommand{\ccCloseAngle}{\ccEndFont {\tt >}}
+\newcommand{\ccAmpersand }{\ccEndFont {\tt \&}}
+\newcommand{\ccUnderscore}{\_}
+\newcommand{\ccHat       }{\lcAsciiToHtml{^}}
+\newcommand{\ccTilde     }{\lcRawHtml{~}}
+\newcommand{\ccHash      }{{\rm \#}}
+\newcommand{\ccDollar    }{\$}
+
+% +--------------------------------------------------------------------------
+% | Replacement of Prefixes, not supported in HTML
+% |
+% | \ccSrcPrefix     contains the old prefix
+% | \ccTargetPrefix  contains the new prefix
+% |
+% | \ccReplacePrefix #1#2  replaces all prefixes in #1 and applies #2 to
+% |                        the partial results that have to be terminated
+% |                        by \ccEnd.
+% +--------------------------------------------------------------------------
+\gdef\ccSrcPrefix{CGAL}
+\gdef\ccTargetPrefix{CGAL}
+
+% ___________________________________________________________________________
+% ###########################################################################
+% |
+% |   o   Common Abbreviations
+% |
+% ###########################################################################
+
+% +--------------------------------------------------------------------------
+% | A handy macro to include files in verbatim mode.
+% +--------------------------------------------------------------------------
+\newcommand{\ccIncludeVerbatim}[1]{[cccbegin]\lciParseFile{\ccExampleXCodeX}{#1}[cccend]}
+
+% +--------------------------------------------------------------------------
+% | C++ Program Examples
+% +--------------------------------------------------------------------------
+% Environment to format contents as C++ code
+\newenvironment{ccExampleCode}{[cccbegin]%
+    \lciParseUntilEndToken{\ccExampleXCodeX}{ccExampleCode}}{[cccend]}
+\newcommand{\ccExampleXCodeX}[1]{%
+    \lcRawHtml{<pre class="ExampleCode">}%
+    \lciAsciiOutputN{#L1}#1\lcRawHtml{</pre>}}
+
+% Format external file:  #1  the file name.
+%\newcommand{\ccIncludeExampleCode}[1]{\ccIncludeVerbatim{#1}}
+\newcommand{\ccIncludeExampleCode}[1]{%
+\lciIfFileExists{#1.filename}{
+\begin{alltt}%
+\textbf{File: }\lcRawHtml{<a href="}\lciOutputUppath\lcRawHtml{../../}\input{#1.filename}\lcRawHtml{">}%
+\input{#1.filename}%
+\lcRawHtml{</a>}%
+\end{alltt}%
+\ccIncludeVerbatim{#1.noheader}}{\lciError{Example file \ccc{#1} missing}}
+}
+
+\newcommand{\ccReferToExampleCode}[1]{%
+\lciBeginAlltt%
+\lcRawHtml{<a href="}\lciOutputUppath\lcRawHtml{../../}\input{#1.filename}\lcRawHtml{">}
+\lcRawHtml{<tt>}#1\lcRawHtml{</tt></a>}%
+\lciEndAlltt%
+}
+
+
+% +--------------------------------------------------------------------------
+% | A handy macro to define macros for RCS entries in a TeX file
+% +--------------------------------------------------------------------------
+% --> see latex_to_html.sty
+
+% +--------------------------------------------------------------------------
+% | Original LEDA Manual macros (shortcuts):
+% | Several new shortcuts for CGAL
+% |
+% | \CC, \gcc, \nat, \real, \boxit
+% | \leda, \cgal, \protocgal, \plageo
+% +--------------------------------------------------------------------------
+% selfmade
+\newcommand{\CC}{C{\tt ++}}
+\newcommand{\gcc}{g{\tt ++}}
+
+\newcommand{\nat}{{\mathbb N}}
+\newcommand{\real}{{\mathbb R}}
+\newcommand{\R}{{\mathbb R}}  %% zusammen mit usepackage{amssymb}
+\newcommand{\N}{{\mathbb N}}  %% zusammen mit usepackage{amssymb}
+\newcommand{\Z}{{\mathbb Z}}  %% zusammen mit usepackage{amssymb}
+\newcommand{\Q}{{\mathbb Q}}  %% zusammen mit usepackage{amssymb}
+\newcommand{\E}{{\mathbb E}}  %% zusammen mit usepackage{amssymb}
+
+%\newcommand{\stl}{STL}
+%\newcommand{\leda}{LEDA}
+%\newcommand{\cgal}{CGAL}
+%\newcommand{\protocgal}{C++GAL}
+%\newcommand{\plageo}{PLAGEO}
+
+\newcommand{\stl}{{\sc STL}}
+\newcommand{\leda}{{\sc Leda}}
+\newcommand{\cgal}{{\sc Cgal}}
+\newcommand{\galia}{{\sc Galia}}
+\newcommand{\protocgal}{{\sc C++gal}}
+\newcommand{\plageo}{{\sc Plageo}}
+
+% +--------------------------------------------------------------------------
+% | Macros that write the special characters \{} literally to the
+% | output stream.
+% |
+% | \ccOpenBrace, \ccCloseBrace, \ccBackslash
+% +--------------------------------------------------------------------------
+\newcommand{\ccBackslash}{\lciBackslash}%
+\newcommand{\ccOpenBrace}{\lciOpenBrace}%
+\newcommand{\ccCloseBrace}{\lciCloseBrace}%
+
+% ___________________________________________________________________________
+% ###########################################################################
+% |
+% |   o   Structuring Macros
+% |
+% ###########################################################################
+% +--------------------------------------------------------------------------
+% | Structuring macros (similar to LEDA Manual):
+% |
+% | \ccSection, \definition, \constants, \types, \creation, \operations,
+% | \implementation, \example, \precond, \postcond,
+% | \ccChapterAuthor, \ccChapterRelease, \ccChapterSubTitle
+% +--------------------------------------------------------------------------
+
+\newcommand{\ccMultiplePartsToc}{\gdef{\lciIfMultipleParts}{\lcTrue}}
+
+\newcommand{\ccChapterSubTitle}[1]{\lcRawHtml{<EM>}#1\lcRawHtml{</EM><br>}}
+\newcommand{\ccChapterAuthor}[1]{%
+  \lciIf{\ccTagChapterAuthor}{%
+    \ccChapterSubTitle{\lciFormatChapterAuthor{#1}}%
+    \ccPkgAuthor{\ccChapterSubTitle{\lciFormatChapterAuthor{#1}}}%
+  }{}%
+}%
+\newcommand{\ccChapterRelease}[1]{\lciIf{\ccTagChapterRelease}
+    {\ccChapterSubTitle{#1}}{}}
+
+
+\newcommand{\ccSection}[1]{\lcRawHtml{
+<H2>}#1 (\ccClassName)\lcRawHtml{</H2>
+}}
+
+\newcommand{\ccSubsection}[1]{\lcRawHtml{
+<H3>}#1 (\ccClassName)\lcRawHtml{</H3>
+}}
+
+
+\newcommand{\ccHeading}[1]{\lcRawHtml{<H3>}#1\lcRawHtml{</H3>}}
+\newcommand{\ccCommentHeading}[1]{%
+\lciInsideComment{%
+  \lciCloseCommentHeadingTable%
+  \lcRawHtml{<table border="0" cellspacing="0" cellpadding="0"><tr valign="top"><td><u>}#1:\lcRawHtml{</u>&nbsp;</td><td>}%
+  \gdef\lciCloseCommentHeadingTable{\lcRawHtml{</td></tr></table>}\gdef\lciCloseCommentHeadingTable{}}%
+}{\lcRawHtml{<p><u>}#1\lcRawHtml{</u></p>}}%
+}
+
+\newcommand{\ccDefinition     }{\ccHeading{Definition}}
+\newcommand{\ccIsModel        }{\ccHeading{Is Model for the Concepts}}
+\newcommand{\ccInheritsFrom   }{\ccHeading{Inherits From}}
+\newcommand{\ccRequirements   }{\ccHeading{Requirements}}
+\newcommand{\ccParameters     }{\ccHeading{Parameters}}
+\newcommand{\ccConstants      }{\ccHeading{Constants}}
+\newcommand{\ccTypes          }{\ccHeading{Types}}
+\newcommand{\ccCreation       }{\ccHeading{Creation}}
+\newcommand{\ccOperations     }{\ccHeading{Operations}}
+\newcommand{\ccQueryFunctions }{\ccHeading{Query Functions}}
+\newcommand{\ccAccessFunctions}{\ccHeading{Access Functions}}
+\newcommand{\ccPredicates     }{\ccHeading{Predicates}}
+\newcommand{\ccModifiers      }{\ccHeading{Modifiers}}
+\newcommand{\ccHasModels      }{\ccHeading{Has Models}}
+\newcommand{\ccGeneralizes    }{\ccHeading{Generalizes}}
+\newcommand{\ccRefines        }{\ccHeading{Refines}}
+\newcommand{\ccSeeAlso        }{\ccHeading{See Also}}
+\newcommand{\ccImplementation }{\ccHeading{Implementation}}
+\newcommand{\ccExample        }{\ccHeading{Example}}
+
+\newcommand{\ccInclude}[1]{\lcRawHtml{<I>##include &lt;}%
+    \lciIfDefined{\lciHeaderPath}%
+    {\lcRawHtml{<A HREF="}\lciIfRelativeHeaderPath{\lciOutputUppath}{}%
+      \newcommand{\lciDefLocalHtmlName}[1]{%
+        \newcommand{\lciLocalHtmlName}{\lcAsciiToHtml{##X1}}}%
+      \lciDefLocalHtmlName\lciHeaderPath\lciLocalHtmlName%
+      \lcAsciiToHtml{#C1}\lcRawHtml{">}\lcAsciiToHtml{#C1}\lcRawHtml{</A>}}%
+    {\lcNoLinkBegin\lcAsciiToHtml{#C1}\lcNoLinkEnd}%
+    \lcRawHtml{&gt;</I>}%
+
+}
+
+\newcommand{\ccPrecond  }{\ccCommentHeading{Precondition}}
+\newcommand{\ccPostcond }{\ccCommentHeading{Postcondition}}
+\newcommand{\ccRequire }{\ccCommentHeading{Requirement}}
+
+
+% ___________________________________________________________________________
+% ###########################################################################
+% |
+% |   o   C++ Declarations
+% |
+% ###########################################################################
+% +--------------------------------------------------------------------------
+% | \ccStyle
+% +--------------------------------------------------------------------------
+\newcommand{\ccc}[1]{[cccbegin]\lciParseCC{\lciCCStyle 1}{#1}[cccend]}  %% the 1 is a dummy to keep it
+                                                                        %% from parsing spaces
+\newcommand{\ccc@om}{\lciParseCC{\cccCont}{#2}{#1}}
+\newcommand{\cccCont}{\cccContX\lciCCParameter}
+\newcommand{\cccContX}[2]{\lcRawHtml{<i>}\ccRef[#X1]{ccRef_#2}\lcRawHtml{</i>}}
+
+\newcommand{\ccStyle}{\ccc}
+
+% +--------------------------------------------------------------------------
+% | \ccDeclaration, \ccHidden, \ccUnchecked
+% +--------------------------------------------------------------------------
+% A \declaration accepts one parameter. The style will ignore it, while
+% the checker tests if it exists one to one in the C++ code.
+% It is intended for declarations that are somehow implied by the
+% surrounded text, but should not be explicitly visible.
+\newcommand{\ccDeclaration}[1]{}
+
+% A \hidden macro can be prepended to each macro with two parameters.
+% It will remove the macro and its parameters from the manual.
+% Again, the checker tests the macro as usual.
+\newcommand{\ccHidden}[3]{}
+
+% An \ccUnchecked macro expands to nothing. It is used by the checker tool
+% where it denotes that the following declarations is not subject of any
+% check.
+\newcommand{\ccUnchecked}{}
+
+% +--------------------------------------------------------------------------
+% | \lciIfGlobal for global declarations
+% +--------------------------------------------------------------------------
+\newcommand{\lciIfGlobal}{\lcFalse}
+
+% ___________________________________________________________________________
+% ###########################################################################
+% |
+% |   o   Reference Page Declarations
+% |
+% ###########################################################################
+% +--------------------------------------------------------------------------
+% | \begin{ccRefDeclaration} ...ccRefConcept, ...ccRefFunctionObjectConcept
+% | ...ccRefClass, ...ccRefFunctionObjectClass, ...ccRefEnum
+% | ...ccRefFunction, ...ccRefVariable, ...ccRefMacro,
+% | \ccRefName
+% +--------------------------------------------------------------------------
+
+% have a counter for reference pages per chapter, used for
+% forward and backward linking between reference pages.
+\newcounter{referencepage}[chapter]
+\gdef{\thereferencepage}{%
+    \lciCounterpart.\lciCounterchapter.\lciCounterreferencepage}
+
+% open and close a new file for reference pages and classes
+% Is between section and subsection
+% Args: <filename>, <text referring to new file>
+\newenvironment{ccReferenceFile}{%
+    \lciEndSubsection
+    \lciPushFootnotes
+    \lciParseCC{\ccReferenceFileCont}%
+}{%
+    \lciEndSubsection
+    \lciPrintFootnotes
+    \lciPopFootnotes
+    % navigation footer
+    \addtocounter{referencepage}{1}%
+    \lcRawHtml{[internal:Next_reference_link_}\thereferencepage\lcRawHtml{]
+}
+    \addtocounter{referencepage}{-1}%
+    \lciHtmlNavigationBottom
+    \lciHtmlFileFooter
+    \lciCloseReferenceFile
+}
+% Args: <text referring to new file>: cc_text contains filename
+\newcommand{\ccReferenceFileCont}[1]{%
+    \lciStoreFileName%
+    \refstepcounter{referencepage}%
+
+    \lciIfPrintRawListOfRefpages{
+      \lciInsideListOfRefPages{}{%
+        \lcRawHtml{<table cellpadding="0">}%
+        \gdef\lciInsideListOfRefPages{\lcTrue}%
+      }
+      % Make a hyperlink in the chapter to the class file.
+      \lcRawHtml{<tr><td>[internal:Toc_reference_link_}\thereferencepage\lcRawHtml{]</td></tr>}%
+    }{
+      \lciInsideListOfRefPages{}{
+        \section{Alphabetical List of Reference Pages}
+        \gdef\lciInsideListOfRefPages{\lcTrue}%
+      }
+    }
+
+    \lciOpenReferenceFile%
+    \lciIfPrintRawListOfRefpages{}{%
+      \lciSortedMapAddTo{TocReferenceLinks}{#X1}{\lciOutputBasename}%
+    }%
+    % cross linking rules
+    \lciPushOutput{anchor}%
+    \lcRawHtml{i Next_reference_link_}\thereferencepage%
+    \lcRawHtml{	<div class="NavNext"><b>Next:</b> <a href="}%
+    \lcRawHtmlExpanded{\lciReplaceWithCurrentPathToken}%
+    \lcRawHtmlExpanded{\lciOutputBasename}%
+    \lcRawHtml{">}#1\lcRawHtml{</a></div>
+}%
+    \lcRawHtml{i Toc_reference_link_}\thereferencepage%
+    \lcRawHtml{	<a href="}%
+    \lcRawHtmlExpanded{\lciReplaceWithCurrentPathToken}%
+    \lcRawHtmlExpanded{\lciOutputBasename}%
+    \lcRawHtml{">}#1\lcRawHtml{</a>
+}%
+    \lciPopOutput%
+    % file header
+    \lciHtmlFileHeader{\ccReferenceFileContX #X1}%
+    \lciHtmlNavigationTop%
+}
+% skips a leading \ccc command, useful for formatted title from reference pages
+\newcommand{\ccReferenceFileContX}[1]{%
+  \lciIfEqual{#1}{\lciParseCC}{\ccReferenceFileContXX}{#1}}
+\newcommand{\ccReferenceFileContXX}[1]{\lcAsciiToHtml}
+
+% make the new manual style parameterized.
+\newcommand{\ccNewRefManualStyle}{}   % false -> old style, true -> new style
+\gdef\ccNewRefManualStyle{\ccTrue}
+
+\newcommand{\ccIsFunctionObjectClass}{}
+\gdef\ccIsFunctionObjectClass{\ccFalse}
+\newcommand{\ccIsFunctionObjectConcept}{}
+\gdef\ccIsFunctionObjectConcept{\ccFalse}
+\gdef\ccIsRefFunction{\ccFalse}
+
+\newcommand{\ccRefPageBegin}{}
+\newcommand{\ccRefPageEnd}{}
+
+% predeclare variable names
+\newcommand{\ccGlobalScope}{}
+\newcommand{\ccPureGlobalScope}{}
+\newcommand{\ccRefScope}{}
+\newcommand{\ccPureRefScope}{}
+\newcommand{\ccRefCategory}{}
+\newcommand{\ccRefName}{}
+\newcommand{\ccPureRefName}{}
+% needed for compliance with ccClass, e.g. used for removal of eigen-name.
+\newcommand{\ccClassTemplateName}{}
+\newcommand{\ccPureClassTemplateName}{}
+
+\gdef\ccRefCategoryIsConcept{\ccFalse}
+
+
+% #1 == global scope used in ref-page section title
+\newcommand{\ccDefGlobalScope}[1]{%
+                   \gdef\ccPureGlobalScope{#1}%
+                   \gdef\ccGlobalScope{\ccc{#1}}%
+}
+
+% #1 == token describing the category (Concept, Class ...)
+\newenvironment{ccRefDeclaration}[1]{%
+                   \lcNoLinkSync
+                   \def\ccRefCategory{#C1}%
+                   \def\ccPureRefScope{}%
+                   \def\ccRefScope{}%
+                   \lciParseCC{\lciRefDeclCont}%
+               }{
+                   \ccRefPageEnd
+                   \end{ccReferenceFile}%
+                   \gdef{\lciIfHtmlClassNotInline}{\lcTrue}%
+                   \def\ccRefCategory{}%
+                   \def\ccPureRefScope{}%
+                   \def\ccRefScope{}%
+                   \def\ccPureRefName{}%
+                   \gdef{\ccIndexClassName}{}%
+                   \renewcommand{\ccRefName}{}%
+                   % needed for compliance with ccClass
+                   \def\ccPureClassTemplateName{}%
+                   \renewcommand{\ccClassTemplateName}{}%
+                   \def\ccPureVar{}%
+                   \renewcommand{\ccVar}{}%
+                   \lciCacheClassName % empties cached class_name
+                   \gdef{\lciIfHtmlClassToc}{\lcTrue}%
+                   \gdef{\lciIfHtmlClassLinks}{\lcTrue}%
+                   \gdef{\lciIfHtmlClassIndex}{\lcTrue}%
+                   \gdef{\lciIfHtmlRefLinks}{\lcTrue}%
+                   \gdef{\lciIfHtmlRefIndex}{\lcTrue}%
+                   \lciPushOutput{comments}\lcRawHtml{</refpage>
+
+}
+\lciPopOutput
+               }
+
+\newcommand{\begin@ccRefDeclaration@mo}{%
+                   \def\ccRefCategory{#C1}%
+                   \def\ccPureRefScope{#C2}%
+                   \def\ccRefScope{\ccc{#C2}}%
+                   \lciParseCC{\lciRefDeclCont}%
+               }
+
+\newcommand{\lciRefDeclCont}{\lciRefDeclContX\ccPureRefScope\lciCCParameter}
+\newcommand{\lciRefDeclContX}[2]{%
+                   \def\ccPureRefName{#XC1#XC2}%
+                   \renewcommand{\ccRefName}{\ccc{#XC1#XC2}}%
+                   % needed for compliance with ccClass
+                   \def\ccPureClassTemplateName{#XC1#XC2}%
+                   \renewcommand{\ccClassTemplateName}{\ccc{#XC1#XC2}}%
+                   \lciParseUntilDelimiter{\lciRefDeclDefFilename}<#XC2<@%
+                   \ccRefPageBegin
+                   \ccRefSection{\ccRefCategory}{\ccPureRefName}%
+                   \lciCacheClassName
+               }
+
+% #1 = classname (functioname etc.) without template parameters
+\newcommand{\lciRefDeclDefFilename}[1]{%
+    \lciRefDeclDefFilenameX{\ccPureRefScope}{#1}{\ccRefCategory}%
+      {\ccRefPureGlobalScope}{\lciCCParameter}}
+
+
+\newcommand{\lciPrintToComments}[2]{%
+\lcRawHtml{<}#1\lcRawHtml{>}\lcAsciiToHtml{#2}\lcRawHtml{</}#1\lcRawHtml{>}%
+}
+% #1 = local scope (may be empty)
+% #2 = classname (functioname etc.) without template parameters
+% #3 = Ref category
+% #4 = global scope (may be empty)
+\newcommand{\lciRefDeclDefFilenameX}[5]{%
+    \lciPushOutput{comments}%
+  \lcRawHtml{<refpage id="#XC2">}
+  \lciPrintToComments{localscope}{#XC1}
+  \lciPrintToComments{refcat}{#XC3}
+  \lciPrintToComments{globalscope}{#XC4}
+  \lciPrintToComments{definition}{#XC5}
+\lciPopOutput
+
+    \newcommand{\ccPureClassName}{#XC1#C2}%
+    \newcommand{\ccClassName}{\ccc{#XC1#C2}}%
+    \gdef{\ccIndexClassName}{\ccClassName}%
+    \newcommand{\ccRefFilename}{#XC1#C2}%
+    \gdef{\lciIfHtmlClassNotInline}{\lcFalse}%
+    \gdef{\lciIfHtmlClassToc}{\lcFalse}%
+    \lciRefDeclOpenFilenameX{#GXC3_#GXC1#GC2}{\lciHtmlSuffix}{\ccRefName}%
+    \lciIfHtmlClassLinks{%
+      \ccHtmlCrossLink{#GXC4#GXC1#GXC5}%
+      %\lciIfEmpty{#XC4}{}{%
+        % cross link names also without the global (CGAL) prefix
+      %  \ccHtmlCrossLink{#GXC1#GXC5}%
+      %}%
+    }{}%
+    \ccIndexRefName{#1}{\ccc{#2}}{#3}%
+    \gdef{\lciIfHtmlClassLinks}{\lcFalse}%
+    \gdef{\lciIfHtmlClassIndex}{\lcFalse}%
+    \gdef{\lciIfHtmlRefLinks}{\lcFalse}%
+    \gdef{\lciIfHtmlRefIndex}{\lcFalse}%
+    \lciParseUntilDelimiter{\lciSkipOneParameter}@}% skip remaining part
+
+\newcommand{\lciRefDeclOpenFilenameX}[3]{\begin{ccReferenceFile}{#1#GXC2}{#3}}
+
+%% Args: ccCategory, ccRefName
+\newcommand{\ccRefSection}[2]{%
+    \lciIf{\ccNewRefManualStyle}{\lcDrawRefTabs{#1}{#2}}{}
+    \ccRefSectionX{\ccRefPureGlobalScope}{#C2}
+}
+
+%% Args: ccRefPureGlobalScope, ccRefName (which should include any local scope)
+\newcommand{\ccRefSectionX}[2]{%
+    %%\section*{\lcAsciiToHtml{#XC1#XC2#XC3}}
+    \label{ccRef_#XC1#XC2}\lciHtmlReferenceHeader{%
+      \lciIf{\ccNewRefManualStyle}{}{%
+      \lciIf{\ccIsFunctionObjectClass}{Function Object Class }{%
+      \lciIf{\ccIsFunctionObjectConcept}{Function Object Concept }{%
+      \ccRefCategory~}}}%
+      \ccRefCategoryIsConcept{\ccc{#XC1#XC2}}{%
+        \begingroup%
+         \def\ccFont{}% class-names should be printed with default font
+         \ccc{#XC1#XC2}%
+        \endgroup% restore old ccFont
+      }%
+      }}
+
+%% #1 == ccCategory
+%% #2 == ccRefName
+\newcommand{\lcDrawRefTabs}[2]{%
+    \lcRawHtml{<TABLE ALIGN=RIGHT><TR><TD><IMG ALIGN=TOP SRC="cc_#XC1.gif">}%
+    \lcRawHtml{</TD></TR></TABLE>
+}
+}
+
+\newenvironment{ccRefConcept}{%
+                   \gdef\ccRefPureGlobalScope{}%
+                   \def\ccRefCategoryIsConcept{\ccTrue}%
+                   \begin{ccRefDeclaration}{Concept}}{\end{ccRefDeclaration}}
+
+\newenvironment{ccRefClass}{%
+                   \gdef\ccRefPureGlobalScope{\ccPureGlobalScope}%
+                   \begin{ccRefDeclaration}{Class}}{\end{ccRefDeclaration}}
+
+\newenvironment{ccRefEnum}{%
+                   \gdef\ccRefPureGlobalScope{\ccPureGlobalScope}%
+                   \begin{ccRefDeclaration}{Enum}}{\end{ccRefDeclaration}}
+
+\newenvironment{ccRefFunction}{%
+                   \gdef\ccIsRefFunction{\lcTrue}%
+                   \gdef\ccRefPureGlobalScope{\ccPureGlobalScope}%
+                   \begin{ccRefDeclaration}{Function}}%
+                   {\gdef\ccIsRefFunction{\lcFalse}%
+                   \end{ccRefDeclaration}}
+
+\newenvironment{ccRefFunctionObjectConcept}{%
+                   \gdef\ccRefPureGlobalScope{}%
+                   \gdef\ccIsFunctionObjectConcept{\ccTrue}%
+                   \def\ccRefCategoryIsConcept{\ccTrue}%
+                   \begin{ccRefDeclaration}{FunctionObjectConcept}}%
+               {\gdef\ccIsFunctionObjectConcept{\ccFalse}\end{ccRefDeclaration}}
+
+\newenvironment{ccRefFunctionObjectClass}{%
+                   \gdef\ccRefPureGlobalScope{\ccPureGlobalScope}%
+                   \gdef\ccIsFunctionObjectClass{\ccTrue}%
+                   \begin{ccRefDeclaration}{FunctionObjectClass}}%
+               {\gdef\ccIsFunctionObjectClass{\ccFalse}\end{ccRefDeclaration}}
+
+\newenvironment{ccRefVariable}{%
+                   \gdef\ccRefPureGlobalScope{\ccPureGlobalScope}%
+                   \begin{ccRefDeclaration}{Variable}}{\end{ccRefDeclaration}}
+
+\newenvironment{ccRefConstant}{%
+                   \gdef\ccRefPureGlobalScope{\ccPureGlobalScope}%
+                   \begin{ccRefDeclaration}{Constant}}{\end{ccRefDeclaration}}
+
+\newenvironment{ccRefMacro}{%
+                   \gdef\ccRefPureGlobalScope{}%
+                   \begin{ccRefDeclaration}{Macro}}{\end{ccRefDeclaration}}
+
+\newcommand{\ccRefPage}{\lciParseCC{\lciRefDummyX}}
+\newcommand{\lciRefDummyX}{}
+
+\newcommand{\ccRefLabel}{\lciParseCC{\lciRefLabelX}}
+\newcommand{\lciRefLabelX}{\lciRefLabelXX\lciCCParameter}
+\newcommand{\lciRefLabelXX}[1]{\label{ccRef_#XC1}}
+
+\newcommand{\ccRefPageNumAtMargin}{}
+\newcommand{\ccRefPageFill}{}
+\newcommand{\ccRefIdfierPage}{\ccc}
+\newcommand{\ccRefConceptPage}{\ccc}
+
+% ___________________________________________________________________________
+% ###########################################################################
+% |
+% |   o   Class and Class Member Declarations
+% |
+% ###########################################################################
+% +--------------------------------------------------------------------------
+% | \ccClassName, \ccClassTemplateName, \ccVar, \ccPur...
+% | \begin{ccClass}, \begin{ccClassTemplate}, \begin{ccTraitsClass}, \end...
+% +--------------------------------------------------------------------------
+
+% class environments
+\newenvironment{ccClass}{%
+    \lciParseCC{\lciClassCont}
+}{%
+    \end{lciClassEnvironment}
+}
+
+% traits class environments
+\newenvironment{ccTraitsClass}{\lciParseCC{\lciClassContforTraits}}{\end{lciClassEnvironment}}
+
+\newcommand{\lciClassContforTraits}{\lciClassContforTraitsX\lciCCParameter}
+\newcommand{\lciClassContforTraitsX}[3]{
+    \newcommand{\ccPureClassName}{#XC1}%
+    \newcommand{\ccClassName}{\ccc{#XC1}}%
+    \ccIndexTraitsClassBegin{#XC1}{#XC2}{#XC3}%
+    \ccIndexTraitsClassEnd%
+    \begin{lciClassEnvironment}{#1}%
+}
+
+
+\newcommand{\lciClassCont}{\lciClassContX\lciCCParameter}
+\newcommand{\lciClassContX}[1]{
+    \newcommand{\ccPureClassName}{#XC1}%
+    \newcommand{\ccClassName}{\ccc{#XC1}}%
+    \begin{lciClassEnvironment}{#1}%
+}
+
+% class environments
+\newenvironment{ccClassTemplate}{\lciParseCC{\lciClassTemplateCont}}%
+    {\end{lciClassEnvironment}}
+
+% traits class environments
+\newenvironment{ccTraitsClassTemplate}{\lciParseCC{\lciClassTemplateCont}}%
+    {\end{lciClassEnvironment}}
+
+\newcommand{\lciClassTemplateCont}{\lciClassTemplateContX\lciCCParameter}
+\newcommand{\lciClassTemplateContX}[1]{
+    \lciParseUntilDelimiter{\lciLocalDefClassName}<#XC1<@%
+    \begin{lciClassEnvironment}{#1}%
+}
+
+\newcommand{\lciLocalDefClassName}[1]{%
+    \newcommand{\ccPureClassName}{#C1}%
+    \newcommand{\ccClassName}{\ccc{#C1}}%
+    \lciParseUntilDelimiter{\lciSkipOneParameter}@}% skip remaining part
+
+\newenvironment{lciClassEnvironment}[1]{%
+    \newcommand{\ccPureVar}{*this}%
+    \newcommand{\ccVar}{\ccc{*this}}%
+    \newcommand{\ccPureClassTemplateName}{#XC1}%
+    \newcommand{\ccClassTemplateName}{\ccc{#XC1}}%
+    \gdef{\ccIndexClassName}{\ccClassName}%
+    \lciIfEmpty{#XC1}{%
+     \lciError{The class environments need a non-empty classname parameter}}{}%
+    \lciIfHtmlClassNotInline{\lciIfHtmlClassFile{%
+        \lciPushFootnotes
+    }{}}{}%
+    \lciIf{\lciIfHtmlClassIndex}{}{\ccIndexMainItem{\ccClassName}}%
+    \lciCacheClassName
+    \lciIfHtmlClassNotInline{\lciIfHtmlClassFile{%
+        \lciClassEnvOpenFile{#XC1}{\lciHtmlSuffix}{\ccClassTemplateName}}{}}{}%
+    \lciIfHtmlClassIndex{\lciIfHtmlIndex{\ccIndex{\ccAutoIndex{%
+        \lciHtmlIndexCExpanded{\ccPureClassName}}{}}{}}{}}{}%
+    \lciIfHtmlClassLinks{\lciIfHtmlLinks{%
+        \lciExpandedCrossLinkTemplateX{\ccPureGlobalScope}{\ccPureClassName}}{}}{}%
+    \gdef{\lciIfHtmlLinks}{\lcTrue}%
+    \gdef{\lciIfHtmlIndex}{\lcTrue}%
+}{%
+    \lciIfHtmlClassNotInline{\lciIfHtmlClassFile{%
+        \lciPrintFootnotes
+        \lciPopFootnotes
+    }{}}{}%
+    \lciIfHtmlClassNotInline{\lciIfHtmlClassFile{%
+        \end{ccReferenceFile}}{}}{}%
+    \gdef{\lciIfHtmlClassToc}{\lcTrue}%
+    \gdef{\lciIfHtmlClassFile}{\lcTrue}%
+    \lciIfHtmlRefLinks{\gdef{\lciIfHtmlClassLinks}{\lcTrue}}{}%
+    \lciIfHtmlRefIndex{\gdef{\lciIfHtmlClassIndex}{\lcTrue}}{}%
+    \lciUndef{\ccPureVar}%
+    \lciUndef{\ccPureClassName}%
+    \lciUndef{\ccPureClassTemplateName}%
+    \lciUndef{\ccVar}%
+    \lciUndef{\ccClassName}%
+    \gdef\ccIndexClassName{}%
+    \lciUndef{\ccClassTemplateName}%
+    \lciCacheClassName % empties cached class_name
+}
+\newcommand{\lciClassEnvOpenFile}[3]{\begin{ccReferenceFile}{#1#GXC2}{#3}}
+
+
+% +--------------------------------------------------------------------------
+% | \ccCreationVariable, \ccConstructor
+% +--------------------------------------------------------------------------
+
+\newcommand{\ccCreationVariable}[1]{%
+    \newcommand{\ccPureVar}{#C1}%
+    \newcommand{\ccVar}{\ccc{#C1}}%
+}
+% +--------------------------------------------------------------------------
+% | \ccMemberFunction, \ccMethod, \ccFunction, \ccFunctionTemplate
+% | \ccTypedef, \ccNestedType, \ccVariable, \ccEnum, \ccStruct
+% +--------------------------------------------------------------------------
+
+\newcommand{\lciMainIndexItem}{}
+\newcommand{\lciSubIndexItem}{}
+\newcommand{\lciSubSubIndexItem}{}
+
+
+%% The single char encodes the category for the continuation
+\newcommand{\ccClassDeclaration}{\lciParseCC{\lciTwoColumnContinuation A}}
+\newcommand{\ccStruct}{\lciParseCC{\lciTwoColumnContinuation B}}
+\newcommand{\ccNestedType}{\lciParseCC{\lciTwoColumnContinuation C}}
+\newcommand{\ccEnum}{\lciParseCC{\lciTwoColumnContinuation D}}
+\newcommand{\ccConstructor}{\lciParseCC{\lciTwoColumnContinuation E}}
+
+%% The comment parameter remains (third column), if its not a global decl.
+\newcommand{\lciTwoColumnContinuation}[1]{\lciIfGlobal
+    {\newcommand{\lciIfGlobal}{\lcFalse}\lciTwoColumnX{#1}{}}
+    {\lciTwoColumnX{#1}}}
+\newcommand{\lciTwoColumnX}[2]{\lciGluePostProcessing
+    \lciTwoColumnLayout{#1}\lciIfEmpty{#C2}
+    {\lciTwoColsEndEmpty}{\gdef\lciInsideComment{\ccTrue}%
+    \lciTwoColsSecond #C2%
+    \lciCloseCommentHeadingTable%
+    \gdef\lciInsideComment{\ccFalse}%
+     \lciTwoColsEnd}%
+    \gdef{\lciIfHtmlLinks}{\lcTrue}%
+    \gdef{\lciIfHtmlIndex}{\lcTrue}%
+    \lciPushOutput{comments}%
+\lcRawHtml{    }\lciPrintToComments{comment}{#C2}
+  \lcRawHtml{</item>}
+\lciPopOutput
+}
+
+%% Tricky definition, since we must have % signs in it.
+\newcommand{\lciTwoColsSecond}{\lcRawHtml{<TR><TD WIDTH=50}\%\lcRawHtml{ NOWRAP></TD><TD ALIGN=LEFT VALIGN=TOP WIDTH=50}\%\lcRawHtml{>
+    }}
+\newcommand{\lciTwoColsEnd}{\lcRawHtml{
+        <P></TD></TR>
+        </TABLE><!2>
+}}
+\newcommand{\lciTwoColsEndEmpty}{\lcRawHtml{
+        <P></TABLE><!2>
+}}
+
+\gdef\ccIsFunctionTemplate{\ccFalse}
+
+%% Simply omit the first argument and hope that ParameterMode
+%% can parse it (i.e. no % symbol in it).
+\newcommand{\ccFunctionTemplate}[1]{%
+    \gdef\ccIsFunctionTemplate{\ccTrue}
+    \ccFunction}
+
+\newcommand{\ccMemberFunction}{\ccMethod}
+
+%% The single char encodes the category for the continuation
+\newcommand{\ccMethod}{\lciParseCC{\lciThreeColumnContinuation L}}
+\newcommand{\ccFunction}{\lciParseCC{\lciThreeColumnContinuation M}}
+\newcommand{\ccVariable}{\lciParseCC{\lciThreeColumnContinuation N}}
+\newcommand{\ccTypedef}{\lciParseCC{\lciThreeColumnContinuation O}}
+
+%% The comment parameter remains (third column), if its not a global decl.
+\newcommand{\lciThreeColumnContinuation}[1]{\lciIfGlobal
+    {\newcommand{\lciIfGlobal}{\lcFalse}\lciThreeColumnX{#1}{}}
+    {\lciThreeColumnX{#1}}}
+\newcommand{\lciThreeColumnX}[2]{\lciGluePostProcessing\lciIfEmpty{#C2}
+    {\lciThreeColumnLayout{#1}{1}\lciThreeColsEndEmpty}
+    {\lciThreeColumnLayout{#1}{0}\gdef\lciInsideComment{\ccTrue}%%
+    #C2%
+    \lciCloseCommentHeadingTable%
+    \gdef\lciInsideComment{\ccFalse}%
+    \lciThreeColsEnd}%
+    \gdef{\lciIfHtmlLinks}{\lcTrue}%
+    \gdef{\lciIfHtmlIndex}{\lcTrue}%
+    \gdef\ccIsFunctionTemplate{\ccFalse}%
+    \lciPushOutput{comments}%
+\lcRawHtml{    }\lciPrintToComments{comment}{#C2}
+  \lcRawHtml{</item>}
+\lciPopOutput
+}
+
+\newcommand{\lciThreeColsEnd}{\lcRawHtml{
+        </TD></TR>
+        </TABLE><!3>
+}}
+\newcommand{\lciThreeColsEndEmpty}{\lcRawHtml{
+        </TR>
+        </TABLE><!3>
+}}
+
+
+
+% ###########################################################################
+% |
+% |   o   Global C++ Declarations
+% |
+% ###########################################################################
+
+\newcommand{\ccGlobalFunction}{\newcommand{\lciIfGlobal}{\lcTrue}\ccFunction}
+\newcommand{\ccGlobalFunctionTemplate}{%
+    \newcommand{\lciIfGlobal}{\lcTrue}\ccFunctionTemplate}
+\newcommand{\ccGlobalVariable}{\newcommand{\lciIfGlobal}{\lcTrue}\ccVariable}
+\newcommand{\ccGlobalTypedef}{\newcommand{\lciIfGlobal}{\lcTrue}\ccTypedef}
+\newcommand{\ccGlobalEnum}{\newcommand{\lciIfGlobal}{\lcTrue}\ccEnum}
+\newcommand{\ccGlobalStruct}{\newcommand{\lciIfGlobal}{\lcTrue}\ccStruct}
+
+
+% ___________________________________________________________________________
+% ###########################################################################
+% |
+% |   o   HTML Related Support
+% |
+% ###########################################################################
+% --> see also latex_to_html.sty
+
+% old names for compatibility
+\newcommand{\ccTexHtml}[1]{\lcRawHtml}
+\newenvironment{ccTexOnly}{%
+    \lciParseUntilEndToken{\lciSkipOneParameter}{ccTexOnly}}{}
+
+\newcommand{\lciLocalHtmlOnly}[1]{\lciRawOutputN{#L1}#1}
+\newenvironment{ccHtmlOnly}{%
+    \lciParseUntilEndToken{\lciLocalHtmlOnly}{ccHtmlOnly}}{}
+
+% old names for compatibility
+\newcommand{\ccAnchor}{\lcAnchor}
+
+\newcommand{\ccHtmlLinksOff}{\lcRawHtml{
+<!-- REMOVE_LINKS_BEGIN -->
+}}
+\newcommand{\ccHtmlLinksOn}{\lcRawHtml{
+<!-- REMOVE_LINKS_END -->
+}}
+\newcommand{\ccHtmlNoLinksFrom}[1]{\ccHtmlLinksOff#1\ccHtmlLinksOn}
+
+% enable later when it's clear that the old definitions where not used
+%\newcommand{\ccHtmlIndex}[1]{\lciHtmlIndex{#1}}
+%\newcommand{\ccHtmlIndexC}{\lciParseCC{\lciHtmlIndexCParsed}}
+\newcommand{\lciHtmlIndexCParsed}{\lciHtmlIndexC 1} % dummy 1, uses cc_string
+
+\newcommand{\lciHtmlIndexExpanded}[1]{\lciHtmlIndex{#XC1}}
+\newcommand{\lciHtmlIndexCExpanded}[1]{\lciParseCC{\lciHtmlIndexCParsed}{#XC1}}
+
+\newcommand{\lciLocalIndexCategory}{class}
+
+\newcommand{\ccHtmlCrossLink}{\lciParseCC{\lciHtmlCrossLink 1}}
+\newcommand{\ccHtmlCrossLinkTemplate}{\lciParseCC{\lciHtmlCrossLinkTemplate 1}}
+
+\newcommand{\lciExpandedCrossLinkTemplate}[1]{%
+    \ccHtmlCrossLinkTemplate{#X1}}
+\newcommand{\lciExpandedCrossLinkTemplateX}[2]{%
+    \ccHtmlCrossLinkTemplate{#X1#GX2}}
+
+\newenvironment{ccHtmlClassFile}{%
+    %\lciPushFootnotes
+    \gdef{\lciIfHtmlClassNotInline}{\lcFalse}%
+    \begin{ccReferenceFile}%
+}{%
+    \end{ccReferenceFile}%
+    \gdef{\lciIfHtmlClassNotInline}{\lcTrue}%
+}
+
+\newenvironment{scriptsize}%
+  {\lcHtml{<small>}}%
+  {\lcHtml{</small>}}%
+\newenvironment{footnotesize}%
+  {\lcHtml{<small><small>}}%
+  {\lcHtml{</small></small>}}%
+
+
+% --------------------------------------------------
+% Wrappers to help nicer rendering of Math formulas.
+% --------------------------------------------------
+\def\ccSum #1#2#3{
+\lciIf{\lciMathModeDisplay}{\lcRawHtml%
+  {<td><table><tr><td><table class="math" cellspacing=0 cellpading=0><tr><td nowrap class="subsup" align="center" valign="bottom">}#2\lcRawHtml{<tr><td class="big_sym" align="center">&sum;<tr><td nowrap class="subsup" align="center" valign="top">}#1\lcRawHtml{</table><td nowrap class="math">}#3\lcRawHtml{</table><td nowrap class="math">}}%
+  {\sum_{#1}^{#2}{#3}}
+}
+
+\def\ccProd #1#2#3{
+\lciIf{\lciMathModeDisplay}{\lcRawHtml%
+  {<td><table><tr><td><table class="math" cellspacing=0 cellpading=0><tr><td nowrap class="subsup" align="center" valign="bottom">}#2\lcRawHtml{<tr><td class="big_sym" align="center">&prod;<tr><td nowrap class="subsup" align="center" valign="top">}#1\lcRawHtml{</table><td nowrap class="math">}#3\lcRawHtml{</table><td nowrap class="math">}}%
+  {\sum_{#1}^{#2}{#3}}
+}
+
+
+% ___________________________________________________________________________
+% ###########################################################################
+% |
+% |   o   Package Descriptions
+% |
+% ###########################################################################
+
+
+\gdef\ccValueofPkgName{}
+%\gdef\lciPkgDescriptionIsOddEntry{\lcTrue}
+
+% without this definition, pictures are aligned with heading
+\gdef\lciPkgDescriptionAlignPicWithText{xxx}
+
+\newcommand{\ccPartSummary}[1]{#1}
+\newcommand{\ccPkgAuthor}[1]{\gdef\ccValueOfPkgAuthor{#1\lcRawHtml{<br>}}}
+\newcommand{\ccPkgSummary}[1]{\gdef\ccValueofPkgSummary{#1}}
+\newcommand{\ccPkgIllustration}[2]{%
+  \gdef\ccValueofPkgIllustration{%
+    \lcRawHtml{<a href="#C2"><img src="#C1" alt="}%
+    \ccValueofPkgNameWithoutLabel\lcRawHtml{ Illustration" width="120" height="120" border="0"}%
+     \lciIfDefined{\lciPkgDescriptionAlignPicWithText}{}{\lcRawHtml{vspace="22"}}%
+     \lcRawHtml{></a>}}%
+}
+\newcommand{\ccPkgIntroducedInCGAL}[1]{\gdef\ccValueofPkgIntroducedInCGAL{\lcRawHtml{<b>Introduced in: </b>}\cgal\ #1\lcRawHtml{<br>}}}
+\newcommand{\ccPkgMaturity}[1]{\gdef\ccValueofPkgMaturity{\lcRawHtml{<b>Maturity: </b>}#1\lcRawHtml{<br>}}}
+\newcommand{\ccPkgDependsOn}[1]{\gdef\ccValueofPkgDependsOn{\lcRawHtml{<b>Depends on: </b>}#1\lcRawHtml{<br>}}}
+\newcommand{\ccPkgLicense}[1]{\gdef\ccValueofPkgLicense{\lcRawHtml{<b>License: </b>}#1\lcRawHtml{<br>}}}
+\newcommand{\ccPkgHowToCiteCgal}[1]{\gdef\ccValueofPkgHowToCiteCgal{\ccHowToCiteCgal{#1}\lcRawHtml{<br>}}}
+%\newcommand{\ccPkgDemo}[2]{\lciPushGlobalStack{\ccValueofPkgDemo}{#1}}
+\newcommand{\ccPkgDemo}[2]{\ccPkgDemoX{#1}{#2}{\ccValueofPkgDemo}}
+\newcommand{\ccPkgDemoX}[3]{\gdef\ccValueofPkgDemo{%
+#Y3\lcRawHtml{<b>Demo: </b><a href="http://www.cgal.org/demo/}\lcRawHtmlExpanded{\cgalversionnumber/#C2">}#1\lcRawHtml{</a><br>}}%
+}
+
+\newenvironment{ccPkgDescription}{\ccPkgDescriptionX}{\end{savestream}}
+
+\newcommand{\ccPkgDescriptionX}[1]{%
+  \gdef\ccValueofPkgName{#1}%
+  \lciCheckForLabelInsideHeading{#1}{\ccValueofPkgNameWithoutLabel}{\myownlocaldummyvariable}%
+  % author is reset in latex.sty:\chapter
+  \gdef\ccValueofPkgSummary{}%
+  \gdef\ccValueofPkgIllustration{\lcRawHtml{&nbsp;}}%
+  \gdef\ccValueofPkgIntroducedInCGAL{}%
+  \gdef\ccValueofPkgMaturity{}%
+  \gdef\ccValueofPkgDependsOn{}%
+  \gdef\ccValueofPkgLicense{}%
+  \gdef\ccValueofPkgHowToCiteCgal{}
+  \gdef\ccValueofPkgDemo{}
+  \begin{savestream}{packages.html}%
+}
+
+\newcommand{\lciEndPackage}[2]{%
+  \lciTocNewLayout{
+    \begin{savestream}{pkgtoc}
+      \lcRawHtml{
+        <td width="4">&nbsp;</td>
+        <td><a id="usermanual}\thechapter\lcRawHtml{" class="TocInactive" href="#XC1">User Manual</a></td>
+        <td width="4">&nbsp;</td>
+        <td><a id="refmanual}\thechapter\lcRawHtml{" class="TocInactive" href="#XC2">Reference Manual</a></td>
+      </tr>}%
+    \end{savestream}
+  }{}
+  \lciFlushPkgDescriptionX{#X1}{#X2}{\ccValueofPkgName}
+}
+
+\newcommand{\lciCheckForLabelInsideHeadingX}[2]{%
+ \lciCheckForLabelInsideHeading{#XC1}{#2}{\lciLocalVariableLabel}%
+ \lciLocalVariableLabel%
+}
+
+\newcommand{\lciFlushPkgDescriptionX}[3]{%
+  \lciIfEmpty{#X3}{}{%
+    \lciIfEmpty{\lciCurrentPartName}{}{%
+      \lciHtmlPartPkgDesciption{\lciCurrentPartName}{\lciCurrentPartLabel}%
+      \gdef\lciCurrentPartName{}%
+    }%
+    \begin{savestream}{packages.html}%
+    
+    \lcRawHtml{<tr><td valign="top" width="140" class="TocGroupEvenLeft"}
+    \lciIfDefined{\lciPkgDescriptionAlignPicWithText}%
+      {\lcRawHtml{>&nbsp;}}%
+      {\lcRawHtml{ rowspan="2" >}
+       \ccValueofPkgIllustration
+      }%
+    \lcRawHtml{</td><td colspan="3" class="TocGroupEvenLeft">}
+    \lciCheckForLabelInsideHeadingX{\ccValueofPkgName}{\lciCurrentPackageName}%
+    \lcRawHtml{<h3>}\lciCurrentPackageName\lcRawHtml{</h3>}%
+    \ccValueOfPkgAuthor%
+    \lcRawHtml{</td></tr>}%
+    \lcRawHtml{<tr valign="top">}
+    \lcRawHtml{<td class="TocGroupEvenLeft">}%
+    \lciIfDefined{\lciPkgDescriptionAlignPicWithText}%
+      {\ccValueofPkgIllustration\lcRawHtml{</td><td class="TocGroupEvenLeft">}}%
+      {}
+    \ccValueofPkgSummary
+    \lcRawHtml{<p></td><td width="2\%" class="TocGroupEvenLeft">}
+    \lcRawHtml{</td><td width="23\%" class="TocGroupEvenLeft">}
+    \ccValueofPkgIntroducedInCGAL%
+    \ccValueofPkgMaturity%
+    \ccValueofPkgDependsOn%
+    \ccValueofPkgLicense%
+    \ccValueofPkgHowToCiteCgal%
+    \ccValueofPkgDemo%
+    %\lcRawHtml{<b>Manuals :</b><br>}%
+    \lcRawHtml{<a href="#C1">User Manual</a> &nbsp; <a href="#C2">Reference Manual</a>}
+    \lcRawHtml{</td></td>}
+    \end{savestream}
+    \gdef\ccValueofPkgName{}%
+  }%
+}
+
+\newcommand{\ccPartDescriptionEnsureHR}{}
+
+\newcommand{\ccPartDescriptionImpl}[2]{
+  \begin{savestream}{packages.html}%
+  \ccPartDescriptionEnsureHR
+  \lcRawHtml{<h2>}#1\lcRawHtml{</h2>}
+  \def\ccValueofPkgSummary{}
+  #2
+  \ccValueofPkgSummary
+  \end{savestream}
+  \newcommand{\ccPartDescriptionEnsureHR}{\lcRawHtml{<hr>}}
+}
+
+
+\newcommand{\lciPrintTOCReferenceLink}[2]{
+  \lcRawHtml{<tr><td>}%
+  \lcRawHtml{ <a href="#C2">}\lcNoLinkBegin#1\lcNoLinkEnd\lcRawHtml{</a></td></tr>}%
+}
+
+\newcommand{\ccPrintSortedListOfRefpages}{
+  \section{Alphabetical List of Reference Pages}
+  \ccPrintSortedListOfRefpagesX
+}
+
+\newcommand{\ccPrintSortedListOfRefpagesX}{
+  \lciSortedMapIsEmpty{TocReferenceLinks}{}{%
+    \lcRawHtml{<table cellpadding="0">}
+    \lciSortedMapForeach{TocReferenceLinks}{\lciPrintTOCReferenceLink}
+    \lcRawHtml{</table>}
+    \lciSortedMapClear{TocReferenceLinks}
+  }
+}
+
+
+\newcommand{\ccBenchmarkInstance}[1]{%
+\begingroup%
+\def\lciBenchmarkPath{}%
+\lciShellCommand{perl -e '
+$location = "#C1";
+$pattern=" -name \"*.bff\"";
+if( $location =~ /\/([^\/]*[*\[\]?][^\/]*)$/ ) {
+  $pattern = " -name \"$1\"";
+  $location = $`;
+} elsif( $location =~ /\.bff$/ ) {
+  $pattern="";
+}
+if( $location =~ /\/$/ ) { $location =$`; }
+$benchname=$location;
+if( $benchname =~ /^[^\/]+\/[^\/]+\/(.*)$/ ) { $tarname = $1; }
+$benchname =~ s/\//__/g;
+if( ! -r $location && -r "../benchmark/data/$location" ) {
+  $location = "../benchmark/data/$location";
+}
+print "\\def\\benchlocation{$location}\\def\\benchpattern{$pattern}\\def\\benchname{$benchname}";
+'
+}%
+\lciShellStdout%
+\ccBenchmarkGetUniqeBenchname{\benchname}{\uniquebenchname}%
+%\begin{alltt}
+%location = \benchlocation
+%
+%pattern = \benchpattern
+%
+%tarname = \uniquebenchname
+%
+%\end{alltt}
+\ccBenchmarkInstanceX{\benchlocation}{\benchpattern}{\uniquebenchname}{\lciTmpPath}%
+\endgroup%
+}
+
+\gdef\lciBenchmarkTarnameCounter{0}
+
+
+\newcommand{\ccBenchmarkGetUniqeBenchname}[2]{%
+  \lciHashMapIsDefined{tarnames}{#XC1}{}{\lciHashMapInsert{tarnames}{#XC1}{0}}%
+  \savebox{\benchvalue}{\lciHashMapGet{tarnames}{#XC1}}%
+  \lciGlobalAddTo{\benchvalue}{1}%
+  \ccBenchmarkGetFreshTarnameX{#XC1}{\benchvalue}%
+  \lciBeginAlltt\savebox{#C2}{#C1__\benchvalue{}}\lciEndAlltt
+}
+
+\newcommand{\ccBenchmarkGetFreshTarnameX}[2]{%
+  \lciHashMapInsert{tarnames}{#1}{#XC2}%
+}
+
+\newcommand{\ccBenchmarkInstanceX}[4]{%
+\lciShellCommand{
+OLDPWD=`pwd`;
+mkdir -p #XC4/benchmarks/#XC3;
+cd #XC4/benchmarks;
+files=`find $OLDPWD/#XC1 #XC2`
+if [ "${files}" != "" ] ; then
+  ln -s $files #XC3;
+  tar -czhf #XC3.tar.gz #XC3;
+else
+  echo "\\lciError{no files found at #XC1}"
+fi
+rm -rf #XC3;
+cd $OLDPWD;
+}%
+\lciShellStdout%
+\lcRawHtml{<a href="../benchmarks/#XC3.tar.gz">#XC3.tar.gz</a>}
+}
+% ___________________________________________________________________________
+% ###########################################################################
+% | EOF
+% ###########################################################################

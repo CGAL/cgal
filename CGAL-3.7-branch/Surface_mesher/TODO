@@ -1,0 +1,156 @@
+Laurent Rineau, 2007/03/20
+- fix the memory leak in Gray_level_image_3.
+
+Laurent Rineau, 2006/09/14
+- use Kernel::Assign_3 instead of CGAL::assign
+
+Laurent Rineau, 2006/08/10
+- try to ease the maintainance of Surface_mesher and Mesh_3 demos:
+   - demo/Surface_mesher/implicit_surface_mesher.cpp
+   - demo/Surface_mesher/polyhedral_surface_mesher.cpp
+   - examples/Mesh_3/implicit_surfaces_mesher_3.cpp
+   - examples/Mesh_3/polyhedral_surface_mesher.cpp
+  They all share the same code base, maintained by hand. :-(
+
+MY 18/10/2006
+output_surface_facets_to_off :
+- documenter
+
+
+Rendre paresseux la gestion de la liste des bad edges
+dans Surface_mesher_manifold_edges
+comme le traitement des bad vertices dans Surface_mesher_manifold
+
+
+Laurent Rineau, 2005/10/02:
+      - fix include/CGAL/Surface_mesher/Oracles/Multi_implicit_oracle.h as
+        regards Kernel_point stuff
+      - merge it with include/CGAL/Surface_mesher/Oracles/Implicit_oracle.h
+
+Complex_2_in_triangulation_3
+
+-Manque les include  poir list, set, map etc
+
+
+Facets_iterator n'est par conforme aux specifications.
+Devrait etre Facets_around_edges
+Cells_iterator -> Cells_around_edges
+Facets_iterator et Edges_iterator etaient prevu pour iterer
+sur les aretes du complexes.
+Facet_circulator -> Facets_circulator
+
+Solution
+renommer Facets_iterator et le mettre prive -> List_Facet_Iterator
+Definir le vrai Facets_iterator en filtrant les iterateurs 
+      de la triangulation pour les cellules
+      pour les aretes utiliser la map
+Pour les incident_facet
+iterateur pour tous les sommet du complexes
+template<OutputIterator>
+incident_facets ....
+
+Pour les Boundary ou Regular -> Facets_around_vertex_circulator
+Facet_around_edge_circulator -> filtrer le circulateur de la triangulation
+par contre on veut consever une fonction
+incident_facets qui donne un iterateur sur les facettes incidente
+(dans le desordre et + efficace)
+incident_facets retourne un iterateur sur des facettes
+
+
+
+
+Avoir une autre foction oriented_facet ?
+Facet oriented_facet(const Facet& f) const;
+qui donne la facette vue de la cellule interieur en cas 
+de facette sur le bord du complexe .
+PB les cellulles ne sont pas marquee dans le cas general
+
+
+
+
+complex_subface_type (const Vertex_handle v)
+il n'y a pas de ISOLATED  (discutable,  mais  ...bon)
+mais les BOUNDARY manquent a l'appel
+
+
+face_type (const Vertex_handle v)
+face_type (const Vertex_handle v, true) pour le cas ou on sait que
+toutes les aretes sont regulieres
+
+
+ Facet_circulator incident_facets (const Edge& e)
+Rem :
+ton implementation ne circule pas dans l'ordre autour des aretes.
+Cette fonction n'etait pas dans les specifications...
+la rendre privee ou protected ?
+
+
+
+
+Pourquoi set_in_complex
+s'appele set_visited dans le sommet. ?
+
+set_in_complex (const Cell_handle c, const int i)
+appel inutile
+Facet f = 
+      facet_with_smallest_cell_handle(std::make_pair(c, i));
+
+ 
+------------------------------------------------------------------
+
+void  set_in_complex (const Cell_handle c, const int i)
+void remove_from_complex (const Cell_handle c, const int i)
+Supprimer le if sur la dimension en 
+utilisant  tri3.dimension()+1 comme borne sur les indices ?
+
+void remove_from_complex (const Cell_handle c, const int i)
+Pourquoi on fait un remove des sommets ?
+
+
+
+
+----------------------------------------------------
+
+Complex_2_in_triangulation_surface_mesh_cell_base_3
+A quoi servent les compteurs de visit et les statuts 
+Proposal :
+tab_surface_center_facets -> facets_surface_center
+tab_surface_status_facets    facets_surface_status 
+facet_visited                visited_facet
+
+le status est redondant avec le 
+tab_surface_facet de Complex_2_in_triangulation_cell_base_3.h
+
+ce qu'il faudrait :
+- un marqueur visited
+- un marquer center_computed
+on pourrait alors  dans l'interface dissocier le calcul du centre
+du test is_on_restricted_Delaunay.
+get_facet_center calcule le centre si ce n'est deja fait.
+Les oracles pourraient toujours decider de calculer
+le centre lorsqu'ils  testent is_on_restricted_Delaunay
+pour des raisons d'efficacite....
+
+Complex_2_in_triangulation_surface_mesh_cell_base_3 ->
+Pourrait etre remplacee par une
+Surface_mesh_cell_base_3
+a pluguer dans Complex_2_in_triangulation_cell_base_3
+
+-------------------------------------------------------------
+
+ Complex_2_in_triangulation_3_surface_mesh 
+
+
+incident_vertices -> should be in Complex_2_in_triangulation_3
+
+Facets incident_facets(const Vertex_handle v) ???
+a quoi sert cette function ?????
+
+-------------------------------------------------------------------------
+
+Surface_mesher.h
+
+
+
+- en cas d'encroachement d'une facette du Delaunay restreint pau un centre de tet, n'importe qu'elle facette de Delaunay restreint encrochee est raffinee
+

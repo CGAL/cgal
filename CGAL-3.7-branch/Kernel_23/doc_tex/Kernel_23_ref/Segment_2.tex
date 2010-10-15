@@ -1,0 +1,120 @@
+\begin{ccRefClass} {Segment_2<Kernel>}
+
+
+\ccDefinition  An object $s$ of the data type \ccRefName\ is a directed
+straight line segment in the two-dimensional Euclidean plane $\E^2$, i.e.\ a
+straight line segment $[p,q]$ connecting two points $p,q \in \R^2$.
+The segment is topologically closed, i.e.\  the end
+points belong to it. Point $p$ is called the {\em source} and $q$
+is called the {\em target} of $s$. The length of $s$ is the
+Euclidean distance between $p$ and $q$. Note that there is only a function
+to compute the square of the length, because otherwise we had to
+perform a square root operation which is not defined for all
+number types, which is expensive, and may not be exact.
+
+\ccCreation
+\ccCreationVariable{s}
+
+
+\ccHidden \ccConstructor{Segment_2();}
+             {introduces an uninitialized variable \ccVar.}
+
+\ccHidden \ccConstructor{Segment_2(const Segment_2<Kernel> &q);}
+            {copy constructor.}
+
+\ccConstructor{Segment_2(const Point_2<Kernel> &p, const Point_2<Kernel> &q);}
+            {introduces a segment \ccVar\ with source $p$
+             and target $q$. The segment is directed from the source towards
+             the target.}
+
+
+\ccOperations
+%\ccSetTwoOfThreeColumns{5cm}{4cm}
+\ccSetThreeColumns{Direction_2<Kernel> & }{}{\hspace*{7.5cm}}
+
+\ccHidden \ccMethod{Segment_2<Kernel> & operator=(const Segment_2<Kernel> &q);}
+        {Assignment.}
+
+\ccMethod{bool operator==(const Segment_2<Kernel> &q) const;}
+       {Test for equality: Two segments are equal, iff their sources and
+        targets are equal.}
+
+\ccMethod{bool operator!=(const Segment_2<Kernel> &q) const;}
+       {Test for inequality.}
+
+
+\ccMethod{Point_2<Kernel> source() const;}
+       {returns the source of \ccVar.}
+
+\ccMethod{Point_2<Kernel> target() const;}
+       {returns the target of \ccVar.}
+\ccGlue
+\ccMethod{Point_2<Kernel> min() const;}
+       {returns the point of \ccVar\ with lexicographically smallest coordinate.}
+
+\ccMethod{Point_2<Kernel> max() const;}
+       {returns the point of \ccVar\ with lexicographically largest coordinate.}
+
+
+\ccMethod{Point_2<Kernel> vertex(int i) const;}
+       {returns source or target   of \ccVar:   \ccStyle{vertex(0)} returns
+        the source of \ccVar, \ccStyle{vertex(1)} returns the target of \ccVar. 
+        The parameter \ccStyle{i} is taken modulo 2, which gives 
+        easy access to the other vertex. }
+
+\ccMethod{Point_2<Kernel> point(int i) const;}
+        {returns \ccStyle{vertex(i)}.}
+
+\ccMethod{Point_2<Kernel> operator[](int i) const;}
+       {returns \ccStyle{vertex(i)}.}
+
+\ccMethod{Kernel::FT squared_length() const;}
+       {returns the squared length of \ccVar. }
+
+\ccMethod{Direction_2<Kernel> direction() const;}
+       {returns the direction from source to target of \ccVar.}
+
+\ccMethod{Vector_2<Kernel> to_vector() const;}
+       {returns the vector \ccVar.\ccc{target()} - \ccVar.\ccc{source()}.}
+
+
+\ccMethod{Segment_2<Kernel> opposite() const; }
+       {returns a segment with source and target point interchanged.}
+
+\ccMethod{Line_2<Kernel> supporting_line() const;}
+       {returns the line $l$ passing through \ccVar. Line $l$  has the
+        same orientation as segment \ccVar.}
+
+\ccPredicates
+
+\ccMethod{bool is_degenerate() const;}
+       {segment \ccVar\ is degenerate, if source and target are equal.}
+
+\ccMethod{bool is_horizontal() const;}
+       {}
+\ccGlue
+\ccMethod{bool is_vertical() const;}
+       {}
+
+\ccMethod{bool has_on(const Point_2<Kernel> &p) const;}
+       {A point is on \ccVar, iff it is equal to the source or target 
+        of \ccVar, or if it is in the interior of \ccVar.}
+
+\ccMethod{bool collinear_has_on(const Point_2<Kernel> &p) const;}
+       {checks if point $p$ is on segment~\ccVar. This function is faster
+        than function \ccStyle{has_on()}.
+        \ccPrecond $p$ is on the supporting line of \ccVar.}
+
+\ccHeading{Miscellaneous}
+
+\ccMethod{Bbox_2 bbox() const;}
+       {returns a bounding box containing~\ccVar.}
+
+\ccMethod{Segment_2<Kernel>  transform(const Aff_transformation_2<Kernel> &t) const;}
+       {returns the segment obtained by applying $t$ on the source
+        and the target of \ccVar.}
+
+\ccSeeAlso
+\ccRefConceptPage{Kernel::Segment_2}\\
+
+\end{ccRefClass} 

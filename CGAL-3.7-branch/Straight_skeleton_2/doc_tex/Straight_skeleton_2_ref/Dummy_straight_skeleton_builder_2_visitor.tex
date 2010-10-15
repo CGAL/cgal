@@ -1,0 +1,48 @@
+%% Copyright (c) 2004  SciSoft.  All rights reserved.
+%%
+%% This file is part of CGAL (www.cgal.org); you may redistribute it under
+%% the terms of the Q Public License version 1.0.
+%% See the file LICENSE.QPL distributed with CGAL.
+%%
+%% Licensees holding a valid commercial license may use this file in
+%% accordance with the commercial license agreement provided with the software.
+%%
+%% This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
+%% WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
+%%
+%% 
+%%
+%% Author(s)     : Fernando Cacciola <fernando_cacciola@hotmail.com>
+
+
+\begin{ccRefClass}{Dummy_straight_skeleton_builder_2_visitor<Ss>}
+
+%% add template arg's if necessary
+
+%% \ccHtmlCrossLink{}     %% add further rules for cross referencing links
+%% \ccHtmlIndexC[class]{} %% add further index entries
+\ccCreationVariable{v}
+\ccDefinition
+
+The class \ccRefName\ provides a model for the
+\ccc{StraightSkeletonBuilder_2_Visitor} concept which is the visitor
+type required by the \ccc{StraightSkeletonBuilder_2}
+concept. The class \ccRefName\ has only one template argument: a model of the \ccc{StraightSkeleton_2} concept.
+
+This class is the default visitor parameter of the straight skeleton builder. 
+All its methods are empty.
+
+\ccInclude{CGAL/Straight_skeleton_builder_2.h}
+
+\ccIsModel
+\ccc{StraightSkeletonBuilder_2_Visitor}\\
+\ccc{DefaultConstructible}
+
+\ccSeeAlso
+\ccc{CGAL::Straight_skeleton_builder_2<Gt,Ss,Visitor>}\\
+\end{ccRefClass}
+
+% +------------------------------------------------------------------------+
+%%RefPage: end of main body, begin of footer
+% EOF
+% +------------------------------------------------------------------------+

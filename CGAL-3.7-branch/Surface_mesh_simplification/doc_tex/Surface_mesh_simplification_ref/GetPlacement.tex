@@ -1,0 +1,64 @@
+%% Copyright (c) 2007 GeometryFactory (France).  All rights reserved.
+%%
+%% This file is part of CGAL (www.cgal.org); you may redistribute it under
+%% the terms of the Q Public License version 1.0.
+%% See the file LICENSE.QPL distributed with CGAL.
+%%
+%% Licensees holding a valid commercial license may use this file in
+%% accordance with the commercial license agreement provided with the software.
+%%
+%% This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
+%% WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
+%%
+%% 
+%%
+%% Author(s)     : Fernando Cacciola <fernando.cacciola@geometryfactory.com>
+
+\begin{ccRefFunctionObjectConcept}{GetPlacement}
+
+%% \ccHtmlCrossLink{}     %% add further rules for cross referencing links
+%% \ccHtmlIndexC[concept]{} %% add further index entries
+
+\ccDefinition
+
+The concept \ccRefName\ describes the requirements for the {\em policy
+function object} which gets the {\em collapse placement} of an edge,
+that is, the new position of the vertex that remains after a 
+halfedge-collapse operation.
+
+The placement returned is a \ccc{boost::optional} value (i.e., it can
+be absent). An absent result indicates that the remaining vertex 
+must be kept in place, not moved to a new position.
+
+\ccRefines
+\ccc{DefaultConstructible}\\
+\ccc{CopyConstructible}
+
+\ccTypes
+  \ccNestedType{Profile}
+  {The type of the edge profile cache. Must be a model of the \ccc{EdgeProfile} concept.}{}
+\ccGlue    
+  \ccTypedef{typename CGAL::halfedge_graph_traits<ECM>::Point Point;}
+  {The point type for the surface vertex.  Must be a model of \ccc{Point_3}.}
+\ccGlue    
+  \ccTypedef{boost::optional<Point> result_type;}{The type of the result (an optional point).}
+
+\ccCreationVariable{gp} 
+
+\ccOperations
+
+\ccTagFullDeclarations
+  \ccMemberFunction{ result_type operator()( Profile const& edge_profile ) const; }
+  {Computes and returns the placement, that is, the position of the vertex 
+  which replaces the collapsing edge (represented by its profile).}
+  
+\ccHasModels
+\ccRefIdfierPage{CGAL::Surface_mesh_simplification::Midpoint_placement<ECM>}\\
+\ccRefIdfierPage{CGAL::Surface_mesh_simplification::LindstromTurk_placement<ECM>}
+
+\end{ccRefFunctionObjectConcept}
+
+% +------------------------------------------------------------------------+
+%%RefPage: end of main body, begin of footer
+% EOF
+% +------------------------------------------------------------------------+

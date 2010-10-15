@@ -1,0 +1,210 @@
+% =============================================================================
+% The CGAL Developers' Manual
+% Chapter: Debugging Tips
+% -----------------------------------------------------------------------------
+% file   : debugging.tex
+% authors: Oren Nechushtan <theoren@math.tau.ac.il>
+% -----------------------------------------------------------------------------
+% $Id$
+% $Date$
+% =============================================================================
+
+\chapter{Debugging Tips\label{chap:debugging}}
+\ccChapterRelease{Chapter Version: 1.0}
+\ccChapterAuthor{Oren Nechushtan ({\tt theoren@math.tau.ac.il })}
+
+\ccIndexMainItemBegin{debugging}
+
+Efficient debugging techniques can become an asset when writing geometric 
+libraries such as \cgal. 
+This chapter discusses debugging-related issues, like how to use 
+the demo as a powerful debugger (Section~\ref{sec:graphical_debugging}), 
+why and how to check your geometric predicates 
+(Section~\ref{sec:debugging_cross_checker}), and what 
+to do in order to evaluate handles and iterators during the debugging phase
+(Section~\ref{sec:debugging_handles_and_it}).
+
+\section{Graphical debugging\label{sec:graphical_debugging}}
+\ccIndexSubitemBegin{debugging}{graphical}
+
+\cgal\ packages usually provide a graphical demo that demostrates the 
+functionality in the package.  Many times this demo is simply a fancier
+version of a program that was used in the early stages of development as a
+(graphical) debugging tool.  In many cases, the output of a geometric
+algorithm is much easier to interpret in graphical form than numeric
+form.  Thus you should use the powerful graphical output capabilities
+of \cgal\ (see the \ccAnchor{http://www.cgal.org/Manual/doc_html/frameset/fsSupport.html}{Support Library documentation}) 
+to develop 
+\begin{itemize}
+   \item programs that can be used for debugging the internal workings
+         of your package (\ie, things a user may not have access to)
+   \item interesting and informative demos that highlight the features and, 
+         at the same time, the absence or presence of bugs in your package.  
+         Other demo/debugging programs can be found in the \texttt{demo} 
+         directory \index{demo directory@{\tt demo} directory}
+         of every internal release and \cgal\ installation.
+\end{itemize}
+\ccIndexSubitemEnd{debugging}{graphical}
+
+\section{Cross-checkers\label{sec:debugging_cross_checker}}
+\ccIndexSubitemBegin{debugging}{with cross-checkers}
+\ccIndexMainItemBegin{cross-checker}
+
+A cross-checker is a powerful means to allow for efficient
+maintainence of your code.  A cross-checker for a given concept is a
+model of that concept \ccIndexMainItemDef{cross-checker} that is
+constructed from another model or models (one of which is the one you
+wish to check).  In order to implement the functionality required by
+the concept, the cross-checker will use functions from the models upon
+which it is built and perform tests for validity, etc.\ on them.  If
+the tests succeed, the cross-checker returns the expected result.
+Otherwise, the cross-checker can generate an assertion violation or a
+warning, depending on the severity of the offense.
+
+For example, if you have a version of an algorithm, traits class, or
+kernel that you know works, you can easily use this as an oracle for
+another version of the algorithm, traits class, or kernel that you
+wish to test.  This is easily done because the code in \cgal\ is
+highly templatized.  The cross-checker would simply plug in the two
+different versions of, say, your traits class, as the relevant
+template parameters for two different instantiations of a class, say,
+and then compare the results from using the two different
+instantiations.
+
+\subsection*{An example: Traits class binary cross-checker}
+
+As a more concrete example, assume that you have a traits class concept 
+that requires a nested type \ccc{X_curve} and a function
+
+\ccGlobalFunction{bool curve_is_vertical(const X_curve & cv) const;}
+%\ccc{bool curve_is_vertical(const X_curve & cv) const;}
+
+A binary cross-checker for this concept might look like 
+%\begin{ccExampleCode} 
+\begin{verbatim}
+template <class Traits1,class Traits2,class Adapter>
+class Binary_traits_checker{
+
+Traits1 tr1;
+Traits1 tr2;
+Adapter P;
+
+public:
+
+typedef typename Traits1::X_curve X_curve;
+
+Traits_binary_checker(Traits1 tr1_,Traits2 tr2_,Adapter P_) :
+tr1(tr1_),tr2(tr2_),P(P_){};
+
+bool curve_is_vertical(const X_curve & cv) const;
+
+}
+\end{verbatim}
+
+and possibly be implemented as 
+
+\begin{verbatim}
+bool curve_is_vertical(const X_curve & cv) const
+{
+    CGAL_assertion(tr1.curve_is_vertical(cv)==tr2.curve_is_vertical(P(cv)));
+    return tr1.curve_is_vertical(cv);
+}
+\end{verbatim}
+
+Notice that the class \ccc{Binary_triats_checker} has template parameters 
+named \ccc{Traits1} and \ccc{Traits2}, and a third parameter named 
+\ccc{Adapter}. One of the traits classes is the one to be tested and the
+other is (presumably) a traits class that always gives the right answer.
+The \ccc{Adapter} is needed since the \ccc{X_curve} types 
+for \ccc{Traits1} and \ccc{Traits2} might be different. 
+This cross-checker does nothing other then asserting that the two traits 
+classes return the same values by calling the 
+the counterparts in the member traits classes 
+(\ccc{tr1},\ccc{tr2}) and comparing the results.
+\ccIndexMainItemEnd{cross-checker}
+\ccIndexSubitemEnd{debugging}{with cross-checkers}
+
+
+\section{Examining the values of variables\label{sec:debugging_handles_and_it}}
+\ccIndexSubitemBegin{debugging}{interactive}
+\ccIndexSubitemBegin{handles}{and debugging}
+
+When using an interactive debugger, one often wishes to see the value of
+a variable, such as the $y$-value of a segment's source point. Thus one
+would naturally issue a command such as
+\begin{verbatim}
+    print segment.source().y()
+\end{verbatim}
+This most often produces disappointingly unrevealing results, \eg, an
+error message saying the value cannot be evaluated because functions may
+be inlined.  
+
+We recommend the following approaches to work around (or avoid) this 
+and similar problems:
+\begin{itemize}
+   \item Use the \ccc{Simple_cartesian} kernel 
+         \ccIndexSubitem{kernel}{\ccFont Simple_cartesian}
+         (Chapter~\ref{chap:kernels}), which does not do reference
+         counting and uses no handles so data member values can be inspected
+         directly.\index{debugging!with \ccc{Simple_cartesian}}
+         \index{Simple_cartesian kernel@\ccc{Simple_cartesian} kernel}
+   \item Print the values by following the pointers in the handles used to 
+         represent objects.  For example, for the segment above, the statement
+         \begin{verbatim}
+            print s.ptr->start->ptr->e1
+         \end{verbatim}
+         is likely to work.  This technique can also work for non-kernel 
+         handles, such as \ccc{Halfedge_handle} and \ccc{Vertex_handle}.
+         One must know, of course, the right names for the data members,
+         but this you can find out by printing the things that pointers
+         point to.   For example,
+         \begin{verbatim}
+            print *s.ptr
+         \end{verbatim}
+         In the case of the planar map package, these handles are actually 
+         polyhedron iterators. 
+         If $h$ is a halfedge of a planar map and you want to know the curve 
+         associated with it, then if
+         \begin{verbatim}
+          print h->curve()
+         \end{verbatim}
+         fails, try using 
+         \begin{verbatim}
+          print h.nt.node->cv
+         \end{verbatim}
+         instead.
+
+         For a vertex $v$ of a planar map, if 
+         \begin{verbatim}
+          print v->point()
+         \end{verbatim}
+         fails, use  
+         \begin{verbatim}
+           print v.nt.node->p
+         \end{verbatim}
+         instead.
+\end{itemize}
+
+Note: You can also use watches to continously examine such values during 
+execution.
+\ccIndexSubitemEnd{debugging}{interactive}
+\ccIndexSubitemEnd{handles}{and debugging}
+\ccIndexMainItemEnd{debugging}
+
+\InternalOnly{
+
+\section{Requirements and recommendations\label{sec:debugging_req_and_rec}}
+
+\noindent
+Requirements:
+\begin{itemize}
+   \item Test and debug your code \textbf{before} submitting it.
+\end{itemize}
+
+\noindent
+Recommendations:
+\begin{itemize}
+   \item Don't write buggy code \texttt{:-)}.
+\end{itemize}
+
+}

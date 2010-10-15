@@ -1,0 +1,369 @@
+%% ============================================================================
+%% The CGAL Reference Manual
+%% Chapter: STL Extensions - The Reference Part
+%% ----------------------------------------------------------------------------
+%% file  : doc_tex/STL_Extension_ref/multiset.tex
+%% author: Ron Wein
+%% ----------------------------------------------------------------------------
+%% $CGAL_Chapter: STL_Extension $
+%% $Id$
+%% $Date$
+%% ============================================================================
+
+%% +=========================================================================+
+
+\begin{ccRefClass}{Multiset<Type,Compare,Allocator>}
+\label{class:cgal_multimap}
+\ccCreationVariable{s}
+
+\ccDefinition
+%============
+
+An instance \ccVar\ of the parametrized data type \ccRefName\ is a
+multi-set of elements of type \ccc{Type}, represented as a red-black tree
+(see~\cite[Chapter~13]{clrs-ia-01} for an excellent introduction to red-black
+trees).
+The main difference between \ccRefName\ and \stl's \ccc{multiset} is that
+the latter uses a less-than functor with a Boolean return type, while our
+\ccRefName\ class is parameterized by a comparison functor \ccc{Compare} that
+returns the three-valued \ccc{Comparison_result} (namely it returns either
+\ccc{SMALLER}, \ccc{EQUAL}, or \ccc{LARGER}). It is thus possible to maintain
+the underlying red-black tree with less invocations of the comparison functor.
+This leads to a speedup of about 5\% even if we maintain a set of integers.
+When each comparison of two elements of type \ccc{Type} is an expensive
+operation (for example, when they are geometric entities represented using
+exact arithmetic), the usage of a three-valued comparison functor can lead to
+considerable decrease in the running times.
+
+Moreover, \ccRefName\ allows the insertion of an element into the set given
+its {\em exact} position, and not just using an insertion hint, as done by 
+\ccc{std::multiset}. This can further reduce the running times, as additional
+comparison operations can be avoided.
+
+In addition, the \ccRefName\ guarantees that the order of elements sent to the
+comparison functor is fixed. For example, if we insert a new element \ccc{x}
+into the set (or erase an element from the set), then we always invoke 
+\ccc{Compare() (x, y)} (and never \ccc{Compare() (y, x)}), where \ccc{y} is an
+element already stored in the set. This behavior, not supported by
+\ccc{std::multiset}, is sometimes crucial for designing more efficient
+comparison predicates.
+
+\ccRefName\ also allows for look-up of keys whose type may differ from
+\ccc{Type}, as long as users supply a comparison functor \ccc{CompareKey},
+where \ccc{CompareKey() (key, y)} returns the three-valued
+\ccc{Comparison_result} (\ccc{key} is the look-up key and \ccc{y} is an
+element of type \ccc{Type}). Indeed, it is very convenient to look-up
+equivalent objects in the set given just by their key. We note however that
+it is also possible to use a key of type \ccc{Type} and to employ the default
+\ccc{Compare} functor for the look-up, as done when using the
+\ccc{std::multiset} class.
+
+\begin{ccAdvanced}
+
+Finally, \ccRefName\ introduces the \ccc{catenate()} and \ccc{split()}
+functions. The first function operates on \ccVar\ and accepts a second
+set \ccVar', such that the maximum element in \ccVar\ is not greater than
+the minimal element in \ccVar', and concatenates \ccVar' to \ccVar. The
+second function splits \ccVar\ into two sets,one containing all the
+elements that are less than a given key, and the other contains all
+elements greater than (or equal to) this key.
+
+\end{ccAdvanced}
+
+\ccParameters
+%------------
+
+The \ccc{Multiset} class-template has three parameters:
+\begin{itemize}
+\item \ccc{Type} --- the type of the stored elements.
+\item \ccc{Compare} --- the comparison-functor type. This type should provide
+    the following operator for comparing two \ccc{Type} elements, namely: \\
+  \ccc{Comparison_result operator() (const Type& t1, const Type& t2) const;}\\
+    The \ccc{CGAL::Compare<Type>} functor is used by default. In this case,
+    \ccc{Type} must support an equality operator (\ccc{operator==}) and a
+    less-than operator (\ccc{operator<}).
+\item \ccc{Allocator} --- the allocator type. \\
+    \ccc{CGAL_ALLOCATOR} is used by default.
+\end{itemize}
+
+\ccInclude{CGAL/Multiset.h}
+
+\ccHeading{Assertions}
+%---------------------
+
+The assertion and precondition flags for the \ccc{Multiset} class
+use \ccc{MULTISET} in their names (i.e., \ccc{CGAL_MULTISET_NO_ASSERTIONS} and
+\ccc{CGAL_MULTISET_NO_PRECONDITIONS}).
+
+\ccTypes
+%-------
+
+In compliance with \stl, the types \ccc{value_type} and \ccc{key_type}
+(both equivalent to \ccc{Type}), \ccc{reference} and \ccc{const_reference}
+(reference to a value-type), \ccc{key_compare} and \ccc{value_compare}
+(both equivalent to \ccc{Compare}), \ccc{size_type} and \ccc{difference_type}
+are defined as well.
+
+\ccNestedType{iterator}{}
+\ccGlue
+\ccNestedType{const_iterator}
+{bi-directional iterators for the elements stored in the set.}
+
+\ccNestedType{reverse_iterator}{}
+\ccGlue
+\ccNestedType{const_reverse_iterator}
+{reverse bi-directional iterators for the elements stored in the set.}
+
+\ccCreation
+%----------
+
+\ccConstructor{Multiset<Type,Compare,Allocator>();}{ 
+    creates an an empty set \ccVar\ that uses a default comparison
+    functor.}
+
+\ccConstructor{Multiset<Type,Compare,Allocator>( 
+               const Compare& comp);}{
+    creates an an empty set \ccVar\ that uses the given comparison
+    functor \ccc{comp}.}
+
+\ccConstructor{template <class InputIterator>
+               Multiset<Type,Compare,Allocator>( 
+               InputIterator first, InputIterator last,
+               const Compare& comp = Compare());}{
+    creates a set \ccVar\ containing all elements in the range
+    \ccc{[first, last)}, that uses the comparison
+    functor \ccc{comp}.}
+
+\ccConstructor{Multiset<Type,Compare,Allocator>(
+	       const Multiset<Type,Compare,Allocator>& other);}{ 
+    copy constructor.}
+
+\ccMethod{const Multiset<Type,Compare,Allocator>& operator= (
+	  const Multiset<Type,Compare,Allocator>& other);}{ 
+    assignment operator.}
+
+\ccMethod{void swap (Multiset<Type,Compare,Allocator>& other);}{
+    swaps the contents of \ccVar\ with those of the other set.}
+
+\ccHeading{Access Member Functions}
+%----------------------------------
+
+\ccMethod{Compare key_comp() const;}{
+    the comparison functor used.}
+\ccGlue
+\ccMethod{Compare value_comp() const;}{
+    the comparison functor used (same as above).
+    Both functions have a non-const version that return a reference
+    to the comparison functor.}
+
+\ccMethod{bool empty ();}{
+    returns \ccc{true} if the set is empty, \ccc{false} otherwise.}
+
+\ccMethod{size_t size ();}{
+    returns the number of elements stored in the set.}
+
+\ccMethod{size_t max_size ();}{
+    returns the maximal number of elements the set can store
+    (same as \ccc{size()}).}
+
+\ccMethod{iterator begin();}{
+    returns an iterator pointing to the first element stored in the set
+    (a \ccc{const} version is also available).}
+
+\ccMethod{iterator end();}{
+    returns an iterator pointing beyond the last element stored in the set
+    (a \ccc{const} version is also available).}
+
+\ccMethod{reverse_iterator rbegin();}{
+    returns a reverse iterator pointing beyond the last element stored in the
+    set (a \ccc{const} version is also available).}
+
+\ccMethod{reverse_iterator rend();}{
+    returns a reverse iterator pointing to the first element stored in the set
+    (a \ccc{const} version is also available).}
+
+\ccHeading{Comparison Operations}
+%--------------------------------
+
+\ccMethod{bool operator== (
+	  const Multiset<Type,Compare,Allocator>& other) const;}{ 
+    returns \ccc{true} if the sequences of elements in the two sets are
+    pairwise equal (using the comparison functor).}
+
+\ccMethod{bool operator< (
+	  const Multiset<Type,Compare,Allocator>& other) const;}{ 
+    returns \ccc{true} if the element sequence in \ccVar{} is
+    lexicographically smaller than the element sequence of \ccc{other}.}
+
+\ccHeading{Insertion Methods}
+%----------------------------
+
+\ccMethod{iterator insert (const Type& x);}{
+    inserts the element \ccc{x} into the set and returns an iterator pointing
+    to the newly inserted element.}
+
+\ccMethod{template <class InputIterator>
+          void insert (InputIterator first, InputIterator last);}{
+    inserts all elements in the range \ccc{[first, last)} into
+    the set.}
+
+\ccMethod{iterator insert (iterator position, const Type& x);}{
+    inserts the element \ccc{x} with a given iterator used as a hint for the
+    position of the new element. It Returns an iterator pointing to the
+    newly inserted element.}
+
+\ccMethod{iterator insert_before (iterator position, const Type& x);}{
+    inserts the element \ccc{x} as the predecessor of the element at the given
+    position.
+    \ccPrecond\ The operation does not violate the set order --- that is,
+                \ccc{x} is not greater than the element pointed by
+                \ccc{position} and not less than its current predecessor.}
+
+\ccMethod{iterator insert_after (iterator position, const Type& x);}{
+    inserts the element \ccc{x} as the successor of the element at the given
+    position.
+    \ccPrecond\ The operation does not violate the set order --- that is,
+                \ccc{x} is not less than the element pointed by
+                \ccc{position} and not greater than its current successor.}
+
+\ccHeading{Removal Methods}
+%--------------------------
+
+\ccMethod{size_t erase (const Type& x);}{
+    erases all elements equivalent to \ccc{x} from the set and returns the
+    number of erased elements.}
+
+\ccMethod{void erase (iterator position);}{
+    erases the element pointed by \ccc{position}.}
+
+\ccMethod{void clear ();}{
+    clears the set (erases all stored elements).}
+
+\ccHeading{Look-up Methods}
+%--------------------------
+
+All methods listed in this section can also accept a \ccc{Type} element
+as a look-up key. In this case, it is not necessary to supply a \ccc{CompareKey}
+functor, as the \ccc{Compare} functor will be used by default.
+
+\ccMethod{template <class Key, class CompareKey>
+          iterator find (const Key& key, const CompareKey& comp_key);}{
+    searches for the an element equivalent to \ccc{key} in the set. If the
+    set contains objects equivalent to \ccc{key}, it returns an iterator
+    pointing to the first one. Otherwise, \ccc{end()} is returned (a 
+    \ccc{const} version is also available).}
+
+\ccMethod{template <class Key, class CompareKey>
+          size_t count (const Key& key, const CompareKey& comp_key) const;}{
+    returns the number of elements equivalent to \ccc{key} in the set.}
+
+\ccMethod{template <class Key, class CompareKey>
+          iterator lower_bound (const Key& key, const CompareKey& comp_key);}{
+    returns an iterator pointing to the first element in the set that is not 
+    less than \ccc{key}. If all set elements are less than \ccc{key}, 
+    \ccc{end()} is returned (a \ccc{const} version is also available).}
+
+\ccMethod{template <class Key, class CompareKey>
+          iterator upper_bound (const Key& key, const CompareKey& comp_key);}{
+    returns an iterator pointing to the first element in the set that is 
+    greater than \ccc{key}. If no set element is greater than \ccc{key}, 
+    \ccc{end()} is returned (a \ccc{const} version is also available).}
+
+\ccMethod{template <class Key, class CompareKey>
+          std::pair<iterator,iterator> 
+          equal_range (const Key& key, const CompareKey& comp_key);}{
+    returns the range of set elements equivalent to the given key, namely
+    \ccc{(lower_bound(key), upper_bound(key))} (a \ccc{const} version is 
+    also available).}
+
+\ccMethod{template <class Key, class CompareKey>
+          std::pair<iterator,bool> 
+          find_lower (const Key& key, const CompareKey& comp_key);}{
+    returns a pair comprised of \ccc{lower_bound(key)} and a Boolean flag
+    indicating whether this iterator points to an element equivalent to
+    the given key (a \ccc{const} version is also available).}
+
+\begin{ccAdvanced}
+
+\ccHeading{Special Operations}
+%-----------------------------
+
+\ccMethod{void replace (iterator position, const Type& x);}{
+    replaces the element stored at the given position with \ccc{x}.
+    \ccPrecond\ The operation does not violate the set order --- that is,
+                \ccc{x} is not less that \ccc{position}'s predecessor and
+                not greater than its successor.}
+
+\ccMethod{void swap (iterator pos1, iterator pos2);}{
+    swaps places between the two elements given by \ccc{pos1} and  \ccc{pos2}.
+    \ccPrecond\ The operation does not violate the set order --- that is,
+                \ccc{pos1} and \ccc{pos2} store equivalent elements.}
+
+\def\ccLongParamLayout{\ccTrue}
+\ccMethod{void catenate (Self& s_prime);}{
+    concatenates all elements in \ccc{s_prime} into \ccVar\ and clears
+    \ccc{s_prime}.
+    All iterators to \ccVar\ and to \ccc{s_prime} remain valid.
+    \ccPrecond\ The maximal element in \ccVar\ is not greater than the minimal
+                element in \ccc{s_prime}.}
+
+\ccMethod{template <class Key, class CompareKey>
+          void split (Key key, CompareKey comp_key, Self& s_prime);}{
+    splits \ccVar\, such that it contains all elements that are less than
+    the given \ccc{key} and such that \ccc{s_prime} contains all other elements.
+    \ccPrecond\ \ccc{s_prime} is initially empty.}
+
+\ccMethod{void split (iterator position, Self& s_prime);}{
+    splits \ccVar\, such that it contains all set elements in the range
+    \ccc{[begin, position)} and such that \ccc{s_prime} contains all elements
+    in the range \ccc{[position, end())}.
+    \ccPrecond\ \ccc{s_prime} is initially empty.}
+\def\ccLongParamLayout{\ccTrue}
+
+\end{ccAdvanced}
+
+\ccImplementation
+%================
+
+\ccc{Multiset} uses a proprietary implementation of a red-black tree
+data-structure. The red-black tree invariants guarantee that the height of a 
+tree containing $n$ elements is $O(\log{n})$ (more precisely, it is bounded by 
+$2 \log_{2}{n}$). As a consequence, all methods that accept an element and need
+to locate it in the tree (namely \ccc{insert(x)}, \ccc{erase(x)}, 
+\ccc{find(x)}, \ccc{count(x)}, \ccc{lower_bound(x)} , \ccc{upper_bound(x)},
+ \ccc{find_lower(x)} and  \ccc{equal_range(x)}) take $O(\log{n})$ time and
+perform $O(\log{n})$ comparison operations.
+
+On the other hand, the set operations that accept a position iterator (namely
+\ccc{insert_before(pos, x)}, \ccc{insert_after(pos, x)} and \ccc{erase(pos)})
+are much more efficient as they can be performed at a {\em constant} amortized 
+cost (see~\cite{gs-dfbt-78} and~\cite{t-dsna-83} for more details).
+More important, these set operations require {\em no} comparison operations.
+Therefore, it is highly recommended to maintain the set via iterators
+to the stored elements, whenever possible. The function \ccc{insert(pos, x)} 
+is safer to use, but it takes amortized $O(\min\{d,\log{n}\})$ time, where $d$
+is the distance between the given position and the true position of \ccc{x}. 
+In addition, it always performs at least two comparison operations.
+
+\begin{ccAdvanced}
+
+The \ccc{catenate()} and \ccc{split()} functions are also very efficient, and
+can be performed in $O(\log{n})$ time, where $n$ is the total number of
+elements in the sets, and without performing any comparison operations
+(see~\cite{t-dsna-83} for the details).
+Note however that the size of two sets resulting from a split operation is
+initially unknown, as it is impossible to compute it in less than linear time.
+Thus, the first invocation of \ccc{size()} on such a set takes linear time,
+and {\em not} constant time.
+
+\end{ccAdvanced}
+
+The design is derived from the \stl\ \ccc{multiset} class-template (see,
+e.g,~\cite{cgal:ms-strg-96}), where the main differences between the two
+classes are highlighted in the class definition above.
+
+\end{ccRefClass}
+
+
+
+

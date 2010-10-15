@@ -1,0 +1,46 @@
+% +------------------------------------------------------------------------+
+% | Reference manual page: Simulator_objects_listener.tex
+% +------------------------------------------------------------------------+
+% | 20.03.2005   Author
+% | Package: Kinetic_data_structures
+% | 
+\RCSdef{\RCSSimulatorobjectslistenerRev}{$Id$}
+\RCSdefDate{\RCSSimulatorobjectslistenerDate}{$Date$}
+% |
+%%RefPage: end of header, begin of main body
+% +------------------------------------------------------------------------+
+
+
+\begin{ccRefClass}{Kinetic::Simulator_objects_listener<Simulator_listener, KDS>}  %% add template arg's if necessary
+
+%% \ccHtmlCrossLink{}     %% add further rules for cross referencing links
+%% \ccHtmlIndexC[class]{} %% add further index entries
+
+\ccDefinition
+  
+The class \ccRefName\ is a helper for classes which wish to react to
+\ccc{Simulator::Listener::DIRECTION_OF_TIME} notifications. The helper
+object translates such notifications \ccc{reverse_time} function calls
+on the responder. See \ccc{Kinetic::Qt_moving_points_2} for a
+simple example of using this helper function.
+
+\ccInclude{CGAL/Kinetic/Simulator_objects_listener.h}
+
+
+\ccCreation
+\ccCreationVariable{a}  %% choose variable name
+
+\ccConstructor{Simulator_objects_listener(Simulator::Handle, KDS*);}{default constructor.}
+
+\ccSeeAlso
+
+\ccc{Kinetic::Listener}.
+
+
+\end{ccRefClass}
+
+% +------------------------------------------------------------------------+
+%%RefPage: end of main body, begin of footer
+% EOF
+% +------------------------------------------------------------------------+
+

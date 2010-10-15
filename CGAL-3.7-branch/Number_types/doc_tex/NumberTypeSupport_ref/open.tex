@@ -1,0 +1,70 @@
+\section{Overview - TODO - OPEN Questions for Release 3.3}
+
+{\em this section is for the reviewer and to be removed for the release. }
+
+
+OPEN:
+\begin{itemize}
+\item there is a problem with io stream operators for CORE types in case 
+      gmpxx.h is included too. 
+\item extra review of \ccc{Root_of_2} ?
+\end{itemize}
+
+
+DONE:
+\begin{itemize}
+\item rm inexact version of \ccc{MP_float}. 
+\item \ccc{utils.h} and \ccc{utils_classes.h} left in NTS\\
+      contains: \\
+      \ccc{min}, \ccc{max}, \ccc{is_valid}\\
+      \ccc{Min}, \ccc{Max}, \ccc{Is_valid}\\
+      TODO: mv to STL-extension\\
+      TODO: wrap up STL-extension ! 
+\end{itemize}
+
+Remarks:
+\begin{itemize}
+\item io support: keep \ccc{Output_rep} 
+\end{itemize}
+
+Keep in mind: 
+\begin{itemize}
+\item \ccc{mpf_class} is not supported yet. why not? is it possible?  
+\item can we do better for \ccc{mpz_class}, \ccc{mpq_class }
+\item what about namespace of leda types ? 
+     \ccc{leda_integer} vs. \ccc{leda::integer}
+\end{itemize}
+
+\subsection{some remarks on current status of number type}
+\begin{itemize}
+\item  \ccc{Interval_nt}\\
+       consider \ccc{Interval_nt} as not exact
+\item \ccc{Lazy_exact_nt}:\\
+      Now supports all algebraic structures that are real embeddable.\\
+      Supports \ccc{Coercion_traits< Lazy_exact_nt<A> , Lazy_exact_nt<B> >}\\ 
+      From Rons email: The output behavior is not the same, as the internal NT. 
+
+\item \ccc{Counted_number}:\\
+        The type has been left undocumented.\\
+        Implementation supports all algebraic structures, all functions are counted.\\
+        Functors of \ccc{RealEmbeddable} are not counted. \\
+        It's current implementation does not use the \ccc{result_type} of the used 
+        functors. i.e. does not fully support \ccc{Interval_nt} as internal type.
+
+\item \ccc{mpz_class}:\\
+       Implementation supports expression templates, 
+       up to the same level as the old CGAL implementation.       
+       i.e. it is possible to call CGAL::square(x+x) but the result is 
+       \ccc{mpz_class } and not the according expression template.  
+
+\item \ccc{mpq_class}:\\
+        same as \ccc{mpz_class}.
+
+\item \ccc{Quotient<NT>}\\
+        For an exact NT it is always a model of \ccc{Field}. (implemented)\\
+        For inexact types it is a FieldWithSqrt in case the internal type has a sqrt.
+        This is not implemented yet, since it is unclear what this sqrt is good for. 
+        Since all inexact types with sqrt are Fields, and thus it make no sense to use 
+        them as the internal type.  \\
+        Supports \ccc{Coercion_traits}. 
+\end{itemize}

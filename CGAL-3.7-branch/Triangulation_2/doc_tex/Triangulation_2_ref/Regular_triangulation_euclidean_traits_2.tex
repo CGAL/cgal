@@ -1,0 +1,55 @@
+% +------------------------------------------------------------------------+
+% | Reference manual page: Regular_triangulation_traits_2.tex
+% +------------------------------------------------------------------------+
+% | 12.04.2000   Author
+% | Package: Package
+% | 
+\RCSdef{\RCSRegulartriangulationtraitsRev}{$Id$}
+\RCSdefDate{\RCSRegulartriangulationtraitsDate}{$Date$}
+% |
+%%RefPage: end of header, begin of main body
+% +------------------------------------------------------------------------+
+
+
+\begin{ccRefClass}{Regular_triangulation_euclidean_traits_2<K,Weight>}  %% add template arg's if necessary
+
+%% \ccHtmlCrossLink{}     %% add further rules for cross referencing links
+%% \ccHtmlIndexC[class]{} %% add further index entries
+\ccCreationVariable{traits}
+\ccDefinition
+  
+
+ \ccRefName\  is a  model for the concept \ccc{RegularTriangulationTraits_2}
+This traits class is templated by a kernel class \ccc{K}
+and a weight type \ccc{Weight}.
+This class inherits from \ccc{K}
+and uses a \ccc{Weighted_point} type
+derived from the type \ccc{K::Point_2}.
+
+Note that this template class is specialized for
+\ccc{CGAL::Exact_predicates_inexact_constructions_kernel}, so that it is as if
+\ccc{Regular_triangulation_filtered_traits_2} was used, i.e. you get
+filtered predicates automatically.
+
+\ccInclude{CGAL/Regular_triangulation_euclidean_traits_2.h}
+
+\ccIsModel
+\ccc{RegularTriangulationTraits_2}
+
+\ccInheritsFrom
+\ccc{K}
+
+
+\ccSeeAlso
+\ccc{RegularTriangulationTraits_2}\\
+\ccc{CGAL::Regular_triangulation_filtered_traits_2}\\
+\ccc{CGAL::Regular_triangulation_2}
+
+
+\end{ccRefClass}
+
+% +------------------------------------------------------------------------+
+%%RefPage: end of main body, begin of footer
+% EOF
+% +------------------------------------------------------------------------+
+

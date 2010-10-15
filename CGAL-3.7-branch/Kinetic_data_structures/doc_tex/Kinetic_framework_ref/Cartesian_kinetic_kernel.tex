@@ -1,0 +1,82 @@
+% +------------------------------------------------------------------------+
+% | Reference manual page: Cartesian.tex
+% +------------------------------------------------------------------------+
+% | 20.03.2005   Author
+% | Package: Kinetic_data_structures
+% | 
+\RCSdef{\RCSCartesiankinetickernelRev}{$Id$}
+\RCSdefDate{\RCSCartesiankinetickernelDate}{$Date$}
+% |
+%%RefPage: end of header, begin of main body
+% +------------------------------------------------------------------------+
+
+
+\begin{ccRefClass}{Kinetic::Cartesian<FunctionKernel>}  %% add template arg's if necessary
+
+%% \ccHtmlCrossLink{}     %% add further rules for cross referencing links
+%% \ccHtmlIndexC[class]{} %% add further index entries
+
+\ccDefinition
+  
+This class provides a model of \ccc{Kinetic::Kernel} for use with general Cartesian geometry.
+
+The IO format for points is currently $p_0$, $p_1$, ... $w$. $p_i$ and $w$ are instances of Function. There IO format is typically $c_0+c_1t+c_2t^2+...$. Beware of issues with CGAL IO of the coeffients as exact number typles often require that the coefficents be expressed as $a/b$ even when $b$ is 1.
+
+\ccInclude{CGAL/Kinetic/Cartesian.h}
+
+\ccTypes
+
+\ccNestedType{Certificate}{This is a model of \ccc{Kinetic::Certificate}.}
+
+\ccNestedType{Point_1}{}
+
+\ccNestedType{Point_2}{}
+
+\ccNestedType{Point_3}{}
+
+\ccNestedType{Weighted_point_3}{}
+
+The following are functors which generate \ccc{Certificate} objects. Each has a corresponding \ccc{_object} method which creates the functor. They are models of \ccc{Kinetic::CertificateGenerator}.
+
+\ccNestedType{Orientation_2}{}
+
+\ccNestedType{Orientation_3}{}
+
+\ccNestedType{Side_of_oriented_circle_2}{}
+
+\ccNestedType{Side_of_oriented_sphere_3}{}
+
+\ccNestedType{Power_test_3}{}
+
+\ccNestedType{Weighted_orientation_3}{}
+
+\ccNestedType{Compare_x_1}{}
+
+\ccNestedType{Compare_x_2}{}
+
+\ccNestedType{Compare_y_2}{}
+
+\ccNestedType{Compare_x_3}{}
+
+\ccNestedType{Compare_y_3}{}
+
+\ccNestedType{Compare_z_3}{}
+
+\ccNestedType{Compare_distance_2}{}
+
+\ccNestedType{Compare_distance_3}{}
+
+
+
+\ccIsModel
+
+\ccc{Kinetic::Kernel}.
+
+
+\end{ccRefClass}
+
+% +------------------------------------------------------------------------+
+%%RefPage: end of main body, begin of footer
+% EOF
+% +------------------------------------------------------------------------+
+

@@ -1,0 +1,75 @@
+% +------------------------------------------------------------------------+
+% | Reference manual page: Ridge_line.tex
+% +------------------------------------------------------------------------+
+% | 15.09.2006   Marc Pouget and Frédéric Cazals
+% | Package: Ridges_3
+% | 
+\RCSdef{\RCSRidgelineRev}{$Id$}
+\RCSdefDate{\RCSRidgelineDate}{$Date$}
+% |
+%%RefPage: end of header, begin of main body
+% +------------------------------------------------------------------------+
+
+
+\begin{ccRefClass}{Ridge_line<TriangulatedSurfaceMesh>}  %% add template arg's if necessary
+
+%% \ccHtmlCrossLink{}     %% add further rules for cross referencing links
+%% \ccHtmlIndexC[class]{} %% add further index entries
+
+\ccDefinition
+  
+The class \ccRefName\ stores the description of a ridge line. The list
+of halfedges defines a connected sequence of edges (but not as
+oriented halfedges). The scalar $b$ paired with a halfedge $pq$ is the
+barycentric coordinate of the crossing point $r$ with the ridge  : 
+$r = b\times p + (1-b)\times q$.
+
+\ccInclude{CGAL/Ridges.h}
+
+
+\ccTypes
+
+\ccTypedef{typedef typename TriangulatedSurfaceMesh::Traits::FT  FT;}{}
+\ccGlue
+\ccTypedef{typedef typename TriangulatedSurfaceMesh::Halfedge_handle  Halfedge_handle;}{}
+\ccGlue
+\ccTypedef{ typedef std::pair< Halfedge_handle, FT>           Ridge_halfhedge;}
+{A halfedge crossed by a ridge is paired with the barycentric
+  coordinate of the crossing point.}
+
+
+\ccCreation
+\ccCreationVariable{ridge_line}  %% choose variable name
+
+\ccConstructor{Ridge_line();}{default constructor.}
+
+\ccAccessFunctions
+% +--------------------------------------------------------------
+\ccMethod{const Ridge_type line_type();}{}
+\ccGlue
+%\ccMethod{Ridge_type& line_type();}{}
+\ccMethod{const FT strength();}{}
+\ccGlue
+%\ccMethod{FT& strength();}{}
+\ccMethod{const FT sharpness();}{}
+\ccGlue
+%\ccMethod{FT& sharpness(); }{}
+\ccMethod{const std::list<Ridge_halfhedge>* line();}{}
+\ccGlue
+%\ccMethod{std::list<ridge_halfhedge>* line();}{}
+
+The opertor $<<$ is overloaded for this class and returns the line
+type, strength, sharpness and coordinates of the points of the
+polyline.
+
+\ccSeeAlso
+
+\ccc{Ridge_approximation},
+
+\end{ccRefClass}
+
+% +------------------------------------------------------------------------+
+%%RefPage: end of main body, begin of footer
+% EOF
+% +------------------------------------------------------------------------+
+

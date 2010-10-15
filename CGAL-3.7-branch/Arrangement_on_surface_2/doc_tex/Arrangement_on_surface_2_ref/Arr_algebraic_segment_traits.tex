@@ -1,0 +1,337 @@
+% +------------------------------------------------------------------------+
+% | Reference manual page: Arr_algebraic_segment_traits.tex
+% +------------------------------------------------------------------------+
+% | 
+% | Package: Arrangement_2
+% | 
+% +------------------------------------------------------------------------+
+
+\ccRefPageBegin
+\begin{ccRefClass}{Arr_algebraic_segment_traits_2<Coefficient>}
+
+\ccDefinition
+%============
+
+The traits class \ccRefName\ is a model of the \ccc{ArrangementTraits_2}
+concept that handles planar algebraic curves of arbitrary degree, 
+and $x$-monotone of such curves.
+A planar (real) \emph{algebraic curve} 
+is the vanishing set of a polynomial in two variables, that is, the
+curve is defined by the defining equation
+$$f(x):=\sum_{i+j\leq n} a_{ij} x^i y^j =0,$$
+where $n$ is the degree of the curve.
+
+The traits class allows the construction of algebraic curves,
+by specifying their implicit equation. $x$-monotone and vertical segments 
+of a curve can also be defined; unbounded curves and segments are supported. 
+The template parameter \ccc{Coefficient} defines
+the innermost coefficient type of the polynomials. Currently, 
+the types \ccc{leda::integer} and \ccc{CORE::BigInt} are supported as well
+as any instance of \ccc{CGAL::Sqrt_extension} that is instantiated with
+one of the integral types above.
+
+\ccInclude{CGAL/Arr_algebraic_segment_traits_2.h}
+
+\ccIsModel
+  \ccc{ArrangementTraits_2}
+
+\ccTypes
+%-------
+
+\ccNestedType{enum Site_of_point {
+        POINT_IN_INTERIOR = 0,
+        MIN_ENDPOINT = -1,
+        MAX_ENDPOINT = 1 };} 
+        {Value to specify whether a point should be in the interior
+         of a segment, or its minimal point, 
+         or its maximal point in lexicographic order.}
+
+\ccNestedType{Polynomial\_2}{the type for bivariate polynomials,
+        with innermost coefficient type \ccc{Coefficient}.
+        Constitutes a model of the concept \ccc{Polynomial_d} 
+        with two variables.
+        (see page~\ccRefPage{Polynomial_d})}
+
+\ccNestedType{Algebraic\_kernel\_1}{model for the concept 
+      \ccc{AlgebraicKernel_1}}
+
+\ccNestedType{Algebraic\_real\_1}{represents coordinates of points.
+      Typedef from \ccc{Algebraic_kernel_1::Algebraic_real_1}}
+
+\ccNestedType{Bound}{Typedef from \ccc{Algebraic_kernel_1::Bound}}
+
+\subsection*{Class
+         Arr\_algebraic\_segment\_traits\_2$<$Coefficient$>$::Curve\_2}
+%========================================================================
+
+Models the \ccc{ArrangementTraits_2::Curve_2} concept. 
+Represents algebraic curves. Internally, the type stores
+topological-geometric information about the particular curve.
+In order to use internal caching, instances should only be created
+using the \ccc{Construct_curve_2} functor of the traits class.
+
+\begin{ccClass}{Arr_algebraic_segment_traits_2<Coefficient>::Curve_2}
+%======================================================================
+
+\ccCreationVariable{C}
+
+\ccMethod{Polynomial_2 polynomial () const;}
+  {returns the defining polynomial of the curve.}
+
+\end{ccClass}
+
+
+\subsection*{Class
+         Arr\_algebraic\_segment\_traits\_2$<$Coefficient$>$::Point\_2}
+%========================================================================
+
+Models the \ccc{ArrangementBasicTraits_2::Point_2} concept.
+Represents points in $\mathbb{R}^2$. Intersection points of algebraic curves
+are in general non-rational, so we need a data structure that is capable
+of representing arbitrary points with algebraic coordinates.
+
+The traits class represents algebraic coordinates by the type
+\ccc{Algebraic_real_1}, which is a model of the \ccc{AlgebraicReal_1}
+concept.
+A point $p$ is stored by a triple $(x,cv,arcno)$, 
+where $x$ is the $x$-coordinate of a point, $cv$ is an instance 
+of \ccc{Curve_2} that contains the point, (and has no vertical line at $x$),
+and $arcno$ is an \ccc{int}, denoting that $p$ is met as the $arcno$-th
+point when shooting a vertical ray at $x$, starting from $-\infty$
+(where counting starts with $0$). 
+
+In addition to the methods listed below, the copy constructor and assignment
+operator for \ccc{Point_2} objects are also supported.
+
+The functor \ccc{Construct_point_2} constructs \ccc{Point_2} instances.
+
+\begin{ccClass}{Arr_algebraic_segment_traits_2<Coefficient>::Point_2}
+%======================================================================
+
+\ccCreationVariable{p}
+
+\ccMethod{Algebraic_real_1 x () const;}
+  {returns the $x$-coordinate of \ccVar.}
+
+\ccMethod{Algebraic_real_1 y () const;}
+  {returns the $y$-coordinates of \ccVar. \\
+   \textbf{Attention:} As described above, points are not stored
+   by their $y$-coordinate in \ccc{Algebraic_real_1} representation. In fact,
+   this representation must be computed on demand, and might become quite
+   costly for points defined by high-degree polynomials. Therefore, it is
+   recommended to avoid to call this function as much as possible.}
+
+\ccMethod{Curve_2 curve () const;}
+  {returns a \ccc{Curve_2} instance that \ccVar is part of.}
+
+\ccMethod{int arcno () const;}
+  {returns the arc number of \ccVar.}
+
+\ccMethod{std::pair<double,double> to_double () const;}
+  {returns double-approximations of the $x$- and $y$-coordinates.}
+
+\end{ccClass}
+
+
+\subsection*{Class 
+Arr\_algebraic\_segment\_traits\_2$<$Coefficient$>$::X\_monotone\_curve\_2}
+%==============================================================================
+
+Models the \ccc{ArrangementBasicTraits_2::X\_monotone\_curve\_2} concept.
+Represents terminal segments of an algebraic curves,
+that means vertical segments or $x$-monotone segments with no critical
+$x$-coordinate in the interior of their $x$-range.
+Terminal segments might either be bounded or unbounded.
+By definition, each interior point of 
+a non-vertical segment has the same arc number (see the documentation of 
+type \ccc{Point_2} above, which is called the \emph{arc number} of the segment
+(note the arc number at the endpoints might differ).
+Such segments are represented internally by a 4-tuple $(p,q,cv,arcno)$,
+where $p$ and $q$ are the endpoints, $cv$ is the \emph{supporting curve}
+that the segment belongs to, and arcno is the arc number of the segment.
+
+Arbitrary (weakly) $x$-monotone segments are presented by a range 
+of \ccc{X_monotone_curve_2} instances, whose union equals the segment.
+The functor \ccc{Construct_x_monotone_segment_2} allows their construction.
+To construct all (maximal) terminal segments of a curve,
+use the \ccc{Make_x_monotone_2} functor supplied by the traits class.
+
+\begin{ccClass}{Arr_algebraic_segment_traits_2<Coefficient>::X_monotone_curve_2}
+%===========================================================================
+
+\ccCreationVariable{s}
+
+\ccMethod{Curve_2 curve () const;}
+  {returns the supporting algebraic curve of \ccVar.}
+
+\ccMethod{bool is\_vertical () const;}
+  {returns whether \ccVar\ is a vertical segment.}
+
+\ccMethod{bool is\_finite (CGAL::Arr_curve_end ce) const;}
+  {returns whether \ccVar\ has a finite endpoint on the left 
+    (if \ccc{ce==CGAL::ARR_MIN_END}) or on the right 
+    (if \ccc{ce==CGAL::ARR_MAX_END}).}
+
+\ccMethod{Point_2 curve_end (CGAL::Arr_curve_end ce) const;}
+  {returns the left or right endpoint of \ccVar for \ccc{ce==CGAL::ARR_MIN_END}
+   and \ccc{ce==CGAL::ARR_MAX_END}.
+   \ccPrecond(The corresponding curve end is finite)}
+
+\ccMethod{int arcno () const;}
+  {returns the arc number of the segment.
+   \ccPrecond(The segment is non-vertical)}
+
+\ccMethod{Algebraic_real_1 x () const;}
+  {returns the $x$-coordinate of a vertical segment.
+   \ccPrecond(The segment is vertical)}
+
+\end{ccClass}
+
+\ccHeading{Object Creation Functors}
+
+Curves, points, and $x$-monotone segments are created by special functors. 
+The functors are not default constructible; the only possibility to
+obtain them is by the corresponding accessing functions.
+
+\subsection*{Class 
+Arr\_algebraic\_segment\_traits\_2$<$Coefficient$>$::Construct\_curve\_2}
+
+\begin{ccClass}{Arr_algebraic_segment_traits_2<Coefficient>::Construct_curve_2}
+%===========================================================================
+
+\ccCreationVariable{fo}
+
+\ccMethod{Curve_2 operator() (Polynomial_2 p);}
+        {Returns a \ccc{Curve_2} object that represents the curve defined by
+         the polynomial \ccc{p}} 
+
+\ccMethod{Curve_2 operator() (std::string s);}
+        {Returns a \ccc{Curve_2} object specified by \ccc{s}. 
+	The passed string represents the defining polynomial of the curve 
+	and must be given in a MAPLE-readable format using "x" as first 
+	and "y" as second variable, e.g., 
+        "(x\^{}3*y-2*x)*(-6*x-y\^{}3*x\^{}6)" 
+	for integer coefficients, and "3/2*x*y\^{}4-5/7*x\^{}2+3/1" 
+	for rational coefficients.} 
+
+
+\end{ccClass}
+
+\subsection*{Class 
+Arr\_algebraic\_segment\_traits\_2$<$Coefficient$>$::Construct\_point\_2}
+
+\begin{ccClass}{Arr_algebraic_segment_traits_2<Coefficient>::Construct_point_2}
+%===========================================================================
+
+\ccCreationVariable{fo}
+
+\ccMethod{Point_2 operator() (Algebraic_real_1 x, Curve_2 cv, int arcno);}
+        {Returns a \ccc{Point_2} object that represents the \ccc{arcno}-th
+         point in the fiber of \ccc{cv} at $x$-coordinate \ccc{x}, 
+         counted from the bottom, starting with zero.
+         \ccPrecond(\ccc{cv} must not have a vertical line at \ccc{x}, 
+                    and $0\leq arcno < c$, where $c$ is the number of points 
+                     in the fiber of \ccc{cv} at \ccc{x}.)} 
+
+\ccMethod{Point_2 operator() (Algebraic_real_1 x, X_monotone_curve_2 xcv);}
+        {Returns a \ccc{Point_2} object that represents the 
+         point on \ccc{xcv} at $x$-coordinate \ccc{x} 
+         \ccPrecond(\ccc{x} is in the $x$-range of \ccc{xcv}.)}
+
+\ccMethod{Point_2 operator() (Algebraic_real_1 x, Algebraic_real_1 y);}
+        {Returns a \ccc{Point_2} object that represents (x,y)} 
+
+\ccMethod{Point_2 operator() (Coefficient x, Coefficient y);}
+        {Returns a \ccc{Point_2} object that represents (x,y)} 
+
+\ccMethod{Point_2 operator() (Bound x, Bound y);}
+        {Returns a \ccc{Point_2} object that represents (x,y)} 
+
+\ccMethod{Point_2 operator() (int x, int y);}
+        {Returns a \ccc{Point_2} object that represents (x,y)} 
+
+\end{ccClass}
+
+\subsection*{Class 
+Arr\_algebraic\_segment\_traits\_2$<$Coefficient$>$::Construct\_x\_monotone\_segment\_2}
+
+\begin{ccClass}{Arr_algebraic_segment_traits_2<Coefficient>::Construct_x_monotone_segment_2}
+%===========================================================================
+
+\ccCreationVariable{fo}
+
+\ccMethod{template<class OutputIterator> OutputIterator 
+          operator() (Curve_2 cv, Point_2 end_min, Point_2 end_max,
+                      OutputIterator out);}
+        {Writes a sequence of \ccc{X_monotone_curve_2} objects into \ccc{out}.
+         These segments form an $x$-monotone (or vertical) 
+         segment of the curve \ccc{cv} 
+         that starts in \ccc{end_max}, and end in \ccc{end_max}.
+         \ccPrecond(\ccc{end_min} must have a unique $x$-monotone segment
+                    to its right, or \ccc{end_max} must have a unique
+                    $x$-monotone segment to its left. Furthermore, 
+                    \ccc{end_min} and \ccc{end_max} must be connected
+                    by a $x$-monotone segment of \ccc{cv})}
+
+\ccMethod{template<class OutputIterator> OutputIterator 
+          operator() (Curve_2 cv, Point_2 p, 
+                      Site_of_point site_of_p,
+                      OutputIterator out);}
+        {Writes a sequence of \ccc{X_monotone_curve_2} objects into \ccc{out}.
+         These segments form an $x$-monotone (or vertical) 
+         segment of the curve \ccc{cv}.
+
+         If \ccc{site_of_p==POINT_IN_INTERIOR}, the maximal segment is
+         returned that contains \ccc{p} in its interior.
+
+         If \ccc{site_of_p==MIN_ENDPOINT}, the maximal segment is
+         returned that contains \ccc{p} as its left endpoint.
+
+         If \ccc{site_of_p==MAX_ENDPOINT}, the maximal segment is
+         returned that contains \ccc{p} as its left endpoint.
+         \ccPrecond(If \ccc{site_of_p==POINT_IN_INTERIOR}, \ccc{p}
+                    must be an interior point of an $x$-monotone or a vertical
+                    segment.
+                    If \ccc{site_of_p==MIN_ENDPOINT}, \ccc{p}
+                    must either have a unique $x$-monotone segment to the right,
+                    or a vertical segment from \ccc{p} upwards.
+                    If \ccc{site_of_p==MAX_ENDPOINT}, \ccc{p}
+                    must either have a unique $x$-monotone segment to the left,
+                    or a vertical segment from \ccc{p} downwards.)}
+
+\ccMethod{template<class OutputIterator> OutputIterator 
+          operator() (Point_2 p, Point_2 q,
+                      OutputIterator out);}
+        {Writes a sequence of \ccc{X_monotone_curve_2} objects into \ccc{out}.
+         These segments form a straight-line segment connecting
+	 the points \ccc{p} and \ccc{q}. If \ccc{p} and \ccc{q} share the
+	 same $x$-coordinate, the constructed vertical segment consists of
+	 only one \ccc{X_monotone_curve_2} object and can be computed
+	 efficiently. In the non-vertical case, 
+	 the construction is only possible if \ccc{p} and \ccc{q} 
+         have both rational x- and y-coordinates.
+         \ccPrecond(\ccc{p} must not be equal to \ccc{q}.)
+	}
+
+
+\end{ccClass}
+
+\ccHeading{Accessing functor objects}
+
+%\begin{ccClass}{Arr_algebraic_segment_traits_2<Coefficient>}
+
+\ccCreationVariable{traits}
+
+\ccMethod{Construct_curve_2 construct_curve_2_object() const;}{}
+\ccGlue
+\ccMethod{Construct_point_2 construct_point_2_object() const;}{}
+\ccGlue
+\ccMethod{Construct_x_monotone_segment_2 construct_x_monotone_segment_2_object() const;}{}
+%\ccGlue
+
+%\end{ccClass}
+
+\end{ccRefClass}
+
+\ccRefPageEnd
+

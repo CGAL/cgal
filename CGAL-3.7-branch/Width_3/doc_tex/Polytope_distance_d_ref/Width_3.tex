@@ -1,0 +1,220 @@
+
+\begin{ccRefClass}{Width_3<Traits>}
+
+\ccIndexSubitem       [t]{width}{of 3D point set}
+\ccIndexSubitem       [t]{point set}{3D width of}
+\ccIndexSubitemSeeAlso[t]{polyhedron}{width of 3D point set}
+\ccIndexSubitem       [t]{optimal distances}{width of 3D point set}
+
+\ccSaveThreeColumns
+
+% -----------------------------------------------------------------------------
+\ccDefinition
+
+Given a set of points $\mathcal{S}=\left\{p_1,\ldots , p_n\right\}$ in
+$\R^3$. The width of $\mathcal{S}$, denoted as $\mathcal{W(S)}$, is defined
+as the minimum distance between two parallel planes of support of
+$\mathit{conv(\mathcal{S})}$; where $\mathit{conv(\mathcal{S})}$ denotes
+the convex hull of $\mathcal{S}$. The width in direction $\mathbf{d}$,
+denoted as $\mathcal{W}_d\mathcal{(S)}$, is the distance between two
+parallel planes of support of $\mathit{conv(\mathcal{S})}$, which are
+orthogonal to $\mathbf{d}$.
+
+Subject to the applications of the width algorithm, several objects
+might be interesting: 
+\begin{enumerate}
+\item The two parallel planes of support such that the distance
+  between them is as small as possible. These planes are called
+  width-planes in further considerations.
+\item The width $\mathcal{W(S)}$, i.e., the distance between the
+  width-planes.
+\item The direction $\mathbf{d}_{opt}$ such that
+  $\mathcal{W(S)}=\mathcal{W}_{d_{opt}}\mathcal{(S)}$
+\end{enumerate}
+
+\emph{Note:} There might be several optimal build directions. Hence
+neither the width-planes nor the direction $\mathbf{d}_{opt}$ are
+unique -- only the width is.
+
+\ccInclude{CGAL/Width_3.h}
+
+% -----------------------------------------------------------------------------
+\ccHeading{Requirements}
+\ccIndexRequirements
+
+The template parameter \ccc{Traits} is a model for \ccc{WidthTraits_3}.
+We provide the model \ccc{Width_default_traits_3<Kernel>} based on a
+three-dimensional \cgal~kernel.
+
+% -----------------------------------------------------------------------------
+\ccTypes
+\ccIndexClassTypes
+
+% All the requirements in this section were redundant with the 
+% description of WidthTraits_3. Removed. L.K.
+%
+% According to the two different possiblities to create the width (by an
+% iterator-range or by a polyhedron), there are slightly different
+% requirements to the types. Note: If the width of a polyhedron is computed,
+% then there is no need for a traits class for the convex hull algorithm. For
+% any additional requirement to the types and functions of the traits class,
+% especially according to the polyhedron and its structure, see concept
+% \ccc{WidthTraits_3}. A default traits class \ccc{Width_default_traits_3}
+% is provided. For the requirements of the convex hull traits class the
+% reader is referred to the reference page for the concept ConvexHullTraits\_3.
+%
+% \paragraph{Creation with Iterator-Range}\hfill\newline
+
+\ccSetThreeColumns{typedef typename Traits::ChullTraits}{CHullTraits;}{}
+\ccThreeToTwo
+
+\ccGlueBegin 
+
+\ccNestedType{Traits}{traits class.}
+\ccTypedef{typedef typename Traits::Point_3      Point_3;}{point type.}
+\ccTypedef{typedef typename Traits::Plane_3      Plane_3;}{plane type.}
+\ccTypedef{typedef typename Traits::Vector_3     Vector_3;}{vector type.}
+\ccTypedef{typedef typename Traits::RT           RT;}{algebraic ring type.}
+\ccTypedef{typedef typename Traits::ChullTraits  ChullTraits;}{traits
+                                    class for the 3D convex hull algorithm.}
+\ccGlueEnd
+
+% \paragraph{Creation with a Polyhedron}\hfill\newline
+% \ccSetThreeColumns{typedef Traits::Polyhedron}{Polyhedron;}{}
+% \ccNestedType{Traits}{typedef to \ccc{Traits}.}
+% \ccNestedType{Point_3}{typedef to \ccc{Traits::Point_3}. It is assumed that \ccc{InputPolyhedron::Point_3} equals \ccc{Traits::Point_3}.}
+% \ccNestedType{Plane_3}{typedef to \ccc{Traits::Plane_3}. It is assumed that \ccc{Polyhedron::Plane_3} equals \ccc{Traits::Plane_3}.}
+% \ccNestedType{Vector_3}{typedef to \ccc{Traits::Vector_3}. It is assumed that \ccc{Plane_3::Normal} equals \ccc{Traits::Vector_3}.}
+% \ccNestedType{RT}{typedef to \ccc{Traits::RT}. It is assumed that the underlying number type of \ccc{Point_3, Plane_3} and \ccc{Vector_3} is \ccc{RT}.}
+% \ccGlueEnd
+
+% -----------------------------------------------------------------------------
+\ccCreation
+\ccIndexClassCreation
+\ccCreationVariable{width}
+\ccSetThreeColumns{Vector_3}{get_build_direction ( );}{}
+\ccThreeToTwo
+
+% Again, redundant. The constructors say it also. Removed. L.K.
+% A \ccClassTemplateName\ object can be created from an arbitrary point set
+% $\mathcal{S}$ or from a polyhedron $\mathcal{P}$. In the latter case the
+% given polyhedron is assumed to be convex.
+
+\ccConstructor{ template < class InputIterator > 
+    Width_3( InputIterator first, InputIterator beyond);}{
+    creates a variable \ccVar\ initialized to the width of $\mathcal{S}$ -- 
+    with $\mathcal{S}$ being the set of points in the range 
+    [\ccc{first},\ccc{beyond}).  
+    \ccCommentHeading{Requirement} The value type of \ccc{InputIterator} 
+    is \ccc{Point_3}.}
+
+\ccConstructor{ template < class Polyhedron >
+    Width_3( Polyhedron& P);}{creates a variable \ccVar\ initialized to 
+    the width of the polyhedron $P$. Note that the vertex point coordinates
+    are altered!
+    \ccPrecond $P$ is a convex polyhedron.
+    \ccCommentHeading{Requirement} \ccc{Polyhedron} is a 
+    \ccc{CGAL::Polyhedron_3} with facets supporting plane equations
+    where \ccc{Polyhedron::Point_3} $\equiv$ \ccc{Point_3} and
+    \ccc{Polyhedron::Plane_3} $\equiv$ \ccc{Plane_3}.}
+
+% -----------------------------------------------------------------------------
+\ccAccessFunctions
+\begin{ccIndexMemberFunctions}
+\ccIndexMemberFunctionGroup{access}
+
+\ccMemberFunction{ void get_squared_width ( RT& width_num, RT&
+  width_denom );}{ returns the squared width. For the reason of exact
+  computation not the width itself is stored, but the \emph{squared}
+  width as a fraction: The numerator in \ccc{width_num} and the
+  denominator in \ccc{width_denom}. The width of the point set
+  $\mathcal{S}$ is
+  $\sqrt{\frac{\ccc{width\_num}}{\ccc{width\_denom}}}$.}
+
+\ccMemberFunction{ void get_width_planes ( Plane_3& e1, Plane_3& e2 );}{
+  The planes \ccc{e1} and \ccc{e2} are the two parallel supporting
+  planes, which distance is minimal (among all such planes).}
+
+\ccMemberFunction{ void get_width_coefficients ( RT& A,RT& B,RT& C,
+  RT& D, RT& K );}{The returned coefficients \ccc{A,B,C,D,K} have the
+  property that width-plane \ccc{e1} is given by the equation
+  $Ax+By+Cz+D=0$ and width-plane \ccc{e2} by $Ax+By+Cz+K=0$.}  
+
+\ccMemberFunction{ Vector_3 get_build_direction ( );}{ returns a
+  direction $\mathbf{d}_{opt}$ such that the width-planes \ccc{e1} and
+  \ccc{e2} are perpendicular to $\mathbf{d}_{opt}$. The width of the
+  point set is minimal in this direction.}
+
+% naming convention: variable names are lowercase, so no AllDir. L.K.
+\ccMemberFunction{ void get_all_build_directions ( std::vector<Vector_3>&
+  dir );}{ All the build directions are stored in the vector
+  \ccc{dir}. It might happen that a certain body has several
+  different build directions, but it is also possible to have only one
+  build direction.}  
+
+\ccMemberFunction{ int get_number_of_optimal_solutions( );}{ returns
+  the number of optimal solutions, i.e., the number of optimal build
+  directions.}
+
+\end{ccIndexMemberFunctions}
+
+% -----------------------------------------------------------------------------
+\ccSeeAlso
+
+\ccRefIdfierPage{CGAL::Width_default_traits_3<K>}\\[1ex]
+\ccRefConceptPage{WidthTraits_3}
+
+% -----------------------------------------------------------------------------
+\ccImplementation
+\ccIndexImplementation
+
+Since the width of the point set $\mathcal{S}$ and the width of the convex
+hull of $\mathcal{S}$ ($\mathit{conv(\mathcal{S})}$) is the same, the
+algorithm uses the 3D convex hull algorithm \cgal\ provides.
+
+The width-algorithm is not incremental and therefore inserting and
+erasing points cause not an `automatic' update of the width. Instead
+you have to run the width-algorithm again even if the point set is
+extended by only one new point.
+
+\begin{ccAdvanced}
+
+\paragraph{Large Numbers.}
+
+Because there is no need for dividing values during the algorithm, the
+numbers can get really huge (all the computations are made using a lot
+of multiplications).  Therefore it is strongly recommended to use a
+number type that can handle numbers of arbitrary length (e.g.,
+\ccc{leda_integer} in combination with the homogeneous representation
+of the points). But these large numbers have a disadvantage:
+Operations on them are slower as greater the number gets. Therefore it
+is possible to shorten the numbers by using the compiler flag
+\textsc{-Dsimplify}. For using this option it is required that
+the underlying number type provides the `modulo' operation. 
+
+\paragraph{Information Output during the Computations.} 
+
+If during the algorithm the program should output some information
+(e.g., during the debugging phase) you can turn on the output
+information by giving the compiler flag \textsc{debug}. In the file
+\texttt{width\_assertions.h} you can turn on/off the output of some
+functions and additional informations by changing the defined values
+from 0 (no output) to 1 (output available). But then it is required
+that the $<\!<$-operator has to been overloaded for \ccc{Point_3},
+\ccc{Plane_3}, \ccc{Vector_3} and \ccc{RT}.
+
+\end{ccAdvanced}
+
+% -----------------------------------------------------------------------------
+\ccExample
+\ccIndexSubitem[C]{Width_3}{example}
+
+\ccIncludeExampleCode{Width_3/width_simplex.cpp}
+
+% -----------------------------------------------------------------------------
+
+\ccRestoreThreeColumns
+
+\end{ccRefClass}
+
+

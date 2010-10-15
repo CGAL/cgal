@@ -1,0 +1,40 @@
+\begin{ccRefFunctionObjectConcept}{RealEmbeddableTraits::Compare}
+
+\ccDefinition
+
+\ccc{AdaptableBinaryFunction} compares two real embeddable numbers. 
+ 
+\ccRefines 
+
+\ccc{AdaptableBinaryFunction} 
+
+\ccTypes
+\ccNestedType{result_type} 
+        { Type convertible to \ccc{CGAL::Comparison_result}.}
+\ccNestedType{first_argument_type}
+        { Is \ccc{RealEmbeddableTraits::Type}.}
+\ccNestedType{second_argument_type}
+        { Is \ccc{RealEmbeddableTraits::Type}.}
+
+
+\ccOperations
+\ccCreationVariable{compare}
+\ccThree{xxxxxxxxxxx}{xxxxxxxxxxx}{}
+
+\ccMethod{result_type operator()(first_argument_type   x,
+                                 second_argument_type  y);}
+        { compares $x$ with respect to $y$. }
+
+\ccMethod{template <class NT1, class NT2> 
+          result_type operator()(NT1  x, NT2  y);}{
+          This operator is well defined if \ccc{NT1} and \ccc{NT2} are 
+          \ccc{ExplicitInteroperable} with coercion type 
+          \ccc{RealEmbeddableTraits::Type}. }
+
+%\ccHasModels
+
+\ccSeeAlso
+
+\ccRefIdfierPage{RealEmbeddableTraits}\\
+
+\end{ccRefFunctionObjectConcept} 

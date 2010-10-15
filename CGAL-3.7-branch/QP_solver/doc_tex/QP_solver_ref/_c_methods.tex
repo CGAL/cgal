@@ -1,0 +1,6 @@
+\ccMethod{C_iterator get_c() const;}{returns an iterator over the entries
+  of $\qpc$. The corresponding past-the-end iterator is 
+        \ccc{get_c()+get_n()}.}
+
+\ccMethod{std::iterator_traits<C_iterator>::value_type get_c0() const;}
+{returns the constant term $c_0$ of the objective function.}

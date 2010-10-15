@@ -1,0 +1,69 @@
+% +------------------------------------------------------------------------+
+% | Reference manual page: offset_polygon.tex
+% +------------------------------------------------------------------------+
+% | 
+% | Package: Minkowski_sum_2
+% | 
+% +------------------------------------------------------------------------+
+
+\ccRefPageBegin
+
+\begin{ccRefFunction}{offset_polygon_2}
+
+\ccInclude{CGAL/offset_polygon_2.h}
+
+\ccFunction{template<class ConicTraits, class Container>
+            typename Gps_traits_2<ConicTraits>::Polygon_with_holes_2
+            offset_polygon_2
+                 (const Polygon_2<typename ConicTraits::Rat_kernel,
+                                  Container>& P,
+                  const typename ConicTraits::Rat_kernel::FT& r,
+                  const ConicTraits& traits);}
+   {Computes the offset of the given polygon \ccc{P} by a given radius
+    \ccc{r} --- namely, the function computes the Minkowski sum
+    $P \oplus B_r$, where $B_r$ is a disc of radius \ccc{r} centered at the
+    origin.
+    Note that as the input polygon may not be convex, its offset may not be a
+    simple polygon. The result is therefore represented as a generalized
+    polygon with holes, such that the edges of the polygon correspond to
+    line segments and circular arcs, both are special types of conic arcs,
+    as represented by the \ccc{traits} class.
+    \ccPrecond{\ccc{P} is a simple polygon.}}
+
+\ccFunction{template<class ConicTraits, class Container>
+            typename Gps_traits_2<ConicTraits>::Polygon_with_holes_2
+            offset_polygon_2
+                 (const Polygon_with_holes_2<typename ConicTraits::Rat_kernel,
+                                             Container>& pwh,
+                  const typename ConicTraits::Rat_kernel::FT& r,
+                  const ConicTraits& traits);}
+   {Computes the offset of the given polygon with holes \ccc{pwh} by a given
+    radius \ccc{r}. It does so by offsetting outer boundary of \ccc{pwh} and
+    insetting its holes.
+    The result is represented as a generalized polygon with holes, such that the
+    edges of the polygon correspond to line segments and circular arcs, both are
+    special types of conic arcs, as represented by the \ccc{traits} class.
+    \ccPrecond{\ccc{pwh} is {\em not} unbounded (it has a valid outer boundary).}}
+
+\ccFunction{template<class ConicTraits, class Container,
+                     class DecompositionStrategy>
+            typename Gps_traits_2<ConicTraits>::Polygon_with_holes_2
+            offset_polygon_2
+                 (const Polygon_2<typename ConicTraits::Rat_kernel,
+                                  Container>& P,
+                  const typename ConicTraits::Rat_kernel::FT& r,
+                  const DecompositionStrategy& decomp,
+                  const ConicTraits& traits);}
+   {Computes the exact representation of the offset of the given polygon
+    \ccc{P} by a radius \ccc{r}, as described above.
+    If \ccc{P} is not convex, the function decomposes it into convex
+    sub-polygons $P_1, \ldots, P_k$ and computes the union of sub-offsets
+    (namely $\bigcup_{i}{(P_i \oplus B_r)}$).
+    The decomposition is performed using the given decomposition strategy
+    \ccc{decomp}, which must be an instance of a class that models the
+    concept \ccc{PolygonConvexDecomposition}.
+    \ccPrecond{\ccc{P} is a simple polygon.}}
+
+\end{ccRefFunction}
+
+\ccRefPageEnd

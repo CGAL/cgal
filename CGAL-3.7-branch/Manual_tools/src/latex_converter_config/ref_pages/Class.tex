@@ -1,0 +1,53 @@
+include(CONFIG_PATH/header.tex)
+\begin{ccRefClass}SCOPE{PREFIX`'ITEM}  %% add template arg's if necessary
+
+%% \ccHtmlCrossLink{}     %% add further rules for cross referencing links
+%% \ccHtmlIndexC[class]{} %% add further `index' entries
+
+\ccDefinition
+  
+The class \ccRefName\ does this and that.
+
+\ccInclude{SUBDIR`'ITEM.h}
+
+\ccIsModel
+
+Concept
+
+\ccTypes
+
+\ccNestedType{TYPE}{some nested types}
+
+\ccCreation
+\ccCreationVariable{a}  %% choose variable name
+
+\ccConstructor{PREFIX`'ITEM`'();}{default constructor.}
+
+\ccOperations
+
+\ccMethod{void foo();}{some member functions}
+
+\ccSeeAlso
+
+\ccc{Some_other_class},
+\ccc{some_other_function}.
+
+\ccExample
+
+A short example program.
+Instead of a short program fragment, a full running program can be
+included using the 
+\verb|\ccIncludeExampleCode{PACKAGE/ITEM`'.C}| 
+macro. The program example would be part of the source code distribution and
+also part of the automatic test suite.
+
+\begin{ccExampleCode}
+void your_example_code() {
+}
+\end{ccExampleCode}
+
+%% \ccIncludeExampleCode{PACKAGE/ITEM`'.C}
+
+\end{ccRefClass}
+
+include(CONFIG_PATH/footer.tex)

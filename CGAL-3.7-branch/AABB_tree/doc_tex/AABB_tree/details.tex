@@ -1,0 +1,10 @@
+\section{Implementation Details}
+\label{AABB_tree_section_details}
+
+The AABB tree construction is initialized by computing the AABB of the whole set of input primitives. All primitives are then sorted along the longest coordinate axis of this box, and the primitives are separated into two equal size sets. This procedure is applied recursively until an AABB contains a single primitive. The tree is leafless as presented in {\sc opcode} \cite{cgal:t-ocdl-05}. An intersection query traverses the tree by computing intersection tests only with respect to the AABBs during traversal, and with respect to the input primitives at the end of traversal (in the leafs of the tree).\\
+
+The reference id is not used internally but simply used by the AABB tree to refer to the primitive in the results provided to the user. It follows that, while in most cases each reference id corresponds to a unique primitive, this is not a requirement of the component. This way a user may use these reference ids as labels, each of them being shared by several geometric object. \\
+
+A distance query between a query point $q$ and the input primitives is turned into a \emph{ball} query centered at $q$. The ball traverses the tree while recursively querying intersections with the AABBs, and computes the closest point $p$ from the query point to the input primitives at the leafs of the tree. The ball radius is then shrunk to the distance between $p$ and $q$ for all remaining recursive traversals of the tree. Efficiency is achieved through setting the initial ball radius to a small value still guaranteed to intersect the input primitives. This is achieved by constructing through the function \ccc{accelerate_distance_queries} an internal secondary data structure which provides a good hint to the algorithm at the beginning of the traversal.
+
+

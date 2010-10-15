@@ -1,0 +1,82 @@
+%% Copyright (c) 2004  SciSoft.  All rights reserved.
+%%
+%% This file is part of CGAL (www.cgal.org); you may redistribute it under
+%% the terms of the Q Public License version 1.0.
+%% See the file LICENSE.QPL distributed with CGAL.
+%%
+%% Licensees holding a valid commercial license may use this file in
+%% accordance with the commercial license agreement provided with the software.
+%%
+%% This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
+%% WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
+%%
+%% 
+%%
+%% Author(s)     : Fernando Cacciola <fernando_cacciola@hotmail.com>
+
+
+\begin{ccRefFunction}{compute_outer_frame_margin}
+
+%% add template arg's if necessary
+
+%% \ccHtmlCrossLink{}     %% add further rules for cross referencing links
+%% \ccHtmlIndexC[class]{} %% add further index entries
+\ccDefinition
+
+The function \ccRefName\ computes the separation required between a polygon and the outer frame used to obtain an exterior skeleton suitable for the computation of outer offset polygons at a given distance.
+
+\ccInclude{CGAL/compute_outer_frame_margin.h}
+
+\ccFunction
+{template <class InputIterator, class Traits>
+boost::optional< typename Traits::FT >
+compute_outer_frame_margin( InputIterator       first
+                          , InputIterator       beyond
+                          , typename Traits::FT offset
+                          , Traits const&       traits = Default_traits
+                          );
+} 
+{Given a non-degenerate strictly-simple 2D polygon whose vertices are passed 
+in the range [\ccc{first},\ccc{beyond}), calculates the largest euclidean distance
+\ccc{d} between each input vertex and its corresponding offset vertex at
+a distance \ccc{offset}.\\
+If such a distance can be approximately computed, returns an \ccc{optional<FT>} with the value \ccc{d + (offset * 1.05)}. If the distance cannot be computed, not even approximately, due to overflow for instance, returns an empty \ccc{optional<FT>} (an {\em absent result}).\\
+This result is the required separation between the input polygon
+and the rectangular frame used to construct an exterior offset contour
+at distance \ccc{offset} (which is done by placing the polygon as a hole of that frame).\\
+Such a separation must be computed in this way because if the frame is 
+too close to the polygon, the inward offset contour from the frame could
+collide with the outward offset contour of the polygon, resulting in a merged
+contour offset instead of two contour offsets, one of them corresponding to the frame.\\
+Simply using \ccc{2*offset} as the separation is incorrect since \ccc{offset} is the distance 
+between an offset line and its original, not between an offset vertex and its original.
+The later, which is calculated by this function and needed to place the frame sufficiently
+away from the polygon, can be thousands of times larger than \ccc{offset}.\\
+If the result is {\em absent}, any attempt to construct an exterior offset polygon at distance \ccc{offset} will fail. This will occur whenever the polygon has a vertex with an internal angle approaching \ccc{0} (because the offset vertex of a vertex whose internal angle equals 0 is at {\em infinity} ).\\
+\ccPrecond offset $>$ 0.
+\ccPrecond The range [\ccc{first},\ccc{beyond}) contains the vertices
+of a non-degenerate strictly-simple 2D polygon.
+}
+
+The default traits class \ccc{Default_traits} is an instance of the
+class \ccc{Polygon_offset_builder_traits_2<Kernel>} parameterized on
+the kernel in which the type \ccc{InputIterator::value_type} is defined.
+
+\ccHeading{Requirements}
+\begin{enumerate}
+   \item    \ccc{InputIterator::value_type}
+            is equivalent to \ccc{Traits::Point_2}.
+   \item    \ccc{Traits} must be a model for \ccc{PolygonOffsetBuilderTraits_2}
+\end{enumerate}
+
+\ccSeeAlso
+\ccc{PolygonOffsetBuilderTraits_2}\\
+\ccc{CGAL::Polygon_offset_builder_traits_2<Kernel>}\\
+
+\end{ccRefFunction}
+
+% +------------------------------------------------------------------------+
+%%RefPage: end of main body, begin of footer
+% EOF
+% +------------------------------------------------------------------------+
+

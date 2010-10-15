@@ -1,0 +1,110 @@
+% +------------------------------------------------------------------------+
+% | Reference manual page: GradientFittingTraits.tex
+% +------------------------------------------------------------------------+
+% | 06.04.2000   Author
+% | Package: Package
+% | 
+\RCSdef{\RCSGradientFittingTraitsRev}{$Id$}
+\RCSdefDate{\RCSGradientFittingTraitsDate}{$Date$}
+% |
+%%RefPage: end of header, begin of main body
+% +------------------------------------------------------------------------+
+
+
+\begin{ccRefConcept}{GradientFittingTraits}
+
+%% \ccHtmlCrossLink{}     %% add further rules for cross referencing links
+%% \ccHtmlIndexC[concept]{} %% add further index entries
+
+\ccDefinition
+  
+The function \ccc{sibson_gradient_fitting} is parameterized by a
+traits class that defines the primitives used by the algorithm.   The
+concept \ccRefName\ defines this common set of requirements.
+
+
+\ccTypes
+\ccNestedType{FT}{The number type must follow the model
+  \ccc{FieldNumberType}.}  
+\ccNestedType{Point_d}{The point type on
+  which the function is defined and interpolated.}
+\ccNestedType{Vector_d}{The corresponding vector type.}
+\ccNestedType{Aff_transformation_d}{defines a
+  matrix type.
+  Must provide the following member functions~: \\
+  \ccc{Aff_transformation tr.inverse ()} which gives the inverse
+  transformation, and \\
+  \ccc{Aff_transformation tr.transform( Vector v)} which returns the
+  multiplication of \ccc{tr} with \ccc{v}.
+  }
+%%% FUNCTION TYPES:
+%VECTOR:
+\ccNestedType{Construct_vector_d} {A constructor object for
+  \ccc{Vector_d}.
+  Provides~: \\
+  \ccc{Vector_d operator() (Point_d a, Point_d b)} which produces the
+  vector \ccc{b -
+    a} and \\
+  \ccc{Vector_d operator() (Null_vector NULL_VECTOR)} which introduces
+  the null vector.}
+\ccNestedType{Construct_scaled_vector_d}{Constructor object for
+  \ccc{Vector_d}.
+  Provides~: \\
+  \ccc{Vector_d operator() (Vector_d v,FT scale)} which produces the
+  vector \ccc{v} scaled by a factor \ccc{scale}.}
+%AFF_TRANSFORMATION:
+\ccNestedType{Construct_null_matrix_d}{Constructor object for
+  \ccc{Aff_transformation_d}. Provides~: \\
+  \ccc{Aff_transformation_d operator()()} which introduces an affine
+  transformation whose matrix has only zero entries.}
+\ccNestedType{Construct_scaling_matrix_d}{Constructor object for
+  \ccc{Aff_transformation_d}. Provides~: \\
+  \ccc{Aff_transformation_d operator()(FT scale)} which introduces a
+  scaling by a scale factor \ccc{scale}.}
+\ccNestedType{Construct_sum_matrix_d}{Constructor object for
+  \ccc{Aff_transformation_d}. Provides~: \\
+  \ccc{Aff_transformation_d operator()(Aff_transformation_d tr1,
+    Aff_transformation_d tr2)} which returns the sum of the two matrices
+  representing \ccc{tr1} and \ccc{tr2}.}
+\ccNestedType{Construct_outer_product_d} {Constructor object for
+  \ccc{Aff_transformation_d}. Provides~: \\
+  \ccc{Aff_transformation_d operator()(Vector v)} which returns the
+  outer product, i.e.~the quadratic matrix \ccc{v}$^t$\ccc{v}.}
+
+
+\ccCreation
+\ccCreationVariable{traits}  %%
+\ccConstructor{GradientFittingTraits();}{default constructor.}
+
+
+\ccOperations The following functions that create instances of the
+above constructor object types must exist.
+\ccMethod{Construct_vector_d construct_vector_d_object();}{} \ccGlue
+\ccMethod{Construct_scaled_vector_d
+  construct_scaled_vector_d_object();}{} \ccGlue
+\ccMethod{Construct_null_matrix_d construct_null_matrix_d_object();}{}
+\ccGlue \ccMethod{Construct_sum_matrix_d
+  construct_sum_matrix_d_object();}{} \ccGlue
+\ccMethod{Construct_outer_product_d
+  construct_outer_product_d_object();}{}
+
+\ccHasModels
+\ccc{CGAL::Interpolation_gradient_fitting_traits_2<K>} \\
+
+\ccSeeAlso
+\ccRefConceptPage{InterpolationTraits}\\
+\ccRefIdfierPage{CGAL::Interpolation_traits_2<K>} \\
+\ccRefIdfierPage{CGAL::sibson_gradient_fitting} \\
+\ccRefIdfierPage{CGAL::sibson_c1_interpolation} \\
+\ccRefIdfierPage{CGAL::farin_c1_interpolation} \\
+\ccRefIdfierPage{CGAL::quadratic_interpolation} \\
+%\ccRefIdfierPage{CGAL::natural_neighbor_coordinates_2}\\
+%\ccRefIdfierPage{CGAL::regular_neighbor_coordinates_2} \\
+%\ccRefIdfierPage{CGAL::surface_neighbor_coordinates_3}\\
+\end{ccRefConcept}
+
+% +------------------------------------------------------------------------+
+%%RefPage: end of main body, begin of footer
+% EOF
+% +------------------------------------------------------------------------+
+

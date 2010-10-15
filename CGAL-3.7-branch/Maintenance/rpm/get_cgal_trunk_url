@@ -1,0 +1,5 @@
+#!/bin/sh
+LC_ALL=C
+LANG=C
+export LANG LC_ALL
+svn info SPECS | perl -ne 'm|URL: (.*)/Maintenance/rpm/SPECS| && print "$1\n"'

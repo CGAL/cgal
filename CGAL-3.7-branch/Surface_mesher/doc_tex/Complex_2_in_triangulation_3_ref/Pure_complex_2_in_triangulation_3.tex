@@ -1,0 +1,87 @@
+% +------------------------------------------------------------------------+
+% | Reference manual page: Pure_complex_2_in_triangulation_3.tex
+% +------------------------------------------------------------------------+
+% | 07.12.2005   Author
+% | Package: Package
+% | 
+\RCSdef{\RCSSurfacemeshCTRev}{$Id$}
+\RCSdefDate{\RCSSurfacemeshCTDate}{$Date$}
+% |
+%%RefPage: end of header, begin of main body
+% +------------------------------------------------------------------------+
+
+
+\begin{ccRefClass}{Pure_complex_2_in_triangulation_3<Tr>}  %% add template arg's if necessary
+
+%% \ccHtmlCrossLink{}     %% add further rules for cross referencing links
+%% \ccHtmlIndexC[class]{} %% add further index entries
+
+\ccDefinition
+  
+The class \ccRefName\  implements a data structure to store
+a two dimensional pure  complex 
+embedded in a three dimensional triangulation.
+The template parameter \ccc{Tr} has to be instantiated
+with a model of the concept \ccc{Triangulation_3}.
+(Any three dimensional   triangulation of
+\cgal\ is a model of \ccc{Triangulation_3}.)
+
+The class \ccRefName\  can be plugged as template parameter
+in the global function \ccc{make_surface_mesh<C2T3,Oracle,FacetsCriteria,Tag>}.
+
+
+
+\ccInclude{CGAL/Pure_complex_2_in_triangulation_3.h}
+
+\ccIsModel
+
+\ccc{PureComplex_2InTriangulation_3}
+
+WARNING: 
+Currently the class  \ccRefName\  does not implement the
+whole concept \ccc{PureComplex_2InTriangulation_3}
+but just what is needed to  be used as the first  parameter 
+of  \ccc{make_surface_mesh<C2T3,Oracle,FacetsCriteria,Tag>}.
+
+
+%\ccTypes
+
+%\ccNestedType{TYPE}{some nested types}
+
+%\ccCreation
+%\ccCreationVariable{a}  %% choose variable name
+
+%\ccConstructor{Pure_complex_2_in_triangulation_3();}{default constructor.}
+
+%\ccOperations
+
+%\ccMethod{void foo();}{some member functions}
+
+\ccSeeAlso
+
+\ccc{make_surface_mesh<C2T3,Oracle,FacetsCriteria,Tag>}.
+
+
+%\ccExample
+
+%A short example program.
+%Instead of a short program fragment, a full running program can be
+%included using the 
+%\verb|\ccIncludeExampleCode{Package/Pure_complex_2_in_triangulation_3.C}| 
+%macro. The program example would be part of the source code distribution and
+%also part of the automatic test suite.
+
+%\begin{ccExampleCode}
+%void your_example_code() {
+%}
+%\end{ccExampleCode}
+
+%%% \ccIncludeExampleCode{Package/Pure_complex_2_in_triangulation_3.C}
+
+\end{ccRefClass}
+
+% +------------------------------------------------------------------------+
+%%RefPage: end of main body, begin of footer
+% EOF
+% +------------------------------------------------------------------------+
+

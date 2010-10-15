@@ -1,0 +1,102 @@
+\begin{ccRefConcept}{PolynomialToolBox_d}
+
+\ccDefinition
+A model of \ccc{PolynomialToolBox_d} is associated to an type 
+\ccc{Polynomial_d}, representing a multivariate polynomial
+\footnote{Univariate polynomials are not excluded by this concept.}. 
+The number of variables is denoted as the dimension $d$ of the polynomial,
+it is arbitrary but fixed for a certain model of this concept.  
+
+\ccRefines
+\ccc{PolynomialTraits_d}
+
+%\ccConstants
+%\ccTypes
+
+\ccHeading{Functors}
+
+In case a functor is not provided it is set to \ccc{CGAL::Null_functor}.
+%,e.g., \ccc{Sign_at} if \ccc{Innermost_coefficient_type} is not \ccc{RealEmbeddable}. 
+\ccSetTwoColumns{xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx}{}
+
+\ccNestedType{Univariate_content}{ 
+        In case \ccc{PolynomialTraits_d::Coefficient_type} is {\bf not} a model of 
+        \ccc{UniqueFactorizationDomain}, this is \ccc{CGAL::Null_type}, otherwise this is 
+        a model of \ccc{PolynomialTraits_d::UnivariateContent}.}
+%\begin{ccAdvanced}
+\ccNestedType{Multivariate_content}{ 
+        In case \ccc{PolynomialTraits_d::Innermost_coefficient_type} is {\bf not} 
+        a model of \ccc{UniqueFactorizationDomain}, this is \ccc{CGAL::Null_type}, 
+        otherwise this is a model of 
+        \ccc{PolynomialTraits_d::MultivariateContent}.}
+%\end{ccAdvanced}
+
+%Manipulation
+\ccNestedType{Shift}{ A model of \ccc{PolynomialTraits_d::Shift}.}\ccGlue
+\ccNestedType{Negate}{ A model of \ccc{PolynomialTraits_d::Negate}.}\ccGlue
+\ccNestedType{Invert}{ A model of \ccc{PolynomialTraits_d::Invert}.}
+
+\ccNestedType{Translate}{ A model of \ccc{PolynomialTraits_d::Translate}.}\ccGlue
+\ccNestedType{Translate_homogeneous}
+{ A model of \ccc{PolynomialTraits_d::TranslateHomogeneous}.}
+
+\ccNestedType{Scale}{ A model of \ccc{PolynomialTraits_d::Scale}.}\ccGlue
+\ccNestedType{Scale_homogeneous}
+{ A model of \ccc{PolynomialTraits_d::ScaleHomogeneous}.}
+
+%\begin{ccAdvanced}
+%\ccNestedType{Scale_up}{ A model of \ccc{PolynomialTraits_d::ScaleUp, return $p(a*x)$}.}
+%\ccNestedType{Scale_down}{ A model of \ccc{PolynomialTraits_d::ScaleDown, return $b^{degree}*p(x/b)$}.}
+%\end{ccAdvanced}
+
+%unary operations
+\ccNestedType{Make_square_free}
+{ A model of \ccc{PolynomialTraits_d::MakeSquareFree}.}\ccGlue
+\ccNestedType{Square_free_factorize}
+{ In case \ccc{PolynomialTraits::Polynomial_d} 
+is not a model of \ccc{UniqueFactorizationDomain}, this is of type \ccc{CGAL::Null_type},
+ otherwise this is a model of \ccc{PolynomialTraits_d::SquareFreeFactorize}.}
+
+
+%pseudo division
+\ccNestedType{Pseudo_division          }
+{ A model of \ccc{PolynomialTraits_d::Pseudo_division}.}\ccGlue
+\ccNestedType{Pseudo_division_remainder}
+{ A model of \ccc{PolynomialTraits_d::Pseudo_division_remainder}.}\ccGlue
+\ccNestedType{Pseudo_division_quotient }
+{ A model of \ccc{PolynomialTraits_d::Pseudo_division_quotient}.}
+
+
+%utcf
+\ccNestedType{Gcd_up_to_constant_factor}
+{ A model of \ccc{PolynomialTraits_d::GcdUpToConstantFactor}.}
+\ccGlue
+\ccNestedType{Integral_division_up_to_constant_factor}
+{ A model of \ccc{PolynomialTraits_d::IntegralDivisionUpToConstantFactor}.}
+\ccGlue
+\ccNestedType{Content_up_to_constant_factor}
+{ A model of \ccc{PolynomialTraits_d::ContentUpToConstantFactor}.}
+\ccGlue
+\ccNestedType{Square_free_factorize_up_to_constant_factor}
+{ A model of \ccc{PolynomialTraits_d::SquareFreeFactorizeUpToConstantFactor}.}
+
+%resultant
+\ccNestedType{Resultant}{ A model of \ccc{PolynomialTraits_d::Resultant}.}
+\ccNestedType{Polynomial_subresultants}
+{ A model of \ccc{PolynomialTraits_d::PolynomialSubresultant}.}
+\ccNestedType{Principal_subresultants}
+{ A model of \ccc{PolynomialTraits_d::PrincipalSubresultant}.}
+\ccNestedType{Sturm_habicht_sequence}
+{ A model of \ccc{PolynomialTraits_d::SturmHabichtSequence}.}
+\ccNestedType{Sturm_habicht_sequence_with_cofactors}
+{ A model of \ccc{PolynomialTraits_d::SturmHabichtSequenceWithCofactors}.}
+\ccNestedType{Principal_sturm_habicht_sequence}
+{ A model of \ccc{PolynomialTraits_d::PrincipalSturmHabichtSequence}.}
+ % end ccIgnore
+ 
+\ccSeeAlso 
+
+\ccRefIdfierPage{Polynomial_d}\\
+\ccRefIdfierPage{PolynomialTraits_d}\\
+
+\end{ccRefConcept}

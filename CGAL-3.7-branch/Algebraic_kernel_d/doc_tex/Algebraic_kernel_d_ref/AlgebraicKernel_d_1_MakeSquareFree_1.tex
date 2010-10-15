@@ -1,0 +1,29 @@
+\begin{ccRefFunctionObjectConcept}{AlgebraicKernel_d_1::MakeSquareFree_1}
+
+\ccDefinition
+Returns a square free part of a univariate polynomial.
+ 
+\ccRefines 
+\ccc{AdaptableUnaryFunction}  
+
+\ccTypes \ccThree{}{+++++++++++++}{++++++++}
+%\ccThree{typedef AlgebraicKernel_d_1::Polynomial_1}{argument_type+}{}
+\ccTypedef{typedef AlgebraicKernel_d_1::Polynomial_1 result_type;}{}
+\ccGlue
+\ccTypedef{typedef AlgebraicKernel_d_1::Polynomial_1 argument_type;}{}
+
+\ccOperations \ccThree{+++++++++}{+++++++++}{}
+\ccCreationVariable{fo}
+%\ccThree{xxxxxxxxxxx}{xxxxxxxxxxxxxxxxxxxxxxxxxxxx}{}
+
+
+
+\ccMethod{result_type operator()(argument_type p);}
+{Returns a square free part of $p$}
+
+%\ccHasModels
+\ccSeeAlso
+\ccRefIdfierPage{AlgebraicKernel_d_1::IsSquareFree_1}\\
+\ccRefIdfierPage{AlgebraicKernel_d_1::SquareFreeFactorize_1}\\
+
+\end{ccRefFunctionObjectConcept}

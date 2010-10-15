@@ -1,0 +1,37 @@
+\RCSdef{\EnvelopeRefRev}{$Id$}
+\RCSdefDate{\EnvelopeRefDate}{$Date$}
+\ccRefChapter{Envelopes of Surfaces in 3D\label{chapterEnvelope_3_ref}}
+% \clearpage
+\ccChapterRelease{\EnvelopeRefRev. \ \EnvelopeRefDate}
+\ccChapterAuthor{Dan Halperin, Michal Meyerovitch, Ron Wein and Baruch Zukerman}
+
+% ===============================================================
+\section*{Introduction}
+\label{env3_ref_sec:intro}
+% ========================
+
+This package consists of functions that compute the lower (or upper)
+envelope of a set of arbitrary surfaces in 3D. The output is
+represented as an 2D envelope diagram --- a planar subdivision such
+that the identity of the surfaces that induce the envelope over each
+diagram cell is unique.
+
+\subsection*{Functions}
+
+\ccRefIdfierPage{CGAL::lower_envelope_3}\\
+\ccRefIdfierPage{CGAL::upper_envelope_3}\\
+\ccRefIdfierPage{CGAL::lower_envelope_xy_monotone_3}\\
+\ccRefIdfierPage{CGAL::upper_envelope_xy_monotone_3}
+
+\subsection*{Concepts}
+
+\ccRefConceptPage{EnvelopeTraits_3}
+
+\subsection*{Classes}
+
+\ccRefIdfierPage{CGAL::Envelope_diagram_2<EnvTraits>}\\
+\\
+\ccRefIdfierPage{CGAL::Env_triangle_traits_3<Kernel>}\\
+\ccRefIdfierPage{CGAL::Env_sphere_traits_3<ConicTraits>}\\
+\ccRefIdfierPage{CGAL::Env_plane_traits_3<Kernel>}\\
+\ccRefIdfierPage{CGAL::Env_surface_data_traits_3<Traits,XyData,SData,Cnv>}

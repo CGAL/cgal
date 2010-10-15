@@ -1,0 +1,6 @@
+<RCC>
+    <qresource prefix="/values" >
+        <file alias="minus.png">icons/minus.png</file>
+        <file alias="plus.png">icons/plus.png</file>
+    </qresource>
+</RCC>

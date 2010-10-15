@@ -1,0 +1,3 @@
+provides support for interval types, that is, introduces:
+Interval_traits
+Bigfloat_interval_traits 

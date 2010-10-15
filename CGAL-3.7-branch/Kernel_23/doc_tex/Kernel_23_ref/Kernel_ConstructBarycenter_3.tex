@@ -1,0 +1,57 @@
+\begin{ccRefFunctionObjectConcept}{Kernel::ConstructBarycenter_3}
+A model for this must provide:
+
+\ccCreationVariable{fo}
+
+\ccMemberFunction{Kernel::Point_3
+operator()( const Kernel::Point_3& p1, const Kernel::FT&w1,
+            const Kernel::Point_3& p2);}
+{compute the barycenter of the points $p1$ and $p2$ with corresponding
+ weights $w1$ and $1-w1$.}
+
+\ccMemberFunction{Kernel::Point_3
+operator()( const Kernel::Point_3& p1, const Kernel::FT&w1,
+            const Kernel::Point_3& p2, const Kernel::FT&w2);}
+{compute the barycenter of the points $p1$ and $p2$ with corresponding
+ weights $w1$ and $w2$. \ccPrecond{w1+w2 != 0}.}
+
+\ccMemberFunction{Kernel::Point_3
+operator()( const Kernel::Point_3& p1, const Kernel::FT&w1,
+            const Kernel::Point_3& p2, const Kernel::FT&w2,
+            const Kernel::Point_3& p3);}
+{compute the barycenter of the points $p1$, $p2$ and $p3$ with corresponding
+ weights $w1$, $w2$ and $1-w1-w2$.}
+
+\ccMemberFunction{Kernel::Point_3
+operator()( const Kernel::Point_3& p1, const Kernel::FT&w1,
+            const Kernel::Point_3& p2, const Kernel::FT&w2,
+            const Kernel::Point_3& p3, const Kernel::FT&w3);}
+{compute the barycenter of the points $p1$, $p2$ and $p3$ with corresponding
+ weights $w1$, $w2$ and $w3$. \ccPrecond{w1+w2+w3 != 0}.}
+
+\ccMemberFunction{Kernel::Point_3
+operator()( const Kernel::Point_3& p1, const Kernel::FT&w1,
+            const Kernel::Point_3& p2, const Kernel::FT&w2,
+            const Kernel::Point_3& p3, const Kernel::FT&w3,
+            const Kernel::Point_3& p4);}
+{compute the barycenter of the points $p1$, $p2$, $p3$ and $p4$ with corresponding
+ weights $w1$, $w2$, $w3$ and $1-w1-w2-w3$.}
+
+\ccMemberFunction{Kernel::Point_3
+operator()( const Kernel::Point_3& p1, const Kernel::FT&w1,
+            const Kernel::Point_3& p2, const Kernel::FT&w2,
+            const Kernel::Point_3& p3, const Kernel::FT&w3,
+            const Kernel::Point_3& p4, const Kernel::FT&w4);}
+{compute the barycenter of the points $p1$, $p2$, $p3$ and $p4$ with corresponding
+ weights $w1$, $w2$, $w3$ and $w4$. \ccPrecond{w1+w2+w3+w4 != 0}.}
+
+
+\ccRefines
+\ccc{AdaptableFunctor} (with three arguments)
+
+\ccSeeAlso
+\ccRefIdfierPage{Kernel::ConstructCentroid_3} \\
+\ccRefIdfierPage{CGAL::centroid} \\
+\ccRefIdfierPage{CGAL::barycenter}
+
+\end{ccRefFunctionObjectConcept}

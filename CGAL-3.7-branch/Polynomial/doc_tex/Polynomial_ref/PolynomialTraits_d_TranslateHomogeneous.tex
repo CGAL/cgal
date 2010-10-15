@@ -1,0 +1,44 @@
+\begin{ccRefConcept}{PolynomialTraits_d::TranslateHomogeneous}
+\ccDefinition
+
+Given numerator $a$ and denominator $b$ this \ccc{AdaptableFunctor} translates a 
+\ccc{PolynomialTraits_d::Polynomial_d} $p$ with respect to one variable by $a/b$, 
+that is, it computes $b^{degree(p)}\cdot p(x+a/b)$. 
+
+Note that this functor operates on the polynomial in the univariate view, that is, 
+the polynomial is considered as a univariate homogeneous polynomial in one specific variable. 
+
+
+\ccRefines 
+\ccc{AdaptableFunctor}\\
+\ccc{CopyConstructible}\\
+\ccc{DefaultConstructible}\\
+
+\ccTypes
+
+\ccSetThreeColumns{xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx}{xxx}{}
+\ccCreationVariable{fo}
+\ccTypedef{typedef PolynomialTraits_d::Polynomial_d   result_type;}{}\ccGlue
+
+\ccOperations
+\ccMethod{result_type operator()(PolynomialTraits_d::Polynomial_d p,
+                                 PolynomialTraits_d::Innermost_coefficient_type  a,
+                                 PolynomialTraits_d::Innermost_coefficient_type  b);}
+         { Returns $b^{degree(p)}\cdot p(x+a/b)$, 
+        with respect to the outermost variable. }
+\ccMethod{result_type operator()(PolynomialTraits_d::Polynomial_d p,
+                                 PolynomialTraits_d::Innermost_coefficient_type a,
+                                 PolynomialTraits_d::Innermost_coefficient_type  b,
+                                 int i);}
+         { Same as first operator but for variable $x_i$.
+           \ccPrecond $0 \leq i  < d$ 
+         }
+
+%\ccHasModels
+
+\ccSeeAlso
+
+\ccRefIdfierPage{Polynomial_d}\\
+\ccRefIdfierPage{PolynomialTraits_d}\\
+
+\end{ccRefConcept}

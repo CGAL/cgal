@@ -1,0 +1,123 @@
+<ui version="4.0" >
+ <class>MainWindow</class>
+ <widget class="QMainWindow" name="MainWindow" >
+  <property name="geometry" >
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>635</width>
+    <height>504</height>
+   </rect>
+  </property>
+  <property name="windowTitle" >
+   <string>CGAL 3D Alpha Shape</string>
+  </property>
+  <property name="windowIcon" >
+   <iconset resource="../resources/CGAL.qrc" >
+    <normaloff>:/cgal/logos/cgal_icon</normaloff>:/cgal/logos/cgal_icon</iconset>
+  </property>
+  <widget class="QWidget" name="centralwidget" >
+   <layout class="QVBoxLayout" >
+    <item>
+     <layout class="QHBoxLayout" >
+      <item>
+       <widget class="QLabel" name="alphaLabel" >
+        <property name="font" >
+         <font>
+          <weight>75</weight>
+          <bold>true</bold>
+         </font>
+        </property>
+        <property name="text" >
+         <string>&amp;alpha:</string>
+        </property>
+        <property name="buddy" >
+         <cstring>alphaBox</cstring>
+        </property>
+       </widget>
+      </item>
+      <item>
+       <widget class="QSpinBox" name="alphaBox" >
+        <property name="suffix" >
+         <string>%</string>
+        </property>
+        <property name="maximum" >
+         <number>100</number>
+        </property>
+       </widget>
+      </item>
+      <item>
+       <widget class="QSlider" name="alphaSlider" >
+        <property name="maximum" >
+         <number>100</number>
+        </property>
+        <property name="singleStep" >
+         <number>1</number>
+        </property>
+        <property name="orientation" >
+         <enum>Qt::Horizontal</enum>
+        </property>
+       </widget>
+      </item>
+     </layout>
+    </item>
+    <item>
+     <widget class="Viewer" native="1" name="viewer" />
+    </item>
+   </layout>
+  </widget>
+  <widget class="QMenuBar" name="menubar" >
+   <property name="geometry" >
+    <rect>
+     <x>0</x>
+     <y>0</y>
+     <width>635</width>
+     <height>19</height>
+    </rect>
+   </property>
+   <widget class="QMenu" name="menuFile" >
+    <property name="title" >
+     <string>File</string>
+    </property>
+    <addaction name="actionLoad_New_File" />
+    <addaction name="actionLoad_Additional_File" />
+    <addaction name="separator" />
+    <addaction name="actionQuit" />
+   </widget>
+   <addaction name="menuFile" />
+  </widget>
+  <widget class="QStatusBar" name="statusbar" />
+  <action name="actionLoad_New_File" >
+   <property name="text" >
+    <string>Load New File</string>
+   </property>
+  </action>
+  <action name="actionLoad_Additional_File" >
+   <property name="text" >
+    <string>Load Additional File</string>
+   </property>
+  </action>
+  <action name="actionLoad_Points" >
+   <property name="text" >
+    <string>Load Points</string>
+   </property>
+  </action>
+  <action name="actionQuit" >
+   <property name="text" >
+    <string>Quit</string>
+   </property>
+  </action>
+ </widget>
+ <customwidgets>
+  <customwidget>
+   <class>Viewer</class>
+   <extends>QWidget</extends>
+   <header>Viewer.h</header>
+  </customwidget>
+ </customwidgets>
+ <resources>
+  <include location="../resources/CGAL.qrc" />
+  <include location="Alpha_shape_3.qrc" />
+ </resources>
+ <connections/>
+</ui>

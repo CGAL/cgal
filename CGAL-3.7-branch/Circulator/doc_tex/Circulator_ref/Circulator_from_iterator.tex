@@ -1,0 +1,93 @@
+% +------------------------------------------------------------------------+
+% | CGAL Reference Manual: Forward_circulator_from_iterator.tex
+% +------------------------------------------------------------------------+
+% | Requirements for circulators in analogy to STL iterators.
+% | Adaptors between circulators and iterators.
+% | Proposal for CGAL.
+% |
+% | 11.10.1996   Lutz Kettner
+% | 
+% | \RCSdef{\circRev}{$Id$}
+% | \RCSdefDate{\circDate}{$Date$}
+% +------------------------------------------------------------------------+
+
+% +-----------------------------------------------------+
+\begin{ccRefClass}{Circulator_from_iterator<I>}
+\label{pageCircFromIterRef}
+
+\ccDefinition
+  
+The adaptor \ccClassTemplateName\ converts two iterators of type
+\ccc{I}, a begin and a past-the-end value, to a circulator of equal
+category. The iterator must be at least of the forward iterator
+category. The circulator will be mutable or non-mutable according to
+the iterator. Iterators provide no \ccc{size_type}. This adapter
+assumes \ccc{std::size_t} instead.
+
+
+\ccInclude{CGAL/circulator.h}
+
+\ccTypes
+\ccSetThreeColumns{typedef const T&}{const_reference;}{}
+
+\ccUnchecked\ccTypedef{typedef I         iterator;}{}
+
+In addition all types required for circulators are provided.
+
+\ccCreation
+\ccCreationVariable{c}
+
+\ccConstructor{Circulator_from_iterator();}{%
+  a circulator \ccVar\ on an empty sequence.}
+
+\ccConstructor{Circulator_from_iterator(const I& begin,
+  const I& end, const I& cur = begin);}{%
+  a circulator \ccVar\ initialized to refer to the element
+  \ccStyle{*cur} in  a range {\tt [}\ccStyle{begin}{\tt
+    ,}\ccStyle{end}{\tt )}.
+  The circulator \ccVar\ refers to a empty sequence
+  if \ccStyle{begin==end}.
+}
+
+\ccConstructor{Circulator_from_iterator(
+  const Circulator_from_iterator<I,T,Size,Dist>& d,
+  const I& cur);}{%
+  a copy of circulator $d$ referring to the element \ccc{*cur}.
+  The circulator \ccVar\ refers to a empty sequence
+  if $d$ does so.
+}
+
+\ccOperations
+
+The adaptor conforms to the requirements of the respective circulator
+category. An additional member function \ccc{current_iterator()}
+returns the current iterator pointing to the same position as the
+circulator does.
+
+\ccSeeAlso
+
+\ccc{Container_from_circulator},
+\ccc{Circulator_from_container},
+\ccc{Circulator}.
+
+\ccExample
+
+The following program composes two adaptors -- from an iterator to a
+circulator and back to an iterator. It applies an \stl\ sort algorithm
+on a \stl\ vector containing three elements. The resulting vector will
+be {\tt [2 5 9]} as it is checked by the assertions. The program is
+part of the \cgal\ distribution.
+
+%\ccIncludeExampleCode{Circulator/circulator_prog1.cpp}
+\ccIncludeExampleCode{Circulator/circulator_prog1.cpp}
+
+Another example usage for this adaptor is a  random access circulator
+over the built-in C arrays. Given an array of type {\tt T*}  with a
+begin pointer {\tt b} and a past-the-end pointer {\tt e} the adaptor
+\ccStyle{Circulator_from_iterator<T*> c(b,e)} is a random access circulator 
+\ccStyle{c} over this array.
+
+\end{ccRefClass}
+
+% +-----------------------------------------------------+
+% EOF

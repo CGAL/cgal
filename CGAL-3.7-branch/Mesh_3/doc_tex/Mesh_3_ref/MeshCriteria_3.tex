@@ -1,0 +1,73 @@
+% +------------------------------------------------------------------------+
+% | Reference manual page: MeshCriteria_3.tex
+% +------------------------------------------------------------------------+
+% | 15.05.2008   Laurent Rineau
+% | Package: Mesh_3
+% |
+\RCSdef{\RCSMeshCriteriaRev}{$Id$}
+\RCSdefDate{\RCSMeshCriteriaDate}{$Date$}
+% |
+\ccRefPageBegin
+%%RefPage: end of header, begin of main body
+% +------------------------------------------------------------------------+
+
+
+\begin{ccRefConcept}{MeshCriteria_3}
+
+%% \ccHtmlCrossLink{}     %% add further rules for cross referencing links
+%% \ccHtmlIndexC[concept]{} %% add further index entries
+
+\ccDefinition
+  
+The Delaunay refinement process involved in the 
+templated functions \ccc{make_mesh_3} and \ccc{refine_mesh_3}
+is guided by a set of elementary refinement criteria
+that concern either mesh tetrahedra or surface facets.
+The refinement criteria for tetrahedra are described
+through the concept \ccc{MeshCellCriteria_3}
+while the refinement criteria for boundary facets
+are described by the concept \ccc{MeshFacetCriteria_3}.
+The concept \ccRefName\ encapsulates both concepts.
+
+
+\ccTypes
+\ccNestedType{Facet_criteria}{Functor that describes the criteria for
+surface facets. This type must be a model
+of the concept \ccc{MeshFacetCriteria_3}.}
+
+\ccNestedType{Cell_criteria}{Functor that describes the criteria for 
+ mesh tetrahedra. This type must be a model of the concept
+\ccc{MeshCellCriteria_3}.}
+
+
+
+\ccCreationVariable{criteria}
+
+\ccAccessFunctions
+
+\ccMethod{Cell_criteria cell_criteria_object();}
+{Returns the cell criteria.}
+
+\ccMethod{Facet_criteria facet_criteria_object();}
+{Returns the facet criteria.}
+
+
+
+\ccHasModels
+\ccc{Mesh_criteria_3<Tr>}
+
+\ccSeeAlso
+\ccc{MeshFacetCriteria_3}\\
+\ccc{MeshCellCriteria_3} \\
+\ccc{make_mesh_3} \\
+
+
+
+\end{ccRefConcept}
+
+% +------------------------------------------------------------------------+
+%%RefPage: end of main body, begin of footer
+\ccRefPageEnd
+% EOF
+% +------------------------------------------------------------------------+
+

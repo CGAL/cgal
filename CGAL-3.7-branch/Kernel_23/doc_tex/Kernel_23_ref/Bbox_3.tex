@@ -1,0 +1,67 @@
+\begin{ccRefClass} {Bbox_3}
+
+\ccInclude{CGAL/Bbox_3.h}
+
+\ccDefinition  An object \ccStyle{b} of the class \ccRefName\ is a bounding 
+box in the three-dimensional Euclidean space $\E^3$. 
+
+\ccCreation
+\ccCreationVariable{b}
+
+
+\ccConstructor{Bbox_3(double x_min, double y_min, double z_min,
+                         double x_max, double y_max, double z_max);}
+            {introduces a bounding box \ccVar\ with lexicographically
+	     smallest corner point at \ccStyle{(xmin, ymin, zmin)} 
+	     lexicographically largest corner point at 
+	     \ccStyle{(xmax, ymax, zmax)}.}
+
+
+\ccOperations
+
+\ccMethod{bool operator==(const Bbox_3 &c) const;}
+       {Test for equality.}
+
+\ccMethod{bool operator!=(const Bbox_3 &q) const;}
+       {Test for inequality.}
+
+\ccMethod{int dimension() const;}{ Returns 3. }
+
+\ccMethod{double                 xmin() const;}
+       {}
+\ccGlue
+\ccMethod{double                 ymin() const;}
+       {}
+\ccGlue
+\ccMethod{double                 zmin() const;}
+       {}
+\ccGlue
+\ccMethod{double                 xmax() const;}
+       {}
+\ccGlue
+\ccMethod{double                 ymax() const;}
+       {}
+\ccGlue
+\ccMethod{double                 zmax() const;}
+       {}
+
+\ccMethod{double                 min(int i) const;}
+         {Returns \ccStyle{xmin()} if \ccStyle{i==0} or \ccStyle{ymin()} if \ccStyle{i==1}
+          or \ccStyle{zmin()} if \ccStyle{i==2}.
+          \ccPrecond{i<=0 and i<=2}}
+\ccGlue
+\ccMethod{double                 max(int i) const;}
+         {Returns \ccStyle{xmax()} if \ccStyle{i==0} or \ccStyle{ymax()} if \ccStyle{i==1}
+          or \ccStyle{zmax()} if \ccStyle{i==2}.
+          \ccPrecond{i==0 and i<=2}}
+
+
+\ccMethod{Bbox_3              operator+(const Bbox_3 &c) const;}
+       {returns a bounding box of \ccVar\ and \ccStyle{c}.}
+
+\ccSeeAlso
+\ccRefIdfierPage{CGAL::Bbox_2} \\
+\ccRefIdfierPage{CGAL::do_overlap} \\
+
+
+\end{ccRefClass} 

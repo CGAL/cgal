@@ -1,0 +1,213 @@
+% +------------------------------------------------------------------------+
+% | Reference manual page: TriangulationDSFaceBase_2.tex
+% +------------------------------------------------------------------------+
+% | 13.08.2003   Author
+% | Package: Package
+% | 
+\RCSdef{\RCSTriangulationDSFaceBaseRev}{$Id$}
+\RCSdefDate{\RCSTriangulationDSFaceBaseDate}{$Date$}
+% |
+%%RefPage: end of header, begin of main body
+% +------------------------------------------------------------------------+
+
+
+\begin{ccRefConcept}{TriangulationDSFaceBase_2}
+
+%% \ccHtmlCrossLink{}     %% add further rules for cross referencing links
+%% \ccHtmlIndexC[concept]{} %% add further index entries
+
+\ccDefinition
+The concept \ccRefName\ describes the requirements for
+the base face of a \ccc{Triangulation_data_structure_2<Vb,Fb>}.
+
+Note that if  the \ccc{Triangulation_data_structure_2} 
+is plugged  into a triangulation class, 
+the face base class may have  additional geometric
+requirements depending on the triangulation class.
+
+At the base level, 
+(see Sections~\ref{Section_2D_Triangulations_Software_Design} 
+and~\ref{2D_TDS_default}),
+a  face stores handles
+ on  its three vertices  and on  the three neighboring faces.
+The vertices and neighbors are indexed 0,1 and 2.
+Neighbor $i$ lies opposite to vertex $i$.
+
+Since the \ccc{Triangulation_data_structure_2} is the class 
+which defines the handle
+types, the face base class has to be somehow 
+parameterized by the triangulation
+data structure.  But since the \ccc{Triangulation_data_structure_2}
+itself is parameterized by the face and vertex
+base classes, there is a cycle in the definition of these classes.  
+In order
+to break the cycle, the base classes for faces and vertices
+ which are plugged in to instantiate a
+\ccc{Triangulation_data_structure_2}
+use a \ccc{void} as triangulation
+data structure parameter. Then, 
+the \ccc{Triangulation_data_structure_2}
+ uses a {\it rebind}  mechanism (similar to the one specified in
+\ccc{std::allocator}) in order to plug itself 
+as parameter in the face and vertex  base classes. 
+This mechanism requires that the base class  provides
+a templated nested class \ccc{Rebind_TDS} that
+itself provides 
+ the subtype \ccc{Rebind_TDS<TDS2>::Other}
+which is the {\it rebound} version of the base class.
+ This {\it rebound} base class is  the class
+that the   \ccc{Triangulation_data_structure_2}
+ actually  uses  as a base class for the class
+\ccc{Triangulation_data_structure_2::Face}.
+
+
+\ccTypes
+\ccThree{typedef TriangulationDataStructure_2::Vertex_handle}{}{}
+\ccThreeToTwo
+The concept \ccRefName\ has to provide the following types.
+
+\ccNestedType{
+  template <typename TDS2>
+  struct Rebind_TDS}
+{This nested template class has to define a type \ccc{Other} which is the
+{\it rebound} face base, where  the 
+\ccc{Triangulation_data_structure_2} is actually  plugged in.
+This type  \ccc{Other}  will be the actual  base 
+of the class \ccc{Triangulation_data_structure_2::Face}.}
+
+\ccTypedef{typedef TriangulationDataStructure_2 Triangulation_data_structure;}{}
+\ccGlue
+\ccTypedef{typedef TriangulationDataStructure_2::Vertex_handle Vertex_handle;}{}
+\ccGlue
+\ccTypedef{typedef TriangulationDataStructure_2::Face_handle Face_handle;}{}
+
+
+
+
+\ccCreation
+\ccCreationVariable{f}  %% choose variable name
+\ccTwo{TriangulationDSFaceBase_2( Vertex_handle v0,}{}
+\ccConstructor{TriangulationDSFaceBase_2();}{default constructor.}
+\ccGlue
+\ccConstructor{TriangulationDSFaceBase_2(Vertex_handle v0, 
+                                         Vertex_handle v1,
+                                         Vertex_handle v2);}
+{Initializes the vertices with \ccc{v0, v1, v2} and the neighbors 
+with \ccc{Face_handle()}.} 
+\ccGlue
+\ccConstructor{TriangulationDSFaceBase_2(Vertex_handle v0, 
+                                       Vertex_handle v1,
+                                       Vertex_handle v2,
+                                       Face_handle n0, 
+                                       Face_handle n1,
+                                       Face_handle n2);}
+{initializes the vertices with \ccc{ v0,v1, v2} and the neighbors with
+\ccc{n0, n1, n2}.}
+
+
+\ccAccessFunctions
+\ccThree{Vertex_handlex}{has_neigbor(const Face_handle n, int& i);}{}
+\ccMethod{ int dimension();}{returns the dimension.}
+\ccMethod{Vertex_handle vertex(int i) const;}
+{returns the vertex \ccc{i} of \ccVar\ .
+\ccPrecond{$0\leq i \leq 2$.}}
+\ccGlue
+\ccMethod{bool has_vertex(Vertex_handle v);}
+{returns true if \ccc{v} is a vertex of \ccVar\ .}
+\ccGlue
+\ccMethod{bool has_vertex(Vertex_handle v, int& i) const;}
+{as above, and sets \ccc{i} to the index of \ccc{v} in \ccVar\ .}
+\ccGlue
+\ccMethod{int index(Vertex_handle v) const;}
+{returns the index of \ccc{v} in \ccVar\ .}
+\ccGlue
+\ccMethod{Face_handle neighbor(int i) const;}
+{{returns the neighbor \ccc{i} of \ccVar\ .
+\ccPrecond $0\leq i \leq 2$.}}
+\ccGlue
+\ccMethod{bool has_neighbor(Face_handle n);}
+{returns true if \ccc{n} is a neighbor of \ccVar\ .}
+\ccGlue
+\ccMethod{bool has_neigbor(Face_handle n, int& i) const;}
+{as above, and sets i to the index of \ccc{n} in \ccVar\ .}
+\ccGlue
+\ccMethod{int index(const Face_handle n) const;}
+{returns the index of neighbor \ccc{n} in \ccVar\ .}
+
+\ccHeading{Setting}
+\ccMethod{void set_vertex(int i, Vertex_handle v);}
+{sets vertex \ccc{i} to \ccc{v}.
+{\ccPrecond $0\leq i \leq 2$.}}
+\ccGlue
+\ccMethod{ void set_vertices();}
+{sets the vertices to \ccc{Vertex_handle()}.}
+\ccGlue
+\ccMethod{void set_vertices(Vertex_handle v0,
+		    Vertex_handle v1,
+		    Vertex_handle v2);}
+{sets the vertices.}
+\ccGlue
+\ccMethod{void set_neighbor(int i, Face_handle n);}
+{sets neighbors \ccc{i} to \ccc{n}.
+{\ccPrecond $0\leq i \leq 2$.} }
+\ccGlue
+\ccMethod{void set_neighbors();} 
+{sets the neighbors to \ccc{Face_handle()}.}
+\ccGlue
+\ccMethod{void set_neighbors(Face_handle n0,
+		     Face_handle n1,
+		     Face_handle n2);}{sets the neighbors.}
+
+\ccHeading{Orientation}
+\ccMethod{void reorient();}
+{Changes the orientation of \ccVar\  by exchanging \ccc{vertex(0)}
+with \ccc{vertex(1)} and \ccc{neighbor(0)} with \ccc{neighbor(1)}.}
+\ccGlue
+\ccMethod{void ccw_permute();}
+{preforms a counterclockwise permutation of the
+ vertices and neighbors of \ccVar.}
+\ccGlue
+\ccMethod{ void cw_permute();}
+{preforms a clockwise permutation of the
+ vertices and neighbors of \ccVar.}
+
+\ccHeading{Checking}
+\ccMethod{bool is_valid(bool verbose = false) const;}
+{performs any required test on a face. \\
+If \ccc{verbose} is set to \ccc{true}, messages are printed to give
+a precise indication of the kind of invalidity encountered.}
+
+\ccHeading{Various}
+
+\ccMethod{void * for_compact_container() const;}{}
+\ccGlue
+\ccMethod{void * & for_compact_container();}{}
+{ These member functions are required by \ccc{Triangulation_data_structure_2}
+  because it uses \ccc{Compact_container} to store its faces.  See the
+  documentation of \ccc{Compact_container} for the exact requirements.}
+
+
+
+
+\ccHasModels
+\ccc{CGAL::Triangulation_ds_face_base_2<Tds>}\\
+\ccc{CGAL::Triangulation_face_base_2<Traits,Fb>}\\
+\ccc{CGAL::Regular_triangulation_face_base_2<Traits,Fb>}\\
+\ccc{CGAL::Constrained_triangulation_face_base_2<Traits,Fb>}\\
+\ccc{CGAL::Triangulation_face_base_with_info_2<Info,Traits,Fb>}
+
+\ccSeeAlso
+\ccc{TriangulationDSVertexBase_2}\\
+\ccc{TriangulationDataStructure_2::Face} \\
+\ccc{TriangulationFaceBase_2} \\
+\ccc{Triangulation_data_structure_2<Vb,Fb>} 
+
+%% \ccIncludeExampleCode{Package/TriangulationDSFaceBase_2_prog.C}
+
+\end{ccRefConcept}
+
+% +------------------------------------------------------------------------+
+%%RefPage: end of main body, begin of footer
+% EOF
+% +------------------------------------------------------------------------+
+

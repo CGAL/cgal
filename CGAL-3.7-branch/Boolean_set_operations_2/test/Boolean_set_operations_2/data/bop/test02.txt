@@ -1,0 +1,26 @@
+0
+0 
+1
+0  0 
+0
+
+0
+
+0
+
+1
+0  0 
+
+1
+0  0 
+
+1
+0  0 
+
+0
+
+-1
+
+# P1 = empty polygon
+# P2 = entire plane polygon
+

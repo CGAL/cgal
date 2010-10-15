@@ -1,0 +1,26 @@
+To compile and run all these examples type : make
+To compile and run only some of them type  : make name-of_wanted_example
+ 
+nn_coordinates_2: shows how to compute 2D natural coordinates 
+	given a 2D Delaunay triangulation  and a query point.
+
+nn_coordinates_3: shows how to compute 3D natural coordinates 
+	given a 3D Delaunay triangulation  and a query point.
+
+rn_coordinates_2: shows how to compute 2D regular (natural) coordinates 
+	given a 2D Regular triangulation  and a (weighted) query point.
+
+linear_interpolation_2: interpolates a linear function using the 
+	linear_interpolation function and 2D natural neighbor coordinates.
+
+sibson_interpolation_2: interpolates a spherical function using the 
+	sibson_gradient_fitting and sibson_c1_interpolation function with 
+	2D natural neighbor coordinates.
+
+surface_neighbor_coordinates_3: shows how to compute natural neighbor 
+	coordinates on surfaces. Example of the sphere.
+
+interpolation_2: this example allows to numerically compare the error 
+	committed by the different interpolation function when interpolating 
+	a predefined function on random points.
+

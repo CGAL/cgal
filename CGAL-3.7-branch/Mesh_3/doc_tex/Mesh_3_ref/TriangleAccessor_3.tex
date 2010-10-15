@@ -1,0 +1,64 @@
+% +------------------------------------------------------------------------+
+% | Reference manual page: Triangle_accessor_3.tex
+% +------------------------------------------------------------------------+
+% | 15.05.2008   Laurent Rineau
+% | Package: Mesh_3
+% |
+\RCSdef{\RCSTriangleAccessorRev}{$Id$}
+\RCSdefDate{\RCSTriangleAccessorDate}{$Date$}
+% |
+\ccRefPageBegin
+%%RefPage: end of header, begin of main body
+% +------------------------------------------------------------------------+
+
+
+\begin{ccRefConcept}{TriangleAccessor_3}
+
+%% \ccHtmlCrossLink{}     %% add further rules for cross referencing links
+%% \ccHtmlIndexC[concept]{} %% add further index entries
+
+\ccDefinition
+
+The concept \ccRefName{} represents an accessor to a triangulated polyhedral
+surface, intersection free and without boundaries.
+
+
+\ccTypes
+
+\ccNestedType{Triangle_3}{Triangle type. Must be a model of DefaultConstructible and
+CopyConstructible.}
+\ccGlue
+\ccNestedType{Triangle_iterator}{Triangle iterator type. Must be a model of InputIterator.}
+\ccGlue
+\ccNestedType{Triangle_handle}{Handle to a \ccc{Triangle_3}. Must be
+  constructible from \ccc{Triangle_iterator}. It may be \ccc{TriangleIterator} itself.}
+
+\ccNestedType{Polyhedron}{Polyhedron type.}
+
+\ccOperations
+\ccCreationVariable{ta}
+
+\ccMethod{Triangle_iterator triangles_begin(Polyhedron p);}
+{Returns a \ccc{Triangle_iterator} to visit the triangles of polyhedron \ccc{p}.}
+\ccGlue
+\ccMethod{Triangle_iterator triangles_end(Polyhedron p);}
+{Returns the past-the-end iterator for the above iterator.}
+\ccGlue
+\ccMethod{Triangle_3 triangle(Triangle_handle h);}{Returns a \ccc{Triangle_3}
+  object from handle \ccc{h}.}
+
+\ccHasModels
+\ccc{Triangle_accessor_3<Polyhedron_3<K>,K>}
+
+\ccSeeAlso
+\ccc{Polyhedral_mesh_domain_3<Polyhedron,IGT,TriangleAccessor>}\\
+\ccc{make_mesh_3}
+
+\end{ccRefConcept}
+
+% +------------------------------------------------------------------------+
+%%RefPage: end of main body, begin of footer
+\ccRefPageEnd
+% EOF
+% +------------------------------------------------------------------------+
+

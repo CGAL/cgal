@@ -1,0 +1,91 @@
+Microsoft Visual Studio Solution File, Format Version 9.00
+# Visual Studio 2005
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "barycenter", "VC\barycenter.vcproj", "{00000000-0000-0000-0000-000000008441}"
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "bounding_box", "VC\bounding_box.vcproj", "{00000000-0000-0000-0000-000000020253}"
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "linear_least_squares_fitting_circles_2", "VC\linear_least_squares_fitting_circles_2.vcproj", "{00000000-0000-0000-0000-000000021471}"
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "linear_least_squares_fitting_cuboids_3", "VC\linear_least_squares_fitting_cuboids_3.vcproj", "{00000000-0000-0000-0000-000000000515}"
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "linear_least_squares_fitting_spheres_3", "VC\linear_least_squares_fitting_spheres_3.vcproj", "{00000000-0000-0000-0000-000000029165}"
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "linear_least_squares_fitting_triangles_3", "VC\linear_least_squares_fitting_triangles_3.vcproj", "{00000000-0000-0000-0000-000000020021}"
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "fitting_2", "VC\linear_least_squares_fitting_points_2.vcproj", "{00000000-0000-0000-0000-000000032064}"
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "fitting_3", "VC\linear_least_squares_fitting_points_3.vcproj", "{00000000-0000-0000-0000-000000011108}"
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "fitting_rectangles_2", "VC\linear_least_squares_fitting_rectangles_2.vcproj", "{00000000-0000-0000-0000-000000022920}"
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "fitting_segments_2", "VC\linear_least_squares_fitting_segments_2.vcproj", "{00000000-0000-0000-0000-000000018803}"
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "fitting_segments_3", "VC\linear_least_squares_fitting_segments_3.vcproj", "{00000000-0000-0000-0000-000000030615}"
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "linear_least_squares_fitting_tetrahedrons_3", "VC\linear_least_squares_fitting_tetrahedra_3.vcproj", "{00000000-0000-0000-0000-000000008209}"
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "fitting_triangles_2", "VC\linear_least_squares_fitting_triangles_2.vcproj", "{00000000-0000-0000-0000-000000009659}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Win32 = Debug|Win32
+		Release|Win32 = Release|Win32
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{00000000-0000-0000-0000-000000008441}.Debug|Win32.ActiveCfg = Debug|Win32
+		{00000000-0000-0000-0000-000000008441}.Debug|Win32.Build.0 = Debug|Win32
+		{00000000-0000-0000-0000-000000008441}.Release|Win32.ActiveCfg = Release|Win32
+		{00000000-0000-0000-0000-000000008441}.Release|Win32.Build.0 = Release|Win32
+		{00000000-0000-0000-0000-000000020253}.Debug|Win32.ActiveCfg = Debug|Win32
+		{00000000-0000-0000-0000-000000020253}.Debug|Win32.Build.0 = Debug|Win32
+		{00000000-0000-0000-0000-000000020253}.Release|Win32.ActiveCfg = Release|Win32
+		{00000000-0000-0000-0000-000000020253}.Release|Win32.Build.0 = Release|Win32
+		{00000000-0000-0000-0000-000000021471}.Debug|Win32.ActiveCfg = Debug|Win32
+		{00000000-0000-0000-0000-000000021471}.Debug|Win32.Build.0 = Debug|Win32
+		{00000000-0000-0000-0000-000000021471}.Release|Win32.ActiveCfg = Release|Win32
+		{00000000-0000-0000-0000-000000021471}.Release|Win32.Build.0 = Release|Win32
+		{00000000-0000-0000-0000-000000000515}.Debug|Win32.ActiveCfg = Debug|Win32
+		{00000000-0000-0000-0000-000000000515}.Debug|Win32.Build.0 = Debug|Win32
+		{00000000-0000-0000-0000-000000000515}.Release|Win32.ActiveCfg = Release|Win32
+		{00000000-0000-0000-0000-000000000515}.Release|Win32.Build.0 = Release|Win32
+		{00000000-0000-0000-0000-000000029165}.Debug|Win32.ActiveCfg = Debug|Win32
+		{00000000-0000-0000-0000-000000029165}.Debug|Win32.Build.0 = Debug|Win32
+		{00000000-0000-0000-0000-000000029165}.Release|Win32.ActiveCfg = Release|Win32
+		{00000000-0000-0000-0000-000000029165}.Release|Win32.Build.0 = Release|Win32
+		{00000000-0000-0000-0000-000000020021}.Debug|Win32.ActiveCfg = Debug|Win32
+		{00000000-0000-0000-0000-000000020021}.Debug|Win32.Build.0 = Debug|Win32
+		{00000000-0000-0000-0000-000000020021}.Release|Win32.ActiveCfg = Release|Win32
+		{00000000-0000-0000-0000-000000020021}.Release|Win32.Build.0 = Release|Win32
+		{00000000-0000-0000-0000-000000032064}.Debug|Win32.ActiveCfg = Debug|Win32
+		{00000000-0000-0000-0000-000000032064}.Debug|Win32.Build.0 = Debug|Win32
+		{00000000-0000-0000-0000-000000032064}.Release|Win32.ActiveCfg = Release|Win32
+		{00000000-0000-0000-0000-000000032064}.Release|Win32.Build.0 = Release|Win32
+		{00000000-0000-0000-0000-000000011108}.Debug|Win32.ActiveCfg = Debug|Win32
+		{00000000-0000-0000-0000-000000011108}.Debug|Win32.Build.0 = Debug|Win32
+		{00000000-0000-0000-0000-000000011108}.Release|Win32.ActiveCfg = Release|Win32
+		{00000000-0000-0000-0000-000000011108}.Release|Win32.Build.0 = Release|Win32
+		{00000000-0000-0000-0000-000000022920}.Debug|Win32.ActiveCfg = Debug|Win32
+		{00000000-0000-0000-0000-000000022920}.Debug|Win32.Build.0 = Debug|Win32
+		{00000000-0000-0000-0000-000000022920}.Release|Win32.ActiveCfg = Release|Win32
+		{00000000-0000-0000-0000-000000022920}.Release|Win32.Build.0 = Release|Win32
+		{00000000-0000-0000-0000-000000018803}.Debug|Win32.ActiveCfg = Debug|Win32
+		{00000000-0000-0000-0000-000000018803}.Debug|Win32.Build.0 = Debug|Win32
+		{00000000-0000-0000-0000-000000018803}.Release|Win32.ActiveCfg = Release|Win32
+		{00000000-0000-0000-0000-000000018803}.Release|Win32.Build.0 = Release|Win32
+		{00000000-0000-0000-0000-000000030615}.Debug|Win32.ActiveCfg = Debug|Win32
+		{00000000-0000-0000-0000-000000030615}.Debug|Win32.Build.0 = Debug|Win32
+		{00000000-0000-0000-0000-000000030615}.Release|Win32.ActiveCfg = Release|Win32
+		{00000000-0000-0000-0000-000000030615}.Release|Win32.Build.0 = Release|Win32
+		{00000000-0000-0000-0000-000000008209}.Debug|Win32.ActiveCfg = Debug|Win32
+		{00000000-0000-0000-0000-000000008209}.Debug|Win32.Build.0 = Debug|Win32
+		{00000000-0000-0000-0000-000000008209}.Release|Win32.ActiveCfg = Release|Win32
+		{00000000-0000-0000-0000-000000008209}.Release|Win32.Build.0 = Release|Win32
+		{00000000-0000-0000-0000-000000009659}.Debug|Win32.ActiveCfg = Debug|Win32
+		{00000000-0000-0000-0000-000000009659}.Debug|Win32.Build.0 = Debug|Win32
+		{00000000-0000-0000-0000-000000009659}.Release|Win32.ActiveCfg = Release|Win32
+		{00000000-0000-0000-0000-000000009659}.Release|Win32.Build.0 = Release|Win32
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+EndGlobal

@@ -1,0 +1,152 @@
+\begin{ccRefClass} {Iso_rectangle_2<Kernel>}
+
+\ccDefinition  An object $s$ of the data type \ccRefName\ is a
+rectangle in the Euclidean plane $\E^2$ with sides parallel to the $x$ and
+$y$ axis of the coordinate system.
+ 
+Although they are represented in a canonical form by only two
+vertices, namely the lower left and the upper right vertex, we provide
+functions for ``accessing'' the other vertices as well. The vertices
+are returned in counterclockwise order.
+
+Iso-oriented rectangles and bounding boxes are quite similar. The
+difference however is that bounding boxes have always double coordinates, 
+whereas the coordinate type of an iso-oriented rectangle is chosen by
+the user.
+
+\ccCreation
+\ccCreationVariable{r}
+
+
+\ccHidden \ccConstructor{Iso_rectangle_2();}
+             {introduces an uninitialized variable \ccVar.}
+
+\ccHidden \ccConstructor{Iso_rectangle_2(const Iso_rectangle_2<Kernel> &u);}
+            {copy constructor.}
+
+\ccConstructor{Iso_rectangle_2(const Point_2<Kernel> &p, 
+                               const Point_2<Kernel> &q);}
+            {introduces an iso-oriented rectangle \ccVar\ with diagonal
+             opposite vertices $p$ and $q$. Note that the object is 
+             brought in the canonical form.}
+
+\ccConstructor{Iso_rectangle_2(const Point_2<Kernel> &p, 
+                               const Point_2<Kernel> &q,
+                               int);}
+            {introduces an iso-oriented rectangle \ccVar\ with diagonal
+             opposite vertices $p$ and $q$.  The \ccc{int} argument value
+             is only used to distinguish the two overloaded functions.
+             \ccPrecond{$p.x()<=q.x()$ and $p.y()<=q.y()$.}}
+
+
+\ccConstructor{Iso_rectangle_2(const Point_2<Kernel> &left, 
+                               const Point_2<Kernel> &right,
+                               const Point_2<Kernel> &bottom,
+                               const Point_2<Kernel> &top);}
+            {introduces an iso-oriented rectangle \ccVar\ whose
+             minimal $x$ coordinate is the one of \ccc{left}, the
+             maximal $x$ coordinate is the one of \ccc{right}, the
+             minimal $y$ coordinate is the one of \ccc{bottom}, the
+             maximal $y$ coordinate is the one of \ccc{top}.}
+
+\ccConstructor{Iso_rectangle_2(const Kernel::RT& min_hx, const Kernel::RT& min_hy, 
+                               const Kernel::RT& max_hx, const Kernel::RT& max_hy, 
+                               const Kernel::RT& hw = RT(1));}
+            {introduces an iso-oriented rectangle \ccVar\ with diagonal
+             opposite vertices (\ccc{min_hx/hw}, \ccc{min_hy/hw}) and 
+             (\ccc{max_hx/hw}, \ccc{max_hy/hw}).  
+             \ccPrecond \ccc{hw} $\neq$ 0.}
+
+\ccOperations
+\ccHidden \ccMethod{Iso_rectangle_2<Kernel> & operator=(const Iso_rectangle_2<Kernel> &q);}
+        {Assignment.}
+
+\ccMethod{bool operator==(const Iso_rectangle_2<Kernel> &r2) const;}
+       {Test for equality: two iso-oriented rectangles are equal, iff their
+        lower left and their upper right vertices are equal.}
+
+\ccMethod{bool operator!=(const Iso_rectangle_2<Kernel> &r2) const;}
+       {Test for inequality.}
+
+\ccMethod{Point_2<Kernel> vertex(int i) const;}
+       {returns the i'th vertex modulo 4  of \ccVar\ in counterclockwise order, 
+        starting with the lower left vertex.}
+
+\ccMethod{Point_2<Kernel> operator[](int i) const;}
+       {returns  \ccStyle{vertex(i)}.}
+
+\ccMethod{Point_2<Kernel> min() const;}
+       {returns the lower left vertex of \ccVar\ (= \ccStyle{vertex(0)}).}
+
+
+\ccMethod{Point_2<Kernel> max() const;}
+       {returns the upper right vertex of \ccVar\ (= \ccStyle{vertex(2)}).}
+
+\ccMethod{Kernel::FT xmin() const;}
+       {returns the $x$ coordinate of lower left vertex of \ccVar.}
+\ccGlue
+\ccMethod{Kernel::FT ymin() const;}
+       {returns the $y$ coordinate of lower left vertex of \ccVar.}
+\ccGlue
+\ccMethod{Kernel::FT xmax() const;}
+       {returns the $x$ coordinate of upper right vertex of \ccVar.}
+\ccGlue
+\ccMethod{Kernel::FT ymax() const;}
+       {returns the $y$ coordinate of upper right vertex of \ccVar.}
+
+\ccMethod{Kernel::FT min_coord(int i) const;}
+       {returns the $i$'th \ccHtmlNoLinksFrom{Cartesian} coordinate of the
+        lower left vertex of \ccVar. 
+%        (\ccc{min_coord(0) == xmin()}; \ccc{min_coord(1) == ymin()})
+        \ccPrecond $0 \leq i \leq 1$.}
+
+\ccMethod{Kernel::FT max_coord(int i) const;}
+       {returns the $i$'th \ccHtmlNoLinksFrom{Cartesian} coordinate of the
+        upper right vertex of \ccVar. 
+%        (\ccc{max_coord(0) == xmin()}; \ccc{max_coord(1) == ymin()})
+        \ccPrecond $0 \leq i \leq 1$.}
+
+\ccPredicates
+
+\ccMethod{bool is_degenerate() const;}
+       {%the iso-oriented rectangle 
+        \ccVar\ is degenerate, if all vertices
+        are collinear.}
+
+\ccMethod{Bounded_side bounded_side(const Point_2<Kernel> &p) const;}
+       {returns either \ccStyle{ON_UNBOUNDED_SIDE},
+        \ccStyle{ON_BOUNDED_SIDE}, or the constant
+        \ccStyle{ON_BOUNDARY}, 
+        depending on where point $p$ is.}
+
+\ccMethod{bool has_on_boundary(const Point_2<Kernel> &p) const;}
+       {}
+\ccGlue
+\ccMethod{bool has_on_bounded_side(const Point_2<Kernel> &p) const;}
+       {}
+\ccGlue
+\ccMethod{bool has_on_unbounded_side(const Point_2<Kernel> &p) const;}
+       {}
+
+\ccHeading{Miscellaneous}
+
+\ccMethod{Kernel::FT area() const;}
+       {returns the area of \ccVar. }
+
+\ccMethod{Bbox bbox() const;}
+       {returns a bounding box containing \ccVar. }
+
+\ccMethod{Iso_rectangle_2<Kernel>  transform(const Aff_transformation_2<Kernel> &t) const;}
+       {returns the iso-oriented rectangle obtained by applying $t$ on 
+        the lower left and the upper right corner of \ccVar.
+        \ccPrecond The angle at a rotation must be a multiple of $\pi/2$,
+        otherwise the resulting rectangle does not have the same side length.
+        Note that rotating about an arbitrary angle can even result in
+        a degenerate  iso-oriented rectangle.}
+
+
+
+\ccSeeAlso
+\ccRefConceptPage{Kernel::IsoRectangle_2}
+
+\end{ccRefClass} 

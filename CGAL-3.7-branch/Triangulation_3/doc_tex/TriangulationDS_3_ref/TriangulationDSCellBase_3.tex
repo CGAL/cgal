@@ -1,0 +1,189 @@
+% +------------------------------------------------------------------------+
+% | Reference manual page: TriangulationDSCellBase_3.tex
+% +------------------------------------------------------------------------+
+% | 29.3.2000   Monique Teillaud
+% | Package: Triangulation3
+% | 
+\RCSdef{\RCSTriangulationcbRev}{$Id$}
+\RCSdefDate{\RCSTriangulationcbDate}{$Date$}
+% |
+%%RefPage: end of header, begin of main body
+% +------------------------------------------------------------------------+
+
+
+\begin{ccRefConcept}{TriangulationDSCellBase_3}
+
+%% \ccHtmlCrossLink{}     %% add further rules for cross referencing links
+%% \ccHtmlIndexC[concept]{} %% add further index entries
+
+\ccDefinition
+  
+At the base level 
+(see Sections~\ref{Triangulation3-sec-design} and~\ref{TDS3-sec-design}),
+a cell stores handles to its four vertices and to its four neighbor cells. 
+The vertices and neighbors are indexed 0, 1, 2 and 3. Neighbor $i$
+lies opposite to vertex $i$.
+
+Since the Triangulation data structure is the class which defines the handle
+types, the cell base class has to be somehow parameterized by the Triangulation
+data structure.  But since it is itself parameterized by the cell and vertex
+base classes, there is a cycle in the definition of these classes.  In order
+to break the cycle, the base classes for vertex and cell which are given as
+arguments for the Triangulation data structure use \ccc{void} as Triangulation
+data structure parameter, and the Triangulation data structure then uses a
+{\it rebind}-like mechanism (similar to the one specified in
+\ccc{std::allocator}) in order to put itself as parameter to the vertex and
+cell classes.  The {\it rebound} base classes so obtained are the classes
+which are used as base classes for the final vertex and cell classes.
+More information can be found in Section~\ref{TDS3-sec-design}.
+
+\ccTypes
+\ccThree{typedef TriangulationDataStructure_3::Vertex_handle}{}{}
+\ccThreeToTwo
+The concept \ccRefName\ has to provide the following types.
+
+\ccNestedType{
+  template <typename TDS2>
+  struct Rebind_TDS}
+{This nested template class has to define a type \ccc{Other} which is the
+{\it rebound} cell, that is, the one whose \ccc{Triangulation_data_structure}
+will be the actually used one.  The \ccc{Other} type will be the real base
+class of \ccc{Triangulation_data_structure_3::Cell}.}
+
+\ccTypedef{typedef TriangulationDataStructure_3 Triangulation_data_structure;}{}
+\ccGlue
+\ccTypedef{typedef TriangulationDataStructure_3::Vertex_handle Vertex_handle;}{}
+\ccGlue
+\ccTypedef{typedef TriangulationDataStructure_3::Cell_handle Cell_handle;}{}
+\ccGlue
+\ccTypedef{typedef TriangulationDataStructure_3::Cell_data TDS_data;}{}
+
+\ccCreation
+\ccCreationVariable{c}  %% choose variable name
+
+\ccConstructor{Cell_base();}
+{Default constructor}
+\ccGlue
+\ccConstructor{Cell_base( Vertex_handle v0, Vertex_handle v1,
+                          Vertex_handle v2, Vertex_handle v3);}
+{Initializes the vertices with \ccc{v0, v1, v2, v3}. Neighbors are
+initialized to the default constructed handle.} 
+\ccGlue
+\ccConstructor{Cell_base( Vertex_handle v0, Vertex_handle v1,
+                          Vertex_handle v2, Vertex_handle v3,
+			  Cell_handle n0, Cell_handle n1,
+                          Cell_handle n2, Cell_handle n3)} 
+{Initializes the vertices with \ccc{v0, v1, v2, v3} and the neighbors with
+\ccc{n0, n1, n2, n3}.}
+                    
+\ccAccessFunctions
+\ccThree{Vertex_handlex}{xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx}{}
+
+\ccMethod{Vertex_handle vertex(int i) const;}
+{Returns the vertex \ccc{i} of \ccVar.
+\ccPrecond{$i \in \{0, 1, 2, 3\}$.}}
+\ccGlue
+\ccMethod{int index(Vertex_handle v) const;}
+{Returns the index of \ccc{v}.
+\ccPrecond{\ccc{v} is a vertex of \ccVar}}
+\ccGlue
+\ccMethod{bool has_vertex(Vertex_handle v);}
+{True iff \ccc{v} is a vertex of \ccVar.}
+\ccGlue
+\ccMethod{bool has_vertex(Vertex_handle v, int & i) const;}
+{Returns \ccc{true} if \ccc{v} is a vertex of \ccVar, and
+computes its index \ccc{i} in \ccVar.}
+
+\ccMethod{Cell_handle neighbor(int i) const;}
+{Returns  the neighbor \ccc{i} of \ccVar.
+\ccPrecond{$i \in \{0, 1, 2, 3\}$.}}
+\ccGlue
+\ccMethod{int index(Cell_handle n) const;}
+{Returns the index of cell \ccc{n} in \ccVar.
+\ccPrecond{\ccc{n} is a neighbor of \ccVar.}}
+\ccGlue
+\ccMethod{bool has_neighbor(Cell_handle n);}
+{Returns \ccc{true} if \ccc{n} is a neighbor of \ccVar.}
+\ccGlue
+\ccMethod{bool has_neighbor(Cell_handle n, int & i) const;}
+{Returns \ccc{true} if \ccc{n} is a neighbor of \ccVar,  and
+computes its index \ccc{i} in \ccVar.}
+
+\ccHeading{Setting}
+
+\ccMethod{void set_vertex(int i, Vertex_handle v);}
+{Sets vertex \ccc{i} to \ccc{v}.
+\ccPrecond{$i \in \{0, 1, 2, 3\}$.}}
+\ccGlue
+\ccMethod{ void set_vertices();}
+{Sets the vertices to the default constructed handle.}
+\ccGlue
+\ccMethod{void set_vertices( Vertex_handle v0, Vertex_handle v1,
+		       	     Vertex_handle v2, Vertex_handle v3);}
+{Sets the vertices.}
+
+\ccMethod{void set_neighbor(int i, Cell_handle n);}
+{Sets neighbor \ccc{i} to \ccc{n}.
+\ccPrecond{$i \in \{0, 1, 2, 3\}$.}}
+\ccGlue
+\ccMethod{void set_neighbors();} 
+{Sets the neighbors to the default constructed handle.}
+\ccGlue
+\ccMethod{void set_neighbors(Cell_handle n0, Cell_handle n1,
+		     	     Cell_handle n2, Cell_handle n3);}
+{Sets the neighbors.}
+
+\begin{ccDebug}
+\ccHeading{Checking}
+\ccMethod{bool is_valid(bool verbose = false, int level = 0) const;}
+{Performs any desired geometric test on a cell.\\
+When \ccc{verbose} is set to \ccc{true}, messages are printed to give
+a precise indication of the kind of invalidity encountered. \ccc{level}
+increases the level of testing.}
+\end{ccDebug}
+
+\begin{ccAdvanced}
+
+\ccHeading{Various}
+
+\ccMethod{void * for_compact_container() const;}{}
+\ccGlue
+\ccMethod{void * & for_compact_container();}{}
+{ These member functions are required by \ccc{Triangulation_data_structure_3}
+  because it uses \ccc{Compact_container} to store its cells.  See the
+  documentation of \ccc{Compact_container} for the exact requirements.}
+
+\ccMethod{TDS_data& tds_data();}{}
+\ccGlue
+\ccMethod{const TDS_data& tds_data() const;}{}
+{ These functions are used internally by the triangulation data structure.  The user is
+not encouraged to use them directly as they may change in the future.}
+
+\end{ccAdvanced}
+
+\ccHeading{I/O}
+
+\ccFunction{istream& operator>> (istream& is, TriangulationDSCellBase_3 & c);}
+{Inputs the possible non combinatorial information given by the cell.}
+\ccGlue
+\ccFunction{ostream& operator<< (ostream& os, const TriangulationDSCellBase_3 & c);}
+{Outputs the possible non combinatorial information given by the cell.}
+
+\ccHasModels
+
+\ccc{CGAL::Triangulation_ds_cell_base_3}\\
+\ccc{CGAL::Triangulation_cell_base_3}\\
+\ccc{CGAL::Triangulation_cell_base_with_info_3}
+
+\ccSeeAlso
+
+\ccc{TriangulationDSVertexBase_3}\\
+\ccc{TriangulationVertexBase_3}\\
+\ccc{TriangulationHierarchyVertexBase_3}\\
+\ccc{TriangulationCellBase_3}
+
+%% \ccExample
+
+%% \ccIncludeExampleCode{Triangulation3/Triangulation_cb_3_prog.C}
+
+\end{ccRefConcept}

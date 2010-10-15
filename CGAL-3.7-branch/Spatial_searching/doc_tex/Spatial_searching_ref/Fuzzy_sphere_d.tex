@@ -1,0 +1,71 @@
+% +------------------------------------------------------------------------+
+% | Reference manual page: Fuzzy_sphere.tex
+% +------------------------------------------------------------------------+
+% | 1.07.2001   Johan W.H. Tangelder
+% | Package: ASPAS
+% | 
+\RCSdef{\RCSFuzzyspheredRev}{$Id$}
+\RCSdefDate{\RCSFuzzyspheredDate}{$Date$}
+% |
+%%RefPage: end of header, begin of main body
+% +------------------------------------------------------------------------+
+
+
+\begin{ccRefClass}{Fuzzy_sphere<Traits>}  %% add template arg's if necessary
+
+%% \ccHtmlCrossLink{}     %% add further rules for cross referencing links
+%% \ccHtmlIndexC[class]{} %% add further index entries
+
+\ccDefinition
+  
+The class \ccRefName\ implements fuzzy $d$-dimensional spheres.
+A fuzzy sphere with radius $r$ and fuzziness value $\epsilon$ has
+as outer approximation a sphere with radius $r+\epsilon$ and
+as inner approximation a sphere with radius $r-\epsilon$. 
+
+\ccInclude{CGAL/Fuzzy_sphere.h}
+
+\ccParameters
+
+
+Expects for the template argument a model of the concept
+\ccc{SearchTraits}, for example \ccc{CGAL::Cartesian_d<double>}.
+
+\ccIsModel
+
+\ccc{FuzzyQueryItem}
+
+\ccTypes
+\ccTypedef{Traits::Point_d Point_d;}{Point type.}
+\ccTypedef{Traits::FT FT;}{Number type.}
+
+\ccCreation
+\ccCreationVariable{s}  %% choose variable name
+
+
+
+\ccConstructor{Fuzzy_sphere(Point_d center, FT radius, FT epsilon=FT(0));}{Constructs a fuzzy sphere
+centered at \ccc{center} with radius \ccc{radius} and fuzziness value \ccc{epsilon}.}
+
+\ccOperations
+
+\ccMethod{bool contains(const Point_d& p); const}{test whether $s$ contains $p$.}
+
+\ccMethod{bool inner_range_intersects(const Kd_tree_rectangle<FT>& rectangle); const}
+{test whether the inner sphere intersects the rectangle
+associated with a node of a tree.}
+
+\ccMethod{bool outer_range_contains(const Kd_tree_rectangle<FT>& rectangle); const}
+{test whether the outer sphere encloses the rectangle associated with a node of a tree.}
+
+\ccSeeAlso
+
+\ccc{FuzzyQueryItem}
+
+\end{ccRefClass}
+
+% +------------------------------------------------------------------------+
+%%RefPage: end of main body, begin of footer
+% EOF
+% +------------------------------------------------------------------------+
+

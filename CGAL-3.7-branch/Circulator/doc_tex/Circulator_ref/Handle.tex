@@ -1,0 +1,53 @@
+% +------------------------------------------------------------------------+
+% | Reference manual page: Handle.tex
+% +------------------------------------------------------------------------+
+% | 
+\RCSdef{\RCSHandleRev}{$Id$}
+\RCSdefDate{\RCSHandleDate}{$Date$}
+% |
+%%RefPage: end of header, begin of main body
+% +------------------------------------------------------------------------+
+
+\begin{ccRefConcept}{Handle}
+
+%% \ccHtmlCrossLink{}     %% add further rules for cross referencing links
+%% \ccHtmlIndexC[concept]{} %% add further index entries
+
+\ccDefinition
+  
+Most data structures in \cgal\ use the concept of \ccRefName\ in their user
+interface to refer to the elements they store.  This concept describes what is
+sometimes called a trivial iterator.  A \ccRefName\ is akin to a pointer to
+an object providing the dereference operator \ccc{operator*()} and member
+access \ccc{operator->()} but no increment or decrement operators like
+iterators.  A \ccRefName\ is intended to be used whenever the referenced
+object is not part of a logical sequence.
+ 
+Like iterators, the handle can be passed as template argument to
+\ccc{std::iterators_traits} in order to extract its \ccc{value_type},
+the type of the element pointed to.
+The \ccc{iterator_category} is \ccc{void}.
+
+\ccRefines DefaultConstructible, CopyConstructible, Assignable, EqualityComparable
+
+The default constructed object must be unique as far as the equality
+operator is concerned (this serves the same purpose as NULL for pointers).
+(Note that this is not a generally supported feature of iterators of
+standard containers.)
+
+\ccCreation
+\ccCreationVariable{h}  %% choose variable name
+
+\ccHeading{Dereference}
+
+\ccMethod{value_type& operator*();}{returns the object pointed to.}
+\ccGlue
+\ccMethod{value_type* operator->();}{returns a pointer to the object pointed to.}
+
+\ccHasModels
+pointers\\
+const pointers\\
+iterators\\
+circulators
+
+\end{ccRefConcept}

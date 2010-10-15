@@ -1,0 +1,128 @@
+% +----------------------------------------------------------+
+%---------------------------------------------
+% Point_set_2 data type
+%---------------------------------------------
+\begin{ccRefClass}{Point_set_2<Gt,Tds>}
+
+\ccDefinition
+
+\ccInclude{CGAL/Point_set_2.h}
+
+An instance $PS$ of the data type \ccRefName\  is a {\em Delaunay Triangulation}
+of its vertex set. The class \ccRefName\ is inherited from the \cgal\ Delaunay triangulation,
+and provides additional nearest neighbor query operations and range searching operations.
+
+The \ccRefName\ class of \cgal\ depends on template parameters standing for the
+geometric traits classes used by the point set and by the Delaunay triangulation (Gt)
+and for the triangulation data structure (Tds). 
+
+
+\ccCreationVariable{PS}
+
+
+\ccHtmlLinksOff
+
+
+\ccTypes
+\ccThree{typedef Gt::Point_2 Point;}{the point type}{}
+\ccThreeToTwo
+\ccTypedef{typedef Gt::Point_2 Point;}{the point type}{}
+\ccTypedef{typedef Gt::Segment_2 Segment;}{the segment type}
+\ccTypedef{typedef Gt::Circle_2 Circle;}{the circle type}
+\ccTypedef{typedef Gt::FT Numb_type;}{the representation field number type.}
+\ccNestedType{Triangulation::size_type}{the size type of the underlying triangulation.}
+\ccNestedType{Triangulation::Vertex}{the vertex type of the underlying triangulation.}
+\ccNestedType{Triangulation::Edge}{the edge type of the underlying triangulation.}
+\ccNestedType{Triangulation::Vertex_handle }{handles to vertices.}
+
+\ccHtmlLinksOn
+
+
+\ccCreation
+
+\ccConstructor{Point_set_2();}
+{creates an empty \ccRefName\ .}
+
+
+\ccConstructor{template<class InputIterator>
+Point_set_2(InputIterator first, InputIterator last);}
+{creates a \ccRefName\ \ccVar\ of the points in the range
+[$first$,$last$).}
+
+
+\ccOperations
+
+
+\ccHtmlLinksOff
+
+
+\ccMethod{Vertex\_handle  lookup(Point p);}
+{ if \ccVar\ contains a Vertex $v$ with $|pos(v)| = p$ 
+the result is a handle to $v$ otherwise the result is $NULL$. }
+
+
+\ccMethod{Vertex\_handle  nearest_neighbor(Point p);}
+{ computes a handle to a vertex $v$ of \ccVar\ that is closest to $p$.
+If \ccVar\ is empty, $NULL$ is returned.
+}
+
+\ccMethod{Vertex\_handle  nearest_neighbor(Vertex_handle v);}
+{ computes a handle to a vertex $w$ of \ccVar\ that is closest to $v$.
+If $v$ is the only vertex in \ccVar\ , $NULL$ is returned.
+}
+
+\ccMethod{template<class OutputIterator>
+OutputIterator   nearest_neighbors(Point p, size_type k, OutputIterator res);}
+{ computes the $k$ nearest neighbors of $p$ in \ccVar, and places the
+handles to the corresponding vertices as a sequence of objects of type
+Vertex\_handle in a container of value type of $res$
+which points to the first object in the sequence. The function
+returns an output iterator pointing to the position beyond the end
+of the sequence. }
+
+\ccMethod{template<class OutputIterator>  
+OutputIterator  nearest_neighbors(Vertex_handle v, size_type k,OutputIterator res);}
+{ computes the $k$ nearest neighbors of $v$, and places them as a sequence of objects of type
+Vertex\_handle in a container of value type of $res$
+which points to the first object in the sequence. The function
+returns an output iterator pointing to the position beyond the end
+of the sequence. }
+
+\ccMethod{template<class OutputIterator>
+OutputIterator range_search(const Circle& C, OutputIterator res);}
+{ computes handles to all vertices contained in the closure of disk $C$.
+The computed vertex handles will be placed as a sequence of objects in a container of value type
+of $res$
+which points to the first object in the sequence. The function
+returns an output iterator pointing to the position beyond the end
+of the sequence.
+}
+
+\ccMethod{template<class OutputIterator>
+OutputIterator range_search(const Point& a, const Point& b, const Point& c,OutputIterator res);}
+{ computes handles to all vertices contained in the closure of the triangle $(a,b,c)$.\\
+\ccPrecond $a$, $b$, and $c$ must not be collinear. 
+The computed vertex handles will be placed as a sequence of objects in a container of value type
+of $res$
+which points to the first object in the sequence. The function
+returns an output iterator pointing to the position beyond the end
+of the sequence.
+}
+
+\ccMethod{template<class OutputIterator>
+OutputIterator range_search(const Point& a1, const Point& b1, const Point& c1,const Point&
+d1,OutputIterator res);}
+{ computes handles to all vertices contained in the closure of the iso-rectangle $(a1,b1,c1,d1)$.\\
+\ccPrecond $a1$ is the upper left point, $b1$ the lower left, $c1$ the lower
+right and $d1$ the upper right point of the iso rectangle.
+The computed vertex handles will be placed as a sequence of objects in a container of value type
+of $res$
+which points to the first object in the sequence. The function
+returns an output iterator pointing to the position beyond the end
+of the sequence.
+}
+
+
+\ccHtmlLinksOn
+
+\end{ccRefClass} 

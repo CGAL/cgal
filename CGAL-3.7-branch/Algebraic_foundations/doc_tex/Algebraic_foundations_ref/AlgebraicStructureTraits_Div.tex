@@ -1,0 +1,41 @@
+\begin{ccRefFunctionObjectConcept}{AlgebraicStructureTraits::Div}
+
+\ccDefinition
+
+\ccc{AdaptableBinaryFunction} computes the integral quotient of division 
+with remainder. 
+ 
+\ccRefines 
+
+\ccc{AdaptableBinaryFunction} 
+
+\ccTypes
+\ccNestedType{result_type} 
+        { Is \ccc{AlgebraicStructureTraits::Type}.}
+\ccGlue
+\ccNestedType{first_argument} 
+        { Is \ccc{AlgebraicStructureTraits::Type}.}
+\ccGlue
+\ccNestedType{second_argument} 
+        { Is \ccc{AlgebraicStructureTraits::Type}.}
+
+\ccOperations
+\ccCreationVariable{div}
+\ccThree{xxxxxxxxxxx}{xxxxxxxxxxx}{}
+
+\ccMethod{result_type operator()(first_argument_type  x, 
+                                 second_argument_type y);}{}
+
+\ccMethod{template <class NT1, class NT2> result_type operator()(NT1  x, NT2  y);}
+         {This operator is well defined if \ccc{NT1} and \ccc{NT2} are \ccc{ExplicitInteroperable} 
+          with coercion type \ccc{AlgebraicStructureTraits::Type}. }
+
+%\ccHasModels
+
+\ccSeeAlso
+
+\ccRefIdfierPage{AlgebraicStructureTraits}\\
+\ccRefIdfierPage{AlgebraicStructureTraits::Mod}\\
+\ccRefIdfierPage{AlgebraicStructureTraits::DivMod}\\
+
+\end{ccRefFunctionObjectConcept} 

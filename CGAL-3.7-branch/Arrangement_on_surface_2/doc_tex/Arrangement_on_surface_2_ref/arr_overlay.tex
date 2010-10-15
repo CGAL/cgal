@@ -1,0 +1,92 @@
+\ccRefPageBegin
+
+\begin{ccRefFunction}{overlay}
+
+\ccDefinition
+
+The function \ccRefName{} computes the overlay of two input arrangement
+objects, and returns the overlaid arrangement. All three arrangements
+can be instantiated with different geometric traits classes and different
+\dcel{} (encapsulated in the various topology-traits classes) classes.
+The geometry traits of the resulting arrangement is used to construct the
+resulting arrangement. This means that all the types (e.g.,
+\ccc{Traits::Point_2}, \ccc{Traits::Curve_2}, and \ccc{Traits::Point_2})
+of both input arrangements have to be convertible to the types in the
+resulting arrangement. A given overlay-traits object is used to properly
+construct the overlaid \dcel{} that represents the resulting arrangement.
+
+%%%%
+
+\ccInclude{CGAL/Arr_overlay_2.h}
+
+\ccGlobalFunction{template <class GeomTraitsA, class GeomTraitsB,
+                            class GeomTraitsRes, class TopTraitsA,
+                            class TopTraitsB, class TopTraitsRes,
+                            class OverlayTraits>
+  void overlay (const Arrangement_2<GeomTraitsA, TopTraitsA>& arr1,
+                const Arrangement_2<GeomTraitsB, TopTraitsB>& arr2,
+                Arrangement_2<GeomTraitsRes, TopTraitsRes>& arr_res,
+                OverlayTraits& ovl_tr);}
+Computes the overlay of two arrangements \ccc{arr1} and \ccc{arr2}, and sets
+the output arrangement \ccc{res} to represent the overlaid arrangement.
+\ccPrecond{\ccc{res} does not refer to either \ccc{arr1} or \ccc{arr2}
+(that is, ``self overlay'' is not supported).}
+
+\ccGlobalFunction{template <class GeomTraitsA, class GeomTraitsB,
+                            class GeomTraitsRes, class TopTraitsA,
+                            class TopTraitsB, class TopTraitsRes>
+  void overlay (const Arrangement_2<GeomTraitsA, TopTraitsA>& arr1,
+                const Arrangement_2<GeomTraitsB, TopTraitsB>& arr2,
+                Arrangement_2<GeomTraitsRes, TopTraitsRes>& arr_res);}
+Computes the (simple) overlay of two arrangements \ccc{arr1} and \ccc{arr2},
+and sets the output arrangement \ccc{res} to represent the overlaid
+arrangement. It employs the default overlay-traits, which practically does
+nothing.
+\ccPrecond{\ccc{res} does not refer to either \ccc{arr1} or \ccc{arr2}
+(that is, ``self overlay'' is not supported).}
+
+%%%%
+
+\ccThree{Orientation~~}{}{\hspace*{8.5cm}}
+
+\ccInclude{CGAL/Arrangement_with_history_2.h}
+
+\ccGlobalFunction{template<typename Traits, typename Dcel1, typename Dcel2,
+                           typename ResDcel, typename OverlayTraits>
+           void overlay (const Arrangement_with_history_2<Traits,Dcel1>& arr1,
+                         const Arrangement_with_history_2<Traits,Dcel2>& arr2,
+                         Arrangement_with_history_2<Traits,ResDcel>& res,
+                         OverlayTraits& ovl_tr);}
+Computes the overlay of two arrangements with history \ccc{arr1} and
+\ccc{arr2}, and sets the output arrangement with history \ccc{res} to
+represent the overlaid arrangement. The function also constructs a
+consolidated set of curves that induce \ccc{res}.
+\ccPrecond{\ccc{res} does not refer to either \ccc{arr1} or \ccc{arr2}
+(that is, ``self overlay'' is not supported).}
+
+\ccGlobalFunction{template<typename Traits, typename Dcel1, typename Dcel2,
+                           typename ResDcel>
+           void overlay (const Arrangement_with_history_2<Traits,Dcel1>& arr1,
+                         const Arrangement_with_history_2<Traits,Dcel2>& arr2,
+                         Arrangement_with_history_2<Traits,ResDcel>& res);}
+Computes the (simple) overlay of two arrangements with history \ccc{arr1}
+and \ccc{arr2}, and sets the output arrangement with history \ccc{res} to
+represent the overlaid arrangement. The function also constructs a
+consolidated set of curves that induce \ccc{res}. It employs the default
+overlay-traits, which practically does nothing.
+\ccPrecond{\ccc{res} does not refer to either \ccc{arr1} or \ccc{arr2}
+(that is, ``self overlay'' is not supported).}
+
+\ccRequirements
+\begin{itemize}
+\item The overlay-traits object \ccc{ovl_tr} must model the \ccc{OverlayTraits}
+  concept, which is able to construct records of the \ccc{ResDcel} class on
+  the basis of the \ccc{Dcel1} and \ccc{Dcel2} records that induce them.
+\end{itemize}
+
+\ccSeeAlso
+  \ccc{OverlayTraits}\lcTex{(\ccRefPage{OverlayTraits})}
+
+\end{ccRefFunction}
+
+\ccRefPageEnd

@@ -1,0 +1,16 @@
+\begin{ccRefFunctionObjectConcept}{Kernel::EqualY_2}
+A model for this must provide:
+
+\ccCreationVariable{fo}
+
+\ccMemberFunction{bool operator()(const Kernel::Point_2&p, 
+                                  const Kernel::Point_2&q);}
+{returns true iff $p$ and $q$ have the same Cartesian $y$-coordinate.}
+
+\ccRefines
+\ccc{AdaptableFunctor} (with two arguments)
+
+\ccSeeAlso
+\ccRefIdfierPage{CGAL::y_equal}\\
+
+\end{ccRefFunctionObjectConcept}

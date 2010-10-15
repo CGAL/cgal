@@ -1,0 +1,229 @@
+% begin cgal manual page
+
+\begin{ccRefConcept}{ExtendedKernelTraits_2}
+\ccIndexTraitsClassRequirements[p]{extended kernel, 2D}     
+\ccCreationVariable{K}
+
+\ccDefinition
+
+\ccc{ExtendedKernelTraits_2} is a kernel concept providing extended
+geometry\footnote{It is called extended geometry for simplicity,
+though it is not a real geometry in the classical sense.}. Let \ccc{K}
+be an instance of the data type \ccc{ExtendedKernelTraits_2}.  The
+central notion of extended geomtry are extended points. An extended
+point represents either a standard affine point of the Cartesian plane
+or a non-standard point representing the equivalence class of rays
+where two rays are equivalent if one is contained in the other.
+
+Let $R$ be an infinimaximal number\footnote{A finite but very large
+number.}, $F$ be the square box with corners $NW(-R,R)$, $NE(R,R)$,
+$SE(R,-R)$, and $SW(-R,-R)$. Let $p$ be a non-standard point and let
+$r$ be a ray defining it. If the frame $F$ contains the source point
+of $r$ then let $p(R)$ be the intersection of $r$ with the frame $F$,
+if $F$ does not contain the source of $r$ then $p(R)$ is undefined.
+For a standard point let $p(R)$ be equal to $p$ if $p$ is contained in
+the frame $F$ and let $p(R)$ be undefined otherwise. Clearly, for any
+standard or non-standard point $p$, $p(R)$ is defined for any
+sufficiently large $R$. Let $f$ be any function on standard points,
+say with $k$ arguments. We call $f$ {\em extensible} if for any $k$
+points $p_1$, \ldots, $p_k$ the function value
+$f(p_1(R),\ldots,p_k(R))$ is constant for all sufficiently large
+$R$. We define this value as $f(p_1,\ldots,p_k)$.  Predicates like
+lexicographic order of points, orientation, and incircle tests are
+extensible.
+
+An extended segment is defined by two extended points such that it is
+either an affine segment, an affine ray, an affine line, or a segment
+that is part of the square box. Extended directions extend the affine
+notion of direction to extended objects.
+
+This extended geometry concept serves two purposes. It offers
+functionality for changing between standard affine and extended
+geometry. At the same time it provides extensible geometric primitives
+on the extended geometric objects.
+
+\ccSetOneOfTwoColumns{7cm}
+
+\ccTypes
+
+\ccHeading{Affine kernel types} 
+
+
+
+\ccNestedType{Standard_kernel}{the standard affine kernel. 
+}
+
+\ccNestedType{Standard_RT}{the standard ring type. 
+}
+
+\ccNestedType{Standard_point_2}{standard points. 
+}
+
+\ccNestedType{Standard_segment_2}{standard segments. 
+}
+
+\ccNestedType{Standard_line_2}{standard oriented lines. 
+}
+
+\ccNestedType{Standard_direction_2}{standard directions. 
+}
+
+\ccNestedType{Standard_ray_2}{standard rays. 
+}
+
+\ccNestedType{Standard_aff_transformation_2}{standard affine transformations. 
+}
+
+\ccHeading{Extended kernel types} 
+
+
+
+\ccNestedType{RT}{the ring type of our extended kernel. 
+}
+
+\ccNestedType{Point_2}{extended points. 
+}
+
+\ccNestedType{Segment_2}{extended segments. 
+}
+
+\ccNestedType{Direction_2}{extended directions. 
+}
+
+\ccEnum{enum Point_type { SWCORNER,  LEFTFRAME,  NWCORNER,  BOTTOMFRAME,  STANDARD,  TOPFRAME,  SECORNER,  RIGHTFRAME,  NECORNER }}{a type descriptor for extended points. 
+}
+
+\ccSetOneOfTwoColumns{2cm}
+
+\ccOperations
+
+\ccHeading{Interfacing the affine kernel types} 
+
+
+
+\ccMethod{Point_2 construct_point(const Standard_point_2& p) ;}{
+creates an extended point and initializes it to the standard point
+\ccc{p}.  }
+
+\ccMethod{Point_2 construct_point(const Standard_line_2& l) ;}{
+creates an extended point and initializes it to the equivalence class
+of all the rays underlying the oriented line \ccc{l}.  }
+
+\ccMethod{Point_2 construct_point(const Standard_point_2& p1, const
+Standard_point_2& p2) ;}{ creates an extended point and initializes it
+to the equivalence class of all the rays underlying the oriented line
+\ccc{l(p1,p2)}.  }
+
+\ccMethod{Point_2 construct_point(const Standard_point_2& p, const
+Standard_direction_2& d) ;}{creates an extended point and initializes
+it to the equivalence class of all the rays underlying the ray
+starting in \ccc{p} in direction \ccc{d}.  }
+
+\ccMethod{Point_2 construct_opposite_point(const Standard_line_2& l)
+;}{creates an extended point and initializes it to the equivalence
+class of all the rays underlying the oriented line opposite to
+\ccc{l}.  }
+
+\ccMethod{Point_type type(const Point_2& p) ;}{determines the type of
+\ccc{p} and returns it.  }
+
+\ccMethod{bool is_standard(const Point_2& p) ;}{returns \ccc{true} iff
+\ccc{p} is a standard point.  }
+
+\ccMethod{Standard_point_2 standard_point(const Point_2& p) ;}{returns
+the standard point represented by \ccc{p}.  \ccPrecond
+\ccc{K.is_standard(p)}.  }
+
+\ccMethod{Standard_line_2 standard_line(const Point_2& p) ;}{returns
+the oriented line representing the bundle of rays defining \ccc{p}.
+\ccPrecond \ccc{!K.is_standard(p)}.  }
+
+\ccMethod{Standard_ray_2 standard_ray(const Point_2& p) ;}{a ray
+defining \ccc{p}. \ccPrecond \ccc{!K.is_standard(p)}.  }
+
+\ccMethod{Point_2 NE() ;}{returns the point on the northeast frame
+corner.  }
+
+\ccMethod{Point_2 SE() ;}{returns the point on the southeast frame
+corner.  }
+
+\ccMethod{Point_2 NW() ;}{returns the point on the northwest frame
+corner.  }
+
+\ccMethod{Point_2 SW() ;}{returns the point on the southwest frame
+corner.  }
+
+\ccHeading{Geometric kernel calls} 
+
+\ccMethod{Point_2 source(const Segment_2& s) ;}{returns the source
+point of \ccc{s}.  }
+
+\ccMethod{Point_2 target(const Segment_2& s) ;}{returns the target
+point of \ccc{s}.  }
+
+\ccMethod{Segment_2 construct_segment(const Point_2& p, const Point_2&
+q) ;}{constructs a segment \ccc{pq}.  }
+
+\ccMethod{int orientation(const Segment_2& s, const Point_2& p)
+;}{returns the orientation of \ccc{p} with respect to the line through
+\ccc{s}.  }
+
+\ccMethod{int orientation(const Point_2& p1, const Point_2& p2, const
+Point_2& p3) ;}{returns the orientation of \ccc{p3} with respect to
+the line through \ccc{p1p2}.  }
+
+\ccMethod{bool left_turn(const Point_2& p1, const Point_2& p2, const
+Point_2& p3) ;}{return true iff the \ccc{p3} is left of the line
+through \ccc{p1p2}.  }
+
+\ccMethod{bool is_degenerate(const Segment_2& s) ;}{return true iff
+\ccc{s} is degenerate.  }
+
+\ccMethod{int compare_xy(const Point_2& p1, const Point_2& p2)
+;}{returns the lexicographic order of \ccc{p1} and \ccc{p2}.  }
+
+\ccMethod{int compare_x(const Point_2& p1, const Point_2& p2)
+;}{returns the order on the $x$-coordinates of \ccc{p1} and \ccc{p2}.
+}
+
+\ccMethod{int compare_y(const Point_2& p1, const Point_2& p2)
+;}{returns the order on the $y$-coordinates of \ccc{p1} and \ccc{p2}.
+}
+
+\ccMethod{Point_2 intersection( const Segment_2& s1, const Segment_2&
+s2) ;}{returns the point of intersection of the lines supported by
+\ccc{s1} and \ccc{s2}. \ccPrecond the intersection point exists.  }
+
+\ccMethod{Direction_2 construct_direction( const Point_2& p1, const
+Point_2& p2) ;}{returns the direction of the vector \ccc{p2} -
+\ccc{p1}.  }
+
+\ccMethod{bool strictly_ordered_ccw(const Direction_2& d1, const
+Direction_2& d2, const Direction_2& d3) ;}{returns \ccc{true} iff
+\ccc{d2} is in the interior of the counterclockwise angular sector
+between \ccc{d1} and \ccc{d3}.  }
+
+\ccMethod{bool strictly_ordered_along_line( const Point_2& p1, const
+Point_2& p2, const Point_2& p3) ;}{returns \ccc{true} iff \ccc{p2} is
+in the relative interior of the segment \ccc{p1p3}.  }
+
+\ccMethod{bool contains(const Segment_2& s, const Point_2& p)
+;}{returns true iff \ccc{s} contains \ccc{p}.  }
+
+\ccMethod{bool first_pair_closer_than_second( const Point_2& p1, const
+Point_2& p2, const Point_2& p3, const Point_2& p4) ;}{returns true iff
+$\|p1-p2\| < \|p3-p4\|$.  }
+
+\ccMethod{const char* output_identifier() ;}{returns a unique
+identifier for kernel object Input/Output. Usually this should be the
+name of the model.}
+
+\ccHasModels        
+
+\ccRefIdfierPage{CGAL::Extended_cartesian<FT>} \\ 
+\ccRefIdfierPage{CGAL::Extended_homogeneous<RT>} \\ 
+\ccRefIdfierPage{CGAL::Filtered_extended_homogeneous<RT>} 
+
+\end{ccRefConcept}
+
+

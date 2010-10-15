@@ -1,0 +1,61 @@
+% +------------------------------------------------------------------------+
+% | Reference manual page: UniqueHashFunction.tex
+% +------------------------------------------------------------------------+
+% | 08.07.2001   Lutz Kettner
+% | Package: Hash_map
+% | 
+\RCSdef{\RCSUniqueHashFunctionRev}{$Id$}
+\RCSdefDate{\RCSUniqueHashFunctionDate}{$Date$}
+% |
+%%RefPage: end of header, begin of main body
+% +------------------------------------------------------------------------+
+
+\begin{ccRefConcept}{UniqueHashFunction}
+
+\ccDefinition
+
+\ccRefName\ is a concept for a hash function with unique hash values.
+An instance \ccc{hash} for a model of the \ccRefName\ concept is a
+function object. It maps objects of its domain type \ccc{Key} to 
+the integral image type \ccc{std::size_t}. The image values have to 
+be unique for all keys in the domain type \ccc{Key}.
+
+\ccRefines
+
+\stl\ concept HashFunction.
+
+\ccTypes
+\ccThree{UniqueHashFunction&}{hash = UniqueHashFunction hash2}{}
+\ccThreeToTwo
+
+\ccTypedef{typedef std::size_t result_type;}{type of the hash value.}
+
+\ccCreation
+\ccCreationVariable{hash}
+
+\ccConstructor{UniqueHashFunction( const UniqueHashFunction& hash2);}{
+    copy constructor.}
+
+\ccMethod{UniqueHashFunction& operator=( 
+    const UniqueHashFunction& hash2);}{assignment.}
+
+\ccOperations
+
+\ccMethod{std::size_t operator()( const Key& key);}{
+    returns unique hash value for the \ccc{key} value.}
+
+\ccHasModels
+
+\ccRefIdfierPage{CGAL::Handle_hash_function}
+
+\ccSeeAlso
+
+\ccRefIdfierPage{CGAL::Unique_hash_map<Key,Data,UniqueHashFunction>}
+
+\end{ccRefConcept}
+
+% +------------------------------------------------------------------------+
+%%RefPage: end of main body, begin of footer
+% EOF
+% +------------------------------------------------------------------------+
+

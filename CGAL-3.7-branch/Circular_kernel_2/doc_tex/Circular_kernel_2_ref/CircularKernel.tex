@@ -1,0 +1,134 @@
+\begin{ccRefConcept}{CircularKernel}
+
+\ccRefines
+\ccc{Kernel}
+
+\ccHasModels
+\ccc{CGAL::Circular_kernel_2<Kernel,AlgebraicKernelForCircles>}\\
+\ccc{CGAL::Exact_circular_kernel_2}
+% maybe those comments have to be updated %
+% %\ccc{CGAL::Lazy_curved_kernel<CircularKernel>}\\
+%\ccc{CGAL::Filtered_hexagon_curved_kernel<CircularKernel>}\\
+%\ccc{CGAL::Filtered_bbox_curved_kernel<CircularKernel>}
+
+\ccTypes
+
+A model of \ccc{CircularKernel} is supposed to provide some basic types
+
+\ccNestedType{Linear_kernel}{Model of \ccc{LinearKernel}.}
+\ccGlue
+\ccNestedType{Algebraic_kernel}{Model of \ccc{AlgebraicKernelForCircles}.}
+
+\ccNestedType{RT}{Model of \ccc{RingNumberType}.}
+\ccGlue
+\ccNestedType{FT}{Model of \ccc{FieldNumberType}.}
+
+\ccNestedType{Root_of_2}{Model of \ccc{RootOf_2}.}
+\ccGlue
+\ccNestedType{Root_for_circles_2_2}{Model of \ccc{AlgebraicKernelForCircles::RootForCircles_2_2}.}
+\ccGlue
+\ccNestedType{Polynomial_1_2}{Model of \ccc{AlgebraicKernelForCircles::Polynomial_1_2}.}
+\ccGlue
+\ccNestedType{Polynomial_for_circles_2_2}{Model of \ccc{AlgebraicKernelForCircles::PolynomialForCircles_2_2}.}
+
+and to define the following geometric objects
+
+\ccNestedType{Point_2}{Model of \ccc{Kernel::Point_2}.}
+\ccGlue
+\ccNestedType{Circle_2}{Model of \ccc{Kernel::Circle_2}.}
+\ccGlue
+\ccNestedType{Line_arc_2}{Model of \ccc{CircularKernel::LineArc_2}.}
+\ccGlue
+\ccNestedType{Circular_arc_2}{Model of \ccc{CircularKernel::CircularArc_2}.}
+\ccGlue
+\ccNestedType{Circular_arc_point_2}{Model of \ccc{CircularKernel::CircularArcPoint_2}.}
+
+Moreover, a model of \ccc{CircularKernel} must provide predicates, 
+constructions and other functionalities. 
+
+\ccPredicates
+
+\ccNestedType{Compare_x_2}{Model of \ccc{CircularKernel::CompareX_2}.}
+\ccGlue
+\ccNestedType{Compare_y_2}{Model of \ccc{CircularKernel::CompareY_2}.}
+\ccGlue
+\ccNestedType{Compare_xy_2}{Model of \ccc{CircularKernel::CompareXY_2}.}
+
+\ccNestedType{Equal_2}{Model of \ccc{CircularKernel::Equal_2}.}
+
+\ccNestedType{Compare_y_at_x_2}{Model of \ccc{CircularKernel::CompareYatX_2}.}
+\ccGlue
+\ccNestedType{Compare_y_to_right_2}{Model of \ccc{CircularKernel::CompareYtoRight_2}.}
+
+\ccNestedType{Has_on_2}{Model of \ccc{CircularKernel::HasOn_2}.}
+
+\ccNestedType{Do_overlap_2}{Model of \ccc{CircularKernel::DoOverlap_2}.}
+
+\ccNestedType{Do_intersect_2}{Model of \ccc{CircularKernel::DoIntersect_2}.}
+
+\ccNestedType{Bounded_side_2}{Model of \ccc{CircularKernel::BoundedSide_2}.}
+\ccGlue
+\ccNestedType{Has_on_bounded_side_2}{Model of \ccc{CircularKernel::HasOnBoundedSide_2}.}
+\ccGlue
+\ccNestedType{Has_on_unbounded_side_2}{Model of \ccc{CircularKernel::HasOnUnboundedSide_2}.}
+
+\ccNestedType{In_x_range_2}{Model of \ccc{CircularKernel::InXRange_2}.}
+%\ccGlue
+%\ccNestedType{In_y_range_2}{Model of \ccc{CircularKernel::InYRange_2}.}
+
+\ccNestedType{Is_vertical_2}{Model of \ccc{CircularKernel::IsVertical_2}.}
+
+\ccNestedType{Is_x_monotone_2}{Model of \ccc{CircularKernel::IsXMonotone_2}.}
+\ccGlue
+\ccNestedType{Is_y_monotone_2}{Model of \ccc{CircularKernel::IsYMonotone_2}.}
+
+\ccHeading{Constructions}
+
+\ccNestedType{Construct_line_2}{Model of \ccc{CircularKernel::ConstructLine_2}.}
+\ccNestedType{Construct_circle_2}{Model of \ccc{CircularKernel::ConstructCircle_2}.}
+\ccNestedType{Construct_circular_arc_point_2}{Model of \ccc{CircularKernel::ConstructCircularArcPoint_2}.}
+\ccNestedType{Construct_line_arc_2}{Model of \ccc{CircularKernel::ConstructLineArc_2}.}
+\ccNestedType{Construct_circular_arc_2}{Model of \ccc{CircularKernel::ConstructCircularArc_2}.}
+
+\ccNestedType{Compute_circular_x_2}{Model of \ccc{CircularKernel::ComputeCircularX_2}}
+\ccGlue
+\ccNestedType{Compute_circular_y_2}{Model of \ccc{CircularKernel::ComputeCircularY_2}}
+
+\ccNestedType{Construct_circular_min_vertex_2}{Model of \ccc{CircularKernel::ConstructCircularMinVertex_2}.}
+\ccGlue
+\ccNestedType{Construct_circular_max_vertex_2}{Model of \ccc{CircularKernel::ConstructCircularMaxVertex_2}.}
+\ccGlue
+\ccNestedType{Construct_circular_source_vertex_2}{Model of \ccc{CircularKernel::ConstructCircularSourceVertex_2}.}
+\ccGlue
+\ccNestedType{Construct_circular_target_vertex_2}{Model of \ccc{CircularKernel::ConstructCircularTargetVertex_2}.}
+
+\ccNestedType{Intersect_2}{Model of \ccc{CircularKernel::Intersect_2}.}
+
+\ccNestedType{Split_2}{Model of \ccc{CircularKernel::Split_2}.}
+
+\ccNestedType{Make_x_monotone_2}{Model of \ccc{CircularKernel::MakeXMonotone_2}.}
+\ccGlue
+\ccNestedType{Make_xy_monotone_2}{Model of \ccc{CircularKernel::MakeXYMonotone_2}.}
+
+\ccHeading{Link with the algebraic kernel}
+
+\ccNestedType{Get_equation}{Model of \ccc{CircularKernel::GetEquation}.}
+
+\ccOperations
+
+As in the \ccc{Kernel} concept, for each of the function objects
+above, there must exist a member function that requires no arguments
+and returns an instance of that function object. The name of the
+member function is the uncapitalized name of the type returned with
+the suffix \ccc{_object} appended. For example, for the function object 
+\ccc{CircularKernel::Construct_circular_arc_2} the following member function 
+must exist: 
+
+\ccCreationVariable{ck}
+\ccMethod{Construct_circular_arc_2 construct_circular_arc_2_object() const;}{}
+
+\ccSeeAlso
+
+\ccRefIdfierPage{Kernel}
+
+\end{ccRefConcept}

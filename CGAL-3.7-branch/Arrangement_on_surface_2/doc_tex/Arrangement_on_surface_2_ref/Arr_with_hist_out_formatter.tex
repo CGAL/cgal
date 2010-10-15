@@ -1,0 +1,64 @@
+% +------------------------------------------------------------------------+
+% | Reference manual page: Arr_with_hist_out_formatter.tex
+% +------------------------------------------------------------------------+
+% | 
+% | Package: Arrangement_2
+% | 
+% +------------------------------------------------------------------------+
+
+\ccRefPageBegin
+
+\begin{ccRefConcept}{ArrangementWithHistoryOutputFormatter}
+
+A model for the \ccRefName\ concept supports a set of functions that enable
+writing an arrangement-with-history instance to an output stream using a
+specific format.
+
+\ccRefines
+\ccc{ArrangementOutputFormatter}
+
+\ccTypes
+%=======
+
+\ccNestedType{Arr_with_history_2}{the type of arrangement to output.}
+
+\ccTypedef{typedef typename Arrangement_2::Curve_2 Curve_2;}
+    {the inducing curve type.}
+
+
+\ccCreationVariable{outf}
+
+\ccHeading{Formatted Output Functions}
+%=====================================
+
+\ccMethod{void write_curves_begin();}
+    {writes a message indicating the beginning of the inducing curves.}
+\ccGlue
+\ccMethod{void write_curves_end();}
+    {writes a message indicating the end of the inducing curves.}
+
+\ccMethod{void write_curve_begin();}
+    {writes a message indicating the beginning of a single curve record.}
+\ccGlue
+\ccMethod{void write_curve_end();}
+    {writes a message indicating the end of a single curve record.}
+
+\ccMethod{void write_curve (const Curve_2& c);}
+    {writes a curve.}
+
+\ccMethod{void write_induced_edges_begin();}
+    {writes a message indicating the beginning of the set of edges
+     induced by the current curve.}
+\ccGlue
+\ccMethod{void write_induced_edges_end();}
+    {writes a message indicating the end of the induced edges set.}
+
+\ccHasModels
+%===========
+
+\ccc{Arr_with_history_text_formatter<ArrFormatter>}\lcTex{
+        (\ccRefPage{CGAL::Arr_with_history_text_formatter<ArrFormatter>})}
+
+\end{ccRefConcept}
+
+\ccRefPageEnd

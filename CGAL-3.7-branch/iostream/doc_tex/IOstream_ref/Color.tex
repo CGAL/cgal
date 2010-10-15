@@ -1,0 +1,83 @@
+
+
+\begin{ccRefClass}{Color}  %% add template arg's if necessary
+
+%% \ccHtmlCrossLink{}     %% add further rules for cross referencing links
+%% \ccHtmlIndexC[class]{} %% add further index entries
+
+\ccDefinition
+An object of the class \ccRefName\ is a color available
+for drawing operations in many \cgal\ output streams.
+Each color is defined by a triple of integers $(r,g,b)$ with
+$0\le r,g,b \le 255$, the so-called {\em rgb-value} of the color.  
+
+\ccInclude{CGAL/IO/Color.h}
+
+%\ccIsModel
+
+%Concept
+
+%\ccTypes
+
+%\ccNestedType{TYPE}{some nested types}
+
+\ccCreation
+\ccCreationVariable{c}  %% choose variable name
+
+
+\ccConstructor{Color();}
+             {creates a color with rgb-value $(0,0,0)$, i.e.\ black.}
+
+\ccConstructor{Color(int red, int green, int blue);}
+             {creates a color with rgb-value \ccStyle{(red,green,blue)}.}
+
+
+\ccOperations
+
+\ccHidden \ccMethod{Color & operator=(const Color &q);}
+        {Assignment.}
+
+\ccMethod{bool operator==(const Color &q) const;}
+       {Test for equality: Two colors are equal, iff their 
+        rgb-values are equal.}
+\ccGlue
+\ccMethod{bool operator!=(const Color &q) const;}
+       {Test for inequality.}
+
+\ccMethod{int red() const;}
+       {returns the  red component of \ccVar.}
+\ccGlue
+\ccMethod{int green() const;}
+       {returns the  green component of \ccVar.}
+\ccGlue
+\ccMethod{int blue() const;}
+       {returns the blue component of \ccVar.}
+
+\ccConstants
+
+The following constants are predefined:
+
+\ccThree{const Color &}{WHITE = Color(255, 255, 255);}{}
+
+\ccVariable{const Color BLACK  = Color(0, 0, 0);}{Black.}
+\ccGlue
+\ccVariable{const Color WHITE  = Color(255, 255, 255);}{White.}
+\ccGlue
+\ccVariable{const Color RED    = Color(255, 0, 0);}{Red.}
+\ccGlue
+\ccVariable{const Color GREEN  = Color(0, 255, 0);}{Green.}
+\ccGlue
+\ccVariable{const Color BLUE   = Color(0, 0, 255);}{Blue.}
+\ccGlue
+\ccVariable{const Color VIOLET = Color(255, 0, 255);}{Violet.}
+\ccGlue
+\ccVariable{const Color ORANGE = Color(255, 170, 0);}{Orange.}
+
+\ccSeeAlso
+
+\ccc{CGAL::Qt_widget } \\
+\ccc{CGAL::Geomview_stream}
+
+
+
+\end{ccRefClass}

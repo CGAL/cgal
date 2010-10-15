@@ -1,0 +1,43 @@
+% +------------------------------------------------------------------------+
+% | Reference manual page: Regular_trianglation_instantaneous_traits_3.tex
+% +------------------------------------------------------------------------+
+% | 20.03.2005   Author
+% | Package: Kinetic_data_structures
+% | 
+\RCSdef{\RCSRegulartrianglationinstantaneoustraitsRev}{$Id$}
+\RCSdefDate{\RCSRegulartrianglationinstantaneoustraitsDate}{$Date$}
+% |
+%%RefPage: end of header, begin of main body
+% +------------------------------------------------------------------------+
+
+
+\begin{ccRefClass}{Kinetic::Regular_triangulation_instantaneous_kernel<ActiveObjectsTable, StaticKernel>}
+
+%% \ccHtmlCrossLink{}     %% add further rules for cross referencing links
+%% \ccHtmlIndexC[class]{} %% add further index entries
+
+\ccDefinition
+  
+The class \ccRefName\ is an instantaneous kernel for use with a
+regular triangulation data structure. There is not currently a reason
+for the user to call this directly unless the user wants created their
+own simulation traits as it is included as part of the
+\ccc{Kinetic::Regular_triangulation_exact_simulation_traits}.
+
+\ccInclude{CGAL/Kinetic/Regular_triangulation_instantaneous_kernel.h}
+
+\ccIsModel
+
+\ccc{CGAL::RegularTriangulationTraits\_3}, \ccc{Kinetic::InstantaneousKernel}
+
+\ccSeeAlso
+
+\ccc{Kinetic::Regular_triangulation_3<Traits, Visitor, Triangulation>}.
+
+\end{ccRefClass}
+
+% +------------------------------------------------------------------------+
+%%RefPage: end of main body, begin of footer
+% EOF
+% +------------------------------------------------------------------------+
+

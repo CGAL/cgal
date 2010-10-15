@@ -1,0 +1,64 @@
+% +------------------------------------------------------------------------+
+% | Reference manual page: barycenter.tex
+% +------------------------------------------------------------------------+
+% | 
+% | March 2005  Pierre Alliez and Sylvain Pion
+% | Package:   Principal Component Analysis
+% |
+% +------------------------------------------------------------------------+
+
+\begin{ccRefFunction}{barycenter}  
+%% add template arg's if necessary
+
+\ccDefinition
+  
+The function \ccRefName\ computes the barycenter (weighted center of mass) of a set of 2D or 3D weighted points. The weight associated to each point is specified using a \ccc{std::pair} storing the point and its weight.
+
+\ccInclude{CGAL/barycenter.h}
+
+There is a set of overloaded \ccc{barycenter} functions for 2D and 3D weighted points. The user can also optionally pass an explicit kernel, in case the default, based on \ccc{Kernel_traits} is not sufficient.
+The dimension is also deduced automatically.
+
+\ccFunction{template < typename InputIterator >
+            K::Point_2
+            barycenter(InputIterator first, InputIterator beyond);}
+{ computes the barycenter of a non-empty set of 2D weighted points.
+  \ccc{K} is \ccc{Kernel_traits<std::iterator_traits<InputIterator>::value_type::first_type>::Kernel}.
+  The value type must be \ccc{std::pair<K::Point_2, K::FT>}.
+\ccPrecond{first != beyond, and the sum of the weights is non-zero.} }
+
+\ccFunction{template < typename InputIterator, typename K >
+            K::Point_2
+            barycenter(InputIterator first, InputIterator beyond, const K & k);}
+{ computes the barycenter of a non-empty set of 2D weighted points.
+  The value type must be \ccc{std::pair<K::Point_2, K::FT>}.
+\ccPrecond{first != beyond, and the sum of the weights is non-zero.} }
+
+\ccFunction{template < typename InputIterator >
+            K::Point_3
+            barycenter(InputIterator first, InputIterator beyond);}
+{ computes the barycenter of a non-empty set of 3D weighted points.
+  \ccc{K} is \ccc{Kernel_traits<std::iterator_traits<InputIterator>::value_type::first_type>::Kernel}.
+  The value type must be \ccc{std::pair<K::Point_3, K::FT>}.
+\ccPrecond{first != beyond, and the sum of the weights is non-zero.} }
+
+\ccFunction{template < typename InputIterator, typename K >
+            K::Point_3
+            barycenter(InputIterator first, InputIterator beyond, const K & k);}
+{ computes the barycenter of a non-empty set of 3D weighted points.
+  The value type must be \ccc{std::pair<K::Point_3, K::FT>}.
+\ccPrecond{first != beyond, and the sum of the weights is non-zero.} }
+
+
+%\ccExample
+%
+%In the following example we use \stl\ containers of 2D and 3D weighted points,
+%and compute their barycenters. The kernel from which the input points come is
+%automatically deduced by the function.
+%
+%\ccIncludeExampleCode{Linear_least_squares_fitting/barycenter.cpp}
+
+\ccSeeAlso
+\ccRefIdfierPage{CGAL::centroid}
+
+\end{ccRefFunction}

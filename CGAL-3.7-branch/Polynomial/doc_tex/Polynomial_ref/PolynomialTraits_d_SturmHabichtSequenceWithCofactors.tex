@@ -1,0 +1,59 @@
+\begin{ccRefConcept}{PolynomialTraits_d::SturmHabichtSequenceWithCofactors}
+
+\textbf{Note:} This functor is optional!
+
+\ccDefinition
+
+Computes the Sturm-Habicht polynomials of a polynomial $f$ of degree $n$, 
+as defined in the documentation of \ccc{PolynomialTraits_d::SturmHabichtSequence}.
+Moreover, for $\mathrm{Stha}_i(f)$, polynomials $u_i$ and $v_i$
+with $\deg u_i\leq n-i-2$ and $\deg v_i\leq n-i-1$ are computed 
+such that $\mathrm{Sres}_i(p,q)=u_i f + v_i f'$. $u_i$ and $v_i$ are called
+the \emph{cofactors} of $\mathrm{Stha}_i(f)$.
+ 
+The result is written in three output ranges, each of length $\min\{n,m\}+1$, 
+starting with the $0$-th Sturm-Habicht polynomial $\mathrm{Stha_0(f)}$ 
+and the corresponding cofactors.
+
+\ccRefines 
+\ccc{AdaptableBinaryFunction}\\
+\ccc{CopyConstructible}\\
+\ccc{DefaultConstructible}\\
+
+\ccCreationVariable{fo}
+
+\ccOperations
+\ccMethod{template<typename OutputIterator1,
+                   typename OutputIterator2,
+                   typename OutputIterator3>
+        OutputIterator1 operator()(Polynomial_d   f,
+                                   OutputIterator1 stha,
+                                   OutputIterator2 co_f,
+                                   OutputIterator3 co_fx);}
+         { computes the Sturm-Habicht sequence of $f$, and the cofactors, 
+           with respect to the outermost variable. Each element is of type
+           \ccc{PolynomialTraits_d::Polynomial_d}.}
+
+\ccMethod{template< typename OutputIterator1,
+                    typename OutputIterator2,
+                    typename OutputIterator3 >
+        OutputIterator1 operator()(Polynomial_d   f,
+                                   OutputIterator1 stha,
+                                   OutputIterator2 co_f,
+                                   OutputIterator3 co_fx,
+                                   int i);}
+         { computes the Sturm-Habicht sequence of $f$, and the cofactors, 
+           with respect to $x_i$. Each element is of type
+           \ccc{PolynomialTraits_d::Polynomial_d}.}
+
+%\ccHasModels
+
+\ccSeeAlso
+
+\ccRefIdfierPage{Polynomial_d}\\
+\ccRefIdfierPage{PolynomialTraits_d}\\
+\ccRefIdfierPage{PolynomialTraits_d::Resultant}\\
+\ccRefIdfierPage{PolynomialTraits_d::SturmHabichtSequence}\\
+\ccRefIdfierPage{PolynomialTraits_d::PrincipalSturmHabichtSequence}\\
+\ccRefIdfierPage{PolynomialTraits_d::PolynomialSubresultantsWithCofactors}\\
+\end{ccRefConcept}

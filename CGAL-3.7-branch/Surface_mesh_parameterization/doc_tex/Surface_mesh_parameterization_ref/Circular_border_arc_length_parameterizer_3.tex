@@ -1,0 +1,127 @@
+% +------------------------------------------------------------------------+
+% | Reference manual page: Circular_border_arc_length_parameterizer_3.tex
+% +------------------------------------------------------------------------+
+% | 23.08.2005   Author
+% | Package: Surface_mesh_parameterization
+% |
+\RCSdef{\RCSCircularborderarclengthparameterizerRev}{$Id$}
+\RCSdefDate{\RCSCircularborderarclengthparameterizerDate}{$Date$}
+% |
+\ccRefPageBegin
+%%RefPage: end of header, begin of main body
+% +------------------------------------------------------------------------+
+
+
+\begin{ccRefClass}{Circular_border_arc_length_parameterizer_3<ParameterizationMesh_3>}
+
+%% \ccHtmlCrossLink{}     %% add further rules for cross referencing links
+%% \ccHtmlIndexC[class]{} %% add further index entries
+
+
+\ccDefinition
+
+\ccc{Circular_border_arc_length_parameterizer_3} is the default border parameterizer
+for fixed border parameterization methods.
+
+% The section below is automatically generated. Do not edit!
+%START-AUTO(\ccDefinition)
+
+This class parameterizes the border of a 3D surface onto a circle, with an arc-length parameterization: (u, v) values are proportional to the length of border edges. \ccc{Circular_border_parameterizer_3} implements most of the border parameterization algorithm. This class implements only \ccc{compute_edge_length}() to compute a segment's length.
+
+%END-AUTO(\ccDefinition)
+
+% The section below is automatically generated. Do not edit!
+%START-AUTO(\ccInclude)
+
+\ccInclude{CGAL/Circular_border_parameterizer_3.h}
+
+%END-AUTO(\ccInclude)
+
+
+\ccInheritsFrom
+
+% The section below is automatically generated. Do not edit!
+%START-AUTO(\ccInheritsFrom)
+
+\ccc{Circular_border_parameterizer_3<ParameterizationMesh_3>}
+
+%END-AUTO(\ccInheritsFrom)
+
+
+\ccIsModel
+
+% The section below is automatically generated. Do not edit!
+%START-AUTO(\ccIsModel)
+
+Model of the \ccc{BorderParameterizer_3} concept.
+
+%END-AUTO(\ccIsModel)
+
+
+\ccHeading{Design Pattern}
+
+% The section below is automatically generated. Do not edit!
+%START-AUTO(\ccHeading{Design Pattern})
+
+\ccc{BorderParameterizer_3} models are Strategies \cite{cgal:ghjv-dpero-95}: they implement a strategy of border parameterization for models of \ccc{ParameterizationMesh_3}
+
+%END-AUTO(\ccHeading{Design Pattern})
+
+
+\ccParameters
+
+The full template declaration is:
+
+% The section below is automatically generated. Do not edit!
+%START-AUTO(\ccParameters)
+
+template$<$class \ccc{ParameterizationMesh_3}$>$   \\
+class \ccc{Circular_border_arc_length_parameterizer_3};
+
+%END-AUTO(\ccParameters)
+
+
+\ccCreation
+\ccCreationVariable{bp}  %% variable name for \ccMethod below
+
+% The section below is automatically generated. Do not edit!
+%START-AUTO(\ccCreation)
+%END-AUTO(\ccCreation)
+
+
+\ccOperations
+
+% The section below is automatically generated. Do not edit!
+%START-AUTO(\ccOperations)
+
+\ccMethod{virtual double compute_edge_length(const Adaptor& mesh, Vertex_const_handle source, Vertex_const_handle target)[protected, virtual];}
+{
+Compute the length of an edge.  \\
+Arc-length border parameterization: (u, v) values are proportional to the length of border edges.
+}
+\ccGlue
+
+%END-AUTO(\ccOperations)
+
+
+\ccSeeAlso
+
+\ccRefIdfierPage{CGAL::Circular_border_uniform_parameterizer_3<ParameterizationMesh_3>}  \\
+\ccRefIdfierPage{CGAL::Square_border_arc_length_parameterizer_3<ParameterizationMesh_3>}  \\
+\ccRefIdfierPage{CGAL::Square_border_uniform_parameterizer_3<ParameterizationMesh_3>}  \\
+\ccRefIdfierPage{CGAL::Two_vertices_parameterizer_3<ParameterizationMesh_3>}  \\
+
+
+\ccExample
+
+See \ccc{Taucs_parameterization.cpp} example.
+
+
+\end{ccRefClass}
+
+% +------------------------------------------------------------------------+
+%%RefPage: end of main body, begin of footer
+\ccRefPageEnd
+% EOF
+% +------------------------------------------------------------------------+
+

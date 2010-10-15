@@ -1,0 +1,56 @@
+% +------------------------------------------------------------------------+
+% | Reference manual page: Is_convex_2.tex
+% +------------------------------------------------------------------------+
+% | 26.07.2000   Susan Hert
+% | Package: Partition_2
+% | 
+% +------------------------------------------------------------------------+
+
+
+\begin{ccRefFunctionObjectClass}{Is_convex_2<Traits>} 
+
+\ccDefinition
+  
+Function object class for testing if a sequence of points represents
+a convex polygon or not.
+\ccIndexSubitem{convex polygon}{function object}
+
+\ccInclude{CGAL/polygon_function_objects.h}
+
+\ccIsModel
+
+\ccRefConceptPage{PolygonIsValid}%
+\ccIndexSubitem[c]{PolygonIsValid}{model}
+
+\ccCreation
+\ccCreationVariable{f}  %% choose variable name
+
+\ccConstructor{Is_convex_2(const Traits& t);}{\ccc{Traits} satisfies the
+requirements of the function \ccc{is_convex_2}}
+
+\ccOperations
+
+\ccMethod{
+template<class InputIterator>
+bool operator()(InputIterator first, InputIterator beyond);}
+{
+  returns \ccc{true} iff the points of type \ccc{Triats::Point_2}
+  in the range [\ccc{first},\ccc{beyond}) define a convex polygon. 
+}
+
+\ccSeeAlso
+
+\ccRefIdfierPage{CGAL::convex_partition_is_valid_2} \\
+\ccRefIdfierPage{CGAL::Partition_is_valid_traits_2<Traits, PolygonIsValid>}
+
+\ccImplementation
+
+This test requires $O(n)$ time for a polygon with $n$ vertices.
+
+\end{ccRefFunctionObjectClass}
+
+% +------------------------------------------------------------------------+
+%%RefPage: end of main body, begin of footer
+% EOF
+% +------------------------------------------------------------------------+
+

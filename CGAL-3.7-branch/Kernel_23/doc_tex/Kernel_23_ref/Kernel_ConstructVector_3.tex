@@ -1,0 +1,51 @@
+\begin{ccRefFunctionObjectConcept}{Kernel::ConstructVector_3}
+A model for this must provide:
+
+\ccCreationVariable{fo}
+
+\ccMemberFunction{Kernel::Vector_3 operator()(const Kernel::Point_3 &a,
+                                              const Kernel::Point_3 &b);}
+            {introduces the vector $b-a$.}
+
+\ccMemberFunction{Kernel::Vector_3 operator()(const Origin &o,
+                                              const Kernel::Point_3 &b);}
+            {introduces the vector $b$.}
+
+\ccMemberFunction{Kernel::Vector_3 operator()(const Kernel::Point_3 &a,
+                                              const Origin &o);}
+            {introduces the vector $-a$.}
+
+\ccMemberFunction{Kernel::Vector_3 operator()(const Kernel::Segment_3 &s);}
+            {introduces the vector $s.target()-s.source()$.}
+
+\ccMemberFunction{Kernel::Vector_3 operator()(const Kernel::Ray_3 &r);}
+            {introduces a vector having the same direction as $r$.}
+
+\ccMemberFunction{Kernel::Vector_3 operator()(const Kernel::Line_3 &l);}
+            {introduces a vector having the same direction as $l$.}
+
+\ccMemberFunction{Kernel::Vector_3 operator()(const Null_vector &NULL_VECTOR);}
+            {introduces a null vector .}
+
+\ccHidden\ccMemberFunction{Kernel::Vector_3 operator()(int x, int y, int z);}
+            {introduces a vector  initialized to $(x, y, z)$.}
+
+\ccHidden\ccMemberFunction{Kernel::Vector_3 operator()(double x, double y, double z);}
+            {introduces a vector  initialized to $(x, y, z)$.}
+
+\ccHidden\ccMemberFunction{Kernel::Vector_3 operator()(const Kernel::RT &hx, const Kernel::RT &hy, const Kernel::RT &hz, const Kernel::RT &hw = Kernel::RT(1));}
+            {introduces a vector  initialized to $(hx/hw, hy/hw, hz/hw)$.
+             If the third argument is not explicitly given it defaults
+             to \ccStyle{Kernel::RT(1)}.}
+
+\ccHidden\ccMemberFunction{Kernel::Vector_3 operator()(const Kernel::FT &x, const Kernel::FT &y, const Kernel::FT &z);}
+            {introduces a vector  initialized to $(x, y, z)$.}
+
+\ccRefines
+\ccc{AdaptableFunctor} (with two arguments)
+
+\ccSeeAlso
+\ccRefIdfierPage{CGAL::Vector_3<Kernel>}\\
+\ccRefIdfierPage{Kernel::ConstructScaledVector_3}\\
+
+\end{ccRefFunctionObjectConcept}

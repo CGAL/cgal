@@ -1,0 +1,69 @@
+\begin{ccRefClass}{Circular_arc_point_2<CircularKernel>}
+
+\ccInclude{CGAL/Circular_arc_point_2.h}
+
+\ccIsModel
+
+\ccc{CircularKernel::CircularArcPoint_2}
+
+\ccCreation
+\ccCreationVariable{p}
+
+\ccThree{Circular_arc_point_2}{ca.is_x_monotone()}{}
+\ccThreeToTwo
+
+\ccConstructor{Circular_arc_point_2(const CircularKernel::Point_2 &q)}{}
+
+\ccConstructor{Circular_arc_point_2(const CircularKernel::Root_for_circles_2_2 &r)}{}
+
+\ccAccessFunctions
+
+\ccThree{CircularKernel::Root_of_2}{ca.is_x_monotone()}{}
+\ccThreeToTwo
+
+\ccMethod{const CircularKernel::Root_of_2 & x();}{$x$-coordinate of the point.}
+\ccGlue
+\ccMethod{const CircularKernel::Root_of_2 & y();}{$y$-coordinate of the point.}
+
+\ccMethod{Bbox_2 bbox() const;}
+{Returns a bounding box around the point.}
+
+\ccOperations
+
+\ccFunction{bool operator==(const Circular_arc_point_2<CircularKernel> &p,
+			const Circular_arc_point_2<CircularKernel> &q);}
+{Test for equality. Two points are equal, iff their $x$ and $y$ coordinates are equal.} 
+
+\ccFunction{bool operator!=(const Circular_arc_point_2<CircularKernel> &p,
+			const Circular_arc_point_2<CircularKernel> &q);}
+{Test for nonequality.} 
+
+\ccFunction{bool operator<(const Circular_arc_point_2<CircularKernel> &p,
+			const Circular_arc_point_2<CircularKernel> &q);}
+{Returns true iff $p$ is lexicographically smaller than $q$, i.e. either if $p.x() < q.x()$
+ or if $p.x() == q.x()$ and $p.y() < q.y()$.}
+
+\ccFunction{bool operator>(const Circular_arc_point_2<CircularKernel> &p,
+			const Circular_arc_point_2<CircularKernel> &q);}
+{Returns true iff $p$ is lexicographically greater than $q$.}
+
+\ccFunction{bool operator<=(const Circular_arc_point_2<CircularKernel> &p,
+			const Circular_arc_point_2<CircularKernel> &q);}
+{Returns true iff $p$ is lexicographically smaller than or equal to $q$.}
+
+\ccFunction{bool operator>=(const Circular_arc_point_2<CircularKernel> &p,
+			const Circular_arc_point_2<CircularKernel> &q);}
+{Returns true iff $p$ is lexicographically greater than or equal to $q$.}
+
+\ccHeading{I/O}
+
+\ccFunction{istream& operator>> (std::istream& is, Circular_arc_point_2 & cp);}{}
+\ccGlue
+\ccFunction{ostream& operator<< (std::ostream& os, const Circular_arc_point_2 &ce);}{}
+
+\ccSeeAlso
+
+\ccRefIdfierPage{CGAL::Circular_arc_2<CircularKernel>}\\
+\ccRefIdfierPage{CGAL::Line_arc_2<CircularKernel>}
+
+\end{ccRefClass}

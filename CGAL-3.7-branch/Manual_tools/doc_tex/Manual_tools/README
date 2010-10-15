@@ -1,0 +1,36 @@
+This is the directory containing the reference manuals.
+The directory structure is:
+
+    README       this file.
+
+    cc_manual.tex          reference manual for the cc_manual.sty.
+    cc_manual_appendix.tex quick reference guide appendix to 
+                           reference manual for the cc_manual.sty.
+    cc_manual.ps.gz        PostScript version of this manual.
+
+    cc_manual_index.tex    reference manual for the cc_manual_index.sty.
+    cc_manual_index_appendix.tex 
+                           quick reference guide appendix to 
+                           reference manual for the cc_manual_index.sty.
+    cc_manual_index.ps.gz  PostScript version of this manual.
+
+    cc_extract.tex         reference manual for the cc_extract and
+                           cc_check tools.
+    cc_extract.ps.gz       PostScript version of this manual.
+
+    disclaimer.tex         standard disclaimer, copyright notice, etc.
+
+    latex_to_html.tex      manual for the HTML converter (not finished!).
+    latex_to_html.ps.gz    PostScript version of this manual.
+
+    manual.bib             BiBTeX file for the manuals.
+    tools_overview.eps
+    horizontal_struct.eps
+    vertical_struct.eps
+
+Note that the manual uses a BibTeX file and has an index 
+made by `makeindex'. 
+
+EOF
+
+

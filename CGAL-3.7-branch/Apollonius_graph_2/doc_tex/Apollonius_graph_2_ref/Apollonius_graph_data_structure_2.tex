@@ -1,0 +1,72 @@
+% +------------------------------------------------------------------------+
+% | Reference manual page: Apollonius_graph_data_structure_2.tex
+% +------------------------------------------------------------------------+
+% | 12.04.2000   Author
+% | Package: Package
+% | 
+%\RCSdef{\RCSRegulartriangulationtraitsRev}{$Id$}
+%\RCSdefDate{\RCSRegulartriangulationtraitsDate}{$Date$}
+% |
+%%RefPage: end of header, begin of main body
+% +------------------------------------------------------------------------+
+
+\begin{ccRefClass}{Apollonius_graph_data_structure_2<Vb,Fb>}
+
+%% add template arg's if necessary
+
+%% \ccHtmlCrossLink{}     %% add further rules for cross referencing links
+%% \ccHtmlIndexC[class]{} %% add further index entries
+\ccCreationVariable{tds}
+
+\ccDefinition
+
+An implementation for the concept \ccc{ApolloniusGraphDataStructure_2}
+is provided. The class is templated by a face 
+base and vertex base class just like the
+\ccc{Triangulation_data_structure_2} class. The \ccRefName\ class
+inherits from \ccc{Triangulation_data_structure_2<Vb,Fb>}. \ccc{Vb}
+must be a model of \ccc{ApolloniusGraphVertexBase_2}. \ccc{Fb}
+must be a model of \ccc{TriangulationFaceBase_2}.
+
+\ccInclude{CGAL/Apollonius_graph_data_structure_2.h}
+
+\ccIsModel
+\ccc{ApolloniusGraphDataStructure_2}
+
+\ccInheritsFrom
+\ccc{CGAL::Triangulation_data_structure_2<Vb,Fb>}
+
+\ccCreation
+\ccCreationVariable{agds}
+\ccThree{Apollonius_graph_data_structure_2<Vb,Fb>}{agds = other}{}
+\ccThreeToTwo
+%
+\ccConstructor{Apollonius_graph_data_structure_2<Vb,Fb>();}
+{default constructor.}
+
+\ccConstructor{Apollonius_graph_data_structure_2<Vb,Fb>(const
+Apollonius_graph_data_structure_2<Vb,Fb>& other)}
+{Copy constructor. All the vertices and faces are duplicated.}
+
+\ccMethod{Apollonius_graph_data_structure_2<Vb,Fb>
+operator=(Apollonius_graph_data_structure_2<Vb,Fb> other);}
+{Assignment. All the vertices and faces are duplicated.}
+
+
+% MK:: copy constructors from TDS
+
+\ccSeeAlso
+\ccc{ApolloniusGraphDataStructure_2}\\
+\ccc{ApolloniusGraphVertexBase_2}\\
+\ccc{TriangulationFaceBase_2}\\
+\ccc{CGAL::Triangulation_data_structure_2<Vb,Fb>}\\
+\ccc{CGAL::Apollonius_graph_2<Gt,Agds>}\\
+\ccc{CGAL::Apollonius_graph_vertex_base_2<Gt,StoreHidden>}\\
+\ccc{CGAL::Triangulation_face_base_2<Gt>}\\
+
+\end{ccRefClass}
+% +------------------------------------------------------------------------+
+%%RefPage: end of main body, begin of footer
+% EOF
+% +------------------------------------------------------------------------+
+

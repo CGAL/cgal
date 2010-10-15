@@ -1,0 +1,127 @@
+% +------------------------------------------------------------------------+
+% | Reference manual page: Envelopediagram_1.tex
+% +------------------------------------------------------------------------+
+% | 
+% | Package: Envelope_2
+% | 
+% +------------------------------------------------------------------------+
+
+\ccRefPageBegin
+
+\begin{ccRefConcept}{EnvelopeDiagram_1}
+
+\ccDefinition
+%============
+
+This concept defines the representation of an envelope diagram of a set
+of planar curve. The {\em envelope diagram} is a subdivision of the $x$-axis
+into $0$-dimensional cells ({\em vertices}) and $1$-dimensional cells
+({\em edges}), such that the identity of the curves that induce the lower
+envelope (or the upper envelope) over each cell is fixed.
+
+A vertex in an envelope diagram is therefore associated with a point
+on the envelope, and corresponds to either a curve endpoint
+or to an intersection point of two (or more) curves. Therefore each vertex
+is associated with a set of $x$-monotone curves that induce the envelope
+over this point. Each vertex is incident to two edges, one lying to its
+left and the other to its right.
+
+An edge in the envelope diagram represents a continuous portion of the
+$x$-axis, and is associated with a (possibly empty) set of curves that
+induce the envelope over this portion of the $x$-axis. An edge may be bounded
+by two vertices, one to its left and the other to its right. However, the
+diagram contains two unbounded edges, its {\em leftmost} edge, representing
+the interval $(-\infty, x_l)$, and its {\em rightmost} edge, representing the
+interval $(x_r, \infty)$, where $x_l$ and $x_r$ are the $x$-coodinates of
+the leftmost and the rightmost vertices in the diagram, respectively.
+Note that a diagram may contain no vertices at all, in which case it
+comprises a single edge.
+
+Note that any model of the \ccRefName\ concept must define a geometric
+traits class, which in turn defines the \ccc{Point_2} and 
+\ccc{X_monotone_curve_2} types defined with the diagram features.
+
+\ccTypes
+%=======
+
+\ccNestedType{Traits_2}{the geometric traits class.}
+
+\ccTypedef{typedef Traits_2::Point_2 Point_2;}{the point type.}
+\ccGlue
+\ccTypedef{typedef Traits_2::X_monotone_curve_2 X_monotone_curve_2;}
+{the $x$-monotone curve type.}
+
+\ccNestedType{Size}{the size type (convertible to \ccc{size_t}).}
+
+\ccNestedType{Curve_const_iterator}
+{an iterator for the $x$-monotone curves that induce a diagram feature.
+ Its value-type is \ccc{X_monotone_curve_2}.}
+
+\ccNestedType{Vertex}{the vertex type, a model of the concept \ccc{EnvelopeDiagramVertex}.}
+\ccGlue
+\ccNestedType{Edge}{the edge type, a model of the concept \ccc{EnvelopeDiagramEdge}.}
+
+\ccNestedType{Vertex_handle}
+{a handle to a diagram vertex.}
+\ccGlue
+\ccNestedType{Vertex_const_handle}
+{a non-mutable handle to a diagram vertex.}
+
+\ccNestedType{Edge_handle}
+{a handle to a diagram edge.}
+\ccGlue
+\ccNestedType{Edge_const_handle}
+{a non-mutable handle to a diagram edge.}
+
+\ccCreation
+\ccCreationVariable{diag}
+%========================
+
+\ccConstructor{EnvelopeDiagram_1();} 
+    {constructs an empty diagram containing one unbounded edge,
+     which corresponds to the entire plane and has no $x$-monotone
+     curves that are associated with it.}
+    
+\ccConstructor{Envelope_diagram_1 (const Self& other);}
+    {copy constructor.}
+        
+\ccAccessFunctions
+%=================
+
+\ccMethod{Edge_const_handle leftmost() const;}
+    {returns the leftmost edge of the diagram (a non-const version is also available).}
+\ccGlue
+\ccMethod{Edge_const_handle rightmost() const;}
+    {returns the rightmost edge of the diagram (a non-const version is also available).}
+
+\ccModifiers
+%===========
+
+\ccMethod{void set_leftmost (Edge_const_handle e);}
+    {sets the leftmost edge of the diagram to be \ccc{e}.}
+\ccGlue
+\ccMethod{void set_rightmost (Edge_const_handle e);}
+    {sets the rightmost edge of the diagram to be \ccc{e}.}
+
+\ccMethod{Vertex_handle new_vertex (const Point_2& p);}
+    {creates a new diagram vertex, associated with the point \ccc{p}.}
+\ccGlue
+\ccMethod{Edge_handle new_edge ();}
+    {creates a new diagram edge.}
+    
+\ccMethod{void delete_vertex (Vertex_handle v);}
+    {deletes the given vertex \ccc{v}.}
+\ccGlue
+\ccMethod{void delete_edge (Edge_handle e);}
+    {deletes the given edge \ccc{e}.}
+
+\ccSeeAlso
+     \ccc{EnvelopeDiagramVertex}\lcTex{ 
+     (\ccRefPage{EnvelopeDiagramVertex})}\\
+     \ccc{EnvelopeDiagramEdge}\lcTex{
+     (\ccRefPage{EnvelopeDiagramEdge})}\\
+
+\end{ccRefConcept}
+
+\ccRefPageEnd
+

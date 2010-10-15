@@ -1,0 +1,25 @@
+\begin{ccRefFunctionObjectConcept}{ModularTraits::ModularImageRepresentative}
+
+\ccDefinition
+
+This \ccc{AdaptableUnaryFunction} returns a representative in the original type of a given modular image. More precisely, it implements the $right inverse$ of a proper restriction of the homomorphism $\varphi$, which is implemented by \ccc{ModularTraits::ModularImage}. 
+
+\ccTypes
+\ccTypedef{typedef ModularTraits::Type         result_type;}{}
+\ccTypedef{typedef ModularTraits::Residue_type argument_type;}{}
+
+\ccCreationVariable{fo}
+
+\ccMethod{
+result_type
+operator()(const  argument_type &x);}{
+computes $\varphi^{-1}(x)$.
+} 
+ 
+\ccRefines 
+\ccc{AdaptableUnaryFunction} 
+
+\ccSeeAlso
+\ccRefConceptPage{ModularTraits}
+
+\end{ccRefFunctionObjectConcept}

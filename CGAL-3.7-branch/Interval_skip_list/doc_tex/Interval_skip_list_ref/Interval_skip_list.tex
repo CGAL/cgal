@@ -1,0 +1,148 @@
+% ======================================================================
+%
+% Copyright (c) 2003 GeometryFactory
+%
+% This software and related documentation is part of the
+% Computational Geometry Algorithms Library (CGAL).
+%
+% Every use of CGAL requires a license. Licenses come in three kinds:
+%
+% - For academic research and teaching purposes, permission to use and
+%   copy the software and its documentation is hereby granted free of  
+%   charge, provided that
+%   (1) it is not a component of a commercial product, and
+%   (2) this notice appears in all copies of the software and
+%       related documentation.
+% - Development licenses grant access to the source code of the library 
+%   to develop programs. These programs may be sold to other parties as 
+%   executable code. To obtain a development license, please contact
+%   the GALIA Consortium (at cgal@cs.uu.nl).
+% - Commercialization licenses grant access to the source code and the
+%   right to sell development licenses. To obtain a commercialization 
+%   license, please contact the GALIA Consortium (at cgal@cs.uu.nl).
+%
+% This software and documentation is provided "as-is" and without
+% warranty of any kind. In no event shall the CGAL Consortium be
+% liable for any damage of any kind.
+%
+% The GALIA Consortium consists of Utrecht University (The Netherlands),
+% ETH Zurich (Switzerland), Free University of Berlin (Germany),
+% INRIA Sophia-Antipolis (France), Martin-Luther-University Halle-Wittenberg
+% (Germany), Max-Planck-Institute Saarbruecken (Germany),
+% and Tel-Aviv University (Israel).
+%
+% ----------------------------------------------------------------------
+%
+% package       : Interval_skip_list
+% author(s)     : Andreas Fabri <Andreas.Fabri@geometryfactory.com>
+%
+% coordinator   : GeometryFactory (<Andreas.Fabri@geometryfactory.com>)
+%
+% ======================================================================
+
+\RCSdef{\alphashapeRevision}{$Id$}
+\RCSdefDate{\alphashapeDate}{$Date$}
+
+%----------------------------------------------------------------------
+
+\begin{ccRefClass} {Interval_skip_list<Interval>}
+
+\ccDefinition
+
+The class \ccClassTemplateName\ is a dynamic data structure that 
+allows to find all members of a set of intervals that overlap a point. 
+
+\ccInclude{CGAL/Interval_skip_list.h}
+
+\ccTypes
+\ccSetThreeColumns{typedef Interval::Value }{}{\hspace*{10cm}}
+\ccThreeToTwo
+
+\ccTypedef{typedef Interval::Value Value;}{the type of inf and sup of the interval.}
+
+\ccNestedType{const_iterator}{An iterator over  all intervals.}
+
+
+
+\ccCreation
+\ccCreationVariable{isl}
+
+\ccConstructor{Interval_skip_list();}
+{Default constructor.}
+
+
+\ccConstructor{template < class InputIterator >
+		Alpha_shape_2(
+			InputIterator first,
+			InputIterator last);}
+{Constructor that inserts the iterator range \ccc{[first, last)} in the interval skip list. 
+\ccPrecond The \ccc{value_type} of \ccc{first} and
+\ccc{last} is \ccc{Interval}.}
+
+\ccOperations
+
+\ccMethod{template < class InputIterator >
+		int insert(
+			InputIterator first,
+			InputIterator last);}
+{Inserts the iterator range \ccc{[first, last)} in the interval skip list, and returns
+the number of inserted intervals.
+\ccPrecond The \ccc{value_type} of \ccc{first} and
+\ccc{last} is \ccc{Interval}.}
+
+
+
+\ccMethod{void insert(const Interval& i);}
+{inserts interval \ccc{i} in the interval skip list.}
+
+\ccMethod{bool remove(const Interval& i);}
+{removes interval \ccc{i} from the interval skip list. Returns \ccc{true} iff removal was successful.}
+
+\ccMethod{bool is_contained(const Value& v);}
+{Returns \ccc{true} iff there is an interval that contains \ccc{v}.}
+
+\ccMethod{template < class OutputIterator >
+		OutputIterator find_intervals(
+			const Value& v,
+			OutputIterator out);}
+{Writes the intervals \ccc{i} with \ccc{i.inf()} $\leq$ \ccc{v} $\leq$ \ccc{i.sup} to the
+output iterator \ccc{out}.
+\ccPrecond The \ccc{value_type} of \ccc{out} is \ccc{Interval}.}
+
+
+\ccMethod{void
+	clear();}
+{Removes all intervals from the interval skip list.}
+
+
+
+\ccMethod{const_iterator begin() const;}
+{Returns an iterator over all intervals.}
+
+\ccMethod{const_iterator end() const;}
+{Returns the past the end iterator.}
+
+
+\ccHeading{I/O}
+
+
+\ccFunction{ostream& operator<<(ostream& os,
+                  const Interval_skip_list<Interval>& isl);}
+{Inserts the interval skip list \ccc{isl} into the stream \ccc{os}.
+\ccPrecond The output operator must be defined for \ccc{Interval}.}
+
+
+\ccImplementation
+
+The insertion and deletion of a segment in the interval skip list
+takes expected time $O(\log^2 n)$, if the segment endpoints are
+chosen from a continuous distribution. A stabbing query takes expected 
+time $O(\log n)$, and finding all intervals that contain a point
+takes expected time $O(\log n + k)$, where $k$ is the number of
+intervals.
+
+The implementation is based on the code developed by Eric N.~Hansen,
+which can be found at \verb+http://www-pub.cise.ufl.edu/~hanson/IS-lists/+.
+Attention, this code has memory leaks.
+\end{ccRefClass}
+

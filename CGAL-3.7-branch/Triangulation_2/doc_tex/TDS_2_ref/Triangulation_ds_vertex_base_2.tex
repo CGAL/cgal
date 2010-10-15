@@ -1,0 +1,54 @@
+% +------------------------------------------------------------------------+
+% | Reference manual page: Triangulation_ds_vertex_base_2.tex
+% +------------------------------------------------------------------------+
+% | 13.08.2003   Author
+% | Package: Package
+% | 
+\RCSdef{\RCSTriangulationdsvertexbaseRev}{$Id$}
+\RCSdefDate{\RCSTriangulationdsvertexbaseDate}{$Date$}
+% |
+%%RefPage: end of header, begin of main body
+% +------------------------------------------------------------------------+
+
+
+\begin{ccRefClass}{Triangulation_ds_vertex_base_2<Tds>}  %% add template arg's if necessary
+
+%% \ccHtmlCrossLink{}     %% add further rules for cross referencing links
+%% \ccHtmlIndexC[class]{} %% add further index entries
+
+\ccDefinition
+
+The class \ccc{Triangulation_ds_vertex_base_2} can be used as the base vertex
+for a \ccc{Triangulation_data_structure_2}, it is a model of the concept
+\ccc{TriangulationDSVertexBase_2}.
+
+This base class can be used directly or can serve as a base to derive
+other base classes with some additional attributes (a color for
+example) tuned for a specific application.
+
+Note that if the \ccc{Triangulation_data_structure_2} 
+is used as a parameter of a
+geometric triangulation, there are additional geometric requirements
+to be fulfilled by the vertex base class,
+and \ccc{Triangulation_ds_vertex_base_2} cannot be plugged in.
+
+
+\ccInclude{CGAL/Triangulation_ds_vertex_base_2.h}
+
+\ccIsModel
+
+\ccc{TriangulationDSVertexBase_2}
+
+\ccSeeAlso
+
+\ccc{CGAL::Triangulation_vertex_base_2<Traits,Vb>}\\
+\ccc{CGAL::Triangulation_ds_face_base_2<Tds>}
+  
+
+\end{ccRefClass}
+
+% +------------------------------------------------------------------------+
+%%RefPage: end of main body, begin of footer
+% EOF
+% +------------------------------------------------------------------------+
+

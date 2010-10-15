@@ -1,0 +1,64 @@
+%% Copyright (c) 2007 GeometryFactory (France).  All rights reserved.
+%%
+%% This file is part of CGAL (www.cgal.org); you may redistribute it under
+%% the terms of the Q Public License version 1.0.
+%% See the file LICENSE.QPL distributed with CGAL.
+%%
+%% Licensees holding a valid commercial license may use this file in
+%% accordance with the commercial license agreement provided with the software.
+%%
+%% This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
+%% WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
+%%
+%% 
+%%
+%% Author(s)     : Fernando Cacciola <fernando.cacciola@geometryfactory.com>
+
+
+\begin{ccRefFunctionObjectClass}{Surface_mesh_simplification::Count_stop_predicate<ECM>}
+
+%% add template arg's if necessary
+
+%% \ccHtmlCrossLink{}     %% add further rules for cross referencing links
+%% \ccHtmlIndexC[class]{} %% add further index entries
+\ccDefinition
+
+The class \ccRefName\ provides a model for the \ccc{StopPredicate} concept.
+It has one template argument: the type of surface being simplified,
+which must be a model of the \ccc{EdgeCollapsableMesh} concept.
+It returns \ccc{true} when the number of current edges drops below a certain threshold.
+
+\ccInclude{CGAL/Surface_mesh_simplification/Policies/Edge_collapse/Count_stop_predicate.h}
+
+\ccIsModel
+\ccc{StopPredicate}
+
+\ccCreation
+\ccCreationVariable{sp}  
+
+\ccConstructor{Count_stop_predicate<ECM>( size_type threshold );}
+{Initializes the predicate establishing the \ccc{threshold} value.} 
+
+\ccTagFullDeclarations
+\ccOperations
+\ccCreationVariable{sp}
+
+  \ccMemberFunction
+    {bool operator()( FT const&      current_cost
+                    , Profile const& edge_profile
+                    , size_type      initial_count
+                    , size_type      current_count
+                    ) const ;
+           }
+  {Returns $(current_count < threshold)$. All other parameters are ignored (but exist since this is a generic policy).}
+
+\ccSeeAlso
+\ccc{CGAL::Surface_mesh_simplification::Count_ratio_stop_predicate<ECM>}
+
+\end{ccRefFunctionObjectClass}
+
+% +------------------------------------------------------------------------+
+%%RefPage: end of main body, begin of footer
+% EOF
+% +------------------------------------------------------------------------+
+

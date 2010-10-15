@@ -1,0 +1,64 @@
+\ccUserChapter{Kinetic Data Structures\label{chapter-kds}}
+\ccChapterAuthor{Daniel Russel} 
+
+%\chapter{Kinetic Data Structures}
+
+\input{Kinetic_data_structures/PkgDescription}
+
+\begingroup
+\minitoc
+
+
+\ccDefGlobalScope{CGAL::}
+
+\def\note#1{$\langle\langle${\bf #1}$\rangle\rangle$}
+%\message{Remove note before final version!}
+%\def{\th}{^{\rm th}}
+
+% space tweaks
+%\addtolength{\parskip}{-1pt}
+
+%\input{Kinetic_data_structures/todo.tex}
+
+Lets say you want to maintain a sorted list of items (each item is
+associate with a real number key). You can imagine placing each of the
+items on the point on the real line corresponding to its key. Now, let
+the key for each item change continuously (i.e. no jumps are allowed).
+As long as no two (consecutive) items cross, the sorted order is
+intact. When two items cross, they need to be exchanged in the list and then
+the sorted order is once again correct. This is a trivial example of a
+kinetic data structure. The key observation is that the combinatorial
+structure which is maintained changes at discrete times (events) even
+though the basic building blocks are changing continuously.
+
+This chapter describes a number of such kinetic data structures
+implemented using the Kinetic framework described in
+Chapter~\ref{chapter-kinetic}. We first, in
+Section~\ref{sec:kds_intro} introduce kinetic data structures and
+sweepline algorithms. This section can be skipped if the reader is
+already familiar with the area. The next sections,
+Section~\ref{sec:kds_terms} and Section~\ref{sec:kds_overview} introduce
+the terms and give an overview of the framework. They are recommended
+reading for all readers, even if you are just using provided kinetic
+data structures. We then present kinetic data structures for Delaunay
+triangulations in two and three dimensions in
+Section~\ref{sec:kds_provided_kdss}.
+
+If you are already familiar with kinetic data structures and know what
+you want to do, you might want to first take a look at the next section
+Section~\ref{sec:quick_hints} which covers quick hints.
+
+\input{Kinetic_data_structures/quick_hints.tex}
+
+\input{Kinetic_data_structures/kds_intro.tex}
+
+\input{Kinetic_data_structures/overview.tex}
+
+\input{Kinetic_data_structures/provided_kdss.tex}
+
+
+
+% LocalWords:  Guibas Menelaos CGAL templated Expr KDSs deschedule
+% LocalWords:  Karavelas
+
+\endgroup

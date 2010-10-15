@@ -1,0 +1,22 @@
+\ccRefPageBegin
+
+\begin{ccRefFunction}{remove_curve}
+
+\ccDefinition
+
+The function \ccRefName{} removes a given curve from a given arrangement.
+
+\ccInclude{CGAL/Arrangement_with_history_2.h}
+
+\ccThree{Orientation~~}{}{\hspace*{8.5cm}}
+
+\ccGlobalFunction{template <class Traits, class Dcel>
+            Size remove_curve (Arrangement_with_history_2<Traits,Dcel>& arr,
+        typename Arrangement_with_history_2<Traits,Dcel>::Curve_handle ch);}
+\ccRefName{} removes a curve, specified by its handle \ccc{ch}, from
+the arrangement \ccc{arr}, by deleting all the edges it induces. The
+function returns the number of deleted edges.
+
+\end{ccRefFunction}
+
+\ccRefPageEnd

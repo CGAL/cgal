@@ -1,0 +1,23 @@
+\begin{ccRefFunctionObjectConcept}{Kernel::ConstructOrthogonalVector_3}
+A model for this must provide:
+
+\ccCreationVariable{fo}
+
+\ccMemberFunction{Kernel::Vector_3 operator()(const Kernel::Plane_3& p);}
+{returns a vector that is orthogonal to the plane \ccc{p} and directed
+ to the positive side of \ccc{p}.}
+
+\ccMemberFunction{Kernel::Vector_3 operator()(const Kernel::Point_3& p, 
+                  const Kernel::Point_3& q, const Kernel::Point_3& r);}
+{returns a vector that is orthogonal to the plane defined by 
+ \ccc{Kernel::ConstructPlane_3()(p, q, r)} and directed
+ to the positive side of this plane.}
+
+\ccRefines
+\ccc{AdaptableFunctor} (with one argument)
+
+\ccSeeAlso
+\ccRefIdfierPage{CGAL::Plane_3<Kernel>} \\
+\ccRefIdfierPage{Kernel::ConstructCrossProductVector_3}\\
+
+\end{ccRefFunctionObjectConcept}

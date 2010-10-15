@@ -1,0 +1,33 @@
+\ccHtmlNoClassLinks
+\begin{ccRefFunction}{operator-}
+\ccTexHtml{\ccSetThreeColumns{Vector_2<Kernel>X }{}{\hspace*{8.0cm}}}{}
+
+\ccFunction{Vector_2<Kernel> operator-(const Point_2<Kernel> &p,
+                                  const Point_2<Kernel> &q);}
+       {returns the difference vector between \ccStyle{q} and \ccStyle{p}. 
+        You can substitute \ccc{ORIGIN} for either \ccc{p} or \ccc{q}
+        ,but not for both.}
+
+\ccFunction{Point_2<Kernel> operator-(const Point_2<Kernel> &p,
+                                 const Vector_2<Kernel> &v);}
+       {returns the point obtained by translating \ccStyle{p} by the 
+        vector -\ccStyle{v}.}
+
+\ccFunction{Vector_3<Kernel> operator-(const Point_3<Kernel> &p,
+                                  const Point_3<Kernel> &q);}
+       {returns the difference vector between \ccStyle{q} and \ccStyle{p}.
+        You can substitute \ccc{ORIGIN} for either $p$
+        or $q$, but not both.}
+
+\ccFunction{Point_3<Kernel> operator-(const Point_3<Kernel> &p,
+                                 const Vector_3<Kernel> &v);}
+       {returns a point obtained by translating \ccStyle{p} by the 
+        vector $-$\ccStyle{v}.}
+
+\ccSeeAlso
+\ccRefIdfierPage{CGAL::operator+} \\
+\ccRefIdfierPage{CGAL::operator*} \\
+
+
+\end{ccRefFunction}
+

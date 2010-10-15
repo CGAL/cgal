@@ -1,0 +1,83 @@
+\begin{ccRefConcept}{AlgebraicKernel_d_1} 
+
+\ccDefinition
+
+A model of the \ccc{AlgebraicKernel_d_1} concept is meant to provide the
+algebraic functionalities on univariate polynomials of general degree $d$.
+
+
+\ccRefines
+% \ccc{DefaultConstructible}\\ it may be not !
+\ccc{CopyConstructible}\\
+\ccc{Assignable}\\
+
+A model of \ccc{AlgebraicKernel_d_1} must provide:
+
+\ccTypes \ccThree{}{+++++++++++++}{++++++++}
+
+\ccNestedType{Coefficient}{
+A model of \ccc{IntegralDomain} and \ccc{RealEmbeddable}.\\ 
+\ccc{ExplicitInteroperable} with \ccc{AlgebraicKernel_d_1::Bound}. 
+}
+
+\ccNestedType{Polynomial_1}{
+A univariate polynomial that is a model of \ccc{Polynomial_d}, 
+where \ccc{CGAL::Polynomial_traits_d<Polynomial_1>::Innermost_coefficient}
+is \ccc{AlgebraicKernel_d_1::Coefficient}.
+}
+
+\ccNestedType{Algebraic_real_1}{ 
+A type that is used to represent real roots of univariate polynomials.
+The type must be a model of \ccc{DefaultConstructible},
+\ccc{CopyConstructible}, \ccc{Assignable} and \ccc{RealEmbeddable}.
+}
+
+\ccNestedType{Bound}{
+A type to represent upper and lower bounds of \ccc{AlgebraicKernel_d_1::Algebraic_real_1}.\\
+The type is \ccc{ExplicitInteroperable} with
+\ccc{AlgebraicKernel_d_1::Coefficient} and must be a model
+\ccc{IntegralDomain}, \ccc{RealEmbeddable} and dense in $\R$.
+} 
+
+\ccNestedType{size_type}{Size type (unsigned integral type).}
+\ccNestedType{Multiplicity_type}{Multiplicity type (unsigned integral type).}
+
+\ccHeading{Functors}
+
+\ccTwo{++++++++}{}
+\ccNestedType{Construct_algebraic_real_1}{A model of \ccc{AlgebraicKernel_d_1::ConstructAlgebraicReal_1}.}
+
+\ccTwo{++++++++++++++++++++++++++++}{}
+\ccNestedType{Compute_polynomial_1}{A model of  \ccc{AlgebraicKernel_d_1::ComputePolynomial_1}.}\ccGlue
+\ccNestedType{Isolate_1}{A model of  \ccc{AlgebraicKernel_d_1::Isolate_1}.}\ccGlue
+\ccNestedType{Is_square_free_1}{A model of \ccc{AlgebraicKernel_d_1::IsSquareFree_1}.}\ccGlue
+\ccNestedType{Make_square_free_1}{A model of \ccc{AlgebraicKernel_d_1::MakeSquareFree_1}.}
+\ccTwo{++++++++}{}
+\ccNestedType{Square_free_factorize_1}{A model of \ccc{AlgebraicKernel_d_1::SquareFreeFactorize_1}.}
+\ccTwo{++++++++++++++++++++++++++++}{}
+\ccNestedType{Is_coprime_1}{A model of \ccc{AlgebraicKernel_d_1::IsCoprime_1}.}\ccGlue
+\ccNestedType{Make_coprime_1}{A model of \ccc{AlgebraicKernel_d_1::MakeCoprime_1}.}\ccGlue
+\ccNestedType{Solve_1}{A model of \ccc{AlgebraicKernel_d_1::Solve_1}.}\ccGlue
+\ccNestedType{Number_of_solutions_1}{A model of \ccc{AlgebraicKernel_d_1::NumberOfSolutions_1}.}\ccGlue
+\ccNestedType{Sign_at_1}{A model of \ccc{AlgebraicKernel_d_1::SignAt_1}.}\ccGlue
+\ccNestedType{Compare_1}{A model of \ccc{AlgebraicKernel_d_1::Compare_1}.}\ccGlue
+\ccNestedType{Bound_between_1}{A model of \ccc{AlgebraicKernel_d_1::BoundBetween_1}.}
+\ccTwo{++++++++}{}
+\ccNestedType{Approximate_absolute_1}{A model of \ccc{AlgebraicKernel_d_1::ApproximateAbsolute_1}.}
+\ccNestedType{Approximate_relative_1}{A model of \ccc{AlgebraicKernel_d_1::ApproximateRelative_1}.}
+
+\ccOperations \ccThree{+++++++++}{+++++++++}{}
+
+For each of the function objects above, there must exist a member function that requires no arguments and returns an instance of that function object. The name of the member function is the uncapitalized name of the type returned with the suffix \ccc{_object} appended. For example, for the function object  \ccc{AlgebraicKernel_d_1::Bound_between_1} the following member function must exist:
+
+\ccCreationVariable{ak_1}
+\ccMemberFunction{AlgebraicKernel_d_1::Bound_between_1 bound_between_1_object() const;}{}
+
+\ccHasModels
+\ccc{Algebraic_kernel_rs_gmpz_d_1}\\
+\ccc{Algebraic_kernel_rs_gmpq_d_1}
+
+\ccSeeAlso
+\ccRefIdfierPage{AlgebraicKernel_d_2}\\
+
+\end{ccRefConcept}

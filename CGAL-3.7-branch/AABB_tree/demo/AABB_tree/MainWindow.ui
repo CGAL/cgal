@@ -1,0 +1,301 @@
+<ui version="4.0">
+ <class>MainWindow</class>
+ <widget class="QMainWindow" name="MainWindow">
+  <property name="geometry">
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>638</width>
+    <height>495</height>
+   </rect>
+  </property>
+  <property name="windowTitle">
+   <string>CGAL AABB tree demo</string>
+  </property>
+  <property name="windowIcon">
+   <iconset resource="AABB_demo.qrc">
+    <normaloff>:/cgal/icons/resources/cgal_logo.xpm</normaloff>:/cgal/icons/resources/cgal_logo.xpm</iconset>
+  </property>
+  <property name="locale">
+   <locale language="English" country="UnitedStates"/>
+  </property>
+  <widget class="QWidget" name="centralwidget">
+   <layout class="QGridLayout" name="gridLayout">
+    <item row="0" column="1">
+     <widget class="Viewer" name="viewer" native="true">
+      <property name="locale">
+       <locale language="English" country="UnitedStates"/>
+      </property>
+     </widget>
+    </item>
+   </layout>
+  </widget>
+  <widget class="QMenuBar" name="menubar">
+   <property name="geometry">
+    <rect>
+     <x>0</x>
+     <y>0</y>
+     <width>638</width>
+     <height>22</height>
+    </rect>
+   </property>
+   <widget class="QMenu" name="menuFile">
+    <property name="title">
+     <string>&amp;File</string>
+    </property>
+    <addaction name="actionLoadPolyhedron"/>
+    <addaction name="separator"/>
+    <addaction name="actionQuit"/>
+   </widget>
+   <widget class="QMenu" name="menuView">
+    <property name="title">
+     <string>&amp;View</string>
+    </property>
+    <addaction name="actionView_points"/>
+    <addaction name="actionView_cutting_plane"/>
+    <addaction name="actionView_segments"/>
+    <addaction name="actionView_polyhedron"/>
+   </widget>
+   <widget class="QMenu" name="menuAlgorithms">
+    <property name="title">
+     <string>Algorithms</string>
+    </property>
+    <widget class="QMenu" name="menuRefine">
+     <property name="title">
+      <string>Refine</string>
+     </property>
+     <addaction name="actionRefine_bisection"/>
+     <addaction name="actionRefine_loop"/>
+    </widget>
+    <widget class="QMenu" name="menuCut_plane">
+     <property name="title">
+      <string>Cut plane</string>
+     </property>
+     <addaction name="actionCutting_plane_none"/>
+     <addaction name="actionIntersection_cutting_plane"/>
+     <addaction name="actionSigned_distance_function_to_facets"/>
+     <addaction name="actionUnsigned_distance_function_to_facets"/>
+     <addaction name="actionUnsigned_distance_function_to_edges"/>
+    </widget>
+    <addaction name="actionEdge_points"/>
+    <addaction name="actionInside_points"/>
+    <addaction name="actionPoints_in_interval"/>
+    <addaction name="actionBoundary_points"/>
+    <addaction name="actionBoundary_segments"/>
+    <addaction name="separator"/>
+    <addaction name="menuCut_plane"/>
+    <addaction name="menuRefine"/>
+   </widget>
+   <widget class="QMenu" name="menuBenchmarks">
+    <property name="title">
+     <string>Benchmark</string>
+    </property>
+    <widget class="QMenu" name="menuAgainst_triangles">
+     <property name="title">
+      <string>Against #triangles</string>
+     </property>
+     <addaction name="actionBench_memory"/>
+     <addaction name="actionBench_construction"/>
+     <addaction name="actionBench_intersections_vs_nbt"/>
+     <addaction name="actionBench_distances_vs_nbt"/>
+    </widget>
+    <addaction name="actionBench_distances"/>
+    <addaction name="actionBench_intersections"/>
+    <addaction name="menuAgainst_triangles"/>
+   </widget>
+   <widget class="QMenu" name="menuEdit">
+    <property name="title">
+     <string>Edit</string>
+    </property>
+    <addaction name="actionClear_points"/>
+    <addaction name="actionClear_segments"/>
+    <addaction name="actionClear_cutting_plane"/>
+    <addaction name="separator"/>
+    <addaction name="actionCopy_snapshot"/>
+    <addaction name="actionSave_snapshot"/>
+   </widget>
+   <addaction name="menuFile"/>
+   <addaction name="menuEdit"/>
+   <addaction name="menuAlgorithms"/>
+   <addaction name="menuView"/>
+   <addaction name="menuBenchmarks"/>
+  </widget>
+  <action name="actionQuit">
+   <property name="text">
+    <string>&amp;Quit</string>
+   </property>
+   <property name="shortcut">
+    <string>Ctrl+Q</string>
+   </property>
+  </action>
+  <action name="actionLoadPolyhedron">
+   <property name="text">
+    <string>Load polyhedron...</string>
+   </property>
+  </action>
+  <action name="actionInside_points">
+   <property name="text">
+    <string>Inside points...</string>
+   </property>
+  </action>
+  <action name="actionBench_distances">
+   <property name="text">
+    <string>Distances</string>
+   </property>
+  </action>
+  <action name="actionUnsigned_distance_function_to_facets">
+   <property name="text">
+    <string>Unsigned distance function to facets</string>
+   </property>
+  </action>
+  <action name="actionUnsigned_distance_function_to_edges">
+   <property name="text">
+    <string>Unsigned distance function to edges</string>
+   </property>
+  </action>
+  <action name="actionSigned_distance_function_to_facets">
+   <property name="text">
+    <string>Signed distance function to facets</string>
+   </property>
+  </action>
+  <action name="actionView_polyhedron">
+   <property name="text">
+    <string>Polyhedron</string>
+   </property>
+   <property name="shortcut">
+    <string>P</string>
+   </property>
+  </action>
+  <action name="actionView_points">
+   <property name="text">
+    <string>Points</string>
+   </property>
+  </action>
+  <action name="actionClear_points">
+   <property name="text">
+    <string>Clear points</string>
+   </property>
+  </action>
+  <action name="actionBoundary_segments">
+   <property name="text">
+    <string>Boundary segments...</string>
+   </property>
+  </action>
+  <action name="actionBoundary_points">
+   <property name="text">
+    <string>Boundary points...</string>
+   </property>
+  </action>
+  <action name="actionClear_segments">
+   <property name="text">
+    <string>Clear segments</string>
+   </property>
+  </action>
+  <action name="actionView_segments">
+   <property name="text">
+    <string>Segments</string>
+   </property>
+  </action>
+  <action name="actionEdge_points">
+   <property name="text">
+    <string>Edge points...</string>
+   </property>
+  </action>
+  <action name="actionBench_intersections">
+   <property name="text">
+    <string>Intersections</string>
+   </property>
+  </action>
+  <action name="actionView_distance_function">
+   <property name="text">
+    <string>Distance function</string>
+   </property>
+  </action>
+  <action name="actionClear_distance_function">
+   <property name="text">
+    <string>Clear distance function</string>
+   </property>
+  </action>
+  <action name="actionRefine_bisection">
+   <property name="text">
+    <string>Longest edge bisection</string>
+   </property>
+  </action>
+  <action name="actionLoop_subdivision">
+   <property name="text">
+    <string>Loop subdivision</string>
+   </property>
+  </action>
+  <action name="actionBench_memory">
+   <property name="text">
+    <string>Memory</string>
+   </property>
+  </action>
+  <action name="actionBench_construction">
+   <property name="text">
+    <string>Construction</string>
+   </property>
+  </action>
+  <action name="actionBench_intersections_vs_nbt">
+   <property name="text">
+    <string>Intersections</string>
+   </property>
+  </action>
+  <action name="actionBench_distances_vs_nbt">
+   <property name="text">
+    <string>Distances</string>
+   </property>
+  </action>
+  <action name="actionPoints_in_interval">
+   <property name="text">
+    <string>Points in interval...</string>
+   </property>
+  </action>
+  <action name="actionSave_snapshot">
+   <property name="text">
+    <string>Save snapshot</string>
+   </property>
+  </action>
+  <action name="actionCopy_snapshot">
+   <property name="text">
+    <string>Copy snapshot</string>
+   </property>
+  </action>
+  <action name="actionRefine_loop">
+   <property name="text">
+    <string>Loop subdivision</string>
+   </property>
+  </action>
+  <action name="actionIntersection_cutting_plane">
+   <property name="text">
+    <string>Intersection</string>
+   </property>
+  </action>
+  <action name="actionView_cutting_plane">
+   <property name="text">
+    <string>Cut plane</string>
+   </property>
+  </action>
+  <action name="actionClear_cutting_plane">
+   <property name="text">
+    <string>Clear cutting plane</string>
+   </property>
+  </action>
+  <action name="actionCutting_plane_none">
+   <property name="text">
+    <string>None</string>
+   </property>
+  </action>
+ </widget>
+ <customwidgets>
+  <customwidget>
+   <class>Viewer</class>
+   <extends>QWidget</extends>
+   <header>Viewer.h</header>
+  </customwidget>
+ </customwidgets>
+ <resources>
+  <include location="AABB_demo.qrc"/>
+ </resources>
+ <connections/>
+</ui>

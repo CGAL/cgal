@@ -1,0 +1,20 @@
+\begin{ccRefFunctionObjectConcept}{Kernel::ConstructBaseVector_3}
+A model for this must provide:
+
+\ccCreationVariable{fo}
+
+\ccMemberFunction{Kernel::Vector_3 operator()(const Kernel::Plane_3& h, 
+                                              int index);}
+{when \ccc{index} == 1, returns a vector \ccc{b1} that is orthogonal to the 
+ normal \ccc{n} to plane \ccc{h}; when \ccc{index} == 2, returns a vector 
+ \ccc{b2} that is orthogonal to \ccc{n} and \ccc{b1} and such that
+ for an arbitrary point \ccc{p} on the plane \ccc{h}, the orientation of
+ \ccc{p}, \ccc{p + b1}, \ccc{p + b2}, and \ccc{p + n} is positive.}
+
+\ccRefines
+\ccc{AdaptableFunctor} (with two arguments)
+
+\ccSeeAlso
+\ccRefIdfierPage{CGAL::Plane_3<Kernel>}  \\
+
+\end{ccRefFunctionObjectConcept}

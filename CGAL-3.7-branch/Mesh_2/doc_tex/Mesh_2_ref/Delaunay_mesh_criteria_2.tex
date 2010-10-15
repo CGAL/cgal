@@ -1,0 +1,34 @@
+\begin{ccRefClass}{Delaunay_mesh_criteria_2<CDT>}
+
+\ccCreationVariable{traits}
+\ccDefinition
+  
+The class \ccRefName\ is a model for the \ccc{MeshingCriteria_2} concept.
+The shape criterion on triangles is given by a bound $B$ such that for good
+triangles $\frac{r}{l} \le B$ where $l$ is the shortest edge length
+and $r$ is the circumradius of the triangle.  By default, $B=\sqrt{2}$,
+which is the best bound one can use with the guarantee that the refinement
+algorithm will terminate. The upper bound $B$ is related to a lower bound
+$\alpha_{min}$ on the minimum angle in the triangle:
+\begin{displaymath}
+  \sin{ \alpha_{min} } = \frac{1}{2 B}
+\end{displaymath}
+so $B=\sqrt{2}$ corresponds to  $\alpha_{min} \ge 20.7$ degrees.
+
+\ccInclude{CGAL/Delaunay_mesh_criteria_2.h}
+
+\ccIsModel
+
+\ccc{MeshingCriteria_2}
+
+\ccCreation
+\ccConstructor{Delaunay_mesh_criteria_2()}{Default constructor. $B=\sqrt{2}$.}
+\ccConstructor{Delaunay_mesh_criteria_2(double b = 0.125)}{Construct
+  a traits class with bound $B=\sqrt{\frac{1}{4 b}}$.}
+\end{ccRefClass}
+
+%%% For emacs/AucTeX:
+%%% Local Variables: ***
+%%% mode:latex ***
+%%% TeX-master: "../Mesh_2.tex"  ***
+%%% End: ***

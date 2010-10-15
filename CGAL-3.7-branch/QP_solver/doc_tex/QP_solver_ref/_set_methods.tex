@@ -1,0 +1,42 @@
+\ccMethod{bool is_linear() const;}{returns \ccc{true} if and only if 
+\ccVar\ is a linear program.}
+
+\ccMethod{bool is_nonnegative() const;}{returns \ccc{true} if and only if  
+\ccVar\ is a nonnegative program.}
+
+\ccMethod{void set_a (int j, int i, const NT& val);}{sets the entry $A_{ij}$
+in column $j$ and row $i$ of the constraint matrix $A$ of \ccVar\ to 
+\ccc{val}. An existing entry is overwritten. \ccVar\ is enlarged if
+necessary to accomodate this entry.}
+
+\ccMethod{void set_b (int i, const NT& val);}{sets the entry $b_i$
+of \ccVar\ to \ccc{val}. An existing entry is overwritten. 
+\ccVar\ is enlarged if necessary to accomodate this entry.}
+
+\ccMethod{void set_r (int i, CGAL::Comparison_result rel);}
+{sets the entry $\qprel_i$ of \ccVar\ to \ccc{rel}. \ccc{CGAL::SMALLER}
+means that the $i$-th constraint is of type ``$\leq$'', \ccc{CGAL::EQUAL}
+means ``$=$'', and \ccc{CGAL::LARGER} encodes ``$\geq$''. An existing entry 
+is overwritten. \ccVar\ is enlarged if necessary to accomodate this entry.}
+
+\ccMethod{void set_l (int j, bool is_finite, const NT& val = NT(0));}
+{if \ccc{is_finite}, this sets the entry $l_j$ of \ccVar\ to \ccc{val},
+otherwise it sets $l_j$ to $-\infty$. An existing entry is overwritten. 
+\ccVar\ is enlarged if necessary to accomodate this entry.}
+
+\ccMethod{void set_u (int j, bool is_finite, const NT& val = NT(0));}
+{if \ccc{is_finite}, this sets the entry $u_j$ of \ccVar\ to \ccc{val},
+otherwise it sets $u_j$ to $\infty$. An existing entry is overwritten. 
+\ccVar\ is enlarged if necessary to accomodate this entry.}
+
+\ccMethod{void set_c (int j, const NT& val);}{sets the entry $c_j$
+of \ccVar\ to \ccc{val}. An existing entry is overwritten. 
+\ccVar\ is enlarged if necessary to accomodate this entry.}
+
+\ccMethod{void set_c0 (const NT& val);}{sets the entry $c_0$
+of \ccVar\ to \ccc{val}. An existing entry is overwritten.}
+
+\ccMethod{void set_d (int i, int j, const NT& val);}{sets the entries 
+$2D_{ij}$ and $2D_{ji}$ of \ccVar\ to \ccc{val}. Existing entries are 
+overwritten. \ccVar\ is enlarged if necessary to accomodate these entries.
+\ccPrecond \ccc{j <= i}}

@@ -1,0 +1,33 @@
+\begin{ccRefFunctionObjectConcept}{Kernel::OrientedSide_2}
+A model for this must provide:
+
+\ccCreationVariable{fo}
+
+\ccMemberFunction{Oriented_side operator()(const Kernel::Circle_2&c, 
+                                           const Kernel::Point_2&p);} 
+{returns \ccStyle{ON_ORIENTED_BOUNDARY},
+\ccStyle{ON_NEGATIVE_SIDE}, or the constant \ccStyle{ON_POSITIVE_SIDE},
+depending on the position of $p$  relative to the oriented circle $c$.}
+
+\ccMemberFunction{Oriented_side operator()(const Kernel::Line_2&l, 
+                                           const Kernel::Point_2&p);} 
+{returns \ccStyle{ON_ORIENTED_BOUNDARY},
+\ccStyle{ON_NEGATIVE_SIDE}, or the constant \ccStyle{ON_POSITIVE_SIDE},
+depending on the position of $p$  relative to the oriented line $l$.}
+
+\ccMemberFunction{Oriented_side operator()(const Kernel::Triangle_2&t, 
+                                           const Kernel::Point_2&p);} 
+{returns \ccStyle{ON_ORIENTED_BOUNDARY},
+\ccStyle{ON_NEGATIVE_SIDE}, or the constant \ccStyle{ON_POSITIVE_SIDE},
+depending on the position of $p$  relative to the oriented triangle $t$.}
+
+\ccRefines
+\ccc{AdaptableFunctor} (with two arguments)
+
+\ccSeeAlso
+\ccRefIdfierPage{CGAL::Circle_2<Kernel>} \\
+\ccRefIdfierPage{CGAL::Line_2<Kernel>} \\
+\ccRefIdfierPage{CGAL::Triangle_2<Kernel>} \\
+
+
+\end{ccRefFunctionObjectConcept}

@@ -1,0 +1,175 @@
+%% Copyright (c) 2005  Foundation for Research and Technology-Hellas (Greece).
+%% All rights reserved.
+%%
+%% This file is part of CGAL (www.cgal.org); you may redistribute it under
+%% the terms of the Q Public License version 1.0.
+%% See the file LICENSE.QPL distributed with CGAL.
+%%
+%% Licensees holding a valid commercial license may use this file in
+%% accordance with the commercial license agreement provided with the software.
+%%
+%% This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
+%% WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
+%%
+%% $URL$
+%% $Id$
+%% 
+%%
+%% Author(s)     : Menelaos Karavelas <mkaravel@iacm.forth.gr>
+
+
+
+\begin{ccRefConcept}{AdaptationPolicy_2}
+
+%% \ccHtmlCrossLink{}     %% add further rules for cross referencing links
+%% \ccHtmlIndexC[concept]{} %% add further index entries
+\ccDefinition
+
+The concept \ccc{AdaptationPolicy_2} defines the requirements on
+the predicate functors that determine whether a feature of the
+triangulated Delaunay graph should be rejected or not. It also
+provides a functor for inserting sites in the Delaunay graph. The last
+functor is optional and a tag determines whether it is provided or
+not. Note that while the first two functors do not modify the Delaunay
+graph they take as an argument, the last ones does.
+
+\ccRefines
+\ccc{DefaultConstructible}, \ccc{CopyConstructible}, \ccc{Assignable}
+
+\ccTypes
+\ccTwo{AdaptationPolicy_2::Delaunay_graph+}{}
+%
+\ccNestedType{Site_2}{A type for the sites of the Voronoi diagram.}
+\ccGlue
+\ccNestedType{Delaunay_graph}{A type for the triangulated Delaunay
+  graph. The type \ccc{Delaunay_graph} must be a model of the
+  \ccc{DelaunayGraph_2} concept.}
+%%
+\ccThree{typedef Delaunay_graph::Finite_edges_iterator}
+{Finite_edges_iterator+}{}
+\ccThreeToTwo
+\ccGlue
+\ccTypedef{typedef Delaunay_graph::Vertex_handle Delaunay_vertex_handle;}{}
+%{Type for the vertex handles of the Delaunay graph.}
+\ccGlue
+\ccTypedef{typedef Delaunay_graph::Face_handle Delaunay_face_handle;}{}
+%{Type for the face handles of the Delaunay graph.}
+\ccGlue
+\ccTypedef{typedef Delaunay_graph::Edge Delaunay_edge;}{}
+%{Type for the edges of the Delaunay graph.}
+\ccGlue
+\ccTypedef{typedef Delaunay_graph::All_edges_iterator
+  All_Delaunay_edges_iterator;}{}
+%{Type for the iterator over all edges of the Delaunay graph.}
+\ccGlue
+\ccTypedef{typedef Delaunay_graph::Finite_edges_iterator
+  Finite_Delaunay_edges_iterator;}
+{}
+%{Type for the iterator over the finite edges of the Delaunay graph.}
+\ccGlue
+\ccTypedef{typedef Delaunay_graph::Edge_circulator Delaunay_edge_circulator;}{}
+%{Type for the edge circulator of the Delaunay graph.}
+%%
+\ccTwo{AdaptationPolicy_2::Edge_rejector+}{}
+\ccGlue
+\ccNestedType{Edge_rejector}{A type for the predicate functor that is
+  responsible for rejecting an edge of the Delaunay graph (or
+  equivalently rejecting its dual edge in the Voronoi diagram). It must be
+  model of the concepts \ccc{DefaultConstructible},
+  \ccc{CopyConstructible}, \ccc{Assignable}, and \ccc{AdaptableFunctor} 
+  (with two arguments). It must provide the following operators:\\
+  \hspace*{2mm}\ccc{bool operator()(Delaunay_graph dg, Delaunay_edge e)}\\
+  \hspace*{2mm}\ccc{bool operator()(Delaunay_graph dg,
+    Delaunay_face_handle f, int i)}\\
+  \hspace*{2mm}\ccc{bool operator()(Delaunay_graph dg,
+    Delaunay_edge_circulator ec)}\\
+  \hspace*{2mm}\ccc{bool operator()(Delaunay_graph dg,}\\
+    \hspace*{25mm}\ccc{All_Delaunay_edges_iterator eit)}\\
+  \hspace*{2mm}\ccc{bool operator()(Delaunay_graph dg,}\\
+    \hspace*{25mm}\ccc{Finite_Delaunay_edges_iterator eit)}\\
+  The functor returns \ccStyle{true} iff the edge is rejected.}
+\ccGlue
+\ccNestedType{Face_rejector}{A type for the predicate functor that is
+  responsible for rejecting a vertex of the Delaunay graph (or
+  equivalently its dual face in the Voronoi diagram -- hence the name
+  of the functor). It must be model of the concepts \ccc{DefaultConstructible},
+  \ccc{CopyConstructible}, \ccc{Assignable}, \ccc{AdaptableFunctor}
+  (with two arguments). It must provide the following operator:\\
+  \centerline{\ccc{bool operator()(Delaunay graph dg,
+      Delaunay_vertex_handle v)}}\\
+  The functor returns \ccStyle{true} iff the face is rejected.}
+\ccGlue
+\ccNestedType{Has_inserter}{A tag for determining if the adaptation
+  policy class provides a functor for inserting sites in the Delaunay
+  graph. This tag is equal to either \ccc{CGAL::Tag_true} (a site
+  inserter functor is available) or \ccc{CGAL::Tag_false} (a site
+  inserter functor is not available).}
+\ccGlue
+\ccNestedType{Site_inserter}{A type for a functor that inserts sites
+  in the Delaunay graph. It must be model of the concepts
+  \ccc{DefaultConstructible}, \ccc{CopyConstructible}, \ccc{Assignable}, 
+  \ccc{AdaptableFunctor} (with two arguments). It must provide the
+  following operator\\
+  \centerline{\ccc{Delaunay_vertex_handle
+      operator()(Delaunay_graph& dg, Site_2 t)}}\\
+  The vertex handle returned either points to the vertex of the
+  Delaunay graph corresponding to the site just inserted or is the
+  default constructed vertex handle. The latter case can happen if the
+  site inserted is \textit{hidden}, i.e., it has an empty Voronoi cell.\\
+  This type is required only if the \ccc{Has_inserter} tag is equal to
+  \ccc{CGAL::Tag_true}.}
+
+
+\ccCreationVariable{ap}  %% choose variable name
+
+\ccHeading{Access to objects}
+\ccThree{Edge_rejector}{ap.edge_rejector_object()+}{}
+\ccMethod{Edge_rejector edge_rejector_object();}{}
+\ccGlue
+\ccMethod{Face_rejector face_rejector_object();}{}
+\ccGlue
+\ccMethod{Site_inserter site_inserter_object();}{This method is
+  required only if \ccc{Has_inserter} is equal to \ccc{CGAL::Tag_true}.}
+
+\ccHeading{Miscellaneous}
+The following methods are important when the adaptation policy maintains a
+state. This can happen if we have a caching adaptation policy, i.e., when
+we cache the results of the edge and face rejectors.
+
+\ccThree{bool}{ap.swap(other)++}{}
+%
+\ccMethod{void clear();}{Clears the state of the adaptation policy.}
+\ccGlue
+\ccMethod{void swap(AdaptationPolicy_2 other);}{The adaptation policies
+  \ccc{ap} and \ccc{other} are swapped. This method should be
+  preferred to \ccStyle{ap=other} or \ccStyle{ap(other)} if
+  \ccc{other} is deleted afterwards.}
+\ccGlue
+\ccMethod{bool is_valid();}{Tests the validity of the adaptation policy.}
+\ccMethod{bool is_valid(Delaunay_graph dg);}{Tests the validity of the
+  adaptation policy using extra information from the Delaunay graph
+  \ccc{dg}.}
+
+%
+\ccHasModels
+\ccc{CGAL::Identity_policy_2<DG,AT>}\\
+\ccc{CGAL::Apollonius_graph_degeneracy_removal_policy_2<AG2>}\\
+\ccc{CGAL::Apollonius_graph_caching_degeneracy_removal_policy_2<AG2>}\\
+\ccc{CGAL::Delaunay_triangulation_degeneracy_removal_policy_2<DT2>}\\
+\ccc{CGAL::Delaunay_triangulation_caching_degeneracy_removal_policy_2<DT2>}\\
+\ccc{CGAL::Regular_triangulation_degeneracy_removal_policy_2<RT2>}\\
+\ccc{CGAL::Regular_triangulation_caching_degeneracy_removal_policy_2<RT2>}\\
+\ccc{CGAL::Segment_Delaunay_graph_degeneracy_removal_policy_2<SDG2>}\\
+\ccc{CGAL::Segment_Delaunay_graph_caching_degeneracy_removal_policy_2<SDG2>}
+
+\ccSeeAlso
+\ccc{DelaunayGraph_2}\\
+\ccc{AdaptationTraits_2}\\
+\ccc{CGAL::Voronoi_diagram_2<DG,AT,AP>}
+\end{ccRefConcept}
+
+% +------------------------------------------------------------------------+
+%%RefPage: end of main body, begin of footer
+% EOF
+% +------------------------------------------------------------------------+
+

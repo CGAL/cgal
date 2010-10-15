@@ -1,0 +1,33 @@
+\section{Using Kinetic Data Structures\label{sec:kds_provided_kdss}}
+
+
+There are five provided kinetic data structures. They are
+\begin{description}
+\item[\ccc{Kinetic::Sort<Traits, Visitor>}] maintain a list of points
+sorted by x-coordinate.
+\item[\ccc{Kinetic::Delaunay_triangulation_2<Traits, Visitor,
+    Triangulation>}] maintain the Delaunay triangulation of a set of
+  two dimensional points
+\item[\ccc{Kinetic::Delaunay_triangulation_3<Traits,Visitor,
+    Triangulation>}] maintain the Delaunay triangulation of a set of
+  three dimensional points.
+\item[\ccc{Kinetic::Regular_triangulation_3<Traits, Visitor,
+Triangulation>}] maintain the regular triangulation of a set of waiting
+three dimensional points.
+\item[\ccc{Kinetic::Enclosing_box_2<Traits>},
+  \ccc{Kinetic::Enclosing_box_3<Traits>}] restrict points to stay
+  within a box by bouncing them off the walls.
+\end{description}
+
+
+\input{Kinetic_data_structures/sort_example.tex}
+
+\input{Kinetic_data_structures/delaunay_2_example.tex}
+
+\input{Kinetic_data_structures/sweepline_usage_example.tex}
+
+
+%%% Local Variables: 
+%%% mode: latex
+%%% TeX-master: t
+%%% End: 

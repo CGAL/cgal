@@ -1,0 +1,52 @@
+To compile, you need support for lapack
+
+Program Single_estimation
+--------------------- 
+takes as input a <inputPoints.txt> which is a xyz text file 
+it compute the fitting for this single entry and 
+it outputs results in the <output.txt> file and on the standard std::cout
+
+Usage is : Single_estimation <inputPoints.txt> <d_fitting>, <d_monge>" 
+
+in_points are sampled on 0.1(x²+2y²)
+
+./Single_estimation data/in_points_file.txt  2 2
+./Single_estimation data/in_points_d4.txt  4 4
+ 
+
+Program Mesh_estimation
+-----------------
+takes an filename.off file as input,
+it computes a fitting for each vertex
+
+it outputs the results in :
+1. filename.off.4ogl.txt  which records raw data (better for a vizualization
+   post-processing)
+2. if option -vtrue, filename.off.verb.txt contains human readable results
+
+Allowed options:
+  -h [ --help ]                                   produce help message.
+  -f [ --input-file ] arg (=data/ellipe0.003.off) name of the input off file
+  -d [ --degree-jet ] arg (=2)                    degree of the jet
+  -m [ --degree-monge ] arg (=2)                  degree of the Monge rep
+  -a [ --nb-rings ] arg (=0)                      number of rings to collect 
+                                                  neighbors. 0 means collect 
+                                                  enough rings to make appro 
+                                                  possible a>=1 fixes the nb of
+                                                  rings to be collected
+  -p [ --nb-points ] arg (=0)                     number of neighbors to use.  
+                                                  0 means this option is not 
+                                                  considered, this is the 
+                                                  default p>=1 fixes the nb of 
+                                                  points to be used
+  -v [ --verbose ] arg (=0)                       verbose output on text file
+
+
+Note : if the nb of collected points is less than the required min number of 
+   points to make the approxiamtion possible (which is constrained by the deg)
+   then the vertex is skipped.
+
+./Mesh_estimation
+ ./Mesh_estimation -f data/ellipe0.003.off -d2 -m2 -a2 
+ ./Mesh_estimation -f data/poly2x\^2+y\^2-0.062500-off -d2 -m2 -a2   
+		

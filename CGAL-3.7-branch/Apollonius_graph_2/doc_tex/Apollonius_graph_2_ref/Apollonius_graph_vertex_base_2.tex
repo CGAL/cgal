@@ -1,0 +1,72 @@
+% +------------------------------------------------------------------------+
+% | Reference manual page: Apollonius_graph_vertex_base_2.tex
+% +------------------------------------------------------------------------+
+% | 12.04.2000   Author
+% | Package: Package
+% | 
+%\RCSdef{\RCSRegulartriangulationtraitsRev}{$Id$}
+%\RCSdefDate{\RCSRegulartriangulationtraitsDate}{$Date$}
+% |
+%%RefPage: end of header, begin of main body
+% +------------------------------------------------------------------------+
+
+\begin{ccRefClass}{Apollonius_graph_vertex_base_2<Gt,StoreHidden>}
+
+%% add template arg's if necessary
+
+%% \ccHtmlCrossLink{}     %% add further rules for cross referencing links
+%% \ccHtmlIndexC[class]{} %% add further index entries
+\ccCreationVariable{vb}
+\ccDefinition
+
+The class \ccRefName\ provides a model for the
+\ccc{ApolloniusGraphVertexBase_2} concept which is the vertex base
+required by the \ccc{ApolloniusGraphDataStructure_2} concept. The
+class \ccRefName\ has two template arguments, the first being the
+geometric traits of the Apollonius graph and should be a model of the
+concept \ccc{ApolloniusGraphTraits_2}. The second is a Boolean which
+controls whether hidden sites are actually stored. Such a
+control is important if the user is not interested in hidden sites
+and/or if only insertions are made, in which case no hidden
+site can become visible. If \ccc{StoreHidden} is set to
+\ccc{true}, hidden sites are stored, otherwise they are
+discarded. By default \ccc{StoreHidden} is set to \ccc{true}.
+
+\ccInclude{CGAL/Apollonius_graph_vertex_base_2.h}
+
+\ccIsModel
+\ccc{ApolloniusGraphVertexBase_2}
+
+\ccCreation
+\ccCreationVariable{vb}  %% choose variable name
+\ccTwo{Apollonius_graph_vertex_base_2<Gt,StoreHidden>
+vb(Site_2 s);+}{}
+
+\ccConstructor{Apollonius_graph_bertex_base_2();}{Default constructor.}
+\ccGlue
+\ccConstructor{Apollonius_graph_vertex_base_2(Site_2 s);}
+{Constructs a vertex associated with the site \ccc{s} and
+embedded at the center of \ccc{s}.}
+\ccGlue
+\ccConstructor{Apollonius_graph_vertex_base_2(Site_2 s, Face_handle f);}
+              {Constructs a vertex associated with
+                the site \ccc{s}, embedded at the center of \ccc{s},
+                and pointing to the face associated with the face
+                handle \ccc{f}.}
+
+
+
+\ccSeeAlso
+\ccc{ApolloniusGraphVertexBase_2}\\
+\ccc{ApolloniusGraphDataStructure_2}\\
+\ccc{ApolloniusGraphTraits_2}\\
+\ccc{CGAL::Triangulation_data_structure_2<Vb,Fb>}\\
+\ccc{CGAL::Apollonius_graph_traits_2<K,Method_tag>}\\
+\ccc{CGAL::Apollonius_graph_filtered_traits_2<CK,CM,EK,EM,FK,FM>}
+\end{ccRefClass}
+
+% +------------------------------------------------------------------------+
+%%RefPage: end of main body, begin of footer
+% EOF
+% +------------------------------------------------------------------------+
+

@@ -1,0 +1,146 @@
+#!/usr/bin/env perl
+
+=head1 SYNOPSIS
+
+check_svn_keywords [options] [filenames...]
+    
+ Options:
+    -help     help message
+    -missing  detect also missing SVN keywords
+    -verbose  verbose mode
+
+=head1 OPTIONS
+
+=over 8
+
+=item  B<-m, -missing>
+
+Without that option, this script only detects incorrect SVN keywords. If
+that option is used, it also detects missing keywords.
+
+=item  B<-v, -verbose>
+
+Print an error message for each incorrect (or missing) SVN keyword. 
+
+=head1 DESCRIPTION
+
+This script reads a file, or all files in a directory tree, and print the
+filename of each file that has incorrect or missing SVN keywords.
+
+=cut
+
+use strict;
+use warnings;
+use DirHandle;
+use File::Spec;
+use Switch;
+use Getopt::Long qw(:config permute);
+use Pod::Usage;
+
+my $help;
+my $missing;
+my $verbose;
+my $global_errcode = 0;
+
+our @FILENAMES = ();
+
+
+sub add_a_file {
+    my $filename = shift;
+    push @::FILENAMES,($filename);
+}
+
+sub check_keywords {
+    my $filename = shift(@_);
+
+    my $keywordAuthor=0;
+    my $keywordDate=0;
+    my $keywordId=0;
+    my $keywordRevision=0;
+    my $keywordURL=0;
+    my $incorrect=0;
+
+    local *FILE;
+    open(FILE, "<", $filename) || die("Bad filename \"$filename\".");
+    while(<FILE>) {
+	chomp;
+	if(/\/\/.*\$[a-zA-Z]+:/) {
+	    my %keys = /\$([a-zA-Z-_]+): ?([^\$]+)\$/g;
+	    if(/^[^\$]*(\$[^\$]+\$[^\$]*)+$/ && scalar(keys(%keys))) {
+		foreach (keys(%keys)) {
+		    my $key = $_;
+		    my $value = $keys{$key};
+		    switch ($key) {
+			case "Author" { $keywordAuthor = $value; }
+			case "Date" { $keywordDate = $value; }
+			case "Id" { $keywordId = $value; }
+			case "Revision" { $keywordRevision = $value; }
+			case "URL" { $keywordURL = $value; }
+			else {
+			    $incorrect = 1;
+			    if($verbose) {
+				print STDERR "$filename has the incorrect keyword \"$key:\".\n";
+			    }
+			}
+		    }
+		}
+	    }
+	    else {
+		$incorrect = 1;
+		$verbose && print STDERR "$filename has the incorrect line: \"" . $_ . "\"\n";
+	    }
+	}
+    }
+    if( ! ($keywordId && $keywordURL) && $missing )
+    {
+	$incorrect = 1;
+	if( $verbose ) {
+	    $keywordId || print STDERR "$filename has no \"Id:\".\n";
+	    $keywordURL || print STDERR "$filename has no \"URL:\".\n";
+	}
+    }
+    if( ! $verbose && $incorrect ) {
+	print "$filename\n";
+    }
+}
+
+sub recursive_check {
+    my $path = shift(@_);
+    my $canonpath = File::Spec->canonpath($path);
+    my $d = new DirHandle $path;
+    if (defined $d) {
+	while( defined(my $file = $d->read) ) {
+	    if ( $file ne File::Spec->updir() &&
+		 $file ne File::Spec->curdir() &&
+		 $file ne ".svn" && 
+		 $file !~ /.*~/ ) {
+		my $canonfilename = File::Spec->catfile($path, $file);
+		recursive_check($canonfilename); 
+	    }
+	}
+    }
+    else {
+	check_keywords($path)
+    }
+}
+
+GetOptions('help' => \$help,
+	   'missing|m' => \$missing,
+	   'verbose|v' => \$verbose,
+	   '<>' => \&add_a_file ) or pod2usage(2);
+
+pod2usage( { -exitval => 1 ,
+	     -verbose => 1 } ) if $help;
+
+if($#FILENAMES == -1) {
+    pod2usage( { -msg => "No filename!" ,
+		 -exitval => 1 ,
+		 -verbose => 0 ,
+		 -output => \*STDERR } );
+}
+
+foreach (@FILENAMES) {
+    recursive_check($_);
+}
+
+exit $global_errcode;

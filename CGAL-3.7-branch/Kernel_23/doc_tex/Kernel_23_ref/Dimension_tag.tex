@@ -1,0 +1,32 @@
+\begin{ccRefClass} {Dimension_tag<int dim>}
+
+\ccDefinition
+An object of the class \ccRefName\ is an empty object which can be used
+for dispatching functions based on the dimension of an object, as provided
+by the \ccc{dim} parameter.  It is useful in cases where it is not more
+practical to pass the dimension as a template parameter directly.
+
+\ccInclude{CGAL/Dimension.h}
+
+\ccConstants
+
+\ccVariable{static const int value;}{ The value of the \ccc{dim} parameter. }
+
+\ccExample
+
+The following code declares two functions constructing two points at the origin,
+either in 2D or in 3D.
+
+\begin{cprog}
+  Point_2<K> get_origin(Dimension_tag<2>) { return Point_2<K>(ORIGIN); }
+  Point_3<K> get_origin(Dimension_tag<3>) { return Point_3<K>(ORIGIN); }
+
+  std::cout << get_origin(Dimension_tag<2>())) << std::endl;
+\end{cprog}
+
+\ccSeeAlso
+\ccRefConceptPage{CGAL::Ambient_dimension<T, K>} \\
+\ccRefConceptPage{CGAL::Feature_dimension<T, K>} \\
+\ccRefConceptPage{CGAL::Dynamic_dimension_tag}
+
+\end{ccRefClass}

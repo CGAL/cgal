@@ -1,0 +1,75 @@
+\begin{ccRefClass} {Iso_box_d<Kernel>}
+
+\ccDefinition  An object $b$ of the data type \ccRefName\ is an
+iso-box in the Euclidean space $\E^d$ with edges parallel to the 
+axes of the coordinate system.
+ 
+\ccCreation
+\ccCreationVariable{b}\ccTagFullDeclarations
+
+\ccConstructor{Iso_box_d(const Point_d<Kernel>& p, 
+                            const Point_d<Kernel> &q);}
+            {introduces an iso-oriented iso-box \ccVar\ with diagonal
+             opposite vertices $p$ and $q$. 
+}
+
+\ccHidden \ccConstructor{Iso_box_d(const Iso_box_d<Kernel>& b2);}
+            {copy constructor.}
+
+\ccOperations
+
+\ccMethod{bool operator==(const Iso_box_d<Kernel>& b2) const;}
+       {Test for equality: two iso-oriented cuboid are equal, iff their
+        lower left and their upper right vertices are equal.}
+
+\ccMethod{bool operator!=(const Iso_box_d<Kernel>& b2) const;}
+       {Test for inequality.}
+
+\ccMethod{const Point_d<Kernel>& min() const;}
+       {returns the smallest vertex of \ccVar.}
+
+
+\ccMethod{const Point_d<Kernel>& max() const;}
+       {returns the largest vertex of \ccVar.}
+
+%% Deprecated
+%%\ccMethod{ Kernel::FT  min_coord(int i) const;}
+%%         {returns $i$-th \ccHtmlNoLinksFrom{Cartesian} coordinate of
+%%          the smallest vertex of \ccVar. 
+%%          (\ccc{min_coord(0) == xmin()}; \ccc{min_coord{2} == zmin()})
+%%          \ccPrecond $0 \leq i \leq d$.}
+%%
+%%\ccMethod{ Kernel::FT  max_coord(int i) const;}
+%%         {returns $i$-th \ccHtmlNoLinksFrom{Cartesian} coordinate of
+%%          the largest vertex of \ccVar. 
+%%          (\ccc{max_coord(0) == xmax()}; \ccc{max_coord{2} == zmax()})
+%%          \ccPrecond $0 \leq i \leq d$.}
+
+\ccPredicates
+
+\ccMethod{bool is_degenerate() const;}
+       {%the iso-oriented cuboid 
+        \ccVar\ is degenerate, if all vertices
+        are collinear.}
+
+\ccMethod{Bounded_side bounded_side(const Point_d<Kernel>& p) const;}
+       {returns either \ccStyle{ON_UNBOUNDED_SIDE},
+        \ccStyle{ON_BOUNDED_SIDE}, or the constant
+        \ccStyle{ON_BOUNDARY}, 
+        depending on where point $p$ is.}
+
+\ccMethod{bool has_on_boundary(const Point_d<Kernel>& p) const;}
+       {}
+\ccGlue
+\ccMethod{bool has_on_bounded_side(const Point_d<Kernel>& p) const;}
+       {}
+\ccGlue
+\ccMethod{bool has_on_unbounded_side(const Point_d<Kernel>& p) const;}
+       {}
+
+\ccHeading{Miscellaneous}
+
+\ccMethod{Kernel::FT volume() const;}
+       {returns the volume of \ccVar. }
+
+\end{ccRefClass} 

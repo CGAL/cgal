@@ -1,0 +1,282 @@
+### On Unix-like systems, put this file in ~/.subversion folder.
+###
+### On Win32 systems, put this file in
+### C:\Document and Settings\username\Application data\Subversion folder
+### (by the way, Application Data is usually a hidden directory).
+###
+### This file configures various client-side behaviors.
+###
+### The commented-out examples below are intended to demonstrate
+### how to use this file.
+
+### Section for authentication and authorization customizations.
+[auth]
+### Set store-passwords to 'no' to avoid storing passwords in the
+### auth/ area of your config directory.  It defaults to 'yes'.
+### Note that this option only prevents saving of *new* passwords;
+### it doesn't invalidate existing passwords.  (To do that, remove
+### the cache files by hand as described in the Subversion book.)
+# store-passwords = no
+### Set store-auth-creds to 'no' to avoid storing any subversion
+### credentials in the auth/ area of your config directory.
+### It defaults to 'yes'.  Note that this option only prevents
+### saving of *new* credentials;  it doesn't invalidate existing
+### caches.  (To do that, remove the cache files by hand.)
+# store-auth-creds = no
+
+### Section for configuring external helper applications.
+[helpers]
+### Set editor to the command used to invoke your text editor.
+###   This will override the environment variables that Subversion
+###   examines by default to find this information ($EDITOR,
+###   et al).
+# editor-cmd = editor (vi, emacs, notepad, etc.)
+### Set diff-cmd to the absolute path of your 'diff' program.
+###   This will override the compile-time default, which is to use
+###   Subversion's internal diff implementation.
+# diff-cmd = diff_program (diff, gdiff, etc.)
+### Set diff3-cmd to the absolute path of your 'diff3' program.
+###   This will override the compile-time default, which is to use
+###   Subversion's internal diff3 implementation.
+# diff3-cmd = diff3_program (diff3, gdiff3, etc.)
+### Set diff3-has-program-arg to 'true' or 'yes' if your 'diff3'
+###   program accepts the '--diff-program' option.
+# diff3-has-program-arg = [true | false]
+
+### Section for configuring tunnel agents.
+[tunnels]
+### Configure svn protocol tunnel schemes here.  By default, only
+### the 'ssh' scheme is defined.  You can define other schemes to
+### be used with 'svn+scheme://hostname/path' URLs.  A scheme
+### definition is simply a command, optionally prefixed by an
+### environment variable name which can override the command if it
+### is defined.  The command (or environment variable) may contain
+### arguments, using standard shell quoting for arguments with
+### spaces.  The command will be invoked as:
+###   <command> <hostname> svnserve -t
+### (If the URL includes a username, then the hostname will be
+### passed to the tunnel agent as <user>@<hostname>.)  If the
+### built-in ssh scheme were not predefined, it could be defined
+### as:
+# ssh = $SVN_SSH ssh
+### If you wanted to define a new 'rsh' scheme, to be used with
+### 'svn+rsh:' URLs, you could do so as follows:
+# rsh = rsh
+### Or, if you wanted to specify a full path and arguments:
+# rsh = /path/to/rsh -l myusername
+### On Windows, if you are specifying a full path to a command,
+### use a forward slash (/) or a paired backslash (\\) as the
+### path separator.  A single backslash will be treated as an
+### escape for the following character.
+
+### Section for configuring miscelleneous Subversion options.
+[miscellany]
+
+## Set global-ignores to a set of whitespace-delimited globs
+## which Subversion will ignore in its 'status' output.
+global-ignores = *.bak *.bk? *.old .DS_Store *.a *.o *.lib *.dll *.exe *.so *.so.* debug release Debug Release x64 *.blg *.cgallog *.aux *.maf *.hax *.hlg *.ilg *.pdflg *.log  *.toc *.cgallog.tmp* *.inc *.dvi *.mtc* *.idx ProgramOutput* ErrorOutput* CompilerOutput* error.txt *.ncb *.suo contents.obv .xvpics semantic.cache doc_ps doc_html doc_pdf *.moc .*~ *~ .#* *.user *.aps doc_doxygen CMakeCache.txt CMakeFiles cmake_install.cmake Doxyfile *.dir ALL_BUILD.vcproj ZERO_CHECK.vcproj gmon.* .qglviewer.xml *.moc_parameters *.cpp_parameters *_moc.cpp ui_*.h qrc_*.cxx *.sbr .dir-locals.el *.tmp *.ilk *.pdb
+
+### Set log-encoding to the default encoding for log messages
+# log-encoding = latin1
+### Set use-commit-times to make checkout/update/switch/revert
+### put last-committed timestamps on every file touched.
+# use-commit-times = yes
+### Set no-unlock to prevent 'svn commit' from automatically
+### releasing locks on files.
+# no-unlock = yes
+
+## Set enable-auto-props to 'yes' to enable automatic properties
+## for 'svn add' and 'svn import', it defaults to 'no'.
+## Automatic properties are defined in the section 'auto-props'.
+enable-auto-props = yes
+
+### Section for configuring automatic properties.
+### The format of the entries is:
+###   file-name-pattern = propname[=value][;propname[=value]...]
+### The file-name-pattern can contain wildcards (such as '*' and '?').
+### Caveat: file-name-patterns are case insensitive but you cannot have 2 rules
+### that differ only by case. Workaround: use [] in pattern (not at start of line!).
+### All entries which match will be applied to the file.
+###
+### Set property "svn:eol-style=native" for text files (default is binary).
+### Set "svn:keywords=Author Date Id Revision URL" for text files (default is binary).
+### Set "svn:executable" for Unix executable files.
+### Set "svn:mime-type" for binary files (else SVN will attempt to guess this property).
+[auto-props]
+
+# Plain text formats
+*.txt = svn:eol-style=native;svn:keywords=Author Date Id Revision URL
+*.hlp = svn:eol-style=native;svn:keywords=Author Date Id Revision URL
+dont_submit = svn:eol-style=native;svn:keywords=Author Date Id Revision URL
+AUTHORS = svn:eol-style=native;svn:keywords=Author Date Id Revision URL
+maintainer = svn:eol-style=native;svn:keywords=Author Date Id Revision URL
+README = svn:eol-style=native;svn:keywords=Author Date Id Revision URL
+LICENSE = svn:eol-style=native;svn:keywords=Author Date Id Revision URL
+TODO = svn:eol-style=native;svn:keywords=Author Date Id Revision URL
+TO_DO = svn:eol-style=native;svn:keywords=Author Date Id Revision URL
+INSTALL = svn:eol-style=native;svn:keywords=Author Date Id Revision URL
+INSTALLATION = svn:eol-style=native;svn:keywords=Author Date Id Revision URL
+COPYRIGHT = svn:eol-style=native;svn:keywords=Author Date Id Revision URL
+KNOWN_PROBLEMS = svn:eol-style=native;svn:keywords=Author Date Id Revision URL
+NOTICE = svn:eol-style=native;svn:keywords=Author Date Id Revision URL
+COPYING = svn:eol-style=native;svn:keywords=Author Date Id Revision URL
+CHANGES = svn:eol-style=native;svn:keywords=Author Date Id Revision URL
+*.win32 = svn:eol-style=native;svn:keywords=Author Date Id Revision URL
+*.MacOSX = svn:eol-style=native;svn:keywords=Author Date Id Revision URL
+*.log = svn:eol-style=native;svn:keywords=Author Date Id Revision URL
+*.cfg = svn:eol-style=native;svn:keywords=Author Date Id Revision URL
+*.config = svn:eol-style=native;svn:keywords=Author Date Id Revision URL
+
+# HTML formats
+*.htm = svn:eol-style=native;svn:keywords=Author Date Id Revision URL;svn:mime-type=text/html
+*.html = svn:eol-style=native;svn:keywords=Author Date Id Revision URL;svn:mime-type=text/html
+*.shtml = svn:eol-style=native;svn:keywords=Author Date Id Revision URL;svn:mime-type=text/html
+*.xml = svn:eol-style=native;svn:keywords=Author Date Id Revision URL;svn:mime-type=text/xml
+*.xsl = svn:eol-style=native;svn:keywords=Author Date Id Revision URL;svn:mime-type=text/xml
+*.css = svn:eol-style=native;svn:keywords=Author Date Id Revision URL;svn:mime-type=text/css
+*.dtd = svn:eol-style=native;svn:keywords=Author Date Id Revision URL; svn:mime-type=text/xml
+.htaccess = svn:eol-style=native;svn:keywords=Author Date Id Revision URL
+.htgroup = svn:eol-style=native;svn:keywords=Author Date Id Revision URL
+.htpasswd = svn:eol-style=native;svn:keywords=Author Date Id Revision URL
+
+# Latex formats
+*.tex = svn:eol-style=native;svn:keywords=Author Date Id Revision URL
+*.inputs = svn:eol-style=native;svn:keywords=Author Date Id Revision URL
+*.bib = svn:eol-style=native;svn:keywords=Author Date Id Revision URL
+*.bst = svn:eol-style=native;svn:keywords=Author Date Id Revision URL
+*.sty = svn:eol-style=native;svn:keywords=Author Date Id Revision URL
+*.fd = svn:eol-style=native;svn:keywords=Author Date Id Revision URL
+*.aw = svn:eol-style=native;svn:keywords=Author Date Id Revision URL
+*.awi = svn:eol-style=native;svn:keywords=Author Date Id Revision URL
+*.lw = svn:eol-style=native;svn:keywords=Author Date Id Revision URL
+*.nw = svn:eol-style=native;svn:keywords=Author Date Id Revision URL
+*.fw = svn:eol-style=native;svn:keywords=Author Date Id Revision URL
+*.fwi = svn:eol-style=native;svn:keywords=Author Date Id Revision URL
+
+# Script formats
+*.sh = svn:eol-style=LF;svn:keywords=Author Date Id Revision URL;svn:executable
+*.csh = svn:eol-style=LF;svn:keywords=Author Date Id Revision URL;svn:executable
+*.bat = svn:eol-style=CRLF;svn:keywords=Author Date Id Revision URL
+*.run = svn:eol-style=native;svn:keywords=Author Date Id Revision URL;svn:executable
+*.pl = svn:eol-style=native;svn:keywords=Author Date Id Revision URL;svn:executable
+*.pm = svn:eol-style=native;svn:keywords=Author Date Id Revision URL;svn:executable
+*.py = svn:eol-style=native;svn:keywords=Author Date Id Revision URL;svn:executable
+cgal_test_with_cmake = svn:eol-style=LF;svn:keywords=Author Date Id Revision URL;svn:executable
+*.cmd = svn:eol-style=LF;svn:keywords=Author Date Id Revision URL
+*.dpatch = svn:eol-style=native;svn:keywords=Author Date Id Revision URL;svn:executable
+
+# Code formats
+*.[cC] = svn:eol-style=native;svn:keywords=Author Date Id Revision URL
+*.cpp = svn:eol-style=native;svn:keywords=Author Date Id Revision URL
+*.cxx = svn:eol-style=native;svn:keywords=Author Date Id Revision URL
+*.xpm = svn:eol-style=native;svn:keywords=Author Date Id Revision URL
+*.cc = svn:eol-style=native;svn:keywords=Author Date Id Revision URL
+*.tcc = svn:eol-style=native;svn:keywords=Author Date Id Revision URL
+*.stage_* = svn:eol-style=native;svn:keywords=Author Date Id Revision URL
+*.h = svn:eol-style=native;svn:keywords=Author Date Id Revision URL
+*.hpp = svn:eol-style=native;svn:keywords=Author Date Id Revision URL
+*.inl = svn:eol-style=native;svn:keywords=Author Date Id Revision URL
+*.ipp = svn:eol-style=native;svn:keywords=Author Date Id Revision URL
+*.tcc = svn:eol-style=native;svn:keywords=Author Date Id Revision URL
+*.f = svn:eol-style=native;svn:keywords=Author Date Id Revision URL
+*.m = svn:eol-style=native;svn:keywords=Author Date Id Revision URL
+*.mema = svn:eol-style=native;svn:keywords=Author Date Id Revision URL
+*.y = svn:eol-style=native;svn:keywords=Author Date Id Revision URL
+*.lex = svn:eol-style=native;svn:keywords=Author Date Id Revision URL
+makefile = svn:eol-style=native;svn:keywords=Author Date Id Revision URL
+makefile.* = svn:eol-style=native;svn:keywords=Author Date Id Revision URL
+makefile_* = svn:eol-style=native;svn:keywords=Author Date Id Revision URL
+Make[Ff]ile = svn:eol-style=native;svn:keywords=Author Date Id Revision URL
+Make[Ff]ile.* = svn:eol-style=native;svn:keywords=Author Date Id Revision URL
+Make[Ff]ile_* = svn:eol-style=native;svn:keywords=Author Date Id Revision URL
+*.[Mm]akefile = svn:eol-style=native;svn:keywords=Author Date Id Revision URL
+GNUmakefile = svn:eol-style=native;svn:keywords=Author Date Id Revision URL
+Makefilevc = svn:eol-style=native;svn:keywords=Author Date Id Revision URL
+*.mak = svn:eol-style=native;svn:keywords=Author Date Id Revision URL
+*.mk = svn:eol-style=native;svn:keywords=Author Date Id Revision URL
+*.kdevelop = svn:eol-style=native;svn:keywords=Author Date Id Revision URL
+*.kdevelop.filelist = svn:eol-style=native;svn:keywords=Author Date Id Revision URL
+*.kdevses = svn:eol-style=native;svn:keywords=Author Date Id Revision URL
+*.kdevelop.pcs = svn:mime-type=application/octet-stream
+*.dsp = svn:eol-style=CRLF;svn:keywords=Author Date Id Revision URL
+*.dsw = svn:eol-style=CRLF;svn:keywords=Author Date Id Revision URL
+*.vcproj = svn:eol-style=CRLF;svn:keywords=Author Date Id Revision URL
+*.vc = svn:eol-style=native;svn:keywords=Author Date Id Revision URL
+*.sln = svn:eol-style=CRLF;svn:keywords=Author Date Id Revision URL
+*.suo = svn:mime-type=application/octet-stream
+*.def = svn:eol-style=native;svn:keywords=Author Date Id Revision URL
+*.rc = svn:eol-style=native;svn:keywords=Author Date Id Revision URL
+*.rc2 = svn:eol-style=native;svn:keywords=Author Date Id Revision URL
+*.reg = svn:eol-style=native;svn:keywords=Author Date Id Revision URL
+*.manifest = svn:eol-style=native;svn:keywords=Author Date Id Revision URL
+*.ini = svn:eol-style=native;svn:keywords=Author Date Id Revision URL
+*.dxy = svn:eol-style=native;svn:keywords=Author Date Id Revision URL
+Doxyfile = svn:eol-style=native;svn:keywords=Author Date Id Revision URL
+
+# Image formats
+*.png = svn:mime-type=image/png
+*.gif = svn:mime-type=image/gif
+*.icns = svn:mime-type=application/octet-stream
+*.jpg = svn:mime-type=image/jpeg
+*.jpeg = svn:mime-type=image/jpeg
+*.bmp = svn:mime-type=image/bmp
+*.ico = svn:mime-type=image/x-icon
+*.tif = svn:mime-type=image/tiff
+*.tiff = svn:mime-type=image/tiff
+*.pcx = svn:mime-type=application/octet-stream
+*.xbm = svn:mime-type=application/octet-stream
+*.ppm = svn:mime-type=application/octet-stream
+*.fig = svn:mime-type=application/octet-stream
+*.xfig = svn:mime-type=application/octet-stream
+*.ltex = svn:mime-type=application/octet-stream
+
+# Meshes and 3D formats
+*.off = svn:mime-type=application/octet-stream
+*.obj = svn:mime-type=application/octet-stream
+*.mtl = svn:mime-type=application/octet-stream
+*.dxf = svn:mime-type=application/octet-stream
+*.poly = svn:mime-type=application/octet-stream
+*.mesh = svn:mime-type=application/octet-stream
+*.nef = svn:mime-type=application/octet-stream
+*.nef3 = svn:mime-type=application/octet-stream
+*.spheres = svn:mime-type=application/octet-stream
+
+# Postscript formats
+*.pdf = svn:mime-type=application/pdf
+*.ai = svn:mime-type=application/postscript
+*.eps = svn:mime-type=application/postscript
+*.ps = svn:mime-type=application/postscript
+*.pstex = svn:mime-type=application/postscript
+*.pstex_t = svn:mime-type=application/postscript
+*.ipe = svn:mime-type=application/postscript
+*.ips = svn:mime-type=application/postscript
+*.plot = svn:mime-type=application/postscript
+
+# Binary executables
+*.dll = svn:mime-type=application/octet-stream
+*.a = svn:mime-type=application/octet-stream
+*.o = svn:mime-type=application/octet-stream
+*.so = svn:mime-type=application/octet-stream
+*.lib = svn:mime-type=application/octet-stream
+*.exe = svn:mime-type=application/octet-stream
+
+# Other text based data formats
+*.mps = svn:eol-style=native;svn:keywords=Author Date Id Revision URL
+*.bff = svn:eol-style=native;svn:keywords=Author Date Id Revision URL
+*.spec = svn:eol-style=native;svn:keywords=Author Date Id Revision URL
+*.nsi = svn:eol-style=native;svn:keywords=Author Date Id Revision URL
+*.patch = svn:mime-type=text/x-diff
+
+# Other binary data formats
+*.gz = svn:mime-type=application/gzip
+*.tgz = svn:mime-type=application/gzip
+*.zip = svn:mime-type=application/zip
+*.tar = svn:mime-type=application/octet-stream
+*.odg = svn:mime-type=application/octet-stream
+*.ppt = svn:mime-type=application/vnd.ms-powerpoint
+*.doc = svn:mime-type=application/msword
+*.rtf = svn:mime-type=application/rtf
+*.mw = svn:mime-type=application/octet-stream
+*.mws = svn:mime-type=application/octet-stream
+*.sxw = svn:mime-type=application/octet-stream
+*.pmproj = svn:mime-type=application/octet-stream

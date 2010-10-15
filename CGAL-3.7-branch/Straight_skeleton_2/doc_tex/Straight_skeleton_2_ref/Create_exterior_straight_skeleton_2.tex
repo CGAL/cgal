@@ -1,0 +1,80 @@
+%% Copyright (c) 2004  SciSoft.  All rights reserved.
+%%
+%% This file is part of CGAL (www.cgal.org); you may redistribute it under
+%% the terms of the Q Public License version 1.0.
+%% See the file LICENSE.QPL distributed with CGAL.
+%%
+%% Licensees holding a valid commercial license may use this file in
+%% accordance with the commercial license agreement provided with the software.
+%%
+%% This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
+%% WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
+%%
+%% 
+%%
+%% Author(s)     : Fernando Cacciola <fernando_cacciola@hotmail.com>
+
+
+\begin{ccRefFunction}{create_exterior_straight_skeleton_2}
+
+%% add template arg's if necessary
+
+%% \ccHtmlCrossLink{}     %% add further rules for cross referencing links
+%% \ccHtmlIndexC[class]{} %% add further index entries
+\ccDefinition
+
+The function \ccRefName\ creates a straight skeleton in the exterior of a 2D polygon with holes.
+
+\ccInclude{CGAL/create_straight_skeleton_2.h}
+
+\ccFunction
+{template<class FT, class PointIterator, class K>
+boost::shared_ptr< Straight_skeleton_2<K> >
+create_exterior_straight_skeleton_2 
+  ( FT            max_offset
+  , PointIterator vertices_begin
+  , PointIterator vertices_end
+  , K const&      k = Exact_predicates_inexact_constructions_kernel
+  ) ;
+}
+{returns a new \ccc{Straight_skeleton_2<K>} in the {\em limited exterior} of the 2D polygon $P$ given by the point sequence \ccc{[vertices_begin,vertices_end]}.
+The skeleton in the {\em limited exterior} of $P$ is the skeleton in the interior of a polygon $Q$ with $P$ as its hole and a rectangular frame $F$ as outer boundary.
+The outer boundary $F$ is constructed by enlarging the bounding box of $P$ a distance $d$. 
+$d$ is a margin sufficiently large to allow an outer offset at dinstance \ccc{max_offset} to be obtained from this exterior skeleton, as computed by the function \ccc{compute_outer_frame_margin} 
+}
+
+\ccFunction
+{template<class FT, class Polygon, class K>
+boost::shared_ptr< Straight_skeleton_2<K> >
+create_exterior_straight_skeleton_2 ( FT       max_offset
+                                    , Polygon  P
+                                    , K const& k = Exact_predicates_inexact_constructions_kernel
+                                    ) ;
+}
+{returns a new \ccc{Straight_skeleton_2<K>} in the {\em limited exterior} of the 2D polygon $P$ .
+The skeleton in the {\em limited exterior} of $P$ is the skeleton in the interior of a polygon $Q$ with $P$ as its hole and a rectangular frame $F$ as outer boundary.
+The outer boundary $F$ is constructed by enlarging the bounding box of $P$ a distance $d$. 
+$d$ is a margin sufficiently large to allow an outer offset at dinstance \ccc{max_offset} to be obtained from this exterior skeleton, as computed by the function \ccc{compute_outer_frame_margin} 
+}
+
+\ccHeading{Requirements}
+
+\begin{enumerate}  
+   \item    \ccc{K} is any CGAL kernel.
+   \item    \ccc{PointIterator::value_type} is equivalent to \ccc{K2::Point_2}.
+            A cartesian converter is used to convert from \ccc{K2::Point_2} to \ccc{K::Point_2}
+   \item    \ccc{Polygon} is \ccc{Polygon_2<K>} or a standard container of \ccc{K2::Point_2} elements 
+\end{enumerate}
+
+
+\ccSeeAlso
+\ccc{create_interior_straight_skeleton_2}\\
+\ccc{Straight_skeleton_builder_2<Gt,Ss,Visitor>} \\
+
+\end{ccRefFunction}
+
+% +------------------------------------------------------------------------+
+%%RefPage: end of main body, begin of footer
+% EOF
+% +------------------------------------------------------------------------+
+

@@ -1,0 +1,106 @@
+\begin{ccRefFunction}{x_extremal_point}
+
+\ccInclude{CGAL/global_functions_circular_kernel_2.h}
+
+\ccFunction{Circular_arc_point_2<CircularKernel>
+  x_extremal_point(const Circle_2<CircularKernel> & c, bool b);}
+{Returns the leftmost (resp. rightmost) point of the circle if $b$ is
+  \ccc{true} (resp. \ccc{false}).}
+
+\end{ccRefFunction}
+\begin{ccRefFunction}{y_extremal_point}
+
+\ccInclude{CGAL/global_functions_circular_kernel_2.h}
+
+\ccFunction{Circular_arc_point_2<CircularKernel>
+  y_extremal_point(const Circle_2<CircularKernel> & c, bool b);}
+{Returns the bottommost (ressp. topmost) point of the circle if $b$ is
+  \ccc{true} (resp. \ccc{false}).}
+
+\end{ccRefFunction}
+\begin{ccRefFunction}{x_extremal_points}
+
+\ccInclude{CGAL/global_functions_circular_kernel_2.h}
+
+\ccFunction{template < class OutputIterator >
+  OutputIterator
+  x_extremal_points(const Circle_2<CircularKernel> & c,
+  OutputIterator res);}
+{Copies in the output iterator the $x$-extremal points of the
+  circle. \ccc{res} iterates on elements of type
+  \ccc{Circular_arc_point_2<CircularKernel>}, sorted in $x$.}
+
+\end{ccRefFunction}
+\begin{ccRefFunction}{y_extremal_points}
+
+\ccInclude{CGAL/global_functions_circular_kernel_2.h}
+
+\ccFunction{template < class OutputIterator >
+  OutputIterator
+  y_extremal_points(const Circle_2<CircularKernel> & c,
+                    OutputIterator res);}
+{Copies in the output iterator the $y$-extremal points of the
+  circle. \ccc{res} iterates on elements of type
+  \ccc{Circular_arc_point_2<CircularKernel>}, sorted in $y$.}
+
+\end{ccRefFunction}
+\begin{ccRefFunction}{has_on}
+
+\ccInclude{CGAL/global_functions_circular_kernel_2.h}
+
+\ccFunction{bool
+  has_on(const Circle_2<CircularKernel> &c, 
+         const Circular_arc_point_2<CircularKernel> &p);}
+{Checks whether the point lies on the circle.}
+
+\end{ccRefFunction}
+\begin{ccRefFunction}{compare_y_to_right}
+
+\ccFunction{CGAL::Comparison_result 
+  compare_y_to_right(const Circular_arc_2<CircularKernel> &ca1,
+                     const Circular_arc_2<CircularKernel> &ca2,
+                     Circular_arc_point_2<CircularKernel> &p);}
+{Compares vertically the two arcs, to the right of the point $p$,
+\ccPrecond{$p$ is an intersection point of the arcs, and the arcs are
+  defined to the right of $p$.}}
+
+\end{ccRefFunction}
+\begin{ccRefFunction}{has_in_x_range}
+
+\ccInclude{CGAL/global_functions_circular_kernel_2.h}
+
+\ccFunction{bool 
+  has_in_x_range(const Circular_arc_2<CircularKernel> &ca, 
+                   const Circular_arc_point_2<CircularKernel> &p);}
+{Checks whether the point lies in the vertical range defined by the
+  arc.}
+
+\ccFunction{bool 
+  has_in_x_range(const Line_arc_2<CircularKernel> &ca, 
+                   const Circular_arc_point_2<CircularKernel> &p);}
+{Checks whether the point lies in the vertical range defined by the
+  line segment.}
+
+\end{ccRefFunction}
+\begin{ccRefFunction}{make_x_monotone}
+
+\ccInclude{CGAL/global_functions_circular_kernel_2.h}
+
+\ccFunction{template < class OutputIterator >
+  OutputIterator
+  make_x_monotone(const Circular_arc_2<CircularKernel> &ca, 
+                  OutputIterator res);}
+{Copies in the output iterator the $x$-monotone sub-arcs of $ca$.}
+
+\end{ccRefFunction}
+\begin{ccRefFunction}{make_xy_monotone}
+
+\ccInclude{CGAL/global_functions_circular_kernel_2.h}
+
+\ccFunction{template < class OutputIterator >
+  OutputIterator
+  make_xy_monotone(const Circular_arc_2<CircularKernel> &ca, 
+                  OutputIterator res);}
+{Copies in the output iterator the $xy$-monotone sub-arcs of $ca$.}
+
+\end{ccRefFunction}

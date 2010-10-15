@@ -1,0 +1,167 @@
+% +------------------------------------------------------------------------+
+% | Reference manual page: Poisson_reconstruction_function.tex
+% +------------------------------------------------------------------------+
+% | 07.09.2007   Pierre Alliez, Laurent Saboret, Gael Guennebaud
+% | Package: Surface_reconstruction_points_3
+% |
+\RCSdef{\RCSPoissonreconstructionfunctionRev}{$Id$}
+\RCSdefDate{\RCSPoissonreconstructionfunctionDate}{$Date$}
+% |
+\ccRefPageBegin
+%%RefPage: end of header, begin of main body
+% +------------------------------------------------------------------------+
+
+
+\begin{ccRefClass}{Poisson_reconstruction_function<GeomTraits>}
+
+%% \ccHtmlCrossLink{}     %% add further rules for cross referencing links
+%% \ccHtmlIndexC[class]{} %% add further index entries
+
+\ccDefinition
+
+% The section below is automatically generated. Do not edit!
+%START-AUTO(\ccDefinition)
+
+Given a set of 3D points with oriented normals sampled on the boundary of a 3D solid, the Poisson Surface Reconstruction method \cite{Kazhdan06} solves for an approximate indicator function of the inferred solid, whose gradient best matches the input normals. The output scalar function, represented in an adaptive octree, is then iso-contoured using an adaptive marching cubes.
+
+\ccc{Poisson_reconstruction_function} implements a variant of this algorithm which solves for a piecewise linear function on a 3D Delaunay triangulation instead of an adaptive octree.
+
+%END-AUTO(\ccDefinition)
+
+% The section below is automatically generated. Do not edit!
+%START-AUTO(\ccInclude)
+
+\ccInclude{CGAL/Poisson_reconstruction_function.h}
+
+%END-AUTO(\ccInclude)
+
+\ccParameters
+
+% The section below is automatically generated. Do not edit!
+%START-AUTO(\ccParameters)
+
+template$<$class Gt$>$   \\
+class \ccc{Poisson_reconstruction_function};
+
+\ccCommentHeading{Parameters}  \\
+\ccc{Gt}: Geometric traits class.
+
+%END-AUTO(\ccParameters)
+
+\ccIsModel
+
+% The section below is automatically generated. Do not edit!
+%START-AUTO(\ccIsModel)
+
+Model of the \ccc{ImplicitFunction} concept.
+
+%END-AUTO(\ccIsModel)
+
+\ccTypes
+
+% Enlarge left margin
+\ccTwo{123456789012345678901234567890123456789012345678}{}
+
+% The section below is automatically generated. Do not edit!
+%START-AUTO(\ccTypes)
+
+\ccNestedType{Geom_traits}
+{
+Geometric traits class.
+}
+\ccGlue
+\ccNestedType{FT}
+{
+typedef to \ccc{Geom_traits::FT}
+}
+\ccGlue
+\ccNestedType{Point}
+{
+typedef to \ccc{Geom_traits::Point_3}
+}
+\ccGlue
+\ccNestedType{Vector}
+{
+typedef to \ccc{Geom_traits::Vector_3}
+}
+\ccGlue
+\ccNestedType{Sphere}
+{
+typedef to \ccc{Geom_traits::Sphere_3}
+}
+\ccGlue
+
+%END-AUTO(\ccTypes)
+
+\ccCreation
+\ccCreationVariable{fct}  %% variable name for \ccMethod below
+
+% Reduce left margin
+\ccTwo{1234567890123456789012}{}
+
+% The section below is automatically generated. Do not edit!
+%START-AUTO(\ccCreation)
+
+\ccConstructor{template<typename InputIterator, typename PointPMap, typename NormalPMap> Poisson_reconstruction_function(InputIterator first, InputIterator beyond, PointPMap point_pmap, NormalPMap normal_pmap);}
+{
+Creates a Poisson implicit function from the [first, beyond) range of points.
+\ccCommentHeading{Template Parameters}  \\
+\ccc{InputIterator}: iterator over input points. \ccc{PointPMap}: is a model of \ccc{boost::ReadablePropertyMap} with a \ccc{value_type} = \ccc{Point_3}. It can be omitted if \ccc{InputIterator} \ccc{value_type} is convertible to \ccc{Point_3}. \ccc{NormalPMap}: is a model of \ccc{boost::ReadablePropertyMap} with a \ccc{value_type} = \ccc{Vector_3}.
+\ccCommentHeading{Parameters}  \\
+\ccc{first}: iterator over the first input point. \ccc{beyond}: past-the-end iterator over the input points. \ccc{point_pmap}: property map to access the position of an input point. \ccc{normal_pmap}: property map to access the {\bf oriented} normal of an input point.
+}
+\ccGlue
+
+%END-AUTO(\ccCreation)
+
+\ccOperations
+
+% Workaround bug in cgal_manual which, by default,
+% removes "const" from "Reconstruction" in return values.
+\ccTagFullDeclarations
+
+% Enlarge left margin
+\ccThree{1234567890}{12345678901234567890123}{}
+
+% The section below is automatically generated. Do not edit!
+%START-AUTO(\ccOperations)
+
+\ccMethod{Sphere bounding_sphere() const;}
+{
+Returns a sphere bounding the inferred surface.
+}
+\ccGlue
+\ccMethod{template<class SparseLinearAlgebraTraits_d> bool compute_implicit_function(SparseLinearAlgebraTraits_d solver = SparseLinearAlgebraTraits_d());}
+{
+The function \ccc{compute_implicit_function}() must be called after the insertion of oriented points. It computes the piecewise linear scalar function operator() by: applying Delaunay refinement, solving for operator() at each vertex of the triangulation with a sparse linear solver, and shifting and orienting operator() such that it is 0 at all input points and negative inside the inferred surface.
+\ccCommentHeading{Template parameters}  \\
+\ccc{SparseLinearAlgebraTraits_d}: Symmetric definite positive sparse linear solver. The default solver is TAUCS Multifrontal Supernodal Cholesky Factorization.
+\ccCommentHeading{Returns} false if the linear solver fails.
+\ccCommentHeading{Parameters}  \\
+\ccc{solver}: sparse linear solver.
+}
+\ccGlue
+\ccMethod{FT operator()(const Point& p) const;}
+{
+\ccc{ImplicitFunction} interface: evaluates the implicit function at a given 3D query point.
+}
+\ccGlue
+\ccMethod{Point get_inner_point() const;}
+{
+Returns a point located inside the inferred surface.
+}
+\ccGlue
+
+%END-AUTO(\ccOperations)
+
+\ccExample
+
+See \ccc{poisson_reconstruction_example.cpp}.
+
+\end{ccRefClass}
+
+% +------------------------------------------------------------------------+
+%%RefPage: end of main body, begin of footer
+\ccRefPageEnd
+% EOF
+% +------------------------------------------------------------------------+

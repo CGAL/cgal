@@ -1,0 +1,61 @@
+% +------------------------------------------------------------------------+
+% | CGAL Reference Manual: Reference manual for Qt_widget.tex
+% +------------------------------------------------------------------------+
+% |
+% | 03.01.2001	Radu Ursu
+% | 
+% | \RCSdef{\qtwidgetRev}{$Id$}
+% | \RCSdefDate{\qtwidgetDate}{$Date$}
+% +------------------------------------------------------------------------+
+
+% +-----------------------------------------------------+
+\begin{ccRefClass}{Qt_widget_get_point<T>}
+\ccDefinition
+An object of type \ccRefName\ creates a \cgal\ point, every time 
+the left mouse button is clicked.
+
+\ccInclude{CGAL/IO/Qt_widget_get_point.h}
+
+\ccParameters
+
+The full template declaration of \ccc{Qt_widget_get_point} states one parameter:
+
+\begin{tabbing}
+\ccc{template <} \=\ccc{class T >}\\
+	\ccc{class Qt_widget_get_point;}
+\end{tabbing}
+
+If T is one of the \cgal\ kernels you don't need additional types. If
+not, the parameter T has to provide this types:
+
+\ccTypes
+\ccTypedef{typedef T::Point_2 Point_2;}{This should be a Point type}
+\ccTypedef{typedef T::FT FT;}{This should be a Field type}
+
+\ccInheritsFrom
+\ccc{Qt_widget_layer}
+
+\ccGlue
+
+\ccCreation
+\ccCreationVariable{getpoint}
+\ccSetTwoColumns{Qt_widget_get_point}{}
+
+\ccConstructor{Qt_widget_get_point<T>(const QCursor
+c=QCursor(Qt::crossCursor), QObject* parent = 0, const char* name =
+0);}{\ccc{c} is the cursor that this layer will use when is
+active. \ccc{parent} is the parent widget and \ccc{name} is the name you 
+give to this layer.}
+
+\end{ccRefClass}
+
+% +-----------------------------------------------------+
+% EOF
+
+
+
+
+
+
+
+

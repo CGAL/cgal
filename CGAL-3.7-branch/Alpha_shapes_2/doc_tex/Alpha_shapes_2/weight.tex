@@ -1,0 +1,77 @@
+\RCSdef{\alphashapeRevision}{$Id$}
+\RCSdefDate{\alphashapeDate}{$Date$}
+
+%----------------------------------------------------------------------
+
+\section{Additional Functionalities for Weighted Alpha-Shape\label{I2_SectWeighted_Alpha_Shape_2}}
+
+\ccChapterSubTitle{\alphashapeRevision, \alphashapeDate}
+
+\begin{ccClassTemplate} {Weighted_alpha_shape_2<Rt>}
+
+\ccDefinition
+Specially for the weighted version, the computation of alpha shape often
+enforces an estimation of weights for the sample of points. This class
+\ccClassTemplateName\ provides some heuristic methods to initialize these
+weights in two dimensions. They can deal with samples of points extract from a
+contour in a plane. The main idea is to control an union of sphere, dual of the
+weighted alpha shape, which has to preserve the skeleton of the original
+contour. The best results are in \ccc{GENERAL} mode, with $\alpha=0$.
+
+\ccInclude{CGAL/Weighted_alpha_shape_2.h}
+
+\ccInheritsFrom
+
+\ccStyle{Alpha_shape_2<Rt>}
+
+This\ccClassTemplateName\ has exactly the same requirements as the
+\ccc{Alpha_shape_2} class, used for the weighted version of alpha shape.
+
+\ccCreation
+\ccCreationVariable{A}
+
+\ccConstructor{Weighted_alpha_shape_2(Coord_type alpha = 0,
+				  Mode m = GENERAL);}
+{Introduces an empty $\alpha$-shape \ccVar\ for a positive $\alpha$-value
+ \ccStyle{alpha}.
+\ccPrecond \ccStyle{alpha}~$\geq~0$.}
+
+
+\ccConstructor{template < class InputIterator >
+		Weighted_alpha_shape_2(
+			InputIterator first,
+			InputIterator last,
+                const Coord_type& alpha = 0,
+	        Mode m = GENERAL);}
+{Initializes the family of alpha-shapes with the weighted points in the range
+$\left[\right.$\ccStyle{first}, \ccStyle{last}$\left.\right)$ and 
+introduces an $\alpha$-shape \ccVar\ for a positive $\alpha$-value
+\ccStyle{alpha}.  
+\ccPrecond The \ccStyle{value_type} of \ccStyle{first} and
+\ccStyle{last} is \ccStyle{Weighted_point}.\\
+\ccStyle{alpha} $\geq 0$.}
+
+\ccOperations
+
+\ccMethod{template < class Iterator >
+void
+initialize_weights_to_the_nearest_voronoi_vertex
+(Iterator first, Iterator last, const Coord_type& k);}
+{initialize the weight of each point, stored in a container of points, with a value
+equal to the distance to his nearest Voronoi vertex multiply by $k \leq 1$.} 
+  
+\ccMethod{template < class Iterator >
+void
+initialize_weights_to_the_nearest_voronoi_edge
+(Iterator first, Iterator last, const Coord_type& k);}
+{initialize the weight of each point, stored in a container of points, with a
+value equal to the distance to his nearest Voronoi edge multiply by $k \geq 1$.}
+  
+\ccMethod{template < class Iterator >
+void
+initialize_weights_to_the_nearest_vertex
+(Iterator  first, Iterator  last, const Coord_type& k);}
+{initialize the weight of each point, stored in a container of points, with a
+value equal to the distance to his nearest vertex multiply by $k$.} 
+ 
+\end{ccClassTemplate}

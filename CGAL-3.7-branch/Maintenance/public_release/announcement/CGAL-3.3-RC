@@ -1,0 +1,91 @@
+Subject: CGAL 3.3 Release Candidate
+Body: 
+
+The CGAL Open Source Project is pleased to announce the release candidate
+for Release 3.3 of CGAL, the Computational Geometry Algorithms Library.  
+
+You can download the tarball from
+ftp://ftp.mpi-sb.mpg.de/pub/outgoing/CGAL/CGAL-3.3-RC1.tar.gz
+
+For Windows we also provide an installer, with precompiled libraries
+ftp://ftp.mpi-sb.mpg.de/pub/outgoing/CGAL/CGAL-3.3-Setup.exe
+
+The online version of the manual can be found at
+http://www.cgal.org/Manual/3.3/doc_html/cgal_manual/contents.html
+
+
+We are looking forward to get your feedback and plan to release CGAL-3.3
+one week from today.
+
+
+
+Besides improvements of existing packages this release offers
+the following new algorithms and data structures.
+
+
+ o Surface Mesh Simplification 
+
+  This package provides a mesh simplification framework using edge collapse
+  operations, and provides the Turk/Lindstrom simplification algorithm.
+
+
+ o Estimation of Local Differential Properties
+
+  This package allows to compute local differential quantities of a surface 
+  from a point sample.
+
+
+ o Approximation of Ridges and Umbilics on Triangulated Surface Meshes
+
+  This package enables the approximation of differential features on
+  triangulated surface meshes. Such curvature related features are
+  lines: ridges or crests, and points: umbilics.
+
+
+ o Envelopes of Curves in 2D
+
+  This package contains two sets of functions that construct the lower and 
+  upper envelope diagram for a given range of bounded or unbounded curves.
+
+
+ o Envelopes of Surfaces in 3D
+
+  This package contains two sets of functions that construct the lower and 
+  upper envelope diagram for a given range of bounded or unbounded surfaces. 
+  The envelope diagram is realized as a 2D arrangement.
+
+
+ o Minkowski Sums in 2D
+
+  This package contains functions for computing planar Minkowski sums of two 
+  closed polygons,  and for a polygon and a disc (an operation also known as 
+  offsetting or dilating a polygon). 
+  The package also contains an efficient approximation algorithm for the offset 
+  computation,  which provides a guaranteed approximation bound while significantly 
+  expediting the running times w.r.t. the exact computation procedure.
+
+
+ o CGAL and the Boost Graph Library
+
+  This package provides the glue layer for several CGAL data structures such 
+  that they become models of the BGL graph concept.
+ 
+
+ o Spatial Sorting
+
+  This package allows to sort points and other objects along a Hilbert curve
+  which can improve the performance of algorithms like triangulations.
+  It is used by the constructors of the triangulation package which have
+  an iterator range of points as argument.
+
+
+ o Linear and Quadratic Programming Solver
+
+  This package contains algorithms for minimizing linear and convex quadratic 
+  functions over polyhedral domains, described by linear equations and inequalities. 
+
+
+
+See also the Package Overview at
+http://www.cgal.org/Manual/3.3/doc_html/cgal_manual/packages.html
+

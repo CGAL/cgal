@@ -1,0 +1,76 @@
+%   $Id$
+%   $URL$
+
+\begin{ccRefClass}{Protect_FPU_rounding<Protected>}
+\label{protect_fpu_rouding}
+
+\ccDefinition
+
+Floating-point arithmetic, as specified by the IEEE-754 standard, allows to use
+so-called directed rounding for the following arithmetic operations: addition,
+subtraction, multiplication, division and square root.  The default behavior is
+that the result of such an arithmetic operation is the closest floating-point
+number to the exact real result of the operation (rounding to the nearest).
+The other rounding modes are: round towards plus infinity, round towards minus
+infinity, and round towards zero.
+
+Interval arithmetic uses such directed rounding modes to offer guaranteed
+enclosures for the evaluation of real functions, such as with \cgal's
+\ccc{Interval_nt} class.
+
+In order to efficiently evaluate sequences of interval arithmetic operations,
+such as a geometric predicate computing for example a determinant, it is
+advised to reduce the number of rounding mode changes, which otherwise are
+performed for each arithmetic operation.  \cgal\ exploits the fact that it is
+possible to compute a sequence of interval arithmetic operations by doing only
+one rounding mode change around the whole function evaluation in order to
+benefit from this optimization.
+
+The class \ccc{Protect_FPU_rounding} allows to easily benefit from this.
+Its constructor saves the current rounding mode in the object, and then sets
+the current rounding mode to the value provided as argument to the constructor.
+The destructor sets the rounding mode back to the saved value.
+This allows to protect a block of code determined by a C++ scope, and have
+the destructor take care of restoring the value automatically.
+
+The related class \ccc{Set_ieee_double_precision} allows to similarly protect
+a block of code from excess precision on some machines (x86 typically with
+the traditional FPU, not the more recent SSE2).  Note that
+\ccc{Protect_FPU_rounding_mode}, when changing rounding modes, also sets the precision
+to the correct 46 bit precision, hence providing a similar effect to
+\ccc{Set_ieee_double_precision}.  This notably affects the \ccc{Residue} class.
+
+Note for Visual C++ 64-bit users: due to a compiler bug, the stack unwinding
+process happenning when an exception is thrown does not correctly execute the
+rounding mode restoration when the \ccc{Protect_FPU_rounding} object is
+destroyed.  Therefore, for this configuration, some explicit code has to be
+added.
+
+\ccInclude{CGAL/FPU.h}
+
+\ccParameters
+
+The template parameter \ccc{Protected} is a Boolean parameter, which defaults
+to \ccc{true}.  It follows the same parameter of the \ccc{Interval_nt} class.
+When it is \ccc{false}, the constructor and the destructor of the class do
+nothing (this is meant to be used in a context where you know that the rounding
+mode change has been taken care of at a higher level in the call stack.
+
+What follows describes the behavior when the parameter has its default value,
+\ccc{true}.
+
+\ccCreationVariable{P}
+\ccCreation
+
+\ccConstructor{Protect_FPU_rounding(FPU_CW_t r = CGAL_FE_UPWARD);}
+{The current rounding mode is saved in the object, and rounding mode is set to \ccc{r}
+which can be any of \ccc{CGAL_FE_TONEAREST}, \ccc{CGAL_FE_TOWARDZERO},
+\ccc{CGAL_FE_UPWARD} (the default) and \ccc{CGAL_FE_DOWNWARD}.}
+\ccGlue
+\ccFunction{void ~Protect_FPU_rounding();}
+{The rounding mode is restored to the saved value.}
+
+\ccSeeAlso
+\ccRefIdfierPage{CGAL::Set_ieee_double_precision}
+
+\end{ccRefClass}

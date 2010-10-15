@@ -1,0 +1,388 @@
+\ccRefPageBegin
+
+\begin{ccRefClass}{General_polygon_set_2<Traits,Dcel>}
+
+\ccThree{General_polygon_set_2<Traits,Dcel>}{Polygon_2}{}
+\ccThreeToTwo
+    
+\ccDefinition
+%============
+An object of the \ccClassTemplateName\ class-template represents a
+point set in the plane bounded by $x$ monotone curves. Points in the set
+lie on the boundary or on the positive side of the curves. This class 
+template provides methods to apply regularized Boolean set-operations and 
+few other utility methods. An \ccc{Arrangement_2} data structure is 
+internally used to represent the point set. The arrangement is
+represented as a doubly-connected edge-list ({\sc Dcel}).
+
+The \ccc{Traits} template-parameter should be instantiated with a
+model of the concept \ccc{GeneralPolygonSetTraits_2}. The traits class
+defines the types of points, $x$-monotone curves, general polygons,
+and general polygons with holes, that is
+\ccHtmlNoLinksFrom{\ccc{Traits::Point_2},
+\ccc{Traits::X_monotone_curve_2}, \ccc{Traits::Polygon_2}, and 
+\ccc{Traits::Polygon_with_holes_2}}, respectively.
+\ccHtmlNoLinksFrom{\ccc{Traits::Point_2}} must 
+be the type of the endpoints of
+\ccHtmlNoLinksFrom{\ccc{Traits::X_monotone_curve_2}}, and 
+\ccHtmlNoLinksFrom{\ccc{Traits::X_monotone_curve_2}} must be the type of
+the curves that comprise the boundaries of the general polygons. The traits
+class supports geometric operations on the types above. We sometimes use
+the term {\em polygon} instead of general polygon for simplicity hereafter.
+
+The template parameter \ccc{Dcel} should be instantiated with a
+model of the concept \ccc{GeneralPolygonSetDcel}. It is instantiated
+by default with the type \ccc{Gps_default_dcel<Traits>}. You can override 
+this default, with a different {\sc Dcel} class, typically an extension
+of the \ccc{Gps_default_dcel} class template. Overriding the default is 
+necessary only if you intend to obtain the underlying internal arrangement 
+and process it further.
+
+The input and output of the Boolean set-operations methods consist of one 
+or more general polygons, some of which may have holes. In particular, 
+these methods operate on pairs of objects of type \ccClassTemplateName, or
+directly on objects of type \ccHtmlNoLinksFrom{\ccc{Traits::Polygon_2}} or 
+\ccHtmlNoLinksFrom{\ccc{Traits::Polygon_with_holes_2}}. An object of type 
+\ccHtmlNoLinksFrom{\ccc{Traits::Polygon_2}} is a valid operand, only if it
+is simple and its boundary is oriented counterclockwise. An object of type
+\ccHtmlNoLinksFrom{\ccc{Traits::Polygon_with_holes_2}} is valid, only if 
+its outer boundary bounds a relatively simple general polygon oriented
+counterclockwise, and each one of its holes is a simple polygon oriented
+clockwise. The holes are pairwise disjoint, except perhaps at the vertices,
+and are contained in the polygon bounded by the outer boundary. The outer
+boundary and the holes are also pairwise disjoint, except perhaps at the
+vertices.
+
+\ccTypes
+%=======
+\ccNestedType{Traits_2}{the traits class in use.}
+\ccGlue
+\ccNestedType{Polygon_2}{the general polygon type. Must model the \ccc{GpsTraitsGeneralPolygon_2} Concept.}
+\ccGlue
+\ccNestedType{Polygon_with_holes_2}{the general polygon with holes type. Must model the \ccc{GpsTraitsGeneralPolygonWithHoles_2} Concept.} 
+
+\ccNestedType{Size}{number of polygons with holes size type.}
+
+\ccNestedType{Arrangement_2}{the arrangement type used internally.}
+
+\ccCreation
+\ccCreationVariable{gps}
+%=======================
+
+\ccThree{General_polygon_set_2<Traits>(Polygon_2 pgn~)}{0pt}{}
+\ccThreeToTwo
+    
+\ccConstructor{General_polygon_set_2<Traits>();} 
+  {constructs an empty set of polygons represented by an empty arrangement.}
+    
+\ccConstructor{General_polygon_set_2<Traits>(const Self & other);}
+  {copy constructor.}
+        
+\ccConstructor{General_polygon_set_2<Traits>(Traits & traits);}
+  {constructs an empty set of polygons that uses the given
+  \ccc{traits} instance for performing the geometric operations.}
+
+\ccConstructor{General_polygon_set_2<Traits>(const Polygon_2 & pgn);}
+  {constructs a set of polygons that consists of the single polygon \ccc{pgn}.}
+
+\ccConstructor{General_polygon_set_2<Traits>(const Polygon_with_holes_2 & pgn_with_holes);}
+  {constructs a set of polygons that consists of the single polygon with 
+   holes \ccc{pgn_with_holes}.}
+
+% \ccConstructor{template <class InputIterator>
+% General_polygon_set_2<General_polygon,Traits>(InputIterator begin,
+%                                               InputIterator end);}
+%   {constructs a set of polygons from the given range of
+%   instances of \ccc{Polygon_with_holes_2} or instances of
+%   \ccc{Polygon_2}. (The value type of the input iterator is
+%   used to distinguish between the two.)
+%   \ccPrecond{All polygons (resp. polygons with holes)
+%   in the given range are pairwise disjoint, except maybe at the
+%   vertices.}}
+%   
+% \ccConstructor{template <class InputIterator1, class InputIterator2>
+%   General_polygon_set_2<GeneralPolygon,Traits>
+%   (InputIterator1 pgn_begin, InputIterator1 pgn_end,
+%    InputIterator2 pgn_with_holes_begin,
+%    InputIterator2 pgn_with_holes_end);}
+%   {constructs a set of polygons from the given range of
+%   \ccc{Polygon_2} and the range of
+%   \ccc{Polygon_with_holes_2} instances.
+%   \ccPrecond{All polygons in the first range, all
+%   polygon with holes in the second range are pairwise disjoint,
+%   except maybe at the vertices.}}
+
+\ccAccessFunctions
+% ================
+\ccThree{Arrangement_2}{gps.number_of_polygons_with_holes()~}{}
+\ccThreeToTwo
+
+\ccMethod{template <class OutputIterator>
+  OutputIterator polygons_with_holes(OutputIterator out);}
+  {obtains the polygons with holes represented by \ccVar.}
+  
+\ccMethod{Size number_of_polygons_with_holes() const;}
+  {returns the total number of general polygons represented by \ccVar.}
+
+\ccMethod{bool is_empty() const;}
+  {returns \ccc{true} if \ccVar\ represents an empty set.}
+
+\ccMethod{bool is_plane() const;}
+  {returns \ccc{true} if \ccVar\ represents the entire plane.}
+
+\ccMethod{Traits & traits() const;}
+  {obtains an instance of the traits. If the traits was passed as a
+  parameter to the constructor of \ccVar, it is returned. Otherwise, a
+  newly created instance is returned.}
+
+\ccMethod{const Arrangement_2 & arrangement() const;}
+  {obtains the arrangement data structure that internally represents the
+  general-polygon set.}
+
+\ccModifiers
+% ==========
+\ccThree{void}{ps.difference(Polygon_with_holes_2 & pgn)~}{}
+\ccThreeToTwo
+
+\ccMethod{void clear();}
+  {clears \ccVar.}
+
+\ccMethod{void insert(Polygon_2 & pgn);}
+  {inserts \ccc{pgn} into \ccVar.
+   \ccPrecond{\ccc{pgn} and the point set represented by \ccVar{} are disjoint.}
+   This precondition enables the use of very efficient insertion methods.
+   Use the respective overloaded method that inserts a polygon of type 
+   \ccHtmlNoLinksFrom{\ccc{Polygon_with_holes_2}}, if only a relaxed
+   precondition can be guaranteed. If even the relaxed precondition cannot
+   be guaranteed, use the \ccc{join} method.}
+
+\ccMethod{void insert(Polygon_with_holes_2 & pgn_with_holes);}
+  {inserts \ccc{pgn_with_holes} into \ccVar.
+   \ccPrecond{\ccc{pgn_with_holes} does not intersect with the point set
+   represented by \ccVar, except maybe at the vertices.}
+   If this relaxed precondition cannot be guaranteed, use the \ccc{join} 
+   method.}
+
+\ccMethod{template <class InputIterator>
+void insert(InputIterator begin, InputIterator end);}
+  {inserts the range of polygons (or polygons with holes) into \ccVar. (The
+   value type of the input iterator is used to distinguish between the two.)
+   \ccPrecond{If the given range contains objects of type 
+   \ccHtmlNoLinksFrom{\ccc{Polygon_with_holes_2}}, then these polygons and
+   the point set represented by \ccVar{} are pairwise disjoint, except maybe
+   at the vertices. If the given range contains objects of type
+   \ccHtmlNoLinksFrom{\ccc{Polygon_2}}, then these polygons and the point
+   set represented by \ccVar{} are pairwise disjoint without any exceptions.}}
+
+\ccMethod{template <class InputIterator1, class InputIterator2>
+void insert(InputIterator1 pgn_begin, InputIterator1 pgn_end,
+            InputIterator2 pgn_with_holes_begin,
+	    InputIterator2 pgn_with_holes_end);}
+  {inserts the two ranges of polygons and polygons with holes into \ccVar.
+   \ccPrecond{All polygons in the first range, all polygon with holes in the 
+   second range, and the point set represented by \ccVar\ are pairwise 
+   disjoint, except maybe at the vertices}}
+
+\ccMethod{void complement();}
+  {computes the complement of \ccVar.}
+
+\ccMethod{void complement(const Polygon_set_2 & other);}
+  {computes the complement of \ccc{other}. 
+   \ccVar\ is overriden by the result.}
+
+% \ccMethod{void complement(const Polygon_2 & pgn);}
+%   {computes the complement of \ccc{pgn}.}
+%   
+% \ccMethod{void complement(const Polygon_with-holes_2 & pgn);}
+%   {computes the complement of \ccc{pgn}.}
+
+\ccHeading{Univariate Operations}
+% ===============================
+In the following univariate and bivariate methods the result is placed in
+\ccVar\ after it is cleared.
+
+% intersection
+% ------------
+\ccMethod{void intersection(const General_polygon_set_2 & other);}
+  {computes the intersection of \ccVar\ and \ccc{other}.}
+\ccGlue
+\ccMethod{void intersection(const Polygon_2 & pgn);}
+  {computes the intersection of \ccVar\ and \ccc{pgn}.}
+\ccGlue
+\ccMethod{void intersection(const Polygon_with_holes_2 & pgn);}
+  {computes the intersection of \ccVar\ and \ccc{pgn}.}
+
+\ccMethod{template <class InputIterator>
+void intersection(InputIterator begin, InputIterator end);}
+  {computes the intersection of a collection of point sets. The collection
+   consists of the polygons (or polygons with holes) in the given range and 
+   the point set represented by \ccVar. (The value type of the input iterator 
+   is used to distinguish between the two options.)}
+\ccGlue
+\ccMethod{template <class InputIterator1, class InputIterator2>
+void intersection(InputIterator1 pgn_begin, InputIterator1 pgn_end,
+                  InputIterator2 pgn_with_holes_begin,
+	          InputIterator2 pgn_with_holes_end);}
+  {computes the intersection of a collection of point sets. The collection
+   consists of the polygons and polygons with holes in the given two ranges
+   and the point set represented by \ccVar.}
+
+% Union
+% -----
+\ccMethod{void join(const General_polygon_set_2 & other);}
+  {computes the union of \ccVar\ and \ccc{other}.}
+\ccGlue
+\ccMethod{void join(const Polygon_2 & pgn);}
+  {computes the union of \ccVar\ and \ccc{pgn}.}
+\ccGlue
+\ccMethod{void join(const Polygon_with_holes_2 & pgn);}
+  {computes the union of \ccVar\ and \ccc{pgn}.}
+
+\ccMethod{template <class InputIterator>
+void join(InputIterator begin, InputIterator end);}
+  {computes the union of the polygons (or polygons with holes) in the 
+   given range and the point set represented by \ccVar. (The value type 
+   of the input iterator is used to distinguish between the two options.)}
+\ccGlue
+\ccMethod{template <class InputIterator1, class InputIterator2>
+void join(InputIterator1 pgn_begin, InputIterator1 pgn_end,
+          InputIterator2 pgn_with_holes_begin,
+	  InputIterator2 pgn_with_holes_end);}
+  {computes the union of the polygons and polygons with holes in the 
+   given two ranges and the point set represented by \ccVar.}
+
+% Difference
+% ----------
+\ccMethod{void difference(const General_polygon_set_2 & other);}
+  {computes the difference between \ccVar\ and \ccc{other}.}
+\ccGlue
+\ccMethod{void difference(const Polygon_2 & pgn);}
+  {computes the difference between \ccVar\ and \ccc{pgn}.}
+\ccGlue
+\ccMethod{void difference(const Polygon_with_holes_2 & pgn);}
+  {computes the difference between \ccVar\ and \ccc{pgn}.}
+
+% Symmetric Difference
+% --------------------
+\ccMethod{void symmetric_difference(const General_polygon_set_2 & other);}
+  {computes the symmetric difference between \ccVar\ and \ccc{other}.}
+\ccGlue
+\ccMethod{void symmetric_difference(const Polygon_2 & pgn);}
+  {computes the symmetric difference between \ccVar\ and \ccc{pgn}.}
+\ccGlue
+\ccMethod{void symmetric_difference(const Polygon_with_holes_2 & pgn);}
+  {computes the symmetric difference between \ccVar\ and \ccc{pgn}.}
+
+\ccMethod{template <class InputIterator>
+void symmetric_difference(InputIterator begin, InputIterator end);}
+  {computes the symmetric difference (xor) of a collection of point sets.
+   The collection consists of the polygons (or polygons with holes) in the 
+   given range and the point set represented by \ccVar. (The value type of 
+   the input iterator is used to distinguish between the two options.)}
+\ccGlue
+\ccMethod{template <class InputIterator1, class InputIterator2>
+void symmetric_difference(InputIterator1 pgn_begin, InputIterator1 pgn_end,
+          InputIterator2 pgn_with_holes_begin,
+	  InputIterator2 pgn_with_holes_end);}
+  {computes the symmetric difference (xor) of a collection of point sets.
+   The collection consists of the polygons and polygons with holes in the
+   given two ranges and the point set represented by \ccVar.}
+
+\ccHeading{Bivariate Operations}
+% ===============================
+The following bivariate function replace \ccc{gps} with the result.
+
+\ccMethod{void intersection(const General_polygon_set_2 & gps1,
+                            const General_polygon_set_2 & gps2);}
+  {computes the intersection of \ccc{gps1} and \ccc{gps2}.}
+
+\ccMethod{void join(const General_polygon_set_2 & gps1,
+                    const General_polygon_set_2 & gps2);}
+  {computes the union of \ccc{gps1} and \ccc{gps2}.}
+
+\ccMethod{void difference(const General_polygon_set_2 & gps1,
+                          const General_polygon_set_2 & gps2);}
+  {computes the difference between \ccc{gps1} and \ccc{gps2}.}
+
+\ccMethod{void symmetric_difference(const General_polygon_set_2 & gps1,
+                                   const General_polygon_set_2 & gps2);}
+  {computes the symmetric difference between \ccc{gps1} and \ccc{gps2}.}
+  
+\ccQueryFunctions
+% ===============
+
+\ccThree{OutputIterator\&}{ps.do_intersect(General_polygon_set_2 & other)}{}
+\ccThreeToTwo
+
+\ccMethod{bool do_intersect(const General_polygon_set_2 & other);}
+  {returns \ccc{true} if \ccVar\ and \ccc{other} intersect in their
+  interior, and \ccc{false} otherwise.}
+\ccGlue
+\ccMethod{bool do_intersect(const Polygon_2 & pgn);}
+  {returns \ccc{true} if \ccVar\ and \ccc{pgn} intersect in their
+  interior, and \ccc{false} otherwise.}
+\ccGlue
+\ccMethod{bool do_intersect(const Polygon_with_holes_2 & pgn);}
+  {returns \ccc{true} if \ccVar\ and \ccc{pgn} intersect in their
+  interior, and \ccc{false} otherwise.}
+  
+\ccMethod{template <class InputIterator>
+void do_intersect(InputIterator begin, InputIterator end);}
+  {returns \ccc{true} if the interior of the point sets in a collection 
+   intersect, and \ccc{false} otherwise. The collection consists of the 
+   polygons (or polygons with holes) in the given range and the point set 
+   represented by \ccVar. (The value type of the input iterator is used to 
+   distinguish between the two options.)}
+\ccGlue
+\ccMethod{template <class InputIterator1, class InputIterator2>
+void do_intersect(InputIterator1 pgn_begin, InputIterator1 pgn_end,
+                  InputIterator2 pgn_with_holes_begin,
+	          InputIterator2 pgn_with_holes_end);}
+  {returns \ccc{true} if the interior of the point sets in a collection 
+   intersect, and \ccc{false} otherwise. The collection consists of the 
+   polygons and polygons with holes in the given two ranges and the point 
+   set represented by \ccVar.}
+
+\ccMethod{bool locate(const Point_2 & p, Polygon_with_holes_2 & pgn);}
+  {obtains a polygon with holes that contains the query point \ccc{p}, 
+   if exists, through \ccc{pgn}, and returns \ccc{true}. 
+   Otherwise, returns \ccc{flase}.}
+
+\ccMethod{Oriented_side oriented_side(const Point_2 & q);}
+  {returns either the constant \ccc{ON_ORIENTED_BOUNDARY}, 
+   \ccc{ON_POSITIVE_SIDE}, or \ccc{ON_NEGATIVE_SIDE}, iff \ccc{p} lies on 
+   the boundary, properly on the positive side, or properly on the negative 
+   side of \ccVar\ respectively.}
+
+\ccMethod{Oriented_side oriented_side(const General_polygon_set_2 & other);}
+  {returns either the constant \ccc{ON_NEGATIVE_SIDE},
+   \ccc{ON_ORIENTED_BOUNDARY}, or \ccc{ON_POSITIVE_SIDE}, iff 
+   \ccc{other} and \ccVar\ are completely disjoint, in contact, or
+   intersect in their interior, respectively.}
+\ccGlue
+\ccMethod{Oriented_side oriented_side(const Polygon_2 & pgn);}
+  {returns either the constant \ccc{ON_NEGATIVE_SIDE},
+   \ccc{ON_ORIENTED_BOUNDARY}, or \ccc{ON_POSITIVE_SIDE}, iff 
+   \ccc{pgn} and \ccVar\ are completely disjoint, in contact, or
+   intersect in their interior, respectively.}
+\ccGlue
+\ccMethod{Oriented_side oriented_side(const Polygon_with_holes_2 & pgn);}
+  {returns either the constant \ccc{ON_NEGATIVE_SIDE},
+   \ccc{ON_ORIENTED_BOUNDARY}, or \ccc{ON_POSITIVE_SIDE}, iff 
+   \ccc{pgn} and \ccVar\ are completely disjoint, in contact, or
+   intersect in their interior, respectively.}
+
+\ccHeading{Miscellaneous}
+% =======================
+
+\ccMethod{bool is_valid() const;}
+  {returns \ccc{true} if \ccVar\ represents a valid point set.}
+
+\ccSeeAlso
+  \ccc{Arrangement_2}\lcTex{(\ccRefPage{Arrangement_2})}\\
+  \ccc{ArrangementXMonotoneTraits_2}\lcTex{(\ccRefPage{ArrangementXMonotoneTraits_2})}\\
+  \ccc{Nef_2}\lcTex{(\ccRefPage{Nef_2})}
+
+\end{ccRefClass}
+
+\ccRefPageEnd

@@ -1,0 +1,23 @@
+\section{Output}
+
+Parameterization methods compute $(u,v)$ fields for each vertex
+of the input mesh, with the seam vertices being virtually duplicated (thanks
+to \ccc{CGAL::Parameterization_mesh_patch_3<ParameterizationPatchableMesh_3>}).
+To support this duplication,
+\ccc{CGAL::Parameterization_polyhedron_adaptor_3<Polyhedron_3_>} stores
+the result in the $(u,v)$ fields of the input mesh halfedges.
+A $(u,v)$ pair is computed for
+each inner vertex (i.e. its halfedges share the same $(u,v)$ pair),
+while a $(u,v)$ pair is computed for each border halfedge.
+The user has to iterate over the mesh halfedges to get the result.
+Note that $(u,v)$ fields do not exist in \ccc{CGAL::Polyhedron_3<Traits>},
+thus the output traversal is specific to the way the (u,v) fields are implemented by the adaptor.
+
+\subsection{EPS Output Example}
+
+\ccc{Complete_parameterization_example.cpp} is a complete parameterization
+example which outputs the resulting parameterization to a EPS file. It gets the $(u,v)$ fields computed by a parameterization method over a \ccc{CGAL::Polyhedron_3<Traits>} mesh with a
+\ccc{CGAL::Parameterization_polyhedron_adaptor_3<Polyhedron_3_>} adaptor:
+
+\ccIncludeExampleCode{Surface_mesh_parameterization/Complete_parameterization_example.cpp}
+

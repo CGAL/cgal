@@ -1,0 +1,58 @@
+% +------------------------------------------------------------------------+
+% | CGAL Reference Manual: Reference manual for Qt_widget.tex
+% +------------------------------------------------------------------------+
+% |
+% | 02.04.2003  Radu Ursu
+% | 
+% | \RCSdef{\qtwidgetRev}{$Id$}
+% | \RCSdefDate{\qtwidgetDate}{$Date$}
+% +------------------------------------------------------------------------+
+
+% +-----------------------------------------------------+
+\begin{ccRefClass}{Qt_widget_history}
+
+\ccDefinition
+
+This class provides basic functionality to manipulate intervals of
+\ccc{Qt_widget} class. \ccc{Qt_widget} knows about the current visible
+area that is specified through an interval. The default one is (-1, 1, -1,
+1). This class is mostly used by the \ccc{Qt_widget_standard_toolbar}
+to provide the backward and the forward navigation through the different
+intervals.
+
+\ccInclude{CGAL/IO/Qt_widget_history.h}
+\ccGlue
+
+\ccInheritsFrom
+\ccc{QObject}
+
+\ccCreation
+\ccCreationVariable{history}
+\ccSetTwoColumns{Qt_widget_history}{}
+\ccConstructor{Qt_widget_history(Qt_widget* parent, const char *name
+= 0 );}{\ccc{parent} is the parent widget that has to be a
+\ccc{Qt_widget} and \ccc{name} is the name of the history. This will
+create a history object that can deal with the \ccc{Qt_widget}
+visualisation intervals. Each time the visible area will change, it's
+interval will be stored in the history list.}
+
+
+\ccHeading{public slots:}
+
+\ccMethod{void save();}{This saves the widget visible area in the 
+history list.}
+\ccMethod{void backward();}{This goes back in the list of saved intervals.}
+\ccMethod{void forward();}{This goes forward in the list of saved
+intervals.}
+\ccMethod{void clear();}{This will clear the entire history list.}
+
+\ccHeading{signals:}
+\ccMethod{void backwardAvaillable(bool);}{}
+\ccGlue
+\ccMethod{void forwardAvaillable(bool);}{This two signals are emited when there are available items in the history list as regards to the current position in the list.}
+
+
+\end{ccRefClass}
+
+% +-----------------------------------------------------+
+% EOF

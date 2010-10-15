@@ -1,0 +1,104 @@
+\ccRefPageBegin
+
+\begin{ccRefConcept}{GeneralPolygonSetTraits_2}
+
+\ccThree{GeneralPolygonSetTraits_2}{Polygon_with_holes_2}{}
+\ccThreeToTwo
+
+\ccDefinition
+% ===========
+This concept defines the minimal set of geometric predicates needed to
+perform the Boolean-set operations. It refines the directional $x$-monotone
+arrangement-traits concept. In addition to the \ccc{Point_2} and
+\ccc{X_monotone_curve_2} types defined in the generalized concept, it defines
+a type that represents a general polygon and another one that represents
+general polygon with holes. It also requires operations that operate on these
+types.
+
+\ccRefines
+% ========
+\ccc{ArrangementDirectionalXMonotoneTraits_2}
+
+\ccTypes
+% ======
+
+\ccNestedType{Polygon_2}{represents a general polygon. Must be a model of the \ccc{GpsTraitsGeneralPolygon_2} concept.}
+\ccGlue
+\ccNestedType{Polygon_with_holes_2}{represents a general polygon with holes. Must be a model of the \ccc{GpsTraitsGeneralPolygonWithHoles_2} concept.}
+
+\ccNestedType{Curve_const_iterator}
+{A const iterator of curves. Its value type is const
+\ccc{X_monotone_curve_2}.}
+
+\ccHeading{Functor Types}
+% =======================
+
+\ccThree{Construct_polygon_2}{}{\hspace*{\ccwComment}}
+\ccThreeToTwo
+
+\ccNestedType{Construct_polygon_2}
+{a functor that constructs a general polygon from a range of
+$x$-monotone curves. It uses the operator\\
+ \ccc{void operator() (InputIterator begin, Input iterator end,
+                       Polygon_2 & pgn)}, \\
+ parameterized by the \ccc{InputIterator} type.}
+
+\ccNestedType{Construct_general_polygon_with_holes_2}{a functor that constructs a general polygon with holes from a general polygon and, optionally, a range of holes. It uses the operator\\
+ \ccc{void operator() (const General_polygon_2& pgn_boundary)} or \\
+\ccc{void operator() (const General_polygon_2& pgn_boundary, HolesInputIterator h_begin, HolesInputIterator h_end)} parameterized by the \ccc{HolesInputIterator} type.}
+
+\ccNestedType{Construct_outer_boundary} {A functor for constructing the outer boundary of a polygon with holes.  It uses the operator\\
+ \ccc{General_polygon_2 operator()(const  General_polygon_with_holes_2& pol_wh)}.}
+
+\ccNestedType{Construct_holes} {A functor for constructing the container of holes of a polygon with holes. It returns the begin/end iterators for the holes It uses the operator\\
+ \ccc{std::pair<Hole_const_iterator, Hole_const_iterator>  operator()(const General_polygon_with_holes_2& pol_wh)}.}
+
+\ccNestedType{Is_unbounded} {A functor for checking if polygon with holes has no outer boundary.  It uses the operator\\
+\ccc{bool operator()(const  General_polygon_with_holes_2& pol_wh)}.}
+
+\ccCreation
+\ccCreationVariable{traits}
+% =========================
+
+\ccConstructor{GeneralPolygonSetTraits_2();}{default constructor.}
+\ccGlue
+\ccConstructor{GeneralPolygonSetTraits_2(GeneralPolygonSetTraits_2 other);}
+{copy constructor}
+\ccGlue
+\ccMethod{GeneralPolygonSetTraits_2  operator=(other);}{assignment operator.}
+
+
+\ccHeading{Accessing Functor Objects}
+%====================================
+
+\ccMethod{Construct_polygon_2 construct_polygon_2_object();}
+{returns a functor that constructs a polygon.}
+
+\ccMethod{Construct_curves_2 construct_curves_2_object();}
+{returns a functor that obtains the curves of a polygon.}
+
+\ccMethod{Construct_general_polygon_with_holes_2 construct_polygon_with_holes_2_object() const;}
+{returns a functor that constructs a polygon with holes.}
+
+\ccMethod{Construct_outer_boundary construct_outer_boundary_object() const;}
+{returns a functor that obtains the outer boundary of a polygon with holes.}
+
+\ccMethod{Construct_holes construct_holes_object() const;}
+{returns a functor that obtains begin/end iterators over a container of holes.}
+
+\ccMethod{Is_unbounded construct_is_unbounded_object();} {returns a functor that detemines if the polygon with holes is unbounded}
+
+
+\ccHasModels
+%===========
+\ccc{CGAL::Gps_segment_traits_2<Kernel,Container,ArrSegmentTraits>}\\
+\ccc{CGAL::Gps_circle_segment_traits_2<Kernel>}\\
+\ccc{CGAL::Gps_traits_2<ArrTraits,GeneralPolygon>}
+
+\ccSeeAlso
+% ========
+  \ccc{ArrangementDirectionalXMonotoneTraits_2}\lcTex{(\ccRefPage{ArrangementDirectionalXMonotoneTraits_2})}
+
+\end{ccRefConcept}
+
+\ccRefPageEnd

@@ -1,0 +1,35 @@
+\begin{ccRefConcept}{PolynomialTraits_d::Differentiate}
+\ccDefinition
+
+This \ccc{AdaptableUnaryFunction} computes the derivative of a 
+\ccc{PolynomialTraits_d::Polynomial_d} with respect to one variable. 
+
+\ccRefines 
+\ccc{AdaptableUnaryFunction}\\
+\ccc{CopyConstructible}\\
+\ccc{DefaultConstructible}\\
+
+\ccTypes
+
+\ccSetThreeColumns{xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx}{xxx}{}
+\ccCreationVariable{fo}
+\ccTypedef{typedef PolynomialTraits_d::Polynomial_d   result_type;}{}
+\ccGlue
+\ccTypedef{typedef PolynomialTraits_d::Polynomial_d   argument_type;}{}
+
+\ccOperations
+\ccMethod{result_type operator()(argument_type  p);}
+         { Returns $p'$, with respect to the outermost variable. }
+\ccMethod{result_type operator()(argument_type  p,
+                                 int i);}
+         { Returns $p'$, with respect to variable $x_i$. 
+           \ccPrecond $0 \leq i  < d$ 
+         }
+
+%\ccHasModels
+
+\ccSeeAlso
+
+\ccRefIdfierPage{Polynomial_d}\\
+\ccRefIdfierPage{PolynomialTraits_d}\\
+\end{ccRefConcept}

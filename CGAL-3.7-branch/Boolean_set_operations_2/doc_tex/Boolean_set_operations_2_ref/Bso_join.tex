@@ -1,0 +1,137 @@
+\ccRefPageBegin
+\label{ref_bso_join}
+
+\begin{ccRefFunction}{join}
+
+\ccThree{OutputIterator}{join}{}
+\ccThreeToTwo
+
+\ccDefinition
+
+\ccInclude{CGAL/Boolean_set_operations_2.h}
+
+\ccGlobalFunction{
+bool join(const Type1 & p1, const Type2 & p2,
+	  General_polygon_with_holes_2 & p);}
+{Each one of these functions computes the union of two given polygons
+\ccc{p1} and \ccc{p2}. If the two given polygons overlap, it returns
+\ccc{true}, and places the resulting polygon in \ccc{p}. Otherwise, it
+returns \ccc{false}.}
+
+\begin{ccTexOnly}
+\begin{longtable}[c]{|l|l|}
+\multicolumn{2}{l}{\sl \ \ }
+\endfirsthead
+\multicolumn{2}{l}{\sl continued}
+\endhead
+\hline
+\textbf{Arg 1 Type} & \textbf{Arg 2 Type}\\
+\hline
+\hline
+\ccc{Polygon_2} & \ccc{Polygon_2}\\
+\hline
+\ccc{Polygon_2} & \ccc{Polygon_with_holes_2}\\
+\hline
+\ccc{Polygon_with_holes_2} & \ccc{Polygon_2}\\
+\hline
+\ccc{Polygon_with_holes_2} & \ccc{Polygon_with_holes_2}\\
+\hline
+\ccc{General_polygon_2} & \ccc{General_polygon_2}\\
+\hline
+\ccc{General_polygon_2} & \ccc{General_polygon_with_holes_2}\\
+\hline
+\ccc{General_polygon_with_holes_2} & \ccc{General_polygon_2}\\
+\hline
+\ccc{General_polygon_with_holes_2} & \ccc{General_polygon_with_holes_2}\\
+\hline
+\end{longtable}
+\end{ccTexOnly}
+
+\begin{ccHtmlOnly}
+<div align="center">
+<table cellpadding=3 border="1">
+<tr><th> Arg 1 type</th><th>Arg 2 type</th></tr>
+<tr><td valign="center">Polygon_2</td><td valign="center">Polygon_2</td></tr>
+<tr><td valign="center">Polygon_2</td><td valign="center">polygon_with_holes_2</td></tr> 
+<tr><td valign="center">Polygon_with_holes_2</td><td valign="center">Polygon_2</td></tr>
+<tr><td valign="center">Polygon_with_holes_2</td><td valign="center">Polygon_with_holes_2</td></tr>
+<tr><td valign="center">General_polygon_2</td><td valign="center">General_polygon_2</td></tr>
+<tr><td valign="center">General_polygon_2</td><td valign="center">General_polygon_with_holes_2</td></tr>
+<tr><td valign="center">General_polygon_with_holes_2</td><td valign="center">General_polygon_2</td></tr>
+<tr><td valign="center">General_polygon_with_holes_2</td><td valign="center">General_polygon_with_holes_2</td></tr>
+</table>
+</div>
+\end{ccHtmlOnly}
+
+\ccGlobalFunction{template <class Kernel, class Container>
+bool join(const Polygon_2<Kernel, Container> & p1,
+          const Polygon_2<Kernel, Container> & p2,
+	  General_polygon_with_holes_2<Polygon_2<Kernel, Container> > & p);}
+\ccGlue
+\ccGlobalFunction{template <class Kernel, class Container>
+bool join(const Polygon_2<Kernel, Container> & p1,
+          const Polygon_with_holes_2<Kernel,Container> & p2,
+	  General_polygon_with_holes_2<Polygon_2<Kernel, Container> > & p);}
+\ccGlue
+\ccGlobalFunction{template <class Kernel, class Container>
+bool join(const Polygon_with_holes_2<Kernel, Container> & p2,
+          const Polygon_2<Kernel, Container> & p1,
+	  General_polygon_with_holes_2<Polygon_2<Kernel, Container> > & p);}
+\ccGlue
+\ccGlobalFunction{template <class Kernel, class Container>
+bool join(const Polygon_with_holes_2<Kernel, Container> & p2,
+          const Polygon_with_holes_2<Kernel, Container> & p1,
+	  General_polygon_with_holes_2<Polygon_2<Kernel, Container> > & p);}
+\ccGlue
+\ccGlobalFunction{template <class Traits>
+bool join(const General_polygon_2<Traits> & p1,
+          const General_polygon_2<Traits> & p2,
+	  General_polygon_with_holes_2<General_polygon_2<Traits> > & p);}
+\ccGlue
+\ccGlobalFunction{template <class Traits>
+bool join(const General_polygon_2<Traits> & p1,
+          const General_polygon_with_holes_2<General_polygon_2<Traits> > & p2,
+	  General_polygon_with_holes_2<General_polygon_2<Traits> > & p);}
+\ccGlue
+\ccGlobalFunction{template <class Traits>
+bool join(const General_polygon_with_holes_2<General_polygon_2<Traits> > & p2,
+          const General_polygon_2<Traits> & p1,
+	  General_polygon_with_holes_2<General_polygon_2<Traits> > & p);}
+\ccGlue
+\ccGlobalFunction{template <class Polygon>
+bool join(const General_polygon_with_holes_2<Polygon> & p1,
+          const General_polygon_with_holes_2<Polygon> & p2,
+	  Traits::Polygon_with_holes_2 & p);}
+
+\ccGlobalFunction{template <class InputIterator, class OutputIterator>
+OutputIterator join(InputIterator begin, InputIterator end,
+                    OutputIterator oi);}
+{Computes the union of the general polygons (or general polygons with
+holes) in the given range. (The value type of the input iterator is
+used to distinguish between the two.) The result, represented by a set
+of general poygon with holes, is inserted into an output container
+through a given output iterator \ccc{oi}. The output iterator is
+returned. The value type of the \ccc{OutputIterator} is
+\ccc{Traits::Polygon_with_holes_2}.}
+
+\ccGlobalFunction{template <class InputIterator1, class InputIterator2,
+		  class OutputIterator>
+OutputIterator join(InputIterator1 pgn_begin1, InputIterator1 pgn_end1,
+                    InputIterator2 pgn_begin2, InputIterator2 pgn_end2,
+		    OutputIterator oi);}
+{Computes the union of the general polygons and general polygons
+with holes in the given two ranges. The result, represented by a set
+of general poygon with holes, is inserted into an output container
+through a given output iterator \ccc{oi}. The output iterator is
+returned. The value type of the \ccc{OutputIterator} is
+\ccc{Traits::Polygon_with_holes_2}.}
+
+\ccSeeAlso
+\ccRefIdfierPage{CGAL::do_intersect}\\
+\ccRefIdfierPage{CGAL::intersection}\\
+\ccRefIdfierPage{CGAL::difference}\\
+\ccRefIdfierPage{CGAL::symmetric_difference}
+
+\end{ccRefFunction}
+
+\ccRefPageEnd

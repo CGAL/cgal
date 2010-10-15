@@ -1,0 +1,82 @@
+% +------------------------------------------------------------------------+
+% | Reference manual page: SpatialTree.tex
+% +------------------------------------------------------------------------+
+% | 1.07.2001   Johan W.H. Tangelder
+% | Package: ASPAS
+% | 
+\RCSdef{\RCSSpatialTreeRev}{$Id$}
+\RCSdefDate{\RCSSpatialTreeDate}{$Date$}
+% |
+%%RefPage: end of header, begin of main body
+% +------------------------------------------------------------------------+
+
+
+\begin{ccRefConcept}{SpatialTree}
+
+%% \ccHtmlCrossLink{}     %% add further rules for cross referencing links
+%% \ccHtmlIndexC[concept]{} %% add further index entries
+
+\ccDefinition
+  
+The concept \ccRefName\ defines the requirements for a tree supporting
+both neighbor searching and approximate range searching. 
+
+\ccTypes
+
+\ccNestedType{SearchTraits}{Search traits.}
+\ccNestedType{Point_d}{Point type.}
+\ccNestedType{iterator}{Bidirectional iterator with value type \ccc{Point_d} that allows
+	to enumerate all points in the tree.}
+
+\ccNestedType{Node_handle}{Node handle.}
+\ccNestedType{Point_d_iterator}{Iterator with value type \ccc{Point_d*}.}
+\ccNestedType{Splitter}{Splitter.}
+\ccNestedType{Distance}{Distance.}
+
+\ccCreation
+\ccCreationVariable{tree}  %% choose variable name
+
+\ccConstructor{template <class InputIterator> Tree(InputIterator first, InputIterator beyond, SearchTraits t);}
+{
+Constructs a tree on the elements from the sequence 
+\ccc{[first,beyond)}. 
+}
+
+\ccOperations
+
+\ccMethod{
+template <class OutputIterator, class FuzzyQueryItem>
+OutputIterator search(OutputIterator it, FuzzyQueryItem q);}
+{Reports the points that are approximately contained by~\ccc{q}. The value type
+of \ccc{OutputIterator} must be \ccc{Point_d}.} 
+
+
+\ccMethod{iterator begin();}{Returns an iterator to the first point in the tree.}
+\ccMethod{iterator end();}{Returns the corresponding past-the-end iterator.}
+
+
+\ccMethod{Node_handle root();}
+{
+Returns a handle to the root node of the tree.
+}
+
+\ccMethod{const Kd_tree_rectangle<SearchTraits>& bounding_box();}{returns a const 
+reference to the bounding box of the root node of the tree.}
+
+
+\ccMethod{unsigned int size();}
+{
+Returns the number of items that are stored in the tree.
+}
+
+\ccHasModels
+
+\ccc{CGAL::Kd_tree<Traits,Splitter,UseExtendedNode>}.
+
+\end{ccRefConcept}
+
+% +------------------------------------------------------------------------+
+%%RefPage: end of main body, begin of footer
+% EOF
+% +------------------------------------------------------------------------+
+

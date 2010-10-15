@@ -1,0 +1,80 @@
+#!/usr/bin/env perl
+
+=head1 SYNOPSIS
+
+check_no_cgal_use_without_includes_before [options] [file...]
+    
+ Options:
+    -help     help message
+    -debug    debug mode
+
+=head1 OPTIONS
+
+=over 8
+
+=item  B<-d, -debug>
+
+Print to standard error output all the #include line of all CGAL headers
+until the first use of a macro with prefix "CGAL_USE_".
+
+=item B<-l, --list>
+
+Print to all macros with prefix "CGAL_USE_" that appear before any CGAL
+header.
+
+=head1 DESCRIPTION
+
+This script reads a file whose name is specify in command line options, and
+return 1 if a macro with prefix "CGAL_USE_" is used before any inclusions
+of a CGAL header.
+
+
+=cut
+
+use strict;
+use warnings;
+
+use Getopt::Long qw(:config permute);
+use Pod::Usage;
+
+my $help;
+my $debug;
+my $global_errcode = 0;
+my $listmacros;
+
+GetOptions('help' => \$help,
+	   'debug|d' => \$debug,
+	   'list|l' => \$listmacros,
+	   '<>' => \&process) or pod2usage(2);
+
+pod2usage(1) if $help;
+
+sub process() {
+    my $filename = shift;
+    my $errcode=1;
+    my $FILE;
+
+    open(FILE, $filename) or die "Cannot read file $filename";
+
+    while (<FILE>) {
+	if(/#include.*CGAL/) {
+	    $errcode = 0;
+	    if($debug) { 
+		print STDERR;
+	    } else {
+		return;
+	    }
+	}
+	if(/CGAL_USE/) {
+	    print STDOUT if $listmacros;
+	    print STDERR if $debug;
+	    if($errcode) {
+		print STDOUT "$filename\n";
+		$global_errcode = 1;
+	    }
+	    return;
+	}
+    }
+}
+
+exit $global_errcode;

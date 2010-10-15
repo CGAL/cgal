@@ -1,0 +1,126 @@
+%% =============================================================================
+%% The CGAL Reference Manual
+%% Chapter: STL Extensions - Introduction
+%% -----------------------------------------------------------------------------
+%% file  : doc_tex/support/STL_Extension/STL_Extension_ref/intro.tex
+%% author: Michael Hoffmann, Lutz Kettner 
+%% -----------------------------------------------------------------------------
+%% $CGAL_Chapter: STL_Extension $
+%% $Id$
+%% $Date$
+%% =============================================================================
+
+\ccRefChapter{STL Extensions for CGAL\label{chapterDataStructures}}\label{chapterStlExtensions}
+
+\RCSdef{\stlExtensionRev}{$Id$}
+\RCSdefDate{\stlExtensionDate}{$Date$}
+\ccChapterRelease{\stlExtensionRev. \ \stlExtensionDate}
+\ccChapterAuthor{Michael Hoffmann, Lutz Kettner, Sylvain Pion, and Ron Wein}
+
+%% +=========================================================================+
+
+
+
+
+
+\section{Classified Reference Pages}
+
+\subsection*{Doubly-Connected List Managing Items in Place}
+
+
+
+\ccRefIdfierPage{CGAL::In_place_list<T,bool>}\\
+\ccRefIdfierPage{CGAL::In_place_list_base<T>}
+
+\subsection*{Compact Container}
+
+
+\ccRefIdfierPage{CGAL::Compact_container<T, Allocator>}\\
+\ccRefIdfierPage{CGAL::Compact_container_traits<T>}\\
+\ccRefIdfierPage{CGAL::Compact_container_base}
+
+\subsection*{Multiset with Extended Functionality}
+
+\ccRefIdfierPage{CGAL::Multiset<Type,Compare,Allocator>}
+
+
+\subsection*{Generic Algorithms}
+
+\ccRefIdfierPage{CGAL::copy_n}\\
+\ccRefIdfierPage{CGAL::min_max_element}\\
+%% Michael: I commented these, as I think they should be replaced by combining 
+%% Filter_iterator with std::min/max_element().
+%%\ccRefIdfierPage{CGAL::min_element_if}\\
+%%\ccRefIdfierPage{CGAL::max_element_if}\\
+\ccRefIdfierPage{CGAL::predecessor}\\
+\ccRefIdfierPage{CGAL::successor}
+
+\subsection*{Iterators and Iterator/Circulator Adaptors.}
+
+\ccRefIdfierPage{CGAL::Dispatch_output_iterator<V,O>}\\
+\ccRefIdfierPage{CGAL::Dispatch_or_drop_output_iterator<V,O>}\\
+\ccRefIdfierPage{CGAL::Emptyset_iterator}\\
+\ccRefIdfierPage{CGAL::Oneset_iterator<T>}\\
+\ccRefIdfierPage{CGAL::Insert_iterator<Container>}\\
+\ccRefIdfierPage{CGAL::Counting_iterator<Iterator, Value>}\\
+\ccRefIdfierPage{CGAL::N_step_adaptor<I,int N>}\\
+\ccRefIdfierPage{CGAL::Filter_iterator<Iterator, Predicate>}\\
+\ccRefIdfierPage{CGAL::Join_input_iterator_1<Iterator, Creator>}\\
+\ccRefIdfierPage{CGAL::Inverse_index<IC>}\\
+\ccRefIdfierPage{CGAL::Random_access_adaptor<IC>}\\
+\ccRefIdfierPage{CGAL::Random_access_value_adaptor<IC,T>}
+
+\subsection*{Projection Function Objects}
+
+\ccRefIdfierPage{CGAL::Identity<Value>}\\
+%%\ccRefIdfierPage{CGAL::Compose<Fct1, Fct2>}\\
+\ccRefIdfierPage{CGAL::Dereference<Value>}\\
+\ccRefIdfierPage{CGAL::Get_address<Value>}\\
+\ccRefIdfierPage{CGAL::Cast_function_object<Arg, Result>}\\
+\ccRefIdfierPage{CGAL::Project_vertex<Node>}\\
+\ccRefIdfierPage{CGAL::Project_facet<Node>}\\
+\ccRefIdfierPage{CGAL::Project_point<Node>}\\
+\ccRefIdfierPage{CGAL::Project_normal<Node>}\\
+\ccRefIdfierPage{CGAL::Project_plane<Node>}\\
+\ccRefIdfierPage{CGAL::Project_next<Node>}\\
+\ccRefIdfierPage{CGAL::Project_prev<Node>}\\
+\ccRefIdfierPage{CGAL::Project_next_opposite<Node>}\\
+\ccRefIdfierPage{CGAL::Project_opposite_prev<Node>}
+
+\subsection*{Creator Function Objects}
+
+\ccRefIdfierPage{CGAL::Creator_1<Arg, Result>}\\
+\ccRefIdfierPage{CGAL::Creator_2<Arg1, Arg2, Result>}\\
+\ccRefIdfierPage{CGAL::Creator_3<Arg1, Arg2, Arg3, Result>}\\
+\ccRefIdfierPage{CGAL::Creator_4<Arg1, Arg2, Arg3, Arg4, Result>}\\
+\ccRefIdfierPage{CGAL::Creator_5<Arg1, Arg2, Arg3, Arg4, Arg5, Result>}\\
+\ccRefIdfierPage{CGAL::Creator_uniform_2<Arg, Result>}\\
+\ccRefIdfierPage{CGAL::Creator_uniform_3<Arg, Result>}\\
+\ccRefIdfierPage{CGAL::Creator_uniform_4<Arg, Result>}\\
+\ccRefIdfierPage{CGAL::Creator_uniform_5<Arg, Result>}\\
+\ccRefIdfierPage{CGAL::Creator_uniform_6<Arg, Result>}\\
+\ccRefIdfierPage{CGAL::Creator_uniform_7<Arg, Result>}\\
+\ccRefIdfierPage{CGAL::Creator_uniform_8<Arg, Result>}\\
+\ccRefIdfierPage{CGAL::Creator_uniform_9<Arg, Result>}\\
+\ccRefIdfierPage{CGAL::Creator_uniform_d<Arg, Result>}
+
+\subsection*{Utilities}
+\ccRefIdfierPage{CGAL::Twotuple<T>}\\
+\ccRefIdfierPage{CGAL::Threetuple<T>}\\
+\ccRefIdfierPage{CGAL::Fourtuple<T>}\\
+\ccRefIdfierPage{CGAL::Sixtuple<T>}\\
+\ccRefIdfierPage{CGAL::Triple<T1, T2, T3>}\\
+\ccRefIdfierPage{CGAL::Quadruple<T1, T2, T3, T4>}\\
+\ccRefIdfierPage{CGAL::Boolean_tag<bool value>}\\
+\ccRefIdfierPage{CGAL::Tag_true}\\
+\ccRefIdfierPage{CGAL::Tag_false}\\
+\ccRefIdfierPage{CGAL::Null_tag}\\
+\ccRefIdfierPage{CGAL::Null_functor}\\
+\ccRefIdfierPage{CGAL::Uncertain<T>}\\
+\ccRefIdfierPage{CGAL::Default}\\
+\ccRefIdfierPage{CGAL::Fast}\\
+\ccRefIdfierPage{CGAL::Compact}\\
+\ccRefIdfierPage{CGAL::Location_policy<Tag>}\\
+\ccRefIdfierPage{CGAL::Fast_location}\\
+\ccRefIdfierPage{CGAL::Compact_location}
+%% EOF

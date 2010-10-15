@@ -1,0 +1,51 @@
+\begin{ccRefConcept}{Polynomial_d}
+
+\ccDefinition
+
+A model of \ccRefName\ is representing a multivariate 
+polynomial in $d \geq 1$ variables over some basic ring $R$. 
+This type is denoted as the innermost coefficient.
+A model of \ccRefName\ accompanied by a traits class 
+\ccc{CGAL::Polynomial_traits_d<Polynomial_d>}, which is a model of 
+\ccc{PolynomialTraits_d}. 
+Please have a look at the concept \ccc{PolynomialTraits_d}, since nearly 
+all functionality related to polynomials is provided by the traits. 
+
+%The innermost coefficient type of the polynomial is accessible through 
+%the traits, that is, the traits provides the public type 
+%\ccc{CGAL::Polynomial_traits_d<Polynomial_d>::Innermost_coefficient_type}.
+
+\ccRefines
+
+\ccc{IntegralDomainWithoutDivision} \\
+
+The algebraic structure of \ccc{Polynomial_d} depends on the 
+algebraic structure of \ccc{Innermost_coefficient_type}:
+
+\begin{tabular}{|l|l|}
+\hline
+\ccc{Innermost_coefficient_type}&\ccc{Polynomial_d}\\
+\hline
+\ccc{IntegralDomainWithoutDivision}&\ccc{IntegralDomainWithoutDivision}\\
+\ccc{IntegralDomain}&\ccc{IntegralDomain}\\
+\ccc{UniqueFactorizationDomain}&\ccc{UniqueFactorizationDomain}\\
+\ccc{EuclideanRing}&\ccc{UniqueFactorizationDomain}\\
+\ccc{Field}&\ccc{UniqueFactorizationDomain}\\
+\hline
+\end{tabular}
+
+Note: In case the polynomial is univariate and the innermost coefficient is a \ccc{Field} the polynomial is model of \ccc{EuclideanRing}.
+
+%Note:The concept \ccc{Polynomial_1} refines \ccc{EuclideanRing} in case 
+%\ccc{Innermost_coefficient_type} is a \ccc{Field}. 
+
+\ccSeeAlso 
+
+\ccRefIdfierPage{AlgebraicStructureTraits}\\
+\ccRefIdfierPage{PolynomialTraits_d}\\
+
+\ccHasModels
+
+\ccRefIdfierPage{CGAL::Polynomial<Coeff>}
+
+\end{ccRefConcept}

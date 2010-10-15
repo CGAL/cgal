@@ -1,0 +1,53 @@
+%% Copyright (c) 2007 GeometryFactory (France).  All rights reserved.
+%%
+%% This file is part of CGAL (www.cgal.org); you may redistribute it under
+%% the terms of the Q Public License version 1.0.
+%% See the file LICENSE.QPL distributed with CGAL.
+%%
+%% Licensees holding a valid commercial license may use this file in
+%% accordance with the commercial license agreement provided with the software.
+%%
+%% This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
+%% WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
+%%
+%% 
+%%
+%% Author(s)     : Fernando Cacciola <fernando.cacciola@geometryfactory.com>
+
+\ccRefChapter{Triangulated Surface Mesh Simplification \label{ref-chapter-meshsimplification}}
+
+
+This chapter introduces the concepts and classes of the triangulated surface mesh simplification package.\\
+The packages provides a policy-based algorithm for the simplification of triangulated surface meshes
+by iterative edge-collapsing.
+
+
+\section{Classified Reference Pages}
+
+\ccHeading{Concepts}
+\ccRefConceptPage{EdgeCollapsableMesh} \\
+\ccRefConceptPage{EdgeProfile} \\
+\ccRefConceptPage{StopPredicate} \\
+\ccRefConceptPage{GetCost} \\
+\ccRefConceptPage{GetPlacement} \\
+\ccRefConceptPage{EdgeCollapseSimplificationVisitor}
+
+\ccHeading{Functions}
+
+\ccRefIdfierPage{CGAL::Surface_mesh_simplification::edge_collapse}\\
+
+\ccHeading{Classes}
+
+\ccRefIdfierPage{CGAL::Surface_mesh_simplification::Edge_collapse_visitor_base<ECM>}\\
+\ccRefIdfierPage{CGAL::Surface_mesh_simplification::Edge_profile<ECM>}\\
+\ccRefIdfierPage{CGAL::Surface_mesh_simplification::Count_stop_predicate<ECM>}\\
+\ccRefIdfierPage{CGAL::Surface_mesh_simplification::Count_ratio_stop_predicate<ECM>}\\
+\ccRefIdfierPage{CGAL::Surface_mesh_simplification::Edge_length_cost<ECM>}\\
+\ccRefIdfierPage{CGAL::Surface_mesh_simplification::Midpoint_placement<ECM>}\\
+\ccRefIdfierPage{CGAL::Surface_mesh_simplification::LindstromTurk_cost<ECM>}\\
+\ccRefIdfierPage{CGAL::Surface_mesh_simplification::LindstromTurk_placement<ECM>}\\
+
+% +------------------------------------------------------------------------+
+%%RefPage: end of main body, begin of footer
+% EOF
+% +------------------------------------------------------------------------+

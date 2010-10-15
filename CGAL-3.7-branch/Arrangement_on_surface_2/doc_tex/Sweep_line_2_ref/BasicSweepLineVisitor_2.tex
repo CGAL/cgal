@@ -1,0 +1,100 @@
+\ccRefPageBegin
+
+\begin{ccRefConcept}{BasicSweepLineVisitor_2}
+
+\ccDefinition
+% ===========
+
+This concept defines the set of methods that are needed to be implemented.
+
+
+
+\ccTypes
+% ======
+
+\ccNestedType{Traits_2}{the type of the associated traits class.}
+\ccNestedType{Sweep_line_2}{the type of the associated sweep-line class.}
+
+\ccTypedef{typedef typename Traits_2::Point_2 Point_2;}
+    {the point type.}
+\ccGlue
+\ccTypedef{typedef typename Traits_2::X_monotone_curve_2 X_monotone_curve_2;}
+    {the $x$-monotone curve type.}
+
+\ccTypedef{typedef typename Sweep_line_2::Event Event;}{the event type.}
+\ccGlue
+\ccTypedef{typedef typename Sweep_line_2::Subcurve Subcurve;}{the subcurve type.}
+\ccGlue
+\ccTypedef{typedef typename Sweep_line_2::Status_line_iterator Status_line_iterator;}{the iterator type of the status line,
+whose value type is \ccc{Subcurve*}. }
+\ccGlue
+
+
+\ccHeading{Notifications from the sweep line}
+%=========================================================
+
+\ccMethod{void attach(Sweep_line_2* sl);}
+    {A notification issued when the visitor been attached to a sweep line object.}
+\ccGlue
+\ccMethod{void before_sweep();}
+    {A notification issued before the sweep process starts.}
+\ccGlue
+
+\ccMethod{void after_sweep();}
+    {A notification issued after the sweep process finished.}
+\ccGlue
+
+\ccMethod{void before_handle_event (Event* e);}
+    {A notification invoked before the sweep-line starts handling the given
+     event \ccc{e} }
+\ccGlue
+
+\ccMethod{bool after_handle_event (Event* e, Status_line_iterator iter, bool flag);}
+    {A notification invoked after the sweep-line finishes handling the given
+     event \ccc{e}.\ccc{iter} is an iterator of the status line that points to the \ccc{Subcurve*} above 
+     \ccc{e}, \ccc{flag} is relevant only when \ccc{e} is a query point that is on the interior of the existing \ccc{iter}.
+     If return value is \ccc{true}, than \ccc{e} will be deallocated by the sweep line right away, otherwise it is the responsibility
+     of the visitor to deallocate it.}
+\ccGlue
+
+\ccMethod{void add_subcurve (X_monotone_curve_2& cv, Subcurve* sc);}
+    {A notification invoked when a subcurve \ccc{sc} is split by some event point and a
+     new \ccc{X_monoton_curve_2}, \ccc{cv}, is added which is disjoint interior from all other subcurves.
+     \ccc{sc} stores the remaining \ccc{X_monotone_curve_2}. }
+\ccGlue
+
+
+
+
+\ccMethod{void update_event (Event* e,
+                             const Point_2& end_point,
+                             const X_monotone_curve_2& cv,
+                             Curve_end cv_end,
+                             bool is_new);}
+    {Update the event to be the given curve end. \ccc{end_point} is the end point of {cv}, 
+     \ccc{cv_end} indicates whether it is the left end or right end of \ccc{cv}, and \ccc{is_new} indicates whether it
+      is a new event.}
+\ccGlue
+
+\ccMethod{void update_event (Event* e,
+                     Subcurve* sc1,
+                     Subcurve* sc2,
+                     bool is_new);}
+    { Update the event to be the intersection point of two subcurves \ccc{sc1} and \ccc{sc2}.\ccc{is_new} is \ccc{true} iff a new
+      event is created.}
+\ccGlue
+
+\ccMethod{void update_event (Event* e, Subcurve* sc);}
+    {Update the event to be on the interior of \ccc{sc}.}
+    
+    \ccMethod{void update_event (Event* e, const Point_2& pt, bool is_new);}
+    {Update the event to be overlap with the isolated point \ccc{pt} that can be either an action point, query point or both.}
+    
+  
+\ccHasModels
+%===========
+\ccc{CGAL::Sweep_line_empty_visitor<Traits>}
+
+\end{ccRefConcept}
+
+\ccRefPageEnd

@@ -1,0 +1,140 @@
+% +------------------------------------------------------------------------+
+% | Reference manual page: Facet.tex
+% +------------------------------------------------------------------------+
+% | 17.03.1999   Lutz Kettner
+% | Package: Polyhedron
+% | 
+\RCSdef{\RCSFacetRev}{$Id$}
+\RCSdefDate{\RCSFacetDate}{$Date$}
+% +------------------------------------------------------------------------+
+
+\ccRefPageBegin
+
+%%RefPage: end of header, begin of main body
+% +------------------------------------------------------------------------+
+
+
+\begin{ccRefClass}[Polyhedron_3<Traits>::]{Facet}
+
+\ccDefinition
+  
+A facet optionally stores a plane equation, and a reference to an 
+incident halfedge that points to the facet. Type tags indicate whether 
+these member functions are supported.  
+Figure~\ref{figurePolyOptionalMethods}
+depicts the relationship between a halfedge and its incident
+halfedges, vertices, and facets. The circulator is assignable to the
+\ccc{Halfedge_handle}. The circulator is bidirectional if the
+halfedge provided to the polyhedron with the \ccc{Items} template
+argument provides a member function \ccc{prev()}, otherwise it is
+of the forward category.
+
+
+\ccInclude{CGAL/Polyhedron_3.h}
+
+\ccTypes
+\ccThree{Halfedge_const_handle}{h.halfedge() const;;}{}
+\ccThreeToTwo
+
+\ccNestedType{Vertex}{type of incident vertices.}
+\ccGlue
+\ccNestedType{Halfedge}{type of incident halfedges.}
+\ccGlue
+\ccNestedType{Plane_3}{plane equation type stored in facets.}
+%\ccGlue
+%\ccNestedType{Normal}{normal vector type stored in facets.}
+
+\ccNestedType{Vertex_handle}{handle to vertex.}
+\ccGlue
+\ccNestedType{Halfedge_handle}{handle to halfedge.}
+\ccGlue
+\ccNestedType{Facet_handle}{handle to facet.}
+\ccGlue
+\ccNestedType{Halfedge_around_facet_circulator}{circulator of
+  halfedges around a facet.}
+
+\ccNestedType{Vertex_const_handle}{}
+\ccGlue
+\ccNestedType{Halfedge_const_handle}{}
+\ccGlue
+\ccNestedType{Facet_const_handle}{}
+\ccGlue
+\ccNestedType{Halfedge_around_facet_const_circulator}{}
+
+\ccNestedType{Supports_facet_halfedge}{$\equiv$  \ccc{CGAL::Tag_true} or 
+  \ccc{CGAL::Tag_false}.}
+\ccGlue
+\ccNestedType{Supports_facet_plane}{$\equiv$  \ccc{CGAL::Tag_true} or 
+  \ccc{CGAL::Tag_false}.}
+%\ccGlue
+%\ccNestedType{Supports_facet_normal}{\~{}}
+
+
+\ccCreation
+\ccCreationVariable{f}
+
+\ccConstructor{Facet();}{default constructor.}
+
+\ccTagFullDeclarations
+\ccHeading{Operations available if \ccc{Supports_facet_plane} $\equiv$ 
+           \ccc{CGAL::Tag_true}}
+         
+%Note, this implies \ccc{Supports_facet_normal} $\equiv$
+%\ccc{CGAL::Tag_true}, but the return type of the \ccc{normal()} member
+%function will not be by reference.
+
+\ccMethod{Plane_3&       plane();}{}
+\ccGlue
+\ccMethod{const Plane_3& plane() const;}{plane equation.}
+%\ccGlue
+%\ccMethod{Normal normal() const;}{normal vector.}
+
+%\ccHeading{Operations available if \ccc{Supports_facet_normal} $\equiv$ 
+%           \ccc{CGAL::Tag_true}}
+%
+%\ccMethod{Normal&       normal();}{}
+%\ccGlue
+%\ccMethod{const Normal& normal() const;}{normal vector.}
+
+
+\ccHeading{Operations available if \ccc{Supports_facet_halfedge} $\equiv$ 
+           \ccc{CGAL::Tag_true}}
+
+\ccMethod{Halfedge_handle       halfedge();}{}
+\ccGlue
+\ccMethod{Halfedge_const_handle halfedge() const;}{
+    an incident halfedge that points to \ccVar.}
+
+%%\ccThree{Halfedge_const_handleh.halfedge() const;}{;}{}
+\ccMethod{Halfedge_around_facet_circulator       facet_begin();}{}
+
+\ccMethod{Halfedge_around_facet_const_circulator facet_begin() const;}
+    {circulator of halfedges around the facet (counterclockwise).}
+
+\ccMethod{void set_halfedge( Halfedge_handle h);}
+    {sets incident halfedge to \ccc{h}.
+     \ccPrecond \ccc{h} is incident, i.e., \ccc{h->facet() ==} \ccVar.}
+
+\ccMethod{std::size_t facet_degree() const;}{the degree of the
+  facet, i.e., number of edges on the boundary of this facet.}
+
+\ccMethod{bool is_triangle() const;}{returns \ccc{true} if the 
+  facet is a triangle.}
+
+\ccMethod{bool is_quad() const;}{returns \ccc{true} if the 
+  facet is a quadrilateral.}
+
+\ccSeeAlso
+
+\ccRefIdfierPage{CGAL::Polyhedron_3<Traits>::Vertex}\\
+\ccRefIdfierPage{CGAL::Polyhedron_3<Traits>::Halfedge}\\
+\ccRefIdfierPage{CGAL::Polyhedron_3<Traits>}
+
+\ccTagDefaults
+\end{ccRefClass}
+
+% +------------------------------------------------------------------------+
+%%RefPage: end of main body, begin of footer
+\ccRefPageEnd
+% EOF
+% +------------------------------------------------------------------------+

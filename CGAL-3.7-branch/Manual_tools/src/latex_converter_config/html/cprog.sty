@@ -1,0 +1,28 @@
+% ___________________________________________________________________________
+% |#########################################################################|
+% |                                                                         |
+% | Latex Converter Style File: cprog.sty                                   |
+% | ------------------------------------------------------------------      |
+% | cprog Environment and cprogfile macro. Both act like verbatim.          |
+% |                                                                         |
+% | 24.07.1998   Lutz Kettner   kettner@acm.org                             |
+% | Zurich, Switzerland                                                     |
+% | $Id$                                                       |
+% | $Date$                                            |
+% |_________________________________________________________________________|
+% |#########################################################################|
+
+\newcommand{\beforecprogskip}{\lciSkipNonWhiteSpace}
+\newcommand{\aftercprogskip}{\lciSkipNonWhiteSpace}
+
+\newcommand{\lciLocalCProg}[1]{%
+    \lcRawHtml{<PRE>}[cccbegin]\lciAsciiOutputN{#L1}#1[cccend]\lcRawHtml{</PRE>}}
+\newenvironment{cprog}{%
+    \lciParseUntilEndToken{\lciLocalCProg}{cprog}}{}
+
+\newcommand{\cprogfile}[1]{\lciParseFile{\lciLocalCProg}{#1}}
+
+% ___________________________________________________________________________
+% ###########################################################################
+% | EOF
+% ###########################################################################

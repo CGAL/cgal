@@ -1,0 +1,86 @@
+%% Copyright (c) 2003,2004,2005  INRIA Sophia-Antipolis (France) and
+%% Notre Dame University (U.S.A.).  All rights reserved.
+%%
+%% This file is part of CGAL (www.cgal.org); you may redistribute it under
+%% the terms of the Q Public License version 1.0.
+%% See the file LICENSE.QPL distributed with CGAL.
+%%
+%% Licensees holding a valid commercial license may use this file in
+%% accordance with the commercial license agreement provided with the software.
+%%
+%% This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
+%% WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
+%%
+%% $URL$
+%% $Id$
+%% 
+%%
+%% Author(s)     : Menelaos Karavelas <mkaravel@cse.nd.edu>
+
+
+
+\begin{ccRefClass}{Segment_Delaunay_graph_traits_without_intersections_2<K,MTag>}
+%% add template arg's if necessary
+
+%% \ccHtmlCrossLink{}     %% add further rules for cross referencing links
+%% \ccHtmlIndexC[class]{} %% add further index entries
+
+\ccDefinition
+  
+The class \ccRefName\ provides a model for the
+\ccc{SegmentDelaunayGraphTraits_2} concept.
+This class has two template parameters. 
+The first template parameter must be a model of the \ccc{Kernel}
+concept. The second template parameter corresponds to how predicates
+are evaluated. There are two possible values for \ccc{MTag}, namely
+\ccc{CGAL::Field_with_sqrt_tag} and \ccc{CGAL::Euclidean_ring_tag}. The first one
+must be used when the number type used in the representation supports
+the exact evaluation of signs of expressions involving all four basic
+operations and square roots, whereas the second one requires the exact
+evaluation of signs of ring-type expressions, i.e., expressions
+involving only additions, subtractions and multiplications. The
+default value for \ccc{MTag} is \ccc{CGAL::Euclidean_ring_tag}.
+%
+The way the predicates are evaluated is discussed in
+\cite{b-ecvdl-96} and \cite{cgal:k-reisv-04} (the geometric filtering
+part).
+
+
+\ccInclude{CGAL/Segment_Delaunay_graph_traits_2.h}
+
+\ccIsModel
+\ccc{SegmentDelaunayGraphTraits_2}
+
+\ccTypes
+\ccThree{typedef CGAL::Tag_false}{Intersections_tag;}{}
+\ccTypedef{typedef CGAL::Tag_false Intersections_tag;}{}
+
+The \ccRefName\ class introduces a few additional types with respect
+to the \ccc{SegmentDelaunayGraphTraits_2} concept. These are:
+
+\ccTypedef{typedef K Kernel;}{A typedef for the template parameter
+  \ccc{K}.}
+\ccGlue
+\ccTypedef{typedef MTag Method_tag;}{A typedef for the template
+  parameter \ccc{MTag}.}
+
+\ccCreationVariable{traits}
+
+\ccSeeAlso
+\ccc{Kernel}\\
+\ccc{SegmentDelaunayGraphTraits_2} \\
+\ccc{CGAL::Euclidean_ring_tag}\\
+\ccc{CGAL::Field_with_sqrt_tag}\\
+\ccc{CGAL::Segment_Delaunay_graph_2<Gt,DS>}\\
+\ccc{CGAL::Segment_Delaunay_graph_hierarchy_2<Gt,STag,DS>}\\
+\ccc{CGAL::Segment_Delaunay_graph_traits_2<K,MTag>}\\
+\ccc{CGAL::Segment_Delaunay_graph_filtered_traits_2<CK,CM,EK,EM,FK,FM>}\\
+\ccc{CGAL::Segment_Delaunay_graph_filtered_traits_without_intersections_2<CK,CM,EK,EM,FK,FM>}
+
+\end{ccRefClass}
+
+% +------------------------------------------------------------------------+
+%%RefPage: end of main body, begin of footer
+% EOF
+% +------------------------------------------------------------------------+
+

@@ -1,0 +1,93 @@
+% +------------------------------------------------------------------------+
+% | Reference manual page: natural_neighbor_coordinates_2.tex
+% +------------------------------------------------------------------------+
+% | 
+% | August 2003  Julia Floetotto
+% | Package:   Interpolation
+% | 
+% |
+% +------------------------------------------------------------------------+
+
+\begin{ccRefFunction}{natural_neighbor_coordinates_2}
+
+\ccDefinition
+  
+The function \ccRefName\ computes natural neighbor coordinates, also
+called Sibson's coordinates, for $2D$ points provided a two-dimensional
+triangulation and a query point in the convex hull of the vertices
+of the triangulation.
+
+\ccInclude{CGAL/natural_neighbor_coordinates_2.h}
+
+
+\ccFunction{template < class Dt, class OutputIterator > CGAL::Triple<
+  OutputIterator, typename Dt::Geom_traits::FT, bool >
+  natural_neighbor_coordinates_2(const Dt& dt, const typename
+  Dt::Geom_traits::Point_2& p, OutputIterator out, typename
+  Dt::Face_handle start = typename Dt::Face_handle());} { computes the
+  natural neighbor coordinates for \ccc{p} with respect to the points
+  in the two-dimensional Delaunay triangulation \ccc{dt}.  The
+  template class \ccc{Dt} should be of type
+  \ccc{Delaunay_triangulation_2<Traits, Tds>}.  The value type of the
+  \ccc{OutputIterator} is a pair of \ccc{Dt::Point_2} and the
+  coordinate value of type \ccc{Dt::Geom_traits::FT}. The sequence of
+  point/coordinate pairs that is computed by the function is placed
+  starting at \ccc{out}. The function returns a triple with an
+  iterator that is placed past-the-end of the resulting sequence of
+  point/coordinate pairs, the normalization factor of the coordinates
+  and a Boolean value which is set to true iff the coordinate
+  computation was successful.  }
+
+\ccFunction{template <class Dt, class OutputIterator,
+  class EdgeIterator > CGAL::Triple< OutputIterator, typename Dt::Geom_traits::FT, 
+  bool > natural_neighbor_coordinates_2(const Dt& dt, const typename
+  Dt::Geom_traits::Point_2& p, OutputIterator out, EdgeIterator hole_begin,
+  EdgeIterator hole_end);} { The same as above.
+  \ccc{hole_begin} and \ccc{hole_end} determines the iterator range
+  over the boundary edges of the conflict zone of \ccc{p} in the
+  triangulation. It is the result of the function
+  \ccc{T.get_boundary_of_conflicts(p,std::back_inserter(hole),
+    start)}, see \ccc{Delaunay_triangulation_2<Traits, Tds>}.}
+
+\ccFunction{template <class Dt, class OutputIterator> 
+  CGAL::Triple< OutputIterator, typename Dt::Geom_traits::FT, bool > 
+  natural_neighbor_coordinates_2(const Dt& dt,
+  typename Dt::Vertex_handle vh, OutputIterator out);}{This function computes
+  the natural neighbor coordinates of the point \ccc{vh->point()} with respect to
+  the vertices of \ccc{dt} excluding \ccc{vh->point()}. The same as above for the
+  remaining parameters.}
+
+\ccHeading{Requirements}
+\begin{enumerate}
+\item \ccc{Dt} are equivalent to the class
+  \ccc{Delaunay_triangulation_2<Traits, Tds>}.
+\item The traits class \ccc{Traits} of \ccc{Dt} is a model of the
+  concept \ccc{DelaunayTriangulationTraits_2}.
+  Only the following members of this traits class are used:
+  \begin{itemize}
+  \item \ccc{Construct_circumcenter_2}
+  \item \ccc{FT}
+  \item \ccc{Point_2}
+  \item \ccc{construct_circumcenter_2_object}
+  \item[] Additionally, \ccc{Traits} must meet the requirements for
+    the traits class of the \ccc{polygon_area_2} function.
+  \end{itemize}
+\item \ccc{OutputIterator::value_type} is equivalent to
+  \ccc{std::pair<Dt::Point_2, Dt::Geom_traits::FT>}, i.e.\ a pair
+  associating a point and its natural neighbor coordinate.
+\end{enumerate}
+
+\ccSeeAlso
+\ccRefIdfierPage{CGAL::linear_interpolation} \\
+\ccRefIdfierPage{CGAL::sibson_c1_interpolation}\\ 
+\ccRefIdfierPage{CGAL::surface_neighbor_coordinates_3} \\
+\ccRefIdfierPage{CGAL::regular_neighbor_coordinates_2} 
+
+\ccImplementation This function computes the area of the sub-cells
+stolen from the Voronoi cells of the points in \ccc{dt} when inserting
+\ccc{p}. The total area of the Voronoi cell of \ccc{p} is also
+computed and returned by the function. If \ccc{p} lies outside the
+convex hull, the coordinate values cannot be computed and the third
+value of the result triple is set to \ccc{false}.
+
+\end{ccRefFunction}

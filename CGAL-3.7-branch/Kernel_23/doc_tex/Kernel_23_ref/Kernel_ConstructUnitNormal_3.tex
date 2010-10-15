@@ -1,0 +1,18 @@
+\begin{ccRefFunctionObjectConcept}{Kernel::ConstructUnitNormal_3}
+A model for this must provide:
+
+\ccCreationVariable{fo}
+
+\ccMemberFunction{Kernel::Vector_3 operator()(const Kernel::Point_3& p,
+                                             const Kernel::Point_3& q,
+                                             const Kernel::Point_3& r );}
+ {computes the unit normal of the vectors\ccc{q-p} and \ccc{r-p}.
+This requires that \ccc{Kernel::FT} supports the \ccc{sqrt} operation.}
+
+\ccRefines
+\ccc{AdaptableFunctor} (with three arguments)
+
+\ccSeeAlso
+\ccRefIdfierPage{CGAL::normal} \\
+\ccRefIdfierPage{CGAL::unit_normal} \\
+\end{ccRefFunctionObjectConcept}

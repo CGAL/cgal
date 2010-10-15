@@ -1,0 +1,102 @@
+% begin cgal manual page
+
+\begin{ccRefClass}{Ray_d<Kernel>}\ccCreationVariable{r}
+
+\ccDefinition
+
+
+An instance of data type \ccc{Ray_d} is a ray in $d$-dimensional
+Euclidean space. It starts in a point called the source of \ccc{r} and
+it goes to infinity. 
+
+\ccSetOneOfTwoColumns{4cm}
+
+\ccTypes
+
+% \ccNestedType{R}{the representation type. 
+% }
+
+% \ccNestedType{RT}{the ring type. 
+% }
+
+% \ccNestedType{FT}{the field type. 
+% }
+
+\ccNestedType{LA}{the linear algebra layer. 
+}
+
+\ccSetOneOfTwoColumns{3cm}
+
+\ccCreation
+
+\ccConstructor{Ray_d<Kernel>()}{introduces some ray in
+$d$-dimensional space.}
+
+\ccConstructor{Ray_d<Kernel>(Point_d<Kernel> p, Point_d<Kernel> q)}{introduces a ray
+through \ccc{p} and \ccc{q} and starting at \ccc{p}.  \ccPrecond $p$
+and $q$ are distinct and have the same dimension. \ccPrecond
+\ccc{p.dimension()==q.dimension()}. }
+
+\ccConstructor{Ray_d<Kernel>(Point_d<Kernel> p, Direction_d<Kernel> dir)}{introduces
+a ray starting in \ccc{p} with direction \ccc{dir}.  \ccPrecond
+\ccc{p} and \ccc{dir} have the same dimension and \ccc{dir} is not
+degenerate. \ccPrecond \ccc{p.dimension()==dir.dimension()}. }
+
+\ccConstructor{Ray_d<Kernel>(Segment_d<Kernel> s)}{introduces a ray through
+\ccc{s.source()} and \ccc{s.target()} and starting at
+\ccc{s.source()}. \ccPrecond $s$ is not degenerate.  }
+
+\ccSetTwoOfThreeColumns{3cm}{3cm}
+
+\ccOperations
+
+\ccMethod{int dimension() ;}{returns the dimension of the ambient
+space.}
+
+\ccMethod{Point_d<Kernel> source() ;}{returns the source point of \ccc{r}.
+}
+
+\ccMethod{Point_d<Kernel> point(int i) ;}{returns a point on
+\ccc{r}. \ccc{point(0)} is the source.  \ccc{point(i)}, with $i>0$, is
+different from the source. \ccPrecond $i \geq 0$.  }
+
+\ccMethod{Direction_d<Kernel> direction() ;}{returns the direction of
+\ccc{r}.  }
+
+\ccMethod{ Line_d<Kernel> supporting_line() ;}{returns the supporting line
+of \ccc{r}.  }
+
+\ccMethod{Ray_d<Kernel> opposite() ;}{returns the ray with direction
+opposite to \ccc{r} and starting in \ccc{source}.  }
+
+\ccMethod{Ray_d<Kernel> transform(const Aff_transformation_d<Kernel>& t)
+;}{returns $t(r)$. \ccPrecond \ccc{r.dimension()==t.dimension()}. }
+
+\ccMethod{Ray_d<Kernel> operator+(const Vector_d<Kernel>& v) ;}{returns
+\ccc{r+v}, i.e., \ccc{r} translated by vector $v$. \ccPrecond
+\ccc{r.dimension()==v.dimension()}. }
+
+\ccMethod{bool has_on(const Point_d<Kernel>& p) ;}{A point is on \ccc{r},
+iff it is equal to the source of \ccc{r}, or if it is in the interior
+of \ccc{r}. \ccPrecond \ccc{r.dimension()==p.dimension()}. }
+
+\ccHeading{Non-Member Functions} 
+
+\ccFunction{bool parallel(const Ray_d<Kernel>& r1, const Ray_d<Kernel>& r2)
+;}{returns true if the unoriented supporting lines of \ccc{r1} and
+\ccc{r2} are parallel and false otherwise. \ccPrecond
+\ccc{r1.dimension()==r2.dimension()}. }
+
+\ccImplementation
+
+Rays are implemented by a pair of points as an item type.  All
+operations like creation, initialization, tests, direction
+calculation, input and output on a ray $r$ take time
+$O(\ccc{r.dimension()})$. \ccc{dimension()}, coordinate and point
+access, and identity test take constant time. The space requirement is
+$O(\ccc{r.dimension()})$.
+
+
+\end{ccRefClass}
+
+

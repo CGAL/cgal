@@ -1,0 +1,454 @@
+% ___________________________________________________________________________
+% |#########################################################################|
+% |                                                                         |
+% | Latex Converter Style File: latex_to_html.sty                           |
+% | ------------------------------------------------------------------      |
+% | Macros needed to make the converter run.                                |
+% |                                                                         |
+% | 24.07.1998   Lutz Kettner   kettner@acm.org                             |
+% | Zurich, Switzerland                                                     |
+% | $Id$                                                       |
+% | $Date$                                            |
+% |_________________________________________________________________________|
+% |#########################################################################|
+% |                                                                         |
+% | Table of Contents:                                                      |
+% |                                                                         |
+% |   o   Configuration                                                     |
+% |   o   End of Conversion Activities                                      |
+% |   o   Inclusion of Converter Style Files                                |
+% |   o   Style Selection                                                   |
+% |   o   (La)TeX Macro Expansion, Environments and Scopes                  |
+% |   o   Boolean Values and Control Structures                             |
+% |   o   Stack of Macro Bodies                                             |
+% |   o   HTML Output and Conversion Macros                                 |
+% |   o   Separation of TeX, HTML and ASCII Parts                           |
+% |   o   RCSdef, RCSdefDate, and RCSdefArg                                 |
+% |                                                                         |
+% |#########################################################################|
+
+% ___________________________________________________________________________
+% ###########################################################################
+% |
+% |   o   Configuration
+% |
+% ###########################################################################
+
+\newcommand{\lciHtmlSuffix}{.html}
+\newcommand{\lciChapterPrefix}{Chapter_}
+\newcommand{\lciAnchorFilename}{cc_anchor_rules.stage_1}
+\newcommand{\lciPkgOverviewFilename}{packages.html}
+\newcommand{\lciContentsFilename}{contents.html}
+\newcommand{\lciShortContentsFilename}{shortcontents.html}
+\newcommand{\lciBibFilename}{biblio.html}
+\newcommand{\lciTitleFilename}{title.html}
+\newcommand{\lciIndexFilename}{manual.hidx}
+\newcommand{\lciHREFFilename}{HREF}
+\newcommand{\lciHREFCounterFilename}{HREF_counter}
+
+\newcommand{\lciIndexHeader}{cc_index_header}
+\newcommand{\lciIndexFooter}{cc_index_footer}
+
+\gdef{\lciIfHtmlClassToc}{\lcTrue}
+\gdef{\lciIfHtmlClassFile}{\lcTrue}
+\gdef{\lciIfHtmlClassNotInline}{\lcTrue} %% used by ccHtmlClassFile,
+                                         %% and ccRefDeclaration
+\gdef{\lciIfHtmlClassLinks}{\lcTrue}
+\gdef{\lciIfHtmlClassIndex}{\lcTrue}
+\gdef{\lciIfHtmlRefLinks}{\lcTrue}
+\gdef{\lciIfHtmlRefIndex}{\lcTrue}
+\gdef{\lciIfHtmlLinks}{\lcTrue}
+\gdef{\lciIfHtmlIndex}{\lcTrue}
+
+\newcommand{\ccHtmlNoClassToc}{\gdef{\lciIfHtmlClassToc}{\lcFalse}}
+\newcommand{\ccHtmlNoClassFile}{\gdef{\lciIfHtmlClassFile}{\lcFalse}}
+\newcommand{\ccHtmlNoClassLinks}{\gdef{\lciIfHtmlClassLinks}{\lcFalse}}
+\newcommand{\ccHtmlNoClassIndex}{\gdef{\lciIfHtmlClassIndex}{\lcFalse}}
+\newcommand{\ccHtmlNoLinks}{\gdef{\lciIfHtmlLinks}{\lcFalse}}
+\newcommand{\ccHtmlNoIndex}{\gdef{\lciIfHtmlIndex}{\lcFalse}}
+
+\newcommand{\ccHtmlNoRefLinks}{\gdef{\lciIfHtmlClassLinks}{\lcFalse}}
+\newcommand{\ccHtmlNoRefIndex}{\gdef{\lciIfHtmlClassIndex}{\lcFalse}}
+
+% possibly nested control blocks that suppress cross-linking
+\newcommand{\lcNoLinkBegin}{\lcRawHtml{<!NoLinkBegin>}}
+\newcommand{\lcNoLinkEnd}{\lcRawHtml{<!NoLinkEnd>}}
+\newcommand{\lcNoLinkSync}{\lcRawHtml{<!NoLinkSync>}}
+
+% ___________________________________________________________________________
+% ###########################################################################
+% |
+% |   o   End of Conversion Activities
+% |
+% ###########################################################################
+
+%% Will be called automatically at the end of the conversion process
+\gdef\lciEndOfConversion{}
+\newcommand{\lciAddToGlobalDef}[2]{\gdef#C1{#X1#2}}
+\newcommand{\lciPrependToGlobalDef}[2]{\gdef#C1{#2#X1}}
+
+
+% ___________________________________________________________________________
+% ###########################################################################
+% |
+% |   o   Inclusion of Converter Style Files
+% |
+% ###########################################################################
+
+% The following four lines at the beginning of other converter style
+% files provide them with the basic macro definitions to make the
+% LaTeX converter work.
+
+%% % Load latex_to_html.sty that provides the basic converter capabilities.
+%% \newcommand{\lcStyleFile}[1]{\lciInputStyleFile{\lciConfigPath}{#XC1}}
+%% \newcommand{\lciInputStyleFile}[2]{\lciInclude{#XC1#C2.sty}}
+%% \lcStyleFile{latex_to_html}
+
+% The \lcStyleFile macro will be overloaded here with a more sophisticated
+% version which keeps track of already loaded styles and which skips
+% loading for style files <sty> where a macro with the name
+% \lciSkipStyle_<sty> is defined. Note that \newcommand{} or gdef{} must
+% be used to define these names, since they contain characters not allowed
+% in usual TeX macros. (I.e. \gdef\... or \def\... would not work.)
+
+\gdef{\lciLoadedStyle_latex_to_html}{}
+
+\newcommand{\lcStyleFile}[1]{%
+    \lciIfDefined{\lciLoadedStyle_#XC1}{}{%
+        \lciIfDefined{\lciSkipStyle_#XC1}{}{%
+            \lciInputStyleFile{\lciConfigPath}{#XC1}%
+            \gdef{\lciLoadedStyle_#XC1}{}}}}
+\newcommand{\lciInputStyleFile}[2]{\lciInclude{#XC1#C2.sty}}
+%\newcommand{\lciInputStyleFile}[2]{\lciInclude{#C2.sty}}
+
+% Try if a style file exists. Give a warning if not (no error as
+% for \lcStyleFile itself.) Try local files and LATEX_CONV_INPUTS files
+% first, then try \lciConfigPath.
+% Param 1: filename of style file without suffix.
+%          The file #1.sty must then exist in the search path (preference)
+%          or the config path.
+\newcommand{\lcTryStyleFile}[1]{%
+    \lciIfDefined{\lciLoadedStyle_#XC1}{}{%
+        \lciIfDefined{\lciSkipStyle_#XC1}{}{%
+            \lciTryInputStyleFile{\lciConfigPath}{#XC1}%
+            \gdef{\lciLoadedStyle_#XC1}{}}}}
+\newcommand{\lciTryInputStyleFile}[2]{%
+    \lciIfFileExists{#C2.sty}{\lciInclude{#C2.sty}}{%
+        \lciIfFileExists{#XC1#C2.sty}{\lciInclude{#XC1#C2.sty}}{%
+            \lciMessage{\nWARNING: Style file '#C2.sty' does not exist.\n}}}}
+
+
+% ___________________________________________________________________________
+% ###########################################################################
+% |
+% |   o   Style Selection
+% |
+% ###########################################################################
+
+% Customization of the HTML style. Loads 'default' style at the end
+% of 'latex.sty'. Other options are 'classic' for the old conversion look
+% of the pre 4.0 release tools, and 'modern', which is the one selected
+% for 'default'.
+\newcommand{\lcStyle}[1]{%
+    \newcommand{\lciLatexToHtmlStyle}{#C1}%
+    \lcStyleFile{latex_to_html_style_#C1}%
+}
+
+\newcommand{\lciCopyCSSFile}[1]{%
+    \lciIfDefined{\lciInstallLatexConverterCSSFile}%
+      {\lciCopyCSSFileX{\lciConfigPath}{#1}{\lciTmpPath}}%
+      {}%
+}
+\newcommand{\lciCopyCSSFileX}[3]{%
+    \lciCopyFile{#XC1#XC2.css}{#XC3latex_to_html.css}}
+
+% ___________________________________________________________________________
+% ###########################################################################
+% |
+% |   o   (La)TeX Macro Expansion, Environments and Scopes
+% |
+% ###########################################################################
+
+\newcommand{\lciSkipOneParameter}[1]{}
+\newcommand{\lciSkipOneParameter@om}{}
+\newcommand{\lciSkipOneParameter@oom}{}
+\newcommand{\lciSkipTwoParameter}[2]{}
+\newcommand{\lciSkipTwoParameter@omm}{}
+\newcommand{\lciSkipTwoParameter@oomm}{}
+
+\newcommand{\lciGlueTwoParam}[2]{#C1#C2}
+\newcommand{\lciGlueFirstToSecond}[2]{#C1#2}
+
+\newcommand{\renewcommand}{\newcommand}
+\newcommand{\providecommand}[1]{\lciIfDefined{#C1}{\lciSkipOneParameter}%
+    {\newcommand{#C1}}}
+
+\newcommand{\newenvironment}[3]{%
+    \newcommand{\begin@#C1}{#2}%
+    \newcommand{\end#C1}{#3}%
+}
+\newcommand{\newenvironment@momm}{%
+    \newcommand{\begin@#C1}[#2]{#3}%
+    \newcommand{\end#C1}{#4}%
+}
+
+%% Note! Only partial functionality of original TeX \edef !
+\newcommand{\edef}[2]{\newcommand{#1}{#X2}}
+\newcommand{\xdef}[2]{\gdef{#1}{#X2}}
+
+%% LaTeX environments and scoping braces, a stack to check proper nesting
+\gdef{\lciNestingScopesStack}{}
+\gdef{\lciNestingScopesFileStack}{}
+\gdef{\lciNestingScopesLineStack}{}
+
+\newcommand{\begin}[1]{\lciBegin{#C1}\lciGlueTwoParam{\begin}{@#C1}}
+\newcommand{\end}[1]{\lciGlueTwoParam{\end}{#C1}\lciEnd{#C1}}
+
+\newcommand{\begingroup}{\lciBegin{@group}}
+\newcommand{\endgroup}{\lciEnd{@group}}
+
+%% Args: the environment that gets opened, '@group' for scoping braces.
+\newcommand{\lciBegin}[1]{%
+    \lciPushGlobalStack{\lciNestingScopesStack}{#1}%
+    \lciPushGlobalStack{\lciNestingScopesFileStack}{\lciInputFilename}%
+    \lciPushGlobalStack{\lciNestingScopesLineStack}{\lciLineNumber}%
+    \lciBeginGroup%
+    \lciBeginScope}
+
+%% Args: the environment that gets closed, '@group' for scoping braces.
+\newcommand{\lciEnd}[1]{%
+    \lciTopGlobalStack{\lciNestingScopesStack}{\lciEndTmpEnv}%
+    \lciTopGlobalStack{\lciNestingScopesFileStack}{\lciEndTmpFile}%
+    \lciTopGlobalStack{\lciNestingScopesLineStack}{\lciEndTmpLine}%
+    \lciPopGlobalStack{\lciNestingScopesStack}%
+    \lciPopGlobalStack{\lciNestingScopesFileStack}%
+    \lciPopGlobalStack{\lciNestingScopesLineStack}%
+    \lciIfEqualExpanded{#1}{\lciEndTmpEnv}{}{%
+        \lciIfEqual{#1}{@group}{%
+            \lciEndMatchError{Closing brace `\}'}{environment}{\lciEndTmpEnv}%
+                {\lciEndTmpFile}{\lciEndTmpLine}%
+        }{\lciIfEqualExpanded{\lciEndTmpEnv}{@group}{%
+            \lciEndMatchError{Environment `#C1'}{opening brace}{\{}%
+                {\lciEndTmpFile}{\lciEndTmpLine}%
+        }{%
+            \lciEndMatchError{Environment `#C1'}{environment}{\lciEndTmpEnv}%
+                {\lciEndTmpFile}{\lciEndTmpLine}%
+        }}%
+    }%
+    \lciSetGlobalFontState%
+        {\lciFontSize}{\lciFontFamily}{\lciFontSeries}{\lciFontShape}%
+    \lciEndScope%
+    \lciRestoreFont%
+    \lciEndGroup}
+
+\newcommand{\lciEndMatchError}[5]{%
+  \lciError{#1 does not match with #2 `#XC3' in file `#XC4' line #XC5}}
+
+\newcommand{\lciCheckNestingScopes}{%
+    \lciIfEmpty{\lciNestingScopesStack}{}{%
+    \lciTopGlobalStack{\lciNestingScopesStack}{\lciEndTmpEnv}%
+    \lciTopGlobalStack{\lciNestingScopesFileStack}{\lciEndTmpFile}%
+    \lciTopGlobalStack{\lciNestingScopesLineStack}{\lciEndTmpLine}%
+    \lciPopGlobalStack{\lciNestingScopesStack}%
+    \lciPopGlobalStack{\lciNestingScopesFileStack}%
+    \lciPopGlobalStack{\lciNestingScopesLineStack}%
+    \lciIfEqualExpanded{\lciEndTmpEnv}{@group}{%
+        \lciCheckNestingScopesError{Opening brace}{\{}%
+                {\lciEndTmpFile}{\lciEndTmpLine}%
+    }{%
+        \lciCheckNestingScopesError{Environment}{\lciEndTmpEnv}%
+                {\lciEndTmpFile}{\lciEndTmpLine}%
+    }%
+    \lciCheckNestingScopes%
+}}
+
+\newcommand{\lciCheckNestingScopesError}[4]{%
+  \lciError{Parsing error: #1 `#XC2' in file `#XC3' line #XC4 not closed.}}
+
+
+%% Both commands will be redefined in latex.sty.
+\newcommand{\lciSetGlobalFontState}[4]{}
+\newcommand{\lciRestoreFont}{}
+
+
+% ___________________________________________________________________________
+% ###########################################################################
+% |
+% |   o   Boolean Values and Control Structures
+% |
+% ###########################################################################
+
+%% Syntax:  \lciIf{bool}[Auto-choice optional]{then path}{else path}
+%% Possible choices for bool
+\newcommand{\lcFalse}[2]{#2}
+\newcommand{\lcTrue}[2]{#1}
+\newcommand{\lcAuto}[2]{}
+
+\newcommand{\lcFalse@omm}{#3}
+\newcommand{\lcTrue@omm}{#2}
+\newcommand{\lcAuto@omm}{#1}
+
+\newcommand{\lciIf}[1]{#X1}
+
+\newcommand{\lciIfEqualExpanded}[2]{\lciIfEqual{#X1}{#X2}}
+\newcommand{\lciIfLessExpanded}[2]{\lciIfLess{#X1}{#X2}}
+\newcommand{\lciIfLessOrEqualExpanded}[2]{\lciIfLessOrEqual{#X1}{#X2}}
+
+%% Args: countername, start, end, body
+\newcommand{\lciFor}[4]{%
+    \newcommand{#1}{#X2}%
+    \lciWhileLessOrEqual{#1}{#X3}{#4}%
+}
+
+%% Args: countername, end, body
+\newcommand{\lciWhileLessOrEqual}[3]{%
+    \lciIfLessOrEqual{#X1}{#2}%
+        {#3\lciAddTo{#1}{1}\lciWhileLessOrEqual{#1}{#2}{#3}}{}%
+}
+
+% declare TeX compatible \iftrue and \iffalse (can be used in the ifthen.sty)
+\newcommand{\iftrue}{\lcTrue}
+\newcommand{\iffalse}{\lcFalse}
+
+
+% ___________________________________________________________________________
+% ###########################################################################
+% |
+% |   o   Stack of Macro Bodies
+% |
+% ###########################################################################
+
+%% A stack stores a nested sequence of macro bodies enclosed in parantheses
+%% \newcommand{\stack}{{body1}{{body2}{{body3}{}}}}
+%% body1 is on top of the stack.
+%% The empty stack: \newcommand{\stack}{}
+%% The empty global stack: \gdef\stack{}
+%% Note that the implementation of #X does not expand the stack body.
+
+%% Args: stack, macro of which the body gets pushed on the stack
+\newcommand{\lciPushStack}[2]{\newcommand{#1}{{#X2}{#X1}}}
+\newcommand{\lciPushGlobalStack}[2]{\gdef#C1{{#X2}{#X1}}}
+
+%% Args: stack, macro which gets assigned the body from top of stack
+\newcommand{\lciTopStack}[2]{\lciLocalTopStack{#2}#X1}
+\newcommand{\lciLocalTopStack}[3]{\newcommand{#1}{#2}}
+
+\newcommand{\lciTopGlobalStack}[2]{\lciLocalTopGlobalStack{#2}#X1}
+\newcommand{\lciLocalTopGlobalStack}[3]{\gdef#C1{#2}}
+
+%% Args: stack
+\newcommand{\lciPopStack}[1]{\lciLocalPopStack{#1}#X1}
+\newcommand{\lciLocalPopStack}[3]{\newcommand{#1}{#3}}
+
+\newcommand{\lciPopGlobalStack}[1]{\lciLocalPopGlobalStack{#1}#X1}
+\newcommand{\lciLocalPopGlobalStack}[3]{\gdef#C1{#3}}
+
+%% Args: a macro name
+\newcommand{\lciIfEmpty}[1]{\lciIfEqual{}{#X1}}
+
+%% Args: stack
+\newcommand{\lciPrintStack}[1]{\{\lciIfEmpty{#1}{}{\lciLocalPrintStack #X1}\}}
+\newcommand{\lciLocalPrintStack}[2]{\{#1\}\{\lciIfEmpty{#2}{}%
+    {\lciLocalPrintStack #2}\}}
+
+%% Args: old-stack, new-stack (reversed). Stacks should differ.
+%%       new-stack may not be empty. old-stack will be empty afterwards.
+\newcommand{\lciReverseStack}[2]{%
+    \lciIfEmpty{#1}{}{%
+        \lciTopStack{#1}{\lciStackTopTmp}\lciPopStack{#1}%
+        \lciPushStack{#2}{\lciStackTopTmp}%
+        \lciReverseStack{#1}{#2}%
+    }}
+
+% arg1: stack
+% arg2: operation
+\newcommand{\lciForeachElementInStack}[2]{%
+  \begingroup%
+  \edef\lciLocalVariableBlubberbla{#1}%
+  \lciForeachElementInStackPrime{\lciLocalVariableBlubberbla}{#2}%
+  \endgroup%
+}
+
+\newcommand{\lciForeachElementInStackPrime}[2]{%
+  \lciIfEmpty{#1}{}{%
+    \lciTopStack{#1}{\localvariablevalue}%
+    #2{\localvariablevalue}%
+    \lciPopStack{#1}%
+    \lciForeachElementInStackPrime{#1}{#2}%
+  }%
+}
+
+% ___________________________________________________________________________
+% ###########################################################################
+% |
+% |   o   HTML Output and Conversion Macros
+% |
+% ###########################################################################
+
+\newcommand{\lcRawHtml}{\lciRawOutput}
+\newcommand{\lcRawHtmlExpanded}[1]{\lciRawOutput{#X1}}
+\newcommand{\lcRawAscii}[1]{}
+
+\newcommand{\lcAnchor}[2]{%
+    \lcRawHtml{<A HREF="#C1" TARGET="_top">}#2\lcRawHtml{</A>}}
+
+
+% ___________________________________________________________________________
+% ###########################################################################
+% |
+% |   o   Separation of TeX, HTML and ASCII Parts
+% |
+% ###########################################################################
+
+\newcommand{\lcTex}[1]{}
+\newcommand{\lcHtml}[1]{#1}
+\newcommand{\lcAscii}[1]{}
+
+\newenvironment{lcTexBlock}{%
+    \lciParseUntilEndToken{\lciSkipOneParameter}{lcTexBlock}}{}
+
+\newcommand{\lciLocalRawHtmlBlock}[1]{\lciRawOutputN{#L1}#1}
+\newenvironment{lcRawHtmlBlock}{%
+    \lciParseUntilEndToken{\lciLocalRawHtmlBlock}{lcRawHtmlBlock}}{}
+
+\newenvironment{lcHtmlBlock}{}{}
+
+
+% ___________________________________________________________________________
+% ###########################################################################
+% |
+% |   o   RCSdef, RCSdefDate, and RCSdefArg
+% |
+% ###########################################################################
+
+\newcommand{\RCSdef}[2]{%
+  \newcommand{#X1}{Revision: \lciRCSdef{#2}}%
+}
+\newcommand{\RCSdefDate}[2]{%
+  \newcommand{#X1}{Date: \lciRCSdefDate{#2}}%
+}
+
+\RCSdef{\lcRevision}{$Id$}
+\RCSdefDate{\lcDate}{$Id$}
+
+
+\newcommand{\ccRevision}{\lcRevision}
+\newcommand{\ccDate}{\lcDate}
+
+
+\newcommand{\savestreamX}[1]{%
+  \gdef\lciSaveStreamName{#C1}%
+  \lciPushOutput{savestream}%
+}
+\newenvironment{savestream}
+  {\savestreamX}%
+  {\lciPopOutput%
+  }
+
+\newcommand{\lciSavestreamUse}[1]{\lciSavestreamUse[lciSavestreamBuffer#GC1]{#C1}}
+\newcommand{\lciSavestreamUse@om}{\lciSavestreamUseX{#C2}{#C1}}
+
+% ___________________________________________________________________________
+% ###########################################################################
+% | EOF
+% ###########################################################################

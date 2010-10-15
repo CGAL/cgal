@@ -1,0 +1,38 @@
+\begin{ccRefFunctionObjectConcept}{AlgebraicKernel_d_1::BoundBetween_1}
+
+\ccDefinition
+Computes a number of type 
+\ccc{AlgebraicKernel_d_1::Bound} in-between two 
+\ccc{AlgebraicKernel_d_1::Algebraic_real_1} values.
+
+\ccRefines 
+\ccc{AdaptableBinaryFunction} 
+
+\ccTypes \ccThree{}{+++++++++++++}{++++++++}
+%\ccThree{typedef AlgebraicKernel_d_1::Algebraic_real_1}{second_argument_type+}{}
+\ccTypedef{typedef AlgebraicKernel_d_1::Bound         result_type;}{}
+\ccGlue
+\ccTypedef{typedef AlgebraicKernel_d_1::Algebraic_real_1  first_argument_type;}{}
+\ccGlue
+\ccTypedef{typedef AlgebraicKernel_d_1::Algebraic_real_1  second_argument_type;}{}
+
+\ccOperations \ccThree{+++++++++}{+++++++++}{}
+\ccCreationVariable{fo}
+
+
+%\ccThree{result_type}{fo(first_argument_type}{}
+\ccMethod{
+result_type
+operator()(const first_argument_type  & a,
+           const second_argument_type & b);}{
+Computes a value $r$, which is between $a$ and $b$.\\
+\ccPrecond{$ a \neq b$} 
+\ccPostcond{$ r > min(a,b)$}
+\ccPostcond{$ r < max(a,b)$}
+} 
+ 
+%\ccSeeAlso
+
+
+
+\end{ccRefFunctionObjectConcept}

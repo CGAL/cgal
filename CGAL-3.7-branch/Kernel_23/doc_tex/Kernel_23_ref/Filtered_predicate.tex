@@ -1,0 +1,58 @@
+\begin{ccRefClass}{Filtered_predicate<EP, FP, C2E, C2F>}
+
+\KernelRefLayout\gdef\ccTagOperatorLayout{\ccFalse}
+
+\ccDefinition
+
+\ccClassTemplateName is an adaptor for predicate function objects that allows
+one to produce efficient and exact predicates.  It is used to build
+\ccc{CGAL::Filtered_kernel<CK>} and can be used for other
+predicates too.
+
+\ccc{EP} is the exact but supposedly slow predicate that is able to evaluate
+the predicate correctly.  It will be called only when the filtering predicate,
+\ccc{FP}, cannot compute the correct result.  This failure of \ccc{FP} must be
+done by throwing an exception.
+
+To convert the geometric objects that are the arguments of the predicate,
+we use the function objects \ccc{C2E} and \ccc{C2F}, which must be of the form
+\ccc{Cartesian_converter} or \ccc{Homogeneous_converter}.
+
+\ccInclude{CGAL/Filtered_predicate.h}
+
+\ccTypes
+\ccTypedef{typedef FP::result_type result_type;}
+{ The return type of the function operators.
+  It must also be the same type as \ccc{EP::result_type}.}
+
+\ccCreation
+\ccCreationVariable{fo}
+
+\ccConstructor{Filtered_predicate<EP, FP, C2E, C2F>();}{Default constructor.}
+
+\ccOperations
+
+\ccMemberFunction{template <class A1> result_type operator()(A1 a1);}
+{ The unary function operator for unary predicates. }
+
+\ccMemberFunction{template <class A1, class A2>
+                  result_type operator()(A1 a1, A2 a2);}
+{ The binary function operator for binary predicates. }
+
+Similar function operators are defined for up to 7 arguments.
+
+\ccExample
+
+The following example defines an efficient and exact version of the
+orientation predicate over three points using the Cartesian representation
+with double coordinates and without reference counting
+(\ccc{Simple_cartesian<double>::Point_2}).
+Of course, the orientation predicate can already be found in the kernel, but
+you can follow this example to filter your own predicates.
+It uses the fast but inexact predicate based on interval arithmetic for
+filtering and the slow but exact predicate based on multi-precision floats
+when the filtering predicate fails.
+
+\ccIncludeExampleCode{Filtered_kernel/Filtered_predicate.cpp}
+
+\end{ccRefClass}

@@ -1,0 +1,7 @@
+Package Principal Component Analysis
+- provides functions for linear fitting (in the least squares sense)
+  of sets of 2D and 3D kernel objects.
+- some basic shape analysis functions :
+  bounding_box() for point sets.
+  centroid() for sets of 2D and 3D kernel objects.
+  barycenter() only for sets of weighted points.

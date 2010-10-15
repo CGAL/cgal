@@ -1,0 +1,47 @@
+\begin{ccRefConcept}{PolynomialTraits_d::TotalDegree}
+
+\ccDefinition
+
+This \ccc{AdaptableUnaryFunction} computes the total degree 
+of a \ccc{PolynomialTraits_d::Polynomial_d}. 
+
+Given a (multivariate) monomial the sum of all appearing exponents 
+is the total degree of this monomial. 
+The total degree of a polynomial $p$ is the maximum of the total degrees 
+of all appearing (multivariate) monomials in $p$.\\
+For instance the total degree of $p = x_0^2x_1^3+x_1^4$ is $5$.
+
+The total degree of the zero polynomial is set to $0$. 
+From the mathematical point of view this should 
+be $-inf$, but this would imply an inconvenient return type. 
+
+ 
+
+\ccRefines 
+\ccc{AdaptableUnaryFunction}\\
+\ccc{CopyConstructible}\\
+\ccc{DefaultConstructible}\\
+
+
+\ccTypes
+
+\ccSetThreeColumns{xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx}{xxx}{}
+\ccTypedef{typedef int result_type;}{}\ccGlue
+\ccTypedef{typedef PolynomialTraits_d::Polynomial_d argument_type;}{}
+
+\ccOperations
+\ccCreationVariable{fo}
+\ccMethod{result_type operator()(argument_type p);}
+         {Computes the total degree of $p$.}
+
+
+%\ccHasModels
+
+\ccSeeAlso
+
+\ccRefIdfierPage{Polynomial_d}\\
+\ccRefIdfierPage{PolynomialTraits_d}\\
+\ccRefIdfierPage{PolynomialTraits_d::Degree}\\
+\ccRefIdfierPage{PolynomialTraits_d::DegreeVector}
+
+\end{ccRefConcept}

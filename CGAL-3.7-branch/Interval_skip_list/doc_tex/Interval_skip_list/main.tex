@@ -1,0 +1,78 @@
+\RCSdef{\IntervalskiplistRev}{$Id$}
+\RCSdefDate{\IntervalskiplistDate}{$Date$}
+% +------------------------------------------------------------------------+
+
+\ccParDims
+
+\ccUserChapter{Interval Skip List\label{chapter_Interval_skip_list}}
+\input{Interval_skip_list/PkgDescription.tex}
+\ccChapterRelease{\IntervalskiplistRev. \ \IntervalskiplistDate}
+\ccChapterAuthor{Andreas Fabri}
+
+\minitoc
+
+
+
+% +========================================================================+
+\section{Definition}
+% +========================================================================+
+  
+An interval skip list is a data structure for finding all intervals 
+that contain a point, and for stabbing queries, that is for answering 
+the question whether a given point is contained in an interval or not. 
+The implementation we provide is dynamic, that is the user can freely
+mix calls  to the methods \ccc{insert(..)}, \ccc{remove(..)}, 
+\ccc{find_intervals(..)}, and \ccc{is_contained(..)}
+
+The interval skip list class is parameterized with an interval class.
+
+The data structure was introduced by Hanson~\cite{h-islds-91}, and it is called
+interval skip list, because it is an extension of the randomized list
+structure known as skip list~\cite{p-slpab-90}.
+ 
+% +========================================================================+
+\section{Example Programs}
+% +========================================================================+
+\label{sectionIntervalskiplistExamples}
+
+We give two examples. The first one uses a basic interval class.  In
+the second example we create an interval skip list for the $z$-ranges
+of the faces of a terrain, allowing to answer level queries.
+
+% +-------------------------------------------------------------+
+\subsection{First Example with Simple Interval}
+
+The first example reads two numbers \ccc{n} and \ccc{d} from \ccc{std::cin}.
+It creates \ccc{n} intervals of length \ccc{d} with the left endpoint at \ccc{n}.
+It then reads out the intervals for the 1-dimensional points with
+coordinates $0 ... n+d$. 
+
+The interval skip list class has as template argument an interval
+class. In this example we use the class \ccc{Interval_skip_list_interval}.
+
+\newpage
+\ccIncludeExampleCode{Interval_skip_list/intervals.cpp}
+
+% +-------------------------------------------------------------+
+\subsection{Example with Faces of a Triangulated Terrain}
+
+
+
+The second example creates an interval skip list that allows to find all the faces
+of a terrain intersected by an horizontal plane at a given height.
+The data points for the terrain are  read from a file. 
+
+As model for the interval concept, we use a class that is a wrapper
+around a face handle of a triangulated terrain. Lower and upper bound
+of the interval are smallest and largest $z$-coordinate of the face.
+
+\ccIncludeExampleCode{Interval_skip_list/isl_terrain.cpp}
+
+
+% +--------------------------------------------------------+
+
+%\input{Interval_skip_list_ref/main}
+
+% EOF
+
+

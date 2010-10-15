@@ -1,0 +1,37 @@
+\begin{ccRefFunctionObjectConcept}{Kernel::ConstructIsoRectangle_2}
+A model for this must provide:
+
+\ccCreationVariable{fo}
+
+\ccMemberFunction{Kernel::Iso_rectangle_2 operator()(const Kernel::Point_2 &p, 
+                                                     const Kernel::Point_2 &q);}
+            {introduces an iso-oriented rectangle  with diagonal
+             opposite vertices $p$ and $q$ such that $p$ is the
+             lexicographically smallest point in the rectangle.}
+
+\ccMemberFunction{Kernel::Iso_rectangle_2 operator()(const Kernel::Point_2 &p, 
+                                                     const Kernel::Point_2 &q,
+                                                     int);}
+            {introduces an iso-oriented rectangle with diagonal
+             opposite vertices $p$ and $q$.  The \ccc{int} argument value is
+             only used to distinguish the two overloaded functions.
+             \ccPrecond{$p.x()<=q.x()$ and $p.y()<=q.y()$.}}
+
+\ccMemberFunction{Kernel::Iso_rectangle_2
+                  operator()(const Kernel::Point_2 &left, 
+                             const Kernel::Point_2 &right,
+                             const Kernel::Point_2 &bottom,
+                             const Kernel::Point_2 &top);}
+            {introduces an iso-oriented rectangle \ccVar\ whose
+             minimal $x$ coordinate is the one of \ccc{left}, the
+             maximal $x$ coordinate is the one of \ccc{right}, the
+             minimal $y$ coordinate is the one of \ccc{bottom}, the
+             maximal $y$ coordinate is the one of \ccc{top}.}
+
+\ccRefines
+\ccc{AdaptableFunctor} (with two arguments)
+
+\ccSeeAlso
+\ccRefIdfierPage{CGAL::Iso_rectangle_2<Kernel>} \\
+
+\end{ccRefFunctionObjectConcept}

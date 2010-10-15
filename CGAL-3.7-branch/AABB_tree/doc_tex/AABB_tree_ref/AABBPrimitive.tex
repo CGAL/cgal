@@ -1,0 +1,62 @@
+% +------------------------------------------------------------------------+
+% | Reference manual page: AABBPrimitive.tex
+% +------------------------------------------------------------------------+
+% | 21.02.2009   Author
+% | Package: Package
+% |
+\RCSdef{\RCSAABBPrimitiveRev}{$Id: header.tex 40270 2007-09-07 15:29:10Z lsaboret $}
+\RCSdefDate{\RCSAABBPrimitiveDate}{$Date: 2007-09-07 17:29:10 +0200 (Ven, 07 sep 2007) $}
+% |
+\ccRefPageBegin
+%%RefPage: end of header, begin of main body
+% +------------------------------------------------------------------------+
+
+
+\begin{ccRefConcept}{AABBPrimitive}
+
+%% \ccHtmlCrossLink{}     %% add further rules for cross referencing links
+%% \ccHtmlIndexC[concept]{} %% add further index entries
+
+\ccDefinition
+  
+The concept \ccRefName\ describes the requirements for the primitives stored in the AABB tree data structure. The concept encapsulates a type for the input datum (a geometric object) and an identifier (id) type through which those primitives are referred to. The concept \ccRefName\ also refines the concepts DefaultConstructible and Assignable.
+
+\ccTypes
+
+\ccNestedType{Point}{3D point type.}
+
+\ccNestedType{Datum}{Type of input datum.}
+
+\ccNestedType{Id}{Type of identifiers through which the input objects are referred to. It must be a model of the concepts DefaultConstructible and Assignable.}
+
+
+% variable name
+\ccCreationVariable{primitive}  
+
+\ccOperations
+
+\ccMethod{Datum datum();}{Returns the datum (geometric object) represented by the primitive.}
+
+\ccMethod{Id id();}{Returns the corresponding identifier. This identifier is only used as a reference for the objects in the output of the \ccc{AABB_tree} methods.}
+
+\ccMethod{Point reference_point();}{Returns a 3D point located on the geometric object represented by the primitive. This function is used to sort the primitives during the AABB tree construction as well as to construct the search KD-tree internal to the AABB tree used to accelerate distance queries.}
+
+\ccSeeAlso
+\ccc{AABB_tree<AT>}
+
+\ccExample
+
+The \ccc{Primitive} type can be, e.g., a wrapper around a \ccc{Handle}. Assume for instance that the input objects are the triangle faces of a mesh stored as a \ccc{CGAL::Polyhedron}. The \ccc{Datum} would be a \ccc{Triangle_3} and the \ccc{Id} would be a polyhedron \ccc{Face_handle}. Method \ccc{datum()} can return either a \ccc{Triangle_3} constructed on the fly from the face handle or a \ccc{Triangle_3} stored internally. This provides a way for the user to trade memory for efficiency.
+
+\ccHasModels
+\ccc{AABB_polyhedron_triangle_primitive<GeomTraits,Polyhedron>},\\
+\ccc{AABB_polyhedron_segment_primitive<GeomTraits,Polyhedron>}.
+
+\end{ccRefConcept}
+
+% +------------------------------------------------------------------------+
+%%RefPage: end of main body, begin of footer
+\ccRefPageEnd
+% EOF
+% +------------------------------------------------------------------------+
+

@@ -1,0 +1,18 @@
+\begin{ccRefFunctionObjectClass}{Max<NT,Compare>}
+
+\ccDefinition
+
+The function object class \ccRefName\ returns the larger of two values.
+The default value for \ccc{Compare} is \ccc{std::less}.
+
+\ccInclude{CGAL/number_utils_classes.h}
+
+
+\ccIsModel
+\ccRefConceptPage{AdaptableFunctor}
+
+\ccCreationVariable{f}
+\ccMethod{NT operator()(const NT& ntval1, const NT& ntval2);}
+{returns the larger of \ccc{ntval1} and \ccc{ntval2}.}
+
+\end{ccRefFunctionObjectClass}

@@ -1,0 +1,602 @@
+% +------------------------------------------------------------------------+
+% | Reference manual page: Arrangement_2.tex
+% +------------------------------------------------------------------------+
+% | 
+% | Package: Arrangement_2
+% | 
+% +------------------------------------------------------------------------+
+
+\ccRefPageBegin
+
+\begin{ccRefClass}{Arrangement_2<Traits,Dcel>}
+\label{arr_ref:arr}
+
+\ccDefinition
+%============
+
+An object \ccc{arr} of the class \ccClassTemplateName\ represents the
+planar subdivision induced by a set of $x$-monotone curves and isolated
+points into maximally connected cells. The arrangement is represented as
+a doubly-connected edge-list ({\sc Dcel}) such that each {\sc Dcel} vertex
+is associated with a point of the plane and each edge is
+associated with an $x$-monotone curve whose interior is disjoint from all
+other edges and vertices. Recall that an arrangement
+edge is always comprised of a pair of twin {\sc Dcel} halfedges.
+
+The \ccClassTemplateName\ template has two parameters:
+\begin{itemize}
+\item The \ccc{Traits} template-parameter should be instantiated with
+a model of the \ccc{ArrangementBasicTraits_2} concept. The traits
+class defines the types of $x$-monotone curves and two-dimensional
+points, namely \ccc{X_monotone_curve_2} and \ccc{Point_2},
+respectively, and supports basic geometric predicates on them.
+\item The \ccc{Dcel} template-parameter should be instantiated with
+a class that is a model of the \ccc{ArrangementDcel} concept. The
+value of this parameter is by default
+\ccc{Arr_default_dcel<Traits>}.
+\end{itemize}
+The available traits classes and {\sc Dcel} classes are described below. 
+
+\ccInclude{CGAL/Arrangement_2.h}
+
+\ccTypes
+%=======
+
+\ccThree{typedef typename Traits_2::X_monotone_curve_2}{X_monotone_2;}{}
+\ccThreeToTwo
+\ccTypedef{typedef Arrangement_2<Traits_2,Dcel> Self;}
+  {a private type used as an abbreviation of the \ccRefName\ type hereafter.}
+  
+\ccNestedType{Traits_2}{the traits class in use.}
+\ccGlue
+\ccNestedType{Dcel}{the {\sc Dcel} representation of the arrangement.}
+
+\ccTypedef{typedef typename Traits_2::Point_2 Point_2;}
+  {the point type, as defined by the traits class.}
+\ccGlue
+\ccTypedef{typedef typename Traits_2::X_monotone_curve_2 X_monotone_curve_2;}
+  {the $x$-monotone curve type, as defined by the traits class.}
+
+\ccTypedef{typedef typename Dcel::Size Size;}
+  {the size type (equivalent to \ccc{size_t}).}
+
+\ccThree{Arrangement_2<Traits,Dcel>::Halfedge_iterator}{}{}
+\ccThreeToTwo
+\ccNestedType{Vertex}{represents a $0$-dimensional cell in the subdivision.
+                      A vertex is always associated with a point.}
+\ccGlue
+\ccNestedType{Halfedge}{represents (together with its twin --- see below)
+                   a $1$-dimensional cell in the subdivision.
+                   A halfedge is always associated with an $x$-monotone curve.}
+\ccGlue
+\ccNestedType{Face}{represents a $2$-dimensional cell in the subdivision.}
+
+The following handles, iterators, and circulators all have respective
+constant counterparts (for example, in addition to \ccc{Vertex_iterator}
+the type \ccc{Vertex_const_iterator} is also defined).
+See~\cite{cgal:ms-strg-96} for a discussion of constant versus mutable
+iterator types. The mutable types are assignable to their constant
+counterparts. 
+
+\ccc{Vertex_iterator}, \ccc{Halfedge_iterator}, and
+\ccc{Face_iterator} are equivalent to the respective handle types (namely,
+\ccc{Vertex_handle}, \ccc{Halfedge_handle}, and \ccc{Face_handle}). Thus,
+wherever the handles appear in function parameter lists, the respective
+iterators can be passed as well.
+   
+\ccNestedType{Vertex_handle}{a handle for an arrangement vertex.}
+\ccGlue
+\ccNestedType{Halfedge_handle}{a handle for a halfedge.
+          The halfedge and its twin form together an arrangement edge.}
+\ccGlue
+\ccNestedType{Face_handle}{a handle for an arrangement face.}
+
+\ccNestedType{Vertex_iterator}{a bidirectional iterator over the
+       vertices of the arrangement. Its value-type is \ccc{Vertex}.}
+\ccGlue
+\ccNestedType{Halfedge_iterator}{a bidirectional iterator over the
+       halfedges of the arrangement.  Its value-type is \ccc{Halfedge}.}
+\ccGlue    
+\ccNestedType{Edge_iterator}{a bidirectional iterator over the
+       edges of the arrangement. (That is, it skips every other halfedge.)
+       Its value-type is \ccc{Halfedge}.}
+\ccGlue    
+\ccNestedType{Face_iterator}{a bidirectional iterator over the
+       faces of arrangement.  Its value-type is \ccStyle{Face}.}
+\ccGlue    
+\ccNestedType{Unbounded_face_iterator}{a bidirectional iterator over the
+       unbounded faces of arrangement.  Its value-type is \ccStyle{Face}.}
+    
+\ccNestedType{Halfedge_around_vertex_circulator}{a bidirectional circulator
+       over the halfedges that have a given vertex as their target.  
+       Its value-type is \ccStyle{Halfedge}.}
+\ccGlue
+\ccNestedType{Ccb_halfedge_circulator}{a bidirectional circulator over the
+       halfedges of a CCB (connected component of the boundary).
+       Its value-type is \ccStyle{Halfedge}. Each
+       bounded face has a single CCB representing it outer boundary, and may
+       have several inner CCBs representing its holes.}
+\ccGlue
+\ccNestedType{Hole_iterator}{a bidirectional iterator over the holes 
+       (i.e., inner CCBs) contained inside a given face.
+       Its value type is \ccStyle{Ccb_halfedge_circulator}.}
+\ccGlue
+\ccNestedType{Isolated_vertex_iterator}{a bidirectional iterator over the
+       isolated vertices contained inside a given face.
+       Its value type is \ccStyle{Vertex}.}
+
+\ccCreation
+\ccCreationVariable{arr}
+%=======================
+    
+\ccConstructor{Arrangement_2<Traits, Dcel>();} 
+    {constructs an empty arrangement containing one unbounded face,
+     which corresponds to the entire plane.}
+    
+\ccConstructor{Arrangement_2<Traits, Dcel>(const Self& other);}
+    {copy constructor.}
+        
+\ccConstructor{Arrangement_2<Traits, Dcel>(const Traits_2 *traits);}
+    {constructs an empty arrangement that uses the given \ccc{traits}
+     instance for performing the geometric predicates.}
+
+
+\ccThree{Halfedge_iterator}{arr.number_of_halfedges()~}{}
+\ccThreeToTwo
+\ccHeading{Assignment Methods}
+%=============================
+
+\ccMethod{Self& operator= (other);}
+    {assignment operator.}
+
+\ccMethod{void assign (const Self& other);}
+    {assigns the contents of another arrangement.}
+
+\ccMethod{void clear ();}
+    {clears the arrangement.}
+
+
+\ccAccessFunctions
+%=================
+
+\ccMethod{Traits_2* get_traits();}
+    {returns the traits object used by the arrangement instance.
+    A \ccc{const} version is also available.}
+
+\ccMethod{bool is_empty() const;}
+    {determines whether the arrangement is empty (contains only the unbounded
+     face, with no vertices or edges).}
+
+All \ccc{_begin()} and \ccc{_end()} methods listed below also have \ccc{const}
+counterparts, returning constant iterators instead of mutable ones:
+
+$\bullet$ {\sl Accessing the Arrangement Vertices:}
+%----------------------------------------------
+
+\ccMethod{Size number_of_vertices() const;}
+    {returns the number of vertices in the arrangement.}
+
+\ccMethod{Size number_of_isolated_vertices() const;}
+    {returns the total number of isolated vertices in the arrangement.}
+
+\ccMethod{Vertex_iterator vertices_begin();}
+    {returns the begin-iterator of the vertices in the arrangement.}
+    
+\ccMethod{Vertex_iterator vertices_end();}
+    {returns the past-the-end iterator of the vertices in the arrangement.}
+
+\ccMethod{Size number_of_vertices_at_infinity() const;}
+    {returns the number of arrangement vertices that lie at infinity and
+     are not associated with valid points. Such vertices are not considered
+     to be regular arrangement vertices and \ccVar\ccc{.number_of_vertices()}
+     does not count them.}
+
+$\bullet$ {\sl Accessing the Arrangement Edges:}
+%-------------------------------------------
+
+\ccMethod{Size number_of_halfedges() const;}
+    {returns the number of halfedges in the arrangement.}
+
+\ccMethod{Halfedge_iterator halfedges_begin();}
+    {returns the begin-iterator of the halfedges in the arrangement.}
+ 
+\ccMethod{Halfedge_iterator halfedges_end();}
+    {returns the past-the-end iterator of the halfedges in the arrangement.}
+
+\ccMethod{Size number_of_edges() const;}
+    {returns the number of edges in the arrangement (equivalent to
+     \ccc{arr.number_of_halfedges() / 2}).}
+
+\ccMethod{Edge_iterator edges_begin();}
+    {returns the begin-iterator of the edges in the arrangement.}
+ 
+\ccMethod{Edge_iterator edges_end();}
+    {returns the past-the-end iterator of the edges in the arrangement.}
+
+$\bullet$ {\sl Accessing the Arrangement Faces:}
+%-------------------------------------------
+
+\ccMethod{Face_handle unbounded_face();}
+    {returns a handle for an unbounded face of the arrangement.
+     In case the arrangement comprises only bounded curves, there is a single
+     unbounded face and the function returns a handle to it. Otherwise, a
+     handle to an arbitrary unbounded face is returned.}
+
+\ccMethod{Size number_of_faces() const;}
+    {returns the number of faces in the arrangement.}
+
+\ccMethod{Face_iterator faces_begin();}
+    {returns the begin-iterator of the faces in the arrangement.}
+    
+\ccMethod{Face_iterator faces_end();}
+    {returns the past-the-end iterator of the faces in the arrangement.}
+
+\ccMethod{Size number_of_unbounded_faces() const;}
+    {returns the number of unbounded faces in the arrangement.
+     Note \ccVar\ccc{.number_of_faces()} also counts the unbounded faces
+     of the arrangement.}
+
+\ccMethod{Unbounded_face_iterator unbounded_faces_begin();}
+    {returns the begin-iterator of the unbounded faces in the arrangement.}
+    
+\ccMethod{Unbounded_face_iterator unbounded_faces_end();}
+    {returns the past-the-end iterator of the unbounded faces in the
+     arrangement.}
+
+\ccMethod{Face_handle fictitious_face();}
+    {returns a handle to the fictitious face of the arrangement.
+    If the arrangement is not unbounded, there is no fictitious
+    face. In this case the result is not deterministic. A const
+    version is also available.}
+     
+\begin{ccAdvanced}
+
+\ccHeading{Casting away Constness}
+%=================================
+
+It is sometime necessary to convert a constant (non-mutable) handle to
+a mutable handle. For example, the result of a point-location query is
+a non-mutable handle for the arrangement cell containing the query point.
+Assume that the query point lies on a edge, so we obtain a
+\ccc{Halfedge_const_handle}; if we wish to use this handle and remove the
+edge, we first need to cast away its ``constness''.
+ 
+\ccMethod{Vertex_handle non_const_handle (Vertex_const_handle v);}
+    {casts the given constant vertex handle to an equivalent mutable handle.}
+
+\ccMethod{Halfedge_handle non_const_handle (Halfedge_const_handle e);}
+    {casts the given constant halfedge handle to an equivalent mutable handle.}
+
+\ccMethod{Face_handle non_const_handle (Face_const_handle f);}
+    {casts the given constant face handle to an equivalent mutable handle.}
+
+\end{ccAdvanced}
+
+\ccModifiers
+%===========
+
+$\bullet$ {\sl Specialized Insertion Methods:}
+%------------------------------------------
+
+\ccMethod{Vertex_handle insert_in_face_interior (const Point_2& p,
+                                                 Face_handle f);}
+   {inserts the point \ccc{p} into the arrangement as an isolated vertex in
+    the interior of the face \ccc{f} and returns a handle for the newly
+    created vertex.
+    \ccPrecond{\ccc{p} lies in the interior of the face \ccc{f}.}}
+
+\ccMethod{Halfedge_handle insert_in_face_interior
+                                      (const X_monotone_curve_2& c, 
+                                       Face_handle f);}
+   {inserts the curve \ccc{c} that is entirely contained in the interior
+    of a given face \ccc{f}. If \ccc{c} is a bounded curve two new vertices
+    that correspond to \ccc{c}'s endpoints are created and connected with a
+    newly created halfedge pair, which forms a new hole (inner component)
+    in the face \ccc{f}. If \ccc{c} is unbounded, at least one of the two
+    vertices that represents its end lies at infinity, and its creation
+    modifies the outer boundary of \ccc{f}.
+    The function returns a handle for one of the new halfedges
+    corresponding to the inserted curve, directed in lexicographic
+    increasing order (from left to right).
+    \ccPrecond{\ccc{c} lies entirely in the interior of the face \ccc{f} and
+    is disjoint from all existing arrangement vertices and edges (in
+    particular, both its endpoints are not already associated with existing
+    arrangement vertices).}
+    \ccPrecond{In case \ccc{c} is an unbounded curve, \ccc{f} must be an
+    unbounded face.}}
+
+\ccMethod{Halfedge_handle insert_from_left_vertex
+                                      (const X_monotone_curve_2& c,
+                                       Vertex_handle v);}
+  {inserts the curve \ccc{c} into the arrangement, such that its left
+   endpoint corresponds to a given arrangement vertex. As a result, a new
+   vertex that correspond to \ccc{c}'s right endpoint is created and
+   connected to \ccc{v} with a newly created halfedge pair. If \ccc{c} has
+   an unbounded right end, the new vertex lies at infinity and the
+   unbounded face that contains the interior of the curve is split. 
+   The function returns a handle for one of the new halfedges corresponding
+   to the inserted curve, directed towards the newly created vertex ---
+   that is, directed in lexicographic increasing order (from left to right).
+   \ccPrecond{The interior of \ccc{c} is disjoint from all existing arrangement
+   vertices and edges.}
+   \ccPrecond{\ccc{v} is associated with the left endpoint of \ccc{c}.}
+   \ccPrecond{The right endpoint of \ccc{c} is not already associated with
+   an existing arrangement vertex.}}
+
+\ccMethod{Halfedge_handle insert_from_right_vertex
+                                      (const X_monotone_curve_2& c,
+                                       Vertex_handle v);}
+  {inserts the curve \ccc{c} into the arrangement, such that its right
+   endpoint corresponds to a given arrangement vertex. As a result, a new
+   vertex that correspond to \ccc{c}'s left endpoint is created and
+   connected to \ccc{v} with a newly created halfedge pair.  If \ccc{c} has
+   an unbounded left end, the new vertex lies at infinity and the
+   unbounded face that contains the interior of the curve is split.
+   The function returns a handle for one of the new halfedges corresponding
+   to the inserted curve, directed to the newly created vertex ---
+   that is, directed in lexicographic decreasing order (from right to left).
+   \ccPrecond{The interior of \ccc{c} is disjoint from all existing arrangement
+   vertices and edges.}
+   \ccPrecond{\ccc{v} is associated with the right endpoint of \ccc{c}.}
+   \ccPrecond{The left endpoint of \ccc{c} is not already associated with
+   an existing arrangement vertex.}}
+
+\ccMethod{Halfedge_handle insert_at_vertices (const X_monotone_curve_2& c,
+                                              Vertex_handle v1, 
+                                              Vertex_handle v2);}
+  {inserts the curve \ccc{c} into the arrangement, such that both \ccc{c}'s
+   endpoints correspond to existing arrangement vertices, given by \ccc{v1}
+   and \ccc{v2}. The function creates a new halfedge pair that connects the
+   two vertices, and returns a handle for the halfedge directed from \ccc{v1}
+   to \ccc{v2}.
+   \ccPrecond{The interior of \ccc{c} is disjoint from all existing arrangement
+   vertices and edges.}
+   \ccPrecond{\ccc{c} must not be an unbounded curve.}
+   \ccPrecond{\ccc{v1} and \ccc{v2} are associated with \ccc{c}'s endpoints.} 
+   \ccPrecond{If \ccc{v1} and \ccc{v2} are already
+              connected by an edge, this edge represents an $x$-monotone
+              curve that is interior-disjoint from \ccc{c}).}}
+
+\begin{ccAdvanced}
+
+\ccMethod{Halfedge_handle insert_in_face_interior
+                            (const X_monotone_curve_2& c,
+                             Halfedge_handle fict_pred1,
+                             Halfedge_handle fict_pred2 = Halfedge_handle());}
+  {inserts an unbounded curve \ccc{c} into the arrangement, such that \ccc{c}
+   is entirely contained within a single unbounded face of the arrangement.
+   \ccc{fict_pred1} specifies the fictitious halfedge that should contain the
+   vertex at infinity that corresponds to the unbounded end of \ccc{c}. If
+   both ends of \ccc{c} are unbounded, \ccc{fict_pred1} indicated the place
+   for its left end and \ccc{fict_pred2} indicated a place for its right end.  
+   The function returns a handle for one of the new halfedges directed
+   (lexicographically) from left to right.
+   \ccPrecond{\ccc{c} is an unbounded curve disjoint from all existing
+   arrangement vertices and edges.}
+   \ccPrecond{\ccc{fict_pred1} (and \ccc{fict_pred2}) are fictitious halfedges
+   that contains the unbounded end(s) of \ccc{c}. If both halfedges are given
+   they must be both incident to the same unbounded face.}}
+
+\ccMethod{Halfedge_handle insert_from_left_vertex
+                                      (const X_monotone_curve_2& c,
+                                       Halfedge_handle pred);}
+  {inserts the curve \ccc{c} into the arrangement, such that its left
+   endpoint corresponds to a given arrangement vertex. This vertex is the
+   target vertex of the halfedge \ccc{pred}, such that \ccc{c} is inserted
+   to the circular list of halfedges around \ccc{pred->target()} right
+   between \ccc{pred} and its successor. The function returns a handle for
+   one of the new halfedges directed (lexicographically) from left to right.
+   \ccPrecond{The interior of \ccc{c} is disjoint from all existing arrangement
+   vertices and edges.}
+   \ccPrecond{\ccc{pred->target()} is associated with the left endpoint
+   of \ccc{c}, and \ccc{c} should be inserted after \ccc{pred} in a
+   clockwise order around this vertex.} 
+   \ccPrecond{The right endpoint of \ccc{c} is not already associated with
+   an existing arrangement vertex.}}
+
+\ccMethod{Halfedge_handle insert_from_left_vertex
+                                      (const X_monotone_curve_2& c,
+                                       Halfedge_handle pred,
+                                       Halfedge_handle fict_pred);}
+  {inserts an unbounded curve \ccc{c} into the arrangement, such that its left
+   endpoint is bounded and corresponds to a given arrangement vertex. This
+   vertex is the target vertex of the halfedge \ccc{pred}, such that \ccc{c}
+   is inserted to the circular list of halfedges around \ccc{pred->target()}
+   right between \ccc{pred} and its successor. Similarly, \ccc{fict_pred}
+   specifies the fictitious halfedge that should contain the vertex at infinity
+   that corresponds to the unbounded right end of \ccc{c}.
+   The function returns a handle for one of the new halfedges directed
+   (lexicographically) from left to right.
+   \ccPrecond{The interior of \ccc{c} is disjoint from all existing arrangement
+   vertices and edges. \ccc{c} must have a bounded left endpoint and an
+   unbounded right end.}
+   \ccPrecond{\ccc{pred->target()} is associated with the left endpoint
+   of \ccc{c}, and \ccc{c} should be inserted after \ccc{pred} in a
+   clockwise order around this vertex.} 
+   \ccPrecond{\ccc{fict_pred} is a fictitious halfedge that contains the
+   unbounded right end of \ccc{c}.}}
+
+\ccMethod{Halfedge_handle insert_from_right_vertex
+                                      (const X_monotone_curve_2& c,
+                                       Halfedge_handle pred);}
+  {inserts the curve \ccc{c} into the arrangement, such that its right
+   endpoint corresponds to a given arrangement vertex. This vertex is the
+   target vertex of the halfedge \ccc{pred}, such that \ccc{c} is inserted
+   to the circular list of halfedges around \ccc{pred->target()} right
+   between \ccc{pred} and its successor. The function returns a handle for
+   one of the new halfedges directed (lexicographically) from right to left.
+   \ccPrecond{The interior of \ccc{c} is disjoint from all existing arrangement
+   vertices and edges.}
+   \ccPrecond{\ccc{pred->target()} is associated with the right endpoint
+   of \ccc{c}, and \ccc{c} should be inserted after \ccc{pred} in a
+   clockwise order around this vertex.}
+   \ccPrecond{The left endpoint of \ccc{c} is not already associated with
+   an existing arrangement vertex.}}
+
+\ccMethod{Halfedge_handle insert_from_right_vertex
+                                      (const X_monotone_curve_2& c,
+                                       Halfedge_handle pred,
+                                       Halfedge_handle fict_pred);}
+  {inserts an unbounded curve \ccc{c} into the arrangement, such that its right
+   endpoint is bounded and corresponds to a given arrangement vertex. This
+   vertex is the target vertex of the halfedge \ccc{pred}, such that \ccc{c}
+   is inserted to the circular list of halfedges around \ccc{pred->target()}
+   right between \ccc{pred} and its successor. Similarly, \ccc{fict_pred}
+   specifies the fictitious halfedge that should contain the vertex at infinity
+   that corresponds to the unbounded left end of \ccc{c}.
+   The function returns a handle for one of the new halfedges directed
+   (lexicographically) from right to left.
+   \ccPrecond{The interior of \ccc{c} is disjoint from all existing arrangement
+   vertices and edges. \ccc{c} must have a bounded right endpoint and an
+   unbounded left end.}
+   \ccPrecond{\ccc{pred->target()} is associated with the right endpoint
+   of \ccc{c}, and \ccc{c} should be inserted after \ccc{pred} in a
+   clockwise order around this vertex.} 
+   \ccPrecond{\ccc{fict_pred} is a fictitious halfedge that contains the
+   unbounded left end of \ccc{c}.}}
+
+\ccMethod{Halfedge_handle insert_at_vertices (const X_monotone_curve_2& c,
+                                              Halfedge_handle pred1, 
+                                              Vertex_handle v2);}
+  {inserts the curve \ccc{c} into the arrangement, such that both \ccc{c}'s
+   endpoints correspond to existing arrangement vertices, given by
+   \ccc{pred1->target()} and \ccc{v2}. The function creates a new halfedge
+   pair that connects the two vertices (where the corresponding halfedge is
+   inserted right between \ccc{pred1} and its successor around \ccc{pred1}'s
+   target vertex) and returns a handle for the halfedge directed from
+   \ccc{pred1->target()} to \ccc{v2}.
+   \ccPrecond{The interior of \ccc{c} is disjoint from all existing arrangement
+   vertices and edges.}
+   \ccPrecond{\ccc{pred1->target()} and \ccc{v2} are associated with 
+   \ccc{c}'s endpoints.} 
+   \ccPrecond{If \ccc{pred1->target} and \ccc{v2} are already connected
+              by an edge, this edge represents an $x$-monotone curve that
+              is interior-disjoint from \ccc{c}).}}
+
+\ccMethod{Halfedge_handle insert_at_vertices (const X_monotone_curve_2& c,
+                                              Halfedge_handle pred1, 
+                                              Halfedge_handle pred2);}
+  {inserts the curve \ccc{c} into the arrangement, such that both \ccc{c}'s
+   endpoints correspond to existing arrangement vertices, given by
+   \ccc{pred1->target()} and \ccc{pred2->target()}. The function creates a
+   new halfedge pair that connects the two vertices (with \ccc{pred1} and
+   \ccc{pred2} indicate the exact place for these halfedges around the two
+   target vertices) and returns a handle for the halfedge directed from
+   \ccc{pred1->target()} to \ccc{pred2->target()}.
+   \ccPrecond{The interior of \ccc{c} is disjoint from all existing arrangement
+   vertices and edges.}
+   \ccPrecond{\ccc{pred1->target()} and \ccc{pred2->target()} are associated
+   with \ccc{c}'s endpoints.} 
+   \ccPrecond{If \ccc{pred1->target} and \ccc{pred2->target()} are already
+              connected by an edge, this edge represents an $x$-monotone
+              curve that is interior-disjoint from \ccc{c}).}}
+
+\end{ccAdvanced}
+
+$\bullet$ {\sl Modifying Vertices and Edges:}
+%-----------------------------------------
+
+\ccMethod{Vertex_handle modify_vertex (Vertex_handle v,
+                                       const Point_2& p);}
+   {sets \ccc{p} to be the point associated with the vertex \ccc{v}.
+    The function returns a handle for the modified vertex (same as \ccc{v}).
+    \ccPrecond{\ccc{v} is not a vertex at infinity and \ccc{p} is
+               geometrically equivalent to the point currently associated
+               with \ccc{v}.}}
+
+\ccMethod{Face_handle remove_isolated_vertex (Vertex_handle v);}
+   {removes the isolated vertex \ccc{v} from the arrangement. The function
+    returns the face \ccc{f} that used to contain the isolated vertex.
+    \ccPrecond{\ccc{v} is an isolated vertex (has no incident edges).}}
+
+\ccMethod{Halfedge_handle modify_edge (Halfedge_handle e,
+                                       const X_monotone_curve_2& c);}
+   {sets \ccc{c} to be the $x$-monotone curve associated with the edge \ccc{e}.
+    The function returns a handle for the modified edge (same as \ccc{e}).
+    \ccPrecond{\ccc{c} is geometrically equivalent to the curve currently
+               associated with \ccc{e}.}}
+
+\ccMethod{Halfedge_handle split_edge (Halfedge_handle e,
+                                      const X_monotone_curve_2& c1, 
+                                      const X_monotone_curve_2& c2);}
+  {splits the edge \ccc{e} into two edges (more precisely, into two halfedge
+   pairs), associated with the given subcurves \ccc{c1} and \ccc{c2}, and
+   creates a vertex that corresponds to the split point. 
+   The function returns a handle for the halfedge, whose source is the same
+   as \ccc{e->source()} and whose target vertex is the split point.
+   \ccPrecond{Either \ccc{c1}'s left endpoint and \ccc{c2}'s right endpoint
+   correspond to \ccc{e}'s end-vertices such that \ccc{c1}'s right endpoint
+   and \ccc{c2}'s left endpoint are equal and define the split point ---
+   or vice-versa (with change of roles between \ccc{c1} and \ccc{c2}).}}
+
+\ccMethod{Halfedge_handle merge_edge (Halfedge_handle e1,
+                                      Halfedge_handle e2, 
+                                      const X_monotone_curve_2& c);}
+  {merges the edges represented by \ccStyle{e1} and \ccStyle{e2} into
+   a single edge, associated with the given merged curve \ccc{c}.
+   Denote \ccc{e1}'s end-vertices as $u_1$ and $v$, while \ccc{e2}'s
+   end-vertices are denoted $u_2$ and $v$. The function removes the
+   common vertex $v$ returns a handle for one of the merged halfedges,
+   directed from $u_1$ to $u_2$.
+   \ccPrecond{\ccc{e1} and \ccc{e2} share a common end-vertex, such that the
+   two other end-vertices of the two edges are associated with \ccc{c}'s
+   endpoints.}}
+
+\ccMethod{Face_handle remove_edge (Halfedge_handle e,
+                                   bool remove_source = true,
+                                   bool remove_target = true);}
+  {removes the edge \ccStyle{e} from the arrangement. Since the \ccc{e} may
+   be the only edge incident to its source vertex (or its target vertex),
+   this vertex can be removed as well. The flags \ccc{remove_source} and
+   \ccc{remove_target} indicate whether the endpoints of \ccc{e} should be
+   removed, or whether they should be left as isolated vertices in the
+   arrangement.
+   If the operation causes two faces to merge, the merged face is returned.
+   Otherwise, the face to which the edge was incident is returned.}
+
+\ccHeading{Miscellaneous}
+% =======================
+
+\ccMethod{bool is_valid () const;}
+   {returns \ccc{true} if \ccVar\ represents a valid instance of 
+   \ccClassTemplateName. In particular, the functions checks the topological 
+    structure of the arrangement and assures that it is valid. In addition, 
+    the function performs several simple geometric tests to ensure the 
+    validity of some of the geometric properties of the arrangement. Namely, 
+    it checks that all arrangement vertices are associated with distinct
+    points, and that the halfedges around every vertex are ordered clockwise.}
+
+\ccSeeAlso
+\ccc{ArrangementDcel}\lcTex{(\ccRefPage{ArrangementDcel})}\\
+\ccc{Arr_default_dcel<Traits>}
+  \lcTex{(\ccRefPage{CGAL::Arr_default_dcel<Traits>})}\\
+\ccc{ArrangementBasicTraits_2}\lcTex{(\ccRefPage{ArrangementBasicTraits_2})}\\
+\ccc{CGAL::is_valid}\lcTex{(\ccRefPage{CGAL::is_valid})}\\
+Insertion functions\lcTex{ 
+  (\ccRefPage{CGAL::insert}, 
+   \ccRefPage{CGAL::insert_non_intersecting_curve}, 
+   \ccRefPage{CGAL::insert_non_intersecting_curves}, 
+   \ccRefPage{CGAL::insert_point})}
+  \lcRawHtml{
+    (<I><A HREF="Function_insert.html">CGAL::insert</A></I>,
+    <I><A HREF="Function_insert_non_intersecting_curve.html">CGAL::insert_non_intersecting_curve</A></I>,
+    <I><A HREF="Function_insert_non_intersecting_curves.html">CGAL::insert_non_intersecting_curves</A></I>,
+    <I><A HREF="Function_insert_point.html">CGAL::insert_point</A></I>)
+  }\\
+Removal functions
+  \lcTex{(\ccRefPage{CGAL::remove_edge}, \ccRefPage{CGAL::remove_vertex})}
+  \lcRawHtml{
+    (<I><A HREF="Function_remove_edge.html">CGAL::remove_edge</A></I>,
+    <I><A HREF="Function_remove_vertex.html">CGAL::remove_vertex</A></I>)
+  }\\
+\ccc{CGAL::overlay}\lcTex{(\ccRefPage{CGAL::overlay})}\\
+Input/output functions
+  \lcTex{(\ccRefPage{CGAL::read},\ccRefPage{CGAL::write})}
+  \lcRawHtml{
+    (<I><A HREF="Function_read.html">CGAL::read</A></I>,
+    <I><A HREF="Function_write.html">CGAL::write</A></I>)
+  }\\
+
+\end{ccRefClass}
+
+\ccRefPageEnd

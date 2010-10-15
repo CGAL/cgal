@@ -1,0 +1,14 @@
+\begin{ccRefFunction}{oformat}
+
+\ccDefinition
+
+Convenience function to construct an output representation (\ccc{Output_rep}) for type \texttt{T}.
+
+\ccFunction{template <class T> Output_rep<T> oformat( const T& t);}
+           {Generic IO for type \ccc{T}.}
+
+\ccFunction{template <class T, typename F> Output_rep<T,F> oformat( const T& t, F );}
+           {Generic IO for type \ccc{T} with formatting tag.}
+
+
+\end{ccRefFunction}

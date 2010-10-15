@@ -1,0 +1,56 @@
+% +------------------------------------------------------------------------+
+% | Reference manual page: HalfedgeDS_halfedge_min_base.tex
+% +------------------------------------------------------------------------+
+% | 22.03.1999   Lutz Kettner
+% | Package: HalfedgeDS
+% | 
+\RCSdef{\RCSHalfedgeDShalfedgebaseRev}{$Id$}
+\RCSdefDate{\RCSHalfedgeDShalfedgebaseDate}{$Date$}
+% +------------------------------------------------------------------------+
+
+\ccRefPageBegin
+
+%%RefPage: end of header, begin of main body
+% +------------------------------------------------------------------------+
+
+
+\begin{ccRefClass}{HalfedgeDS_halfedge_min_base<Refs>}
+
+\ccDefinition
+  
+The class \ccRefName\ is a model of the \ccc{HalfedgeDSHalfedge}
+concept. \ccc{Refs} is an instantiation of a \ccc{HalfedgeDS}. 
+It is equivalent to \ccc{CGAL::HalfedgeDS_halfedge_base< Refs, 
+CGAL::Tag_false, CGAL::Tag_false, CGAL::Tag_false>}.
+The class contains support for the next and the opposite pointer and
+the required type definitions. It can be used for deriving own halfedges.
+
+\ccInclude{CGAL/HalfedgeDS_halfedge_min_base.h}
+
+\ccIsModel
+
+\ccRefConceptPage{HalfedgeDSHalfedge}
+
+\ccCreation
+\ccCreationVariable{h}
+
+\ccConstructor{HalfedgeDS_halfedge_min_base();}{default constructor.}
+
+\ccSeeAlso
+
+\ccRefConceptPage{HalfedgeDS<Traits,Items,Alloc>}\\
+\ccRefConceptPage{HalfedgeDSItems}\\
+\ccRefConceptPage{PolyhedronItems_3}\\
+\ccRefIdfierPage{CGAL::HalfedgeDS_min_items}\\
+\ccRefIdfierPage{CGAL::HalfedgeDS_vertex_min_base<Refs>}\\
+\ccRefIdfierPage{CGAL::HalfedgeDS_face_min_base<Refs>}\\
+\ccRefIdfierPage{CGAL::HalfedgeDS_halfedge_base<Refs>}
+
+\end{ccRefClass}
+
+% +------------------------------------------------------------------------+
+%%RefPage: end of main body, begin of footer
+\ccRefPageEnd
+% EOF
+% +------------------------------------------------------------------------+
+

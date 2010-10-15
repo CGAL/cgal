@@ -1,0 +1,18 @@
+\begin{ccRefFunctionObjectConcept}{Kernel::ConstructSegment_3}
+A model for this must provide:
+
+\ccCreationVariable{fo}
+
+\ccMemberFunction{Kernel::Segment_3 operator()(const Kernel::Point_3 &p, const Kernel::Point_3 &q);}
+            {introduces a segment  with source $p$
+             and target $q$. It is directed from the source towards
+             the target.}
+
+
+\ccRefines
+\ccc{AdaptableFunctor} (with two arguments)
+
+\ccSeeAlso
+\ccRefIdfierPage{CGAL::Segment_3<Kernel>}\\
+
+\end{ccRefFunctionObjectConcept}

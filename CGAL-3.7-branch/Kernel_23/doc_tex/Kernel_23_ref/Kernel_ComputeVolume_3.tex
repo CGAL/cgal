@@ -1,0 +1,27 @@
+\begin{ccRefFunctionObjectConcept}{Kernel::ComputeVolume_3}
+A model for this must provide:
+
+\ccCreationVariable{fo}
+
+\ccMemberFunction{Kernel::FT operator()(const Kernel::Iso_cuboid_3& c);}
+       {returns the volume of $c$. }
+
+\ccMemberFunction{Kernel::FT operator()(const Kernel::Tetrahedron_3& t);}
+       {returns the signed volume of $t$. }
+
+\ccMemberFunction{Kernel::FT operator()(const Kernel::Point_3& p0,
+                                        const Kernel::Point_3& p1,
+                                        const Kernel::Point_3& p2,
+                                        const Kernel::Point_3& p3);}
+       {returns the signed volume of the tetrahedron defined by the four
+        points \ccc{p0}, \ccc{p1}, \ccc{p2}, \ccc{p3}. }
+
+\ccRefines
+\ccc{AdaptableFunctor} (with one argument)
+
+\ccSeeAlso
+
+\ccRefIdfierPage{CGAL::Iso_cuboid_3<Kernel>} \\
+\ccRefIdfierPage{CGAL::Tetrahedron_3<Kernel>} \\
+
+\end{ccRefFunctionObjectConcept}

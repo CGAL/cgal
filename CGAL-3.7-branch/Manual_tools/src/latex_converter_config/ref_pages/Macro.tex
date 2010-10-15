@@ -1,0 +1,42 @@
+include(CONFIG_PATH/header.tex)
+\begin{ccRefMacro}{PREFIX`'ITEM}  %% add template arg's if necessary
+
+%% \ccHtmlCrossLink{}     %% add further rules for cross referencing links
+%% \ccHtmlIndexC[macro]{} %% add further `index' entries
+
+\ccDefinition
+  
+The macro \ccRefName\ does this and that.
+
+\ccInclude{SUBDIR`'ITEM.h}
+
+\ccc{PREFIX`'ITEM}
+
+\ccIsModel
+
+Concept
+
+\ccSeeAlso
+
+\ccc{Some_other_macro},
+\ccc{some_other_function}.
+
+\ccExample
+
+A short example program.
+Instead of a short program fragment, a full running program can be
+included using the 
+\verb|\ccIncludeExampleCode{PACKAGE/ITEM`'.C}| 
+macro. The program example would be part of the source code distribution and
+also part of the automatic test suite.
+
+\begin{ccExampleCode}
+void your_example_code() {
+}
+\end{ccExampleCode}
+
+%% \ccIncludeExampleCode{PACKAGE/ITEM`'.C}
+
+\end{ccRefMacro}
+
+include(CONFIG_PATH/footer.tex)

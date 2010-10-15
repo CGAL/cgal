@@ -1,0 +1,75 @@
+% +------------------------------------------------------------------------+
+% | Reference manual page: Triangulation_data_structure/intro.tex
+% +------------------------------------------------------------------------+
+% | 27.3.2000   Monique Teillaud
+% | Package: Triangulation3
+% | 
+\RCSdef{\RCSTriangulationcellRev}{$Id$}
+\RCSdefDate{\RCSTriangulationcellDate}{$Date$}
+% |
+%%RefPage: end of header, begin of main body
+% +------------------------------------------------------------------------+
+%\clearpage
+%\section{Reference pages for 3D-Triangulation data structure}
+\ccRefChapter{3D Triangulation Data Structure}
+\ccChapterAuthor{Sylvain Pion \and Monique Teillaud}
+
+The triangulation data structure is able to represent a
+triangulation of a topological sphere $S^d$ of $\R^{d+1}$, for 
+$d \in \{-1,0,1,2,3\}$. (See~\ref{TDS3-sec-intro}.)
+
+The vertex class of a 3D-triangulation data structure must define
+a number of types and operations. 
+The requirements that are of geometric nature are required only when
+the triangulation data structure is used as a layer for the geometric
+triangulation classes. (See Section~\ref{TDS3-sec-design}.)
+
+The cell class of a triangulation data structure stores
+four handles to its four vertices and four handles to its four
+neighbors. The vertices are indexed 0, 1, 2, and 3 in a consistent order.
+The neighbor indexed $i$ lies opposite to vertex \ccc{i}.
+
+In degenerate dimensions, cells are used to store faces of maximal
+dimension: in dimension~2, each cell represents only one
+facet of index 3, and 3 edges $(0,1)$, $(1,2)$ and $(2,0)$; in
+dimension~1, each cell represents one edge $(0,1)$. (See 
+Section~\ref{TDS3-sec-intro}.) 
+
+
+\section{Classified Reference Pages}
+
+\subsection*{Concepts}
+
+\ccRefConceptPage{TriangulationDataStructure_3}
+
+\ccRefConceptPage{TriangulationDataStructure_3::Cell} \\
+\ccRefConceptPage{TriangulationDataStructure_3::Vertex}
+
+\ccRefConceptPage{TriangulationDSCellBase_3} \\
+\ccRefConceptPage{TriangulationDSVertexBase_3}
+
+\subsection*{Classes}
+
+\ccRefIdfierPage{CGAL::Triangulation_data_structure_3<TriangulationDSVertexBase_3,TriangulationDSCellBase_3>}
+
+This class is a model for the concept of the 3D-triangulation data
+structure \ccc{TriangulationDataStructure_3}.
+It is templated by base classes for vertices and cells.
+
+\cgal\ provides base vertex classes and base cell classes:
+
+\ccRefIdfierPage{CGAL::Triangulation_ds_cell_base_3<>}\\
+\ccRefIdfierPage{CGAL::Triangulation_ds_vertex_base_3<>}\\
+\ccRefIdfierPage{CGAL::Triangulation_cell_base_3<TriangulationTraits_3, TriangulationDSCellBase_3>}\\
+\ccRefIdfierPage{CGAL::Triangulation_vertex_base_3<TriangulationTraits_3, TriangulationDSVertexBase_3>}\\
+\ccRefIdfierPage{CGAL::Triangulation_hierarchy_vertex_base_3<TriangulationVertexBase_3>}
+
+\subsubsection*{Helper Classes}
+
+\ccRefIdfierPage{CGAL::Triangulation_utils_3}
+
+It defines operations on the indices of vertices and neighbors within
+a cell of a triangulation.
+
+
+

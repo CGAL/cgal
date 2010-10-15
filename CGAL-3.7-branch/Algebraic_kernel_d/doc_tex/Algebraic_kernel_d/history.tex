@@ -1,0 +1,38 @@
+
+
+\section{Design and Implementation History}
+
+This package is clearly split into a univariate and bivariate
+kernel. However, with respect to its history the package splits into
+a design part and an implementation part. 
+
+The concepts, which make up the design part, 
+where written by Eric Berberich, Michael Hemmer, and
+Monique Teillaud. 
+The design history of the package is fairly old and several
+ideas that influenced this package can already be found
+in~\cite{cgal:bhkt-risak-07}. Since then, the initial design underwent
+considerable changes. For instance, it was decided that the algebraic
+numbers should be under the control of the algebraic kernel. On the other
+hand the initial support for polynomials was extended to a separate
+and independent package that is not restricted to a certain number of
+variables. Thus, the authors want to thank for all the useful feedback and
+ideas that was brought to them throughout the last years. In particular,
+they want to thank Menelaos Karavelas and Elias Tsigaridas for their
+initial contributions.
+
+The two generic models %, \ccc{CGAL::Algebraic_kernel_d_1<Coeff>} and \ccc{CGAL::Algebraic_kernel_d_2<Coeff>}, 
+where initially developed as part of the \exacus~\cite{beh+-eeeafcs-05} project. 
+However, the models are now fully integrated into the \cgal~library, 
+since also the relevant layers of \exacus\ are now part of \cgal.
+The main authors for \ccc{CGAL::Algebraic_kernel_d_1<Coeff>} and \ccc{CGAL::Algebraic_kernel_d_2<Coeff>} are 
+Michael Hemmer and Michael Kerber, respectively. Notwithstanding, the authors also want to emphasize the 
+contribution of all authors of the \exacus\ project, 
+particularly the contribution of Arno Eigenwillig, Sebastian Limbach and Pavel Emeliyanenko. 
+
+The two univariate kernels that interface the library \rs~\cite{cgal:r-rs} were 
+written by Luis Pe\~{n}aranda and Sylvain Lazard. 
+Both models interface the library \rs~\cite{cgal:r-rs} by Fabrice Rouillier. 
+The authors want to thank Fabrice Rouillier and Elias Tsigaridas for 
+strong support and many useful discussions that lead to the integration of \rs.
+

@@ -1,0 +1,21 @@
+\begin{ccRefFunctionObjectConcept}{Kernel::ConstructMinVertex_3}
+A model for this must provide:
+
+\ccCreationVariable{fo}
+
+\ccMemberFunction{Kernel::Point_3 operator()(const
+  Kernel::Iso_cuboid_3 &c);} {returns the vertex of
+  \ccc{c} with lexicographically smallest coordinates.}
+
+\ccMemberFunction{Kernel::Point_3 operator()(const
+  Kernel::Segment_3 &s);} {returns the vertex of
+  \ccc{s} with lexicographically smallest coordinates.}
+
+\ccRefines
+\ccc{AdaptableFunctor} (with one argument)
+
+\ccSeeAlso
+\ccRefIdfierPage{CGAL::Iso_cuboid_3<Kernel>}\\
+\ccRefIdfierPage{CGAL::Segment_3<Kernel>}
+
+\end{ccRefFunctionObjectConcept}

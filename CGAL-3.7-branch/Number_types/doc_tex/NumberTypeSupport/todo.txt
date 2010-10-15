@@ -1,0 +1,40 @@
+{\em \small 
+TODO: move this part to chapter: kernel 
+
+\cgal\ kernel classes are parameterized by number types.  
+Depending on the problem and the input data that have to be handled,
+one has to make a trade-off between efficiency and accuracy in 
+order to select an appropriate number type and kernel class.
+
+In homogeneous representation, two number types are involved,
+although only one of them appears as a template parameter in
+the homogeneous kernel classes.
+This type, for the sake of simplicity and readability called ring type, is
+used for the representation of homogeneous coordinates and all 
+internal computations. 
+If it is assured that the second operand divides the first one, these 
+internal computations are basically division-free.
+The ring type is a placeholder for an integer type (or an integral 
+domain type) rather than for elements of arbitrary rings. 
+The name should remind you that the division operation is not
+needed for this number type.
+Of course, also more general number types can be used as a ring type 
+in a homogeneous kernel class. In some computations, e.g.\ accessing 
+Cartesian coordinates, divisions cannot be avoided. In these computations a 
+second number type, the field type, is used. \cgal\ automatically generates 
+this number type as a \ccc{Quotient}.
+For the Cartesian kernels 
+there is only one number type that is used for all calculations.
+
+The kernel classes provide access to the number types 
+involved in the representation, although it is not expected that
+such access is needed at this level, since low-level geometric 
+operations are wrapped in geometric primitives provided by \cgal.
+This access can be useful if appropriate primitives are missing.
+In a homogeneous kernel class \ccStyle{K}, ring type and field
+type can be accessed as \ccStyle{K::RT} and \ccStyle{K::FT}, respectively.
+The number type used in Cartesian kernels is considered as 
+ring type or as field type depending on the context.
+If can be accessed as \ccStyle{K::RT} and \ccStyle{K::FT}, according
+to the use of number types used in the homogeneous counterpart.
+}

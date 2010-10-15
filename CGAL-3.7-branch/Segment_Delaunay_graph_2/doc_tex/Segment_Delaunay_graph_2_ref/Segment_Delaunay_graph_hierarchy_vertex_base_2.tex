@@ -1,0 +1,83 @@
+%% Copyright (c) 2003,2004,2005  INRIA Sophia-Antipolis (France) and
+%% Notre Dame University (U.S.A.).  All rights reserved.
+%%
+%% This file is part of CGAL (www.cgal.org); you may redistribute it under
+%% the terms of the Q Public License version 1.0.
+%% See the file LICENSE.QPL distributed with CGAL.
+%%
+%% Licensees holding a valid commercial license may use this file in
+%% accordance with the commercial license agreement provided with the software.
+%%
+%% This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
+%% WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
+%%
+%% $URL$
+%% $Id$
+%% 
+%%
+%% Author(s)     : Menelaos Karavelas <mkaravel@cse.nd.edu>
+
+
+
+\begin{ccRefClass}{Segment_Delaunay_graph_hierarchy_vertex_base_2<Vbb>}
+
+%% add template arg's if necessary
+
+%% \ccHtmlCrossLink{}     %% add further rules for cross referencing links
+%% \ccHtmlIndexC[class]{} %% add further index entries
+\ccCreationVariable{vb}
+\ccDefinition
+
+The class \ccRefName\ provides a model for the
+\ccc{SegmentDelaunayGraphHierarchyVertexBase_2} concept, which is the
+vertex base required by the
+\ccc{Segment_Delaunay_graph_hierarchy_2<Gt,DS>} class. The class
+\ccRefName\ is templated by a class \ccc{Vbb} which must be a model
+of the \ccc{SegmentDelaunayGraphVertexBase_2} concept.
+
+\ccInclude{CGAL/Segment_Delaunay_graph_hierarchy_vertex_base_2.h}
+
+\ccInheritsFrom
+\ccc{Vbb}
+
+\ccIsModel
+\ccc{SegmentDelaunayGraphHierarchyVertexBase_2}
+
+%% \ccCreation
+%% \ccCreationVariable{hvb}  %% choose variable name
+%% \ccTwo{Segment_Delaunay_graph_hierarchy_vertex_base_2<Vbb>
+%% hvb();}{}
+
+%% \ccConstructor{Segment_Delaunay_graph_hierarchy_vertex_base_2();}
+%% {Default constructor.}
+%% \ccGlue
+%% \ccConstructor{Segment_Delaunay_graph_hierarchy_vertex_base_2(Storage_site_2
+%%   ss);}
+%% {Constructs a vertex associated with the site represented by the
+%%   storage site \ccc{ss}.}
+%% %
+%% \ccGlue
+%% \ccConstructor{Segment_Delaunay_graph_hierarchy_vertex_base_2(Storage_site_2
+%%   ss, Face_handle f);}
+%%            {Constructs a vertex associated with
+%%              the site represented by the storage site \ccc{ss},
+%%              and pointing to the face associated with the face
+%%              handle \ccc{f}.}
+
+
+
+\ccSeeAlso
+\ccc{SegmentDelaunayGraphVertexBase_2}\\
+\ccc{SegmentDelaunayGraphHierarchyVertexBase_2}\\
+\ccc{SegmentDelaunayGraphDataStructure_2}\\
+\ccc{CGAL::Segment_Delaunay_graph_vertex_base_2<Gt,SSTag>}\\
+\ccc{CGAL::Triangulation_data_structure_2<Vb,Fb>}\\
+\ccc{CGAL::Segment_Delaunay_graph_hierarchy_2<Gt,STag,DS>}
+
+\end{ccRefClass}
+
+% +------------------------------------------------------------------------+
+%%RefPage: end of main body, begin of footer
+% EOF
+% +------------------------------------------------------------------------+
+

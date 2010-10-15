@@ -1,0 +1,68 @@
+% +------------------------------------------------------------------------+
+% | Reference manual page: Weighted_point.tex
+% +------------------------------------------------------------------------+
+% | 13.04.2000   Author
+% | Package: Package
+% | 
+% | \RCSdef{\RCSWeightedpointRev}{$Id$}
+% |  \RCSdefDate{\RCSWeightedpointDate}{$Date$}
+% |
+%%RefPage: end of header, begin of main body
+% +------------------------------------------------------------------------+
+
+
+\begin{ccRefConcept}{ApolloniusSite_2}  %% add template arg's if necessary
+
+%% \ccHtmlCrossLink{}     %% add further rules for cross referencing links
+%% \ccHtmlIndexC[class]{} %% add further index entries
+
+\ccDefinition
+  
+The concept \ccc{ApolloniusSite_2} provides the requirements for an
+Apollonius site class.
+
+
+\ccTypes
+\ccNestedType{Point_2}{The point type.}
+\ccGlue
+\ccNestedType{FT}{The field number type.}
+\ccGlue
+\ccNestedType{RT}{The ring number type.}
+\ccGlue
+\ccNestedType{Weight}{The weight type.
+\ccPrecond{It must be the same as \ccc{FT}.}}
+
+
+
+
+\ccCreation
+%\ccTwo{ApolloniusSite_2 s(ApolloniusSite_2 other, Face_handle f);++}{}
+
+
+\ccCreationVariable{s}  %% choose variable name
+\ccConstructor{ApolloniusSite2(Point_2 p=Point_2(), Weight w= Weight(0))}{}
+\ccGlue
+\ccConstructor{ApolloniusSite_2(ApolloniusSite_2 other)}{Copy constructor.}
+
+\ccAccessFunctions
+\ccMethod{Point_2 point() const;}{Returns the center of the Apollonius
+site.}
+\ccGlue
+\ccMethod{ Weight weight() const;}{Returns the weight of the
+  Apollonius site.}
+
+
+
+\ccSeeAlso
+\ccc{ApolloniusGraphTraits_2}\\
+\ccc{CGAL::Apollonius_site_2<K>}\\
+\ccc{CGAL::Apollonius_graph_traits_2<K,Method_tag>}\\
+\ccc{CGAL::Apollonius_graph_filtered_traits_2<CK,CM,EK,EM,FK,FM>}
+
+\end{ccRefConcept}
+
+% +------------------------------------------------------------------------+
+%%RefPage: end of main body, begin of footer
+% EOF
+% +------------------------------------------------------------------------+
+

@@ -1,0 +1,33 @@
+\begin{ccRefFunctionObjectConcept}{AlgebraicKernel_d_1::IsCoprime_1}
+
+\ccDefinition
+Determines whether a given pair of univariate polynomials $p_1, p_2$ is coprime,
+   namely if $\deg({\rm gcd}(p_1 ,p_2)) = 0$.
+
+\ccRefines 
+\ccc{AdaptableBinaryFunction} 
+
+\ccTypes \ccThree{}{+++++++++++++}{++++++++}
+%\ccThree{typedef AlgebraicKernel_d_1::Polynomial_1}{second_argument_type+}{}
+\ccTypedef{typedef bool result_type;}{}
+\ccGlue
+\ccTypedef{typedef AlgebraicKernel_d_1::Polynomial_1 first_argument_type;}{}
+\ccGlue
+\ccTypedef{typedef AlgebraicKernel_d_1::Polynomial_1 second_argument_type;}{}
+
+
+\ccOperations \ccThree{+++++++++}{+++++++++}{}
+\ccCreationVariable{fo}
+%\ccThree{xxxxxxxxxxx}{xxxxxxxxxxx}{}
+
+
+
+\ccMethod{result_type
+	operator()(const first_argument_type & p1,
+        	   const second_argument_type & p2);}
+{Returns true if \ccc{p1} and \ccc{p2} are coprime.}
+
+\ccSeeAlso
+\ccRefIdfierPage{AlgebraicKernel_d_1::MakeCoprime_1}\\
+
+\end{ccRefFunctionObjectConcept}

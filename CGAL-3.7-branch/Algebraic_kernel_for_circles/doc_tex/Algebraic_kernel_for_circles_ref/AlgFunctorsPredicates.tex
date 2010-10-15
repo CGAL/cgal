@@ -1,0 +1,100 @@
+\begin{ccRefConcept}{AlgebraicKernelForCircles::CompareX}
+
+\ccDefinition
+
+\ccCreationVariable{cmpx}
+
+A model \ccVar\ of this type must provide:
+
+\ccMethod{template < class OutputIterator >
+    CGAL::Comparison_result
+    operator()(const AlgebraicKernelForCircles::RootForCircles_2_2 & r1,
+	     const AlgebraicKernelForCircles::RootForCircles_2_2 & r2);}
+{Compares the \ccc{x} variables of two \ccc{RootForCircles_2_2}.}
+
+\ccHasModels
+
+\ccc{Algebraic_kernel_for_circles_2_2::Compare_x;}
+
+\ccSeeAlso
+
+\ccRefIdfierPage{CGAL::compare_x}
+
+\end{ccRefConcept}
+\begin{ccRefConcept}{AlgebraicKernelForCircles::CompareY}
+
+\ccDefinition
+
+\ccCreationVariable{cmpy}
+
+A model \ccVar\ of this type must provide:
+
+\ccMethod{template < class OutputIterator >
+    CGAL::Comparison_result
+    operator()(const AlgebraicKernelForCircles::RootForCircles_2_2 & r1,
+	     const AlgebraicKernelForCircles::RootForCircles_2_2 & r2);}
+{Compares the \ccc{y} variables of two \ccc{RootForCircles_2_2}.}
+
+\ccHasModels
+
+\ccc{Algebraic_kernel_for_circles_2_2::Compare_y;}
+
+\ccSeeAlso
+
+\ccRefIdfierPage{CGAL::compare_y}
+
+\end{ccRefConcept}
+\begin{ccRefConcept}{AlgebraicKernelForCircles::CompareXY}
+
+\ccDefinition
+
+\ccCreationVariable{cmpxy}
+
+A model \ccVar\ of this type must provide:
+
+\ccMethod{template < class OutputIterator >
+    CGAL::Comparison_result
+    operator()(const AlgebraicKernelForCircles::RootForCircles_2_2 & r1,
+	     const AlgebraicKernelForCircles::RootForCircles_2_2 & r2);}
+{Compares two \ccc{RootForCircles_2_2} lexicographically.}
+
+\ccHasModels
+
+\ccc{Algebraic_kernel_for_circles_2_2::Compare_xy;}
+
+\ccSeeAlso
+
+\ccRefIdfierPage{CGAL::compare_xy}
+
+\end{ccRefConcept}
+
+\begin{ccRefConcept}{AlgebraicKernelForCircles::SignAt}
+
+\ccDefinition
+
+\ccCreationVariable{sign}
+
+A model \ccVar\ of this type must provide:
+
+\ccMethod{template < class OutputIterator >
+    CGAL::Sign
+    operator()(const AlgebraicKernelForCircles::Polynomial_1_2 & p,
+	     const AlgebraicKernelForCircles::RootForCircles_2_2 & r);}
+{Computes the sign of polynomial \ccc{p} evaluated at a root \ccc{r}.}
+
+\ccMethod{template < class OutputIterator >
+    CGAL::Sign
+    operator()(const AlgebraicKernelForCircles::PolynomialForCircles_2_2 & p,
+	     const AlgebraicKernelForCircles::RootForCircles_2_2 & r);}
+{Same as previous.}
+
+\ccHasModels
+
+\ccc{Algebraic_kernel_for_circles_2_2::Sign_at;}
+
+\ccSeeAlso
+
+\ccRefIdfierPage{CGAL::sign_at}
+
+\end{ccRefConcept}
+

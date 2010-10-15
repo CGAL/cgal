@@ -1,0 +1,110 @@
+\begin{ccRefClass} {Gmpq}
+\label{Gmpq}
+
+\ccDefinition
+
+An object of the class \ccStyle{Gmpq} is an arbitrary precision rational
+number based on the {\sc Gnu} Multiple Precision Arithmetic Library. 
+
+\ccInclude{CGAL/Gmpq.h}
+
+\ccIsModel
+\ccc{Field}\\
+\ccc{RealEmbeddable}\\
+\ccc{Fraction}
+
+\ccCreation
+\ccCreationVariable{q}
+
+\ccConstructor{Gmpq();}
+             {creates an uninitialized \ccc{Gmpq} \ccVar.}
+
+\ccHidden \ccConstructor{Gmpq(const Gmpq& q);}
+            {copy constructor.}\ccGlue
+
+
+\ccConstructor{Gmpq(int i)}
+            {creates a \ccc{Gmpq} initialized with
+             \ccStyle{i}.}\ccGlue
+
+
+\ccConstructor{Gmpq(Gmpz n)}
+            {creates a \ccc{Gmpq} initialized with
+             \ccStyle{n}.}\ccGlue
+
+
+\ccConstructor{Gmpq(Gmpfr f)}
+            {creates a \ccc{Gmpq} initialized with
+             \ccStyle{f}.}\ccGlue
+
+
+\ccConstructor{Gmpq(int n, int d)}
+            {creates a \ccc{Gmpq} initialized with
+             \ccStyle{n/d}.}\ccGlue
+
+
+\ccConstructor{Gmpq(signed long n, unsigned long d)}
+            {creates a \ccc{Gmpq} initialized with
+             \ccStyle{n/d}.}\ccGlue
+
+
+\ccConstructor{Gmpq(unsigned long n, unsigned long d)}
+            {creates a \ccc{Gmpq} initialized with
+             \ccStyle{n/d}.}\ccGlue
+
+
+\ccConstructor{Gmpq(Gmpz n, Gmpz d)}
+            {creates a \ccc{Gmpq} initialized with
+             \ccStyle{n/d}.}\ccGlue
+
+
+\ccConstructor{Gmpq(double d)}
+            {creates a \ccc{Gmpq} initialized with
+             \ccStyle{d}.}
+
+
+\ccConstructor{Gmpq(const std::string& str)}
+            {creates a \ccc{Gmpq} initialized with \ccStyle{str}, which can
+	    be an integer like "41" or a fraction like "41/152". White
+	    space is allowed in the string, and ignored.}\ccGlue
+
+
+\ccConstructor{Gmpq(const std::string& str, int base)}
+            {creates a \ccc{Gmpq} initialized with \ccStyle{str} in base
+	    \ccc{base}, which is an integer between 2 and 62. White space
+	    in the string is ignored.}
+
+%\ccSetTwoOfThreeColumns{5cm}{4cm}
+%SetThreeColumns{std::ostream& }{}{\hspace*{8cm}}
+
+\ccThree{xxxxxxxxxxxxxx}{xxxxxxxxxxxxxxxxxxxxxxx}{}
+\ccOperations
+\ccFunction{std::ostream& operator<<(std::ostream& out, const Gmpq& q);}
+	{writes \ccc{q} to the ostream \ccc{out}, in the form $n/d$.}
+
+\ccFunction{std::istream& operator>>(std::istream& in, Gmpq& q);}
+	{reads a number from \ccc{in}, then converts it to a
+	\ccc{Gmpq}. The number may be an integer, a rational number in
+	the form $n/d$, or a floating-point number.}
+
+There are two access functions, namely to the
+numerator and the denominator of a rational.
+Note that these values are not uniquely defined. 
+It is guaranteed that \ccStyle{q.numerator()} and 
+\ccStyle{q.denominator()} return values \ccStyle{nt_num} and
+\ccStyle{nt_den} such that \ccStyle{q = nt_num/nt_den}, only
+if  \ccStyle{q.numerator()} and \ccStyle{q.denominator()} are called
+consecutively wrt. \ccStyle{q}, i.e.~\ccStyle{q} is not involved in 
+any other operation between these calls.
+
+\ccMethod{Gmpz numerator() const;}
+       {returns the numerator of \ccStyle{q}.}
+\ccGlue
+\ccMethod{Gmpz denominator() const;}
+       {returns the denominator of \ccStyle{q}.}
+
+\ccImplementation
+\ccc{Gmpq}s are reference counted.
+
+\end{ccRefClass} 
+\ccDefGlobalScope{CGAL::}

@@ -1,0 +1,15 @@
+This is the directory containing the tools for extracting the
+C++ declarations from a specification, to check the specification
+against an implementation, and the converter to HTML.
+The directory structure is:
+
+    README                    this file.
+    INSTALLATION              installation instructions.
+
+    latex_converter_config/   configuration files for the LaTeX converter.
+
+See also the file INSTALLATION in the parent directory for how to
+install the complete distribution.
+
+EOF
+

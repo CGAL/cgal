@@ -1,0 +1,49 @@
+% +------------------------------------------------------------------------+
+% | Reference manual page: Vertex2VectorPropertyMap.tex
+% +------------------------------------------------------------------------+
+% | 15.09.2006   Marc Pouget and Frédéric Cazals
+% | Package: Ridges_3
+% | 
+\RCSdef{\RCSVertexVectorPropertyMapRev}{$Id$}
+\RCSdefDate{\RCSVertexVectorPropertyMapDate}{$Date$}
+% |
+%%RefPage: end of header, begin of main body
+% +------------------------------------------------------------------------+
+
+
+\begin{ccRefConcept}{Vertex2VectorPropertyMap}
+
+%% \ccHtmlCrossLink{}     %% add further rules for cross referencing links
+%% \ccHtmlIndexC[concept]{} %% add further index entries
+
+\ccDefinition
+  
+
+The concept \ccRefName\ specializes the concept of LvaluePropertyMap
+of the Boost library. It is intended to be used in combination with
+the concept \ccc{TriangulatedSurfaceMesh} in the class
+\ccc{Ridge_approximation}. It associates a three dimensional vector
+\ccc{TriangulatedSurfaceMesh::Traits::Vector_3} to keys which are
+\ccc{TriangulatedSurfaceMesh::Vertex_handle}. 
+
+
+%\ccTypes
+%value and key??
+%\ccNestedType{TYPE}{some nested types}
+
+\ccHasModels
+
+\ccc{Vertex2Data_Property_Map_with_std_map::Vertex2Vector_property_map},
+
+\ccSeeAlso
+
+\ccc{TriangulatedSurfaceMesh}.
+
+
+\end{ccRefConcept}
+
+% +------------------------------------------------------------------------+
+%%RefPage: end of main body, begin of footer
+% EOF
+% +------------------------------------------------------------------------+
+

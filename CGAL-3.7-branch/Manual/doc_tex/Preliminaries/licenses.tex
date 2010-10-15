@@ -1,0 +1,63 @@
+
+\section{License Issues}
+
+\cgal\ is Open Source software, and consists of different parts covered by
+different licenses.  In this section we explain the essence of the different
+licenses, as well as the rationale why we have chosen them. 
+
+The fact that \cgal\ is Open Source software does not mean that users are free
+to do whatever they want with the software. Using the software means to accept
+the license, which has the status of a contract between the user and the owner
+of the \cgal\ software.  A more detailed description of the license terms is
+available in the \cgal\ software tarball.
+
+
+\subsection{QPL \label{licenses:QPL}}
+
+The {\sc Qpl} is an Open Source license that obliges you to distribute your
+software based on {\sc Qpl}ed \cgal\ data structures.  The rationale behind
+this is that we can claim access to your software.  The license further obliges
+you to put your software under an Open Source license as well. The rationale
+behind is that we can distribute your software, even if this is not your
+intention.  Finally, the {\sc Qpl} requires that, if you modify \cgal, you
+distribute the modifications in the form of patches and you distribute the
+sources of your changes as well.
+
+
+The exact license terms can be
+found at the Trolltech web site: \path'http://doc.qt.nokia.com/4.3/qpl.html'.
+\subsection{LGPL \label{licenses:LGPL}}
+
+The {\sc Lgpl} is an Open Source license that obliges you to distribute
+modifications you make on \cgal\ software accessible to the users. There is no
+obligation to make the source code of software you build on top of {\sc Lgpl}ed
+\cgal\ data structures available.
+
+Currently the linear kernel, the support library, the halfedge data structure,
+the kinetic data structures, and the mesh subdivision framework are distributed
+under the {\sc Lgpl}. The rationale behind is that we want to promote them as
+de facto standards.
+
+The exact license terms can be found at the Free Software Foundation web site:
+\path'http://www.gnu.org/copyleft/lesser.html'.
+
+\subsection{Commercial Licenses \label{licenses:Commercial}}
+
+Users who cannot comply to the Open Source license terms can buy individual
+data structures under various commercial licenses from GeometryFactory:
+\path'http://www.geometryfactory.com'.
+
+
+\subsection{License Compatibility \label{licenses:Compatibility}}
+
+The General Public License ({\sc Gpl}) has a viral effect which makes it
+incompatible with the {\sc Qpl}. For more information, please refer to the
+paragraph about the {\sc Qpl} on the licenses web page of the Free Software
+Foundation ({\sc Fsf}): \path'http://www.fsf.org/licensing/licenses/index_html'. 
+It is therefore not possible to build a program including {\sc Gpl}
+code and some {\sc Qpl} parts of {\sc Cgal}. In this case, if you are
+the copyright owner of the {\sc Gpl} code, you can amend the license
+by adding an exception allowing the use of {\sc Cgal} with it (see
+again the {\sc Fsf} web page).
+
+

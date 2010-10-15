@@ -1,0 +1,146 @@
+% +------------------------------------------------------------------------+
+% | Reference manual page: First_of_pair_property_map.tex
+% +------------------------------------------------------------------------+
+% | 16.06.2009   Pierre Alliez, Laurent Saboret, Gael Guennebaud
+% | Package: Property_map
+% |
+\RCSdef{\RCSFirstofpairpropertymapRev}{$Id$}
+\RCSdefDate{\RCSFirstofpairpropertymapDate}{$Date$}
+% |
+\ccRefPageBegin
+%%RefPage: end of header, begin of main body
+% +------------------------------------------------------------------------+
+
+
+\begin{ccRefClass}{First_of_pair_property_map<Pair>}
+
+%% \ccHtmlCrossLink{}     %% add further rules for cross referencing links
+%% \ccHtmlIndexC[class]{} %% add further index entries
+
+\ccDefinition
+
+% The section below is automatically generated. Do not edit!
+%START-AUTO(\ccDefinition)
+
+Property map that accesses the first item of a \ccc{std::pair}.
+
+%END-AUTO(\ccDefinition)
+
+% The section below is automatically generated. Do not edit!
+%START-AUTO(\ccInclude)
+
+\ccInclude{CGAL/property_map.h}
+
+%END-AUTO(\ccInclude)
+
+\ccParameters
+
+% The section below is automatically generated. Do not edit!
+%START-AUTO(\ccParameters)
+
+template$<$typename Pair$>$   \\
+struct \ccc{First_of_pair_property_map};
+
+\ccCommentHeading{Parameters}  \\
+\ccc{Pair}: Instance of \ccc{std::pair}.
+
+%END-AUTO(\ccParameters)
+
+\ccInheritsFrom
+
+% The section below is automatically generated. Do not edit!
+%START-AUTO(\ccInheritsFrom)
+
+\ccc{boost::put_get_helper< Pair::first_type& , First_of_pair_property_map<Pair>} $>$
+
+%END-AUTO(\ccInheritsFrom)
+
+\ccIsModel
+
+% The section below is automatically generated. Do not edit!
+%START-AUTO(\ccIsModel)
+
+Model of \ccc{boost::LvaluePropertyMap} concept.
+
+%END-AUTO(\ccIsModel)
+
+\ccTypes
+
+% The section below is automatically generated. Do not edit!
+%START-AUTO(\ccTypes)
+
+\ccNestedType{key_type}
+{
+typedef to \ccc{Pair*}
+}
+\ccGlue
+\ccNestedType{value_type}
+{
+typedef to \ccc{Pair::first_type}
+}
+\ccGlue
+\ccNestedType{reference}
+{
+typedef to \ccc{value_type}\&
+}
+\ccGlue
+\ccNestedType{category}
+{
+\ccc{boost::lvalue_property_map_tag}
+}
+\ccGlue
+
+%END-AUTO(\ccTypes)
+
+\ccCreation
+\ccCreationVariable{pmap}
+
+\ccConstructor{First_of_pair_property_map();}
+{
+Constructor.
+}
+
+\ccOperations
+
+% The section below is automatically generated. Do not edit!
+%START-AUTO(\ccOperations)
+
+\ccMethod{template<class Iter> reference operator[](Iter pair) const;}
+{
+Access a property map element.
+\ccCommentHeading{Template Parameters}  \\
+\ccc{Iter}: Type convertible to \ccc{key_type}.
+}
+\ccGlue
+
+%END-AUTO(\ccOperations)
+
+\ccHeading{Related Functions}
+
+% The section below is automatically generated. Do not edit!
+%START-AUTO(\ccHeading{Related Functions})
+
+\ccFunction{First_of_pair_property_map<typename value_type_traits<Iter>::type> make_first_of_pair_property_map(Iter);}
+{
+Free function to create a \ccc{First_of_pair_property_map} property map.
+}
+\ccGlue
+
+%END-AUTO(\ccHeading{Related Functions})
+
+\ccSeeAlso
+
+\ccRefIdfierPage{CGAL::Second_of_pair_property_map<Pair>}  \\
+
+\ccExample
+
+See \ccc{property_map.cpp} example.
+
+\end{ccRefClass}
+
+% +------------------------------------------------------------------------+
+%%RefPage: end of main body, begin of footer
+\ccRefPageEnd
+% EOF
+% +------------------------------------------------------------------------+
+

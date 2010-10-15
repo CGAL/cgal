@@ -1,0 +1,74 @@
+% +------------------------------------------------------------------------+
+% | Reference manual page: Interval.tex
+% +------------------------------------------------------------------------+
+% | 11.04.2000   Author
+% | Package: Package
+% | 
+\RCSdef{\RCSIntervalRev}{$Id$}
+\RCSdefDate{\RCSIntervalDate}{$Date$}
+% |
+%%RefPage: end of header, begin of main body
+% +------------------------------------------------------------------------+
+
+
+\begin{ccRefConcept}{Interval}
+
+%% \ccHtmlCrossLink{}     %% add further rules for cross referencing links
+%% \ccHtmlIndexC[concept]{} %% add further index entries
+
+\ccDefinition
+  
+The concept \ccRefName\ describes the requirements for the
+template argument \ccc{Interval} of a \ccc{Interval_skip_list<Interval>}.
+
+The concept does not specify, whether the interval is open or
+closed. It is up to the implementer of a model for this concept
+to define that.
+
+
+\ccCreation
+\ccCreationVariable{in}  %% choose variable name
+
+\ccConstructor{Interval();}{default constructor.}
+\ccTypes
+
+\ccNestedType{Value}{The type of the lower and upper bound of the interval.}
+
+
+\ccAccessFunctions
+\ccMethod{Value inf() const;}
+{returns  the lower bound.}
+\ccGlue
+\ccMethod{Value sup() const;}{returns the upper bound.}
+
+
+\ccMethod{bool contains(const Value& v) const;}
+{returns \ccc{true}, iff \ccc{in} contains \ccc{v}.}
+
+\ccMethod{bool contains_interval(const Value& i, const Value& s) const;}
+{returns \ccc{true}, iff \ccc{in} contains \ccc{(i,s)}.}
+
+\ccMethod{bool operator==(const Interval& I) const;}
+{Equality test.}
+
+\ccMethod{bool operator!=(const Interval& I) const;}
+{Unequality test.}
+
+\ccHasModels
+
+\ccc{CGAL::Interval_skip_list_interval<Value>}\\
+\ccc{CGAL::Face_interval}
+
+
+\ccSeeAlso
+
+\ccc{Interval_skip_list} 
+
+
+\end{ccRefConcept}
+
+% +------------------------------------------------------------------------+
+%%RefPage: end of main body, begin of footer
+% EOF
+% +------------------------------------------------------------------------+
+

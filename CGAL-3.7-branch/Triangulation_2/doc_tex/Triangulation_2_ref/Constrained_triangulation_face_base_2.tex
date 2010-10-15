@@ -1,0 +1,59 @@
+% +------------------------------------------------------------------------+
+% | Reference manual page: Constrained_triangulation_face_base_2.tex
+% +------------------------------------------------------------------------+
+% | 12.04.2000   Author
+% | Package: Package
+% | 
+\RCSdef{\RCSConstrainedtriangulationfacebaseRev}{$Id$}
+\RCSdefDate{\RCSConstrainedtriangulationfacebaseDate}{$Date$}
+% |
+%%RefPage: end of header, begin of main body
+% +------------------------------------------------------------------------+
+
+
+\begin{ccRefClass}{Constrained_triangulation_face_base_2<Traits,Fb>}  %% add template arg's if necessary
+
+%% \ccHtmlCrossLink{}     %% add further rules for cross referencing links
+%% \ccHtmlIndexC[class]{} %% add further index entries
+\ccCreationVariable{ctfb} 
+
+\ccDefinition
+ The class \ccRefName\ is the default model for the concept
+\ccc{ConstrainedTriangulationFaceBase_2} to be used as base face class
+of constrained triangulations.
+
+\ccInclude{CGAL/Constrained_triangulation_face_base_2.h}
+
+\ccIsModel
+\ccc{ConstrainedTriangulationFaceBase_2}
+
+\ccParameters
+The first template parameter is a geometric traits.
+
+The second template parameter has to be a model
+of the concept \ccc{TriangulationFaceBase_2}.
+Its default is \ccc{CGAL::Triangulation_face_base_2<Traits>}
+
+\ccInheritsFrom
+The class \ccRefName\  derives from its parameter \ccc{Fb}.
+and add three Boolean to deal with information about
+constrained edges.
+
+The member functions \ccc{cw(int i)}, \ccc{ccw(int i)}
+and \ccc{reorient} are overloaded  to update
+information about constrained edges.
+
+\ccSeeAlso
+\ccc{TriangulationFaceBase_2} \\
+\ccc{ConstrainedTriangulationFaceBase_2}\\
+\ccc{CGAL::Constrained_triangulation_2<Traits,Tds>} \\
+\ccc{CGAL::Triangulation_face_base_2<Traits>}
+
+
+\end{ccRefClass}
+
+% +------------------------------------------------------------------------+
+%%RefPage: end of main body, begin of footer
+% EOF
+% +------------------------------------------------------------------------+
+

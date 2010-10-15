@@ -1,0 +1,115 @@
+#!/bin/bash
+
+# Copyright (c) 2005,2006  Utrecht University (The Netherlands),
+# ETH Zurich (Switzerland), Freie Universitaet Berlin (Germany),
+# INRIA Sophia-Antipolis (France), Martin-Luther-University Halle-Wittenberg
+# (Germany), Max-Planck-Institute Saarbruecken (Germany), RISC Linz (Austria),
+# and Tel-Aviv University (Israel).  All rights reserved.
+#
+# This file is part of CGAL (www.cgal.org); you can redistribute it and/or
+# modify it under the terms of the GNU Lesser General Public License as
+# published by the Free Software Foundation; version 2.1 of the License.
+# See the file LICENSE.LGPL distributed with CGAL.
+#
+# Licensees holding a valid commercial license may use this file in
+# accordance with the commercial license agreement provided with the software.
+#
+# This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
+# WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
+#
+# $URL$
+# $Id$
+#
+# Author(s)     : Joachim Reichel <joachim.reichel@gmx.de>
+
+
+
+# This script can be used to check all files in an internal or external release
+# for proper license notices. It reports all files without a proper notice.
+# Observe that the check is fairly simple, we just grep through the files
+# looking for a fixed string. Additionally, there might be provisions in the
+# top-level LICENSE file that are not taken into account by this script.
+
+# Note that there might be license errors that are not detected by this script.
+# For example, we do not check that files under LGPL and QPL are not mixed in
+# one library.
+
+set -e
+
+DIR=stats
+PREFIX1=$DIR/X
+PREFIX2=$DIR/Y
+EXTENSIONS="C cpp h xpm gif pcx bmp jpeg png txt html vcproj sln dsp dsw cin cout cmd nef cgal dll lib tex makefile readme"
+
+if [ -e $DIR ]; then
+	echo error: \'$DIR\' exists, this script needs \'$DIR\' for its own purposes
+	exit 1
+fi
+
+mkdir $DIR
+rm -f $PREFIX1* $PREFIX2*
+
+if [ ! -f INSTALL ]; then
+	echo This script should be run from the top-level directory of an internal or external release.
+	exit 1
+fi
+ 
+grep -r -L "^\(//\| \*\|#\) See the file LICENSE\.\(LG\|Q\)PL distributed with CGAL\." * | \
+	grep -v "^$DIR/\|^include/CGAL/CORE/\|^include/CGAL/OpenNL/\|^src/CGALCore/\|^src/CGALimageIO/\|^config/support/\|test/\|^Packages/\|^developer_scripts\|^doc_tex/\|^winutils/" | sort >$PREFIX1 || true
+	
+echo Note that files in the following directories are ignored:
+echo include/CGAL/CORE, include/CGAL/OpenNL,
+echo src/CGALCore, src/CGALimageIO, config/support,
+echo test, Packages, developer_scripts, doc_tex, winutils
+
+echo
+echo Results including examples and demo:
+echo
+
+for EXT in $EXTENSIONS; do
+	grep -i "\(\.\|/\)$EXT$" $PREFIX1 >$PREFIX1.$EXT || true
+	echo "$EXT `cat $PREFIX1.$EXT | wc -l`"
+done
+
+PATTERN=`echo $EXTENSIONS | sed -e 's/ /\\$\\\\|/g'`
+grep -v -i "\(\.\|/\)\($PATTERN$\)" $PREFIX1 >$PREFIX1.misc || true
+echo "misc `cat $PREFIX1.misc | wc -l`"
+
+echo "total `cat $PREFIX1 | wc -l `"
+
+echo
+echo Results excluding examples and demo:
+echo
+
+grep -v "^examples/\|^demo/" $PREFIX1 >$PREFIX2 || true
+
+for EXT in $EXTENSIONS; do
+	grep -i "\(\.\|/\)$EXT$" $PREFIX2 >$PREFIX2.$EXT || true
+	echo "$EXT `cat $PREFIX2.$EXT | wc -l`"
+done
+
+PATTERN=`echo $EXTENSIONS | sed -e 's/ /\\$\\\\|/g'`
+grep -v -i "\(\.\|/\)\($PATTERN$\)" $PREFIX2 >$PREFIX2.misc || true
+echo "misc `cat $PREFIX2.misc | wc -l`"
+
+echo "total `cat $PREFIX2 | wc -l `"
+
+echo
+echo Detailed results excluding examples and demo:
+
+for EXT in $EXTENSIONS; do
+	if [ `cat $PREFIX2.$EXT | wc -l` -gt 0 ]; then
+		echo
+		echo $EXT files
+		echo
+		cat $PREFIX2.$EXT
+	fi
+done
+
+echo
+echo misc files
+echo
+cat $PREFIX2.misc
+
+rm -f $PREFIX1* $PREFIX2*
+rmdir $DIR

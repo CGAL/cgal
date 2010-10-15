@@ -1,0 +1,49 @@
+\begin{ccRefClass}{Quadratic_program_from_iterators<A_it, B_it, R_it, FL_it, L_it, FU_it, U_it, D_it, C_it>}
+
+\ccInclude{CGAL/QP_models.h}
+
+\ccDefinition
+An object of class \ccRefName\ describes a convex quadratic program of the form
+
+\input{QP_solver_ref/_qp_description.tex}
+
+\input{QP_solver_ref/_from_iterator_description.tex}
+
+\ccIsModel
+\ccc{QuadraticProgram}
+
+\ccCreation
+\ccIndexClassCreation
+\ccCreationVariable{qp}
+
+\ccConstructor{Quadratic_program_from_iterators(int n, int m, 
+  const A_it& a, 
+  const B_it& b,
+  const R_it& r,
+  const FL_it& fl,
+  const L_it& l,
+  const FU_it& fu,
+  const U_it& u,
+  const D_it& d,
+  const C_it& c,
+  const std::iterator_traits<C_it>value_type& c0 = 0
+  )}{constructs \ccVar\ from given random-access iterators and the constant \ccc{c0}. The passed iterators are merely stored, no copying of the program data takes place. How these iterators are supposed to encode the quadratic program is
+described in \ccc{QuadraticProgram}.}
+
+\ccExample
+
+\ccReferToExampleCode{QP_solver/first_qp_from_iterators.cpp}
+
+The following example for the simpler model
+\ccc{Nonnegative_linear_program_from_iterators<A_it, B_it, R_it, C_it>} 
+should give you a flavor of the use of this 
+model in practice.
+
+\ccReferToExampleCode{QP_solver/solve_convex_hull_containment_lp.h}\\
+\ccReferToExampleCode{QP_solver/convex_hull_containment.cpp}
+\ccSeeAlso
+\ccc{QuadraticProgram}
+\ccc{Quadratic_program<NT>}\\
+\ccc{Quadratic_program_from_mps<NT>}
+
+\end{ccRefClass}

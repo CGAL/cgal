@@ -1,0 +1,42 @@
+\begin{ccRefConcept}{FractionTraits}
+
+\ccDefinition
+
+A model of \ccRefName\ is associated with a type \ccc{Type}.
+
+In case the associated type is a \ccc{Fraction}, a model of \ccRefName\
+provides the relevant functionality for decomposing and re-composing as well
+as the numerator and denominator type.
+
+\ccInclude{CGAL/Fraction_traits.h}
+
+\ccTypes
+
+\ccNestedType{Type}{the associated type}
+\ccNestedType{Is_fraction}{ 
+        Tag indicating whether the associated type is a fraction and can be 
+        decomposed into a numerator and denominator. \\
+        This is either \ccc{CGAL::Tag_true} or \ccc{CGAL::Tag_false}.}
+\ccNestedType{Numerator_type  }{The type to represent the numerator. 
+        This is undefined in case the associated type is not a fraction. }
+\ccNestedType{Denominator_type}{The (simpler) type to represent the denominator.
+        This is undefined in case the associated type is not a fraction. }
+
+\ccHeading{Functors}
+
+In case \ccc{Type} is not a \ccc{Fraction} all functors are \ccc{Null_functor}.
+
+\ccNestedType{Decompose}{A model of \ccc{FractionTraits::Decompose}.}
+\ccNestedType{Compose}{A model of \ccc{FractionTraits::Compose}.}
+\ccNestedType{Common_factor}{A model of \ccc{FractionTraits::CommonFactor}.}
+
+\ccHasModels
+
+\ccRefIdfierPage{CGAL::Fraction_traits<T>}\\
+
+\ccSeeAlso
+\ccRefConceptPage{FractionTraits::Decompose}\\
+\ccRefConceptPage{FractionTraits::Compose}\\
+\ccRefConceptPage{FractionTraits::CommonFactor}\\
+
+\end{ccRefConcept}

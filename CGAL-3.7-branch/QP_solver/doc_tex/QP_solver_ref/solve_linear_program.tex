@@ -1,0 +1,29 @@
+\begin{ccRefFunction}{solve_linear_program}
+
+\ccInclude{CGAL/QP_functions.h}
+
+This function solves a linear program, using some exact
+Integral Domain \ccc{ET} for its computations. Various
+options may be provided, see \ccc{Quadratic_program_options}.  
+
+\ccFunction{template <LinearProgram, ET>
+  Quadratic_program_solution<ET> solve_linear_program 
+  (const LinearProgram& lp, const ET&,
+  const Quadratic_program_options& options = Quadratic_program_options());}
+{returns the solution of the linear program \ccc{lp}, solved
+with exact number type \ccc{ET}.}
+
+\input{QP_solver_ref/_solve_requirements.tex}
+
+\ccExample
+\ccReferToExampleCode{QP_solver/first_lp.cpp}
+
+\ccSeeAlso
+
+The  models of \ccRefIdfierPage{LinearProgram}:
+
+\ccc{Quadratic_program<NT>}\\
+\ccc{Quadratic_program_from_mps<NT>}\\
+\ccc{Linear_program_from_iterators<A_it, B_it, R_it, FL_it, L_it, FU_it, U_it, C_it>}
+
+\end{ccRefFunction}

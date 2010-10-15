@@ -1,0 +1,40 @@
+\begin{center}
+\begin{tabular}{ccc}
+	%\special(papersize=17in,11in)    
+    %simple polygon   
+    \pspicture[](0,-1)(2,2)
+    \psset{unit=1cm,linewidth=1.0pt}
+    \pspolygon*[linecolor=gray](0,1)(1,2)(2,1)(1,0)
+    \pspolygon(0,1)(1,2)(2,1)(1,0)
+  %  \rput(1,-1){\text{Simple Polygon}}
+    \endpspicture &
+    %relatively simple polygon
+     \pspicture[](-1,-1)(3,3)
+    \psset{unit=1cm,linewidth=1pt}
+    \pspolygon*[linecolor=gray](0,0)(0,2)(1,1)(2,2)(2,0)(1,1)
+    \pspolygon(0,0)(0,2)(1,1)(2,2)(2,0)(1,1)
+    \psline[arrowsize=3pt 3]{->}(0.1,2)(0.9,1.2)
+    \psline[arrowsize=3pt 3]{->}(1.1,1.2)(1.9,2)
+    \psline[arrowsize=3pt 3]{->}(2.1,1.9)(2.1,0.1)
+    \psline[arrowsize=3pt 3, linestyle=dashed]{->}(1.9,0)(1.1,0.8)
+    \psline[arrowsize=3pt 3, linestyle=dashed]{->}(0.9,0.8)(0.1,0)
+    \psline[arrowsize=3pt 3]{->}(-0.1,0.1)(-0.1,1.9)
+   % \rput(1,-1){\text{Relatively Simple Polygon}}
+    \endpspicture &  
+    %not relatively simple polygon
+    \pspicture[](-1,-1)(3,3)
+    \psset{unit=1cm,linewidth=1pt}
+    \pspolygon*[linecolor=gray](0,0)(0,2)(1,1)(2,2)(2,0)(1,1)
+     \pspolygon(0,0)(0,2)(1,1)(2,2)(2,0)(1,1)
+    % \cnodeput(0,2){tl}{1}
+    \psline[arrowsize=3pt 3]{->}(0.1,2)(0.9,1.2)
+    \psline[arrowsize=3pt 3]{->}(1.1,0.8)(1.9,0)
+    \psline[arrowsize=3pt 3]{->}(2.1,0.1) (2.1,1.9)
+    \psline[arrowsize=3pt 3, linestyle=dashed]{->}(1.9,2)(1.1,1.2)
+    \psline[arrowsize=3pt 3, linestyle=dashed]{->}(0.9,0.8)(0.1,0)
+    \psline[arrowsize=3pt 3]{->}(-0.1,0.1)(-0.1,1.9)
+    %\rput(1,-1){\text{Not Relatively Simple Polygon}}
+    \endpspicture \\
+	$A$ & $B$ & $C$
+\end{tabular}
+\end{center}

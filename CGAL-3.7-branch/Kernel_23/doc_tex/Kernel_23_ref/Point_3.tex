@@ -1,0 +1,174 @@
+\begin{ccRefClass} {Point_3<Kernel>}
+
+\ccDefinition
+An object of the class \ccRefName\ is a point in the three-dimensional
+Euclidean space $\E^3$. 
+%% 
+%% \cgal\ defines a symbolic constant
+%% \ccStyle{ORIGIN}  which denotes the point at the origin. It can be used
+%% wherever a point can be used, with the only exception that you can not
+%% access its dimension as it is dimensionless.
+%% 
+
+Remember that \ccStyle{Kernel::RT} and \ccStyle{Kernel::FT} denote a
+RingNumberType and a FieldNumberType, respectively. For the kernel
+model \ccStyle{Cartesian<T>}, the two types are the same. For the
+kernel model \ccStyle{Homogeneous<T>}, \ccStyle{Kernel::RT} is equal
+to \ccStyle{T}, and \ccStyle{Kernel::FT} is equal to
+\ccStyle{Quotient<T>}.
+
+\ccTypes
+\ccThree{Cartesian_const_iterator}{Facet }{}
+\ccThreeToTwo
+
+\ccNestedType{Cartesian_const_iterator}{An iterator for enumerating the
+      \ccHtmlNoLinksFrom{Cartesian} coordinates of a point.}
+
+\ccCreation
+\ccCreationVariable{p}
+
+
+\ccHidden \ccConstructor{Point_3();}
+             {introduces an uninitialized variable \ccVar.}
+
+\ccHidden \ccConstructor{Point_3(const Point_3<Kernel> &q);}
+            {copy constructor.}
+
+\ccConstructor{Point_3(const Origin &ORIGIN);}
+            {introduces a point with \ccHtmlNoLinks{Cartesian} coordinates$(0,0,0)$.}
+
+\ccConstructor{Point_3(int x, int y, int z);}
+            {introduces a point \ccVar\ initialized to $(x,y,z)$.}
+
+\ccConstructor{Point_3(double x, double y, double z);}
+            {introduces a point \ccVar\ initialized to $(x,y,z)$
+             provided \ccc{RT} supports it.}
+
+\ccConstructor{Point_3(const Kernel::RT &hx, const Kernel::RT &hy, const Kernel::RT &hz, const Kernel::RT &hw = RT(1));}
+            {introduces a point \ccVar\ initialized to $(hx/hw,hy/hw, hz/hw)$.
+             \ccPrecond \ccc{hw} $\neq$ 0.}
+
+\ccConstructor{Point_3(const Kernel::FT &x, const Kernel::FT &y, const Kernel::FT &z);}
+            {introduces a point \ccVar\ initialized to $(x,y,z)$.}
+
+
+\ccOperations
+%\ccSetTwoOfThreeColumns{5cm}{4cm}
+
+\ccHidden \ccMethod{Point_3<Kernel> & operator=(const Point_3<Kernel> &q);}
+        {Assignment.}
+
+\ccMethod{bool operator==(const Point_3<Kernel> &q) const;}
+       {Test for equality: Two points are equal, iff their $x$, $y$ and $z$
+        coordinates are equal.}
+
+\ccMethod{bool operator!=(const Point_3<Kernel> &q) const;}
+       {Test for inequality.}
+
+There are two sets of coordinate access functions, namely to the
+homogeneous and to the \ccHtmlNoLinksFrom{Cartesian} coordinates. They can be used
+independently from the chosen kernel model.
+
+\ccMethod{Kernel::RT hx() const;}
+       {returns the homogeneous $x$ coordinate.}
+\ccGlue
+\ccMethod{Kernel::RT hy() const;}
+       {returns the homogeneous $y$ coordinate.}
+\ccGlue
+\ccMethod{Kernel::RT hz() const;}
+       {returns the homogeneous $z$ coordinate.}
+\ccGlue
+\ccMethod{Kernel::RT hw() const;}
+       {returns the homogenizing coordinate.}
+
+Note that you do not loose information with the homogeneous
+representation, because the FieldNumberType is a quotient.
+
+\ccMethod{Kernel::FT x() const;}
+       {returns the \ccHtmlNoLinks{Cartesian} $x$ coordinate, that is $hx/hw$.}
+\ccGlue
+\ccMethod{Kernel::FT y() const;}
+       {returns the \ccHtmlNoLinks{Cartesian} $y$ coordinate, that is $hy/hw$.}
+\ccGlue
+\ccMethod{Kernel::FT z() const;}
+       {returns the \ccHtmlNoLinks{Cartesian} $z$ coordinate, that is $hz/hw$.}
+
+The following operations are for convenience and for compatibility
+with code for higher dimensional points. Again they come in a
+\ccHtmlNoLinksFrom{Cartesian} and in a homogeneous flavor.
+
+\ccMethod{Kernel::RT homogeneous(int i) const;}
+       {returns the i'th homogeneous coordinate of \ccVar, starting with 0.
+        \ccPrecond $0\leq i \leq 3$.}
+
+\ccMethod{Kernel::FT cartesian(int i) const;}
+       {returns the i'th \ccHtmlNoLinks{Cartesian} coordinate of \ccVar, starting with 0.
+        \ccPrecond $0\leq i \leq 2$.}
+
+\ccMethod{Kernel::FT operator[](int i) const;}
+       {returns \ccStyle{cartesian(i)}.
+        \ccPrecond $0\leq i \leq 2$.}
+
+\ccMethod{Cartesian_const_iterator cartesian_begin() const;}
+       {returns an iterator to the \ccHtmlNoLinksFrom{Cartesian} coordinates 
+        of \ccVar, starting with the 0th coordinate.}
+
+\ccMethod{Cartesian_const_iterator cartesian_end() const;}
+       {returns an off the end iterator to the \ccHtmlNoLinksFrom{Cartesian} 
+        coordinates of \ccVar.}
+
+\ccMethod{int dimension() const;}
+       {returns the dimension (the constant 3).}
+
+\ccMethod{Bbox_3 bbox() const;}
+       {returns a bounding box containing \ccVar.}
+
+\ccMethod{Point_3<Kernel>  transform(const Aff_transformation_3<Kernel> &t) const;}
+       {returns the point obtained by applying $t$ on \ccVar.}
+
+\ccHeading{Operators}
+
+The following operations can be applied on points:
+
+\ccFunction{bool operator<(const Point_3<Kernel> &p,
+                           const Point_3<Kernel> &q);}
+       {returns true iff \ccc{p} is lexicographically smaller than \ccc{q}
+       (the lexicographical order being defined on the Cartesian
+       coordinates).}
+
+\ccFunction{bool operator>(const Point_3<Kernel> &p,
+                           const Point_3<Kernel> &q);}
+       {returns true iff \ccc{p} is lexicographically greater than \ccc{q}.}
+
+\ccFunction{bool operator<=(const Point_3<Kernel> &p,
+                           const Point_3<Kernel> &q);}
+       {returns true iff \ccc{p} is lexicographically smaller or equal to
+\ccc{q}.}
+
+\ccFunction{bool operator>=(const Point_3<Kernel> &p,
+                           const Point_3<Kernel> &q);}
+       {returns true iff \ccc{p} is lexicographically greater or equal to
+\ccc{q}.}
+
+\ccFunction{Vector_3<Kernel> operator-(const Point_3<Kernel> &p,
+                                  const Point_3<Kernel> &q);}
+       {returns the difference vector between \ccStyle{q} and \ccStyle{p}. 
+        You can substitute \ccc{ORIGIN} for either \ccc{p} or \ccc{q}, 
+        but not for both.}
+
+\ccFunction{Point_3<Kernel> operator+(const Point_3<Kernel> &p,
+                                 const Vector_3<Kernel> &v);}
+       {returns the point obtained by translating \ccStyle{p} by the 
+        vector \ccStyle{v}.}
+
+\ccFunction{Point_3<Kernel> operator-(const Point_3<Kernel> &p,
+                                 const Vector_3<Kernel> &v);}
+       {returns the point obtained by translating \ccStyle{p} by the 
+        vector -\ccStyle{v}.}
+
+\ccSeeAlso
+
+\ccRefConceptPage{Kernel::Point_3}
+
+\end{ccRefClass} 
+

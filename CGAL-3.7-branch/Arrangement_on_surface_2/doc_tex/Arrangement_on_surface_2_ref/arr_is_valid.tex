@@ -1,0 +1,29 @@
+\ccRefPageBegin
+
+\begin{ccRefFunction}{is_valid}
+
+\ccDefinition
+
+The function \ccRefName{} checks the validity of a given arrangement.
+
+\ccInclude{CGAL/Arrangement_2.h}
+
+\ccGlobalFunction{template<typename Traits, typename Dcel>
+                  bool is_valid (const Arrangement_2<Traits, Dcel>& arr);}
+
+Invokes the member function \ccc{arr.is_valid()} to verify the
+topological correctness of the arrangement. Then it performs additional
+validity tests. It checks that all $x$-monotone curves associated with
+arrangement edges are pairwise disjoint in their interior. Then it makes
+sure that all holes and all isolated vertices are located within the
+proper arrangement faces. Note that the test carried out by this
+function may take a considerable amount of time; it is recommended to be
+used only for debugging purposes.
+
+\ccRequirements
+The instantiated traits class must model the concept
+\ccc{ArranagmentXMonotoneTraits_2}. 
+
+\end{ccRefFunction}
+
+\ccRefPageEnd

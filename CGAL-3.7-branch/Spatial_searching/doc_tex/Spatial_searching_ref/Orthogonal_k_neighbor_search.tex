@@ -1,0 +1,94 @@
+% +------------------------------------------------------------------------+
+% | Reference manual page: Orthogonal_k_neighbor_search.tex
+% +------------------------------------------------------------------------+
+% | 1.07.2001   Johan W.H. Tangelder
+% | Package: ASPAS
+% |
+\RCSdef{\RCSOrthogonalkneighborsearchRev}{$Id$}
+\RCSdefDate{\RCSOrthogonalkneighborsearchDate}{$Date$}
+% |
+%%RefPage: end of header, begin of main body
+% +------------------------------------------------------------------------+
+
+
+\begin{ccRefClass}{Orthogonal_k_neighbor_search<Traits, OrthogonalDistance, Splitter, SpatialTree>}
+
+%% \ccHtmlCrossLink{}     %% add further rules for cross referencing links
+%% \ccHtmlIndexC[class]{} %% add further index entries
+
+\ccDefinition
+
+The class \ccRefName\ implements approximate $k$-nearest and
+$k$-furthest neighbor searching  on a tree
+using an orthogonal distance class.
+
+\ccInclude{CGAL/Orthogonal_k_neighbor_search.h}
+
+\ccParameters
+
+Expects for the first template argument an implementation of the concept \ccc{SearchTraits},
+for example \ccc{CGAL::Search_traits_2<CGAL::Cartesian<double> >}.
+
+Expects for the second template argument a model of the
+concept \ccc{GeneralDistance}. The default type is 
+\ccc{CGAL::Euclidean_distance<Traits>}.
+
+Expects for third template argument a model of the concept \ccc{Splitter}.
+The default type is \ccc{CGAL::Sliding_midpoint<Traits>}.
+
+Expects for fourth template argument an implementation of the concept \ccc{SpatialTree}.
+The default type is \ccc{CGAL::Kd_tree<Traits, Splitter, CGAL::Tag_true>}.  The 
+template argument must be \ccc{CGAL::Tag_true} because orthogonal search needs extended 
+kd tree nodes.
+
+\ccTypes
+
+\ccTypedef{Traits::Point_d Point_d;}{Point type.}
+\ccTypedef{Traits::FT FT;}{Number type.}
+\ccTypedef{GeneralDistance::Query_item Query_item;}{Query item.}
+\ccTypedef{std::pair<Point_d,FT> Point_with_transformed_distance;}{Pair of point and transformed distance.}
+
+\ccNestedType{iterator}{Bidirectional iterator with value type \ccc{Point_with_transformed_distance}
+                        for enumerating approximate neighbors.}
+\ccTypedef{SpatialTree Tree;}{The tree type.}
+
+\ccCreationVariable{s}  %% choose variable name
+
+\ccOperations
+
+\def\ccLongParamLayout{\ccTrue}
+\ccConstructor{Orthogonal_k_neighbor_search(SpatialTree tree, Query_item query, unsigned int k=1, FT eps=FT(0.0),
+                                          bool search_nearest=true, 
+                                          OrthogonalDistance d=OrthogonalDistance(),bool sorted=true);}
+{Constructor for searching approximately $k$ neighbors of the query item \ccc{query} 
+in the points stored in \ccc{tree} using 
+distance \ccc{d} and approximation factor \ccc{eps}.\ccc{sorted} indicates
+if the computed sequence of $k$-nearest neighbors needs to be sorted.}
+
+%\ccMethod{template <class OutputIterator>
+%OutputIterator  the_k_neighbors(OutputIterator res);}
+%{Writes \ccc{k} elements of type \ccc{Point_with_distance} to \ccc{res}.}
+
+\ccMethod{iterator begin();}{Returns an iterator to the approximate neighbors.}
+
+\ccMethod{iterator end();}{Past-the-end iterator.}
+
+
+\begin{ccAdvanced}
+\ccMethod{std::ostream& statistics(std::ostream& s);}
+{
+Inserts statistics of the search process into the output stream~\ccc{s}.
+}
+\end{ccAdvanced}
+
+\ccSeeAlso
+
+\ccc{CGAL::K_neighbor_search<Traits, GeneralDistance, Splitter, SpatialTree>}.
+
+\end{ccRefClass}
+
+% +------------------------------------------------------------------------+
+%%RefPage: end of main body, begin of footer
+% EOF
+% +------------------------------------------------------------------------+
+

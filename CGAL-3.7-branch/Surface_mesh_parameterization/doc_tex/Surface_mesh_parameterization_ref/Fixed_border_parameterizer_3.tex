@@ -1,0 +1,203 @@
+% +------------------------------------------------------------------------+
+% | Reference manual page: Fixed_border_parameterizer_3.tex
+% +------------------------------------------------------------------------+
+% | 21.09.2005   Laurent Saboret, Pierre Alliez, Bruno Levy
+% | Package: Surface_mesh_parameterization
+% |
+\RCSdef{\RCSFixedborderparameterizerRev}{$Id$}
+\RCSdefDate{\RCSFixedborderparameterizerDate}{$Date$}
+% |
+\ccRefPageBegin
+%%RefPage: end of header, begin of main body
+% +------------------------------------------------------------------------+
+
+
+\begin{ccRefClass}{Fixed_border_parameterizer_3<ParameterizationMesh_3, BorderParameterizer_3, SparseLinearAlgebraTraits_d>}
+
+%% \ccHtmlCrossLink{}     %% add further rules for cross referencing links
+%% \ccHtmlIndexC[class]{} %% add further index entries
+
+
+\ccDefinition
+
+% The section below is automatically generated. Do not edit!
+%START-AUTO(\ccDefinition)
+
+The class \ccc{Fixed_border_parameterizer_3} is the base class of fixed border parameterization methods (Tutte, Floater, ...).
+
+One-to-one mapping is guaranteed if surface's border is mapped onto a convex polygon.
+
+This class is a pure virtual class, thus cannot be instantiated. Anyway, it implements most of the parameterization algorithm parameterize(). Subclasses are Strategies \cite{cgal:ghjv-dpero-95} that modify the behavior of this algorithm: They provide \ccc{BorderParameterizer_3} and \ccc{SparseLinearAlgebraTraits_d} template parameters that make sense. They implement \ccc{compute_w_ij}() to compute \ccc{w_ij} = (i, j) coefficient of matrix A for j neighbor vertex of i. They may implement an optimized version of \ccc{is_one_to_one_mapping}().
+
+%END-AUTO(\ccDefinition)
+
+% The section below is automatically generated. Do not edit!
+%START-AUTO(\ccInclude)
+
+\ccInclude{CGAL/Fixed_border_parameterizer_3.h}
+
+%END-AUTO(\ccInclude)
+
+
+\ccInheritsFrom
+
+% The section below is automatically generated. Do not edit!
+%START-AUTO(\ccInheritsFrom)
+
+\ccc{Parameterizer_traits_3<ParameterizationMesh_3>}
+
+%END-AUTO(\ccInheritsFrom)
+
+
+\ccIsModel
+
+% The section below is automatically generated. Do not edit!
+%START-AUTO(\ccIsModel)
+
+Model of the \ccc{ParameterizerTraits_3} concept (although you cannot instantiate this class).
+
+%END-AUTO(\ccIsModel)
+
+
+\ccHeading{Design Pattern}
+
+% The section below is automatically generated. Do not edit!
+%START-AUTO(\ccHeading{Design Pattern})
+
+\ccc{Fixed_border_parameterizer_3} class is a Strategy \cite{cgal:ghjv-dpero-95}: it implements (part of) a strategy of surface parameterization for models of \ccc{ParameterizationMesh_3}.
+
+%END-AUTO(\ccHeading{Design Pattern})
+
+
+\ccParameters
+
+The full template declaration is:
+
+% The section below is automatically generated. Do not edit!
+%START-AUTO(\ccParameters)
+
+template$<$class \ccc{ParameterizationMesh_3}, class \ccc{BorderParameterizer_3} = \ccc{Circular_border_arc_length_parameterizer_3<ParameterizationMesh_3>}, class \ccc{SparseLinearAlgebraTraits_d} = \ccc{OpenNL::DefaultLinearSolverTraits<typename ParameterizationMesh_3::NT>}$>$   \\
+class \ccc{Fixed_border_parameterizer_3};
+
+%END-AUTO(\ccParameters)
+
+
+\ccTypes
+
+% The section below is automatically generated. Do not edit!
+%START-AUTO(\ccTypes)
+
+\ccNestedType{Border_param}
+{
+Export \ccc{BorderParameterizer_3} template parameter.
+}
+\ccGlue
+\ccNestedType{Sparse_LA}
+{
+Export \ccc{SparseLinearAlgebraTraits_d} template parameter.
+}
+\ccGlue
+
+%END-AUTO(\ccTypes)
+
+
+\ccCreation
+\ccCreationVariable{param}  %% choose variable name for \ccMethod
+
+% The section below is automatically generated. Do not edit!
+%START-AUTO(\ccCreation)
+
+\ccConstructor{Fixed_border_parameterizer_3(Border_param border_param = Border_param(), Sparse_LA sparse_la = Sparse_LA());}
+{
+Constructor.
+\ccCommentHeading{Parameters}  \\
+\ccc{border_param}: Object that maps the surface's border to 2D space. \ccc{sparse_la}: Traits object to access a sparse linear system.
+}
+\ccGlue
+
+%END-AUTO(\ccCreation)
+
+
+\ccOperations
+
+% The section below is automatically generated. Do not edit!
+%START-AUTO(\ccOperations)
+
+\ccMethod{Error_code parameterize(Adaptor& mesh);}
+{
+Compute a one-to-one mapping from a triangular 3D surface \ccc{mesh} to a piece of the 2D space. The mapping is linear by pieces (linear in each triangle). The result is the (u, v) pair image of each vertex of the 3D surface.
+\ccCommentHeading{Preconditions}  \\
+\ccc{mesh} must be a surface with one connected component. \ccc{mesh} must be a triangular mesh. The mesh border must be mapped onto a convex polygon.
+}
+\ccGlue
+\ccMethod{Error_code check_parameterize_preconditions(Adaptor& mesh)[protected, virtual];}
+{
+Check parameterize() preconditions: \ccc{mesh} must be a surface with one connected component. \ccc{mesh} must be a triangular mesh. The mesh border must be mapped onto a convex polygon.
+}
+\ccGlue
+\ccMethod{void initialize_system_from_mesh_border(Matrix& A, Vector& Bu, Vector& Bv, const Adaptor& mesh);}
+{
+Initialize A, Bu and Bv after border parameterization. Fill the border vertices' lines in both linear systems: {\em u = constant} and {\em v = constant}.
+\ccCommentHeading{Preconditions}  \\
+Vertices must be indexed. A, Bu and Bv must be allocated. Border vertices must be parameterized.
+}
+\ccGlue
+\ccMethod{virtual NT compute_w_ij(const Adaptor& mesh, Vertex_const_handle main_vertex_v_i, Vertex_around_vertex_const_circulator neighbor_vertex_v_j)[protected, pure virtual];}
+{
+Compute \ccc{w_ij} = (i, j) coefficient of matrix A for j neighbor vertex of i. Implementation note: Subclasses must at least implement \ccc{compute_w_ij}().
+}
+\ccGlue
+\ccMethod{Error_code setup_inner_vertex_relations(Matrix& A, Vector& Bu, Vector& Bv, const Adaptor& mesh, Vertex_const_handle vertex)[protected, virtual];}
+{
+Compute the line i of matrix A for i inner vertex: call \ccc{compute_w_ij}() to compute the A coefficient \ccc{w_ij} for each neighbor \ccc{v_j}. compute \ccc{w_ii} = - sum of \ccc{w_ijs}.
+\ccCommentHeading{Preconditions}  \\
+Vertices must be indexed. Vertex i musn't be already parameterized. Line i of A must contain only zeros.
+}
+\ccGlue
+\ccMethod{void set_mesh_uv_from_system(Adaptor& mesh, const Vector& Xu, const Vector& Xv);}
+{
+Copy Xu and Xv coordinates into the (u, v) pair of each surface vertex.
+}
+\ccGlue
+\ccMethod{Error_code check_parameterize_postconditions(const Adaptor& mesh, const Matrix& A, const Vector& Bu, const Vector& Bv)[protected, virtual];}
+{
+Check parameterize() postconditions: 3D -$>$ 2D mapping is one-to-one.
+}
+\ccGlue
+\ccMethod{bool is_one_to_one_mapping(const Adaptor& mesh, const Matrix& A, const Vector& Bu, const Vector& Bv)[protected, virtual];}
+{
+Check if 3D -$>$ 2D mapping is one-to-one. The default implementation checks each normal.
+}
+\ccGlue
+\ccMethod{Border_param& get_border_parameterizer();}
+{
+Get the object that maps the surface's border onto a 2D space.
+}
+\ccGlue
+\ccMethod{Sparse_LA& get_linear_algebra_traits();}
+{
+Get the sparse linear algebra (traits object to access the linear system).
+}
+\ccGlue
+
+%END-AUTO(\ccOperations)
+
+
+\ccSeeAlso
+
+\ccRefIdfierPage{CGAL::Parameterizer_traits_3<ParameterizationMesh_3>}  \\
+\ccRefIdfierPage{CGAL::Barycentric_mapping_parameterizer_3<ParameterizationMesh_3, BorderParameterizer_3, SparseLinearAlgebraTraits_d>}  \\
+\ccRefIdfierPage{CGAL::Discrete_authalic_parameterizer_3<ParameterizationMesh_3, BorderParameterizer_3, SparseLinearAlgebraTraits_d>}  \\
+\ccRefIdfierPage{CGAL::Discrete_conformal_map_parameterizer_3<ParameterizationMesh_3, BorderParameterizer_3, SparseLinearAlgebraTraits_d>}  \\
+\ccRefIdfierPage{CGAL::LSCM_parameterizer_3<ParameterizationMesh_3, BorderParameterizer_3, SparseLinearAlgebraTraits_d>}  \\
+\ccRefIdfierPage{CGAL::Mean_value_coordinates_parameterizer_3<ParameterizationMesh_3, BorderParameterizer_3, SparseLinearAlgebraTraits_d>}  \\
+
+
+\end{ccRefClass}
+
+% +------------------------------------------------------------------------+
+%%RefPage: end of main body, begin of footer
+\ccRefPageEnd
+% EOF
+% +------------------------------------------------------------------------+
+

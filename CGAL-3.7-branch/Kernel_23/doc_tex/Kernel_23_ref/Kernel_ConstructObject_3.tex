@@ -1,0 +1,22 @@
+\begin{ccRefFunctionObjectConcept}{Kernel::ConstructObject_3}
+A model for this must provide:
+
+\ccCreationVariable{fo}
+
+\ccMemberFunction{
+template <class T>
+Object_3 operator()(const T& t);}
+{constructs an object that contains \ccc{t} and returns it.}
+
+\ccRefines
+\ccc{AdaptableFunctor} (with one argument)
+
+\ccSeeAlso
+%\ccRefIdfierPage{CGAL::make_object} \\
+\ccRefIdfierPage{CGAL::Object} \\
+\ccRefConceptPage{Kernel::Assign_2} \\
+\ccRefConceptPage{Kernel::Assign_3} \\
+\ccRefConceptPage{Kernel::Object_2} \\
+\ccRefConceptPage{Kernel::Object_3} \\
+
+\end{ccRefFunctionObjectConcept}

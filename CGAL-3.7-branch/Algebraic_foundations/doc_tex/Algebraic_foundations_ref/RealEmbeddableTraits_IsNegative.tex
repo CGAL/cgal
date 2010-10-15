@@ -1,0 +1,30 @@
+\begin{ccRefFunctionObjectConcept}{RealEmbeddableTraits::IsNegative}
+
+\ccDefinition
+
+\ccc{AdaptableUnaryFunction}, returns true in case the argument is negative.  
+ 
+\ccRefines 
+
+\ccc{AdaptableUnaryFunction} 
+
+\ccTypes
+\ccNestedType{result_type} 
+        { Type convertible to \ccc{bool}.}
+\ccNestedType{argument_type}
+        { Is \ccc{RealEmbeddableTraits::Type}.}
+
+\ccOperations
+\ccCreationVariable{is_negative}
+\ccThree{xxxxxxxxxxx}{xxxxxxxxxxx}{}
+
+\ccMethod{result_type operator()(argument_type x);}
+        { returns true in case $x$ is negative. }
+
+%\ccHasModels
+
+\ccSeeAlso
+
+\ccRefIdfierPage{RealEmbeddableTraits}\\
+
+\end{ccRefFunctionObjectConcept} 

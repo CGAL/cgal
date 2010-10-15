@@ -1,0 +1,61 @@
+Subject: CGAL 3.0 Released, Computational Geometry Algorithms Library
+Body: 
+
+We are pleased to announce the release 3.0 of CGAL, the Computational Geometry
+Algorithms Library.  Version 3.0 differs from version 2.4 in licensing, in the
+platforms that are supported and in functionality.
+
+The license has been changed to either the LGPL (GNU Lesser General Public
+License v2.1) or the QPL (Q Public License v1.0) depending on each package.
+So CGAL remains free of use for you, if your usage meets the criteria of
+these licenses, otherwise, a commercial license has to be purchased from
+Geometry Factory (www.geometryfactory.com).
+
+Major changes in this release include the following:
+
+o Apollonius graph: the dual of the Voronoi diagram of a set of circles under
+  the Euclidean metric.  The implementation is dynamic.
+
+o Min_sphere_of_spheres_d: Algorithms to compute the smallest enclosing sphere
+  of a given set of spheres in d-dimensional space.
+
+o Spatial Searching: Provides exact and approximate distance browsing in a set
+  of points in d-dimensional space (such as nearest neighbor searching).
+
+o Largest_empty_iso_rectangle_2: Given a set of points P in the plane,
+  computes the largest empty iso-rectangle that are inside a given
+  iso-rectangle bounding box, and that do not contain any point of P.
+
+o Interval_skip_list: A data strucure for finding all intervals in R that
+  contain a value, and for stabbing queries, that is for answering the
+  question whether a given value is contained in an interval or not.
+
+o Existing packages have been improved in various area:
+  2D and 3D triangulations, Planar Maps, Arrangements...
+
+o The CORE library (http://www.cs.nyu.edu/exact/core/) for exact computations
+  is now distributed as part of CGAL as well.
+
+o We support the latest versions of the C++ compilers from GNU, Microsoft,
+  Intel, Sun, SGI.
+
+o All demos are now using the portable Qt window toolkit.
+
+See http://www.cgal.org/releases_frame.html for a complete list of changes.
+
+
+The CGAL project is a collaborative effort to develop a robust,
+easy-to-use, and efficient C++ software library of geometric data 
+structures and algorithms. The CGAL library contains:
+o Basic geometric primitives such as points, vectors, lines, predicates
+  for testing things such as relative positions of points, and operations
+  such as intersections and distance calculation.
+o A collection of standard data structures and geometric algorithms, 
+  such as convex hull, (Delaunay, Regular, Constrained) triangulation, Voronoi
+  diagrams, planar map, arrangements, polyhedron, smallest enclosing sphere,
+  multidimensional query structures...
+o Interfaces to other packages, e.g. for visualization, and I/O, and 
+  other support facilities. 
+
+For further information and for downloading the library and its 
+documentation, please visit the CGAL web page: http://www.cgal.org/

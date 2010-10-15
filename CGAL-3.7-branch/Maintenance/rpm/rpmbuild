@@ -1,0 +1,3 @@
+#!/bin/sh 
+
+exec rpmbuild --define "_topdir $PWD" ${1+"$@"}

@@ -1,0 +1,89 @@
+% +------------------------------------------------------------------------+
+% | Reference manual page: Mode.tex
+% +------------------------------------------------------------------------+
+% | 09.04.2002   Author
+% | Package: Package
+% | 
+\RCSdef{\RCSModeRev}{$Id$}
+\RCSdefDate{\RCSModeDate}{$Date$}
+% |
+%%RefPage: end of header, begin of main body
+% +------------------------------------------------------------------------+
+
+
+\begin{ccRefEnum}{Mode}  %% add template arg's if necessary
+
+%% \ccHtmlCrossLink{}     %% add further rules for cross referencing links
+%% \ccHtmlIndexC[enum]{} %% add further index entries
+
+\ccDefinition
+  
+All classes in the \cgal\ kernel provide input and output operators for
+IOStreams.  The basic task of such an operator is to produce a
+representation of an object that can be written as a sequence of
+characters on devices as a console, a file, or a pipe. The enum \ccRefName\
+distinguish between three different printing formats.
+
+In  \ccc{ASCII} mode, numbers 
+e.g.\ the coordinates of a point or
+the coefficients of a line, are written
+in a machine independent format. 
+In {\sc BINARY} mode, data are written
+in a binary format, e.g.\ a double is represented
+as a sequence of four byte. The format depends on the machine.
+ The mode  {\sc PRETTY}
+serves mainly for debugging as the type of the geometric
+object is written, as well as the data defining the object. For example
+for a point at the origin with Cartesian double coordinates, the output
+would be \ccc{PointC2(0.0, 0.0)}.  At the moment \cgal\ does not
+provide input operations for pretty printed data. By default a stream
+is in {\sc Ascii} mode.
+
+
+
+\ccGlobalEnum{enum Mode { ASCII = 0, BINARY, PRETTY };}
+
+\ccRefLabel{ASCII}
+\ccRefLabel{BINARY}
+\ccRefLabel{PRETTY}
+\ccHtmlCrossLink{ASCII}
+\ccHtmlCrossLink{BINARY}
+\ccHtmlCrossLink{PRETTY}
+%\ccHtmlIndexC[enum_tags]{ASCII}
+%\ccHtmlIndexC[enum_tags]{BINARY}
+%\ccHtmlIndexC[enum_tags]{PRETTY}
+
+\ccSeeAlso
+\ccRefIdfierPage{CGAL::set_mode} \\
+\ccRefIdfierPage{CGAL::set_ascii_mode} \\
+\ccRefIdfierPage{CGAL::set_binary_mode}  \\
+\ccRefIdfierPage{CGAL::set_pretty_mode}  \\
+\ccRefIdfierPage{CGAL::get_mode} \\
+\ccRefIdfierPage{CGAL::is_ascii} \\
+\ccRefIdfierPage{CGAL::is_binary} \\
+\ccRefIdfierPage{CGAL::is_pretty} \\
+
+
+%\ccExample
+
+%A short example program.
+%Instead of a short program fragment, a full running program can be
+%included using the 
+%\verb|\ccIncludeExampleCode{Package/Mode_prog.C}| 
+%macro. The program example would be part of the source code distribution and
+%also part of the automatic test suite.
+
+%\begin{ccExampleCode}
+%void your_example_code() {
+%}
+%\end{ccExampleCode}
+
+%% \ccIncludeExampleCode{Package/Mode_prog.C}
+
+\end{ccRefEnum}
+
+% +------------------------------------------------------------------------+
+%%RefPage: end of main body, begin of footer
+% EOF
+% +------------------------------------------------------------------------+
+

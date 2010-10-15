@@ -1,0 +1,258 @@
+\documentclass[a4paper]{article}
+%\usepackage{html}
+\usepackage[dvips]{graphics,color,epsfig}
+\usepackage{path}
+\usepackage{amssymb}
+\usepackage{amsfonts}
+\usepackage{amsmath}
+\usepackage{amsthm}
+\usepackage{psfrag}
+\newcommand{\N}{\ensuremath{\mathbb{N}}}
+\newcommand{\F}{\ensuremath{\mathbb{F}}}
+\newcommand{\Z}{\ensuremath{\mathbb{Z}}}
+\newcommand{\R}{\ensuremath{\mathbb{R}}}
+\newcommand{\Q}{\ensuremath{\mathbb{Q}}}
+\newcommand{\C}{\ensuremath{\mathbb{C}}}
+
+\newtheorem{lemma}{Lemma}
+\newtheorem{assumption}{Assumption}
+\newtheorem{definition}{Definition}
+
+
+\title{Test\_suite\_QP\_solver}
+\author{Frans Wessendorp}
+\begin{document}
+\maketitle
+\section{Validity check}
+All of the validity checks of a solution computed by the solver are done using
+the complete set of constraints; since the solver itself works with an active
+set method and therefore uses the reduced basis matrix $\check{M}_{B}$
+and its inverse we here restate the relationship given in \cite{Frans_Deg}. 
+If the basis heading is given as
+$\left[C, S_{B}, B_{O}, B_{S} \right]$ the basis matrix
+$M_{B}$ has the following form
+\begin{equation}
+\label{def:basis_matrix}
+M_{B}:=
+\left(\begin{array}{c|c|c|c}
+        0 & 0 & A_{C, B_{O}} & 0 \\
+        \hline
+	0 & 0 & A_{S_{B}, B_{O}} & A_{S_{B}, B_{S}} \\
+	\hline
+        A_{C, B_{O}}^{T} & A_{S_{B}, B_{O}}^{T} & D_{B_{O}, B_{O}}
+	  & 0 \\
+        \hline
+        0 & A_{S_{B}, B_{S}}^{T} & 0
+	  & 0 \\
+      \end{array}
+\right).
+\end{equation}
+and the inverse $M_{B}^{-1}$ in terms of the reduced basis inverse
+$\check{M}_{B}^{-1}$
+\begin{equation}
+\label{eq:M_B_inv_exp}
+M_{B}^{-1}=
+\left(\begin{array}{c|c|c|c}
+        \left(\check{M}_{B}^{-1}\right)_{C,C} &
+	0 &
+	\left(\check{M}_{B}^{-1}\right)_{C,B_{O}} &
+	 \left(\check{M}_{B}^{-1}\right)_{C, B_{O}}\alpha^{T} \\
+	\hline
+	0 &
+	0 &
+	0 &
+	A_{S_{B},B_{S}} \\
+	\hline
+	\left(\check{M}_{B}^{-1}\right)_{B_{O}, C} &
+	0 &
+	\left(\check{M}_{B}^{-1}\right)_{B_{O}, B_{O}} &
+          \left(\check{M}_{B}^{-1}\right)_{B_{O},B_{O}}\alpha^{T} \\
+	\hline
+	\alpha\left(\check{M}_{B}^{-1}\right)_{B_{O},
+	C} &
+	A_{S_{B}, B_{S}}^{T} &
+	\alpha\left(\check{M}_{B}^{-1}\right)_{B_{O},
+	B_{O}} &
+	\alpha\left(\check{M}_{B}^{-1}\right)_{B_{O}, B_{O}}\alpha^{T}
+      \end{array}
+\right)
+\end{equation}
+
+
+\subsection{Verifying Feasibility}
+\subsection{Verifying Optimality}
+\subsection{Verifying Unboundedness}
+Since the solver delivers, in case of unboundedness, implicitly a feasible
+solution $x^{*}$ and a vector
+$w$ such that
+\begin{equation}
+\label{eq:Unboundedness}
+x^{*}-tw \quad \text{for} \quad t>0
+\end{equation}
+is a feasible solution
+we by convention define the single nonzero nonbasic component of the basic
+feasible direction $w$ to be negative:
+\begin{eqnarray}
+\label{def:w_B}
+w_{B}&:=&q_{B}=\left(M_{B}^{-1}\right)_{B_{O} \cup B_{S}, \bullet}
+\left(
+\begin{array}{c}
+A_{C,j} \\
+\hline
+A_{S_{B}, j} \\
+\hline
+2D_{B_{O}, j} \\
+\hline
+2D_{B_{S}, j}  
+\end{array}
+\right) \\
+\label{def:w_N}
+w_{N}&:=&-e_{\{j\}}
+\end{eqnarray}
+where $j \in N$ and $e_{\{j\}}$ denotes the unit vector with $\left|N\right|$
+entries.
+
+Feasibility of the solution in Equation~(\ref{eq:Unboundedness}) requires
+$w <0$ and $Aw=0$. That the latter is true for $w$ defined by
+Equations~(\ref{def:w_B}) and~(\ref{def:w_N}) shows the following computation
+where we use the
+Definitions~(\ref{def:basis_matrix}) and~(\ref{eq:M_B_inv_exp})
+\begin{eqnarray}
+Aw
+&=&
+A_{C \cup S_{B}, B_{O} \cup B_{S}}
+\left(M_{B}^{-1}\right)_{B_{O} \cup B_{S}, \bullet}
+\left(
+\begin{array}{c}
+A_{C,j} \\
+\hline
+A_{S_{B}, j} \\
+\hline
+2D_{B_{O}, j} \\
+\hline
+0
+\end{array}
+\right)
+-A_{C \cup S_{B}, j}
+\nonumber \\
+&=&
+\left(M_{B}\right)_{C \cup S_{B}, B_{O} \cup B_{S}}
+\left(M_{B}^{-1}\right)_{B_{O} \cup B_{S}, \bullet}
+\left(
+\begin{array}{c}
+A_{C,j} \\
+\hline
+A_{S_{B}, j} \\
+\hline
+2D_{B_{O}, j} \\
+\hline
+0
+\end{array}
+\right)
+-A_{C \cup S_{B}, j}
+\nonumber \\
+&=&
+\left(M_{B}\right)_{C \cup S_{B}, \bullet}
+M_{B}^{-1}
+\left(
+\begin{array}{c}
+A_{C,j} \\
+\hline
+A_{S_{B}, j} \\
+\hline
+2D_{B_{O}, j} \\
+\hline
+0
+\end{array}
+\right)
+-A_{C \cup S_{B}, j}
+\nonumber \\
+&=&
+\left[
+  I_{C\cup S_{B},C\cup S_{B}} \left|\right.
+  \mathbf{0}_{C\cup S_{B},B_{O}\cup B_{S}}
+\right]
+\left(
+\begin{array}{c}
+A_{C,j} \\
+\hline
+A_{S_{B}, j} \\
+\hline
+2D_{B_{O}, j} \\
+\hline
+0
+\end{array}
+\right)
+-A_{C \cup S_{B}, j}
+\nonumber \\
+&=&
+0
+\end{eqnarray}
+
+
+\subsubsection{Linear Case}
+We are minimizing the objective function
+\begin{equation}
+f\left(x\right):=c^{T}x,
+\end{equation}
+so for $t>0$
+\begin{eqnarray}
+f(x^{*}-tw)
+&=&
+c^{T}\left(x^{*}-tw\right)
+\nonumber \\
+&=&
+f\left(x^{*}\right) -tc^{T}w
+\end{eqnarray}
+Since we are minimizing we must require $c^{T}w>0$.
+Subsuming we obtain together with the above the necessary conditions for
+unboundedness. 
+\begin{enumerate}	
+\item $w_{x_{i}} \leq 0$ for $i \in B_{O} \cup B_{S}$
+\item $Aw=0$
+\item $c^{T}w>0$
+\end{enumerate}
+
+\subsubsection{Quadratic Case}
+We are minimizing the objective function
+\begin{equation}
+f\left(x\right):=c^{T}x+x^{T}Dx,
+\end{equation}
+using the symmetry of $D$ we obtain for $t>0$
+\begin{eqnarray}
+f(x^{*}-tw)
+&=&
+c^{T}\left(x^{*}-tw\right)
+ +\left(x^{*}-tw\right)^{T}D\left(x^{*}-tw\right)
+\nonumber \\
+&=&
+c^{T}x^{*} - tc^{T}w + {x^{*}}^{T}Dx^{*} - tw^{T}Dx^{*}-t{x^{*}}^{T}Dw
+ +t^{2}w^{T}Dw
+\nonumber \\
+&=&
+c^{T}x^{*} + {x^{*}}^{T}Dx^{*} + t^{2}w^{T}Dw
+ -t\left[\left(c^{T}+2{x^{*}}^{T}D\right)w\right]
+\nonumber \\
+&=&
+f\left(x^{*}\right) + t^{2}w^{T}Dw
+ -t\left[\left(c^{T}+2{x^{*}}^{T}D\right)w\right]
+\end{eqnarray}
+Since $D$ is positive semidefinite $w^{T}Dw \geq 0$ and since we are minimizing
+we must require $w^{T}Dw=0$ and $\left(c^{T}+2{x^{*}}^{T}D\right)w>0$.
+Subsuming we obtain together with the above the necessary conditions for
+unboundedness.
+\begin{enumerate}
+\item $w_{x_{i}} \leq 0$ for $i \in B_{O} \cup B_{S}$
+\item $Aw=0$
+\item $w^{T}Dw = 0$
+\item $\left(c^{T}+2{x^{*}}^{T}D\right)w>0$
+\end{enumerate}
+\begin{thebibliography}{99}
+\bibitem{Sven} Sven Sch\"{o}nherr. Quadratic Programming in Geometric Optimization:
+Theory, Implementation, and Applications, Dissertation, Diss. ETH No 14738, ETH
+Z\"{u}rich, Institute of Theoretical Computer Science, 2002.
+\bibitem{Chvatal} Va\v{s}ek Chv\'{a}tal. \textit{Linear Programming}. W. H. Freeman and Company,
+New York, Chapter 8, 1983 
+\bibitem{Frans_Deg} Degeneracy
+\end{thebibliography}
+\end{document}

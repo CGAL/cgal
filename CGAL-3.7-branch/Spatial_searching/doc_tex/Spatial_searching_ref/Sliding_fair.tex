@@ -1,0 +1,85 @@
+% +------------------------------------------------------------------------+
+% | Reference manual page: Sliding_fair.tex
+% +------------------------------------------------------------------------+
+% | 1.07.2001   Johan W.H. Tangelder
+% | Package: ASPAS
+% |
+\RCSdef{\RCSSlidingfairRev}{$Id$}
+\RCSdefDate{\RCSSlidingfairDate}{$Date$}
+% |
+%%RefPage: end of header, begin of main body
+% +------------------------------------------------------------------------+
+
+
+\begin{ccRefFunctionObjectClass}{Sliding_fair<Traits, SpatialSeparator>}
+
+%% \ccHtmlCrossLink{}     %% add further rules for cross referencing links
+%% \ccHtmlIndexC[class]{} %% add further index entries
+
+\ccDefinition
+Implements the {\em sliding fair} splitting rule.
+This splitting rule is a compromise between the \ccc{Fair} splitting rule
+and the \ccc{Sliding_midpoint} rule.  Sliding fair-split is based on the
+theory that there are two types of splits that are good: balanced
+splits that produce fat rectangles, and unbalanced splits provided the
+rectangle with fewer points is fat.
+
+Also, this splitting rule maintains an upper bound on the maximal
+allowed ratio of the longest and shortest side of a rectangle (the
+value of this upper bound is set in the constructor of the fair
+splitting rule). Among the splits that satisfy this bound, it selects
+the one one in which the points have the largest spread.  It then
+considers the most extreme cuts that would be allowed by the aspect
+ratio bound. This is done by dividing the longest side of the
+rectangle by the aspect ratio bound. If the median cut lies between
+these extreme cuts, then we use the median cut. If not, then consider
+the extreme cut that is closer to the median.  If all the points lie
+to one side of this cut, then we slide the cut until it hits the first
+point.  This may violate the aspect ratio bound, but will never
+generate empty cells.
+
+\ccInclude{CGAL/Splitters.h}
+
+\ccParameters
+
+Expects for the first template argument a model of
+the concept \ccc{SearchTraits}, 
+for example \ccc{CGAL::Cartesian_d<double>}. 
+
+Expects for the second template argument a model of the concept \ccc{Separator}. It has as default value
+the type, \ccc{CGAL::Plane_separator<Traits::FT>}
+
+
+\ccIsModel
+
+\ccc{Splitter}
+
+\ccTypes
+
+\ccTypedef{Traits::FT FT;}{Number type.} 
+
+\ccCreation
+\ccCreationVariable{s}
+\ccConstructor{ Sliding_fair(unsigned int bucket_size, 
+                             FT aspect_ratio=FT(3))}{Constructor.}
+
+\ccOperations
+
+\ccMethod{FT aspect_ratio();}{Returns the maximal ratio between the largest and smallest side
+of a cell allowed for fair splitting.}
+
+\ccMethod{unsigned int bucket_size();} {Returns the bucket size of the leaf nodes.}
+
+\ccSeeAlso
+
+\ccc{Splitter},\\
+\ccc{SpatialSeparator}
+
+\end{ccRefFunctionObjectClass}
+
+
+% +------------------------------------------------------------------------+
+%%RefPage: end of main body, begin of footer
+% EOF
+% +------------------------------------------------------------------------+
+

@@ -1,0 +1,71 @@
+% +------------------------------------------------------------------------+
+% | Reference manual page: MarchingTetrahedraTraits_3.tex
+% +------------------------------------------------------------------------+
+% | 27.09.2005   Nico Kruithof
+% | Package: Skin_surface
+% | 
+\RCSdef{\RCSMarchingtetrahedratraitsRev}{$Id$}
+\RCSdefDate{\RCSMarchingtetrahedratraitsDate}{$Date$}
+% +------------------------------------------------------------------------+
+
+\ccRefPageBegin
+
+%%RefPage: end of header, begin of main body
+% +------------------------------------------------------------------------+
+
+
+\begin{ccRefConcept}{MarchingTetrahedraTraits_3}
+\label{pageMarchingTetrahedraTraits}
+
+Required types and member functions for the \ccRefName\ concept.  This
+geometric traits concept is used by the function
+\ccc{CGAL::marching_tetrahedra_3} for the extraction of a mesh from a
+triangulation.
+
+%\ccRefines
+  
+\ccTypes
+
+%\ccNestedType{Converter}{Function object that can convert points defined by
+%  the \ccc{triangulation} to points defined by the \ccc{HDS}}
+
+\ccNestedType{Triangulation}{The type of the triangulation}
+\ccNestedType{Halfedge_DS}{The type of the half-edge data structure}
+\ccNestedType{Cell_handle}{handle to the Cell type of the triangulation}
+
+% \ccGlue
+\ccNestedType{HDS_point}{the point type defined by the kernel of the
+  polyhedron}
+% \ccNestedType{HDS_RT}{the number type defined by the kernel of the polyhedron}
+
+\ccCreation
+\ccCreationVariable{traits}
+
+\ccConstructor{MarchingTetrahedraTraits_3();}{}
+
+\ccOperations
+
+\ccMethod{Sign sign(Cell_handle const ch, int i) const;}{returns
+  whether a vertex $i$ lies inside or outside the surface. The value
+  \ccc{CGAL::POSITIVE} implies outside the surface, \ccc{CGAL::ZERO}
+  and \ccc{CGAL::NEGATIVE} inside the surface. \ccPrecond{\ccc{ch} is
+    a finite tetrahedron.}  }
+
+\ccMethod{HDS_point intersection(Cell_handle ch, int i, int j)
+  const;}{Returns the intersection point of the surface with the edge
+  between \ccc{ch->vertex(i)} and \ccc{ch->vertex(j)}.
+  \ccPrecond{\ccc{ch} is a finite tetrahedron and the two vertices lie
+    on different sides of the surface.}}
+
+\ccHasModels
+
+\ccRefIdfierPage{CGAL::Marching_tetrahedra_traits_skin_surface_3<Triangulation_3, HalfedgeDS, Converter_ >}
+
+\end{ccRefConcept}
+
+% +------------------------------------------------------------------------+
+%%RefPage: end of main body, begin of footer
+\ccRefPageEnd
+% EOF
+% +------------------------------------------------------------------------+
+

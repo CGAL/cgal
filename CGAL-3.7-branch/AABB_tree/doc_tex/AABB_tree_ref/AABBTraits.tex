@@ -1,0 +1,112 @@
+% +------------------------------------------------------------------------+
+% | Reference manual page: AABBTraits.tex
+% +------------------------------------------------------------------------+
+% | 21.02.2009   Author
+% | Package: Package
+% |
+\RCSdef{\RCSAABBTraitsRev}{$Id: header.tex 40270 2007-09-07 15:29:10Z lsaboret $}
+\RCSdefDate{\RCSAABBTraitsDate}{$Date: 2007-09-07 17:29:10 +0200 (Ven, 07 sep 2007) $}
+% |
+\ccRefPageBegin
+%%RefPage: end of header, begin of main body
+% +------------------------------------------------------------------------+
+
+
+\begin{ccRefConcept}{AABBTraits}
+
+%% \ccHtmlCrossLink{}     %% add further rules for cross referencing links
+%% \ccHtmlIndexC[concept]{} %% add further index entries
+
+\ccDefinition
+  
+The concept \ccRefName\ provides the geometric primitive types and methods for the class \ccc{AABB_tree<AT>}.
+
+\ccTypes
+
+\ccNestedType{FT}{Value type of the \ccc{Squared_distance} functor.}
+
+\ccNestedType{Point_3}{Type of a 3D point.}
+
+\ccNestedType{Primitive}{Type of primitive.
+                         Must be a model of the concept \ccc{AABBPrimitive}.}
+
+\ccNestedType{Bounding_box}{Bounding box type.}
+
+\ccNestedType{enum Axis \{ X_AXIS, Y_AXIS, Z_AXIS \}}{}
+
+\ccTypedef{typedef std::pair<Point_3, Primitive::Id> Point_and_primitive_id;}{}
+
+\ccTypedef{typedef std::pair<Object, Primitive::Id> Object_and_primitive_id;}{}
+
+During the construction of the \ccc{AABB_tree}, the primitives are sorted according to some comparison functions related to the $x$, $y$ or $z$ coordinate axis:
+
+\ccNestedType{Split_primitives_along_x_axis}{A functor object to split a range of primitives into two sub-ranges along the X-axis. Provides the operator:
+\ccc{void operator()(InputIterator first, InputIterator beyond);} Iterator \ccc{InputIterator} must be a model of RandomAccessIterator and have \ccc{Primitive} as value type. The operator is used for determining the primitives assigned to the two children nodes of a given node, assuming that the goal is to split the X-dimension of the bounding box of the node. The primitives assigned to this node are passed as argument to the operator. It should modify the iterator range in such a way that its first half and its second half correspond to the two children nodes.}
+
+\ccNestedType{Split_primitives_along_y_axis}{A functor object to split a range of primitives into two sub-ranges along the Y-axis. See \ccc{Split_primitives_along_x_axis} for the detailed description.}
+
+\ccNestedType{Split_primitives_along_z_axis}{A functor object to split a range of primitives into two sub-ranges along the Z-axis. See \ccc{Split_primitives_along_x_axis} for the detailed description.}
+
+\ccNestedType{Compute_bbox}{A functor object to compute the bounding box of a set of primitives. Provides the operator:
+\ccc{Bounding_box operator()(Input_iterator begin,                                              Input_iterator beyond);} Iterator \ccc{InputIterator} must have \ccc{Primitive} as value type. }
+
+\ccNestedType{Splitting_direction}{A functor object to specify the direction along which the bounding box should be split:
+\ccc{Axis operator()(const Bounding_box& bbox);} which returns the direction used for splitting \ccc{bbox}. It is usually the axis aligned with the longest edge of \ccc{bbox}.}
+
+The following predicates are required for each type \ccc{Query}
+for which the class \ccc{AABB_tree<AT>} may receive an intersection detection or computation query.
+
+\ccNestedType{Do_intersect}{A functor object to compute intersection predicates between the query and the nodes of the tree. Provides the operators:
+\ccc{bool operator()(const Query & q, const Bounding_box & box);} which returns \ccc{true} iff the query intersects the bounding box, and \ccc{bool operator()(const Query & q, const Primitive & primitive);} which returns \ccc{true} iff the query intersects the primitive.}
+
+\ccNestedType{Intersect}{A functor object to compute the intersection of a query and a primitive. Provides the operator:
+\ccc{boost::optional<Object_and_primitive_id> operator()(const Query & q, const Primitive& primitive);} which returns the intersection as a pair composed of an object and a primitive id, iff the query intersects the primitive.}
+
+The following predicates are required for each type \ccc{Query}
+for which the class \ccc{AABB_tree<AT>} may receive a distance query.
+
+\ccNestedType{Compare_distance}{A functor object to compute distance comparisons between the query and the nodes of the tree. Provides the operators:
+\ccc{bool operator()(const Query & query, const Bounding_box& box, const Point & closest);} which returns \ccc{true} iff the bounding box is closer to \ccc{query} than \ccc{closest} is, and \ccc{bool operator()(const Query & query, const Primitive & primitive, const Point & closest);} which returns \ccc{true} iff \ccc{primitive} is closer to the \ccc{query} than \ccc{closest} is.}
+
+\ccNestedType{Closest_point}{A functor object to compute closest point from the query on a primitive. Provides the operator:
+\ccc{Point_3 operator()(const Query& query, const Primitive& primitive, const Point_3 & closest);} which returns the closest point to \ccc{query}, among \ccc{closest} and all points of the primitive.}
+
+\ccNestedType{Squared_distance}{A functor object to compute the squared distance between the query and a point. Provides the operator:
+\ccc{FT operator()(const Query& query, const Point_3 & p);} which returns the squared distance between \ccc{query} and \ccc{p}.}
+
+\ccCreationVariable{traits}  %% choose variable name
+
+\ccOperations
+
+\ccMethod{Split_primitives_along_x_axis split_primitives_along_x_axis_object();}{Returns the primitive splitting functor for the X axis.}
+
+\ccMethod{Split_primitives_along_y_axis split_primitives_along_y_axis_object();}{Returns the primitive splitting functor for the Y axis.}
+
+\ccMethod{Split_primitives_along_z_axis split_primitives_along_z_axis_object();}{Returns the primitive splitting functor for the Z axis.}
+
+\ccMethod{Compute_bbox compute_bbox_object();}{Returns the bounding box constructor.}
+
+\ccMethod{Do_intersect do_intersect_object();}{Returns the intersection detection functor.}
+
+\ccMethod{Intersect intersect_object();}{Returns the intersection constructor.}
+
+\ccMethod{Compare_distance compare_distance_object();}{Returns the distance comparison functor.}
+
+\ccMethod{Closest_point closest_point_object();}{Returns the closest point constructor.}
+
+\ccHasModels
+\ccc{AABB_traits<GeomTraits,TrianglePrimitive>}.
+
+\ccSeeAlso
+\ccc{AABB_traits<GeomTraits,TrianglePrimitive>}\\
+\ccc{AABB_tree<AT>}
+\ccc{AABBPrimitive}
+
+\end{ccRefConcept}
+
+% +------------------------------------------------------------------------+
+%%RefPage: end of main body, begin of footer
+\ccRefPageEnd
+% EOF
+% +------------------------------------------------------------------------+
+

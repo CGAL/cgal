@@ -1,0 +1,184 @@
+% +------------------------------------------------------------------------+
+% | Reference manual page: FunctionKernel.tex
+% +------------------------------------------------------------------------+
+% | 20.03.2005   Author
+% | Package: Kinetic_data_structures
+% | 
+\RCSdef{\RCSFunctionKernelRev}{$Id$}
+\RCSdefDate{\RCSFunctionKernelDate}{$Date$}
+% |
+%%RefPage: end of header, begin of main body
+% +------------------------------------------------------------------------+
+
+
+\begin{ccRefConcept}{Kinetic::FunctionKernel}
+
+%% \ccHtmlCrossLink{}     %% add further rules for cross referencing links
+%% \ccHtmlIndexC[concept]{} %% add further index entries
+
+\ccDefinition
+  
+The concept \ccRefName\ encapsulates all the methods for representing
+and handing functions. The set is kept deliberately small to easy use
+of new \ccRefName s, but together these operations are sufficient to
+allow the correct processing of events, handling of degeneracies,
+usage of static data structures, run-time error checking as well as
+run-time verification of the correctness of kinetic data structures.
+The computation of a polynomial with the variable negated is used for
+reversing time in kinetic data structures and can be omitted if that
+capability is not needed.
+
+
+\ccTypes
+
+\ccNestedType{Function}{The type of function being handled.}
+
+\ccNestedType{NT}{The basic representational number type.}
+
+\ccNestedType{Root}{A type representing the roots of a \ccc{Function}.}
+
+\ccNestedType{Root_stack}{A model of \ccc{RootStack}. These objects can be created by calling the \ccc{root_stack_object} method with a \ccc{Function} and two (optional) \ccc{Root} objects. The enumerator then enumerates all roots of the function in the open inverval defined by the two root arguments. They optional arguments default to positive and negative infinity. }
+
+\ccNestedType{Root_enumerator_traits}{The traits for the \ccc{Root_enumerator} class.}
+
+Each of the following types has a corresponding \ccc{type_object}
+method (not explicitly documented) which takes a \ccc{Function} as an
+argument.
+
+\ccNestedType{Sign_at}{A functor which returns the sign of a
+  \ccc{Function} at a \ccc{NT} or \ccc{Root}.}
+
+%\ccNestedType{Multiplicity}{A functor which returns the multiplicity of a rational.}
+
+\ccNestedType{Sign_after}{A functor which returns sign of a function
+  immediately after a root.}
+
+The following type is used to construct functions from a list of
+coefficients. To get an instance use the
+\ccc{construct_function_object()} method.
+
+\ccNestedType{Construct_function}{This functor can be used create
+  instances of \ccc{Function}. See its reference page
+  \ccc{FunctionKernel::ConstructFunction} for more details.}
+
+The following functor likewise have a \ccc{type_object} method, but
+these take arguments other than a \ccc{Function}. The arguments are
+given below.
+
+\ccNestedType{Sign_between_roots}{This functor, creation of which
+  requires two \ccc{Root}s, returns the sign of a passed function
+  between the pair of roots.}
+
+%\ccNestedType{Compare_isolated_roots_in_interval}{This functor, creation of which requires two functions, compares the roots of two functions in an isolating invterval. More specifically, it takes two \ccc{NT}s as an argument. These numbers must isolate a root for each of the functions the functor is constructed with. The functor then returns true if the isolated root of the first function is less than that of the second.}
+
+%\ccNestedType{Quotient}{Compute the quotient of two \ccc{Functions}s.}
+
+%\ccNestedType{Pseudo_quotient}{Compute the pseudo quotient of two \ccc{Functions}s.}
+
+%\ccNestedType{Remainder}{Compute the remainder of one \ccc{Functions} divided by another.}
+
+%\ccNestedType{Are_negations_object}{Return true of the two functions passed are negations of one another.}
+
+%\ccNestedType{Sturm_sequence}{This object evaluates the Sturm sequence of two \ccc{Function}s at a \ccc{NT} value. Construction requires two \ccc{Function}s.}
+
+\ccNestedType{Differentiate}{This functor computes the derivitive of a \ccc{Function}. Construction takes no arguments.}
+
+%\ccNestedType{Sign_Sturm_sequence}{This object evaluates the Sturm sequence of two \ccc{Function}s at a \ccc{NT} value. Construction requires two \ccc{Function}s.}
+
+The following methods do not require any arguments to get the functor and take one \ccc{Function} as a functor argument.
+
+%\ccNestedType{Root_bound_evaluator}{This functor computes a root bound on a passed \ccc{Function}. }
+
+%\ccNestedType{Invert_variable}{Map $f(x)$ to $x^d f(1/x)$.}
+
+\ccNestedType{Negate_variable}{Map $f(x)$ to $f(-x)$.}
+
+%\ccNestedType{Map_rational_interval_to_positive}{}
+
+%\ccNestedType{Rational_translate_zero}{}
+%\ccNestedType{Shift_power}{}
+
+%\ccCreation
+%\ccCreationVariable{fk}  %% choose variable name
+
+%\ccConstructor{FunctionKernel(Root_enumerator_traits tr);}{}
+
+%\ccOperations
+
+%\ccMethod{void foo();}{some member functions}
+
+\ccHasModels
+\ccc{POLYNOMIAL::Kernel<RootStack>}, \ccc{POLYNOMIAL::Filtered_kernel<RootStack>}.
+
+\ccSeeAlso
+
+\ccc{Kinetic::RootEnumerator}.
+
+\ccExample
+
+We provide several models of the concept, which are not documented
+separately. The models of \ccc{Kinetic::SimulationTraits} all choose
+appropriate models.  However, if
+more control is desired, we here provide examples of how to create the
+various supported \ccc{Kinetic::FunctionKernel}.
+
+A Sturm sequence based kernel which supports exact comparisons of roots of polynomials (certificate failure times):
+\begin{ccExampleCode}
+typedef CGAL::POLYNOMIAL::Polynomial<CGAL::Gmpq> Function;
+typedef CGAL::POLYNOMIAL::Sturm_root_stack_traits<Function> Root_stack_traits;
+typedef CGAL::POLYNOMIAL::Sturm_root_stack<Root_stack_traits> Root_stack;
+typedef CGAL::POLYNOMIAL::Kernel<Function, Root_stack> Function_kernel;
+\end{ccExampleCode}
+
+A wrapper for \ccc{CORE::Expr} which implements the necessary
+operations:
+\begin{ccExampleCode}
+typedef CGAL::POLYNOMIAL::CORE_kernel Function_kernel;
+\end{ccExampleCode}
+
+A function kernel which computes approximations to the roots of the polynomials:
+\begin{ccExampleCode}
+typedef CGAL::POLYNOMIAL::Polynomial<double> Function;
+typedef CGAL::POLYNOMIAL::Root_stack_default_traits<Function> Root_stack_traits;
+typedef CGAL::POLYNOMIAL::Numeric_root_stack<Root_stack_traits> Root_stack;
+typedef CGAL::POLYNOMIAL::Kernel<Function, Root_stack> Function_kernel;
+\end{ccExampleCode}
+
+When using the function kernel in kinetic data structures, especially
+one that is in exact, it is useful to wrap the root stack. The wrapper
+checks the sign of the certificate function being solved and uses that
+to handle degeneracies. This is done by, for the inexact solvers 
+\begin{ccExampleCode}
+typedef Kinetic::Derivitive_filter_function_kernel<Function_kernel> KDS_function_kernel;
+\end{ccExampleCode}
+and for exact solvers
+\begin{ccExampleCode}
+typedef Kinetic::Handle_degeneracy_function_kernel<Function_kernel> KDS_function_kernel;
+\end{ccExampleCode}
+
+For exact computations, the primary representation for roots is the
+now standard choice of a polynomial with an associated isolating
+interval (and interval containing exactly one distinct root of a
+polynomial) along with whether the root has odd or even multiplicity
+and, if needed, the Sturm sequence of the polynomial. Two intervals
+can be compared by first seeing if the isolating intervals are
+disjoint. If they are, then we know the ordering of the respective
+roots. If not we can subdivide each of the intervals (using the
+endpoints of the other interval) and repeat. In order to avoid
+subdividing endlessly when comparing equal roots, once we subdivide a
+constant number of times, we use the Sturm sequence of $p$ and $p'q$
+(where $p$ and $q$ are the two polynomials and $p'$ is the derivative
+of $p$) to evaluate the sign of the second at the root of the first
+one directly (note that this Sturm sequence is applied to a common
+isolating interval of the roots of interest of both polynomials).
+
+
+
+\end{ccRefConcept}
+
+
+% +------------------------------------------------------------------------+
+%%RefPage: end of main body, begin of footer
+% EOF
+% +------------------------------------------------------------------------+
+

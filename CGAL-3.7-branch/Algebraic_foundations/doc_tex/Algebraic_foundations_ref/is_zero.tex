@@ -1,0 +1,22 @@
+\begin{ccRefFunction}{is_zero}
+
+\ccDefinition
+
+The function \ccRefName\ determines if a value is equal to 0 or not.\\
+The function is guaranteed to be well defined in case the argument type 
+is a model of the \ccc{RealEmbeddable} or of 
+the \ccc{IntegralDomainWithoutDivision} concept. 
+
+\ccInclude{CGAL/number_utils.h}
+
+\ccFunction{template <class NT> result_type is_zero(const NT& x);}
+        { The \ccc{result_type} is convertible to \ccc{bool}. }
+
+\ccSeeAlso
+
+\ccRefConceptPage{RealEmbeddable}\\
+\ccRefConceptPage{RealEmbeddableTraits::IsZero}\\
+\ccRefConceptPage{IntegralDomainWithoutDivision}\\
+\ccRefConceptPage{AlgebraicStructureTraits::IsZero}\\
+
+\end{ccRefFunction}

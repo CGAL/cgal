@@ -1,0 +1,48 @@
+\begin{ccRefConcept}{PolynomialTraits_d::PseudoDivisionRemainder}
+ 
+\ccDefinition
+
+This \ccc{AdaptableBinaryFunction} computes the remainder of the 
+{\em pseudo division} of two polynomials $f$ and $g$. 
+          
+Given $f$ and $g \neq 0$ one can compute quotient $q$ and remainder $r$
+such that $D \cdot f = g \cdot q + r$ and $degree(r) < degree(g)$,
+where $ D = leading\_coefficient(g)^{max(0, degree(f)-degree(g)+1)}$
+
+This functor computes $r$.
+
+\ccRefines 
+\ccc{AdaptableBinaryFunction}\\
+\ccc{CopyConstructible}\\
+\ccc{DefaultConstructible}\\
+
+
+\ccTypes
+
+
+\ccSetThreeColumns{xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx}{xxx}{}
+\ccCreationVariable{fo}
+
+\ccTypedef{typedef PolynomialTraits_d::Polynomial_d   result_type;}{}\ccGlue
+\ccTypedef{typedef PolynomialTraits_d::Polynomial_d   first_argument_type;}{}\ccGlue
+\ccTypedef{typedef PolynomialTraits_d::Polynomial_d   second_argument_type;}{}
+
+\ccOperations
+
+
+\ccMethod{result_type operator()(first_argument_type  f,
+                                 second_argument_type g);}{ 
+        Returns the remainder $r$ of the pseudo division of $f$ and $g$ with
+        respect to the outermost variable $x_{d-1}$.}
+
+%\ccHasModels
+
+\ccSeeAlso
+
+\ccRefIdfierPage{Polynomial_d}\\
+\ccRefIdfierPage{PolynomialTraits_d}\\
+\ccRefIdfierPage{PolynomialTraits_d::PseudoDivision}\\
+\ccRefIdfierPage{PolynomialTraits_d::PseudoDivisionRemainder}\\
+\ccRefIdfierPage{PolynomialTraits_d::PseudoDivisionQuotient}\\
+
+\end{ccRefConcept}

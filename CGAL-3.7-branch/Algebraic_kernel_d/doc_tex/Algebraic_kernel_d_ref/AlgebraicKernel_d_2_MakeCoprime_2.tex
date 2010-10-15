@@ -1,0 +1,37 @@
+\begin{ccRefFunctionObjectConcept}{AlgebraicKernel_d_2::MakeCoprime_2}
+
+\ccDefinition
+Computes for a given pair of bivariate polynomials $p_1$, $p_2$ their
+common part $g$ and coprime parts $q_1$, $q_2$ respectively.
+
+That is, it computes $g, q_1, q_2$ such that:\\
+\hspace{1cm} $c_1 \cdot p_1 =  g \cdot q_1$ for some constant $c_1$ and\\
+\hspace{1cm} $c_2 \cdot p_2 =  g \cdot q_2$ for some constant $c_2$, 
+such that $q_1$ and $q_2$ are coprime. 
+
+\ccRefines 
+\ccc{AdaptableFunctor} with five arguments 
+
+\ccTypes \ccThree{}{+++++++++++++}{++++++++}
+%\ccThree{typedef bool}{result_type+}{}
+\ccTypedef{typedef bool result_type;}{}
+
+\ccOperations \ccThree{+++++++++}{+++++++++}{}
+\ccCreationVariable{fo}
+%\ccThree{xxxxxxxxxxx}{xxxxxxxxxxx}{}
+
+
+\ccMethod{result_type
+    operator()(const AlgebraicKernel_d_2::Polynomial_2 & p1, 
+               const AlgebraicKernel_d_2::Polynomial_2 & p2, 
+               AlgebraicKernel_d_2::Polynomial_2 & g, 
+               AlgebraicKernel_d_2::Polynomial_2 & q1,     
+               AlgebraicKernel_d_2::Polynomial_2 & q2);}
+{ Computes $g, q_1, q_2$ as described above.\\
+Returns whether $p_1$ and $p_2$ where already coprime. 
+}
+
+\ccSeeAlso
+\ccRefIdfierPage{AlgebraicKernel_d_2::IsCoprime_2}\\
+
+\end{ccRefFunctionObjectConcept}

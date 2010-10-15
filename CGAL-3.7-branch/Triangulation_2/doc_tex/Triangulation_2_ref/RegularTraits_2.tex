@@ -1,0 +1,145 @@
+% +------------------------------------------------------------------------+
+% | Reference manual page: Regular_triangulation_traits_2.tex
+% +------------------------------------------------------------------------+
+% | 12.04.2000   Author
+% | Package: Package
+% | 
+\RCSdef{\RCSRegulartriangulationtraitsRev}{$Id$}
+\RCSdefDate{\RCSRegulartriangulationtraitsDate}{$Date$}
+% |
+%%RefPage: end of header, begin of main body
+% +------------------------------------------------------------------------+
+
+
+\begin{ccRefConcept}{RegularTriangulationTraits_2}
+
+%% \ccHtmlCrossLink{}     %% add further rules for cross referencing links
+%% \ccHtmlIndexC[concept]{} %% add further index entries
+\ccCreationVariable{traits}
+\ccDefinition
+  
+The concept \ccRefName\ describe the requirements
+for the traits class of regular triangulations. It refines  the 
+concept \ccc{TriangulationTraits_2} 
+providing  the  type
+\ccc{Weighted_point_2} and the \ccc{power-test}  predicate on those 
+weighted points.
+A weighted point is basically 
+a point augmented with a scalar weight. It can be seen as a circle
+when the weight is interpreted as a square radius.
+The  \ccc{power-test} on weighted points
+is the fundamental test to build regular triangulations 
+as  the \ccc{side_of_oriented_circle} test is the fundamental test
+of Delaunay triangulations.
+
+%The traits must also provide the types 
+%\ccc{Ray} and \ccc{Line} to output the dual power diagram,
+
+\ccRefines
+\ccc{TriangulationTraits_2}
+
+\ccTypes
+\ccNestedType{Bare_point}{Another name for the point type.}
+\ccGlue    
+\ccNestedType{Weighted_point_2}{ The weighted point type, it has to be 
+a model of the concept \ccc{WeightedPoint}.} 
+%\ccGlue
+%\ccNestedType{Line_2}{Only required if the dual power diagram is asked.}
+%\ccGlue
+%\ccNestedType{Ray_2}{Only required if the dual power diagram is asked.}
+%\ccGlue
+
+\ccNestedType{Power_test_2}{A predicate object type. Must provide
+the operators:\\
+  % \begin{enumerate} does not work, unfortunately (unexplained reason).
+  --- \ccc{Oriented_side operator() ( Weighted_point_2 p,
+                                        Weighted_point_2 q,
+                                        Weighted_point_2 r,
+                                        Weighted_point_2 s) }
+  which is the power test for points \ccc{p}, \ccc{q}, \ccc{r} and 
+  \ccc{s}. \ccPrecond{the bare points corresponding to 
+  \ccc{p}, \ccc{q}, \ccc{r} are not collinear.}\\
+  --- \ccc{Oriented_side operator() ( Weighted_point_2 p,
+                                        Weighted_point_2 q,
+                                        Weighted_point_2 r) }
+    which is the degenerated power test for collinear points 
+    \ccc{p}, \ccc{q}, \ccc{r}.
+    \ccPrecond{the bare points corresponding to 
+      \ccc{p}, \ccc{q}, \ccc{r} are collinear and \ccc{p != q}.}\\
+  --- \ccc{Oriented_side operator() ( Weighted_point_2 p,
+                                        Weighted_point_2 q) }
+    which is the degenerated power test for weighted points  
+    \ccc{p} and \ccc{q} whose corresponding bare-points are identical.
+    \ccPrecond{the bare points corresponding to 
+      \ccc{p} and \ccc{q} are identical.}
+}
+
+The following type/predicate is required if a call to
+\ccc{nearest_power_vertex} is issued:
+
+\ccNestedType{Compare_power_distance_2}{A predicate object type. Must
+  provide the operator:\\
+  \ccc{Comparison_result operator()(Bare_point p, Weighted_point_2 q,
+    Weighted_point_2 r)},
+  which compares the power distance between \ccc{p} and \ccc{q} to the
+  power distance between \ccc{p} and \ccc{r}.}
+
+
+\ccNestedType{Construct_weighted_circumcenter_2}{A constructor
+object which constructs the weighted circumcenter of  three
+weighted points. Provides the operator \\
+\ccc{Bare_point operator() ( Weighted_point_2 p,
+                             Weighted_point_2 q,
+                             Weighted_point_2 r);} }
+
+
+\ccNestedType{Construct_radical_axis_2} {A constructor type which
+constructs
+the radical axis of two weighted points. Provides the operator~: \\
+\ccc{ Line_2  operator() ( Weighted_point_2 p, Weighted_point_2 q);} }
+
+
+\ccCreation
+\ccCreationVariable{traits}  %% choose variable name
+
+\ccConstructor{RegularTriangulationTraits_2();}{default constructor.}
+\ccConstructor{ RegularTriangulationTraits_2 ( 
+    const  RegularTriangulatioTraits_2& );} { copy constructor.}
+\ccMethod{RegularTriangulationTraits_2& operator=
+  (const  RegularTriangulationTraits_2& );} {assignment operator}
+
+
+\ccHeading{Access to predicate and constructors objects}
+\ccThree{Construct_weighted_circumcenter_2}
+        { construct_weighted_circumcenter_2_object();}{}
+\ccMethod{Power_test_2 power_test_2_object();}{}
+\ccGlue
+\ccMethod{Compare_power_distance_2 compare_power_distance_2_object();}{}
+\ccGlue
+\ccMethod{Construct_weighted_circumcenter_2
+  construct_weighted_circumcenter_2_object();}{}
+\ccGlue
+\ccMethod{Construct_radical_axis_2
+  construct_radical_axis_2_object();}{}
+
+
+%\ccOperations
+%\ccMethod{Rt power(Weighted_point wp, Weighted_point wq) const;}{Returns the power product
+%of \ccc{wp} \ and \ccc{wq}. This function is NOT YET required nor used.}
+
+
+\ccHasModels
+\ccc{CGAL::Regular_triangulation_traits_2<Rep>}\\
+\ccc{CGAL::Regular_triangulation_filtered_traits_2<FK>}
+
+\ccSeeAlso
+\ccc{TriangulationTraits_2} \\
+\ccc{CGAL::Regular_triangulation_2<Traits,Tds>}
+
+\end{ccRefConcept}
+
+% +------------------------------------------------------------------------+
+%%RefPage: end of main body, begin of footer
+% EOF
+% +------------------------------------------------------------------------+
+

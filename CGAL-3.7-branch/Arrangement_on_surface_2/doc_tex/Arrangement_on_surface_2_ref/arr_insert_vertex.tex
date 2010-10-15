@@ -1,0 +1,43 @@
+\ccRefPageBegin
+
+\begin{ccRefFunction}{insert_point}
+
+\ccDefinition
+
+The function \ccRefName{} inserts a given point into a given arrangement.
+It uses a given point-location object to locate the given
+point in the given arrangement. If the point conincides with an existing
+vertex, there is nothing left to do; if it lies on an edge, the edge is
+split at the point. Otherwise, the point is contained inside a face, and is
+inserted as an isolated vertex inside this face.
+By default, the function uses the ``walk along line'' point-location
+strategy --- namely, an instance of the class
+\ccc{Arr_walk_along_line_point_location<Arrangement_2<Traits,Dcel> >}.
+In either case, the function returns a handle for the vertex associated
+with the point.
+
+\ccInclude{CGAL/Arrangement_2.h}
+
+\ccGlobalFunction{template<typename Traits, typename Dcel,
+                           typename PointLocation>
+                       typename Arrangement_2<Traits,Dcel>::Vertex_handle
+                       insert_point (Arrangement_2<Traits,Dcel>& arr,
+                                         const typename Traits::Point_2& p,
+                                         const PointLocation& pl = walk_pl);}
+\ccPrecond{If provided, \ccc{pl} must be attached to the given arrangement
+\ccc{arr}.}
+
+\ccRequirements
+\begin{itemize}
+\item The instantiated \ccc{Traits} class must model the
+  \ccc{ArrangementXMonotoneTraits_2} concept. Not all expressions listed 
+  by this concept are required. In fact the traits class must model the 
+  \ccc{ArrangementBasicTraits_2} concept, and support the splitting
+  functionality.
+\item The point-location object \ccc{pl}, must model the
+  \ccc{ArrangementPointLocation_2} concept.
+\end{itemize}
+
+\end{ccRefFunction}
+
+\ccRefPageEnd

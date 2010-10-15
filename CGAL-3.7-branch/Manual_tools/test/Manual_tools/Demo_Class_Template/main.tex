@@ -1,0 +1,23 @@
+\begin{ccClassTemplate}{ClassB<FT<RT> >}
+
+\ccCreation
+\ccCreationVariable{p}
+
+\ccTwo{ClassB<FT<RT> > p( A a, B *b);X}{}
+  \ccConstructor{ ClassB();}{ default.}
+  \ccGlue
+  \ccConstructor{ ClassB( ClassB<FT<RT> > q);}{ copy.}
+  \ccGlue
+  \ccConstructor{ ClassB( A a, B *b);}{ arbitrary.}
+
+\ccOperations
+\ccThree{ClassB<FT<RT> >}{foo( q);}{}
+
+  \ccMethod{ ClassB foo( ClassB q);}{
+      wrong, without template parameters.}
+
+  \ccFunction{ ClassB<FT<RT> > foo( ClassB<FT<RT> > q);}{
+      right, with template parameters.}
+\end{ccClassTemplate}
+
+% ----------------------------------------------------------------------

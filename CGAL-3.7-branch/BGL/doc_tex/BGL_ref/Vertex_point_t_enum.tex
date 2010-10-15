@@ -1,0 +1,38 @@
+\begin{ccRefEnum}{vertex_point_t}
+
+\ccInclude{CGAL/boost/graph/properties.h}
+
+\ccGlobalEnum{enum vertex_point_t { vertex_point } ; }
+\ccRefLabel{vertex_point}
+\ccHtmlCrossLink{vertex_point}
+
+The constant \ccc{vertex_point} is a \ccAnchor{http://www.boost.org/libs/graph/doc/PropertyTag.html}
+{property tag} which refers to the  geometric embedding property of a  vertex of a \ccc{HalfedgeGraph}.
+
+A \ccc{vertex_point} is an 
+\ccAnchor{http://www.boost.org/libs/graph/doc/using_property_maps.html}
+{interior property}, 
+that is, a
+\ccAnchor{http://www.boost.org/libs/property_map/doc/property_map.html}{property map} 
+for a \ccc{vertex_point} can be extracted from any model of a \ccc{HalfedgeGraph}
+using the {\sc Bgl}
+\ccAnchor{http://www.boost.org/libs/graph/doc/PropertyGraph.html}
+{PropertyGraph} interface:
+
+\ccc{boost::get(vertex_point,graph)}
+
+A point of a vertex can be directly accessed via:
+
+\ccc{boost::get(vertex_point,graph,vertex)}\\
+\ccc{boost::put(vertex_point,graph,vertex,newpoint)}
+
+
+\end{ccRefEnum}
+
+
+
+
+
+
+
+

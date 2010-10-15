@@ -1,0 +1,5 @@
+compare_y_at_x_right 1 14 9 LARGER
+compare_y_at_x_right 1 14 0 SMALLER
+compare_y_at_x_right 1 15 13 SMALLER
+compare_y_at_x_right 1 15 9 LARGER
+compare_y_at_x_right 1 15 0 SMALLER

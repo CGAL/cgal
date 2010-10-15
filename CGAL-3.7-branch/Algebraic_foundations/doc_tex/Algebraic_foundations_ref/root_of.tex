@@ -1,0 +1,29 @@
+\begin{ccRefFunction}{root_of}
+
+\ccDefinition
+
+The function \ccRefName\ computes a real root of a square-free univariate 
+polynomial.
+
+The function is guaranteed to be well defined in case the value type, \ccc{NT},
+of the iterator range is a model of the \ccc{FieldWithRootOf} concept. 
+
+\ccInclude{CGAL/number_utils.h}
+
+\ccFunction{template <class InputIterator> NT 
+        root_of(int k, InputIterator begin, InputIterator end);}
+        {
+        returns the k-th real root of the univariate polynomial, 
+        which is defined by the iterator range, 
+        where begin refers to the constant term. 
+        \ccPrecond The polynomial is square-free. 
+        }
+
+
+\ccSeeAlso
+
+\ccRefConceptPage{FieldWithRootOf}\\
+\ccRefConceptPage{AlgebraicStructureTraits::RootOf}\\
+
+
+\end{ccRefFunction}

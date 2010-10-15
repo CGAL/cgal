@@ -1,0 +1,29 @@
+\begin{ccRefFunction}{random_selection}
+
+\ccDefinition
+
+\ccc{random_selection} chooses $n$ items at random from a random
+access iterator range which is useful to produce degenerate input data
+sets with multiple entries of identical items.
+
+\ccInclude{CGAL/random_selection.h}
+
+\ccFunction{template <class RandomAccessIterator, class Size, 
+                      class OutputIterator, class Random>
+    OutputIterator random_selection( RandomAccessIterator first,
+        RandomAccessIterator last, 
+        Size n, OutputIterator result, Random& rnd = default_random);}
+{ chooses a random item from the range $[\ccc{first},\ccc{last})$ and
+    writes it to \ccc{result}, each item from the range with equal
+    probability, and repeats this $n$ times, thus writing $n$ items to
+    \ccc{result}.
+    A single random number is needed from \ccc{rnd} for each item.
+    Returns the value of \ccc{result} after inserting the $n$ items.
+    \ccPrecond \ccc{Random} is a random number generator type as provided 
+    by the STL or by \ccc{Random}.
+}
+
+\ccSeeAlso
+\ccRefIdfierPage{CGAL::perturb_points_2} \\
+
+\end{ccRefFunction}

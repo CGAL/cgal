@@ -1,0 +1,28 @@
+\begin{ccRefClass}{Istream_iterator<T,Stream>}
+
+\ccDefinition
+
+The class \ccRefName\ is an input iterator adaptor for the
+input stream class \ccc{Stream} and value type $T$. It is particularly
+useful for classes that are similar but not compatible to \ccc{std::istream}.
+
+\ccInclude{CGAL/IO/Istream_iterator.h}
+
+\ccCreation
+\ccCreationVariable{i}
+
+\ccConstructor{Istream_iterator();}{creates an end-of-stream
+  iterator \ccVar. This is a past-the-end iterator, and it is useful
+  when constructing a range.}
+
+\ccConstructor{Istream_iterator( Stream& s);}{creates an input
+  iterator \ccVar\ reading from $s$. When $s$ reaches end of stream,
+  this iterator will compare equal to an end-of-stream iterator
+  created using the default constructor.}
+
+\ccOperations
+
+\ccVar\ fulfills the requirements for an input iterator.
+
+\end{ccRefClass}
+%% EOF

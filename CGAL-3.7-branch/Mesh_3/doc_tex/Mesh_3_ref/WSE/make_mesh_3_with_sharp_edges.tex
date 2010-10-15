@@ -1,0 +1,80 @@
+% +------------------------------------------------------------------------+
+% | Reference manual page: make_mesh_3_with_sharp_edges.tex
+% +------------------------------------------------------------------------+
+% | 13.05.2008   Laurent Rineau
+% | Package: Mesh_3
+% |
+\RCSdef{\RCSmakemeshfrompiecewisesmoothsurfacesRev}{$Id: make_mesh_3_with_sharp_edges.tex 43417 2008-06-03 13:33:01Z lrineau $}
+\RCSdefDate{\RCSmakemeshfrompiecewisesmoothsurfacesDate}{$Date: 2008-06-03 15:33:01 +0200 (Tue, 03 Jun 2008) $}
+% |
+\ccRefPageBegin
+%%RefPage: end of header, begin of main body
+% +------------------------------------------------------------------------+
+
+
+\begin{ccRefFunction}{make_mesh_3_with_sharp_edges}  %% add template arg's if necessary
+
+%% \ccHtmlCrossLink{}     %% add further rules for cross referencing links
+%% \ccHtmlIndexC[function]{} %% add further index entries
+
+\ccDefinition
+  
+The function \ccRefName\ is a volume mesh generator. It produces a surface
+mesh at the same time. The object to be meshed is supposed to be bounded by
+a piecewise-smooth surface. That object is known through a meshing traits
+that provides several predicates on the object and its boundary.
+
+\ccInclude{CGAL/make_mesh_3_with_sharp_edges.h}
+
+\ccGlobalFunction{
+  template <class C2T3,
+  class MeshTraits,
+  class MeshCriteria>
+  void make_mesh_3_with_sharp_edges(C2T3& c2t3,
+                                    MeshTraits meshtraits,
+                                    MeshCriteria mesh_criteria);}{}
+
+\ccParameters
+
+The template parameter \ccc{C2T3} is required to be a model of
+\ccc{SurfaceMeshComplex_2InTriangulation_3}, a data structure able to
+represent a two dimensional complex embedded in a three dimensional
+triangulation. The argument \ccc{c2t3} of type \ccc{C2T3}, passed by
+reference to the mesh generator, is used to maintain the current
+approximating surface mesh and it stores the final surface mesh at the end
+of the procedure.
+
+The type \ccc{C2T3} is in particular required to provide a nested type
+\ccc{C2T3::Triangulation_3} for the three dimensional triangulation
+embedding the surface mesh.  The vertex and cell base classes of the
+triangulation \ccc{C2T3::Triangulation_3} are required to be models of the
+concepts \ccc{MeshWSEVertexBase_3} and \ccc{MeshCellBase_3}
+respectively.
+
+The template parameter \ccc{MeshTraits} is required to be a model of
+\ccc{MeshWSETraits_3}.The argument \ccc{meshtraits} of type
+\ccc{MeshTraits} is the link between object to be meshed and
+the meshing algorithm.
+
+The template argument \ccc{MeshCriteria} has to be a model of the concepts
+\ccc{SurfaceMeshWSEEdgesCriteria_3}, \ccc{SurfaceMeshFacetsCriteria_3} and
+\ccc{MeshCriteria_3}. The argument of type \ccc{MeshCriteria}
+passed to the mesh generator specifies:
+\begin{itemize}
+\item the requirements on the marked edges of the output mesh,
+\item the size and shape requirements on the facets of the output surface
+  mesh,
+\item the size and shape requirements on the tetrahedra of the output mesh.
+\end{itemize}
+
+\ccSeeAlso
+\ccc{make_mesh_3}
+
+\end{ccRefFunction}
+
+% +------------------------------------------------------------------------+
+%%RefPage: end of main body, begin of footer
+\ccRefPageEnd
+% EOF
+% +------------------------------------------------------------------------+
+

@@ -1,0 +1,41 @@
+% +------------------------------------------------------------------------+
+% | CGAL Reference Manual: circulator_distance
+% +------------------------------------------------------------------------+
+% | Requirements for circulators in analogy to STL iterators.
+% | Adaptors between circulators and iterators.
+% | Proposal for CGAL.
+% |
+% | 11.10.1996   Lutz Kettner
+% | 
+% | \RCSdef{\circRev}{$Id$}
+% | \RCSdefDate{\circDate}{$Date$}
+% +------------------------------------------------------------------------+
+
+% +-----------------------------------------------------+
+\begin{ccRefFunction}{circulator_distance}
+
+\ccDefinition
+
+\ccSetThreeColumns{template <class C> sieze_t}{XXX}{}
+
+The distance of a circulator $c$ to a circulator $d$ is the number of
+elements in the range $\left[c, d\right)$. It is defined to be zero
+for a circulator on an empty sequence and it returns the size of the data
+structure when applied to a range of the form $\left[c, c\right)$.
+
+\ccInclude{CGAL/circulator.h}
+
+\ccGlobalFunction{template <class C> C::difference_type
+  circulator_distance(C c, C d);}
+
+\ccSeeAlso
+
+\ccc{circulator_size},
+\ccc{iterator_distance},
+\ccc{is_empty_range},
+\ccc{Circulator}.
+
+\end{ccRefFunction}
+
+% +-----------------------------------------------------+
+% EOF

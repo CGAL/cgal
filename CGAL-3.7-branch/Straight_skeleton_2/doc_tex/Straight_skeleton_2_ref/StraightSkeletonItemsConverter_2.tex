@@ -1,0 +1,76 @@
+%% Copyright (c) 2004  SciSoft.  All rights reserved.
+%%
+%% This file is part of CGAL (www.cgal.org); you may redistribute it under
+%% the terms of the Q Public License version 1.0.
+%% See the file LICENSE.QPL distributed with CGAL.
+%%
+%% Licensees holding a valid commercial license may use this file in
+%% accordance with the commercial license agreement provided with the software.
+%%
+%% This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
+%% WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
+%%
+%% 
+%%
+%% Author(s)     : Fernando Cacciola <fernando_cacciola@hotmail.com>
+
+\begin{ccRefConcept}{StraightSkeletonItemsConverter_2}
+
+%% \ccHtmlCrossLink{}     %% add further rules for cross referencing links
+%% \ccHtmlIndexC[concept]{} %% add further index entries
+
+\ccCreationVariable{conv}
+\ccDefinition
+
+The concept \ccRefName\ describes the requirements for items converter passed as the third template argument to the class \ccc{Straight_skeleton_converter_2<SrcSs,TgtSs,ItemsConverter>}. It converts the \ccc{HDS} items from one type of straight skeleton to another
+
+\ccTypes
+  \ccNestedType{Source_vertex_const_handle}
+  {A constant handle to a model of the \ccc{StraightSkeletonVertex_2} concept 
+  used to represent the vertices of the straight skeleton of the source type.}{}
+  \ccGlue
+  \ccNestedType{Source_halfedge_const_handle}
+   {A constant handle to model of the \ccc{StraightSkeletonHalfedge_2} concept 
+    used to represent the halfedges of the straight skeleton of the source type.}{}
+  \ccGlue
+  \ccNestedType{Source_face_const_handle}
+  {A constant handle to model of the \ccc{StraightSkeletonFace_2} concept 
+   used to represent the faces of the straight skeleton of the source type.}{}
+  \ccGlue
+  \ccNestedType{Tarvet_vertex}
+  {A model of the \ccc{StraightSkeletonVertex_2} concept used to represent the vertices 
+  of the straight skeleton of the target type.}{}
+  \ccGlue
+  \ccNestedType{Target_halfedge}
+  {A model of the \ccc{StraightSkeletonHalfedge_2} concept used to represent the halfedges
+   of the straight skeleton of the target type.}{}
+  \ccGlue
+  \ccNestedType{Target_face}
+  {Any model of the \ccc{StraightSkeletonFace_2} concept used to represent the faces 
+   of the straight skeleton of the target type.}{}
+
+\ccOperations
+
+\ccTagFullDeclarations
+\ccMemberFunction{Target_vertex operator()( Source_vertex_const_handle v) const;}
+{ returns a new vertex with the same data as $v$ converted to the corresponding target types.}
+\ccGlue
+\ccMemberFunction{Target_halfedge operator()( Source_halfedge_const_handle h) const;}
+{ returns a new halfedge with the same data as $h$ converted to the corresponding target types.}
+\ccGlue
+\ccMemberFunction{Target_face operator()( Source_face_const_handle f) const;}
+{ returns a new face with the same data as $f$ converted to the corresponding target types.}
+
+\ccHasModels
+
+\ccc{CGAL::Straight_skeleton_items_converter_2<TgtSs,SrcSs,NTConverter>}
+
+\ccSeeAlso
+\ccRefIdfierPage{CGAL::Straight_skeleton_converter_2<SrcSs,TgtSs,ItemsCvt>}
+
+\end{ccRefConcept}
+
+% +------------------------------------------------------------------------+
+%%RefPage: end of main body, begin of footer
+% EOF
+% +------------------------------------------------------------------------+

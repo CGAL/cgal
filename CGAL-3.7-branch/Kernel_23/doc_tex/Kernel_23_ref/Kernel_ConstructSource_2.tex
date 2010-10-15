@@ -1,0 +1,21 @@
+\begin{ccRefFunctionObjectConcept}{Kernel::ConstructSource_2}
+A model for this must provide:
+
+\ccCreationVariable{fo}
+
+\ccMemberFunction{Kernel::Point_2 operator()(const
+  Kernel::Segment_2 &s);} {returns the source of
+  the segment \ccc{s}.}
+
+\ccMemberFunction{Kernel::Point_2 operator()(const
+  Kernel::Ray_2 &r);} {returns the source of
+  the ray \ccc{r}.}
+
+\ccRefines
+\ccc{AdaptableFunctor} (with one argument)
+
+\ccSeeAlso
+\ccRefIdfierPage{CGAL::Segment_2<Kernel>}\\
+\ccRefIdfierPage{CGAL::Ray_2<Kernel>}
+
+\end{ccRefFunctionObjectConcept}

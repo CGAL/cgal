@@ -1,0 +1,45 @@
+\RCSdef{\RCSSurfacemeshdefaultedgescriteria3Rev}{$Id$}
+\RCSdefDate{\RCSSurfacemeshdefaultedgescriteria3Date}{$Date$}
+
+\begin{ccRefClass}{Piecewise_smooth_surface_mesh_default_edges_criteria_3<Tr>}
+
+\ccDefinition
+  
+The class \ccRefName\  implements  the most commonly used combination
+of criteria for edges. It involves two criteria which are
+in order: 
+\begin{itemize}
+\item an upper bound on the radius of lineic Delaunay balls.
+ A lineic Delaunay ball is a  ball circumscribing  an edge,
+centered on the 1D curves of he piecewise smooth surface and empty of vertices.
+ Such a ball exists for each marked edge of the 2D complex.
+\item an upper bound on the center-center distances of the marked edges.
+  The center-center distance of a marked edge
+  is the distance between the edge circumcenter and the 
+  center of its  lineic Delaunay ball. 
+\end{itemize}
+
+\ccInclude{CGAL/Piecewise_smooth_surface_mesh_default_edges_criteria_3.h}
+
+\ccIsModel
+
+\ccc{SurfaceMeshEdgesCriteria_3}
+
+\ccTypes
+
+\ccTypedef{typedef Tr::FT FT;}{The numerical type.}
+
+\ccCreation
+\ccCreationVariable{criteria}
+
+\ccConstructor{Piecewise_smooth_surface_mesh_default_edges_criteria_3(FT radius_bound,
+                                                     FT distance_bound);}
+{Returns a \ccRefName\ with \ccc{radius_bound},
+\ccc{distance_bound} as bounds the radius of the lineic Delaunay balls 
+and the center-center distances respectively.}
+
+\ccSeeAlso
+
+\ccc{make_surface_mesh}
+
+\end{ccRefClass}

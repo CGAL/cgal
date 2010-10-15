@@ -1,0 +1,53 @@
+% +------------------------------------------------------------------------+
+% | Reference manual page: Arr_extended_dcel.tex
+% +------------------------------------------------------------------------+
+% | 
+% | Package: Arrangement_2
+% | 
+% +------------------------------------------------------------------------+
+
+\ccRefPageBegin
+
+\begin{ccRefClass}{Arr_extended_dcel<Traits,VData,HData,FData,V,H,F>}
+
+\ccDefinition
+%============
+The \ccRefName\ class-template extends the topological-features of the \dcel\,
+namely the vertex, halfedge, and face types. While it is possible to maintain
+extra (non-geometric) data with the curves or points of the arrangement by
+extending their types respectively, it is also possible to extend the vertex,
+halfedge, or face types of the \dcel\ through inheritance. As the technique to
+extend these types is somewhat cumbersome and difficult for inexperienced
+users, the \ccRefName\ class-template provides a convenient way to do that.
+Each one of the three features is extended with a corresponding data type
+provided as parameters. This class template is also parameterized with a
+traits class used to extract default values for the vertex, halfedge, and face
+base classes, which are the remaining three template parameters respectively.
+The default values follow:
+
+\begin{tabbing}
+\ccc{V} = \=\ccc{Arr_vertex_base<typename Traits::Point_2>}\\
+\ccc{H} = \>\ccc{Arr_halfedge_base<typename Traits::X_monotone_curve_2>}\\
+\ccc{F} = \>\ccc{Arr_face_base}
+\end{tabbing}
+
+\ccInclude{CGAL/Arr_extended_dcel.h}
+
+\ccIsModel
+  \ccc{ArrangementDcelWithRebind}
+
+\ccInheritsFrom
+  \begin{tabbing}
+  \ccc{Arr_dcel_base<}\=\ccc{Arr_extended_vertex<V, VData>,}\\
+                      \>\ccc{Arr_extended_halfedge<H, HData>,}\\
+                      \>\ccc{Arr_extended_face<F, FData> >}
+  \end{tabbing}
+
+\ccSeeAlso
+
+\ccc{Arr_dcel_base<V,H,F>}\lcTex{
+  (\ccRefPage{CGAL::Arr_dcel_base<V,H,F>})}
+
+\end{ccRefClass}
+
+\ccRefPageEnd

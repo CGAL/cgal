@@ -1,0 +1,391 @@
+% +------------------------------------------------------------------------+
+% | CGAL Reference Manual:  circulator.tex
+% +------------------------------------------------------------------------+
+% | Requirements for circulators in analogy to STL iterators.
+% | Adaptors between circulators and iterators.
+% | Proposal for CGAL.
+% |
+% | 11.10.1996   Lutz Kettner
+% | 
+\RCSdef{\circRev}{$Id$}
+\RCSdefDate{\circDate}{$Date$}
+% +------------------------------------------------------------------------+
+
+\gdef\lciIfHtmlClassLinks{\lcFalse}
+\gdef\lciIfHtmlRefLinks{\lcFalse}
+\gdef\lciIfHtmlLinks{\lcFalse}
+
+\section{Circulators}
+%\label{chapterCirculators}
+
+%\ccChapterRelease{\circRev. \ \circDate}\\
+%\ccChapterAuthor{Lutz Kettner}
+
+An introduction to the concept of circulators is given here. A couple
+of adaptors are presented that convert between iterators and
+circulators. Some useful functions for circulators follow. This
+chapter concludes with a discussion of the design decisions taken. For
+the full description of the circulator requirements, the provided base
+classes, the circulator tags, and the support for generic algorithms
+that work for iterators as well as for circulators please refer to the
+reference pages. Note that circulators are not part of \stl, but of \cgal.
+
+% +-----------------------------------------------------+
+\subsection{Introduction\label{sectionIntroduction}}
+\label{sectionCirculatorWarning}
+
+The concept of iterators in \stl\ is tailored for linear
+sequences~\cite{cgal:ansi-is14882-98,cgal:ms-strg-96}.  In contrast, circular
+sequences occur naturally in many combinatorial and geometric
+structures. Examples are polyhedral surfaces and planar maps, where
+the edges emanating from a vertex or the edges around a facet form a
+circular sequence.
+
+Since circular sequences do not allow for efficient iterators, we have
+introduced the new concept of {\em circulators}. They share most of
+the requirements of iterators, while the main difference is the lack
+of a past-the-end position in the sequence. Appropriate adaptors are
+provided between iterators and circulators to integrate circulators
+smoothly into the framework of \stl. An example of a generic {\tt
+  contains} function illustrates the use of circulators.  As usual for
+circular structures, a {\tt do}-{\tt while} loop is preferable, such
+that for the specific input, {\tt c == d}, all elements in the
+sequence are reached.
+
+\begin{ccExampleCode}
+template <class Circulator, class T>
+bool contains( Circulator c, Circulator d, const T& value) {
+    if (c != 0) {
+        do {
+            if (*c == value)
+                return true;
+        } while (++c != d);
+    }
+    return false;
+}
+\end{ccExampleCode}
+
+\noindent
+Three circulator categories are defined: forward, bidirectional and
+random-access circulators. Given a circulator {\tt c}, the operation
+{\tt *c} denotes the item the circulator refers to. The operation {\tt
+  ++c} advances the circulator by one item and {\tt --c} steps a
+bidirectional circulator one item backwards. For random-access
+circulators {\tt c+n} advances the circulator {\tt n} steps.  Two
+circulators can be compared for equality.
+
+Circulators have a different notion of reachability and ranges than
+iterators. A circulator {\tt d} is called {\em reachable\/} from a
+circulator {\tt c} if {\tt c} can be made equal to {\tt d} with
+finitely many applications of the operator {\tt ++}. Due to the
+circularity of the sequence this is always true if both circulators
+refer to items of the same sequence. In particular, {\tt c} is always
+reachable from {\tt c}. Given two circulators {\tt c} and {\tt d}, the
+range {\tt [c,d)} denotes all circulators obtained by starting with
+{\tt c} and advancing {\tt c} until {\tt d} is reached, but does not
+include {\tt d}, for {\tt d} $\neq$ {\tt c}.  So far it is the same
+range definition as for iterators.  The difference lies in the use of
+{\tt [c,c)} to denote all items in the circular sequence, whereas for
+an iterator {\tt i} the range {\tt [i,i)} denotes the empty range.  As
+long as {\tt c != d} the range {\tt[c,d)} behaves like an iterator
+range and could be used in \stl\ algorithms. For circulators however,
+an additional test {\tt c == NULL} is required that returns true if
+and only if the circular sequence is empty.  As for
+\CC, we recommend the use of 0 instead of {\tt NULL}.
+
+Besides the conceptual cleanness, the main reason for inventing a new
+concept with a similar intent as iterators is efficiency. An iterator
+is supposed to be a light-weight object -- merely a pointer and a
+single indirection to advance the iterator.  Although iterators could
+be written for circular sequences, we do not know of an efficient
+solution. The missing past-the-end situation in circular sequences can
+be solved with an arbitrary sentinel in the cyclic order, but this
+would destroy the natural symmetry in the structure (which is in
+itself a bad idea) and additional bookkeeping in the items and
+checking in the iterator advance method reduces efficiency.  Another
+solution may use more bookkeeping in the iterator, e.g.~with a start
+item, a current item, and a kind of winding-number that is zero for
+the {\tt begin()}-iterator and one for the past-the-end
+situation\footnote{This is currently implemented as the
+  adaptor class which provides a pair of iterators for a given
+  circulator.}.  We have introduced the concept of circulators
+that allows light-weight implementations and the \cgal\ support
+library provides adaptor classes that convert between iterators and
+circulators (with the corresponding penalty in efficiency), so as to
+integrate this new concept into the framework of \stl.
+
+A serious design problem is the slight change of the semantic for
+circulator ranges as compared to iterator ranges. Since this semantic
+is defined by the intuitive operators {\tt ++} and {\tt ==}, which we
+would like to keep for circulators as well, circulator ranges can be
+used in \stl\ algorithms. This is in itself a useful feature, if there
+would not be the definition of a full range $\left[c, c\right)$ that
+an \stl\ algorithm will treat as an empty range. However, the
+likelihood of a mistake may be overestimated, since for a container
+{\tt C} supporting circulators there is no {\tt end()} member
+function, and an expression such as {\tt std::sort( C.begin(),
+  C.end())} will fail.  It is easy to distinguish iterators and
+circulators at compile time, which allows for generic algorithms
+supporting both as arguments.  It is also possible to protect
+algorithms against inappropriate arguments using the same technique,
+see the reference pages for circulators, specifically the
+\ccc{Assert_iterator} and \ccc{is_empty_range} functions.
+
+{\bf Warning:} Please note that the definition of a range is different
+from that of iterators. An interface of a data structure must declare
+whether it works with iterators, circulators, or both. \stl\ 
+algorithms always specify only iterators in their interfaces. A range
+$\left[c, d\right)$ of circulators used in an interface for iterators
+will work as expected as long as $c\; !\!= d$. A range $\left[c,
+  c\right)$ will be interpreted as the empty range like for iterators,
+which is different than the full range that it should denote for
+circulators.
+
+% +---------------------------------------------+
+\begin{ccHtmlClassFile}{Circulator.html}{Requirements for Circulators}
+\ccHtmlNoClassLinks
+\begin{ccClass}{Circulator}
+\subsection{Forward Circulator}
+
+A class \ccClassName\ that satisfies the requirements of a forward
+circulator with the value type \ccStyle{T}, supports the following
+operations. See the reference pages for the full set of requirements.
+Note that the stated return values are not required, only a return
+value that is convertible to the stated type is required.  As for \CC,
+we recommend the use of 0 instead of {\tt NULL}.
+
+\ccTypes
+\ccSetTwoColumns{Circulator:: iterator_category}{}
+
+\ccNestedType{value_type}{the value type \ccStyle{T}.}
+\ccGlue
+\ccNestedType{reference}{either reference or const reference to \ccStyle{T}.}
+\ccGlue
+\ccNestedType{pointer}{either pointer or const pointer to \ccStyle{T}.}
+\ccGlue
+\ccNestedType{size_type}{unsigned integral type that can hold the size
+  of the sequence.}
+\ccGlue
+\ccNestedType{difference_type}{signed integral type that can hold the
+  distance between two circulators.}
+\ccGlue
+\ccNestedType{iterator_category}{circulator category 
+    \ccc{Forward_circulator_tag}.}
+
+\ccCreation
+\ccCreationVariable{c}
+%\ccSetThreeColumns{Circulator&}{int n + Circulator d}{}
+\ccSetThreeColumns{difference_type}{difference_type n += d}{}
+\ccPropagateThreeToTwoColumns
+
+\ccConstructor{Circulator();}{a circulator equal to \ccc{NULL} denoting
+                              an empty sequence.}
+\ccGlue
+\ccConstructor{Circulator(const Circulator& d);}{a circulator equal to $d$.}
+
+\ccOperations
+
+\ccMethod{Circulator& operator=(const Circulator &d);}
+{Assignment.}
+\ccGlue
+\ccMethod{bool operator==(NULL) const;}
+{Test for emptiness.}
+\ccGlue
+\ccMethod{bool operator!=(NULL) const;}
+{Test for non-emptiness, i.e.~ \ccStyle{!(c == NULL)}.}
+\ccGlue
+\ccMethod{bool operator==(const Circulator &d) const;}
+{$c$ is equal to $d$ if they refer to the same item.}
+\ccGlue
+\ccMethod{bool operator!=(const Circulator &d) const;}
+{Test for inequality, i.e.~\ccStyle{!(c == d)}.}
+
+\ccMethod{reference operator*();}
+{Returns the value of the circulator.
+ If \ccClassName\ is mutable \ccStyle{*c = t} is valid.
+ \ccPrecond \ccVar\ is dereferenceable.}
+
+\ccMethod{pointer operator->();}
+{Returns a pointer to the value of the circulator.
+ \ccPrecond \ccVar\ is dereferenceable.}
+
+\ccMethod{Circulator& operator++();}
+{Prefix increment operation.
+\ccPrecond \ccVar\ is dereferenceable. 
+\ccPostcond \ccVar\ is dereferenceable.}
+
+\ccMethod{const Circulator& operator++(int);}
+{Postfix increment operation. The result is the same as that of: 
+ \ccStyle{Circulator tmp = c; ++c; return tmp;}~.}
+
+\end{ccClass} 
+
+
+% +---------------------------------------------+
+\ccHtmlNoClassLinks
+\ccHtmlNoClassIndex
+\begin{ccClass}{Circulator}
+\subsection{Bidirectional Circulator}
+
+A class \ccClassName\ that satisfies the requirements of a bidirectional
+circulator with the value type \ccStyle{T}, supports the following operations
+in addition to the operations supported by a forward circulator.
+
+\ccTypes
+\ccSetTwoColumns{Circulator:: iterator_category}{}
+
+\ccNestedType{iterator_category}{circulator category 
+    \ccc{Bidirectional_circulator_tag}.}
+
+\ccSetThreeColumns{difference_type}{difference_type n += d}{}
+\ccPropagateThreeToTwoColumns
+\ccCreationVariable{c}
+\ccOperations
+
+\ccMethod{Circulator& operator--();}
+{Prefix decrement operation.
+ \ccPrecond \ccVar\ is dereferenceable. \ccPostcond\ccVar\ is dereferenceable.}
+
+\ccMethod{const Circulator& operator--(int);}
+{Postfix decrement operation. The result is the same as that of 
+ \ccStyle{Circulator tmp = c; --c; return tmp;}~.}
+
+\end{ccClass} 
+
+
+% +---------------------------------------------+
+\ccHtmlNoClassLinks
+\ccHtmlNoClassIndex
+\begin{ccClass}{Circulator}
+\subsection{Random Access Circulator\label{sectionRandomAccessCirculatorRequ}}
+
+A class \ccClassName\ that satisfies the requirements of a random
+access Circulator for the value type \ccStyle{T}, supports the
+following operations in addition to the operations supported by a
+bidirectional Circulator.  In contrast to random access iterators, 
+no comparison operators are available for
+random access circulators.
+
+\ccTypes
+\ccSetTwoColumns{Circulator:: iterator_category}{}
+
+\ccNestedType{iterator_category}{circulator category 
+    \ccc{Random_access_circulator_tag}.}
+
+\ccSetThreeColumns{difference_type}{difference_type n += d}{}
+\ccPropagateThreeToTwoColumns
+\ccCreationVariable{c}
+\ccOperations
+
+\ccMethod{Circulator& operator+=(difference_type n);}
+{The result is the same as if the prefix increment operation 
+ was applied $n$ times, but it is computed in constant time.}
+
+\ccMethod{Circulator operator+(difference_type n);}
+{Same as above, but returns a new circulator.}
+
+\def\ccTagRmEigenClassName{\ccTrue}
+\ccFunction{Circulator operator+(difference_type n, Circulator c);}
+{Same as above.}
+\def\ccTagRmEigenClassName{\ccFalse}
+
+\ccMethod{Circulator& operator-=(difference_type n);}
+{The result is the same as if the prefix decrement operation 
+ was applied $n$ times, but it is computed in constant time.}
+
+\ccMethod{Circulator operator-(difference_type n);}
+{Same as above, but returns a new circulator.}
+
+
+\ccMethod{reference operator[](difference_type n);}
+{Returns \ccStyle{*(c + n)}.}
+
+\ccMethod{difference_type operator-(const Circulator& d) const;}
+{returns the difference between the two circulators. The value will be
+  in the interval $\left[ 1-s , s-1 \right]$ if $s$ is the size of the
+  total sequence. The difference for a fixed circulator \ccVar\ (or
+  $d$) with all other circulators $d$ (or \ccVar) is a consistent
+  ordering of the elements in the data structure. There has to be a
+  minimal circulator $d_{\mbox{\footnotesize min}}$ for which the
+  difference \ccVar $- d_{\mbox{\footnotesize min}}$ to all other
+  circulators \ccVar\ is non-negative.}
+
+\ccMethod{Circulator min_circulator() const;}
+{Returns the minimal circulator $c_{\mbox{\footnotesize min}}$
+  in constant time.} 
+
+\end{ccClass} 
+\end{ccHtmlClassFile} 
+
+% +-----------------------------------------------------+
+\subsection{Adaptors Between Iterators and Circulators\label{sectionCirculatorAdaptor}}
+
+Algorithms working on iterator ranges can not be applied to circulator
+ranges in full generality, only to subranges (see the warning in
+Section~\ref{sectionCirculatorWarning}). The following adaptors
+convert circulators to iterators and vice versa (with the unavoidable
+space and time penalty) to reestablish this generality.
+
+\ccInclude{CGAL/circulator.h}
+
+\begin{tabbing}
+  \ccc{Container_from_circulator}\ \ \ \=
+      container-like class with iterators built from a circulator\\
+  \ccc{Circulator_from_iterator}  \>
+      circulator over a range of two iterators\\
+  \ccc{Circulator_from_container} \>
+      circulator for a container
+\end{tabbing}
+
+The following example applies the generic {\tt std::reverse()} algorithm 
+from \stl\ to a sequence given by a bidirectional circulator {\tt c}.
+It uses the \ccc{Container_from_circulator} adaptor.
+
+\begin{ccExampleCode}
+Circulator c;  // c must be at least bidirectional.
+CGAL::Container_from_circulator<Circulator> container(c);
+std::reverse( container.begin(), container.end());
+\end{ccExampleCode}
+
+Another example defines a circulator \ccc{c} for a vector of
+\ccc{int}'s. However, since there are no elements in the vector, the
+circulator denotes an empty sequence.  If there were elements in the
+vector, the circulator would implement a random access modulus the
+size of the sequence.
+
+\begin{ccExampleCode}
+std::vector<int> v;
+typedef  CGAL::Circulator_from_iterator< 
+             std::vector<int>::iterator > Circulator;
+Circulator c( v.begin(), v.end());
+\end{ccExampleCode}
+
+% +-----------------------------------------------------+
+\subsection{Functions on Circulators\label{sectionCirculatorFunctions}}
+
+A few functions deal with circulators and circulator ranges. The type
+\ccc{C} denotes a circulator. The type \ccc{IC} denotes either a circulator
+or an iterator. More on algorithms that work with circulators as well with
+iterators can be found in the reference pages.
+
+\ccInclude{CGAL/circulator.h}
+
+\begin{tabbing}
+  \ccTexHtml{\ccc{Forward_container_from_circulator}\ \ \ \= \kill}{}
+  \ccc{circulator_size(C c)} \>
+      size of the sequence reachable by \ccc{c}\\
+  \ccc{circulator_distance(C c, C d)} \>
+      number of elements in the range $\left[c, d\right)$ \\
+  \ccc{iterator_distance(IC ic1, IC ic2)} \>
+      number of elements in the range $\left[\ccc{ic2}, \ccc{ic1}\right)$ \\
+  \ccc{is_empty_range( IC ic1, IC ic2)} \>
+      test the range $\left[\ccc{ic2}, \ccc{ic1}\right)$ for emptiness
+\end{tabbing}
+
+\gdef\lciIfHtmlClassLinks{\lcTrue}
+\gdef\lciIfHtmlRefLinks{\lcTrue}
+\gdef\lciIfHtmlLinks{\lcTrue}
+
+
+% +-----------------------------------------------------+
+% EOF

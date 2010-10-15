@@ -1,0 +1,63 @@
+\RCSdef{\RCSSurfaceMeshEdgesCriteriaRev}{$Id$}
+\RCSdefDate{\RCSSurfaceMeshEdgesCriteriaDate}{$Date$}
+
+\begin{ccRefConcept}{PiecewiseSmoothSurfaceMeshEdgesCriteria_3}
+
+\ccDefinition
+  
+The Delaunay refinement process involved in the 
+function template \ccc{make_piecewise_smooth_surface_mesh} 
+is guided by a set of refinement criteria.
+The concept \ccRefName\ describes the type  which
+handles the criteria that apply to the marked edges of the 2D
+complex. Those marked edges are a 1D mesh corresponding to the 1D curves of
+a piecewise smooth surface.
+
+The concept \ccRefName\ corresponds to the requirements for the template
+parameter \ccc{EdgesCriteria} of the piecewise smooth surface mesher function
+\ccc{make_piecewise_smooth_surface_mesh<SurfaceMeshC2T3,Surface,FacetsCriteria,
+  EdgesCriteria,Tag>}.
+
+Typically the meshing criteria are a set
+of elementary criteria, each of which
+has to be met by  the marked edges of the final mesh.
+The meshing algorithm eliminates in turn  {\em bad} edges, i.e.,
+marked edges that do not meet all the criteria.
+
+\ccTypes
+
+\ccNestedType{Edge}{The type of edges. This type has to match
+the \ccc{Edge} type in  the triangulation type used  by 
+the mesher function. (This triangulation type
+is the type \ccc{SurfaceMeshC2T3::Triangulation} 
+provided by the model of
+\ccc{PiecewiseSmoothSurfaceMeshComplex_2InTriangulation_3} plugged 
+ as first template parameter of
+ \ccc{make_piecewise_smooth_surface_mesh}).}
+
+\ccNestedType{Point_3}{The type of points. This has to match the
+  \ccc{Point} type of the underlying triangulation as well.}
+
+\ccOperations
+\ccCreationVariable{criteria}
+
+\ccMethod{bool is_bad (const Edge& e, const Point_3& p);}
+{Returns \ccc{true} is \ccc{e} does not meet the criteria. \ccc{p} is the
+  point that is candidate for insertion if \ccc{e} is to be eliminated.}
+
+\ccHasModels
+
+\ccc{Piecewise_smooth_surface_mesh_default_edges_criteria_3<Tr>}
+
+\ccSeeAlso
+\ccc{make_piecewise_smooth_surface_mesh<SurfaceMeshC2T3,Surface,FacetsCriteria,
+  EdgesCriteria,Tag>}
+
+
+\end{ccRefConcept}
+
+% +------------------------------------------------------------------------+
+%%RefPage: end of main body, begin of footer
+% EOF
+% +------------------------------------------------------------------------+
+

@@ -1,0 +1,140 @@
+%OPEN: new name for template argument ROOT ?
+%But this will cause changes in the interface  i.e. root() should change too.
+
+\begin{ccRefClass}{Polynomial<Coeff>}
+\def\ccTagOperatorLayout{\ccFalse}
+
+\ccDefinition
+
+An instance of the data type \ccc{Polynomial} represents a
+polynomial $p = a_0 + a_1*x + ...a_i*x^i$ from the ring $Coeff[x]$.
+\ccc{Coeff} can itself be an instance of \ccc{Polynomial}, yielding a form of
+multivariate polynomials. 
+
+The template argument \ccc{Coeff} must be at 
+least a model of \ccc{IntegralDomainWithoutDivision}.
+For all operations naturally involving division, an \ccc{IntegralDomain} 
+is required. 
+%If more than a \c IntegralDomain is required, this is documented.
+\ccc{Polynomial} offers a full set of algebraic operators, i.e.
+binary  {\tt +}, {\tt  -}, {\tt  *}, {\tt /} as well as  
+{\tt +=}, {\tt -=}, {\tt *=}, {\tt  /=}; not only for polynomials
+but also for a polynomial and a number of the coefficient type.
+(The  {\tt /} operator must only be used for integral divisions, i.e.
+those with remainder zero.)
+The operations are implemented naively:  {\tt +} and  {\tt -} need a number of \ccc{Coeff}
+operations which is linear in the degree while * is quadratic.
+%The advanced algebraic operations are implemented with classical
+%non-modular methods.
+Unary  {\tt +} and {\tt -} and (in)equality {\tt ==}, {\tt !=} are provided as well.
+
+\ccc{Polynomial} is a model of \ccc{LessThanComparable} if \ccc{Coeff} is a 
+model of \ccc{LessThanComparable}. In this case \ccc{Polynomial} provides 
+comparison operators  {\tt <}, {\tt >}, {\tt <=}, {\tt >=}, where the comparison amounts to 
+lexicographic comparison of the coefficient sequence,
+with the coefficient of the highest power taking precedence over
+those of lower powers.
+
+\ccc{Polynomial} is a model of \ccc{Fraction} if \ccc{Coeff} is a 
+model of \ccc{Fraction}. In this case Polynomial may be decomposed into a 
+(scalar) denominator and a compound numerator with a simpler coefficient type. 
+Often operations can be performed faster on these denominator-free multiples. 
+%In case a \ccc{Polynomial} is a \ccc{Fraction} the relevant functionality as well as 
+%the numerator and denominator type are provided by \ccc{CGAL::Fraction_traits}. 
+%In particular \ccc{CGAL::Fraction_traits} provides a tag \ccc{Is_fraction} that can 
+%be used for dispatching.
+
+\ccc{Polynomial} is a model of \ccc{Modularizable} if \ccc{Coeff} is a 
+model of \ccc{Modularizable}, where the homomorphic map on the polynomials
+is simply defined as the canonical extension of the homomorphic map which is 
+defined on the coefficient type.  
+
+
+
+\ccImplementation
+Inexact and limited-precision types can be used as coefficients,
+but at the user's risk. The algorithms implemented were written with
+exact number types in mind.
+
+This data type is implemented as a handle type with value semantics
+using \ccc{CGAL::Handle_with_policy}, where \ccc{HandlePolicy}
+is \ccc{Handle_policy_no_union}. 
+An important invariant to be preserved by all methods is that
+the coefficient sequence does not contain leading zero coefficients
+(where leading means at the high-degree end), with the exception that
+the zero polynomial is represented by a single zero coefficient.
+%However, this has the disadvantage that each time a new polynomial is 
+%created the leading coefficient is tested against zero. 
+
+%This is not true anymore:
+%An empty coefficient sequence denotes an undefined value.
+
+\ccIsModel 
+
+\begin{tabular}{ll}
+\ccc{Polynomial_d}\\
+\ccc{Assignable}\\
+\ccc{CopyConstructible}\\
+\ccc{DefaultConstructible}\\
+\ccc{EqualityComparable}\\
+\ccc{ImplicitInteroperable} & with int\\
+\ccc{ImplicitInteroperable} & with Coeff\\
+\ccc{Fraction}              & if \ccc{Coeff} is model of \ccc{Fraction}\\
+\ccc{LessThanComparable}    & if \ccc{Coeff} is model of \ccc{LessThanComparable}\\
+\ccc{Modularizable}         & if \ccc{Coeff} is model of \ccc{Modularizable}.
+\end{tabular}
+
+\ccCreation
+
+\ccCreationVariable{poly}
+\ccConstructor{Polynomial ();} 
+{Introduces an variable initialized with 0.}
+\ccGlue
+\ccConstructor{Polynomial (const Polynomial& x);}
+{copy constructor.}
+\ccGlue
+\ccConstructor{Polynomial (const int &i);}
+{Constructor from int.}
+\ccGlue
+\ccConstructor{Polynomial (const Coeff &x);}
+{Constructor from type Coeff.}
+\ccGlue
+\ccConstructor{ 
+template <class Forward_iterator>
+Polynomial(Forward_iterator first, Forward_iterator last);}
+{Constructor from iterator range with value type Coeff.}
+
+\ccTypes
+
+\ccOperations
+%\ccMethod{const NT & a0 () const ;    }{Const access operator for a0} \ccGlue
+
+\ccMethod{const_iterator begin() const;}
+{A const random access iterator pointing to the constant coefficient.} \ccGlue
+\ccMethod{const_iterator end()   const;}
+{A const random access iterator pointing beyond the leading coefficient.}\ccGlue
+\ccMethod{int degree() const;}
+{The degree of the polynomial in $x$. The degree of the zero polynomial is 0.}\ccGlue
+\ccMethod{const NT& operator[](unsigned int i) const;}
+{Const access to the coefficient of $x^i$.}\ccGlue
+\ccMethod{const NT& lcoeff() const;}
+{Const access to the leading coefficient.}\ccGlue
+
+
+\ccFunction{
+std::ostream& operator<<(std::ostream& os, const Polynomial<Coeff> &poly);}
+{Writes \ccc{poly} to ostream \ccc{os}. 
+The format depends on the \ccc{CGAL::IO::MODE} of \ccc{os}.
+In case the mode is \ccc{CGAL::IO::ASCII} the format is $P[d(0,a_0)(1,a_1)\dots(d,a_d)]$,
+where $d$ is the degree of the polynomial. 
+The format is output sensitive, that is, coefficients that are zero are not reported. 
+In case the mode is \ccc{CGAL::IO::PRETTY} the format is human readable.}
+
+
+\ccFunction{
+std::istream& operator>>(std::istream& is, const Polynomial<Coeff> &poly);}
+{Reads \ccc{poly} from istream \ccc{is} in format $P[d(0,a_0)(1,a_1)\dots(d,a_d)]$,  
+the output format in mode \ccc{CGAL::IO::ASCII}.  }
+
+
+\end{ccRefClass}

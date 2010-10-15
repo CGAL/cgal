@@ -1,0 +1,121 @@
+% +------------------------------------------------------------------------+
+% | Reference manual page: Square_border_uniform_parameterizer_3.tex
+% +------------------------------------------------------------------------+
+% | 21.09.2005   Laurent Saboret, Pierre Alliez, Bruno Levy
+% | Package: Surface_mesh_parameterization
+% |
+\RCSdef{\RCSSquareborderuniformparameterizerRev}{$Id$}
+\RCSdefDate{\RCSSquareborderuniformparameterizerDate}{$Date$}
+% |
+\ccRefPageBegin
+%%RefPage: end of header, begin of main body
+% +------------------------------------------------------------------------+
+
+
+\begin{ccRefClass}{Square_border_uniform_parameterizer_3<ParameterizationMesh_3>}
+
+%% \ccHtmlCrossLink{}     %% add further rules for cross referencing links
+%% \ccHtmlIndexC[class]{} %% add further index entries
+
+
+\ccDefinition
+
+% The section below is automatically generated. Do not edit!
+%START-AUTO(\ccDefinition)
+
+This class parameterizes the border of a 3D surface onto a square in a uniform manner: points are equally spaced.
+
+\ccc{Square_border_parameterizer_3} implements most of the border parameterization algorithm. This class implements only \ccc{compute_edge_length}() to compute a segment's length.
+
+%END-AUTO(\ccDefinition)
+
+% The section below is automatically generated. Do not edit!
+%START-AUTO(\ccInclude)
+
+\ccInclude{CGAL/Square_border_parameterizer_3.h}
+
+%END-AUTO(\ccInclude)
+
+
+\ccInheritsFrom
+
+% The section below is automatically generated. Do not edit!
+%START-AUTO(\ccInheritsFrom)
+
+\ccc{Square_border_parameterizer_3<ParameterizationMesh_3>}
+
+%END-AUTO(\ccInheritsFrom)
+
+
+\ccIsModel
+
+% The section below is automatically generated. Do not edit!
+%START-AUTO(\ccIsModel)
+
+Model of the \ccc{BorderParameterizer_3} concept.
+
+%END-AUTO(\ccIsModel)
+
+
+\ccHeading{Design Pattern}
+
+% The section below is automatically generated. Do not edit!
+%START-AUTO(\ccHeading{Design Pattern})
+
+\ccc{BorderParameterizer_3} models are Strategies \cite{cgal:ghjv-dpero-95}: they implement a strategy of border parameterization for models of \ccc{ParameterizationMesh_3}.
+
+%END-AUTO(\ccHeading{Design Pattern})
+
+
+\ccParameters
+
+The full template declaration is:
+
+% The section below is automatically generated. Do not edit!
+%START-AUTO(\ccParameters)
+
+template$<$class \ccc{ParameterizationMesh_3}$>$   \\
+class \ccc{Square_border_uniform_parameterizer_3};
+
+%END-AUTO(\ccParameters)
+
+
+\ccCreation
+\ccCreationVariable{bp}  %% variable name for \ccMethod
+
+% The section below is automatically generated. Do not edit!
+%START-AUTO(\ccCreation)
+%END-AUTO(\ccCreation)
+
+
+\ccOperations
+
+% The section below is automatically generated. Do not edit!
+%START-AUTO(\ccOperations)
+
+\ccMethod{virtual double compute_edge_length(const Adaptor& , Vertex_const_handle, Vertex_const_handle)[protected, virtual];}
+{
+Compute the length of an edge.  \\
+Uniform border parameterization: points are equally spaced.
+}
+\ccGlue
+
+%END-AUTO(\ccOperations)
+
+
+\ccSeeAlso
+
+\ccRefIdfierPage{CGAL::Circular_border_arc_length_parameterizer_3<ParameterizationMesh_3>}  \\
+\ccRefIdfierPage{CGAL::Circular_border_uniform_parameterizer_3<ParameterizationMesh_3>}  \\
+\ccRefIdfierPage{CGAL::Square_border_arc_length_parameterizer_3<ParameterizationMesh_3>}  \\
+\ccRefIdfierPage{CGAL::Two_vertices_parameterizer_3<ParameterizationMesh_3>}  \\
+
+
+\end{ccRefClass}
+
+% +------------------------------------------------------------------------+
+%%RefPage: end of main body, begin of footer
+\ccRefPageEnd
+% EOF
+% +------------------------------------------------------------------------+
+

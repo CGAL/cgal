@@ -1,0 +1,209 @@
+% +------------------------------------------------------------------------+
+% | Reference manual page: surface_mesher.tex
+% +------------------------------------------------------------------------+
+% | 01.12.2005   Author
+% | Package: Package
+% | 
+\RCSdef{\RCSsurfacemesherRev}{$Id$}
+\RCSdefDate{\RCSsurfacemesherDate}{$Date$}
+% |
+%%RefPage: end of header, begin of main body
+% +------------------------------------------------------------------------+
+
+
+\begin{ccRefFunction}{make_surface_mesh}  %% add template arg's if necessary
+
+%% \ccHtmlCrossLink{}     %% add further rules for cross referencing links
+%% \ccHtmlIndexC[function]{} %% add further index entries
+
+\ccInclude{CGAL/make_surface_mesh.h}
+
+\ccDefinition
+  
+The function \ccRefName\ is a surface mesh generator,
+that is a function to build a two dimensional mesh 
+approximating  a surface.
+
+The library provides two overloaded version 
+of this function:
+
+\ccThree{2,5cm}{4cm}{}
+
+
+\ccGlobalFunction{template <class SurfaceMeshC2T3,
+                            class Surface,
+                            class FacetsCriteria,
+                            class Tag >
+void make_surface_mesh(SurfaceMeshC2T3& c2t3,
+                       Surface surface,
+                       FacetsCriteria criteria,
+                       Tag,
+		       int initial_number_of_points = 20) ;}
+
+
+\ccGlobalFunction{template <class SurfaceMeshC2T3,
+                            class SurfaceMeshTraits,
+                            class FacetsCriteria,
+                            class Tag >
+void make_surface_mesh(SurfaceMeshC2T3& c2t3,
+                       SurfaceMeshTraits::Surface_3  surface,
+		       SurfaceMeshTraits traits,
+                       FacetsCriteria criteria,
+                       Tag,
+		       int initial_number_of_points = 20 );}
+
+
+
+\ccParameters
+The template parameter  \ccc{SurfaceMeshC2T3}
+is required to be a model of the concept
+\ccc{SurfaceMeshComplex_2InTriangulation_3},
+a data structure able to represent a two dimensional
+complex  embedded in a three dimensional triangulation.
+The argument \ccc{c2t3} of type \ccc{SurfaceMeshC2T3},  passed by reference
+to the surface mesh generator, 
+is used to maintain  the current approximating mesh and it stores
+the final mesh at the end of the procedure.
+The type \ccc{SurfaceMeshC2T3} is in particular required to
+provide a type \ccc{SurfaceMeshC2T3::Triangulation_3}
+for the three dimensional triangulation
+embedding the surface mesh.
+The vertex and cell base classes of the triangulation
+\ccc{SurfaceMeshC2T3::Triangulation_3} are required
+to be  models  of the concepts 
+\ccc{SurfaceMeshVertexBase_3} and 
+\ccc{SurfaceMeshCellBase_3} respectively.
+
+
+The template parameter \ccc{Surface}  stands for the surface type.
+This type has to be a model of the concept \ccc{Surface_3}.
+
+The knowledge on the surface, required by the surface mesh generator
+is  encapsulated in a
+traits class. Actually, the mesh generator accesses the surface to be meshed
+through this traits class only. 
+The traits class is required to be a model
+of the concept \ccc{SurfaceMeshTraits_3}.
+
+In the first  version
+of  \ccRefName\, the surface type is a template parameter \ccc{Surface}
+and the surface mesh generator traits type 
+is  automatically generated form the surface type  through
+the class 
+\ccc{Surface_mesh_traits_generator_3<Surface>}.
+
+The difference between the two overloaded versions of
+\ccc{make_surface_mesh}
+can be explained as follows
+\begin{itemize}
+\item
+In the first  overloaded version of
+of \ccc{make_surface_mesh},  the surface type  is given  
+as template parameter  (\ccc{Surface}) and the \ccc{surface}
+to be meshed is passed as parameter to the mesh generator.
+In that case the surface mesh generator traits type 
+is  automatically generated form the surface type
+by an auxiliary class called  the \ccc{Surface_mesh_traits_generator_3}.
+  %through
+%the class 
+%\ccc{Surface_mesh_traits_generator_3<Surface>}.
+%(This mechanism is similar to the 
+%\ccc{Kernel_traits}  mechanism.) \\
+\item In the second overloaded version of \ccc{make_surface_mesh}, 
+the surface mesh generator traits type is provided
+by the  template parameter \ccc{SurfaceMeshTraits_3}
+and the surface type is obtained from this traits type.
+Both the surface and the traits 
+are passed to the mesh generator as arguments. 
+\end{itemize}
+
+
+The first overloaded version can be used
+whenever the surface type either provides  a nested type
+\ccc{Surface::Surface_mesher_traits_3} 
+that is  a model of \ccc{SurfaceMeshTraits_3}
+or is a surface type for which a specialization
+of the traits generator \ccc{Surface_mesh_traits_generator_3<Surface>}
+is provided.
+Currently, the library provides partial specializations
+of  \ccc{Surface_mesher_traits_generator_3<Surface>}
+for implicit surfaces (\ccc{Implicit_surface_3<Traits, Function>}) and 
+gray level images (\ccc{Gray_level_image_3<FT, Point>}).
+
+
+
+The template parameter \ccc{FacetsCriteria} has to be a model
+of the concept \ccc{SurfaceMeshFacetsCriteria_3}.
+The argument of type  \ccc{FacetsCriteria} passed to the surface
+mesh generator specifies the size and shape  requirements
+on the output surface mesh.
+
+The template parameter \ccc{Tag}
+is a tag whose type affects the behavior of the
+meshing algorithm. The function \ccRefName\  has specialized versions
+for the following  tag types: \\
+- \ccc{Manifold_tag}: the output mesh is guaranteed to be a manifold
+surface without boundary.\\
+- \ccc{Manifold_with_boundary_tag}: the output mesh is guaranteed to be
+manifold but may have boundaries.\\
+- \ccc{Non_manifold_tag}: the algorithm relies on the given criteria and
+guarantees nothing else.
+
+
+
+The Delaunay refinement
+process is started with an initial set of points which is the union 
+of two sets: the
+set of vertices in the initial  triangulation pointed to by the
+\ccc{c2t3} argument   and a set of
+points provided by the traits class.
+The optional parameter  \ccc{initial_number_of_points}
+allows to monitor the number of points in this second set.
+(This parameter is passed to the \ccc{operator()} of 
+the constructor object \ccc{Construct_initial_points} 
+in the traits class.)
+The meshing algorithm requires that the initial set of points
+includes at least one point
+on each connected components of the surface to be meshed.
+one.
+
+
+ 
+
+%\ccIsModel
+
+%Concept
+
+\ccSeeAlso
+%\ccc{Complex2InTriangulation3} \\
+\ccc{SurfaceMeshComplex_2InTriangulation_3} \\
+\ccc{SurfaceMeshCellBase_3} \\
+\ccc{SurfaceMeshVertexBase_3} \\
+\ccc{Surface_3} \\
+\ccc{SurfaceMeshFacetsCriteria_3} \\
+\ccc{Surface_mesh_default_triangulation_3}
+
+
+%\ccExample
+
+%A short example program.
+%Instead of a short program fragment, a full running program can be
+%included using the 
+%\verb|\ccIncludeExampleCode{Package/surface_mesher.cpp}| 
+%macro. The program example would be part of the source code distribution and
+%also part of the automatic test suite.
+
+%\begin{ccExampleCode}
+%void your_example_code() {
+%}
+%\end{ccExampleCode}
+
+%% \ccIncludeExampleCode{Package/make_surface_mesh.cpp}
+
+\end{ccRefFunction}
+
+% +------------------------------------------------------------------------+
+%%RefPage: end of main body, begin of footer
+% EOF
+% +------------------------------------------------------------------------+
+

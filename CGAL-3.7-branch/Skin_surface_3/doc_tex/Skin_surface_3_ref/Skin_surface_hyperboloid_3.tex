@@ -1,0 +1,77 @@
+% +------------------------------------------------------------------------+
+% | Reference manual page: Skin_surface_hyperboloid_3.tex
+% +------------------------------------------------------------------------+
+% | 27.09.2005   Nico Kruithof
+% | Package: Skin_surface
+% | 
+\RCSdef{\RCSSkinsurfacehyperboloidRev}{$Id$}
+\RCSdefDate{\RCSSkinsurfacehyperboloidDate}{$Date$}
+% +------------------------------------------------------------------------+
+
+\ccRefPageBegin
+
+%%RefPage: end of header, begin of main body
+% +------------------------------------------------------------------------+
+
+
+\begin{ccRefClass}{Skin_surface_hyperboloid_3<Kernel>}
+\label{refSkinsurfacehyperboloid}
+
+\ccDefinition
+%
+The class \ccc{Skin_surface_hyperboloid_3} defines a hyperbolic
+surface that is used in the construction of the skin surface mesh.
+
+
+\ccInclude{CGAL/Skin_surface_quadratic_surface_3.h}
+
+\ccParameters 
+%
+It is parameterized by a kernel that must provide types for points,
+vectors, segments and weighted points.
+
+\ccInheritsFrom \ccc{Skin_surface_quadratic_surface_3<Kernel>}
+
+\ccTypes
+\ccThree{typedef  Triangulation_3::Cell_handle}{xxx}{ }
+\ccThreeToTwo
+
+\ccTypedef{typedef Kernel::RT_3 RT;}{}
+\ccGlue
+\ccTypedef{typedef Kernel::Point_3 Point;}{}
+\ccGlue
+\ccTypedef{typedef Kernel::Vector_3 Vector;}{}
+\ccGlue
+\ccTypedef{typedef Kernel::Segment_3 Segment;}{}
+\ccGlue
+\ccTypedef{typedef Weighted_point<Point, RT> Weighted_point;}{}
+
+\ccCreation
+\ccCreationVariable{surf}  %% choose variable name
+
+\ccConstructor{ Skin_surface_hyperboloid_3(Weighted_point wp, Vector
+  t, RT s, int orient)}{%
+  Constructs a hyperboloid defined by an edge or facet of the regular
+  triangulation that is part of the skin surface. The weighted point
+  \ccc{wp} is the center of the Delaunay simplex, the vector \ccc{t} is
+  the symmetry axis of the hyperboloid and $s$ is the shrink factor.
+  The orientation is -1 or 1 and used to exchange the inside and
+  outside, which is the difference between a hyperboloid defined by a
+  Delaunay edge and a Delaunay facet.}
+
+\ccOperations
+\ccThree{voidxxx}{typedef  Triangulation_3::Cell_handle}{ }
+\ccThreeToTwo
+
+\ccMethod{RT value(const Point &p) const;}{Returns the function value
+  of the hyperboloid.}
+\ccGlue
+\ccMethod{Vector gradient(const Point &p); }{Returns the gradient in
+  \ccc{p}. }
+
+\ccSeeAlso
+\ccRefIdfierPage{CGAL::Skin_surface_quadratic_surface_3<Kernel>}\\
+\ccRefIdfierPage{CGAL::Skin_surface_sphere_3<Kernel>}
+
+
+\end{ccRefClass}

@@ -1,0 +1,25 @@
+\begin{ccRefFunctionObjectConcept}{Kernel::ComputeArea_2}
+A model for this must provide:
+
+\ccCreationVariable{fo}
+
+\ccMemberFunction{Kernel::FT operator()(const Kernel::Point_2& p,
+                                        const Kernel::Point_2& q,
+					const Kernel::Point_2& r);}
+       {returns the signed area of the triangle defined by the points $p$,
+       $q$ and $r$. }
+
+\ccMemberFunction{Kernel::FT operator()(const Kernel::Iso_rectangle_2& r);}
+       {returns the area of $r$. }
+
+\ccMemberFunction{Kernel::FT operator()(const Kernel::Triangle_2& t);}
+       {returns the signed area of $t$. }
+
+\ccRefines
+\ccc{AdaptableFunctor} (with one argument)
+
+\ccSeeAlso
+\ccRefIdfierPage{CGAL::Iso_rectangle_2<Kernel>} \\
+\ccRefIdfierPage{CGAL::Triangle_2<Kernel>}  \\
+
+\end{ccRefFunctionObjectConcept}

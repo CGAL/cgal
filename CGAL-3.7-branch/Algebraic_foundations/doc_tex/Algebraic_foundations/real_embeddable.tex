@@ -1,0 +1,47 @@
+\section{Real Embeddable}
+\label{sec:RealEmbeddable}
+
+Most number types represent some subset of the real numbers. From those types 
+we expect functionality to compute the sign, absolute value or double 
+approximations. In particular we can expect an order on such a type that 
+reflects the order along the real axis. 
+All these properties are gathered in the concept \ccc{RealComparable}. 
+The concept is orthogonal to the algebraic structure concepts, 
+i.e., it is possible 
+that a type is a model of \ccc{RealEmbeddable} only, 
+since the type may just represent values on the real axis
+but does not provide any arithmetic operations.
+
+
+As for algebraic structures this concept is also traits class oriented.
+The main functionality related to \ccc{RealEmbeddable} is gathered in 
+the class \ccc{Real_embeddable_traits}. In particular, it porivdes the boolean 
+tag  \ccc{Is_real_embeddable} indicating whether a type is a model of 
+\ccc{RealEmbeddable}. The comparison operators are required to be realized via 
+\CC\ operator overloading. 
+All unary functions (e.g. {\em sign}, {\em to\_double}) and 
+binary functions (e.g. {\em compare} ) are models of the \stl-concepts 
+\ccc{AdaptableUnaryFunction} and \ccc{AdaptableBinaryFunction} and are local 
+to \ccc{Real_embeddable_traits}. 
+
+
+In case a type is a model of \ccc{IntegralDomainWithoutDivision} and  
+\ccc{RealEmbeddable} the number represented by an object of this type is 
+the same for arithmetic and comparison.
+It follows that the ring represented  by this type is a superset of the integers
+and a subset of the real numbers and hence has characteristic zero.
+\ccIgnore{see http://mathworld.wolfram.com/CharacteristicField.html )}
+In case the type is a model of \ccc{Field} and \ccc{RealEmbeddable} it is a 
+superset of the rational numbers. 
+
+
+\ccIgnore{
+All algebraic structure concepts do not require any order on a type, 
+in particular they refine \ccc{EqualityComparable} but not \ccc{LessThanComparable}. 
+From that it is possible for a type representing $\Z/p \Z$ to be a model of \ccc{Field}. 
+However, from those types that are embedded on the real axis we can expect an order
+that correlates to the one of the real numbers, a sign, an absolute value and 
+
+However, most number types are representing some subset of the real numbers and from that
+we can expect an order on these types that correlates to the one of the real numbers. 
+}

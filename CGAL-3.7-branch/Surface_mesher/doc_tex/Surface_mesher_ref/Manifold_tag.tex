@@ -1,0 +1,79 @@
+% +------------------------------------------------------------------------+
+% | Reference manual page: Manifold_tag.tex
+% +------------------------------------------------------------------------+
+% | 09.12.2005   Author
+% | Package: Package
+% | 
+\RCSdef{\RCSTagmanifoldRev}{$Id$}
+\RCSdefDate{\RCSTagmanifoldDate}{$Date$}
+% |
+%%RefPage: end of header, begin of main body
+% +------------------------------------------------------------------------+
+
+
+\begin{ccRefClass}{Manifold_tag}  %% add template arg's if necessary
+
+%% \ccHtmlCrossLink{}     %% add further rules for cross referencing links
+%% \ccHtmlIndexC[class]{} %% add further index entries
+
+\ccDefinition
+  
+The class \ccRefName\ is a tag class used to monitor the
+surface meshing algorithm. When instantiated with the tag
+\ccRefName\, the function template
+\ccc{make_surface_mesh}
+ensures that the output mesh  is a  manifold surface
+without boundary.
+
+
+\ccInclude{CGAL/make_surface_mesh.h}
+
+%\ccIsModel
+
+%Concept
+
+%\ccTypes
+
+%\ccNestedType{TYPE}{some nested types}
+
+%\ccCreation
+%\ccCreationVariable{a}  %% choose variable name
+
+%\ccConstructor{Manifold_tag();}{default constructor.}
+
+%\ccOperations
+
+%\ccMethod{void foo();}{some member functions}
+
+\ccSeeAlso
+
+\ccc{make_surface_mesh}\\
+%\ccc{Manifold_tag} \\
+\ccc{Manifold_with_boundary_tag} \\
+\ccc{Non_manifold_tag}
+%\ccc{Some_other_class},
+%\ccc{some_other_function}.
+
+%\ccExample
+
+%A short example program.
+%Instead of a short program fragment, a full running program can be
+%included using the 
+%\verb|\ccIncludeExampleCode{Package/Manifold_tag.cpp}| 
+%macro. The program example would be part of the source code distribution and
+%also part of the automatic test suite.
+
+%\begin{ccExampleCode}
+%void your_example_code() {
+%}
+%\end{ccExampleCode}
+
+%%% \ccIncludeExampleCode{Package/Manifold_tag.cpp}
+
+\end{ccRefClass}
+
+% +------------------------------------------------------------------------+
+%%RefPage: end of main body, begin of footer
+% EOF
+% +------------------------------------------------------------------------+
+

@@ -1,0 +1,54 @@
+\begin{ccRefClass}{Random_points_on_segment_2<Point_2, Creator>}
+
+\ccDefinition
+
+The class \ccRefName\ is an input iterator creating points uniformly
+distributed on a segment. The default \ccc{Creator} is
+\ccc{Creator_uniform_2<Kernel_traits<P>::Kernel::RT,P>}.
+
+\ccIsModel
+InputIterator \\
+\ccRefConceptPage{PointGenerator}
+
+\ccInclude{CGAL/point_generators_2.h}
+
+\ccTypes
+
+\ccThree{typedef std::input_iterator_tagxxx}{xxxiterator_category;}{}
+\ccTypedef{typedef std::input_iterator_tag iterator_category;}{}
+\ccGlue
+\ccTypedef{typedef Point_2                 value_type;}{}
+\ccGlue
+\ccTypedef{typedef std::ptrdiff_t          difference_type;}{}
+\ccGlue
+\ccTypedef{typedef const Point_2*          pointer;}{}
+\ccGlue
+\ccTypedef{typedef const Point_2&          reference;}{}
+
+
+\ccOperations
+
+\ccCreationVariable{g}
+\ccConstructor{Random_points_on_segment_2( const Point_2& p, const Point_2& q,
+  Random& rnd = default_random);}{%
+  $g$ is an input iterator creating points of type \ccc{Point_2} uniformly
+  distributed on the segment from $p$ to $q$ (excluding $q$),
+  i.e.~$\ccc{*g} == (1-\lambda)\, p + \lambda q$ where $0 \le \lambda < 1$~.
+  A single random number is needed from \ccc{rnd} for each point.
+  \ccRequire The expressions \ccc{to_double(p.x())} and
+    \ccc{to_double(p.y())} must  result in the respective
+    \ccc{double} representation of the coordinates of $p$,
+    and similarly for $q$.}
+
+\ccSeeAlso
+
+\ccRefIdfierPage{CGAL::copy_n} \\
+\ccRefIdfierPage{CGAL::Counting_iterator} \\
+\ccRefIdfierPage{CGAL::Points_on_segment_2<Point_2>} \\
+\ccRefIdfierPage{CGAL::Random_points_in_disc_2<Point_2, Creator>} \\
+\ccRefIdfierPage{CGAL::Random_points_in_square_2<Point_2, Creator>} \\
+\ccRefIdfierPage{CGAL::Random_points_on_circle_2<Point_2, Creator>} \\
+\ccRefIdfierPage{CGAL::Random_points_on_square_2<Point_2, Creator>} \\
+\ccc{std::random_shuffle} \\
+
+\end{ccRefClass}

@@ -1,0 +1,46 @@
+\begin{ccClass}{Dummy}
+\ccCreationVariable{q}
+
+Inlining of template declarations. The default is to format the
+template declaration in an extra line. Here the default with a struct
+and a global function.
+
+\ccSetThreeColumns{template <class T> T*}{X}{}
+\ccSetTwoColumns{template <class T> struct circulator_base \{\};}{}
+\ccStruct{template <class T> 
+          struct circulator_base1 {};}{forward.}
+
+\ccConstructor{template <class T> 
+          Dummy();}{constructor.}
+
+\ccGlobalFunction{template <class T> 
+  T* value_type( const circulator_base<T>&);}
+
+Here with the inlining on.
+
+\def\ccTagTemplateInline{\ccTrue}
+\ccStruct{template <class T> 
+          struct circulator_base2 {};}{forward.}
+
+\ccConstructor{template <class T> 
+          Dummy();}{constructor.}
+
+\ccGlobalFunction{template <class T> 
+  T* value_type( const circulator_base<T>&);}
+\def\ccTagTemplateInline{\ccFalse}
+
+Here with the removal on.
+
+\def\ccTagRmTemplate{\ccTrue}
+\ccStruct{template <class T> 
+          struct circulator_base3 {};}{forward.}
+
+\ccConstructor{template <class T> 
+          Dummy();}{constructor.}
+
+\ccGlobalFunction{template <class T> 
+  T* value_type( const circulator_base<T>&);}
+\def\ccTagRmTemplate{\ccFalse}
+\end{ccClass}
+
+% ----------------------------------------------------------------------

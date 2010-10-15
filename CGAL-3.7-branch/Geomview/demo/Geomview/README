@@ -1,0 +1,9 @@
+This directory contains demo programs for the interface of CGAL with the
+Geomview 3D viewer.
+
+- kernel is a program that shows the output of kernel objects.
+- input is a program demonstrating how you can enter a point in Geomview and
+  pass it to the CGAL program.
+- gv_terrain is a program that show successively the same set of points in a 2D
+  Delaunay triangulation (projected), 3D Delaunay, and terrain.  Alternatively
+  in wired or plain mode.

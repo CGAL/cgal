@@ -1,0 +1,308 @@
+% +------------------------------------------------------------------------+
+% | Reference manual page: Delaunay_triangulation_2.tex
+% +------------------------------------------------------------------------+
+% | 12.04.2000   Author
+% | Package: Package
+% | 
+\RCSdef{\RCSDelaunaytriangulationRev}{$Id$}
+\RCSdefDate{\RCSDelaunaytriangulationDate}{$Date$}
+% |
+%%RefPage: end of header, begin of main body
+% +------------------------------------------------------------------------+
+
+
+\begin{ccRefClass}{Delaunay_triangulation_2<Traits,Tds>}  %% add template arg's if necessary
+
+%% \ccHtmlCrossLink{}     %% add further rules for cross referencing links
+%% \ccHtmlIndexC[class]{} %% add further index entries
+
+\ccDefinition
+  
+The class \ccRefName\ is designed to represent
+the Delaunay triangulation of a set of points in a plane.
+A  Delaunay triangulation of a set of points
+is a triangulation of the sets of points that fulfills
+the following {\em empty circle property} 
+(also called {\em Delaunay property}): the circumscribing
+circle of any facet
+of the triangulation contains no point of the set in its interior.
+For a point set with no case of co-circularity 
+of more than three points,
+the Delaunay triangulation is unique, it is  the dual
+of the Voronoi diagram of the points.
+
+\ccInclude{CGAL/Delaunay_triangulation_2.h}
+
+\ccParameters
+The template parameter \ccc{Tds}
+is to be instantiated with a model of
+\ccc{TriangulationDataStructure_2}.
+\cgal\ provides a default instantiation for this parameter,
+which is the class 
+\ccc{CGAL::Triangulation_data_structure_2 <
+                       CGAL::Triangulation_vertex_base_2<Traits>,
+                       CGAL::Triangulation_face_base_2<Traits> >}.
+
+The geometric traits \ccc{Traits} 
+is to be instantiated with a model of
+\ccc{DelaunayTriangulationTraits_2}.
+The concept \ccc{DelaunayTriangulationTraits_2} refines the
+concept \ccc{TriangulationTraits_2}, providing
+a predicate type 
+to check the empty circle property.
+
+Changing this predicate type
+allows to build Delaunay triangulations for different metrics
+such that $L_1$ or $L_{\infty}$ or any metric defined by a
+convex object. However, the user of an exotic metric
+must be careful that the constructed triangulation 
+has to be a triangulation of the convex hull
+which means that convex hull edges have to be Delaunay edges.
+This is granted for any smooth convex metric (like $L_2$)
+and can be ensured for other metrics (like  $L_{\infty}$)
+by the addition to the point set of well chosen sentinel points
+The concept of \ccc{DelaunayTriangulationTraits_2} is  described
+\ccRefPage{DelaunayTriangulationTraits_2}.
+
+When dealing
+with a large triangulations, the user is advised to 
+encapsulate  the Delaunay triangulation class into a
+triangulation hierarchy, which means to use  the class
+\ccc{Triangulation_hierarchy_2<Tr>}
+with the template parameter instantiated with \ccRefName\ .
+The triangulation hierarchy will then  offer the same 
+functionalities  but be much more for efficient 
+for locations and insertions.
+
+
+
+\ccInheritsFrom
+
+\ccc{Triangulation_2<Traits,Tds>}
+
+\ccTypes
+Inherits all the types defined in  \ccc{Triangulation_2<Traits,Tds>}.
+
+\ccCreation
+\ccCreationVariable{dt}  %% choose variable name
+
+\ccConstructor{Delaunay_triangulation_2(const Traits& gt =
+Traits());}{default constructor.}
+
+\ccConstructor{Delaunay_triangulation_2(
+               const Delaunay_triangulation_2<Traits,Tds> &tr);}
+{copy constructor. All the vertices and faces are duplicated.}
+
+\ccHeading{Insertion and Removal}
+
+The following insertion and removal  functions overwrite
+the functions inherited from the class
+\ccc{Triangulation_2<Traits,Tds>} to maintain the Delaunay property.
+
+In the degenerate case when there are co-circular points, the Delaunay
+triangulation is known not to be uniquely defined. In this case, \cgal\ 
+chooses a particular Delaunay triangulation using a symbolic perturbation
+scheme~\cite{cgal:dt-pvr3d-03}.
+
+
+\ccMethod{Vertex_handle insert(const Point& p, Face_handle f=Face_handle());}
+{inserts  point \ccc{p}.
+If point \ccc{p} coincides with an already existing vertex, this 
+vertex is returned and the triangulation is not updated.
+Optional parameter \ccc{f} is used to initialize the location of \ccc{p}.
+}
+
+\ccMethod{Vertex_handle insert(const Point& p, Locate_type& lt,
+Face_handle loc, int li );}
+{ inserts a point \ccc{p}, the location of which is supposed to be
+given by \ccc{(lt,loc,li)}, see the description of member function
+\ccc{locate} in class \ccc{Triangulation_2<Traits,Tds>}.}
+
+\ccMethod{Vertex_handle push_back(const Point& p);}
+{equivalent to \ccc{insert(p)}.}
+
+\ccMethod{template < class InputIterator >
+          std::ptrdiff_t
+          insert(InputIterator first, InputIterator last);}
+{inserts the points in the range
+ $\left[\right.$\ccc{first}, \ccc{last}$\left.\right)$.
+ Returns the number of inserted points.
+ \ccPrecond The \ccc{value_type} of \ccc{first} and \ccc{last}
+ is \ccc{Point}.}
+
+
+
+\ccMethod{void    remove(Vertex_handle v);}
+{removes the vertex from the triangulation.}
+
+Note that the other modifier functions  of
+\ccc{Triangulation_2<Traits,Tds>} are not overwritten.
+Thus a  call to \ccc{insert_in_face}
+\ccc{insert_in_edge}, \ccc{insert_outside_convex_hull},
+\ccc{insert_outside_affine_hull}  or \ccc{flip}
+on a valid Delaunay triangulation might lead to a triangulation
+which is no longer a Delaunay triangulation.
+
+\ccHeading{Displacement}
+
+\ccMethod{Vertex_handle    move_if_no_collision(Vertex_handle v, const Point & p);}
+{if there is not already another vertex placed on \ccc{p}, 
+the triangulation is modified such that the new position of vertex \ccc{v}
+is \ccc{p}, and \ccc{v} is returned. Otherwise, the triangulation is not
+modified and the vertex at point \ccc{p} is returned.
+\ccPrecond Vertex \ccc{v} must be finite.}
+
+\ccMethod{Vertex_handle    move(Vertex_handle v, const Point & p);}
+{same as above if there is no collision. Otherwise, \ccc{v}
+is deleted and the vertex placed on \ccc{p} is returned.
+ \ccPrecond Vertex \ccc{v} must be finite.}
+
+\ccHeading{Queries}
+
+\ccMethod{Vertex_handle
+        nearest_vertex(const Point& p, Face_handle f=Face_handle());}
+{returns any nearest vertex of \ccc{p}. The implemented function
+begins with a location step and
+\ccc{f} may be used to initialize the location.}
+
+\ccMethod{template <class OutputItFaces, class OutputItBoundaryEdges> 
+  std::pair<OutputItFaces,OutputItBoundaryEdges>
+  get_conflicts_and_boundary(const Point  &p, 
+                             OutputItFaces fit, 
+                             OutputItBoundaryEdges eit,
+                             Face_handle start) const;}
+{ \ccc{OutputItFaces} is an output iterator with \ccc{Face_handle} as value type.
+\ccc{OutputItBoundaryEdges} stands for an output iterator with \ccc{Edge} as value type.
+This members function outputs in the container pointed to by \ccc{fit}
+the faces which are in conflict with point \ccc{p}
+i. e. the faces whose circumcircle contains \ccc{p}.
+It outputs in the container pointed to by \ccc{eit} the 
+the boundary of the zone in conflict with \ccc{p}.
+The boundary edges
+of the conflict  zone are output in counter-clockwise order
+and each edge is described  through its incident face
+which is not in conflict with \ccc{p}.
+The function returns in a std::pair the resulting output iterators.
+\ccPrecond dimension()==2}
+
+\ccMethod{template <class OutputItFaces> 
+          OutputItFaces
+          get_conflicts (const Point  &p, 
+                         OutputItFaces fit, 
+                         Face_handle start) const;}
+{same as above except that only the faces in conflict with \ccc{p}
+are output. The function returns the resulting output iterator.
+\ccPrecond dimension()==2}
+
+\ccMethod{template <class OutputItBoundaryEdges>
+          OutputItBoundaryEdges
+          get_boundary_of_conflicts(const Point  &p, 
+                                    OutputItBoundaryEdges eit,
+                                    Face_handle start) const;}
+{ \ccc{OutputItBoundaryEdges} stands for an output iterator with 
+\ccc{Edge} as value
+type.
+ This function  outputs in the container pointed to by \ccc{eit},
+the boundary of the zone in conflict with \ccc{p}. The boundary edges
+of the conflict  zone are output in counterclockwise order
+and each edge is described  through the incident face
+which is not in conflict with \ccc{p}.
+The function returns the resulting output iterator.}
+
+
+\ccHeading{Voronoi diagram}
+\ccThree{Object}{dt.dual(Edge_circulator ec)}{}
+\ccIndexMainItem{Voronoi diagram}
+The following member functions provide the elements of the
+dual Voronoi diagram.
+
+\ccMethod{Point dual(const Face_handle &f) const;}
+{Returns the center of the circle circumscribed to face \ccc{f}.
+\ccPrecond \ccc{f} is not infinite}
+
+\ccMethod{Object dual(const Edge &e) const;}
+{returns a segment, a ray or a line supported by the bisector of the
+endpoints of \ccc{e}.
+If faces incident to \ccc{e} are both finite, a segment whose endpoints are the
+duals of each incident face is returned. If only one incident face is
+finite, a
+ray whose endpoint is the dual of the finite incident face is returned.
+Otherwise both incident faces
+are infinite and the bisector line is returned.}
+
+\ccMethod{Object dual(const Edge_circulator& ec) const;}
+{Idem}
+
+\ccMethod{Object dual(const Edge_iterator& ei) const;}
+{Idem}
+
+\ccMethod{
+template < class Stream>
+  Stream& draw_dual(Stream & ps);}
+{output the dual Voronoi diagram to stream \ccc{ps}.}
+
+
+\ccPredicates
+\ccThree{Oriented_side}{side_of_}{}
+\ccThreeToTwo
+
+\ccMethod{Oriented_side
+  side_of_oriented_circle(Face_handle f,
+                          const Point& p) const;}
+{Returns the side of \ccc{p} with respect to the circle circumscribing
+ the triangle associated with \ccc{f}}
+
+\begin{ccAdvanced}
+\ccHeading{Miscellaneous}
+\ccThree{Vertex_handle}{T.push_back(const Point &p);}{}
+
+The checking function \ccc{is_valid()} is also overwritten
+to additionally test the empty circle property.
+
+\ccMethod{bool is_valid(bool verbose = false, int level = 0) const;}
+{ tests the validity of the triangulation as a \ccc{Triangulation_2}
+and additionally tests the Delaunay property. This method is
+ mainly  useful for debugging Delaunay triangulation algorithms designed by
+ the user.}
+\end{ccAdvanced}
+
+
+
+
+\ccSeeAlso
+
+\ccc{CGAL::Triangulation_2<Traits,Tds>}, \\
+\ccc{TriangulationDataStructure_2}, \\
+\ccc{DelaunayTriangulationTraits_2}, \\
+\ccc{Triangulation_hierarchy_2<Tr>}.
+
+
+
+
+\ccHeading{Implementation}
+
+Insertion is implemented by inserting in the triangulation, then
+performing a sequence of Delaunay flips. The number of flips is $O(d)$
+if the new vertex is of degree $d$ in the new triangulation. For
+points distributed uniformly at random, insertion takes time $O(1)$ on
+average.
+
+Removal calls the removal in the triangulation and then re-triangulates
+the hole in such a way that  the Delaunay criterion is satisfied. Removal of a
+vertex of degree $d$ takes time $O(d^2)$.
+The degree $d$ is $O(1)$ for a random
+vertex in the triangulation.
+
+After a point location step, the nearest neighbor 
+is found in time $O(n)$ in the
+worst case, but in time $O(1)$
+for vertices distributed uniformly at random  and any query point. 
+
+
+\end{ccRefClass}
+
+% +------------------------------------------------------------------------+
+%%RefPage: end of main body, begin of footer
+% EOF
+% +------------------------------------------------------------------------+
+

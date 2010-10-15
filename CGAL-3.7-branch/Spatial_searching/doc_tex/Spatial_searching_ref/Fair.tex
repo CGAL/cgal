@@ -1,0 +1,79 @@
+% +------------------------------------------------------------------------+
+% | Reference manual page: Fair.tex
+% +------------------------------------------------------------------------+
+% | 1.07.2001   Johan W.H. Tangelder
+% | Package: ASPAS
+% | 
+\RCSdef{\RCSFairRev}{$Id$}
+\RCSdefDate{\RCSFairDate}{$Date$}
+% |
+%%RefPage: end of header, begin of main body
+% +------------------------------------------------------------------------+
+
+
+\begin{ccRefFunctionObjectClass}{Fair<Traits, SpatialSeparator>}  %% add template arg's if necessary
+
+%% \ccHtmlCrossLink{}     %% add further rules for cross referencing links
+%% \ccHtmlIndexC[class]{} %% add further index entries
+
+\ccDefinition
+Implements the {\em fair} splitting rule.  
+This splitting rule is a compromise between the median of rectangle
+splitting rule and the midpoint of rectangle splitting rule. This
+splitting rule maintains an upper bound on the maximal allowed ratio
+of the longest and shortest side of a rectangle (the value of this
+upper bound is set in the constructor of the fair splitting
+rule). Among the splits that satisfy this bound, it selects the one in
+which the points have the largest spread.  It then splits the points
+in the most even manner possible, subject to maintaining the bound on
+the ratio of the resulting rectangles.
+
+\ccInclude{CGAL/Splitters.h}
+
+\ccParameters
+
+Expects for the first template argument a model of
+the concept \ccc{SearchTraits}, 
+for example \ccc{Cartesian_d<double>}. 
+
+Expects for the second template argument a model of the concept \ccc{Separator}. 
+It has as default value the type, \ccc{CGAL::Plane_separator<Traits::FT>}.
+
+
+
+\ccIsModel
+
+Splitter
+
+\ccTypes
+
+\ccTypedef{Traits::FT FT;}{Number type.} 
+
+\ccCreation
+\ccCreationVariable{s}  %% choose variable name
+
+\ccConstructor{Fair();}{Default constructor.}
+\ccConstructor{ Fair(unsigned int bucket_size, 
+                     FT aspect_ratio=FT(3))}{Constructor.}
+
+\ccOperations
+
+
+\ccMethod{FT aspect_ratio();}{Returns the maximal ratio between the largest and smallest side
+of a cell allowed for fair splitting.}
+
+\ccMethod{unsigned int bucket_size();} {Returns the bucket size of the leaf nodes.}
+
+
+\ccSeeAlso
+
+\ccc{Splitter},\\
+\ccc{SpatialSeparator}
+
+\end{ccRefFunctionObjectClass}
+
+% +------------------------------------------------------------------------+
+%%RefPage: end of main body, begin of footer
+% EOF
+% +------------------------------------------------------------------------+
+

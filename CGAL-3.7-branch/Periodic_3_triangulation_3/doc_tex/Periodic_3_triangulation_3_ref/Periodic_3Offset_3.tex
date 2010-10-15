@@ -1,0 +1,95 @@
+% +------------------------------------------------------------------------+
+% | Reference manual page: Periodic_3Offset_3.tex
+% +------------------------------------------------------------------------+
+% | 19.2.2009   Manuel Caroli
+% | Package: Periodic_3_triangulation_3
+% | 
+\RCSdef{\RCSPeriodicOffsetRev}{$Id$}
+\RCSdefDate{\RCSPeriodicOffsetDate}{$Date$}
+% |
+%%RefPage: end of header, begin of main body
+% +------------------------------------------------------------------------+
+
+\begin{ccRefConcept}{Periodic_3Offset_3}
+
+\ccDefinition
+The concept \ccRefName\ describes a three-dimensional integer vector
+with some specialized access functions and operations.
+
+\ccCreation
+\ccCreationVariable{o}
+
+\ccThree{Periodic_3Offset_3}{Offsetxxxxxxxxxxxxxxxxxxxxxxxxxxxxx}{}
+
+\ccConstructor{Periodic_3Offset_3();}
+{Default constructor.}
+\ccGlue
+\ccConstructor{Periodic_3Offset_3(int x, int y, int z);}
+{Constructs the offset (x,y,z).}
+
+\ccOperations
+\ccMethod{Periodic_3Offset_3 operator+(const Periodic_3Offset_3 & o')
+  const;}
+{Return the vector sum of \ccc{o} and \ccc{o'}.}
+\ccGlue
+\ccMethod{Periodic_3Offset_3 operator-(const Periodic_3Offset_3 & o')
+  const;}
+{Return the vector difference of \ccc{o} and \ccc{o'}.}
+\ccGlue
+\ccMethod{Periodic_3Offset_3 operator-() const;}
+{Return the negative vector of \ccc{o}.}
+\ccGlue
+\ccMethod{void operator+=(const Periodic_3Offset_3 & o')
+  const;}
+{Add \ccc{o'} to \ccc{o} using vector addition.}
+\ccGlue
+\ccMethod{void operator-=(const Periodic_3Offset_3 & o')
+  const;}
+{Subtract \ccc{o'} from \ccc{o} using vector subtraction.}
+\ccGlue
+\ccMethod{bool operator==(const Periodic_3Offset_3 & o') const;}
+{Return \ccc{true} if \ccc{o'} and \ccc{o} represent the same vector.}
+\ccGlue
+\ccMethod{bool operator!=(const Periodic_3Offset_3 & o') const;}
+{Return \ccc{true} if \ccc{o'} and \ccc{o} do not represent the same
+  vector.}
+\ccGlue
+\ccMethod{bool operator<(const Periodic_3Offset_3 & o') const;}
+{Compare \ccc{o} and \ccc{o'} lexicographically.}
+
+\ccAccessFunctions
+
+\ccMethod{int operator[](int i);}
+{Return the $i$-th entry of \ccc{o}.}
+\ccGlue
+\ccMethod{int x() const;}
+{Return the $x$-entry of \ccc{o}.}
+\ccGlue
+\ccMethod{int y() const;}
+{Return the $y$-entry of \ccc{o}.}
+\ccGlue
+\ccMethod{int z();}
+{Return the $z$-entry of \ccc{o}.}
+\ccGlue
+\ccMethod{bool is_null() const;}
+{Returns \ccc{true} if \ccc{o} is equal to (0,0,0).}
+
+\ccHeading{I/O}
+\ccFunction{istream& operator>>(istream & is, Periodic_3_offset_3
+  & off);}
+{Inputs an offset from \ccc{is}.}
+\ccGlue
+\ccFunction{ostream& operator<<(ostream & os, Periodic_3_offset_3
+  & off) const;}
+{Outputs an offset from \ccc{os}.}
+
+
+\ccHasModels
+
+\ccc{CGAL::Periodic_3_offset_3}
+
+\ccSeeAlso
+
+\ccc{Periodic_3DelaunayTriangulationTraits_3}
+
+\end{ccRefConcept}

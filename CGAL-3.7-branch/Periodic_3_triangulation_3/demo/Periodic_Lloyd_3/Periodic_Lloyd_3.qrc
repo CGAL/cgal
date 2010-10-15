@@ -1,0 +1,16 @@
+<RCC>
+  <qresource prefix="/cgal/help" >
+    <file>about_Periodic_Lloyd_3.html</file>
+    <file>about_CGAL.html</file>
+  </qresource>
+  <qresource prefix="/Periodic_Lloyd_3" >
+    <file>icons/fileSave.png</file>
+    <file>icons/fileOpen.png</file>
+    <file>icons/fileNew.png</file>
+    <file>icons/pause.png</file>
+    <file>icons/planar.png</file>
+    <file>icons/play.png</file>
+    <file>icons/step.png</file>
+    <file>icons/cp8.png</file>
+  </qresource>
+</RCC>

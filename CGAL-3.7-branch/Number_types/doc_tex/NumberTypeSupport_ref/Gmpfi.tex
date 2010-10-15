@@ -1,0 +1,314 @@
+\begin{ccRefClass} {Gmpfi}
+\label{Gmpfi}
+
+\ccDefinition
+
+An object of the class \ccc{Gmpfi} is a closed interval, whith endpoints
+represented as \ccc{Gmpfr} floating-point numbers. An interval can have
+finite or infinite endpoints and its meaning is straightforward. It can
+also have one (or both) \ccc{NaN} endpoint(s): this indicates that an
+invalid operation has been performed and that the resulting interval has no
+mathematical meaning.
+
+All the operations of \ccc{Gmpfi} were designed in such a way that the
+mathematical correct result is always contained in the resulting interval.
+
+This type is \ccc{ImplicitInteroperable} with \ccc{Gmpfr}, \ccc{Gmpz},
+\ccc{Gmpq}, \verb-long-, \verb-unsigned long-, \verb-int-, \verb-double-
+and \verb-long double-.
+
+\ccInclude{CGAL/Gmpfi.h}
+
+\ccIsModel
+\ccc{FieldWithKthRoot}\\
+\ccc{RealEmbeddable}
+
+\ccTypes
+
+\ccNestedType{Precision_type}
+                {Type representing the precision (number of bits
+                used to represent the mantissa) of a number.}
+
+\ccCreation
+
+All the constructors accept an optional last argument: a precision (a
+\ccc{Precision_type}, which can be used to specify the precision of the
+\ccc{Gmpfr} endpoints. If none is specified, the default precision will be
+used. As the endpoints are represented with a fixed number of bits, they
+may need to be rounded. In this case, the number from which the \ccc{Gmpfi}
+was constructed is guaranteed to be included in the constructed interval.
+
+\ccCreationVariable{i}
+
+\ccConstructor{Gmpfi(Precision_type p=get_default_precision());}
+        {creates an uninitialized \ccc{Gmpfi} interval \ccVar.}
+
+\ccHidden \ccConstructor{Gmpfi(const Gmpfi& j);}
+        {copy constructor.}
+
+%--------------------------------------------------
+% \ccConstructor{Gmpfi(mpfi_srcptr p);}
+%         {creates a \ccc{Gmpfi} interval, initialized with the value of
+%         \ccstyle{p}, a \mpfi\ number used in a C implementation. The data
+%         structure containing \ccc{p} will not be cleared after object's
+%         destruction.}
+%--------------------------------------------------
+
+\ccConstructor{template <class T>
+                Gmpfi(const T& t,Precision_type p=get_default_precision());}
+        {creates a \ccc{Gmpfi} initialized with the value of \ccc{t}.
+        \ccc{T} is \ccc{Gmpfr}, \ccc{Gmpq}, or any type from which
+        \ccc{Gmpfr} can be constructed from. The rounding of the
+        endpoints will guarantee that \ccc{t} is included in \ccVar.}
+
+\ccConstructor{Gmpfi(const Gmpfr &left,
+                     const Gmpfr &right,
+                     Precision_type p=get_default_precision());}
+        {creates a \ccc{Gmpfi} initialized with endpoints \ccc{left}
+        and \ccc{right}. The rounding of the endpoints will guarantee
+        that \([\ccc{left},\ccc{right}]\) is included in \ccVar .}
+
+\ccConstructor{template<class L, class R>
+                Gmpfi(std::pair<const L&,const R&> endpoints,
+                      Precision_type p=get_default_precision());}
+        {creates a \ccc{Gmpfi} initialized with endpoints
+        \ccc{endpoints.first} and \ccc{endpoints.second}. \ccc{L} and
+        \ccc{R} are types from which \ccc{Gmpfr} can be constructed
+        from. The rounding of the endpoints will guarantee that
+        \([\ccc{endpoints.first},\ccc{endpoints.second}]\) is included in
+        \ccVar .}
+
+\ccOperations
+
+\ccMethod{Gmpfr inf() const;}
+        {Returns the smallest (or \emph{inferior}) \ccc{Gmpfr} endpoint of
+        \ccc{i}.}
+
+\ccMethod{Gmpfr sup()const;}
+        {Returns the largest (or \emph{superior}) \ccc{Gmpfr} endpoint of
+        \ccc{i}.}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% precision handling
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\ccMethod{static Precision_type get_default_precision();}
+        {Returns the default precision.}
+
+\ccMethod{static Precision_type set_default_precision(Precision_type prec);}
+        {Sets the default precision to \ccc{prec} and returns the
+        old value.}
+
+\ccMethod{Precision_type get_precision()const;}
+        {Returns the precision of \ccVar.}
+
+\ccMethod{Gmpfi round(Precision_type p)const;}
+        {Returns the value of the number, rounded with precision \ccc{p}.}
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% arithmetic operators
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+Arithmetic operators \verb=+=, \verb=-=, \verb=*=\ and \verb=/=\ are
+overloaded, but special care must be taken when applying them. The
+precision of an operation between two \ccc{Gmpfi}s is defined as the
+maximum of the operands precision and the default precision.
+
+The second operand of the former operations can be a \verb=Gmpfi=,
+\verb=Gmpfr=, \verb=int=, \verb=long=, \verb=unsigned=,
+\verb=unsigned long=, \verb=Gmpz= or \verb=Gmpq=. The precision of an
+operation between a \ccc{Gmpfi} and a number of another type is defined
+as the \ccc{Gmpfi}'s precision (even when operating with a \verb=Gmpfr=).
+
+To specify the rounding mode and/or the precision to perform an operation,
+this class provides the four static functions \verb=add=, \verb=sub=,
+\verb=mul=~and \verb=div=. Only one of them is shown here, since their
+interfaces are similar:
+
+\ccFunction
+        {static Gmpfi add (const Gmpfi &a,const Gmpfi &b,Precision_type p=0);}
+        {}
+
+When the precision is not specified in this family of functions, it is
+defined as in the overloaded operators.
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% the rest
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+Other arithmetic functions provided by the class are:
+
+\ccMethod{Gmpfi abs(Precision_type p)const;}
+        {Returns the absolute value of \ccVar, with precision \ccc{p}.
+        If \ccc{p} is not specified, the precision used is the maximum
+        between \ccVar 's precision and the default.}
+
+\ccMethod{Gmpfi sqrt(Precision_type p)const;}
+        {Returns the square root of \ccVar, with precision \ccc{p}.
+        If \ccc{p} is not specified, the precision used is the maximum
+        between \ccVar 's precision and the default.}
+
+\ccMethod{Gmpfi kthroot(int k,Precision_type p)const;}
+        {Returns the k-th root of \ccVar, with precision \ccc{p}.
+        If \ccc{p} is not specified, the precision used is the maximum
+        between \ccVar 's precision and the default.}
+
+\ccMethod{Gmpfi square(Precision_type p)const;}
+        {Returns the square of \ccVar, with precision \ccc{p}. If
+        \ccc{p} is not specified, the precision used is the maximum
+        between \ccVar 's precision and the default.}
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% conversion
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\ccMethod{std::pair<double,double> to_interval()const;}
+        {Returns an interval of doubles which contains \ccVar. If a
+        rounded enpoint does not fit in a double, sets its value to plus
+        or minus infinity and the \ccc{overflow} or \ccc{underflow} flag.}
+
+\ccMethod{std::pair<double,long> to_double_exp()const;}
+        {Returns \((m,e)\) such that \(m \times 2^e\) is the center of
+        \ccVar, rounded to nearest. If one of the endpoints of \ccVar~is
+        \ccc{NaN} or infinity, then the corresponding double is returned,
+        leaving the exponent undefined and setting the appropriate
+        error flag.}
+
+\ccMethod{std::pair<std::pair<double,double>,long> to_interval_exp()const;}
+        {Returns \(((m_1,m_2),e)\), such that \([m_1 \times 2^e,m_2
+        \times 2^e]\) contains \ccVar . If one of the endpoints of
+        \ccVar~is \ccc{NaN} or infinity, then the corresponding doubles
+        are returned, leaving the exponent undefined and setting the
+        appropriate error flag.}
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% comparisons
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\ccHeading{Comparisons}
+
+The semantics of the comparison operators is the same than on
+\ccc{Interval_nt<Protected>}. The result of the comparison is always an
+\ccc{Uncertain<bool>} (this type is convertible to \ccc{bool}, but may
+throw an exception). If compared intervals have no common points, the
+result is \ccc{true} or \ccc{false}; otherwise,
+\ccc{Uncertain<bool>::indeterminate()} will be returned.
+
+In the same way, we can explain the semantics of
+\ccc{Uncertain<Comparison\_result>} and \ccc{Uncertain<Sign>}.
+
+With the semantics described above, this class provides comparisons between
+\ccc{Gmpfi} and \ccc{Gmpfi}, \ccc{Gmpfr}, \ccc{long}, \ccc{unsigned long},
+\ccc{int}, \ccc{double}, \ccc{Gmpz} and \ccc{Gmpq}. Comparison operators
+\verb-==-, \verb-!=-, \verb->-, \verb-<-, \verb->=- \ and \verb-<=- \ are
+overloaded.
+
+The class provides also functions to test efficiently some special kinds
+of comparisons:
+
+\ccMethod{bool is_same(const Gmpfi &j)const;}
+        {Returns \ccc{true} iff left endpoints of \ccVar~and
+        \ccc{j} are equal and right endpoints of them are also equal. Note
+        that this does not mean equality between \ccVar~and \ccc{j}.}
+
+\ccMethod{bool do_overlap(const Gmpfi &j)const;}
+        {Returns \ccc{true} iff \ccVar~and \ccc{j} overlap,
+        i.e., iff they have points in common.}
+
+\ccMethod{Uncertain<Comparison_result> compare(const Gmpfi &j)const;}
+        {If \ccVar~and \ccc{j} do not overlap, this function returns
+        the result of the comparison. Otherwise, it returns
+        \ccc{indeterminate}.}
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% query functions
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\ccQueryFunctions
+\ccMethod{bool is_point()const;}
+        {Returns \ccc{true} iff both endpoints are equal.}
+
+\ccMethod{bool is_nan()const;}
+        {Returns \ccc{true} iff at least one of the endpoints is
+        \ccc{NaN}.}
+
+\ccMethod{bool is_inf()const;}
+        {Returns \ccc{true} iff at least one of the endpoints is plus or
+        minus infinity.}
+
+\ccMethod{bool is_number()const;}
+        {Returns \ccc{true} iff \ccVar~is a bounded interval, i.e. its
+        endpoints are neither invalid nor infinite.}
+
+\ccMethod{Uncertain<bool> is_zero()const;}
+        {Returns \ccc{true} if both endpoints are zero, \ccc{false} if
+        the interval does not contain zero and \ccc{indeterminate}
+        otherwise.}
+
+\ccMethod{Uncertain<bool> is_one()const;}
+        {Returns \ccc{true} if both endpoints are one, \ccc{false}
+        if the interval does not contain one and \ccc{indeterminate}
+        otherwise.}
+
+\ccMethod{Uncertain<Sign> sign()const;}
+        {If all numbers contained in the interval have the same sign, this
+        function returns it. Otherwise it returns \ccc{indeterminate}.}
+
+\ccMethod{Uncertain<bool> is_positive()const;}
+        {Returns \ccc{true} if all numbers contained in the interval
+        are positive, false if all of them are negative or zero and
+        \ccc{indeterminate} otherwise.}
+
+\ccMethod{Uncertain<bool> is_negative()const;}
+        {Returns \ccc{true} if all numbers contained in the interval
+        are negative, false if all of them are positive or zero and
+        \ccc{indeterminate} otherwise.}
+
+%--------------------------------------------------
+% \ccMethod{Uncertain<bool> is_square(const Gmpfi &y)const;}
+%         {Returns \ccc{true} if \ccVar~contains the squares of all
+%         the numbers in interval \ccc{y}, \ccc{indeterminate} if
+%         \ccVar~contains the squares of some numbers in \ccc{y} but not
+%         of all of them, and \ccc{false} otherwise.}
+%--------------------------------------------------
+
+%--------------------------------------------------
+% \ccMethod{Uncertain<bool> divides(const Gmpfi &n,Gmpfi &c,
+%                 Precision_type p=Gmpfr::get_default_precision())const;}
+%         {Returns \ccVar \ccc{.divides(n)}. If it is \ccc{true}, sets
+%         \ccc{c} such that \( \ccc{n} = \ccVar \times \ccc{c} \), with
+%         precision \ccc{p}.}
+%--------------------------------------------------
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% input/output
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\ccHeading{Input/Output}
+
+\ccFunction{std::istream& operator>>(std::istream &is,Gmpfi i);}
+        {Reads \ccc{i} from \ccc{is}. \ccc{is} has the form
+        \ccc{[inf,sup]}, where \ccc{inf} and \ccc{sup} have valid
+        \ccc{Gmpfr} formats.}
+        % TODO: add the possibility of reading a number in non-interval form
+
+\ccFunction{std::ostream& operator<<(std::ostream &os,const Gmpfi &i);}
+        {Writes \ccc{i} to \ccc{os}, in the form \ccc{[i.inf(),i.sup()]}.}
+
+
+\ccImplementation
+All interval operations are performed by the \mpfi~library. The class
+\ccc{Gmpfi} is not reference counted, but its members are.
+
+\ccSeeAlso
+\ccRefIdfierPage{Gmpfr}\\
+\ccRefIdfierPage{Interval_nt<Protected>}\\
+\ccRefIdfierPage{Uncertain<T>}\\
+\ccRefIdfierPage{RealEmbeddable}\\
+\ccRefIdfierPage{FieldWithKthRoot}\\
+
+\end{ccRefClass}
+\ccDefGlobalScope{CGAL::}

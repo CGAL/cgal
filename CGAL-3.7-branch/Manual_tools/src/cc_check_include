@@ -1,0 +1,46 @@
+#!/bin/tcsh -f
+# **************************************************************************
+# 
+#  cc_check_include
+#  ===================
+#  A script to check the consistency between header files mentioned in
+#  a specification written in a TeX file with the cc_manual.sty using
+#  the \ccInclude{} macro and the files provided in the include directory.
+#
+#  Usage: $0 <include-dir> <spec-files...>
+#
+#  Author    : (c) 1997 Lutz Kettner
+#              as of version 3.3 (Sept. 1999) maintained by Susan Hert
+#  Revision  : $Id$
+#  Date      : $Date$
+# 
+# **************************************************************************
+
+if ( $#argv < 2) goto usage
+set incl_dir = $1
+shift
+if ( ! -d ${incl_dir} ) goto error
+
+set returnvalue = 0
+
+foreach file ( $argv)
+    set incl_files = `grep '\\ccInclude *[{][^}]*[}]' $file`
+    foreach ifile ( $incl_files)
+        set iifile = `echo $ifile | sed 's/\\ccInclude//'`
+        if ( ! -r ${incl_dir}/${iifile} ) then
+	    set returnvalue = 1
+            echo "Error: Include file '${iifile}' mentioned in '${file}' does not exist in directory '${incl_dir}'."
+        endif
+    end
+end
+exit $returnvalue
+
+error:
+echo "Error: First argument must be an existing include directory."
+
+usage:
+echo "$0 "'$Id$'" (c) Lutz Kettner"
+echo "Usage: $0 <include-dir> <spec-files...>"
+exit 1
+
+# EOF #

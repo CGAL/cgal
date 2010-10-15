@@ -1,0 +1,30 @@
+\ccDefGlobalScope{CGAL::}
+\begin{ccRefClass}[Qt::]{GraphicsViewNavigation}
+
+\ccDefinition
+An object of type \ccRefName\ can be added as event filter to a \ccc{Qt::QGraphicsView} and its viewport.
+
+Dragging the left mouse button while holding the 'Ctrl' key defines a zoom rectangle.
+Dragging the right mouse button while holding the 'Ctrl' key translates the scene.
+'Ctrl-Shift' and a click of the right mouse button translates what is under the mouse to the center.
+
+\ccInclude{CGAL/Qt/GraphicsViewNavigation.h}
+
+
+\ccCreationVariable{nav}
+
+\ccOperations
+
+\ccMethod{bool eventFilter(QObject *obj, QEvent *event);}{The event filter.}
+
+\ccHeading{Signals}
+
+\ccMethod{void mouseCoordinates(QPointF p);}{Emits the real world mouse coordinates.}
+\end{ccRefClass}
+
+
+
+
+
+
+

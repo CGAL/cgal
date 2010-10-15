@@ -1,0 +1,57 @@
+% +------------------------------------------------------------------------+
+% | Reference manual page: output_surface_facets_to_polyhedron.tex
+% +------------------------------------------------------------------------+
+% | 07.01.2009   Laurent Rineau, Laurent Saboret
+% | Package: Surface_mesher
+% |
+\RCSdef{\RCSsurfacemesheroutputsurfacefacetsRev}{$Id$}
+\RCSdefDate{\RCSsurfacemesheroutputsurfacefacetsDate}{$Date$}
+% |
+\ccRefPageBegin
+%%RefPage: end of header, begin of main body
+% +------------------------------------------------------------------------+
+
+
+\begin{ccRefFunction}{output_surface_facets_to_polyhedron}  %% add template arg's if necessary
+
+%% \ccHtmlCrossLink{}     %% add further rules for cross referencing links
+%% \ccHtmlIndexC[function]{} %% add further index entries
+
+\ccDefinition
+
+\ccc{output_surface_facets_to_polyhedron()} converts a surface reconstructed by \ccc{make_surface_mesh()} to a \ccc{Polyhedron_3<Traits>}.
+
+\ccInclude{CGAL/IO/output_surface_facets_to_polyhedron.h}
+
+% The section below is automatically generated. Do not edit!
+%START-AUTO(\ccDefinition)
+
+% Reduce left margin
+\ccThree{123456789012345}{6789012}{}
+
+\ccFunction{template<class SurfaceMeshComplex_2InTriangulation_3, class Polyhedron> bool output_surface_facets_to_polyhedron(const SurfaceMeshComplex_2InTriangulation_3& c2t3, Polyhedron& output_polyhedron);}
+{
+Gets reconstructed surface out of a \ccc{SurfaceMeshComplex_2InTriangulation_3} object.  \\
+This variant exports the surface as a polyhedron. It requires the surface to be manifold. For this purpose, you may call \ccc{make_surface_mesh}() with \ccc{Manifold_tag} or \ccc{Manifold_with_boundary_tag} parameter.
+\ccCommentHeading{Template Parameters}  \\
+\ccc{SurfaceMeshComplex_2InTriangulation_3}: model of the \ccc{SurfaceMeshComplex_2InTriangulation_3} concept. \ccc{Polyhedron}: an instance of \ccc{Polyhedron_3<Traits>}.
+\ccCommentHeading{Returns} true if the surface is manifold and orientable.
+\ccCommentHeading{Parameters}  \\
+\ccc{c2t3}: Input surface. \ccc{output_polyhedron}: Output polyhedron.
+}
+\ccGlue
+
+%END-AUTO(\ccDefinition)
+
+\ccSeeAlso
+
+\ccRefIdfierPage{CGAL::output_surface_facets_to_off}  \\
+
+\end{ccRefFunction}
+
+% +------------------------------------------------------------------------+
+%%RefPage: end of main body, begin of footer
+\ccRefPageEnd
+% EOF
+% +------------------------------------------------------------------------+
+

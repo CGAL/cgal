@@ -1,0 +1,59 @@
+% +------------------------------------------------------------------------+
+% | Reference manual page: Triangulation_face_base_2.tex
+% +------------------------------------------------------------------------+
+% | 11.04.2000   Author
+% | Package: Package
+% | 
+\RCSdef{\RCSTriangulationfacebaseRev}{$Id$}
+\RCSdefDate{\RCSTriangulationfacebaseDate}{$Date$}
+% |
+%%RefPage: end of header, begin of main body
+% +------------------------------------------------------------------------+
+
+
+\begin{ccRefClass}{Triangulation_face_base_2<Traits,Fb>}  %% add template arg's if necessary
+
+%% \ccHtmlCrossLink{}     %% add further rules for cross referencing links
+%% \ccHtmlIndexC[class]{} %% add further index entries
+\ccCreationVariable{fb}
+\ccDefinition
+  
+The class \ccRefName\ is a model for the concept
+\ccc{TriangulationFaceBase_2}. It is the default face base class
+for basic and Delaunay triangulation.
+
+These default base class can be used directly or can serve as a base to derive
+other base classes with some additional attribute (a color for example)
+tuned for specific applications.
+
+
+\ccParameters
+The first template parameter of \ccRefName\ is  a geometric traits class.
+The geometric traits is actually not used by the class.
+
+The second template parameter 
+has to be a  model of the concept \ccc{TriangulationDSFaceBase_2}
+and will serve as a base class for \ccRefName\ .
+\cgal\ provides a default instantiation for this parameter which is
+\ccc{Triangulation_ds_face_base_2<>}.
+
+
+\ccInclude{CGAL/Triangulation_face_base_2.h}
+
+\ccIsModel
+\ccc{TriangulationFaceBase_2}
+
+\ccSeeAlso
+\ccc{CGAL::Triangulation_ds_face_base_2<Tds>}\\
+\ccc{CGAL::Triangulation_vertex_base_2<Traits,Vb>}\\
+\ccc{CGAL::Triangulation_2<Traits,Tds>}
+
+
+
+\end{ccRefClass}
+
+% +------------------------------------------------------------------------+
+%%RefPage: end of main body, begin of footer
+% EOF
+% +------------------------------------------------------------------------+
+

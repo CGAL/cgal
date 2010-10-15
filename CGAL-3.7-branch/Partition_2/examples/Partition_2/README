@@ -1,0 +1,29 @@
+examples/Partition_2/y_monotone_partition_2.C
+------------------------------------
+
+computes a y-monotone partition of a random polygon and checks that each 
+polygon produced is, in fact, y-monotone and that the polygons form a 
+partition of the original polygon.
+
+file: examples/Partition_2/approx_convex_partition_2.C
+---------------------------------------------
+
+computes an approximately optimal convex partition of a random polygon and 
+checks the validity of the partition afterwards.
+
+file: examples/Partition_2/greene_approx_convex_partition_2.C
+----------------------------------------------------
+
+computes an approximately optimal convex partition of a random polygon using 
+Greene's approximation algorithm and checks the validity of the partition 
+afterwards.
+
+file: examples/Partition_2/optimal_convex_partition_2.C
+----------------------------------------------
+
+Computes an optimal convex partition of a particular polygon and checks the 
+validity of the partition afterwards.
+
+NOTE:  The assertions in these programs are superfluous unless postcondition 
+checking has been turned off.
+

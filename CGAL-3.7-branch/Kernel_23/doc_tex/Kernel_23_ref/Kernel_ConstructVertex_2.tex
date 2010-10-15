@@ -1,0 +1,30 @@
+\begin{ccRefFunctionObjectConcept}{Kernel::ConstructVertex_2}
+A model for this must provide:
+
+\ccCreationVariable{fo}
+
+
+\ccMemberFunction{Kernel::Point_2 operator()(const Kernel::Segment_2
+  &s, int i);} {returns source or target of \ccc{s}: \ccVar\ccc{(s,0)}
+  returns the source of \ccc{s}, \ccVar\ccc{(s,1)} returns the target
+  of \ccc{s}. The parameter \ccc{i} is taken modulo 2. }
+
+\ccMemberFunction{Kernel::Point_2 operator()(const
+  Kernel::Iso_rectangle_2 &r, int i);} {returns the i'th vertex of
+  \ccc{r} in counterclockwise order, starting with the lower left
+  vertex. The parameter \ccc{i} is taken modulo 4.}
+
+\ccMemberFunction{Kernel::Point_2 operator()(const Kernel::Triangle_2
+  &t, int i);} {returns the i'th vertex of \ccc{t}. The parameter
+  \ccc{i} is taken modulo 3.}
+
+
+\ccRefines
+\ccc{AdaptableFunctor} (with two arguments)
+
+\ccSeeAlso
+\ccRefIdfierPage{CGAL::Iso_rectangle_2<Kernel>} \\
+\ccRefIdfierPage{CGAL::Segment_2<Kernel>} \\
+\ccRefIdfierPage{CGAL::Triangle_2<Kernel>} \\
+
+\end{ccRefFunctionObjectConcept}

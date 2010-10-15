@@ -1,0 +1,40 @@
+% +------------------------------------------------------------------------+
+% | Reference manual page: Ssab_decomp.tex
+% +------------------------------------------------------------------------+
+% | 
+% | Package: Minkowski_sum_2
+% | 
+% +------------------------------------------------------------------------+
+
+\ccRefPageBegin
+
+\begin{ccRefClass}{Small_side_angle_bisector_decomposition_2<Kernel,Container>}
+\label{mink_ref:ssab_decomp}
+
+\ccDefinition
+%============
+
+The \ccRefName\ class implements a simple yet efficient heuristic for
+decomposing an input polygon into convex sub-polygons. It is based
+on the algorithm suggested by Flato and Halperin~\cite{fh-recpm-00},
+but without introducing Steiner points. The algorithm operates in two
+major steps. In the first step, it tries to subdivide the polygon by
+connect two reflex vertices with an edge. When this is not possible any
+more, it eliminates the reflex vertices one by one by connecting them
+to other convex vertices, such that the new edge best approximates
+the angle bisector of the reflex vertex. The algorithm operates in
+$O(n^2)$ time an takes $O(n)$ space at the worst case, where $n$ is the
+size of the input polygon.
+
+The \ccc{Polygon_2} type defined by the class is simply
+\ccc{Polygon_2<Kernel,Container>}. The \ccc{Container} parameter
+is by default \ccc{std::vector<typename Kernel::Point_2>}.
+
+\ccInclude{CGAL/Small_side_angle_bisector_decomposition_2.h}
+
+\ccIsModel
+  \ccc{PolygonConvexDecomposition_2}
+
+\end{ccRefClass}
+
+\ccRefPageEnd

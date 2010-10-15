@@ -1,0 +1,55 @@
+\ccRefPageBegin
+
+\begin{ccRefFunction}{do_intersect}
+
+\ccDefinition
+
+The function \ccRefName{} checks if a given curve or $x$-monotone
+curve intersects an existing arrangement's edges or vertices. 
+
+If the give curve is not an $x$-monotone curve then the function
+subdivides the given curve into $x$-monotone subcurves and isolated
+vertices . Each subcurve is in turn checked for intersection.
+The function uses the zone algorithm to check if the curve intersects
+the arrangement. First, the curve's left endpoint is located. Then, 
+its zone is computed starting from its left endpoint location. The
+zone computation terminates when an intersection with an arrangement's
+edge/vertex is found or when the right endpoint is reached. 
+
+A given point-location object is used for locating the left endpoint 
+of the given curve in the existing arrangement. By default, the function 
+uses the ``walk along line'' point-location strategy --- namely an 
+instance of the class 
+\ccc{Arr_walk_along_line_point_location<Arrangement_2<Traits,Dcel> >}.
+
+%%%%
+
+\ccInclude{CGAL/Arrangement_2.h}
+
+\ccGlobalFunction{template <class GeomTraits, class TopTraits, 
+  class Curve, class PointLocation>
+  bool do_intersect (
+  Arrangement_on_surface_2<GeomTraits, TopTraits>& arr, 
+  const Curve& c, const PointLocation& pl);}
+Checks if the given curve or $x$-monotone curve \ccc{c} intersects
+  edges or vertices of the existing arrangement \ccc{arr}.
+\ccPrecond{If provided, \ccc{pl} must be attached to the given arrangement
+\ccc{arr}.}
+
+%%%%
+
+\ccRequirements
+\begin{itemize}
+\item If \ccc{c} is $x$-monotone then the instantiated \ccc{GeomTraits}
+  class must model the  \ccc{ArrangementXMonotoneTraits_2} concept. If
+  \ccc{c} is a curve then the instantiated \ccc{GeomTraits} class must
+  model the \ccc{ArrangementTraits_2} concept. That is, it should
+  define the \ccc{Curve_2} type, and support its subdivision into
+  $x$-monotone subcurves (and perhaps isolated points).
+\item The point-location object \ccc{pl}, must model the
+  \ccc{ArrangementPointLocation_2} concept.
+\end{itemize}
+
+\end{ccRefFunction}
+
+\ccRefPageEnd

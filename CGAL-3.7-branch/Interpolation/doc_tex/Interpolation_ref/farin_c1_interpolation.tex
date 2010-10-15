@@ -1,0 +1,57 @@
+% +------------------------------------------------------------------------+
+% | Reference manual page: farin_c1_interpolation.tex
+% +------------------------------------------------------------------------+
+% | 
+% | August 2003  Julia Floetotto
+% | Package:   Interpolation
+% | 
+% |
+% +------------------------------------------------------------------------+
+
+\begin{ccRefFunction}{farin_c1_interpolation}
+
+\ccDefinition
+  
+The function \ccRefName\ interpolates the function values and the
+gradients that are provided by functors using the method described in  \cite{f-sodt-90}.
+
+\ccInclude{CGAL/interpolation_functions.h}
+
+\ccParameters \ccc{RandomAccessIterator::value_type} is a pair
+associating a point to a (non-normalized) barycentric coordinate.  See
+\ccc{sibson_c1_interpolation} for the other parameters.
+
+\ccFunction{template < class RandomAccessIterator, class Functor,
+  class GradFunctor, class Traits> typename Functor::result_type
+  farin_c1_interpolation(RandomAccessIterator first,
+  RandomAccessIterator beyond, const typename
+  std::iterator_traits<RandomAccessIterator>::value_type::second_type&
+  norm, Functor function_value, GradFunctor function_gradient, const
+  Traits& traits);} {generates the interpolated function value
+  computed by Farin's interpolant \cite{f-sodt-90}.  See also
+  \ccc{sibson_c1_interpolation}.  \ccPrecond{\ccc{norm} $\neq 0$.
+    \ccc{function_value(p).second == true} for all points \ccc{p} of
+    the point/coordinate pairs in the range
+    $\left[\right.$\ccc{first}, \ccc{beyond}$\left.\right)$.}
+  \ccPrecond{The range $\left[\right.$ \ccc{first},
+    \ccc{beyond}$\left.\right)$ contains either one or more than three
+    elements.  }  }
+
+\ccHeading{Requirements}
+
+Same requirements as for \ccc{sibson_c1_interpolation} only the
+iterator must provide random access and \ccc{Traits::FT} does not need
+to provide the square root operation.
+
+\ccSeeAlso
+\ccRefIdfierPage{CGAL::Data_access<Map>}\\
+\ccRefIdfierPage{CGAL::linear_interpolation} \\
+\ccRefIdfierPage{CGAL::sibson_c1_interpolation} \\
+\ccRefIdfierPage{CGAL::sibson_gradient_fitting} \\
+\ccRefIdfierPage{CGAL::Interpolation_traits_2<K>} \\
+\ccRefIdfierPage{CGAL::natural_neighbor_coordinates_2}\\
+\ccRefIdfierPage{CGAL::regular_neighbor_coordinates_2} \\
+\ccRefIdfierPage{CGAL::surface_neighbor_coordinates_3}\\
+%\ccImplementation
+
+\end{ccRefFunction}

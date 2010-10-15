@@ -1,0 +1,92 @@
+Manual/TO_DO
+==================
+
+-- Bug Fixes
+-- Feature Requests
+-- Projects
+
+
+Bug Fixes
+============================================================================
+
+-- MAN: Remove the explicit \ccRefPageBegin/End's from my manual pages
+   since they are automatically called in the refPage environment [small]
+
+
+Feature Requests
+============================================================================
+
+-- DOC: Add to Chapter 2 of Developers Manual a section on the way how
+   to build the manuals manually, i.e., without the use of cgal_manual.
+   It would a commented version of the output one gets from
+   cgal_manual -cmdlog.
+
+-- DOC: Add to Chapter 2 of Developers Manual a section on how to handle
+   chapters in CGAL Manuals that are assembled from several CGAL packages.
+   The problem is the question, whether a package author can test
+   his/her package alone. There are some examples in the curren cgal_manual,
+   Handle, and STL_Extensions.
+
+-- All: Packages can be assembled into different manuals, i.e., cross 
+   references to other packages might exist or not. In principle, one
+   could use the multi-pass assembly of packages in the current way how
+   CGAL manuals are built to declare the exisiting packages first and then
+   include them, such that packages can check for the existence of other 
+   packages. Some help can be provided with additional macros.
+
+-- TeX: Change page numbers of printed manual to <Part-Num>-<Chapter-Num> 
+   + page per chapter. It simplifies packaging of individual manuals. 
+   Try just to redefine \thepage. It might not work as smooth as expected 
+   with the indexing and would turn thus into a project, not a feature 
+   request. Seek consensus on cgal-develop/cgal-editor for such change.
+
+-- TeX, HTML: header/footer are not respected yet. The printed manuals
+   have no footer like the HTML manuals yet. Can be added to the wrapper 
+   file embodied into cgal_manual.
+
+-- SRC: Add -v flag to cgal_manual to print commands executed 
+   (helps in doing it later by hand)
+
+-- SRC: Add -debug flag to cgal_manual that prevent temp file from 
+   being deleted (debug index)
+
+-- CHECK: Look into Naming conventions. e.g., "User Manual" of the OpenGL books
+
+-- TeX: generate a PostScript and PDF manuals for single sided printers, 
+   i.e., which do not distinguish between left and right pages. Things
+   to check: alignment with paper boundaries, header and footer, and 
+   the "Class", "Concept", etc., tabs should all be on the right side.
+   Suggestion: make this an option of cgal_manual, but the default
+   remains double sided, since almost all users will have double sided
+   printers these days. We also have to figure out whether we want to 
+   support all combinations of A4 and letter size paper with single or
+   double sided printing on the download page, or if this is an option
+   for Andreas GeometryFactory only to offer cumstomized manuals for
+   his customers.
+
+-- DOC: Remove Use of STL manual
+
+-- SRC: Would it be possible to replace the requirement that the Manual/
+   directory is placed side by side with the package we want to build the
+   doc, by an environment variable (which could default to "../..") ?
+   (name it CGAL_MANUAL_DIR, define it to end with .../Manual/ )
+
+
+Projects
+============================================================================
+
+-- CHECK: Check what to do with  Tutorial/doc_tex, needs reorganization
+   to be intergrated into the automatic manual test build. The tutorials
+   should be build and tested as all other manuals too.
+
+-- SRC: either adapt cgal_manual, or create a new script that works on the
+   latest test suite result, and builds a release candidate of the manuals,
+   in particular, repackages the files into their proper subdirectories 
+   before tar'ing. (Check the current release for file organization.)
+
+-- SRC: How to support US letter paper at the same time as A4 in PS and PDF?
+
+-- CHECK: alternative for creating PDF (some options seem to be missing for 
+   good font support though, -ups, -Ppdf???)
+   ???: dvips -t letter -o pdf_wrapper.ps pdf_wrapper
+   ???: ps2pdf pdf_wrapper.ps

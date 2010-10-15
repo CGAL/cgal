@@ -1,0 +1,72 @@
+\begin{ccRefFunctionObjectConcept}{Kernel::ConstructCircle_3}
+A model for this must provide:
+
+\ccCreationVariable{fo}
+
+
+\ccHidden
+\ccMemberFunction{Kernel::Circle_3 operator()( );}{
+        introduces an uninitialized variable  of type
+        \ccClassTemplateName.}
+
+\ccMemberFunction{Kernel::Circle_3 operator()
+			( Kernel::Point_3 const& center, 
+                               Kernel::FT const& sq_r,
+                               Kernel::Plane_3 const& plane);}
+	{introduces a variable  of type \ccc{Kernel::Circle_3}.
+        It is initialized to the circle with center \ccc{center},
+        and squared radius \ccc{sq_r} in the plane \ccc{plane}.
+        \ccPrecond{\ccc{center} lies in \ccc{plane} and
+		\ccc{sq_r} $\geq$ 0.}}
+
+\ccMemberFunction{Kernel::Circle_3 operator()
+			( Kernel::Point_3 const& center, 
+                               Kernel::FT const& sq_r,
+                               Kernel::Vector_3 const& n);}
+	{introduces a variable  of type \ccc{Kernel::Circle_3}.
+        It is initialized to the circle with center \ccc{center},
+        and squared radius \ccc{sq_r} in the plane 
+	containing \ccc{center} and normal to \ccc{n}.
+        \ccPrecond{\ccc{sq_r} $\geq$ 0.}}
+
+\ccMemberFunction{Kernel::Circle_3 operator()
+			( Kernel::Point_3 const& p,
+                        Kernel::Point_3 const& q, 
+                        Kernel::Point_3 const& r);}
+        {introduces a variable of type \ccc{Kernel::Point_3}.
+        It is initialized to the circle passing through the three points.
+        \ccPrecond{The three points are not collinear.}}
+
+\ccMemberFunction{Kernel::Circle_3 operator()
+			( Kernel::Sphere_3 const& sphere1,
+				Kernel::Sphere_3 const& sphere2);}
+	{introduces a variable of type \ccc{Kernel::Circle_3}.
+        It is initialized to the circle along which the two spheres intersect.
+	\ccPrecond{The two spheres intersect along a circle.}}
+
+\ccMemberFunction{Kernel::Circle_3 operator()
+			( Kernel::Sphere_3 const& sphere, 
+				Kernel::Plane_3 const& plane);}
+	{introduces a variable of type \ccc{Kernel::Circle_3}.
+        It is initialized to the circle along which the sphere and the 
+	plane intersect.
+	\ccPrecond{The sphere and the plane intersect along a circle.}}
+
+\ccMemberFunction{Kernel::Circle_3 operator()
+			( Kernel::Plane_3 const& plane,
+				Kernel::Sphere_3 const& sphere);}
+	{introduces a variable of type \ccc{Kernel::Circle_3}.
+        It is initialized to the circle along which the sphere and the 
+	plane intersect.
+	\ccPrecond{The sphere and the plane intersect along a circle.}}
+
+\ccHidden
+\ccMemberFunction{Kernel::Circle_3 operator()( Kernel::Circle_3 const&);}{copy constructor.}
+
+\ccRefines
+\ccc{AdaptableFunctor} (with three arguments)
+
+\ccSeeAlso
+\ccRefIdfierPage{CGAL::Circle_3<Kernel>}  
+
+\end{ccRefFunctionObjectConcept}

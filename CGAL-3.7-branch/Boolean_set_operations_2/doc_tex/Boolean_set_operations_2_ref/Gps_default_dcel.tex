@@ -1,0 +1,32 @@
+\ccRefPageBegin
+
+\begin{ccRefClass}{Gps_default_dcel<Traits>}
+
+\ccDefinition
+%============
+The class \ccRefName\ is the default \dcel{} class used by the
+\ccc{General_polygon_set_2} and \ccc{Polygon_set_2} class-templates
+to represent the underlying internal \ccc{Arrangement_2} data structure.
+
+\ccInclude{CGAL/Boolean_set_operations_2/Gps_default_dcel.h}
+
+\ccIsModel
+  \ccc{GeneralPolygonSetDcel}
+
+\ccInheritsFrom
+  \begin{tabbing}
+    \ccc{Arr_dcel_base<}\=\ccc{Arr_vertex_base<typename Traits_::Point_2>,} \\
+                        \>\ccc{Arr_halfedge_base<typename Traits_::X_monotone_curve_2>,}\\
+                        \>\ccc{Gps_face_base>}
+  \end{tabbing}
+
+\ccTypes
+
+\ccNestedType{template <class T> rebind}
+   {allows the rebinding of the \dcel\ with a different traits class \ccc{T}.}
+
+% \ccSeeAlso
+
+\end{ccRefClass}
+
+\ccRefPageEnd

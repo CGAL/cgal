@@ -1,0 +1,19 @@
+Planar Parameterization of Triangulated Surface Meshes
+
+Parameterizing a surface amounts to finding a one-to-one mapping from a
+suitable domain to the surface. In this package, we focus on triangulated
+surfaces that are homeomorphic to a disk and on piecewise linear mappings
+into a planar domain.
+
+This CGAL package implements some of the state-of-the-art surface mesh parameterization
+methods, such as Least Squares Conformal Maps, Discrete Conformal Map,
+Discrete Authalic Parameterization, Floater Mean Value Coordinates or
+Tutte Barycentric Mapping.
+
+The package proposes currently an interface with CGAL Polyhedron_3 data structure.
+
+Since parameterizing meshes require efficient representation of sparse matrices
+and efficient iterative or direct linear solvers, we provide links to standard
+libraries (TAUCS) and propose a separate package devoted to OpenNL
+sparse linear solver (Levy).
+

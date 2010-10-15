@@ -1,0 +1,50 @@
+% +------------------------------------------------------------------------+
+% | Reference manual page: Ref_counted.tex
+% +------------------------------------------------------------------------+
+% | 21.03.2005   Author
+% | Package: Support
+% | 
+\RCSdef{\RCSRefcountedRev}{$Id$}
+\RCSdefDate{\RCSRefcountedDate}{$Date$}
+% |
+%%RefPage: end of header, begin of main body
+% +------------------------------------------------------------------------+
+
+
+\begin{ccRefClass}{Ref_counted<T>}  %% add template arg's if necessary
+
+%% \ccHtmlCrossLink{}     %% add further rules for cross referencing links
+%% \ccHtmlIndexC[class]{} %% add further index entries
+
+\ccDefinition
+  
+The class \ccRefName\ implements a base class for objects which are
+reference counted. To use it simply inherit from \ccRefName\ (passing
+the type to be reference counted as the template argument) and then
+access the object through \ccc{Handle} objects rather than bare C++
+pointers.
+
+\ccInclude{CGAL/Kinetic/Ref_counted.h}
+
+
+\ccTypes
+
+\ccNestedType{Handle}{A reference counted pointer to an Object. }
+\ccNestedType{Const_handle}{A const reference counted pointer to an Object. }
+
+\ccCreation
+\ccCreationVariable{rc}  %% choose variable name
+
+\ccConstructor{Ref_counted();}{default constructor.}
+
+\ccOperations
+
+There are no methods which should be called by users of this class.
+
+\end{ccRefClass}
+
+% +------------------------------------------------------------------------+
+%%RefPage: end of main body, begin of footer
+% EOF
+% +------------------------------------------------------------------------+
+

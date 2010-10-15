@@ -1,0 +1,37 @@
+\begin{ccRefFunction}{compare_squared_radius}
+
+\ccFunction{Comparison_result
+compare_squared_radius(const Point_3<Kernel>& p,
+                       const typename Kernel::FT& sr);}
+          {compares the squared radius of the sphere of radius 0 centered at
+           \ccStyle{p} to \ccStyle{sr}. 
+           This returns the opposite sign of \ccStyle{sr}.}           
+
+\ccFunction{Comparison_result
+compare_squared_radius(const Point_3<Kernel>& p,
+                       const Point_3<Kernel>& q,
+                       const typename Kernel::FT& sr);}
+          {compares the squared radius of the sphere defined by the
+           points \ccStyle{p} and \ccStyle{q} to \ccStyle{sr}.}
+
+
+\ccFunction{Comparison_result
+compare_squared_radius(const Point_3<Kernel>& p,
+                       const Point_3<Kernel>& q,
+                       const Point_3<Kernel>& r,
+                       const typename Kernel::FT& sr);}
+          {compares the squared radius of the sphere defined by the
+           points \ccStyle{p}, \ccStyle{q}, and \ccStyle{r} to \ccStyle{sr}.}
+
+\ccFunction{Comparison_result
+compare_squared_radius(const Point_3<Kernel>& p,
+                       const Point_3<Kernel>& q,
+                       const Point_3<Kernel>& r,
+                       const Point_3<Kernel>& s,
+                       const typename Kernel::FT& sr);}
+          {compares the squared radius of the sphere defined by the
+           points \ccStyle{p}, \ccStyle{q}, \ccStyle{r}, and \ccStyle{r} to \ccStyle{sr}.}
+
+
+
+\end{ccRefFunction}

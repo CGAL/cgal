@@ -1,0 +1,56 @@
+% +------------------------------------------------------------------------+
+% | CGAL Reference Manual: Reference manual for Qt_widget.tex
+% +------------------------------------------------------------------------+
+% |
+% | 02.04.2003  Radu Ursu
+% | 
+% | \RCSdef{\qtwidgetRev}{$Id$}
+% | \RCSdefDate{\qtwidgetDate}{$Date$}
+% +------------------------------------------------------------------------+
+
+% +-----------------------------------------------------+
+\begin{ccRefClass}{Qt_help_window}
+
+\ccDefinition
+This class is a specialization of the \ccc{QTextBrowser} class, that
+provides a rich text browser with hypertext navigation. It has couple
+more functionalities as navigation support and printing.
+
+\ccInclude{CGAL/IO/Qt_help_window.h}
+\ccGlue
+
+\ccInheritsFrom
+\ccc{QMainWindow}
+
+\ccCreation
+\ccCreationVariable{hw}
+\ccSetTwoColumns{Qt_help_window}{}
+\ccConstructor{Qt_help_window( const QString& home_,  const QString& path, 
+                QWidget* parent = 0, const char *name=0 );}
+{\ccc{home_} is the name of the file considered as home, \ccc{path} is 
+the path to this file, \ccc{parent} is the parent widget, and
+\ccc{name} is the name of this help class.}
+
+
+\ccHeading{public slots:}
+
+\ccMethod{void print();}{This prints the current displayed page to the 
+printer device of your choice.}
+
+\ccExample
+\begin{ccExampleCode}
+  #include <CGAL/IO/Qt_help_window.h>
+  //...
+  QString home;
+  home = "help/index.html";
+  CGAL::Qt_help_window *help = new 
+    CGAL::Qt_help_window(home, ".", 0, "help viewer");
+  help->resize(400, 400);
+  help->setCaption("Demo HowTo");
+  help->show();
+\end{ccExampleCode}
+
+\end{ccRefClass}
+
+% +-----------------------------------------------------+
+% EOF

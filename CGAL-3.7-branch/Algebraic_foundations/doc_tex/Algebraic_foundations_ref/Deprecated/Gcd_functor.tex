@@ -1,0 +1,24 @@
+\begin{ccRefFunctionObjectClass}{Gcd<NT>}
+
+\ccDefinition
+
+The function \ccRefName\ computes the greatest common divisor of two values.
+
+\ccInclude{CGAL/number_utils_classes.h}
+
+\ccIsModel
+\ccRefConceptPage{AdaptableFunctor}
+
+\ccCreationVariable{f}
+\ccMethod{NT operator()(const NT& ntval1, const NT& ntval2);}
+{
+computes the greatest common divisor of two numbers. If \ccc{ntval1} is
+0, the function returns \ccc{ntval2}.
+\ccPrecond: \ccc{ntval2} is not zero.
+}
+
+\ccImplementation
+
+Uses Euclid's algorithm.
+
+\end{ccRefFunctionObjectClass}

@@ -1,0 +1,51 @@
+\begin{ccRefConcept}{NonnegativeQuadraticProgram}
+
+\ccDefinition
+A model of \ccRefName\ describes a convex quadratic program of the form
+\input{QP_solver_ref/_nqp_description}
+
+The description is given by appropriate \emph{random-access} 
+iterators over the program data, see below. The program therefore 
+comes in \emph{dense} representation which includes zero entries.
+
+\ccHasModels
+\ccc{Quadratic_program<NT>}\\
+\ccc{Quadratic_program_from_mps<NT>}\\
+\ccc{Nonnegative_quadratic_program_from_iterators<A_it, B_it, R_it, FL_it, L_it, FU_it, U_it, D_it, C_it>}\\
+
+\ccTypes
+
+\input{QP_solver_ref/_abr_types.tex}
+
+\input{QP_solver_ref/_d_types.tex}
+
+\input{QP_solver_ref/_c_types.tex}
+
+\ccOperations
+
+\ccCreationVariable{qp}
+
+\input{QP_solver_ref/_nmabr_methods.tex}
+
+\input{QP_solver_ref/_d_methods.tex}
+
+\input{QP_solver_ref/_c_methods.tex}
+
+\ccRequirements
+
+The value types of all iterator types (nested iterator types,
+respectively, for \ccc{A_iterator} and \ccc{D_iterator}) must be
+convertible to some common \ccc{IntegralDomain} \ccc{ET}.
+
+\ccSeeAlso
+The models
+
+\ccc{Quadratic_program<NT>}\\
+\ccc{Quadratic_program_from_mps<NT>}\\
+\ccc{Nonnegative_quadratic_program_from_iterators<A_it, B_it, R_it, D_it, C_it>}
+and the other concepts
+
+\ccc{QuadraticProgram}\\
+\ccc{LinearProgram}\\
+\ccc{NonnegativeLinearProgram}
+\end{ccRefConcept}

@@ -1,0 +1,91 @@
+% +------------------------------------------------------------------------+
+% | Reference manual page: Polyhedron_items_3.tex
+% +------------------------------------------------------------------------+
+% | 17.03.1999   Lutz Kettner
+% | Package: Polyhedron
+% | 
+\RCSdef{\RCSPolyhedronitemsRev}{$Id$}
+\RCSdefDate{\RCSPolyhedronitemsDate}{$Date$}
+% +------------------------------------------------------------------------+
+
+\ccRefPageBegin
+
+%%RefPage: end of header, begin of main body
+% +------------------------------------------------------------------------+
+
+
+\begin{ccRefClass}{Polyhedron_items_3}
+
+\ccDefinition
+  
+The class \ccRefName\ is a model of the \ccc{PolyhedronItems_3}
+concept.  It provides definitions for vertices with points, halfedges,
+and faces with plane equations. The polyhedron traits class must
+provide the respective types for the point and the plane equation.
+Vertices and facets both contain a halfedge handle to an incident
+halfedge.
+
+\ccInclude{CGAL/Polyhedron_items_3.h}
+
+\ccIsModel
+
+\ccRefIdfierPage{PolyhedronItems_3}
+
+\ccHeading{Types in 
+   \ccc{Polyhedron_items_3::Vertex_wrapper<Refs,Traits>::Vertex}}
+\ccThree{CGAL::Polyhedron_items_3}{items;;;;}{}
+\ccThreeToTwo
+%%\ccTwo{CGAL::Polyhedron_items_3 items;;;}{}
+
+\ccTypedef{typedef Traits::Point_3 Point;}{}
+\ccGlue
+\ccTypedef{typedef CGAL::Tag_true Supports_vertex_point;}{}
+
+
+\ccHeading{Types in \ccc{Polyhedron_items_3::Face_wrapper<Refs,Traits>::Face}}
+
+\ccTypedef{typedef Traits::Plane_3 Plane;}{}
+\ccGlue
+\ccTypedef{typedef CGAL::Tag_true Supports_face_plane;}{}
+% No longer required.
+%\ccGlue
+%\ccTypedef{typedef Traits::Normal Normal;}{}
+%\ccGlue
+%\ccTypedef{typedef CGAL::Tag_true Supports_face_normal;}{}
+
+\ccCreation
+\ccCreationVariable{items}  %% choose variable name
+
+\ccConstructor{Polyhedron_items_3();}{default constructor.}
+
+\ccOperations
+
+Supported as required by the \ccc{PolyhedronItems_3} concept.
+
+\ccSeeAlso
+
+\ccRefIdfierPage{CGAL::Polyhedron_3<Traits>}\\
+\ccRefIdfierPage{CGAL::Polyhedron_min_items_3}\\
+\ccRefIdfierPage{CGAL::HalfedgeDS_min_items}\\
+\ccRefIdfierPage{CGAL::HalfedgeDS_items_2}
+
+\ccExample
+
+The following example program defines a new face class based on the
+\ccc{CGAL::HalfedgeDS_face_base} and adds a new color member variable.
+The new face class is used to replace the face definition in the
+\ccc{CGAL::Polyhedron_items_3} class. The main function illustrates the
+access to the new member variable.
+See also the \ccc{PolyhedronItems_3} concept for another illustrative
+example.
+
+\ccIncludeExampleCode{Polyhedron/polyhedron_prog_color.cpp}
+
+\end{ccRefClass}
+
+% +------------------------------------------------------------------------+
+%%RefPage: end of main body, begin of footer
+\ccRefPageEnd
+% EOF
+% +------------------------------------------------------------------------+
+

@@ -1,0 +1,69 @@
+% +------------------------------------------------------------------------+
+% | Reference manual page: Umbilic.tex
+% +------------------------------------------------------------------------+
+% | 15.09.2006   Marc Pouget and Frédéric Cazals
+% | Package: Ridges_3
+% | 
+\RCSdef{\RCSUmbilicRev}{$Id$}
+\RCSdefDate{\RCSUmbilicDate}{$Date$}
+% |
+%%RefPage: end of header, begin of main body
+% +------------------------------------------------------------------------+
+
+
+\begin{ccRefClass}{Umbilic<TriangulatedSurfaceMesh>}  %% add template arg's if necessary
+
+%% \ccHtmlCrossLink{}     %% add further rules for cross referencing links
+%% \ccHtmlIndexC[class]{} %% add further index entries
+
+\ccDefinition
+  
+The class \ccRefName\ stores the description of an umbilic.
+
+\ccInclude{CGAL/Umbilics.h}
+
+\ccTypes
+
+\ccTypedef{  typedef typename TriangulatedSurfaceMesh::Vertex_handle    Vertex_handle;}{}
+\ccGlue
+\ccTypedef{ typedef typename TriangulatedSurfaceMesh::Halfedge_handle  Halfedge_handle;}{}
+
+\ccCreation
+\ccCreationVariable{umbilic} %hoose variable name
+
+% \ccConstructor{Umbilic(Vertex_handle v_init,
+% 	  std::list<Halfedge_handle> contour_init);}{default constructor.}
+
+\ccAccessFunctions
+% +--------------------------------------------------------------
+\ccMethod{const Vertex_handle vertex();}{}
+\ccMethod{const Umbilic_type umbilic_type();}{}
+%\ccGlue
+%\ccMethod{Umbilic_type& umbilic_type();}{}
+\ccMethod{const std::list<Halfedge_handle>& contour_list() ;}{}
+%\ccGlue
+%\ccMethod{std::list<Halfedge_handle>& contour_list();}{}
+
+
+\ccOperations
+The usual insert operator ($<<$) is overloaded for \ccc{Umbilic}, it
+gives the location (3d coordinates of the vertex) and the type.
+
+%\ccFunction{template <class TriangulatedSurfaceMesh>
+%std::ostream& 
+%operator<<(std::ostream& out_stream, const Umbilic<TriangulatedSurfaceMesh>& umbilic);}
+%{Outputs umbilic location and type.}
+
+
+\ccSeeAlso
+
+\ccc{Umbilic_approximation}
+
+
+\end{ccRefClass}
+
+% +------------------------------------------------------------------------+
+%%RefPage: end of main body, begin of footer
+% EOF
+% +------------------------------------------------------------------------+
+

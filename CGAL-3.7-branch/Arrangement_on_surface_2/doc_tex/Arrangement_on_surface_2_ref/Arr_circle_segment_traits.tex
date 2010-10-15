@@ -1,0 +1,332 @@
+% +------------------------------------------------------------------------+
+% | Reference manual page: Arr_circle_segment_traits.tex
+% +------------------------------------------------------------------------+
+% | 
+% | Package: Arrangement_2
+% | 
+% +------------------------------------------------------------------------+
+
+\ccRefPageBegin
+\begin{ccRefClass}{Arr_circle_segment_traits_2<Kernel>}
+
+\ccDefinition
+%============
+
+The class \ccRefName\ is a model of the \ccc{ArrangementTraits_2} concept
+and can be used to construct and maintain arrangements of circular arcs
+and line segments.
+
+The traits class must be instantiated with a geometric kernel, such that
+the supporting circles of the circular arcs are of type \ccc{Kernel::Circle_2}
+and the supporting lines of the line segments are of type \ccc{Kernel::Line_2}.
+Thus, the coordinates of the center of supporting circles, and its squared
+radius are of type \ccc{Kernel::FT}, which should be an exact rational
+number-type; similarly, the coefficients of each supporting line
+$ax + by + c = 0$ are also of type \ccc{Kernel::FT}. Note however that
+the intersection point between two such arcs do not have rational coordinates
+in general. For this reason, we do not require the endpoints of the input arcs
+and segments to have rational coordinates.
+
+The nested \ccc{Point_2} type defined by the traits class is therefore
+{\em different} than the \ccc{Kernel::Point_2} type. Its coordinates are
+of type \ccc{CoordNT}, and represent real numbers obtained from solving
+quadratic equations with rational coordinates. A number of type
+\ccc{CoordNT} can therefore be expressed as $\alpha + \beta\sqrt{\gamma}$,
+where $\alpha$, $\beta$ and $\gamma$ are all rational numbers.
+The definition of the curve and $x$-monotone curve types nested in the
+traits class are detailed below.
+
+\ccInclude{CGAL/Arr_circle_segment_traits_2.h}
+ 
+\ccIsModel
+    \ccc{ArrangementTraits_2}
+
+\subsection*{Class 
+Arr\_circle\_segment\_traits\_2$<$Kernel$>$::CoordNT}
+%==============================================================================
+
+The \ccc{CoordNT} number-type nested within the traits class represents
+an algebraic number of degree 2; it can be represented as
+$\alpha + \beta\sqrt{\gamma}$, where $\alpha$, $\beta$ and $\gamma$ are
+all rational numbers of type \ccc{Kernel::FT}.
+
+\begin{ccClass}{Arr_circle_segment_traits_2<Kernel>::CoordNT}
+
+\ccTypes
+%-------
+
+\ccNestedType{Rational}{the \ccc{Kernel::FT} type.}
+
+\ccCreation
+\ccCreationVariable{x}
+%---------------------
+
+\ccConstructor{CoordNT ();}
+    {creates a variable whose value is $0$.}
+
+\ccConstructor{CoordNT (const Rational& alpha);}
+    {creates a variable whose value is the rational number $\alpha$.}
+
+\ccConstructor{CoordNT (const Rational& alpha,
+                        const Rational& beta,
+                        const Rational& gamma);}
+    {creates a variable whose value is the algebraic number 
+     $\alpha + \beta\sqrt{\gamma}$.}
+
+\ccAccessFunctions
+%-----------------
+
+\ccMethod{bool is_rational () const;}
+  {determines whether \ccVar\ is rational.}
+
+\ccMethod{Rational alpha () const;}
+  {returns $\alpha$.}
+\ccGlue
+\ccMethod{Rational beta () const;}
+  {returns $\beta$ (0 if \ccVar\ is rational).}
+\ccGlue
+\ccMethod{Rational gamma () const;}
+  {returns $\gamma$ (0 if \ccVar\ is rational).}
+
+\ccHeading{Operators}
+%--------------------
+
+The \ccc{CoordNT} number-type supports all arithmetic operations with
+rational numbers of type \ccc{Kernel::FT}. For example, it is possible to
+compute \ccc{x + q}, \ccc{q - x}, \ccc{x += q}, etc. where \ccc{q} is rational.
+
+The global functions \ccc{CGAL::sign(x)}, \ccc{CGAL::square(x)},
+\ccc{CGAL::to_double(x)} and \ccc{CGAL::compare(x,y)}, where \ccc{x} and
+\ccc{y} are of type \ccc{CoordNT}, are also supported.
+
+It is also possible to call \ccc{CGAL::to_double(x)} to convert \ccc{x} to
+a rational number, with the precondition that it is indeed rational.
+
+\end{ccClass}
+
+\subsection*{Class 
+Arr\_circle\_segment\_traits\_2$<$Kernel$>$::Point\_2}
+%==============================================================================
+
+The \ccc{Point\_2} number-type nested within the traits class represents
+a Cartesian point whose coordinates are algebraic numbers of type
+\ccc{CoordNT}.
+
+\begin{ccClass}{Arr_circle_segment_traits_2<Kernel>::Point_2}
+
+\ccTypes
+%-------
+
+\ccNestedType{Rational}{the \ccc{Kernel::FT} type.}
+
+\ccNestedType{CoordNT}{the algebraic number-type.}
+
+\ccCreation
+\ccCreationVariable{p}
+%---------------------
+
+\ccConstructor{Point_2 ();}
+    {default constructor.}
+
+\ccConstructor{Point_2 (const Rational& x, const Rational& y);}
+    {creates the point $(x,y)$.}
+
+\ccConstructor{Point_2 (const CoordNT& x, const CoordNT& y);}
+    {creates the point $(x,y)$.}
+
+\ccAccessFunctions
+%-----------------
+
+\ccMethod{CoordNT x () const;}
+  {returns the $x$-coordinate.}
+\ccGlue
+\ccMethod{CoordNT y () const;}
+  {returns the $y$-coordinate.}
+
+\end{ccClass}
+
+\subsection*{Class 
+        Arr\_circle\_segment\_traits\_2$<$Kernel$>$::Curve\_2}
+%=========================================================================
+
+The \ccc{Curve_2} class nested within the traits class can represent
+arbitrary circular arcs, full circles and line segments and support their
+construction in various ways.
+The copy and default constructor as well as the assignment operator are
+provided. In addition, an \ccc{operator<<} for the curves is defined for
+standard output streams.
+
+\begin{ccClass}{Arr_circle_segment_traits_2<Kernel>::Curve_2}
+
+\ccCreation
+\ccCreationVariable{cv}
+%----------------------
+
+\ccConstructor{Curve_2 (const typename Kernel::Segment_2& seg);}
+    {constructs an curve corresponding to the line segment \ccc{seg}.}
+
+\ccConstructor{Curve_2 (const typename Kernel::Point_2& source,
+                        const typename Kernel::Point_2& target);}
+    {constructs an curve corresponding to the line segment directed
+     from \ccc{source} to \ccc{target}, both having rational coordinates.}
+
+\ccConstructor{Curve_2 (const typename Kernel::Line_2& line,
+                        const Point_2& source,
+                        const Point_2& target);}
+    {constructs an curve corresponding to the line segment supported by
+     the given line, directed from \ccc{source} to \ccc{target}.
+     Note that the two endpoints may have one-root coordinates.
+     \ccPrecond{Both endpoints must lie on the given supporting line.}}
+
+\ccConstructor{Curve_2 (const typename Kernel::Circle_2& circ);}
+    {constructs an curve corresponding to the given circle. \ccc{circ}
+     has a center point with rational coordinates and its {\em squared}
+     radius is rational.}
+
+\ccConstructor{Curve_2 (const typename Kernel::Point_2& c,
+                        const typename Kernel::FT& r,
+                        Orientation orient = COUNTERCLOCKWISE);}
+    {constructs an curve corresponding to a circle centered at the rational
+     point \ccc{c} whose radius \ccc{r} is rational.}
+
+\ccConstructor{Curve_2 (const typename Kernel::Circle_2& circ,
+                        const Point_2& source, const Point_2& target);}
+    {constructs a circular arc supported by \ccc{circ}, which has a
+     center point with rational coordinates and whose {\em squared}
+     radius is rational, with the given endpoints. The orientation of the
+     arc is the same as the orientation of \ccc{circ}.
+     \ccPrecond{Both endpoints must lie on the given supporting circle.}}
+
+\ccConstructor{Curve_2 (const typename Kernel::Point_2& c,
+                        const typename Kernel::FT& r,
+                        Orientation orient,
+                        const Point_2& source, const Point_2& target);}
+    {constructs a circular arc supported by a circle centered at the rational
+     point \ccc{c} whose radius \ccc{r} is rational, directed from
+     \ccc{source} to \ccc{target} with the given orientation.
+     \ccPrecond{Both endpoints must lie on the supporting circle.}}
+
+\ccConstructor{Curve_2 (const typename Kernel::Point_2& source,
+                        const typename Kernel::Point_2& mid,
+                        const typename Kernel::Point_2& target);}
+    {constructs an circular arc whose endpoints are \ccc{source} and
+     \ccc{target} that passes through \ccc{mid}. All three points have
+     rational coordinates.
+     \ccPrecond{The three points must not be collinear.}}
+
+\ccAccessFunctions
+%-----------------
+
+\ccMethod{bool is_full() const;}
+  {indicates whether the curve represents a full circle.}
+
+\ccMethod{const Point_2& source() const;}
+  {returns the source point.
+   \ccPrecond{\ccVar{} is not a full circle.}}
+\ccGlue
+\ccMethod{const Point_2& target() const;}
+  {returns the target point.
+   \ccPrecond{\ccVar{} is not a full circle.}}
+
+\ccMethod{Orientation orientation() const;}
+  {returns the orientation of the curve (\ccc{COLLINEAR} in case of
+   line segments).}
+
+\ccMethod{bool is_linear () const;}
+  {determines whether \ccVar{} is a line segment.}
+\ccGlue
+\ccMethod{bool is_circular () const;}
+  {determines whether \ccVar{} is a circular arc.}
+
+\ccMethod{typename Kernel::Line_2 supporting_line() const;}
+  {returns the supporting line of \ccVar{}.
+   \ccPrecond{\ccVar{} is a line segment.}}
+\ccGlue
+\ccMethod{typename Kernel::Circle_2 supporting_circle() const;}
+  {returns the supporting circle of \ccVar{}.
+   \ccPrecond{\ccVar{} is a circular arc.}}
+
+\end{ccClass}
+
+\subsection*{Class 
+Arr\_circle\_segment\_traits\_2$<$Kernel$>$::X\_monotone\_curve\_2}
+%==============================================================================
+
+The \ccc{X_monotone_curve_2} class nested within the traits class can
+represent $x$-monotone and line segments (which are always weakly $x$-monotone).
+The copy and default constructor as well as the assignment operator are
+provided. In addition, an \ccc{operator<<} for the curves is defined for
+standard output streams.
+
+\begin{ccClass}{Arr_circle_segment_traits_2<Kernel>::X_monotone_curve_2}
+
+\ccCreation
+\ccCreationVariable{xcv}
+%-----------------------
+
+\ccConstructor{X_monotone_curve_2 (const typename Kernel::Point_2& source,
+                        const typename Kernel::Point_2& target);}
+    {constructs an curve corresponding to the line segment directed
+     from \ccc{source} to \ccc{target}, both having rational coordinates.}
+
+\ccConstructor{X_monotone_curve_2 (const typename Kernel::Line_2& line,
+                        const Point_2& source,
+                        const Point_2& target);}
+    {constructs an curve corresponding to the line segment supported by
+     the given line, directed from \ccc{source} to \ccc{target}.
+     Note that the two endpoints may have one-root coordinates.
+     \ccPrecond{Both endpoints must lie on the given supporting line.}}
+
+\ccConstructor{X_monotone_curve_2 (const typename Kernel::Circle_2& circ,
+                        const Point_2& source, const Point_2& target,
+                        Orientation orient);}
+    {constructs a circular arc supported by \ccc{circ}, which has a
+     center point with rational coordinates and whose {\em squared}
+     radius is rational, with the given endpoints. The orientation of the
+     arc is determined by \ccc{orient}.
+     \ccPrecond{Both endpoints must lie on the given supporting circle.}
+     \ccPrecond{The circular arc is $x$-monotone.}}
+
+\ccAccessFunctions
+%-----------------
+
+\ccMethod{const Point_2& source() const;}
+  {returns the source point of \ccVar{}.}
+\ccGlue
+\ccMethod{const Point_2& target() const;}
+  {returns the target point of \ccVar{}.}
+\ccMethod{bool is_directed_right () const;}
+  {returns true if \ccVar{} is directed right, false otherwise.}
+\ccGlue
+\ccMethod{const Point_2& left() const;}
+  {returns the left (lexicographically smaller) endpoint of \ccVar{}.}
+\ccGlue
+\ccMethod{const Point_2& right() const;}
+  {returns the right (lexicographically larger) endpoint of \ccVar{}.}
+
+\ccMethod{Orientation orientation() const;}
+  {returns the orientation of the curve (\ccc{COLLINEAR} in case of
+   line segments).}
+
+\ccMethod{bool is_linear () const;}
+  {determines whether \ccVar{} is a line segment.}
+\ccGlue
+\ccMethod{bool is_circular () const;}
+  {determines whether \ccVar{} is a circular arc.}
+
+\ccMethod{typename Kernel::Line_2 supporting_line() const;}
+  {returns the supporting line of \ccVar{}.
+   \ccPrecond{\ccVar{} is a line segment.}}
+\ccGlue
+\ccMethod{typename Kernel::Circle_2 supporting_circle() const;}
+  {returns the supporting circle of \ccVar{}.
+   \ccPrecond{\ccVar{} is a circular arc.}}
+
+\ccMethod{Bbox_2 bbox() const;}
+  {returns a bounding box of the arc \ccVar{}.}
+
+\end{ccClass}
+
+\end{ccRefClass}
+
+\ccRefPageEnd

@@ -1,0 +1,84 @@
+\begin{ccRefClass}{Direction_3<Kernel>}
+
+\ccDefinition
+An object of the class \ccRefName\ is a vector in the three-dimensional 
+vector space $\R^3$  where we forget about their length. They can be
+viewed as unit vectors, although there is no normalization internally,
+since this is error prone.  Directions are used whenever the length of
+a vector does not matter. 
+They also characterize a set of parallel lines that have the same orientation 
+or the direction normal to parallel planes that have the same orientation.
+For example, you can ask for the direction
+orthogonal to an oriented plane, or the direction of an oriented line.
+
+
+\ccCreation
+\ccCreationVariable{d}
+
+
+\ccHidden \ccConstructor{Direction_3();}
+             {introduces an uninitialized direction \ccVar.}
+
+\ccHidden \ccConstructor{Direction_3(const Direction_3<Kernel> &d);}
+            {copy constructor.}
+
+\ccConstructor{Direction_3(const Vector_3<Kernel> &v);}
+            {introduces a direction \ccVar\ initialized with the 
+             direction of vector $v$.}
+
+\ccConstructor{Direction_3(const Line_3<Kernel> &l);}
+            {introduces the direction \ccVar\ of line $l$.}
+
+\ccConstructor{Direction_3(const Ray_3<Kernel> &r);}
+            {introduces the direction \ccVar\ of ray $r$.}
+
+\ccConstructor{Direction_3(const Segment_3<Kernel> &s);}
+            {introduces the direction \ccVar\ of segment $s$.}
+
+\ccConstructor{Direction_3(const Kernel::RT &x, const Kernel::RT &y, const Kernel::RT &z);}
+            {introduces a direction \ccVar\ initialized with the direction 
+             from the origin to the point with Cartesian coordinates $(x, y, z)$.}
+
+
+\ccOperations
+%\ccSetTwoOfThreeColumns{5cm}{4cm}
+\ccSetThreeColumns{Direction_3<Kernel> & }{}{\hspace*{7.8cm}}
+
+\ccHidden \ccMethod{Direction_3<Kernel> & operator=(const Direction_3<Kernel> &e);}
+        {Assignment.}
+
+\ccMethod{Kernel::RT delta(int i) const;}
+       {returns values, such that \ccVar \ccc{== Direction_3<Kernel>(delta(0),delta(1),delta(2))}.
+        \ccPrecond: $0 \leq i \leq 2$.}
+
+\ccMethod{Kernel::RT dx() const;}
+       {returns \ccc{delta(0)}.}
+\ccGlue
+\ccMethod{Kernel::RT dy() const;}
+       {returns \ccc{delta(1)}.}
+\ccGlue
+\ccMethod{Kernel::RT dz() const;}
+       {returns \ccc{delta(2)}.}
+
+
+\ccMethod{bool operator==(const Direction_3<Kernel> &e) const;}
+       {Test for equality.}
+\ccGlue
+\ccMethod{bool operator!=(const Direction_3<Kernel> &e) const;}
+       {Test for inequality.}
+
+
+\ccMethod{Direction_3<Kernel>  operator-() const;}
+       {The direction opposite to \ccVar.}
+
+\ccMethod{Vector_3<Kernel> vector() const;}
+       {returns a vector that has the same direction as \ccVar.}
+
+\ccMethod{Direction_3<Kernel>  transform(const Aff_transformation_3<Kernel> &t) const;}
+       {returns the direction obtained by applying $t$ on \ccVar.}
+
+\ccSeeAlso
+\ccRefConceptPage{Kernel::Direction_3}
+
+\end{ccRefClass} 
+

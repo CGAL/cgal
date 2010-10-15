@@ -1,0 +1,25 @@
+\ccRefPageBegin
+
+\begin{ccRefFunction}{compute_subcurves}
+
+\ccInclude{CGAL/Sweep_line_2_algorithms.h}
+
+\ccFunction{template <class InputIterator, class OutputIterator, class Traits>
+OutputIterator compute_subcurves (InputIterator curves_begin,
+                              InputIterator curves_end,
+                              OutputIterator subcurves,
+                              bool multiple_overlaps = false,
+                              Traits traits = Default_traits());}
+{given a range of curves, compute all $x$-monotone subcurves that are pairwise
+ disjoint in their interior, as induced by the input curves.
+ If the flag \ccc{multiple_overlaps} is \ccc{true}, then a subcurve that
+ represents an overlap of $k$ input curves is reported $k$ times; otherwise,
+ each subcurve is reported only once. The \ccc{Traits} type must be a model
+ of the \ccc{ArrangementTraits_2} concept, such that the value-type of
+ \ccc{InputIterator} is \ccc{Traits::Curve_2}, and the value-type of
+ \ccc{OutputIterator} is \ccc{Traits::X_monotone_curve_2}.}
+
+\end{ccRefFunction}
+
+\ccRefPageEnd
+

@@ -1,0 +1,30 @@
+\begin{ccRefFunctionObjectConcept}{Kernel::ConstructBisector_2}
+A model for this must provide:
+
+\ccCreationVariable{fo}
+
+\ccMemberFunction{Kernel::Line_2 operator()(const Kernel::Point_2&p, 
+                                            const Kernel::Point_2&q );}
+{constructs the bisector of $p$ and $q$.
+The bisector is oriented in such a way that \ccc{p} lies on its
+positive side. \ccPrecond{\ccc{p} and \ccc{q} are not equal.}}
+
+\ccMemberFunction{Kernel::Line_2 operator()(const Kernel::Line_2&l1, 
+                                            const Kernel::Line_2&l2);}
+{constructs the bisector of the two lines $l1$ and $l2$.
+In the general case, the bisector has the direction of the vector which
+is the sum of the normalized directions of the two lines, and which passes
+through the intersection of \ccc{l1} and \ccc{l2}.
+If \ccc{l1} and \ccc{l2} are parallel, then the bisector is defined as the line
+which has the same direction as \ccc{l1}, and which is at the same distance
+from \ccc{l1} and \ccc{l2}.
+This function requires that \ccc{Kernel::RT} supports the \ccc{sqrt()}
+operation.}
+
+\ccRefines
+\ccc{AdaptableFunctor} (with two arguments)
+
+\ccSeeAlso
+\ccRefIdfierPage{CGAL::bisector}
+
+\end{ccRefFunctionObjectConcept}

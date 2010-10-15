@@ -1,0 +1,73 @@
+% +------------------------------------------------------------------------+
+% | Reference manual page: BoxTraits_d.tex
+% +------------------------------------------------------------------------+
+
+\begin{ccRefConcept}{BoxIntersectionTraits_d}
+\ccThree{inti}{BoxIntersectionmmmmmmnTraits_d::dimension();}{}
+\ccTwo{BoxIntersectionTraits_d::NT;}{}
+\ccCreationVariable{traits}
+
+\ccDefinition
+
+The \ccRefName\ concept is used for the intersection algorithms for
+sequences of iso-oriented boxes.  This concept defines the access
+functions to the dimension, the \ccc{id}-number, and the boundaries of
+the boxes manipulated in these algorithms.
+
+
+\ccRefines
+
+\ccc{Assignable}.
+
+\ccHasModels
+
+\ccRefIdfierPage{CGAL::Box_intersection_d::Box_traits_d<BoxHandle>}
+
+\ccTypes
+
+
+\ccNestedType{Box_parameter}{type used for passing box parameters in the
+  functions below. Since we support in our algorithms
+  passing the boxes by value as well as passing them as pointers, this
+  type can be either \ccc{const B&}, \ccc{B*}, or \ccc{const B*}
+  respectively, where \ccc{B} is the actual box type. The difference
+  to the box handle type lies in the first case where the box handle
+  would be \ccc{B} where this type is \ccc{const B&}.}
+
+\ccNestedType{NT}{number type to represent the box
+  boundaries. Allowed are the built-in types \ccc{int}, \ccc{unsigned
+  int}, \ccc{float}, and \ccc{double}.} 
+
+\ccNestedType{ID}{type for the \ccc{id}-number,
+  model of the \ccc{LessThanComparable} concept.}
+
+\ccAccessFunctions
+
+\ccFunction{int BoxIntersectionTraits_d::dimension();}{%
+  returns the dimension of the box.}
+
+\ccFunction{ID BoxIntersectionTraits_d::id(Box_parameter box);}{%
+  returns the unique \ccc{id}-number for the \ccc{box}.}
+
+\ccThree{inti}{BoxIntersec}{}
+
+\ccFunction{NT  BoxIntersectionTraits_d::min_coord( Box_parameter box, int d);}{%
+  returns the lower boundary of the \ccc{box} in dimension
+  \ccc{d}, $0 \leq $\ccc{d}$ < $\ccc{dimension()}.}
+
+\ccFunction{NT  BoxIntersectionTraits_d::max_coord( Box_parameter box, int d);}{%
+  returns the upper boundary of the \ccc{box} in dimension
+  \ccc{d}, $0 \leq $\ccc{d}$ < $\ccc{dimension()}.}
+
+\ccSeeAlso
+
+\ccRefIdfierPage{CGAL::box_intersection_d}\\
+\ccRefIdfierPage{CGAL::box_self_intersection_d}\\
+\ccRefIdfierPage{CGAL::box_intersection_all_pairs_d}\\
+\ccRefIdfierPage{CGAL::box_self_intersection_all_pairs_d}
+
+\end{ccRefConcept}
+
+% +------------------------------------------------------------------------+
+% EOF
+% +------------------------------------------------------------------------+

@@ -1,0 +1,56 @@
+\begin{ccRefConcept}{PolynomialTraits_d::PrincipalSturmHabichtSequence}
+
+\textbf{Note:} This functor is optional!
+
+\ccDefinition
+
+Computes the principal leading coefficients of the Sturm-Habicht sequence 
+of a polynomials $f$ of type \ccc{PolynomialTraits_d::Polynomial_d} 
+with respect a certain variable $x_i$.
+This means that for the $j$-th Sturm-Habicht polynomial, this methods returns
+the coefficient of $x_i^j$. 
+
+Note that the degree of the $j$-th Sturm-Habicht polynomial is at most $j$,
+but the principal coefficient might be zero, thus, this functor does not
+necessarily give the leading coefficient of the Sturm-Habicht polynomials.
+
+In case that \ccc{PolynomialTraits_d::Coefficient_type} is \ccc{RealEmbeddable}, the function \ccc{CGAL::number_of_real_roots} can be used
+on the resulting sequence to count the number of distinct real roots of
+the polynomial~$f$.
+
+\ccRefines 
+\ccc{AdaptableBinaryFunction}\\
+\ccc{CopyConstructible}\\
+\ccc{DefaultConstructible}\\
+
+\ccCreationVariable{fo}
+
+\ccOperations
+\ccMethod{template<typename OutputIterator>
+        OutputIterator operator()(Polynomial_d   f,
+                                  OutputIterator out);}
+         { computes the principal coefficients of the 
+           Sturm-Habicht sequence of $f$, 
+           with respect to the outermost variable. Each element is of type
+           \ccc{PolynomialTraits_d::Coefficient_type}.}
+
+\ccMethod{template<typename OutputIterator>
+        OutputIterator operator()(Polynomial_d   f,
+                                  OutputIterator out,
+                                  int i);}
+         { computes the principal coefficients 
+           of the Sturm-Habicht sequence of $f$ 
+           with respect to the variable $x_i$.}
+
+%\ccHasModels
+
+\ccSeeAlso
+
+\ccRefIdfierPage{Polynomial_d}\\
+\ccRefIdfierPage{PolynomialTraits_d}\\
+\ccRefIdfierPage{CGAL::number_of_real_roots}\\
+\ccRefIdfierPage{PolynomialTraits_d::Resultant}\\
+\ccRefIdfierPage{PolynomialTraits_d::SturmHabichtSequence}\\
+\ccRefIdfierPage{PolynomialTraits_d::PrincipalSubresultants}\\
+
+\end{ccRefConcept}

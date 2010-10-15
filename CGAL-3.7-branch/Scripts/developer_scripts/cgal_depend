@@ -1,0 +1,343 @@
+#!/usr/bin/env perl
+#
+# file:     cgal_depend 
+# author:   Michael Hoffmann
+# version:  $Id$
+# purpose:  Scan CGAL directories for package dependencies
+#
+
+$0 =~ /.*\/(.*)/;
+$thisprog = "$1";
+'$Id$' =~ /\s(\S*)\s/;
+$thisprog_version = "$1";
+
+# where to put the perl data structure containing the dependency graph
+$resultperlfile = "cgal_dependencies";
+
+# the flags that makes the compiler produce all included files
+# + dependency information (not used)
+#
+# * it must start with a list of all included files indented by one space
+#   per inclusion level
+# * then comes dependency information starting with "file.o:"
+#   that is where the program stops parsing
+$compilerflags = "-w -MM -H -Werror";
+
+# prettyprint message
+sub banner($) {
+    print "--------------------------------------------------------\n";
+    print "@_ ...\n";
+    print "--------------------------------------------------------\n";
+}
+
+# argument is a file with absolute path
+# returns path inside CGAL-directory structure
+sub cgal_basename($) {
+    local $locfile = join("",@_);
+    $locfile =~ "$cgaldir/(.*)";
+    return $1;
+}
+
+if (!defined($ARGV[0])) {
+    die "usage: $thisprog <cgal-dir>\n";
+}
+if (defined($ARGV[1])) {
+    $compiler = $ARGV[1];
+} else {
+    $compiler = 'g++';
+}
+
+# directories to scan for files:
+$cgaldir = "$ARGV[0]";
+
+# get os description:
+banner "Getting OS description";
+$install_cgal = "$cgaldir/install_cgal";
+if ( ! open( ICGAL, "$install_cgal -leda -gmp -os $compiler | ")) {
+    die "error in \"$install_cgal\", exiting.\n";
+}
+$cgalos = <ICGAL>;
+chomp $cgalos;
+$cgalmakefile = "$ARGV[0]/make/makefile_$cgalos";
+close ICGAL;
+    
+# write makefile:
+$tmakefile = "./$thisprog\_makefile";
+$tfile = "./$thisprog\_this.C";
+$tofile = "./$thisprog\_this.o";
+
+if ( ! open( READMAKE, "$cgalmakefile")) {
+    die "error opening \"$cgalmakefile\", exiting.\n";
+}
+if ( ! open( WRITEMAKE, ">$tmakefile")) {
+    die "error opening \"$tmakefile\", exiting.\n";
+}
+while (<READMAKE>) {
+    print WRITEMAKE "$_";
+}
+print WRITEMAKE "\nthis:\n\t@\$(CGAL_CXX) \$(CGAL_CXXFLAGS)";
+print WRITEMAKE " $compilerflags $tfile\n";
+close READMAKE;
+close WRITEMAKE;
+
+# check directory (if e.g. there is a symbolic link involved,
+#   the compiler might give different filenames)
+open( TFILE, ">$tfile") || die "\nError opening $tfile\n";
+print TFILE "\#include <CGAL/compiler_config.h>\n";
+close TFILE;
+open( MAKEPIPE, "make -f $tmakefile 2>&1 |") || die "\nError making $file\n";
+$log = <MAKEPIPE>;
+close MAKEPIPE;
+$log =~ "(.+)/include/CGAL/config/[^/]+/CGAL/compiler_config.h";
+$cgaldir = $1;
+$cgalincldir = $cgaldir . "/include";
+$cgalsrcdir = $cgaldir . "/src";
+@cgalsearchdirs = ( "$cgalincldir", "$cgalsrcdir" );
+@cgalnosearch = ( "$cgalincldir/compilers" );
+
+# status information
+print "========================================================\n";
+print "CGAL_DIR\tis $cgaldir\n";
+print "CGAL_INCL_DIR\tis $cgalincldir\n";
+print "CGAL_SRC_DIR\tis $cgalsrcdir\n";
+print "COMPILER\tis $compiler\n";
+print "OS\t\tis $cgalos\n";
+print "========================================================\n";
+
+# scan package information:
+
+foreach $sdir (@cgalsearchdirs) {
+    banner "Scanning $sdir";
+    if ( ! open( FINDPIPE, "find $sdir -print | ")) {
+	die "error in \"find\", exiting.\n";
+    }
+    $| = 1;
+    while (<FINDPIPE>) {
+	$file = $_;
+	chomp $file;
+	if ( -d "$file") { next; }
+	if ( ! open( AFILE, "$file")) {
+	    die "error opening \"$file\", exiting.\n";
+	}
+	print ".";
+	while (<AFILE>) {
+	    if ($_ =~ /^\/\/\s*[pP]ackage\s*:\s*(\S+).*/ ) {
+		$package{"$file"} = "$1";
+		last;
+	    }
+	}
+	if (eof) {
+	    print "\nWARNING(1): No package information for $file.\n";
+	} 
+	close AFILE;
+    }
+    $| = 0;
+    print "\n";
+    close FINDPIPE;
+}
+
+# --------------------------------------------------------------------
+# generate dependencies:
+# --------------------------------------------------------------------
+
+banner "Generating dependencies";
+print "\n";
+ LOOP1: foreach $file (keys %package) {
+     foreach $no (@cgalnosearch) {
+	 if ($file =~ "^\Q$no\E/(.*)") { next LOOP1; }
+     }
+     $basename = &cgal_basename( $file);
+     $| = 1;
+     print "Compiling $basename ... ";
+     $| = 0;
+     open( TFILE, ">$tfile") || die "\nError opening $tfile\n";
+     print TFILE "\#include \"$file\"\n";
+     close TFILE;
+     $compiletry = 0;
+   TRYCOMPILE:
+     ++$compiletry;
+     $| = 1;
+     print "$compiletry";
+     $| = 0;
+     open( MAKEPIPE, "make -f $tmakefile 2>&1 |") ||
+	 die "\nError making $file\n";
+     # start reading from the pipe to get the logfile
+     @log = <MAKEPIPE>;
+     close MAKEPIPE;
+     $log = lc( join("",@log));
+     if ( $log =~ /error(\s|:|\()/) {
+	 if ( $log =~ "no representation class defined" && $compiletry == 1) {
+	     close MAKEPIPE;
+	     open( TFILE, ">$tfile") || die "\nError opening $tfile\n";
+	     print TFILE "\#include <CGAL/Cartesian.h>\n";
+	     if ( $basename =~ /\.C$/) {
+		 print TFILE "\#include \"$file\"\n";
+	     } else {
+		 $basename =~ "include/CGAL/(.*)";
+		 print TFILE "\#include <CGAL/$1>\n";
+	     }
+	     close TFILE;
+	     goto TRYCOMPILE;
+	 } else {
+	     print "\nCompilation failed with the following error messages:\n";
+	     banner "@log";
+	     $compiletry = 99;
+	 }
+     } else {
+	 print " ok.\n";
+     }
+     
+     if ( $compiletry < 99) {
+	 @inclpath == 0 || die "\nAssertion failed: inclpath == 0\n";
+	 # We start with our file, ignoring stuff e.g. generated
+	 # by the added #include <CGAL/Cartesian.h>
+	 while ( @log > 0) {
+	     $actual = shift @log;
+	     chomp $actual;
+	     if ( $actual eq $file) { last; }
+	 }
+	 # Now the dependency generation starts
+	 $inclpath[0] = &cgal_basename($actual);
+	 while ( @log > 0) {
+	     $actual = shift @log;
+	     # parse whitespaces
+	     $actual =~ s/(^\s*)(\S+)//;
+	     $indent = length("$1");
+	     $actual = "$2";
+	     # record include path (used to justify pkg-dependency)
+	     $inclpath[$indent] = &cgal_basename($actual);
+	     # stop when g++ starts listing dependencies
+	     if ( $actual =~ /$tofile:/) {
+		 last; 
+	     }
+	     
+	     # I don't understand the following anymore :-(
+	     #while ( @log > $indent + 1) {
+	     #	pop @log;
+	     #}
+	     
+	     # ignore everything outside CGAL
+	     $match = 0;
+	     map( $match = $match + $actual =~ /$_/, @cgalsearchdirs);
+	     if ( $match > 0) {
+		 if ( ! defined($package{"$actual"})) {
+		     print "WARNING(2): Could not find package for $actual.\n";
+		 } else {
+		     # check, whether our current include-path is shorter
+		     # than what we found so far
+		     if ( defined( $depend{"$package{\"$file\"}"}
+				   {"$package{\"$actual\"}"}) 
+			  &&
+			  length( @{$depend{"$package{\"$file\"}"}
+				    {"$package{\"$actual\"}"}}) 
+			  > $indent) 
+		     {
+			 delete $depend{"$package{\"$file\"}"}
+			 {"$package{\"$actual\"}"};
+		     } 
+		     if ( ! defined( $depend{"$package{\"$file\"}"}
+				     {"$package{\"$actual\"}"}))			
+		     {
+			 # Did we add Cartesian.h first?
+			 #if ( $compiletry > 1 && 
+			 #    "$inclpath[0]" ne "$basename") {
+			 #    push @{$depend{"$package{\"$file\"}"}
+			 #	   {"$package{\"$actual\"}"}},
+			 #    "$basename";
+			 #}
+			 for ($i = 0; $i <= $indent; ++$i) {
+			     # we only want direct dependencies
+			     local $afile = "$cgaldir" . "/" . "$inclpath[$i]";
+			     if (!defined($package{"$afile"})) {
+				 print "WARNING(3): Could not find package for $afile.\n";
+			     } elsif ($package{"$afile"} ne $package{"$file"} &&
+				 $package{"$afile"} ne $package{"$actual"}) 
+			     {
+				 delete $depend{"$package{\"$file\"}"}
+				 {"$package{\"$actual\"}"};
+				 last;
+			     }
+			     push @{$depend{"$package{\"$file\"}"}
+				    {"$package{\"$actual\"}"}},
+			     "$inclpath[$i]";
+			 }
+		    }
+		 }
+	     }
+	 }
+     }
+     # clear @inclpath:
+     while ( @inclpath > 0) {
+	 pop @inclpath;
+     }
+ }
+system "rm -f $tfile $tmakefile";
+
+foreach $pkg (keys %depend) {
+    # of course it depends on itself
+    delete $depend{"$pkg"}{"$pkg"};
+}
+
+# do bfs to compute connected components of dependency graph
+# !change the condition if you want to have the closure!
+if (1 < 0) {
+    banner "Computing connected components";
+    foreach $pkg (keys %depend) {
+	$visited{"$pkg"} = [ ];
+	push @todo,"$pkg";
+	while ( @todo > 0) {
+	    $actual = shift @todo;
+	    foreach $dp (keys %{$depend{"$actual"}}) {
+		if ( ! defined($visited{"$dp"})) {
+		    $visited{"$dp"} = [ @{$visited{"$actual"}} ];
+		    if ( "$actual" ne "$pkg") {
+			push @{$visited{"$dp"}}, "$actual";
+		    } 
+		    push @todo,"$dp";
+		    if ( ! defined( $depend{"$pkg"}{"$dp"})) {
+			$depend{"$pkg"}{"$dp"} = [ @{$visited{"$dp"}} ];
+		    }
+		}
+	    }
+	}
+	# clear visited list
+	foreach $dp (keys %visited) {
+	    delete $visited{"$dp"};
+	}
+    }
+}
+
+# output package dependencies
+open( PERLRES, ">$resultperlfile") ||
+    die "\nError opening $resultperlfile.\n";
+print PERLRES "# CGAL Package dependencies\n";
+print PERLRES "# Automatically generated by $thisprog V$thisprog_version\n";
+print PERLRES "#\n";
+print PERLRES "# CGAL_DIR\t: $cgaldir\n";
+print PERLRES "# CGAL_INCL_DIR\t: $cgalincldir\n";
+print PERLRES "# CGAL_SRC_DIR\t: $cgalsrcdir\n";
+print PERLRES "# COMPILER\t: $compiler\n";
+print PERLRES "# OS\t\t: $cgalos\n";
+print PERLRES "#\n\n";
+print PERLRES "%depend = (\n";
+banner "These are the package dependencies";
+foreach $pkg (keys %depend) {
+    print "\n--------------------------------------------\n";
+    print "package: $pkg\n";
+    print PERLRES "\t$pkg\t=> {\n";
+    foreach $dp (keys %{$depend{"$pkg"}}) {
+	print "\t$dp\n";
+	#@tmpname = [ @{$depend{"$pkg"}{"$dp"}} ];
+	print PERLRES "\t\t$dp\t=> [\n";
+	foreach $tr (@{$depend{"$pkg"}{"$dp"}}) {
+	    print PERLRES "\t\t\t\"$tr\",\n";
+	}
+	print PERLRES "\t\t],\n";
+    }
+    print PERLRES "\t},\n";
+}
+print PERLRES ");\n\n# EOF\n";
+close PERLRES;
+print "\n*** ALL DONE ***\n";
+
+# EOF

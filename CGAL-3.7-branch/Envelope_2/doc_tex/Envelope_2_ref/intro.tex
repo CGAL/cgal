@@ -1,0 +1,36 @@
+\RCSdef{\EnvelopePlnRefRev}{$Id$}
+\RCSdefDate{\EnvelopePlnRefDate}{$Date$}
+\clearpage
+\ccRefChapter{Envelopes of Curves in 2D\label{chapterEnvelope2Ref}}
+
+\ccChapterAuthor{Ron Wein}
+
+% ===============================================================
+\section*{Introduction}
+\label{env2_ref_sec:intro}
+% ========================
+
+This package consists of functions that compute the lower (or upper)
+envelope of a set of arbitrary curves in 2D. The output is
+represented as an envelope diagram, namely a subdivision of the
+$x$-axis into intervals, such that the identity of the curves that
+induce the envelope over each interval is unique.
+
+\subsection*{Functions}
+
+\ccRefIdfierPage{CGAL::lower_envelope_2}\\
+\ccRefIdfierPage{CGAL::upper_envelope_2}\\
+\ccRefIdfierPage{CGAL::lower_envelope_x_monotone_2}\\
+\ccRefIdfierPage{CGAL::upper_envelope_x_monotone_2}
+
+\subsection*{Concepts}
+
+\ccRefConceptPage{EnvelopeDiagram_1}\\
+\ccRefConceptPage{EnvelopeDiagramVertex}\\
+\ccRefConceptPage{EnvelopeDiagramEdge}
+
+\subsection*{Classes}
+
+\ccRefIdfierPage{CGAL::Env_default_diagram_1<Traits>}
+
+

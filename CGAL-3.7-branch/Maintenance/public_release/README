@@ -1,0 +1,88 @@
+This is what you need to do to create a release:
+------------------------------------------------
+
+SVN Release Branch:
+-------------------
+
+Before releasing proper, you need to create a branch, and run the internal
+release process on this branch for some time.  Experience shows that there
+is very few development (on the packages to be released) on the trunk.
+So it seems best to branch as late as possible, in order to avoid the pain
+of committing things twice during the final stabilization phase.
+
+For branching, you need to :
+  - export svncgal=svn+ssh://scm.gforge.inria.fr/svn/cgal
+  - svn cp $svncgal/trunk $svncgal/tags/CGAL-M.m-branch-tag
+  - svn cp $svncgal/trunk $svncgal/branches/CGAL-M.m-branch
+  - then switch the release building process to that branch, i.e.:
+    - do a check out of the branch
+    - call create_new_release with the directory of the branch as argument
+  - then update the release numbers in trunk/Maintenance/release_building/*
+    and reset the version_number file to 0 for trunk.
+
+Releasing:
+----------
+
+For the library:
+
+Let <release_dir> be the directory in which you plan to build the release.
+
+      1.  update the main CHANGES file to correspond to this release
+      2.  pick the public versions (.zip and .tar.gz) produced by the
+          release building script, corresponding to the internal
+	  release which you want to bless as public release.
+      3.  The .zip file for the code needs to be repackaged for use with
+          InstallShield.  Contact the person in charge of Windows support.
+
+For the manuals:
+
+      1.  Check out the package Manual from the SVN server and follow the
+          instructions in the INSTALL file
+      2.  cd Manual
+      3.  install_manual_files ?.?-I-??  (number of latest internal release)
+      4.  follow the directions in Manual/README to create the
+          manuals (but don't install them yet)
+      5.  in the CGAL-M.m directory, create doc_ps, doc_pdf and
+          doc_html/installation directories to hold the installation
+          doc. Copy the appropriate files from directory
+          Manual/CGAL-M.m_doc_tex/installation to these directories.
+
+      6.  For the HTML version in CGAL-M.m/doc_html (NOT in the Manual
+          directory), do the following bit of editing:
+             remove the navigation links to bibliography, index and title;
+             remove the files title.html and manual_index.html, to_html.log.
+
+
+For the web pages:
+      1.  edit the following web pages (at least)
+             Web_pages/news.html
+             Web_pages/in_progress.html
+             Web_pages/download/index.html
+             Web_pages/index.html
+             Web_pages/releases.html
+             Web_pages/platforms.html
+           change release number in:
+           (edit and use Manual/script/rename_version)
+             Manual/web_pages/doc_html/frameset/panel*.html
+             Manual/web_pages/doc_html/html_tar.html
+             Manual/web_pages/doc_ps/index.html
+             Manual/web_pages/doc_pdf/index.html
+      2.  update the cgi-bin/cgal_download.pl script to add the new release,
+          goes then to /www/pub/cgi-bin/www.cgal.org/
+
+Install everything:
+      1.  install the manual (and include files) in
+          /www/pub/www.cgal.org/Manual using "make install"
+      2.  copy the .tar.gz and .zip files for the library and
+          the documentation to /ftp/pub/outgoing/CGAL/
+            (can be done with "make pack" for the documentation)
+      3.  zip the individual .ps files for the documentation using
+          make dest_zip_ps
+      4.  install the new web pages, i.e., make a svn commit in Web_pages/,
+          and a 'svn up' in /www/pub/www.cgal.org/
+      5.  cp cgi-bin/cgal_download.pl /www/pub/cgi-bin/www.cgal.org/
+      6.  tag : svn cp $svncgal/branches/CGAL-M.m-branch $svncgal/tags/CGAL-M.m-release
+
+Then finally ...
+      7.  announce the release (see announcement directory)
+

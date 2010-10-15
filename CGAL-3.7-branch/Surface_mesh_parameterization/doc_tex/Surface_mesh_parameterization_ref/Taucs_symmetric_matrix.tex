@@ -1,0 +1,131 @@
+% +------------------------------------------------------------------------+
+% | Reference manual page: Taucs_symmetric_matrix.tex
+% +------------------------------------------------------------------------+
+% | 21.09.2005   Laurent Saboret, Pierre Alliez, Bruno Levy
+% | Package: Surface_mesh_parameterization
+% |
+\RCSdef{\RCSTaucssymmetricmatrixRev}{$Id$}
+\RCSdefDate{\RCSTaucssymmetricmatrixDate}{$Date$}
+% |
+\ccRefPageBegin
+%%RefPage: end of header, begin of main body
+% +------------------------------------------------------------------------+
+
+
+\begin{ccRefClass}{Taucs_symmetric_matrix<T>}
+
+%% \ccHtmlCrossLink{}     %% add further rules for cross referencing links
+%% \ccHtmlIndexC[class]{} %% add further index entries
+
+
+\ccDefinition
+
+% The section below is automatically generated. Do not edit!
+%START-AUTO(\ccDefinition)
+
+The class \ccc{Taucs_symmetric_matrix} is a C++ wrapper around a TAUCS {\bf symmetric} matrix (type \ccc{taucs_ccs_matrix}).
+
+Symmetric matrices store only the lower triangle.
+
+%END-AUTO(\ccDefinition)
+
+% The section below is automatically generated. Do not edit!
+%START-AUTO(\ccInclude)
+
+\ccInclude{CGAL/Taucs_matrix.h}
+
+%END-AUTO(\ccInclude)
+
+
+\ccInheritsFrom
+
+% The section below is automatically generated. Do not edit!
+%START-AUTO(\ccInheritsFrom)
+
+\ccc{Taucs_matrix<T>}
+
+%END-AUTO(\ccInheritsFrom)
+
+
+\ccIsModel
+
+% The section below is automatically generated. Do not edit!
+%START-AUTO(\ccIsModel)
+
+Model of the \ccc{SparseLinearAlgebraTraits_d::Matrix} concept.
+
+%END-AUTO(\ccIsModel)
+
+
+\ccParameters
+
+The full template declaration is:
+
+% The section below is automatically generated. Do not edit!
+%START-AUTO(\ccParameters)
+
+template$<$class T$>$   \\
+struct \ccc{Taucs_symmetric_matrix};
+
+\ccCommentHeading{Parameters}  \\
+\ccc{T}: Number type. Tested with T = \ccc{taucs_single} or \ccc{taucs_double}. May also work with T = \ccc{taucs_dcomplex} and \ccc{taucs_scomplex}.
+
+%END-AUTO(\ccParameters)
+
+
+\ccTypes
+
+% The section below is automatically generated. Do not edit!
+%START-AUTO(\ccTypes)
+
+\ccNestedType{NT}
+{
+}
+\ccGlue
+
+%END-AUTO(\ccTypes)
+
+
+\ccCreation
+\ccCreationVariable{M}  %% choose variable name for \ccMethod
+
+% The section below is automatically generated. Do not edit!
+%START-AUTO(\ccCreation)
+
+\ccConstructor{Taucs_symmetric_matrix(int dim);}
+{
+Create a square {\bf symmetric} matrix initialized with zeros.
+\ccCommentHeading{Parameters}  \\
+\ccc{dim}: Matrix dimension.
+}
+\ccGlue
+\ccConstructor{Taucs_symmetric_matrix(int rows, int columns);}
+{
+Create a square {\bf symmetric} matrix initialized with zeros.
+\ccPrecond rows == columns.
+\ccCommentHeading{Parameters}  \\
+\ccc{rows}: Number of rows. \ccc{columns}: Number of columns.
+}
+\ccGlue
+
+%END-AUTO(\ccCreation)
+
+
+\ccSeeAlso
+
+\ccRefIdfierPage{CGAL::Taucs_solver_traits<T>}  \\
+\ccRefIdfierPage{CGAL::Taucs_symmetric_solver_traits<T>}  \\
+\ccRefIdfierPage{CGAL::Taucs_matrix<T>}  \\
+\ccRefIdfierPage{CGAL::Taucs_vector<T>}  \\
+\ccc{OpenNL::DefaultLinearSolverTraits<COEFFTYPE, MATRIX, VECTOR, SOLVER>} in OpenNL package  \\
+\ccc{OpenNL::SymmetricLinearSolverTraits<COEFFTYPE, MATRIX, VECTOR, SOLVER>} in OpenNL package  \\
+
+
+\end{ccRefClass}
+
+% +------------------------------------------------------------------------+
+%%RefPage: end of main body, begin of footer
+\ccRefPageEnd
+% EOF
+% +------------------------------------------------------------------------+
+

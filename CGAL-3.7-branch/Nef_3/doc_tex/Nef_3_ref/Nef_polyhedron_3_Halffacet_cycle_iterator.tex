@@ -1,0 +1,68 @@
+% +------------------------------------------------------------------------+
+% | Reference manual page: Nef_polyhedron_3_Halffacet_cycle_iterator.tex
+% +------------------------------------------------------------------------+
+% | 14.05.2004   Peter Hachenberger
+% | Package: Nef_3
+% | 
+\RCSdef{\RCSHalffacetCycleRev}{$Id$}
+\RCSdefDate{\RCSSHalffacetCycleDate}{$Date$}
+% +------------------------------------------------------------------------+
+
+\ccRefPageBegin
+
+%%RefPage: end of header, begin of main body
+% +------------------------------------------------------------------------+
+
+
+\begin{ccRefClass}[Nef_polyhedron_3<Traits>::]{Halffacet_cycle_iterator}
+
+\ccDefinition
+
+The type \ccc{Halffacet_cycle_iterator} iterates over a list of 
+\ccc{Object_handles}. Each item of that list can either be assigned
+to \ccc{SHalfedge_handle} or \ccc{SHalfloop_handle}. To find out which
+of these assignment works out, the member functions \ccc{is_shalfedge()}
+and \ccc{is_shalfloop()} are provided.
+
+\ccInclude{CGAL/Nef_polyhedron_3.h}
+
+\ccTypes
+\ccThree{Halfedge_const_handle;}{SHalfloop_handle(hfc);;}{}
+\ccThreeToTwo
+
+\ccNestedType{SHalfedge_handle}{const handle to SHalfedge.}
+\ccGlue
+\ccNestedType{SHalfloop_handle}{const handle to SHalfloop.}
+
+\ccCreation
+\ccCreationVariable{hfc}
+
+\ccConstructor{Halffacet_cycle_iterator();}{default constructor.}
+
+\ccOperations
+
+\ccMethod{bool is_shalfedge() const;}
+{returns true if \ccVar\ represents a \ccc{SHalfedge_handle}.}
+\ccGlue
+\ccMethod{bool is_shalfloop() const;}
+{returns true if \ccVar\ represents a \ccc{SHalfloop_handle}.}
+
+\ccMethod{operator SHalfedge_handle() const;}
+{casts \ccVar\ to \ccc{SHalfedge_handle}.}
+\ccGlue
+\ccMethod{operator SHalfloop_handle() const;}
+{casts \ccVar\ to \ccc{SHalfloop_handle}.}
+
+\ccSeeAlso
+
+\ccRefIdfierPage{CGAL::Nef_polyhedron_3<Traits>::SHalfedge}\\
+\ccRefIdfierPage{CGAL::Nef_polyhedron_3<Traits>::SHalfloop}
+
+\ccTagDefaults
+\end{ccRefClass}
+
+% +------------------------------------------------------------------------+
+%%RefPage: end of main body, begin of footer
+\ccRefPageEnd
+% EOF
+% +------------------------------------------------------------------------+

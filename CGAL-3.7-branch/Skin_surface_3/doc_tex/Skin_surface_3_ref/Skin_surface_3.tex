@@ -1,0 +1,114 @@
+% +------------------------------------------------------------------------+
+% | Reference manual page: skin_surface_3.tex
+% +------------------------------------------------------------------------+
+% | 27.09.2005   Nico Kruithof
+% | Package: Skin_surface_3
+% | 
+\RCSdef{\RCSskinsurfaceRev}{$Id$}
+\RCSdefDate{\RCSskinsurfaceDate}{$Date$}
+% |
+%%RefPage: end of header, begin of main body
+% +------------------------------------------------------------------------+
+
+\begin{ccRefClass}{Skin_surface_3<SkinSurfaceTraits_3>}
+  \ccDefinition
+
+  The \ccRefName\ is the main class in the
+  \ccHtmlNoLinksFrom{\ccc{Skin_surface_3}}\ package. It is a model of
+  the concept \ccc{SkinSurface_3}.  
+% NGHK: ADD 
+% The class also defines an interface to the surface mesher as it is a
+% model of the concept \ccc{Surface_3}.
+
+  The template argument is required to be a model of the concept
+  \ccc{SkinSurfaceTraits_3}, which means that it provides predicates
+  to construct a regular triangulation of the weighted points and for
+  point location in the mixed complex.
+  
+  \ccInclude{CGAL/Skin_surface_3.h}
+
+  %\ccInheritsFrom
+
+  %\ccRefines
+
+  %\ccHasModels
+
+  \ccIsModel \ccc{SkinSurface_3} 
+%% NGHK: ADD
+%% (and through \ccc{SkinSurface_3} of \ccc{Surface_3})
+%
+%  \ccTypes
+%  \ccThree{typedef Skin_surface_3::Weighted_point<Point_3,FT>asdf}{x}{}
+%  \ccThreeToTwo
+%
+%  \ccTypedef{typedef SkinSurfaceTraits_3 Geometric_traits;}{}
+%  \ccGlue
+%  \ccTypedef{typedef Geometric_traits::Weighted_point Weighted_point;}{}
+%  \ccGlue
+%  % The following two are not defined in the SkinSurfaceTraits
+%  \ccTypedef{typedef Weighted_point::Point Bare_point;}{} 
+%  \ccGlue
+%  \ccTypedef{typedef Weighted_point::Weight RT;}{}
+%
+
+%  \ccNestedType{TMC_traits}{The traits class used for the triangulated
+%    mixed complex}
+%  \ccGlue
+%  \ccNestedType{Triangulated_mixed_complex}{The type of a 3D
+%    triangulation that is used to store the triangulated mixed
+%    complex.}
+%  \ccGlue
+%%
+%  \ccTypedef{typedef Triangulated_mixed_complex::Vertex_handle
+%    TMC_Vertex_handle;}{The type of a vertex handle of the
+%    \ccc{Triangulated_mixed_complex}.}
+%%
+%  \ccGlue
+%%
+%  \ccTypedef{typedef Triangulated_mixed_complex::Cell_handle
+%    TMC_Cell_handle;}{The type of a cell handle of the
+%    \ccc{Triangulated_mixed_complex}.}
+%
+%
+%  %\ccConstants
+%
+%  \ccCreation 
+%  \ccCreationVariable{skin} 
+%
+%  \ccConstructor{Skin_surface_3 ( WP_iterator begin, WP_iterator end,
+%    RT shrink_factor, bool grow_balls = true, Geometric_traits gt =
+%    Geometric_traits(), bool verbose = false);}{The mandatory
+%    arguments to the constructor are an iterator range
+%    \ccc{[begin,end)} of weighted points and a shrink factor between 0
+%    and 1. Optionally, it is possible to specify whether weights of
+%    the input balls have to be increased and a \ccc{Geometric_traits}
+%    class to be used.}
+%  
+%
+%  %\ccOperations
+%  \ccAccessFunctions
+%
+%  \ccMethod{const Triangulated_mixed_complex
+%    &triangulated_mixed_complex() const;}{Returns the triangulated
+%    mixed complex.  }
+%
+%  \ccQueryFunctions
+%%
+%  \ccMethod{TMC_Cell_handle locate(const TMC_Point &p) const;}{Returns
+%    a handle to the cell of the triangulated mixed complex containing the point $p$.}
+%
+%
+%  \ccSeeAlso
+%  \ccRefIdfierPage{SkinSurface_3}
+%
+%  %\ccImplementation
+%
+%  %\ccExample
+
+\end{ccRefClass}
+
+% +------------------------------------------------------------------------+
+%%RefPage: end of main body, begin of footer
+% EOF
+% +------------------------------------------------------------------------+
+

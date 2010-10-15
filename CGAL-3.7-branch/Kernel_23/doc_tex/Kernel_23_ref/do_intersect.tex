@@ -1,0 +1,117 @@
+\begin{ccRefFunction}{do_intersect}
+
+\ccUnchecked{
+\ccRefLabel{Kernel::do_intersect}
+\ccFunction{bool do_intersect(Type1 obj1, Type2 obj2);}
+{checks whether \ccc{obj1} and \ccc{obj2} intersect.
+Two objects \ccStyle{obj1} and \ccStyle{obj2} intersect if there is a point
+\ccStyle{p} that is part of both \ccStyle{obj1} and \ccStyle{obj2}.
+The \ccHtmlNoLinksFrom{intersection} region of those two objects is defined as the set of all
+points \ccStyle{p} that are part of both \ccStyle{obj1} and \ccStyle{obj2}.
+Note that for objects like triangles and polygons that enclose a
+bounded region, this region is part of the object.
+}}
+
+Depending on which \cgal\ \ccHtmlNoLinksFrom{kernel} is used,
+\ccStyle{Type1} and \ccStyle{Type2} can be of different types. 
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\paragraph{With the basic 2D and 3D Kernel} (see Chapter~\ref{chapter-kernel-23})
+
+\ccInclude{CGAL/intersections.h}
+
+The types \ccStyle{Type1} and \ccStyle{Type2} can be any of the following:
+\begin{itemize}\ccTexHtml{\itemsep0pt\topsep0pt\partopsep0pt\parskip0pt\parsep0pt}{}
+\item \ccStyle{Point_2<Kernel>}
+\item \ccStyle{Line_2<Kernel>}
+\item \ccStyle{Ray_2<Kernel>}
+\item \ccStyle{Segment_2<Kernel>}
+\item \ccStyle{Triangle_2<Kernel>}
+\item \ccStyle{Iso_rectangle_2<Kernel>}
+\end{itemize}
+
+Also, \ccStyle{Type1} and \ccStyle{Type2} can be both of type
+\begin{itemize}\ccTexHtml{\itemsep0pt\topsep0pt\partopsep0pt\parskip0pt\parsep0pt}{}
+\item \ccStyle{Line_2<Kernel>}
+\item \ccStyle{Circle_2<Kernel>}
+\end{itemize}
+
+In three-dimensional space, \ccc{Type1} can be \ccc{Plane_3<Kernel>} or
+\ccc{Triangle_3<Kernel>} and \ccc{Type2} any of 
+\begin{itemize}\ccTexHtml{\itemsep0pt\topsep0pt\partopsep0pt\parskip0pt\parsep0pt}{}
+\item \ccStyle{Plane_3<Kernel>}
+\item \ccStyle{Line_3<Kernel>}
+\item \ccStyle{Ray_3<Kernel>}
+\item \ccStyle{Segment_3<Kernel>}
+\item \ccStyle{Triangle_3<Kernel>}.
+\end{itemize}
+
+\ccc{Type1} can also be \ccc{Bbox_3} and \ccc{Type2} any of 
+\begin{itemize}\ccTexHtml{\itemsep0pt\topsep0pt\partopsep0pt\parskip0pt\parsep0pt}{}
+\item \ccStyle{Bbox_3}
+\item \ccStyle{Line_3<Kernel>}
+\item \ccStyle{Ray_3<Kernel>}
+\item \ccStyle{Segment_3<Kernel>}.
+\end{itemize}
+
+Also, \ccc{Type1} and \ccc{Type2} can be respectively of types
+\begin{itemize}\ccTexHtml{\itemsep0pt\topsep0pt\partopsep0pt\parskip0pt\parsep0pt}{}
+\item \ccStyle{Triangle_3<Kernel>} and \ccStyle{Tetrahedron_3<Kernel>}
+\item \ccStyle{Line_3<Kernel>} and \ccStyle{Line_3<Kernel>}
+\item \ccStyle{Plane_3<Kernel>} and \ccStyle{Sphere_3<Kernel>} (or the contrary)
+\item \ccStyle{Sphere_3<Kernel>} and \ccStyle{Sphere_3<Kernel>}.
+\end{itemize} 
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\paragraph{With the 2D Circular Kernel} (see Chapter~\ref{chapter-circular-kernel}) 
+
+\ccInclude{CGAL/Circular_kernel_intersections.h}
+
+If this kernel is used, in addition to the combinations of 2D types
+previously listed, \ccStyle{Type1} and \ccStyle{Type2} can be any of
+the following:
+\begin{itemize}\ccTexHtml{\itemsep0pt\topsep0pt\partopsep0pt\parskip0pt\parsep0pt}{}
+\item \ccStyle{Line_2<CircularKernel>}
+\item \ccStyle{Circle_2<CircularKernel>}
+\item \ccStyle{Line_arc_2<CircularKernel>}
+\item \ccStyle{Circular_arc_2<CircularKernel>}
+\end{itemize}
+
+An example illustrating this is presented in
+Chapter~\ref{chapter-circular-kernel}.
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\paragraph{With the 3D Spherical Kernel} (see Chapter~\ref{chapter-spherical-kernel}) 
+
+\ccInclude{CGAL/Spherical_kernel_intersections.h}
+
+If this kernel is used, in addition to the combinations of 3D types
+previously listed, \ccStyle{Type1} and \ccStyle{Type2} can be any of
+the following:
+\begin{itemize}\ccTexHtml{\itemsep0pt\topsep0pt\partopsep0pt\parskip0pt\parsep0pt}{}
+\item \ccStyle{Line_3<SphericalKernel>}
+\item \ccStyle{Circle_3<SphericalKernel>}
+\item \ccStyle{Plane_3<SphericalKernel>}
+\item \ccStyle{Sphere_3<SphericalKernel>}
+\item \ccStyle{Line_arc_3<SphericalKernel>}
+\item \ccStyle{Circular_arc_3<SphericalKernel>}
+\end{itemize}
+
+An example illustrating this is presented in
+Chapter~\ref{chapter-spherical-kernel}.
+
+Also, another predicate is provided with this kernel:
+
+\ccFunction{bool do_intersect(Type1 obj1, Type2 obj2, Type3 obj3);}
+{checks whether \ccc{obj1}, \ccc{obj2} and \ccc{obj3} intersect.}
+
+where \ccStyle{Type1}, \ccStyle{Type2} and \ccStyle{Type3} can be:
+\begin{itemize}\ccTexHtml{\itemsep0pt\topsep0pt\partopsep0pt\parskip0pt\parsep0pt}{}
+\item \ccStyle{Sphere_3<SphericalKernel>}
+\item \ccStyle{Plane_3<SphericalKernel>}
+\end{itemize}
+
+\ccSeeAlso
+\ccRefIdfierPage{CGAL::intersection}
+
+\end{ccRefFunction}

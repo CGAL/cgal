@@ -1,0 +1,64 @@
+% +------------------------------------------------------------------------+
+% | Reference manual page: KineticKernel.tex
+% +------------------------------------------------------------------------+
+% | 20.03.2005   Author
+% | Package: Kinetic_data_structures
+% | 
+\RCSdef{\RCSKineticKernelRev}{$Id$}
+\RCSdefDate{\RCSKineticKernelDate}{$Date$}
+% |
+%%RefPage: end of header, begin of main body
+% +------------------------------------------------------------------------+
+
+
+\begin{ccRefConcept}{Kinetic::Kernel}
+
+%% \ccHtmlCrossLink{}     %% add further rules for cross referencing links
+%% \ccHtmlIndexC[concept]{} %% add further index entries
+
+\ccDefinition
+  
+The concept \ccRefName\ acts as the kinetic analog of a CGAL kernel.
+It provides some set of primitives and predicats acting on them. The
+predicates are instances of \ccc{Kinetic::CertificateGenerator} and
+can be used to either create \ccc{Certificate}s or to evaluate
+instantaneous predicates.
+
+
+\ccCreationVariable{kk}
+\ccTypes
+
+\ccNestedType{Motion_function}{The type which is used to represent
+  coordinates of moving primitives. It is a model of the concept
+  \ccc{FunctionKernel::Function}. This is the analog of the CGAL
+  kernel \ccc{RT}.}
+
+\ccNestedType{Certificate}{The type representing the results of
+  predicates. See \ccc{Kinetic::Certificate}.}
+
+\ccNestedType{Function_kernel}{The type of the function kernel used.
+  See \ccc{Kinetic::FunctionKernel}.}
+
+\ccOperations
+
+\ccMethod{Function_kernel function_kernel_object() const;}{Gets a copy
+  of the function kernel.}
+
+\ccCreationVariable{a}  %% choose variable name
+
+
+\ccHasModels
+
+\ccc{Kinetic::Cartesian<FunctionKernel>}.
+
+
+
+
+\end{ccRefConcept}
+
+
+% +------------------------------------------------------------------------+
+%%RefPage: end of main body, begin of footer
+% EOF
+% +------------------------------------------------------------------------+
+

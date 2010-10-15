@@ -1,0 +1,21 @@
+\ccMethod{int get_n() const;}{returns the number $n$ of variables (number
+  of columns of $A$) in \ccVar.}
+
+\ccMethod{int get_m() const;}{returns the number $m$ of constraints
+  (number of rows of $A$) in \ccVar.}
+
+\ccMethod{A_iterator get_a() const;}{returns an iterator over the columns
+  of $A$. The corresponding past-the-end iterator is \ccc{get_a()+get_n()}.
+  For $j=0,\ldots,n-1$, $\ccc{*(get_a()+j)}$ is a random access
+  iterator for column $j$.}
+
+\ccMethod{B_iterator get_b() const;}{returns an iterator over the entries
+  of $\qpb$. The corresponding past-the-end iterator is 
+        \ccc{get_b()+get_m()}.}
+
+\ccMethod{R_iterator get_r() const;}{returns an iterator over the entries
+  of $\qprel$. The corresponding past-the-end iterator is 
+        \ccc{get_r()+get_m()}.
+  The value \ccc{CGAL::SMALLER} stands
+  for $\leq$, \ccc{CGAL::EQUAL} stands for $=$, and \ccc{CGAL::LARGER}
+  stands for $\geq$.}

@@ -1,0 +1,234 @@
+% begin cgal manual page
+
+\begin{ccRefClass}{Topological_explorer}\ccCreationVariable{D}
+
+\ccDefinition
+
+An instance \ccc{D} of the data type \ccc{Topological_explorer} is a
+decorator for interfacing the topological structure of a plane map
+\ccc{P} (read-only).
+
+A plane map \ccc{P} consists of a triple $(V, E, F)$ of vertices,
+edges, and faces. We collectively call them objects. An edge \ccc{e}
+is a pair of vertices \ccc{(v,w)} with incidence operations \ccc{v =
+source(e)}, \ccc{w = target(e)}. The list of all edges with source
+\ccc{v} is called the adjacency list \ccc{A(v)}.
+
+Edges are paired into twins. For each edge \ccc{e = (v,w)} there's an
+edge \ccc{twin(e) = (w,v)} and \ccc{twin(twin(e)) == e}\footnote{The
+existence of the edge pairs makes \ccc{P} a bidirected graph, the
+\ccc{twin} links make \ccc{P} a map.}.
+
+An edge \ccc{e = (v,w)} knows two adjacent edges \ccc{en = next(e)}
+and \ccc{ep = previous(e)} where \ccc{source(en) = w},
+\ccc{previous(en) = e} and \ccc{target(ep) = v} and \ccc{next(ep) =
+e}. By this symmetric \ccc{previous-next} relationship all edges are
+partitioned into face cycles.  Two edges $e$ and $e'$ are in the same
+face cycle if $e = \ccc{next}^*(e')$.  All edges \ccc{e} in the same
+face cycle have the same incident face $f = \ccc{face}(e)$. The cyclic
+order on the adjacency list of a vertex \ccc{v = source(e)} is given
+by \ccc{cyclic_adj_succ(e) = twin(previous(e))} and
+\ccc{cyclic_adj_pred(e) = next(twin(e))}.
+
+A vertex \ccc{v} is embedded via coordinates \ccc{point(v)}. By the
+embedding of its source and target an edge corresponds to a
+segment. \ccc{P} has the property that the embedding is always
+\emph{order-preserving}.  This means a ray fixed in \ccc{point(v)} of
+a vertex \ccc{v} and swept around counterclockwise meets the
+embeddings of \ccc{target(e)} ($e \in A(v)$) in the cyclic order
+defined by the list order of \ccc{A}.
+
+The embedded face cycles partition the plane into maximal connected
+subsets of points. Each such set corresponds to a face. A face is
+bounded by its incident face cycles. For all the edges in the
+non-trivial face cycles it holds that the face is left of the edges.
+There can also be trivial face cycles in form of isolated vertices in
+the interior of a face. Each such vertex \ccc{v} knows its surrounding
+face \ccc{f = face(v)}. 
+
+Plane maps are attributed, for each object $u \in V \cup E \cup F$ we
+attribute an information \ccc{mark(u)} of type \ccc{Mark}. \ccc{Mark}
+fits the concepts assignable, default-constructible, and
+equal-comparable.
+
+\ccTypes
+
+\ccNestedType{Plane_map}{The underlying plane map type}
+
+\ccNestedType{Point}{The point type of vertices.}
+
+\ccNestedType{Mark}{
+All objects (vertices, edges, faces) are attributed by a \ccc{Mark} object.}
+
+\ccNestedType{Size_type}{The size type.}
+
+Local types are handles, iterators and circulators of the following
+kind: \ccc{Vertex_const_handle}, \ccc{Vertex_const_iterator},
+\ccc{Halfedge_const_handle}, \ccc{Halfedge_const_iterator},
+\ccc{Face_const_handle}, \ccc{Face_const_iterator}.
+Additionally the following circulators are defined.
+
+\ccNestedType{Halfedge_around_vertex_const_circulator}{
+circulating the outgoing halfedges in $A(v)$. }
+
+\ccNestedType{Halfedge_around_face_const_circulator}{
+circulating the halfedges in the face cycle of a face \ccc{f}. 
+}
+
+\ccNestedType{Hole_const_iterator}{
+iterating all holes of a face \ccc{f}. The type is 
+convertible to \ccc{Halfedge_const_handle}. 
+}
+
+\ccNestedType{Isolated_vertex_const_iterator}{
+iterating all isolated vertices of a face \ccc{f}. 
+The type generalizes \ccc{Vertex_const_handle}. 
+}
+
+\ccSetTwoOfThreeColumns{4cm}{4cm}
+
+\ccOperations
+
+\ccMethod{Vertex_const_handle source(Halfedge_const_handle e) ;}{
+returns the source of \ccc{e}. }
+
+\ccMethod{Vertex_const_handle target(Halfedge_const_handle e) ;}{
+returns the target of \ccc{e}. }
+
+\ccMethod{Halfedge_const_handle twin(Halfedge_const_handle e) ;}{
+returns the twin of \ccc{e}. }
+
+\ccMethod{bool is_isolated(Vertex_const_handle v) ;}{
+returns \ccc{true} iff $A(v) = \emptyset$. }
+
+\ccMethod{Halfedge_const_handle first_out_edge(Vertex_const_handle v) ;}{
+  returns one halfedge with source \ccc{v}. It's the starting point for
+  the circular iteration over the halfedges with source \ccc{v}.
+  \ccPrecond \ccc{!is_isolated(v)}. 
+}
+
+\ccMethod{Halfedge_const_handle last_out_edge(Vertex_const_handle v) ;}{
+  returns the halfedge with source \ccc{v} that is the last
+  in the circular iteration before encountering \ccc{first_out_edge(v)} 
+  again. \ccPrecond \ccc{!is_isolated(v)}. 
+}
+
+\ccMethod{Halfedge_const_handle cyclic_adj_succ(Halfedge_const_handle e) ;}{
+returns the edge after \ccc{e} in the cyclic ordered adjacency list of
+\ccc{source(e)}. 
+}
+
+\ccMethod{Halfedge_const_handle cyclic_adj_pred(Halfedge_const_handle e) ;}{
+returns the edge before \ccc{e} in the cyclic ordered adjacency list of
+\ccc{source(e)}. 
+}
+
+\ccMethod{Halfedge_const_handle next(Halfedge_const_handle e) ;}{
+returns the next edge in the face cycle containing \ccc{e}. }
+
+\ccMethod{Halfedge_const_handle previous(Halfedge_const_handle e) ;}{
+returns the previous edge in the face cycle containing \ccc{e}.}
+
+\ccMethod{Face_const_handle face(Halfedge_const_handle e) ;}{
+returns the face incident to \ccc{e}.}
+
+\ccMethod{Face_const_handle face(Vertex_const_handle v) ;}{
+returns the face incident to \ccc{v}. \ccPrecond \ccc{is_isolated(v)}.}
+
+\ccMethod{Halfedge_const_handle halfedge(Face_const_handle f) ;}{
+returns a halfedge in the bounding face cycle of \ccc{f} 
+(\ccc{Halfedge_const_handle()} if there is no bounding face cycle). 
+}
+
+\ccHeading{Iteration} 
+
+\ccMethod{Vertex_const_iterator   vertices_begin();}
+{iterator over vertices of the map.}
+\ccMethod{Vertex_const_iterator   vertices_end();}
+{past-the-end iterator for vertices.}
+\ccMethod{Halfedge_const_iterator halfedges_begin();}
+{ iterator over halfedges of the map. }
+\ccMethod{Halfedge_const_iterator halfedges_end();}
+{ past-the-end iterator for halfedges. }
+\ccMethod{Face_const_iterator     faces_begin();}
+{ iterator over faces of the map. }
+\ccMethod{Face_const_iterator     faces_end();}
+{ past-the-end iterator for faces}
+
+\ccHidden
+\ccMethod{Point_const_iterator points_begin();}
+{ ??? }
+\ccHidden
+\ccMethod{Point_const_iterator points_end();}
+{ ??? }
+
+\ccMethod{Halfedge_around_vertex_const_circulator 
+  out_edges(Vertex_const_handle v) ;}{
+  returns a circulator for the cyclic adjacency list of \ccc{v}.}
+
+\ccMethod{Halfedge_around_face_const_circulator 
+  face_cycle(Face_const_handle f) ;}{
+  returns a circulator for the outer face cycle of \ccc{f}.}
+
+\ccMethod{Hole_const_iterator  holes_begin(Face_const_handle f) ;}{
+returns an iterator for all holes in the interior of \ccc{f}.
+A \ccc{Hole_iterator} can be assigned to a 
+\ccc{Halfedge_around_face_const_circulator}. }
+
+\ccMethod{Hole_const_iterator  holes_end(Face_const_handle f) ;}{
+returns the past-the-end iterator of \ccc{f}. }
+
+\ccMethod{Isolated_vertex_const_iterator isolated_vertices_begin(
+ Face_const_handle f) ;}{
+  returns an iterator for all isolated vertices in the interior of \ccc{f}. 
+}
+
+\ccMethod{Isolated_vertex_const_iterator isolated_vertices_end(
+  Face_const_handle f) ;}{
+  returns the past the end iterator of \ccc{f}.}
+
+\ccHeading{Associated Information}
+The type \ccc{Mark} is the general attribute of an object. 
+
+\ccMethod{const Point& point(Vertex_const_handle v) ;}{
+  returns the embedding of \ccc{v}. }
+
+\ccMethod{const Mark& mark(Vertex_const_handle v) ;}{
+  returns the mark of \ccc{v}. }
+
+\ccMethod{const Mark& mark(Halfedge_const_handle e) ;}{
+  returns the mark of \ccc{e}. }
+
+\ccMethod{const Mark& mark(Face_const_handle f) ;}{
+  returns the mark of \ccc{f}. }
+
+\ccHeading{Statistics and Integrity} 
+
+\ccMethod{Size_type number_of_vertices() ;}{
+  returns the number of vertices. }
+
+\ccMethod{Size_type number_of_halfedges() ;}{
+  returns the number of halfedges. }
+
+\ccMethod{Size_type number_of_edges() ;}{
+  returns the number of halfedge pairs. }
+
+\ccMethod{Size_type number_of_faces() ;}{
+  returns the number of faces. }
+
+\ccMethod{Size_type number_of_face_cycles() ;}{
+  returns the number of face cycles. }
+
+\ccMethod{Size_type number_of_connected_components() ;}{
+  calculates the number of connected components of \ccc{P}. }
+
+\ccMethod{void print_statistics(std::ostream& os = std::cout) ;}{
+  print the statistics of \ccc{P}: the number of vertices, edges, 
+  and faces. }
+
+\ccMethod{void check_integrity_and_topological_planarity(bool faces=true) ;}{
+  checks the link structure and the genus of \ccc{P}. }
+
+\end{ccRefClass}
+
+

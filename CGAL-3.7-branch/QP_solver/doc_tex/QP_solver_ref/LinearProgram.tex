@@ -1,0 +1,47 @@
+\begin{ccRefConcept}{LinearProgram}
+
+\ccDefinition
+A model of \ccRefName\ describes a linear program of the form
+\input{QP_solver_ref/_lp_description.tex}
+
+The description is given by appropriate \emph{random-access} 
+iterators over the program data, see below. The program therefore 
+comes in \emph{dense} representation which includes zero entries.
+
+\ccHasModels
+\ccc{Quadratic_program<NT>}\\
+\ccc{Quadratic_program_from_mps<NT>}\\
+\ccc{Linear_program_from_iterators<A_it, B_it, R_it, FL_it, L_it, FU_it, U_it, D_it, C_it>}
+
+
+\ccTypes
+
+\input{QP_solver_ref/_abr_types.tex}
+
+\input{QP_solver_ref/_lu_types.tex}
+
+\input{QP_solver_ref/_c_types.tex}
+
+\ccOperations
+
+\ccCreationVariable{lp}
+
+\input{QP_solver_ref/_nmabr_methods.tex}
+
+\input{QP_solver_ref/_lu_methods.tex}
+
+\input{QP_solver_ref/_c_methods.tex}
+
+\ccSeeAlso
+The  models 
+
+\ccc{Quadratic_program<NT>}\\
+\ccc{Quadratic_program_from_mps<NT>}\\
+\ccc{Linear_program_from_iterators<A_it, B_it, R_it, FL_it, L_it, FU_it, U_it, C_it>}
+
+and the other concepts
+
+\ccc{QuadraticProgram}\\
+\ccc{NonnegativeQuadraticProgram}\\
+\ccc{NonnegativeLinearProgram}
+\end{ccRefConcept}

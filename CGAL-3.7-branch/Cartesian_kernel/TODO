@@ -1,0 +1,105 @@
+Stuff to look at, as time permits:
+----------------------------------
+
+- Why Ray_3 and Line_3 don't have the same internal representation ???
+
+- Triangle-Triangle instersection (and predicate) :
+    Tomas Möller. A fast triangle-triangle intersection test. Journal of
+    Graphics Tools, 2(2):25-30, 1997
+              A Fast Triangle-Triangle Intersection Test,  tompa@clarus.se
+
+- Stefan voudrait un tag :
+  > > > As for the tag, I would like to distinguish the tag used to trigger
+  > > > the
+  > > > so-called advanced kernel and the tag used to distinguish coordinate
+  > > > rep.
+
+  > > > I asekd for this long time ago, and that time, I got no reply ... :)
+
+  > > I see... :)  When was it ?  As you know, I'm back to work since october,
+  > > so.
+  ..
+  > > I am not aware of that question.
+  > > Do you have some actual code to propose for that ?
+  >
+  > It was long time ago, end of spring, beginning of summer.
+
+- Remove all global function usage, and replace by common code for all kernels.
+  The backward compatible layer could look like :
+
+// Another idea : write a backward compatible wrapper for any kernel,
+// say, Backward<R> using only the kernel traits R, and giving the additional
+// interface to get an "old kernel interface" from it.
+// So in particular, we would have :
+template <class R>
+Backward
+{
+  typedef CGAL::Point_2<Backward<R> > Point_2;
+};
+// Backward<R> would also be a valid kernel traits, but with
+// R::Point_2 != Backward<R>::Point_2.
+ 
+------------------------
+
+- Tests :
+  - Write a Checker for full kernels, like Pm_traits_checker.h ?
+  - Advanced kernel, Cd.
+
+- Handles :
+  - http://www.uni-giessen.de/faq/archiv/c++-faq.part1-9/msg00005.html
+    [16.22] How do I provide reference counting with copy-on-write
+            semantics for a hierarchy of classes?
+  - Having a proper Handle_for_virtual<> is becoming important...
+    - It must have the same interface than Handle_for<> [due, it can't !]
+    - Must use the allocator, see Stefan's mail. [due, impossible !]
+    - Ok, after reflexion : it can't use STL allocators, however we can do
+      something clean by looking at auto_ptr<>, I think.
+    - It would also be nice if we could remove the ref-counting mechanism
+      easily, like for Handle_for<>. [low priority, but would be nice to
+      get the right interface able to do that]
+      Update : it is not possible to have it since we cannot copy this object
+      as we don't know its exact type !
+    - Apply them to Aff_transformations, then Lazy_exact_nt<>, then... :)
+
+- ::bbox() robustness issues : it's not robust, since basically, we use
+  to_double().
+  The homogeneous kernel uses an epsilon to get this right, in the case
+  to_double() returns an error < 1 ulp().
+  I would propose to use the intervals, and require the NTs to have a
+  to_interval().  For most of the current ones, it's already done, so...
+  Ask Stefan and the list about that.  For PointH2::bbox(), we would have:
+{
+  Interval_base x = CGAL::to_interval(hx());
+  Interval_base y = CGAL::to_interval(hy());
+  Interval_base w = CGAL::to_interval(hw());
+  // The following can be slightly optimized using the advanced class.
+  return Bbox_2(Interval_nt<>(x)/Interval_nt<>(w),
+                Interval_nt<>(y)/Interval_nt<>(w));
+}
+  And PointC2::bbox():
+{
+  return Bbox_2(CGAL::to_interval(x()), CGAL::to_interval(y()));
+}
+- Merge Intersection package ?  What about Conic ?
+- Cd must come back to life somehow...  Currently, I've disabled it ~totally
+  in Cartesian.h.  Same thing for Conics...
+- line_get_pointC2() could take "i" as "const FT&" directly, not "int", it
+  will avoid several constructions.  Also, propagating that to the higher
+  level will also bring more functionality at the top level...
+  Seems like a stupid design choice at the beginning ?
+  Or did I miss something ?
+  Do we want to allow that for other implementations ?
+  Maybe there are other similar places.
+- Homogeneous' Point_2 has member functions :
+    // and for efficiency in the predicates:
+    const RT&     hx_ref() const;
+    const RT&     hy_ref() const;
+    const RT&     hw_ref() const;
+  Probably a good idea ?  Or is it worse with doubles ?  Let's try.
+  Why do Point.x(), y(), hx(), hy(), hw() return FT instead of a "const FT &" ?
+- include/CGAL/smallest_radiusC2.h should use the kernel code.
+  Check if it's ok (correct and as efficient), and tell Frank to do so.
+  The name of this file doesn't have anything to do with what is inside anyway.
+- Herve complains that the design of the CGAL kernel is too
+  cartesian/homogeneous oriented, whereas it could be made more general (think
+  polar kernel).  Anyone with a concrete proposal ? :)

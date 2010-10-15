@@ -1,0 +1,29 @@
+\begin{ccRefFunction}{print_nonnegative_linear_program}
+
+\ccInclude{CGAL/QP_functions.h}
+
+This function writes a nonnegative linear program to an output stream
+(in \ccc{MPSFormat}). The time
+complexity is $\Theta (mn)$, even if the program is very sparse.
+
+\ccFunction{template <NonnegativeLinearProgram>
+void print_nonnegative_linear_program 
+(std::ostream& out, const NonnegativeLinearProgram &lp, 
+ const std::string& problem_name = std::string("MY_MPS"));}
+{writes the nonnegative linear program \ccc{lp} to \ccc{out} in 
+\ccc{MPSFormat}. The name of the program will be the one provided 
+by \ccc{problem_name}.}
+
+\ccHeading{Requirements}
+Output operators are defined for all entry types of \ccc{lp}.
+
+\ccExample
+\ccReferToExampleCode{QP_solver/print_first_nonnegative_lp.cpp}
+
+\ccSeeAlso
+
+The concept
+
+\ccc{NonnegativeLinearProgram}
+
+\end{ccRefFunction}

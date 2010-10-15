@@ -1,0 +1,73 @@
+\section{Cutting a Mesh \label{sec:Cutting-a-Mesh}}
+
+\subsection{Computing a Cut Graph}
+
+All surface parameterization methods proposed in this package only
+deal with meshes which are homeomorphic (topologically equivalent) to discs.
+Nevertheless meshes with arbitrary topology and number of connected components car be parameterized, provided that the user specifies a cut graph (an oriented list of vertices), which is the border of a topological disc. If no cut graph is
+provided as input, the longest border already
+in the input mesh is taken as default border, all other borders being considered as holes. Note that only the inside part (i.e., one connected component) of the given border is parameterized.
+
+% cut graph
+\begin{center}
+    \label{Surface_mesh_parameterization-fig-cut}
+    % Image
+    \begin{ccTexOnly}
+        \includegraphics[width=1.0\textwidth]{Surface_mesh_parameterization/cut}
+    \end{ccTexOnly}
+    \begin{ccHtmlOnly}
+        <img style="max-width: 80%;" border=0 src="./cut.png"><P>
+    \end{ccHtmlOnly}
+    % Title
+    \begin{figure}[h]
+        \caption{Cut Graph}
+    \end{figure}
+\end{center}
+
+This package does not provide any algorithm to transform an arbitrary mesh
+into a topological disk, the user being responsible
+for generating such a cut graph. Nevertheless, we provide in
+\ccc{polyhedron_ex_parameterization.cpp}
+a simple cutting algorithm for the sake of completeness.
+
+
+\subsection{Applying a Cut}
+
+The surface parameterization classes in this package only \emph{directly} support
+ surfaces which are homeomorphic to disks (models of
+\ccc{ParameterizationMesh_3}). This software design simplifies the
+implementation of all new parameterization methods.
+
+The \ccc{CGAL::Parameterization_mesh_patch_3<ParameterizationPatchableMesh_3>}
+class is responsible for \emph{virtually} cutting
+a patch in a \ccc{ParameterizationPatchableMesh_3} mesh.
+The resulting patch is a topological
+disk (if the cut graph is correct)
+and provides a \ccc{ParameterizationMesh_3} interface. It can be used as
+parameter of \ccc{CGAL::parameterize()}.
+
+\ccc{ParameterizationPatchableMesh_3} inherits from concept \ccc{ParameterizationMesh_3},
+thus is a concept for a 3D surface mesh.
+\ccc{ParameterizationPatchableMesh_3} adds the ability to support patches and
+virtual seams. \emph{Patches} are a subset of a 3D mesh.
+\emph{Virtual seams} behave exactly as if the surface was cut along a certain graph.
+
+The \ccc{ParameterizationMesh_3} interface with the Polyhedron is both a model of
+\ccc{ParameterizationMesh_3} and \ccc{ParameterizationPatchableMesh_3}: \\
+\ccc{CGAL::Parameterization_polyhedron_adaptor_3<Polyhedron_3_>}
+
+Note that this class is a decorator which adds {\em on the fly}
+the necessary fields to unmodified \cgal\ data structures (using STL
+maps). For better performances, it is recommended to use \cgal\ data
+structures enriched with the proper fields. See \ccc{Polyhedron_ex}
+class in \ccc{polyhedron_ex_parameterization.cpp} example.
+
+
+\subsection{Cutting a Mesh Example}
+
+\ccc{Mesh_cutting_parameterization.cpp} \emph{virtually} cuts a
+\ccc{CGAL::Polyhedron_3<Traits>} mesh
+to make it a topological disk, then applies the default parameterization:
+
+\ccIncludeExampleCode{Surface_mesh_parameterization/Mesh_cutting_parameterization.cpp}
+

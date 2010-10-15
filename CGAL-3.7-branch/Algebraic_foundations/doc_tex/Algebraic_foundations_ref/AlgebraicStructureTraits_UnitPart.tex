@@ -1,0 +1,44 @@
+\begin{ccRefFunctionObjectConcept}{AlgebraicStructureTraits::UnitPart}
+
+\ccDefinition
+
+This \ccc{AdaptableUnaryFunction} computes the unit part of a given ring 
+element. 
+
+The mathematical definition of unit part is as follows: Two ring elements $a$ 
+and $b$ are said to be associate if there exists an invertible ring element 
+(i.e. a unit) $u$ such that $a = ub$. This defines an equivalence relation. 
+We can distinguish exactly one element of every equivalence class as being 
+unit normal. Then each element of a ring possesses a factorization into a unit 
+(called its unit part) and a unit-normal ring element 
+(called its unit normal associate).
+
+For the integers, the non-negative numbers are by convention unit normal, 
+hence the unit-part of a non-zero integer is its sign. For a \ccc{Field}, every 
+non-zero element is a unit and is its own unit part, its unit normal 
+associate being one. The unit part of zero is, by convention, one.
+
+\ccRefines 
+
+\ccc{AdaptableUnaryFunction} 
+
+\ccTypes
+\ccNestedType{result_type} 
+        { Is \ccc{AlgebraicStructureTraits::Type}.}
+\ccNestedType{argument_type}
+        { Is \ccc{AlgebraicStructureTraits::Type}.}
+
+\ccOperations
+\ccThree{xxxxxxxxxxx}{xxxxxxxxxxx}{}
+\ccCreationVariable{unit_part}
+
+\ccMethod{result_type operator()(argument_type x);}
+{ returns the unit part of $x$.}
+
+%\ccHasModels
+
+\ccSeeAlso
+
+\ccRefIdfierPage{AlgebraicStructureTraits}
+
+\end{ccRefFunctionObjectConcept}

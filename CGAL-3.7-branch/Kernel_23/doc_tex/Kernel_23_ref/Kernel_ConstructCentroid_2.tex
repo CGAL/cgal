@@ -1,0 +1,28 @@
+\begin{ccRefFunctionObjectConcept}{Kernel::ConstructCentroid_2}
+A model for this must provide:
+
+\ccCreationVariable{fo}
+
+\ccMemberFunction{Kernel::Point_2 operator()(const Kernel::Point_2&p,
+                                  const Kernel::Point_2&q,
+                                  const Kernel::Point_2&r);}
+ {compute the centroid of the points $p$, $q$, and $r$.}
+
+\ccMemberFunction{Kernel::Point_2 operator()(const Kernel::Point_2&p,
+                                  const Kernel::Point_2&q,
+                                  const Kernel::Point_2&r,
+                                  const Kernel::Point_2&s);}
+ {compute the centroid of the points $p$, $q$, $r$ and $s$.}
+
+\ccMemberFunction{Kernel::Point_2 operator()(const Kernel::Triangle_2&t);}
+ {compute the centroid of the triangle $t$.}
+
+\ccRefines
+\ccc{AdaptableFunctor} (with three arguments)
+
+\ccSeeAlso
+\ccRefIdfierPage{Kernel::ConstructBarycenter_2} \\
+\ccRefIdfierPage{CGAL::centroid} \\
+\ccRefIdfierPage{CGAL::barycenter} \\
+
+\end{ccRefFunctionObjectConcept}

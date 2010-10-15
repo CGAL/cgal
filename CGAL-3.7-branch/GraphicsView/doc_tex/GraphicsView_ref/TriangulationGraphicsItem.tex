@@ -1,0 +1,44 @@
+\ccDefGlobalScope{CGAL::}
+\begin{ccRefClass}[Qt::]{TriangulationGraphicsItem<T>}
+
+\ccDefinition
+An object of type \ccRefName\ is a graphics item that encapsulates a 2D triangulation.
+
+\ccInclude{CGAL/Qt/TriangulationGraphicsItem.h}
+
+\ccParameters
+
+The template parameter of \ccRefName\ must be a
+\cgal\ 2D triangulation class.
+
+
+\ccInheritsFrom
+\ccc{Qt::GraphicsItem}
+
+\ccCreation
+\ccCreationVariable{tgi}
+
+\ccConstructor{TriangulationGraphicsItem<T>(T* t);}{Constructs a graphics
+  item for a triangulation pointed by \ccc{t}.}
+
+\ccOperations
+
+\ccMethod{QPen verticesPen()() const;}{Returns the pen used to draw vertices.}
+\ccMethod{void setVerticesPen()(const QPen& p);}{Sets the pen used to draw vertices.}
+
+\ccMethod{QPen edgesPen()() const;}{Returns the pen used to draw edges.}
+\ccMethod{void setEdgesPen()(const QPen& p);}{Sets the pen used to draw edges.}
+
+\ccMethod{bool visibleVertices();}{Returns \ccc{true}, iff vertices are drawn.}
+\ccMethod{void setVisibleVertices(bool b);}{Sets the property.}
+
+\ccMethod{bool visibleEdges();}{Returns \ccc{true}, iff edges are drawn.}
+\ccMethod{void setVisibleEdges(bool b);}{Sets the property.}
+\end{ccRefClass}
+
+
+
+
+
+
+

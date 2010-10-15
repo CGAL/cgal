@@ -1,0 +1,42 @@
+%% +------------------------------------------------------------------------+
+% | Reference manual page: Runge_kutta_integrator_2.tex
+% +------------------------------------------------------------------------+
+% | 07.12.2004 Abdelkrim Mebarki
+% | Package: Stream_lines_2
+% | 
+\RCSdef{\RCSRungekuttaintegratorRev}{$Id$}
+\RCSdefDate{\RCSRungekuttaintegratorDate}{$Date$}
+% |
+%%RefPage: end of header, begin of main body
+% +------------------------------------------------------------------------+
+
+
+\begin{ccRefFunctionObjectClass}{Runge_kutta_integrator_2<VectorField_2>}  %% add template arg's if necessary
+
+%% \ccHtmlCrossLink{}     %% add further rules for cross referencing links
+%% \ccHtmlIndexC[class]{} %% add further index entries
+\ccCreationVariable{rkinteg}
+\ccDefinition
+
+The template parameter \ccc{VectorField_2} has to
+be instantiated by a model of the concept \ccc{VectorField_2}. This class implements the second order Runge-Kutta integrator.
+
+\ccCreation
+\ccConstructor{Runge_kutta_integrator_2(const FT & integration_step);}
+{Creates a Runge-Kutta second order integrator class \ccVar \ with \ccc{integration_step} as integration step.}
+
+%\ccInclude{CGAL/Runge_kutta_2_integrator_2.h}
+
+\ccIsModel 
+
+\ccc{Integrator_2} \\
+
+\ccSeeAlso
+\ccc{Euler_integrator_2<VectorField_2>} \\
+\end{ccRefFunctionObjectClass}
+
+% +------------------------------------------------------------------------+
+%%RefPage: end of main body, begin of footer
+% EOF
+% +------------------------------------------------------------------------+
+

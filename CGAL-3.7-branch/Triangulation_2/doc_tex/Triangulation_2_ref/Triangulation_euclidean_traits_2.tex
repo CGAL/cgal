@@ -1,0 +1,51 @@
+% +------------------------------------------------------------------------+
+% | Reference manual page: Triangulation_euclidean_traits_2.tex
+% +------------------------------------------------------------------------+
+% | 06.04.2000   Author
+% | Package: Package
+% | 
+\RCSdef{\RCSTriangulationeuclideantraitsRev}{$Id$}
+\RCSdefDate{\RCSTriangulationeuclideantraitsDate}{$Date$}
+% |
+%%RefPage: end of header, begin of main body
+% +------------------------------------------------------------------------+
+
+
+\begin{ccRefClass}{Triangulation_euclidean_traits_2<K>}  %% add template arg's if necessary
+
+%% \ccHtmlCrossLink{}     %% add further rules for cross referencing links
+%% \ccHtmlIndexC[class]{} %% add further index entries
+\ccCreationVariable{traits}
+\ccDefinition
+  
+The class \ccRefName\ can be used to instantiate the geometric traits
+class of basic and Delaunay triangulations.
+The templated parameter \ccc{K} has to
+be instantiated by a model of the \ccc{Kernel} concept.
+The class \ccRefName\  uses types 
+and predicates defined \ccc{K}.
+
+
+\ccInclude{CGAL/Triangulation_euclidean_traits_2.h}
+
+\ccIsModel 
+
+\ccc{TriangulationTraits_2} \\
+\ccc{DelaunayTriangulationTraits_2}
+
+
+\ccSeeAlso
+\ccc{TriangulationTraits_2} \\
+\ccc{DelaunayTriangulationTraits_2} \\
+\ccc{CGAL::Triangulation_2<Traits,Tds>}\\
+\ccc{CGAL::Delaunay_triangulation_2<Traits,Tds>} \\
+\ccc{CGAL::Triangulation_euclidean_traits_xy_3<K>} \\
+
+
+\end{ccRefClass}
+
+% +------------------------------------------------------------------------+
+%%RefPage: end of main body, begin of footer
+% EOF
+% +------------------------------------------------------------------------+
+

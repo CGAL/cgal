@@ -1,0 +1,104 @@
+%% Copyright (c) 2006  SciSoft.  All rights reserved.
+%%
+%% This file is part of CGAL (www.cgal.org); you may redistribute it under
+%% the terms of the Q Public License version 1.0.
+%% See the file LICENSE.QPL distributed with CGAL.
+%%
+%% Licensees holding a valid commercial license may use this file in
+%% accordance with the commercial license agreement provided with the software.
+%%
+%% This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
+%% WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
+%%
+%% 
+%%
+%% Author(s)     : Fernando Cacciola <fernando_cacciola@hotmail.com>
+
+\begin{ccRefConcept}{StraightSkeletonVertex_2}
+
+%% \ccHtmlCrossLink{}     %% add further rules for cross referencing links
+%% \ccHtmlIndexC[concept]{} %% add further index entries
+
+\ccDefinition
+
+The concept \ccRefName\ describes the requirements for the vertex type of the
+\ccc{StraightSkeleton_2} concept. It is a refinement of the \ccc{HalfedgeDSVertex} concept
+with support for storage of the incident halfedge. The \ccRefName\ concept requires the geometric embedding to be a 2D point.
+
+\ccRefines
+\ccc{HalfedgeDSVertex}
+
+\ccTypes
+  \ccNestedType{Point_2}{The type of the 2D point being the geometric embedding of the vertex}{}
+\ccGlue
+  \ccNestedType{FT}{A model of the \ccc{SqrtFieldNumberType} concept representing the time of a vertex (an Euclidean distance)}{}
+\ccGlue
+  \ccNestedType{Halfedge_around_vertex_const_circulator}{}{}
+\ccGlue
+  \ccNestedType{Halfedge_around_vertex_circulator}{The circulator type used to visit all the incident halfedges around a vertex}
+\ccGlue
+  \ccNestedType{Defining_contour_halfedge_const_circulator}{}{}
+\ccGlue
+  \ccNestedType{Defining_contour_halfedge_circulator}{The circulator type used to visit all the defining contour halfedges of a vertex}
+
+\ccCreation
+\ccCreationVariable{v}  %% choose variable name
+
+\ccConstructor{StraightSkeletonVertex_2();}{Default constructor}
+\ccGlue
+\ccConstructor{StraightSkeletonVertex_2(int id, Point_2 const& p);}{Constructs a contour vertex with ID number \ccc{id}, at the point \ccc{p}}
+\ccGlue
+\ccConstructor{StraightSkeletonVertex_2(int id, Point_2 const& p, FT time );}
+{Constructs a skeleton vertex with ID number \ccc{id}, at point \ccc{p} and time \ccc{time}.}
+
+\ccAccessFunctions
+  \ccMethod{int id() const;}{The ID of the vertex.}
+  \ccGlue
+  \ccMethod{Point_2 const& point() const;}{The vertex point.}
+  \ccGlue
+  \ccMethod{FT time() const;}{The time of the vertex: the distance from the vertex point to the lines supporting the defining contour edges}
+  \ccGlue
+  \ccMethod{Halfedge_handle primary_bisector();}{}
+  \ccGlue
+  \ccMethod{Halfedge_const_handle primary_bisector() const;}
+{Returns the skeleton halfedge incident upon the vertex (called the \textit{primary} bisector).}
+  \ccGlue
+  \ccMethod{Halfedge_around_vertex_circulator halfedge_around_vertex_begin();}{}
+  \ccGlue
+  \ccMethod{Halfedge_around_vertex_const_circulator halfedge_around_vertex_begin() const;}
+{Returns a bi-directional circulator pointing to one of the incident halfedges (which one is unspecified).\\
+There will always be as many incident halfedges as the degree of the vertex.\\
+If this is a \textit{contour} vertex, its degree is exactly 3, and from the halfedges pointed to by the circulator, 2 are contour and 1 is a bisector.\\
+If this is an \ccc{skeleton} vertex, its degree is at least 3 and all of the halfedges pointed to by the circulator are bisectors.\\
+Each halfedge pointed to by this circulator is the one which is oriented towards the vertex (according to the geometric embedding).}
+  \ccGlue
+  \ccMethod{Defining_contour_halfedge_circulator defining_contour_halfedges_begin();}{}
+  \ccGlue
+  \ccMethod{Defining_contour_halfedge_const_circulator defining_contour_halfedges_begin() const;}
+{Returns a bi-directional circulator pointing to one of the defining contour halfedges of the vertex (which one is unspecified).\\
+There will always be as many incident defining contour halfedges as the degree of the vertex.\\
+Each halfedge pointed to by this circulator is the one having its left side facing inwards (which happens to be the contour halfedge for which \ccc{is\_border()} is \ccc{false}).}
+
+
+\ccHeading{Queries}
+\ccMethod{bool is_contour() const;}{Returns \ccc{true} iff this is a contour vertex.}
+\ccGlue
+\ccMethod{bool is_skeleton() const;}{Returns \ccc{true} iff this is a skeleton vertex.}
+
+\ccHasModels
+
+\ccc{CGAL::Straight_skeleton_vertex_base_2<Refs,Point,FT>}.
+
+\ccSeeAlso
+
+\ccc{StraightSkeleton_2}\\
+\ccc{StraightSkeletonHalfedge_2}\\
+\ccc{CGAL::Straight_skeleton_vertex_base_2<Refs,Point,FT>}\\
+\ccc{CGAL::Straight_skeleton_halfedge_base_2<Refs>}\\
+
+\end{ccRefConcept}
+
+% +------------------------------------------------------------------------+
+%%RefPage: end of main body, begin of footer
+% EOF
+% +------------------------------------------------------------------------+

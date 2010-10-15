@@ -1,0 +1,98 @@
+% +------------------------------------------------------------------------+
+% | Reference manual page: Triangulation_2.tex
+% +------------------------------------------------------------------------+
+% | 29.03.2000   Mariette Yvinec
+% | Package: Triangulation
+% | 
+\RCSdef{\RCSTriangulationRev}{$Id$}
+\RCSdefDate{\RCSTriangulationDate}{$Date$}
+% |
+%%RefPage: end of header, begin of main body
+% +------------------------------------------------------------------------+
+
+%\clearpage
+%\section{Reference pages for 2D Triangulations}
+\ccRefChapter{2D Triangulations\label{ref_chapter_2D_Triangulations}}
+\ccChapterAuthor{Mariette Yvinec}
+
+%\subsection*{Definition}
+A triangulation is a 2-dimensional simplicial complex which is pure
+connected and without singularities. Thus a triangulation
+can be viewed as a collection of triangular faces,
+such that two faces either have an empty intersection or share an edge or a vertex.
+
+The basic elements of the representation are vertices and faces.
+Each triangular face gives access to its three incident vertices 
+and to its three adjacent faces. 
+Each vertex gives access to one of its incident faces
+and through that face to the circular list of its incident faces.
+The edges are not explicitly represented, they are only represented 
+through the adjacency relations of two faces.
+
+The triangulation classes of \cgal\ depend on two template parameters.
+The first template parameter stands for
+ a geometric traits class which is assumed to provide
+the geometric objects (points, segments and triangles) 
+forming  the triangulation and the geometric predicates on those objects.
+The second template parameter stands for a model
+of  triangulation data
+structure acting as a container for faces and vertices
+while  taking care of the combinatorial aspects of the triangulation. 
+The concepts and models relative to the triangulation data structure
+are described in
+Chapter~\ref{ref_chapter_2D_Triangulation_Data_Structure}.
+
+\section{Classified Reference Pages}
+
+\subsection*{Concepts}
+\ccRefConceptPage{TriangulationTraits_2} \\
+\ccRefConceptPage{DelaunayTriangulationTraits_2} \\
+\ccRefConceptPage{RegularTriangulationTraits_2} \\
+\ccRefConceptPage{ConstrainedTriangulationTraits_2} \\
+\ccRefConceptPage{ConstrainedDelaunayTriangulationTraits_2} 
+
+\ccRefConceptPage{TriangulationFaceBase_2}\\
+\ccRefConceptPage{TriangulationVertexBase_2}\\
+\ccRefConceptPage{ConstrainedTriangulationFaceBase_2}\\
+\ccRefConceptPage{RegularTriangulationFaceBase_2} \\
+\ccRefConceptPage{RegularTriangulationVertexBase_2} \\
+\ccRefConceptPage{TriangulationHierarchyVertexBase_2}
+
+\subsection*{Classes}
+
+
+\ccRefIdfierPage{CGAL::Triangulation_2<Traits,Tds>}\\
+\ccRefIdfierPage{CGAL::Delaunay_triangulation_2<Traits,Tds>}\\
+\ccRefIdfierPage{CGAL::Regular_triangulation_2<Traits,Tds>}\\
+\ccRefIdfierPage{CGAL::Constrained_triangulation_2<Traits,Tds,Itag>}\\
+%\ccRefIdfierPage{CGAL::Constrained_triangulation_demo_2<Traits,Tds>}\\
+\ccRefIdfierPage{CGAL::Constrained_Delaunay_triangulation_2<Traits,Tds,Itag>}\\
+\ccRefIdfierPage{CGAL::Constrained_triangulation_plus_2<Tr>}\\
+\ccRefIdfierPage{CGAL::Triangulation_hierarchy_2<Tr>} \\
+
+\ccRefIdfierPage{CGAL::Triangulation_euclidean_traits_2<K>}\\
+\ccRefIdfierPage{CGAL::Triangulation_euclidean_traits_xy_3<K>}\\
+\ccRefIdfierPage{CGAL::Regular_triangulation_euclidean_traits_2<K,Weight>}\\
+\ccRefIdfierPage{CGAL::Regular_triangulation_filtered_traits_2<FK>}\\
+
+\ccRefIdfierPage{CGAL::Triangulation_face_base_2<Traits,Fb>}\\
+\ccRefIdfierPage{CGAL::Triangulation_vertex_base_2<Traits,Vb>}\\
+\ccRefIdfierPage{CGAL::Regular_triangulation_face_base_2<Traits,Fb>}\\
+\ccRefIdfierPage{CGAL::Regular_triangulation_vertex_base_2<Traits,Vb>}\\
+\ccRefIdfierPage{CGAL::Constrained_triangulation_face_base_2<Traits,Fb>}\\
+\ccRefIdfierPage{CGAL::Triangulation_vertex_base_with_info_2<Info,Traits,Vb>}\\
+\ccRefIdfierPage{CGAL::Triangulation_face_base_with_info_2<Info,Traits,Fb>}\\
+\ccRefIdfierPage{CGAL::Triangulation_hierarchy_vertex_base_2<Vb>}
+
+\ccRefIdfierPage{CGAL::Weighted_point<Pt,Wt>}\\
+\ccRefIdfierPage{CGAL::Triangulation_cw_ccw_2}\\
+
+
+\subsection*{Enum}
+\ccRefIdfierPage{CGAL::Triangulation_2<Traits,Tds>::Locate_type}
+
+
+% +------------------------------------------------------------------------+
+%%RefPage: end of main body, begin of footer
+% EOF
+% +------------------------------------------------------------------------+

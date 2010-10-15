@@ -1,0 +1,38 @@
+README for the Specification and Manual Writing Tools
+       for C++ Reference Manuals
+=========================================================
+01.09.2005   Saarbruecken Andreas Meyer ameyer@mpi-inf.mpg.de
+24.08.1999   Zurich       Lutz Kettner  kettner@acm.org
+29.09.1999   Saarbruecken Susan Hert    hert@mpi-sb.mpg.de
+
+This is the parent directory containing the cc_manual.sty and 
+related tools used for writing C++ Reference Manuals. 
+The directory structure is:
+
+    README        this file.
+    CHANGES       revision history
+    INSTALLATION  how to install the style and the tools.
+
+    doc_tex/      the reference manual.
+    doc_ps/       precompiled version of the reference manuals.
+    example/      an example of the (new) C++ reference pages.
+    sty/          the LaTeX style files and a test document.
+
+    scripts/      scripts around manual writing 
+    src/          src for the extraction and checking tools.
+
+
+Copyright (c) 1996,1997,1998,1999,2000,2001
+Lutz Kettner, Susan Hert
+
+Permission to use, copy, and distribute this software and its
+documentation for non-comercial purpose is hereby granted without fee,
+provided that the above copyright notice appear in all copies and that
+both that copyright notice and this permission notice appear in
+supporting documentation.  I make no representations about the
+suitability of this software for any purpose.  It is provided "as is"
+without express or implied warranty.
+
+EOF
+
+

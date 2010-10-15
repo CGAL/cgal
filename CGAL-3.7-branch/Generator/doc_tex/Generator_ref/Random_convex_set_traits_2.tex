@@ -1,0 +1,49 @@
+\renewcommand{\ccRefPageBegin}{\begin{ccAdvanced}}
+\renewcommand{\ccRefPageEnd}{\end{ccAdvanced}}
+\begin{ccRefClass}{Random_convex_set_traits_2<Kernel>}
+\ccTagFullDeclarations
+\ccIndexSubitem[C]{random_convex_set}{traits class}
+    
+\ccDefinition 
+
+The class \ccRefName serves as a traits class 
+for the function \ccc{random_convex_set_2}.
+
+\ccInclude{CGAL/Random_convex_set_traits_2.h}
+
+\ccIsModel
+
+\ccRefConceptPage{RandomConvexSetTraits_2}
+\ccIndexSubitem[c]{RandomConvexSetTraits_2}{model}
+    
+\ccTypes 
+    
+\ccTypedef{typedef Kernel::Point_2  Point_2;}{}
+\ccGlue
+\ccTypedef{typedef Kernel::FT       FT;}{}
+\ccGlue    
+\ccNestedType{Sum}{function object class derived from 
+                    \ccc{std::binary_function<Point_2, Point_2, Point_2>}
+                   }
+    
+\ccNestedType{Scale}{function object class derived from 
+                     \ccc{std::binary_function<Point_2, Point_2, Point_2>}}
+    
+\ccNestedType{Max_coordinate}{function object class derived from 
+                               \ccc{std::unary_function<Point_2, FT>}}
+
+\ccNestedType{Angle_less}{function object class derived from 
+                          \ccc{std::binary_function<Point_2, Point_2, bool>}}
+
+\ccCreation
+\ccCreationVariable{t}
+
+\ccConstructor{Random_convex_set_traits_2();}{default constructor}
+
+\ccOperations
+    
+\ccMemberFunction{Point_2 origin() const;}{returns CGAL::ORIGIN.} 
+      
+\end{ccRefClass}
+\renewcommand{\ccRefPageBegin}{}
+\renewcommand{\ccRefPageEnd}{}

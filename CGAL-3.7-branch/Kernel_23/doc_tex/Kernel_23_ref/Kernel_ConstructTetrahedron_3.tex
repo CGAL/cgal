@@ -1,0 +1,18 @@
+\begin{ccRefFunctionObjectConcept}{Kernel::ConstructTetrahedron_3}
+A model for this must provide:
+
+\ccCreationVariable{fo}
+
+\ccMemberFunction{Kernel::Tetrahedron_3 operator()(const Kernel::Point_3 &p0, 
+                             const Kernel::Point_3 &p1, 
+                             const Kernel::Point_3 &p2, 
+                             const Kernel::Point_3 &p3);}
+            {introduces a tetrahedron  with vertices $p_0$, $p_1$, $p_2$ and $p_3$.}
+
+\ccRefines
+\ccc{AdaptableFunctor} (with four arguments)
+
+\ccSeeAlso
+\ccRefIdfierPage{CGAL::Tetrahedron_3<Kernel>} \\
+
+\end{ccRefFunctionObjectConcept}

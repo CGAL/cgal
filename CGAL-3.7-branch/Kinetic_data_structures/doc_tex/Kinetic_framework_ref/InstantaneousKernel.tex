@@ -1,0 +1,65 @@
+% +------------------------------------------------------------------------+
+% | Reference manual page: Event.tex
+% +------------------------------------------------------------------------+
+% | 20.03.2005   Author
+% | Package: Kinetic_data_structures
+% | 
+\RCSdef{\RCSEventRev}{$Id$}
+\RCSdefDate{\RCSEventDate}{$Date$}
+% |
+%%RefPage: end of header, begin of main body
+% +------------------------------------------------------------------------+
+
+
+\begin{ccRefConcept}{Kinetic::InstantaneousKernel}
+
+%% \ccHtmlCrossLink{}     %% add further rules for cross referencing links
+%% \ccHtmlIndexC[concept]{} %% add further index entries
+
+\ccDefinition
+  
+The concept \ccRefName\ covers models that act as adaptors allowing
+CGAL static data structures to act on snapshots of kinetic
+data. Different methods for evaluating predicates are used depending
+on whether time is set using an \ccc{NT} or a \ccc{Time}
+object. Evaluating predicates when time is the former is much cheaper.
+
+
+\ccTypes 
+
+\ccNestedType{NT}{A number type which can be used to represent the current time. This must be a ring or field type.}
+
+\ccNestedType{Time}{The type used to represent the current time. This type must be comparable.}
+
+\ccCreationVariable{a}  %% choose variable name
+
+\ccOperations
+
+\ccMethod{Time time();}{Return the current time.}
+
+\ccMethod{NT time_as_nt();}{Return the current time as an \ccc{NT}. As a precondition, \ccc{time_is_nt} must be true.}
+
+\ccMethod{bool time_is_nt();}{Return true if the last time time was set, it was using an object of type \ccc{NT}.}
+
+\ccMethod{void set_time(Time);}{Set the current time to have a certain value. All existing predicates are updated automatically.}
+
+
+\ccMethod{void set_time(NT);}{The the current time to be an instance of \ccc{NT}. With this more efficient techniques can be used. \ccc{time_is_nt()} must be true.}
+
+\ccMethod{Static_object static_object(Key);}{Return a static object corresponding to the kinetic object at this instant in time. \ccc{time_is_nt()} must be true.}
+
+\ccHasModels
+
+\ccc{Kinetic::Default_instantaneous_kernel}
+
+
+
+
+
+\end{ccRefConcept}
+
+% +------------------------------------------------------------------------+
+%%RefPage: end of main body, begin of footer
+% EOF
+% +------------------------------------------------------------------------+
+

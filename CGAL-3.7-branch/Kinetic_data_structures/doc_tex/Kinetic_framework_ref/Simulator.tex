@@ -1,0 +1,164 @@
+% +------------------------------------------------------------------------+
+% | Reference manual page: Simulator.tex
+% +------------------------------------------------------------------------+
+% | 20.03.2005   Daniel Russel
+% | Package: Kinetic_data_structures
+% | 
+\RCSdef{\RCSSimulatorRev}{$Id$}
+\RCSdefDate{\RCSSimulatorDate}{$Date$}
+% |
+%%RefPage: end of header, begin of main body
+% +------------------------------------------------------------------------+
+
+
+\begin{ccRefConcept}{Kinetic::Simulator}  
+
+%% \ccHtmlCrossLink{}     %% add further rules for cross referencing links
+%% \ccHtmlIndexC[class]{} %% add further index entries
+
+\ccDefinition
+  
+The class \ccRefName\ controls kinetic data structures by maintaining
+a the current time and ensuring that events are processed when
+necessary.
+
+In addition, the \ccRefName\ can call on the kinetic data structures
+to audit themselves at appropriate times. When the last event
+processed and the next to be processed have different times, then
+there is a rational value of time at which all kinetic data structures
+should be non-degenerate (since there are no events at that time). At
+such a time, kinetic data structures can easily verify their
+correctness by checking that all the certificate predicates have the
+correct value. When exactness checks are enabled, whenever the last
+event processed and the next event to be processed have different
+times, a
+\ccc{Kinetic::Simulator::Listener::HAS_AUDIT_TIME} notification is made. Kinetic
+data structures can listen for that event, and when it is made, they
+can call \ccc{Kinetic::Simulator::audit_time()} to get the time value and
+then verify that their structure is correct.
+
+In addition, at such a time, the \ccc{Event::audit(Key)} is called on
+each event. This allows kinetic data structures to check that the
+event should be in the queue.
+
+Typically, the simulator is created by the Kinetic:SimulationTraits
+class and kinetic data structures request a handle to it from there.
+
+Events that occur at or after \ccc{Kinetic::Simulator::end_time()}
+will may not be processed. The exception are events which are
+scheduled using the \ccc{new_final_event(Event)} call which are
+guaranteed to occur after all other events (but have no particular
+order amongst themselves).
+
+
+\ccTypes
+
+\ccNestedType{Function_kernel}{The type of the function kernel used to instantiate this \ccRefName.}
+
+\ccNestedType{Listener}{Extend this base class to listen to notifications from this \ccRefName. There are two types of notifications: \ccc{HAS_AUDIT_TIME} and \ccc{DIRECTION_OF_TIME}. The first is made when kinetic data structures can perform an audit. The second is made when the direction of time is changed. }
+
+\ccNestedType{Time}{The representation type for times in the simulator. It is \ccc{Function_kernel::Root_enumerator::Root}.}
+
+\ccNestedType{Event_key}{The key to access scheduled \ccc{Event} in order to inspect or delete them.}
+
+\ccNestedType{NT}{The basic number type used in computations.}
+
+\ccNestedType{Handle}{A reference counted pointer to be used for storing references to the object.}
+
+\ccNestedType{Const_handle}{A reference counted pointer to be used for storing references to the object.}
+
+\ccCreation
+\ccCreationVariable{sim}  %% choose variable name
+
+\ccConstructor{Simulator(const Time start=Time(0), const Time end= Time::infinity());}{Construct a \ccRefName\ which will process events between times start and end (events outside this window will be discarded).}
+
+\ccOperations
+
+%\ccMethod{Root_enumerator root_enumerator_object(const Function_kernel::Function certificate_function) const;}{Return a root enumerator which enumerates the roots of the \ccc{certificate_function} between the current time and the end of the simulation.}
+
+\ccMethod{Function_kernel function_kernel_object() const;}{Access the \ccc{Function_kernel} object used by the \ccRefName.}
+
+\ccMethod{Time current_time();}{Return the current time.}
+
+\ccMethod{void set_current_time(Time t);}{Set the current time to \ccc{t}, which cannot be less than \ccc{current_time}. Any events in the queue before time \ccc{t} are processed.}
+
+\ccMethod{NT next_time_reprsentable_as_nt() const;}{ This function returns a time which can be represented using an instance of type \ccc{NT} which is shortly after the current time. You can then advance the current time to this one and act on the data structure using the return nt.}
+
+\ccMethod{bool has_current_time_as_nt() const;}{ Return true if there is a rational number which is equivalent to the current time. Equivalent means that it has the same ordering relation to all previous and scheduled events.}
+
+\ccMethod{bool has_audit_time() const;}{
+Returns true if the current time is a rational number and there are no events at the current time. This means that the simulation can be audited at this time.}
+
+\ccMethod{Time next_event_time() const;} {Return the time of the next event in the queue.}
+
+\ccMethod{Time end_time() const;} { Return the time the simulation will end. If time is running backwards, then this returns \ccc{Time::infinity()}.}
+
+\ccMethod{void set_interval(Time t_cur, Time t_end);}{Set the current
+  time to $t_{cur}$ and the end time to $t_{end}$. The event queue
+  must be empty. Use this method if you want to reset or extend the
+  simulation.}
+
+\ccMethod{ template <class Event> Event_key new_event(Time t, const
+  Event event);}{Schedule a new event at time \ccc{t}. The object
+  \ccc{event} must implement the concept \ccc{Event}. The
+  \ccc{Event_key} returned can be used to access or deschedule the
+  event.}
+
+\ccMethod{ template <class Event> Event_key new_final_event(const
+  Event event);}{Schedule a new event that will occur at the end of
+  the simulation. This type of event is useful if, for example, you
+  want to run for a while, change all motions, and then run some
+  more.}
+
+\ccMethod{Event_key null_event() const;}{This method returns an
+  \ccc{Event_key} which is guaranteed never to be assigned to any real
+  event. This is a very useful placeholder for events which are known
+  never to occur (and allows data structures to differentiate between
+  uninitialized and never failing).}
+
+\ccMethod{void audit_event(Event_key) const;}{Performs some checks as
+  to whether the key corresponds to a valid event. Generally, a event
+  is valid if it is not defaultly constructed and either is in the
+  queue or is the \ccc{null_event()}.}
+
+\ccMethod{bool empty() const;}{Return true if there are no more events.}
+
+\ccMethod{void delete_event(const Event_key k);}{Remove the event
+  referenced by \ccc{k} from the event queue.}
+
+\ccMethod{template <class Ev> typename
+  Queue::Event_handle<Ev>::Handle event(const Event_key k, const Ev
+  e) const;} {This method returns a pointer to an event, which can be
+  used for recoving data, such as cached solvers, from that event. The
+  second argument really shouldn't be there, but gcc seems to
+  sometimes have issues if you try to specify the template value
+  directly.}
+
+
+\ccMethod{Time event_time(Event_key k) const;}{ Return the time at which the event referenced by \ccc{k} occurs.}
+
+\ccMethod{  template <class Ev>
+  Event_key set_event(Event_key k, const Ev ev);}{Set the event referenced by key \ccc{k} to \ccc{ev}, for example if you want to change what happens when that event occurs. A new event key is returned.}
+
+\ccMethod{Sign direction_of_time() const;}{Return \ccc{POSITIVE} if time is running forwards or \ccc{NEGATIVE} if it is running backwards.}
+
+\ccMethod{void set_direction_of_time(Sign dir) const;}{Set which direction time is running.}
+
+\ccMethod{unsigned int current_event_number() const;}{Return the number of events which have been processed.}
+
+\ccMethod{void set_current_event_number(unsigned int i) const;}{Process all events up to the ith event. \ccc{i} cannot be less than \ccc{current_event_number}.}
+
+\ccSeeAlso
+\ccc{Kinetic::Simulator_objects_listener<Simulator_listener, KDS>},
+\ccc{Kinetic::Simulator_kds_listener<Simulator_listener, KDS>}.
+
+\ccHasModels
+\ccc{Kinetic::Default_simulator<FunctionKernel, EventQueue>}
+
+\end{ccRefConcept}
+
+% +------------------------------------------------------------------------+
+%%RefPage: end of main body, begin of footer
+% EOF
+% +------------------------------------------------------------------------+
+

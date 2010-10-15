@@ -1,0 +1,60 @@
+\begin{ccRefConcept}{AlgebraicKernelForSpheres::PolynomialForSpheres_2_3}
+
+\ccDefinition
+
+Concept to represent
+trivariate polynomials of degree up to~2 capable of storing equations
+of spheres, whose center's coordinates, as well as the square of the radius, 
+are of a type that is a model of the concept
+\ccc{FieldNumberType}.
+%\footnote{Of course the name looks bad since it mixes geometry with algebra. 
+%suggestions welcome}
+
+\ccRefines
+CopyConstructible, Assignable, DefaultConstructible
+
+\ccCreation
+\ccCreationVariable{pol}
+
+%\ccConstructor{PolynomialForSpheres_2_2(const FT & a, const FT & b, const FT & rsq);}{Constructs polynomial \ccc{(x-a)^2 + (y-b)^2 - rsq}.}
+
+%\ccAccessFunctions
+
+%\ccMethod{const FT & a();}{\ccc{x}-coordinate of the center of the sphere.}
+%\ccGlue
+%\ccMethod{const FT & b();}{\ccc{y}-coordinate of the center of the sphere.}
+%\ccGlue
+%\ccMethod{const FT & r_sq();}{Square radius of the center of the sphere.}
+
+\ccOperations
+
+The comparison operator \ccc{==} must be provided. 
+
+\ccFunction{bool operator ==
+(const AlgebraicKernelForSpheres::PolynomialForSpheres_2_3 & p,
+	const AlgebraicKernelForSpheres::PolynomialForSpheres_2_3 & q);}
+{Tests equality of two polynomials.}
+
+\ccHasModels
+
+\ccc{CGAL::Polynomial_for_spheres_2_3}
+
+\ccSeeAlso
+
+\ccRefIdfierPage{AlgebraicKernelForSpheres}
+
+\end{ccRefConcept}
+
+\begin{ccRefClass}{Polynomial_for_spheres_2_3<FT>}
+
+\ccInclude{CGAL/Polynomials_2_3.h}
+
+\ccIsModel
+
+\ccc{AlgebraicKernelForSpheres::PolynomialForSpheres_2_3}
+
+\ccSeeAlso
+
+\ccRefIdfierPage{AlgebraicKernelForSpheres}
+
+\end{ccRefClass}

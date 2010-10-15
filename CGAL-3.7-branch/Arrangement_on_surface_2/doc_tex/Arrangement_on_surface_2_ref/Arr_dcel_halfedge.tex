@@ -1,0 +1,143 @@
+% +------------------------------------------------------------------------+
+% | Reference manual page: Arr_dcel_halfedge.tex
+% +------------------------------------------------------------------------+
+% | 
+% | Package: Arrangement_2
+% | 
+% +------------------------------------------------------------------------+
+
+\ccRefPageBegin
+
+\begin{ccRefConcept}{ArrangementDcelHalfedge}
+
+\ccDefinition
+
+A halfedge record in a \dcel\ data structure. Two halfedges with opposite
+directions always form an edge (a halfedge pair). The halfedges form together
+chains, defining the boundaries of connected components, such that all
+halfedges along a chain have the same incident face. Note that the chain the
+halfedge belongs to may form the outer boundary of a bounded face (an outer
+CCB) or the boundary of a hole inside a face (an inner CCB). 
+
+An edge is always associated with a curve, but the halfedge records only
+store a pointer to the associated curve, and the actual curve objects
+are stored elsewhere. Two opposite halfedges are always associated with
+the same curve.
+
+\ccCreationVariable{e}
+
+\ccTypes
+%=======
+
+\ccNestedType{Vertex}{the corresponding \dcel\ vertex type.}
+\ccGlue
+\ccNestedType{Face}{the corresponding \dcel\ face type.}
+\ccGlue
+\ccNestedType{Hole}{the corresponding \dcel\ hole type.}
+
+\ccNestedType{X_monotone_curve}{the curve type associated with the edge.} 
+
+\ccCreation
+%==========
+
+\ccConstructor{Arr_dcel_halfedge();}
+   {default constructor.}
+
+\ccMethod{void assign (const Self& other);}
+   {assigns \ccVar{} with the contents of the \ccc{other} halfedge.}
+
+\ccHtmlNoLinksFrom{   % to avoid linkage of Vertex, etc to HDS::Vertex
+
+\ccAccessFunctions
+%=================
+
+\ccMethod{Arr_halfedge_direction direction() const;}
+    {returns \ccc{ARR_LEFT_TO_RIGHT} if \ccVar{}'s source vertex is
+      lexicographically smaller than it target, and
+      \ccc{ARR_RIGHT_TO_LEFT} if it is lexicographically larger than
+      the target.}
+
+\ccMethod{bool is_on_hole() const;}
+    {determines whether the \ccVar{} lies on an outer CCB of a bounded face,
+     or on an inner CCB (a hole inside a face). The function returns \ccc{true}
+     if \ccVar{} lies on a hole.}
+
+All functions below also have \ccc{const} counterparts, returning non-mutable
+pointers or references:
+
+\ccMethod{Halfedge* opposite();}
+    {returns the twin halfedge.}
+
+\ccMethod{Halfedge* prev();}
+    {returns the previous halfedge along the chain.}
+
+\ccMethod{Halfedge* next();}
+    {returns the next halfedge along the chain.}
+
+\ccMethod{Vertex* vertex();}
+    {returns the target vertex.}
+
+\ccMethod{Face* face();}
+    {returns the incident face.
+     \ccPrecond{\ccVar{} lies on the outer boundary of this face.}}
+
+\ccMethod{Hole* hole();}
+    {returns the hole (inner CCB) \ccVar{} belongs to.
+     \ccPrecond{\ccVar{} lies on a hole inside its incident face.}}
+
+\ccMethod{bool has_null_curve() const;}
+    {returns whether the vertex is not associated with a valid curve.}
+ 
+\ccMethod{X_monotone_curve& curve();}
+    {returns the associated curve.
+     \ccPrecond{\ccVar{} is associated with a valid curve.}}
+
+\ccModifiers
+%===========
+
+\ccMethod{void set_opposite (Halfedge* opp);}
+    {sets the opposite halfedge.}
+
+\ccMethod{void set_direction (Arr_halfedge_direction dir);}
+    {sets the lexicographical order between \ccVar{}'s source and target
+     vertices to be \ccc{dir}.
+     The direction of the opposite halfedge is also set to the
+     opposite direction.}
+
+\ccMethod{void set_prev (Halfedge* prev);}
+    {sets the previous halfedge of \ccVar{} along the chain,
+     and updates the cross-pointer \ccc{prev->next()}.}
+
+\ccMethod{void set_next (Halfedge* next);}
+    {sets the next halfedge of \ccVar{} along the chain,
+     and updates the cross-pointer \ccc{next->prev()}.}
+
+\ccMethod{void set_vertex (Vertex* v);}
+    {sets the target vertex.}
+
+\ccMethod{void set_face (Face* f);}
+    {sets the incident face, marking that \ccVar{} lies on the outer CCB
+     of the face \ccc{f}.}
+
+\ccMethod{void set_hole (Hole* ho);}
+    {sets the incident hole, marking that \ccVar{} lies on an inner CCB.}
+
+\ccMethod{void set_curve (X_monotone_curve* c);}
+    {sets the associated curve of \ccVar{} and its opposite halfedge.}
+
+} % ccHtmlNoLinksFrom
+
+\ccSeeAlso
+
+     \ccc{ArrangementDcel}\lcTex{ 
+     (\ccRefPage{ArrangementDcel})}\\
+     \ccc{ArrangementDcelVertex}\lcTex{
+     (\ccRefPage{ArrangementDcelVertex})}\\
+     \ccc{ArrangementDcelFace}\lcTex{
+     (\ccRefPage{ArrangementDcelFace})}\\
+     \ccc{ArrangementDcelHole}\lcTex{
+     (\ccRefPage{ArrangementDcelHole})}\\
+
+\end{ccRefConcept}  
+
+\ccRefPageEnd

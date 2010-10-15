@@ -1,0 +1,63 @@
+#!/bin/csh -f
+# cc_make_ref_pages <Package-dir>
+
+if ( $#argv != 1) goto usage
+if ( ! -d $1) goto error
+
+set reffile       = "$1/main.tex"
+set reftmp        = "$1/main.tmp"
+set introfile     = "$1/intro.tex"
+set cgalintrofile = "$1/cgal_intro.tex"
+set prepath       = ""
+# set prepath       = "ref_man/"
+set prefix        = ""
+set postfix       = ""
+
+if ( -r $reftmp) rm $reftmp
+cat > $reffile <<EOF
+% +------------------------------------------------------------------------+
+% | CBP Reference Manual:  main.tex
+% +------------------------------------------------------------------------+
+% | Automatically generated driver file for the reference manual chapter
+% | of this package. Do not edit manually, you may loose your changes.
+% +------------------------------------------------------------------------+
+
+EOF
+
+if ( -r $introfile ) then
+    echo "\input{$prepath$introfile}" >> $reffile
+    echo "" >> $reffile
+else
+    echo "Warning: no file $introfile found. Not included."
+endif
+foreach file ( $1/*.tex)
+    if ( ! -r $file) then
+        echo "Warning: file '$file' could not be read."
+    endif
+    if ( $file != $introfile && $file != $cgalintrofile \
+         && $file != $reffile ) then
+        echo "${prefix}\input{${prepath}${file}}${postfix}" >> $reftmp
+    endif
+end
+# -f ==> ignore case
+sort -f $reftmp >> $reffile
+echo "" >> $reffile
+echo "%% EOF" >> $reffile
+
+if ( -r $reftmp) rm $reftmp
+exit 0
+
+finished:
+echo "-1"
+exit 0
+
+error:
+echo "Error: parameter '$1' is no directory."
+
+usage:
+echo "Usage: cc_make_ref_pages <Package-dir>"
+echo "       creates a file '<Package-dir>/main.tex' that will be the driver"
+echo "       file for the reference manual chapter for <Package-dir>, i.e. it"
+echo "       inputs '<Package-dir>/intro.tex' for the chapter intro and all"
+echo "       tex files from <Package-dir> in alphabetical order thereafter."
+# EOF

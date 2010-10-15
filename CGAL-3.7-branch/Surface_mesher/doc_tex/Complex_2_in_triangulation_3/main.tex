@@ -1,0 +1,162 @@
+	
+\ccUserChapter{2D Complex embedded in a 3D Triangulation\label{chapter_Complex2inTriangulation3}}
+\label{chapter_C2inT3}
+
+
+\vspace*{-15mm}
+\minitoc
+\vspace*{30mm}
+
+\section{Introduction\label{section_C2inT3_Intro}}
+This package provides a data structure to  represent a
+2D simplicial complex as a subcomplex of a 3D triangulation.
+By 2D simplicial complex we mean a simplicial complex of dimension at
+most 2. The faces of the 2D complex are called
+facets, edges and vertices according to their dimension.
+The represented 2D complex is required has to be simplicial 
+in order to appear 
+as a subcomplex of a 3D triangulation, however 
+it does not need to be connected, nor pure.
+This   means that the complex may have antenna edges, that is 
+edges which do not belong to a facet  or 
+isolated vertices that is vertices which do not belong an edge.
+%Antenna edges are also called isolated edges in the following.
+
+The data structure enables to mark certain edges of the 2D complex.
+This feature can be used in particular
+to mark constrained edges and enables 
+to represent as well non simplicial 2D complexes 
+in a conforming 3D triangulation.
+If the 3D triangulation is conforming any non triangular facet
+of the 2D complex appear as a union of facets of the 3D triangulation.
+The 2D embedded complex represents this triangulated version of the
+2D complex and marked edges are used to distinguish  the original
+edges  of the complex from edges used to triangulate
+the non simplicial facets of the complex.
+
+The data structure enables also to attach some information to the
+facets of the 2D complex and to antenna or marked edges.
+
+The package can for example be used to represent 3D constrained
+triangulations where the constraints facets form a piecewise linear
+complex (PLC) as described in \cite{s-cgehd-98}.
+
+Another typical application of the data structure is surface
+reconstruction. Many reconstruction algorithms
+build a 3D triangulation and extract from there
+a 2D simplicial complex approximating the surface to be reconstructed.
+Embedding the approximated surface in a 3D
+triangulation allows to deal with any kind of topology and to handle
+topology changes occurring in the process of reconstruction.
+The surface to be reconstructed can be 
+a polyhedral surface, a smooth surface or a general curved surface
+with singularities and sharp features. See e.g. \cite{prisme-bo-03}.
+
+\section{Representation  and main functionalities\label{section_C2inT3_Functionalities}}
+
+\subsection{Representation}
+The 2D complex is represented as a 3D triangulations in which
+a subset of facets, edges and vertices are marked as belonging to the 
+2D complex.  
+A 2D complex is fully described by the set of its maximal faces
+where a maximal face of a complex is a face which is not
+a subface of a higher dimensional face of the complex.
+The data structure maintains explicitly the set of maximal faces 
+of the 2D complex, that is 
+the set of facets, antenna edges and isolated vertices.
+
+In addition, the data structure also allows to maintain a subset
+of the complex edges which are of particular interest to the user.
+Those edges are referred to in the documentation as marked
+edges.
+
+\subsection{Creation, modification}
+The data structure can be created from any 3D triangulation
+by specifying the subset of maximal faces of the 2D complex
+and eventually the subset of marked edges.
+
+The data structure offers member functions to add or remove faces from the
+2D complex and member functions  to add or removed edges
+from the subset of marked edges. It also provide member functions
+to set or get the information attached to facets in the 2D complex
+and  to antenna or  marked edges.
+
+The underlying 3D triangulation remains  available to the user
+and can be modified,  however it is the responsibility
+of the user, to update the set of faces of the 2D complex
+when  it is affected by  the modification of the 3D triangulation.
+
+
+\subsection{Queries on the complex}
+The data structure enables to answer  a certain number of queries
+regarding the complex.
+
+Any facet, edge or vertex  of the  3D triangulation 
+can be classified as belonging to the 2D complex or not.
+
+Edges of the 2D complex  are furthermore  classified 
+as isolated, boundary, regular and singular edges. An edge is said
+to be  isolated if it not incident to a facet in the complex
+boundary if it is incident to a single facet of the complex,
+regular if it is incident to exactly two facets in the complex  and 
+singular if it is incident to three or more facets in the complex.
+
+Likewise, the vertices of the complex are classified as  isolated, boundary
+regular or singular.  The classification of a vertex is best
+described by looking  as the adjacency graph of the set 
+of facets of the 2D complex
+incidents to that vertex. 
+Two facets are connected by an arc in this graph if
+they share an edge of the 2D complex. The vertex is isolated
+there is no incident facet, regular  if the graph is a cycle,
+boundary if the graph is a simple path (which can be reduced to a
+single node) and singular in any other case.
+
+In the following we consider that the 2D complex is 
+actually two dimensional and pure or we focus
+on its pure 2D component 
+that is on  the subcomplex formed by the facets and
+their subfaces.
+The data structure allows to know if this subcomplex is manifold or not
+and if it has a boundary or not.  If the pure component is manifold
+the number of its connected components as well
+as the number of connected components of its boundary.
+can be obtained. 
+Counting the number of vertices, edges and
+facets of each  pure connected component  and the number
+of its boundary edges allows to get
+ (through Euler formula)
+the  topology, that is the number of handles of this component.
+
+ 
+
+\subsection{Traversal of the complex}
+The data structure provides iterators to enumerate 
+the facets of the complex, the isolated vertices and edges.
+
+The basic tool to traverse the 2D  complex is the \ccc{neighbor_facet}
+function which provide the facets of the complex adjacent to  a given
+facet if any.
+
+The data structure provides circulators to explore the facet of the
+complex incidents to a regular or boundary vertex. The circulators 
+chooses an orientation around the vertex. In case of a boundary vertex,
+after the last incident facet, the circulator will
+come back to the first one.
+
+\subsection{Input-output}
+CGAL provides an  output operator of the
+2D complex into  various streams:
+files in format  OFF or VRML, \ccc{CGAL::Geomview_stream}.
+The 2D complex can also be output together with its underlying 3D triangulation
+in a special internal file format from where it can be reread for later use.
+
+
+
+\section{Examples\label{section_C2inT3_Examples}}
+
+
+
+
+
+

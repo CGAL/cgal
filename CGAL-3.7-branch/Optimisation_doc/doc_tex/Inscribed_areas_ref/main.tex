@@ -1,0 +1,39 @@
+
+%% cross references
+\ccIndexSubitemSeeAlso{minimum enclosing}{smallest enclosing}
+\ccIndexSubitemSeeAlso{minimum spanning}{smallest enclosing}
+\ccIndexSubitemSeeAlso{concentric spheres}{annulus}
+
+%% -----------------------------------------------------------------------------
+\ccRefChapter{Inscribed Areas}
+\ccChapterAuthor{Michael Hoffmann \and Eli Packer}
+
+
+This chapter describes concepts, classes, and functions for
+maximum area and perimeter inscribed $k$-gon (2D), extremal inscribed
+$k$-gon (2D), largest empty isorectangle (2D).
+
+\section*{Assertions}
+The optimization code uses infix \ccc{OPTIMISATION} in the assertions,
+e.g.\ defining the compiler flag
+\ccc{CGAL_OPTIMISATION_NO_PRECONDITIONS} switches precondition
+checking off, cf.~Section~\ref{sec:checks}.
+
+\section{Classified References Pages}
+
+\ccRefIdfierPage{CGAL::maximum_area_inscribed_k_gon_2}\\
+\ccRefIdfierPage{CGAL::maximum_perimeter_inscribed_k_gon_2}\\
+\ccRefIdfierPage{CGAL::extremal_polygon_2}\\
+\ccRefIdfierPage{CGAL::Largest_empty_iso_rectangle_2<T>}\\[1ex]
+\ccRefIdfierPage{CGAL::Extremal_polygon_area_traits_2<K>}\\
+\ccRefIdfierPage{CGAL::Extremal_polygon_perimeter_traits_2<K>}\\[1ex]
+\ccRefConceptPage{ExtremalPolygonTraits_2}\\
+\ccRefConceptPage{LargestEmptyIsoRectangleTraits_2}
+
+
+
+
+\input{Inscribed_areas_ref/main_Extremal_polygons.tex}
+
+\input{Inscribed_areas_ref/main_Largest_empty_iso_rectangle_2.tex}
+

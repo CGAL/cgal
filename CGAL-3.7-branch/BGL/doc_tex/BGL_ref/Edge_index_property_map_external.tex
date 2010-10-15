@@ -1,0 +1,57 @@
+
+\begin{ccRefClass}{Edge_index_property_map_external<Graph>}
+
+%% add template arg's if necessary
+
+%% \ccHtmlCrossLink{}     %% add further rules for cross referencing links
+%% \ccHtmlIndexC[class]{} %% add further index entries
+\ccDefinition
+
+The class \ccRefName\ provides a model for the concept 
+\ccAnchor{http://www.boost.org/libs/property_map/ReadablePropertyMap.html}{ReadablePropertyMap} 
+that maps an edge in a {\sc Bgl}
+\ccAnchor{http://www.boost.org/libs/graph/doc/Graph.html}{graph}
+to the integer numbers in the range \ccc{[0,boost::num_edges(graph)]}
+via a non-intrusive mechanism (so that any graph can be indexed).
+
+The template parameter \ccc{Graph} must be a model of a {\sc Bgl}
+\ccAnchor{http://www.boost.org/libs/graph/doc/Graph.html}{graph}
+
+\ccInclude{CGAL/boost/graph/Edge_index_property_map_external.h}
+
+\ccTypes
+  \ccTypedef{std::size_type value_type;}
+    {The type of the property.}
+\ccGlue
+  \ccTypedef{std::size_type reference;}
+    {The result type of the map operator.}
+\ccGlue
+  \ccNestedType{Graph}{The Graph template parameter.}
+\ccGlue
+  \ccTypedef{typename boost::graph_traits<Graph>::edge_descriptor key_type;}
+  {The type of {\sc Bgl} edge descriptor used as key.}
+
+\ccCreation
+\ccCreationVariable{pm}  %% choose variable name
+
+\ccConstructor{CGAL::Edge_index_property_map_external<Graph>( Graph const& g ); }
+{Initializes an internal table which associates a unique integer
+number in the range \ccc{[0,boost::num_edges(g)]} to each edge in \ccc{g}.}
+
+\ccOperations
+
+\ccMethod
+  {reference operator[]( key_type const& edge ) const;}
+  {Returns the unique index for \ccc{edge} as maintained by this map.}
+    
+\ccIsModel
+\ccAnchor{http://www.boost.org/libs/property_map/ReadablePropertyMap.html}{ReadablePropertyMap} 
+
+
+\end{ccRefClass}
+
+% +------------------------------------------------------------------------+
+%%RefPage: end of main body, begin of footer
+% EOF
+% +------------------------------------------------------------------------+
+

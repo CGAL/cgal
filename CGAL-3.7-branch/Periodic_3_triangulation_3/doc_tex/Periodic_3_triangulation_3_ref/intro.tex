@@ -1,0 +1,90 @@
+% +------------------------------------------------------------------------+
+% | Reference manual page: Periodic_3_triangulation_3/intro.tex
+% +------------------------------------------------------------------------+
+% | 19.2.2009   Monique Teillaud, Manuel Caroli
+% | Package: Periodic_3_triangulation_3
+% | 
+\RCSdef{\RCSPeriodicTriangulationIntroRev}{$Id$}
+\RCSdefDate{\RCSPeriodicTriangulationIntroDate}{$Date$}
+% |
+%%RefPage: end of header, begin of main body
+% +------------------------------------------------------------------------+
+
+%\clearpage
+%\section{Reference pages for 3D-Triangulations}
+
+\ccRefChapter{3D Periodic Triangulations}
+\ccChapterAuthor{Manuel Caroli \and Monique Teillaud}
+
+The main classes of the 3D Periodic Triangulation package are
+\ccc{Periodic_3_triangulation_3} and
+\ccc{Periodic_3_Delaunay_triangulation_3}. They contain functionality
+to access triangulations and to run queries on
+them. \ccc{Periodic_3_Delaunay_triangulation_3} can construct and
+modify Delaunay triangulations. It takes the geometric traits as well
+as the triangulation data structure as template parameters. 
+
+The geometric traits class must be a model of the concept
+\ccc{Periodic_3DelaunayTriangulationTraits_3}. It contains all
+predicates and constructions that are needed by the functions in the
+triangulation classes.
+
+The package uses \ccc{Triangulation_data_structure_3} to represent the
+triangulation. The cells and vertices need to be models of the
+concepts \ccc{Periodic_3TriangulationDSCellBase_3} and
+\ccc{Periodic_3TriangulationDSVertexBase_3}, respectively.
+A triangulation is stored as a collection of vertices and cells that
+are linked together through incidence and adjacency relations. Each
+cell gives access to its four incident vertices and to its four
+adjacent cells. Each vertex gives access to one of its incident
+cells.
+
+The four vertices of a cell are indexed with 0, 1, 2 and 3 in positive
+orientation, the positive orientation being defined by the orientation
+of the underlying space $\mathbb T_c^3$. The neighbors of a cell are
+also indexed with 0, 1, 2, 3 in such a way that the neighbor indexed
+by $i$ is opposite to the vertex with the same index. See
+Figure~\ref{P3Triangulation3-fig-orient}.
+
+In order to be able to specify the tetrahedra that contain vertices
+both inside and outside the original domain we store an additional
+offset information in each vertex of a cell. These offsets are models
+of the concept \ccc{Periodic_3Offset_3}. 
+
+
+\section{Classified Reference Pages}
+
+\subsection*{Concepts}
+
+\ccRefConceptPage{Periodic_3DelaunayTriangulationTraits_3}
+
+\ccRefConceptPage{TriangulationDataStructure_3}\\
+\ccRefConceptPage{Periodic_3TriangulationDSCellBase_3}\\
+\ccRefConceptPage{Periodic_3TriangulationDSVertexBase_3}
+
+\ccRefConceptPage{Periodic_3Offset_3}
+
+\subsection*{Classes}
+
+\subsubsection*{Main Classes}
+
+\ccRefIdfierPage{CGAL::Periodic_3_triangulation_3<PT,TDS>}\\
+\ccRefIdfierPage{CGAL::Periodic_3_Delaunay_triangulation_3<PT,TDS>}\\
+\ccRefIdfierPage{CGAL::Periodic_3_triangulation_hierarchy_3<PTr>}
+
+\ccRefIdfierPage{CGAL::Periodic_3_triangulation_ds_cell_base_3<>}\\
+\ccRefIdfierPage{CGAL::Periodic_3_triangulation_ds_vertex_base_3<>}
+
+\ccRefIdfierPage{CGAL::Periodic_3_offset_3}
+
+\subsubsection*{Traits Classes}
+
+\ccRefIdfierPage{CGAL::Periodic_3_triangulation_traits_3<Traits,Periodic_3Offset_3>}
+
+\subsection*{Enums}
+
+\ccRefIdfierPage{CGAL::Periodic_3_triangulation_3::Iterator_type}\\
+\ccRefIdfierPage{CGAL::Periodic_3_triangulation_3::Locate_type}
+
+
+

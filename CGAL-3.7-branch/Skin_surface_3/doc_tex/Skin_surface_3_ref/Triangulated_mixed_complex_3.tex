@@ -1,0 +1,60 @@
+% +------------------------------------------------------------------------+
+% | Reference manual page: Triangulated_mixed_complex_3.tex
+% +------------------------------------------------------------------------+
+% | 27.09.2005   Nico Kruithof
+% | Package: Skin_surface
+% | 
+\RCSdef{\RCSTriangulatedmixedcomplexRev}{$Id$}
+\RCSdefDate{\RCSTriangulatedmixedcomplexDate}{$Date$}
+% +------------------------------------------------------------------------+
+
+\ccRefPageBegin
+
+%%RefPage: end of header, begin of main body
+% +------------------------------------------------------------------------+
+
+
+\begin{ccRefClass}{Triangulated_mixed_complex_3<SkinSurfaceTraits_3,GT,PolyhedronKernel_3,Tds>}
+\label{refTriangulatedmixedcomplex}
+
+\ccDefinition 
+%
+The \ccRefName\ is a default class that can be used to
+store the triangulated mixed complex. It is derived from the
+\ccc{Triangulation_3} class and extends cell-type of the triangulation
+with a pointer to the quadratic surface that defines the skin surface
+within the cell.
+
+\ccInclude{CGAL/Triangulated_mixed_complex_3.h}
+
+\ccParameters 
+%
+The first template parameter \ccc{SkinSurfaceTraits_3} is a model of
+the \ccc{SkinSurfaceTraits_3} concept and is used to derive default
+values for the following parameters. 
+
+The second parameter defines the \ccc{TriangulationTraits_3} of the
+triangulation and should be a model of the \ccc{TriangulationTraits_3}
+concept. By default this template is
+\ccc{SkinSurfaceTraits_3::Triangulated_mixed_complex_traits}.
+
+The third template argument defines the kernel used for quadratic
+surface class, which is kernel of the Polyhedral mesh. By default this
+template is \ccc{SkinSurfaceTraits_3::Polyhedron_traits}.
+
+The last template argument defines the enhanced
+\ccc{TriangulationDataStructure_3}, which is the second template
+argument of the parent class. Its default value is
+\ccc{Triangulation_data_structure_3 < Triangulation_vertex_base_3<GT>,
+  Triangulated_mixed_complex_cell_3<GT, PolyhedronKernel_3> >}
+
+\ccInheritsFrom
+\ccc{CGAL::Triangulation_3<TriangulationTraits_3,TriangulationDataStructure_3>}
+
+\ccSeeAlso
+\ccRefIdfierPage{SkinSurfaceTraits_3}\\
+\ccRefIdfierPage{CGAL::Triangulated_mixed_complex_cell_3<GT,SurfaceKernel,Cb>}\\
+\ccRefIdfierPage{CGAL::Triangulation_3<TriangulationTraits_3,TriangulationDataStructure_3>}
+
+
+\end{ccRefClass}

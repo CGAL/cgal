@@ -1,0 +1,96 @@
+#!/bin/tcsh -f
+# **************************************************************************
+# 
+#  cc_check
+#  ===================
+#  A script to check the consistency between a specification written
+#  in a TeX file with the cc_manual.sty and the implementation in 
+#  a C++ header file.
+#
+#  The following programs are necessary to run this script
+#
+#    o  cc_build_checker
+#    o  flex
+#    o  cc / gcc
+#
+#  Author    : (c) 1997 Lutz Kettner
+#              as of version 3.3 (Sept. 1999) maintained by Susan Hert
+#  Revision  : $Id$
+#  Date      : $Date$
+# 
+# **************************************************************************
+
+# =====================================================================
+# Begin of Installation Section: ...
+# =====================================================================
+# Choose appropriate values in the environment or uncomment and
+# set the values here. See the INSTALLATION file for more details.
+
+# C Compiler: Gnu gcc 2.6.3 (or above) or the usual system cc:
+# CC = gcc
+
+# Gnu C as default if none is chosen so far.
+if ( ! $?CC) setenv CC gcc
+
+# =====================================================================
+# ... End of Installation Section.
+# =====================================================================
+
+if ( $?DEBUG) echo "# DEBUG defined; all commands will be echoed."
+
+if ( $#argv < 1) goto usage
+set spec = ""
+while ($#argv > 0)
+    if ( "$1" == "-h") goto usage
+    if ( "$1" == "-against") then
+        shift
+	if ( $#argv < 1) goto usage
+	break
+    endif
+    if ( "$1" == "-a") then
+        shift
+	if ( $#argv < 1) goto usage
+	break
+    endif
+    set spec = "$spec $1"
+    shift
+end
+
+if ( $?DEBUG) echo "cc_build_checker cc_checker.yy cc_checker.h $spec"
+cc_build_checker cc_checker.yy cc_checker.h $spec
+if ( $?DEBUG) echo "flex -t -8 cc_checker.yy > cc_checker.c"
+flex -t -8 cc_checker.yy > cc_checker.c
+if ( $?DEBUG) echo "$CC -o cc_checker cc_checker.c"
+$CC -o cc_checker cc_checker.c
+if ( $?DEBUG) then 
+    echo "# rm cc_checker.yy cc_checker.c cc_checker.h cc_checker.o"
+else
+    rm cc_checker.yy cc_checker.c cc_checker.h
+    if ( -w cc_checker.o) rm cc_checker.o
+endif
+if ( $?DEBUG) echo "cc_checker $argv"
+./cc_checker $argv
+set returnvalue = $status
+if ( $returnvalue) then
+   echo '==>  NOTE: The program call `cc_checker '"$argv""' can be used to"
+   echo '==>        check the sources again. Otherwise, remove `cc_checker'"'."
+   if ( $returnvalue == 3) set returnvalue = 0
+else
+   if ( $?DEBUG) then 
+       echo "# rm cc_checker"
+   else
+       rm cc_checker
+   endif
+endif
+exit $returnvalue
+
+usage:
+echo "$0 "'$Id$'" (c) Lutz Kettner"
+echo "Usage: $0 <spec-files...> [-against [<options>] <impl-files...>]"
+echo "   or: $0 -against [<options>] <impl-files...>"
+echo "           -a          short form for -against"
+echo "           -fw         recognize FunnelWeb or AnyWeb keywords"
+echo "           -match      print all matched text"
+echo "           -unmatch    print all unmatched text"
+echo "           -comm       print all commented text"
+exit 1

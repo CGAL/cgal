@@ -1,0 +1,14 @@
+\section{Analysis}
+
+Function \ccc{CGAL::compute_average_spacing()} computes the average spacing of all input points to their $k$ nearest neighbor points, $k$ being specified by the user. As it provides an order of a point set density, this function is used downstream the surface reconstruction pipeline to automatically determine some parameters such as output mesh sizing for surface reconstruction. \\
+
+\ccExample
+
+The following example reads a point set in the \ccc{xyz} format and computes the average spacing. Index, position and color are stored in a tuple and accessed through property maps.
+\ccIncludeExampleCode{Point_set_processing_3/average_spacing_example.cpp}
+
+Note that other functions such as centroid or bounding volumes are found in other \cgal\ components: \\
+\ccc{CGAL::centroid}  \\
+\ccc{CGAL::bounding_box}  \\
+\ccc{CGAL::bounding_sphere}  \\
+

@@ -1,0 +1,158 @@
+% +------------------------------------------------------------------------+
+% | Reference manual page: Basic_sweep_line_2.tex
+% +------------------------------------------------------------------------+
+% | 
+% | Package: Arrangement_2
+% | 
+% +------------------------------------------------------------------------+
+
+\ccRefPageBegin
+
+\begin{ccRefClass}{Basic_sweep_line_2<Traits, BasicVisitor>}
+%\label{arr_ref:arr_obs}
+
+\ccDefinition
+%============
+
+\ccClassTemplateName\ 
+
+\ccInclude{CGAL/Basic_sweep_line_2.h}
+
+\ccTypes
+%=======
+
+
+\ccTypedef{typedef typename Basic_sweep_line_2<Traits, BasicVisitor>::Traits_2 Traits_2;}
+    {the traits type.}
+\ccGlue
+
+\ccTypedef{typedef typename Basic_sweep_line_2<Traits, BasicVisitor>::X_monotone_curve_2 X_monotone_curve_2;}
+    {the $x$-monotone curve type.}
+\ccGlue
+\ccTypedef{typedef typename Basic_sweep_line_2<Traits, BasicVisitor>::Point_2 Point_2;}
+    {the point type.}
+\ccGlue
+
+\ccTypedef{typedef typename Basic_sweep_line_2<Traits, BasicVisitor>::Event Event;}
+    {the event type.}
+\ccGlue
+
+\ccTypedef{typedef typename Basic_sweep_line_2<Traits, BasicVisitor>::Subcurve Subcurve;}
+    {the subcurve type.}
+\ccGlue
+
+\ccTypedef{typedef typename Basic_sweep_line_2<Traits, BasicVisitor>::Status_line_iterator Status_line_iterator;}
+{the iterator type of the status line, its value type is  \ccc{Subcurve*}.}
+\ccGlue
+\ccTypedef{typedef typename Basic_sweep_line_2<Traits, BasicVisitor>::Event_queue_iterator Event_queue_iterator;}
+{the iterator type of the event queue, its value type is  \ccc{Event*}.}
+\ccGlue
+
+\ccTypedef{typedef typename Basic_sweep_line_2<Traits, BasicVisitor>::Visitor Visitor;}
+    {the visitor type.}
+\ccGlue
+
+\ccCreation
+\ccCreationVariable{obs}
+%=======================
+
+\ccConstructor{Basic_sweep_line_2 (Visitor *visitor);} 
+    {constructs a sweep line object with a pointer to a sweep line visitor.}
+ 
+\ccConstructor{Basic_sweep_line_2 (Traits_2 *traits, Visitor *visitor);} 
+    {constructs a sweep line object with pointer to a triats object and a pointer to a sweep-line visitor.}
+
+\ccMethods
+%===========
+
+\ccMethod{template<class CurveInputIterator>
+  void sweep (CurveInputIterator curves_begin,
+              CurveInputIterator curves_end);}
+   {Run the sweep-line algorithm on a given range of x-monotone curves.
+    \ccc{curves_begin} is an iterator for the first curve in the range.
+    \ccc{curves_end} is a past-the-end iterator for the range.
+    \ccPrecond {The value-type of CurveInputIterator is X_monotone_curve_2.}}
+    
+    
+\ccMethod{template<class CurveInputIterator, class PointInputIterator>
+  void sweep (CurveInputIterator curves_begin,
+              CurveInputIterator curves_end,
+              PointInputIterator action_points_begin,
+              PointInputIterator action_points_end);}
+   {Run the sweep-line algorithm on a range of x-monotone curves and a range 
+    of action event points (if a curve passed through an action point, it will be split).
+   \ccc{curves_begin} is an iterator for the first x-monotone curve in the range.
+   \ccc{curves_end} is a past-the-end iterator for this range.
+   \ccc{points_begin} An iterator for the first point in the range.
+   \ccc{points_end} is a past-the-end iterator for this range.
+   \ccPrecond{ The value-type of XCurveInputIterator is the traits-class
+    X_monotone_curve_2, and the value-type of PointInputIterator is the traits-class Point_2.}}
+    
+    
+    \ccMethod{template<class CurveInputIterator, class ActionPointItr,class QueryPointItr>
+  void sweep (CurveInputIterator curves_begin,
+              CurveInputIterator curves_end,
+              ActionPointItr action_points_begin,
+              ActionPointItr action_points_end,
+              QueryPointItr query_points_begin,
+              QueryPointItr query_points_end);}
+   { Run the sweep-line alogrithm on a range of x-monotone curves, a range   
+     of action event points (if a curve passed through an action point, it will
+     be split) and a range of query points (if a curve passed through a
+     query point,it will not be splitted).
+   \ccc{curves_begin} An iterator for the first x-monotone curve in the range.
+   \ccc{curves_end} A past-the-end iterator for this range.
+   \ccc{points_begin} An iterator for the first point in the range.
+   \ccc{points_end} A past-the-end iterator for this range.
+   \ccPrecond{ The value-type of XCurveInputIterator is the traits-class 
+        X_monotone_curve_2, and the value-type of PointInputIterator is the 
+        traits-class Point_2.}}
+
+
+\ccHeading{Utility methods that can be used by the visitor during the sweep process.}
+%=========================================================
+
+\ccMethod{Status_line_iterator status_line_begin();}
+    {Get an iterator for the first subcurve in the status line.}
+\ccGlue
+\ccMethod{Status_line_iterator status_line_end();}
+    {Get a past-the-end iterator for the subcurves in the status line.}
+
+\ccMethod{unsigned int status_line_size() const;}
+    {Get the status line size.}
+\ccGlue
+\ccMethod{bool is_status_line_empty() const;}
+    {Check if the status line is empty.}
+
+\ccMethod{Event_queue_iterator event_queue_begin();}
+    {Get an iterator for the first event in event queue.}
+\ccGlue
+\ccMethod{Event_queue_iterator event_queue_end();}
+    {Get a past-the-end iterator for the events in the in event queue.}
+    
+    \ccMethod{unsigned int event_queue_size() const;}
+    {Get the event queue size.}
+    
+    \ccMethod{bool is_event_queue_empty() const;}
+    {Check if the event queue is empty.}
+    
+    \ccMethod{void stop_sweep();}
+    {Stop the sweep by erasing the event queue (except for the current event).
+     This function may called by the visitor during 'arter_handle_event' in
+     order to stop the sweep-line process.}
+     
+     \ccMethod{void deallocate_event(Event* event);}
+    { Deallocate event object.
+      This method is made public to allow the visitor to manage the events
+      deallocation (as necessary). }
+    
+    \ccMethod{Event* current_event();}
+    {Get the current event.}
+    
+    \ccMethod{Traits_2* traits ();}
+    {Get the traits object.}
+    
+
+\end{ccRefClass}
+
+\ccRefPageEnd

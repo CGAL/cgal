@@ -1,0 +1,28 @@
+\ccRefChapter{First chapter}{first_user_chap_label}
+\label{first_ref_chap_label}
+
+The first chapter of the reference manual defines \ccc{operator+}
+and \ccc{HDS} concept
+
+\gdef\ccTagOperatorLayout{\ccFalse}
+\begin{ccRefFunction}{operator+}
+\ccTexHtml{\ccSetThreeColumns{Vector_2<R>X }{}{\hspace*{8.0cm}}}{}
+
+\ccInclude{CGAL/Vector_2.h}
+
+\ccFunction{Vector_2<R> operator+(const R::RT &s, const Vector_2<R> &w);}
+       {Multiplication with a scalar from the left.}
+
+\ccInclude{CGAL/Vector_3.h}
+
+\ccFunction{Vector_3<R> operator+(const R::RT &s, const Vector_3<R> &w);}
+       {Multiplication with a scalar from the left.}
+\end{ccRefFunction}
+
+\begin{ccRefConcept}{HDS}
+
+\ccDefinition
+\ccRefName\ is a hungry data structure
+
+Blah blah blah.
+\end{ccRefConcept}

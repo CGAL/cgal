@@ -1,0 +1,102 @@
+% +------------------------------------------------------------------------+
+% | CBP Reference Manual:  intro.tex
+% +------------------------------------------------------------------------+
+% | Model for a new style of manuals in CBP
+% |
+% | 14.05.1998   Lutz Kettner
+% +------------------------------------------------------------------------+
+
+\ccRefChapter{Handles and Circulators}
+\ccChapterAuthor{Olivier Devillers \and Lutz Kettner \and Michael Seel
+  \and Mariette Yvinec}
+
+
+
+
+\input{Circulator_ref/handle_intro}
+
+The concept of iterators in \stl\ is tailored for linear sequences.
+In contrast, circular sequences occur naturally in many combinatorial
+and geometric structures. Examples are polyhedral surfaces and planar
+maps, where the edges emanating from a vertex or the edges around a
+facet form a circular sequence. 
+
+We provide several functions, classes and macros to assist in working
+with circulators: distance computation, adaptor classes converting
+between circulators and iterators, base classes to ease the implementation
+of circulators, and support for generic algorithms that work with
+circulators as well as with iterators.
+
+\section{Classified Reference Pages}
+
+\subsection*{Concepts}
+
+\ccRefConceptPage{Handle}\\
+\ccRefConceptPage{Circulator}\\
+\ccc{Forward_circulator}\\
+\ccc{Bidirectional_circulator}\\
+\ccc{Random_access_circulator}\\
+
+\subsection*{Classes}
+
+\ccRefIdfierPage{CGAL::Container_from_circulator<C>}\\
+\ccRefIdfierPage{CGAL::Circulator_from_iterator<I>}\\
+\ccRefIdfierPage{CGAL::Circulator_from_container<C>}\\
+\ccc{CGAL::Const_circulator_from_container<C>}
+
+\ccRefIdfierPage{CGAL::Circulator_tag}\\
+\ccc{CGAL::Iterator_tag}\\
+\ccc{CGAL::Forward_circulator_tag}\\
+\ccc{CGAL::Bidirectional_circulator_tag}\\
+\ccc{CGAL::Random_access_circulator_tag}
+
+\ccRefIdfierPage{CGAL::Circulator_base}\\
+\ccc{CGAL::Forward_circulator_base}\\
+\ccc{CGAL::Bidirectional_circulator_base}\\
+\ccc{CGAL::Random_access_circulator_base}
+
+\ccRefIdfierPage{CGAL::Circulator_traits<C>}
+
+\subsection*{Functions}
+\ccThree{random_access_iterator_tag}{}{page 999.}
+\ccAutoIndexingOff
+\ccFunction{size_type        CGAL::circulator_size ( C c);}
+    {\hfill \ccRefPage{CGAL::circulator_size}}\ccGlue
+\ccFunction{difference_type  CGAL::circulator_distance ( C c, C d);}
+    {\hfill \ccRefPage{CGAL::circulator_distance}}\ccGlue
+\ccFunction{difference_type  CGAL::iterator_distance ( IC ic1, IC ic2);}
+    {\hfill \ccRefPage{CGAL::iterator_distance}}\ccGlue
+\ccFunction{bool CGAL::is_empty_range ( IC i, IC j);}
+    {\hfill \ccRefPage{CGAL::is_empty_range}}
+
+\ccFunction{CGAL::Circulator_tag CGAL::query_circulator_or_iterator ( C c);}
+    {\hfill \ccRefPage{CGAL::query_circulator_or_iterator}}\ccGlue
+\ccFunction{CGAL::Iterator_tag CGAL::query_circulator_or_iterator ( I i);}
+    {}
+
+\ccFunction{void CGAL::Assert_circulator ( C c);}
+    {\hfill \ccRefPage{CGAL::Assert_circulator}}\ccGlue
+\ccFunction{void CGAL::Assert_iterator ( I i);}
+    {}\ccGlue
+\ccFunction{void CGAL::Assert_input_category ( I i);}
+    {}\ccGlue
+\ccFunction{void CGAL::Assert_output_category ( I i);}
+    {}\ccGlue
+\ccFunction{void CGAL::Assert_forward_category ( IC ic);}
+    {}\ccGlue
+\ccFunction{void CGAL::Assert_bidirectional_category ( IC ic);}
+    {}\ccGlue
+\ccFunction{void CGAL::Assert_random_access_category ( IC ic);}
+    {}\ccGlue
+\ccFunction{void CGAL::Assert_circulator_or_iterator ( IC i);}
+    {}
+\ccAutoIndexingOn
+
+\subsection*{Macros}
+
+\ccc{CGAL_For_all(i,j)}\hfill \ccRefPage{CGAL_For_all}\\
+\ccc{CGAL_For_all_backwards(i,j)}
+
+
+
+%% EOF %%

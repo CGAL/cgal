@@ -1,0 +1,130 @@
+%% Copyright (c) 2005  Foundation for Research and Technology-Hellas (Greece).
+%% All rights reserved.
+%%
+%% This file is part of CGAL (www.cgal.org); you may redistribute it under
+%% the terms of the Q Public License version 1.0.
+%% See the file LICENSE.QPL distributed with CGAL.
+%%
+%% Licensees holding a valid commercial license may use this file in
+%% accordance with the commercial license agreement provided with the software.
+%%
+%% This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
+%% WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
+%%
+%% $URL$
+%% $Id$
+%% 
+%%
+%% Author(s)     : Menelaos Karavelas <mkaravel@iacm.forth.gr>
+
+
+\begin{ccRefConcept}{AdaptationTraits_2}
+
+%% \ccHtmlCrossLink{}     %% add further rules for cross referencing links
+%% \ccHtmlIndexC[concept]{} %% add further index entries
+\ccDefinition
+
+The concept \ccc{AdaptationTraits_2} defines the functors required for
+accessing geometric information in the Delaunay graph that is needed by the
+\ccc{Voronoi_diagram_2<DG,AT,AP>} class.
+It optionally defines a functor for performing nearest site queries. A
+tag is provided for determining whether this functor is defined or not.
+
+\ccRefines
+\ccc{DefaultConstructible}, \ccc{CopyConstructible}, \ccc{Assignable}
+
+\ccTypes
+\ccTwo{AdaptationTraits_2::Delaunay_graph+}{}
+%
+\ccNestedType{Point_2}{A type for a point.}
+\ccGlue
+\ccNestedType{Site_2}{A type for the sites of the Voronoi diagram.}
+\ccGlue
+\ccNestedType{Delaunay_graph}{A type for the triangulated Delaunay
+  graph. The type \ccc{Delaunay_graph} must be a model of the
+  \ccc{DelaunayGraph_2} concept.}
+%%
+\ccThree{typedef Delaunay_graph::Vertex_handle}{Delaunay_Vertex_handle+}{}
+\ccTypedef{typedef Delaunay_graph::Edge Delaunay_edge;}
+{The type of the edges of the Delaunay graph}
+\ccGlue
+\ccTypedef{typedef Delaunay_graph::Face_handle Delaunay_face_handle;}
+{The type of the face handles of the Delaunay graph}
+\ccGlue
+\ccTypedef{typedef Delaunay_graph::Vertex_handle Delaunay_vertex_handle;}
+{The type of the vertex handles of the Delaunay graph.}
+%%
+\ccTwo{AdaptationDiagram_2::Construct_Voronoi_point_2}{}
+\ccNestedType{Access_site_2}{A type for a functor that accesses the
+  site associated with a vertex. The functor should be a model of the
+  concepts \ccc{DefaultConstructible}, \ccc{CopyConstructible},
+  \ccc{Assignable} and \ccc{AdaptableFunctor} (with one argument). The
+  functor must provide the following operator:\\
+  \centerline{\ccc{result_type operator()(Delaunay_vertex_handle v)}}\\
+  where the result type \ccc{result_type} must be either \ccc{Site_2} or
+  \ccc{const Site_2&}.}
+\ccGlue
+\ccNestedType{Construct_Voronoi_point_2}{A type for a functor that
+  constructs the dual point of a (triangular) face in the Delaunay
+  graph. This point is the Voronoi vertex of the three sites defining
+  the face in the Delaunay graph. The functor must be a model of the
+  concepts \ccc{DefaultConstructible}, \ccc{CopyConstructible},
+  \ccc{Assignable}, \ccc{AdaptableFunctor} (with one argument). It
+  must provide the following operator:\\
+  \centerline{\ccc{Point_2 operator()(Delaunay_face_handle f)}}.
+  The face handle \ccc{f} must not correspond to an infinite face.}
+\ccGlue
+\ccNestedType{Has_nearest_site_2}{A tag for determining if the adaptation
+  traits class provides a functor for performing nearest site queries.
+  This tag is equal to either \ccc{CGAL::Tag_true} (a nearest site
+  query functor is available) or \ccc{CGAL::Tag_false} (a nearest site
+  query functor is not available).}
+\ccGlue
+\ccNestedType{Nearest_site_2}{A type for a functor that performs
+  nearest site queries. Semantically, the result of the query is
+  either a face, edge or vertex of the Delaunay graph. It is a face if
+  the query point has at least three closest sites; the returned face
+  has closest sites as vertices. It is an edge if the query point is
+  equidistant to exactly two vertices of the Delaunay graph, which are
+  the source and target vertices of the edge. In all other cases, the
+  search result is a vertex, namely, the unique vertex of the
+  Delaunay graph closest to the query point. The functor must be a
+  model of the concepts \ccc{DefaultConstructible},
+  \ccc{CopyConstructible}, \ccc{Assignable}, \ccc{AdaptableFunctor}
+  (with two arguments). It must provide the following operator:\\
+  \centerline{\ccc{result_type operator()(Delaunay_graph dg, Point_2 p)}}\\
+  where the result type \ccc{result_type} is
+  \ccc{boost::variant<Delaunay_vertex_handle,Delaunay_edge,Delaunay_face_handle>}.\\
+  This type is required only if
+  \ccc{Has_nearest_site_2} is equal to \ccc{CGAL::Tag_true}.}
+
+
+
+\ccCreationVariable{at}  %% choose variable name
+
+\ccHeading{Access to objects}
+\ccThree{Construct_Voronoi_point_2}{at.construct_Voronoi_point_2_object()+}{}
+\ccMethod{Access_site_2 access_site_2_object();}{}
+\ccGlue
+\ccMethod{Construct_Voronoi_point_2 construct_Voronoi_point_2_object();}{}
+\ccGlue
+\ccMethod{Nearest_site_2 nearest_site_2_object();}{This method is
+  required only if \ccc{Has_nearest_site_2} is equal to \ccc{CGAL::Tag_true}.}
+
+%
+\ccHasModels
+\ccc{CGAL::Apollonius_graph_adaptation_traits_2<AG2>}\\
+\ccc{CGAL::Delaunay_triangulation_adaptation_traits_2<DT2>}\\
+\ccc{CGAL::Regular_triangulation_adaptation_traits_2<RT2>}\\
+\ccc{CGAL::Segment_Delaunay_graph_adaptation_traits_2<SDG2>}
+
+\ccSeeAlso
+\ccc{DelaunayGraph_2}\\
+\ccc{CGAL::Voronoi_diagram_2<DG,AT,AP>}
+\end{ccRefConcept}
+
+% +------------------------------------------------------------------------+
+%%RefPage: end of main body, begin of footer
+% EOF
+% +------------------------------------------------------------------------+
+

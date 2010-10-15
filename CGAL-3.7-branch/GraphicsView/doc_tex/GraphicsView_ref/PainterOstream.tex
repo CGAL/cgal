@@ -1,0 +1,49 @@
+\ccDefGlobalScope{CGAL::}
+\begin{ccRefClass}[Qt::]{PainterOstream<K>}
+
+\ccDefinition
+An object of type \ccRefName\ provides output operators for \cgal\ kernel objects.
+As \cgal\ has unbounded objects the \ccRefName\ must be constructed with a clipping rectangle.
+This is typically the visible area of the widget where the unbounded object is displayed.
+
+\ccInclude{CGAL/Qt/PainterOstream.h}
+
+\ccCreationVariable{os}
+
+\ccCreation
+\ccConstructor{PainterOstream<K>(QPainter* qp, QRectF clippingRect);}{The clipping rect is used for unbounded \cgal\ objects.}
+
+\ccOperations
+
+\ccMethod{PainterOstream<K> operator<<(K::Point_2);}{Draws a point.}
+
+\ccMethod{PainterOstream<K> operator<<(K::Segment_2);}{Draws a segment.}
+
+\ccMethod{PainterOstream<K> operator<<(K::Ray_2);}{Draws a clipped ray.}
+
+\ccMethod{PainterOstream<K> operator<<(K::Line_2);}{Draws a clipped line.}
+
+\ccMethod{PainterOstream<K> operator<<(K::Triangle_2);}{Draws a triangle.}
+
+\ccMethod{PainterOstream<K> operator<<(K::Iso_rectangle_2);}{Draws an iso rectangle.}
+
+\ccMethod{PainterOstream<K> operator<<(K::Circle_2);}{Draws a circle.}
+
+\ccMethod{PainterOstream<K> operator<<(K::Circular_arc_2);}{Draws a circular arc.}
+
+\ccMethod{PainterOstream<K> operator<<(std::list<K::Point_2>);}{Draws a polyline. In order to close it the first and last point must be equal. }
+
+\ccMethod{PainterOstream<K> operator<<(Bbox_2);}{Draws an iso rectangle.}
+
+\ccMethod{PainterOstream<K> operator<<(QPen);}{Sets the pen used in the next paint operations.}
+
+\ccMethod{PainterOstream<K> operator<<(QBrush);}{Sets the brush used in the next paint operations.}
+
+\end{ccRefClass}
+
+
+
+
+
+
+

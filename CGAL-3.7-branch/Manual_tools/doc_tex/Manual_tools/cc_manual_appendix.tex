@@ -1,0 +1,1068 @@
+\appendix
+
+\section{Quick Reference Guide}
+
+\newcommand{\Indent}{\hspace*{5pt}}
+
+In this appendix we summarize the various commands that are defined in
+{\tt cc\_manual.sty} and provide either an example of the result or a
+brief explanation of what the command does.  
+
+
+
+\begin{ccClassTemplate}{Gnu<T>}
+\ccCreationVariable{g}
+\lcTex{
+\tablehead{
+\hline
+&  \\
+{\large \bf Command} & {\large \bf Example and/or Result} \\ 
+& \\ \hline \hline
+}
+\tabletail{\hline}
+\begin{supertabular}{|p{7.4cm}|p{7.4cm}|}
+}
+\lcHtml{\begin{tabular}{pp}
+\textbf{Command} & \textbf{Example and/or Result} \\
+}
+ 
+
+\verb|\CC| & \CC \Mindex{CC}\\ \hline
+
+\verb|\ccAccessFunctions| 
+&  \ccAccessFunctions 
+\ccIndexEntry{AccessFunctions}\\ \hline 
+
+& \\
+\begin{minipage}{2.0in}
+\verb|\begin{ccAdvanced}| \\
+\VarText{text} \\
+\verb|\end{ccAdvanced}|
+\end{minipage} &
+\begin{minipage}{3.0in}
+\begin{ccAdvanced} 
+\VarText{text}
+\end{ccAdvanced} 
+\end{minipage} 
+\Eindex{ccAdvanced} \\ 
+& \\ \hline
+
+\verb|\ccAmpersand| 
+& \leavevmode\ccAmpersand 
+\ccIndexEntry{Ampersand}\\ \hline
+
+\verb|\ccc{|\VarText{text}\verb|}|
+&\verb+\ccc{A f_bar(X<T>& x = "%^~#");}+ \\
+& \\
+&\ccc{A f_bar(X<T>& x = "%^~#");} 
+\ccIndexEntry{c}\\ \hline
+
+&\verb|\def\ccTagChapaterAuthor{\ccTrue}| \\
+\verb|\ccChapterAuthor{|\VarText{author name}\verb|}| 
+&\verb|\ccChapterAuthor{Alice \and Irene}| \\
+& \\
+&FIXME: em {\em Alice and Irene} 
+\ccIndexEntry{ChapterAuthor}\\ \hline
+
+&\verb|\def\ccTagChapterRelease{\ccTrue}| \\
+\verb|\ccChapterRelease{|\VarText{release info}\verb|}|
+&\verb|\ccChapterRelease{3.4, 4 February 2000}| \\
+& \\
+&{\em 3.4, 4 February 2000} 
+\ccIndexEntry{ChapterRelease}\\ \hline
+
+\verb|\ccChapterSubTitle{|\VarText{subtitle}\verb|}| 
+&\verb|\ccChapterSubTitle{subtitle}| \\
+& \\
+&{\em subtitle} 
+\ccIndexEntry{ChapterSubTitle} \\ \hline
+
+\verb|\begin{ccClass}{|\VarText{class\_name}\verb|}| 
+&\Indent \verb|\begin{ccClass}{My_class}| ...  \\
+             \VarText{class description} 
+& sets the variable \verb|\ccClassName| to \ccc{My_class} (formatted using \verb|\ccc|);  sets \verb|\ccPureClassName| to \verb|My_class| (without formatting) \\
+        \verb|\end{ccClass}| 
+&
+\Eindex{ccClass} \\ \hline
+
+\verb|\ccClassName| & 
+the name of the current (nontemplated) class formated using
+\verb|\ccc|
+\ccIndexEntry{ClassName}  \\ \hline
+
+
+\verb|\begin{ccClassTemplate}{|\VarText{class\_name}\verb|}| 
+& \verb|\begin{ccClassTemplate}{Gnu<T>}| ...\\
+    \VarText{class description} 
+& sets variable \verb|\ccClassTemplateName| to \ccc{Gnu<T>}
+(with template parameters) (formatted using \verb|\ccc|);
+sets \verb|\ccPureClassTemplateName| to \verb|Gnu<T>| (without formatting) \\
+\verb|\end{ccClassTemplate}| & 
+\Eindex{ccClassTemplate} \\ \hline
+
+\verb|\ccCloseAngle| & \leavevmode\ccCloseAngle
+\ccIndexEntry{CloseAngle} \\ \hline
+
+\verb|\ccCommentHeading{|\VarText{text}\verb|}| 
+&\verb|\ccCommentHeading{comment heading}| \\
+& \\
+&\ccCommentHeading{comment heading}
+\ccIndexEntry{CommentHeading} \\ \hline
+
+\verb|\ccClassTemplateName| & 
+the name of the current class with its template parameters
+formated using \verb|\ccc|
+\ccIndexEntry{ClassTemplateName}  \\ \hline
+
+\verb|\ccConstants| & \ccConstants 
+\ccIndexEntry{Constants} \\ \hline
+
+\verb|\ccConstructor{|\VarText{header}\verb|}{|\VarText{comment}\verb|}| 
+& \verb|\ccConstructor{Gnu(Gnu<T> a);}{comment}| \\
+& \\
+& \ccConstructor{Gnu(Gnu<T> a);}{comment}
+\ccIndexEntry{Constructor} \\ \hline
+
+\verb|\ccCreation| & \ccCreation 
+\ccIndexEntry{Creation} \\ \hline
+
+\verb|\ccCreationVariable{|\VarText{var\_name}\verb|}| & defines \VarText{var\_name} as the variable to use when formatting member functions for a class 
+\ccIndexEntry{CreationVariable} \\ \hline
+
+\verb|\ccDate| & prints the date of the {\tt cc\_manual.sty} file being used
+\ccIndexEntry{Date} \\ \hline
+
+\verb|\ccDeclaration{|\VarText{decl}\verb|}| 
+& \VarText{decl} produces no text in the manual unless \verb|\ccMakeAllVisible| 
+has been used; used only for the {\tt cc\_check} tool
+\ccIndexEntry{Declaration} \\ \hline
+
+\verb|\ccDefGlobalScope{|\VarText{scope\_name}\verb|}| & 
+makes \VarText{scope\_name} the text that is prepended to all reference page 
+names (except concepts)  (default: empty)
+\ccIndexEntry{DefGlobalScope} \\ \hline
+
+\verb|\ccDefinition| & \ccDefinition 
+\ccIndexEntry{Definition} \\ \hline
+
+\verb|\renewcommand{\ccEndFont}{|\VarText{chars}\verb|}| 
+& \verb|\renewcommand{\ccEndFont}{}| \\
+& \VarText{chars} will be appended after typesetting arguments
+provided to the \verb|\ccStyle| and \verb|\ccc| commands (default: \verb|\/|) 
+\ccIndexEntry{EndFont}\\ \hline
+
+\verb|\ccEnum{|\VarText{enum\_decl}\verb|}{|\VarText{comment}\verb|}| 
+&\verb|\ccEnum{ enum E { E1, E2};}{comment}| \\
+& \\
+&\ccEnum{ enum E { E1, E2};}{comment} 
+\ccIndexEntry{Enum} \\ \hline
+
+\verb|\ccExample| & \ccExample 
+\ccIndexEntry{Example} \\ \hline
+
+
+\verb|\begin{ccExampleCode}| & \\
+\VarText{source code}        & \VarText{source code} is typeset in \verb|\tt| 
+                               with some formatting of comments, {\em etc.}\\
+\verb|\end{ccExampleCode}|  &
+\Eindex{ccExampleCode}\\ \hline
+
+\verb|\ccFalse| & no result; a boolean variable used for defining values of other commands
+\ccIndexEntry{False}\\ \hline
+
+\verb|\renewcommand{\ccFont}{|\VarText{font}\verb|}| 
+& \verb|\renewcommand{\ccFont}{\tt}| \\
+& redefines the font to use with the \verb|\ccStyle| and \verb|\ccc| commands 
+\ccIndexEntry{Font}\\ \hline
+
+\verb|\ccFunction{|\VarText{header}\verb|}{|\VarText{comment}\verb|}| 
+& \verb|\ccFunction{int foo( float d);}{comment}| \\
+& \\
+& \ccc{int}\hspace*{1.0cm}\ccc{foo( float d);}\hspace*{\fill}\ccc{comment}  \\
+& 
+\ccIndexEntry{Function} \\ \hline
+
+\verb|\ccFunctionTemplate{|\VarText{parameters}\verb|}%| & \\
+\Indent\Indent\verb|{|\VarText{decl.}\verb|}{|\VarText{comment}\verb|}| 
+& this is obsolete and remains only for backward compatability
+\ccIndexEntry{FunctionTemplate}\\ \hline
+
+\verb|\ccGeneralizes| 
+& \ccGeneralizes
+\ccIndexEntry{Generalizes} \\ \hline
+
+\verb|\ccGlobalEnum{|\VarText{enum declaration}\verb|}| 
+&\verb+\ccGlobalEnum{ enum E { E1, E2};}+ \\
+&\ccGlobalEnum{ enum E { E1, E2};}
+\ccIndexEntry{GlobalEnum}\\ \hline
+
+\verb|\ccGlobalFunction{|\VarText{declaration}\verb|}| 
+& \verb+\ccGlobalFunction{ int foo(X x);}+  \\
+& \\
+& \ccc{int}\hspace*{1.0cm}\ccc{foo(X x);}  \\
+& 
+\ccIndexEntry{GlobalFunction}\\ \hline
+
+\verb|\ccGlobalFunctionTemplate{|\VarText{templ. params}\verb|}{|\VarText{declaration}\verb|}| 
+& this is obsolete and remains only for backward compatability
+\ccIndexEntry{GlobalFunctionTemplate}\\ \hline
+
+\verb|\ccGlobalScope| 
+& contains the text given as the argument of \verb|\ccDefGlobalScope|
+formatted using \verb|\ccc|
+\ccIndexEntry{GlobalScope} \\ \hline
+
+\verb|\ccGlobalStruct{|\VarText{declaration}\verb|}| 
+&\verb+\ccGlobalStruct{ struct S { int i;};}+ \\
+&\ccGlobalStruct{ struct S { int i;};}
+\ccIndexEntry{GlobalStruct} \\ \hline
+
+\verb|\ccGlobalTypedef{|\VarText{declaration}\verb|}| 
+&\verb+\ccGlobalTypedef{ typedef A Sleep;}+ \\
+& \\
+&\ccc{typedef A}\hspace*{2.0cm}\ccc{Sleep;}  \\
+&
+\ccIndexEntry{GlobalTypedef} \\ \hline
+
+\verb|\ccGlobalVariable{|\VarText{declaration}\verb|}| 
+&\verb+\ccGlobalVariable{ const int i = 42;}+  \\
+& \\
+&\ccc{const int}\hspace*{2.0cm}\ccc{i = 42;} \\
+&
+\ccIndexEntry{GlobalVariable} \\ \hline
+
+
+\verb|\ccGlue| 
+& see \verb|\ccGlueDeclarations|
+\ccIndexEntry{Glue} \\ \hline
+
+\verb|\ccGlueBegin| 
+& used with \verb|\ccGlueEnd| to shorten vertical spacing between 
+declarations that come between the commands
+\ccIndexEntry{GlueBegin} \\ \hline
+
+
+\verb|\ccGlueDeclarations| 
+& causes vertical spacing in the following declarations to be shortened
+\ccIndexEntry{GlueDeclarations}\\ \hline
+
+\verb|\ccGlueEnd| 
+& see \verb|\ccGlueBegin|
+\ccIndexEntry{GlueEnd}\\ \hline
+
+\verb|\ccHasModels| 
+& \ccHasModels
+\ccIndexEntry{HasModels} \\ \hline
+
+\verb|\ccHat| 
+& \ccHat
+\ccIndexEntry{Hat} \\ \hline
+
+\verb|\ccHeading{|\VarText{heading}\verb|}|
+& \verb|\ccHeading{A Heading}| \\
+& \ccHeading{A Heading}
+\ccIndexEntry{Heading} \\ \hline
+
+\verb|\ccHidden| 
+& causes the following declaration not to appear in the manual
+\ccIndexEntry{Hidden}\\ \hline
+
+\verb|\begin{ccHtmlClassFile}{|\VarText{file\_name}\verb|}%| & \\
+\Indent\Indent\verb|{|\VarText{description}\verb|}| & \\
+            \VarText{text} & writes \VarText{text} to \VarText{file\_name}
+                             using \VarText{description} in the HTML table of 
+                             contents and the anchor in the current chapter \\
+\verb|\end{ccHtmlClassFile}| & 
+\Eindex{ccHtmlClassFile} \\ \hline
+
+
+\verb|\ccHtmlCrossLink{|\VarText{C++ identifier}\verb|}| 
+& activates the automatic cross linking for \VarText{C++ identifier}
+\ccIndexEntry{HtmlCrossLink}\\ \hline
+
+\verb|\ccHtmlIndex[|\VarText{category}\verb|]{|\VarText{index key}\verb|}| 
+&\verb+\ccHtmlIndex[Function]{Style guides}+  \\ 
+& creates an entry in the HTML index for \VarText{index key} under category
+ \VarText{category} (defualt: Class)
+\ccIndexEntry{HtmlIndex} \\ \hline
+
+\verb|\ccHtmlIndexC[|\VarText{category}\verb|]{|\VarText{C++\_id}\verb|}|
+&\verb+\ccHtmlIndexC{My_point<R>}+ \\
+& creates an entry in the HTML index for \VarText{C++\_id} under category
+  \VarText{category} (default: Class)
+\ccIndexEntry{HtmlIndexC} \\ \hline
+
+\verb|\ccHtmlLinksOff| 
+& inserts a comment into the current {\tt .html} file to indicate that all 
+  text until the comment generated by the command \verb|\ccHtmlLinksOn| is 
+  reached contain no links. 
+\ccIndexEntry{HtmlLinksOff}\\ \hline
+
+\verb|\ccHtmlLinksOn| 
+& See \verb|\ccHtmlLinksOff|.
+\ccIndexEntry{HtmlLinksOn}\\ \hline
+
+\verb|\ccHtmlNoClassFile| 
+& deactivates the creation of a separate HTML file for this class
+\ccIndexEntry{HtmlNoClassFile}\\ \hline
+
+\verb|\ccHtmlNoClassIndex|
+& no HTML index entries for this class
+\ccIndexEntry{HtmlNoClassIndex} \\ \hline
+
+\verb|\ccHtmlNoClassLinks| 
+& deactivates the cross linking for this class name
+\ccIndexEntry{HtmlNoClassLinks}\\ \hline
+
+\verb|\ccHtmlNoClassToc| 
+& no entry in the HTML table of contents for this class
+\ccIndexEntry{HtmlNoClassToc} \\ \hline
+
+\verb|\ccHtmlNoIndex| 
+& no HTML index entry for the following declaration
+\ccIndexEntry{HtmlNoIndex}\\ \hline
+
+\verb|\ccHtmlNoLinksFrom{|\VarText{text}\verb|}| 
+& no links from (or to) any words or phrases in \VarText{text} will be created 
+  in the HTML manual.
+\ccIndexEntry{HtmlNoLinksFrom}\\ \hline
+
+\verb|\ccHtmlNoLinks| 
+& no cross linking for the following declaration
+\ccIndexEntry{HtmlNoLinks}\\ \hline
+
+\verb|\ccHtmlNoRefIndex| 
+& no indexing of the identifier of the following reference page
+\ccIndexEntry{HtmlNoRefIndex}\\ \hline
+
+\verb|\ccHtmlNoRefLinks| 
+& no cross linking for the identifier of the following reference page
+\ccIndexEntry{HtmlNoRefLinks}\\ \hline
+
+\verb|\begin{ccHtmlOnly}| & \\
+\VarText{HTML text}       & \VarText{HTML text} is ignored by \LaTeX\
+                            and included as raw HTML by 
+                            {\tt cc\_manual\_to\_html}\\
+\verb|\end{ccHtmlOnly}|  &
+\Eindex{ccHtmlOnly}\\ \hline
+
+\verb|\ccImplementation| 
+& \ccImplementation
+\ccIndexEntry{Implementation}\\ \hline
+
+
+\verb|\ccInclude{|\VarText{include file name}\verb|}| 
+& \verb|\ccInclude{CGAL/header.h}|\\
+& \\
+& \ccInclude{CGAL/header.h}
+\ccIndexEntry{Include} \\ \hline
+
+\verb|\ccIncludeExampleCode{|\VarText{file name}\verb|}| 
+& file \VarText{file name} will be included and typeset in \\
+& \verb|\tt| with font changes for comments and such 
+\ccIndexEntry{IncludeExampleCode}\\ \hline
+
+\verb|\ccIncludeVerbatim{|\VarText{file name}\verb|}| 
+& file \VarText{file name} will be included and typeset in \\
+& \verb|\tt| without any formatting
+\ccIndexEntry{IncludeVerbatim}\\ \hline
+
+\verb|\ccInheritsFrom| 
+& \ccInheritsFrom 
+\ccIndexEntry{InheritsFrom} \\ \hline
+
+\verb|\ccInitConstructorWidths| 
+& sets the values of \verb|\ccwFirst| and \verb|\ccwSecond| to
+\verb|\ccwConstructorFirst| and \verb|\ccwConstructorSecond|, respectively 
+for formatting constructors
+\ccIndexEntry{InitConstructorWidths} \\ \hline
+
+\verb|\ccInitFunctionWidths| 
+& sets the values of \verb|\ccwFirst| and \verb|\ccwSecond| to
+ \verb|\ccwFunctionFirst| and \verb|\ccwFunctionSecond|, respectively 
+ for formatting functions
+\ccIndexEntry{InitFunctionWidths} \\ \hline
+
+\verb|\ccInitWidths| 
+& sets the widths of columns for formatting declarations
+\ccIndexEntry{InitWidths} \\ \hline
+
+\verb|\ccIsModel| 
+& \ccIsModel
+\ccIndexEntry{IsModel} \\ \hline
+
+\verb|\def\ccLongParamLayout{|\VarText{bool}\verb|}|
+& \VarText{bool} is either \verb|\ccTrue| or \verb|\ccFalse| (default) \\
+& if true, each function parameter will appear on a separate line
+\ccIndexEntry{LongParamLayout}\\ \hline
+
+
+\verb|\ccMakeAllVisible| 
+& makes \verb|\ccDelclaration| and things designated as \verb|\ccHidden| 
+appear in the manual
+\ccIndexEntry{MakeAllVisible} \\ \hline
+
+&\verb+\begin{ccClassTemplate}{Gnu<T>}+ \\
+&\verb+\ccCreationVariable{g}+ \\
+\verb|\ccMemberFunction{|\VarText{declaration}\verb|}%| 
+&\verb+\ccMemberFunction{ int f(X x);}{comment}+ \\
+\Indent\Indent\verb|{|\VarText{comment}\verb|}| & \\
+& \ccc{int}\hspace*{1.0cm}\ccc{g.gnat(X x);}\hspace*{\fill}comment \\
+&
+\ccIndexEntry{MemberFunction} \\ \hline
+
+\verb|\ccMethod{|\VarText{declaration}\verb|}{|\VarText{comment}\verb|}| 
+& see \verb|\ccMemberFunction|
+\ccIndexEntry{Method}\\ \hline
+
+\verb|\ccModifiers| 
+& \ccModifiers
+\ccIndexEntry{Modifiers} \\ \hline
+
+\verb|\ccMultiplePartsToc| 
+& tells the HTML converter to format the table of contents for a manuals 
+  with multiple \verb|\part| commands.
+\ccIndexEntry{MultiplePartsToc} \\ \hline
+
+&\verb+\begin{ccClass}{Gnu<T>}+ \\
+\verb|\ccNestedType{|\VarText{declaration}\verb|}{|\VarText{comment}\verb|}|  
+&\verb+\ccNestedType{ Stampede}{comment}+ \\
+&\ccNestedType{ Stampede}{comment}
+\ccIndexEntry{NestedType} \\ \hline
+
+\verb|\gdef\ccNewRefManualStyle{|\VarText{bool}\verb|}|
+& \VarText{bool} is either \verb|\ccTrue| or \verb|\ccFalse| (default)  
+if true, each reference manual environment starts a new page and tabs 
+will mark the edges of these pages 
+\ccIndexEntry{NewRefManualStyle} \\ \hline
+
+\verb|\ccNumberChaptersByPart| 
+& After each \verb+\part+ command start numbering chapters at 1 again.
+\ccIndexEntry{NumberChaptersByPart} \\ \hline
+
+\verb|\ccOpenAngle| 
+& \leavevmode\ccOpenAngle
+\ccIndexEntry{OpenAngle} \\ \hline
+
+\verb|\ccOperations| 
+& \ccOperations 
+\ccIndexEntry{Operations} \\ \hline
+
+%\verb|\begin{ccPackage}| & \\
+%\VarText{package description} &  \\
+%& defines \verb|\ccIndexPackageName| used for producing the PostScript index \\
+%\verb|\end{ccPackage}| &
+%\Eindex{ccPackage} \\ \hline
+
+\verb|\ccParDims| 
+& restores the original settings of \verb+\parskip+ and \verb+\parindent+
+\ccIndexEntry{ParDims} \\ \hline
+
+\verb|\gdef\ccPortability{|\VarText{bool}\verb|}| 
+& \VarText{bool} is either \verb|\ccTrue| or \verb|\ccFalse| (default)  \\& if true, old macro names are activated 
+\ccIndexEntry{Portability} \\ \hline
+
+\verb|\ccPostcond| 
+& \verb|\ccPostcond: this is a postcondition| \\
+& \\
+& \ccPostcond: this is a postcondition
+\ccIndexEntry{Postcond}\\ \hline
+
+\verb|\ccPrecond| 
+& \verb|\ccPrecond: this is a precondition| \\
+& \\
+& \ccPrecond: this is a precondition
+\ccIndexEntry{Precond}\\ \hline
+
+\verb|\ccPredicates| 
+& \ccPredicates 
+\ccIndexEntry{Predicates}\\ \hline
+
+\verb|\ccPropagateThreeToTwoColumns| 
+& propagates the current settings of the three-column layout to the two-column  
+layout such that the descriptions align properly
+\ccIndexEntry{PropagateThreeToTwoColumns}\\ \hline
+
+\verb|\ccPureClassName|
+& the value of the current class name without formatting as \CC\ identifier
+\ccIndexEntry{PureClassName} \\ \hline
+
+\verb|\ccPureClassTemplateName|
+& the value of the current template class name without formatting as \CC\ identifier
+\ccIndexEntry{PureClassTemplateName} \\ \hline
+
+\verb|\ccPureGlobalScope| 
+& the unformatted text given as the argument of 
+ \verb|\ccDefGlobalScope|
+\ccIndexEntry{PureGlobalScope} \\ \hline
+
+\verb|\ccPureRefScope| 
+& the unformatted text given as the optional argument to the current 
+\verb|\ccRef*| environment 
+\ccIndexEntry{PureRefScope} \\ \hline
+
+\verb|\ccPureRefName| 
+& the unformatted text given as the argument to the current 
+\verb|\ccRef*| environmnet
+\ccIndexEntry{PureRefName} \\ \hline
+
+\verb|\ccPureVar| 
+& the unformatted text supplied as the argument to 
+\verb|\ccCreationVariable|
+\ccIndexEntry{PureVar} \\ \hline
+
+\verb|\ccQueryFunctions| 
+& \ccQueryFunctions
+\ccIndexEntry{QueryFunctions} \\ \hline
+
+\verb|\ccRefCategory| 
+& the category of the current reference page
+\ccIndexEntry{RefCategory} \\ \hline
+
+
+\verb|\ccRefChapter{|\VarText{chapter title}\verb|}{|\VarText{label}\verb|}| 
+& makes a crosslink to the corresponding page of user manual with \VarText{label} and writes \VarText{chapter title}\\ \hline
+\ccIndexEntry{RefChapter}
+
+& \verb+\ccDefGlobalScope{CGAL::}+ \\
+\verb|\begin{ccRefClass}[|\VarText{scope}\verb|]{|\VarText{class\_name}\verb|}| 
+&\verb+\begin{ccRefClass}[Poly]{A_class<C>}+  \\
+           \VarText{class description}  &  \\
+        \verb|\end{ccRefClass}| &\\
+& 
+\lcTex{{\large\bf \ccPrintTokens Class CGAL::Poly::A_class<C>\ccEnd\ccEndFont}}
+\lcHtml{{\bf{\ccStyle{Class CGAL::Poly::A_class<C>}}}}  \\
+& \\
+& defines a label for the class
+that can be referred to by \verb|\ccRefPage| and \verb|\ccRefIdfierPage|
+using \VarText{class name} as the argument; 
+defines \verb|\ccRefCategory| to \verb|Class|; defines \verb|\ccRefScope|
+and \verb|\ccPureRefScope| to \VarText{scope} with and without formatting, 
+resp.; defines \verb|\ccRefName| and \verb|\ccPureRefName| to 
+\VarText{class name} with and without formatting, resp.; defines
+\verb|\ccClassTemplateName| and \verb|\ccPureClassTemplateName| to
+\VarText{class name} with and without formatting, resp.
+\Eindex{ccRefClass}\\ \hline
+
+\verb|\begin{ccRefConcept}[|\VarText{scope}\verb|]%| 
+& \verb+\begin{ccRefConcept}{Circulator}+ \\
+\Indent\Indent \verb|{|\VarText{concept name}\verb|}|  & \\
+           \VarText{concept description} & \\
+        \verb|\end{ccRefConcept}| &  {\large{\bf Concept Circulator}}   \\
+& \\
+& defines labels and variables as for the {\tt ccRefClass} environment 
+\Eindex{ccRefConcept}\\ \hline
+
+\verb|\ccRefConceptPage{|\VarText{concept}\verb|}| 
+& prints \VarText{concept} in the default font at the left
+margin and ``page $x$'' on the right margin, where $x$ is the page on which
+the reference page for \VarText{concept} begins
+\ccIndexEntry{RefConceptPage} \\ \hline
+
+& \verb+\ccDefGlobalScope{CGAL::}+ \\
+\verb|\begin{ccRefEnum}[|\VarText{scope}\verb|]|\verb|{|\VarText{enum\_name}\verb|}| 
+& \verb+\begin{ccRefEnum}{Orientation}+  \\
+           \VarText{enum description}  & \\
+        \verb|\end{ccRefEnum}|  &\\
+& 
+\lcTex{{\large\bf \ccPrintTokens Enum CGAL::Orientation\ccEnd\ccEndFont}}
+\lcHtml{{\bf{\large\ccStyle{Enum CGAL::Orientation}}}}   \\
+& \\
+& defines labels and variables as for the {\tt ccRefClass} environment 
+\Eindex{ccRefEnum}\\ \hline
+
+&  \verb+\ccDefGlobalScope{CGAL::}+ \\
+\verb|\begin{ccRefFunction}[|\VarText{scope}\verb|]%| 
+& \verb+\begin{ccRefFunction}{ch_jarvis}+ \\
+\Indent\Indent\verb|{|\VarText{function name}\verb|}|   & \\
+           \VarText{function description} &  \\
+        \verb|\end{ccRefFunction}|  & \\ 
+& 
+\lcTex{{\large\bf \ccPrintTokens Function CGAL::ch_jarvis\ccEnd\ccEndFont}}
+\lcHtml{{\bf{\large\ccStyle{Function CGAL::ch_jarvis}}}}   \\
+& \\
+& defines labels and variables as for the {\tt ccRefClass} environment 
+\Eindex{ccRefFunction}\\ \hline
+
+&  \verb+\ccDefGlobalScope{CGAL::}+ \\
+\verb|\begin{ccRefFunctionObjectClass}%|
+& \verb+\begin{ccRefFunctionObjectClass}+ \\
+\Indent\Indent\verb|[|\VarText{scope}\verb|]{|\VarText{class name}\verb|}|    
+& \Indent\Indent\verb+{Less_xy_2<Point_2>}+ \\
+           \VarText{function object description} &  \\
+        \verb|\end{ccRefFunctionObjectClass}|  & \\ 
+& 
+\lcTex{{\large\bf \ccPrintTokens Function Object Class CGAL::Less_xy_2<Point_2>\ccEnd\ccEndFont}}
+\lcHtml{{\bf{\large\ccStyle{Function Object Class CGAL::Less_xy_2<Point_2>}}}}  \\
+& \\
+& defines labels and variables as for the {\tt ccRefClass} environment 
+\Eindex{ccRefFunctionObjectClass}\\ \hline
+
+
+&  \verb+\ccDefGlobalScope{CGAL::}+ \\
+\verb|\begin{ccRefFunctionObjectConcept}%|
+& \verb+\begin{ccRefFunctionObjectConcept}+ \\
+\Indent\Indent\verb|[|\VarText{scope}\verb|]{|\VarText{concept name}\verb|}|  
+& \verb+{Less_xy_2}+ \\
+           \VarText{concept description} &  \\
+        \verb|\end{ccRefFunctionObjectConcept}|  & \\ 
+& 
+\lcTex{{\large\bf \ccPrintTokens Function Object Concept Less_xy_2\ccEnd\ccEndFont}}
+\lcHtml{{\large{\bf\ccStyle{Function Object Concept Less_xy_2}}}}   \\
+& \\
+& defines labels and variables as for the {\tt ccRefClass} environment 
+\Eindex{ccRefFunctionObjectClass}\\ \hline
+
+\verb|\ccRefIdfierPage{|\VarText{identifier}\verb|}| 
+& prints \VarText{identifier} formatted using \verb|\ccc| at the left
+margin and ``page $x$'' on the right margin, where $x$ is the page on which
+the reference page for \VarText{identifier} begins
+\ccIndexEntry{RefIdfierPage} \\ \hline
+
+\verb|\ccRefines| 
+& \ccRefines
+\ccIndexEntry{Refines} \\ \hline
+
+\verb|\ccRefLabel{|\VarText{label name}\verb|}| 
+& defines a label called \VarText{label name} that can be referred to by
+\verb|\ccRefIdfierPage| or \verb|\ccRefPage|
+\ccIndexEntry{RefLabel} \\ \hline
+
+&  \verb+\ccDefGlobalScope{CGAL::}+ \\
+\verb|\begin{ccRefMacro}[|\VarText{scope}\verb|]{|\VarText{macro}\verb|}|  
+& \verb+\begin{ccRefMacro}{For_all}+ \\
+           \VarText{macro description} & \\
+        \verb|\end{ccRefMacro}| & \\
+& 
+\lcTex{{\large\bf \ccPrintTokens Function CGAL::For_all\ccEnd\ccEndFont}}
+\lcHtml{{\large{\bf\ccStyle{Function CGAL::For_all}}}} \\
+& \\
+& defines labels and variables as for the {\tt ccRefClass} environment   
+\Eindex{ccRefMacro}\\ \hline
+
+\verb|\ccRefName| 
+& contains the text given as the argument to the current \verb|\ccRef*|
+environmnet, formatted using \verb|\ccc|
+\ccIndexEntry{RefName} \\ \hline
+
+\verb|\ccRefPage{|\VarText{label name}\verb|}| 
+& produces the text ``page $x$'', where $x$ is the page on which the label
+\VarText{label name} was defined 
+\ccIndexEntry{RefPage}\\ \hline
+
+\verb|\renewcommand\ccRefPageBegin{|\VarText{cmd}\verb|}| 
+& causes \VarText{cmd} to be executed at the beginning of each
+\verb|ccRef*| environment
+\ccIndexEntry{RefPageBegin}\\ \hline
+
+\verb|\gdef\ccRefPageBreak{|\VarText{bool}\verb|}| 
+& \VarText{bool} is either \verb|\ccTrue| (default) or \verb|\ccFalse| 
+ if true, causes a page break at the beginning and end of each 
+\verb|ccRef*| environment when \verb|\ccNewRefManualStyle| is also
+set to \verb|\ccTrue|;  if false, no page breaks will happen until 
+\verb|\ccRefPageBreak| is set to true.
+\ccIndexEntry{RefPageBreak}\\ \hline
+
+\verb|\renewcommand\ccRefPageEnd{|\VarText{cmd}\verb|}| 
+& causes \VarText{cmd} to be executed at the end of each
+\verb|ccRef*| environment
+\ccIndexEntry{RefPageEnd}\\ \hline
+
+\verb|\renewcommand\ccRefPageFill{|\VarText{cmd}\verb|}| 
+& causes \VarText{cmd} to be executed to fill the space between an identifier
+and a page number in the commands \verb|\ccRefIdfierPage| and 
+\verb|\ccRefConceptPage|.  Default command is \verb|\dotfill|.
+\ccIndexEntry{RefPageFill}\\ \hline
+
+\verb|\gdef\ccRefPageNumAtMargin{|\VarText{bool}\verb|}| 
+& If this is set to \verb|\ccTrue| (default), the page numbers produced
+  by \verb|\ccRefIdfierPage| and \verb|\ccRefConceptPage| appear at the 
+  right margin with the space in between filled using 
+  \verb|\ccRefPageFill|.  When set to \verb|\ccFalse|, the page numbers 
+  appear directly after the name using the following format ``(pg. \#)''.
+\ccIndexEntry{RefPageNumAtMargin}\\ \hline
+
+\verb|\ccRefScope| 
+& contains the text given as the optional argument to the current \verb|\ccRef*|
+environment formatted using \verb|\ccc|
+\ccIndexEntry{RefScope} \\ \hline
+
+&  \verb+\ccDefGlobalScope{CGAL::}+ \\
+\verb|\begin{ccRefVariable}[|\VarText{scope}\verb|]%| 
+& \verb+\begin{ccRefVariable}{ORIGIN}+ \\
+\Indent\Indent\verb|{|\VarText{variable name}\verb|}| & \\
+           \VarText{variable description} &  \\
+        \verb|\end{ccRefVariable}|  &\\
+& 
+\lcTex{{\large\bf \ccPrintTokens Variable CGAL::ORIGIN\ccEnd\ccEndFont}}
+\lcHtml{{\large{\bf\ccStyle{Variable CGAL::ORIGIN}}}}   \\
+& \\
+& defines labels and variables as for the {\tt ccRefClass} environment   
+\Eindex{ccRefVariable}\\ \hline
+
+\verb|\ccRestoreThreeColumns| 
+&restores the values of \verb|\ccFunctionFirst| and \verb|\ccFunctionSecond|
+saved by the last use of \verb|\ccSaveThreeColumns|.
+\ccIndexEntry{RestoreThreeColumns} \\ \hline
+
+\verb|\ccRestoreTwoColumns| 
+&restores the value of \verb|\ccConstructorFirst| 
+saved by the last use of \verb|\ccSaveTwoColumns|.
+\ccIndexEntry{RestoreTwoColumns} \\ \hline
+
+\verb|\ccRequire| & \ccRequire
+\ccIndexEntry{Require} \\ \hline
+
+\verb|\ccRequirements| & \ccRequirements
+\ccIndexEntry{Requirements} \\ \hline
+
+\verb|\ccRevision| 
+&\ccRevision
+\ccIndexEntry{Revision} \\ \hline
+
+\verb|\ccSaveThreeColumns| 
+&stores the values of \verb|\ccFunctionFirst| and \verb|\ccFunctionSecond|
+in temporary variables so they may be restored using 
+\verb|\ccRestoreThreeColumns|.
+\ccIndexEntry{SaveThreeColumns} \\ \hline
+
+\verb|\ccSaveTwoColumns| 
+&stores the value of \verb|\ccConstructorSecond| 
+in a temporary variable so it may be restored using 
+\verb|\ccRestoreTwoColumns|.
+\ccIndexEntry{SaveTwoColumns} \\ \hline
+
+& \verb|\begin{ccClassTemplate}{Gnu<T>}| \\
+\verb|\ccSection{|\VarText{section title}\verb|}| 
+& \verb|\ccSection{Section}| \\ 
+& \\
+& {\large{\bf{2 Section (\ccc{Gnu<T>})}}} 
+
+%& (assuming command used after \verb|\begin{ccClassTemplate}{Gnu<T>}|)
+\ccIndexEntry{Section}\\ \hline
+
+\verb|\ccSeeAlso|
+& \ccSeeAlso 
+\ccIndexEntry{SeeAlso} \\ \hline
+
+\verb|\ccSetOneOfTwoColumns{|\VarText{dimension}\verb|}| 
+& sets the first column width in the two-column layout to the dimension given 
+ and sets the second to the remaining width based on the value of \verb|\textwidth|
+\ccIndexEntry{SetOneOfTwoColumns} \\ \hline
+
+\verb|\ccSetThreeColumns{|\VarText{text1}\verb|}{|\VarText{text2}\verb|}%| &\\
+\Indent\Indent\verb|{|\VarText{text3}\verb|}| 
+& one of \VarText{text1}, \VarText{text2}, and \VarText{text3} must be  empty;
+ sets the column widths for three-column layout based on the size of the 
+ text arguments given and the value of \verb|\textwidth| 
+\ccIndexEntry{SetThreeColumns}\\ \hline
+
+\verb|\ccSetTwoColumns{|\VarText{text1}\verb|}{|\VarText{text2}\verb|}|
+& one of \VarText{text1} and \VarText{text2} must be empty; 
+ sets the column widths for two-column layout based on the size 
+ of the text argument given and the value of \verb|\textwidth|
+\ccIndexEntry{SetTwoColumns} \\ \hline
+
+\verb|\ccSetTwoOfThreeColumns{|\VarText{col1\_dim}\verb|}%| & \\
+\Indent\Indent\verb|{|\VarText{col2\_dim.}\verb|}| 
+& sets the first two column widths in the three-column layout to the dimensions
+given 
+ and sets the third to the remaining width based on the value of \verb|\textwidth|
+\ccIndexEntry{SetTwoOfThreeColumns}\\ \hline
+
+\verb|\gdef\ccSrcPrefix{|\VarText{old prefix}\verb|}| 
+& specifies the identifier prefix that is to be replaced by
+  \verb|\ccTargetPrefix| during parsing
+\ccIndexEntry{SrcPrefix}\\ \hline
+
+\verb|\ccStruct{|\VarText{struct\_decl}\verb|}{|\VarText{comment}\verb|}| 
+&\verb+\ccStruct{ struct S { int i;};}{comment}+ \\
+&\ccStruct{ struct S { int i;};}{comment}
+\ccIndexEntry{Struct}\\ \hline
+
+\verb|\ccStyle{|\VarText{text}\verb|}| 
+& parses \VarText{text} as \CC\ code
+\ccIndexEntry{Style}\\ \hline
+
+& \verb|\begin{ccClassTemplate}{Gnu<T>}| \\
+\verb|\ccSubsection{|\VarText{subsection name}\verb|}| 
+& \verb|\ccSubsection{Subsection}| \\
+& \\
+%& {\bf{\large 2.1 Subsection (\ccc{Gnu<T>})}} <--- TODO: why does this not work?
+% after this ^^^^, everything is typeset using boldface
+& {\large{\bf 2.1 Subsection (\ccc{Gnu<T>})}} 
+\\ \hline
+\verb|\def\ccTagChapterAuthor{|\VarText{bool}\verb|}|
+& \VarText{bool} is either \verb|\ccTrue| (default) or \verb|\ccFalse| 
+ if true, chapter author names supplied with \verb|\ccChapterAuthor| will be
+printed 
+\ccIndexEntry{TagChapterAuthor} \\ \hline
+
+\verb|\ccTagChapterRelease{|\VarText{bool}\verb|}|
+& \VarText{bool} is either \verb|\ccTrue| or \verb|\ccFalse| (default) 
+ if true, chapter release information supplied with \verb|\ccChapterRelease| will be printed 
+\ccIndexEntry{TagChapterRelease}\\ \hline
+
+\verb|\ccTagDefaults| 
+& reverts to the default settings of the \verb|\ccTag*| variables
+\ccIndexEntry{TagDefaults} \\ \hline
+
+\verb|\ccTagFullDeclarations| 
+& deactivates the simplifcation for readability of \CC\ declarations done 
+during parsing
+\ccIndexEntry{TagFullDeclarations}\\ \hline
+
+\verb|\def\ccTagOperatorLayout{|\VarText{bool}\verb|}|
+& \VarText{bool} is either \verb|\ccTrue| (default) or \verb|\ccFalse|;
+controls whether an operator declaration is formatted as a function 
+declaration or using operator notation
+\ccIndexEntry{TagOperatorLayout} \\ \hline
+
+\verb|\def\ccTagReplaceInclude{|\VarText{bool}\verb|}|
+& \VarText{bool} is either \verb|\ccTrue| or \verb|\ccFalse| (default);
+if true, will replace \verb|\ccSrcPrefix| by \verb|\ccTargetPrefix| in
+include paths
+\ccIndexEntry{TagReplaceInclude} \\ \hline
+
+\verb|\ccTexHtml{|\VarText{\LaTeX\ text}\verb|}%| & \\
+\Indent\Indent \verb|{|\VarText{HTML text}\verb|}| 
+& \VarText{\LaTeX\ text} will be processed by \LaTeX\ only;  \\
+& \VarText{HTML text} will be processed by {\tt cc\_manual\_to\_html} only
+\ccIndexEntry{TexHtml} \\ \hline
+
+
+\verb|\def\ccTagReplacePrefix{|\VarText{bool}\verb|}|
+& \VarText{bool} is either \verb|\ccTrue| or \verb|\ccFalse| (default);\\ 
+& if true, will replace \verb|\ccSrcPrefix| by \verb|\ccTargetPrefix| for all
+identifiers parsed by the macros
+\ccIndexEntry{TagReplacePrefix} \\ \hline
+
+\verb|\def\ccTagRmConstRefPair{|\VarText{bool}\verb|}|
+& \VarText{bool} is either \verb|\ccTrue| (default) or \verb|\ccFalse|; \\ 
+& controls whether {\tt const\ldots\&}-pairs are removed or not. 
+\ccIndexEntry{TagRmConstRefPair} \\ \hline
+
+\verb|\def\ccTagRmEigenClassName{|\VarText{bool}\verb|}|
+& \VarText{bool} is either \verb|\ccTrue| (default) or \verb|\ccFalse|; \\ 
+& controls whether the name of a class within a class environment is removed 
+  from function argument lists. 
+\ccIndexEntry{TagRmEigenClassName} \\ \hline
+
+\verb|\def\ccTagRmTrailingConst{|\VarText{bool}\verb|}|
+& \VarText{bool} is either \verb|\ccTrue| (default) or \verb|\ccFalse|; \\ 
+& controls whether the text appearing after the closing parenthesis of a 
+function declaration is removed or not
+\ccIndexEntry{TagRmTrailingConst} \\ \hline
+
+\verb|\def\ccTagTemplateInline{|\VarText{bool}\verb|}|
+& \VarText{bool} is either \verb|\ccTrue| or \verb|\ccFalse| (default); \\ 
+& if true, template parameters will appear on the same line as the rest of the
+function header
+\ccIndexEntry{TagTemplateInline} \\ \hline
+
+
+\verb|\gdef\ccTargetPrefix{|\VarText{new prefix}\verb|}| 
+& \VarText{new prefix} will be substituted for \VarText{old prefix} 
+(see \verb|\ccSrcPrefix|) during parsing
+\ccIndexEntry{TargetPrefix} \\ \hline
+
+\verb|\begin{ccTexOnly}| & \VarText{\LaTeX\ text} will be processed by \LaTeX\\
+\VarText{\LaTeX\ text}   & but ignored by {\tt cc\_manual\_to\_html} program \\
+\verb|\end{ccTexOnly}| &
+\Eindex{ccTexOnly} \\ \hline
+
+\verb|\ccThree{|\VarText{text1}\verb|}{|\VarText{text2}\verb|}{|\VarText{text3}\verb|}|
+& see \verb|\ccSetThreeColumns|
+\ccIndexEntry{Three} \\ \hline
+
+\verb|\ccThreeToTwo| 
+& see \verb|\ccPropagateThreeToTwoColumns|
+\ccIndexEntry{ThreeToTwo} \\ \hline
+
+\verb|\ccTilde| 
+& \leavevmode\ccTilde
+\ccIndexEntry{Tilde}\\ \hline
+
+
+\verb|\begin{ccTraitsClass}{|\VarText{traits\_class}\verb|}%| & \\
+\Indent\verb|{|\VarText{class list}\verb|}{|\VarText{package list}\verb|}|
+& \verb|\begin{ccTraitsClass}{good_traits}%| \\
+& \Indent\verb|{class1; class2}{package}| \\
+\VarText{class description} & ... \\
+\verb|\end{ccTraitsClass}| & \\
+& see \verb|ccClass|
+\Eindex{ccTraitsClass} \\ \hline
+
+\verb|\begin{ccTraitsClassTemplate}{|\VarText{t\_class}\verb|}%| & \\
+\Indent\verb|{|\VarText{class list}\verb|}{|\VarText{package list}\verb|}|
+& \verb|\begin{ccTraitsClass}{better_traits<T>}%| \\
+& \Indent\verb|{}{p1;p2}| \\
+\VarText{class description} & ... \\
+\verb|\end{ccTraitsClassTemplate}| & \\
+& see \verb|ccClassTemplate|
+\Eindex{ccTraitsClassTemplate} \\ \hline
+
+\verb|\ccTrue| 
+& no result; boolean value used to set the value for other commands
+\ccIndexEntry{True} \\ \hline
+
+\verb|\ccTwo{|\VarText{text1}\verb|}{|\VarText{text2}\verb|}| 
+& see \verb|\ccSetTwoColumns|
+\ccIndexEntry{Two}\\ \hline
+
+\verb|\ccTypedef{|\VarText{typedef}\verb|}{|\VarText{comment}\verb|}| 
+&\verb+\ccTypedef{ typedef A Sleep;}{comment}+   \\
+& \\
+&\ccc{typedef A}\hspace*{1.0cm}\ccc{Sleep;}\hspace*{\fill}comment \\
+& 
+\ccIndexEntry{Typedef}\\ \hline
+
+\verb|\ccTypes| 
+& \ccTypes
+\ccIndexEntry{Types} \\ \hline
+
+\verb|\ccUnderscore| 
+& \ccUnderscore
+\ccIndexEntry{Underscore} \\ \hline
+
+\verb|\ccUserChapter{|\VarText{chapter title}\verb|}{|\VarText{label}\verb|}| 
+& makes a crosslink to the corresponding page of reference manual with \VarText{label} and writes \VarText{chapter title}\\ \hline
+\ccIndexEntry{UserChapter}
+
+
+\verb|\ccVar| 
+& contains the text supplied as the argument to \verb|\ccCreationVariable|,
+formatted using \verb|\ccc|
+\ccIndexEntry{Var} \\ \hline
+
+\verb|\ccVariable{|\VarText{declaration}\verb|}{|\VarText{comment}\verb|}| 
+&\verb+\ccVariable{ const int i = 42;}{comment}+  \\
+& \\
+&\ccc{const int}\hspace*{1.0cm}\ccc{i = 42;}\hspace*{\fill}{comment} \\
+&
+\ccIndexEntry{Variable}\\ \hline
+
+\verb|\ccwBetween| 
+& the padding space between columns
+\ccIndexEntry{wBetween}\\ \hline
+
+
+\verb|\ccwConstructorFirst| 
+& the width of the first column used for constructor formatting
+\ccIndexEntry{wConstructorFirst} \\ \hline
+
+\verb|\ccwConstructorSecond| 
+&  the width of the second column used for constructor formatting
+\ccIndexEntry{wConstructorSecond} \\ \hline
+
+\verb|\ccwFirst| 
+&  the width of the first column for the current declaration
+\ccIndexEntry{wFirst} \\ \hline
+
+\verb|\ccwFunctionFirst| 
+&  the width of the first column used for function formatting
+\ccIndexEntry{wFunctionFirst} \\ \hline
+
+\verb|\ccwFunctionSecond| 
+& the width of the second column used for function formatting
+\ccIndexEntry{wFunctionSecond}\\ \hline
+
+
+\verb|\ccwIndent| 
+& width of indentation before the first column 
+\ccIndexEntry{wIndent} \\ \hline
+
+\verb|\ccwRightMargin| 
+& width of the right margin for declaration formatting
+\ccIndexEntry{wRightMargin} \\ \hline
+
+\verb|\ccwSecond| 
+& the width of the second column for the current declaration
+\ccIndexEntry{wSecond} \\ \hline
+\verb|\cgal| 
+& \cgal
+\Mindex{cgal} \\ \hline
+
+\verb|\E| 
+& \E
+\Mindex{E} \\ \hline
+
+\verb|\galia| 
+& \galia
+\Mindex{galia} \\ \hline
+
+\verb|\gcc| 
+& \gcc 
+\Mindex{gcc} \\ \hline
+
+\verb|\leda| 
+& \leda
+\Mindex{leda} \\ \hline
+
+\verb|\listofrefpages| 
+& produces a file with extension \texttt{.ref} that contains a list of
+  all the reference pages.  When \LaTeX\ is run again this list will
+  be inserted at the place where the command appears.  Sort the \texttt{.ref}
+  file before the second run of \LaTeX\ to get a sorted list of 
+  reference pages.
+\Mindex{listofrefpages} \\ \hline
+
+\verb|\N| 
+& \N
+\Mindex{N} \\ \hline
+
+\verb|\nat| 
+& \nat
+\Mindex{nat} \\ \hline
+
+\verb+\nonlinkedpath|+\VarText{path name}\verb+|+
+& The delimeters (here {\verb+|+}) are chosen as for the \verb|\verb| command.  
+Formats \VarText{path name} using \verb|\tt| and uses hyphen-less line breaks 
+if necessary; identical to \verb|\path| for \LaTeX\ but for HTML creates no
+link for \VarText{path name} 
+\Mindex{nonlinkedpath}\\ \hline
+
+\verb+\path|+\VarText{path name}\verb+|+
+& The delimeters (here {\verb+|+}) are chosen as for the \verb|\verb| command.  
+Formats \VarText{path name} using \verb|\tt| and uses hyphen-less line breaks 
+if necessary; for HTML creates a link for \VarText{path name} 
+\Mindex{path}\\ \hline
+
+\verb|\plageo| (obsolete)
+& \plageo
+\Mindex{plageoo} \\ \hline
+
+\verb|\protocgal| (obsolete)
+&\protocgal
+\Mindex{protocgal} \\ \hline
+
+\verb|\Q|
+& \Q
+\Mindex{Q} \\ \hline
+
+\verb|\R| 
+& \R
+\Mindex{R} \\ \hline
+
+\verb|\RCSdef{|\VarText{macro}\verb|}{|\VarText{RCS entry}\verb|}| 
+&\verb`\RCSdef{\a}{$Id$}` \\
+&\verb|\a| now has the value of the second argument supplied by RCS
+without the \$s
+\Mindex{RCSdef} \\ \hline
+
+\verb|\RCSdefDate{|\VarText{macro}\verb|}{|\VarText{RCS date}\verb|}| 
+& \verb`\RCSdefDate{\b}{$Date$}` \\
+& \verb|\b| now has the value of the second argument supplied by RCS
+without the \$s
+\Mindex{RCSdefDate}\\ \hline
+
+\verb|\real| 
+&\real
+\Mindex{real} \\ \hline
+\verb|\Z| 
+& \Z
+\Mindex{Z}\\ \hline
+\lcTex{\end{supertabular}}
+\lcHtml{\end{tabular}}
+
+\end{ccClassTemplate}

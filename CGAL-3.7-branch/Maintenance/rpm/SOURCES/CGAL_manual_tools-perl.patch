@@ -1,0 +1,10 @@
+Index: developer_scripts/bibmerge
+===================================================================
+--- developer_scripts/bibmerge	(revision 29032)
++++ developer_scripts/bibmerge	(working copy)
+@@ -1,4 +1,4 @@
+-#!/opt/gnu/bin/perl
++#!/usr/bin/perl
+ 
+ # usage:  bibmerge bibfiles
+ # merges .bib files to standard output, removing duplicates.

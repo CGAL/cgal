@@ -1,0 +1,52 @@
+% +------------------------------------------------------------------------+
+% | Reference manual page: Regular_trianglation_3.tex
+% +------------------------------------------------------------------------+
+% | 20.03.2005   Author
+% | Package: Kinetic_data_structures
+% | 
+\RCSdef{\RCSRegulartrianglationRev}{$Id$}
+\RCSdefDate{\RCSRegulartrianglationDate}{$Date$}
+% |
+%%RefPage: end of header, begin of main body
+% +------------------------------------------------------------------------+
+
+
+\begin{ccRefClass}{Kinetic::Regular_triangulation_3<Traits, Visitor, Triangulation>}  %% add template arg's if necessary
+
+%% \ccHtmlCrossLink{}     %% add further rules for cross referencing links
+%% \ccHtmlIndexC[class]{} %% add further index entries
+
+\ccDefinition
+  
+The class \ccRefName\ maintains a triangulation of set of moving
+weighted points. Its interface is the same as
+\ccc{Kinetic::Delaunay_triangulation_3<Traits, Visitor, Triangulation>}.
+
+Note that the regular triangulation tracks as points are added to the \ccc{Kinetic::ActiveObjectsTable}, but not removed from it.
+
+
+The optional \ccc{Triangulation} template argument must be a model of
+\ccc{CGAL::RegularTriangulation_3} which has
+\ccc{Kinetic::Regular_triangulation_cell_base_3<Traits, Base>} as a
+cell base and
+\ccc{Kinetic::Regular_triangulation_vertex_base_3<Traits, Base>} as a
+vertex base.
+
+\ccInclude{CGAL/Kinetic/Regular_triangulation_3.h}
+
+
+\ccSeeAlso
+\ccc{Kinetic::Delaunay_triangulation_3<Traits, Visitor, Triangulation>}.
+\ccc{Kinetic::RegularTriangulationVisitor_3}.
+
+\ccExample
+
+\ccIncludeExampleCode{Kinetic_data_structures/Kinetic_regular_triangulation_3.cpp}
+
+\end{ccRefClass}
+
+% +------------------------------------------------------------------------+
+%%RefPage: end of main body, begin of footer
+% EOF
+% +------------------------------------------------------------------------+
+

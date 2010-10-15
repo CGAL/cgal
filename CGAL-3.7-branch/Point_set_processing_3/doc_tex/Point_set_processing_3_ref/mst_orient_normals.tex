@@ -1,0 +1,69 @@
+% +------------------------------------------------------------------------+
+% | Reference manual page: mst_orient_normals.tex
+% +------------------------------------------------------------------------+
+% | 02.06.2008   Pierre Alliez, Laurent Saboret, Gael Guennebaud
+% | Package: Point_set_processing_3
+% |
+\RCSdef{\RCSmstnormalorientationRev}{$Id$}
+\RCSdefDate{\RCSmstnormalorientationDate}{$Date$}
+% |
+\ccRefPageBegin
+%%RefPage: end of header, begin of main body
+% +------------------------------------------------------------------------+
+
+
+\begin{ccRefFunction}{mst_orient_normals}  %% add template arg's if necessary
+
+%% \ccHtmlCrossLink{}     %% add further rules for cross referencing links
+%% \ccHtmlIndexC[function]{} %% add further index entries
+
+\ccDefinition
+
+\ccc{CGAL::mst_orient_normals()} orients the normals of a point set using the propagation of a seed orientation through a minimum spanning tree computed over the Riemannian graph \cite{cgal:hddms-srup-92}.
+
+The seed is chosen as the top point of the point set. Its normal is oriented towards +Z axis. The success of the orientation algorithm depends on the \ccc{k} parameter.
+The number of neighbors controls the number of candidates to propagate the orientation to around each input point. In general the value 18 works well. With smaller values the propagation may be blocked by large gaps in sparse point sets as the graph may be disconnected. Large values cause problems with points scattered over thin objects as the algorithm may incorrectly propagate the orientation from one side of the object to the other. In presence of disconnected clusters of points the algorithm may fail propagating the orientation from one cluster to the others and may only orient the top cluster.
+
+This method modifies the order of the input points so as to pack all successfully oriented normals first, and returns an iterator over the first point with an unoriented normal (see erase-remove idiom). For this reason it should not be called on sorted containers.
+
+\ccInclude{CGAL/mst_orient_normals.h}
+
+% The section below is automatically generated. Do not edit!
+%START-AUTO(\ccDefinition)
+
+% Reduce left margin
+\ccThree{123456789012345}{6789012}{}
+
+\ccFunction{template<typename ForwardIterator, typename PointPMap, typename NormalPMap, typename Kernel> ForwardIterator mst_orient_normals(ForwardIterator first, ForwardIterator beyond, PointPMap point_pmap, NormalPMap normal_pmap, unsigned int k, const Kernel& kernel);}
+{
+Orients the normals of the [first, beyond) range of points using the propagation of a seed orientation through a minimum spanning tree of the Riemannian graph \cite{cgal:hddms-srup-92}.  \\
+This method modifies the order of input points so as to pack all sucessfully oriented points first, and returns an iterator over the first point with an unoriented normal (see erase-remove idiom). For this reason it should not be called on sorted containers.
+\ccCommentHeading{Preconditions}  \\
+Normals must be unit vectors. k $>$= 2.
+\ccCommentHeading{Template Parameters}  \\
+\ccc{ForwardIterator}: iterator over input points. \ccc{PointPMap}: is a model of \ccc{boost::ReadablePropertyMap} with a \ccc{value_type} = \ccc{Point_3<Kernel>}. It can be omitted if \ccc{ForwardIterator} \ccc{value_type} is convertible to \ccc{Point_3<Kernel>}. \ccc{NormalPMap}: is a model of \ccc{boost::ReadWritePropertyMap} with a \ccc{value_type} = \ccc{Vector_3<Kernel>}. \ccc{Kernel}: Geometric traits class. It can be omitted and deduced automatically from \ccc{PointPMap} \ccc{value_type}.
+\ccCommentHeading{Returns} iterator over the first point with an unoriented normal.
+\ccCommentHeading{Parameters}  \\
+\ccc{first}: iterator over the first input point. \ccc{beyond}: past-the-end iterator over the input points. \ccc{point_pmap}: property map \ccc{ForwardIterator} -$>$ \ccc{Point_3}. \ccc{normal_pmap}: property map \ccc{ForwardIterator} -$>$ \ccc{Vector_3}. \ccc{k}: number of neighbors. \ccc{kernel}: geometric traits.
+}
+\ccGlue
+
+%END-AUTO(\ccDefinition)
+
+\ccSeeAlso
+
+\ccRefIdfierPage{CGAL::pca_estimate_normals}  \\
+\ccRefIdfierPage{CGAL::jet_estimate_normals}  \\
+
+\ccExample
+
+See \ccc{pca_estimate_normals_example.cpp}.
+
+\end{ccRefFunction}
+
+% +------------------------------------------------------------------------+
+%%RefPage: end of main body, begin of footer
+\ccRefPageEnd
+% EOF
+% +------------------------------------------------------------------------+
+

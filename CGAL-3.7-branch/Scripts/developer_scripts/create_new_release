@@ -1,0 +1,331 @@
+#!/bin/sh
+#
+# Creating a new CGAL internal+public release.
+#
+# Radu Ursu, Sylvain Pion, 2004-2006.
+
+# TODO :
+# - Use svn revision instead of separate internal release number ?
+# - Cleanup the public/internal separation:
+#   - have CGAL_VERSION_NR be not affected by the internal version
+#   - have CGAL_REVISION be the revision (replacing the internal number)
+# - The public release case should pass the info to create_internal_release.
+#   [new] : create_internal_release should not know about internal/public mode.
+# - Merge [some parts] into ./create_internal_release ?
+
+DO_RPM=""                # Also build RPMs (no RPMs by default)
+DO_PUBLIC=""             # Also build the public versions
+DO_IT=""                 # Real mode (svn tag, copy to HTTP server), versus local testing
+DO_NOT_TAG=""            # If set, do not call svn tag
+DO_TAG=""                # If set, svn tag is called anyway
+NO_TESTUITE=""           # If set, the LATEST file is not updated
+SOURCES_DIR="$PWD/trunk" # SVN working copy directory, default is "$PWD/trunk"
+VERBOSE=""               # Verbose mode (displays log to standard err)
+
+SOURCES_DIR_HAS_BEEN_SET=
+CANDIDATES_DIR_HAS_BEEN_SET=
+
+usage() {
+    echo "Usage : $0 [--help] [--rpm] [--public] [--do-it] <packages dir> [<candidates dir>]"
+    echo
+    echo '  --help           : prints this usage help'
+    echo '  --rpm            : also build the corresponding SRPMs'
+    echo '  --public         : also build the corresponding public versions'
+    echo '  --do-it          : the real thing (NOT for local tests!  Only for the release'
+    echo '                     master! Does write operations (updating the version_number,'
+    echo '                     svn tag, copying on the web server...)'
+    echo '  --do-not-tag     : when used with --do-it, the tag is not created.'
+    echo '  --tag            : when used without --do-it, the tag is created, but files'
+    echo '                     are not published'
+    echo '  --no-testsuite   : when used with --do-it, the tag is made, files are published,'
+    echo '                     but the LATEST file is not updated.'
+    echo '  --verbose        : print log to standard output, instead of the log file'
+    echo '  <packages dir>   : the directory containing the packages [default is trunk]'
+    echo '  <candidates dir> : the directory containing the candidate packages [no default]'
+}
+
+
+# Parsing command-line
+while [ $1 ]; do
+    case "$1" in
+        -h|-help|--h|--help)
+            usage;
+            exit;
+        ;;
+        --rpm)
+            DO_RPM="y"
+            shift; continue
+        ;;
+        --public)
+            DO_PUBLIC="y"
+            shift; continue
+        ;;
+        --do-it)
+            DO_IT="y"
+            shift; continue
+        ;;
+        --tag)
+            DO_TAG="y"
+            shift; continue
+        ;;
+        --do-not-tag)
+            DO_NOT_TAG="y"
+            shift; continue
+        ;;
+        --no-testsuite)
+            NO_TESTSUITE="y"
+            shift; continue
+        ;;
+        --verbose)
+            VERBOSE="y"
+            shift; continue
+        ;;
+        -*)
+            echo "Unrecognized option : $1"
+            exit
+        ;;
+        *) 
+            if [ -z "$SOURCES_DIR_HAS_BEEN_SET" ]; then
+                SOURCES_DIR="$1"
+                SOURCES_DIR_HAS_BEEN_SET=y
+                shift; continue
+            elif [ -z "$CANDIDATES_DIR_HAS_BEEN_SET" ]; then
+                CANDIDATES_DIR="$1"
+                CANDIDATES_DIR_HAS_BEEN_SET=y
+                shift; continue
+            else
+                echo "Unrecognized option : $1"
+                usage
+            fi
+        ;;
+    esac
+done
+
+
+# The internal release number is extracted/updated from this file :
+VERSION_FILE="version_number"
+
+# Where to put the resulting tarball and where to send the announce.
+HTML_DIR="/u/agrion/geometrica/CGAL/Members/Releases"
+URL="http://cgal.inria.fr/CGAL/Members/Releases"
+
+# Wine: run Windows application under Linux.
+# Uncomment the lines with WINE and MAKENSIS to make the Windows installer
+#WINE=wine
+# The NSIS tool
+#MAKENSIS=makensis.exe
+
+# CGAL manual tool
+# Needed by the making of the public release
+CGAL_MANUAL=cgal_manual
+
+# SVN repository
+SVNCGAL="svn+ssh://scm.gforge.inria.fr/svn/cgal"
+
+PATH=$PATH:/usr/local/bin:/usr/bin/gnu
+
+# Working dir
+TMPDIR="`pwd`"
+
+if [ -f $HOME/.cgal_create_new_release_rc ]; then
+  . $HOME/.cgal_create_new_release_rc
+fi
+
+[ -n "$DO_IT" -a -z "$DO_NOT_TAG" ] && DO_TAG="y"
+[ -z "$DO_IT" ] && HTML_DIR=$TMPDIR/tmp
+[ -d "$HTML_DIR" ] || mkdir "$HTML_DIR"
+
+# ISO format ("date -I" does not work on Darwin).
+date_=`date "+%Y-%m-%d"`
+
+LOGFILE="${TMPDIR}/create_release.log.$date_.$$"
+
+if [ -z "$VERBOSE" ]; then
+  # Redirect standard out and standard err to $LOGFILE
+  exec 3>&1 >> ${LOGFILE} 2>&1
+fi
+
+# Verbose: displays all executed commands 
+#PS4='[${LINENO}]+ '
+set -x
+
+cd ${TMPDIR} || return
+
+# Update the working copy
+svn update ${SOURCES_DIR}
+if [ -n "${CANDIDATES_DIR_HAS_BEEN_SET}" ]; then  
+    svn update ${CANDIDATES_DIR}
+fi
+CGAL_SVN_REVISION=`svn info ${SOURCES_DIR} | grep Revision | cut -d' ' -f2`
+
+# Set the major/minor/bugfix release numbers
+NUMBERS_DIR=${SOURCES_DIR}/Maintenance/release_building
+MAJOR_NUMBER=`cat ${NUMBERS_DIR}/MAJOR_NUMBER`     # 2 digits max
+MINOR_NUMBER=`cat ${NUMBERS_DIR}/MINOR_NUMBER`     # 2 digits max
+BUGFIX_NUMBER=`cat ${NUMBERS_DIR}/BUGFIX_NUMBER`   # 1 digit max
+
+# Do not show the bugfix number if it is 0.
+if [ x"$BUGFIX_NUMBER" != "x0" ]; then 
+    BUGFIX_STRING=".$BUGFIX_NUMBER"
+else
+    BUGFIX_STRING=""
+fi
+
+# Compute the internal release number.
+if [ -r $VERSION_FILE ]; then
+  INTERNAL_NUMBER=$(( `cat $VERSION_FILE` + 1 ))
+  [ -n "$DO_TAG" ] && printf "%d\n" "${INTERNAL_NUMBER}" > $VERSION_FILE
+else
+  INTERNAL_NUMBER=$((`svn ls $SVNCGAL/tags/internal-releases | awk "/${MAJOR_NUMBER}\\.${MINOR_NUMBER}${BUGFIX_STRING}/ "'{FS="-|/"; print $4}' | sort -n | tail -1` + 1 ))
+fi
+if [ -z "$INTERNAL_NUMBER" ]; then
+  INTERNAL_NUMBER=1
+fi
+
+if [ -n "${CANDIDATES_DIR_HAS_BEEN_SET}" ]; then
+    INTERNAL_STRING="-Ic-${INTERNAL_NUMBER}"
+else
+    INTERNAL_STRING="-I-${INTERNAL_NUMBER}"
+fi
+
+internal_nr=`printf "%4s" "${INTERNAL_NUMBER}" | sed "y/ /0/"`
+
+if [ -r "${NUMBERS_DIR}/release_name" ]; then
+    release_name=`cat "${NUMBERS_DIR}/release_name"`${INTERNAL_STRING}
+else
+    release_name="CGAL-${MAJOR_NUMBER}.${MINOR_NUMBER}${BUGFIX_STRING}${INTERNAL_STRING}"
+fi
+echo "${release_name}"
+major_nr=`printf "%2s" "${MAJOR_NUMBER}" | sed "y/ /0/"`
+minor_nr=`printf "%2s" "${MINOR_NUMBER}" | sed "y/ /0/"`
+bugfix_nr=`printf "%1s" "${BUGFIX_NUMBER}" | sed "y/ /0/"`
+release_number="1${major_nr}${minor_nr}${bugfix_nr}${internal_nr}"
+echo "Release number is ${release_number}"
+
+if [ -n "$DO_IT" -a -e "${HTML_DIR}/${release_name}.tar.gz" ]; then
+    printf "%s\n" "\"${HTML_DIR}/${release_name}.tar.gz\" already exists!"
+    exit 1
+fi
+
+# Create the release
+if [ -n "$CANDIDATES_DIR_HAS_BEEN_SET" ]; then
+    ${SOURCES_DIR}/Scripts/developer_scripts/create_internal_release -a ${SOURCES_DIR} -c ${CANDIDATES_DIR} -r ${release_name} -n ${release_number}
+else
+    ${SOURCES_DIR}/Scripts/developer_scripts/create_internal_release -a ${SOURCES_DIR} -r ${release_name} -n ${release_number}
+fi
+# Add the SVN revision to version.h
+cd "${release_name}"
+sed -i -e "s/define CGAL_SVN_REVISION .*/define CGAL_SVN_REVISION $CGAL_SVN_REVISION/" include/CGAL/version.h
+cd ..
+# Make the release tarball
+tar -cf "${release_name}.tar" "${release_name}"
+gzip "${release_name}.tar"
+cp "${release_name}.tar.gz" "${HTML_DIR}"
+rm -f "$HTML_DIR/CGAL-last.tar.gz"
+ln -s "${release_name}.tar.gz" "$HTML_DIR/CGAL-last.tar.gz"
+if [ -z "${NO_TESTSUITE}" ]; then
+  echo "${release_name}.tar.gz" > "${HTML_DIR}/LATEST"
+fi
+
+# Tag
+if [ -n "$DO_TAG" ]; then
+#    mail -s "[automatic] ${release_name} is released" ${MAILTO} <<EOF
+#
+#You can fetch it at :
+#${URL}/${release_name}.tar.gz
+#
+#EOF
+
+    # Now we tag.
+    echo "Tagging ${SOURCES_DIR} with $release_name"
+    if [ -n "$NO_TESTSUITE" ]; then
+        TAG_MSG_EXTRA=" (no testsuite)"
+    fi
+    svn cp -m "Internal release tag for $release_name$TAG_MSG_EXTRA" ${SOURCES_DIR} $SVNCGAL/tags/internal-releases/$release_name
+fi
+
+# Build the SRPM
+if [ "$DO_RPM" ]; then
+    echo "Making the SRPM file"
+    rm -rf rpm
+    cp -r ${SOURCES_DIR}/Maintenance/rpm .
+    cp ${release_name}.tar.gz rpm/SOURCES/
+    make -C rpm CGAL.src CGAL_INTERNAL_RELEASE=${INTERNAL_NUMBER}
+    echo "`basename rpm/SRPMS/*.src.rpm`" > "${HTML_DIR}/LATEST_SRPM"
+    mv rpm/SRPMS/*.src.rpm "${HTML_DIR}"
+    rm -rf rpm
+fi
+
+# Build public release version
+if [ -n "$DO_PUBLIC" ]; then
+    echo "Making the public version of the tarball"
+    public_release_number="1${major_nr}${minor_nr}${bugfix_nr}1000"
+    public_release_version="${MAJOR_NUMBER}.${MINOR_NUMBER}${BUGFIX_STRING}"
+    if [ -r "${NUMBERS_DIR}/public_release_name" ]; then
+	public_release_name=`cat "${NUMBERS_DIR}/public_release_name"`
+    else
+	public_release_name="CGAL-${public_release_version}"
+    fi
+    mv ${release_name} $public_release_name
+
+    cd ${public_release_name}
+    rm -rf bench* Bench* test package_info developer_scripts doc_tex winutils include/CGAL/Test include/CGAL/Testsuite/
+    rm -f examples/*/cgal_test* demo/*/cgal_test*
+    find . -name .scm-urls -exec rm '{}' '+'
+    sed -i -e "s/define CGAL_VERSION .*/define CGAL_VERSION $public_release_version/" -e "s/define CGAL_VERSION_NR .*/define CGAL_VERSION_NR $public_release_number/" include/CGAL/version.h
+    echo -n $public_release_version > VERSION 2>&1
+    cd ..
+
+    cp -a ${SOURCES_DIR}/Installation/doc_tex .
+    cp -a ${SOURCES_DIR}/Manual/doc_tex/Manual doc_tex
+    pushd doc_tex
+    "${CGAL_MANUAL}" -v -html installation_manual
+    popd
+    cp -a doc_html/* ${public_release_name}/doc_html
+    tar -cf "${public_release_name}.tar" "${public_release_name}"
+    mkdir "${HTML_DIR}/${release_name}-public"
+    xz --best "${public_release_name}.tar" -c > "${HTML_DIR}/${release_name}-public/${public_release_name}.tar.xz"
+    gzip "${public_release_name}.tar"
+    cp "${public_release_name}.tar.gz" "${HTML_DIR}/${release_name}-public/"
+    # Do a Zip file as well for the public version.
+    zip -q -r ${public_release_name}.zip ${public_release_name}
+    cp "${public_release_name}.zip" "${HTML_DIR}/${release_name}-public/"
+    rm -f "$HTML_DIR/CGAL-last-public"
+    ln -s "${release_name}-public" "$HTML_DIR/CGAL-last-public"
+fi
+
+# Build the SRPM of the public version
+if [ -n "$DO_RPM" -a -n "$DO_PUBLIC" ]; then
+    echo "Making the SRPM public file"
+    rm -rf rpm
+    cp -r ${SOURCES_DIR}/Maintenance/rpm .
+    cp ${public_release_name}.tar.gz rpm/SOURCES/
+    make -C rpm CGAL.src
+    # echo "`basename rpm/SRPMS/*.src.rpm`" > "${HTML_DIR}/LATEST_SRPM"
+    mv rpm/SRPMS/*.src.rpm "${HTML_DIR}/${release_name}-public/"
+    rm -rf rpm
+fi
+
+if [ -n "$DO_PUBLIC" ]; then
+  # Build the Windows installer
+  mkdir ${public_release_name}-NSIS
+  mv ${public_release_name} ${public_release_name}-NSIS
+  cp ${SOURCES_DIR}/wininst/developer_scripts/* ${public_release_name}-NSIS
+  sed -i -e "/define *CGAL_SRC/,+20 s/CGAL-${MAJOR_NUMBER}.${MINOR_NUMBER}/${public_release_name}/g" ${public_release_name}-NSIS/script_cgal.nsi
+  pushd ${public_release_name}-NSIS
+  if [ -n "${WINE}" -a -n "${MAKENSIS}" ]; then 
+    "${WINE}" "${MAKENSIS}" "script_cgal.nsi"
+    mv *.exe "${HTML_DIR}/${release_name}-public/"
+  fi
+  popd
+fi
+
+# Remove local directory and tarball
+rm -rf ${release_name}
+rm ${release_name}.tar.gz
+if [ -n "$DO_PUBLIC" ]; then
+  rm -rf  ${public_release_name}-NSIS
+  rm -rf doc_tex 
+  rm -rf doc_html
+  rm  ${public_release_name}.tar.gz ${public_release_name}.zip
+fi

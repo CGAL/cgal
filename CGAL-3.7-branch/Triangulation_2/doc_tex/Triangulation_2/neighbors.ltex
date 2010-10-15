@@ -1,0 +1,101 @@
+% dessin effectue par JpDraw (un programme de JP. MERLET)
+% INRIA Sophia-Antipolis,France le: Fri Dec 11 18:18:15 1998
+% Directory de creation:/u/alcor/0/prisme_util/CGAL/Local/Triangulation/doc
+% Createur:yvinec
+\ifx\cs\tempdima \newdimen \tempdima\fi
+\ifx\cs\tempdimb \newdimen \tempdimb\fi
+\ifx\cs\jpdrawx \newcount \jpdrawx\fi
+\ifx\cs\jpspace \def\jpspace{ } \fi
+\jpdrawx=100 \tempdima=   1.00cm \tempdimb= 1.0cm
+\ifdim \unitlength = 1pt
+\unitlength=  1.00cm
+\fi
+\ifdim \unitlength < 0cm
+\multiply \unitlength by -10 \divide \unitlength by 70 \fi
+\ifdim \unitlength > \tempdima \tempdima=\unitlength \fi
+\ifdim \unitlength < \tempdima \tempdima=\unitlength \fi
+\multiply \jpdrawx by \tempdima \divide \jpdrawx by \tempdimb
+\setlength{\unitlength}{\tempdima}
+\begin{picture}(   7.0,   5.1)( 1.566, 7.177)
+\thinlines
+\large
+\put( 1.566, 7.177){\special{"
+\the\jpdrawx \space 100 div
+\the\jpdrawx \space 100 div scale
+%%BoundingBox: 0 0 199 143
+% initial value of unitlength : 1.000000
+/Ellipse { gsave moveto setgray /savematrix matrix
+currentmatrix def currentpoint translate rotate newpath
+scale arc closepath savematrix setmatrix stroke grestore 0 setgray} def
+/EllipseColor { gsave moveto setgray /savematrix matrix
+currentmatrix def currentpoint translate rotate newpath
+scale arc closepath savematrix setmatrix fill grestore 0 setgray} def
+/EllipseRVB { gsave moveto setrgbcolor /savematrix matrix
+currentmatrix def currentpoint translate rotate newpath
+scale arc closepath savematrix setmatrix fill grestore 0 setgray} def
+/EllipseBRVB { gsave moveto setrgbcolor /savematrix matrix
+currentmatrix def currentpoint translate rotate newpath
+scale arc closepath savematrix setmatrix stroke grestore 0 setgray} def
+/Ligne { gsave moveto currentpoint translate 0 0 moveto
+lineto currentpoint stroke moveto closepath grestore} def
+/LigneRVB { gsave setrgbcolor moveto currentpoint translate 0 0 moveto
+lineto currentpoint stroke moveto closepath grestore 0 setgray} def
+/ArrowNoire {gsave 0 setgray moveto currentpoint
+translate 0 0 moveto lineto lineto lineto lineto 
+currentpoint fill moveto closepath grestore 0 setgray} def
+/ArrowRVB {gsave setrgbcolor moveto currentpoint
+translate 0 0 moveto lineto lineto lineto lineto 
+currentpoint fill moveto closepath grestore 0 setgray} def
+/RectangleNoir {gsave setgray moveto currentpoint
+translate 0 0 moveto lineto lineto lineto lineto 
+currentpoint fill moveto closepath grestore 0 setgray} def
+/RectangleRVB {gsave setrgbcolor moveto currentpoint
+translate 0 0 moveto lineto lineto lineto lineto 
+currentpoint fill moveto closepath grestore 0 setgray} def
+/Rectangle {gsave moveto currentpoint
+translate 0 0 moveto lineto lineto lineto lineto 
+currentpoint stroke moveto closepath grestore} def
+/OpenPoly {gsave moveto currentpoint translate 0 0 moveto} def
+/Li {lineto} def
+/ClosePnoir {currentpoint fill moveto closepath grestore 0 setgray} def
+/ClosePoly {currentpoint stroke moveto closepath grestore 0 setgray} def
+gsave
+ /ulx where{pop ulx uly scale} if
+ %currentpoint translate
+0.3 setlinewidth
+[] 0  setdash
+  0.85 setlinewidth
+ 54.255  42.746 OpenPoly
+  0.800 setgray
+ 93.302   0.000 Li
+ 47.268  89.603 Li
+ 47.268  89.192 Li
+  0.000   0.000 Li
+ClosePnoir
+ 54.255  42.746 OpenPoly
+ 93.302   0.000 Li
+ 47.268  89.603 Li
+ 47.268  89.192 Li
+  0.000   0.000 Li
+ClosePoly
+ 94.124  -4.521 101.523 131.939 Ligne
+-47.679 -83.438 195.647 127.417 Ligne
+-58.776 -22.606 101.523 131.939 Ligne
+ 11.509 -66.997  42.746 109.332 Ligne
+  4.932 -42.335  54.255  42.335 Ligne
+ 87.548  42.746  59.598   0.000 Ligne
+0 0  14.820 0 360 1 1   0.000 0 102.345  70.285 Ellipse
+  0.000   0.000  -6.227   5.792  -5.071   2.535  -8.369   1.506 101.523  55.077 ArrowNoire
+ -0.473   0.237 100.701  55.488 Ligne
+grestore
+}}
+\scriptsize
+\put(5.05,12.05){$vertex(i)$}
+\put(1.57,8.56){$vertex(ccw(i))$}
+\put(6.90,8.53){$vertex(cw(i))$}
+\put(5.80,11.01){$neighbor(ccw(i))$}
+\put(3.89,8.11){$neighbor(i)$}
+\put(2.35,10.60){$neighbor(cw(i))$}
+\put(5.02,9.67){$f$}
+\end{picture}
+\setlength{\unitlength}{1cm}

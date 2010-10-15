@@ -1,0 +1,79 @@
+\begin{ccRefConcept}{MeshingCriteria_2}
+
+\ccDefinition
+
+The concept \ccRefName\ defines the meshing criteria to be used in the
+algorithm. It provides a predicate \ccc{Is_bad} that tests a triangle
+according to criteria. The return type of \ccc{Is_bad} is an enum
+\ccc{Mesh_2::Face_badness}.
+
+The possible values of \ccc{Mesh_2::Face_badness} are \ccc{NOT_BAD},
+\ccc{BAD} and \ccc{IMPERATIVELY_BAD}. If the predicate returns \ccc{BAD},
+the triangle is marked as bad and the algorithm will try to destroy it. If
+the predicates returns \ccc{IMPERATIVELY_BAD}, the algorithm will destroy
+the triangle unconditionally during its execution.
+
+The termination of the algorithm is guaranteed when criteria are shape
+criteria corresponding to a bound on smallest angles not less than
+$20.7$ degrees (this corresponds to a radius-edge ratio bound not less
+than $\sqrt{2}$). Any size criteria that are satisfied by small enough
+tetrahedra can be added to the set of criteria without compromising
+the termination.
+
+Note that, in the presence of input angles smaller than $60$~degrees,
+some bad shaped triangles can appear in the finale mesh in the
+neighboring of small angles. To achieve termination and the respect of
+size criteria everywhere, the \ccc{Is_bad} predicate has to return
+\ccc{IMPERATIVELY_BAD} when size criteria are not satisfied, and
+\ccc{BAD} when shape criteria are not satisfied.
+
+% \ccc{IMPERATIVELY_BAD} 
+% If some input angles are smaller than $60$~degrees, some triangles that do
+% not satisfy the criteria could be not destroyed, with guarantees that the
+% algorithm will terminate. This predicate should not returns
+% \ccc{IMPERATIVELY_BAD} if the only reasons for the triangle to be destroyed
+% are shapes criteria. The use of \ccc{IMPERATIVELY_BAD} should be restricted
+% to other criteria, such as size criteria.
+
+\ccRefName\ also provides a type \ccc{Quality} designed to code a quality
+measure for triangles.  The type \ccc{Quality} must be \emph{less-than
+  comparable} as the meshing algorithm will order bad triangles by quality,
+to split those with smallest quality first. The predicate \ccc{Is_bad}
+computes the quality of the triangle as a by-product.
+
+\ccTypes
+
+\ccNestedType{Face_handle}{Handle to a face of the triangulation.}
+
+\ccNestedType{Quality}{Default constructible, copy constructible,
+  assignable, and less-than comparable type.}
+
+\ccNestedType{Is_bad} {Predicate object. Must provide two operators. The
+  first operator \ccc{Mesh_2::Face_badness operator()(Face_handle fh,
+    Quality& q)} returns \ccc{NOT_BAD} if it satisfies the desired criteria
+  for mesh triangles, \ccc{BAD} if it does not, and \ccc{IMPERATIVELY_BAD}
+  if it does not and should be refined unconditionally. In addition, this
+  operator assigns to \ccc{q} a value measuring the quality of the triangle
+  pointed by \ccc{fh}. The second operator \ccc{Mesh_2::Face_badness
+    operator()(Quality q)} returns \ccc{NOT_BAD} if \ccc{q} is the quality
+  of a good triangle, \ccc{BAD} if the \ccc{q} represents a poor quality,
+  and \ccc{IMPERATIVELY_BAD} if \ccc{q} represents the quality of a bad
+  triangle that should be refined unconditionally.}
+
+\ccCreationVariable{traits}
+
+\ccHeading{Access to predicate and constructor objects}
+
+\ccMethod{Is_bad is_bad_object();}{}
+
+\ccHasModels
+\ccc{Delaunay_mesh_criteria_2<CDT>}\\
+\ccc{Delaunay_mesh_size_criteria_2<CDT>}
+
+\end{ccRefConcept}
+
+%%% For emacs/AucTeX:
+%%% Local Variables: ***
+%%% mode:latex ***
+%%% TeX-master: "../Mesh_2.tex"  ***
+%%% End: ***

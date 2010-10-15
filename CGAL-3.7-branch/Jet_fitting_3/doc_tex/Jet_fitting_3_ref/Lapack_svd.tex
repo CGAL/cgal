@@ -1,0 +1,62 @@
+% +------------------------------------------------------------------------+
+% | Reference manual page: Lapack.tex
+% +------------------------------------------------------------------------+
+% | 09.02.2006   Marc Pouget and Frédéric Cazals
+% | Package: Jet_fitting_3
+% | 
+\RCSdef{\RCSLapackRev}{$Id$}
+\RCSdefDate{\RCSLapackDate}{$Date$}
+% |
+%%RefPage: end of header, begin of main body
+% +------------------------------------------------------------------------+
+
+\begin{ccRefClass}{Lapack_svd} %%add template arg's if necessary
+
+%% \ccHtmlCrossLink{}     %% add further rules for cross referencing links
+%% \ccHtmlIndexC[class]{} %% add further index entries
+
+\ccDefinition
+  
+The class \ccRefName\ provides an algorithm to solve in the least
+square sense a linear system with a singular value decomposition. The
+field type is \ccc{double}.
+
+\ccInclude{CGAL/Lapack/Linear_algebra_lapack.h}
+
+\ccIsModel
+\ccc{SvdTraits}
+
+% \ccTypes
+% % +--------------------------------------------------------------
+% %\ccNestedType{TYPE}{some nested types}
+% \ccTypedef{  typedef double FT; }{}
+% \ccNestedType{Vector}{}
+% \ccNestedType{Matrix}{}
+% %\ccTypedef{  typedef Lapack_vector Vector; }{}
+
+% \ccCreation
+% % +--------------------------------------------------------------
+% \ccCreationVariable{lapack_svd}  %% choose variable name
+
+% \ccConstructor{Lapack_svd();}{default constructor.}
+
+% \ccOperations
+% % +--------------------------------------------------------------
+% \ccMemberFunction{ void solve(Matrix& M, Vector& B, FT& cond_nb);
+% }{Solve MX=B using SVD and give the condition number of M. The
+% solution is stored in B.}
+
+% \ccSeeAlso
+
+% \ccc{SvdTraits}\\
+% %
+%\ccc{Lapack_matrix}
+%\ccc{some_other_function}.
+
+\end{ccRefClass}
+
+% +------------------------------------------------------------------------+
+%%RefPage: end of main body, begin of footer
+% EOF
+% +------------------------------------------------------------------------+
+

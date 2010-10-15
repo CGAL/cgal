@@ -1,0 +1,25 @@
+\begin{ccRefFunction}{points_on_segment_2}
+
+\ccDefinition
+
+The function \ccRefName\ generates a set of points equally spaced on
+a segment given the endpoints of the segment.
+
+\ccInclude{CGAL/point_generators_2.h}
+
+\ccFunction{template <class P, class OutputIterator>
+    OutputIterator points_on_segment_2( const P& p, const P& q, std::size_t n,
+    OutputIterator o);}
+{ creates $n$ points equally spaced on the segment from $p$ to $q$,
+    i.e.~$\forall i: 0 \le i < n: o[i] := \frac{n-i-1}{n-1}\, p +
+    \frac{i}{n-1}\, q$. Returns the value of $o$ after inserting
+    the $n$ points.}
+
+\ccSeeAlso
+\ccRefIdfierPage{CGAL::points_on_segment_2} \\
+\ccRefIdfierPage{CGAL::points_on_square_grid_2} \\
+\ccRefIdfierPage{CGAL::random_collinear_points_2} \\
+
+
+\end{ccRefFunction}
+

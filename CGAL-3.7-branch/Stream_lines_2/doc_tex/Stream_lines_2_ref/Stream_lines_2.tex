@@ -1,0 +1,109 @@
+% +------------------------------------------------------------------------+
+% | Reference manual page: Stream_lines_2.tex
+% +------------------------------------------------------------------------+
+% | 29.03.2000   Abdelkrim MEBARKI
+% | Package: Stream_lines_2
+% | 
+\RCSdef{\RCSStreamlinesRev}{$Id$}
+\RCSdefDate{\RCSStreamlinesDate}{$Date$}
+% |
+%%RefPage: end of header, begin of main body
+% +------------------------------------------------------------------------+
+
+
+\ccModifierCrossRefOff
+\begin{ccRefClass}{Stream_lines_2<VectorField_2,Integrator_2>}  %% add template arg's if necessary
+
+%% \ccHtmlCrossLink{}     %% add further rules for cross referencing links
+%% \ccHtmlIndexC[class]{} %% add further index entries
+
+\ccDefinition
+  
+The class \ccRefName\ is designed to handle a placement of streamlines
+in a 2D domain according to a bidimensional vector field.\\
+
+The class \ccRefName\ creates a placement of streamlines according to
+a specified density and gives access to those streamlines via two
+iterators over a container of iterators that provide access to the
+streamline points.
+
+\ccParameters
+The class \ccRefName\ has two template parameters. The first parameter
+\ccc{VectorField_2} has to be instantiated by a model of the concept
+\ccc{VectorField_2}. The second parameter is the function object
+\ccc{Integrator_2}, and has to be instantiated by a model of the concept
+\ccc{Integrator_2}.
+
+\ccTypes
+\ccThree{typedef VectorField_2:::Point_iterator_x}{xxx_xxxx_xxx;}{}
+\ccTypedef{typedef VectorField_2::Geom_traits Geom_traits;}{the traits class.}
+\ccGlue
+\ccTypedef{typedef VectorField_2::FT FT;}{the scalar type.}
+\ccGlue
+\ccTypedef{typedef VectorField_2::Point_2 Point_2;}{the point type.}
+\ccGlue
+\ccTypedef{typedef VectorField_2::Vector_2 Vector_2;}{the vector type.}
+
+The class \ccRefName\ provides also two types for handling
+streamlines:
+
+\ccNestedType{Point_iterator_2}{iterator of points with value type \ccc{Point_2}.}
+\ccGlue
+\ccNestedType{Stream_line_iterator_2}{an iterator to visit the streamlines with value type \ccc{std::pair<Point_iterator_2, Point_iterator_2>}.}
+\ccGlue
+
+
+
+\ccCreation
+\ccCreationVariable{stl}  %% choose variable name
+
+
+\ccThree{Stream_lines_2<>}{t = Streamlines__2 Streamlines}{}
+\ccThreeToTwo
+\ccConstructor{Stream_lines_2(VectorField_2 vector_field_2, Integrator_2 integrator_2, FT
+separating_distance, FT saturation_ratio);}
+{Generates a streamline placement \ccVar.}
+
+\ccHeading{Modifiers}
+
+\ccMethod{void set_separating_distance(FT new_value);}{Modify the
+separating distance.}
+\ccGlue
+
+\ccMethod{void set_saturation_ratio(FT new_value);}{Modify the
+saturation ratio.}
+\ccGlue
+
+\ccMethod{void update();}{Update the placement after changing the
+separating distance or the saturation ratio.}
+\ccGlue
+
+\ccHeading{Access Functions}
+
+\ccMethod{void get_separating_distance();}{returns the separating distance.}
+\ccGlue
+
+\ccMethod{void get_saturation_ratio();}{returns the saturation ratio.}
+\ccGlue
+
+\ccMethod{void print_stream_lines(std::ofstream & fw);}{prints the streamlines to an ASCII file : line by line, and point by point.}
+\ccGlue
+
+\ccHeading{Streamline iterators}
+
+The following iterators allow to visit all the streamlines generated
+by the constructor or the update function.
+
+\ccThree{Stream_line_iterator}{streamline.begin()x}{}
+\ccMethod{Stream_line_iterator begin() const;}{Starts at the first streamline}
+\ccGlue
+\ccMethod{Stream_line_iterator end() const;}{Past-the-end iterator}
+
+\end{ccRefClass}
+\ccModifierCrossRefOn
+
+% +------------------------------------------------------------------------+
+%%RefPage: end of main body, begin of footer
+% EOF
+% +------------------------------------------------------------------------+
+

@@ -1,0 +1,38 @@
+% +------------------------------------------------------------------------+
+% | Reference manual page: Greene_decomp.tex
+% +------------------------------------------------------------------------+
+% | 
+% | Package: Minkowski_sum_2
+% | 
+% +------------------------------------------------------------------------+
+
+\ccRefPageBegin
+
+\begin{ccRefClass}{Greene_convex_decomposition_2<Kernel,Container>}
+\label{mink_ref:Greene_decomp}
+
+\ccDefinition
+%============
+
+The \ccRefName\ class implements the approximation algorithm of
+Greene for the decomposition of an input polygon into convex
+sub-polygons~\cite{g-dpcp-83}. This algorithm takes $O(n \log n)$
+time and $O(n)$ space, where $n$ is the size of the input polygon,
+and outputs a decomposition whose size is guaranteed to be no more
+than four times the size of the optimal decomposition.
+
+The \ccc{Polygon_2} type defined by the class is simply
+\ccc{Polygon_2<Kernel,Container>}. The \ccc{Container} parameter
+is by default \ccc{std::vector<typename Kernel::Point_2>}.
+
+\ccInclude{CGAL/Polygon_convex_decomposition_2.h}
+
+\ccIsModel
+  \ccc{PolygonConvexDecomposition_2}
+
+\ccSeeAlso
+\ccc{CGAL::greene_approx_convex_partition_2}\lcTex{(\ccRefPage{CGAL::greene_approx_convex_partition_2})}
+
+\end{ccRefClass}
+
+\ccRefPageEnd

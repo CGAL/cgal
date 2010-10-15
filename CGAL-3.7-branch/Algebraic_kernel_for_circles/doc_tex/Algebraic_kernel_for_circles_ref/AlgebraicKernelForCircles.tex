@@ -1,0 +1,76 @@
+\begin{ccRefConcept}{AlgebraicKernelForCircles} 
+
+\ccDefinition
+
+The \ccc{AlgebraicKernelForCircles} concept is meant to provide the
+curved kernel with all the algebraic functionalities required for the
+manipulation of circular arcs. 
+
+\ccTypes
+
+A model of \ccc{AlgebraicKernelForCircles} is supposed to provide
+
+\ccNestedType{RT}{A model of \ccc{RingNumberType}. }%In addition, the
+%class \ccc{Root_of_traits_2<RT>} must be defined and provide a nested
+%type \ccc{Type} which must be the same as \ccc{Root_of_2} and a
+%function \ccc{make_root_of_2(RT,RT,RT,bool)} whose return type is
+%\ccc{Type}.} 
+\ccGlue
+\ccNestedType{FT}{A model of \ccc{FieldNumberType}\ccc{<RT>}.}
+\footnote{concept template...?} 
+
+\ccNestedType{Polynomial_1_2}{A model of 
+\ccc{AlgebraicKernelForCircles::Polynomial_1_2}, for bivariate polynomials of degree up
+to~1.}
+\ccGlue
+\ccNestedType{Polynomial_for_circles_2_2}{A model of
+\ccc{AlgebraicKernelForCircles::PolynomialForCircles_2_2}, for bivariate polynomials 
+of degree up to~2 that can store equations of circles.} 
+
+\ccNestedType{Root_of_2}{A model of 
+\ccc{AlgebraicKernelForCircles::RootOf_2}, for algebraic numbers 
+of degree up to~2.} 
+\ccGlue
+\ccNestedType{Root_for_circles_2_2}{A model of 
+\ccc{AlgebraicKernelForCircles::RootForCircles_2_2}, for
+solutions of systems of two models of 
+\ccc{AlgebraicKernelForCircles::PolynomialForCircles_2_2}.} 
+
+\ccNestedType{Construct_polynomial_1_2}{A model of
+\ccc{AlgebraicKernelForCircles::ConstructPolynomial_1_2}.}
+ \ccGlue
+\ccNestedType{Construct_polynomial_for_circles_2_2}{A model of
+\ccc{AlgebraicKernelForCircles::ConstructPolynomialForCircles_2_2}.}
+
+\ccNestedType{Solve}{A model of the concept \ccc{AlgebraicKernelForCircles::Solve}.}
+
+\ccNestedType{Sign_at}{A model of the concept \ccc{AlgebraicKernelForCircles::SignAt}.}
+
+\footnote{no \_2 (or \_2\_2) for functors ????????? problem of compatibility 
+with CK and the current kernel. On the other hand, allows to have only
+one functor for several types of arguments}
+
+\ccNestedType{X_critical_points}{A model of the concept 
+\ccc{AlgebraicKernelForCircles::XCriticalPoints}.}
+\ccGlue
+\ccNestedType{Y_critical_points}{A model of the concept 
+\ccc{AlgebraicKernelForCircles::YCriticalPoints}.}
+
+\ccNestedType{Compare_x}{A model of the concept 
+\ccc{AlgebraicKernelForCircles::CompareX}.}
+\ccGlue
+\ccNestedType{Compare_y}{A model of the concept 
+\ccc{AlgebraicKernelForCircles::CompareY}.}
+\ccGlue
+\ccNestedType{Compare_xy}{A model of the concept 
+\ccc{AlgebraicKernelForCircles::CompareXY}.}
+
+\ccHasModels
+
+\ccc{Algebraic_kernel_for_circles_2_2}
+
+\ccSeeAlso
+
+\ccRefIdfierPage{CGAL::Curved_kernel<BasicGeometricKernel,AlgebraicKernel>}
+
+\end{ccRefConcept}

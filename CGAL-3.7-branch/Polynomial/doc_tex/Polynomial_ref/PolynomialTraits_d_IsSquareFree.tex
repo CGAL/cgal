@@ -1,0 +1,38 @@
+\begin{ccRefConcept}{PolynomialTraits_d::IsSquareFree}
+\ccDefinition
+
+This \ccc{AdaptableBinaryFunction} computes whether the given 
+a polynomial of type \ccc{PolynomialTraits_d::Polynomial_d} 
+is square free. 
+
+Note that this statement does cover constant factors,
+i.e., whether the multivariate content contains a square.
+
+\ccRefines 
+\ccc{AdaptableUnaryFunction}\\
+\ccc{CopyConstructible}\\
+\ccc{DefaultConstructible}\\
+
+\ccTypes
+
+\ccSetThreeColumns{xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx}{xxx}{}
+\ccCreationVariable{fo}
+\ccTypedef{typedef bool                        result_type;}{}\ccGlue
+\ccTypedef{typedef PolynomialTraits_d::Polynomial_d   argument_type;}{}
+
+\ccOperations
+\ccMethod{result_type operator()(argument_type  p);}
+         { Returns whether the $p$ is square free. }
+
+
+%\ccHasModels
+
+\ccSeeAlso
+
+\ccRefIdfierPage{Polynomial_d}\\
+\ccRefIdfierPage{PolynomialTraits_d}\\
+\ccRefIdfierPage{PolynomialTraits_d::SquareFreeFactorize}\\
+\ccRefIdfierPage{PolynomialTraits_d::MakeSquareFree}\\
+\ccRefIdfierPage{PolynomialTraits_d::MultivariateContent}\\
+
+\end{ccRefConcept}

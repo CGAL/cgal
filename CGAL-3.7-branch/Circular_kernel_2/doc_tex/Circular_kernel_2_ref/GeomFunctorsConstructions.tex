@@ -1,0 +1,151 @@
+\begin{ccRefFunctionObjectConcept}{CircularKernel::MakeXMonotone_2}
+
+\ccCreationVariable{fo}
+
+A model \ccVar\ of this type must provide:
+
+\ccMemberFunction{template < class OutputIterator >
+    OutputIterator
+    operator()(const CircularKernel::Circular_arc_2 &ca, OutputIterator oit);}
+{Splits the arc \ccc{ca} into $x$-monotone arcs that are returned through the 
+output iterator. Note that, to ensure an easy interface with the 
+\ccc{Arrangement_2} package, the arcs are returned as \ccc{CGAL::Object}'s 
+(see the \ccc{ArrangementTraits_2} concept).}
+
+For the sake of completeness, the \ccc{operator()} must also be
+defined for a
+\ccc{Line_arc_2}. In this case, the input line arc itself is the only
+arc returned through the \ccc{OutputIterator}. 
+
+\ccSeeAlso
+
+\ccRefIdfierPage{CircularKernel::MakeXYMonotone_2}
+
+\end{ccRefFunctionObjectConcept}
+\begin{ccRefFunctionObjectConcept}{CircularKernel::MakeXYMonotone_2}
+
+\ccCreationVariable{fo}
+
+A model \ccVar\ of this type must provide:
+
+\ccMemberFunction{template < class OutputIterator >
+    OutputIterator
+    operator()(const CircularKernel::Circular_arc_2 &ca, OutputIterator oit);}
+{Splits the arc \ccc{ca} into $xy$-monotone arcs that are returned through the 
+output iterator. Note that, to ensure an easy interface with the 
+\ccc{Arrangement_2} package, the arcs are returned as \ccc{CGAL::Object}'s 
+(see the \ccc{ArrangementTraits_2} concept).}
+
+For the sake of completeness, the \ccc{operator()} must also be
+defined for a
+\ccc{Line_arc_2}. In this case, the input line arc itself is the only
+arc returned through the \ccc{OutputIterator}. 
+
+\ccSeeAlso
+
+\ccRefIdfierPage{CircularKernel::MakeXMonotone_2}
+
+\end{ccRefFunctionObjectConcept}
+\begin{ccRefFunctionObjectConcept}{CircularKernel::Intersect_2}
+
+\ccRefines
+
+\ccc{Kernel::Intersect_2}
+
+\ccCreationVariable{fo}
+
+A model \ccVar\ of this type must provide:
+
+\ccMemberFunction{template < class OutputIterator >
+    OutputIterator
+    operator()(const Type1 &obj1, const Type2 &obj2,
+	OutputIterator intersections);}
+{Copies in the output iterator the intersection elements between the
+two objects. \ccc{intersections} iterates on
+elements of type \ccc{CGAL::Object}, in lexicographic order.}
+
+where \ccc{Type_1} and \ccc{Type_2} can both be either
+\begin{itemize}
+\item {} \ccc{CircularKernel::Line_2} or
+\item {} \ccc{CircularKernel::Line_arc_2} or
+\item {} \ccc{CircularKernel::Circle_2} or
+\item {} \ccc{CircularKernel::Circular_arc_2}.
+\end{itemize} 
+
+Depending on the types \ccc{Type_1} and \ccc{Type_2}, these elements can be
+assigned to 
+\begin{itemize}
+\item {} \ccc{std::pair<CircularKernel::Circular_arc_point_2, unsigned>},
+where the unsigned integer is the multiplicity of the corresponding
+intersection point between \ccc{obj_1} and \ccc{obj_2},
+\item {} \ccc{CircularKernel::Circular_arc_2} in case of an overlap of 
+two circular arcs,
+\item {} \ccc{CircularKernel::Line_arc_2} in case of an overlap of two 
+line segments or
+\item {} \ccc{CircularKernel::Line_2} or \ccc{CircularKernel::Circle_2} 
+in case of two equal input lines or circles. 
+\end{itemize} 
+
+\ccSeeAlso
+
+\ccRefIdfierPage{CGAL::intersection}
+
+%\ccMemberFunction{template < class OutputIterator >
+%    OutputIterator
+%    operator()(const CircularKernel::Line_arc_2 &l, const Type &c, 
+%	OutputIterator points);}
+%{Copies in the output iterators the intersection points between the
+%two objects, sorted lexicographically. \ccc{points} iterates on
+%elements of type \ccc{std::pair<CircularKernel::Circular_arc_point_2,
+%int>}, where the integer is the multiplicity of the corresponding
+%intersection point between \ccc{l} and \ccc{c}. }
+%and
+%\ccMemberFunction{template < class OutputIterator >
+%    OutputIterator
+%    operator()(const Type &c, const CircularKernel::Line_arc_2 &l);}
+%{same}
+
+%where \ccc{Type} is either \ccc{CircularKernel::Circle_2} or
+%\ccc{CircularKernel::Circular_arc_2}. 
+
+%\ccMemberFunction{template < class OutputIteratorPoints, 
+%				class OutputIteratorArcs >
+%    std::pair< OutputIteratorPoints, OutputIteratorArcs >
+%    operator()(const Type1 &obj1, const Type2 &obj2, 
+%	OutputIteratorPoints points, OutputIteratorArcs arcs);}
+%{Copies in the output iterators the intersections between the two
+%objects, sorted lexicographically. \ccc{points} iterates on elements
+%of type \ccc{std::pair<CircularKernel::Circular_arc_point_2, int>},
+%where the integer is the multiplicity of the corresponding
+%intersection point between \ccc{obj1} and \ccc{obj2}, and \ccc{arcs}
+%iterates on elements of type \ccc{CircularKernel::Circular_arc_2} %(or
+%%\ccc{CircularKernel::Circle_2} in the special case of two equal input circles)
+%that are arcs on which \ccc{obj1} and \ccc{obj2} overlap.} 
+
+%where \ccc{Type1} and \ccc{Type2} can both be either
+%\ccc{CircularKernel::Circle_2} or
+%\ccc{CircularKernel::Circular_arc_2}. 
+
+\end{ccRefFunctionObjectConcept}
+
+\begin{ccRefFunctionObjectConcept}{CircularKernel::Split_2}
+
+\ccCreationVariable{fo}
+
+A model \ccVar\ of this type must provide:
+
+\ccMemberFunction{void operator()
+	(const CircularKernel::Circular_arc_2 &a, 
+	const CircularKernel::Circular_arc_point_2 &p,
+	CircularKernel::Circular_arc_2 &a1, 
+	CircularKernel::Circular_arc_2 &a2);}
+{Splits arc $a$ at point $p$, which creates arcs $a1$ and $a2$.
+\ccPrecond{The point lies on the input arc.}}
+
+\ccMemberFunction{void operator()
+	(const CircularKernel::Line_arc_2 &l, 
+	 const CircularKernel::Circular_arc_point_2 &p,
+	 CircularKernel::Line_arc_2 &l1, CircularKernel::Line_arc_2 &l2);}
+{Same for a line arc.}
+
+\end{ccRefFunctionObjectConcept}

@@ -1,0 +1,47 @@
+
+
+%% Geometric optimization is a well-studied subject also in theory.
+%% Consequently, general design principles have been developed from which
+%% solutions to diverse problems arise. For example, although the
+%% problems of computing the smallest enclosing sphere of a point set and
+%% the problem of computing the distance between two convex hulls seem to
+%% be quite different, they are both instances of a more general
+%% optimization problem, named ``quadratic programming''. To be more
+%% specific, \cgal's solutions for the two quadratic programming
+%% instances just mentioned are based on a general quadratic programming
+%% solver, which will be documented as a separate unit in future
+%% releases.
+
+%% This section provides interfaces to several such general techniques as
+%% well as additional concrete optimization algorithms that derive from
+%% these general techniques.
+
+%% To be more specific, \cgal's solutions for the two quadratic
+%% programming instances just mentioned are based on a general quadratic
+%% programming solver, which itself is available as an advanced
+%% technique.  This means, using \cgal, you can solve your favorite
+%% quadratic program, even if it does not assume the form of one of the
+%% optimization problems that we explicitly address! A word of warning is
+%% in order: the interface of the quadratic programming solver has mainly
+%% been developed for internal use by the \cgal\ developers community. In
+%% particular, feedback from the developers has influenced (and will
+%% further influence) its design. This means: you are welcome to use the
+%% solver's interface, but if you do so, please be aware that it might
+%% change in the future, making adaptions of your code necessary. In the
+%% future, the interface and the functionality will stabilize.
+
+
+\ccc{CGAL::monotone_matrix_search} and \ccc{CGAL::sorted_matrix_search} 
+are techniques that deal with the problem of efficiently finding
+largest entries in matrices with certain structural properties. Many
+concrete problems can be modelled as matrix search problems, and for
+some of them we provide explicit solutions that allow you to solve
+them without knowing about the matrix search technique. Examples are,
+the computation of all furthest neighbors for the vertices of a convex
+polygon, maximal $k$-gons inscribed into a planar point set, and
+computing rectangular $p$-centers.
+
+%% ===== EOF ===================================================================
+
+
+

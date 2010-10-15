@@ -1,0 +1,50 @@
+% +------------------------------------------------------------------------+
+% | Reference manual page: Moving_object_table_listener_helper.tex
+% +------------------------------------------------------------------------+
+% | 20.03.2005   Author
+% | Package: Kinetic_data_structures
+% | 
+\RCSdef{\RCSMovingobjecttablelistenerhelperRev}{$Id$}
+\RCSdefDate{\RCSMovingobjecttablelistenerhelperDate}{$Date$}
+% |
+%%RefPage: end of header, begin of main body
+% +------------------------------------------------------------------------+
+
+
+\begin{ccRefClass}{Kinetic::Active_objects_listener<ActiveObjectsTable, KDS>}  %% add template arg's if necessary
+
+%% \ccHtmlCrossLink{}     %% add further rules for cross referencing links
+%% \ccHtmlIndexC[class]{} %% add further index entries
+
+\ccDefinition
+  
+The class \ccRefName\ acts as an intermediate between a moving object
+table and a KDS. It translates the
+\ccc{ActiveObjectsTable::Listener::IS_EDITING} notification events into
+appropriate calls to \ccc{KDS::insert(Key)}, \ccc{KDS::set(Key)},
+\ccc{KDS::erase(Key)}. 
+
+Kinetic data structures can still take advantage of the batch editing
+if they are careful. The methods (such as \ccc{KDS::set(Key)} are
+called in lexicographical order in the \ccc{Key}s. So, when a KDS is
+preparing to update some certificate involving a recently set object,
+it can first check if the certificate involves another changed object
+which is lexicographically prior. If so, then the certificate has
+already been updated and can be skipped.
+
+\ccInclude{CGAL/Kinetic/listeners.h}
+
+
+\ccSeeAlso
+
+\ccc{Kinetic::Active_objects_vector<MovingObject>},
+\ccc{Kinetic::ActiveObjectsTable}.
+
+
+\end{ccRefClass}
+
+% +------------------------------------------------------------------------+
+%%RefPage: end of main body, begin of footer
+% EOF
+% +------------------------------------------------------------------------+
+

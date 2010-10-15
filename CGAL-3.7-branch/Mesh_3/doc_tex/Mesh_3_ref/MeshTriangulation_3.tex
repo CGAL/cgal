@@ -1,0 +1,73 @@
+% +------------------------------------------------------------------------+
+% | Reference manual page: MeshTriangulation_3.tex
+% +------------------------------------------------------------------------+
+% | 16.02.2009   Author
+% | Package: Package
+% |
+\RCSdef{\RCSMeshTriangulationRev}{$Id: header.tex 40270 2007-09-07 15:29:10Z lsaboret $}
+\RCSdefDate{\RCSMeshTriangulationDate}{$Date: 2007-09-07 17:29:10 +0200 (Ven, 07 sep 2007) $}
+% |
+\ccRefPageBegin
+%%RefPage: end of header, begin of main body
+% +------------------------------------------------------------------------+
+
+
+\begin{ccRefConcept}{MeshTriangulation_3}
+
+%% \ccHtmlCrossLink{}     %% add further rules for cross referencing links
+%% \ccHtmlIndexC[concept]{} %% add further index entries
+
+\ccDefinition
+  
+The concept \ccRefName\ describes the requirement for the triangulation
+class used by a 3D meshing process.
+This concept is similar to the concept 
+\ccc{SurfaceMeshTriangulation_3}
+except that the triangulation has to be a regular triangulation.
+In addition, the vertex and cell classes of 
+a \ccc{MeshTriangulation_3}
+are required to match the
+models of the concepts \ccc{MeshVertexBase_3} and
+\ccc{MeshCellBase_3}, respectively.
+
+% The following will bbe true when Surface Mesher will be
+% updated
+% \ccRefines
+% \ccc{SurfaceMeshTriangulation_3}
+
+
+\ccTypes
+
+\ccNestedType{Point}
+{Point type. Because the triangulation is a regular
+triangulation, the point type has to be a weighted point type.
+This type must be the same as \ccc{MeshDomain::Point_3}.}
+
+\ccNestedType{Vertex}{Vertex type. Must be a model
+of the concept \ccc{MeshVertexBase_3}.}
+
+\ccNestedType{Cell}{Cell type. Must to be a model
+of the concept \ccc{MeshCellBase_3}.}
+
+
+\ccHasModels
+\ccc{Mesh_triangulation_3<Traits,MeshDomain>} \\
+Any 3D regular triangulation of \cgal\ is also a model of this concept.
+
+
+
+\ccSeeAlso
+\ccc{MeshCellBase_3}\\
+\ccc{MeshVertexBase_3} \\
+\ccc{Complex_3_in_triangulation_3<Tr>} \\
+\ccc{make_mesh_3}.
+
+
+\end{ccRefConcept}
+
+% +------------------------------------------------------------------------+
+%%RefPage: end of main body, begin of footer
+\ccRefPageEnd
+% EOF
+% +------------------------------------------------------------------------+
+

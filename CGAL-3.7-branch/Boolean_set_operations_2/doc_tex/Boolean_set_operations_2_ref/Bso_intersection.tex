@@ -1,0 +1,141 @@
+\ccRefPageBegin
+\label{ref_bso_intersection}
+
+\begin{ccRefFunction}{intersection}
+
+\ccThree{OutputIterator}{intersection}{}
+\ccThreeToTwo
+
+\ccDefinition
+
+\ccInclude{CGAL/Boolean_set_operations_2.h}
+
+\ccGlobalFunction{
+OutputIterator intersection(const Type1 & p1, const Type2 & p2,
+                            OutputIterator oi);}
+{Each one of these functions computes the intersection of two given
+polygons \ccc{p1} and \ccc{p2}, inserts the resulting polygons with
+holes into an output container through a given output iterator
+\ccc{oi}, and returns the output iterator. The value type of the
+\ccc{OutputIterator} is either \ccc{Polygon_with_holes_2} or 
+\ccc{General_polygon_with_holes_2}.}
+
+\begin{ccTexOnly}
+\begin{longtable}[c]{|l|l|}
+\multicolumn{2}{l}{\sl \ \ }
+\endfirsthead
+\multicolumn{2}{l}{\sl continued}
+\endhead
+\hline
+\textbf{Arg 1 Type} & \textbf{Arg 2 Type}\\
+\hline
+\hline
+\ccc{Polygon_2} & \ccc{Polygon_2}\\
+\hline
+\ccc{Polygon_2} & \ccc{Polygon_with_holes_2}\\
+\hline
+\ccc{Polygon_with_holes_2} & \ccc{Polygon_2}\\
+\hline
+\ccc{Polygon_with_holes_2} & \ccc{Polygon_with_holes_2}\\
+\hline
+\ccc{General_polygon_2} & \ccc{General_polygon_2}\\
+\hline
+\ccc{General_polygon_2} & \ccc{General_polygon_with_holes_2}\\
+\hline
+\ccc{General_polygon_with_holes_2} & \ccc{General_polygon_2}\\
+\hline
+\ccc{General_polygon_with_holes_2} & \ccc{General_polygon_with_holes_2}\\
+\hline
+\end{longtable}
+\end{ccTexOnly}
+
+\begin{ccHtmlOnly}
+<div align="center">
+<table cellpadding=3 border="1">
+<tr><th> Arg 1 type</th><th>Arg 2 type</th></tr>
+<tr><td valign="center">Polygon_2</td><td valign="center">Polygon_2</td></tr>
+<tr><td valign="center">Polygon_2</td><td valign="center">Polygon_with_holes_2</td></tr> 
+<tr><td valign="center">Polygon_with_holes_2</td><td valign="center">Polygon_2</td></tr>
+<tr><td valign="center">Polygon_with_holes_2</td><td valign="center">Polygon_with_holes_2</td></tr>
+<tr><td valign="center">General_polygon_2</td><td valign="center">General_polygon_2</td></tr>
+<tr><td valign="center">General_polygon_2</td><td valign="center">General_polygon_with_holes_2</td></tr>
+<tr><td valign="center">General_polygon_with_holes_2</td><td valign="center">General_polygon_2</td></tr>
+<tr><td valign="center">General_polygon_with_holes_2</td><td valign="center">General_polygon_with_holes_2</td></tr>
+</table>
+</div>
+\end{ccHtmlOnly}
+
+\ccGlobalFunction{template <class Kernel, class Container, class OutputIterator>
+OutputIterator intersection(const Polygon_2<Kernel, Container> & p1,
+                            const Polygon_2<Kernel, Container> & p2,
+                            OutputIterator oi);}
+\ccGlue
+\ccGlobalFunction{template <class Kernel, class Container, class OutputIterator>
+OutputIterator intersection(const Polygon_2<Kernel, Container> & p1,
+                            const Polygon_with_holes_2<Kernel, Container> & p2,
+                            OutputIterator oi);}
+\ccGlue
+\ccGlobalFunction{template <class Kernel, class Container, class OutputIterator>
+OutputIterator intersection(const Polygon_with_holes_2<Kernel, Container> & p1,
+                            const Polygon_2<Kernel, Container> & p2,
+                            OutputIterator oi);}
+\ccGlue
+\ccGlobalFunction{template <class Kernel, class Container, class OutputIterator>
+OutputIterator intersection(const Polygon_with_holes_2<Kernel, Container> & p1,
+                            const Polygon_with_holes_2<Kernel, Container> & p2,
+                            OutputIterator oi);}
+\ccGlue
+\ccGlobalFunction{template <class Traits, class OutputIterator>
+OutputIterator intersection(const General_polygon_2<Traits> & p1,
+                            const General_polygon_2<Traits> & p2,
+                            OutputIterator oi);}
+\ccGlue
+\ccGlobalFunction{template <class Traits, class OutputIterator>
+OutputIterator intersection(const General_polygon_with_holes_2<General_polygon_2<Traits> > & p1,
+                            const General_polygon_2<Traits> & p2,
+                            OutputIterator oi);}
+\ccGlue
+\ccGlobalFunction{template <class Traits, class OutputIterator>
+OutputIterator intersection(const General_polygon_2<Traits> & p1,
+                            const General_polygon_with_holes_2<General_polygon_2<Traits> > & p2,
+                            OutputIterator oi);}
+\ccGlue
+\ccGlobalFunction{template <class Polygon, class OutputIterator>
+OutputIterator intersection(const General_polygon_with_holes_2<Polygon> & p1,
+                            const General_polygon_with_holes_2<Polygon> & p2,
+                            OutputIterator oi);}
+
+\ccGlobalFunction{template <class InputIterator, class OutputIterator>
+OutputIterator intersection(InputIterator begin, InputIterator end,
+                            OutputIterator oi);}
+{Computes the intersection of the general polygons (or general polygons with
+holes) in the given range. (The value type of the input iterator is
+used to distinguish between the two.) The result, represented by a set
+of general poygon with holes, is inserted into an output container
+through a given output iterator \ccc{oi}. The output iterator is
+returned. The value type of the \ccc{OutputIterator} is
+\ccc{Traits::Polygon_with_holes_2}.}
+
+\ccGlobalFunction{template <class InputIterator1, class InputIterator2,
+		  class OutputIterator>
+OutputIterator intersection(InputIterator1 pgn_begin1,
+                            InputIterator1 pgn_end1,
+                            InputIterator2 pgn_begin2,
+	                    InputIterator2 pgn_end2,
+		            OutputIterator oi);}
+{Computes the intersection of the general polygons and general polygons
+with holes in the given two ranges. The result, represented by a set
+of general poygon with holes, is inserted into an output container
+through a given output iterator \ccc{oi}. The output iterator is
+returned. The value type of the \ccc{OutputIterator} is
+\ccc{Traits::Polygon_with_holes_2}.}
+
+\ccSeeAlso
+\ccRefIdfierPage{CGAL::do_intersect}\\
+\ccRefIdfierPage{CGAL::join}\\
+\ccRefIdfierPage{CGAL::difference}\\
+\ccRefIdfierPage{CGAL::symmetric_difference}
+
+\end{ccRefFunction}
+
+\ccRefPageEnd

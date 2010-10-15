@@ -1,0 +1,29 @@
+\begin{ccRefFunctionObjectConcept}{Kernel::ComputeSquaredDistance_3}
+A model for this must provide:
+
+\ccCreationVariable{fo}
+
+\ccMemberFunction{Kernel::FT operator()(Type1 obj1, Type2 obj2);}
+{returns the squared distance between two geometrical objects of type
+\ccStyle{Type1} and \ccStyle{Type2} }
+
+for all pairs \ccStyle{Type1} and \ccStyle{Type2}, where
+the types \ccStyle{Type1} and \ccStyle{Type2} can be any of the
+following:
+\begin{itemize}\ccTexHtml{\itemsep0pt\topsep0pt\partopsep0pt\parskip0pt\parsep0pt}{}
+\item \ccStyle{Kernel::Point_3}
+\item \ccStyle{Kernel::Line_3}
+\item \ccStyle{Kernel::Ray_3}
+\item \ccStyle{Kernel::Segment_3}
+\item \ccStyle{Kernel::Plane_3}
+% If this list is changed, please change also in
+% Kernel_CompareDistance_3.tex and compare_distance.tex
+\end{itemize}
+
+\ccRefines
+\ccc{AdaptableFunctor} (with two arguments)
+
+\ccSeeAlso
+\ccRefIdfierPage{CGAL::squared_distance}  \\
+
+\end{ccRefFunctionObjectConcept}

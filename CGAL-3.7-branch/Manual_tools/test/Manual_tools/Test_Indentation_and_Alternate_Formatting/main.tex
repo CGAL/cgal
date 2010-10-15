@@ -1,0 +1,52 @@
+
+This example tests the indentation and right margin setting
+possibilities. Two long declarations with alternative formatting rules
+for the function arguments are used. First the  declaration without
+any indentation or margins.
+
+\ccFunction{int a_really_long_function_name( double paramter1, double
+  paramter2);}{the default formatting. A bit more text is necessary to
+  demonstrate the right margin.}
+
+Now with 10mm indentation and 10mm right margin. Note that the
+description is also further indented since all dimensions are
+calculated from left.
+
+\ccTagDefaults
+\def\ind{\hspace*{7mm}}
+\ccTexHtml{\ccwIndent=10mm \ccwRightMargin=10mm}{}
+
+\ccFunction{int a_really_long_function_name( double paramter1, double
+  paramter2);}{the default formatting. A bit more text is necessary to
+  demonstrate the right margin.}
+\renewcommand{\ccLongParamLayout}{\ccTrue}
+
+\ccFunction{int a_really_long_function_name( double paramter1, double
+  paramter2);}{the alternative formatting. A bit more text is necessary to
+  demonstrate the right margin.}
+
+Show the indentation also for template functions.
+
+\ccFunction{template<class A> int bar(A a);}{A bit more text to
+  demonstrate the right margin.}
+
+\renewcommand{\ccLongParamLayout}{\ccFalse}
+
+Check the same alternate indentation with the compatibility mode 
+\verb+\renewcommand{\ccAlternateThreeColumn}{\ccFalse}+
+
+\renewcommand{\ccAlternateThreeColumn}{\ccFalse}
+
+\ccFunction{int a_really_long_function_name( double paramter1, double
+  paramter2);}{the alternative formatting. A bit more text is necessary to
+  demonstrate the right margin.}
+
+Show the indentation also for template functions.
+
+\ccFunction{template<class A> int bar(A a);}{A bit more text to
+  demonstrate the right margin.}
+
+\renewcommand{\ccAlternateThreeColumn}{\ccTrue}
+\ccTexHtml{\ccwIndent=0mm \ccwRightMargin=0mm}{}
+
+% ----------------------------------------------------------------------

@@ -1,0 +1,172 @@
+%% Copyright (c) 2005  Foundation for Research and Technology-Hellas (Greece).
+%% All rights reserved.
+%%
+%% This file is part of CGAL (www.cgal.org); you may redistribute it under
+%% the terms of the Q Public License version 1.0.
+%% See the file LICENSE.QPL distributed with CGAL.
+%%
+%% Licensees holding a valid commercial license may use this file in
+%% accordance with the commercial license agreement provided with the software.
+%%
+%% This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
+%% WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
+%%
+%% $URL$
+%% $Id$
+%% 
+%%
+%% Author(s)     : Menelaos Karavelas <mkaravel@iacm.forth.gr>
+
+
+
+\begin{ccRefClass}[Voronoi_diagram_2<DG,AT,AP>::]{Halfedge}
+
+\ccDefinition
+The class \ccRefName\ is the class provided by the
+\ccc{Voronoi_diagram_2<DG,AT,AP>} class for Voronoi halfedges.
+Below we present its interface.
+
+\ccIsModel
+\ccc{DefaultConstructible}, \ccc{CopyConstructible}, \ccc{Assignable},
+\ccc{EqualityComparable}, \ccc{LessThanComparable}
+
+\ccTypes
+%
+\ccTwo{Voronoi_diagram_2<DG,AT,AP>::Halfedge::Ccb_halfedge_circulator+}{}
+\ccNestedType{Vertex}{A type for the vertices of the Voronoi diagram.}
+\ccGlue
+\ccNestedType{Face}{A type for the faces of the Voronoi diagram.}
+\ccGlue
+\ccNestedType{Vertex_handle}{Handle for the vertices of the Voronoi diagram.}
+\ccGlue
+\ccNestedType{Face_handle}{Handle for the faces of the Voronoi diagram.}
+\ccGlue
+\ccNestedType{Halfedge_handle}{Handle for the halfedges of the Voronoi
+  diagram.}
+\ccGlue
+\ccNestedType{Ccb_halfedge_circulator}{A type for a bidirectional
+  circulator over the halfedges of the boundary of a
+  Voronoi face. The value type of the circulator is
+  \ccc{CGAL::Voronoi_diagram_2<DG,AT,AP>::Halfedge} and is convertible to
+  \ccc{Halfedge_handle}.}
+\ccGlue
+\ccNestedType{Delaunay_graph}{A type for the Delaunay graph. It is a
+  model of the \ccc{DelaunayGraph_2} concept.}
+\ccThree{typedef Delaunay_graph::Vertex_handle}{Delaunay_vertex_handle;}{}
+\ccThreeToTwo
+\ccGlue
+\ccTypedef{typedef Delaunay_graph::Edge Delaunay_edge;}{A type for
+  the dual edge in the Delaunay graph.}
+\ccGlue
+\ccTypedef{typedef Delaunay_graph::Vertex_handle Delaunay_vertex_handle;}
+{A type for vertex handles in the Delaunay graph.}
+
+\ccCreationVariable{e}  %% choose variable name
+
+\ccThree{Delaunay_edge}{e.has_source()+}{}
+\ccThreeToTwo
+
+\ccHeading{Access Methods}
+\ccThree{Ccb_halfedge_circulator}{e.opposite()+}{}
+%
+\ccMethod{Halfedge_handle twin();}{Returns the twin halfedge.}
+\ccGlue
+\ccMethod{Halfedge_handle opposite();}{Same as \ccc{e.twin()}.}
+\ccGlue
+\ccMethod{Halfedge_handle next();}{Returns the next halfedge in the
+  counterclockwise sense around the boundary of the face that \ccc{e}
+  is incident to.}
+\ccGlue
+\ccMethod{Halfedge_handle previous();}{Returns the previous halfedge in the
+  counterclockwise sense around the boundary of the adjacent face.}
+\ccGlue
+\ccMethod{Face_handle face();}{Returns the face that \ccc{e} is
+  incident to.}
+\ccGlue
+\ccMethod{Vertex_handle source();}{Returns the source vertex of
+  \ccc{e}.
+  \ccPrecond{The source vertex must exist, i.e., \ccc{has_source()}
+    must return \ccStyle{true}.}}
+\ccGlue
+\ccMethod{Vertex_handle target();}{Returns the target vertex of
+  \ccc{e}.
+  \ccPrecond{The target vertex must exist, i.e., \ccc{has_target()}
+    must return \ccStyle{true}.}}
+\ccGlue
+\ccMethod{Ccb_halfedge_circulator ccb();}{Returns a bidirectional
+  circulator to traverse the halfedges on the boundary of the Voronoi
+  face containing \ccc{e}. The circulator is initialized to
+  \ccc{e}. Applying \ccc{operator++} (resp. \ccc{operator--}) to this
+  circulator returns the next halfedge on the boundary of the face
+  containing \ccc{e} in the counterclockwise (resp. clockwise) sense.}
+\ccGlue
+\ccMethod{Delaunay_edge dual();}{Returns the
+  corresponding dual edge in the Delaunay graph.}
+
+In the four methods below we consider Voronoi halfedges to be ``parallel''
+to the $x$-axis, oriented from left to right.
+
+\ccMethod{Delaunay_vertex_handle up();}{Returns a handle to the vertex in
+the Delaunay graph corresponding to the defining site above
+the Voronoi edge.}
+\ccGlue
+\ccMethod{Delaunay_vertex_handle down();}{Returns a handle to the vertex
+in the Delaunay graph corresponding to the defining site below
+the Voronoi edge.}
+\ccGlue
+\ccMethod{Delaunay_vertex_handle left();}{Returns a handle to the vertex in
+the Delaunay graph corresponding to the defining site to the left of
+the Voronoi edge.
+\ccPrecond{\ccc{has_source()} must be \ccStyle{true}.}}
+\ccGlue
+\ccMethod{Delaunay_vertex_handle right();}{Returns a handle to the vertex in
+the Delaunay graph corresponding to the defining site to the right of
+the Voronoi edge.
+\ccPrecond{\ccc{has_target()} must be \ccStyle{true}.}}
+
+\ccHeading{Predicate Methods}
+\ccThree{bool}{e.is_unbounded()+}{}
+%
+\ccMethod{bool has_source();}{Returns \ccStyle{true} iff the halfedge
+  corresponds to a bisecting segment or a bisecting ray oriented
+  appropriately so that its apex is its source.}
+\ccGlue
+\ccMethod{bool has_target();}{Returns \ccStyle{true} iff the halfedge
+  corresponds to a bisecting segment or a bisecting ray oriented
+  appropriately so that its apex is its target.}
+\ccGlue
+\ccMethod{bool is_unbounded();}{Returns \ccStyle{true} iff the source or
+  the target of the halfedge does not exist, i.e., if either of
+  \ccc{has_source()} or \ccc{has_target()} return \ccStyle{false}.}
+\ccGlue
+\ccMethod{bool is_bisector();}{Returns \ccStyle{true} iff the Voronoi
+  edge is an entire bisector.}
+\ccGlue
+\ccMethod{bool is_segment();}{Returns \ccStyle{true} iff the Voronoi
+  edge has both a source and a target Voronoi vertex.}
+\ccGlue
+\ccMethod{bool is_ray();}{Returns \ccStyle{true} iff the Voronoi
+  edge has either a source or a target Voronoi vertex, but not both;
+  in other words it is a bisecting ray.}
+\ccGlue
+\ccMethod{bool is_valid();}{Returns \ccStyle{true} if the following
+  conditions are met: the halfedge is not a rejected
+  edge with respect to the chosen adaptation policy;
+  the twin edge of its twin edge is itself; its adjacent face is not a
+  rejected face with respect to the chosen adaptation policy;
+  its source and target vertices are valid (provided
+  they exist, of course); the previous of its next halfedge is itself
+  and the next of its previous halfedge is itself.}
+
+\ccSeeAlso
+\ccc{CGAL::Voronoi_diagram_2<DG,AT,AP>}\\
+\ccc{CGAL::Voronoi_diagram_2<DG,AT,AP>::Vertex}\\
+\ccc{CGAL::Voronoi_diagram_2<DG,AT,AP>::Face}\\
+\ccc{DelaunayGraph_2}
+\end{ccRefClass}
+
+% +------------------------------------------------------------------------+
+%%RefPage: end of main body, begin of footer
+% EOF
+% +------------------------------------------------------------------------+
+

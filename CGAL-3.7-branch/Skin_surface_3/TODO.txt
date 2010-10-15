@@ -1,0 +1,18 @@
+- Skin_surface_refinement_traits->Skin_surface_subdivision_policy (subdiv,policy)
+- Sqrt3->subdiv
+- refinement->subdivision
+- Put quadratic surfaces in a list and free the list on destruction
+- Remove 'small' edges from the triangulated mixed complex
+
+
+OLD:
+- check the normals to the skin surface
+- give surface_test input
+- check triangulate_mixed_complex: converter not from traits
+- polyhedron traits does not define Vector
+- Chew's algorithm
+
+Documentation:
+- Add references from doc_tex/Skin_surface_3 to classes.
+- Compute anchor point types are not from Skin_surface_traits
+  since they depend on the regular triangulation and not the reg. kernel

@@ -1,0 +1,52 @@
+\section{Extending the Package and Reusing Code}
+
+\subsection{Reusing Mesh Adaptors}
+
+\ccc{ParameterizationMesh_3} defines a concept to access to a
+general polyhedral mesh.
+It is optimized for the \ccc{Surface_mesh_parameterization} package
+only in the sense that it
+defines the accessors to fields specific to the parameterization domain
+(\ccc{index}, \ccc{u}, \ccc{v}, \ccc{is_parameterized}).
+
+It may be easily generalized.
+
+
+\subsection{Reusing Sparse Linear Algebra}
+
+The \ccc{SparseLinearAlgebraTraits_d} concept and the traits classes
+for OpenNL and {\sc Taucs} are independent of the rest of the
+\ccc{Surface_mesh_parameterization} package, and may be reused by
+\cgal\ developers for other purposes.
+
+
+\subsection{Adding New Parameterization Methods}
+
+Implementing a new fixed border linear parameterization is easy.  Most
+of the code of the fixed border methods is factorized in the
+\ccc{CGAL::Fixed_border_parameterizer_3<ParameterizationMesh_3, BorderParameterizer_3, SparseLinearAlgebraTraits_d>}
+class.  Subclasses must mainly
+implement a \ccc{compute_w_ij}() method which computes each
+$w_{ij}$ = $(i, j)$ coefficient of the matrix $A$ for $v_j$ neighboring
+vertices of $v_i$.
+
+Although implementing a new free border linear parameterization
+method is more challenging, the Least Squares Conformal Maps
+parameterization method provides a good starting point.
+
+Implementing \emph{non} linear parameterizations is a natural extension
+to this package, although only the mesh adaptors can be reused.
+
+
+\subsection{Adding New Border Parameterization Methods}
+
+Implementing a new border parameterization method is easy.
+Square, circular and two-points border parameterizations are good starting points.
+
+
+\subsection{Mesh Cutting}
+
+Obviously, this package would benefit of having robust algorithms
+which transform arbitrary meshes into topological disks.
+
+% pierre : references ?

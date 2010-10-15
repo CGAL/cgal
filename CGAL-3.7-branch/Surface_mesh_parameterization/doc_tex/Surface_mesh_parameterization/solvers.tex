@@ -1,0 +1,89 @@
+\section{Sparse Linear Algebra \label{sec:Sparse-Linear-Algebra}}
+
+Parameterizing triangle meshes requires both efficient representation
+of sparse matrices and efficient iterative or direct linear
+solvers. We provide links to standard libraries ({\sc Taucs})
+and include a separate package devoted to OpenNL sparse linear solver.
+
+\subsection{List of Solvers}
+
+We provide an interface to several sparse linear solvers, as models
+of the \ccc{SparseLinearAlgebraTraits_d} concept:
+
+\begin{itemize}
+
+\item
+    OpenNL \cite{cgal:l-nmdgp-05} is shipped with \cgal. This is the default solver.
+
+    \ccc{OpenNL::DefaultLinearSolverTraits<COEFFTYPE, MATRIX, VECTOR, SOLVER>} in OpenNL package  \\
+    \ccc{OpenNL::SymmetricLinearSolverTraits<COEFFTYPE, MATRIX, VECTOR, SOLVER>} in OpenNL package  \\
+
+    \emph{Usage:}
+
+    OpenNL (in the version shipped with \cgal) is a lightweight sparse linear solver.
+    It does not support large systems, but it is highly portable and
+    supports exact number types.
+
+\item
+    \ccAnchor{http://www.cs.tau.ac.il/~stoledo/taucs}{{\sc Taucs}}
+    is a state-of-the-art direct solver for sparse symmetric matrices.
+    It also includes an out-of-core general sparse solver.
+
+    \ccc{CGAL::Taucs_solver_traits<T>}  \\
+    \ccc{CGAL::Taucs_symmetric_solver_traits<T>}  \\
+
+    \emph{Usage:}
+
+    {\sc Taucs} is very robust and supports large systems.
+    On the other hand, it is not available on all platforms
+    supported by \cgal\ and does not support exact number types.
+
+    \emph{Install:}
+
+    {\sc Taucs} can be downloaded from
+    \ccAnchor{http://www.tau.ac.il/~stoledo/taucs/2.2/taucs_full.zip}
+    {\ccc{http://www.tau.ac.il/~stoledo/taucs/2.2/taucs_full.zip}}.
+
+\end{itemize}
+
+
+\subsection{{\sc Taucs} Solver Example}
+
+\ccc{examples/Surface_mesh_parameterization/Taucs_parameterization.cpp} computes the
+default parameterization method (Floater mean value coordinates with a circular border),
+but specifically instantiates the {\sc Taucs} solver. Specifying a specific solver
+instead of the default one (OpenNL) means using the third parameter of
+\ccc{CGAL::Mean_value_coordinates_parameterizer_3<ParameterizationMesh_3,
+BorderParameterizer_3, SparseLinearAlgebraTraits_d>}.  The differences with the first
+example \ccc{examples/Surface_mesh_parameterization/Simple_parameterization.cpp} are:
+
+\begin{ccExampleCode}
+
+#include <CGAL/Taucs_solver_traits.h>
+
+...
+
+//***************************************
+// Floater Mean Value Coordinates parameterization
+// (circular border) with TAUCS solver
+//***************************************
+
+// Circular border parameterizer (the default)
+typedef CGAL::Circular_border_arc_length_parameterizer_3<Parameterization_polyhedron_adaptor>
+                                                    Border_parameterizer;
+// TAUCS solver
+typedef CGAL::Taucs_solver_traits<double>           Solver;
+
+// Floater Mean Value Coordinates parameterization
+// (circular border) with TAUCS solver
+typedef CGAL::Mean_value_coordinates_parameterizer_3<Parameterization_polyhedron_adaptor,
+                                                        Border_parameterizer,
+                                                        Solver>
+                                                    Parameterizer;
+
+Parameterizer::Error_code err = CGAL::parameterize(mesh_adaptor, Parameterizer());
+
+...
+
+\end{ccExampleCode}
+

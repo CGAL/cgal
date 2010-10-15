@@ -1,0 +1,44 @@
+\RCSdef{\RCSCandSSurface_3Rev}{$Id$}
+\RCSdefDate{\RCSCandSSurface_3Date}{$Date$}
+
+\begin{ccRefConcept}{PiecewiseSmoothSurfaceMeshTraits_3}
+
+\ccDefinition
+  
+The concept \ccRefName\ refines the concept \ccc{SurfaceMeshTraits_3}, and
+adds the requirement to handle the knowledge of the 1D~curves of a
+piecewise smooth surface. A model of this concept must be able to tell
+whether a Voronoi facet, dual to a Delaunay edge, intersects the set of
+1D~curves of the surface, and to compute the intersection.
+
+\ccRefines
+\ccc{SurfaceMeshTraits_3}
+
+\ccTypes
+
+\ccNestedType{Edge}{The type of the triangulation edges.}
+
+%\ccCreation
+\ccCreationVariable{traits}  %% choose variable name
+
+\ccHeading{Methods}
+
+\ccMethod{Object intersect_curves_with_voronoi_facet(const Edge& e) const;}
+{ Compute the intersection between the Voronoi facet dual to the edge
+  \ccc{e} and the set of 1D~curves of the surface. }
+
+\ccHasModels
+
+\ccc{Surface_mesh_traits_generator_3<Surface>::Type}, if the surface type
+\ccc{Surface} has 1D~curves.
+
+\ccSeeAlso
+\ccc{make_surface_mesh}\\
+
+\end{ccRefConcept}
+
+% +------------------------------------------------------------------------+
+%%RefPage: end of main body, begin of footer
+% EOF
+% +------------------------------------------------------------------------+
+

@@ -1,0 +1,90 @@
+\ccRefChapter{Linear and Quadratic Programming Solver\label{chapter:QPSolver}}
+\ccChapterAuthor{Kaspar Fischer \and Bernd G{\"a}rtner \and Sven Sch{\"o}nherr
+\and Frans Wessendorp}
+
+\section{Classified Reference Pages}
+
+\ccHeading{Concepts}
+\ccRefConceptPage{QuadraticProgram}\\
+$\quad$ (for quadratic programs with variable bounds $\qpl\leq \qpx \leq \qpu$) \\
+\ccRefConceptPage{LinearProgram} \\
+$\quad$(for linear programs with variable bounds $\qpl\leq \qpx \leq \qpu$)\\
+\ccRefConceptPage{NonnegativeQuadraticProgram}\\
+$\quad$ (for quadratic programs with variable bounds $\qpx\geq 0$) \\
+\ccRefConceptPage{NonnegativeLinearProgram}\\
+$\quad$ (for linear programs with variable bounds $\qpx\geq 0$)
+
+\ccRefConceptPage{MPSFormat}\\
+$\quad$ (the format used for reading and writing linear and quadratic 
+programs)
+
+\ccHeading{Classes}
+
+There is a class that represents the solution of a linear
+or quadratic program. An instance of this class is returned by any of 
+the solution functions below.
+
+\ccRefIdfierPage{CGAL::Quadratic_program_solution<ET>}
+
+We offer a number of predefined models for the above program concepts.
+The following two are simultaneously models for all four concepts and
+are probably the most convenient models; they allow you to construct
+linear or quadratic programs entry by entry, or from streams in
+\ccc{MPSFormat}. At any time, you can query these programs for
+linearity and nonnegativity and thus select the appropriate 
+solution function.
+
+\ccRefIdfierPage{CGAL::Quadratic_program<NT>}\\
+$\quad$ (for linear and quadratic programs that own their 
+data and are built entry-wise)\\
+\ccRefIdfierPage{CGAL::Quadratic_program_from_mps<NT>}\\
+$\quad$ (for linear and quadratic programs read from an input stream in 
+\ccc{MPSFormat}; the constructed program can also be manipulate entry-wise)
+
+Then there are specific models for any of the four program concepts above; 
+these are useful if you want to maintain the program data yourself, since
+they simply wrap random access iterators over the program data and involve
+no further copying of data.
+
+\ccRefIdfierPage{CGAL::Quadratic_program_from_iterators<A_it, B_it, R_it, FL_it, L_it, FU_it, U_it, D_it, C_it>}\\
+$\quad$ (for quadratic programs that wrap given iterators, without copying 
+data) 
+
+\ccRefIdfierPage{CGAL::Linear_program_from_iterators<A_it, B_it, R_it, FL_it, L_it, FU_it, U_it, C_it>}\\
+$\quad$ (for linear programs wrapping given iterators) 
+
+\ccRefIdfierPage{CGAL::Nonnegative_quadratic_program_from_iterators<A_it, B_it, R_it, D_it, C_it>}\\
+$\quad$ (for nonnegative quadratic programs, wrapping given iterators)
+
+\ccRefIdfierPage{CGAL::Nonnegative_linear_program_from_iterators<A_it, B_it, R_it, C_it>}\\
+$\quad$ (for nonnegative linear programs, wrapping given iterators)
+\ccHeading{Functions}
+
+In case you want to construct a program from complicated iterators
+(whose types you don't know, or simply don't want to bother with), 
+we provide four makers.
+
+\ccRefIdfierPage{CGAL::make_quadratic_program_from_iterators}\\
+\ccRefIdfierPage{CGAL::make_linear_program_from_iterators}\\
+\ccRefIdfierPage{CGAL::make_nonnegative_quadratic_program_from_iterators}\\
+\ccRefIdfierPage{CGAL::make_nonnegative_linear_program_from_iterators}
+
+There are four functions to solve a program, one for each program
+concept. 
+
+\ccRefIdfierPage{CGAL::solve_quadratic_program}\\
+\ccRefIdfierPage{CGAL::solve_linear_program}\\
+\ccRefIdfierPage{CGAL::solve_nonnegative_quadratic_program}\\
+\ccRefIdfierPage{CGAL::solve_nonnegative_linear_program}
+
+The solution process can customized by passing an object of the class
+
+\ccRefIdfierPage{Quadratic_program_options} 
+
+Programs can be written to an output stream in \ccc{MPSFormat}, using
+one of the following four functions.
+
+\ccRefIdfierPage{CGAL::print_quadratic_program}\\
+\ccRefIdfierPage{CGAL::print_linear_program}\\
+\ccRefIdfierPage{CGAL::print_nonnegative_quadratic_program}\\
+\ccRefIdfierPage{CGAL::print_nonnegative_linear_program}

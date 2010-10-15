@@ -1,0 +1,142 @@
+% +------------------------------------------------------------------------+
+% | Reference manual page: SurfaceMeshCellBase_3.tex
+% +------------------------------------------------------------------------+
+% | 09.12.2005   Author
+% | Package: Package
+% | 
+\RCSdef{\RCSSurfaceMeshCellBaseRev}{$Id$}
+\RCSdefDate{\RCSSurfaceMeshCellBaseDate}{$Date$}
+% |
+%%RefPage: end of header, begin of main body
+% +------------------------------------------------------------------------+
+
+
+\begin{ccRefConcept}{SurfaceMeshCellBase_3}
+
+%% \ccHtmlCrossLink{}     %% add further rules for cross referencing links
+%% \ccHtmlIndexC[concept]{} %% add further index entries
+
+\ccDefinition
+The concept \ccRefName\ describes the cell base type
+of the three dimensional triangulation used
+to embed the surface mesh.  
+
+More precisely,
+the first template parameter \ccc{SurfaceMeshC2T3} of the surface mesher
+\ccc{make_surface_mesh}
+is a model of the concept 
+\ccc{SurfaceMeshComplex_2InTriangulation_3} 
+which describes a data structure to store
+a pure two dimensional complex 
+embedded in a three dimensional triangulation.
+In particular, the type \ccc{SurfaceMeshC2T3} is required to provide
+a three dimensional triangulation type
+\ccc{SurfaceMeshC2T3::Triangulation_3}. 
+The concept \ccRefName\ describes the cell base type
+required in this triangulation type.
+
+\ccRefines
+\ccc{TriangulationCellBase_3}
+
+The concept \ccRefName\ adds four markers to mark the facets
+of the triangulation that belong to the two dimensional complex,
+and four markers  that are helpers 
+used in some operations to mark for instance
+the facets that have been visited.
+
+This concept also provides storage for  the center of a Delaunay surface
+ball. 
+Given a surface and a 3D  Delaunay triangulation,
+ a Delaunay surface ball
+is a ball circumscribed to a facet of the triangulation
+and centered on the surface and empty of triangulation vertices. 
+Such a ball does exist
+when the facet is part of the restriction to the surface
+of a three dimensional triangulation.
+ In the following we call \ccc{surface center}
+of a facet, the center of its biggest Delaunay surface ball.
+
+\ccTypes
+
+\ccNestedType{Point}{The point type, required to match the point type
+of the three dimensional
+triangulation in which the surface mesh is embedded.}
+
+\ccCreation
+\ccCreationVariable{cell}  %% choose variable name
+
+
+
+\ccOperations
+
+\ccMethod
+{bool is_facet_on_surface(int i);}
+{returns \ccc{true}, if \ccc{facet(i)} is in the 2D complex. }
+\ccGlue
+\ccMethod
+{void set_facet_on_surface(int i, bool b );}
+{Sets \ccc{facet(i)} as part of the 2D  complex, if \ccc{b} is \ccc{true},
+and \ccc{NOT_IN_COMPLEX}, otherwise.}
+
+
+\ccMethod
+{bool is_facet_visited (int i);}
+{Returns \ccc{true}, if \ccc{facet(i)} has been visited,
+\ccc{false} otherwise.}
+\ccGlue
+\ccMethod
+{void set_facet_visited (int i, bool b);} 
+{Marks \ccc{facet(i)} as visited, if \ccc{b} is \ccc{true},
+ and non visited otherwise.}
+
+
+\ccMethod
+{const Point&   get_facet_surface_center(int i);}
+{Returns a const reference to the surface center of \ccc{facet(i)}.}
+\ccGlue
+\ccMethod
+{void set_facet_surface_center (int i, Point p);} 
+{Sets point \ccc{p} as the surface center of \ccc{facet(i)}.}
+
+
+    
+
+
+
+
+\ccHasModels
+
+\ccc{Surface_mesh_cell_base_3<Gt,Vb>} \\
+\ccc{Surface_mesh_default_triangulation_3::Cell}
+
+\ccSeeAlso
+
+\ccc{SurfaceMeshTriangulation_3} \\
+\ccc{SurfaceMeshComplex_2InTriangulation_3} \\
+\ccc{Surface_mesh_complex_2_in_triangulation_3<Tr>}\\
+\ccc{Surface_mesh_default_triangulation_3} \\
+\ccc{make_surface_mesh}
+
+%\ccExample
+
+%A short example program.
+%Instead of a short program fragment, a full running program can be
+%included using the 
+%\verb|\ccIncludeExampleCode{Package/SurfaceMeshCellBase_3.cpp}| 
+%macro. The program example would be part of the source code distribution and
+%also part of the automatic test suite.
+
+%\begin{ccExampleCode}
+%void your_example_code() {
+%}
+%\end{ccExampleCode}
+
+%% \ccIncludeExampleCode{Package/SurfaceMeshCellBase_3.cpp}
+
+\end{ccRefConcept}
+
+% +------------------------------------------------------------------------+
+%%RefPage: end of main body, begin of footer
+% EOF
+% +------------------------------------------------------------------------+
+

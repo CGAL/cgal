@@ -1,0 +1,97 @@
+
+\ccAutoIndexingOff
+
+\begin{ccRefClass}{Polytope_distance_d_traits_d<K,ET,NT>}
+\ccIndexTraitsClassBegin{Polytope_distance_d_traits_d}{%
+  Min_sphere_d;Min_annulus_d;Polytope_distance_d}{}
+
+\ccAutoIndexingOn
+
+% -----------------------------------------------------------------------------
+\ccDefinition
+
+The class \ccRefName\ is a traits class for the $d$-dimensional
+optimisation algorithms using the $d$-dimensional \cgal\ kernel.
+ 
+\ccInclude{CGAL/Polytope_distance_d_traits_d.h}
+
+% -----------------------------------------------------------------------------
+\ccRequirements
+
+The template parameter \ccc{K} is a model for \ccc{Kernel}. Template
+parameters \ccc{ET} and \ccc{NT} are models for \ccc{RingNumberType}.
+
+The second and third template parameter have default type \ccc{K::RT}.
+
+% -----------------------------------------------------------------------------
+\ccIsModel
+
+\ccRefConceptPage{PolytopeDistanceDTraits}
+
+% -----------------------------------------------------------------------------
+\ccTypes
+
+\ccSaveThreeColumns
+\ccSetTwoColumns{Polytope_distance_d_traits_d<K,ET,NT>:: Rep_tag}{}
+
+\ccNestedType{Point_d}{typedef to \ccc{K::Point_d}.}
+
+\ccNestedType{Rep_tag}{typedef to \ccc{K::Rep_tag}.}
+
+\ccNestedType{RT}{typedef to \ccc{K::RT}.}
+\ccNestedType{FT}{typedef to \ccc{K::FT}.}
+
+\ccNestedType{Access_dimension_d}{%
+  typedef to \ccc{K::Access_dimension_d}.}
+\ccNestedType{Access_coordinates_begin_d}{%
+  typedef to \ccc{K::Access_coordinates_begin_d}.}
+
+\ccNestedType{Construct_point_d}{%
+  typedef to \ccc{K::Construct_point_d}.}
+
+\ccNestedType{ET}{second template parameter (default is \ccc{K::RT}).}
+\ccNestedType{NT}{third  template parameter (default is \ccc{K::RT}).}
+
+% -----------------------------------------------------------------------------
+\ccCreation
+\ccCreationVariable{traits}
+
+\ccConstructor{ Polytope_distance_d_traits_d( );}{default constructor.}
+\ccConstructor{ Polytope_distance_d_traits_d(
+                  const Polytope_distance_d_traits_d<K,ET,NT>&);}{copy constructor.}
+
+% -----------------------------------------------------------------------------
+\ccOperations
+
+\ccSetThreeColumns{Access_coordinates_begin_d}{}{\hspace*{8.5cm}}
+
+The following functions just return the corresponding function class
+object.
+
+\ccMemberFunction{ Access_dimension_d
+                   access_dimension_d_object() const;}{}
+
+\ccMemberFunction{ Access_coordinates_begin_d
+                   access_coordinates_begin_d_object() const;}{}
+
+\ccMemberFunction{ Construct_point_d
+                   construct_point_d_object() const;}{}
+
+\ccRestoreThreeColumns
+
+% -----------------------------------------------------------------------------
+\ccSeeAlso
+
+\ccRefIdfierPage{CGAL::Polytope_distance_d<Traits>}\\[1ex]
+\ccRefIdfierPage{CGAL::Polytope_distance_d_traits_2<K,ET,NT>}\\
+\ccRefIdfierPage{CGAL::Polytope_distance_d_traits_3<K,ET,NT>}\\[1ex]
+\ccRefConceptPage{PolytopeDistanceDTraits}
+
+% -----------------------------------------------------------------------------
+
+\ccAutoIndexingOff
+
+\ccIndexTraitsClassEnd
+\end{ccRefClass}
+
+\ccAutoIndexingOn

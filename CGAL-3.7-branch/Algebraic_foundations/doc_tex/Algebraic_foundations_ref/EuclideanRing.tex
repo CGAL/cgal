@@ -1,0 +1,69 @@
+\begin{ccRefConcept}{EuclideanRing}
+
+
+\ccDefinition
+
+A model of \ccc{EuclideanRing} represents an euclidean ring (or Euclidean domain). 
+It is an \ccc{UniqueFactorizationDomain} that affords a suitable notion of minimality of remainders 
+such that given $x$ and $y \neq 0$ we obtain an (almost) unique solution to 
+$ x = qy + r $ by demanding that a solution $(q,r)$ is chosen to minimize $r$. 
+In particular, $r$ is chosen to be $0$ if possible.
+
+Moreover, \ccc{CGAL::Algebraic_structure_traits< EuclideanRing >} is a model of 
+\ccc{AlgebraicStructureTraits} providing:\\
+ 
+- \ccc{CGAL::Algebraic_structure_traits< EuclideanRing >::Algebraic_type} derived from \ccc{Unique_factorization_domain_tag} \\
+- \ccc{CGAL::Algebraic_structure_traits< EuclideanRing >::Mod} \\
+- \ccc{CGAL::Algebraic_structure_traits< EuclideanRing >::Div} \\
+- \ccc{CGAL::Algebraic_structure_traits< EuclideanRing >::Div_mod}\\
+
+
+
+
+\ccHeading{Remarks}
+
+The most prominent example of a Euclidean ring are the integers. 
+Whenever both $x$ and $y$ are positive, then it is conventional to choose 
+the smallest positive remainder $r$. 
+
+
+%Another important example of a Euclidean ring are univariate polynomials over a field. 
+%Here the degree of $r$ is to be minimized. There is no remaining ambiguity.
+
+%Any Euclidean ring is necessarily a \ccc{UniqueFactorizationDomain}, and the ability to take remainders allows 
+%to use the Euclidean Algorithm to compute gcds.   
+
+\ccRefines
+ \ccc{UniqueFactorizationDomain}
+
+\ccSeeAlso
+
+\ccRefIdfierPage{IntegralDomainWithoutDivision}\\
+\ccRefIdfierPage{IntegralDomain}\\
+\ccRefIdfierPage{UniqueFactorizationDomain}\\
+\ccRefIdfierPage{EuclideanRing}\\
+\ccRefIdfierPage{Field}\\
+\ccRefIdfierPage{FieldWithSqrt}\\
+\ccRefIdfierPage{FieldWithKthRoot}\\
+\ccRefIdfierPage{FieldWithRootOf}\\
+\ccRefIdfierPage{AlgebraicStructureTraits}\\
+
+%\ccHasModels
+%\ccc{int}\\
+%\ccc{long}\\
+
+%\ccc{CGAL::Gmpz} \\
+%\ccc{CGAL::Gmpzf} \\
+
+%\ccc{mpz_class} \\
+
+%\ccc{leda_integer} \\
+
+%\ccc{CORE::BigInt} \\
+
+%\ccc{CGAL::MP_Float} ( exact version )\\
+%\ccc{CGAL::Lazy_exact_nt< NT > } (depends on NT) \\
+
+%%\ccc{CGAL::Polynomial< T >} \\
+
+\end{ccRefConcept}

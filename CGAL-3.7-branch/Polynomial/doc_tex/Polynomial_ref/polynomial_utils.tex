@@ -1,0 +1,1212 @@
+% GetCoefficient
+\begin{ccRefFunction}{get_coefficient}
+
+\ccInclude{CGAL/polynomial_utils.h}
+
+\ccDefinition
+For a given \ccc{Polynomial_d} the function \ccRefName\ adapts the 
+according functor in \ccc{Polynomial_traits_d<Polynomial_d>}. \\ \\ 
+For more details see the concept \ccc{PolynomialTraits_d::GetCoefficient}. \\ \\ 
+
+\ccFunction{
+template <class Polynomial_d>
+Polynomial_traits_d<Polynomial_d>::get_coefficient::result_type 
+get_coefficient(const Polynomial_d& p, int i);
+}{
+Adapts \ccc{Polynomial_traits_d<Polynomial_d>::GetCoefficient}. 
+}
+\ccSeeAlso
+\ccRefConceptPage{Polynomial_d}\\
+\ccRefConceptPage{PolynomialTraits_d}\\
+\ccRefConceptPage{PolynomialTraits_d::GetCoefficient}\\
+\ccRefConceptPage{PolynomialTraits_d::GetInnermostCoefficient}\\
+\end{ccRefFunction}
+
+% GetInnermostCoefficient
+
+\begin{ccRefFunction}{get_innermost_coefficient}
+
+\ccInclude{CGAL/polynomial_utils.h}
+
+\ccDefinition
+For a given \ccc{Polynomial_d} the function \ccRefName\ adapts the 
+according functor in \ccc{Polynomial_traits_d<Polynomial_d>}. \\ \\ 
+For more details see the concept \ccc{PolynomialTraits_d::GetInnermostCoefficient}. \\ \\ 
+
+\ccFunction{
+template <class Polynomial_d>
+Polynomial_traits_d<Polynomial_d>::get_innermost_coefficient::result_type 
+get_innermost_coefficient(const Polynomial_d& p, Exponent_vector ev);
+}{
+Adapts \ccc{Polynomial_traits_d<Polynomial_d>::GetInnermostCoefficient}. 
+}
+\ccSeeAlso
+\ccRefConceptPage{Polynomial_d}\\
+\ccRefConceptPage{PolynomialTraits_d}\\
+\ccRefConceptPage{PolynomialTraits_d::GetCoefficient}\\
+\ccRefConceptPage{PolynomialTraits_d::GetInnermostCoefficient}\\
+\end{ccRefFunction}
+% ConstructCoefficientConstIteratorRange
+% ConstructInnermostCoefficientConstIteratorRange
+
+% Permute
+\begin{ccRefFunction}{permute}
+
+\ccInclude{CGAL/polynomial_utils.h}
+
+\ccDefinition
+For a given \ccc{Polynomial_d} the function \ccRefName\ adapts the 
+according functor in \ccc{Polynomial_traits_d<Polynomial_d>}. \\ \\ 
+For more details see the concept \ccc{PolynomialTraits_d::Permute}. \\ \\ 
+
+\ccFunction{
+template <class Polynomial_d, class InputIterator >
+Polynomial_traits_d<Polynomial_d>::Permute::result_type
+permute(const Polynomial_d& p, InputIterator begin, InputIterator end );
+}{
+Adapts \ccc{Polynomial_traits_d<Polynomial_d>::Permute}. 
+}
+\ccSeeAlso
+\ccRefConceptPage{Polynomial_d}\\
+\ccRefConceptPage{PolynomialTraits_d}\\
+\ccRefConceptPage{PolynomialTraits_d::Permute}\\
+\end{ccRefFunction}
+
+% Swap
+\begin{ccRefFunction}{swap}
+
+\ccInclude{CGAL/polynomial_utils.h}
+
+\ccDefinition
+For a given \ccc{Polynomial_d} the function \ccRefName\ adapts the 
+according functor in \ccc{Polynomial_traits_d<Polynomial_d>}. \\ \\ 
+For more details see the concept \ccc{PolynomialTraits_d::Swap}. \\ \\ 
+
+\ccFunction{
+template <class Polynomial_d>
+Polynomial_traits_d<Polynomial_d>::Swap::result_type 
+swap(const Polynomial_d& p, int i, int j);
+}{
+Adapts \ccc{Polynomial_traits_d<Polynomial_d>::Swap}. 
+}
+\ccSeeAlso
+\ccRefConceptPage{Polynomial_d}\\
+\ccRefConceptPage{PolynomialTraits_d}\\
+\ccRefConceptPage{PolynomialTraits_d::Swap}\\
+\end{ccRefFunction}
+
+% Move
+\begin{ccRefFunction}{move}
+
+\ccInclude{CGAL/polynomial_utils.h}
+
+\ccDefinition
+For a given \ccc{Polynomial_d} the function \ccRefName\ adapts the 
+according functor in \ccc{Polynomial_traits_d<Polynomial_d>}.  \\ \\
+For more details see the concept \ccc{PolynomialTraits_d::Move}.  \\ \\
+
+\ccFunction{
+template <class Polynomial_d>
+Polynomial_traits_d<Polynomial_d>::Move::result_type 
+move(const Polynomial_d& p, int i, int j);
+}{
+Adapts \ccc{Polynomial_traits_d<Polynomial_d>::Move}. 
+}
+\ccSeeAlso
+\ccRefConceptPage{Polynomial_d}\\
+\ccRefConceptPage{PolynomialTraits_d}\\
+\ccRefConceptPage{PolynomialTraits_d::Move}\\
+\end{ccRefFunction}
+
+% Degree
+\begin{ccRefFunction}{degree}
+
+\ccInclude{CGAL/polynomial_utils.h}
+
+\ccDefinition
+For a given \ccc{Polynomial_d} the function \ccRefName\ adapts the 
+according functor in \ccc{Polynomial_traits_d<Polynomial_d>}.  \\ \\
+For more details see the concept \ccc{PolynomialTraits_d::Degree}.  \\ \\
+
+\ccFunction{
+template <class Polynomial_d>
+Polynomial_traits_d<Polynomial_d>::Degree::result_type 
+degree(const Polynomial_d& p, 
+int i, 
+index = Polynomial_traits_d<Polynomial_d>::d-1);
+}{
+Adapts \ccc{Polynomial_traits_d<Polynomial_d>::Degree}. 
+}
+\ccSeeAlso
+\ccRefConceptPage{Polynomial_d}\\
+\ccRefConceptPage{PolynomialTraits_d}\\
+\ccRefConceptPage{PolynomialTraits_d::Degree}\\
+\end{ccRefFunction}
+
+% TotalDegree
+\begin{ccRefFunction}{total_degree}
+
+\ccInclude{CGAL/polynomial_utils.h}
+
+\ccDefinition
+For a given \ccc{Polynomial_d} the function \ccRefName\ adapts the 
+according functor in \ccc{Polynomial_traits_d<Polynomial_d>}. \\ \\ 
+For more details see the concept \ccc{PolynomialTraits_d::TotalDegree}. \\ \\ 
+
+\ccFunction{
+template <class Polynomial_d>
+Polynomial_traits_d<Polynomial_d>::Total_degree::result_type 
+total_degree(const Polynomial_d& p);
+}{
+Adapts \ccc{Polynomial_traits_d<Polynomial_d>::Total_degree}. 
+}
+\ccSeeAlso
+\ccRefConceptPage{Polynomial_d}\\
+\ccRefConceptPage{PolynomialTraits_d}\\
+\ccRefConceptPage{PolynomialTraits_d::TotalDegree}\\
+\end{ccRefFunction}
+
+% DegreeVector
+\begin{ccRefFunction}{degree_vector}
+
+\ccInclude{CGAL/polynomial_utils.h}
+
+\ccDefinition
+For a given \ccc{Polynomial_d} the function \ccRefName\ adapts the 
+according functor in \ccc{Polynomial_traits_d<Polynomial_d>}. \\ \\ 
+For more details see the concept \ccc{PolynomialTraits_d::DegreeVector}. \\ \\ 
+
+\ccFunction{
+template <class Polynomial_d>
+Polynomial_traits_d<Polynomial_d>::Degree_vector::result_type 
+degree_vector(const Polynomial_d& p);
+}{
+Adapts \ccc{Polynomial_traits_d<Polynomial_d>::DegreeVector}. 
+}
+\ccSeeAlso
+\ccRefConceptPage{Polynomial_d}\\
+\ccRefConceptPage{PolynomialTraits_d}\\
+\ccRefConceptPage{PolynomialTraits_d::Degree_vector}\\
+\end{ccRefFunction}
+
+% LeadingCoefficient
+\begin{ccRefFunction}{leading_coefficient}
+
+\ccInclude{CGAL/polynomial_utils.h}
+
+\ccDefinition
+For a given \ccc{Polynomial_d} the function \ccRefName\ adapts the 
+according functor in \ccc{Polynomial_traits_d<Polynomial_d>}. \\ \\ 
+For more details see the concept \ccc{PolynomialTraits_d::LeadingCoefficient}. \\ \\ 
+
+\ccFunction{
+template <class Polynomial_d>
+Polynomial_traits_d<Polynomial_d>::Leading_coefficient::result_type 
+leading_coefficient(const Polynomial_d& p);
+}{
+Adapts \ccc{Polynomial_traits_d<Polynomial_d>::Leading_coefficient}. 
+}
+\ccSeeAlso
+\ccRefConceptPage{Polynomial_d}\\
+\ccRefConceptPage{PolynomialTraits_d}\\
+\ccRefConceptPage{PolynomialTraits_d::LeadingCoefficient}\\
+\end{ccRefFunction}
+
+% InnermostLeadingCoefficient
+\begin{ccRefFunction}{innermost_leading_coefficient}
+
+\ccInclude{CGAL/polynomial_utils.h}
+
+\ccDefinition
+For a given \ccc{Polynomial_d} the function \ccRefName\ adapts the 
+according functor in \ccc{Polynomial_traits_d<Polynomial_d>}. \\ \\ 
+For more details see the concept 
+\ccc{PolynomialTraits_d::InnermostLeadingCoefficient}. \\ \\ 
+
+\ccFunction{
+template <class Polynomial_d>
+Polynomial_traits_d<Polynomial_d>::Innermost_leading_coefficient::result_type 
+innermost_leading_coefficient(const Polynomial_d& p);
+}{
+Adapts \ccc{Polynomial_traits_d<Polynomial_d>::InnermostLeadingCoefficient}. 
+}
+\ccSeeAlso
+\ccRefConceptPage{Polynomial_d}\\
+\ccRefConceptPage{PolynomialTraits_d}\\
+\ccRefConceptPage{PolynomialTraits_d::InnermostLeadingCoefficient}\\
+\end{ccRefFunction}
+
+% Canonicalize
+\begin{ccRefFunction}{canonicalize}
+
+\ccInclude{CGAL/polynomial_utils.h}
+
+\ccDefinition
+For a given \ccc{Polynomial_d} the function \ccRefName\ adapts the 
+according functor in \ccc{Polynomial_traits_d<Polynomial_d>}. \\ \\ 
+For more details see the concept \ccc{PolynomialTraits_d::Canonicalize}. \\ \\ 
+
+\ccFunction{
+template <class Polynomial_d>
+Polynomial_traits_d<Polynomial_d>::Canonicalize::result_type 
+canonicalize(const Polynomial_d& p);
+}{
+Adapts \ccc{Polynomial_traits_d<Polynomial_d>::Canonicalize}. 
+}
+\ccSeeAlso
+\ccRefConceptPage{Polynomial_d}\\
+\ccRefConceptPage{PolynomialTraits_d}\\
+\ccRefConceptPage{PolynomialTraits_d::Canonicalize}\\
+\end{ccRefFunction}
+
+% Differentiate
+\begin{ccRefFunction}{differentiate}
+
+\ccInclude{CGAL/polynomial_utils.h}
+
+\ccDefinition
+For a given \ccc{Polynomial_d} the function \ccRefName\ adapts the 
+according functor in \ccc{Polynomial_traits_d<Polynomial_d>}. \\ \\ 
+For more details see the concept \ccc{PolynomialTraits_d::Differentiate}. \\ \\ 
+
+\ccFunction{
+template <class Polynomial_d>
+Polynomial_traits_d<Polynomial_d>::Differentiate::result_type 
+differentiate(const Polynomial_d& p,
+index = Polynomial_traits_d<Polynomial_d>::d-1 );
+}{
+Adapts \ccc{Polynomial_traits_d<Polynomial_d>::Differentiate}. 
+}
+\ccSeeAlso
+\ccRefConceptPage{Polynomial_d}\\
+\ccRefConceptPage{PolynomialTraits_d}\\
+\ccRefConceptPage{PolynomialTraits_d::Differentiate}\\
+\end{ccRefFunction}
+
+% Evaluate
+\begin{ccRefFunction}{evaluate}
+
+\ccInclude{CGAL/polynomial_utils.h}
+
+\ccDefinition
+For a given \ccc{Polynomial_d} the function \ccRefName\ adapts the 
+according functor in \ccc{Polynomial_traits_d<Polynomial_d>}. \\ \\ 
+For more details see the concept \ccc{PolynomialTraits_d::Evaluate}. \\ \\ 
+
+\ccFunction{
+template <class Polynomial_d>
+Polynomial_traits_d<Polynomial_d>::Evaluate::result_type 
+evaluate(const Polynomial_d& p,
+        Polynomial_traits_d<Polynomial_d>::Coefficient_type x);
+}{
+Adapts \ccc{Polynomial_traits_d<Polynomial_d>::Evaluate}. 
+}
+\ccSeeAlso
+\ccRefConceptPage{Polynomial_d}\\
+\ccRefConceptPage{PolynomialTraits_d}\\
+\ccRefConceptPage{PolynomialTraits_d::Evaluate}\\
+\end{ccRefFunction}
+% EvaluateHomogeneous
+\begin{ccRefFunction}{evaluate_homogeneous}
+
+\ccInclude{CGAL/polynomial_utils.h}
+
+\ccDefinition
+For a given \ccc{Polynomial_d} the function \ccRefName\ adapts the 
+according functor in \ccc{Polynomial_traits_d<Polynomial_d>}. \\ \\ 
+For more details see the concept \ccc{PolynomialTraits_d::EvaluateHomogeneous}. \\ \\ 
+
+\ccFunction{
+template <class Polynomial_d>
+Polynomial_traits_d<Polynomial_d>::Evaluate_homogeneous::result_type 
+evaluate_homogeneous(
+const Polynomial_d& p,
+Polynomial_traits_d<Polynomial_d>::Coefficient_type u,
+Polynomial_traits_d<Polynomial_d>::Coefficient_type v);
+}{
+Adapts \ccc{Polynomial_traits_d<Polynomial_d>::Evaluate_homogeneous}. 
+}
+\ccSeeAlso
+\ccRefConceptPage{Polynomial_d}\\
+\ccRefConceptPage{PolynomialTraits_d}\\
+\ccRefConceptPage{PolynomialTraits_d::EvaluateHomogeneous}\\
+\end{ccRefFunction}
+
+% Substitute
+\begin{ccRefFunction}{substitute}
+
+\ccInclude{CGAL/polynomial_utils.h}
+
+\ccDefinition
+For a given \ccc{Polynomial_d} the function \ccRefName\ adapts the 
+according functor in \ccc{Polynomial_traits_d<Polynomial_d>}. \\ \\ 
+For more details see the concept \ccc{PolynomialTraits_d::Substitute}. \\ \\ 
+
+\ccFunction{
+template < class Polynomial_d, class InputIterator >
+CGAL::Coercion_traits<
+Polynomial_traits_d<Polynomial_d>::Innermost_coefficient,
+std::iterator_traits<Input_iterator>::value_type
+>::Type
+substitute(
+const Polynomial_d& p, InputIterator begin, InputIterator end);
+}{
+Adapts \ccc{Polynomial_traits_d<Polynomial_d>::Substitute}. 
+}
+\ccSeeAlso
+\ccRefConceptPage{Polynomial_d}\\
+\ccRefConceptPage{PolynomialTraits_d}\\
+\ccRefConceptPage{PolynomialTraits_d::Substitute}\\
+\end{ccRefFunction}
+% IsZeroAt
+\begin{ccRefFunction}{is_zero_at}
+
+\ccInclude{CGAL/polynomial_utils.h}
+
+\ccDefinition
+For a given \ccc{Polynomial_d} the function \ccRefName\ adapts the 
+according functor in \ccc{Polynomial_traits_d<Polynomial_d>}. \\ \\ 
+For more details see the concept \ccc{PolynomialTraits_d::IsZeroAt}. \\ \\ 
+
+\ccFunction{
+template < class Polynomial_d, class InputIterator >
+Polynomial_traits_d<Polynomial_d>::Is_zero_at::result_type
+is_zero_at(
+const Polynomial_d& p, InputIterator begin, InputIterator end);
+}{
+Adapts \ccc{Polynomial_traits_d<Polynomial_d>::Is_zero_at}. 
+}
+\ccSeeAlso
+\ccRefConceptPage{Polynomial_d}\\
+\ccRefConceptPage{PolynomialTraits_d}\\
+\ccRefConceptPage{PolynomialTraits_d::IsZeroAt}\\
+\end{ccRefFunction}
+% SignAt
+\begin{ccRefFunction}{sign_at}
+
+\ccInclude{CGAL/polynomial_utils.h}
+
+\ccDefinition
+For a given \ccc{Polynomial_d} the function \ccRefName\ adapts the 
+according functor in \ccc{Polynomial_traits_d<Polynomial_d>}. \\ \\ 
+For more details see the concept \ccc{PolynomialTraits_d::SignAt}. \\ \\ 
+
+\ccFunction{
+template < class Polynomial_d, class InputIterator >
+Polynomial_traits_d<Polynomial_d>::Sign_at::result_type
+sign_at(
+const Polynomial_d& p, InputIterator begin, InputIterator end);
+}{
+Adapts \ccc{Polynomial_traits_d<Polynomial_d>::Sign_at}. 
+}
+\ccSeeAlso
+\ccRefConceptPage{Polynomial_d}\\
+\ccRefConceptPage{PolynomialTraits_d}\\
+\ccRefConceptPage{PolynomialTraits_d::SignAt}\\
+\end{ccRefFunction}
+
+
+% SubstituteHomogeneous
+\begin{ccRefFunction}{substitute_homogeneous}
+
+\ccInclude{CGAL/polynomial_utils.h}
+
+\ccDefinition
+For a given \ccc{Polynomial_d} the function \ccRefName\ adapts the 
+according functor in \ccc{Polynomial_traits_d<Polynomial_d>}. \\ \\ 
+For more details see the concept \ccc{PolynomialTraits_d::SubstituteHomogeneous}. \\ \\ 
+
+\ccFunction{
+template < class Polynomial_d, class InputIterator >
+CGAL::Coercion_traits<
+Polynomial_traits_d<Polynomial_d>::Innermost_coefficient,
+std::iterator_traits<Input_iterator>::value_type
+>::Type
+substitute_homogeneous(
+const Polynomial_d& p, InputIterator begin, InputIterator end);
+}{
+Adapts \ccc{Polynomial_traits_d<Polynomial_d>::Substitute_homogeneous}. 
+}
+\ccSeeAlso
+\ccRefConceptPage{Polynomial_d}\\
+\ccRefConceptPage{PolynomialTraits_d}\\
+\ccRefConceptPage{PolynomialTraits_d::SubstituteHomogeneous}\\
+\end{ccRefFunction}
+% IsZeroAtHomogeneous
+\begin{ccRefFunction}{is_zero_at_homogeneous}
+
+\ccInclude{CGAL/polynomial_utils.h}
+
+\ccDefinition
+For a given \ccc{Polynomial_d} the function \ccRefName\ adapts the 
+according functor in \ccc{Polynomial_traits_d<Polynomial_d>}. \\ \\ 
+For more details see the concept \ccc{PolynomialTraits_d::IsZeroAtHomogeneous}. \\ \\ 
+
+\ccFunction{
+template < class Polynomial_d, class InputIterator >
+Polynomial_traits_d<Polynomial_d>::Is_zero_at_homogeneous::result_type
+is_zero_at_homogeneous(
+const Polynomial_d& p, InputIterator begin, InputIterator end);
+}{
+Adapts \ccc{Polynomial_traits_d<Polynomial_d>::Is_zero_at_homogeneous}. 
+}
+\ccSeeAlso
+\ccRefConceptPage{Polynomial_d}\\
+\ccRefConceptPage{PolynomialTraits_d}\\
+\ccRefConceptPage{PolynomialTraits_d::IsZeroAtHomogeneous}\\
+\end{ccRefFunction}
+% SignAtHomogeneous
+\begin{ccRefFunction}{sign_at_homogeneous}
+
+\ccInclude{CGAL/polynomial_utils.h}
+
+\ccDefinition
+For a given \ccc{Polynomial_d} the function \ccRefName\ adapts the 
+according functor in \ccc{Polynomial_traits_d<Polynomial_d>}. \\ \\ 
+For more details see the concept \ccc{PolynomialTraits_d::SignAtHomogeneous}. \\ \\ 
+
+\ccFunction{
+template < class Polynomial_d, class InputIterator >
+Polynomial_traits_d<Polynomial_d>::Sign_at_homogeneous::result_type
+sign_at_homogeneous(
+const Polynomial_d& p, InputIterator begin, InputIterator end);
+}{
+Adapts \ccc{Polynomial_traits_d<Polynomial_d>::Sign_at_homogeneous}. 
+}
+\ccSeeAlso
+\ccRefConceptPage{Polynomial_d}\\
+\ccRefConceptPage{PolynomialTraits_d}\\
+\ccRefConceptPage{PolynomialTraits_d::SignAtHomogeneous}\\
+\end{ccRefFunction}
+
+% Compare 
+\begin{ccRefFunction}{compare}
+
+\ccInclude{CGAL/polynomial_utils.h}
+
+\ccDefinition
+For a given \ccc{Polynomial_d} the function \ccRefName\ adapts the 
+according functor in \ccc{Polynomial_traits_d<Polynomial_d>}. \\ \\ 
+For more details see the concept \ccc{PolynomialTraits_d::Compare}. \\ \\ 
+
+\ccFunction{
+template <class Polynomial_d>
+Polynomial_traits_d<Polynomial_d>::Compare::result_type 
+compare(const Polynomial_d& p, const Polynomial_d& q);
+}{
+Adapts \ccc{Polynomial_traits_d<Polynomial_d>::Compare}. 
+}
+\ccSeeAlso
+\ccRefConceptPage{Polynomial_d}\\
+\ccRefConceptPage{PolynomialTraits_d}\\
+\ccRefConceptPage{PolynomialTraits_d::Compare}\\
+\end{ccRefFunction}
+
+% UnivariateContent
+\begin{ccRefFunction}{univariate_content}
+
+\ccInclude{CGAL/polynomial_utils.h}
+
+\ccDefinition
+For a given \ccc{Polynomial_d} the function \ccRefName\ adapts the 
+according functor in \ccc{Polynomial_traits_d<Polynomial_d>}. \\ \\ 
+For more details see the concept \ccc{PolynomialTraits_d::UnivariateContent}. \\ \\ 
+
+\ccFunction{
+template <class Polynomial_d>
+Polynomial_traits_d<Polynomial_d>::Univariate_content::result_type 
+univariate_content(const Polynomial_d& p);
+}{
+Adapts \ccc{Polynomial_traits_d<Polynomial_d>::UnivariateContent}. 
+}
+\ccSeeAlso
+\ccRefConceptPage{Polynomial_d}\\
+\ccRefConceptPage{PolynomialTraits_d}\\
+\ccRefConceptPage{PolynomialTraits_d::Univariate_Content}\\
+\end{ccRefFunction}
+
+% MultivariateContent
+\begin{ccRefFunction}{multivariate_content}
+
+\ccInclude{CGAL/polynomial_utils.h}
+
+\ccDefinition
+For a given \ccc{Polynomial_d} the function \ccRefName\ adapts the 
+according functor in \ccc{Polynomial_traits_d<Polynomial_d>}. \\ \\ 
+For more details see the concept \ccc{PolynomialTraits_d::MultivariateContent}. \\ \\ 
+
+\ccFunction{
+template <class Polynomial_d>
+Polynomial_traits_d<Polynomial_d>::Multivariate_content::result_type 
+multivariate_content(const Polynomial_d& p);
+}{
+Adapts \ccc{Polynomial_traits_d<Polynomial_d>::Multivariate_content}. 
+}
+\ccSeeAlso
+\ccRefConceptPage{Polynomial_d}\\
+\ccRefConceptPage{PolynomialTraits_d}\\
+\ccRefConceptPage{PolynomialTraits_d::MultivariateContent}\\
+\end{ccRefFunction}
+
+% SquareFreeFactorize
+\begin{ccRefFunction}{square_free_factorize}
+
+\ccInclude{CGAL/polynomial_utils.h}
+
+\ccDefinition
+For a given \ccc{Polynomial_d} the function \ccRefName\ adapts the 
+according functor in \ccc{Polynomial_traits_d<Polynomial_d>}. \\ \\ 
+For more details see the concept \ccc{PolynomialTraits_d::SquareFreeFactorize}. \\ \\ 
+
+\ccFunction{
+template <class Polynomial_d, class OutputIterator > 
+OutputIterator
+square_free_factorize(
+const Polynomial_d& p, 
+OutputIterator it,
+Polynomial_traits_d<Polynomial>::Innermost_coefficient& a);
+}{
+Adapts \ccc{Polynomial_traits_d<Polynomial_d>::Square_free_factorize}. 
+}
+\ccFunction{
+template <class Polynomial_d, class OutputIterator > 
+OutputIterator
+square_free_factorize(const Polynomial_d& p, OutputIterator it);
+}{
+Adapts \ccc{Polynomial_traits_d<Polynomial_d>::Square_free_factorize}. 
+}
+\ccSeeAlso
+\ccRefConceptPage{Polynomial_d}\\
+\ccRefConceptPage{PolynomialTraits_d}\\
+\ccRefConceptPage{PolynomialTraits_d::SquareFreeFactorize}\\
+\end{ccRefFunction}
+
+% MakeSquareFree
+\begin{ccRefFunction}{make_square_free}
+
+\ccInclude{CGAL/polynomial_utils.h}
+
+\ccDefinition
+For a given \ccc{Polynomial_d} the function \ccRefName\ adapts the 
+according functor in \ccc{Polynomial_traits_d<Polynomial_d>}. \\ \\ 
+For more details see the concept \ccc{PolynomialTraits_d::MakeSquareFree}. \\ \\ 
+
+\ccFunction{
+template <class Polynomial_d>
+Polynomial_traits_d<Polynomial_d>::Make_square_free::result_type 
+make_square_free(const Polynomial_d& p);
+}{
+Adapts \ccc{Polynomial_traits_d<Polynomial_d>::Make_square_free}. 
+}
+\ccSeeAlso
+\ccRefConceptPage{Polynomial_d}\\
+\ccRefConceptPage{PolynomialTraits_d}\\
+\ccRefConceptPage{PolynomialTraits_d::MakeSquareFree}\\
+\end{ccRefFunction}
+
+% IsSquareFree
+\begin{ccRefFunction}{is_square_free}
+
+\ccInclude{CGAL/polynomial_utils.h}
+
+\ccDefinition
+For a given \ccc{Polynomial_d} the function \ccRefName\ adapts the 
+according functor in \ccc{Polynomial_traits_d<Polynomial_d>}. \\ \\ 
+For more details see the concept \ccc{PolynomialTraits_d::IsSquareFree}. \\ \\ 
+
+\ccFunction{
+template <class Polynomial_d>
+Polynomial_traits_d<Polynomial_d>::Is_square_free::result_type 
+is_square_free(const Polynomial_d& p);
+}{
+Adapts \ccc{Polynomial_traits_d<Polynomial_d>::Is_square_free}. 
+}
+\ccSeeAlso
+\ccRefConceptPage{Polynomial_d}\\
+\ccRefConceptPage{PolynomialTraits_d}\\
+\ccRefConceptPage{PolynomialTraits_d::IsSquareFree}\\
+\end{ccRefFunction}
+
+% PseudoDivision
+\begin{ccRefFunction}{pseudo_division}
+
+\ccInclude{CGAL/polynomial_utils.h}
+
+\ccDefinition
+For a given \ccc{Polynomial_d} the function \ccRefName\ adapts the 
+according functor in \ccc{Polynomial_traits_d<Polynomial_d>}. \\ \\ 
+For more details see the concept \ccc{PolynomialTraits_d::PseudoDivision}. \\ \\ 
+
+\ccFunction{
+template <class Polynomial_d>
+void
+pseudo_division(
+const Polynomial_d& f, const Polynomial_d& g, 
+Polynomial_d& q, Polynomial_d& r, Polynomial_traits_d<Polynomial_d>::Coefficient_type& D );
+}{
+Adapts \ccc{Polynomial_traits_d<Polynomial_d>::Pseudo_division}. 
+}
+\ccSeeAlso
+\ccRefConceptPage{Polynomial_d}\\
+\ccRefConceptPage{PolynomialTraits_d}\\
+\ccRefConceptPage{PolynomialTraits_d::PseudoDivision}\\
+\end{ccRefFunction}
+
+% PseudoDivisionQuotient
+\begin{ccRefFunction}{pseudo_division_quotient}
+
+\ccInclude{CGAL/polynomial_utils.h}
+
+\ccDefinition
+For a given \ccc{Polynomial_d} the function \ccRefName\ adapts the 
+according functor in \ccc{Polynomial_traits_d<Polynomial_d>}. \\ \\ 
+For more details see the concept \ccc{PolynomialTraits_d::PseudoDivisionQuotient}. \\ \\ 
+
+\ccFunction{
+template <class Polynomial_d>
+Polynomial_traits_d<Polynomial_d>::Pseudo_division_quotient::result_type 
+pseudo_division_quotient(const Polynomial_d& p, const Polynomial_d& q);
+}{
+Adapts \ccc{Polynomial_traits_d<Polynomial_d>::Pseudo_division_quotient}. 
+}
+\ccSeeAlso
+\ccRefConceptPage{Polynomial_d}\\
+\ccRefConceptPage{PolynomialTraits_d}\\
+\ccRefConceptPage{PolynomialTraits_d::PseudoDivisionQuotient}\\
+\end{ccRefFunction}
+
+% PseudoDivisionRemainder
+\begin{ccRefFunction}{pseudo_division_remainder}
+
+\ccInclude{CGAL/polynomial_utils.h}
+
+\ccDefinition
+For a given \ccc{Polynomial_d} the function \ccRefName\ adapts the 
+according functor in \ccc{Polynomial_traits_d<Polynomial_d>}. \\ \\ 
+For more details see the concept \ccc{PolynomialTraits_d::PseudoDivisionRemainder}. \\ \\ 
+
+\ccFunction{
+template <class Polynomial_d>
+Polynomial_traits_d<Polynomial_d>::Pseudo_division_remainder::result_type 
+pseudo_division_remainder(const Polynomial_d& p, const Polynomial_d& q);
+}{
+Adapts \ccc{Polynomial_traits_d<Polynomial_d>::Pseudo_division_remainder}. 
+}
+\ccSeeAlso
+\ccRefConceptPage{Polynomial_d}\\
+\ccRefConceptPage{PolynomialTraits_d}\\
+\ccRefConceptPage{PolynomialTraits_d::PseudoDivisionRemainder}\\
+\end{ccRefFunction}
+
+% GcdUpToConstantFactor
+\begin{ccRefFunction}{gcd_up_to_constant_factor}
+
+\ccInclude{CGAL/polynomial_utils.h}
+
+\ccDefinition
+For a given \ccc{Polynomial_d} the function \ccRefName\ adapts the 
+according functor in \ccc{Polynomial_traits_d<Polynomial_d>}. \\ \\ 
+For more details see the concept \ccc{PolynomialTraits_d::GcdUpToConstantFactor}. \\ \\ 
+
+\ccFunction{
+template <class Polynomial_d>
+Polynomial_traits_d<Polynomial_d>::Gcd_up_to_constant_factor::result_type 
+gcd_up_to_constant_factor(const Polynomial_d& p, const Polynomial_d& q);
+}{
+Adapts \ccc{Polynomial_traits_d<Polynomial_d>::Gcd_up_to_constant_factor}. 
+}
+\ccSeeAlso
+\ccRefConceptPage{Polynomial_d}\\
+\ccRefConceptPage{PolynomialTraits_d}\\
+\ccRefConceptPage{PolynomialTraits_d::GcdUpToConstantFactor}\\
+\end{ccRefFunction}
+
+% IntegralDivisionUpToConstantFactor
+\begin{ccRefFunction}{integral_division_up_to_constant_factor}
+
+\ccInclude{CGAL/polynomial_utils.h}
+
+\ccDefinition
+For a given \ccc{Polynomial_d} the function \ccRefName\ adapts the 
+according functor in \ccc{Polynomial_traits_d<Polynomial_d>}. \\ \\ 
+For more details see the concept \ccc{PolynomialTraits_d::IntegralDivisionUpToConstantFactor}. \\ \\ 
+
+\ccFunction{
+template <class Polynomial_d>
+Polynomial_traits_d<Polynomial_d>::Integral_division_up_to_constant_factor::result_type 
+integral_division_up_to_constant_factor(const Polynomial_d& p, const Polynomial_d& q);
+}{
+Adapts \ccc{Polynomial_traits_d<Polynomial_d>::Integral_division_up_to_constant_factor}. 
+}
+\ccSeeAlso
+\ccRefConceptPage{Polynomial_d}\\
+\ccRefConceptPage{PolynomialTraits_d}\\
+\ccRefConceptPage{PolynomialTraits_d::IntegralDivisionUpToConstantFactor}\\
+\end{ccRefFunction}
+% UnivariateContentUpToConstantFactor
+\begin{ccRefFunction}{univariate_content_up_to_constant_factor}
+
+\ccInclude{CGAL/polynomial_utils.h}
+
+\ccDefinition
+For a given \ccc{Polynomial_d} the function \ccRefName\ adapts the 
+according functor in \ccc{Polynomial_traits_d<Polynomial_d>}. \\ \\ 
+For more details see the concept \ccc{PolynomialTraits_d::UnivariateContentUpToConstantFactor}. \\ \\ 
+
+\ccFunction{
+template <class Polynomial_d>
+Polynomial_traits_d<Polynomial_d>::Univariate_content_up_to_constant_factor::result_type 
+univariate_content_up_to_constant_factor(const Polynomial_d& p);
+}{
+Adapts \ccc{Polynomial_traits_d<Polynomial_d>::Univariate_content_up_to_constant_factor}. 
+}
+\ccSeeAlso
+\ccRefConceptPage{Polynomial_d}\\
+\ccRefConceptPage{PolynomialTraits_d}\\
+\ccRefConceptPage{PolynomialTraits_d::UnivariateContentUpToConstantFactor}\\
+\end{ccRefFunction}
+
+% SquareFreeFactorizeUpToConstantFactorUpToConstantFactor
+\begin{ccRefFunction}{square_free_factorize_up_to_constant_factor}
+
+\ccInclude{CGAL/polynomial_utils.h}
+
+\ccDefinition
+For a given \ccc{Polynomial_d} the function \ccRefName\ adapts the 
+according functor in \ccc{Polynomial_traits_d<Polynomial_d>}. \\ \\ 
+For more details see the concept \ccc{PolynomialTraits_d::SquareFreeFactorizeUpToConstantFactor}. \\ \\ 
+
+\ccFunction{
+template <class Polynomial_d, class OutputIterator > 
+OutputIterator
+square_free_factorize_up_to_constant_factor(const Polynomial_d& p, OutputIterator it);
+}{
+Adapts \ccc{Polynomial_traits_d<Polynomial_d>::Square_free_factorize_up_to_constant_factor}. 
+}
+\ccSeeAlso
+\ccRefConceptPage{Polynomial_d}\\
+\ccRefConceptPage{PolynomialTraits_d}\\
+\ccRefConceptPage{PolynomialTraits_d::SquareFreeFactorizeUpToConstantFactor}\\
+\end{ccRefFunction}
+
+% Shift
+\begin{ccRefFunction}{shift}
+
+\ccInclude{CGAL/polynomial_utils.h}
+
+\ccDefinition
+For a given \ccc{Polynomial_d} the function \ccRefName\ adapts the 
+according functor in \ccc{Polynomial_traits_d<Polynomial_d>}. \\ \\ 
+For more details see the concept \ccc{PolynomialTraits_d::Shift}. \\ \\ 
+
+\ccFunction{
+template <class Polynomial_d>
+Polynomial_traits_d<Polynomial_d>::Shift::result_type 
+shift(const Polynomial_d& p, int i, int index = Polynomial_traits_d<Polynomial_d>::d-1);
+}{
+Adapts \ccc{Polynomial_traits_d<Polynomial_d>::Shift}. 
+}
+\ccSeeAlso
+\ccRefConceptPage{Polynomial_d}\\
+\ccRefConceptPage{PolynomialTraits_d}\\
+\ccRefConceptPage{PolynomialTraits_d::Shift}\\
+\end{ccRefFunction}
+% Negate
+\begin{ccRefFunction}{negate}
+
+\ccInclude{CGAL/polynomial_utils.h}
+
+\ccDefinition
+For a given \ccc{Polynomial_d} the function \ccRefName\ adapts the 
+according functor in \ccc{Polynomial_traits_d<Polynomial_d>}. \\ \\ 
+For more details see the concept \ccc{PolynomialTraits_d::Negate}. \\ \\ 
+
+\ccFunction{
+template <class Polynomial_d>
+Polynomial_traits_d<Polynomial_d>::Negate::result_type 
+negate(const Polynomial_d& p, int index = Polynomial_traits_d<Polynomial_d>::d-1);
+}{
+Adapts \ccc{Polynomial_traits_d<Polynomial_d>::Negate}. 
+}
+\ccSeeAlso
+\ccRefConceptPage{Polynomial_d}\\
+\ccRefConceptPage{PolynomialTraits_d}\\
+\ccRefConceptPage{PolynomialTraits_d::Negate}\\
+\end{ccRefFunction}
+% Invert
+\begin{ccRefFunction}{invert}
+
+\ccInclude{CGAL/polynomial_utils.h}
+
+\ccDefinition
+For a given \ccc{Polynomial_d} the function \ccRefName\ adapts the 
+according functor in \ccc{Polynomial_traits_d<Polynomial_d>}. \\ \\ 
+For more details see the concept \ccc{PolynomialTraits_d::Invert}. \\ \\ 
+
+\ccFunction{
+template <class Polynomial_d>
+Polynomial_traits_d<Polynomial_d>::Invert::result_type 
+invert(const Polynomial_d& p, int index = Polynomial_traits_d<Polynomial_d>::d-1);
+}{
+Adapts \ccc{Polynomial_traits_d<Polynomial_d>::Invert}. 
+}
+\ccSeeAlso
+\ccRefConceptPage{Polynomial_d}\\
+\ccRefConceptPage{PolynomialTraits_d}\\
+\ccRefConceptPage{PolynomialTraits_d::Invert}\\
+\end{ccRefFunction}
+% Translate
+\begin{ccRefFunction}{translate}
+
+\ccInclude{CGAL/polynomial_utils.h}
+
+\ccDefinition
+For a given \ccc{Polynomial_d} the function \ccRefName\ adapts the 
+according functor in \ccc{Polynomial_traits_d<Polynomial_d>}. \\ \\ 
+For more details see the concept \ccc{PolynomialTraits_d::Translate}. \\ \\ 
+
+\ccFunction{
+template <class Polynomial_d>
+Polynomial_traits_d<Polynomial_d>::Translate::result_type 
+translate(
+const Polynomial_d& p, 
+const Polynomial_traits_d<Polynomial_d>::Innermost_coefficient_type& a, 
+int index = Polynomial_traits_d<Polynomial_d>::d-1);
+}{
+Adapts \ccc{Polynomial_traits_d<Polynomial_d>::Translate}. 
+}
+\ccSeeAlso
+\ccRefConceptPage{Polynomial_d}\\
+\ccRefConceptPage{PolynomialTraits_d}\\
+\ccRefConceptPage{PolynomialTraits_d::Translate}\\
+\end{ccRefFunction}
+% TranslateHomogeneous
+\begin{ccRefFunction}{translate_homogeneous}
+
+\ccInclude{CGAL/polynomial_utils.h}
+
+\ccDefinition
+For a given \ccc{Polynomial_d} the function \ccRefName\ adapts the 
+according functor in \ccc{Polynomial_traits_d<Polynomial_d>}. \\ \\ 
+For more details see the concept \ccc{PolynomialTraits_d::TranslateHomogeneous}. \\ \\ 
+
+\ccFunction{
+template <class Polynomial_d>
+Polynomial_traits_d<Polynomial_d>::Translate_homogeneous::result_type 
+translate_homogeneous(
+const Polynomial_d& p, 
+const Polynomial_traits_d<Polynomial_d>::Innermost_coefficient_type& u, 
+const Polynomial_traits_d<Polynomial_d>::Innermost_coefficient_type& v, 
+int index = Polynomial_traits_d<Polynomial_d>::d-1);
+}{
+Adapts \ccc{Polynomial_traits_d<Polynomial_d>::Translate_homogeneous}. 
+}
+\ccSeeAlso
+\ccRefConceptPage{Polynomial_d}\\
+\ccRefConceptPage{PolynomialTraits_d}\\
+\ccRefConceptPage{PolynomialTraits_d::TranslateHomogeneous}\\
+\end{ccRefFunction}
+
+% Scale
+\begin{ccRefFunction}{scale}
+
+\ccInclude{CGAL/polynomial_utils.h}
+
+\ccDefinition
+For a given \ccc{Polynomial_d} the function \ccRefName\ adapts the 
+according functor in \ccc{Polynomial_traits_d<Polynomial_d>}. \\ \\ 
+For more details see the concept \ccc{PolynomialTraits_d::Scale}. \\ \\ 
+
+\ccFunction{
+template <class Polynomial_d>
+Polynomial_traits_d<Polynomial_d>::Scale::result_type 
+scale(
+const Polynomial_d& p, 
+const Polynomial_traits_d<Polynomial_d>::Innermost_coefficient_type& a, 
+int index = Polynomial_traits_d<Polynomial_d>::d-1);
+}{
+Adapts \ccc{Polynomial_traits_d<Polynomial_d>::Scale}. 
+}
+\ccSeeAlso
+\ccRefConceptPage{Polynomial_d}\\
+\ccRefConceptPage{PolynomialTraits_d}\\
+\ccRefConceptPage{PolynomialTraits_d::Scale}\\
+\end{ccRefFunction}
+% ScaleHomogeneous
+\begin{ccRefFunction}{scale_homogeneous}
+
+\ccInclude{CGAL/polynomial_utils.h}
+
+\ccDefinition
+For a given \ccc{Polynomial_d} the function \ccRefName\ adapts the 
+according functor in \ccc{Polynomial_traits_d<Polynomial_d>}. \\ \\ 
+For more details see the concept \ccc{PolynomialTraits_d::ScaleHomogeneous}. \\ \\ 
+
+\ccFunction{
+template <class Polynomial_d>
+Polynomial_traits_d<Polynomial_d>::Scale_homogeneous::result_type 
+scale_homogeneous(
+const Polynomial_d& p, 
+const Polynomial_traits_d<Polynomial_d>::Innermost_coefficient_type& u, 
+const Polynomial_traits_d<Polynomial_d>::Innermost_coefficient_type& v, 
+int index = Polynomial_traits_d<Polynomial_d>::d-1);
+}{
+Adapts \ccc{Polynomial_traits_d<Polynomial_d>::Scale_homogeneous}. 
+}
+\ccSeeAlso
+\ccRefConceptPage{Polynomial_d}\\
+\ccRefConceptPage{PolynomialTraits_d}\\
+\ccRefConceptPage{PolynomialTraits_d::ScaleHomogeneous}\\
+\end{ccRefFunction}
+% Resultant
+
+
+
+% Compare 
+\begin{ccRefFunction}{resultant}
+
+\ccInclude{CGAL/polynomial_utils.h}
+
+\ccDefinition
+For a given \ccc{Polynomial_d} the function \ccRefName\ adapts the 
+according functor in \ccc{Polynomial_traits_d<Polynomial_d>}. \\ \\ 
+For more details see the concept \ccc{PolynomialTraits_d::Resultant}. \\ \\ 
+
+\ccFunction{
+template <class Polynomial_d>
+Polynomial_traits_d<Polynomial_d>::Resultant::result_type 
+resultant(const Polynomial_d& p, const Polynomial_d& q);
+}{
+Adapts \ccc{Polynomial_traits_d<Polynomial_d>::Resultant}. 
+}
+\ccSeeAlso
+\ccRefConceptPage{Polynomial_d}\\
+\ccRefConceptPage{PolynomialTraits_d}\\
+\ccRefConceptPage{PolynomialTraits_d::Resultant}\\
+\end{ccRefFunction}
+
+% polynomial_subresultants
+\begin{ccRefFunction}{polynomial_subresultants}
+
+\ccInclude{CGAL/polynomial_utils.h}
+
+\ccDefinition
+For a given \ccc{Polynomial_d} the function \ccRefName\ adapts the 
+according functor in \ccc{Polynomial_traits_d<Polynomial_d>}. \\ \\ 
+For more details see the concept 
+\ccc{PolynomialTraits_d::PolynomialSubresultants}. \\ \\ 
+\\ \\
+\ccFunction{template<typename Polynomial_d,typename OutputIterator>
+        OutputIterator polynomial_subresultants
+            (Polynomial_d   p,
+             Polynomial_d   q,
+             OutputIterator out);}
+         { computes the polynomial subresultants of $p$ and $q$, 
+           with respect to the outermost variable. Each element is of type
+           \ccc{Polynomial_d}.}
+\ccSeeAlso
+\ccRefConceptPage{Polynomial_d}\\
+\ccRefConceptPage{PolynomialTraits_d}\\
+\ccRefConceptPage{PolynomialTraits_d::PolynomialSubresultants}\\
+\end{ccRefFunction}
+
+% polynomial_subresultants_with_cofactors
+\begin{ccRefFunction}{polynomial_subresultants_with_cofactors}
+
+\ccInclude{CGAL/polynomial_utils.h}
+
+\ccDefinition
+For a given \ccc{Polynomial_d} the function \ccRefName\ adapts the 
+according functor in \ccc{Polynomial_traits_d<Polynomial_d>}. \\ \\ 
+For more details see the concept 
+\ccc{PolynomialTraits_d::PolynomialSubresultantsWithCofactors}. \\ \\ 
+\\ \\
+\ccFunction{template<typename Polynomial_d,
+    typename OutputIterator1, 
+    typename OutputIterator2,
+    typename OutputIterator3>
+    OutputIterator1 polynomial_subresultants_with_cofactors
+      (Polynomial_d p,
+       Polynomial_d q,
+       OutputIterator1 sres_out,
+       OutputIterator2 coP_out,
+       OutputIterator3 coQ_out);}
+         { computes the polynomial subresultants of $p$ and $q$, 
+           \ccc{sres_out}, with respect to the outermost variable, and
+           the cofactors for $P$, \ccc{coP_out} and $Q$, \ccc{coQ_out}. 
+           The elements  of each output range are of type
+           \ccc{Polynomial_d}.}
+\ccSeeAlso
+\ccRefConceptPage{Polynomial_d}\\
+\ccRefConceptPage{PolynomialTraits_d}\\
+\ccRefConceptPage{PolynomialTraits_d::PolynomialSubresultantsWithCofactors}\\
+\end{ccRefFunction}
+
+
+% principal_subresultants
+\begin{ccRefFunction}{principal_subresultants}
+
+\ccInclude{CGAL/polynomial_utils.h}
+
+\ccDefinition
+For a given \ccc{Polynomial_d} the function \ccRefName\ adapts the 
+according functor in \ccc{Polynomial_traits_d<Polynomial_d>}. \\ \\ 
+For more details see the concept 
+\ccc{PolynomialTraits_d::PrincipalSubresultants}. \\ \\ 
+\\ \\
+\ccFunction{template<typename Polynomial_d,typename OutputIterator>
+        OutputIterator principal_subresultants
+            (Polynomial_d   p,
+             Polynomial_d   q,
+             OutputIterator out);}
+         { computes the principal subresultants of $p$ and $q$, 
+           with respect to the outermost variable. Each element is of type
+           \ccc{Polynomial_traits_d<Polynomial_d>::Coefficient_type}.}
+\ccSeeAlso
+\ccRefConceptPage{Polynomial_d}\\
+\ccRefConceptPage{PolynomialTraits_d}\\
+\ccRefConceptPage{PolynomialTraits_d::PrincipalSubresultants}\\
+\end{ccRefFunction}
+
+% sturm_habicht_sequence
+\begin{ccRefFunction}{sturm_habicht_sequence}
+
+\ccInclude{CGAL/polynomial_utils.h}
+
+\ccDefinition
+For a given \ccc{Polynomial_d} the function \ccRefName\ adapts the 
+according functor in \ccc{Polynomial_traits_d<Polynomial_d>}. \\ \\ 
+For more details see the concept 
+\ccc{PolynomialTraits_d::SturmHabichtSequence}. \\ \\ 
+\\ \\
+\ccFunction{template<typename Polynomial_d,typename OutputIterator> OutputIterator
+    sturm_habicht_sequence(Polynomial_d f, 
+                           OutputIterator out);}
+         { computes the Sturm-Habicht-sequence of $f$
+           with respect to the outermost variable. Each element is of type
+           \ccc{Polynomial_d}.}
+\ccSeeAlso
+\ccRefConceptPage{Polynomial_d}\\
+\ccRefConceptPage{PolynomialTraits_d}\\
+\ccRefConceptPage{PolynomialTraits_d::SturmHabichtSequence}\\
+\end{ccRefFunction}
+
+% sturm_habicht_sequence_with_cofactors
+\begin{ccRefFunction}{sturm_habicht_sequence_with_cofactors}
+
+\ccInclude{CGAL/polynomial_utils.h}
+
+\ccDefinition
+For a given \ccc{Polynomial_d} the function \ccRefName\ adapts the 
+according functor in \ccc{Polynomial_traits_d<Polynomial_d>}. \\ \\ 
+For more details see the concept 
+\ccc{PolynomialTraits_d::SturmHabichtSequenceWithCofactors}. \\ \\ 
+\\ \\
+\ccFunction{template<typename Polynomial_d,
+    typename OutputIterator1,
+    typename OutputIterator2,
+    typename OutputIterator3> 
+    OutputIterator1
+    sturm_habicht_sequence_with_cofactors
+      (Polynomial_d f,
+       OutputIterator1 stha_out,
+       OutputIterator2 cof_out,
+       OutputIterator3 cofx_out);}
+         { computes the Sturm-Habicht sequence of $f$
+           \ccc{stha_out}, with respect to the outermost variable, and
+           the cofactors for $f$, \ccc{cof_out} and $f'$, \ccc{cofx_out}. 
+           The elements  of each output range are of type
+           \ccc{Polynomial_d}.}
+\ccSeeAlso
+\ccRefConceptPage{Polynomial_d}\\
+\ccRefConceptPage{PolynomialTraits_d}\\
+\ccRefConceptPage{PolynomialTraits_d::SturmHabichtSequenceWithCofactors}\\
+\end{ccRefFunction}
+
+
+% principal_sturm_habicht_sequence
+\begin{ccRefFunction}{principal_sturm_habicht_sequence}
+
+\ccInclude{CGAL/polynomial_utils.h}
+
+\ccDefinition
+For a given \ccc{Polynomial_d} the function \ccRefName\ adapts the 
+according functor in \ccc{Polynomial_traits_d<Polynomial_d>}. \\ \\ 
+For more details see the concept 
+\ccc{PolynomialTraits_d::PrincipalSturmHabichtSequence}. \\ \\ 
+\\ \\
+\ccFunction{  template <typename Polynomial_d,typename OutputIterator> inline
+    OutputIterator
+    principal_sturm_habicht_sequence
+      (typename Polynomial_d f, 
+       OutputIterator out);}
+         { computes the principal Sturm-Habicht coefficients of $f$
+           with respect to the outermost variable. Each element is of type
+           \ccc{Polynomial_traits_d<Polynomial_d>::Coefficient_type}.}
+\ccSeeAlso
+\ccRefConceptPage{Polynomial_d}\\
+\ccRefConceptPage{PolynomialTraits_d}\\
+\ccRefConceptPage{PolynomialTraits_d::PrincipalSturmHabichtSequence}\\
+\end{ccRefFunction}
+
+% number_of_real_roots
+\begin{ccRefFunction}{number_of_real_roots}
+
+\ccInclude{CGAL/polynomial_utils.h}
+
+\ccDefinition
+
+Given a polynomial $f$, or a range of values that is interpreted 
+as the principal Sturm-Habicht coefficients of $f$, the function computes
+$$m:=\# \{\alpha\in\mathbb{R}\mid f(\alpha)=0\}$$
+that is, the number of distinct real roots of $f$.
+
+The coefficient type of the polynomial, 
+or the value type of the iterator range, respectively 
+must be a model of \ccc{RealEmbeddable}.
+In the second version, 
+it is not required to pass the exact princiapl Sturm-Habicht coefficients
+to the functions; it is only required that the sign of each element
+corresponds to the sign of the actual principal Sturm-Habicht coefficient.
+
+\begin{ccAdvanced}
+
+We explain the internals of this function.
+For a sequence $I:=(a_0,\ldots,a_n)$ of real numbers with $a_0\neq 0$, define 
+$$C(I)=\ccSum{i=1}{s}\epsilon_i$$
+where $s$ is the number of subsequences of $I$ of the form
+\begin{ccTexOnly}
+$$(a,\underbrace{0,\ldots,0}_k,b)$$
+\end{ccTexOnly}
+\begin{ccHtmlOnly}
+<CENTER>
+<IMG BORDER=0 SRC="./underbrace.gif" ALIGN=middle ALT="">
+</CENTER>
+\end{ccHtmlOnly}
+with $a\neq 0,b\neq 0, k\geq 0$.\\
+For the $i$-th subsequence of $I$, define
+$$\epsilon_i:=\begin{array}{cc}
+0 & \mbox{if $k$ is odd},\\
+(-1)^{k/2}\mathrm{sign}(ab) & \mbox{if $k$ is even}.
+\end{array}$$ 
+
+For $f\in\mathbb{R}[x]$ with $\deg f=n$, we have:
+$$C(\mathrm{stha}_n(f),\ldots,\mathrm{stha}_0(f)) = \#\{\alpha\in\R\mid f(\alpha)=0\}$$
+In other words, the signs of the principal Sturm-Habicht coefficients
+determine the number of distinct real roots of $f$.
+
+\end{ccAdvanced}
+
+
+\ccOperations
+\ccFunction{  template<typename Polynomial_d>
+    int number_of_real_roots(Polynomial_d f);}
+         { computes the number of distinct real roots of $f$}
+\ccFunction{  template<typename InputIterator>
+    int number_of_real_roots(InputIterator start,InputIterator end);}
+         { computes the number of distinct real roots of $f$ whose principal Sturm-Habicht coefficients are passed by the iterator range.}
+\ccSeeAlso
+\ccRefConceptPage{Polynomial_d}\\
+\ccRefConceptPage{PolynomialTraits_d}\\
+\ccRefConceptPage{PolynomialTraits_d::PrincipalSturmHabichtSequence}\\
+\end{ccRefFunction}

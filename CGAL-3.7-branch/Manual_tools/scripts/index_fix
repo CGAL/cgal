@@ -1,0 +1,94 @@
+#!/usr/bin/perl -swi.unfixed
+#
+# ===========================================================================
+#
+# Index postprocessing script -- index_fix
+#
+# $Id$
+# $Date$
+#
+# script for post-processing of a CGAL reference manual .ind file to 
+#   -- remove commas and page numbers after "see also" entries
+#   -- insert an explanation of the use of boldface 
+#   -- insert a table of contents command
+#   -- insert blank lines between main entries with the CGAL_ prefix 
+#      when the letter after the prefix changes
+#   -- insert hyphenation clues in names with underscores
+#   -- insert a space between characters in () and [] operators
+#   -- separate the current d-digit page number entry into a 
+#      one-digit part number (the first of the d digits) and a 
+#      (d-1)-digit page number if the -p option is used.
+#
+# Usage: index_fix [-p] <filname.ind>
+# ===========================================================================
+#
+
+
+$/=""; # read in a paragraph at a time (to the next blank line)
+       # Some entries may span more than one line.  In particular, 
+       # a \none{d} macro may be on a different line than the preceding comma
+       # and text
+
+$indexlegend = "Pages on which definitions are given are presented in \{\\bf boldface\}.\n\n   \\indexspace\n";
+
+$tocCommand = "\\addcontentsline{toc}{chapter}{Index}";
+
+while (<>) {
+    s/,\s+\\none\{\d+\}//g;   # get rid of the ", \none{n}" text
+
+
+    s/(\\begin\{theindex\})/$1\n$tocCommand\n$indexlegend/g; # add the explanation of fonts
+
+    s/\\item\s*(.*)\s*\$\(\)\$/\\item $1\$\(\\; \)\$/g; # put spaces in the
+    s/\\item\s*(.*)\s*\$\[\]\$/\\item $1\$\[\\; \]\$/g; # () and [] operators
+
+    if (($p) || (m/\\item.*CGAL_.*/)){
+     $CGALItemsSeen = 0;
+     $notLastCGALchar = qr/[^ ]/;
+     @lines = split /\n/, $_;     # split into a list of lines at \n
+     $spaceBefore = 1;            # assume there was an indexspace before
+                                  # the first CGAL entry
+     foreach $line (@lines) {
+        if ($p) {                # separate the part prefixes from page numbers
+           @words = split /,/, $line;  # split line into "words" at commas
+           foreach $word (@words) {
+              # check for commands such as \textbf{n1-n2} and \textbf{n}
+              if (!($word =~ s/\\(\w+)\{(\d)(\d+)--(\d)(\d+)\}/\\$1\{$2.$3--$4.$5\}/)){
+                   $word =~ s/\\(\w+)\{(\d)(\d+)\}/\\$1\{$2.$3\}/;
+              }
+              # check for page numbers in normal font
+              if (!($word =~ s/\s+(\d)(\d+)--(\d)(\d+)/ $1.$2--$3.$4/)){
+                 $word =~ s/\s+(\d)(\d+)$/ $1.$2/;
+              }
+           }
+           $line = join ",", @words; # put back together with separating commas
+        }
+        if ($line =~ m/\\item.*CGAL_(.).*/) {  # main CGAL_ item
+            $newCGALchar = $1;            # letter after prefix in this line
+            $newCGALchar =~ tr/A-Z/a-z/;  # make letter lower case
+            if ($newCGALchar =~ m/$notLastCGALchar/) { #new letter after prefix
+              if ($spaceBefore == 0) {
+                 $line = join "\n", "\n  \\indexspace\n", $line;
+              }
+              $spaceBefore = 0;           # now must separate all CGAL entries
+              $notLastCGALchar = qr/[^$newCGALchar]/;
+            }
+            $CGALItemsSeen = 1;
+        }
+        elsif ($line =~ m/\\item.*/) {
+            if ($CGALItemsSeen == 1) { # put indexspace after all CGAL entries
+               $line = join "\n", "\n  \\indexspace\n", $line;
+               $CGALItemsSeen = 0;
+            }
+            else {
+               $spaceBefore = 0;      # there wasn't an indexspace before the
+                                      # first CGAL entry in this paragraph
+            }
+        }
+    }
+    # join the (possibly modified) lines
+    $_ = join "\n", @lines, "\n";
+    }
+    s/(\w+?)_(.)/$1_\\-$2/g;   # add hyphenation clues in underscore words
+    print;
+} 

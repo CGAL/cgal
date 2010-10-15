@@ -1,0 +1,81 @@
+% +------------------------------------------------------------------------+
+% | Reference manual page: Event.tex
+% +------------------------------------------------------------------------+
+% | 20.03.2005   Author
+% | Package: Kinetic_data_structures
+% | 
+\RCSdef{\RCSEventRev}{$Id$}
+\RCSdefDate{\RCSEventDate}{$Date$}
+% |
+%%RefPage: end of header, begin of main body
+% +------------------------------------------------------------------------+
+
+\ccDefGlobalScope{CGAL::}
+\begin{ccRefClass}[Kinetic::]{Event_base<KDS>}
+
+%% \ccHtmlCrossLink{}     %% add further rules for cross referencing links
+%% \ccHtmlIndexC[concept]{} %% add further index entries
+
+\ccDefinition
+  
+This class provides a base to use for implementing events. The base provides default implementations of several methods and stores a pointer to the KDS.
+
+\ccCreationVariable{a}  %% choose variable name
+
+\ccConstructor{Event_base(KDS *kds)}{Construct the object and store the pointer to the KDS.}
+
+\ccConstructor{Event_base()}{Use a \ccc{NULL} pointer as the KDS pointer.}
+
+\ccOperations
+
+\ccMethod{KDS* kds();}{Returns the stored pointer to the KDS.}
+
+\ccMethod{CGAL::Comparison_result compare_concurrent(Key a, Key b) const;}{This returns \ccc{CGAL::compare(a,b)}.}
+
+\ccMethod{bool merge_concurrent(Key a, Key b);}{ This does nothing and returns false.}
+
+\ccMethod{void audit(Key this_key);}{Audit that this is a valid event.}
+
+\ccMethod{std::ostream& write(std::ostream&) const;}{Write ``Event base'' to the stream.}
+
+%\ccMethod{void degenerate_events(Event_key this_event, Event_key other_event);}{This event and the event referenced by \ccc{k} belong to the same KDS and occur simultaneously. This function call gives the KDS a chance to handle } 
+
+\ccIsModel
+
+\ccc{Kinetic::Event}.
+
+\ccSeeAlso
+
+\ccc{Kinetic::EventQueue}
+
+\ccExample
+
+All of the kinetic data structures provided have models of
+\ccRefName. Here is the code implementing a swap event from the
+sorting kinetic data structure.
+
+\begin{ccExampleCode}
+template <class Certificate, class Id, class Root_enumerator> 
+class Swap_event: CGAL::Kinetic::Event_base<Sort> {
+  typedef CGAL::Kinetic::Event_base<Sort> P;
+public:
+  Swap_event(Id o, Sort* sorter, 
+	     const Certificate &s): P(sorter),
+	                            left_object_(o),
+                                    s_(s){}
+  void process(){
+    P::kds()->swap(left_object_, s_);
+  }
+  Id left_object_; 
+  Certificate s_;
+};
+\end{ccExampleCode}
+
+
+\end{ccRefConcept}
+
+% +------------------------------------------------------------------------+
+%%RefPage: end of main body, begin of footer
+% EOF
+% +------------------------------------------------------------------------+
+

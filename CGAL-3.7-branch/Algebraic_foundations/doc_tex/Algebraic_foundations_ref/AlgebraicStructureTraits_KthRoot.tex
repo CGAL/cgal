@@ -1,0 +1,39 @@
+\begin{ccRefFunctionObjectConcept}{AlgebraicStructureTraits::KthRoot}
+
+%\begin{ccAdvanced}
+\ccDefinition
+
+\ccc{AdaptableBinaryFunction} providing the k-th root. 
+
+\ccRefines 
+
+\ccc{AdaptableBinaryFunction} 
+
+\ccTypes
+\ccNestedType{result_type} 
+        { Is \ccc{AlgebraicStructureTraits::Type}.}
+\ccGlue
+\ccNestedType{first_argument} 
+        { Is int.}
+\ccGlue
+\ccNestedType{second_argument} 
+        { Is \ccc{AlgebraicStructureTraits::Type}.}
+
+\ccOperations
+\ccCreationVariable{kth_root}
+\ccThree{xxxxxxxxxxx}{xxxxxxxxxxx}{}
+
+\ccMethod{result_type operator()(int k, second_argument_type x);}
+        { returns the $k$-th root of $x$.
+         \ccPrecond{ $k \geq 1$ }
+         }
+
+%\ccHasModels
+
+\ccSeeAlso
+
+\ccRefIdfierPage{FieldWithRootOf}\\
+\ccRefIdfierPage{AlgebraicStructureTraits}
+
+%\end{ccAdvanced}
+\end{ccRefFunctionObjectConcept} 

@@ -1,0 +1,3 @@
+Approximation of ridges and umbilics on triangulated surface meshes.
+
+\ccPkgIllustration{Ridges_3/david_crest_small.png}{Ridges_3/david_crest.png}

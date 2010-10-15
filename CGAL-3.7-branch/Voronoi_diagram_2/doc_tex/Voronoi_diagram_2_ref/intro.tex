@@ -1,0 +1,79 @@
+%% Copyright (c) 2005  Foundation for Research and Technology-Hellas (Greece).
+%% All rights reserved.
+%%
+%% This file is part of CGAL (www.cgal.org); you may redistribute it under
+%% the terms of the Q Public License version 1.0.
+%% See the file LICENSE.QPL distributed with CGAL.
+%%
+%% Licensees holding a valid commercial license may use this file in
+%% accordance with the commercial license agreement provided with the software.
+%%
+%% This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
+%% WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
+%%
+%% $URL$
+%% $Id$
+%% 
+%%
+%% Author(s)     : Menelaos Karavelas <mkaravel@iacm.forth.gr>
+
+
+\ccRefChapter{2D Voronoi Diagram Adaptor\label{ref-chapter-vda2}}
+\ccChapterAuthor{Menelaos Karavelas}
+
+
+\cgal\ provides the class \ccc{CGAL::Voronoi_diagram_2<DG,AT,AP>} for
+adapting the various (triangulated) Delaunay graphs to Voronoi
+diagrams according to some adaptation policy.
+In particular, the class \ccc{CGAL::Voronoi_diagram_2<DG,AT,AP>}
+provides an API for the duals of (triangulated) Delaunay graphs, that
+makes them look like planar subdivisions. The adaptation policy is
+responsible for deciding which edges and faces of these duals should
+be eliminated. This is especially important when, for instance, we
+want to eliminate degenerate features in the Voronoi diagram that are
+the result of the fact that Delaunay graphs are always triangulated
+and are due to degenerate configurations in the generating data.
+
+The three template parameters must be models of the
+\ccc{DelaunayGraph_2}, \ccc{AdaptationTraits_2} and
+\ccc{AdaptationPolicy_2} concepts, respectively.
+The first concept is related to the Delaunay graphs that are to be
+adapted, whereas the second one is responsible for
+manipulating/accessing in a unified way the geometry of a specific
+Voronoi diagram as well as for performing nearest site queries. 
+The third template parameter corresponds to the chosen adaptation
+policy and provides the necessary types and functors needed for
+performing this adaptation.
+
+\section{Classified Reference Pages}
+
+\ccHeading{Concepts}
+\ccRefConceptPage{DelaunayGraph_2}\\
+\ccRefConceptPage{AdaptationTraits_2}\\
+\ccRefConceptPage{AdaptationPolicy_2}
+
+\ccHeading{Classes}
+\ccRefIdfierPage{CGAL::Voronoi_diagram_2<DG,AT,AP>}\\
+\ccRefIdfierPage{CGAL::Voronoi_diagram_2<DG,AT,AP>::Halfedge}\\
+\ccRefIdfierPage{CGAL::Voronoi_diagram_2<DG,AT,AP>::Vertex}\\
+\ccRefIdfierPage{CGAL::Voronoi_diagram_2<DG,AT,AP>::Face}\\
+\ccRefIdfierPage{CGAL::Apollonius_graph_adaptation_traits_2<AG2>}\\
+\ccRefIdfierPage{CGAL::Delaunay_triangulation_adaptation_traits_2<DT2>}\\
+\ccRefIdfierPage{CGAL::Regular_triangulation_adaptation_traits_2<RT2>}\\
+\ccRefIdfierPage{CGAL::Segment_Delaunay_graph_adaptation_traits_2<SDG2>}\\
+\ccRefIdfierPage{CGAL::Identity_policy_2<DG,AT>}\\
+\ccRefIdfierPage{CGAL::Apollonius_graph_degeneracy_removal_policy_2<AG2>}\\
+\ccRefIdfierPage{CGAL::Apollonius_graph_caching_degeneracy_removal_policy_2<AG2>}\\
+\ccRefIdfierPage{CGAL::Delaunay_triangulation_degeneracy_removal_policy_2<DT2>}\\
+\ccRefIdfierPage{CGAL::Delaunay_triangulation_caching_degeneracy_removal_policy_2<DT2>}\\
+\ccRefIdfierPage{CGAL::Regular_triangulation_degeneracy_removal_policy_2<RT2>}\\
+\ccRefIdfierPage{CGAL::Regular_triangulation_caching_degeneracy_removal_policy_2<RT2>}\\
+\ccRefIdfierPage{CGAL::Segment_Delaunay_graph_degeneracy_removal_policy_2<SDG2>}\\
+\ccRefIdfierPage{CGAL::Segment_Delaunay_graph_caching_degeneracy_removal_policy_2<SDG2>}\\
+
+
+
+% +------------------------------------------------------------------------+
+%%RefPage: end of main body, begin of footer
+% EOF
+% +------------------------------------------------------------------------+

@@ -1,0 +1,156 @@
+// Begin Doc //
+// #include "mstring.h"  // String class by Modena //
+
+template<class charT>
+class basic_string {
+public:
+    typedef  charT                       char_type;
+    typedef  string_char_baggage<charT>  baggage_type;
+    typedef  basic_string<charT>         Self;
+
+    // Container types
+    typedef charT value_type;
+    typedef value_type* pointer;
+    typedef const value_type* const_iterator;
+    typedef value_type& reference;
+    typedef const value_type& const_reference;
+    typedef size_t size_type;
+    typedef ptrdiff_t difference_type;
+    typedef reverse_iterator<const_iterator, value_type, const_reference,
+				 difference_type>  const_reverse_iterator;
+
+    // iterator support
+    const_iterator begin() const { return data(); }
+    const_iterator end()   const { return data() + reference_p -> len; }
+    const_reverse_iterator rbegin() const;
+    const_reverse_iterator rend() const;
+
+    // container support
+    size_type size()     const { return reference_p -> len; }
+    size_type max_size() const { return LONG_MAX; }
+    size_type capacity() const;
+    bool empty()         const { return begin() == end(); }
+
+    // constructors
+    basic_string ();
+    basic_string (size_t size, ::capacity cap);
+    basic_string (const Self& str, 
+                  size_t pos = 0, 
+	          size_t n   = NPOS);
+    basic_string (const charT* s, size_t n);
+    basic_string (const charT* s);
+    basic_string (charT c, size_t rep = 1);
+    basic_string (const vector<charT>& vec);
+
+    ~basic_string ();
+
+    Self&         operator= (const Self& str);
+    Self&         operator= (const charT* s);
+    Self&         operator= (charT c);
+
+    Self&         operator+= (const Self& rhs);
+    Self&         operator+= (const charT* s);
+    Self&         operator+= (charT c);
+
+                  operator vector<charT> () const;
+
+    Self&         append (const Self& str, size_t pos = 0, size_t n = NPOS);
+    Self&         append (const charT* s, size_t n);
+    Self&         append (const charT* s);
+    Self&         append (charT c, size_t rep = 1);
+
+    Self&         assign (const Self& str, size_t pos = 0, size_t n = NPOS);
+    Self&         assign (const charT* s, size_t n);
+    Self&         assign (const charT* s);
+    Self&         assign (charT c, size_t rep = 1);
+
+    Self&         insert (size_t pos1, 
+	                  const Self& str, 
+                          size_t pos2 = 0,
+		          size_t n = NPOS);
+    Self&         insert (size_t pos, const charT* s, size_t n);
+    Self&         insert (size_t pos, const charT* s);
+    Self&         insert (size_t pos, charT c, size_t rep = 1);
+
+    //Self&         remove (size_t pos = 0, size_t n = NPOS);
+    void?         clear();
+        
+
+    Self&         replace (size_t pos1,
+		           size_t n1, 
+		           const Self& str,
+		           size_t pos2 = 0,
+		           size_t n2 = NPOS);
+    Self&         replace (size_t pos, size_t n1, const charT* s, size_t n2);
+    Self&         replace (size_t pos, size_t n1, const charT* s);
+    Self&         replace (size_t pos, size_t n, charT c, size_t rep = 1);
+                  
+    inline charT  get_at  (size_t pos) const;
+    void          put_at  (size_t pos, charT c);
+    inline charT  operator[] (size_t pos) const;
+    charT&        operator[] (size_t pos);
+    const charT*  c_str   () const;
+    const charT*  data    () const;
+    size_t        length  () const;
+    void          resize  (size_t n, charT c);
+    void          resize  (size_t n);
+    size_t        reserve () const;
+    void          reserve (size_t res_arg);
+    size_t        copy    (charT* s, size_t n, size_t pos = 0) const;
+
+    size_t        find (const Self& str, size_t pos = 0) const;
+    size_t        find (const charT* s, size_t pos, size_t n) const;
+    size_t        find (const charT* s, size_t pos = 0) const;
+    size_t        find (charT c, size_t pos = 0) const;
+
+    size_t        rfind (const Self& str, size_t pos = NPOS) const;
+    size_t        rfind (const charT* s, size_t pos, size_t n) const;
+    size_t        rfind (const charT* s, size_t pos = NPOS) const;
+    size_t        rfind (charT c, size_t pos = NPOS) const;
+
+    size_t       find_first_of (const Self& str, size_t pos = 0) const;
+    size_t       find_first_of (const charT* s, size_t pos, size_t n) const;
+    size_t       find_first_of (const charT* s, size_t pos = 0) const;
+    size_t       find_first_of (charT c, size_t pos = 0) const;
+
+    size_t       find_last_of (const Self& str, size_t pos = NPOS) const;
+    size_t       find_last_of (const charT* s, size_t pos, size_t n) const;
+    size_t       find_last_of (const charT* s, size_t pos = NPOS) const;
+    size_t       find_last_of (charT c, size_t pos = NPOS) const;
+
+    size_t       find_first_not_of (const Self& str, size_t pos = 0) const;
+    size_t       find_first_not_of (const charT* s, 
+				    size_t pos, 
+				    size_t n) const;
+    size_t       find_first_not_of (const charT* s, size_t pos = 0) const;
+    size_t       find_first_not_of (charT c, size_t pos = 0) const;
+
+    size_t       find_last_not_of (const Self& str, size_t pos = NPOS) const;
+    size_t       find_last_not_of (const charT* s, size_t pos, size_t n) const;
+    size_t       find_last_not_of (const charT* s, size_t pos = NPOS) const;
+    size_t       find_last_not_of (charT c, size_t pos = NPOS) const;
+
+    Self         substr (size_t pos = 0,  size_t n = NPOS) const;
+
+    int          compare (const Self& str, 
+			  size_t pos = 0,
+			  size_t n = NPOS) const;
+    int          compare (const charT* s, size_t pos, size_t n) const;
+    int          compare (const charT* s, size_t pos = 0) const;
+    int          compare (charT c, size_t pos = 0, size_t rep = 1) const;
+};
+
+ostream&  operator<< (ostream& o, const Self& s);
+istream&  operator>> (istream& i, Self& s);
+
+Self      operator+ (const Self& lhs, const Self& rhs);
+Self      operator+ (const charT* lhs, const Self& rhs);
+Self      operator+ (charT lhs, const Self& rhs);
+Self      operator+ (const Self& lhs, const charT* rhs);
+Self      operator+ (const Self& lhs, charT rhs);
+
+
+typedef  basic_string<char>     cstring;
+typedef  basic_string<char>     string;
+
+// End Doc //

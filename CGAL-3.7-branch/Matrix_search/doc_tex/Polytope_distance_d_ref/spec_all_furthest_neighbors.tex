@@ -1,0 +1,131 @@
+%% ==============================================================
+%% Specification: All Furthest Neighbors
+%% --------------------------------------------------------------
+%% file  : spec_all_furthest_neighbors.awi
+%% author: Michael Hoffmann
+%% $Id$
+%% ==============================================================
+
+\cgalColumnLayout
+
+\begin{ccRefFunction}{all_furthest_neighbors_2}
+  \ccIndexSubitem[t]{neighbor}{all furthest}
+  \ccIndexMainItem[t]{all furthest neighbors}
+  \ccIndexSubitem[t]{furthest}{all neighbors}
+  
+  \ccDefinition The function \ccRefName\ computes all furthest
+  neighbors for the vertices of a convex polygon $P$, i.e. for each
+  vertex $v$ of $P$ a vertex $f_v$ of $P$ such that the distance
+  between $v$ and $f_v$ is maximized.
+
+  \ccInclude{CGAL/all_furthest_neighbors_2.h}
+
+  \def\ccLongParamLayout{\ccTrue} 
+  
+  \ccGlobalFunction{ template < class RandomAccessIterator, class
+    OutputIterator, class Traits > OutputIterator
+    all_furthest_neighbors_2( RandomAccessIterator points_begin,
+    RandomAccessIterator points_end, OutputIterator o, Traits t =
+    Default_traits);}
+  
+  computes all furthest neighbors for the vertices of the convex
+  polygon described by the range [\ccc{points_begin},
+  \ccc{points_end}), writes their indices (relative to
+  \ccc{points_begin}) to \ccc{o}\footnote{i.e. the furthest neighbor
+    of \ccc{points_begin[}i\ccc{]} is \ccc{points_begin[}$i$-th number
+    written to \ccc{o}\ccc{]}} and returns the past-the-end iterator
+  of this sequence.
+  
+  \ccPrecond The points denoted by the non-empty range
+  [\ccc{points_begin}, \ccc{points_end}) form the boundary of a convex
+  polygon $P$ (oriented clock-- or counterclockwise).
+  
+  The geometric types and operations to be used for the computation
+  are specified by the traits class parameter \ccc{t}. This parameter
+  can be omitted if \ccc{RandomAccessIterator} refers to a point type
+  from a \ccc{Kernel}. In this case, the kernel is used as default
+  traits class.
+  
+  \ccRequire
+  \begin{enumerate}
+  \item If \ccc{t} is specified explicitly, \ccc{Traits} is a model
+    for \ccc{AllFurthestNeighborsTraits_2}.
+  \item Value type of \ccc{RandomAccessIterator} is
+    \ccc{Traits::Point_2} or -- if \ccc{t} is not specified explicitly
+    -- \ccc{K::Point_2} where \ccc{K} is a model for \ccc{Kernel}.
+  \item \ccc{OutputIterator} accepts \ccc{int} as value type.
+  \end{enumerate}
+  
+  \ccSeeAlso
+  \ccRefConceptPage{AllFurthestNeighborsTraits_2}\\
+  \ccRefIdfierPage{CGAL::monotone_matrix_search}
+ 
+  \ccImplementation The implementation uses monotone matrix
+  search\cite{akmsw-gamsa-87}. Its runtime complexity is linear in the
+  number of vertices of $P$.
+  
+  \ccExample The following code generates a random convex polygon
+  \ccc{p} with ten vertices, computes all furthest neighbors and
+  writes the sequence of their indices (relative to
+  \ccc{points_begin}) to \ccc{cout} (e.g. a sequence of
+  \ccc{4788911224} means the furthest neighbor of
+  \ccc{points_begin[0]} is \ccc{points_begin[4]}, the furthest
+  neighbor of \ccc{points_begin[1]} is \ccc{points_begin[7]} etc.).
+  
+  \ccIncludeExampleCode{Matrix_search/all_furthest_neighbors_2.cpp}
+\end{ccRefFunction}
+
+\begin{ccRefConcept}{AllFurthestNeighborsTraits_2}
+  \ccCreationVariable{t}\ccTagFullDeclarations
+  
+  \ccDefinition The concept \ccRefName\ defines types and operations
+  needed to compute all furthest neighbors for the vertices of a
+  convex polygon using the function \ccc{all_furthest_neighbors_2}.
+  
+  \ccTypes
+  
+  \ccNestedType{FT}{model for \ccRefConceptPage{FieldNumberType}.}
+  
+  \ccNestedType{Point_2}{model for
+    \ccRefConceptPage{Kernel::Point_2}.}
+  
+  \ccNestedType{Compute_squared_distance_2}{model for
+    \ccRefConceptPage{Kernel::Compute_squared_distance_2}.}
+  
+  \ccNestedType{Less_xy_2}{model for
+    \ccRefConceptPage{Kernel::Less_xy_2}.}
+  
+  \ccNestedType{Orientation_2}{model for
+    \ccRefConceptPage{Kernel::Orientation_2}.}
+  
+  \ccOperations The following member functions return function objects
+  of the types listed above.
+  
+  \ccGlue\ccMemberFunction{Compute_squared_distance_2
+    compute_squared_distance_2_object();}{}
+  
+  \ccGlue\ccMemberFunction{Less_xy_2 less_xy_2_object();}{}
+  
+  \ccGlue\ccMemberFunction{Orientation_2 orientation_2_object();}{}
+  
+  \ccHasModels 
+  \ccRefIdfierPage{Cartesian<FieldNumberType>},
+  \ccRefIdfierPage{Homogeneous<RingNumberType>},
+  \ccRefIdfierPage{Simple_cartesian<FieldNumberType>},
+  \ccRefIdfierPage{Simple_homogeneous<RingNumberType>}.
+
+  \ccSeeAlso
+  \ccRefIdfierPage{CGAL::all_furthest_neighbors_2}
+
+  \ccHeading{Notes}
+  \begin{itemize}
+  \item \ccClassName\ccc{::Less_xy_2} and
+    \ccClassName\ccc{::Orientation_2} are used for (expensive)
+    precondition checking only. Therefore, they need not to be
+    specified, in case that precondition checking is disabled.
+  \end{itemize}
+\end{ccRefConcept}
+
+%% --------------------------------------------------------------
+%% EOF spec_all_furthest_neighbors.awi
+%% --------------------------------------------------------------

@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<QHelpCollectionProject version="1.0">
+    <assistant>
+        <title>CGAL Periodic Lloyd Demo</title>
+        <cacheDirectory>CGAL/Periodic_3_triangulation_3</cacheDirectory>
+	<startPage>qthelp://org.cgal.demos.periodic_lloyd_3/doc/documentation/index.html</startPage>
+     <enableDocumentationManager>false</enableDocumentationManager>
+     <enableAddressBar>false</enableAddressBar>
+     <enableFilterFunctionality>false</enableFilterFunctionality>
+    </assistant>
+    <docFiles>
+        <generate>
+            <file>
+                <input>Periodic_Lloyd_3.qhp</input>
+                <output>Periodic_Lloyd_3.qch</output>
+                </file>
+            </generate>
+        <register>
+            <file>Periodic_Lloyd_3.qch</file>
+            </register>
+        </docFiles>
+    </QHelpCollectionProject>

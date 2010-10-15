@@ -1,0 +1,64 @@
+% +------------------------------------------------------------------------+
+% | Reference manual page: parameters_perturb.tex
+% +------------------------------------------------------------------------+
+% | 20.10.2009   Stephane Tayeb
+% | Package: Mesh_3
+% |
+\RCSdef{\RCSperturbRev}{$Id$}
+\RCSdefDate{\RCSperturbDate}{$Date$}
+% |
+\ccRefPageBegin
+ %%RefPage: end of header, begin of main body
+% +------------------------------------------------------------------------+
+
+\begin{ccRefFunction}{parameters::perturb}  %% add template arg's if necessary
+
+%% \ccHtmlCrossLink{}     %% add further rules for cross referencing links
+%% \ccHtmlIndexC[function]{} %% add further index entries
+
+\ccDefinition
+  
+The function \ccRefName\ allows the user to trigger a call to
+\ccc{perturb_mesh_3} in
+\ccc{make_mesh_3} and \ccc{refine_mesh_3} mesh generation functions. It also
+allows the user to pass parameters 
+to the optimization function \ccc{perturb_mesh_3} through these mesh generation functions.
+
+\ccInclude{CGAL/refine_mesh_3.h}
+
+\ccGlobalFunction{parameters::internal::Perturb parameters::perturb(
+  double time_limit = 0,
+  double sliver_bound = 0);}
+
+\ccParameters
+
+The parameters are named parameters. They are the same (i.e. they have the same
+name and the same default values) as the parameters of \ccc{perturb_mesh_3}
+function. See its manual page for further details.
+
+
+\ccSeeAlso
+
+\ccc{no_perturb} \\
+\ccc{perturb_mesh_3} \\
+\ccc{make_mesh_3} \\
+\ccc{refine_mesh_3} 
+
+
+\ccExample
+
+\begin{ccExampleCode}
+// Mesh generation with a perturbation step
+C3t3 c3t3 = make_mesh_3<c3t3>(domain, criteria, parameters::perturb());
+refine_mesh_3(c3t3, domain, criteria, parameters::perturb(parameters::time_limit=10));
+\end{ccExampleCode}
+
+
+\end{ccRefFunction}
+
+% +------------------------------------------------------------------------+
+%%RefPage: end of main body, begin of footer
+\ccRefPageEnd
+% EOF
+% +------------------------------------------------------------------------+
+

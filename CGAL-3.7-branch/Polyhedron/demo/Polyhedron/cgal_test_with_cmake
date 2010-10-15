@@ -1,0 +1,193 @@
+#! /bin/sh
+
+# This is a script for the CGAL test suite. Such a script must obey
+# the following rules:
+#
+# - the name of the script is cgal_test_with_cmake
+# - for every target two one line messages are written to the file 'error.txt'
+#     the first one indicates if the compilation was successful
+#     the second one indicates if the execution was successful
+#   if one of the two was not successful, the line should start with 'ERROR:'
+# - running the script should not require any user interaction
+# - the script should clean up object files and executables
+
+  ERRORFILE=error.txt
+  DO_RUN=
+  if [ -z "${MAKE_CMD}" ]; then
+    MAKE_CMD=make
+  fi
+  NEED_CLEAN=
+
+#---------------------------------------------------------------------#
+#                    configure
+#---------------------------------------------------------------------#
+
+configure()
+{
+  echo "Configuring... "
+  
+  if eval 'cmake "$CMAKE_GENERATOR" -DRUNNING_CGAL_AUTO_TEST=TRUE  \
+                                     -DCGAL_DIR="$CGAL_DIR" \
+                                     .' ; then
+                                     
+    echo "   succesful configuration" >> $ERRORFILE
+  else
+    echo "   ERROR:    configuration" >> $ERRORFILE
+  fi
+}
+
+#---------------------------------------------------------------------#
+#                    compile_and_run <target>
+#---------------------------------------------------------------------#
+
+compile_and_run()
+{
+  echo "Compiling $1 ... "
+  SUCCES="y"
+  
+  if eval '${MAKE_CMD} VERBOSE=ON -fMakefile $1' ; then
+    echo "   succesful compilation of $1" >> $ERRORFILE
+  else
+    echo "   ERROR:    compilation of $1" >> $ERRORFILE
+    SUCCES=""
+  fi
+
+  if [ -n "$DO_RUN" ] ; then
+    if [ -n "${SUCCES}" ] ; then
+      OUTPUTFILE=ProgramOutput.$1.$PLATFORM
+      rm -f $OUTPUTFILE
+      COMMAND="./$1"
+      if [ -f $1.cmd ] ; then
+        COMMAND="$COMMAND `cat $1.cmd`"
+      fi
+      if [ -f $1.cin ] ; then
+        COMMAND="cat $1.cin | $COMMAND"
+      fi
+      echo "Executing $1 ... "
+      echo
+      ulimit -t 3600 2> /dev/null
+      if eval $COMMAND > $OUTPUTFILE 2>&1 ; then
+        echo "   succesful execution   of $1" >> $ERRORFILE
+      else
+        echo "   ERROR:    execution   of $1" >> $ERRORFILE
+      fi
+    else
+      echo   "   ERROR:    not executed   $1" >> $ERRORFILE
+    fi
+  fi
+}
+
+#---------------------------------------------------------------------#
+#                    remove the previous error file
+#---------------------------------------------------------------------#
+
+rm -f $ERRORFILE
+touch $ERRORFILE
+
+#---------------------------------------------------------------------#
+#                    configure, compile and run the tests
+#---------------------------------------------------------------------#
+
+configure
+
+if [ $# -ne 0 ] ; then
+  for file in $* ; do
+    compile_and_run $file
+  done
+else
+  echo "Run all tests."
+if  ${MAKE_CMD} -f Makefile help | grep "Polyhedron_3" > /dev/null; then 
+  compile_and_run Polyhedron_3
+  NEED_CLEAN=y
+fi
+if  ${MAKE_CMD} -f Makefile help | grep "convex_hull_plugin" > /dev/null; then 
+  compile_and_run convex_hull_plugin
+  NEED_CLEAN=y
+fi
+if  ${MAKE_CMD} -f Makefile help | grep "cut_plugin" > /dev/null; then 
+  compile_and_run cut_plugin
+  NEED_CLEAN=y
+fi
+if  ${MAKE_CMD} -f Makefile help | grep "inside_out_plugin" > /dev/null; then 
+  compile_and_run inside_out_plugin
+  NEED_CLEAN=y
+fi
+if  ${MAKE_CMD} -f Makefile help | grep "kernel_plugin" > /dev/null; then 
+  compile_and_run kernel_plugin
+  NEED_CLEAN=y
+fi
+if  ${MAKE_CMD} -f Makefile help | grep "mesh_3_plugin" > /dev/null; then 
+  compile_and_run mesh_3_plugin
+  NEED_CLEAN=y
+fi
+if  ${MAKE_CMD} -f Makefile help | grep "mesh_simplification_plugin" > /dev/null; then 
+  compile_and_run mesh_simplification_plugin
+  NEED_CLEAN=y
+fi
+if  ${MAKE_CMD} -f Makefile help | grep "nef_plugin" > /dev/null; then 
+  compile_and_run nef_plugin
+  NEED_CLEAN=y
+fi
+if  ${MAKE_CMD} -f Makefile help | grep "off_plugin" > /dev/null; then 
+  compile_and_run off_plugin
+  NEED_CLEAN=y
+fi
+if  ${MAKE_CMD} -f Makefile help | grep "off_to_nef_plugin" > /dev/null; then 
+  compile_and_run off_to_nef_plugin
+  NEED_CLEAN=y
+fi
+if  ${MAKE_CMD} -f Makefile help | grep "orient_soup_plugin" > /dev/null; then 
+  compile_and_run orient_soup_plugin
+  NEED_CLEAN=y
+fi
+if  ${MAKE_CMD} -f Makefile help | grep "pca_plugin" > /dev/null; then 
+  compile_and_run pca_plugin
+  NEED_CLEAN=y
+fi
+if  ${MAKE_CMD} -f Makefile help | grep "polygon_soup" > /dev/null; then 
+  compile_and_run polygon_soup
+  NEED_CLEAN=y
+fi
+if  ${MAKE_CMD} -f Makefile help | grep "remeshing_plugin" > /dev/null; then 
+  compile_and_run remeshing_plugin
+  NEED_CLEAN=y
+fi
+if  ${MAKE_CMD} -f Makefile help | grep "scene_basic_objects" > /dev/null; then 
+  compile_and_run scene_basic_objects
+  NEED_CLEAN=y
+fi
+if  ${MAKE_CMD} -f Makefile help | grep "scene_item" > /dev/null; then 
+  compile_and_run scene_item
+  NEED_CLEAN=y
+fi
+if  ${MAKE_CMD} -f Makefile help | grep "scene_nef_polyhedron_item" > /dev/null; then 
+  compile_and_run scene_nef_polyhedron_item
+  NEED_CLEAN=y
+fi
+if  ${MAKE_CMD} -f Makefile help | grep "scene_polyhedron_item" > /dev/null; then 
+  compile_and_run scene_polyhedron_item
+  NEED_CLEAN=y
+fi
+if  ${MAKE_CMD} -f Makefile help | grep "self_intersection_plugin" > /dev/null; then 
+  compile_and_run self_intersection_plugin
+  NEED_CLEAN=y
+fi
+if  ${MAKE_CMD} -f Makefile help | grep "subdivision_methods_plugin" > /dev/null; then 
+  compile_and_run subdivision_methods_plugin
+  NEED_CLEAN=y
+fi
+if  ${MAKE_CMD} -f Makefile help | grep "trivial_plugin" > /dev/null; then 
+  compile_and_run trivial_plugin
+  NEED_CLEAN=y
+fi
+fi
+
+#
+# The clean target generated by CMake under cygwin 
+# always fails for some reason
+#
+if [ -n "${NEED_CLEAN}" ]; then 
+  if ! ( uname | grep -q "CYGWIN" ) ; then
+    ${MAKE_CMD} -fMakefile clean
+  fi
+fi

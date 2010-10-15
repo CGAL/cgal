@@ -1,0 +1,348 @@
+%% Copyright (c) 2003,2004,2005  INRIA Sophia-Antipolis (France) and
+%% Notre Dame University (U.S.A.).  All rights reserved.
+%%
+%% This file is part of CGAL (www.cgal.org); you may redistribute it under
+%% the terms of the Q Public License version 1.0.
+%% See the file LICENSE.QPL distributed with CGAL.
+%%
+%% Licensees holding a valid commercial license may use this file in
+%% accordance with the commercial license agreement provided with the software.
+%%
+%% This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
+%% WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
+%%
+%% $URL$
+%% $Id$
+%% 
+%%
+%% Author(s)     : Menelaos Karavelas <mkaravel@cse.nd.edu>
+
+
+
+
+\begin{ccRefConcept}{SegmentDelaunayGraphTraits_2}
+
+%% \ccHtmlCrossLink{}     %% add further rules for cross referencing links
+%% \ccHtmlIndexC[concept]{} %% add further index entries
+\ccDefinition
+
+The concept \ccc{SegmentDelaunayGraphTraits_2} provides the traits
+requirements for the \ccc{Segment_Delaunay_graph_2<Gt,DS>} and
+\ccc{Segment_Delaunay_graph_hierarchy_2<Gt,STag,DS>} classes. In
+particular, it provides a type \ccc{Site_2}, which must be a model of
+the concept \ccc{SegmentDelaunayGraphSite_2}. It also provides
+constructions for sites and several function object
+types for the predicates.
+
+\ccRefines
+\ccc{DefaultConstructible}\\
+\ccc{CopyConstructible}\\
+\ccc{Assignable}
+
+\ccTypes
+\ccTwo{SegmentDelaunayGraphTraits_2::Arrangement_type+}{}
+%
+\ccNestedType{Intersections_tag}{Indicates or not whether the
+  intersecting segments are to be supported. The tag must either be
+  \ccc{CGAL::Tag_true} or \ccc{CGAL::Tag_false}.}
+\ccNestedType{Site_2}{A type for a site of the segment Delaunay
+  graph. Must be a model of the concept
+  \ccc{SegmentDelaunayGraphSite_2}.}
+\ccGlue
+\ccNestedType{Point_2}{A type for a point.}
+\ccGlue
+\ccNestedType{Line_2}{A type for a line. Only required if the segment
+  Delaunay graph is inserted in a stream.}
+\ccGlue
+\ccNestedType{Ray_2}{A type for a ray. Only required if the segment
+  Delaunay graph is inserted in a stream.}
+\ccGlue
+\ccNestedType{Segment_2}{A type for a segment. Only required if 
+  if the segment Delaunay graph is inserted in a stream.}
+\ccGlue
+\ccNestedType{FT}{A type for the field number type of sites, points, etc..}
+\ccGlue
+\ccNestedType{RT}{A type for the ring number type of sites, points, etc.}
+\ccGlue
+\ccNestedType{Arrangement_type}{An enumeration type that indicates the
+  type of the arrangement of two sites. The possible values are
+  \ccc{DISJOINT}, \ccc{IDENTICAL}, \ccc{CROSSING},
+  \ccc{TOUCHING_1}, \ccc{TOUCHING_2}, \ccc{TOUCHING_11},
+  \ccc{TOUCHING_12}, \ccc{TOUCHING_21}, \ccc{TOUCHING_22},
+  \ccc{OVERLAPPING_11}, \ccc{OVERLAPPING_12}, \ccc{OVERLAPPING_21},
+  \ccc{OVERLAPPING_22}, \ccc{INTERIOR}, \ccc{INTERIOR_1},
+  \ccc{INTERIOR_2}, \ccc{TOUCHING_11_INTERIOR_1},
+  \ccc{TOUCHING_11_INTERIOR_2}, \ccc{TOUCHING_12_INTERIOR_1},
+  \ccc{TOUCHING_12_INTERIOR_2}, \ccc{TOUCHING_21_INTERIOR_1},
+  \ccc{TOUCHING_21_INTERIOR_2}, \ccc{TOUCHING_22_INTERIOR_1}, 
+  \ccc{TOUCHING_22_INTERIOR_2}. A detailed description of the meaning
+  of these values is shown the end of the reference manual for this
+  concept. (\bf to be done)}
+\ccGlue
+\ccNestedType{Object_2}{A type representing different types of objects
+  in two dimensions, namely: \ccc{Point_2}, \ccc{Site_2},
+  \ccc{Line_2}, \ccc{Ray_2} and \ccc{Segment_2}.}
+\ccGlue
+\ccNestedType{Assign_2}
+{Must provide \ccc{template <class T> bool operator() ( T& t,
+    Object_2 o)} which assigns \ccc{o} to \ccc{t} if \ccc{o} was
+  constructed from an object of type \ccc{T}. Returns 
+  \ccc{true}, if the assignment was possible.}
+\ccGlue
+\ccNestedType{Construct_object_2}{Must provide \ccc{template <class T>
+    Object_2 operator()( T t)} that constructs an object of type
+  \ccc{Object_2} that contains \ccc{t} and returns it.}
+\ccGlue
+\ccNestedType{Construct_svd_vertex_2}{
+  A constructor for a point of the segment Voronoi diagram equidistant
+  from three sites. Must provide
+  \ccc{Point_2 operator()(Site_2 s1, Site_2 s2, Site_2 s3)}, which
+  constructs a point equidistant from the sites \ccc{s1}, \ccc{s2} and
+  \ccc{s3}.
+}
+%
+\ccTwo{SegmentDelaunayGraphTraits_2}{}
+%
+\ccGlue
+\ccNestedType{Compare_x_2}{A predicate object type. Must
+provide \ccc{Comparison_result operator()(Site_2 s1,
+Site_2 s2)}, which compares the $x$-coordinates of the points
+represented by the sites \ccc{s1} and \ccc{s2}.
+\ccPrecond{\ccc{s1} and \ccc{s2} must be points.}}
+%
+\ccGlue
+\ccNestedType{Compare_y_2}{A predicate object type. Must
+provide \ccc{Comparison_result operator()(Site_2 s1,
+Site_2 s2)}, which compares the $y$-coordinates of the points
+represented by the sites \ccc{s1} and \ccc{s2}.
+\ccPrecond{\ccc{s1} and \ccc{s2} must be points.}}
+%
+\ccGlue
+\ccNestedType{Orientation_2}{A predicate object type. Must
+provide \ccc{Orientation operator()(Site_2 s1,
+Site_2 s2, Site_2 s3)}, which performs the
+usual orientation test for three points.
+\ccc{s1}, \ccc{s2} and \ccc{s3}.
+\ccPrecond{the sites \ccc{s1}, \ccc{s2} and \ccc{s3} must be points.}}
+%
+\ccGlue
+\ccNestedType{Equal_2}{A predicate object type. Must provide
+  \ccc{bool operator()(Site_2 s1, Site_2 s2)}, which determines is the
+  points represented by the sites \ccc{s1} and \ccc{s2} are identical.
+  \ccPrecond{\ccc{s1} and \ccc{s2} must be points.}}
+%
+\ccGlue
+\ccNestedType{Are_parallel_2}{A predicate object type. Must provide
+  \ccc{bool operator()(Site_2 s1, Site_2 s2)}, which determines is the
+  segments represented by the sites \ccc{s1} and \ccc{s2} are
+  parallel.
+  \ccPrecond{\ccc{s1} and \ccc{s2} must be segments.}}
+%
+\ccGlue
+\ccNestedType{Oriented_side_of_bisector_2}{A predicate object type.
+Must provide \ccc{Oriented_side operator()(Site_2 s1,
+Site_2 s2, Point_2 p)}, which returns
+the oriented side of the bisector of \ccc{s1} and \ccc{s2} that
+contains \ccc{p}. Returns \ccc{ON_POSITIVE_SIDE} if \ccc{p} lies in
+the half-space of \ccc{s1} (i.e., \ccc{p} is closer to \ccc{s1} than
+\ccc{s2}); returns \ccc{ON_NEGATIVE_SIDE} if \ccc{p} lies in the
+half-space of \ccc{s2}; returns \ccc{ON_ORIENTED_BOUNDARY} if \ccc{p}
+lies on the bisector of \ccc{s1} and \ccc{s2}.}
+%
+\ccGlue
+\ccNestedType{Vertex_conflict_2}{A predicate object type.
+Must provide \ccc{Sign operator()(Site_2 s1, Site_2
+s2, Site_2 s3, Site_2 q)}, which
+returns the sign of the distance of \ccc{q} from the Voronoi circle
+of \ccc{s1}, \ccc{s2}, \ccc{s3} (the Voronoi circle of three sites
+\ccc{s1}, \ccc{s2}, \ccc{s3} is a circle co-tangent to all three
+sites, that touches them in that order as we walk on its circumference
+in the counter-clockwise sense).
+\ccPrecond{the Voronoi circle of \ccc{s1}, \ccc{s2},
+\ccc{s3} must exist.}\\
+Must also provide \ccc{Sign operator()(Site_2 s1,
+Site_2 s2, Site_2 q)}, which returns the sign of the distance of
+\ccc{q} from the bitangent line of \ccc{s1}, \ccc{s2} (a degenerate
+Voronoi circle, with its center at infinity).}
+%
+\ccGlue
+\ccNestedType{Finite_edge_interior_conflict_2}{A predicate object
+type. Must provide \ccc{bool operator()(Site_2 s1,
+Site_2 s2, Site_2 s3, Site_2 s4,
+Site_2 q, Sign sgn)}. The sites \ccc{s1}, \ccc{s2},
+\ccc{s3} and \ccc{s4} define a Voronoi edge that lies on the
+bisector of \ccc{s1} and \ccc{s2} and has as endpoints the Voronoi
+vertices defined by the triplets \ccc{s1}, \ccc{s2}, \ccc{s3} and
+\ccc{s1}, \ccc{s4} and \ccc{s2}. The sign \ccc{sgn} is the common sign
+of the distance of the site \ccc{q} from the Voronoi circle of the
+triplets \ccc{s1}, \ccc{s2}, \ccc{s3} and \ccc{s1}, \ccc{s4} and
+\ccc{s2}. In case that \ccc{sgn} is equal to \ccc{NEGATIVE}, the
+predicate returns \ccc{true} if and only if the entire Voronoi edge is
+in conflict with \ccc{q}. If \ccc{sgn} is equal to \ccc{POSITIVE} or
+\ccc{ZERO}, the predicate returns \ccc{false} if and only if \ccc{q}
+is not in conflict with the Voronoi edge.
+\ccPrecond{the Voronoi vertices of \ccc{s1}, \ccc{s2},
+\ccc{s3}, and \ccc{s1}, \ccc{s4}, \ccc{s2} must exist.}\\
+%
+Must also provide \ccc{bool operator()(Site_2 s1,
+Site_2 s2, Site_2 s3, Site_2 q, Sign sgn)}. The
+sites \ccc{s1}, \ccc{s2}, \ccc{s3} and the site at infinity
+$s_\infty$ define a Voronoi edge that lies on the bisector of
+\ccc{s1} and \ccc{s2} and has as endpoints the Voronoi vertices
+$v_{123}$ and $v_{1\infty{2}}$ defined by the triplets \ccc{s1},
+\ccc{s2}, \ccc{s3} and \ccc{s1}, $s_\infty$ and \ccc{s2} (the second
+vertex is actually at infinity). The sign \ccc{sgn} is the common sign
+of the distance of the site \ccc{q} from the two Voronoi circles
+centered at the Voronoi vertices $v_{123}$ and $v_{1\infty{2}}$.
+In case that \ccc{sgn} is \ccc{NEGATIVE}, the predicate
+returns \ccc{true} if and only if the entire Voronoi edge is in
+conflict with \ccc{q}. If \ccc{sgn} is \ccc{POSITIVE} or \ccc{ZERO},
+the predicate returns \ccc{false} if and only if \ccc{q} is not in
+conflict with the Voronoi edge.
+\ccPrecond{the Voronoi vertex $v_{123}$ of \ccc{s1}, \ccc{s2},
+\ccc{s3} must exist.}\\
+%
+Must finally provide \ccc{bool operator()(Site_2 s1,
+Site_2 s2, Site_2 q, Sign sgn)}. The
+sites \ccc{s1}, \ccc{s2} and the site at infinity
+$s_\infty$ define a Voronoi edge that lies on the bisector of
+$v_{12\infty}$ and $v_{1\infty{}2}$
+\ccc{s1} and \ccc{s2} and has as endpoints the Voronoi vertices
+defined by the triplets \ccc{s1}, \ccc{s2}, $s_\infty$ and \ccc{s1},
+$s_\infty$ and \ccc{s2} (both vertices are actually at
+infinity). The sign \ccc{sgn} denotes the common sign of the distance
+of the site \ccc{q} from the Voronoi circles centered at
+$v_{12\infty}$ and $v_{1\infty{}2}$.
+If \ccc{sgn} is \ccc{NEGATIVE}, the predicate
+returns \ccc{true} if and only if the entire Voronoi edge is in
+conflict with \ccc{q}. If \ccc{POSITIVE} or \ccc{ZERO} is \ccc{false},
+the predicate returns \ccc{false} if and only if \ccc{q} is not in
+conflict with the Voronoi edge.}
+%
+\ccGlue
+\ccNestedType{Infinite_edge_interior_conflict_2}{A predicate
+object type. Must provide \ccc{bool operator()(Site_2 s1,
+Site_2 s2, Site_2 s3, Site_2 q, Sign sgn)}. The
+sites $s_\infty$, \ccc{s1}, \ccc{s2} and \ccc{s3} define a
+Voronoi edge that lies on the bisector of $s_\infty$ and \ccc{s1}
+and has as endpoints the Voronoi vertices $v_{\infty{}12}$ and
+$v_{\infty{}31}$ defined by the triplets
+$s_\infty$, \ccc{s1}, \ccc{s2} and $s_\infty$, \ccc{s3} and
+\ccc{s1}. The sign \ccc{sgn} is the common sign of the distances of
+\ccc{q} from the Voronoi circles centered at the vertices
+$v_{\infty{}12}$ and $v_{\infty{}31}$. If \ccc{sgn} is \ccc{NEGATIVE},
+the predicate returns \ccc{true} if and only if the entire Voronoi
+edge is in conflict with \ccc{q}. If \ccc{sgn} is \ccc{POSITIVE} or
+\ccc{ZERO}, the predicate returns \ccc{false} if and only if \ccc{q}
+is not in conflict with the Voronoi edge.}
+%
+\ccGlue
+\ccNestedType{Oriented_side_2}{A predicate object type. Must provide
+  \ccc{Oriented_side operator()(Site_1 s1, Site_2 s2, Site_2 s3, Site_2
+    s, Site_2 p)}. Determines the oriented side of the line $\ell$
+  that contains the point site \ccc{p}, where $\ell$ is the line
+  that passes through the Voronoi vertex of the sites \ccc{s1},
+  \ccc{s2}, \ccc{s3} and is perpendicular to the segment site \ccc{s}.
+  \ccPrecond{\ccc{s} must be a segment and \ccc{p} must be a point.}}
+%
+\ccNestedType{Arrangement_type_2}{A predicate object type. Must
+  provide \ccc{Arrangement_type operator()(Site_2 s1, Site_2 s2)} that
+  returns the type of the arrangement of the two sites \ccc{s1} and
+  \ccc{s2}.}
+%
+ 
+
+\ccCreationVariable{gt}  %% choose variable name
+
+%% \ccCreation
+
+%% \ccThree{SegmentDelaunayGraphTraits_2}{ traits = other}{}
+%% \ccThreeToTwo
+%% %
+%% \ccConstructor{ SegmentDelaunayGraphTraits_2(); }{Default constructor.}
+%% \ccGlue
+%% \ccConstructor{SegmentDelaunayGraphTraits_2(SegmentDelaunayGraphTraits_2
+%% other);}{Copy constructor.}
+%% \ccGlue
+%% \ccMethod{SegmentDelaunayGraphTraits_2
+%%   operator=(SegmentDelaunayGraphTraits_2 other);}
+%% {Assignment operator.}
+
+
+
+\ccHeading{Access to predicate objects}
+%
+\ccThree{Infinite_edge_interior_conflict_2}
+{gt.infinite_edge_interior_conflict_2_object();}{}
+%
+\ccMethod{Compare_x_2 compare_x_2_object();}{}
+\ccGlue
+\ccMethod{Compare_y_2 compare_y_2_object();}{}
+\ccGlue
+\ccMethod{Orientation_2 orientation_2_object();}{}
+\ccGlue
+\ccMethod{Equal_2 equal_2_object();}{}
+\ccGlue
+\ccMethod{Are_parallel_2 are_parallel_2_object();}{}
+\ccGlue
+\ccMethod{Oriented_side_of_bisector_2
+oriented_side_of_bisector_test_2_object();}{}
+\ccGlue
+\ccMethod{Vertex_conflict_2 vertex_conflict_2_object();}{}
+\ccGlue
+\ccMethod{Finite_edge_interior_conflict_2
+        finite_edge_interior_conflict_2_object();}{}
+\ccGlue
+\ccMethod{Infinite_edge_interior_conflict_2
+        infinite_edge_interior_conflict_2_object();}{}
+\ccGlue
+\ccMethod{Oriented_side_2 oriented_side_2_object();}{}
+\ccGlue
+\ccMethod{Arrangement_type_2 arrangement_type_2_object();}{}
+%\ccGlue
+%\ccMethod{Is_degenerate_edge_2 is_degenerate_edge_2_object();}{}
+
+
+
+
+\ccHeading{Access to contructor objects}
+%
+\ccMethod{Construct_object_2
+construct_object_2_object();}{} 
+%
+\ccGlue
+\ccMethod{Construct_svd_vertex_2
+construct_svd_vertex_2_object();}{} 
+%
+
+
+
+
+\ccHeading{Access to other objects}
+%
+\ccMethod{Assign_2 assign_2_object();}{} 
+
+
+\ccHasModels
+
+\ccc{CGAL::Segment_Delaunay_graph_traits_2<K,MTag>}\\
+\ccc{CGAL::Segment_Delaunay_graph_traits_without_intersections_2<K,MTag>}\\
+\ccc{CGAL::Segment_Delaunay_graph_filtered_traits_2<CK,CM,EK,EM,FK,FM>}\\
+\ccc{CGAL::Segment_Delaunay_graph_filtered_traits_without_intersections_2<CK,CM,EK,EM,FK,FM>}
+
+
+\ccSeeAlso
+\ccc{SegmentDelaunayGraphSite_2}\\
+\ccc{CGAL::Segment_Delaunay_graph_2<Gt,DS>}\\
+\ccc{CGAL::Segment_Delaunay_graph_hierarchy_2<Gt,STag,DS>}\\
+\ccc{CGAL::Segment_Delaunay_graph_traits_2<K,MTag>}\\
+\ccc{CGAL::Segment_Delaunay_graph_traits_without_intersections_2<K,MTag>}\\
+\ccc{CGAL::Segment_Delaunay_graph_filtered_traits_2<CK,CM,EK,EM,FK,FM>}\\
+\ccc{CGAL::Segment_Delaunay_graph_filtered_traits_without_intersections_2<CK,CM,EK,EM,FK,FM>}
+\end{ccRefConcept}
+
+% +------------------------------------------------------------------------+
+%%RefPage: end of main body, begin of footer
+% EOF
+% +------------------------------------------------------------------------+
+

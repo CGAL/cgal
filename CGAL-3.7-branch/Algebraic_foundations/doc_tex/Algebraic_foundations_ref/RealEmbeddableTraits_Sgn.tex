@@ -1,0 +1,30 @@
+\begin{ccRefFunctionObjectConcept}{RealEmbeddableTraits::Sgn}
+
+\ccDefinition
+
+This \ccc{AdaptableUnaryFunction} computes the sign of a real embeddable number. 
+ 
+\ccRefines 
+
+\ccc{AdaptableUnaryFunction}  
+
+\ccTypes
+\ccNestedType{result_type} 
+        { Type convertible to \ccc{CGAL::Sign}.}
+\ccNestedType{argument_type}
+        { Is \ccc{RealEmbeddableTraits::Type}.}
+
+\ccOperations
+\ccCreationVariable{sign}
+\ccThree{xxxxxxxxxxx}{xxxxxxxxxxx}{}
+
+\ccMethod{result_type operator()(argument_type x);}
+        { Computes the sign of $x$. }
+
+%\ccHasModels
+
+\ccSeeAlso
+
+\ccRefIdfierPage{RealEmbeddableTraits}\\
+
+\end{ccRefFunctionObjectConcept} 

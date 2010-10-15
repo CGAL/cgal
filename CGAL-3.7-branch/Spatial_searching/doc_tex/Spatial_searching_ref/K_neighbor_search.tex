@@ -1,0 +1,95 @@
+% +------------------------------------------------------------------------+
+% | Reference manual page: K_neighbor_search.tex
+% +------------------------------------------------------------------------+
+% | 1.07.2001   Johan W.H. Tangelder
+% | Package: ASPAS
+% | 
+\RCSdef{\RCSKneighborsearchRev}{$Id$}
+\RCSdefDate{\RCSKneighborsearchDate}{$Date$}
+% |
+%%RefPage: end of header, begin of main body
+% +------------------------------------------------------------------------+
+
+
+\begin{ccRefClass}{K_neighbor_search<Traits, GeneralDistance, Splitter, SpatialTree>} 
+
+%% \ccHtmlCrossLink{}     %% add further rules for cross referencing links
+%% \ccHtmlIndexC[class]{} %% add further index entries
+
+\ccDefinition
+  
+The class \ccRefName\ implements approximate $k$-nearest and $k$-furthest neighbor searching
+using standard search on a tree using a general distance class. The tree may be built with 
+extended or unextended nodes.
+
+\ccInclude{CGAL/K_neighbor_search.h}
+
+\ccParameters
+
+Expects for the first template argument an implementation of the concept \ccc{SearchTraits},
+for example \ccc{CGAL::Cartesian_d<double>}.
+
+Expects for the second template argument a model of the
+concept \ccc{GeneralDistance}. The default type is 
+\ccc{CGAL::Euclidean_distance<Traits>}.
+
+
+Expects for fourth template argument an implementation of the concept \ccc{SpatialTree}.
+The default type is \ccc{CGAL::Kd_tree<Traits, Splitter, CGAL::Tag_false>}. The 
+template argument \ccc{CGAL::Tag_false} makes that the tree is built with unextended nodes.
+
+\ccTypes
+
+\ccTypedef{Traits::Point_d Point_d;}{Point type.}
+\ccTypedef{Traits::FT FT;}{Number type.}
+\ccTypedef{std::pair<Point_d,FT> Point_with_transformed_distance;}{Pair of point and transformed distance.} 
+
+\ccNestedType{iterator}{Bidirectional iterator with value type \ccc{Point_with_distance}
+                        for enumerating approximate neighbors.}
+
+\ccTypedef{GeneralDistance::Query_item Query_item;}{Query item type.}
+
+\ccTypedef{SpatialTree Tree;}{The tree type.}
+
+
+\ccCreation
+\ccCreationVariable{s}  %% choose variable name
+
+
+\def\ccLongParamLayout{\ccTrue}
+\ccConstructor{K_neighbor_search(Tree& tree, Query_item q, unsigned int k=1, FT eps=FT(0.0),
+	                         bool search_nearest=true, GeneralDistance d=GeneralDistance(),bool sorted=true);}
+{Constructor for searching approximately $k$ neighbors of the query item \ccc{q} 
+in the points stored in \ccc{tree} using 
+distance class $d$ and approximation factor \ccc{eps}. \ccc{sorted} indicates
+if the computed sequence of $k$-nearest neighbors needs to be sorted.}
+
+\ccOperations
+
+%\ccMethod{template <class OutputIterator>
+%OutputIterator  the_k_neighbors(OutputIterator res);}
+%{Writes \ccc{k} elements of type \ccc{Point_with_distance} to \ccc{res}.} 
+
+\ccMethod{iterator begin();}{Returns an iterator to the approximate neighbors.}
+
+\ccMethod{iterator end();}{Past-the-end iterator.}
+
+
+\begin{ccAdvanced}
+\ccMethod{std::ostream& statistics(std::ostream& s);}
+{
+Inserts statistics of the search process into the output stream \ccc{s}.
+}
+\end{ccAdvanced}
+
+\ccSeeAlso
+
+\ccc{CGAL::Orthogonal_k_neighbor_search<Traits, OrthogonalDistance, Splitter, SpatialTree>}.
+
+\end{ccRefClass}
+
+% +------------------------------------------------------------------------+
+%%RefPage: end of main body, begin of footer
+% EOF
+% +------------------------------------------------------------------------+
+

@@ -1,0 +1,41 @@
+% begin cgal manual page
+
+\begin{ccRefClass}{Sphere_direction<R>}\ccCreationVariable{d}
+
+\ccDefinition
+
+An object \ccc{c} of type \ccc{Sphere_direction<R>} is a direction on
+the surface of the unit sphere.  Such directions can be used to
+describe walks that are part of great circles.
+
+\ccSetOneOfTwoColumns{5cm}
+
+\ccTypes
+
+\ccNestedType{R}{representation class.}
+
+\ccNestedType{RT}{ring type.}
+
+\ccSetOneOfTwoColumns{5cm}
+
+\ccCreation
+
+\ccConstructor{Sphere_direction<R>()}{creates some direction.}
+
+\ccConstructor{Sphere_direction<R>(Sphere_circle<R> c)}{ creates the
+  direction corresponding to the circle \ccc{c}.  }
+
+\ccConstructor{Sphere_direction<R>(Sphere_point<R> p, Sphere_point<R>
+  q)}{ creates a direction that describes the orientation of the great
+  circle through $p$ and $q$ (oriented such that the segment $pq$ is
+  the shorter one of the two possible ones. \ccPrecond $p$ and $q$ are
+  not opposite on $S_2$.  }
+
+\ccSetTwoOfThreeColumns{4cm}{2cm}
+
+\ccOperations
+
+\ccMethod{Sphere_direction<R> opposite() ;}{returns the opposite of
+  \ccc{d}.  }
+
+\end{ccRefClass}

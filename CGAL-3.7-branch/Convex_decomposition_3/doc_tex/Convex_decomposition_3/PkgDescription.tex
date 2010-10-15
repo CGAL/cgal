@@ -1,0 +1,18 @@
+\begin{ccPkgDescription}{Convex Decomposition of Polyhedra\label{Pkg:ConvexDecomposition3}}
+\ccPkgHowToCiteCgal{cgal:h-emspe-10}
+\ccPkgSummary{
+This packages provides a function for decomposing a bounded polyhedron
+into convex sub-polyhedra. The decomposition yields $O(r^2)$ convex
+pieces, where $r$ is the number of edges, whose adjacent facets form
+an angle of more than 180 degrees with respect to the polyhedron's
+interior. This bound is worst-case optimal.
+}
+\ccPkgDependsOn{
+	\ccRef[2D Nef Polygons]{Pkg:Nef2},
+        \ccRef[Nef Polygons on the Sphere]{Pkg:NefS2} 
+	\ccRef[3D Nef Polyhedra]{Pkg:Nef3},
+}
+\ccPkgIntroducedInCGAL{3.5}
+\ccPkgLicense{\ccLicenseQPL}
+\ccPkgIllustration{Convex_decomposition_3/fig/teaser.png}{Convex_decomposition_3/fig/two_cubes2.png}
+\end{ccPkgDescription}

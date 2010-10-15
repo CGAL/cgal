@@ -1,0 +1,51 @@
+% +------------------------------------------------------------------------+
+% | Reference manual page: Locate_type.tex
+% +------------------------------------------------------------------------+
+% | 06.04.2000   Author
+% | Package: Package
+% | 
+\RCSdef{\RCSLocatetypeRev}{$Id$}
+\RCSdefDate{\RCSLocatetypeDate}{$Date$}
+% |
+%%RefPage: end of header, begin of main body
+% +------------------------------------------------------------------------+
+
+\ccModifierCrossRefOff
+\begin{ccRefEnum}[Triangulation_2<Traits,Tds>::]{Locate_type}  %% add template arg's if necessary
+
+%% \ccHtmlCrossLink{}     %% add further rules for cross referencing links
+%% \ccHtmlIndexC[enum]{} %% add further index entries
+
+\ccDefinition
+  
+The enum \ccRefName\ is defined by the
+\ccc{Triangulation_2<Traits,Tds>} 
+class to specify
+which case occurs when locating a point in the triangulation. 
+
+\ccEnum{enum Locate_type {VERTEX=0, EDGE, FACET, OUTSIDE_CONVEX_HULL, 
+OUTSIDE_AFFINE_HULL};}
+{The locate type is : \\
+\ccc{VERTEX} when the located point coincides 
+with a vertex of the triangulation \\
+\ccc{EDGE} when the point is in the relative interior of an edge \\
+\ccc{FACE} when the point is in the interior of a facet  \\
+\ccc{OUTSIDE_CONVEX_HULL} when the point
+is  outside the convex hull but in the affine hull of the current triangulation \\
+\ccc{OUTSIDE_AFFINE_HULL} 
+when the point is outside the affine hull
+of the current triangulation.}
+
+\ccSeeAlso
+\ccc{CGAL::Triangulation_2<Traits,Tds>}.
+
+\end{ccRefEnum}
+\ccModifierCrossRefOn
+
+
+
+% +------------------------------------------------------------------------+
+%%RefPage: end of main body, begin of footer
+% EOF
+% +------------------------------------------------------------------------+
+

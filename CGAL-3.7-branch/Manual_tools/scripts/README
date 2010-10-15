@@ -1,0 +1,18 @@
+This is the directory containing small scripts around manual writing.
+The directory structure is:
+
+    README              this file.
+
+    index_fix           a Perl script for postprocessing a .ind file generated
+                        by makeindex.
+
+    cc_ref_wizard       creates templates for reference pages.
+    cc_ref_wizard_rc    example for a $HOME/.cc_ref_wizard_rc file.
+
+    cc_make_ref_pages   creates a main.tex file for a reference
+                        page directory.
+
+The script cc_ref_wizard understands several environment variables and
+it reads the config file '${HOME}/.cc_ref_wizard_rc' (in csh syntax).
+See the script itself for more details.
+

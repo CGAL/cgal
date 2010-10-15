@@ -1,0 +1,281 @@
+\begin{ccRefFunctionObjectConcept}{SphericalKernel::CompareX_3} 
+
+\ccRefines
+
+\ccc{Kernel::CompareX_3}
+
+\ccCreationVariable{fo}
+
+An object \ccVar\ of this type must provide in addition: 
+
+\ccMemberFunction{Comparison_result operator()
+	(const SphericalKernel::Circular_arc_point_3 &p,
+         const SphericalKernel::Circular_arc_point_3 &q );}
+{Compares the $x$-coordinates of $p$ and $q$.}
+
+\ccSeeAlso
+
+\ccRefIdfierPage{SphericalKernel::CompareY_3}\\
+\ccRefIdfierPage{SphericalKernel::CompareZ_3}\\
+\ccRefIdfierPage{SphericalKernel::CompareXY_3}\\
+\ccRefIdfierPage{SphericalKernel::CompareXYZ_3}\\
+\ccRefIdfierPage{SphericalKernel::CompareTheta_3}\\
+\ccRefIdfierPage{SphericalKernel::CompareThetaZ_3}\\
+\ccRefIdfierPage{SphericalKernel::Equal_3}
+
+\end{ccRefFunctionObjectConcept}
+\begin{ccRefFunctionObjectConcept}{SphericalKernel::CompareY_3} 
+
+\ccRefines
+
+\ccc{Kernel::CompareY_3}
+
+\ccCreationVariable{fo}
+
+An object \ccVar\ of this type must provide in addition: 
+
+\ccMemberFunction{Comparison_result operator()
+	(const SphericalKernel::Circular_arc_point_3 &p,
+         const SphericalKernel::Circular_arc_point_3 &q );}
+{Compares the $y$-coordinates of $p$ and $q$.}
+
+\ccSeeAlso
+
+\ccRefIdfierPage{SphericalKernel::CompareX_3}\\
+\ccRefIdfierPage{SphericalKernel::CompareZ_3}\\
+\ccRefIdfierPage{SphericalKernel::CompareXY_3}\\
+\ccRefIdfierPage{SphericalKernel::CompareXYZ_3}\\
+\ccRefIdfierPage{SphericalKernel::CompareTheta_3}\\
+\ccRefIdfierPage{SphericalKernel::CompareThetaZ_3}\\
+\ccRefIdfierPage{SphericalKernel::Equal_3}
+
+\end{ccRefFunctionObjectConcept}
+\begin{ccRefFunctionObjectConcept}{SphericalKernel::CompareZ_3} 
+
+\ccRefines
+
+\ccc{Kernel::CompareZ_3}
+
+\ccCreationVariable{fo}
+
+An object \ccVar\ of this type must provide in addition: 
+
+\ccMemberFunction{Comparison_result operator()
+	(const SphericalKernel::Circular_arc_point_3 &p,
+         const SphericalKernel::Circular_arc_point_3 &q );}
+{Compares the $z$-coordinates of $p$ and $q$.}
+
+\ccSeeAlso
+
+\ccRefIdfierPage{SphericalKernel::CompareX_3}\\
+\ccRefIdfierPage{SphericalKernel::CompareY_3}\\
+\ccRefIdfierPage{SphericalKernel::CompareXY_3}\\
+\ccRefIdfierPage{SphericalKernel::CompareXYZ_3}\\
+\ccRefIdfierPage{SphericalKernel::CompareTheta_3}\\
+\ccRefIdfierPage{SphericalKernel::CompareThetaZ_3}\\
+\ccRefIdfierPage{SphericalKernel::Equal_3}
+
+\end{ccRefFunctionObjectConcept}
+\begin{ccRefFunctionObjectConcept}{SphericalKernel::CompareXY_3} 
+
+\ccRefines
+
+\ccc{Kernel::CompareXY_3}
+
+\ccCreationVariable{fo}
+
+An object \ccVar\ of this type must provide in addition: 
+
+\ccMemberFunction{Comparison_result operator()
+	(const SphericalKernel::Circular_arc_point_3 &p,
+         const SphericalKernel::Circular_arc_point_3 &q );}
+{Compares $p$ and $q$ according to the lexicographic ordering on $x$- and $y$-coordinates.}
+
+\ccSeeAlso
+
+\ccRefIdfierPage{SphericalKernel::CompareX_3}\\
+\ccRefIdfierPage{SphericalKernel::CompareY_3}\\
+\ccRefIdfierPage{SphericalKernel::CompareZ_3}\\
+\ccRefIdfierPage{SphericalKernel::CompareXYZ_3}\\
+\ccRefIdfierPage{SphericalKernel::CompareTheta_3}\\
+\ccRefIdfierPage{SphericalKernel::CompareThetaZ_3}\\
+\ccRefIdfierPage{SphericalKernel::Equal_3}
+
+\end{ccRefFunctionObjectConcept}
+\begin{ccRefFunctionObjectConcept}{SphericalKernel::CompareXYZ_3} 
+
+\ccRefines
+
+\ccc{Kernel::CompareXYZ_3}
+
+\ccCreationVariable{fo}
+
+An object \ccVar\ of this type must provide in addition: 
+
+\ccMemberFunction{Comparison_result operator()
+	(const SphericalKernel::Circular_arc_point_3 &p,
+         const SphericalKernel::Circular_arc_point_3 &q );}
+{Compares $p$ and $q$ according to the lexicographic ordering on $x$-, $y$-,
+and $z$-coordinates.}
+
+\ccSeeAlso
+
+\ccRefIdfierPage{SphericalKernel::CompareX_3}\\
+\ccRefIdfierPage{SphericalKernel::CompareY_3}\\
+\ccRefIdfierPage{SphericalKernel::CompareZ_3}\\
+\ccRefIdfierPage{SphericalKernel::CompareXY_3}\\
+\ccRefIdfierPage{SphericalKernel::CompareTheta_3}\\
+\ccRefIdfierPage{SphericalKernel::CompareThetaZ_3}\\
+\ccRefIdfierPage{SphericalKernel::Equal_3}
+
+\end{ccRefFunctionObjectConcept}
+
+\begin{ccRefFunctionObjectConcept}{SphericalKernel::CompareTheta_3}
+
+\ccCreationVariable{fo}
+
+An object \ccVar\ of this type must provide: 
+
+% \ccConstructor{CompareTheta_3(const Sphere_3 &sphere)}
+% {Constructs a functor \ccVar\ to compare $\theta$-coordinates.}
+
+\ccMemberFunction{Comparison_result operator()
+	(const SphericalKernel::Circular_arc_point_3 &p,
+         const SphericalKernel::Circular_arc_point_3 &q );}
+{Compares the $\theta$-coordinates of $p$ and $q$ in the cylindrical coordinate system relative to the context sphere used by the function \ccc{SphericalKernel::compare_theta_3_object}.
+\ccPrecond{\ccc{p} and \ccc{q} lie on the context sphere used by the function \ccc{SphericalKernel::compare_theta_3_object}, but do not coincide with its poles.}
+}
+
+
+\ccMemberFunction{Comparison_result operator()
+	(const SphericalKernel::Circular_arc_point_3 &p,
+         const SphericalKernel::Vector_3 &m );}
+{Compares the $\theta$-coordinates of $p$ and of the meridian defined by $m$ (see section \ref{section-SK-objects}) in the cylindrical coordinate system relative to the context sphere used by the function \ccc{SphericalKernel::compare_theta_3_object}.
+\ccPrecond{\ccc{p} lies on the context sphere used by the function \ccc{SphericalKernel::compare_theta_3_object}, but does not coincide with its poles. $m \neq (0,0,0)$ and the $z$-coordinate of $m$ is $0$.}
+}
+
+\ccMemberFunction{Comparison_result operator()
+	(const SphericalKernel::Vector_3 &m,const SphericalKernel::Circular_arc_point_3 &p);}{Same as previous, with opposite result.}
+
+\ccMemberFunction{Comparison_result operator()
+	(const SphericalKernel::Vector_3 &m1,
+         const SphericalKernel::Vector_3 &m2 );}
+{Compares the $\theta$-coordinates of the meridians defined by $m1$ and by $m2$ (see section \ref{section-SK-objects})
+in the cylindrical coordinate system relative to the context sphere used by the function \ccc{SphericalKernel::compare_theta_3_object}.
+$m1 \neq (0,0,0)$, $m2 \neq (0,0,0)$ and the $z$-coordinate of $m1$ and $m2$ is $0$.}
+
+
+
+\ccSeeAlso
+
+\ccRefIdfierPage{SphericalKernel::CompareThetaZ_3}\\
+\ccRefIdfierPage{SphericalKernel::CompareX_3}\\
+\ccRefIdfierPage{SphericalKernel::CompareY_3}\\
+\ccRefIdfierPage{SphericalKernel::CompareZ_3}\\
+\ccRefIdfierPage{SphericalKernel::CompareXY_3}\\
+\ccRefIdfierPage{SphericalKernel::CompareXYZ_3}\\
+\ccRefIdfierPage{SphericalKernel::Equal_3}
+
+\end{ccRefFunctionObjectConcept}
+
+\begin{ccRefFunctionObjectConcept}{SphericalKernel::CompareThetaZ_3} 
+
+\ccCreationVariable{fo}
+
+An object \ccVar\ of this type must provide:
+
+% \ccConstructor{CompareThetaZ_3(const Sphere_3 &sphere)}
+% {Constructs a functor \ccVar\ to compare lexicographically $\theta$- and $z$- coordinates
+% in the cylindrical coordinate system relative to \ccc{sphere}.}
+
+
+\ccMemberFunction{Comparison_result operator()
+	(const SphericalKernel::Circular_arc_point_3 &p,
+         const SphericalKernel::Circular_arc_point_3 &q );}
+{Compares $p$ and $q$ according to the lexicographic ordering on $\theta$- and $z$-coordinates
+in the cylindrical coordinate system relative to the context sphere used by the function \ccc{SphericalKernel::compare_theta_z_3_object}.
+\ccPrecond{\ccc{p} and \ccc{q} lie on the context sphere used by the function \ccc{SphericalKernel::compare_theta_z_3_object}, but do not coincide with its poles.}
+}
+
+\ccSeeAlso
+
+\ccRefIdfierPage{SphericalKernel::CompareTheta_3}\\
+\ccRefIdfierPage{SphericalKernel::CompareX_3}\\
+\ccRefIdfierPage{SphericalKernel::CompareY_3}\\
+\ccRefIdfierPage{SphericalKernel::CompareZ_3}\\
+\ccRefIdfierPage{SphericalKernel::CompareXY_3}\\
+\ccRefIdfierPage{SphericalKernel::CompareXYZ_3}\\
+\ccRefIdfierPage{SphericalKernel::Equal_3}
+
+\end{ccRefFunctionObjectConcept}
+
+
+\begin{ccRefFunctionObjectConcept}{SphericalKernel::CompareZAtTheta_3}
+
+\ccCreationVariable{fo}
+
+An object \ccVar\ of this type must provide: 
+
+% \ccConstructor{CompareZAtTheta_3(const Sphere_3 &sphere)}
+% {Constructs a functor \ccVar\ to compare the position of objects lying on \ccc{sphere} along a given meridian.}
+
+
+\ccMemberFunction{Comparison_result operator()
+	( const SphericalKernel::Circular_arc_3& a0,
+	  const SphericalKernel::Circular_arc_3& a1,
+    const SphericalKernel::Vector_3 &m);}
+{
+compares the $z$-coordinates of the two intersections points of $a0$ and $a1$ with the meridian defined by $m$ (see section \ref{section-SK-objects}).
+\ccPrecond{
+\ccc{a0} and \ccc{a1} lie on the context sphere used by the function \ccc{SphericalKernel::compare_z_at_theta_3_object}.
+$m \neq (0,0,0)$ and the $z$-coordinate of $m$ is $0$.
+Arcs $a0$ and $a1$ are $\theta$-monotone and both intersected by the meridian defined by $m$ (see section \ref{section-SK-objects}).}}
+
+
+
+\ccMemberFunction{Comparison_result operator()
+	( const SphericalKernel::Circular_arc_point_3& p,
+	  const SphericalKernel::Circular_arc_3& a);}
+{given a meridian anchored at the poles of the context sphere used by the function \ccc{SphericalKernel::compare_z_at_theta_3_object}, and passing through point $p$,
+compares the $z$-coordinate of point $p$ and that of the intersection of the meridian with $a$.
+\ccPrecond{\ccc{a} and \ccc{p} lie on the context sphere used by the function \ccc{SphericalKernel::compare_z_at_theta_3_object},
+arc $a$ is $\theta$-monotone and the meridian passing through $p$ intersects arc $a$.}}
+
+\ccSeeAlso
+
+\ccRefIdfierPage{SphericalKernel::CompareZToRight_3}
+
+\end{ccRefFunctionObjectConcept}
+
+
+\begin{ccRefFunctionObjectConcept}{SphericalKernel::CompareZToRight_3} 
+
+\ccCreationVariable{fo}
+
+An object \ccVar\ of this type must provide: 
+
+% \ccConstructor{CompareZToRight_3(const Sphere_3 &sphere)}
+% {Constructs a functor \ccVar\ to compare the position of two arcs to the \textit{right} of a meridian on \ccc{sphere}.}
+
+\ccMemberFunction{Comparison_result operator()
+	( const SphericalKernel::Circular_arc_3& a0,
+	  const SphericalKernel::Circular_arc_3& a1,
+    const SphericalKernel::Circular_arc_point_3 &p);}
+{Compares the $z$-coordinates of the intersection points of both arcs
+with a meridian anchored at the poles of the context sphere used by the function \ccc{SphericalKernel::compare_z_to_right_3_object}, at a $\theta$-coordinate
+infinitesimally greater that the $\theta$-coordinate of point $p$.
+\ccPrecond{
+\ccc{a0} and \ccc{a1} lie on the context sphere used by the function \ccc{SphericalKernel::compare_z_to_right_3_object},
+\ccc{a0} and \ccc{a1} are $\theta$-monotone, $p$ lies on \ccc{a0} and \ccc{a1} and is not a $\theta$-extremal
+point of the supporting circle of \ccc{a0} or \ccc{a1}.}}
+
+
+
+\ccSeeAlso
+
+\ccRefIdfierPage{SphericalKernel::CompareZAtTheta_3}
+
+\end{ccRefFunctionObjectConcept}
+
+
+

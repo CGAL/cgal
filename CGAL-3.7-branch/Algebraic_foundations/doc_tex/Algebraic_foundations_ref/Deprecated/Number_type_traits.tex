@@ -1,0 +1,34 @@
+\begin{ccRefClass}{Number_type_traits<NT>}
+
+\ccDefinition
+
+The class \ccRefName\ can be used to determine if a certain number type
+supports certain operations and thus to determine which number type concept
+it is a model of. It also specifies if the number type supports some
+operations exactly.
+%By that it is meant that when a number is
+%constructed using these operations, the sign of the result of these
+%operations is computed exactly.
+
+\ccInclude{CGAL/Number_type_traits.h}
+
+\ccTypes
+
+The following types are each set to either \ccc{CGAL::Tag_true} or
+\ccc{CGAL::Tag_false} depending on whether the indicated operation is
+supported or not by the number type \ccc{NT}.
+
+\ccNestedType{Has_gcd}{indicates if the number type \ccc{NT} supports the
+                       \ccc{gcd} operation or not.}
+\ccNestedType{Has_division}{indicates if the number type \ccc{NT} has 
+                            \ccc{operator/} defined or not.}
+\ccNestedType{Has_sqrt}{indicates if the number type \ccc{NT} 
+  has \ccc{sqrt} defined or not.}
+\ccNestedType{Has_exact_ring_operations}{indicates if the number type
+  \ccc{NT} supports ring operations exactly.}
+\ccNestedType{Has_exact_division}{indicates if the number type
+  \ccc{NT} supports divisions exactly.}
+\ccNestedType{Has_exact_sqrt}{indicates if the number type \ccc{NT}
+  supports the operation \ccc{sqrt} exactly.} 
+
+\end{ccRefClass}

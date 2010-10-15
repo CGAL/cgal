@@ -1,0 +1,47 @@
+% +------------------------------------------------------------------------+
+% | Reference manual page: convex_decomposition_3.tex
+% +------------------------------------------------------------------------+
+% | 28.05.2008   Peter Hachenberger
+% | Package: Convex_decomposition_3
+% | 
+\RCSdef{\RCSconvex_decomposition_3Rev}{$Id$}
+\RCSdefDate{\RCconvex_decomposition_3Date}{$Date$}
+% |
+%%RefPage: end of header, begin of main body
+% +------------------------------------------------------------------------+
+
+\ccHtmlNoClassLinks
+\begin{ccRefFunction}{convex_decomposition_3}
+\label{refconvex_decomposition_3}
+
+\ccDefinition
+
+The function \ccc{convex_decomposition_3} inserts additional facets
+into the given \ccc{Nef_polyhedron_3} $N$, such that each bounded
+marked volume (the outer volume is unbouned) is subdivided into convex
+pieces. The modified polyhedron represents a decomposition into
+$O(r^2)$ convex pieces, where $r$ is the number of edges that have two
+adjacent facets that span an angle of more than 180 degrees with
+respect to the interior of the polyhedron.
+
+The worst-case running time of our implementation is
+$O(n^2r^4\sqrt[3]{nr^2}\log{(nr)})$, where $n$ is the complexity of
+the polyhedron (the complexity of a \ccc{Nef_polyhedron_3} is the sum
+of its \ccc{Vertices}, \ccc{Halfedges} and \ccc{SHalfedges}) and $r$
+is the number of reflex edges.
+
+\ccGlobalFunction{void convex_decomposition_3(Nef_polyhedron_3& N);}
+
+\ccPrecond
+
+The polyhedron $N$ is bounded. Otherwise, the outer volume is ignored.
+
+\ccPostcond
+
+If the polyhedron $N$ is non-convex, it is modified to represent the
+convex decomposition. If $N$ is convex, it is not modified.
+
+\ccSeeAlso
+\ccRefIdfierPage{CGAL::Nef_polyhedron_3<Traits>}\\ 
+
+\end{ccRefFunction}

@@ -1,0 +1,27 @@
+- deprectate the following function 
+Classification_type   	  A.classify ( Cell_handle f, int i, FT alpha = get_alpha())
+because it is ambiguous with
+Classification_type   	  A.classify ( Cell_handle f, FT alpha = get_alpha())
+when alpha is given as an int.
+
+- Get rid of the derivation from Triangulation_3
+  add a Triangulation_3 as a data member 
+  creators from a triangulation:
+  Alpha_shape_3(cnst Dt& dt, NT alpha = 0, Mode m = REGULARIZED)
+  The triangulation is copied
+  Alpha_shape_3(Dt& dt, bool swap=true, NT alpha = 0, Mode m = REGULARIZED)
+  The triangulation is swapped  if swap=true and copied otherwise.
+
+- suppress the traits classes Alpha_shape_euclidean_traits_3.h
+  and Weighted_alpha_shape_euclidean_traits_3.h
+  their purpose was to rename the Compute_squared_radius_3 constructor.
+  The same can be achieved in class Alpha_shapes_3 using the Weighted_tag
+  of the triangulation
+
+- same as previous for Alpha_shapes_2
+
+- test the  taking into account of paramater alpha in functions
+get_alpha_shape_edges
+get_alpha_shape_facets
+get_alpha_shape_vertices
+get_alpha_shape_cells

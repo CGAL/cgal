@@ -1,0 +1,62 @@
+\begin{ccRefFunctionObjectConcept}{AlgebraicKernel_d_2::ConstructAlgebraicReal_2}
+
+\ccDefinition
+Constructs an \ccc{AlgebraicKernel_d_2::Algebraic_real_2}.
+
+\ccRefines 
+\ccc{AdaptableFunctor}
+
+\ccTypes \ccThree{}{+++++++++++++}{++++++++}
+%\ccNestedType{result_type}{Type convertible to \ccc{AlgebraicKernel_d_2::Algebraic_real_2}}
+\ccTypedef{typedef AlgebraicKernel_d_2::Algebraic_real_2 result_type;}{}
+
+
+\ccOperations \ccThree{+++++++++}{+++++++++}{}
+\ccCreationVariable{fo}
+
+
+%\ccThree{result_type}{fo()AlgebraicKernel_d_2}{}
+\ccMethod{result_type operator()(int x, int y);}
+{introduces an \ccc{AlgebraicKernel_d_2::Algebraic_real_2} initialized to $(x,y)$.} 
+\ccMethod{result_type operator()(AlgebraicKernel_d_2::Bound x,AlgebraicKernel_d_2::Bound y);}
+{introduces an \ccc{AlgebraicKernel_d_2::Algebraic_real_2} initialized to $(x,y)$.} 
+\ccMethod{result_type operator()(AlgebraicKernel_d_2::Coefficient x,AlgebraicKernel_d_2::Coefficient y);}
+{introduces an \ccc{AlgebraicKernel_d_2::Algebraic_real_2} initialized to $(x,y)$.} 
+\ccMethod{result_type operator()(AlgebraicKernel_d_2::Algebraic_real_1 x,AlgebraicKernel_d_2::Algebraic_real_1 y);}
+{introduces an \ccc{AlgebraicKernel_d_2::Algebraic_real_2} initialized to $(x,y)$.} 
+
+\ccMethod{result_type operator()(
+        AlgebraicKernel_d_2::Polynomial_2 f, 
+        AlgebraicKernel_d_2::Polynomial_2 g, 
+        AlgebraicKernel_d_2::size_type i);}{
+introduces an \ccc{AlgebraicKernel_d_2::Algebraic_real_2} 
+initialized to the $i$-th real common solution of $f$ and $g$, 
+with respect to \ccc{xy}-lexicographic order. 
+The index starts at $0$, that is, the system must have at least $i+1$ real solutions. 
+\ccPrecond{ $f$ is square free.}
+\ccPrecond{ $g$ is square free.}
+\ccPrecond{ $f$ and $g$ are coprime.}        
+}
+
+\ccMethod{result_type operator()(
+        AlgebraicKernel_d_2::Polynomial_2 f, 
+        AlgebraicKernel_d_2::Polynomial_2 g, 
+        AlgebraicKernel_d_2::Bound x_l, 
+        AlgebraicKernel_d_2::Bound x_u,
+        AlgebraicKernel_d_2::Bound y_l, 
+        AlgebraicKernel_d_2::Bound y_u);}
+{introduces an \ccc{AlgebraicKernel_d_2::Algebraic_real_2} initialized to the only real intersection of 
+ $f$ and $g$ in the open box $B = (x_l,x_u)\times(y_l,y_u)$.
+\ccPrecond{ $x_l < x_u$ }
+\ccPrecond{ $y_l < y_u$ }
+\ccPrecond{ $f$ is square free.}
+\ccPrecond{ $g$ is square free.}
+\ccPrecond{ $f$ and $g$ are coprime.}
+\ccPrecond{ $f$ and $g$ have exactly one common solution in $B$}
+\ccPrecond{ $f$ and $g$ have no common solution on $\partial B$}
+}
+
+\ccSeeAlso
+\ccRefIdfierPage{AlgebraicKernel_d_1::ConstructAlgebraicReal_1}\\
+
+\end{ccRefFunctionObjectConcept}

@@ -1,0 +1,196 @@
+% +------------------------------------------------------------------------+
+% | cgal_manual.tex
+% | CGAL User and Reference Manual for all packages
+% +------------------------------------------------------------------------+
+
+\documentclass{book}
+\usepackage{Manual/cgal_manual}
+\gdef\lciManualTitle{CGAL User and Reference Manual}
+
+\makeindex
+
+% Make the table of contents use two columns
+\lcHtml{\lcTwoColumnToc\lcEnableNewTocLayout\lcEnableHowToCite}
+
+\begin{document}
+
+\cgaltitlepage{User and Reference Manual: All Parts}
+
+\cleardoublepage
+\pagestyle{plain}
+\pagenumbering{roman}
+\setcounter{page}{1}
+\ifthenelse{\boolean{useminitoc}}{\lcTex{\dominitoc}}{}
+\tableofcontents
+\cleardoublepage
+\pagenumbering{arabic}
+\setcounter{page}{1}
+
+\cgalchapters{
+    \entry{\part{General Introduction \label{Part:GeneralIntroduction}}}
+
+    \lcTex{\entryright{\listofrefpages}}
+
+    \packageleftright{Introduction}{Introduction_ref}
+
+    \packageleftright{Preliminaries}{Preliminaries_ref}
+
+    \packageleftright{Installation}{Installation_ref}
+
+
+% Algebraic Foundations:
+% -----------
+
+    \entry{\part{Arithmetic and Algebra\label{Part:AlgebraicFoundations}}}
+
+    \packageleftright{Algebraic_foundations}{Algebraic_foundations_ref}
+    \packageleftright{NumberTypeSupport}{NumberTypeSupport_ref}
+    \packageleftright{Modular_arithmetic}{Modular_arithmetic_ref}
+    \packageleftright{Polynomial}{Polynomial_ref}
+    \packageleftright{Algebraic_kernel_d}{Algebraic_kernel_d_ref}
+
+% Combinatorial Algorithms:
+% -----------
+
+    \entry{\part{Combinatorial Algorithms\label{Part:CombinatorialAlgorithms}}}
+
+    \packageleftright{Matrix_search}{Matrix_search_ref}
+    \packageleftright{QP_solver}{QP_solver_ref}
+
+% The Kernel:
+% -----------
+
+    \entry{\part{Geometry Kernels\label{Part:Kernels}}}
+
+    \packageleftright{Kernel_23}{Kernel_23_ref}
+    \packageleftright{Kernel_d}{Kernel_d_ref}
+    \packageleftright{Circular_kernel_2}{Circular_kernel_2_ref}
+    \packageleftright{Circular_kernel_3}{Circular_kernel_3_ref}
+
+
+%         
+% The Basic Library:
+% ------------------
+
+    \entry{\part{Convex Hull Algorithms\label{Part:ConvexHullAlgorithms}}}
+
+    \packageleftright{Convex_hull_2}{Convex_hull_2_ref}
+    \packageleftright{Convex_hull_3}{Convex_hull_3_ref}
+    \packageleftright{Convex_hull_d}{Convex_hull_d_ref}
+
+
+    \entry{\part{Polygons\label{Part:Polygons}}}
+
+    \packageleftright{Polygon}{Polygon_ref}
+    \packageleftright{Boolean_set_operations_2}{Boolean_set_operations_2_ref}
+    \packageleftright{Nef_2}{Nef_2_ref}
+    \packageleftright{Nef_S2}{Nef_S2_ref}
+    \packageleftright{Partition_2}{Partition_2_ref}
+    \packageleftright{Straight_skeleton_2}{Straight_skeleton_2_ref}
+    \packageleftright{Minkowski_sum_2}{Minkowski_sum_2_ref}
+
+
+    \entry{\part{Polyhedra\label{Part:Polyhedra}}}
+
+    \packageleftright{Polyhedron}{Polyhedron_ref}
+    \packageleftright{HalfedgeDS}{HalfedgeDS_ref}
+    \packageleftright{Nef_3}{Nef_3_ref}
+    \packageleftright{Convex_decomposition_3}{Convex_decomposition_3_ref}
+    \packageleftright{Minkowski_sum_3}{Minkowski_sum_3_ref}
+
+
+    \entry{\part{Arrangements\label{Part:Arrangements}}}
+
+    \packageleftright{Arrangement_on_surface_2}{Arrangement_on_surface_2_ref}
+    \packageleftright{Sweep_line_2}{Sweep_line_2_ref}
+    \packageleftright{Snap_rounding_2}{Snap_rounding_2_ref}
+
+    \packageleftright{Envelope_2}{Envelope_2_ref}
+    \packageleftright{Envelope_3}{Envelope_3_ref}
+
+    \entry{\part{Triangulations and Delaunay Triangulations\label{Part:TriangulationsAndDelaunayTriangulations}}}
+
+    \packageleftright{Triangulation_2}{Triangulation_2_ref}
+    \packageleftright{TDS_2}{TDS_2_ref}
+    \packageleftright{Triangulation_3}{Triangulation_3_ref}
+    \packageleftright{TriangulationDS_3}{TriangulationDS_3_ref}
+    \packageleftright{Periodic_3_triangulation_3}{Periodic_3_triangulation_3_ref}
+    \packageleftright{Alpha_shapes_2}{Alpha_shapes_2_ref}
+    \packageleftright{Alpha_shapes_3}{Alpha_shapes_3_ref}
+
+
+    \entry{\part{Voronoi Diagrams\label{Part:VoronoiDiagrams}}}
+
+    \packageleftright{Segment_Delaunay_graph_2}{Segment_Delaunay_graph_2_ref}
+    \packageleftright{Apollonius_graph_2}{Apollonius_graph_2_ref}
+    \packageleftright{Voronoi_diagram_2}{Voronoi_diagram_2_ref}
+
+
+    \entry{\part{Mesh Generation\label{Part:Meshing}}}
+
+    \packageleftright{Mesh_2}{Mesh_2_ref}
+    \packageleftright{Surface_mesher}{Surface_mesher_ref}
+    \packageleftright{Surface_reconstruction_points_3}{Surface_reconstruction_points_3_ref}
+    \packageleftright{Skin_surface_3}{Skin_surface_3_ref}
+    \packageleftright{Mesh_3}{Mesh_3_ref}
+
+    \entry{\part{Geometry Processing\label{Part:GeometryProcessing}}}
+
+    \packageleftright{Subdivision_method_3}{Subdivision_method_3_ref}
+    \packageleftright{Surface_mesh_simplification}{Surface_mesh_simplification_ref}
+    \packageleftright{Surface_mesh_parameterization}{Surface_mesh_parameterization_ref}
+    \packageleftright{Stream_lines_2}{Stream_lines_2_ref}
+    \packageleftright{Ridges_3}{Ridges_3_ref}
+    \packageleftright{Jet_fitting_3}{Jet_fitting_3_ref}
+    \packageleftright{Point_set_processing_3}{Point_set_processing_3_ref}
+
+    \entry{\part{Spatial Searching and Sorting\label{Part:SearchStructures}}}
+
+    \packageleftright{Point_set_2}{Point_set_2_ref}
+    \packageleftright{Interval_skip_list}{Interval_skip_list_ref}
+    \packageleftright{Spatial_searching}{Spatial_searching_ref}
+    \packageleftright{SearchStructures}{SearchStructures_ref}
+    \packageleftright{Box_intersection_d}{Box_intersection_d_ref}
+    \packageleftright{AABB_tree}{AABB_tree_ref}
+    \packageleftright{Spatial_sorting}{Spatial_sorting_ref}
+
+    \entry{\part{Geometric Optimization\label{Part:GeometricOptimization}}}
+
+    \packageleftright{Bounding_volumes}{Bounding_volumes_ref}
+    \packageleftright{Inscribed_areas}{Inscribed_areas_ref}
+    \packageleftright{Polytope_distance_d}{Polytope_distance_d_ref}
+    \packageleftright{Principal_component_analysis}{Principal_component_analysis_ref}
+
+    \entry{\part{Interpolation\label{Part:Interpolation}}}
+
+    \packageleftright{Interpolation}{Interpolation_ref}
+
+    \entry{\part{Kinetic Data Structures\label{Part:KineticDataStructures}}}
+    \packageleftright{Kinetic_data_structures}{Kinetic_data_structures_ref}
+    \packageleftright{Kinetic_framework}{Kinetic_framework_ref}
+
+% The Support Library:
+
+    \entry{\part{Support Library\label{Part:SupportLibrary}}}
+
+    \packageleftright{STL_Extension}{STL_Extension_ref}
+    \packageleftright{BGL}{BGL_ref}
+    \packageleftright{Property_map}{Property_map_ref}
+    \packageleftright{Circulator}{Circulator_ref}
+    \packageleftright{Generator}{Generator_ref}
+    \packageleftright{Miscellany}{Miscellany_ref}
+    \packageleftright{IOstream}{IOstream_ref}
+
+    \entry{\part{Visualization\label{Part:Visualization}}}
+
+    \packageleftright{Geomview}{Geomview_ref}
+    \packageleftright{GraphicsView}{GraphicsView_ref}
+    \packageleftright{CGAL_ipelets}{CGAL_ipelets_ref}
+}
+
+\bibliographystyle{alpha}
+\bibliography{Manual/cgal_manual,Manual/geom}
+
+\printindex
+
+\end{document}

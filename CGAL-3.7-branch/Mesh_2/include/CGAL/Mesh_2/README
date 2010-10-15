@@ -1,0 +1,6 @@
+No header in this sub-directory, but Face_badness.h, is documented. They
+are internal headers of the Mesh_2 packages, and should not be used.
+
+If you want to use some undocumented functionnality, please contact me
+(Laurent Rineau <laurent.rineau@ens.fr>) so that we can see if I can move
+some internal details to the documented interface.

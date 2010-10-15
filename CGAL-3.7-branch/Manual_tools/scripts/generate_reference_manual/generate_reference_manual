@@ -1,0 +1,264 @@
+#!/bin/bash
+
+# --------------------------------------------------------------------------
+# Goal   : Generate automatically (most of) the Reference Manual of a CGAL package
+# Author : Laurent Saboret, INRIA, 2005-2010
+# --------------------------------------------------------------------------
+
+
+# --------------------------------------------------------------------------
+# Print usage and quit
+# --------------------------------------------------------------------------
+usage ()
+{
+echo "\
+See documentation at https://cgal.geometryfactory.com/CGAL/Members/wiki/Tools/generate_reference_manual
+
+Usage:
+cd /path/to/package/doc_tex
+generate_reference_manual [options] [module-files...] [package-dir]
+    package-dir is a subdirectory of doc_tex/ that contains .tex files.
+    module-files... is a list of .tex files.
+Options:
+    -I /path/to/CGAL/include  Include path
+    -h, --help                Print detailed help
+    -v, --verbose             Verbose mode
+    -d, --debug               Debug mode
+"
+
+exit 1
+}
+
+
+# --------------------------------------------------------------------------
+# Main
+# --------------------------------------------------------------------------
+
+# Turn traces on
+#set -x
+
+# Version
+echo "generate_reference_manual version 1.3.1"
+
+# Global variables
+DOC_TEX_FOLDER="" # Package's doc_tex/ folder
+FOLDER_TO_PARSE='*_ref' # Subfolders of doc_tex/ to parse. Default = Reference Manual.
+REF_MANUAL_TEX_FILES="" # List of .tex files to parse in $FOLDER_TO_PARSE
+ARGS="" # options for copy_doxygen_latex_doc
+INCLUDE_PATH="" # Path to CGAL include folder
+PACKAGE="" # package name (without path)
+DOXYFILE="" # doxygen configuration file
+DEBUG=0 # Debug mode?
+VERBOSE=0 # Verbose mode?
+
+# Avoid bad surprises
+unalias which 2>/dev/null
+unalias sed 2>/dev/null
+unalias rm 2>/dev/null
+unalias cat 2>/dev/null
+unalias grep 2>/dev/null
+unalias find 2>/dev/null
+
+#
+# Decode parameters
+#
+
+while [ "${1}" ] # for each argument
+do
+    case "${1}" in
+    -h|--help) # If request for help
+        usage
+        ;;
+    -f|--force) # Ignore obsolete option --force
+        ;;
+    -d|--debug) # If --debug
+        DEBUG=1
+        ARGS="${ARGS} ${1}"
+        ;;
+    -v|--verbose) # If --verbose
+        VERBOSE=1
+        ARGS="${ARGS} ${1}"
+        ;;
+    -I|--include) # If -I xxx or --include xxx
+        shift # get argument after -I
+        if [ ! "${1}" ]; then # If no argument after -I
+            usage
+        fi
+        INCLUDE_PATH="${INCLUDE_PATH} ${1}"
+        ;;
+    -I*) # If -Ixxx (no space)
+        path=`echo "${1}" | sed 's/-I//'`
+        INCLUDE_PATH="${INCLUDE_PATH} ${path}"
+        ;;
+    *.tex) # .tex file to parse
+        REF_MANUAL_TEX_FILES="${REF_MANUAL_TEX_FILES} ${1}"
+        ;;
+    * ) # last param is folder to parse
+        FOLDER_TO_PARSE="${1}"
+        ;;
+    esac
+    shift
+done
+
+# Check parameters
+DOC_TEX_FOLDER=`pwd`
+if [[ `basename $DOC_TEX_FOLDER` != "doc_tex" ]]; then
+    echo "ERROR: you must call generate_reference_manual from the package's doc_tex/ folder"
+    exit 1
+fi
+if [[ ! "${INCLUDE_PATH}" ]]; then
+    usage
+fi
+
+# Fetch list of files to parse
+if [[ ! "${REF_MANUAL_TEX_FILES}" ]]; then
+    FOLDER_TO_PARSE=`ls -d ${FOLDER_TO_PARSE}`
+    REF_MANUAL_TEX_FILES=`find ${FOLDER_TO_PARSE} -name '*.tex' | sort`
+    if [[ $? != 0 ]]; then
+        echo "ERROR: folder ${DOC_TEX_FOLDER}/${FOLDER_TO_PARSE} contains no .tex files"
+        exit 1
+    fi
+fi
+
+# Test if doxygen is installed
+which doxygen >/dev/null 2>&1
+if [[ $? != 0 ]]; then
+    echo "ERROR: cannot find doxygen"
+    exit 1
+fi
+
+# Test if doxygen configuration file generate_reference_manual_Doxyfile is present
+DOXYFILE="$0_Doxyfile"
+if [[ ! (-f "${DOXYFILE}") ]]; then
+    echo "ERROR: file ${DOXYFILE} does not exist"
+    exit 1
+fi
+
+# Test if copy_doxygen_latex_doc is installed
+which copy_doxygen_latex_doc >/dev/null 2>&1
+if [[ $? != 0 ]]; then
+    echo "ERROR: cannot find copy_doxygen_latex_doc"
+    exit 1
+fi
+
+#
+# Run doxygen in package's root folder
+#
+
+# Goto package's root folder
+cd ..
+
+# Get package name
+PACKAGE=`pwd | sed 's/.*\///'`
+
+# Delete the output of previous calls to generate_reference_manual
+rm -rf doc_doxygen
+mkdir doc_doxygen
+
+# Run doxygen. m4 is used to search and replace in template Doxyfile.
+echo ""
+echo "Run doxygen `doxygen --version`..."
+if [[ $VERBOSE == 0 ]]; then
+    WARN_IF_DOC_ERROR="NO"
+else
+    WARN_IF_DOC_ERROR="YES"
+fi
+m4 -DCGAL_PACKAGE="${PACKAGE}" \
+   -DCGAL_WARN_IF_DOC_ERROR="${WARN_IF_DOC_ERROR}" \
+   -DCGAL_INCLUDE_PATH="${INCLUDE_PATH}" \
+   "${DOXYFILE}" > generate_reference_manual_Doxyfile
+doxygen generate_reference_manual_Doxyfile 2>&1 | egrep -v 'BoundingBox not found'
+if [[ $DEBUG == 0 ]]; then
+    rm -f generate_reference_manual_Doxyfile
+fi
+
+
+#
+# Update the Reference Manual
+#
+
+echo ""
+echo "Update the Reference Manual..."
+for cgal_doc in ${REF_MANUAL_TEX_FILES}
+do
+    cgal_doc="doc_tex/$cgal_doc" # as we moved to package's root folder
+
+    # For each class/struct/function... documented in "${cgal_doc}"
+    items=`cat ${cgal_doc} | perl -p -e 's/[ \t]//g' | egrep '^[^%]*\\\\begin\{ccRef' | \
+        perl -p -e 's/^[^%]*\\\\begin\{ccRef.*?\}(.*?)\{(.*?)[<}].*/$1$2/g'`
+    for item in $items
+    do
+        # Extract scope (namespace or a class name) of ${item} indicated in ${cgal_doc}.
+        # The scope may be surrounded by square braquets.
+        scope=`echo $item | perl -e 'while (<>) {if (m/\[?(.*::)/) {print "$1\n";}}'`
+        item=`echo $item | perl -p -e 's/.*::\]?//'` # remove namespace
+
+        # Find the file containing the doxygen-generated documentation.
+        # We search in CGAL namespace and in the global scope (e.g. for concepts).
+        doxygen_doc=""
+        for namespace in "$scope" "CGAL::$scope"
+        do
+            # Mangled item and namespace names in individual doxygen output files
+            item_base_file_name=`echo "${item}" | sed 's/_/__/g'`
+            namespace_base_file_name=`echo "${namespace}" | sed 's/_/__/g' | sed 's/:/_1/g'`
+
+            # Name of doxygen output file containing the global functions of the namespace
+            namespace_tex_file="namespace`echo "${namespace}" | sed 's/::$//' | sed 's/:/_1/g'`.tex"
+
+            # Item name in Doxygen output file (mangled for latex)
+            item_latex_name=`echo "${item}" | sed 's/_/\\\\\\\\_\\\\\\\\-/g'`
+
+            # Test if ${item} is a class or a class concept
+            [ ! -f "${doxygen_doc}" ] && \
+                doxygen_doc="doc_doxygen/latex/class${namespace_base_file_name}${item_base_file_name}.tex"
+            # Test if ${item} is a struct or a struct concept
+            [ ! -f "${doxygen_doc}" ] && \
+                doxygen_doc="doc_doxygen/latex/struct${namespace_base_file_name}${item_base_file_name}.tex"
+
+            # Test if ${item} is a function in the global scope
+            [ ! -f "${doxygen_doc}" ] && \
+                doxygen_doc=`grep -l -E '\\\\paragraph.*?\\{.*\\b'${item_latex_name}'\\b' \
+                              "doc_doxygen/latex/${item_base_file_name}_8h.tex" 2>/dev/null`
+            # Test if ${item} is a function in a namespace
+            [ ! -f "${doxygen_doc}" ] && \
+                doxygen_doc=`grep -l -E '\\\\paragraph.*?\\{.*\\b'${item_latex_name}'\\b' \
+                              "doc_doxygen/latex/${namespace_tex_file}" 2>/dev/null`
+        done
+
+        # Insert the doxygen-generated documentation into ${cgal_doc}
+        if [[ -f "${doxygen_doc}" ]]; then
+            if [[ $DEBUG == 0 ]]; then
+              if [[ $VERBOSE == 0 ]]; then
+                echo "Extract ${scope}${item} doxygen documentation"
+              else
+                doc_html=`basename ${doxygen_doc} | sed 's/\.tex/.html/'`
+                doc_html="doc_doxygen/html/${doc_html}"
+                echo "Extract ${scope}${item} documentation (from ${doc_html})"
+              fi
+            else
+              echo copy_doxygen_latex_doc ${ARGS} "${item}" "`pwd`/${doxygen_doc}" "`pwd`/${cgal_doc}"
+            fi
+            copy_doxygen_latex_doc ${ARGS} "${item}" "${doxygen_doc}" "${cgal_doc}"
+        else
+            echo "ERROR: cannot find doxygen documentation for ${scope}${item} (see `basename ${cgal_doc}`)"
+        fi
+    done
+
+    # Update citations (hard-coded).
+    # TODO: add here citations for all packages using generate_reference_manual.
+    perl -pi -e 's/\[(GHJV95|GOF95)\]/\\cite{cgal:ghjv-dpero-95}/s' "$cgal_doc"
+    perl -pi -e 's/\[FH05\]/\\cite{cgal:fh-survey-05}/s' "$cgal_doc"
+    perl -pi -e 's/\[Flo03\]/\\cite{cgal:f-mvc-03}/s' "$cgal_doc"
+    perl -pi -e 's/\[DMA02\]/\\cite{cgal:dma-ipsm-02}/s' "$cgal_doc"
+    perl -pi -e 's/\[LPRM02\]/\\cite{cgal:lprm-lscm-02}/s' "$cgal_doc"
+    perl -pi -e 's/\[Tut63\]/\\cite{t-hdg-63}/s' "$cgal_doc"
+    perl -pi -e 's/\[EDD\+95\]/\\cite{cgal:eddhls-maam-95}/s' "$cgal_doc"
+    perl -pi -e 's/\[Guennebaud07\]/\\cite{Guennebaud07}/s' "$cgal_doc"
+    perl -pi -e 's/\[GG07\]/\\cite{Guennebaud07}/s' "$cgal_doc"
+    perl -pi -e 's/\[Kazhdan06\]/\\cite{Kazhdan06}/s' "$cgal_doc"
+    perl -pi -e 's/\[KBH05\]/\\cite{Kazhdan06}/s' "$cgal_doc"
+    perl -pi -e 's/\[Hoppe92\]/\\cite{cgal:hddms-srup-92}/s' "$cgal_doc"
+    perl -pi -e 's/\[HDD\+92\]/\\cite{cgal:hddms-srup-92}/s' "$cgal_doc"
+done
+
+exit 0

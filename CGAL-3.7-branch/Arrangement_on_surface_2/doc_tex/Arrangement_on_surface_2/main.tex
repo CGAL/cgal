@@ -1,0 +1,56 @@
+\RCSdef{\ArrangementOnSurfaceRev}{$Id$}
+\RCSdefDate{\ArrangementOnSurfaceDate}{$Date$}
+
+\ccParDims
+
+\ccUserChapter{2D Arrangements}
+
+\begingroup
+
+\label{chapterArrangement_on_surface_2}
+\ccChapterRelease{\ArrangementOnSurfaceRev. \ \ArrangementOnSurfaceDate}
+\ccChapterAuthor{Ron Wein, Efi Fogel, Baruch Zukerman, Dan Halperin, and Eric Berberich}
+
+\input{Arrangement_on_surface_2/PkgDescription.tex}
+
+\minitoc
+
+\lcTex{%
+  \newlength{\ArrangementTwoWidthExtra}\setlength{\ArrangementTwoWidthExtra}{1.1cm}
+  \newlength{\ArrangementTwoWidthLineReal}\setlength{\ArrangementTwoWidthLineReal}{\linewidth}
+  \addtolength{\ArrangementTwoWidthLineReal}{-\ArrangementTwoWidthExtra}
+  \newlength{\ArrangementTwoMinipageSpace}\setlength{\ArrangementTwoMinipageSpace}{0.2cm}
+
+  \newlength{\ArrangementTwoWidthLeft}
+  \newlength{\ArrangementTwoWidthRight}
+}
+
+\newcommand{\calC}{{\cal C}}
+\newcommand{\calA}{{\cal A}}
+\newcommand{\dcel}{{\sc Dcel}}
+\newcommand{\kdtree}{{\sc Kd}-tree}
+
+\lcTex{%
+\ifpdf
+  \pdfstringdefDisableCommands{
+    \def\dcel{DCEL}
+  }
+\fi%
+}
+
+\input{Arrangement_on_surface_2/arr_intro.tex}
+\input{Arrangement_on_surface_2/arr_class.tex}
+\input{Arrangement_on_surface_2/arr_queries.tex}
+\input{Arrangement_on_surface_2/arr_free.tex}
+\input{Arrangement_on_surface_2/arr_unbounded.tex}
+\input{Arrangement_on_surface_2/arr_traits.tex}
+\input{Arrangement_on_surface_2/arr_notif.tex}
+\input{Arrangement_on_surface_2/arr_exdcel.tex}
+\input{Arrangement_on_surface_2/arr_overlay.tex}
+\input{Arrangement_on_surface_2/arr_hist.tex}
+\input{Arrangement_on_surface_2/arr_io.tex}
+\input{Arrangement_on_surface_2/arr_boost.tex}
+\input{Arrangement_on_surface_2/arr_tips.tex}
+\input{Arrangement_on_surface_2/arr_ack.tex}
+
+\endgroup

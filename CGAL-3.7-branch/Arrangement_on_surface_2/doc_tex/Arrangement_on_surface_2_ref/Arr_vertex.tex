@@ -1,0 +1,80 @@
+% +------------------------------------------------------------------------+
+% | Reference manual page: Arr_vertex.tex
+% +------------------------------------------------------------------------+
+% | 
+% | Package: Arrangement_2
+% | 
+% +------------------------------------------------------------------------+
+
+\ccRefPageBegin
+
+\begin{ccRefClass}[Arrangement_2<Traits,Dcel>::]{Vertex}
+\ccRefLabel{arr_ref:vertex}
+
+\ccDefinition
+An object $v$ of the class \ccRefName\ represents an arrangement vertex,
+that is --- a $0$-dimensional cell, associated with a point on the plane. 
+
+\ccInheritsFrom
+    \ccHtmlNoLinksFrom{\ccc{typename Dcel::Vertex}}
+
+\ccThree{typename Traits::Point_2}{v.is_isolated()~}{}
+\ccThreeToTwo
+
+\ccCreation
+\ccCreationVariable{v}
+%=====================
+
+\ccConstructor{Vertex();}
+    {default constructor.}    
+
+\ccAccessFunctions
+%=================
+
+All non-const methods listed below also have \ccc{const} counterparts
+that return constant handles, iterators or circulators:
+
+\ccMethod{bool is_at_open_boundary() const;}
+    {checks whether the vertex lies at infinity and not associated with
+     a point with bounded coordinates.}
+
+\ccMethod{bool is_isolated() const;}
+    {checks whether the vertex is isolated (i.e., has no incident edges).}
+
+\ccMethod{typename Dcel::Size degree() const;}
+    {returns the number of edges incident to \ccVar{}.}
+
+\ccThree{Halfedge_around_vertex_circulator}{}{\hspace*{\ccwComment}}
+\ccThreeToTwo
+
+\ccMethod{Halfedge_around_vertex_circulator incident_halfedges();}
+    {returns a circulator circulator that allows going over the halfedges
+     incident to \ccVar{} (that have \ccVar{} as their target).
+     The edges are traversed in a clockwise direction around \ccVar{}.
+     \ccPrecond{\ccVar{} is {\em not} an isolated vertex.}}
+
+\ccThree{typename Traits::Point_2}{v.is_isolated()~}{}
+\ccThreeToTwo
+
+\ccMethod{Face_handle face();}
+    {returns a handle to the face that contains \ccVar{} in its interior.
+     \ccPrecond{\ccVar{} is an isolated vertex.}}
+
+\ccMethod{const typename Traits::Point_2& point() const;}
+    {returns the point associated with the vertex.
+     \ccPrecond{\ccVar{} is not a vertex at infinity.}}
+
+\ccMethod{Arr_parameter_space parameter_space_in_x () const;}
+    {returns the placement of the $x$-coordinate in the parameter space,
+    that is, either the left boundary-side, the interior, or the right
+    boundary-side.}
+
+\ccMethod{Arr_parameter_space parameter_space_in_y () const;}
+    {returns the placement of the $y$-coordinate in the parameter space,
+    that is, either the bottom boundary-side, the interior, or the top
+    boundary-side.}
+     
+
+\end{ccRefClass}
+
+\ccRefPageEnd

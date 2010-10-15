@@ -1,0 +1,18 @@
+#!/bin/bash
+
+function bailout()
+{
+    echo "$1"
+    exit 1;
+}
+
+# collect files:
+echo "Collecting data files..."
+LIST=$(find test_PD_data -name '*.data')
+
+# save file:
+echo $LIST > "test_PD.cin"
+
+# finish:
+echo "Done."
+exit 0

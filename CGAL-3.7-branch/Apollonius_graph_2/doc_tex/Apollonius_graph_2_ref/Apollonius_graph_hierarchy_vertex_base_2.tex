@@ -1,0 +1,68 @@
+% +------------------------------------------------------------------------+
+% | Reference manual page: Apollonius_graph_vertex_base_2.tex
+% +------------------------------------------------------------------------+
+% | 12.04.2000   Author
+% | Package: Package
+% | 
+%\RCSdef{\RCSRegulartriangulationtraitsRev}{$Id$}
+%\RCSdefDate{\RCSRegulartriangulationtraitsDate}{$Date$}
+% |
+%%RefPage: end of header, begin of main body
+% +------------------------------------------------------------------------+
+
+\begin{ccRefClass}{Apollonius_graph_hierarchy_vertex_base_2<Agvb>}
+
+%% add template arg's if necessary
+
+%% \ccHtmlCrossLink{}     %% add further rules for cross referencing links
+%% \ccHtmlIndexC[class]{} %% add further index entries
+\ccCreationVariable{vb}
+\ccDefinition
+
+The class \ccRefName\ provides a model for the
+\ccc{ApolloniusGraphHierarchyVertexBase_2} concept, which is the
+vertex base required by the
+\ccc{Apollonius_graph_hierarchy_2<Gt,Agds>} class. The class
+\ccRefName\ is templated by a class \ccc{Agvb} which must be a model
+of the \ccc{ApolloniusGraphVertexBase_2} concept.
+
+\ccInclude{CGAL/Apollonius_graph_hierarchy_vertex_base_2.h}
+
+\ccInheritsFrom
+\ccc{Agvb}
+
+\ccIsModel
+\ccc{ApolloniusGraphHierarchyVertexBase_2}
+
+\ccCreation
+\ccCreationVariable{hvb}  %% choose variable name
+\ccTwo{Apollonius_graph_hierarchy_vertex_base_2<Agvb>
+hvb(Site_2 s);++}{}
+
+\ccConstructor{Apollonius_graph_hierarchy_vertex_base_2();}
+{Default constructor.}
+\ccGlue
+\ccConstructor{Apollonius_graph_hierarchy_vertex_base_2(Site_2 s);}
+{Constructs a vertex associated with the site \ccc{s} and
+embedded at the center of \ccc{s}.}
+\ccGlue
+\ccConstructor{Apollonius_graph_vertex_base_2(Site_2 s, Face_handle f);}
+	      {Constructs a vertex associated with
+		the site \ccc{s}, embedded at the center of \ccc{s},
+		and pointing to the face associated with the face
+		handle \ccc{f}.}
+
+
+
+\ccSeeAlso
+\ccc{ApolloniusGraphVertexBase_2}\\
+\ccc{ApolloniusGraphHierarchyVertexBase_2}\\
+\ccc{CGAL::Apollonius_graph_vertex_base_2<Gt,StoreHidden>}
+
+\end{ccRefClass}
+
+% +------------------------------------------------------------------------+
+%%RefPage: end of main body, begin of footer
+% EOF
+% +------------------------------------------------------------------------+
+

@@ -1,0 +1,120 @@
+% +------------------------------------------------------------------------+
+% | Reference manual page: TDS_2::Vertex.tex
+% +------------------------------------------------------------------------+
+% | 07.04.2000   Author
+% | Package: Package
+% | 
+\RCSdef{\RCSTdsVertexRev}{$Id$}
+\RCSdefDate{\RCSTdsVertexDate}{$Date$}
+% |
+%%RefPage: end of header, begin of main body
+% +------------------------------------------------------------------------+
+
+
+\begin{ccRefConcept}{TriangulationDataStructure_2::Vertex}
+
+%% \ccHtmlCrossLink{}     %% add further rules for cross referencing links
+%% \ccHtmlIndexC[concept]{} %% add further index entries
+
+\ccDefinition
+  
+The concept \ccRefName\ describes the type used by a
+\ccc{TriangulationDataStructure_2} to store the vertices\lcTex{, see 
+\ccRefPage{TriangulationDataStructure_2}}.
+
+Some of the requirements listed below are of geometric nature
+and are \textit{optional}
+when using the triangulation data structure class alone.
+They became required when the triangulation data structure is plugged
+into a triangulation.
+
+
+\ccTypes
+The class \ccRefName\ defines the same types as 
+the triangulation data structure 
+except the iterators.
+
+\ccTwo{TriangulationDataStructure_2::Vertex:: Point }{}
+\ccNestedType{Point}{\textit{Optional for the triangulation data
+structure used alone.}} 
+
+\ccCreationVariable{v}  %% choose variable name
+
+\ccCreation
+
+In order to obtain new vertices or destruct unused vertices, the user must
+call the \ccc{create_vertex()} and \ccc{delete_vertex()} methods of the
+triangulation data structure.
+
+%\ccConstructor{TriangulationDataStructure_2::Vertex();}{default
+%constructor.
+% The geometric information is
+% initialized by the default constructor of class \ccc{Point}.
+%The pointer to the incident face is initialized with \ccc{NULL}.}
+
+%\ccConstructor{TriangulationDataStructure_2::Vertex(const Point&
+%p);}
+%{introduces a vertex \ccVar, and initializes the geometric information.
+%The pointer to the incident face is initialized with \ccc{NULL}.}
+
+%\ccConstructor{TriangulationDataStructure_2::Vertex(const Point& p,
+%                      Face_handle f);}
+%{introduces a vertex \ccVar, and initializes the geometric information and 
+%the pointer to the incident face.}
+
+\ccHeading{Access Functions}
+\ccThree{Face_handle}{v.set_face(Face_handle f);}{}
+\ccMethod{Point point() const;}
+{returns  the geometric information of \ccVar.}
+\ccGlue
+\ccMethod{Face_handle face() const;}
+{returns a face of the triangulation having  \ccVar\ as vertex.}
+
+\begin{ccAdvanced}
+\ccHeading{Setting}
+
+\ccMethod{void set_point(const Point& p);}
+{sets the geometric information to \ccc{p}.}
+\ccGlue
+\ccMethod{void set_face(Face_handle f);}
+{sets the incident face to \ccc{f}.}
+
+\end{ccAdvanced}
+
+\ccHeading{Checking}
+
+\ccMethod{bool is_valid(bool verbose = false) const;}
+{Checks the validity of the vertex. Must check that its incident face
+has this vertex. The validity of the base vertex is also checked.\\
+When \ccc{verbose} is set to \ccc{true}, messages are printed to give
+a precise indication on the kind of invalidity encountered.}
+
+
+\ccHeading{I/O}
+
+\ccFunction{istream& operator>>
+(istream& is, TriangulationDataStructure_2::Vertex & v);}
+{Inputs the non-combinatorial information possibly stored in the vertex.} 
+
+\ccFunction{ostream& operator<< (ostream& os, 
+			const TriangulationDataStructure_2::Vertex & v);}
+{Outputs the non combinatorial operation possibly stored in the
+vertex.}
+
+
+
+\ccHasModels
+\ccc{CGAL::Triangulation_ds_vertex_2<Vb,Fb>}
+
+
+\ccSeeAlso
+\ccc{TriangulationDataStructure_2} \\
+\ccc{TriangulationDataStructure_2::Face} \\
+
+\end{ccRefConcept}
+
+% +------------------------------------------------------------------------+
+%%RefPage: end of main body, begin of footer
+% EOF
+% +------------------------------------------------------------------------+
+

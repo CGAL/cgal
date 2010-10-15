@@ -1,0 +1,101 @@
+% +------------------------------------------------------------------------+
+% | Reference manual page: regular_neighbor_coordinates_2.tex
+% +------------------------------------------------------------------------+
+% | 
+% | August 2003  Julia Floetotto
+% | Package:   Interpolation
+% | 
+% |
+% +------------------------------------------------------------------------+
+
+%\renewcommand{\ccRefPageBegin}{\begin{ccAdvanced}}
+%\renewcommand{\ccRefPageEnd}{\end{ccAdvanced}}
+\begin{ccRefFunction}{regular_neighbor_coordinates_2}  %% add template arg's if necessary
+\ccIndexSubitemBegin{Interpolation}{regular_neighbor_coordinates_2}
+
+\ccDefinition
+  
+The function \ccRefName\ computes natural neighbor coordinates, also
+called Sibson's coordinates, for weighted $2D$ points provided a
+two-dimensional regular triangulation and a (weighted) query point
+inside the convex hull of the vertices of the triangulation. We call these 
+coordinates regular neighbor coordinates.
+
+\ccInclude{CGAL/regular_neighbor_coordinates_2.h}
+
+
+\ccFunction{template < class Rt, class OutputIterator > CGAL::Triple<
+  OutputIterator, typename Rt::Geom_traits::FT, bool >
+  regular_neighbor_coordinates_2(const Rt& rt, const typename
+  Rt::Weighted_point& p, OutputIterator out, typename
+  Rt::Face_handle start = typename Rt::Face_handle());} {
+  computes the regular neighbor coordinates for \ccc{p} with respect
+  to the weighted points in the two-dimensional regular triangulation
+  \ccc{rt}.  The template class \ccc{Rt} should be of type
+  \ccc{Regular_triangulation_2<Traits, Tds>}.  The value type of the
+  \ccc{OutputIterator} is a pair of \ccc{Rt::Weighted_point} and the
+  coordinate value of type \ccc{Rt::Geom_traits::FT}. The sequence of
+  point/coordinate pairs that is computed by the function is placed
+  starting at \ccc{out}. The function returns a triple with an
+  iterator that is placed past-the-end of the resulting sequence of
+  point/coordinate pairs, the normalization factor of the coordinates
+  and a Boolean value which is set to true iff the coordinate
+  computation was successful, i.e. if \ccc{p} lies inside the
+  convex hull of the points in \ccc{rt}. 
+  }  
+
+\ccFunction{template <class Rt, class OutputIterator,
+  class EdgeIterator, class VertexIterator > CGAL::Triple<
+  OutputIterator, typename Traits::FT, bool >
+  regular_neighbor_coordinates_2(const Rt& rt, const typename
+  Traits::Weighted_point& p, OutputIterator out, EdgeIterator
+  hole_begin, EdgeIterator hole_end, VertexIterator
+  hidden_vertices_begin, VertexIterator hidden_vertices_end);} 
+{ The same as above.  \ccc{hole_begin} and
+  \ccc{hole_end} determines the iterator range over the boundary edges
+  of the conflict zone of \ccc{p} in the triangulation \ccc{rt}.
+  \ccc{hidden_vertices_begin} and \ccc{hidden_vertices_end} determines
+  the iterator range over the hidden vertices of the conflict zone of
+  \ccc{p} in\ccc{rt}. It is the result of the function
+  \ccc{T.get_boundary_of_conflicts(p,std::back_inserter(hole),
+    std::back_inserter(hidden_vertices),
+    start)}, see \ccc{Regular_triangulation_2<Traits, Tds>}.}
+
+
+\ccFunction{template <class Rt, class OutputIterator>
+  CGAL::Triple< OutputIterator, typename Rt::Geom_traits::FT, bool >
+  regular_neighbor_coordinates_2(const Rt& rt, typename
+  Rt::Vertex_handle vh, OutputIterator out);}{This function computes
+  the regular neighbor coordinates of the point \ccc{vh->point()} with respect to
+  the vertices of \ccc{rt} excluding \ccc{vh->point()}. The same as above for the
+  remaining parameters.}  
+
+\ccHeading{Requirements}
+\begin{enumerate}
+\item \ccc{Rt} are equivalent to the class
+  \ccc{Regular_triangulation_2<Traits, Tds>}.
+\item The traits class \ccc{Traits} of \ccc{Rt} is a model of the
+  concept \ccc{RegularTriangulationTraits_2}. It provides the number
+  type \ccc{FT} which is a model for \ccc{FieldNumberType} and it must
+  meet the requirements for the traits class of the
+  \ccc{polygon_area_2} function. A model of this traits class is
+  \ccc{Regular_triangulation_euclidean_traits_2<K, Weight>}.
+\item \ccc{OutputIterator::value_type} is equivalent to
+  \ccc{std::pair<Rt::Weighted_point, Rt::Geom_traits::FT>}, i.e.\ a pair
+  associating a point and its regular neighbor coordinate.
+\end{enumerate}
+
+\ccImplementation This function computes the areas stolen from the
+Voronoi cells of points in \ccc{rt} by the insertion of \ccc{p}. The
+total area of the Voronoi cell of \ccc{p} is also computed and
+returned by the function. If \ccc{p} lies outside the convex hull, the
+coordinate values cannot be computed and the third value of the result
+triple is set to \ccc{false}.
+
+\ccSeeAlso
+\ccRefIdfierPage{CGAL::natural_neighbor_coordinates_2}
+% The following does not exist (!) :
+% \ccRefIdfierPage{CGAL::Regular_neighbor_coordinates_traits_2<R, Weight>}
+
+\ccIndexSubitemEnd{Interpolation}{regular_neighbor_coordinates_2}
+\end{ccRefFunction}

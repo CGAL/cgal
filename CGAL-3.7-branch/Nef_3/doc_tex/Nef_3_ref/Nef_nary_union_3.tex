@@ -1,0 +1,53 @@
+% +------------------------------------------------------------------------+
+% | Reference manual page: Nef_nary_union_3.tex
+% +------------------------------------------------------------------------+
+% | 15.07.2008   Peter Hachenberger
+% | Package: Nef_3
+% | 
+%\RCSdef{\RCSNefNaryUnionThreeRev}{$Id: $}
+%\RCSdefDate{\RCSNefNaryUnionThreeDate}{$Date: $}
+% +------------------------------------------------------------------------+
+
+\begin{ccRefClass}{Nef_nary_union_3<Nef_polyhedron_3>}
+
+\ccDefinition
+
+This class helps to perform the union of a set of 3D Nef polyhedra
+efficiently. It succesively applies the binary union operation of
+\ccc{Nef_polyhedron_3}, but schedules these union operations in an
+opportune way. The class is most efficient, if the polyhedra are added
+in sorted order. Any order that reflects proximity in the
+three-dimensional space is helpful. To allow saving memory space, the
+sorting is left to the user. This way the user can generate the
+polyhedra in a sorted way and add them one by one to \ccc{Nef_nary_union_3}.
+
+\ccInclude{CGAL/Nef_nary_union_3.h}
+
+\ccParameters
+
+\begin{tabbing}
+\ccc{template <} \=\ccc{class Nef_polyhedron_3,}\\
+    \ccc{class Nef_nary_union_3;}
+\end{tabbing}
+
+As a template parameter an instantiation of the template class Nef
+polyhedra is needed.
+
+\ccCreation
+\ccCreationVariable{U}
+
+\ccThree{Nef_nary_union_3<Nef_polyhedron_3>;}{U}{}
+\ccThreeToTwo
+\ccConstructor{Nef_nary_union_3<Nef_polyhedron_3>();} {initialization only.}
+
+\ccHeading{Member Functions}
+
+\ccMethod{Nef_polyhedron_3 get_union() const;}
+{returns the union of the polyhedra previously added to the class.}
+
+\ccMethod{void add_polyhedron(const Nef_polyhedron_3& N);} 
+{adds a polyhedron.}
+
+\ccRefIdfierPage{CGAL::Nef_polyhedron_3<Traits>}
+
+\end{ccRefClass}

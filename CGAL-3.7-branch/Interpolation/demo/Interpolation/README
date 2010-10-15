@@ -1,0 +1,27 @@
+These demos use Geomview 
+[see the chapter Geomview in the cgal manual - support library:
+Geomview 1.8.1 is required.  The geomview command must be in the user's $PATH,
+otherwise the program will not be able to execute.]
+ 
+------- gv_interpolation_2 -------------------------------------------------
+using Geomview
+
+This demo program dumps the plot of the different interpolation functions
+using a very simple data set
+shows:	the differentiability (or not) at the data points
+	the closeness to the gradient at the data points	
+
+1) Construction of a Delaunay triangulation of the data points.
+ 
+2) Interpolation on a grid using a user chosen interpolation function.
+
+3) Dumps the plot of the interpolation functions (.off file)
+
+4) Displays the data points in geomview.
+--------------------------------------------------------------
+
+------- surface_voronoi -----------------------------------------------
+This demo program displays the intersection between the three dimensional 
+Voronoi diagram of a point cloud issued from a surface (sphere,cylinder 
+or cube) and the tangent plane of another surface point. 
+--------------------------------------------------------------

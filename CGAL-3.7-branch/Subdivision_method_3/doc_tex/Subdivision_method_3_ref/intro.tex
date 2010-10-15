@@ -1,0 +1,68 @@
+% +------------------------------------------------------------------------+
+% | Cbp Reference Manual:  intro.tex
+% +------------------------------------------------------------------------+
+% | Polyhedron reference manual pages
+% |
+% | 03/01/2005   Le-Jeng Andy Shiue
+\RCSdef{\polyhedronRefRev}{$Id$}
+\RCSdefDate{\polyhedronRefDate}{$Date$}
+% +------------------------------------------------------------------------+
+
+\ccRefChapter{3D Surface Subdivision Methods\label{chapterSubdivisionRef}}
+\ccChapterRelease{\subdivisionRefRev. \ \subdivisionRefDate}
+\ccChapterAuthor{Le-Jeng Andy Shiue}
+
+
+% +------------------------------------------------------------------------+
+
+Subdivision methods recursively refine the control mesh 
+(i.e.~the input mesh) and generate points approximating 
+the limit surface. 
+Designed to work on the class \ccc{Polyhedron_3},
+\ccc{Subdivision_method_3} aims to be easy to use and to extend.
+\ccc{Subdivision_method_3} is not a class, but a namespace 
+which consists of four popular subdivision methods and their refinement
+hosts. Supported subdivision methods include Catmull-Clark, Loop, 
+Doo-Sabin and $\sqrt{3}$ subdivisions. Their respective refinement 
+hosts are PQQ, PTQ, DQQ and $\sqrt{3}$ refinements.
+Variations of those methods can be easily 
+extended by substituting the geometry computation of the refinement
+host.
+
+
+\section{Classified Reference Pages}
+
+\subsection*{Concepts}
+\ccRefIdfierPage{PQQMask_3}\\
+\ccRefIdfierPage{PTQMask_3}\\
+\ccRefIdfierPage{DQQMask_3}\\
+\ccRefIdfierPage{Sqrt3Mask_3}
+
+\subsection*{Classes}
+
+\ccRefIdfierPage{CGAL::Subdivision_method_3}\\ 
+\ccRefIdfierPage{CGAL::CatmullClark_mask_3<Polyhedron_3>}\\ 
+\ccRefIdfierPage{CGAL::Loop_mask_3<Polyhedron_3>}\\ 
+\ccRefIdfierPage{CGAL::DooSabin_mask_3<Polyhedron_3>}\\ 
+\ccRefIdfierPage{CGAL::Sqrt3_mask_3<Polyhedron_3>}\\ 
+
+%\subsection*{Functions}
+%\ccThree{ostream&}{}{page 999.}
+
+%\ccHtmlNoLinks\ccHtmlNoIndex
+%\ccFunction{template <class Traits>
+%            ostream& operator<<( ostream& out, 
+%                                 const CGAL::Polyhedron_3<Traits>& P);}
+%    {\lcRawHtml{<A HREF="Function_operator.html">(go there)</A>}
+%     \lcTex{\hfill page~\pageref{refPolyhedron_operator_leftshift}}}
+
+%\ccHtmlNoLinks\ccHtmlNoIndex
+%\ccFunction{template <class Traits>
+%            istream& operator>>( istream& in, 
+%                                 CGAL::Polyhedron_3<Traits>& P);}
+%    {\lcRawHtml{<A HREF="Function_operator--.html">(go there)</A>}
+%     \lcTex{\hfill page~\pageref{refPolyhedron_operator_rightshift}}}
+
+%\lcHtml{\subsection*{Links to the Reference Sections}}
+
+%% EOF %%

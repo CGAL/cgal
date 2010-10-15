@@ -1,0 +1,35 @@
+\begin{ccRefFunctionObjectConcept}{AlgebraicKernel_d_1::SignAt_1}
+
+\ccDefinition
+Computes the sign of a univariate polynomial 
+\ccc{AlgebraicKernel_d_1::Polynomial_1} at a real value of type 
+\ccc{AlgebraicKernel_d_1::Algebraic_real_1}. 
+
+\ccRefines 
+\ccc{AdaptableBinaryFunction}
+
+\ccTypes \ccThree{}{+++++++++++++}{++++++++}
+%\ccThree{typedef AlgebraicKernel_d_1::Algebraic_real_1}{second_argument_type+}{}
+\ccNestedType{result_type}{Type convertible to \ccc{CGAL::Sign}}
+\ccGlue
+\ccTypedef{typedef AlgebraicKernel_d_1::Polynomial_1 first_argument_type;}{}
+\ccGlue
+\ccTypedef{typedef AlgebraicKernel_d_1::Algebraic_real_1 second_argument_type;}{}
+
+
+\ccOperations \ccThree{+++++++++}{+++++++++}{}
+\ccCreationVariable{fo}
+
+
+%\ccThree{result_type}{fo(first_argument_type,++}{}
+\ccMethod{
+	result_type
+	operator()(const first_argument_type & p,
+          	 const second_argument_type & x);}
+{Computes the sign of $p$ at $x$.} 
+
+\ccSeeAlso
+
+\ccRefIdfierPage{AlgebraicKernel_d_1::IsZeroAt_1}\\
+
+\end{ccRefFunctionObjectConcept}

@@ -1,0 +1,376 @@
+% +------------------------------------------------------------------------+
+% | Reference manual page: ParameterizationMesh_3.tex
+% +------------------------------------------------------------------------+
+% | 23.08.2005   Laurent Saboret, Pierre Alliez, Bruno Levy
+% | Package: Surface_mesh_parameterization
+% |
+\RCSdef{\RCSParameterizationMeshRev}{$Id$}
+\RCSdefDate{\RCSParameterizationMeshDate}{$Date$}
+% |
+\ccRefPageBegin
+%%RefPage: end of header, begin of main body
+% +------------------------------------------------------------------------+
+
+
+\begin{ccRefConcept}{ParameterizationMesh_3}
+
+%% \ccHtmlCrossLink{}     %% add further rules for cross referencing links
+%% \ccHtmlIndexC[concept]{} %% add further index entries
+
+
+\ccDefinition
+
+% The section below is automatically generated. Do not edit!
+%START-AUTO(\ccDefinition)
+
+\ccc{ParameterizationMesh_3} is a concept for a 3D surface mesh. Its main purpose is to allow the parameterization methods to access meshes in a uniform manner.
+
+A \ccc{ParameterizationMesh_3} surface consists of vertices, facets and an incidence relation on them. No notion of edge is requested. Vertices represent points in 3d-space. Facets are planar polygons without holes defined by the circular sequence of vertices along their border. The surface itself can have holes. The vertices along the border of a hole are called {\em border vertices}. A surface is {\em closed} if it contains no border vertices.
+
+The surface must be an oriented 2-manifold with border vertices, i.e. the neighborhood of each point on the surface is either homeomorphic to a disc or to a half disc, except for vertices where many holes and surfaces with border can join.
+
+\ccc{ParameterizationMesh_3} defines the types, data and methods that a mesh must implement to allow surface parameterization. Among other things, this concept defines accessors to fields specific to parameterizations methods: index, u, v, \ccc{is_parameterized}.
+
+\ccc{ParameterizationMesh_3} meshes can have any genus, arity or number of components. On the other hand, as parameterization methods deal only with topological disks, \ccc{ParameterizationMesh_3} defines an interface oriented towards topological disks.
+
+%END-AUTO(\ccDefinition)
+
+
+\ccHeading{Design Pattern}
+
+% The section below is automatically generated. Do not edit!
+%START-AUTO(\ccHeading{Design Pattern})
+
+\ccc{ParameterizationMesh_3} is an Adaptor \cite{cgal:ghjv-dpero-95}: it changes the interface of a 3D mesh to match the interface expected by the parameterization methods.
+
+%END-AUTO(\ccHeading{Design Pattern})
+
+
+\ccTypes
+
+The following mutable handles, iterators, and circulators have appropriate
+non-mutable counterparts, i.e. \ccc{const_handle},
+\ccc{const_iterator}, and \ccc{const_circulator}. The mutable types are
+assignable to their non-mutable counterparts.  Both circulators are
+assignable to the \ccc{Vertex_iterator}. The iterators are
+assignable to the respective handle types. Wherever the handles appear
+in function parameter lists, the corresponding iterators can be used as
+well.
+
+% The section below is automatically generated. Do not edit!
+%START-AUTO(\ccTypes)
+
+\ccNestedType{NT}
+{
+Number type to represent coordinates.
+}
+\ccGlue
+\ccNestedType{Point_2}
+{
+2D point that represents (u, v) coordinates computed by parameterization methods. Must provide X() and Y() methods.
+}
+\ccGlue
+\ccNestedType{Point_3}
+{
+3D point that represents vertices coordinates. Must provide X() and Y() methods.
+}
+\ccGlue
+\ccNestedType{Vector_2}
+{
+2D vector. Must provide X() and Y() methods.
+}
+\ccGlue
+\ccNestedType{Vector_3}
+{
+3D vector. Must provide X() and Y() methods.
+}
+\ccGlue
+\ccNestedType{Facet}
+{
+Opaque type representing a facet of the 3D mesh. No methods are expected.
+}
+\ccGlue
+\ccNestedType{Facet_handle}
+{
+Handle to a facet. Model of the Handle concept.
+}
+\ccGlue
+\ccNestedType{Facet_const_handle}
+{
+}
+\ccGlue
+\ccNestedType{Facet_iterator}
+{
+Iterator over all mesh facets. Model of the \ccc{ForwardIterator} concept.
+}
+\ccGlue
+\ccNestedType{Facet_const_iterator}
+{
+}
+\ccGlue
+\ccNestedType{Vertex}
+{
+Opaque type representing a vertex of the 3D mesh. No methods are expected.
+}
+\ccGlue
+\ccNestedType{Vertex_handle}
+{
+Handle to a vertex. Model of the Handle concept.
+}
+\ccGlue
+\ccNestedType{Vertex_const_handle}
+{
+}
+\ccGlue
+\ccNestedType{Vertex_iterator}
+{
+Iterator over all vertices of a mesh. Model of the \ccc{ForwardIterator} concept.
+}
+\ccGlue
+\ccNestedType{Vertex_const_iterator}
+{
+}
+\ccGlue
+\ccNestedType{Border_vertex_iterator}
+{
+Iterator over vertices of the mesh {\em main border}. Model of the \ccc{ForwardIterator} concept.
+}
+\ccGlue
+\ccNestedType{Border_vertex_const_iterator}
+{
+}
+\ccGlue
+\ccNestedType{Vertex_around_facet_circulator}
+{
+Counter-clockwise circulator over a facet's vertices. Model of the \ccc{BidirectionalCirculator} concept.
+}
+\ccGlue
+\ccNestedType{Vertex_around_facet_const_circulator}
+{
+}
+\ccGlue
+\ccNestedType{Vertex_around_vertex_circulator}
+{
+Clockwise circulator over the vertices incident to a vertex. Model of the \ccc{BidirectionalCirculator} concept.
+}
+\ccGlue
+\ccNestedType{Vertex_around_vertex_const_circulator}
+{
+}
+\ccGlue
+
+%END-AUTO(\ccTypes)
+
+
+\ccCreation
+\ccCreationVariable{mesh}  %% define variable name used by \ccMethod below
+
+Construction and destruction are undefined.
+
+% The section below is automatically generated. Do not edit!
+%START-AUTO(\ccCreation)
+%END-AUTO(\ccCreation)
+
+
+\ccOperations
+
+The following mutable methods returning a handle, iterator, or circulator have appropriate
+non-mutable counterpart methods, i.e. \ccc{const}, returning a \ccc{const_handle},
+\ccc{const_iterator}, or \ccc{const_circulator}.
+
+% The section below is automatically generated. Do not edit!
+%START-AUTO(\ccOperations)
+
+\ccMethod{bool is_valid() const;}
+{
+Indicate if the mesh matches the \ccc{ParameterizationMesh_3} concept.
+}
+\ccGlue
+\ccMethod{Vertex_iterator mesh_vertices_begin();}
+{
+Get iterator over first vertex of mesh.
+}
+\ccGlue
+\ccMethod{Vertex_const_iterator mesh_vertices_begin() const;}
+{
+}
+\ccGlue
+\ccMethod{Vertex_iterator mesh_vertices_end();}
+{
+Get iterator over past-the-end vertex of mesh.
+}
+\ccGlue
+\ccMethod{Vertex_const_iterator mesh_vertices_end() const;}
+{
+}
+\ccGlue
+\ccMethod{int count_mesh_vertices() const;}
+{
+Count the number of vertices of the mesh.
+}
+\ccGlue
+\ccMethod{void index_mesh_vertices();}
+{
+Index vertices of the mesh from 0 to \ccc{count_mesh_vertices}()-1.
+}
+\ccGlue
+\ccMethod{Border_vertex_iterator mesh_main_border_vertices_begin();}
+{
+Get iterator over first vertex of mesh's {\em main border}.
+}
+\ccGlue
+\ccMethod{Border_vertex_const_iterator mesh_main_border_vertices_begin() const;}
+{
+}
+\ccGlue
+\ccMethod{Border_vertex_iterator mesh_main_border_vertices_end();}
+{
+Get iterator over past-the-end vertex of mesh's {\em main border}.
+}
+\ccGlue
+\ccMethod{Border_vertex_const_iterator mesh_main_border_vertices_end() const;}
+{
+}
+\ccGlue
+\ccMethod{std::list<Vertex_handle> get_border(Vertex_handle seed_vertex);}
+{
+Return the border containing \ccc{seed_vertex}. Return an empty list if not found.
+}
+\ccGlue
+\ccMethod{Facet_iterator mesh_facets_begin();}
+{
+Get iterator over first facet of mesh.
+}
+\ccGlue
+\ccMethod{Facet_const_iterator mesh_facets_begin() const;}
+{
+}
+\ccGlue
+\ccMethod{Facet_iterator mesh_facets_end();}
+{
+Get iterator over past-the-end facet of mesh.
+}
+\ccGlue
+\ccMethod{Facet_const_iterator mesh_facets_end() const;}
+{
+}
+\ccGlue
+\ccMethod{int count_mesh_facets() const;}
+{
+Count the number of facets of the mesh.
+}
+\ccGlue
+\ccMethod{bool is_mesh_triangular() const;}
+{
+Return true of all mesh's facets are triangles.
+}
+\ccGlue
+\ccMethod{int count_mesh_halfedges() const;}
+{
+Count the number of halfedges of the mesh.
+}
+\ccGlue
+\ccMethod{Vertex_around_facet_circulator facet_vertices_begin(Facet_handle facet);}
+{
+Get circulator over facet's vertices.
+}
+\ccGlue
+\ccMethod{Vertex_around_facet_const_circulator facet_vertices_begin(Facet_const_handle facet) const;}
+{
+}
+\ccGlue
+\ccMethod{int count_facet_vertices(Facet_const_handle facet) const;}
+{
+Count the number of vertices of a facet.
+}
+\ccGlue
+\ccMethod{Point_3 get_vertex_position(Vertex_const_handle vertex) const;}
+{
+Get the 3D position of a vertex.
+}
+\ccGlue
+\ccMethod{Point_2 get_vertex_uv(Vertex_const_handle vertex) const;}
+{
+Get/set the 2D position (u/v pair) of a vertex. Default value is undefined.
+}
+\ccGlue
+\ccMethod{void set_vertex_uv(Vertex_handle vertex, const Point_2& uv);}
+{
+}
+\ccGlue
+\ccMethod{bool is_vertex_parameterized(Vertex_const_handle vertex) const;}
+{
+Get/set {\em is parameterized} field of vertex. Default value is undefined.
+}
+\ccGlue
+\ccMethod{void set_vertex_parameterized(Vertex_handle vertex, bool parameterized);}
+{
+}
+\ccGlue
+\ccMethod{int get_vertex_index(Vertex_const_handle vertex) const;}
+{
+Get/set vertex index. Default value is undefined.
+}
+\ccGlue
+\ccMethod{void set_vertex_index(Vertex_handle vertex, int index);}
+{
+}
+\ccGlue
+\ccMethod{int get_vertex_tag(Vertex_const_handle vertex) const;}
+{
+Get/set vertex' all purpose tag. Default value is undefined.
+}
+\ccGlue
+\ccMethod{void set_vertex_tag(Vertex_handle vertex, int tag);}
+{
+}
+\ccGlue
+\ccMethod{bool is_vertex_on_border(Vertex_const_handle vertex) const;}
+{
+Return true if a vertex belongs to ANY mesh's border.
+}
+\ccGlue
+\ccMethod{bool is_vertex_on_main_border(Vertex_const_handle vertex) const;}
+{
+Return true if a vertex belongs to the UNIQUE mesh's main border.
+}
+\ccGlue
+\ccMethod{Vertex_around_vertex_circulator vertices_around_vertex_begin(Vertex_handle vertex, Vertex_handle start_position = Vertex_handle());}
+{
+Get circulator over the vertices incident to \ccc{vertex}. \ccc{start_position} defines the optional initial position of the circulator.
+}
+\ccGlue
+\ccMethod{Vertex_around_vertex_const_circulator vertices_around_vertex_begin(Vertex_const_handle vertex, Vertex_const_handle start_position = Vertex_const_handle()) const;}
+{
+}
+\ccGlue
+
+%END-AUTO(\ccOperations)
+
+
+\ccHasModels
+
+% The section below is automatically generated. Do not edit!
+%START-AUTO(\ccHasModels)
+
+We provide 2 models of this concept:
+
+\ccc{Parameterization_polyhedron_adaptor_3<Polyhedron_3_>}  \\
+\ccc{Parameterization_mesh_patch_3<ParameterizationPatchableMesh_3>}
+
+%END-AUTO(\ccHasModels)
+
+
+\ccSeeAlso
+
+\ccRefIdfierPage{ParameterizationPatchableMesh_3}
+
+
+\end{ccRefConcept}
+
+% +------------------------------------------------------------------------+
+%%RefPage: end of main body, begin of footer
+\ccRefPageEnd
+% EOF
+% +------------------------------------------------------------------------+
+

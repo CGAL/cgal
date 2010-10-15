@@ -1,0 +1,31 @@
+
+
+\begin{ccRefClass}{halfedge_graph_traits< CGAL::Polyhedron_3<Traits> >}
+
+%% add template arg's if necessary
+
+%% \ccHtmlCrossLink{}     %% add further rules for cross referencing links
+%% \ccHtmlIndexC[class]{} %% add further index entries
+\ccDefinition
+
+The class \ccRefName\ is a partial specialization of \ccc{CGAL::halfedge_graph_traits}
+for \ccc{Polyhedron_3}. It provides the types associated 
+to the \ccc{HalfedgeGraph} concept.
+
+
+\ccInclude{CGAL/boost/graph/halfedge_graph_traits_Polyhedron_3.h}
+
+
+
+\ccTypes
+  \ccNestedType{undirected_edge_iterator}{An edge iterator that iterates 
+  over one of the two opposite edges forming an undirected edge.\\
+  The value type is \ccc{CGAL::Polyhedron_3::Halfedge_const_handle}.}
+
+  \ccTypedef{typename CGAL::Polyhedron_3<Traits>::Point_3 Point ;}
+  {The point type of the vertex.}
+
+
+
+
+\end{ccRefClass}

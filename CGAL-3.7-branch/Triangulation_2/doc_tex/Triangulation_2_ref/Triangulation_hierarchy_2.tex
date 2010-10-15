@@ -1,0 +1,83 @@
+% +------------------------------------------------------------------------+
+% | Reference manual page: Triangulation_hierarchy_2.tex
+% +------------------------------------------------------------------------+
+% | 16.08.2000   Mariette Yvinec
+% | Package: Triangulation
+% | 
+\RCSdef{\RCSTriangulationhierarchyRev}{$Id$}
+\RCSdefDate{\RCSTriangulationhierarchyDate}{$Date$}
+% |
+%%RefPage: end of header, begin of main body
+% +------------------------------------------------------------------------+
+
+
+\begin{ccRefClass}{Triangulation_hierarchy_2<Tr>}
+%% add template arg's if necessary
+
+\ccDefinition
+The class \ccRefName\ implements a triangulation augmented with
+a data structure which allows fast point location queries.
+
+The data structure is a hierarchy 
+of triangulations. The triangulation at the lowest level is
+the original triangulation where operations and point location are to 
+be performed.
+Then at each succeeding level, the data structure
+stores a triangulation of a small random sample of the vertices
+of the triangulation at the preceding level. 
+
+Point location
+is done through a top-down nearest neighbor query.
+The nearest neighbor query is first
+performed naively in the top level triangulation.
+Then, at each following level, the nearest neighbor at that level
+is found through a linear walk performed from
+the nearest neighbor found at the preceding level.
+
+Because the number of vertices in each triangulation is only a small
+fraction of the number of vertices of the preceding triangulation 
+the data structure remains small and achieves fast point location 
+queries on real
+data. As proved in~\cite{d-iirdt-98}, this structure has an optimal behavior
+when it is built for Delaunay triangulations.
+However it can be used as well for other triangulations.
+The class \ccRefName\ is templated by a parameter
+which is to be instantiated by anyone of the \cgal\ triangulation
+classes.
+
+\ccInclude{CGAL/Triangulation_hierarchy_2.h}
+
+\ccInheritsFrom
+\ccc{Tr}
+
+\ccTypes
+The class \ccRefName\ inherits the types from its base triangulation
+class \ccc{Tr}. 
+
+The class \ccRefName\ offers exactly the same functionalities
+as the triangulation Tr does.
+Location queries are overloaded to benefit from the
+data structure. Modifiers (insertion, removal, and displacement) are overloaded
+to take care of updating the data structure.
+
+Be careful that I/O operations are not overloaded.
+Writing a \ccRefName\  into a file
+writes only the lowest level triangulation and drop the hierarchy
+and reading it from a file results in a triangulation
+whose efficiency will be that of an ordinary triangulation.
+
+
+\ccSeeAlso
+\ccc{CGAL::Triangulation_2<Traits,Tds>} \\
+\ccc{CGAL::Delaunay_triangulation_2<Traits,Tds>} 
+\ccc{TriangulationHierarchyVertexBase_2}, \\
+\ccc{CGAL::Triangulation_hierarchy_vertex_base_2<Vb>}
+
+
+\end{ccRefClass}
+
+% +------------------------------------------------------------------------+
+%%RefPage: end of main body, begin of footer
+% EOF
+% +------------------------------------------------------------------------+
+

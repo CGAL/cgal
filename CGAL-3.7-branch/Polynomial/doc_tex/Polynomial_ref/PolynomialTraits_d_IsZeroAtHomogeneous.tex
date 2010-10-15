@@ -1,0 +1,41 @@
+\begin{ccRefConcept}{PolynomialTraits_d::IsZeroAtHomogeneous}
+\ccDefinition
+
+This \ccc{AdaptableFunctor} returns whether a
+\ccc{PolynomialTraits_d::Polynomial_d} $p$ is zero at a given homogeneous point,
+which is given by an iterator range.
+
+The polynomial is interpreted as a homogeneous polynomial in all variables. \\
+For instance the polynomial $p(x_0,x_1) = x_0^2x_1^3+x_1^4$ is interpreted as the homogeneous
+polynomial  $p(x_0,x_1,w) = x_0^2x_1^3+x_1^4w^1$.
+
+\ccRefines 
+\ccc{AdaptableFunctor}\\
+\ccc{CopyConstructible}\\
+\ccc{DefaultConstructible}\\
+
+\ccTypes
+
+\ccSetThreeColumns{xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx}{xxx}{}
+\ccCreationVariable{fo}
+\ccTypedef{typedef bool                        result_type;}{}\ccGlue
+
+\ccOperations
+\ccMethod{
+template <class InputIterator>
+result_type operator()(PolynomialTraits_d::Polynomial_d  p,
+                                 InputIterator                     begin,
+                                 InputIterator                     end );}{ 
+Computes whether $p$ is zero at the homogeneous point given by the iterator range, 
+where $begin$ is referring to the innermost variable.
+\ccPrecond{(end-begin==\ccc{PolynomialTraits_d::d}+1)}
+\ccPrecond{\ccc{std::iterator_traits< InputIterator >::value_type} is  \ccc{ExplicitInteroperable} with  \ccc{PolynomialTraits_d::Innermost_coefficient_type}.}
+}
+%\ccHasModels
+
+\ccSeeAlso
+
+\ccRefIdfierPage{Polynomial_d}\\
+\ccRefIdfierPage{PolynomialTraits_d}\\
+
+\end{ccRefConcept}

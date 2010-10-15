@@ -1,0 +1,32 @@
+\section{Fractions}
+
+Beyond the need for performing algebraic operations on objects as a 
+whole, there are also number types which one would like to decompose into 
+numerator and denominator. This does not only hold for rational numbers 
+as \ccc{Quotient}, \ccc{Gmpq}, \ccc{mpq_class} or \ccc{leda_rational}, but 
+also for compound objects as \ccc{Sqrt_extension} or \ccc{Polynomial} 
+which may decompose into a (scalar) 
+denominator and a compound numerator with a simpler coefficient type 
+(e.g. integer instead of rational). Often operations can be performed faster on 
+these denominator-free multiples. In case a type is a \ccc{Fraction} 
+the relevant functionality as well as the numerator and denominator 
+type are provided by \ccc{CGAL::Fraction_traits}. In particular  
+\ccc{CGAL::Fraction_traits} provides a tag \ccc{Is_fraction} that can be
+used for dispatching.
+
+A related class is \ccc{CGAL::Rational_traits} which has been kept for backward 
+compatibility reasons. However, we recommend to use \ccc{Fraction_traits} since
+it is more general and offers dispatching functionality. 
+
+\subsection{Examples}
+
+The following example show a simple use of \ccc{Fraction_traits}:
+\ccIncludeExampleCode{Algebraic_foundations/fraction_traits.cpp}
+
+The following example illustrates the integralization of a vector, 
+i.e., the coefficient vector of a polynomial. Note that for minimizing 
+coefficient growth \ccc{Fraction_traits<Type>::Common_factor} is used to 
+compute the 'least' common multiple of the denominators.
+
+\ccIncludeExampleCode{Algebraic_foundations/integralize.cpp}
+

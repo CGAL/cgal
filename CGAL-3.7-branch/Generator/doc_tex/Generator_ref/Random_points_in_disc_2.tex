@@ -1,0 +1,52 @@
+
+\begin{ccRefClass}{Random_points_in_disc_2<Point_2, Creator>}
+
+\ccDefinition
+
+The class \ccRefName\ is an input iterator creating points uniformly
+distributed in an open disc.  The default \ccc{Creator} is
+\ccc{Creator_uniform_2<Kernel_traits<P>::Kernel::RT,P>}.
+
+\ccIsModel
+InputIterator \\
+\ccRefConceptPage{PointGenerator}
+
+\ccInclude{CGAL/point_generators_2.h}
+
+\ccTypes
+
+\ccThree{typedef std::input_iterator_tagxxx}{xxxiterator_category;}{}
+\ccTypedef{typedef std::input_iterator_tag iterator_category;}{}
+\ccGlue
+\ccTypedef{typedef Point_2                 value_type;}{}
+\ccGlue
+\ccTypedef{typedef std::ptrdiff_t          difference_type;}{}
+\ccGlue
+\ccTypedef{typedef const Point_2*          pointer;}{}
+\ccGlue
+\ccTypedef{typedef const Point_2&          reference;}{}
+
+\ccOperations
+
+\ccCreationVariable{g}
+\ccConstructor{Random_points_in_disc_2( double r, Random& rnd =
+  default_random);}{%
+  $g$ is an input iterator creating points of type \ccc{Point_2} uniformly
+  distributed in the open disc with radius $r$,
+  i.e.~$|\ccc{*g}| < r$~. Two random numbers are needed from
+  \ccc{rnd} for each point.
+} 
+
+\ccSeeAlso
+
+\ccRefIdfierPage{CGAL::copy_n} \\
+\ccRefIdfierPage{CGAL::Counting_iterator} \\
+\ccRefIdfierPage{CGAL::Points_on_segment_2<Point_2>} \\
+\ccRefIdfierPage{CGAL::Random_points_in_square_2<Point_2, Creator>} \\
+\ccRefIdfierPage{CGAL::Random_points_on_circle_2<Point_2, Creator>} \\
+\ccRefIdfierPage{CGAL::Random_points_on_segment_2<Point_2, Creator>} \\
+\ccRefIdfierPage{CGAL::Random_points_on_square_2<Point_2, Creator>} \\
+\ccRefIdfierPage{CGAL::Random_points_in_sphere_3<Point_3, Creator>}
+\ccc{std::random_shuffle} \\
+
+\end{ccRefClass}

@@ -1,0 +1,109 @@
+% +------------------------------------------------------------------------+
+% | Reference manual page: Mesh_criteria_3.tex
+% +------------------------------------------------------------------------+
+% | 16.02.2009   Author
+% | Package: Package
+% |
+\RCSdef{\RCSMeshdefaultcriteriaRev}{$Id: header.tex 40270 2007-09-07 15:29:10Z lsaboret $}
+\RCSdefDate{\RCSMeshdefaultcriteriaDate}{$Date: 2007-09-07 17:29:10 +0200 (Ven, 07 sep 2007) $}
+% |
+\ccRefPageBegin
+%%RefPage: end of header, begin of main body
+% +------------------------------------------------------------------------+
+
+
+\begin{ccRefClass}{Mesh_criteria_3<Tr>}  %% add template arg's if necessary
+
+%% \ccHtmlCrossLink{}     %% add further rules for cross referencing links
+%% \ccHtmlIndexC[class]{} %% add further index entries
+
+\ccDefinition
+  
+The class \ccRefName\ is a model of \ccc{MeshCriteria_3}. 
+It gathers the criteria for  facets in the boundary surface meshes
+and for mesh tetrahedra.
+
+\ccInclude{CGAL/Mesh_criteria_3.h}
+
+\ccParameters
+The parameter \ccc{Tr} must be identical to the nested type
+\ccc{Triangulation} of the instance used as model of
+\ccc{MeshComplex_3InTriangulation_3}.
+
+\ccIsModel
+\ccc{MeshCriteria_3}
+
+
+\ccTypes
+
+\ccTypedef{typedef Mesh_facet_criteria_3<Tr>
+  Facet_criteria;}{The criteria for facets.}
+\ccGlue
+\ccTypedef{typedef Mesh_cell_criteria_3<Tr> Cell_criteria;}{The
+  criteria for cells.}
+
+
+\ccCreation
+\ccCreationVariable{mc}  %% choose variable name
+
+\ccConstructor{Mesh_criteria_3(
+         Facet_criteria facet_criteria,
+         Cell_criteria  cell_criteria);}
+{Construction from facet and cell criteria.}
+
+\ccConstructor{Mesh_criteria_3(
+         double facet_angle=0,
+         double facet_size=0,
+         double facet_distance=0,
+         double cell_radius_edge=0,
+         double cell_size=0);}
+{Construction from facet and cell parameters. This constructor uses named
+  parameters (from \emph{boost::parameters}) for convenient criteria
+  construction. Parameters \ccc{facet_*} corresponds to the parameters of
+  \ccc{Mesh_facet_criteria_3<Tr>} and parameters \ccc{cell_*} corresponds to the parameters of
+  \ccc{Mesh_cell_criteria_3<Tr>}. They can be passed in any order provided
+  their name is given. The naming of these parameters
+  is the following: each argument \ccc{argument_name} of the
+  constructor is named \ccc{parameters::argument_name} 
+ (e.g. \ccc{parameters::facet_angle} for \ccc{facet_angle}). The
+ default values are such that the corresponding criterion is
+ ignored if one parameter is not set (e.g. if \ccc{parameters::facet_angle} is
+ not given, facet angular bound criterion is ignored).}
+
+
+\ccSeeAlso
+
+\ccc{MeshCriteria_3} \\
+\ccc{MeshCellCriteria_3} \\
+\ccc{MeshFacetCriteria_3}\\
+\ccc{Mesh_cell_criteria_3<Tr>} \\
+\ccc{Mesh_facet_criteria_3<Tr>}
+
+
+\ccExample
+
+\begin{ccExampleCode}
+// Create a Mesh_criteria_3<Tr> object with all parameters set
+Mesh_criteria_3<Tr> criteria (parameters::facet_angle=30,
+                              parameters::facet_size=1,
+                              parameters::facet_distance=0.1,
+                              parameters::cell_radius_edge=2,
+                              parameters::cell_size=1.5);
+
+// Create a Mesh_criteria_3<Tr> object with size ignored (note that the order changed)
+Mesh_criteria_3<Tr> criteria (parameters::cell_radius_edge=2,
+                              parameters::facet_angle=30,
+                              parameters::facet_distance=0.1);
+\end{ccExampleCode}
+
+
+%% \ccIncludeExampleCode{Package/Mesh_criteria_3.C}
+
+\end{ccRefClass}
+
+% +------------------------------------------------------------------------+
+%%RefPage: end of main body, begin of footer
+\ccRefPageEnd
+% EOF
+% +------------------------------------------------------------------------+
+

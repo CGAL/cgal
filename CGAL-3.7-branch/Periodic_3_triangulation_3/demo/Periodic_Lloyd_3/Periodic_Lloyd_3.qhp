@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<QtHelpProject version="1.0">
+    <namespace>org.cgal.demos.periodic_lloyd_3</namespace>
+    <virtualFolder>doc</virtualFolder>
+    <filterSection>
+        <toc>
+	  <section title="CGAL Periodic Lloyd Demo"
+		   ref="./documentation/index.html">
+	    <section title="Introduction" ref="./documentation/introduction.html"></section>
+	    <section title="Menu" ref="./documentation/menu.html">
+	      <section title = "File Menu"
+		       ref="./documentation/menu.html#File"></section>
+	      <section title = "Control Menu"
+		       ref="./documentation/menu.html#Control"></section>
+	    </section>
+	  </section>
+	</toc>
+        <files>
+            <file>documentation/index.html</file>
+            <file>documentation/introduction.html</file>
+            <file>documentation/menu.html</file>
+            <file>documentation/images/mainwindow.png</file>
+	    <file>icons/fileNew.png</file>
+	    <file>icons/fileOpen.png</file>
+	    <file>icons/fileSave.png</file>
+	    <file>icons/step.png</file>
+	    <file>icons/play.png</file>
+	    <file>icons/cp8.png</file>
+	    <file>icons/planar.png</file>
+            </files>
+        </filterSection>
+    </QtHelpProject>

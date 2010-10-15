@@ -1,0 +1,145 @@
+\section{Third Party Software}
+
+In this section we list the software that is used by the various
+\cgal\ packages.
+
+
+\subsection{Standard Template Library \label{thirdparty:stl}}
+
+\cgal\ heavily uses the {\sc Stl}, and in particular adopted
+many of its design ideas.   The {\sc Stl} comes with the compiler,
+but it is possible to use the compiler together with an
+alternative {\sc Stl} implementation. You can find online
+documentation for the {\sc Stl} at various web sites, e.g., 
+\path+http://www.sgi.com/tech/stl/+, \path+http://www.cplusplus.com/reference/stl/+,
+or \path+http://msdn.microsoft.com/en-us/library/1fe2x6kt(VS.71).aspx+.
+
+
+\subsection{Boost \label{thirdparty:Boost}}
+
+Boost is a collection of libraries. \cgal\ needs some of them, that is
+it is mandatory.  If Boost is not already on your system, e.g., on
+Windows, you can download it from \path'http://www.boost.org'.
+
+
+\subsection{Blas \label{thirdparty:Blas}}
+
+The \blas\ (Basic Linear Algebra Subprograms) are routines that provide
+standard building blocks for performing basic vector and matrix operations.
+In \cgal, \blas\ is required by the packages
+\ccRef[Estimation of Local Differential Properties]{Pkg:Jet_fitting_3}
+and \ccRef[Approximation of Ridges and Umbilics]{Pkg:Ridges_3} only.
+
+You can download the official release from \path'http://www.netlib.org/blas/'
+or download optimized implementations from \path'http://www.netlib.org/blas/faq.html#5'.
+Alternatively, installing \taucs\ provides \blas.
+
+
+\subsection{Lapack \label{thirdparty:Lapack}}
+
+\lapack\ provides routines for solving systems of simultaneous linear equations,
+least-squares solutions of linear systems of equations, eigenvalue problems,
+and singular value problems.
+In \cgal, \lapack\ is required by the packages
+\ccRef[Estimation of Local Differential Properties]{Pkg:Jet_fitting_3}
+and \ccRef[Approximation of Ridges and Umbilics]{Pkg:Ridges_3} only.
+
+You can download the official release from \path'http://www.netlib.org/lapack/'.
+Alternatively, installing \taucs\ customized for \cgal\ provides \lapack.
+
+
+\subsection{GMP \label{thirdparty:GMP}}
+
+A library for multi precision integers and rational numbers.
+\cgal\ offers adapters for these number types. The usage
+of the {\sc Gmp} library is optional.  If it is not already on your system,
+e.g., on Windows, you can download it from \path'http://gmplib.org/'
+or from the download section of \path'http://www.cgal.org'.
+
+
+\subsection{MPFR \label{thirdparty:MPFR}}
+
+A library for multi precision floating point numbers.  The usage of
+the {\sc Mpfr} library is optional, and you must install it when you
+use {\sc Gmp}.  You can download {\sc Mpfr} from \path'http://www.mpfr.org'
+or from the download section of \path'http://www.cgal.org'.
+
+\subsection{RS \label{thirdparty:RS}}
+
+\rs{} stands for Real Solutions and is devoted to the study of the real
+roots of polynomial systems with a finite number of complex roots
+(including univariate polynomials). \rs{} is used only by one model of the
+\ccRef[Algebraic Kernel]{Pkg:AlgebraicKerneld}.
+
+\rs{} is freely distributable for non-commercial use. You can download it
+from \rspage{}.
+
+\subsection{Leda \label{thirdparty:Leda}}
+
+A library of efficient data structures and algorithms. \cgal\ offers
+adapters to the {\sc Leda} number types. The usage is optional.
+It is available commercially from \path'http://www.algorithmic-solutions.com',
+and there exists a binary ``free edition''.
+
+
+\subsection{Taucs \label{thirdparty:Taucs}}
+
+\taucs\ is a library of sparse linear solvers.
+In \cgal, it is used to improve the computations within the
+\ccRef[Planar Parameterization of Triangulated Surface Meshes]{Pkg:SurfaceParameterization}
+package only.
+
+The \taucs\ web site is \path'http://www.tau.ac.il/~stoledo/taucs/'.\\
+The latest official version is \taucs\ version 2.2, September 4, 2003.
+Copyright (c) 2001, 2002, 2003 by Sivan Toledo, Tel-Aviv University,
+stoledo@tau.ac.il. All Rights Reserved.\\
+See \path'http://www.tau.ac.il/~stoledo/taucs/' for the license and the availability note.\\
+Used by permission of Sivan Toledo.
+
+The \cgal\ project provides a modified version of \taucs\ in the download
+section of \path'http://www.cgal.org'. This version fixes some bugs,
+supports 64-bit platforms and allows a simplified installation process.
+It also contains a complete \lapack\ implementation.\\
+{\em CAUTION:} Since version 3.3.1, \cgal\ is no longer compatible with the official
+release of \taucs\ (currently 2.2). Make sure to use the modified
+version provided in the download section.
+
+
+\subsection{OpenNL \label{thirdparty:OpenNL}}
+
+OpenNL (Open Numerical Library) is a library to easily construct and solve
+sparse linear systems. It is the default solver of the
+\ccRef[Surface Mesh Parameterization]{Pkg:SurfaceParameterization} package.
+
+OpenNL's main page is \path'http://www.loria.fr/~levy/software/'.
+
+\cgal\ includes a version of OpenNL in C++, made especially for \cgal\ by Bruno L\'evy.
+
+
+\subsection{zlib \label{thirdparty:zlib}}
+
+A data compression library.
+It is used in the examples of the \ccRef[Surface Mesh Generation]{Pkg:SurfaceMesher3} package.
+If it is not already on your system,
+e.g., on Windows, you can download it from  \path'http://www.gzip.org/zlib'.
+
+\subsection{Qt \label{thirdparty:Qt}}
+
+Qt is a cross-platform application framework. The usage of Qt is optional, but note that
+it is used for many \cgal\ 2D as well as 3D demos.
+
+As Qt is the layer underneath {\sc Kde}, Qt is installed
+on many Linux systems. Otherwise you can download it from
+ \path'http://qt.nokia.com/'.
+
+\subsection{libQGLViewer \label{thirdparty:libQGLViewer}}
+
+A 3D widget based on \qt~4's \ccc{QGLWidget}. It can be downloaded from
+\path'http://www.libqglviewer.com/'.
+
+\subsection{Coin \label{thirdparty:Coin}}
+
+An implementation of Open Inventor.  It is used in the demo
+of the \ccRef[Kinetic Data Structures]{Pkg:Kds} package. You can download
+it from \path'http://www.coin3d.org/'.
+

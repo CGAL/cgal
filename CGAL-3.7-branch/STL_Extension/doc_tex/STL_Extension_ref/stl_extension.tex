@@ -1,0 +1,1874 @@
+%% =============================================================================
+%% The CGAL Reference Manual
+%% Chapter: STL Extensions - The Reference Part
+%% -----------------------------------------------------------------------------
+%% file  : doc_tex/support/STL_Extension/STL_Extension_ref/stl_extension.tex
+%% author: Michael Hoffmann, Lutz Kettner 
+%% -----------------------------------------------------------------------------
+%% $CGAL_Chapter: STL_Extension $
+%% $Id$
+%% $Date$
+%% =============================================================================
+
+%% +=========================================================================+
+
+%% +---------------------------------------------+
+\begin{ccRefFunction}{predecessor}
+  \label{sectionPredecessor}
+  \label{sectionGenericFunctions}
+
+  \ccDefinition The function \ccRefName\ returns the previous iterator,
+  i.e. the result of \ccc{operator--} on a bidirectional iterator.
+  
+  \ccInclude{CGAL/algorithm.h}
+  
+  \ccThree{BidirectionalIterator}{predecessor}{}
+  \ccFunction{template <class BidirectionalIterator>
+              BidirectionalIterator predecessor(BidirectionalIterator it);}
+    {returns \ccc{--it}.}
+  
+  \ccSeeAlso
+  \ccRefIdfierPage{CGAL::successor}
+\end{ccRefFunction}
+
+%% +---------------------------------------------+
+\begin{ccRefFunction}{successor}
+  \label{sectionSuccessor}
+
+  \ccDefinition The function \ccRefName\ returns the next iterator, i.e.
+  the result of \ccc{operator++} on a forward iterator.
+  
+  \ccInclude{CGAL/algorithm.h}
+  
+  \ccThree{ForwardIterator}{successor}{}
+  \ccFunction{template <class ForwardIterator>
+              ForwardIterator successor(ForwardIterator it);}
+    {returns \ccc{++it}.}
+  
+  \ccSeeAlso
+  \ccRefIdfierPage{CGAL::predecessor}
+\end{ccRefFunction}
+
+%% +---------------------------------------------+
+\begin{ccRefFunction}{copy_n}
+  \label{sectionCopyN}
+
+  \ccDefinition The function \ccRefName\ copies $n$ items from an
+  input iterator to an output iterator which is useful for possibly
+  infinite
+  sequences of random geometric objects.\footnote{%
+    The \stl\ release June 13, 1997, from SGI contains an equivalent
+    function, but it is not part of the ISO standard.}
+  
+  \ccInclude{CGAL/algorithm.h}
+  
+  \ccThree{OutputIterator}{copy_n}{}
+  \ccFunction{template <class InputIterator, class Size, class
+    OutputIterator> OutputIterator copy_n(InputIterator first, Size n,
+    OutputIterator result);}{copies the first $n$ items from
+    \ccc{first} to \ccc{result}. Returns the value of \ccc{result}
+    after inserting the $n$ items.}
+  
+  \ccSeeAlso
+  \ccRefIdfierPage{CGAL::Counting_iterator<Iterator, Value>}
+\end{ccRefFunction}
+
+%% +---------------------------------------------+
+\begin{ccRefFunction}{min_max_element}
+  \label{sectionMinmaxelement}
+  
+  \ccDefinition The function \ccRefName\ computes the minimal and the
+  maximal element of a range. It is modeled after the STL functions
+  \ccc{min_element} and \ccc{max_element}. The advantage of
+  \ccc{min_max_element} compared to calling both STL functions is that
+  one only iterates once over the sequence. This is more efficient
+  especially for large and/or complex sequences.
+
+  \ccInclude{CGAL/algorithm.h}
+  
+  \ccFunction{template < class ForwardIterator > std::pair<
+    ForwardIterator, ForwardIterator > min_max_element(ForwardIterator
+    first, ForwardIterator last);}{returns a pair of iterators where
+    the first component refers to the minimal and the second component
+    refers to the maximal element in the range [\ccc{first},
+    \ccc{last}). The ordering is defined by \ccc{operator<} on the
+    value type of \ccc{ForwardIterator}.}
+  
+  \ccFunction{template < class ForwardIterator, class CompareMin,
+    class CompareMax > std::pair< ForwardIterator, ForwardIterator >
+    min_max_element(ForwardIterator first, ForwardIterator last,
+    CompareMin comp_min, CompareMax comp_max);}{returns a pair of
+    iterators where the first component refers to the minimal and the
+    second component refers to the maximal element in the range
+    [\ccc{first}, \ccc{last}). \ccRequire
+    \ccc{CompareMin} and \ccc{CompareMax} are adaptable binary
+    function objects:
+    \ccc{VT}~$\times$~\ccc{VT}~$\rightarrow$~\ccc{bool} where \ccc{VT}
+    is the value type of \ccc{ForwardIterator}.}
+  
+  \ccExample The following example program computes the minimal and
+  maximal element of the sequence $(3,\,6,\,5)$. Hence the output is
+  \ccc{min = 3, max = 6}.
+  
+  \ccIncludeExampleCode{STL_Extension/min_max_element_example.cpp}
+
+\end{ccRefFunction}
+
+%% Michael: I commented these, as I think they should be replaced by combining 
+%% Filter_iterator with std::min/max_element().
+%%
+%% %% +---------------------------------------------+
+%% \begin{ccRefFunction}{min_element_if}
+%%   \label{sectionMinElementIf}
+  
+%%   \ccDefinition The function \ccRefName\ computes the minimum among
+%%   the elements of a range which satisfy a certain predicate. It is
+%%   modeled after the STL function \ccc{min_element}.
+
+%%   \ccInclude{CGAL/algorithm.h}
+  
+%%   \ccFunction{template < class ForwardIterator, class Predicate >
+%%     ForwardIterator min_element_if(ForwardIterator first,
+%%     ForwardIterator last, Predicate pred);}{returns an iterator
+%%     referring to the minimal element among those satifying the
+%%     predicate \ccc{pred} in the range [\ccc{first}, \ccc{last}). The
+%%     ordering is defined by the \ccc{operator<} on \ccc{VT} where
+%%     \ccc{VT} is the value type of \ccc{ForwardIterator}.
+%%     \ccRequire \ccc{pred} is an unary function
+%%     object: \ccc{VT}~$\rightarrow$~\ccc{bool}.}
+  
+%%   \ccFunction{template < class ForwardIterator, class Compare, class
+%%     Predicate > ForwardIterator min_element_if(ForwardIterator first,
+%%     ForwardIterator last, Compare comp, Predicate pred);} {return an
+%%     iterator referring to the minimal element among those satifying
+%%     the predicate \ccc{pred} in the range [\ccc{first}, \ccc{last}).
+%%     The ordering is defined by \ccc{comp}.
+%%     \ccRequire \ccc{comp} is a binary function
+%%     object: \ccc{VT}~$\times$~\ccc{VT}~$\rightarrow$~\ccc{bool} where
+%%     \ccc{VT} is the value type of \ccc{ForwardIterator}. \ccc{pred} is
+%%     an unary function object: \ccc{VT}~$\rightarrow$~\ccc{bool}.}
+  
+%%   \ccSeeAlso
+%%   \ccRefIdfierPage{CGAL::max_element_if}\\
+%%   \ccRefIdfierPage{CGAL::min_max_element}
+
+%%   \ccExample The following example program computes the minimal odd
+%%   element of the sequence $(3,\,5,\,2)$. Hence the output is
+%%   \ccc{min_odd = 3}.
+  
+%%   \ccIncludeExampleCode{STL_Extension_ref/min_element_if_example.cpp}
+
+%% \end{ccRefFunction}
+
+%% %% +---------------------------------------------+
+%% \begin{ccRefFunction}{max_element_if}
+  
+%%   \ccDefinition The function \ccRefName\ computes the maximum among
+%%   the elements of a range which satisfy a certain predicate. It is
+%%   modeled after the STL function \ccc{max_element}.
+
+%%   \ccInclude{CGAL/algorithm.h}
+  
+%%   \ccFunction{template < class ForwardIterator, class Predicate >
+%%     ForwardIterator max_element_if(ForwardIterator first,
+%%     ForwardIterator last, Predicate pred);}{returns an iterator
+%%     referring to the maximal element among those satifying the
+%%     predicate \ccc{pred} in the range [\ccc{first}, \ccc{last}). The
+%%     ordering is defined by the \ccc{operator<} on \ccc{VT} where
+%%     \ccc{VT} is the value type of \ccc{ForwardIterator}.
+%%     \ccRequire \ccc{pred} is an unary function
+%%     object: \ccc{VT}~$\rightarrow$~\ccc{bool}.}
+  
+%%   \ccFunction{template < class ForwardIterator, class Compare, class
+%%     Predicate > ForwardIterator max_element_if(ForwardIterator first,
+%%     ForwardIterator last, Compare comp, Predicate pred);} {return an
+%%     iterator referring to the maximal element among those satifying
+%%     the predicate \ccc{pred} in the range [\ccc{first}, \ccc{last}).
+%%     The ordering is defined by \ccc{comp}.
+%%     \ccRequire \ccc{comp} is a binary function
+%%     object: \ccc{VT}~$\times$~\ccc{VT}~$\rightarrow$~\ccc{bool} where
+%%     \ccc{VT} is the value type of \ccc{ForwardIterator}. \ccc{pred} is
+%%     an unary function object: \ccc{VT}~$\rightarrow$~\ccc{bool}.}
+
+%%   \ccSeeAlso
+%%   \ccRefIdfierPage{CGAL::min_element_if}\\
+%%   \ccRefIdfierPage{CGAL::min_max_element}
+
+%% \end{ccRefFunction}
+
+%% +=========================================================================+
+
+\begin{ccRefClass}{Dispatch_output_iterator<V,O>}
+
+  \ccCreationVariable{i}
+
+  \ccDefinition The class \ccClassTemplateName\ defines an
+  \ccc{OutputIterator} that contains a tuple of output iterators, and dispatches
+  among those based on the type of the value type which is put in it.
+  It also inherits from \ccc{O}, which makes it easy to treat like a tuple.
+
+  \ccParameters
+  \ccc{V} must be a \ccc{CGAL::cpp0x::tuple<...>} of the types of values to be accepted and dispatched.
+  \ccc{O} must be a \ccc{CGAL::cpp0x::tuple<...>} of the types of corresponding output iterators.
+
+  \ccInclude{CGAL/iterator.h}
+
+  \ccIsModel
+  \ccc{OutputIterator}
+
+  \ccInheritsFrom \ccc{O}
+
+  \ccTypes
+
+  \ccTypedef{typedef V Value_type_tuple;}{}
+  \ccGlue
+  \ccTypedef{typedef O Iterator_tuple;}{}
+
+  \ccCreation
+
+  \ccTwo{Exptyset_iterator()}{}
+
+  \ccConstructor{Dispatch_output_iterator(I...o);}{Constructor taking all the output iterators.}
+
+  \ccMemberFunction{const Iterator_tuple& get_iterator_tuple() const;}
+  {returns a reference to the tuple of output iterators.}
+
+  \ccFunction{template < typename... V, typename... O>
+              Dispatch_output_iterator<tuple<V...>, tuple<O...> >
+              dispatch_output(O... o);}
+  {returns a \ccc{Dispatch_output_iterator} constructed from the arguments.}
+
+  \ccSeeAlso
+  \ccRefIdfierPage{CGAL::Dispatch_or_drop_output_iterator<V,O>}
+
+\end{ccRefClass}
+
+
+\begin{ccRefClass}{Dispatch_or_drop_output_iterator<V,O>}
+
+  \ccCreationVariable{i}
+
+  \ccDefinition The class \ccClassTemplateName\ defines an
+  \ccc{OutputIterator} that contains a tuple of output iterators, and dispatches
+  among those based on the type of the value type which is put in it.
+  Other types are also accepted, and the object is simply discarded in this case.
+  It also inherits from \ccc{O}, which makes it easy to treat like a tuple.
+
+  \ccParameters
+  \ccc{V} must be a \ccc{CGAL::cpp0x::tuple<...>} of the types of values to be accepted and dispatched.
+  \ccc{O} must be a \ccc{CGAL::cpp0x::tuple<...>} of the types of corresponding output iterators.
+
+  \ccInclude{CGAL/iterator.h}
+
+  \ccIsModel
+  \ccc{OutputIterator}
+
+  \ccInheritsFrom \ccc{O}
+
+  \ccTypes
+
+  \ccTypedef{typedef V Value_type_tuple;}{}
+  \ccGlue
+  \ccTypedef{typedef O Iterator_tuple;}{}
+
+  \ccCreation
+
+  \ccTwo{Exptyset_iterator()}{}
+
+  \ccConstructor{Dispatch_or_drop_output_iterator(I...o);}{Constructor taking all the output iterators.}
+
+  \ccMemberFunction{const Iterator_tuple& get_iterator_tuple() const;}
+  {returns a reference to the tuple of output iterators.}
+
+  \ccFunction{template < typename... V, typename... O>
+              Dispatch_or_drop_output_iterator<tuple<V...>, tuple<O...> >
+              dispatch_or_drop_output(O... o);}
+  {returns a \ccc{Dispatch_or_drop_output_iterator} constructed from the arguments.}
+
+  \ccSeeAlso
+  \ccRefIdfierPage{CGAL::Dispatch_output_iterator<V,O>}
+
+\end{ccRefClass}
+
+
+\begin{ccRefClass}{Emptyset_iterator}
+  \label{sectionEmptysetIterator}
+
+  \ccCreationVariable{i}
+  
+  \ccDefinition The class \ccClassName\ defines an
+  \ccc{OutputIterator} that ignores everything written to it. One can
+  think of it as being connected to \texttt{/dev/null}.
+
+  \ccInclude{CGAL/iterator.h}
+
+  \ccIsModel
+  \ccc{OutputIterator}
+  
+  \ccCreation
+
+  \ccTwo{Emptyset_iterator()}{}
+  
+  \ccConstructor{Emptyset_iterator();}{default constructor.}
+  
+  \ccSeeAlso
+  \ccRefIdfierPage{CGAL::Oneset_iterator}\\
+  \ccRefIdfierPage{CGAL::Const_oneset_iterator}
+
+\end{ccRefClass}
+
+\begin{ccRefClass}{Oneset_iterator<T>}
+  \label{sectionOnesetIterator}
+
+  \ccCreationVariable{i}
+  
+  \ccDefinition The class \ccClassTemplateName\ defines an
+  \ccc{BidirectionalIterator} that always refers to one specific
+  object of type \ccc{T}.  Internally, \ccClassTemplateName\ stores a
+  pointer to the referred object.
+  
+  \ccInclude{CGAL/iterator.h}
+
+  \ccIsModel
+  \ccc{BidirectionalIterator}
+  
+  \ccCreation
+
+  \ccTwo{Oneset_iterator(T& t);}{}
+  
+  \ccTagFullDeclarations\ccConstructor{Oneset_iterator(T& t);}{creates
+    an iterator referring to \ccc{t}.}\ccTagDefaults
+  
+  \ccSeeAlso
+  \ccRefIdfierPage{CGAL::Emptyset_iterator}\\
+  \ccRefIdfierPage{CGAL::Const_oneset_iterator}
+
+\end{ccRefClass}
+
+\begin{ccRefClass}{Const_oneset_iterator<T>}
+  \label{sectionConst_onesetIterator}
+
+  \ccCreationVariable{i}
+  
+  \ccDefinition The class \ccClassTemplateName\ defines an
+  \ccc{RandomAccessIterator} that always refers to a copy of a
+  specific object of type \ccc{T}.
+  
+  \ccInclude{CGAL/iterator.h}
+
+  \ccIsModel
+  \ccc{RandomAccessIterator}
+  
+  \ccCreation
+
+  \ccTwo{Const_oneset_iterator(const T& t);}{}
+  
+  \ccTagFullDeclarations\ccConstructor{Const_oneset_iterator(T&
+    t);}{creates an iterator that always refers to some copy of
+    \ccc{t}.  The copy is constructed by invoking \ccc{T}'s copy
+    constructor and remains constant during $i$'s
+    lifetime.}\ccTagDefaults
+  
+  \ccSeeAlso
+  \ccRefIdfierPage{CGAL::Emptyset_iterator}\\
+  \ccRefIdfierPage{CGAL::Oneset_iterator}
+
+\end{ccRefClass}
+
+%% +--------------------------------------------------------+
+\begin{ccRefClass}{Counting_iterator<Iterator, Value>}
+  \label{sectionCountingIterator}
+
+  \ccCreationVariable{i}
+  
+  \ccDefinition The iterator adaptor \ccClassTemplateName\ adds a
+  counter to the internal iterator of type \ccc{Iterator} and defines
+  equality of two instances in terms of this counter. It can be used
+  to create finite sequences of possibly infinite sequences of values
+  from input iterators.
+
+  \ccInclude{CGAL/iterator.h}
+
+  \ccIsModel
+  \ccc{InputIterator}
+  
+  \ccRequirements \ccc{Iterator} is a model for
+  \ccc{InputIterator}.
+
+  \ccCreation
+
+  \ccTwo{Identity<Value>MMMMMM}{}
+  
+  \ccConstructor{Counting_iterator( std::size_t n = 0);}{initializes
+    the internal counter to $n$ and \ccVar\ has a singular value.}
+  
+  \ccConstructor{Counting_iterator( Iterator j, std::size_t n = 0);}{
+    initializes the internal counter to $n$ and \ccVar\ to $j$.}
+
+  \ccSeeAlso
+  \ccRefIdfierPage{CGAL::copy_n}
+
+\end{ccRefClass}
+
+%% +--------------------------------------------------------+
+\begin{ccRefClass}{Insert_iterator<Container>}
+  \label{sectionInsertIterator}
+
+  \ccCreationVariable{i}
+  
+  \ccDefinition The output iterator \ccClassTemplateName\ is similar
+  to \ccc{std::insert_iterator}, but differs in that it calls the
+  \ccc{insert()} function of the container without the iterator
+  additional argument.
+
+  \ccInclude{CGAL/iterator.h}
+
+  \ccIsModel
+  \ccc{OutputIterator}
+  
+  \ccRequirements \ccc{Container} provides a member function
+  \ccc{insert(const Container::const_reference&)}.
+
+  \ccCreation
+
+  \ccTwo{Identity<Value>MMMMMM}{}
+  
+  \ccConstructor{Insert_iterator( Container &c );}{initializes
+    the internal container reference to $c$.}
+
+  There is also a global function similar to \ccc{std::inserter}:
+
+  \ccFunction{template < class Container >
+              Insert_iterator<Container>
+              inserter(Container &x);}
+  { Constructs \ccc{Insert_iterator<Container>(x)}. }
+  
+\end{ccRefClass}
+
+%% +--------------------------------------------------------+
+\begin{ccRefClass}{N_step_adaptor<I,int N>}
+  \ccCreationVariable{i}
+  
+  \ccDefinition The adaptor \ccRefName\ changes the step width of the
+  iterator or circulator class \ccStyle{I} to $N$. It is itself an
+  iterator or circulator respectively. The behavior is undefined if
+  the adaptor is used on a range [$i,j$) where $j-i$ is not a multiple
+  of $n$.
+  
+  \ccInclude{CGAL/iterator.h}
+  
+  \ccCreation
+  \ccTwo{N_step_adaptor<I,int N> i( I j);;M}{}
+  
+  \ccConstructor{N_step_adaptor(const I& j);}{down cast.}
+  
+\end{ccRefClass}
+
+\begin{ccRefClass}{Filter_iterator<Iterator, Predicate>}
+  \label{sectionFilterIterator}
+
+  \ccCreationVariable{i}
+  
+  \ccDefinition The iterator adaptor \ccClassTemplateName\ acts as a
+  filter on a given range. Whenever the iterator is in-- or
+  decremented, it ignores all iterators for which the given
+  \ccc{Predicate} is true. The iterator category is the same as for
+  \ccc{Iterator}.
+
+  Note: Boost also provides the same functionality via the
+  \ccc{boost::filter_iterator} class.  Unfortunately, the semantics
+  chosen for accepting or rejecting elements based on the predicate's
+  result are opposite as the semantic chosen here. What is more, the
+  argument of the predicate is different: the predicate used with
+  \ccc{boost::filter_iterator} must take the value type of the iterator, as
+  argument, and not the iterator itself.
+
+  \ccInclude{CGAL/iterator.h}
+  
+  \ccRequirements
+  \begin{itemize}
+  \item \ccc{Iterator} is a model for \ccc{ForwardIterator}.
+  \item \ccc{Predicate} is a functor: \ccc{Iterator} $\rightarrow$
+    \ccc{bool}.
+  \end{itemize}
+
+  \ccCreation
+
+  %%\ccTwo{Identity<Value>MMMMMM}{}
+  
+  \ccConstructor{Filter_iterator();}{}
+  
+  \ccConstructor{Filter_iterator(Iterator e, Predicate p, Iterator c = e);}
+   {creates an iterator which filters values according to \ccc{p}.
+    Initializes by taking the first valid iterator (according to \ccc{p}),
+    starting at \ccc{c}, and stopping at \ccc{e} if none is found.}
+
+  There is also a global function to help the use of \ccClassTemplateName{}:
+
+  \ccFunction{template < class Iterator, class Predicate >
+    inline Filter_iterator< Iterator, Predicate >
+    filter_iterator(Iterator e, const Predicate& p, Iterator c = e);}
+  { Constructs \ccc{Filter_iterator<Iterator, Predicate>(e, p, c)}. }
+\end{ccRefClass}
+
+%% +---------------------------------------------+
+
+\begin{ccRefClass}{Join_input_iterator_1<Iterator, Creator>}
+  \label{sectionJoinInputIterator}
+  
+  \ccDefinition The class \ccRefName\ joins an iterator and a creator
+  function object. The result is again an iterator (of the same
+  iterator category type as the original iterator) that reads an object
+  from the stream and applies a creator function object to that
+  object.
+
+  \ccInclude{CGAL/iterator.h}
+  
+  \ccIsModel \ccc{InputIterator}
+
+  \ccTypes
+  \ccNestedType{value_type}{typedef to \ccc{Creator::result_type}.}
+  
+  \ccCreation\ccCreationVariable{join}
+  
+  \ccConstructor{Join_input_iterator_1( Iterator i, const Creator&
+    creator);} {creates a join iterator from the given iterator $i$
+    and the functor \ccc{creator}. Applies \ccc{creator} to each item
+    read from $i$.}
+
+  \ccConstructor{Join_input_iterator_1( Iterator i);} {creates a join
+    iterator from the given iterator $i$ and a default constructed
+    instance of \ccc{Creator}. The latter instance is applied to each
+    item read from $i$.}
+
+  \ccSeeAlso
+  \ccRefIdfierPage{CGAL::Creator_1<Arg, Result>}
+\end{ccRefClass}
+
+
+%%  +--------------------------------------------------------+
+\begin{ccRefClass}{Inverse_index<IC>}
+  
+  \ccDefinition The class \ccClassTemplateName\ constructs an inverse
+  index for a given range [$i,j$) of two iterators or circulators of
+  type \ccc{IC}.  The first element $I$ in the range [$i,j$) has the
+  index 0.  Consecutive elements are numbered incrementally. The
+  inverse index provides a query for a given iterator or circulator
+  $k$ to retrieve its index number. {\em Precondition:}\/ The iterator
+  or circulator must be either of the random access category or the
+  dereference operator must return stable and distinguishable
+  addresses for the values, e.g.~proxies or non-modifiable iterator
+  with opaque values will not work.
+
+  \ccInclude{CGAL/iterator.h}
+
+  \ccCreation\ccCreationVariable{inverse}
+  
+  \ccTwo{Inverse_index< IC,> inverse( IC i, IC j);;}{}
+  \ccConstructor{Inverse_index();}{invalid index.}
+  
+  \ccGlue\ccConstructor{Inverse_index( const IC& i);}{empty inverse
+    index initialized to start at $i$.}
+  
+  \ccGlue\ccConstructor{Inverse_index( const IC& i, const IC& j);}
+  {inverse index initialized with range [$i,j$).}
+
+  \ccOperations
+  \ccThree{std::size_t}{inverse.find( const T* p);}{}
+  
+  \ccMethod{std::size_t operator[]( const IC& k);}{returns inverse
+    index of $k$. \ccPrecond $k$ has been stored in the inverse
+    index.}
+  
+  \ccMethod{void push_back( const IC& k);}{adds $k$ at the end of the
+    indices.}
+
+  \ccImplementation
+  
+  For random access iterators or circulators, it is done in constant
+  time by subtracting $i$. For other iterator categories, an \stl\ 
+  \ccc{map} is used, which results in a $\log j-i$ query time. The
+  comparisons are done using the operator \ccc{operator<} on pointers.
+
+  \ccSeeAlso
+  \ccRefIdfierPage{CGAL::Random_access_adaptor<IC>}\\
+  \ccRefIdfierPage{CGAL::Random_access_value_adaptor<IC,T>}
+
+\end{ccRefClass}
+
+%% +--------------------------------------------------------+
+\begin{ccRefClass}{Random_access_adaptor<IC>}
+  
+  \ccDefinition The class \ccClassTemplateName\ provides a random
+  access for data structures. Either the data structure supports
+  random access iterators or circulators where this class maps
+  function calls to the iterator or circulator, or a \stl\ 
+  \ccc{std::vector} is used to provide the random access. The iterator
+  or circulator of the data structure are of type \ccc{IC}.
+
+  \ccInclude{CGAL/iterator.h}
+
+  \ccTypes
+
+  \ccNestedType{size_type}{size type of the \stl\ \ccc{std::vector}.}
+
+  \ccCreation\ccCreationVariable{random_access}
+
+  \ccTwo{Random_access_adaptor< IC> random_access;}{}
+  \ccConstructor{Random_access_adaptor();}{invalid index.}
+  
+  \ccConstructor{Random_access_adaptor( const IC& i);} {empty random
+    access index initialized to start at $i$.}
+  
+  \ccConstructor{Random_access_adaptor( const IC& i, const IC& j);}
+  {random access index initialized to the range [$i,j$).}
+  
+  \ccThree{Dist}{random_access.push_back( IC k);}{} \ccMethod{void
+    reserve( size_type r);}{reserve $r$ entries, if a
+    \ccc{std::vector} is used internally.}
+  
+  \ccOperations
+  
+  \ccMethod{IC operator[]( size_type n);}{returns iterator or
+    circulator to the $n$-th item.  \ccPrecond $n <$ number of items
+    in \ccVar.}
+  
+  \ccMethod{void push_back( const IC& k);}{adds $k$ at the end of the
+    indices.}
+  
+  \ccSeeAlso
+  \ccRefIdfierPage{CGAL::Inverse_index<IC>}\\
+  \ccRefIdfierPage{CGAL::Random_access_value_adaptor<IC,T>}
+
+\end{ccRefClass}
+
+
+%% +--------------------------------------------------------+
+\begin{ccRefClass}{Random_access_value_adaptor<IC,T>}
+  
+  \ccDefinition The class \ccClassTemplateName\ provides a random
+  access for data structures. It is derived from
+  \ccc{Random_access_adaptor<IC>}. Instead of returning iterators from
+  the \ccc{operator[]} methods, it returns the dereferenced value of
+  the iterator.  The iterator or circulator of the data structure are
+  of type \ccc{IC}. Their value type is $T$.
+
+  \ccInclude{CGAL/iterator.h}
+
+  \ccOperations
+  
+  Creation and operations see \ccc{Random_access_adaptor<IC>}, with
+  the exception of:
+  
+  \ccCreationVariable{random_access}
+
+  \ccThree{Dist}{random_access.push_back( IC k);}{}
+  
+  \ccMethod{T& operator[]( size_type n);}{returns a reference to the
+    $n$-th item.  \ccPrecond $n <$ number of items in \ccVar.}
+  
+  \ccSeeAlso
+  \ccRefIdfierPage{CGAL::Inverse_index<IC>}\\
+  \ccRefIdfierPage{CGAL::Random_access_adaptor<IC>}
+
+\end{ccRefClass}
+
+%% +=========================================================================+
+
+\begin{ccRefFunction}{compare_to_less}
+  \ccDefinition The function \ccRefName\ is used to change a functor
+  returning a \ccc{Comparison_result} to one which returns a bool.
+  The returned functor will return \ccc{true} iff the original one
+  returns \ccc{SMALLER}.
+  
+  \ccInclude{CGAL/function_objects.h}
+  
+  \ccThree{typename Compare_to_less< F >::Type}{compare_to_less}{}
+  
+  \ccFunction{template < class F > Compare_to_less< F >
+    compare_to_less(const F& f);}{returns a functor equivalent to
+    \ccc{f}, but which returns a bool instead of a
+    \ccc{Comparison_result}.}
+  
+  \ccSeeAlso
+  \ccRefIdfierPage{CGAL::Compare_to_less<F>}
+  
+\end{ccRefFunction}
+
+\begin{ccRefClass}{Compare_to_less<F>}
+  \ccDefinition The class \ccRefName\ is used to convert a functor which
+  returns a \ccc{Comparison_result} to a predicate (returning bool) : it
+  will return true iff the return value of \ccc{F} is \ccc{SMALLER}.
+  The class is used in conjunction with the \ccc{compare_to_less}
+  function; see there for an explanation on how exactly the functors
+  are combined.
+
+  \ccInclude{CGAL/function_objects.h}
+  
+  \ccTypes
+  \ccNestedType{Type}{type of the composed functor.}
+  
+  \ccSeeAlso
+  \ccRefIdfierPage{CGAL::compare_to_less}
+  
+\end{ccRefClass}
+
+%% +=========================================================================+
+
+\begin{ccRefFunctionObjectConcept}{Projection_object}
+  \label{sectionProjectionFunctionObjects}
+  
+  \ccDefinition The concept \ccRefName\ is modeled after the STL
+  concept \ccc{UnaryFunction}, but takes also care of (const)
+  references.
+  
+  \ccTagFullDeclarations
+  \ccNestedType{argument_type}{argument type.}
+  \ccNestedType{result_type}{result type.}
+  \ccCreationVariable{o}
+  \ccCreation
+  \ccConstructor{Projection_object();}{default constructor.}
+  \ccOperations
+  \ccThree{const result_type&;;}{A}{}
+  \ccMethod{result_type& operator()(argument_type &) const;}{}
+  \ccGlue
+  \ccMethod{const result_type& operator()(const argument_type &) const;}{}
+  \ccTagDefaults
+
+  \ccHasModels
+  \ccRefIdfierPage{CGAL::Identity<Value>}\\
+  \ccRefIdfierPage{CGAL::Dereference<Value>}\\
+  \ccRefIdfierPage{CGAL::Get_address<Value>}\\
+  \ccRefIdfierPage{CGAL::Cast_function_object<Arg, Result>}\\
+  \ccRefIdfierPage{CGAL::Project_vertex<Node>}\\
+  \ccRefIdfierPage{CGAL::Project_facet<Node>}\\
+  \ccRefIdfierPage{CGAL::Project_point<Node>}\\
+  \ccRefIdfierPage{CGAL::Project_normal<Node>}\\
+  \ccRefIdfierPage{CGAL::Project_plane<Node>}\\
+  \ccRefIdfierPage{CGAL::Project_next<Node>}\\
+  \ccRefIdfierPage{CGAL::Project_prev<Node>}\\
+  \ccRefIdfierPage{CGAL::Project_next_opposite<Node>}\\
+  \ccRefIdfierPage{CGAL::Project_opposite_prev<Node>}
+  
+\end{ccRefFunctionObjectConcept}
+
+\begin{ccRefFunctionObjectClass}{Identity<Value>}
+  \ccDefinition The class \ccRefName\ represents the identity function
+  on \ccc{Value}.
+  
+  \ccInclude{CGAL/function_objects.h}
+
+  \ccIsModel
+  \ccRefConceptPage{Projection_object}
+
+  \ccTagFullDeclarations
+  \ccNestedType{argument_type}{typedef to \ccc{Value}.}
+  \ccNestedType{result_type}{typedef to \ccc{Value}.}
+  \ccCreationVariable{o}
+  \ccCreation
+  \ccConstructor{Identity();}{default constructor.}
+  \ccOperations
+  \ccThree{const result_type&;;}{A}{}
+  
+  \ccMethod{result_type& operator()(argument_type& x) const;}{returns
+    \ccc{x}.}
+  
+  \ccGlue\ccMethod{const result_type& operator()(const argument_type&
+    x) const;}{returns \ccc{x}.}  \ccTagDefaults
+
+\end{ccRefFunctionObjectClass}
+
+\begin{ccRefFunctionObjectClass}{Dereference<Value>}
+  \ccDefinition The class \ccRefName\ dereferences a pointer
+  (\ccc{operator*}).
+  
+  \ccInclude{CGAL/function_objects.h}
+
+  \ccIsModel
+  \ccRefConceptPage{Projection_object}
+
+  \ccTagFullDeclarations
+  \ccNestedType{argument_type}{typedef to \ccc{Value*}.}
+  \ccNestedType{result_type}{typedef to \ccc{Value}.}
+  \ccCreationVariable{o}
+  \ccCreation
+  \ccConstructor{Dereference();}{default constructor.}
+  \ccOperations
+  \ccThree{const result_type&;;}{A}{}
+  
+  \ccMethod{result_type& operator()(argument_type& x) const;}{returns
+    \ccc{*x}.}
+  
+  \ccGlue\ccMethod{const result_type& operator()(const argument_type&
+    x) const;}{returns \ccc{*x}.} \ccTagDefaults
+
+\end{ccRefFunctionObjectClass}
+
+\begin{ccRefFunctionObjectClass}{Get_address<Value>}
+  \ccDefinition The class \ccRefName\ gets the address of an lvalue
+  (\ccc{operator&}).
+  
+  \ccInclude{CGAL/function_objects.h}
+
+  \ccIsModel
+  \ccRefConceptPage{Projection_object}
+
+  \ccTagFullDeclarations
+  \ccNestedType{argument_type}{typedef to \ccc{Value}.}
+  \ccNestedType{result_type}{typedef to \ccc{Value*}.}
+  \ccCreationVariable{o}
+  \ccCreation
+  \ccConstructor{Get_address();}{default constructor.}
+  \ccOperations
+  \ccThree{const result_type&;;}{A}{}
+  
+  \ccMethod{result_type& operator()(argument_type& x) const;}{returns
+    \ccc{&x}.}
+  
+  \ccGlue\ccMethod{const result_type& operator()(const argument_type&
+    x) const;}{returns \ccc{&x}.} \ccTagDefaults
+
+\end{ccRefFunctionObjectClass}
+
+\begin{ccRefFunctionObjectClass}{Cast_function_object<Arg, Result>}
+  \ccDefinition The class \ccRefName\ applies a C-style type cast to
+  its argument.
+  
+  \ccInclude{CGAL/function_objects.h}
+
+  \ccIsModel
+  \ccRefConceptPage{Projection_object}
+
+  \ccTagFullDeclarations
+  \ccNestedType{argument_type}{typedef to \ccc{Arg}.}
+  \ccNestedType{result_type}{typedef to \ccc{Result}.}
+  \ccCreationVariable{o}
+  \ccCreation
+  \ccConstructor{Cast_function_object();}{default constructor.}
+  \ccOperations
+  \ccThree{const result_type&;;}{A}{}
+  
+  \ccMethod{result_type& operator()(argument_type& x) const;}{returns
+    \ccc{(Result)x}.}
+  
+  \ccGlue\ccMethod{const result_type& operator()(const argument_type&
+    x) const;}{returns \ccc{(Result)x}.} \ccTagDefaults
+
+\end{ccRefFunctionObjectClass}
+
+\begin{ccRefFunctionObjectClass}{Project_vertex<Node>}
+  \ccDefinition The class \ccRefName\ calls the member function
+  \ccc{vertex()} on an instance of type \ccc{Node}.
+  
+  \ccInclude{CGAL/function_objects.h}
+
+  \ccIsModel
+  \ccRefConceptPage{Projection_object}
+
+  \ccTagFullDeclarations
+  \ccNestedType{argument_type}{typedef to \ccc{Node}.}
+  \ccNestedType{result_type}{typedef to \ccc{Node::Vertex}.}
+  \ccCreationVariable{o}
+  \ccCreation
+  \ccConstructor{Project_vertex();}{default constructor.}
+  \ccOperations
+  \ccThree{const result_type&;;}{A}{}
+  
+  \ccMethod{result_type& operator()(argument_type& n) const;}{returns
+    \ccc{n.vertex()}.}
+  
+  \ccGlue \ccMethod{const result_type& operator()(const argument_type&
+    n) const;}{returns \ccc{n.vertex()}.}  \ccTagDefaults
+
+\end{ccRefFunctionObjectClass}
+
+\begin{ccRefFunctionObjectClass}{Project_facet<Node>}
+  \ccDefinition The class \ccRefName\ calls the member function
+  \ccc{facet()} on an instance of type \ccc{Node}.
+  
+  \ccInclude{CGAL/function_objects.h}
+
+  \ccIsModel
+  \ccRefConceptPage{Projection_object}
+
+  \ccTagFullDeclarations
+  \ccNestedType{argument_type}{typedef to \ccc{Node}.}
+  \ccNestedType{result_type}{typedef to \ccc{Node::Facet}.}
+  \ccCreationVariable{o}
+  \ccCreation
+  \ccConstructor{Project_facet();}{default constructor.}
+  \ccOperations
+  \ccThree{const result_type&;;}{A}{}
+  
+  \ccMethod{result_type& operator()(argument_type& n) const;}{returns
+    \ccc{n.facet()}.}
+  
+  \ccGlue\ccMethod{const result_type& operator()(const argument_type&
+    n) const;}{returns \ccc{n.facet()}.} \ccTagDefaults
+
+\end{ccRefFunctionObjectClass}
+
+\begin{ccRefFunctionObjectClass}{Project_point<Node>}
+  \ccDefinition The class \ccRefName\ calls the member function
+  \ccc{point()} on an instance of type \ccc{Node}.
+  
+  \ccInclude{CGAL/function_objects.h}
+
+  \ccIsModel
+  \ccRefConceptPage{Projection_object}
+
+  \ccTagFullDeclarations
+  \ccNestedType{argument_type}{typedef to \ccc{Node}.}
+  \ccNestedType{result_type}{typedef to \ccc{Node::Point}.}
+  \ccCreationVariable{o}
+  \ccCreation
+  \ccConstructor{Project_point();}{default constructor.}
+  \ccOperations
+  \ccThree{const result_type&;;}{A}{}
+  
+  \ccMethod{result_type& operator()(argument_type& n) const;}{returns
+    \ccc{n.point()}.}
+  
+  \ccGlue \ccMethod{const result_type& operator()(const argument_type&
+    n) const;}{returns \ccc{n.point()}.} \ccTagDefaults
+
+\end{ccRefFunctionObjectClass}
+
+\begin{ccRefFunctionObjectClass}{Project_normal<Node>}
+  \ccDefinition The class \ccRefName\ calls the member function
+  \ccc{normal()} on an instance of type \ccc{Node}.
+  
+  \ccInclude{CGAL/function_objects.h}
+
+  \ccIsModel
+  \ccRefConceptPage{Projection_object}
+
+  \ccTagFullDeclarations
+  \ccNestedType{argument_type}{typedef to \ccc{Node}.}
+  \ccNestedType{result_type}{typedef to \ccc{Node::Normal}.}
+  \ccCreationVariable{o}
+  \ccCreation
+  \ccConstructor{Project_normal();}{default constructor.}
+  \ccOperations
+  \ccThree{const result_type&;;}{A}{}
+  
+  \ccMethod{result_type& operator()(argument_type& n) const;}{returns
+    \ccc{n.normal()}.}
+  
+  \ccGlue \ccMethod{const result_type& operator()(const argument_type&
+    n) const;}{returns \ccc{n.normal()}.}  \ccTagDefaults
+
+\end{ccRefFunctionObjectClass}
+
+\begin{ccRefFunctionObjectClass}{Project_plane<Node>}
+  \ccDefinition The class \ccRefName\ calls the member function
+  \ccc{plane()} on an instance of type \ccc{Node}.
+  
+  \ccInclude{CGAL/function_objects.h}
+
+  \ccIsModel
+  \ccRefConceptPage{Projection_object}
+
+  \ccTagFullDeclarations
+  \ccNestedType{argument_type}{typedef to \ccc{Node}.}
+  \ccNestedType{result_type}{typedef to \ccc{Node::Plane}.}
+  \ccCreationVariable{o}
+  \ccCreation
+  \ccConstructor{Project_plane();}{default constructor.}
+  \ccOperations
+  \ccThree{const result_type&;;}{A}{}
+  
+  \ccMethod{result_type& operator()(argument_type& n) const;}{returns
+    \ccc{n.plane()}.}
+  
+  \ccGlue\ccMethod{const result_type& operator()(const argument_type&
+    n) const;}{returns \ccc{n.plane()}.}  \ccTagDefaults
+
+\end{ccRefFunctionObjectClass}
+
+\begin{ccRefFunctionObjectClass}{Project_next<Node>}
+  \ccDefinition The class \ccRefName\ calls the member function
+  \ccc{next()} on an instance of type \ccc{Node}.
+  
+  \ccInclude{CGAL/function_objects.h}
+
+  \ccIsModel
+  \ccRefConceptPage{Projection_object}
+
+  \ccTagFullDeclarations
+  \ccNestedType{argument_type}{typedef to \ccc{Node*}.}
+  \ccNestedType{result_type}{typedef to \ccc{Node*}.}
+  \ccCreationVariable{o}
+  \ccCreation
+  \ccConstructor{Project_next();}{default constructor.}
+  \ccOperations
+  \ccThree{const result_type&;;}{A}{}
+  
+  \ccMethod{result_type& operator()(argument_type& n) const;}{returns
+    \ccc{n->next()}.}
+  
+  \ccGlue\ccMethod{const result_type& operator()(const argument_type&
+    n) const;}{returns \ccc{n->next()}.}  \ccTagDefaults
+
+\end{ccRefFunctionObjectClass}
+
+\begin{ccRefFunctionObjectClass}{Project_prev<Node>}
+  \ccDefinition The class \ccRefName\ calls the member function
+  \ccc{prev()} on an instance of type \ccc{Node}.
+  
+  \ccInclude{CGAL/function_objects.h}
+
+  \ccIsModel
+  \ccRefConceptPage{Projection_object}
+
+  \ccTagFullDeclarations
+  \ccNestedType{argument_type}{typedef to \ccc{Node*}.}
+  \ccNestedType{result_type}{typedef to \ccc{Node*}.}
+  \ccCreationVariable{o}
+  \ccCreation
+  \ccConstructor{Project_prev();}{default constructor.}
+  \ccOperations
+  \ccThree{const result_type&;;}{A}{}
+  
+  \ccMethod{result_type& operator()(argument_type& n) const;}{returns
+    \ccc{n->prev()}.}
+  
+  \ccGlue\ccMethod{const result_type& operator()(const argument_type&
+    n) const;}{returns \ccc{n->prev()}.}  \ccTagDefaults
+
+\end{ccRefFunctionObjectClass}
+
+\begin{ccRefFunctionObjectClass}{Project_next_opposite<Node>}
+  \ccDefinition The class \ccRefName\ calls the member functions
+  \ccc{next()->opposite()} on an instance of type \ccc{Node}.
+  
+  \ccInclude{CGAL/function_objects.h}
+
+  \ccIsModel
+  \ccRefConceptPage{Projection_object}
+
+  \ccTagFullDeclarations
+  \ccNestedType{argument_type}{typedef to \ccc{Node*}.}
+  \ccNestedType{result_type}{typedef to \ccc{Node*}.}
+  \ccCreationVariable{o}
+  \ccCreation
+  \ccConstructor{Project_next_opposite();}{default constructor.}
+  \ccOperations
+  \ccThree{const result_type&;;}{A}{}
+  
+  \ccMethod{result_type& operator()(argument_type& n) const;}{returns
+    \ccc{n->next()->opposite()}.}
+  
+  \ccGlue\ccMethod{const result_type& operator()(const argument_type&
+    n) const;}{returns \ccc{n->next()->opposite()}.}  \ccTagDefaults
+
+\end{ccRefFunctionObjectClass}
+
+\begin{ccRefFunctionObjectClass}{Project_opposite_prev<Node>}
+  \ccDefinition The class \ccRefName\ calls the member functions
+  \ccc{opposite()->prev()} on an instance of type \ccc{Node}.
+  
+  \ccInclude{CGAL/function_objects.h}
+
+  \ccIsModel
+  \ccRefConceptPage{Projection_object}
+
+  \ccTagFullDeclarations
+  \ccNestedType{argument_type}{typedef to \ccc{Node*}.}
+  \ccNestedType{result_type}{typedef to \ccc{Node*}.}
+  \ccCreationVariable{o}
+  \ccCreation
+  \ccConstructor{Project_opposite_prev();}{default constructor.}
+  \ccOperations
+  \ccThree{const result_type&;;}{A}{}
+  
+  \ccMethod{result_type& operator()(argument_type& n) const;}{returns
+    \ccc{n->opposite()->prev()}.}
+  
+  \ccGlue\ccMethod{const result_type& operator()(const argument_type&
+    n) const;}{returns \ccc{n->opposite()->prev()}.}
+  \ccTagDefaults
+
+\end{ccRefFunctionObjectClass}
+
+%% +--------------------------------------------------------+
+
+\begin{ccRefFunctionObjectClass}{Creator_1<Arg, Result>}
+  \label{sectionCreatorFunctionObjects}
+  
+  \ccDefinition The concept \ccRefName\ defines types and operations
+  for creating objects from one argument.
+  
+  \ccInclude{CGAL/function_objects.h}
+
+  \ccHeading{Requirements} \ccc{Arg} is convertible to \ccc{Result}.
+  
+  \ccTagFullDeclarations\ccCreationVariable{c}
+  \ccNestedType{argument_type}{type of argument.}
+  \ccNestedType{result_type}{type of object to create.}
+  \ccThree{result_type;;}{operator()(argument_type a) const;;}{}
+  
+  \ccMethod{result_type operator()(argument_type a) const;}{returns
+    \ccc{result_type(a)}.}
+
+  \ccTagDefaults
+\end{ccRefFunctionObjectClass}
+
+\begin{ccRefFunctionObjectClass}{Creator_2<Arg1, Arg2, Result>}
+  \ccDefinition The concept \ccRefName\ defines types and operations
+  for creating objects from two arguments.
+  
+  \ccInclude{CGAL/function_objects.h}
+  
+  \ccRequirements \ccc{Result} defines a corresponding
+  constructor.
+  
+  \def\ccLongParamLayout{\ccTrue}
+  \ccTagFullDeclarations\ccCreationVariable{c}
+  \ccNestedType{argument1_type}{type of first argument.}
+  \ccNestedType{argument2_type}{type of second argument.}
+  \ccNestedType{result_type}{type of object to create.}
+  \ccThree{result_type;;}{operator()(argument_type a) const;;}{}
+  
+  \ccMethod{result_type operator()(argument_type1 a1, argument_type2
+    a2) const;}{returns \ccc{result_type(a1, a2)}.}
+
+  \ccTagDefaults\def\ccLongParamLayout{\ccFalse}
+\end{ccRefFunctionObjectClass}
+
+\begin{ccRefFunctionObjectClass}{Creator_3<Arg1, Arg2, Arg3, Result>}
+  \ccDefinition The concept \ccRefName\ defines types and operations
+  for creating objects from three arguments.
+  
+  \ccInclude{CGAL/function_objects.h}
+  
+  \ccRequirements \ccc{Result} defines a corresponding
+  constructor.
+  
+  \def\ccLongParamLayout{\ccTrue}
+  \ccTagFullDeclarations\ccCreationVariable{c}
+  \ccNestedType{argument1_type}{type of first argument.}
+  \ccNestedType{argument2_type}{type of second argument.}
+  \ccNestedType{argument3_type}{type of third argument.}
+  \ccNestedType{result_type}{type of object to create.}
+  \ccThree{result_type;;}{operator()(argument_type a) const;;}{}
+  
+  \ccMethod{result_type operator()(argument_type1 a1, argument_type2
+    a2, argument_type3 a3) const;}{returns \ccc{result_type(a1, a2,
+      a3)}.}
+
+  \ccTagDefaults\def\ccLongParamLayout{\ccFalse}
+\end{ccRefFunctionObjectClass}
+
+\begin{ccRefFunctionObjectClass}{Creator_4<Arg1, Arg2, Arg3, Arg4, Result>}
+  \ccDefinition The concept \ccRefName\ defines types and operations
+  for creating objects from four arguments.
+  
+  \ccInclude{CGAL/function_objects.h}
+  
+  \ccRequirements \ccc{Result} defines a corresponding
+  constructor.
+  
+  \def\ccLongParamLayout{\ccTrue}
+  \ccTagFullDeclarations\ccCreationVariable{c}
+  \ccNestedType{argument1_type}{type of first argument.}
+  \ccNestedType{argument2_type}{type of second argument.}
+  \ccNestedType{argument3_type}{type of third argument.}
+  \ccNestedType{argument4_type}{type of 4th argument.}
+  \ccNestedType{result_type}{type of object to create.}
+  \ccThree{result_type;;}{operator()(argument_type a) const;;}{}
+  
+  \ccMethod{result_type operator()(argument_type1 a1, argument_type2
+    a2, argument_type3 a3, argument_type4 a4) const;}{returns
+    \ccc{result_type(a1, a2, a3, a4)}.}
+
+  \ccTagDefaults\def\ccLongParamLayout{\ccFalse}
+\end{ccRefFunctionObjectClass}
+
+\begin{ccRefFunctionObjectClass}{Creator_5<Arg1, Arg2, Arg3, Arg4, Arg5, Result>}
+  \ccDefinition The concept \ccRefName\ defines types and operations
+  for creating objects from five arguments.
+  
+  \ccInclude{CGAL/function_objects.h}
+  
+  \ccRequirements \ccc{Result} defines a corresponding
+  constructor.
+  
+  \def\ccLongParamLayout{\ccTrue}
+  \ccTagFullDeclarations\ccCreationVariable{c}
+  \ccNestedType{argument1_type}{type of first argument.}
+  \ccNestedType{argument2_type}{type of second argument.}
+  \ccNestedType{argument3_type}{type of third argument.}
+  \ccNestedType{argument4_type}{type of 4th argument.}
+  \ccNestedType{argument5_type}{type of 5th argument.}
+  \ccNestedType{result_type}{type of object to create.}
+  \ccThree{result_type;;}{operator()(argument_type a) const;;}{}
+  
+  \ccMethod{result_type operator()(argument_type1 a1, argument_type2
+    a2, argument_type3 a3, argument_type4 a4, argument_type5 a5)
+    const;}{returns \ccc{result_type(a1, a2, a3, a4, a5)}.}
+
+  \ccTagDefaults\def\ccLongParamLayout{\ccFalse}
+\end{ccRefFunctionObjectClass}
+
+\begin{ccRefFunctionObjectClass}{Creator_uniform_2<Arg, Result>}
+  \ccDefinition The concept \ccRefName\ defines types and operations
+  for creating objects from two arguments of the same type.
+  
+  \ccInclude{CGAL/function_objects.h}
+  
+  \ccRequirements \ccc{Result} defines a constructor from two
+  \ccc{Arg} arguments.
+  
+  \def\ccLongParamLayout{\ccTrue}
+  \ccTagFullDeclarations\ccCreationVariable{c}
+  \ccNestedType{argument_type}{type of arguments; typedef to
+    \ccc{Arg}.}
+  \ccNestedType{result_type}{type of object to create; typedef to
+    \ccc{Result}.}
+  \ccThree{result_type;;}{operator()(argument_type a) const;;}{}
+  
+  \ccMethod{result_type operator()(argument_type a1, argument_type a2)
+    const;}{returns \ccc{result_type(a1, a2)}.}
+
+  \ccTagDefaults\def\ccLongParamLayout{\ccFalse}
+\end{ccRefFunctionObjectClass}
+
+\begin{ccRefFunctionObjectClass}{Creator_uniform_3<Arg, Result>}
+  \ccDefinition The concept \ccRefName\ defines types and operations
+  for creating objects from three arguments of the same type.
+  
+  \ccInclude{CGAL/function_objects.h}
+  
+  \ccRequirements \ccc{Result} defines a constructor from
+  three \ccc{Arg} arguments.
+  
+  \def\ccLongParamLayout{\ccTrue}
+  \ccTagFullDeclarations\ccCreationVariable{c}
+  \ccNestedType{argument_type}{type of arguments; typedef to
+    \ccc{Arg}.}
+  \ccNestedType{result_type}{type of object to create; typedef to
+    \ccc{Result}.}
+  \ccThree{result_type;;}{operator()(argument_type a) const;;}{}
+  
+  \ccMethod{result_type operator()(argument_type a1, argument_type a2,
+    argument_type a3) const;}{returns \ccc{result_type(a1, a2, a3)}.}
+
+  \ccTagDefaults\def\ccLongParamLayout{\ccFalse}
+\end{ccRefFunctionObjectClass}
+
+\begin{ccRefFunctionObjectClass}{Creator_uniform_4<Arg, Result>}
+  \ccDefinition The concept \ccRefName\ defines types and operations
+  for creating objects from four arguments of the same type.
+  
+  \ccInclude{CGAL/function_objects.h}
+  
+  \ccRequirements \ccc{Result} defines a constructor from
+  four \ccc{Arg} arguments.
+  
+  \def\ccLongParamLayout{\ccTrue}
+  \ccTagFullDeclarations\ccCreationVariable{c}
+  \ccNestedType{argument_type}{type of arguments; typedef to
+    \ccc{Arg}.}
+  \ccNestedType{result_type}{type of object to create; typedef to
+    \ccc{Result}.}
+  \ccThree{result_type;;}{operator()(argument_type a) const;;}{}
+  
+  \ccMethod{result_type operator()(argument_type a1, argument_type a2,
+    argument_type a3, argument_type a4) const;}{returns
+    \ccc{result_type(a1, a2, a3, a4)}.}
+
+  \ccTagDefaults\def\ccLongParamLayout{\ccFalse}
+\end{ccRefFunctionObjectClass}
+
+\begin{ccRefFunctionObjectClass}{Creator_uniform_5<Arg, Result>}
+  \ccDefinition The concept \ccRefName\ defines types and operations
+  for creating objects from five arguments of the same type.
+  
+  \ccInclude{CGAL/function_objects.h}
+  
+  \ccRequirements \ccc{Result} defines a constructor from
+  five \ccc{Arg} arguments.
+  
+  \def\ccLongParamLayout{\ccTrue}
+  \ccTagFullDeclarations\ccCreationVariable{c}
+  \ccNestedType{argument_type}{type of arguments; typedef to
+    \ccc{Arg}.}
+  \ccNestedType{result_type}{type of object to create; typedef to
+    \ccc{Result}.}
+  \ccThree{result_type;;}{operator()(argument_type a) const;;}{}
+  
+  \ccMethod{result_type operator()(argument_type a1, argument_type a2,
+    argument_type a3, argument_type a4, argument_type a5)
+    const;}{returns \ccc{result_type(a1, a2, a3, a4, a5)}.}
+
+  \ccTagDefaults\def\ccLongParamLayout{\ccFalse}
+\end{ccRefFunctionObjectClass}
+
+\begin{ccRefFunctionObjectClass}{Creator_uniform_6<Arg, Result>}
+  \ccDefinition The concept \ccRefName\ defines types and operations
+  for creating objects from six arguments of the same type.
+  
+  \ccInclude{CGAL/function_objects.h}
+  
+  \ccRequirements \ccc{Result} defines a constructor from six
+  \ccc{Arg} arguments.
+  
+  \def\ccLongParamLayout{\ccTrue}
+  \ccTagFullDeclarations\ccCreationVariable{c}
+  \ccNestedType{argument_type}{type of arguments; typedef to
+    \ccc{Arg}.}
+  \ccNestedType{result_type}{type of object to create; typedef to
+    \ccc{Result}.}
+  \ccThree{result_type;;}{operator()(argument_type a) const;;}{}
+  
+  \ccMethod{result_type operator()(argument_type a1, argument_type a2,
+    argument_type a3, argument_type a4, argument_type a5,
+    argument_type a6) const;}{returns \ccc{result_type(a1, a2, a3, a4,
+      a5, a6)}.}
+
+  \ccTagDefaults\def\ccLongParamLayout{\ccFalse}
+\end{ccRefFunctionObjectClass}
+
+\begin{ccRefFunctionObjectClass}{Creator_uniform_7<Arg, Result>}
+  \ccDefinition The concept \ccRefName\ defines types and operations
+  for creating objects from seven arguments of the same type.
+  
+  \ccInclude{CGAL/function_objects.h}
+  
+  \ccRequirements \ccc{Result} defines a constructor from
+  seven \ccc{Arg} arguments.
+  
+  \def\ccLongParamLayout{\ccTrue}
+  \ccTagFullDeclarations\ccCreationVariable{c}
+  \ccNestedType{argument_type}{type of arguments; typedef to
+    \ccc{Arg}.}
+  \ccNestedType{result_type}{type of object to create; typedef to
+    \ccc{Result}.}
+  \ccThree{result_type;;}{operator()(argument_type a) const;;}{}
+  
+  \ccMethod{result_type operator()(argument_type a1, argument_type a2,
+    argument_type a3, argument_type a4, argument_type a5,
+    argument_type a6, argument_type a7) const;}{returns
+    \ccc{result_type(a1, a2, a3, a4, a5, a6, a7)}.}
+
+  \ccTagDefaults\def\ccLongParamLayout{\ccFalse}
+\end{ccRefFunctionObjectClass}
+
+\begin{ccRefFunctionObjectClass}{Creator_uniform_8<Arg, Result>}
+  \ccDefinition The concept \ccRefName\ defines types and operations
+  for creating objects from eight arguments of the same type.
+  
+  \ccInclude{CGAL/function_objects.h}
+  
+  \ccRequirements \ccc{Result} defines a constructor from
+  eight \ccc{Arg} arguments.
+  
+  \def\ccLongParamLayout{\ccTrue}
+  \ccTagFullDeclarations\ccCreationVariable{c}
+  \ccNestedType{argument_type}{type of arguments; typedef to
+    \ccc{Arg}.}
+  \ccNestedType{result_type}{type of object to create; typedef to
+    \ccc{Result}.}
+  \ccThree{result_type;;}{operator()(argument_type a) const;;}{}
+  
+  \ccMethod{result_type operator()(argument_type a1, argument_type a2,
+    argument_type a3, argument_type a4, argument_type a5,
+    argument_type a6, argument_type a7, argument_type a8)
+    const;}{returns \ccc{result_type(a1, a2, a3, a4, a5, a6, a7,
+      a8)}.}
+
+  \ccTagDefaults\def\ccLongParamLayout{\ccFalse}
+\end{ccRefFunctionObjectClass}
+
+\begin{ccRefFunctionObjectClass}{Creator_uniform_9<Arg, Result>}
+  \ccDefinition The concept \ccRefName\ defines types and operations
+  for creating objects from nine arguments of the same type.
+  
+  \ccInclude{CGAL/function_objects.h}
+  
+  \ccRequirements \ccc{Result} defines a constructor from
+  nine \ccc{Arg} arguments.
+  
+  \def\ccLongParamLayout{\ccTrue}
+  \ccTagFullDeclarations\ccCreationVariable{c}
+  \ccNestedType{argument_type}{type of arguments; typedef to
+    \ccc{Arg}.}
+  \ccNestedType{result_type}{type of object to create; typedef to
+    \ccc{Result}.}
+  \ccThree{result_type;;}{operator()(argument_type a) const;;}{}
+  
+  \ccMethod{result_type operator()(argument_type a1, argument_type a2,
+    argument_type a3, argument_type a4, argument_type a5,
+    argument_type a6, argument_type a7, argument_type a8,
+    argument_type a9) const;}{returns \ccc{result_type(a1, a2, a3, a4,
+      a5, a6, a7, a8, a9)}.}
+
+  \ccTagDefaults\def\ccLongParamLayout{\ccFalse}
+\end{ccRefFunctionObjectClass}
+
+\begin{ccRefFunctionObjectClass}{Creator_uniform_d<Arg, Result>}
+  \ccDefinition The concept \ccRefName\ defines types and operations
+  for creating objects from two arguments of the same type.
+
+  \ccInclude{CGAL/function_objects.h}
+
+  \ccRequirements \ccc{Result} defines a constructor from three arguments: 
+  one \ccc{d} dimension and two \ccc{Arg} arguments.
+
+  \def\ccLongParamLayout{\ccTrue}
+  \ccTagFullDeclarations\ccCreationVariable{c}
+  \ccNestedType{argument_type}{type of arguments; typedef to
+    \ccc{Arg}.}
+  \ccNestedType{result_type}{type of object to create; typedef to
+    \ccc{Result}.}
+  \ccThree{result_type;;}{operator()(argument_type a) const;;}{}
+
+  \ccMethod{result_type operator()(argument_type a1, argument_type a2)
+    const;}{returns \ccc{result_type(d, a1, a2)}.}
+
+  \ccTagDefaults\def\ccLongParamLayout{\ccFalse}
+\end{ccRefFunctionObjectClass}
+
+
+%% +--------------------------------------------------------+
+
+\begin{ccRefClass}{Twotuple<T>}
+  
+  \ccDefinition The \ccRefName\ class stores a homogeneous (same type) pair
+  of objects of type \ccc{T}.  A \ccRefName\ is much like a container, in that
+  it "owns" its elements. It is not actually a model of container, though,
+  because it does not support the standard methods (such as iterators) for
+  accessing the elements of a container.
+
+  This class is DEPRECATED, and will be removed in some future CGAL release.
+  Please use \ccc{CGAL::cpp0x::array} instead.
+
+  \ccInclude{CGAL/Twotuple.h}
+  
+  \ccRequirements \ccc{T} must be \ccc{Assignable}.
+
+  %\ccSetThreeColumns{T*}{next_link ;}{}
+  \ccThree{result_type;;}{operator()(argument a) ;;}{}
+
+  \ccTypes
+  \ccTypedef{typedef T value_type;}{}
+
+  \ccHeading{Variables}
+  \ccVariable{T e0;}{first element}
+  \ccGlue
+  \ccVariable{T e1;}{second element}
+
+  \ccCreation
+  \ccCreationVariable{t}
+  
+  \ccConstructor{Twotuple();}{introduces a \ccRefName\ using the default
+    constructor of the elements.}
+  
+  \ccConstructor{Twotuple(T x, T y);}{constructs a \ccRefName\ such
+    that \ccc{e0} is constructed from \ccc{x} and \ccc{e1} is
+    constructed from \ccc{y}.}
+  
+\end{ccRefClass}
+
+%% +--------------------------------------------------------+
+
+\begin{ccRefClass}{Threetuple<T>}
+  
+  \ccDefinition The \ccRefName\ class stores a homogeneous (same type) triple
+  of objects of type \ccc{T}.  A \ccRefName\ is much like a container, in that
+  it "owns" its elements. It is not actually a model of container, though,
+  because it does not support the standard methods (such as iterators) for
+  accessing the elements of a container.
+
+  This class is DEPRECATED, and will be removed in some future CGAL release.
+  Please use \ccc{CGAL::cpp0x::array} instead.
+
+  \ccInclude{CGAL/Threetuple.h}
+  
+  \ccRequirements \ccc{T} must be \ccc{Assignable}.
+
+  %\ccSetThreeColumns{T*}{next_link ;}{}
+  \ccThree{result_type;;}{operator()(argument a) ;;}{}
+
+  \ccTypes
+  \ccTypedef{typedef T value_type;}{}
+
+  \ccHeading{Variables}
+  \ccVariable{T e0;}{first element}
+  \ccGlue
+  \ccVariable{T e1;}{second element}
+  \ccGlue
+  \ccVariable{T e2;}{third element}
+
+  \ccCreation
+  \ccCreationVariable{t}
+  
+  \ccConstructor{Threetuple();}{introduces a \ccRefName\ using the default
+    constructor of the elements.}
+  
+  \ccConstructor{Threetuple(T x, T y, T z);}{constructs a \ccRefName\ such
+    that \ccc{e0} is constructed from \ccc{x}, \ccc{e1} is
+    constructed from \ccc{y} and \ccc{e2} is constructed from \ccc{z}.}
+  
+\end{ccRefClass}
+
+%% +--------------------------------------------------------+
+
+\begin{ccRefClass}{Fourtuple<T>}
+  
+  \ccDefinition The \ccRefName\ class stores a homogeneous (same type)
+  fourtuple of objects of type \ccc{T}.  A \ccRefName\ is much like a
+  container, in that it "owns" its elements. It is not actually a model of
+  container, though, because it does not support the standard methods (such as
+  iterators) for accessing the elements of a container.
+
+  This class is DEPRECATED, and will be removed in some future CGAL release.
+  Please use \ccc{CGAL::cpp0x::array} instead.
+
+  \ccInclude{CGAL/Fourtuple.h}
+  
+  \ccRequirements \ccc{T} must be \ccc{Assignable}.
+
+  %\ccSetThreeColumns{T*}{next_link ;}{}
+  \ccThree{result_type;;}{operator()(argument a) ;;}{}
+
+  \ccTypes
+  \ccTypedef{typedef T value_type;}{}
+
+  \ccHeading{Variables}
+  \ccVariable{T e0;}{first element}
+  \ccGlue
+  \ccVariable{T e1;}{second element}
+  \ccGlue
+  \ccVariable{T e2;}{third element}
+  \ccGlue
+  \ccVariable{T e3;}{fourth element}
+
+  \ccCreation
+  \ccCreationVariable{t}
+  
+  \ccConstructor{Fourtuple();}{introduces a \ccRefName\ using the default
+    constructor of the elements.}
+  
+  \ccConstructor{Fourtuple(T x, T y, T z, T t);}{constructs a \ccRefName\ such
+    that \ccc{e0} is constructed from \ccc{x}, \ccc{e1} from \ccc{y},
+    \ccc{e2} from \ccc{z} and \ccc{e3} from \ccc{t}.}
+  
+\end{ccRefClass}
+
+%% +--------------------------------------------------------+
+
+\begin{ccRefClass}{Sixtuple<T>}
+  
+  \ccDefinition The \ccRefName\ class stores a homogeneous (same type)
+  sixtuple of objects of type \ccc{T}.  A \ccRefName\ is much like a
+  container, in that it "owns" its elements. It is not actually a model of
+  container, though, because it does not support the standard methods (such as
+  iterators) for accessing the elements of a container.
+
+  This class is DEPRECATED, and will be removed in some future CGAL release.
+  Please use \ccc{CGAL::cpp0x::array} instead.
+
+  \ccInclude{CGAL/Sixtuple.h}
+  
+  \ccRequirements \ccc{T} must be \ccc{Assignable}.
+
+  %\ccSetThreeColumns{T*}{next_link ;}{}
+  \ccThree{result_type;;}{operator()(argument a) ;;}{}
+
+  \ccTypes
+  \ccTypedef{typedef T value_type;}{}
+
+  \ccHeading{Variables}
+  \ccVariable{T e0;}{first element}
+  \ccGlue
+  \ccVariable{T e1;}{second element}
+  \ccGlue
+  \ccVariable{T e2;}{third element}
+  \ccGlue
+  \ccVariable{T e3;}{fourth element}
+  \ccGlue
+  \ccVariable{T e4;}{fifth element}
+  \ccGlue
+  \ccVariable{T e5;}{sixth element}
+
+  \ccCreation
+  \ccCreationVariable{t}
+  
+  \ccConstructor{Sixtuple();}{introduces a \ccRefName\ using the default
+    constructor of the elements.}
+  
+  \ccConstructor{Sixtuple(T x, T y, T z, T t, T u, T v);}{constructs a
+    \ccRefName\ such that \ccc{e0} is constructed from \ccc{x}, \ccc{e1} from
+    \ccc{y}, \ccc{e2} from \ccc{z}, \ccc{e3} from \ccc{t}, \ccc{e4} from
+    \ccc{u} and \ccc{e5} from \ccc{v}.}
+  
+\end{ccRefClass}
+
+%% +--------------------------------------------------------+
+
+\begin{ccRefClass}{Triple<T1, T2, T3>}
+  
+  \ccDefinition The Triple class is an extension of \ccc{std::pair}.
+  \ccRefName\ is a heterogeneous triple: it holds one object of type
+  \ccc{T1}, one of type \ccc{T2}, and one of type \ccc{T3}.  A
+  \ccRefName\ is much like a container, in that it "owns" its
+  elements. It is not actually a model of container, though, because
+  it does not support the standard methods (such as iterators) for
+  accessing the elements of a container.
+
+  This class is NOT RECOMMENDED anymore.  We recommend that you use
+  \ccc{CGAL::cpp0x::tuple} or \ccc{CGAL::cpp0x::array} instead for new uses.
+
+  \ccInclude{CGAL/utility.h}
+  
+  \ccRequirements \ccc{T1}, \ccc{T2} and \ccc{T3} must be \ccc{Assignable}.
+  Additional operations have additional requirements.
+
+  %\ccSetThreeColumns{T*}{next_link ;}{}
+  \ccThree{result_type;;}{operator()(argument a) ;;}{}
+
+  \ccTypes
+  \ccTypedef{typedef T1 first_type;}{}
+  \ccGlue
+  \ccTypedef{typedef T2 second_type;}{}
+  \ccGlue
+  \ccTypedef{typedef T3 third_type;}{}
+
+  \ccHeading{Variables}
+  \ccVariable{T1 first;}{first element.  Please access it using \ccc{get<0>()}.}
+  \ccGlue
+  \ccVariable{T2 second;}{second element.  Please access it using \ccc{get<1>()}.}
+  \ccGlue
+  \ccVariable{T3 third;}{third element.  Please access it using \ccc{get<2>()}.}
+
+  \ccCreation
+  \ccCreationVariable{t}
+  
+  \ccConstructor{Triple();}{introduces a triple using the default
+    constructor of the three elements.}
+  
+  \ccConstructor{Triple(T1 x, T2 y, T3 z);}{constructs a triple such
+    that \ccc{first} is constructed from \ccc{x}, \ccc{second} is
+    constructed from \ccc{y}, and \ccc{third} is constructed from
+    \ccc{z}.}
+  
+  \ccConstructor{template <class U, class V, class W> Triple(U u, V v,
+    W w);} {constructs a triple such that \ccc{first} is constructed
+    from \ccc{u}, \ccc{second} is constructed from \ccc{v}, and
+    \ccc{third} is constructed from \ccc{w}. \ccRequire Proper
+    conversion operators exist from \ccc{U} to \ccc{T1}, \ccc{V} to
+    \ccc{T2}, and \ccc{W} to \ccc{T3}.}
+
+  \ccMemberFunction{template <int i> T get();}
+    {Gives access to \ccc{first}, \ccc{second} or \ccc{third} whenever
+     \ccc{i} is 0, 1 or 2, via a, potentially const, reference.
+     Note: \ccc{T} stands for \ccc{T1}, \ccc{T2} or \ccc{T3} depending
+     on \ccc{i}.}
+
+  \ccFunction{template <class T1, class T2, class T3> bool
+    operator<(Triple<T1, T2, T3> x, Triple<T1, T2, T3> y);} {The
+    comparison operator. It uses lexicographic comparison: the return
+    value is true if the first element of \ccc{x} is less than the
+    first element of \ccc{y}, and false if the first element of
+    \ccc{y} is less than the first element of \ccc{x}. If neither of
+    these is the case, then it returns true if the second element of
+    \ccc{x} is less than the second element of \ccc{y}, and false if
+    the second element of \ccc{y} is less than the second element of
+    \ccc{x}.  If neither of these is the case, then it returns the
+    result of comparing the third elements of \ccc{x} and \ccc{y}.
+    This operator may only be used if \ccc{T1}, \ccc{T2} and \ccc{T3}
+    define the comparison operator.}
+
+  \ccFunction{template <class T1, class T2, class T3> bool
+    operator==(Triple<T1, T2, T3> x, Triple<T1, T2, T3> y);} {The
+    equality operator. The return value is true if and only the first
+    elements of \ccc{x} and \ccc{y} are equal, the second elements of
+    \ccc{x} and \ccc{y} are equal, and the third elements of \ccc{x}
+    and \ccc{y} are equal.  This operator may only be used if
+    \ccc{T1}, \ccc{T2} and \ccc{T3} define the equality operator.}
+  
+  \ccFunction{template <class T1, class T2, class T3> Triple<T1, T2,
+    T3> make_triple(T1 x, T2 y, T3 z);} {Equivalent to
+    \ccStyle{Triple<T1, T2, T3>(x, y, z)}.}
+  
+  \ccFunction{template <class T1, class T2, class T3> Triple<T1, T2,
+    T3> make_tuple(T1 x, T2 y, T3 z);} {Equivalent to
+    \ccStyle{Triple<T1, T2, T3>(x, y, z)}.}
+
+\end{ccRefClass}
+
+%% +--------------------------------------------------------+
+
+\begin{ccRefClass}{Quadruple<T1, T2, T3, T4>}
+  
+  \ccDefinition The Quadruple class is an extension of
+  \ccc{std::pair}.  \ccRefName\ is a heterogeneous quadruple: it holds
+  one object of type \ccc{T1}, one of type \ccc{T2}, one of type
+  \ccc{T3}, and one of type \ccc{T4}.  A \ccRefName\ is much like a
+  container, in that it ``owns'' its elements. It is not actually a
+  model of container, though, because it does not support the standard
+  methods (such as iterators) for accessing the elements of a
+  container.
+
+  This class is NOT RECOMMENDED anymore.  We recommend that you use
+  \ccc{CGAL::cpp0x::tuple} or \ccc{CGAL::cpp0x::array} instead for new uses.
+
+  \ccInclude{CGAL/utility.h}
+  
+  \ccRequirements \ccc{T1}, \ccc{T2}, \ccc{T3} and \ccc{T4} must be
+  \ccc{Assignable}. Additional operations have additional requirements.
+
+  %\ccSetThreeColumns{T*}{next_link ;}{}
+  \ccThree{result_type;;}{operator()(argument a) ;;}{}
+
+  \ccTypes
+  \ccTypedef{typedef T1 first_type;}{}
+  \ccGlue
+  \ccTypedef{typedef T2 second_type;}{}
+  \ccGlue
+  \ccTypedef{typedef T3 third_type;}{}
+  \ccGlue
+  \ccTypedef{typedef T4 fourth_type;}{}
+
+  \ccHeading{Variables}
+  \ccVariable{T1 first;}{first element.  Please access it using \ccc{get<0>()}.}
+  \ccGlue
+  \ccVariable{T2 second;}{second element.  Please access it using \ccc{get<1>()}.}
+  \ccGlue
+  \ccVariable{T3 third;}{third element.  Please access it using \ccc{get<2>()}.}
+  \ccGlue
+  \ccVariable{T4 fourth;}{fourth element.  Please access it using \ccc{get<3>()}.}
+
+  \ccCreation
+  \ccCreationVariable{t}
+  
+  \ccConstructor{Quadruple();} {introduces a quadruple using the
+    default constructor of the four elements.}
+  
+  \ccConstructor{Quadruple(T1 x, T2 y, T3 z, T4 w);} {constructs a
+    quadruple such that \ccc{first} is constructed from \ccc{x},
+    \ccc{second} is constructed from \ccc{y}, \ccc{third} is
+    constructed from \ccc{z}, and \ccc{fourth} is constructed from
+    \ccc{w}.}
+  
+  \ccConstructor{template <class U, class V, class W, class X>
+    Quadruple(U u, V v, W w, X x);} {constructs a quadruple such that
+    \ccc{first} is constructed from \ccc{u}, \ccc{second} is
+    constructed from \ccc{v}, \ccc{third} is constructed from \ccc{w},
+    and \ccc{fourth} is constructed from \ccc{x}. \ccRequire Proper
+    conversion operators exist from \ccc{U} to \ccc{T1}, \ccc{V} to
+    \ccc{T2}, \ccc{W} to \ccc{T3}, and \ccc{X} to \ccc{T4}.  }
+
+  \ccMemberFunction{template <int i> T get();}
+    {Gives access to \ccc{first}, \ccc{second}, \ccc{third} or \ccc{fourth}
+     whenever \ccc{i} is 0, 1, 2 or 3, via a, potentially const, reference.
+     Note: \ccc{T} stands for \ccc{T1}, \ccc{T2}, \ccc{T3} or \ccc{T4}
+     depending on \ccc{i}.}
+   
+  \ccFunction{template <class T1, class T2, class T3, class T4> bool
+    operator<(Quadruple<T1, T2, T3, T4> x, Quadruple<T1, T2, T3, T4>
+    y);} {The comparison operator. It uses lexicographic comparison:
+    the return value is true if the first element of \ccc{x} is less
+    than the first element of \ccc{y}, and false if the first element
+    of \ccc{y} is less than the first element of \ccc{x}. If neither
+    of these is the case, then it returns true if the second element
+    of \ccc{x} is less than the second element of \ccc{y}, and false
+    if the second element of \ccc{y} is less than the second element
+    of \ccc{x}. If neither of these is the case, then it returns true
+    if the third element of \ccc{x} is less than the third element of
+    \ccc{y}, and false if the third element of \ccc{y} is less than
+    the third element of \ccc{x}.  If neither of these is the case,
+    then it returns the result of comparing the fourth elements of
+    \ccc{x} and \ccc{y}. This operator may only be used if \ccc{T1},
+    \ccc{T2}, \ccc{T3}, and \ccc{T4} define the comparison operator.}
+  
+  \ccFunction{template <class T1, class T2, class T3, class T4> bool
+    operator==(Quadruple<T1, T2, T3, T4> x, Quadruple<T1, T2, T3, T4>
+    y);} {The equality operator. The return value is true if and only
+    the first elements of \ccc{x} and \ccc{y} are equal, the second
+    elements of \ccc{x} and \ccc{y} are equal, the third elements of
+    \ccc{x} and \ccc{y} are equal, and the fourth elements of \ccc{x}
+    and \ccc{y} are equal.  This operator may only be used if
+    \ccc{T1}, \ccc{T2}, \ccc{T3}, and \ccc{T4} define the equality
+    operator.}
+  
+  \ccFunction{template <class T1, class T2, class T3, class T4>
+    Quadruple<T1, T2, T3, T4> make_quadruple(T1 x, T2 y, T3 z, T4 w);}
+  {Equivalent to \ccStyle{Quadruple<T1, T2, T3, T4>(x, y, z, w)}.}
+  
+  \ccFunction{template <class T1, class T2, class T3, class T4>
+    Quadruple<T1, T2, T3, T4> make_tuple(T1 x, T2 y, T3 z, T4 w);}
+  {Equivalent to \ccStyle{Quadruple<T1, T2, T3, T4>(x, y, z, w)}.}
+
+\end{ccRefClass}
+
+%% +=========================================================================+
+
+\begin{ccRefClass}{Boolean_tag<bool value>}
+
+\ccDefinition
+
+Depending on \ccc{bool value} the class \ccRefName\ indicates that
+something is \ccc{true} or \ccc{false} respectively.
+
+\ccInclude{CGAL/tags.h}
+
+\ccConstants
+
+\ccVariable{static const bool value;}{}
+
+\ccSeeAlso
+\ccRefIdfierPage{CGAL::Tag_true} \\
+\ccRefIdfierPage{CGAL::Tag_false}
+
+\end{ccRefClass}
+
+
+\begin{ccRefClass}{Tag_true}
+
+\ccDefinition
+
+The typedef \ccRefName\ is \ccc{Boolean_tag<true>}.
+It is used to indicate, for example,
+that a certain feature is available in a class.
+
+\ccInclude{CGAL/tags.h}
+
+\ccVariable{static const bool value;}{ is \ccc{true} }
+
+\ccSeeAlso
+\ccRefIdfierPage{CGAL::Boolean_tag<bool value>} \\
+\ccRefIdfierPage{CGAL::Tag_false}
+
+\end{ccRefClass}
+
+
+\begin{ccRefClass}{Tag_false}
+
+\ccDefinition
+
+The typedef \ccRefName\ is \ccc{Boolean_tag<false>}.
+It is used to indicate, for example,
+that a certain feature is not available in a class.
+
+\ccInclude{CGAL/tags.h}
+
+\ccVariable{static const bool value;}{ is \ccc{false} }
+
+\ccSeeAlso
+\ccRefIdfierPage{CGAL::Boolean_tag<bool value>} \\
+\ccRefIdfierPage{CGAL::Tag_true}
+
+\end{ccRefClass}
+
+\input{STL_Extension_ref/Null_functor.tex}
+\input{STL_Extension_ref/Null_tag.tex}
+
+%% +--------------------------------------------------------+
+\ccParDims
+
+%% EOF
+
+

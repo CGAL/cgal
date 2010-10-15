@@ -1,0 +1,60 @@
+% +------------------------------------------------------------------------+
+% | Reference manual page: skin_surface_3.tex
+% +------------------------------------------------------------------------+
+% | 27.09.2005   Nico Kruithof
+% | Package: Skin_surface_3
+% | 
+\RCSdef{\RCStriangulatemixedcomplexRev}{$Id$}
+\RCSdefDate{\RCStriangulatemixedcomplexDate}{$Date$}
+% |
+%%RefPage: end of header, begin of main body
+% +------------------------------------------------------------------------+
+
+
+\begin{ccRefFunction}{triangulate_mixed_complex_3}
+
+\ccDefinition The global function \ccRefName\ takes a regular
+triangulation as input and constructs the triangulated mixed
+complex, as described in \cite{cgal:kv-mssct-05}. It deals with all
+degeneracies.
+
+
+\ccInclude{CGAL/triangulate_mixed_complex_3.h}
+
+\ccParameters 
+%
+The first template argument \ccc{SkinSurfaceTraits_3} is a model of
+the \ccc{SkinSurfaceTraits_3} concept. It defines the shrink factor
+and is used for the construction of the vertices of the mixed complex
+from centers of Delaunay simplices and Voronoi cells.
+
+The second template argument is the type of the Regular triangulation
+from which the triangulated mixed complex is computed and the last
+template argument is the type of the triangulation in which the
+triangulated mixed complex is stored. 
+
+\ccThree{voidx }{x}{}
+\ccThreeToTwo
+
+\ccGlobalFunction{
+template < 
+  class SkinSurfaceTraits_3,
+  class Regular_3,
+  class TriangulatedMixedComplex_3>
+void triangulate_mixed_complex_3(
+  Regular_3 &regular, 
+  TriangulatedMixedComplex_3 &triangulated_mixed_complex,
+  SkinSurfaceTraits_3 &traits);}
+
+%\ccSeeAlso
+%\ccRefIdfierPage{Polyhedron_3<Traits>}\\
+%\ccRefIdfierPage{SkinSurfaceTraits_3<Regular_kernel, Triangulated_mixed_complex_kernel, Polyhedron_kernel>}\\
+
+
+\end{ccRefFunction}
+
+% +------------------------------------------------------------------------+
+%%RefPage: end of main body, begin of footer
+% EOF
+% +------------------------------------------------------------------------+
+

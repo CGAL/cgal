@@ -1,0 +1,105 @@
+% +------------------------------------------------------------------------+
+% | Reference manual page: sibson_c1_interpolation.tex
+% +------------------------------------------------------------------------+
+% | 
+% | August 2003  Julia Floetotto
+% | Package:   Interpolation
+% | 
+% |
+% +------------------------------------------------------------------------+
+
+\begin{ccRefFunction}{sibson_c1_interpolation}
+
+\ccDefinition
+  
+The function \ccRefName\ interpolates the function values and the
+gradients that are provided by functors 
+following the method described in \cite{s-bdnni-81}.
+
+\ccParameters The template parameter \ccc{Traits} is to be
+instantiated with a model of \ccc{InterpolationTraits}.
+\ccc{ForwardIterator::value_type} is a pair associating a point to a
+(non-normalized) barycentric coordinate.  \ccc{norm} is the
+normalization factor. The range $\left[\right.$
+\ccc{first},\ccc{beyond}$\left.\right)$ contains the barycentric
+coordinates for the query point \ccc{p}. The functor
+\ccc{function_value} allows to access the value of the interpolated
+function given a point. \ccc{function_gradient} allows to access the
+function gradient given a point.
+
+\ccInclude{CGAL/interpolation_functions.h}
+
+\ccFunction{template < class ForwardIterator, class Functor, class
+  GradFunctor, class Traits> std::pair< typename Functor::result_type,
+  bool> sibson_c1_interpolation(ForwardIterator first, ForwardIterator
+  beyond, const typename
+  std::iterator_traits<ForwardIterator>::value_type::second_type&
+  norm, const typename
+  std::iterator_traits<ForwardIterator>::value_type:: first_type& p,
+  Functor function_value, GradFunctor function_gradient,const Traits&
+  traits);} { This function generates the interpolated function
+  value at the point \ccc{p} using Sibson's $Z^1$ interpolant
+  \cite{s-bdnni-81}.\\
+  If the functor \ccc{function_gradient} cannot supply the gradient of
+  a point, the function returns a pair where the Boolean is set to
+  \ccc{false}.  If the interpolation was successful, the pair contains
+  the interpolated function value as first and \ccc{true} as second
+  value.  \ccPrecond{\ccc{norm} $\neq 0$.
+    \ccc{function_value(p).second == true} for all points \ccc{p} of
+    the point/coordinate pairs in the range
+    $\left[\right.$\ccc{first}, \ccc{beyond}$\left.\right)$.}  }
+
+\ccHeading{Requirements}
+\begin{enumerate}
+\item  \ccc{Traits} is a model of the concept 
+  \ccc{InterpolationTraits}\ccIndexMainItem[c]{InterpolationTraits}.
+\item \ccc{ForwardIterator::value_type} is a point/coordinate pair.
+  Precisely \ccc{ForwardIterator::value_type::first_type} is
+  equivalent to \ccc{Traits::Point_d} and
+  \ccc{ForwardIterator::value_type::second_type} is equivalent to
+  \ccc{Traits::FT}.
+\item \ccc{Functor::argument_type} must be equivalent to
+  \ccc{Traits::Point_d} and \ccc{Functor::result_type} is a pair of
+  the function value type and a Boolean. The function value type must
+  provide a multiplication and addition operation with the type
+  \ccc{Traits::FT} as well as a constructor with argument $0$.
+\item \ccc{GradFunctor::argument_type} must be equivalent to
+  \ccc{Traits::Point_d} and \ccc{Functor::result_type} is a pair of
+  the function's gradient type and a Boolean. The
+  function gradient type must provide a multiplication operation with
+  \ccc{Traits::Vector_d}.
+\item A model of the functor types \ccc{Functor} (resp.\ 
+  \ccc{GradFunctor}) is provided by the struct \ccc{Data_access}. It
+  must be instantiated accordingly with an associative container
+  (e.g.\ \stl\ \ccc{std::map}) having the point type as \ccc{key_type}
+  and the function value type (resp.\ function gradient type) as
+  \ccc{mapped_type}.
+\item The number type \ccc{FT} provided by \ccc{Traits} must support
+  the square root operation \ccc{sqrt()}.
+\end{enumerate}
+
+\ccFunction{template < class ForwardIterator, class Functor, class
+  GradFunctor, class Traits> typename Functor::result_type
+  sibson_c1_interpolation_square(ForwardIterator first,
+  ForwardIterator beyond, const typename
+  std::iterator_traits<ForwardIterator>::value_type::second_type&
+  norm, Functor function_value, GradFunctor function_gradient,const
+  Traits& traits);} {The same as above except that no square root
+  operation is needed for \ccc{FT}.}
+
+\ccSeeAlso 
+\ccRefConceptPage{InterpolationTraits}\\
+\ccRefConceptPage{GradientFittingTraits}\\
+\ccRefIdfierPage{CGAL::Data_access<Map>}\\
+\ccRefIdfierPage{CGAL::sibson_gradient_fitting} \\
+\ccRefIdfierPage{CGAL::linear_interpolation} \\
+%\ccRefIdfierPage{CGAL::farin_c1_interpolation} \\
+%\ccRefIdfierPage{CGAL::quadratic_interpolation} \\
+\ccRefIdfierPage{CGAL::Interpolation_traits_2<K>} \\
+\ccRefIdfierPage{CGAL::Interpolation_gradient_fitting_traits_2<K>} \\
+\ccRefIdfierPage{CGAL::natural_neighbor_coordinates_2}\\
+\ccRefIdfierPage{CGAL::regular_neighbor_coordinates_2} \\
+\ccRefIdfierPage{CGAL::surface_neighbor_coordinates_3}\\
+%\ccImplementation
+
+\end{ccRefFunction}

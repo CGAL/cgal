@@ -1,0 +1,43 @@
+This directory contains several examples of how to create manuals using
+the tools in this distribution.
+
+The directory structure is:
+
+    README                 this file.
+
+    Example_ref            Directory containing examples of the C++ reference
+                           pages.  See the README file in this directory for
+                           documentation of how these files were created.
+    Example_ref/main.tex   main LaTeX file for the reference page chapter.
+    Example_ref/intro.tex  introduction to this chapter.
+    Example_ref/*.tex      the reference pages.
+ 
+    one_manual             example of creation of a single manual 
+                           
+    one_manual_ext_html    example of creation of a single manual using
+                           the -extended option for HTML conversion.
+    two_manuals            example of creation of two manuals in a single
+                           document using \part commands
+    two_manuals_ext_html   example of creation of two manuals in a single
+                           document using \part commands and the -extended
+                           and -ref_manual options for HTML conversion
+    
+Each of the last four directories has similar structure.  Namely, each
+directory <dir> contains:
+
+     <dir>/Example*/          a directory containing a chapter of the manual.  
+     <dir>/Example*/main.tex  file containing an explanation of the example.
+                              (the chapter body)
+     <dir>/Example_ref        a link to Example_ref in this directory
+     <dir>/Makefile           makefile used to produce the manuals
+     <dir>/html/contents.html HTML manual
+     <dir>/main.tex           file that includes the main.tex files for the
+                              manual parts or chapters
+     <dir>/manual.ps.gz       PostScript manual
+     <dir>/manual.tex         main LaTex file for the manual
+
+The directories one_manual_ext_html and two_manuals_ext_html contain 
+additionaly .tex files used in the extended HTML conversion.  See the
+example documents for explanations.
+--------------------------------------------------------------------------
+EOF

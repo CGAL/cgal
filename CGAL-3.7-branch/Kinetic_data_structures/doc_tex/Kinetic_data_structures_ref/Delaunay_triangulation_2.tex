@@ -1,0 +1,90 @@
+% +------------------------------------------------------------------------+
+% | Reference manual page: Delaunay_triangulation_3.tex
+% +------------------------------------------------------------------------+
+% | 20.03.2005   Author Daniel Russel
+% | Package: Kinetic_data_structures
+% | 
+\RCSdef{\RCSDelaunaytriangulationRev}{$Id$}
+\RCSdefDate{\RCSDelaunaytriangulationDate}{$Date$}
+% |
+%%RefPage: end of header, begin of main body
+% +------------------------------------------------------------------------+
+
+
+\begin{ccRefClass}{Kinetic::Delaunay_triangulation_2<Traits, Visitor, Triangulation>}  %% add template arg's if necessary
+
+%% \ccHtmlCrossLink{}     %% add further rules for cross referencing links
+%% \ccHtmlIndexC[class]{} %% add further index entries
+
+\ccDefinition
+  
+The class \ccRefName\ maintains a Delaunay triangulation on top of the
+points contained in a \ccc{Kinetic::ActiveObjectsTable}. It has one
+main method of interest, \ccc{triangulation()}, which returns the
+triangulation it is maintaining.
+
+Note that the Delaunay triangulation is fully dynamic as it tracks points added to and removed from the \ccc{Kinetic::ActiveObjectsTable}.
+
+The class \ccc{Kinetic::Qt_triangulation_2<KineticTriangulation_2,
+  QtWidget_2, QtMovingPoints_2>} displays a kinetic Delaunay
+triangulation using the Qt widget.
+
+This class is a good example of a simple, but non-trivial, kinetic
+data structure.
+
+The \ccc{Triangulation} template parameter must be a model of
+\ccc{CGAL::Delaunay_triangulation_2<Traits, Tds>} which uses
+\ccc{Traits::Default_instantaneous_kernel} as its geometric traits and a
+\ccc{Tds} whose face inherits from
+\ccc{Kinetic::Delaunay_triangulation_face_base_2<Traits, Base>}.
+
+The optional \ccc{Visitor} parameter takes a model of
+\ccc{Kinetic::DelaunayTriangulationVisitor_2}. Methods on this object will be called
+whenever the triangulation changes.
+
+\ccInclude{CGAL/Kinetic/Delaunay_triangulation_2.h}
+
+\ccIsModel
+
+\ccc{Ref_counted<T>}
+
+
+\ccTypes
+
+\ccNestedType{Triangulation}{The template argument triangulation.}
+
+\ccNestedType{Visitor}{The template argument for the visitor.}
+
+\ccCreation
+\ccCreationVariable{dt}  %% choose variable name
+
+\ccConstructor{Delaunay_triangulation_2(Traits tr);}{Maintain the
+  Delaunay triangulation of the points in
+  \ccc{tr.active_points_2_handle()}.}
+
+\ccOperations
+
+\ccMethod{const Triangulation& triangulation() const;}{Access the triangulation that is maintained. }
+
+\ccMethod{Visitor& visitor();}{Access the visitor. }
+
+\ccMethod{Vertex_handle insert(Point_key k);}{Insert the point. }
+
+\ccMethod{void erase(Vertex_handle h);}{Erase the vertex.}
+
+\ccSeeAlso
+
+\ccc{Kinetic::DelaunayTriangulationVisitor_2},
+\ccc{Kinetic::Delaunay_triangulation_default_visitor_2},
+\ccc{Kinetic::Delaunay_triangulation_recent_edges_visitor_2<Triangulation>},
+\ccc{Kinetic::Delaunay_triangulation_event_log_visitor_2},
+\ccc{Kinetic::Qt_Delaunay_triangulation_2}.
+
+
+\end{ccRefClass}
+
+% +------------------------------------------------------------------------+
+%%RefPage: end of main body, begin of footer
+% EOF
+% +------------------------------------------------------------------------+
+

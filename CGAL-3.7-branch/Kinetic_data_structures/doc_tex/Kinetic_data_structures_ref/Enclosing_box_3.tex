@@ -1,0 +1,52 @@
+% +------------------------------------------------------------------------+
+% | Reference manual page: Delaunay_triangulation_3.tex
+% +------------------------------------------------------------------------+
+% | 20.03.2005   Author
+% | Package: Kinetic_data_structures
+% | 
+\RCSdef{\RCSDelaunaytriangulationRev}{$Id$}
+\RCSdefDate{\RCSDelaunaytriangulationDate}{$Date$}
+% |
+%%RefPage: end of header, begin of main body
+% +------------------------------------------------------------------------+
+
+
+\begin{ccRefClass}{Kinetic::Enclosing_box_3<Traits>}  %% add template arg's if necessary
+
+%% \ccHtmlCrossLink{}     %% add further rules for cross referencing links
+%% \ccHtmlIndexC[class]{} %% add further index entries
+
+\ccDefinition
+  
+The class \ccRefName\ keeps the points in the simulation inside of a
+box. Whenever the points come close to the wall of the box they bounce
+off of the wall.
+
+
+Note that, in general, points hit the wall of the box at times which
+are not easily represented by standard (rational) number types. The
+resulting trajectories would also have non-rational coefficients,
+complicating and slowing the simulation. In order to handle this, the
+\ccRefName\ bounces the points at the nearest easily representable
+time before the point would leave the box.
+
+\ccInclude{CGAL/Kinetic/Enclosing_box_3.h}
+
+\ccTypes
+
+\ccNestedType{NT}{The number type used to represent the walls of the box and perform calculations. Generally this is \ccc{Traits::NT}.}
+
+\ccCreation
+\ccCreationVariable{eb}  %% choose variable name
+
+\ccConstructor{Enclosing_box_3(Traits, NT xmin, NT xmax, NT ymin, NT ymax, NT zmin, NT zmax);}{This constructs a bounding box with the dimensions specified by the last 6 arguments. They are optional and will take the values $\pm$10 if omitted.}
+
+
+
+\end{ccRefClass}
+
+% +------------------------------------------------------------------------+
+%%RefPage: end of main body, begin of footer
+% EOF
+% +------------------------------------------------------------------------+
+

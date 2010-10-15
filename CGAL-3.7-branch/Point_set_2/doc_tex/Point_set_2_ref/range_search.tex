@@ -1,0 +1,166 @@
+\begin{ccRefFunction}{range_search}
+
+\ccDefinition  
+
+There are six versions of the function template \ccRefName\ that
+perform range searches on Delaunay triangulations. The first performs
+circular range searches, the second triangular range searches and the
+third performs iso-rectangular range searches. The other three range search
+function templates perform enhanced variants of the three aforementioned
+operations.\\
+They get a user-defined object that has to control the range search operation.
+This way one can for instance stop the search, when $n$ points were found. 
+
+\ccInclude{CGAL/range_search_delaunay_2.h}
+
+\ccFunction{template<class Dt, class Circle, class OutputIterator>
+            OutputIterator range_search(Dt& delau, const Circle& C, OutputIterator res);}
+{ computes handles to all vertices contained in the closure of disk $C$.
+The computed vertex handles will be placed as a sequence of objects in a container of value type
+of $res$
+which points to the first object in the sequence. The function
+returns an output iterator pointing to the position beyond the end
+of the sequence.
+$delau$ is the \cgal\ Delaunay triangulation on which we perform the range search operation.}
+
+\ccHeading{Requirements}
+\begin{itemize}
+\item \ccc{Dt} is a \cgal\ Delaunay triangulation and contains the following subset of types from the concept \ccc{PointSetTraits} and from
+the Delaunay triangulation data type:
+ \begin{itemize}
+  \item \ccc{Dt::Geom_traits} 
+  \item \ccc{Dt::Vertex_handle}
+  \item \ccc{Dt::Vertex} 
+  \item \ccc{Dt::Vertex_circulator}   
+  \item \ccc{Dt::Vertex_iterator} 
+  \item \ccc{Dt::Point}  
+  \item \ccc{Dt::Geom_traits::Bounded_side_2} 
+  \item \ccc{Dt::Geom_traits::Construct_center_2} 
+ \end{itemize}
+\item the template parameter \ccc{Circle} corresponds to \ccc{Dt::Geom_traits::Cricle_2}
+\end{itemize}
+
+\ccFunction{template<class Dt, class OutputIterator>
+            OutputIterator range_search(Dt& delau, const Dt::Point& a, const Dt::Point& b, 
+            const Dt::Point& c,OutputIterator res);}
+{computes handles to all vertices contained in the closure of the triangle $(a,b,c)$.\\
+\ccPrecond $a$, $b$, and $c$ must not be collinear. 
+The computed vertex handles will be placed as a sequence of objects in a container of value type
+of $res$
+which points to the first object in the sequence. The function
+returns an output iterator pointing to the position beyond the end
+of the sequence. 
+$delau$ is the \cgal\ Delaunay triangulation on which we perform the range search operation.}
+
+\ccHeading{Requirements}
+\ccc{Dt} is a \cgal\ Delaunay triangulation and contains the following subset of types from the concept \ccc{PointSetTraits} and from
+the Delaunay triangulation data type:
+\begin{itemize}
+  \item \ccc{Dt::Geom_traits} 
+  \item \ccc{Dt::Vertex_handle}
+  \item \ccc{Dt::Vertex} 
+  \item \ccc{Dt::Vertex_circulator}   
+  \item \ccc{Dt::Vertex_iterator} 
+  \item \ccc{Dt::Point}  
+  \item \ccc{Dt::Geom_traits::Circle_2}  
+  \item \ccc{Dt::Geom_traits::Bounded_side_2} 
+  \item \ccc{Dt::Geom_traits::Construct_center_2} 
+  \item \ccc{Dt::Geom_traits::Orientation_2} 
+  \item \ccc{Dt::Geom_traits::Construct_circle_2}  
+\end{itemize}
+
+
+\ccFunction{template<class Dt, class OutputIterator>
+            OutputIterator range_search(Dt& delau, const Dt::Point& a, const Dt::Point& b, const Dt::Point& c,const Dt::Point& d,OutputIterator res) ;}
+{computes handles to all vertices contained in the closure of the iso-rectangle $(a,b,c,d)$.\\
+\ccPrecond $a$ is the upper left point, $b$ the lower left, $c$ the lower
+right and $d$ the upper right point of the iso rectangle.
+The computed vertex handles will be placed as a sequence of objects in a container of value type
+of $res$
+which points to the first object in the sequence. The function
+returns an output iterator pointing to the position beyond the end
+of the sequence. $delau$ is the \cgal\ Delaunay triangulation on which we perform the range search operation.} 
+
+\ccHeading{Requirements}
+\ccc{Dt} is a \cgal\ Delaunay triangulation and contains the following subset of types from the concept \ccc{PointSetTraits} and from
+the Delaunay triangulation data type:
+\begin{itemize}
+  \item \ccc{Dt::Geom_traits} 
+  \item \ccc{Dt::Vertex_handle}
+  \item \ccc{Dt::Vertex} 
+  \item \ccc{Dt::Vertex_circulator}   
+  \item \ccc{Dt::Vertex_iterator} 
+  \item \ccc{Dt::Point}  
+  \item \ccc{Dt::Geom_traits::Circle_2}  
+  \item \ccc{Dt::Geom_traits::Bounded_side_2} 
+  \item \ccc{Dt::Geom_traits::Construct_center_2} 
+  \item \ccc{Dt::Geom_traits::Orientation_2} 
+  \item \ccc{Dt::Geom_traits::Construct_circle_2}  
+\end{itemize}
+
+
+\ccFunction{template<class Dt, class Circle, class OutputIterator, class Pred>
+            OutputIterator range_search(Dt& delau, const Circle& C, OutputIterator res,
+	                                Pred& pred, bool return_if_succeded);}
+{ computes handles to all vertices contained in the closure of disk $C$.
+The computed vertex handles will be placed as a sequence of objects in a container of value type
+of $res$
+which points to the first object in the sequence. The function
+returns an output iterator pointing to the position beyond the end
+of the sequence.
+$delau$ is the \cgal\ Delaunay triangulation on that we perform the range search operation.
+$pred$ controls the search operation. If $return\_if\_succeded$ is $true$, we will end the search
+after the first success of the predicate, otherwise we will continue till the search is finished.}
+
+\ccHeading{Requirements}
+For the requirements of \ccc{Dt} see the description for the non-predicate version.\\
+Requirements of \ccc{Pred}:
+\begin{itemize}
+  \item \ccc{void set_result(bool);}
+  \item \ccc{bool operator()(const Point&);}
+\end{itemize}
+The \ccc{operator()} is used for testing the current point in the search operation.
+If this operator returns $true$ and $return\_if\_succeded$ is $true$, the range search will stop.
+Otherwise the range search operation will continue. Member function  $set\_result$ can be used to
+store the result of the range search in the function object. The result will be $true$ if the last
+call to the  \ccc{operator()} of the predicate returned $true$, $false$ otherwise.
+
+\ccFunction{template<class Dt, class OutputIterator, class Pred>
+            OutputIterator range_search(Dt& delau, const Dt::Point& a, const Dt::Point& b, 
+            const Dt::Point& c,OutputIterator res, Pred& pred, bool return_if_succeded);}
+{computes handles to all vertices contained in the closure of the triangle $(a,b,c)$.\\
+\ccPrecond $a$, $b$, and $c$ must not be collinear. 
+The computed vertex handles will be placed as a sequence of objects in a container of value type
+of $res$
+which points to the first object in the sequence. The function
+returns an output iterator pointing to the position beyond the end
+of the sequence. 
+$delau$ is the \cgal\ Delaunay triangulation on which we perform the range search operation.
+$pred$ controls the search operation. If $return\_if\_succeded$ is $true$, we will end the search
+after the first success of the predicate, otherwise we will continue till the search is finished.}
+
+\ccHeading{Requirements}
+For the requirements of \ccc{Dt} see the description for the non-predicate version.\\
+For the requirements of \ccc{Pred} see the description above. \\
+
+\ccFunction{template<class Dt, class OutputIterator, class Pred>
+            OutputIterator range_search(Dt& delau, const Dt::Point& a, const Dt::Point& b, const Dt::Point& c,const Dt::Point& d,
+	                                OutputIterator res, Pred& pred, bool return_if_succeded);}
+{computes handles to all vertices contained in the closure of the iso-rectangle $(a,b,c,d)$.\\
+\ccPrecond $a$ is the upper left point, $b$ the lower left, $c$ the lower
+right and $d$ the upper right point of the iso rectangle.
+The computed vertex handles will be placed as a sequence of objects in a container of value type
+of $res$
+which points to the first object in the sequence. The function
+returns an output iterator pointing to the position beyond the end
+of the sequence. $delau$ is the \cgal\ Delaunay triangulation on which we perform the range search operation.
+$pred$ controls the search operation. If $return\_if\_succeded$ is $true$, we will end the search
+after the first success of the predicate, otherwise we will continue till the search is finished.} 
+
+\ccHeading{Requirements}
+For the requirements of \ccc{Dt} see the description for the non-predicate version.\\
+For the requirements of \ccc{Pred} see the description above. \\
+
+\end{ccRefFunction}
+
+

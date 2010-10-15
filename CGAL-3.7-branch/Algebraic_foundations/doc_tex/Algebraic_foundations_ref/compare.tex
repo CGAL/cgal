@@ -1,0 +1,24 @@
+\begin{ccRefFunction}{compare}
+
+\ccDefinition
+
+The template function \ccRefName\ compares the first argument with respect to
+the second, i.e. it returns \ccc{CGAL::LARGER} if $x$ is larger then $y$. 
+
+In case the argument types \ccc{NT1} and \ccc{NT2} differ, 
+\ccRefName\ is performed with the semantic of the type determined via
+\ccc{Coercion_traits}.
+The function is guaranteed to be well defined in case this type
+is a model of the \ccc{RealEmbeddable} concept. 
+
+\ccInclude{CGAL/number_utils.h}
+
+\ccFunction{template <class NT1, class NT2> 
+        result_type compare(const NT &x, const NT &y);}{
+        The \ccc{result_type} is convertible to \ccc{CGAL::Comparison_result}. 
+}
+
+\ccRefConceptPage{RealEmbeddable}\\
+\ccRefConceptPage{RealEmbeddableTraits::Compare}\\
+
+\end{ccRefFunction}

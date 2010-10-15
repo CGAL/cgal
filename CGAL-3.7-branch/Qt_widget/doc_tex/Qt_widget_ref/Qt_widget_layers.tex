@@ -1,0 +1,143 @@
+% +------------------------------------------------------------------------+
+% | CGAL Reference Manual: Reference manual for Qt_widget.tex
+% +------------------------------------------------------------------------+
+% |
+% | 03.01.2001  Radu Ursu
+% | 
+% | \RCSdef{\qtwidgetRev}{$Id$}
+% | \RCSdefDate{\qtwidgetDate}{$Date$}
+% +------------------------------------------------------------------------+
+
+% +-----------------------------------------------------+
+\begin{ccRefClass}{Qt_widget_layer}
+
+\ccDefinition
+The \ccc{Qt\_widget\_layer} serves as a base class for layers. Layers
+are classes that draw on the drawing area of a \ccc{Qt_widget} and
+receive events from it. You can attach and detach layers on the
+\ccc{Qt\_widget}. All the attached layers will receive the events if
+they are active. The same for drawing, all the active layers that are
+attached will be drawn.
+
+\ccInclude{CGAL/IO/Qt_widget_layer.h}
+\ccGlue
+
+\ccInheritsFrom
+\ccc{QObject}
+
+\ccCreation
+\ccCreationVariable{layer}
+\ccSetTwoColumns{Qt_widget_layer}{}
+
+\ccConstructor{Qt_widget_layer(QObject *parent = 0, const char* name = 
+0);}{The default constructor. The parameters \ccc{parent} and \ccc{name} 
+are passed to the \ccc{QObject} constructor.}
+\ccSetThreeColumns{const_iterator}{container.begin() const;}{}
+
+\ccMethod{virtual void mousePressEvent(QMouseEvent *);}{}
+\ccGlue
+\ccMethod{virtual void mouseReleaseEvent(QMouseEvent *);}{}
+\ccGlue
+\ccMethod{virtual void wheelEvent(QMouseEvent *);}{}
+\ccGlue
+\ccMethod{virtual void mouseDoubleClickEvent(QMouseEvent *);}{}
+\ccGlue
+\ccMethod{virtual void mouseMoveEvent(QMouseEvent *);}{}
+\ccGlue
+\ccMethod{virtual void keyPressEvent(QKeyEvent *);}{}
+\ccGlue
+\ccMethod{virtual void keyReleaseEvent(QMouseEvent *);}{}
+\ccGlue
+\ccMethod{virtual void enterEvent(QEvent *);}{}
+\ccGlue
+\ccMethod{virtual void leaveEvent(QEvent *);}{}
+\ccGlue
+\ccMethod{virtual bool event(QEvent *);}{These
+virtual functions can be overloaded in the derived class. They are
+called by the \ccc{Qt\_widget} to which the layer is attached.}
+
+\ccMethod{bool is_active();}{Returns \ccc{true} if this layer is active.}
+
+\ccHeading{Public Slots}
+
+\ccMethod{virtual void draw();}{This virtual member function
+ must be overloaded. This is where the drawing code goes.}
+\ccMethod{void stateChanged(int s);}{This slot is provided to change
+the layer's state from activated to deactivated and reverse if it is
+triggered. The layer is activated if \ccc{s} is 2, or it is
+deactivated if \ccc{s} is 0. These values match with the signal
+\ccc{stateChanged(int)} in the \ccc{QButton} widget.}
+\ccMethod{void toggle(bool b);}{This slot is provided to change
+the layer's state from activated to deactivated and reverse if it is
+triggered. The layer is activated if \ccc{b} is \ccc{true}, or it is
+deactivated if \ccc{b} is \ccc{false}. These values match with the signal
+\ccc{toggled(bool)} in the \ccc{QButton} widget.}
+\ccMethod{bool activate();}{Activate and return \ccc{true} if it was not active.}
+\ccMethod{bool deactivate();}{Deactivate and return \ccc{true} if it was active.}
+
+\ccHeading{Protected}
+\ccVariable{Qt_widget *widget;}{The widget a layer is attached to or 0 
+otherwise.}
+\ccMethod{virtual void activating();}{You should overload this
+function if you want to have initializing code for your layer. This
+function is called every time the layer is activated.}
+\ccMethod{virtual void deactivating();}{You should overload this
+function if you want to write clean up code for your
+layer. This function is called every time the layer is deactivated.}
+
+\ccHeading{Signals}
+\ccMethod{void activated(Qt_widget_layer *l);}{This signal is emitted
+every time this layer is activated.}
+\ccMethod{void deactivated(Qt_widget_layer *l);}{This signal is emitted
+every time this layer is deactivated.}
+
+
+
+\ccExample
+The following example of a layer draws the points of a triangulation in green.
+
+\begin{ccExampleCode}
+#include <CGAL/IO/Qt_widget_layer.h>
+
+namespace CGAL {
+
+template <class T>
+class Qt_layer_show_points : public Qt_widget_layer {
+public:
+  typedef typename T::Point           Point;
+  typedef typename T::Segment         Segment;
+  typedef typename T::Vertex          Vertex;
+  typedef typename T::Vertex_iterator   Vertex_iterator;
+
+  Qt_layer_show_points(T &t) : tr(t){};
+
+  void draw()
+  {  
+    Vertex_iterator it = tr.vertices_begin(), 
+                beyond = tr.vertices_end();
+    *widget << CGAL::GREEN << CGAL::PointSize (3) 
+            << CGAL::PointStyle (CGAL::DISC);    
+    while(it != beyond) {      
+      *widget << (*it).point();
+      ++it;
+    }
+  };
+private:
+  T &tr;
+  
+};//end class 
+
+} // namespace CGAL
+\end{ccExampleCode}
+
+\end{ccRefClass}
+% +-----------------------------------------------------+
+% EOF
+
+
+
+
+
+
+
+

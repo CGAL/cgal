@@ -1,0 +1,120 @@
+\begin{ccRefFunctionObjectConcept}{AlgebraicStructureTraits::DivMod}
+
+\ccDefinition
+
+\ccc{AdaptableFunctor} computes both integral quotient and remainder
+of division with remainder. The quotient $q$ and remainder $r$ are computed 
+such that $x = q*y + r$ and $|r| < |y|$ with respect to the proper integer norm of 
+the represented ring.
+\footnote{
+For integers this norm is the absolute value.\\ 
+For univariate polynomials this norm is the degree.} 
+In particular, $r$ is chosen to be $0$ if possible.
+Moreover, we require $q$ to be minimized with respect to the proper integer norm.  
+
+\ccIgnore{
+For types representing \Z, this is round $q$ towards zero.
+For univariate polynomials this has no effect at all.
+MP_Float Z[1/2] is not clear yet.
+}
+
+
+Note that the last condition is needed to ensure a unique computation of the 
+pair $(q,r)$. However, an other option is to require minimality for $|r|$, 
+with the advantage that
+a {\em mod(x,y)} operation would return the unique representative of the 
+residue class of $x$ with respect to $y$, e.g. $mod(2,3)$ should return $-1$. 
+But this conflicts with nearly all current implementation 
+of integer types. From there, we decided to stay conform with common 
+implementations and require $q$ to be computed as $x/y$ rounded towards zero. 
+
+\ccIgnore{
+Note that in general the above definition does not force a unique computation 
+of the pair $(q,r)$. This could be solved by requiring $|r|$ to be minimal, 
+in particular a {\em mod} operation would return the unique representative of 
+its residue class. But this conflicts with nearly all current implementation 
+of integer types. From there, we decided to stay conform with common 
+implementation and require $q$ to be computed as $x/y$ rounded towards zero, 
+for \ccc{RealEmbeddable} \ccc{EuclideanRing}s. 
+}
+
+The following table illustrates the behavior for integers: 
+
+\begin{tabular}{ccc}
+\begin{tabular}{|c|c|c|c|}
+\hline
+ $\ x\ $ & $\ y\ $ & $\ q\ $ & $\ r\ $\\
+\hline
+ 3  &  3  &  1  &  0\\
+ 2  &  3  &  0  &  2\\
+ 1  &  3  &  0  &  1\\
+ 0  &  3  &  0  &  0\\
+-1  &  3  &  0  & -1\\
+-2  &  3  &  0  & -2\\
+-3  &  3  & -1  &  0\\
+\hline
+\end{tabular}
+& - & 
+\begin{tabular}{|c|c|c|c|}
+\hline
+ $\ x\ $ & $\ y\ $ & $\ q\ $ & $\ r\ $\\
+\hline
+ 3  & -3  & -1  &  0\\
+ 2  & -3  &  0  &  2\\
+ 1  & -3  &  0  &  1\\
+ 0  & -3  &  0  &  0\\
+-1  & -3  &  0  & -1\\
+-2  & -3  &  0  & -2\\
+-3  & -3  &  1  &  0\\
+\hline
+\end{tabular}\\
+\end{tabular}
+
+
+
+
+\ccRefines 
+
+\ccc{AdaptableFunctor} 
+
+\ccTypes
+\ccNestedType{result_type}
+        { Is void.}
+\ccGlue
+\ccNestedType{first_argument_type}
+        { Is \ccc{AlgebraicStructureTraits::Type}.}
+\ccGlue
+\ccNestedType{second_argument_type}
+        { Is \ccc{AlgebraicStructureTraits::Type}.}
+\ccGlue
+\ccNestedType{third_argument_type}
+        { Is \ccc{AlgebraicStructureTraits::Type&}.}
+\ccGlue
+\ccNestedType{fourth_argument_type}
+        { Is \ccc{AlgebraicStructureTraits::Type&}.}
+
+\ccOperations
+\ccCreationVariable{div_mod}
+\ccThree{xxxxxxxxxxx}{xxxxxxxxxxx}{}
+\ccMethod{result_type operator()( first_argument_type  x, 
+                                  second_argument_type y,
+                                  third_argument_type  q,
+                                  fourth_argument_type r);}{ 
+        computes the quotient $q$ and remainder $r$, such that $x = q*y + r$ 
+        and $r$ minimal with respect to the Euclidean Norm on   
+        \ccc{Type}. }
+
+\ccMethod{template <class NT1, class NT2> result_type 
+        operator()(NT1  x, NT2  y, third_argument_type q, fourth_argument_type r);}
+         {This operator is well defined if \ccc{NT1} and \ccc{NT2} are \ccc{ExplicitInteroperable} 
+          with coercion type \ccc{AlgebraicStructureTraits::Type}. }
+
+%\ccHasModels
+
+\ccSeeAlso
+
+\ccRefIdfierPage{AlgebraicStructureTraits}\\
+\ccRefIdfierPage{AlgebraicStructureTraits::Mod}\\
+\ccRefIdfierPage{AlgebraicStructureTraits::Div}\\
+
+\end{ccRefFunctionObjectConcept} 

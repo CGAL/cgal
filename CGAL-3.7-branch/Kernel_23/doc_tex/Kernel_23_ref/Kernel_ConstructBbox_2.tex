@@ -1,0 +1,28 @@
+\begin{ccRefFunctionObjectConcept}{Kernel::ConstructBbox_2}
+A model for this must provide:
+
+\ccCreationVariable{fo}
+
+
+\ccMemberFunction{CGAL::Bbox_2 operator()(const Kernel::Point_2
+  &p);} {returns a bounding box of \ccc{p}.}
+
+\ccMemberFunction{CGAL::Bbox_2 operator()(const Kernel::Segment_2
+  &s);} {returns a bounding box of \ccc{s}.}
+
+\ccMemberFunction{CGAL::Bbox_2 operator()(const Kernel::Triangle_2
+  &t);} {returns a bounding box of \ccc{t}.}
+
+\ccMemberFunction{CGAL::Bbox_2 operator()(const Kernel::Iso_rectangle_2
+  &i);} {returns a bounding box of \ccc{i}.}
+
+\ccMemberFunction{CGAL::Bbox_2 operator()(const Kernel::Circle_2
+  &c);} {returns a bounding box of \ccc{c}.}
+
+
+\ccRefines
+\ccc{AdaptableFunctor} (with one argument)
+
+
+
+\end{ccRefFunctionObjectConcept}

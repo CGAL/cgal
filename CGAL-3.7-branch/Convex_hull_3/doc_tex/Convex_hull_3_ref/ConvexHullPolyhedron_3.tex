@@ -1,0 +1,104 @@
+\begin{ccRefConcept}{ConvexHullPolyhedron_3}
+
+\ccDefinition
+The requirements of the polyhedron type to be built by the
+function \ccc{convex_hull_3}.
+
+\ccHasModels
+
+\ccRefIdfierPage{CGAL::Polyhedron_3<Traits>}
+
+\ccTypes
+\ccAutoIndexingOff
+\ccNestedType{Point_3}{ type of point stored in a vertex }
+\ccGlue
+\ccNestedType{Vertex}{ a model of \ccc{ConvexHullPolyhedronVertex_3}}
+\ccGlue
+\ccNestedType{Halfedge}{ a model of \ccc{ConvexHullPolyhedronHalfedge_3}}
+\ccGlue
+\ccNestedType{Facet}{ a model of \ccc{ConvexHullPolyhedronFacet_3} }
+\ccGlue
+\ccNestedType{Halfedge_data_structure}{halfedge data structure}
+\ccGlue
+\ccNestedType{Halfedge_handle}{handle to halfedge}
+\ccGlue
+\ccNestedType{Halfedge_iterator}{iterator for halfedge}
+\ccGlue
+\ccNestedType{Facet_handle}{handle to facet}
+\ccGlue
+\ccNestedType{Facet_iterator}{iterator for facet}
+
+\ccCreation
+\ccCreationVariable{p}
+
+Only a default constructor is required.
+
+\ccConstructor{ConvexHullPolyhedron_3();}{}
+
+\ccOperations
+
+\ccAutoIndexingOff
+\ccMethod{Facet_iterator facets_begin();}%
+{iterator over all facets (excluding holes).}
+
+\ccMethod{Facet_iterator facets_end();}{past-the-end iterator.}
+
+\ccMethod{Halfedge_iterator P.halfedges_begin();}{ iterator over all halfedges.}
+\ccMethod{Halfedge_iterator P.halfedges_end();}{past-the-end iterator.}
+
+\ccMethod{
+Halfedge_handle make_tetrahedron(Point_3 p1, Point_3 p2, Point_3 p3, Point_3 p4);
+}{
+adds a new tetrahedron to the polyhedral surface with its
+vertices initialized with \ccc{p1}, \ccc{p2}, \ccc{p3} and \ccc{p4}. 
+Returns that halfedge
+of the tetrahedron which incident vertex is initialized with \ccc{p1}, the
+incident vertex of the next halfedge with \ccc{p2}, and the vertex
+thereafter with \ccc{p3}. The remaining fourth vertex is initialized with
+\ccc{p4}.
+}
+
+\ccMethod{void erase_facet(Halfedge_handle h);}%
+{removes the incident facet of \ccc{h} 
+and changes all halfedges incident to the facet into border edges or removes 
+them from the polyhedral surface if they were already border edges.}
+
+
+\ccMethod{
+Halfedge_handle 
+add_vertex_and_facet_to_border(Halfedge_handle h, Halfedge_handle g);
+}{
+creates a new facet within the hole incident to \ccc{h} and \ccc{g} by
+connecting the tip of \ccc{g} with the tip of \ccc{h} with two new halfedges
+and a new vertex and filling this separated part of the hole with
+a new facet, such that the new facet is incident to \ccc{g}. Returns the
+halfedge of the new edge that is incident to the new facet and
+the new vertex.
+}
+
+\ccMethod{
+Halfedge_handle
+add_facet_to_border(Halfedge_handle h, Halfedge_handle g);}%
+{
+creates a new facet within the hole incident to \ccc{h} and \ccc{g} by
+connecting the tip of \ccc{g} with the tip of \ccc{h} with a new halfedge and
+filling this separated part of the hole with a new facet, such that
+the new facet is incident to \ccc{g}. Returns the halfedge of the new
+edge that is incident to the new facet.
+}
+
+\ccMethod{Halfedge_handle fill_hole(Halfedge_handle h);}{
+fills a hole with a newly created facet. Makes all border
+halfedges of the hole denoted by h incident to the new facet.
+Returns \ccc{h}.
+}
+
+\ccMethod{void delegate(Modifier_base<Halfedge_data_structure>& m);}%
+{
+calls the \ccc{operator()} of the modifier \ccc{m}. See \ccc{Modifier_base}
+for a description of modifier design and its usage.
+}
+\ccAutoIndexingOn
+
+
+\end{ccRefConcept}

@@ -1,0 +1,135 @@
+% +------------------------------------------------------------------------+
+% | Reference manual page: Taucs_solver_traits.tex
+% +------------------------------------------------------------------------+
+% | 21.09.2005   Laurent Saboret, Pierre Alliez, Bruno Levy
+% | Package: Surface_mesh_parameterization
+% |
+\RCSdef{\RCSTaucssolvertraitsRev}{$Id$}
+\RCSdefDate{\RCSTaucssolvertraitsDate}{$Date$}
+% |
+\ccRefPageBegin
+%%RefPage: end of header, begin of main body
+% +------------------------------------------------------------------------+
+
+
+\begin{ccRefClass}{Taucs_solver_traits<T>}
+
+%% \ccHtmlCrossLink{}     %% add further rules for cross referencing links
+%% \ccHtmlIndexC[class]{} %% add further index entries
+
+
+\ccDefinition
+
+% The section below is automatically generated. Do not edit!
+%START-AUTO(\ccDefinition)
+
+The class \ccc{Taucs_solver_traits} is a traits class for solving GENERAL (aka unsymmetric) sparse linear systems using TAUCS out-of-core LU factorization.
+
+%END-AUTO(\ccDefinition)
+
+% The section below is automatically generated. Do not edit!
+%START-AUTO(\ccInclude)
+
+\ccInclude{CGAL/Taucs_solver_traits.h}
+
+%END-AUTO(\ccInclude)
+
+
+\ccIsModel
+
+% The section below is automatically generated. Do not edit!
+%START-AUTO(\ccIsModel)
+
+Model of the \ccc{SparseLinearAlgebraTraits_d} concept.
+
+%END-AUTO(\ccIsModel)
+
+
+\ccParameters
+
+The full template declaration is:
+
+% The section below is automatically generated. Do not edit!
+%START-AUTO(\ccParameters)
+
+template$<$class T$>$   \\
+class \ccc{Taucs_solver_traits};
+
+%END-AUTO(\ccParameters)
+
+
+\ccTypes
+
+% The section below is automatically generated. Do not edit!
+%START-AUTO(\ccTypes)
+
+\ccNestedType{Matrix}
+{
+}
+\ccGlue
+\ccNestedType{Vector}
+{
+}
+\ccGlue
+\ccNestedType{NT}
+{
+}
+\ccGlue
+
+%END-AUTO(\ccTypes)
+
+
+\ccCreation
+\ccCreationVariable{solver}  %% choose variable name for \ccMethod
+
+% The section below is automatically generated. Do not edit!
+%START-AUTO(\ccCreation)
+
+\ccConstructor{Taucs_solver_traits();}
+{
+Create a TAUCS sparse linear solver for GENERAL (aka unsymmetric) matrices.
+}
+\ccGlue
+
+%END-AUTO(\ccCreation)
+
+
+\ccOperations
+
+% The section below is automatically generated. Do not edit!
+%START-AUTO(\ccOperations)
+
+\ccMethod{bool linear_solver(const Matrix& A, const Vector& B, Vector& X, NT& D);}
+{
+Solve the sparse linear system {\em A$\ast$X = B}. Return true on success. The solution is then (1/D) $\ast$ X.
+\ccCommentHeading{Preconditions}  \\
+A.\ccc{row_dimension}() == B.dimension(). A.\ccc{column_dimension}() == X.dimension().
+}
+\ccGlue
+
+%END-AUTO(\ccOperations)
+
+
+\ccSeeAlso
+
+\ccRefIdfierPage{CGAL::Taucs_symmetric_solver_traits<T>}  \\
+\ccRefIdfierPage{CGAL::Taucs_matrix<T>}  \\
+\ccRefIdfierPage{CGAL::Taucs_symmetric_matrix<T>}  \\
+\ccRefIdfierPage{CGAL::Taucs_vector<T>}  \\
+\ccc{OpenNL::DefaultLinearSolverTraits<COEFFTYPE, MATRIX, VECTOR, SOLVER>} in OpenNL package  \\
+\ccc{OpenNL::SymmetricLinearSolverTraits<COEFFTYPE, MATRIX, VECTOR, SOLVER>} in OpenNL package  \\
+
+
+\ccExample
+
+See \ccc{Taucs_parameterization.cpp} example.
+
+
+\end{ccRefClass}
+
+% +------------------------------------------------------------------------+
+%%RefPage: end of main body, begin of footer
+\ccRefPageEnd
+% EOF
+% +------------------------------------------------------------------------+
+

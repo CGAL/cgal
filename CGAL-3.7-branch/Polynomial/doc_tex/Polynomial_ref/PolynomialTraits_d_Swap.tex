@@ -1,0 +1,37 @@
+\begin{ccRefConcept}{PolynomialTraits_d::Swap}
+
+\ccDefinition
+
+This \ccc{AdaptableFunctor} swaps two variables of a multivariate polynomial. 
+
+\ccRefines 
+
+\ccc{AdaptableFunctor}\\
+\ccc{CopyConstructible}\\
+\ccc{DefaultConstructible}\\
+
+\ccTypes
+
+\ccSetThreeColumns{xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx}{xxx}{}
+\ccTypedef{typedef PolynomialTraits_d::Polynomial_d   result_type;}{}\ccGlue
+
+\ccOperations
+
+\ccCreationVariable{fo}
+\ccMethod{result_type operator()(PolynomialTraits_d::Polynomial_d p,
+                                 int i, int j);}
+               { Returns polynomial $p$ with interchanged variables $x_i$,$x_j$. 
+                 \ccPrecond $0 \leq i  < d$   
+                 \ccPrecond $0 \leq j  < d$                       
+               }       
+
+
+
+%\ccHasModels
+
+\ccSeeAlso
+
+\ccRefIdfierPage{Polynomial_d}\\
+\ccRefIdfierPage{PolynomialTraits_d}\\
+
+\end{ccRefConcept}

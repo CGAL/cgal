@@ -1,0 +1,28 @@
+\begin{ccRefFunctionObjectConcept}{Kernel::HasOnNegativeSide_3}
+A model for this must provide:
+
+\ccCreationVariable{fo}
+
+\ccMemberFunction{bool operator()(const Kernel::Plane_3&h,
+                                  const Kernel::Point_3&p);}
+{returns true iff $p$ lies on the negative side of $h$ 
+($h$ is considered a half-space).}
+
+\ccMemberFunction{bool operator()(const Kernel::Sphere_3&s,
+                                  const Kernel::Point_3&p);}
+{returns true iff $p$ lies on the negative side of $s$.}
+
+\ccMemberFunction{bool operator()(const Kernel::Tetrahedron_3&t,
+                                  const Kernel::Point_3&p);}
+{returns true iff $p$ lies on the negative side of $t$.}
+
+\ccRefines
+\ccc{AdaptableFunctor} (with two arguments)
+
+\ccSeeAlso
+\ccRefIdfierPage{CGAL::Plane_3<Kernel>} \\
+\ccRefIdfierPage{CGAL::Sphere_3<Kernel>} \\
+\ccRefIdfierPage{CGAL::Tetrahedron_3<Kernel>} \\
+
+
+\end{ccRefFunctionObjectConcept}

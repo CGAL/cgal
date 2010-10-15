@@ -1,0 +1,18 @@
+\begin{ccRefFunctionObjectConcept}{Kernel::ComputeDeterminant_3}
+A model for this must provide:
+
+\ccCreationVariable{fo}
+
+\ccMemberFunction{Kernel::FT operator()(const Kernel::Vector_3& u,
+					const Kernel::Vector_3& v,
+					const Kernel::Vector_3& w);}
+       {returns the determinant of the three vectors $u$, $v$ and $w$. }
+
+\ccRefines
+\ccc{AdaptableFunctor} (with three arguments)
+
+\ccSeeAlso
+\ccRefIdfierPage{CGAL::Vector_3<Kernel>} \\
+\ccRefIdfierPage{CGAL::determinant}  \\
+
+\end{ccRefFunctionObjectConcept}

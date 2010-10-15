@@ -1,0 +1,165 @@
+\begin{ccRefConcept}{Kernel_d}
+
+The concept of a {\em kernel} is defined by a set of requirements on
+the provision of certain types and access member functions to create 
+objects of these types. The types are function object classes to be used
+within the algorithms and data structures in the basic library of \cgal. 
+This allows you to use any model of a kernel as a traits class in 
+the \cgal\ algorithms and data structures, unless they require types 
+beyond those provided by a kernel. 
+
+\ccc{Kernel_d} subsumes the concept of a {\em $d$-dimensional kernel}.
+
+A kernel provides types, construction objects, and generalized
+predicates.  The former replace constructors of the kernel classes and
+constructive procedures in the kernel. There are also function objects
+replacing operators, especially for equality testing.
+
+\ccCreationVariable{kernel}
+
+\ccTypes
+
+\ccNestedType{FT}{a number type that is a model for \ccc{FieldNumberType}}
+\ccGlue
+\ccNestedType{RT}{a number type that is a model for \ccc{RingNumberType}}
+
+
+\ccHeading{Coordinate Access}
+
+\ccNestedType{Cartesian_const_iterator_d}{ a type that allows to iterate over 
+                                        the \ccHtmlNoLinksFrom{Cartesian} coordinates}
+
+\ccHeading{Geometric Objects}
+
+\ccNestedType{Point_d}{}
+\ccGlue
+\ccNestedType{Vector_d}{}
+\ccGlue
+\ccNestedType{Direction_d}{}
+\ccGlue
+\ccNestedType{Hyperplane_d}{}
+\ccGlue
+\ccNestedType{Line_d}{}
+\ccGlue
+\ccNestedType{Ray_d}{}
+\ccGlue
+\ccNestedType{Segment_d}{}
+\ccGlue
+\ccNestedType{Iso_box_d}{}
+\ccGlue
+\ccNestedType{Sphere_d}{}
+\ccGlue
+\ccNestedType{Aff_transformation_d}{}
+
+\ccHeading{Constructions}
+
+\ccNestedType{Construct_point_d}{}
+\ccGlue
+\ccNestedType{Construct_vector_d}{}
+\ccGlue
+\ccNestedType{Construct_direction_d}{}
+\ccGlue
+\ccNestedType{Construct_hyperplane_d}{}
+\ccGlue
+\ccNestedType{Construct_segment_d}{}
+\ccGlue
+\ccNestedType{Construct_iso_box_d}{}
+\ccGlue
+\ccNestedType{Construct_line_d}{}
+\ccGlue
+\ccNestedType{Construct_ray_d}{}
+\ccGlue
+\ccNestedType{Construct_sphere_d}{}
+\ccGlue
+\ccNestedType{Construct_aff_transformation_d}{}
+\ccGlue
+\ccNestedType{Construct_cartesian_const_iterator_d}{}
+\ccGlue
+
+\ccHeading{Generalized Predicates}
+
+\ccNestedType{Affine_rank_d}{}
+\ccGlue
+\ccNestedType{Affinely_independent_d}{}
+\ccGlue
+\ccNestedType{Barycentric_coordinates_d}{}
+\ccGlue
+\ccNestedType{Center_of_sphere_d}{}
+\ccGlue
+\ccNestedType{Compare_lexicographically_d}{}
+\ccGlue
+\ccNestedType{Component_accessor_d}{}
+\ccGlue
+\ccNestedType{Contained_in_affine_hull_d}{}
+\ccGlue
+\ccNestedType{Contained_in_linear_hull_d}{}
+\ccGlue
+\ccNestedType{Contained_in_simplex_d}{}
+\ccGlue
+\ccNestedType{Equal_d}{}
+\ccGlue
+\ccNestedType{Has_on_positive_side_d}{}
+\ccGlue
+\ccNestedType{Intersect_d}{}
+\ccGlue
+\ccNestedType{Less_lexicographically_d}{}
+\ccGlue
+\ccNestedType{Less_or_equal_lexicographically_d}{}
+\ccGlue
+\ccNestedType{Lift_to_paraboloid_d}{}
+\ccGlue
+\ccNestedType{Linear_base_d}{}
+\ccGlue
+\ccNestedType{Linear_rank_d}{}
+\ccGlue
+\ccNestedType{Linearly_independent_d}{}
+\ccGlue
+\ccNestedType{Midpoint_d}{}
+\ccGlue
+\ccNestedType{Orientation_d}{}
+\ccGlue
+\ccNestedType{Oriented_side_d}{}
+\ccGlue
+\ccNestedType{Orthogonal_vector_d}{}
+\ccGlue
+\ccNestedType{Point_of_sphere_d}{}
+\ccGlue
+\ccNestedType{Point_to_vector_d}{}
+\ccGlue
+\ccNestedType{Position_on_line_d}{}
+\ccGlue
+\ccNestedType{Project_along_d_axis_d}{}
+\ccGlue
+\ccNestedType{Side_of_bounded_sphere_d}{}
+\ccGlue
+\ccNestedType{Side_of_oriented_sphere_d}{}
+\ccGlue
+\ccNestedType{Squared_distance_d}{}
+\ccGlue
+\ccNestedType{Value_at_d}{}
+\ccGlue
+\ccNestedType{Vector_to_point_d}{}
+\ccGlue
+
+\ccOperations
+
+The following member functions return function objects of the types
+listed above. The name of the access function is the name of the type
+returned with an \ccc{_object} suffix and no capital letter at the
+beginning. We only give two examples to show the scheme. For the
+functors \ccc{Construct_point_d} and \ccc{Orientation_d} the
+corresponding functions are:
+
+\ccTexHtml{\ccSetThreeColumns{Kernel::Construct_point_d}{}{%
+\hspace*{4.5cm}}}{}
+\setlength{\parskip}{0pt}
+ 
+\ccMemberFunction{Kernel::Construct_point_d construct_point_d_object() const;}{}
+\ccGlue
+\ccMemberFunction{Kernel::Orientation_d orientation_d_object() const;}{}
+
+\ccHasModels
+
+\ccc{Cartesian_d<FieldNumberType>}, \ccc{Homogeneous_d<RingNumberType>} 
+
+\end{ccRefConcept} 

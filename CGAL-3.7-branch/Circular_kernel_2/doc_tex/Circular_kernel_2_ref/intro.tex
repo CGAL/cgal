@@ -1,0 +1,164 @@
+\ccRefChapter{2D Circular Geometry Kernel}
+
+\ccChapterAuthor{Pedro Machado Manh\~{a}es de Castro \and Sylvain Pion \and Monique Teillaud}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\section{Geometric Concepts}
+
+\ccRefConceptPage{CircularKernel}
+
+	\subsubsection*{Functors} 
+
+\ccRefConceptPage{CircularKernel::ConstructLine_2}\\
+\ccRefConceptPage{CircularKernel::ConstructCircle_2}\\
+\ccRefConceptPage{CircularKernel::ConstructCircularArcPoint_2}\\
+\ccRefConceptPage{CircularKernel::ConstructLineArc_2}\\
+\ccRefConceptPage{CircularKernel::ConstructCircularArc_2}
+
+\ccRefConceptPage{CircularKernel::ComputeCircularX_2}\\
+\ccRefConceptPage{CircularKernel::ComputeCircularY_2}
+
+\ccRefConceptPage{CircularKernel::ConstructCircularMinVertex_2}\\
+\ccRefConceptPage{CircularKernel::ConstructCircularMaxVertex_2}\\
+\ccRefConceptPage{CircularKernel::ConstructCircularSourceVertex_2}\\
+\ccRefConceptPage{CircularKernel::ConstructCircularTargetVertex_2}
+
+%\footnote{technical remark: the previous functors have a different name 
+%``Circular'' because the operators() don't have the same return type 
+%as the existing CGAL functors... it would be nice to find a way to avoid 
+%this, but I don't know any technique for this.} 
+
+\ccRefConceptPage{CircularKernel::ConstructBbox_2}
+
+\ccRefConceptPage{CircularKernel::CompareX_2}\\
+\ccRefConceptPage{CircularKernel::CompareY_2}\\
+\ccRefConceptPage{CircularKernel::CompareXY_2}
+
+\ccRefConceptPage{CircularKernel::Equal_2}
+
+\ccRefConceptPage{CircularKernel::CompareYatX_2}\\
+\ccRefConceptPage{CircularKernel::CompareYtoRight_2}
+
+\ccRefConceptPage{CircularKernel::HasOn_2}
+
+\ccRefConceptPage{CircularKernel::DoOverlap_2}
+
+\ccRefConceptPage{CircularKernel::DoIntersect_2}
+
+\ccRefConceptPage{CircularKernel::BoundedSide_2}\\
+\ccRefConceptPage{CircularKernel::HasOnBoundedSide_2}\\
+\ccRefConceptPage{CircularKernel::HasOnUnboundedSide_2}
+
+\ccRefConceptPage{CircularKernel::InXRange_2}
+%\ccRefConceptPage{CircularKernel::InYRange_2}
+
+\ccRefConceptPage{CircularKernel::IsVertical_2}
+
+\ccRefConceptPage{CircularKernel::IsXMonotone_2}\\
+\ccRefConceptPage{CircularKernel::IsYMonotone_2}
+
+\ccRefConceptPage{CircularKernel::MakeXMonotone_2}\\
+\ccRefConceptPage{CircularKernel::MakeXYMonotone_2}
+
+\ccRefConceptPage{CircularKernel::Intersect_2}
+
+\ccRefConceptPage{CircularKernel::Split_2}
+
+\ccRefConceptPage{CircularKernel::GetEquation}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\section{Geometric Kernels and Classes}
+
+	\subsubsection*{Kernels}
+
+\ccRefIdfierPage{CGAL::Circular_kernel_2<Kernel,AlgebraicKernelForCircles>} 
+\\
+\ccRefIdfierPage{CGAL::Exact_circular_kernel_2}
+%\ccRefIdfierPage{CGAL::Lazy_curved_kernel<??>}%\\
+%\ccRefIdfierPage{CGAL::Filtered_hexagon_curved_kernel<CircularKernel>}\\
+%\ccRefIdfierPage{CGAL::Filtered_bbox_curved_kernel<CircularKernel>}
+
+	\subsubsection*{Points}
+\ccRefIdfierPage{CGAL::Circular_arc_point_2<CircularKernel>}
+
+	\subsubsection*{Arcs}
+\ccRefIdfierPage{CGAL::Circular_arc_2<CircularKernel>}\\
+\ccRefIdfierPage{CGAL::Line_arc_2<CircularKernel>}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\section{Geometric Global Functions}	
+
+\ccRefIdfierPage{CGAL::compare_x}\\
+\ccRefIdfierPage{CGAL::compare_y}\\
+\ccRefIdfierPage{CGAL::compare_xy}
+
+\ccRefIdfierPage{CGAL::compare_y_at_x}\\
+\ccRefIdfierPage{CGAL::compare_y_to_right}\\
+
+\ccRefIdfierPage{CGAL::has_in_x_range}\\
+\ccRefIdfierPage{CGAL::has_on}
+
+\ccRefIdfierPage[Kernel::do_intersect]{CGAL::do_intersect}\\
+\ccRefIdfierPage[Kernel::intersection]{CGAL::intersection}
+
+\ccRefIdfierPage{CGAL::x_extremal_point}\\
+\ccRefIdfierPage{CGAL::y_extremal_point}\\
+\ccRefIdfierPage{CGAL::x_extremal_points}\\
+\ccRefIdfierPage{CGAL::y_extremal_points}
+
+\ccRefIdfierPage{CGAL::make_x_monotone}\\
+\ccRefIdfierPage{CGAL::make_xy_monotone}
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\section{Algebraic Concepts}
+
+\ccRefConceptPage{AlgebraicKernelForCircles}
+
+%\ccRefConceptPage{AlgebraicKernelForCircles::Polynomial_1_2}\footnote{General
+%remark about the suffix \_d\_v: \_d stands
+%for the degree of the polynomials and the algebraic numbers, and
+%\_v stands for the number of variables, which is analogous to the
+%dimension for CGAL geometric objects.}\\
+%\ccRefConceptPage{AlgebraicKernelForCircles::PolynomialForCircles_2_2}\\
+%\ccRefConceptPage{RootOf_2}\\
+%\ccRefConceptPage{AlgebraicKernelForCircles::RootForCircles_2_2}
+
+	\subsubsection*{Functors} 
+% \footnote{no \_2 (or \_2\_2) for functors ????????? problem of compatibility 
+% with CK and the current kernel. On the other hand, allows to have only
+% one functor for several types of arguments}
+
+\ccRefConceptPage{AlgebraicKernelForCircles::ConstructPolynomial_1_2}\\
+\ccRefConceptPage{AlgebraicKernelForCircles::ConstructPolynomialForCircles_2_2}
+
+\ccRefConceptPage{AlgebraicKernelForCircles::CompareX}\\
+\ccRefConceptPage{AlgebraicKernelForCircles::CompareY}\\
+\ccRefConceptPage{AlgebraicKernelForCircles::CompareXY}
+
+\ccRefConceptPage{AlgebraicKernelForCircles::SignAt}
+
+\ccRefConceptPage{AlgebraicKernelForCircles::XCriticalPoints}\\
+\ccRefConceptPage{AlgebraicKernelForCircles::YCriticalPoints}
+
+\ccRefConceptPage{AlgebraicKernelForCircles::Solve}
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\section{Algebraic Kernel and Classes}
+
+	\subsubsection*{Kernel}
+
+\ccRefIdfierPage{CGAL::Algebraic_kernel_for_circles_2_2<RT>}
+
+	\subsubsection*{Polynomials} 
+
+\ccRefIdfierPage{CGAL::Polynomial_1_2<RT>}\\
+\ccRefIdfierPage{CGAL::Polynomial_for_circles_2_2<FT>}
+
+	\subsubsection*{Roots of Polynomials}
+
+\ccRefIdfierPage{CGAL::Root_of_2<RT>}\\
+\ccRefIdfierPage{CGAL::Root_for_circles_2_2<FT>}
+
+\ccRefIdfierPage{CGAL::Root_of_traits_2<RT>}

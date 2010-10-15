@@ -1,0 +1,62 @@
+\begin{ccRefConcept}{UniqueFactorizationDomain}
+
+
+\ccDefinition
+
+
+A model of \ccc{UniqueFactorizationDomain} is an \ccc{IntegralDomain} with the 
+additional property 
+that the ring it represents is a unique factorization domain 
+(a.k.a. UFD or factorial ring), meaning that every non-zero non-unit 
+element has a factorization into irreducible elements that is unique 
+up to order and up to multiplication by invertible elements (units). 
+(An irreducible element is a non-unit ring element that cannot be factored 
+further into two non-unit elements. In a UFD, the irreducible elements 
+are precisely the prime elements.)
+
+In a UFD, any two elements, not both zero, possess a greatest common 
+divisor (gcd). 
+
+Moreover, \ccc{CGAL::Algebraic_structure_traits< UniqueFactorizationDomain >} 
+is a model of \ccc{AlgebraicStructureTraits} providing:\\ 
+- \ccc{CGAL::Algebraic_structure_traits< UniqueFactorizationDomain >::Algebraic_type} 
+derived from \ccc{Unique_factorization_domain_tag} \\
+- \ccc{CGAL::Algebraic_structure_traits< UniqueFactorizationDomain >::Gcd}\\
+  
+
+ 
+\ccRefines
+ \ccc{IntegralDomain}
+ 
+\ccSeeAlso
+
+\ccRefIdfierPage{IntegralDomainWithoutDivision}\\
+\ccRefIdfierPage{IntegralDomain}\\
+\ccRefIdfierPage{UniqueFactorizationDomain}\\
+\ccRefIdfierPage{EuclideanRing}\\
+\ccRefIdfierPage{Field}\\
+\ccRefIdfierPage{FieldWithSqrt}\\
+\ccRefIdfierPage{FieldWithKthRoot}\\
+\ccRefIdfierPage{FieldWithRootOf}\\
+\ccRefIdfierPage{AlgebraicStructureTraits}\\
+
+%\ccHasModels
+%\ccc{int}\\
+%\ccc{long}\\
+
+%\ccc{CGAL::Gmpz} \\
+%\ccc{CGAL::Gmpzf} \\
+
+%\ccc{mpz_class} \\
+
+%\ccc{leda_integer} \\
+
+%\ccc{CORE::BigInt} \\
+
+%\ccc{CGAL::MP_Float} ( exact version )\\
+%\ccc{CGAL::Lazy_exact_nt< NT > } (depends on NT) \\
+
+%\ccc{CGAL::Polynomial< T >} \\
+
+
+\end{ccRefConcept}

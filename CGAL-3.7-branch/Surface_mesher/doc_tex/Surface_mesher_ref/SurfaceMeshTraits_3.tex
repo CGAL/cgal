@@ -1,0 +1,114 @@
+% +------------------------------------------------------------------------+
+% | Reference manual page: Surface_3.tex
+% +------------------------------------------------------------------------+
+% | 02.12.2005   Author
+% | Package: Package
+% | 
+\RCSdef{\RCSSurface_3Rev}{$Id$}
+\RCSdefDate{\RCSSurface_3Date}{$Date$}
+% |
+%%RefPage: end of header, begin of main body
+% +------------------------------------------------------------------------+
+
+
+\begin{ccRefConcept}{SurfaceMeshTraits_3}
+
+%% \ccHtmlCrossLink{}     %% add further rules for cross referencing links
+%% \ccHtmlIndexC[concept]{} %% add further index entries
+
+\ccDefinition
+  
+The concept \ccRefName\ describes the knowledge that is required on the
+surface to be meshed. A model of this concept
+implements an oracle that is able to tell whether a segment
+(or a ray,  or a line) intersects the surface or not
+and to compute some intersection
+points if any. The concept \ccRefName\ also includes a constructor able  to provide
+a small set of initial points on the surface.
+
+%\ccRefines
+%ThisConcept \\
+%ThatConcept
+
+\ccTypes
+
+\ccNestedType{Point_3}{The type of points. 
+This type  is required to match
+the point type of the 
+three dimensional embedding triangulation 
+\ccc{C2T3::Triangulation_3}.}
+\ccGlue
+\ccNestedType{Segment_3}{The type of segments.}
+\ccGlue
+\ccNestedType{Ray_3}{The type of rays.}
+\ccGlue
+\ccNestedType{Line_3}{The type of lines.}
+\ccGlue
+\ccNestedType{Surface_3}{ The surface type.}
+
+
+\ccNestedType{Intersect_3}
+{A model of this type provides the operator \\
+\ccc{CGAL::Object operator()(Surface_3 surface, Type1 type1)}\\
+to compute the intersection of the surface  
+with an object of type \ccc{Type1} which may  be 
+\ccc{Segment_3}, \ccc{Ray_3} or \ccc{Line_3} .}
+
+
+\ccNestedType{Construct_initial_points}
+{A model of this type provides the following operators
+to construct initial points on the surface: \\
+\ccc{template <class OutputIteratorPoints>}\\
+\ccc{OutputIteratorPoints operator()(OutputIteratorPoints pts)}\\
+which outputs a set of points on the surface,\\
+\ccc{template <class OutputIteratorPoints>}\\
+\ccc{OutputIteratorPoints operator() (OutputIteratorPoints pts, int n)} \\
+which outputs a set of \ccc{n} points on the surface.}
+
+
+%\ccCreation
+\ccCreationVariable{traits}  %% choose variable name
+
+\ccOperations
+The following functions give access to the construction objects:
+
+\ccMethod{Intersect_3 intersect_3_object();}{}
+\ccGlue
+\ccMethod{Construct_initial_points construct_initial_points_object();}{}
+
+
+\ccHasModels
+
+\ccc{Surface_mesh_traits_generator_3<Surface>::Type}
+
+\ccSeeAlso
+\ccc{make_surface_mesh}\\
+%\ccc{ImplicitFunction}\\
+%\ccc{ImplicitSurfaceOracleTraits_3}
+
+%Some\_other\_concept,
+%\ccc{some_other_function}.
+
+%\ccExample
+
+%A short example program.
+%Instead of a short program fragment, a full running program can be
+%included using the 
+%\verb|\ccIncludeExampleCode{Package/SurfaceOracle.cpp}| 
+%macro. The program example would be part of the source code distribution and
+%also part of the automatic test suite.
+
+%\begin{ccExampleCode}
+%void your_example_code() {
+%}
+%\end{ccExampleCode}
+
+%%% \ccIncludeExampleCode{Package/SurfaceOracle.cpp}
+
+\end{ccRefConcept}
+
+% +------------------------------------------------------------------------+
+%%RefPage: end of main body, begin of footer
+% EOF
+% +------------------------------------------------------------------------+
+

@@ -1,0 +1,25 @@
+\begin{ccRefFunction}{simplest_rational_in_interval}
+
+\ccDefinition
+
+The function \ccRefName\ computes the simplest rational number in an
+interval of two \ccc{double} values.
+
+\ccInclude{CGAL/simplest_rational_in_interval.h}
+
+\ccFunction{Rational simplest_rational_in_interval(double d1, double d2);}
+{
+computes the rational number with the smallest denominator in the 
+interval \ccc{[d1,d2].}
+}
+
+\ccImplementation
+
+See Knuth, "Seminumerical algorithms", page 654, answer to exercise
+4.53-39.
+
+\ccSeeAlso
+
+\ccc{Rational CGAL::to_rational<Rational>(double d)}.
+
+\end{ccRefFunction}

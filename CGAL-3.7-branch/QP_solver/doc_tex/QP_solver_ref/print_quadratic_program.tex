@@ -1,0 +1,28 @@
+\begin{ccRefFunction}{print_quadratic_program}
+
+\ccInclude{CGAL/QP_functions.h}
+
+This function writes a quadratic program to an output stream (in 
+\ccc{MPSFormat}). The time complexity is $\Theta (n^2 + mn)$, even 
+if the program is very sparse.
+
+\ccFunction{template <QuadraticProgram>
+void print_quadratic_program 
+(std::ostream& out, const QuadraticProgram &qp, 
+ const std::string& problem_name = std::string("MY_MPS"));}
+{writes the quadratic program \ccc{qp} to \ccc{out} in \ccc{MPSFormat}.
+The name of the program will be the one provided by \ccc{problem_name}.}
+
+\ccHeading{Requirements}
+Output operators are defined for all entry types of \ccc{qp}.
+
+\ccExample
+\ccReferToExampleCode{QP_solver/print_first_qp.cpp}
+
+\ccSeeAlso
+
+The concept
+
+\ccc{QuadraticProgram}
+
+\end{ccRefFunction}

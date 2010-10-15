@@ -1,0 +1,26 @@
+This directory contains word files ( .aspell.en.prepl and .aspell.en.pws)
+and a configuration file (.aspell.conf) that allow to spell-check the CGAL
+Manual using the "aspell" program.  Just run it using :
+
+aspell --home-dir=../../../Manual_tools/aspell -c filename.tex
+
+
+Some notes:
+
+There are currently the following problems with aspell which affect us:
+- aspell does not know about LaTeX environments, like \begin{ccRefClass}{MyClass}
+  so it attempts to spell-check MyClass, which of course barfs most of the time.
+  Note that it knows about LaTeX macros (and e.g. treats \begin and \end as such).
+- this also has the consequence that it barfs for \begin{HtmlOnly} pieces, which
+  are mostly used for specifying <img src=...>.
+- it is not very good at LaTeX accents like Ga\"ertner... I have not attempted
+  at switching to e.g. UTF8 accented letters instead.
+- code pieces in \begin{ExampleCode} also tend to barf.  Some of them should be
+  moved to external .cpp example files (compiled by the test-suite).
+- don't forget to set LANG=en_US.
+
+Moreover, I made the choice to have the local word dictionnary containing words
+which might be incorrect but largely used or not clearly obviously wrong
+(e.g. "halfspace" is there while it might be "half-space").  Such picky fixups
+could be performed in a second round of spell-checking.
+This first round is especially meant at catching obvious typos.

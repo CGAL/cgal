@@ -1,0 +1,32 @@
+\begin{ccRefFunctionObjectConcept}{Kernel::OrientedSide_3}
+A model for this must provide:
+
+\ccCreationVariable{fo}
+
+\ccMemberFunction{Oriented_side operator()(const Kernel::Plane_3&h, 
+                                           const Kernel::Point_3&p);} 
+{returns \ccStyle{ON_ORIENTED_BOUNDARY},
+\ccStyle{ON_NEGATIVE_SIDE}, or the constant \ccStyle{ON_POSITIVE_SIDE},
+depending on the position of $p$  relative to the oriented plane $h$.}
+
+\ccMemberFunction{Oriented_side operator()(const Kernel::Tetrahedron_3&t, 
+                                           const Kernel::Point_3&p);} 
+{returns \ccStyle{ON_ORIENTED_BOUNDARY},
+\ccStyle{ON_NEGATIVE_SIDE}, or the constant \ccStyle{ON_POSITIVE_SIDE},
+depending on the position of $p$  relative to the oriented tetrahedron $t$.}
+
+\ccMemberFunction{Oriented_side operator()(const Kernel::Sphere_3& s, 
+                                           const Kernel::Point_3& p);} 
+{returns \ccStyle{ON_ORIENTED_BOUNDARY},
+\ccStyle{ON_NEGATIVE_SIDE}, or the \ccStyle{ON_POSITIVE_SIDE},
+depending on the position of \ccc{p}  relative to the oriented sphere \ccc{s}.}
+
+\ccRefines
+\ccc{AdaptableFunctor} (with two arguments)
+
+\ccSeeAlso
+\ccRefIdfierPage{CGAL::Plane_3<Kernel>} \\
+\ccRefIdfierPage{CGAL::Sphere_3<Kernel>} \\
+\ccRefIdfierPage{CGAL::Tetrahedron_3<Kernel>} \\
+
+\end{ccRefFunctionObjectConcept}

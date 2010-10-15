@@ -1,0 +1,80 @@
+% +------------------------------------------------------------------------+
+% | Reference manual page: Triangulation_face_base_with_info_2.tex
+% +------------------------------------------------------------------------+
+% | 19.08.2003   Author
+% | Package: Package
+% | 
+\RCSdef{\RCSTriangulationfacebasewithinfoRev}{$Id$}
+\RCSdefDate{\RCSTriangulationfacebasewithinfoDate}{$Date$}
+% |
+%%RefPage: end of header, begin of main body
+% +------------------------------------------------------------------------+
+
+
+\begin{ccRefClass}{Triangulation_face_base_with_info_2<Info,Traits,Fb>} 
+
+%% add template arg's if necessary
+
+%% \ccHtmlCrossLink{}     %% add further rules for cross referencing links
+%% \ccHtmlIndexC[class]{} %% add further index entries
+
+\ccDefinition
+  
+The class \ccRefName\ is a model of the concept
+\ccc{TriangulationFaceBase_2} to be plugged into the
+triangulation data structure of a triangulation class.
+It provides an easy way to add some user defined information
+in the faces of a triangulation.
+
+\ccInclude{CGAL/Triangulation_face_base_with_info_2.h}
+
+\ccParameters
+
+The first template argument is the information the user would like to add
+to a face.  It has to be \ccc{DefaultConstructible} and \ccc{Assignable}.
+
+The second template argument is a geometric traits class
+and  is actually not used in \ccRefName\ .
+
+The third parameter is a face base class from which
+\ccRefName\ derives. 
+
+\ccInheritsFrom \ccc{Fb}
+
+\ccIsModel
+Because \ccRefName\ derives from the class instantiating its third
+parameter, it will be a model of the same face base concept
+as its parameter~:
+\ccc{TriangulationFaceBase_2},\\
+\ccc{ConstrainedTriangulationFaceBase_2} ,\\
+or \ccc{RegularTriangulationFaceBase_2}
+
+
+\ccTypes
+\ccTypedef{typedef Info Info;}{}
+
+\ccCreationVariable{f}
+
+\ccAccessFunctions
+\ccThree{const Info&}{Facetxxxxxxxx}{}
+\ccTagFullDeclarations
+
+\ccMethod{const Info& info() const;}
+{Returns a const reference to the object of type \ccc{Info} stored in the face.}
+\ccGlue
+\ccMethod{Info & info();}
+{Returns a reference to the object of type \ccc{Info} stored in the face.}
+
+\ccSeeAlso
+\ccc{CGAL::Triangulation_face_base_2<Traits,Fb>} \\
+\ccc{CGAL::Constrained_triangulation_face_base_2<Traits,Fb>} \\
+\ccc{CGAL::Regular_triangulation_face_base_2<Traits,Fb>} 
+
+
+\end{ccRefClass}
+
+% +------------------------------------------------------------------------+
+%%RefPage: end of main body, begin of footer
+% EOF
+% +------------------------------------------------------------------------+
+

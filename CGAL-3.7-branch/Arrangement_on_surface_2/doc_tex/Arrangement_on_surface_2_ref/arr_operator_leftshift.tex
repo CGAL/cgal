@@ -1,0 +1,91 @@
+\ccHtmlNoClassLinks
+\begin{ccRefFunction}{operator<<}
+\label{ref_arr_operator_leftshift}
+
+\ccDefinition
+
+The function \ccRefName{} inserts an object into a given output stream.
+
+%%%%
+
+\ccInclude{CGAL/IO/Arr_iostream.h}
+
+\ccGlobalFunction{template<typename Traits, typename Dcel>
+            std::ostream& operator<< (std::ostream& os,
+                                      const Arrangement_2<Traits,Dcel>& arr);}
+Inserts the arrangement object \ccc{arr} into the output stream
+\ccc{os} using the output format defined by the
+\ccc{Arr_text_formatter} class. Only the basic geometric and
+topological features of the arrangement are inserted. Auxiliary data
+that may be attached to the \dcel\ features is ignored.
+
+%%%%
+
+\ccInclude{CGAL/IO/Arr_with_history_iostream.h}
+
+\ccGlobalFunction{template<typename Traits, typename Dcel>
+            std::ostream& operator<< (std::ostream& os,
+                         const Arrangement_with_history_2<Traits,Dcel>& arr);}
+Inserts the arrangement-with-history object \ccc{arr} into the output
+stream \ccc{os} using the output format defined by the
+\ccc{Arr_with_history_text_formatter} class. Only the basic geometric
+and topological features of the arrangement are inserted. Auxiliary
+data that may be attached to the \dcel\ features is ignored.
+
+%%%%
+
+%% Inserts an arrangement into a given Postscript stream.
+%% Only the basic geometric and topological features of the arrangement are
+%% written. Auxiliary data that might be attached to the \dcel\ features is
+%% lost.
+
+%% \ccInclude{CGAL/IO/Arr_postscript_file_stream.h}
+
+%% \ccGlobalFunction{template<typename Traits, typename Dcel>
+%% Arr_postscript_file_stream& operator<< (std::ostream& os,
+%%                                       const Arrangement_2<Traits,Dcel>& arr);}
+
+%%%%
+
+%% Inserts a polyline into a given Postscript stream.
+%% Only the basic geometric and topological features of the polylines are
+%% written. Auxiliary data that might be attached is lost.
+    
+%% \ccInclude{CGAL/IO/Polyline_2_postscript_file_stream.h}
+
+%% \ccGlobalFunction{template<typename SegmentTraits>
+%% Postscript_file_stream& operator<< (std::ostream& os,
+%%                                   const Polyline_2<SegmentTraits>& polyline);}
+
+%%%%
+
+Inserts a polyline into a given \ccc{Qt_widget} stream.
+Only the basic geometric and topological features of the polylines are
+written. Auxiliary data that might be attached is lost.
+    
+\ccInclude{CGAL/IO/Qt_widget_Polyline_2.h}
+
+\ccGlobalFunction{template<typename SegmentTraits>
+          Qt_widget& operator<< (std::ostream& os,
+                                 const Polyline_2<SegmentTraits>& polyline);}
+
+%%%%
+
+Inserts a conic arc into a given \ccc{Qt_widget} stream.
+Only the basic geometric and topological features of the conic arcs are
+written. Auxiliary data that might be attached is lost.
+    
+\ccInclude{CGAL/IO/Qt_widget_Conic_arc_2.h}
+
+\ccGlobalFunction{template<typename ConicArc>
+         Qt_widget& operator<< (std::ostream& os,
+                                const _Conic_x_monotone_arc_2<ConicArc>& cv);}
+
+\ccSeeAlso
+  \ccc{read}\lcTex{(\ccRefPage{CGAL::read})}\\
+  \ccc{write}\lcTex{(\ccRefPage{CGAL::write})}\\
+  \lcTex{\ccc{operator>>} page~\pageref{ref_arr_operator_rightshift}}
+  \lcRawHtml{<I><A HREF="Function_operator--.html">operator&gt;&gt;</A></I>}
+
+\end{ccRefFunction}
+\ccRefPageEnd

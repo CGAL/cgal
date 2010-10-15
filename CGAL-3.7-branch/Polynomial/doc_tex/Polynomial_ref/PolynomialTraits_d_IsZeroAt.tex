@@ -1,0 +1,38 @@
+\begin{ccRefConcept}{PolynomialTraits_d::IsZeroAt}
+\ccDefinition
+
+This \ccc{AdaptableFunctor} returns whether a 
+\ccc{PolynomialTraits_d::Polynomial_d} $p$ is zero at a given Cartesian point, 
+which is represented as an iterator range.
+
+\ccRefines 
+\ccc{AdaptableFunctor}\\
+\ccc{CopyConstructible}\\
+\ccc{DefaultConstructible}\\
+
+\ccTypes
+
+\ccSetThreeColumns{xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx}{xxx}{}
+\ccCreationVariable{fo}
+\ccTypedef{typedef bool                        result_type;}{}\ccGlue
+
+\ccOperations
+\ccMethod{
+template <class InputIterator>
+result_type operator()(PolynomialTraits_d::Polynomial_d  p,
+                       InputIterator                     begin,
+                       InputIterator                     end );}{ 
+Computes whether $p$ is zero at the Cartesian point given by the iterator range, 
+where $begin$ is referring to the innermost variable.
+
+\ccPrecond{(end-begin == \ccc{PolynomialTraits_d::d})} 
+\ccPrecond{\ccc{std::iterator_traits< InputIterator >::value_type} is  \ccc{ExplicitInteroperable} with  \ccc{PolynomialTraits_d::Innermost_coefficient_type}.} 
+}
+%\ccHasModels
+
+\ccSeeAlso
+
+\ccRefIdfierPage{Polynomial_d}\\
+\ccRefIdfierPage{PolynomialTraits_d}\\
+
+\end{ccRefConcept}

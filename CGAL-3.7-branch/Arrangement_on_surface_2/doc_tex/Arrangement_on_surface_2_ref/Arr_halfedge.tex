@@ -1,0 +1,86 @@
+% +------------------------------------------------------------------------+
+% | Reference manual page: Arr_halfedge.tex
+% +------------------------------------------------------------------------+
+% | 
+% | Package: Arrangement_2
+% | 
+% +------------------------------------------------------------------------+
+
+\ccRefPageBegin
+
+\begin{ccRefClass}[Arrangement_2<Traits,Dcel>::]{Halfedge}
+\ccRefLabel{arr_ref:halfedge}
+
+\ccThree{Ccb_halfedge_circulator}{e.direction()~}{}
+\ccThreeToTwo
+
+\ccDefinition
+An object $e$ of the class \ccRefName\ represents a halfedge in the
+arrangement. A halfedge is directed from its \emph{source} vertex
+to its \emph{target} vertex, and has an \emph{incident face} lying to
+its right. Each halfedge has a \emph{twin} halfedge directed in the
+opposite direction, where the pair of twin halfedges form together
+an arrangement edge, that is --- a $1$-dimensional cell, associated
+with planar $x$-monotone curve.
+
+Halfedges are sotred in doubly-connected lists and form chains. These
+chains define the inner and outer boundaries of connceted components.
+
+\ccInheritsFrom
+    \ccHtmlNoLinksFrom{\ccc{typename Dcel::Halfedge}}
+
+\ccCreation
+\ccCreationVariable{e}
+%=====================
+
+\ccConstructor{Halfedge();}
+   {default constructor.}    	    
+    
+\ccAccessFunctions
+%=================
+
+All non-const methods listed below also have \ccc{const} counterparts
+that return constant handles, iterators or circulators:
+
+\ccMethod{bool is_fictitious () const;}
+    {returns whether the halfedge is fictitious (i.e., connects two vertices at
+     infinity and is not associated with a valid curve).}
+    
+\ccMethod{Vertex_handle source();}
+    {returns a handle for the source vertex of \ccVar{}.}
+\ccGlue
+\ccMethod{Vertex_handle target();}
+    {returns a handle for the target vertex of \ccVar{}.}
+
+\ccMethod{Arr_halfedge_direction direction() const;}
+    {returns the direction of the halfedge: \ccc{ARR_LEFT_TO_RIGHT} if
+      \ccVar{}'s source vertex is lexicographically smaller than it
+      target (so the halfedge is directed from left to right), and
+      \ccc{ARR_RIGHT_TO_LEFT} if it is lexicographically larger than
+      the target (so the halfedge is directed from right to left).}
+
+\ccMethod{Face_handle face();}
+    {returns the face that \ccVar{} is incident to (The face lies to
+    the left of \ccc{e}).}
+
+\ccMethod{Halfedge_handle twin();}
+    {returns the twin halfedge.}
+
+\ccMethod{Halfedge_handle prev();}
+    {returns \ccVar{}'s predecessor in the connected component it belongs to.}
+\ccGlue
+\ccMethod{Halfedge_handle next();}
+    {returns \ccVar{}'s successor in the connected component it belongs to.}
+
+\ccMethod{Ccb_halfedge_circulator ccb();}
+    {returns a circulator that allows traversing the halfedges of the
+     connected component boundary (CCB) that contains \ccVar{}.
+     The circulator is initialized to point to \ccVar{}.}
+
+\ccMethod{const typename Traits::X_monotone_curve_2& curve() const;}
+    {returns the $x$-monotone curve associated with \ccVar{}.
+     \ccPrecond{\ccVar{} is not a fictitious halfedge.}}
+
+\end{ccRefClass}
+
+\ccRefPageEnd

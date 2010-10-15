@@ -1,0 +1,28 @@
+\begin{ccRefFunctionObjectConcept}{AlgebraicKernel_d_1::ComputePolynomial_1}
+
+\ccDefinition
+Computes a square free univariate polynomial $p$, such that the given 
+\ccc{AlgebraicKernel_d_1::Algebraic_real_1} is a root of $p$. 
+
+\ccRefines 
+\ccc{AdaptableUnaryFunction}  
+ 
+\ccTypes \ccThree{}{+++++++++++++}{++++++++}
+%\ccThree{typedef AlgebraicKernel_d_1::Polynomial_1}{argument_type+}{}
+\ccTypedef{typedef AlgebraicKernel_d_1::Polynomial_1 result_type;}{}
+\ccGlue
+\ccTypedef{typedef AlgebraicKernel_d_1::Algebraic_real_1 argument_type;}{}
+
+\ccOperations \ccThree{+++++++++}{+++++++++}{}
+\ccCreationVariable{fo}
+%\ccThree{xxxxxxxxxxx}{xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx}{}
+
+\ccMethod{result_type operator()(argument_type x);}
+{Computes a square free polynomial $p$, such that $x$ is a real root of $p$.}
+
+
+%\ccHasModels
+\ccSeeAlso
+\ccRefIdfierPage{AlgebraicKernel_d_1::Isolate_1}\\
+
+\end{ccRefFunctionObjectConcept}

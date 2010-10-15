@@ -1,0 +1,53 @@
+%% Copyright (c) 2004  SciSoft.  All rights reserved.
+%%
+%% This file is part of CGAL (www.cgal.org); you may redistribute it under
+%% the terms of the Q Public License version 1.0.
+%% See the file LICENSE.QPL distributed with CGAL.
+%%
+%% Licensees holding a valid commercial license may use this file in
+%% accordance with the commercial license agreement provided with the software.
+%%
+%% This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
+%% WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
+%%
+%% 
+%%
+%% Author(s)     : Fernando Cacciola <fernando_cacciola@hotmail.com>
+
+
+\begin{ccRefClass}{Straight_skeleton_2<Traits,Items,Alloc>}
+
+%% add template arg's if necessary
+
+%% \ccHtmlCrossLink{}     %% add further rules for cross referencing links
+%% \ccHtmlIndexC[class]{} %% add further index entries
+\ccCreationVariable{Ss}
+\ccDefinition
+
+The class \ccRefName\ provides a model for the
+\ccc{StraightSkeleton_2} concept which is the class
+type used to represent a straight skeleton.\\
+It inherits from \ccc{HalfedgeDS_vector<Traits,Items,Alloc>}
+
+\ccInclude{CGAL/Straight_skeleton_2.h}
+
+\ccIsModel
+\ccc{StraightSkeleton_2}\\
+\ccc{DefaultConstructible}\\
+\ccc{CopyConstructible}\\
+\ccc{Assignable}\\
+
+\ccSeeAlso
+\ccc{StraightSkeletonVertex_2}\\
+\ccc{StraightSkeletonHalfedge_2}\\
+\ccc{StraightSkeleton_2}\\
+
+The only purpose of this class is to protect all the modifying operations in a \ccc{HalfedgeDS}. Normal users should not modify a straight skeleton. If an advanced user needs to get access to the modifying operations, it must call the required methods through the \ccc{::Base} class.
+
+\end{ccRefClass}
+
+% +------------------------------------------------------------------------+
+%%RefPage: end of main body, begin of footer
+% EOF
+% +------------------------------------------------------------------------+
+

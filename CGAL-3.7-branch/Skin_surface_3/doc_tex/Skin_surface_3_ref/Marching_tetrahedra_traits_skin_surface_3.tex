@@ -1,0 +1,66 @@
+% +------------------------------------------------------------------------+
+% | Reference manual page: Marching_tetrahedra_traits_skin_surface_3.tex
+% +------------------------------------------------------------------------+
+% | 27.09.2005   Nico Kruithof
+% | Package: Skin_surface
+% | 
+\RCSdef{\RCSMarchingtetrahedratraitsskinRev}{$Id$}
+\RCSdefDate{\RCSMarchingtetrahedratraitsskinDate}{$Date$}
+% +------------------------------------------------------------------------+
+
+\ccRefPageBegin
+
+%%RefPage: end of header, begin of main body
+% +------------------------------------------------------------------------+
+
+
+\begin{ccRefClass}{Marching_tetrahedra_traits_skin_surface_3<Triangulation_3, HalfedgeDS, Converter_ >}
+\label{pageMarchingtetrahedratraitsskinsurface}
+
+\ccDefinition
+  
+\ccInclude{CGAL/Marching_tetrahedra_traits_skin_surface_3.h}
+
+\ccIsModel
+
+\ccRefConceptPage{MarchingTetrahedraTraits_3}
+
+\ccTypes
+\ccThree{typedef  Triangulation_3::Cell_handle}{xxx}{ }
+\ccThreeToTwo
+
+\ccTypedef{typedef Converter_              Converter;}{}
+\ccGlue
+\ccTypedef{typedef Triangulation_3 Triangulation;}{}
+\ccTypedef{typedef Triangulation_3::Cell_handle Cell_handle;}{}
+\ccTypedef{typedef HalfedgeDS::Traits             HDS_K;}{}
+\ccGlue
+\ccTypedef{typedef HDS_K::Point_3              HDS_point;}{}
+\ccTypedef{typedef HDS_point::R::RT                     HDS_RT;}{}
+
+
+\ccCreation
+\ccCreationVariable{marching_traits}  %% choose variable name
+
+\ccConstructor{Marching_tetrahedra_traits_skin_surface_3();}{default constructor with
+  \ccc{iso_value} zero}
+\ccConstructor{Marching_tetrahedra_traits_skin_surface_3(HDS_RT iso_value);}{}
+
+\ccOperations
+
+\ccMethod{  Sign sign(Cell_handle const ch, int i) const;}{ }
+\ccMethod{HDS_point intersection(Cell_handle const ch, int i, int j) const;}{ }
+
+\ccSeeAlso
+\ccRefIdfierPage{CGAL::marching_tetrahedra_3}\\
+\ccRefIdfierPage{MarchingTetrahedraTraits_3}
+
+
+\end{ccRefClass}
+
+% +------------------------------------------------------------------------+
+%%RefPage: end of main body, begin of footer
+\ccRefPageEnd
+% EOF
+% +------------------------------------------------------------------------+
+

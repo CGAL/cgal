@@ -1,0 +1,125 @@
+% =============================================================================
+% The CGAL Developers' Manual
+% Chapter: Memory management
+% -----------------------------------------------------------------------------
+% file   : memory_management.tex
+% authors: Michael Seel <seel@mpi-sb.mpg.de>
+% -----------------------------------------------------------------------------
+% $Id$
+% $Date$
+% =============================================================================
+
+\chapter{Memory Management\label{chap:memory_management}}
+\ccChapterRelease{Chapter Version: 1.0}
+\ccChapterAuthor{Michael Seel ({\tt seel@mpi-sb.mpg.de})}
+
+One of the design goals of \cgal\ (Section~\ref{sec:design_goals}) is 
+efficiency,\ccIndexMainItem{efficiency}
+and this means not only implementing efficient algorithms
+but also implementing them efficiently.  One way to improve the efficiency
+of an implementation is through efficient memory management.  Here we
+describe one way to address this using the allocator interface.
+
+\section{The \CC\ standard allocator interface\label{sec:allocator_interface}}
+\ccIndexMainItemBegin{allocator}
+
+We first give a short presentation of the memory allocator interface.
+Objects of type \ccc{allocator<T>} can be used to obtain small, typed 
+chunks of memory to be used, for example, as static members of a class. 
+This is especially
+interesting with classes of a constant size that are frequently
+allocated and deallocated (geometric objects, etc.), since a memory
+allocator can maintain the corresponding memory chunks in local blocks
+and thus can answer allocation and deallocation calls much faster than
+the corresponding system calls. We first recapitulate the interface of
+an allocator:
+
+\input{Developers_manual/Allocator}
+\ccIndexMainItemEnd{allocator}
+
+\section{The allocator macro\label{sec:allocator_macro}}
+\ccIndexSubitemBegin{allocator}{macro}
+
+The macro \ccc{CGAL_ALLOCATOR}\ccIndexMainItem{\ccFont CGAL_ALLOCATOR}
+is defined in the file \ccc{<CGAL/memory.h>} to be the standard allocator
+from \ccc{<memory>}.
+However, the user can redefine it, for example, if \leda\ is present,
+he can define it (before including any CGAL header file) this way :
+
+\begin{verbatim}
+#include <LEDA/allocator.h>
+#define CGAL_ALLOCATOR(t) leda_allocator<t>
+\end{verbatim}
+\ccIndexSubitemEnd{allocator}{macro}
+
+\section{Using the allocator\label{sec:using_memory_allocator}}
+\ccIndexSubitemBegin{allocator}{as template parameter}
+
+How should a data structure use the allocator mechanism? Just make the
+allocator one of the template arguments of the data structure. Then
+use a static member object to allocate items on the heap that you
+want to keep optimized regarding allocation and deallocation. We
+show an example using a trivial list structure:
+
+\begin{verbatim}
+#include <CGAL/memory.h>
+
+template <typename T> 
+class dlink 
+{ T some_member; };
+
+template < typename T, typename Alloc = CGAL_ALLOCATOR(dlink<T>) >
+class list 
+{
+public:
+  typedef dlink<T>* dlink_ptr;
+  typedef Alloc list_allocator;
+
+  static list_allocator M;
+
+list() {
+  p = M.allocate(1);          // allocation of space for one dlink
+  M.construct(p,dlink<T>());  // inplace construction of object
+}
+
+~list() {
+  M.destroy(p);      // destroy object
+  M.deallocate(p,1); // deallocate memory
+}
+
+private:
+  dlink_ptr p;
+};
+
+// init static member allocator object:
+template <typename T, typename Alloc>
+typename list<T,Alloc>::list_allocator list<T,Alloc>::M =
+             typename list<T,Alloc>::list_allocator();
+
+
+int main()
+{
+  list<int> L;
+  return 0;
+}
+\end{verbatim}
+\ccIndexSubitemEnd{allocator}{as template parameter}
+
+\InternalOnly{
+
+\section{Requirements and recommendations\label{sec:memory_req_and_rec}}
+
+%\noindent
+%Requirements:
+%\begin{itemize}
+%\end{itemize}
+
+\noindent
+Recommendations:
+\begin{itemize}
+   \item Use an allocator template parameter (which defaults to
+         \ccc{CGAL_ALLOCATOR}) for data structures for which an optimization
+         with regard to allocation and deallocation is beneficial.
+\end{itemize}
+
+}

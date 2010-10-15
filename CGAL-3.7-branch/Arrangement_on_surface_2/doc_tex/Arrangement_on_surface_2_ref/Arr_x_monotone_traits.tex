@@ -1,0 +1,187 @@
+% Reference manual page: ArrangementXMonotoneTraits.tex
+% Package: Arrangement_2
+
+\ccRefPageBegin
+\begin{ccRefConcept}{ArrangementXMonotoneTraits_2}
+
+\ccThree{ArrangementXMonotoneTraits::Has_merge_category}{}{}
+\ccThreeToTwo
+
+\ccDefinition
+% ===========
+The concept\ccRefName{} refines the basic arrangement-traits concept.
+A model of this concept is able to handle $x$-monotone curves that
+intersect in their interior (and points that conincide with curve
+interiors). This is necessary for constructing arrangements of sets of
+intersecting $x$-monotone curves.
+
+As the resulting structure, represented by the \ccc{Arrangement_2} class,
+stores pairwise interior-disjoint curves, the input curves are split at
+the intersection points before being inserted into the arrangement. 
+A model of this refined concept therefore needs to compute the intersections
+(and possibly overlaps) between two $x$-monotone curves and to support
+curve splitting.
+
+\ccRefines
+\ccc{ArrangementBasicTraits_2}
+
+\ccTypes
+% ======
+\ccNestedType{Multiplicity}{the multiplicity type.}
+
+\ccHeading{Tags}
+% ==============
+\ccNestedType{Has_merge_category}
+  {indicates whether the nested functors \ccc{Are_mergeable_2} and
+  \ccc{Merge_2} are provided.} 
+
+\ccHeading{Functor Types}
+% =======================
+\ccThree{Compare_y_at_x_2}{}{\hspace*{14cm}}
+\ccThreeToTwo
+\ccNestedType{Intersect_2}{models the concept \ccc{ArrTraits::Intersect_2}.}
+\ccGlue
+\ccNestedType{Split_2}{models the concept \ccc{ArrTraits::Split_2}.}
+
+The two following function-object types are optional. If they are
+supported, the \ccc{Has_merge_category} tag should be defined as
+\ccc{Tag_true} (and \ccc{Tag_false} otherwise.
+
+\ccNestedType{Are_mergeable_2}%
+  {models the concept \ccc{ArrTraits::AreMergeable_2}.}
+\ccGlue
+\ccNestedType{Merge_2}{models the concept \ccc{ArrTraits::Merge_2}.}
+
+\ccThree{Construct_x_monotone_curve_2~~~}{}{\hspace*{7cm}}
+\ccThreeToTwo
+
+\ccCreationVariable{traits}
+% \ccCreation
+%==========
+
+\ccHeading{Accessing Functor Objects}
+% ===================================
+\ccMethod{Intersect_2 intersect_2_object() const;} {}
+\ccGlue
+\ccMethod{Split_2 split_2_object() const;} {}
+
+The two following methods are optional. If they are supported, 
+the \ccc{Has_merge_category} tag should be defined as \ccc{Tag_true} (and
+\ccc{Tag_false} otherwise.
+
+\ccMethod{Are_mergeable_2 are_mergeable_2_object() const;} {}
+\ccGlue
+\ccMethod{Merge_2 merge_2_object() const;} {}
+
+\ccHasModels
+% ==========
+\ccc{CGAL::Arr_segment_traits_2<Kernel>}\\
+\ccc{CGAL::Arr_non_caching_segment_traits_2<Kernel>}\\
+\ccc{CGAL::Arr_linear_traits_2<Kernel>}\\
+\ccc{CGAL::Arr_polyline_traits_2<SegmentTraits>}\\
+\ccc{CGAL::Arr_circle_segment_traits_2<Kernel>}\\
+\ccc{CGAL::Arr_line_arc_traits_2<CircularKernel>}\\
+\ccc{CGAL::Arr_circular_arc_traits_2<CircularKernel>}\\
+\ccc{CGAL::Arr_circular_line_arc_traits_2<CircularKernel>}\\
+\ccc{CGAL::Arr_conic_traits_2<RatKernel,AlgKernel,NtTraits>}\\
+\ccc{CGAL::Arr_rational_arc_traits_2<AlgKernel,NtTraits>}\\
+\ccc{CGAL::Arr_Bezier_curve_traits_2<RatKernel,AlgKernel,NtTraits>}\\
+\ccc{CGAL::Arr_algebraic_segment_traits_2<Coefficient>}\\
+\ccc{CGAL::Arr_curve_data_traits_2<Tr,XData,Mrg,CData,Cnv>}\\
+\ccc{CGAL::Arr_consolidated_curve_data_traits_2<Traits,Data>}
+
+\ccSeeAlso
+% ========
+\ccc{ArrangementBasicTraits_2}\lcTex{(\ccRefPage{ArrangementBasicTraits_2})}
+
+\end{ccRefConcept}
+\ccRefPageEnd
+
+%%%%%%%% Functors  %%%%%%%%
+
+%%%%%%%% Intersect_2
+% ==================
+\ccRefPageBegin
+\begin{ccRefConcept}{ArrTraits::Intersect_2}
+\ccRefines{Functor}
+
+\ccHasModels\ccc{ArrangementXMonotoneTraits_2::Intersect_2}
+
+\ccCreationVariable{fo}
+
+\ccMethod{Output_iterator intersect(ArrTraits::X_monotone_curve_2 xc1,
+                                    ArrTraits::X_monotone_curve_2 xc2,
+				    Output_iterator& oi);}{%
+  computes the intersections of \ccc{xc1} and \ccc{xc2} and 
+  inserts them {\sl in an ascending lexicographic $xy$-order} into the 
+  output iterator \ccc{oi}. The value-type of \ccc{Output_iterator} is 
+  \ccc{CGAL::Object}, where each \ccc{Object} wraps either a 
+  \ccc{pair<ArrTraits::Point_2,ArrTraits::Multiplicity>} object, which
+  represents an intersection point with its multiplicity (in case the
+  multiplicity is undefined or unknown, it should be set to $0$) or an 
+  \ccc{ArrTraits::X_monotone_curve_2} object, representing an
+  overlapping subcurve of \ccc{xc1} and \ccc{xc2}. The operator
+  returns a past-the-end iterator for the output sequence.}
+\end{ccRefConcept}
+\ccRefPageEnd
+
+%%%%%%%% Split_2
+% ==============
+\ccRefPageBegin
+\begin{ccRefConcept}{ArrTraits::Split_2}
+\ccRefines{Functor}
+
+\ccHasModels\ccc{ArrangementXMonotoneTraits_2::Split_2}
+
+\ccCreationVariable{fo}
+
+\def\ccTagRmConstRefPair{\ccFalse}%
+\ccMethod{void split(ArrTraits::X_monotone_curve_2 xc,
+                     ArrTraits::Point_2 p,
+		     ArrTraits::X_monotone_curve_2& xc1,
+		     ArrTraits::X_monotone_curve_2& xc2);}{%
+  accepts an input curve \ccc{xc} and a split point \ccc{p} in its
+  interior. It splits \ccc{xc} at the split point into two subcurves \ccc{xc1}
+  and \ccc{xc2}, such that \ccc{p} is \ccc{xc1}'s {\sl right} endpoint and
+  \ccc{xc2}'s {\sl left} endpoint.}%
+\ccTagDefaults
+\end{ccRefConcept}
+\ccRefPageEnd
+
+%%%%%%%% AreMergeable_2
+% =====================
+\ccRefPageBegin
+\begin{ccRefConcept}{ArrTraits::AreMergeable_2}
+\ccRefines{Functor}
+
+\ccHasModels\ccc{ArrangementXMonotoneTraits_2::Are_mergeable_2}
+
+\ccCreationVariable{fo}
+
+\ccMethod{bool are_mergeable(ArrTraits::X_monotone_curve_2 xc1,
+                             ArrTraits::X_monotone_curve_2 xc2);}{%
+  accepts two $x$-monotone curves \ccc{xc1} and \ccc{xc2} that share
+  a common endpoint, and determines whether they can be merged to form
+  a single continuous $x$-monotone curve.}
+\end{ccRefConcept}
+\ccRefPageEnd
+
+%%%%%%%% Merge_2
+% ==============
+\ccRefPageBegin
+\begin{ccRefConcept}{ArrTraits::Merge_2}
+\ccRefines{Functor}
+
+\ccHasModels\ccc{ArrangementXMonotoneTraits_2::Merge_2}
+
+\ccCreationVariable{fo}
+
+\def\ccTagRmConstRefPair{\ccFalse}%
+\ccMethod{void merge(ArrTraits::X_monotone_curve_2 xc1,
+                     ArrTraits::X_monotone_curve_2 xc2,
+		     ArrTraits::X_monotone_curve_2& xc);}{%
+  accepts two {\em mergeable} $x$-monotone curves \ccc{xc1} and \ccc{xc2}
+  (see definition above), and sets\ccc{xc} to be the merged curve.}
+\ccTagDefaults
+\end{ccRefConcept}
+\ccRefPageEnd

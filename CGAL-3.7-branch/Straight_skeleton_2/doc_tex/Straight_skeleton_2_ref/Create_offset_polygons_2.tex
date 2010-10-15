@@ -1,0 +1,65 @@
+%% Copyright (c) 2004  SciSoft.  All rights reserved.
+%%
+%% This file is part of CGAL (www.cgal.org); you may redistribute it under
+%% the terms of the Q Public License version 1.0.
+%% See the file LICENSE.QPL distributed with CGAL.
+%%
+%% Licensees holding a valid commercial license may use this file in
+%% accordance with the commercial license agreement provided with the software.
+%%
+%% This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
+%% WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
+%%
+%% 
+%%
+%% Author(s)     : Fernando Cacciola <fernando_cacciola@hotmail.com>
+
+
+\begin{ccRefFunction}{create_offset_polygons_2}
+
+%% add template arg's if necessary
+
+%% \ccHtmlCrossLink{}     %% add further rules for cross referencing links
+%% \ccHtmlIndexC[class]{} %% add further index entries
+\ccDefinition
+
+The function \ccRefName\ creates a straight skeleton in the interior of a 2D polygon with holes.
+
+\ccInclude{CGAL/create_straight_skeleton_2.h}
+
+\ccFunction
+{template<class Polygon, class FT, class Straight_skeleton, class K>
+std::vector< boost::shared_ptr<Polygon> >
+create_offset_polygons_2 ( FT                       offset
+                         , Straight_skeleton const& s,
+                         , K const&                 k = Exact_predicates_inexact_constructions_kernel
+                         ) ;
+}
+{returns a container with all the offset polygons at distance $offset$ obtained from 
+the straight skeleton $s$. 
+}
+
+
+\begin{enumerate}  
+   \item    \ccc{K} is any CGAL kernel.
+   \item    \ccc{FT} is any number type implicitly convertible to \ccc{K::FT}.
+   \item    \ccc{Straight_skeleton} is \ccc{Straight_skeleton_2<K2>}. 
+            If $K != K2$ the straight skeleton is converted to \ccc{Straight_skeleton_2<K>}.
+   \item    \ccc{Polygon} is a model of \ccc{VertexContainer_2}. 
+            If this first template parameter is omitted, \ccc{Polygon_2} is used.
+\end{enumerate}
+
+
+\ccSeeAlso
+\ccc{create_interior_skeleton_2}\\
+\ccc{create_exterior_skeleton_2}\\
+\ccc{create_interior_skeleton_and_offset_polygons_2}\\
+\ccc{create_exterior_skeleton_and_offset_polygons_2}\\
+
+\end{ccRefFunction}
+
+% +------------------------------------------------------------------------+
+%%RefPage: end of main body, begin of footer
+% EOF
+% +------------------------------------------------------------------------+
+

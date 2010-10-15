@@ -1,0 +1,400 @@
+
+
+
+\section{Introduction}
+
+The spatial searching package implements exact and approximate
+distance browsing by providing implementations of algorithms
+supporting
+
+\begin{itemize} 
+
+\item
+both nearest and furthest neighbor searching
+
+\item
+both exact and approximate searching
+
+\item
+(approximate) range searching
+
+\item 
+(approximate) $k$-nearest and $k$-furthest neighbor searching
+
+\item 
+(approximate) incremental nearest and incremental furthest neighbor searching
+
+\item
+query items representing points and spatial objects.
+
+\end{itemize}
+
+In these searching problems a set $P$ of data points in
+$d$-dimensional space is given.  The points can be represented by
+Cartesian coordinates or homogeneous coordinates.  These points are
+preprocessed into a tree data structure, so that given any
+query item $q$ the points of $P$ can be browsed efficiently.  The
+approximate spatial searching package is designed for data sets that
+are small enough to store the search structure in main memory (in
+contrast to approaches from databases that assume that the data reside
+in secondary storage).
+
+\subsection{Neighbor Searching}
+
+Spatial searching supports browsing through a collection of
+$d$-dimensional spatial objects stored in a spatial data structure on
+the basis of their distances to a query object. The query object may
+be a point or an arbitrary spatial object, e.g, a $d$-dimensional
+sphere. The objects in the spatial data structure are $d$-dimensional
+points.
+
+Often the number of the neighbors to be computed is not know
+beforehand, e.g., because the number may depend on some properties of
+the neighbors (for example when querying for the nearest city to Paris with
+population greater than a million) or the distance to the query point.
+The conventional approach is $k$-{\em nearest neighbor searching} that
+makes use of a $k$-nearest neighbor algorithm, where $k$ is known
+prior to the invocation of the algorithm.  Hence, the number of
+nearest neighbors has to be guessed. If the guess is too large
+redundant computations are performed.  If the number is too small the
+computation has to be re-invoked for a larger number of neighbors,
+thereby performing redundant computations.  Therefore, Hjaltason and
+Samet \cite{hs-rsd-95} introduced {\em incremental nearest neighbor
+searching} in the sense that having obtained the $k$ nearest
+neighbors, the $k$ + 1$^{st}$ neighbor can be obtained without having
+to calculate the $k$ + 1 nearest neighbor from scratch.
+ 
+
+Spatial searching typically consists of a preprocessing phase and a
+searching phase.  In the preprocessing phase one builds a search
+structure and in the searching phase one makes the queries.  In the
+preprocessing phase the user builds a tree data structure
+storing the spatial data.  In the searching phase the user invokes a
+searching method to browse the spatial data.
+
+With relatively minor modifications, nearest neighbor searching
+algorithms can be used to find the furthest object from the query
+object.  Therefore, {\em furthest neighbor searching} is also
+supported by the spatial searching package.
+
+The execution time for exact neighbor searching can be reduced by
+relaxing the requirement that the neighbors should be computed
+exactly.  If the distances of two objects to the query object are
+approximately the same, instead of computing the nearest/furthest
+neighbor exactly, one of these objects may be returned as the
+approximate nearest/furthest neighbor. I.e., given some non-negative
+constant $\epsilon$ the distance of an object returned as an
+approximate $k$-nearest neighbor must not be larger than
+$(1+\epsilon)r$, where $r$ denotes the distance to the real $k^{th}$
+nearest neighbor.  Similar the distance of an approximate $k$-furthest
+neighbor must not be smaller than $r/(1+\epsilon)$.  Obviously, for
+$\epsilon=0$ we get the exact result, and the larger $\epsilon$ is,
+the less exact the result.
+
+Neighbor searching is implemented by the following four classes.
+
+The class \ccc{CGAL::Orthogonal_k_neighbor_search<Traits,
+OrthogonalDistance, Splitter, SpatialTree>} implements the standard
+search strategy for orthogonal distances like the weighted Minkowski
+distance. It requires the use of extended nodes in the spatial tree
+and supports only $k$ neighbor searching for point queries.
+
+The class \ccc{CGAL::K_neighbor_search<Traits, GeneralDistance,
+Splitter, SpatialTree>} implements the standard search strategy for
+general distances like the Manhattan distance for iso-rectangles.
+It does not require the use of extended nodes in the spatial tree and supports
+only $k$ neighbor searching for queries defined by points or spatial
+objects.
+
+The class \ccc{Orthogonal_incremental_neighbor_search<Traits,
+GeneralDistance, Splitter, SpatialTree>} implements the incremental
+search strategy for general distances like the weighted Minkowski
+distance. It requires the use of extended nodes in the spatial tree
+and supports incremental neighbor searching and distance browsing for
+point queries.
+
+The class \ccc{CGAL::Incremental_neighbor_search<Traits,
+GeneralDistance, Splitter, SpatialTree>} implements the incremental
+search strategy for general distances like the Manhattan distance for
+iso-rectangles.  It does not require the use of extended nodes in the
+spatial tree and supports incremental neighbor searching and distance
+browsing for queries defined by points or spatial objects.
+
+
+
+
+\subsection{Range Searching}
+
+{\em Exact range searching} and {\em approximate range searching} is
+supported using exact or fuzzy $d$-dimensional objects enclosing a
+region.  The fuzziness of the query object is specified by a parameter
+$\epsilon$ denoting a maximal allowed distance to the boundary of a
+query object.  If the distance to the boundary is at least
+$\epsilon$, points inside the object are always reported and points
+outside the object are never reported. Points within distance
+$\epsilon$ to the boundary may be or may be not reported.  For exact
+range searching the fuzziness parameter $\epsilon$ is set to zero.
+
+The class \ccc{Kd_tree} implements range searching in the method \ccc{search},
+which is a template method with an output iterator and a model of the
+concept \ccc{FuzzyQueryItem} as \ccc{CGAL::Fuzzy_iso_box_d}  
+or \ccc{CGAL::Fuzzy_sphere_d}. 
+For range searching of large data sets the user may set the parameter \ccc{bucket_size} 
+used in building the $k$-$d$ tree to a large value (e.g. 100), 
+because in general the query time will be less then using the default value.
+
+\section{Splitting Rules\label{Spatial_Searching:Splitting_rule_section}}
+
+Instead of using the default splitting rule \ccc{Sliding_midpoint} described below,
+a user may, depending upon the data, select 
+one from the following splitting rules,
+which determine how a separating hyperplane is computed:
+
+\begin{description}
+
+\item[ \ccc{Midpoint_of_rectangle}]
+
+This splitting rule cuts a rectangle through its midpoint orthogonal
+to the longest side.
+
+\item[ \ccc{Midpoint_of_max_spread}]
+
+This splitting rule cuts a rectangle through $(Mind+Maxd)/2$ orthogonal
+to the dimension with the maximum point spread $[Mind,Maxd]$.
+
+\item[ \ccc{Sliding_midpoint}]
+
+This is a modification of the midpoint of rectangle splitting rule.
+It first attempts to perform a midpoint of rectangle split as
+described above. If data points lie on both sides of the separating
+plane the sliding midpoint rule computes the same separator as
+the midpoint of rectangle rule. If the data points lie only on one
+side it avoids this by sliding the separator, computed by
+the midpoint of rectangle rule, to the nearest data point.
+
+\item[ \ccc{Median_of_rectangle}]
+
+The splitting dimension is the dimension of the longest side of the rectangle.
+The splitting value is defined by the median of the coordinates of the data points
+along this dimension.
+
+\item[ \ccc{Median_of_max_spread}]
+
+The splitting dimension is the dimension of the longest side of the rectangle.
+The splitting value is defined by the median of the coordinates of the data points
+along this dimension.
+
+\item[ \ccc{Fair}]
+
+This splitting rule is a compromise between the median of rectangle
+splitting rule and the midpoint of rectangle splitting rule. This
+splitting rule maintains an upper bound on the maximal allowed ratio
+of the longest and shortest side of a rectangle (the value of this
+upper bound is set in the constructor of the fair splitting
+rule). Among the splits that satisfy this bound, it selects the one in
+which the points have the largest spread.  It then splits the points
+in the most even manner possible, subject to maintaining the bound on
+the ratio of the resulting rectangles.
+
+\item[ \ccc{Sliding_fair}]
+
+This splitting rule is a compromise between the fair splitting rule
+and the sliding midpoint rule.  Sliding fair-split is based on the
+theory that there are two types of splits that are good: balanced
+splits that produce fat rectangles, and unbalanced splits provided the
+rectangle with fewer points is fat.
+
+Also, this splitting rule maintains an upper bound on the maximal
+allowed ratio of the longest and shortest side of a rectangle (the
+value of this upper bound is set in the constructor of the fair
+splitting rule). Among the splits that satisfy this bound, it selects
+the one one in which the points have the largest spread.  It then
+considers the most extreme cuts that would be allowed by the aspect
+ratio bound. This is done by dividing the longest side of the
+rectangle by the aspect ratio bound. If the median cut lies between
+these extreme cuts, then we use the median cut. If not, then consider
+the extreme cut that is closer to the median.  If all the points lie
+to one side of this cut, then we slide the cut until it hits the first
+point.  This may violate the aspect ratio bound, but will never
+generate empty cells.
+
+\end{description}
+
+
+
+
+\section{Example Programs}
+
+We give six examples.  The first example illustrates k nearest neighbor
+searching, and the second example incremental neighbor searching. 
+The third is an example of approximate furthest neighbor searching
+using a $d$-dimensional iso-rectangle as an query object.  Approximate
+range searching is illustrated by the fourth example.  The fifth
+example illustrates k neighbor searching for a user defined point
+class. The last example shows how to choose another splitting rule in the
+$k$-$d$ tree that is used as search tree.
+
+\newpage
+\subsection{Example for K Neighbor Searching}
+
+The first example illustrates k neighbor searching with an Euclidean
+distance and 2-dimensional points. The generated random
+data points are inserted in a search tree. We then initialize
+the k neighbor search object with the origin as query. Finally, we 
+obtain the result of the computation in the form of an iterator
+range. The value of the iterator is a pair of a point and its square
+distance to the query point. We use square distances, or {\em
+transformed distances} for other distance classes, as they are 
+computationally cheaper.
+
+\ccIncludeExampleCode{Spatial_searching/nearest_neighbor_searching.cpp}
+
+\newpage
+\subsection{Example for Incremental Searching}
+
+This example program illustrates incremental searching for the closest
+point with a positive first coordinate. We can use the orthogonal
+incremental neighbor search class, as the query is also a point and as
+the distance is the Euclidean distance. 
+
+As for the $k$ neighbor search, we first initialize the search tree with
+the data. We then create the search object, and finally obtain the iterator
+with the \ccc{begin()} method. Note that the iterator is of the input
+iterator category, that is one can make only one pass over the data. 
+
+ 
+\ccIncludeExampleCode{Spatial_searching/distance_browsing.cpp}
+
+
+\newpage
+\subsection{Example for General Neighbor Searching}
+
+This example program illustrates approximate nearest and furthest
+neighbor searching using 4-dimensional Cartesian coordinates.  Five
+approximate nearest neighbors of the query rectangle
+$[0.1,0.2]^4$ are computed. Because the query object is a rectangle
+we cannot use the Orthogonal neighbor search. As in the previous 
+examples we first initialize a search tree, create the search object
+with the query, and obtain the result of the search as iterator range.
+ 
+\ccIncludeExampleCode{Spatial_searching/general_neighbor_searching.cpp}
+
+\newpage
+\subsection{Example for a Range Query}
+
+This example program illustrates approximate range querying for
+4-dimensional fuzzy iso-rectangles and spheres using homogeneous
+coordinates. The range queries are member functions of the $k$-$d$ 
+tree class.
+
+\ccIncludeExampleCode{Spatial_searching/fuzzy_range_query.cpp}
+
+
+
+\newpage
+\subsection{Example for User Defined Point and Distance Class}
+
+The neighbor searching works with all \cgal\ kernels, as well as with
+user defined points and distance classes.
+In this example we assume that the user provides the following 3-dimensional 
+points class.
+
+\ccIncludeExampleCode{Spatial_searching/Point.h}
+
+We have put the glue layer in this file as well, that is a class that allows to 
+iterate over the Cartesian coordinates of the point, and a class to construct
+such an iterator for a point. We next need a distance class
+\newpage
+\ccIncludeExampleCode{Spatial_searching/Distance.h}
+
+\newpage
+
+We are ready to put the pieces together.
+The class \ccc{Search_traits<..>} which you see in the next file is then a mere 
+wrapper for all these types.  The searching itself works exactly as for \cgal\ kernels.
+
+\ccIncludeExampleCode{Spatial_searching/user_defined_point_and_distance.cpp}
+
+\newpage
+\subsection{Example for Selecting a Splitting Rule and Setting the Bucket Size}
+
+This example program illustrates selecting a splitting rule and
+setting the maximal allowed bucket size.  The only differences with
+the first example are the declaration of the {\em Fair} 
+splitting rule, needed to set the maximal allowed bucket size.
+
+\ccIncludeExampleCode{Spatial_searching/using_fair_splitting_rule.cpp}
+
+\newpage
+
+\section{Software Design}
+
+\subsection{The $k$-$d$ tree\label{Kd_tree_subsection}}
+
+Bentley \cite{b-mbstu-75} introduced the $k$-$d$ tree as a
+generalization of the binary search tree in higher dimensions. $k$-$d$
+trees hierarchically decompose space into a relatively small number of
+rectangles such that no rectangle contains too many input objects.
+For our purposes, a {\it rectangle} in real $d$ dimensional space,
+$\R^d$, is the product of $d$ closed intervals on the coordinate axes.
+$k$-$d$ trees are obtained by partitioning point sets in $\R^d$ using
+($d$-1)-dimensional hyperplanes.  Each node in the tree is split into
+two children by one such separating hyperplane.  Several splitting
+rules (see Section \ref{Spatial_Searching:Splitting_rule_section} can
+be used to compute a separating ($d$-1)-dimensional hyperplane.
+
+Each internal node of the $k$-$d$ tree is associated with a rectangle
+and a hyperplane orthogonal to one of the coordinate axis, which
+splits the rectangle into two parts.  Therefore, such a hyperplane,
+defined by a splitting dimension and a splitting value, is called a
+separator.  These two parts are then associated with the two child
+nodes in the tree. The process of partitioning space continues until
+the number of data points in the rectangle falls below some given
+threshold. The rectangles associated with the leaf nodes are called
+{\it buckets}, and they define a subdivision of the space into
+rectangles.  Data points are only stored in the leaf nodes of the
+tree, not in the internal nodes.
+
+Friedmann, Bentley and Finkel \cite{fbf-afbml-77} described the
+standard search algorithm to find the $k$th nearest neighbor by
+searching a $k$-$d$ tree recursively.
+
+When encountering a node of the tree, the algorithm first visits the
+child that is closest to the query point. On return, if the rectangle
+containing the other child lies within 1/ (1+$\epsilon$) times the
+distance to the $k$th nearest neighbors so far, then the other child
+is visited recursively.  Priority search \cite{am-annqf-93} visits the
+nodes in increasing order of distance from the queue with help of a
+priority queue.  The search stops when the distance of the query point
+to the nearest nodes exceeds the distance to the nearest point found
+with a factor 1/ (1+$\epsilon$).  Priority search supports next
+neighbor search, standard search does not.
+
+In order to speed-up the internal distance computations in nearest
+neighbor searching in high dimensional space, the approximate
+searching package supports orthogonal distance computation. Orthogonal distance
+computation
+implements the efficient incremental distance computation technique
+introduced by Arya and Mount \cite{am-afvq-93}.  This technique
+works only for neighbor queries with query items represented as points
+and with a quadratic form distance, defined by $d_A(x,y)=
+(x-y)A(x-y)^T$, where the matrix $A$ is positive definite,
+i.e. $d_A(x,y) \geq 0$.  An important class of quadratic form
+distances are weighted Minkowski distances.  Given a parameter $p>0$
+and parameters $w_i \geq 0, 0 < i \leq d$, the weighted Minkowski
+distance is defined by $l_p(w)(r,q)= ({\Sigma_{i=1}^{i=d} \,
+w_i(r_i-q_i)^p})^{1/p}$ for $0 < p <\infty$ and defined by
+$l_{\infty}(w)(r,q)=max \{w_i |r_i-q_i| \mid 1 \leq i \leq d\}$.  The
+Manhattan distance ($p=1$, $w_i=1$) and the Euclidean distance ($p=2$,
+$w_i=1$) are examples of a weighted Minkowski metric.
+
+To speed up distance computations also transformed distances are used
+instead of the distance itself.  For instance for the Euclidean
+distance, to avoid the expensive computation of square roots, squared
+distances are used instead of the Euclidean distance itself.
+
+
+
+
+
+

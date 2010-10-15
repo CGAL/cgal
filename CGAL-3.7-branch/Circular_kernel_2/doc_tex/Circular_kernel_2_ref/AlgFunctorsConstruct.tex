@@ -1,0 +1,131 @@
+\begin{ccRefConcept}{AlgebraicKernelForCircles::ConstructPolynomial_1_2}
+
+\ccCreationVariable{fo}
+
+A model \ccVar\ of this type must provide:
+
+\ccMethod{AlgebraicKernelForCircles::Polynomial_1_2
+	operator()(const AlgebraicKernelForCircles::RT &a,
+		const AlgebraicKernelForCircles::RT &b,
+		const AlgebraicKernelForCircles::RT &c);}
+{Constructs polynomial \ccc{ax+by+c}.}
+
+\ccSeeAlso
+
+\ccRefIdfierPage{CircularKernel::ConstructLine_2}\\
+\ccRefIdfierPage{CircularKernel::GetEquation}
+
+\end{ccRefConcept}
+
+\begin{ccRefConcept}{AlgebraicKernelForCircles::ConstructPolynomialForCircles_2_2}
+
+\ccCreationVariable{fo}
+
+A model \ccVar\ of this type must provide:
+
+\ccMethod{AlgebraicKernelForCircles::PolynomialForCircles_2_2
+	operator()(const AlgebraicKernelForCircles::FT a,
+		const AlgebraicKernelForCircles::FT b,
+		const AlgebraicKernelForCircles::FT rsq);}
+{Constructs polynomial \ccc{(x-a)^2 + (y-b)^2 - rsq}.}
+
+\ccSeeAlso
+
+\ccRefIdfierPage{CircularKernel::ConstructCircle_2}\\
+\ccRefIdfierPage{CircularKernel::GetEquation}
+
+\end{ccRefConcept}
+
+\begin{ccRefConcept}{AlgebraicKernelForCircles::Solve}
+
+\ccDefinition
+
+\ccCreationVariable{fo}
+
+A model \ccVar\ of this type must provide:
+
+\ccMethod{template < class OutputIterator >
+    OutputIterator
+    operator()(const AlgebraicKernelForCircles::Polynomial_1_2 &p1,
+	     const AlgebraicKernelForCircles::Polynomial_1_2 &p2,
+	     OutputIterator res);}
+{Copies in the output iterator the common roots of \ccc{p1} and \ccc{p2}, 
+with their multiplicity, as objects of type 
+\ccc{std::pair< AlgebraicKernelForCircles::Root_for_circles_2_2, int>}.} 
+
+\ccMethod{template < class OutputIterator >
+    OutputIterator
+    operator()(const AlgebraicKernelForCircles::Polynomial_1_2 &p1,
+	     const AlgebraicKernelForCircles::Polynomial_for_circles_2_2 &p2,
+	     OutputIterator res);}
+{Same as previous.} 
+
+\ccMethod{template < class OutputIterator >
+    OutputIterator
+    operator()(const AlgebraicKernelForCircles::Polynomial_for_circles_2_2 &p1,
+	     const AlgebraicKernelForCircles::Polynomial_1_2 &p2,
+	     OutputIterator res);}
+{Same as previous.} 
+
+\ccMethod{template < class OutputIterator >
+    OutputIterator
+    operator()(const AlgebraicKernelForCircles::Polynomial_for_circles_2_2 &p1,
+	     const AlgebraicKernelForCircles::Polynomial_for_circles_2_2 &p2,
+	     OutputIterator res);}
+{Same as previous.} 
+
+\end{ccRefConcept}
+\begin{ccRefConcept}{AlgebraicKernelForCircles::XCriticalPoints}
+
+\ccDefinition
+
+\ccCreationVariable{fo}
+
+A model \ccVar\ of this type must provide:
+
+\ccMethod{template < class OutputIterator >
+    OutputIterator
+    operator()(const AlgebraicKernelForCircles::Polynomial_for_circles_2_2 &p,
+	     OutputIterator res);}
+{Copies in the output iterator the \ccc{x}-critical points of polynomial 
+\ccc{p}, as objects of type \ccc{AlgebraicKernelForCircles::Root_for_circles_2_2}.} 
+
+\ccMethod{template < class OutputIterator >
+    AlgebraicKernelForCircles::Root_for_circles_2_2
+    operator()(const AlgebraicKernelForCircles::Polynomial_for_circles_2_2 &p,
+	     bool b);}
+{Computes the \ccc{x}-critical point with smallest (resp. largest) $x$
+  of polynomial \ccc{p} if $b$ is \ccc{true} (resp. \ccc{false}).} 
+
+\ccSeeAlso
+
+\ccRefIdfierPage{AlgebraicKernelForCircles::YCriticalPoints}
+
+\end{ccRefConcept}
+\begin{ccRefConcept}{AlgebraicKernelForCircles::YCriticalPoints}
+
+\ccDefinition
+
+\ccCreationVariable{fo}
+
+A model \ccVar\ of this type must provide:
+
+\ccMethod{template < class OutputIterator >
+    OutputIterator
+    operator()(const AlgebraicKernelForCircles::Polynomial_for_circles_2_2 &p,
+	     OutputIterator res);}
+{Copies in the output iterator the \ccc{y}-critical points of polynomial 
+\ccc{p}, as objects of type \ccc{AlgebraicKernelForCircles::Root_for_circles_2_2}.} 
+
+\ccMethod{template < class OutputIterator >
+    AlgebraicKernelForCircles::Root_for_circles_2_2
+    operator()(const AlgebraicKernelForCircles::Polynomial_for_circles_2_2 &p,
+	     bool i);}
+{Computes the \ccc{y}-critical point with smallest (resp. largest) $y$
+  of polynomial \ccc{p} if $b$ is \ccc{true} (resp. \ccc{false}).} 
+
+\ccSeeAlso
+
+\ccRefIdfierPage{AlgebraicKernelForCircles::XCriticalPoints}
+
+\end{ccRefConcept}

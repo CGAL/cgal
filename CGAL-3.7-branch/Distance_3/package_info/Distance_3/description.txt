@@ -1,0 +1,1 @@
+Squared distance computations for simple 3D objects.

@@ -1,0 +1,90 @@
+#!/usr/bin/env perl
+
+=head1 SYNOPSIS
+
+check_macro_names [options] [file...]
+    
+ Options:
+    --help     help message
+    --debug    debug mode
+
+=head1 OPTIONS
+
+=over 8
+
+=item  B<-d, --debug>
+
+Print to standard error output all macros names that are defined in the
+file.
+
+=item B<-l, --list>
+
+Print to standard output the names of all macros defined in the file that
+do not follow the naming rules, preceded by the file name and the line number.
+
+=Head1 DESCRIPTION
+
+This script reads a file whose name is specify in command line options, and
+return 1 if a macro defined in the file does not follow the naming
+rules. The script can process several files simultaneously.
+
+
+=cut
+
+use strict;
+use warnings;
+use English;
+
+use Getopt::Long qw(:config permute);
+use Pod::Usage;
+
+my $help;
+my $debug;
+my $global_errcode = 0;
+my $listmacros;
+
+GetOptions('help' => \$help,
+	   'list|l' => \$listmacros,
+	   'debug|d' => \$debug,
+	   '<>' => \&process) or pod2usage(2);
+
+pod2usage(1) if $help;
+
+sub process() {
+    my $filename = shift;
+    my $errcode=1;
+    my $FILE;
+    my %macros;
+    my %bad_macros;
+
+    open(FILE, $filename) or die "Cannot read file $filename";
+
+    while (<FILE>) {
+        my $macro;
+	if( ($macro) = ($_ =~ /# *define +([^[:space:]()]+)/) ) { 
+            $macros{$NR} = $macro;
+            if( $macro !~ /^CGAL/ ) {
+		$global_errcode = 1;
+                $bad_macros{$NR} = $macro;
+	    }
+	}
+    }
+    if($debug && %macros) {
+        print STDERR "$filename\n";
+        foreach my $line (sort {$a <=> $b} (keys(%macros))) {
+            print STDERR "  $line: $macros{$line}\n";
+        }
+        print STDERR "\n";
+    } else {
+        if( $listmacros && %bad_macros ) {
+            print STDOUT "$filename\n";
+            foreach my $line (sort {$a <=> $b} (keys(%bad_macros))) {
+                print STDOUT "  $line: $bad_macros{$line}\n";
+            }
+            print STDOUT "\n";
+        }
+    }
+    close(FILE)
+}
+
+exit $global_errcode;

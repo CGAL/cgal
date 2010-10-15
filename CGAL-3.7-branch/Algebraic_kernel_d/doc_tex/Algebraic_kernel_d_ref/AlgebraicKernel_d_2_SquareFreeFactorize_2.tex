@@ -1,0 +1,36 @@
+\begin{ccRefFunctionObjectConcept}{AlgebraicKernel_d_2::SquareFreeFactorize_2}
+
+\ccDefinition
+Computes a square free factorization of an
+\ccc{AlgebraicKernel_d_2::Polynomial_2}.
+
+A polynomial $p$ is factored into square free and pairwise 
+coprime non-constant factors $q_i$ with multiplicities $m_i$ 
+and a constant factor $c$, such that 
+$p = c  \cdot  q_1^{m_1}  \cdot  ...  \cdot  q_n^{m_n}$.
+
+The factor multiplicity pairs $<q_i,m_i>$ are written to the 
+given output iterator. The constant factor $c$ is not computed. 
+
+\ccRefines 
+\ccc{Assignable}\\
+\ccc{CopyConstructible}
+
+\ccOperations \ccThree{+++++++++}{+++++++++}{}
+\ccCreationVariable{fo}
+
+
+
+%\ccThree{result_type}{fo(first_argument_type,++}{}
+\ccMethod{template < class OutputIterator >
+    OutputIterator
+    operator()(const AlgebraicKernel_d_2::Polynomial_2& p, OutputIterator res);}
+{Copies in the output iterator the factors of a square free 
+factorization of $p$, with their multiplicity, as objects of type 
+\ccc{std::pair<AlgebraicKernel_d_2::Polynomial_2, AlgebraicKernel_d_2::Multiplicity_type>}.}
+
+\ccSeeAlso
+\ccRefIdfierPage{AlgebraicKernel_d_2::IsSquareFree_2}\\
+\ccRefIdfierPage{AlgebraicKernel_d_2::MakeSquareFree_2}\\
+
+\end{ccRefFunctionObjectConcept}

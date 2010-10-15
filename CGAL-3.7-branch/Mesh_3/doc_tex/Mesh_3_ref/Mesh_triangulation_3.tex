@@ -1,0 +1,92 @@
+% +------------------------------------------------------------------------+
+% | Reference manual page: Mesh_triangulation_3.tex
+% +------------------------------------------------------------------------+
+% | 13.02.2009   Author
+% | Package: Package
+% |
+\RCSdef{\RCSMeshtriangulationRev}{$Id: header.tex 40270 2007-09-07 15:29:10Z lsaboret $}
+\RCSdefDate{\RCSMeshtriangulationDate}{$Date: 2007-09-07 17:29:10 +0200 (Ven, 07 sep 2007) $}
+% |
+\ccRefPageBegin
+%%RefPage: end of header, begin of main body
+% +------------------------------------------------------------------------+
+
+
+\begin{ccRefClass}{Mesh_triangulation_3<MD,Gt>}  %% add template arg's if necessary
+
+%% \ccHtmlCrossLink{}     %% add further rules for cross referencing links
+%% \ccHtmlIndexC[class]{} %% add further index entries
+
+\ccDefinition
+  
+The class \ccRefName\ provides a default triangulation to be used as the 3D
+triangulation of a mesh generation process.
+
+\ccInclude{CGAL/Mesh_triangulation_3.h}
+
+\ccParameters
+Template parameter \ccc{MD} stands for a model of \ccc{MeshDomain_3}. 
+
+Template parameter \ccc{Gt} stands for a model of \ccc{RegularTriangulationTraits_3} 
+and defaults to \ccc{Kernel_traits<MD>::Kernel}.
+
+% \ccc{Gt} defaults to MD::
+
+% It is a 3D regular
+% triangulation whose vertex and cell classes are respectively
+% \ccc{Mesh_vertex_base_3<MD,Gt,Vb>} and
+% \ccc{Mesh_cell_base_3<MD,Gt,Cb>}.
+
+
+
+
+% The following will bbe true when Surface Mesher will be
+% updated
+% \ccRefines
+% \ccc{SurfaceMeshTriangulation_3}
+
+% \ccInheritsFrom
+% \ccc{Regular_triangulation_3<Gt, Triangulation_data_structure_3<\\
+% Mesh_vertex_base_3<MD,Gt>, Mesh_cell_base_3<MD,Gt> > >}
+
+\ccTypes
+
+\ccNestedType{type}{A 3D regular
+triangulation whose vertex and cell classes are respectively
+\ccc{Mesh_vertex_base_3<MD,Gt>} and
+\ccc{Mesh_cell_base_3<MD,Gt>}.}
+
+% \ccTypedef{typedef MD::Point_3 Point;}{Point type. Note that it is a weighted point
+%   type since the triangulation is regular.}
+% \ccTypedef{typedef Mesh_vertex_base_3<MD,Gt> Vertex;}{Vertex type.}
+% \ccTypedef{typedef Mesh_cell_base_3<MD,Gt> Cell;}{Cell type.}
+
+% \ccNestedType{Point}
+% {Point type. Because the triangulation is a regular
+% triangulation, the point type as to be a weighted point type.
+% This type must be the same as \ccc{MeshDomain::Point_3}.}
+
+% \ccNestedType{Vertex}{Vertex type. Must be a model
+% of the concept \ccc{MeshVertexBase_3}.}
+
+% \ccNestedType{Cell}{Cell type. Must to be a model
+% of the concept \ccc{MeshCellBase_3}.}
+
+% \ccIsModel
+% \ccc{MeshTriangulation_3}
+
+\ccSeeAlso
+
+\ccc{make_mesh_3}\\
+\ccc{Mesh_complex_3_in_triangulation_3<Tr>} \\
+
+
+
+\end{ccRefClass}
+
+% +------------------------------------------------------------------------+
+%%RefPage: end of main body, begin of footer
+\ccRefPageEnd
+% EOF
+% +------------------------------------------------------------------------+
+

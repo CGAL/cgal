@@ -1,0 +1,84 @@
+% +------------------------------------------------------------------------+
+% | Reference manual page: AABBGeomTraits.tex
+% +------------------------------------------------------------------------+
+% | 25.02.2009   Author
+% | Package: Package
+% |
+\RCSdef{\RCSAABBGeomTraitsRev}{$Id: header.tex 40270 2007-09-07 15:29:10Z lsaboret $}
+\RCSdefDate{\RCSAABBGeomTraitsDate}{$Date: 2007-09-07 17:29:10 +0200 (Ven, 07 sep 2007) $}
+% |
+\ccRefPageBegin
+%%RefPage: end of header, begin of main body
+% +------------------------------------------------------------------------+
+
+
+\begin{ccRefConcept}{AABBGeomTraits}
+
+%% \ccHtmlCrossLink{}     %% add further rules for cross referencing links
+%% \ccHtmlIndexC[concept]{} %% add further index entries
+
+\ccDefinition
+  
+The concept \ccRefName\ defines the requirements for the first template parameter of the class \ccc{AABB_traits<GeomTraits, Primitive>}. It provides predicates and constructors to detect and compute intersections between query objects and the primitives stored in the AABB tree. In addition, it contains  predicates and constructors to compute distances between a point query and the primitives stored in the AABB tree.
+
+\ccTypes
+
+\ccNestedType{Bbox_3}{Bounding box type.}
+\ccNestedType{Sphere_3}{Sphere type, that should be consistent with the distance function chosen for the distance queries, namely the \ccc{Squared_distance_3} functor.}
+\ccNestedType{Point_3}{Point type.}
+
+\ccNestedType{Do_intersect_3}{A functor object to detect intersections between two geometric objects.
+Provides the operators:
+\ccc{bool operator()(const Type_1& type_1, const Type_2& type_2);}
+where \ccc{Type_1} and \ccc{Type_2} are relevant types
+among \ccc{Ray_3}, \ccc{Segment_3}, \ccc{Line_3}, \ccc{Triangle_3}, \ccc{Plane_3} and \ccc{Bbox_3}. Relevant herein means that a line primitive (ray, segment, line) is tested against a planar or solid primitive (plane, triangle, box), and a solid primitive is tested against another solid primitive (box against box). The operator returns \ccc{true} iff \ccc{type_1} and \ccc{type_2} have a non empty intersection.}
+
+\ccNestedType{Intersect_3}{A functor object to construct the intersection between two geometric objects.
+Provides the operators:
+\ccc{CGAL::Object operator()(const Type_1& type_1, const Type_2& type_2);} where \ccc{Type_1} and \ccc{Type_2} are any relevant types among \ccc{Ray_3}, \ccc{Segment_3}, \ccc{Line_3},  \ccc{Triangle_3}, \ccc{Plane_3} and \ccc{Bbox_3}. Relevant herein means that a line primitive (ray, segment, line) is tested against a planar or solid primitive (plane, triangle, box). The operator computes a \ccc{CGAL::Object} which is the intersection between the objects \ccc{type_1} and \ccc{type_2}.}
+
+\ccNestedType{Construct_sphere_3}{A functor object to construct the sphere centered at one point and passing through another one. Provides the operator:
+\ccc{Sphere_3 operator()(const Point_3& p, const Point_3 & q);} which returns the sphere centered at \ccc{p} and passing through \ccc{q}.}
+
+\ccNestedType{Compute_closest_point_3}{A functor object to compute the point on a geometric primitive which is closest from a query. Provides the operator:
+\ccc{Point_3 operator()(const Point_3& p, const Type_2& type_2);} where \ccc{Type_2} is any type among \ccc{Segment_3} and \ccc{Triangle_3}. The operator returns the point on \ccc{type_2} which is closest to \ccc{p}.}
+
+\ccNestedType{Has_on_bounded_side_3}{A functor object to detect if a point lies inside a sphere or not.
+Provides the operator:
+\ccc{bool operator()(const Sphere_3& s, const Point_3& p);} which returns \ccc{true} iff the closed volume bounded by \ccc{s} contains \ccc{p}.}
+
+\ccNestedType{Compute_squared_radius_3}{A functor object to compute the squared radius of a sphere. Provides the operator:
+\ccc{FT operator()(const Sphere_3& s);} which returns the squared radius of  \ccc{s}.}
+
+\ccCreation
+\ccCreationVariable{geomtraits}  %% choose variable name
+
+\ccOperations
+
+\ccMethod{Do_intersect_3 do_intersect_3_object();}{Returns the intersection detection functor.}
+
+\ccMethod{Intersect_3 intersect_3_object();}{Returns the intersection constructor.}
+
+\ccMethod{Construct_sphere_3 construct_sphere_3_object();}{Returns the distance comparison functor.}
+
+\ccMethod{Compute_closest_point_3 compute_closest_point_3_object();}{Returns the closest point constructor.}
+
+\ccMethod{Has_on_bounded_side_3 has_on_bounded_side_3_object();}{Returns the closest point constructor.}
+
+\ccMethod{Compute_squared_radius_3 compute_squared_radius_3_object();}{Returns the squared radius functor.}
+
+\ccHasModels
+Any instantiation of \ccc{CGAL::Kernel} is a model of this traits concept.
+
+\ccSeeAlso
+
+\ccc{AABB_traits<GeomTraits,AABBPrimitive>}.
+
+\end{ccRefConcept}
+
+% +------------------------------------------------------------------------+
+%%RefPage: end of main body, begin of footer
+\ccRefPageEnd
+% EOF
+% +------------------------------------------------------------------------+
+

@@ -1,0 +1,96 @@
+% +------------------------------------------------------------------------+
+% | Reference manual page: sibson_gradient_fitting.tex
+% +------------------------------------------------------------------------+
+% | 
+% | August 2003  Julia Floetotto
+% | Package:   Interpolation
+% | 
+% |
+% +------------------------------------------------------------------------+
+
+\begin{ccRefFunction}{sibson_gradient_fitting}
+
+\ccDefinition
+  
+The function \ccRefName\ approximates the gradient of a function at a
+point \ccc{p} given natural neighbor coordinates for \ccc{p} and its
+neighbors' function values. The approximation method is described in
+\cite{s-bdnni-81}. Further functions are provided to fit the gradient
+for all data points that lie inside the convex hull of the data
+points. One function exists for each type of natural neighbor
+coordinates.
+
+\ccInclude{CGAL/sibson_gradient_fitting.h}
+
+\ccFunction{template < class ForwardIterator, class Functor, class
+  Traits> typename Traits::Vector_d
+  sibson_gradient_fitting(ForwardIterator first, ForwardIterator
+  beyond, const typename
+  std::iterator_traits<ForwardIterator>::value_type::second_type&
+  norm, const typename
+  std::iterator_traits<ForwardIterator>::value_type::first_type& p,
+  Functor f, const Traits& traits);} { This function estimates the
+  gradient of a function at the point \ccc{p} given natural neighbor
+  coordinates of \ccc{p} in the range $\left[\right.$ \ccc{first},
+  \ccc{beyond}$\left.\right)$ and the function values of the neighbors
+  provided by the functor \ccc{f}.  \ccc{norm} is the normalization
+  factor of the barycentric coordinates.}
+
+\ccHeading{Requirements}
+\begin{enumerate}
+\item \ccc{ForwardIterator::value_type} is a pair of point/coordinate
+  value, thus \ccc{ForwardIterator::value_type::first_type} is
+  equivalent to a point and
+  \ccc{ForwardIterator::value_type::second_type} is a
+  number type. 
+\item \ccc{Functor::argument_type} must be equivalent to
+  \ccc{ForwardIterator::value_type::first_type} and
+  \ccc{Functor::result_type} is the function value type. It must
+  provide a multiplication and addition operation with the type
+  \ccc{ForwardIterator::value_type::second_type}.
+\item  \ccc{Traits} is a model of the concept 
+  \ccc{GradientFittingTraits}\ccIndexMainItem[c]{GradientFittingTraits}.
+\end{enumerate}
+
+\ccFunction{template < class Dt, class OutputIterator, class Functor,
+  class Traits> OutputIterator sibson_gradient_fitting_nn_2(const Dt&
+  dt, OutputIterator out, Functor f, const Traits& traits);}
+{estimates the function gradients at all vertices of \ccc{dt} that lie
+  inside the convex hull using the coordinates computed by the
+  function \ccc{natural_neighbor_coordinates_2}.
+  \ccc{OutputIterator::value_type} is a pair associating a point to a
+  vector. The sequence of point/gradient pairs computed by this
+  function is placed starting at \ccc{out}. The function returns an
+  iterator that is placed past-the-end of the resulting sequence. The
+  requirements are the same as above. The template class \ccc{Dt} must
+  be equivalent to \ccc{Delaunay_triangulation_2<Gt, Tds>}.}
+
+\ccFunction{template < class Rt, class OutputIterator, class Functor,
+  class Traits> OutputIterator sibson_gradient_fitting_rn_2(const Rt&
+  rt, OutputIterator out, Functor f, const Traits& traits);}
+{estimates the function gradients at all vertices of \ccc{rt} that lie
+  inside the convex hull using the coordinates computed by the
+  function \ccc{regular_neighbor_coordinates_2}.
+  \ccc{OutputIterator::value_type} is a pair associating a point to a
+  vector. The sequence of point/gradient pairs computed by this
+  function is placed starting at \ccc{out}. The function returns an
+  iterator that is placed past-the-end of the resulting sequence. The
+  requirements are the same as above. The template class \ccc{Rt} must
+  be equivalent to \ccc{Regular_triangulation_2<Gt, Tds>}.}
+
+
+\ccSeeAlso
+\ccRefIdfierPage{CGAL::linear_interpolation} \\
+\ccRefIdfierPage{CGAL::sibson_c1_interpolation} \\
+\ccRefIdfierPage{CGAL::farin_c1_interpolation} \\
+\ccRefIdfierPage{CGAL::quadratic_interpolation} \\
+\ccRefIdfierPage{CGAL::Interpolation_gradient_fitting_traits_2<K>} \\
+\ccRefIdfierPage{CGAL::natural_neighbor_coordinates_2}\\
+\ccRefIdfierPage{CGAL::regular_neighbor_coordinates_2} \\
+\ccRefIdfierPage{CGAL::surface_neighbor_coordinates_3}\\
+
+\ccImplementation This function implements Sibson's gradient
+estimation method based on natural neighbor coordinates
+\cite{s-bdnni-81}. 
+
+\end{ccRefFunction}

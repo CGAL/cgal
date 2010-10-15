@@ -1,0 +1,3 @@
+This is a framework for implementing kinetic data structures and sweepline
+algorithms as well as a number of kinetic data structures. The framework is
+called Kinetic_framework and the algorithms are in Kinetic_data_structures.

@@ -1,0 +1,3 @@
+*.cin are "standard in" files for ./combined_spheres
+Use them with:
+  ./combined_spheres < FILE.cin

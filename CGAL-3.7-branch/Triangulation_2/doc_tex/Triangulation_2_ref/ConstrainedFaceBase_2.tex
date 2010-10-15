@@ -1,0 +1,100 @@
+% +------------------------------------------------------------------------+
+% | Reference manual page: Constrained_face_base.tex
+% +------------------------------------------------------------------------+
+% | 12.04.2000   Author
+% | Package: Package
+% | 
+\RCSdef{\RCSConstrainedfacebaseRev}{$Id$}
+\RCSdefDate{\RCSConstrainedfacebaseDate}{$Date$}
+% |
+%%RefPage: end of header, begin of main body
+% +------------------------------------------------------------------------+
+
+
+\begin{ccRefConcept}{ConstrainedTriangulationFaceBase_2}
+
+%% \ccHtmlCrossLink{}     %% add further rules for cross referencing links
+%% \ccHtmlIndexC[concept]{} %% add further index entries
+
+\ccDefinition
+  
+In a constrained triangulation,
+the information about constrained edges is stored in the 
+faces of the triangulation.
+The base face of a constrained triangulation
+has to be a model of the concept
+\ccRefName\ which  refines the concept
+\ccc{TriangulationFaceBase_2} 
+providing functionalities to deal with
+constraints.
+
+\ccRefines
+\ccc{TriangulationFaceBase_2}
+
+\ccTypes
+Defines the same types as the \ccc{TriangulationFaceBase_2} concept
+
+
+\ccCreationVariable{f}  %% choose variable name
+
+
+\ccThree{bool}{f.is_constrained(int i)}{}
+\ccHeading{Access Functions}
+\ccMethod{bool is_constrained(int i);}
+{returns true if the edge between \ccVar\ and its neighbor 
+\ccVar .\ccc{neighbor(i)} is constrained.
+\ccPrecond $0\leq i \leq 2$.}
+
+\begin{ccAdvanced}
+\ccModifiers
+\ccMethod{void  set_constraint(int i, bool b);}
+{sets the edge between \ccVar\ and its neighbor \ccVar .\ccc{neighbor(i)}
+ as a constrained or unconstrained edge according to \ccc{b}.}
+
+\ccMethod{void set_constraints(bool c0, bool c1, bool c2);}
+{sets the status (constrained or unconstrained) of the three
+edges of \ccVar.}
+
+\ccMethod{void reorient();}
+{Changes the orientation of \ccVar\ by exchanging \ccc{vertex(0)}
+with \ccc{vertex(1)} and \ccc{neighbor(0)} with \ccc{neighbor(1)}
+and the corresponding constrained status.}
+\ccMethod{void ccw_permute();}
+{performs a counterclockwise permutation of the
+ vertices, neighbors and constrained status of  \ccVar.}
+\ccMethod{ void cw_permute();}
+{performs a clockwise permutation of the
+ vertices and neighbors and constrained status of \ccVar.}
+
+
+
+\ccHeading{Miscellaneous}
+\ccMethod{bool is_valid();}
+{tests the validity of face  \ccVar\ 
+as a face of a plain triangulation
+and additionally checks
+if the edges of \ccVar\ are consistently marked
+as constrained or unconstrained edges
+in face \ccVar and its neighbors.}
+\end{ccAdvanced}
+
+
+
+\ccHasModels
+
+\ccc{CGAL::Constrained_triangulation_face_base_2<Traits>}
+
+
+\ccSeeAlso
+\ccc{TriangulationFaceBase_2} \\
+\ccc{CGAL::Constrained_triangulation_2<Traits,Tds>} \\
+\ccc{CGAL::Constrained_triangulation_face_base_2<Traits>}
+
+
+\end{ccRefConcept}
+
+% +------------------------------------------------------------------------+
+%%RefPage: end of main body, begin of footer
+% EOF
+% +------------------------------------------------------------------------+
+

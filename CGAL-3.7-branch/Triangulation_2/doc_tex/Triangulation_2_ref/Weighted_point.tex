@@ -1,0 +1,59 @@
+% +------------------------------------------------------------------------+
+% | Reference manual page: Weighted_point.tex
+% +------------------------------------------------------------------------+
+% | 13.04.2000   Author
+% | Package: Package
+% | 
+\RCSdef{\RCSWeightedpointRev}{$Id$}
+\RCSdefDate{\RCSWeightedpointDate}{$Date$}
+% |
+%%RefPage: end of header, begin of main body
+% +------------------------------------------------------------------------+
+
+
+\begin{ccRefClass}{Weighted_point<Pt,Wt>}  %% add template arg's if necessary
+
+%% \ccHtmlCrossLink{}     %% add further rules for cross referencing links
+%% \ccHtmlIndexC[class]{} %% add further index entries
+
+\ccDefinition
+  
+The class \ccRefName\ provides a type associating
+a point type \ccc{Pt} with a weight type \ccc{Wt}.
+It is used in the traits classes \ccc{Regular_triangulation_euclidean_traits_2}
+and \ccc{Regular_triangulation_euclidean_traits_3}.
+
+\ccInclude{CGAL/Weighted_point.h}
+
+\ccInheritsFrom \ccc{Pt}
+
+\ccTypes
+\ccTypedef{Pt Point;}{The point type}
+\ccGlue
+\ccTypedef{Wt Weight;}{The weight type.}
+
+\ccCreation
+\ccCreationVariable{wp}  %% choose variable name
+\ccConstructor{Weighted_point(Weighted_point wq)}{copy constructor.}
+\ccGlue
+\ccConstructor{Weighted_point(Point p=Point(), Weight w= Weight(0))}{}
+\ccGlue
+\ccConstructor{Weighted_point(FT x, FT y)}{Constructs the point from \ccc{x}
+and \ccc{y} coordinates, with a weight of 0.  Requires that the ambient
+dimension be 2.}
+\ccGlue
+\ccConstructor{Weighted_point(FT x, FT y, FT z)}{Constructs the point from
+\ccc{x}, \ccc{y} and \ccc{z} coordinates, with a weight of 0.  Requires that
+the ambient dimension be 3.}
+
+\ccAccessFunctions
+\ccMethod{Point point() const;}{}
+\ccGlue
+\ccMethod{ Weight weight() const;}{}
+
+
+\ccSeeAlso
+\ccc{CGAL::Regular_triangulation_euclidean_traits_2<Rep,Weight>}\\
+\ccc{CGAL::Regular_triangulation_euclidean_traits_3<R,Weight>}.
+
+\end{ccRefClass}

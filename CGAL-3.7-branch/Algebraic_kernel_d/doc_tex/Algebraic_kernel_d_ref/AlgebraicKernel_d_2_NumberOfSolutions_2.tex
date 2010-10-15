@@ -1,0 +1,32 @@
+\begin{ccRefFunctionObjectConcept}{AlgebraicKernel_d_2::NumberOfSolutions_2}
+
+\ccDefinition
+Computes the number of real solutions of the given bivariate polynomial system.  
+ 
+\ccRefines 
+\ccc{AdaptableBinaryFunction}
+
+\ccTypes \ccThree{}{+++++++++++++}{++++++++}
+%\ccThree{typedef AlgebraicKernel_d_2::Polynomial_2}{argument_type+}{}
+\ccTypedef{typedef AlgebraicKernel_d_2::size_type     result_type;}{}
+\ccGlue
+\ccTypedef{typedef AlgebraicKernel_d_2::Polynomial_2  first_argument_type;}{}
+\ccTypedef{typedef AlgebraicKernel_d_2::Polynomial_2  second_argument_type;}{}
+
+A model of this type must provide:
+
+\ccOperations \ccThree{+++++++++}{+++++++++}{}
+\ccCreationVariable{fo}
+%\ccThree{xxxxxxxxxxx}{xxxxxxxxxxxxxxxxxxxxxxxxxxxx}{}
+
+\ccMethod{result_type operator()(first_argument_type f, second_argument_type g);}
+{Returns the number of real solutions of the bivariate polynomial system $(f,g)$.
+\ccPrecond{ $f$ is square free.}
+\ccPrecond{ $g$ is square free.}
+\ccPrecond{ $f$ and $g$ are coprime.}}
+
+%\ccHasModels
+\ccSeeAlso
+\ccRefIdfierPage{AlgebraicKernel_d_2::ConstructAlgebraicReal_2}\\
+
+\end{ccRefFunctionObjectConcept} 

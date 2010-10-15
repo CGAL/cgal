@@ -1,0 +1,436 @@
+% +------------------------------------------------------------------------+
+% | Reference manual page: Parameterization_mesh_patch_3.tex
+% +------------------------------------------------------------------------+
+% | 21.09.2005   Laurent Saboret, Pierre Alliez, Bruno Levy
+% | Package: Surface_mesh_parameterization
+% |
+\RCSdef{\RCSMeshadaptorpatchRev}{$Id$}
+\RCSdefDate{\RCSMeshadaptorpatchDate}{$Date$}
+% |
+\ccRefPageBegin
+%%RefPage: end of header, begin of main body
+% +------------------------------------------------------------------------+
+
+
+\begin{ccRefClass}{Parameterization_mesh_patch_3<ParameterizationPatchableMesh_3>}
+
+%% \ccHtmlCrossLink{}     %% add further rules for cross referencing links
+%% \ccHtmlIndexC[class]{} %% add further index entries
+
+
+\ccDefinition
+
+% The section below is automatically generated. Do not edit!
+%START-AUTO(\ccDefinition)
+
+\ccc{Parameterization_mesh_patch_3} is a Decorator class to {\em virtually} cut a patch in a \ccc{ParameterizationPatchableMesh_3} 3D surface. Only the patch is exported, making the 3D surface look like a topological disk.
+
+The input mesh can be of any genus, but it has to come with a {\em seam} that describes the border of a topological disc. This border may be an actual border of the mesh or a virtual border.
+
+%END-AUTO(\ccDefinition)
+
+% The section below is automatically generated. Do not edit!
+%START-AUTO(\ccInclude)
+
+\ccInclude{CGAL/Parameterization_mesh_patch_3.h}
+
+%END-AUTO(\ccInclude)
+
+
+\ccIsModel
+
+% The section below is automatically generated. Do not edit!
+%START-AUTO(\ccIsModel)
+
+Model of \ccc{ParameterizationMesh_3} concept, whose purpose is to allow the \ccc{Surface_mesh_parameterization} package to access meshes in a uniform manner.
+
+%END-AUTO(\ccIsModel)
+
+
+\ccHeading{Design Pattern}
+
+% The section below is automatically generated. Do not edit!
+%START-AUTO(\ccHeading{Design Pattern})
+
+\ccc{Parameterization_mesh_patch_3} is a Decorator \cite{cgal:ghjv-dpero-95}: it changes the behavior of a \ccc{ParameterizationPatchableMesh_3} 3D surface while keeping its \ccc{ParameterizationMesh_3} interface.
+
+%END-AUTO(\ccHeading{Design Pattern})
+
+
+\ccParameters
+
+The full template declaration is:
+
+% The section below is automatically generated. Do not edit!
+%START-AUTO(\ccParameters)
+
+template$<$class \ccc{ParameterizationPatchableMesh_3}$>$   \\
+class \ccc{Parameterization_mesh_patch_3};
+
+\ccCommentHeading{Parameters}  \\
+\ccc{ParameterizationPatchableMesh_3}: 3D surface mesh.
+
+%END-AUTO(\ccParameters)
+
+
+\ccTypes
+
+The following mutable handles, iterators, and circulators have appropriate
+non-mutable counterparts, i.e. \ccc{const_handle},
+\ccc{const_iterator}, and \ccc{const_circulator}. The mutable types are
+assignable to their non-mutable counterparts.  Both circulators are
+assignable to the \ccc{Vertex_iterator}. The iterators are
+assignable to the respective handle types. Wherever the handles appear
+in function parameter lists, the corresponding iterators can be used as
+well.
+
+% The section below is automatically generated. Do not edit!
+%START-AUTO(\ccTypes)
+
+\ccNestedType{Adaptor}
+{
+Export template parameter.
+}
+\ccGlue
+
+\subsubsection{Types implementing the ParameterizationMesh\_3 interface}
+
+\ccNestedType{NT}
+{
+Number type to represent coordinates.
+}
+\ccGlue
+\ccNestedType{Point_2}
+{
+2D point that represents (u, v) coordinates computed by parameterization methods. Must provide X() and Y() methods.
+}
+\ccGlue
+\ccNestedType{Point_3}
+{
+3D point that represents vertices coordinates. Must provide X() and Y() methods.
+}
+\ccGlue
+\ccNestedType{Vector_2}
+{
+2D vector. Must provide X() and Y() methods.
+}
+\ccGlue
+\ccNestedType{Vector_3}
+{
+3D vector. Must provide X() and Y() methods.
+}
+\ccGlue
+\ccNestedType{Facet}
+{
+Opaque type representing a facet of the 3D mesh. No methods are expected.
+}
+\ccGlue
+\ccNestedType{Facet_handle}
+{
+Handle to a facet. Model of the Handle concept.
+}
+\ccGlue
+\ccNestedType{Facet_const_handle}
+{
+}
+\ccGlue
+\ccNestedType{Facet_iterator}
+{
+Iterator over all mesh facets. Model of the \ccc{ForwardIterator} concept.
+}
+\ccGlue
+\ccNestedType{Facet_const_iterator}
+{
+}
+\ccGlue
+\ccNestedType{Vertex}
+{
+Opaque type representing a vertex of the 3D mesh. No methods are expected.
+}
+\ccGlue
+\ccNestedType{Vertex_handle}
+{
+Handle to a vertex. Model of the Handle concept.
+}
+\ccGlue
+\ccNestedType{Vertex_const_handle}
+{
+}
+\ccGlue
+\ccNestedType{Vertex_iterator}
+{
+Iterator over all vertices of a mesh. Model of the \ccc{ForwardIterator} concept.
+}
+\ccGlue
+\ccNestedType{Vertex_const_iterator}
+{
+}
+\ccGlue
+\ccNestedType{Border_vertex_iterator}
+{
+Iterator over vertices of the mesh {\em main border}. Model of the \ccc{ForwardIterator} concept.
+}
+\ccGlue
+\ccNestedType{Border_vertex_const_iterator}
+{
+}
+\ccGlue
+\ccNestedType{Vertex_around_facet_circulator}
+{
+Counter-clockwise circulator over a facet's vertices. Model of the \ccc{BidirectionalCirculator} concept.
+}
+\ccGlue
+\ccNestedType{Vertex_around_facet_const_circulator}
+{
+}
+\ccGlue
+\ccNestedType{Vertex_around_vertex_circulator}
+{
+Clockwise circulator over the vertices incident to a vertex. Model of the \ccc{BidirectionalCirculator} concept.
+}
+\ccGlue
+\ccNestedType{Vertex_around_vertex_const_circulator}
+{
+}
+\ccGlue
+
+%END-AUTO(\ccTypes)
+
+
+\ccHeading{Variables}
+
+% The section below is automatically generated. Do not edit!
+%START-AUTO(\ccHeading{Variables})
+
+\ccVariable{Adaptor& m_mesh_adaptor;}
+{
+The decorated mesh.
+}
+\ccGlue
+
+%END-AUTO(\ccHeading{Variables})
+
+
+\ccCreation
+\ccCreationVariable{mesh}  %% define variable name used by \ccMethod below
+
+% The section below is automatically generated. Do not edit!
+%START-AUTO(\ccCreation)
+
+\ccConstructor{template<class InputIterator> Parameterization_mesh_patch_3(Adaptor& mesh, InputIterator first_seam_vertex, InputIterator end_seam_vertex);}
+{
+Create a Decorator for an existing \ccc{ParameterizationPatchableMesh_3} mesh. The input mesh can be of any genus, but it has to come with a {\em seam} that describes the border of a topological disc. This border may be an actual border of the mesh or a virtual border.
+\ccCommentHeading{Preconditions}  \\
+\ccc{first_seam_vertex} -$>$ \ccc{end_seam_vertex} defines the outer seam, i.e. \ccc{Parameterization_mesh_patch_3} will export the {\em right} of the seam. The {\em seam} is given as a container of \ccc{Adaptor::Vertex_handle} elements. The {\em seam} is implicitely a loop. The first vertex should {\bf not} be duplicated at the end.
+}
+\ccGlue
+
+%END-AUTO(\ccCreation)
+
+
+\ccOperations
+
+The following methods returning a mutable handle, iterator, or circulator have appropriate
+non-mutable counterpart methods, i.e. \ccc{const}, returning a \ccc{const_handle},
+\ccc{const_iterator}, or \ccc{const_circulator}.
+
+% The section below is automatically generated. Do not edit!
+%START-AUTO(\ccOperations)
+
+\ccMethod{Adaptor& get_decorated_mesh();}
+{
+\ccCommentHeading{Returns} the decorated mesh.
+}
+\ccGlue
+\ccMethod{const Adaptor& get_decorated_mesh() const;}
+{
+}
+\ccGlue
+\subsubsection{Methods implementing the ParameterizationMesh\_3 interface}
+\ccMethod{bool is_valid() const;}
+{
+Indicate if the mesh matches the \ccc{ParameterizationMesh_3} concept.
+}
+\ccGlue
+\ccMethod{Vertex_iterator mesh_vertices_begin();}
+{
+Get iterator over first vertex of mesh.
+}
+\ccGlue
+\ccMethod{Vertex_const_iterator mesh_vertices_begin() const;}
+{
+}
+\ccGlue
+\ccMethod{Vertex_iterator mesh_vertices_end();}
+{
+Get iterator over past-the-end vertex of mesh.
+}
+\ccGlue
+\ccMethod{Vertex_const_iterator mesh_vertices_end() const;}
+{
+}
+\ccGlue
+\ccMethod{int count_mesh_vertices() const;}
+{
+Count the number of vertices of the mesh.
+}
+\ccGlue
+\ccMethod{void index_mesh_vertices();}
+{
+Index vertices of the mesh from 0 to \ccc{count_mesh_vertices}()-1.
+}
+\ccGlue
+\ccMethod{Border_vertex_iterator mesh_main_border_vertices_begin();}
+{
+Get iterator over first vertex of mesh's main border (aka {\em seam}).
+}
+\ccGlue
+\ccMethod{Border_vertex_const_iterator mesh_main_border_vertices_begin() const;}
+{
+}
+\ccGlue
+\ccMethod{Border_vertex_iterator mesh_main_border_vertices_end();}
+{
+Get iterator over past-the-end vertex of mesh's main border (aka {\em seam}).
+}
+\ccGlue
+\ccMethod{Border_vertex_const_iterator mesh_main_border_vertices_end() const;}
+{
+}
+\ccGlue
+\ccMethod{std::list<Vertex_handle> get_border(Vertex_handle seed_vertex);}
+{
+\ccCommentHeading{Returns} the border containing \ccc{seed_vertex} (or an empty list if not found).
+\ccCommentHeading{Parameters}  \\
+\ccc{seed_vertex}: a border vertex.
+}
+\ccGlue
+\ccMethod{Facet_iterator mesh_facets_begin();}
+{
+Get iterator over first facet of mesh.
+}
+\ccGlue
+\ccMethod{Facet_const_iterator mesh_facets_begin() const;}
+{
+}
+\ccGlue
+\ccMethod{Facet_iterator mesh_facets_end();}
+{
+Get iterator over past-the-end facet of mesh.
+}
+\ccGlue
+\ccMethod{Facet_const_iterator mesh_facets_end() const;}
+{
+}
+\ccGlue
+\ccMethod{int count_mesh_facets() const;}
+{
+Count the number of facets of the mesh.
+}
+\ccGlue
+\ccMethod{bool is_mesh_triangular() const;}
+{
+Return true of all mesh's facets are triangles.
+}
+\ccGlue
+\ccMethod{int count_mesh_halfedges() const;}
+{
+Count the number of halfedges of the mesh.
+}
+\ccGlue
+\ccMethod{Vertex_around_facet_circulator facet_vertices_begin(Facet_handle facet);}
+{
+Get circulator over facet's vertices.
+}
+\ccGlue
+\ccMethod{Vertex_around_facet_const_circulator facet_vertices_begin(Facet_const_handle facet) const;}
+{
+}
+\ccGlue
+\ccMethod{int count_facet_vertices(Facet_const_handle facet) const;}
+{
+Count the number of vertices of a facet.
+}
+\ccGlue
+\ccMethod{Point_3 get_vertex_position(Vertex_const_handle vertex) const;}
+{
+Get the 3D position of a vertex.
+}
+\ccGlue
+\ccMethod{Point_2 get_vertex_uv(Vertex_const_handle vertex) const;}
+{
+Get/set the 2D position (u/v pair) of a vertex. Default value is undefined.
+}
+\ccGlue
+\ccMethod{void set_vertex_uv(Vertex_handle vertex, const Point_2& uv);}
+{
+}
+\ccGlue
+\ccMethod{bool is_vertex_parameterized(Vertex_const_handle vertex) const;}
+{
+Get/set {\em is parameterized} field of vertex. Default value is undefined.
+}
+\ccGlue
+\ccMethod{void set_vertex_parameterized(Vertex_handle vertex, bool parameterized);}
+{
+}
+\ccGlue
+\ccMethod{int get_vertex_index(Vertex_const_handle vertex) const;}
+{
+Get/set vertex index. Default value is undefined.
+}
+\ccGlue
+\ccMethod{void set_vertex_index(Vertex_handle vertex, int index);}
+{
+}
+\ccGlue
+\ccMethod{int get_vertex_tag(Vertex_const_handle vertex) const;}
+{
+Get/set vertex' all purpose tag. Default value is undefined.
+}
+\ccGlue
+\ccMethod{void set_vertex_tag(Vertex_handle vertex, int tag);}
+{
+}
+\ccGlue
+\ccMethod{bool is_vertex_on_border(Vertex_const_handle vertex) const;}
+{
+Return true if a vertex belongs to ANY mesh's border.
+}
+\ccGlue
+\ccMethod{bool is_vertex_on_main_border(Vertex_const_handle vertex) const;}
+{
+Return true if a vertex belongs to the UNIQUE mesh's main border set by the constructor.
+}
+\ccGlue
+\ccMethod{Vertex_around_vertex_circulator vertices_around_vertex_begin(Vertex_handle vertex, Vertex_handle start_position = Vertex_handle());}
+{
+Get circulator over the vertices incident to \ccc{vertex}. \ccc{start_position} defines the optional initial position of the circulator.
+}
+\ccGlue
+\ccMethod{Vertex_around_vertex_const_circulator vertices_around_vertex_begin(Vertex_const_handle vertex, Vertex_const_handle start_position = Vertex_const_handle()) const;}
+{
+}
+\ccGlue
+
+%END-AUTO(\ccOperations)
+
+
+\ccSeeAlso
+
+\ccRefIdfierPage{CGAL::Parameterization_polyhedron_adaptor_3<Polyhedron_3_>}  \\
+
+
+\ccExample
+
+See \ccc{Mesh_cutting_parameterization.cpp} example.
+
+
+\end{ccRefClass}
+
+% +------------------------------------------------------------------------+
+%%RefPage: end of main body, begin of footer
+\ccRefPageEnd
+% EOF
+% +------------------------------------------------------------------------+
+

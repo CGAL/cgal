@@ -1,0 +1,32 @@
+% +------------------------------------------------------------------------+
+% | Reference manual page: Multiscale_sort.tex
+% +------------------------------------------------------------------------+
+
+\begin{ccRefFunctionObjectClass}{Multiscale_sort<Sort>}
+\ccDefinition The class \ccRefName\ represents a sorting algorithm adaptor.
+Given a range of $n$ points:
+\begin{enumerate}
+\item it applies \ccc{Sort} on the last $(1 -$\ccc{ratio}$)\times n$ points,
+\item it recurses on the first \ccc{ratio}$\times n$ points,
+stopping when there are less than \ccc{threshold} points.
+\end{enumerate}
+
+\ccTagFullDeclarations
+\ccCreationVariable{o}
+\ccCreation
+\ccConstructor{Multiscale_sort (const Sort &sort = Sort(), std::ptrdiff_t threshold = 1, double ratio = 0.5)}{constructs an instance with \ccc{traits} as traits class instance.}
+\ccOperations
+\ccThree{void;;}{A}{}
+
+\ccMethod{template <class RandomAccessIterator> void operator() (RandomAccessIterator begin, RandomAccessIterator end) const;}{sorts the range [\ccc{begin}, \ccc{end}).
+    \ccRequire
+    \ccc{Sort::operator()(RandomAccessIterator begin, RandomAccessIterator end)} is defined.}
+
+    \ccTagDefaults
+
+\end{ccRefFunctionObjectClass}
+% +------------------------------------------------------------------------+
+%%RefPage: end of main body, begin of footer
+% EOF
+% +------------------------------------------------------------------------+
+

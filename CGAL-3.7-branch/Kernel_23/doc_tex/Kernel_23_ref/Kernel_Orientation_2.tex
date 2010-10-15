@@ -1,0 +1,26 @@
+\begin{ccRefFunctionObjectConcept}{Kernel::Orientation_2}
+A model for this must provide:
+
+\ccCreationVariable{fo}
+
+\ccMemberFunction{Orientation operator()(const Kernel::Point_2&p, 
+                                         const Kernel::Point_2&q, 
+                                         const Kernel::Point_2&r);}
+{returns \ccStyle{LEFT_TURN}, if $r$ lies to the left of the oriented 
+line $l$ defined by $p$ and $q$, returns \ccStyle{RIGHT_TURN} if $r$ 
+lies to the right of $l$, and returns \ccStyle{COLLINEAR} if $r$ lies
+on $l$.}
+
+\ccMemberFunction{Orientation operator()(const Kernel::Vector_2&u, 
+                                         const Kernel::Vector_2&v);}
+{returns \ccStyle{LEFT_TURN} if $u$ and $v$ form a left turn,
+returns \ccStyle{RIGHT_TURN} if $u$ and $v$ form a right turn,
+and returns \ccStyle{COLLINEAR} if $u$ and $v$ are collinear.}
+
+\ccRefines
+\ccc{AdaptableFunctor} (with three arguments)
+
+\ccSeeAlso
+\ccRefIdfierPage{CGAL::orientation}\\
+
+\end{ccRefFunctionObjectConcept}

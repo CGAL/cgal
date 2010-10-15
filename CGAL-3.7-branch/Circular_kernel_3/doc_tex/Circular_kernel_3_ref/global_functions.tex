@@ -1,0 +1,267 @@
+\begin{ccRefFunction}{is_theta_monotone}
+
+\ccInclude{CGAL/global_functions_spherical_kernel_3.h}
+
+\ccFunction{bool
+  is_theta_monotone(const Circular_arc_3<SphericalKernel> & a,const Sphere_3<SphericalKernel>& sphere);}
+{Tests whether the arc $a$ is $\theta$-monotone, i.e. the intersection of
+any meridian anchored at the poles \ccc{sphere} and the arc $a$
+is reduced to at most one point in general, and two points if a pole of \ccc{sphere} is an endpoint of the arc.
+Note that a bipolar circle has no such arcs.
+\ccPrecond{\ccc{a} lies on \ccc{sphere}, and the supporting circle of \ccc{a} is not bipolar.}
+}
+
+\end{ccRefFunction}
+
+\begin{ccRefFunction}{compare_theta}
+
+\ccInclude{CGAL/global_functions_spherical_kernel_3.h}
+
+\ccFunction{Comparison_result
+  compare_theta(const Circular_arc_point_3<SphericalKernel> & p,
+  const Circular_arc_point_3<SphericalKernel> & q,const Sphere_3<SphericalKernel>& sphere);}
+{Compares the $\theta$-coordinates of $p$ and $q$ relatively to \ccc{sphere}.
+\ccPrecond{\ccc{p} and \ccc{q} lie on \ccc{sphere}, but do not coincide with the poles of \ccc{sphere}.}
+}
+
+
+\ccFunction{Comparison_result
+  compare_theta(const SphericalKernel::Circular_arc_point_3 &p,
+         const SphericalKernel::Vector_3 &m, const SphericalKernel::Sphere_3& sphere );}
+{Compares the $\theta$-coordinates of $p$ and of the meridian defined by $m$ (see section \ref{section-SK-objects})
+in the cylindrical coordinate system relative to \ccc{sphere} .
+\ccPrecond{\ccc{p} lies on \ccc{sphere}, but does not coincide with its poles. $m \neq (0,0,0)$ and the $z$-coordinate of $m$ is $0$.}
+}
+
+\ccFunction{Comparison_result
+  compare_theta(const SphericalKernel::Vector_3 &m,const SphericalKernel::Circular_arc_point_3 &p);}{Same as previous, with opposite result.}
+         
+
+
+
+
+
+\ccSeeAlso
+\ccRefIdfierPage{CGAL::compare_x} \\
+\ccRefIdfierPage{CGAL::compare_xy} \\
+\ccRefIdfierPage{CGAL::compare_xyz} \\
+\ccRefIdfierPage{CGAL::compare_x_at_y} \\
+\ccRefIdfierPage{CGAL::compare_y} \\
+\ccRefIdfierPage{CGAL::compare_yx} \\
+\ccRefIdfierPage{CGAL::compare_y_at_x} \\
+\ccRefIdfierPage{CGAL::compare_z} \\
+\ccRefIdfierPage{CGAL::compare_theta_z} \\
+
+\end{ccRefFunction}
+
+
+\begin{ccRefFunction}{compare_theta_z}
+
+\ccInclude{CGAL/global_functions_spherical_kernel_3.h}
+
+\ccFunction{bool
+  compare_theta_z(const Circular_arc_point_3<SphericalKernel> & p,
+  const Circular_arc_point_3<SphericalKernel> & q,const Sphere_3<SphericalKernel>& sphere);}
+{Compares $p$ and $q$ according to the lexicographic ordering on $\theta$ and $z$-coordinates
+in the cylindrical coordinate system relative to \ccc{sphere}.
+\ccPrecond{\ccc{p} and \ccc{q} lie on \ccc{sphere}, but do not coincide with the poles of \ccc{sphere}.}
+}
+
+\ccSeeAlso
+\ccRefIdfierPage{CGAL::compare_x} \\
+\ccRefIdfierPage{CGAL::compare_xy} \\
+\ccRefIdfierPage{CGAL::compare_xyz} \\
+\ccRefIdfierPage{CGAL::compare_x_at_y} \\
+\ccRefIdfierPage{CGAL::compare_y} \\
+\ccRefIdfierPage{CGAL::compare_yx} \\
+\ccRefIdfierPage{CGAL::compare_y_at_x} \\
+\ccRefIdfierPage{CGAL::compare_z} \\
+\ccRefIdfierPage{CGAL::compare_theta} \\
+
+\end{ccRefFunction}
+
+
+
+
+
+\begin{ccRefFunction}{x_extremal_point}
+
+\ccInclude{CGAL/global_functions_spherical_kernel_3.h}
+
+\ccFunction{Circular_arc_point_3<SphericalKernel>
+  x_extremal_point(const Sphere_3<SphericalKernel> & c, bool b);}
+{Returns the point on the sphere that is extremal in the
+  $x$-direction, and that is the smallest (resp. largest) of the two
+  $x$-extremal points for the lexicographic order if $b$ is \ccc{true} 
+  (resp. \ccc{false}).}
+
+\ccFunction{Circular_arc_point_3<SphericalKernel>
+  x_extremal_point(const Circle_3<SphericalKernel> & c, bool b);}
+{Same for a circle.
+\ccPrecond{The circle is not contained in a plane orthogonal to the $x$-axis.}}
+
+\end{ccRefFunction}
+\begin{ccRefFunction}{y_extremal_point}
+
+\ccInclude{CGAL/global_functions_spherical_kernel_3.h}
+
+\ccFunction{Circular_arc_point_3<SphericalKernel>
+  y_extremal_point(const Sphere_3<SphericalKernel> & c, bool b);}
+{Returns the point on the sphere that is extremal in the
+  $y$-direction, and that is the smallest (resp. largest) of the two
+  $y$-extremal points for the lexicographic order if $b$ is \ccc{true} 
+  (resp. \ccc{false}).}
+
+\ccFunction{Circular_arc_point_3<SphericalKernel>
+  y_extremal_point(const Circle_3<SphericalKernel> & c, bool b);}
+{Same for a circle.
+\ccPrecond{The circle is not contained in a plane orthogonal to the $y$-axis.}}
+
+\end{ccRefFunction}
+\begin{ccRefFunction}{z_extremal_point}
+
+\ccInclude{CGAL/global_functions_spherical_kernel_3.h}
+
+\ccFunction{Circular_arc_point_3<SphericalKernel>
+  z_extremal_point(const Sphere_3<SphericalKernel> & c, bool b);}
+{Returns the point on the sphere that is extremal in the
+  $z$-direction, and that is the smallest (resp. largest) of the two
+  $z$-extremal points for the lexicographic order if $b$ is \ccc{true} 
+  (resp. \ccc{false}).}
+
+\ccFunction{Circular_arc_point_3<SphericalKernel>
+  z_extremal_point(const Circle_3<SphericalKernel> & c, bool b);}
+{Same for a circle.
+\ccPrecond{The circle is not contained in a plane orthogonal to the $z$-axis.}}
+
+\end{ccRefFunction}
+
+\begin{ccRefFunction}{theta_extremal_point}
+
+\ccInclude{CGAL/global_functions_spherical_kernel_3.h}
+
+\ccFunction{Circular_arc_point_3<SphericalKernel>
+  theta_extremal_point(const Circle_3<SphericalKernel> & c, const Sphere_3<SphericalKernel> sphere, bool b);}
+{Returns the point on the circle that is extremal in $\theta$ using the cylindrical coordinate system
+relative to \ccc{sphere}, and that has the smallest (resp. largest)
+  $\theta$-coordinate of the two points if $b$ is \ccc{true} (resp. \ccc{false}).
+  See section~\ref{section-SK-objects} for definitions.
+\ccPrecond{\ccc{c} lies on \ccc{sphere} and is a normal circle.}
+}
+
+\end{ccRefFunction}
+
+
+
+\begin{ccRefFunction}{x_extremal_points}
+
+\ccInclude{CGAL/global_functions_spherical_kernel_3.h}
+
+\ccFunction{template < class OutputIterator >
+  OutputIterator
+  x_extremal_points(const Sphere_3<SphericalKernel> & c,
+  OutputIterator res);}
+{Copies in the output iterator the $x$-extremal points of the
+  sphere. \ccc{res} iterates on elements of type
+  \ccc{Circular_arc_point_3<SphericalKernel>}, lexicographically sorted.}
+
+\ccFunction{template < class OutputIterator >
+  OutputIterator
+  x_extremal_points(const Circle_3<SphericalKernel> & c,
+  OutputIterator res);}
+{Copies in the output iterator the $x$-extremal points of the
+  circle. \ccc{res} iterates on elements of type
+  \ccc{Circular_arc_point_3<SphericalKernel>}, lexicographically
+  sorted.
+\ccPrecond{The circle is not contained in a plane orthogonal to the $x$-axis.}}
+
+\end{ccRefFunction}
+\begin{ccRefFunction}{y_extremal_points}
+
+\ccInclude{CGAL/global_functions_spherical_kernel_3.h}
+
+\ccFunction{template < class OutputIterator >
+  OutputIterator
+  y_extremal_points(const Sphere_3<SphericalKernel> & c,
+  OutputIterator res);}
+{Copies in the output iterator the $y$-extremal points of the
+  sphere. \ccc{res} iterates on elements of type
+  \ccc{Circular_arc_point_3<SphericalKernel>}, lexicographically sorted.}
+
+\ccFunction{template < class OutputIterator >
+  OutputIterator
+  y_extremal_points(const Circle_3<SphericalKernel> & c,
+  OutputIterator res);}
+{Copies in the output iterator the $y$-extremal points of the
+  circle. \ccc{res} iterates on elements of type
+  \ccc{Circular_arc_point_3<SphericalKernel>}, lexicographically
+  sorted.
+\ccPrecond{The circle is not contained in a plane orthogonal to the $y$-axis.}}
+
+\end{ccRefFunction}
+\begin{ccRefFunction}{z_extremal_points}
+
+\ccInclude{CGAL/global_functions_spherical_kernel_3.h}
+
+\ccFunction{template < class OutputIterator >
+  OutputIterator
+  z_extremal_points(const Sphere_3<SphericalKernel> & c,
+  OutputIterator res);}
+{Copies in the output iterator the $z$-extremal points of the
+  sphere. \ccc{res} iterates on elements of type
+  \ccc{Circular_arc_point_3<SphericalKernel>}, lexicographically sorted.}
+
+\ccFunction{template < class OutputIterator >
+  OutputIterator
+  z_extremal_points(const Circle_3<SphericalKernel> & c,
+  OutputIterator res);}
+{Copies in the output iterator the $z$-extremal points of the
+  circle. \ccc{res} iterates on elements of type
+  \ccc{Circular_arc_point_3<SphericalKernel>}, lexicographically
+  sorted.
+\ccPrecond{The circle is not contained in a plane orthogonal to the $z$-axis.}}
+
+\end{ccRefFunction}
+
+
+\begin{ccRefFunction}{theta_extremal_points}
+
+\ccInclude{CGAL/global_functions_spherical_kernel_3.h}
+
+\ccFunction{template < class OutputIterator >
+  OutputIterator
+  theta_extremal_points(const Circle_3<SphericalKernel> & c, const Sphere_3<SphericalKernel>& sphere,
+  OutputIterator res);}
+{Copies in the output iterator the $\theta$-extremal points of the
+  circle relatively to \ccc{sphere}. \ccc{res} iterates on elements of type
+  \ccc{Circular_arc_point_3<SphericalKernel>}, lexicographically
+  sorted in the cylindrical coordinate system relative to \ccc{sphere}.
+  See section~\ref{section-SK-objects} for definitions.
+  \ccPrecond{\ccc{c} lies on \ccc{sphere} and is a normal circle.}
+}
+
+\end{ccRefFunction}
+
+
+\begin{ccRefFunction}{classify}
+
+\ccInclude{CGAL/global_functions_spherical_kernel_3.h}
+
+\ccFunction{
+  CGAL::Circle_type
+  classify(const Circle_3<SphericalKernel> & c, const Sphere_3<SphericalKernel>& sphere);}
+{ 
+  Classify a circle according to \ccc{sphere}, as defined in section~\ref{section-SK-objects}.
+  \ccPrecond{\ccc{c} lies on \ccc{sphere}.}
+}
+
+\ccSeeAlso
+\ccRefIdfierPage{CGAL::Circle_type}
+
+\end{ccRefFunction}
+
+
+
+
+
+

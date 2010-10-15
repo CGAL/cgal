@@ -1,0 +1,95 @@
+% +------------------------------------------------------------------------+
+% | Reference manual page: skin_surface_3.tex
+% +------------------------------------------------------------------------+
+% | 27.09.2005   Nico Kruithof
+% | Package: Skin_surface_3
+% | 
+\RCSdef{\RCSskinsurfaceRev}{$Id$}
+\RCSdefDate{\RCSskinsurfaceDate}{$Date$}
+% |
+%%RefPage: end of header, begin of main body
+% +------------------------------------------------------------------------+
+
+\begin{ccRefConcept}{SkinSurface_3}
+  \ccDefinition
+
+% NGHK: ADD INSTEAD OF NEXT LINE
+%  The concept \ccRefName\ defines a skin surface and provides an
+%  interface for both the dedicated skin surface mesher as well as the
+%  general Delaunay based mesher, described in
+%  Chapter~\ref{chapter_SurfaceMesher}. 
+  The concept \ccRefName\ defines a skin surface and provides an
+  interface for the dedicated skin surface mesher.
+%
+  The concept requires a constructor from an iterator range of
+  weighted points and a shrink factor. By default the input balls are
+  grown in such that the skin surface wraps around the input balls.
+
+  %\ccRefines
+
+  \ccThree{Triangulated_mixed_complex}{Skin_surface_3}{}
+  \ccThreeToTwo
+
+  \ccHasModels
+  \ccc{CGAL::Skin_surface_3<SkinSurfaceTraits_3>}\\
+  \ccc{CGAL::Union_of_balls_3<SkinSurfaceTraits_3>}
+
+  \ccTypes
+
+  \ccNestedType{Geometric_traits}{The geometric traits used for the
+    construction of the regular triangulation.}  
+  \ccGlue
+  \ccNestedType{Weighted_point}{The \ccc{Weighted_point} type defined
+    by the \ccc{Geometric_traits}.}
+  \ccGlue
+  \ccNestedType{Bare_point}{The \ccc{Bare_point} type defined by the
+    \ccc{Geometric_traits}.}
+  \ccGlue
+
+  \ccNestedType{FT}{The \ccc{FT} type defined by the
+    \ccc{Geometric_traits}. This is the number type used by the
+    weighted points.}
+
+  %\ccConstants
+  \ccCreation 
+  \ccCreationVariable{skin} 
+
+  \ccConstructor{Skin_surface_3 ( WP_iterator begin, WP_iterator end,
+    RT shrink_factor);}{The mandatory arguments to the constructor are
+    an iterator range \ccc{[begin,end)} of weighted points and a
+    shrink factor between 0 and 1.}
+
+  \ccOperations
+%
+  \ccMethod{template <class Polyhedron_3> void
+    mesh_skin_surface_3 (Polyhedron_3 &p);}{Constructs a
+    coarse mesh in \ccc{p}.\ccPrecond{\ccc{Polyhedron_3::HDS} can be
+      used as the template argument of the
+      \ccc{Polyhedron_incremental_builder_3<HDS>}}.  }
+
+  \ccMethod{template <class Polyhedron_3> void
+    subdivide_skin_surface_mesh_3 (Polyhedron_3 &p, int nSubdiv =
+    1);}{Subdivides the skin surface using \ccc{nSubdiv} 1-4 split
+    operations (each triangle is split into four sub-triangles) and
+    the new vertices are moved towards the skin surface.}
+ 
+  %\ccAccessFunctions
+
+%  \ccQueryFunctions
+%
+%  \ccMethod{Simplex locate(const TMC_Point &p) const;}{Returns
+%    a handle to the cell of the triangulated mixed complex containing the point $p$.}
+
+%  \ccPredicates
+%  \ccModifiers %	Modifiers 	insert, delete, update
+%  \ccSeeAlso %	See Also 	other classes, functions
+%  \ccImplementation %	Implementation 	running time, memory
+%  \ccExample
+
+\end{ccRefConcept}
+
+% +------------------------------------------------------------------------+
+%%RefPage: end of main body, begin of footer
+% EOF
+% +------------------------------------------------------------------------+
+

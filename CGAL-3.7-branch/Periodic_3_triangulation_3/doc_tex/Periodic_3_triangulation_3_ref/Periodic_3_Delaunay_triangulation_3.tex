@@ -1,0 +1,328 @@
+% +------------------------------------------------------------------------+
+% | Reference manual page: Periodic_3_Delaunay_triangulation_3.tex
+% +------------------------------------------------------------------------+
+% | 19.2.2009   Monique Teillaud, Manuel Caroli
+% | Package: Periodic_3_triangulation_3
+% | 
+\RCSdef{\RCSPeriodicDelaunaytriangulationRev}{$Id$}
+\RCSdefDate{\RCSPeriodicDelaunaytriangulationDate}{$Date$}
+% |
+%%RefPage: end of header, begin of main body
+% +------------------------------------------------------------------------+
+
+
+\begin{ccRefClass}{Periodic_3_Delaunay_triangulation_3<PT,TDS>}
+
+\ccDefinition
+  
+The class \ccc{Periodic_3_Delaunay_triangulation_3} represents a
+Delaunay triangulation in three-dimensional periodic space.
+
+\ccInclude{CGAL/Periodic_3_Delaunay_triangulation_3.h}
+
+\ccParameters
+
+The first template argument \ccc{PT} must be a model of the
+\ccc{Periodic_3DelaunayTriangulationTraits_3} concept.
+
+The second template argument \ccc{TDS} must be a model of the
+\ccc{TriangulationDataStructure_3} concept with some additional
+functionality in cells and vertices.
+Its default value is
+\ccc{Triangulation_data_structure_3<Triangulation_vertex_base_3<PT,Periodic_3_triangulation_ds_vertex_base_3<>>,Triangulation_cell_base_3<PT,Periodic_3_triangulation_ds_cell_base_3<>>>}.
+
+\ccInheritsFrom{\ccc{Periodic_3_triangulation_3<Periodic_3DelaunayTriangulationTraits_3,TriangulationDataStructure_3>}}
+
+
+\ccCreation
+\ccCreationVariable{dt}
+\ccTwo{Vertex_handle}{}
+
+\ccConstructor{Periodic_3_Delaunay_triangulation_3(
+  const Iso_cuboid & domain = Iso_cuboid(0,0,0,1,1,1),
+  const Geom_traits & traits = Geom_traits());} 
+{Creates an empty periodic Delaunay triangulation \ccVar, with
+  \ccc{domain} as original domain and possibly specifying
+  a traits class \ccc{traits}.
+\ccPrecond{\ccc{domain} is a cube.}}
+
+\ccConstructor{Periodic_3_Delaunay_triangulation_3 (const
+  Periodic_3_Delaunay_triangulation_3 & dt1);} 
+{Copy constructor.}
+
+\ccConstructor{template < class InputIterator >
+       Periodic_3_Delaunay_triangulation_3 (
+       InputIterator first,
+       InputIterator last,
+       const Iso_cuboid & domain = Iso_cuboid(0,0,0,1,1,1),
+       const Geom_traits & traits = Geom_traits());} 
+{Equivalent to constructing an empty triangulation with the optional 
+domain and traits class arguments and calling \ccc{insert(first,last)}.
+\ccPrecond{The \ccc{value_type} of \ccc{first} and \ccc{last} are
+  \ccc{Point}s lying inside \ccc{domain} and \ccc{domain} is a cube.}} 
+
+\ccOperations
+
+\ccHeading{Insertion}
+
+The following methods insert points in the triangulation ensuring the
+empty sphere property of Delaunay triangulations. The inserted points
+need to lie in the original domain (see
+Section~\ref{P3Triangulation3-sec-space} of the user manual).
+
+In the degenerate case when there are co-spherical points, the Delaunay
+triangulation is known not to be uniquely defined. In this case, \cgal\
+chooses a particular Delaunay triangulation using a symbolic perturbation
+scheme~\cite{cgal:dt-pvr3d-03}.
+
+Note that insertion of a new point can cause a switch from computing
+in the 27-sheeted covering space to computing in the 1-sheeted covering space,
+which invalidates some \ccc{Vertex_handle}s and \ccc{Cell_handle}s.
+
+\ccThree{Vertex_handle}{dt.remove()}{}
+
+\ccMethod{Vertex_handle insert(const Point & p,
+                               Cell_handle start = Cell_handle() );}
+{Inserts point \ccc{p} in the triangulation and returns the corresponding
+ vertex. The optional argument \ccc{start} is used as a starting place
+ for the point location.
+\ccPrecond{\ccc{p} lies in the original domain \ccc{domain}.}}
+
+\ccMethod{Vertex_handle insert(const Point & p, Locate_type lt,
+                               Cell_handle loc, int li, int lj);}
+{Inserts point \ccc{p} in the triangulation and returns the corresponding
+ vertex. Similar to the above \ccc{insert()} function, but takes as additional
+ parameter the return values of a previous location query.  See description of
+ \ccc{Periodic_3_triangulation_3::locate()}.
+\ccPrecond{\ccc{p} lies in the original domain \ccc{domain}.}}
+
+The following method allows one to insert several points. It returns the
+number of inserted points. 
+
+\ccMethod{template < class InputIterator >
+          std::ptrdiff_t
+          insert(InputIterator first, InputIterator last,
+          bool is_large_point_set = false);}
+{Inserts the points in the iterator range $\left[\right.$\ccc{first},
+\ccc{last}$\left.\right)$.  Returns the number of inserted points.
+This function uses spatial sorting (cf.\ chapter~\ref{sec:spatial_sorting})
+and therefore is not guaranteed to insert the points following the
+order of \ccc{InputIterator}. If the third argument
+\ccc{is_large_point_set} is set to \ccc{true} a heuristic for
+optimizing the insertion of large point sets is applied.
+\ccPrecond{The \ccc{value_type} of \ccc{first} and \ccc{last} are
+\ccc{Point}s lying inside \ccc{domain}.}}
+
+
+\ccHeading{Point moving}
+
+\ccMethod{Vertex_handle move_point(Vertex_handle v, const Point & p);}
+{Moves the point stored in \ccc{v} to \ccc{p}, while preserving the Delaunay
+property.  This performs an action semantically equivalent to \ccc{remove(v)}
+followed by \ccc{insert(p)}, but is supposedly faster when the point has
+not moved much.  Returns the handle to the new vertex.
+\ccPrecond{\ccc{p} lies in the original domain \ccc{domain}.}}
+
+\ccHeading{Removal}
+
+When a vertex \ccc{v} is removed from a triangulation, all the cells
+incident to \ccc{v} must be removed, and the polyhedral region
+consisting of all the tetrahedra that are incident to \ccc{v} must be
+re-triangulated. 
+So, the problem reduces to triangulating a polyhedral
+region, while preserving its boundary, or to compute a
+\textit{constrained} triangulation. This is known to be sometimes
+impossible: the Sch\"onhardt polyhedron cannot be triangulated
+\cite{cgal:s-cgehd-98}. 
+
+However, when dealing with Delaunay triangulations, the case of such
+polyhedra that cannot be re-triangulated cannot happen, so \cgal\
+proposes a vertex removal.
+
+\ccMethod{void remove(Vertex_handle v);}
+{Removes the vertex \ccc{v} from the triangulation. When computing in
+  the 27-sheeted covering space it removes all 27 copies of \ccc{v}.}
+
+\ccMethod{template < class InputIterator >
+  std::ptrdiff_t remove(InputIterator first, InputIterator beyond);}
+{Removes the vertices specified by the iterator range (\ccStyle{first,
+    beyond}) of value type \ccc{Vertex_handle}.
+\ccc{remove()} is called for each element of the range.
+The number of vertices removed is returned; this number does not
+account for periodic copies of removed vertices.
+\ccPrecond{The iterator must not iterate over several periodic copies
+  of the same vertex, use e.g.\ the \ccc{Unique_vertex_iterator}.}
+}
+
+\ccHeading{Queries}
+
+\ccMethod{Bounded_side
+          side_of_sphere(Cell_handle c, const Point & p,
+          const Offset & off = Offset(0,0,0)) const;}
+{Returns a value indicating on which side of the circumscribed sphere
+of \ccc{c} the point-offset pair (\ccc{p},\ccc{off}) lies. More
+precisely, it returns:\\ 
+- \ccc{ON_BOUNDED_SIDE} if (\ccc{p},\ccc{off}) is inside the sphere.\\
+- \ccc{ON_BOUNDARY} if (\ccc{p},\ccc{off}) on the boundary of the sphere.\\
+- \ccc{ON_UNBOUNDED_SIDE} if (\ccc{p},\ccc{off}) lies outside the
+sphere.
+\ccPrecond{\ccc{p} lies in the original domain \ccc{domain}.}}
+
+\ccMethod{Vertex_handle nearest_vertex(Point p,
+                                       Cell_handle c = Cell_handle());}
+{Returns any nearest vertex to the point \ccc{p}, or the default constructed
+handle if the triangulation is empty.  The optional argument \ccc{c} is a hint
+specifying where to start the search. It always returns a vertex
+corresponding to a point inside $\ccc{domain}$ even if computing in a
+multiply sheeted covering space.
+\ccPrecond{\ccc{c} is a cell of \ccVar\ and \ccc{p} lies in the
+  original domain \ccc{domain}.}
+}
+
+\ccMethod{Vertex_handle nearest_vertex_in_cell(Cell_handle c,
+  Point p, Offset off = Offset(0,0,0)) const;}
+{Returns the  vertex  of the cell \ccc{c} that is nearest to the
+  point-offset pair (\ccc{p},\ccc{off}).
+\ccPrecond{\ccc{p} lies in the original domain \ccc{domain}.}}
+
+A point-offset pair (\ccc{p},\ccc{off}) is said to be in conflict with
+a cell \ccc{c} iff \ccVar.\ccc{side_of_sphere(c, p, off)} returns
+\ccc{ON_BOUNDED_SIDE}. 
+The set of cells that are in conflict with (\ccc{p},\ccc{off}) is
+star-shaped.
+
+\ccMethod{template <class OutputIteratorBoundaryFacets,
+                    class OutputIteratorCells,
+                    class OutputIteratorInternalFacets>
+  Triple<OutputIteratorBoundaryFacets,
+         OutputIteratorCells,
+         OutputIteratorInternalFacets>
+  find_conflicts(Point p, Cell_handle c,
+                 OutputIteratorBoundaryFacets bfit,
+                 OutputIteratorCells cit,
+                 OutputIteratorInternalFacets ifit);}
+{Computes the  conflict hole induced by \ccc{p}.  The starting cell
+\ccc{c} must be in conflict.  Then this function returns
+respectively in the output iterators:\\
+-- \ccc{cit}: the cells in conflict.\\
+-- \ccc{bfit}: the facets on the boundary, that is, the facets
+\ccc{(t, i)} where the cell \ccc{t} is in
+conflict, but \ccc{t->neighbor(i)} is not.\\
+-- \ccc{ifit}: the facets inside the hole, that is, delimiting two
+cells in conflict.\\
+Returns the pair composed of the resulting output iterators.
+\ccPrecond{\ccc{c} is in conflict with \ccc{p} and \ccc{p} lies in the
+  original domain \ccc{domain}.}}
+
+\ccMethod{template <class OutputIterator>
+  OutputIterator
+  vertices_in_conflict(Point p, Cell_handle c,
+                 OutputIterator res);}
+{Similar to \ccc{find_conflicts()}, but reports the vertices which are on the
+boundary of the conflict hole of \ccc{p}, in the output iterator \ccc{res}.
+Returns the resulting output iterator.
+\ccPrecond{\ccc{c} is in conflict with \ccc{p} and \ccc{p} lies in the
+  original domain \ccc{domain}.}}
+
+A face (cell, facet or edge) is said to be a Gabriel face iff
+its smallest circumscribing sphere do not enclose
+any vertex of the triangulation.  Any Gabriel face belongs to the
+Delaunay triangulation, but the reciprocal is not true.
+The following member functions test the Gabriel property of
+Delaunay faces.
+\ccMethod{bool is_Gabriel(Cell_handle c, int i);}{}
+\ccGlue 
+\ccMethod{bool is_Gabriel(Cell_handle c, int i, int j);}{}
+\ccGlue 
+\ccMethod{bool is_Gabriel(const Facet& f);}{}
+\ccGlue
+\ccMethod{bool is_Gabriel(const Edge& e);} {}
+
+
+\ccHeading{Voronoi diagram}
+\ccIndexMainItem{Voronoi diagram}
+\cgal\ offers several functions to display the Voronoi diagram of 
+a set of points in 3D.
+
+
+Note that a traits class providing exact constructions should be used
+in order to guarantee the computation of the Voronoi diagram (as
+opposed to computing the triangulation only, which requires only exact
+predicates). 
+
+\ccThree{Periodic_segment}{dt.dual(Cell_handle c, int i)X}{}
+
+\ccMethod{Point dual(Cell_handle c) const;}
+{Returns the representative of the circumcenter of the four vertices
+  of c that lies in the original domain \ccc{domain}.}
+
+\ccMethod{Periodic_segment dual(Facet f) const;}
+{Returns the dual of facet \ccc{f}, which is a periodic segment.}
+
+\ccMethod{Periodic_segment dual(Cell_handle c, int i) const;}
+{same as the previous method for facet \ccc{(c,i)}.
+\ccPrecond{$i\in\{0,1,2,3\}$}}
+
+\ccMethod{template <class OutputIterator>
+OutputIterator
+dual(Edge e, OutputIterator pts) const;}
+{Returns in the output iterator the points of the dual polygon of
+  edge \ccc{e} in the same order as the \ccc{Facet_circulator} returns
+  facets incident to the edge \ccc{e}. The points form the dual polygon
+  in $\mathbb R^3$, so they do not necessarily all lie inside the
+  original domain.}
+
+\ccMethod{template <class OutputIterator>
+OutputIterator
+dual(Cell_handle c, int i, int j, OutputIterator pts) const;}
+{same as the previous method for edge \ccc{(c,i,j)}.
+\ccPrecond{$i,j\in\{0,1,2,3\}, i\neq j$}}
+
+\ccMethod{template <class OutputIterator>
+OutputIterator
+dual(Vertex_handle v, OutputIterator pts) const;}
+{Returns in the output iterator the points of the dual polyhedron of
+  vertex \ccc{v} in no particular order. The points form the dual
+  polyhedron in $\mathbb R^3$, so they do not necessarily lie all
+  inside the original domain.}
+
+\ccMethod{template <class Stream> Stream & draw_dual(Stream & os);}
+{Sends the set of duals to all the facets of \ccVar\ into \ccc{os}.}
+
+\ccMethod{Geom_traits::FT dual_volume(Vertex_handle v) const;}
+{Returns the volume of the Voronoi cell dual to \ccc{v}.}
+
+\ccMethod{Point dual_centroid(Vertex_handle v) const;}
+{Returns the centroid of the Voronoi cell dual to \ccc{v}.}
+
+\begin{ccAdvanced}
+\ccHeading{Checking}
+\ccMethod{bool
+          is_valid(bool verbose = false) const;}
+{Checks the combinatorial validity of the triangulation and the
+validity of its geometric embedding (see
+Section~\ref{P3Triangulation3-sec-intro}). Also checks that all the
+circumscribing spheres of cells are empty.\\
+When \ccc{verbose} is set to true,  messages describing the first
+invalidity encountered are printed.}
+
+\ccMethod{bool
+          is_valid(Cell_handle c, bool verbose = false) const;}
+{Checks the combinatorial and geometric validity of the cell (see
+Section~\ref{P3Triangulation3-sec-intro}). Also checks that the
+circumscribing sphere of cells is empty.\\
+When \ccc{verbose} is set to true, messages are printed to give
+a precise indication of the kind of invalidity encountered.}
+
+These methods are  mainly a debugging help for the users of advanced features.
+\end{ccAdvanced}
+
+\ccSeeAlso
+
+\ccc{Periodic_3_triangulation_3}
+
+%% \ccExample
+
+%% \ccIncludeExampleCode{Triangulation3/Delaunay_triangulation_3_prog.cpp}
+
+\end{ccRefClass}

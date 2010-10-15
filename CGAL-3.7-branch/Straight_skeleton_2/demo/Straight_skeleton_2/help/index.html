@@ -1,0 +1,231 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<html>
+  <head>
+    <title>2D Straight Skeleton and Offsetting demo</title>
+  </head>
+
+  <body>
+    <P align="center"><FONT size="5">How to use 2D Straight Skeleton and Polygon Offseting Demo</FONT></P>
+    <br>
+    Main Functionality
+    <UL>
+      <LI><A href="#new">Reset application</A></LI>
+      <LI><A href="#new_window">Creating a new window</A></LI>
+      <LI><A href="#print">Print</A></LI>
+      <LI><A href="#close_window">Close the current window</A></LI>
+      <LI><A href="#quit">Quit the application</A></LI>      
+    </UL><br>
+    Input
+    <UL>
+      <LI><A href="#inp_p">Draw a new simple polygon with holes</A></LI>
+    </UL>
+    Generation
+    <UL>
+      <LI><A href="#outss">Generate the straight skeleton on the exterior of the polygon</A></LI>
+      <LI><A href="#inss">Generate the straight skeleton in the interior of the polygon</A></LI>
+      <LI><A href="#dooff">Generate offset polygons</A></LI>
+      <LI><A href="#setoff">Set the offset distance</A></LI>
+    </UL>
+    Persistance
+    <UL>
+      <LI><A href="#load_polygon">Load an existing polygon</A></LI>
+      <LI><A href="#save_polygon">Save the current polygon</A></LI>
+      <LI><A href="#format">Polygon with holes file format</A></LI>
+    </UL>
+
+    <P align="left"><STRONG><FONT size="5"></FONT></STRONG>&nbsp;</P>
+    <P align="left"><STRONG><FONT size="5"></FONT></STRONG>&nbsp;</P>
+    <P align="left"><STRONG><FONT size="5"></FONT></STRONG>&nbsp;</P>
+    <P align="left"><STRONG><FONT size="5"></FONT></STRONG>&nbsp;</P>
+
+    <P align="left"><STRONG><FONT color="#3300cc" size="4"><A name="new">
+	  </A></FONT></STRONG>&nbsp;</P>
+    <P align="left"><STRONG><FONT color="#3300cc" size="4"></FONT>
+      </STRONG>&nbsp;</P>
+    <P align="left"><STRONG><FONT color="#3300cc" size="3">
+	  Reset application</FONT></STRONG></P>
+    <p>Press Ctrl+N combination keys or go to File menu and choose "New". All the elements will be erased,
+     the window's visible area will be set to default. 
+    (-1, 1, -1, 1)</p>
+
+    <P align="left"><STRONG><FONT color="#3300cc" size="4">
+	  <A name="new_window"></A></FONT></STRONG>&nbsp;</P>
+    <P align="left"><STRONG><FONT color="#3300cc" size="4"></FONT>
+      </STRONG>&nbsp;</P>
+    <P align="left"><STRONG><FONT color="#3300cc" size="3">
+	  <p>Create a new window</FONT></STRONG></P>
+    Press Ctrl+W combination keys or go to File menu and choose "New Window". 
+    A new window will appear, modifying the visible area to be the default 
+    (-1, 1, -1, 1).</p>
+
+    <P align="left"><STRONG><FONT color="#3300cc" size="4"><A name="print">
+	  </A></FONT></STRONG>&nbsp;</P>
+    <P align="left"><STRONG><FONT color="#3300cc" size="4"></FONT>
+      </STRONG>&nbsp;</P>
+    <P align="left"><STRONG><FONT color="#3300cc" size="3">Print
+	</FONT></STRONG></P>
+    <p>Press Ctrl+P combination keys or go to File menu and choose "Print". The 
+    visible area on the screen will be outputed to the print device of your 
+    choice.</p>
+
+
+    <P align="left"><STRONG><FONT color="#3300cc" size="4">
+	  <A name="close_window"></A></FONT></STRONG>&nbsp;</P>
+    <P align="left"><STRONG><FONT color="#3300cc" size="4"></FONT>
+      </STRONG>&nbsp;</P>
+    <P align="left"><STRONG><FONT color="#3300cc" size="3">
+	  <p>Close the current window</FONT></STRONG></P>
+    Press Ctrl+X combination keys or go to File menu and choose "Close". You 
+    may do it for any window other than the initial one, this operation will 
+    close only the one you have choosen. If you do this for the initial parent 
+    window, it will close the others too.</p>
+
+    <P align="left"><STRONG><FONT color="#3300cc" size="4"><A name="quit">
+	  </A></FONT></STRONG>&nbsp;</P>
+    <P align="left"><STRONG><FONT color="#3300cc" size="4"></FONT>
+      </STRONG>&nbsp;</P>
+    <P align="left"><STRONG><FONT color="#3300cc" size="3">
+	  Quit the application</FONT></STRONG></P>
+    <p>Press Ctrl+Q combination keys or go to File menu and choose "Quit". When 
+    you quit the application, all the windows you have created will be 
+    destroyed.</p>
+
+    <P align="left"><STRONG><FONT color="#3300cc" size="4"><A name="inp_p">
+	  </A></FONT></STRONG>&nbsp;</P>
+    <P align="left"><STRONG><FONT color="#3300cc" size="4"></FONT>
+      </STRONG>&nbsp;</P>
+    <P align="left"><STRONG><FONT color="#3300cc" size="3">
+	  Create a new simple polygon with holes</FONT></STRONG></P>
+
+    <p>This package supports polygons with holes. To create a a polygon with holes you must 
+    first create the <em>outer</em> contour, then the holes. The orientation of the contours is unimportant,
+    but you must create the outer contour first. The holes must be strictly in the interior of 
+    the outer contour. Holes cannot cross each other nor cross the outer contour and a hole cannot be inside
+    any other hole.</p>
+    <P>To draw the outer contour or a hole, Left click on the "Input polygon" layer. 
+    Be sure there is no layer activated in standard toolbar that eat events. 
+    To be sure, press the arrow button situated on the standard toolbar.
+    Left Click anywhere on the application's drawing area to insert points in the 
+    polygon. You may press "Esc" key if you want to erase the last point. 
+    Once you have completed the polygon press the right click to close the 
+    polygon. To deactivate this layer, just press the arrow button situated 
+    on the same toolbar.</p>
+
+    <P align="left"><STRONG><FONT color="#3300cc" size="4">
+	  <A name="outss"></A></FONT></STRONG>&nbsp;</P>
+    <P align="left"><STRONG><FONT color="#3300cc" size="4"></FONT>
+      </STRONG>&nbsp;</P>
+    <P align="left"><STRONG><FONT color="#3300cc" size="3">
+	  Generate the straight skeleton on the exterior of the polygon</FONT></STRONG></P>
+    <p>Press Ctrl+O combination keys or go to Generation menu, then choose "Generate Outer Skeleton".
+    The Straight skeleton on the exterior of the polygon currently drawn will be created. 
+    (holes are ignored by this command).<br>
+    As explained in the package's User Manual, the outer skeleton is constructed by placing the polygon
+    as a hole of a big <em>frame</em>. That frame is placed sufficiently away from the polygon
+    to guarantee that the frame will have its own independent offset. Therefore, the constructed
+    exterior skeleton will reach out only as much as it needs in order to make sure the frame offset 
+    doesn't merge with the polygon offset. If you create the offset polygons, you will see the frame offset
+    separatedly from the polygon offset.<br>
+    If the construction fails for any reason, a critical dialog will pop up saying so.</p>
+
+    <P align="left"><STRONG><FONT color="#3300cc" size="4">
+	  <A name="inss"></A></FONT></STRONG>&nbsp;</P>
+    <P align="left"><STRONG><FONT color="#3300cc" size="4"></FONT>
+      </STRONG>&nbsp;</P>
+    <P align="left"><STRONG><FONT color="#3300cc" size="3">
+	  Generate the straight skeleton in the interior of the polygon</FONT></STRONG></P>
+    <p>Press Ctrl+I combination keys or go to Generation menu, then choose "Generate Inner Skeleton".
+    The Straight skeleton in the interior of the polygon with holes currently drawn will be created.
+    If the construction fails for any reason, a critical dialog will pop up saying so.</p>
+
+    <P align="left"><STRONG><FONT color="#3300cc" size="4">
+	  <A name="setoff"></A></FONT></STRONG>&nbsp;</P>
+    <P align="left"><STRONG><FONT color="#3300cc" size="4"></FONT>
+      </STRONG>&nbsp;</P>
+    <P align="left"><STRONG><FONT color="#3300cc" size="3">
+	  Set the offset distance</FONT></STRONG></P>
+    <p>Press Ctrl+T combination keys or go to Generation menu, then choose "Set Offset Distance".
+       A dialog box will pop up with a slot showing the actual offset distance. You can enter
+       a new value there, and press the OK button; or press the Cancel button to leave the
+       current distance unmodified.<br>
+       The value that is shown initially corresponds to a 1% of the diagonal length of the bbox
+       of the currently load or drawn polygon (or 0 if there is no current polygon). 
+   </p>
+
+    <P align="left"><STRONG><FONT color="#3300cc" size="4">
+	  <A name="dooff"></A></FONT></STRONG>&nbsp;</P>
+    <P align="left"><STRONG><FONT color="#3300cc" size="4"></FONT>
+      </STRONG>&nbsp;</P>
+    <P align="left"><STRONG><FONT color="#3300cc" size="3">
+	  Generate offset polygons</FONT></STRONG></P>
+    <p>Press Ctrl+F combination keys or go to Generation menu, then choose "Generate Offset Polygons".
+    If you have created the outer or inner skeleton, a sequence of offset polygons will be created. 
+    If not, a critical dialog box saying that you must first create the skeleton will pop up.<br>
+    The offset polygons will be created in the same region were the skeleton was created (exterior or interior)<br>
+    If you loaded or drawn a polygon, and <em>after</em> that, you have defined an offset distance, the offset polygons
+    will be created for that distance. On the other hand, if you have not defined an offset distance since the last time
+    you loaded or drawn the current polygon, the program will automatically pick up an offset distance corresponnding to 
+    a 1% of the diagonal length of the bbox of the polygon, and will create not 1 but 30 offset polygons stepping by that
+    automatic distance.<br>
+    If the construction fails for any reason, a critical dialog will pop up saying so.</p>
+
+    <P align="left"><STRONG><FONT color="#3300cc" size="4">
+	  <A name="load_polygon"></A></FONT></STRONG>&nbsp;</P>
+    <P align="left"><STRONG><FONT color="#3300cc" size="4"></FONT>
+      </STRONG>&nbsp;</P>
+    <P align="left"><STRONG><FONT color="#3300cc" size="3">
+	  <p>Load an existing polygon wit holes</FONT></STRONG></P>
+    Press Ctrl+L combination keys or go to File menu and choose "Load 
+    Polygon". A load file dialog will appear, having a filter that displays 
+    only the files with "poly" extension. Choose a file then press "Open" 
+    button or hit "Enter" key.<br>
+    <FONT SIZE=3 COLOR="#0000FF"> The polygon saved does not contain the 
+      visible area. The application will change the current visible area to 
+      fit the bounding box of the polygon.</FONT></p>
+  <P align="left"><STRONG><FONT size="5"></FONT></STRONG>&nbsp;</P>
+  <P align="left"><STRONG><FONT size="5"></FONT></STRONG>&nbsp;</P>
+	
+
+    <P align="left"><STRONG><FONT color="#3300cc" size="4">
+	  <A name="save_polygon"></A></FONT></STRONG>&nbsp;</P>
+    <P align="left"><STRONG><FONT color="#3300cc" size="4"></FONT>
+      </STRONG>&nbsp;</P>
+    <P align="left"><STRONG><FONT color="#3300cc" size="3">
+	  <p>Save the current polygon with holes</FONT></STRONG></P>
+    Press Ctrl+S combination keys or go to File menu, then choose "Save 
+    Polygon". A save file dialog will appear. 
+    You may change the name then press "Save" or hit "Enter" 
+    key. To cancel the save process just press Esc key.</p>
+
+    <P align="left"><STRONG><FONT color="#3300cc" size="4">
+	  <A name="format"></A></FONT></STRONG>&nbsp;</P>
+    <P align="left"><STRONG><FONT color="#3300cc" size="4"></FONT>
+      </STRONG>&nbsp;</P>
+    <P align="left"><STRONG><FONT color="#3300cc" size="3">
+    <p>Polygon with holes file format</FONT></STRONG></P>
+    <p>The files loaded and saved by this demo must have the extension ".poly"
+    and follow this simple text-based format:</p>
+    <pre>
+      (number of contours)[new-line]                           * integer
+      (number of vertices in outer contout)[new-line]          * integer
+      (x-coord) (y-coord)[new-line]                            * double
+      (x-coord) (y-coord)[new-line]                            * double
+      (x-coord) (y-coord)[new-line]                            * double
+      ..
+      (EOF) or (number of vertices in hole 0)[new-line]        * integer
+      (x-coord) (y-coord)[new-line]                            * double
+      (x-coord) (y-coord)[new-line]                            * double
+      ..
+      (EOF) or (number of vertices in hole 1)[new-line]        * integer
+      (x-coord) (y-coord)[new-line]                            * double
+      (x-coord) (y-coord)[new-line]                            * double
+      ..
+      ..
+    </pre>
+    <p>The package is distributed with some sample files you can look at</p>
+
+
+<hr>
+Last modified: Thu March, 2006
+  </body>
+</html>

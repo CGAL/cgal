@@ -1,0 +1,44 @@
+\begin{ccRefClass}{Nonnegative_linear_program_from_iterators<A_it, B_it, R_it, C_it>}
+
+\ccInclude{CGAL/QP_models.h}
+
+\ccDefinition
+An object of class \ccRefName\ describes a linear program of the form
+
+\input{QP_solver_ref/_nlp_description.tex}
+
+\input{QP_solver_ref/_from_iterator_description.tex}
+
+
+\ccIsModel
+\ccc{QuadraticProgram}\\
+\ccc{LinearProgram}\\
+\ccc{NonnegativeQuadraticProgram}\\
+\ccc{NonnegativeLinearProgram}
+
+\ccCreation
+\ccIndexClassCreation
+\ccCreationVariable{lp}
+
+\ccConstructor{Nonnegative_linear_program_from_iterators(int n, int m, 
+  const A_it& a, 
+  const B_it& b,
+  const R_it& r,
+  const C_it& c,
+  const std::iterator_traits<C_it>value_type& c0 = 0
+  )}{constructs \ccVar\ from given random-access iterators and the constant 
+\ccc{c0}. The passed iterators are merely stored, no copying of the program 
+data takes place. How these iterators are supposed to encode the nonnegative 
+linear program is described in \ccc{NonnegativeLinearProgram}.}
+
+\ccExample
+
+\ccReferToExampleCode{QP_solver/first_nonnegative_lp_from_iterators.cpp}\\
+\ccReferToExampleCode{QP_solver/solve_convex_hull_containment_lp.h}\\
+\ccReferToExampleCode{QP_solver/convex_hull_containment.cpp}
+
+\ccSeeAlso
+\ccc{NonnegativeLinearProgram}
+\ccc{Quadratic_program<NT>}\\
+\ccc{Quadratic_program_from_mps<NT>}
+\end{ccRefClass}

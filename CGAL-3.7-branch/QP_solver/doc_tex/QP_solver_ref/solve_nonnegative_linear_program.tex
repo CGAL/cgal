@@ -1,0 +1,28 @@
+\begin{ccRefFunction}{solve_nonnegative_linear_program}
+
+\ccInclude{CGAL/QP_functions.h}
+
+This function solves a nonnegative linear program, using some exact
+Integral Domain \ccc{ET} for its computations. Various
+options may be provided, see \ccc{Quadratic_program_options}. 
+
+\ccFunction{template <NonnegativeLinearProgram, ET>
+  Quadratic_program_solution<ET> solve_nonnegative_linear_program 
+  (const NonnegativeLinearProgram& lp, const ET&,
+  const Quadratic_program_options& options = Quadratic_program_options());}
+{returns the solution of the nonnegative linear program \ccc{lp}, solved
+with exact number type \ccc{ET}.}
+
+\input{QP_solver_ref/_solve_requirements.tex}
+
+\ccExample
+\ccReferToExampleCode{QP_solver/first_nonnegative_lp.cpp}
+
+\ccSeeAlso
+
+The  models of \ccRefIdfierPage{NonnegativeLinearProgram}:
+
+\ccc{Quadratic_program<NT>}\\
+\ccc{Quadratic_program_from_mps<NT>}\\
+\ccc{Nonnegative_linear_program_from_iterators<A_it, B_it, R_it, C_it>}
+\end{ccRefFunction}

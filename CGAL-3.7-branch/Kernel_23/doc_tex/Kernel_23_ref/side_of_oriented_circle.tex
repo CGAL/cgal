@@ -1,0 +1,25 @@
+\begin{ccRefFunction}{side_of_oriented_circle}
+
+\ccFunction{Oriented_side side_of_oriented_circle(
+	                           const Point_2<Kernel> &p, 
+	                           const Point_2<Kernel> &q,
+                                   const Point_2<Kernel> &r, 
+                                   const Point_2<Kernel> &test);}
+         {returns the relative position of point \ccStyle{test}
+          to the oriented circle defined by $p$, $q$ and $r$.
+	  The order of the points $p$, $q$ and $r$ is important,
+	  since it determines the orientation of the implicitly
+          constructed circle.
+
+If $p$, $q$ and $r$ are collinear, the circle degenerates in a line.
+\ccStyle{ON_ORIENTED_BOUNDARY} is returned if $test$ is also collinear or if two
+points are identical, 
+otherwise, \ccc{side_of_oriented_circle(r, q, test, p)} is returned.
+}
+
+\ccSeeAlso
+
+\ccRefIdfierPage{CGAL::side_of_bounded_circle} \\
+
+\end{ccRefFunction}
+

@@ -1,0 +1,38 @@
+\begin{ccRefFunction}{make_nonnegative_quadratic_program_from_iterators}
+
+\ccInclude{CGAL/QP_models.h}
+
+This template function creates an instance of 
+\ccc{Nonnegative_quadratic_program_from_iterators<A_it, B_it, R_it, D_it, C_it>} from given iterators. This function can be useful if the types of these
+iterators are too complicated (or of too little interest for you) 
+to write them down explicitly.
+
+\ccFunction{template <
+   A_it, 
+   B_it, 
+   R_it,  
+   D_it,   
+   C_it >  
+Nonnegative_quadratic_program_from_iterators
+<A_it, B_it, R_it, D_it, C_it>
+make_nonnegative_quadratic_program_from_iterators (
+   int n, int m, 
+   const A_it& a, 
+   const B_it& b, 
+   const R_it& r, 
+   const D_it& d, 
+   const C_it& c, 
+   std::iterator_traits<C_it>::value_type c0 =
+   std::iterator_traits<C_it>::value_type(0));}
+{returns an instance of \ccc{Nonnegative_quadratic_program_from_iterators<A_it, B_it, R_it, D_it, C_it>}, constructed from the given iterators.}
+
+\ccExample
+The following example demonstrates the typical usage of makers
+with the simpler function \ccc{make_nonnegative_linear_program_from_iterators}.
+
+\ccReferToExampleCode{QP_solver/solve_convex_hull_containment_lp2.h}\\
+\ccReferToExampleCode{QP_solver/convex_hull_containment2.cpp}
+
+\ccSeeAlso
+\ccc{Nonnegative_quadratic_program_from_iterators<A_it, B_it, R_it, D_it, C_it>}
+\end{ccRefFunction}

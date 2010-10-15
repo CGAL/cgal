@@ -1,0 +1,53 @@
+\begin{ccRefConcept}{EuclideanRingNumberType}
+
+The number type supports the operations $+$, $-$ and $*$ as well as a function
+$div$, which performs an integer division, the modulus operator $\%$,
+that returns the remainder of integer division and the function $gcd$.
+This implies that 
+\ccc{CGAL::Number_type_traits<EuclideanRingNumberType>::Has_gcd} is 
+\ccc{CGAL::Tag_true}.
+
+\ccRefines
+RingNumberType
+
+\ccCreationVariable{n1}
+
+\ccThree{EuclideanRingNumberType}{xxxxxxxxxxxx}{}
+\ccOperations
+
+\ccFunction{EuclideanRingNumberType div(
+                    const EuclideanRingNumberType& n1,
+                    const EuclideanRingNumberType &n2) const;}
+{returns the result of the integer division \ccc{n1}/\ccc{n2}.}
+
+\ccGlue
+\ccFunction{EuclideanRingNumberType gcd(const EuclideanRingNumberType &n1,
+                                        const EuclideanRingNumberType &n2);}
+       {computes the greatest common divisor between \ccc{n1} and \ccc{n2}.}
+       
+\ccGlue
+\ccMethod{EuclideanRingNumberType operator%(const EuclideanRingNumberType &n2) const;}
+       {returns the remainder achieved when dividing \ccVar\ by \ccc{n2}.}
+
+\ccGlue
+\ccMethod{EuclideanRingNumberType operator%=(const EuclideanRingNumberType &n2);}
+       {computes the remainder achieved when dividing \ccVar\ by \ccc{n2} and
+        assigns it to \ccVar.}
+
+
+\ccHasModels
+\ccc{int} \\
+\ccc{long} \\
+\ccc{long long} \\
+\ccc{CGAL::MP_Float} \\
+\ccc{CGAL::Gmpz} \\
+\ccc{leda_integer}
+
+%\ccc{CGAL::Lazy_exact_nt<EuclideanRingNumberType>} \\
+
+\ccSeeAlso
+\ccRefConceptPage{FieldNumberType} \\
+\ccRefConceptPage{Kernel} \\
+\ccRefIdfierPage{CGAL::Euclidean_ring_tag} \\
+
+\end{ccRefConcept}

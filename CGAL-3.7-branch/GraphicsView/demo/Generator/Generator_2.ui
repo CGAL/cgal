@@ -1,0 +1,252 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
+ <author>GeometryFactory</author>
+ <class>Generator_2</class>
+ <widget class="QMainWindow" name="Generator_2">
+  <property name="geometry">
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>568</width>
+    <height>325</height>
+   </rect>
+  </property>
+  <property name="windowTitle">
+   <string>CGAL 2D Generator</string>
+  </property>
+  <property name="windowIcon">
+   <iconset resource="../resources/CGAL.qrc">
+    <normaloff>:/cgal/logos/cgal_icon</normaloff>:/cgal/logos/cgal_icon</iconset>
+  </property>
+  <widget class="QWidget" name="centralwidget">
+   <layout class="QHBoxLayout">
+    <item>
+     <widget class="QSplitter" name="splitter">
+      <property name="orientation">
+       <enum>Qt::Horizontal</enum>
+      </property>
+      <widget class="QGraphicsView" name="graphicsView">
+       <property name="sizePolicy">
+        <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
+         <horstretch>2</horstretch>
+         <verstretch>0</verstretch>
+        </sizepolicy>
+       </property>
+       <property name="focusPolicy">
+        <enum>Qt::StrongFocus</enum>
+       </property>
+       <property name="verticalScrollBarPolicy">
+        <enum>Qt::ScrollBarAlwaysOn</enum>
+       </property>
+       <property name="horizontalScrollBarPolicy">
+        <enum>Qt::ScrollBarAlwaysOn</enum>
+       </property>
+       <property name="transformationAnchor">
+        <enum>QGraphicsView::NoAnchor</enum>
+       </property>
+      </widget>
+     </widget>
+    </item>
+   </layout>
+  </widget>
+  <widget class="QStatusBar" name="statusbar"/>
+  <widget class="QToolBar" name="fileToolBar">
+   <property name="windowTitle">
+    <string>File Tools</string>
+   </property>
+   <attribute name="toolBarArea">
+    <enum>TopToolBarArea</enum>
+   </attribute>
+   <attribute name="toolBarBreak">
+    <bool>false</bool>
+   </attribute>
+   <addaction name="actionClear"/>
+  </widget>
+  <widget class="QToolBar" name="toolBar">
+   <property name="windowTitle">
+    <string>Visualization Tools</string>
+   </property>
+   <attribute name="toolBarArea">
+    <enum>TopToolBarArea</enum>
+   </attribute>
+   <attribute name="toolBarBreak">
+    <bool>false</bool>
+   </attribute>
+   <addaction name="actionRecenter"/>
+  </widget>
+  <widget class="QMenuBar" name="menubar">
+   <property name="geometry">
+    <rect>
+     <x>0</x>
+     <y>0</y>
+     <width>568</width>
+     <height>26</height>
+    </rect>
+   </property>
+   <widget class="QMenu" name="menuFile">
+    <property name="title">
+     <string>&amp;File</string>
+    </property>
+    <addaction name="separator"/>
+    <addaction name="actionClear"/>
+    <addaction name="separator"/>
+    <addaction name="actionQuit"/>
+   </widget>
+   <widget class="QMenu" name="menuTools">
+    <property name="title">
+     <string>&amp;Algorithms</string>
+    </property>
+    <addaction name="separator"/>
+    <addaction name="actionRecenter"/>
+    <addaction name="actionGeneratePointsOnCircle"/>
+    <addaction name="actionGeneratePointsInDisc"/>
+    <addaction name="actionGeneratePointsInSquare"/>
+    <addaction name="actionGenerateSegments"/>
+    <addaction name="actionGenerateSegmentFans"/>
+   </widget>
+   <addaction name="menuFile"/>
+   <addaction name="menuTools"/>
+  </widget>
+  <action name="actionAbout">
+   <property name="text">
+    <string>&amp;About</string>
+   </property>
+  </action>
+  <action name="actionAboutCGAL">
+   <property name="text">
+    <string>About &amp;CGAL</string>
+   </property>
+  </action>
+  <action name="actionQuit">
+   <property name="text">
+    <string>&amp;Quit</string>
+   </property>
+   <property name="shortcut">
+    <string>Ctrl+Q</string>
+   </property>
+  </action>
+  <action name="actionClear">
+   <property name="icon">
+    <iconset resource="../icons/File.qrc">
+     <normaloff>:/cgal/fileToolbar/fileNew.png</normaloff>:/cgal/fileToolbar/fileNew.png</iconset>
+   </property>
+   <property name="text">
+    <string>&amp;Clear</string>
+   </property>
+   <property name="shortcut">
+    <string>Ctrl+C</string>
+   </property>
+  </action>
+  <action name="actionLoadGenerator">
+   <property name="icon">
+    <iconset resource="../icons/File.qrc">
+     <normaloff>:/cgal/fileToolbar/fileOpen.png</normaloff>:/cgal/fileToolbar/fileOpen.png</iconset>
+   </property>
+   <property name="text">
+    <string>&amp;Load Generator</string>
+   </property>
+   <property name="shortcut">
+    <string>Ctrl+L</string>
+   </property>
+  </action>
+  <action name="actionSaveGenerator">
+   <property name="icon">
+    <iconset resource="../icons/File.qrc">
+     <normaloff>:/cgal/fileToolbar/fileSave.png</normaloff>:/cgal/fileToolbar/fileSave.png</iconset>
+   </property>
+   <property name="text">
+    <string>&amp;Save Generator</string>
+   </property>
+   <property name="shortcut">
+    <string>Ctrl+S</string>
+   </property>
+  </action>
+  <action name="actionRecenter">
+   <property name="icon">
+    <iconset resource="../icons/Input.qrc">
+     <normaloff>:/cgal/Input/zoom-best-fit</normaloff>:/cgal/Input/zoom-best-fit</iconset>
+   </property>
+   <property name="text">
+    <string>Re&amp;center the viewport</string>
+   </property>
+   <property name="shortcut">
+    <string>Ctrl+R</string>
+   </property>
+  </action>
+  <action name="actionYMonotonePartition">
+   <property name="text">
+    <string>Y-monotone Partition</string>
+   </property>
+  </action>
+  <action name="actionCreateInputGenerator">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="text">
+    <string>Create Input Generator</string>
+   </property>
+  </action>
+  <action name="actionInnerSkeleton">
+   <property name="text">
+    <string>Inner Skeleton</string>
+   </property>
+  </action>
+  <action name="actionOuterOffset">
+   <property name="text">
+    <string>Outer Offset</string>
+   </property>
+  </action>
+  <action name="actionOptimalConvexPartition">
+   <property name="text">
+    <string>Optimal Convex Partition</string>
+   </property>
+  </action>
+  <action name="actionApproximateConvexPartition">
+   <property name="text">
+    <string>Approximate Convex Partition</string>
+   </property>
+  </action>
+  <action name="actionLinearLeastSquaresFitting">
+   <property name="text">
+    <string>Linear Least Squares Fitting of Points</string>
+   </property>
+  </action>
+  <action name="actionLinearLeastSquaresFittingOfSegments">
+   <property name="text">
+    <string>Linear Least Squares Fitting of Segments</string>
+   </property>
+  </action>
+  <action name="actionGeneratePointsOnCircle">
+   <property name="text">
+    <string>Generate Points on Circle</string>
+   </property>
+  </action>
+  <action name="actionGeneratePointsInSquare">
+   <property name="text">
+    <string>Generate Points in Square</string>
+   </property>
+  </action>
+  <action name="actionGenerateSegments">
+   <property name="text">
+    <string>Generate Segments</string>
+   </property>
+  </action>
+  <action name="actionGeneratePointsInDisc">
+   <property name="text">
+    <string>Generate Points in Disc</string>
+   </property>
+  </action>
+  <action name="actionGenerateSegmentFans">
+   <property name="text">
+    <string>Generate Segment Fans</string>
+   </property>
+  </action>
+ </widget>
+ <resources>
+  <include location="Generator_2.qrc"/>
+  <include location="../icons/File.qrc"/>
+  <include location="../resources/CGAL.qrc"/>
+  <include location="../icons/Input.qrc"/>
+ </resources>
+ <connections/>
+</ui>

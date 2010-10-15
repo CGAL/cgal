@@ -1,0 +1,149 @@
+\RCSdef{\ArrangementOnSurfaceRefRev}{$Id$}
+\RCSdefDate{\ArrangementOnSurfaceRefDate}{$Date$}
+\ccRefChapter{2D Arrangements\label{chapterArrangement_on_surface_2_ref}}
+\ccChapterRelease{\ArrangementOnSurfaceRefRev. \ \ArrangementOnSurfaceRefDate}
+\ccChapterAuthor{Ron Wein, Efi Fogel, Baruch Zukerman, Dan Halperin, and Eric Berberich}
+
+% ===============================================================
+%\section*{Introduction}
+%\label{arr_ref_sec:intro}
+% =======================
+Given a set $\mathcal{C}$ of planar curves, the {\em arrangement}
+${\mathcal A}({\mathcal C})$ is the subdivision of the plane induced
+by the curves in $\mathcal{C}$ into maximally connected cells. The cells
+can be $0$-dimensional ({\em vertices}), $1$-dimensional ({\em edges})
+or $2$-dimensional ({\em faces}).
+
+The class \ccc{Arrangement_2<Traits,Dcel>} encapsulates a data structure
+that maintains arrangements of arbitrary bounded planar curves. It comes
+with a variety of algorithms that operate on planar arrangement,
+such as point-location queries and overlay computations, which are
+implemented as peripheral classes or as free (global) functions.
+
+\section{Classified Reference Pages}
+
+\subsection*{Enumerations}
+
+\ccRefIdfierPage{CGAL::Arr_parameter_space}\\
+\ccRefIdfierPage{CGAL::Arr_boundary_type}\\
+\ccRefIdfierPage{CGAL::Arr_curve_end}\\
+\ccRefIdfierPage{CGAL::Arr_halfedge_direction}
+
+\subsection*{Concepts}
+
+\ccRefConceptPage{ArrangementDcel}\\
+\ccRefConceptPage{ArrangementDcelWithRebind}\\
+\ccRefConceptPage{ArrangementDcelVertex}\\
+\ccRefConceptPage{ArrangementDcelHalfedge}\\
+\ccRefConceptPage{ArrangementDcelFace}\\
+\ccRefConceptPage{ArrangementDcelHole}\\
+\ccRefConceptPage{ArrangementDcelIsolatedVertex}\\
+~\\
+\ccRefConceptPage{ArrangementBasicTraits_2}\\
+\ccRefConceptPage{ArrangementLandmarkTraits_2}\\
+\ccRefConceptPage{ArrangementXMonotoneTraits_2}\\
+\ccRefConceptPage{ArrangementTraits_2}\\
+~\\
+\ccRefConceptPage{ArrangementInputFormatter}\\
+\ccRefConceptPage{ArrangementOutputFormatter} \\
+\ccRefConceptPage{ArrangementWithHistoryInputFormatter}\\
+\ccRefConceptPage{ArrangementWithHistoryOutputFormatter}
+~\\
+\ccRefConceptPage{ArrangementPointLocation_2}\\
+\ccRefConceptPage{ArrangementVerticalRayShoot_2}
+
+\subsection*{Geometric Object Concepts}
+
+\ccRefConceptPage{ArrTraits::Point_2}\\
+\ccRefConceptPage{ArrTraits::XMonotoneCurve_2}\\
+\ccRefConceptPage{ArrTraits::Curve_2}
+
+\subsection*{Function Object Concepts}
+
+\ccRefConceptPage{ArrTraits::CompareX_2}\\
+\ccRefConceptPage{ArrTraits::CompareXy_2}\\
+\ccRefConceptPage{ArrTraits::ConstructMinVertex_2}\\
+\ccRefConceptPage{ArrTraits::ConstructMaxVertex_2}\\
+\ccRefConceptPage{ArrTraits::IsVertical_2}\\
+\ccRefConceptPage{ArrTraits::CompareYAtX_2}\\
+\ccRefConceptPage{ArrTraits::CompareYAtXLeft_2}\\
+\ccRefConceptPage{ArrTraits::CompareYAtXRight_2}\\
+\ccRefConceptPage{ArrTraits::Equal_2}\\
+\ccRefConceptPage{ArrTraits::ParameterSpaceInX_2}\\
+\ccRefConceptPage{ArrTraits::ParameterSpaceInY_2}\\
+\ccRefConceptPage{ArrTraits::CompareXNearBoundary_2}\\
+\ccRefConceptPage{ArrTraits::CompareYNearBoundary_2}\\
+% \ccRefConceptPage{ArrTraits::IsOnXIdentification_2}\\
+% \ccRefConceptPage{ArrTraits::IsOnYIdentification_2}\\
+% \ccRefConceptPage{ArrTraits::CompareXOnBoundary_2}\\
+% \ccRefConceptPage{ArrTraits::CompareYOnBoundary_2}\\
+\ccRefConceptPage{ArrTraits::Intersect_2}\\
+\ccRefConceptPage{ArrTraits::Split_2}\\
+\ccRefConceptPage{ArrTraits::AreMergeable_2}\\
+\ccRefConceptPage{ArrTraits::Merge_2}\\
+\ccRefConceptPage{ArrTraits::MakeXMonotone_2}\\
+\ccRefConceptPage{ArrTraits::Approximate_2}\\
+\ccRefConceptPage{ArrTraits::ConstructXMonotoneCurve_2}
+
+
+\subsection*{Classes}
+
+\ccRefIdfierPage{CGAL::Arrangement_2<Traits,Dcel>}\\
+\ccRefIdfierPage{CGAL::Arr_accessor<Arrangement>}\\
+\ccRefIdfierPage{CGAL::Arr_observer<Arrangement>}\\
+\ccRefIdfierPage{CGAL::Arrangement_with_history_2<Traits,Dcel>} \\
+~\\
+\ccRefIdfierPage{CGAL::Arrangement_2<Traits,Dcel>::Vertex}\\
+\ccRefIdfierPage{CGAL::Arrangement_2<Traits,Dcel>::Halfedge}\\
+\ccRefIdfierPage{CGAL::Arrangement_2<Traits,Dcel>::Face}\\
+\ccRefIdfierPage{CGAL::Arr_dcel_base<V,H,F>}\\
+\ccRefIdfierPage{CGAL::Arr_default_dcel<Traits>}\\
+\ccRefIdfierPage{CGAL::Arr_face_extended_dcel<Traits,FData,V,H,F>}\\
+\ccRefIdfierPage{CGAL::Arr_extended_dcel<Traits,VData,HData,FData,V,H,F>}\\
+~\\
+\ccRefIdfierPage{CGAL::Arr_segment_traits_2<Kernel>}\\
+\ccRefIdfierPage{CGAL::Arr_non_caching_segment_traits_2<Kernel>}\\
+\ccRefIdfierPage{CGAL::Arr_linear_traits_2<Kernel>}\\
+\ccRefIdfierPage{CGAL::Arr_polyline_traits_2<SegmentTraits>}\\
+\ccRefIdfierPage{CGAL::Arr_circle_segment_traits_2<Kernel>}\\
+\ccRefIdfierPage{CGAL::Arr_line_arc_traits_2<CircularKernel>}\\
+\ccRefIdfierPage{CGAL::Arr_circular_arc_traits_2<CircularKernel>}\\
+\ccRefIdfierPage{CGAL::Arr_circular_line_arc_traits_2<CircularKernel>}\\
+\ccRefIdfierPage{CGAL::Arr_conic_traits_2<RatKernel,AlgKernel,NtTraits>}\\
+\ccRefIdfierPage{CGAL::Arr_rational_arc_traits_2<AlgKernel,NtTraits>}\\
+\ccRefIdfierPage{CGAL::Arr_Bezier_curve_traits_2<RatKernel,AlgKernel,NtTraits>}\\
+\ccRefIdfierPage{CGAL::Arr_algebraic_segment_traits_2<Coefficient>}\\
+\ccRefIdfierPage{CGAL::Arr_curve_data_traits_2<Tr,XData,Mrg,CData,Cnv>}\\
+\ccRefIdfierPage{CGAL::Arr_consolidated_curve_data_traits_2<Traits,Data>}\\
+~\\
+\ccRefIdfierPage{CGAL::Arr_text_formatter<Arrangement>}\\
+\ccRefIdfierPage{CGAL::Arr_face_extended_text_formatter<Arrangement>}\\
+\ccRefIdfierPage{CGAL::Arr_extended_dcel_text_formatter<Arrangement>}\\
+\ccRefIdfierPage{CGAL::Arr_with_history_text_formatter<ArrFormatter>}\\
+~\\
+\ccRefIdfierPage{CGAL::Arr_naive_point_location<Arrangement>}\\
+\ccRefIdfierPage{CGAL::Arr_walk_along_line_point_location<Arrangement>}\\
+\ccRefIdfierPage{CGAL::Arr_trapezoid_ric_point_location<Arrangement>}\\
+\ccRefIdfierPage{CGAL::Arr_landmarks_point_location<Arrangement,Generator>}
+
+\subsection*{Functions}
+
+\ccRefIdfierPage{CGAL::is_valid}\\
+\ccRefIdfierPage{CGAL::insert}\\
+\ccRefIdfierPage{CGAL::insert_non_intersecting_curve}\\
+\ccRefIdfierPage{CGAL::insert_non_intersecting_curves}\\
+\ccRefIdfierPage{CGAL::insert_point}\\
+\ccRefIdfierPage{CGAL::remove_edge}\\
+\ccRefIdfierPage{CGAL::remove_vertex}\\
+\ccRefIdfierPage{CGAL::locate}\\
+\ccRefIdfierPage{CGAL::decompose}\\
+\ccRefIdfierPage{CGAL::overlay} \\
+\ccRefIdfierPage{CGAL::read} \\
+\ccRefIdfierPage{CGAL::write} \\
+\ccRefIdfierPage{CGAL::remove_curve} \\
+\ccc{CGAL::operator<<}
+  {\lcRawHtml{<A HREF="Function_operator.html">(go there)</A>}
+   \lcTex{\dotfill page~\pageref{ref_arr_operator_leftshift}}}\\
+\ccc{CGAL::operator>>}
+  {\lcRawHtml{<A HREF="Function_operator--.html">(go there)</A>}
+   \lcTex{\dotfill page~\pageref{ref_arr_operator_rightshift}}}

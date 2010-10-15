@@ -1,0 +1,73 @@
+% +------------------------------------------------------------------------+
+% | Reference manual page: is_simple_2.tex
+% +------------------------------------------------------------------------+
+% | 21.06.2001   Author
+% | Package: Polygon
+% | 
+\RCSdef{\RCSissimpleRev}{$Id$}
+\RCSdefDate{\RCSissimpleDate}{$Date$}
+% |
+%%RefPage: end of header, begin of main body
+% +------------------------------------------------------------------------+
+
+
+\begin{ccRefFunction}{is_simple_2} 
+
+%% \ccHtmlCrossLink{}     %% add further rules for cross referencing links
+%% \ccHtmlIndexC[function]{} %% add further index entries
+
+\ccDefinition
+  
+The function \ccRefName\ computes if a polygon is simple, that is, if the edges 
+do not intersect, except consecutive edges in their common vertex.
+
+\ccInclude{CGAL/Polygon_2_algorithms.h}
+
+\ccGlobalFunction{
+template <class ForwardIterator, class Traits>
+inline bool is_simple_2(ForwardIterator first, ForwardIterator last,
+                      Traits traits);
+}
+{
+Checks if the polygon defined by the
+iterator range \ccc{first} \ldots\ \ccc{last} is simple.
+}
+
+
+\ccHeading{Requirements}
+\ccIndexSubitem[C]{bottom_vertex_2}{requirements}
+\begin{enumerate}
+    \item \ccc{Traits} is a model of the concept 
+	  \ccc{PolygonTraits_2}\ccIndexMainItem[c]{PolygonTraits_2}.
+	  Only the following members of this traits class are used:
+          \begin{itemize}
+            \item \ccc{Point_2}
+            \item \ccc{Less_xy_2}
+            \item \ccc{Orientation_2}
+            \item \ccc{less_xy_2_object()}
+            \item \ccc{orientation_2_object()}
+          \end{itemize}
+    \item The value type of \ccc{ForwardIterator} must be \ccc{Traits::Point_2},
+\end{enumerate}
+
+\ccImplementation
+
+The simplicity test is implemented by means of a plane sweep algorithm.
+The algorithm is quite robust when used with inexact number types.
+The running time is O(n log n), where n is the number of vertices of the
+polygon.
+
+\ccSeeAlso
+
+\ccRefIdfierPage{PolygonTraits_2} \\
+\ccRefIdfierPage{CGAL::Polygon_2<PolygonTraits_2, Container>} \\
+
+%% \ccIncludeExampleCode{Polygon/is_simple_2_prog.cpp}
+
+\end{ccRefFunction}
+
+% +------------------------------------------------------------------------+
+%%RefPage: end of main body, begin of footer
+% EOF
+% +------------------------------------------------------------------------+
+

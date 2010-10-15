@@ -1,0 +1,122 @@
+% +------------------------------------------------------------------------+
+% | Reference manual page: SurfaceMeshVertexBase_3.tex
+% +------------------------------------------------------------------------+
+% | 09.12.2005   Author
+% | Package: Package
+% | 
+\RCSdef{\RCSSurfaceMeshVertexBaseRev}{$Id$}
+\RCSdefDate{\RCSSurfaceMeshVertexBaseDate}{$Date$}
+% |
+%%RefPage: end of header, begin of main body
+% +------------------------------------------------------------------------+
+
+\begin{ccRefConcept}{SurfaceMeshVertexBase_3}
+
+%% \ccHtmlCrossLink{}     %% add further rules for cross referencing links
+%% \ccHtmlIndexC[concept]{} %% add further index entries
+
+\ccDefinition
+  
+The concept \ccRefName\ describes the vertex base type
+of the three dimensional triangulation used
+to embed the surface mesh.
+
+More precisely,
+the first template parameter \ccc{SurfaceMeshC2T3} of the surface mesher
+\ccc{make_surface_mesh}
+is a model of the concept 
+\ccc{SurfaceMeshComplex_2InTriangulation_3} 
+which describes a data structure to store
+a pure two dimensional complex 
+embedded in a three dimensional triangulation.
+In particular, the type \ccc{SurfaceMeshC2T3} is required to provide
+a three dimensional triangulation type
+\ccc{SurfaceMeshC2T3::Triangulation_3}
+The concept \ccRefName\ describes the vertex base type
+required in this triangulation type.
+
+
+
+
+
+\ccRefines
+
+\ccc{TriangulationVertexBase_3}
+
+
+The surface mesher algorithm issues frequent queries
+about the status of the vertices  with respect to the
+two dimensional complex that represents the current
+surface approximation.
+The class \ccRefName\ offers a caching mechanism
+to answer  more efficiently these queries.
+The caching mechanism includes two cached integers, which, when they
+are valid, store respectively the number of complex
+facets incident to the vertex and the number
+of connected components  of the adjacency graph of those facets.
+
+
+
+
+
+
+%\ccTypes
+
+%\ccNestedType{TYPE}{some nested types}
+
+\ccCreation
+\ccCreationVariable{vb}  %% choose variable name
+
+
+\ccOperations
+
+
+\ccMethod{bool is_c2t3_cache_valid();}
+{Returns \ccc{true} if the cache is valid.}
+\ccGlue
+\ccMethod{void invalidate_c2t3_cache();}
+{Invalidates the cache.}
+\ccGlue
+\ccMethod{int cached_number_of_incident_facets();}
+{Returns the cached number of facets of the complex incident to the vertex.}
+\ccGlue
+\ccMethod{int cached_number_of_components();}
+{ This method concerns the adjacency
+graph of  the facets of the complex incident to the vertex
+and returns a cached value for the number of connected components this graph.}
+
+\ccHasModels
+
+\ccc{Surface_mesh_vertex_base_3<Gt,Vb>} \\
+\ccc{Surface_mesh_default_triangulation_3::Vertex}
+
+
+\ccSeeAlso
+
+\ccc{SurfaceMesherComplex_2InTriangulation_3} \\
+\ccc{Surface_mesh_complex_2_in_triangulation_3<Tr>} \\
+\ccc{Surface_mesh_default_triangulation_3}.
+
+%\ccExample
+
+%A short example program.
+%Instead of a short program fragment, a full running program can be
+%included using the 
+%\verb|\ccIncludeExampleCode{Package/SurfaceMeshVertexBase_3.cpp}| 
+%macro. The program example would be part of the source code distribution and
+%also part of the automatic test suite.
+
+%\begin{ccExampleCode}
+%void your_example_code() {
+%}
+%\end{ccExampleCode}
+
+%%% \ccIncludeExampleCode{Package/SurfaceMeshVertexBase_3.cpp}
+
+\end{ccRefConcept}
+
+% +------------------------------------------------------------------------+
+%%RefPage: end of main body, begin of footer
+% EOF
+% +------------------------------------------------------------------------+
+

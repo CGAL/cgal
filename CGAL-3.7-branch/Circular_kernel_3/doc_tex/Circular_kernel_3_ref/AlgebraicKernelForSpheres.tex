@@ -1,0 +1,97 @@
+\begin{ccRefConcept}{AlgebraicKernelForSpheres} 
+
+\ccDefinition
+
+The \ccc{AlgebraicKernelForSpheres} concept is meant to provide the
+curved kernel with all the algebraic functionalities required for the
+manipulation of spheres, circles, and circular arcs in 3D. 
+
+\ccHasModels
+
+\ccc{Algebraic_kernel_for_spheres_2_3}
+
+\ccTypes
+
+A model of \ccc{AlgebraicKernelForSpheres} is supposed to provide
+
+\ccNestedType{RT}{A model of \ccc{RingNumberType}. }%In addition, the
+%class \ccc{Root_of_traits_2<RT>} must be defined and provide a nested
+%type \ccc{Type} which must be the same as \ccc{Root_of_2} and a
+%function \ccc{make_root_of_2(RT,RT,RT,int)} whose return type is
+%\ccc{Type}.} 
+\ccGlue
+\ccNestedType{FT}{A model of \ccc{FieldNumberType}\ccc{<RT>}.}
+%\footnote{concept template...?} 
+
+\ccNestedType{Polynomial_1_3}{A model of 
+\ccc{AlgebraicKernelForSpheres::Polynomial_1_3}, for trivariate polynomials
+of degree up to~1.}
+\ccGlue
+\ccNestedType{Polynomial_for_spheres_2_3}{A model of
+\ccc{AlgebraicKernelForSpheres::PolynomialForSpheres_2_3}, for trivariate 
+polynomials of degree up to~2 that can store equations of spheres.} 
+
+\ccNestedType{Polynomials_for_lines_3}{A model of 
+\ccc{AlgebraicKernelForSpheres::PolynomialsForLines_3}, for systems of 
+polynomials that can store equations of lines in 3D.}
+%\ccGlue
+%\ccNestedType{Polynomials_for_circles_3}{A model of 
+%\ccc{AlgebraicKernelForSpheres::PolynomialsForCircles_3}, for systems of 
+%polynomials that can store equations of circles in 3D.}
+
+\ccNestedType{Root_of_2}{A model of 
+\ccc{RootOf_2}, for algebraic numbers 
+of degree up to~2.} 
+\ccGlue
+\ccNestedType{Root_for_spheres_2_3}{A model of 
+\ccc{AlgebraicKernelForSpheres::RootForSpheres_2_3}, for
+solutions of systems of three models of 
+\ccc{AlgebraicKernelForSpheres::PolynomialForSpheres_2_3}.} 
+
+\ccNestedType{Construct_polynomial_1_3}{A model of
+\ccc{AlgebraicKernelForSpheres::ConstructPolynomial_1_3}.}
+\ccGlue
+\ccNestedType{Construct_polynomial_for_spheres_2_3}{A model of
+\ccc{AlgebraicKernelForSpheres::ConstructPolynomialForSpheres_2_3}.}
+
+\ccNestedType{Construct_polynomials_for_lines_3}{A model of
+\ccc{AlgebraicKernelForSpheres::ConstructPolynomialsForLines_3}.}
+%\ccGlue
+%\ccNestedType{Construct_polynomials_for_circles_3}{A model of
+%\ccc{AlgebraicKernelForSpheres::ConstructPolynomialsForCircles_3}.}
+
+
+\ccNestedType{Compare_x}{A model of the concept 
+\ccc{AlgebraicKernelForSpheres::CompareX}.}
+\ccGlue
+\ccNestedType{Compare_y}{A model of the concept 
+\ccc{AlgebraicKernelForSpheres::CompareY}.}
+\ccGlue
+\ccNestedType{Compare_z}{A model of the concept 
+\ccc{AlgebraicKernelForSpheres::CompareZ}.}
+\ccGlue
+\ccNestedType{Compare_xy}{A model of the concept 
+\ccc{AlgebraicKernelForSpheres::CompareXY}.}
+\ccGlue
+\ccNestedType{Compare_xyz}{A model of the concept 
+\ccc{AlgebraicKernelForSpheres::CompareXYZ}.}
+
+\ccNestedType{Sign_at}{A model of the concept \ccc{AlgebraicKernelForSpheres::SignAt}.}
+
+\ccNestedType{X_critical_points}{A model of the concept 
+\ccc{AlgebraicKernelForSpheres::XCriticalPoints}.}
+\ccGlue
+\ccNestedType{Y_critical_points}{A model of the concept 
+\ccc{AlgebraicKernelForSpheres::YCriticalPoints}.}
+\ccGlue
+\ccNestedType{Z_critical_points}{A model of the concept 
+\ccc{AlgebraicKernelForSpheres::ZCriticalPoints}.}
+
+\ccNestedType{Solve}{A model of the concept \ccc{AlgebraicKernelForSpheres::Solve}.}
+
+\ccSeeAlso
+
+\ccRefIdfierPage{SphericalKernel}\\
+\ccRefIdfierPage{CGAL::Spherical_kernel_3<Kernel,AlgebraicKernelForSpheres>}
+
+\end{ccRefConcept}

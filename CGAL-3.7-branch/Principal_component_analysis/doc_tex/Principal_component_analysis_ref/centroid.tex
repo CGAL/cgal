@@ -1,0 +1,54 @@
+% +------------------------------------------------------------------------+
+% | Reference manual page: centroid.tex
+% +------------------------------------------------------------------------+
+% | 
+% | November 2008  Pierre Alliez and Sylvain Pion and Ankit Gupta
+% | Package:   Principal Component Analysis
+% |
+% +------------------------------------------------------------------------+
+
+\begin{ccRefFunction}{centroid}  
+%% add template arg's if necessary
+
+\ccDefinition
+  
+The function \ccRefName\ computes the (uniform) center of mass of a set of 2D or 3D bounded objects. In 2D these objects include points, segments, triangles, iso rectangles, circles and disks. In 3D these objects include points, segments, triangles, iso cuboids, spheres, balls and tetrahedra.
+
+\ccInclude{CGAL/centroid.h}
+
+There is a set of overloaded \ccc{centroid} functions for 2D and 3D objects. The user can also optionally pass an explicit kernel, in case the default based on \ccc{Kernel_traits} is not sufficient. The default dimension tag is deduced automatically, although the user can pass a \ccc{tag} specifying the dimension of the objects to be considered for the centroid computation. For example, the default dimension of a tetrahedron is 3, but specifying a dimension 0 computes the centroid of the tetrahedron vertices (3D points), specifying a dimension 1 computes the centroid of the tetrahedron edges (3D segments) and specifying a dimension 2 computes the centroid of the tetrahedron facets (3D triangles).
+
+\ccFunction{template < typename InputIterator, typename Tag >
+            K::Point_2
+            centroid(InputIterator first, InputIterator beyond, const Tag& t);}
+{ computes the centroid of a non-empty set of 2D objects. The tag is used to specify the dimension to be considered from the objects. \ccc{K} is \ccc{Kernel_traits<std::iterator_traits<InputIterator>::value_type>::Kernel}.
+The value type must be either \ccc{K::Point_2}, \ccc{K::Segment_2}, \ccc{K::Triangle_2}, \ccc{K::Rectangle_2} or \ccc{K::Circle_2}. To fit a set of disks the user must call the function with value type \ccc{K::Circle_2} and with dimension tag of 2. The tag must range between \ccc{CGAL::Dimension_tag<0>} and \ccc{CGAL::Dimension_tag<2>}.
+\ccPrecond{first != beyond.} }
+
+\ccFunction{template < typename InputIterator, typename K, typename Tag >
+            K::Point_2
+            centroid(InputIterator first, InputIterator beyond, const K & k, const Tag& t);}
+{ computes the centroid of a non-empty set of 2D objects. The tag is used to specify the dimension to be considered from the objects. \ccc{K} is \ccc{Kernel_traits<std::iterator_traits<InputIterator>::value_type>::Kernel}.
+The value type must be either \ccc{K::Point_2}, \ccc{K::Segment_2}, \ccc{K::Triangle_2}, \ccc{K::Rectangle_2} or \ccc{K::Circle_2}. To fit a set of disks the user must call the function with value type \ccc{K::Circle_2} and with dimension tag of 2. The tag must range between \ccc{CGAL::Dimension_tag<0>} and \ccc{CGAL::Dimension_tag<2>}.
+\ccPrecond{first != beyond.} }
+
+
+
+\ccFunction{template < typename InputIterator, typename Tag >
+            K::Point_3
+            centroid(InputIterator first, InputIterator beyond, const Tag& t);}
+{ computes the centroid of a non-empty set of 3D objects. The tag is used to specify the dimension to be considered from the objects. \ccc{K} is \ccc{Kernel_traits<std::iterator_traits<InputIterator>::value_type>::Kernel}.
+The value type must be either \ccc{K::Point_3}, \ccc{K::Segment_3}, \ccc{Triangle_3}, \ccc{Cuboid_3}, \ccc{Sphere_3} or \ccc{Tetrahedron_3}.  To fit a set of balls the user must call the function with value type \ccc{K::Sphere_3} and with dimension tag of 3. The tag must range between \ccc{CGAL::Dimension_tag<0>} and \ccc{CGAL::Dimension_tag<3>}.
+\ccPrecond{first != beyond.} }
+
+\ccFunction{template < typename InputIterator, typename K, typename Tag >
+            K::Point_3
+            centroid(InputIterator first, InputIterator beyond, const K & k, const Tag& t);}
+{ computes the centroid of a non-empty set of 3D objects. The tag is used to specify the dimension to be considered from the objects. \ccc{K} is \ccc{Kernel_traits<std::iterator_traits<InputIterator>::value_type>::Kernel}.
+The value type must be either \ccc{K::Point_3}, \ccc{K::Segment_3}, \ccc{Triangle_3}, \ccc{Cuboid_3}, \ccc{Sphere_3} or \ccc{Tetrahedron_3}.  To fit a set of balls the user must call the function with value type \ccc{K::Sphere_3} and with dimension tag of 3. The tag must range between \ccc{CGAL::Dimension_tag<0>} and \ccc{CGAL::Dimension_tag<3>}.
+\ccPrecond{first != beyond.} }
+
+\ccSeeAlso
+\ccRefIdfierPage{CGAL::barycenter}
+
+\end{ccRefFunction}

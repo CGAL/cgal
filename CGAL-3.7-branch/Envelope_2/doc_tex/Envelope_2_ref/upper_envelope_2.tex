@@ -1,0 +1,27 @@
+% +------------------------------------------------------------------------+
+% | Reference manual page: upper_envelope_2.tex
+% +------------------------------------------------------------------------+
+% | 
+% | Package: Envelope_2
+% | 
+% +------------------------------------------------------------------------+
+
+\ccRefPageBegin
+
+\begin{ccRefFunction}{upper_envelope_2}
+
+\ccInclude{CGAL/envelope_2.h}
+
+\ccFunction{template<class InputIterator, class EnvelopeDiagram>
+            void upper_envelope_2 (InputIterator begin, InputIterator end,
+                                   EnvelopeDiagram& diag);}
+   {Computes the upper envelope of a set of curves in $\mathbb{R}^2$,
+    as given by the range \ccc{[begin, end)}. The upper envelope is
+    represented using the output maximization diagram \ccc{diag},
+    which must be a model of the \ccc{EnvelopeDiagram_1} concept.
+    \ccPrecond{The value-type of \ccc{InputIterator} is
+               \ccc{EnvelopeDiagram::Traits_2::Curve_2}.}}
+
+\end{ccRefFunction}
+
+\ccRefPageEnd

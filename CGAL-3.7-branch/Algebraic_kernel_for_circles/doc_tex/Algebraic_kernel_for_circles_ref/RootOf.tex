@@ -1,0 +1,59 @@
+\begin{ccRefConcept}{AlgebraicKernelForCircles::RootOf_2}
+
+\ccDefinition
+
+The \ccc{AlgebraicKernelForCircles::RootOf_2} concept represents algebraic numbers of
+degree up to~2 over a \ccc{RingNumberType} denoted as \ccc{RT}.
+
+\ccc{FT} denotes the \ccc{FieldNumberType} constructed from \ccc{RT}.
+\footnote{see \ccc{make_rational}, we need something to get FT from RT in a clean way.}
+
+\ccCreation
+
+\footnote{How to get RT...?}
+
+\ccFunction{RootOf_2 make_root_of_2(RT a, RT b, RT c, bool s);}{Returns 
+the smaller (resp. larger) root of equation $aX^2+bX+c=0$ if \ccc{s} is true
+(resp. false).}
+\footnote{numbering of roots from 0 or 1? to be checked}
+\ccGlue
+\ccFunction{RootOf_2 make_root_of_2(FT a, FT b, FT c, bool s);}{Returns
+the smaller (resp. larger) root of equation $aX^2+bX+c=0$ if \ccc{s} is true
+(resp. false).}
+
+\ccOperations
+
+The comparison operators \ccc{==, !=, <, >, <=, >=} as well as the \ccc{sign}
+and \ccc{compare} functions need to be
+provided to compare elements of types \ccc{RootOf_2, RT} and \ccc{FT}. 
+
+In addition, the following operations must be provided:
+
+\def\ccTagRmEigenClassName{\ccFalse}
+
+\ccFunction{RootOf_2 operator+(const RT &a, const RootOf_2 &r);}{}
+\ccGlue
+\ccFunction{RootOf_2 operator+(const FT &a, const RootOf_2 &r);}{}
+\ccGlue
+\ccFunction{RootOf_2 operator+(const RootOf_2 &r, const RT &a);}{}
+\ccGlue
+\ccFunction{RootOf_2 operator+(const RootOf_2 &r, const FT &a);}{}
+
+and similarly for operators -, * and /.
+
+\ccFunction{RootOf_2 square(const RootOf_2 & r);}{}
+
+\def\ccTagRmEigenClassName{\ccTrue}
+
+\ccHasModels
+
+\ccc{double}, \ccc{Root_of_2<RT>}, etc \footnote{to be precised}
+
+\ccSeeAlso
+
+\ccRefIdfierPage{CGAL::Root_of_2<RT>}\\
+\ccRefIdfierPage{CGAL::Root_of_traits_2<RT>}\\
+\ccRefIdfierPage{AlgebraicKernelForCircles::PolynomialForCircles_2_2}\\
+\ccRefIdfierPage{AlgebraicKernelForCircles}
+
+\end{ccRefConcept}

@@ -1,0 +1,48 @@
+% +------------------------------------------------------------------------+
+% | Reference manual page: Env_sphere_traits.tex
+% +------------------------------------------------------------------------+
+% | 
+% | Package: Envelope_3
+% | 
+% +------------------------------------------------------------------------+
+
+\ccRefPageBegin
+
+\begin{ccRefClass}{Env_sphere_traits_3<ConicTraits>}
+    
+\ccDefinition 
+%============
+
+The traits class \ccRefName\ models the \ccc{EnvelopeTraits_3}
+concept, and is used for the construction of lower and upper envelopes 
+of spheres. Note that when projecting the intersection curve of two 
+spheres (a circle in 3D) onto the $xy$-plane, the resulting curve is an 
+ellipse. The traits class is therefore parameterized by an 
+arrangement-traits class that is capable of handling conic 
+curves --- namely an instantiation of the \ccc{Arr_conic_traits_2} 
+class-template --- and inherits from it.
+
+The conic-traits class defines a nested type named \ccc{Rat_kernel},
+which is a geometric kernel parameterized by an exact rational type.
+\ccRefName\ defines its \ccc{Surface_3} type to be constructible from
+\ccc{Rat_kernel::Sphere_3}. Namely, it can handle spheres whose center
+points have rational coordinates (i.e., of the type \ccc{Rat_kernel::FT}),
+and whose squared radius is also rational. The \ccc{Surface_3} type is
+also convertible to a \ccc{Rat_kernel::Sphere_3} object.
+
+The \ccc{Xy_monotone_surface_3} type is the same as the nested
+\ccc{Surface_3} type. The traits-class simply ignores the upper
+hemisphere when it computes lower envelopes, and ignores the lower
+hemisphere when it computes upper envelopes.
+
+\ccInclude{CGAL/Env_sphere_traits_3.h}
+ 
+\ccIsModel
+    \ccc{EnvelopeTraits_3}
+
+\ccInheritsFrom
+    \ccc{ConicTraits}
+
+\end{ccRefClass}
+
+\ccRefPageEnd

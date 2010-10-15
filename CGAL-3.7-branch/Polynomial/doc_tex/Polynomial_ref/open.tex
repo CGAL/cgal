@@ -1,0 +1,36 @@
+\section{todo open questions:}
+
+\begin{itemize} 
+\item Some of the functors in PolynomialTraits can be implemented using some more basic ones. 
+      On the other hand, the way they should be implemented may depend on  the way the polynomial is 
+      represented and on the cost of the other functors. 
+      I therefore decided to put them into the PolynomialTraits. 
+      On the other hand one could decide to provide a very basic PolynomialTraits 
+      (just constructor, access to coefficients, and properties (degree)) and call the current 
+      PolynomialTraits a PolynomialToolBox. But I don't think that this is going to be very efficient 
+      or used. 
+
+\item Note that the numbering of variables in \ccc{Exponent_vector} is inconsistent
+      with the one in \ccc{Polynomial_d} and \ccc{PolynomialTraits_d}. \\
+      TODO: resolve this conflict. 
+
+\item Should the concept define the total order of Polynomials, i.e. how two polynomials are compared? 
+
+\item Note that a Polynomial is also a Model of an algebraic structure. Therefore a Polynomial will have a
+       valid \ccc{Algebraic_structure_traits}. \\
+      Question: should concept \ccc{PolynomialTraits} refine \ccc{AlgebraicStructureTraits}.\\
+      However, the \ccc{Polynomial_traits} could easily derive from \ccc{Algebraic_structure_traits}.\\
+      see also package: \ccc{Algebraic_foundations}. 
+
+\item \ccc{PolynomialTraits_d::Evaluate}: take \ccc{Innermost_coefficient_type} as argument type only.
+      this relates \ccc{Coercion_traits} \ccc{Algebraic_foundations}
+
+\item This is just the general concept for \ccc{Polynomial_d}.  \\
+      I plan to propose additional concepts for \ccc{Polynomial_1},\ccc{Polynomial_2} and maybe \ccc{Polynomial_3}.     
+      These concepts will refine \ccc{Polynomial_d}, i.e. fix the constant \ccc{Polynomial_traits_d::d} to the appropriate value 
+      and introduce extra functors as \ccc{Sign_at}, for univariate bivariate polynomials. 
+
+\item Do we need a SignAt for multivariate polynomials?
+\item see in uni/bivariate\_polynomial\_hacks.h of NiX whether something is useful.
+\item document functor Move 
+\end{itemize}

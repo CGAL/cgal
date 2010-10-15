@@ -1,0 +1,76 @@
+\ccRefPageBegin
+
+\begin{ccRefClass}{General_polygon_2<ArrTraits>}
+
+\ccThree{Orientation}{ polygon.reverse_orientation ()~}{}
+\ccThreeToTwo
+
+\ccDefinition
+%============
+The class \ccRefName\ models the concept \ccc{GeneralPolygon_2}.
+It represents a simple general-polygon. It is parameterized with the type
+\ccc{ArrTraits} that models the concept
+\ccc{ArrangementDirectionalXMonotoneTraits}. The latter is a refinment
+of the concept \ccc{ArrangementXMonotoneTraits_2}. In addition to the
+requirements of the concept \ccc{ArrangementXMonotoneTraits_2}, a
+model of the concept \ccc{ArrangementDirectionalXMonotoneTraits} must
+support the following functions:
+\begin{itemize}
+\item Given an $x$-monotone curve, construct its opposite curve.
+\item Given an $x$-monotone curve, compare its two endpoints lexigroaphically.
+\end{itemize} 
+
+This class supports a few convenient operations in addition to the 
+requirements that the concept \ccc{GeneralPolygon_2} lists.
+
+\ccInclude{CGAL/General_polygon_2.h}
+ 
+\ccTypes
+%=======
+
+% \ccNestedType{Vertex_iterator}{a bidirectional iterator over the
+%        vertices of the polygonal region. Its value-type is \ccc{Vertex}.}
+
+\ccNestedType{Size}{number of edges size type.}
+
+\ccCreation
+\ccCreationVariable{polygon}
+%===========================
+
+% \ccAccessFunctions
+% %=================
+% 
+% \ccMethod{Vertex_iterator vertices_begin();} {returns the begin
+% iterator of the vertices.}
+% \ccGlue
+% \ccMethod{Vertex_iterator vertices_end();} {returns the past-the-end
+% iterator of the vertices.}
+% 
+
+\ccOperations
+%============
+\ccMethod{Size size();} {returns the number of edges of \ccVar.}
+
+\ccModifiers
+% ==========
+\ccMethod{void clear();}{clears \ccVar.}
+
+\ccMethod{void reverse_orientation();}{reverses the orientation of the polygon.
+\ccPrecond{\ccStyle{is_simple()}.}}
+
+\ccPredicates
+% ===========
+\ccMethod{bool is_empty();}
+{returns \ccc{true} if \ccVar\ is empty, and \ccc{false} otherwise.}
+
+\ccMethod{Orientation orientation();}{returns the orientation of \ccVar.
+\ccPrecond{\ccStyle{is_simple()}.}}
+
+% \ccMethod{bool is_convex();}{returns \ccc{true} if the polygonal
+% region is convex, and \ccc{false} otherwise.}
+
+\ccIsModel
+  \ccc{GeneralPolygon_2}
+
+\end{ccRefClass}
+\ccRefPageEnd

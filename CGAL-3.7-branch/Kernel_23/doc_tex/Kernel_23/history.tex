@@ -1,0 +1,61 @@
+\section{Design and Implementation History}
+
+At a meeting at Utrecht University in January 1995,
+Olivier Devillers, Andreas Fabri, Wolfgang Freiseisen,
+Geert-Jan Giezeman, Mark Overmars, Stefan Schirra, Otfried Schwarzkopf
+(now Otfried Cheong), and Sven Sch\"onherr
+discussed the foundations of the \cgal\ kernel.
+Many design and software engineering issues were addressed, 
+e.g.\ naming conventions, coupling of classes 
+(flat versus deep class hierarchy), 
+memory allocation, programming conventions, mutability of 
+atomic objects, points and vectors, storing additional information, 
+orthogonality of operations on the kernel objects,
+viewing non-constant-size objects like polygons as 
+dynamic data structures (and hence not as part of the (innermost) kernel).
+
+The people attending the meeting delegated the compilation of 
+a draft specification to Stefan Schirra.
+The resulting draft specification was intentionally modeled on \cgal's 
+precursors \protocgal\ and \plageo\ as well as on the geometric part of \leda.
+The specification already featured coexistence of 
+\ccHtmlNoLinksFrom{Cartesian} and 
+homogeneous representation of point/vector data and parameterization 
+by number type(s).
+During the discussion of the draft a kernel design group was formed. 
+The members of this group were Andreas Fabri, Geert-Jan Giezeman,
+Lutz Kettner, Stefan Schirra, and Sven Sch\"onherr.
+The work of the kernel design group led to significant changes and
+improvements of the original design, e.g.\ the strong separation between
+points and vectors. Probably the most important enhancement was the design 
+of a common superstructure for the previously uncoupled 
+\ccHtmlNoLinksFrom{Cartesian} and
+homogeneous representations. One can say, that the kernel was designed
+by this group.
+The kernel was later revised based on suggestions by Herv\'e Br\"onnimann,
+Bernd G\"artner, Michael Hoffmann, and Lutz Kettner.
+
+A first version of the kernel was internally made available at the beginning
+of the \cgal-project ({\sc esprit ltr iv} project number 21957).
+Since then many more people contributed to the evolution of the kernel
+through discussions on the \cgal\ mailing lists.
+The implementation based on 
+\ccHtmlNoLinksFrom{Cartesian} representation was (initially) provided 
+by Andreas Fabri, the homogeneous representation (initially) by Stefan Schirra.
+Intersection and distance computations were implemented by Geert-Jan Giezeman.
+Further work has been done by Susan Hert on the overall maintenance of the
+kernel.
+Philippe Guigue has provided efficient intersection tests for 3D triangles.
+Andreas Fabri, Michael Hoffmann and Sylvain Pion have improved the support for
+the extensibility and adaptability of the kernel. Pedro Machado
+Manh\~{a}es de Castro and Monique Teillaud introduced 3D circles. In 2010,
+Pierre Alliez, St\'ephane Tayeb and Camille Wormser added intersection constructions 
+for 3D triangles and efficient intersection tests for bounding boxes.
+
+\subsection{Acknowledgment}
+
+This work was supported
+by the Graduiertenkolleg `Algorithmische Diskrete Mathematik',
+under grant DFG We 1265/2-1,
+and by ESPRIT IV Long Term Research Projects No.~21957 (CGAL)
+and No.~28155 (GALIA).

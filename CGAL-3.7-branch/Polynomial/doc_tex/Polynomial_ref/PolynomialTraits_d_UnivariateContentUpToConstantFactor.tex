@@ -1,0 +1,48 @@
+\begin{ccRefConcept}{PolynomialTraits_d::UnivariateContentUpToConstantFactor}
+
+\ccDefinition
+
+This \ccc{AdaptableUnaryFunction} computes the content of a 
+\ccc{PolynomialTraits_d::Polynomial_d} 
+with respect to the univariate (recursive) view on the 
+polynomial {\em up to  a constant factor (utcf)}, that is, 
+it computes the $gcd\_utcf$ of all coefficients  with respect to one variable. 
+
+Remark: This is called \ccc{UnivariateContentUpToConstantFactor} for 
+symmetric reasons with respect to \ccc{PolynomialTraits_d::UnivariateContent} 
+and \ccc{PolynomialTraits_d::MultivariateContent}. 
+However, a concept \ccc{PolynomialTraits_d::MultivariateContentUpToConstantFactor} 
+does not exist since the result is trivial. 
+ 
+\ccRefines 
+\ccc{AdaptableUnaryFunction}\\
+\ccc{CopyConstructible}\\
+\ccc{DefaultConstructible}\\
+\ccCreationVariable{fo}
+
+\ccTypes
+
+\ccSetThreeColumns{xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx}{xxx}{}
+\ccTypedef{typedef PolynomialTraits_d::Coefficient_type  result_type;}{}\ccGlue
+\ccTypedef{typedef PolynomialTraits_d::Polynomial_d argument_type;}{}
+
+\ccOperations
+\ccMethod{result_type operator()(first_argument_type p);}
+         {Computes the content {\em up to  a constant factor} of $p$ with 
+          respect to the outermost variable $x_{d-1}$. }
+
+%\ccMethod{result_type operator()(first_argument_type p, int i);}
+%         {Computes the content {\em up to  a constant factor} of $p$ with 
+%          respect to variable $x_i$. 
+%          \ccPrecond $0 \leq i  < d$
+%         }
+
+%\ccHasModels
+
+\ccSeeAlso
+
+\ccRefIdfierPage{Polynomial_d}\\
+\ccRefIdfierPage{PolynomialTraits_d}\\
+\ccRefIdfierPage{PolynomialTraits_d::GcdUpToConstantFactor}\\
+
+\end{ccRefConcept}

@@ -1,0 +1,124 @@
+% Reference manual page: ArrangementTraits.tex
+% Package: Arrangement_2
+
+\ccRefPageBegin
+\begin{ccRefConcept}{ArrangementTraits_2}
+
+\ccDefinition
+% ===========
+The concept \ccRefName{} allows the construction of arrangement
+of {\sl general} planar curves. Models of this concept are used
+by the free \ccc{insert()} functions of the arrangement package and
+by the \ccc{Arrangement_with_history_2} class.
+
+A model of this concept must define the nested \ccc{Curve_2} type, which
+represents a general planar curve that is not necessarily $x$-monotone
+and is not necessarily connected. Such curves are eventually subdivided into
+$x$-monotone subcurves and isolated points (represented by the \ccc{Point_2}
+and \ccc{X_monotone_curve_2} types, defined in the basic traits concept).
+
+A model of the concept \ccRefName{} that handles arbitrary curves,
+which are always $x$-monotone, such as a traits class that handles
+linear curves may define the nested types \ccc{Curve\_2} and
+\ccc{X_monotone_curve\_2} to be of equivalent types. Moreover, defining
+them as of equivalent types is advantageous, as it enables a generic
+simple implementation of the nested Functor
+\ccc{Make_x_monotone_2}.
+
+On the other hand, a model of the \ccRefName{} concept that handles
+arbitrary curves, which may be not $x$-monotone msut define the
+\ccc{Curve\_2} and \ccc{X_monotone_curve\_2} nested types to be of
+different types to allow proper dispatching of the free functions
+that accept such curves, such as \ccc{intsert()}.
+
+\ccRefines
+\ccc{ArrangementXMonotoneTraits_2}
+
+\ccTypes
+% ======
+\ccNestedType{Curve_2}{models the concept \ccc{ArrTraits::Curve_2}.}
+
+\ccHeading{Functor Types}
+% =======================
+\ccThree{Make_x_monotone_2}{}{\hspace*{14cm}}
+\ccThreeToTwo
+\ccNestedType{Make_x_monotone_2}%
+  {models the concept \ccc{ArrTraits::MakeXMonotone_2}.}
+
+\ccCreationVariable{traits}
+% \ccCreation
+% ===========
+
+\ccHeading{Accessing Functor Objects}
+% ===================================
+\ccMethod{Make_x_monotone_2 make_x_monotone_2_object() const;} {}
+
+\ccHasModels
+% ==========
+\ccc{CGAL::Arr_segment_traits_2<Kernel>}\\
+\ccc{CGAL::Arr_non_caching_segment_traits_2<Kernel>}\\
+\ccc{CGAL::Arr_linear_traits_2<Kernel>}\\
+\ccc{CGAL::Arr_polyline_traits_2<SegmentTraits>}\\
+\ccc{CGAL::Arr_circle_segment_traits_2<Kernel>}\\
+\ccc{CGAL::Arr_line_arc_traits_2<CircularKernel>}\\
+\ccc{CGAL::Arr_circular_arc_traits_2<CircularKernel>}\\
+\ccc{CGAL::Arr_circular_line_arc_traits_2<CircularKernel>}\\
+\ccc{CGAL::Arr_conic_traits_2<RatKernel,AlgKernel,NtTraits>}\\
+\ccc{CGAL::Arr_rational_arc_traits_2<AlgKernel,NtTraits>}\\
+\ccc{CGAL::Arr_Bezier_curve_traits_2<RatKernel,AlgKernel,NtTraits>}\\
+\ccc{CGAL::Arr_algebraic_segment_traits_2<Coefficient>}\\
+\ccc{CGAL::Arr_curve_data_traits_2<Tr,XData,Mrg,CData,Cnv>}\\
+\ccc{CGAL::Arr_consolidated_curve_data_traits_2<Traits,Data>}
+
+\ccSeeAlso
+% ========
+\ccc{ArrangementBasicTraits_2}\lcTex{
+  (\ccRefPage{ArrangementBasicTraits_2})}\\
+\ccc{ArrangementXMonotoneTraits_2}\lcTex{
+  (\ccRefPage{ArrangementXMonotoneTraits_2})}\\
+\ccc{ArrangementLandmarkTraits_2}\lcTex{
+  (\ccRefPage{ArrangementLandmarkTraits_2})}
+
+\end{ccRefConcept}
+\ccRefPageEnd
+
+%%%%%%%% Geometric Objects %%%%%%%%
+% =================================
+
+%%%%%%%% Curve_2
+% ==============
+\ccRefPageBegin
+\begin{ccRefConcept}{ArrTraits::Curve_2}
+\ccDefinition
+represents a general planar curve.
+
+\ccRefines{DefaultConstructible, CopyConstructible, Assignable}
+
+\ccHasModels\ccc{ArrangementTraits_2::Curve_2}
+\end{ccRefConcept}
+\ccRefPageEnd
+
+%%%%%%%% Functors %%%%%%%%
+% ========================
+
+%%%%%%%% MakeXMonotone_2
+\ccRefPageBegin
+\begin{ccRefConcept}{ArrTraits::MakeXMonotone_2}
+\ccRefines{Functor}
+
+\ccHasModels\ccc{ArrangementTraits_2::Make_x_monotone_2}
+
+\ccCreationVariable{fo}
+
+\ccMethod{template <typename OutputIterator>
+          OutputIterator operator()( ArrTraits::Curve_2 c,
+	                             OutputIterator oi);}{%
+  subdivides the input curve \ccc{c} into $x$-monotone subcurves and
+  isolated points, and inserts the results into a container through the
+  given output iterator. The value type of \ccc{OutputIterator} is
+  \ccc{CGAL::Object}, where each \ccc{Object} wraps either an
+  \ccc{ArrTraits::X_monotone_curve_2} object or a \ccc{ArrTraits::Point_2}
+  object. The operator returns a past-the-end iterator for the output
+  sequence.}
+\end{ccRefConcept}
+\ccRefPageEnd

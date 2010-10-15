@@ -1,0 +1,14 @@
+\section{Stream Support} 
+
+Three classes are provided by \cgal\ as adaptors to input and output stream
+iterators.  The class \ccc{Istream_iterator} is an input iterator adaptor and 
+is particularly useful for classes that are similar but not compatible to 
+\ccc{std::istream}.  Similarly, the class \ccc{Ostream_iterator} is an output 
+iterator adaptor.  The class \ccc{Verbose_ostream} can be used as an output 
+stream. The stream
+output operator \ccc{<<} is defined for any type. The class
+stores in an internal state a stream and whether the
+output is active or not. If the state is active, the stream output
+operator \ccc{<<} uses the internal stream to output its argument. If
+the state is inactive, nothing happens.
+

@@ -1,0 +1,93 @@
+% +------------------------------------------------------------------------+
+% | Reference manual page: Kd_tree_rectangle.tex
+% +------------------------------------------------------------------------+
+% | 1.07.2001   Johan W.H. Tangelder
+% | Package: ASPAS
+% | 
+\RCSdef{\RCSKdtreerectangleRev}{$Id$}
+\RCSdefDate{\RCSKdtreerectangleDate}{$Date$}
+% |
+%%RefPage: end of header, begin of main body
+% +------------------------------------------------------------------------+
+
+
+\begin{ccRefClass}{Kd_tree_rectangle<Traits>}  %% add template arg's if necessary
+
+\begin{ccAdvanced}
+
+%% \ccHtmlCrossLink{}     %% add further rules for cross referencing links
+%% \ccHtmlIndexC[class]{} %% add further index entries
+
+\ccDefinition
+  
+The class \ccRefName\ implements \ccc{d}-dimensional iso-rectangles and related operations,
+e.g., methods to compute bounding boxes of point sets. 
+
+
+\ccInclude{CGAL/Kd_tree_rectangle.h}
+
+
+\ccTypes
+
+\ccTypedef{Traits::FT FT;}{Number type.}
+
+\ccCreation
+\ccCreationVariable{r}  %% choose variable name
+
+\ccConstructor{Kd_tree_rectangle(int d);}
+{Constructs a $d$-dimensional rectangle \ccc{r} with lower bound and upper bound set to zero 
+in each dimension.}
+ 
+\ccConstructor{
+template <class PointIter>
+Kd_tree_rectangle(int d, PointIter begin, PointIter end);}
+{Constructs the bounding box of the points in the range [\ccc{begin,end}), where the value
+type of \ccc{PointIter} must be \ccc{Traits::Point_d}.}
+
+\ccOperations
+
+\ccMethod{FT min_coord(int i);}
+{Returns the lower bound of the rectangle in dimension~\ccc{i}.}
+
+\ccMethod{FT max_coord(int i);}
+{Returns the upper bound of the rectangle in dimension~\ccc{i}.}
+
+
+
+\ccMethod{void set_upper_bound(int i, const FT& x);}
+{Sets upper bound in dimension \ccc{i} to \ccc{x}.}
+
+\ccMethod{void set_lower_bound(int i, const FT& x);}
+{Sets lower bound in dimension \ccc{i} to \ccc{x}.}
+ 
+ 
+\ccMethod{FT max_span();}
+{Returns the maximal span of the rectangle.}
+
+\ccMethod{FT max_span_coord();}
+{Returns the smallest coordinate for which the rectangle has its maximal span.}
+
+\ccMethod{int dimension();}
+{Returns the dimension of the rectangle.}
+
+\ccMethod{void split(Kd_tree_rectangle<Traits>& r, int d, FT value);}
+{Splits rectangle in dimension \ccc{d} at coordinate-value \ccc{value} 
+ by modifying itself to lower half and by modifying \ccc{r} to upper half.} 
+
+\ccHeading{Output Routines}
+
+\ccFunction{ template<class FT>
+std::ostream& operator<<(std::ostream& s, Kd_tree_rectangle<Traits>& r);} 
+{Inserts rectangle \ccc{r} in the output stream \ccc{s} and returns~\ccc{s}.}
+
+
+\end{ccAdvanced}
+
+
+\end{ccRefClass}
+
+% +------------------------------------------------------------------------+
+%%RefPage: end of main body, begin of footer
+% EOF
+% +------------------------------------------------------------------------+
+

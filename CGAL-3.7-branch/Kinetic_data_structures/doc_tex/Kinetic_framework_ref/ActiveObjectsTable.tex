@@ -1,0 +1,123 @@
+% +------------------------------------------------------------------------+
+% | Reference manual page: Moving_object_table.tex
+% +------------------------------------------------------------------------+
+% | 20.03.2005   Author
+% | Package: Kinetic_data_structures
+% | 
+\RCSdef{\RCSMovingobjecttableRev}{$Id$}
+\RCSdefDate{\RCSMovingobjecttableDate}{$Date$}
+% |
+%%RefPage: end of header, begin of main body
+% +------------------------------------------------------------------------+
+
+
+\begin{ccRefConcept}{Kinetic::ActiveObjectsTable}  %% add template arg's if necessary
+
+%% \ccHtmlCrossLink{}     %% add further rules for cross referencing links
+%% \ccHtmlIndexC[class]{} %% add further index entries
+
+\ccDefinition
+  
+
+This container holds a set of objects of a particular type. It creates
+notifications using the standard \ccc{Multi_listener<Interface>}
+interface when a primitive changes or is added or deleted. Objects
+which are listening for events can then ask which primitives changed.
+
+For speed, modifications to the \ccRefName\ can be grouped into
+editing sessions. A session is begun by calling
+\ccc{set_is_editing(true)} and ended by calling \ccc{set_is_editing(false)}.
+There is one type of notification, namely, \ccc{Listener::IS_EDITING}
+which occurs when the editing mode is set to false, signaling that a
+batch of changes is completed.
+
+As an convenience, the change methods can be called without setting
+the editing state to true, this acts as if it were set to true for
+that one function call.
+
+\ccTypes
+
+\ccNestedType{Key}{A key identifying an object in the table.}
+
+\ccNestedType{Data}{The type being stored in the table.}
+
+\ccNestedType{Listener}{The base class to derive from for listening for runtime events.}
+
+The following types are iterators. Each type, \ccc{Foo_iterator} has
+two corresponding methods \ccc{foo_begin} and \ccc{foo_end} which
+allow you to iterate through the objects in the set \ccc{Foo}.
+
+\ccNestedType{Key_iterator}{An iterator through all the valid keys in the table.}
+
+\ccNestedType{Changed_iterator}{An iterator through all the objects which have been changed in the last editing session. The iterator iterates through the objects in lexicographical order.}
+
+\ccNestedType{Inserted_iterator}{An iterator through all the objects which were added in the last editing session.}
+
+\ccNestedType{Erased_iterator}{An iterator through all the objects which were deleted in the last editing session.}
+
+\ccCreation
+\ccCreationVariable{mot}  %% choose variable name
+
+\ccOperations
+
+\ccMethod{Data operator[](Key key) const;}{Access the object referenced by the key.}
+
+\ccMethod{Data at(Key key) const;}{Access the object referenced by the key.}
+
+\ccMethod{void set_is_editing(bool is_editing);}{Set the editing state of
+  the object. A notification is sent when the editing state is set to
+  false after it has been true, i.e. the editing session is finished.
+  This allows changes to be batched together.}
+
+\ccMethod{bool is_editing() const;}{Access the editing state.}
+
+\ccMethod{void set(Key key, Data object);}{This method changes
+  the motion of one moving object.  The position at the current time
+  should not be different from the previous current position. However,
+  at the moment I do not check this as there is no reference to time
+  in the \ccRefName.  If \ccc{is_editing()} is not true, then it is as
+  if the calls \ccc{set_is_editing(true)}, \ccc{set(key, value)} and
+  finally \ccc{set_is_editing(false)} were made. If it is true, then
+  no notifications are created.}
+
+  \ccMethod{Key insert_object(Data ob);}{Insert a new object into the
+    table and return a \ccc{Key} which can be used to refer to it. See
+    \ccc{set(Key, Data)} for a description of editing modes.}
+
+
+ \ccMethod{void erase(Key key);}{ Delete an object from the table. The
+   object with Key key must already be in the table. This does not
+   necessarily decrease the amount of storage used at all. In fact, it
+   is unlikely to do so.  See \ccc{set(Key,Data)} for an explainating
+   of how the editing modes are used.  }
+
+\ccMethod{void clear();}{Remove all objects from the table and free all storage.}
+
+\ccMethod{void is_set(Key) const;}{Returns true if the object has been
+  set in the currently notified editing session. Note that this method
+  can only be saftely called when processing an \ccc{IS_EDITING}
+  notification.}
+
+\ccMethod{void is_new(Key) const;}{Returns true if the object has been
+  set in the currently notified editing session.}
+
+\ccMethod{void clear(Key) const;}{Returns true if the object has been
+  set in the currently notified editing session.}
+
+\ccHasModels
+
+\ccc{Kinetic::Active_objects_vector<MovingObject>}
+
+\ccSeeAlso
+
+\ccc{Multi_listener<Interface>},
+\ccc{Kinetic::Active_objects_listener_helper<ActiveObjectsTable, KDS>}
+
+
+\end{ccRefConcept}
+
+% +------------------------------------------------------------------------+
+%%RefPage: end of main body, begin of footer
+% EOF
+% +------------------------------------------------------------------------+
+

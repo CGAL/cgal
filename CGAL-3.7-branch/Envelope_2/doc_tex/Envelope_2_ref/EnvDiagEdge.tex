@@ -1,0 +1,95 @@
+% +------------------------------------------------------------------------+
+% | Reference manual page: EnvDiagEdge.tex
+% +------------------------------------------------------------------------+
+% | 
+% | Package: Envelope_2
+% | 
+% +------------------------------------------------------------------------+
+
+\ccRefPageBegin
+
+\begin{ccRefConcept}{EnvelopeDiagramEdge}
+
+\ccDefinition
+%============
+
+An edge record in an envelope diagram, which represents a continuous portion
+of the $x$-axis. It is associated with a (possibly empty) set of curves that
+induce the envelope over this portion of the $x$-axis. Note that all curves
+in this set overlap over the interval represented by the edge.
+
+\ccTypes
+%=======
+
+\ccNestedType{Size}{the size type (convertible to \ccc{size_t}).}
+
+\ccNestedType{Vertex}{the corresponding diagram-vertex type.}
+
+\ccNestedType{X_monotone_curve_2}{the $x$-monotone curve type.} 
+
+\ccCreation
+\ccCreationVariable{e}
+%=====================
+
+\ccConstructor{EnvelopeDiagramEdge();} 
+    {default constructor.}
+    
+\ccConstructor{EnvelopeDiagramEdge (const EnvelopeDiagramEdge& other);}
+    {copy constructor.}
+
+\ccAccessFunctions
+%=================
+
+\ccMethod{Size number_of_curves () const;}
+    {returns the number of $x$-monotone curves associated with \ccVar.}
+\ccGlue
+\ccMethod{bool is_empty () const;}
+    {returns whether \ccVar\ represents an empty interval --- namely, whether the set of $x$-monotone curves associated with it is empty.}
+
+\ccMethod{const X_monotone_curve_2& curve () const;}
+    {returns a representative $x$-monotone curve associated with \ccVar.
+     \ccPrecond{\ccVar\ does not represent an empty interval.}}
+
+\ccMethod{Curve_const_iterator curves_begin () const;}
+    {return an iterator for the first $x$-monotone curve associated with \ccVar.}
+\ccGlue
+\ccMethod{Curve_const_iterator curves_end () const;}
+    {return a past-the-end iterator for the $x$-monotone curves associated with \ccVar.}
+
+\ccMethod{Vertex_const_handle left() const;}
+    {returns the vertex lying to \ccVar's left.
+     \ccPrecond{\ccVar\ is not the leftmost edge in the diagram.}}
+
+\ccMethod{Vertex_const_handle right() const;}
+    {returns the vertex lying to \ccVar's right.
+     \ccPrecond{\ccVar\ is not the rightmost edge in the diagram.}}
+
+\ccModifiers
+%===========
+
+\ccMethod{void clear_curves();}
+    {clears the set of curves associated with \ccVar.}
+\ccGlue
+\ccMethod{void add_curve (const X_monotone_curve_2& cv);}
+    {adds the $x$-monotone curve \ccc{cv} to the set of curves associated with \ccVar.}
+\ccGlue
+\ccMethod{void add_curves (Curve_const_iterator begin, 
+                           Curve_const_iterator end);}
+    {adds the given range of $x$-monotone curves to the set of curves associated with \ccVar.}
+
+\ccMethod{void set_left (Vertex_const_handle v);}
+    {sets the vertex lying to the left of \ccVar\ to be \ccc{v}.}
+\ccGlue
+\ccMethod{void set_right (Vertex_const_handle v);}
+    {sets the vertex lying to the right of \ccVar\ to be \ccc{v}.}
+
+\ccSeeAlso
+     \ccc{EnvelopeDiagram_1}\lcTex{ 
+     (\ccRefPage{EnvelopeDiagram_1})}\\
+     \ccc{EnvelopeDiagramVertex}\lcTex{
+     (\ccRefPage{EnvelopeDiagramVertex})}\\
+
+\end{ccRefConcept}
+
+\ccRefPageEnd
+

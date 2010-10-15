@@ -1,0 +1,31 @@
+% +------------------------------------------------------------------------+
+% | Reference manual page: Periodic_3_triangulation_locate_type_3.tex
+% +------------------------------------------------------------------------+
+% | 19.2.2009   Monique Teillaud, Manuel Caroli
+% | Package: Periodic_3_triangulation_3
+% | 
+\RCSdef{\RCSPeriodictriangulationlocatetypeRev}{$Id$}
+\RCSdefDate{\RCSPeriodictriangulationlocatetypeDate}{$Date$}
+% |
+%%RefPage: end of header, begin of main body
+% +------------------------------------------------------------------------+
+
+\ccModifierCrossRefOff
+\begin{ccRefEnum}[Periodic_3_triangulation_3::]{Locate_type}
+
+\ccDefinition
+  
+The enum \ccRefName\ is defined by \ccc{Periodic_3_triangulation_3} to
+specify which case occurs when locating a point in the
+triangulation. If the triangulation does not contain any points
+\ccc{EMPTY} is returned.
+
+\ccEnum{enum Locate_type {VERTEX=0, EDGE, FACET, CELL, EMPTY};}
+{}
+
+\ccSeeAlso
+
+\ccc{CGAL::Periodic_3_triangulation_3}
+
+\end{ccRefEnum}
+\ccModifierCrossRefOn

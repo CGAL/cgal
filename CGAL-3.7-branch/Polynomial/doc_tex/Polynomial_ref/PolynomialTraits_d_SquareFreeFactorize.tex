@@ -1,0 +1,56 @@
+\begin{ccRefConcept}{PolynomialTraits_d::SquareFreeFactorize}
+
+\ccDefinition
+
+This \ccc{Functor} computes a square-free factorization 
+of a \ccc{PolynomialTraits_d::Polynomial_d}. 
+
+A polynomial $p$ is factored into square-free and pairwise coprime non-constant
+factors $g_i$ with multiplicities $m_i$ and a constant factor $a$, such that 
+$p = a  \cdot  g_1^{m_1}  \cdot  ...  \cdot  g_n^{m_n}$.
+
+The pairs $(g_i,m_i)$ are written into the given output iterator.\\
+
+This functor is well defined if \ccc{PolynomialTraits_d::Polynomial_d} is a 
+\ccc{UniqueFactorizationDomain}. 
+        
+\ccRefines 
+
+Assignable\\
+CopyConstructible\\
+DefaultConstructible\\
+
+%\ccTypes
+
+\ccOperations
+
+\ccSetThreeColumns{xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx}{xxx}{}
+\ccCreationVariable{fo}
+
+\ccMethod{template<class OutputIterator>
+OutputIterator operator()(PolynomialTraits_d::Polynomial_d  p,
+                          OutputIterator                    it,
+                          PolynomialTraits_d::Innermost_coefficient_type& a);}
+{ Computes the square-free factorization of $p$ and returns the 
+  past-the-end iterator of the written range. 
+  \ccPrecond{ \ccc{std::iterator_traits< OutputIterator >::value_type} 
+  must be constructible from 
+  \ccc{std::pair<PolynomialTraits_d::Polynomial_d,int>}.}
+}
+
+\ccMethod{template<class OutputIterator>
+OutputIterator operator()(PolynomialTraits_d::Polynomial_d  p,
+                          OutputIterator                   it);}
+{ As the first operator, just not computing the factor $a$. }
+
+%\ccHasModels
+
+\ccSeeAlso
+
+\ccRefIdfierPage{Polynomial_d}\\
+\ccRefIdfierPage{PolynomialTraits_d}\\
+\ccRefIdfierPage{PolynomialTraits_d::SquareFreeFactorizeUpToConstantFactor}\\
+\ccRefIdfierPage{PolynomialTraits_d::MakeSquareFree}\\
+\ccRefIdfierPage{PolynomialTraits_d::IsSquareFree}\\
+
+\end{ccRefConcept}

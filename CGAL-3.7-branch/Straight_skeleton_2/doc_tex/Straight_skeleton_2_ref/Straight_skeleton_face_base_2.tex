@@ -1,0 +1,56 @@
+%% Copyright (c) 2004  SciSoft.  All rights reserved.
+%%
+%% This file is part of CGAL (www.cgal.org); you may redistribute it under
+%% the terms of the Q Public License version 1.0.
+%% See the file LICENSE.QPL distributed with CGAL.
+%%
+%% Licensees holding a valid commercial license may use this file in
+%% accordance with the commercial license agreement provided with the software.
+%%
+%% This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
+%% WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
+%%
+%% 
+%%
+%% Author(s)     : Fernando Cacciola <fernando_cacciola@hotmail.com>
+
+
+\begin{ccRefClass}{Straight_skeleton_face_base_2<Refs>}
+
+%% add template arg's if necessary
+
+%% \ccHtmlCrossLink{}     %% add further rules for cross referencing links
+%% \ccHtmlIndexC[class]{} %% add further index entries
+\ccCreationVariable{f}
+\ccDefinition
+
+The class \ccRefName\ provides a model for the
+\ccc{StraightSkeletonFace_2} concept which is the face
+type required by the \ccc{StraightSkeleton_2}
+concept. The class \ccRefName\ has only one template argument: the model of the \ccc{StraightSkeleton_2} concept (the face container).
+
+This class can be used as a base class allowing users of the straight skeleton data structure to decorate a face with additional data. The concrete face class must be given in the \ccc{HalfedgeDSItems} template parameter of the instantiation of the \ccc{HalfedgeDS_default} class used as the model for the \ccc{Straight_skeleton_2} concept.
+
+\ccInclude{CGAL/Straight_skeleton_face_base_2.h}
+
+\ccIsModel
+\ccc{StraightSkeletonFace_2}\\
+\ccc{DefaultConstructible}\\
+\ccc{CopyConstructible}\\
+\ccc{Assignable}\\
+
+\ccSeeAlso
+\ccc{StraightSkeletonFace_2}\\
+\ccc{StraightSkeletonVertex_2}\\
+\ccc{StraightSkeletonHalfedge_2}\\
+\ccc{StraightSkeleton_2}\\
+\ccc{CGAL::Straight_skeleton_vertex_base_2<Refs>}\\
+\ccc{CGAL::Straight_skeleton_halfedge_base_2<Refs>}
+
+\end{ccRefClass}
+
+% +------------------------------------------------------------------------+
+%%RefPage: end of main body, begin of footer
+% EOF
+% +------------------------------------------------------------------------+
+

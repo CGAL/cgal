@@ -1,0 +1,245 @@
+
+\begin{ccRefFunctionObjectConcept}{CircularKernel::ConstructLine_2}
+\ccCreationVariable{fo}
+
+\ccRefines
+
+\ccc{Kernel::ConstructLine_2}
+
+A model \ccVar\ of this type must provide:
+
+\ccMemberFunction{CircularKernel::Line_2 operator()
+	(CircularKernel::LineArc_2);}
+{Constructs the supporting line of a line segment.}
+
+\ccMemberFunction{CircularKernel::Line_2 operator()
+	(CircularKernel::Polynomial_1_2);}
+{Constructs a line from an equation.}
+
+\ccSeeAlso
+
+\ccRefIdfierPage{CircularKernel::GetEquation}
+
+\end{ccRefFunctionObjectConcept}
+\begin{ccRefFunctionObjectConcept}{CircularKernel::ConstructCircle_2}
+\ccCreationVariable{fo}
+
+\ccRefines
+
+\ccc{Kernel::ConstructCircle_2}
+
+A model \ccVar\ of this type must provide:
+
+\ccMemberFunction{CircularKernel::Circle_2 operator()
+	(CircularKernel::CircularArc_2);}
+{Constructs the supporting circle of a circular arc.}
+
+\ccMemberFunction{CircularKernel::Circle_2 operator()
+	(CircularKernel::Polynomial_for_circles_2_2);}
+{Constructs a circle from an equation.}
+
+\ccSeeAlso
+
+\ccRefIdfierPage{CircularKernel::GetEquation}
+
+\end{ccRefFunctionObjectConcept}
+\begin{ccRefFunctionObjectConcept}{CircularKernel::ConstructCircularArcPoint_2}
+\ccCreationVariable{fo}
+
+A model \ccVar\ of this type must provide:
+
+\ccMemberFunction{CircularKernel::Circular_arc_point_2 operator()
+	(const CircularKernel::Root_for_circles_2_2 & r);}
+{}
+
+\ccMemberFunction{CircularKernel::Circular_arc_point_2 operator()
+	(const CircularKernel::Point_2 & p);}
+{}
+
+\end{ccRefFunctionObjectConcept}
+\begin{ccRefFunctionObjectConcept}{CircularKernel::ConstructLineArc_2}
+\ccCreationVariable{fo}
+
+A model \ccVar\ of this type must provide:
+
+\ccMemberFunction{CircularKernel::Line_arc_2 operator()
+	(const CircularKernel::Line_2 &l,
+	const CircularKernel::Circular_arc_point_2 &p1,
+	const CircularKernel::Circular_arc_point_2 &p2);}
+{Constructs the line segment supported by \ccc{l}, whose source 
+is \ccc{p1} and whose target is \ccc{p2}.
+\ccPrecond{\ccc{p1} and \ccc{p2} lie on \ccc{l}.}}
+
+%\ccMemberFunction{CircularKernel::Line_arc_2 operator()
+%	(const CircularKernel::Line_2 &l,
+%	const CircularKernel::Point_2 &p1,
+%	const CircularKernel::Point_2 &p2);}
+%{Same.}
+
+\ccMemberFunction{CircularKernel::Line_arc_2 operator()
+	(const CircularKernel::Segment_2 &s);}
+{}
+
+\ccMemberFunction{CircularKernel::Line_arc_2 operator()
+	(const CircularKernel::Point_2 &p1,
+	const CircularKernel::Point_2 &p2);}
+{}
+
+\ccMemberFunction{CircularKernel::Line_arc_2 operator()
+	(const CircularKernel::Line_2 &l,
+	const CircularKernel::Circle_2 &c1, bool b1,
+	const CircularKernel::Circle_2 &c2, bool b2);}
+{Constructs the line segment whose supporting line is \ccc{l}, whose 
+source endpoint is the $b_1^{th}$ intersection of \ccc{l} with \ccc{c1}, 
+and whose target endpoint is the $b_2^{th}$ intersection of \ccc{l} 
+and \ccc{c2}, where intersections are ordered lexicographically.
+\ccPrecond{\ccc{l} intersects both \ccc{c1} and \ccc{c2}, and the arc
+defined by the intersections has non-zero length.}}
+
+\ccMemberFunction{CircularKernel::Line_arc_2 operator()
+	(const CircularKernel::Line_2 &l,
+	const CircularKernel::Line_2 &l1,
+	const CircularKernel::Line_2 &l2);}
+{Same, for intersections defined by lines instead of circles.}
+
+\end{ccRefFunctionObjectConcept}
+\begin{ccRefFunctionObjectConcept}{CircularKernel::ConstructCircularArc_2}
+\ccCreationVariable{fo}
+
+A model \ccVar\ of this type must provide:
+
+\ccMemberFunction{CircularKernel::Circular_arc_2 operator()
+	(const CircularKernel::Circle_2 &c);}
+{Constructs an arc from a full circle.}
+
+\ccMemberFunction{CircularKernel::Circular_arc_2 operator()
+	(const CircularKernel::Circle_2 &c,
+	const CircularKernel::Circular_arc_point_2 &p1,
+	const CircularKernel::Circular_arc_point_2 &p2);}
+{Construct the circular arc supported by \ccc{c}, whose source is
+  \ccc{p1} and whose target is \ccc{p2} when traversing the circle in
+  counterclockwise direction. 
+\ccPrecond{\ccc{p1} and \ccc{p2} lie on \ccc{c}.}}
+
+%\ccMemberFunction{CircularKernel::Circular_arc_2 operator()
+%	(const CircularKernel::Circle_2 &c,
+%	const CircularKernel::Point_2 &p1,
+%	const CircularKernel::Point_2 &p2);}
+%{Same.}
+
+\ccMemberFunction{CircularKernel::Circular_arc_2 operator()
+	(const CircularKernel::Circle_2 &c, 
+	const CircularKernel::Circle_2 &c1, bool b1,
+	const CircularKernel::Circle_2 &c2, bool b2);}
+{Constructs the unique circular arc whose supporting circle is
+  \ccc{c}, and whose source is the intersection of \ccc{c}
+  and \ccc{c1} with index $b_1$, and whose target is the intersection
+  of \ccc{c} and \ccc{c2} of index $b_2$, where intersections are
+  ordered lexicographically, and when traversing the circle in
+  counterclockwise direction.  
+\ccPrecond{\ccc{c} intersects both \ccc{c1} and \ccc{c2}, and the arc
+  defined by the intersections has non-zero length.}}
+
+\ccMemberFunction{CircularKernel::Circular_arc_2 operator()
+	(const CircularKernel::Circle_2 &c,
+	const CircularKernel::Line_2 &l1, bool b1,
+ 	const CircularKernel::Line_2 &l2, bool b2);}
+{Same, for intersections defined by lines instead of circles.}
+
+\ccMemberFunction{CircularKernel::Circular_arc_2 operator()
+	(const CircularKernel::Point_2 &p,
+        const CircularKernel::Point_2 &q,
+        const CircularKernel::Point_2 &r);}
+{Constructs an arc that is supported by the circle of type
+  \ccc{CircularKernel::Circle_2} passing through the points \ccc{p},
+  \ccc{q} and \ccc{r}. The source and target are respectively \ccc{p}
+  and \ccc{r}, when traversing the supporting circle in the
+  counterclockwise direction. 
+  Note that, depending on the orientation of the point triple
+  \ccc{(p,q,r)}, \ccc{q} may not lie on the arc. 
+\ccPrecond{\ccc{p}, \ccc{q}, and \ccc{r} are not collinear.}}
+
+\end{ccRefFunctionObjectConcept}
+\begin{ccRefFunctionObjectConcept}{CircularKernel::ConstructCircularMinVertex_2} 
+
+\ccCreationVariable{fo}
+
+A model \ccVar\ of this type must provide:
+
+\ccMemberFunction{CircularKernel::Circular_arc_point_2 operator()
+	(const CircularKernel::Circular_arc_2 & c);}
+{Constructs the $x$-minimal vertex of \ccc{c}.
+\ccPrecond{The arc \ccc{c} is $x$-monotone.}}
+
+\ccMemberFunction{CircularKernel::Circular_arc_point_2 operator()
+	(const CircularKernel::Line_arc_2 & l);}
+{Same, for a line segment.}
+
+\end{ccRefFunctionObjectConcept}
+\begin{ccRefFunctionObjectConcept}{CircularKernel::ConstructCircularMaxVertex_2} 
+
+\ccCreationVariable{fo}
+
+A model \ccVar\ of this type must provide:
+
+\ccMemberFunction{CircularKernel::Circular_arc_point_2 operator()
+	(const CircularKernel::Circular_arc_2 & c);}
+{Constructs the $x$-maximal vertex of \ccc{c}.
+\ccPrecond{The arc \ccc{c} is $x$-monotone.}}
+
+\ccMemberFunction{CircularKernel::Circular_arc_point_2 operator()
+	(const CircularKernel::Line_arc_2 & l);}
+{Same, for a line segment.}
+
+\end{ccRefFunctionObjectConcept}
+\begin{ccRefFunctionObjectConcept}{CircularKernel::ConstructCircularSourceVertex_2} 
+
+\ccCreationVariable{fo}
+
+A model \ccVar\ of this type must provide:
+
+\ccMemberFunction{CircularKernel::Circular_arc_point_2 operator()
+	(const CircularKernel::Circular_arc_2 & c);}
+{Constructs the source vertex of \ccc{c}.}
+
+\ccMemberFunction{CircularKernel::Circular_arc_point_2 operator()
+	(const CircularKernel::Line_arc_2 & l);}
+{Same, for a line segment.}
+
+\end{ccRefFunctionObjectConcept}
+\begin{ccRefFunctionObjectConcept}{CircularKernel::ConstructCircularTargetVertex_2} 
+
+\ccCreationVariable{fo}
+
+A model \ccVar\ of this type must provide:
+
+\ccMemberFunction{CircularKernel::Circular_arc_point_2 operator()
+	(const CircularKernel::Circular_arc_2 & c);}
+{Constructs the target vertex of \ccc{c}.}
+
+\ccMemberFunction{CircularKernel::Circular_arc_point_2 operator()
+	(const CircularKernel::Line_arc_2 & l);}
+{Same, for a line segment.}
+
+\end{ccRefFunctionObjectConcept}
+\begin{ccRefFunctionObjectConcept}{CircularKernel::ConstructBbox_2}
+
+\ccCreationVariable{fo}
+
+A model \ccVar\ of this type must provide operators to construct 
+a bounding box of geometric objects:
+
+\ccMemberFunction{CGAL::Bbox_2 operator()
+	(const CircularKernel::Circular_arc_point_2 & p);}
+{}
+
+\ccMemberFunction{CGAL::Bbox_2 operator()
+	(const CircularKernel::Line_arc_2 & l);}
+{}
+
+\ccMemberFunction{CGAL::Bbox_2 operator()
+	(const CircularKernel::Circular_arc_2 & c);}
+{}
+
+\end{ccRefFunctionObjectConcept}
+

@@ -1,0 +1,2951 @@
+\documentclass[a4paper]{article}
+%\usepackage{html}
+\usepackage[dvips]{graphics,color,epsfig}
+\usepackage{path}
+\usepackage{amssymb}
+\usepackage{amsfonts}
+\usepackage{amsmath}
+\usepackage{amsthm}
+\usepackage{psfrag}
+\newcommand{\N}{\ensuremath{\mathbb{N}}}
+\newcommand{\F}{\ensuremath{\mathbb{F}}}
+\newcommand{\Z}{\ensuremath{\mathbb{Z}}}
+\newcommand{\R}{\ensuremath{\mathbb{R}}}
+\newcommand{\Q}{\ensuremath{\mathbb{Q}}}
+\newcommand{\C}{\ensuremath{\mathbb{C}}}
+
+\newtheorem{lemma}{Lemma}
+\newtheorem{assumption}{Assumption}
+\newtheorem{definition}{Definition}
+
+
+\title{Update $Uz$}
+\author{Frans Wessendorp}
+\begin{document}
+\maketitle
+\section{The necessity for an additional update}
+Suppose in Ratio Test Step~1 variable $x_{i}$ is leaving and variable $x_{j}$ is
+entering. If $M_{B \setminus \{i\}}$ is not regular, we no longer have a unique
+solution to $(UQP_{j}^{t}(\hat{B} \setminus \{i\}))$ for each value of $t$.
+Currently the algorithm then proceeds with Ratio Test Step~2 with
+$\hat{B}:=B \cup \{j\}$ and variable $x_{i}$ leaving in the first ratio test in
+Ratio Test Step~2. However, this does not always work, for
+$B^{\prime}:=B \setminus \{i\} \cup \{j\}$, $M_{B^{\prime}}$ may be regular
+whereas $M_{B \cup \{j\}}$ and $M_{B \setminus \{i\}}$ are both singular, such
+that both ways to compute the new basis inverse $M_{B^{\prime}}^{-1}$ from
+$M_{B}^{-1}$ by `growing' and `shrinking' updates,
+that add or remove one column and row per update,
+are blocked. The simplest way
+to solve this problem is to have a replacement step in phaseII as well. 
+
+\section{Update type z}
+We use an inversion formula described in~\cite{Zielke} which expresses $(M +
+UV^{T})^{-1}$ in terms of $M^{-1}$, $U$ and $V$, where $UV^{T}$ has at
+most rank 2 and $M$ as well as $M+UV^{T}$ are both symmetric.
+We use the general inversion formula
+given in~\cite{Zielke}, Equation~(3), and specialize it to our specific
+situation in subsequent sections:
+\begin{equation}
+\label{eq:inversion_formula}
+\left(M + UV^{T}\right)^{-1} =
+M^{-1} - M^{-1} U \left(I_{r} +
+V^{T}M^{-1}U\right)^{-1}V^{T}M^{-1}
+\end{equation}
+where
+\begin{eqnarray}
+\label{def:U}
+U &:=& \left(u- u_{i}e_{i}, e_{i} \right) \\
+\label{def:V}
+V &:=& \left(e_{i}, u \right)
+\end{eqnarray}
+and 
+\begin{equation}
+\label{def:diff_column}
+u:=
+\zeta
+-
+M_{\bullet, i}
+\end{equation}
+with $\zeta$ being the new column (row).
+Thus the correction matrix $C$ has the following form
+\begin{equation}
+C:=UV^{T}=ue_{i}^{T} + e_{i}u^{T} - u_{i}e_{i}e_{i}^{T}.
+\end{equation}
+Plugging this into Equation~(\ref{eq:inversion_formula}) yields
+\begin{equation}
+\label{eq:inversion_formula_spec}
+\left(M + UV^{T}\right)^{-1} =
+M^{-1} - M^{-1}\left(u - u_{i}e_{i}, e_{i}\right)
+Q^{-1}
+\left(
+\begin{array}{c}
+e_{i}^{T} \\
+\hline
+u^{T}
+\end{array}
+\right)
+M^{-1}
+\end{equation}
+where 
+\begin{eqnarray}
+Q &:=& I_{2} +
+\left(
+\begin{array}{c}
+e_{i}^{T}  \\
+u^{T}
+\end{array}
+\right)M^{-1}
+\left(u - u_{i}e_{i}, e_{i}\right) \\
+&=&
+\label{def:Q_explicit}
+\left(
+\begin{array}{cc}
+1 + M^{-1}_{i, \bullet}u - u_{i}M_{i,i}^{-1} &
+M_{i,i}^{-1} \\
+u^{T}M^{-1}u-u_{i}u^{T}M^{-1}_{\bullet, i} &
+1 + u^{T}M^{-1}_{\bullet, i}
+\end{array}
+\right)
+\end{eqnarray}
+%and $\beta_{i,i}$ is defined as 
+%\begin{equation}
+%\label{def:beta}
+%\beta_{i,i}:=M^{-1}_{i,i}
+%\end{equation}
+The inverse of $Q$,
+\begin{equation}
+Q=
+\left(
+\begin{array}{cc}
+q_{1} & q_{2} \\
+q_{3} & q_{4}
+\end{array}
+\right)
+\end{equation}
+is given by
+\begin{equation}
+Q^{-1}=
+\frac{1}{\det(Q)}
+\left(
+\begin{array}{cc}
+q_{4}  & -q_{2} \\
+-q_{3} &  q_{1}
+\end{array}
+\right)
+\end{equation}
+with
+\begin{eqnarray}
+\label{def:det_Q}
+\det(Q)
+&=&
+q_{1}q_{4}-q_{2}q_{3}
+\nonumber \\
+&=&
+\left(1+M_{i, \bullet}^{-1}u-u_{i}M_{i,i}^{-1}\right)
+\left(1 + u^{T}M^{-1}_{\bullet, i}\right)
+\nonumber \\
+&&
+-M_{i,i}^{-1}\left(u^{T}M^{-1}u-u_{i}u^{T}M_{\bullet,i}^{-1}\right)
+\nonumber \\
+&=&
+\left(1+M_{i, \bullet}^{-1}u\right)^{2}
+-u_{i}M_{i,i}^{-1}\left(1+u^{T}M_{\bullet,i}^{-1}\right)
+-M_{i,i}^{-1}u^{T}M^{-1}u
+\nonumber \\
+&&
++ u_{i}M_{i,i}^{-1}u^{T}M_{\bullet,i}^{-1}
+\nonumber \\
+&=& \left(1+M_{i, \bullet}^{-1}u\right)^{2} -
+    M_{i,i}^{-1}\left(u_{i}+ u^{T}M^{-1}u\right)
+\end{eqnarray}
+Collecting terms in Equation~(\ref{eq:inversion_formula_spec}) then yields
+\begin{eqnarray}
+\label{eq:inversion_formula_spec_explicit}
+\lefteqn{\left(M+ UV^{T}\right)^{-1}=M^{-1} -} \nonumber \\
+& & \frac{1}{\det(Q)}
+\left[
+  M^{-1}_{\bullet, i}
+  \left(k_{1}v^{T} + k_{2}M^{-1}_{i, \bullet}\right)
+  +v\left(k_{3}v^{T} + k_{1}M^{-1}_{i, \bullet}\right)
+\right]
+\end{eqnarray}
+where
+\begin{eqnarray}
+\label{def:v}
+v     &:=& M^{-1}u \\
+\label{def:w}
+w     &:=& M^{-1}_{i, \bullet}u \\
+\label{def:k1}
+k_{1} &:=& 1 + w \\
+\label{def:k2}
+k_{2} &:=& -\left(u^{T}v + u_{i}\right) \\
+\label{def:k3}
+k_{3} &:=& -M_{i,i}^{-1} 
+\end{eqnarray}
+With these definitions $\det(Q)$ can then be written in terms of
+$k_{1}$, $k_{2}$ and $k_{3}$ as
+\begin{equation}
+\label{def:det_Q_k}
+\det(Q)=k_{1}^{2}-k_{2}k_{3}
+\end{equation}
+In order to get rid of the difference $u$
+in Equation~(\ref{eq:inversion_formula_spec_explicit}) and
+Definitions~(\ref{def:v}) to~(\ref{def:k3}) we rewrite the latter ones
+\begin{eqnarray}
+\label{def:v_zeta}
+v
+&:=&
+M^{-1}u
+\nonumber \\
+&=& 
+M^{-1}\left[\zeta - M_{\bullet, i}\right]
+\nonumber \\
+&=&
+M^{-1}\zeta - e_{i}
+\end{eqnarray}
+\begin{eqnarray}
+\label{def:w_zeta}
+w
+&:=&
+M^{-1}_{i, \bullet}u
+\nonumber \\
+&=&
+M^{-1}_{i, \bullet}\left[\zeta - M_{\bullet, i}\right] 
+\nonumber \\
+&=&
+M^{-1}_{i, \bullet}\zeta - 1
+\end{eqnarray}
+\begin{eqnarray}
+\label{def:k_1_zeta}
+k_{1}
+&:=&
+1 + w
+\nonumber \\
+&=&
+M^{-1}_{i, \bullet}\zeta
+\end{eqnarray}
+\begin{eqnarray}
+k_{2} &:=& -\left(u^{T}v + u_{i}\right) \nonumber \\
+      &=& -\left[\left(\zeta-M_{\bullet,i}\right)^{T}
+           M^{-1}\left(\zeta-M_{\bullet,i}\right)
+	   + \left(\zeta-M_{\bullet,i}\right)_{i}
+	   \right]   \nonumber \\
+      &=& -\left[\zeta^{T}M^{-1}\zeta
+        +M_{i,\bullet}M^{-1}M_{\bullet,i}
+	          -2\zeta^{T}M^{-1}M_{\bullet,i} 
+         	  +\zeta_{i} - M_{i,i}
+	   \right] \nonumber \\
+      &=& -\left[\zeta^{T}M^{-1}\zeta + M_{i,i}
+                  -2\zeta_{i} + \zeta_{i} - M_{i,i}
+            \right] \nonumber \\
+      &=& -\zeta^{T}M^{-1}\zeta + \zeta_{i}
+\end{eqnarray}
+
+The symmetry of the right-hand side of
+Equation~(\ref{eq:inversion_formula_spec_explicit}) becomes obvious when
+rewriting it as the sum of three symmetric matrices
+\begin{eqnarray*}
+\lefteqn{\left(M+ UV^{T}\right)^{-1}=M^{-1}-}  \\
+& & \frac{1}{\det(Q)}
+\left[
+k_{1}\left(
+  M^{-1}_{\bullet, i}v^{T}
+  +vM^{-1}_{i,\bullet}
+\right)
++
+k_{2}M^{-1}_{\bullet, i}M^{-1}_{i, \bullet}
++
+k_{3}vv^{T}
+\right]
+\end{eqnarray*}
+
+In case of a regular matrix $M+UV^{T}$ the determinant $\det(Q)$ is
+always nonzero as the factorization of 
+\begin{equation*}
+\left(
+\begin{array}{cc}
+I & -V^{T} \\
+U & M
+\end{array}
+\right)
+\end{equation*}
+into the products 
+\begin{equation*}
+\left(
+\begin{array}{cc}
+I & 0 \\
+U & M + UV^{T}
+\end{array}
+\right)
+\left(
+\begin{array}{cc}
+I & -V^{T} \\
+0 & I
+\end{array}
+\right)
+=
+\left(
+\begin{array}{cc}
+I & -V^{T}  \\
+0 & M
+\end{array}
+\right)
+\left(
+\begin{array}{cc}
+I + V^{T}M^{-1}U & 0 \\
+M^{-1}U          & I
+\end{array}
+\right)
+\end{equation*}
+shows.
+By taking determinants we obtain
+\begin{equation}
+\label{eq:det_prod}
+\det\left(M + UV^{T}\right) =
+\det\left(M\right) \det\left(I + V^{T}M^{-1}U\right)
+\end{equation}
+by assumption $M$ and $M+UV^{T}$ are regular, therefore by the above
+Equation
+$\det(I + V^{T}M^{-1}U)=\det(Q) \neq 0$.
+
+A determinant identity that will be useful in the following is subsumed in the
+following lemma
+\begin{lemma}[Jacobi's determinant identity]
+\label{lem:Jacobi_det_id}
+Let
+\begin{equation}
+A:=
+\left(
+\begin{array}{c|c}
+B & C \\
+\hline
+D & E
+\end{array}
+\right)
+, \quad
+A^{-1}:=
+\left(
+\begin{array}{c|c}
+W & X \\
+\hline
+Y & Z
+\end{array}
+\right)
+\end{equation}
+where $B$ and $W$ are $k \times k$ matrices then $\det(B)=\det(A)\det(Z)$.
+\end{lemma}
+The justification for the new additional update is given by the following
+lemma.
+\begin{lemma}
+\label{lem:main}
+If $M_{B}$ is regular with entering variable $x_{j}$, $j \not \in B$, and
+leaving variable $x_{i}$, $i \in B$, then if $M_{B \setminus \{i\}}$ 
+is singular $M_{B \setminus \{i\} \cup \{j\}}$ is regular.
+\end{lemma}
+
+\begin{proof}
+Suppose $M_{B \setminus \{i\} \cup \{j\}}=M_{B}+UV^{T}$ with
+$U$, $V$ defined according to Equations~(\ref{def:U}), (\ref{def:V})
+and (\ref{def:diff_column}) to be singular, then according to
+Equation~(\ref{eq:det_prod}), the regularity of $M_{B}$ and
+Equation~(\ref{def:det_Q})
+\begin{equation}
+\label{eq:det_Q_eq_det_M_B_replaced}
+\det \left(I+V^{T}M_{B}^{-1}U\right) =
+\det(Q) = 0
+\Longleftrightarrow
+\det(M_{B \setminus \{i\} \cup \{j\}})=0
+\end{equation}
+By Equation~(\ref{def:det_Q_k})
+\begin{equation}
+\label{def:det_Q_k_proof}
+\det(Q) = k_{1}^{2} - k_{2}k_{3}
+\end{equation}
+where
+\begin{equation}
+\label{def:ks}
+k_{1}:=\left(M_{B}^{-1}\right)_{\beta(i), \bullet}\zeta,
+\quad
+k_{2}:=\zeta_{\beta(i)} - \zeta^{T}M_{B}^{-1}\zeta,
+\quad
+k_{3}:=-\left(M_{B}^{-1}\right)_{\beta(i), \beta(i)}
+\end{equation}
+By the assumption of variable $x_{j}$ entering and variable $x_{i}$ leaving
+\begin{equation}
+\label{precond:pivot_proof}
+\left(M_{B}^{-1}\right)_{\beta(i), \bullet}
+\zeta
+=
+q_{x_{i}}
+\neq
+0
+\end{equation}
+If the assumption $\det(M_{B\setminus \{i\}})=0$ holds true
+we have, according to Lemma~(\ref{lem:Jacobi_det_id}) for $M_{B}$ and
+the regularity of $M_{B}$, 
+\begin{equation}
+\label{precond:leaving_proof}
+\det(M_{B \setminus \{i\}})=0
+\Longleftrightarrow
+\left(M_{B}^{-1}\right)_{\beta(i),\beta(i)}=0
+\end{equation}
+such that by Equations~(\ref{def:ks}), (\ref{precond:pivot_proof})
+and~(\ref{precond:leaving_proof}) $\det(Q) \neq 0$ in
+Equation~(\ref{def:det_Q_k_proof}).
+%If on the other hand the assumptions $\det(M_{B \cup \{j\}})=0$ and
+%$D_{j,j}=D_{i,j}$ hold true, we have according to \cite{Sven},
+%Equation (6.7),
+%\begin{equation*}
+%\det(M_{B \cup \{j\}}) = 0
+%\Longleftrightarrow
+%2D_{j,j} -\zeta^{T}M_{B}^{-1}\zeta = 0
+%\end{equation*}
+%which together with the assumption $D_{i,j}=D_{j,j}$ and
+%the fact $\zeta_{\beta(i)}=2D_{i,j}$ is equivalent to
+%\begin{equation}
+%\label{precond:entering_proof}
+%\det(M_{B \cup \{j\}}) = 0
+%\Longleftrightarrow
+%\zeta_{\beta(i)} -\zeta^{T}M_{B}^{-1}\zeta = 0
+%\end{equation}
+%such that by Equations~(\ref{def:ks}), (\ref{precond:pivot_proof})
+%and~(\ref{precond:entering_proof}) again $\det(Q) \neq 0$
+%in Equation~(\ref{def:det_Q_k_proof}).
+%For both cases (\ref{eq:det_Q_eq_det_M_B_replaced}) implies the lemma.
+\end{proof}
+
+\section{Update type z in the context of reduced bases}
+We distinguish 4 different cases with respect to the entering and leaving
+variables and the respective changes of the basis headings they entail:
+\begin{description}
+
+\item [$\mathbf{U_{Z_{1}}}$:$\quad j \in O \setminus B$ replaces $i \in B_{O}$]
+\begin{equation}
+\label{update:o_rep_o}
+\begin{array}{ccccccc}
+C^{\prime}      &:=&  C     &\quad\quad&
+S_{B}^{\prime}  &:=&  S_{B}  \\
+B_{O}^{\prime}  &:=&  B_{O} \setminus \{i\} \cup \{j\}  &\quad\quad&
+B_{S}^{\prime}  &:=&  B_{S}
+\end{array}
+\end{equation}
+
+\item [$\mathbf{U_{Z_{2}}}$:$\quad j \in S \setminus B$ replaces $i \in B_{O}$:]
+\begin{equation}
+\label{update:s_rep_o}
+\begin{array}{ccccccc}
+C^{\prime}      &:=& C \setminus \{\sigma(j)\}   &\quad\quad&
+S_{B}^{\prime}  &:=& S_{B} \cup  \{\sigma(j)\}   \\
+B_{O}^{\prime}  &:=& B_{O} \setminus \{i\} &\quad\quad&
+B_{S}^{\prime}  &:=&B_{S} \cup \{j\}  
+\end{array}
+\end{equation}
+
+\item [$\mathbf{U_{Z_{3}}}$:$\quad j \in O \setminus B$ replaces $i \in B_{S}$:]
+\begin{equation}
+\label{update:o_rep_s}
+\begin{array}{ccccccc}
+C^{\prime}      &:=& C \cup \{\sigma(i)\}   &\quad\quad&
+S_{B}^{\prime}  &:=& S_{B} \setminus  \{\sigma(i)\}   \\
+B_{O}^{\prime}  &:=& B_{O} \cup \{j\} &\quad\quad&
+B_{S}^{\prime}  &:=&B_{S} \setminus \{i\}  
+\end{array}
+\end{equation}
+
+\item [$\mathbf{U_{Z_{4}}}$:$\quad j \in S \setminus B$ replaces $i \in B_{S}$:]
+\begin{equation}
+\label{update:s_rep_s}
+\begin{array}{ccccccc}
+C^{\prime}      &:=& C \setminus \{\sigma(j)\} \cup \{\sigma(i)\}  &\quad\quad&
+S_{B}^{\prime}  &:=& S_{B} \setminus  \{\sigma(i)\} \cup \{\sigma(j)\}   \\
+B_{O}^{\prime}  &:=& B_{O}                                         &\quad\quad&
+B_{S}^{\prime}  &:=&B_{S} \setminus \{i\} \cup \{j\} 
+\end{array}
+\end{equation}
+\end{description} 
+Note that with respect to the reduced basis matrix $\check{M}_{B}$
+\begin{equation}
+\label{def:M_B_red}
+\check{M}_{B}:=
+\left(
+\begin{array}{c|c}
+0 & A_{C, B_{O}} \\
+\hline
+A_{C, B_{O}}^{T} & 2D_{B_{O}, B_{O}}
+\end{array}
+\right)
+\end{equation}
+only the Updates~(\ref{update:o_rep_o}) and~(\ref{update:s_rep_s}) are
+replacement updates, whereas the Updates~(\ref{update:s_rep_o})
+and~(\ref{update:o_rep_s}) are `shrinking' and `growing' updates.
+Since the solver uses the reduced basis inverse $\check{M}_{B}^{-1}$ we can
+directly apply the update described in the last section only for
+Updates~(\ref{update:o_rep_o}) and~(\ref{update:s_rep_s}), although we could
+indirectly apply last section's update by expanding the the reduced basis
+matrix inverse $\check{M}_{B}^{-1}$ to $M_{B}^{-1}$, apply the update
+and shrink back to $\check{M}_{B}^{-1}$ again.
+Since we want to work with the reduced basis inverse $\check{M}_{B}^{-1}$
+directly we generalize some of the updates described in~\cite{Sven},
+Section (6.3.2), in the sense that enlarging the reduced basis matrix by two
+rows and columns as well as the removal of two rows and columns of the reduced
+basis matrix is possible.
+
+To this end we restate the expression for $M_{B}^{-1}$ in terms of 
+$\check{M}_{B}^{-1}$ derived in~\cite{Frans_Deg}, Section~(3.7),
+given the basis heading
+$\left[C, S_{B}, B_{O}, B_{S}\right]$ as
+\begin{equation}
+\label{eq:M_B_inv_exp}
+M_{B}^{-1}=
+\left(\begin{array}{c|c|c|c}
+        \left(\check{M}_{B}^{-1}\right)_{C,C} &
+	0 &
+	\left(\check{M}_{B}^{-1}\right)_{C,B_{O}} &
+	 \left(\check{M}_{B}^{-1}\right)_{C, B_{O}}\alpha^{T} \\
+	\hline
+	0 &
+	0 &
+	0 &
+	A_{S_{B},B_{S}} \\
+	\hline
+	\left(\check{M}_{B}^{-1}\right)_{B_{O}, C} &
+	0 &
+	\left(\check{M}_{B}^{-1}\right)_{B_{O}, B_{O}} &
+          \left(\check{M}_{B}^{-1}\right)_{B_{O},B_{O}}\alpha^{T} \\
+	\hline
+	\alpha\left(\check{M}_{B}^{-1}\right)_{B_{O},
+	C} &
+	A_{S_{B}, B_{S}}^{T} &
+	\alpha\left(\check{M}_{B}^{-1}\right)_{B_{O},
+	B_{O}} &
+	\alpha\left(\check{M}_{B}^{-1}\right)_{B_{O}, B_{O}}\alpha^{T}
+      \end{array}
+\right)
+\end{equation}
+where
+\begin{equation*}
+\alpha=-A_{S_{B}, B_{S}}^{T}A_{S_{B}, B_{O}}
+\end{equation*}
+Furthermore in order to take into account possible permutations within the
+different blocks in the above expressions we introduce the following
+permutations:
+\begin{equation}
+\beta: B_{O} \cup B_{S} \rightarrow B_{O} \cup B_{S} 
+\end{equation}
+\begin{equation}
+\beta_{O}: B_{O}  \rightarrow  B_{O}, \quad
+\beta_{S}: B_{S} \rightarrow  B_{S}
+\end{equation}
+\begin{equation}
+\gamma_{C}: E \cup S_{N} \rightarrow  E \cup S_{N}, \quad
+\gamma_{S_{B}}: S_{B} \rightarrow  S_{B} 
+\end{equation}
+where the permutations are defined with respect to the headings in ascending
+order.
+
+
+
+\subsection{The precondition of the leaving variable}
+The precondition of the leaving variable of the update for the basis matrix, 
+$\det(M_{B\setminus \{i\}})=0$, is
+according to Lemma~(\ref{lem:Jacobi_det_id}) equivalent to 
+\begin{equation}
+\label{precond:leaving} 
+\left(M_{B}^{-1}\right)_{\beta(i),\beta(i)}=0
+\end{equation}
+For the updates $U_{Z_{1}}$ and $U_{Z_{2}}$ this precondition translates
+directly for the reduced basis
+matrix $\check{M}_{B}$, for the updates $U_{Z_{3}}$ and $U_{Z_{4}}$ for the
+reduced basis matrix $\check{M}_{B}$, however, the translation is a little bit
+more involved. Before delving into the details we introduce the following
+definitions which will be useful later
+\begin{equation}
+\label{def:theta_vartheta}
+\theta :=
+\left(
+\begin{array}{c}
+A_{C, j} \\
+\hline
+2D_{B_{O}, j}
+\end{array}
+\right),
+\quad
+\vartheta^{T}:=
+\left(
+\begin{array}{c}
+0 \\
+\hline
+A_{\sigma(i), B_{O}}^{T}
+\end{array}
+\right)
+\end{equation}
+\begin{equation}
+\label{def:rho_varrho}
+\rho:=
+\left(\check{M}_{B}^{-1}\right)_{\bullet, \beta_{O}(i)},
+\quad
+\varrho^{T}:=
+\left(\check{M}_{B}^{-1}\right)_{\bullet, \gamma_{C}(\sigma(j))}
+\end{equation}
+According to Equation~(\ref{eq:M_B_inv_exp})
+$\left(M_{B}^{-1}\right)_{\beta(i),\beta(i)}=0$
+for $i \in B_{S}$ amounts to
+\begin{equation}
+\label{eq:precond}
+\left(\alpha\left(\check{M}_{B}^{-1}\right)_{B_{O}, B_{O}}
+    \alpha^{T}\right)_{\beta_{S}(i), \beta_{S}(i)} = 0
+\end{equation}
+Simplifying the part involving $\alpha$ in this expression yields
+\begin{eqnarray*}
+\left(\alpha\right)_{\beta_{S}(i), \bullet} &=&
+-\left(A_{S_{B}, B_{S}}^{T}\right)_{\beta_{S}(i), \bullet}A_{S_{B}, B_{O}} \\
+&=&
+-A_{\sigma(i),i}\left(A_{S_{B},B_{O}}\right)_{\gamma_{S_{B}}(\sigma(i))} \\
+&=&
+-A_{\sigma(i),i}A_{\sigma(i),B_{O}}
+\end{eqnarray*}
+such that Equation~(\ref{eq:precond}) becomes 
+\begin{equation*}
+A_{\sigma(i), B_{O}}\left(\check{M}_{B}^{-1}\right)_{B_{O}, B_{O}}
+A_{\sigma(i), B_{O}}^{T} =0
+\end{equation*}
+Using the Definitions~(\ref{def:theta_vartheta}) this can be written as
+\begin{equation}
+\label{eq:precond_simplified}
+\vartheta\check{M}_{B}^{-1}\vartheta^{T}=0
+\end{equation}
+Subsuming this for later reference we obtain 
+\begin{equation}
+\label{table:leaving_precond}
+\begin{array}{c|ccc}
+ & 
+\left(M_{B}^{-1}\right)_{\beta(i), \beta(i)}
+&=& 0
+ \\
+\hline
+U_{Z_{1}}
+&
+\left(\check{M}_{B}^{-1}\right)_{\beta_{O}(i), \beta_{O}(i)}
+&=& 0
+ \\
+U_{Z_{2}}
+&
+\left(\check{M}_{B}^{-1}\right)_{\beta_{O}(i), \beta_{O}(i)}
+&=& 0
+ \\
+U_{Z_{3}}
+&
+\vartheta\check{M}_{B}^{-1}
+\vartheta^{T}
+&=& 0
+ \\
+U_{Z_{4}}
+&
+\vartheta\check{M}_{B}^{-1}\vartheta^{T}
+&=& 0
+\end{array}
+\end{equation}
+
+\subsection{The pivoting precondition}
+Due to the fact variable $x_{i}$ has been selected to be the leaving variable with $x_{j}$ entering by Ratio Test Step~1 we have
+\begin{equation}
+\label{precond:pivot}
+\left(M_{B}^{-1}\right)_{\beta(i), \bullet}\eta \neq 0
+\end{equation}
+where $\eta$ denotes the entering column. 
+We distinguish according to Equations~(\ref{update:o_rep_o})
+to~(\ref{update:s_rep_s}) the following cases:
+
+\paragraph{$\mathbf{U_{Z_{1}}}$: $j \in O \setminus B$ replaces $i \in B_{O}$.}
+According to~(\ref{update:o_rep_o}) we have for the entering column $\eta$
+\begin{equation}
+\eta:=
+\left(
+\begin{array}{c}
+A_{C, j} \\
+\hline
+A_{S_{B},j} \\
+\hline
+2D_{B_{O}, j} \\
+\hline
+0
+\end{array}
+\right)
+\end{equation}
+such that the pivoting precondition~(\ref{precond:pivot})
+for the basis matrix inverse in terms of
+the reduced basis matrix inverse becomes
+\begin{eqnarray}
+\left(M_{B}^{-1}\right)_{\beta_{O}(i), \bullet} \eta
+&=&
+\left(\check{M}_{B}^{-1}\right)_{\beta_{O}(i),C}A_{C,j}
++\left(\check{M}_{B}^{-1}\right)_{\beta_{O}(i), B_{O}}2D_{B_{O},j}
+\nonumber \\
+&=&
+\check{M}_{\beta_{O}(i), \bullet}
+\left(
+\begin{array}{c}
+A_{C,j} \\
+\hline
+2D_{B_{O},j}
+\end{array}
+\right)
+\neq 0,
+\nonumber
+\end{eqnarray}
+using the Definitions~(\ref{def:theta_vartheta})
+and~(\ref{def:rho_varrho}) this can be written as
+\begin{equation}
+\rho^{T}\theta \neq 0
+\end{equation}
+
+\paragraph{$\mathbf{U_{Z_{2}}}$: $j \in S \setminus B$ replaces $i \in B_{O}$.}
+According to~(\ref{update:s_rep_o}) and the fact that
+\begin{equation}
+A_{S_{B},j}=0, \quad 2D_{B_{O}, j}=0 \quad j \in S \setminus B
+\end{equation}
+we have for the entering column $\eta$
+\begin{equation}
+\eta:=
+\left(
+\begin{array}{c}
+A_{C, j} \\
+\hline
+0 \\
+\hline
+0 \\
+\hline
+0
+\end{array}
+\right)
+\end{equation}
+such that the pivoting precondition~(\ref{precond:pivot})
+for the basis matrix inverse in terms of
+the reduced basis matrix inverse becomes
+\begin{eqnarray}
+\left(M_{B}^{-1}\right)_{\beta_{O}(i), \bullet} \eta
+&=&
+\left(\check{M}_{B}^{-1}\right)_{\beta_{O}(i),C}A_{C,j}
+\nonumber \\
+&=&
+A_{\sigma(j),j}
+ \left(\check{M}_{B}^{-1}\right)_{\beta_{O}(i), \gamma_{C}(\sigma(j))} \neq 0
+\nonumber
+\end{eqnarray}
+Since $A_{\sigma(j),j} \neq 0$ the last inequality amounts to
+\begin{equation}
+\left(\check{M}_{B}^{-1}\right)_{\beta_{O}(i), \gamma_{C}(\sigma(j))} \neq 0
+\end{equation}
+
+\paragraph{$\mathbf{U_{Z_{3}}}$: $j \in O \setminus B$ replaces $i \in B_{S}$.}
+According to~(\ref{update:o_rep_s})
+we have for the entering column $\eta$
+\begin{equation}
+\eta:=
+\left(
+\begin{array}{c}
+A_{C, j} \\
+\hline
+A_{S_{B},j} \\
+\hline
+2D_{B_{O},j} \\
+\hline
+0
+\end{array}
+\right)
+\end{equation}
+such that ~(\ref{precond:pivot})
+for the basis matrix inverse in terms of
+the reduced basis matrix inverse becomes
+\begin{eqnarray}
+\left(M_{B}^{-1}\right)_{\beta_{S}(i), \bullet} \eta
+&=&
+\left(\alpha\right)_{\beta_{S}(i), \bullet}
+\left(\check{M}_{B}^{-1}\right)_{B_{O},C}A_{C,j}
++\left(A_{S_{B}, B_{S}}^{T}\right)_{\beta_{S}(i), \bullet}A_{S_{B},j}
+\nonumber \\
+&&
++\left(\alpha\right)_{\beta_{S}(i), \bullet}
+ \left(\check{M}_{B}^{-1}\right)_{B_{O}, B_{O}}2D_{B_{O},j}
+\nonumber \\
+&=&
+-A_{\sigma(i),i}A_{\sigma(i),B_{O}}
+ \left(\check{M}_{B}^{-1}\right)_{B_{O},C}A_{C,j}
++A_{\sigma(i),i}A_{\sigma(i),j}
+\nonumber \\
+&&
+-A_{\sigma(i),i}A_{\sigma(i),B_{O}}
+ \left(\check{M}_{B}^{-1}\right)_{B_{O},B_{O}}2D_{B_{O},j}
+\nonumber \\
+&=&
+A_{\sigma(i),i}
+\left[
+A_{\sigma(i),j} - A_{\sigma(i), B_{O}}
+\left(\check{M}_{B}^{-1}\right)_{B_{O}, \bullet}
+\left(
+\begin{array}{c}
+A_{C,j}  \\
+\hline
+2D_{B_{O}, j}
+\end{array}
+\right)
+\right]
+\neq 0
+\nonumber
+\end{eqnarray}
+Since $A_{\sigma(i), i} \neq 0$ the last inequality above amounts to
+\begin{equation}
+A_{\sigma(i),j} - A_{\sigma(i), B_{O}}
+\left(\check{M}_{B}^{-1}\right)_{B_{O}, \bullet}
+\left(
+\begin{array}{c}
+A_{C,j}  \\
+\hline
+2D_{B_{O}, j}
+\end{array}
+\right)
+\neq
+0,
+\nonumber
+\end{equation}
+using the Definitions~(\ref{def:theta_vartheta}) this can be written as
+\begin{equation}
+A_{\sigma(i),j} -
+\vartheta\check{M}_{B}^{-1}\theta \neq 0
+\end{equation}
+
+\paragraph{$\mathbf{U_{Z_{4}}}$: $j \in S \setminus B$ replaces $i \in B_{S}$.}
+According to~(\ref{update:o_rep_s})
+and the fact that
+\begin{equation}
+A_{S_{B},j}=0, \quad 2D_{B_{O}, j}=0, \quad j \in S \setminus B
+\end{equation}
+we have for the entering column $\eta$
+\begin{equation}
+\eta:=
+\left(
+\begin{array}{c}
+A_{C, j} \\
+\hline
+0 \\
+\hline
+0 \\
+\hline
+0
+\end{array}
+\right)
+\end{equation}
+such that the pivoting precondition~(\ref{precond:pivot})
+for the basis matrix inverse in terms of
+the reduced basis matrix inverse becomes
+\begin{eqnarray}
+\left(M_{B}^{-1}\right)_{\beta_{S}(i), \bullet} \eta
+&=&
+\left(\alpha\right)_{\beta_{S}(i), \bullet}
+\left(\check{M}_{B}^{-1}\right)_{B_{O},C}A_{C,j}
+\nonumber \\
+&=&
+-A_{\sigma(i),i}A_{\sigma(i),B_{O}}
+ \left(\check{M}_{B}^{-1}\right)_{B_{O},C}A_{C,j}
+\nonumber \\
+&=&
+-A_{\sigma(i),i}A_{\sigma(j),j}A_{\sigma(i),B_{O}}
+ \left(\check{M}_{B}^{-1}\right)_{B_{O},\gamma_{C}(j)}
+ \neq 0
+ \nonumber
+\end{eqnarray}
+Since $A_{\sigma(i), i} \neq 0$ and $A_{\sigma(j),j} \neq 0$
+the last inequality above amounts to
+\begin{equation}
+A_{\sigma(i),B_{O}}
+\left(\check{M}_{B}^{-1}\right)_{B_{O},\gamma_{C}(\sigma(j))}
+\neq 0,
+\nonumber
+\end{equation}
+using the Definitions~(\ref{def:theta_vartheta})
+and~(\ref{def:rho_varrho}) this can be written as
+\begin{equation}
+\vartheta \varrho^{T} \neq 0
+\end{equation}
+Subsuming this for later reference we obtain
+\begin{equation}
+\label{table:pivot_precond}
+\begin{array}{c|ccc}
+&
+\left(M_{B}^{-1}\right)_{\beta(i), \bullet} \eta
+&\neq& 0
+ \\
+\hline
+U_{Z_{1}} 
+&
+\rho^{T} \theta &\neq& 0
+ \\
+U_{Z_{2}}
+&
+\left(\check{M}_{B}^{-1}\right)_{\beta_{O}(i), \gamma_{C}(\sigma(j))}
+&\neq& 0
+ \\
+U_{Z_{3}}
+&
+A_{\sigma(i), j}
+-\vartheta\check{M}_{B}^{-1}\theta
+&\neq& 0
+ \\
+U_{Z_{4}}
+&
+\vartheta \varrho^{T} &\neq& 0
+\end{array}
+\end{equation}
+
+\section{Updates $U_{Z_{1}} \dots U_{Z_{4}}$}
+Since the inverse of a matrix $A$ can be represented as a product of the
+cofactor matrix of $A$ and $1/\det(A)$ and we represent $A^{-1}$ in rational
+form, we use the following form 
+\begin{equation}
+\label{def:rat_form}
+A^{-1}=\frac{\hat{A}^{-1}}{\left|\det\left(A\right)\right|}
+\end{equation}
+such that the denominator is by convention positive.
+
+\subsection{Updates $\mathbf{U_{Z_{1}}}$, $\mathbf{U_{Z_{4}}}$ and the rational form}
+According to~(\ref{update:o_rep_o}) and~(\ref{update:s_rep_s})
+and the Definition~(\ref{def:M_B_red}) of the reduced basis matrix
+the update described by Equation~(\ref{eq:inversion_formula_spec_explicit})
+can directly be applied to the reduced basis $\check{M}_{B}$
+in order to implement
+the updates $U_{Z_{1}}$ and $U_{Z_{4}}$. In order to obtain the rational form
+in~(\ref{def:rat_form}) for Equation~(\ref{eq:inversion_formula_spec_explicit})
+\begin{eqnarray}
+\label{def:update_Z1_Z4}
+\lefteqn{\left(M+ UV^{T}\right)^{-1}=M^{-1} -} \nonumber \\
+& & \frac{1}{\det(Q)}
+\left[
+  M^{-1}_{\bullet, i}
+  \left(k_{1}v^{T} + k_{2}M^{-1}_{i, \bullet}\right)
+  +v\left(k_{3}v^{T} + k_{1}M^{-1}_{i, \bullet}\right)
+\right]
+\end{eqnarray}
+where
+\begin{equation}
+\label{def:update_Z1_Z4_entities}
+v:= M^{-1}\zeta-e_{i},
+\quad
+k_{1}:=M_{i, \bullet}^{-1}\zeta,
+\quad
+k_{2}:=\zeta_{i} - \zeta^{T}M^{-1}\zeta,
+\quad
+k_{3}:=-M_{i,i}^{-1}
+\end{equation}
+and
+\begin{equation}
+\label{eq:det(Q)}
+\det(Q)=k_{1}^{2}-k_{2}k_{3}
+\end{equation}
+we use the following substitutions
+\begin{equation}
+M^{-1}=:\frac{\hat{M}^{-1}}{d},
+\quad
+v=:\frac{\hat{v}}{d},
+\quad
+k_{1}=:\frac{\hat{k}_{1}}{d},
+\quad
+k_{2}=:\frac{\hat{k}_{2}}{d},
+\quad
+k_{3}=:\frac{\hat{k}_{3}}{d}
+\end{equation}
+where $d$ is defined as
+\begin{equation}
+\label{def:old_denom_Z1_Z4}
+d:=\left|\det(M)\right|
+\end{equation}
+Substituting in the above equation yields,
+if we abbreviate $M+UV^{T}$ by $M_{Z}$,
+\begin{eqnarray}
+M_{Z}^{-1}&=&\frac{\hat{M}^{-1}}{d}
+-
+\frac{
+\left[
+  \hat{M}^{-1}_{\bullet, i}
+  \left(\hat{k}_{1}\hat{v}^{T} + \hat{k}_{2}\hat{M}^{-1}_{i, \bullet}\right)
+  +\hat{v}\left(\hat{k}_{3}\hat{v}^{T}
+  +\hat{k}_{1}\hat{M}^{-1}_{i, \bullet}\right)
+\right]
+}{\det(Q)d^{3}}
+\nonumber \\
+&=&
+\frac{
+\det(Q)d^{2}\hat{M}^{-1}
+-
+\left[
+  \hat{M}^{-1}_{\bullet, i}
+  \left(\hat{k}_{1}\hat{v}^{T} + \hat{k}_{2}\hat{M}^{-1}_{i, \bullet}\right)
+  +\hat{v}\left(\hat{k}_{3}\hat{v}^{T}
+  +\hat{k}_{1}\hat{M}^{-1}_{i, \bullet}\right)
+\right]
+}{\det(Q)d^{3}}
+\nonumber
+\end{eqnarray}
+Using Definitions~(\ref{def:rat_form})
+and~(\ref{def:old_denom_Z1_Z4}) and defining the new denominator $\hat{z}$
+according to Equation~(\ref{eq:det_prod})
+\begin{equation}
+\label{def:new_denom_Z1_Z4}
+\hat{z}:=\det(Q)d,
+\end{equation}
+we finally obtain from the last Equation above
+\begin{eqnarray}
+\label{def:update_Z1_Z4_denom}
+M_{Z}^{-1}
+&=&
+\frac{\hat{z}d\hat{M}^{-1}
+- 
+\left[
+  \hat{M}^{-1}_{\bullet, i}
+  \left(\hat{k}_{1}\hat{v}^{T} + \hat{k}_{2}\hat{M}^{-1}_{i, \bullet}\right)
+  +\hat{v}\left(\hat{k}_{3}\hat{v}^{T}
+  +\hat{k}_{1}\hat{M}^{-1}_{i, \bullet}\right)
+\right]}
+{\hat{z}d^{2}}
+\nonumber \\
+&=&
+\frac{sgn(\hat{z})}{\left|\hat{z}\right|}
+%\left[
+\frac{\hat{z}d\hat{M}^{-1}
+- 
+\left[
+  \hat{M}^{-1}_{\bullet, i}
+  \left(\hat{k}_{1}\hat{v}^{T} + \hat{k}_{2}\hat{M}^{-1}_{i, \bullet}\right)
+  +\hat{v}\left(\hat{k}_{3}\hat{v}^{T}
+  +\hat{k}_{1}\hat{M}^{-1}_{i, \bullet}\right)
+\right]}
+{d^{2}}
+%\right]
+\nonumber \\
+&=&
+\frac{\hat{M}_{Z}^{-1}}{\left|\hat{z}\right|}
+\end{eqnarray}
+
+  
+
+\subsection{Update $\mathbf{U_{Z_{1}}}$}
+According to~(\ref{update:o_rep_o}) and the
+Definitions~(\ref{def:theta_vartheta}) 
+and~(\ref{def:rho_varrho}) the
+Update~(\ref{def:update_Z1_Z4}) applied to $\check{M}_{B}^{-1}$
+leads to the following correspondences
+in~(\ref{def:update_Z1_Z4_entities})
+\begin{eqnarray}
+\label{def:zeta_Z1}
+\zeta
+&=&
+\theta + \left(2D_{j,j}-\theta_{\beta_{O}(i)}\right)e_{\beta_{O}(i)}
+= \theta+2\left(D_{j,j}-D_{i,j}\right)e_{\beta_{O}(i)} \\
+M_{i, \bullet}^{-1}
+&=&
+\left(\check{M}_{B}^{-1}\right)_{\beta_{O}(i), \bullet}
+= \rho^{T}
+\end{eqnarray}
+According to table~(\ref{table:leaving_precond})
+the leaving variable precondition~(\ref{precond:leaving})
+in terms of the reduced basis inverse for $U_{Z_{1}}$ is 
+\begin{equation}
+\label{precond:leaving_Z1}
+\left(\check{M}_{B}^{-1}\right)_{\beta_{O}(i),\beta_{O}(i)}=0 
+\end{equation}
+which, together with the Definitions~(\ref{def:update_Z1_Z4_entities}),
+implies
+\begin{equation}
+\label{eq:k_3_zero}
+k_{3} = 0
+\end{equation}
+Furthermore, according to table~(\ref{table:pivot_precond}) the
+pivoting precondition~(\ref{precond:pivot})
+in terms of the reduced basis inverse for $U_{Z_{1}}$ is
+\begin{equation*}
+\rho^{T}\theta
+=
+\left(\check{M}_{B}^{-1}\right)_{\beta_{O}(i), \bullet}\theta \neq 0
+\end{equation*}
+which, together with the leaving variable
+precondition~(\ref{precond:leaving_Z1}) and~(\ref{def:zeta_Z1}) is equivalent
+to
+\begin{equation*}
+\rho^{T}\zeta \neq 0,
+\end{equation*}  
+which in turn together with the Definitions~(\ref{def:update_Z1_Z4_entities})
+implies 
+\begin{equation}
+\label{ineq:Z_1_k_1}
+k_{1} \neq 0
+\end{equation}
+(\ref{ineq:Z_1_k_1}) and~(\ref{eq:k_3_zero}) together with
+Equation~(\ref{eq:det(Q)}) imply, in accordance with Lemma~(\ref{lem:main}),  
+\begin{equation}
+\det(Q)=k_{1}^{2} \neq 0.
+\end{equation}
+Note that according to the above and
+Definition~(\ref{def:new_denom_Z1_Z4}) of the new denominator
+$\hat{z}$ we have
+\begin{equation}
+sgn(\hat{z}) = 1
+\end{equation} 
+Update~(\ref{def:update_Z1_Z4_denom})
+applied to $\check{M}_{B}$ then simplifies to
+\begin{eqnarray}
+\label{def:update_Z1}
+\check{M}_{B^{\prime}}^{-1}
+&=&
+\frac{1}{\left|\hat{z}\right|}
+\frac{
+\hat{k}_{1}^{2}\hat{\check{M}}_{B}^{-1}
+-\left[
+  \hat{\rho}
+  \left(\hat{k}_{1}\hat{v}^{T} +\hat{k}_{2}\hat{\rho}^{T}\right)
+  +\hat{k}_{1}\hat{v}\hat{\rho}^{T}
+ \right]
+}{d^{2}}
+\nonumber \\
+&=&
+\frac{1}{\left|\hat{z}\right|}
+\frac{
+\hat{k}_{1}^{2}\hat{\check{M}}_{B}^{-1}
+-\left[
+  \hat{k}_{2}\hat{\rho}\hat{\rho}^{T}
+  +\hat{k}_{1}\left(\hat{\rho}\hat{v}^{T} +\hat{v}\hat{\rho}^{T}\right)
+ \right]
+}{d^{2}}
+\nonumber \\
+&=&
+\frac{\hat{\check{M}}_{B^{\prime}}}{\left|\hat{z}\right|}
+\end{eqnarray}
+where $\hat{z}$ is the new denominator and
+\begin{equation}
+\label{def:update_Z1_entities}
+\begin{array}{rclcrcl}
+\hat{\rho}
+&:=&
+\left(\hat{\check{M}}_{B}^{-1}\right)_{\bullet, \beta_{O}(i)}
+&&
+\hat{v}
+&:=&
+\hat{\check{M}}_{B}^{-1}\zeta - d e_{\beta_{O}(i)}
+\\
+\hat{k}_{1}
+&:=&
+\hat{\rho}^{T}\zeta
+&&
+\hat{k}_{2}
+&:=&
+d\zeta_{\beta_{O}(i)}- \zeta^{T}\hat{\check{M}}_{B}^{-1}\zeta
+\\
+\hat{z}
+&:=&
+\hat{k}_{1}^{2}/d
+&&
+d
+&:=&
+\left|\det(\hat{\check{M}}_{B})\right|
+\end{array}
+\end{equation}
+
+\subsection{Update $\mathbf{U_{Z_{4}}}$}
+According to~(\ref{update:s_rep_s}) and the
+Definitions~(\ref{def:theta_vartheta})
+and~(\ref{def:rho_varrho})
+the Update~(\ref{def:update_Z1_Z4})
+applied to $\check{M}_{B}^{-1}$ leads to the follwing correspondences
+in~(\ref{def:update_Z1_Z4_entities})
+\begin{eqnarray}
+\label{def:zeta_Z4}
+\zeta
+&=&
+\vartheta^{T} 
++ 
+\left(
+  \left(\check{M}_{B}\right)_{\gamma_{C}(\sigma(i)),\gamma_{C}(\sigma(i))}
+  - \vartheta_{\gamma_{C}(\sigma(j))}
+\right)
+e_{\gamma_{C}(\sigma(j))}^{T}
+=
+\vartheta^{T} 
+\\
+M_{i, \bullet}^{-1}
+&=&
+\left(\check{M}_{B}^{-1}\right)_{\bullet, \gamma_{C}(\sigma(j))}
+=
+\varrho^{T}
+\end{eqnarray}
+According to table~(\ref{table:pivot_precond}) the
+pivoting precondition~(\ref{precond:pivot})
+in terms of the reduced basis inverse for $U_{Z_{4}}$ is together
+with~(\ref{def:zeta_Z4})
+\begin{equation*}
+\vartheta \varrho^{T}= \zeta^{T} \varrho^{T} \neq 0,
+\end{equation*}
+which together with the Definitions~(\ref{def:update_Z1_Z4_entities}) implies 
+\begin{equation}
+\label{ineq:Z_4_k_1}
+k_{1} \neq 0
+\end{equation}
+Furthermore according to table~(\ref{table:leaving_precond})
+the leaving variable precondition~(\ref{precond:leaving})
+in terms of the reduced basis inverse for $U_{Z_{4}}$ is
+together with~(\ref{def:zeta_Z4})
+\begin{equation*}
+\vartheta\check{M}_{B}^{-1}\vartheta^{T}
+=
+\zeta_{\gamma_{C}(\sigma(j))}-\zeta^{T}\check{M}_{B}^{-1}\zeta= 0 
+\end{equation*}
+which, again, together with the Definitions~(\ref{def:update_Z1_Z4_entities})
+implies
+\begin{equation}
+\label{eq:k_2_zero}
+k_{2} = 0
+\end{equation}
+(\ref{ineq:Z_4_k_1}) and~(\ref{eq:k_2_zero}) together with
+Equation~(\ref{eq:det(Q)}) imply, in accordance with Lemma~(\ref{lem:main}),  
+\begin{equation}
+\det(Q)=k_{1}^{2} \neq 0
+\end{equation}
+Note that according to the above and
+Definition~(\ref{def:new_denom_Z1_Z4}) of the new denominator
+$\hat{z}$ we have
+\begin{equation}
+sgn(\hat{z}) = 1
+\end{equation}  
+Update~(\ref{def:update_Z1_Z4_denom})
+applied to $\check{M}_{B}$ then simplifies to
+\begin{eqnarray}
+\label{def:update_Z4}
+\check{M}_{B^{\prime}}^{-1}
+&=&
+\frac{1}{\left|\hat{z}\right|}
+\frac{
+\hat{k}_{1}^{2}\hat{\check{M}}_{B}^{-1}
+-\left[
+  \hat{k}_{1}\hat{\varrho}^{T}\hat{v}^{T}
+  +\hat{v}\left(\hat{k}_{3}\hat{v}^{T}+\hat{k}_{1}\hat{\varrho}\right)  
+ \right]
+}{d^{2}}
+\nonumber \\
+&=&
+\frac{1}{\left|\hat{z}\right|}
+\frac{
+\hat{k}_{1}^{2}\hat{\check{M}}_{B}^{-1}
+-\left[
+  \hat{k}_{3}\hat{v}\hat{v}^{T}
+  +\hat{k}_{1}\left(\hat{\varrho}^{T}\hat{v}^{T}+\hat{v}\hat{\varrho}\right)  
+ \right]
+}{d^{2}}
+\nonumber \\
+&=&
+\frac{\hat{\check{M}}_{B^{\prime}}^{-1}}{\left|\hat{z}\right|}
+\end{eqnarray}
+where $\hat{z}$ is the new denominator and
+\begin{equation}
+\label{def:update_Z4_entities}
+\begin{array}{rclcrcl}
+\hat{v}
+&:=&
+\hat{\check{M}}_{B}^{-1}\zeta -de_{\gamma_{C}(\sigma(j))}
+&&
+\hat{\varrho}^{T}
+&:=&
+\left(\hat{\check{M}}_{B}^{-1}\right)_{\bullet, \gamma_{C}(\sigma(j))}
+\\
+\hat{k}_{1}
+&:=&
+\hat{\varrho}\zeta
+&&
+\hat{k}_{3}
+&:=&
+-\left(\hat{\check{M}}_{B}^{-1}\right)_{\gamma_{C}(\sigma(j)),
+  \gamma_{C}(\sigma(j))}
+\\
+\hat{z}
+&:=&
+\hat{k}_{1}^{2}/d
+&&
+d
+&:=&
+\left|\det(\hat{\check{M}}_{B})\right|
+\end{array}
+\end{equation}
+
+
+\subsection{Updates $\mathbf{U_{Z_{2}}}$ and $\mathbf{U_{Z_{3}}}$ in general}
+According to~(\ref{update:s_rep_o}) and~(\ref{update:o_rep_s}) the Updates
+$U_{Z_{2}}$ and $U_{Z_{3}}$ require a basis matrix update that is capable of
+growing and shrinking the basis matrix by two columns and rows in one step.
+Let 
+\begin{equation}
+\label{def:U_W}
+M_{>>}=
+\left(
+\begin{array}{c|c}
+M & U \\
+\hline
+U^{T} & W
+\end{array}
+\right)
+\end{equation}
+where $(U^{T}, W)$ are the two rows and $(U^{T}, W^{T})^{T}$ the two columns
+to be added, with $W$ being the $2 \times 2$ matrix with the entries
+they have in common.
+\begin{equation}
+\label{product}
+M_{>>}=
+\left(
+\begin{array}{ccc|c}
+1	&	 &	&        \\
+	& \ddots &	& 0      \\
+	&	 & 1	&        \\
+\hline
+	& X^{T}  &      & I_{2}  \\
+\end{array}
+\right)
+\left(
+\begin{array}{ccc|c}
+	&	 &	&        \\
+	& M      &	& 0      \\
+	&	 & 	&        \\
+\hline
+	& 0      &      & Z      \\
+\end{array}
+\right)
+\left(
+\begin{array}{ccc|c}
+1	&	 &	&        \\
+	& \ddots &	& X      \\
+	&	 &  1	&        \\
+\hline
+	& 0      &      & I_{2}  \\
+\end{array}
+\right)
+\end{equation}
+where
+\begin{equation}
+\label{def:X_Z}
+X:=M^{-1}U, \quad Z:=W - U^{T}M^{-1}U
+\end{equation}
+The inverse $M_{>>}^{-1}$ is then given by
+\begin{eqnarray}
+M_{>>}^{-1}&=&
+\left(
+\begin{array}{ccc|c}
+1	&	 &	&        \\
+	& \ddots &	& -X     \\
+	&	 &  1	&        \\
+\hline
+	& 0      &      & I_{2}  \\
+\end{array}
+\right)
+\left(
+\begin{array}{ccc|c}
+	&	 &	&        \\
+	& M^{-1} &	& 0      \\
+	&	 & 	&        \\
+\hline
+	& 0      &      & Z^{-1} \\
+\end{array}
+\right)
+\left(
+\begin{array}{ccc|c}
+1	&	 &	&        \\
+	& \ddots &	& 0      \\
+	&	 & 1	&        \\
+\hline
+	& -X^{T} &      & I_{2}  \\
+\end{array}
+\right)  
+\nonumber \\
+&=&
+\label{eq:inv_expand_by_2}
+\left(
+\begin{array}{c|c}
+M^{-1}+XZ^{-1}X^{T} & -XZ^{-1}   \\
+\hline
+-Z^{-1}X^{T}        & Z^{-1}
+\end{array}
+\right)
+\end{eqnarray}
+From Jacobi's determinant identity we get 
+\begin{equation}
+\det
+\left(
+\begin{array}{c|c}
+M & 0 \\
+\hline
+0 & Z
+\end{array}
+\right)
+=
+\det\left(M\right)\det\left(Z\right)
+\end{equation}
+such that from~(\ref{product}) we obtain
+\begin{equation}
+\label{eq:det_id_Z2_Z3}
+\det\left(M_{>>}\right) = \det\left(M\right)\det\left(Z\right)
+\end{equation}
+
+\subsubsection{Update $U_{Z_{3}}$ and the rational form}
+In order to obtain the rational form of Definition~(\ref{def:rat_form})
+for $M_{>>}^{-1}$ in
+Equation~(\ref{eq:inv_expand_by_2}) in terms of $\hat{M}^{-1}$
+and its common denominator
+\begin{equation}
+\label{def:old_denom_Z3}
+d:=\left|\det\left(M\right)\right|
+\end{equation}
+we first rewrite the $2 \times 2$-matrix $Z^{-1}$ in terms of $Z$
+\begin{equation}
+\label{eq:2_by_2_matrix_inverse}
+Z^{-1}=\frac{1}{\det\left(Z\right)}PZP^{T}, \quad
+P:=
+\left(
+\begin{array}{cr}
+0 & -1 \\
+1 & 0
+\end{array}
+\right),
+\end{equation}
+and substitute this in Equation~(\ref{eq:inv_expand_by_2}) yielding
+\begin{equation}
+\label{eq:inv_expand_by_2_Z}
+M_{>>}^{-1}=
+\frac{1}{\det\left(Z\right)}
+\left(
+\begin{array}{c|c}
+\det\left(Z\right)M^{-1} + XPZP^{T}X^{T} & -XPZP^{T} \\
+\hline
+-PZP^{T}X^{T}     & PZP^{T}
+\end{array}
+\right)
+\end{equation}
+Using the following substitutions, that seem to be coming out of the blue, 
+\begin{eqnarray}
+\label{def:X_hat_Z_hat}
+X=:\frac{\hat{X}}{d} & & Z=:\frac{\hat{Z}}{d}
+\end{eqnarray}
+in Equation~(\ref{eq:inv_expand_by_2_Z}) we obtain
+\begin{equation}
+\label{eq:inv_expand_2_Z3}
+M_{>>}^{-1}=
+\frac{1}{\det\left(Z\right)d}
+\left(
+\begin{array}{c|c}
+(\det\left(Z\right)d^{3}M^{-1}+\hat{X}P\hat{Z}P^{T}\hat{X}^{T})/ d^{2} &
+-\hat{X}P\hat{Z}P^{T}/d  \\
+\hline
+-P\hat{Z}P^{T}\hat{X}^{T}/d & P\hat{Z}P^{T} 
+\end{array}
+\right)
+\end{equation}
+Note that 
+\begin{equation}
+\label{eq:det_hat_Z}
+\det(\hat{Z})=d^{2}\det\left(Z\right).
+\end{equation}
+Using Definitions~(\ref{def:rat_form}) and~(\ref{def:old_denom_Z3})
+and defining the new denominator $\hat{z}$ according to 
+Equation~(\ref{eq:det_id_Z2_Z3})
+\begin{equation}
+\label{def:new_denom_Z3}
+\hat{z}:=\det\left(Z\right) d = \det(\hat{Z}) /d
+\end{equation}
+we finally obtain from Equation~(\ref{eq:inv_expand_2_Z3})
+\begin{eqnarray}
+M_{>>}^{-1}&=&
+\frac{sgn\left(\hat{z}\right)}{\left|\hat{z}\right|}
+\left(
+\begin{array}{c|c}
+(\det(\hat{Z})\hat{M}^{-1}+\hat{X}P\hat{Z}P^{T}\hat{X}^{T})/d^{2} &
+-\hat{X}P\hat{Z}P^{T}/d \\
+\hline
+-P\hat{Z}P^{T}\hat{X}^{T}/d & P\hat{Z}P^{T}
+\end{array}
+\right) 
+\nonumber \\
+&=&
+\frac{\hat{M}_{>>}^{-1}}{\left|\hat{z}\right|}
+\end{eqnarray}
+Note that this update works only provided that $\det(Z) \neq 0$.
+
+\subsubsection{Update $U_{Z_{2}}$ and the rational form}
+In order to obtain the rational form of Definition~(\ref{def:rat_form})
+for $M^{-1}$ in Equation~(\ref{eq:inv_expand_by_2}) in terms of
+parts of $\hat{M}_{>>}^{-1}$ and its common denominator
+\begin{equation}
+\label{def:old_denom_Z2}
+d:=\left|\det(M_{>>})\right|
+\end{equation}
+we multiply Equation~(\ref{eq:inv_expand_by_2}) by the above $d$ 
+\begin{equation}
+dM_{>>}^{-1}=
+\left(
+\begin{array}{c|c}
+d\left(M^{-1}+XZ^{-1}X^{T}\right) & \hat{\chi}   \\
+\hline
+\hat{\chi}^{T}                           & \hat{Z}^{-1}
+\end{array}
+\right)
+\end{equation}
+where
+\begin{equation}
+\label{def:chi}
+\hat{\chi}:=-dXZ^{-1},
+\quad
+\hat{Z}^{-1}:=d Z^{-1}
+\end{equation} 
+and solve for $M^{-1}$ to obtain
+\begin{equation}
+\label{eq:inv_shrink_by_2_Z}
+\left(
+\begin{array}{c|c}
+M^{-1} & \vdots \\
+\hline
+\hdots & \bullet
+\end{array}
+\right)
+=
+\frac{1}{d}
+\left[
+\hat{M}_{>>}^{-1}
+\left(
+\begin{array}{c|c}
+dXZ^{-1}X^{T} & \vdots \\
+\hline
+\hdots        & \bullet
+\end{array}
+\right)
+\right]
+\end{equation}
+The relevant submatrix $dXZ^{-1}X^{T}$ in the above Equation can be expressed
+in terms of the leaving rows and columns $\hat{\chi}$ of the basis inverse
+and their intersection $\hat{Z}^{-1}$ using
+Equations~(\ref{eq:2_by_2_matrix_inverse}), (\ref{def:chi})
+and~(\ref{eq:det_hat_Z})
+\begin{eqnarray}
+dXZ^{-1}X^{T}
+&=&
+\left(-dXZ^{-1}\right)\frac{1}{d}Z\left(-dZ^{-1}X^{T}\right) \\
+&=&
+\frac{1}{\det(Z^{-1})d}
+\hat{\chi} PZ^{-1}P^{T}\hat{\chi}^{T} \\
+&=&
+\frac{1}{\det(\hat{Z}^{-1})}
+\hat{\chi} P\hat{Z}^{-1}P^{T}\hat{\chi}^{T}.
+\end{eqnarray}
+Equation~(\ref{eq:inv_shrink_by_2_Z}) then becomes
+\begin{equation}
+\label{eq:inv_shrink_by_2_Z2}
+\left(
+\begin{array}{c|c}
+M^{-1}  & \vdots \\
+\hline
+\hdots  & \bullet
+\end{array}
+\right)
+=
+\frac{1}{\det(\hat{Z}^{-1})d}
+\left[
+\det(\hat{Z}^{-1})\hat{M}_{>>}^{-1}
+-
+\left(
+\begin{array}{c|c}
+\hat{\chi} P\hat{Z}^{-1}P^{T} \hat{\chi}^{T} & \vdots \\
+\hline
+\hdots                           & \bullet
+\end{array}
+\right)
+\right]
+\end{equation}
+Using Definitions~(\ref{def:rat_form}) and~(\ref{def:old_denom_Z2}) and
+defining the new denominator $\hat{z}$ according to
+Equation~(\ref{eq:det_id_Z2_Z3})
+\begin{equation}
+\label{def:new_denom_Z2}
+\hat{z}:=\det(Z^{-1})d = \det(\hat{Z}^{-1}) / d
+\end{equation}
+we finally obtain from Equation~(\ref{eq:inv_shrink_by_2_Z2})
+\begin{eqnarray}
+\left(
+\begin{array}{c|c}
+M^{-1}  & \vdots \\
+\hline
+\hdots  & \bullet
+\end{array}
+\right)
+&=&
+\frac{sgn(\hat{z})}{\left|\hat{z}\right|d^{2}}
+\left[
+\det(\hat{Z}^{-1})\hat{M}_{>>}^{-1}
+-
+\left(
+\begin{array}{c|c}
+\hat{\chi} P\hat{Z}^{-1}P^{T} \hat{\chi}^{T} & \vdots \\
+\hline
+\hdots                           & \bullet	
+\end{array}
+\right)
+\right]
+\nonumber \\
+&=&
+\frac{1}{\left|\hat{z}\right|}
+\left(
+\begin{array}{c|c}
+\hat{M}^{-1} & \vdots \\
+\hline
+\hdots       & \bullet
+\end{array}
+\right)
+\end{eqnarray}
+Note that this update works only provided that $\det(Z^{-1}) \neq 0$.
+
+\subsection{Update $\mathbf{U_{Z_{3}}}$}
+According to~(\ref{update:o_rep_s}) and Definition~(\ref{def:U_W})
+$U$ and $W$ are defined as
+\begin{equation}
+\label{def:U2}
+U:=
+\left(
+\begin{array}{c|c}
+ 0                        & A_{C,j}  \\
+\hline
+A_{\sigma(i), B_{O}}^{T}  & 2D_{B_{O}, j}
+\end{array}
+\right)
+=
+\left(
+\begin{array}{c|c}
+0                     &  \theta_{C} \\
+\hline
+\vartheta_{B_{O}}^{T} & \theta_{B_{O}}
+\end{array}
+\right),
+\quad
+W:=
+\left(
+\begin{array}{c|c}
+0                & A_{\sigma(i), j} \\
+\hline
+A_{\sigma(i), j} & 2D_{j,j}
+\end{array}
+\right)
+\end{equation}
+such that according to the Definitions~(\ref{def:X_Z}) and
+Substitutions~(\ref{def:X_hat_Z_hat}) $\hat{X}$ becomes
+\begin{eqnarray}
+\hat{X}
+&:=&
+d\check{M}_{B}^{-1}U
+\nonumber \\
+&=&
+\hat{\check{M}}_{B}^{-1}
+\left(
+\begin{array}{c|c}
+\vartheta^{T} & \theta
+\end{array}
+\right)
+\nonumber \\
+&=&
+\left(
+\begin{array}{c|c}
+\hat{\check{M}}_{B}^{-1}\vartheta^{T}
+&
+\hat{\check{M}}_{B}^{-1}\theta  \\
+\end{array}
+\right)
+\end{eqnarray}
+using again the Definition~(\ref{def:X_Z}), the
+Substitutions~(\ref{def:X_hat_Z_hat}) and the above yields $\hat{Z}$
+\begin{eqnarray}
+\hat{Z}
+&:=&
+d\left(W - U^{T}\check{M}_{B}^{-1}U\right)
+\nonumber \\
+&=&
+dW - U^{T}\hat{X}
+\nonumber \\
+&=&
+dW
+-
+\left(
+\begin{array}{c}
+\vartheta \\
+\hline
+\theta^{T}
+\end{array}
+\right)
+\left(
+\begin{array}{c|c}
+\hat{\check{M}}_{B}^{-1}\vartheta^{T}
+&
+\hat{\check{M}}_{B}^{-1}\theta  \\
+\end{array}
+\right)
+\nonumber \\
+&=&
+dW
+-
+\left(
+\begin{array}{c|c}
+\vartheta \hat{\check{M}}_{B}^{-1} \vartheta^{T}
+&
+\vartheta \hat{\check{M}}_{B}^{-1}\theta
+\\
+\hline
+\theta^{T}\hat{\check{M}}_{B}^{-1}\vartheta^{T}
+&
+\theta^{T}\hat{\check{M}}_{B}^{-1}\theta
+\end{array}
+\right)
+\nonumber \\
+&=&
+d
+\left(
+\begin{array}{c|c}
+0                & A_{\sigma(i), j} \\
+\hline
+A_{\sigma(i), j} & 2D_{j,j}  
+\end{array}
+\right)
+-
+\left(
+\begin{array}{c|c}
+\vartheta \hat{\check{M}}_{B}^{-1} \vartheta^{T}
+&
+\vartheta \hat{\check{M}}_{B}^{-1}\theta
+\\
+\hline
+\theta^{T}\hat{\check{M}}_{B}^{-1}\vartheta^{T}
+&
+\theta^{T}\hat{\check{M}}_{B}^{-1}\theta
+\end{array}
+\right)
+\nonumber
+\end{eqnarray}
+Since $\nu$ is according to \cite{Sven}, Lemma(2.7), defined as
+\begin{equation}
+\nu:=
+2D_{j,j}
+-\left(
+  A_{C,j}^{T}\left|\right.A_{S_{B}, j}^{T}\left|\right.
+  2D_{B_{O},j}^{T} \left|\right. 2D_{B_{S}, j}^{T}
+ \right)
+M_{B}^{-1}
+\left(
+\begin{array}{c}
+A_{C, j} \\
+\hline
+A_{S_{B},j} \\
+\hline
+2D_{B_{O}, j} \\
+\hline
+2D_{B_{S}, j}
+\end{array}
+\right) 
+\end{equation}
+and $D_{B_{S}, j}=0$ we obtain for $\nu$ together with
+Definition~(\ref{eq:M_B_inv_exp}) of the basis inverse
+and Definitions~(\ref{def:theta_vartheta})
+\begin{eqnarray}
+\nu
+&=&
+2D_{j,j}
+-\left(
+  \theta_{C}^{T}\left|\right.A_{S_{B}, j}^{T}\left|\right.
+  \theta_{B_{O}}^{T} \left|\right. 0
+ \right)
+\left(
+\begin{array}{c}
+\left(\check{M}_{B}^{-1}\right)_{C,\bullet}\theta
+\\
+\hline
+0
+\\
+\hline
+\left(\check{M}_{B}^{-1}\right)_{B_{O}, \bullet}\theta
+\\
+\hline
+\hdots
+\end{array}
+\right)
+\nonumber \\
+&=&
+2D_{j,j}- \theta^{T} \check{M}_{B}^{-1} \theta
+\end{eqnarray}
+
+With this and the precondition of the leaving variable for $U_{Z_{3}}$
+in table~(\ref{table:leaving_precond}) $\hat{Z}$ can then be expressed as
+\begin{equation}
+\hat{Z}:=
+\left(
+\begin{array}{c|c}
+0
+&
+dA_{\sigma(i),j}
+ -\vartheta\hat{\check{M}}_{B}^{-1}\theta
+\\
+\hline
+dA_{\sigma(i),j}
+ -\theta^{T}\hat{\check{M}}_{B}^{-1}\vartheta^{T}
+&
+d\nu
+\end{array}
+\right)
+\end{equation} 
+By the pivoting precondition for $U_{Z_{3}}$ in
+table~(\ref{table:pivot_precond}) and the symmetry of $\check{M}_{B}^{-1}$
+we have 
+\begin{equation}
+\det(Z)=-\left(A_{\sigma(i),j}
+ -\vartheta\check{M}_{B}^{-1}\theta
+\right)^{2} \neq 0
+\end{equation}
+in accordance with Lemma~(\ref{lem:main}). Note that according to the above and
+the Definition~(\ref{def:new_denom_Z3}) of the new denominator $\hat{z}$
+we have 
+\begin{equation}
+\label{eq:sign_of_new_denom_Z3}
+sgn(\hat{z})=-1
+\end{equation}
+
+If we define
+\begin{equation}
+\label{def:kappa_hat_nu_hat}
+\hat{\kappa}:= dA_{\sigma(i),j}-\vartheta\hat{\check{M}}_{B}^{-1}\theta,
+\quad
+\hat{\nu}:=d\nu
+\end{equation}
+\marginpar{check definition of $\kappa$ with last subsection} 
+we may write
+\begin{eqnarray}
+-\hat{X}P\hat{Z}P^{T}
+&:=&
+-
+\left(
+\begin{array}{c|c}
+\hat{\check{M}}_{B}^{-1}\vartheta^{T}
+&
+\hat{\check{M}}_{B}^{-1}\theta  \\
+\end{array}
+\right)
+\left(
+\begin{array}{c|c}
+\hat{\nu}     & -\hat{\kappa} \\
+\hline
+-\hat{\kappa} & 0
+\end{array}
+\right)
+\nonumber \\
+&=&
+\left(
+\begin{array}{c|c}
+\hat{\kappa}\hat{\check{M}}_{B}^{-1}\theta
+-\hat{\nu}\hat{\check{M}}_{B}^{-1}\vartheta^{T}
+&
+\hat{\kappa}\hat{\check{M}}_{B}^{-1}\vartheta^{T}
+\end{array}
+\right)
+\end{eqnarray}
+as well as 
+\begin{equation}
+\det(\hat{Z})=-\hat{\kappa}^{2},
+\end{equation}
+if we furthermore define
+\begin{equation}
+\label{def:phi_hat_varphi_hat}
+\hat{\phi}:=\left(\hat{\check{M}}_{B}^{-1}\right)\theta,
+\quad
+\hat{\varphi}:=\left(\hat{\check{M}}_{B}^{-1}\right)\vartheta^{T}
+\end{equation}
+we may now express $\hat{X}P\hat{Z}P^{T}\hat{X}^{T}$ as
+\begin{eqnarray}
+\hat{X}P\hat{Z}P^{T}\hat{X}^{T}
+&:=&
+-
+\left(
+\begin{array}{c|c}
+\hat{\kappa}\hat{\phi}-\hat{\nu}\hat{\varphi}
+&
+\hat{\kappa}\hat{\varphi}
+\end{array}
+\right)
+\left(
+\begin{array}{c}
+\hat{\varphi}^{T}  \\
+\hline
+\hat{\phi}^{T}
+\end{array}
+\right)
+\nonumber \\
+&=&
+\left(
+  \hat{\nu}\hat{\varphi}-\hat{\kappa}\hat{\phi}
+\right)
+\hat{\varphi}^{T}
+-\hat{\kappa}\hat{\varphi}\hat{\phi}^{T}
+\nonumber \\
+&=&
+\hat{\nu}\hat{\varphi}\hat{\varphi}^{T}
+-\hat{\kappa}
+ \left[
+   \hat{\varphi}\hat{\phi}^{T}+\hat{\phi}\hat{\varphi}^{T}
+ \right]
+\end{eqnarray}
+
+Subsuming we may finally write
+\begin{eqnarray}
+\label{def:update_Z3}
+\hat{\check{M}}_{B^{\prime}}^{-1}
+&=&
+-
+\left(
+\begin{array}{c|c|c}
+\left[
+  -\hat{\kappa}^{2}\hat{\check{M}}_{B}^{-1}
+  +\hat{\nu}\hat{\varphi}\hat{\varphi}^{T}
+  -\hat{\kappa}
+  \left[
+    \hat{\varphi}\hat{\phi}^{T}+\hat{\phi}\hat{\varphi}^{T}
+  \right]
+\right] / d^{2}
+&
+\left[
+  \hat{\kappa}\hat{\phi} - \hat{\nu}\hat{\varphi}
+\right] /d
+&
+  \hat{\kappa}\hat{\varphi} / d
+\\
+\hline
+\left[
+  \hat{\kappa}\hat{\phi}^{T} - \hat{\nu}\hat{\varphi}^{T}
+\right] /d
+&
+\hat{\nu}
+&
+-\hat{\kappa}
+\\
+\hline
+\hat{\kappa}\hat{\varphi}^{T} /d
+&
+-\hat{\kappa}
+&
+0
+\end{array}
+\right)
+\nonumber \\
+&=&
+\left(
+\begin{array}{c|c|c}
+\left[
+  \hat{\kappa}^{2}\hat{\check{M}}_{B}^{-1}
+  -\hat{\nu}\hat{\varphi}\hat{\varphi}^{T}
+  +\hat{\kappa}
+  \left[
+    \hat{\varphi}\hat{\phi}^{T}+\hat{\phi}\hat{\varphi}^{T}
+  \right]
+\right] / d^{2}
+&
+\left[
+  \hat{\nu}\hat{\varphi} - \hat{\kappa}\hat{\phi}
+\right] /d
+&
+-\hat{\kappa}\hat{\varphi} / d
+\\
+\hline
+\left[
+  \hat{\nu}\hat{\varphi}^{T} - \hat{\kappa}\hat{\phi}^{T}
+\right] /d
+&
+-\hat{\nu}
+&
+\hat{\kappa}
+\\
+\hline
+-\hat{\kappa}\hat{\varphi}^{T} /d
+&
+\hat{\kappa}
+&
+0
+\end{array}
+\right)
+\end{eqnarray}
+where $\hat{z}$ is the new denominator and 
+\begin{equation}
+\label{def:update_Z3_entities}
+\begin{array}{rclcrcl}
+\hat{\phi} &:=& \hat{\check{M}}_{B}^{-1}\theta
+&&
+\hat{\varphi} &:=& \hat{\check{M}}_{B}^{-1}\vartheta^{T}
+\\
+\hat{\kappa} &:=& dA_{\sigma(i), j}-\vartheta\hat{\check{M}}_{B}^{-1}\theta
+&&
+\hat{\nu} &:=& 2dD_{j,j}-\theta^{T}\hat{\check{M}}_{B}^{-1}\theta
+\\
+\hat{z} &:=& \hat{\kappa}^{2} / d
+&&
+d &:=& \left|\det(\hat{\check{M}}_{B})\right|
+\end{array}
+\end{equation}
+
+\subsection{Update $\mathbf{U_{Z_{2}}}$}
+In analogy with Definitions~(\ref{def:theta_vartheta}) we define
+\begin{equation}
+\label{def:rho_hat_varrho_hat}
+\hat{\rho}:=\left(\hat{\check{M}}_{B}^{-1}\right)_{\bullet, \beta_{O}(i)},
+\quad
+\hat{\varrho}^{T}
+:=
+\left(\hat{\check{M}}_{B}^{-1}\right)_{\bullet, \gamma_{C}(\sigma(j))}
+\end{equation}
+such that
+\begin{equation}
+\hat{\chi}:=
+\left(
+\begin{array}{c|c}
+\hat{\varrho}_{C^{\prime}}^{T}     & \hat{\rho}_{C^{\prime}} \\
+\hline
+\hat{\varrho}_{B_{O}^{\prime}}^{T} & \hat{\rho}_{B_{O}^{\prime}}
+\end{array}
+\right)
+\end{equation}
+and
+\begin{eqnarray}
+\hat{Z}^{-1}
+&:=&
+\left(
+\begin{array}{c|c}
+\hat{\varrho}_{\gamma_{C}(\sigma(j))}^{T}
+&
+\hat{\rho}_{\gamma_{C}(\sigma(j))} \\
+\hline
+\hat{\varrho}_{\beta_{O}(i)}^{T}
+&
+\hat{\rho}_{\beta_{O}(i)}
+\end{array}
+\right)
+\nonumber \\
+&=&
+\left(
+\begin{array}{c|c}
+\left(
+  \hat{\check{M}}_{B}^{-1}
+\right)_{\gamma_{C}(\sigma(j)), \gamma_{C}(\sigma(j))}
+&
+\left(\hat{\check{M}}_{B}^{-1}\right)_{\gamma_{C}(\sigma(j)), \beta_{O}(i)}
+\\
+\hline
+\left(\hat{\check{M}}_{B}^{-1}\right)_{\beta_{O}(i), \gamma_{C}(\sigma(j))}
+&
+\left(\hat{\check{M}}_{B}^{-1}\right)_{\beta_{O}(i), \beta_{O}(i)}
+\end{array}
+\right) 
+\end{eqnarray}
+The above is using the precondition of the leaving variable for $U_{Z_{2}}$ in
+table~(\ref{table:leaving_precond}) simplified to
+\begin{equation}
+\hat{Z}^{-1}=
+\left(
+\begin{array}{c|c}
+\left(
+  \hat{\check{M}}_{B}^{-1}
+\right)_{\gamma_{C}(\sigma(j)), \gamma_{C}(\sigma(j))}
+&
+\left(\hat{\check{M}}_{B}^{-1}\right)_{\gamma_{C}(\sigma(j)), \beta_{O}(i)}
+\\
+\hline
+\left(\hat{\check{M}}_{B}^{-1}\right)_{\beta_{O}(i), \gamma_{C}(\sigma(j))}
+&
+0
+\end{array}
+\right) 
+\end{equation}
+By the pivoting precondition for $U_{Z_{2}}$ in 
+table~(\ref{table:pivot_precond}) we then have
+\begin{equation}
+\det(Z^{-1}) =
+-\left( 
+\left(\check{M}_{B}^{-1}\right)_{\beta_{O}(i),\gamma_{C}(\sigma(j))}
+\right)^{2}
+\neq 0
+\end{equation}
+again, in accordance with Lemma~(\ref{lem:main}). Note that according to the above and
+the Definition~(\ref{def:new_denom_Z2}) of the new denominator $\hat{z}$
+we have 
+\begin{equation}
+\label{eq:sign_of_new_denom_Z2}
+sgn(\hat{z})=-1
+\end{equation}
+
+
+If we define 
+\begin{equation}
+\hat{\kappa}:=
+\left(\hat{\check{M}}_{B}^{-1}\right)_{\gamma_{C}(\sigma(j)), \beta_{O}(i)}
+\quad
+\hat{{\xi}}:=
+\left(
+  \hat{\check{M}}_{B}^{-1}
+\right)_{\gamma_{C}(\sigma(j)), \gamma_{C}(\sigma(j))}
+\end{equation}
+we may write
+\begin{eqnarray}
+-\hat{\chi} P \hat{Z}^{-1}P^{T}\hat{\chi}^{T}
+&=&
+-\left(
+\begin{array}{c|c}
+\hat{\varrho}_{C^{\prime} \cup B_{O}^{\prime}}^{T}
+&
+\hat{\rho}_{C^{\prime} \cup B_{O}^{\prime}} \\
+\end{array}
+\right)
+\left(
+\begin{array}{c|c}
+0              & -\hat{\kappa}  \\
+\hline
+-\hat{\kappa} & \hat{\xi}
+\end{array}
+\right)
+\left(
+\begin{array}{c}
+\hat{\varrho}_{C^{\prime} \cup B_{O}^{\prime}}   \\
+\hline
+\hat{\rho}_{C^{\prime} \cup B_{O}^{\prime}}^{T} 
+\end{array}
+\right)
+\nonumber \\
+&=&
+\left(
+\begin{array}{c|c}
+\hat{\kappa}\hat{\rho}_{C^{\prime} \cup B_{O}^{\prime}}
+&
+\hat{\kappa}\hat{\varrho}_{C^{\prime} \cup B_{O}^{\prime}}^{T}
+ -\hat{\xi}\hat{\rho}_{C^{\prime} \cup B_{O}^{\prime}}
+\end{array}
+\right)
+\left(
+\begin{array}{c}
+\hat{\varrho}_{C^{\prime} \cup B_{O}^{\prime}}   \\
+\hline
+\hat{\rho}_{C^{\prime} \cup B_{O}^{\prime}}^{T}  
+\end{array}
+\right)
+\nonumber \\
+&=&
+-\hat{\xi}
+ \hat{\rho}_{C^{\prime} \cup B_{O}^{\prime}}
+ \hat{\rho}_{C^{\prime} \cup B_{O}^{\prime}}^{T}
++\hat{\kappa}
+ \left[
+ \hat{\rho}_{C^{\prime} \cup B_{O}^{\prime}}
+ \hat{\varrho}_{C^{\prime} \cup B_{O}^{\prime}}
+ +\hat{\varrho}_{C^{\prime} \cup B_{O}^{\prime}}^{T}
+ \hat{\rho}_{C^{\prime} \cup B_{O}^{\prime}}^{T}
+ \right]
+\end{eqnarray}
+as well as 
+\begin{equation}
+\det(\hat{Z}^{-1})=-\hat{\kappa}^{2},
+\end{equation}
+
+
+Subsuming this we may finally write
+\begin{eqnarray}
+\label{def:update_Z2}
+\hat{\check{M}}_{B^{\prime}}^{-1}
+&=&
+-
+\left(
+\begin{array}{c|c}
+\left[
+  -\hat{\kappa}^{2}\hat{\check{M}}_{B}^{-1}
+  -\hat{\xi}
+  \hat{\rho}_{C^{\prime} \cup B_{O}^{\prime}}
+  \hat{\rho}_{C^{\prime} \cup B_{O}^{\prime}}^{T}
+  +\hat{\kappa}
+  \left[
+    \hat{\rho}_{C^{\prime} \cup B_{O}^{\prime}}
+    \hat{\varrho}_{C^{\prime} \cup B_{O}^{\prime}}
+    +\hat{\varrho}_{C^{\prime} \cup B_{O}^{\prime}}^{T}
+    \hat{\rho}_{C^{\prime} \cup B_{O}^{\prime}}^{T}
+  \right]
+\right]/d^{2}
+&
+\vdots
+\\
+\hline
+\hdots
+&
+\bullet
+\end{array}
+\right)
+\nonumber \\
+&=&
+\left(
+\begin{array}{c|c}
+\left[
+  \hat{\kappa}^{2}\hat{\check{M}}_{B}^{-1}
+  +\hat{\xi}
+  \hat{\rho}_{C^{\prime} \cup B_{O}^{\prime}}
+  \hat{\rho}_{C^{\prime} \cup B_{O}^{\prime}}^{T}
+  -\hat{\kappa}
+  \left[
+    \hat{\rho}_{C^{\prime} \cup B_{O}^{\prime}}
+    \hat{\varrho}_{C^{\prime} \cup B_{O}^{\prime}}
+    +\hat{\varrho}_{C^{\prime} \cup B_{O}^{\prime}}^{T}
+    \hat{\rho}_{C^{\prime} \cup B_{O}^{\prime}}^{T}
+  \right]
+\right]/d^{2}
+&
+\vdots
+\\
+\hline
+\hdots
+&
+\bullet
+\end{array}
+\right)
+\end{eqnarray}
+where $\hat{z}$ is the new denominator and 
+\begin{equation}
+\label{def:update_Z2_entities}
+\begin{array}{rclcrcl}
+\hat{\rho}
+&:=&
+\left(
+  \hat{\check{M}}_{B}^{-1}
+\right)_{\bullet, \beta_{O}(i)}
+&&
+\hat{\varrho}^{T}
+&:=&
+\left(
+  \hat{\check{M}}_{B}^{-1}
+\right)_{\bullet, \gamma_{C}(\sigma(j))}
+\\
+\hat{\kappa}
+&:=&
+\left(
+  \hat{\check{M}}_{B}^{-1}
+\right)_{\gamma_{C}(\sigma(j)), \beta_{O}(i)}
+&&
+\hat{\xi}
+&:=&
+\left(
+  \hat{\check{M}}_{B}^{-1}
+\right)_{\gamma_{C}(\sigma(j)), \gamma_{C}(\sigma(j))}
+\\
+\hat{z}
+&:=&
+\hat{\kappa}^{2}/d
+&&
+d
+&:=&
+\left|\det(\hat{\check{M}}_{B})\right|
+\end{array}
+\end{equation}
+
+\section{Implementation Issues}
+Comparing the Updates for $U_{Z_{1}}$ to $U_{Z_{4}}$ we note that the Updates
+$U_{Z_{1}}$ and $U_{Z_{4}}$ are en-bloc replacement updates, that is, the to be
+replaced row and column need no special treatment, in contrast to the Updates
+$U_{Z_{2}}$ and $U_{Z_{3}}$, which change the dimensions of the reduced basis
+inverse by $2$. Nevertheless, all the Updates have a similar update
+formula in common for parts of the to be updated basis inverses,
+for $U_{Z_{1}}$ and $U_{Z_{4}}$ this part comprises the whole
+basis inverse $\check{M}_{B}^{-1}$ and for $U_{Z_{2}}$
+and $U_{Z_{3}}$ the corresponding part consists of  
+\begin{equation}
+\left(
+ \check{M}_{B}^{-1}
+\right)_{C \cap C^{\prime} \cup B_{O} \cap B_{O}^{\prime}}
+\end{equation}
+The general update formula for this part for the Updates
+$U_{Z_{1}}$ and $U_{Z_{4}}$ can then be written as 
+\begin{equation}
+\check{M}_{B^{\prime}}^{-1}
+=
+\frac{
+\omega_{0}\check{M}_{B}^{-1}
++\omega_{1}\Psi_{1}\Psi_{1}^{T}
++\omega_{2}\left[\Psi_{1}\Psi_{2}^{T}+\Psi_{2}\Psi_{1}^{T}\right]
+}{\omega_{3}},
+\end{equation}
+The values the above entities assume for the updates $U_{Z_{1}}$ and
+$U_{Z_{4}}$ are subsumed in the following table below.
+\begin{equation}
+\begin{array}{c|cc}
+& U_{Z_{1}} & U_{Z_{4}} \\
+\hline
+C^{\prime}
+& C
+& C \setminus \{\sigma(j)\} \cup \{\sigma(i)\}
+\\
+B_{O}^{\prime}
+& B_{O} \setminus \{i\} \cup \{j\}
+& B_{O}
+\\
+\Psi_{1}
+& \hat{\rho}
+& \hat{\check{M}}_{B}^{-1}\zeta-de_{\gamma_{C}(\sigma(j))}
+\\
+\Psi_{2}
+& \hat{\check{M}}_{B}^{-1}\zeta-de_{\beta_{O}(i)}
+& \hat{\varrho}^{T}
+\\
+\omega_{0}
+& \left(\hat{\rho}^{T}\zeta\right)^{2}
+& \left(\hat{\varrho}\zeta\right)^{2}
+\\
+\omega_{1}
+& -\left(
+   d\zeta_{\beta_{O}(i)}-\zeta^{T}\hat{\check{M}}_{B}^{-1}\zeta
+  \right) 
+& \left(
+   \hat{\check{M}}_{B}^{-1}
+  \right)_{\gamma_{C}(\sigma(j)), \gamma_{C}(\sigma(j))} 
+\\
+\omega_{2}
+& -\hat{\rho}^{T}\zeta
+& -\hat{\varrho}\zeta
+\\
+\omega_{3}
+& d^{2}
+& d^{2}
+\end{array}
+\end{equation}
+ 
+Correspondingly for the Updates $U_{Z_{2}}$ and $U_{Z_{3}}$ as 
+\begin{equation}
+\left(
+\check{M}_{B^{\prime}}^{-1}
+\right)_{C \cap C^{\prime} \cup B_{O} \cap B_{O}^{\prime}}
+=
+\frac{
+\omega_{0}
+\left(
+\check{M}_{B}^{-1}
+\right)_{C \cap C^{\prime} \cup B_{O} \cap B_{O}^{\prime}}
++\omega_{1}\Psi_{1}\Psi_{1}^{T}
++\omega_{2}\left[\Psi_{1}\Psi_{2}^{T}+\Psi_{2}\Psi_{1}^{T}\right]
+}{\omega_{3}},
+\end{equation}
+The values the above entities assume for the updates $U_{Z_{2}}$ and
+$U_{Z_{3}}$ are subsumed in the following table below.
+\begin{equation}
+\begin{array}{c|cccc}
+& U_{Z_{2}} & U_{Z_{3}} \\
+\hline
+C^{\prime}
+& C \setminus \{\sigma(j)\}
+& C \cup \{\sigma(i)\}
+\\
+B_{O}^{\prime}
+& B_{O} \setminus \{i\}
+& B_{O} \cup \{j\}
+\\
+\Psi_{1}
+& \hat{\rho}_{C^{\prime} \cup B_{O}^{\prime}}
+& \varphi
+\\
+\Psi_{2}
+& \hat{\varrho}_{C^{\prime} \cup B_{O}^{\prime}}^{T}
+& \phi
+\\
+\omega_{0}
+& \left(
+   \hat{\check{M}}_{B}^{-1}
+  \right)_{\gamma_{C}(\sigma(j)), \beta_{O}(i)}^{2}
+& \left(
+   dA_{\sigma(i),j}-\vartheta\hat{\check{M}}_{B}^{-1}\theta
+  \right)^{2} d
+\\
+\omega_{1}
+& \left(
+   \hat{\check{M}}_{B}^{-1}
+  \right)_{\gamma_{C}(\sigma(j)), \gamma_{C}(\sigma(j))}
+& -\hat{\nu}
+\\
+\omega_{2}
+& -\left(
+   \hat{\check{M}}_{B}^{-1}
+  \right)_{\gamma_{C}(\sigma(j)), \beta_{O}(i)}
+& d A_{\sigma(i), j}-\vartheta\hat{\check{M}}_{B}^{-1}\theta
+\\
+\omega_{3}
+& d^{2}
+& d^{2}
+\end{array}
+\end{equation}
+The function performing this part of the Updates $U_{Z_{1}} \dots U_{Z_{4}}$
+has the following signature:
+\begin{tabbing}
+\texttt{z\_update\_inplace($\Psi_{1}, \Psi_{2}, \omega_{0}, \omega_{1},
+\omega_{2}, \omega_{3}$)}
+\end{tabbing}
+\subsection{Interfaces}
+%In general entities depending only on the constraint matrix $A$ and on the
+%objective function matrix $D$ as well as on the indices $j, i$ of the current
+%entering and leaving variables are considered to be global constants.  
+The QP-solver is represented by the classes \texttt{QP\_solver} and
+\texttt{QP\_basis\_inverse} and other classes representing the different
+pricing strategies. An instance of the class \texttt{QP\_solver} has
+members representing the headings $B_{O},B_{S}, C$ and $S_{B}$,
+the constraint matrix $A$, the objective function matrix $D$ as well as a
+reference, \texttt{inv\_M\_B}, referring to an instance of the class
+\texttt{QP\_basis\_inverse}. An instance of the class
+\texttt{QP\_basis\_inverse} however does not have a reference
+referring to its ambient solver. This entails that methods of the basis inverse
+implementing the Updates $U_{Z_{1}} \dots U_{Z_{4}}$ described in previous
+sections can not access these entities kept in the class \texttt{QP\_solver};
+we therefore adopt the policy that these entities are passed as parameters of
+these methods wherever necessary.   
+
+Some of the entities used in the update formulas~(\ref{def:update_Z1}),
+(\ref{def:update_Z4}), (\ref{def:update_Z3}) and~(\ref{def:update_Z2})
+are already determined by the Ratio Test Step~1 preceeding the update step~1.
+Among other entities the Ratio Test Step~1 computes
+\begin{equation}
+\label{def:q_hat_nu_hat}
+\hat{q}:=\hat{\check{M}}_{B}^{-1}\theta
+\quad
+\hat{\nu}:=2D_{j,j}d-\theta^{T}\hat{\check{M}}_{B}^{-1}\theta
+\end{equation}  
+
+
+\subsection{Update $U_{Z_{1}}$}
+According to the Definitions~(\ref{def:zeta_Z1})
+and~(\ref{def:q_hat_nu_hat}), $\hat{v}$ of the 
+Definitions~(\ref{def:update_Z1_entities}) can be expressed in terms
+of the entering column $\theta$ and $D$ as
+\begin{eqnarray*}
+\hat{v}
+&:=&
+\hat{\check{M}}_{B}^{-1}\zeta - de_{\beta_{O}(i)} \\
+&=&
+\hat{\check{M}}_{B}^{-1}\theta
++2\left(D_{j,j}-D_{i,j}\right)\hat{\check{M}}_{B}^{-1}e_{\beta_{O}(i)}
+-de_{\beta_{O}(i)} \\
+&=&
+\hat{q}+2\left(D_{j,j}-D_{i,j}\right)\hat{\rho}-de_{\beta_{O}(i)}
+\end{eqnarray*}
+Similarly we obtain for $\hat{k}_{2}$ using Definitions~(\ref{def:zeta_Z1})
+and~(\ref{def:q_hat_nu_hat})
+\begin{eqnarray*}
+\hat{k}_{2}
+&:=&
+d\zeta_{\beta_{O}(i)}-\zeta^{T}\hat{\check{M}}_{B}^{-1}\zeta \\
+&=&
+2dD_{j,j}
+-\left(\theta+2\left(D_{j,j}-D_{i,j}\right)e_{\beta_{O}(i)}^{T}\right)
+\hat{\check{M}}_{B}^{-1}
+\left(\theta+2\left(D_{j,j}-D_{i,j}\right)e_{\beta_{O}(i)}\right) \\
+&=&
+2dD_{j,j}-\theta^{T}\hat{\check{M}}_{B}^{-1}\theta
+-4\left(D_{j,j}-D_{i,j}\right)^{2}
+e_{\beta_{O}(i)}^{T}\hat{\check{M}}_{B}^{-1}e_{\beta_{O}(i)} \\
+&&
+-4\left(D_{j,j}-D_{i,j}\right)
+e_{\beta_{O}(i)}^{T}\hat{\check{M}}_{B}^{-1}\theta \\
+&=&
+\hat{\nu}
+-4\left(D_{j,j}-D_{i,j}\right)^{2}
+\left(\hat{\check{M}}_{B}^{-1}\right)_{\beta_{O}(i), \beta_{O}(i)}
+-4\left(D_{j,j}-D_{i,j}\right)\hat{\rho}^{T}\theta \\
+&=&
+\hat{\nu}
+-4\left(D_{j,j}-D_{i,j}\right)\hat{\rho}^{T}\theta \\
+&=&
+\hat{\nu}
+-4\left(D_{j,j}-D_{i,j}\right)\hat{q}_{\beta_{O}(i)}
+\end{eqnarray*}
+Using the above, the entities used
+in~(\ref{def:update_Z1_entities}) can be expressed as
+\begin{equation}
+\label{def:update_Z1_entities_prep}
+\begin{array}{rclcrcl}
+\hat{\rho}
+&:=&
+\left(\hat{\check{M}}_{B}^{-1}\right)_{\bullet, \beta_{O}(i)}
+&&
+\hat{v}
+&:=&
+\hat{q}+2\left(D_{j,j}-D_{i,j}\right)\hat{\rho}-de_{\beta_{O}(i)}
+\\
+\hat{k}_{1}
+&:=&
+\hat{q}_{\beta_{O}(i)}
+&&
+\hat{k}_{2}
+&:=&
+\hat{\nu}
+-4\left(D_{j,j}-D_{i,j}\right)\hat{q}_{\beta_{O}(i)}
+\\
+\hat{z}
+&:=&
+\hat{k}_{1}^{2}/d
+&&
+d
+&:=&
+\left|\det(\hat{\check{M}}_{B})\right|
+\end{array}
+\end{equation}
+such that the part in the class \texttt{QP\_basis\_inverse} of 
+Update $U_{Z_{1}}$ can be outlined as
+\begin{tabbing}
+\texttt{z\_replace\_original\_by\_original($y, s_{\Delta}, s_{\nu}, k_{i}$) \{}
+\\
+\texttt{  } \= // compute $\hat{v}, \hat{\rho}, \hat{k}_{1}, \hat{k}_{2}$ \\
+\> \texttt{$\hat{k}_{1}:=y_{k_{i}}$} \\
+\> \texttt{$\hat{\rho}:=
+  \left(\hat{\check{M}}_{B}^{-1}\right)_{\bullet, k_{i}}$} \\
+\> \texttt{$\hat{v}:=y + s_{\Delta} \hat{\rho} - de_{k_{i}}$} \\
+\> \texttt{$\hat{k}_{2}:=s_{\nu} - 2s_{\Delta}\hat{k}_{1}$} \\
+\> \texttt{z\_update\_in\_place($\hat{\rho}, \hat{v}, \hat{k}_{1}^{2},
+-\hat{k}_{2}, -\hat{k}_{1}, d^{2}$)} \\
+\> // store new denominator $\hat{z}$ \\
+\> \texttt{$d:=\hat{k}_{1}^{2}/d$} \\
+\texttt{\}}
+\end{tabbing}
+The calling counterpart in the class \texttt{QP\_solver} can be outlined as
+\begin{tabbing}
+\texttt{z\_replace\_variable\_original\_by\_original() \{} \\
+\texttt{  } \= // compute $k_{i}, \hat{k}_{2}$ \\
+\> \texttt{$s_{\Delta}:= 2\left(D_{j,j} - D_{i,j}\right)$} \\
+\> \texttt{$s_{\nu}:= \nu$} \\
+\> \texttt{$k_{i}:=\beta_{O}(i)$} \\
+\> // update headings \\
+\> // ... \\
+\> // update basis inverse \\
+\> \texttt{inv\_M\_B.z\_replace\_original\_by\_original($\hat{q},
+s_{\Delta}, s_{\nu}, k_{i}$)} \\
+\texttt{\}}
+\end{tabbing}
+
+\subsection{Update $U_{Z_{4}}$}
+According to the Definitions~(\ref{def:zeta_Z4}),
+%and~(\ref{def:q_hat_nu_hat}),
+$\zeta=\vartheta$, such that the entities $\hat{v}$ and $\hat{k}_{1}$ used
+in Definitions~(\ref{def:update_Z4_entities}) can be expressed in terms
+of the entering column $\vartheta$ as
+\begin{equation}
+\label{def:update_Z4_entities_prep}
+\begin{array}{rclcrcl}
+\hat{v}
+&:=&
+\hat{\check{M}}_{B}^{-1}\vartheta^{T} -de_{\gamma_{C}(\sigma(j))}
+&&
+\hat{\varrho}^{T}
+&:=&
+\left(\hat{\check{M}}_{B}^{-1}\right)_{\bullet, \gamma_{C}(\sigma(j))}
+\\
+\hat{k}_{1}
+&:=&
+\hat{\varrho}\vartheta^{T}
+&&
+\hat{k}_{3}
+&:=&
+-\left(\hat{\check{M}}_{B}^{-1}\right)_{\gamma_{C}(\sigma(j)),
+  \gamma_{C}(\sigma(j))}
+\\
+\hat{z}
+&:=&
+\hat{k}_{1}^{2}/d
+&&
+d
+&:=&
+\left|\det(\hat{\check{M}}_{B})\right|
+\end{array}
+\end{equation}
+such that, by taking into account that according to
+Definition~(\ref{def:theta_vartheta}), $\vartheta_{C}=0$,
+the part in the class \texttt{QP\_basis\_inverse} of
+Update $U_{Z_{4}}$ can be outlined as
+\begin{tabbing}
+\texttt{z\_replace\_slack\_by\_slack($u, k_{j}$) \{} \\
+\texttt{  } \= // compute $\hat{v}, \hat{\varrho}, \hat{k}_{1}, \hat{k}_{3}$ \\
+\> \texttt{$\hat{v}:=
+    \left(\hat{\check{M}}_{B}^{-1}\right)_{\bullet, B_{O}}u-de_{k_{j}}$} \\
+\> \texttt{$\hat{\varrho}^{T}:=
+  \left(\hat{\check{M}}_{B}^{-1}\right)_{\bullet,k_{j}}$} \\
+\> \texttt{$\hat{k}_{1}:=\hat{\varrho}_{B_{O}}u$} \\
+\> \texttt{$\hat{k}_{3}:=
+  -\left(\hat{\check{M}}_{B}^{-1}\right)_{k_{j}, k_{j}}$} \\
+\> \texttt{z\_update\_in\_place($\hat{v}, \hat{\varrho}, \hat{k}_{1}^{2},
+-\hat{k}_{3}, -\hat{k}_{1}, d^{2}$)} \\
+\> // store new denominator $\hat{z}$ \\
+\> \texttt{$d:=\hat{k}_{1}^{2}/d$} \\
+\texttt{\}}
+\end{tabbing}
+The calling counterpart in the class \texttt{QP\_solver} can be outlined as
+\begin{tabbing}
+\texttt{z\_replace\_variable\_slack\_by\_slack() \{} \\
+\texttt{  } \= // compute $u, k_{j}$ \\
+\> \texttt{$u:=\vartheta_{B_{O}}^{T}$} \\
+\> \texttt{$k_{j}:=\gamma_{C}(\sigma(j))$} \\
+\> // update headings \\
+\> // ... \\
+\> // update basis inverse \\
+\> \texttt{inv\_M\_B.z\_replace\_slack\_by\_slack($u, k_{j}$)}
+\\
+\texttt{\}}
+\end{tabbing}
+
+
+\subsection{Update $U_{Z_{2}}$}
+Using Definitions~(\ref{def:q_hat_nu_hat}) the entities used
+in~(\ref{def:update_Z2_entities}) can be expressed as
+\begin{equation}
+\label{def:update_Z2_entities_prep}
+\begin{array}{rclcrcl}
+\hat{\rho}
+&:=&
+\left(
+  \hat{\check{M}}_{B}^{-1}
+\right)_{\bullet, \beta_{O}(i)}
+&&
+\hat{\varrho}^{T}
+&:=&
+\left(
+  \hat{\check{M}}_{B}^{-1}
+\right)_{\bullet, \gamma_{C}(\sigma(j))}
+\\
+\hat{\kappa}
+&:=&
+\left(
+  \hat{\check{M}}_{B}^{-1}
+\right)_{\gamma_{C}(\sigma(j)), \beta_{O}(i)}
+&&
+\hat{\xi}
+&:=&
+\left(
+  \hat{\check{M}}_{B}^{-1}
+\right)_{\gamma_{C}(\sigma(j)), \gamma_{C}(\sigma(j))}
+\\
+\hat{z}
+&:=&
+\hat{\kappa}^{2}/d
+&&
+d
+&:=&
+\left|\det(\hat{\check{M}}_{B})\right|
+\end{array}
+\end{equation}
+such that the part in the class \texttt{QP\_basis\_inverse} of
+Update $U_{Z_{2}}$ can be outlined as
+\begin{tabbing}
+\texttt{z\_replace\_original\_by\_slack() \{} \\
+\texttt{  } \= // compute $\hat{\rho}, \hat{\varrho}, \hat{\kappa},
+\hat{\xi}$ \\
+\> \texttt{$\hat{\rho}:=
+  \left(\hat{\check{M}}_{B}^{-1}\right)_{\bullet, k_{i}}$} \\
+\> \texttt{$\hat{\varrho}:=
+  \left(\hat{\check{M}}_{B}^{-1}\right)_{\bullet, k_{j}}$} \\
+\> \texttt{$\hat{\kappa}:=
+  \left(\hat{\check{M}}_{B}^{-1}\right)_{k_{j}, k_{i}}$} \\
+\> \texttt{$\hat{\xi}:=
+  \left(\hat{\check{M}}_{B}^{-1}\right)_{k_{j}, k_{j}}$} \\    
+\> \texttt{z\_update\_in\_place($\hat{\rho}, \hat{\varrho}^{T},
+\hat{\kappa}^{2}, \hat{\xi}, -\hat{\kappa}, d^{2}$)} \\
+\> // store new denominator $\hat{z}$ \\
+\> \texttt{$d:=\hat{\kappa}^{2}/d$} \\
+\texttt{\}}
+\end{tabbing}
+The calling counterpart in the class \texttt{QP\_solver} can be outlined as
+\begin{tabbing}
+\texttt{z\_replace\_variable\_original\_by\_slack() \{} \\
+\texttt{  } \= // compute $u, k_{j}$ \\
+\> \texttt{$k_{j}:=\gamma_{C}(\sigma(j))$} \\
+\> \texttt{$k_{i}:=\beta_{O}(i)$} \\
+\> // update headings \\
+\> // ... \\
+\> // prepare basis inverse \\
+\> \texttt{inv\_M\_B.swap\_variable($k_{i}$)} \\
+\> \texttt{inv\_M\_B.swap\_constraint($k_{j}$)}\\
+\> // update basis inverse \\
+\> \texttt{inv\_M\_B.z\_replace\_original\_by\_slack()}
+\\
+\texttt{\}}
+\end{tabbing}
+
+
+
+\subsection{Update $U_{Z_{3}}$}
+Using Definitions~(\ref{def:q_hat_nu_hat}) 
+as well as Definitions~(\ref{def:theta_vartheta}) the entities used
+in~(\ref{def:update_Z3_entities}) can be expressed as
+\begin{equation}
+\label{def:update_Z3_entities_prep}
+\begin{array}{rclcrcl}
+\hat{\phi} &:=& \hat{q}
+&&
+\hat{\varphi}
+&:=&
+\hat{\check{M}}_{B}^{-1}\vartheta^{T}
+\\
+\hat{\kappa} &:=& dA_{\sigma(i), j}-\vartheta\hat{q}
+&&
+\hat{\nu} &:=& 2dD_{j,j}-\theta^{T}\hat{\check{M}}_{B}^{-1}\theta
+\\
+\hat{z} &:=& \hat{\kappa}^{2}/d
+&&
+d &:=& \left|\det(\hat{\check{M}}_{B})\right|
+\end{array}
+\end{equation}
+such that, by taking into account that according to
+Definition~(\ref{def:theta_vartheta}), $\vartheta_{C}=0$,
+the part in the class \texttt{QP\_basis\_inverse} of
+Update $U_{Z_{3}}$ can be outlined as
+\begin{tabbing}
+\texttt{z\_replace\_slack\_by\_original($y,u,\kappa,\nu$) \{}
+\\
+\texttt{  } \= // compute $\hat{\phi}, \hat{\varphi}, \hat{\kappa},
+\hat{\nu}$ \\
+\> \texttt{$\hat{\phi}:=y$} \\
+\> \texttt{$\hat{\varphi}:= 
+ \left(\hat{\check{M}}_{B}^{-1}\right)_{\bullet, B_{O}}u$} \\
+\> \texttt{$\hat{\kappa}:=\kappa$} \\
+\> \texttt{$\hat{\nu}:=\nu$} \\
+\> \texttt{z\_update\_in\_place($\hat{\varphi}, \hat{\phi},
+\hat{\kappa}^{2}, -\hat{\nu}, \hat{\kappa}, d^{2}$)} \\
+\> // append new rows and columns \\
+\> $\left(\hat{\check{M}}_{B^{\prime}}\right)_{s, \bullet}:=
+\left[
+  (\hat{\nu}\hat{\varphi}-\hat{\kappa}\hat{\phi})_{C}/d
+  \left|\right. -\hat{\nu}
+  \left|\right.(\hat{\nu}\hat{\varphi}-\hat{\kappa}\hat{\phi})_{B_{O}}/d 
+  \left|\right. \hat{\kappa}
+\right]$ \\
+\> $\left(\hat{\check{M}}_{B^{\prime}}\right)_{l+b, \bullet}:=
+\left[
+  -\hat{\kappa}\hat{\varphi}^{T}_{C}/d
+  \left|\right. \hat{\kappa}
+  \left|\right. -\hat{\kappa}\hat{\varphi}^{T}_{B_{O}}/d
+  \left|\right. 0
+\right]$ \\
+\> // store new denominator $\hat{z}$ \\
+\> \texttt{$d:=\hat{\kappa}^{2}/d$} \\
+\texttt{\}}
+\end{tabbing}
+The calling counterpart in the class \texttt{QP\_solver} can be outlined as
+\begin{tabbing}
+\texttt{z\_replace\_variable\_slack\_by\_original() \{} \\
+\texttt{  } \= // compute $u, k_{j}$ \\
+\> \texttt{$y:=\hat{q}$} \\
+\> \texttt{$u:=\vartheta_{B_{O}}$} \\
+\> \texttt{$\kappa:=dA_{\sigma(i), j}-\vartheta_{B_{O}}\hat{q}_{B_{O}}$} \\
+\> \texttt{$\nu:=\hat{\nu}$} \\
+\> // update headings \\
+\> // ... \\
+\> // update basis inverse \\
+\> \texttt{inv\_M\_B.z\_replace\_slack\_by\_original($y, u, \kappa, \nu$)}
+\\
+\texttt{\}}
+\end{tabbing}
+
+
+
+\section{Verification}
+\subsection{Update $U_{Z_{1}}$}
+According to Equations  we have
+\begin{eqnarray}
+\hat{\rho}^{T}\check{M}_{B}=de_{\beta_{O}(i)}
+\end{eqnarray}
+as well as 
+\begin{equation}
+\hat{v}^{T}\check{M}_{B}=
+d\left(\theta^{T} 
+   -\left(\check{M}_{B}\right)_{\beta_{O}(i), \bullet}
+ \right)
+=
+du^{T}
+\end{equation}
+such that $\hat{\check{M}}_{B^{\prime}}^{-1}\check{M}_{B}$ becomes
+\begin{eqnarray}
+\hat{\check{M}}_{B^{\prime}}^{-1}
+\check{M}_{B}
+&=&
+\frac{
+\hat{k}_{1}^{2}\hat{\check{M}}_{B}^{-1}
+-\left[
+  \hat{k}_{2}\hat{\rho}\hat{\rho}^{T}
+  +\hat{k}_{1}\left(\hat{\rho}\hat{v}^{T} +\hat{v}\hat{\rho}^{T}\right)
+ \right]
+}{d^{2}}
+\check{M}_{B}
+\nonumber \\
+&=&
+\frac{
+  d\hat{k}_{1}^{2}I
+  -d
+  \left[
+    \hat{k}_{2}\hat{\rho}e_{\beta_{O}(i)}^{T}
+    +\hat{k}_{1}
+    \left(
+      \hat{\rho}u^{T}
+      +\hat{v}e_{\beta_{O}(i)}^{T}
+    \right)
+  \right]
+}{d^{2}}
+\nonumber \\
+&=&
+\hat{z}
+-\frac{
+  \hat{k}_{2}\hat{\rho}e_{\beta_{O}(i)}^{T}
+  +\hat{k}_{1}\hat{\rho}u^{T}
+  +\hat{k}_{1}\hat{v}e_{\beta_{O}(i)}^{T}
+}{d}
+\end{eqnarray}
+
+According to Equations we have
+\begin{eqnarray}
+\hat{\check{M}}_{B}^{-1}UV^{T}
+&=&
+\hat{\check{M}}_{B}^{-1}ue_{\beta_{O}(i)}^{T}
++\hat{\check{M}}_{B}^{-1}e_{\beta_{O}(i)}u^{T}
+-u_{i}\hat{\check{M}}_{B}^{-1}e_{\beta_{O}(i)}e_{\beta_{O}(i)}^{T}
+\nonumber \\
+&=&
+\hat{\check{M}}_{B}^{T}
+\left(\theta-\left(\check{M}_{B}\right)_{\bullet, \beta_{O}(i)}\right)
+e_{\beta_{O}(i)}^{T}
++\hat{\rho}u^{T}
+-u_{\beta_{O}(i)}\hat{\rho}e_{\beta_{O}(i)}^{T}
+\nonumber \\
+&=&
+\left(
+  \hat{\check{M}}_{B}^{-1}\theta -de_{\beta_{O}(i)}
+\right)
+e_{\beta_{O}(i)}^{T}
++\hat{\rho}u^{T}
+-u_{\beta_{O}(i)}\hat{\rho}e_{\beta_{O}(i)}^{T}
+\nonumber \\
+&=&
+\hat{v}e_{\beta_{O}(i)}^{T}
++\hat{\rho}u^{T}
+-u_{\beta_{O}(i)}\hat{\rho}e_{\beta_{O}(i)}^{T}
+\nonumber \\
+&=&
+\hat{v}e_{\beta_{O}(i)}^{T}
++\hat{\rho}\left(u^{T}-u_{\beta_{O}(i)}e_{\beta_{O}(i)}^{T}\right)
+\end{eqnarray}
+and
+\begin{eqnarray}
+\hat{\rho}^{T}UV^{T}
+&=&
+\hat{\rho}^{T}ue_{\beta_{O}(i)}^{T}
++\hat{\rho}^{T}e_{\beta_{O}(i)}u^{T}
+-u_{\beta_{O}(i)}\hat{\rho}^{T}e_{\beta_{O}(i)}e_{\beta_{O}(i)}^{T}
+\nonumber \\
+&=&
+\hat{\rho}^{T}
+\left(\theta-\left(\check{M}_{B}\right)_{\bullet, \beta_{O}(i)}\right)
+e_{\beta_{O}(i)}^{T}
+\nonumber \\
+&=&
+\left(\hat{k}_{1}-d\right)e_{\beta_{O}(i)}^{T}
+\end{eqnarray}
+as well as
+\begin{eqnarray}
+\hat{v}^{T}UV^{T}
+&=&
+\hat{v}^{T}ue_{\beta_{O}(i)}^{T}
++\hat{v}^{T}e_{\beta_{O}(i)}u^{T}
+-u_{\beta_{O}(i)}\hat{v}^{T}e_{\beta_{O}(i)}e_{\beta_{O}(i)}^{T}
+\nonumber \\
+&=&
+\hat{v}^{T}
+\left(\theta-\left(\check{M}_{B}\right)_{\bullet, \beta_{O}(i)}\right)
+e_{\beta_{O}(i)}^{T}
++\hat{v}_{\beta_{O}(i)}u^{T}
+-u_{\beta_{O}(i)}\hat{v}_{\beta_{O}(i)}e_{\beta_{O}(i)}^{T}
+\nonumber \\
+&=&
+-\hat{k}_{2}e_{\beta_{O}(i)}^{T}
+-\hat{v}^{T}
+\left(\check{M}_{B}\right)_{\bullet, \beta_{O}(i)}e_{\beta_{O}(i)}^{T}
++\hat{v}_{\beta_{O}(i)}u^{T}
+-u_{\beta_{O}(i)}\hat{v}_{\beta_{O}(i)}e_{\beta_{O}(i)}^{T}
+\nonumber \\
+&=&
+-\hat{k}_{2}e_{\beta_{O}(i)}^{T}
+-du_{\beta_{O}(i)}e_{\beta_{O}(i)}^{T}
++\hat{v}_{\beta_{O}(i)}u^{T}
+-u_{\beta_{O}(i)}\hat{v}_{\beta_{O}(i)}e_{\beta_{O}(i)}^{T}
+\nonumber \\
+&=&
+-\hat{k}_{2}e_{\beta_{O}(i)}^{T}
+-u_{\beta_{O}(i)}\left(d+\hat{v}_{\beta_{O}(i)}\right)e_{\beta_{O}(i)}^{T}
++\hat{v}_{\beta_{O}(i)}u^{T}
+\nonumber \\
+&=&
+-\hat{k}_{2}e_{\beta_{O}(i)}^{T}
+-u_{\beta_{O}(i)}\hat{k}_{1}e_{\beta_{O}(i)}^{T}
++\left(\hat{k}_{1}-d\right)u^{T}
+\nonumber \\
+&=&
+-\hat{k}_{2}e_{\beta_{O}(i)}^{T}
++\hat{k}_{1}
+\left(u^{T}-u_{\beta_{O}(i)}e_{\beta_{O}(i)}^{T}\right)
+-du^{T}
+\end{eqnarray}
+such that $\hat{\check{M}}_{B^{\prime}}^{-1}UV^{T}$ becomes
+\begin{eqnarray}
+\hat{\check{M}}_{B^{\prime}}^{-1}UV^{T}
+&=&
+\frac{
+\hat{k}_{1}^{2}\hat{\check{M}}_{B}^{-1}
+-\left[
+  \hat{k}_{2}\hat{\rho}\hat{\rho}^{T}
+  +\hat{k}_{1}\left(\hat{\rho}\hat{v}^{T} +\hat{v}\hat{\rho}^{T}\right)
+ \right]
+}{d^{2}}
+UV^{T}
+\nonumber \\
+&=&
+\frac{
+\hat{k}_{1}^{2}\hat{v}e_{\beta_{O}(i)}^{T}
++\hat{k}_{1}^{2}
+\hat{\rho}\left(u^{T}-u_{\beta_{O}(i)}e_{\beta_{O}(i)}^{T}\right)
+-\hat{k}_{2}\left(\hat{k}_{1}-d\right)\hat{\rho}e_{\beta_{O}(i)}^{T}
+}{d^{2}}
+\nonumber \\
+&&
+\frac{
+-\hat{k}_{1}\hat{\rho}
+\left(
+  -\hat{k}_{2}e_{\beta_{O}(i)}^{T}
+  +\hat{k}_{1}
+  \left(u^{T}-u_{\beta_{O}(i)}e_{\beta_{O}(i)}^{T}\right)
+  -du^{T}
+\right)
+}{d^{2}}
+\nonumber \\
+&&
+\frac{
+-\hat{k}_{1}\left(\hat{k}_{1}-d\right)\hat{v}e_{\beta_{O}(i)}^{T}
+}{d^{2}}
+\nonumber \\
+&=&
+\hat{k}_{2}d\hat{\rho}e_{\beta_{O}(i)}^{T}
++\hat{k}_{1}d\hat{\rho} u^{T}
++\hat{k}_{1}d\hat{v}e_{\beta_{O}(i)}^{T}
+\end{eqnarray}
+Finally we have 
+\begin{equation}
+\hat{\check{M}}_{B}^{-1}\left(M_{B}+UV^{T}\right)=\hat{z}
+\end{equation}
+as expected..
+\begin{thebibliography}{99}
+\bibitem{Sven} Sven Sch\"{o}nherr. Quadratic Programming in Geometric Optimization:
+Theory, Implementation, and Applications, Dissertation, Diss. ETH No 14738, ETH
+Z\"{u}rich, Institute of Theoretical Computer Science, 2002.
+\bibitem{Chvatal} Va\v{s}ek Chv\'{a}tal. \textit{Linear Programming}. W. H. Freeman and Company,
+New York, Chapter 8, 1983 
+\bibitem{Zielke} Gerhard Zielke. Inversion of Modified Symmetric Matrices. 
+\textit{Journal of the Association for Computing Machinery}, Vol. 15, No. 3,
+July 1968, pp. 402-408
+\bibitem{Frans_Deg} Degeneracy
+\end{thebibliography}
+\end{document}

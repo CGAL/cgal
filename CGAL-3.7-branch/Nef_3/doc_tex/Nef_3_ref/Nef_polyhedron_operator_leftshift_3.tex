@@ -1,0 +1,62 @@
+% +------------------------------------------------------------------------+
+% | Reference manual page: Polyhedron_operator_leftshift.tex
+% +------------------------------------------------------------------------+
+% | 05.04.2004   Peter Hachenberger
+% | Package: Nef_3
+% | 
+\RCSdef{\RCSNefpolyhedron3operatoristreamRev}{$Id$}
+\RCSdefDate{\RCNefpolyhedron3operatoristreamDate}{$Date$}
+% |
+%%RefPage: end of header, begin of main body
+% +------------------------------------------------------------------------+
+
+\ccHtmlNoClassLinks
+\begin{ccRefFunction}{operator<<}
+\label{refNef_polyhedron_operator_leftshift_3}
+
+\ccDefinition
+
+This operator writes The Nef polyhedron \ccc{N} to the output stream \ccc{out} 
+using a propriatary file format. It includes the 
+complete incidence structure, the geometric data, and the marks of each item.
+
+Using \cgal\ stream modifiers the following output formats can be chosen: 
+ASCII(\ccc{set_ascii_mode}), binary(\ccc{set_binary_mode}) or 
+pretty(\ccc{set_pretty_mode}). The mandatory format is the ASCII format. It 
+is recommended to use this format for file input and output.
+
+As the output depends on the output operators of the geometric primitives 
+provided by the traits class, it might not be possible that the input operator
+and output operators of different traits classes are not compatible. We recommend
+to use the \cgal\ kernels \ccc{Homogeneous}, \ccc{Simple_homogeneous}, or 
+\ccc{Extended_homogeneous}
+parametrized with any exact number type that models $\mathbb{Z}$ (e.g. \ccc{Gmpz}
+or \ccc{leda_integer}).
+
+A bounded \ccc{Nef_polyhedron_3<Extended_homogeneous>} is automatically written
+as though \ccc{Nef_polyhedron_3<CGAL::Homogeneous>} or 
+\ccc{Nef_polyhedron_3<CGAL::Simple_homogeneous>} is used. As a result, the input
+operator of each of these types can read the output.
+
+\ccInclude{CGAL/IO/Nef_polyhedron_iostream_3.h}
+
+\ccGlobalFunction{template <class Traits>
+    ostream& operator<<( ostream& out, 
+                         const CGAL::Nef_polyhedron_3<Traits>& N);}
+  
+\ccSeeAlso
+
+\ccRefIdfierPage{CGAL::Nef_polyhedron_3<Traits>}\\ 
+\lcTex{\ccc{operator>>} \dotfill\ 
+    page~\pageref{refNef_polyhedron_operator_rightshift_3}}%
+\lcRawHtml{
+    <I><A HREF="Function_operator--.html">operator&gt;&gt;</A></I>.
+}
+
+\end{ccRefFunction}
+
+% +------------------------------------------------------------------------+
+%%RefPage: end of main body, begin of footer
+% EOF
+% +------------------------------------------------------------------------+
+

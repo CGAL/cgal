@@ -1,0 +1,43 @@
+\ccRefPageBegin
+
+\begin{ccRefConcept}{ArrangementDcelWithRebind}
+
+\ccDefinition
+% ===========
+
+The concept \ccRefName{} refines the \ccc{ArrangementDcel} concept by adding
+a policy clone idiom in form of a rebind struct-template.
+
+Instantiate a dcel{} class with many different possible types without ad-hoc limitations on type of the dcel classes.
+
+\ccRefines
+\ccc{ArrangementDcel}
+
+\ccTypes
+% ======
+\ccNestedType{template <class T> rebind}
+   {allows the instantiation of a model of the base concept
+   \ccc{ArrangementDcel} with a different possible geometry-traits
+   classe without ad-hoc limitations on it.
+
+   Followng the standard clone policy, the rebind struct-template must
+   have a nested type named \ccc{other} that defines the type of the
+   model replica.}
+
+\ccCreation
+\ccCreationVariable{dcel}
+% =======================  
+\ccConstructor{Arr_dcel();}
+  {constructs an empty \dcel{} with one unbouned face.}
+
+\ccHasModels
+% ==========
+\ccc{Arr_default_dcel<Traits>}
+  \lcTex{(\ccRefPage{CGAL::Arr_default_dcel<Traits>})}\\
+\ccc{Arr_face_extended_dcel<Traits,FData,V,H,F>}
+  \lcTex{(\ccRefPage{CGAL::Arr_face_extended_dcel<Traits,FData,V,H,F>})}\\
+\ccc{Arr_extended_dcel<Traits,VData,HData,FData,V,H,F>}
+  \lcTex{(\ccRefPage{CGAL::Arr_extended_dcel<Traits,VData,HData,FData,V,H,F>})}
+
+\end{ccRefConcept}
+\ccRefPageEnd

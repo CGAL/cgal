@@ -1,0 +1,151 @@
+% +------------------------------------------------------------------------+
+% | Reference manual page: Box_d.tex
+% +------------------------------------------------------------------------+
+
+
+\begin{ccRefClass}[Box_intersection_d::]{Box_d<NT,int D,IdPolicy>}
+\ccDefinition
+
+\ccRefName\ is a generic iso-oriented bounding box in dimension $D$.
+It provides in each dimension an interval with lower and upper
+endpoints represented with the number type \ccc{NT}.  This class is
+designed to work smoothly with the algorithms for intersecting
+sequences of iso-oriented boxes. For degeneracy handling, the boxes
+need to provide a unique \ccc{id}-number. The policy parameter
+\ccc{IdPolicy} offers several choices. The template parameters have to
+comply with the following requirements:
+
+\begin{itemize}
+  \item
+    \ccc{NT}: number type for the box boundaries, needs to be a model
+    of the \ccc{Assignable} and the \ccc{LessThanComparable} concept.
+  \item
+    \ccc{int D}: the dimension of the box.
+  \item
+    \ccc{IdPolicy}: specifies how the \ccc{id}-number will be
+    provided. Can be one of the following types, where
+    \ccc{ID_EXPLICIT} is the default for this parameter:
+    \begin{itemize}
+      \item
+        \ccc{ID_NONE}: no \ccc{id}-number is provided. Can be useful
+        if \ccc{Box_d} is used as a base class for a different
+        implementation of \ccc{id}-numbers than the ones provided
+        here.
+      \item
+        \ccc{ID_EXPLICIT}: the \ccc{id}-number is stored explicitly in
+        the box and automatically created and assigned at construction
+        time of the box. Note that copying a box (copy-constructor and
+        assignment) does not create a new \ccc{id}-number but keeps
+        the old one, which is the behavior needed by the
+        \ccc{CGAL::box_self_intersection} algorithm. This is therefore
+        the safe default implementation. 
+      \item
+        \ccc{ID_FROM_BOX_ADDRESS}: casts the address of the box into a
+        \ccc{std::ptrdiff_t} to create the \ccc{id}-number. Works fine 
+        if the intersection algorithms work effectively with pointers
+        to boxes, but not in the case where the algorithms work with
+        box values, because the algorithms modify the order of the
+        boxes, and the \ccc{CGAL::box_self_intersection} algorithm
+        creates copies of the boxes that would not have identical
+        \ccc{id}-numbers.  
+    \end{itemize}
+\end{itemize}
+
+\ccInclude{CGAL/Box_intersection_d/Box_d.h}\\
+and also automatically with\\
+\ccInclude{CGAL/box_intersection_d.h}
+
+\ccIsModel
+
+\ccRefConceptPage{BoxIntersectionBox_d}
+
+\ccTypes
+\ccThree{std::size_tMMMMM}{Mbox.min_coord( int dim)}{}\ccThreeToTwo
+
+\ccNestedType{NT}{number type to represent the box
+  boundaries. Allowed  are the built-in types \ccc{int}, \ccc{unsigned
+  int}, \ccc{float}, and \ccc{double}.}
+
+%\footnote{The support is limited
+%  since we need the largest and the smallest number representable for
+%  this number type, which are currently only provided for the types
+%  \ccc{int}, \ccc{unsigned int}, \ccc{float}, and \ccc{double} with the
+%  class \ccc{CGAL::Box_intersection_d::box_limits<NT>}.}
+
+\ccTypedef{typedef std::size_t ID;}{type for the box \ccc{id}-number.}
+
+
+\ccCreation
+\ccCreationVariable{box}
+\ccThree{std::size_t}{MMMMMMbox.min_coord( int dim)}{}\ccThreeToTwo
+
+\ccConstructor{Box_d();}{Default constructor. No particular initialization.}
+
+\ccConstructor{Box_d(bool complete);}{initializes to the complete or 
+  the empty space. If empty, all interval starting(end) points will be
+  set to positive(negative) infinity.} 
+
+\ccConstructor{Box_d(NT lo[D], NT hi[D]);}{initializes the box
+  intervals to [\ccc{lo[i]},\ccc{hi[i]}], $0 \leq i < D$. 
+  \ccPrecond \ccc{lo[i]} $<$ \ccc{hi[i]} for $0 \leq i < D$.}
+
+\ccConstructor{Box_d( const Bbox_2& bbox);}{constructs from bbox
+  \ccRequire $D=2$ and \ccc{NT}$ \equiv $\ccc{double}.}
+\ccGlue
+\ccConstructor{Box_d( const Bbox_3& bbox);}{constructs from bbox
+  \ccRequire $D=3$ and \ccc{NT}$ \equiv $\ccc{double}.} 
+
+
+\ccModifiers
+
+\ccMethod{void init( bool complete = false);}{initializes to the complete or 
+  the empty space. If empty, all interval starting(end) points will be
+  set to positive(negative) infinity.}
+
+\ccMethod{void extend(NT point[D]);}{extend \ccc{box} to contain the
+  old \ccc{box} and \ccc{point}.}
+
+\ccAccessFunctions
+
+\ccFunction{int Box_d::dimension();}{%
+  returns $D$, the dimension of the box.}
+
+\ccMethod{std::size_t id();} {returns a unique box id, see the
+  \ccc{IdPolicy} template parameter above for the different
+  choices.
+  \ccRequire \ccc{IdPolicy}$ \neq $\ccc{ID_NONE}}
+
+\ccMethod{NT min_coord(int d) const;}{%
+  returns the lower boundary in dimension \ccc{d}
+  \ccPrecond $0 \leq $\ccc{d}$ < D$}
+
+\ccMethod{NT max_coord(int d) const;}{%
+  returns the upper boundary in dimension \ccc{d}
+  \ccPrecond $0 \leq $\ccc{d}$ < D$}
+
+\ccMethod{const Bbox_2& bbox() const;}{returns the bounding box
+  \ccRequire $D=2$ and \ccc{NT}$ \equiv $\ccc{double}}
+\ccGlue
+\ccMethod{const Bbox_3& bbox() const;}{returns the bounding box
+  \ccRequire $D=3$ and \ccc{NT}$ \equiv $\ccc{double}}
+
+\ccMethod{void extend(NT p[N]);}{extends \ccVar\ to the smallest
+  box that additionally contains the point represented by coordinates in \ccc{p}.}
+\ccMethod{void extend(std::pair<NT,NT> p[N]);}{extends \ccVar\ to the smallest
+  box that additionally contains the point represented by coordinate intervals in \ccc{p}.}
+
+\ccSeeAlso
+
+\ccRefIdfierPage{CGAL::box_intersection_d}\\
+\ccRefIdfierPage{CGAL::box_self_intersection_d}\\
+\ccRefIdfierPage{CGAL::box_intersection_all_pairs_d}\\
+\ccRefIdfierPage{CGAL::box_self_intersection_all_pairs_d}
+
+\ccRefIdfierPage{CGAL::Box_intersection_d::Box_with_handle_d<NT, int D, Handle, IdPolicy>}
+
+\ccRefIdfierPage{CGAL::Box_intersection_d::Box_traits_d<BoxHandle>}\\
+\ccRefConceptPage{BoxIntersectionTraits_d}
+
+
+
+\end{ccRefClass}

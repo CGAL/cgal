@@ -1,0 +1,39 @@
+% +------------------------------------------------------------------------+
+% | Reference manual page: Multi_listener.tex
+% +------------------------------------------------------------------------+
+% | 21.03.2005   Author
+% | Package: Support
+% | 
+\RCSdef{\RCSMultilistenerRev}{$Id$}
+\RCSdefDate{\RCSMultilistenerDate}{$Date$}
+% |
+%%RefPage: end of header, begin of main body
+% +------------------------------------------------------------------------+
+
+
+\begin{ccRefClass}{Multi_listener<Interface>}  %% add template arg's if necessary
+
+%% \ccHtmlCrossLink{}     %% add further rules for cross referencing links
+%% \ccHtmlIndexC[class]{} %% add further index entries
+
+\ccDefinition
+  
+The class \ccRefName\ implements a base class for listeners where more
+than one listener is allowed to subscribe to a notifier. See
+\ccc{Listener} for full documentation. This uses the function calls
+\ccc{new_listener()} and \ccc{delete_listener()} to register and
+unrester the listener (instead of \ccc{set_listener()}).
+
+\ccInclude{CGAL/Kinetic/Multi_listener.h}
+
+\ccSeeAlso
+
+\ccc{Listener<Interface>}.
+
+\end{ccRefClass}
+
+% +------------------------------------------------------------------------+
+%%RefPage: end of main body, begin of footer
+% EOF
+% +------------------------------------------------------------------------+
+

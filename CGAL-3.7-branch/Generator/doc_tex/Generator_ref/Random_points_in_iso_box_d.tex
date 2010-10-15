@@ -1,0 +1,42 @@
+\begin{ccRefClass}{Random_points_in_iso_box_d<Point_d>}
+
+\ccDefinition
+
+The class \ccRefName\ is an input iterator creating points uniformly
+distributed in a half-open d-dimensional iso box.  The default \ccc{Creator} is
+\ccc{Creator_uniform_d<Kernel_traits<Point_d>::Kernel::RT, Point_d>}.
+
+\ccIsModel
+InputIterator \\
+\ccRefConceptPage{PointGenerator}
+
+\ccInclude{CGAL/point_generators_d.h}
+
+\ccTypes
+
+\ccThree{typedef std::input_iterator_tagxxx}{xxxiterator_category;}{}
+\ccTypedef{typedef std::input_iterator_tag iterator_category;}{}
+\ccGlue
+\ccTypedef{typedef Point_d                 value_type;}{}
+\ccGlue
+\ccTypedef{typedef std::ptrdiff_t          difference_type;}{}
+\ccGlue
+\ccTypedef{typedef const Point_d*          pointer;}{}
+\ccGlue
+\ccTypedef{typedef const Point_d&          reference;}{}
+
+\ccOperations
+
+\ccCreationVariable{g}
+\ccConstructor{Random_points_in_iso_box_3( int dim, double a, Random& rnd =
+  default_random);}{%
+  $g$ is an input iterator creating points of type \ccc{Point_d} uniformly
+  distributed in the half-open d-dimensional iso box with side length $2 a$, 
+  centered
+  at the origin, i.e.~$\forall p = \ccc{*g}:  -a \le p.x(),p.y(),p.z() < a$~. 
+  \ccc{d} random numbers are needed from \ccc{rnd} for each point.
+} 
+
+
+
+\end{ccRefClass}

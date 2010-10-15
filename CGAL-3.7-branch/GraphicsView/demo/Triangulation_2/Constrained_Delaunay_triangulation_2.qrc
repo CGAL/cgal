@@ -1,0 +1,12 @@
+<RCC>
+  <qresource prefix="/cgal/Actions" >
+    <file>icons/circumcenter.png</file>
+    <file>icons/constrained_triangulation_show_in_domain.png</file>
+    <file>icons/constrained_triangulation_show_constraints.png</file>
+    <file>icons/constrained_triangulation.png</file>
+  </qresource>
+  <qresource prefix="/cgal/help" >
+    <file alias="about_CGAL.html" >../resources/about_CGAL.html</file>
+    <file>about_Constrained_Delaunay_triangulation_2.html</file>
+  </qresource>
+</RCC>

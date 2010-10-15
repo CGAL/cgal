@@ -1,0 +1,100 @@
+\ccRefChapter{dD Spatial Searching\label{ChapterReferenceSpatialSearching}}
+
+\ccChapterAuthor{Hans Tangelder \and Andreas Fabri}
+
+This package provides data structures and algorithms for exact and approximate distance browsing,
+supporting
+
+\begin{itemize} 
+
+\item
+both nearest and furthest neighbor searching,
+
+\item
+both exact and approximate searching,
+
+\item
+(approximate) range searching,
+
+\item 
+(approximate) $k$-nearest and $k$-furthest neighbor searching,
+
+\item 
+(approximate) incremental nearest and incremental furthest neighbor searching,
+
+\item
+query items representing points and spatial objects.
+
+\end{itemize}
+
+
+
+The spatial searching package consists of the following concepts and
+classes that are described in the reference pages.
+
+
+
+\section{Classified Reference Pages}
+
+\ccHeading{Search Classes}
+
+\ccRefIdfierPage{CGAL::K_neighbor_search<Traits, GeneralDistance, Splitter, SpatialTree>} \\
+\ccRefIdfierPage{CGAL::Incremental_neighbor_search<Traits, GeneralDistance, Splitter, SpatialTree>} \\
+\ccRefIdfierPage{CGAL::Orthogonal_incremental_neighbor_search<Traits, OrthogonalDistance, Splitter, SpatialTree>} \\
+\ccRefIdfierPage{CGAL::Orthogonal_k_neighbor_search<Traits, OrthogonalDistance, Splitter, SpatialTree>} \\
+\ccRefIdfierPage{CGAL::Kd_tree<Traits, Splitter, UseExtendedNode>} 
+
+\ccHeading{Range Query Item Classes}
+
+\ccRefIdfierPage{CGAL::Fuzzy_iso_box<Traits>} \\
+\ccRefIdfierPage{CGAL::Fuzzy_sphere<Traits>} 
+
+
+\ccHeading{Search Traits Classes}
+
+\ccRefIdfierPage{CGAL::Search_traits_2<Kernel>}\\
+\ccRefIdfierPage{CGAL::Search_traits_3<Kernel>}\\
+\ccRefIdfierPage{CGAL::Search_traits_d<Kernel>}\\
+\ccRefIdfierPage{CGAL::Search_traits<NT,Point,CartesianIterator,ConstructCartesianIterator,ConstructMinVertex,ConstructMaxVertex>}
+
+\ccHeading{Distance Classes}
+
+\ccRefIdfierPage{CGAL::Euclidean_distance<Traits>} \\
+\ccRefIdfierPage{CGAL::Euclidean_distance_sphere_point<Traits>} \\
+\ccRefIdfierPage{CGAL::Manhattan_distance_iso_box_point<Traits>} \\
+\ccRefIdfierPage{CGAL::Weighted_Minkowski_distance<Traits>} 
+
+\ccHeading{Splitter Classes}
+
+\ccRefIdfierPage{CGAL::Sliding_midpoint<Traits, SpatialSeparator>} \\
+\ccRefIdfierPage{CGAL::Sliding_fair<Traits, SpatialSeparator>} \\
+\ccRefIdfierPage{CGAL::Fair<Traits, SpatialSeparator>} \\
+\ccRefIdfierPage{CGAL::Median_of_max_spread<Traits, SpatialSeparator>} \\
+\ccRefIdfierPage{CGAL::Median_of_rectangle<Traits, SpatialSeparator>} \\
+\ccRefIdfierPage{CGAL::Midpoint_of_max_spread<Traits, SpatialSeparator>} \\
+\ccRefIdfierPage{CGAL::Midpoint_of_rectangle<Traits, SpatialSeparator>} 
+
+
+
+\ccHeading{Advanced Classes}
+
+\ccRefIdfierPage{CGAL::Kd_tree_node<Traits, Splitter, UseExtendedNode>} \\
+\ccRefIdfierPage{CGAL::Kd_tree_rectangle<Traits>} \\
+\ccRefIdfierPage{CGAL::Plane_separator<FT>}
+
+\ccHeading{Concepts}
+
+\ccRefConceptPage{FuzzyQueryItem} \\
+\ccRefConceptPage{GeneralDistance} \\ 
+\ccRefConceptPage{OrthogonalDistance} \\
+\ccRefConceptPage{SearchTraits} \\
+\ccRefConceptPage{SpatialSeparator} \\
+\ccRefConceptPage{SpatialTree}
+
+
+ 
+
+
+
+
+

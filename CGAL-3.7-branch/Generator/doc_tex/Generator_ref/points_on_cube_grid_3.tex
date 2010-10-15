@@ -1,0 +1,42 @@
+\begin{ccRefFunction}{points_on_cube_grid_3}
+
+\ccDefinition
+
+The function \ccRefName\ generates a given number of points on a cubic
+grid whose size is determined by the number of points to be generated.
+
+\ccInclude{CGAL/point_generators_3.h}
+
+\def\ccLongParamLayout{\ccTrue}
+\ccFunction{template <class OutputIterator, Creator creator>
+    OutputIterator
+    points_on_cube_grid_3( double a, std::size_t n, OutputIterator o,
+                             Creator creator = 
+            Creator_uniform_3<Kernel_traits<P>::Kernel::RT,P>);}
+{ creates the first $n$ points on the regular $\lceil n^{1/3}\,\rceil
+    \times \lceil  n^{1/3}\,\rceil \times \lceil  n^{1/3}\,\rceil$ 
+    grid within the cube
+    $[-a,a]\times [-a,a]\times [-a, a]$. Returns the value of $o$ after 
+    inserting the $n$ points. 
+}
+\def\ccLongParamLayout{\ccFalse}
+
+\ccRequirements
+\begin{itemize}
+    \item \ccc{Creator} must be a function object accepting three
+          \ccc{double} values $x$, $y$,  and $z$ and returning an initialized 
+           point \ccc{(x,y,z)} of type \ccc{P}. Predefined implementations for 
+           these creators like the default can be found in
+           Section~\ref{sectionCreatorFunctionObjects}. 
+    \item The \ccc{OutputIterator} must accept values of type \ccc{P}. If the
+          \ccc{OutputIterator} has a \ccc{value_type} the default
+          initializer of the \ccc{creator} can be used. \ccc{P} is set to
+          the \ccc{value_type} in this case.
+\end{itemize}
+
+\ccRefIdfierPage{CGAL::points_on_square_grid_2} \\
+\ccRefIdfierPage{CGAL::random_selection} \\
+
+
+
+\end{ccRefFunction}

@@ -1,0 +1,80 @@
+% +------------------------------------------------------------------------+
+% | Reference manual page: Euclidean_distance.tex
+% +------------------------------------------------------------------------+
+% | 1.07.2001   Johan W.H. Tangelder
+% | Package: ASPAS
+% | 
+\RCSdef{\RCSEuclideandistanceRev}{$Id$}
+\RCSdefDate{\RCSEuclideandistanceDate}{$Date$}
+% |
+%%RefPage: end of header, begin of main body
+% +------------------------------------------------------------------------+
+
+
+\begin{ccRefClass}{Euclidean_distance<Traits>}  %% add template arg's if necessary
+
+%% \ccHtmlCrossLink{}     %% add further rules for cross referencing links
+%% \ccHtmlIndexC[class]{} %% add further index entries
+
+\ccDefinition
+  
+The class \ccRefName\ provides an implementation of the concept \ccc{OrthogonalDistance}, with the
+Euclidean distance ($l_2$ metric).
+To optimize distance computations squared distances are used.
+
+
+\ccInclude{CGAL/Euclidean_distance.h}
+
+\ccParameters
+
+Expects for the first template argument a model of the concept
+\ccc{SearchTraits}, for example \ccc{CGAL::Search_traits_2<CGAL::Cartesian<double> >}.
+
+
+
+\ccIsModel
+
+\ccc{OrthogonalDistance}
+
+\ccTypes
+
+\ccTypedef{Traits::FT FT;}{Number type.}
+\ccTypedef{Traits::Point_d Point_d;}{Point type.}
+\ccTypedef{Point_d Query_item;}{Query item type.}
+
+\ccCreation
+\ccCreationVariable{ed}  %% choose variable name
+
+\ccConstructor{Euclidean_distance();}{Default constructor.}
+
+\ccOperations
+ 
+\ccMethod{FT transformed_distance(Query_item q, Point_d p);}{Returns the squared Euclidean distance between~\ccc{q} and~\ccc{p}.}
+
+\ccMethod{FT min_distance_to_rectangle(Query_item q, Kd_tree_rectangle<FT> r);}
+{Returns the squared Euclidean distance between \ccc{q} and
+the point on the boundary of \ccc{r} closest to \ccc{q}.}
+
+\ccMethod{FT max_distance_to_rectangle(Query_item q, Kd_tree_rectangle<FT> r;);}
+{Returns the squared Euclidean distance, where $d$ denotes the distance between \ccc{q} and
+the point on the boundary of \ccc{r} farthest to \ccc{q}.}
+
+\ccMethod{FT new_distance(FT dist, FT old_off, FT new_off, int cutting_dimension);} {Updates the squared \ccc{dist} incrementally
+and returns the updated squared distance.}
+
+\ccMethod{FT transformed_distance(FT d);} {Returns $d^2$.}
+
+\ccMethod{FT inverse_of_transformed_distance(FT d);} {Returns $d^{1/2}$.}
+
+\ccSeeAlso
+
+\ccc{OrthogonalDistance}\\
+\ccc{CGAL::Weighted_Minkowski_distance<Traits>}.
+
+\end{ccRefClass}
+
+% +------------------------------------------------------------------------+
+%%RefPage: end of main body, begin of footer
+% EOF
+% +------------------------------------------------------------------------+
+

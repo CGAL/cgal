@@ -1,0 +1,78 @@
+%% +------------------------------------------------------------------------+
+% | Reference manual page: Regular_grid_2.tex
+% +------------------------------------------------------------------------+
+% | 07.12.2004 Abdelkrim Mebarki
+% | Package: Stream_lines_2
+% | 
+\RCSdef{\RCSRegulargridRev}{$Id$}
+\RCSdefDate{\RCSRegulargridDate}{$Date$}
+% |
+%%RefPage: end of header, begin of main body
+% +------------------------------------------------------------------------+
+
+
+\begin{ccRefClass}{Regular_grid_2<StreamLinesTraits_2>}  %% add template arg's if necessary
+
+%% \ccHtmlCrossLink{}     %% add further rules for cross referencing links
+%% \ccHtmlIndexC[class]{} %% add further index entries
+\ccCreationVariable{rgrid_2}
+\ccDefinition
+
+
+The template parameter \ccc{StreamLinesTraits_2} has to be
+instantiated by a model of the concept \ccc{StreamLinesTraits_2}.\\
+This class provides a 2D vector field specified by a set of sample
+points defined on a regular grid, with a bilinear interpolation scheme
+over its cells (i.e. for each point \ccc{p} in a cell \ccc{c}, the
+vector value is interpolated from the vertices of \ccc{c}).
+
+\ccTypes
+\ccThree{typedef VectorField_2:::Point_iterator_x}{xxx_xxxx_xxx;}{}
+\ccTypedef{typedef StreamLinesTraits_2::FT FT;}{the scalar type.}
+\ccGlue
+\ccTypedef{typedef StreamLinesTraits_2::Point_2 Point_2;}{the point type.}
+\ccGlue
+\ccTypedef{typedef StreamLinesTraits_2::Vector_2 Vector_2;}{the vector type.}
+
+\ccCreation
+\ccCreationVariable{rgrid}  %% choose variable name
+
+\ccThree{Regular_grid_2<StreamLinesTraits_2>}{r = Regular_grid_2 rgrid}{}
+\ccThreeToTwo
+
+\ccThree{Regular_grid_2<StreamLinesTraits>}{r = Regular_grid_2 regular_grid_2}{}
+\ccThreeToTwo
+\ccConstructor{Regular_grid_2(int x_samples, int y_samples, FT x_size, FT y_size);}
+{Generate a regular grid \ccVar\ whose size is \ccc{x_size} by \ccc{y_size}, while \ccc{x_samples} and
+	\ccc{y_samples} specify the number of samples on \ccc{x} and \ccc{y}.}
+
+\ccHeading{Modifiers}
+
+In addition to the minimum interface required by the concept
+definition, the class \ccRefName provides the following function to
+fill the vector field with the user data.
+
+\ccMethod{void set_xy(int i, int j, Vector_2 v);}{Attribute the vector v
+ to the position (i,j) on the regular grid.}
+
+\ccHeading{Access Functions}
+
+\ccMethod{std::pair<int, int> get_dimension();}{returns the dimension of the grid.}
+
+\ccMethod{std::pair<FT, FT> get_size();}{returns the size of the grid.}
+
+%\ccInclude{CGAL/Regular_grid_2.h}
+
+\ccIsModel 
+
+\ccc{VectorField_2} \\
+
+\ccSeeAlso
+\ccc{Triangular_field_2<StreamLinesTraits_2>} \\
+\end{ccRefClass}
+
+% +------------------------------------------------------------------------+
+%%RefPage: end of main body, begin of footer
+% EOF
+% +------------------------------------------------------------------------+
+

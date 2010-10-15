@@ -1,0 +1,244 @@
+% +------------------------------------------------------------------------+
+% | Reference manual page: box_intersection_d.tex
+% +------------------------------------------------------------------------+
+% | 19.05.2004   Lutz Kettner, Andreas Meyer
+% | Package: Package
+% | 
+\RCSdef{\RCSboxintersectiondRev}{$Id$}
+\RCSdefDate{\RCSboxintersectiondDate}{$Date$}
+% |
+%%RefPage: end of header, begin of main body
+% +------------------------------------------------------------------------+
+
+
+\begin{ccRefFunction}{box_intersection_d}
+%\ccHtmlCrossLink{CGAL::box_intersection_custom_predicates_d}
+%\ccRefLabel{CGAL::box_intersection_custom_predicates_d}
+\ccIndexSubitemDef{intersection}{iso-oriented boxes}
+\ccIndexSubitemDef{iso-oriented boxes}{intersection}
+
+\ccDefinition
+
+The function \ccRefName\ computes the pairwise intersecting boxes
+between two sequences of iso-oriented boxes in arbitrary dimension.
+The sequences of boxes are given with two random-access iterator
+ranges and will be reordered in the course of the algorithm. For each
+intersecting pair of boxes a \ccc{callback} function object is called
+with the two intersecting boxes as argument; the first argument is a
+box from the first sequence, the second argument a box from the second
+sequence.  The performance of the algorithm can be tuned with a
+\ccc{cutoff} parameter, see the implementation section below for more
+details.
+
+The algorithm reorders the boxes in the course of the algorithm. Now,
+depending on the size of a box it can be faster to copy the boxes, or
+to work with pointers to boxes and copy only pointers. We offer
+automatic support for both options. To simplify the description, let
+us call the \ccc{value_type} of the iterators \emph{box handle}.  The
+\emph{box handle\/} can either be our box type itself or a pointer (or
+const pointer) to the box type.
+
+A $d$-dimensional iso-oriented box is defined as the
+Cartesian product of $d$ intervals. We call the
+box \emph{half-open} if the $d$ intervals $\{ [lo_i,hi_i) \,|\, 0 \leq
+i < d\}$ are half-open intervals, and we call the box \emph{closed} if
+the $d$ intervals $\{ [lo_i,hi_i] \,|\, 0 \leq i < d\}$ are closed
+intervals. Note that closed boxes support zero-width boxes and they
+can intersect at their boundaries, while non-empty half-open boxes
+always have a positive volume and they only intersect iff their
+interiors overlap.  The distinction between closed or half-open boxes
+does not require a different representation of boxes, just a different
+interpretation when comparing boxes, which is selected with the
+\ccc{topology} parameter and its two values,
+\ccc{CGAL::Box_intersection_d::HALF_OPEN} and
+\ccc{CGAL::Box_intersection_d::CLOSED}.
+
+In addition, a box has an unique \ccc{id}-number. It is used to order
+boxes consistently in each dimension even if boxes have identical
+coordinates. In consequence, the algorithm guarantees that a pair of
+intersecting boxes is reported only once. Boxes with equal
+\ccc{id}-number are not reported since they obviously intersect trivially.
+
+The algorithm uses a traits class of the \ccc{BoxIntersectionTraits_d}
+concept to access the boxes. A default traits class is provided that
+assumes that the box type is a model of the \ccc{BoxIntersectionBox_d}
+concept and that the box handle, i.e., the iterators value type, is
+identical to the box type or a pointer to the box type.
+
+An important special application of this algorithm is the test for
+self-intersections where the second box sequence is an identical copy
+of the first sequence including the preserved \ccc{id}-number. Note
+that this implies that the address of the box is not sufficient for
+the \ccc{id}-number if boxes are copied by value. To ease the use of
+this special case we offer a simplified version of this function with
+one iterator range only, which then creates internally the second copy
+of the boxes, under the name \ccc{CGAL::box_self_intersection_d}.
+
+In the general case, we distinguish between the bipartite case (the
+boxes are from different sequences) and the complete case (the boxes
+are from the same sequence, i.e., the self intersection case). The
+default is the bipartite case, since the complete case is typically
+handled with the simplified function call mentioned above. However,
+the general function call offers the \ccc{setting} parameter with the
+values \ccc{CGAL::Box_intersection_d::COMPLETE} and
+\ccc{CGAL::Box_intersection_d::BIPARTITE}.
+
+\ccInclude{CGAL/box_intersection_d.h}
+
+\ccThree{void}{box_inter}{}
+%\def\ccLongParamLayout{\ccTrue}
+\ccFunction{template< class RandomAccessIterator1, 
+            class RandomAccessIterator2, 
+            class Callback >
+void box_intersection_d(
+    RandomAccessIterator1 begin1, RandomAccessIterator1 end1,
+    RandomAccessIterator2 begin2, RandomAccessIterator2 end2,
+    Callback callback,
+    std::ptrdiff_t cutoff = 10,
+    Box_intersection_d::Topology topology = Box_intersection_d::CLOSED,
+    Box_intersection_d::Setting  setting  = Box_intersection_d::BIPARTITE);
+}{%
+    Invocation of box intersection with default box traits
+    \ccc{CGAL::Box_intersection_d::Box_traits_d<Box_handle>}, where
+    \ccc{Box_handle} corresponds to the iterator value type  of
+    \ccc{RandomAccessIterator1}.}
+ 
+\ccFunction{template< class RandomAccessIterator1,
+            class RandomAccessIterator2,
+            class Callback, class BoxTraits >
+void box_intersection_d(
+    RandomAccessIterator1 begin1, RandomAccessIterator1 end1,
+    RandomAccessIterator2 begin2, RandomAccessIterator2 end2,
+    Callback callback,
+    BoxTraits box_traits,
+    std::ptrdiff_t cutoff = 10,
+    Box_intersection_d::Topology topology = Box_intersection_d::CLOSED,
+    Box_intersection_d::Setting  setting  = Box_intersection_d::BIPARTITE);
+}{Invocation with custom box traits.}
+
+% \begin{ccAdvanced}
+% \def\ccLongParamLayout{\ccTrue}
+% \ccFunction{template< class RandomAccessIterator1,
+%                   class RandomAccessIterator2,
+%                   class Callback, class BoxPredicateTraits >
+% void box_intersection_custom_predicates_d(
+%     RandomAccessIterator1 begin1, RandomAccessIterator1 end1,
+%     RandomAccessIterator2 begin2, RandomAccessIterator2 end2,
+%     Callback callback,
+%     BoxPredicateTraits traits,
+%     std::ptrdiff_t cutoff = 10,
+%     Box_intersection_d::Setting  setting  = Box_intersection_d::BIPARTITE);
+% }{%
+%     This version of the box-intersection algorithms uses a very
+%     fine-grained predicate traits class that allows the hand-crafted
+%     implementation of the individual interval comparison tests. This is
+%     only for experts and might only be useful in the context of special
+%     number types or exploitation of special assembler instructions!
+%     The details of half-open or closed boxes and the \ccc{id}-number of a
+%     box are encoded in this predicate traits.
+% }
+% \def\ccLongParamLayout{\ccFalse}
+% \end{ccAdvanced}
+
+
+\ccRequirements
+
+\begin{itemize}
+  \item
+    \ccc{RandomAccessIterator1}, and \ldots \ccc{2}, must be
+    mutable random-access iterators and both value types must be
+    the same. We call this value type \ccc{Box_handle} in the following.
+  \item
+    \ccc{Callback} must be of the \ccc{BinaryFunction} concept. 
+    The \ccc{Box_handle} must be convertible to both argument types. The
+    return type is not used and can be \ccc{void}.
+  \item
+    The \ccc{Box_handle} must be a model of the \ccc{Assignable} concept.
+  \item
+    In addition, if the default box traits is used the \ccc{Box_handle} must 
+    be a class type \ccc{T} or a pointer to a class type \ccc{T}, where
+    \ccc{T} must be a model of the \ccc{BoxIntersectionBox_d} concept.
+    In both cases, the default box traits specializes to a suitable
+    implementation.
+  \item
+    \ccc{BoxTraits} must be of the \ccc{BoxIntersectionTraits_d} concept.
+%  \item
+%    \ccc{BoxPredicateTraits} must be of the
+%    \ccc{BoxIntersectionPredicateTraits_d} concept.
+\end{itemize}
+
+\ccSeeAlso
+
+\ccRefIdfierPage{CGAL::box_self_intersection_d}\\
+\ccRefIdfierPage{CGAL::box_intersection_all_pairs_d}
+
+\ccRefIdfierPage{CGAL::Box_intersection_d::Box_traits_d<BoxHandle>}\\
+\ccRefConceptPage{BoxIntersectionBox_d}\\
+\ccRefConceptPage{BoxIntersectionTraits_d}
+
+%\begin{ccAdvanced}
+%
+%\ccRefIdfierPage{CGAL::Box_intersection_d::Predicate_traits_d<BoxTraits,bool closed>}\\
+%\ccRefConceptPage{BoxIntersectionPredicateTraits_d}
+%
+%\end{ccAdvanced}
+
+\ccImplementation
+
+The implemented algorithm is described in~\cite{cgal:ze-fsbi-02} as
+version two.  Its performance depends on a \ccc{cutoff} parameter.
+When the size of both iterator ranges drops below the \ccc{cutoff}
+parameter the function switches from the streamed segment-tree
+algorithm to the two-way-scan algorithm, see~\cite{cgal:ze-fsbi-02}
+for the details.
+
+The streamed segment-tree algorithm needs $O(n \log^d (n) + k)$
+worst-case running time and $O(n)$ space, where $n$ is the number of
+boxes in both input sequences, $d$ the (constant) dimension of the
+boxes, and $k$ the output complexity, i.e., the number of pairwise
+intersections of the boxes. The two-way-scan algorithm needs $O(n \log
+(n) + l)$ worst-case running time and $O(n)$ space, where $l$ is the
+number of pairwise overlapping intervals in one dimensions (the
+dimension where the algorithm is used instead of the segment tree).
+Note that $l$ is not necessarily related to $k$ and using the
+two-way-scan algorithm is a heuristic.
+
+Unfortunately, we have no general method to automatically determine an
+optimal cutoff parameter, since it depends on the used hardware, the
+runtime ratio between callback runtime and segment-tree runtime, and
+of course the number of boxes to be checked and their distribution. In
+cases where the callback runtime is dominant, it may be best to make
+the threshold parameter small. Otherwise a \ccc{cutoff}$=\sqrt{n}$ can
+lead to acceptable results. For well distributed boxes the original
+paper~\cite{cgal:ze-fsbi-02} gives optimal cutoffs in the thousands.
+Anyway, for optimal runtime some experiments to compare different
+cutoff parameters are recommended. See also
+Section~\ref{sec:box-inters-performance}.
+
+\ccExample
+
+The box implementation provided with
+\ccc{CGAL::Box_intersection_d::Box_d<double,2>} has a special
+constructor for the \cgal\ bounding box type \ccc{CGAL::Bbox_2} (and
+similar for dimension 3). We use this in the example to create $3
+\times 3$ \ccc{boxes} in a grid layout. Additionally we pick the
+center box and the box in the upper-right corner as our second box
+sequence \ccc{query}.
+
+The default policy of the box type implements the \ccc{id}-number with
+an explicit counter in the boxes, which is the default choice since it
+always works. We use the \ccc{id}-number in our callback function to
+report the result of the intersection algorithm call. The result will
+be that the first \ccc{query} box intersects all nine \ccc{boxes} and
+the second \ccc{query} box intersects the four boxes in the
+upper-right quadrant.
+
+\ccIncludeExampleCode{Box_intersection_d/minimal.cpp}
+
+\end{ccRefFunction}
+
+% +------------------------------------------------------------------------+
+%%RefPage: end of main body, begin of footer
+% EOF
+% +------------------------------------------------------------------------+
+

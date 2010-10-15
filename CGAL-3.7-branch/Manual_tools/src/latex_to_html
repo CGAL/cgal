@@ -1,0 +1,933 @@
+#!/bin/bash
+# **************************************************************************
+#
+#  latex_to_html
+#  ===================
+#  LaTeX to HTML converter. General purpose converter (with some
+#  limitations), but particularly specialized in converting manuals
+#  with C++ specifications written with the cc_manual.sty.
+#
+#  Conversion works in two steps: First all TeX files are converted into
+#  HTML. Meanwhile the necessary information for the cross links is
+#  collected as set of rules. In the second step the hyperlinks
+#  are generated for all HTML files.
+#
+#  Besides programs and scripts distributed with this LaTeX converter,
+#  the following programs are necessary to run the converter
+#
+#    o  C Compiler: cc / gcc
+#    o  Perl 5 (for subsequent scripts)
+#
+#  Author    : (c) 1997 Lutz Kettner
+#              as of version 3.3  (Sept. 1999) maintained by Susan Hert
+#              as of version 3.11 (Aug. 2001) maintained by
+#              Peter Hachenberger and Lutz Kettner
+#  Revision  : $Id$
+#  Date      : $Date$
+#
+# **************************************************************************
+
+# allow wildcard file expansions to become empty if nothing matches
+shopt -s nullglob
+
+# =====================================================================
+# Begin of Installation Section: ...
+# =====================================================================
+# Choose appropriate values in the environment or uncomment and
+# set the values here. See the INSTALLATION file for more details.
+
+#Precedence order for variable values is (least to highest):
+# (1) the variables set in the remainder of this section
+# (2) variables set in the resource file (gets read after this section)
+# (3) parameters on the commandline
+
+# reads the following resource file if it exists
+LATEX_CONV_RESOURCE=${HOME}/.latex_to_html.rc
+
+# Path to the configuration files of the latex_converter:
+# Used during installation to copy config files and compiled
+# into the cc_extract_html program as default config path.
+# The same variable is used in the cc_manual_to_html script.
+# LATEX_CONV_CONFIG=${PUBLIC}/CGAL/Tools/latex_converter_config
+
+
+# C Compiler: Gnu gcc 2.6.3 (or above) or the usual system cc:
+if [ "$CC" == "" ]; then
+    CC=gcc
+fi
+
+# The header files within the \ccInclude macro can be linked to the original
+# header files if the -header option is given to the cc_extract_html program.
+# The environment variable LATEX_CONV_HEADER is used as default.
+# If it is not set, the default setting is empty and include files are not
+# linked.
+# LATEX_CONV_HEADER=""
+
+# Default parameters used in calling the cc_extract_html program:
+# They are not necessarily supposed to be set in the environment.
+if [ "$LATEX_CONV_DATE" == "" ]; then
+    LATEX_CONV_DATE=`date +"%a, %B %e, %Y"`
+fi
+if [ "$LATEX_CONV_AUTHOR" == "" ]; then
+    # no longer CGAL default, the cgal_manual script sets it explicitly
+    # LATEX_CONV_AUTHOR='The <A HREF="http://www.cgal.org">CGAL Project</A>'
+    LATEX_CONV_AUTHOR=""
+fi
+if [ "$LATEX_CONV_TITLE" == "" ]; then
+    LATEX_CONV_TITLE=""
+fi
+if [ "$LATEX_CONV_RELEASE" == "" ]; then
+    LATEX_CONV_RELEASE=""
+fi
+
+# =====================================================================
+# ... End of Installation Section.
+# =====================================================================
+
+# keep track of a global exit code, reports first non-zero error code
+GlobalExitCode=0
+
+#---------------------------------------------------------------------#
+# version
+#---------------------------------------------------------------------#
+
+version_no() {
+    echo '$Id$' | awk '{print $3}'
+}
+
+version_date() {
+    echo '$Id$' | awk '{print $4}'
+}
+
+version() {
+    echo "${BlueColor}${0##*/}: Revision `version_no` [`version_date`]"\
+        "   (c) Lutz Kettner${ResetColor}"  1>&2
+}
+
+all_versions() {
+    version
+    echo -n "Using: "  1>&2
+    cc_extract_html -V   1>&2
+}
+
+#---------------------------------------------------------------------#
+# usage
+#---------------------------------------------------------------------#
+
+usage() {
+    version
+    cat  1>&2 <<EOF
+${BoldColor}Usage: $ProgName [<options>] <tex-files...>${ResetColor}
+${BoldColor}Options:${ResetColor}
+    ${BoldColor}-o${ResetColor}        <dir>     output directory for the generated HTML manual
+    ${BoldColor}-header${ResetColor}   <dir>     set the path where the C headers are.
+    ${BoldColor}-config${ResetColor}   <dir>     set the path where to find the config files.
+    ${BoldColor}-tmp${ResetColor}      <dir>     set the path where to put intermediate files.
+    ${BoldColor}-aux${ResetColor}      <file>    auxiliary file where the \\bibcite\'s are in.
+    ${BoldColor}-sty${ResetColor}      <style>   use style file.
+    ${BoldColor}-quiet${ResetColor}              no output, no warnings for unknown macros.
+    ${BoldColor}-realquiet${ResetColor}          quiet and also suppresses error messages.
+${BoldColor}Parameter-Options:${ResetColor}
+    ${BoldColor}-date${ResetColor}     <text>    set a date for the manual.
+    ${BoldColor}-release${ResetColor}  <text>    set a release number for the manual.
+    ${BoldColor}-title${ResetColor}    <text>    set a title text for the manual.
+    ${BoldColor}-author${ResetColor}   <text>    set an author address (email) for the manual.
+${BoldColor}Debug-Options:${ResetColor}
+    ${BoldColor}-keeptmp${ResetColor}            keeps the temporary working directory for inspection.
+    ${BoldColor}-defaults${ResetColor}           show the settings of the internal variables.
+    ${BoldColor}-macrodef${ResetColor}           trace macro definitions.
+    ${BoldColor}-macroexp${ResetColor}           trace macro expansions.
+    ${BoldColor}-stymacro${ResetColor}           trace style macros as well.
+    ${BoldColor}-stacktrace${ResetColor}         stack trace for each error.
+EOF
+}
+
+
+#---------------------------------------------------------------------#
+# lgout <strings> ....
+#     - writes '<strings> ...' in one line to stdout and the $LogFile
+#     - the line break is suppressed if <string> starts with '-n'
+#     - Keeps track of characters written with -n, tries to format
+#       nicely in 80 character columns
+#     - suppresses stdout output if $Quiet is set to 1
+#---------------------------------------------------------------------#
+
+declare -i CurrentLen=0
+
+lgout() {
+    if [ "$1" == "-n" ]; then
+        shift
+        Buf="$@"
+        declare -i len=$CurrentLen+${#Buf}
+        if [ $len -lt 79 ]; then
+            if [ $Quiet -eq 0 ] ; then
+               echo -n "$@"
+            fi
+            echo -n "$@" >> $LogFile
+            CurrentLen=$len
+        else
+            if [ $Quiet -eq 0 ] ; then
+               echo ""
+               echo -n "$@"
+            fi
+            echo ""      >> $LogFile
+            echo -n "$@" >> $LogFile
+            CurrentLen=${#Buf}
+        fi
+    else
+        Buf="$@"
+        declare -i len2=$CurrentLen+${#Buf}
+        if [ $len2 -gt 78 ]; then
+            echo ""
+            echo ""  >> $LogFile
+        fi
+        if [ $Quiet -eq 0 ] ; then
+           echo "$@"
+        fi
+        echo "$@" >> $LogFile
+        CurrentLen=0
+    fi
+}
+
+#---------------------------------------------------------------------#
+# vout <strings> ....
+#     - lgout '<strings> ...' if $Verbose is set.
+#---------------------------------------------------------------------#
+
+vout() {
+    if [ $Verbose -eq 1 ] ; then
+        lgout "$@"
+    fi
+}
+
+#---------------------------------------------------------------------#
+# error <exit-code> <strings> ....
+#     - writes 'ERROR: <strings> ...' in one line to stderr and the $LogFile
+#     - suppresses stderr output if $RealQuiet is set to 1
+#     - exits script with the <exit-code>, except if it is equal to "noexit"
+#---------------------------------------------------------------------#
+
+error() {
+    ExitCode=$1
+    shift
+    if [ $RealQuiet -eq 0 ] ; then
+        if [ $CurrentLen -gt 0 ]; then echo ""; fi
+        echo "${ErrorColor}ERROR: $@${ResetColor}" 1>&2
+    fi
+    if [ $CurrentLen -gt 0 ]; then
+        echo ""  >> $LogFile
+    fi
+    echo "ERROR: $@" >> $LogFile
+    if [ "$ExitCode" != "noexit" ]; then exit $ExitCode; fi
+    if [ $GlobalExitCode -eq 0 ]; then GlobalExitCode=1 ; fi
+}
+
+#---------------------------------------------------------------------#
+# error_usage <exit-code> <strings> ....
+#     - same as error, but appends the usage message on stderr.
+#     - suppresses stderr output if $RealQuiet is set to 1
+#     - exits script with the <exit-code>, except if it is equal to "noexit"
+#---------------------------------------------------------------------#
+
+error_usage() {
+    ExitCode=$1
+    shift
+    if [ $RealQuiet -eq 0 ] ; then
+        if [ $CurrentLen -gt 0 ]; then echo ""; fi
+        echo "${ErrorColor}ERROR: $@${ResetColor}" 1>&2
+        usage 1>&2
+    fi
+    if [ $CurrentLen -gt 0 ]; then
+        echo ""  >> $LogFile
+    fi
+    echo "ERROR: $@" >> $LogFile
+    if [ "$ExitCode" != "noexit" ]; then exit $ExitCode; fi
+    if [ $GlobalExitCode -eq 0 ]; then GlobalExitCode=1 ; fi
+}
+
+#---------------------------------------------------------------------#
+# warning <strings> ....
+#     - writes 'WARNING: <strings> ...' in one line to stderr and the $LogFile
+#     - suppresses stderr output if $RealQuiet is set to 1
+#---------------------------------------------------------------------#
+
+warning() {
+    if [ $RealQuiet -eq 0 ] ; then
+        echo "${WarnColor}WARNING: $@${ResetColor}" 1>&2
+    fi
+    echo "WARNING: $@" >> $LogFile
+}
+
+#---------------------------------------------------------------------#
+# find_in_search_path <name> <search-path>
+#     - searches for <name> in all directories listed in the
+#       colon seperated <search-path> starting at ${CurrentDir}
+#     - Echos the first path that contains <name>, otherwise echos ".".
+#---------------------------------------------------------------------#
+
+find_in_search_path() {
+    search_paths="`echo $2 | sed 's/:/ /g'`"
+    for p in ${search_paths} ; do
+        if [[ "$p" != "" && -r ${CurrentDir}/$p/$1 ]]; then
+            echo -n $p
+            return
+        fi
+    done
+    echo -n "."
+}
+
+#---------------------------------------------------------------------#
+# print_time <start-time> <end-time>
+#     - prints the time difference in the format hh:mm:ss
+#     - <start-time> and <end-time> are in seconds
+#---------------------------------------------------------------------#
+
+print_time() {
+  declare -i DiffTime=$2-$1
+  declare -i Hours="$DiffTime/3600"
+  declare -i Minutes="($DiffTime/60)%60"
+  declare -i Seconds="$DiffTime%60"
+  printf "%02d:%02d:%02d" $Hours $Minutes $Seconds
+}
+
+
+#---------------------------------------------------------------------#
+# run_command <command ...>
+#     - executes command and stores its return code in $ExitCode
+#     - writes output of stdout and stderr to $LogFile and stdout
+#     - if $Quiet is set, output to stdout is suppressed
+#---------------------------------------------------------------------#
+
+run_command() {
+  ExitCode=0
+  cmd=${@//(/\\(};
+  cmd=${cmd//)/\\)};
+  if [ $Quiet -eq 0 ] ; then
+    {
+      if ! eval "$cmd" 2>&1 ; then
+        # We need to set ExitCode=1, but that won't work with that pipe.
+        # Instead we touch a file and test that later.
+        touch ${LogFile}.tmp.err
+      fi ;
+    } | tee ${LogFile}.tmp
+    if [ -f ${LogFile}.tmp.err ] ; then
+      rm ${LogFile}.tmp.err
+      ExitCode=1
+    fi
+  else
+    if ! eval "$cmd" > ${LogFile}.tmp  2>&1 ; then
+      ExitCode=1
+      #error noexit "Non-zero exit-code when running '$@'."
+    fi
+  fi
+  ErrorInLogfile=0
+  if [ -r $LogFile.tmp ]; then
+    # copy temp logfile to final logfile and remove escape sequences (color)
+    cat $LogFile.tmp | sed 's/[[][0-9]*m//g' >> $LogFile
+    if grep -i '^error' $LogFile.tmp > /dev/null ; then
+        ErrorInLogfile=1
+    fi
+    rm $LogFile.tmp
+  fi
+  if [ $GlobalExitCode -eq 0 ]; then GlobalExitCode=$ExitCode ; fi
+}
+
+#---------------------------------------------------------------------#
+# anchor_filter <file> <outfile>
+#     - transforms HTML <file> through all anchor filters and writes
+#       it to its <outfile> place in the output directory.
+#---------------------------------------------------------------------#
+
+anchor_filter() {
+    cat cc_anchor_rules.stage_0 \
+        cc_anchor_rules.stage_1 \
+        cc_anchor_rules.stage_2 \
+        cc_anchor_rules.stage_3 \
+      | sed 's/REPLACE_WITH_CURRENT_PATH//g' > cc_anchor_rules
+
+    cc_anchor_filter cc_anchor_rules $1
+}
+
+create_stage_3_rules_helper() {
+  subdir=$1
+  sibling=$2
+  if [[ -d $sibling && "$sibling" != "$subdir" ]]; then
+      vout -n " "$sibling
+      \cat $sibling/cc_anchor_rules.stage_[12]  | sed "s/REPLACE_WITH_CURRENT_PATH/..\/REPLACE_WITH_CURRENT_PATH${sibling}\//g" >> $subdir/cc_anchor_rules.stage_3
+  fi
+}
+
+
+#---------------------------------------------------------------------#
+# convert <filename>
+#     - LaTeX to HTML conversion for <filename>
+#---------------------------------------------------------------------#
+
+convert() {
+    # check if file exists
+    if [[ ! -r ${1}.tex && ! -r ${1} ]]; then
+        error 1 "LaTeX filename '${1}' does not exist."
+    fi
+
+    # prepare timing result for logfile
+    local StartTime=$SECONDS
+
+    # get rootname of file to convert
+    BaseName=${1##*/}
+    RootName=${BaseName%.*}
+
+    # relative path, can be empty. If not empty, it has a trailing '/'.
+    PathName=${1%$BaseName}
+    if [ "$PathName" != "" ]; then
+        if [[ $PathName == /* ]]; then
+            error 3 "LaTeX filename must be given with a relative path."
+        fi
+        ${MakePath} ${TmpDir}/${PathName}
+    fi
+
+    # derive LogFile from rootname, and copy existing 'latex_to_html.hlg' to it
+    LogFile=$CurrentDir/${RootName}.hlg
+    if [ -r $LogFile ]; then rm $LogFile; fi
+    if [ -r latex_to_html.hlg ]; then mv latex_to_html.hlg $LogFile; fi
+    lgout "[$ProgName: Revision `version_no` [`version_date`] "
+
+    # check for <rootname>.aux files automatically
+    ExOpt=""
+    if [ -r ${PathName}${RootName}.aux ]; then
+    grep "\\bibcite[{]" ${PathName}${RootName}.aux > ${TmpDir}/${RootName}.auxtmp
+    fi
+
+    # Convert LaTeX into HTML.
+    # --------------------------------------------------
+    run_command cc_extract_html ${ExtractOptions} -main ${RootName}.html $ExOpt $1
+    CurrentLen=0
+
+    # create minitocs
+    
+    cd ${TmpDir}
+
+    find . -name "*.minitoc" | while read minitoc ; do
+      targetfilename=${minitoc%.minitoc}
+      lgout -n "minitoc: [$minitoc] target: [$targetfilename]"
+      cat ${targetfilename} | sed '/LATEX_TO_HTML_REPLACE_WITH_MINITOC_HERE/ {
+r '"$minitoc"'
+d
+}' > ${targetfilename}.tmp
+      mv $targetfilename.tmp $targetfilename
+    done
+    
+    #find . -name "*.html" | while read minitoc ; do
+     # targetfilename=${minitoc%.minitoc}
+     # lgout -n "minitoc: [$minitoc] target: [$targetfilename]"
+     # cat ${targetfilename} | ./replace_minitoc $minitoc > ${targetfilename}.tmp
+     # #cat ${targetfilename} | sed "s/LATEX_TO_HTML_TOKEN_2374627354263542_REPLACE_WITH_MINITOC_HERE/xxx/" > ${targetfilename}.tmp
+     # mv $targetfilename.tmp $targetfilename
+    #done
+
+    # Duplicate directory structure into OutDir
+    # ---------------------------------------------------------------------
+    lgout -n "duplicating directory structure"
+    cd ${TmpDir}
+    # make sure we get all subdirectories
+    AllSubDirs=`find . -type d -print | sed 's/^[.][/]//'`
+    AllSubDirsPostfix=`find . -depth -type d -print | sed 's/^[.][/]//'`
+    for f in ${AllSubDirs} ; do
+        vout -n " "$f
+        if [ ! -d ${AbsOutDir}/$f ]; then mkdir ${AbsOutDir}/$f; fi
+    done
+    vout ""
+
+    # cleanup stage 1 crosslink rules
+    for dir in ${AllSubDirs} ; do
+      cd $dir
+      cat cc_anchor_rules.stage_1 | sed 's/\[cccbegin\]//g' | sed 's/\[cccend\]//g' > cc_anchor_rules.stage_1.tmp
+      mv cc_anchor_rules.stage_1.tmp cc_anchor_rules.stage_1
+      cd ${TmpDir}
+    done
+
+    # Prepare stage 2 crosslink rules
+    # -------------------------------------------------------------
+    lgout -n ", "
+    lgout -n "creating stage 2 anchor rules"
+    # bottom up propagation of rule sets
+    touch cc_anchor_rules.stage_0
+    for dir in ${AllSubDirsPostfix} ; do
+        vout -n " "$dir
+        \touch ${dir}/cc_anchor_rules.stage_2  # necessary to make stage_3 work
+        if [ "$dir" != "." ]; then
+            cd $dir
+            touch cc_anchor_rules.stage_0
+            \cat cc_anchor_rules.stage_1 | sed "s/REPLACE_WITH_CURRENT_PATH/REPLACE_WITH_CURRENT_PATH${dir}\//g" | grep -v -E -e "^local" >> ../cc_anchor_rules.stage_2
+            \cat cc_anchor_rules.stage_1 | grep -E -e "^local" | sed 's/^local//' > cc_anchor_rules.stage_0
+            \cat cc_anchor_rules.stage_1 | grep -v -E -e "^local" > cc_anchor_rules.stage_1.tmp
+            \mv cc_anchor_rules.stage_1.tmp cc_anchor_rules.stage_1
+            cd ${TmpDir}
+        fi
+    done
+    vout ""
+
+    # Prepare stage 3 crosslink rules
+    # -------------------------------------------------------------
+    lgout -n ", "
+    lgout -n "creating stage 3 anchor rules"
+    # top down propagation of rule sets. We avoid getting the rule set
+    # from stage_2 applied to the same files again for performance reasons,
+    # but the scheme implemented here might become slow if we have many
+    # subdirectories in one directory. Then it might be better to copy
+    # copy just the local stage_2 rule set to the sudirectories again.
+    #   We append the stage_3 rules from the current directory
+    # with the stage_2 rules from all sibling directories to form the
+    # stage 3 rule set for a subdirectory. We initialize the stage_3 rule
+    # set in the root with the stage_1 rule set in the root.
+    \cp cc_anchor_rules.stage_1  cc_anchor_rules.stage_3
+    for dir in ${AllSubDirs} ; do
+        vout "    processing in '$dir'"
+        cd $dir
+
+        # this hack solves the following problem:
+        # (quote from bugtracker)
+        # The hyperlinks from INTERIOR/SINGULAR/REGULAR/EXTERIOR on the page
+        # http://www.cgal.org/Manual/3.2/doc_html/cgal_manual/Alpha_shapes_3/Chapter_main.html#Section_25.1
+        # point back to cgal_manual/Alpha_shapes_2_ref instead of Alpha_shapes_3_ref as they should.
+        for subdir in * ; do
+            if [[ -d $subdir && "$subdir" == "${subdir%_ref}" ]]; then
+                vout -n "    --> $subdir : "
+                sibling=${subdir}_ref
+                create_stage_3_rules_helper $subdir $sibling
+                vout ""
+            fi
+        done
+
+        for subdir in *_ref ; do
+            if [ -d $subdir ]; then
+                vout -n "    --> $subdir : "
+                sibling=${subdir%_ref}
+                if [ -d $sibling ]; then
+                    create_stage_3_rules_helper $subdir $sibling
+                    vout ""
+                fi
+            fi
+        done
+
+        for subdir in * ; do
+            if [ -d $subdir ]; then
+                vout -n "    --> $subdir : "
+
+                for sibling in * ; do
+                  create_stage_3_rules_helper $subdir $sibling
+                done
+                \cat cc_anchor_rules.stage_3  | sed "s/REPLACE_WITH_CURRENT_PATH/..\/REPLACE_WITH_CURRENT_PATH/g" >> $subdir/cc_anchor_rules.stage_3
+                vout ""
+            fi
+        done
+        cd ${TmpDir}
+        vout ""
+    done
+    vout ""
+    cd $CurrentDir
+
+    # Creating the index.
+    # --------------------------
+    lgout -n ", "
+    lgout "creating the index"
+    cat ${TmpDir}/manual.hidx | sed 's/\[cccbegin\]//g' | sed 's/\[cccend\]//g' > ${TmpDir}/manual.hidx.tmp
+    mv ${TmpDir}/manual.hidx.tmp ${TmpDir}/manual.hidx
+    vout "makeindex -s ${ConfigHtml}/html_index.mst ${TmpDir}/manual.hidx"
+    run_command makeindex -s ${ConfigHtml}/html_index.mst ${TmpDir}/manual.hidx
+
+    run_command cc_index_link ${TmpDir}/HREF ${TmpDir}/manual.ind ${TmpDir}/cc_index
+    \cat ${TmpDir}/cc_index_header ${TmpDir}/cc_index ${TmpDir}/cc_index_footer > ${TmpDir}/manual_index.html
+
+    CurrentLen=0
+    cd ${TmpDir}
+
+    # Apply anchor filter to all HTML files creating the crosslinks
+    # ---------------------------------------------------------------------
+    lgout -n ", "
+    lgout -n "[applying cross linker "
+    for dir in ${AllSubDirs} ; do
+        lgout -n "[$dir"
+        cd $dir
+        run_command anchor_filter "${AbsOutDir}/${dir}"
+        if [ $ErrorInLogfile -eq 1 ]; then GlobalExitCode=1 ; fi
+        cd ${AbsOutDir}/${dir}
+        for filename in *.html; do
+          cat $filename | cc_remove_unwanted_links > $filename.tmp
+          mv $filename.tmp $filename
+        done
+        cd ${TmpDir}
+        lgout -n "]"
+    done
+
+    cd $CurrentDir
+    # Copy cascaded style sheet (CSS) file and related images
+    # -------------------------------------------------------
+    lgout -n "copying CSS file and images"
+
+    cp -r ${ConfigHtml}/style ${OutDir}
+
+    if [ -r ${TmpDir}/latex_to_html.css ]; then
+        cp ${TmpDir}/latex_to_html.css ${OutDir}
+    else
+        error noexit "CSS file '${TmpDir}/latex_to_html.css' not found, trying default."
+        if [ -r ${ConfigHtml}/default.css ]; then
+            cp ${ConfigHtml}/default.css ${OutDir}/latex_to_html.css
+        else
+            error noexit "Also failed to copy CSS file '${ConfigHtml}/default.css'."
+        fi
+    fi
+
+    # Copy the necessary images to the manual.
+    # -------------------------------------------------------
+    lgout -n ", "
+    lgout -n "copying image files"
+
+    for dir in ${AllSubDirs} ; do
+        vout -n " "$dir
+        cd ${OutDir}/$dir
+        if [ "`find . -name "*.html"`" == "" ]; then
+            continue;
+        fi
+        # copy user images first
+        ImageFiles=`\cat *.html | cc_extract_images | \sort | \uniq`
+
+        for f in $ImageFiles ; do
+            ImageSearchPath="."
+            if [ ! -r ${CurrentDir}/${dir}/${f} ]; then
+                ImageSearchPath="`find_in_search_path ${dir}/${f} ${LATEX_CONV_INPUTS}`"
+            fi
+            if [ -r ${CurrentDir}/${ImageSearchPath}/${dir}/${f} ]; then
+                ImageBase=${f##*/}
+                # relative path, can be empty. If not empty, trailing '/'.
+                ImagePath=${f%$ImageBase}
+                if [ "$ImagePath" != "" ]; then
+                    if [ ! -d $ImagePath ]; then ${MakePath} ${ImagePath} ; fi
+                    if [ ! -d $ImagePath ]; then
+                      error noexit "failed to create directory for image '$f'."
+                    fi
+                fi
+                \cp ${CurrentDir}/${ImageSearchPath}/${dir}/${f} ${f}
+            else
+               error noexit "image file '${CurrentDir}/${dir}/${f}' not found."
+            fi
+        done
+        # copy latex_to_html internal images with 'cc_' prefix now
+        ImageFiles=`\cat *.html | cc_extract_images -cc | \sort | \uniq`
+        for f in $ImageFiles ; do
+            if [ -r ${ConfigGif}/$f ]; then
+                \cp ${ConfigGif}/$f .
+            else
+                error noexit "image file '${ConfigGif}/$f' not found."
+            fi
+        done
+        cd $CurrentDir
+    done
+    cd $CurrentDir
+
+    lgout "pwd: `pwd`"
+    cp -r ${ConfigHtml}/Biblio ${OutDir}
+
+    cp ${TmpDir}/comments.xml ${OutDir}
+    if [ -d ${TmpDir}/benchmarks ] ; then
+        mkdir -p ${OutDir}/benchmarks
+        cp -r ${TmpDir}/benchmarks/*.tar.gz ${OutDir}/benchmarks
+    fi
+
+    # finish, write timing to logfile and close it
+    # -------------------------------------------------------
+    local EndTime=$SECONDS
+    lgout -n ", "
+    lgout "conversion time = `print_time $StartTime $EndTime`]"
+}
+
+#---------------------------------------------------------------------#
+# main script
+#     - setup of variables
+#     - parse commandline parameters
+#     - calls conversion for each filename
+#---------------------------------------------------------------------#
+
+# Read resource file
+# ------------------
+if [ -r ${LATEX_CONV_RESOURCE} ]; then
+  source ${LATEX_CONV_RESOURCE}
+fi
+
+
+# Prepare local variables
+# -----------------------
+CppHeader=""
+if [ "$LATEX_CONV_HEADER" != "" ]; then
+    CppHeader="-header ${LATEX_CONV_HEADER}"
+fi
+
+ProgName=${0##*/}
+
+TmpPath="/usr/tmp"
+if [ ! -d ${TmpPath} ]; then TmpPath="." ; fi
+if [ "$TEMP" != "" ]; then
+  if [ -d ${TEMP} ]; then TmpPath=$TEMP ; fi
+fi
+if [ "$TMP" != "" ]; then
+  if [ -d ${TMP} ]; then TmpPath=$TMP ; fi
+fi
+
+# logfile gets set to rootname of current main LateX file + '.hlg' suffix
+LogFile="latex_to_html.hlg"
+if [ -r $LogFile ]; then rm $LogFile; fi
+
+OutDir="html"
+ConfigPath="`cc_extract_html -get_latex_conv_config`"
+
+ShowDefaults=0
+KeepTmp=0
+ExtractOptions=""
+Quiet=0
+RealQuiet=0
+Verbose=0
+
+MakePath="mkdir -p"
+
+set_no_color() {
+    ExtractOptions="`echo $ExtractOptions | sed 's/-color//g'`"
+    BlueColor=""
+    BoldColor=""
+    OkColor=""
+    ErrorColor=""
+    WarnColor=""
+    ResetColor=""
+}
+set_color() {
+    ExtractOptions="$ExtractOptions -color"
+    BlueColor='[1m[34m'    # blue boldface
+    BoldColor='[1m'          # boldface
+    OkColor='[32m'           # green
+    ErrorColor='[1m[31m'   # red boldface
+    WarnColor='[35m'         # magenta
+    ResetColor='[30m[00m'  # black, reset attribute
+}
+
+set_no_color
+if [ -t 2 ] ; then # is stderr connected to a terminal
+  case "$TERM" in
+    xterm* | vt100* | console* ) # terminals believed to have color capability
+          set_color
+      ;;
+  esac
+fi
+
+# Parse command line parameters
+# -----------------------------
+
+if [ $# -eq 0 ]; then
+    usage
+    exit 1
+fi
+InFiles=""
+
+while [ $# -gt 0 ]; do
+  case "$1" in
+    -h | --help)
+        usage
+        exit 0
+        ;;
+    -V | --version)
+        all_versions
+        exit 0
+        ;;
+    -keeptmp)
+	KeepTmp=1
+        ;;
+    -defaults)
+	ShowDefaults=1
+        ;;
+    -color)
+	set_color
+        ;;
+    -nocolor)
+	set_no_color
+        ;;
+    -config)
+        shift
+        if [[ $# -lt 1 || ! -d $1 ]]; then
+ 	    error_usage 1 "-config needs a valid directory as parameter."
+	fi
+	ConfigPath="$1"
+        ;;
+    -tmp)
+        shift
+        if [[ $# -lt 1 || ! -d $1 ]]; then
+ 	    error_usage 1 "-tmp needs a valid directory as parameter."
+	fi
+	TmpPath="$1"
+        ;;
+    -o)
+        shift
+        if [ $# -lt 1 ]; then
+	    error_usage 1 "-o needs an additional parameter."
+	fi
+	if [ ! -d $1 ]; then ${MakePath} $1 ; fi
+	if [ ! -d $1 ]; then
+	   error_usage 1 "-o needs a directory as parameter. Cannot create it."
+	fi
+	OutDir="$1"
+        ;;
+    -header | -cgal_dir)  # -cgal_dir remains for backwards compatibility
+        shift
+        if [ $# -lt 1 ]; then
+	    error_usage 1 "-header needs an additional parameter."
+	fi
+	CppHeader="-header $1"
+        ;;
+    -date)
+        shift
+        if [ $# -lt 1 ]; then
+	    error_usage 1 "-date needs an additional parameter."
+	fi
+	LATEX_CONV_DATE="$1"
+        ;;
+    -release)
+        shift
+        if [ $# -lt 1 ]; then
+	    error_usage 1 "-release needs an additional parameter."
+	fi
+	LATEX_CONV_RELEASE="$1"
+        ;;
+    -title)
+        shift
+        if [ $# -lt 1 ]; then
+	    error_usage 1 "-title needs an additional parameter."
+	fi
+	LATEX_CONV_TITLE="$1"
+        ;;
+    -author)
+        shift
+        if [ $# -lt 1 ]; then
+	    error_usage 1 "-author needs an additional parameter."
+	fi
+	LATEX_CONV_AUTHOR="$1"
+        ;;
+    -quiet)
+        Quiet=1;
+        # see run_command, ExtractOptions="$ExtractOptions $1"
+        ;;
+    -realquiet)
+        Quiet=1;
+        RealQuiet=1;
+        #ExtractOptions="$ExtractOptions $1"
+        ;;
+    -v | --verbose)
+        Verbose=1;
+        ExtractOptions="$ExtractOptions -v"
+        ;;
+    -macrodef | -macroexp | -stymacro | -stacktrace)
+        ExtractOptions="$ExtractOptions $1"
+        ;;
+    -sty)
+        shift
+        if [ $# -lt 1 ]; then
+	    error_usage 1 "-sty needs an additional parameter."
+	fi
+        ExtractOptions = "$ExtractOptions -sty $1"
+        ;;
+    -*)
+        error_usage 2 "Unknow option $1."
+        ;;
+    *)  InFiles="$InFiles $1"
+        ;;
+  esac
+  shift
+done
+
+# Make a subdirectory for the temp_path:
+# --------------------------------------
+TmpDir=${TmpPath}/latex_to_html_tmp_${USER}_${RANDOM}
+while [ -d ${TmpDir} ]; do
+    TmpDir=${TmpPath}/latex_to_html_tmp_${USER}_${RANDOM}
+done
+
+if [ $ShowDefaults == 1 ]; then
+    echo "The variable settings (including commmandline options) are:"
+    echo "  LATEX_CONV_CONFIG  = ${LATEX_CONV_CONFIG}"
+    echo "  LATEX_CONV_DATE    = ${LATEX_CONV_DATE}"
+    echo "  LATEX_CONV_AUTHOR  = ${LATEX_CONV_AUTHOR}"
+    echo "  LATEX_CONV_TITLE   = ${LATEX_CONV_TITLE}"
+    echo "  LATEX_CONV_RELEASE = ${LATEX_CONV_RELEASE}"
+    echo "  TmpPath            = ${TmpPath}"
+    echo "  TmpDir             = ${TmpDir}"
+    echo "  OutDir             = ${OutDir}"
+    echo "  CppHeader          = ${CppHeader}"
+    echo "  ConfigPath         = ${ConfigPath}"
+    echo "  InFiles            = ${InFiles}"
+    echo "  ExtractOptions     = ${ExtractOptions}"
+    echo ""
+    exit 0
+fi
+
+if [ "$InFiles" == "" ]; then
+    error_usage 2 "Need at least one LaTeX input file."
+fi
+
+ConfigHtml="${ConfigPath}/html"
+ConfigGif="${ConfigPath}/gif"
+
+
+# Make a subdirectory for the default 'html' output dir if chosen
+# ---------------------------------------------------------------
+if [ "$OutDir" == "html" ]; then
+    if [ ! -d $OutDir ]; then ${MakePath} $OutDir ; fi
+    if [ ! -d $OutDir ]; then
+       error_usage 1 "Cannot create default output directory './html/' ."
+    fi
+fi
+
+# Make a subdirectory for the temp_path:
+# --------------------------------------
+if [ -d ${TmpDir} ]; then
+    # with the randomly chosen name above this should not happen anymore
+    warning "the dir '$TmpDir' exists already."
+    warning "         It will be removed."
+    \rm -r ${TmpDir}
+fi
+${MakePath} ${TmpDir}
+
+
+# Convert
+# -------
+# prepare common options
+ExtractOptions="${ExtractOptions} -date \"${LATEX_CONV_DATE}\" -release \"${LATEX_CONV_RELEASE}\" -title \"${LATEX_CONV_TITLE}\" -author \"${LATEX_CONV_AUTHOR}\" ${CppHeader} -config ${ConfigPath} -tmp ${TmpDir}"
+
+# make pathnames absolute pathnames
+CurrentDir=$PWD
+cd ${OutDir}
+AbsOutDir=$PWD
+cd ${CurrentDir}
+cd $TmpDir
+TmpDir=$PWD
+cd ${CurrentDir}
+
+# convert two path variables for use with Cygwin
+if eval cygpath -i > /dev/null 2>&1 ; then
+    TmpDir=`cygpath -m $TmpDir`
+    LATEX_CONV_CONFIG=`cygpath -m $LATEX_CONV_CONFIG`
+fi
+
+for f in $InFiles; do
+    convert $f
+done
+
+
+# Cleanup
+# -------
+if [ $KeepTmp -eq 0 ]; then
+    \rm -r ${TmpDir}
+else
+    echo "NOTE: The tmp directory '${TmpDir}' was kept."  1>&2
+fi
+
+exit $GlobalExitCode
+
+# -------------
+# End of script
+# -------------
+

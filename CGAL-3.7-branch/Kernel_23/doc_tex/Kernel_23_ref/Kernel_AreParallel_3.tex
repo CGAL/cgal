@@ -1,0 +1,32 @@
+\begin{ccRefFunctionObjectConcept}{Kernel::AreParallel_3}
+A model for this must provide:
+
+\ccCreationVariable{fo}
+
+\ccMemberFunction{bool operator()(const Kernel::Line_3&l1, 
+                                  const Kernel::Line_3&l2);}
+{returns \ccStyle{true}, if \ccc{l1} and \ccc{l2} are parallel or if one
+of those (or both) is degenerate.}
+
+\ccMemberFunction{bool operator()(const Kernel::Plane_3&h1, 
+                                  const Kernel::Plane_3&h2);}
+{returns \ccStyle{true}, if \ccc{h1} and \ccc{h2} are parallel or if one
+of those (or both) is degenerate.}
+
+\ccMemberFunction{bool operator()(const Kernel::Ray_3&r1, 
+                                  const Kernel::Ray_3&r2);}
+{returns \ccStyle{true}, if \ccc{r1} and \ccc{r2} are parallel or if one
+of those (or both) is degenerate.}
+
+\ccMemberFunction{bool operator()(const Kernel::Segment_3&s1, 
+                                  const Kernel::Segment_3&s2);}
+{returns \ccStyle{true}, if \ccc{s1} and \ccc{s2} are parallel or if one
+of those (or both) is degenerate.}
+
+\ccRefines
+\ccc{AdaptableFunctor} (with two arguments)
+
+\ccSeeAlso
+\ccRefIdfierPage{CGAL::parallel} \\
+
+\end{ccRefFunctionObjectConcept}

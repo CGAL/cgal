@@ -1,0 +1,28 @@
+\begin{ccPkgDescription}{3D Mesh Generation \label{Pkg:Mesh_3}}
+\ccPkgSummary{
+The generated meshes are   3 dimensional 
+isotropic simplicial meshes. The discretized region
+may be a monodomain, i.e. a single connected component,
+ or  a multidomain subdivided
+into different subdomains.
+The domain is input as an oracle able to answer
+ queries, of a few different types, on the domain.
+In the current version, 
+the mesh generator is able to discretize
+ domains described
+through implicit functions,  3D images or polyhedral boundaries.
+The output is a 3D mesh of the domain volume
+and conformal surface meshes for all the boundary and subdividing
+surfaces. }
+
+\ccPkgHowToCiteCgal{cgal:rty-m3-10}
+\ccPkgDependsOn{\ccRef[3D Triangulations]{Pkg:Triangulation3},
+\ccRef[2D Meshes]{Pkg:Mesh2},
+\ccRef[3D Surface Mesh Generation]{Pkg:SurfaceMesher3}
+}
+
+\ccPkgIntroducedInCGAL{3.5}
+\ccPkgLicense{\ccLicenseQPL}
+
+\ccPkgIllustration{Mesh_3/pictures/multilabel_mesher_small.jpg}{Mesh_3/pictures/multilabel_mesher.jpg}
+\end{ccPkgDescription}

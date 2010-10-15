@@ -1,0 +1,22 @@
+This the format used by operator >> of the CGAL::Polygon_with_holes_2 template class
+used in these examples.
+====================================================================================
+
+outer_boundary_number_of_vertices
+outer_boundary_x1 outer_boundary_y1
+outer_boundary_x2 outer_boundary_y2
+...
+outer_boundary_xN outer_boundary_yN
+numer_of_holes
+hole_1_number_of_vertices
+hole_1_x1 hole_1_y1
+hole_1_x2 hole_1_y2
+...
+hole_1_xN hole_1_yN
+....
+hole_2_number_of_vertices
+hole_2_x1 hole_2_y1
+hole_2_x2 hole_2_y2
+...
+hole_2_xN hole_2_yN
+

@@ -1,0 +1,29 @@
+\begin{ccRefFunctionObjectConcept}{Kernel::ConstructDirection_2}
+A model for this must provide:
+
+\ccCreationVariable{fo}
+
+\ccMemberFunction{Kernel::Direction_2 operator()(const Kernel::Vector_2 &v);}
+            {introduces the direction of vector $v$.}
+
+\ccMemberFunction{Kernel::Direction_2 operator()(const Kernel::Line_2 &l);}
+            {introduces the direction of line $l$.}
+
+\ccMemberFunction{Kernel::Direction_2 operator()(const Kernel::Ray_2 &r);}
+            {introduces the direction of ray $r$.}
+
+\ccMemberFunction{Kernel::Direction_2 operator()(const Kernel::Segment_2 &s);}
+            {introduces the direction of segment $s$.}
+
+\ccHidden\ccMemberFunction{Kernel::Direction_2 operator()(const Kernel::RT &x, const Kernel::RT &y);}
+            {introduces a direction  passing through the origin
+             and the point with Cartesian coordinates $(x, y)$.}
+
+\ccRefines
+\ccc{AdaptableFunctor} (with one argument)
+
+\ccSeeAlso
+
+\ccRefIdfierPage{CGAL::Direction_2<Kernel>}  \\
+
+\end{ccRefFunctionObjectConcept}

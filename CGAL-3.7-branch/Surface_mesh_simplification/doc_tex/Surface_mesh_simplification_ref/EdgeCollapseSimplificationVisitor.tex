@@ -1,0 +1,110 @@
+%% Copyright (c) 2007 GeometryFactory (France).  All rights reserved.
+%%
+%% This file is part of CGAL (www.cgal.org); you may redistribute it under
+%% the terms of the Q Public License version 1.0.
+%% See the file LICENSE.QPL distributed with CGAL.
+%%
+%% Licensees holding a valid commercial license may use this file in
+%% accordance with the commercial license agreement provided with the software.
+%%
+%% This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
+%% WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
+%%
+%% 
+%%
+%% Author(s)     : Fernando Cacciola <fernando.cacciola@geometryfactory.com>
+
+\begin{ccRefConcept}{EdgeCollapseSimplificationVisitor}
+
+%% \ccHtmlCrossLink{}     %% add further rules for cross referencing links
+%% \ccHtmlIndexC[concept]{} %% add further index entries
+
+\ccDefinition
+
+The concept \ccRefName\ describes the requirements for the {\em visitor object} which is used to track the edge collapse simplification algorithm.
+
+The several callbacks given as member functions in the visitor are called from certain places in the algorithm implementation.
+
+\ccTypes
+  \ccNestedType{ECM}
+  {The type of the surface to simplify. Must be a model of the \ccc{EdgeCollapsableMesh} concept.}{}
+\ccGlue    
+  \ccNestedType{FT}{A field type representing the collapse cost}{}
+\ccGlue    
+  \ccNestedType{Profile}
+  {The type of the edge profile cache. Must be a model of the \ccc{EdgeProfile} concept.}{}
+\ccGlue    
+  \ccTypedef{typename CGAL::halfedge_graph_traits<ECM>::Point Point;}
+  {The point type for the surface vertex.  Must be a model of \ccc{Point_3}.}
+\ccGlue    
+  \ccNestedType{size_type}{An integer type representing the number of edges}{}
+
+\ccCreationVariable{v} 
+
+\ccOperations
+
+  \ccMethod
+  {void OnStarted( ECM& surface );}
+  {Called before the algorithm starts.}
+  
+  \ccMethod
+  {void OnFinished ( ECM& surface ) ; }
+  {Called after the algorithm finishes.}
+  
+  \ccMethod
+  {void OnStopConditionReached( ECM& surface ) ; } 
+  {Called when the \ccc{StopPredicate} returned \ccc{true}
+  (but not if the algorithm terminates because the surface could not be simplified any further).
+  }
+  
+  \ccMethod
+  {void OnCollected( Profile const& profile, boost::optional<FT> cost );
+  }                  
+  {Called during the {\em collecting phase} (when a cost is assigned to the edges),
+  for each edge collected.
+  }
+  
+  \ccMethod
+  {void OnSelected( Profile const&      profile
+                  , boost::optional<FT> cost
+                  , size_type           initial_count
+                  , size_type           current_count
+                  );
+  }                 
+  {Called during the {\em processing phase} (when edges are collapsed),
+  for each edge that is selected.\\
+  This method is called before the algorithm checks 
+  if the edge is collapsable.\\
+  \ccc{cost} indicates the current collapse cost for the edge.
+  If absent (meaning that it could not be computed)
+  the edge will not be collapsed.\\
+  \ccc{initial_count} and \ccc{current_count} refer to 
+  the number of edges.
+  }
+  
+  \ccMethod
+  {void OnCollapsing( Profile const&         profile
+                    , boost::optional<Point> placement
+                    );
+  }                  
+  {Called when an edge is about to be collapsed and replaced by a vertex
+  whose position is \ccc{*placement}.\\
+  If \ccc{placement} is absent (meaning that it could not be computed)
+  the edge will not be collapsed.
+  }
+  
+  \ccMethod
+  {void OnNonCollapsable( Profile const& profile );
+  }                  
+  {Called for each selected edge which cannot be 
+  collapsed because doing so would change the topological
+  type of the surface (turn it into a non-manifold
+  for instance).
+  }
+  
+\end{ccRefConcept}
+
+% +------------------------------------------------------------------------+
+%%RefPage: end of main body, begin of footer
+% EOF
+% +------------------------------------------------------------------------+

@@ -1,0 +1,79 @@
+%% ==============================================================
+%% Specification: Random Convex Sets
+%% --------------------------------------------------------------
+%% file  : rcs_spec.awi
+%% author: Michael Hoffmann
+%% maintainer: Susan Hert 
+%% $Id$
+%% ==============================================================
+
+\RCSdef{\RandomConvexSetRev}{$Id$}
+\RCSdefDate{\RandomConvexSetDate}{$Date$}
+
+\begin{ccRefFunction}{random_convex_set_2}
+\ccIndexMainItemBegin[c]{random convex set}
+\ccIndexSubitemBegin[c]{generator}{convex set}
+
+\ccDefinition
+
+The function \ccRefName\ computes a random convex planar
+point set of given size where the points are drawn from a specific
+domain.
+
+\ccInclude{CGAL/random_convex_set_2.h}
+
+\def\ccLongParamLayout{\ccTrue} 
+
+\ccFunction{template < class OutputIterator, class PointGenerator,
+  class Traits > OutputIterator random_convex_set_2( int n,
+  OutputIterator o, const PointGenerator& pg, Traits t =
+  Default_traits);}
+{
+computes a random convex \ccc{n}-gon by writing its vertices (oriented
+counterclockwise) to \ccc{o}. The resulting polygon is scaled such
+that it fits into the bounding box as specified by \ccc{pg}. Therefore
+we cannot easily describe the resulting distribution.
+\ccPrecond $n \ge 3$.
+}
+
+\ccHeading{Requirements}
+\ccIndexSubitem[C]{random_convex_set}{preconditions}
+\begin{enumerate}
+\item \ccc{PointGenerator} is a model of the concept PointGenerator
+\item \ccc{Traits} is a model of the concept RandomConvexSetTraits\_2 
+\item \ccc{Point_generator::value_type} is equivalent to 
+      \ccc{Traits::Point_2} and \ccc{OutputIterator::value_type}.
+\item if \ccc{Traits} is not specified,
+  \ccc{Point_generator::value_type} must be \ccc{Point_2<
+    R >} for some representation class \ccc{R},
+\end{enumerate}
+
+
+The default traits class \ccc{Default_traits} is 
+\ccc{Random_convex_set_traits_2}.
+\ccIndexTraitsClassDefault{random_convex_set}.
+
+\ccSeeAlso 
+\ccRefIdfierPage{CGAL::Random_points_in_square_2<Point_2, Creator>} \\
+\ccRefIdfierPage{CGAL::Random_points_in_disc_2<Point_2, Creator>} \\
+
+\ccImplementation 
+The implementation uses the centroid method
+described in \cite{cgal:s-zkm-96} and has a worst case running time of $O(r
+\cdot n + n \cdot \log n)$, where $r$ is the time needed by \ccc{pg}
+to generate a random point.
+\ccIndexMainItemEnd[c]{random convex set}
+\ccIndexSubitemEnd[c]{generator}{convex set}
+
+\ccExample
+
+The following program displays a random convex 500-gon where the
+points are drawn uniformly from the unit square centered at the
+origin.
+
+\ccIncludeExampleCode{Generator/random_convex_set.cpp}
+
+
+\end{ccRefFunction}
+
+%% EOF %%

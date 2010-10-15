@@ -1,0 +1,68 @@
+%% Copyright (c) 2004  SciSoft.  All rights reserved.
+%%
+%% This file is part of CGAL (www.cgal.org); you may redistribute it under
+%% the terms of the Q Public License version 1.0.
+%% See the file LICENSE.QPL distributed with CGAL.
+%%
+%% Licensees holding a valid commercial license may use this file in
+%% accordance with the commercial license agreement provided with the software.
+%%
+%% This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
+%% WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
+%%
+%% 
+%%
+%% Author(s)     : Fernando Cacciola <fernando_cacciola@hotmail.com>
+
+
+\begin{ccRefFunction}{arrange_offset_polygons_2}
+
+%% add template arg's if necessary
+
+%% \ccHtmlCrossLink{}     %% add further rules for cross referencing links
+%% \ccHtmlIndexC[class]{} %% add further index entries
+\ccDefinition
+
+The function \ccRefName\ arranges the sequence of \ccc{Polygon_2} objects obtained by \ccc{create_offset_polygons_2} into \ccc{Polygon_with_holes_2} objects by determining geometric parent-hole relationships using a simple algorithm based on the particular characteristics of offset polygons. This function should not be used to arrange arbitrary polygons into polygons with holes unless they meet the requirements specified below.
+
+\ccInclude{CGAL/arrange_offset_polygons_2.h}
+
+\ccFunction
+{template<class K, class InputPolygonPtrIterator, class OutputPolygonWithHolesPtrIterator>
+void arrange_offset_polygons_2 ( InputPolygonPtrIterator           begin
+                               , InputPolygonPtrIterator           end
+                               , OutputPolygonWithHolesPtrIterator out
+                               , K const&                          k  
+                               ) ;
+}
+{determines parent-hole relationships among the polygons given by \ccc{[begin,end]} creating 
+\ccc{boost::shared_ptr< Polygon_with_holes_2<K> >} objects added to the output sequence given \ccc{out}.
+A \ccc{CLOCKWISE} oriented polygon $H$ is a hole of a \ccc{COUNTERCLOCKWISE} polygon $P$, iff at least one vertex of $H$ is \ccc{ON_BOUNDED_SIDE} of $P$.
+}
+
+\ccRequirements
+
+\begin{enumerate} 
+   \item    \ccc{K} is any \cgal\ kernel.
+   \item    \ccc{InputPolygonPtrIterator} is an input iterator whose \ccc{value_type} is a \ccc{smart ptr}
+            (such as \ccc{boost::shared_ptr}) whose \ccc{element_type} is \ccc{Polygon_2<K>}.
+   \item    \ccc{InputPolygonPtrIterator} is an output iterator whose \ccc{value_type} is a \ccc{smart ptr}
+            (such as \ccc{boost::shared_ptr}) whose \ccc{element_type} is \ccc{Polygon_with_holes_2<K>}.
+   \item    The input polygons must be simple.
+   \item    The set of input polygons are unique and interior disjoint. That is, given distinct polygons
+            $P$ and $Q$, there are vertices of $P$ which are not on the boundary of $Q$ and are all on the
+            bounded or unbounded side of $Q$ (but not both). 
+\end{enumerate}
+
+
+\ccSeeAlso
+\ccc{create_exterior_straight_skeleton_2}\\
+\ccc{Straight_skeleton_builder_2<Gt,Ss>} \\
+
+\end{ccRefFunction}
+
+% +------------------------------------------------------------------------+
+%%RefPage: end of main body, begin of footer
+% EOF
+% +------------------------------------------------------------------------+
+

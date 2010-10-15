@@ -1,0 +1,217 @@
+#!/bin/csh -f
+# **************************************************************************
+# 
+#  cc_ref_wizard
+#  ===================
+#  Wizard to create a reference page skeleton.
+#
+#  Author    : (c) 1997 Lutz Kettner
+#  Revision  : $Id$
+#  Date      : $Date$
+# 
+# **************************************************************************
+
+# =====================================================================
+# Begin of Installation Section: ...
+# =====================================================================
+# Either choose appropriate values in the environment, in the resource
+# file ${HOME}/.cc_ref_wizard_rc, or uncomment and set the values here
+# explicitly. See als the INSTALLATION file.
+
+# Path to the configuration files of the latex_converter: It contains
+# the skeletons for the reference manual pages that will be costumized
+# by this skript.
+# set LATEX_CONV_CONFIG = /CGAL/Tools/latex_converter_config
+
+# Author of the refernce page
+# set REF_WIZARD_AUTHOR = ""
+
+# Date of the reference manual creation
+# set REF_WIZARD_DATE = "21.10.2001"
+
+# The subdirectory all header files are in.
+# set REF_WIZARD_SUBDIR = "DIR"
+
+# The prefix prepended to every item except concepts, e.g., PKG_...
+# set REF_WIZARD_PREFIX = "PKG"
+
+# The name of the package the reference page is part of.
+# set REF_WIZARD_PACKAGE = "Circulator"
+
+# =====================================================================
+# ... End of Installation Section.
+# =====================================================================
+
+# check user resource file
+# ------------------------
+if ( -r ${HOME}/.cc_ref_wizard_rc ) source ${HOME}/.cc_ref_wizard_rc
+
+# Check configuration and prepare default settings
+# ------------------------------------------------
+if ( ! $?REF_WIZARD_AUTHOR )  set REF_WIZARD_AUTHOR = "Author"
+if ( ! $?REF_WIZARD_SUBDIR )  set REF_WIZARD_SUBDIR = ""
+if ( ! $?REF_WIZARD_PREFIX )  set REF_WIZARD_PREFIX = ""
+if ( ! $?REF_WIZARD_DATE )    set REF_WIZARD_DATE = `date +"%d.%m.%Y"`
+if ( ! $?REF_WIZARD_PACKAGE ) set REF_WIZARD_PACKAGE = "Package"
+
+# Prepare local variables
+# -----------------------
+set prog_name = $0
+set prog_name = $prog_name:t
+
+set categories = "Class Concept Constant Enum Function FunctionObjectClass FunctionObjectConcept Macro Variable"
+
+set tmp_path = "/usr/tmp"
+if ( ! -d ${tmp_path}) set tmp_path = "."
+if ($?TEMP) then
+  if (-d ${TEMP}) set tmp_path = $TEMP
+endif
+if ($?TMP) then
+  if (-d ${TMP}) set tmp_path = $TMP
+endif
+
+set config_path = ${LATEX_CONV_CONFIG}
+set refpath = "${config_path}/ref_pages"
+
+# Parse command line parameters
+# -----------------------------
+
+if ( $#argv < 2) goto help
+set category = ""
+set item     = ""
+set scope    = ""
+set subdir   = ""
+set outfile  = ""
+set package  = "$REF_WIZARD_PACKAGE"
+
+while ($#argv > 0)
+    if ( "$1" == "-h") goto help
+    if ( "$1" == "-help") goto help
+
+    if ( "$1" == "-V") then
+        echo "$prog_name "'$Id$'" (c) Lutz Kettner"
+        exit(0)
+    endif
+
+    if ( "$1" == "-p") then
+        shift
+        if ( $#argv < 1) then
+	    echo "error: switch -p needs an additional parameter."
+            goto usage
+	endif
+	set package = "$1"
+	shift
+        continue
+    endif
+    if ( "$1" == "-s") then
+        shift
+        if ( $#argv < 1) then
+	    echo "error: switch -s needs an additional parameter."
+            goto usage
+	endif
+	set scope = "$1"
+	shift
+        continue
+    endif
+    if ( "$1" == "-o") then
+        shift
+        if ( $#argv < 1) then
+	    echo "error: switch -o needs an additional parameter."
+            goto usage
+	endif
+	set outfile = "$1"
+	shift
+        continue
+    endif
+
+    if ( "$subdir" != "") then
+	echo "Error: too many commandline arguments."
+	goto usage
+    endif
+    if ( "$item" != "") then
+        set subdir = "$1/"
+    else
+	if ( "$category" != "") then
+	    set item = "$1"
+	else
+	    set category = "$1"
+	endif
+    endif
+    shift
+end
+
+if ( "$item" == "") then
+    echo "Error: too few arguments in command line."
+    goto usage
+endif
+
+set allowed = 0
+foreach f ($categories)
+    if ( "$category" == "$f") then
+        set allowed = 1
+    endif
+end
+if ( ! $allowed) then
+    echo "Error: <category> not known. It must be one of:"
+    goto categ
+endif
+
+if ( "$outfile" == "") set outfile = ${item}.tex
+if ( -e $outfile) then
+    echo "Error: The to-be-created reference page '$outfile' exists already."
+    goto usage
+endif
+
+set infile = ${refpath}/${category}.tex
+if ( ! -r $infile) then
+    echo "Configuration error: The input file '$infile' does not exist."
+    goto usage
+endif
+
+set prefix = "$REF_WIZARD_PREFIX"
+if ( "$prefix" != "") then
+    set prefix = "${prefix}_"
+endif
+if ( "$REF_WIZARD_SUBDIR" != "") then
+    set subdir = "$REF_WIZARD_SUBDIR/$subdir"
+endif
+if ( "$scope" != "" ) then
+    set prefix = ""
+    set scope  = "[${scope}::]"
+endif
+m4 -DCATEGORY="$category" -DITEM="$item" \
+    -DPREFIX="$prefix" \
+    -DSCOPE="$scope" \
+    -DSUBDIR="$subdir" \
+    -DAUTHOR="$REF_WIZARD_AUTHOR" \
+    -DDATE="$REF_WIZARD_DATE" \
+    -DPACKAGE="$package" \
+    -DCONFIG_PATH="${refpath}" $infile > $outfile
+echo "File '$outfile' of category $category created."
+exit(0)
+
+help:
+echo "Hi, I am the reference manual page wizard. I create a reference"
+echo "manual page skeleton for you. I'll need to know the <category>"
+echo "of page you want me to create and the <item-name>, e.g. the name"
+echo "of the class, function, etc. you want to document. A third and"
+echo "optional argument specifies the subdirectory where the header"
+echo "file for the item  is located, e.g. IO for io related files."
+echo "The <category> can be one of:"
+categ:
+echo ""
+echo "    $categories"
+echo ""
+goto usage
+
+error:
+echo "Error in command line:"
+usage:
+echo "$prog_name "'$Id$'" (c) Lutz Kettner"
+echo "Usage: $prog_name [<options>] <category> <item-name> [<sub-dir>]"
+echo "       -s <scope>       scope the item is in (suppresses prefix).";
+echo "       -p <package>     name of the package the item belongs to.";
+echo "       -o <outfile>     the output filename. Default: <item-name>.tex.";
+echo "       -V               version number.";
+echo "       -h               help message."
+exit (1)

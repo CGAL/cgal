@@ -1,0 +1,26 @@
+% +------------------------------------------------------------------------+
+% | Reference manual page: upper_envelope_3.tex
+% +------------------------------------------------------------------------+
+% | 
+% | Package: Envelope_3
+% | 
+% +------------------------------------------------------------------------+
+
+\ccRefPageBegin
+
+\begin{ccRefFunction}{upper_envelope_3}
+
+\ccInclude{CGAL/envelope_3.h}
+
+\ccFunction{template<class InputIterator, class Traits>
+            void upper_envelope_3 (InputIterator begin, InputIterator end,
+                                   Envelope_diagram_2<Traits>& diag);}
+   {Computes the upper envelope of a set of surfaces in $\mathbb{R}^3$,
+    as given by the range \ccc{[begin, end)}. The upper envelope is
+    represented using the output maximization diagram \ccc{diag}.
+    \ccPrecond{The value-type of \ccc{InputIterator} is
+               \ccc{Traits::Surface_3}.}}
+
+\end{ccRefFunction}
+
+\ccRefPageEnd

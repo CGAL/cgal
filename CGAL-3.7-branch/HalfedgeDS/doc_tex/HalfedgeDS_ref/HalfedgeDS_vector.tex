@@ -1,0 +1,72 @@
+% +------------------------------------------------------------------------+
+% | Reference manual page: HalfedgeDS_vector.tex
+% +------------------------------------------------------------------------+
+% | 22.03.1999   Lutz Kettner
+% | Package: HalfedgeDS
+% | 
+\RCSdef{\RCSHalfedgeDSvectorRev}{$Id$}
+\RCSdefDate{\RCSHalfedgeDSvectorDate}{$Date$}
+% +------------------------------------------------------------------------+
+
+\ccRefPageBegin
+
+%%RefPage: end of header, begin of main body
+% +------------------------------------------------------------------------+
+
+
+\begin{ccRefClass}{HalfedgeDS_vector<Traits,HalfedgeDSItems,Alloc>}
+\ccRefLabel{CGAL::HalfedgeDS_vector}
+
+\ccDefinition
+  
+The class \ccRefName\ is a model for the \ccc{HalfedgeDS} concept.
+\ccRefName\ is a vector-based representation with random
+access iterators that does not support removal.
+
+\ccInclude{CGAL/HalfedgeDS_vector.h}
+
+\ccIsModel
+
+\ccRefConceptPage{HalfedgeDS<Traits,Items,Alloc>}
+
+\ccTypes
+\ccThree{typedef random_access_iterator_tag;}{Supports_removal;;}{}
+
+\ccTypedef{typedef random_access_iterator_tag iterator_category;}{}
+\ccGlue
+\ccTypedef{typedef CGAL::Tag_false Supports_removal;}{}
+
+\ccSeeAlso
+
+\ccRefIdfierPage{CGAL::HalfedgeDS_default}\\
+\ccRefIdfierPage{CGAL::HalfedgeDS_list}\\
+\ccRefConceptPage{HalfedgeDSItems}\\
+\ccRefIdfierPage{CGAL::Polyhedron_3<Traits>}\\
+\ccRefIdfierPage{CGAL::HalfedgeDS_items_decorator<HDS>}\\
+\ccRefIdfierPage{CGAL::HalfedgeDS_decorator<HDS>}\\
+\ccRefIdfierPage{CGAL::HalfedgeDS_const_decorator<HDS>}
+
+
+\ccImplementation
+
+\ccRefName\ uses internally the \stl\ \ccc{std::vector} container
+class. We require that we can create a \ccc{std::vector::iterator}
+from a pointer. If this will not be true any longer for any major \stl\
+distribution we might switch to an internal implementation of a vector.
+
+The capacity is restricted to the reserved size. Allocations
+are not possible beyond the capacity without calling reserve again.
+All handles and iterators are invalidated upon a reserve call that
+increases the capacity.
+
+\ccc{CGAL_ALLOCATOR(int)} is used as default argument for the
+\ccc{Alloc} template parameter.  
+
+\end{ccRefClass}
+
+% +------------------------------------------------------------------------+
+%%RefPage: end of main body, begin of footer
+\ccRefPageEnd
+% EOF
+% +------------------------------------------------------------------------+
+

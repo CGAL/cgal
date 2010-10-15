@@ -1,0 +1,140 @@
+% +------------------------------------------------------------------------+
+% | Reference manual page: Matrix.tex
+% +------------------------------------------------------------------------+
+% | 21.09.2005   Laurent Saboret, Pierre Alliez, Bruno Levy
+% | Package: Surface_mesh_parameterization
+% |
+\RCSdef{\RCSMatrixRev}{$Id$}
+\RCSdefDate{\RCSMatrixDate}{$Date$}
+% |
+\ccRefPageBegin
+%%RefPage: end of header, begin of main body
+% +------------------------------------------------------------------------+
+
+
+\begin{ccRefConcept}[SparseLinearAlgebraTraits_d::]{Matrix}
+
+%% \ccHtmlCrossLink{}     %% add further rules for cross referencing links
+%% \ccHtmlIndexC[concept]{} %% add further index entries
+
+
+\ccDefinition
+
+% The section below is automatically generated. Do not edit!
+%START-AUTO(\ccDefinition)
+
+\ccc{SparseLinearAlgebraTraits_d::Matrix} is a concept of a sparse matrix class.
+
+%END-AUTO(\ccDefinition)
+
+
+\ccRefines
+
+% The section below is automatically generated. Do not edit!
+%START-AUTO(\ccRefines)
+
+\ccc{LinearAlgebraTraits_d::Matrix}
+
+%END-AUTO(\ccRefines)
+
+
+\ccTypes
+
+% The section below is automatically generated. Do not edit!
+%START-AUTO(\ccTypes)
+
+\ccNestedType{NT}
+{
+}
+\ccGlue
+
+%END-AUTO(\ccTypes)
+
+
+\ccCreation
+\ccCreationVariable{M}  %% choose variable name
+
+% The section below is automatically generated. Do not edit!
+%START-AUTO(\ccCreation)
+
+\ccConstructor{Matrix(int dimension);}
+{
+Create a square matrix initialized with zeros.
+}
+\ccGlue
+\ccConstructor{Matrix(int rows, int columns);}
+{
+Create a rectangular matrix initialized with zeros.
+}
+\ccGlue
+
+%END-AUTO(\ccCreation)
+
+
+\ccOperations
+
+% The section below is automatically generated. Do not edit!
+%START-AUTO(\ccOperations)
+
+\ccMethod{int row_dimension() const;}
+{
+Return the matrix number of rows.
+}
+\ccGlue
+\ccMethod{int column_dimension() const;}
+{
+Return the matrix number of columns.
+}
+\ccGlue
+\ccMethod{NT get_coef(int row, int column) const;}
+{
+Read access to a matrix coefficient.
+\ccCommentHeading{Preconditions}  \\
+0 $<$= row $<$ \ccc{row_dimension}(). 0 $<$= column $<$ \ccc{column_dimension}().
+}
+\ccGlue
+\ccMethod{void add_coef(int row, int column, NT value);}
+{
+Write access to a matrix coefficient: \ccc{a_ij} $<$- \ccc{a_ij} + val.
+\ccCommentHeading{Preconditions}  \\
+0 $<$= row $<$ \ccc{row_dimension}(). 0 $<$= column $<$ \ccc{column_dimension}().
+}
+\ccGlue
+\ccMethod{void set_coef(int row, int column, NT value, bool new_coef = false);}
+{
+Write access to a matrix coefficient: \ccc{a_ij} $<$- val.  \\
+Optimization: Caller can optimize this call by setting \ccc{new_coef} to true if the coefficient does not already exist in the matrix.
+\ccCommentHeading{Preconditions}  \\
+0 $<$= i $<$ \ccc{row_dimension}(). 0 $<$= j $<$ \ccc{column_dimension}().
+}
+\ccGlue
+
+%END-AUTO(\ccOperations)
+
+
+\ccHasModels
+
+% The section below is automatically generated. Do not edit!
+%START-AUTO(\ccHasModels)
+
+\ccc{Taucs_matrix<T>}  \\
+\ccc{Taucs_symmetric_matrix<T>}  \\
+\ccc{OpenNL::SparseMatrix<T>} in \ccc{OpenNL} package
+
+%END-AUTO(\ccHasModels)
+
+
+\ccSeeAlso
+
+\ccRefIdfierPage{SparseLinearAlgebraTraits_d}  \\
+\ccRefIdfierPage{SparseLinearAlgebraTraits_d::Vector}  \\
+
+
+\end{ccRefConcept}
+
+% +------------------------------------------------------------------------+
+%%RefPage: end of main body, begin of footer
+\ccRefPageEnd
+% EOF
+% +------------------------------------------------------------------------+
+

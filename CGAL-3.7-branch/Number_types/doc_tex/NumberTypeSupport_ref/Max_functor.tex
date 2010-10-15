@@ -1,0 +1,30 @@
+\begin{ccRefFunctionObjectClass}{Max<T,Less>}
+
+\ccDefinition
+
+The function object class \ccRefName\ returns the larger of two values.
+The order is induced by the second template argument {\tt Less}.
+The default value for \ccc{Less} is \ccc{std::less}.\\
+
+Note that \ccc{T} must be a model of \ccc{LessThanComparable}
+in case \ccc{std::less} is used. 
+ 
+\ccInclude{CGAL/utils_classes.h}
+
+\ccIsModel
+\ccRefConceptPage{AdaptableFunctor}
+
+\ccCreation
+\ccCreationVariable{max}
+\ccConstructor{Max();}{ default constructor. }
+\ccGlue
+\ccConstructor{Max(Less c);}
+        {The constructed object will use \ccc{c} to compare the arguments. }
+
+\ccOperations
+\ccCreationVariable{operator()}
+\ccMethod{T operator()(const T& x, const T& y);}
+{returns the larger of \ccc{x} and \ccc{y}, 
+with respect to the order induced by \ccc{Less}. }
+
+\end{ccRefFunctionObjectClass}

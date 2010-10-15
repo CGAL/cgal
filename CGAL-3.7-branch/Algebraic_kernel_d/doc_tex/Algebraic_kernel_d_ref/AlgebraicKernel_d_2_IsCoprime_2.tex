@@ -1,0 +1,32 @@
+\begin{ccRefFunctionObjectConcept}{AlgebraicKernel_d_2::IsCoprime_2}
+
+\ccDefinition
+Computes whether a given pair of bivariate polynomials is coprime. 
+ 
+\ccRefines 
+\ccc{AdaptableBinaryFunction} 
+
+\ccTypes \ccThree{}{+++++++++++++}{++++++++}
+%\ccThree{typedef AlgebraicKernel_d_2::Polynomial_2}{second_argument_type+}{}
+\ccTypedef{typedef bool result_type;}{}
+\ccGlue
+\ccTypedef{typedef AlgebraicKernel_d_2::Polynomial_2 first_argument_type;}{}
+\ccGlue
+\ccTypedef{typedef AlgebraicKernel_d_2::Polynomial_2 second_argument_type;}{}
+
+\ccOperations \ccThree{+++++++++}{+++++++++}{}
+\ccCreationVariable{fo}
+%\ccThree{xxxxxxxxxxx}{xxxxxxxxxxx}{}
+
+
+
+\ccMethod{
+  result_type
+    operator()(const first_argument_type& p1,
+	       const second_argument_type& p2);}
+{Computes whether $f$ and $g$ are coprime. }
+
+\ccSeeAlso
+\ccRefIdfierPage{AlgebraicKernel_d_2::MakeCoprime_2}\\
+
+\end{ccRefFunctionObjectConcept}

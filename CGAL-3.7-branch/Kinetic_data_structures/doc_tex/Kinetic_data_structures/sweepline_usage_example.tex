@@ -1,0 +1,139 @@
+
+
+\subsection{Extending Kinetic Data Structures\label{sec:kds_sweepline_example}}
+
+
+Here we present a simple example that uses the
+\ccc{Kinetic::Sort<Traits, Visitor>} kinetic data structure to compute
+an arrangement of algebraic functions. It wraps the sorting data
+structure and uses a visitor to monitor changes and map them to
+corresponding features in the arrangement. To see an example using
+this kinetic data structure read the example at
+examples/Kinetic\_data\_structures/Kinetic\_sweepline.cpp.
+
+First we define the visitor class. An object of this type is passed to
+the \ccc{Kinetic::Sort<Traits, Visitor>} data structure and turns
+events into calls on the arrangement structure. This class has to be
+defined externally since the arrangement will inherit from the sorting
+structure.
+
+\begin{ccExampleCode}
+template <class Arrangement>
+struct Arrangement_visitor: public Kinetic::Sort_visitor_base
+{
+  Arrangement_visitor(Arrangement *a):p_(a){}
+  template <class Vertex_handle>
+  void remove_vertex(Vertex_handle a) {
+    p_->erase(a);
+  }
+  template <class Vertex_handle>
+  void create_vertex(Vertex_handle a) {
+    p_->insert(a);
+  }
+  template <class Vertex_handle>
+  void after_swap(Vertex_handle a, Vertex_handle b) {
+    p_->swap(a, b);
+  }
+  Arrangement *p_;
+};
+
+\end{ccExampleCode}
+
+Now we define the actual arrangement data structure. 
+
+\begin{ccExampleCode}
+
+template <class TraitsT> 
+class Planar_arrangement: 
+  public Kinetic::Sort<TraitsT, 
+		       Arrangement_visitor<Planar_arrangement<TraitsT> > > {
+  typedef TraitsT Traits;
+  typedef Planar_arrangement<TraitsT> This;
+  typedef typename Kinetic::Sort<TraitsT,
+				 Arrangement_visitor<This> > Sort;
+  typedef Arrangement_visitor<This> Visitor;
+  typedef typename Traits::Active_objects_table::Key Key;
+
+public:
+  typedef CGAL::Exact_predicates_inexact_constructions_kernel::Point_2 Approximate_point;
+  typedef std::pair<int,int> Edge;
+  typedef typename Sort::Vertex_handle Vertex_handle; 
+
+  // Register this KDS with the MovingObjectTable and the Simulator
+  Planar_arrangement(Traits tr): Sort(tr, Visitor(this)) {}
+
+  Approximate_point vertex(int i) const
+  {
+    return approx_coords_[i];
+  }
+
+  size_t vertices_size() const
+  {
+    return approx_coords_.size();
+  }
+
+  typedef std::vector<Edge >::const_iterator Edges_iterator;
+  Edges_iterator edges_begin() const
+  {
+    return edges_.begin();
+  }
+  Edges_iterator edges_end() const
+  {
+    return edges_.end();
+  }
+
+  void insert(Vertex_handle k) {
+    last_points_[*k]=new_point(*k);
+  }
+
+  void swap(Vertex_handle a, Vertex_handle b) {
+    int swap_point= new_point(*a);
+    edges_.push_back(Edge(swap_point, last_points_[*a]));
+    edges_.push_back(Edge(swap_point, last_points_[*b]));
+    last_points_[*a]= swap_point;
+    last_points_[*b]= swap_point;
+  }
+
+  void erase(Vertex_handle a) {
+    edges_.push_back(Edge(last_points_[*a], new_point(*a)));
+  }
+
+  int new_point(typename Traits::Active_objects_table::Key k) {
+    double tv= CGAL::to_double(Sort::traits().simulator_handle()->current_time());
+    double dv= CGAL::to_double(Sort::traits().active_objects_table_handle()->at(k).x()(tv));
+    approx_coords_.push_back(Approximate_point(tv, dv));
+    return approx_coords_.size()-1;
+  }
+
+  std::vector<Approximate_point > approx_coords_;
+  std::map<Key, int> last_points_;
+  std::vector<Edge> edges_;
+
+};
+\end{ccExampleCode}
+
+Finally, we have to set everything up. To do this we use some special
+event classes: \ccc{Kinetic::Insert_event<ActiveObjectsTable>} and
+\ccc{Kinetic::Erase_event<ActiveObjectsTable>}. These are events which
+can be put in the event queue which either insert a primitive into the
+set of active objects or remove it. Using these, we can allow curves
+in the arrangement to begin or end in arbitrary places.
+\begin{ccExampleCode}
+typedef CGAL::Kinetic::Insert_event<Traits::Active_points_1_table> Insert_event;
+typedef CGAL::Kinetic::Erase_event<Traits::Active_points_1_table> Erase_event;
+do {
+  NT begin, end;
+  Point function;
+  // initialize the function and the beginning and end somewhere
+  tr.simulator_handle()->new_event(Time(begin),
+			      Insert_event(function, tr.active_points_1_table_handle()));
+  tr.simulator_handle()->new_event(Time(end),
+				      Erase_event(Traits::Active_points_1_table::Key(num),
+						  tr.active_points_1_table_handle()));
+  ++num;
+} while (true);
+\end{ccExampleCode}
+%%% Local Variables: 
+%%% mode: latex
+%%% TeX-master: t
+%%% End: 

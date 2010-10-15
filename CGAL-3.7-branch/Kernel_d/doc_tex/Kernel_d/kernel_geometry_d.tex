@@ -1,0 +1,94 @@
+\section{Kernel Geometry}
+
+\subsection{Points and Vectors}
+In \cgal, we strictly distinguish between points, vectors and
+directions.  A {\em point} is a point in the Euclidean space $\E^d$, a
+{\em vector} is the difference of two points $p_2$, $p_1$ and denotes
+the direction and the distance from $p_1$ to $p_2$ in the vector space
+$\R^d$, and a {\em direction} is a vector where we forget about its
+length.  They are different mathematical concepts. For example, they
+behave different under affine transformations and an addition of two
+points is meaningless in affine geometry.  By putting them in
+different classes we not only get cleaner code, but also type checking
+by the compiler which avoids ambiguous expressions. Hence, it pays
+twice to make this distinction.
+
+\cgal\ defines a symbolic constant \ccStyle{ORIGIN} of type
+\ccc{Origin} which denotes the point at the origin. This constant is
+used in the conversion between points and vectors. Subtracting it from
+a point $p$ results in the locus vector of $p$.
+
+\begin{cprog}
+  double coord[] = {1.0, 1.0, 1.0, 1.0};
+  Point_d< Cartesian_d<double> >  p(4,coord,coord+4), q(4);
+  Vector_d< Cartesian_d<double> >  v(4);
+  v = p - ORIGIN;
+  q = ORIGIN + v;  
+  assert( p == q );
+\end{cprog} 
+
+In order to obtain the point corresponding to a vector $v$ you simply
+have to add $v$ to \ccStyle{ORIGIN}. If you want to determine
+the point $q$ in the middle between two points $p_1$ and $p_2$, you can 
+write%
+\footnote{you might call \ccc{midpoint(p_1,p_2)} instead}
+
+\begin{cprog}
+  q = p_1 + (p_2 - p_1) / 2.0;
+\end{cprog}  
+
+Note that these constructions do not involve any performance overhead
+for the conversion with the currently available representation
+classes.
+
+\subsection{Kernel Objects}
+
+Besides points (\ccc{Point_d<R>}), vectors (\ccc{Vector_d<R>}), and
+directions (\ccc{Direction_d<R>}), \cgal\ provides lines, rays,
+segments, hyperplanes, and spheres.
+
+Lines (\ccc{Line_d<R>}) in {\cgal} are oriented.  A ray
+(\ccc{Ray_d<R>}) is a semi-infinite interval on a line, and this line
+is oriented from the finite endpoint of this interval towards any
+other point in this interval. A segment (\ccc{Segment_d<R>}) is a
+bounded interval on a directed line, and the endpoints are ordered so
+that they induce the same direction as that of the line.
+
+Hyperplanes are affine subspaces of dimension $d-1$ in $\E^d$, passing
+through $d$ points.  Hyperplanes are oriented and partition space into
+a positive side and a negative side.  In \cgal, there are no special
+classes for halfspaces.  Halfspaces are supposed to be represented by
+oriented hyperplanes. All kernel objects are equality comparable via
+\ccc{operator==} and \ccc{operator!=}. For those oriented objects
+whose orientation can be reversed (segments, lines, hyperplanes,
+spheres) there is also a global function \ccc{weak_equality} that
+allows to test for point set equality disregarding the orientation.
+
+
+\subsection{Orientation and Relative Position}
+
+Geometric objects in \cgal\ have member functions that test the
+position of a point relative to the object.  Full dimensional objects
+and their boundaries are represented by the same type, e.g.\ 
+halfspaces and hyperplanes are not distinguished, neither are balls
+and spheres. Such objects split the ambient space into two
+full-dimensional parts, a bounded part and an unbounded part (e.g.\ 
+spheres), or two unbounded parts (e.g.\ hyperplanes). By default these
+objects are oriented, i.e., one of the resulting parts is called the
+positive side, the other one is called the negative side. Both of
+these may be unbounded.
+
+For these objects there is a function \ccStyle{oriented_side()} that
+determines whether a test point is on the positive side, the negative
+side, or on the oriented boundary. These function returns a value of
+type \ccc{Oriented_side}.
+
+Those objects that split the space in a bounded and an unbounded part,
+have a member function \ccStyle{bounded_side()} with return type
+\ccc{Bounded_side}.
+
+If an object is lower dimensional, e.g.\ a segment in $d$-dimensional
+space, there is only a test whether a point belongs to the object or
+not. This member function, which takes a point as an argument and
+returns a Boolean value, is called \ccStyle{has_on()}
+

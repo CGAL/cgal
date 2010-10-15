@@ -1,0 +1,13 @@
+#!/bin/bash
+
+data_dir="data"
+
+rm -f ${data_dir}/upgrade.tmp
+
+while read LINE; do
+    echo ${LINE}
+    ./nef_3 loadnef3 ${data_dir}/${LINE} dump >${data_dir}/upgrade.tmp
+    if [ -s ${data_dir}/upgrade.tmp ]; then
+	mv ${data_dir}/upgrade.tmp ${data_dir}/${LINE}
+    fi
+done

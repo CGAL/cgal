@@ -1,0 +1,63 @@
+%\newcommand{\Section}[1]{Section~{\protect\ref{#1}}}
+%\newcommand{\Chapter}[1]{Chapter~{\protect\ref{#1}}}
+%\newcommand{\new}[1]{\marginpar{\sf #1}}
+
+%\newcommand{\what}{\mbox{?\hspace*{2cm}?}}
+
+
+%\parindent0em
+%\setlength{\parskip}{1ex minus 0.9ex}
+%\sloppy
+
+\newcommand{\note}[1]{{\bf NOTE: #1}}
+
+
+\section{Definition}
+
+This chapter presents the \cgal\ interface to Geomview\footnote{\tt
+http://www.geomview.org/}, which is a
+viewer for three-dimensional objects, originally developed at the Geometry
+Center in Minneapolis\footnote{\tt http://www.geom.umn.edu/}.
+
+
+\noindent {\bf Note:} The functionality described in this chapter is not available on Windows.
+
+
+An object of the class \ccc{Geomview_stream}\ is a stream in which geometric
+objects can be inserted and where geometric objects can be extracted
+from. The constructor starts Geomview either on the local either on
+a remote machine.
+
+
+
+Not all but most classes of the \cgal\ kernel have output
+operators for the  \ccc{Geomview_stream}. 
+2D objects are embedded in the \ccc{xy}-plane.
+Input is only provided for points.
+Polyhedron and 2D and 3D triangulations  have output
+operators for the  \ccc{Geomview_stream}. 
+
+
+\section{Implementation}
+
+The constructor forks a process and establishes two pipes between the
+processes. The forked process is then overlaid with Geomview. The
+file descriptors \ccc{stdin} and \ccc{stdout} of Geomview are hooked
+on the two pipes.
+
+All insert operators construct expressions in \ccc{gcl}, the Geomview
+command language, which is a subset of {\sc Lisp}. These expressions
+are sent to Geomview via the pipe. The extract operators notify \ccc{interest}
+for a certain kind of events. When such an event happens Geomview
+sends a description of the event in \ccc{gcl} and the extract operator has
+to parse this expression.
+
+In order to implement further insert and extract operators you should
+take a look at the implementation and at the Geomview manual.
+
+
+\section{Example}
+The following program ouputs successively a 2D
+Delaunay triangulation (projected), a 3D Delaunay, and a terrain
+from the set of points.
+\ccIncludeExampleCode{Geomview/gv_terrain.cpp}

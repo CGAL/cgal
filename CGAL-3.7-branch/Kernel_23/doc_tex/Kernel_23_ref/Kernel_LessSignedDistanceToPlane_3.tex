@@ -1,0 +1,28 @@
+\begin{ccRefFunctionObjectConcept}{Kernel::LessSignedDistanceToPlane_3}
+A model for this must provide:
+
+\ccCreationVariable{fo}
+
+\ccMemberFunction{bool operator()(const Kernel::Plane_3& p,
+                                  const Kernel::Point_3& q,
+                                  const Kernel::Point_3& r);}
+{returns true, iff the signed distance from point \ccc{q} to plane 
+\ccc{p} is smaller than the signed distance from point \ccc{r} to \ccc{p}.}
+
+\ccMemberFunction{bool operator()(const Kernel::Point_3& p1,
+                                  const Kernel::Point_3& p2,
+                                  const Kernel::Point_3& p3,
+                                  const Kernel::Point_3& q,
+                                  const Kernel::Point_3& r);}
+{returns true, iff the signed distance from point \ccc{q} to the plane
+\ccc{p} defined by \ccc{p1, p2, p3} is smaller than the signed distance 
+from point \ccc{r} to \ccc{p}.
+\ccPrecond $p, q$, and $r$ are not collinear.}
+
+\ccRefines
+\ccc{AdaptableFunctor} (with three arguments)
+
+\ccSeeAlso
+\ccRefIdfierPage{CGAL::has_smaller_signed_distance_to_plane}\\
+
+\end{ccRefFunctionObjectConcept}

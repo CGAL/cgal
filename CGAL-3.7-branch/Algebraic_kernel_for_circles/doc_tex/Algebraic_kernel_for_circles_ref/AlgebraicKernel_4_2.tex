@@ -1,0 +1,37 @@
+\begin{ccRefConcept}{AlgebraicKernel_4_2} 
+
+\ccDefinition
+
+The \ccc{AlgebraicKernel_4_2} concept is meant to provide the
+curved kernel with all the algebraic functionalities required for the
+manipulation of conic arcs. 
+
+\ccTypes
+
+A model of \ccc{AlgebraicKernel_4_2} is supposed to provide
+
+\ccNestedType{RT}{A model of \ccc{RingNumberType}. In addition, the class \ccc{Root_of_traits_4<RT>} must be defined and provide a nested type \ccc{Type} which must be the same as \ccc{Root_of_4} and a function \ccc{make_root_of_4(RT,RT,RT,RT,RT,int)} whose return type is \ccc{Type}.}\footnote{\ccc{make_root_of_4} to be replaced by solve, since we don't always want a resultant...}
+\ccGlue
+\ccNestedType{FT}{A model of \ccc{FieldNumberType<RT>}.} \footnote{concept template...?}
+\ccc{RT} is supposed to be \ccc{Rational_traits<FT>}.
+
+\ccNestedType{Root_of_4}{A model of \ccc{RootOf_4}, for algebraic numbers 
+		of degree up to~4.}
+\ccGlue
+\ccNestedType{Polynomial_2_2}{A model of \ccc{Polynomial_2_2}, for bivariate polynomials of degree up to~2.}
+
+\ccNestedType{Construct_polynomial_2_2}{A model of \ccc{ConstructPolynomial_2_2.}}
+
+\ccNestedType{Solve}{A model of the concept \ccc{AlgebraicKernel_4_2::Solve}.}
+
+\ccHasModels
+
+\footnote{to be done}
+
+\ccSeeAlso
+
+\ccRefIdfierPage{Algebraic_kernel_4_2::RootOf_4}\\
+\ccRefIdfierPage{Algebraic_kernel_4_2::Polynomial_2_2}\\
+\ccRefIdfierPage{CGAL::Curved_kernel<BasicGeometricKernel,AlgebraicKernel>}
+
+\end{ccRefConcept}

@@ -1,0 +1,48 @@
+% +------------------------------------------------------------------------+
+% | Reference manual page: Vertex2FTPropertyMap.tex
+% +------------------------------------------------------------------------+
+% | 15.09.2006   Marc Pouget and Frédéric Cazals
+% | Package: Ridges_3
+% | 
+\RCSdef{\RCSVertexFTPropertyMapRev}{$Id$}
+\RCSdefDate{\RCSVertexFTPropertyMapDate}{$Date$}
+% |
+%%RefPage: end of header, begin of main body
+% +------------------------------------------------------------------------+
+
+
+\begin{ccRefConcept}{Vertex2FTPropertyMap}
+
+%% \ccHtmlCrossLink{}     %% add further rules for cross referencing links
+%% \ccHtmlIndexC[concept]{} %% add further index entries
+
+\ccDefinition
+  
+The concept \ccRefName\ specializes the concept of LvaluePropertyMap
+of the Boost library. It is intended to be used in combination with
+the concept \ccc{TriangulatedSurfaceMesh} in the class
+\ccc{Ridge_approximation}. It associates a field type value
+\ccc{TriangulatedSurfaceMesh::Traits::FT} to keys which are
+\ccc{TriangulatedSurfaceMesh::Vertex_handle}. 
+
+
+%\ccTypes
+%value and key??
+%\ccNestedType{TYPE}{some nested types}
+
+\ccHasModels
+
+\ccc{Vertex2Data_Property_Map_with_std_map::Vertex2FT_property_map},
+
+\ccSeeAlso
+
+\ccc{TriangulatedSurfaceMesh}.
+
+
+\end{ccRefConcept}
+
+% +------------------------------------------------------------------------+
+%%RefPage: end of main body, begin of footer
+% EOF
+% +------------------------------------------------------------------------+
+

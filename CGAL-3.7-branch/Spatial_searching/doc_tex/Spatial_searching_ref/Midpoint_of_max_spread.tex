@@ -1,0 +1,61 @@
+% +------------------------------------------------------------------------+
+% | Reference manual page: Midpoint_of_max_spread.tex
+% +------------------------------------------------------------------------+
+% | 1.07.2001   Johan W.H. Tangelder
+% | Package: ASPAS
+% | 
+\RCSdef{\RCSMidpointofmaxspreadRev}{$Id$}
+\RCSdefDate{\RCSMidpointofmaxspreadDate}{$Date$}
+% |
+%%RefPage: end of header, begin of main body
+% +------------------------------------------------------------------------+
+
+
+\begin{ccRefFunctionObjectClass}{Midpoint_of_max_spread<Traits, SpatialSeparator>}
+
+%% \ccHtmlCrossLink{}     %% add further rules for cross referencing links
+%% \ccHtmlIndexC[class]{} %% add further index entries
+
+\ccDefinition
+Implements the {\em midpoint of max spread} splitting rule.
+A rectangle is cut through $(Mind+Maxd)/2$ orthogonal
+to the dimension with the maximum point spread $[Mind,Maxd]$.
+
+\ccInclude{CGAL/Splitters.h}
+
+\ccParameters
+
+Expects for the first template argument a model of
+the concept \ccc{SearchTraits}, for example
+the type \ccc{CGAL::Search_traits_3< Cartesian<double> >}. 
+
+Expects for the second template argument a model of the concept \ccc{Separator}. It has as default value
+the type, \ccc{CGAL::Plane_separator<Traits::FT>}
+
+
+\ccIsModel
+
+\ccc{Splitter}
+
+
+\ccCreation
+\ccCreationVariable{s}  %% choose variable name
+
+\ccConstructor{Midpoint_of_max_spread();}{Default constructor.}
+\ccConstructor{Midpoint_of_max_spread(unsigned int bucket_size);}{Constructor.}
+
+\ccOperations
+\ccMethod{unsigned int bucket_size();} {Returns the bucket size of the leaf nodes.}
+
+\ccSeeAlso
+
+\ccc{Splitter},\\
+\ccc{SpatialSeparator}
+
+\end{ccRefFunctionObjectClass}
+
+% +------------------------------------------------------------------------+
+%%RefPage: end of main body, begin of footer
+% EOF
+% +------------------------------------------------------------------------+
+

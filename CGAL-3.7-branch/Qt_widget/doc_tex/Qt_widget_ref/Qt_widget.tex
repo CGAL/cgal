@@ -1,0 +1,414 @@
+% +------------------------------------------------------------------------+
+% | CGAL Reference Manual: Reference manual for Qt_widget.tex
+% +------------------------------------------------------------------------+
+% |
+% | 13.12.2001  Radu Ursu
+% | 
+% | \RCSdef{\qtwidgetRev}{$Id$}
+% | \RCSdefDate{\qtwidgetDate}{$Date$}
+% +------------------------------------------------------------------------+
+
+% +-----------------------------------------------------+
+\begin{ccRefClass}{Qt_widget}
+
+\ccDefinition
+
+An object of type \ccc{Qt_widget} is a two-dimensional window for
+graphical IO. It is a class that is designed to help \cgal\ users
+to visualize easily \cgal\ objects and for advanced users to interact
+with them. This widget is designed for 2D \cgal\ objects only.
+
+\ccInclude{CGAL/IO/Qt_widget.h}
+
+\ccInheritsFrom
+\ccc{QWidget}
+
+\ccTypes
+
+The widget class also defines the following enum type to specify
+which kind of point representation do you want to use:
+
+\ccEnum{enum PointStyle { PIXEL, CROSS, PLUS, CIRCLE, DISC, RECT, BOX };}{}
+
+\ccCreation
+\ccCreationVariable{win}
+\ccSetTwoColumns{Qt_widget}{}
+
+\ccConstructor{Qt_widget(QWidget *parent = 0, const char *name =
+);}{Constructs a widget which is a child of \ccc{parent}, with the name
+\ccc{name}. The default visible area is between ranges xmin = -1, xmax
+= 1, ymin = -1, ymax = 1. By default the X and Y scale factors are equal.}
+
+%\ccOperations
+\ccSetThreeColumns{const_iterator}{container.begin() const;}{}
+
+%SCALES
+%\ccHeading{Scaling}
+
+\ccStyle{Qt_widget} provides scaling support. You can use a scaling factor for
+your objects as well as you can draw the objects with one scale and
+look at the objects with different scales. Also there is a possibility
+to tell the widget that you want that the visible area should be
+mapped to a certain interval, and the widget adjust the scaling factor 
+according to that.
+
+\ccMethod{void set_window(double x_min, double x_max, double y_min, double 
+y_max, bool u = false);}{Map the widget coordinates to the interval
+defined by the rectangle with given coordinates. This method should be
+called after \ccc{resize()} from \ccStyle{QWidget}. If \ccc{u} is
+\ccc{true} the X and Y scale factors will not be equal and the widget
+will not keep the aspect ratio.}
+
+\ccMethod{void set_x_scale(double xscale);}{Set the current X scaling
+factor. Actually the scales are recomputed when you resize, so this
+method is not used very often.}
+
+\ccMethod{void set_y_scale(double yscale);}{Set the current Y scaling
+factor. Actually the scales are recomputed when you resize, so this
+method is not used very often.}
+
+\begin{ccAdvanced}
+You should have the same scaling factor for X and Y if you want to
+keep the aspect ratio of your objects.
+\end{ccAdvanced}
+
+\ccMethod{void zoom(double ratio);}{Multiply the X and Y scaling factors by
+\ccc{ratio}, then calls \ccc{redraw}. The center of the visible area
+remains the same.}
+
+\ccMethod{void zoom(double ratio, double xc, double yc);}{Multiply the 
+X and Y scaling factors by \ccc{ratio}, then calls \ccc{redraw}. The
+center of the visible area becomes (xc, yc).}
+
+\ccMethod{void move_center(const double distx, const double disty);}{Move the center of the
+ widget with \ccc{distx} on the X axis and \ccc{disty} on the Y axis.}
+
+\ccMethod{void set_center(const double x, const double y);}{Set the center of the widget to
+ \ccStyle{(x, y)}.}
+
+\ccMethod{void add_to_history();}{Deprecated: This function adds the current
+viewport and transformations to history. You should use \ccc{save()}
+public slot from \ccc{Qt_widget_history} object.}
+
+\ccMethod{void clear_history();}{Deprecated: Clears the history. This
+means that there are no elements in the history list. Call this method
+when you want to reinitialize the history list. You should use
+\ccc{clear_history()} method from \ccc{Qt_widget_standard_toolbar} or
+the \ccc{clear()} public slot from \ccc{Qt_widget_history} object.}
+
+\ccHeading{public slots:}
+\ccGlue
+\ccMethod{bool back();}{}
+\ccGlue
+\ccMethod{bool forth();}{Deprecated: This slots permit to walk into
+history. Return \ccc{true} if succeded. These slots are
+deprecated. You should use the \ccc{backward()} and \ccc{forward()}
+methods of \ccc{Qt_widget_history} object, or the \ccc{back()} and
+\ccc{forward()} public slots from \ccc{Qt_widget_standard_toolbar} object.}
+
+\ccMethod{void clear();}{Clear the screen. The properties of the
+widget remain the same after calling this member function. You can see 
+a list of the properties that you can set at the properties
+description.}
+
+\ccMethod{void lock();}{Locks the widget, keeping the widget from being 
+refreshed. If you lock the widget you should verify that you unlock it 
+somewhere. The number of \ccc{lock()} calls should be the same with the 
+number of \ccc{unlock()} calls. Lock and unlock calls can be nested.}
+
+\ccMethod{void unlock();}{Unlocks the widget, and calls
+\ccc{do_paint()}. The widget is only unlocked if the number of unlock
+calls is equal to the number of lock calls.}
+
+\ccMethod{void do_paint();}{Refresh the widget calling 
+\ccc{paintEvent(QPaintEvent *e)} for the \ccc{Qt_widget} only if the widget is 
+unlocked. This mean that \ccc{redraw()} is called if and only if the widget is 
+unlocked.}
+
+\ccMethod{void redraw();}{If you derive from \ccc{Qt_widget} you have to 
+overload this function and put your code for drawing here if you don't use 
+\ccc{layers}. The best way is to attach layers to the widget and
+call this method. This method redraws the layers attached and
+active. Before drawing the layers, redraw clear the screen and emit
+\ccc{redraw_on_back()}. Emit \ccc{redraw_on_front()} at the end.}
+
+\ccMethod{void print_to_ps();}{Redraws all the attached and active
+layers into a Postscript device. It could be a file or a
+printer. This method also use signals as \ccc{redraw_on_back()} or \ccc{redraw_on_front()}.}
+
+
+%PROPERTIES
+\ccHeading{Properties}
+
+You can set the properties of the functions through this functions as
+well as with the help of manipulators described later. The function
+naming convention has changed for this member functions, to \qt\ convention.
+
+\ccMethod{void setColor(Qcolor c);}{Set the current pen color of the widget to 
+be c.}
+
+\ccMethod{void setBackgroundColor(QColor c);}{Set the current background color 
+to be \ccc{c}.}
+
+\ccMethod{void setFillColor(QColor c);}{Set the current fill color of the 
+widget to be \ccc{c}.}
+
+\ccMethod{void setFilled(bool f);}{Set the status of the widget to
+true or false concerning filling the objects: polygons, circles,
+rectangles \ldots}
+
+\ccMethod{void setLineWidth(unsigned int i);}{Set the current line width of the widget.}
+
+\ccMethod{void setPointSize(unsigned int i);}{Set the current point size of the widget.}
+
+\ccMethod{void setPointStyle(PointStyle s);}{Set the current point style of the
+ widget to s. PointStyle is a enumeration declared in \ccc{Qt_widget}.}
+
+\ccMethod{void setRasterOp(RasterOp r);}{Set the current raster operation.}
+
+%LAYERS
+\ccHeading{Layers}
+
+\ccMethod{void attach(Qt_widget_layer* s);}{Add the layer s in the list of 
+layers.The last added will be on top of the screen. Also the events
+are forwarded to layers in the order they have been attached.}
+
+\ccMethod{void detach(Qt_widget_layer* s);}{Remove the layer s from the list. 
+s it's a pointer to an existing layer.}
+
+%Cgal
+\ccHeading{New CGAL Objects}
+\ccMethod{void new_object(CGAL::Object obj);}{This function should be called 
+by the tools that create \cgal\ objects. It then emits the signal 
+\ccc{new_cgal_object(CGAL::Object)}. Slots of other components can be
+connected to this signal.}
+
+\ccAccessFunctions
+%PROPERTIES
+%\ccHeading{Properties}
+
+Note that we use also types from \qt\ here.
+
+\ccMethod{QColor color() const;}{Returns the current pen color. The color 
+returned is a Qt class.}
+
+\ccMethod{QColor backgroundColor() const;}{Returns the current widget
+background color. The color returned is a Qt class.}
+
+\ccMethod{QColor fillColor() const;}{Returns the current color used
+for filling the objects. The color returned is a Qt class.}
+
+\ccMethod{PointStyle pointStyle();}{Returns the current point style. PointStyle
+ is a enumeration declared in \ccc{Qt_widget}.}
+
+\ccMethod{uint pointSize();}{Returns the current point size.}
+
+\ccMethod{uint lineWidth();}{Returns the current line width.}
+
+\ccMethod{RasterOp rasterOp();}{Return the current raster operation.}
+
+
+%COORDINATES
+%\ccHeading{Coordinates}
+\ccMethod{double x_min() const;}{Returns the left \ccc{x} coordinate
+of the widget.}
+\ccMethod{double y_min() const;}{Returns the lower \ccc{y} coordinate
+of the widget.}
+\ccMethod{double x_max() const;}{Returns the right \ccc{x} coordinate
+of the widget.}
+\ccMethod{double y_max() const;}{Returns the upper \ccc{y} coordinate
+of the widget.}
+\begin{ccAdvanced}
+The coordinates of the screen are maped to a certain interval that you 
+can choose  with \ccc{set_window} member function. The scale of the
+objects you can visualize is computed and maintained the same for both 
+axes to keep the aspect ratio of the objects. You should use
+\ccc{x_real} or \ccc{y_real} to get the real world coordinates, for
+your screen coordinates. If you are using
+\ccc{gmp} you can use this functions with \ccc{Gmpq} as second
+parameter. You may need it when you work with rationals. The double
+from the other function could be more complex and can make you loose
+speed in computations. Computing with rational coordinates directly
+could increase the speed, rather than computing with complex double
+coordinates.
+
+\ccMethod{double x_real(int x);}{}
+\ccGlue
+\ccMethod{double y_real(int y);}{}
+\ccFunction{template<class FT> void x_real(int x, FT&) const;}{Returns
+the \ccc{x} real world coordinate of the \ccc{Qt_widget}.}
+\ccFunction{template<class FT> void y_real(int y, FT& )
+const;}{Returns the \ccc{y} real world coordinate of the
+\ccc{Qt_widget}.}
+\ccMethod{void x_real(int, Gmpq&);}{}
+\ccGlue
+\ccMethod{void y_real(int, Gmpq&);}{}
+\end{ccAdvanced}
+
+\ccMethod{int x_pixel(double x);}{This method is the opposite of
+\ccc{x_real} method. Converts the world coordinates in screen
+coordinates. If you want to get an integer between 0 and width, you
+should pass an x between xmin and xmax.}
+\ccMethod{int y_pixel(double y);}{This method is the opposite of
+\ccc{y_real} method. Converts the world coordinates in screen
+coordinates. If you want to get an integer between 0 and height, you
+should pass an y between ymin and ymax.}
+
+\begin{ccAdvanced}
+%PAINTER
+\ccHeading{Painter and Pixmap}
+
+In order that layers can draw on the drawing area of a widget, they
+have to access the underlying pixmap and painter.
+ 
+\ccStyle{Qt_widget} use as a backbuffer for drawing a pixmap
+defined inside the class, i.e. an object of type \ccc{QPixmap}. The
+\ccc{QPixmap} class is an off-screen pixel-based paint device. One
+common use of the \ccc{QPixmap} class is to enable smooth updating of widgets.
+The QPainter class paints on paint devices. There is an object of type 
+QPainter defined in \ccStyle{Qt_widget} that uses as a paint device
+the \ccc{QPixmap} object.
+
+\ccMethod{QPixmap& get_pixmap();}{Returns the current pixmap.}
+
+\ccMethod{QPainter& get_painter();}{Returns the current painter.}
+
+%\ccMethod{QWMatrix& get_matrix();}{Returns the current world matrix
+%for the current painter. You can modify the matrix using the pointer
+%to the painter.}
+\end{ccAdvanced}
+
+%Signals
+\ccHeading{Signals}
+
+\ccMethod{void s_mousePressEvent(QMouseEvent *e);}{}
+\ccGlue
+\ccMethod{void s_mouseReleaseEvent(QMouseEvent *e);}{}
+\ccGlue
+\ccMethod{void s_mouseMoveEvent(QMouseEvent *e);}{}
+\ccGlue
+\ccMethod{void s_paintEvent(QPaintEvent *e);}{}
+\ccGlue
+\ccMethod{void s_resizeEvent(QResizeEvent *e);}{}
+\ccGlue
+\ccMethod{void s_wheelEvent(QMouseEvent *e);}{}
+\ccGlue
+\ccMethod{void s_mouseDoubleClickEvent(QMouseEvent *e);}{}
+\ccGlue
+\ccMethod{void s_keyPressEvent(QKeyEvent *e);}{}
+\ccGlue
+\ccMethod{void s_keyReleaseEvent(QKeyEvent *e);}{}
+\ccGlue
+\ccMethod{void s_enterEvent(QEvent *e);}{}
+\ccGlue
+\ccMethod{void s_leaveEvent(QEvent *e);}{}
+\ccGlue
+\ccMethod{void s_event(QEvent *e);}{The \ccc{Qt\_widget} receives the
+events through virtual functions. This is the mechanism that \qt\
+offers for dispaching events. This signals are called every time an
+event is dispatched to a virtual function. For example if
+\ccc{Qt\_widget} receives \ccc{mousePressEvent(QMouseEvent *e)} emits
+\ccc{s_mousePressEvent(e)}. This is very useful when you have only a
+pointer to \ccc{Qt_widget}. It is enough to connect this slot to your
+function to receive the event.}
+
+\ccMethod{void new_cgal_object(CGAL::Object);}{Triggered when a new object 
+from a tool is received. The user should catch this signal if it's working with
+tools that provide \cgal\ objects as input.}
+\ccMethod{void custom_redraw();}{Deprecated: Emitted in the redraw()
+function after the layers are drawn.}
+\ccMethod{void redraw_on_back();}{Emmitted in \ccc{redraw()} method before
+calling layer's redraw.}
+\ccMethod{void redraw_on_front();}{Emmitted in \ccc{redraw()} method after
+calling layer's redraw.}
+\ccMethod{void rangesChanged();}{Emmitted each time (xmin, xmax) and
+(ymin, ymax) ranges are changed.}
+
+
+\input{Qt_widget_ref/Operators_for_output.tex}
+\input{Qt_widget_ref/Manipulators.tex}
+
+
+
+\ccExample
+
+In the given example, we create an object of type
+\ccStyle{Qt_widget} and then we use the operators for output and the
+manipulators to show some of the widget's functionality.
+
+\begin{ccExampleCode}
+#include <CGAL/Cartesian.h>
+#include <CGAL/Bbox_2.h>
+#include <list>
+#include <CGAL/Polygon_2.h>
+#include <CGAL/IO/Qt_widget_Polygon_2.h>
+#include <qapplication.h>
+#include <CGAL/IO/Qt_widget.h>
+
+typedef CGAL::Cartesian<int>   Rep;
+typedef CGAL::Point_2<Rep>     Point;
+typedef CGAL::Circle_2<Rep>    Circle;
+typedef CGAL::Segment_2<Rep>   Segment;
+typedef CGAL::Line_2<Rep>      Line;
+typedef CGAL::Ray_2<Rep>       Ray;
+typedef CGAL::Triangle_2<Rep>  Triangle;
+typedef CGAL::Iso_rectangle_2<Rep>
+                               Cgal_Rectangle;
+typedef CGAL::Bbox_2           BBox;
+typedef std::list<Point>       Container;
+typedef CGAL::Polygon_2<Rep,Container>
+                               Cgal_Polygon;
+
+int main( int argc, char **argv )
+{
+  QApplication app( argc, argv );
+  using namespace CGAL;
+  CGAL::Qt_widget * W = new CGAL::Qt_widget();
+  app.setMainWidget( W );
+  W->resize(600, 600);
+  W->set_window(0, 600, 0, 600);
+  W->show();
+  //painting something on the screen
+  W->lock();
+
+  *W << BackgroundColor(ORANGE) << RED <<
+  LineWidth(3) << PointSize(3) << PointStyle(DISC);
+  *W << Segment(Point(10,20),Point(300,400));
+  *W << LineWidth(5) << GREEN << FillColor(BLACK) <<
+    Circle(Point(400,400),50*50);
+  *W << LineWidth(1) << noFill << Circle(Point(300,300),300*300);
+  *W << BLUE << LineWidth(2);
+  *W << Segment(Point(200,200),Point(400,400));
+  *W << Segment(Point(200,400),Point(400,200));
+  W->setFilled(TRUE);
+  *W << RED << Triangle(Point(150,300),
+                                  Point(150,350),
+                                  Point(100,325));
+  *W << FillColor(RED) << Cgal_Rectangle(Point(320,220),
+                                              Point(350,240));
+  *W << DEEPBLUE << BBox(100,80,260,140);
+  Cgal_Polygon p;
+  p.push_back(Point(300,30));
+  p.push_back(Point(400,30));
+  p.push_back(Point(500,130));
+  p.push_back(Point(400,180));
+  p.push_back(Point(300,130));
+  *W << p;
+  *W << Ray(Point(200,400), Point(180,430))
+    << Ray(Point(200,400), Point(180,370));
+  W->unlock();
+
+  return app.exec();
+}
+\end{ccExampleCode}
+
+\end{ccRefClass}
+% +-----------------------------------------------------+
+% EOF
+
+
+
+
+
+
+

@@ -1,0 +1,6 @@
+<!DOCTYPE RCC><RCC version="1.0">
+<qresource prefix="/SplatRenderer">
+    <file>shaders/Raycasting.glsl</file>
+    <file>shaders/Finalization.glsl</file>
+</qresource>
+</RCC>

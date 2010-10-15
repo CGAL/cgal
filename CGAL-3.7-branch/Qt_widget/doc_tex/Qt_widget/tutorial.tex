@@ -1,0 +1,423 @@
+
+\section{Tutorial}
+
+In the directories \ccc{demo/Qt_widget/basic/tutorial*} we provide some examples that illustrate the widget, layers, and the standard toolbar.
+
+\subsection*{Tutorial 1}
+
+In this tutorial you can see how you can use \ccStyle{Qt\_widget} like
+a stream, for the output of \cgal\ objects.  Of course I recommend to read
+the tutorial from Trolltech, that is the original Qt tutorial, but I
+think that you can pass this tutorials without having strong skills of \qt\
+programming. Anyway, the code that belongs to Qt is explained in tutorials.
+
+The following is a typical way of how to create a window using
+\qt\ and \ccStyle{Qt\_widget.}
+\begin{ccExampleCode}
+#include <CGAL/IO/Qt_widget.h>
+#include <qapplication.h>
+
+int main( int argc, char **argv )
+{
+    QApplication app( argc, argv );
+    CGAL::Qt_widget * W = new CGAL::Qt_widget();
+    app.setMainWidget( W );
+    W.resize(400, 400);
+    W.set_window(0, 400, 0, 400);
+    W.show();
+
+    return app.exec();
+}
+\end{ccExampleCode}
+You always have to include the header:
+\begin{ccExampleCode}
+#include <qapplication.h>
+\end{ccExampleCode}
+
+The entry point for a typical Qt application is the function main. In
+this function you should define an application object of Qt:
+\begin{ccExampleCode}
+QApplication app( argc, argv );
+\end{ccExampleCode}
+You will run the Qt application with the line:
+\begin{ccExampleCode}
+return app.exec();
+\end{ccExampleCode}
+To use \ccStyle{Qt\_widget} you need an instance and tell the
+application to use that instance:
+\begin{ccExampleCode}
+CGAL::Qt_widget *W = new CGAL::Qt_widget();
+app.setMainWidget(W);
+\end{ccExampleCode}
+To resize and set the scaling factor of the window you will use:
+\begin{ccExampleCode}
+W->resize(400, 400);
+W->set_window(0, 400, 0, 400);
+\end{ccExampleCode}
+At the end you need to show the window when the initialization has been done:
+\begin{ccExampleCode}
+W->show();
+\end{ccExampleCode}
+
+All the drawing code should be put between \ccStyle{Qt\_Widget}'s lock() and
+unlock() functions. See the manual reference pages of
+\ccStyle{Qt\_widget}. Doing like this, the window will be updated only
+once, when \ccStyle{Qt\_widget} finds the last unlock(). This way you
+can avoid the window flickering.
+
+As you will notice, this tutorial has some limitations. If you try to
+resize the window you'll see that what you have been painted will
+disappear. This is not a very pleasant thing but you'll see in the
+next tutorial how you can solve this problem.
+
+Applications following this approach are only useful when you quickly
+want to see how the output of a computation looks like.
+
+\subsection*{Tutorial 2}
+
+In this tutorial you can see a different method to draw on the window,
+and you'll pass over the limitations of the previous example.
+
+This tutorials insert a point in a Delaunay triangulation every time
+you press the mouse button over the widget, and calls \ccc{redraw()}. This
+means that you'll see the results of your insertions immediately. The
+advantage of this approach is that when you resize the window, the
+painting will not disappear.
+
+As you see the main entry point is the same as in the previous
+tutorial, but instead of using an instance of \ccStyle{Qt\_widget}
+class, you'll use an instance of a class derived from \ccStyle{Qt\_widget}.
+In this sense, we create a new class \ccc{My\_window} as a child for
+\ccStyle{Qt\_widget}. The resize function has been moved into the
+constructor of \ccc{My\_window}.
+
+We define a triangulation as a global variable:
+\begin{ccExampleCode}
+typedef CGAL::Cartesian<double>             Rep;
+typedef CGAL::Point_2<Rep>                  Point;
+typedef CGAL::Delaunay_triangulation_2<Rep> Delaunay;
+
+Delaunay dt;
+\end{ccExampleCode}
+The private slot \ccc{redraw_win()} is used to output the
+triangulation on the screen. This slot is triggered by the
+\ccc{custom\_redraw()} signal emitted by \ccc{Qt\_widget} at the end of 
+\ccc{redraw()}. The connection between this signal and our slot is
+made in the constructor of \ccc{My\_window}.
+\begin{ccExampleCode}
+private slots:
+  void redraw_win()
+  {
+    *this << dt;
+  }
+\end{ccExampleCode}
+
+This slot is triggered every time the \ccc{redraw()}
+public member of \ccc{Qt\_widget} is called. This way the window
+redraws the painting from this slot in the same time with the other
+paintings. You will see in the next tutorial how to use a layer. All
+the layers are drawn in this redraw() method of \ccc{Qt\_widget}, and
+at the end \ccc{custom\_redraw()} is emitted.
+
+Another private member catches the mouse press event from the Window
+system (X11/Windows). The code put in this function will be executed when
+you press the mouse over the widget.
+\begin{ccExampleCode}
+private:
+  void mousePressEvent(QMouseEvent *e)
+  {
+    Qt_widget::mousePressEvent(e);
+    dt.insert(Point(x_real(e->x()), y_real(e->y())));
+    redraw();
+  }
+\end{ccExampleCode}
+As you see, the code inserts a point in the triangulation, and calls
+redraw(). You can comment redraw() to see what happens: You'll see
+the results only when you'll resize the window.
+\begin{ccAdvanced}
+Of course if you want to trigger the mouse press event in the base
+class you have to put this in the code of the function:
+\begin{ccExampleCode}
+Qt_widget::mousePressEvent(e);
+\end{ccExampleCode}
+It is the \ccc{Qt\_widget} that forward events to the attached
+layers. In order to forward the events, it should receive them
+first. So, if you are not using layers, and you do not need the
+\ccc{Qt\_widget} to handle this event, you should not use this line.
+You can experience more this feature in tutorial 5 were it is used the
+standard toolbar. Try to remove there this line to see what
+happens. The widget will not receive the events and neither the
+standard toolbar.
+\end{ccAdvanced}
+
+\subsection*{Tutorial 3}
+
+We change the previous tutorial to use layers for drawing. We derive
+our own class from \ccc{Qt\_widget\_layer}.
+
+In this example the layer is:
+\begin{ccExampleCode}
+class My_Layer : public CGAL::Qt_widget_layer{
+  void draw(){
+    *widget << dt;
+  }
+};
+\end{ccExampleCode}
+As you see you have to provide a \ccc{draw()} function in your layer, in
+order to create output on the screen. The \ccStyle{Qt\_widget} will call this
+\ccc{draw()} function for every attached and active layer. A layer is active
+in the moment of attaching by default.
+
+In the code of the constructor of \ccc{My\_window} the layer is attached to
+the widget:
+\begin{ccExampleCode}
+attach(&v);
+\end{ccExampleCode}
+Because the layer is attached, the triangulation will appear on the
+screen every time you call redraw(), as the widget redraws all the
+layers. This means that in this tutorial every time you press the mouse
+button, the triangulation will be redrawn.
+
+Try to detach the layer to see what happens. Or try to deactivate
+the layer. The triangulation will not be shown anymore.
+
+\subsection*{Tutorial 4}
+
+The fourth tutorial shows how to create a more complex application
+using the \qt\ class \ccStyle{QMainWindow}. With this class you can create a
+{\sc Mdi} (Multiple Document Interface) application as well as a {\sc
+Sdi} (Single Document Interface).
+
+For drawing, the tutorial use the same layer as for the previous one
+but this time we use another class \ccStyle{QMainWindow}, as the main frame of
+the application. We describe here how it is done.
+
+The entry point is the same:
+\begin{ccExampleCode}
+int main( int argc, char **argv )
+{
+    QApplication app( argc, argv );
+    My_window W(400,400);
+    app.setMainWidget( &W );
+    W.show();
+    W.setCaption("Using QMainWindow QT class");
+    return app.exec();
+}
+\end{ccExampleCode}
+This time you see that \ccc{W} is no longer an instance of
+\ccStyle{Qt\_widget} but is an instance of
+\ccStyle{QMainWindow}. \ccStyle{QMainWindow} is also a widget but
+provides functionalities like you can use a toolbar, a status bar ... in other
+words you can create a complex application. To use an instance of
+\ccStyle{Qt\_widget} you have to say in the constructor:
+\begin{ccExampleCode}
+setCentralWidget(widget);
+\end{ccExampleCode}
+where widget is an instance of \ccStyle{Qt\_widget}. As you see it is
+also declared in \ccStyle{My\_window}.
+
+There is one more thing, at the constructor you see:
+\begin{ccExampleCode}
+widget = new My_widget(this);
+\end{ccExampleCode}
+Also the constructor of \ccStyle{My\_widget} is adapted:
+\begin{ccExampleCode}
+My_widget(QMainWindow* c) : CGAL::Qt_widget(c) {};
+\end{ccExampleCode}
+This lines tells the application that \ccStyle{My\_window} is a parent for
+\ccStyle{My\_widget}. Try to comment this lines to see what happens. Two
+windows will appear, one for \ccStyle{My\_window} and one for \ccStyle{My\_widget}.
+
+In the constructor it is \ccc{widget->attach(\&v)}; This way, the layer is
+attached by \ccc{My\_widget}. The other part of the code does the same
+thing as the previous tutorials: insert a new point in a Delaunay
+triangulation and draw the triangulation every time you click on the window.
+
+\subsection*{Tutorial 5}
+
+The fifth tutorial includes the standard toolbar in the
+application. The application has the same functionality but as you
+see you can now zoom in, zoom out and translate, using the tools from
+the standard toolbar.
+
+The layer is still there, doing nothing but drawing the triangulation.
+
+The class \ccc{My\_widget} is like in the previous example an instance of
+\ccStyle{Qt\_widget}, that you need in the class \ccc{My\_window}.
+
+The only difference between this example and the previous one is the
+use of standard toolbar. It is declared as private in \ccc{My\_window} class:
+\begin{ccExampleCode}
+CGAL::Qt_widget_standard_toolbar *stoolbar;
+\end{ccExampleCode}
+To use it, in the constructor of \ccc{My\_window}, it is added:
+\begin{ccExampleCode}
+stoolbar = new CGAL::Qt_widget_standard_toolbar(widget, this, ``Standard toolbar'');
+\end{ccExampleCode}
+In this tutorial you can play a little bit with the standard toolbar
+but you will see probably something that is not quite pleasant. If you
+select the hand, and try to use it, you'll see that when you click to
+select the first point, also a new \ccc{CGAL::Point\_2} is inserted in the
+triangulation. This is due to the fact that the mousePressEvent
+implemented in My\_window it is called every time you click on the
+widget, even if a tool from the standard toolbar is active.
+
+You will see in the next tutorial a solution to this problem.
+
+\begin{ccAdvanced}
+In tutorial 2 we have been talked about this line:
+\begin{ccExampleCode}
+Qt_widget::mousePressEvent(e);
+\end{ccExampleCode}
+You can try to remove it now to see what happens. The \ccc{Standard Toolbar}
+will not receive any event because \ccc{Qt\_widget} will not receive
+any event.
+\end{ccAdvanced}
+
+\subsection*{Tutorial 6}
+
+The sixth tutorial uses for the first time a layer to build \cgal\
+objects. It is declared the class \ccc{My\_input_layer} derived from
+\ccStyle{Qt\_widget\_layer}, that is used to create a \cgal\ point
+every time you click on the widget.
+\begin{ccExampleCode}
+class My_input_layer : public CGAL::Qt_widget_layer{
+public:
+  My_input_layer(){};
+private:
+  void mousePressEvent(QMouseEvent *e)
+  {
+    if(e->button() == Qt::LeftButton)
+    {
+      double x=static_cast<double>(widget->x_real(e->x()));
+      double y=static_cast<double>(widget->y_real(e->y()));
+      widget->new_object(CGAL::make_object(Point(x, y)));
+    }
+  }
+};
+\end{ccExampleCode}
+This class has a member function \ccc{mousePressEvent(QMouseEvent *e)} that
+is called by \ccStyle{Qt\_widget} if the tool is attached.
+
+In \ccc{My\_window} class an instance of \ccc{My\_input_layer} is created:
+\begin{ccExampleCode}
+My_input_layer t;
+\end{ccExampleCode}
+In the constructor of \ccc{My\_window} we attach the layer:
+\begin{ccExampleCode}
+widget->attach(&t);
+\end{ccExampleCode}
+
+To receive the object that the layer creates, in the constructor of
+\ccc{My\_window}, we connect:
+\begin{ccExampleCode}
+connect (widget, SIGNAL(new_cgal_object(CGAL::Object)), 
+         this, SLOT(get_object(CGAL::Object)));
+\end{ccExampleCode}
+In \ccc{My\_window} class the private slot
+\ccc{get\_object(CGAL::Object obj)} is declared. This is what you have
+to do to receive \cgal\ objects from a layer. The layer calls the new\_object()
+member function from \ccStyle{Qt\_widget}, that emits a signal
+\ccc{new\_cgal\_object(CGAL::Object)}. To receive this signal, in the
+constructor of \ccc{My\_window} a connect is declared:
+\begin{ccExampleCode}
+connect (widget, SIGNAL(new_cgal_object(CGAL::Object)), 
+         this, SLOT(get_object(CGAL::Object)));
+\end{ccExampleCode}
+
+This connect tells the application that every time
+\ccStyle{Qt\_widget} emits the signal new\_cgal\_object, the function
+get\_object is called, having as parameter a \ccc{CGAL::Object}. It could be
+anything, and to verify what object have been received you can use
+\ccc{CGAL::object_cast}.
+\begin{ccExampleCode}
+  if(const Point *p = CGAL::object_cast<Point>(&obj)) {
+      dt.insert(*p);
+      widget->redraw();
+  }
+\end{ccExampleCode}
+You can insert new points in the triangulation by clicking on the
+widget. When you use the standard toolbar, your already attached layers
+will be put on waiting state, untill you finish working with it. For
+example if you click on the hand tool and you use it, then you click
+on the arrow to detach it, your attached layer will receive the
+focus, being brought to life.
+
+You can attach as many layers you like on the \ccc{Qt\_widget}. All
+the layers have a order of drawing and of calling the events. The
+\ccc{Qt\_widget} dispatch the events to layers in the order they have
+been attached.
+
+\subsection*{Tutorial 7}
+
+This tutorial is very similar to the previous one. Insert new points
+in a Delaunay triangulation when you click the mouse on the widget,
+using a layer, and also let you use the standard toolbar.
+
+The difference is that this example is using a generic layer, developed
+by \cgal. This layer creates new \cgal\ points every time you click the
+mouse. The coordinates of the point are the coordinates of the real
+world. This means that the mouse coordinates are transformed using the
+current scales to the real world coordinates.
+
+The generic layers are documented in the manual. They are templatized
+by a kernel of \cgal. In this tutorial the generic tool
+\ccStyle{CGAL::Qt\_widget\_get\_point} it is templatized by
+\ccc{Cartesian<double>}.
+
+First comes the include statement:
+\begin{ccExampleCode}
+#include <CGAL/IO/Qt_widget_get_point.h>
+\end{ccExampleCode}
+In the class \ccc{My\_window}, it is declared as a private member:
+\begin{ccExampleCode}
+CGAL::Qt_widget_get_point<Rep> get_point;
+\end{ccExampleCode}
+In the constructor of \ccc{My\_window} we attach this generic layer:
+\begin{ccExampleCode}
+widget->attach(&get_point);
+\end{ccExampleCode}
+
+The connect is still there in the constructor, the good news is that
+no matter how many tools you use, you will have to connect only once
+the {\sc Signal} with your {\sc Slot}.
+
+\subsection*{Tutorial 8}
+
+In this tutorial you learn how to use a button to activate and
+deactivate a \ccStyle{Qt\_widget\_layer}. As in the previous tutorial
+we use the generic layer \ccStyle{Qt\_widget\_get\_point} and a
+toolbar button that will control the process of activating and deactivating.
+
+To use a toolbar, here is what you have to do in the constructor of My\_window:
+\begin{ccExampleCode}
+QToolBar  *layers_toolbar;
+layers_toolbar = new QToolBar("Layers", this, QMainWindow::Top, true, "Layers");
+addToolBar(layers_toolbar, Top, false);
+\end{ccExampleCode}
+To add a button in the toolbar you have to:
+declare the button in \ccc{My\_window}:
+\begin{ccExampleCode}
+QToolButton *get_point_button;     //the toolbar button
+\end{ccExampleCode}
+add the button in the toolbar:
+\begin{ccExampleCode}
+get_point_button = new QToolButton(tools_toolbar, ``Get Point'');
+get_point_button->setPixmap(QPixmap( (const char**)point_xpm ));
+\end{ccExampleCode}
+To make the button a toggle button:
+\begin{ccExampleCode}
+get_point_but->setToggleButton(TRUE);
+\end{ccExampleCode}
+The connection between the button and the layer is done in the
+following way, using the \ccc{stateChanged(int)} public slot of \ccc{Qt\_widget\_layer}:
+\begin{ccExampleCode}
+connect (get_point_button, SIGNAL(stateChanged(int)),
+         &get_point, SLOT(stateChanged(int)));
+\end{ccExampleCode}
+\begin{ccAdvanced}
+This public slot was desinged to be used only with \qt\/ buttons. The
+integer value sent as a parameter represents the state of a \qt\/
+button. Please see the documentation of \qt\ if you want to know more
+about buttons and how to use them properly.
+\end{ccAdvanced}

@@ -1,0 +1,131 @@
+%% Copyright (c) 2004  SciSoft.  All rights reserved.
+%%
+%% This file is part of CGAL (www.cgal.org); you may redistribute it under
+%% the terms of the Q Public License version 1.0.
+%% See the file LICENSE.QPL distributed with CGAL.
+%%
+%% Licensees holding a valid commercial license may use this file in
+%% accordance with the commercial license agreement provided with the software.
+%%
+%% This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
+%% WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
+%%
+%% 
+%%
+%% Author(s)     : Fernando Cacciola <fernando_cacciola@hotmail.com>
+
+
+\begin{ccRefFunction}{create_interior_skeleton_and_offset_polygons_2}
+
+%% add template arg's if necessary
+
+%% \ccHtmlCrossLink{}     %% add further rules for cross referencing links
+%% \ccHtmlIndexC[class]{} %% add further index entries
+\ccDefinition
+
+The function \ccRefName\ creates inner offset polygons directly from an input polygon via a temporarily created straight skeleton. 
+
+\ccInclude{CGAL/create_offset_polygons_2.h}
+
+\ccFunction
+{template<class FT, class Polygon, class HoleIterator, class OffsettingK, class SkeletonK>
+std::vector< boost::shared_ptr<Polygon> >
+create_interior_skeleton_and_offset_polygons_2 ( FT             offset
+                                               , Polygon const& outer_boundary
+                                               , HoleIterator   holes_begin
+                                               , HoleIterator   holes_end
+                                               , OffsettingK   ofk 
+                                                  = CGAL::Exact_predicates_inexact_constructions_kernel
+                                               , SkeletonK      ssk 
+                                                  = CGAL::Exact_predicates_inexact_constructions_kernel
+                                               ) ;
+}
+{returns a container with all the inner offset polygons at distance $offset$ of the 2D polygon with holes whose outer boundary is \ccc{outer_boundary} and its holes are given by \ccc{[holes_begin,holes_end]}.
+A temporary straight skeleton is constructed in the interior of the input polygon to obtain the offsets. The construction of this skeleton is the most expensive operation, therefore, to construct offsets at more than one single distance, use the separate functions \ccc{create_interior_straight_skeleton_2} and \ccc{create_offset_polygons_2} instead.}
+
+\ccFunction
+{template<class FT, class Polygon, class OffsettingK, class SkeletonK>
+std::vector< boost::shared_ptr<Polygon> >
+create_interior_skeleton_and_offset_polygons_2 ( FT             offset
+                                               , Polygon const& poly
+                                               , OffsettingK     ofk 
+                                                  = CGAL::Exact_predicates_inexact_constructions_kernel
+                                               , SkeletonK      ssk 
+                                                  = CGAL::Exact_predicates_inexact_constructions_kernel
+                                               ) ;
+}
+{returns a container with all the inner offset polygons at distance $offset$ of the 2D polygon \ccc{poly}.
+A temporary straight skeleton is constructed in the interior of the input polygon to obtain the offsets. The construction of this skeleton is the most expensive operation, therefore, to construct offsets at more than one single distance, use the separate functions \ccc{create_interior_straight_skeleton_2} and \ccc{create_offset_polygons_2} instead.}
+
+
+
+
+\ccInclude{CGAL/create_offset_polygons_from_polygon_with_holes_2.h}
+
+\ccFunction
+{template<class FT, class OffsettingK, class SkeletonK>
+std::vector< boost::shared_ptr< Polygon_2<OffsettingK> > >
+create_interior_skeleton_and_offset_polygons_2 ( FT offset
+                                               , CGAL::Polygon_with_holes<OffsettingK> poly_with_holes
+                                               , OffsettingK ofk 
+                                                  = CGAL::Exact_predicates_inexact_constructions_kernel
+                                               , SkeletonK ssk 
+                                                  = CGAL::Exact_predicates_inexact_constructions_kernel
+                                    ) ;
+}
+{returns a container with all the inner offset polygons at distance $offset$ of the 2D polygon with holes $poly_with_holes$.
+A temporary straight skeleton is constructed in the interior of the input polygon to obtain the offsets. The construction of this skeleton is the most expensive operation, therefore, to construct offsets at more than one single distance, use the separate functions \ccc{create_interior_straight_skeleton_2} and \ccc{create_offset_polygons_2} instead.}
+
+\ccFunction
+{template<class FT, class OffsettingK, class SkeletonK>
+std::vector< boost::shared_ptr< Polygon_with_holes_2<OffsettingK> > >
+create_interior_skeleton_and_offset_polygons_with_holes_2 
+  ( FT offset
+  , CGAL::Polygon_2<OffsettingK> poly
+  , OffsettingK ofk = CGAL::Exact_predicates_inexact_constructions_kernel
+  , SkeletonK ssk   = CGAL::Exact_predicates_inexact_constructions_kernel
+  ) ;
+}
+{returns a container with all the inner offset polygons {\em with holes} at distance $offset$ of the 2D polygon $poly$.
+This is equivalent to \ccc{arrange_offset_polygons_2(create_interior_skeleton_and_offset_polygons_2(offset,poly,okk,ssk))}.}
+
+\ccFunction
+{template<class FT, class OffsettingK, class SkeletonK>
+std::vector< boost::shared_ptr< Polygon_with_holes_2<OffsettingK> > >
+create_interior_skeleton_and_offset_polygons_with_holes_2 
+  ( FT offset
+  , CGAL::Polygon_with_holes_2<OffsettingK> poly_with_holes
+  , OffsettingK ofk = CGAL::Exact_predicates_inexact_constructions_kernel
+  , SkeletonK ssk   = CGAL::Exact_predicates_inexact_constructions_kernel
+  ) ;
+}
+{returns a container with all the inner offset polygons {\em with holes} at distance $offset$ of the 2D polygon with holes $poly_with_holes$.
+This is equivalent to \ccc{arrange_offset_polygons_2(create_interior_skeleton_and_offset_polygons_2(offset,poly_with_holes,okk,ssk))}.}
+
+\begin{enumerate}  
+   \item    \ccc{OffsettingK} is the CGAL kernel used to instantiate
+                            \ccc{Polygon_offset_builder_traits_2<K>} for constructing 
+                            the offset polygons.
+   \item    \ccc{SkeletonK} is the CGAL kernel used to instantiate
+                            \ccc{Straight_skeleton_builder_traits_2<K>} for constructing 
+                            the straight skeleton.
+                            If \ccc{SkeletonK != OffsettingK} the constructed straight skeleton
+                            is converted to \ccc{Straight_skeleton_2<OffsettingK>}.
+   \item    \ccc{FT} is any number type implicitly convertible to \ccc{OffsettingK::FT}.
+   \item    \ccc{Straight_skeleton} is \ccc{Straight_skeleton_2<K2>}. 
+            If $K != K2$ the straight skeleton is converted to \ccc{Straight_skeleton_2<K>}.
+   \item    \ccc{HoleIterator::value_type} and \ccc{Polygon} are \ccc{CGAL::Polygon_2<OffsettingK>}
+            or a standard container of \ccc{OffsettingK::Point_2} elements 
+\end{enumerate}
+
+\ccSeeAlso
+\ccc{create_exterior_straight_skeleton_2}\\
+\ccc{Straight_skeleton_builder_2<Gt,Ss>} \\
+
+\end{ccRefFunction}
+
+% +------------------------------------------------------------------------+
+%%RefPage: end of main body, begin of footer
+% EOF
+% +------------------------------------------------------------------------+
+

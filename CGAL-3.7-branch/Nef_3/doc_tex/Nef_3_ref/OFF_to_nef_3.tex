@@ -1,0 +1,34 @@
+% +------------------------------------------------------------------------+
+% | Reference manual page: Polyhedron_operator_leftshift.tex
+% +------------------------------------------------------------------------+
+% | 10.03.2006   Peter Hachenberger
+% | Package: Nef_3
+% | 
+\RCSdef{\RCSOFFToNef3Rev}{$Id$}
+\RCSdefDate{\RCOFFToNef3Date}{$Date$}
+% |
+%%RefPage: end of header, begin of main body
+% +------------------------------------------------------------------------+
+
+\ccHtmlNoClassLinks
+\begin{ccRefFunction}{OFF_to_nef_3}
+\label{refOFF_to_nef_3}
+
+\ccDefinition
+
+This constructor creates a 3D Nef polyhedron from OFF file. OFF file
+is read from input stream \ccc{in}. The purpose of \ccc{OFF_to_nef_3}
+is to create a Nef polyhedron from an OFF file that cannot be handled
+by the \ccc{Nef_polyhedron_3} constructors. It handles double
+coordinates while using a homogenous kernel, non-coplanar facets,
+surfaces with boundaries, self-intersecting surfaces, and single
+facets. Every closed volume gets marked. The function returns the
+number of facets it could not handle.
+
+\ccGlobalFunction{template<class Nef_polyhedron_3>
+            std::size_t OFF_to_nef_3(std::istream& in, Nef_polyhedron_3& N);}
+
+\ccSeeAlso
+\ccRefIdfierPage{CGAL::Nef_polyhedron_3<Traits>}\\ 
+
+\end{ccRefFunction}

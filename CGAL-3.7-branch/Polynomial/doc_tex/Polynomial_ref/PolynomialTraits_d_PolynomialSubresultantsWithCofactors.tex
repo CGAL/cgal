@@ -1,0 +1,61 @@
+\begin{ccRefConcept}{PolynomialTraits_d::PolynomialSubresultantsWithCofactors}
+
+\textbf{Note:} This functor is optional!
+
+\ccDefinition
+
+Computes the polynomial subresultant of two polynomials $p$ and $q$ of degree
+$n$ and $m$, respectively, 
+as defined in the documentation of \ccc{PolynomialTraits_d::PolynomialSubresultants}.
+Moreover, for $\mathrm{Sres}_i(p,q)$, polynomials $u_i$ and $v_i$
+with $\deg u_i\leq m-i-1$ and $\deg v_i\leq n-i-1$ are computed 
+such that $\mathrm{Sres}_i(p,q)=u_i p + v_i q$. $u_i$ and $v_i$ are called
+the \emph{cofactors} of $\mathrm{Sres}_i(p,q)$.
+ 
+The result is written in three output ranges, each of length $\min\{n,m\}+1$, 
+starting with the $0$-th subresultant and the corresponding cofactors.
+
+\ccRefines 
+\ccc{AdaptableBinaryFunction}\\
+\ccc{CopyConstructible}\\
+\ccc{DefaultConstructible}\\
+
+\ccCreationVariable{fo}
+\ccOperations
+\ccMethod{template< typename OutputIterator1,
+                    typename OutputIterator2,
+                    typename OutputIterator3 >
+        OutputIterator1 operator()(Polynomial_d   p,
+                                   Polynomial_d   q,
+                                   OutputIterator1 sres,
+                                   OutputIterator2 co_p,
+                                   OutputIterator3 co_q);}
+         { computes the subresultants of $p$ and $q$, and the cofactors, 
+           with respect to the outermost variable. Each element is of type
+           \ccc{PolynomialTraits_d::Polynomial_d}.}
+
+\ccMethod{template< typename OutputIterator1,
+                    typename OutputIterator2,
+                    typename OutputIterator3 >
+        OutputIterator1 operator()(Polynomial_d   p,
+                                   Polynomial_d   q,
+                                   OutputIterator1 sres,
+                                   OutputIterator2 co_p,
+                                   OutputIterator3 co_q,
+                                   int i);}
+         { computes the subresultants of $p$ and $q$, and the cofactors, 
+           with respect to $x_i$. Each element is of type
+           \ccc{PolynomialTraits_d::Polynomial_d}.}
+
+%\ccHasModels
+
+\ccSeeAlso
+
+\ccRefIdfierPage{Polynomial_d}\\
+\ccRefIdfierPage{PolynomialTraits_d}\\
+\ccRefIdfierPage{PolynomialTraits_d::Resultant}\\
+\ccRefIdfierPage{PolynomialTraits_d::PolynomialSubresultants}\\
+\ccRefIdfierPage{PolynomialTraits_d::PrincipalSubresultants}\\
+\ccRefIdfierPage{PolynomialTraits_d::SturmHabichtSequenceWithCofactors}\\
+
+\end{ccRefConcept}

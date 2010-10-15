@@ -1,0 +1,62 @@
+% +------------------------------------------------------------------------+
+% | Reference manual page: Median_of_max_spread.tex
+% +------------------------------------------------------------------------+
+% | 1.07.2001   Johan W.H. Tangelder
+% | Package: ASPAS
+% | 
+\RCSdef{\RCSMedianofmaxspreadRev}{$Id$}
+\RCSdefDate{\RCSMedianofmaxspreadDate}{$Date$}
+% |
+%%RefPage: end of header, begin of main body
+% +------------------------------------------------------------------------+
+
+
+\begin{ccRefFunctionObjectClass}{Median_of_max_spread<Traits, SpatialSeparator>}
+
+\ccDefinition
+Implements the {\em median of max spread} splitting rule.
+The splitting dimension is the dimension of the longest side of the rectangle.
+The splitting value is defined by the median of the coordinates of the data points
+along this dimension.
+
+\ccInclude{CGAL/Splitters.h}
+
+\ccParameters
+
+Expects for the first template argument a model of
+the concept \ccc{SearchTraits}, for example
+the type \ccc{CGAL::Search_traits_3< Cartesian<double> >}. 
+
+Expects for the second template argument a model of the concept \ccc{Separator}. It has as default value
+the type, \ccc{CGAL::Plane_separator<Traits::FT>}.
+
+
+
+\ccIsModel
+
+\ccc{Splitter}
+
+
+\ccCreation
+\ccCreationVariable{s}  %% choose variable name
+
+\ccConstructor{Median_of_max_spread();}{Default constructor.}
+\ccConstructor{Median_of_max_spread(unsigned int bucket_size);}{Constructor.}
+
+\ccOperations
+\ccMethod{unsigned int bucket_size();} {Returns the bucket size of the leaf nodes.}
+
+
+\ccSeeAlso
+
+\ccc{Splitter},\\
+\ccc{SpatialSeparator}
+
+
+\end{ccRefFunctionObjectClass}
+
+% +------------------------------------------------------------------------+
+%%RefPage: end of main body, begin of footer
+% EOF
+% +------------------------------------------------------------------------+
+

@@ -1,0 +1,43 @@
+\begin{ccRefConcept}{PolynomialTraits_d::Compare}
+
+\ccDefinition
+
+This \ccc{AdaptableBinaryFunction} compares two polynomials, with respect to the lexicographic 
+order with preference to the outermost variable.  
+
+This functor is well defined if \ccc{PolynomialTraits_d::Innermost_coefficient_type} is 
+\ccc{RealEmbeddable}. 
+
+\ccRefines 
+
+\ccc{AdaptableBinaryFunction}\\
+\ccc{CopyConstructible}\\
+\ccc{DefaultConstructible}\\
+
+\ccTypes
+
+\ccSetThreeColumns{xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx}{xxx}{}
+\ccCreationVariable{fo}
+\ccTypedef{typedef CGAL::Comparison_result            result_type;}{}
+\ccGlue
+\ccTypedef{typedef PolynomialTraits_d::Polynomial_d   first_argument_type;}{}
+\ccGlue
+\ccTypedef{typedef PolynomialTraits_d::Polynomial_d   second_argument_type;}{}
+
+\ccOperations
+
+\ccCreationVariable{fo}
+\ccMethod{result_type operator()(first_argument_type  f,
+                                 second_argument_type g);}
+                {Compares two polynomials.}
+
+
+
+%\ccHasModels
+
+\ccSeeAlso
+
+\ccRefIdfierPage{Polynomial_d}\\
+\ccRefIdfierPage{PolynomialTraits_d}\\
+
+\end{ccRefConcept}

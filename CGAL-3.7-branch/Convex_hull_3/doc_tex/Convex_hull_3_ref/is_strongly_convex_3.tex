@@ -1,0 +1,68 @@
+\begin{ccRefFunction}{is_strongly_convex_3}
+\ccIndexSubitemBegin{strongly convex}{polyhedron}
+\ccIndexSubitemBegin{polyhedron}{strongly convex}
+\ccIndexSubitem[C]{convex_hull_3}{postcondition}
+
+\ccDefinition
+
+The function \ccRefName\ determines if the vertices of a given polyhedron 
+represents a strongly convex set of points or not.  A set of points is said 
+to be strongly convex if it consists of only extreme points (\textit{i.e.}, 
+vertices of the convex hull).
+
+\ccInclude{CGAL/convexity_check_3.h}
+
+\ccFunction{
+template<class Polyhedron_3, class Traits>
+bool is_strongly_convex_3(Polyhedron_3& P, 
+                          const Traits& traits = Default_traits);
+}
+{
+determines if the set of vertices of the polyhedron \ccc{P} represent
+a strongly convex set of points or not.
+\ccPrecond%\ccIndexSubitem[C]{is_strongly_convex_3}{preconditions}
+The equations of the facet planes of the polyhedron must have
+already been computed.
+}
+
+The default traits class is the kernel in which the type 
+\ccc{Polyhedron_3::Point_3} is defined.
+
+\ccHeading{Requirements}
+\begin{enumerate}
+   \item \ccc{Polyhedron_3::Point_3} is equivalent to \ccc{Traits::Point_3}.
+   \item \ccc{Traits} is a model of the concept \ccc{IsStronlyConvexTraits_3}
+         %\ccIndexMainItem[c]{IsStronglyConvexTraits_3}.
+  \item \ccc{Polyhedron_3} must define the following types:
+        \begin{itemize}
+          \item \ccc{Polyhedron_3::Facet_iterator}
+          \item \ccc{Polyhedron_3::Vertex_iterator}
+        \end{itemize}
+        and the following member functions:
+        \begin{itemize}
+          \item \ccc{facets_begin()}
+          \item \ccc{facets_end()}
+          \item \ccc{vertices_begin()}
+          \item \ccc{vertices_end()}
+        \end{itemize}
+        The vertex type of \ccc{Polyhedron_3} must be a model of
+        \ccc{ConvexHullPolyhedronVertex_3};
+        the facet type must be \ccc{ConvexHullPolyhedronFacet_3}.
+\end{enumerate}
+
+
+\ccSeeAlso
+
+\ccRefIdfierPage{CGAL::is_ccw_strongly_convex_2} \\
+\ccRefIdfierPage{CGAL::is_cw_strongly_convex_2} \\
+
+\ccIndexSubitemEnd{polyhedron}{strongly convex}
+\ccIndexSubitemEnd{strongly convex}{polyhedron}
+
+\ccImplementation
+
+This function implements the tests described in \cite{mnssssu-cgpvg-96} to 
+determine convexity and requires $O(e + f)$ time for a polyhedron with
+$e$ edges and $f$ faces.
+
+\end{ccRefFunction}

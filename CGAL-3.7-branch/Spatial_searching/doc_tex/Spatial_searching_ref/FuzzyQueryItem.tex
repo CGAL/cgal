@@ -1,0 +1,59 @@
+% +------------------------------------------------------------------------+
+% | Reference manual page: FuzzyQueryItem.tex
+% +------------------------------------------------------------------------+
+% | 1.07.2001   Johan W.H. Tangelder
+% | Package: ASPAS
+% | 
+\RCSdef{\RCSFuzzyQueryItemRev}{$Id$}
+\RCSdefDate{\RCSFuzzyQueryItemDate}{$Date$}
+% |
+%%RefPage: end of header, begin of main body
+% +------------------------------------------------------------------------+
+
+
+\begin{ccRefConcept}{FuzzyQueryItem}
+
+%% \ccHtmlCrossLink{}     %% add further rules for cross referencing links
+%% \ccHtmlIndexC[concept]{} %% add further index entries
+
+\ccDefinition
+  
+The concept \ccRefName\ describes the requirements for fuzzy $d$-dimensional spatial objects.
+
+\ccHasModels
+
+\ccc{CGAL::Fuzzy_sphere<Traits>},\\
+\ccc{CGAL::Fuzzy_iso_box<Traits>}
+
+\ccTypes
+
+\ccNestedType{Point_d}{ represents a $d$-dimensional point.}
+\ccNestedType{FT}{Number type.} 
+
+\ccCreationVariable{q}  %% choose variable name
+
+
+
+\ccOperations
+
+\ccMethod{bool contains(Point_d p); const}{test whether $q$ contains $p$.}
+
+\ccMethod{bool inner_range_intersects(const Kd_tree_rectangle<Traits>& rectangle); const}
+{test whether the inner approximation of the spatial object intersects a rectangle
+associated with a node of a tree. }
+
+\ccMethod{bool outer_range_contains(const Kd_tree_rectangle<Traits>& rectangle); const}
+{test whether the outer approximation of the spatial object encloses the rectangle
+associated with a node of a tree.}
+
+
+
+
+
+\end{ccRefConcept}
+
+% +------------------------------------------------------------------------+
+%%RefPage: end of main body, begin of footer
+% EOF
+% +------------------------------------------------------------------------+
+

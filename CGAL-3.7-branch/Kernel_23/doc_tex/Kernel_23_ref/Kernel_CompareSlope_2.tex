@@ -1,0 +1,21 @@
+\begin{ccRefFunctionObjectConcept}{Kernel::CompareSlope_2}
+A model for this must provide:
+
+\ccCreationVariable{fo}
+
+\ccMemberFunction{Comparison_result operator()(const Kernel::Line_2& l1,
+                                               const Kernel::Line_2& l2);} 
+      {compares the slopes of the lines \ccc{l1} and \ccc{l2}}
+
+\ccMemberFunction{Comparison_result operator()(const Kernel::Segment_2& s1,
+                                               const Kernel::Segment_2& s2);} 
+      {compares the slopes of the segments \ccc{s1} and \ccc{s2}}
+
+\ccRefines
+\ccc{AdaptableFunctor} (with two arguments)
+
+\ccSeeAlso
+
+\ccRefIdfierPage{CGAL::compare_slopes} \\
+
+\end{ccRefFunctionObjectConcept}

@@ -1,0 +1,48 @@
+% +------------------------------------------------------------------------+
+% | CGAL Reference Manual: Reference manual for Qt_widget.tex
+% +------------------------------------------------------------------------+
+% |
+% | 20.12.2001	Radu Ursu
+% | 
+% | \RCSdef{\qtwidgetRev}{$Id$}
+% | \RCSdefDate{\qtwidgetDate}{$Date$}
+% +------------------------------------------------------------------------+
+
+% +-----------------------------------------------------+
+
+\ccHeading{Manipulators for \ccc{Qt_widget}}
+
+
+A \ccc{manipulator} is an object which can be inserted in the \ccc{Qt_widget},
+via the operator \ccc{<<}, to change the context for further drawing.
+
+Here, we simply document the use of these operators which is all the
+user needs to know to modify the state of a stream.
+
+\ccFunction{Qt_widget& operator<<(Qt_widget& win, BackgroundColor);}
+{Sets the color used for background color.}
+\ccGlue
+
+\ccFunction{Qt_widget& operator<<(Qt_widget& win, FillColor);}
+{Sets the color used for filling the objects.}
+\ccGlue
+
+\ccFunction{Qt_widget& operator<<(Qt_widget& win, LineWidth);}
+{Sets the width of the line for drawing objects.}
+\ccGlue
+
+\ccFunction{Qt_widget& operator<<(Qt_widget& win, PointSize);}
+{Sets the size of the points.}
+\ccGlue
+
+\ccFunction{Qt_widget& operator<<(Qt_widget& win, noFill);}
+{Sets the state of \ccc{Qt_widget} concerning filling the objects to be false.}
+\ccGlue
+
+\ccFunction{Qt_widget& operator<<(Qt_widget& win, const Color& c);}
+{Sets the color used as the \ccc{Qt_widget} fillColor.}
+\ccGlue
+
+\ccFunction{Qt_widget& operator<<(Qt_widget& win, const PointStyle& ps);}
+{Sets the point style for \ccc{Qt_widget}.}
+\ccGlue

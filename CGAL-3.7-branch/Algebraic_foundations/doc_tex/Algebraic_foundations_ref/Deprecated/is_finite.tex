@@ -1,0 +1,21 @@
+\begin{ccRefFunction}{is_finite}
+
+\ccDefinition
+
+The template function \ccRefName\ determines whether the argument represents 
+a value in $\R$.\\
+
+\ccc{is_finite} implies \ccc{is_valid}.
+
+\ccRefines 
+
+\ccInclude{CGAL/number_utils.h}
+
+\ccFunction{template<NT> result_type is_finite(const NT& x);}
+        { The \ccc{result_type} is convertible to \ccc{bool}. }
+
+\ccSeeAlso
+\ccRefConceptPage{RealEmbeddable} \\
+\ccRefConceptPage{RealEmbeddableTraits::IsFinite}\\
+ 
+\end{ccRefFunction}

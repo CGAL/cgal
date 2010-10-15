@@ -1,0 +1,45 @@
+\begin{ccRefConcept}{PolynomialTraits_d::Scale}
+\ccDefinition
+
+
+Given a constant $c$ this \ccc{AdaptableBinaryFunction} scales a 
+\ccc{PolynomialTraits_d::Polynomial_d} $p$ with respect to one variable, that is, 
+it computes $p(c\cdot x)$.
+
+Note that this functor operates on the polynomial in the univariate view, that is, 
+the polynomial is considered as a univariate polynomial in one specific variable. 
+
+\ccRefines 
+\ccc{AdaptableBinaryFunction}\\
+\ccc{CopyConstructible}\\
+\ccc{DefaultConstructible}\\
+
+\ccTypes
+
+\ccSetThreeColumns{xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx}{xxx}{}
+\ccCreationVariable{fo}
+\ccTypedef{typedef PolynomialTraits_d::Polynomial_d   result_type;}{}\ccGlue
+\ccTypedef{typedef PolynomialTraits_d::Polynomial_d   first_argument_type;}{}
+\ccGlue
+\ccTypedef{typedef PolynomialTraits_d::Innermost_coefficient_type    second_argument_type;}{}
+
+\ccOperations
+\ccMethod{result_type operator()(first_argument_type  p,
+                                 second_argument_type c);}
+         { Returns $p(c\cdot x)$, with respect to the outermost variable. }
+\ccMethod{result_type operator()(first_argument_type  p,
+                                 second_argument_type c,
+                                 int i);}
+         { Same as first operator but for variable $x_i$.
+           \ccPrecond $0 \leq i  < d$
+         }
+
+%\ccHasModels
+
+\ccSeeAlso
+
+\ccRefIdfierPage{Polynomial_d}\\
+\ccRefIdfierPage{PolynomialTraits_d}\\
+
+\end{ccRefConcept}
+

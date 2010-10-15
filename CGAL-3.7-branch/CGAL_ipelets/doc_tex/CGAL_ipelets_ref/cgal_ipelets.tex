@@ -1,0 +1,194 @@
+\begin{ccRefClass}{Ipelet_base<Kernel,int nbf>}
+
+\ccDefinition
+\ccRefName\ is an abstract base class for defining an ipelet. 
+The only function that needs to be defined in a derived class is 
+\ccc{protected_run(int i)} that contains the code of an ipelet. Note that
+the name of the function suggests that the ipelet may throw exceptions that
+will be caught by a function of the class \ccRefName\, avoiding Ipe to crash. 
+
+
+\ccParameters
+The \ccc{Kernel} template parameter determines the kernel that will be used
+in the ipelet. This parameter must be set according to the algorithm to be used.
+The integer \ccc{nbf} indicates the number of functions defined by the ipelet.
+
+
+\ccTypes
+\ccTypedef{typedef Kernel Kernel;}{The kernel used to define internal types.}
+\ccTypedef{typedef Kernel::FT FT;}{The number type of the coordinates.}
+\ccTypedef{typedef Kernel::Point_2 Point_2;}{The point type.}
+\ccTypedef{typedef Kernel::Circle_2 Circle_2;}{The circle type.}
+\ccTypedef{typedef CGAL::tuple<Circle_2,Point_2,Point_2,CGAL::Sign> Circular_arc_2;}{
+The circular arc type. The \ccc{CGAL::Sign}, equals either to \ccc{CGAL::COUNTERCLOCKWISE} or \ccc{CGAL::CLOCKWISE}, indicates
+if the arc is the set of points on the circle from the first point to the second point turning clockwise or counterclockwise.}
+\ccTypedef{typedef CGAL::Weighted_point<Point,FT> Weighted_point_2;}{The weighted point type.}
+\ccTypedef{typedef Kernel::Segment_2 Segment_2;}{The segment type.}
+\ccTypedef{typedef Kernel::Line_2 Line_2;}{The line type.}
+\ccTypedef{typedef Kernel::Ray_2 Ray_2;}{The ray type.}
+\ccTypedef{typedef Kernel::Triangle_2 Triangle_2;}{The triangle type.}
+\ccTypedef{typedef CGAL::Polygon_2<Kernel> Polygon_2;}{The polygon type.}
+\ccTypedef{typedef Kernel::Iso_rectangle_2 Iso_rectangle_2;}{A type to represent bounding boxes.}
+
+
+The set of \ccc{read objects} is defined as the set of objects of type \ccc{Point_2}, \ccc{Segment_2}, 
+\ccc{Polygon_2}, \ccc{Circular_arc_2} or \ccc{Circle_2}.
+The set of \ccc{drawable objects} is defined as the super set of the set of \ccc{read objects} also including
+objects of type \ccc{Line_2}, \ccc{Ray_2}, \ccc{Triangle_2}  and \ccc{Iso_rectangle_2}.
+
+
+\ccTypedef{template<class output_iterator> Point_grabber;}{Class type providing operators to extract points from segments and polygons.}
+\ccTypedef{template<class output_iterator> Segment_grabber;}{Class type providing operators to extract segments from polygons.}
+
+% -----------------------------------------------------------------------------
+\ccCreation
+\ccCreationVariable{iplt}
+
+
+\ccConstructor{ CGAL_ipelet(const std::string fct_names[],const std::string help_msg[],const std::string name);}{
+        initializes an ipelet.
+        The string \ccc{name} is the name given to the ipelet in the Ipe menu.
+        The string array
+        \ccc{fct_names} contains the names of these functions as they will appear in the sub-menu of the ipelet.
+        The string array \ccc{help_msg} of size one or \ccc{nbf-1} contains a help message for each function of the ipelet.
+        These help messages can be printed using the member function \ccc{show_help()}.
+        This function expects that the last function defined in the ipelet is dedicated to print the help message.
+        It is advised that the last function defined is dedicated to show a help message.
+        }
+
+
+\ccAccessFunctions
+\begin{ccAdvanced}
+\ccMemberFunction{IpePage* get_ipe_page();}{
+returns a pointer to an Ipe object representing the drawing page.
+Refer to the Ipe library documentation for more details.}
+
+\ccMemberFunction{IpeletHelper* get_ipelet_helper();}{returns a pointer to an Ipe object providing services to Ipelets.
+Refer to the Ipe library documentation for more details.}
+\end{ccAdvanced}
+
+\ccOperations
+
+\ccMemberFunction{void show_help(bool one_per_func=true);}
+{Prints in Ipe a pop-up help message constructed from the string array of the constructor.
+This function expects that the last function defined in the ipelet is dedicated to print the help message.
+When the boolean \ccc{one_per_func} is \ccc{true}, one help message per function is printed
+(except for the help function itself) using the \ccc{nbf-1} strings in the array given to the constructor. Otherwise,
+only one help message is printed using the first string in the array given to the constructor.
+}
+
+\ccMemberFunction{void print_error_message(std::string msg);}{Prints the string \ccc{msg} as a message in Ipe.}
+
+\ccMemberFunction{void protected_run(int i)=0;}{function called when the user selects the \cgal{} ipelet.}
+
+
+
+\ccMemberFunction{
+template< class V, class O >
+Iso_rectangle_2 read_active_objects(Dispatch_or_drop_output_iterator<V, O> out,
+                                    bool deselect_all=true,
+                                    bool delete_selected_objects=false);}{
+This function assigns to output iterator \ccc{out} all handled objects selected in Ipe.
+Objects read belong to the set of \ccc{read objects} (even within groups).
+The output iterator \ccc{out} must be able to handle all \ccc{read objects} (see \ccc{CGAL::Dispatch_or_drop_output_iterator<V,O>}).
+In addition, a bounding box (\ccc{Iso_rectangle_2}) of the active objects selected is returned.
+The two Boolean arguments indicate whether the retrieved objects must be deselected and/or removed.
+Note that non-retrieved objects (primitives of Ipe not handled or objects dropped by \ccc{out})
+are automatically deselected, and not deleted.
+If a non-retrieved object is a sub-path or is inside a group, the whole path or group will not be deleted.
+}
+
+
+\ccMemberFunction{ template<class Output_iterator>
+boost::function_output_iterator<Point_grabber<Output_iterator> > point_grabber(Output_iterator it);}
+{returns an output iterator which wraps \ccc{it}.  \ccc{Output_iterator} must be a model
+of the output iterator concept accepting assignments from \ccc{Point_2}.
+The returned output iterator will accept assignments from objects of types
+\ccc{Polygon_2} or \ccc{Segment_2} or \ccc{Point_2}, it decomposes them in
+objects of type \ccc{Point_2} and assigns them to \ccc{it}.
+For more details on the returned output iterator refer to the Boost library
+\ccAnchor{http://www.boost.org/doc/libs/1_39_0/libs/iterator/doc/function_output_iterator.html}{documentation}.
+}
+
+\ccMemberFunction{ template<class Output_iterator>
+boost::function_output_iterator<Segment_grabber<Output_iterator> > segment_grabber(Output_iterator it);}
+{returns an output iterator which wraps \ccc{it}.  \ccc{Output_iterator} must be a model
+of the output iterator concept accepting assignments from \ccc{Segment_2}.
+The returned output iterator will accept assignments from objects of types
+\ccc{Polygon_2} or \ccc{Segment_2}, it decomposes them in objects of type \ccc{Segment_2}
+and assigns them to \ccc{it}.
+For more details on the returned output iterator refer to the Boost library
+\ccAnchor{http://www.boost.org/doc/libs/1_39_0/libs/iterator/doc/function_output_iterator.html}{documentation}.
+}
+
+\ccMemberFunction{template<class T> void draw_in_ipe(const T& object,bool deselect=false);}{
+This function draws in the page of Ipe a given object.
+\ccc{T} must be a type inside the set of \ccc{drawable objects}.
+When \ccc{object} is of type \ccc{Line_2} or \ccc{Ray_2}, only the part of the object that is inside the page of Ipe (if not empty) is drawn.
+This function is also able to draw a 2D \cgal{} triangulation as a group of segments. If the boolean \ccc{deselect}
+is set to \ccc{true}, object drawn is deselected.
+}
+
+\ccMemberFunction{template<class T> void draw_in_ipe(const T& object, const Iso_rectangle_2& bbox, bool deselect=false);}{
+Same as above, except that objects are clipped to \ccc{bbox} before been drawn.
+}
+
+\ccMemberFunction{template<class Iterator> void draw_in_ipe(Iterator begin, Iterator end,bool makegrp=true,bool deselectall=false);}{
+This function draws in the page of Ipe a set of objects given by an iterator range.
+These objects must be of a type inside the set of \ccc{drawable objects}.
+If the boolean \ccc{makegrp} is set to \ccc{true}, objects drawn define a group in Ipe. If the boolean \ccc{deselectall}
+is set to \ccc{true}, objects drawn are deselected.
+}
+
+\ccMemberFunction{template<class Iterator> void draw_in_ipe(Iterator begin, Iterator end, const Iso_rectangle_2& bbox, bool makegrp=true,bool deselectall=false);}{
+Same as above, except that objects are clipped to \ccc{bbox} before been drawn.
+}
+
+\ccMemberFunction{template<class iterator> void draw_polyline_in_ipe
+(iterator first, iterator last,bool setclose=false,bool deselect=false);}{
+This function draws in the page of Ipe a polyline defined by an iterator range of points.
+If the boolean \ccc{setclose} is \ccc{true}, the polyline drawn is closed.
+If the boolean \ccc{deselect} is set to \ccc{true}, polyline drawn is deselected.
+}
+
+\ccMemberFunction{template<class Triangulation> void draw_dual_in_ipe(Triangulation T,const Iso_rectangle_2& bbox,
+bool makegrp=true,bool deselect=false);}{
+This function draws in the page of Ipe the dual of a 2D \cgal{} triangulation. The edges of the dual are restricted to the interior
+of \ccc{bbox}.
+If the boolean \ccc{makegrp} is set to \ccc{true}, segments drawn define a group in Ipe. If the boolean \ccc{deselect}
+is set to \ccc{true}, segments drawn are deselected.
+}
+
+
+\ccMemberFunction{template<class Triangulation> void draw_skeleton_in_ipe(Triangulation T,const Iso_rectangle_2& bbox,
+bool makegrp=true,bool deselect=false);}{
+This function draws in the page of Ipe the Voronoi segment skeleton from a triangulation of segments.
+The edges are restricted to the interior of \ccc{bbox}.
+If the boolean \ccc{makegrp} is set to \ccc{true}, segments drawn define a group in Ipe. If the boolean \ccc{deselect}
+is set to \ccc{true}, segments drawn are deselected.
+}
+
+
+
+
+\ccMemberFunction{template <class T> std::pair<int,T> request_value_from_user(std::string msg);}{
+This function induces the creation of a dialog box requesting a value from the user. 
+The string \ccc{msg} is printed in this dialog box. 
+Ipe lexer tries to convert the user input into an object of type \ccc{T} (a simple type such as \ccc{int}, \ccc{float}, etc).
+If the conversion is possible, the value is returned within a \ccc{std::pair}.
+The integer of the pair returned is -1 if the user input is not correct, 0 if user input is empty and 1, otherwise.
+ otherwise.
+}
+
+
+% \ccSeeAlso
+% \ccRefConceptPage{SphericalKernel::CircleOnSphere_3}\\
+% \ccRefIdfierPage{CGAL::Circle_3<SphericalKernel>}
+
+\end{ccRefClass}
+\begin{ccRefMacro}{CGAL_IPELET}
+The registration of a new ipelet can be done using the macro command \ccc{CGAL_IPELET}.
+Taking as a parameter the name of the class defining the new ipelet, that macro must be placed in the source
+file after the class definition. 
+\end{ccRefMacro}
+

@@ -1,0 +1,448 @@
+\begin{ccRefClass}{Quadratic_program_solution<ET>}
+
+\ccInclude{CGAL/QP_solution.h}
+
+\ccDefinition
+An object of class \ccRefName\ represents the solution of a linear or 
+convex quadratic program of the general form
+
+\input{QP_solver_ref/_qp_formula.tex}
+
+If $D=0$, the program is
+a linear program; if the variable bounds are $\qpx\geq 0$, we have a 
+nonnegative program. Objects of type \ccRefName\ are returned by any of 
+the four functions 
+\ccc{solve_quadratic_program}, \ccc{solve_linear_program},
+\ccc{solve_nonnegative_quadratic_program}, and
+\ccc{solve_nonnegative_linear_program}. 
+
+\ccExample
+\ccReferToExampleCode{QP_solver/first_qp.cpp}
+
+\ccHeading{Terminology}
+If there is no $\qpx$ that satisfies all the (in)equalities,
+the program is called \emph{infeasible}, otherwise, it is \emph{feasible},
+and any $\qpx$ that satisfies all (in)equalities is called a \emph{feasible
+solution}. 
+
+If the objective function value becomes arbitrarily small over the
+\emph{feasible region} (the set of feasible solutions), the program
+is called \emph{unbounded}, and \emph{bounded} otherwise. 
+
+Any program that is both feasible and bounded has at least one
+feasible solution $\qpx^*$ whose objective function value is not larger
+than that of any other feasible solution. This is called an 
+\emph{optimal solution}.
+
+Every convex quadratic program (even if it is infeasible or unbounded)
+has a 'solution' in form of an object of the class \ccRefName.
+
+\ccTypes
+
+\ccNestedType{ET}{The exact number type that was used to solve the 
+program.}
+
+\ccNestedType{Variable_value_iterator}{An iterator type with value type 
+\ccc{Quotient<ET>} to go over the values of the variables in the solution.} 
+
+\ccNestedType{Variable_numerator_iterator}{An iterator type with value type 
+\ccc{ET} to go over the numerators of the variable values
+with respect to a common denominator.}
+
+\ccNestedType{Index_iterator}{An iterator type with value type \ccc{int}
+to go over the indices of the basic variables and the basic constraints.}
+
+\ccNestedType{Optimality_certificate_iterator}{An iterator type with 
+value type \ccc{Quotient<ET>} to go over an $m$-vector $\qplambda$ that proves 
+optimality of the solution.} 
+
+\ccNestedType{Optimality_certificate_numerator_iterator}{An iterator type 
+with value type \ccc{ET} to go over the numerators of the vector $\qplambda$
+with respect to a common denominator.}
+
+\ccNestedType{Infeasibility_certificate_iterator}{An iterator type with 
+value type \ccc{ET} to go over an $m$-vector $\qplambda$ that proves 
+infeasibility of the solution.} 
+
+\ccNestedType{Unboundedness_certificate_iterator}{An iterator type with 
+value type \ccc{ET} to go over an $n$-vector $\qpw$ that proves unboundedness 
+of the solution.} 
+
+\ccCreation
+\ccIndexClassCreation
+\ccCreationVariable{sol}
+
+\ccConstructor{Quadratic_program_solution();}
+{constructs a void instance of \ccRefName\ that is associated to 
+no program.}
+
+Objects of type \ccRefName\ can be copied and assigned.
+
+Objects of type \ccRefName\ that are associated to an actual
+program are returned by any of the four functions 
+\ccc{solve_quadratic_program}, \ccc{solve_linear_program},
+\ccc{solve_nonnegative_quadratic_program}, and
+\ccc{solve_nonnegative_linear_program}. 
+
+\ccExample
+\ccReferToExampleCode{QP_solver/first_qp.cpp}
+
+\ccOperations
+
+\ccMethod{bool is_void() const;}{returns \ccc{true} iff \ccVar\ is not
+associated to a program. The condition 
+!\ccVar\ccc{.is_void()} is a precondition for all access methods below.} 
+
+\ccHeading{Solution status}
+Here are the access methods for the status of the solution.
+
+\ccMethod{bool is_optimal() const;}{returns \ccc{true} iff \ccVar\
+is an optimal solution of the associated program.}
+
+\ccMethod{bool is_infeasible() const;}{returns \ccc{true} iff the 
+associated program is infeasible.}
+
+\ccMethod{bool is_unbounded() const;}{returns \ccc{true} iff the 
+associated program is unbounded.}
+
+\ccMethod{Quadratic_program_status status() const;}
+{returns the status of the solution;
+this is one of the values \ccc{QP_OPTIMAL}, \ccc{QP_INFEASIBLE}, and 
+\ccc{QP_UNBOUNDED}, depending on whether the program asociated
+to \ccVar\ has an optimal solution, is infeasible, or is unbounded.}
+
+\ccMethod{int number_of_iterations() const;}
+{returns the number of iterations that it took to solve the 
+program asociated to \ccVar.}
+
+\ccHeading{Solution values}
+The actual solution (variable and objective function values) can be
+accessed as follows.
+
+\ccMethod{Quotient<ET> objective_value() const;}{returns the objective 
+function value of \ccVar.}
+
+\ccMethod{ET objective_value_numerator() const;}{returns the numerator
+of the objective function value of \ccVar.}
+
+\ccMethod{ET objective_value_denominator() const;}{returns the denominator
+of the objective function value of \ccVar.}
+
+\ccMethod{Variable_value_iterator variable_values_begin() const;}{returns
+a random-access iterator over the values of the
+variables in \ccVar. The value type is \ccc{Quotient<ET>}, and the valid
+iterator range has length $n$.}
+
+\ccMethod{Variable_value_iterator variable_values_end() const;}{returns
+the corresponding past-the-end iterator.}
+
+\ccMethod{Variable_numerator_iterator variable_numerators_begin() const;}
+{returns a random-access iterator \ccc{it} over the values 
+of the variables in \ccVar, with respect to a common
+denominator of all variables. The value type is \ccc{ET}, and the valid
+iterator range has length $n$.}
+
+\ccMethod{Variable_numerator_iterator variable_numerators_end() const;}
+{returns the corresponding past-the-end iterator.}
+
+\ccMethod{const ET& variables_common_denominator() const;}
+{returns the common denominator of the variable values as referred to
+by the previous two methods.}
+
+\ccHeading{Basic variables and constraints}
+The solution of a linear or quadratic program distinguishes 'important'
+variables (the ones not attaining one of their bounds), and 'important'
+constraints (the ones being satisfied with equality). The following
+methods grant access to them.
+
+\ccMethod{Index_iterator basic_variable_indices_begin() const;}
+{returns a random access iterator over the indices of the basic
+variables. The value type is \ccc{int}. It is guaranteed that any 
+variable that is not basic in \ccVar\ attains one of its bounds. 
+In particular, if the bounds are of type $\qpx\geq 0$, all non-basic 
+variables have value $0$.}
+
+\ccMethod{Index_iterator basic_variable_indices_end() const;}
+{returns the corresponding past-the-end iterator.}
+
+\ccMethod{int number_of_basic_variables() const;}
+{returns the number of basic variables, equivalently the length
+of the range determined by the previous two iterators.}
+
+\ccExample
+\ccReferToExampleCode{QP_solver/important_variables.cpp}
+
+\ccMethod{Index_iterator basic_constraint_indices_begin() const;}
+{returns a random access iterator over the indices of the basic
+constraints in the system $A\qpx\qprel \qpb$. The value type is \ccc{int}. 
+It is guaranteed that any basic constraint is satisfied with equality.
+In particular, if the system is of type $A\qpx=\qpb$, all constraints are
+basic.}
+
+\ccMethod{Index_iterator basic_constraint_indices_end() const;}
+{returns the corresponding past-the-end iterator.}
+
+\ccMethod{int number_of_basic_constraints() const;}
+{returns the number of basic constraint, equivalently the length
+of the range determined by the previous two iterators.}
+
+\ccExample
+\ccReferToExampleCode{QP_solver/first_qp_basic_constraints.cpp}
+
+\ccHeading{Output}
+
+\ccFunction{
+template <typename ET>
+std::ostream& operator<<
+(std::ostream& out, 
+ const Quadratic_program_solution<ET>& sol);}%>>
+{writes the status of \ccc{sol} to the stream \ccc{out}. In case the
+status is \ccc{QP_OPTIMAL}, the optimal objective value and the values
+of the variables at the optimal solution are output as well. For more
+detailed information about the solution (like basic variables/constraints) 
+please use the dedicated methods of \ccc{Quadratic_program_solution<ET>}.}
+
+\ccHeading{Validity}
+The following four methods allow you to check whether \ccc{sol} indeed
+solves the program that you intended to solve. The methods 
+use the certificates described in the advanced section below and
+thus save you from validating the certificates yourself (if you believe 
+in the correctness of these methods; otherwise, you can look at their
+implementation to convince yourself). 
+
+By passing a suitable option to the solution function, you can make sure that 
+this check is done automatically after the solution of the program, see 
+\ccc{Quadratic_program_options}. If the check fails, a logfile is generated
+that contains the details, and an error message is written to \ccc{std::cerr}
+(see \ccReferToExampleCode{QP_solver/cycling.cpp} for an example that uses
+this option).
+
+\ccMethod{template <class QuadraticProgram>
+  bool solves_quadratic_program 
+  (const QuadraticProgram& qp);}
+{returns \ccc{true} iff \ccVar\ solves the quadratic program \ccc{qp}. 
+If the result is \ccc{false}, you can get a message that describes the
+problem, through the method \ccc{get_error()}.}
+
+\ccReferToExampleCode{QP_solver/first_qp.cpp}
+
+\ccMethod{template <class LinearProgram>
+  bool solves_linear_program 
+  (const LinearProgram& lp);}
+{returns \ccc{true} iff \ccVar\ solves the linear program \ccc{lp}.
+If the result is \ccc{false}, you can get a message that describes the
+problem, through the method \ccc{get_error()}. }
+
+\ccReferToExampleCode{QP_solver/first_lp.cpp}
+
+\ccMethod{template <class NonnegativeQuadraticProgram>
+  bool solves_nonnegative_quadratic_program 
+  (const NonnegativeQuadraticProgram& qp);}
+{returns \ccc{true} iff \ccVar\ solves the nonnegative 
+quadratic program \ccc{qp}.
+If the result is \ccc{false}, you can get a message that describes the
+problem, through the method \ccc{get_error()}. }
+
+\ccReferToExampleCode{QP_solver/first_nonnegative_qp.cpp}
+
+\ccMethod{template <class NonnegativeLinearProgram>
+  bool solves_nonnegative_linear_program 
+  (const NonnegativeLinearProgram& lp);}
+{returns \ccc{true} iff \ccVar\ solves the nonnegative
+linear program \ccc{lp}. If the result is \ccc{false}, you can get a message that describes the
+problem, through the method \ccc{get_error()}. }
+
+\ccReferToExampleCode{QP_solver/first_nonnegative_lp.cpp}
+
+\ccMethod{bool is_valid() const;}
+{returns \ccc{false} iff the validation through one of the 
+previous four functions has failed.}
+
+\ccMethod{const std::string& get_error() const;}
+{returns an error message in case any of the
+previous four validation functions has returned \ccc{false}.}
+
+\begin{ccAdvanced}
+\ccHeading{Certificates}
+
+A certificate is a vector that admits a simple proof for the 
+correctness of the solution. Any non-void object of \ccRefName\ 
+comes with such a certificate.
+
+{\bf Lemma 1 (optimality certificate):} A feasible $n$-vector $\qpx^*$ 
+is an optimal solution of (QP) if an $m$-vector $\qplambda$ with the
+following properties exist.
+\begin{enumerate}
+\item if the $i$-th constraint is of type $\leq$ ($\geq$, respectively), 
+then $\lambda_i\geq 0$ ($\lambda_i\leq 0$, respectively).
+\item $\qplambda^T(A\qpx^*-\qpb) = 0$.
+\item \[
+\begin{array}{llll}
+&&\geq 0, & \mbox{if $x^*_j = l_j < u_j$} \\
+(\qpc^T + \qplambda^T A + 2{\qpx^*}^TD)_j& \quad  &= 0, & \mbox{if $l_j < x^*_j < u_j$} \\
+&&\leq 0, & \mbox{if $l_j < u_j = x^*_j$.}
+\end{array}\]
+\end{enumerate}
+
+{\bf Proof:} Let $\qpx$ be any feasible solution. We need to prove that
+\[\qpc^T\qpx + \qpx^TD\qpx \geq \qpc^T\qpx^* + {\qpx^*}^TD\qpx^*.\]
+
+For this, we argue as follows.
+\[
+\begin{array}{lcll}
+\qpc^T\qpx + 2{\qpx^*}^TD\qpx &\geq& \qpc^T\qpx + 2{\qpx^*}^TD\qpx + \qplambda^T(A\qpx-\qpb) &  
+\mbox{(by $A\qpx\qprel \qpb$ and 1.)} \\
+                  &=& (\qpc^T + \qplambda^T A + 2{\qpx^*}^TD)\qpx - \qplambda^Tb \\
+                  &\geq& (\qpc^T + \qplambda^T A + 2{\qpx^*}^TD)\qpx^* - \qplambda^Tb &
+\mbox{(by $\qpl\leq \qpx \leq \qpu$ and 3.)} \\
+                  &=& \qpc^T\qpx^* + 2{\qpx^*}^TD\qpx^* &
+\mbox{(by 2.)}
+\end{array}
+\]
+
+After adding $\qpx^TD\qpx - \qpx^TD\qpx - {\qpx^*}^TD\qpx^* = -{\qpx^*}^TD\qpx^*$ to both sides of
+this inequality, we get
+\[
+\qpc^T\qpx + \qpx^TD\qpx - (\qpx-\qpx^*)^TD(\qpx-\qpx^*) \geq \qpc^T\qpx^* + {\qpx^*}^TD\qpx^*,
+\] 
+and since $D$ is positive semidefinite, we have
+$(\qpx-\qpx^*)^TD(\qpx-\qpx^*)\geq 0$ and the lemma follows.
+
+
+\ccMethod{Optimality_certificate_iterator 
+optimality_certifcate_begin() const;}
+{returns a random access iterator over the optimality certificate 
+$\qplambda$ as given in Lemma 1, with respect to the solution $\qpx^*$ 
+obtained from \ccVar\ccc{.variable_values_begin()}. The value type
+is \ccc{Quotient<ET>}, and the valid iterator range has length $m$.
+\ccPrecond \ccVar\ccc{.is_optimal()}}
+
+\ccMethod{Optimality_certificate_iterator 
+  optimality_certificate_end() const;}
+{returns the corresponding past-the-end iterator.}
+
+\ccMethod{Optimality_certificate_numerator_iterator 
+optimality_certifcate_numerators_begin() const;}
+{returns a random access iterator over the numerator values
+of the optimality certificate $\qplambda$, with respect to the
+common denominator returned by \ccVar.\ccc{variables_common_denominator()}. 
+The value type is \ccc{ET}, and the valid iterator range has length $m$.}
+
+\ccMethod{Optimality_certificate_numerator_iterator 
+  optimality_certificate_numerators_end() const;}
+{returns the corresponding past-the-end iterator.}
+
+\ccExample
+\ccReferToExampleCode{QP_solver/optimality_certificate.cpp}
+
+{\bf Lemma 2 (infeasibility certificate):} The program (QP) is
+infeasible if an $m$-vector $\qplambda$ with the
+following properties exist.
+\begin{enumerate}
+\item if the $i$-th constraint is of type $\leq$ ($\geq$, respectively), 
+then $\lambda_i\geq 0$ ($\lambda_i\leq 0$, respectively).
+\item 
+\[
+\begin{array}{llll}
+&&\geq 0 & \mbox{if $u_j=\infty$} \\
+\qplambda^T A_j &\quad  \\
+&&\leq 0 & \mbox{if $l_j=-\infty$.}
+\end{array}
+\]
+\item \[\qplambda^T\qpb \quad<\quad \ccSum{j: \qplambda^TA_j <0}{}{ \qplambda^TA_j u_j }
+\quad+\quad  \ccSum{j: \qplambda^TA_j >0}{}{ \qplambda^TA_j l_j}.\]
+\end{enumerate}
+
+{\bf Proof:} Let us assume for the purpose of obtaining a contradiction
+that there is a feasible solution $\qpx$. Then we get
+\[
+\begin{array}{lcll}
+0 &\geq& \qplambda^T(A\qpx -\qpb) &  \mbox{(by $A\qpx\qprel \qpb$ and 1.)} \\
+  &=& \ccSum{j: \qplambda^TA_j <0}{}{ \qplambda^TA_j x_j }
+\quad+\quad  \ccSum{j: \qplambda^TA_j >0}{}{ \qplambda^TA_j x_j} - \qplambda^T \qpb \\
+  &\geq& \ccSum{j: \qplambda^TA_j <0}{}{ \qplambda^TA_j u_j }
+\quad+\quad  \ccSum{j: \qplambda^TA_j >0}{}{ \qplambda^TA_j l_j} - \qplambda^T \qpb &
+\mbox{(by $\qpl\leq \qpx \leq \qpu$ and 2.)} \\
+  &>& 0 & \mbox{(by 3.)}, 
+\end{array}
+\]
+and this is the desired contradiction $0>0$.
+
+
+\ccMethod{Infeasibility_certificate_iterator 
+  infeasibility_certificate_begin() const;}
+{returns a random access iterator over the infeasibility certificate 
+$\qplambda$ as given in Lemma 2. The value type
+is \ccc{ET}, and the valid iterator range has length $m$.
+\ccPrecond \ccVar\ccc{.is_infeasible()}}
+
+\ccMethod{Infeasibility_certificate_iterator 
+  infeasibility_certificate_end() const;}
+{returns the corresponding past-the-end iterator.}
+
+\ccExample
+\ccReferToExampleCode{QP_solver/infeasibility_certificate.cpp}
+
+{\bf Lemma 3 (unboundedness certificate:)} Let $\qpx^*$ be a feasible
+solution of (QP). The program (QP) is unbounded if an $n$-vector 
+$\qpw$ with the following properties exist.
+\begin{enumerate}
+\item if the $i$-th constraint is of type $\leq$ ($\geq, =$, respectively),
+then $(A\qpw)_i\leq 0$ ($(A\qpw)_i\geq 0, (A\qpw)_i=0$, respectively).
+\item 
+\[
+\begin{array}{llll}
+&&\geq 0 & \mbox{if $l_j$ is finite} \\
+w_j &\quad  \\
+&&\leq 0 & \mbox{if $u_j$ is finite.}
+\end{array}
+\]
+\item $\qpw^TD\qpw=0$ and $(\qpc^T+2{\qpx^*}^TD)\qpw<0$.
+\end{enumerate}
+
+The vector $\qpw$ is called an \emph{unbounded direction}.
+
+{\bf Proof:} For a real number $t$, consider the vector $\qpx(t):=\qpx^*+t\qpw$. By 1.
+and 2., $\qpx(t)$ is feasible for all $t\geq 0$. The objective function value
+of $\qpx(t)$ is
+\begin{eqnarray*}
+\qpc^T \qpx(t) + \qpx(t)^TD \qpx(t) &=& 
+\qpc^T\qpx^* + t\qpc^T\qpw + {\qpx^*}^TD\qpx^* +  2t{\qpx^*}^TD\qpw + t^2 \qpw^TD\qpw  \\
+&=& \qpc^T\qpx^* + {\qpx^*}^TD\qpx^* + t(\qpc^T + 2{\qpx^*}^TD)\qpw + t^2\qpw^TD\qpw.
+\end{eqnarray*}
+By condition 3., this tends to $-\infty$ for $t\rightarrow\infty$, so
+the problem is indeed unbounded. 
+
+\ccMethod{Unboundedness_certificate_iterator 
+unboundedness_certificate_begin() const;}
+{returns a random acess iterator over the unbounded direction $\qpw$
+as given in Lemma 3,with respect to the solution $\qpx^*$ 
+obtained from \ccVar\ccc{.variable_values_begin()}. The value type
+is \ccc{ET}, and the valid iterator range has length $n$.
+\ccPrecond \ccVar\ccc{.is_unbounded()}}
+
+\ccMethod{Unboundedness_certificate_iterator 
+unboundedness_certificate_end();}
+{returns the corresponding past-the-end iterator.}
+\ccExample
+\ccReferToExampleCode{QP_solver/unboundedness_certificate.cpp}
+
+\end{ccAdvanced}
+
+\ccSeeAlso
+
+The program concepts 
+
+\ccRefIdfierPage{QuadraticProgram}\\
+\ccRefIdfierPage{LinearProgram}\\
+\ccRefIdfierPage{NonnegativeQuadraticProgram}\\
+\ccRefIdfierPage{NonnegativeLinearProgram}
+
+and the functions that compute objects of class \ccRefName\ from
+models of these concepts:
+
+\ccRefIdfierPage{solve_quadratic_program}\\
+\ccRefIdfierPage{solve_linear_program}\\
+\ccRefIdfierPage{solve_nonnegative_quadratic_program}\\
+\ccRefIdfierPage{solve_nonnegative_linear_program}
+\end{ccRefClass}

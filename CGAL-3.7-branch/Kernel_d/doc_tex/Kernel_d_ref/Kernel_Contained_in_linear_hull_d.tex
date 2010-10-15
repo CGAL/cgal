@@ -1,0 +1,13 @@
+\begin{ccRefFunctionObjectConcept}{Kernel::Contained_in_linear_hull_d}
+A model for this must provide:
+
+\ccCreationVariable{fo}
+
+\ccMemberFunction{template <class ForwardIterator> Bounded_side
+  operator()( ForwardIterator first, ForwardIterator last, const
+  Kernel::Vector_d& v); }{determines whether $v$ is contained in the
+  linear hull of the vectors in \ccc{A = tuple [first,last)}.
+  \ccPrecond The objects are of the same dimension.  \ccRequire The
+  value type of \ccc{ForwardIterator} is \ccc{Kernel::Vector_d}.}
+
+\end{ccRefFunctionObjectConcept}

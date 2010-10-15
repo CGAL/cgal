@@ -1,0 +1,50 @@
+\ccRefPageBegin
+\begin{ccRefFunction}{write}
+
+\ccDefinition
+
+The function \ccRefName\ writes a given arrangement into a given output stream
+using a specific output format.
+
+%%%%
+
+\ccInclude{CGAL/IO/Arr_iostream.h}
+
+\ccGlobalFunction{template<typename Traits, typename Dcel, typename Formatter>
+            std::ostream& write (const Arrangement_2<Traits,Dcel>& arr,
+                                 std::ostream& os,
+                                 Formatter& formatter);}
+Writes the arrangement object \ccc{arr} into the given output stream
+\ccc{os} using a specific output format defined by \ccc{formatter}.
+
+%%%%
+
+\ccInclude{CGAL/IO/Arr_with_history_iostream.h}
+
+\ccGlobalFunction{template<typename Traits, typename Dcel,
+                  typename WithHistoryFormatter>
+      std::ostream& write (const Arrangement_with_history_2<Traits,Dcel>& arr,
+      std::ostream& os,
+      WithHistoryFormatter& formatter);}
+Writes the arrangement-with-history object \ccc{arr} into the given
+output stream \ccc{os} using a specific output format defined by
+\ccc{formatter}.
+
+\ccHeading{Requirements}
+\begin{itemize}
+\item The instantiated \ccc{Formatter} class must model the
+  \ccc{ArrangementOutputFormatter} concept.
+\item The instantiated \ccc{WithHistoryFormatter} class must model the
+  \ccc{ArrangementWithHistoryOutputFormatter} concept.
+\end{itemize}
+      
+\ccSeeAlso
+  \ccc{read}\lcTex{(\ccRefPage{CGAL::read})}\\
+  \lcTex{\ccc{operator<<} page~\pageref{ref_arr_operator_leftshift}}
+  \lcRawHtml{<I><A HREF="Function_operator.html">operator&lt;&lt;</A></I>}\\
+  \lcTex{\ccc{operator>>} page~\pageref{ref_arr_operator_rightshift}}
+  \lcRawHtml{<I><A HREF="Function_operator--.html">operator&gt;&gt;</A></I>}
+
+\end{ccRefFunction}
+\ccRefPageEnd
+

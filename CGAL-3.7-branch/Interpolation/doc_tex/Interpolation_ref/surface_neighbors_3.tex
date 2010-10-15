@@ -1,0 +1,163 @@
+% +------------------------------------------------------------------------+
+% | Reference manual page: surface_neighbors_3.tex
+% +------------------------------------------------------------------------+
+% | 
+% | August 2003  Julia Floetotto
+% | Package:   Interpolation
+% | 
+% |
+% +------------------------------------------------------------------------+
+
+%\renewcommand{\ccRefPageBegin}{\begin{ccAdvanced}}
+%\renewcommand{\ccRefPageEnd}{\end{ccAdvanced}}
+\begin{ccRefFunction}{surface_neighbors_3}  %% add template arg's if necessary
+\ccIndexSubitemBegin{Interpolation}{surface_neighbors_3}
+
+\ccDefinition
+
+Given a set of sample points issued from a surface and a query point
+\ccc{p}, the function \ccRefName\ computes the neighbors of \ccc{p} on
+the surface within the sample points. If the sampling is sufficiently
+dense, the neighbors are provably close to the point \ccc{p} on the
+surface (cf.\ the manual pages and
+\cite{bf-lcss-02},\cite{cgal:f-csapc-03}). They are defined to
+be the neighbors of \ccc{p} in the regular triangulation dual
+to the power diagram which is equivalent to the intersection of the
+Voronoi cell of the query point \ccc{p} with the tangent plane to the
+surface at \ccc{p}.
+
+\ccInclude{CGAL/surface_neighbors_3.h}
+
+\ccFunction{template <class OutputIterator, class InputIterator, class
+  Kernel> OutputIterator surface_neighbors_3(InputIterator first,
+  InputIterator beyond, const typename Kernel::Point_3& p, const
+  typename Kernel::Vector_3& normal, OutputIterator out, const Kernel&
+  K);}{ The sample points $\mathcal{P}$ are provided in the range
+  $\left[\right.$\ccc{first}, \ccc{beyond}$\left.\right)$.
+  \ccc{InputIterator::value_type} is the point type
+  \ccc{Kernel::Point_3}. The tangent plane is defined by the point
+  \ccc{p} and the vector \ccc{normal}.  The
+  parameter \ccc{K} determines the kernel type that will instantiate the template parameter of \ccc{Voronoi_intersection_2_traits_3<K>}. \\
+  The surface neighbors of \ccc{p} are computed which are the
+  neighbors of \ccc{p} in the regular triangulation that is dual to
+  the intersection of the $3D$ Voronoi diagram of $\mathcal{P}$ with
+  the tangent plane. The point sequence that is computed by the
+  function is placed starting at \ccc{out}. The function returns an
+  iterator that is placed past-the-end of the resulting point
+  sequence.}
+
+
+\ccFunction{template <class OutputIterator, class InputIterator, class
+  ITraits> OutputIterator
+  surface_neighbors_3(InputIterator first, InputIterator beyond,
+  const typename ITraits::Point_2& p,OutputIterator out, 
+  const ITraits& traits);}{ the same as above only that the traits
+  class must be instantiated by the user. \ccc{ITraits} must be equivalent
+  to \ccc{Voronoi_intersection_2_traits_3<K>}.}
+
+
+The next functions return, in addition, a Boolean value that certifies
+whether or not, the Voronoi cell of \ccc{p} can be affected by points
+that lie outside the input range, i.e.\ outside the ball centered on \ccc{p} passing through the
+furthest sample point from \ccc{p} in the range
+$\left[\right.$\ccc{first}, \ccc{beyond}$\left.\right)$. If the sample
+points are collected by a $k$-nearest neighbor or a range search
+query, this permits to verify that a large enough neighborhood has
+been considered. 
+
+\ccFunction{template <class OutputIterator, class InputIterator, class
+  Kernel> std::pair< OutputIterator, bool >
+  surface_neighbors_certified_3(InputIterator first,
+  InputIterator beyond, const typename Kernel::Point_3& p, const
+  typename Kernel::Vector_3& normal, OutputIterator out, const Kernel&
+  K);}{Similar to the first function. The additional third return
+  value is \ccc{true} if the furthest point in the range
+  $\left[\right.$\ccc{first}, \ccc{beyond}$\left.\right)$ is further
+  away from \ccc{p} than twice the distance from \ccc{p} to the
+  furthest vertex of the intersection of the Voronoi cell of \ccc{p}
+  with the tangent plane defined be \ccc{(p,normal)}. It is
+  \ccc{false} otherwise.}
+\ccFunction{template <class OutputIterator, class InputIterator, class
+  Kernel> std::pair< OutputIterator, bool >
+  surface_neighbors_certified_3(InputIterator first,
+  InputIterator beyond, const typename Kernel::Point_2& p, const
+  typename Kernel::FT& max_distance, OutputIterator out, const
+  Kernel& kernel);} { The same as above except that this function
+  takes the maximal distance from \ccc{p} to the points in the range
+  $\left[\right.$\ccc{first}, \ccc{beyond}$\left.\right)$ as additional
+  parameter.}
+
+\ccFunction{template <class OutputIterator, class InputIterator, class
+  ITraits> std::pair< OutputIterator, bool >
+  surface_neighbors_certified_3(InputIterator first, InputIterator
+  beyond, const typename ITraits::Point_2& p, OutputIterator out,
+  const ITraits& traits);}{The same as above only that the traits
+  class must be instantiated by the user.  \ccc{ITraits} must be
+  equivalent to \ccc{Voronoi_intersection_2_traits_3<K>}. There is no
+  parameter \ccc{max_distance}.}
+
+\ccFunction{template <class OutputIterator, class InputIterator, class
+  ITraits> std::pair< OutputIterator, bool >
+  surface_neighbors_certified_3(InputIterator first,
+  InputIterator beyond, const typename ITraits::Point_2& p, const
+  typename ITraits::FT& max_distance, OutputIterator out, const
+  ITraits& traits);} { The same as above with the parameter
+  \ccc{max_distance}.}
+
+The next function allows to filter some potential neighbors of the
+query point \ccc{p} from $\mathcal{P}$ via its three-dimensional
+Delaunay triangulation. All surface neighbors of \ccc{p} are
+necessarily neighbors in the Delaunay triangulation of $\mathcal{P}
+\cup \{p\}$.  
+
+\ccFunction{template < class Dt, class OutputIterator >
+  OutputIterator
+  surface_neighbors_3(const Dt& dt, const typename
+  Dt::Geom_traits::Point_2& p, const typename
+  Dt::Geom_traits::Vector_3& normal, OutputIterator out, typename
+  Dt::Face_handle start = typename Dt::Face_handle());} {computes
+  the surface neighbor coordinates with respect to the points that are
+  vertices of the Delaunay triangulation \ccc{dt}. The type \ccc{Dt}
+  must be equivalent to \ccc{Delaunay_triangulation_3<Gt, Tds>}. The
+  optional parameter \ccc{start} is used for the used as a starting
+  place for the search of the conflict zone. It may be the result of
+  the call \ccc{dt.locate(p)}. This function instantiates the template
+  parameter \ccc{ITraits} to be
+  \ccc{Voronoi_intersection_2_traits_3<Dt::Geom_traits>}.}
+
+
+\ccFunction{template < class Dt, class OutputIterator,
+  class ITraits> 
+  OutputIterator surface_neighbors_3(const Dt& dt,
+  const typename Dt::Geom_traits::Point_2& p, OutputIterator out,
+  const ITraits& traits, typename Dt::Face_handle start = typename
+  Dt::Face_handle());}
+%
+{The same as above only that the parameter \ccc{traits} instantiates
+  the geometric traits class. Its type \ccc{ITraits} must be
+  equivalent to \ccc{Voronoi_intersection_2_traits_3<K>}.}
+
+
+
+\ccHeading{Requirements}
+\begin{enumerate}
+\item \ccc{Dt} is equivalent to the class
+  \ccc{Delaunay_triangulation_3}.
+\item \ccc{OutputIterator::value_type} is equivalent to
+  \ccc{Dt::Point_3}, i.e.\ a point type.
+\item  \ccc{ITraits} is equivalent to the class \ccc{Voronoi_intersection_2_traits_3<K>}.
+\end{enumerate}
+
+\ccSeeAlso
+\ccRefIdfierPage{CGAL::Voronoi_intersection_2_traits_3<K>}\\
+\ccRefIdfierPage{CGAL::surface_neighbor_coordinates_3} \\
+
+\ccImplementation These functions compute the regular triangulation of
+the sample points and the point \ccc{p} using a traits class
+equivalent to \ccc{Voronoi_intersection_2_traits_3<K>}. They determine
+the neighbors of \ccc{p} in this triangulation. The functions which
+certify the result need to compute, in addition, the Voronoi vertices
+of the cell of \ccc{p} in this diagram.
+
+\ccIndexSubitemEnd{Interpolation}{surface_neighbors_3}
+\end{ccRefFunction}

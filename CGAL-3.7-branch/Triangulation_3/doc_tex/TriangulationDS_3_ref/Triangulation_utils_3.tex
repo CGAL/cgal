@@ -1,0 +1,61 @@
+% +------------------------------------------------------------------------+
+% | Reference manual page: Triangulation_utils_3.tex
+% +------------------------------------------------------------------------+
+% | 27.3.2000   Monique Teillaud
+% | Package: Triangulation3
+% | 
+\RCSdef{\RCSTriangulationutilsRev}{$Id$}
+\RCSdefDate{\RCSTriangulationutilsDate}{$Date$}
+% |
+%%RefPage: end of header, begin of main body
+% +------------------------------------------------------------------------+
+
+
+\begin{ccRefClass}{Triangulation_utils_3}
+
+\ccDefinition
+  
+The class \ccRefName\ defines operations on the indices of vertices
+and neighbors within a cell.
+
+\ccInclude{CGAL/Triangulation_utils_3.h}
+
+\ccOperations
+
+\ccThree{unsigned int}{ccw(unsigned int i)toto}{}
+
+\ccFunction{unsigned int next_around_edge(unsigned int i, 
+				    unsigned int j) const;}
+{In dimension~3, index of the neighbor \ccc{n} that is next to the current cell,
+when turning positively around an oriented edge whose endpoints are
+indexed \ccc{i} and \ccc{j}. According to the usual numbering of
+vertices and neighbors in a given cell, it is also the index of the vertex 
+opposite to this neighbor \ccc{n}. (see Figure~\ref{Triangulation3-fig-utils}).
+\ccPrecond{\ccc{( i < 4 ) && ( j < 4 ) && ( i != j )}.}}
+
+\ccFunction{unsigned int ccw(unsigned int i) const;}
+{Has a meaning only in dimension~2.\\
+ Computes the index of the vertex that is next to the vertex numbered
+\ccc{i} in counterclockwise direction. (see
+Figure~\ref{Triangulation3-fig-utils}).  
+\ccPrecond{\ccc{i<3}.}}
+\ccGlue
+\ccFunction{unsigned int cw(unsigned int i) const;}
+{Same for clockwise.}
+
+\begin{figure}[htbp]
+\begin{ccTexOnly}
+\begin{center} 
+\includegraphics{TriangulationDS_3_ref/utils} 
+\end{center}
+\end{ccTexOnly}
+\begin{ccHtmlOnly}
+<CENTER>
+<img border=0 src="./utils.gif" align=middle alt="Operations on indices">
+</CENTER>
+\end{ccHtmlOnly}
+\caption{Operations on indices.
+\label{Triangulation3-fig-utils}}
+\end{figure} 
+
+\end{ccRefClass}

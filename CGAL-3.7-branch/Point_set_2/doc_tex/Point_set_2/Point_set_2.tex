@@ -1,0 +1,82 @@
+% +------------------------------------------------------------------------+
+% | CGAL User Manual:  Point_set_2.tex
+% +------------------------------------------------------------------------+
+
+
+
+%---------------------------------------------
+% Introduction
+%---------------------------------------------
+\section{Introduction}
+
+Geometric queries are fundamental to many applications in computational
+geometry. The task is to maintain a dynamic set of geometric objects
+in such a way that certain queries can be performed efficiently.
+Typical examples of queries are:
+find out whether a given object is contained in the set,
+find all objects of the set lying in a given area (e.g. rectangle),
+find the object closest to a given point or
+find the pair of objects in the set lying closest to each other. 
+Furthermore, the set should be dynamic in the sense that deletions and 
+insertions of objects can be performed efficiently.
+
+In computational geometry literature one can find many different data structures for
+maintaining sets of geometric objects. Most of them are data structures 
+that have been developed to support a single very special kind of query 
+operation.
+Examples are Voronoi diagrams for answering nearest neighbor
+searches, range trees for orthogonal range queries, partition trees
+for more general range queries, hierarchical triangulations for point
+location and segment trees for intersection queries \dots.
+
+In many applications, different types of queries have to be
+performed on the same set of objects. A naive approach to this
+problem would use a collection of the above mentioned data structures to
+represent the set of objects and delegate every query operation to
+the corresponding structure.
+However, this is completely impractical since it uses too much
+memory and requires the maintenance of all these data structures in the presence of
+update operations.
+
+Data structures that are non-optimal in theory seem to perform quite well in
+practice for many of these queries.
+For example, the Delaunay diagram turns out to be a very powerful
+data structure for storing dynamic sets of points under range and nearest
+neighbor queries. A first implementation and computational
+study of using Delaunay diagrams for geometric queries is described by
+Mehlhorn and N\"aher in ~\cite{mn-lpcgc-00}.
+
+In this section we present a generic variant of a two dimensional point set
+data type supporting various geometric queries.
+
+The \ccc{CGAL::Point_set_2} class in this section is inherited
+from the two-dimensional \cgal\ {\em Delaunay Triangulation} data type.
+
+The \ccc{CGAL::Point_set_2} class depends on two template parameters \ccc{T1} and \ccc{T2}.
+They are used as template parameters for the \ccc{CGAL::Delaunay_triangulation_2}
+class \ccc{CGAL::Point_set_2} is inherited from. \ccc{T1} is a model for the
+geometric traits and \ccc{T2} is a model for the triangulation data structure that the Delaunay triangulation
+expects.
+
+The \ccc{CGAL::Point_set_2} class supports the following kinds of queries:
+\begin{itemize}
+\item circular range search
+\item triangular range search
+\item isorectangular range search
+\item (k) nearest neighbor(s)
+\end{itemize}
+For details about the running times see ~\cite{mn-lpcgc-00}.
+
+\section{Example: Range Search}
+
+
+The following example program demonstrates the various range search operations
+of the two dimensional point set.
+First we construct a two dimensional point set $PSet$ and initialize it with a few points.
+Then we perform circular, triangular and isorectangular range search operations on the
+point set.
+
+
+\ccIncludeExampleCode{Point_set_2/range_search.cpp}
+
+

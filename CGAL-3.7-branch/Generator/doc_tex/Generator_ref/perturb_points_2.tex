@@ -1,0 +1,49 @@
+\begin{ccRefFunction}{perturb_points_2}
+
+\ccDefinition
+
+The function \ccRefName\ perturbs each point in a given range of points by
+a random amount. 
+
+\ccInclude{CGAL/point_generators_2.h}
+
+\def\ccLongParamLayout{\ccTrue}
+\ccFunction{template <class ForwardIterator>
+    void perturb_points_2( ForwardIterator first, ForwardIterator last, 
+        double xeps, double yeps = xeps, Random& rnd = default_random,
+        Creator creator = Creator_uniform_2<Kernel_traits<P>::Kernel::RT,P>);}
+{ perturbs the points in the range $[\ccc{first},\ccc{last})$ by
+  replacing each point with a random point from the 
+  \ccc{xeps} $\times$ \ccc{yeps} rectangle centered at the original point.
+  Two random numbers are needed from \ccc{rnd} for each point.
+}
+
+\ccRequirements
+\begin{itemize}
+   \item \ccc{Creator} must be a function object accepting two
+         \ccc{double} values $x$ and $y$ and returning an initialized point
+         \ccc{(x,y)} of type \ccc{P}. 
+
+         Predefined implementations for these creators like the default are
+         described in Section~\ref{sectionCreatorFunctionObjects}. 
+
+  \item The \ccc{value_type} of the \ccc{ForwardIterator} must be assignable 
+        to \ccc{P}.
+  \item \ccc{P} is equal to the \ccc{value_type} of the
+        \ccc{ForwardIterator} when using the default initializer.
+  \item The expressions \ccc{to_double((*first).x())} and
+        \ccc{to_double((*first).y())} must result in the respective
+        coordinate values.
+\end{itemize}
+
+\ccSeeAlso
+\ccRefIdfierPage{CGAL::points_on_segment_2} \\
+\ccRefIdfierPage{CGAL::points_on_square_grid_2} \\
+\ccRefIdfierPage{CGAL::random_selection} \\
+\ccRefIdfierPage{CGAL::random_selection} \\
+\ccc{std::random_shuffle} \\
+
+
+
+
+\end{ccRefFunction}

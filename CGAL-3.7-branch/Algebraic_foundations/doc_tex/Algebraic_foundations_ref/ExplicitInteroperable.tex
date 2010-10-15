@@ -1,0 +1,23 @@
+\begin{ccRefConcept}{ExplicitInteroperable}
+
+\ccDefinition
+
+Two types \ccc{A} and \ccc{B} are a model of the \ccc{ExplicitInteroperable} 
+concept, if it is possible to derive a superior type for \ccc{A} and \ccc{B},
+such that both types are embeddable into this type. 
+This type is \ccc{Coercion_traits<A,B>::Type}.  
+
+In this case \ccc{Coercion_traits<A,B>::Are_explicit_interoperable} 
+is \ccc{Tag_true}.
+
+\ccc{A} and \ccc{B} are valid argument types for all binary functors in 
+\ccc{Algebraic_structure_traits<Type>} and \ccc{Real_embeddable_traits<Type>}.   
+This is also the case for the respective global functions. 
+
+\ccSeeAlso
+\ccRefIdfierPage{CGAL::Coercion_traits<A,B>}\\
+\ccRefConceptPage{ImplicitInteroperable}\\
+\ccRefConceptPage{AlgebraicStructureTraits}\\
+\ccRefConceptPage{RealEmbeddableTraits}\\
+
+\end{ccRefConcept}

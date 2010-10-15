@@ -1,0 +1,83 @@
+% +------------------------------------------------------------------------+
+% | Reference manual page: Skin_surface_quadratic_surface_3.tex
+% +------------------------------------------------------------------------+
+% | 27.09.2005   Nico Kruithof
+% | Package: Skin_surface
+% | 
+\RCSdef{\RCSSkinsurfacequadraticsurfaceRev}{$Id$}
+\RCSdefDate{\RCSSkinsurfacequadraticsurfaceDate}{$Date$}
+% +------------------------------------------------------------------------+
+
+\ccRefPageBegin
+
+%%RefPage: end of header, begin of main body
+% +------------------------------------------------------------------------+
+
+
+\begin{ccRefClass}{Skin_surface_quadratic_surface_3<SkinSurfaceQuadraticSurfaceTraits_3>}
+\label{refSkinsurfacequadraticsurface}
+\ccDefinition
+  
+The class \ccRefName\ defines a quadratic surface designed for the
+skin surface package. The class stores the defining matrix $Q$, the
+apex $a$, and the function value $c$ at the apex. The surface is then
+defined as the zero-set of the function $(x-a)^T\cdot Q\cdot (x-a)+c$.
+
+The template parameter should be a model of the concept
+\ccc{SkinSurfaceQuadraticSurfaceTraits_3}.
+
+\ccInclude{CGAL/Skin_surface_quadratic_surface_3.h}
+
+\ccTypes
+The geometric types used by the quadratic surface:
+\ccThree{typedef Weighted_point<Point, RT> x}{Triangulated}{}
+\ccThreeToTwo
+
+\ccTypedef{typedef  Kernel::RT                  RT;}{}
+\ccGlue
+\ccTypedef{typedef  Kernel::Point_3             Point;}{}
+\ccGlue
+\ccTypedef{typedef  Kernel::Vector_3            Vector;}{}
+\ccGlue
+\ccTypedef{typedef  Kernel::Segment_3           Segment;}{}
+
+\ccCreation
+\ccCreationVariable{surf}  %% choose variable name
+
+\ccConstructor{Skin_surface_quadratic_surface_3(RT Q[], Point a, RT
+  c);}{Constructs a quadratic surface with defining matrix $Q$, apex
+  $a$ and function value $c$ at the apex.}
+
+%\ccOperations
+%\ccAccessFunctions
+\ccQueryFunctions
+
+\ccThree{Input_point}{to_surface(Point p0, Point p1)asdfasdf}{}
+\ccThreeToTwo
+
+\ccMethod{ template <class Input_point> RT value( const Input_point &
+  x) const;} {Returns the function value at the point $x$.
+  \ccPrecond{\ccc{Input_point} is convertible to \ccc{Point} using the
+    \ccc{Cartesian_converter}.}}
+%
+\ccGlue \ccMethod{template <class Input_point> Sign sign(const
+  Input_point & x) const;}{Returns the sign of the function value at
+  the point $x$.  \ccPrecond{\ccc{Input_point} is convertible to
+    \ccc{Point} using the \ccc{Cartesian_converter}.}}
+
+\ccMethod{template <class Input_point> typename
+  Input_point::R::Vector_3 gradient(const Input_point & x);}{Returns
+  the gradient at the point $x$.  \ccPrecond{\ccc{Input_point} is
+    convertible to \ccc{Point} and \ccc{Input_point::R::Vector_3} to
+    \ccc{Vector} using the \ccc{Cartesian_converter}.}}
+
+\ccMethod{template <class Input_point> Input_point to_surface(const
+  Input_point &p0, const Input_point &p1);}{ Returns an intersection
+  point of the quadratic surface with the line segment p0p1.
+  \ccPrecond{\ccc{Input_point} is convertible to \ccc{Point} using the
+    \ccc{Cartesian_converter}.}}
+
+\ccSeeAlso
+\ccRefIdfierPage{SkinSurfaceQuadraticSurfaceTraits_3}
+\end{ccRefClass}
+

@@ -1,0 +1,35 @@
+\begin{ccRefFunctionObjectConcept}{AlgebraicKernel_d_2::IsZeroAt_2}
+
+\ccDefinition
+Computes whether an \ccc{AlgebraicKernel_d_2::Polynomial_2} 
+is zero at a given \ccc{AlgebraicKernel_d_2::Algebraic_real_2}. 
+
+\ccRefines 
+\ccc{AdaptableBinaryFunction}
+
+\ccTypes \ccThree{}{+++++++++++++}{++++++++}
+%\ccThree{typedef AlgebraicKernel_d_2::Algebraic_real_2}{second_argument_type+}{}
+\ccNestedType{result_type}{Type convertible to \ccc{bool}}
+\ccGlue
+\ccTypedef{typedef AlgebraicKernel_d_2::Polynomial_2 first_argument_type;}{}
+\ccGlue
+\ccTypedef{typedef AlgebraicKernel_d_2::Algebraic_real_2 second_argument_type;}{}
+
+
+\ccOperations \ccThree{+++++++++}{+++++++++}{}
+\ccCreationVariable{fo}
+
+
+%\ccThree{result_type}{fo(first_argument_type,++}{}
+\ccMethod{
+	result_type
+	operator()(const first_argument_type & p,
+          	 const second_argument_type & a);}
+{Computes whether $p$ is zero at $a$.} 
+
+\ccSeeAlso
+
+\ccRefIdfierPage{AlgebraicKernel_d_2::SignAt_2}\\
+\ccRefIdfierPage{AlgebraicKernel_d_1::IsZeroAt_1}\\
+
+\end{ccRefFunctionObjectConcept}

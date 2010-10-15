@@ -1,0 +1,129 @@
+% begin cgal manual page
+
+\begin{ccRefClass}{Segment_d<Kernel>}\ccCreationVariable{s}
+
+\ccDefinition
+
+
+An instance $s$ of the data type \ccc{Segment_d} is a directed
+straight line segment in $d$-dimensional Euclidean space connecting
+two points $p$ and $q$. $p$ is called the source point and $q$ is
+called the target point of $s$, both points are called endpoints of
+$s$. A segment whose endpoints are equal is called \emph{degenerate}.
+
+\ccSetOneOfTwoColumns{5cm}
+
+\ccTypes
+
+% \ccNestedType{R}{the representation type.  }
+
+% \ccNestedType{RT}{the ring type.  }
+
+% \ccNestedType{FT}{the field type.  }
+
+\ccNestedType{LA}{the linear algebra layer.  }
+
+\ccSetOneOfTwoColumns{3cm}
+
+\ccCreation
+
+\ccConstructor{Segment_d<Kernel>()}{introduces a variable \ccc{s}
+of type \ccc{Segment_d<Kernel>}.}
+
+\ccConstructor{Segment_d<Kernel>(Point_d<Kernel> p, Point_d<Kernel> q)}{introduces a
+variable \ccc{s} of type \ccc{Segment_d<Kernel>} which is initialized to
+the segment $(p,q)$. \ccPrecond \ccc{p.dimension()==q.dimension()}.  }
+
+\ccConstructor{Segment_d<Kernel>(Point_d<Kernel> p, Vector_d<Kernel> v)}{introduces a
+variable \ccc{s} of type \ccc{Segment_d<Kernel>} which is initialized to
+the segment \ccc{(p,p+v)}. \ccPrecond \ccc{p.dimension()==v.dimension()}. }
+
+\ccSetTwoOfThreeColumns{3cm}{3cm}
+
+\ccOperations
+
+\ccMethod{int dimension();}{returns the dimension of the ambient
+space.}
+
+\ccMethod{Point_d<Kernel> source();}{returns the source point of segment
+\ccc{s}. }
+
+\ccMethod{Point_d<Kernel> target();}{returns the target point of segment
+\ccc{s}. }
+
+\ccMethod{Point_d<Kernel> vertex(int i) ;}{returns source or target of
+\ccc{s}: \ccc{vertex(0)} returns the source, \ccc{vertex(1)} returns
+the target. The parameter $i$ is taken modulo $2$, which gives easy
+access to the other vertex.  \ccPrecond $i \geq 0$.  }
+
+\ccMethod{Point_d<Kernel> point(int i) ;}{returns \ccc{vertex(i)}.  }
+
+\ccMethod{Point_d<Kernel> operator[](int i) ;}{returns \ccc{vertex(i)}.  }
+
+\ccMethod{Point_d<Kernel> min() ;}{returns the lexicographically smaller
+vertex.  }
+
+\ccMethod{Point_d<Kernel> max() ;}{returns the lexicographically larger
+vertex.  }
+
+\ccMethod{Segment_d<Kernel> opposite() ;}{returns the segment
+\ccc{(target(),source())}.  }
+
+\ccMethod{Direction_d<Kernel> direction() ;}{returns the direction from
+source to target. \ccPrecond \ccc{s} is non-degenerate.  }
+
+\ccMethod{Vector_d<Kernel> vector() ;}{returns the vector from source to
+target.}
+
+\ccMethod{FT squared_length() ;}{returns the square of the length of
+\ccc{s}.}
+
+\ccMethod{bool has_on(const Point_d<Kernel>& p) ;}{returns true if $p$ lies
+on \ccc{s} and false otherwise. \ccPrecond
+\ccc{s.dimension()==p.dimension()}. }
+
+\ccMethod{ Line_d<Kernel> supporting_line() ;}{returns the supporting line
+of \ccc{s}.  \ccPrecond \ccc{s} is non-degenerate.  }
+
+\ccMethod{Segment_d<Kernel> transform(const Aff_transformation_d<Kernel>& t)
+;}{returns $t(s)$. \ccPrecond \ccc{s.dimension()==t.dimension()}. }
+
+\ccMethod{Segment_d<Kernel> operator+(const Vector_d<Kernel>& v) ;}{returns
+$s+v$, i.e., \ccc{s} translated by vector $v$. \ccPrecond
+\ccc{s.dimension()==v.dimension()}. }
+
+\ccMethod{bool is_degenerate() ;}{returns true if \ccc{s} is
+degenerate i.e.  \ccc{s.source()=s.target()}.  }
+
+\ccHeading{Non-Member Functions}  
+
+\ccFunction{bool weak_equality(const Segment_d<Kernel>& s1, const
+Segment_d<Kernel>& s2) ;}{Test for equality as unoriented
+segments. \ccPrecond \ccc{s1.dimension()==s2.dimension()}.}
+
+\ccFunction{bool parallel(const Segment_d<Kernel>& s1, const Segment_d<Kernel>&
+s2) ;}{return true if one of the segments is degenerate or if the
+unoriented supporting lines are parallel. \ccPrecond
+\ccc{s1.dimension()==s2.dimension()}. }
+
+\ccFunction{bool common_endpoint(const Segment_d<Kernel>& s1, const
+Segment_d<Kernel>& s2, Point_d<Kernel>& common) ;}{if \ccc{s1} and \ccc{s2}
+touch in a common end point, this point is assigned to \ccc{common}
+and the result is \ccc{true}, otherwise the result is \ccc{false}. If
+\ccc{s1==s2} then one of the endpoints is returned.  \ccPrecond
+\ccc{s1.dimension()==s2.dimension()}.  }
+
+\ccImplementation
+
+Segments are implemented by a pair of points as an item type.  All
+operations like creation, initialization, tests, the calculation of
+the direction and source - target vector, input and output on a
+segment $s$ take time $O(\ccc{s.dimension()})$. \ccc{dimension()},
+coordinate and end point access, and identity test take constant time.
+The operations for intersection calculation also take time
+$O(\ccc{s.dimension()})$. The space requirement is
+$O(\ccc{s.dimension()})$.
+ 
+\end{ccRefClass}
+
+

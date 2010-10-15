@@ -1,0 +1,79 @@
+% +------------------------------------------------------------------------+
+% | Reference manual page: Regular_face_base.tex
+% +------------------------------------------------------------------------+
+% | 12.04.2000   Author
+% | Package: Package
+% | 
+\RCSdef{\RCSRegularfacebaseRev}{$Id$}
+\RCSdefDate{\RCSRegularfacebaseDate}{$Date$}
+% |
+%%RefPage: end of header, begin of main body
+% +------------------------------------------------------------------------+
+
+
+\begin{ccRefConcept}{RegularTriangulationFaceBase_2}
+
+%% \ccHtmlCrossLink{}     %% add further rules for cross referencing links
+%% \ccHtmlIndexC[concept]{} %% add further index entries
+
+\ccDefinition
+  
+The regular triangulation of a set of weighted points does not
+necessarily
+have one vertex for each of the input points. Some of the input
+weighted points have no cell in the dual power diagrams
+and therefore do not correspond to a vertex of the regular
+triangulation.
+Those weighted points are said to be {\it hidden} points.
+A  point which is hidden at a given time may appear later as a vertex of
+the regular triangulation upon removal on some other weighted point.
+Therefore, hidden points have to be stored somewhere.
+The regular triangulation store those hidden points
+in special vertices called {\it hidden} vertices.
+
+A hidden point can appear as vertex of the triangulation
+only when the
+two dimensional face where its point component is located
+(the face which hides it)
+is removed. Therefore we decided to store 
+in each  face of a regular triangulation
+the list of hidden vertices whose points are located in the face.
+Thus  points hidden by a face are easily reinserted in the triangulation
+when the face is removed.
+
+The base face of a regular triangulation 
+has to be a model
+of the concept \ccRefName\ , which refines
+the concept \ccc{TriangulationFaceBase_2} by adding
+in the face  a list to store hidden vertices.
+
+\ccRefines
+\ccc{TriangulationFaceBase_2}
+
+\ccTypes
+\ccTypedef{typedef std::list<Vertex_handle> Vertex_list;}
+{An std list of hidden vertices.}
+
+
+\ccCreationVariable{rfb}  %% choose variable name
+
+
+\ccHeading{Access Functions}
+\ccMethod{Vertex_list& vertex_list();}
+{Returns a reference to the list of vertices hidden by the face.}
+
+
+\ccHasModels
+\ccc{CGAL::Regular_triangulation_face_base_2}
+
+\ccSeeAlso
+\ccc{TriangulationFaceBase_2} \\
+\ccc{RegularTriangulationVertexBase_2}
+
+\end{ccRefConcept}
+
+% +------------------------------------------------------------------------+
+%%RefPage: end of main body, begin of footer
+% EOF
+% +------------------------------------------------------------------------+
+

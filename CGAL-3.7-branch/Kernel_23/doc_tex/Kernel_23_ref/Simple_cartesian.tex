@@ -1,0 +1,34 @@
+\begin{ccRefClass}{Simple_cartesian<FieldNumberType>}
+
+\ccInclude{CGAL/Simple_cartesian.h}
+
+\ccDefinition
+A model for a \ccc{Kernel} using \ccHtmlNoLinksFrom{Cartesian} coordinates to represent the
+geometric objects. In order for \ccRefName\ to model Euclidean geometry
+in $E^2$ and/or $E^3$, for some mathematical field $E$ (\textit{e.g.},
+the rationals \Q\ or the reals \R), the template parameter \ccc{FieldNumberType}      
+must model the mathematical field $E$.  That is, the field operations on this
+number type must compute the mathematically correct results.  If the number
+type provided as a model for \ccc{FieldNumberType} is only an approximation of a
+field (such as the built-in type \ccc{double}), then the geometry provided by
+the kernel is only an approximation of Euclidean geometry.  
+
+
+\ccIsModel
+\ccRefConceptPage{Kernel}
+
+\ccTypes
+\ccTypedef{typedef FieldNumberType FT;}{}
+\ccGlue
+\ccTypedef{typedef FieldNumberType RT;}{}
+
+\ccImplementation In contrast to \ccc{Cartesian}, no reference counting
+is used internally. This eases debugging, but may slow down algorithms
+that copy objects intensively.
+
+\ccSeeAlso
+\ccRefIdfierPage{CGAL::Cartesian<FieldNumberType>} \\
+\ccRefIdfierPage{CGAL::Homogeneous<RingNumberType>} \\
+\ccRefIdfierPage{CGAL::Simple_homogeneous<RingNumberType>} \\
+
+\end{ccRefClass}

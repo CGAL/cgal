@@ -1,0 +1,141 @@
+% +------------------------------------------------------------------------+
+% | Reference manual page: ApolloniusGraphVertexBase_2.tex
+% +------------------------------------------------------------------------+
+% | 12.04.2000   Author
+% | Package: Package
+% | 
+%\RCSdef{\RCSRegulartriangulationtraitsRev}{$Id$}
+%\RCSdefDate{\RCSRegulartriangulationtraitsDate}{$Date$}
+% |
+%%RefPage: end of header, begin of main body
+% +------------------------------------------------------------------------+
+
+\begin{ccRefConcept}{ApolloniusGraphVertexBase_2}
+
+%% \ccHtmlCrossLink{}     %% add further rules for cross referencing links
+%% \ccHtmlIndexC[concept]{} %% add further index entries
+\ccCreationVariable{vb}
+\ccDefinition
+
+The concept \ccc{ApolloniusGraphVertexBase_2} describes the
+requirements for the vertex base class of the
+\ccc{ApolloniusGraphDataStructure_2} concept. A vertex stores an
+Apollonius site and provides access to one of its incident faces
+through a \ccc{Face_handle}. In addition, it maintains a container of
+sites. The container stores the hidden sites related to the vertex.
+
+\ccTypes
+\ccTwo{ApolloniusGraphVertexBase_2::Hidden_sites_iterator+}{}
+\ccNestedType{Geom_traits}{A type for the geometric traits that defines
+the site stored. \ccPrecond{The type \ccc{Geom_traits} must
+define the type \ccc{Site_2}.}}
+%
+\ccGlue
+\ccNestedType{Store_hidden}{A Boolean that indicates if
+  hidden sites are actually stored or not. Its value is \ccc{true} if
+  hidden sites are stored, \ccc{false} otherwise.}
+%
+\ccGlue
+\ccNestedType{Site_2}{A type for the site stored.
+\ccPrecond{This type must coincide with the type
+\ccc{Geom_traits::Site_2}.}}
+%
+\ccGlue
+\ccNestedType{Apollonius_graph_data_structure_2}{A type for the
+  Apollonius graph data structure, to which the vertex belongs to.}
+%
+\ccGlue
+\ccNestedType{Vertex_handle}{A type for the vertex handle of the
+  Apollonius graph data structure.}
+%
+\ccGlue
+\ccNestedType{Face_handle}{A type for the face handle of the
+  Apollonius graph data structure.}
+%
+\ccGlue
+\ccNestedType{Hidden_sites_iterator}{An iterator that
+iterates over the hidden sites in the hidden sites
+container of the vertex.
+\ccPrecond Must be a model of \ccc{Iterator}.}
+
+
+\ccCreation
+\ccCreationVariable{v}  %% choose variable name
+
+\ccTwo{ApolloniusGraphVertexBase_2 v(Site_2 s, Face_handle f);++}{}
+%
+\ccConstructor{ApolloniusGraphVertexBase_2();}{Default constructor.}
+\ccGlue
+\ccConstructor{ApolloniusGraphVertexBase_2(Site_2 s);}
+{Constructs a vertex associated with the Apollonius site \ccc{s} and
+embedded at the center of \ccc{s}.}
+\ccGlue
+\ccConstructor{ApolloniusGraphVertexBase_2(Site_2 s,
+  Face_handle f);}{Constructs a vertex associated with
+  the site \ccc{s}, embedded at the center of \ccc{s},
+  and pointing to the face associated with the face handle \ccc{f}.}
+
+
+
+
+
+\ccAccessFunctions
+\ccThree{Hidden_sites_iterator}{v.number_of_hidden_sites()+}{}
+%
+\ccMethod{Site_2 site();}
+{Returns  the Apollonius site.}
+\ccGlue
+\ccMethod{Face_handle face();}{Returns a handle to an incident face.}
+\ccGlue
+\ccMethod{unsigned int number_of_hidden_sites();}
+{Returns the number of hidden sites in the hidden
+sites container.}
+\ccGlue
+\ccMethod{Hidden_sites_iterator
+hidden_sites_begin();}
+{Starts at an arbitrary hidden site.}
+\ccGlue
+\ccMethod{Hidden_sites_iterator hidden_sites_end();}
+	 {Past-the-end iterator.}
+
+
+
+
+\ccHeading{Setting and unsetting}
+\ccThree{void}{v.clear_hidden_sites_container()+}{}
+\ccMethod{void set_site(Site_2 s);}
+{Sets the Apollonius site.}
+\ccGlue
+\ccMethod{void set_face(Face_handle f);}{Sets the incident face.}
+\ccGlue
+\ccMethod{void add_hidden_site(Site_2 s);}
+{Adds a hidden site to the container of hidden sites.}
+\ccGlue
+\ccMethod{void clear_hidden_sites_container();}
+{Clears the container of hidden sites.}
+
+
+
+
+\ccHeading{Checking}
+\ccMethod{bool is_valid(bool verbose, int level) const;}
+{Performs any required tests on a vertex.}
+
+
+\ccHasModels
+
+\ccc{CGAL::Apollonius_graph_vertex_base_2<Gt,StoreHidden>}.
+
+
+\ccSeeAlso
+
+\ccc{ApolloniusGraphDataStructure_2}\\
+\ccc{ApolloniusGraphTraits_2}\\
+\ccc{CGAL::Apollonius_graph_vertex_base_2<Gt,StoreHidden>}
+
+\end{ccRefConcept}
+
+% +------------------------------------------------------------------------+
+%%RefPage: end of main body, begin of footer
+% EOF
+% +------------------------------------------------------------------------+

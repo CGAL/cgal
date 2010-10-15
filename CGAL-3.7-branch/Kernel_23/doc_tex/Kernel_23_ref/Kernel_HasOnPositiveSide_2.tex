@@ -1,0 +1,27 @@
+\begin{ccRefFunctionObjectConcept}{Kernel::HasOnPositiveSide_2}
+A model for this must provide:
+
+\ccCreationVariable{fo}
+
+\ccMemberFunction{bool operator()(const Kernel::Circle_2&c,
+                                  const Kernel::Point_2&p);}
+{returns true iff $p$ lies on the positive side of $c$.}
+
+\ccMemberFunction{bool operator()(const Kernel::Line_2&l,
+                                  const Kernel::Point_2&p);}
+{returns true iff $p$ lies on the positive side of $l$ 
+($l$ is considered a half-space).}
+
+\ccMemberFunction{bool operator()(const Kernel::Triangle_2&t,
+                                  const Kernel::Point_2&p);}
+{returns true iff $p$ lies on the positive side of $t$.}
+
+\ccRefines
+\ccc{AdaptableFunctor} (with two arguments)
+
+\ccSeeAlso
+\ccRefIdfierPage{CGAL::Circle_2<Kernel>} \\
+\ccRefIdfierPage{CGAL::Line_2<Kernel>}\\
+\ccRefIdfierPage{CGAL::Triangle_2<Kernel>}\\
+
+\end{ccRefFunctionObjectConcept}

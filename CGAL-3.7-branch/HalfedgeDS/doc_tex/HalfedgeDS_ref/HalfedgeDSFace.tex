@@ -1,0 +1,110 @@
+% +------------------------------------------------------------------------+
+% | Reference manual page: HalfedgeDSFace.tex
+% +------------------------------------------------------------------------+
+% | 22.03.1999   Lutz Kettner
+% | Package: HalfedgeDS
+% | 
+\RCSdef{\RCSFaceRev}{$Id$}
+\RCSdefDate{\RCSFaceDate}{$Date$}
+% +------------------------------------------------------------------------+
+
+\ccRefPageBegin
+
+%%RefPage: end of header, begin of main body
+% +------------------------------------------------------------------------+
+
+
+\begin{ccRefConcept}{HalfedgeDSFace}
+\label{pageHalfedgeDSItemsFaceRef}
+
+\ccDefinition
+  
+The concept \ccRefName\ defines the requirements for the local \ccc{Face} 
+type in the \ccc{HalfedgeDS} concept. It is also required in 
+the \ccc{Face_wrapper<Refs,Traits>} member class template of an
+items class, see the \ccc{HalfedgeDSItems} concept.
+
+A face optionally stores a reference to an incident halfedge that
+points to the face.  A type tag indicates whether the related member
+functions are supported. 
+Figure~\ref{figureHalfedgeDSOptionalMethods} 
+depicts the relationship between a halfedge and its incident
+halfedges, vertices, and faces.
+
+For the protection of the integrity of the data structure classes such as
+\ccc{CGAL::Polyhedron_3} are allowed to redefine the modifying member 
+functions to be private. In order to make them accessible for the 
+halfedge data structure they must be derived from a base class \ccc{Base}
+where the modifying member functions are still public. (The protection
+can be bypassed by the user, but not by accident.)
+
+\ccTypes
+
+\ccThree{Halfedge_const_handle}{v.set_halfedge( Halfedge_handle h);}{}
+\ccThreeToTwo
+%\ccTwo{HalfedgeDSFace:: Halfedge_const_handleXX}{}
+
+\ccNestedType{HalfedgeDS}
+    {instantiated \ccc{HalfedgeDS} ( $\equiv$ \ccc{Refs}).}
+\ccGlue
+\ccNestedType{Base}{base class that allows modifications.}
+\ccGlue
+\ccNestedType{Vertex}{model of \ccc{HalfedgeDSVertex}.}
+\ccGlue
+\ccNestedType{Halfedge}{model of \ccc{HalfedgeDSHalfedge}.}
+\ccGlue
+\ccNestedType{Vertex_handle}{handle to vertex.}
+\ccGlue
+\ccNestedType{Halfedge_handle}{handle to halfedge.}
+\ccGlue
+\ccNestedType{Face_handle}{handle to face.}
+\ccGlue
+\ccNestedType{Vertex_const_handle}{}
+\ccGlue
+\ccNestedType{Halfedge_const_handle}{}
+\ccGlue
+\ccNestedType{Face_const_handle}{}
+\ccGlue
+\ccNestedType{Supports_face_halfedge}{\ccc{CGAL::Tag_true} or 
+  \ccc{CGAL::Tag_false}.}
+
+\ccCreation
+\ccCreationVariable{f}
+
+\ccConstructor{Face();}{default constructor.}
+
+\ccTagFullDeclarations
+
+\ccHeading{Operations available if \ccc{Supports_face_halfedge} $\equiv$ 
+           \ccc{CGAL::Tag_true}}
+
+\ccMethod{Halfedge_handle       halfedge();}{}
+\ccGlue
+\ccMethod{Halfedge_const_handle halfedge() const;}{
+    incident halfedge that points to \ccVar.}
+\ccGlue
+\ccMethod{void set_halfedge( Halfedge_handle h);}{
+    sets incident halfedge to $h$.}
+
+
+\ccHasModels
+
+\ccRefIdfierPage{CGAL::HalfedgeDS_face_base<Refs>}\\
+\ccRefIdfierPage{CGAL::HalfedgeDS_face_min_base<Refs>}
+
+\ccSeeAlso
+
+\ccRefConceptPage{HalfedgeDS<Traits,Items,Alloc>}\\
+\ccRefConceptPage{HalfedgeDSItems}\\
+\ccRefConceptPage{HalfedgeDSVertex}\\
+\ccRefConceptPage{HalfedgeDSHalfedge}
+
+\ccTagDefaults
+\end{ccRefConcept}
+
+% +------------------------------------------------------------------------+
+%%RefPage: end of main body, begin of footer
+\ccRefPageEnd
+% EOF
+% +------------------------------------------------------------------------+
+

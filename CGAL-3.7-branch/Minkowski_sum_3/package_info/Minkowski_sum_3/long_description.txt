@@ -1,0 +1,2 @@
+Given two finite, completely open or closed 3D Nef polyhedra, the function
+minkowski_sum_3 computes the Minkowski sum of the two polyhedra.

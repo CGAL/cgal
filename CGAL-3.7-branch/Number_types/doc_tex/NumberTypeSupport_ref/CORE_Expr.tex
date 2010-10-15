@@ -1,0 +1,24 @@
+\ccDefGlobalScope{}
+\begin{ccRefClass}{CORE::Expr}
+
+\ccDefinition
+
+The class \ccRefName\ provides exact computation over the subset of real
+numbers that contains integers, and which is closed by the operations
+$+,-,\times,/,\sqrt{}$ and $kth\_root$.  Operations and comparisons 
+between objects of this type are guaranteed to be exact.  
+This number type is provided by the
+{\sc Core} library~\cite{klpy-clp-99}.
+
+\cgal\ defines the necessary functions so that this class complies to the
+requirements on number types.
+
+\ccInclude{CGAL/CORE_Expr.h}
+
+\ccIsModel
+\ccc{FieldWithRootOf}\\
+\ccc{RealEmbeddable}\\
+\ccc{FromDoubleConstructible}\\
+
+\end{ccRefClass}
+\ccDefGlobalScope{CGAL::}

@@ -1,0 +1,30 @@
+\section{Examples\label{sec:kds_examples}}
+
+
+We provide a number of examples of different levels of usage of the
+kinetic data structures framework, both for kinetic data structures as
+well as sweepline algorithms.
+
+To see how to use existing kinetic data structures, look at the
+examples in the previous chapter such as
+Section~\ref{sec:kds_sort_example}. 
+
+The here we cover implementing kinetic data structures. The examples
+explained are
+\begin{itemize}
+\item A trivial kinetic data structure which has all the parts of a
+full kinetic data structure but doesn't do much in
+Section~\ref{sec:kds_trivial_example}.
+\item Adding a new type of certificate to a kernel in
+  Section~\ref{sec:kds_add_cert}.
+\end{itemize}
+
+In order to see more detail about how to implement a kinetic data
+structure, the best place to start is the source code for the kinetic
+sorting data structure, \ccc{Kinetic::Sort<Traits, Visitor>}. Once you
+are familiar with that, \ccc{Kinetic::Delaunay_2<Traits,
+Triangulation, Visitor>} is the next step in complexity.
+
+
+\input{Kinetic_framework/trivial_kds_example.tex}
+\input{Kinetic_framework/adding_certificate.tex}

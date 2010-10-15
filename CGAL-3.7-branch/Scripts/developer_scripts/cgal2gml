@@ -1,0 +1,34 @@
+#!/usr/bin/env perl
+#
+# file:     cgal2gml
+# author:   Michael Hoffmann
+# version:  $Id$
+# purpose:  convert package dependencies (output of cgal_depend)
+#           into gml graph format
+#
+
+require "cgal_dependencies";
+
+print "Creator \"cgal2gml\"\nVersion 1.7\ngraph [\n\nlabel \"\"\ndirected 1\n\n";
+
+# nodes
+$i = 0;
+foreach $pkg (keys %depend) {
+    $ind{"$pkg"} = $i;
+    printf "node [\n\tid %d\n\tlabel \"$pkg\"\n\tlabelAnchor \"c\"\n\tgraphics [\n\t\tx %d\n\t\ty %d\n\t\tw 10\n\t\th 10\n\t\ttype \"rectangle\"\n\t\twidth 10\n\t]\n", $i, $i, $i*$i/2;
+    print "\tLabelGraphics [\n\t\ttype \"index_label\"\n\t]\n]\n";
+    ++$i;	
+}
+
+# edges
+foreach $pkg (keys %depend) {
+    foreach $dep (keys %{$depend{"$pkg"}}) {
+	if ($dep ne $pkg) {
+	    printf "edge [\n\tsource %d\n\ttarget %d\n\tgraphics [\n\t\ttype \"line\"\n\t\tarrow \"last\"\n\t]\n]\n", $ind{"$dep"}, $ind{"$pkg"};
+	}
+    }
+}
+
+print "]\n";
+
+# EOF

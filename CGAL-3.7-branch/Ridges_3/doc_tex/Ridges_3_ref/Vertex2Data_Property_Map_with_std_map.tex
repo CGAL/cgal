@@ -1,0 +1,65 @@
+% +------------------------------------------------------------------------+
+% | Reference manual page: Vertex2Data_Property_Map_with_std_map.tex
+% +------------------------------------------------------------------------+
+% | 15.09.2006   Marc Pouget and Frédéric Cazals
+% | Package: Ridges_3
+% | 
+\RCSdef{\RCSVertexDataPropertyMapwithstdmapRev}{$Id$}
+\RCSdefDate{\RCSVertexDataPropertyMapwithstdmapDate}{$Date$}
+% |
+%%RefPage: end of header, begin of main body
+% +------------------------------------------------------------------------+
+
+
+\begin{ccRefClass}{Vertex2Data_Property_Map_with_std_map<TriangulatedSurfaceMesh>}  %% add template arg's if necessary
+
+%% \ccHtmlCrossLink{}     %% add further rules for cross referencing links
+%% \ccHtmlIndexC[class]{} %% add further index entries
+
+\ccDefinition
+  
+The class \ccRefName\ provides models for the concepts
+\ccc{Vertex2FTPropertyMap} and \ccc{Vertex2VectorPropertyMap} to be used for 
+\ccc{Ridge_approximation}. The property maps are 
+created with the \ccc{boost::associative_property_map} adaptor from
+\ccc{std::map}.
+
+\ccInclude{CGAL/Ridges.h}
+
+
+\ccTypes
+
+\ccTypedef{  typedef typename TriangulatedSurfaceMesh::Traits::FT        FT;}{}
+\ccGlue
+\ccTypedef{  typedef typename TriangulatedSurfaceMesh::Traits::Vector_3  Vector_3;}{}
+\ccGlue
+\ccTypedef{  typedef typename TriangulatedSurfaceMesh::Vertex_handle     Vertex_handle;}{}
+\ccStruct{  struct Vertex_cmp{bool operator();};}{}
+
+\ccTypedef{  typedef std::map<Vertex_handle, FT, Vertex_cmp> Vertex2FT_map;}{}
+\ccGlue
+\ccTypedef{  typedef boost::associative_property_map< Vertex2FT_map > Vertex2FT_property_map;}{}
+\ccTypedef{  typedef std::map<Vertex_handle, Vector_3, Vertex_cmp> Vertex2Vector_map;}{}
+\ccGlue
+\ccTypedef{  typedef boost::associative_property_map< Vertex2Vector_map > Vertex2Vector_property_map;}{}
+
+
+
+\ccIsModel
+
+\ccc{Vertex2FT_property_map} is model of \ccc{Vertex2FTPropertyMap}.
+
+\ccc{Vertex2Vector_property_map} is model of \ccc{Vertex2VectorPropertyMap}.
+
+
+\ccSeeAlso
+
+\ccc{Ridge_approximation}
+
+\end{ccRefClass}
+
+% +------------------------------------------------------------------------+
+%%RefPage: end of main body, begin of footer
+% EOF
+% +------------------------------------------------------------------------+
+

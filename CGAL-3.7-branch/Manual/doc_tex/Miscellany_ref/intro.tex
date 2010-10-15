@@ -1,0 +1,41 @@
+%
+%    SYNCRONIZE THIS WITH THE INDIVIDUAL PACKAGES
+%    SYNCRONIZE THIS WITH THE INDIVIDUAL PACKAGES
+%    SYNCRONIZE THIS WITH THE INDIVIDUAL PACKAGES
+%
+\ccRefChapter{Profiling tools, Hash Map, Union-find, Modifiers\label{chap:union_find}}
+\label{chap:hash_map}
+\ccChapterAuthor{Lutz Kettner \and Sylvain Pion \and Michael Seel}
+
+
+This chapter decribes classes for measuring user process time and real time
+as well as the memory size. It also provides a profile counter tool.
+
+A hash map \ccc{CGAL::Unique_hash_map} is offered that is specialized
+on unique hash values of type \ccc{std::size_t}, i.e., it is
+particularly useful for pointers, handles, iterators, and circulators
+as key values.
+
+Furthermore, a union-find data structure and the modifier base class
+is documented.
+
+\section{Classified Reference Pages}
+
+\subsection*{Concepts}
+
+\ccRefConceptPage{UniqueHashFunction}
+
+\subsection*{Classes}
+
+\ccRefIdfierPage{CGAL::Timer} \\
+\ccRefIdfierPage{CGAL::Real_timer} \\
+\ccRefIdfierPage{CGAL::Memory_sizer} \\
+\ccRefIdfierPage{CGAL::Profile_counter} \\
+
+\ccRefIdfierPage{CGAL::Unique_hash_map<Key,Data,UniqueHashFunction>}\\
+\ccRefIdfierPage{CGAL::Handle_hash_function}
+
+\ccRefIdfierPage{CGAL::Union_find<T,A>}
+
+\ccRefIdfierPage{CGAL::Modifier_base<R>}
+

@@ -1,0 +1,75 @@
+% +------------------------------------------------------------------------+
+% | Reference manual page: marching_tetrahedra_3.tex
+% +------------------------------------------------------------------------+
+% | 27.09.2005   Nico Kruithof
+% | Package: Skin_surface_3
+% | 
+\RCSdef{\RCSmarchingtetrahedraRev}{$Id$}
+\RCSdefDate{\RCSmarchingtetrahedraDate}{$Date$}
+% |
+%%RefPage: end of header, begin of main body
+% +------------------------------------------------------------------------+
+
+
+\begin{ccRefFunction}{marching_tetrahedra_3}
+
+\ccDefinition
+
+The function \ccRefName\ implements the marching tetrahedra algorithm
+\cite{cgal:tpg-rmtiise-99}. To allow maximal flexibility, it uses the
+traits class \ccc{MarchingTetrahedraTraits_3} for labeling the
+vertices as inside and outside and the construction of vertices on
+edges of the triangulation. The observer class
+\ccc{MarchingTetrahedraObserver_3} is used to add callbacks after the
+insertion of an vertex or facet of the polyhedron.
+
+The input is a triangulation, a class implementing the
+\ccc{MarchingTetrahedraTraits_3} and an implementation of the
+\ccc{MarchingTetrahedraObserver_3}, which is empty by default. The
+triangulation has to define the types \ccc{Finite_cells_iterator} and
+\ccc{Vertex_handle}. The vertices are accessed by the function
+\ccc{vertex(i)}, with $i=0,1,2,3$ and each tetrahedron has a positive
+orientation. A Strict Weak Ordering and equality has to be defined for
+\ccc{Vertex_handle}. These requirements are satisfied by
+\ccc{Triangulation_3}.
+
+The output is a \ccc{Polyhedron_3} and is constructed using the
+\ccc{Polyhedral_incremental_builder_3}.
+
+\ccInclude{CGAL/marching_tetrahedra_3.h}
+
+\ccParameters The first template argument defines the type of the
+triangulation that forms the input for the marching tetrahedra
+algorithm. The second parameter is the type of the polyhedral mesh in
+which the extracted surface is stored. The third template argument is
+a model of the \ccc{MarchingTetrahedraTraits_3} concept and defines
+which vertices lie inside and which outside the surface. It also
+provides a function to obtain a vertex from the intersection of an
+edge with the surface. The last template argument is a model of the
+\ccc{MarchingTetrahedraObserver_3} concept.
+
+\ccGlobalFunction{
+template <class Triangulation_3,
+	  class Polyhedron_3,
+	  class MarchingTetrahedraTraits_3,
+          class MarchingTetrahedraObserver_3 >
+void marching_tetrahedra_3(
+  const Triangulation_3 &triangulation,
+  Polyhedron_3 &polyhedron,
+  const MarchingTetrahedraTraits_3 &marching_traits,
+  const MarchingTetrahedraObserver_3 &marching_observer = 
+    CGAL::Marching_tetrahedra_observer_default_3());}
+
+\ccSeeAlso
+\ccRefIdfierPage{MarchingTetrahedraTraits_3}\\
+\ccRefIdfierPage{MarchingTetrahedraObserver_3}\\
+\ccRefIdfierPage{Polyhedron_3}\\
+\ccRefIdfierPage{Triangulation_3}
+
+\end{ccRefFunction}
+
+% +------------------------------------------------------------------------+
+%%RefPage: end of main body, begin of footer
+% EOF
+% +------------------------------------------------------------------------+
+

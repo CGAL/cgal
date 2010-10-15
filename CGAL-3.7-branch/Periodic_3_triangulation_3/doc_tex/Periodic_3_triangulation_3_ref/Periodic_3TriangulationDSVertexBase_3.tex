@@ -1,0 +1,67 @@
+% +------------------------------------------------------------------------+
+% | Reference manual page: Periodic_3TriangulationDSVertexBase_3.tex
+% +------------------------------------------------------------------------+
+% | 19.2.2009   Monique Teillaud, Manuel Caroli
+% | Package: Periodic_3_triangulation_3
+% | 
+\RCSdef{\RCSPeriodicTriangulationDSVertexBaseRev}{$Id$}
+\RCSdefDate{\RCSPeriodicTriangulationDSVertexBaseDate}{$Date$}
+% |
+%%RefPage: end of header, begin of main body
+% +------------------------------------------------------------------------+
+
+
+\begin{ccRefConcept}{Periodic_3TriangulationDSVertexBase_3}
+
+\ccDefinition
+  
+At the base level of 3D-triangulations 
+(see Sections~\ref{P3Triangulation3-sec-design} and~\ref{TDS3-sec-design}),
+a vertex provides access to one of its incident cells through a handle.
+
+For optimization purposes we need to extend the concept
+\ccc{TriangulationDSVertexBase_3} as follows.
+
+\ccRefines \ccc{TriangulationDSVertexBase_3}
+
+\ccc{Periodic_3TriangulationDSVertexBase_3} needs to store an offset
+and some index inside the vertex.
+
+\ccTypes
+\ccTwo{Periodic_3TriangulationDSVertexBase_3::Periodic_3_offset_3X}{}
+\ccNestedType{Periodic_3_offset_3}{A model of the concept
+  \ccc{Periodic_3Offset_3}}
+
+\ccCreationVariable{v}  %% choose variable name
+
+\ccThree{Periodic_3_offset_3X}{Facetxxxxxxxxxxxxxxxxxxxxxxxxxxx}{}
+
+\ccAccessFunctions
+
+\ccMethod{Periodic_3_offset_3 offset() const;}
+{Returns the offset stored in the vertex.}
+\ccGlue
+\ccMethod{bool get_offset_flag() const;}
+{Returns \ccc{true} if the offset has been set, \ccc{false} otherwise.}
+\ccGlue
+\ccMethod{void set_offset(Periodic_3_offset_3 o);}
+{Sets the offset and sets the offset flag to \ccc{true}.}
+\ccGlue
+\ccMethod{void clear_offset();}
+{Sets the offset flag to \ccc{false} and clears the offset.}
+
+\ccHasModels
+
+\ccc{CGAL::Periodic_3_triangulation_ds_vertex_base_3}
+
+\ccSeeAlso
+
+\ccc{TriangulationDataStructure_3}\\
+\ccc{TriangulationDSVertexBase_3}\\
+\ccc{Periodic_3TriangulationDSCellBase_3}
+
+%% \ccExample
+
+%% \ccIncludeExampleCode{Triangulation3/Triangulation_vb_prog.C}
+
+\end{ccRefConcept}

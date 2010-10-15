@@ -1,0 +1,67 @@
+% +------------------------------------------------------------------------+
+% | Reference manual page: ImplicitFunction.tex
+% +------------------------------------------------------------------------+
+% | 09.12.2005   Mariette Yvinec, Laurent Rineau
+% | Package: Surface_mesher
+% |
+\RCSdef{\RCSImplicitFunctionRev}{$Id$}
+\RCSdefDate{\RCSImplicitFunctionDate}{$Date$}
+% |
+%%RefPage: end of header, begin of main body
+% +------------------------------------------------------------------------+
+
+
+\begin{ccRefConcept}{ImplicitFunction}
+
+\ccDefinition
+  
+The concept \ccRefName\ describes a function object
+whose \ccc{operator()} computes the values of a function
+\begin{math}f : \R^3 \longrightarrow \R\end{math}.
+
+\ccTypes
+
+\ccNestedType{FT}{Number type}
+\ccNestedType{Point}{Point type}
+
+
+\ccCreationVariable{function} 
+
+\ccOperations
+
+\ccMethod{FT operator()(Point p);}{Returns the value $f(p)$, where $p \in \R^3$.}
+
+\ccHasModels
+
+\ccc{Gray_level_image_function},\\
+any pointer to a function of type \ccc{FT (*)(Point)}.
+
+\ccSeeAlso
+\ccc{Implicit_surface_3<Traits, Function>},\\
+\ccc{make_surface_mesh}
+
+
+
+%\ccExample
+
+%A short example program.
+%Instead of a short program fragment, a full running program can be
+%included using the 
+%\verb|\ccIncludeExampleCode{Package/ImplicitFunction.cpp}| 
+%macro. The program example would be part of the source code distribution and
+%also part of the automatic test suite.
+
+%\begin{ccExampleCode}
+%void your_example_code() {
+%}
+%\end{ccExampleCode}
+
+%%% \ccIncludeExampleCode{Package/ImplicitFunction.cpp}
+
+\end{ccRefConcept}
+
+% +------------------------------------------------------------------------+
+%%RefPage: end of main body, begin of footer
+% EOF
+% +------------------------------------------------------------------------+
+

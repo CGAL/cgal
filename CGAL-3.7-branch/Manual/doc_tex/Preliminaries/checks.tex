@@ -1,0 +1,226 @@
+
+\ccSetThreeColumns{Failure_behaviour }{}{\hspace*{8.5cm}}
+
+\section{Checks\label{sec:checks}}
+
+Much of the {\cgal} code contains checks. 
+For example, all checks used in the kernel code are prefixed by 
+\ccc{CGAL_KERNEL}.
+Other packages have their own prefixes, as documented in the corresponding
+chapters.
+Some are there to check if the kernel behaves correctly, others are there to 
+check if the user calls kernel routines in an acceptable manner.
+
+There are four types of checks. 
+The first three are errors and lead to a halt of the program if they fail. 
+The last only leads to a warning.
+\begin{description}
+\item[Preconditions] check if the caller of a routine has called it in a
+proper fashion. 
+If such a check fails it is the responsibility of the caller 
+(usually the user of the library).
+\item[Postconditions] check if a routine does what it promises to do. 
+If such a check fails it is the fault of this routine, so of the library.
+\item[Assertions] are other checks that do not fit in the above two 
+categories.
+\item[Warnings] are checks for which it is not so severe if they fail.
+\end{description}
+
+By default, all of these checks are performed. 
+It is however possible to turn them off through the use of compile time 
+switches.
+For example, for the checks in the kernel code, these switches are the 
+following:
+\ccStyle{CGAL_KERNEL_NO_PRECONDITIONS}, 
+\ccStyle{CGAL_KERNEL_NO_POSTCONDITIONS},
+\ccStyle{CGAL_KERNEL_NO_ASSERTIONS} and 
+\ccStyle{CGAL_KERNEL_NO_WARNINGS}.
+So, in order to compile the file \verb~foo.cpp~ with the postcondition checks
+off, you can do:\\
+\verb~CC -DCGAL_KERNEL_NO_POSTCONDITIONS foo.cpp~
+
+This is also preferably done by modifying your makefile by adding
+\ccStyle{-DCGAL_KERNEL_NO_POSTCONDITIONS} to the \ccStyle{CXXFLAGS} variable.
+
+The name \ccStyle{KERNEL} in the macro name can be replaced by a package
+specific name in order to control assertions done in a given package.
+This name is given in the documentation of the corresponding package,
+in case it exists.
+
+Note that global macros can also be used to control the behavior over the
+whole \cgal\ library:
+\begin{itemize}
+  \item \ccStyle{CGAL_NO_PRECONDITIONS},
+  \item \ccStyle{CGAL_NO_POSTCONDITIONS},
+  \item \ccStyle{CGAL_NO_ASSERTIONS},
+  \item \ccStyle{CGAL_NO_WARNINGS} and
+  \item \ccStyle{CGAL_NDEBUG}.
+\end{itemize}
+
+Setting the macro \ccStyle{CGAL_NDEBUG} disables all checks.
+Note that the standard flag \ccc{NDEBUG} sets \ccc{CGAL_NDEBUG}, but it also
+affects the standard \ccc{assert} macro.
+This way, adding \ccStyle{-DCGAL_NDEBUG} to your compilation flags removes
+absolutely all checks.  This is the default recommended setup for performing
+timing benchmarks for example.
+
+Not all checks are on by default.
+All four types of checks can be marked as expensive or exactness checks
+(or both).
+These checks need to be turned on explicitly by supplying one or both of
+the compile time switches \ccStyle{CGAL_KERNEL_CHECK_EXPENSIVE} and 
+\ccStyle{CGAL_KERNEL_CHECK_EXACTNESS}.
+
+Expensive checks are, as the word says, checks that take a considerable
+time to compute. 
+Considerable is an imprecise phrase. 
+Checks that add less than 10 percent to the execution time of the routine 
+they are in are not expensive.
+Checks that can double the execution time are. 
+Somewhere in between lies the border line.
+Checks that increase the asymptotic running time of an algorithm are always 
+considered expensive.
+Exactness checks are checks that rely on exact arithmetic. 
+For example, if the intersection of two lines is computed, the postcondition 
+of this routine may state that the intersection point lies on both lines. 
+However, if the computation is done with doubles as number type, this may not 
+be the case, due to round off errors. 
+So, exactness checks should only be turned on if the computation is done 
+with some exact number type.
+
+\subsection{Altering the Failure Behavior}
+
+As stated above, if a postcondition, precondition or assertion is
+violated, an exception is thrown, and if nothing is done to catch it,
+the program will abort.
+This behavior can be changed by means of the following function.
+
+\ccInclude{CGAL/assertions_behaviour.h}
+
+\ccGlueBegin
+\ccGlobalFunction{Failure_behaviour
+set_error_behaviour(Failure_behaviour eb);}
+\ccGlueEnd
+
+The parameter should have one of the following values.
+
+\ccGlobalEnum{enum Failure_behaviour 
+{ ABORT, EXIT, EXIT_WITH_SUCCESS, CONTINUE, THROW_EXCEPTION };}
+The \ccc{THROW_EXCEPTION} value is the default, which throws an exception.
+
+If the \ccStyle{EXIT} value is set, the program will stop and return a value 
+indicating failure, but not dump the core. 
+The \ccc{CONTINUE} value tells the checks to go on after diagnosing the error.
+Note that since \cgal\ 3.4, \ccc{CONTINUE} has the same effect as
+\ccc{THROW_EXCEPTION} for errors (but it keeps its meaning for warnings), it is
+not possible anymore to let assertion failures simply continue (except by
+totally disabling them).
+
+\begin{ccAdvanced}
+If the \ccStyle{EXIT_WITH_SUCCESS} value is set, the program will stop and 
+return a value corresponding to successful execution and not dump the core. 
+\end{ccAdvanced}
+
+The value that is returned by \ccc{set_error_behaviour} is the value that was in use before.
+
+For warnings there is a separate routine, which works in the same way.
+The only difference is that for warnings the default value is
+\ccStyle{CONTINUE}.
+
+\ccGlueBegin
+\ccGlobalFunction{Failure_behaviour
+set_warning_behaviour(Failure_behaviour eb);}
+\ccGlueEnd
+
+\subsection{Control at a Finer Granularity}
+
+The compile time flags as described up to now all operate on the whole 
+library.
+Sometimes you may want to have a finer control.
+\cgal\ offers the possibility to turn checks on and off with a bit finer
+granularity, namely the module in which the routines are defined.
+The name of the module is to be appended directly after the \cgal\ prefix.
+So, the flag \ccStyle{CGAL_KERNEL_NO_ASSERTIONS} switches off assertions in 
+the kernel only, the flag \ccStyle{CGAL_CH_CHECK_EXPENSIVE} turns on
+expensive checks in the convex hull module.
+The name of a particular module is documented with that module.
+
+\begin{ccAdvanced}
+
+\subsection{Customizing how Errors are Reported}
+
+Normally, error messages are written to the standard error output.
+It is possible to do something different with them.
+To that end you can register your own handler.
+This function should be declared as follows.
+
+\ccTexHtml{\begin{samepage}}{}
+\renewcommand{\ccLongParamLayout}{\ccTrue}
+
+\lcTex{\ccAutoIndexingOff}
+\ccGlobalFunction{
+void my_failure_function( const char *type, const char *expression,
+const char *file, int line, const char *explanation);}
+\ccTexHtml{\end{samepage}}{}
+\lcTex{\ccAutoIndexingOn}
+
+Your failure function will be called with the following parameters.
+\ccStyle{type} is a string that contains one of the words precondition,
+postcondition, assertion or warning. 
+The parameter \ccStyle{expression} contains the expression that was violated.
+\ccStyle{file} and \ccStyle{line} contain the place where the check was made.
+The \ccStyle{explanation} parameter contains an explanation of what was 
+checked. 
+It can be \ccStyle{NULL}, in which case the \ccStyle{expression} is thought
+to be descriptive enough.
+
+There are several things that you can do with your own handler.
+You can display a diagnostic message in a different way, for instance in 
+a pop up window or to a log file (or a combination).
+You can also implement a different policy on what to do after an error.
+For instance, you can throw an exception or ask the user in a dialog 
+whether to abort or to continue.
+If you do this, it is best to set the error behavior to
+\ccStyle{CONTINUE}, so that it does not interfere with your policy.
+
+You can register two handlers, one for warnings and one for errors.
+Of course, you can use the same function for both if you want.
+When you set a handler, the previous handler is returned, so you can restore
+it if you want.
+
+\ccInclude{CGAL/assertions.h}
+
+\ccGlueBegin
+\ccGlobalFunction{Failure_function
+set_error_handler(Failure_function handler);}
+
+\ccGlobalFunction{Failure_function
+set_warning_handler(Failure_function handler);}
+\ccGlueEnd
+
+\subsubsection{Example}
+
+\begin{cprog}
+#include <CGAL/assertions.h>
+
+void my_failure_handler(
+    const char *type,
+    const char *expr,
+    const char* file,
+    int line,
+    const char* msg)
+{
+    /* report the error in some way. */
+}
+
+void foo()
+{
+    CGAL::Failure_function prev;
+    prev = CGAL::set_error_handler(my_failure_handler);
+    /* call some routines. */
+    CGAL::set_error_handler(prev);
+}
+\end{cprog}
+
+\end{ccAdvanced}
+

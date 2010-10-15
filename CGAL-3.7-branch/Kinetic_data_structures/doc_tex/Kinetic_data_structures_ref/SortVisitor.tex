@@ -1,0 +1,45 @@
+% +------------------------------------------------------------------------+
+% | Reference manual page: Event.tex
+% +------------------------------------------------------------------------+
+% | 20.03.2005   Author
+% | Package: Kinetic_data_structures
+% | 
+\RCSdef{\RCSDelaunayTriangulationVisitorRev}{$Id$}
+\RCSdefDate{\RCSDelaunayTriangulationVisitorDate}{$Date$}
+% |
+%%RefPage: end of header, begin of main body
+% +------------------------------------------------------------------------+
+
+\ccDefGlobalScope{CGAL::}
+\begin{ccRefConcept}{Kinetic::SortVisitor}
+
+\ccDefinition
+
+This concept is for proxy objects which have functions called on them when a \ccc{Kinetic::Sort<Traits, Visitor>}.
+
+\ccCreationVariable{v}
+
+\ccOperations
+
+\ccMethod{void pre_remove_vertex(Vertex_handle);}{The vertex is about to be deleted.}
+
+\ccMethod{void post_remove_vertex(Point_key);}{The vertex was just removed.}
+
+\ccMethod{void pre_insert_vertex(Point_key);}{The vertex is about to be inserted into the cell (although the \ccc{Cell_handle} might be \ccc{NULL}).}
+
+\ccMethod{void post_insert_vertex(Vertex_handle);}{The vertex was just inserted.}
+
+\ccMethod{void change_vertex(Vertex_handle);}{Something changed at the vertex.}
+
+\ccMethod{void pre_swap(Vertex_handle, Vertex_handle);}{The pair of vertices is about to be exchanged.}
+
+\ccMethod{void post_swap(Vertex_handle, Vertex_handle);}{The pair of vertices was just swapped.}
+
+
+\ccHasModels 
+
+\ccc{Kinetic::Sort_visitor_base}, \ccc{Kinetic::Sort_event_log_visitor}
+
+\end{ccRefConcept}
+
+

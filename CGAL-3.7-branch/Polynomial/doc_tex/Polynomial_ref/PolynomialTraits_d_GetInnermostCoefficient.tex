@@ -1,0 +1,38 @@
+\begin{ccRefConcept}{PolynomialTraits_d::GetInnermostCoefficient}
+
+\ccDefinition
+
+For the given \ccc{PolynomialTraits_d::Polynomial_d} this 
+\ccc{AdaptableBinaryFunction} returns the coefficient of 
+the (multivariate) monomial specified by the given \ccc{Exponent_vector}. 
+ 
+\ccRefines 
+\ccc{AdaptableBinaryFunction}\\
+\ccc{CopyConstructible}\\
+\ccc{DefaultConstructible}\\
+
+\ccTypes
+
+\ccSetThreeColumns{xxxxxxxxxxxxxxxxxxx}{xxxxxxxxxxx}{}
+\ccTypedef{typedef PolynomialTraits_d::Innermost_coefficient_type  result_type;}{}
+\ccGlue
+\ccTypedef{typedef PolynomialTraits_d::Polynomial_d first_argument_type ;}{}
+\ccGlue
+\ccTypedef{typedef Exponent_vector                  second_argument_type;}{}
+
+\ccCreationVariable{fo}
+\ccOperations
+
+\ccMethod{result_type operator()( first_argument_type p, 
+                                  second_argument_type v);}{ 
+For given polynomial $p$ this operator returns the innermost coefficient of the 
+monomial corresponding to the given \ccc{Exponent_vector} $v$. }
+
+%\ccHasModels
+
+\ccSeeAlso
+
+\ccRefIdfierPage{Polynomial_d}\\
+\ccRefIdfierPage{PolynomialTraits_d}
+
+\end{ccRefConcept}

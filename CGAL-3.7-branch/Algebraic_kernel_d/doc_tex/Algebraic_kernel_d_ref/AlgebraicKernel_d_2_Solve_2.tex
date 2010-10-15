@@ -1,0 +1,50 @@
+\begin{ccRefFunctionObjectConcept}{AlgebraicKernel_d_2::Solve_2}
+
+\ccDefinition
+Computes the real  zero-dimensional solutions of a bivariate polynomial system. 
+The multiplicity stored in the output iterator is the multiplicity in the system.
+
+\ccRefines 
+\ccc{Assignable}
+\ccc{CopyConstructible}
+
+\ccCreationVariable{fo}
+
+\ccOperations \ccThree{+++++++++}{+++++++++}{}
+A model of this type must provide:
+
+%\ccThree{OutputIterator}{fo(argument_type,++}{}
+\ccMethod{template < class OutputIterator >
+    OutputIterator
+    operator()( 
+        AlgebraicKernel_d_2::Polynomial_2 f,
+        AlgebraicKernel_d_2::Polynomial_2 g,
+	OutputIterator res );}
+{Computes all common solutions of $f$ and $g$ with multiplicity, and copies them as objects of type 
+\ccc{std::pair<AlgebraicKernel_d_2::Algebraic_real_2, AlgebraicKernel_d_2::Multiplicity_type>} in \ccc{res}. 
+\ccPrecond{ $f$ is square free.}
+\ccPrecond{ $g$ is square free.}
+\ccPrecond{ $f$ and $g$ are coprime.}
+} 
+
+%\ccThree{OutputIterator}{fo(AlgebraicKernel_d_2::Polynomial_2,++}{}
+\ccMethod{
+template < class OutputIterator > OutputIterator  operator()(
+        AlgebraicKernel_d_2::Polynomial_2 f,
+        AlgebraicKernel_d_2::Polynomial_2 g, 
+        AlgebraicKernel_d_2::Bound xl,  
+        AlgebraicKernel_d_2::Bound xu, 
+        AlgebraicKernel_d_2::Bound yl,  
+        AlgebraicKernel_d_2::Bound yu, 
+        OutputIterator res);}
+{Computes all common solutions of $f$ and $g$ in the closed box $[xl,xu]\times[yl,yu]$, and copies them as objects of 
+type \ccc{std::pair<AlgebraicKernel_d_2::Algebraic_real_2, AlgebraicKernel_d_2::Multiplicity_type>} in \ccc{res}. 
+\ccPrecond{ $f$ is square free.}
+\ccPrecond{ $g$ is square free.}
+\ccPrecond{ $f$ and $g$ are coprime.}
+}
+
+%\ccSeeAlso
+
+
+\end{ccRefFunctionObjectConcept}

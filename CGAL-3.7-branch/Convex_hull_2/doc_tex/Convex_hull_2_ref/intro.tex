@@ -1,0 +1,98 @@
+% +------------------------------------------------------------------------+
+% | Reference manual page: ConvexHull/intro.tex
+% +------------------------------------------------------------------------+
+% | 10.5.2001   Susan Hert and Stefan Schirra
+% | Package: ConvexHull
+% | 
+% |
+% +------------------------------------------------------------------------+
+
+%\clearpage
+%\section{Reference Pages for 2D Convex Hulls and Extreme Points}
+\ccRefChapter{2D Convex Hulls and Extreme Points\label{chap:convex_hull_2_ref}}
+\ccChapterAuthor{Susan Hert \and Stefan Schirra}
+
+
+
+A subset $S \subseteq \R^2$ is convex if for any two points $p$ and $q$
+in the set the line segment with endpoints $p$ and $q$ is contained
+in $S$. The convex hull\ccIndexMainItemDef{convex hull} of a set $S$ is 
+the smallest convex set containing
+$S$. The convex hull of a set of points $P$ is a convex 
+polygon with vertices in $P$.  A point in $P$ is an extreme point 
+(with respect to $P$)\ccIndexMainItemDef{extreme point} if it is a vertex 
+of the convex hull of $P$.
+
+\cgal\ provides functions for computing convex hulls in two dimensions
+as well as functions for testing if a given set of points is strongly 
+convex or not.  There are also a number of functions available for computing 
+particular extreme points in 2D and subsequences of the hull points, such as 
+the lower hull or upper hull of a set of points.
+
+\section{Classified Reference Pages}  
+
+\ccHeading{Assertions}
+\ccIndexSubitem{convex hull, 2D}{assertion flags}
+\ccIndexSubitem{assertion flags}{convex hull, 2D}
+The assertion flags for the convex hull and extreme point algorithms
+use \ccc{CH} in their names (\textit{e.g.}, \ccc{CGAL_CH_NO_POSTCONDITIONS}).
+For the convex hull algorithms, the postcondition
+check tests only convexity (if not disabled), but not containment of the
+input points in the polygon or polyhedron defined by the output points.
+The latter is considered an expensive checking and can be enabled by
+defining \ccc{CGAL_CH_CHECK_EXPENSIVE}%
+\ccIndexAssertionFlagName{CGAL_CH_CHECK_EXPENSIVE}.
+
+
+\ccHeading{Concepts}
+
+
+\ccRefConceptPage{ConvexHullTraits_2}
+
+
+\ccHeading{Traits Classes}
+
+
+\ccRefIdfierPage{CGAL::Convex_hull_constructive_traits_2<R>}  \\
+\ccRefIdfierPage{CGAL::Convex_hull_projective_xy_traits_2<Point_3>}  \\
+\ccRefIdfierPage{CGAL::Convex_hull_projective_xz_traits_2<Point_3>}  \\
+\ccRefIdfierPage{CGAL::Convex_hull_projective_yz_traits_2<Point_3>}  \\
+\ccRefIdfierPage{CGAL::Convex_hull_traits_2<R>} 
+
+
+\ccHeading{Convex Hull Functions}
+
+\ccRefIdfierPage{CGAL::ch_akl_toussaint} \\
+\ccRefIdfierPage{CGAL::ch_bykat} \\
+\ccRefIdfierPage{CGAL::ch_eddy} \\
+\ccRefIdfierPage{CGAL::ch_graham_andrew} \\
+\ccRefIdfierPage{CGAL::ch_jarvis} \\
+\ccRefIdfierPage{CGAL::ch_melkman} \\
+\ccRefIdfierPage{CGAL::convex_hull_2} 
+
+\ccHeading{Convexity Checking Functions}
+
+\ccRefIdfierPage{CGAL::is_ccw_strongly_convex_2} \\
+\ccRefIdfierPage{CGAL::is_cw_strongly_convex_2} 
+
+\ccHeading{Hull Subsequence Functions}
+
+\ccRefIdfierPage{CGAL::ch_graham_andrew_scan} \\
+\ccRefIdfierPage{CGAL::ch_jarvis_march} \\
+\ccRefIdfierPage{CGAL::lower_hull_points_2} \\
+\ccRefIdfierPage{CGAL::upper_hull_points_2}
+
+
+\ccHeading{Extreme Point Functions}
+
+\ccRefIdfierPage{CGAL::ch_e_point} \\
+\ccRefIdfierPage{CGAL::ch_nswe_point} \\
+\ccRefIdfierPage{CGAL::ch_n_point} \\
+\ccRefIdfierPage{CGAL::ch_ns_point} \\
+\ccRefIdfierPage{CGAL::ch_s_point} \\
+\ccRefIdfierPage{CGAL::ch_w_point} \\
+\ccRefIdfierPage{CGAL::ch_we_point} 
+
+\clearpage
+
+

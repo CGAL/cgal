@@ -1,0 +1,41 @@
+#!/bin/tcsh -f
+# **************************************************************************
+# 
+#  cc_check_include_html
+#  =====================
+#  A script to check the consistency between header files mentioned in
+#  an HTML documentation and the files provided in the include directory.
+#
+#  Usage: $0 <HTML-files...>
+#
+#  Author    : (c) 1997 Lutz Kettner
+#              as of version 3.3 (Sept. 1999) maintained by Susan Hert
+#  Revision  : $Id$
+#  Date      : $Date$
+# 
+# **************************************************************************
+
+if ( $#argv < 1) goto usage
+
+set returnvalue = 0
+
+foreach file ( $argv)
+    set incl_files = `grep '[#]include *[&]lt[;][<][aA] *[hH][rR][eE][fF]' $file | sed 's/^.*[hH][rR][eE][fF][=]["]//' | sed 's/["][>].*$//'`
+    foreach ifile ( $incl_files)
+        if ( ! -r ${ifile} ) then
+	    set returnvalue = 1
+            echo "Error: Include file '${ifile}' mentioned in '${file}' does not exist."
+        endif
+    end
+end
+exit $returnvalue
+
+error:
+echo "Error: First argument must be an existing include directory."
+
+usage:
+echo "$0 "'$Id$'" (c) Lutz Kettner"
+echo "Usage: $0 <HTML-files...>"
+exit 1
+
+# EOF #

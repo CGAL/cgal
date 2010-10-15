@@ -1,0 +1,22 @@
+\begin{ccRefFunctionObjectClass}{Is_valid<T>}
+
+\ccDefinition
+
+Not all values of a type need to be valid. The function object 
+class \ccRefName\ checks this. \\
+
+For example, an expression like
+\ccStyle{NT(0)/NT(0)} can result in an invalid number. 
+Routines may have as a precondition that all values are valid.
+ 
+\ccInclude{CGAL/utils_classes.h}
+
+
+\ccIsModel
+\ccRefConceptPage{AdaptableFunctor}
+
+\ccCreationVariable{operator()}
+\ccMethod{bool operator()(const T& x);}
+{returns if the argument is valid.}
+
+\end{ccRefFunctionObjectClass}

@@ -1,0 +1,186 @@
+
+\chapter{Preliminaries}
+\ccChapterAuthor{CGAL Editorial Board}
+\input{Preliminaries/PkgDescription}
+
+This chapter lists the licenses
+under which the \cgal\ datastructures and algorithms are distributed,
+and the third party libraries on which \cgal\ depends, or for which
+\cgal\ provides interfaces.  The chapter further explains how to control
+inlining, thread safety, code deprecation, checking of pre- and postconditions,
+and how to alter the failure behavior. 
+
+\input{Preliminaries/licenses}
+
+\input{Preliminaries/thirdparty}
+
+
+\section{Marking of Special Functionality}
+
+In this manual you will encounter sections marked as follows.
+
+\subsection{Advanced Features}
+
+Some functionality is considered more advanced, for example because it is
+relatively low-level, or requires special care to be properly used.
+
+\begin{ccAdvanced}
+Such functionality is identified this way in the manual.
+\end{ccAdvanced}
+
+\subsection{Debugging Support Features}
+
+Usually related to advanced features that for example may not guarantee
+class invariants, some functionality is provided that helps debugging,
+for example by performing invariants checks on demand.
+
+\begin{ccDebug}
+Such functionality is identified this way in the manual.
+\end{ccDebug}
+
+\subsection{Deprecated Code}
+
+Sometimes, the \cgal\ project decides that a feature is deprecated.  This means
+that it still works in the current release, but it will be removed in the next,
+or a subsequent release.  This can happen when we have found a better way to do
+something, and we would like to reduce the maintenance cost of \cgal\ at some
+point in the future.  There is a trade-off between maintaining backward
+compatibility and implementing new features more easily.
+
+In order to help users manage the changes to apply to their code, we attempt
+to make \cgal\ code emit warnings when deprecated code is used.  This can be
+done using some compiler specific features.  Those warnings can be disabled
+by defining the macro \ccc{CGAL_NO_DEPRECATION_WARNINGS}.  On top of this, we
+also provide a macro, \ccc{CGAL_NO_DEPRECATED_CODE}, which, when defined,
+disables all deprecated features.  This allows users to easily test if their
+code relies on deprecated features.
+
+\begin{ccDeprecated}
+Such functionality is identified this way in the manual.
+\end{ccDeprecated}
+
+
+\section{Namespace CGAL}
+
+All names introduced by \cgal, especially those documented in these
+manuals, are in a namespace called \ccc{CGAL}, which is in global
+scope. A user can either qualify names from \cgal\ by adding
+\ccc{CGAL::}, e.g., \ccc{CGAL::Point_2< CGAL::Exact_predicates_inexact_constructions_kernel >},
+make a single name from \cgal\ visible in a scope via a \ccc{using}
+statement, e.g., \ccc{using CGAL::Point_2;}, and then use this name
+unqualified in this scope, or even make all names from namespace
+\ccc{CGAL} visible in a scope with \ccc{using namespace CGAL;}. The
+latter, however, is likely to give raise to name conflicts and is
+therefore not recommended.
+
+
+\section{Inclusion Order of Header Files}
+
+Not all compilers fully support standard header names. \cgal\ provides 
+workarounds for these problems in \ccc{CGAL/basic.h}. Consequently, as a 
+golden rule, you should always include \ccc{CGAL/basic.h} first in your 
+programs (or \ccc{CGAL/Cartesian.h}, or \ccc{CGAL/Homogeneous.h}, since they 
+include \ccc{CGAL/basic.h} first).
+
+
+\section{Thread Safety}
+
+\cgal\ is progressively being made thread-safe.  The guidelines which are followed
+are:
+\begin{itemize}
+\item it should be possible to use different objects in different threads at
+the same time (of the same type or not),
+\item it is not safe to access the same object from different threads
+at the same time, unless otherwise specified in the class documentation.
+\end{itemize}
+
+If the macro \ccc{CGAL_HAS_THREADS} is not defined, then \cgal\ assumes it can use
+any thread-unsafe code (such as static variables).  By default, this macro is not
+defined, unless \ccc{BOOST_HAS_THREADS} or \ccc{_OPENMP} is defined.  It is possible
+to force its definition on the command line, and it is possible to prevent its default
+definition by setting \ccc{CGAL_HAS_NO_THREADS} from the command line.
+
+
+\section{C++0x Support}
+
+\cgal\ is based on the \CC\ standard released in 1998 (and later refined in 2003).
+A new major version of this standard is being prepared, and is refered to as C++0x.
+Some compilers and standard library implementations already provide some of the
+functionality of this new standard, as a preview.  For example, \gcc\ provides
+a command-line switch \ccc{-std=c++0x} which enables some of those features.
+
+\cgal\ attempts to support this mode progressively, and already makes use of
+some of these features if they are available, although no extensive support has
+been implemented yet.
+
+
+\input{Preliminaries/checks} % extra chapter
+
+
+\section{Identifying the Version of CGAL\label{sec:cgal_version}}
+
+\ccInclude{CGAL/version.h}
+
+Every release of \cgal\ defines the following preprocessor macros:
+\begin{description}
+\item[\texttt{CGAL\_VERSION}]
+     \index{CGAL_VERSION macro@{\tt CGAL\_VERSION} macro}
+     -- a textual description of the current release
+        (e.g., or 3.3 or 3.2.1 or 3.2.1-I-15), and 
+\item[\texttt{CGAL\_VERSION\_NR}]
+     \index{CGAL_VERSION_NR macro@{\tt CGAL\_VERSION\_NR} macro}
+     -- a numerical description of the current release such that
+        more recent releases have higher number.
+
+     More precisely, it is defined as \texttt{1MMmmbiiii},
+     where \texttt{MM} is the major release number (e.g. 03),
+     \texttt{mm} is the minor release number (e.g. 02),
+     \texttt{b} is the bug-fix release number (e.g. 0), and
+     \texttt{iiii} is the internal release number (e.g. 0001). For
+     public releases, the latter is defined as 1000.
+     Examples: for the public release 3.2.4 this number is 
+     1030241000; for internal release 3.2-I-1, it is 1030200001.
+     Note that this scheme was modified around 3.2-I-30.
+\item[\texttt{CGAL\_VERSION\_NUMBER(M,m,b)}]
+     \index{CGAL_VERSION_NUMBER macro@{\tt CGAL\_VERSION\_NUMBER} macro}
+     -- a function macro computing the version number macro
+     from the M.m.b release version.  Note that the internal release
+     number is dropped here.  Example: \texttt{CGAL\_VERSION\_NUMBER(3,2,4)}
+     is equal to 1030241000.
+\end{description}
+ 
+
+\begin{ccAdvanced}
+\section{Compile-time Flags to Control Inlining}
+\ccIndexMainItem{code optimization}
+\ccIndexMainItem{inlining}
+\ccIndexMainItem{\tt inline}
+
+Making functions inlined can, at times, improve the efficiency of your code.
+However this is not always the case and it can differ for a single function
+depending on the application in which it is used. Thus \cgal\ defines a set 
+of compile-time macros that can be used to control whether certain functions 
+are designated as inlined functions or not.  The following table lists the 
+macros and their default values, which are set in one of the \cgal\ include
+files.  
+
+\begin{tabular}{l|l}
+               macro name        & default \\ \hline
+\ccc{CGAL_KERNEL_INLINE}         & inline \\
+\ccc{CGAL_KERNEL_MEDIUM_INLINE}  &  \\
+\ccc{CGAL_KERNEL_LARGE_INLINE}   &  \\
+\ccc{CGAL_MEDIUM_INLINE}         & inline \\
+\ccc{CGAL_LARGE_INLINE}          &  \\
+\ccc{CGAL_HUGE_INLINE}           & 
+\end{tabular}
+
+If you wish to change the value of one or more of these macros,
+you can simply give it a new value when compiling.  For example, to make
+functions that use the macro \ccc{CGAL_KERNEL_MEDIUM_INLINE} inline functions,
+you should set the value of this macro to \texttt{inline} instead of the
+default blank. 
+
+Note that setting inline manually is very fragile, especially in a template
+context.  It is usually better to let the compiler select by himself which
+functions should be inlined or not.
+\end{ccAdvanced}

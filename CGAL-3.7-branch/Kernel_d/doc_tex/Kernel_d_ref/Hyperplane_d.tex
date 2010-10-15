@@ -1,0 +1,155 @@
+\providecommand{\ccRequire}{\ccCommentHeading{Requirement}}
+
+\begin{ccRefClass}{Hyperplane_d<Kernel>}\ccCreationVariable{h}
+
+\ccDefinition
+
+An instance of data type \ccc{Hyperplane_d} is an oriented hyperplane
+in $d$ - dimensional space. A hyperplane $h$ is represented by
+coefficients $(c_0,c_1,\ldots,c_d)$ of type \ccc{RT}. At least one of
+$c_0$ to $c_{ d - 1 }$ must be non-zero.  The plane equation is
+$\sum_{ 0 \le i < d } c_i x_i + c_d = 0$, where $x_0$ to $x_{d-1}$ are
+Cartesian point coordinates.  For a particular $x$ the sign of $\sum_{
+  0 \le i < d } c_i x_i + c_d$ determines the position of a point $x$
+with respect to the hyperplane (on the hyperplane, on the negative
+side, or on the positive side).
+
+There are two equality predicates for hyperplanes. The (weak) equality
+predicate (\ccc{weak_equality}) declares two hyperplanes equal if they
+consist of the same set of points, the strong equality predicate
+(\ccc{operator==}) requires in addition that the negative halfspaces
+agree. In other words, two hyperplanes are strongly equal if their
+coefficient vectors are positive multiples of each other and they are
+(weakly) equal if their coefficient vectors are multiples of each
+other.
+
+\ccSetOneOfTwoColumns{4cm}
+
+\ccTypes
+
+% \ccNestedType{RT}{the ring type.  }
+
+% \ccNestedType{FT}{the field type.  }
+
+\ccNestedType{LA}{the linear algebra layer.  }
+
+\ccNestedType{Coefficient_const_iterator}{a read-only iterator for the
+  coefficients.  }
+
+\ccCreationVariable{h}
+\ccSetOneOfTwoColumns{4cm}
+
+\ccCreation
+
+\ccConstructor{Hyperplane_d<Kernel>()}{introduces a variable
+  \ccc{h} of type \ccc{Hyperplane_d<Kernel>}.}
+
+\ccConstructor{template <class InputIterator> Hyperplane_d<Kernel>(int d,
+  InputIterator first, InputIterator last, RT D)}{introduces a
+  variable \ccc{h} of type \ccc{Hyperplane_d<Kernel>} initialized to the
+  hyperplane with coefficients \ccc{set [first,last)} and \ccc{D}.
+  \ccPrecond \ccc{size [first,last) == d}. \ccRequire The value type of
+  InputIterator is \ccc{RT}.  }
+
+\ccConstructor{template <class InputIterator> Hyperplane_d<Kernel>(int d,
+  InputIterator first, InputIterator last)}{introduces a variable
+  \ccc{h} of type \ccc{Hyperplane_d<Kernel>} initialized to the hyperplane
+  with coefficients \ccc{set [first,last)}.  \ccPrecond \ccc{size
+    [first,last) == d+1}. \ccRequire The value type of InputIterator
+  is \ccc{RT}.  }
+
+\ccConstructor{template <class ForwardIterator>
+  Hyperplane_d<Kernel>(ForwardIterator first, ForwardIterator last,
+  Point_d<Kernel> o, Oriented_side side = ON_ORIENTED_BOUNDARY)}{constructs
+  some hyperplane that passes through the points in \ccc{set
+    [first,last)}. If \ccc{side} is \ccc{ON_POSITIVE_SIDE} or
+  \ccc{ON_NEGATIVE_SIDE} then \ccc{o} is on that side of the
+  constructed hyperplane.  \ccPrecond A hyperplane with the stated
+  properties must exist. \ccRequire The value type of
+  \ccc{ForwardIterator} is \ccc{Point_d<Kernel>}.  }
+
+\ccConstructor{Hyperplane_d<Kernel>(Point_d<Kernel> p, Direction_d<Kernel>
+  dir)}{constructs the hyperplane with normal direction \ccc{dir} that
+  passes through $p$. The direction \ccc{dir} points into the positive
+  side.  \ccPrecond \ccc{p.dimension()==dir.dimension()} and \ccc{dir}
+  is not degenerate.}
+
+\ccConstructor{Hyperplane_d<Kernel>(RT a, RT b, RT c)}{introduces a
+  variable \ccc{h} of type \ccc{Hyperplane_d<Kernel>} in $2$-dimensional
+  space with equation $ax+by+c=0$.  }
+
+\ccConstructor{Hyperplane_d<Kernel>(RT a, RT b, RT c, RT d)}{introduces a
+  variable \ccc{h} of type \ccc{Hyperplane_d<Kernel>} in $3$-dimensional
+  space with equation $ax+by+cz+d=0$.  }
+
+\ccSetTwoOfThreeColumns{4cm}{2cm}
+
+\ccOperations
+
+\ccMethod{int dimension() ;}{returns the dimension of \ccc{h}.  }
+
+\ccMethod{RT operator[](int i) ;}{returns the $i$-th coefficient of
+  \ccc{h}.  \ccPrecond $0 \leq i \leq d$.  }
+
+\ccMethod{RT coefficient(int i) ;}{returns the $i$-th coefficient of
+  \ccc{h}.  \ccPrecond $0 \leq i \leq d$.  }
+
+\ccMethod{Coefficient_const_iterator coefficients_begin() ;}{returns
+  an iterator pointing to the first coefficient.  }
+
+\ccMethod{Coefficient_const_iterator coefficients_end() ;}{returns an
+  iterator pointing beyond the last coefficient.  }
+
+\ccMethod{Vector_d<Kernel> orthogonal_vector() ;}{returns the orthogonal
+  vector of \ccc{h}. It points from the negative halfspace into the
+  positive halfspace and its homogeneous coordinates are $(c_0,
+  \ldots, c_{d - 1},1)$.  }
+
+\ccMethod{Direction_d<Kernel> orthogonal_direction() ;}{returns the
+  orthogonal direction of \ccc{h}. It points from the negative
+  halfspace into the positive halfspace.  }
+
+\ccMethod{Oriented_side oriented_side(const Point_d<Kernel>& p) ;}{returns
+  the side of the hyperplane \ccc{h} containing $p$.  \ccPrecond
+  \ccc{h.dimension() == p.dimension()}. }
+
+\ccMethod{bool has_on(const Point_d<Kernel>& p) ;}{returns true iff point
+  \ccc{p} lies on the hyperplane \ccc{h}. \ccPrecond
+  \ccc{h.dimension() == p.dimension()}. }
+
+\ccMethod{bool has_on_boundary(const Point_d<Kernel>& p) ;}{returns true
+  iff point \ccc{p} lies on the boundary of hyperplane \ccc{h}.
+  \ccPrecond \ccc{h.dimension() == p.dimension()}. }
+
+\ccMethod{bool has_on_positive_side(const Point_d<Kernel>& p) ;}{returns
+  true iff point \ccc{p} lies on the positive side of hyperplane
+  \ccc{h}. \ccPrecond \ccc{h.dimension() == p.dimension()}. }
+
+\ccMethod{bool has_on_negative_side(const Point_d<Kernel>& p) ;}{returns
+  true iff point \ccc{p} lies on the negative side of hyperplane
+  \ccc{h}. \ccPrecond \ccc{h.dimension() == p.dimension()}. }
+
+\ccMethod{Hyperplane_d<Kernel> transform(const Aff_transformation_d<Kernel>& t)
+  ;}{returns $t(h)$. \ccPrecond \ccc{h.dimension() == t.dimension()}.
+  }
+
+\ccHeading{Non-Member Functions} 
+
+
+\ccFunction{bool weak_equality(const Hyperplane_d<Kernel>& h1, const
+  Hyperplane_d<Kernel>& h2) ;}{test for weak equality. \ccPrecond
+  \ccc{h1.dimension() == h2.dimension()}. }
+
+\ccImplementation
+
+Hyperplanes are implemented by arrays of integers as an item type.
+All operations like creation, initialization, tests, vector
+arithmetic, input and output on a hyperplane $h$ take time
+$O(\ccc{h.dimension()})$. coordinate access and \ccc{dimension()} take
+constant time.  The space requirement is $O(\ccc{h.dimension()})$.
+
+
+
+\end{ccRefClass}
+
+

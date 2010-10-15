@@ -1,0 +1,23 @@
+\begin{ccPkgDescription}{3D Minkowski Sum of Polyhedra\label{Pkg:MinkowskiSum3}}
+\ccPkgHowToCiteCgal{cgal:h-msp3-10}
+\ccPkgSummary{
+This package provides a function, which computes the Minkowski sum of
+two point sets in $\mathbb{R}^3$. These point sets may consist of
+isolated vertices, isolated edges, surfaces with convex facets without
+holes, and open and closed solids. Thus, it is possible to compute
+the configuration space of translational robots (even in tight passage
+scenarios) as well as several graphics operations, like for instance
+the glide operation, which computes the point set swept by a
+polyhedron that moves along a polygonal line.
+}
+\ccPkgDependsOn{
+	\ccRef[2D Nef Polygons]{Pkg:Nef2},
+        \ccRef[Nef Polygons on the Sphere]{Pkg:NefS2} 
+	\ccRef[3D Nef Polyhedra]{Pkg:Nef3},
+	\ccRef[Convex Decomposition of Polyhedra]{Pkg:ConvexDecomposition3}
+}
+\ccPkgIntroducedInCGAL{3.5}
+\ccPkgLicense{\ccLicenseQPL}
+\ccPkgDemo{Operations on Polyhedra}{polyhedron_3.zip}
+\ccPkgIllustration{Minkowski_sum_3/fig/teaser.png}{Minkowski_sum_3/fig/spoon_star.png}
+\end{ccPkgDescription}

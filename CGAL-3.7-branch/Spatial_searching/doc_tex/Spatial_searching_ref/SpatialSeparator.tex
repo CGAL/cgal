@@ -1,0 +1,71 @@
+% +------------------------------------------------------------------------+
+% | Reference manual page: SpatialSeparator.tex
+% +------------------------------------------------------------------------+
+% | 1.07.2001   Johan W.H. Tangelder
+% | Package: ASPAS
+% | 
+\RCSdef{\RCSSpatialSeparatorRev}{$Id$}
+\RCSdefDate{\RCSSpatialSeparatorDate}{$Date$}
+% |
+%%RefPage: end of header, begin of main body
+% +------------------------------------------------------------------------+
+
+
+\begin{ccRefConcept}{SpatialSeparator}
+
+\begin{ccAdvanced}
+
+%% \ccHtmlCrossLink{}     %% add further rules for cross referencing links
+%% \ccHtmlIndexC[concept]{} %% add further index entries
+
+\ccDefinition
+  
+The concept \ccRefName\ defines the requirements for a separator.
+A separator is a ($d$-1)-dimensional subspace that separates a $d$-dimensional space into two parts.
+One part of space is said to be on the negative side of the separator and the other part of space is 
+said to be on the positive side of the separator.
+
+\ccHasModels
+
+\ccc{CGAL::Plane_separator<FT>}.
+
+\ccTypes
+
+\ccNestedType{FT}{Number type.}
+
+\ccCreation
+\ccCreationVariable{s}  %% choose variable name
+
+\ccConstructor{Separator();}{Default constructor.}
+
+\ccOperations
+
+\ccMethod{
+void set_cutting_dimension(int d);}
+{Sets the cutting dimension to \ccc{d}. }
+
+\ccMethod{
+void set_cutting_value(FT v);}
+{Sets the cutting value to \ccc{v}. }
+
+\ccMethod{int cutting_dimension();}{Returns the number of the cutting dimension.}
+
+\ccMethod{FT cutting_value();}{Returns the cutting value.}
+
+
+
+\ccMethod{template <class Point_d>
+bool has_on_negative_side(Point_d p);}
+{Returns true if and only if the point \ccc{p} is on the negative side of the separator.}
+
+
+
+\end{ccAdvanced}
+
+\end{ccRefConcept}
+
+% +------------------------------------------------------------------------+
+%%RefPage: end of main body, begin of footer
+% EOF
+% +------------------------------------------------------------------------+
+

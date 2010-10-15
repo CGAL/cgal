@@ -1,0 +1,1 @@
+Fast intersection test between two sets of boxes.

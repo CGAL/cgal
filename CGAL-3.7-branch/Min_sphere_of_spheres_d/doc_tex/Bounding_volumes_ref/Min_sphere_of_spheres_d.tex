@@ -1,0 +1,317 @@
+
+\begin{ccRefClass}{Min_sphere_of_spheres_d<Traits>}
+\ccIndexSubitem[t]{sphere}{smallest enclosing sphere of spheres}
+\ccIndexSubitem[t]{smallest enclosing}{sphere of spheres}
+\ccIndexSubitem[t]{bounding volumes}{smallest enclosing sphere of spheres}
+\ccIndexSubitemSeeAlso[t]{circle}{smallest enclosing sphere of spheres}
+
+% -----------------------------------------------------------------------------
+\ccDefinition
+
+An object of the class \ccRefName\ is a data structure that represents
+the unique sphere of smallest volume enclosing a finite set of spheres
+in $d$-dimensional Euclidean space $\E^d$.  For a set $S$ of spheres
+we denote by $ms(S)$ the smallest sphere that contains all spheres of
+$S$; we call $ms(S)$ the \emph{minsphere} of $S$. $ms(S)$ can be
+degenerate, i.e., $ms(S)=\emptyset$,
+if $S=\emptyset$ and $ms(S)=\{s\}$,
+if $S=\{s\}$.  Any sphere in $S$ may be degenerate, too, i.e., any
+sphere from $S$ may be a point.  Also, $S$ may contain several
+copies of the same sphere.
+
+An inclusion-minimal subset $R$ of $S$ with $ms(R)=ms(S)$ is called a
+\emph{support set} for $ms(S)$; the spheres in $R$ are the
+\emph{support spheres}.  A support set has size at most $d+1$, and all
+its spheres lie on the boundary of $ms(S)$. (A sphere $s'$ is said to
+\emph{lie on the boundary} of a sphere $s$, if $s'$ is contained in $s$
+and if their boundaries intersect.)  In general, the support set is
+not unique.
+
+The algorithm computes the center and the radius of $ms(S)$, and finds
+a support set $R$ (which remains fixed until the next \ccc{insert()},
+\ccc{clear()} or \ccc{set()} operation).  We also provide a
+specialization of the algorithm for the case when the center
+coordinates and radii of the input spheres are floating-point numbers.
+This specialized algorithm uses floating-point arithmetic only, is
+very fast and especially tuned for stability and robustness.  Still,
+it's output may be incorrect in some (rare) cases; termination is
+guaranteed.
+
+When default constructed, an instance of type
+\ccc{Min_sphere_of_spheres_d<Traits>} represents the set
+$S=\emptyset$, together with its minsphere $ms(S)=\emptyset$.  You can
+add spheres to the set $S$ by calling \ccc{insert()}.  Querying the
+minsphere is done by calling the routines \ccc{is_empty()},
+\ccc{radius()} and \ccc{center_cartesian_begin()}, among others.
+
+In general, the radius and the Euclidean center coordinates of $ms(S)$
+need not be rational.  Consequently, the algorithm computing the exact
+minsphere will have to deal with algebraic numbers.  Fortunately, both
+the radius and the coordinates of the minsphere are numbers of the
+form $a_i+b_i\sqrt{t}$, where $a_i,b_i,t\in \Q$ and where $t\ge 0$ is
+the same for all coordinates and the radius.  Thus, the exact
+minsphere can be described by the number~$t$, which is called the
+sphere's \emph{discriminant}, and by $d+1$ pairs $(a_i,b_i)\in\Q^2$
+(one for the radius and $d$ for the center coordinates).
+
+\ccInclude{CGAL/Min_sphere_of_spheres_d.h}
+
+\textbf{Note:} This class (almost) replaces
+\ccc{CGAL::Min_sphere_d<Traits>}, which solves the less general
+problem of finding the smallest enclosing ball of a set of
+\emph{points}.  \ccRefName\ is faster than
+\ccc{CGAL::Min_sphere_d<Traits>}, and in contrast to the latter
+provides a specialized implementation for floating-point arithmetic
+which ensures correct results in a large number of cases (including
+highly degenerate ones).  The only advantage of
+\ccc{CGAL::Min_sphere_d<Traits>} over \ccRefName\ is that the former
+can deal with points in homogeneous coordinates, in which case the
+algorithm is division-free. Thus, \ccc{CGAL::Min_sphere_d<Traits>}
+might still be an option in case your input number type cannot
+(efficiently) divide.
+
+\ccRequirements
+\ccIndexRequirements
+
+The class \ccRefName\ expects a model of the concept
+\ccc{MinSphereOfSpheresTraits} as its template argument.
+
+% We provide the model \ccc{Min_sphere_of_spheres_d_traits_d} in
+% order to facilitate working with $d$-dimensional spheres of type
+% \ccc{CGAL::Weighted_point<Pt,Wt>}, where \ccc{Pt} is \ccc{Point_d}.
+% the models \ccc{MinSphereOfSpheres_d_traits_2},
+% \ccc{MinSphereOfSpheres_d_traits_3} and
+% \ccc{MinSphereOfSpheres_d_traits_d} for two-, three-, and
+% $d$-dimensional spheres respectively.
+
+\ccTypes \ccIndexClassTypes
+
+\ccNestedType{Sphere}{is a typedef to \ccc{Traits::Sphere}.}
+
+\ccNestedType{FT}{is a typedef to \ccc{Traits::FT}.}
+
+\ccNestedType{Result}{is the type of the radius and of the center
+  coordinates of the computed minsphere: When \ccc{FT} is an inexact
+  number type (\ccc{double}, for instance), then \ccc{Result} is
+  simply \ccc{FT}.  However, when \ccc{FT} is an exact number type,
+  then \ccc{Result} is a typedef to a derived class of
+  \ccc{std::pair<FT,FT>}; an instance of this type represents the
+  number $a+b\sqrt{t}$, where $a$ is the first and $b$ the second
+  element of the pair and where the number $t$ is accessed using the
+  member function \ccc{disciminant()} of class
+  \ccc{Min_sphere_of_spheres_d<Traits>}.}
+
+\ccNestedType{Algorithm}{is either \ccc{CGAL::LP_algorithm} or
+\ccc{CGAL::Farthest_first_heuristic}.  As is described in the
+documentation of concept \ccc{MinSphereOfSpheresTraits}, the type
+\ccc{Algorithm} reflects the method which is used to compute the
+minsphere.  (Normally, \ccc{Algorithm} coincides with
+\ccc{Traits::Algorithm}.  However, if the method
+\ccc{Traits::Algorithm} should not be supported anymore in a future
+release, then \ccc{Algorithm} will have another type.)}
+
+\ccNestedType{Support_iterator}{non-mutable model of the STL
+concept
+%\ccc{ForwardIterator}
+\ccc{BidirectionalIterator}
+with value type \ccc{Sphere}. Used
+to access the support spheres defining the smallest enclosing sphere.}
+
+\ccNestedType{Cartesian_const_iterator}{non-mutable model of the STL
+concept
+\ccc{BidirectionalIterator}
+%\ccc{ForwardIterator} with value type \ccc{Result}. Used
+to access the center coordinates of the minsphere.}
+
+\ccCreation
+\ccIndexClassCreation
+\ccCreationVariable{minsphere}
+
+\ccConstructor{ Min_sphere_of_spheres_d(const Traits& traits = Traits());}%
+{creates a variable of type \ccRefName\ and initializes it to
+  $ms(\emptyset)$.  If the traits
+  parameter is not supplied, the class \ccc{Traits} must provide a
+  default constructor.}
+
+\ccUnchecked
+\ccConstructor{ template < typename InputIterator >
+                Min_sphere_of_spheres_d( InputIterator  first,
+                                   InputIterator  last,
+                                   const Traits&  traits = Traits());}
+%
+                                 {creates a variable \ccVar\ of type
+                                   \ccRefName\ and inserts (cf.\ 
+                                   \ccc{insert()}) the spheres from
+                                   the range [\ccc{first},\ccc{last}).
+%
+\ccRequire The value type of \ccc{first} and \ccc{last} is
+\ccc{Sphere}. If the traits parameter is not supplied, the class
+\ccc{Traits} must provide a default constructor.}
+
+\ccAccessFunctions
+\begin{ccIndexMemberFunctions}
+\ccIndexMemberFunctionGroup{access}
+
+\ccMemberFunction{ Support_iterator support_begin() const;}{ returns
+  an iterator referring to the first support sphere of \ccVar.}
+%
+\ccMemberFunction{ Support_iterator support_end() const;}{ returns the
+  corresponding past-the-end iterator.}
+
+
+\ccMemberFunction{ const FT& discriminant( ) const;}{ returns the
+  discriminant of \ccVar.  This number is undefined when \ccc{FT} is
+  an inexact number type.  When \ccc{FT} is exact, the center
+  coordinates and the radius of the minsphere are numbers of the form
+  $a+b\sqrt{t}$, where $t$ is the discriminant of the minsphere as
+  returned by this function.  \ccPrecond \ccVar\ is not empty, and
+  \ccc{FT} is an exact number type.}
+
+
+\ccMemberFunction{Result radius( ) const;}{ returns the radius of
+  \ccVar.  If \ccc{FT} is an exact number type then the radius of the
+  minsphere is the real number $a+b\sqrt{t}$, where $t$ is the
+  minsphere's discriminant, $a$ is the first and $b$ the second
+  component of the pair returned by \ccc{radius()}.  \ccPrecond
+  \ccVar\ is not empty.}
+
+\ccMemberFunction{Cartesian_const_iterator center_cartesian_begin( )
+  const;}{ returns a const-iterator to the first of the
+  \ccc{Traits::D} center coordinates of \ccVar.  The iterator returns
+  objects of type \ccc{Result}.  If \ccc{FT} is an exact number type,
+  then a center coordinate is represented by a pair $(a,b)$ describing
+  the real number $a+b\sqrt{t}$, where $t$ is the minsphere's
+  discriminant (cf.  \ccc{discriminant()}).  \ccPrecond \ccVar\ is not
+  empty.}
+
+\ccMemberFunction{Cartesian_const_iterator center_cartesian_end( )
+  const;}{ returns the corresponding past-the-end iterator, i.e.\ 
+  \ccc{center_cartesian_begin()+Traits::D}.  \ccPrecond \ccVar\ is not
+  empty.}
+
+% -----------------------------------------------------------------------------
+\ccPredicates
+\ccIndexMemberFunctionGroup{predicates}
+
+\ccMemberFunction{ bool is_empty( ) const;}{ returns \ccc{true}, iff
+  \ccVar\ is empty, i.e.\ iff $ms(S)=\emptyset$.}
+
+%\ccIndexSubitem[t]{degeneracies}{\ccc{Min_sphere_d}}
+%\ccMemberFunction{ bool  is_degenerate( ) const;}{
+%        returns \ccc{true}, iff \ccVar\ is degenerate, i.e.\ if
+%        \ccVar\ is empty or equal to a single point, equivalently if
+%        the number of support points is less than 2.}
+
+% -----------------------------------------------------------------------------
+\ccModifiers
+\ccIndexMemberFunctionGroup{modifiers}
+
+\ccMemberFunction{ void clear ();}{
+        resets \ccVar\ to $ms(\emptyset)$, with $S:= \emptyset$.}
+
+\ccUnchecked \ccMemberFunction{ template < class InputIterator > void
+  set( InputIterator first, InputIterator last );}{ sets \ccVar\ to
+  the $ms(S)$, where $S$ is the set of spheres in the range
+  [\ccc{first},\ccc{last}).
+  \ccRequire The value type of \ccc{first} and \ccc{last} is
+  \ccc{Sphere}.}
+
+\ccMemberFunction{ void insert( const Sphere& s );}{ inserts the
+  sphere \ccc{s} into the set $S$ of instance \ccVar.}
+
+
+\ccMemberFunction{ template < class InputIterator > void insert(
+  InputIterator first, InputIterator last );}{ inserts the spheres in
+  the range [\ccc{first},\ccc{last}) into the set $S$ of instance
+  \ccVar.
+  \ccRequire The value type of \ccc{first} and \ccc{last} is
+  \ccc{Sphere}.}
+
+% -----------------------------------------------------------------------------
+\ccHeading{Validity Check}
+\ccIndexMemberFunctionGroup{validity check}
+%\ccIndexSubitem[t]{validity check}{\ccc{Min_sphere_d}}
+An object \ccVar\ is valid, iff
+\begin{itemize}
+\item \ccVar\ contains all spheres of its defining set $S$,
+\item \ccVar\ is the smallest sphere containing its support set $R$, and
+\item $R$ is minimal, i.e., no support sphere is redundant.
+\end{itemize}
+
+%\ccMemberFunction{ bool is_valid( bool verbose = false,
+%                                  int  level   = 0    ) const;}{
+\ccMemberFunction{ bool is_valid() const;}{ returns \ccc{true}, iff
+  \ccVar\ is valid.  When \ccc{FT} is inexact, this routine always
+  returns \ccc{true}.}
+
+% -----------------------------------------------------------------------------
+\ccHeading{Miscellaneous}
+\ccIndexMemberFunctionGroup{miscellaneous}
+
+\def\ccTagRmConstRefPair{\ccFalse}
+\ccMemberFunction{ const Traits&  traits( ) const;}{
+        returns a const reference to the traits class object.}
+        \def\ccTagRmConstRefPair{\ccTrue}
+
+ \end{ccIndexMemberFunctions}
+
+% -----------------------------------------------------------------------------
+%\ccHeading{I/O}
+%\begin{ccIndexGlobalFunctions}
+%
+%\ccIndexGlobalFunctionGroup{output}
+%\ccFunction{ std::ostream& operator << ( std::ostream& os,
+%                                    const Min_sphere_d<Traits>&
+%                                        min_sphere);}{
+%        writes \ccVar\ to output stream \ccc{os}.
+%        \ccRequire The output operator is defined for \ccc{Point}.}
+%
+%\ccIndexGlobalFunctionGroup{input}
+%
+%\ccFunction{ std::istream& operator >> ( std::istream& is,
+%                                    Min_sphere_d<Traits> min_sphere&);}{
+%        reads \ccVar\ from input stream \ccc{is}.
+%          \ccRequire The input operator is defined for \ccc{Point}.}
+%
+%\end{ccIndexGlobalFunctions}
+
+% -----------------------------------------------------------------------------
+\ccSeeAlso
+%
+    \ccRefIdfierPage{CGAL::Min_sphere_d<Traits>}\\
+    \ccRefIdfierPage{CGAL::Min_circle_2<Traits>}\\
+% -----------------------------------------------------------------------------
+
+\ccImplementation
+\ccIndexImplementation
+%\ccIndexSubitem[t]{incremental algorithm}{\ccc{Min_sphere_of_spheres_d}}
+%\ccIndexSubitem[t]{farthest-first heuristic}{\ccc{Min_sphere_of_spheres_d}}
+
+We implement two algorithms, the LP-algorithm and a
+heuristic~\cite{msw-sblp-92}.  As described in the documentation of
+concept \ccc{MinSphereOfSpheresTraits}, each has its advantages and
+disadvantages: Our implementation of the LP-algorithm has maximal
+expected running time $O(2^d n)$, while the heuristic comes without
+any complexity guarantee.  In particular, the LP-algorithm runs in
+linear time for fixed dimension~$d$. (These running times hold for the
+arithmetic model, so they count the number of operations on
+the number type \ccc{FT}.)
+
+On the other hand, the LP-algorithm is, for inexact number types
+\ccc{FT}, much worse at handling degeneracies and should therefore not
+be used in such a case.  (For exact number types
+\ccc{FT}, both methods handle all kinds of degeneracies.)
+
+Currently, we require \ccc{Traits::FT} to be either an exact number
+type or \ccc{double} or \ccc{float}; other inexact number types are
+not supported at this time.  Also, the current implementation only
+handles spheres with Cartesian coordinates; homogenous representation
+is not supported yet.
+
+\ccExample
+\ccIncludeExampleCode{Min_sphere_of_spheres_d/min_sphere_of_spheres_d_d.cpp}
+
+\end{ccRefClass}
+
+% ===== EOF ===================================================================
+

@@ -1,0 +1,82 @@
+% +------------------------------------------------------------------------+
+% | Reference manual page: Surface_mesh_traits_generator_3.tex
+% +------------------------------------------------------------------------+
+% | 22.02.2006   Author
+% | Package: Package
+% | 
+\RCSdef{\RCSSurfacemeshtraitsgenerator3Rev}{$Id$}
+\RCSdefDate{\RCSSurfacemeshtraitsgenerator3Date}{$Date$}
+% |
+%%RefPage: end of header, begin of main body
+% +------------------------------------------------------------------------+
+
+
+\begin{ccRefClass}{Surface_mesh_traits_generator_3<Surface>}
+
+%% \ccHtmlCrossLink{}     %% add further rules for cross referencing links
+%% \ccHtmlIndexC[class]{} %% add further index entries
+
+\ccDefinition
+  
+The class \ccRefName\ provides 
+ a type \ccc{Type}, that is 
+a model of the concept \ccc{SurfaceMeshTraits_3}
+for the surface type \ccc{Surface}.
+
+The type \ccc{Surface} is required to be a model of the concept
+\ccc{Surface_3},
+which means that it is copy constructible
+and assignable.
+ In addition, a \ccc{Surface} type is required
+\begin{itemize}
+\item 
+either to provide a nested type
+\ccc{Surface::Surface_mesher_traits_3}
+that is a model of \ccc{SurfaceMeshTraits_3}
+\item or to be a surface type for which a specialization
+of the traits generator \ccRefName\ exists.
+\end{itemize}
+ 
+
+Currently, the library provides partial specializations
+of  the   traits generator 
+for implicit surfaces (\ccc{Implicit_surface_3<Traits, Function>}) and 
+gray level images (\ccc{Gray_level_image_3<FT, Point>}).
+ 
+
+
+\ccInclude{CGAL/Surface_mesh_traits_generator_3.h}
+
+\ccNestedType{Type}{A model of the concept \ccc{SurfaceMeshTraits_3}.}
+
+
+
+\ccSeeAlso
+
+  
+\ccc{SurfaceMeshTraits_3}
+\ccc{make_surface_mesh}
+
+%\ccExample
+
+%A short example program.
+%Instead of a short program fragment, a full running program can be
+%included using the 
+%\verb|\ccIncludeExampleCode{Package/Surface_mesh_traits_3.cpp}| 
+%macro. The program example would be part of the source code distribution and
+%also part of the automatic test suite.
+
+%\begin{ccExampleCode}
+%void your_example_code() {
+%}
+%\end{ccExampleCode}
+
+%%% \ccIncludeExampleCode{Package/Surface_mesh_traits_3.cpp}
+
+\end{ccRefClass}
+
+% +------------------------------------------------------------------------+
+%%RefPage: end of main body, begin of footer
+% EOF
+% +------------------------------------------------------------------------+
+

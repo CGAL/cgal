@@ -1,0 +1,75 @@
+% +------------------------------------------------------------------------+
+% | Reference manual page: Volume.tex
+% +------------------------------------------------------------------------+
+% | 14.05.2004   Peter Hachenberger
+% | Package: Nef_3
+% | 
+\RCSdef{\RCSVolumeRev}{$Id$}
+\RCSdefDate{\RCSVolumeDate}{$Date$}
+% +------------------------------------------------------------------------+
+
+\ccRefPageBegin
+
+%%RefPage: end of header, begin of main body
+% +------------------------------------------------------------------------+
+
+
+\begin{ccRefClass}[Nef_polyhedron_3<Traits>::]{Volume}
+
+\ccDefinition
+
+A volume is a full-dimensional connected point set in $\mathbb{R}^3$. It is
+bounded by several shells, i.e. a connected part of the boundary incident
+to a single volume. An entry element to each shell is provided by the 
+iterator range (\ccc{shells_begin()}/\ccc{shells_end()}). A 
+\ccc{Shell_entry_iterator} is assignable to \ccc{SFace_handle}.
+
+\ccInclude{CGAL/Nef_polyhedron_3.h}
+
+\ccTypes
+\ccThree{Shell_entry_const_iterator}{shells_begin() const;}{}
+\ccThreeToTwo
+
+The following types are the same as in \ccc{Nef_polyhedron_3<Traits>}.
+
+\ccNestedType{Mark}{type of mark.}
+
+\ccNestedType{Object_list}{list of Object handles.}
+
+\ccNestedType{Volume_const_handle}{const handle to Volume.}
+\ccGlue
+\ccNestedType{Shell_entry_const_iterator}
+{const iterator over the entries to all shells adjacent to a volume.}
+
+\ccCreation
+\ccCreationVariable{c}
+
+There is no need for a user to create a \ccc{Volume} explicitly. The
+class \ccc{Nef_polyhedron_3<Traits>} manages the needed volumes internally.
+
+%\ccConstructor{Volume();}{ default constructor.}
+
+\ccOperations
+
+\ccThree{Shell_entry_const_iterator}{h.halfedge()const}{}
+
+\ccMethod{const Mark& mark() const;}{the mark of \ccVar\ .}
+
+\ccMethod{Shell_entry_const_iterator  shells_begin() const;}
+{const iterator over the entries to all shells adjacent to \ccVar\ .}
+
+\ccMethod{Shell_entry_const_iterator  shells_end() const;}
+{past-the-end iterator.}
+
+\ccSeeAlso
+
+\ccRefIdfierPage{CGAL::Nef_polyhedron_3<Traits>::SFace}
+
+\ccTagDefaults
+\end{ccRefClass}
+
+% +------------------------------------------------------------------------+
+%%RefPage: end of main body, begin of footer
+\ccRefPageEnd
+% EOF
+% +------------------------------------------------------------------------+

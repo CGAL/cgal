@@ -1,0 +1,31 @@
+\begin{ccRefFunction}{make_root_of_2}
+
+\ccDefinition
+
+The function \ccRefName\ constructs an algebraic number of degree 2 over a 
+ring number type. 
+
+\ccInclude{CGAL/Root_of_traits.h}
+
+\ccFunction{template <typename RT>
+            Root_of_traits<RT>::RootOf_2
+            make_root_of_2(const RT& a, const RT& b, const RT& c, bool s);}
+{Returns the real root of the polynomial $aX^2+bX+c$ which is the smallest 
+if $s$ is true, or the largest if $s$ is false.   
+%If \ccc{NT} supports a \ccc{sqrt} operation, then the usual formula is used.  
+%Otherwise the \ccc{Root_of_2} class is used.
+\ccPrecond{\ccc{RT} is a \ccc{RingNumberType}.}
+\ccPrecond{The polynomial has at least one real root.}}
+
+\ccFunction{template <typename RT>
+            Root_of_traits<RT>::RootOf_2
+	    make_root_of_2(RT alpha, RT beta, RT gamma);}
+{Constructs the number $\alpha + \beta \sqrt{\gamma}$. 
+\ccPrecond{\ccc{RT} is a \ccc{RingNumberType}.}
+\ccPrecond{$\gamma\geq 0$}}
+
+\ccSeeAlso
+\ccRefIdfierPage{RootOf_2}\\
+\ccRefIdfierPage{CGAL::Root_of_2<RT>}\\
+\ccRefIdfierPage{CGAL::Root_of_traits_2<RT>}
+\end{ccRefFunction}

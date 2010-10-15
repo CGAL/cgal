@@ -1,0 +1,99 @@
+% +------------------------------------------------------------------------+
+% | Reference manual page: HalfedgeDS_items_2.tex
+% +------------------------------------------------------------------------+
+% | 22.03.1999   Lutz Kettner
+% | Package: HalfedgeDS
+% | 
+\RCSdef{\RCSHalfedgeDSitemsRev}{$Id$}
+\RCSdefDate{\RCSHalfedgeDSitemsDate}{$Date$}
+% +------------------------------------------------------------------------+
+
+\ccRefPageBegin
+
+%%RefPage: end of header, begin of main body
+% +------------------------------------------------------------------------+
+
+
+\begin{ccRefClass}{HalfedgeDS_items_2}
+\label{pageHalfedgeDSitemsRef}
+
+\ccDefinition
+  
+The class \ccRefName\ is a model of the \ccc{HalfedgeDSItems} concept.
+It uses the default types for vertices, halfedges, and faces that
+declare all incidences supported by a \ccc{HalfedgeDS}.  The vertex
+also contains a point of type \ccc{Traits::Point_2}, where \ccc{Traits} 
+is the template argument of the corresponding \ccc{HalfedgeDS}.
+
+\ccInclude{CGAL/HalfedgeDS_items_2.h}
+
+\ccIsModel
+
+\ccRefConceptPage{HalfedgeDSItems}
+
+\ccSeeAlso
+
+\ccRefIdfierPage{CGAL::HalfedgeDS_min_items}\\
+\ccRefIdfierPage{CGAL::Polyhedron_items_3}\\
+\ccRefConceptPage{HalfedgeDS<Traits,Items,Alloc>}\\
+\ccRefConceptPage{PolyhedronItems_3}\\
+\ccRefIdfierPage{CGAL::HalfedgeDS_vertex_base<Refs>}\\
+\ccRefIdfierPage{CGAL::HalfedgeDS_halfedge_base<Refs>}\\
+\ccRefIdfierPage{CGAL::HalfedgeDS_face_base<Refs>}
+
+\ccExample
+
+The following example shows the canonical implementation of the
+\ccRefName\ class. It uses the base classes for the item types that
+are provided in the library.
+
+\begin{ccExampleCode}
+struct HalfedgeDS_items_2 {
+    template < class Refs, class Traits>
+    struct Vertex_wrapper {
+        typedef typename Traits::Point_2 Point;
+        typedef CGAL::HalfedgeDS_vertex_base< Refs, Tag_true, Point> Vertex;
+    };
+    template < class Refs, class Traits>
+    struct Halfedge_wrapper {
+        typedef CGAL::HalfedgeDS_halfedge_base< Refs> Halfedge;
+    };
+    template < class Refs, class Traits>
+    struct Face_wrapper {
+        typedef CGAL::HalfedgeDS_face_base< Refs> Face;
+    };
+};
+\end{ccExampleCode}
+
+The following example shows a class definition for a new items class
+derived from the \ccRefName\ class. It replaces the \ccc{Face_wrapper}
+with a new definition of a face that contains a member variable for
+color. The new face makes use of the face base class provided in the
+library.
+
+\begin{ccExampleCode}
+// A face type with a color member variable.
+template <class Refs>
+struct My_face : public CGAL::HalfedgeDS_face_base<Refs> {
+    CGAL::Color color;
+    My_face() {}
+    My_face( CGAL::Color c) : color(c) {}
+};
+
+// An items type using my face.
+struct My_items : public CGAL::HalfedgeDS_items_2 {
+    template <class Refs, class Traits>
+    struct Face_wrapper {
+        typedef My_face<Refs> Face;
+    };
+};
+\end{ccExampleCode}
+
+\end{ccRefClass}
+
+% +------------------------------------------------------------------------+
+%%RefPage: end of main body, begin of footer
+\ccRefPageEnd
+% EOF
+% +------------------------------------------------------------------------+
+

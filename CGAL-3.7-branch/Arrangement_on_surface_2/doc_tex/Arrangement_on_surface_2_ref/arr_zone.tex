@@ -1,0 +1,46 @@
+\ccRefPageBegin
+
+\begin{ccRefFunction}{zone}
+
+\ccDefinition
+
+The function \ccRefName{} compute the zone of the given $x$-monotone
+curve in the existing arrangement. Meaning, it output the
+arrangement's vertices, edges and faces that the $x$-monotone curve 
+intersects. The order of the objects is the order that they are
+discovered when traversing the $x$-monotone curve from left to right.
+
+A given point-location object is used for answering point-location queries
+during the insertion process. By default, the function uses the
+``walk along line'' point-location strategy --- namely an instance of the
+class \ccc{Arr_walk_along_line_point_location<Arrangement_2<Traits,Dcel> >}.
+
+%%%%
+
+\ccInclude{CGAL/Arrangement_2.h}
+
+\ccGlobalFunction{template <class GeomTraits, class TopTraits, 
+  class OutputIterator, class PointLocation>
+  OutputIterator zone (
+  Arrangement_on_surface_2<GeomTraits, TopTraits>& arr, 
+  const typename GeomTraits::X_monotone_curve_2& c,
+  OutputIterator oi,
+  const PointLocation& pl);}
+Compute the zone of the given $x$-monotone curve \ccc{c} in the
+arrangement \ccc{arr}.
+\ccPrecond{If provided, \ccc{pl} must be attached to the given arrangement
+\ccc{arr}.}
+
+%%%%
+
+\ccRequirements
+\begin{itemize}
+\item The instantiated \ccc{GeomTraits} class must model the
+  \ccc{ArrangementXMonotoneTraits_2} concept. 
+\item The point-location object \ccc{pl}, must model the
+  \ccc{ArrangementPointLocation_2} concept.
+\end{itemize}
+
+\end{ccRefFunction}
+
+\ccRefPageEnd

@@ -1,0 +1,86 @@
+% +------------------------------------------------------------------------+
+% | Reference manual page: Kd_tree_node.tex
+% +------------------------------------------------------------------------+
+% | 1.07.2001   Johan W.H. Tangelder
+% | Package: ASPAS
+% | 
+\RCSdef{\RCSKdtreenodeRev}{$Id$}
+\RCSdefDate{\RCSKdtreenodeDate}{$Date$}
+% |
+%%RefPage: end of header, begin of main body
+% +------------------------------------------------------------------------+
+
+
+\begin{ccRefClass}{Kd_tree_node<Traits, Splitter, UseExtendedNode>}  %% add template arg's if necessary
+
+%% \ccHtmlCrossLink{}     %% add further rules for cross referencing links
+%% \ccHtmlIndexC[class]{} %% add further index entries
+
+\begin{ccAdvanced}
+
+\ccDefinition
+  
+The class \ccRefName\ implements a node class for a $k$-$d$ tree. 
+A node is either a leaf node, an internal node or an extended internal node.
+A leaf node contains one or more points. An internal node contains a pointer
+to its lower child, a pointer to its upper child, and a pointer to its separator.
+An extended internal node is an internal node containing the lower and 
+upper limit of an extended node's rectangle
+along the node's cutting dimension.
+
+\ccInclude{CGAL/Kd_tree_node.h}
+
+\ccHeading{Parameters}
+
+Expects for the template argument a model of the concept \ccc{SearchTraits},
+for example \ccc{CGAL::Search_traits_2<CGAL::Cartesian<double> >}, or \ccc{CGAL::Cartesian_d<double>}.
+
+\ccTypes
+
+\ccEnum{ enum Node_type { LEAF, INTERNAL, EXTENDED_INTERNAL};}{Denotes type of node.}
+
+\ccTypedef{Traits::FT FT;}{Number type.}
+\ccTypedef{Traits::Point_d Point_d;}{Point type.}
+\ccTypedef{Splitter::Separator Separator;}{Separator type.}
+\ccTypedef{Kd_tree<Traits,Splitter,UseExtendedNode>::Point_d_iterator Point_d_iterator;}{Iterator over points.} 
+\ccTypedef{Kd_tree<Traits,Splitter,UseExtendedNode>::Node_handle Node_handle;}{Node handle.}
+
+
+\ccCreation
+\ccCreationVariable{n}  %% choose variable name
+
+
+
+\ccOperations
+
+\ccMethod{
+template <class OutputIterator, class FuzzyQueryItem>
+OutputIterator search(OutputIterator it, FuzzyQueryItem q);}
+{Reports the points from the subtree of the node, that are approximately contained by q.} 
+
+\ccMethod{
+template <class OutputIterator>
+OutputIterator tree_points(OutputIterator it);}
+{Reports all the points contained by the subtree of the node.} 
+
+\ccMethod{bool is_leaf();}{Indicates whether a node is a leaf node.}
+\ccMethod{int  size();}{Returns the number of items stored in a leaf node.}
+\ccMethod{Point_d_iterator begin();}{Returns the iterator to the first item in a leaf node.}
+\ccMethod{Point_d_iterator end();}{Returns the past-the-end iterator in a leaf node.}
+\ccMethod{Node_handle lower();}{Returns a handle to the lower child of an internal node.}
+\ccMethod{Node_handle upper();}{Returns a handle to the upper child of an internal node.}
+\ccMethod{Separator& separator();}{Returns a reference to the separator.}
+\ccMethod{FT low_val();}{Returns the lower limit of an extended node's rectangle
+along the node's cutting dimension.}
+\ccMethod{FT high_val();}{Returns the upper limit of an extended node's rectangle
+along the node's cutting dimension.}
+
+
+\end{ccAdvanced}
+\end{ccRefClass}
+
+% +------------------------------------------------------------------------+
+%%RefPage: end of main body, begin of footer
+% EOF
+% +------------------------------------------------------------------------+
+

@@ -1,0 +1,62 @@
+% +------------------------------------------------------------------------+
+% | Reference manual page: Triangulation_2.tex
+% +------------------------------------------------------------------------+
+% | 29.03.2000   Mariette Yvinec
+% | Package: Triangulation
+% | 
+% |  \RCSdef{\RCSTriangulationRev}{$Id$}
+% |  \RCSdefDate{\RCSTriangulationDate}{$Date$}
+% |
+%%RefPage: end of header, begin of main body
+% +------------------------------------------------------------------------+
+
+\ccRefChapter{2D Apollonius Graphs (Delaunay Graphs of Disks)\label{ref-chapter-apollonius2}}
+\ccChapterAuthor{Menelaos Karavelas \and Mariette Yvinec}
+
+
+An Apollonius graph is the dual of the Apollonius diagram, also known
+as the {\em additively weighted Voronoi diagram}. It is essentially the
+Voronoi diagram of a set of disks, where the distance of a
+point of the plane from a disk is defined as the Euclidean
+distance of the point and the center of the circle, minus the radius
+of the disk.
+
+\cgal\ provides the class \ccc{CGAL::Apollonius_graph_2<Gt,Agds>} for
+computing the 2D Apollonius graph. The two template parameters must be
+models of the \ccc{ApolloniusGraphTraits_2} and
+\ccc{ApolloniusGraphDataStructure_2} concepts. The first concept is
+related to the geometric objects and predicates associated with
+Apollonius graphs, whereas the second concept refers to the data
+structure used to represent the Apollonius graph. The classes
+\ccc{Apollonius_graph_traits_2<K,Method_tag>} and
+\ccc{Triangulation_data_structure_2<Vb,Fb>} are models of the
+aforementioned concepts.
+
+
+\section{Classified Reference Pages}
+
+\ccHeading{Concepts}
+\ccRefConceptPage{ApolloniusSite_2} \\
+\ccRefConceptPage{ApolloniusGraphDataStructure_2} \\
+\ccRefConceptPage{ApolloniusGraphVertexBase_2} \\
+\ccRefConceptPage{ApolloniusGraphTraits_2} \\
+
+\ccRefConceptPage{ApolloniusGraphHierarchyVertexBase_2}
+
+\ccHeading{Classes}
+\ccRefIdfierPage{CGAL::Apollonius_graph_2<Gt,Agds>}\\
+\ccRefIdfierPage{CGAL::Apollonius_site_2<K>}\\
+\ccRefIdfierPage{CGAL::Apollonius_graph_vertex_base_2<Gt,StoreHidden>}\\
+\ccRefIdfierPage{CGAL::Apollonius_graph_traits_2<K,Method_tag>}\\
+\ccRefIdfierPage{CGAL::Apollonius_graph_filtered_traits_2<CK,CM,EK,EM,FK,FM>}\\
+
+\ccRefIdfierPage{CGAL::Apollonius_graph_hierarchy_2<Gt,Agds>} \\
+\ccRefIdfierPage{CGAL::Apollonius_graph_hierarchy_vertex_base_2<Agvb>}
+
+
+
+
+% +------------------------------------------------------------------------+
+%%RefPage: end of main body, begin of footer
+% EOF
+% +------------------------------------------------------------------------+

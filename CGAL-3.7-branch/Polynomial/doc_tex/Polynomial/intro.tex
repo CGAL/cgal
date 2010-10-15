@@ -1,0 +1,446 @@
+
+\ccChapterAuthor{Michael Hemmer}
+
+\section{Fundamentals}
+
+Note that this is just a very brief introduction to polynomials. 
+For a quick reference we refer to the Wikipedia or for a more elaborate 
+introduction to any class book on elementary algebra. 
+
+A {\em polynomial} is either zero, or can be written as the sum of one or more 
+non-zero {\em terms}. The number of terms is finite. A term consist of a 
+constant {\em coefficient} and a {\em monomial}, 
+that is, the product of zero or more variables. 
+Each variable may have an exponent that is a non-negative integer. 
+The exponent on a variable in a term is equal to the {\em degree} of that 
+variable in that term. A term with no variables is called a constant term.
+The degree of a constant term is 0. 
+
+For example, $-7x^3y$ is a term. The coefficient is $-7$, 
+the monomial is $x^3y$, comprised of the variables $x$ and $y$, 
+the degree of $x$ is three, and the degree of $y$ is one. 
+The {\em total degree} of the entire term is the sum of the 
+degrees in each variable. 
+In the example above, the degree is $3 + 1 = 4$.
+
+A one-variable (univariate) polynomial $f$ of degree $n$ has the following form:
+
+\[f = a_nx^n + a_{n-1}x^{n-1} + ... + a_2x^2 + a_1x + a_0\]
+
+The coefficient $a_0$ is called the {\em constant coefficient}, 
+$a_n$ is called the {\em leading coefficient}.  
+If $f$ is not the zero polynomial the leading coefficient is not zero. 
+The polynomial is called monic if $a_n = 1$. 
+In case the coefficient domain of $f$ possess a greatest common divisor 
+(gcd) the {\em content} of $f$ is the gcd of all coefficients of $f$. 
+For instance, the content of $12 x^3 + 6$ is $6$. 
+
+A multivariate polynomial is a polynomial in more than one variable. 
+According to the number of variables it is possible to 
+further classify multivariate polynomials as bivariate, trivariate etc. 
+In contrast to univariate polynomials the terms of a multivariate polynomial
+are not completely ordered by their total degree. However, given a certain order 
+on the variables it is possible to define a lexicographic order on the terms. 
+Given this order the leading coefficient of a multivariate polynomial is defined 
+as the coefficient of the highest term. For instance the leading coefficient of 
+the multivariate polynomial $p = 5 x^3y + 7xy^2$ is $7$, given that $y$ has an 
+higher order than $x$. 
+
+However, it is also possible to interpret a multivariate polynomial as a 
+univariate polynomial in that variable. For instance the trivariate polynomial 
+\[q = x^5 + 7x^2y^1z^2 + 13x^1y^2z^2 \in \Z[x,y,z] \]
+may be interpreted as a univariate polynomial in $z$, that is, $q$ is interpreted as an element of $R[z]$, with $R=\Z[x,y]$.  
+\[q = (13x^1y^2 + 7x^2y^1)z^2 + x^5z^0 \in R[z] \]
+In this case the leading coefficient of $q$ with respect to $z$ is
+$13x^1y^2 + 7x^2y^1$ and $x^5$ becomes the 'constant' term. 
+
+A {\em homogeneous polynomial} is a polynomial whose terms do all 
+have the same total degree. 
+For example, $h = x^5 + 7x^2y^1z^2 + 13x^1y^2z^2$ is a homogeneous polynomial 
+of degree $5$, in three variables. 
+
+
+
+\section{General Design}
+
+The package introduces a concept \ccc{Polynomial_d}, a concept for multivariate 
+polynomials in $d$ variables. Though the concept is written for an arbitrary 
+number of variables, the number of variables is considered as fixed for a 
+particular model of \ccc{Polynomial_d}. 
+The concept also allows univariate polynomials.
+
+First of all a model of \ccc{Polynomial_d} is considered as an algebraic 
+structure, that is, the ring operations $\{+, -, \cdot\}$ are 
+provided due to the fact that \ccc{Polynomial_d} refines at least the 
+concept \ccc{IntegralDomainWithoutDivision}. 
+However, a model of \ccc{Polynomial_d} has to be accompanied by a traits class 
+\ccc{CGAL::Polynomial_traits_d<Polynomial_d>} being a model of 
+\ccc{PolynomialTraits_d}. 
+In principal the traits class provides all further functionalities 
+on polynomials.
+
+Given a $d$-variate polynomial over some base ring $R$ there are at least 
+two different possible views on such a polynomial.
+\begin{itemize}
+\item The recursive or univariate view:  
+In this view, a polynomial is considered as 
+an element of $R[x_0,\dots,x_{d-2}][x_{d-1}]$. That is, the polynomial 
+is treated as a univariate polynomial over the ring $R[x_0,\dots,x_{d-2}]$. 
+\item The symmetric or multivariate view: 
+This view is almost symmetric with respect to all variables. It considers 
+the polynomial as an element of $R [x_0,\dots,x_{d-1}]$.
+\end{itemize}
+
+According to these two different views the traits class is required to provide 
+two different coefficient types:
+\begin{itemize}
+\item \ccc{CGAL::Polynomial_traits_d<Polynomial_d>::Coefficient_type} 
+representing $R[x_0,\dots,x_{d-2}]$.
+\item \ccc{CGAL::Polynomial_traits_d<Polynomial_d>::Innermost_coefficient_type} 
+representing the base ring $R$.
+\end{itemize}
+
+Another important type which is introduced by this package is 
+\ccc{CGAL::Exponent_vector}. 
+It is derived from \ccc{std::vector<int>} and used to identify multivariate 
+monomials. For instance the exponent vector containing the sequence 
+$[3,2,4]$ corresponds to the trivariate monomial $x_0^3x_1^2x_2^4$. 
+Note that a vector with negative exponents is considered as invalid. 
+However, we decided to in principal allow negative exponents as they may 
+appear as intermediate results, in particular we did {\bf not} derive from 
+\ccc{std::vector<unsigned int>}. 
+
+
+% ###########################
+\section{Constructing a multivariate polynomial}
+
+First of all the concept \ccc{Polynomial_d} requires that the model is 
+constructible from int. This is due to the fact that \ccc{Polynomial_d} 
+refines \ccc{IntegralDomainWithoutDivision} which in turn refines 
+\ccc{FromIntConstructible}. Of course this allows only the construction of 
+constant polynomials. 
+
+In general a polynomial is constructed using the functor 
+\ccc{CGAL::Polynomial_traits_d<Polynomial_d>::Construct_polynomial} a model of 
+\ccc{PolynomialTraits_d::ConstructPolynomial}.  Basically there are two options:
+\begin{itemize}
+\item The polynomial is constructed from an iterator range with value type 
+\ccc{CGAL::Polynomial_traits_d<Polynomial_d>::Coefficient_type}, 
+where the $begin$ iterator refers to the constant term 
+(constant with respect to the outermost variable). 
+\item The polynomial is constructed from an iterator range with value type 
+\ccc{std::pair< CGAL::Exponent_vector, 
+CGAL::Polynomial_traits_d<Polynomial_d>::Innermost_coefficient_type>},
+where each pair defines the coefficient for the monomial defined by 
+the exponent vector. 
+\end{itemize}
+
+However, in some cases it might be more convenient to just construct 
+the polynomials representing the different variables and to obtain the 
+final polynomial using 
+algebraic expressions. The most elegant way to construct a certain variable is 
+\ccc{CGAL::Polynomial_traits_d<Polynomial_d>::Shift} being a model of 
+\ccc{PolynomialTraits_d::Shift}. 
+
+\subsection{Examples}
+
+The following example illustrates different ways to construct a 
+bivariate polynomial:
+\ccIncludeExampleCode{Polynomial/construction.cpp}
+
+
+
+% ###########################
+\section{Coefficient Access}
+ 
+In order to obtain a certain coefficient the traits class provides 
+several functors. 
+Note that the functors do not allow a write access to the coefficients. 
+\begin{itemize}
+\item \ccc{PolynomialTraits_d::GetCoefficient}: 
+a model of this concept provides access to a coefficient in the univariate view,
+that is, it returns elements of $R[x_0,\dots,x_{d-2}]$.
+\item \ccc{PolynomialTraits_d::GetInnermostCoefficient}: 
+a model of this concept provides access to a coefficient in the multivariate 
+view, that is, it returns elements of $R$.
+\item \ccc{PolynomialTraits_d::LeadingCoefficient}: 
+a model of this concept provides access to the leading coefficient in 
+the univariate view. 
+\item \ccc{PolynomialTraits_d::InnermostLeadingCoefficient}: 
+a model of this concept provides access to the leading coefficient in 
+the multivariate view, that is,
+it returns the (innermost) coefficient of the leading multivariate monomial. 
+See also  \ccc{PolynomialTraits_d::DegreeVector}.          
+\end{itemize}
+
+\subsection{Examples}
+The following example illustrates the application of the functors 
+discussed above:
+\ccIncludeExampleCode{Polynomial/coefficient_access.cpp}
+
+
+\section{Degree, total degree and degree vector}
+
+There are three functors in \ccc{PolynomialTraits_d} 
+related to the degree of a polynomial. 
+\begin{itemize}
+\item \ccc{PolynomialTraits_d::Degree}: 
+a model of this concept returns the degree of the polynomial in the univariate 
+view. By default this is the degree with respect to the outermost variable, 
+but it is also possible to select another variable. 
+\item \ccc{PolynomialTraits_d::TotalDegree}: 
+a model of this concept returns the {\em total degree} of a polynomial. 
+The polynomial is considered as a multivariate polynomial. 
+The total degree is the maximum over the sums of the exponents of each 
+multivariate monomial. 
+\item \ccc{PolynomialTraits_d::DegreeVector}:
+a model of this concept returns the exponent vector of the leading monomial,
+where the monomial order is lexicographic and starts with the outermost 
+variable. See also  \ccc{PolynomialTraits_d::InnermostLeadingCoefficient}. 
+\end{itemize}
+
+\subsection{Examples}
+The following example illustrates the application of the functors discussed 
+above:
+\ccIncludeExampleCode{Polynomial/degree.cpp}
+
+\section{Changing the order of variables}
+
+Given for instance a bivariate polynomial it is conceivable that one wants to 
+interchange the role of $x$ and $y$. That is one wants to interpret the 
+$x$ as $y$ and vice versa.
+For such a case the polynomial traits provides \ccc{PolynomialTraits_d::Swap}:\\
+Given a polynomial $p$ and to two indices $i$ and $j$, 
+the functor returns the polynomial in which $x_i$ is substituted by $x_j$ and 
+vice versa, that is, the variables swap their positions.
+The order of the other variables remains untouched. 
+
+Another scenario is, that a particular variable should be moved to another 
+position, for instance, it should become the outermost variable while the 
+relative order of the other variables remains unchanged. 
+For such a case the polynomial traits provides \ccc{PolynomialTraits_d::Move}.
+
+Of course there is also a general method to interchange the order of 
+variables, namely \ccc{PolynomialTraits_d::Permute}.
+
+\subsection{Examples}
+The following example illustrates the application of the functors discussed 
+above:
+\ccIncludeExampleCode{Polynomial/swap_move.cpp}
+
+
+\section{GCD and More}
+
+Since the concept \ccc{PolynomialTraits_d} refines the concept 
+\ccc{AlgebraicStructureTraits} the polynomial traits provides functors for 
+integral division, division with remainder, greatest common divisor, etc.
+But note that the algebraic structure of a polynomial depends on the algebraic 
+structure of the innermost coefficient, for instance, a gcd is available 
+if and only if the innermost coefficient is a \ccc{Field} or a 
+\ccc{UniqueFactorizationDomain}. Hence, we can not provide a $gcd$ if the 
+innermost coefficient is just an \ccc{IntegralDomain} since it is simply 
+not well defined\footnote{%
+An example for such a number type is the template 
+\ccc{CGAL::Sqrt_extension<NT,ROOT>} representing an algebraic extension of 
+degree two. This is just an \ccc{IntegralDomain} if NT is not a \ccc{Field}. }.
+% 
+However, if we would consider the polynomial over the quotient field of the 
+integral domain the $gcd$ would be well defined. The only problem is
+that the result can not be represented over the ring since it contains 
+denominators.   
+Therefore, the \ccc{PolynomialTraits_d} requires functors such as 
+\ccc{PolynomialTraits_d::GcdUpToConstantFactor}. 
+This functor computes the gcd of two polynomials up to a constant factor (utcf).
+That is, it returns the correct gcd for polynomials over the quotient field, 
+but multiplied by some constant such that the result is representable with 
+coefficients in the ring. 
+
+However, note that these 'utcf' functions are usually a bit faster than their 
+strict counterparts. This is due to the fact that the 'utcf' functions are allowed 
+to skip the computation of the correct constant factor.
+Note that in many cases the constant factor is in fact not needed.
+In particular if the polynomials are supposed to represent some zero set, 
+that is, an algebraic curve or surface.  
+
+The concepts for the related functors are: 
+\begin{itemize}
+\item \ccc{AlgebraicStructureTraits::Gcd}\\     
+      \ccc{PolynomialTraits_d::GcdUpToConstantFactor}
+
+\item \ccc{AlgebraicStructureTraits::IntegralDivision}\\        
+      \ccc{PolynomialTraits_d::IntegralDivisionUpToConstantFactor}
+
+\item \ccc{PolynomialTraits_d::UnivariateContent}\\
+      \ccc{PolynomialTraits_d::UnivariateContentUpToConstantFactor}
+       
+\item \ccc{PolynomialTraits_d::SquareFreeFactorize}\\
+      \ccc{PolynomialTraits_d::SquareFreeFactorizeUpToConstantFactor}
+\end{itemize}
+
+%In case of \ccc{PolynomialTraits_d::MultivariateContent} a counterpart does 
+%not make sense, since it is defined as the gcd of all innermost coefficients. 
+
+%There is also no counterpart to \ccc{PolynomialTraits_d::MakeSquareFree}, since 
+%the result is canonicalized, which is supposed to remove superfluous constant 
+%factors anyway. (See also \ccc{PolynomialTraits_d::Canonicalize}.)
+
+
+Another analog functionality is the pseudo division. 
+The related functors replace the usual division with remainder in case the 
+Polynomial is not a \ccc{EuclideanRing}. \\
+The concepts for the related functors are: 
+\begin{itemize}
+\item \ccc{AlgebraicStructureTraits::Div_mod}\\
+      \ccc{PolynomialTraits_d::PseudoDivision}
+\item \ccc{AlgebraicStructureTraits::Div}\\
+      \ccc{PolynomialTraits_d::PseudoDivisionQuotient}
+\item \ccc{AlgebraicStructureTraits::Mod}\\
+      \ccc{PolynomialTraits_d::PseudoDivisionRemainder}
+\end{itemize}
+
+
+\subsection{Examples}
+The following example illustrates the application of some functors 
+discussed above:
+\ccIncludeExampleCode{Polynomial/gcd_up_to_constant_factor.cpp}
+
+\section{Evaluation and Substitution}
+
+Of course, it should also be possible to evaluate a polynomial 
+or substitute its variables. We also require a special functor to 
+determine whether a polynomial is zero at a given point. 
+In case the inner most coefficient is \ccc{RealEmbeddable} the traits 
+also must provide a function to compute the sign at a given point. \\
+The concepts for the related functors are:
+\begin{itemize}
+\item \ccc{PolynomialTraits_d::Substitute}\ccGlue
+\item \ccc{PolynomialTraits_d::Evaluate}\ccGlue
+\item \ccc{PolynomialTraits_d::IsZeroAt}\ccGlue
+\item \ccc{PolynomialTraits_d::SignAt}
+\end{itemize}
+
+The traits is also required to provide variants of these functors that 
+interpret the polynomial as a homogeneous polynomial by adding a virtual 
+homogeneous variable such that each term has the same degree, namely the degree of the polynomial.
+Of course there is a difference between the univariate and multivariate view. 
+For instance the polynomial \[5x^3 + 7x - 3\] has degree 3, hence it is interpreted as 
+the homogeneous polynomial \[5x^3 + 7xw^2 -3w^3\] by adding the homogeneous variable $w$. 
+In case of the multivariate view each term is filled up by the homogeneous variable such 
+that the degree of each term is equal to the total degree of the polynomial. 
+Note that these functors may significantly improve efficiency. 
+For instance, it is possible to determine the sign of a polynomial 
+over integer coefficients at a rational point without 
+changing the coefficient domain of the polynomial. 
+For more details have a look at the following concepts:
+\begin{itemize}
+\item \ccc{PolynomialTraits_d::SubstituteHomogeneous} \ccGlue
+\item \ccc{PolynomialTraits_d::EvaluateHomogeneous}\ccGlue
+\item \ccc{PolynomialTraits_d::IsZeroAtHomogeneous}\ccGlue
+\item \ccc{PolynomialTraits_d::SignAtHomogeneous}
+\end{itemize}
+
+Note that substitute allows the substitution of the variables by any type that 
+is \ccc{ExplicitInteroperable} with the innermost coefficient type. 
+This is a very powerful tool since it allows the substitution of the variables 
+by polynomials. However, for some standard manipulations such as translation 
+or scaling we require special functors since they are expected to be faster 
+than their equivalent implementation using substitution:
+
+\begin{itemize}
+\item \ccc{PolynomialTraits_d::Shift}\ccGlue
+\item \ccc{PolynomialTraits_d::Negate}\ccGlue
+\item \ccc{PolynomialTraits_d::Invert}\ccGlue
+\item \ccc{PolynomialTraits_d::Translate}\ccGlue
+\item \ccc{PolynomialTraits_d::TranslateHomogeneous}\ccGlue
+\item \ccc{PolynomialTraits_d::Scale}\ccGlue
+\item \ccc{PolynomialTraits_d::ScaleHomogeneous}
+\end{itemize}
+
+\subsection{Examples}   
+The following example illustrates the application of some functors 
+discussed above:
+\ccIncludeExampleCode{Polynomial/substitute.cpp}
+
+\section{Resultants, Subresultants and Sturm-Habicht sequences}
+
+The \ccc{PolynomialTraits_d} concept also provides more sophisticated functors
+for computations with polynomials --
+computing the resultant of two polynomials, 
+their polynomial subresultant sequence, with or without cofactors,
+and their principal subresultant coefficients.
+%
+\begin{itemize}
+\item \ccRefConceptPage{PolynomialTraits_d::Resultant}\ccGlue
+\item \ccRefConceptPage{PolynomialTraits_d::PolynomialSubresultants}\ccGlue
+\item \ccRefConceptPage{PolynomialTraits_d::PolynomialSubresultantsWithCofactors}\ccGlue
+\item \ccRefConceptPage{PolynomialTraits_d::PrincipalSubresultants}
+\end{itemize}
+%
+Moreover, functors to compute the Sturm-Habicht sequence, with or without
+cofactors, and for the principal Sturm-Habicht coefficients exist.
+%
+\begin{itemize}
+\item \ccRefConceptPage{PolynomialTraits_d::SturmHabichtSequence}\ccGlue
+\item \ccRefConceptPage{PolynomialTraits_d::SturmHabichtSequenceWithCofactors}\ccGlue
+\item \ccRefConceptPage{PolynomialTraits_d::PrincipalSturmHabichtSequence}
+\end{itemize}
+%
+For a formal definition of all used terms, we refer to the corresponding
+reference pages.
+
+The principal Sturm-Habicht sequence allows to count the number of
+real roots of a polynomial using the function
+\begin{itemize}
+\item \ccRefIdfierPage{CGAL::number_of_real_roots}.
+\end{itemize}
+As input, this function requires an iterator range that represents
+the principal Sturm-Habicht coefficients. 
+This might look complicated at a first sight,
+as one has to store the principal Sturm-Habicht sequence temporarily.
+However, we remark an important property of the (principal) Sturm-Habicht
+sequence. Having a polynomial $f_t(x)$ that depends on a parameter $t$,
+and its (principal) Sturm-Habicht coefficients 
+$\mathrm{stha}_0(f_t),\ldots,\mathrm{stha}_n(f_t)$, evaluating 
+$\mathrm{stha}_0(f_t)$ for $t=t_0$ yields a valid (principal)
+Sturm-Habicht sequence for $f_{t_0}$. The same holds for (principal)
+subresultants. Thus, it is enough in such situations to compute
+the sequence once for the parameter $t$, and call 
+\ccc{CGAL::number_of_real_roots} for each specialized parameter
+value.
+
+We finally remark that computing subresultants and Sturm-Habicht sequences
+introduces an enormous coefficient blow-up.
+An application of the functors therefore does not make sense
+for built-in integers except for toy examples.
+To avoid overflows, one should use arbitrary size integer types
+in real applications.
+
+\subsection{Examples}
+
+The following example illustrates how two compute resultants of two
+polynomials, and how to count the number of distinct real roots
+of a polynomial using its principal Sturm-Habicht coefficients.
+
+\ccIncludeExampleCode{Polynomial/subresultants.cpp}
+
+\section{Design and Implementation History}
+
+This package is the result of the integration process of the NumeriX library 
+of \exacus~\cite{beh+-eeeafcs-05} into \cgal.
+
+The class \ccc{CGAL::Polynomial<Coeff>} had been started by Michael Seel within 
+CGAL as part of the Nef\_2 package. As part of the \exacus\ project 
+it got significantly improved by Arno Eigenwillig and Michael Hemmer. 
+
+However, due to the recursive definition the class was rather restricted to the 
+univariate view. Moreover, it is clear that depending on the context 
+other classes that are symmetric in all variables or dedicated 
+for sparse polynomials may be more efficient. As a consequence this package 
+introduced the \ccc{CGAL::Polynomial_traits_d<Polynomial_d>} giving also
+the symmetric view on polynomials and the opportunity to introduce and use
+other classes representing polynomials within \cgal. 
+
+ 
+
+
+ 

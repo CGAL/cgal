@@ -1,0 +1,60 @@
+% +------------------------------------------------------------------------+
+% | Reference manual page: jet_smooth_point_set.tex
+% +------------------------------------------------------------------------+
+% | 02.06.2008   Pierre Alliez, Laurent Saboret, Gael Guennebaud
+% | Package: Point_set_processing_3
+% |
+\RCSdef{\RCSjetsmoothingRev}{$Id$}
+\RCSdefDate{\RCSjetsmoothingDate}{$Date$}
+% |
+\ccRefPageBegin
+%%RefPage: end of header, begin of main body
+% +------------------------------------------------------------------------+
+
+
+\begin{ccRefFunction}{jet_smooth_point_set}  %% add template arg's if necessary
+
+%% \ccHtmlCrossLink{}     %% add further rules for cross referencing links
+%% \ccHtmlIndexC[function]{} %% add further index entries
+
+\ccDefinition
+
+\ccc{CGAL::jet_smooth_point_set()} smooths a point set by fitting for each point a jet surface and projecting it onto the jet. The default jet surface is a quadric.
+
+The output of the smoothing algorithm highly depends on the \ccc{k} parameter.
+The number of neighbors controls the size of the point subset considered for jet fitting at each input point. As this parameter is application-specific we do not provide any default value. Larger values lead to smoother point sets and are more time consuming. For point sets with limited noise this value can be set to small number such as 24. For noisy point sets this value must be increased.
+
+
+\ccInclude{CGAL/jet_smooth_point_set.h}
+
+% The section below is automatically generated. Do not edit!
+%START-AUTO(\ccDefinition)
+
+% Reduce left margin
+\ccThree{123456789012345}{6789012}{}
+
+\ccFunction{template<typename InputIterator, typename PointPMap, typename Kernel> void jet_smooth_point_set(InputIterator first, InputIterator beyond, PointPMap point_pmap, unsigned int k, const Kernel& kernel, unsigned int degree_fitting = 2, unsigned int degree_monge = 2);}
+{
+Smoothes the [first, beyond) range of points using jet fitting on the k nearest neighbors and reprojection onto the jet. As this method relocates the points, it should not be called on containers sorted w.r.t. point locations.
+\ccPrecond k $>$= 2.
+\ccCommentHeading{Template Parameters}  \\
+\ccc{InputIterator}: iterator over input points. \ccc{PointPMap}: is a model of \ccc{boost::ReadablePropertyMap} with a \ccc{value_type} = \ccc{Point_3<Kernel>}. It can be omitted if \ccc{InputIterator} \ccc{value_type} is convertible to \ccc{Point_3<Kernel>}. \ccc{Kernel}: Geometric traits class. It can be omitted and deduced automatically from \ccc{PointPMap} \ccc{value_type}.
+\ccCommentHeading{Parameters}  \\
+\ccc{first}: iterator over the first input point. \ccc{beyond}: past-the-end iterator over the input points. \ccc{point_pmap}: property map \ccc{InputIterator} -$>$ \ccc{Point_3}. \ccc{k}: number of neighbors. \ccc{kernel}: geometric traits.
+}
+\ccGlue
+
+%END-AUTO(\ccDefinition)
+
+\ccExample
+
+See \ccc{jet_smoothing_example.cpp}.
+
+\end{ccRefFunction}
+
+% +------------------------------------------------------------------------+
+%%RefPage: end of main body, begin of footer
+\ccRefPageEnd
+% EOF
+% +------------------------------------------------------------------------+
+

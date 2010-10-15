@@ -1,0 +1,156 @@
+\begin{ccRefClass}{Delaunay_mesher_2<CDT, Criteria>}
+
+This class implements a 2D mesh generator.
+
+\ccInclude{CGAL/Delaunay_mesher_2.h}
+
+
+\ccParameters The template parameter \ccc{CDT} should be a model of the
+concept \ccc{ConstrainedDelaunayTriangulation_2}, and type \ccc{CDT::Face}
+should be a model of the concept \ccc{MeshFaceBase_2}.
+
+The geometric traits class of the instance of \ccc{CDT} has to be
+a model of the concept \ccc{DelaunayMeshTraits_2}.
+
+The template parameter \ccc{Criteria} should be a model of the concept
+\ccc{MeshingCriteria_2}. This traits class defines the shape and size
+criteria for the triangles of the mesh. \ccc{Criteria::Face_handle} has to
+be the same as \ccc{CDT::Face_handle}.
+
+\ccHeading{Using this class}
+
+The constructor of the class \ccRefName{} takes a reference to a \ccc{CDT}
+as an argument. A call to the refinement method \ccc{refine_mesh()} will
+refine the constrained Delaunay triangulation into a mesh satisfying the
+size and shape criteria specified in the traits class. Note that if, during
+the life time of the \ccRefName\ object, the triangulation is externally
+modified, any further call to its member methods may crash. Consider
+constructing a new \ccRefName\ object if the triangulation has been
+modified.
+
+\ccHeading{Meshing domain}
+
+The domain to be mesh is defined by the constrained edges and a set of seed
+points. The constrained edges divides the plane into several connected
+components.  The mesh domain is either the union of the bounded connected
+components including at least one seed, or the union of the bounded
+connected components that do no contain any seed. Note that the unbounded
+component of the plane is never meshed.
+
+
+\ccTypes 
+\ccTypedef{typedef CDT::Geom_traits Geom_traits;}{the geometric traits class.}
+\ccNestedType{Seeds_iterator}{const iterator over defined seeds. Its
+  value type is \ccc{Geom_traits::Point_2}.}
+
+\ccCreation
+\ccCreationVariable{mesher}
+
+\ccConstructor{Delaunay_mesher_2(CDT& t, Criteria criteria = Criteria());}
+{Create a new mesher, working on \ccc{t}, with meshing criteria
+  \ccc{criteria}.}
+
+\ccHeading{Seeds functions}
+
+The following functions are used to define seeds.
+
+\ccMethod{void  clear_seeds ();}{ Sets seeds to the empty set. All
+  finite connected components of the constrained triangulation will be 
+  refined.}
+
+\ccMethod{template<class InputIterator>
+          void set_seeds(InputIterator begin, InputIterator end,
+                         const bool mark=false);}                   
+                       { Sets seeds to the sequence [\ccc{begin},
+                         \ccc{end}]. If \ccc{mark=true}, the mesh domain
+                         is the union of the bounded connected
+                         components including at least one seed. If
+                         \ccc{mark=false}, the domain is the union of
+                         the bounded components including no seed. Note
+                         that the unbounded component of the plane is
+                         never meshed.
+                         \ccRequire The \ccc{value_type} of
+                         \ccc{begin} and \ccc{end} is
+                         \ccc{Geom_traits::Point_2}.}
+
+\ccMethod{Seeds_const_iterator  seeds_begin () const;}
+{ Start of the seeds sequence. }
+\ccGlue
+\ccMethod{Seeds_const_iterator  seeds_end () const;}
+{ Past the end of the seeds sequence. }
+
+\ccHeading{Meshing methods}
+
+\ccMethod{void refine_mesh(); }
+{ Refines the constrained Delaunay triangulation into a mesh
+  satisfying the criteria defined by the traits.
+}
+
+\ccMethod{ const Criteria& get_criteria();}
+{ Returns a const reference to the criteria traits object. }
+
+\ccMethod{ void set_criteria(Criteria criteria);}
+{ Assigns \ccc{criteria} to the criteria traits object. }
+
+\begin{ccAdvanced}
+  The function \ccc{set_criteria} scans all faces to recalculate the list of
+  \emph{bad faces}, that are faces not conforming to the meshing criteria.
+  This function actually has an optional argument that permits to prevent
+  this recalculation. The filling of the list of bad faces can then be done
+  by a call to \ccc{set_bad_faces}.
+  
+  \ccMethod{ void set_criteria(Criteria criteria, bool
+    recalculate_bad_faces);}
+  { Assigns \ccc{criteria} to the criteria traits object. If
+    \ccc{recalculate_bad_faces} is \ccc{false}, the list of bad faces is
+    let empty and the function \ccc{set_bad_faces} should be called before
+    \ccc{refine_mesh}.}
+
+\ccMethod{template <class InputIterator>
+  void set_bad_faces(InputIterator begin,
+                     InputIterator end);}
+                   { This method permits to set the list of bad triangles
+                     directly, from the sequence [begin, end], so that the
+                     algorithm will not scan the whole set of triangles to
+                     find bad ones. To use if there is a non-naive way to
+                     find bad triangles.  \ccRequire The \ccc{value_type}
+                     of \ccc{begin} and \ccc{end} is \ccc{Face_handle}.}
+
+\end{ccAdvanced}
+
+
+\begin{ccAdvanced}
+\ccHeading{Step by step operations}
+
+The \ccRefName{} class allows, for debugging or demos, to play the
+meshing algorithm step by step, using the following methods.
+
+\ccMethod{ void init(); }
+         { This method must be called just before the first
+             call to the following step by step refinement method,
+             that is when all vertices and constrained edges have been
+             inserted into the constrained Delaunay triangulation. It
+             must be called again before any subsequent calls to the
+             step by step refinement method if new vertices or constrained
+             edges have been inserted since the last call.}
+
+\ccMethod{bool is_refinement_done(); }
+{ Tests if the step by step refinement algorithm is done. If it returns
+  \ccc{true}, the following calls to \ccc{step_by_step_refine_mesh} will
+  not insert any points, until some new constrained segments or points are
+  inserted in the triangulation and \ccc{init} is called again. }
+
+\ccMethod{ bool step_by_step_refine_mesh(); }
+{ Applies one step of the algorithm, by inserting one point, if the
+  algorithm is not done. Returns \ccc{false} iff no point has been inserted
+  because the algorithm is done. }
+
+\end{ccAdvanced}
+
+\end{ccRefClass}
+
+%%% For emacs/AucTeX:
+%%% Local Variables: ***
+%%% mode:latex ***
+%%% TeX-master: "../Mesh_2.tex"  ***
+%%% End: ***

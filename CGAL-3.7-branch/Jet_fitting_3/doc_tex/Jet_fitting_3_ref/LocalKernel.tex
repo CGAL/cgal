@@ -1,0 +1,112 @@
+% +------------------------------------------------------------------------+
+% | Reference manual page: LocalKernel.tex
+% +------------------------------------------------------------------------+
+% | 09.02.2006   Marc Pouget and Frédéric Cazals
+% | Package: Jet_fitting_3
+% | 
+\RCSdef{\RCSLocalKernelRev}{$Id$}
+\RCSdefDate{\RCSLocalKernelDate}{$Date$}
+% |
+%%RefPage: end of header, begin of main body
+% +------------------------------------------------------------------------+
+
+
+\begin{ccRefConcept}{LocalKernel}
+
+%% \ccHtmlCrossLink{}     %% add further rules for cross referencing links
+%% \ccHtmlIndexC[concept]{} %% add further index entries
+
+\ccDefinition
+  
+The concept \ccRefName\ describes the set of requirements to be
+fulfilled by any class used to instantiate the second template
+parameter of the class
+\ccc{Monge_via_jet_fitting<DataKernel,LocalKernel,SvdTraits>}.
+ 
+This concept provides the geometric primitives used for the
+computations in the class
+\ccc{Monge_via_jet_fitting}. 
+
+\ccRequirements
+% +------------------------------------------------------------------
+ 
+In the class \ccc{Monge_via_jet_fitting} the scalar type,
+\ccc{LocalKernel::FT}, must be the same as that of the \ccc{SvdTraits}
+concept~: \ccc{SvdTraits::FT}.
+
+% The concept \ccRefName\ must fulfill the requirement of
+% the\ccc{Kernel} template of the
+% class\ccc{CGAL::Aff_transformation_3<Kernel>}.
+
+% The type \ccc{LocalKernel::FT} must fulfill the requirement of
+% the\ccc{FT} template of the class\ccc{CGAL::Linear_algebraCd<FT>}.
+
+ The type \ccc{LocalKernel::FT} is a model of the FieldWithSqrt concept.
+
+% The type \ccc{LocalKernel::FT} must fulfill the requirement of the
+% \ccc{FT} template of the function \ccc{CGAL::Sqrt<NT>}. An alternative 
+% is to overload this latter function.
+
+%\ccRefines
+
+%ThisConcept \\
+%ThatConcept
+
+\ccTypes
+% +------------------------------------------------------------------
+\ccNestedType{FT}{The scalar type.}
+\ccGlue
+\ccNestedType{Point_3}{The  point type.}
+\ccGlue
+\ccNestedType{Vector_3}{The vector  type.}
+
+%\ccNestedType{TYPE}{some nested types}
+
+%\ccCreation
+%\ccCreationVariable{a}  %% choose variable name
+
+%\ccConstructor{LocalKernel();}{default constructor.}
+
+\ccOperations
+% +------------------------------------------------------------------
+The scalar type \ccc{LocalKernel::FT} must be a field type with a
+square root.
+
+Only constructors (from 3 scalars and copy constructors) and access
+methods to coordinates \ccc{x()}, \ccc{y()}, \ccc{z()} are needed for the point and
+vector types.
+
+%\ccMethod{void foo();}{some member functions}
+
+\ccHasModels
+% +------------------------------------------------------------------
+\ccc{CGAL::Cartesian<FieldNumberType>}
+
+\ccSeeAlso
+% +------------------------------------------------------------------
+The \ccc{DataKernel} and \ccc{SvdTraits} concepts.
+
+
+%\ccExample
+
+%A short example program.
+%Instead of a short program fragment, a full running program can be
+%included using the 
+%\verb|\ccIncludeExampleCode{Jet_fitting_3/LocalKernel.cpp}| 
+%macro. The program example would be part of the source code distribution and
+%also part of the automatic test suite.
+
+%\begin{ccExampleCode}
+%void your_example_code() {
+%}
+%\end{ccExampleCode}
+
+%% \ccIncludeExampleCode{Jet_fitting_3/LocalKernel.cpp}
+
+\end{ccRefConcept}
+
+% +------------------------------------------------------------------------+
+%%RefPage: end of main body, begin of footer
+% EOF
+% +------------------------------------------------------------------------+
+

@@ -1,0 +1,212 @@
+
+Real solving of polynomials is a fundamental problem with a wide application range. 
+This package is targeted at providing black-box implementations of state-of-the-art 
+algorithms to determine, compare, and approximate real roots of univariate polynomials
+and bivariate polynomial systems. Such a black-box is called an {\bf Algebraic Kernel}. 
+Since this package is aimed at providing more than one implementation, the interface of 
+the algebraic kernels is expressed in concepts. The main concepts provided by this package are the 
+\ccc{AlgebraicKernel_d_1} for univariate polynomial systems and \ccc{AlgebraicKernel_d_2} 
+for bivariate polynomial systems, the latter being a refinement of the first. 
+
+
+%So far the package only provides models for the univariate kernel. Nevertheless, 
+%we also provide the concepts for the bivariate kernel, since this settles the interface
+%for upcoming implementations.
+
+%The package introduces a concept for a univariate 
+%\ccc{AlgebraicKernel_d_1} and a concept for bivariate \ccc{AlgebraicKernel_d_2}.
+%\ccc{AlgebraicKernel_d_1} provides univariate root solving as well as comparison 
+%and refinement of the resulting algebraic numbers. 
+%\ccc{AlgebraicKernel_d_2} provides about the same for bivariate polynomial. 
+%Beside the functionalities related to one bivariate polynomial, it is in 
+%particular possible to solve a $2\times2$ system and to compare and approximate 
+%the resulting intersection points. The computation of the sign of a 
+%polynomial at given point is also provide.
+
+
+\section{Algebraic Kernel Concepts}
+\subsection{Univariate Algebraic Kernel}
+%\subsection{Layout}
+\subsubsection{Major types}
+First of all, the univariate algebraic kernel provides construction, comparison and 
+approximation of real roots of univariate polynomials. 
+Thus, the major public types the \ccc{AlgebraicKernel_d_1} provides are: \\
+\ccc{AlgebraicKernel_d_1::Polynomial_1} -- the type representing univariate polynomials,\\
+\ccc{AlgebraicKernel_d_1::Coefficient} -- the coefficient type of these polynomials, \\
+\ccc{AlgebraicKernel_d_1::Algebraic_real_1} -- the type representing real roots,\\
+\ccc{AlgebraicKernel_d_1::Bound} -- the type which is used to approximate these algebraic reals, 
+in particular, it is used to represent the boundaries of isolating intervals. \\
+
+\subsubsection{Construction of Algebraic Real Numbers }
+
+The kernel provides two different function objects to construct an
+\ccc{AlgebraicKernel_d_1::Algebraic_real_1}. The most general way
+is to use \ccc{AlgebraicKernel_d_1::Isolate_1}; The function object
+takes a univariate polynomial and writes all real roots into a given
+output iterator. It is also possible to retrieve the multiplicity of
+each root. The second option is to construct one particular algebraic
+real using \ccc{AlgebraicKernel_d_1::Construct_algebraic_real_1}.
+This function object provides construction from the native int type, the
+coefficient type as well as the bound type.  Moreover, it is possible
+to construct an algebraic real by giving a polynomial and either an
+isolating interval or the index of the root. A related function object
+is \ccc{AlgebraicKernel_d_1::Number_of_solutions_1} computing the number
+of real roots of a polynomial.
+
+%Examples can be found in Section~\ref{CGAL::AK1::EG::Construct_algebraic_real_1}.
+
+
+\subsubsection{ Comparison and Approximation of Algebraic Real Numbers}
+
+An \ccc{AlgebraicKernel_d_1::Algebraic_real_1} is model of
+\ccc{RealEmbeddable}, for instance, it is possible to compare two
+algebraic reals, to determine the sign of an algebraic real or to ask
+for its double approximation, see also section \ref{sec:RealEmbeddable}.
+Moreover, \ccc{AlgebraicKernel_d_1::Compare_1} provides
+comparison with int, the coefficient type and the bound type.
+
+There are several ways to approximate an \ccc{AlgebraicKernel_d_1::Algebraic_real_1}:\\
+\ccc{AlgebraicKernel_d_1::Approximate_absolute_1} -- provides an approximation that is 
+better than the passed absolute error bound,\\
+\ccc{AlgebraicKernel_d_1::Approximate_relative_1} -- provides an approximation that is 
+better than the passed relative error bound,\\
+\ccc{AlgebraicKernel_d_1::Isolate_1} -- returns an isolating interval with respect to 
+a given univariate polynomial,\\
+A related function object is \ccc{AlgebraicKernel_d_1::Bound_between_1}, which computes 
+a number that isolates two algebraic real numbers. 
+
+%An example can be found in Section~\ref{CGAL::AK1::EG::Compare_1}.
+
+
+\subsubsection{Interplay with Polynomials}
+It is also possible to retrieve a representing polynomial from an
+algebraic real using \ccc{AlgebraicKernel_d_1::Compute_polynomial_1}, 
+which guarantees that the algebraic real is a root of the returned
+polynomial. As the name already indicates, this operation may be very
+costly since the polynomial may not be computed yet. Moreover, it is
+not guaranteed that the returned polynomial is the minimal polynomial
+of the number.  Together with \ccc{AlgebraicKernel_d_1::Isolate_1}, it
+is possible to retrieve the traditional representation of an algebraic
+real as a square free polynomial and an isolating interval.
+
+Though the \ccc{AlgebraicKernel_d_1} does not provide arithmetic
+operations on \ccc{AlgebraicKernel_d_1::Algebraic_real_1}, it is
+possible to compute the sign of a polynomial at a given algebraic
+real using \ccc{AlgebraicKernel_d_1::Sign_at_1}.  Or alternatively,
+just compute whether the polynomial is zero at an algebraic real number
+using \ccc{AlgebraicKernel_d_1::Is_zero_at_1}.  Note that this operation
+can be significantly less expensive, in particular if the polynomial
+is not zero at the given algebraic real.
+
+%An example can be found in Section~\ref{CGAL::AK1::EG::Sign_at_1}.
+
+\subsubsection{Auxiliary Functionality for Polynomials}
+
+First of all the type \ccc{AlgebraicKernel_d_1::Polynomial_1} is required
+to be a model of the concept \ccc{Polynomial_1}, which is defined
+in the Polynomial package (see chapter \ref{ChapterPolynomial}).
+This implies that all essential functionality is provided via
+\ccc{CGAL::Polynomial_traits_d}. However, the algebraic kernel also
+provides several function objects to handle polynomials:\\
+\ccc{AlgebraicKernel_d_1::Is_square_free_1} -- determines whether a polynomial is square free,\\
+\ccc{AlgebraicKernel_d_1::Make_square_free_1} -- computes the square free part of a polynomial,\\
+\ccc{AlgebraicKernel_d_1::Square_free_factorize_1} -- computes a square free factorization of a polynomial,\\
+\ccc{AlgebraicKernel_d_1::Is_coprime_1} -- computes whether a pair of polynomials is square free,\\
+\ccc{AlgebraicKernel_d_1::Make_coprime_1} -- decomposes two polynomials into the coprime factors and their common factor. 
+
+Though the polynomial package provides similar functionality we suggest to use 
+the function objects provided by the kernel, since the design of the algebraic kernel 
+allows for instance internal caching by the kernel. 
+
+%An example can be found in Section~\ref{CGAL::AK1::EG::Polynomial}.
+
+%\begin{ccAdvanced}
+Also note that  \ccc{AlgebraicKernel_d_1::Square_free_factorize_1} only computes the square free 
+factorization up to a constant factor. This is a slight modification with respect to its 
+counterpart in \ccc{CGAL::Polynomial_traits_d}. In this way it was possible that the concepts just require 
+the coefficient type to be a model of \ccc{IntegralDomain}, instead of \ccc{Field} or \ccc{UniqueFactorizationDomain}. 
+For more details see also:\\
+\ccRefIdfierPage{PolynomialTraits_d::SquareFreeFactorize} \\
+\ccRefIdfierPage{PolynomialTraits_d::SquareFreeFactorizeUpToConstantFactor}\\
+%\end{ccAdvanced}
+
+\subsubsection{Design Rationale}
+
+Most implementations of an \ccc{AlgebraicKernel_d_1} will represent
+an algebraic real number by the root of a square free polynomial and
+an isolating interval, that is, the number is defined as the only
+root of the polynomial within the interval. Usually, one will refrain
+from computing the minimal polynomial since the computation of the
+minimal polynomial is much more expensive and does not pay of. However,
+besides the representation by a polynomial and an isolating interval
+one can also imagine the representation by a polynomial and the index
+of the root, e.g., as the $i$th real root when enumerated from minus
+to plus infinity. Moreover, it may very well be that the kernel just
+computes an approximation of the number, whereas the representing
+polynomial is not computed yet. 
+This is in particular relevant in relation to the \ccc{AlgebraicKernel_d_2},
+where \ccc{AlgebraicKernel_d_1::Algebraic_real_1} is used to represent coordinates of solutions of bivariate systems.
+Hence, the design does
+not allow a direct access to any, seemingly obvious, members of an
+\ccc{AlgebraicKernel_d_1::Algebraic_real_1}. Instead there is, e.g.,
+\ccc{AlgebraicKernel_d_1::Compute_polynomial_1} which emphasizes
+that the requested polynomial may not be computed yet. Similarly,
+there is no way to directly ask for the refinement of the current
+isolating interval since this would impose a state to every object of
+an \ccc{AlgebraicKernel_d_1::Algebraic_real_1}.
+
+
+\subsection{Bivariate Algebraic Kernel}
+
+The concept  \ccc{AlgebraicKernel_d_2} is a refinement of \ccc{AlgebraicKernel_d_1}, 
+that is, a model of  \ccc{AlgebraicKernel_d_2} is also a model of \ccc{AlgebraicKernel_d_1}. 
+Hence, the \ccc{AlgebraicKernel_d_2} concept is designed such that occurring 
+names and functionalities are as similar as possible to those in the 
+\ccc{AlgebraicKernel_d_1} concept.
+The following are a direct generalization of their univariate counterparts: 
+
+\ccc{AlgebraicKernel_d_2::Polynomial_2},\\
+\ccc{AlgebraicKernel_d_2::Algebraic_real_2},\\
+\ccc{AlgebraicKernel_d_2::Construct_algebraic_real_2},\\
+\ccc{AlgebraicKernel_d_2::Isolate_2},\\
+\ccc{AlgebraicKernel_d_2::Is_square_free_2},\\
+\ccc{AlgebraicKernel_d_2::Make_square_free_2},\\
+\ccc{AlgebraicKernel_d_2::Square_free_factorize_2},\\
+\ccc{AlgebraicKernel_d_2::Is_coprime_2},\\
+\ccc{AlgebraicKernel_d_2::Make_coprime_2},\\
+\ccc{AlgebraicKernel_d_2::Solve_2},\\
+\ccc{AlgebraicKernel_d_2::Number_of_solutions_2},\\
+\ccc{AlgebraicKernel_d_2::Compare_xy_2},\\
+\ccc{AlgebraicKernel_d_2::Sign_at_2},\\
+\ccc{AlgebraicKernel_d_2::Is_zero_at_2}.
+
+For instance, \ccc{AlgebraicKernel_d_2::Solve_2}
+provides the solution for a bivariate polynomial system. 
+However, it is also possible to obtain the coordinates of these 
+solutions with the additional functors: 
+
+\ccc{AlgebraicKernel_d_2::Compute_x_2},\\
+\ccc{AlgebraicKernel_d_2::Compute_y_2}.
+
+In principal this would be sufficient generalization, 
+since functions such as isolating, approximating algebraic real numbers 
+could be implemented using these access functions ant 
+the corresponding functionalities in the univariate algebraic kernel. 
+However, one should be aware that an  \ccc{AlgebraicKernel_d_2::Algebraic_real_2}
+is not necessarily represented as a pair of univariate solutions, that is, 
+using \ccc{AlgebraicKernel_d_2::Compute_y_2} may entail considerable 
+computations. Therefore, the concept also requires the following 
+additional functors that may allow a model to bypass this issue:
+
+\ccc{AlgebraicKernel_d_2::Compute_polynomial_x_2},\\
+\ccc{AlgebraicKernel_d_2::Compute_polynomial_y_2},\\
+\ccc{AlgebraicKernel_d_2::Isolate_x_2},\\
+\ccc{AlgebraicKernel_d_2::Isolate_y_2},\\
+\ccc{AlgebraicKernel_d_2::Compare_x_2},\\
+\ccc{AlgebraicKernel_d_2::Compare_y_2},\\
+\ccc{AlgebraicKernel_d_2::Approximate_absolute_x_2},\\
+\ccc{AlgebraicKernel_d_2::Approximate_relative_x_2},\\
+\ccc{AlgebraicKernel_d_2::Approximate_absolute_y_2},\\
+\ccc{AlgebraicKernel_d_2::Approximate_relative_y_2},\\
+\ccc{AlgebraicKernel_d_2::Bound_between_x_2},\\
+\ccc{AlgebraicKernel_d_2::Bound_between_y_2}.

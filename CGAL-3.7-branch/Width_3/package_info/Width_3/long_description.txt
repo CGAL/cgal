@@ -1,0 +1,16 @@
+The width of a three dimensional point set is defined as the minimum
+distance between two parallel planes of support of the point set. The
+convex hull is computed to simplify the search for such two
+planes. Note that these width-planes are not unique; there might exist more
+than one pair of parallel supporting planes, all having the same
+distance.
+
+For the convex hull computation the three dimensional convex hull
+algorithm of CGAL itself have been used. But this calculation requires
+LEDA, so LEDA is required for the width computation of a set of points
+too. But if the convex hull has been determined elsewhere and if this
+hull is represented by an halfedge data structure then the width can
+be computed without any use of LEDA. But the STL has been used instead
+for some data structures.
+
+ 

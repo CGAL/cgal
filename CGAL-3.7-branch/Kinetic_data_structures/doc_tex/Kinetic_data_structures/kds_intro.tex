@@ -1,0 +1,110 @@
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\section{An Overview of Kinetic Data Structures and Sweep Algorithms\label{sec:kds_intro}}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+
+%\subsection{Kinetic Data Structures}
+Kinetic data structures were first introduced in by Basch et.\ al.\ in
+1997~\cite{cgal:bgh-dsmd-97}.  The idea stems from the observation that
+most, if not all, computational geometry structures are built using
+{\em predicates} --- functions on quantities defining the geometric
+input (e.g.\ point coordinates), which return a discrete set of
+values. Many predicates reduce to determining the sign of a polynomial
+on the defining parameters of the primitive objects. For example, to
+test whether a point lies above or below a plane we compute the dot
+product of the point with the normal of the plane and subtract the
+plane's offset along the normal. If the result is positive, the point
+is above the plane, zero on the plane, negative below. The validity of
+many combinatorial structures built on top of geometric primitives can
+be verified by checking a finite number of predicates of the geometric
+primitives.  These predicates, which collectively certify the
+correctness of the structure, are called {\em certificates}.  For a
+Delaunay triangulation in three dimensions, for example, the
+certificates are one \ccc{InCircle} test per facet of the
+triangulation, plus a point plane orientation test for each facet or
+edge of the convex hull.
+
+The kinetic data structures approach is built on top of this view of
+computational geometry. Let the geometric primitives move by replacing
+each of their defining quantities with a function of time (generally a
+polynomial). As time advances, the primitives trace out paths in
+space called {\em trajectories}. The values of the polynomial
+functions of the defining quantities used to evaluate the predicates now
+also become functions of time. We call these functions
+{\em certificate functions}. Typically, a geometric structure is valid when
+all predicates have a specific non-zero sign. In the kinetic setting,
+as long as the certificate functions maintain the correct sign as time varies,
+the corresponding predicates do not change values,
+and the original data structure remains correct. However, if
+one of the certificate functions changes sign, the original structure
+must be updated, as well as the set of certificate functions that
+verify it.  We call such occurrences {\em events}.
+
+Maintaining a kinetic data structure is then a matter of determining
+which certificate function changes sign next, i.e.\ determining which
+certificate function has the first real root that is greater than the
+current time, and then updating the structure and the set of
+certificate functions. In addition, the trajectories of primitives are
+allowed to change at any time, although $C^0$-continuity of the
+trajectories must be maintained.  When a trajectory update occurs for
+a geometric primitive, all certificates involving that primitive must
+be updated.  We call the collection of kinetic data structures,
+primitives, event queue and other support structures a
+{\em simulation}.
+
+Sweepline algorithms for computing arrangements in $d$ dimensions
+easily map on to kinetic data structures by taking one of the
+coordinates of the ambient space as the time variable. The kinetic
+data structure then maintains the arrangement of a set of objects
+defined by the intersection of a hyperplane of dimension $d-1$ with
+the objects whose arrangement is being computed. 
+
+
+Time is one of the central concepts in a kinetic simulation.  Just as
+static geometric data structures divide the continuous space of all
+possible inputs (as defined by sets of coordinates) into a discrete
+set of combinatorial structures, kinetic data structures divide the
+continuous time domain into a set of disjoint intervals. In each
+interval the combinatorial structure does not change, so, in terms of
+the combinatorial structure, all times in the interval are equivalent.
+We capitalize on this equivalence in the framework in order to
+simplify computations. If the primitives move on polynomial
+trajectories and the certificates are polynomials in the coordinates,
+then events occur at real roots of polynomials of time. Real numbers,
+which define the endpoints of the interval, are more expensive to
+compute with than rational numbers, so performing computations at a
+rational number inside the interval is preferable whenever
+possible. See Section~\ref{sec:kds_instantaneous_kernel} for an example of
+where this equivalence is exploited.
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\subsection{Terms Used\label{sec:kds_terms}}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\begin{description}
+\item[primitive] The basic geometric types, e.g., the points of a
+  triangulation. A primitive has a set of {\em coordinates}.
+\item[combinatorial structure] A structure built on top of the
+  primitives. The structure does not depend directly on the
+  coordinates of the primitives, only on relationships between them.
+\item[trajectory] The path traced out by a primitive as time passes.
+  In other words how the coordinates of a primitive change with time.
+\item[snapshot] The position of all the primitives at a particular
+  moment in time.
+\item[static] Having to do with geometric data structures on
+  non-moving primitives.
+\item[predicate] A function which takes the coordinates of several
+  primitives from a snapshot as input and produces one of a discrete
+  set of outputs.
+\item[certificate] One of a set of predicates which, when all having
+  the correct values, ensure that the combinatorial structure is
+  correct.
+\item[certificate function] A function of time which is positive when
+  the corresponding certificate has the correct value. When the
+  certificate function changes sign, the combinatorial structure needs
+  to be updated.
+\item[event] When a certificate function changes sign and the
+  combinatorial structure needs to be updated.
+\end{description}

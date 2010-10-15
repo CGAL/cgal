@@ -1,0 +1,124 @@
+% +------------------------------------------------------------------------+
+% | Reference manual page: Compute_anchor_3.tex
+% +------------------------------------------------------------------------+
+% | 27.09.2005   Nico Kruithof
+% | Package: Skin_surface
+% | 
+\RCSdef{\RCSComputeanchorRev}{$Id$}
+\RCSdefDate{\RCSComputeanchorDate}{$Date$}
+% +------------------------------------------------------------------------+
+\ccRefPageBegin
+%%RefPage: end of header, begin of main body
+% +------------------------------------------------------------------------+
+
+\begin{ccRefClass}{Compute_anchor_3<RegularTriangulation_3>}
+
+\ccDefinition
+
+The affine hulls of a Regular simplex and its dual Voronoi cell
+intersect in a single point, called the center. The point in a Regular
+simplex (Voronoi cell) closest to the center is called the anchor
+point of the simplex (cell). The anchor point coincides with the
+center of the simplex (cell) or with the center of one of its faces.
+
+The class \ccRefName\ defines functions for the computation of the
+anchor point of a given Regular simplex (Power cell). Given a Regular
+simplex, it returns the lowest dimensional simplex that has the same
+anchor point. For Voronoi cells, it returns the dual Regular simplex
+of the lowest dimensional Voronoi cell with the same anchor point.
+
+If the Regular triangulation is degenerate (it contains more than 4
+co-circular points), then the anchor point might not be uniquely
+defined. For example, if a Voronoi edge degenerates to a line segment,
+then both Voronoi vertices are valid anchor points. In that case,
+\ccc{is_degenerate()} returns true and the iterator range from
+\ccc{equivalent_anchors_begin()} until \ccc{equivalent_anchors_end()}
+contains the additional simplices.
+
+\ccInclude{CGAL/Compute_anchor_3.h}
+
+\ccTypes
+\ccThree{typedef Triangulation_simplex_3<RegularTriangulation_3>xxx}{Simplex;xxx}{}
+\ccThreeToTwo
+
+\ccTypedef{typedef RegularTriangulation_3::Vertex_handle Vertex_handle;}{}
+\ccGlue
+\ccTypedef{typedef RegularTriangulation_3::Edge          Edge;}{}
+\ccGlue
+\ccTypedef{typedef RegularTriangulation_3::Facet         Facet;}{}
+\ccGlue
+\ccTypedef{typedef RegularTriangulation_3::Cell_handle   Cell_handle;}{}
+
+\ccGlue
+\ccTypedef{typedef Triangulation_simplex_3<RegularTriangulation_3> Simplex;}{}
+
+\ccNestedType{Simplex_iterator}{iterator over simplices}
+\ccGlue
+
+
+\ccCreation
+\ccCreationVariable{compute_anchor}  %% choose variable name
+
+\ccThree{Compute_anchor_3}{xxxx}{}
+\ccThreeToTwo
+
+
+\ccConstructor{Compute_anchor_3(const RegularTriangulation_3 &reg);}{
+  constructor that takes the regular triangulation from which it will
+  construct anchor points as argument.}
+
+\ccOperations
+
+\ccHeading{Computing the anchor point}
+
+The class \ccClassTemplateName provides functions for the computation
+of anchor points. These functions return the face of the argument with
+minimal dimension and an anchor point equal to the anchor point of the
+argument, which is unique (under a generality condition). If no proper
+face exists satisfying this condition, the argument is returned.
+
+\ccMethod{Simplex anchor_del( const Vertex_handle v );}{ } \ccGlue
+\ccMethod{Simplex anchor_del( const Edge &e );}{ } \ccGlue
+\ccMethod{Simplex anchor_del( const Facet &f );}{ } \ccGlue
+\ccMethod{Simplex anchor_del( const Cell_handle ch );}{ } \ccGlue
+\ccMethod{Simplex anchor_del( const Simplex &s );}{ }
+
+
+\ccMethod{Simplex anchor_vor( const Vertex_handle v );}{ }
+\ccGlue
+\ccMethod{Simplex anchor_vor( const Edge &e );}{ }
+\ccGlue
+\ccMethod{Simplex anchor_vor( const Facet &f );}{ }
+\ccGlue
+\ccMethod{Simplex anchor_vor( const Cell_handle ch );}{ }
+\ccGlue
+\ccMethod{Simplex anchor_vor( const Simplex &s );}{ }
+
+\ccHeading{Degenerate situations} 
+%
+In degenerate cases, the anchor cannot be represented by a simple
+simplex. E.g., if a Voronoi edge degenerates into a point, the anchor
+of the Voronoi edge is equal to the anchor of the edge and both
+vertices.
+
+In the case of degeneracies, the method \ccc{is_degenerate()} returns
+true and the functions \ccc{equivalent_anchors_begin()} and
+\ccc{equivalent_anchors_end()} define a range of equivalent simplices.
+
+\ccMethod{bool is_degenerate();}{ }
+\ccGlue
+\ccMethod{Simplex_iterator equivalent_anchors_begin();}{ }
+\ccGlue
+\ccMethod{Simplex_iterator equivalent_anchors_end();}{ }
+
+%\ccSeeAlso
+%\ccRefIdfierPage{CGAL::SkinSurfaceTraits_3<Traits>}
+
+\end{ccRefClass}
+
+% +------------------------------------------------------------------------+
+%%RefPage: end of main body, begin of footer
+\ccRefPageEnd
+% EOF
+% +------------------------------------------------------------------------+
+

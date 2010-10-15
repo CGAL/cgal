@@ -1,0 +1,69 @@
+% begin cgal manual page
+
+\begin{ccRefClass}[Nef_polyhedron_S2<Traits>::]{Sphere_circle}
+\ccCreationVariable{c}
+  
+\ccDefinition
+
+An object \ccc{c} of type \ccc{Sphere_circle} is an oriented great
+circle on the surface of a unit sphere.  Such circles correspond to
+the intersection of an oriented plane (that contains the origin) and
+the surface of $S_2$. The orientation of the great circle is that of a
+counterclockwise walk along the circle as seen from the positive
+halfspace of the oriented plane.
+
+\ccSetOneOfTwoColumns{6.5cm}
+
+\ccTypes
+
+\ccNestedType{RT}{ ring type.  }
+
+\ccNestedType{Plane_3}{ plane a \ccc{Sphere_circle} lies in.}
+
+\ccCreation
+
+\ccConstructor{Sphere_circle()}{ creates some great circle.  }
+
+\ccConstructor{Sphere_circle(const Sphere_point& p, 
+  const Sphere_point& q)}{ If $p$ and $q$ are
+  opposite of each other, then we create the unique great circle on $S_2$ 
+  which contains p and q. This circle is oriented such
+  that a walk along \ccc{c} meets $p$ just before the shorter segment
+  between $p$ and $q$. If $p$ and $q$ are opposite of each other then
+  we create any great circle that contains $p$ and $q$.  }
+
+\ccConstructor{Sphere_circle(const Plane_3& h)}{ creates the
+  circle corresponding to the plane \ccc{h}.  \ccPrecond \ccc{h}
+  contains the origin.  }
+
+\ccConstructor{Sphere_circle(const RT& x, const RT& y, const RT& z)}
+{ creates the circle orthogonal to the vector $(x,y,z)$.  }
+
+\ccConstructor{Sphere_circle(Sphere_circle c, const Sphere_point&
+  p)}{ creates a great circle orthogonal to $c$ that contains $p$.
+  \ccPrecond $p$ is not part of $c$.  }
+
+\ccSetTwoOfThreeColumns{2.5cm}{3.8cm}
+
+\ccOperations
+
+\ccMethod{Sphere_circle opposite() ;}{ Returns a sphere circle 
+  in the oppostie direction of \ccc{c}.  }
+
+\ccMethod{bool has_on(const Sphere_point& p) ;}{ returns true iff
+  \ccc{c} contains \ccc{p}.  }
+
+\ccMethod{Plane_3 plane() ;}{ returns the plane supporting \ccc{c}.  }
+
+\ccMethod{Sphere_point orthogonal_pole() ;}{ returns the point that
+  is the pole of the hemisphere left of \ccc{c}.  }
+
+\ccHeading{Global functions} 
+
+\ccFunction{bool equal_as_sets(
+  const Nef_polyhedron_S2<Traits>::Sphere_circle c1, 
+  const Nef_polyhedron_S2<Traits>::Sphere_circle c2) ;}{
+  returns true iff \ccc{c1} and \ccc{c2} are equal as unoriented
+  circles.  }
+
+\end{ccRefClass}

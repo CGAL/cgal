@@ -1,0 +1,107 @@
+%% Copyright (c) 2005  Foundation for Research and Technology-Hellas (Greece).
+%% All rights reserved.
+%%
+%% This file is part of CGAL (www.cgal.org); you may redistribute it under
+%% the terms of the Q Public License version 1.0.
+%% See the file LICENSE.QPL distributed with CGAL.
+%%
+%% Licensees holding a valid commercial license may use this file in
+%% accordance with the commercial license agreement provided with the software.
+%%
+%% This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
+%% WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
+%%
+%% $URL$
+%% $Id$
+%% 
+%%
+%% Author(s)     : Menelaos Karavelas <mkaravel@iacm.forth.gr>
+
+
+
+\begin{ccRefClass}[Voronoi_diagram_2<DG,AT,AP>::]{Face}
+
+%% \ccHtmlCrossLink{}     %% add further rules for cross referencing links
+%% \ccHtmlIndexC[concept]{} %% add further index entries
+\ccDefinition
+
+The class \ccRefName\ is the class provided by the
+\ccc{Voronoi_diagram_2<DG,AT,AP>} class for Voronoi faces. Below we
+present its interface.
+
+\ccIsModel
+\ccc{DefaultConstructible}, \ccc{CopyConstructible}, \ccc{Assignable},
+\ccc{EqualityComparable}, \ccc{LessThanComparable}
+
+\ccTypes
+%
+\ccTwo{Voronoi_diagram_2<DG,AT,AP>::Face::Halfedge_handle+}{}
+\ccNestedType{Vertex}{A type for the vertices of the Voronoi diagram.}
+\ccGlue
+\ccNestedType{Halfedge}{A type for the halfedges of the Voronoi diagram.}
+\ccGlue
+\ccNestedType{Vertex_handle}{Handle for the vertices of the Voronoi diagram.}
+\ccGlue
+\ccNestedType{Face_handle}{Handle for the faces of the Voronoi diagram.}
+\ccGlue
+\ccNestedType{Halfedge_handle}{Handle for the halfedges of the Voronoi
+  diagram.}
+\ccGlue
+\ccNestedType{Ccb_halfedge_circulator}{A type for a bidirectional
+  circulator over the halfedges on the boundary of the face. The value
+  type of the circulator is
+  \ccc{CGAL::Voronoi_diagram_2<DG,AT,AP>::Halfedge}, and is convertible
+  to \ccc{Halfedge_handle}.}
+\ccGlue
+\ccNestedType{Delaunay_graph}{A type for the Delaunay graph. It is a
+  model of the \ccc{DelaunayGraph_2} concept.}
+%
+\ccGlue
+\ccThree{typedef Delaunay_graph::Vertex_handle}{Delaunay_vertex_handle;}{}
+\ccThreeToTwo
+\ccTypedef{typedef Delaunay_graph::Vertex_handle
+  Delaunay_vertex_handle;}{A type for the handle of the dual vertex.}
+
+\ccCreationVariable{f}  %% choose variable name
+
+
+\ccHeading{Access Methods}
+\ccThree{Ccb_halfedge_circulator}{f.halfedge()+}{}
+%
+\ccMethod{Halfedge_handle halfedge();}{Returns an incident halfedge on
+  the boundary of \ccc{f}.}
+\ccGlue
+\ccMethod{Ccb_halfedge_circulator ccb();}{Returns a bidirectional
+  circulator for traversing the halfedges on the boundary of
+  \ccc{f}. The halfedges are traversed in counterclockwise order.}
+\ccGlue
+\ccMethod{Delaunay_vertex_handle dual();}
+{Returns a handle to the corresponding dual vertex in the Delaunay graph.}
+
+\ccHeading{Predicate Methods}
+\ccThree{bool}{f.is_halfedge_on_ccb(Halfedge e)+}{}
+\ccMethod{bool is_unbounded();}{Returns \ccStyle{true} iff the face is
+  an unbounded face in the Voronoi diagram.}
+\ccMethod{bool is_halfedge_on_ccb(Halfedge e);}{Returns
+  \ccStyle{true} iff \ccc{e} is a halfedge of the boundary of
+  \ccc{f}.}
+\ccGlue
+\ccMethod{bool is_valid();}{Returns \ccStyle{true} iff the following
+  conditions are met: the face is not rejected by the chosen
+  adaptation policy;
+  all its adjacent halfedges do not have zero length; all its adjacent
+  halfedges return the face as their adjacent face.}
+
+
+\ccSeeAlso
+\ccc{CGAL::Voronoi_diagram_2<DG,AT,AP>}\\
+\ccc{CGAL::Voronoi_diagram_2<DG,AT,AP>::Vertex}\\
+\ccc{CGAL::Voronoi_diagram_2<DG,AT,AP>::Halfedge}\\
+\ccc{DelaunayGraph_2}
+\end{ccRefClass}
+
+% +------------------------------------------------------------------------+
+%%RefPage: end of main body, begin of footer
+% EOF
+% +------------------------------------------------------------------------+
+

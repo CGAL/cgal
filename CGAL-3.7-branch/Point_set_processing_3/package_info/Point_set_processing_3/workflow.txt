@@ -1,0 +1,35 @@
+Analysis
+- barycenter, len diag of bbox, etc., see centroid() and bounding_box() in PCA component (done)
+- average spacing (KNN) (done)
+- lfs estimate (pole approach + arbitrary query points using KNN) (pierre)
+
+Processing
+- smoothing (via jet-fitting + reprojection) (done)
+- outlier removal (to check which one is easy with CGAL components) (done)
+- simplify point sets: clustering, random simplification (done)
+
+Normal estimation
+- KNN + point-based PCA (done)
+- KNN + jet fitting (done)
+- Voronoi diagram + poles [Amenta98] (pierre)
+- Voronoi diagram + tetrahedral-based PCA [Alliez07] (pierre)
+
+Normal orientation
+- MST [Hope92] (done)
+- pole-based (frederic?)
+
+
+In addition:
+
+Concepts
+- Algorithms are independent global functions (no concepts)
+- Output formats concept to be defined (laurent?)
+
+Demos, examples and tests
+- Command line tests (pierre + laurent)
+
+
+
+
+
+

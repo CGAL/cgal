@@ -1,0 +1,43 @@
+\begin{ccRefConcept}{PolynomialTraits_d::MakeSquareFree}
+\ccDefinition
+
+This \ccc{AdaptableBinaryFunction} computes the square-free part of 
+a polynomial of type \ccc{PolynomialTraits_d::Polynomial_d}  
+{\em up to a constant factor}.  
+
+A polynomial $p$ can be  factored into square-free and pairwise coprime 
+non-constant factors $g_i$ with multiplicities $m_i$ and a constant factor $a$, 
+such that $p = a  \cdot  g_1^{m_1}  \cdot  ...  \cdot  g_n^{m_n}$, where all $g_i$ are canonicalized.
+
+Given this decomposition, the square free part is defined as the product $g_1  \cdot  ...  \cdot  g_n$, 
+which is computed by this functor. 
+
+\ccRefines 
+\ccc{AdaptableUnaryFunction}\\
+\ccc{CopyConstructible}\\
+\ccc{DefaultConstructible}\\
+
+\ccTypes
+
+\ccSetThreeColumns{xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx}{xxx}{}
+\ccCreationVariable{fo}
+\ccTypedef{typedef PolynomialTraits_d::Polynomial_d   result_type;}{}
+\ccGlue
+\ccTypedef{typedef PolynomialTraits_d::Polynomial_d   argument_type;}{}
+
+\ccOperations
+\ccMethod{result_type operator()(argument_type  p);}
+         { Returns the square-free part of $p$.}
+
+
+%\ccHasModels
+
+\ccSeeAlso
+
+\ccRefIdfierPage{Polynomial_d}\\
+\ccRefIdfierPage{PolynomialTraits_d}\\
+\ccRefIdfierPage{PolynomialTraits_d::Canonicalize}\\
+\ccRefIdfierPage{PolynomialTraits_d::SquareFreeFactorize}\\
+\ccRefIdfierPage{PolynomialTraits_d::IsSquareFree}\\
+
+\end{ccRefConcept}

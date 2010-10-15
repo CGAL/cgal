@@ -1,0 +1,42 @@
+\begin{ccRefConcept}{PolynomialTraits_d::Shift}
+\ccDefinition
+
+This \ccc{AdaptableBinaryFunction} multiplies a \ccc{PolynomialTraits_d::Polynomial_d}
+by the given power of the specified variable. 
+
+This functor is provided for efficiency reasons, since multiplication by some variable 
+will in general correspond to a shift of coefficients in the internal representation. 
+
+\ccRefines 
+\ccc{AdaptableBinaryFunction}\\
+\ccc{CopyConstructible}\\
+\ccc{DefaultConstructible}\\
+
+\ccTypes
+\ccCreationVariable{fo}
+\ccSetThreeColumns{xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx}{xxx}{}
+\ccTypedef{typedef PolynomialTraits_d::Polynomial_d   result_type;}{}
+\ccTypedef{typedef PolynomialTraits_d::Polynomial_d   first_argument_type;}{}
+\ccTypedef{typedef int                                second_argument_type;}{}
+
+\ccOperations
+\ccMethod{result_type operator()(first_argument_type  p,
+                                 second_argument_type e);}
+         { Returns $p * x_{d-1}^e$.
+          \ccPrecond $0 \leq e$     }
+\ccMethod{result_type operator()(first_argument_type p,
+                                 second_argument_type e,
+                                 int i);}
+         { Returns $p * x_{i}^e$.
+          \ccPrecond $0 \leq e$   
+          \ccPrecond $0 \leq i < d$
+         }
+
+%\ccHasModels
+
+\ccSeeAlso
+
+\ccRefIdfierPage{Polynomial_d}\\
+\ccRefIdfierPage{PolynomialTraits_d}\\
+
+\end{ccRefConcept}

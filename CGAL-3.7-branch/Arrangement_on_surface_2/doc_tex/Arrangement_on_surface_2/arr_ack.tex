@@ -1,0 +1,31 @@
+\section*{Design and Implementation History}
+%===========================================
+
+The code of this package is the result of a long development process.
+Initially (and until version~3.1), the code was spread among several
+components, namely, \ccc{Topological_map}, \ccc{Planar_map_2},
+\ccc{Planar_map_with_intersections_2} and \ccc{Arrangement_2}, that were
+developed by Ester Ezra, Eyal Flato, Efi Fogel, Dan Halperin, Iddo
+Hanniel, Idit Haran, Shai Hirsch, Eugene Lipovetsky, Oren Nechushtan,
+Sigal Raab, Ron Wein, Baruch Zukerman, and Tali Zvi.
+
+In version~3.2, as part of the ACS project, the packages have gone
+through a major re-design, resulting in an improved and unified
+\emph{2D Arrangements} package.
+The code of the new package was restructured and developed by
+Efi Fogel, Idit Haran, Ron Wein, and Baruch Zukerman. This
+version included for the first time a new geometry-traits
+class that handles circular and linear curves, and is based
+on the circular kernel. The circular kernel was developed
+by Monique Teillaud, Sylvain Pion, and Julien Hazebrouck.
+
+Version~3.3 features arrangements of unbounded curves for the first
+time. The design and development of this feature required yet another
+restructuring of the entire package. All this was done by Eric
+Berberich, Efi Fogel, Dan Halperin, Ophir Setter, and Ron
+Wein. Michael Hemmer helped tuning up parts of the geometry-traits 
+concept related to unbounded curves.
+
+Version~3.7 introduced a geometry-traits class
+that handles planar algebraic curves of arbitrary degree.
+It was developed by Eric Berberich and Michael Kerber.

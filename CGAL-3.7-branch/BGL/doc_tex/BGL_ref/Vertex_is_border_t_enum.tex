@@ -1,0 +1,30 @@
+\begin{ccRefEnum}{vertex_is_border_t}
+
+\ccInclude{CGAL/boost/graph/properties.h}
+
+\ccGlobalEnum{enum vertex_is_border_t { vertex_is_border } ; }
+\ccRefLabel{vertex_is_border}
+\ccHtmlCrossLink{vertex_is_border}
+
+The constant \ccc{vertex_is_border} is a 
+\ccAnchor{http://www.boost.org/libs/graph/doc/PropertyTag.html}
+{property tag} which refers to the property
+of a vertex of being a border vertex.
+
+\ccc{vertex_is_border} is an 
+\ccAnchor{http://www.boost.org/libs/graph/doc/using_property_maps.html}
+{interior property}, that is, a
+\ccAnchor{http://www.boost.org/libs/property_map/doc/property_map.html}{property map} 
+for \ccc{vertex_is_border} can be extracted from any  model of 
+a \ccc{HalfedgeGraph} using the {\sc Bgl}
+\ccAnchor{http://www.boost.org/libs/graph/doc/PropertyGraph.html}
+{PropertyGraph} interface:
+
+\ccc{boost::get(vertex_is_border,graph)}
+
+The Boolean flag that indicates if the vertex is a border can be directly accessed via:
+
+\ccc{boost::get(vertex_is_border,graph,edge)}
+
+
+\end{ccRefEnum}

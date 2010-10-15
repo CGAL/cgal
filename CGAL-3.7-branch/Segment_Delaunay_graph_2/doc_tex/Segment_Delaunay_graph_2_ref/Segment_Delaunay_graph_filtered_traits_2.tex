@@ -1,0 +1,144 @@
+%% Copyright (c) 2003,2004,2005  INRIA Sophia-Antipolis (France) and
+%% Notre Dame University (U.S.A.).  All rights reserved.
+%%
+%% This file is part of CGAL (www.cgal.org); you may redistribute it under
+%% the terms of the Q Public License version 1.0.
+%% See the file LICENSE.QPL distributed with CGAL.
+%%
+%% Licensees holding a valid commercial license may use this file in
+%% accordance with the commercial license agreement provided with the software.
+%%
+%% This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
+%% WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
+%%
+%% $URL$
+%% $Id$
+%% 
+%%
+%% Author(s)     : Menelaos Karavelas <mkaravel@cse.nd.edu>
+
+
+
+\begin{ccRefClass}
+{Segment_Delaunay_graph_filtered_traits_2<CK,CM,EK,EM,FK,FM>}
+%% add template arg's if necessary
+
+%% \ccHtmlCrossLink{}     %% add further rules for cross referencing links
+%% \ccHtmlIndexC[class]{} %% add further index entries
+
+\ccDefinition
+  
+The class \ccRefName\ provides a model for the
+\ccc{SegmentDelaunayGraphTraits_2} concept.
+
+The class \ccRefName\ uses the filtering technique \cite{cgal:bbp-iayed-01}
+to achieve traits for the \ccc{Segment_Delaunay_graph_2<Gt,DS>}
+class with efficient and exact predicates given an exact
+kernel \ccc{EK} and a filtering kernel \ccc{FK}. The geometric
+constructions associated provided by this class are equivalent
+to those provided by the traits class
+\ccc{Segment_Delaunay_graph_traits_2<CK,CM>}, which means that
+they may be inexact depending on the choice of the \ccc{CK} kernel.
+
+This class has six template parameters. The first, third and fifth
+template parameters must be a models of the \ccc{Kernel} concept. The
+parameter \ccc{CK} is the construction kernel and it is the kernel
+that will be used for constructions. The parameter \ccc{FK} is the
+filtering kernel; this kernel will be used for performing the
+arithmetic filtering for the predicates involved in the computation of
+the segment Delaunay graph. Finally, the parameter \ccc{EK} is the
+exact kernel; this kernel will be used for computing the predicates if
+the filtering kernel fails to produce an answer.
+
+The second, fourth and sixth template parameters correspond to how
+predicates are evaluated. There are two predefined possible values for
+these parameters, namely \ccc{CGAL::Field_with_sqrt_tag} and
+\ccc{CGAL::Field_tag}. The first one must be used when the number type
+used in the representation supports the exact evaluation of signs of
+expressions involving all four basic operations and square roots,
+whereas the second one requires that only field operations are
+exact. Finally, in order to get exact constructions \ccc{CM}
+must be set to \ccc{CGAL::Field_with_sqrt_tag} and the number type in
+\ccc{CK} must support operations involing divisions and square roots
+(as well as the other three basic operations of course).
+%
+The way the predicates are evaluated is discussed in
+\cite{b-ecvdl-96} and \cite{cgal:k-reisv-04} (the geometric filtering
+part).
+
+The default values for the template parameters are as follows:
+\ccc{CM = CGAL::Field_with_sqrt_tag} (it is assumed that
+\ccc{CGAL::Cartesian<double>} or \ccc{CGAL::Simple_cartesian<double>}
+will be the entry for the template parameter \ccc{CK}), 
+\ccc{EM = CGAL::Field_tag},
+\ccc{FK = CGAL::Simple_cartesian<CGAL::Interval_nt<false> >},
+\ccc{FM = CGAL::Field_with_sqrt_tag}. If the \textsc{Gmp} package is
+installed with \cgal, the template parameter \ccc{EK} has the default
+value: \ccc{EK = CGAL::Simple_cartesian<CGAL::Gmpq>}, otherwise its
+default value is
+\ccc{EK = CGAL::Simple_cartesian<CGAL::Quotient<CGAL::MP_Float> >}.
+
+
+\ccInclude{CGAL/Segment_Delaunay_graph_filtered_traits_2.h}
+
+\ccIsModel
+\ccc{SegmentDelaunayGraphTraits_2}\\
+\ccc{DefaultConstructible}\\
+\ccc{CopyConstructible}\\
+\ccc{Assignable}
+
+\ccTypes
+
+\ccThree{typedef CGAL::Tag_true}{Intersections_tag;}{}
+\ccTypedef{typedef CGAL::Tag_true Intersections_tag;}{}
+
+In addition to the types required by the
+\ccc{SegmentDelaunayGraphTraits_2} concept the class \ccRefName\
+defines the following types:
+
+\ccTypedef{typedef CK  Kernel;}{}
+\ccGlue
+\ccTypedef{typedef CK  Construction_kernel;}{}
+\ccGlue
+\ccTypedef{typedef FK  Filtering_kernel;}{}
+\ccGlue
+\ccTypedef{typedef EK  Exact_kernel;}{}
+\ccGlue
+\ccTypedef{typedef CM  Method_tag;}{}
+\ccGlue
+\ccTypedef{typedef CM  Construction_traits_method_tag;}{}
+\ccGlue
+\ccTypedef{typedef FM  Filtering_traits_method_tag;}{}
+\ccGlue
+\ccTypedef{typedef EM  Exact_traits_method_tag;}{}
+\ccGlue
+\ccNestedType{Construction_traits}{A type for the segment Delaunay
+  graph traits, where the kernel is \ccc{CK}.}
+\ccGlue
+\ccNestedType{Filtering_traits}{A type for the segment Delaunay
+  graph traits, where the kernel is \ccc{FK}.}
+\ccGlue
+\ccNestedType{Exact_traits}{A type for the segment Delaunay
+  graph traits, where the kernel is \ccc{EK}.}
+
+
+
+\ccSeeAlso
+\ccc{Kernel}\\
+\ccc{SegmentDelaunayGraphTraits_2} \\
+\ccc{CGAL::Field_tag}\\
+\ccc{CGAL::Field_with_sqrt_tag}\\
+\ccc{CGAL::Segment_Delaunay_graph_2<Gt,DS>}\\
+\ccc{CGAL::Segment_Delaunay_graph_hierarchy_2<Gt,STag,DS>}\\
+\ccc{CGAL::Segment_Delaunay_graph_traits_2<K,MTag>}\\
+\ccc{CGAL::Segment_Delaunay_graph_traits_without_intersections_2<K,MTag>}\\
+\ccc{CGAL::Segment_Delaunay_graph_filtered_traits_without_intersections_2<CK,CM,EK,EM,FK,FM>}
+
+
+\end{ccRefClass}
+
+% +------------------------------------------------------------------------+
+%%RefPage: end of main body, begin of footer
+% EOF
+% +------------------------------------------------------------------------+
+

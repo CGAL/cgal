@@ -1,0 +1,50 @@
+\begin{ccRefConcept}{PolynomialTraits_d::Canonicalize}
+
+\ccDefinition
+
+For a given polynomial $p$ this \ccc{AdaptableUnaryFunction} computes the 
+unique representative of the set 
+\[{\cal P} := \{ q\ |\ \lambda * q = p\ for\ some\ \lambda \in R  \},\]
+where $R$ is the base of the polynomial ring. 
+
+In case \ccc{PolynomialTraits::Innermost_coefficient_type} is a model of 
+\ccc{Field}, the computed polynomial is the {\em monic} polynomial in 
+{$\cal P$}, that is, the innermost leading coefficient equals one.\\
+In case \ccc{PolynomialTraits::Innermost_coefficient_type} is a model 
+of \ccc{UniqueFactorizationDomain}, the computed polynomial is the one with 
+a multivariate content of one.\\
+For all other cases the notion of uniqueness is up to the concrete model. 
+
+Note that the computed polynomial has the same zero set as the given one.
+
+
+
+\ccRefines 
+
+\ccc{AdaptableUnaryFunction}\\
+\ccc{CopyConstructible}\\
+\ccc{DefaultConstructible}\\
+
+\ccTypes
+
+
+\ccSetThreeColumns{xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx}{xxx}{}
+\ccTypedef{typedef PolynomialTraits_d::Polynomial_d   result_type;}{}\ccGlue
+\ccTypedef{typedef PolynomialTraits_d::Polynomial_d   argument_type;}{}
+
+\ccOperations
+
+\ccCreationVariable{fo}
+\ccMethod{result_type operator()(first_argument_type  p);}{
+        Returns the canonical representative of $p$.}
+
+
+
+%\ccHasModels
+
+\ccSeeAlso
+
+\ccRefIdfierPage{Polynomial_d}\\
+\ccRefIdfierPage{PolynomialTraits_d}\\
+
+\end{ccRefConcept}

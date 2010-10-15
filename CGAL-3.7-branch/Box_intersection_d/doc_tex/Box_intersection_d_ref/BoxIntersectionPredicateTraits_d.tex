@@ -1,0 +1,91 @@
+% +------------------------------------------------------------------------+
+% | Reference manual page: BoxIntersectionPredicateTraits_d.tex
+% +------------------------------------------------------------------------+
+
+\begin{ccRefConcept}{BoxIntersectionPredicateTraits_d}
+\begin{ccAdvanced}
+  
+This very fine-grained \ccRefName\ concept allows the hand-crafted
+implementation of the individual interval comparison tests. This is
+only for experts and might only be useful in the context of special
+number types or exploitation of special assembler instructions!  The
+generic default implementation
+\ccc{CGAL::Box_intersection_d::Predicate_traits_d<BoxTraits_d,
+  bool closed>} is likely to suffice for all practical purposes.
+
+\ccRefines
+
+\ccRefConceptPage{BoxIntersectionTraits_d}
+
+\ccTypes
+\ccTwo{BoxIntersectionPredicateTraits_d::MHi_greater}{}
+
+\ccNestedType{Box}{box type. Since we support in our algorithms
+  passing the boxes by value as well as passing them as pointers, we
+  have as box type either \ccc{const B&}, \ccc{B*}, or \ccc{const B*}
+  respectively, if \ccc{B} is the actual class type storing the box.
+  The box objects are passed in parameter lists of functions and
+  predicates using exactly this type.} 
+
+\ccNestedType{NT}{number type to represent the box
+  boundaries. Supported are the built-in types \ccc{int}, \ccc{unsigned
+  int}, \ccc{float}, and \ccc{double}.} 
+
+\ccNestedType{ID}{type for the \ccc{id}-number,
+  model of the \ccc{LessThanComparable} concept.}
+
+\ccNestedType{Compare}{Function object that compares two boxes with
+  respect to the predicate \ccc{is_lo_less_lo.}}
+
+\ccNestedType{Lo_less}{Function object that compares the starting
+  point of a box in a certain dimension against a fixed value. Or,
+  more compactly in math-like notation:
+  \ccc{Lo_less(val,dim)=fn box->get_lo(box,dim) < val}} 
+
+\ccNestedType{Hi_greater}{Function object: \ccc{Hi_greater(val,dim)=fn
+    box->get_hi(box,dim) > val}} 
+
+\ccNestedType{Spanning}{Function object: \ccc{Spanning(lo,hi,dim)=fn
+    box->get_lo(box,dim) < lo && get_hi(box,dim) > hi}}
+
+
+\ccOperations
+\ccThree{bool.}{BoxIntersectionPred}{}
+For all methods that require a dimension parameter, \ccc{dim <
+  dimension()} must hold.
+
+\ccFunction{bool BoxIntersectionPredicateTraits_d::is_lo_less_lo(Box
+      a, Box b, int dim);} 
+  {the interval starting point of box $a$ is less or equal to box
+      $b$'s, regarding dimension \ccc{dim}. If equal, the
+      \ccc{id}-number of $a$ and $b$ is compared. If the
+      \ccc{id}-number of $a$ is less, return \ccc{true}.} 
+
+\ccFunction{bool BoxIntersectionPredicateTraits_d::is_lo_less_hi(Box
+      a, Box b, int dim);} 
+  {the interval starting point of box $a$ is less than interval end point of
+      box $b$, regarding dimension \ccc{dim}, i.e., the intervals in
+      dimension \ccc{dim} could possibly overlap.}
+
+\ccFunction{bool BoxIntersectionPredicateTraits_d::does_intersect (Box
+      a, Box b, int dim);} 
+  {intervals of box $a$ and box $b$ intersect in dimension \ccc{dim}.}
+
+\ccFunction{bool
+  BoxIntersectionPredicateTraits_d::contains_lo_point(Box a, Box b, int dim);} 
+  {interval of box $a$ contains interval starting point of box $b$ in
+  dimension \ccc{dim}, i.e., the intervals in dimension \ccc{dim}
+  could possibly overlap.} 
+
+\ccHasModels
+
+\ccRefIdfierPage{CGAL::Box_intersection_d::Predicate_traits_d<BoxTraits,bool closed>} 
+
+\ccSeeAlso
+
+\ccRefIdfierPage{CGAL::box_intersection_custom_predicates_d}\\
+\ccRefIdfierPage{CGAL::box_intersection_all_pairs_custom_predicates_d}
+
+
+\end{ccAdvanced}
+\end{ccRefConcept}

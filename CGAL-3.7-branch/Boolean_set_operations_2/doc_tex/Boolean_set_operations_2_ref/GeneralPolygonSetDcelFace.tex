@@ -1,0 +1,60 @@
+\ccRefPageBegin
+
+\begin{ccRefConcept}{GeneralPolygonSetDcelFace}
+
+\ccDefinition
+% ===========
+A face record in a \dcel{} data structure used by the
+\ccc{General_polygon_set_2} and \ccc{Polygon_set_2} class-templates
+to represent the underlying internal \ccc{Arrangement_2} data structure.
+
+\ccRefines
+\ccc{ArrangementDcelFace}
+
+% \ccTypes
+
+\ccCreation
+\ccCreationVariable{f}
+% =========
+\ccConstructor{Gps_dcel_face();}
+   {default constructor.}
+
+\ccMethod{void assign (const Self& other);}
+   {assigns \ccVar{} with the contents of the \ccc{other} face.}
+
+\ccHtmlNoLinksFrom{   % to avoid linkage of Vertex, etc to HDS::Vertex
+
+\ccAccessFunctions
+% ================
+\ccMethod{bool contained() const;}{%
+  returns \ccc{true} if the face is contained in the general-polygon set,
+  and \ccc{false} otherwise.}
+
+\ccMethod{bool visited();}{%
+  returns \ccc{true} if the face has been visited, and \ccc{false} otherwise.
+  This is used internally by the some of the operations of the 
+  \ccc{General_polygon_set_2} class that traverse the arrangement faces.}
+
+\ccModifiers
+% ==========
+\ccMethod{void set_contained(bool flag);}{%
+  marks the face as contained (if \ccc{flag} is \ccc{true}), or as a hole
+  (if it is \ccc{false}).}
+
+\ccMethod{void set_visited(bool flag);}
+  {marks the face as visited (if \ccc{flag} is \ccc{true}), or as not visited
+  (if it is \ccc{false}). This is used internally by the some of the 
+  operations of the \ccc{General_polygon_set_2} class that traverse the 
+  arrangement faces.}
+
+} % ccHtmlNoLinksFrom
+
+\ccSeeAlso
+
+\ccc{ArrangementDcel}\lcTex{(\ccRefPage{ArrangementDcel})}\\
+\ccc{ArrangementDcelVertex}\lcTex{(\ccRefPage{ArrangementDcelVertex})}\\
+\ccc{ArrangementDcelHalfedge}\lcTex{(\ccRefPage{ArrangementDcelHalfedge})}
+
+\end{ccRefConcept}  
+
+\ccRefPageEnd

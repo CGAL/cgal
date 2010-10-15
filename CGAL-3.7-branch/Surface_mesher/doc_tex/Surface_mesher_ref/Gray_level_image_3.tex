@@ -1,0 +1,86 @@
+% +------------------------------------------------------------------------+
+% | Reference manual page: Gray_level_image_3.tex
+% +------------------------------------------------------------------------+
+% | 06.03.2006   Laurent Rineau
+% | Package: Surface_mesher
+% | 
+\RCSdef{\RCSGraylevelimage3Rev}{$Id$}
+%\RCSdefDate{\RCSGraylevelimage3Date}{$Date$}
+% |
+%%RefPage: end of header, begin of main body
+% +------------------------------------------------------------------------+
+
+
+\begin{ccRefClass}{Gray_level_image_3<FT, Point>}
+
+%% \ccHtmlCrossLink{}     %% add further rules for cross referencing links
+%% \ccHtmlIndexC[class]{} %% add further index entries
+
+\ccDefinition
+
+ A~3D gray image is a
+tri-dimensional array that associates a scalar value to each triple of
+integer $(x, y, z)$ in the range of the image. A~trilinear interpolation
+algorithm provides a map \begin{math}f : \R^3 \longrightarrow \R\end{math}.
+
+The class \ccRefName\ is a 3D gray image loader and a model
+of the concept \ccc{ImplicitFunction}.
+An object of the class \ccRefName\  is created with a parameter
+\ccc{iso} and then its \ccc{operator()}  implements
+the function \ccc{sign of (f(p) - iso)}, for $p \in \R^3$.
+Plugging such a function in the creation of the \ccc{Implicit_surface_3}
+object given as parameter  to \ccc{make_surface_mesh} yields
+a mesh approximating the level with value \ccc{iso}
+in the input 3D gray image.
+ 
+
+%An object of type \ccRefName\ represents the implicit surface of equation
+%$f(x,y,z) = iso$, on $\R^3$, where $iso$ is a given isovalue. The parameter
+%\ccc{FT} is the numerical types. \ccRefName\ provides an \ccc{operator()(FT x, FT y
+%  ,FT z)} that returns \ccc{FT(-1)} if $f(x,y,z)>0$, \ccc{FT(0)} if
+%$f(x,y,z)=0$, and \ccc{FT(1)} if $f(x,y,z)<0$. \ccRefName\ is a model of
+%\ccc{ImplicitFunction}.
+
+\ccRefName\ provides an interface with an auxiliary library called
+\emph{CGALimageIO}. An executable that uses \ccRefName\ must be linked with
+the \emph{CGALimageIO} library. This library is shipped with \cgal{} and
+will be linked automatically by any makefile created by the script
+\ccc{cgal_create_makefile}.
+
+The library \emph{CGALimageIO} and therefore \ccRefName\ support
+several types of 3D images: INRIMAGE (extension .inr[.gz]), GIS (extension
+.dim, of .ima[.gz]), and ANALYZE (extension .hdr, or .img[.gz]).
+
+
+\ccInclude{CGAL/Gray_level_image_3.h}
+
+\ccIsModel
+
+\ccc{ImplicitFunction}
+
+\ccTypes
+
+\ccNestedType{FT}{the numerical type \ccc{FT}}
+\ccNestedType{FT}{the point type \ccc{Point}}
+
+\ccCreation
+\ccCreationVariable{image}
+
+\ccConstructor{Gray_level_image_3(const char* filename, FT iso_value);}
+{\ccc{filename} is the path to a file of a type supported by \emph{ImageIO}.\\
+\ccc{iso_value} is an isovalue of $f$.
+}
+
+\ccSeeAlso
+
+\ccc{ImplicitFunction},\\
+\ccc{Implicit_surface_3<Traits, Function>}, \\
+\ccc{make_surface_mesh}
+
+\end{ccRefClass}
+
+% +------------------------------------------------------------------------+
+%%RefPage: end of main body, begin of footer
+% EOF
+% +------------------------------------------------------------------------+
+

@@ -1,0 +1,123 @@
+\begin{ccRefClass}{Circle_3<Kernel>}
+
+\ccDefinition
+
+An object of type \ccRefName\ is a circle in the
+three-dimensional Euclidean space $\E^3$. Note that the
+circle can be degenerate, i.e.\ the squared radius may be zero.
+
+% -----------------------------------------------------------------------------
+\ccCreation
+\ccCreationVariable{c}
+
+\ccHidden
+\ccConstructor{ Circle_3( );}{
+        introduces an uninitialized variable \ccVar\ of type
+        \ccClassTemplateName.}
+
+\ccConstructor{Circle_3(Point_3<Kernel> const& center, 
+		Kernel::FT const& sq_r, 
+		Plane_3<Kernel> const& plane);}
+	{introduces a variable \ccVar\ of type \ccClassTemplateName.
+        It is initialized to the circle of center \ccc{center} and 
+	squared radius \ccc{sq_r} in plane \ccc{plane}.
+	\ccPrecond{\ccc{center} lies in \ccc{plane} and
+		\ccc{sq_r} $\geq$ 0.}}
+
+\ccConstructor{Circle_3(Point_3<Kernel> const& center, 
+		Kernel::FT const& sq_r, 
+		Vector_3<Kernel> const& n);}
+	{introduces a variable \ccVar\ of type \ccClassTemplateName.
+        It is initialized to the circle of center \ccc{center} and 
+	squared radius \ccc{sq_r} in a plane normal to
+	the vector \ccc{n}.
+	\ccPrecond{\ccc{sq_r} $\geq$ 0.}}
+
+\ccConstructor{Circle_3(Point_3<Kernel> const& p, 
+               Point_3<Kernel> const& q, Point_3<Kernel> const& r);}
+	{introduces a variable \ccVar\ of type \ccClassTemplateName.
+        It is initialized to the circle passing through the three points.
+        \ccPrecond{The three points are not collinear.}}
+
+\ccConstructor{Circle_3(Sphere_3<Kernel> const& sphere1, 
+		Sphere_3<Kernel> const& sphere2);}
+	{introduces a variable \ccVar\ of type \ccClassTemplateName.
+        It is initialized to the circle along which the two spheres intersect.
+	\ccPrecond{The two spheres intersect along a circle.}}
+
+\ccConstructor{Circle_3(Sphere_3<Kernel> const& sphere, 
+		Plane_3<Kernel> const& plane);}
+	{introduces a variable \ccVar\ of type \ccClassTemplateName.
+        It is initialized to the circle along which the sphere and the 
+	plane intersect.
+	\ccPrecond{The sphere and the plane intersect along a circle.}}
+
+\ccConstructor{Circle_3(Plane_3<Kernel> const& plane, 
+		Sphere_3<Kernel> const& sphere);}
+	{introduces a variable \ccVar\ of type \ccClassTemplateName.
+        It is initialized to the circle along which the sphere and the 
+	plane intersect.
+	\ccPrecond{The sphere and the plane intersect along a circle.}}
+
+\ccHidden
+\ccConstructor{ Circle_3( Circle_3<Kernel> const&);}{
+        copy constructor.}
+
+\ccHidden
+\ccMemberFunction{ Circle_3<Kernel>& operator = ( Circle_3<Kernel> const&);}{
+        assignment.}
+
+% -----------------------------------------------------------------------------
+\ccAccessFunctions
+
+\ccMemberFunction{Point_3<Kernel> const& center( ) const;}{
+        returns the center of \ccVar.}
+\ccGlue
+\ccMemberFunction{Kernel::FT const& squared_radius( ) const;}{
+        returns the squared radius of \ccVar.}
+\ccGlue
+\ccMemberFunction{Plane_3<Kernel> const& supporting_plane( ) const;}{
+        returns the supporting plane of \ccVar.}
+\ccGlue
+\ccMemberFunction{Sphere_3<Kernel> const& diametral_sphere( ) const;}{
+	returns the diametral sphere of \ccVar.}
+
+
+\ccMemberFunction{Kernel::FT const& area_divided_by_pi( ) const;}{
+	returns the area of \ccVar, divided by $\pi$. }
+\ccGlue
+\ccMemberFunction{double const& approximate_area( ) const;}{
+	returns an approximation of the area of \ccVar. }
+\ccGlue
+\ccMemberFunction{Kernel::FT const& squared_length_divided_by_pi_square( ) const;}{
+	returns the squared length of \ccVar, divided by $\pi^2$. }
+\ccGlue
+\ccMemberFunction{double const& approximate_squared_length( ) const;}{
+	returns an approximation of the squared length (i.e. perimeter) of \ccVar. }
+
+
+\ccPredicates
+
+\ccMethod{bool has_on(Point_3<Kernel> const& p) const;}
+       {}
+
+\ccOperations
+
+\ccFunction{ bool operator == (Circle_3<Kernel> const& c1,
+		           Circle_3<Kernel> const& c2);}
+	{returns \ccc{true}, iff \ccc{c1} and \ccc{c2} are equal,
+        i.e.\ if they have the same center, the same squared radius
+	and the same supporting plane.}
+
+\ccFunction{ bool operator != (Circle_3<Kernel> const& c1,
+		           Circle_3<Kernel> const& c2);}
+	{}
+
+\ccMemberFunction{ Bbox_3 bbox() const;}{
+        returns a bounding box containing \ccVar.}
+
+\ccSeeAlso
+
+\ccRefConceptPage{Kernel::Circle_3}
+
+\end{ccRefClass}

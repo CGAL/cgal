@@ -1,0 +1,151 @@
+\ccRefPageBegin
+
+\begin{ccRefClass}{Boolean_set_operations_2<Polygonal_region_with_holes_2, Traits>}
+    
+\ccDefinition
+%============
+An instance of the \ccClassTemplateName\ class-template represents a
+point set in the plane. An \ccc{Arrangement_2} data structure is used
+internaly to represent the point set. The class template provides
+methods to apply Boolean-set operations on pairs of instances of  
+\ccc{Boolean_set_operations_2} and a few other utility methods. At this
+point only regularized Boolean-set operations are implemented.
+The input and output of these methods consist of one or more
+polygonal-like regions, some of which may have holes.
+
+The \ccClassTemplateName\ template has two parameters:
+\begin{itemize}
+\item The \ccc{Polygon_region_with_holes_2} template-parameter should
+be instantiated with a class that is a model of the
+\ccc{PolygonRegionWithHoles_2} concept.
+\item The \ccc{Traits} template-parameter should be instantiated with
+a model of the \ccc{PolygonalSetTraits_2} concept. The traits
+class defines the types of points, $x$-monotone curves, polygonal-like
+regions, and polygonal-like regions with holes, that is \ccc{Point_2},
+\ccc{X_monotone_curve_2}, \ccc{Polygonal_region_2}, and
+\ccc{Polygonal_region_with_holes_2} respectively. \ccc{Point_2} must
+be the type of the endpoints of \ccc{X_monotone_curve_2}, and
+\ccc{X_monotone_curve_2} must be the type of the curves that comprise
+the boundaries of the polygonal regions. The traits class supports
+geometric operations on the types above. For some classes that model
+\ccc{PolygonalRegionWithHoles_2} default traits class are
+extracted. For other, the template parameter
+\ccc{Polygonal_region_with_holes_2} must match the corresponding
+nested type of the \ccc{PolygonalSetTraits_2} parameter.
+\end{itemize}
+
+\ccTypes
+%=======
+\ccNestedType{Polygonal_region_2}{the polygonal-like region type.}
+\ccGlue
+\ccNestedType{Polygonal_region_with_holes_2}{the polygonal-like region
+with holes type.} 
+
+\ccNestedType{Traits_2}{the traits class in use.}
+
+\ccCreation
+\ccCreationVariable{ps}
+%=======================
+    
+\ccConstructor{Boolean_set_operations_2<Polygonal_region_with_holes_2,Traits>();} 
+  {constructs an empty set of polygonal regions represented by an
+  empty arrangement.}
+    
+\ccConstructor{Boolean_set_operations_2<Polygonal_region_with_holes_2,Traits>(const Self& other);}
+  {copy constructor.}
+        
+\ccConstructor{Boolean_set_operations_2<Polygonal_region_with_holes_2,Traits>(Traits_2 * traits);}
+  {constructs an empty set of polygonal regions that uses the given
+  \ccc{traits} instance for performing the geometric operations.}
+
+\ccConstructor{Boolean_set_operations_2<Polygonal_region_with_holes_2,Traits>(const Polygonal_region_2 & pgn);}
+  {constructs a set of polygonal regions from the polygonal region
+  \ccc{pgn}.}
+
+\ccConstructor{Boolean_set_operations_2<Polygonal_region_with_holes_2,Traits>(const Polygonal_region_with_holes_2 & pgn_with_holes);}
+  {constructs a set of polygonal regions from the polygonal region
+  with holes \ccc{pgn_with_holes}.}
+
+\ccConstructor{template <class PolygonalRegionIterator> Boolean_set_operations_2<Polygonal_region_with_holes_2,Traits>(PolygonalRegionIterator pgn_begin, PolygonalRegionIterator pgn_end);}
+  {constructs a set of polygonal regions that from the given range of
+  \ccc{Polygonal_region_2} instances.}
+  
+\ccConstructor{template <class PolygonalRegionIterator,
+                         class PolygonalRegionWithHolesIterator>
+  Boolean_set_operations_2<Polygonal_region_with_holes_2,Traits>
+  (PolygonalRegionIterator pgn_begin, PolygonalRegionIterator pgn_end,
+  PolygonalRegionWithHolesIterator pgn_with_holes_begin,
+  PolygonalRegionWithHolesIterator pgn_with_holes_end);}
+  {constructs a set of polygonal regions from the given range of
+  \ccc{Polygonal_region_2} and
+  \ccc{Polygonal_region_with_holes_2}instances.}
+
+\ccAccessFunctions
+% ================
+\ccMethod{template <class OutputIterator>
+  void polygonal_regions(OutputIterator out);}
+  {obtains all the polygonal regions as polygonal regions with
+  holes. This operation takes time $O(n)$, where $n$ is the number of
+  polygonal regions.}
+  
+\ccMethod{template <class OutputIterator1, class OutputIterator2>
+  void polygonal_regions(OutputIterator1 out1, OutputIterator2 out2);}
+  {obtains all the polygonal regions. The polygonal regions (without
+  holes) are inserted to the range given by the first iterator, and
+  those with holes are inserted to the second one. This operation
+  takes time $O(n)$, where $n$ is the number of polygonal regions.}
+
+\ccMethod{Size number_of_polygons() const;}
+  {returns the number of polygonal regions with holes represented by
+  this.}
+
+\ccMethod{Size number_of_polygons_with_holes() const;}
+  {returns the number of polygonal regions with holes represented by
+  this.}
+
+\ccMethod{Traits & traits() const;}
+  {obtains an instance of the traits. If the traits was passed as a
+  parameter to the constructor of this, it is returned. Otherwise, a
+  newly created instance is returned.}
+
+\ccModifiers
+% ==========
+\ccMethod{void clear();}
+  {clears this.}
+
+\ccMethod{void intersection(const Boolean_set_operations_2& bops);}
+  {computes the intersection of this and \ccc{bops}.}
+
+\ccMethod{void union(const Boolean_set_operations_2& bops);}
+  {computes the union of this and \ccc{bops}.}
+
+\ccMethod{void difference(const Boolean_set_operations_2& bops);}
+  {computes the difference between this and \ccc{bops}.}
+
+\ccMethod{void symetric_difference(const Boolean_set_operations_2& bops);}
+  {computes the symetric difference between this and \ccc{bops}.}
+  
+\ccPredicates
+% ===========
+\ccMethod{void do_intersect(const Boolean_set_operations_2& bops);}
+  {returns \ccc{true} if this and \ccc{bops} intersect in their
+  interior, and \ccc{false} otherwise.}
+
+\ccMethod{bool is_empty() const;}
+  {returns \ccc{true} if this is empty and contains nothing.}
+
+\ccMethod{Bounded_side bounded_side(const Point_2& q);}
+  {returns the symbolic constant \ccc{ON_BOUNDED_SIDE},
+  \ccc{ON_BOUNDARY} or \ccc{ON_UNBOUNDED_SIDE}, depending on the
+  location of point \ccc{q}.}
+
+\ccMethod{Polygonal_region_with_holes_2 locate(const Point_2 & p);}
+  {returns the location of the query point \ccc{p}.}
+
+\ccSeeAlso
+  \ccc{Arrangement_2}\lcTex{(\ccRefPage{Arrangement_2})}\\
+  \ccc{ArrangementTraits_2}\lcTex{(\ccRefPage{ArrangementTraits_2})}
+
+\end{ccRefClass}
+
+\ccRefPageEnd

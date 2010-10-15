@@ -1,0 +1,38 @@
+include(CONFIG_PATH/header.tex)
+\begin{ccRefConstant}SCOPE{PREFIX`'ITEM}  %% add template arg's if necessary
+
+%% \ccHtmlCrossLink{}     %% add further rules for cross referencing links
+%% \ccHtmlIndexC[variable]{} %% add further `index' entries
+
+\ccDefinition
+  
+The constant \ccRefName\ does this and that.
+
+\ccInclude{SUBDIR`'ITEM.h}
+
+\ccGlobalVariable{type PREFIX`'ITEM = init_value;}
+
+\ccSeeAlso
+
+\ccc{Some_other_variable},
+\ccc{some_other_function}.
+
+\ccExample
+
+A short example program.
+Instead of a short program fragment, a full running program can be
+included using the 
+\verb|\ccIncludeExampleCode{PACKAGE/ITEM`'.C}| 
+macro. The program example would be part of the source code distribution and
+also part of the automatic test suite.
+
+\begin{ccExampleCode}
+void your_example_code() {
+}
+\end{ccExampleCode}
+
+%% \ccIncludeExampleCode{PACKAGE/ITEM`'.C}
+
+\end{ccRefConstant}
+
+include(CONFIG_PATH/footer.tex)

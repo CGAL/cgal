@@ -1,0 +1,83 @@
+% +------------------------------------------------------------------------+
+% | Reference manual page: Triangulation_vertex_base_with_info_2.tex
+% +------------------------------------------------------------------------+
+% | 19.08.2003   Author
+% | Package: Package
+% | 
+\RCSdef{\RCSTriangulationvertexbasewithinfoRev}{$Id$}
+\RCSdefDate{\RCSTriangulationvertexbasewithinfoDate}{$Date$}
+% |
+%%RefPage: end of header, begin of main body
+% +------------------------------------------------------------------------+
+
+
+\begin{ccRefClass}{Triangulation_vertex_base_with_info_2<Info,Traits,Vb>}  %% add template arg's if necessary
+
+%% \ccHtmlCrossLink{}     %% add further rules for cross referencing links
+%% \ccHtmlIndexC[class]{} %% add further index entries
+
+\ccDefinition
+  
+The class \ccRefName\ is designed to be used as a base vertex class
+of a triangulation. It provides an easy way to add some user defined information in vertices.
+
+\ccInclude{CGAL/Triangulation_vertex_base_with_info_2.h}
+
+\ccParameters
+
+The first template parameter is the information the user would like to add
+to a vertex.  It has to be \ccc{DefaultConstructible} and \ccc{Assignable}.
+
+The second template parameter is the geometric traits class
+which provides the \ccc{Point_2}. It is strongly 
+recommended to instantiate this parameter
+with the traits class used for   the triangulation.
+This ensures that the point type defined by \ccRefName\
+matches  the point type defined by 
+the triangulation.
+
+The third template parameter is a vertex base class from which
+\ccc{Triangulation_vertex_base_with_info_3} derives.  By default
+this parameter is instantiated by
+\ccc{CGAL::Triangulation_vertex_base_2<Traits>}.
+
+\ccIsModel
+The parameter \ccc{Vb} is a model of some vertex base concept.
+\ccRefName\ derives from \ccc{Vb} and will be a model of the
+same vertex base concept :
+\ccc{TriangulationVertexBase_2}, or \\
+\ccc{RegularTriangulationVertexBase_2}.
+
+\ccTypes
+\ccTypedef{typedef Info Info;}{}
+
+
+\ccCreationVariable{v}  %% choose variable name
+
+\ccAccessFunctions
+\ccThree{const Info&}{Facetxxxxxxxxxx}{}
+
+\ccTagFullDeclarations
+
+\ccMethod{const Info& info() const;}
+{Returns a const reference to the object of type \ccc{Info} stored in the
+vertex.}
+\ccGlue
+\ccMethod{Info& info();}
+{Returns a reference to the object of type \ccc{Info} stored in the vertex.}
+
+
+\ccSeeAlso
+
+\ccc{CGAL::Triangulation_face_base_with_info_2<Info,Traits,Fb>}\\
+\ccc{CGAL::Triangulation_vertex_base_2<Traits,Vb>} \\
+\ccc{CGAL::Regular_triangulation_vertex_base_2<Traits,Vb>} \\
+
+
+\end{ccRefClass}
+
+% +------------------------------------------------------------------------+
+%%RefPage: end of main body, begin of footer
+% EOF
+% +------------------------------------------------------------------------+
+

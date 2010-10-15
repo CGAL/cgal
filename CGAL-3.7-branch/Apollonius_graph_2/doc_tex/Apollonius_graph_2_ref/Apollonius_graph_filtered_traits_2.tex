@@ -1,0 +1,94 @@
+% +------------------------------------------------------------------------+
+% | Reference manual page: Apollonius_graph_euclidean_traits_2.tex
+% +------------------------------------------------------------------------+
+% | 12.04.2000   Author
+% | Package: Package
+% | 
+%\RCSdef{\RCSRegulartriangulationtraitsRev}{$Id$}
+%\RCSdefDate{\RCSRegulartriangulationtraitsDate}{$Date$}
+% |
+%%RefPage: end of header, begin of main body
+% +------------------------------------------------------------------------+
+
+
+\begin{ccRefClass}
+{Apollonius_graph_filtered_traits_2<CK,CM,EK,EM,FK,FM>}
+%% add template arg's if necessary
+
+%% \ccHtmlCrossLink{}     %% add further rules for cross referencing links
+%% \ccHtmlIndexC[class]{} %% add further index entries
+\ccDefinition
+  
+The class \ccRefName\ provides a model for the
+\ccc{ApolloniusGraphTraits_2} concept.
+
+The class \ccRefName\ uses the filtering technique \cite{cgal:bbp-iayed-01}
+to achieve traits for the \ccc{Apollonius_graph_2<Gt,Agds>} class
+with efficient and exact predicates given an exact
+kernel \ccc{EK} and a filtering kernel \ccc{FK}. The geometric
+constructions associated provided by this class are equivalent
+to those provided by the traits class
+\ccc{Apollonius_graph_traits_2<CK,CM>}, which means that they may
+be inexact.
+
+This class has six template parameters. The first, third and fifth
+template parameters must be a models of the \ccc{Kernel} concept. The
+second, fourth and sixth template parameters correspond to how
+predicates are evaluated. There are two predefined possible values for
+\ccc{Method_tag}, namely \ccc{CGAL::Sqrt_field_tag} and
+\ccc{CGAL::Ring_tag}. The first one must be used when the number type
+used in the representation supports the exact evaluation of signs of
+expressions involving all four basic operations and square roots,
+whereas the second one requires the exact evaluation of signs of
+ring-type expressions, i.e., expressions involving only additions,
+subtractions and multiplications.
+%
+The way the predicates are evaluated is discussed in
+\cite{cgal:ke-ppawv-02,cgal:ke-rctac-03}.
+
+The default values for the template parameters are as follows:
+\ccc{CM = CGAL::Ring_tag},
+\ccc{EK = CGAL::Simple_cartesian<CGAL::MP_Float>},
+\ccc{EM = CM},
+\ccc{FK = CGAL::Simple_cartesian<CGAL::Interval_nt<false> >},
+\ccc{FM = CM}.
+
+
+\ccInclude{CGAL/Apollonius_graph_filtered_traits_2.h}
+
+\ccIsModel
+\ccc{ApolloniusGraphTraits_2}
+
+\ccCreationVariable{traits}
+\ccCreation
+\ccThree{Apollonius_graph_filtered_traits_2<CK,CK,CK,CK,CK,CK>+}{traits = other;+}{}
+\ccThreeToTwo
+%
+\ccConstructor{ Apollonius_graph_filtered_traits_2<CK,CM,EK,EM,FK,FM>();}
+{Default\\ constructor.}
+\ccGlue
+\ccConstructor{
+Apollonius_graph_filtered_traits_2
+(Apollonius_graph_filtered_traits_2<CK,CM,EK,EM,FK,FM> other);}{Copy\\ constructor.}
+\ccGlue
+%\ccThree{Apollonius_graph_filtered_traits_2<CK,CK,CK,CK,CK,CK>+}{traits = other;+}{}
+\ccMethod{Apollonius_graph_filtered_traits_2<CK,CM,EK,EM,FK,FM> operator=(other);}{Assignment\\ operator.}
+
+
+
+\ccSeeAlso
+\ccc{Kernel}\\
+\ccc{ApolloniusGraphTraits_2} \\
+\ccc{CGAL::Ring_tag}\\
+\ccc{CGAL::Sqrt_field_tag}\\
+\ccc{CGAL::Apollonius_graph_2<Gt,Agds>}\\
+\ccc{CGAL::Apollonius_graph_traits_2<K,Method_tag>}
+
+
+\end{ccRefClass}
+
+% +------------------------------------------------------------------------+
+%%RefPage: end of main body, begin of footer
+% EOF
+% +------------------------------------------------------------------------+
+

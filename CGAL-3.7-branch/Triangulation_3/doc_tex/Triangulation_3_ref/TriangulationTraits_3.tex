@@ -1,0 +1,113 @@
+% +------------------------------------------------------------------------+
+% | Reference manual page: Triangulation_Traits_3.tex
+% +------------------------------------------------------------------------+
+% | 27.3.2000   Monique Teillaud
+% | Package: Triangulation3
+% | 
+\RCSdef{\RCSTriangulationTraitsRev}{$Id$}
+\RCSdefDate{\RCSTriangulationTraitsDate}{$Date$}
+% |
+%%RefPage: end of header, begin of main body
+% +------------------------------------------------------------------------+
+
+
+\begin{ccRefConcept}{TriangulationTraits_3}
+
+\ccDefinition
+The concept \ccRefName\ is the first template parameter of the class
+\ccc{Triangulation_3}. It defines the geometric objects (points, segments,
+triangles and tetrahedra) forming the triangulation together with a few
+geometric predicates and constructions on these objects : lexicographical
+comparison, orientation in case of coplanar points and orientation in space.
+
+\ccTypes
+\ccTwo{TriangulationTraits_3::Tetrahedron_3xx}{}
+
+\ccNestedType{Point_3}
+{The point type.  It must be \ccc{DefaultConstructible},
+\ccc{CopyConstructible} and \ccc{Assignable}.}
+\ccGlue
+\ccNestedType{Segment_3} {The segment type.}
+\ccGlue
+\ccNestedType{Tetrahedron_3} {The tetrahedron type.}
+\ccGlue
+\ccNestedType{Triangle_3} {The triangle type.}
+
+\ccTwo{TriangulationTraits_3}{}
+
+\ccNestedType{Construct_segment_3}
+{A constructor object that must provide the function operator\\
+\ccc{Segment_3 operator()(Point_3 p, Point_3 q)},\\
+which constructs a segment from two points.}
+\ccGlue
+\ccNestedType{Construct_triangle_3}
+{A constructor object that must provide the function operator\\
+\ccc{Triangle_3 operator()(Point_3 p, Point_3 q, Point_3 r )},\\
+which constructs a triangle from three points.}
+\ccGlue
+\ccNestedType{Construct_tetrahedron_3}
+{A constructor object that must provide the function operator\\
+\ccc{Tetrahedron_3 operator()(Point_3 p, Point_3 q, Point_3 r, Point_3 s)},\\
+which constructs a tetrahedron from four points.}
+
+\ccNestedType{Compare_xyz_3}
+{A predicate object that must provide the function operator\\ 
+\ccc{Comparison_result operator()(Point p, Point q)},\\
+which returns \ccc{EQUAL} if the two points are equal.  Otherwise it must
+return a consistent order for any two points chosen in a same line.}
+\ccGlue
+\ccNestedType{Coplanar_orientation_3}
+{A predicate object that must provide the function operator\\
+\ccc{Orientation operator()(Point p, Point q, Point r)},\\
+which returns \ccc{COLLINEAR} if the points are collinear.  Otherwise it must
+return a consistent orientation for any three points chosen in a same plane.
+}
+\ccGlue
+\ccNestedType{Orientation_3}
+{A predicate object that must provide the function operator\\
+\ccc{Orientation operator()(Point p, Point q, Point r, Point s)},\\
+which returns POSITIVE, if \ccc{s} lies on the positive side of the oriented
+plane \ccc{h} defined by \ccc{p}, \ccc{q}, and \ccc{r}, returns NEGATIVE if
+\ccc{s} lies on the negative side of \ccc{h}, and returns COPLANAR if \ccc{s}
+lies on \ccc{h}.}
+
+\ccCreation
+\ccCreationVariable{traits}
+\ccThree{Triangulation_traits_3xxx();}{Triangulation_traits_3 & tr}{}
+\ccThreeToTwo
+
+\ccConstructor{Triangulation_traits_3();}{Default constructor.}
+\ccGlue
+\ccConstructor{Triangulation_traits_3(const Triangulation_traits_3 & tr);}
+{Copy constructor.}
+
+\ccOperations
+
+The following functions give access to the predicate and construction objects:
+
+\ccThree{coplanar_side_of_bounded_circle_3xxx}{gt.xxxxxxxxx(Point p0, Point p1)x}{}
+
+\ccMethod{Construct_tetrahedron_3 construct_tetrahedron_3_object();}{}
+\ccGlue
+\ccMethod{Construct_triangle_3 construct_triangle_3_object();}{}
+\ccGlue
+\ccMethod{Construct_segment_3 construct_segment_3_object();}{}
+
+\ccMethod{Compare_xyz_3 compare_xyz_3_object();}{}
+\ccGlue
+\ccMethod{Coplanar_orientation_3 coplanar_orientation_3_object();}{}
+\ccGlue
+\ccMethod{Orientation_3 orientation_3_object();}{}
+
+
+\ccHasModels
+
+\ccc{CGAL::Exact_predicates_inexact_constructions_kernel} (recommended)\\
+\ccc{CGAL::Exact_predicates_exact_constructions_kernel}\\
+\ccc{CGAL::Filtered_kernel}\\
+\ccc{CGAL::Cartesian}\\
+\ccc{CGAL::Simple_cartesian}\\
+\ccc{CGAL::Homogeneous}\\
+\ccc{CGAL::Simple_homogeneous}
+
+\end{ccRefConcept}

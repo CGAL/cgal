@@ -1,0 +1,55 @@
+% +------------------------------------------------------------------------+
+% | Reference manual page: skin_surface_3.tex
+% +------------------------------------------------------------------------+
+% | 27.09.2005   Nico Kruithof
+% | Package: Skin_surface_3
+% | 
+\RCSdef{\RCSskinsurfaceRev}{$Id$}
+\RCSdefDate{\RCSskinsurfaceDate}{$Date$}
+% |
+%%RefPage: end of header, begin of main body
+% +------------------------------------------------------------------------+
+
+\begin{ccRefConcept}{SkinSurfaceQuadraticSurfaceTraits_3}
+  \ccDefinition
+
+  The concept \ccRefName\ defines the traits class used for the
+  \ccc{Skin_surface_quadratic_surface_3}. It defines the geometric
+  objects (ring type, points, vectors and segments) for the quadratic
+  surface together with a few geometric predicates and constructions
+  on these objects.
+
+  \ccThree{SkinSurfaceQuadraticSurfaceTraits_3}{Segment_3}{}
+  \ccThreeToTwo
+
+  \ccTypes
+
+  \ccNestedType{RT}{The ring type.}\ccGlue
+  \ccNestedType{Point_3}{The point type.}\ccGlue
+  \ccNestedType{Vector_3}{The vector type.}\ccGlue
+  \ccNestedType{Segment_3}{The segment type.}
+
+  %\ccConstants
+  \ccCreation 
+  \ccCreationVariable{traits} 
+
+  \ccConstructor{SkinSurfaceQuadraticSurfaceTraits_3 ();}{Default
+    constructor.}
+
+  \ccHasModels
+%  \ccc{CGAL::Skin_surface_3<SkinSurfaceTraits_3>}
+  \ccc{CGAL::Exact_predicates_inexact_constructions_kernel}\\
+  \ccc{CGAL::Exact_predicates_exact_constructions_kernel}\\
+  \ccc{CGAL::Filtered_kernel}\\
+  \ccc{CGAL::Cartesian}\\
+  \ccc{CGAL::Simple_cartesian}\\
+  \ccc{CGAL::Homogeneous}\\
+  \ccc{CGAL::Simple_homogeneous}\\
+
+\end{ccRefConcept}
+
+% +------------------------------------------------------------------------+
+%%RefPage: end of main body, begin of footer
+% EOF
+% +------------------------------------------------------------------------+
+

@@ -1,0 +1,70 @@
+
+\ccAutoIndexingOff
+
+\begin{ccRefClass}{Min_circle_2_traits_2<K>}
+\ccIndexTraitsClassBegin{Min_circle_2_traits_2}{Min_circle_2}{}
+
+\ccAutoIndexingOn
+
+% -----------------------------------------------------------------------------
+\ccDefinition
+
+The class \ccRefName\ is a traits class for \ccc{Min_circle_2<Traits>}
+using the two-dimensional \cgal\ kernel.
+
+\ccInclude{CGAL/Min_circle_2_traits_2.h}
+
+% -----------------------------------------------------------------------------
+\ccRequirements
+
+The template parameter \ccc{K} is a model for \ccc{Kernel}.
+
+% -----------------------------------------------------------------------------
+\ccIsModel
+
+\ccRefConceptPage{MinCircle2Traits}
+
+% -----------------------------------------------------------------------------
+\ccTypes
+
+\ccSaveThreeColumns
+\ccSetTwoColumns{Min_circle_2_traits_2<K>:: Circle}{}
+
+\ccNestedType{Point }{typedef to \ccc{K::Point_2}.}
+\ccNestedType{Circle}{internal type.}
+
+% -----------------------------------------------------------------------------
+\ccCreation
+\ccCreationVariable{traits}
+
+\ccConstructor{ Min_circle_2_traits_2( );}{default constructor.}
+\ccConstructor{ Min_circle_2_traits_2(
+                    const Min_circle_2_traits_2<K>&);}{copy constructor.}
+
+% -----------------------------------------------------------------------------
+\ccOperations
+
+\ccSetThreeColumns{CGAL::Orientation}{}{\hspace*{10cm}}
+
+\ccMemberFunction{ CGAL::Orientation
+                   orientation( const Point& p,
+                                const Point& q,
+                                const Point& r) const;}{
+        returns \ccGlobalScope\ccc{orientation( p, q, r)}.}
+
+% -----------------------------------------------------------------------------
+\ccSeeAlso
+
+\ccRefIdfierPage{CGAL::Min_circle_2<Traits>}\\[1ex]
+\ccRefConceptPage{MinCircle2Traits}
+
+% -----------------------------------------------------------------------------
+
+\ccAutoIndexingOff
+
+\ccIndexTraitsClassEnd
+\end{ccRefClass}
+
+\ccAutoIndexingOn
+
+

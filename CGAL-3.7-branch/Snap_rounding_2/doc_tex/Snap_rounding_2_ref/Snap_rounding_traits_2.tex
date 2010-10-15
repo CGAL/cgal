@@ -1,0 +1,56 @@
+% +------------------------------------------------------------------------+
+% | Reference manual page: Snap_rounding_2_traits.tex (Snap_rounding_2)
+% +------------------------------------------------------------------------+
+% | 
+% | Package: sr (Snap_rounding_2)
+% | 
+% +------------------------------------------------------------------------+
+
+\ccRefPageBegin
+
+%%RefPage: end of header, begin of main body
+% +------------------------------------------------------------------------+
+
+\begin {ccRefClass} {Snap_rounding_traits_2<Kernel>}
+    
+%\ccDefinition 
+
+The class \ccStyle{Snap_rounding_traits_2<Kernel>} is a model of the
+\ccc{SnapRoundingTraits_2} concept, and is the only traits class supplied
+with the package.
+This class should be instantiated with an exact geometric kernel that conforms
+to the \cgal\ kernel-concept, such as the
+\ccStyle{Cartesian<gmpq>} kernel.
+% although other inexact kernels could be used at the user's own risk.
+
+This geometric kernel must provide an (arbitrary-precision) rational number type
+(\ccc{FT}), \ccc{Point_2}, \ccc{Segment_2} and \ccc{Iso_rectangle_2}.
+It should be possible to cast numbers of the number type \ccc{FT} to 
+double-precision representation. That is, the function 
+\ccc{CGAL::to_double(FT)} must be supported.
+
+The \ccc{CGAL::to_double()} function is used to implement the operation that
+rounds the coordinates of a point to a center of a pixel. This operation is one
+of the traits-concept requirement. The coordinates are converted to double, 
+rounded down to the nearest grid point, and finally adjusted to lie on a center
+of a pixel. Notice that if
+\ccc{CGAL::to_double()} returns the closet value, then when it rounds up a given
+coordinate, the resulting ISR, may be imprecise, and the distance between some
+vertex and a non-incident edge can be slightly less than the guaranteed
+half-the width-of-a-pixel.
+
+% The traits class inherits from the
+% \ccStyle{Arr_segment_cached_traits_2<Kernel>}
+% class, so that the \ccStyle{X_monotone_curve_2} type is defined for it.
+
+\ccInclude{CGAL/Snap_rounding_traits_2.h}
+ 
+\ccIsModel
+    \ccc{SnapRoundingTraits_2}\\
+ 
+\end{ccRefClass} % Snap_rounding_2_traits
+% +------------------------------------------------------------------------+
+%%RefPage: end of main body, begin of footer
+\ccRefPageEnd
+% EOF
+% +------------------------------------------------------------------------+

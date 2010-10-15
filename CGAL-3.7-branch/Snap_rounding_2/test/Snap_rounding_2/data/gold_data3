@@ -1,0 +1,25 @@
+input segments
+5/10 5/10 77/10 22/10
+35/10 18/10 21/10 49/10
+
+the output
+Polyline number 1:
+    (0.5:0.5)
+    (3.5:1.5)
+    (7.5:2.5)
+
+Polyline number 2:
+    (3.5:1.5)
+    (2.5:4.5)
+
+
+testing sr
+Polyline number 1:
+    (0.5:0.5)
+    (3.5:1.5)
+    (7.5:2.5)
+
+Polyline number 2:
+    (3.5:1.5)
+    (2.5:4.5)
+

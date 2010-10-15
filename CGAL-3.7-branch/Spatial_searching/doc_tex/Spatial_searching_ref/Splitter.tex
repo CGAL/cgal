@@ -1,0 +1,63 @@
+% +------------------------------------------------------------------------+
+% | Reference manual page: Splitter.tex
+% +------------------------------------------------------------------------+
+% | 1.07.2001   Johan W.H. Tangelder
+% | Package: ASPAS
+% | 
+\RCSdef{\RCSSplitterRev}{$Id$}
+\RCSdefDate{\RCSSplitterDate}{$Date$}
+% |
+%%RefPage: end of header, begin of main body
+% +------------------------------------------------------------------------+
+
+
+\begin{ccRefConcept}{Splitter}
+
+%% \ccHtmlCrossLink{}     %% add further rules for cross referencing links
+%% \ccHtmlIndexC[concept]{} %% add further index entries
+
+\begin{ccAdvanced}
+\ccDefinition
+  
+The concept \ccRefName\ defines the requirements for a function object class implementing a splitting rule.
+
+\ccHasModels
+
+\ccc{CGAL::Fair<Traits, SpatialSeparator>}, \\
+\ccc{CGAL::Median_of_rectangle<Traits, SpatialSeparator>}, \\
+\ccc{CGAL::Median_of_max_spread<Traits, SpatialSeparator>}, \\
+\ccc{CGAL::Midpoint_of_rectangle<Traits, SpatialSeparator>}, \\
+\ccc{CGAL::Midpoint_of_max_spread<Traits, SpatialSeparator>}, \\
+\ccc{CGAL::Sliding_fair<Traits, SpatialSeparator>}, \\
+\ccc{CGAL::Sliding_midpoint<Traits, SpatialSeparator>.}
+
+\ccTypes
+
+\ccNestedType{FT}{Number type.}
+\ccNestedType{Separator}{Separator.} 
+
+\ccCreationVariable{s}  %% choose variable name
+
+The parameters \ccc{aspect_ratio} and \ccc{bucket_size}
+define the way in which $k$-$d$ tree is constructed.
+
+\ccOperations
+
+
+\ccMethod{FT aspect_ratio();}{Returns the maximal ratio between the largest and smallest side
+of a cell allowed for fair splitting.}
+
+\ccMethod{unsigned int bucket_size();} {Returns the bucket size of the leaf nodes.}
+
+ 
+
+
+\end{ccAdvanced}
+
+\end{ccRefConcept}
+
+% +------------------------------------------------------------------------+
+%%RefPage: end of main body, begin of footer
+% EOF
+% +------------------------------------------------------------------------+
+

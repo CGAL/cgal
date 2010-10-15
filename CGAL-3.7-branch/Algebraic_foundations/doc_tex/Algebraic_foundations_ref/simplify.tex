@@ -1,0 +1,21 @@
+\begin{ccRefFunction}{simplify}
+
+\ccDefinition
+
+The function \ccRefName\ may simplify a given object. 
+
+The function is guaranteed to be well defined in case the argument type 
+is a model of the \ccc{IntegralDomainWithoutDivision} concept. 
+
+\ccInclude{CGAL/number_utils.h}
+
+\ccFunction{template <class NT> void simplify(const NT& x);}
+{}
+
+
+\ccSeeAlso
+
+\ccRefConceptPage{IntegralDomainWithoutDivision}\\
+\ccRefConceptPage{AlgebraicStructureTraits::Simplify}\\
+
+\end{ccRefFunction}

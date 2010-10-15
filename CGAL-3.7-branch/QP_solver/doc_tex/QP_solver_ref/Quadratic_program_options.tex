@@ -1,0 +1,78 @@
+\begin{ccRefClass}{Quadratic_program_options}
+
+\ccInclude{CGAL/QP_options.h}
+
+\ccDefinition
+This is a class used for passing options to the linear and
+quadratic programming solvers. Currently, we support only
+options referring to
+\begin{enumerate}
+\item the verbosity, 
+\item the pricing strategy (see \ccc{Quadratic_program_pricing_strategy}),
+\item the validation mode (see the Validity section of
+\ccc{Quadratic_program_solution})
+\end{enumerate}
+The idea is that this list grows in the future.
+
+\ccCreation
+\ccIndexClassCreation
+\ccCreationVariable{options}
+
+\ccConstructor{Quadratic_program_options();}
+{constructs an instance of \ccRefName\ where all available options
+are at their defaults.}
+
+\ccOperations
+Here we just have set/get pairs for any option type.
+
+\ccHeading{Verbosity}
+
+\ccMethod{void set_verbosity (int verbosity);}
+{sets the verbosity of the solver to the value \ccc{verbosity} when
+\ccVar\ is passed to any of the four solution functions. The provided
+value must be a number between $0$ and $5$. Verbosity $0$ is the default and
+results in the solver running silently. Verbosity $1$ prints a short
+summary of every iteration. Higher verbosity values print more information
+about the solution process, but these are mainly for debugging 
+purposes and have no effect if you compile with 
+\texttt{CGAL\_QP\_NO\_ASSERTIONS} or \texttt{NDEBUG}.}
+
+\ccMethod{int get_verbosity () const;}
+{returns the verbosity level of \ccVar.}
+
+\ccHeading{Pricing strategy}
+
+\ccMethod{void set_pricing_strategy
+  (Quadratic_program_pricing_strategy pricing_strategy);}
+{sets the pricing strategy of the solver to the value \ccc{pricing_strategy}
+when \ccVar\ is passed to any of the four solution functions. The pricing
+strategy controls how the solver proceeds from any intermediate solution.
+For the available strategies and their behavior, see the documentation of the 
+class \ccc{Quadratic_program_pricing_strategy}.}
+
+\ccMethod{Quadratic_program_pricing_strategy get_pricing_strategy() const;}
+{returns the pricing strategy of \ccVar.}
+
+\ccHeading{Validation mode}
+
+\ccMethod{void set_auto_validation(bool validate);}
+{sets the automatic validation mode of the solver to the value \ccc{validate}.
+The default is \ccc{false}. By providing value \ccc{true} you can
+tell the solver to automatically check whether the program has
+correctly been solved, see the Validity section of the class
+\ccc{Quadratic_program_solution}.}
+
+\ccMethod{bool get_auto_validation() const;}
+{returns the validation mode of \ccVar.}
+
+\ccExample
+\ccReferToExampleCode{QP_solver/cycling.cpp}
+
+\ccSeeAlso
+
+\ccc{Quadratic_program_solution}\\
+\ccc{solve_quadratic_program}\\
+\ccc{solve_linear_program}\\
+\ccc{solve_nonnegative_quadratic_program}\\
+\ccc{solve_nonnegative_linear_program}
+\end{ccRefClass}

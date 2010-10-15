@@ -1,0 +1,89 @@
+% +------------------------------------------------------------------------+
+% | Reference manual page: Surface_mesh_vertex_base_3.tex
+% +------------------------------------------------------------------------+
+% | 09.12.2005   Author
+% | Package: Package
+% | 
+\RCSdef{\RCSSurfacemeshvertexbaseRev}{$Id$}
+\RCSdefDate{\RCSSurfacemeshvertexbaseDate}{$Date$}
+% |
+%%RefPage: end of header, begin of main body
+% +------------------------------------------------------------------------+
+
+
+\begin{ccRefClass}{Surface_mesh_vertex_base_3<Gt,Vb>}  %% add template arg's if necessary
+
+%% \ccHtmlCrossLink{}     %% add further rules for cross referencing links
+%% \ccHtmlIndexC[class]{} %% add further index entries
+
+\ccDefinition
+  
+The class \ccRefName\ is a model of the concept
+\ccc{SurfaceMeshVertexBase_3}.
+It is designed to serve  as vertex base  class
+in a  triangulation class \ccc{Tr} 
+plugged in a  \ccc{Surface_mesh_complex_2_in_triangulation_3<Tr>}
+ class.
+
+
+The first template parameter is the geometric traits class.
+
+The second template parameter is a base class. It
+has to be a model of the concept \ccc{TriangulationVertexBase_3}
+and  
+defaults to \ccc{Triangulation_vertex_base_3 <Gt>}.
+
+\ccInclude{CGAL/Surface_mesh_vertex_base_3.h}
+
+\ccIsModel
+
+\ccc{SurfaceMeshVertexBase_3}
+
+\ccInheritsFrom 
+
+Vb
+
+%\ccTypes
+
+%\ccNestedType{TYPE}{some nested types}
+
+%\ccCreation
+%\ccCreationVariable{a}  %% choose variable name
+
+%\ccConstructor{Surface_mesh_vertex_base_3();}{default constructor.}
+
+%\ccOperations
+
+%\ccMethod{void foo();}{some member functions}
+
+\ccSeeAlso
+
+\ccc{SurfaceMeshComplex_2InTriangulation_3} \\
+\ccc{Surface_mesh_complex_2_in_triangulation_3<Tr>} \\
+\ccc{SurfaceMeshTriangulation_3} \\
+\ccc{make_surface_mesh}
+
+
+%\ccExample
+
+%A short example program.
+%Instead of a short program fragment, a full running program can be
+%included using the 
+%\verb|\ccIncludeExampleCode{Package/Surface_mesh_vertex_base_3.cpp}| 
+%macro. The program example would be part of the source code distribution and
+%also part of the automatic test suite.
+
+%\begin{ccExampleCode}
+%void your_example_code() {
+%}
+%\end{ccExampleCode}
+
+%%% \ccIncludeExampleCode{Package/Surface_mesh_vertex_base_3.cpp}
+
+\end{ccRefClass}
+
+% +------------------------------------------------------------------------+
+%%RefPage: end of main body, begin of footer
+% EOF
+% +------------------------------------------------------------------------+
+

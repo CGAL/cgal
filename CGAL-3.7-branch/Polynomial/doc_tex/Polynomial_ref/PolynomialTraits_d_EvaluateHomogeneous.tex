@@ -1,0 +1,45 @@
+\begin{ccRefConcept}{PolynomialTraits_d::EvaluateHomogeneous}
+\ccDefinition
+
+This \ccc{AdaptableFunctor} provides evaluation of a 
+\ccc{PolynomialTraits_d::Polynomial_d} interpreted as a homogeneous polynomial 
+{\bf in one variable}.  \\
+For instance the polynomial $p = 5x^2y^3 + y$ is interpreted as the homogeneous polynomial
+$p[x](u,v) = 5x^2u^3 + uv^2$ and evaluated as such. 
+
+\ccRefines 
+\ccc{AdaptableFunctor}\\
+\ccc{CopyConstructible}\\
+\ccc{DefaultConstructible}\\
+
+\ccTypes
+
+\ccSetThreeColumns{xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx}{xxx}{}
+\ccCreationVariable{fo}
+\ccTypedef{typedef PolynomialTraits_d::Coefficient_type              result_type;}{}
+
+\ccOperations
+\ccMethod{result_type operator()(PolynomialTraits_d::Polynomial_d  p,
+                                 PolynomialTraits_d::Coefficient_type   u,
+                                 PolynomialTraits_d::Coefficient_type   v);}{ 
+        Returns $p(u,v)$, with respect to the outermost variable. 
+%        \\ The homogeneous degree is considered as equal to the degree of $p$.  
+        }
+
+%\ccMethod{result_type operator()( PolynomialTraits_d::Polynomial_d  p,
+%                                  PolynomialTraits_d::Coefficient_type   u,
+%                                  PolynomialTraits_d::Coefficient_type   v,
+%                                  int i);}{ 
+%        Returns $p(u,v)$, with respect to the variable $x_i$. 
+%        \\ The homogeneous degree is considered as equal to the $degree(p,i)$.
+%        \ccPrecond $0 \leq i  < d$
+%        }
+
+%\ccHasModels
+
+\ccSeeAlso
+
+\ccRefIdfierPage{Polynomial_d}\\
+\ccRefIdfierPage{PolynomialTraits_d}\\
+
+\end{ccRefConcept}

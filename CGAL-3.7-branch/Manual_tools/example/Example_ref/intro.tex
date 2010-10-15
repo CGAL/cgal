@@ -1,0 +1,73 @@
+% +------------------------------------------------------------------------+
+% | intro.tex
+% +------------------------------------------------------------------------+
+% | chapter title, some introduction and a kind of table-of-contents
+% +------------------------------------------------------------------------+
+
+\ccRefChapter{Examples of \CC\ Reference Pages}
+\ccChapterRelease{\ccRevision. \ \ccDate}\\
+\ccChapterAuthor{Lutz Kettner and Susan Hert}
+
+\section*{Summary}
+
+This example chapter belongs to the documentation of the \LaTeX\ style
+file {\tt cc\_manual.sty} and the related tools, for example, the
+\LaTeX\ to HTML converter. See the related documention for the details.
+
+This example contains a reference page for an item of each category except
+variable (which will look the same as a constant):
+concept, constant, class, enum, function, function object class, function
+object concept, and macro. It documents no
+particular functionality. It serves only as an example for the various
+layouts. The actual \LaTeX\ sources and the README file in the {\tt
+  Tools/example/} directory should be studied in parallel to the
+formatted output since these files contain further comments and 
+descriptions of the tools used to create these pages. 
+For example, the
+table-of-contents below uses not only the \verb+\ccRefIdfierPage+
+macro, but needs also a more hand-written layout for the
+\verb+is_empty_range+ function with its parameter list.  All items,
+except concepts and macros, are given including the global scope.
+
+
+\subsection*{Concepts}
+
+\ccRefIdfierPage{Circulator} 
+
+\subsection*{Function Object Concepts}
+
+\ccRefIdfierPage{Kernel::Less_xy_2}
+
+\subsection*{Classes}
+
+\ccRefIdfierPage{CGAL::Circulator_traits<C>} 
+
+\subsection*{Function Object Classes}
+
+\ccRefIdfierPage{CGAL::Less_xy_2}
+
+\subsection*{Enums}
+
+\ccRefIdfierPage{CGAL::Orientation}\\
+\ccRefIdfierPage{CGAL::POSITIVE}\\
+\ccRefIdfierPage{CGAL::NEGATIVE}
+
+\subsection*{Functions}
+
+\ccThree{Orientation}{}{page 100}
+\lcTex{\ccAutoIndexingOff}
+\ccFunction{bool CGAL::is_empty_range ( IC i, IC j);}
+    {\hfill \ccRefPage{CGAL::is_empty_range}}
+\lcTex{\ccAutoIndexingOn}
+
+\subsection*{Constants}
+
+\ccRefIdfierPage{CGAL::ORIGIN}
+
+\subsection*{Macros}
+
+\ccc{For_all(i,j)}\hfill \ccRefPage{For_all}
+
+\lcHtml{\section*{Alphabetical Listing of Reference Pages}}
+
+%% EOF %%

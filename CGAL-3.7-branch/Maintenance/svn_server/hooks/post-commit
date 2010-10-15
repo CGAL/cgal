@@ -1,0 +1,40 @@
+#!/bin/sh
+
+# POST-COMMIT HOOK
+#
+# The post-commit hook is invoked after a commit.  Subversion runs
+# this hook by invoking a program (script, executable, binary, etc.)
+# named 'post-commit' with the following ordered arguments:
+#
+#   [1] REPOS-PATH   (the path to this repository)
+#   [2] REV          (the number of the revision just committed)
+#
+# The default working directory for the invocation is undefined, so
+# the program should set one explicitly if it cares.
+#
+# Because the commit has already completed and cannot be undone,
+# the exit code of the hook program is ignored.  The hook program
+# can use the 'svnlook' utility to help it examine the
+# newly-committed tree.
+#
+# On a Unix system, the normal procedure is to have 'post-commit'
+# invoke other programs to do the real work, though it may do the
+# work itself too.
+#
+# Note that 'post-commit' must be executable by the user(s) who will
+# invoke it (typically the user httpd runs as), and that user must
+# have filesystem-level permission to access the repository.
+#
+# On a Windows system, you should name the hook program
+# 'post-commit.bat' or 'post-commit.exe',
+# but the basic idea is the same.
+
+REPOS="$1"
+REV="$2"
+
+# InriaGForge default mail notification
+#/usr/lib/subversion/hook-scripts/commit-email.pl "$REPOS" "$REV" -h users.gforge.inria.fr cgal-commits@lists.gforge.inria.fr
+
+# Mail notification customized for CGAL
+/home/groups/cgal/hooks/cgal-commit-email.pl "$REPOS" "$REV" -h users.gforge.inria.fr cgal-commits@lists.gforge.inria.fr
+

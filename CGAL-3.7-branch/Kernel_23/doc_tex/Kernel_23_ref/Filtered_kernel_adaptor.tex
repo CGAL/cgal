@@ -1,0 +1,46 @@
+\begin{ccRefClass}{Filtered_kernel_adaptor<CK>}
+
+\KernelRefLayout\gdef\ccTagOperatorLayout{\ccFalse}
+
+\ccDefinition
+
+\ccClassTemplateName is a kernel that uses the filtering technique
+\cite{cgal:bbp-iayed-01} to obtain a kernel with exact and efficient
+predicate functors.
+The geometric constructions are exactly those
+of the kernel \ccc{CK}, which means that they are not necessarily exact.
+
+In contrast to \ccc{Filtered_kernel}, 
+the global functions are those of \ccc{CK}.
+
+\ccIsModel
+\ccc{Kernel}
+
+\ccInclude{CGAL/Filtered_kernel.h}
+
+\ccExample
+
+The following example shows how to produce a kernel whose geometric
+objects and constructions are those of \ccc{Simple_cartesian<double>}
+The predicate functors of the kernel are exact, the global functions
+are not.
+
+\begin{verbatim}
+#include <CGAL/Simple_cartesian.h>
+#include <CGAL/Filtered_kernel.h>
+
+typedef CGAL::Simple_cartesian<double> CK;
+typedef CGAL::Filtered_kernel_adaptor<CK> K;
+
+
+typedef K::Point_2 p(0,0), q(1,1), r(1,5);
+
+CGAL::orientation(p,q,r);                // not exact
+
+typedef K::Orientation_2 orientation;
+orientation(p,q,r);                      // exact
+
+\end{verbatim}
+
+
+\end{ccRefClass}

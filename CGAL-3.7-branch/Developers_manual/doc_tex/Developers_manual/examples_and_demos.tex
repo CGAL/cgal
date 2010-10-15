@@ -1,0 +1,192 @@
+\chapter{Example and Demo Programs\label{chap:examples_and_demos}}
+\ccIndexMainItemBegin{example programs}
+\ccIndexMainItemBegin{demo programs}
+
+The best way to illustrate the functionality provided by the library
+is through programs that users can compile, run, copy and modify to
+their hearts' content.  Thus every package should contain some of
+these programs.  In \cgal\ we distinguish between two types of
+programs:  those that provided graphical output (demos) and those that
+do not (examples).
+
+In this chapter we provide guidelines for the development
+of these programs and their inclusion in the documentation.  See
+Sections~\ref{sec:examples_subdirectory} and~\ref{sec:demo_subdirectory}
+for a description of the directory structure required for example and
+demo programs, respectively. Note in particular that each directory
+should contain a \texttt{README} file that explains what the programs do and
+how one interacts with them.
+
+\section{Coding conventions\label{sec:ex_and_demo_coding}}
+\ccIndexSubitem{example programs}{coding conventions}
+\ccIndexSubitem{demo programs}{coding conventions}
+
+Remember that these programs are likely to be a user's first introduction
+to the library, so you should be careful to follow our coding conventions 
+(Chapter~\ref{chap:code_format}) and good programming practice in these 
+programs.  In particular:
+
+\begin{itemize}
+   \item Do \textbf{not} use the statements 
+         \begin{verbatim}
+         using namespace CGAL;
+         using namespace std;
+         \end{verbatim}
+         \ccIndexSubitem{\tt using}{in examples and demos}
+         We discourage the use of these as they introduce more names than
+         are necessary and may lead to more conflicts than are necessary.
+   \item As of release 2.3, you can include only the kernel include file
+         (\eg, \texttt{Cartesian.h} or \texttt{Homogeneous.h}) to get all
+         kernel classes as well as the \texttt{basic.h} file.  All example
+         and demo programs should do this.  For exmaple, you should have
+         simply:
+         \begin{verbatim}
+         #include <CGAL/Cartesian.h>
+         \end{verbatim}
+         instead of:
+         \begin{verbatim}
+         #include <basic.h>
+         #include <CGAL/Cartesian.h>
+         #include <CGAL/Point_2.h>
+         #include <CGAL/Triangle_2.h>
+         #include <CGAL/Segment_3.h>
+         // etc.
+         \end{verbatim}
+   \item Types should be declared using the following syntax:
+         \begin{verbatim}
+         typedef CGAL::Cartesian<double>     Kernel;
+         typedef Kernel::Point_2             Point_2;
+         typedef Kernel::Triangle_3          Triangle_3;
+         \end{verbatim}
+         instead of this syntax:
+         \begin{verbatim}
+         typedef CGAL::Cartesian<double>     Kernel;
+         typedef Point_2<Kernel>             Point_2;
+         typedef Triangle_3<Kernel>          Triangle_3;
+         \end{verbatim}
+         Although both will work, the former is to be preferred since
+         it reflects that the types are actually part of the kernel and
+         also reflects the new (as of release 2.3) kernel design that allows
+         types to be easily exchanged and adapted.  
+    
+         Note also that the typedef used above is
+         \begin{verbatim}
+         typedef CGAL::Cartesian<double>     Kernel;
+         \end{verbatim}
+         instead of
+         \begin{verbatim}
+         typedef CGAL::Cartesian<double>     R; // for representation
+         \end{verbatim}
+         This also reflects the new design, where the kernel classes are
+         kernels containing objects and predicates not just representation
+         classes for the objects.
+\end{itemize}
+
+\section{The Programs\label{sec:ex_and_demo_content}}
+\ccIndexSubitem{example programs}{content}
+\ccIndexSubitem{demo programs}{content}
+
+The following guidelines should be followed to the greatest extent possible
+when writing the example and demo programs.
+\begin{itemize}
+   \item Provide simple programs with which a beginner can get started.
+   \item Provide more involved programs that illustrate the power of the
+         software.
+   \item Provide programs that truly exercise the data structure.  Though you
+         may have some canned programs that work on fixed data sets to 
+         illustrate specific things, you should also have one (or more)
+         programs that work on 
+         \ccAnchor{http://www.cgal.org/Manual/doc_html/support_lib/Generator/Chapter_generators.html}{randomly generated} or user-generated data. 
+         This illustrates confidence in the software (and can also build
+         confidence by highlighting bugs).
+   \item Take some care to design a good interface to the program; 
+         the packaging of a product does make a difference.
+\end{itemize}
+
+\section{Including programs in documentation\label{sec:programs_in_doc}}
+\ccIndexSubitem{example programs}{in manuals}
+
+All programs included in the documentation should be included in either
+the \texttt{examples} or the \texttt{demo} directory to ensure that:
+\begin{itemize}
+   \item[(a)] the programs will be included in the test suite and
+   \item[(b)] the user can more easily use the example program
+\end{itemize}
+The macro to do this inclusion is \verb|\ccIncludeExampleCode|.
+See Chapter~\ref{chap:specification} and the documentation of the
+\ccAnchor{http://www.cgal.org/Members/Manual_tools}{Manual tools} for more 
+details.
+
+The reverse statement, that all programs in the \texttt{examples}
+and \texttt{demo} directory should be included in the documentation,
+is not necessarily true.  Ideally the programs included in the documentation
+will be a proper (non-empty) subset of the programs included in the 
+distribution.
+
+Please make sure that your example programs do not have too lengthy lines
+as they are copied verbatim in the manual, which can trigger overflows
+in the PDF manual.
+
+\section{Demo programs on the web\label{sec:demos_web_page}}
+\ccIndexSubitem{demo programs}{on the web}
+
+We maintain a \ccAnchor{http://www.cgal.org/demos.html}{page of demo 
+programs} on the \cgal\ web site
+\lcTex{ (\path|http://www.cgal.org/demos.html|)}.  For each demo on
+the page, we have a screen shot of the demo in action, a link to the source
+code, and a precompiled executable for the Windows platform.
+
+If you have other demos you would like to add to the page (and the more 
+here the better), you should do the following:
+\begin{enumerate}
+\item Compile the demo and create a screen shot (as a \texttt{.gif} or 
+      \texttt{.jpg} file) and then create a smaller version of this 
+      (approx $235 \times 280$) that can be used as a ``thumbnail'' 
+      (admittedly for a rather large thumb) on the page.  These names of
+      the image files should be as follows: 
+      \centerline{\ccc{<program>_}\texttt{[big|small].[gif|jpg]}},
+      where \textit{$<$prog\_name$>$} is the name of the program from which
+      the screen shots were made (an nice menmonic name like 
+      \ccc{alpha_shapes_2} or \ccc{hull_of_int_points_2}).
+
+\item Create the \texttt{.exe} file for use under Windows (probably with the 
+      compiler optimization flags turned on)
+\item \texttt{gzip} the \texttt{.exe} file
+\item Package these together with the source code using the following structure:
+      \begin{verbatim}
+          images/demo/<program>_big.[gif|jpg]
+          demo/<program>.exe
+          demo/<subdir>/<program>.cpp
+      \end{verbatim}
+      where \ccc{<subdir>} is the name of the subdirectory in which the program
+      is (or will be) found in the distribution. \ccc{<program>} should be a 
+      name that is self-explanatory (\eg, \texttt{demo.cpp} is a bad name here).
+
+\item Send the package to \ccAnchor{mailto:ameyer@mpi-sb.mpg.de}{the web page
+      maintainer} together with a one-paragraph description similar to the
+      ones on the page already.
+\end{enumerate}
+
+\InternalOnly{
+
+\section{Requirements and recommendations\label{sec:ex_and_demos_req_and_rec}}
+
+\noindent
+Requirements:
+\begin{itemize}
+   \item Follow the coding conventions outlined in 
+         Section~\ref{sec:ex_and_demo_coding}.
+   \item Include all example and demo programs from the documentation in
+         the \texttt{examples} or \texttt{demo} directories.
+\end{itemize}
+
+\noindent
+Recommendations:
+\begin{itemize}
+   \item Place a demo of your package on the web site.
+\end{itemize}
+
+}
+
+\ccIndexMainItemEnd{example programs}
+\ccIndexMainItemEnd{demo programs}

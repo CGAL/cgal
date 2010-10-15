@@ -1,0 +1,80 @@
+% +------------------------------------------------------------------------+
+% | Reference manual page: EventQueue.tex
+% +------------------------------------------------------------------------+
+% | 20.03.2005   Author
+% | Package: Kinetic_data_structures
+% | 
+\RCSdef{\RCSEventQueueRev}{$Id$}
+\RCSdefDate{\RCSEventQueueDate}{$Date$}
+% |
+%%RefPage: end of header, begin of main body
+% +------------------------------------------------------------------------+
+
+
+\begin{ccRefConcept}{Kinetic::EventQueue}
+
+%% \ccHtmlCrossLink{}     %% add further rules for cross referencing links
+%% \ccHtmlIndexC[concept]{} %% add further index entries
+
+\ccDefinition
+  
+The for priority queues used by the \ccc{Simulator}. The concept
+basically defines a priority queue which supports deletions and
+changes of items in the queue (but not their priorities). Items in the
+queue must implement the \ccc{Event} concept.
+
+
+\ccTypes
+
+\ccNestedType{Key}{The type used to access items in the queue in order
+  to change or delete them.}
+
+\ccNestedType{Priority}{The priority type for items in the queue. This
+  is typically the same as \ccc{Kinetic::Simulator::Time}}.
+
+\ccCreation
+\ccCreationVariable{q}  %% choose variable name
+
+\ccConstructor{EventQueue(Priority start, Priority end, int
+  size_hint);}{Construct a queue which will start at time start and
+  run until time end.}
+
+\ccOperations
+
+\ccMethod{template <class Event> Key insert(Priority, Event);}{Insert
+  an event into the event queue. A \ccc{Key} which can be used to
+  manipulated the event is returned.}
+
+\ccMethod{void erase(Key);}{Erase an event from the queue.}
+
+\ccMethod{template <class Event> void set(Key, Event);}{Change the data in the event referred to by the key.}
+
+\ccMethod{template <class Event> Event& get(Key) const;}{Access the event referred to by the passed key.}
+
+\ccMethod{Priority priority(Key) const;}{Return the priority of the event.}
+
+\ccMethod{bool empty();}{Return true if the queue is empty.}
+
+\ccMethod{Priority next_priority() const;}{Return the priority of the next event in the queue.}
+
+\ccMethod{void process_next();}{Process the next \ccc{Event} by calling its process method with its \ccc{Priority}.}
+
+\ccMethod{void set_end_priority();}{Set the priority beyond which to ignore events.}
+
+\ccMethod{bool contains(Key) const;}{Return true if the queue contains
+  the event and false if it does not. This is used for auditing
+  events and can be slow if needed.}
+
+\ccHasModels
+
+\ccc{Kinetic::Two_list_pointer_event_queue<FunctionKernel>},
+\ccc{Kinetic::Heap_pointer_event_queue<FunctionKernel>}.
+
+
+\end{ccRefConcept}
+
+% +------------------------------------------------------------------------+
+%%RefPage: end of main body, begin of footer
+% EOF
+% +------------------------------------------------------------------------+
+

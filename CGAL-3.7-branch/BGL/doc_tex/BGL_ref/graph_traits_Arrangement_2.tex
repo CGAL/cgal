@@ -1,0 +1,75 @@
+
+\ccDefGlobalScope{boost::} 
+\begin{ccRefClass}{graph_traits< CGAL::Arrangement_2<Traits,Dcel> >}
+
+%% add template arg's if necessary
+
+%% \ccHtmlCrossLink{}     %% add further rules for cross referencing links
+%% \ccHtmlIndexC[class]{} %% add further index entries
+\ccDefinition
+
+The class \ccRefName\ is a partial specialization of \ccc{boost::graph_traits}
+for the class \ccc{Arrangement_2}. It provides the types  associated 
+to the 
+\ccAnchor{http://www.boost.org/libs/graph/doc/graph_concepts.html}
+{graph} concepts 
+\ccAnchor{http://www.boost.org/libs/graph/doc/BidirectionalGraph.html}{\ccc{BidirectionalGraph}} and 
+\ccAnchor{http://www.boost.org/libs/graph/doc/EdgeAndVertexListGraph.html}{\ccc{EdgeAndVertexListGraph}}.
+
+
+
+
+\ccInclude{CGAL/boost/graph/graph_traits_Arrangement_2.h}
+
+
+
+\ccTypes
+  \ccTypedef{typename CGAL::Arrangement_2::Vertex_handle   vertex_descriptor;}
+    {The vertex descriptor.}
+  
+  \ccTypedef{typename CGAL::Arrangement_2::Halfedge_handle edge_descriptor;}
+    {The edge descriptor.}
+  
+  \ccNestedType{vertex_iterator}{An iterator corresponding to 
+  \ccc{CGAL::Arrangement_2::Vertex_iterator},
+    with the difference that its value type is a vertex descriptor and not
+    \ccc{CGAL::Arrangement_2::Vertex}.}{}
+  
+  \ccNestedType{edge_iterator}{An iterator corresponding to 
+   \ccc{CGAL::Arrangement_2::Halfedge_iterator}
+    with the difference that its value type is an edge descriptor and not
+    \ccc{CGAL::Arrangement_2::Halfedge}.}{}
+  
+  \ccNestedType{in_edge_iterator}{An edge iterator which only iterates over 
+  the incoming edges around a vertex. It corresponds to a
+  \ccc{CGAL::Arrangement_2::Halfedge_around_vertex_circulator}
+  with the difference that its value type is an edge descriptor and not
+  \ccc{CGAL::Arrangement_2::Halfedge}.}{}
+  
+  \ccNestedType{out_edge_iterator}{An edge iterator which only iterates over 
+  the outgoing halfedges around a vertex. It corresponds to a
+  \ccc{CGAL::Arrangement_2::Halfedge_around_vertex_circulator}
+  with the difference that its value type is an edge descriptor and not
+  \ccc{CGAL::Arrangement_2::Halfedge}.}{}
+  
+  
+  \ccTypedef{boost::sallow_parallel_edge_tag edge_parallel_category;}
+  {Indicates that this graph does support multiedges.}
+  
+  \ccTypedef{boost::bidirectional_graph_tag  traversal_category;}
+    {Indicates that this graph is bidirectional.}
+    
+  \ccTypedef{typename Arrangement_2::size_type vertices_size_type;}
+    {The size type of the vertex list.}
+    
+  \ccTypedef{typename Arrangement_2::size_type edges_size_type;}
+    {The size type of the edge list.}
+    
+  \ccTypedef{typename Arrangement_2::size_type degree_size_type;}
+    {The size type of the adjacency list.}
+
+The const specialization, \ccc{boost::graph_traits< CGAL::Arrangement_2<Traits,Dcel> const>} 
+is also defined, using the constant handles in the arrangement.
+     
+\end{ccRefClass}
+\ccDefGlobalScope{CGAL::} 

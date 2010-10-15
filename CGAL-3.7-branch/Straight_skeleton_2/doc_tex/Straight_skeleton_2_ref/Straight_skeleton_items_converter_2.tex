@@ -1,0 +1,47 @@
+%% Copyright (c) 2004  SciSoft.  All rights reserved.
+%%
+%% This file is part of CGAL (www.cgal.org); you may redistribute it under
+%% the terms of the Q Public License version 1.0.
+%% See the file LICENSE.QPL distributed with CGAL.
+%%
+%% Licensees holding a valid commercial license may use this file in
+%% accordance with the commercial license agreement provided with the software.
+%%
+%% This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
+%% WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
+%%
+%% 
+%%
+%% Author(s)     : Fernando Cacciola <fernando_cacciola@hotmail.com>
+
+\begin{ccRefClass}{Straight_skeleton_items_converter_2<SrcSs, TgtSs, NTConverter>}
+
+\ccCreationVariable{conv}
+\ccDefinition
+
+\ccClassTemplateName is a model of the \ccc{StraightSkeletonItemsConverter_2} concept
+
+The first and second template parameters are the target and source straight skeleton types, resp.
+
+The third template parameter \ccc{NTConverter} is a function object that must
+provide \ccc{TgtSs:Traits::FT operator()(SrcSs::Traits::FT n)} that converts \ccc{n} to an
+\ccc{TgtSs::Traits::FT} which has the same value. The default value of this parameter is \ccc{CGAL::NT_converter<SrcSs::Traits::FT, TgtSs::Traits::FT>}.
+
+\ccIsModel
+\ccc{StraightSkeletonItemsConverter_2}\\
+\ccc{DefaultConstructible}\\
+\ccc{CopyConstructible}\\
+\ccc{Assignable}\\
+
+\ccInclude{CGAL/Straight_skeleton_converter_2.h}
+
+\ccCreation
+
+\ccConstructor{Straight_skeleton_items_converter_2<>();}{Default constructor.}
+
+\ccSeeAlso
+\ccRefIdfierPage{CGAL::Straight_skeleton_2<Traits,Items,Alloc>} \\
+\ccRefIdfierPage{CGAL::Straight_skeleton_converter_2<SrcSs,TgtSs,ItemsCvt>} \\
+\ccRefIdfierPage{CGAL::Straight_skeleton_builder_2<Gt,Ss,Visitor>} \\
+
+\end{ccRefClass}

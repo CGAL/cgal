@@ -1,0 +1,89 @@
+% +------------------------------------------------------------------------+
+% | Reference manual page: Nef_polyhedron_3_SFace.tex
+% +------------------------------------------------------------------------+
+% | 14.05.2004   Peter Hachenberger
+% | Package: Nef_3
+% | 
+\RCSdef{\RCSSFaceRev}{$Id$}
+\RCSdefDate{\RCSSFaceDate}{$Date$}
+% +------------------------------------------------------------------------+
+
+\ccRefPageBegin
+
+%%RefPage: end of header, begin of main body
+% +------------------------------------------------------------------------+
+
+
+\begin{ccRefClass}[Nef_polyhedron_3<Traits>::]{SFace}
+
+\ccDefinition
+
+Figures~\ref{figureNef3HalfedgeIncidences}
+and~\ref{figureNef3HalfloopIncidences}
+illustrate the incidences of an sface. An sface is described
+by its boundaries. An entry item to each boundary cycle can be accessed
+using the iterator range (\ccc{sface_cycles_begin()}/\ccc{sface_cycles_end()}).
+Additionally, \ccc{Nef_polyhedron_S2} provides the macro 
+\ccc{CGAL_forall_sface_cylces_of}. The iterators are of type 
+\ccc{SFace_cycle_const_iterator} and represent either a shalfedge, a shalfloop,
+or a svertex.
+
+
+\ccInclude{CGAL/Nef_polyhedron_3.h}
+
+\ccTypes
+\ccThree{SFace_cycle_const_iterator}{sf.sface_cycle_begin();;}{}
+\ccThreeToTwo
+
+The following types are the same as in \ccc{Nef_polyhedron_3<Traits>}.
+
+\ccNestedType{Mark}{type of mark.}
+
+\ccNestedType{Object_list}{list of Object handles.}
+
+\ccNestedType{Vertex_const_handle}{const handle to Vertex.}
+\ccGlue
+\ccNestedType{Volume_const_handle}{const handle to Volume.}
+\ccGlue
+\ccNestedType{SFace_const_handle}{const handle to SFace.}
+\ccGlue
+\ccNestedType{SFace_cycle_const_iterator}
+{const iterator over the entries to all sface cycles of a sface.}
+
+\ccCreation
+\ccCreationVariable{sf}
+
+There is no need for a user to create a \ccc{SFace} explicitly. The
+class \ccc{Nef_polyhedron_3<Traits>} manages the needed sfaces internally.
+
+%\ccConstructor{SFace();}{default constructor.}
+
+\ccOperations
+
+\ccMethod{const Mark& mark() const;}{the mark of \ccVar\ .}
+
+\ccMethod{Vertex_const_handle center_vertex() const;}
+{the center vertex of the sphere map \ccVar\ belongs to.}
+
+\ccMethod{Volume_const_handle volume() const;}
+{the volume that corresponds to \ccVar\ in the 3D incidence structure.}
+
+\ccMethod{SFace_cycle_const_iterator  sface_cycle_begin() const;}
+{iterator over the entries to all sface cycles of \ccVar\ .}
+
+\ccMethod{SFace_cycle_const_iterator  sface_cycle_end() const;}
+{past-the-end iterator.}
+
+\ccSeeAlso
+
+\ccRefIdfierPage{CGAL::Nef_polyhedron_3<Traits>::Vertex}\\
+\ccRefIdfierPage{CGAL::Nef_polyhedron_3<Traits>::Volume}
+
+\ccTagDefaults
+\end{ccRefClass}
+
+% +------------------------------------------------------------------------+
+%%RefPage: end of main body, begin of footer
+\ccRefPageEnd
+% EOF
+% +------------------------------------------------------------------------+

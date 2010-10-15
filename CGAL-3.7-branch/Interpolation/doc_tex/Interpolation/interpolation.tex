@@ -1,0 +1,120 @@
+\section{Interpolation Methods\label{sec:interpolation}}
+\subsection{Introduction}
+\subsubsection{Linear Precision Interpolation}
+
+Sibson \cite{s-bdnni-81} defines a very simple interpolant that
+re-produces linear functions exactly. The interpolation of
+$\Phi(\mathbf{x})$ is given as the linear combination of the neighbors' function
+values weighted by the coordinates:
+\begin{displaymath}
+  Z^0(\mathbf{x}) = \ccSum{i}{}{ \lambda_i(\mathbf{x}) z_i}.
+\end{displaymath}
+Indeed, if $z_i=a + \mathbf{b}^t \mathbf{p_i}$ for all natural
+neighbors of $\mathbf{x}$, we have
+\[  Z^0(\mathbf{x}) = \ccSum{i}{}{ \lambda_i(\mathbf{x}) (a + \mathbf{b}^t\mathbf{p_i})} = a+\mathbf{b}^t \mathbf{x}\]
+by the barycentric coordinate property. The first example in
+Subsection~\ref{subsec:interpol_examples} shows how the function is
+called.
+
+\subsubsection{Sibson's $C^1$ Continuous Interpolant}
+In \cite{s-bdnni-81}, Sibson describes a second interpolation method
+that relies also on the function gradient $\mathbf{g_i}$ for all $\mathbf{p_i} \in \mathcal{P}$. It is $C^1$ continuous with gradient $\mathbf{g_i}$ at
+$\mathbf{p_i}$. Spherical quadrics of the form $\Phi(\mathbf{x}) =a +
+\mathbf{b}^t \mathbf{x} +\gamma\ \mathbf{x}^t\mathbf{x}$ are reproduced 
+exactly. The
+proof relies on the barycentric coordinate property of the natural
+neighbor coordinates and assumes that the gradient of $\Phi$ at the
+data points is known or approximated from the function values as
+described in \cite{s-bdnni-81} (see Section \ref{s:gradient_fitting}). 
+
+Sibson's $Z^1$ interpolant is a combination of the linear interpolant
+$Z^0$ and an interpolant $\xi$ which is the weighted sum of the first
+degree functions
+$$\xi_i(\mathbf{x}) = z_i
++\mathbf{g_i}^t(\mathbf{x}-\mathbf{p_i}),\qquad \xi(\mathbf{x})= \frac{\ccSum{i}{}{ \frac{\lambda_i(\mathbf{x})}
+  {\|\mathbf{x}-\mathbf{p_i}\|}\xi_i(\mathbf{x}) } }{\ccSum{i}{}{
+  \frac{\lambda_i(\mathbf{x})}{\|\mathbf{x}-\mathbf{p_i}\|}}}.$$
+Sibson observed that the combination of $Z^0$ and $\xi$ reconstructs exactly
+a spherical quadric if they are mixed as follows:
+$$
+Z^1(\mathbf{x}) = \frac{\alpha(\mathbf{x}) Z^0(\mathbf{x}) +
+  \beta(\mathbf{x}) \xi(\mathbf{x})}{\alpha(\mathbf{x}) +
+  \beta(\mathbf{x})} \mbox{ where } \alpha(\mathbf{x}) =
+\frac{\ccSum{i}{}{ \lambda_i(\mathbf{x}) \frac{\|\mathbf{x} -
+    \mathbf{p_i}\|^2}{f(\|\mathbf{x} - \mathbf{p_i}\|)}}}{\ccSum{i}{}{
+  \frac{\lambda_i(\mathbf{x})} {f(\|\mathbf{x} - \mathbf{p_i}\|)}}}
+\mbox{ and } \beta(\mathbf{x})= \ccSum{i}{}{ \lambda_i(\mathbf{x})
+\|\mathbf{x} - \mathbf{p_i}\|^2},$$
+where in Sibson's original work,
+$f(\|\mathbf{x} - \mathbf{p_i}\|) = \|\mathbf{x} - \mathbf{p_i}\|$.
+
+
+\cgal\ contains a second implementation with $f(\|\mathbf{x} -
+\mathbf{p_i}\|) = \|\mathbf{x} - \mathbf{p_i}\|^2$ which is less
+demanding on the number type because it avoids the square-root
+computation needed to compute the distance $\|\mathbf{x} -
+\mathbf{p_i}\|$. The theoretical guarantees are the same (see
+\cite{cgal:f-csapc-03}). Simply, the smaller the slope of $f$
+around $f(0)$, the faster the interpolant approaches $\xi_i$ as
+$\mathbf{x} \rightarrow \mathbf{p_i}$.
+
+\subsubsection{Farin's $C^1$ Continuous Interpolant}
+
+Farin \cite{f-sodt-90} extended Sibson's work and realizes a $C^1$
+continuous interpolant by embedding natural neighbor coordinates in
+the Bernstein-B\'ezier representation of a cubic simplex. If the
+gradient of $\Phi$ at the data points is known, this interpolant
+reproduces quadratic functions exactly. The function gradient can be
+approximated from the function values by Sibson's method
+\cite{s-bdnni-81} (see Section \ref{s:gradient_fitting}) which is exact only
+for spherical quadrics.
+
+\subsubsection{Quadratic Precision Interpolants}
+
+
+Knowing the gradient $\mathbf{g_i}$ for all $\mathbf{p_i} \in
+\mathcal{P}$, we formulate a very simple interpolant that reproduces
+exactly quadratic functions. This interpolant is not $C^1$ continuous
+in general.  It is defined as follows:
+\begin{displaymath}
+  I^1(\mathbf{x}) = \ccSum{i}{}{ \lambda_i(\mathbf{x}) 
+  (z_i + \frac{1}{2} \mathbf{g_i}^t (\mathbf{x} - \mathbf{p_i}))} 
+\end{displaymath} 
+
+
+
+\subsection{Gradient Fitting\label{s:gradient_fitting}}
+Sibson describes a method to approximate the gradient of the function
+$f$ from the function values on the data sites. For the data point
+$\mathbf{p_i}$, we determine
+$$\mathbf{g_i} 
+= \min_{\mathbf{g}} 
+\ccSum{j}{}{
+\frac{\lambda_j(\mathbf{p_i})}{\|\mathbf{p_i} - \mathbf{p_j}\|^2}
+\left( z_j - (z_i + \mathbf{g}^t (\mathbf{p_j} -\mathbf{p_i})) \right)},
+$$
+where $\lambda_j(\mathbf{p_i})$ is the natural neighbor coordinate
+of $\mathbf{p_i}$ with respect to $\mathbf{p_i}$ associated to
+$\mathcal{P} \setminus \{\mathbf{p_i}\}$. For spherical quadrics, the result is exact.
+
+\cgal\ provides functions to approximate the gradients of all data
+points that are inside the convex hull. There is one function for each
+type of natural neighbor coordinate (i.e.\ \ccc{natural_neighbor_coordinates_2}, \ccc{regular_neighbor_coordinates_2}).
+%\begin{ccAdvanced}
+%\end{ccAdvanced}
+
+%\subsection{Implementation}
+
+\subsection{Example for Linear Interpolation\label{subsec:interpol_examples}}
+
+\ccIncludeExampleCode{Interpolation/linear_interpolation_2.cpp}
+
+\subsection{Example for Sibson's $C^1$ Interpolation Scheme with Gradient Estimation}
+
+\ccIncludeExampleCode{Interpolation/sibson_interpolation_2.cpp}
+
+An additional example in the distribution compares numerically the errors of the different 
+interpolation functions with respect to a known function. 
+It is distributed in the examples directory.
+
+%end of file

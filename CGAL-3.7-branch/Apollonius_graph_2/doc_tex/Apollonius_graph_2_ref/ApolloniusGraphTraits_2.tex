@@ -1,0 +1,322 @@
+% +------------------------------------------------------------------------+
+% | Reference manual page: ApolloniusGraphTraits_2.tex
+% +------------------------------------------------------------------------+
+% | 12.04.2000   Author
+% | Package: Package
+% | 
+%\RCSdef{\RCSRegulartriangulationtraitsRev}{$Id$}
+%\RCSdefDate{\RCSRegulartriangulationtraitsDate}{$Date$}
+% |
+%%RefPage: end of header, begin of main body
+% +------------------------------------------------------------------------+
+
+
+\begin{ccRefConcept}{ApolloniusGraphTraits_2}
+
+%% \ccHtmlCrossLink{}     %% add further rules for cross referencing links
+%% \ccHtmlIndexC[concept]{} %% add further index entries
+\ccDefinition
+  
+The concept \ccc{ApolloniusGraphTraits_2} provides the traits
+requirements for the \ccc{Apollonius_graph_2} class. In particular,
+it provides a type \ccc{Site_2}, which must be a model of the concept
+\ccc{ApolloniusSite_2}. It also provides
+constructions for sites and several function object
+types for the predicates.
+
+\ccTypes
+\ccTwo{ApolloniusGraphTraits_2::Segment_2+}{}
+%
+\ccNestedType{Point_2}{A type for a point.}
+\ccGlue
+\ccNestedType{Site_2}{A type for an Apollonius site. Must be a model
+  of the concept \ccc{ApolloniusSite_2}.}
+\ccGlue
+\ccNestedType{Line_2}{A type for a line. Only required if access to
+  the dual of the Apollonius graph is required or if the primal
+  or dual diagram are inserted in a stream.}
+\ccGlue
+\ccNestedType{Ray_2}{A type for a ray. Only required if access to
+  the dual of the Apollonius graph is required or if the primal
+  or dual diagram are inserted in a stream.}
+\ccGlue
+\ccNestedType{Segment_2}{A type for a segment. Only required if access to
+  the dual of the Apollonius graph is required or if the primal
+  or dual diagram are inserted in a stream.}
+\ccGlue
+\ccNestedType{Object_2}{A type representing different types of objects
+  in two dimensions, namely: \ccc{Point_2}, \ccc{Site_2},
+  \ccc{Line_2}, \ccc{Ray_2} and \ccc{Segment_2}.}
+\ccGlue
+\ccNestedType{FT}{A type for the field number type of sites.}
+\ccGlue
+\ccNestedType{RT}{A type for the ring number type of sites.}
+\ccGlue
+\ccNestedType{Assign_2}
+{Must provide \ccc{template <class T> bool operator() ( T& t,
+    Object_2 o)} which assigns \ccc{o} to \ccc{t} if \ccc{o} was
+  constructed from an object of type \ccc{T}. Returns 
+  \ccc{true}, if the assignment was possible.}
+\ccGlue
+\ccNestedType{Construct_object_2}{Must provide \ccc{template <class T>
+    Object_2 operator()( T t)} that constructs an object of type
+  \ccc{Object_2} that contains \ccc{t} and returns it.}
+\ccGlue
+\ccNestedType{Construct_Apollonius_vertex_2}{
+  A constructor for a point of the Apollonius diagram equidistant
+  from three sites. Must provide
+  \ccc{Point_2 operator()(Site_2 s1, Site_2 s2, Site_2 s3)}, which
+  constructs a point equidistant from the sites \ccc{s1}, \ccc{s2} and
+  \ccc{s3}.
+}
+%
+\ccGlue
+\ccNestedType{Construct_Apollonius_site_2}
+{A constructor for
+a dual Apollonius site (a site whose center is a
+vertex of the Apollonius diagram and its weight is the common
+distance of its center from the three defining sites).
+Must provide \ccc{Site_2 operator()(Site_2 s1,
+Site_2 s2, Site_2 s3)}, which constructs a
+dual site whose center $c$ is equidistant from \ccc{s1}, \ccc{s2} and
+\ccc{s3}, and its weight is equal to the (signed) distance of $c$
+from \ccc{s1} (or \ccc{s2} or \ccc{s3}).\\
+Must also provide \ccc{Line_2 operator()(Site_2 s1, Site_2 s2)}, which
+constructs a line bitangent to \ccc{s1} and \ccc{s2}. This line is the
+dual site of \ccc{s1}, \ccc{s2} and the site at infinity; it can be
+viewed as a dual Apollonius site whose center is at infinity
+and its weight is infinite.
+}
+%
+\ccTwo{ApolloniusGraphTraits_2}{}
+%
+\ccGlue
+\ccNestedType{Compare_x_2}{A predicate object type. Must
+provide \ccc{Comparison_result operator()(Site_2 s1,
+Site_2 s2)}, which compares the $x$-coordinates of the centers of
+\ccc{s1} and \ccc{s2}.}
+%
+\ccGlue
+\ccNestedType{Compare_y_2}{A predicate object type. Must
+provide \ccc{Comparison_result operator()(Site_2 s1,
+Site_2 s2)}, which compares the $y$-coordinates of the centers of
+\ccc{s1} and \ccc{s2}.}
+%
+\ccGlue
+\ccNestedType{Compare_weight_2}{A predicate object type. Must
+provide \ccc{Comparison_result operator()(Site_2 s1,
+Site_2 s2)}, which compares the weights of \ccc{s1} 
+and \ccc{s2}.}
+%
+\ccGlue
+\ccNestedType{Orientation_2}{A predicate object type. Must
+provide \ccc{Orientation operator()(Site_2 s1,
+Site_2 s2, Site_2 s3)}, which performs the
+usual orientation test for the centers of the three sites
+\ccc{s1}, \ccc{s2} and \ccc{s3}.\\
+Must also provide \ccc{Orientation operator()(Site_2 s1, Site_2 s2,
+  Site_2 s3, Site_2 p1, Site_2 p2)}, 
+which performs the usual orientation test for the Apollonius vertex of
+\ccc{s1}, \ccc{s2}, \ccc{s3} and the centers of \ccc{p1} and
+\ccc{p2}.
+\ccPrecond{the Apollonius vertex of \ccc{s1}, \ccc{s2}
+and \ccc{s3} must exist.}}
+%
+\ccGlue
+\ccNestedType{Is_hidden_2}{A predicate object type. Must
+provide \ccc{bool operator()(Site_2 s1,
+Site_2 s2)}, which returns \ccc{true} if the circle
+corresponding to \ccc{s2} is contained in the closure of the disk
+corresponding to \ccc{s1}, \ccc{false} otherwise.}
+%
+\ccGlue
+\ccNestedType{Oriented_side_of_bisector_2}{A predicate object type.
+Must provide \ccc{Oriented_side operator()(Site_2 s1,
+Site_2 s2, Point_2 p)}, which returns
+the oriented side of the bisector of \ccc{s1} and \ccc{s2} that
+contains \ccc{p}. Returns \ccc{ON_POSITIVE_SIDE} if \ccc{p} lies in
+the half-space of \ccc{s1} (i.e., \ccc{p} is closer to \ccc{s1} than
+\ccc{s2}); returns \ccc{ON_NEGATIVE_SIDE} if \ccc{p} lies in the
+half-space of \ccc{s2}; returns \ccc{ON_ORIENTED_BOUNDARY} if \ccc{p}
+lies on the bisector of \ccc{s1} and \ccc{s2}.}
+%
+\ccGlue
+\ccNestedType{Vertex_conflict_2}{A predicate object type.
+Must provide \ccc{Sign operator()(Site_2 s1, Site_2
+s2, Site_2 s3, Site_2 q)}, which
+returns the sign of the distance of \ccc{q} from the dual Apollonius
+site of \ccc{s1}, \ccc{s2}, \ccc{s3}.
+\ccPrecond{the dual Apollonius site of \ccc{s1}, \ccc{s2},
+\ccc{s3} must exist.}\\
+Must also provide \ccc{Sign operator()(Site_2 s1,
+Site_2 s2, Site_2 q)}, which returns the sign of the distance of
+\ccc{q} from the bitangent line of \ccc{s1}, \ccc{s2} (a degenerate
+dual Apollonius site, with its center at infinity).}
+%
+\ccGlue
+\ccNestedType{Finite_edge_interior_conflict_2}{A predicate object
+type. Must provide \ccc{bool operator()(Site_2 s1,
+Site_2 s2, Site_2 s3, Site_2 s4,
+Site_2 q, bool b)}. The sites \ccc{s1}, \ccc{s2},
+\ccc{s3} and \ccc{s4} define an Apollonius edge that lies on the
+bisector of \ccc{s1} and \ccc{s2} and has as endpoints the Apollonius
+vertices defined by the triplets \ccc{s1}, \ccc{s2}, \ccc{s3} and
+\ccc{s1}, \ccc{s4} and \ccc{s2}. The Boolean \ccc{b} denotes if the
+two Apollonius vertices are in conflict with the site
+\ccc{q} (in which case \ccc{b} should be \ccc{true}, otherwise
+\ccc{false}). In case that \ccc{b} is \ccc{true}, the predicate
+returns \ccc{true} if and only if the entire Apollonius edge is in
+conflict with \ccc{q}. If \ccc{b} is \ccc{false}, the predicate returns
+\ccc{false} if and only if \ccc{q} is not in conflict with the
+Apollonius edge.
+\ccPrecond{the Apollonius vertices of \ccc{s1}, \ccc{s2},
+\ccc{s3}, and \ccc{s1}, \ccc{s4}, \ccc{s2} must exist.}\\
+%
+Must also provide \ccc{bool operator()(Site_2 s1,
+Site_2 s2, Site_2 s3, Site_2 q, bool b)}. The
+sites \ccc{s1}, \ccc{s2}, \ccc{s3} and the site at infinity
+$s_\infty$ define an Apollonius edge that lies on the bisector of
+\ccc{s1} and \ccc{s2} and has as endpoints the Apollonius vertices
+defined by the triplets \ccc{s1}, \ccc{s2}, \ccc{s3} and \ccc{s1},
+$s_\infty$ and \ccc{s2} (the second Apollonius vertex is actually at
+infinity). The Boolean \ccc{b} denotes if the two Apollonius vertices
+are in conflict with the site \ccc{q} (in which case \ccc{b}
+should be \ccc{true}, otherwise \ccc{false}). 
+In case that \ccc{b} is \ccc{true}, the predicate
+returns \ccc{true} if and only if the entire Apollonius edge is in
+conflict with \ccc{q}. If \ccc{b} is \ccc{false}, the predicate returns
+\ccc{false} if and only if \ccc{q} is not in conflict with the
+Apollonius edge.
+\ccPrecond{the Apollonius vertex of \ccc{s1}, \ccc{s2},
+\ccc{s3} must exist.}\\
+%
+Must finally provide \ccc{bool operator()(Site_2 s1,
+Site_2 s2, Site_2 q, bool b)}. The
+sites \ccc{s1}, \ccc{s2} and the site at infinity
+$s_\infty$ define an Apollonius edge that lies on the bisector of
+\ccc{s1} and \ccc{s2} and has as endpoints the Apollonius vertices
+defined by the triplets \ccc{s1}, \ccc{s2}, $s_\infty$ and \ccc{s1},
+$s_\infty$ and \ccc{s2} (both Apollonius vertices are actually at
+infinity). The Boolean \ccc{b} denotes if the two Apollonius vertices
+are in conflict with the site \ccc{q} (in which case \ccc{b}
+should be \ccc{true}, otherwise \ccc{false}). 
+In case that \ccc{b} is \ccc{true}, the predicate
+returns \ccc{true} if and only if the entire Apollonius edge is in
+conflict with \ccc{q}. If \ccc{b} is \ccc{false}, the predicate returns 
+\ccc{false} if and only if \ccc{q} is not in conflict with the
+Apollonius edge.}
+%
+\ccGlue
+\ccNestedType{Infinite_edge_interior_conflict_2}{A predicate
+object type. Must provide \ccc{bool operator()(Site_2 s1,
+Site_2 s2, Site_2 s3, Site_2 q, bool b)}. The
+sites $s_\infty$, \ccc{s1}, \ccc{s2} and \ccc{s3} define an
+Apollonius edge that lies on the bisector of $s_\infty$ and \ccc{s1}
+and has as endpoints the Apollonius vertices defined by the triplets
+$s_\infty$, \ccc{s1}, \ccc{s2} and $s_\infty$, \ccc{s3} and
+\ccc{s1}. The Boolean \ccc{b} denotes if the two Apollonius vertices
+are in conflict with the site \ccc{q} (in which case \ccc{b}
+should be \ccc{true}, otherwise \ccc{false}.
+In case that \ccc{b} is \ccc{true}, the predicate
+returns \ccc{true} if and only if the entire Apollonius edge is in
+conflict with \ccc{q}. If \ccc{b} is \ccc{false}, the predicate returns
+\ccc{false} if and only if \ccc{q} is not in conflict with the
+Apollonius edge.}
+%
+\ccGlue
+\ccNestedType{Is_degenerate_edge_2}{A predicate object type.
+Must provide \ccc{bool operator()(Site_2 s1, Site_2
+s2, Site_2 s3, Site_2 s4)}. It returns \ccc{true} if
+the Apollonius edge defined by \ccc{s1}, \ccc{s2}, \ccc{s3} and
+\ccc{s4} is degenerate, \ccc{false} otherwise. An Apollonius edge is
+called degenerate if its two endpoints coincide.
+\ccPrecond{the Apollonius vertices of \ccc{s1}, \ccc{s2},
+\ccc{s3}, and \ccc{s1}, \ccc{s4}, \ccc{s2} must exist.}}
+%
+ 
+
+\ccCreation
+\ccCreationVariable{gt}  %% choose variable name
+
+\ccThree{ApolloniusGraphTraits_2}{ traits = other}{}
+\ccThreeToTwo
+%
+\ccConstructor{ ApolloniusGraphTraits_2(); }{Default constructor.}
+\ccGlue
+\ccConstructor{ ApolloniusGraphTraits_2(ApolloniusGraphTraits_2 other);}
+{Copy constructor.}
+\ccGlue
+\ccMethod{ApolloniusGraphTraits_2 operator=(ApolloniusGraphTraits_2 other);}
+{Assignment operator.}
+
+
+
+\ccHeading{Access to predicate objects}
+%
+\ccThree{Infinite_edge_interior_conflict_2}
+{gt.infinite_edge_interior_conflict_2_object();}{}
+%
+\ccMethod{Compare_x_2 compare_x_2_object();}{}
+\ccGlue
+\ccMethod{Compare_y_2 compare_y_2_object();}{}
+\ccGlue
+\ccMethod{Compare_weight_2 compare_weight_2_object();}{}
+\ccGlue
+\ccMethod{Orientation_2 orientation_2_object();}{}
+\ccGlue
+\ccMethod{Is_hidden_2 is_hidden_2_object();}{}
+\ccGlue
+\ccMethod{Oriented_side_of_bisector_2
+oriented_side_of_bisector_test_2_object();}{}
+\ccGlue
+\ccMethod{Vertex_conflict_2 vertex_conflict_2_object();}{}
+\ccGlue
+\ccMethod{Finite_edge_interior_conflict_2
+	finite_edge_interior_conflict_2_object();}{}
+\ccGlue
+\ccMethod{Infinite_edge_interior_conflict_2
+	infinite_edge_interior_conflict_2_object();}{}
+\ccGlue
+\ccMethod{Is_degenerate_edge_2 is_degenerate_edge_2_object();}{}
+
+
+
+
+\ccHeading{Access to constructor objects}
+%
+\ccMethod{Construct_object_2
+construct_object_2_object();}{} 
+%
+\ccGlue
+\ccMethod{Construct_Apollonius_vertex_2
+construct_Apollonius_vertex_2_object();}{} 
+%
+\ccGlue
+\ccMethod{Construct_Apollonius_site_2
+construct_Apollonius_site_2_object();}{}
+
+
+
+
+\ccHeading{Access to other objects}
+%
+\ccMethod{Assign_2 assign_2_object();}{} 
+
+
+\ccHasModels
+
+\ccc{CGAL::Apollonius_graph_traits_2<K,Method_tag>}\\
+\ccc{CGAL::Apollonius_graph_filtered_traits_2<CK,CM,EK,EM,FK,FM>}
+
+
+\ccSeeAlso
+\ccc{CGAL::Apollonius_graph_2<Gt,Agds>}\\
+\ccc{CGAL::Apollonius_graph_traits_2<K,Method_tag>}\\
+\ccc{CGAL::Apollonius_graph_filtered_traits_2<CK,CM,EK,EM,FK,FM>}
+\end{ccRefConcept}
+
+% +------------------------------------------------------------------------+
+%%RefPage: end of main body, begin of footer
+% EOF
+% +------------------------------------------------------------------------+
+

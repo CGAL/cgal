@@ -1,0 +1,71 @@
+% +------------------------------------------------------------------------+
+% | Reference manual page: Triangulated_mixed_complex_observer_3.tex
+% +------------------------------------------------------------------------+
+% | 27.09.2005   Nico Kruithof
+% | Package: Skin_surface
+% | 
+\RCSdef{\RCSTriangulatedmixedcomplexobserverRev}{$Id$}
+\RCSdefDate{\RCSTriangulatedmixedcomplexobserverDate}{$Date$}
+% +------------------------------------------------------------------------+
+
+\ccRefPageBegin
+
+%%RefPage: end of header, begin of main body
+% +------------------------------------------------------------------------+
+
+
+\begin{ccRefConcept}{TriangulatedMixedComplexObserver_3}
+  Required types and member functions for the \ccRefName\ concept.
+  This concept is used to make the triangulation of the mixed complex
+  more flexible. The triangulation algorithm calls the functions
+  \ccc{after_vertex_insertion} and \ccc{after_cell_insertion} after
+  the construction of each vertex and cell of the triangulated mixed
+  complex.
+
+\ccThree{Skin}{Triang}{}
+\ccThreeToTwo
+\ccTypes
+
+\ccNestedType{Rt_Simplex}{The type of the simplices of the regular
+  triangulation.}
+
+\ccNestedType{TMC_Vertex_handle}{The type of a pointer to the Vertex
+  type of the constructed triangulated mixed complex.}
+
+\ccNestedType{TMC_Cell_handle}{The type of a pointer to the Cell type
+  of the constructed triangulated mixed complex.}
+
+\ccCreation
+\ccCreationVariable{observer}
+
+\ccConstructor{TriangulatedMixedComplexObserver_3();}{}
+
+\ccHasModels
+
+\ccRefIdfierPage{CGAL::Triangulated_mixed_complex_observer_3<SkinSurfaceTraits_3, TriangulatedMixedComplex_3, RegularTriangulation_3>}
+
+
+\ccOperations
+
+\ccMethod{void after_vertex_insertion( const Rt_Simplex &sDel, const
+  Rt_Simplex &sVor, TMC_Vertex_handle &vh);}{This function is
+  called after the insertion of a vertex in the triangulated mixed
+  complex. The vertex is constructed from the anchor point of the
+  Delaunay simplex \ccc{sDel} and the Voronoi cell \ccc{sVor}.}
+
+\ccMethod{void after_cell_insertion( const Rt_Simplex &s,
+  TMC_Cell_handle &ch);}{This function is called after the insertion
+  of a cell in the triangulated mixed complex. The cell is contained
+  in the mixed cell defined by the Delaunay simplex \ccc{s}.}
+
+\ccSeeAlso
+\ccRefIdfierPage{CGAL::Triangulated_mixed_complex_observer_3<SkinSurfaceTraits_3, TriangulatedMixedComplex_3, RegularTriangulation_3>}
+
+% +------------------------------------------------------------------------+
+%%RefPage: end of main body, begin of footer
+\ccRefPageEnd
+% EOF
+% +------------------------------------------------------------------------+
+
+
+\end{ccRefConcept}

@@ -1,0 +1,80 @@
+\begin{ccRefClass}{Quadratic_program_from_mps<NT>}
+
+\ccInclude{CGAL/QP_models.h}
+
+\ccDefinition
+An object of class \ccRefName\ describes a convex quadratic program of the 
+general form
+
+\input{QP_solver_ref/_qp_description.tex}
+
+If $D=0$, the program is
+a linear program; if the variable bounds are $x\geq 0$, we have a 
+nonnegative program.
+
+The program data are read from an input stream in \ccc{MPSFormat}. This is
+a commonly used format for encoding linear and quadratic programs that
+is understood by many solvers. All values are expected to be readable
+into type \ccc{NT}. The constructed program can be further manipulated 
+by using the set-methods below.
+
+\ccIsModel
+\ccc{QuadraticProgram}\\
+\ccc{LinearProgram}\\
+\ccc{NonnegativeQuadraticProgram}\\
+\ccc{NonnegativeLinearProgram}
+
+\ccTypes
+\ccNestedType{NT}{The number type of the program entries.}
+
+\ccCreation
+\ccIndexClassCreation
+\ccCreationVariable{qp}
+
+\ccConstructor{Quadratic_program_from_mps(std::istream& in)} 
+{reads \ccVar\ from the input stream \ccc{in}.}
+
+\ccOperations
+
+\ccMethod{bool is_valid() const;}{returns \ccc{true} if and only if an
+MPS-encoded quadratic program could be extracted from the input stream.}
+
+\ccMethod{const std::string& get_error() const;}{if !\ccVar\ccc{.is_valid()},
+this method returns an error message explaining why the input does not
+conform to the \ccc{MPSFormat}.}
+
+\ccMethod{const std::string& variable_name_by_index (int j) const;} 
+{returns the name of the $j$-th variable. \ccPrecond j must not refer 
+ to a variable that has been added later, using one of the set methods 
+ below.}
+
+\ccMethod{int variable_index_by_name (const std::string& name) const;}
+{returns the index of the variable with name \ccc{name}. If there is
+no variable with this name, the result is $-1$.}
+
+\ccMethod{const std::string& constraint_name_by_index (int i) const;} 
+{returns the name of the $i$-th constraint. \ccPrecond i must not refer 
+ to a constraint that has been added later, using one of the set methods 
+ below.}
+
+\ccMethod{int constraint_index_by_name (const std::string& name) const;}
+{returns the index of the constraint with name \ccc{name}. If there is
+no constraint with this name, the result is $-1$.}
+
+
+\input{QP_solver_ref/_set_methods.tex}
+
+\ccExample
+
+\ccReferToExampleCode{QP_solver/first_qp_from_mps.cpp}\\
+\ccReferToExampleCode{QP_solver/first_lp_from_mps.cpp}\\
+\ccReferToExampleCode{QP_solver/first_nonnegative_qp_from_mps.cpp}\\
+\ccReferToExampleCode{QP_solver/first_nonnegative_lp_from_mps.cpp}
+
+\ccSeeAlso
+\ccc{Quadratic_program<NT>}\\
+\ccc{Quadratic_program_from_iterators<A_it, B_it, R_it, FL_it, L_it, FU_it, U_it, D_it, C_it>}\\
+\ccc{Linear_program_from_iterators<A_it, B_it, R_it, FL_it, L_it, FU_it, U_it, C_it>}\\
+\ccc{Nonnegative_quadratic_program_from_iterators<A_it, B_it, R_it, D_it, C_it>}\\
+\ccc{Nonnegative_linear_program_from_iterators<A_it, B_it, R_it, C_it>}
+\end{ccRefClass}

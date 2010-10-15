@@ -1,0 +1,5 @@
+Once you have updated a file manual-x.y.bib, you need to update the
+directory Manual_tools/src/latex_converter_comfig/html/Biblio/ as
+well. Have a look at the file Biblio.README in
+Manual_tools/src/latex_converter_comfig/html/
+

@@ -1,0 +1,73 @@
+\begin{ccRefConcept}{IsStronglyConvexTraits_3}
+
+\ccDefinition
+Requirements of the traits class used by the function
+\ccc{is_strongly_convex_3}, which is used for postcondition checking
+by \ccc{convex_hull_3}.
+
+\ccTypes
+\ccAutoIndexingOff
+\ccNestedType{Plane_3}{a 3D plane}
+\ccGlue
+\ccNestedType{Point_3}{a 3D point}
+\ccGlue
+\ccNestedType{Ray_3}{a 3D ray}
+\ccGlue
+\ccNestedType{Triangle_3}{a 3D triangle}
+
+\ccNestedType{Construct_ray_3}{Function object type that provides
+\ccc{Ray_3 operator()(Point_3 p, Point_3 q)}, which constructs and returns
+the ray based at point \ccc{p} and passing though \ccc{q}}
+
+\ccNestedType{Construct_triangle_3}{Function object type that provides
+\ccc{Triangle_3 operator()(Point_3 p, Point_3 q, Point_3 r)}, which
+constructs and returns the triangle with vertices \ccc{p}, \ccc{q}, and
+\ccc{r}}
+
+\ccNestedType{Coplanar_3}{Predicate object type that provides
+\ccc{bool operator()(Point_3 p, Point_3 q, Point_3 r, Point_3 s)}, which
+determines if points \ccc{p}, \ccc{q}, \ccc{r}, and \ccc{s} are coplanar
+or not}
+
+\ccNestedType{Do_intersect_3}{Function object type that provides
+\ccc{CGAL::Object operator()(Triangle_3 t, Ray_3 r)}, which 
+returns \ccc{true} iff \ccc{t} and
+\ccc{r} intersect.}
+
+
+\ccNestedType{Has_on_positive_side_3}{Predicate object type that provides
+\ccc{bool operator()(Plane_3 h, Point_3 q)}, which determines of the point
+\ccc{q} is on the positive side of the halfspace \ccc{h}}
+
+\ccNestedType{Oriented_side_3}{Predicate object type that provides
+\ccc{Oriented_side operator()(Plane_3 p, Point_3 q)}, which determines
+the position of point \ccc{q} relative to plane \ccc{p}}
+
+\ccCreation
+\ccCreationVariable{traits}
+
+Only a copy constructor is required.
+
+\ccConstructor{IsStronglyConvexTraits_3(IsStronglyConvexTraits_3& t);}{}
+
+\ccOperations
+
+For each of the above function and predicate object types,
+\ccc{Func_obj_type}, a function must exist with the name
+\ccc{func_obj_type_object} that creates an instance of the function or
+predicate object type.  For example:
+
+\ccMethod{Construct_ray_3 construct_ray_3_object();}{}
+\ccAutoIndexingOn
+
+\ccHasModels
+\ccRefIdfierPage{CGAL::Convex_hull_traits_3<R>} \\
+%\ccc{CGAL::Kernel_traits_3} 
+
+\ccSeeAlso
+
+\ccRefConceptPage{ConvexHullTraits_3}\\
+\ccRefIdfierPage{CGAL::is_strongly_convex_3} 
+
+\end{ccRefConcept}
+

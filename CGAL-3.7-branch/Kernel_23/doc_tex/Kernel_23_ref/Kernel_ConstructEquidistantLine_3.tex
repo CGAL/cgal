@@ -1,0 +1,21 @@
+\begin{ccRefFunctionObjectConcept}{Kernel::ConstructEquidistantLine_3}
+A model for this must provide:
+
+\ccCreationVariable{fo}
+
+\ccMemberFunction{Kernel::Line_3 operator()(const Kernel::Point_3&p, 
+                                            const Kernel::Point_3&q,
+                                            const Kernel::Point_3&r );}
+{constructs the line which is at the same distance from the three points
+\ccc{p}, \ccc{q} and \ccc{r}.
+%The bisector is oriented in such a way that \ccc{p} lies on its
+%positive side.
+\ccPrecond{\ccc{p}, \ccc{q} and \ccc{r} are not collinear.}}
+
+\ccRefines
+\ccc{AdaptableFunctor} (with three arguments)
+
+\ccSeeAlso
+\ccRefIdfierPage{CGAL::equidistant_line}
+
+\end{ccRefFunctionObjectConcept}

@@ -1,0 +1,76 @@
+% +------------------------------------------------------------------------+
+% | Reference manual page: MarchingTetrahedraObserver_3.tex
+% +------------------------------------------------------------------------+
+% | 27.09.2005   Nico Kruithof
+% | Package: Skin_surface
+% | 
+\RCSdef{\RCSMarchingtetrahedraobserverRev}{$Id$}
+\RCSdefDate{\RCSMarchingtetrahedraobserverDate}{$Date$}
+% +------------------------------------------------------------------------+
+
+\ccRefPageBegin
+
+%%RefPage: end of header, begin of main body
+% +------------------------------------------------------------------------+
+
+
+\begin{ccRefConcept}{MarchingTetrahedraObserver_3}
+\label{pageMarchingTetrahedraObserver}
+
+  Required types and member functions for the \ccRefName\ concept.
+  This concept is used to customize the behavior of the marching
+  tetrahedra algorithm.
+
+  After the construction of a vertex or a triangle of the mesh, the
+  functions \ccc{after_vertex_insertion} and
+  \ccc{after_facet_insertion} are called respectively.
+
+%\ccRefines
+%\ccc{CopyConstructable}, \ccc{Assignable}.
+
+\ccTypes
+
+\ccThree{Triangulation_cell}{handle to the Cell type of
+  the triangulation}{}
+\ccThreeToTwo
+
+\ccNestedType{Triangulation_cell_handle}{handle to the Cell type of
+  the triangulation}
+\ccNestedType{Polyhedron_vertex_handle}{handle to the Vertex type of
+  the polyhedron}
+\ccGlue
+\ccNestedType{Polyhedron_facet_handle}{handle to the Facet type of the
+  polyhedron}
+
+
+\ccCreation
+\ccCreationVariable{observer}
+
+\ccConstructor{MarchingTetrahedraObserver_3();}{}
+\ccGlue
+\ccConstructor{MarchingTetrahedraObserver_3( const
+  MarchingTetrahedraObserver_3& traits2);}{ copy constructor.}
+
+\ccOperations
+
+\ccMethod{void after_vertex_insertion(Triangulation_cell_handle ch,
+  int i, int j, Polyhedron_vertex_handle vh);}{ this function is
+  called after the insertion of a new vertex to the mesh.
+  \ccPrecond{\ccc{ch} is finite.}}
+\ccMethod{void after_facet_insertion(Triangulation_cell_handle ch,
+  Polyhedron_facet_handle fh);}{this function is called after the
+  insertion of a vertex to the mesh. 
+  \ccPrecond{\ccc{ch} is finite.}}
+
+\ccHasModels
+
+\ccRefIdfierPage{CGAL::Marching_tetrahedra_observer_default_3<MarchingTetrahedraTraits_3>}
+\ccRefIdfierPage{CGAL::Marching_tetrahedra_observer_skin_surface_3<MarchingTetrahedraTraits_3>}
+\end{ccRefConcept}
+
+% +------------------------------------------------------------------------+
+%%RefPage: end of main body, begin of footer
+\ccRefPageEnd
+% EOF
+% +------------------------------------------------------------------------+
+

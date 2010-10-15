@@ -1,0 +1,174 @@
+% +------------------------------------------------------------------------+
+% | Reference manual page: make_mesh_3.tex
+% +------------------------------------------------------------------------+
+% | 13.05.2008   Laurent Rineau
+% | Package: Mesh_3
+% |
+\RCSdef{\RCSmakemeshRev}{$Id$}
+\RCSdefDate{\RCSmakemeshDate}{$Date$}
+% |
+\ccRefPageBegin
+%%RefPage: end of header, begin of main body
+% +------------------------------------------------------------------------+
+
+
+\begin{ccRefFunction}{make_mesh_3}  %% add template arg's if necessary
+
+%% \ccHtmlCrossLink{}     %% add further rules for cross referencing links
+%% \ccHtmlIndexC[function]{} %% add further index entries
+
+\ccDefinition
+
+The function \ccRefName\ is a 3D
+ mesh generator. It produces simplicial meshes which discretize
+ 3D domains.
+
+The mesh generation algorithm is a Delaunay refinement process
+followed by an optimization phase. 
+The  criteria driving the Delaunay refinement
+process may be tuned to achieve the user needs with respect to
+the size of mesh elements, the accuracy of boundaries approximation,
+etc.
+
+The optimization phase is a sequence of optimization processes,
+including possibly a Lloyd smoothing, an odt-smoothing,
+a perturber and an exuder.
+% The odt- and Lloyd  smoothers are global optimizers based on the minimization
+% of a  mesh global energy.
+% The perturber improves the meshes by local changes
+% in  the vertices positions
+% aiming at making sliver disappear and the exuder
+% chases the remaining slivers by turning the Delaunay mesh into a 
+% weighted Delaunay mesh with optimal weights affected to the vertices.
+ Each optimization process
+can be activated or not,
+ according to the user requirements
+and available time. 
+By default, only the perturber and the exuder are activated.
+Note that the benefits of the exuder will be lost if the mesh
+is further refined afterwards.
+ 
+The function outputs the mesh to an object which provides iterators to
+traverse the resulting mesh data structure or can be written to a file
+(see~\ref{Mesh_3_section_examples}).
+
+\ccGlobalFunction{
+  template <class C3T3,
+  class MeshDomain,
+  class MeshCriteria>
+  C3T3 make_mesh_3(MeshDomain domain,
+    MeshCriteria criteria,
+    parameters::internal::Lloyd lloyd = parameters::no_lloyd(),
+    parameters::internal::Odt odt = parameters::no_odt(),
+    parameters::internal::Perturb perturb = parameters::perturb(),
+    parameters::internal::Exude exude = parameters::exude()); }{}
+
+
+\ccParameters
+
+Parameter \ccc{C3T3} is required to be a model of
+the concept 
+\ccc{MeshComplex_3InTriangulation_3}. This is the return type.
+
+The type \ccc{C3T3} is in particular required to provide a nested type
+\ccc{C3T3::Triangulation} for the 3D triangulation
+embedding the mesh. The vertex and cell base classes of the
+triangulation \ccc{C3T3::Triangulation} are required to be models of the
+concepts \ccc{MeshVertexBase_3} and \ccc{MeshCellBase_3}
+respectively.
+
+Template parameter \ccc{MeshDomain} is required to be a model of
+the concept  \ccc{MeshDomain_3}. The argument \ccc{domain} of type
+\ccc{MeshDomain}
+ is the link through which the domain
+to be discretized is known  by the mesh generation algorithm. 
+
+% The compatibility requirements between the template parameters
+% \ccc{C3T3} and \ccc{MeshDomain} are as follows:
+% the nested types \ccc{MeshDomain::Subdomain_index},
+% \ccc{MeshDomain::Surface_index} and \ccc{MeshDomain::Index} 
+% have to be convertible respectively
+% to the nested type \ccc{C3T3::Triangulation::Cell::Subdomain_index}
+% and \ccc{C3T3::Triangulation::Vertex::Index}.
+
+
+The argument of
+type \ccc{MeshCriteria} passed to the mesh generator specifies the
+size and shape requirements for the mesh tetrahedra
+and for the triangles in the boundary mesh facets. These criteria
+form the rules which drive the refinement process. All mesh elements
+satisfy those criteria at the end of the refinement process.
+% This may no longer be  true anymore if some optimization process
+% is activated  although the optimization phase
+%  is devised to improve the mesh quality.
+The template parameter \ccc{MeshCriteria} has to be a model of the concept
+\ccc{MeshCriteria_3}. 
+
+
+The four additional parameters are optimization parameters.
+They control which optimization processes are performed
+and allow the user to tune the parameters of the optimization processes.
+We do not describe  the types of optimization parameters  as they are
+internal types. The package defines two global
+functions for each optimization parameter
+ to generate appropriate value of this parameter.
+
+\begin{itemize}
+\item \ccc{parameters::lloyd()} and \ccc{parameters::no_lloyd()} are designed to
+  trigger or not a call to \ccc{lloyd_optimize_mesh_3} function and to set the
+  parameters of this optimizer. If one parameter is not set, the default value of
+  \ccc{lloyd_optimize_mesh_3} is used for this parameter.
+\item \ccc{parameters::odt()} and \ccc{parameters::no_odt()} are designed to
+  trigger or not a call to \ccc{odt_optimize_mesh_3} function and 
+to set the  parameters of this optimizer
+ If one parameter is not set, the default value of
+  \ccc{odt_optimize_mesh_3} is used for this parameter.
+\item \ccc{parameters::perturb()} and \ccc{parameters::no_perturb()} are designed  to
+  trigger or not a call to \ccc{perturb_mesh_3} function and 
+to set the  parameters of this optimizer. If one parameter is not set, the default value of
+  \ccc{perturb_mesh_3} is used for this parameter, except for the time bound which is set to be
+  equal to the refinement cpu time.
+\item \ccc{parameters::exude()} and \ccc{parameters::no_exude()} are designed to
+  trigger or not a call to \ccc{exude_mesh_3} function and  to override to set the
+  parameters of this optimizer. If one parameter is not set, the default value of
+  \ccc{exude_mesh_3} is used for this parameter, except for the time bound which is set to be
+  equal to the refinement cpu time.
+\end{itemize}
+
+The optimization parameters can be passed in random order. If one parameter
+is not passed, its default value is used. The default values are
+\ccc{no_lloyd()}, \ccc{no_odt()}, \ccc{perturb()} and \ccc{exude()}.
+
+Note that whatever may be the optimization processes activated,
+they are always launched in the order that is a suborder 
+of the following (see user manual for further details):
+\ccc{lloyd}, \ccc{odt}, \ccc{perturb}, \ccc{exude}.
+
+
+
+\ccSeeAlso
+
+\ccc{refine_mesh_3} \\
+\ccc{exude_mesh_3} \\
+\ccc{perturb_mesh_3} \\
+\ccc{lloyd_optimize_mesh_3} \\
+\ccc{odt_optimize_mesh_3} \\
+\ccc{parameters::exude} \\
+\ccc{parameters::no_exude} \\
+\ccc{parameters::perturb} \\
+\ccc{parameters::no_perturb} \\
+\ccc{parameters::lloyd} \\
+\ccc{parameters::no_lloyd} \\
+\ccc{parameters::odt} \\
+\ccc{parameters::no_odt} \\
+
+
+
+\end{ccRefFunction}
+
+% +------------------------------------------------------------------------+
+%%RefPage: end of main body, begin of footer
+\ccRefPageEnd
+% EOF
+% +------------------------------------------------------------------------+
+

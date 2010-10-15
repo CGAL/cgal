@@ -1,0 +1,55 @@
+% +------------------------------------------------------------------------+
+% | Reference manual page: Event.tex
+% +------------------------------------------------------------------------+
+% | 20.03.2005   Author
+% | Package: Kinetic_data_structures
+% | 
+\RCSdef{\RCSEventRev}{$Id$}
+\RCSdefDate{\RCSEventDate}{$Date$}
+% |
+%%RefPage: end of header, begin of main body
+% +------------------------------------------------------------------------+
+
+\ccDefGlobalScope{CGAL::}
+\begin{ccRefConcept}[Kinetic::FunctionKernel::]{ConstructFunction}
+
+%% \ccHtmlCrossLink{}     %% add further rules for cross referencing links
+%% \ccHtmlIndexC[concept]{} %% add further index entries
+
+\ccDefinition
+  
+The concept \ccClassName\ is used to construct functions. 
+
+\ccCreationVariable{a}  %% choose variable name
+
+\ccOperations
+
+\ccMethod{Function operator()(NT a, ...);} {This family of methods
+  takes a list of coefficients and returns a function. There can be
+  any number of coeffients passed as arguments (up to about 25 in the
+  current implementations).}
+
+\ccSeeAlso
+
+\ccc{FunctionKernel}
+
+\ccExample
+
+\begin{ccExampleCode}
+Function_kernel fk;
+Function_kernel::Construct_function cf= fk.construct_function_object();
+Function_kernel::Function f= cf(0,1,2,3,4,5);
+\end{ccExampleCode}
+
+\end{ccRefConcept}
+
+% +------------------------------------------------------------------------+
+%%RefPage: end of main body, begin of footer
+% EOF
+% +------------------------------------------------------------------------+
+
+
+%%% Local Variables: 
+%%% mode: latex
+%%% TeX-master: t
+%%% End: 

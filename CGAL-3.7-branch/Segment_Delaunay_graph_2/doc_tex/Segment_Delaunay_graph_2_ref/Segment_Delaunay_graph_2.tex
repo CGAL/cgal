@@ -1,0 +1,677 @@
+%% Copyright (c) 2003,2004,2005  INRIA Sophia-Antipolis (France) and
+%% Notre Dame University (U.S.A.).  All rights reserved.
+%%
+%% This file is part of CGAL (www.cgal.org); you may redistribute it under
+%% the terms of the Q Public License version 1.0.
+%% See the file LICENSE.QPL distributed with CGAL.
+%%
+%% Licensees holding a valid commercial license may use this file in
+%% accordance with the commercial license agreement provided with the software.
+%%
+%% This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
+%% WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
+%%
+%% $URL$
+%% $Id$
+%% 
+%%
+%% Author(s)     : Menelaos Karavelas <mkaravel@cse.nd.edu>
+
+
+
+
+\begin{ccRefClass}{Segment_Delaunay_graph_2<Gt,DS>}
+%% add template arg's if necessary
+
+%% \ccHtmlCrossLink{}     %% add further rules for cross referencing links
+%% \ccHtmlIndexC[class]{} %% add further index entries
+\ccDefinition
+
+The class \ccRefName\ represents the segment Delaunay graph (which is
+the dual graph of the 2D segment Voronoi diagram).
+Currently it supports only insertions of sites.
+%and deletions of sites.
+It is templated by two template arguments \ccc{Gt}, which
+must be a model of \ccc{SegmentDelaunayGraphTraits_2}
+and \ccc{DS},
+which must be a model of \ccc{SegmentDelaunayGraphDataStructure_2}.
+The second template argument defaults to 
+\ccc{CGAL::Triangulation_data_structure_2< 
+CGAL::Segment_Delaunay_graph_vertex_base_2<Gt>,
+CGAL::Triangulation_face_base_2<Gt> >}.
+
+\ccInclude{CGAL/Segment_Delaunay_graph_2.h}
+
+\ccIsModel
+%\ccc{DefaultConstructible}\\
+%\ccc{CopyConstructible}\\
+%\ccc{Assignable}\\
+\ccc{DelaunayGraph_2}
+
+\ccTypes
+
+\ccThree{typedef typename Point_container::iterator}{Point_container+}{}
+\ccThreeToTwo
+%
+\ccTypedef{typedef Gt Geom_traits;}{A type for the geometric traits.}
+\ccGlue
+\ccTypedef{typedef DS  Data_structure;}{A type for the underlying
+data structure.}
+\ccGlue
+\ccTypedef{typedef Data_structure Triangulation_data_structure;}
+{This type has been added so that the \ccRefName\ class is a model of
+  the \ccc{DelaunayGraph_2} concept.}
+\ccGlue
+\ccTypedef{typedef typename DS::size_type size_type;}
+{Size type (an unsigned integral type)}
+\ccGlue
+\ccTypedef{typedef typename Gt::Point_2 Point_2;}{A type for the
+point defined in the geometric traits.}
+\ccGlue
+\ccTypedef{typedef typename Gt::Site_2  Site_2;}
+{A type for the segment Delaunay graph site, defined in the geometric
+  traits.}
+\ccGlue
+%\ccTypedef{typedef std::set<Point_2> Point_container;}{A type for the
+%container of points.}
+\ccNestedType{Point_container}{A type for the container of points.}
+\ccGlue
+\ccTypedef{typedef typename Point_container::iterator Point_handle;}
+{A handle for points in the point container.}
+%
+
+% MK:: in the following copy text from TDS
+
+The vertices and faces of the segment Delaunay graph are
+accessed through \ccc{handles}, \ccc{iterators} and \ccc{circulators}. 
+The iterators and circulators are all bidirectional and non-mutable.
+The circulators and iterators are assignable to the corresponding
+handle types, and they are also convertible to the corresponding
+handles.
+The edges of the segment Delaunay graph can also be visited through
+iterators and circulators, the edge circulators and iterators are also
+bidirectional and non-mutable.
+In the following, we call {\it infinite} any face or edge 
+incident  to the infinite vertex and the infinite vertex itself.
+Any other feature (face, edge or vertex) of the segment Delaunay graph
+is said to be {\it finite}.
+Some iterators (the \ccStyle{All} iterators ) allow to visit finite or 
+infinite features while the others (the \ccStyle{Finite} iterators) visit only
+finite features. Circulators visit both infinite and finite features.
+
+\ccThree{typedef typename DS::Vertex_circulator}{All_vertices_iterator;}{}
+%
+\ccTypedef{typedef typename DS::Edge Edge;}{The edge type.
+The \ccc{Edge(f,i)} is the edge common to faces \ccc{f} and 
+\ccc{f.neighbor(i)}. It is also the edge joining the vertices
+\ccc{vertex(cw(i))} and \ccc{vertex(ccw(i))} of \ccc{f}.
+\ccPrecond{\ccc{i} must be \ccc{0}, \ccc{1} or \ccc{2}.}}
+%
+\ccGlue
+\ccTypedef{typedef typename DS::Vertex Vertex;}
+{A type for a vertex.}
+\ccGlue
+\ccTypedef{typedef typename DS::Face Face;}{A type for a face.}
+\ccGlue
+\ccTypedef{typedef typename DS::Vertex_handle Vertex_handle;}
+{A type for a handle to a vertex.}
+\ccGlue
+\ccTypedef{typedef typename DS::Face_handle Face_handle;}{A type for a handle to a face.}
+\ccGlue
+\ccTypedef{typedef typename DS::Vertex_circulator Vertex_circulator;}
+{A type for a circulator over vertices incident to a given vertex.}
+\ccGlue
+\ccTypedef{typedef typename DS::Face_circulator Face_circulator;}
+{A type for a circulator over faces incident to a given vertex.}
+\ccGlue
+\ccTypedef{typedef typename DS::Edge_circulator Edge_circulator;}
+{A type for a circulator over edges incident to a given vertex.}
+\ccGlue
+\ccTypedef{typedef typename DS::Vertex_iterator All_vertices_iterator;}
+{A type for an iterator over all vertices.}
+\ccGlue
+\ccTypedef{typedef typename DS::Face_iterator All_faces_iterator;}
+{A type for an iterator over all faces.}
+\ccGlue
+\ccTypedef{typedef typename DS::Edge_iterator All_edges_iterator;}
+{A type for an iterator over all edges.}
+\ccTwo{Segment_Delaunay_graph_2<Gt,DS>::Finite_vertices_iterator+}{}
+\ccGlue
+\ccNestedType{Finite_vertices_iterator}
+{A type for an iterator over finite vertices.}
+\ccGlue
+\ccNestedType{Finite_faces_iterator}
+{A type for an iterator over finite faces.}
+\ccGlue
+\ccNestedType{Finite_edges_iterator}
+{A type for an iterator over finite edges.}
+
+
+In addition to iterators and circulators for vertices and faces,
+iterators for sites are provided. In particular there are iterators
+for the set of input sites and the set of output sites. The set of
+input sites is the set of sites inserted by the user using the
+\ccc{insert} methods of this class. If a site is inserted multiple
+times, every instance of this site will be reported. The set of output
+sites is the set of sites in the segment Delaunay graph. The value
+type of these iterators is \ccc{Site_2}.
+
+\ccTwo{Segment_Delaunay_graph_2<Gt,DS>::Output_sites_iterator+}{}
+%\ccGlue
+\ccNestedType{Input_sites_iterator}
+{A type for a bidirectional iterator over all input sites.}
+\ccGlue
+\ccNestedType{Output_sites_iterator}
+{A type for a bidirectional iterator over all output sites (the sites
+  in the Delaunay graph).}
+
+\ccCreationVariable{sdg}
+
+\ccCreation
+\ccThree{Segment_Delaunay_graph_2<Gt,DS>}{sdg(Gt gt=Gt());}{}
+\ccThreeToTwo
+%
+
+In addition to the default and copy constructors the following
+constructors are defined:
+
+\ccConstructor{Segment_Delaunay_graph_2(Gt gt=Gt());}{Creates the
+  segment Delaunay graph using \ccc{gt} as geometric traits.}
+%
+\ccConstructor{template< class Input_iterator >
+Segment_Delaunay_graph_2(Input_iterator first, Input_iterator beyond,
+Gt gt=Gt());}
+{Creates the segment Delaunay graph using \ccc{gt} as geometric traits
+  and inserts all sites in the range [\ccc{first}, \ccc{beyond}).
+\ccPrecond{\ccc{Input_iterator} must be a model of
+\ccc{InputIterator}. The value type of
+\ccc{Input_iterator} must be either \ccc{Point_2} or \ccc{Site_2}.}}
+%
+%% \ccConstructor{Segment_Delaunay_graph_2(const
+%%   Segment_Delaunay_graph_2<Gt,DS>& other)}
+%% {Copy constructor. All faces and vertices are duplicated. After the
+%%   construction, 
+%%   \ccVar\ and \ccc{other} refer to two different segment Delaunay
+%%   graphs~: if \ccc{other} is modified, \ccVar\ is not.}
+%% %
+%% \ccMethod{Segment_Delaunay_graph_2<Gt,DS>
+%% operator=(const Segment_Delaunay_graph_2<Gt,DS>& other);}
+%% {Assignment. If \ccc{sdg} and \ccc{other} are the same object
+%%   nothing is done. Otherwise, all the vertices and faces are
+%%   duplicated. After the assignment, \ccVar\ and \ccc{other} refer to
+%%   different segment Delaunay graphs~: if \ccc{other} is modified,
+%%   \ccVar\ is not.}
+
+
+
+
+\ccAccessFunctions
+% MK:: in the following copy text from TDS
+\ccThree{Point_container}{sdg.number_of_output_sites()+}{}
+%
+\ccMethod{Geom_traits geom_traits();}
+{Returns a reference to the segment Delaunay graph traits object.}
+\ccGlue
+\ccMethod{int dimension();}
+{Returns the dimension of the segment Delaunay graph. The dimension
+  is $-1$ if the graph contains no sites, $0$ if the graph
+  contains one site, $1$ if it contains two sites and $2$ if it
+  contains three or more sites.}
+\ccGlue
+\ccMethod{size_type number_of_vertices();}
+{Returns the number of finite vertices of the segment Delaunay graph.}
+\ccGlue
+\ccMethod{size_type number_of_faces();}
+{Returns the number of faces (both finite and infinite) of the
+  segment Delaunay graph.}
+\ccGlue
+\ccMethod{size_type number_of_input_sites();}
+{Return the number of input sites.}
+\ccGlue
+\ccMethod{size_type number_of_output_sites();}
+{Return the number of output sites. This is equal to the number of
+vertices in the segment Delaunay graph.}
+\ccGlue
+\ccMethod{Face_handle infinite_face();}
+{Returns a face incident to the \ccc{infinite_vertex}.}
+\ccGlue
+\ccMethod{Vertex_handle
+          infinite_vertex();}
+{Returns the \ccc{infinite_vertex}.}
+\ccGlue
+\ccMethod{Vertex_handle finite_vertex();}
+{Returns a vertex distinct from  the \ccc{infinite_vertex}.
+\ccPrecond{The number of sites in the segment Delaunay graph must
+  be at least one.}}
+\ccGlue
+\ccMethod{Data_structure data_structure();}{Returns a reference to the
+  segment Delaunay graph data structure object.}
+\ccGlue
+\ccMethod{Data_structure tds();}{Same as \ccc{data_structure()}. It
+  has been added for compliance to the \ccc{DelaunayGraph_2} concept.}
+\ccGlue
+\ccMethod{Point_container point_container();}{Returns a reference to
+  the point container object.}
+
+
+\ccHeading{Traversal of the segment Delaunay graph}
+
+
+A segment Delaunay graph can be seen as a container of faces and
+vertices. Therefore the \ccRefName\ class provides several iterators
+and circulators that allow to traverse it (completely or partially).
+
+
+
+\ccHeading{Face, Edge and Vertex Iterators}
+
+\ccThree{Finite_vertices_iterator}{sdg.finite_vertices_begin()+}{}
+
+The following iterators allow respectively to visit finite faces,
+finite edges and  finite vertices of the segment Delaunay graph. These
+iterators are non-mutable, bidirectional and their value types are
+respectively \ccc{Face}, \ccc{Edge} and \ccc{Vertex}. 
+They are all invalidated by any change in the segment Delaunay graph.
+
+\ccMethod{Finite_vertices_iterator finite_vertices_begin();}
+{Starts at an arbitrary finite vertex.}
+\ccGlue
+\ccMethod{Finite_vertices_iterator finite_vertices_end();}
+{Past-the-end iterator.}
+
+\ccMethod{Finite_edges_iterator finite_edges_begin();}
+{Starts at an arbitrary finite edge.}
+\ccGlue
+\ccMethod{Finite_edges_iterator finite_edges_end();}
+{Past-the-end iterator.}
+
+\ccMethod{Finite_faces_iterator finite_faces_begin();}
+{Starts at an arbitrary finite face.}
+\ccGlue
+\ccMethod{Finite_faces_iterator finite_faces_end()
+const;}{Past-the-end iterator.}
+
+The following iterators allow respectively to visit all (both finite
+and infinite) faces, edges and vertices of the segment Delaunay
+graph. These iterators are non-mutable, bidirectional and their value
+types are respectively \ccc{Face}, \ccc{Edge} and \ccc{Vertex}. 
+They are all invalidated by any change in the segment Delaunay graph.
+
+\ccMethod{All_vertices_iterator all_vertices_begin();}
+{Starts at an arbitrary  vertex.}
+\ccGlue
+\ccMethod{All_vertices_iterator all_vertices_end();}
+{Past-the-end iterator.}
+
+\ccMethod{All_edges_iterator all_edges_begin();}
+{Starts at an arbitrary edge.}
+\ccGlue
+\ccMethod{All_edges_iterator all_edges_end();}
+{Past-the-end iterator.}
+
+\ccMethod{All_faces_iterator all_faces_begin();}
+{Starts at an arbitrary face.}
+\ccGlue
+\ccMethod{All_faces_iterator all_faces_end();}
+{Past-the-end iterator.}
+
+
+
+\ccHeading{Site iterators}
+
+The following iterators allow respectively to visit 
+all sites. These iterators are non-mutable, bidirectional and their
+value type is \ccc{Site_2}. They are all invalidated by any change in
+the segment Delaunay graph.
+
+
+\ccMethod{Input_sites_iterator input_sites_begin();}
+{Starts at an arbitrary input site.}
+\ccGlue
+\ccMethod{Input_sites_iterator input_sites_end();}
+{Past-the-end iterator.}
+\ccGlue
+\ccMethod{Output_sites_iterator output_sites_begin();}
+{Starts at an arbitrary output site.}
+\ccGlue
+\ccMethod{Output_sites_iterator output_sites_end();}
+{Past-the-end iterator.}
+
+
+\ccThree{Vertex_circulator}{t.number_of_vertices()x}{}
+\ccThreeToTwo
+
+
+
+\ccHeading{Face, Edge and Vertex Circulators}
+
+The \ccRefName\ class also provides circulators that allow to visit
+respectively all faces or edges incident to a given vertex or all
+vertices adjacent to a given vertex. These circulators are non-mutable
+and bidirectional. The operator \ccc{operator++} moves the circulator
+counterclockwise around the vertex while the \ccc{operator--} moves
+clockwise. A face circulator is invalidated by any modification of the
+face pointed to. An edge circulator is invalidated by any modification
+in one of the two faces incident to the edge pointed to. A vertex
+circulator is invalidated by any modification in any of the faces
+adjacent to the vertex pointed to.
+
+\ccMethod{Face_circulator incident_faces(Vertex_handle v);}
+{Starts at an arbitrary face incident
+to \ccc{v}.}
+\ccGlue
+\ccMethod{Face_circulator incident_faces(Vertex_handle v, Face_handle f);}
+{Starts at face \ccc{f}.
+\ccPrecond Face \ccc{f} is incident to vertex \ccc{v}.}
+\ccGlue
+\ccMethod{Edge_circulator incident_edges(Vertex_handle v);}
+{Starts at an arbitrary edge incident
+to \ccc{v}.}
+\ccGlue
+\ccMethod{Edge_circulator incident_edges(Vertex_handle v, Face_handle f);}
+{Starts at the first edge of \ccc{f} incident to 
+\ccc{v}, in counterclockwise order around \ccc{v}.
+\ccPrecond Face \ccc{f} is incident to vertex \ccc{v}.}
+\ccGlue
+\ccMethod{Vertex_circulator incident_vertices(Vertex_handle v);}
+{Starts at an arbitrary  vertex incident
+to \ccc{v}.}
+\ccGlue
+\ccMethod{Vertex_circulator incident_vertices(Vertex_handle v, Face_handle f);}
+{Starts at the first vertex of \ccc{f} adjacent  to \ccc{v}
+in  counterclockwise order around \ccc{v}.
+\ccPrecond Face \ccc{f} is incident to vertex \ccc{v}.}
+
+
+
+\ccHeading{Traversal of the Convex Hull}
+
+Applied on the \ccc{infinite_vertex}
+the above methods  allow to visit the vertices on the convex hull and
+the infinite edges and faces. Note that a counterclockwise
+traversal of the vertices adjacent to the \ccc{infinite_vertex} is
+a clockwise traversal of the convex hull.
+
+\ccMethod{Vertex_circulator incident_vertices(sdg.infinite_vertex());}{}
+\ccGlue
+\ccMethod{Vertex_circulator incident_vertices(sdg.infinite_vertex(),
+  Face_handle f);}{}
+\ccGlue
+\ccMethod{Face_circulator incident_faces(sdg.infinite_vertex());}{}
+\ccGlue
+\ccMethod{Face_circulator incident_faces(sdg.infinite_vertex(),
+  Face_handle f);}{}
+\ccGlue
+\ccMethod{Edge_circulator incident_edges(sdg.infinite_vertex());}{}
+\ccGlue
+\ccMethod{Edge_circulator incident_edges(sdg.infinite_vertex(),
+  Face_handle f);}{}
+
+
+
+
+\ccPredicates
+The class \ccRefName\ provides methods to test
+the finite or infinite character of any feature.
+\ccThree{bool }{sdg.is_infinite( Face_handle f, int i)x}{}
+
+%
+\ccMethod{bool is_infinite(Vertex_handle v) const;}
+{\ccc{true}, iff \ccc{v} is the \ccc{infinite_vertex}.}
+\ccGlue
+\ccMethod{bool is_infinite(Face_handle f) const;}
+{\ccc{true}, iff face \ccc{f} is infinite.}
+\ccGlue
+\ccMethod{bool is_infinite(Face_handle f, int i) const;}
+{\ccc{true}, iff edge \ccc{(f,i)} is infinite.}
+\ccGlue
+\ccMethod{bool is_infinite(Edge e) const;}
+{\ccc{true}, iff edge \ccc{e} is infinite.}
+\ccGlue
+\ccMethod{bool is_infinite(Edge_circulator ec) const;}
+{\ccc{true}, iff edge \ccc{*ec} is infinite.}
+
+
+
+\ccHeading{Insertion}
+\ccThree{Vertex_handle }{sdg.insert(Point_2 s)+}{}
+%
+
+\ccMethod{template< class Input_iterator >
+size_type insert(Input_iterator first, Input_iterator beyond);}
+{Inserts the sites in the range
+[\ccc{first},\ccc{beyond}). The number of additional sites inserted in
+  the Delaunay graph is returned. \ccc{Input_iterator} must be a model of
+  \ccc{InputIterator} and its value type must be
+  either \ccc{Point_2} or \ccc{Site_2}.}
+%
+\ccMethod{template< class Input_iterator >
+size_type insert(Input_iterator first, Input_iterator beyond, Tag_false);}
+{Same as the previous method. \ccc{Input_iterator} must be a model of
+  \ccc{InputIterator} and its value type must be
+  either \ccc{Point_2} or \ccc{Site_2}.}
+%
+\ccMethod{template< class Input_iterator >
+size_type insert(Input_iterator first, Input_iterator beyond, Tag_true);}
+{Inserts the sites in the range
+[\ccc{first},\ccc{beyond}) after performing a random shuffle on
+  them. The number of additional sites inserted in the Delaunay graph is
+  returned. \ccc{Input_iterator} must be a model of
+  \ccc{InputIterator} and its value type must be
+  either \ccc{Point_2} or \ccc{Site_2}.}
+%
+\ccGlue
+\ccMethod{Vertex_handle  insert(Point_2 p);}{Inserts the
+point \ccc{p} in the segment Delaunay graph. If \ccc{p} has already
+been inserted, then the vertex handle of its already inserted copy is
+returned. If \ccc{p} has not been inserted yet, the vertex handle of
+\ccc{p} is returned.}
+%
+\ccGlue
+\ccMethod{Vertex_handle insert(Point_2 p, Vertex_handle vnear);}
+{Inserts \ccc{p} in the segment Delaunay graph using the site
+associated with \ccc{vnear} as an estimate for the nearest neighbor
+of \ccc{p}. The vertex handle returned has the same semantics as
+the vertex handle returned by the method
+\ccc{Vertex_handle insert(Point_2 p)}.}
+%
+\ccGlue
+\ccMethod{Vertex_handle  insert(Point_2 p1, Point_2 p2);}{Inserts the
+  closed segment with endpoints \ccc{p1} and \ccc{p2} in the segment
+  Delaunay graph. If the segment has already been inserted in the
+  Delaunay graph then the vertex handle of its already inserted copy is
+  returned. If the segment does not intersect any segment in the
+  existing diagram, the vertex handle corresponding to its
+  corresponding open segment is returned. Finally, if the segment
+  intersects other segments in the existing Delaunay graph, the
+  vertex handle to one of its open subsegments is returned.}
+%
+\ccGlue
+\ccMethod{Vertex_handle insert(Point_2 p1, Point_2 p2, Vertex_handle
+vnear);}{Inserts the segment whose endpoints are \ccc{p1} and \ccc{p2}
+  in the segment Delaunay graph using the site
+  associated with \ccc{vnear} as an estimate for the nearest neighbor
+  of \ccc{p1}. The vertex handle returned has the same semantics as the
+  vertex handle returned by the method
+  \ccc{Vertex_handle insert(Point_2 p1, Point_2 p2)}.}
+%
+\ccGlue
+\ccMethod{Vertex_handle insert(Site_2 s);}{Inserts the site \ccc{s} in the
+  segment Delaunay graph. The vertex handle returned has the same
+  semantics as the vertex handle returned by the methods
+  \ccc{Vertex_handle insert(Point_2 p)} and \ccc{Vertex_handle
+    insert(Point_2 p1, Point_2 p2)}, depending on whether \ccc{s}
+  represents a point or a segment respectively.
+\ccPrecond{\ccc{s.is_input()} must be \ccc{true}.}}
+%
+\ccGlue
+\ccMethod{Vertex_handle insert(Site_2 s, Vertex_handle
+vnear);}{Inserts \ccc{s} in the segment Delaunay graph using the site
+associated with \ccc{vnear} as an estimate for the nearest neighbor of
+\ccc{s}, if \ccc{s} is a point, or the first endpoint of \ccc{s}, if
+\ccc{s} is a segment. The vertex handle returned has the same
+semantics as the vertex handle returned by the method
+\ccc{Vertex_handle insert(Site_2 s)}.
+\ccPrecond{\ccc{s.is_input()} must be \ccc{true}.}}
+
+
+\ccHeading{Nearest neighbor location}
+\ccThree{Vertex_handle }{sdg.nearest_neighbor(Point_2 p)+}{}
+%
+\ccMethod{Vertex_handle  nearest_neighbor(Point_2 p);}
+{Finds the nearest neighbor of the point \ccc{p}. In other words it
+finds the site whose segment Voronoi diagram cell contains
+\ccc{p}. Ties are broken arbitrarily and one of the nearest neighbors
+of \ccc{p} is returned. If there are no sites in the
+segment Delaunay graph \ccc{Vertex_handle()} is returned.}
+\ccGlue
+\ccMethod{Vertex_handle  nearest_neighbor(Point_2 p,
+Vertex_handle vnear);}{Finds the nearest neighbor of the point
+\ccc{p} using the site associated with \ccc{vnear} as an
+estimate for the nearest neighbor of \ccc{p}. Ties are broken
+arbitrarily and one of the nearest neighbors of \ccc{p} is
+returned. If there are no sites in the segment Delaunay graph
+\ccc{Vertex_handle()} is returned.}
+
+
+\begin{ccTexOnly}
+% to make the last I/O method appear in the next page
+%\vspace*{20mm}
+\end{ccTexOnly}
+
+\ccHeading{I/O}
+\ccThree{Stream& }{sdg.draw_dual(Stream& str)+}{}
+%
+\ccMethod{template < class Stream > 
+Stream& draw_dual(Stream& str);}{Draws the segment Voronoi
+diagram to the stream \ccc{str}. The following operators must be
+defined:\\
+\ccc{Stream& operator<<(Stream&, Gt::Segment_2)}\\
+\ccc{Stream& operator<<(Stream&, Gt::Ray_2)}\\
+\ccc{Stream& operator<<(Stream&, Gt::Line_2)}
+}
+%
+\ccGlue
+\ccMethod{template < class Stream > 
+Stream& draw_skeleton(Stream& str);}{Draws the segment Voronoi
+diagram to the stream \ccc{str}, except the edges of the diagram
+corresponding to a segment and its endpoints.
+The following operators must be defined:\\
+\ccc{Stream& operator<<(Stream&, Gt::Segment_2)}\\
+\ccc{Stream& operator<<(Stream&, Gt::Ray_2)}\\
+\ccc{Stream& operator<<(Stream&, Gt::Line_2)}
+}
+%
+\ccGlue
+\ccMethod{template< class Stream >
+Stream& draw_dual_edge(Edge e, Stream& str);}{Draws the edge \ccc{e} of
+  the segment Voronoi diagram to the stream \ccc{str}.
+The following operators must be defined:\\
+\ccc{Stream& operator<<(Stream&, Gt::Segment_2)}\\
+\ccc{Stream& operator<<(Stream&, Gt::Ray_2)}\\
+\ccc{Stream& operator<<(Stream&, Gt::Line_2)}
+\ccPrecond{\ccc{e} must be a finite edge.}}
+%
+\ccGlue
+\ccMethod{template< class Stream >
+Stream& draw_dual_edge(Edge_circulator ec, Stream& str);}
+{Draws the edge \ccc{*ec} of the segment Voronoi diagram to the stream
+  \ccc{str}.
+The following operators must be defined:\\
+\ccc{Stream& operator<<(Stream&, Gt::Segment_2)}\\
+\ccc{Stream& operator<<(Stream&, Gt::Ray_2)}\\
+\ccc{Stream& operator<<(Stream&, Gt::Line_2)}
+\ccPrecond{\ccc{*ec} must be a finite edge.}}
+%
+\ccGlue
+\ccMethod{template< class Stream >
+Stream& draw_dual_edge(All_edges_iterator eit, Stream& str);}
+{Draws the edge \ccc{*eit} of the segment Voronoi diagram to the
+  stream \ccc{str}.
+The following operators must be defined:\\
+\ccc{Stream& operator<<(Stream&, Gt::Segment_2)}\\
+\ccc{Stream& operator<<(Stream&, Gt::Ray_2)}\\
+\ccc{Stream& operator<<(Stream&, Gt::Line_2)}
+\ccPrecond{\ccc{*eit} must be a finite edge.}}
+%
+\ccGlue
+\ccMethod{template< class Stream >
+Stream& draw_dual_edge(Finite_edges_iterator eit, Stream& str);}
+{Draws the edge \ccc{*eit} of the segment Voronoi diagram to the
+  stream \ccc{str}.
+The following operators must be defined:\\
+\ccc{Stream& operator<<(Stream&, Gt::Segment_2)}\\
+\ccc{Stream& operator<<(Stream&, Gt::Ray_2)}\\
+\ccc{Stream& operator<<(Stream&, Gt::Line_2)}}
+%
+\ccThree{std::ostream&}{sdg.file_output(std::ostream& os)+}{}
+\ccThreeToTwo
+\ccGlue
+\ccMethod{void file_output(std::ostream& os);}{Writes the current
+  state of the segment Delaunay graph to an output stream. In particular,
+  all sites in the diagram are written to the stream (represented
+  through appropriate input sites), as well as the underlying
+  combinatorial data structure.}
+\ccGlue
+\ccMethod{void file_input(std::istream& is);}{Reads the state of the
+  segment Delaunay graph from an input stream.}
+%
+\ccGlue
+\ccFunction{std::ostream& operator<<(std::ostream& os,
+  Segment_Delaunay_graph_2<Gt,DS> sdg);}
+{Writes the current state of the segment Delaunay graph to an output stream.}
+\ccGlue
+\ccFunction{std::istream& operator>>(std::istream& is,
+  Segment_Delaunay_graph_2<Gt,DS> sdg);}
+{Reads the state of the segment Delaunay graph from an input stream.}
+
+
+\ccHeading{Validity check}
+%\ccThree{bool}{sdg.is_valid(bool verbose, int level)+}{}
+%
+% MK:: change the output stream in the code
+\ccMethod{bool is_valid(bool verbose = false, int level = 1);}
+{Checks the validity of the segment Delaunay graph. If \ccc{verbose}
+  is \ccc{true} a short message is sent to \ccc{std::cerr}. If
+  \ccc{level} is 0, only the data structure is validated. If
+  \ccc{level} is 1, then both the data structure and the segment
+  Delaunay graph are validated. Negative values of \ccc{level} always
+  return true, and values greater than 1 are equivalent to \ccc{level}
+  being 1.}
+
+\ccHeading{Miscellaneous}
+\ccThree{void}{sdg.swap(& other)+}{}
+%
+\ccMethod{void clear();}{Clears all contents of the segment Delaunay graph.}
+\ccGlue
+% MK:: add this method make copy(...) protected and see doc of TDS
+\ccMethod{void swap(Segment_Delaunay_graph_2<Gt,DS>
+other);}{The segment Delaunay graphs
+\ccc{other} and \ccVar\ are swapped. \ccVar.\ccc{swap(other)} should
+be preferred to \ccVar\ccc{ = other} or to \ccVar\ccc{(other)} if
+\ccc{other} is deleted afterwards.}
+
+
+
+
+\ccSeeAlso
+\ccc{DelaunayGraph_2}\\
+\ccc{SegmentDelaunayGraphTraits_2}\\
+\ccc{SegmentDelaunayGraphDataStructure_2}\\
+\ccc{SegmentDelaunayGraphVertexBase_2}\\
+\ccc{TriangulationFaceBase_2}\\
+\ccc{CGAL::Segment_Delaunay_graph_hierarchy_2<Gt,STag,DS>}\\
+\ccc{CGAL::Segment_Delaunay_graph_traits_2<K,MTag>}\\
+\ccc{CGAL::Segment_Delaunay_graph_traits_without_intersections_2<K,MTag>}\\
+\ccc{CGAL::Segment_Delaunay_graph_filtered_traits_2<CK,CM,EK,EM,FK,FM>}\\
+\ccc{CGAL::Segment_Delaunay_graph_filtered_traits_without_intersections_2<CK,CM,EK,EM,FK,FM>}\\
+\ccc{CGAL::Triangulation_data_structure_2<Vb,Fb>}\\
+\ccc{CGAL::Segment_Delaunay_graph_vertex_base_2<Gt,SSTag>}\\
+\ccc{CGAL::Triangulation_face_base_2<Gt>}
+
+\end{ccRefClass}
+
+% +------------------------------------------------------------------------+
+%%RefPage: end of main body, begin of footer
+% EOF
+% +------------------------------------------------------------------------+

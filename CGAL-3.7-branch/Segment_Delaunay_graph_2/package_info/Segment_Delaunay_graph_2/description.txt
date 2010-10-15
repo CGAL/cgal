@@ -1,0 +1,4 @@
+This package computes the Delaunay graph for a set of segments on the
+plane, i.e., the triangulated dual of the Voronoi diagram for the
+set of segments. The segments are allowed to intersect at interior
+points.

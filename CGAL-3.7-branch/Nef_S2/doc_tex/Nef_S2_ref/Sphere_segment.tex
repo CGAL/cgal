@@ -1,0 +1,83 @@
+% begin cgal manual page
+
+\begin{ccRefClass}[Nef_polyhedron_S2<Traits>::]{Sphere_segment}
+\ccCreationVariable{s}
+
+\ccDefinition
+
+An object \ccc{s} of type \ccc{Sphere_segment} is a segment in the
+surface of a unit sphere that is part of a great circle trough the
+origin. Sphere segments are represented by two sphere points $p$ and
+$q$ plus an oriented plane $h$ that contains $p$ and $q$. The plane
+determines the sphere segment as follows. Let $c$ be the circle in the
+intersection of $h$ and $S_2$. Then $s$ is that part of $c$ that is
+swept, when we rotate $p$ into $q$ in counterclockwise rotation around
+the normal vector of $h$ as seen from the positive halfspace.
+
+\ccSetOneOfTwoColumns{4cm}
+
+\ccCreation
+
+\ccConstructor{Sphere_segment()}{ creates some sphere segment.  }
+
+\ccConstructor{Sphere_segment(
+  const Sphere_point& p1, const Sphere_point& p2, bool shorter_arc=true)}
+{ creates a spherical segment spanning
+  the shorter arc from \ccc{p1} to \ccc{p2} if \ccc{shorter_arc ==
+    true}. Otherwise the longer arc is created. \ccPrecond \ccc{p1 !=
+    p2} and \ccc{p1 != p2.opposite()}.  }
+
+\ccConstructor{Sphere_segment(const Sphere_point& p1, 
+  const Sphere_point& p2, const Sphere_circle& c)}
+{ creates a spherical segment spanning the
+  arc from \ccc{p1} to \ccc{p2} as part of the oriented circle \ccc{c}
+  (\ccc{p1 == p2} or \ccc{p1 == p2.opposite()} are possible.)
+  \ccPrecond \ccc{p1} and \ccc{p2} are contained in \ccc{c}.  }
+
+\ccConstructor{Sphere_segment(const Sphere_circle& c1, 
+  const Sphere_circle& c2)}
+{ creates the spherical segment as part of \ccc{c1} that is part
+  of the halfsphere left of the oriented circle \ccc{c2}.  \ccPrecond
+  \ccc{c1 != c2} as unoriented circles.  }
+
+\ccSetTwoOfThreeColumns{3.5cm}{2.5cm}
+
+\ccOperations
+
+\ccMethod{const Sphere_point& source() ;}{ the source point of
+  \ccc{s}.  }
+
+\ccMethod{const Sphere_point& target() ;}{ the target point of
+  \ccc{s}.  }
+
+\ccMethod{const Sphere_circle& sphere_circle() ;}{ the great circle
+  supporting \ccc{s}.  }
+
+\ccMethod{Sphere_segment opposite() ;}{ returns the sperical
+  segment oriented from \ccc{target()} to \ccc{source()} with the same
+  point set as \ccc{s}.  }
+
+\ccMethod{Sphere_segment complement() ;}{ returns the sperical
+  segment oriented from \ccc{target()} to \ccc{source()} with the
+  point set completing \ccc{s} to a full circle.  }
+
+\ccMethod{bool is_short() ;}{ a segment is short iff it is shorter
+  than a half-circle.  }
+
+\ccMethod{bool is_long() ;}{ a segment is long iff it is longer than a
+  half-circle.  }
+
+\ccMethod{bool is_degenerate() ;}{ return true iff \ccc{s} is
+  degenerate, \\ i.e. source and target are the same.  }
+
+\ccMethod{bool is_halfcircle() ;}{ return true iff \ccc{s} is a
+  perfect half-circle, i.e. \ccc{source().antipode == target()}.  }
+
+\ccMethod{bool has_on(const Sphere_point& p) ;}{ return true iff
+  \ccc{s} contains \ccc{p}.  }
+
+\ccMethod{bool has_in_relative_interior(const Sphere_point& p) ;}{
+  return true iff \ccc{s} contains \ccc{p} in its relative interior.
+  }
+
+\end{ccRefClass}

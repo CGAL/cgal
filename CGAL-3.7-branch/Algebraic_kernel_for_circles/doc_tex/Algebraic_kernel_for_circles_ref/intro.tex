@@ -1,0 +1,121 @@
+\ccRefChapter{Algebraic Kernel}
+
+\textbf{Submission - Monique - with Sylvain's help...}
+
+\begin{ccAdvanced}
+As in Curved-kernel, I use the ``Advanced'' environment in this
+document to distinguish between my current submission to the CGAL
+editorial board and plans for the future, related to ACS. The
+``Advanced'' parts will disappear if/when this is released.
+\end{ccAdvanced}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\section*{Concepts}
+
+\footnote{Same big question as for curved-kernel. Should the kernel here
+be described as a concept or a class?}
+
+\ccRefConceptPage{AlgebraicKernelForCircles}\\
+\ccRefConceptPage{AlgebraicKernelForCircles::Polynomial_1_2}\\
+\ccRefConceptPage{AlgebraicKernelForCircles::PolynomialForCircles_2_2}\\
+\ccRefConceptPage{AlgebraicKernelForCircles::RootOf_2}\\
+\ccRefConceptPage{AlgebraicKernelForCircles::RootForCircles_2_2}
+
+\begin{ccAdvanced}
+\ccRefConceptPage{AlgebraicKernel_4_2}\\
+\ccRefConceptPage{Algebraic_kernel_4_2::Polynomial_2_2}\\
+\ccRefConceptPage{AlgebraicKernel_4_2::RootOf_2_2}\\
+\ccRefConceptPage{AlgebraicKernel_4_2::RootOf_4}\\
+
+(The indices may look strange but there is indeed a logic: solve on two
+Polynomial-2-2's gives Root-of-4's...)
+
+General remark about the suffix \ccc{_d_v}: \ccc{_d} stands 
+for the degree of the polynomials and the algebraic numbers, and
+\ccc{_v} stands for the number of variables, which is analogous to the
+dimension for CGAL geometric objects. I had already mentioned this in an
+earlier version of this document (presented at the CGAL meeting at
+INRIA in march 05), and it is consistent with what Menelaos proposed
+later (CGAL meeting in Pisa in june 05) for a hierarchy of algebraic kernels.
+\end{ccAdvanced}
+
+	\subsubsection*{Functors} 
+
+\ccRefConceptPage{AlgebraicKernelForCircles::ConstructPolynomial_1_2}\\
+\ccRefConceptPage{AlgebraicKernelForCircles::ConstructPolynomialForCircles_2_2}
+
+\ccRefConceptPage{AlgebraicKernelForCircles::ComputeA}\\
+\ccRefConceptPage{AlgebraicKernelForCircles::ComputeB}\\
+\ccRefConceptPage{AlgebraicKernelForCircles::ComputeC}\\
+\ccRefConceptPage{AlgebraicKernelForCircles::ComputeRsq}\\
+(to be documented)
+
+\ccRefConceptPage{AlgebraicKernelForCircles::ComputeX}\\
+\ccRefConceptPage{AlgebraicKernelForCircles::ComputeY}\\
+(to be documented)
+
+\ccRefConceptPage{AlgebraicKernelForCircles::Solve}
+
+\ccRefConceptPage{AlgebraicKernelForCircles::SignAt}
+
+\ccRefConceptPage{AlgebraicKernelForCircles::XCriticalPoints}\\
+\ccRefConceptPage{AlgebraicKernelForCircles::YCriticalPoints}
+
+\ccRefConceptPage{AlgebraicKernelForCircles::CompareX}\\
+\ccRefConceptPage{AlgebraicKernelForCircles::CompareY}\\
+\ccRefConceptPage{AlgebraicKernelForCircles::CompareXY}
+
+\begin{ccAdvanced}
+\ccRefConceptPage{AlgebraicKernel_4_2::ConstructPolynomial_2_2}\\
+\ccRefConceptPage{AlgebraicKernel_4_2::Solve}\\
+etc
+\end{ccAdvanced}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\section*{Classes}
+
+\footnote{how does the linking work when concepts and classes have the same name...? example \ccc{Polynomial_2_2}}
+
+\ccRefIdfierPage{CGAL::Algebraic_kernel_for_circles_2_2<RT>}
+
+\ccRefIdfierPage{CGAL::Polynomial_1_2<RT>}\\
+\ccRefIdfierPage{CGAL::Polynomial_for_circles_2_2<FT>}
+
+\ccRefIdfierPage{CGAL::Root_of_2<RT>}\\
+\ccRefIdfierPage{CGAL::Root_for_circles_2_2<FT>}
+
+\ccRefIdfierPage{CGAL::Root_of_traits_2<RT>}
+
+\begin{ccAdvanced}
+\ccRefIdfierPage{CGAL::Root_of_4<RT>}\\
+\ccRefIdfierPage{CGAL::Polynomial_2_2<RT>}\\
+\ccRefIdfierPage{CGAL::Root_of_2_2<RT>}\\
+\ccRefIdfierPage{CGAL::Root_of_traits_4<RT>}
+\end{ccAdvanced}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\section*{Functions}
+
+	\subsubsection*{Predicates}
+\ccRefIdfierPage{CGAL::sign_at}\\
+
+\ccRefIdfierPage{CGAL::compare_x}\\
+\ccRefIdfierPage{CGAL::compare_y}\\
+\ccRefIdfierPage{CGAL::compare_xy}
+
+	\subsubsection*{Constructions}
+
+\ccRefIdfierPage{CGAL::construct_polynomial_1_2}\\
+\ccRefIdfierPage{CGAL::construct_polynomial_for_circles_2_2}\\
+
+\ccRefIdfierPage{CGAL::make_root_of_2}
+
+\ccRefIdfierPage{CGAL::solve}
+
+\ccRefIdfierPage{CGAL::x_critical_points}\\
+\ccRefIdfierPage{CGAL::y_critical_points}
+
+\begin{ccAdvanced}
+\ccRefIdfierPage{CGAL::make_root_of_4}\\
+etc
+\end{ccAdvanced}

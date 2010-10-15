@@ -1,0 +1,46 @@
+\ccDefGlobalScope{CGAL::}
+\begin{ccRefClass}[Qt::]{GraphicsViewCircleInput<K>}
+
+\ccDefinition
+An object of type \ccRefName\ creates a circle, defined by either
+center and radius, or two or three points on the circle. A new 
+vertex is inserted every time the left mouse button is released.
+The \ccc{Del} key removes the last entered point. The \ccc{Esc} 
+key removes all entered points.
+
+
+\ccInclude{CGAL/Qt/GraphicsViewCircleInput.h}
+
+\ccParameters
+
+The template parameter of \ccRefName\ must be a \cgal\ \ccc{Kernel}. 
+
+\ccInheritsFrom
+\ccc{Qt::GraphicsViewInput}
+
+\ccGlue
+
+\ccCreation
+\ccCreationVariable{in}
+\ccSetTwoColumns{GraphicsViewCircleInput}{}
+
+\ccConstructor{GraphicsViewCircleInput<T>(QObject *p, QGraphicsScene* s, int pointsOnCircle = 1);}
+{\ccc{p} is a parent object. \ccc{s} is the scene where the circle is generated. \ccc{pointsOnCircle} is the
+  number of points on the circle to be generated, that is the default value \ccc{1}
+  corresponds to the case center/radius.}
+
+\ccHeading{Signals}
+
+\ccMethod{void generate(Object o);}{The object \ccc{o} contains a \ccc{std::pair<K::Point_2, K::FT>}
+for center and radius, or a \ccc{std::pair<K::Point_2, K::Point_2>} for two points defining
+the circle, or \ccc{CGAL::array<K::Point_2, 3>} for three points defining
+the circle.}
+
+\end{ccRefClass}
+
+
+
+
+
+
+

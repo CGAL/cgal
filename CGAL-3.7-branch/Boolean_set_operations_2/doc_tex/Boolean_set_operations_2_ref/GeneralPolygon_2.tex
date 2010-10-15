@@ -1,0 +1,93 @@
+\ccRefPageBegin
+
+\begin{ccRefConcept}{GeneralPolygon_2}
+
+\ccRefines
+% ========
+\ccc{GpsTraitsGeneralPolygon_2}
+
+\ccTypes
+%=======
+
+\ccNestedType{X_monotone_curve_2}{represents a planar (weakly) $x$-monotone
+  curve. The type of the geometric mapping of the polygonal edges. It must model the concept ArrTraits::XMonotoneCurve\_2.}
+
+\ccNestedType{Curve_iterator}{an iterator over the geometric mapping of the 
+polygon edges. Its value type is \ccc{X_monotone_curve_2}.}
+\ccGlue
+\ccNestedType{Curve_const_iterator}{a const iterator over the geometric 
+mapping of the polygon edges. Its value type is \ccc{X_monotone_curve_2}.}
+ 
+\ccDefinition
+% ===========
+A model of this concept represents a simple general-polygon. The
+geometric mapping of the edges of the polygon must be $x$-monotone curves.
+The concept requires the ability to access these curves. 
+The general polygon represented must be simple. That is, the
+only points of the plane belonging to two curves are the geometric mapping
+of the polygon vertices. In addition, the vertices of the represented 
+polygon must be ordered consistently, and the curved must be directed 
+accordingly. Only counterclockwise oriented polygons are valid operands
+of Boolean set-operations. General polygon that represent holes must be
+clockwise oriented.
+
+\ccCreation
+\ccCreationVariable{polygon}
+
+\ccThree{Edge_const_iterator~~~}{}{\hspace*{7cm}}
+\ccThreeToTwo
+
+\ccConstructor{GeneralPolygon_2();}{default constructor.}
+\ccGlue
+\ccConstructor{GeneralPolygon_2(GeneralPolygon_2 other);}
+{copy constructor.}
+\ccGlue
+\ccMethod{GeneralPolygon_2  operator=(other);}{assignment operator.}
+\ccGlue
+\ccConstructor{template <class InputIterator>
+GeneralPolygon_2(InputIterator begin, InputIterator end);}
+{constructs a general polygon from a given range of curves.}
+
+\ccAccessFunctions
+%=================
+
+\ccMethod{Curve_iterator curves_begin();} 
+{returns the begin iterator of the curves.}
+\ccGlue
+\ccMethod{Curve_iterator curves_end();} 
+{returns the past-the-end iterator of the curves.}
+
+\ccMethod{Curve_const_iterator curves_begin();} 
+{returns the begin const iterator of the curves.}
+\ccGlue
+\ccMethod{Curve_const_iterator curves_end();} 
+{returns the past-the-end const iterator of the curves.}
+
+\ccModifiers
+% ==========
+
+\ccMethod{template <class Iterator>
+  void init(Iterator begin, Iterator end);}
+{initializes the polygon with the polygonal chain given by the range. 
+The value type of \ccc{Iterator} must be \ccc{X_monotone_curve_2}.
+\ccPrecond{The curves in the range must define a simple polygon.}}
+ 
+% \ccPredicates
+% % ===========
+% 
+% \ccMethod{bool is_simple();}{returns \ccc{true} if the polygon is simple, 
+% and \ccc{false} otherwise. Used as precondition for some of the operations.}
+% \ccGlue
+% \ccMethod{bool is_strictly_simple();}{returns \ccc{true} if the polygon
+% is strictly simple, and \ccc{false} otherwise. Used as precondition for
+% some of the operations.
+% \ccPrecond{\ccStyle{is_simple()}.}}
+
+\ccHasModels
+% ==========
+\ccc{CGAL::General_polygon_2<ArrTraits>} \\
+
+
+\end{ccRefConcept}
+
+\ccRefPageEnd

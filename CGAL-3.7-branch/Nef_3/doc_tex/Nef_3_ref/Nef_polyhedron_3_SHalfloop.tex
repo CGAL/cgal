@@ -1,0 +1,105 @@
+% +------------------------------------------------------------------------+
+% | Reference manual page: SHalfloop.tex
+% +------------------------------------------------------------------------+
+% | 14.05.2004   Peter Hachenberger
+% | Package: Nef_3
+% | 
+\RCSdef{\RCSSHalfloopRev}{$Id$}
+\RCSdefDate{\RCSSHalfloopDate}{$Date$}
+% +------------------------------------------------------------------------+
+
+\ccRefPageBegin
+
+%%RefPage: end of header, begin of main body
+% +------------------------------------------------------------------------+
+
+
+\begin{ccRefClass}[Nef_polyhedron_3<Traits>::]{SHalfloop}
+
+\ccDefinition
+
+A shalfloop is a great circle on a sphere map. 
+Figure~\ref{figureNef3HalfloopIncidences}
+depicts the relationship between a shalfloop and its incident
+shalfloops, and sfaces on a sphere map.  A shalfloop is 
+an oriented sloop. It is always paired with a 
+shalfloop whose supporting \ccc{Sphere_circle} is pointing in
+the opposite direction. The \ccc{twin()} member function returns
+this shalfloop of opposite orientation.
+
+    \begin{figure}[bht]
+\begin{ccTexOnly}
+        \begin{center}
+          \parbox{0.3\textwidth}{%
+              \includegraphics[width=0.3\textwidth]{Nef_3_ref/fig/shalfloopB}%
+          }
+        \end{center}
+\end{ccTexOnly}
+
+\begin{ccHtmlOnly}
+    <CENTER>
+    <A HREF="fig/shalfloopB.gif">
+        <img src="fig/shalfloopB.gif" 
+             alt="Incidences of an SHalfloop"></A><BR>
+    </CENTER>
+\end{ccHtmlOnly}
+        \label{figureNef3HalfloopIncidences}
+    \end{figure}
+
+A sphere map having a shalfloop models the neighborhood of a vertex which is 
+isolated on a facet. That facet is returned by the member function
+\ccc{facet}. 
+
+\ccInclude{CGAL/Nef_polyhedron_3.h}
+
+\ccTypes
+\ccThree{SHalfloop_const_handle}{incident_facet() const;;}{}
+\ccThreeToTwo
+
+The following types are the same as in \ccc{Nef_polyhedron_3<Traits>}.
+
+\ccNestedType{Mark}{type of mark.}
+
+\ccNestedType{Sphere_circle}{sphere circle type stored in SHalfloop.}
+
+\ccNestedType{Halffacet_const_handle}{const handle to Halffacet.}
+\ccGlue
+\ccNestedType{SHalfloop_const_handle}{const handle to SHalfloop.}
+\ccGlue
+\ccNestedType{SFace_const_handle}{const handle to SFace.}
+
+\ccCreation
+\ccCreationVariable{se}
+
+There is no need for a user to create a \ccc{SHalfloop} explicitly. The
+class \ccc{Nef_polyhedron_3<Traits>} manages the needed shalfloops internally.
+
+%\ccConstructor{SHalfloop();}{default constructor.}
+
+\ccOperations
+
+\ccMethod{const Mark& mark() const;}{the mark of \ccVar\ .}
+
+\ccMethod{const Sphere_circle& circle() const;}{the sphere circle of \ccVar\ .}
+
+\ccMethod{SHalfloop_const_handle twin() const;}{the twin of \ccVar\ .}
+
+\ccMethod{Halffacet_const_handle facet() const;}
+{the facet that corresponds to \ccVar\ in the 3D incidence structure.}
+
+\ccMethod{SFace_const_handle incident_sface() const;}{the incident sface of \ccVar\ .}
+
+\ccSeeAlso
+
+\ccRefIdfierPage{CGAL::Nef_polyhedron_3<Traits>::Halffacet}\\
+\ccRefIdfierPage{CGAL::Nef_polyhedron_3<Traits>::SFace}\\
+\ccRefIdfierPage{CGAL::Nef_polyhedron_S2<Traits>::Sphere_point}
+
+\ccTagDefaults
+\end{ccRefClass}
+
+% +------------------------------------------------------------------------+
+%%RefPage: end of main body, begin of footer
+\ccRefPageEnd
+% EOF
+% +------------------------------------------------------------------------+

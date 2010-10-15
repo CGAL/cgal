@@ -1,0 +1,103 @@
+\begin{ccRefClass}{Circular_arc_2<CircularKernel>}
+
+\ccInclude{CGAL/Circular_arc_2.h}
+
+\ccIsModel
+
+\ccc{CircularKernel::CircularArc_2}
+
+\ccCreation
+\ccCreationVariable{ca}
+
+\ccThree{Circular_arc_point_2}{ca.is_x_monotone()}{}
+\ccThreeToTwo
+
+\ccConstructor{Circular_arc_2(const Circle_2<CircularKernel> &c)}
+{Constructs an arc from a full circle.}
+
+\ccConstructor{Circular_arc_2(const Circle_2<CircularKernel> &c,
+		const Circular_arc_point_2<CircularKernel> &p,
+		const Circular_arc_point_2<CircularKernel> &q)}
+{Constructs the circular arc supported by \ccc{c}, whose source is
+  \ccc{p} and whose target is \ccc{q} when traversing the circle in
+  counterclockwise direction. 
+\ccPrecond{\ccc{p} and \ccc{q} lie on \ccc{c}.}}
+
+\ccConstructor{Circular_arc_2(const Point_2<CircularKernel> &p,
+                              const Point_2<CircularKernel> &q,
+                              const Point_2<CircularKernel> &r)}
+{Constructs an arc that is supported by the circle of type
+  \ccc{Circle_2<CircularKernel>} passing through the points \ccc{p},
+  \ccc{q} and \ccc{r}. The source and target are respectively \ccc{p}
+  and \ccc{r}, when traversing the supporting circle in the
+  counterclockwise direction. 
+  Note that, depending on the orientation of the point triple
+  \ccc{(p,q,r)}, \ccc{q} may not lie on the arc. 
+\ccPrecond{\ccc{p}, \ccc{q}, and \ccc{r} are not collinear.}}
+
+\ccAccessFunctions
+
+\ccThree{Circular_arc_point_2<CircularKernel>}{Ca.is_x_monotone()}{}
+\ccThreeToTwo
+
+\ccMethod{Circle_2<CircularKernel> supporting_circle();}{}
+
+\ccMethod{Point_2<CircularKernel> const& center( ) const;}{
+        returns the center of the supporting circle.}
+\ccGlue
+\ccMemberFunction{CircularKernel::FT const& squared_radius( ) const;}{
+        returns the squared radius of the supporting circle.}
+
+A circular arc is not oriented. Still, its source and target endpoints
+can be defined, supposing that its supporting circle in traversed the
+counterclockwise direction from \ccc{source} to \ccc{target}. 
+
+\ccMethod{Circular_arc_point_2<CircularKernel> source();}{}
+\ccGlue
+\ccMethod{Circular_arc_point_2<CircularKernel> target();}{}
+
+When the methods \ccc{source} and \ccc{target} return the same point, then 
+the arc is in fact a full circle. %\footnote{so far, arcs of zero length are
+%points, not arcs. But see Menelaos' remark: add functors to test whether an
+%arc is degenerate... to be fixed}
+
+When an arc is x-monotone, its left and right points can be accessed
+directly:
+
+\ccMethod{Circular_arc_point_2<CircularKernel> left();}{\ccPrecond{\ccVar.\ccc{is_x_monotone()}}.}
+\ccGlue
+\ccMethod{Circular_arc_point_2<CircularKernel> right();}{\ccPrecond{\ccVar.\ccc{is_x_monotone()}}.}
+
+\ccMethod{Bbox_2 bbox() const;}
+{Returns a bounding box containing the arc.}
+
+\ccQueryFunctions
+
+\ccMethod{bool is_x_monotone();}{Tests whether the arc is x-monotone.}
+\ccGlue
+\ccMethod{bool is_y_monotone();}{Tests whether the arc is y-monotone.}
+
+\ccOperations
+
+\ccFunction{bool operator==(const Circular_arc_2<CircularKernel> &ca1,
+  const Circular_arc_2<CircularKernel> &ca2);} 
+{Test for equality. Two arcs are equal, iff their non-oriented
+  supporting circles are equal (i.e. they have same center and same
+  squared radius) and their endpoints are equal.}
+
+\ccFunction{bool operator!=(const Circular_arc_2<CircularKernel> &ca1,
+  const Circular_arc_2<CircularKernel> &ca2);} 
+{Test for non-equality}
+
+\ccHeading{I/O}
+
+\ccFunction{istream& operator>> (std::istream& is, Circular_arc_2 & ca);}{}
+\ccGlue
+\ccFunction{ostream& operator<< (std::ostream& os, const Circular_arc_2 & ca);}{}
+
+\ccSeeAlso
+
+\ccRefIdfierPage{CGAL::Circular_arc_point_2<CircularKernel>}\\
+\ccRefIdfierPage{CGAL::Line_arc_2<CircularKernel>}
+
+\end{ccRefClass}

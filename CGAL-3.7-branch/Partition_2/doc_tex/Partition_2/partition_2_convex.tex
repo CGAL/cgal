@@ -1,0 +1,62 @@
+%A {\em convex polygon}%
+%\ccIndexMainItemDef{convex polygon} is a polygon for which any segment
+%connecting two points on the boundary of the polygon lies completely in
+%the interior of the polygon.
+%
+\ccIndexSubitemBegin{polygon partitioning}{convex}
+Three functions are provided for producing convex partitions of polygons.
+One produces a partition that is optimal in the number of pieces. 
+The other two functions produce approximately optimal convex partitions.
+Both these functions produce convex decompositions by first decomposing the 
+polygon into simpler polygons; the first uses a triangulation and the second a
+monotone partition.  These two functions both guarantee that they will produce 
+no more than four times the optimal number of convex pieces but they differ in 
+their runtime complexities.  Though the triangulation-based approximation
+algorithm often results in fewer convex pieces, this is not always the case.
+
+An optimal convex partition can be produced using the function
+\ccc{optimal_convex_partition_2}.%
+\ccIndexGlobalFunction{optimal_convex_partition_2} 
+\ccIndexSubsubitem{polygon partitioning}{convex}{optimal}
+This function provides an
+implementation of Greene's dynamic programming algorithm for optimal
+partitioning \cite{g-dpcp-83}. 
+This algorithm requires $O(n^4)$ time and $O(n^3)$ space in the worst case.  
+%As a preprocessing step, this algorithm requires that a vertex visibility
+%graph of the polygon be built.  This is done using the algorithm of
+%Overmars and Welzl \cite{ow-nmcvg-88} for computing the visibility graph
+%of a set of nonintersecting line segments in the plane, adapted to handle
+%points that are not in general position and for the particular case that the
+%segments form a polygon (and thus segments that lie completely outside the
+%polygon are considered to be invisible).  This algorithm $O(n^2)$ time and 
+%$O(n)$ space to compute a visibility graph for $n$ segments.
+
+The function
+\ccIndexSubsubitem{polygon partitioning}{convex}{approximately optimal}
+\ccc{approx_convex_partition_2}\ccIndexGlobalFunction{approx_convex_partition_2}
+implements the simple approximation algorithm of Hertel and Mehlhorn 
+\cite{hm-ftsp-83} that 
+produces a convex partitioning of a polygon from a triangulation by 
+throwing out unnecessary triangulation edges.
+The triangulation used in this function is one produced by the
+2-dimensional constrained triangulation
+package of \cgal.  For a given triangulation, this convex partitioning 
+algorithm requires $O(n)$ time and space to construct a decomposition into 
+no more than four times the optimal number of convex pieces.
+
+\ccIndexSubsubitem{polygon partitioning}{convex}{approximately optimal}
+The sweep-line approximation algorithm of Greene \cite{g-dpcp-83}, which, 
+given a monotone partition of a polygon, produces a convex partition in 
+$O(n \log n)$ time and $O(n)$ space, is implemented
+by the function \ccc{greene_approx_convex_partition_2}%
+\ccIndexGlobalFunction{greene_approx_convex_partition_2}.  The function
+\ccc{y_monotone_partition_2} described in
+Section~\ref{sec:partition_2_monotone} is used to produce the monotone
+partition.  This algorithm provides the same worst-case approximation guarantee 
+as the algorithm of Hertel and Mehlhorn implemented with
+\ccc{approx_convex_partition_2} but can sometimes produce better
+results ({\em i.e.}, convex partitions with fewer pieces).
+\ccIndexSubitemEnd{polygon partitioning}{convex}
+
+Examples of the uses of all of these functions are provided with the
+corresponding reference pages.

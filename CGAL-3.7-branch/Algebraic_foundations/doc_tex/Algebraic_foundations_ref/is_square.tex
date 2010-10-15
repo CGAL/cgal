@@ -1,0 +1,28 @@
+\begin{ccRefFunction}{is_square}
+
+\ccDefinition
+
+
+An ring element $x$ is said to be a square iff there exists a ring element 
+$y$ such
+that $x= y*y$. In case the ring is a \ccc{UniqueFactorizationDomain},
+$y$ is uniquely defined up to multiplication by units. \\
+
+The function \ccRefName\ is available if 
+\ccc{Algebraic_structure_traits::Is_square} is not the \ccc{CGAL::Null_functor}. 
+
+\ccInclude{CGAL/number_utils.h}
+
+\ccFunction{template <class NT> result_type is_square(const NT& x);}{
+        The \ccc{result_type} is convertible to \ccc{bool}. 
+        }
+\ccFunction{template <class NT> result_type is_square(const NT& x, NT& y);}{
+        The \ccc{result_type} is convertible to \ccc{bool}.
+        }
+
+\ccSeeAlso
+
+\ccRefConceptPage{UniqueFactorizationDomain}\\
+\ccRefConceptPage{AlgebraicStructureTraits::IsSquare}\\
+
+\end{ccRefFunction}

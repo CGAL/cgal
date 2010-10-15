@@ -1,0 +1,22 @@
+
+Enum's are formatted similiar to constructors. Exactly one pair of
+matching braces has to be in the declaration.
+
+\ccTwo{enum Short ( A, B, C);XX}{}
+
+\ccEnum{enum Short { A, B, C};}{ Comment.}
+
+\ccEnum{enum Funny_type_name1 { A_couple_of_entries1,
+    one_with_initialisation1 = 5, another1 = -3};}{ Comment.}
+
+We can even switch the alternative layout on:
+
+\def\ccLongParamLayout{\ccTrue}
+
+\ccEnum{enum Funny_type_name2 { A_couple_of_entries2,
+    one_with_initialisation2 = 5, another2 = -3};}{ Comment.}
+
+\def\ccLongParamLayout{\ccFalse}
+
+
+% ----------------------------------------------------------------------

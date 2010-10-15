@@ -1,0 +1,34 @@
+\chapter{Making Releases\label{chap:releases}}
+
+\section{Internal Releases\label{sec:internal_releases}}
+\ccIndexSubitem{releases}{internal}
+
+Internal releases are currently created daily from a script run
+at GeometryFactory.  This script packages together the current versions of all
+packages into a tar file and publish a tarball at
+\path'http://cgal.geometryfactory.com/CGAL/Members/Releases/'.
+People responsible for running the test suite can pick it up automatically
+using the {\tt autotest\_cgal} script (Section~\ref{sec:autotest_cgal}).
+
+\section{Public Releases\label{sec:public_releases}}
+\ccIndexSubitem{releases}{public}
+
+A public release can be created from an internal release by following the
+steps detailed in the
+\texttt{README} file in the package \texttt{Release} on the SVN server.
+\index{SVN server!Release package@\texttt{Release} package}
+This file describes how to create the code, the documentation and the
+updated web pages for a new release.
+
+Each public release is tagged on the SVN server with a tag in the following
+format \texttt{CGAL\_N\_release}, where \texttt{N} is the release number
+with all `.'s replaced by `\_'s (\eg, for release 3.0, the tag is
+\texttt{CGAL\_3\_0\_release}.  There is also a branch created for
+each release with the name \texttt{CGAL\_N\_branch}, where \texttt{N} is
+the release number as before.  This facilitates the creation of bug fix
+releases.
+
+%\section{Bug Fix Releases}
+%\label{sec:bug_fix_releases}
+%\ccIndexSubitem{releases}{bug fix}
+%\ccIndexMainItem{bug fixe}

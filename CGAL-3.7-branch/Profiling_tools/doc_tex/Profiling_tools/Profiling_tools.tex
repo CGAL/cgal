@@ -1,0 +1,36 @@
+
+\section{Timers}
+
+\cgal\ provides classes for measuring the user process time and the real time.
+The class \ccc{CGAL::Timer} is the version for the user process time and
+the class \ccc{CGAL::Real\_timer} is the version for the real time.
+
+Instantiations of both classes are objects with a state. The state is
+either {\em running\/} or it is {\em stopped}. The state of an object
+\ccc{t} is controlled
+with \ccStyle{t.start()} and \ccStyle{t.stop()} . The timer counts the
+time elapsed since its creation or last reset. It counts only the time
+where it is in the running state. The time information is given in seconds.
+The timer counts also the number of intervals it was running, i.e. it 
+counts the number of calls of the \ccc{start()} member function since the 
+last reset. If the reset occurs while the timer is running it counts as the
+first interval.
+
+\section{Memory Size}
+
+\cgal\ provides access to the memory size used by the program with the
+\ccc{CGAL::Memory_sizer} class.  Both the virtual memory size and the
+resident size are available (the resident size does not account for
+swapped out memory nor for the memory which is not yet paged-in).
+
+\section{Profiling}
+
+\cgal\ provides a way to count the number of times a given line of code
+is executed during the execution of a program.  Such
+\ccc{CGAL::Profile_counter} counters can be added at critical place in the
+code, and at the end of the execution of a program, the count is printed on
+\ccc{std::cerr}.  A macro \ccc{CGAL_PROFILER} can be used to conveniently place
+these counters anywhere.  They are disabled by default and activated by the
+global macro \ccc{CGAL_PROFILE}.
+
+% EOF

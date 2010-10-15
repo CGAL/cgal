@@ -1,0 +1,44 @@
+\begin{ccRefConcept}{PolynomialTraits_d::IntegralDivisionUpToConstantFactor}
+
+\ccDefinition
+
+This \ccc{AdaptableBinaryFunction} computes the integral division 
+of two polynomials of type \ccc{PolynomialTraits_d::Polynomial_d} 
+{\em up to a constant factor (utcf)} . 
+
+
+\ccPrecond $g$ divides $f$ in $Q(R)[x_0,\dots,x_{d-1}]$, where $Q(R)$ is the quotient
+field of the base ring $R$, \ccc{PolynomialTraits_d::Innermost_coefficient_type}.
+
+\ccRefines 
+
+\ccc{AdaptableBinaryFunction}\\
+\ccc{CopyConstructible}\\
+\ccc{DefaultConstructible}\\
+
+\ccTypes
+
+
+\ccSetThreeColumns{xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx}{xxx}{}
+\ccCreationVariable{fo}
+\ccTypedef{typedef PolynomialTraits_d::Polynomial_d   result_type;}{}\ccGlue
+\ccTypedef{typedef PolynomialTraits_d::Polynomial_d   first_argument_type;}{}\ccGlue
+\ccTypedef{typedef PolynomialTraits_d::Polynomial_d   second_argument_type;}{}
+
+\ccOperations
+
+\ccMethod{result_type operator()(first_argument_type  f,
+                                 second_argument_type g);}
+                {Computes $f/g$ up to a constant factor.}
+
+
+
+%\ccHasModels
+
+\ccSeeAlso
+
+\ccRefIdfierPage{Polynomial_d}\\
+\ccRefIdfierPage{PolynomialTraits_d}\\
+\ccRefIdfierPage{PolynomialTraits_d::GcdUpToConstantFactor}\\
+
+\end{ccRefConcept}

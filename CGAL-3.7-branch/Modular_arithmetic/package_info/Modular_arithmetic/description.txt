@@ -1,0 +1,6 @@
+Modular Arithmetic
+- modular type
+- modular traits 
+- modular gcd 
+- some needed algorithms 
+- chiniese_remainder_traits (very experimental)

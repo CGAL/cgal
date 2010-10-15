@@ -1,0 +1,36 @@
+\begin{ccRefConcept}
+{PolynomialTraits_d::ConstructInnermostCoefficientConstIteratorRange}
+
+\ccDefinition
+
+This \ccc{AdaptableUnaryFunction} returns a const iterator range over all 
+innermost coefficients of the given polynomial.
+
+\ccRefines 
+\ccc{AdaptableUnaryFunction}\\
+\ccc{CopyConstructible}\\
+\ccc{DefaultConstructible}\\
+
+\ccTypes
+
+\ccSetThreeColumns{xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx}{xxx}{}
+
+\ccCreationVariable{fo}
+\ccTypedef{typedef std::pair<
+        PolynomialTraits_d::Innermost_coefficient_const_iterator,
+        PolynomialTraits_d::Innermost_coefficient_const_iterator > result_type;}{}
+\ccGlue
+\ccTypedef{typedef PolynomialTraits_d::Polynomial_d argument_type;}{}
+
+\ccOperations
+\ccMethod{result_type operator()(argument_type p);}
+         {Returns a const iterator range over all innermost coefficients of $p$.}
+
+%\ccHasModels
+
+\ccSeeAlso
+
+\ccRefIdfierPage{Polynomial_d}\\
+\ccRefIdfierPage{PolynomialTraits_d}\\
+
+\end{ccRefConcept}

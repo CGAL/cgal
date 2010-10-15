@@ -1,0 +1,32 @@
+\begin{ccRefConcept}{AlgebraicKernelForCircles::RootForCircles_2_2}
+
+\ccDefinition
+
+Concept to represent the roots of a system of two equations of degree 2
+in two variables \ccc{x} and \ccc{y} that are models of concept
+\ccc{AlgebraicKernelForCircles::PolynomialForCircles_2_2}
+
+%\ccAccessFunctions
+
+%\ccFunction{const RootOf_2 & x();}{}
+%\ccGlue
+%\ccFunction{const RootOf_2 & y();}{}
+
+\ccOperations
+
+The comparison operator \ccc{==} must be provided. 
+
+\ccFunction{bool operator ==(
+        const AlgebraicKernelForCircles::RootForCircles_2_2 & p,
+	const AlgebraicKernelForCircles::RootForCircles_2_2 & q);}{}
+
+\ccHasModels
+
+\ccc{CGAL::Root_for_circles_2_2}
+
+\ccSeeAlso
+
+\ccRefIdfierPage{AlgebraicKernelForCircles}
+
+\end{ccRefConcept}
+

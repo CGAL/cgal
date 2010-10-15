@@ -1,0 +1,169 @@
+// Copyright (c) 2008  GeometryFactory Sarl (France).
+// All rights reserved.
+//
+// This file is part of CGAL (www.cgal.org); you may redistribute it under
+// the terms of the Q Public License version 1.0.
+// See the file LICENSE.QPL distributed with CGAL.
+//
+// Licensees holding a valid commercial license may use this file in
+// accordance with the commercial license agreement provided with the software.
+//
+// This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
+// WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
+//
+// $URL$
+// $Id$
+// 
+//
+// Author(s)     : Andreas Fabri <Andreas.Fabri@geometryfactory.com>
+//                 Laurent Rineau <Laurent.Rineau@geometryfactory.com>
+
+#ifndef CGAL_QT_SEGMENTS_GRAPHICS_ITEM_H
+#define CGAL_QT_SEGMENTS_GRAPHICS_ITEM_H
+
+#include <CGAL/Bbox_2.h>
+#include <CGAL/bounding_box.h>
+#include <CGAL/Qt/PainterOstream.h>
+#include <CGAL/Qt/GraphicsItem.h>
+#include <CGAL/Qt/Converter.h>
+
+#include <QGraphicsScene>
+#include <QPainter>
+#include <QStyleOption>
+
+namespace CGAL {
+namespace Qt {
+
+template <typename P>
+class SegmentsGraphicsItem : public GraphicsItem
+{
+  typedef typename P::value_type Segment_2;
+  typedef typename CGAL::Kernel_traits<Segment_2>::Kernel Traits;
+
+public:
+  SegmentsGraphicsItem(P* p_);
+
+  void modelChanged();
+
+public:
+  QRectF boundingRect() const;
+  
+  void paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget);
+  
+
+  const QPen& verticesPen() const
+  {
+    return vertices_pen;
+  }
+
+  void setVerticesPen(const QPen& pen)
+  {
+    vertices_pen = pen;
+  }
+
+  bool drawVertices() const
+  {
+    return draw_vertices;
+  }
+
+  void setDrawVertices(const bool b)
+  {
+    draw_vertices = b;
+    update();
+  }
+
+protected:
+  void updateBoundingBox();
+
+  P * segments;
+  QPainter* m_painter;
+  PainterOstream<Traits> painterostream;
+
+
+  QRectF bounding_rect;
+
+  QPen vertices_pen;
+  bool draw_edges;
+  bool draw_vertices;
+};
+
+
+template <typename P>
+SegmentsGraphicsItem<P>::SegmentsGraphicsItem(P * p_)
+  :  segments(p_), painterostream(0),
+     draw_edges(true), draw_vertices(true)   
+{
+  setVerticesPen(QPen(::Qt::red, 3.));
+  if(segments->size() == 0){
+    this->hide();
+  }
+  updateBoundingBox();
+  setZValue(3);
+}
+
+template <typename P>
+QRectF 
+SegmentsGraphicsItem<P>::boundingRect() const
+{
+  return bounding_rect;
+}
+
+
+
+
+template <typename P>
+void 
+SegmentsGraphicsItem<P>::paint(QPainter *painter, 
+                                    const QStyleOptionGraphicsItem *option,
+                                    QWidget * widget)
+{
+
+  painterostream = PainterOstream<Traits>(painter);
+  
+    for(typename P::iterator it = segments->begin();
+        it != segments->end();
+        it++){
+      painterostream << *it;
+    }
+}
+
+// We let the bounding box only grow, so that when vertices get removed
+// the maximal bbox gets refreshed in the GraphicsView
+template <typename P>
+void 
+SegmentsGraphicsItem<P>::updateBoundingBox()
+{
+  Converter<Traits> convert;
+  prepareGeometryChange();
+  if(segments->size() == 0){
+    return;
+  }
+  Bbox_2 bb = segments->begin()->bbox();
+  for(typename P::iterator it = segments->begin();
+      it != segments->end();
+      ++it){
+    bb = bb + it->bbox();
+  }
+
+  bounding_rect = convert(bb);
+}
+
+
+template <typename P>
+void 
+SegmentsGraphicsItem<P>::modelChanged()
+{
+  if((segments->size() == 0) ){
+    this->hide();
+  } else if((segments->size() > 0) && (! this->isVisible())){
+    this->show();
+  }
+  updateBoundingBox();
+  update();
+}
+
+
+} // namespace Qt
+} // namespace CGAL
+
+#endif // CGAL_QT_SEGMENTS_GRAPHICS_ITEM_H

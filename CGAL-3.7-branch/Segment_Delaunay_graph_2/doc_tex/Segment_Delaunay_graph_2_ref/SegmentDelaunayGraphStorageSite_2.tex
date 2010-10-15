@@ -1,0 +1,280 @@
+%% Copyright (c) 2003,2004,2005  INRIA Sophia-Antipolis (France) and
+%% Notre Dame University (U.S.A.).  All rights reserved.
+%%
+%% This file is part of CGAL (www.cgal.org); you may redistribute it under
+%% the terms of the Q Public License version 1.0.
+%% See the file LICENSE.QPL distributed with CGAL.
+%%
+%% Licensees holding a valid commercial license may use this file in
+%% accordance with the commercial license agreement provided with the software.
+%%
+%% This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
+%% WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
+%%
+%% $URL$
+%% $Id$
+%% 
+%%
+%% Author(s)     : Menelaos Karavelas <mkaravel@cse.nd.edu>
+
+
+
+\begin{ccRefConcept}{SegmentDelaunayGraphStorageSite_2} 
+%% add template arg's if necessary
+
+%% \ccHtmlCrossLink{}     %% add further rules for cross referencing links
+%% \ccHtmlIndexC[class]{} %% add further index entries
+
+\ccDefinition
+
+The concept \ccc{SegmentDelaunayGraphStorageSite_2} provides the
+requirements for the storage sites of a segment Delaunay graph. The
+storage sites are sites that are used to store the information of a
+site in a more compact form (that uses less storage). This is achieved
+by storing handles to points instead of points.
+
+
+\ccRefines
+\ccc{DefaultConstructible}\\
+\ccc{CopyConstructible}\\
+\ccc{Assignable}
+
+\ccThree{typedef typename std::set<typename Site_2::Point_2>::iterator}
+{Point_handle+}{}
+\ccThreeToTwo
+\ccTypes
+\ccNestedType{Site_2}{The site type.}
+\ccGlue
+\ccTypedef{typedef typename std::set<typename Site_2::Point_2>::iterator
+Point_handle;}{The type for a handle to a point.}
+
+
+
+\ccCreation
+%\ccThree{SegmentDelaunayGraphStorageSite_2}{construct_storage_site_2(Point_handle hp)+}{} 
+\ccThree{SegmentDelaunayGraphStorageSite_2}{construct}{}
+
+\ccCreationVariable{ss}  %% choose variable name
+
+In addition to the default and copy constructors, the following static
+methods should be available for constructing sites:
+
+\ccMethod{SegmentDelaunayGraphStorageSite_2
+  construct_storage_site_2(Point_handle hp);}{Constructs a storage site from a 
+  point handle. The storage site represents the point associated with
+  the point handle \ccc{hp}.}
+%
+\ccGlue
+\ccMethod{SegmentDelaunayGraphStorageSite_2
+  construct_storage_site_2(Point_handle hp1, Point_handle hp2);}
+{Constructs a storage site from two point handles. The storage site
+  represents the segment the endpoints of which are the points
+  associated with the point handles \ccc{hp1} and \ccc{hp2}.}
+%
+\ccGlue
+\ccMethod{SegmentDelaunayGraphStorageSite_2
+  construct_storage_site_2(Point_handle hp1,
+  Point_handle hp2, Point_handle hq1, Point_handle hq2);}{Constructs
+  a storage site from four point handles. The storage site represents
+  the point of intersection of the segments the endpoints of which are
+  the points associated with the point handles \ccc{hp1}, \ccc{hp2} and
+  \ccc{hq1} and \ccc{hq2}, respectively.}
+%
+\ccGlue
+\ccMethod{SegmentDelaunayGraphStorageSite_2
+  construct_storage_site_2(Point_handle hp1, Point_handle hp2,
+  Point_handle hq1, Point_handle hq2, bool b);}{Constructs 
+  a site from four point handles and a boolean. The storage site
+  represents a segment. If \ccc{b} is \ccc{true}, the first endpoint
+  of the segment is the point associated with the handle \ccc{hp1} and
+  the second endpoint is the point of intersection of the segments the
+  endpoints of which are the point associated with the point handles
+  \ccc{hp1}, \ccc{hp2} and \ccc{hq1}, \ccc{hq2}, respectively. If
+  \ccc{b} is \ccc{false}, the first endpoint of the represented
+  segment is the one mentioned above, whereas the second endpoint if
+  the point associated with the point handle \ccc{hp2}.}
+%
+\ccGlue
+\ccMethod{SegmentDelaunayGraphStorageSite_2
+  construct_storage_site_2(Point_handle hp1,
+  Point_handle hp2, Point_handle hq1, Point_handle hq2, Point_handle
+  hr1, Point_handle hr2);}{Constructs a storage site from six
+  point handles. The storage site represents of segment the endpoints
+  of which are points of intersection of two pairs of segments, the
+  endpoints of which are \ccc{hp1}, \ccc{hp2}/\ccc{hq1}, \ccc{hq2} and
+  \ccc{hp1}, \ccc{hp2}/\ccc{hr1}, \ccc{hr2}, respectively.}
+
+
+\ccPredicates
+\ccThree{bool}{ss.is_input(unsigned int i)+}{}
+\ccMethod{bool is_defined();}{Returns \ccc{true} if the storage site
+  represents a valid point or segment.}
+%
+\ccGlue
+\ccMethod{bool is_point();}{Returns \ccc{true} if the storage site
+  represents a point.}
+%
+\ccGlue
+\ccMethod{bool is_segment();}{Returns \ccc{true} if the storage site
+  represents a segment.}
+%
+\ccGlue
+\ccMethod{bool is_input();}{Returns \ccc{true} if the storage site
+  represents an input point or a segment defined by two input
+  points. Returns \ccc{false} if it represents a point of intersection
+  of two segments, or if it represents a segment, at least one
+  endpoint of which is a point of intersection of two segments.}
+%
+\ccGlue
+\ccMethod{bool is_input(unsigned int i);}{Returns \ccc{true} if the
+  \ccc{i}-th endpoint of the corresponding site is an input
+  point. Returns \ccc{false} if the \ccc{i}-th endpoint of the
+  corresponding site is the intersection of two segments.
+  \ccPrecond{\ccc{i} must be at most $1$, and \ccc{ss.is_segment()}
+    must be \ccc{true}.}}
+
+
+
+
+\ccAccessFunctions
+%\ccThree{Point_handle}{ss.handle(unsigned int i)+}{}
+\ccThree{SegmentDelaunayGraphStorageSite_2}{}{}
+%% \ccMethod{Point_handle handle(unsigned int i) const;}{
+%%   Returns the \ccc{i}-th point handle of the site's
+%%   representation. The valid values for \ccc{i} are $0$ through the
+%%   number of handles in the constructor used to construct the site.
+%%   \ccPrecond{\ccc{i} must be at most $5$. The storage site must be of
+%%     the correct type in order to access the corresponding point handle.}}
+%
+\ccGlue
+\ccMethod{SegmentDelaunayGraphStorageSite_2 supporting_site();}
+         {Returns a storage site object representing the segment
+           that supports the segment represented by the storage site.
+           The returned storage site represents a site, both endpoints
+           of which are input points.
+  \ccPrecond{\ccc{ss.is_segment()} must be \ccc{true}.}}
+%
+\ccGlue
+\ccMethod{SegmentDelaunayGraphStorageSite_2 source_site();}
+{Returns a storage site that represents the first endpoint of the
+  represented segment.
+  \ccPrecond{\ccc{ss.is_segment()} must be \ccc{true}.}}
+%
+\ccGlue
+\ccMethod{SegmentDelaunayGraphStorageSite_2 target_site();}
+{Returns a storage site that represents the second endpoint of the
+  represented segment.
+  \ccPrecond{\ccc{ss.is_segment()} must be \ccc{true}.}}
+%
+\ccGlue
+\ccMethod{SegmentDelaunayGraphStorageSite_2 supporting_site(unsigned int i);}
+         {Returns a storage site object representing the \ccc{i}-th
+           segment that supports the point of intersection represented
+           by the storage site.
+           The returned storage site represents a site, both endpoints
+           of which are input points.
+  \ccPrecond{\ccc{i} must be at most $1$, \ccc{ss.is_point()} must be
+    \ccc{true} and \ccc{ss.is_input()} must be \ccc{false}.}}
+%
+\ccGlue
+\ccMethod{SegmentDelaunayGraphStorageSite_2 crossing_site(unsigned int i);}
+         {Returns a storage site object representing the \ccc{i}-th
+           segment that supports the $i$-th endpoint of the site
+           which is not the supporting segment of the site.
+           The returned storage site represents a site, both endpoints
+           of which are input points.
+           \ccPrecond{\ccc{i} must be at most $1$,
+             \ccc{ss.is_segment()} must be \ccc{true} and
+             \ccc{ss.is_input(i)} must be \ccc{false}.}}
+%
+\ccGlue
+\ccMethod{Site_2 site();}{Returns the site represented by the storage
+  site.}
+%
+\ccGlue
+\ccMethod{Point_handle point();}{Returns a handle associated with
+  the represented point. \ccPrecond{\ccc{is_point()} and
+    \ccc{is_input()} must both be \ccc{true}.}}
+%
+\ccGlue
+\ccMethod{Point_handle source_of_supporting_site();}
+{ Returns a handle to the source point of the supporting site of the
+  this site. \ccPrecond{\ccc{is_segment()} must be \ccc{true}.}}
+%
+\ccGlue
+\ccMethod{Point_handle target_of_supporting_site();}
+{ Returns a handle to the target point of the supporting site of the
+  this site. \ccPrecond{\ccc{is_segment()} must be \ccc{true}.}}
+%
+\ccGlue
+\ccMethod{Point_handle source_of_supporting_site(unsigned int i);}
+{ Returns a handle to the source point of the \ccc{i}-th supporting
+  site of the this site.
+  \ccPrecond{\ccc{is_point()} must be \ccc{true}, \ccc{is_input()}
+    must be \ccc{false} and \ccc{i} must either be \ccc{0} or \ccc{1}.}}
+%
+\ccGlue
+\ccMethod{Point_handle target_of_supporting_site(unsigned int i);}
+{ Returns a handle to the target point of the \ccc{i}-th supporting
+  site of the this site.
+  \ccPrecond{\ccc{is_point()} must be \ccc{true}, \ccc{is_input()}
+    must be \ccc{false} and \ccc{i} must either be \ccc{0} or \ccc{1}.}}
+%
+\ccGlue
+\ccMethod{Point_handle source_of_crossing_site(unsigned int i);}
+{ Returns a handle to the source point of the \ccc{i}-th crossing site
+  of the this site.
+  \ccPrecond{\ccc{is_segment()} must be \ccc{true}, \ccc{is_input(i)}
+    must be \ccc{false} and \ccc{i} must either be \ccc{0} or \ccc{1}.}}
+%
+\ccGlue
+\ccMethod{Point_handle target_of_crossing_site(unsigned int i);}
+{ Returns a handle to the target point of the \ccc{i}-th supporting
+  site of the this site.
+  \ccPrecond{\ccc{is_segment()} must be \ccc{true}, \ccc{is_input(i)}
+    must be \ccc{false} and \ccc{i} must either be \ccc{0} or \ccc{1}.}}
+
+
+%% \ccHeading{Set methods}
+%% \ccThree{void}{s.set_point(Point_handle hp)+}{}
+%% %\ccThree{void}{s.set_segment(Point_2 p1, Point_2 p2)+}{}
+%% \ccMethod{void set_point(Point_handle hp);}{}
+%% %
+%% \ccGlue
+%% \ccMethod{void set_point(Point_handle hp1, Point_handle hp2,
+%%   Point_handle hq1, Point_handle hq2);}{}
+%% %
+%% \ccGlue
+%% \ccMethod{void set_segment(Point_handle hp1, Point_handle hp2);}{}
+%% %
+%% \ccGlue
+%% \ccMethod{void set_segment(Point_handle hp1, Point_handle hp2,
+%%   Point_handle hq1, Point_handle hq2, bool b);}{}
+%% %
+%% \ccGlue
+%% \ccMethod{void set_segment(Point_handle hp1, Point_handle hp2,
+%%   Point_handle hq1, Point_handle hq2, Point_handle hr1,
+%%   Point_handle hr2);}{}
+
+
+
+\ccHasModels
+\ccc{CGAL::Segment_Delaunay_graph_storage_site_2<Gt>}
+
+
+\ccSeeAlso
+\ccc{SegmentDelaunayGraphTraits_2}\\
+\ccc{CGAL::Segment_Delaunay_graph_site_2<K>}\\
+\ccc{CGAL::Segment_Delaunay_graph_storage_site_2<Gt>}\\
+\ccc{CGAL::Segment_Delaunay_graph_traits_2<K,MTag>}\\
+\ccc{CGAL::Segment_Delaunay_graph_traits_without_intersections_2<K,MTag>}\\
+\ccc{CGAL::Segment_Delaunay_graph_filtered_traits_2<CK,CM,EK,EM,FK,FM>}\\
+\ccc{CGAL::Segment_Delaunay_graph_filtered_traits_without_intersections_2<CK,CM,EK,EM,FK,FM>}
+
+\end{ccRefConcept}
+
+% +------------------------------------------------------------------------+
+%%RefPage: end of main body, begin of footer
+% EOF
+% +------------------------------------------------------------------------+
+

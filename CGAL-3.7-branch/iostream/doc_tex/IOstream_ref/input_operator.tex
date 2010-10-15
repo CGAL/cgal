@@ -1,0 +1,76 @@
+% +------------------------------------------------------------------------+
+% | Reference manual page: input_op.tex
+% +------------------------------------------------------------------------+
+% | 10.04.2002   Author
+% | Package: Package
+% | 
+\RCSdef{\RCSinputopRev}{$Id$}
+\RCSdefDate{\RCSinputopDate}{$Date$}
+% |
+%%RefPage: end of header, begin of main body
+% +------------------------------------------------------------------------+
+
+
+\ccHtmlNoClassLinks
+\begin{ccRefFunction}{operator>>}  %% add template arg's if necessary
+
+%% \ccHtmlCrossLink{}     %% add further rules for cross referencing links
+%% \ccHtmlIndexC[function]{} %% add further index entries
+
+\ccDefinition
+\cgal\  defines input operators for classes that are derived
+from the class \ccStyle{istream}. This allows to read from istreams
+as \ccStyle{cin}, as well as from strstreams and fstreams.
+The input operator is defined for all classes in the \cgal\ kernel.
+
+
+\ccFunction{istream& operator>>(istream& is, Class c);}
+   {Extracts object \ccStyle{c} from the stream \ccc{is}. Returns \ccc{is}.}           
+\ccSeeAlso
+\ccRefIdfierPage{CGAL::set_mode} \\
+\ccRefIdfierPage{CGAL::set_ascii_mode} \\
+\ccRefIdfierPage{CGAL::set_binary_mode}  \\
+\ccRefIdfierPage{CGAL::set_pretty_mode}  \\
+\ccRefIdfierPage{CGAL::get_mode} \\
+\ccRefIdfierPage{CGAL::is_ascii} \\
+\ccRefIdfierPage{CGAL::is_binary} \\
+\ccRefIdfierPage{CGAL::is_pretty} \\
+\ccRefIdfierPage{CGAL::operator<<}
+
+\ccExample
+\begin{cprog}
+
+#include <CGAL/basic.h>
+#include <iostream>
+#include <fstream>
+
+#include <CGAL/Cartesian.h>
+#include <CGAL/Segment_2.h>
+
+typedef CGAL::Point_2< CGAL::Cartesian<double> >     Point;
+typedef CGAL::Segment_2< CGAL::Cartesian<double> >   Segment;
+
+int
+main()
+{
+    Point p, q;
+    Segment s;
+
+    CGAL::set_ascii_mode(std::cin);
+    std::cin >> p >> q;
+
+    std::ifstream f("data.txt");
+    CGAL::set_binary_mode(f);
+    f >> s >> p;
+
+    return 1;
+}
+\end{cprog} 
+
+\end{ccRefFunction}
+
+% +------------------------------------------------------------------------+
+%%RefPage: end of main body, begin of footer
+% EOF
+% +------------------------------------------------------------------------+
+

@@ -1,0 +1,106 @@
+\begin{ccRefConcept}{PolynomialTraits_d::Resultant}
+\ccDefinition
+
+This \ccc{AdaptableBinaryFunction} computes the {\em resultant} of two polynomials 
+$f$ and $g$ of type \ccc{PolynomialTraits_d::Polynomial_d} with respect to a 
+certain variable.
+ 
+Note that this functor operates on the polynomial in the univariate view, 
+that is, the polynomial is considered as a univariate polynomial in one 
+specific variable. 
+
+Let $f$ and $g$ be two univariate polynomials over some commutative ring $A$, 
+where 
+\[f = f_mx^m + \dots + f_0\] and 
+\[g = g_nx^n + \dots + g_0.\] 
+The resultant of $f$ and $g$ is defined as the determinant of the {\em Sylvester matrix}: 
+
+\begin{ccTexOnly}
+\[ \left( \begin{array}{cccccccc}
+f_m & \dots & f_0&&& \\
+&f_m & \dots & f_0&&\\
+&&\ddots&&\ddots&\\
+&&&f_m &\dots& f_0\\  
+g_n & \dots & g_0&&& \\
+&g_n & \dots & g_0&&\\
+&&\ddots&&\ddots&\\
+&&&g_n & \dots& g_0\\  
+\end{array} \right) \]
+\end{ccTexOnly}
+
+\begin{ccHtmlOnly}
+<CENTER>
+<IMG BORDER=0 SRC="./sylvester_matrix.gif" ALIGN=middle ALT="Sylvester Matrix">
+</CENTER>
+\end{ccHtmlOnly}
+
+Note that this is a $(n+m)\times(n+m)$ matrix as there are $n$ rows for $f$ 
+and $m$ rows that are used for $g$. The blank spaces are supposed to be 
+filled with zeros. 
+
+
+% In the sequel we list the most important properties of the resultant. 
+\begin{ccAdvanced}
+Let $L$ be the algebraic closure of $A$, and write $f$ and $g$ as 
+\[f := f_m \ccProd{i=1}{m}{(x-\alpha_i)},\ \alpha_i \in L \]
+and 
+\[g :=  g_n \ccProd{j=1}{n}{(x-\beta_j)},\ \beta_i \in L,\] then
+the resultant of $f$ and $g$ is (up to leading coefficients) 
+the product of all pairwise differences of the roots of $f$ and $g$, namely 
+\[res(f,g) = f_m^n g_n^m \ccProd{i=1}{m}{\ccProd{j=1}{n}{(\alpha_i-\beta_j)}}.\] 
+In particular, $res(f,g) \neq 0$ iff $f$ and $g$ have a common factor with a 
+positive degree in $X$. %, that is, they may still have a common factor in $A$. 
+%As a consequence $res(f,f') \neq 0$ iff $f$ is square free with respect to 
+%$X$, that is, the content of $f$ may still contain a square.  
+
+
+\end{ccAdvanced}
+
+
+There are various ways to compute the resultant. 
+Naive options are the computation of the resultant as the determinant of 
+the Sylvester Matrix or the Bezout 
+Matrix as well as the so called subresultant algorithm, 
+which is a variant of the Euclidean Algorithm. 
+More sophisticated methods may use modular arithmetic and interpolation. 
+For more information we refer to, e.g., \cite{gg-mca-99}. 
+
+\ccRefines 
+\ccc{AdaptableBinaryFunction}\\
+\ccc{CopyConstructible}\\
+\ccc{DefaultConstructible}\\
+
+\ccTypes
+\ccSetThreeColumns{xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx}{xxx}{}
+\ccCreationVariable{fo}
+\ccTypedef{typedef PolynomialTraits_d::Coefficient_type   result_type;}{}
+\ccGlue
+\ccTypedef{typedef PolynomialTraits_d::Polynomial_d   first_argument_type;}{}
+\ccGlue
+\ccTypedef{typedef PolynomialTraits_d::Polynomial_d   second_argument_type;}{}
+
+\ccOperations
+\ccMethod{result_type operator()(first_argument_type   f,
+                                 second_argument_type  g);}
+         { Computes the resultant of $f$ and $g$, 
+           with respect to the outermost variable.}
+
+%\ccMethod{result_type operator()(first_argument_type  f,
+%                                 second_argument_type g,
+%                                 int  i);}
+%         { Computes the resultant of $f$ and $g$,
+%           with respect to variable $x_i$. 
+%           \ccPrecond $0 \leq i  < d$ 
+%         }
+
+%\ccHasModels
+
+\ccSeeAlso
+
+\ccRefIdfierPage{Polynomial_d}\\
+\ccRefIdfierPage{PolynomialTraits_d}\\
+\ccRefIdfierPage{PolynomialTraits_d::UnivariateContent}\\
+\ccRefIdfierPage{PolynomialTraits_d::PolynomialSubresultants}\\
+\ccRefIdfierPage{PolynomialTraits_d::PrincipalSubresultants}\\
+
+\end{ccRefConcept}

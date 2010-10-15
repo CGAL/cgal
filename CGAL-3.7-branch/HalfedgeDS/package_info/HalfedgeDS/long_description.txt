@@ -1,0 +1,49 @@
+HalfedgeDS_2 Package
+---------------------------------------------------------------------
+
+-  CGAL/HalfedgeDS_default.h
+-  CGAL/HalfedgeDS_using_in_place_list.h
+-  CGAL/HalfedgeDS_using_list.h
+-  CGAL/HalfedgeDS_using_vector.h
+
+     Generic halfedge data structures based on an internal representation
+     with a list or a vector respectively.
+
+-  CGAL/HalfedgeDS_min_items.h
+-  CGAL/HalfedgeDS_items_2.h
+-  CGAL/Polyhedron_items_3.h
+
+     Implementations of the Items class concept.
+
+-  CGAL/HalfedgeDS_vertex_base.h
+-  CGAL/HalfedgeDS_halfedge_base.h
+-  CGAL/HalfedgeDS_face_base.h
+
+     Appropriate base classes for vertices, halfedges and faces.
+     Used in the Items class implementations.
+
+-  CGAL/HalfedgeDS_vertex_min_base.h
+-  CGAL/HalfedgeDS_halfedge_min_base.h
+-  CGAL/HalfedgeDS_face_min_base.h
+
+     Minimal base classes for vertices, halfedges and faces.
+     Used in the Min_items class implementations.
+
+-  CGAL/HalfedgeDS_items_decorator.h
+-  CGAL/HalfedgeDS_decorator.h
+-  CGAL/HalfedgeDS_const_decorator.h
+
+     Helper classes to implement high level operations and 
+     adaptive operations on top of a halfedge data structure.
+     Adaptive operations provide the flexibility to work with 
+     the optional features of the halfedge data structure design.
+
+-  CGAL/HalfedgeDS_iterator_adaptor.h
+
+     Iterator adaptor used by CGAL_HalfedgeDS_using_list and
+     CGAL_HalfedgeDS_using_vector to guarantee that the default
+     constructor of the handle types is unique and always the
+     same value.
+
+
+Lutz Kettner

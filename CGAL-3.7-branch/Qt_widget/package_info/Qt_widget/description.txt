@@ -1,0 +1,2 @@
+visualization through a Qt widget
+Design for Qt-3.x only.

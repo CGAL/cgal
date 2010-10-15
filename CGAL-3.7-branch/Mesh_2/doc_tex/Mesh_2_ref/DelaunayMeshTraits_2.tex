@@ -1,0 +1,39 @@
+\begin{ccRefConcept}{DelaunayMeshTraits_2}
+
+\ccDefinition
+
+The concept \ccRefName\ refines the concept
+\ccc{ConformingDelaunayTriangulationTraits_2}. It provides a construction
+object \ccc{Construct_circumcenter_2}.
+
+\ccRefines
+
+\ccc{ConformingDelaunayTriangulationTraits_2}
+
+\ccTypes
+
+\ccNestedType{Construct_circumcenter_2} {Constructor object. Must provide
+  an operator \ccc{Point_2 operator()(Point_2 p, 
+                                      Point_2 q, 
+                                      Point_2 r);}
+  that computes the center of the circle passing through the points $p$,
+  $q$ and $r$.
+  \ccPrecond $p$, $q$ and $r$ are not collinear.}
+
+\ccCreationVariable{traits}
+
+\ccHeading{Access to predicate and constructor objects}
+
+\ccThree{Construct_circumcenter_2xx}{construct_circumcenter_2_object();}{}
+\ccMethod{Construct_circumcenter_2 construct_circumcenter_2_object();}{}
+
+\ccHasModels
+Any model of the \ccc{Kernel} concept. In particular, all CGAL kernels.
+
+\end{ccRefConcept}
+
+%%% For emacs/AucTeX:
+%%% Local Variables: ***
+%%% mode:latex ***
+%%% TeX-master: "../Mesh_2.tex"  ***
+%%% End: ***

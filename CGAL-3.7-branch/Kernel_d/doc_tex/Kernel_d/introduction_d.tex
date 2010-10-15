@@ -1,0 +1,65 @@
+\section{Introduction}
+
+This part of the reference manual covers the higher-dimensional
+kernel.  The kernel contains objects of constant size, such as point,
+vector, direction, line, ray, segment, circle.  With each type comes a
+set of functions which can be applied to an object of this type.  You
+will typically find access functions (e.g.\ to the coordinates of a
+point), tests of the position of a point relative to the object, a
+function returning the bounding box, the length, or the area of an
+object, and so on.  The \cgal\ kernel further contains basic
+operations such as affine transformations, detection and computation
+of intersections, and distance computations. Note that this section
+partly recapitulates facts already mentioned for the lower-dimensional
+kernel.
+
+\subsection{Robustness}
+
+The correctness proof of nearly all geometric algorithms presented in
+theory papers assumes exact computation with real numbers.  This leads
+to a fundamental problem with the implementation of geometric
+algorithms.  Naively, often the exact real arithmetic is replaced by
+inexact floating-point arithmetic in the implementation.  This often
+leads to acceptable results for many input data.  However, even for
+the implementation of the simplest geometric algorithms this
+simplification occasionally does not work.  Rounding errors introduced
+by inaccurate arithmetic may lead to inconsistent decisions, causing
+unexpected failures for some correct input data.  There are many
+approaches to this problem, one of them is to compute exactly (compute
+so accurate that all decisions made by the algorithm are exact) which
+is possible in many cases but more expensive than standard
+floating-point arithmetic.  C.~M.~Hoffmann~\cite{h-gsm-89,h-pargc-89}
+illustrates some of the problems arising in the implementation of
+geometric algorithms and discusses some approaches to solve them.  A
+more recent overview is given in \cite{s-rpigc-00}.  The exact
+computation paradigm is discussed by Yap and Dub\'e \cite{yd-ecp-95}
+and Yap \cite{y-tegc-97}.
+
+In \cgal\ you can choose the underlying number types and arithmetic.
+You can use different types of arithmetic simultaneously and the
+choice can be easily changed, e.g.\ for testing.  So you can choose
+between implementations with fast but occasionally inexact arithmetic
+and implementations guaranteeing exact computation and exact results.
+Of course you have to pay for the exactness in terms of execution time
+and storage space.  See the dedicated chapter for more details
+on number types and their capabilities and performance.
+
+\subsection{Genericity}
+
+To increase generic usage of objects and predicates the
+higher-dimensional kernel makes heavy use of iterator ranges as
+defined in the STL for modeling tuples. Iterators conceptualize C++
+pointers. 
+
+For an iterator range \ccc{[first,last)} we define \ccc{T = tuple
+  [first,last)} as the ordered tuple $(T[0],T[1], \ldots T[d-1])$
+where $S[i] = *++^{(i)}\mathit{first}$ (the element obtained by $i$
+times forwarding the iterator by operator \ccc{++} and then
+dereferencing it to get the value to which it points).  We write \ccc{d
+  = size [first,last)} and \ccc{S = set [first,last)} to denote the
+unordered set of elements of the corresponding tuple.
+
+This extends the syntax of random access iterators to input iterators.
+If we index the tuple as above then we require that
+$++^{(d+1)}\mathit{first} = \mathit{last}$.
+

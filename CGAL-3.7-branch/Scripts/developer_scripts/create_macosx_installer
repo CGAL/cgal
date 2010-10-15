@@ -1,0 +1,78 @@
+#!/bin/tcsh
+#
+# create the MacOSX CGAL disk image and package
+#
+# For releases 3.2 and on
+#
+# The script assumes that the current directory is the MacOSX_Installer
+# directory of the Maintenance package
+#
+# Author(s): Menelaos Karavelas, 2006
+
+# Modify the following lines according to your release and configuration
+
+# modify the following line for your release
+setenv CGALVER $2
+
+# modify the following line to reflect the size of the disk image you
+# want to create
+setenv VOLSIZE 7m
+
+# modify the following lines if the MacOSX applications reside at different
+# paths than the ones shown below
+setenv HDIUTIL /usr/bin/hdiutil
+setenv PACKAGEMAKERAPP /Developer/Applications/Utilities/PackageMaker.app
+setenv PACKAGEMAKER ${PACKAGEMAKERAPP}/Contents/MacOS/PackageMaker
+
+# this is the directory where the script temporarily puts files 
+setenv TMP_ROOT /tmp/MacOSX_Installer
+
+####### DO NOT TOUCH ANYTHING BEYIND THIS POINT #######
+setenv CUR_DIR `pwd`
+setenv VOLNAME CGAL-${CGALVER}
+
+# cleanup files that should not be there
+rm -f ${VOLNAME}.dmg
+rm -fr ${TMP_ROOT}
+
+# create a copy of the CGAL package structure
+mkdir -p ${TMP_ROOT}
+cp -rp Package_root ${TMP_ROOT}
+cp -rp Resources ${TMP_ROOT}
+cp -rp CGAL-absolute.pmproj ${TMP_ROOT}
+cd ${TMP_ROOT}
+
+# copy the CGAL tarball at its correct place and uncompress it
+cp -p $1 Package_root
+cd Package_root
+tar xvfz CGAL-${CGALVER}.tar.gz
+rm -f CGAL-${CGALVER}.tar.gz
+
+# now the building phase starts
+cd ..
+
+# build the package
+${PACKAGEMAKER} -build -ds -proj CGAL-absolute.pmproj -p CGAL.pkg -v
+
+# create the disk image
+${HDIUTIL} create -ov -size ${VOLSIZE} -fs HFS+ -type UDIF -volname ${VOLNAME} CGAL-tmp.dmg
+
+# mount the disk image
+${HDIUTIL} attach CGAL-tmp.dmg
+
+# move the CGAL package to the disk image
+mv CGAL.pkg /Volumes/${VOLNAME}
+
+# unmount the disk image
+${HDIUTIL} detach /Volumes/${VOLNAME}
+
+# convert the disk image to a read-only one
+${HDIUTIL} convert -ov CGAL-tmp.dmg -format UDRO -o CGAL-RO.dmg
+rm -f CGAL-tmp.dmg
+
+# copy the converted disk image to the original directory
+cp -p CGAL-RO.dmg ${CUR_DIR}/${VOLNAME}.dmg
+
+# cleanup temporary files
+rm -fr ${TMP_ROOT}
+

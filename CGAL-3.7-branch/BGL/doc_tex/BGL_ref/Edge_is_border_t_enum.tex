@@ -1,0 +1,33 @@
+\begin{ccRefEnum}{edge_is_border_t}
+
+\ccInclude{CGAL/boost/graph/properties.h}
+
+\ccGlobalEnum{enum edge_is_border_t { edge_is_border } ; }
+\ccRefLabel{edge_is_border}
+\ccHtmlCrossLink{edge_is_border}
+
+The constant \ccc{edge_is_border} is a 
+\ccAnchor{http://www.boost.org/libs/graph/doc/PropertyTag.html}
+{property tag} which refers to the property
+of an edge of being a border edge.
+
+\ccc{edge_is_border} is an 
+\ccAnchor{http://www.boost.org/libs/graph/doc/using_property_maps.html}
+{interior property}. 
+That is, a
+\ccAnchor{http://www.boost.org/libs/property_map/doc/property_map.html}{property map} 
+for \ccc{edge_is_border} can be extracted from any model of a \ccc{HalfedgeGraph}
+using the {\sc Bgl}
+\ccAnchor{http://www.boost.org/libs/graph/doc/PropertyGraph.html}
+{PropertyGraph} interface:
+
+\ccc{boost::get(edge_is_border,graph)}
+
+The Boolean flag that indicates if the edge is a border can be directly accessed via:
+
+\ccc{boost::get(edge_is_border,graph,edge)}.
+
+
+\end{ccRefEnum}
+
+

@@ -1,0 +1,73 @@
+\begin{ccRefClass}{Circular_arc_point_3<SphericalKernel>}
+
+\ccInclude{CGAL/Circular_arc_point_3.h}
+
+\ccIsModel
+
+\ccc{SphericalKernel::CircularArcPoint_3}
+
+\ccCreation
+\ccCreationVariable{p}
+
+\ccThree{Circular_arc_point_3}{ca.is_x_monotone()}{}
+\ccThreeToTwo
+
+\ccConstructor{Circular_arc_point_3(const Point_3<SphericalKernel> &q)}{}
+
+\ccConstructor{Circular_arc_point_3(const SphericalKernel::Root_for_spheres_2_3 &r)}{}
+
+\ccAccessFunctions
+
+\ccThree{SphericalKernel::Root_of_2}{ca.is_x_monotone()}{}
+\ccThreeToTwo
+
+\ccMethod{const SphericalKernel::Root_of_2 & x();}{$x$-coordinate of the point.}
+\ccGlue
+\ccMethod{const SphericalKernel::Root_of_2 & y();}{$y$-coordinate of the point.}
+\ccGlue
+\ccMethod{const SphericalKernel::Root_of_2 & z();}{$z$-coordinate of the point.}
+
+\ccMethod{Bbox_3 bbox() const;}
+{Returns a bounding box around the point.}
+
+\ccOperations
+
+\ccFunction{bool operator==(const Circular_arc_point_3<SphericalKernel> &p,
+			const Circular_arc_point_3<SphericalKernel> &q);}
+{Test for equality. Two points are equal, iff their $x$, $y$ and $z$ 
+coordinates are equal.} 
+
+\ccFunction{bool operator!=(const Circular_arc_point_3<SphericalKernel> &p,
+			const Circular_arc_point_3<SphericalKernel> &q);}
+{Test for nonequality.} 
+
+\ccFunction{bool operator<(const Circular_arc_point_3<SphericalKernel> &p,
+			const Circular_arc_point_3<SphericalKernel> &q);}
+{Returns true iff $p$ is lexicographically smaller than $q$, i.e. either 
+if $p.x() < q.x()$ or if $p.x() == q.x()$ and $p.y() < q.y()$
+or if $p.x() == q.x()$ and $p.y() == q.y()$ and $p.z() < q.z()$.}
+
+\ccFunction{bool operator>(const Circular_arc_point_3<SphericalKernel> &p,
+			const Circular_arc_point_3<SphericalKernel> &q);}
+{Returns true iff $p$ is lexicographically greater than $q$.}
+
+\ccFunction{bool operator<=(const Circular_arc_point_3<SphericalKernel> &p,
+			const Circular_arc_point_3<SphericalKernel> &q);}
+{Returns true iff $p$ is lexicographically smaller than or equal to $q$.}
+
+\ccFunction{bool operator>=(const Circular_arc_point_3<SphericalKernel> &p,
+			const Circular_arc_point_3<SphericalKernel> &q);}
+{Returns true iff $p$ is lexicographically greater than or equal to $q$.}
+
+\ccHeading{I/O}
+
+\ccFunction{istream& operator>> (std::istream& is, Circular_arc_point_3 & p);}{}
+\ccGlue
+\ccFunction{ostream& operator<< (std::ostream& os, const Circular_arc_point_3 &p);}{}
+
+\ccSeeAlso
+
+\ccRefIdfierPage{CGAL::Circular_arc_3<SphericalKernel>}\\
+\ccRefIdfierPage{CGAL::Line_arc_3<SphericalKernel>}
+
+\end{ccRefClass}

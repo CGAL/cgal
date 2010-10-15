@@ -1,0 +1,39 @@
+\begin{ccRefConcept}{PolynomialTraits_d::Evaluate}
+\ccDefinition
+
+This \ccc{AdaptableBinaryFunction} evaluates
+\ccc{PolynomialTraits_d::Polynomial_d} with respect to one variable. 
+
+\ccRefines 
+\ccc{AdaptableBinaryFunction}\\
+\ccc{CopyConstructible}\\
+\ccc{DefaultConstructible}\\
+
+\ccTypes
+
+\ccSetThreeColumns{xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx}{xxx}{}
+\ccCreationVariable{fo}
+\ccTypedef{typedef PolynomialTraits_d::Coefficient_type    result_type;}{}\ccGlue
+\ccTypedef{typedef PolynomialTraits_d::Polynomial_d   first_argument_type;}{}\ccGlue
+\ccTypedef{typedef PolynomialTraits_d::Coefficient_type    second_argument_type;}{}
+
+\ccOperations
+\ccMethod{result_type operator()(first_argument_type  p,
+                                 second_argument_type x);}
+         { Returns $p(x)$, with respect to the outermost variable. }
+
+%\ccMethod{result_type operator()(first_argument_type  p,
+%                                 second_argument_type x,
+%                                 int i);}
+%         { Returns $p(x)$, with respect to variable $x_i$. 
+%          \ccPrecond $0 \leq i  < d$
+%         }
+
+%\ccHasModels
+
+\ccSeeAlso
+
+\ccRefIdfierPage{Polynomial_d}\\
+\ccRefIdfierPage{PolynomialTraits_d}\\
+
+\end{ccRefConcept}

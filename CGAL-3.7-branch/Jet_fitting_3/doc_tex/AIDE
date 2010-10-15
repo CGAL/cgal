@@ -1,0 +1,18 @@
+~/devc/svn-cgal/Manual/developer_scripts/cgal_manual -ps Jet_fitting_3 (or _ref)
+
+
+create manual with cgal_manual from the doc_tex dir
+
+create templates for ref_man_pages with cc_refe_wizard + type + name,
+update data for the packge in ${HOME}\cc_ref_wizard_rc
+
+create main.tex of ref man from here with cc_make_ref_pages Ridges_3_ref
+
+voir cc_manual.pdf in Manual_tools/doc_pdf  WARNING the html is not comprehensive
+
+pour creer les assersions : utiliser une version intern cgal:
+CGAL3.?.?/developer_scripts/create_assertions.sh fichier(sans le .h)
+ ou sur le package directory???
+dans le rep package_ref
+
+update the biblio file in Manual/doc_tex/Manual/cgal_manual.bib

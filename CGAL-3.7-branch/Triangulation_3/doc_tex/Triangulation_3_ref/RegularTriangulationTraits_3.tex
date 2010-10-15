@@ -1,0 +1,198 @@
+% +------------------------------------------------------------------------+
+% | Reference manual page: Triangulation_Traits_3.tex
+% +------------------------------------------------------------------------+
+% | 27.3.2000   Monique Teillaud
+% | Package: Triangulation3
+% | 
+\RCSdef{\RCSTriangulationTraitsRev}{$Id$}
+\RCSdefDate{\RCSTriangulationTraitsDate}{$Date$}
+% |
+%%RefPage: end of header, begin of main body
+% +------------------------------------------------------------------------+
+
+
+\begin{ccRefConcept}{RegularTriangulationTraits_3}
+
+\ccDefinition
+The concept \ccRefName\ is the first template parameter of the class
+\ccc{Regular_triangulation_3}. It defines the geometric objects (points,
+segments...) forming the triangulation together with a few geometric
+predicates and constructions on these objects.
+
+\ccRefines \ccc{TriangulationTraits_3}
+
+In addition to the requirements described for the traits class of
+\ccc{Triangulation_3}, the geometric traits class of
+\ccc{Regular_triangulation_3} must fulfill the following requirements.
+%It must provide definitions for the \textit{power tests}.
+
+
+\ccTypes
+\ccTwo{DelaunayTriangulationTraits_3::Object_3_xxxxx}{}
+
+\ccNestedType{Line_3}{The line type.}
+\ccGlue
+\ccNestedType{Object_3}{The object type.}
+\ccGlue
+\ccNestedType{Plane_3}{The plane type.}
+\ccGlue
+\ccNestedType{Ray_3}{The ray type.}
+
+
+
+
+We use here the same notation as in
+Section~\ref{Triangulation3-sec-class-Regulartriangulation}. 
+To simplify notation, $p$ will often denote in the sequel either the
+point $p\in\R^3$ or the weighted point ${p}^{(w)}=(p,w_p)$.
+
+\ccTwo{RegularTriangulationTraits_3::Weighted_point_3xx}{}
+\ccNestedType{Weighted_point_3}{The weighted point type.}
+
+\ccTwo{Regular}{}
+\ccNestedType{Power_test_3}
+{A predicate object which must provide the following function operators:
+%
+\\
+\\
+\ccc{Oriented_side operator()( Weighted_point_3 p,
+			    Weighted_point_3 q,
+			    Weighted_point_3 r,
+			    Weighted_point_3 s,
+			    Weighted_point_3 t)},\\
+which performs the following:\\
+Let ${z(p,q,r,s)}^{(w)}$ be the power sphere of the weighted points 
+$(p,q,r,s)$. Returns \\
+\ccc{ON_ORIENTED_BOUNDARY} if \ccc{t} is orthogonal to
+${z(p,q,r,s)}^{(w)}$,\\ 
+\ccc{ON_NEGATIVE_SIDE} if \ccc{t} lies outside the oriented sphere of
+center $z(p,q,r,s)$ and radius $\sqrt{ w_{z(p,q,r,s)}^2 + w_t^2 }$
+(which is equivalent to $\Pi({t}^{(w)},{z(p,q,r,s)}^{(w)} >0$)),\\
+\ccc{ON_POSITIVE_SIDE} if \ccc{t} lies inside this oriented sphere.
+\ccPrecond{\ccc{p, q, r, s} are not coplanar.}
+%
+Note that with this definition, if all the points have a weight equal
+to 0, then
+\ccc{power_test_3(p,q,r,s,t)} = \ccc{side_of_oriented_sphere(p,q,r,s,t)}.
+%
+%
+\\
+\\
+\ccc{Oriented_side operator()( Weighted_point_3 p,
+			    Weighted_point_3 q,
+			    Weighted_point_3 r,
+			    Weighted_point_3 t)},\\
+which has an
+definition analogous to the previous method, for coplanar points,
+with the power circle ${z(p,q,r)}^{(w)}$.
+\ccPrecond{\ccc{p, q, r} are not collinear and \ccc{p, q, r, t} are
+coplanar.}
+%
+If all the points have a weight equal to 0, then
+\ccc{power_test_3(p,q,r,t)} = \ccc{side_of_oriented_circle(p,q,r,t)}.
+%
+\\
+\\
+\ccc{Oriented_side operator()( Weighted_point_3 p,
+			    Weighted_point_3 q,
+			    Weighted_point_3 t)},\\
+which is the same for collinear points, where ${z(p,q)}^{(w)}$ is the
+power segment of \ccc{p} and \ccc{q}.
+\ccPrecond{\ccc{p} and \ccc{q} have different Bare\_points, and
+\ccc{p, q, t} are collinear.}
+%
+If all points have a weight equal to 0, then
+\ccc{power_test_3(p,q,t)} gives the same answer as the kernel predicate
+\ccc{s(p,q).has_on(t)} would give, where  \ccc{s(p,q)} denotes the
+segment with endpoints \ccc{p} and \ccc{q}.
+%
+\\
+\\
+\ccc{Oriented_side operator()( Weighted_point_3 p, Weighted_point_3 q)},\\
+which is the same for equal points, that is when \ccc{p} and \ccc{q}
+have equal coordinates, then it returns the comparison of the weights
+(\ccc{ON_POSITIVE_SIDE} when \ccc{q} is heavier than \ccc{p}).
+\ccPrecond{\ccc{p} and \ccc{q} have equal Bare\_points.}
+}
+
+The following predicate is required if  a call to
+\ccc{nearest_power_vertex}
+or \ccc{nearest_power_vertex_in_cell} is issued: 
+
+\ccNestedType{Compare_power_distance_3}
+{A predicate object that must provide the function operator\\
+\ccc{Comparison_result operator()(Point_3 p, Weighted_point_3 q, 
+Weighted_point_3 r)},\\
+which compares the power distance between \ccc{p} and \ccc{q} 
+to the power distance
+between \ccc{p} and \ccc{r}.}
+
+In addition, only when the dual operations are used, the traits class
+must provide the following constructor objects: 
+
+\ccTwo{DelaunayTriangulationTraits_3}{}
+\ccNestedType{Construct_weighted_circumcenter_3}
+{A constructor type. The operator()  constructs the bare point
+ which is the center of the smallest orthogonal sphere to the input
+weighted points. \\
+\ccc{Bare_point operator() ( Weighted_point_3  p,
+			   Weighted_point_3  q,
+			   Weighted_point_3  r,
+			   Weighted_point_3  s);}
+}
+\ccGlue
+\ccNestedType{Construct_object_3}
+{A constructor object that must provide the function operators\\
+\ccc{Object_3 operator()(Point_3 p)},\\
+\ccc{Object_3 operator()(Segment_3 s)} and\\
+\ccc{Object_3 operator()(Ray_3 r)}\\
+that construct an object respectively from a point, a segment and a ray.}
+\ccGlue
+\ccNestedType{Construct_perpendicular_line_3}
+{A constructor object that must provide the function operator\\
+\ccc{Line_3 operator()(Plane_3 pl, Point_3 p)},\\
+which constructs the line perpendicular to \ccc{pl} passing through \ccc{p}.}
+\ccGlue
+\ccNestedType{Construct_plane_3}
+{A constructor object that must provide the function operator\\
+\ccc{Plane_3 operator()(Point_3 p, Point_3 q, Point_3 r)},\\
+which constructs the plane passing through \ccc{p}, \ccc{q} and \ccc{r}.
+\ccPrecond{\ccc{p}, \ccc{q} and \ccc{r} are non collinear.}}
+\ccGlue
+\ccNestedType{Construct_ray_3}
+{A constructor object that must provide the function operator\\
+\ccc{Ray_3 operator()(Point_3 p, Line_3 l)},\\
+which constructs the ray starting at \ccc{p} with direction given by \ccc{l}.}
+
+
+
+
+
+\ccOperations
+
+The following function gives access to the predicate object:
+\ccThree{coplanar_side_of_bounded}{gt.xxxxxxxxx(Point p0, Point p1)x}{}
+\ccCreationVariable{traits}  %% choose variable name
+
+\ccMethod{Power_test_3 power_test_3_object();}{}
+
+The following functions must be provided only if the member functions
+ of  \ccc{Regular_triangulation_3} returning elements of the dual diagram 
+are called:
+
+\ccMethod{Construct_weighted_circumcenter_3 construct_weighted_circumcenter_3_object();}{}
+\ccGlue
+\ccMethod{Construct_object_3 construct_object_3_object();}{}
+\ccGlue
+\ccMethod{Construct_perpendicular_line_3 construct_perpendicular_line_object();}{}
+\ccGlue
+\ccMethod{Construct_plane_3 construct_plane_3_object();}{}
+\ccGlue
+\ccMethod{Construct_ray_3 construct_ray_3_object();}{}
+
+\ccHasModels
+
+\ccc{CGAL::Regular_triangulation_euclidean_traits_3}\\
+
+
+\end{ccRefConcept}

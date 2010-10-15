@@ -1,0 +1,108 @@
+\section{Introduction}
+
+The goal of the circular kernel is to offer to the user a large set of
+functionalities on circles and circular arcs in the plane. All the
+choices (interface, robustness, representation, and so on) made here
+are consistent with the choices made in the \cgal\ kernel, for which we
+refer the user to the 2D kernel manual. 
+
+In this first release, all functionalities necessary for computing an
+arrangement of circular arcs and these line segments are
+defined. Three traits classes are provided for the \cgal\ arrangement
+package. 
+
+\section{Software Design}
+
+The design is done in such a way that the algebraic concepts and the
+geometric concepts are clearly separated. \ccc{Circular_kernel_2}
+has therefore two template parameters: 
+\begin{itemize}
+\item {} the first parameter must model the \cgal\ 
+three dimensional \ccc{Kernel} concept. The circular kernel derives
+from it, and it provides all elementary geometric objects like points,
+lines, circles, and elementary functionality on them. 
+%The \cgal\ 2D Kernel can be used as parameter,
+%but the user may plug his own kernel 
+%instead, as long as it follows the \cgal\ kernel concept. 
+\item {} the second parameter is the algebraic kernel, which is 
+responsible for computations on polynomials and algebraic numbers. It 
+has to be a model of concept \ccc{AlgebraicKernelForCircles}. The
+robustness of the package relies on the fact that the algebraic kernel
+provides exact computations on algebraic objects.
+\end{itemize}
+
+The circular kernel uses the extensibility scheme presented in the 2D
+kernel manual (see Section~\ref{section-extensible-kernel}). 
+The types of \ccc{Kernel} are inherited
+by the circular kernel and some types are taken from the
+\ccc{AlgebraicKernelForCircles} parameter. Three new main geometric objects are
+introduced by \ccc{Circular_kernel_2}: circular arcs, points of
+circular arcs (used in particular for endpoints of arcs and
+intersection points between arcs) and line segments whose endpoints
+are points of this new type.  
+
+In fact, the circular kernel is documented as a concept, \ccc{CircularKernel}, 
+and two models are provided: 
+\begin{itemize}
+\item {} \ccc{Circular_kernel_2<Kernel,AlgebraicKernelForCircles>}, the basic kernel, 
+\item {} and
+a predefined filtered kernel \ccc{Exact_circular_kernel_2}, 
+that is based on similar techniques as 
+\ccc{Exact_predicates_exact_constructions_kernel}. 
+\end{itemize}
+
+% those comments may need to be updated
+%several filtered kernels are built on top of this basic kernel to
+%increase effciency:\\
+%\ccc{Lazy_curved_kernel<??>}, \\
+%\ccc{Filtered_hexagon_curved_kernel<CircularKernel>}, and\\
+%\ccc{Filtered_bbox_curved_kernel<CircularKernel>}. \\
+%Kernels are enumerated here from finest to coarsest filtering
+%technique. As in the 2D \cgal\ kernel, the idea is that cascading
+%filters should give the most efficient result \footnote{In practice,
+%benchmarking should still be done and further optimizations will be
+%provided for future releases.}
+
+\section{Examples}
+
+The first example shows how to construct circles or circular arcs from
+points, and how to compute intersections between them using the global
+function.
+
+\ccIncludeExampleCode{Circular_kernel_2/intersecting_arcs.cpp}
+
+The following example shows how to use a functor of the kernel.
+
+\ccIncludeExampleCode{Circular_kernel_2/functor_has_on_2.cpp}
+
+\section{Design and Implementation History}
+
+The first pieces of prototype code were comparisons of algebraic
+numbers of degree~2, written by Olivier Devillers
+\cite{cgal:dfmt-amafe-00,cgal:dfmt-amafe-02}, and that are still used
+in the current implementation of \ccc{CGAL::Root_of_2}.
+
+Some work was then done in the direction of a ``kernel'' for
+\cgal.\footnote{Monique Teillaud, First Prototype of a
+\cgal\ Geometric Kernel with Circular Arcs, Technical Report
+ECG-TR-182203-01, 2002\\Sylvain Pion and Monique Teillaud,
+Towards a \cgal-like kernel for curves, Technical Report
+ECG-TR-302206-01, 2003} and the first design emerged in
+\cite{cgal:ekptt-tock-04}.
+
+The code of this package was initially written by Sylvain Pion and
+Monique Teillaud who also wrote the manual. Athanasios Kakargias had
+worked on a prototype version of this kernel in 2003. Julien
+Hazebrouck participated in the implementation in July and August
+2005. The contribution of Pedro Machado Manh\~{a}es de Castro in
+summer 2006 improved significantly the efficiency of this kernel.  He
+also added more functionality in 2008.
+
+This work was partially supported by the IST Programme of the EU as a
+Shared-cost RTD (FET Open) Project under Contract No IST-2000-26473
+(\ccAnchor{http://www-sop.inria.fr/prisme/ECG/}{ECG} - Effective
+Computational Geometry for Curves and Surfaces) and by the IST
+Programme of the 6th Framework Programme of the EU as a STREP (FET
+Open Scheme) Project under Contract No IST-006413
+(\ccAnchor{http://acs.cs.rug.nl/}{ACS} - Algorithms for Complex
+Shapes).

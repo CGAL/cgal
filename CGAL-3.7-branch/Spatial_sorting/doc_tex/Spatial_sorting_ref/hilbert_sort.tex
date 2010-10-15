@@ -1,0 +1,56 @@
+% +------------------------------------------------------------------------+
+% | Reference manual page: hilbert_sort.tex
+% +------------------------------------------------------------------------+
+% | 05.06.2006   Christophe Delage
+% | Package: Spatial_sorting
+% | 
+% |
+%%RefPage: end of header, begin of main body
+% +------------------------------------------------------------------------+
+
+
+\begin{ccRefFunction}{hilbert_sort}  %% add template arg's if necessary
+
+%% \ccHtmlCrossLink{}     %% add further rules for cross referencing links
+%% \ccHtmlIndexC[function]{} %% add further index entries
+
+\ccDefinition
+  
+The function \ccRefName\ sorts an iterator range of points
+along a Hilbert curve.
+
+\ccInclude{CGAL/hilbert_sort.h}
+
+\ccGlobalFunction{template <class RandomAccessIterator, class Traits>
+                  void
+                  hilbert_sort( RandomAccessIterator begin,
+                                RandomAccessIterator end,
+                                const Traits& traits = Default_traits);}%
+                 {sorts the range [\ccc{begin},\ccc{end}) in place.}
+                 
+The default traits class \ccc{Default_traits} is the kernel in which the type
+\ccc{RandomAccessIterator::value_type} is defined.
+
+\ccHeading{Requirements}
+\begin{enumerate}
+\item  \ccc{RandomAccessIterator::value_type} is convertible to
+\ccc{Traits::Point_2} or \ccc{Traits::Point_3}.
+\item    \ccc{Traits} is a model for concept \ccc{SpatialSortingTraits_2} or \ccc{SpatialSortingTraits_3}.
+\end{enumerate}
+
+\ccImplementation
+
+Creates an instance of \ccc{Hilbert_sort_2<Traits>} or
+\ccc{Hilbert_sort_3<Traits>} and calls its \ccc{operator()}.
+
+%\ccc{Some_other_class},
+%\ccc{some_other_function}.
+
+
+\end{ccRefFunction}
+
+% +------------------------------------------------------------------------+
+%%RefPage: end of main body, begin of footer
+% EOF
+% +------------------------------------------------------------------------+
+

@@ -1,0 +1,186 @@
+%% Copyright (c) 2007 GeometryFactory (France).  All rights reserved.
+%%
+%% This file is part of CGAL (www.cgal.org); you may redistribute it under
+%% the terms of the Q Public License version 1.0.
+%% See the file LICENSE.QPL distributed with CGAL.
+%%
+%% Licensees holding a valid commercial license may use this file in
+%% accordance with the commercial license agreement provided with the software.
+%%
+%% This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
+%% WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
+%%
+%% 
+%%
+%% Author(s)     : Fernando Cacciola <fernando.cacciola@geometryfactory.com>
+
+
+\begin{ccRefFunction}{Surface_mesh_simplification::edge_collapse}
+
+%% add template arg's if necessary
+
+%% \ccHtmlCrossLink{}     %% add further rules for cross referencing links
+%% \ccHtmlIndexC[class]{} %% add further index entries
+\ccDefinition
+
+The function \ccRefName\ simplifies in-place a triangulated surface mesh by iteratively collapsing edges.
+
+\ccInclude{CGAL/Surface_mesh_simplification/edge_collapse.h}
+
+\ccFunction
+{
+template<class EdgeCollapsableMesh,class StopPredicate, class P, class T, class R>
+int edge_collapse ( EdgeCollapsableMesh&           surface
+                  , StopPredicate           const& should_stop
+                  , sms_named_params<P,T,R> const& named_parameters
+                  ) ;
+}
+{Simplifies \ccc{surface} in-place by collapsing edges, and returns
+the number of edges effectively removed.
+}
+
+
+\ccHeading{Non-named parameters}
+
+\ccc{surface} is the surface to simplify. 
+It must be a model of the \ccc{EdgeCollapsableMesh} concept.
+
+\ccc{should_stop} is the stop-condition policy.
+It must be a model of the \ccc{StopPredicate} concept.
+
+\ccHeading{Named parameters}
+
+\ccc{named_parameters} holds the list of all the additional parameters 
+used by the \ccc{edge_collapse} function (including default parameters).
+
+The named parameters list is a composition of function calls separated by a dot ($.$) where
+the name of each function matches the name of an argument and wraps the actual parameter.
+
+This is an example with 2 arguments:
+
+\ccc{vertex_index_map(the_actual_vertex_index_map).edge_index_map(the_actual_edge_index_map)}
+
+\ccc{the_actual_vertex_index_map} and \ccc{the_actual_edge_index_map} are
+the actual parameters, while \ccc{vertex_index_map()} and \ccc{edge_index_map()}
+are wrapper functions used to designate each formal argument.
+
+All named parameters have default values so you only need to compose those for which the default
+is inappropriate. Furthermore, since each actual parameter is wrapped in a function whose name
+designates the formal argument, the order of named parameters in the list is totally irrelevant.
+
+In the following subsections, each named parameter is documented as a helper function. The argument to each helper
+function is the actual parameter to \ccc{edge_collapse()}, while the name of the helper 
+function designates which formal argument it is.
+
+\subsubsection*{vertex\_index\_map(VertexIndexMap vpm)}
+
+Maps each vertex in the surface into an unsigned integer number
+in the range \ccc{[0,num_vertices(surface))}.
+
+\ccc{VertexIndexMap} must be a
+\ccAnchor{http://www.boost.org/libs/property_map/doc/ReadablePropertyMap.html}{ReadablePropertyMap} 
+whose \ccc{key_type} is
+\ccc{boost::graph_traits<EdgeCollapsableMesh const>::vertex_descriptor}
+and whose \ccc{value_type} is 
+\ccc{boost::graph_traits<EdgeCollapsableMesh>::size_type},
+
+\textbf{Default}: the property map obtained by calling \ccc{get(vertex_index,surface)},
+which requires the surface vertices to have an \ccc{id()} member properly initialized to the 
+required value.\\
+If the vertices don't have such an \ccc{id()}, you must pass some property map explicitly.
+An external property map can be easily obtained by calling 
+\ccc{get(vertex_external_index,surface)}. This constructs on the fly, and returns,
+a property map which non-intrusively associates a proper id with each vertex.
+
+\subsubsection*{edge\_index\_map(EdgeIndexMap eim)} 
+
+Maps each {\em directed} edge in the surface into an unsigned integer number
+in the range \ccc{[0,num_edges(surface))}.
+
+\ccc{EdgeIndexMap} must be a
+\ccAnchor{http://www.boost.org/libs/property_map/doc/ReadablePropertyMap.html}{ReadablePropertyMap} 
+whose \ccc{key_type} is
+\ccc{boost::graph_traits<EdgeCollapsableMesh const>::edge_descriptor}
+and whose \ccc{value_type} is 
+\ccc{boost::graph_traits<EdgeCollapsableMesh>::size_type}
+
+\textbf{Default}: the property map obtained by calling \ccc{get(edge_index,surface)},
+which requires the surface edges to have an \ccc{id()} member properly initialized to the 
+require value.\\
+If the edges don't have such an \ccc{id()}, you must pass some property map explicitly.
+An external property map can be easily obtained by calling 
+\ccc{get(edge_external_index,surface)}. This constructs on the fly, and returns,
+a property map which non-intrusively associates a proper id with each edge.
+
+\subsubsection*{edge\_is\_border\_map(EdgeIsBorderMap ebm)} 
+
+Maps each {\em directed} edge in the surface into a Boolean value
+which indicates if the edge belongs to the boundary of the surface
+(facing the outside).
+\ccc{EdgeIsBorderMap} must be a 
+\ccAnchor{http://www.boost.org/libs/property_map/doc/ReadablePropertyMap.html}{ReadablePropertyMap} 
+whose \ccc{key_type} is
+\ccc{boost::graph_traits<EdgeCollapsableMesh const>::edge_descriptor}
+and whose \ccc{value_type} is \ccc{bool}.
+
+\textbf{Default}: the property map obtained by calling \ccc{get(edge_is_border,surface)}.
+
+\subsubsection*{get\_cost(GetCost gc)}
+
+The policy which returns the collapse cost for an edge.\\
+The type of \ccc{gc} must be a model of the \ccc{GetCost} concept.
+
+\textbf{Default}: 
+\ccc{CGAL::Surface_mesh_simplification::LindstromTurk_cost<EdgeCollapsableMesh>}.
+
+\subsubsection*{get\_placement(GetPlacement gp)}
+
+The policy which returns the placement (position of the replacemet vertex)
+for an edge.\\
+The type of \ccc{gp} must be a model of the \ccc{GetPlacement} concept.
+
+\textbf{Default}: 
+\ccc{CGAL::Surface_mesh_simplification::LindstromTurk_placement<EdgeCollapsableMesh>}
+
+\subsubsection*{visitor(EdgeCollapseSimplificationVisitor v)}
+
+The visitor that is called by the \ccc{edge_collapse} function
+in certain points to allow the user to track the simplification process.\\
+The type of \ccc{v} must be a model of the \ccc{EdgeCollapseSimplificationVisitor} concept.
+
+\textbf{Default: an implementation-defined dummy visitor}.
+
+If you wish to provide your own visitor, you can derive from:
+\ccc{CGAL::Surface_mesh_simplification::Edge_collapse_visitor_base<EdgeCollapsableMesh>}
+and override only the callbacks you are interested in.
+
+
+
+
+All these functions naming parameters are defined in
+\ccc{namespace CGAL}. Being non-member functions, they could clash
+with equally named functions in some other namespace. If that happens,
+simply qualify the {\em first} 
+\footnote{The second and subsequent named parameters shall not be qualified as they are member functions}
+named parameter with \ccc{CGAL::}, as shown in the examples in the user manual.
+
+\ccHeading{Semantics}
+
+The simplification process continues until the \ccc{should_stop} policy returns \ccc{true}
+or the surface cannot be simplified any further due to topological constraints.
+
+\ccc{get_cost} and \ccc{get_placement} are the policies which control
+the {\em cost-strategy}, that is, the order in which edges are collapsed 
+and the remaining vertex is re-positioned.
+
+\ccc{visitor} is used to keep track of the simplification process. It has several member functions which
+are called at certain points in the simplification code.
+
+\end{ccRefFunction}
+
+
+% +------------------------------------------------------------------------+
+%%RefPage: end of main body, begin of footer
+% EOF
+% +------------------------------------------------------------------------+
+

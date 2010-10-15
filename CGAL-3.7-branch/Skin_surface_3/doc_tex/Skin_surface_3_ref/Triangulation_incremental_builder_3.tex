@@ -1,0 +1,68 @@
+% +------------------------------------------------------------------------+
+% | Reference manual page: Triangulation_incremental_builder_3.tex
+% +------------------------------------------------------------------------+
+% | 27.09.2005   Nico Kruithof
+% | Package: Skin_surface
+% | 
+\RCSdef{\RCSTriangulationincrementalbuilderRev}{$Id$}
+\RCSdefDate{\RCSTriangulationincrementalbuilderDate}{$Date$}
+% +------------------------------------------------------------------------+
+
+\ccRefPageBegin
+
+%%RefPage: end of header, begin of main body
+% +------------------------------------------------------------------------+
+
+
+\begin{ccRefClass}{Triangulation_incremental_builder_3<Triangulation_3>}
+\label{refTriangulationincrementalbuilder}
+\ccDefinition
+  
+The \ccRefName\ supports the incremental construction of a
+triangulation from a set of vertices and cells. First the vertices of
+the triangulation are inserted. Then the cells are inserted as
+quadruples of four vertices. The orientation of each cell is supposed
+to be positive.
+
+\ccInclude{CGAL/Triangulation_incremental_builder_3.h}
+
+
+\ccThree{typedef T::Vertex_handle}{Triang}{}
+\ccThreeToTwo
+
+\ccTypes
+
+\ccTypedef{typedef Triangulation_3 T;}{}
+
+\ccTypedef{typedef T::Vertex_handle Vertex_handle;}{}
+\ccGlue
+\ccTypedef{typedef T::Cell_handle Cell_handle;}{}
+\ccGlue
+\ccTypedef{typedef T::Facet Facet;}{}
+
+\ccThree{Vertex_handle}{Triang}{}
+\ccThreeToTwo
+
+
+\ccCreation
+\ccCreationVariable{observer}
+
+\ccConstructor{Triangulation_incremental_builder_3( T &t, bool verbose
+  = false);}{}
+
+\ccOperations
+
+\ccMethod{void begin_triangulation(int dim);}{Initializes the
+  triangulation and sets the dimension to \ccc{dim}.}
+
+\ccMethod{void end_triangulation();}{Finalizes the triangulation.}
+
+\ccMethod{Vertex_handle add_vertex();}{Adds a vertex to the
+  triangulation and returns a pointer to the vertex.}
+
+\ccMethod{Cell_handle add_cell(Vertex_handle vh0, Vertex_handle vh1,
+  Vertex_handle vh2, Vertex_handle vh3);}{Adds a cell to the
+  triangulation with the given vertices. Only finite cells have to be
+  specified.}
+
+\end{ccRefClass}

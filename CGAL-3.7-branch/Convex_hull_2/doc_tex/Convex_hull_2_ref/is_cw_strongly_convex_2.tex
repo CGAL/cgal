@@ -1,0 +1,70 @@
+% +------------------------------------------------------------------------+
+% | Reference manual page: is_cw_strongly_convex_2.tex
+% +------------------------------------------------------------------------+
+% | 09.05.2001   Susan Hert and Stefan Schirra
+% | Package: Convex_hull_2
+% | 
+% +------------------------------------------------------------------------+
+
+
+\begin{ccRefFunction}{is_cw_strongly_convex_2}  
+\ccIndexMainItemBegin{convexity checking, 2D}
+\ccIndexSubitemBegin{polygon}{strongly convex}
+\ccIndexSubitemBegin{strongly convex}{polygon}
+
+\ccDefinition
+  
+The function \ccRefName\ determines if a given sequence of points defines
+a clockwise-oriented, strongly convex polygon.  
+A set of points is said to be strongly convex %
+\ccIndexMainItemDef{strongly convex} if it consists of only extreme points
+(\textit{i.e.}, vertices of the convex hull).
+
+
+\ccInclude{CGAL/convexity_check_2.h}
+
+\ccFunction{template <class ForwardIterator, class Traits>
+            bool
+            is_cw_strongly_convex_2( 
+                               ForwardIterator first,
+                               ForwardIterator beyond,
+                               const Traits & ch_traits = Default_traits);}
+           {returns \ccc{true}, iff the point elements in 
+            [\ccc{first},\ccc{beyond})
+            form a clockwise-oriented strongly convex polygon.
+           }
+
+The default traits class \ccc{Default_traits} is the kernel in which the 
+type \ccc{ForwardIterator::value_type} is defined.
+
+
+\ccHeading{Requirements}
+\ccc{Traits} contains the following subset of types from
+the concept \ccc{ConvexHullTraits_2} and their corresponding member
+%\ccIndexMainItem[c]{ConvexHullTraits_2}
+functions that return instances of these types:
+            \begin{itemize}
+	        \item \ccc{Traits::Equal_2},
+                \item \ccc{Traits::Less_xy_2}, 
+                \item \ccc{Traits::Left_turn_2}.
+            \end{itemize}
+
+
+\ccSeeAlso
+
+\ccRefIdfierPage{CGAL::is_ccw_strongly_convex_2} \\
+\ccRefIdfierPage{CGAL::is_strongly_convex_3} 
+
+\ccImplementation
+The algorithm requires $O(n)$ time for a set of $n$ input points.
+
+\ccIndexMainItemEnd{convexity checking, 2D}
+\ccIndexSubitemEnd{polygon}{strongly convex}
+\ccIndexSubitemEnd{strongly convex}{polygon}
+\end{ccRefFunction}
+
+% +------------------------------------------------------------------------+
+%%RefPage: end of main body, begin of footer
+% EOF
+% +------------------------------------------------------------------------+
+

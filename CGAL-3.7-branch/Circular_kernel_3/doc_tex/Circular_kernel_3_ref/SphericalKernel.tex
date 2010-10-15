@@ -1,0 +1,168 @@
+\begin{ccRefConcept}{SphericalKernel}
+
+\ccRefines
+\ccc{Kernel}
+
+\ccHasModels
+\ccc{CGAL::Spherical_kernel_3<Kernel,AlgebraicKernelForSpheres>}\\
+\ccc{CGAL::Exact_spherical_kernel_3}
+
+\ccTypes
+
+A model of \ccc{SphericalKernel} is supposed to provide some basic types
+
+\ccNestedType{Linear_kernel}{Model of \ccc{Kernel}.}
+\ccGlue
+\ccNestedType{Algebraic_kernel}{Model of \ccc{AlgebraicKernelForSpheres}.}
+
+\ccNestedType{Root_of_2}{Model of \ccc{RootOf_2}.}
+\ccGlue
+\ccNestedType{Root_for_spheres_2_3}{Model of \ccc{AlgebraicKernelForSpheres::RootForSpheres_2_3}.}
+\ccGlue
+\ccNestedType{Polynomial_1_3}{Model of \ccc{AlgebraicKernelForSpheres::Polynomial_1_3}.}
+\ccGlue
+\ccNestedType{Polynomials_for_line_3}{Model of \ccc{AlgebraicKernelForSpheres::PolynomialsForLines_3}.}
+\ccGlue
+\ccNestedType{Polynomial_for_spheres_2_3}{Model of \ccc{AlgebraicKernelForSpheres::PolynomialForSpheres_2_3}.}
+\ccGlue
+\ccNestedType{Polynomials_for_circle_3}{Model of \ccc{AlgebraicKernelForSpheres::PolynomialsForCircles_3}.}
+
+and to define the following geometric objects
+
+\ccNestedType{Point_3}{Model of \ccc{Kernel::Point_3}.}
+\ccGlue
+\ccNestedType{Vector_3}{Model of \ccc{Kernel::Vector_3}.}
+\ccGlue
+\ccNestedType{Line_3}{Model of \ccc{Kernel::Line_3}.}
+\ccGlue
+\ccNestedType{Plane_3}{Model of \ccc{Kernel::Plane_3}.}
+\ccGlue
+\ccNestedType{Sphere_3}{Model of \ccc{Kernel::Sphere_3}.}
+\ccGlue
+\ccNestedType{Circle_3}{Model of \ccc{Kernel::Circle_3}.}
+
+\ccNestedType{Line_arc_3}{Model of \ccc{SphericalKernel::LineArc_3}.}
+\ccGlue
+\ccNestedType{Circular_arc_3}{Model of \ccc{SphericalKernel::CircularArc_3}.}
+\ccGlue
+\ccNestedType{Circular_arc_point_3}{Model of \ccc{SphericalKernel::CircularArcPoint_3}.}
+
+
+
+
+Moreover, a model of \ccc{SphericalKernel} must provide predicates, 
+constructions and other functionalities. 
+
+\ccPredicates
+
+\ccNestedType{Compare_x_3}{Model of \ccc{SphericalKernel::CompareX_3}.}
+\ccGlue
+\ccNestedType{Compare_y_3}{Model of \ccc{SphericalKernel::CompareY_3}.}
+\ccGlue
+\ccNestedType{Compare_z_3}{Model of \ccc{SphericalKernel::CompareZ_3}.}
+\ccGlue
+\ccNestedType{Compare_xy_3}{Model of \ccc{SphericalKernel::CompareXY_3}.}
+\ccGlue
+\ccNestedType{Compare_xyz_3}{Model of \ccc{SphericalKernel::CompareXYZ_3}.}
+\ccGlue
+\ccNestedType{Compare_theta_3}{Model of \ccc{SphericalKernel::CompareTheta_3}.}
+\ccGlue
+\ccNestedType{Compare_theta_z_3}{Model of \ccc{SphericalKernel::CompareThetaZ_3}.}
+\ccGlue
+\ccNestedType{Compare_z_at_theta_3}{Model of \ccc{SphericalKernel::CompareZAtTheta_3}.}
+\ccGlue
+\ccNestedType{Compare_z_to_right_3}{Model of \ccc{SphericalKernel::CompareZToRight_3}.}
+
+
+\ccNestedType{Equal_3}{Model of \ccc{SphericalKernel::Equal_3}.}
+
+\ccNestedType{Has_on_3}{Model of \ccc{SphericalKernel::HasOn_3}.}
+
+\ccNestedType{Do_overlap_3}{Model of \ccc{SphericalKernel::DoOverlap_3}.}
+
+\ccNestedType{Do_intersect_3}{Model of \ccc{SphericalKernel::DoIntersect_3}.}
+
+\ccNestedType{Bounded_side_3}{Model of \ccc{SphericalKernel::BoundedSide_3}.}
+\ccGlue
+\ccNestedType{Has_on_bounded_side_3}{Model of \ccc{SphericalKernel::HasOnBoundedSide_3}.}
+\ccGlue
+\ccNestedType{Has_on_unbounded_side_3}{Model of \ccc{SphericalKernel::HasOnUnboundedSide_3}.}
+
+\ccNestedType{Is_theta_monotone_3}{Model of \ccc{SphericalKernel::IsThetaMonotone_3}.}
+
+\ccHeading{Constructions}
+
+\ccNestedType{Construct_line_3}{Model of \ccc{SphericalKernel::ConstructLine_3}.}
+\ccGlue
+\ccNestedType{Construct_plane_3}{Model of \ccc{SphericalKernel::ConstructPlane_3}.}
+\ccGlue
+\ccNestedType{Construct_sphere_3}{Model of \ccc{SphericalKernel::ConstructSphere_3}.}
+\ccGlue
+\ccNestedType{Construct_circle_3}{Model of \ccc{SphericalKernel::ConstructCircle_3}.}
+
+\ccNestedType{Construct_line_arc_3}{Model of \ccc{SphericalKernel::ConstructLineArc_3}.}
+\ccGlue
+\ccNestedType{Construct_circular_arc_3}{Model of \ccc{SphericalKernel::ConstructCircularArc_3}.}
+\ccGlue
+\ccNestedType{Construct_circular_arc_point_3}{Model of \ccc{SphericalKernel::ConstructCircularArcPoint_3}.}
+
+\ccNestedType{Construct_circular_min_vertex_3}{Model of \ccc{SphericalKernel::ConstructCircularMinVertex_3}.}
+\ccGlue
+\ccNestedType{Construct_circular_max_vertex_3}{Model of \ccc{SphericalKernel::ConstructCircularMaxVertex_3}.}
+\ccGlue
+\ccNestedType{Construct_circular_source_vertex_3}{Model of \ccc{SphericalKernel::ConstructCircularSourceVertex_3}.}
+\ccGlue
+\ccNestedType{Construct_circular_target_vertex_3}{Model of \ccc{SphericalKernel::ConstructCircularTargetVertex_3}.}
+
+\ccNestedType{Construct_bbox_3}{Model of \ccc{SphericalKernel::ConstructBbox_3}.}
+
+\ccNestedType{Intersect_3}{Model of \ccc{SphericalKernel::Intersect_3}.}
+
+\ccNestedType{Split_3}{Model of \ccc{SphericalKernel::Split_3}.}
+
+\ccNestedType{Make_theta_monotone_3}{Model of \ccc{SphericalKernel::MakeThetaMonotone_3}.}
+
+\ccHeading{Computations}
+
+\ccNestedType{Compute_circular_x_3}{Model of \ccc{SphericalKernel::ComputeCircularX_3}.}
+\ccGlue
+\ccNestedType{Compute_circular_y_3}{Model of \ccc{SphericalKernel::ComputeCircularY_3}.}
+\ccGlue
+\ccNestedType{Compute_circular_z_3}{Model of \ccc{SphericalKernel::ComputeCircularZ_3}.}
+
+\ccNestedType{ComputeApproximateSquaredLength_3}{Model of \ccc{SphericalKernel::ComputeApproximateSquaredLength_3}.}
+\ccGlue
+\ccNestedType{ComputeApproximateAngle_3}{Model of \ccc{SphericalKernel::ComputeApproximateAngle_3}.}
+
+\ccHeading{Link with the algebraic kernel}
+
+\ccNestedType{Get_equation}{Model of \ccc{SphericalKernel::GetEquation}.}
+
+\ccOperations
+
+As in the \ccc{Kernel} concept, for each of the function objects
+above, there must exist a member function that requires no arguments
+and returns an instance of that function object. The name of the
+member function is the uncapitalized name of the type returned with
+the suffix \ccc{_object} appended. For example, for the function object 
+\ccc{SphericalKernel::Construct_circular_arc_3} the following member function 
+must exist: 
+
+\ccCreationVariable{sk}
+\ccMethod{Construct_circular_arc_3 construct_circular_arc_3_object() const;}{}
+
+For operations on a given sphere, a \textit{context} sphere must be provided to the following functions:
+
+\ccMethod{Compare_theta_3 compare_theta_3_object(const Sphere_3& sphere) const;}{}
+\ccMethod{Compare_theta_z_3 compare_theta_z_3_object(const Sphere_3& sphere) const;}{}
+\ccMethod{Compare_z_at_theta_3 compare_z_at_theta_3_object(const Sphere_3& sphere) const;}{}
+\ccMethod{Compare_z_to_right_3 compare_z_to_right_3_object(const Sphere_3& sphere) const;}{}
+\ccMethod{Make_theta_monotone_3 make_theta_monotone_3_object(const Sphere_3& sphere) const;}{}
+\ccMethod{Is_theta_monotone_3 is_theta_monotone_3_object(const Sphere_3& sphere) const;}{}
+
+
+\ccSeeAlso
+
+\ccRefIdfierPage{Kernel}
+
+\end{ccRefConcept}

@@ -1,0 +1,28 @@
+\begin{ccRefFunctionObjectConcept}{AlgebraicKernel_d_2::MakeSquareFree_2}
+
+\ccDefinition
+Returns a square free part of a bivariate polynomial.
+ 
+\ccRefines 
+\ccc{AdaptableUnaryFunction}  
+
+\ccTypes \ccThree{}{+++++++++++++}{++++++++}
+%\ccThree{typedef AlgebraicKernel_d_2::Polynomial_2}{argument_type+}{}
+\ccTypedef{typedef AlgebraicKernel_d_2::Polynomial_2 result_type;}{}
+\ccGlue
+\ccTypedef{typedef AlgebraicKernel_d_2::Polynomial_2 argument_type;}{}
+
+\ccOperations \ccThree{+++++++++}{+++++++++}{}
+\ccCreationVariable{fo}
+%\ccThree{xxxxxxxxxxx}{xxxxxxxxxxxxxxxxxxxxxxxxxxxx}{}
+
+
+
+\ccMethod{result_type operator()(const argument_type& p);}{
+Returns a square free part of $p$.}
+
+\ccSeeAlso
+\ccRefIdfierPage{AlgebraicKernel_d_2::IsSquareFree_2}\\
+\ccRefIdfierPage{AlgebraicKernel_d_2::SquareFreeFactorize_2}\\
+
+\end{ccRefFunctionObjectConcept}

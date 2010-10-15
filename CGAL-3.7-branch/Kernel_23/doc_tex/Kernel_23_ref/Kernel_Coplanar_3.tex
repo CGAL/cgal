@@ -1,0 +1,18 @@
+\begin{ccRefFunctionObjectConcept}{Kernel::Coplanar_3}
+A model for this must provide:
+
+\ccCreationVariable{fo}
+
+\ccMemberFunction{bool operator()(const Kernel::Point_3&p, 
+                                  const Kernel::Point_3&q, 
+                                  const Kernel::Point_3&r, 
+                                  const Kernel::Point_3&s);}
+{returns \ccStyle{true}, if $p$, $q$, $r$, and $s$ are coplanar.}
+
+\ccRefines
+\ccc{AdaptableFunctor} (with four arguments)
+
+\ccSeeAlso
+\ccRefIdfierPage{CGAL::coplanar}\\
+
+\end{ccRefFunctionObjectConcept}

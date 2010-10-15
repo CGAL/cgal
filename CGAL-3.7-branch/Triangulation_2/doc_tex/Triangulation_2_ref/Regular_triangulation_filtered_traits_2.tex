@@ -1,0 +1,37 @@
+% +------------------------------------------------------------------------+
+% | Reference manual page: Regular_triangulation_filtered_traits_2.tex
+% +------------------------------------------------------------------------+
+% | September 2004   Sylvain Pion
+% | Package: Triangulation_2
+% | 
+\RCSdef{\RCSRegulartriangulationfilteredtraitsRev}{$Id$}
+\RCSdefDate{\RCSRegulartriangulationfilteredtraitsDate}{$Date$}
+% |
+%%RefPage: end of header, begin of main body
+% +------------------------------------------------------------------------+
+
+
+\begin{ccRefClass}{Regular_triangulation_filtered_traits_2<FK>}
+
+\ccDefinition
+  
+The class \ccRefName\ is designed as a traits class for the
+class \ccc{Regular_triangulation_2<RegularTriangulationTraits_2,TriangulationDataStructure_2>}. 
+Its difference with \ccc{Regular_triangulation_euclidean_traits_2} is that it
+provides filtered predicates which are meant to be fast and exact.
+
+The first argument \ccc{FK} must be a model of the \ccc{Kernel} concept, and
+it is also restricted to be a instance of the \ccc{Filtered_kernel} template.
+
+\ccInclude{CGAL/Regular_triangulation_filtered_traits_2.h}
+
+\ccIsModel
+\ccc{RegularTriangulationTraits_2}
+
+\ccInheritsFrom{\ccc{Regular_triangulation_euclidean_traits_2<FK>}}
+
+\ccSeeAlso
+
+\ccc{CGAL::Regular_triangulation_euclidean_traits_2}.
+
+\end{ccRefClass}

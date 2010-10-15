@@ -1,0 +1,14 @@
+#!/bin/tcsh -f
+# **************************************************************************
+# 
+#  cc_extract_include
+#  ===================
+#  A script to extract \ccInclude statements from a spec file.
+#
+#  Author    : (c) 1997 Lutz Kettner   kettner@acm.org
+#              as of version 3.3 (Sept. 1999) maintained by Susan Hert
+#  Revision  : $Id$
+#  Date      : $Date$
+# 
+# **************************************************************************
+grep '\\ccInclude' $argv[1-] | sed 's/^.*[{]\([^}]*\)[}].*$/#include <\1>/'

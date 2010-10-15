@@ -1,0 +1,70 @@
+% +------------------------------------------------------------------------+
+% | Reference manual page: Sort.tex
+% +------------------------------------------------------------------------+
+% | 27.03.2005   Author
+% | Package: KDS
+% | 
+\RCSdef{\RCSSortRev}{$Id$}
+\RCSdefDate{\RCSSortDate}{$Date$}
+% |
+%%RefPage: end of header, begin of main body
+% +------------------------------------------------------------------------+
+
+\ccDefGlobalScope{CGAL::}
+\begin{ccRefClass}{Kinetic::Sort<Traits, Visitor>}  %% add template arg's if necessary
+
+%% \ccHtmlCrossLink{}     %% add further rules for cross referencing links
+%% \ccHtmlIndexC[class]{} %% add further index entries
+
+\ccDefinition
+  
+The class \ccRefName\ maintains a sorted list of objects. It is the
+simplest kinetic data structure provided and is a good place to start
+when looking at the basics of implementing a kinetic data
+structure. 
+
+The \ccc{Kinetic::SortVisitor} can be used to monitor what is happening.
+
+\ccInclude{CGAL/Kinetic/Sort.h}
+
+\ccCreation
+\ccCreationVariable{s}  %% choose variable name
+
+\ccConstructor{Sort(Traits tr);}{The basic constructor.}
+
+\ccTypes
+
+\ccNestedType{Visitor}{The type of the visitor.}
+
+\ccNestedType{Traits}{The traits type.}
+
+\ccNestedType{Vertex_handle}{The handle used to refer to vertex in the sorted list. Derefernecing this returns a \ccc{Key} into the \ccc{ActiveObjectsTable}.}
+
+\ccNestedType{Handle}{A reference counted pointer to be used for storing references to the object.}
+
+\ccNestedType{Const_handle}{A reference counted pointer to be used for storing references to the object.}
+
+\ccOperations
+
+\ccMethod{Visitor& visitor();}{Access the visitor.}
+
+\ccMethod{Traits& traits();}{Access the traits.}
+
+\ccMethod{Vertex_handle insert(Point_key k);}{Insert the point.}
+
+\ccMethod{void erase(Vertex_handle k);}{Erase the point.}
+
+\ccMethod{Iterator begin();}{Begin iterating through the ordered \ccc{Vertex_handle}s (the iterator is convertible to \ccc{Vertex_handle}.}
+\ccMethod{Iterator end();}{End iterating through the ordered \ccc{Vertex_handle}s (the iterator is convertible to \ccc{Vertex_handle}.}
+
+\ccSeeAlso
+
+\ccc{Kinetic::Ref_counted<T>}
+
+\end{ccRefClass}
+
+% +------------------------------------------------------------------------+
+%%RefPage: end of main body, begin of footer
+% EOF
+% +------------------------------------------------------------------------+
+

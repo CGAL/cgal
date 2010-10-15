@@ -1,0 +1,32 @@
+\begin{ccRefConcept}{AlgebraicKernelForCircles::RootForCircles_2_2}
+
+\ccDefinition
+
+The \ccc{AlgebraicKernelForCircles::RootForCircles_2_2} concept represents
+algebraic numbers that can store the roots of systems of two
+\ccc{AlgebraicKernelForCircles::PolynomialForCircles_2_2}
+equations of degree 2 in two variables \ccc{x} and \ccc{y}. 
+
+%\ccAccessFunctions
+
+%\ccFunction{const AlgebraicKernelForCircles::RootOf_2 & x();}{}
+%\ccGlue
+%\ccFunction{const AlgebraicKernelForCircles::RootOf_2 & y();}{}
+
+\ccOperations
+
+The comparison operator \ccc{==} must be provided. 
+
+\ccFunction{bool operator ==(const AlgebraicKernelForCircles::RootForCircles_2_2 & p,
+	const AlgebraicKernelForCircles::RootForCircles_2_2 & q);}{}
+
+\ccHasModels
+
+\ccc{Root_for_circles_2_2}
+
+\ccSeeAlso
+
+\ccRefIdfierPage{AlgebraicKernelForCircles}
+
+\end{ccRefConcept}
+

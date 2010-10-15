@@ -1,0 +1,38 @@
+\begin{ccRefClass}{Kernel_traits<T>}
+\ccTexHtml{\ccSetThreeColumns{Point_2< Homogeneous<RT> > }{}{\hspace*{8.5cm}}}{}
+
+\ccInclude{CGAL/Kernel_traits.h}
+
+\ccDefinition
+
+The class \ccClassTemplateName\ provides access to the kernel model to
+which the argument type \ccc{T} belongs. (Provided \ccc{T} belongs to
+some kernel model.)  The default implementation assumes there is a
+local type \ccc{T::Kernel} referring to the kernel model of \ccc{T}.
+If this type does not exist, a specialization of \ccRefName\ can be
+used to provide the desired information.
+
+This class is, for example, useful in the following context. Assume
+you want to write a generic function that accepts two points $p$ and
+$q$ as argument and constructs the line segment between $p$ and $q$.
+In order to specify the return type of this function, you need to know
+what is the segment type corresponding to the Point type representing
+$p$ and $q$. Using \ccRefName, this can be done as follows.
+\begin{verbatim}
+template < class Point >
+typename Kernel_traits<Point>::Kernel::Segment
+construct_segment(Point p, Point q)
+{ ... } 
+\end{verbatim}
+
+% \ccInclude{CGAL/Kernel_traits.h}
+
+\ccTypes
+
+\ccTypedef {typedef T::R Kernel;} { If \ccc{T} is a type
+  \ccc{K::Point_2} of some kernel model \ccc{K}, then \ccc{Kernel} is
+  equal to \ccc{K}. }
+
+\ccTexHtml{\KernelRefLayout}{}
+\end{ccRefClass}
+

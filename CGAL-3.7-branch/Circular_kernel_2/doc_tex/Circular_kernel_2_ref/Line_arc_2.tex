@@ -1,0 +1,80 @@
+\begin{ccRefClass}{Line_arc_2<CircularKernel>}
+
+\ccInclude{CGAL/Line_arc_2.h}
+
+\ccIsModel
+
+\ccc{CircularKernel::LineArc_2}
+
+\ccCreation
+\ccCreationVariable{la}
+
+\ccThree{Circular_arc_point_2}{ca.is_x_monotone()}{}
+\ccThreeToTwo
+
+\ccConstructor{Line_arc_2(const Line_2<CircularKernel> &l,
+		const Circular_arc_point_2<CircularKernel> &p1,
+		const Circular_arc_point_2<CircularKernel> &p2)}
+{Construct the line segment supported by \ccc{l}, whose source 
+is \ccc{p1} and whose target is \ccc{p2}.
+\ccPrecond{\ccc{p1} and \ccc{p2} lie on \ccc{l}.}}
+
+\ccConstructor{Line_arc_2(const Line_2<CircularKernel> &l,
+		const Point_2<CircularKernel> &p1,
+		const Point_2<CircularKernel> &p2)}
+{Same.}
+
+\ccConstructor{Line_arc_2(const Segment_2<CircularKernel> &s)}
+{}
+
+\ccAccessFunctions
+
+\ccThree{Circular_arc_point_2<CircularKernel>}{ca.is_x_monotone()}{}
+\ccThreeToTwo
+
+\ccMethod{Line_2<CircularKernel> supporting_line();}{}
+
+\ccMethod{Circular_arc_point_2<CircularKernel> source();}{}
+\ccGlue
+\ccMethod{Circular_arc_point_2<CircularKernel> target();}{}
+
+\ccMethod{Circular_arc_point_2<CircularKernel> left();}{}
+\ccGlue
+\ccMethod{Circular_arc_point_2<CircularKernel> right();}{}
+
+\ccMethod{Bbox_2 bbox() const;}
+{Returns a bounding box containing the line segment.}
+
+\ccQueryFunctions
+
+\ccMethod{bool is_vertical();}{}
+
+\ccOperations
+
+\ccFunction{bool operator==(const Line_arc_2<CircularKernel> &la1,
+  const Line_arc_2<CircularKernel> &la2);} 
+{Test for equality. Two arcs are equal, iff their non-oriented
+  supporting lines are equal (i.e. they contain the same set of
+  points) and their endpoints are equal.}
+
+\ccFunction{bool operator!=(const Line_arc_2<CircularKernel> &la1,
+  const Line_arc_2<CircularKernel> &la2);} 
+{Test for non-equality.}
+
+\ccHeading{I/O}
+
+\ccFunction{istream& operator>> (std::istream& is, Line_arc_2 & ca);}{}
+\ccGlue
+\ccFunction{ostream& operator<< (std::ostream& os, const Line_arc_2 & ca);}{}
+
+The format for input/output is, for each line arc: a \ccc{Line_2} 
+(the supporting line) and two \ccc{Circular_arc_point_2} (the two endpoints), 
+under the condition that the endpoints are actually lying on the line. 
+
+\ccSeeAlso
+
+\ccRefIdfierPage{CGAL::Circular_arc_point_2<CircularKernel>}\\
+\ccRefIdfierPage{CGAL::Circular_arc_2<CircularKernel>}
+
+\end{ccRefClass}
+

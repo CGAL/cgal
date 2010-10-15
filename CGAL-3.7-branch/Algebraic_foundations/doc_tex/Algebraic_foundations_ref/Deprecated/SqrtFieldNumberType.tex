@@ -1,0 +1,34 @@
+\begin{ccRefConcept}{SqrtFieldNumberType}
+
+The concept \ccRefName\ defines the syntactic requirements of a number
+type to be used as a template parameter for the Cartesian kernels.
+This number type supports the operations $+$, $-$, $*$, $/$, and
+$\sqrt{\cdot}$. This implies that both
+\ccc{CGAL::Number_type_traits<SqrtFieldNumberType>::Has_division} and
+\ccc{CGAL::Number_type_traits<SqrtFieldNumberType>::Has_sqrt} are
+\ccc{CGAL::Tag_true}.
+
+\ccRefines
+FieldNumberType
+
+\ccHasModels
+\ccc{float} \\
+\ccc{double} \\
+\ccc{CGAL::Lazy_exact_nt<FieldNumberType>} \\
+\ccc{leda_bigfloat} \\
+\ccc{leda_real} \\
+
+\ccCreationVariable{ntvar}
+
+\ccOperations 
+
+\ccFunction{SqrtFieldNumberType sqrt(const SqrtFieldNumberType
+  &ntval);} {}
+
+\ccSeeAlso
+\ccRefConceptPage{RingNumberType} \\
+\ccRefConceptPage{EuclideanRingNumberType} \\
+\ccRefConceptPage{Kernel} \\
+\ccRefIdfierPage{CGAL::Sqrt_field_tag} \\
+
+\end{ccRefConcept}

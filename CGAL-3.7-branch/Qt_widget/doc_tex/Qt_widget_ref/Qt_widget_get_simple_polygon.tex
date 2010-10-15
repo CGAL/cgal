@@ -1,0 +1,64 @@
+% +------------------------------------------------------------------------+
+% | CGAL Reference Manual: Reference manual for Qt_widget.tex
+% +------------------------------------------------------------------------+
+% |
+% | 03.01.2001	Radu Ursu
+% | 
+% | \RCSdef{\qtwidgetRev}{$Id$}
+% | \RCSdefDate{\qtwidgetDate}{$Date$}
+% +------------------------------------------------------------------------+
+
+% +-----------------------------------------------------+
+\begin{ccRefClass}{Qt_widget_get_simple_polygon<Polygon>}
+
+\ccDefinition
+An object of type \ccRefName\ creates a \cgal\ simple polygon.
+A new vertex is inserted every time the left mouse button is pressed, if the 
+polyline entered so far is simple. A right click closes the polygon, if
+it is simple. You can use the \ccc{Escape} key if you want to remove
+your last entered point in the polygon.
+
+\ccInclude{CGAL/IO/Qt_widget_get_simple_polygon.h}
+
+\ccParameters
+
+The full template declaration of \ccc{Qt_widget_get_simple_polygon} states one parameter:
+
+\begin{tabbing}
+\ccc{template <} \=\ccc{class Polygon >}\\
+	\ccc{class Qt_widget_get_simple_polygon;}
+\end{tabbing}
+
+Polygon should be a \cgal\ Polygon, or it should provide the following 
+types:.
+
+\ccTypes
+\ccTypedef{typedef Polygon::Point_2 Point_2;}{}
+\ccTypedef{typedef Polygon::Segment_2 Segment2;}{}
+\ccTypedef{typedef Polygon::Edge_const_iterator ECI;}{}
+
+\ccInheritsFrom
+\ccc{Qt_widget_layer}
+\ccGlue
+
+\ccCreation
+\ccCreationVariable{getspoly}
+\ccSetTwoColumns{Qt_widget_get_simple_polygon}{}
+
+\ccConstructor{Qt_widget_get_simple_polygon<T>(const QCursor
+c=QCursor(Qt::crossCursor), QObject* parent = 0, const char* name =
+0);}{\ccc{c} is the cursor that this layer will use when is
+active. \ccc{parent} is the parent widget and \ccc{name} is the name you 
+give to this layer.}
+
+\end{ccRefClass}
+% +-----------------------------------------------------+
+% EOF
+
+
+
+
+
+
+
+

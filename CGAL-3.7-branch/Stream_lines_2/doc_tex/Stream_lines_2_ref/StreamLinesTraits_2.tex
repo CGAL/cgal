@@ -1,0 +1,47 @@
+% +------------------------------------------------------------------------+
+% | Reference manual page: SteramlinesTraits_2.tex
+% +------------------------------------------------------------------------+
+% | 07.12.2004   Abdelkrim Mebarki
+% | Package: Stream_lines_2
+% | 
+\RCSdef{\RCSStreamLinestraitsRev}{$Id$}
+\RCSdefDate{\RCSStreamLinestraitsDate}{$Date$}
+% |
+%%RefPage: end of header, begin of main body
+% +------------------------------------------------------------------------+
+
+
+\begin{ccRefConcept}{StreamLinesTraits_2}
+
+%% \ccHtmlCrossLink{}     %% add further rules for cross referencing links
+%% \ccHtmlIndexC[concept]{} %% add further index entries
+
+\ccDefinition
+  
+The concept \ccRefName\ describes the set of requirements to be
+fulfilled by any class used to instantiate the template parameter of the class 
+\ccc{Regular_grid_2<StreamLinesTraits_2>}.
+This concept provides the types handled by the
+\ccc{Stream_lines_2<VectorField_2, Integrator_2>} class.
+
+\ccTypes
+\ccNestedType{FT}{The scalar type.}
+\ccGlue
+\ccNestedType{Point_2}{The  point type.}
+\ccGlue
+\ccNestedType{Vector_2}{The vector  type.}
+\ccGlue
+
+
+\ccHasModels
+The kernels of CGAL are models for this traits class. \\
+
+
+
+\end{ccRefConcept}
+
+% +------------------------------------------------------------------------+
+%%RefPage: end of main body, begin of footer
+% EOF
+% +------------------------------------------------------------------------+
+

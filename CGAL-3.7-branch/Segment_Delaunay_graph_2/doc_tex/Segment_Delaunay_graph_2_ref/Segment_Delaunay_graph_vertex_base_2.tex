@@ -1,0 +1,81 @@
+%% Copyright (c) 2003,2004,2005  INRIA Sophia-Antipolis (France) and
+%% Notre Dame University (U.S.A.).  All rights reserved.
+%%
+%% This file is part of CGAL (www.cgal.org); you may redistribute it under
+%% the terms of the Q Public License version 1.0.
+%% See the file LICENSE.QPL distributed with CGAL.
+%%
+%% Licensees holding a valid commercial license may use this file in
+%% accordance with the commercial license agreement provided with the software.
+%%
+%% This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
+%% WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
+%%
+%% $URL$
+%% $Id$
+%% 
+%%
+%% Author(s)     : Menelaos Karavelas <mkaravel@cse.nd.edu>
+
+
+\begin{ccRefClass}{Segment_Delaunay_graph_vertex_base_2<Gt,SSTag>}
+
+%% add template arg's if necessary
+
+%% \ccHtmlCrossLink{}     %% add further rules for cross referencing links
+%% \ccHtmlIndexC[class]{} %% add further index entries
+\ccCreationVariable{vb}
+\ccDefinition
+
+The class \ccRefName\ provides a model for the
+\ccc{SegmentDelaunayGraphVertexBase_2} concept which is the vertex
+base required by the \ccc{SegmentDelaunayGraphDataStructure_2}
+concept. The class \ccRefName\ has two template arguments, the first
+being the geometric traits of the segment Delaunay graph and should be a
+model of the concept \ccc{SegmentDelaunayGraphTraits_2}.
+The second template argument indicates whether
+or not to use the simple storage site that does not support
+intersecting segments, or the full storage site, that supports
+intersecting segments. The possible values are \ccc{CGAL::Tag_true}
+and \ccc{CGAL::Tag_false}. \ccc{CGAL::Tag_true} indicates that the
+full storage site is to be used, whereas \ccc{CGAL::Tag_false}
+indicates that the simple storage site is to be used.
+
+
+\ccInclude{CGAL/Segment_Delaunay_graph_vertex_base_2.h}
+
+\ccIsModel
+\ccc{SegmentDelaunayGraphVertexBase_2}
+
+%% \ccCreation
+%% \ccCreationVariable{vb}  %% choose variable name
+%% \ccTwo{Segment_Delaunay_graph_vertex_base_2<Gt>
+%% vb(Storage_site_2 ss);++}{}
+
+%% \ccConstructor{Segment_Delaunay_graph_vertex_base_2(Storage_site_2 ss);}
+%% {Constructs a vertex associated with the storage site \ccc{ss}.}
+%% \ccGlue
+%% \ccConstructor{Segment_Delaunay_graph_vertex_base_2(Storage_site_2 ss, Face_handle f);}
+%%               {Constructs a vertex associated with
+%%                 the storage site \ccc{ss},
+%%                 and pointing to the face associated with the face
+%%                 handle \ccc{f}.}
+
+
+
+\ccSeeAlso
+\ccc{SegmentDelaunayGraphVertexBase_2}\\
+\ccc{SegmentDelaunayGraphDataStructure_2}\\
+\ccc{SegmentDelaunayGraphTraits_2}\\
+\ccc{CGAL::Triangulation_data_structure_2<Vb,Fb>}\\
+\ccc{CGAL::Segment_Delaunay_graph_traits_2<K,MTag>}\\
+\ccc{CGAL::Segment_Delaunay_graph_traits_without_intersections_2<K,MTag>}\\
+\ccc{CGAL::Segment_Delaunay_graph_filtered_traits_2<CK,CM,EK,EM,FK,FM>}\\
+\ccc{CGAL::Segment_Delaunay_graph_filtered_traits_without_intersections_2<CK,CM,EK,EM,FK,FM>}
+\end{ccRefClass}
+
+% +------------------------------------------------------------------------+
+%%RefPage: end of main body, begin of footer
+% EOF
+% +------------------------------------------------------------------------+
+

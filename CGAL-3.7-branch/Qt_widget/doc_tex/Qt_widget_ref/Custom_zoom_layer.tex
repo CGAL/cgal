@@ -1,0 +1,45 @@
+% +------------------------------------------------------------------------+
+% | CGAL Reference Manual: Reference manual for Qt_widget.tex
+% +------------------------------------------------------------------------+
+% |
+% | 03.01.2001	Radu Ursu
+% | 
+% | \RCSdef{\qtwidgetRev}{$Id$}
+% | \RCSdefDate{\qtwidgetDate}{$Date$}
+% +------------------------------------------------------------------------+
+
+% +-----------------------------------------------------+
+\begin{ccRefClass}{Custom_zoom_layer}
+
+\ccInclude{CGAL/IO/Custom_zoom_layer.h}
+
+\ccInheritsFrom
+\ccc{Custom_zoom_layer}
+
+\ccGlue
+
+\ccCreation
+\ccCreationVariable{zoom_layer}
+\ccSetTwoColumns{Custom_zoom_layer}{}
+
+\ccConstructor{Custom_zoom_layer(QObject* parent = 0, const char* name =
+0);}{\ccc{parent} is the parent widget and \ccc{name} is the name you 
+give to this layer.}
+
+The standard toolbar already provide zooming functionality, but this layer
+ comes to complete the latest.
+When this layer is attached and active, zooming functionality could be used anytime. To zoom in x2 you must press the + key on your keyboard. To zoom 
+out x2 you must press the - key on your keyboard. You can also use the mouse
+ to zoom to a region defined by one rectangle. To define the rectangle you 
+must press Ctrl+LeftMouseButton for the first corner of the rectangle, you 
+may release, then move, then press Ctrl+LeftMouseButton once again to define 
+the second corner.
+
+
+\end{ccRefClass}
+
+% +-----------------------------------------------------+
+% EOF
+
+
+

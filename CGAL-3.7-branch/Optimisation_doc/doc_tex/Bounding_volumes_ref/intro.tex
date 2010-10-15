@@ -1,0 +1,94 @@
+
+
+
+%% cross references
+\ccIndexSubitemSeeAlso{minimum enclosing}{smallest enclosing}
+\ccIndexSubitemSeeAlso{minimum spanning}{smallest enclosing}
+\ccIndexSubitemSeeAlso{concentric spheres}{annulus}
+
+%% -----------------------------------------------------------------------------
+\ccRefChapter{Bounded Volumes}
+\ccChapterAuthor{Kaspar Fischer \and Bernd G{\"a}rtner \and Thomas Herrmann \and Michael Hoffmann
+   \and Sven Sch{\"o}nherr}
+
+
+This chapter describes concepts, classes, and functions for bounding areas and volumes.
+
+These are Smallest enclosing circle and ellipse (2D), smallest enclosing rectangle,
+parallelogram, and strip (2D), rectangular $p$-center (2D), smallest
+enclosing sphere and annulus (dD), approximate
+minimum-volume enclosing ellipsoid with user-specified
+approximation ratio (dD).
+
+\section*{Assertions}
+The optimization code uses infix \ccc{OPTIMISATION} in the assertions,
+e.g.\ defining the compiler flag
+\ccc{CGAL_OPTIMISATION_NO_PRECONDITIONS} switches precondition
+checking off, cf.~Section~\ref{sec:checks}.
+
+\section{Classified References Pages}
+
+%% -----------------------------------------------------------------------------
+\subsection*{Bounding Areas and Volumes}
+
+\ccRefIdfierPage{CGAL::Min_circle_2<Traits>}\\[1ex]
+\ccRefIdfierPage{CGAL::Min_circle_2_traits_2<K>}\\[1ex]
+\ccRefConceptPage{MinCircle2Traits}
+
+\smallskip
+
+\ccRefIdfierPage{CGAL::Min_ellipse_2<Traits>}\\[1ex]
+\ccRefIdfierPage{CGAL::Min_ellipse_2_traits_2<K>}\\[1ex]
+\ccRefConceptPage{MinEllipse2Traits}
+
+\smallskip
+
+\ccRefIdfierPage{CGAL::Approximate_min_ellipsoid_d<Traits>}\\
+\ccRefConceptPage{ApproximateMinEllipsoid_d_Traits_d}
+
+\smallskip
+
+\ccRefIdfierPage{CGAL::min_rectangle_2}\\
+\ccRefIdfierPage{CGAL::min_parallelogram_2}\\
+\ccRefIdfierPage{CGAL::min_strip_2}\\[1ex]
+\ccRefIdfierPage{CGAL::Min_quadrilateral_default_traits_2<K>}\\[1ex]
+\ccRefConceptPage{MinQuadrilateralTraits_2}
+
+\smallskip
+
+\ccRefIdfierPage{CGAL::rectangular_p_center_2}\\[1ex]
+\ccRefIdfierPage{CGAL::Rectangular_p_center_default_traits_2<K>}\\[1ex]
+\ccRefConceptPage{RectangularPCenterTraits_2}
+
+\smallskip
+
+\ccRefIdfierPage{CGAL::Min_sphere_d<Traits>}\\
+\ccRefIdfierPage{CGAL::Min_annulus_d<Traits>}\\[1ex]
+\ccRefIdfierPage{CGAL::Min_sphere_annulus_d_traits_2<K,ET,NT>}\\
+\ccRefIdfierPage{CGAL::Min_sphere_annulus_d_traits_3<K,ET,NT>}\\
+\ccRefIdfierPage{CGAL::Min_sphere_annulus_d_traits_d<K,ET,NT>}\\[1ex]
+\ccRefConceptPage{MinSphereAnnulusDTraits}
+
+\smallskip
+
+\ccRefIdfierPage{CGAL::Min_sphere_of_spheres_d<Traits>}\\
+\ccRefConceptPage{MinSphereOfSpheresTraits}
+
+
+
+\input{Bounding_volumes_ref/main_Min_circle_2.tex}
+\input{Bounding_volumes_ref/main_Min_ellipse_2.tex}
+\input{Bounding_volumes_ref/main_Min_quadrilateral_2.tex}
+\input{Bounding_volumes_ref/main_Rectangular_p_centers.tex}
+
+\input{Bounding_volumes_ref/main_Min_sphere_d.tex}
+\input{Bounding_volumes_ref/main_Min_annulus_d.tex}
+
+\input{Bounding_volumes_ref/main_Min_sphere_of_spheres_d.tex}
+\input{Bounding_volumes_ref/main_Approximate_min_ellipsoid_d.tex}
+
+\input{Bounding_volumes_ref/Min_sphere_annulus_d_traits_2.tex}
+\input{Bounding_volumes_ref/Min_sphere_annulus_d_traits_3.tex}
+\input{Bounding_volumes_ref/Min_sphere_annulus_d_traits_d.tex}
+\input{Bounding_volumes_ref/MinSphereAnnulusDTraits.tex}
+

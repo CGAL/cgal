@@ -1,0 +1,67 @@
+% +------------------------------------------------------------------------+
+% | CGAL Reference Manual: Reference manual for Qt_widget.tex
+% +------------------------------------------------------------------------+
+% |
+% | 03.01.2001  Radu Ursu
+% | 
+% | \RCSdef{\qtwidgetRev}{$Id$}
+% | \RCSdefDate{\qtwidgetDate}{$Date$}
+% +------------------------------------------------------------------------+
+
+% +-----------------------------------------------------+
+\begin{ccRefClass}{Qt_widget_get_segment<T>}
+
+\ccDefinition
+An object of type \ccRefName\ creates a \cgal\ segment in this 
+way: one left click on the mouse will be the first point and the second point 
+of the segment will be considered at the coordinates where the left
+mouse button is pressed for the second time.
+You can always cancel the creation process by pressing the ESC key.
+The use of \ccRefName\ requires that the mouse tracking is
+enabled for widgets attaching it.
+
+\ccInclude{CGAL/IO/Qt_widget_get_segment.h}
+
+\ccParameters
+
+The full template declaration of \ccc{Qt_widget_get_segment} states one parameter:
+
+\begin{tabbing}
+\ccc{template <} \=\ccc{class T >}\\
+        \ccc{class Qt_widget_get_segment;}
+\end{tabbing}
+
+If T is one of the \cgal\ kernels you don't need additional types. If
+not, the parameter T has to provide this types:
+
+\ccTypes
+\ccTypedef{typedef T::Point_2 Point_2;}{This should be a Point type}
+\ccTypedef{typedef T::Segment_2 Segment_2;}{This should be a Segment type}
+\ccTypedef{typedef T::FT FT;}{This should be a Field type}
+
+\ccInheritsFrom
+\ccc{Qt_widget_layer}
+
+\ccGlue
+
+\ccCreation
+\ccCreationVariable{getsegment}
+\ccSetTwoColumns{Qt_widget_get_segment}{}
+
+\ccConstructor{Qt_widget_get_segment<T>(const QCursor
+c=QCursor(Qt::crossCursor), QObject* parent = 0, const char* name =
+0);}{\ccc{c} is the cursor that this layer will use when is
+active. \ccc{parent} is the parent widget and \ccc{name} is the name you 
+give to this layer.}
+
+\end{ccRefClass}
+% +-----------------------------------------------------+
+% EOF
+
+
+
+
+
+
+
+

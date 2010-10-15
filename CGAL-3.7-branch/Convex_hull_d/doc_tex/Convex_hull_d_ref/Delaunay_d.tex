@@ -1,0 +1,334 @@
+% begin cgal manual page
+
+\begin{ccRefClass}{Delaunay_d< R, Lifted_R >}\ccCreationVariable{DT}
+\ccIndexMainItemBegin{Delaunay triangulation, dD}
+
+\ccDefinition
+
+An instance \ccc{DT} of type \ccc{Delaunay_d< R, Lifted_R >} is the
+nearest and furthest site Delaunay triangulation of a set \ccc{S} of
+points in some $d$-dimensional space. We call \ccc{S} the underlying
+point set and $d$ or \ccc{dim} the dimension of the underlying space.
+We use \ccc{dcur} to denote the affine dimension of \ccc{S}.  The data
+type supports incremental construction of Delaunay triangulations and
+various kind of query operations (in particular, nearest and furthest
+neighbor queries and range queries with spheres and simplices).
+
+A Delaunay triangulation is a simplicial complex. All simplices in
+the Delaunay triangulation have dimension \ccc{dcur}.  In the nearest
+site Delaunay triangulation the circumsphere of any simplex in the
+triangulation contains no point of $S$ in its interior. In the
+furthest site Delaunay triangulation the circumsphere of any simplex
+contains no point of $S$ in its exterior. If the points in $S$ are
+co-circular then any triangulation of $S$ is a nearest as well as a
+furthest site Delaunay triangulation of $S$. If the points in $S$ are
+not co-circular then no simplex can be a simplex of both
+triangulations. Accordingly, we view \ccc{DT} as either one or two
+collection(s) of simplices. If the points in $S$ are co-circular there
+is just one collection: the set of simplices of some triangulation.
+If the points in $S$ are not co-circular there are two
+collections. One collection consists of the simplices of a nearest
+site Delaunay triangulation and the other collection consists of the
+simplices of a furthest site Delaunay triangulation.
+
+For each simplex of maximal dimension there is a handle of type
+\ccc{Simplex_handle} and for each vertex of the triangulation there is
+a handle of type \ccc{Vertex_handle}. Each simplex has \ccc{1 + dcur}
+vertices indexed from $0$ to \ccc{dcur}.  For any simplex $s$ and any
+index $i$, \ccc{DT.vertex_of(s,i)} returns the $i$-th vertex of
+$s$. There may or may not be a simplex $t$ opposite to the vertex of
+$s$ with index $i$.  The function \ccc{DT.opposite_simplex(s,i)}
+returns $t$ if it exists and returns \ccc{Simplex_handle()}
+otherwise. If $t$ exists then $s$ and $t$ share \ccc{dcur} vertices,
+namely all but the vertex with index $i$ of $s$ and the vertex with
+index \ccc{DT.index_of_vertex_in_opposite_simplex(s,i)} of $t$.
+Assume that $t = \ccc{DT.opposite_simplex(s,i)}$ exists and let $j =
+\ccc{DT.index_of_vertex_in_opposite_simplex(s,i)}$. Then \ccc{s =
+DT.opposite_simplex(t,j)} and \ccc{i =
+DT.index_of_vertex_in_opposite_simplex(t,j)}.  In general, a vertex
+belongs to many simplices.
+
+Any simplex of \ccc{DT} belongs either to the nearest or to the
+furthest site Delaunay triangulation or both. The test
+\ccc{DT.simplex_of_nearest(dt_simplex s)} returns true if \ccc{s}
+belongs to the nearest site triangulation and the test
+\ccc{DT.simplex_of_furthest(dt_simplex s)} returns true if \ccc{s}
+belongs to the furthest site triangulation.
+ 
+\ccInheritsFrom \ccc{Convex_hull_d<Lifted_R>}
+
+\ccSetOneOfTwoColumns{7cm}
+
+\ccTypes
+
+\ccNestedType{Simplex_handle}{handles to the simplices of the complex. 
+}
+
+\ccNestedType{Vertex_handle}{handles to vertices of the complex. 
+}
+
+\ccNestedType{Point_d}{the point type 
+}
+
+\ccNestedType{Sphere_d}{the sphere type 
+}
+
+\ccEnum{enum Delaunay_voronoi_kind { NEAREST,  FURTHEST }}{interface flags 
+}
+
+To use these types you can typedef them into the global
+scope after instantiation of the class. We use \ccc{Vertex_handle} instead
+of \ccc{Delaunay_d< R, Lifted_R >::Vertex_handle} from now on. Similarly we use
+\ccc{Simplex_handle}. 
+
+
+
+\ccNestedType{Point_const_iterator}{the iterator for points. 
+}
+
+\ccNestedType{Vertex_iterator}{the iterator for vertices. 
+}
+
+\ccNestedType{Simplex_iterator}{the iterator for simplices. 
+}
+
+
+\ccSetOneOfTwoColumns{3cm}
+
+\ccCreation
+
+\ccConstructor{Delaunay_d< R, Lifted_R >(int d, R k1 = R(), Lifted_R k2 = Lifted_R())}{creates an instance \ccc{DT} of type \ccc{Delaunay_d}. The
+dimension of the underlying space is $d$ and \ccc{S} is initialized to the
+empty point set. The traits class \ccc{R} specifies the models of
+all types and the implementations of all geometric primitives used by
+the Delaunay class. The traits class \ccc{Lifted_R} specifies the models of
+all types and the implementations of all geometric primitives used by
+the base class of \ccc{Delaunay_d< R, Lifted_R >}. The second template parameter defaults to
+the first: \ccc{Delaunay_d<R> = Delaunay_d<R, Lifted_R = R >}. 
+}
+
+The data type \ccc{Delaunay_d} offers neither copy constructor nor
+assignment operator. 
+
+\ccHeading{Requirements}
+
+\ccc{R} is a model of the concept \ccc{DelaunayTraits_d}
+  \ccIndexMainItem[c]{DelaunayTraits_d}.                    
+\ccc{Lifted_R} is a model of the concept \ccc{DelaunayLiftedTraits_d}
+  \ccIndexMainItem[c]{DelaunayLiftedTraits_d}.
+
+
+\ccSetTwoOfThreeColumns{3cm}{3cm}
+
+\ccOperations
+
+All operations below that take a point \ccc{x} as an argument
+have the common precondition that $\ccc{x.dimension()} = \ccc{DT.dimension()}$. 
+
+
+
+\ccMethod{int dimension() ;}{returns the dimension of ambient space 
+}
+
+\ccMethod{int current_dimension() ;}{returns the affine dimension of the current point set, i.e.,
+$-1$ is $S$ is empty, $0$ if $S$ consists of a single point,
+$1$ if all points of $S$ lie on a common line, etc. 
+}
+
+\ccMethod{bool is_simplex_of_nearest(Simplex_handle s) ;}{returns true if \ccc{s} is a simplex of the nearest site 
+triangulation. 
+}
+
+\ccMethod{bool is_simplex_of_furthest(Simplex_handle s) ;}{returns true if \ccc{s} is a simplex of the furthest site 
+triangulation. 
+}
+
+\ccMethod{ Vertex_handle vertex_of_simplex(Simplex_handle s, int i) ;}{returns the vertex associated with the $i$-th node of $s$.
+\ccPrecond $0 \leq i \leq \ccc{dcur}$.  
+}
+
+\ccMethod{Point_d associated_point(Vertex_handle v) ;}{returns the point associated with vertex $v$. 
+}
+
+\ccMethod{Point_d point_of_simplex(Simplex_handle s,int i) ;}{returns the point associated with the $i$-th vertex of $s$.
+\ccPrecond $0 \leq i \leq \ccc{dcur}$.  
+}
+
+\ccMethod{Simplex_handle opposite_simplex(Simplex_handle s, int i) ;}{returns the simplex opposite to the $i$-th vertex of $s$
+(\ccc{Simplex_handle()} if there is no such simplex).
+\ccPrecond $0 \leq i \leq \ccc{dcur}$.  
+}
+
+\ccMethod{int index_of_vertex_in_opposite_simplex(Simplex_handle s,int i) ;}{returns the index of the vertex opposite to the $i$-th vertex 
+of $s$. \ccPrecond $0 \leq i \leq \ccc{dcur}$. 
+}
+
+\ccMethod{Simplex_handle simplex(Vertex_handle v) ;}{returns a simplex of the nearest site triangulation incident 
+to $v$. 
+}
+
+\ccMethod{int index(Vertex_handle v) ;}{returns the index of $v$ in \ccc{DT.simplex(v)}. 
+}
+
+\ccMethod{ bool  contains(Simplex_handle s, const Point_d& x) ;}{returns true if \ccc{x} is contained in the closure of simplex \ccc{s}. 
+}
+
+\ccMethod{ bool empty() ;}{decides whether \ccc{DT} is empty. 
+}
+
+\ccMethod{void clear() ;}{re-initializes \ccc{DT} to the empty Delaunay triangulation. 
+}
+
+\ccMethod{Vertex_handle insert(const Point_d& x) ;}{inserts point $x$ into \ccc{DT} and returns the corresponding
+\ccc{Vertex_handle}.  More precisely, if there is already a vertex \ccc{v} in
+\ccc{DT} positioned at $x$ (i.e., \ccc{associated_point(v)} is equal to
+\ccc{x}) then \ccc{associated_point(v)} is changed to \ccc{x} (i.e.,
+\ccc{associated_point(v)} is made identical to \ccc{x}) and if there is no
+such vertex then a new vertex $v$ with \ccc{associated_point(v) = x} is
+added to \ccc{DT}.  In either case, $v$ is returned. 
+}
+
+\ccMethod{Simplex_handle locate(const Point_d& x) ;}{returns a simplex of the nearest site triangulation
+containing \ccc{x} in its closure (returns \ccc{Simplex_handle()} if \ccc{x} lies 
+outside the convex hull of $S$). 
+}
+
+\ccMethod{Vertex_handle lookup(const Point_d& x) ;}{if \ccc{DT} contains a vertex $v$ with \ccc{associated_point(v) = x} 
+the result is $v$ otherwise the result is \ccc{Vertex_handle()}.  
+}
+
+\ccMethod{Vertex_handle nearest_neighbor(const Point_d& x) ;}{computes a vertex $v$ of \ccc{DT} that is closest to $x$,
+i.e.,\\ $\ccc{dist(x,associated_point(v))} = \min \{ 
+\ccc{dist(x, associated_point(u))} \mid u \in S\ \}$. 
+}
+
+
+\ccMethod{std::list<Vertex_handle>  range_search(const Sphere_d& C) ;}{returns the list of all vertices contained in the closure of 
+sphere $C$. 
+}
+
+\ccMethod{std::list<Vertex_handle> range_search(const std::vector<Point_d>& A) ;}{returns the list of all vertices contained in the closure of
+the simplex whose corners are given by \ccc{A}.
+\ccPrecond \ccc{A} must consist of $d+1$ affinely independent points
+in base space. 
+}
+
+\ccMethod{std::list<Simplex_handle> all_simplices(Delaunay_voronoi_kind k = NEAREST) ;}{returns a list of all simplices of either the nearest or the
+        furthest site Delaunay triangulation of \ccc{S}. 
+}
+
+\ccMethod{std::list<Vertex_handle> all_vertices(Delaunay_voronoi_kind k = NEAREST) ;}{returns a list of all vertices of either the nearest or the
+furthest site Delaunay triangulation of \ccc{S}. 
+}
+
+\ccMethod{ std::list<Point_d> all_points() ;}{returns $S$.  
+}
+
+\ccMethod{ Point_const_iterator points_begin() ;}{returns the start iterator for points in \ccc{DT}. 
+}
+
+\ccMethod{Point_const_iterator points_end() ;}{returns the past the end iterator for points in \ccc{DT}. 
+}
+
+\ccMethod{Simplex_iterator simplices_begin(Delaunay_voronoi_kind k = NEAREST) ;}{returns the start iterator for simplices of \ccc{DT}. 
+}
+
+\ccMethod{Simplex_iterator simplices_end() ;}{returns the past the end iterator for simplices of \ccc{DT}. 
+}
+
+\ccImplementation
+
+The data type is derived from \ccc{Convex_hull_d} via
+the lifting map. For a point $x$ in $d$-dimensional space let
+\ccc{lift(x)} be its lifting to the unit paraboloid of revolution. There
+is an intimate relationship between the Delaunay triangulation of a
+point set $S$ and the convex hull of \ccc{lift(S)}: The nearest site
+Delaunay triangulation is the projection of the lower hull and the
+furthest site Delaunay triangulation is the upper hull.  For
+implementation details we refer the reader to the implementation
+report available from the CGAL server.
+
+The space requirement is the same as for convex hulls. The time
+requirement for an insert is the time to insert the lifted point
+into the convex hull of the lifted points. 
+
+
+
+\ccExample
+
+
+
+The abstract data type \ccc{Delaunay_d} has a default instantiation by
+means of the $d$-dimensional geometric kernel.
+
+\begin{verbatim}
+#include <CGAL/Homogeneous_d.h>
+#include <CGAL/leda_integer.h>
+#include <CGAL/Delaunay_d.h>
+
+typedef leda_integer RT;
+typedef CGAL::Homogeneous_d<RT> Kernel;
+typedef CGAL::Delaunay_d<Kernel> Delaunay_d;
+typedef Delaunay_d::Point_d Point;
+typedef Delaunay_d::Simplex_handle Simplex_handle;
+typedef Delaunay_d::Vertex_handle Vertex_handle;
+
+int main()
+{
+  Delaunay_d T(2);
+  Vertex_handle v1 = T.insert(Point_d(2,11));
+  ...
+}
+\end{verbatim}
+ 
+
+
+
+\ccHeading{Traits requirements}
+
+\ccc{Delaunay_d< R, Lifted_R >} requires the following types from the kernel traits \ccc{Lifted_R}:
+\begin{verbatim}
+  RT Point_d Vector_d Ray_d Hyperplane_d 
+\end{verbatim}
+and uses the following function objects from the kernel traits:
+\begin{verbatim}
+  Construct_hyperplane_d
+  Construct_vector_d
+  Vector_to_point_d / Point_to_vector_d
+  Orientation_d
+  Orthogonal_vector_d
+  Oriented_side_d / Has_on_positive_side_d
+  Affinely_independent_d
+  Contained_in_simplex_d
+  Contained_in_affine_hull_d
+  Intersect_d
+  Lift_to_paraboloid_d / Project_along_d_axis_d
+  Component_accessor_d
+\end{verbatim}
+\ccc{Delaunay_d< R, Lifted_R >} requires the following types from the kernel traits \ccc{R}:
+\begin{verbatim}
+  FT Point_d Sphere_d 
+\end{verbatim}
+and uses the following function objects from the kernel traits \ccc{R}:
+\begin{verbatim}
+  Construct_sphere_d
+  Squared_distance_d
+  Point_of_sphere_d
+  Affinely_independent_d
+  Contained_in_simplex_d
+\end{verbatim}
+ 
+
+
+
+\ccHeading{Low Dimensional Output Routines}
+
+
+\ccFunction{template <typename R, typename Lifted_R>
+template <typename R, typename Lifted_R> void d2_map(const Delaunay_d<R,Lifted_R>& D,              GRAPH< typename Delaunay_d<R,Lifted_R>::Point_d, int >& DTG,              typename Delaunay_d<R,Lifted_R>::Delaunay_voronoi_kind k =              Delaunay_d<R,Lifted_R>::NEAREST) ;}{constructs a LEDA graph representation of the nearest 
+(\ccc{kind = NEAREST} or the furthest (\ccc{kind = FURTHEST}) site
+Delaunay triangulation.\\ \ccPrecond \ccc{dim() == 2}.  
+}
+
+\ccIndexMainItemEnd{Delaunay triangulation, dD}
+\end{ccRefClass}

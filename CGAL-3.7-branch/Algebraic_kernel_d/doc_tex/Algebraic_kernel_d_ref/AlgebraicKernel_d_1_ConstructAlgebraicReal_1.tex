@@ -1,0 +1,48 @@
+\begin{ccRefFunctionObjectConcept}{AlgebraicKernel_d_1::ConstructAlgebraicReal_1}
+
+\ccDefinition
+Constructs \ccc{AlgebraicKernel_d_1::Algebraic_real_1}.
+
+\ccRefines 
+\ccc{AdaptableFunctor}
+
+\ccTypes \ccThree{}{+++++++++++++}{++++++++}
+\ccThree{}{++++++++++++++++++++++++}{+++++++++}
+
+%\ccNestedType{result_type}{Type convertible to \ccc{AlgebraicKernel_d_1::Algebraic_real_1}}
+\ccTypedef{typedef AlgebraicKernel_d_1::Algebraic_real_1 result_type;}{}
+
+\ccOperations \ccThree{+++++++++}{+++++++++}{}
+\ccThree{+++++++++}{+++++++++}{}
+\ccCreationVariable{fo}
+
+
+
+\ccMethod{result_type operator()(int a);}
+{introduces an \ccc{AlgebraicKernel_d_1::Algebraic_real_1} initialized to $a$.} 
+\ccMethod{result_type operator()(AlgebraicKernel_d_1::Bound a);}
+{introduces an \ccc{AlgebraicKernel_d_1::Algebraic_real_1} initialized to $a$.} 
+\ccMethod{result_type operator()(AlgebraicKernel_d_1::Coefficient a);}
+{introduces an \ccc{AlgebraicKernel_d_1::Algebraic_real_1} initialized to $a$.} 
+\ccMethod{result_type operator()(AlgebraicKernel_d_1::Polynomial_1 p, AlgebraicKernel_d_1::size_type i);}
+{introduces an \ccc{AlgebraicKernel_d_1::Algebraic_real_1} initialized to the $i$-th real root of $p$.
+The index starts at $0$, that is, $p$ must have at least $i+1$ real roots. 
+\ccPrecond{ $p$ is square free.}
+\ccPrecond{ $p$ has at least $i+1$ real roots.}
+}
+\ccMethod{result_type operator()(
+        AlgebraicKernel_d_1::Polynomial_1 p, 
+        AlgebraicKernel_d_1::Bound l, 
+        AlgebraicKernel_d_1::Bound u);}
+{introduces an \ccc{AlgebraicKernel_d_1::Algebraic_real_1} initialized to the 
+only real root of $p$ in the open interval $I = (l,u)$.
+\ccPrecond{ $l < u$ }
+\ccPrecond{ $p$ is square free.}
+\ccPrecond{ $p$ has exactly one real root in $I$}
+\ccPrecond{ $p$ has no real root on $\partial I$}
+} 
+
+\ccSeeAlso
+\ccRefIdfierPage{AlgebraicKernel_d_2::ConstructAlgebraicReal_2}\\
+
+\end{ccRefFunctionObjectConcept}

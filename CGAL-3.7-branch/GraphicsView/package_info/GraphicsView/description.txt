@@ -1,0 +1,3 @@
+The future 2D graphics package using the GraphicsView framework
+http://doc.trolltech.com/4.3/graphicsview.html
+

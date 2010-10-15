@@ -1,0 +1,60 @@
+% +------------------------------------------------------------------------+
+% | Reference manual page: GpsTraitsGeneralPolygon_2.tex
+% +------------------------------------------------------------------------+
+% | 02.09.2008   Author
+% | Package: Boolean_set_operations_2
+% |
+\RCSdef{\RCSGpsTraitsGeneralPolygonRev}{$Id: header.tex 40270 2007-09-07 15:29:10Z lsaboret $}
+\RCSdefDate{\RCSGpsTraitsGeneralPolygonDate}{$Date: 2007-09-07 18:29:10 +0300 (Fri, 07 Sep 2007) $}
+% |
+\ccRefPageBegin
+%%RefPage: end of header, begin of main body
+% +------------------------------------------------------------------------+
+
+
+\begin{ccRefConcept}{GpsTraitsGeneralPolygon_2}
+
+%% \ccHtmlCrossLink{}     %% add further rules for cross referencing links
+%% \ccHtmlIndexC[concept]{} %% add further index entries
+
+\ccDefinition
+% ============
+A model of this concept represents a simple general polygon.
+
+\ccRefines{DefaultConstructible, CopyConstructible, Assignable}.
+
+\ccGeneralizes
+% ============
+\ccc{GeneralPolygon_2}
+
+%\ccPredicates
+% ===========
+%
+%\ccMethod{bool is_simple();}{returns \ccc{true} if the polygon is simple, 
+% and \ccc{false} otherwise. Used as precondition for some of the operations.}
+%\ccGlue
+%\ccMethod{bool is_strictly_simple();}{returns \ccc{true} if the polygon
+% is strictly simple, and \ccc{false} otherwise. Used as precondition for
+% some of the operations.
+%\ccPrecond{\ccStyle{is_simple()}.}}
+
+\ccHasModels
+% ==========
+\ccc{GeneralPolygonSetTraits_2::Polygon_2}
+\ccc{CGAL::Polygon_2<PolygonTraits_2, Container>}
+%\ccc{CGAL::Gps_segment_traits_2<Kernel,Container,ArrSegmentTraits>::Polygon_2}\\
+%\ccc{CGAL::Gps_circle_segment_traits_2<Kernel>::Polygon_2}\\
+%\ccc{CGAL::Gps_traits_2<ArrTraits,GeneralPolygon>::Polygon_2}
+
+\ccSeeAlso
+% ========
+\ccc{GeneralPolygon_2}
+
+\end{ccRefConcept}
+
+% +------------------------------------------------------------------------+
+%%RefPage: end of main body, begin of footer
+\ccRefPageEnd
+% EOF
+% +------------------------------------------------------------------------+
+

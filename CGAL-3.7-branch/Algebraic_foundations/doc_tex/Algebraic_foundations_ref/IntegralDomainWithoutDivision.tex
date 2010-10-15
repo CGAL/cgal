@@ -1,0 +1,154 @@
+\begin{ccRefConcept}{IntegralDomainWithoutDivision}
+
+
+\ccDefinition
+
+This is the most basic concept for algebraic structures considered within CGAL. 
+
+A model \ccc{IntegralDomainWithoutDivision}  represents an integral domain,
+i.e. commutative ring with 0, 1, +, * and unity free of zero divisors.\\ 
+{\bf Note:} A model is not required to offer the always well defined integral division.
+
+It refines \ccc{Assignable}, \ccc{CopyConstructible}, \ccc{DefaultConstructible}
+and \ccc{FromIntConstructible}. \\ 
+It refines \ccc{EqualityComparable}, where equality is defined w.r.t. 
+the ring element being represented. \\
+The operators unary and binary plus +, unary and binary minus -, 
+multiplication * and their compound forms +=, -=, *= are required and 
+implement the respective ring operations.
+
+Moreover, \ccc{CGAL::Algebraic_structure_traits< IntegralDomainWithoutDivision >} is a model of 
+\ccc{AlgebraicStructureTraits} providing:\\ 
+- \ccc{CGAL::Algebraic_structure_traits< IntegralDomainWithoutDivision >::Algebraic_type} derived from \ccc{Integral_domain_without_division_tag} \\
+- \ccc{CGAL::Algebraic_structure_traits< IntegralDomainWithoutDivision >::Is_zero}  \\
+- \ccc{CGAL::Algebraic_structure_traits< IntegralDomainWithoutDivision >::Is_one}  \\
+- \ccc{CGAL::Algebraic_structure_traits< IntegralDomainWithoutDivision >::Square}  \\
+- \ccc{CGAL::Algebraic_structure_traits< IntegralDomainWithoutDivision >::Simplify} \\
+- \ccc{CGAL::Algebraic_structure_traits< IntegralDomainWithoutDivision >::Unit_part} \\
+
+
+%{ \em \small FROM \exacus: \\
+%It is permissible for the constructor 
+%to convert from another built-in type than int, provided ints are
+%automatically converted to this type. It is not permissible to 
+%rely in a similar fashion on a chain of user-defined conversions.
+%}
+
+
+
+\ccRefines
+\ccc{Assignable}\\
+\ccc{CopyConstructible}\\
+\ccc{DefaultConstructible}\\
+\ccc{EqualityComparable}\\
+\\
+\ccc{FromIntConstructible}\\ 
+
+\ccOperations
+\ccCreationVariable{a}
+
+\ccFunction{IntegralDomainWithoutDivision 
+            operator+(const IntegralDomainWithoutDivision &a);}{ unary plus }
+\ccGlue
+\ccFunction{IntegralDomainWithoutDivision 
+            operator-(const IntegralDomainWithoutDivision &a);}{ unary minus}
+\ccGlue
+\ccFunction{IntegralDomainWithoutDivision 
+            operator+(const IntegralDomainWithoutDivision &a, 
+                      const IntegralDomainWithoutDivision &b);}{}
+\ccGlue
+
+\ccFunction{IntegralDomainWithoutDivision 
+            operator-(const IntegralDomainWithoutDivision &a, 
+                      const IntegralDomainWithoutDivision &b);}{}
+\ccGlue
+
+\ccFunction{IntegralDomainWithoutDivision 
+            operator*(const IntegralDomainWithoutDivision &a, 
+                      const IntegralDomainWithoutDivision &b);}{}
+\ccGlue
+\ccMethod{IntegralDomainWithoutDivision 
+            operator+=(const IntegralDomainWithoutDivision &b);}{}
+\ccGlue
+\ccMethod{IntegralDomainWithoutDivision 
+            operator-=(const IntegralDomainWithoutDivision &b);}{}
+\ccGlue
+\ccMethod{IntegralDomainWithoutDivision 
+            operator*=(const IntegralDomainWithoutDivision &b);}{}
+
+Equality comparable: 
+
+\ccFunction{ result_type 
+            operator==(const IntegralDomainWithoutDivision &a, 
+                      const IntegralDomainWithoutDivision &b);}
+        {The \ccc{result_type} is convertible to \ccc{bool}. }
+\ccGlue
+\ccFunction{ result_type 
+            operator!=(const IntegralDomainWithoutDivision &a, 
+                      const IntegralDomainWithoutDivision &b);}
+        {The \ccc{result_type} is convertible to \ccc{bool}. }
+\ccGlue
+ 
+\ccSeeAlso
+
+\ccRefIdfierPage{IntegralDomainWithoutDivision}\\
+\ccRefIdfierPage{IntegralDomain}\\
+\ccRefIdfierPage{UniqueFactorizationDomain}\\
+\ccRefIdfierPage{EuclideanRing}\\
+\ccRefIdfierPage{Field}\\
+\ccRefIdfierPage{FieldWithSqrt}\\
+\ccRefIdfierPage{FieldWithKthRoot}\\
+\ccRefIdfierPage{FieldWithRootOf}\\
+\ccRefIdfierPage{AlgebraicStructureTraits}\\
+
+%\ccHasModels
+%\CC\ built-in number types \\
+%\ccc{CGAL::Gmpq} \\
+%\ccc{CGAL::Gmpz} \\
+%\ccc{CGAL::Gmpzf} \\
+
+%\ccc{mpz_class} \\
+%\ccc{mpq_class} \\
+%%\ccc{mpf_class} \\
+
+%\ccc{leda_integer} \\
+%\ccc{leda_rational} \\
+%\ccc{leda_bigfloat} \\
+%\ccc{leda_real} \\
+
+%\ccc{CORE::BigInt} \\
+%\ccc{CORE::BigRat} \\
+%%\ccc{CORE::BigFloat} \\
+%\ccc{CORE::Expr} \\
+
+%%\ccc{CGAL::Interval_nt} \\
+%%\ccc{CGAL::Interval_nt_advanced} \\
+
+%\ccc{CGAL::MP_Float} \\
+%\ccc{CGAL::Lazy_exact_nt< NT >} (depends on NT) \\
+%\ccc{CGAL::Quotient< NT >} \\
+
+%\ccc{CGAL::Sqrt_extension< NT, Root >} \\
+%%\ccc{CGAL::Polynomial< T >} \\
+
+\ccIgnore{
+
+\ccDefinition
+
+An {\em integral domain} is a commutative ring with an additive {\em zero} and a multiplicative {\em one} such that $0 \neq 1$.  A product of any two non-zero elements is always non-zero, that is, there are no zero divisors. 
+
+A model of the concepts \ccc{IntegralDomainWithoutDivision} is supposed to represent an {\em integral domain} in the mathematical sense. It is required to be \ccc{FromIntConstructible}, where the construction models the canonical homomorphism from \Z (\ccc{int}) into the value range of the type. The type is required to be closed under construction from \ccc{int}, addition and multiplication. The mathematical always well defined integral division is not required. 
+
+\begin{ccAdvanced}
+
+The full value range of a model may not represent an integral domain, in particular not all values are required to be interoperable at runtime. However, any code that is using this concept requires, that the input is taken from a proper interoperable subset of the value range. Moreover, the code is allowed to construct values from \ccc{int} and interoperate them with the input. In particular, any subset of the value range representing an integral domain is required to contain the integral domain induced by the construction from int.
+
+\end{ccAdvanced}
+
+}
+
+\end{ccRefConcept}
+
+
+
+

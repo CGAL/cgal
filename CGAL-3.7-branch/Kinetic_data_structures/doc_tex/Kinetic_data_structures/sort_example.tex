@@ -1,0 +1,83 @@
+\subsection{A Simple Example \label{sec:kds_sort_example}}
+
+
+Using a kinetic data structure can be as simple as the following:
+\label{fig:kds_sort_program}
+\ccIncludeExampleCode{Kinetic_data_structures/Kinetic_sort.cpp}
+
+Using the other kinetic data
+structures is substantially identical. Please see the appropriate
+files in the demo/Kinetic\_data\_structures directory.
+
+In the example, first the \ccc{Kinetic::SimulationTraits} object is chosen
+(in this case one that supports exact computations). Then the kinetic
+data structure is defined using the chosen traits object and a
+visitor class which logs changes to the sorted list.  Next, instances
+of the two are created and a set of points is read from a file. Then,
+the simulator is instructed to process all the events until the end of
+the simulation.  Finally, a record of what happened is printed to the
+terminal.
+
+Several important things happen behind the scenes in this example.
+First, the \ccc{Kinetic::ActiveObjectsTable} which holds the moving
+points notifies the kinetic data structure that new points have been
+added to the simulation. Second, the
+\ccc{Kinetic::Sort<Traits,Visitor>} kinetic data structure registers
+its events with the \ccc{Kinetic::Simulator} by providing a time and a
+proxy object for each event. When a particular event occurs, the
+\ccc{Kinetic::Simulator} calls a function on the proxy object which in turn
+updates the kinetic data structure.
+
+The example illustrates how to monitor the supplied data structures as
+they evolve by using a \ccc{Kinetic::SortVisitor} object---a small class whose
+methods are called whenever the kinetic data structure changes. Hooks
+for such visitor concepts are provided for all of the shipped kinetic
+data structures. In the case of kinetic sorting, the visitor's
+methods are called every time a new point is inserted in the sorted
+list, when one is removed, or when two points are swapped in the
+sorted order. 
+
+
+The visitor concept is quite powerful, allowing us, for example, to
+implement a data structure for computing and storing two-dimensional
+arrangements of $x$-monotone curves on top of the
+\ccc{Kinetic::Sort<Traits, Visitor>} data structure using about 60
+lines of code. This sweepline code is presented in
+Section~\ref{sec:kds_sweepline_example}.
+
+%\subsection{Constructing Primitives}
+%\label{sec:kds_constructing_primitives}
+
+\subsection{Creating Kinetic Primitives}
+
+One key part of the framework not shown is how to create kinetic
+primitives (rather than just reading them in from a file). There are
+two ways to construction the necessary motion functions (which are
+models of \ccc{Kinetic::FunctionKernel::Function}). The first is to
+create an array of polynomial coeffients and simply call the
+constructor as in:
+\begin{ccExampleCode}
+typedef Traits::Kinetic_kernel::Motion_function F;
+std::vector<F::NT> coefs;
+coefs.push_back(F::NT(1.0));
+coefs.push_back(F::NT(2.0));
+F x(coefs.begin(), coefs.end());
+\end{ccExampleCode}
+
+A slightly more flexible way is to use a
+\ccc{Kinetic::FunctionKernel::ConstructFunction} object. To do this do the following:
+\begin{ccExampleCode}
+typedef Traits::Kinetic_kernel::Function_kernel::Construct_function
+CF; typedef Traits::Kinetic_kernel::Motion_function F; CF cf; F
+x=cf(F::NT(1.0), F::NT(2.0));
+\end{ccExampleCode}
+The \ccc{Kinetic::FunctionKernel::ConstructFunction} can be passed
+(almost) an number of arguments and will construct a polynomial with
+those arguments are coefficients.
+
+Once the motion functions are constructed, constructing the primitive
+is just like constructing the corresponding static object.
+\begin{ccExampleCode}
+typedef Traits::Kinetic_kernel::Point_1 Point_1;
+Point_1 p(x);
+\end{ccExampleCode}

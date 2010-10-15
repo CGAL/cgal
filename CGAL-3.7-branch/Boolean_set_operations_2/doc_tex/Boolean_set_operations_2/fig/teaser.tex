@@ -1,0 +1,75 @@
+\begin{center}
+\begin{tabular}{cccc}
+  \pspicture[](-1,-2.3)(1,2)
+    \psset{unit=1cm,linewidth=1pt}
+    \pscircle*[linecolor=gray](0,-1){1}
+    \pscircle*[linecolor=gray](0,1){1}
+    \pscircle(0,-1){1}
+    \pscircle(0,1){1}
+    \psaxes{<->}(0,0)(-1,-1)(1,1)
+  \endpspicture &
+  \pspicture[](-2,-2.3)(2,2)
+    \psset{unit=1cm,linewidth=1pt}
+    \pscircle*[linecolor=gray](-1,0){1}
+    \pscircle*[linecolor=gray](1,0){1}
+    \pscircle(-1,0){1}
+    \pscircle(1,0){1}
+    \psaxes{<->}(0,0)(-1,-1)(1,1)
+  \endpspicture &
+  \pspicture[](-2,-2.3)(2,2)
+    \psset{unit=1cm,linewidth=1pt}
+    \pscustom[linewidth=0,fillstyle=solid,fillcolor=gray]{
+      \psarc(0,1){1}{270}{360}
+      \psarc(1,0){1}{90}{180}
+    }
+    \pscustom[linewidth=0,fillstyle=solid,fillcolor=gray]{
+      \psarc(1,0){1}{180}{270}
+      \psarc(0,-1){1}{0}{90}
+    }
+    \pscustom[linewidth=0,fillstyle=solid,fillcolor=gray]{
+      \psarc(0,-1){1}{90}{180}
+      \psarc(-1,0){1}{270}{360}
+    }
+    \pscustom[linewidth=0,fillstyle=solid,fillcolor=gray]{
+      \psarc(-1,0){1}{0}{90}
+      \psarc(0,1){1}{180}{270}
+    }
+    \psarc(0,1){1}{270}{360}
+    \psarc{c}(1,0){1}{90}{180}
+    \psarc(1,0){1}{180}{270}
+    \psarc{c}(0,-1){1}{0}{90}
+    \psarc(0,-1){1}{90}{180}
+    \psarc{c}(-1,0){1}{270}{360}
+    \psarc{-c}(-1,0){1}{0}{90}
+    \psarc(0,1){1}{180}{270}
+  \endpspicture &
+  \pspicture[](-2,-2.3)(2,2)
+    \psset{unit=1cm,linewidth=1pt}
+    \pscustom[linewidth=0,fillstyle=solid,fillcolor=gray,linecolor=gray]{
+      \psarc(0,1){1}{360}{180}
+      \psarc(1,0){1}{90}{180}
+      \psarc(-1,0){1}{0}{90}
+    }
+    \pscustom[linewidth=0,fillstyle=solid,fillcolor=gray,linecolor=gray]{
+      \psarc(1,0){1}{270}{90}
+      \psarc(0,-1){1}{0}{90}
+      \psarc(0,1){1}{270}{0}
+    }
+    \pscustom[linewidth=0,fillstyle=solid,fillcolor=gray,linecolor=gray]{
+      \psarc(0,-1){1}{180}{0}
+      \psarc(-1,0){1}{270}{360}
+      \psarc(1,0){1}{180}{270}
+    }
+    \pscustom[linewidth=0,fillstyle=solid,fillcolor=gray,linecolor=gray]{
+      \psarc(-1,0){1}{90}{270}
+      \psarc(0,1){1}{180}{270}
+      \psarc(0,-1){1}{90}{180}
+    }
+    \pscircle(0,-1){1}
+    \pscircle(0,1){1}
+    \pscircle(-1,0){1}
+    \pscircle(1,0){1}
+  \endpspicture\\
+$A$ & $B$ & $\mbox{intersection}(A,B)$ & $\mbox{symmetric-difference}(A,B)$
+\end{tabular}
+\end{center}

@@ -1,0 +1,114 @@
+% +------------------------------------------------------------------------+
+% | Reference manual page: SparseLinearAlgebraTraits_d.tex
+% +------------------------------------------------------------------------+
+% | 21.09.2005   Laurent Saboret, Pierre Alliez, Bruno Levy
+% | Package: Surface_mesh_parameterization
+% |
+\RCSdef{\RCSSparseLinearAlgebraTraitsdRev}{$Id$}
+\RCSdefDate{\RCSSparseLinearAlgebraTraitsdDate}{$Date$}
+% |
+\ccRefPageBegin
+%%RefPage: end of header, begin of main body
+% +------------------------------------------------------------------------+
+
+
+\begin{ccRefConcept}{SparseLinearAlgebraTraits_d}
+
+%% \ccHtmlCrossLink{}     %% add further rules for cross referencing links
+%% \ccHtmlIndexC[concept]{} %% add further index entries
+
+
+\ccDefinition
+
+% The section below is automatically generated. Do not edit!
+%START-AUTO(\ccDefinition)
+
+The concept \ccc{SparseLinearAlgebraTraits_d} is used to solve sparse linear systems {\em A$\ast$X = B}.
+
+%END-AUTO(\ccDefinition)
+
+
+\ccRefines
+
+% The section below is automatically generated. Do not edit!
+%START-AUTO(\ccRefines)
+
+\ccc{LinearAlgebraTraits_d}
+
+%END-AUTO(\ccRefines)
+
+
+\ccTypes
+
+% The section below is automatically generated. Do not edit!
+%START-AUTO(\ccTypes)
+
+\ccNestedType{Matrix}
+{
+}
+\ccGlue
+\ccNestedType{Vector}
+{
+}
+\ccGlue
+\ccNestedType{NT}
+{
+}
+\ccGlue
+
+%END-AUTO(\ccTypes)
+
+
+\ccCreation
+\ccCreationVariable{sparse_LA}  %% variable name for \ccMethod
+
+% The section below is automatically generated. Do not edit!
+%START-AUTO(\ccCreation)
+
+\ccConstructor{SparseLinearAlgebraTraits_d();}
+{
+Default constructor.
+}
+\ccGlue
+
+%END-AUTO(\ccCreation)
+
+
+\ccOperations
+
+% The section below is automatically generated. Do not edit!
+%START-AUTO(\ccOperations)
+
+\ccMethod{bool linear_solver(const Matrix& A, const Vector& B, Vector& X, NT& D);}
+{
+Solve the sparse linear system {\em A$\ast$X = B}. Return true on success. The solution is then (1/D) $\ast$ X.
+\ccCommentHeading{Preconditions}  \\
+A.\ccc{row_dimension}() == B.dimension(). A.\ccc{column_dimension}() == X.dimension().
+}
+\ccGlue
+
+%END-AUTO(\ccOperations)
+
+
+\ccHasModels
+
+\ccRefIdfierPage{CGAL::Taucs_solver_traits<T>}  \\
+\ccRefIdfierPage{CGAL::Taucs_symmetric_solver_traits<T>}  \\
+\ccc{OpenNL::DefaultLinearSolverTraits<COEFFTYPE, MATRIX, VECTOR, SOLVER>} in OpenNL package  \\
+\ccc{OpenNL::SymmetricLinearSolverTraits<COEFFTYPE, MATRIX, VECTOR, SOLVER>} in OpenNL package  \\
+
+
+\ccSeeAlso
+
+\ccRefIdfierPage{SparseLinearAlgebraTraits_d::Matrix}  \\
+\ccRefIdfierPage{SparseLinearAlgebraTraits_d::Vector}  \\
+
+
+\end{ccRefConcept}
+
+% +------------------------------------------------------------------------+
+%%RefPage: end of main body, begin of footer
+\ccRefPageEnd
+% EOF
+% +------------------------------------------------------------------------+
+

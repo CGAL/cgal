@@ -1,0 +1,167 @@
+% +------------------------------------------------------------------------+
+% | Reference manual page: TDS_2::Face.tex
+% +------------------------------------------------------------------------+
+% | 07.04.2000   Author
+% | Package: Package
+% | 
+\RCSdef{\RCSTdsFace}{$Id$}
+\RCSdefDate{\RCSTdsFaceDate}{$Date$}
+% |
+%%RefPage: end of header, begin of main body
+% +------------------------------------------------------------------------+
+
+
+\begin{ccRefConcept}{TriangulationDataStructure_2::Face}
+
+%% \ccHtmlCrossLink{}     %% add further rules for cross referencing links
+%% \ccHtmlIndexC[concept]{} %% add further index entries
+
+\ccDefinition
+  
+The concept \ccRefName\  describes the types used to store the faces
+face class of a 
+\ccc{TriangulationDataStructure_2}\lcTex{, see 
+\ccRefPage{TriangulationDataStructure_2}}.
+A \ccRefName\ stores three pointers to its three vertices
+and three pointers to its three neighbors.
+The vertices are indexed 0,1, and 2 in counterclockwise order.
+The  neighbor indexed $i$ lies
+opposite to vertex i.
+
+In degenerate cases,
+when the triangulation data structure  stores a
+simplicial complex of dimension $0$ and $1$,
+the type \ccRefName\  is used to store the faces 
+of maximal dimension of the complex 
+: i.e. a vertex in dimension $0$, an edge in dimension $1$.
+Only vertices and neighbors with index $0$ are set in the first case,
+only vertices and neighbors with index $0$ or $1$ are set in the second case.
+
+
+\ccTypes
+The class \ccRefName\ defines the same types as 
+the triangulation data structure 
+except the iterators and the circulators.
+
+\ccCreationVariable{f}  %% choose variable name
+
+\ccCreation
+
+The methods \ccc{create_face} and
+\ccc{delete_face()}
+have to be used to 
+define new faces and  to delete non longer used faces.
+
+
+\ccHeading{Vertex Access Functions}
+\ccThree{Vertex_handle}{f.has_neighbors((Face_handle n);}{}
+
+\ccMethod{Vertex_handle vertex(int i) const;}
+{returns  the vertex \ccc{i} of \ccVar.
+\ccPrecond $0\leq i \leq 2$.}
+\ccGlue
+\ccMethod{int index(Vertex_handle v) const;}
+{returns the index of vertex \ccc{v} in \ccVar. \ccPrecond \ccc{v} is
+a vertex of \ccVar}
+\ccGlue
+\ccMethod{bool has_vertex(Vertex_handle v) const;}
+{returns \ccc{true} if  \ccc{v} is a vertex of \ccVar.}
+\ccGlue
+\ccMethod{bool has_vertex(Vertex_handle v, int& i) const;}
+{returns \ccc{true} if  \ccc{v} is a vertex of \ccVar, and
+ computes the index \ccc{i} of \ccc{v} in \ccc{f}.}
+
+
+\ccHeading{Neighbor Access Functions}
+
+The neighbor with index \ccc{i} is the neighbor which is opposite
+to the vertex with index \ccc{i}.
+
+
+\ccMethod{Face_handle neighbor(int i) const;}
+{returns  the neighbor \ccc{i} of \ccVar. 
+\ccPrecond $0\leq i \leq 2$.
+}
+\ccGlue
+\ccMethod{int index(Face_handle n) const;}
+{returns the index of face \ccc{n}.
+\ccPrecond \ccc{n} is a neighbor of \ccVar.}
+\ccGlue
+\ccMethod{bool has_neighbor(Face_handle n) const;}
+{returns \ccc{true} if \ccc{n} is a neighbor of \ccVar.}
+\ccGlue
+\ccMethod{bool has_neighbor(Face_handle n, int& i) const;}
+{returns \ccc{true} if \ccc{n} is a neighbor of \ccVar,  and
+compute the index \ccc{i} of \ccc{n}.}
+
+
+
+\begin{ccAdvanced}
+\ccHeading{Setting}
+
+\ccThree{Vertex_handle}{f.has_vertex( Vertex_handle v, int& i)x}{}
+\ccMethod{void set_vertex(int i, Vertex_handle v);}
+{sets vertex \ccc{i} to be \ccc{v}.
+\ccPrecond $0\leq i \leq 2$.
+}
+\ccGlue
+\ccMethod{void set_neighbor(int i, Face_handle n);}
+{sets neighbor \ccc{i} to be \ccc{n}.
+\ccPrecond $0\leq i \leq 2$.
+}
+\ccGlue
+\ccMethod{ void set_vertices();}{sets the vertices pointers to \ccc{NULL}.}
+\ccGlue
+\ccMethod{void set_vertices(Vertex_handle v0,
+		    Vertex_handle v1,
+		    Vertex_handle v2);}{sets the vertices pointers.}
+\ccGlue
+\ccMethod{void set_neighbors();} {sets the neighbors pointers to \ccc{NULL}.}
+\ccGlue
+\ccMethod{void set_neighbors(Face_handle n0,
+		     Face_handle n1,
+		     Face_handle n2);}{sets the neighbors pointers.}
+
+
+\ccHeading{Checking}
+
+\ccMethod{bool is_valid() const;}
+{returns \ccc{true} if  the function 
+\ccc{is_valid()} of the base class
+returns \ccc{true} and if, for each index $i$, $0 \le i < 3$,
+face $f$ is a neighbor of its neighboring face \ccc{neighbor(i)}
+and shares with this neighbor the  vertices \ccc{cw(i)} and \ccc{ccw(i)}
+in correct reverse order.}
+
+\end{ccAdvanced}
+
+\ccHeading{Miscellaneous} 
+
+\ccMethod{int ccw(int i) const;}
+{Returns $i+1$ modulo 3.\ccPrecond $0\leq i \leq 2$.}
+
+\ccMethod{int cw(int i) const;}
+{Returns $i+2$ modulo 3.\ccPrecond $0\leq i \leq 2$.}
+
+\ccHeading{I/O}
+
+\ccFunction{istream& operator>> (istream& is, TriangulationDataStructure_2::Face & f);}
+{Inputs any non combinatorial information possibly stored in  the face.}
+\ccGlue
+\ccFunction{ostream& operator<< (ostream& os, const TriangulationDataStructure_2::Face & f);}
+{Outputs any non combinatorial information possibly stored in  the face.}
+
+
+\ccSeeAlso
+\ccc{TriangulationDataStructure_2}, \\
+\ccc{TriangulationDataStructure_2::Vertex}, \\
+\ccc{TriangulationFaceBase_2}.
+
+
+\end{ccRefConcept}
+
+% +------------------------------------------------------------------------+
+%%RefPage: end of main body, begin of footer
+% EOF
+% +------------------------------------------------------------------------+
+

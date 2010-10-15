@@ -1,0 +1,39 @@
+\begin{ccRefClass} {Feature_dimension<T, K>}
+
+\ccDefinition
+The class \ccRefName\ allows to retrieve the geometric dimension of a type \ccc{T}
+in a kernel \ccc{K}.
+
+\ccParameters
+The parameter \ccc{K} has the default value \ccc{Kernel_traits<T>::Kernel}.
+
+\ccInclude{CGAL/Dimension.h}
+
+\ccConstants
+
+\ccVariable{static const int value;}{The dimension value as a compile-time
+integral constant. It is implemented as \ccc{K::Feature_dimension<T>::type::value}.
+It exists only when the dimension is a compile-time constant.}
+
+\ccTypes
+
+\ccNestedType{type}{Either \ccc{Dimension_tag<dim>} if the dimension is a
+compile-time constant of value \ccc{dim}, or \ccc{Dynamic_dimension_tag}
+otherwise.  It is implemented as \ccc{K::Feature_dimension<T>::type}. }
+
+\ccExample
+
+The following retrieves the dimension of a point type.
+
+\begin{cprog}
+  typedef K::Point_2 Point;
+  int dimension = Feature_dimension<Point, K>::value;
+  assert(dimension == 0);
+\end{cprog} 
+
+\ccSeeAlso
+\ccRefConceptPage{CGAL::Dimension_tag<int dim>} \\
+\ccRefConceptPage{CGAL::Dynamic_dimension_tag} \\
+\ccRefConceptPage{CGAL::Ambient_dimension<T, K>}
+
+\end{ccRefClass} 

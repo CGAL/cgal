@@ -1,0 +1,27 @@
+\begin{ccRefFunctionObjectConcept}{Kernel::SideOfBoundedCircle_2}
+A model for this must provide:
+
+\ccCreationVariable{fo}
+
+\ccMemberFunction{Bounded_side operator()(const Kernel::Point_2&p, 
+                                  const Kernel::Point_2&q, 
+                                  const Kernel::Point_2&r, 
+                                  const Kernel::Point_2&t);}
+         {returns the relative position of point \ccStyle{t}
+          to the circle defined by $p$, $q$ and $r$. The order
+          of the points $p$, $q$ and $r$ does not matter.
+          \ccPrecond \ccStyle{p, q} and \ccStyle{r} are not collinear.}
+
+\ccMemberFunction{Bounded_side operator()(const Kernel::Point_2&p, 
+                                  const Kernel::Point_2&q, 
+                                  const Kernel::Point_2&t);}
+         {returns the position of the point \ccStyle{t} relative to the circle
+          that has $pq$ as its diameter.}
+
+\ccRefines
+\ccc{AdaptableFunctor} (with four arguments)
+
+\ccSeeAlso
+\ccRefIdfierPage{CGAL::side_of_bounded_circle} \\
+
+\end{ccRefFunctionObjectConcept}

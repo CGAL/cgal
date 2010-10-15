@@ -1,0 +1,52 @@
+\begin{ccRefFunctionObjectConcept}{AlgebraicStructureTraits::RootOf}
+
+%\begin{ccAdvanced}
+\ccDefinition
+
+\ccc{AdaptableFunctor} computes a real root of a square-free univariate
+polynomial.
+
+\ccRefines
+
+\ccc{AdaptableFunctor}
+
+\ccTypes
+\ccNestedType{result_type} 
+        { Is \ccc{AlgebraicStructureTraits::Type}.}
+
+\ccOperations
+\ccCreationVariable{root_of}
+
+\ccMethod{
+template<class InputIterator>
+result_type operator() (int k, InputIterator begin, InputIterator end);}
+        {returns the k-th real root of the univariate polynomial,
+        which is defined by the iterator range,
+        where begin refers to the constant term.
+        \ccPrecond The polynomial is square-free.
+        \ccPrecond The value type of the InputIterator is \ccc{AlgebraicStructureTraits::Type}\\ }
+
+%\begin{ccAdvanced}
+%\ccMethod{
+%template<class InputIterator>
+%result_type operator()(const Type& lower,
+%                       const Type& upper,
+%                       InputIterator begin,
+%                       InputIterator end);}
+%        {returns the only real root within the interval [lower,upper]
+%        of the univariate polynomial, which is defined by the iterator
+%        range, where begin refers to the constant term.
+%        \ccPrecond The polynomial is square-free.
+%        \ccPrecond The value type of the InputIterator is \ccc{AlgebraicStructureTraits::Type}\\
+%}
+%\end{ccAdvanced}
+
+%\ccHasModels
+
+\ccSeeAlso
+
+\ccRefIdfierPage{FieldWithRootOf}\\
+\ccRefIdfierPage{AlgebraicStructureTraits}
+
+%\end{ccAdvanced}
+\end{ccRefFunctionObjectConcept}

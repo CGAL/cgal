@@ -1,0 +1,204 @@
+\ccRefPageBegin
+
+\begin{ccRefConcept}{EnvelopeTraits_3}
+
+\ccDefinition
+% ===========
+
+This concept defines the minimal set of geometric predicates and
+operations needed to compute the envelope of a set of arbitrary
+surfaces in $\mathbb{R}^3$. It refines the 
+\ccc{ArrangementXMonotoneTraits_2} concept. In addition to the
+\ccc{Point_2} and \ccc{X_monotone_curve_2} types and the
+\ccc{Has_boundary_category} category tag listed in the base concept,
+it also lists the \ccc{Surface_3} and  \ccc{Xy_monotone_surface_3}
+types, which represent arbitrary surfaces and $xy$-monotone surfaces,
+respectively, and some constructions and predicates on these types.
+Note however, that these operations usually involve the projection of
+3D objects onto the $xy$-plane.
+
+\ccRefines
+\ccc{ArrangementXMonotoneTraits_2}
+
+\ccTypes
+% ======
+
+\ccNestedType{Surface_3}
+{represents an arbitrary surface in $\mathbb{R}^3$.}
+\ccGlue
+\ccNestedType{Xy_monotone_surface_3}
+{represents a weakly $xy$-monotone surface in $\mathbb{R}^3$.}
+
+\ccHeading{Functor Types}
+% =======================
+
+\ccThree{Compare_y_at_x_2}{}{\hspace*{14cm}}
+\ccThreeToTwo
+
+\ccNestedType{Make_xy_monotone_3}
+{provides the operator (templated by the \ccc{OutputIterator} type)~:
+ \begin{itemize}
+ \item \ccc{OutputIterator operator() (Surface_3 S, bool is_lower,
+                                       OutputIterator oi)} \\
+ which subdivides the given surface \ccc{S} into $xy$-monotone parts
+ and inserts them into the output iterator. The value of
+ \ccc{is_lower} indicates whether we compute the lower or the upper
+ envelope, so that $xy$-monotone surfaces that are irrelevant to the
+ lower-envelope (resp. upper-envelope) computation may be discarded.
+ The value-type of \ccc{OutputIterator} is \ccc{Xy_monotone_surface_3}.
+ The operator returns a past-the-end iterator for the output sequence.
+ \end{itemize}}
+
+\ccNestedType{Construct_projected_boundary_2}
+{provides the operator (templated by the \ccc{OutputIterator} type)~:
+ \begin{itemize}
+ \item \ccc{OutputIterator operator() (Xy_monotone_surface_3 s, OutputIterator oi)} \\
+ which computes all planar $x$-monotone curves and possibly isolated planar 
+ points that form the projection of the boundary of the given $xy$-monotone 
+ surface $s$ onto the $xy$-plane, and inserts them into the output iterator. 
+ The value-type of \ccc{OutputIterator} is \ccc{Object}, where \ccc{Object}
+ wraps either a \ccc{Point_2}, or a
+ \ccc{pair<X_monotone_curve_2, Oriented_side>}. In the former case, the
+ object represents an isolated point of the projected boundary. In the latter,
+ more general, case the object represents an $x$-monotone boundary curve
+ along with an enumeration value which is either \ccc{ON_NEGATIVE_SIDE}
+ or \ccc{ON_POSITIVE_SIDE}, indicating whether whether the projection of the
+ surface onto the $xy$-plane lies below or above this $x$-monotone curve,
+ respectively. In degenerate case, namely when the surface itself is vertical,
+ and its projection onto the plane is $1$-dimensional, the \ccc{Oriented_side}
+ value is \ccc{ON_ORIENTED_BOUNDARY}. The operator returns a past-the-end
+ iterator for the output sequence.
+ \end{itemize}}
+ 
+\ccNestedType{Construct_projected_intersections_2}
+{provides the operator (templated by the \ccc{OutputIterator} type)~:
+ \begin{itemize}
+ \item \ccc{OutputIterator operator() (Xy_monotone_surface_3 s1,
+                                       Xy_monotone_surface_3 s2,
+                                       OutputIterator oi)} \\
+ which computes the projection of the intersections of the
+ $xy$-monotone surfaces \ccc{s1} and \ccc{s2} onto the $xy$-plane,
+ and inserts them into the output iterator.
+ The value-type of \ccc{OutputIterator} is \ccc{Object}, where
+ each \ccc{Object} either wraps a \ccc{pair<X_monotone_curve_2,Multiplicity>}
+ instance, which represents a projected intersection curve with its
+ multiplicity (in case the multiplicity is undefined or not known, it
+ should be set to $0$) or an \ccc{Point_2} instance, representing the
+ projected image of a degenerate intersection (the projection of an
+ isolated intersection point, or of a vertical intersection curve).
+ The operator returns a past-the-end iterator for the output sequence.
+ \end{itemize}}
+
+\ccNestedType{Compare_z_at_xy_3}
+{provides the operators~:
+ \begin{itemize}
+ \item \ccc{Comparison_result operator() (Point_2 p,
+                                          Xy_monotone_surface_3 s1,
+                                          Xy_monotone_surface_3 s2)}\\
+ which determines the relative $z$-order of the two given $xy$-monotone
+ surfaces at the $xy$-coordinates of the point \ccc{p}, with the
+ precondition that both surfaces are defined over \ccc{p}. Namely, it
+ returns the comparison result of $s_1(p)$ and $s_2(p)$.
+%
+ \item \ccc{Comparison_result operator() (X_monotone_curve_2 c,
+                                          Xy_monotone_surface_3 s1,
+                                          Xy_monotone_surface_3 s2)}\\
+ which determines the relative $z$-order of the two given $xy$-monotone
+ surfaces over the interior of a given $x$-monotone curve $c$, with the
+ precondition that $c$ is fully contained in the $xy$-definition range
+ of both $s_1$ and $s_2$, and that the surfaces do not intersect over
+ $c$. The functor should therefore return the comparison result of
+ $s_1(p')$ and $s_2(p')$ for some point $p'$ in the interior of $c$.
+ %
+ \item \ccc{Comparison_result operator() (Xy_monotone_surface_3 s1,
+                                          Xy_monotone_surface_3 s2)}\\
+ which determines the relative $z$-order of the two given unbounded
+ $xy$-monotone surfaces, which are defined over the entire $xy$-plane and
+ have no boundary, with the precondition that the surfaces do not intersect
+ at all.
+ The functor should therefore return the comparison result of
+ $s_1(p)$ and $s_2(p)$ for some planar point $p \in \mathbb{R}^2$.
+ This operator is required iff the category tag \ccc{Has_boundary_category} 
+ is defined as \ccc{Tag_true}.
+ \end{itemize}}
+
+\ccNestedType{Compare_z_at_xy_above_3}
+{provides the operator~:
+ \begin{itemize}
+ \item \ccc{Comparison_result operator() (X_monotone_curve_2 c,
+                                          Xy_monotone_surface_3 s1,
+                                          Xy_monotone_surface_3 s2)}\\
+ which determines the relative $z$-order of the two given $xy$-monotone
+ surfaces immediately above their projected intersection curve
+ $c$ (a planar point $p$ is {\em above} an $x$-monotone curve $c$ if it
+ is in the $x$-range of $c$, and lies to its left when the curve is
+ traversed from its $xy$-lexicographically smaller endpoint to its
+ larger endpoint). We have the precondition that both surfaces are
+ defined ``above'' $c$, and their relative $z$-order is the same for
+ some small enough neighborhood of points above $c$.
+ \end{itemize}}
+
+\ccNestedType{Compare_z_at_xy_below_3}
+{provides the operator~:
+ \begin{itemize}
+ \item \ccc{Comparison_result operator() (X_monotone_curve_2 c,
+                                          Xy_monotone_surface_3 s1,
+                                          Xy_monotone_surface_3 s2)}\\
+ which determines the relative $z$-order of the two given $xy$-monotone
+ surfaces immediately below their projected intersection curve
+ $c$ (a planar point $p$ is {\em below} an $x$-monotone curve $c$ if it
+ is in the $x$-range of $c$, and lies to its right when the curve is
+ traversed from its $xy$-lexicographically smaller endpoint to its
+ larger endpoint). We have the precondition that both surfaces are
+ defined ``below'' $c$, and their relative $z$-order is the same for
+ some small enough neighborhood of points below $c$.
+ \end{itemize}}
+
+\ccCreation
+\ccCreationVariable{traits}
+% =========================
+
+\ccThree{EnvelopeTraits_3~~~}{}{\hspace*{8cm}}
+\ccThreeToTwo
+
+\ccConstructor{EnvelopeTraits_3();}{default constructor.}
+\ccGlue
+\ccConstructor{EnvelopeTraits_3(EnvelopeTraits_3 other);}
+{copy constructor.}
+\ccGlue
+\ccMethod{EnvelopeTraits_3 operator=(other);}{assignment operator.}
+
+\ccHeading{Accessing Functor Objects}
+%====================================
+
+\ccThree{Construct_projected_boundary_2~~~}{}{\hspace*{7cm}}
+\ccThreeToTwo
+
+\ccMethod{Make_xy_monotone_3 make_xy_monotone_3_object();}
+{}
+\ccGlue
+\ccMethod{Construct_projected_boundary_2 construct_projected_boundary_2_object();}
+{}
+\ccGlue
+\ccMethod{Construct_projected_intersections_2 construct_projected_intersections_2_object();}
+{}
+\ccGlue
+\ccMethod{Compare_z_at_xy_3 compare_z_at_xy_3_object();}
+{}
+\ccGlue
+\ccMethod{Compare_z_at_xy_above_3 compare_z_at_xy_above_3_object();}
+{}
+\ccGlue
+\ccMethod{Compare_z_at_xy_below_3 compare_z_at_xy_below_3_object();}
+{}
+
+\ccHasModels
+%===========
+\ccc{CGAL::Env_triangle_traits_3<Kernel>}\\
+\ccc{CGAL::Env_sphere_traits_3<ConicTraits>}\\
+\ccc{CGAL::Env_plane_traits_3<Kernel>}\\
+\ccc{CGAL::Env_surface_data_traits_3<Traits,XyData,SData,Cnv>}
+
+\end{ccRefConcept}
+
+\ccRefPageEnd

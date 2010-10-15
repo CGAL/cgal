@@ -1,0 +1,4 @@
+Computation of local differential quantities of a surface from a point sample.
+
+
+\ccPkgIllustration{Jet_fitting_3/david-dirmaxkmin-small.png}{Jet_fitting_3/david-dirmaxkmin-jpg-white-back.png}

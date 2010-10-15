@@ -1,0 +1,220 @@
+\section{Extensible Kernel\label{section-extensible-kernel}}
+
+This manual section describe how users can plug user defined
+geometric classes in existing \cgal\ kernels.  This is best
+illustrated by an example.
+
+
+\subsection{Introduction}
+
+\cgal\ defines the concept of a geometry kernel. Such a kernel provides types,
+construction objects and generalized predicates. Most implementations
+of Computational Geometry algorithms and data structures in the basic
+library of \cgal\ were done in a way that classes or functions can be
+parametrized with a geometric traits class.
+
+In most cases this geometric traits class must be a model of the \cgal\ geometry
+kernel concept (but there are some exceptions).
+
+
+
+
+\subsection{An Extensive Example}
+
+Assume you have the following point class, where the coordinates are
+stored in an array of \ccc{doubles}, where we have another data member
+\ccc{color}, which shows up in the constructor.
+
+\ccHtmlLinksOff
+\begin{ccExampleCode}
+class MyPointC2 {
+
+private:
+  double vec[2];
+  int col;
+
+public:
+
+  MyPointC2()
+    : col(0)
+  {
+    *vec = 0;
+    *(vec+1) = 0;
+  }
+
+  
+  MyPointC2(const double x, const double y, int c)
+    : col(c)
+  {
+    *vec = x;
+    *(vec+1) = y;
+  }
+
+  const double& x() const  { return *vec; }
+
+  const double& y() const { return *(vec+1); }
+
+  double & x() { return *vec; }
+
+  double& y() { return *(vec+1); }
+
+  int color() const { return col; }
+
+  int& color() { return col; }
+  
+  
+  bool operator==(const MyPointC2 &p) const
+  {
+    return ( *vec == *(p.vec) )  && ( *(vec+1) == *(p.vec + 1) && ( col == p.col) );
+  }
+
+  bool operator!=(const MyPointC2 &p) const
+  {
+      return !(*this == p);
+  }
+
+};
+\end{ccExampleCode}
+\ccHtmlLinksOn
+
+
+As said earlier the class is pretty minimalistic, for
+example it has no \ccc{bbox()} method.  One
+might assume that a basic library algorithm which computes 
+a bounding box (e.g, to compute the bounding box of a polygon),
+will not compile. Luckily it will, because it does not
+use of member functions of geometric objects, but it makes
+use of the functor \ccc{Kernel::Construct_bbox_2}.
+
+To make the right thing happen with \ccc{MyPointC2} we
+have to provide the following functor.
+
+\ccHtmlLinksOff
+\begin{ccExampleCode}
+template <class ConstructBbox_2>
+class MyConstruct_bbox_2 : public ConstructBbox_2 {
+public:
+  using ConstructBbox_2::operator();
+
+  CGAL::Bbox_2 operator()(const typename MyPointC2& p) const {
+    return CGAL::Bbox_2(p.x(), p.y(), p.x(), p.y());
+  }
+};
+\end{ccExampleCode}
+\ccHtmlLinksOn
+
+
+Things are similar for random access to the \ccHtmlNoLinksFrom{Cartesian}
+coordinates of a point. As the coordinates are stored
+in an array of \ccc{doubles} we can use \ccc{double*} as
+random access iterator.
+
+\ccHtmlLinksOff
+\begin{ccExampleCode}
+class MyConstruct_coord_iterator {
+public:
+  const double* operator()(const MyPointC2& p)
+  {
+    return &p.x();
+  }
+
+  const double* operator()(const MyPointC2& p, int)
+  {
+    const double* pyptr = &p.y();
+    pyptr++;
+    return pyptr;
+  }
+};
+\end{ccExampleCode}
+\ccHtmlLinksOn
+
+The last functor we have to provide is the one which constructs
+points. That is you are not forced to add the constructor 
+with the \ccc{Origin} as parameter to your class, nor the constructor with 
+homogeneous coordinates.
+The functor is a kind of glue layer between the \cgal\ algorithms
+and your class.
+
+\ccHtmlLinksOff
+\begin{ccExampleCode}
+ template <typename K>
+  class MyConstruct_point_2
+  {
+    typedef typename K::RT         RT;
+    typedef typename K::Point_2    Point_2;
+  public:
+    typedef Point_2          result_type;
+
+    Point_2
+    operator()(CGAL::Origin o) const
+    { return Point_2(0,0, 0); }
+
+    Point_2
+    operator()(const RT& x, const RT& y) const
+    { return Point_2(x, y, 0); }
+
+    
+    // We need this one, as such a functor is in the Filtered_kernel
+    Point_2
+    operator()(const RT& x, const RT& y, const RT& w) const
+    { 
+      if(w != 1){
+	return Point_2(x/w, y/w, 0); 
+      } else {
+	return Point_2(x,y, 0);
+      }
+    }
+  };
+
+\end{ccExampleCode}
+\ccHtmlLinksOn
+
+
+Now we are ready to put the puzzle together. We won't explain it in
+detail, but you see that there are \ccc{typedefs} to the new point
+class and the functors. All the other types are inherited.
+
+
+
+\ccHtmlLinksOff
+
+\ccIncludeExampleCode{Kernel_23/MyKernel.h}
+
+\ccHtmlLinksOn
+
+
+
+Finally, we give an example how this new kernel can be used.
+Predicates and constructions work with the new point, they
+can be a used to construct segments and triangles with, and
+data structures from the Basic Library, as the Delaunay
+triangulation work with them.  
+
+The kernel itself can be
+made robust by plugging it in the \ccc{Filtered_kernel}.
+
+
+\ccHtmlLinksOff
+\ccIncludeExampleCode{Kernel_23/MyKernel.cpp}
+\ccHtmlLinksOn
+
+
+\subsection{Limitations}
+
+The point class must have member functions \ccc{x()} and \ccc{y()}
+(and \ccc{z()} for the 3d point). We will probably
+introduce function objects that take care of coordinate
+access.
+
+
+As we enforce type equality between \ccc{MyKernel::Point_2} and \ccc{Point_2<MyKernel>},
+the constructor with the color as third argument is not available.
+
+
+
+
+
+
+
+
+

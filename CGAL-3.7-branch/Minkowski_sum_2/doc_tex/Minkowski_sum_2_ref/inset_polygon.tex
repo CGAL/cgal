@@ -1,0 +1,37 @@
+% +------------------------------------------------------------------------+
+% | Reference manual page: inset_polygon.tex
+% +------------------------------------------------------------------------+
+% | 
+% | Package: Minkowski_sum_2
+% | 
+% +------------------------------------------------------------------------+
+
+\ccRefPageBegin
+
+\begin{ccRefFunction}{inset_polygon_2}
+
+\ccInclude{CGAL/offset_polygon_2.h}
+
+\ccFunction{template<class ConicTraits, class Container, class OutputIterator>
+            OutputIterator inset_polygon_2
+                 (const Polygon_2<typename ConicTraits::Rat_kernel,
+                                  Container>& P,
+                  const typename ConicTraits::Rat_kernel::FT& r,
+                  const ConicTraits& traits,
+                  OutputIterator oi);}
+   {Computes the inset, or inner offset, of the given polygon \ccc{P} by a
+    given radius \ccc{r} --- namely, the function computes the set of points
+    inside the polygon whose distance from $P$'s boundary is at least $r$:
+    $\{ p \in P \;|\; {\rm dist}(p, \partial P) \geq r \}$.
+    Note that as the input polygon may not be convex, its inset may comprise
+    several disconnected components. The result is therefore represented as a
+    sequence of generalized polygons, such that the edges of each polygon
+    correspond to line segments and circular arcs, both are special types of
+    conic arcs, as represented by the \ccc{traits} class.
+    The output sequence is returned via the output iterator \ccc{oi}, whose
+    value-type must be \ccc{Gps_traits_2<ConicTraits>::Polygon_2}.
+    \ccPrecond{\ccc{P} is a simple polygon.}}
+
+\end{ccRefFunction}
+
+\ccRefPageEnd

@@ -1,0 +1,28 @@
+lexer.o: lexer.cpp lexer.h mstring.h output.h basic.h string_conversion.h \
+  internal_macros.h syntax.tab.h input.h lex_include_impl.h \
+  macro_dictionary.h
+syntax.o: syntax.cpp syntax.h lexer.h mstring.h output.h basic.h \
+  string_conversion.h input.h macro_dictionary.h cpp_formatting.h \
+  internal_macros.h
+basic.o: basic.cpp basic.h
+buffer.o: buffer.cpp buffer.h basic.h
+macro_dictionary.o: macro_dictionary.cpp macro_dictionary.h mstring.h \
+  lexer.h output.h basic.h input.h string_conversion.h error.h config.h
+internal_macros.o: internal_macros.cpp internal_macros.h mstring.h \
+  string_conversion.h lexer.h output.h basic.h macro_dictionary.h \
+  cpp_formatting.h input.h error.h config.h
+error.o: error.cpp error.h config.h mstring.h input.h basic.h \
+  string_conversion.h lexer.h output.h
+string_conversion.o: string_conversion.cpp string_conversion.h mstring.h \
+  lexer.h output.h basic.h input.h config.h error.h
+cpp_formatting.o: cpp_formatting.cpp cpp_formatting.h mstring.h \
+  string_conversion.h lexer.h output.h basic.h macro_dictionary.h \
+  internal_macros.h config.h error.h
+input.o: input.cpp input.h mstring.h basic.h config.h error.h \
+  macro_dictionary.h string_conversion.h lexer.h output.h \
+  cpp_formatting.h
+output.o: output.cpp output.h mstring.h basic.h config.h error.h \
+  macro_dictionary.h string_conversion.h lexer.h cpp_formatting.h
+cc_extract_html.o: cc_extract_html.cpp mstring.h macro_dictionary.h \
+  internal_macros.h config.h error.h syntax.h string_conversion.h lexer.h \
+  output.h basic.h input.h

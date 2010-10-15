@@ -1,0 +1,226 @@
+% +------------------------------------------------------------------------+
+% | Reference manual page: Arr_Bezier_traits.tex
+% +------------------------------------------------------------------------+
+% | 
+% | Package: Arrangement_2
+% | 
+% +------------------------------------------------------------------------+
+
+\ccRefPageBegin
+\begin{ccRefClass}{Arr_Bezier_curve_traits_2<RatKernel,AlgKernel,NtTraits>}
+
+\ccDefinition
+%============
+
+The traits class \ccRefName{} is a model of the \ccc{ArrangementTraits_2}
+concept that handles planar B\'ezier curves. A planar {\em B\'ezier curve}
+$B$ is a parametric curve defined by a sequence of {\em control points}
+$p_0, \ldots, p_n$ as follows:
+\begin{eqnarray*}
+B(t) = \left(X(t), Y(t)\right)
+  = \ccSum{k=0}{n}{p_k \cdot \frac{n!}{k! (n-k)!} \cdot
+                   t^k (1-t)^{n-k}}\ .
+\end{eqnarray*}
+where $t \in [0, 1]$. The degree of the curve is therefore $n$ ---
+namely, $X(t)$ and $Y(t)$ are polynomials of degree $n$. B\'ezier curves
+have numerous applications in computer graphics and solid modelling. They
+are used, for example, in free-form sketches and for defining the true-type
+fonts.
+
+In our representation, we assume that the coordinates of all control
+points are rational numbers (namely they are given as objects of the
+\ccc{RatKernel::Point_2} type), so both $X(t)$ and $Y(t)$ are polynomials
+with rational coefficients. The intersection points between curves are
+however algebraic numbers, and their exact computation is time-consuming.
+The traits class therefore contains a layer of geometric filtering that
+performs all computation in an approximate manner whenever possible, and
+it resorts to exact computations only when the approximate computation
+fails to produce an unambiguous result.
+
+We therefore require separate representations of the control points and
+the intersection points. The \ccc{NtTraits} should be instantiated with a class
+that defines nested \ccc{Integer}, \ccc{Rational} and \ccc{Algebraic} number
+types and supports various operations on them, yielding certified computation
+results (for example, in can convert rational numbers to algebraic numbers
+and can compute roots of polynomials with integer coefficients).
+The other template parameters, \ccc{RatKernel} and \ccc{AlgKernel} should be
+geometric kernels templated with the \ccc{NtTraits::Rational} and
+\ccc{NtTraits::Algebraic} number types, repectively. It is recommended to
+instantiate the \ccc{CORE_algebraic_number_traits} class as the \ccc{NtTraits}
+parameter, with \ccc{Cartesian<NtTraits::Rational>} and
+\ccc{Cartesian<NtTraits::Algebraic>} instantiating the two kernel types,
+respectively. The number types in this case are provided by the {\sc Core}
+library, with its ability to exactly represent simple algebraic numbers.
+
+\ccInclude{CGAL/Arr_Bezier_curve_traits_2.h}
+
+\ccIsModel
+  \ccc{ArrangementTraits_2}
+
+\ccTypes
+%-------
+
+\ccNestedType{Rational}{the \ccc{NtTraits::Rational} type
+                        (and also the \ccc{RatKernel::FT} type).}
+
+\ccNestedType{Algebraic}{the \ccc{NtTraits::Algebraic} type
+                         (and also the \ccc{AlgKernel::FT} type).}
+
+\subsection*{Class
+         Arr\_Bezier\_curve\_traits\_2$<$RatKernel,AlgKernel,NtTraits$>$::Curve\_2}
+%========================================================================
+
+The \ccc{Curve_2} class nested within the B\'ezier traits class is used
+to represent a B\'ezier curve of arbitrary degree, which is defined by a
+sequence of rational control points. In addition to the methods listed
+below, the I/O operators \ccc{operator<<} and \ccc{operator>>} for
+standard output-streams are also supported. The copy constructor and
+assigment operator are supported as well.
+
+\begin{ccClass}{Arr_Bezier_curve_traits_2<AlgKernel,NtTraits>::Curve_2}
+%======================================================================
+% 
+\ccCreation
+\ccCreationVariable{B}
+%---------------------
+
+\ccConstructor{Curve_2 ();}
+  {default constructor.}
+
+\ccConstructor{template <class InputIterator>
+               Curve_2 (InputIterator pts_begin, InputIterator pts_end);}{%
+  constructs a B\'ezier curve as defined by the given range of control
+  points. The value-type of \ccc{InputIterator} is \ccc{RatKernel::Point_2}.
+  \ccPrecond{The input range must contain at least two control points.}
+}
+
+\ccAccessFunctions
+%-----------------
+
+\ccMethod{size_t number_of_control_point () const;}
+  {returns the number of control points that define \ccVar.}
+
+\ccMethod{typename RatKernel::Point_2 control_point (size_t k) const;}
+  {returns the $k$th control point. Note that the first control point equals
+   the curve source, while the last control point equals its target. The rest
+   of the control points do not lie on the curve.
+   \ccPrecond{$k$ is smaller than the number of control points.}}
+
+\ccMethod{typename RatKernel::Point_2 operator() (const Rational& t) const;}
+  {returns the point $B(t)$ on the curve that corresponds to the given
+   rational parameter value.}
+
+\ccMethod{typename AlgKernel::Point_2 operator() (const Algebraic& t) const;}
+  {returns the point $B(t)$ on the curve that corresponds to the given
+   algebraic parameter value.}
+
+\end{ccClass}
+
+
+\subsection*{Class
+         Arr\_Bezier\_curve\_traits\_2$<$RatKernel,AlgKernel,NtTraits$>$::Point\_2}
+%========================================================================
+
+The \ccc{Point_2} class nested within the B\'ezier traits class is used
+to represent: (i) an endpoint of a B\'ezier curve, (ii)~a vertical tangency
+point of a curve, used to subdivide it into $x$-monotone subcurve, and
+(iii)~an intersection point between two curves. While, points of type~(i) have
+rational coordinates and are given as part of the input, points of the two
+latter types have algebraic coordinates. However, to speed up the arrangement
+construction, such point are not computed in an exact manner, and instead
+are given in an approximate representation. Note that the exact coordinates
+of a point may only be accessed if it is exactly computed.
+
+In addition to the methods listed below, the copy constructor and assigment
+operator for \ccc{Point_2} objects are also supported.
+
+\begin{ccClass}{Arr_Bezier_curve_traits_2<AlgKernel,NtTraits>::Point_2}
+%======================================================================
+
+\ccCreation
+\ccCreationVariable{p}
+%---------------------
+
+\ccConstructor{Point_2 ();}
+  {default constructor.}
+
+\ccConstructor{Point_2 (const Curve_2& B, const Algebraic& t_0);}
+  {constructs the point $B(t_0)$ on the given curve. As $t_0$ is an
+   algebraic number, the point has algebraic coordinates.}
+
+\ccConstructor{Point_2 (const Curve_2& B, const Rational& t_0);}
+  {constructs the point $B(t_0)$ on the given curve. As $t_0$ is a
+   rational number, the point has rational coordinates.}
+
+\ccAccessFunctions
+%-----------------
+
+\ccMethod{std::pair<double, double> approximate () const;}
+  {returns the approximated coordinates of \ccVar.}
+
+\ccMethod{bool is_exact () const;}
+  {returns whether the coordinates of \ccVar{} are computed in an exact manner.}
+
+\ccMethod{Algebraic x () const;}
+  {returns the $x$-coordinate of \ccVar.
+   \ccPrecond{\ccVar{} is exactly computed.}}
+\ccGlue
+\ccMethod{Algebraic y () const;}
+  {returns the $y$-coordinate of \ccVar.
+   \ccPrecond{\ccVar{} is exactly computed.}}
+
+\ccMethod{bool is_rational () const;}
+  {returns whether the coordinates of \ccVar{} are rational numbers.}
+
+\ccMethod{operator typename RatKernel::Point_2 () const;}
+  {casts \ccVar{} to a point with rational coordinates.
+   \ccPrecond{\ccVar{} has rational coordinates.}}
+
+\end{ccClass}
+
+
+\subsection*{Class 
+Arr\_Bezier\_curve\_traits\_2$<$RatKernel,AlgKernel,NtTraits$>$::X\_monotone\_curve\_2}
+%==============================================================================
+
+The \ccc{X_monotone_curve_2} class nested within the B\'ezier traits is
+used to represent $x$-monotone subcurves of B\'ezier curves. The subcurve is
+defined by a supporting B\'ezier curve $B(t)$ and a range of definition in
+the parameter space $[t_1, t_2] \subseteq [0, 1]$, where $B(t_1)$ is the
+subcurve source and $B(t_2)$ is its target. Note that as the point endpoints
+may only be approxiamted, the parameter range definining the subcurve may
+only be approximately known.
+
+It is not possible to construct $x$-monotone subcurves directly. Instead,
+use the \ccc{Make_x_monotone_2} functor supplied by the traits class to
+subdivide a \ccc{Curve_2} object into $x$-monotone cubcurves.
+
+\begin{ccClass}{Arr_Bezier_curve_traits_2<AlgKernel,NtTraits>::X_monotone_curve_2}
+%===========================================================================
+
+\ccCreationVariable{b}
+\ccAccessFunctions
+%-----------------
+
+\ccMethod{Curve_2 supporting_curve () const;}
+  {returns the supporting B\'ezier curve of \ccVar.}
+
+\ccMethod{Point_2 source () const;}
+  {returns the source point of \ccVar.}
+\ccGlue
+\ccMethod{Point_2 target () const;}
+  {returns the target point of \ccVar.}
+
+\ccMethod{Point_2 left () const;}
+  {returns the left ($xy$-lexicographically smaller) endpoint of \ccVar.}
+\ccGlue
+\ccMethod{Point_2 right () const;}
+  {returns the right ($xy$-lexicographically smaller) endpoint of \ccVar.}
+
+\ccMethod{std::pair<double, double> parameter_range () const;}
+  {return the approximate parameter range defining the subcurve \ccVar.}
+
+\end{ccClass}
+
+\end{ccRefClass}
+\ccRefPageEnd

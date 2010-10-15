@@ -1,0 +1,312 @@
+% +------------------------------------------------------------------------+
+% | Reference manual page: MeshComplex_3InTriangulation_3.tex
+% +------------------------------------------------------------------------+
+% | 13.02.2009   Author
+% | Package: Package
+% |
+\RCSdef{\RCSMeshComplexInTriangulationRev}{$Id$}
+\RCSdefDate{\RCSMeshComplexInTriangulationDate}{$Date$}
+% |
+\ccRefPageBegin
+%%RefPage: end of header, begin of main body
+% +------------------------------------------------------------------------+
+
+
+\begin{ccRefConcept}{MeshComplex_3InTriangulation_3}
+
+%% \ccHtmlCrossLink{}     %% add further rules for cross referencing links
+%% \ccHtmlIndexC[concept]{} %% add further index entries
+
+\ccDefinition
+
+The concept \ccRefName\ provides a data structure 
+to represent and maintain a 3D complex embedded in a 3D triangulation.
+The data structure includes a 3D triangulation and marks for each cell
+of the triangulation whether or not such cell belongs to the 3D complex.
+In \cgal{} 3D mesh generator, this data structure is used to maintain,
+during the refinement process, the current  approximation
+of the domain to be discretized and to represent the final mesh.
+Each subdomain is approximated as the union of some
+ cells of the embedding triangulation.
+The 3D complex is always a pure 3D complex, i.e., it includes
+a subset of the cells of the triangulations as well as their subfaces.
+
+The data structure also represents a 2D complex, the boundary complex,
+embedded in the same 3D
+triangulation,  and  representing the boundary of the 3D complex.
+ This 2D complex includes, for each surface patch of the input domain,
+ a set of triangulation  facets, forming an approximation of the surface patch.
+Facets in the boundary complex are called {\em surface facets} or
+{\em boundary facets}.
+
+
+\ccTypes
+
+\ccNestedType{Triangulation}{Type of the
+embedding 3D triangulation. Must be a 3D
+regular triangulation of \cgal{}.
+% Vertex and cell base class of that
+% triangulation must be
+% models of the concepts
+% \ccc{MeshVertexBase_3} and \ccc{MeshCellBase_3} respectively.
+}
+\ccGlue
+\ccTypedef{typedef Triangulation::Vertex_handle Vertex_handle;}
+{ Type of
+the embedding triangulation vertex handles.}
+\ccGlue
+\ccTypedef{typedef Triangulation::Cell_handle  Cell_handle;}
+{ Type of
+the embedding triangulation cell handles.}
+\ccGlue
+\ccTypedef{typedef Triangulation::Facet Facet;}
+{Type of
+the embedding triangulation facets.}
+\ccGlue
+\ccTypedef{typedef Triangulation::Edge Edge;}
+{Type of
+the embedding triangulation edges.}
+\ccGlue
+\ccTypedef{typedef Triangulation::size_type size_type;}
+{Size type (unsigned integral type).}
+
+% \ccEnum{enum Face_status {NOT_IN_COMPLEX, ISOLATED, BOUNDARY, REGULAR,
+% SINGULAR};}
+% {A type to describe the status of a face (facet, edge, or vertex) with respect to 
+% the 2D \& 3D complex. Cells can be either \ccc{NOT_IN_COMPLEX} or \ccc{REGULAR}
+%   depending on whether they belong to the 3D complex or not.
+
+% Facets can only be  \ccc{NOT_IN_COMPLEX}  or \ccc{REGULAR}
+% depending on whether they belong to the 2D complex on not.
+
+
+\ccNestedType{Subdomain_index}{
+Must match the type \ccc{MeshDomain_3::Subdomain_index}
+of the mesh generation process.}
+\ccGlue
+\ccNestedType{Surface_Index}{
+Must match the type \ccc{MeshDomain_3::Surface_index}
+of the mesh generation process.}
+\ccGlue
+\ccNestedType{Index}{
+Must match the type \ccc{MeshDomain_3::Index}
+of the mesh generation process.}
+% \ccType{typedef MeshCellBase_3::Subdomain_index Subdomain_index;}
+% {Subdomain index type.}
+% \ccGlue
+% \ccTypedef{typedef MeshCellBase_3::Surface_index Surface_index;}
+% {Surface index type.}
+% \ccGlue
+% \ccTypedef{typedef MeshVertexBase_3::Index Index;}
+% {Index type.}
+
+
+\ccNestedType{Cell_iterator}{Iterator type to visit the cells
+of the triangulation belonging to the 3D complex.}
+\ccGlue
+\ccNestedType{Facet_iterator}{Iterator type to visit the facets
+of the 2D boundary complex.}
+% \ccGlue
+% \ccNestedType{Edge_iterator}{An iterator type to visit  the
+% edges of the 2D complex.}
+% \ccGlue
+% \ccNestedType{Vertex_iterator}{An iterator type to visit 
+% vertices of the 2D complex.}
+
+
+\ccCreation
+\ccCreationVariable{c3t3}  %% choose variable name
+
+\ccConstructor{MeshComplex_3InTriangulation_3();}
+{Builds an empty 3D complex.}
+\ccGlue
+\ccConstructor{MeshComplex_3InTriangulation_3(const MeshComplex_3InTriangulation_3 & rhs);}
+{Copy constructor. Embedded triangulation is duplicated.}
+
+\ccMethod{MeshComplex_3InTriangulation_3& operator= (const MeshComplex_3InTriangulation_3 & rhs);}
+{Assignment operator. Embedded triangulation is duplicated, and the former triangulation of \ccc{rhs} is deleted.}
+
+\ccMethod{void swap(MeshComplex_3InTriangulation_3 & rhs);} 
+{Swaps \ccVar\ and \ccc{rhs}. There is no copy of embedded triangulation,
+thus this method runs in constant time. This method should be preferred to
+\ccVar=\ccc{rhs} or \ccVar(\ccc{rhs}) when \ccc{rhs} is deleted after
+that.}
+
+
+\ccAccessFunctions
+\ccMethod{const Triangulation& triangulation() const;}
+{Returns a const reference to the triangulation.}
+
+\begin{ccAdvanced}
+\ccHeading{Non const access}
+The responsibility of keeping a valid C3T3 belongs to the user when using
+advanced operations allowing a direct manipulation of the triangulation.
+
+\ccMethod{Triangulation& triangulation();}
+{Returns a reference to the triangulation.}
+\end{ccAdvanced}
+
+\ccModifiers
+
+\ccMethod{void add_to_complex(Cell_handle c, Subdomain_index index);}
+{Adds cell \ccc{c} of index \ccc{index} to the 3D complex.}
+\ccGlue
+\ccMethod{void add_to_complex(Facet f, Surface_index index);}
+{Adds facet \ccc{f} with surface index \ccc{index}) to the 2D boundary complex.}
+\ccGlue
+\ccMethod{void add_to_complex(Cell_handle c, int i, Surface_index index);}
+{Same as above with \ccc{f=(c,i)}.}
+
+\ccMethod{void remove_from_complex(Cell_handle c);}{Removes cell \ccc{c} from the 3D complex.}
+\ccGlue
+\ccMethod{void remove_from_complex(Facet f);}
+{Removes facet \ccc{f} from  the 2D complex.}
+\ccGlue
+\ccMethod{void remove_from_complex(Cell_handle c, int i);}
+{Same as above with \ccc{f=(c,i)}.}
+
+
+\ccMethod{void set_subdomain_index(Cell_handle c, Subdomain_index index);}
+{Sets the subdomain index of a cell.}
+\ccGlue
+\ccMethod{void set_surface_index(Facet f, Surface_index index);}
+{Sets the surface index of the facet \ccc{f}.}
+\ccGlue
+\ccMethod{void set_surface_index(Cell_handle c, int i, Surface_index index);}
+{Same as above with \ccc{f=(c,i)}.}
+\ccGlue
+\ccMethod{void set_index(Vertex_handle v, Index index);}
+{Sets the index of a vertex.}
+\ccGlue
+\ccMethod{void set_dimension(Vertex_handle v);}
+{Sets the dimension of vertex \ccc{v}.}
+
+\ccHeading{Queries}
+Queries on the  3D and  2D  complexes.
+
+\ccMethod{size_type number_of_cells();}
+{Returns the number of cells that belong to the 3D complex.}
+
+\ccMethod{size_type number_of_facets();}
+{Returns the number of facets that belong to the boundary 2D complex.}
+
+
+% \ccMethod{Face_status face_status(Cell_handle c);}
+% {Returns the status of the cell \ccc{c}  with respect to  the 3D complex.}
+% \ccGlue
+% \ccMethod{Face_status face_status(Facet f);}
+% {Returns the status of the facet \ccc{f}  with respect to the 2D complex.}
+% \ccGlue
+% \ccMethod{Face_status face_status(Cell_handle c, int i);}
+% {Same as above with \ccc{f=(c,i)}.}
+% \ccGlue
+% \ccMethod{Face_status face_status(Edge e);}
+% {Returns the status of edge \ccc{e} in the 2D complex.}
+% \ccGlue
+% \ccMethod{Face_status face_status(Cell_handle c, int
+% i, int j);}
+% {Returns the status of edge \ccc{(c,i,j)} in the 2D complex.}
+% \ccGlue
+% \ccMethod{Face_status face_status(Vertex_handle v);}
+% {Returns the status of vertex \ccc{v} in the 2D complex.}
+
+
+\ccMethod{bool is_in_complex(Cell_handle c);}
+{Returns \ccc{true} iff the cell \ccc{c} belongs to the 3D complex.}
+\ccGlue
+\ccMethod{bool is_in_complex(Facet f);}
+{Returns \ccc{true} iff the facet \ccc{f} belongs to the boundary 2D complex.}
+\ccGlue
+\ccMethod{bool is_in_complex(Cell_handle c, int i);}
+{Same as above with \ccc{f=(c,i)}.}
+% \ccGlue
+% \ccMethod{bool is_in_complex(Edge e);}
+% {Returns \ccc{true}, if the edge  \ccc{e} belongs to the 2D complex.}
+% \ccGlue
+% \ccMethod{bool is_in_complex(Cell_handle c, int i, int j);}
+% {Returns \ccc{true}, if the edge \ccc{(c,i,j)} belongs to the 2D complex.}
+% \ccGlue
+% \ccMethod{bool is_in_complex(Vertex_handle v);}
+% {Returns \ccc{true}, if the vertex \ccc{v} belongs to the 2D complex.}
+
+
+Queries on the identifier of the face complex 
+including triangulation cells, facets and vertices.
+
+\ccMethod{Subdomain_index subdomain_index(Cell_handle c);}
+{Returns the index of the subdomain of the input domain containing
+  the cell \ccc{c} (i.e., its circumcenter).
+The default subdomain index is returned if the cell  \ccc{c} is outside the domain.}
+
+\ccMethod{Surface_index surface_index(Facet f);}
+{For a surface facet, returns  the index of the surface patch of the input complex
+intersection the dual Voronoi edge of the facet.
+For a facet that is not a surface facet, the default \ccc{Surface_index} value
+is returned.} 
+
+
+\ccMethod{Surface_index surface_index(Cell_handle c, int i);}
+{Same as above with \ccc{f=(c,i)}.}
+
+\ccMethod{int in_dimension( Vertex_handle v) const;}{Returns the
+  dimension of the lowest dimensional face of the domain complex that
+  contains the vertex \ccc{v}.}
+
+\ccMethod{Index index(Vertex_handle v) const;}{Returns the index of
+  the lowest dimensional face of the input domain that contains the vertex \ccc{v}.}
+
+
+\ccHeading{Traversal of the complex}
+
+The data structure provides iterators to visit the cells and facets of the complex.
+All those iterators are bidirectional and non mutable.
+
+\ccMethod{Cell_iterator cells_begin();}
+{Returns a \ccc{Cell_iterator} to visit the cells of the triangulation contained in the input domain.}
+\ccGlue
+\ccMethod{Cell_iterator cells_end();}
+{Returns the past-the-end iterator for the above iterator.}
+
+\ccMethod{Facet_iterator facets_begin();}
+{Returns a \ccc{Facet_iterator} to visit the facets
+of the 2D complex.}
+\ccGlue
+\ccMethod{Facet_iterator facets_end();}
+{Returns the  past-the-end iterator for the above iterator.}
+
+% \ccMethod{Edge_iterator edges_begin();}
+% {Returns an iterator with value type \ccc{Edge} to visit the
+% edges of the 2D complex which are not isolated.}
+% \ccGlue
+% \ccMethod{Edge_iterator edges_end();}
+% {Returns the past the end iterator for the above iterator.}
+
+% \ccMethod{Vertex_iterator vertices_begin();}
+% {Returns an iterator with value type \ccc{Vertex_handle} to visit the
+% vertices of the 2D complex.}
+% \ccGlue
+% \ccMethod{Vertex_iterator vertices_end();}
+% {Returns the past the end iterator for the above iterator.}
+
+
+\ccHasModels
+\ccc{CGAL::Mesh_complex_3_in_triangulation_3<Tr>}
+
+
+\ccSeeAlso
+\ccc{MeshDomain_3} \\
+\ccc{CGAL::make_mesh_3}
+
+
+
+
+
+
+\end{ccRefConcept}
+
+% +------------------------------------------------------------------------+
+%%RefPage: end of main body, begin of footer
+\ccRefPageEnd
+% EOF
+% +------------------------------------------------------------------------+
+

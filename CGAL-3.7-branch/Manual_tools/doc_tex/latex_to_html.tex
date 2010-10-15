@@ -1,0 +1,925 @@
+% ___________________________________________________________________________
+% |#########################################################################|
+% |                                                                         |
+% | The Manual for the LaTeX converter   latex_to_html.tex                  |
+% | -------------------------------------------------------------           |
+% |                                                                         |
+% | 30.07.1998   Lutz Kettner   kettner@acm.org                             |
+% | Zurich, Switzerland                                                     |
+% | $Id$                                                        |
+% | $Date$                                            |
+% |_________________________________________________________________________|
+% |#########################################################################|
+
+\documentclass[11pt]{article}
+\usepackage{latexsym}
+\usepackage{amssymb}
+\usepackage{path}
+\usepackage{epsfig}
+\usepackage{cc_manual}
+\usepackage{latex_to_html}
+\usepackage{makeidx}
+\makeindex
+
+%\pagestyle{empty}
+\textwidth 15.4cm 
+\textheight 24 cm
+\topmargin -14mm       
+\evensidemargin 3mm 
+\oddsidemargin 3mm
+
+\parindent0em
+\setlength{\parskip}{1.4ex}
+
+\sloppy
+
+{
+  \begingroup
+    \catcode`\|=0
+    \catcode`\[=1
+    \catcode`\]=2
+    \catcode`\{=12
+    \catcode`\}=12    
+    \catcode`\\=12    
+    |gdef|Open[[|tt {]]
+    |gdef|Close[[|tt }]]
+    |gdef|Backslash[[|tt \]]
+  |endgroup
+}
+
+\newcommand{\Mindex}[1]{\index{#1@\protect\Backslash{\tt #1}}}
+\newcommand{\ccIndexEntry}[1]{\index{#1@\protect\Backslash{\tt #1}}}
+\newcommand{\lcIndex}[1]{\index{#1@\protect\Backslash{\tt #1}}}
+\newcommand{\TTindex}[1]{\index{#1@{\tt #1}}}
+\newcommand{\Dindex}[1]{#1\index{#1}}
+
+\def\ind{\hspace*{7mm}}
+
+% ----------------------------------------------------------------------
+\title{\LaTeX\ to HTML Converter\\
+       {\tt cc\_manual\_to\_html} and {\tt latex\_converter.sty}}
+\author{Lutz Kettner}
+
+\date{\lcRevision. \lcDate}
+
+\begin{document}
+
+\maketitle
+
+\tableofcontents
+\thispagestyle{empty}
+\clearpage
+\thispagestyle{empty}
+~\vfill
+
+\input{Manual_tools/disclaimer}
+
+\cleardoublepage\setcounter{page}{1}
+
+% ----------------------------------------------------------------------
+\section{Introduction}
+
+This manual describes the \LaTeX\ to HTML converter {\tt
+  cc\_manual\_to\_html}. The converter is accompanied by a \LaTeX\ style
+file, {\tt latex\_converter.sty}, that defines a couple of macros for
+HTML output which are then usually ignored in the \LaTeX\ formatting,
+for example, hyper-links.
+
+The converter is a full fledged \LaTeX\ interpreter and understands
+most of \LaTeX2e's language repertoire including user macro
+definitions and several additional style files.  Examples for the
+additionally supported style files are {\tt alltt}, {\tt path}, {\tt
+  cprog}, and {\tt cc\_manual}~\cite{k-clswr-99}. In fact, the
+converter is, similar to \TeX, realized as a macro-expansion engine
+and a set of style files.  Currently, restrictions of the converter
+are mostly in the area of complex formulas, complex tables and figure
+environments. The converter does not repeat the layout of \LaTeX\ in
+HTML. Instead, it tries to find a logical translation into HTML which
+may result in a different layout.
+
+The following sections stretches from the documentation of the \LaTeX\ 
+style file to the use, configuration, and some internal implementation
+details of the converter. We start with the new macros and
+environments to support HTML generation in the new style file. We
+continue with an introduction to the assumed structure of the manual
+and the induced output files using the converter. The use of the
+converter is subdivided into two section. The first section documents
+the usual converter call to translate a single document. The second
+section addresses how to convert a larger manual spread over several
+subdirectories. Such an organization of the manual helps in the case
+of name clashes, e.g., two concepts of the same name.  Thereafter we
+discuss the part of \LaTeX\ covered with our converter and give a list
+of unsupported macros. In the remaining sections we go into some
+implementation details of the converter and its internal macros that
+can help to implement own style files for the converter.
+
+% -------------------------------------------------------
+\section{\LaTeX\ Style File {\tt latex\_converter.sty}}
+\label{sectionHTMLsupport}
+
+The converter distinguishes different text coding standards: {\em
+  text} for the usual \LaTeX\ source text, {\em ascii-text} for ASCII
+encoded text, {\em html-text} for HTML encoded text, and sometimes
+others.
+
+\def\lcIx  #1\lcIxEnd{\lcIndex{#1}}
+\def\lcIxE #1\lcIxEnd{\index{#1 environment@{\tt #1} environment}}
+
+\newcommand{\plainitem}[1]{\item[{\normalfont {\tt #1}}]
+    \lcIx #1\lcIxEnd~\par}
+
+\newcommand{\macroitem}[1]{\item[{\normalfont {\tt \Backslash #1}}]
+    \lcIx #1\lcIxEnd~\par}
+\newcommand{\macroitemX}[2]{\item[{\normalfont {\tt \Backslash #1\Open}{\em
+    #2\/}{\tt\Close}}]\lcIx #1\lcIxEnd~\par}
+\newcommand{\macroitemXX}[3]{\item[{\normalfont {\tt \Backslash #1\Open}{\em
+    #2\/}{\tt\Close\Open}{\em #3\/}{\tt\Close}}]\lcIx #1\lcIxEnd~\par}
+\newcommand{\macroitemXXX}[4]{\item[{\normalfont {\tt \Backslash #1\Open}{\em
+    #2\/}{\tt\Close\Open}{\em #3\/}{\tt\Close\Open}{\em #4\/}{\tt\Close}}]
+    \lcIx #1\lcIxEnd~\par}
+\newcommand{\macroitemXOX}[4]{\item[{\normalfont {\tt \Backslash #1\Open}{\em
+    #2\/}{\tt\Close[}{\em #3\/}{\tt]\Open}{\em #4\/}{\tt\Close}}]
+    ~\par}
+\newcommand{\macroitemXXXX}[5]{\item[{\normalfont {\tt \Backslash #1\Open}{\em
+    #2\/}{\tt\Close\Open}{\em #3\/}{\tt\Close\Open}{\em #4\/}{\tt\Close
+    \Open}{\em #5\/}{\tt\Close}}]\lcIx #1\lcIxEnd~\par}
+\newcommand{\envitem}[2]{\item[{\normalfont {\tt \Backslash begin\Open 
+    #1\Close}{\em\ #2 }{\tt \Backslash end\Open #1\Close}}]
+    \lcIxE #1\lcIxEnd~\par}
+\newcommand{\envitemX}[3]{\item[{\normalfont {\tt \Backslash begin\Open 
+    #1\Close\Open}{\em #2}{\tt\Close}{\em\ #3 }{\tt \Backslash 
+    end\Open #1\Close}}]\lcIxE #1\lcIxEnd~\par}
+
+\begin{description}
+  \macroitemX{lcRawHtml}{html-text}
+    Outputs {\em html-text\/} without any formatting, i.e., {\em html-text\/} 
+    is supposed to be in HTML format.
+  \macroitemX{lcRawHtmlExpanded}{html-text}
+    Outputs {\em html-text\/} without any formatting, i.e., {\em html-text\/} 
+    is supposed to be in HTML format, except that if {\em html-text\/} 
+    starts with a macro, this macro is expanded before the output.    
+  \macroitemX{lcAsciiToHtml}{ascii-text}
+    Outputs {\em ascii-text\/} which is supposed to be in ASCII format.
+    Creates the necessary conversions for the special characters of HTML.
+  \macroitemX{lcTex}{text}
+    Encapsulates {\em text\/} that is only meant to be formatted in \LaTeX.
+    It is ignored during the conversion.
+  \macroitemX{lcHtml}{text}
+    Encapsulates {\em text\/} that is only meant to be formatted with the 
+    converter to HTML.
+  \envitem{lcTexBlock}{text}
+    Encapsulates {\em text\/} that is only meant to be formatted in
+    \LaTeX. It is ignored during the conversion.
+  \envitem{lcHtmlBlock}{text}
+    Encapsulates {\em text\/} that is only meant to be formatted with the 
+    converter to HTML.
+  \envitem{lcRawHtmlBlock}{html-text}
+    Encapsulates {\em html-text\/} that is only meant to be formatted with the 
+    converter to HTML. The {\em html-text\/} is supposed to be in HTML and
+    is written literally to the output.
+  \macroitemXX{lcAnchor}{URL}{text}
+    Formats text and surrounds it with an anchor pointing to {\em URL}.
+\end{description}
+
+The remainder of this section addresses possible customizations of the
+converter with respect to the {\tt cc\_manual.sty} style file
+(see~\cite{k-clswr-99}).  The conversion usually creates a new file
+for each class with the class name as file name. In addition it adds
+an entry to the table of contents, to the index, and it links all
+occurences of this class name in all other places of the manual to
+point to its place of declaration. For a manual documenting classes in
+a single namespace this behavior is reasonable. For other purposes,
+more flexibility is provided here. One example are class requirements
+that can be documented like a class but they are nowhere implemented.
+The flexibility introduced here separates apart the creation of the
+file, the table of contents entry, the index entry, the automatic
+cross linking and the layout management of the class. The
+\verb+ccClass+ and \verb+ccClassTemplate+ environments are responsible
+for the layout and class name variable managment (e.g.~the
+\verb+\ccClassName+ variable).  The other default mechanisms can be
+deactivated for a single environment with the following macros by
+placing them right before the environment. These macros also influence
+local declarations like \verb+\ccStruct+ within the class environment.
+Since \verb+\ccFunction+ denotes global functions, they are not
+involved.  For this purpose and for global declarations the
+\verb+\ccHtmlNoLinks+ deactivates the automatic cross linking and
+\verb+\ccHtmlNoIndex+ deactivates the automatic index generation of
+the declaration following these macros.
+
+\index{table of contents}
+\ccIndexEntry{ccHtmlNoClassToc}
+\ccIndexEntry{ccHtmlNoClassFile}
+\ccIndexEntry{ccHtmlNoClassLinks}
+\ccIndexEntry{ccHtmlNoClassIndex}
+\ccIndexEntry{ccHtmlNoLinks}
+\ccIndexEntry{ccHtmlNoIndex}
+%
+\begin{tabbing}
+  M \= CCimplementationNNNMM \= ImplementationMMMMM \= \kill
+  \> \verb+\ccHtmlNoClassFile+ \> deactivates the creation of an own
+                                   file\footnotemark.\\
+  \> \verb+\ccHtmlNoClassLinks+ \> deactivates the cross linking for
+                                     this class name.\\
+  \> \verb+\ccHtmlNoClassToc+   \> no entry into the table of contents
+                                     for this class. \\
+  \> \verb+\ccHtmlNoClassIndex+ \> no index entries for this class. \\
+  \> \verb+\ccHtmlNoLinks+      \> no cross linking for the following
+                                   declaration. \\
+  \> \verb+\ccHtmlNoIndex+      \> no index entry for the following
+                                   declaration.
+\end{tabbing}
+
+\footnotetext{A class without its own file will be formatted in the
+  enclosing chapter file. The embedded layout within this chapter file
+  may be not be optimal and might be customized with the {\tt HTML} 
+  specific macros.}
+
+The \verb+ccHtmlClassFile{+{\em filename\/}\verb+}{+{\em
+    desc\/}\verb+}+ environment enclose parts of the manual that are
+written to their own file with name {\em filename}. The parameter {\em
+  desc\/} contains a descriptive text that will be placed in the
+anchor in the chapter file and in the table of contents to refer to
+this new file. Note that class files cannot be nested and neither
+ can this file. Within this environment new class environments
+will automatically be stopped to create own files.  \index{htmlclassfile
+  environment@{\tt ccHtmlClassFile} environment} \index{class files}
+
+\begin{tabbing}
+  M \= CCimplementationNNNMM \= ImplementationMMMMM \= \kill
+  \> 
+  \verb+\begin{ccHtmlClassFile}{My_point.html}{Declaration of \ccc{My_point}}+
+     \\ 
+  \> \ldots\\
+  \> \verb+\end{ccHtmlClassFile}+
+\end{tabbing}
+
+\ccIndexEntry{ccHtmlCrossLink}\index{crosslinking} The macro
+\verb+\ccHtmlCrossLink{+{\em C-idfier\/}\verb+}+ activates the
+automatic cross linking for the given C identifier {\em C-idfier}. The
+generated links will point to the place where this macro is placed.
+The following example demonstrates the explicit coding to achieve the
+default cross linking for template classes including the option that
+the template argument {\tt R} is captured with the anchor's text if
+possible.
+
+\begin{tabbing}
+  M \= CCimplementationNNNMM \= ImplementationMMMMM \= \kill
+  \> \verb+\ccHtmlCrossLink{My_point}+ \\
+  \> \verb+\ccHtmlCrossLink{My_point<R>}+
+\end{tabbing}
+
+The index is organized in categories. The macros
+\verb+\ccHtmlIndex[+{\em category\/}\verb+]{+{\em key\/}\verb+}+ and
+\verb+\ccHtmlIndexC[+{\em category\/}\verb+]{+{\em C-idfier\/}\verb+}+
+have an optional parameter to state the category for the {\em key\/} or
+the {\em C-idfier}. If the optional argument is missing the entry will
+be made for a class name. Possible categories are: {\tt
+  class, nested\_type, struct, enum, enum\_tags, typedef, variable,
+  function,} and {\tt member\_function}.  An index entry will point to
+the place where its generating macro is placed.  The difference between
+both macros is that \verb+\ccHtmlIndexC+ parses C code in its
+argument {\em C-idfier}.
+\ccIndexEntry{ccHtmlIndex}\ccIndexEntry{ccHtmlIndexC}\index{index}
+
+\begin{tabbing}
+  M \= CCimplementationNNNMM \= ImplementationMMMMM \= \kill
+  \> \verb+\ccHtmlIndex[function]{Style guides for functions}+ \\
+  \> \verb+\ccHtmlIndexC{My_point<R>}+
+\end{tabbing}
+
+% -------------------------------------------------------
+\section{Manual Structure and Induced Output Files}
+
+\index{document structure}\index{structure of document}\index{online
+  manual} The tools for the conversion to an online {\tt HTML} manual
+impose certain restrictions on the \LaTeX\ specification. Each chapter
+and each reference page or class defining environment ({\tt ccRef}{\em
+  Category}, {\tt ccClass}, {\tt ccClassTemplate}, and {\tt
+  ccHtmlClassFile} from {\tt cc\_manual.sty}, see~\cite{k-clswr-99})
+opens a new file. For a chapter, the new file gets the filename of the
+current \LaTeX\ file with the prefix {\tt Chapter\_} and the file
+suffix {\tt .html}. For a reference page, the new file gets the
+filename of the item documented in this page with a prefix according
+to its {\em Category} (avoiding name clashes) and the file suffix {\tt
+  .html}.  For a class defining environment, the new file gets the
+name of the class as filename with the postfix {\tt .html} added.
+These conventions make hyper-linking easier.  A set of requirements and
+recommendations follow from these conventions.
+
+\begin{itemize}
+  \item
+    All files in one directory.
+  \item
+    No two chapters in one file. A chapter macro should be located at
+    the beginning of a file.
+  \item
+    No nesting, i.e., no chapter or class definition within a class
+    defining environment. (The conventions impose a two-level file
+    hierarchy.) Class defining environments within a reference page
+    are allowed, but they will not create a new file in this case.
+  \item
+    No two classes, concepts, etc., of the same name in one manual.
+\end{itemize}
+
+Section~\ref{sectionHtmlExtended} describes an extended conversion
+model using multiple directories to overcome the filename problem.
+Section~\ref{sectionHTMLsupport} explains how the file generation of
+reference pages and class environments can be customized with
+\verb+\ccHtmlNoClassFile+ and the environment {\tt ccHtmlClassFile} to
+gain more flexibility.
+
+\index{title page}\index{show\_main@{\tt -show\_main}}
+By default, a \LaTeX\ file is assumed to start with a chapter macro or
+a class defining environment. Any pieces of \LaTeX\ code in front of
+it are most probably definitions and not meant for conversion. For
+example a complete manual starts with a title page and the table of
+contents. These are provided by other means for the online {\tt HTML}
+manual, i.e., the title page, {\tt title.html}, has to be written
+manually, and the table of contents, {\tt contents.html}, is
+automatically generated.  In the case of a file without a chapter
+macro or a class defining environment the conversion result for this
+part can be directed to the stdout using the command line option {\tt
+  -show\_main}, see below.
+
+
+% -------------------------------------------------------
+\section{Conversion Tools}
+
+The conversion of a specification to an online {\tt HTML} manual is a
+two step process. In the first step, all \LaTeX\ files are converted
+to {\tt HTML} files. Meanwhile auxiliary information about
+\Dindex{hyper-links} are collected.  In the second step, the hyper-links
+are added to all {\tt HTML} files.  The {\tt csh}-script {\tt
+  cc\_manual\_to\_html} integrates the first and the second step. It
+uses the program {\tt cc\_extract\_html}, which does the first part,
+the program {\tt flex}, which generates the filter program to add the
+hyper-links, the standard C compiler {\tt cc}, and the program {\tt
+  cc\_index\_sort}, which sorts the index case-insensitive. The
+synopsis for the script {\tt cc\_manual\_to\_html} is:
+
+\ind{\tt cc\_manual\_to\_html [<options>] <tex-files\ldots>}
+
+This command translates all LaTeX files in its command-line to {\tt
+  HTML} files. All files included with the \verb+\input+ or
+\verb+\include+ macros of \LaTeX\ are converted as well. The converter
+{\em does not\/} understand the \verb+\includeonly+ macro. In summary,
+the converter can translate a complete manual at once if it is called
+only with the main \LaTeX\ file.
+\Mindex{input}\Mindex{include}\Mindex{includeonly}
+
+\index{bibliography}\TTindex{BiBTeX}\index{auxiliary file}
+\Mindex{bibcite}\Mindex{bibitem}
+The converter supports the generation of an {\tt HTML} bibliography
+called {\tt biblio.html}. If the bibliography is generated using
+BiB\TeX\ the {\tt *.bbl} file should be given to the converter.  If
+the bibliography is written by hand using the \verb+thebibliography+
+environment the file containing this environment also should be in the
+list of conversion files.  In both cases, the related {\tt *.aux} will
+contain \verb+\bibcite+ entries that are needed to generate proper
+labels instead of the internally used citation keys. However, if the
+bibliography is written by hand with optional arguments in the bibitem
+entries the {\tt *.aux} file is not necessary (these optional
+arguments also will be used by \LaTeX\ to label the citations).  The
+\verb+\+\verb+ref+ macros in \LaTeX\ will be instrumented with
+\Dindex{hyper-links} to the bibliography.  A table of contents {\tt
+  contents.html} and an index {\tt manual\_index.html} are always
+automatically generated. A handwritten title page {\tt title.html} is
+assumed, but not supplied.  A common page layout on all pages
+guarantees easy navigation through the different files.
+\index{title page}\index{table of contents}\index{index}
+
+Available command line options for {\tt cc\_manual\_to\_html} are:
+
+\begin{tabular}{ll}
+    {\tt -defaults}        & show the settings of the internal variables.\\
+    {\tt -extended}        & extended conversion model, see
+                                Section~\ref{sectionHtmlExtended} \\
+    {\tt -ref\_manual}     & for manuals split into user and reference parts, 
+                               see Section~\ref{sectionHtmlExtended} \\
+    {\tt -show\_main}      & print the translation result for the main
+                               file to stdout.\\
+    {\tt -date <text>}     & set a date for the manual. Default: system date.\\
+    {\tt -release <text>}  & set a release number for the
+                             manual. Default: empty\\
+    {\tt -title <text>}    & set a title text for the manual.\\
+                           & Default: ``Reference Manual''.\\
+    {\tt -author <text>}   & set an author address (email) for the manual. \\
+                           & Default: ``The \cgal\ Project''. \\
+    {\tt -config <dir>} & path to the configuration files.\\
+    {\tt -tmp <dir>}    & temporary directory to keep all intermediate files.\\
+    {\tt -header <dir>} & set the path where the C headers are.\\
+    {\tt -o <dir>}    & output directory for the generated {\tt HTML} manual.\\
+    {\tt -aux <file>} & \LaTeX\ auxiliary file with the
+                                \verb+\bibcite+ entries.\\
+    {\tt -bbl <file>} & bibliography file produced by BiB\TeX.\\
+    {\tt -sty <style>} & use style file.\\
+    {\tt -quiet}      & no output, no warnings for unknown macros.\\
+    {\tt -macrodef}   & Print trace messages for macro definitions.\\
+    {\tt -macroexp}   & Print trace messages for macro expansions.\\
+    {\tt -stymacro}   & Print trace messages for style macros as well.\\
+    {\tt -stacktrace} & Print stack trace for each error.\\
+    {\tt -h, -help}   & A short usage message and a summary of the options.
+\end{tabular}
+
+\TTindex{TMP}\TTindex{TEMP}\index{environment variable} 
+
+The default settings of the internal variables can be viewed with {\tt
+  -defaults}. The result of other options is also shown when applied
+to the left of {\tt -defaults}. The option {\tt -show\_main} has
+already been explained above.
+
+A moderate kind of customization is possible with the four options
+{\tt -date, -release, -title,} and {\tt -author}. The manual creation
+date, its release number, the manual title, and the authors address or
+email might decorate each page, depending on the page layout.
+Internal variables are set to the value of the second parameter of
+these command line options.  The header and footer files (see below)
+make use of these variables.
+
+The default output directory is the current directory.  The default
+temporary directory is taken from the environment variables {\tt
+  TMP} or {\tt TEMP}. If these are empty, {\tt /usr/tmp} is tried. If
+not available, the local directory is chosen. In all cases, a
+subdirectory {\tt extract\_html\_tmp\_\$}\{{\tt USER}\} is created within
+the temporary directory.  It keeps all intermediate files. It will be
+removed after the conversion.  The standard layout of the {\tt HTML}
+pages can be customized with own header and footer files. The default
+files are provided in a the directory that can be changed with the
+option {\tt -config}.
+
+The \verb+\ccInclude+ macro from {\tt cc\_manual.sty} is converted to a
+hyper-link referencing the original header files if the path to the
+header files is properly predefined in the conversion script or given
+with the {\tt -header} option.\index{include directory}
+
+\TTindex{DEBUG}\index{environment variable} 
+In addition to the command line options another debug technique is
+implemented in the {\tt csh}-script. If the environment variable DEBUG
+is set the script echos each command executed. The {\tt rm} commands
+to remove files are echoed with a \# in front. The temporary files are
+not removed in DEBUG mode in order to examine them later.
+
+% -------------------------------------------------------
+\section{Getting input from other places using {\tt LATEX\_CONV\_INPUTS}} 
+\label{sectionLatexConvInputs}
+
+Beginning with release 3.6, the converter supports the use of an 
+environment variable, \verb|LATEX_CONV_INPUTS|, which is analogous
+to the \verb|TEXINPUTS| environment variable used with \LaTeX.  This
+variable is used by the \verb|cc_extract_html| program to find input
+files (included, for example, using the \verb|\input| or \verb|\include| 
+commands, or their derivatives).  It should contain a colon-separated
+list of directories in which the input files can be found.  If this variable
+is not set, the default is that files are looked for in the current
+directory (meaning the directory where \verb|cc_extract_html| is being
+run).  If it is set, directories 
+are searched in the order provided in this variable (which means you should
+include \verb|"."| somewhere in the list if you want it to find files in the
+current directory).
+\index{LATEX_CONV_INPUTS@{\tt LATEX\_CONV\_INPUTS}}
+\Mindex{input}\Mindex{include}
+
+% -------------------------------------------------------
+\section{Converting a Manual Using Multiple Directories}
+\label{sectionHtmlExtended}
+
+\index{subdirectories}\index{multiple directories}
+
+The restriction to keep all files in one directory is weakened with
+the capabilities of the {\tt cc\_manual\_to\_html} script. Use the
+{\tt -extended} option to activate it. However, the actual converter
+{\tt cc\_extract\_html} has not changed and does not support
+subdirectories. Similar to \TeX, subdirectories in \verb+\input+ and
+\verb+\include+ macros do not cause the converter to change its
+local working directory while processing the included file.  Thus,
+also similar to \TeX, if relative paths are provided, they should be
+relative to the place where the {\tt cc\_extract\_html} command is
+run, not relative to the place where the file containing the command
+is.  
+
+With the introduction of the {\tt LATEX\_CONV\_INPUTS} variable 
+(Section~\ref{sectionLatexConvInputs}), it is now also possible 
+for {\tt cc\_extract\_html} to find input files in other directories 
+without the directory being specified in the body of the source file.  
+However, if the {\tt -extended} option is used, it is NOT 
+necessary (and probably undesirable) to include the list of all the
+subdirectories containing the various files in the variable 
+{\tt LATEX\_CONV\_INPUTS}; {\tt cc\_manual\_to\_html} attaches each
+separate subdirectory to the existing {\tt LATEX\_CONV\_INPUTS} before 
+processing the subdirectory.  This allows different subdirectories 
+to have files with the same name. 
+\index{LATEX_CONV_INPUTS@{\tt LATEX\_CONV\_INPUTS}}
+
+The file structure proposed here is as follows. The manual is split
+into different parts, each part in its own subdirectory. Each part
+could be converted on its own using the non-extended conversion mode, e.g., no
+additional subdirectories. Each part has its own main \LaTeX\ file
+that includes all other files of this part. (It might be necessary to
+have a separate main file to create the manual using \LaTeX.) The {\tt
+  cc\_manual\_to\_html} script is called in the common parent
+directory with all main files from all parts at once.  The main files
+are given with their relative paths. The bibliography files must be
+supplied to the script using the {\tt -bbl} and {\tt -aux} options
+(instead of giving the {\tt *.bbl} file directly as a \LaTeX\ file).
+
+For manuals with their source files split into subdirectories in this
+way and for which one set of subdirectories corresponds to a user manual
+and the other set corresonds to a reference manual, the {\tt -ref\_manual}
+option should be used in conjunction with {\tt -extended}.  This will 
+cause the two manuals to have a common table of contents and to be
+easily hyperlinked together.  All input files following the {\tt -ref\_manual}
+option will be considered part of the reference manual.  Thus, the first 
+input file following this option should contain the 
+{\texttt \\part\{<part title>\}} command giving the title of the reference 
+manual.\index{ref_manual@{\tt ref\_manual}}\index{part@{\tt \protect$\backslash$part}}. 
+
+The script converts each subdirectory independently and generates the
+automatic hyper-links locally. It then collects the table of contents,
+index files, and hyper-linking rules globally and applies the
+hyper-linking rules once again on all files. This way, local classes
+gets hyper-linked within their part without naming conflicts with other
+parts and more global classes will nevertheless be referenced from
+other parts. The conversion script will issue lots of warnings for
+duplicated hyper-linking rules for classes that exists in multiple
+parts. These warnings can be ignored since the locally created links
+will not be changed any more, they are stable during the global
+processing.
+
+The result of the conversion will be a duplicated subdirectory
+structure in the output directory, where each part is again in its own
+subdirectory. The table of contents, the index, and the bibliography
+are located directly in the output directory (with some other
+auxiliary files).
+
+\index{example} 
+In the source code distribution is an example manual with three parts
+in the directory {\tt Tools/src/test\_html/extended} which can be converted
+with the script {\tt convert} located in the same directory. This
+script calls the {\tt cc\_manual\_to\_html} converter with the
+appropriate parameters for the example.  There is a second example in
+{\tt Tools/example/test\_html/extended\_with\_ref} that shows the conversion
+of a user manual and reference manual using the {\tt -ref\_manual} 
+option.  Again, the script {\tt convert} in this directory does the
+conversion.  Further examples can be found in the \texttt{Tools/examples}
+directory.
+
+% -------------------------------------------------------
+\section{Conversion Capabilities and Unsupported Features}
+
+A note on the formatting quality. The converter repeats the formatting
+task that the {\tt cc\_manual.sty} does in \LaTeX~\cite{k-clswr-99}.
+The converter cannot be as accurate nor flexible than the \LaTeX\ 
+style. A couple of customizations will not work that easily with HTML,
+for example the column widths are not parameterized and may depend on
+the browser.  However, these converter converts a lot, including
+itemized lists, enumerations, tables, arrays, fractions, \ldots.  If
+this is not enough, Section~\ref{sectionHTMLsupport} explains macros
+to write certain passages directly in {\tt HTML}.
+
+\index{three-column layout} 
+In the case of formatting own pieces in the three- or two-column
+layout it is recommended to copy an example from the output of the
+{\tt cc\_extract\_html} program rather than from the {\tt
+  cc\_manual\_to\_html} script, since the script does certain
+optimizations in the table layout. Most notable, each declaration is
+formatted as its own table, and the script glues adjacent tables with
+equal column number together. To accomplish this, each declaration
+table starts with {\tt <!3><TABLE\ldots} or {\tt <!2><TABLE\ldots},
+and ends with {\tt\ldots </TABLE><!3>} or {\tt\ldots </TABLE><!2>}.
+The gluing works only for matching {\tt <!3>} or {\tt <!2>} pairs and
+if nothing than whitespace separates them.
+
+\Mindex{kill}
+The {\tt tabular} and {\tt tabbing} environments are converted to
+standard {\tt HTML} tables. Most likely, the conversion fails to
+produce an appealing layout for non-regular {\tt tabbing}
+environments. If it is quite regular but only the first table defining
+line uses the \verb+\kill+ possibility of \LaTeX, this line can
+removed from the conversion with the \verb+\ccTexHtml{}{}+ macro from
+Section~\ref{sectionHTMLsupport}. The {\tt ccTexOnly} environment will
+not work in this case.
+\index{tabbing environment}\index{tabular environment}
+
+Footnotes are managed. They are printed at the end of each file and
+referenced with hyper-links.\index{footnotes}
+
+The latest and now most fundamental technique in the converter is the
+capability of expanding macros and defining new macros including
+macros with parameters.  This works for user definitions with
+\verb+\newcommand+, \verb+\newevironment+, and simple cases of
+\verb+\def+ definitions. The \verb+\RCSdef+ and \verb+\RCSdefDate+
+macros are also recognized.
+\index{macro expansion}\Mindex{newcommand}\Mindex{newenvironment}\Mindex{def}
+\Mindex{RCSdef}\Mindex{RCSdefDate}
+
+The {\tt flushrigth} environment and the arguments to the {\tt
+  tabular} environment are not fully supported. Graphics and color are
+not supported. The following environments of \LaTeX\ are not
+supported.
+
+\ind \verb+list+\hfill
+\verb+trivlist+\hfill
+\verb+verbatim*+\hfill
+\verb+theindex+\hfill{}
+
+The converter does not support the following macros and commands of \LaTeX.
+
+\begin{tabbing}
+  M \= \hspace*{0.24\textwidth} \= \hspace*{0.24\textwidth} 
+    \= \hspace*{0.24\textwidth} \=  \kill
+  \>\verb+\filecontents+ \>    \verb+\listfiles+ \>
+    \verb+\addcontentsline+ \>    \verb+\addtocontents+\\
+  \>\verb+\verb*+ \>    \verb+\underline+ \>
+    \verb+\overline+ \>    \verb+\widehat+\\
+  \>\verb+\widetilde+ \>    \verb+\imath+ \>
+    \verb+\jmath+ \>    \verb+\stackrel+\\
+  \>\verb+\ifthenelse+ \>    \verb+\whiledo+ \>
+    \verb+\kill+ \>    \verb+\pushtabs+\\
+  \>\verb+\poptabs+ \>    \verb+\printindex+ \>
+    \verb+\subitem+ \>    \verb+\subsubitem+\\
+  \>\verb+\newlength+ \>    \verb+\setlength+ \>
+    \verb+\addtolength+ \>    \verb+\settowidth+\\
+  \>\verb+\settoheight+ \>    \verb+\settodepth+ \>
+    \verb+\rule+ \>    \verb+\raisebox+\\
+  \>\verb+\centering+ \>    \verb+\raggedright+ \>
+    \verb+\raggedleft+
+\end{tabbing}
+
+% -------------------------------------------------------
+\section{Configuration Files and Variable Substitution}
+
+\index{variables}\index{customization, HTML} Configurations files are
+used to create uniform headers and footers for all HTML files.  The
+default files in the distribution are the recommended starting point
+for further customizations. These are {\tt cc\_toc\_header}, {\tt
+  cc\_toc\_footer}, {\tt cc\_index\_header}, {\tt cc\_index\_footer},
+{\tt cc\_manual\_header}, {\tt cc\_manual\_footer}, {\tt
+  cc\_biblio\_header}, and {\tt cc\_biblio\_footer}.  A variable
+substitution scheme makes some internal variables available in the
+header and footer files. Variables start with a `\%' character and are
+identified by a single letter. A special option are blocks between
+curly braces right behind a variable. If a particular variable is
+empty the whole block is omitted. If a particular variable is not
+empty the variable notation \% with its single letter and the two
+curly braces are removed, leaving the block's body in the file. The
+blocks might be nested. The list of variables:
+
+\begin{tabular}{ll}
+    {\tt\%0}  &  the program name itself (cc\_manual\_to\_html) \\
+    {\tt\%p}  &  the release number of the program. \\
+    {\tt\%f}  &  current {\tt HTML} output file name. \\
+    {\tt\%c}  &  full class name, including template parameters (if any). \\
+    {\tt\%u}  &  file name of the {\tt HTML} file of the chapter wherein a
+    class defining envi- \\ & ronment is used (and is responsible for the
+    {\tt HTML} file we are in at the\\ &  moment). This filename is empty
+    in all other situations. It is used \\ & to build an up-link from a
+    class definition back to its chapter file. \\
+    {\tt\%d}  &  a creation date for the manual.\\
+    {\tt\%r}  &  a release number for the manual.\\
+    {\tt\%t}  &  a manual title. \\
+    {\tt\%a}  &  an author address or email.\\
+    {\tt\%\%}  &  escape sequence for {\tt\%}.\\
+    {\tt\%}\{{\tt , \%}\}  &  escape sequences for \{ or \}.
+\end{tabular}
+
+The variables which might be empty are {\tt\%c, \%u, \%d, \%r, \%t},
+and {\tt\%a}.  An example for a block between parentheses is {\tt
+  \%r}\{{\tt \%r<BR>}\}. It formats the release number in its own line.
+Whenever the release number is empty the superfluous line break
+is omitted.
+
+% -------------------------------------------------------
+\section{Style File and Internal Macros of the Converter}
+
+The converter is basically a macro expansion engine and its major data
+structure is a hash table for macro definitions. In consequence, the
+major implementation of the various \LaTeX, \TeX, and other style file
+macros is put into style files of the converter, usually located at
+{\tt \$\Open LATEX\_CONV\_CONFIG\Close/html/*.sty}. Only a small core
+part is realized in the \CC\ implementation together with a {\tt flex}
+scanner and a {\tt bison/yacc} parser. An important note: All macros
+presented in this section work only for the converter and not for
+\LaTeX\ itself. So they can only be used to extend the converter with own
+definitions and style files.
+\TTindex{flex}\TTindex{bison}\TTindex{yacc}
+\index{parser}\index{scanner}
+\index{style files}
+
+For macro expansions, two key characteristics have to be defined: A
+macro body is expanded when the macro is used, not when it is defined.
+Arguments to the macro are pasted literally into the macro body
+without expanding the arguments. However, this is not sufficient to
+implement \TeX's functionality and we have built in another argument
+expansion possibility.
+
+Since we tried to keep the converter reasonably small, we have not
+fully implemented the \TeX\ scanner with its catcodes\index{catcode}.
+In particular, the \TeX\ scanner causes some strange behaviors with
+\Dindex{parsing} spaces\index{parsing space}\index{space, parsing}.
+For example, after macros, spaces are silently ignored. We cope with
+spaces by introducing artificial delimiters, {\tt Ctrl-A}, at block
+boundaries. These delimiters will never appear in user output. In some
+places, macro implementations explicitly have to get rid of
+surrounding spaces of arguments. We have built in another argument
+expansion possibility that does this.
+
+\LaTeX\ has added optional arguments in angle brackets to \TeX\ 
+macros. The converter has a simple notion of implementing macros with
+optional arguments. A name mangling scheme gives different names to
+all possible macros with optional arguments. The original macro name
+is extended with the letter `@' and for each optional argument a
+letter `o' and for each mandatory argument a letter `m'. Each
+combination of optional and mandatory argument is therefore a new
+macro with its own body. Optional and mandatory arguments are numbered
+as usual from left to right, but now including the optional arguments.
+The macro without any optional argument is defined without the mangled
+name. It must always be defined and it must be the first definition.
+The additional macros with optional arguments are defined with the
+mangled name. The number of arguments is omitted in the definition,
+but the number of mandatory arguments must be equal to the number of
+arguments specified earlier. An example:
+\index{optional arguments}\index{mandatory arguments}\index{macro arguments}
+\index{arguments, macro}
+
+\begin{tabbing}
+  M \= implementationNNNMMMMMMMMMMMMMMMMMMM \= \kill
+  \> \verb+\newcommand{\a}[1]{{\bf #1}}+ \\
+  \> \verb+\newcommand{\a@om}{#1{\bf #2}}+ \\
+  \> \verb+\newcommand{\a@mo}{{\bf #1}#2#2}+ \\
+  \> \verb+\a{text}+         \> {\bf text}\\
+  \> \verb+\a[pre]{text}+    \> pre{\bf text}\\
+  \> \verb+\a{text}[post]+   \> {\bf text}postpost
+\end{tabbing}
+
+The name mangling scheme is also used to encode environments {\em
+  env\/} in the same macro dictionary using the names
+\verb+\begin@+{\em env\/} and \verb+\end@+{\em env}. Thus,
+environments with optional arguments are just the straightforward
+combination with the name mangling described for macros. An example:
+
+\begin{tabbing}
+  M \= implementationNNNMMMMMMMMMMMMMMMMMM \= \kill
+  \> \verb+\newenvironment{b}{Open\\}{Close}+ \\
+  \> \verb+\newcommand{\begin@b@o}{Open #1\\}{Close}+ \\
+  \> \verb+\begin{b}[Opt]+        \> Open Opt\\
+  \> \verb+\end{b}+               \> Close
+\end{tabbing}
+
+Single characters can be defined to act as macros, an example is
+`\verb+~+'.  They are defined using the usual \verb+\newcommand+
+definitions. Internally, a table for single character commands instead
+of the hash table speeds up the access.\index{single character commands}
+
+Two extensions of the plain macro expansion mechanism have been
+explained above: expanding a macro argument right at the time of
+replacement, and removing whitespace around an argument. Together
+with two more extensions they are encoded with the argument token of
+\TeX, {\tt \#}. Usually, the argument number, 1 to 9, follows
+immediately. Here, we allow one or several of the following key
+capitals to follow {\tt \#} before the digit comes. To extend the
+limited numbers of arguments (0 to 9), we allow also the small letters
+`a' to `z' to denote the arguments of number 10 to 25.\index{extensions}
+\index{whitespace}\index{crop}\index{skip}\index{expand}\index{length}
+
+\begin{tabbing}
+  M \= impM \= expandM:: \= \kill
+  \> \verb+X+ \> expand: \> if the argument starts with a parameterless macro 
+                            it is\\ \> \> \> immediately expanded.\\
+  \> \verb+S+ \> skip:   \> skip the fist character of the argument.\\
+  \> \verb+C+ \> crop:   \> removes whitespace on both sides of the 
+                            argument.\\
+  \> \verb+L+ \> length: \> gives the length of the argument.
+\end{tabbing}
+
+The extensions have to be given in the order shown in this table. An
+example of a useful combination is {\tt \#XC1} that skips whitespaces
+before expanding a possible macro. The length is useful for some
+internal macros that accept as the first parameter the actual length
+of the second parameter.  These internal macros just do not parse the
+second argument and ignore therefore block braces therein, which is
+what one needs for verbatim output. The skip option is useful to get
+rid of unwanted prefixes, for example a `{\tt \Backslash}'.
+
+We continue with a short description of the internal macros recognized
+by the converter without reading any style file. After some initial
+setup the converter reads the style file {\tt default.sty} which in
+turn includes all style files currently supported. Before \LaTeX\ is
+addressed with the style file {\tt latex.sty}, the style file {\tt
+  latex\_converter.sty} is included. It extends the base functionality
+of the converter and it is always recommended to include this file
+first.
+
+% -------------------------------------------------------
+\subsection{Internal Macros of the Converter}
+\index{internal macros}
+
+The following list of internal macros is initialized and implemented
+in the module {\tt internal\_macros.C}. It is not the complete list of
+internal macros, many more (yet not documented) are recognized in the
+lexical scanner phase in {\tt html\_lex.yy}.
+
+\begin{description}
+  %\plainitem{\Open}
+  %  Maps to \verb+\begingroup+.
+  %\plainitem{\Close}
+  %  Maps to \verb+\endgroup+.
+  \macroitemXX{newcommand}{macro}{body}
+    Defines {\em macro\/} to expand to {\em body}.
+  \macroitemXOX{newcommand@mom}{macro}{number}{body}
+    Defines {\em macro\/} with {\em number\/} many arguments to expand to
+    {\em body}.
+  \macroitemXX{def}{macro}{body}
+    Defines {\em macro\/} to expand to {\em body}.
+  \macroitemXX{gdef}{macro}{body}
+    Globally defines {\em macro\/} to expand to {\em body}.
+  \macroitemX{lciUndef}{macro}
+    Removes definition of {\em macro\/} from the dictionary.
+  \macroitem{lciBeginScope}
+    Opens a new scope for macros.
+  \macroitem{lciEndScope}
+    Closes a scope for macros removing all macro definitions that 
+    have been (not globally) defined in the current scope.
+  \macroitemXXX{lciIfDefined}{macro}{if-text}{else-text}
+    Expands to {\em if-text\/} if {\em macro\/} is defined, and to
+    {\em else-text\/} otherwise.
+  \macroitemXXXX{lciIfEqual}{arg1}{arg2}{if-text}{else-text}
+    Expands to {\em if-text\/} if {\em arg1\/} is equal to {\em arg2}, and to
+    {\em else-text\/} otherwise.
+  \macroitemXXXX{lciIfLess}{num1}{num2}{if-text}{else-text}
+    Expands to {\em if-text\/} if {\em num1\/} is less than {\em num2}, and to
+    {\em else-text\/} otherwise.
+  \macroitemXXXX{lciIfLessOrEqual}{num1}{num2}{if-text}{else-text}
+    Expands to {\em if-text\/} if {\em num1\/} is less than or equal 
+    to {\em num2}, and to {\em else-text\/} otherwise.
+  \macroitemXX{lciAddTo}{macro}{num}
+    Redefines {\em macro\/} to be the sum of its value with {\em num}.
+  \macroitemXX{lciMultTo}{macro}{num}
+    Redefines {\em macro\/} to be the product of its value with {\em num}.
+  \macroitemXX{lciGlobalAddTo}{macro}{num}
+    Globally redefines {\em macro\/} to be the sum of its value with {\em num}.
+  \macroitemXX{lciGlobalMultTo}{macro}{num}
+    Globally redefines {\em macro\/} to be the product of its value 
+    with {\em num}.
+  \macroitemX{lciToUpper}{text}
+    Expands {\em text\/} to all upper-case letters.
+  \macroitemX{lciError}{ascii-text}
+    Prints {\em ascii-text\/} as error message and terminates conversion.
+  \macroitemX{lciMessage}{ascii-text}
+    Prints {\em ascii-text\/} as a message to the user on {\tt cerr}
+    and continues with the conversion.
+  \macroitemX{lciStyle}{C++-text}
+    Formats {\em C++-text} for HTML.
+  \macroitem{lciCCParameter}
+    \CC\ parameters are parsed separately and stored in an internal state.
+    The \CC\ text in this internal state is returned accessed with this macro.
+  \macroitemX{lciTwoColumnLayout}{decl-category}
+    Formats two-column layout using the \CC\ test in the internal \CC\ text
+    (see \verb+\lciCCParameter+) and {\em decl-category} as the category 
+    to format.
+  \macroitemXX{lciThreeColumnLayout}{decl-category}{bool}
+    Formats three-column layout using the \CC\ test in the internal \CC\ text
+    (see \verb+\lciCCParameter+) and {\em decl-category} as the category 
+    to format. The {\em bool\/} parameter tells whether the comment that 
+    is supposed to follow will be empty or not.
+  \macroitemXX{lciHtmlIndex}{category}{text}
+    Inserts {\em text\/} in the index under {\em category}.
+  \macroitemX{lciHtmlIndexC}{category}
+    Inserts the internal \CC\ text (see \verb+\lciCCParameter+) in the 
+    index under {\em category}.
+  \macroitemX{lciHtmlCrossLink}{dummy}
+    Activates the creation of hyper-links for the identifier kept in the 
+    internal \CC\ text (see \verb+\lciCCParameter+). The {\em dummy\/}
+    argument is not used.
+  \macroitem{lciHtmlClassFileEnd}
+    Triggers file postprocessing.
+  \macroitem{lciPopOutput}
+    Pops current output stream.
+  \macroitemX{lciPushOutput}{key}
+    Pushes current output stream and makes a new stream current.
+    The new stream is identified by the {\em key\/} from a fixed set.
+  \macroitem{lciOpenBibliography}
+    Opens bibliography file and writes header.
+  \macroitem{lciCloseBibliography}
+    Closes bibliography file and writes footer.
+  \macroitem{lciLineNumber}
+    Expands to the current line number of the current input file.
+\end{description}
+
+
+
+% -------------------------------------------------------
+%\subsection{Style File {\tt latex\_converter.sty}}
+%\index{style file}
+
+
+% =====================================================
+\newpage
+\bibliographystyle{plain}
+%\bibliography{kettner}
+\bibliography{Manual_tools/manual}
+
+\small
+\printindex
+
+\end{document}
+

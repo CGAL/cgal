@@ -1,0 +1,40 @@
+
+%\parskip0pt
+
+\ccGlueBegin
+  \ccFunction{int foo( double x);}{}
+  \ccFunction{int bar( double x);}{}
+\ccGlueEnd
+
+\ccGlueBegin
+  \ccFunction{int foo( double x);}{Bla.}
+  \ccFunction{int bar( double x);}{Blubb blubb.}
+\ccGlueEnd
+
+\ccGlueBegin
+  \ccFunction{int foo_baaaaaaaarrrr( double x);}{%
+     Bla bal blabal blabal blabal blab.}
+  \ccFunction{int barfoooooooooooooooooo( double x);}{%
+    Blubb blubblubb blubblubb blubblubb blubb.}
+\ccGlueEnd
+
+\ccGlueBegin
+  \ccFunction{int foo_baaaaaaaarrrr( double x);}{%
+     Blkj fdkjbjlh flknlkj kjh kjh lkjh a bal blabal blabal blabal blab.}
+  \ccFunction{int bar( double x);}{Blubb blubb.}
+\ccGlueEnd
+
+\ccGlueBegin
+  \ccFunction{int foo_bar( double x);}{%
+     Blkj fdkjbjlh flknlkj kjh kjh lkjh a bal blabal blabal blabal blab.}
+  \ccFunction{int foo_bar( double x);}{%
+     Blkj fdkjbjlh flknlkj kjh kjh lkjh a bal blabal blabal blabal
+     Blkj fdkjbjlh flknlkj kjh kjh lkjh a bkuuhd kjwdhwkjdhh blab.}
+  \ccFunction{int bar( double x);}{Blubb blubb.}
+\ccGlueEnd
+
+A bit text thereafter.
+
+A new paragraph to check that \verb+\parskip+ gets restored properly.
+
+% ----------------------------------------------------------------------

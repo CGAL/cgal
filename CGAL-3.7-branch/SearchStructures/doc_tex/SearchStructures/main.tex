@@ -1,0 +1,33 @@
+\def\ccTagRmEigenClassName{\ccFalse}
+\def\ccLongParamLayout{\ccTrue}
+
+\ccSetThreeColumns{Oriented_side}{}{\hspace*{10cm}}
+\ccThreeToTwo
+
+\ccUserChapter{dD Range and Segment Trees \label{Trees}} 
+
+\ccChapterAuthor{Gabriele Neyer}
+
+%\ccChapterSubTitle{\rangetreeRevision, \rangetreeDate}
+
+\input{SearchStructures/PkgDescription}
+
+\minitoc
+
+\section{Introduction}
+
+This chapter presents the {\cgal} range tree and segment tree
+data structures. 
+
+% The range tree is theoretically superior to the $Kd$-tree, but the 
+% latter often seems to perform better.
+% However, the range tree as implemented in {\cgal} is more flexible than the
+% $Kd$-tree implementation, in that it enables to layer together range trees 
+% and segment trees in the same data structure.
+
+\input{SearchStructures/defs}
+\input{SearchStructures/software_design}
+\input{SearchStructures/range_tree}
+\input{SearchStructures/segment_tree}
+
+

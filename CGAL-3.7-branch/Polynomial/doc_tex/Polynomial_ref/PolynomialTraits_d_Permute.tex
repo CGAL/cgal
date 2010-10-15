@@ -1,0 +1,56 @@
+\begin{ccRefConcept}{PolynomialTraits_d::Permute}
+
+\ccDefinition
+
+This \ccc{AdaptableFunctor} permutes the variables of the given polynomial
+with respect to a permutation $\sigma$, that is, each monomial 
+$\prod x_i^{e_i}$ will be mapped to the monomial $\prod x_{\sigma(i)}^{e_i}$. 
+The permutation $\sigma$ is given by the iterator range of 
+length \ccc{PolynomialTraits_d::d}, which is supposed to contain 
+the second row of the permutation. 
+
+For instance, let $p$ be a polynomial in 4 variables and it is intended to 
+change the order of the variables such that 
+$x_0 \mapsto x_2$, $x_1 \mapsto x_0$, $x_2 \mapsto x_1$ and $x_3 \mapsto x_3$. 
+In this case the iterator range should contain the sequence $[2,0,1,3]$. 
+
+
+\ccRefines 
+
+\ccc{AdaptableFunctor}\\
+\ccc{CopyConstructible}\\
+\ccc{DefaultConstructible}\\
+
+\ccTypes
+
+\ccSetThreeColumns{xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx}{xxx}{}
+\ccTypedef{typedef PolynomialTraits_d::Polynomial_d   result_type;}{}\ccGlue
+
+\ccOperations
+
+\ccCreationVariable{fo}
+
+\ccOperations
+\ccMethod{
+template<class Input_iterator>        
+result_type  operator()(PolynomialTraits_d::Polynomial_d  p,
+                       Input_iterator begin, Input_iterator end);}{ 
+Returns $p$ with interchanged variables as defined by the iterator range. 
+%Change order of variables in $p$ as defined by the iterator range. 
+\ccPrecond{(end-begin == \ccc{PolynomialTraits_d::d})}  
+\ccPrecond{\ccc{std::iterator_traits< InputIterator >::value_type} is convertible to int.}
+\ccPrecond{The iterator range contains each value in $\{0,\dots,d-1\}$ exactly once. }
+}
+
+
+
+
+
+%\ccHasModels
+
+\ccSeeAlso
+
+\ccRefIdfierPage{Polynomial_d}\\
+\ccRefIdfierPage{PolynomialTraits_d}\\
+
+\end{ccRefConcept}

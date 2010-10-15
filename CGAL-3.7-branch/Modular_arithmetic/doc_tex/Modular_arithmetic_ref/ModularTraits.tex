@@ -1,0 +1,48 @@
+\begin{ccRefConcept}{ModularTraits}
+
+\ccDefinition
+
+A model of \ccc{ModularTraits} is associated to a specific \ccc{Type}.
+In case this associated type is \ccc{Modularizable}, this is indicated by the 
+boolean tag \ccc{Is_modularizable}. The mapping into the \ccc{Residue_type} is
+provided by the functor \ccc{Modular_image}.
+
+\ccTypes
+
+A model of \ccc{ModularTraits} is supposed to provide:\\
+
+\ccNestedType{Type        }{The associated type.}
+
+\ccGlue
+
+\ccNestedType{Is_modularizable}{ 
+  Tag indicating whether the associated type is modularizable. \\
+  This is either \ccc{CGAL::Tag_true} or \ccc{CGAL::Tag_false}. }
+
+\ccGlue
+
+\ccNestedType{Residue_type}{
+   The type of the modular image. \\
+   In case the type is not \ccc{Modularizable} this is undefined. 
+}
+
+\ccHeading{Functors}
+
+In case the associated type is \ccc{Modularizable} all functors are provided.\\
+In case a functor is not provided, it is set to \ccc{CGAL::Null_functor}.
+
+
+\ccNestedType{Modular_image}
+{A model of \ccc{ModularTraits::ModularImage} } 
+\ccGlue
+\ccNestedType{Modular_image_representative}
+{A model of \ccc{ModularTraits::ModularImageRepresentative} } 
+
+\ccHasModels
+\ccRefIdfierPage{CGAL::Modular_traits<T>}\\
+
+\ccSeeAlso
+\ccRefConceptPage{CGAL::Residue}\\
+\ccRefConceptPage{Modularizable}\\
+
+\end{ccRefConcept}

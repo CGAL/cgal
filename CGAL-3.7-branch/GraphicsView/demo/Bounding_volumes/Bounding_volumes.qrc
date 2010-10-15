@@ -1,0 +1,14 @@
+<RCC>
+  <qresource prefix="/cgal/Actions">
+    <file>icons/convex_hull.png</file>
+    <file>icons/min_ellipse.png</file>
+    <file>icons/min_parallelogram.png</file>
+    <file>icons/min_quadrilateral.png</file>
+    <file>icons/p_center.png</file>
+    <file>icons/min_circle.png</file>
+  </qresource>
+  <qresource prefix="/cgal/help">
+    <file alias="about_CGAL.html">../resources/about_CGAL.html</file>
+    <file>about_Bounding_volumes.html</file>
+  </qresource>
+</RCC>

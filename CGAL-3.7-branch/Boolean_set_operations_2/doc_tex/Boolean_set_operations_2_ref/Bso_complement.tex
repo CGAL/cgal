@@ -1,0 +1,104 @@
+\begin{ccRefFunction}{complement}
+\label{ref_bso_complement}
+
+\ccThree{OutputIterator}{complement}{}
+\ccThreeToTwo
+
+\ccDefinition
+
+\ccInclude{CGAL/Boolean_set_operations_2.h}
+
+\ccGlobalFunction{void complement(const Type & pgn, Type & res);}
+{Each one of these functions computes the complement of a given
+polygon \ccc{pgn}, and stores the resulting polygon with holes in
+\ccc{res}.}
+
+\begin{ccTexOnly}
+\begin{longtable}[c]{|l|}
+\multicolumn{1}{l}{\sl \ \ }
+\endfirsthead
+\multicolumn{1}{l}{\sl continued}
+\endhead
+\hline
+\textbf{Arg Type}\\
+\hline
+\hline
+\ccc{Polygon_2}\\
+\hline
+\ccc{General_polygon_2}\\
+\hline
+\end{longtable}
+\end{ccTexOnly}
+
+\begin{ccHtmlOnly}
+<div align="center">
+<table cellpadding=3 border="1">
+<tr><th> Arg type</th></tr>
+<tr><td valign="center">Polygon_2</td></tr>
+<tr><td valign="center">General_polygon_2</td></tr>
+</table>
+</div>
+\end{ccHtmlOnly}
+
+\ccGlobalFunction{
+OutputIterator complement(const Type & pgn, OutputIterator oi);}
+{Each one of these functions computes the complement of a given
+polygon \ccc{pgn}, inserts the resulting polygons with
+holes into an output container through a given output iterator
+\ccc{oi}, and returns the output iterator. The value type of the
+\ccc{OutputIterator} is either \ccc{Polygon_with_holes_2} or 
+\ccc{General_polygon_with_holes_2}.}
+
+\begin{ccTexOnly}
+\begin{longtable}[c]{|l|}
+\multicolumn{1}{l}{\sl \ \ }
+\endfirsthead
+\multicolumn{1}{l}{\sl continued}
+\endhead
+\hline
+\textbf{Arg Type}\\
+\hline
+\hline
+\ccc{Polygon_with_holes_2}\\
+\hline
+\ccc{General_polygon_with_holes_2}\\
+\hline
+\end{longtable}
+\end{ccTexOnly}
+
+\begin{ccHtmlOnly}
+<div align="center">
+<table cellpadding=3 border="1">
+<tr><th> Arg type</th></tr>
+<tr><td valign="center">Polygon_with_holes_2</td></tr>
+<tr><td valign="center">General_polygon_with_holes_2</td></tr>
+</table>
+</div>
+\end{ccHtmlOnly}
+
+\ccGlobalFunction{template <class Kernel, class Container>
+void complement(const Polygon_2<Kernel, Container> & pgn,
+                Polygon_with_holes_2<Kernel, Container> & res);}
+\ccGlue
+\ccGlobalFunction{template <class Traits>
+void complement(const General_polygon_2<Traits> & pgn,
+                General_polygon_with_holes_2<Traits> & res);}
+
+\ccGlobalFunction{template <class Traits, class OutputIterator>
+OutputIterator complement(const Polygon_with_holes_2<Kernel, Container> & pgn,
+                          OutputIterator oi);}
+\ccGlue
+\ccGlobalFunction{template <class Traits, class OutputIterator>
+OutputIterator complement(const General_polygon_with_holes_2<General_polygon_2<Traits> > & pgn,
+                          OutputIterator oi);}
+
+\ccSeeAlso
+\ccRefIdfierPage{CGAL::do_intersect}\\
+\ccRefIdfierPage{CGAL::intersection}\\
+\ccRefIdfierPage{CGAL::join}\\
+\ccRefIdfierPage{CGAL::difference}\\
+\ccRefIdfierPage{CGAL::symmetric_difference}
+
+\end{ccRefFunction}
+
+\ccRefPageEnd

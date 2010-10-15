@@ -1,0 +1,2211 @@
+% ___________________________________________________________________________
+% |#########################################################################|
+% |                                                                         |
+% | Latex Converter Style File: latex.sty                                   |
+% | ------------------------------------------------------------------      |
+% | LaTeX macros available with article/report/book style.                  |
+% |                                                                         |
+% | 24.07.1998   Lutz Kettner   kettner@acm.org                             |
+% | Zurich, Switzerland                                                     |
+% | $Id$                                                       |
+% | $Date$                                            |
+% |_________________________________________________________________________|
+% |#########################################################################|
+% |                                                                         |
+% | Table of Contents:                                                      |
+% |                                                                         |
+% |   o   Plain TeX Macros                                                  |
+% |   o   Single Letter Translations and Single Letter Macros               |
+% |                                                                         |
+% |     * Single hot characters implemented as macros:                      |
+% |     * Single character macro abbreviations:                             |
+% |                                                                         |
+% |   o   C.1   Commands and Environments                                   |
+% |   o   C.2   The Structure of the Document                               |
+% |   o   C.3   Sentences and Paragraphs                                    |
+% |                                                                         |
+% |     * Sentences                                                         |
+% |     * Paragraphs                                                        |
+% |     * Footnotes                                                         |
+% |     * Accents and Special Symbols                                       |
+% |     * Greek alphabet: following Table 3.3 page 41 in Lamport.           |
+% |     * Calligraphic letters                                              |
+% |     * Mathbb letters                                                    |
+% |     * The \not command on some symbols (not all defined)                |
+% |     * Binary operation symbols following Table 3.4 page 42 in Lamport.  |
+% |     * Relation symbols following Table 3.5 page 43 in Lamport.          |
+% |     * Arrow symbols following Table 3.6 page 43 in Lamport.             |
+% |     * Miscellaneous symbols following Table 3.7 page 43 in Lamport.     |
+% |     * Variable sized symbols following Table 3.8 page 44 in Lamport.    |
+% |     * Log-like functions following Table 3.9 page 44 in Lamport.        |
+% |     * Delimiters following Table 3.10 page 47 in Lamport.               |
+% |     * Math mode accents following Table 3.11 page 50 in Lamport.        |
+% |                                                                         |
+% |   o   C.4   Sectioning and Table of Contents                            |
+% |   o   C.5   Classes, Packages, and Page Styles                          |
+% |   o   C.6   Displayed Paragraphs                                        |
+% |   o   C.7   Mathematical Formulas                                       |
+% |   o   C.8   Definitions, Numbering, and Programming                     |
+% |   o   C.9   Figures and Other Floating Bodies                           |
+% |   o   C.10  Lining It Up in Columns                                     |
+% |                                                                         |
+% |     * Tabbing Environment                                               |
+% |     * Tabular Environment                                               |
+% |                                                                         |
+% |   o   C.11  Moving Information Around                                   |
+% |                                                                         |
+% |     * Cross-References                                                  |
+% |     * Bibliography and Citation                                         |
+% |     * Splitting the Input                                               |
+% |     * Index and Glossary                                                |
+% |     * Terminal Input and Output                                         |
+% |                                                                         |
+% |   o   C.12  Line and Page Breaking                                      |
+% |   o   C.13  Lengths, Spaces, and Boxes                                  |
+% |   o   C.14  Pictures and Color                                          |
+% |   o   C.15  Font Selection                                              |
+% |                                                                         |
+% |   o   Default Style for Latex to HTML Converter                         |
+% |                                                                         |
+% |#########################################################################|
+
+
+
+\newcommand{\lcFalse}[2]{#2}
+\newcommand{\lcTrue}[2]{#1}
+
+\gdef{\lciCurrentPartName}{}
+
+\newcommand{\lcLogicalOr}[4]{%
+  \def\lciLogicalOrResult{\lcFalse}%
+  #1{\def\lciLogicalOrResult{\lcTrue}}{}%
+  #2{\def\lciLogicalOrResult{\lcTrue}}{}%
+  \lciLogicalOrResult{#3}{#4}%
+}
+
+\newcommand{\lcLogicalNot}[1]{%
+  \def\lciLogicalNotResult{\lcFalse}%
+  #1{\def\lciLogicalNotResult{\lcFalse}}%
+    {\def\lciLogicalNotResult{\lcTrue}}%
+  \lciLogicalNotResult%
+}
+
+\lciIfDefined{\lcStyleFile}{}{
+    \newcommand{\lcStyleFile}[1]{\lciInputStyleFile{\lciConfigPath}{#XC1}}
+    \newcommand{\lciInputStyleFile}[2]{\lciInclude{#XC1#C2.sty}}
+}
+
+% ___________________________________________________________________________
+% ###########################################################################
+% | Regular Expressions
+% ###########################################################################
+
+
+\newcommand{\lcRegexRegister}[1]{%
+  \def\lciRegexNameToBeRegistered{#1}%
+  \lciParseUntilDelimiter{\lciRegexRegisterX}}
+
+\newcommand{\lciRegexRegisterX}[1]{\lciRegexRegisterXX{\lciRegexNameToBeRegistered}{#1}}
+\newcommand{\lciRegexRegisterXX}[2]{\lciRegexRegister{#XC1}{#C2}}
+
+\lcRegexRegister{checkforlabel}@(.+)(\\label[^\}]+\})(.*)@
+
+\newcommand{\lciCheckForLabelInsideHeading}[3]{%
+  \lcRegexDoesMatch{checkforlabel}{#1}{%
+    % xdef doesnt work, either ..
+    \gdef#2{}%
+    \lcRegexStoreResult{#C2}{1}%
+    \lcRegexStoreResult{#C2}{3}%
+    \gdef#3{}%
+    \lcRegexStoreResult{#C3}{2}%
+  }{%
+    \gdef#2{#1}%
+    \gdef#3{}%
+  }%
+}%
+
+\newcommand{\lciRemoveNewlines}[1]{\lciRemoveNewlinesX{#X1}}
+
+% Load latex_to_html.sty that provides the basic converter capabilities.
+% redefined in latex_to_html.sty
+\lcStyleFile{latex_to_html}
+
+% print own release number
+%\RCSdef{\lcRevision}{$Id$}\RCSdefArg{\lcRevision}{\lcRevision}
+%\RCSdefDate{\lcDate}{$Date$}\RCSdefArg{\lcDate}{\lcDate}
+%\RCSdef{\lcRevision}{$dummy-id 123 $}\RCSdefArg{\lcRevision}{\lcRevision}
+%\RCSdefDate{\lcDate}{$dummy-date 123 $}\RCSdefArg{\lcDate}{\lcDate}
+%\lciPrintVersion{\lcRevision}{\lcDate}
+
+% ___________________________________________________________________________
+% ###########################################################################
+% |
+% |   o   Plain TeX Macros
+% |
+% ###########################################################################
+
+\newcommand{\centerline}[1]{\lcRawHtml{<CENTER>}#1\lcRawHtml{</CENTER>}}
+
+\newcommand{\hfil}{}
+\newcommand{\vfil}{}
+\newcommand{\vskip}{\lciSkipNonWhiteSpace}
+\newcommand{\hskip}{\lciSkipNonWhiteSpace}
+
+\newcommand{\vbox}[1]{#1}
+\newcommand{\hbox}[1]{#1}
+
+\newcommand{\batchmode}{}
+
+% ___________________________________________________________________________
+% ###########################################################################
+% |
+% |   o   Single Letter Translations and Single Letter Macros
+% |
+% ###########################################################################
+
+
+% +--------------------------------------------------------------------------
+% |     * Single hot characters implemented as macros:
+% +--------------------------------------------------------------------------
+% Note that { and } are also implemented this way, but with internal macros.
+\newcommand{~}{\lcRawHtml{&nbsp;}}
+\newcommand{$}{\lciToggleMathMode}
+
+% Subscript and superscript in math-mode:
+\newcommand{^}[1]{\lcRawHtml{<SUP>}#1\lcRawHtml{</SUP>}}
+\newcommand{_}[1]{\lcRawHtml{<SUB>}#1\lcRawHtml{</SUB>}}
+
+% only defined in HTML 4.0 ... should we use it?
+%\newcommand{--}{\lcRawHtml{&ndash;}}
+%\newcommand{---}{\lcRawHtml{&mdash;}}
+
+% +--------------------------------------------------------------------------
+% |     * Single character macro abbreviations:
+% +--------------------------------------------------------------------------
+\newcommand{\_}{\lcAsciiToHtml{_}}
+\newcommand{\#}{\lcAsciiToHtml{#}}
+\newcommand{\$}{\lcAsciiToHtml{$}}
+\newcommand{\&}{\lcAsciiToHtml{&}}
+\newcommand{\/}{}
+\newcommand{\,}{\lcRawHtml{ }}
+\newcommand{\;}{}
+\newcommand{\:}{}
+\newcommand{\!}{}
+\newcommand{\@}{\lcRawHtml{&nbsp;}}
+\newcommand{\-}{}  % hyphenation
+
+%% newlines, except for tabbing and tabular environments.
+\newcommand{\\}{\lcRawHtml{<BR>}}
+\newcommand{\\*}{\lcRawHtml{<BR>}}
+\newcommand{\\@o}{\lcRawHtml{<BR>}}
+\newcommand{\\*@o}{\lcRawHtml{<BR>}}
+
+%% not valid, used for accents. \newcommand{\~}{\lcAsciiToHtml{~}}
+
+
+% ___________________________________________________________________________
+% ###########################################################################
+% |
+% |   o   C.1   Commands and Environments
+% |
+% ###########################################################################
+% --> see latex_to_html.sty
+
+\newcommand{\protect}{}
+
+% trivial implementation: not "reentrant" !
+\newcommand{\expandafter}[2]{%
+  \lciSavestreamOpen{expandafter}%
+  \begin{savestream}{expandafter}#2\end{savestream}%
+  \lciSavestreamUse{expandafter}%
+  \expandafterX{#1}{\lciSavestreamBufferexpandafter}%
+  \lciSavestreamClose{expandafter}%
+}
+
+\newcommand{\expandafterX}[2]{#1{#X2}}
+
+% ___________________________________________________________________________
+% ###########################################################################
+% |
+% |   o   C.2   The Structure of the Document
+% |
+% ###########################################################################
+
+\newenvironment{document}{%
+    % prepare main HTML file
+    \lciHtmlFileHeader{\lciIfEmpty{\lciManualTitle}{}{\lciManualTitle : }%
+      \lciMainRootname}
+
+    \lciHtmlNavigationTop
+
+    \lciSavestreamOpen{packages.html}
+    \lciTocNewLayout{
+      \lciSavestreamOpen{pkgtoc}
+      \lciSavestreamOpen{parttoc}
+    }{}
+    % prepare TOC
+    \lciPushOutput{toc}
+      \lciTocFileHeader{Table of Contents}
+      \lciTocBegin
+    \lciPopOutput
+    \lciReadAuxtmp{\lciTmpPath}{\lciMainRootname}%  read auxtmp file
+    \lciReadBbl{\lciMainPath}{\lciMainRootname}%    read bbl    file
+    \lciPushOutput{packages}%
+      \lciHtmlFileHeader{Package Overview}%
+      \lciHtmlNavigationTop
+      \lcRawHtml{<h1>Package Overview</h1>}
+      \lcRawHtml{<br><table border="0">}
+    \lciPopOutput%
+
+    \lciIfHowToCite{\lcHtmlHowToCite}{}
+
+    \lciPushOutput{comments}%
+\lcRawHtml{<manual_tools_output>}
+\lciPopOutput%
+}{%
+    % close all parts, chapters, and sections at the end of the conversion
+    \lciEndPart
+    % finish table of contents
+    \lciPushOutput{toc}
+      \lciTocNewLayout{
+        \lcRawHtml{<div class="NavTOC"><h2>Parts</h2></div>}
+        \lcRawHtml{<br><table border="0">}
+        \lciTocNewLayout{
+          \lciSavestreamUse{parttoc}
+          \lcRawHtmlExpanded{\lciSavestreamBufferparttoc}
+          \lcRawHtml{</table><br>}
+          \lcRawHtml{<div class="NavTOC"><h2>Packages</h2></div>}
+          \lcRawHtml{<table border="0">}
+        }{}
+        \lciSavestreamUse{pkgtoc}
+        \lcRawHtmlExpanded{\lciSavestreamBufferpkgtoc}
+        \lcRawHtml{</table>}
+      }{}
+      %\lciTocSync
+      \lciTocFileFooter
+    \lciPopOutput
+    % finish main HTML file
+    \lciHtmlNavigationBottom
+    \lciHtmlFileFooter
+    % prepare Index Header and Footer (only if index is actually used)
+    \lciOpenTmpFile{\lciIndexHeader}\lciIndexFileHeader\lciCloseFile
+    \lciOpenTmpFile{\lciIndexFooter}\lciIndexFileFooter\lciCloseFile
+    \lciPushOutput{packages}%
+      \lciTocNewLayout{
+        \lciSavestreamUse{parttoc}
+        \lcRawHtmlExpanded{\lciSavestreamBufferparttoc}
+        \lcRawHtml{</table>}
+        \lcRawHtml{<table cellpadding="2" cellspacing="0">}
+      }{}
+      \lciSavestreamUse[lciSavestreamBufferpackage]{packages.html}
+      \lcRawHtmlExpanded{\lciSavestreamBufferpackage}
+      \lcRawHtml{</table>}
+      \lciHtmlNavigationBottom
+      \lciHtmlFileFooter%
+    \lciPopOutput%
+    \lciPushOutput{comments}%
+\lcRawHtml{</manual_tools_output>}
+\lciPopOutput%
+}
+
+% Args: tmp-path, main-rootname: reads *.auxtmp file created by latex_to_html
+\newcommand{\lciReadAuxtmp}[2]{%
+    \lciIfFileExists{#GXC1#GXC2.auxtmp}{\lciInclude{#GXC1#GXC2.auxtmp}}{}}
+
+% Args: main-path, main-rootname: reads *.bbl file if it exists
+% if it does not exist, at least prepare a dummy bib page
+% to prevent dead links
+\newcommand{\lciReadBbl}[2]{%
+    \lciIfFileExists{#GXC1#GXC2.bbl}%
+    {\lciInclude{#GXC1#GXC2.bbl}}%
+    {\lciOpenTmpFile{\lciBibFilename}%
+     \lciBibFileHeader%
+     The empty bibliography.
+     \lciBibFileFooter%
+     \lciCloseFile%
+    }%
+}
+
+
+% ___________________________________________________________________________
+% ###########################################################################
+% |
+% |   o   C.3   Sentences and Paragraphs
+% |
+% ###########################################################################
+
+% +--------------------------------------------------------------------------
+% |     * Sentences
+% +--------------------------------------------------------------------------
+\newcommand{\frenchspacing}{}
+\newcommand{\nonfrenchspacing}{}
+
+\newcommand{\TeX}{%
+    \lcRawHtml{<span class="TEX">T<span class="E">E</span>X</span>}}
+\newcommand{\LaTeX}{%
+    \lcRawHtml{<span class="LATEX">L<span class="A">A</span><span class="TEX">T<span class="E">E</span>X</span></span>}}
+\newcommand{\LaTeXe}{%
+    \lcRawHtml{<span class="LATEX">L<span class="A">A</span><span class="TEX">T<span class="E">E</span>X</span></span>2&epsilon;}}
+
+%% \newcommand{\today}{\lciManualDate}
+
+% +--------------------------------------------------------------------------
+% |     * Paragraphs
+% +--------------------------------------------------------------------------
+\newcommand{\noindent}{}
+\newcommand{\indent}{}
+\newcommand{\par}{\lcRawHtml{<P>}}
+
+\newcommand{\textwidth}{\lciSkipNonWhiteSpace}
+\newcommand{\linewidth}{\lciSkipNonWhiteSpace}
+\newcommand{\parindent}{\lciSkipNonWhiteSpace}
+\newcommand{\baselineskip}{\lciSkipNonWhiteSpace}
+\newcommand{\baselinestretch}{\lciSkipNonWhiteSpace}
+\newcommand{\parskip}{\lciSkipNonWhiteSpace}
+\newcommand{\itemsep}{\lciSkipNonWhiteSpace}
+
+\newcommand{\textheight}{\lciSkipNonWhiteSpace}
+\newcommand{\topmargin}{\lciSkipNonWhiteSpace}
+\newcommand{\evensidemargin}{\lciSkipNonWhiteSpace}
+\newcommand{\oddsidemargin}{\lciSkipNonWhiteSpace}
+\newcommand{\headsep}{\lciSkipNonWhiteSpace}
+
+% +--------------------------------------------------------------------------
+% |     * Footnotes
+% +--------------------------------------------------------------------------
+
+% the counter '\lciCounterfootnote' used for footnotes is defined in C.8,
+% see below. We also have a '\lciCounterfootnotefn' for \fnsymbol type
+% footnotes used in page titles with \lciFootnoteSymbol
+
+\gdef{\lciFootnotes}{}            %% collected footnotes
+\gdef{\lciFootnoteStyle}{}        %% either empty or \lciFootnoteSymbol
+\gdef{\lciFootnotePrefix}{}       %% either empty or 'fn_' for use of \fnsymbol
+
+% Args: num; prints num as \fnsymbol
+\newcommand{\lciFootnoteSymbol}[1]{%
+  \setcounter{footnotefn}{#XC1}\fnsymbol{footnotefn}}
+
+\gdef{\lciFootnoteStack}{}        %% stack for counter and collected footnotes
+\newcommand{\lciPushFootnotes}{%
+    \lciPushGlobalStack{\lciFootnoteStack}{\lciCounterfootnote}%
+    \lciPushGlobalStack{\lciFootnoteStack}{\lciFootnotes}%
+    \setcounter{footnote}{0}%
+    \gdef{\lciFootnotes}{}}
+\newcommand{\lciPopFootnotes}{%
+    \lciTopGlobalStack{\lciFootnoteStack}{\lciFootnotes}%
+    \lciPopGlobalStack{\lciFootnoteStack}%
+    \lciTopGlobalStack{\lciFootnoteStack}{\lciCounterfootnote}%
+    \lciPopGlobalStack{\lciFootnoteStack}}
+
+\newcommand{\footnote}[1]{%
+    \addtocounter{footnote}{1}%
+    \footnote[\lciCounterfootnote]{#1}}
+\newcommand{\footnote@om}{%
+    \footnotemark[#1]%
+    \footnotetext[#1]{#2}}
+
+\newcommand{\footnotemark}{%
+    \addtocounter{footnote}{1}%
+    \footnotemark[\lciCounterfootnote]}
+\newcommand{\footnotemark@o}{%
+    \lcRawHtml{<A HREF="##Footnote_}\lcRawHtmlExpanded{\lciFootnotePrefix}%
+        \lcRawHtml{#XC1"><SUP>}\lciFootnoteStyle{#XC1}%
+    \lcRawHtml{</SUP></A>}}
+\newcommand{\footnotetext}[1]{%
+    \footnotetext[\lciCounterfootnote]{#1}}
+\newcommand{\footnotetext@om}{%
+ \lciAddFootnote{\lciFootnotes}{\lciFootnoteStyle}{\lciFootnotePrefix}{#1}{#2}}
+
+%% Args: collected footnotes, footnote style, prefix, number, text
+\newcommand{\lciAddFootnote}[5]{%
+    \lciIfEqualExpanded{\lciCounterfootnote}{0}{
+        \gdef{\lciFootnotes}{#X1%
+        \lcRawHtml{<A NAME="Footnote_#XC3#XC4">&nbsp;<SUP>}#XC2{#XC4}%
+            \lcRawHtml{</SUP>&nbsp;</A><TD VALIGN=TOP>
+}#5
+}}%
+    {%
+        \gdef{\lciFootnotes}{#X1\lcRawHtml{<TR><TD VALIGN=TOP>}
+        \lcRawHtml{<A NAME="Footnote_#XC3#XC4">&nbsp;<SUP>}#XC2{#XC4}%
+            \lcRawHtml{</SUP>&nbsp;</A><TD VALIGN=TOP>
+}#5
+}}}
+
+
+\newcommand{\lciPrintFootnotes}{%
+    \lciIfEqualExpanded{\lciCounterfootnote}{0}{}{%
+        \lcRawHtml{<P><HR><H3>Footnotes</H3><P><TABLE><TR><TD VALIGN=TOP>
+}\lciFootnotes\lcRawHtml{</TABLE>}}}
+\newcommand{\lciResetFootnotes}{%
+    \setcounter{footnote}{0}%
+    \gdef{\lciFootnotes}{}}
+
+\newcommand{\footnotesep}{\lciSkipNonWhiteSpace}
+\newcommand{\footnoterule}{\hrule}
+
+% +--------------------------------------------------------------------------
+% |     * Accents and Special Symbols
+% +--------------------------------------------------------------------------
+\newcommand{\dag}{%
+  \lcRawHtml{<IMG BORDER=0 WIDTH=5 HEIGHT=17 ALIGN=BOTTOM SRC="cc_dag.gif">}}
+\newcommand{\ddag}{%
+  \lcRawHtml{<IMG BORDER=0 WIDTH=5 HEIGHT=17 ALIGN=BOTTOM SRC="cc_ddag.gif">}}
+
+\newcommand{\S}{\lcRawHtml{&sect;}}
+\newcommand{\P}{\lcRawHtml{&para;}}
+\newcommand{\copyright}{\lcRawHtml{&copy;}}
+\newcommand{\pounds}{\lcRawHtml{&pound;}}
+
+% not all possible TeX accents translate properly
+\newcommand{\"}[1]{\lcRawHtml{&#C1uml;}}
+\newcommand{\'}[1]{\lcRawHtml{&#C1acute;}}
+\newcommand{\`}[1]{\lcRawHtml{&#C1grave;}}
+\newcommand{\^}[1]{\lcRawHtml{&#C1circ;}}
+\newcommand{\~}[1]{\lcRawHtml{&#C1tilde;}}
+\newcommand{\c}[1]{\lcRawHtml{&#C1cedil;}}
+\newcommand{\v}[1]{\lcRawHtml{&#C1caron;}}
+
+\newcommand{\ss}{\lcRawHtml{&szlig;}}
+\newcommand{\ae}{\lcRawHtml{&aelig;}}
+\newcommand{\AE}{\lcRawHtml{&AElig;}}
+\newcommand{\aa}{\lcRawHtml{&aring;}}
+\newcommand{\AA}{\lcRawHtml{&Aring;}}
+\newcommand{\o}{\lcRawHtml{&oslash;}}
+\newcommand{\O}{\lcRawHtml{&Oslash;}}
+
+\newcommand{\l}{%
+  \lcRawHtml{<IMG BORDER=0 WIDTH=4 HEIGHT=13 ALIGN=BOTTOM SRC="cc_lowercase_l.gif">}}
+\newcommand{\L}{%
+  \lcRawHtml{<IMG BORDER=0 WIDTH=9 HEIGHT=12 ALIGN=BOTTOM SRC="cc_uppercase_L.gif">}}
+\newcommand{\oe}{%
+  \lcRawHtml{<IMG BORDER=0 WIDTH=12 HEIGHT=8 ALIGN=BOTTOM SRC="cc_lowercase_oe.gif">}}
+\newcommand{\OE}{%
+  \lcRawHtml{<IMG BORDER=0 WIDTH=16 HEIGHT=12 ALIGN=BOTTOM SRC="cc_uppercase_OE.gif">}}
+
+% +--------------------------------------------------------------------------
+% |     * Greek alphabet: following Table 3.3 page 41 in Lamport.
+% +--------------------------------------------------------------------------
+\newcommand{\alpha}{\lcRawHtml{&alpha;}}
+\newcommand{\beta}{\lcRawHtml{&beta;}}
+\newcommand{\gamma}{\lcRawHtml{&gamma;}}
+\newcommand{\delta}{\lcRawHtml{&delta;}}
+\newcommand{\epsilon}{\lcRawHtml{&epsilon;}}
+\newcommand{\varepsilon}{\lcRawHtml{&epsilon;}}
+\newcommand{\zeta}{\lcRawHtml%
+    {<IMG BORDER=0 WIDTH=7 HEIGHT=27 ALIGN=MIDDLE SRC="cc_zeta.gif">}}
+\newcommand{\eta}{\lcRawHtml{&eta;}}
+\newcommand{\theta}{\lcRawHtml%
+    {<IMG BORDER=0 WIDTH=6 HEIGHT=13 ALIGN=BOTTOM SRC="cc_lowercase_theta.gif">}}
+\newcommand{\vartheta}{\lcRawHtml%
+    {<IMG BORDER=0 WIDTH=8 HEIGHT=13 ALIGN=BOTTOM SRC="cc_vartheta.gif">}}
+\newcommand{\iota}{\lcRawHtml%
+    {<IMG BORDER=0 WIDTH=4 HEIGHT=8 ALIGN=BOTTOM SRC="cc_iota.gif">}}
+\newcommand{\kappa}{\lcRawHtml%
+    {<IMG BORDER=0 WIDTH=8 HEIGHT=8 ALIGN=BOTTOM SRC="cc_kappa.gif">}}
+\newcommand{\lambda}{\lcRawHtml{&lambda;}}
+\newcommand{\mu}{\lcRawHtml{&micro;}}
+%%\newcommand{\mu}{\lcRawHtml%
+%%    {<IMG BORDER=0 WIDTH=9 HEIGHT=17 ALIGN=MIDDLE SRC="cc_lowercase_mu.gif">}}
+\newcommand{\nu}{\lcRawHtml%
+    {<IMG BORDER=0 WIDTH=7 HEIGHT=8 ALIGN=BOTTOM SRC="cc_nu.gif">}}
+\newcommand{\xi}{\lcRawHtml{&xi;}}
+\newcommand{\pi}{\lcRawHtml{&pi;}}
+\newcommand{\varpi}{\lcRawHtml%
+    {<IMG BORDER=0 WIDTH=13 HEIGHT=8 ALIGN=BOTTOM SRC="cc_varpi.gif">}}
+\newcommand{\rho}{\lcRawHtml%
+    {<IMG BORDER=0 WIDTH=7 HEIGHT=17 ALIGN=MIDDLE SRC="cc_rho.gif">}}
+\newcommand{\varrho}{\lcRawHtml%
+    {<IMG BORDER=0 WIDTH=6 HEIGHT=17 ALIGN=MIDDLE SRC="cc_varrho.gif">}}
+\newcommand{\sigma}{\lcRawHtml{&sigma;}}
+\newcommand{\varsigma}{\lcRawHtml%
+    {<IMG BORDER=0 WIDTH=5 HEIGHT=17 ALIGN=MIDDLE SRC="cc_varsigma.gif">}}
+\newcommand{\tau}{\lcRawHtml%
+    {<IMG BORDER=0 WIDTH=8 HEIGHT=8 ALIGN=BOTTOM SRC="cc_tau.gif">}}
+\newcommand{\upsilon}{\lcRawHtml%
+    {<IMG BORDER=0 WIDTH=8 HEIGHT=8 ALIGN=BOTTOM SRC="cc_lowercase_upsilon.gif">}}
+\newcommand{\phi}{\lcRawHtml{&Phi;}}
+\newcommand{\varphi}{\lcRawHtml{&phi;}}
+\newcommand{\chi}{\lcRawHtml%
+    {<IMG BORDER=0 WIDTH=11 HEIGHT=17 ALIGN=MIDDLE SRC="cc_chi.gif">}}
+\newcommand{\psi}{\lcRawHtml%
+    {<IMG BORDER=0 WIDTH=10 HEIGHT=27 ALIGN=MIDDLE SRC="cc_lowercase_psi.gif">}}
+\newcommand{\omega}{\lcRawHtml{&omega;}}
+
+\newcommand{\Gamma}{\lcRawHtml%
+    {<IMG BORDER=0 WIDTH=9 HEIGHT=12 ALIGN=BOTTOM SRC="cc_uppercase_Gamma.gif">}}
+\newcommand{\Delta}{\lcRawHtml{&Delta;}}
+\newcommand{\Theta}{\lcRawHtml{&Theta;}}
+\newcommand{\Lambda}{\lcRawHtml%
+    {<IMG BORDER=0 WIDTH=11 HEIGHT=12 ALIGN=BOTTOM SRC="cc_uppercase_Lambda.gif">}}
+\newcommand{\Xi}{\lcRawHtml%
+    {<IMG BORDER=0 WIDTH=9 HEIGHT=12 ALIGN=BOTTOM SRC="cc_uppercase_Xi.gif">}}
+\newcommand{\Pi}{\lcRawHtml{&Pi;}}
+\newcommand{\Sigma}{\lcRawHtml{&Sigma;}}
+\newcommand{\Upsilon}{\lcRawHtml%
+    {<IMG BORDER=0 WIDTH=11 HEIGHT=12 ALIGN=BOTTOM SRC="cc_uppercase_Upsilon.gif">}}
+\newcommand{\Phi}{\lcRawHtml{&Phi;}}
+\newcommand{\Psi}{\lcRawHtml%
+    {<IMG BORDER=0 WIDTH=11 HEIGHT=12 ALIGN=BOTTOM SRC="cc_uppercase_Psi.gif">}}
+\newcommand{\Omega}{\lcRawHtml{&Omega;}}
+
+% +--------------------------------------------------------------------------
+% |     * Calligraphic letters
+% +--------------------------------------------------------------------------
+\newcommand{\cal}{\mathcal} % comes from plain TeX
+\newcommand{\mathcal}[1]{\lcRawHtml{<span class="cal">}#1\lcRawHtml{</span>}}
+
+% +--------------------------------------------------------------------------
+% |     * Mathbb letters
+% +--------------------------------------------------------------------------
+\newcommand{\mathbb}[1]{\lciScanMathbb #C1@}
+\newcommand{\lciScanMathbb}[1]{%
+    \lciIfEqual{#1}{@}{}{\lciGlueFirstToSecond{\lciMathbb}{#1}\lciScanMathbb}}
+\newcommand{\lciMathbb}{}  % dummy, supporting other chars/macros as argument
+
+\newcommand{\lciMathbbA}{\lcRawHtml%
+    { <IMG BORDER=0 WIDTH=13 HEIGHT=12 ALIGN=BOTTOM SRC="cc_mathbb_A.gif"> }}
+\newcommand{\lciMathbbB}{\lcRawHtml%
+    { <IMG BORDER=0 WIDTH=11 HEIGHT=12 ALIGN=BOTTOM SRC="cc_mathbb_B.gif"> }}
+\newcommand{\lciMathbbC}{\lcRawHtml{<span class="sym">&#x2102;</span>}}
+\newcommand{\lciMathbbD}{\lcRawHtml%
+    { <IMG BORDER=0 WIDTH=13 HEIGHT=12 ALIGN=BOTTOM SRC="cc_mathbb_D.gif"> }}
+\newcommand{\lciMathbbE}{\lcRawHtml%
+    { <IMG BORDER=0 WIDTH=12 HEIGHT=12 ALIGN=BOTTOM SRC="cc_mathbb_E.gif"> }}
+\newcommand{\lciMathbbF}{\lcRawHtml%
+    { <IMG BORDER=0 WIDTH=11 HEIGHT=12 ALIGN=BOTTOM SRC="cc_mathbb_F.gif"> }}
+\newcommand{\lciMathbbG}{\lcRawHtml%
+    { <IMG BORDER=0 WIDTH=13 HEIGHT=12 ALIGN=BOTTOM SRC="cc_mathbb_G.gif"> }}
+\newcommand{\lciMathbbH}{\lcRawHtml%
+    { <IMG BORDER=0 WIDTH=14 HEIGHT=12 ALIGN=BOTTOM SRC="cc_mathbb_H.gif"> }}
+\newcommand{\lciMathbbI}{\lcRawHtml%
+    { <IMG BORDER=0 WIDTH=7 HEIGHT=12 ALIGN=BOTTOM SRC="cc_mathbb_I.gif"> }}
+\newcommand{\lciMathbbJ}{\lcRawHtml%
+    { <IMG BORDER=0 WIDTH=9 HEIGHT=21 ALIGN=MIDDLE SRC="cc_mathbb_J.gif"> }}
+\newcommand{\lciMathbbK}{\lcRawHtml%
+    { <IMG BORDER=0 WIDTH=14 HEIGHT=12 ALIGN=BOTTOM SRC="cc_mathbb_K.gif"> }}
+\newcommand{\lciMathbbL}{\lcRawHtml%
+    { <IMG BORDER=0 WIDTH=12 HEIGHT=12 ALIGN=BOTTOM SRC="cc_mathbb_L.gif"> }}
+\newcommand{\lciMathbbM}{\lcRawHtml%
+    { <IMG BORDER=0 WIDTH=18 HEIGHT=12 ALIGN=BOTTOM SRC="cc_mathbb_M.gif"> }}
+\newcommand{\lciMathbbN}{\lcRawHtml{<span class="sym">&#x2115;</span>}}
+\newcommand{\lciMathbbO}{\lcRawHtml%
+    { <IMG BORDER=0 WIDTH=12 HEIGHT=20 ALIGN=MIDDLE SRC="cc_mathbb_O.gif"> }}
+\newcommand{\lciMathbbP}{\lcRawHtml{<span class="sym">&#x2119;</span>}}
+\newcommand{\lciMathbbQ}{\lcRawHtml{<span class="sym">&#x211A;</span>}}
+\newcommand{\lciMathbbR}{\lcRawHtml{<span class="sym">&#x211D;</span>}}
+\newcommand{\lciMathbbS}{\lcRawHtml%
+    { <IMG BORDER=0 WIDTH=8 HEIGHT=12 ALIGN=BOTTOM SRC="cc_mathbb_S.gif"> }}
+\newcommand{\lciMathbbT}{\lcRawHtml%
+    { <IMG BORDER=0 WIDTH=11 HEIGHT=12 ALIGN=BOTTOM SRC="cc_mathbb_T.gif"> }}
+\newcommand{\lciMathbbU}{\lcRawHtml%
+    { <IMG BORDER=0 WIDTH=13 HEIGHT=12 ALIGN=BOTTOM SRC="cc_mathbb_U.gif"> }}
+\newcommand{\lciMathbbV}{\lcRawHtml%
+    { <IMG BORDER=0 WIDTH=13 HEIGHT=12 ALIGN=BOTTOM SRC="cc_mathbb_V.gif"> }}
+\newcommand{\lciMathbbW}{\lcRawHtml%
+    { <IMG BORDER=0 WIDTH=18 HEIGHT=12 ALIGN=BOTTOM SRC="cc_mathbb_W.gif"> }}
+\newcommand{\lciMathbbX}{\lcRawHtml%
+    { <IMG BORDER=0 WIDTH=14 HEIGHT=12 ALIGN=BOTTOM SRC="cc_mathbb_X.gif"> }}
+\newcommand{\lciMathbbY}{\lcRawHtml%
+    { <IMG BORDER=0 WIDTH=13 HEIGHT=12 ALIGN=BOTTOM SRC="cc_mathbb_Y.gif"> }}
+\newcommand{\lciMathbbZ}{\lcRawHtml{<span class="sym">&#x2124;</span>}}
+
+% +--------------------------------------------------------------------------
+% |     * The \not command on some symbols (not all defined)
+% +--------------------------------------------------------------------------
+\newcommand{\not}[1]{%
+  \lciIfEqual{#1}{<}{\lciNotLess}{%
+  \lciIfEqual{#1}{>}{\lciNotGreater}{%
+  \lciIfEqual{#1}{=}{\neq}{%
+    \lciGlueTwoParam{\lciNot}{#S1}
+  }}}%
+}
+\newcommand{\lciNotin}{\notin}
+
+% +--------------------------------------------------------------------------
+% |     * Binary operation symbols following Table 3.4 page 42 in Lamport.
+% +--------------------------------------------------------------------------
+\newcommand{\pm}{\lcRawHtml{ &plusmn; }}
+\newcommand{\times}{\lcRawHtml{ &times; }}
+\newcommand{\div}{\lcRawHtml{ &divide; }}
+\newcommand{\mp}{\lcRawHtml%
+    { <IMG BORDER=0 WIDTH=11 HEIGHT=23 ALIGN=MIDDLE SRC="cc_mp.gif"> }}
+\newcommand{\ast}{\lcRawHtml{ &#8727; }}
+\newcommand{\star}{\lcRawHtml%
+    { <IMG BORDER=0 WIDTH=4 HEIGHT=2 ALIGN=BOTTOM SRC="cc_star.gif"> }}
+\newcommand{\circ}{\lcRawHtml{&deg;}}
+\newcommand{\bullet}{\lcRawHtml{&bull; }}
+\newcommand{\cap}{\lcRawHtml{ <span class="sym">&cap;</span> }}
+\newcommand{\cup}{\lcRawHtml{ <span class="sym">&cup;</span> }}
+\newcommand{\uplus}{\lcRawHtml%
+    { <IMG BORDER=0 WIDTH=9 HEIGHT=11 ALIGN=BOTTOM SRC="cc_uplus.gif"> }}
+\newcommand{\sqcap}{\lcRawHtml%
+    { <IMG BORDER=0 WIDTH=9 HEIGHT=11 ALIGN=BOTTOM SRC="cc_sqcap.gif"> }}
+\newcommand{\sqcup}{\lcRawHtml%
+    { <IMG BORDER=0 WIDTH=9 HEIGHT=11 ALIGN=BOTTOM SRC="cc_sqcup.gif"> }}
+\newcommand{\vee}{\lcRawHtml%
+    { <IMG BORDER=0 WIDTH=9 HEIGHT=11 ALIGN=BOTTOM SRC="cc_vee.gif"> }}
+\newcommand{\wedge}{\lcRawHtml%
+    { <IMG BORDER=0 WIDTH=9 HEIGHT=11 ALIGN=BOTTOM SRC="cc_wedge.gif"> }}
+\newcommand{\setminus}{\lcRawHtml{ \ }}
+\newcommand{\wr}{\lcRawHtml%
+    { <IMG BORDER=0 WIDTH=2 HEIGHT=21 ALIGN=MIDDLE SRC="cc_wr.gif"> }}
+\newcommand{\diamond}{\lcRawHtml%
+    { <IMG BORDER=0 WIDTH=7 HEIGHT=7 ALIGN=BOTTOM SRC="cc_lowercase_diamond.gif"> }}
+\newcommand{\bigtriangleup}{\lcRawHtml%
+    { <IMG BORDER=0 WIDTH=13 HEIGHT=21 ALIGN=MIDDLE SRC="cc_bigtriangleup.gif"> }}
+\newcommand{\bigtriangledown}{\lcRawHtml%
+    { <IMG BORDER=0 WIDTH=13 HEIGHT=21 ALIGN=MIDDLE SRC="cc_bigtriangledown.gif"> }}
+\newcommand{\triangleleft}{\lcRawHtml%
+    { <IMG BORDER=0 WIDTH=6 HEIGHT=7 ALIGN=BOTTOM SRC="cc_triangleleft.gif"> }}
+\newcommand{\triangleright}{\lcRawHtml%
+    { <IMG BORDER=0 WIDTH=6 HEIGHT=7 ALIGN=BOTTOM SRC="cc_triangleright.gif"> }}
+\newcommand{\lhd}{\lcRawHtml%
+    { <IMG BORDER=0 WIDTH=11 HEIGHT=21 ALIGN=MIDDLE SRC="cc_lhd.gif"> }}
+\newcommand{\rhd}{\lcRawHtml%
+    { <IMG BORDER=0 WIDTH=11 HEIGHT=21 ALIGN=MIDDLE SRC="cc_rhd.gif"> }}
+\newcommand{\unlhd}{\lcRawHtml%
+    { <IMG BORDER=0 WIDTH=11 HEIGHT=25 ALIGN=MIDDLE SRC="cc_unlhd.gif"> }}
+\newcommand{\unrhd}{\lcRawHtml%
+    { <IMG BORDER=0 WIDTH=11 HEIGHT=25 ALIGN=MIDDLE SRC="cc_unrhd.gif"> }}
+\newcommand{\oplus}{\lcRawHtml{ <span class="sym">&oplus;</span> }}
+\newcommand{\ominus}{\lcRawHtml%
+    { <IMG BORDER=0 WIDTH=11 HEIGHT=23 ALIGN=MIDDLE SRC="cc_ominus.gif"> }}
+\newcommand{\otimes}{\lcRawHtml%
+    { <IMG BORDER=0 WIDTH=11 HEIGHT=23 ALIGN=MIDDLE SRC="cc_otimes.gif"> }}
+\newcommand{\oslash}{\lcRawHtml%
+    { <IMG BORDER=0 WIDTH=11 HEIGHT=23 ALIGN=MIDDLE SRC="cc_oslash.gif"> }}
+\newcommand{\odot}{\lcRawHtml%
+    { <IMG BORDER=0 WIDTH=11 HEIGHT=23 ALIGN=MIDDLE SRC="cc_odot.gif"> }}
+\newcommand{\bigcirc}{\lcRawHtml%
+    { <IMG BORDER=0 WIDTH=15 HEIGHT=27 ALIGN=MIDDLE SRC="cc_bigcirc.gif"> }}
+\newcommand{\dagger}{\lcRawHtml%
+    { <IMG BORDER=0 WIDTH=5 HEIGHT=27 ALIGN=MIDDLE SRC="cc_dagger.gif"> }}
+\newcommand{\ddagger}{\lcRawHtml%
+    { <IMG BORDER=0 WIDTH=5 HEIGHT=27 ALIGN=MIDDLE SRC="cc_ddagger.gif"> }}
+\newcommand{\amalg}{\lcRawHtml%
+    { <IMG BORDER=0 WIDTH=13 HEIGHT=12 ALIGN=BOTTOM SRC="cc_amalg.gif"> }}
+
+% +--------------------------------------------------------------------------
+% |     * Relation symbols following Table 3.5 page 43 in Lamport.
+% +--------------------------------------------------------------------------
+\newcommand{\le}{\leq}
+\newcommand{\ge}{\geq}
+
+\newcommand{\leq}{\lcRawHtml{ <span class="sym">&le;</span> }}
+\newcommand{\prec}{\lcRawHtml%
+    { <IMG BORDER=0 WIDTH=11 HEIGHT=21 ALIGN=MIDDLE SRC="cc_prec.gif"> }}
+\newcommand{\preceq}{\lcRawHtml%
+    { <IMG BORDER=0 WIDTH=11 HEIGHT=25 ALIGN=MIDDLE SRC="cc_preceq.gif"> }}
+\newcommand{\ll}{\lcRawHtml%
+    { <IMG BORDER=0 WIDTH=15 HEIGHT=25 ALIGN=MIDDLE SRC="cc_ll.gif"> }}
+\newcommand{\subset}{\lcRawHtml{ <span class="sym">&sub;</span> }}
+\newcommand{\subseteq}{\lcRawHtml{ <span class="sym">&sube;</span> }}
+\newcommand{\sqsubset}{\lcRawHtml%
+    { <IMG BORDER=0 WIDTH=12 HEIGHT=21 ALIGN=MIDDLE SRC="cc_sqsubset.gif"> }}
+\newcommand{\sqsubseteq}{\lcRawHtml%
+    { <IMG BORDER=0 WIDTH=12 HEIGHT=25 ALIGN=MIDDLE SRC="cc_sqsubseteq.gif"> }}
+\newcommand{\in}{\lcRawHtml{ <span class="sym">&isin;</span> }}
+\newcommand{\vdash}{\lcRawHtml%
+    { <IMG BORDER=0 WIDTH=8 HEIGHT=13 ALIGN=BOTTOM SRC="cc_vdash.gif"> }}
+\newcommand{\geq}{\lcRawHtml{ <span class="sym">&ge;</span> }}
+\newcommand{\succ}{\lcRawHtml%
+    { <IMG BORDER=0 WIDTH=11 HEIGHT=21 ALIGN=MIDDLE SRC="cc_succ.gif"> }}
+\newcommand{\succeq}{\lcRawHtml%
+    { <IMG BORDER=0 WIDTH=11 HEIGHT=25 ALIGN=MIDDLE SRC="cc_succeq.gif"> }}
+\newcommand{\gg}{\lcRawHtml%
+    { <IMG BORDER=0 WIDTH=15 HEIGHT=25 ALIGN=MIDDLE SRC="cc_gg.gif"> }}
+\newcommand{\supset}{\lcRawHtml%
+    { <IMG BORDER=0 WIDTH=11 HEIGHT=21 ALIGN=MIDDLE SRC="cc_supset.gif"> }}
+\newcommand{\supseteq}{\lcRawHtml%
+    { <IMG BORDER=0 WIDTH=11 HEIGHT=25 ALIGN=MIDDLE SRC="cc_supseteq.gif"> }}
+\newcommand{\sqsupset}{\lcRawHtml%
+    { <IMG BORDER=0 WIDTH=12 HEIGHT=21 ALIGN=MIDDLE SRC="cc_sqsupset.gif"> }}
+\newcommand{\sqsupseteq}{\lcRawHtml%
+    { <IMG BORDER=0 WIDTH=12 HEIGHT=25 ALIGN=MIDDLE SRC="cc_sqsupseteq.gif"> }}
+\newcommand{\ni}{\lcRawHtml%
+    { <IMG BORDER=0 WIDTH=9 HEIGHT=21 ALIGN=MIDDLE SRC="cc_ni.gif"> }}
+\newcommand{\dashv}{\lcRawHtml%
+    { <IMG BORDER=0 WIDTH=8 HEIGHT=13 ALIGN=BOTTOM SRC="cc_dashv.gif"> }}
+\newcommand{\equiv}{\lcRawHtml{ <span class="sym">&equiv;</span> }}
+\newcommand{\sim}{\lcRawHtml{ <span class="sym">&sim;</span> }}
+\newcommand{\simeq}{\lcRawHtml%
+    { <IMG BORDER=0 WIDTH=11 HEIGHT=8 ALIGN=BOTTOM SRC="cc_simeq.gif"> }}
+\newcommand{\asymp}{\lcRawHtml%
+    { <IMG BORDER=0 WIDTH=11 HEIGHT=9 ALIGN=BOTTOM SRC="cc_asymp.gif"> }}
+\newcommand{\approx}{\lcRawHtml%
+    { <IMG BORDER=0 WIDTH=11 HEIGHT=10 ALIGN=BOTTOM SRC="cc_approx.gif"> }}
+\newcommand{\cong}{\lcRawHtml%
+    { <IMG BORDER=0 WIDTH=11 HEIGHT=21 ALIGN=MIDDLE SRC="cc_cong.gif"> }}
+\newcommand{\neq}{\lcRawHtml{ <span class="sym">&ne;</span> }}
+\newcommand{\ne}{\lcRawHtml{ <span class="sym">&ne;</span> }}
+\newcommand{\doteq}{\lcRawHtml%
+    { <IMG BORDER=0 WIDTH=11 HEIGHT=9 ALIGN=BOTTOM SRC="cc_doteq.gif"> }}
+\newcommand{\notin}{\lcRawHtml%
+    { <IMG BORDER=0 WIDTH=9 HEIGHT=37 ALIGN=MIDDLE SRC="cc_notin.gif"> }}
+\newcommand{\models}{\lcRawHtml%
+    { <IMG BORDER=0 WIDTH=12 HEIGHT=29 ALIGN=MIDDLE SRC="cc_models.gif"> }}
+\newcommand{\perp}{\lcRawHtml%
+    { <IMG BORDER=0 WIDTH=11 HEIGHT=11 ALIGN=BOTTOM SRC="cc_perp.gif"> }}
+\newcommand{\mid}{\lcRawHtml{ <span class="sym">|</span> }}
+\newcommand{\parallel}{\lcRawHtml{<span class="sym">||</span>}}
+\newcommand{\bowtie}{\lcRawHtml%
+    { <IMG BORDER=0 WIDTH=12 HEIGHT=7 ALIGN=BOTTOM SRC="cc_bowtie.gif"> }}
+\newcommand{\Join}{\lcRawHtml%
+    { <IMG BORDER=0 WIDTH=10 HEIGHT=11 ALIGN=BOTTOM SRC="cc_Join.gif"> }}
+\newcommand{\smile}{\lcRawHtml%
+    { <IMG BORDER=0 WIDTH=15 HEIGHT=4 ALIGN=BOTTOM SRC="cc_smile.gif"> }}
+\newcommand{\frown}{\lcRawHtml%
+    { <IMG BORDER=0 WIDTH=15 HEIGHT=4 ALIGN=BOTTOM SRC="cc_frown.gif"> }}
+\newcommand{\propto}{\lcRawHtml%
+    { <IMG BORDER=0 WIDTH=12 HEIGHT=8 ALIGN=BOTTOM SRC="cc_propto.gif"> }}
+
+% +--------------------------------------------------------------------------
+% |     * Arrow symbols following Table 3.6 page 43 in Lamport.
+% +--------------------------------------------------------------------------
+\newcommand{\leftarrow}{\lcRawHtml%
+    { <IMG BORDER=0 WIDTH=15 HEIGHT=9 ALIGN=BOTTOM SRC="cc_lowercase_leftarrow.gif"> }}
+\newcommand{\Leftarrow}{\lcRawHtml{ <span class="sym">&lArr;</span> }}
+\newcommand{\rightarrow}{\lcRawHtml{ <span class="sym">&rarr;</span> }}
+\newcommand{\Rightarrow}{\lcRawHtml{ <span class="sym">&rArr;</span> }}
+\newcommand{\leftrightarrow}{\lcRawHtml%
+    { <IMG BORDER=0 WIDTH=15 HEIGHT=9 ALIGN=BOTTOM SRC="cc_lowercase_leftrightarrow.gif"> }}
+\newcommand{\Leftrightarrow}{\lcRawHtml{ <span class="sym">&hArr;</span> }}
+\newcommand{\mapsto}{\lcRawHtml{ <span class="sym">&#8614;</span> }}
+\newcommand{\hookleftarrow}{\lcRawHtml%
+    { <IMG BORDER=0 WIDTH=17 HEIGHT=9 ALIGN=BOTTOM SRC="cc_hookleftarrow.gif"> }}
+\newcommand{\leftharpoonup}{\lcRawHtml%
+    { <IMG BORDER=0 WIDTH=15 HEIGHT=5 ALIGN=BOTTOM SRC="cc_leftharpoonup.gif"> }}
+\newcommand{\leftharpoondown}{\lcRawHtml%
+    { <IMG BORDER=0 WIDTH=15 HEIGHT=5 ALIGN=BOTTOM SRC="cc_leftharpoondown.gif"> }}
+\newcommand{\rightleftharpoons}{\lcRawHtml%
+    { <IMG BORDER=0 WIDTH=15 HEIGHT=24 ALIGN=MIDDLE SRC="cc_rightleftharpoons.gif"> }}
+\newcommand{\longleftarrow}{\lcRawHtml{ <span class="sym">&larr;</span> }}
+\newcommand{\Longleftarrow}{\lcRawHtml%
+    { <IMG BORDER=0 WIDTH=25 HEIGHT=11 ALIGN=BOTTOM SRC="cc_uppercase_Longleftarrow.gif"> }}
+\newcommand{\longrightarrow}{\lcRawHtml{ <span class="sym">&rarr;</span> }}
+\newcommand{\Longrightarrow}{\lcRawHtml{ <span class="sym">&rArr;</span> }}
+\newcommand{\longleftrightarrow}{\lcRawHtml%
+    { <IMG BORDER=0 WIDTH=30 HEIGHT=9 ALIGN=BOTTOM SRC="cc_lowercase_longleftrightarrow.gif"> }}
+\newcommand{\Longleftrightarrow}{\lcRawHtml{ <span class="sym">&hArr;</span> }}
+\newcommand{\longmapsto}{\lcRawHtml%
+    { <IMG BORDER=0 WIDTH=26 HEIGHT=9 ALIGN=BOTTOM SRC="cc_longmapsto.gif"> }}
+\newcommand{\hookrightarrow}{\lcRawHtml%
+    { <IMG BORDER=0 WIDTH=17 HEIGHT=9 ALIGN=BOTTOM SRC="cc_hookrightarrow.gif"> }}
+\newcommand{\rightharpoonup}{\lcRawHtml%
+    { <IMG BORDER=0 WIDTH=15 HEIGHT=5 ALIGN=BOTTOM SRC="cc_rightharpoonup.gif"> }}
+\newcommand{\rightharpoondown}{\lcRawHtml%
+    { <IMG BORDER=0 WIDTH=15 HEIGHT=5 ALIGN=BOTTOM SRC="cc_rightharpoondown.gif"> }}
+\newcommand{\leadsto}{\lcRawHtml%
+    { <IMG BORDER=0 WIDTH=16 HEIGHT=7 ALIGN=BOTTOM SRC="cc_leadsto.gif"> }}
+\newcommand{\uparrow}{\lcRawHtml%
+    { <IMG BORDER=0 WIDTH=7 HEIGHT=27 ALIGN=MIDDLE SRC="cc_lowercase_uparrow.gif"> }}
+\newcommand{\Uparrow}{\lcRawHtml%
+    { <IMG BORDER=0 WIDTH=10 HEIGHT=25 ALIGN=MIDDLE SRC="cc_uppercase_Uparrow.gif"> }}
+\newcommand{\downarrow}{\lcRawHtml%
+    { <IMG BORDER=0 WIDTH=7 HEIGHT=27 ALIGN=MIDDLE SRC="cc_lowercase_downarrow.gif"> }}
+\newcommand{\Downarrow}{\lcRawHtml%
+    { <IMG BORDER=0 WIDTH=10 HEIGHT=25 ALIGN=MIDDLE SRC="cc_uppercase_Downarrow.gif"> }}
+\newcommand{\updownarrow}{\lcRawHtml%
+    { <IMG BORDER=0 WIDTH=7 HEIGHT=29 ALIGN=MIDDLE SRC="cc_lowercase_updownarrow.gif"> }}
+\newcommand{\Updownarrow}{\lcRawHtml%
+    { <IMG BORDER=0 WIDTH=10 HEIGHT=26 ALIGN=MIDDLE SRC="cc_uppercase_Updownarrow.gif"> }}
+\newcommand{\nearrow}{\lcRawHtml%
+    { <IMG BORDER=0 WIDTH=16 HEIGHT=29 ALIGN=MIDDLE SRC="cc_nearrow.gif"> }}
+\newcommand{\searrow}{\lcRawHtml%
+    { <IMG BORDER=0 WIDTH=16 HEIGHT=29 ALIGN=MIDDLE SRC="cc_searrow.gif"> }}
+\newcommand{\swarrow}{\lcRawHtml%
+    { <IMG BORDER=0 WIDTH=16 HEIGHT=29 ALIGN=MIDDLE SRC="cc_swarrow.gif"> }}
+\newcommand{\nwarrow}{\lcRawHtml%
+    { <IMG BORDER=0 WIDTH=16 HEIGHT=29 ALIGN=MIDDLE SRC="cc_nwarrow.gif"> }}
+
+% +--------------------------------------------------------------------------
+% |     * Miscellaneous symbols following Table 3.7 page 43 in Lamport.
+% +--------------------------------------------------------------------------
+\newcommand{\prime}{'}
+\newcommand{\|}{\parallel}
+\newcommand{\neg}{\lcRawHtml{&not;}}
+\newcommand{\backslash}{\verb+\+}
+\newcommand{\slash}{\verb+/+}
+
+\newcommand{\aleph}{\lcRawHtml%
+    { <IMG BORDER=0 WIDTH=8 HEIGHT=13 ALIGN=BOTTOM SRC="cc_aleph.gif"> }}
+\newcommand{\hbar}{\lcRawHtml%
+    { <IMG BORDER=0 WIDTH=8 HEIGHT=13 ALIGN=BOTTOM SRC="cc_hbar.gif"> }}
+\newcommand{\imath}{\lcRawHtml%
+    { <IMG BORDER=0 WIDTH=4 HEIGHT=8 ALIGN=BOTTOM SRC="cc_imath.gif"> }}
+\newcommand{\jmath}{\lcRawHtml%
+    { <IMG BORDER=0 WIDTH=6 HEIGHT=17 ALIGN=MIDDLE SRC="cc_jmath.gif"> }}
+\newcommand{\ell}{\lcRawHtml{&#x2113;}}
+\newcommand{\wp}{\lcRawHtml%
+    { <IMG BORDER=0 WIDTH=9 HEIGHT=17 ALIGN=MIDDLE SRC="cc_wp.gif"> }}
+\newcommand{\Re}{\lcRawHtml%
+    { <IMG BORDER=0 WIDTH=11 HEIGHT=13 ALIGN=BOTTOM SRC="cc_Re.gif"> }}
+\newcommand{\Im}{\lcRawHtml%
+    { <IMG BORDER=0 WIDTH=11 HEIGHT=13 ALIGN=BOTTOM SRC="cc_Im.gif"> }}
+\newcommand{\mho}{\lcRawHtml%
+    { <IMG BORDER=0 WIDTH=10 HEIGHT=12 ALIGN=BOTTOM SRC="cc_mho.gif"> }}
+\newcommand{\emptyset}{\lcRawHtml{&empty;}}
+\newcommand{\nabla}{\lcRawHtml{<span class="sym">&nabla;</span>}}
+\newcommand{\surd}{\lcRawHtml%
+    { <IMG BORDER=0 WIDTH=13 HEIGHT=27 ALIGN=MIDDLE SRC="cc_surd.gif"> }}
+\newcommand{\top}{\lcRawHtml%
+    { <IMG BORDER=0 WIDTH=11 HEIGHT=11 ALIGN=BOTTOM SRC="cc_top.gif"> }}
+\newcommand{\bot}{\lcRawHtml%
+    { <IMG BORDER=0 WIDTH=11 HEIGHT=11 ALIGN=BOTTOM SRC="cc_bot.gif"> }}
+\newcommand{\angle}{\lcRawHtml{ <span class="sym">&ang;</span>}}
+\newcommand{\forall}{\lcRawHtml{ <span class="sym">&forall;</span> }}
+\newcommand{\exists}{\lcRawHtml{ <span class="sym">&exist;</span> }}
+\newcommand{\flat}{\lcRawHtml%
+    { <IMG BORDER=0 WIDTH=4 HEIGHT=14 ALIGN=BOTTOM SRC="cc_flat.gif"> }}
+\newcommand{\natural}{\lcRawHtml%
+    { <IMG BORDER=0 WIDTH=4 HEIGHT=27 ALIGN=MIDDLE SRC="cc_natural.gif"> }}
+\newcommand{\sharp}{\lcRawHtml%
+    { <IMG BORDER=0 WIDTH=4 HEIGHT=27 ALIGN=MIDDLE SRC="cc_sharp.gif"> }}
+\newcommand{\partial}{\lcRawHtml{&part;}}
+\newcommand{\infty}{\lcRawHtml{&infin;}}
+\newcommand{\Box}{\lcRawHtml%
+    { <IMG BORDER=0 WIDTH=10 HEIGHT=10 ALIGN=BOTTOM SRC="cc_Box.gif"> }}
+\newcommand{\Diamond}{\lcRawHtml%
+    { <IMG BORDER=0 WIDTH=13 HEIGHT=12 ALIGN=BOTTOM SRC="cc_uppercase_Diamond.gif"> }}
+\newcommand{\triangle}{\lcRawHtml%
+    { <IMG BORDER=0 WIDTH=13 HEIGHT=21 ALIGN=MIDDLE SRC="cc_triangle.gif"> }}
+\newcommand{\clubsuit}{\lcRawHtml%
+    { <IMG BORDER=0 WIDTH=13 HEIGHT=26 ALIGN=MIDDLE SRC="cc_clubsuit.gif"> }}
+\newcommand{\diamondsuit}{\lcRawHtml%
+    { <IMG BORDER=0 WIDTH=11 HEIGHT=26 ALIGN=MIDDLE SRC="cc_diamondsuit.gif"> }}
+\newcommand{\heartsuit}{\lcRawHtml%
+    { <IMG BORDER=0 WIDTH=11 HEIGHT=22 ALIGN=MIDDLE SRC="cc_heartsuit.gif"> }}
+\newcommand{\spadesuit}{\lcRawHtml%
+    { <IMG BORDER=0 WIDTH=11 HEIGHT=26 ALIGN=MIDDLE SRC="cc_spadesuit.gif"> }}
+
+
+% +--------------------------------------------------------------------------
+% |     * Variable sized symbols following Table 3.8 page 44 in Lamport.
+% +------------------------------------------------ --------------------------
+\newcommand{\sum}{\lciIf{\lciMathModeDisplay}{\lcRawHtml%
+  {<span class="big_sym">&sum;</span>}}%
+  {\lcRawHtml{<span class="sym">&sum;</span>}}}
+\newcommand{\prod}{\lciIf{\lciMathModeDisplay}{\lcRawHtml%
+  {<span class="big_sym">&prod;</span>}}%
+  {\lcRawHtml{<span class="sym">&prod;</span>}}}
+\newcommand{\coprod}{\lciIf{\lciMathModeDisplay}{\lcRawHtml%
+  { <IMG BORDER=0 WIDTH=16 HEIGHT=29 ALIGN=MIDDLE SRC="cc_big_coprod.gif"> }}%
+  {\lcRawHtml{ <IMG BORDER=0 WIDTH=11 HEIGHT=24 ALIGN=MIDDLE SRC="cc_coprod.gif"> }}}
+\newcommand{\int}{\lciIf{\lciMathModeDisplay}{\lcRawHtml%
+  {<span class="big_sym">&int;</span>}}%
+  {\lcRawHtml{<span class="sym">&int;</span>}}}
+\newcommand{\oint}{\lciIf{\lciMathModeDisplay}{\lcRawHtml%
+  { <IMG BORDER=0 WIDTH=12 HEIGHT=44 ALIGN=MIDDLE SRC="cc_big_oint.gif"> }}%
+  {\lcRawHtml{ <IMG BORDER=0 WIDTH=7 HEIGHT=27 ALIGN=MIDDLE SRC="cc_oint.gif"> }}}
+\newcommand{\bigcap}{\lciIf{\lciMathModeDisplay}{\lcRawHtml%
+  {<span class="big_sym">&cap;</span>}}%
+  {\lcRawHtml{<span class="big_sym">&cap;</span>}}}
+\newcommand{\bigcup}{\lciIf{\lciMathModeDisplay}{\lcRawHtml%
+  {<span class="big_sym">&cup;</span>}}%
+  {\lcRawHtml{<span class="big_sym">&cup;</span>}}}
+\newcommand{\bigsqcup}{\lciIf{\lciMathModeDisplay}{\lcRawHtml%
+  { <IMG BORDER=0 WIDTH=14 HEIGHT=29 ALIGN=MIDDLE SRC="cc_big_bigsqcup.gif"> }}%
+  {\lcRawHtml{ <IMG BORDER=0 WIDTH=10 HEIGHT=24 ALIGN=MIDDLE SRC="cc_bigsqcup.gif"> }}}
+\newcommand{\bigvee}{\lciIf{\lciMathModeDisplay}{\lcRawHtml%
+  { <IMG BORDER=0 WIDTH=14 HEIGHT=29 ALIGN=MIDDLE SRC="cc_big_bigvee.gif"> }}%
+  {\lcRawHtml{ <IMG BORDER=0 WIDTH=10 HEIGHT=24 ALIGN=MIDDLE SRC="cc_bigvee.gif"> }}}
+\newcommand{\bigwedge}{\lciIf{\lciMathModeDisplay}{\lcRawHtml%
+  { <IMG BORDER=0 WIDTH=14 HEIGHT=29 ALIGN=MIDDLE SRC="cc_big_bigwedge.gif"> }}%
+  {\lcRawHtml{ <IMG BORDER=0 WIDTH=10 HEIGHT=24 ALIGN=MIDDLE SRC="cc_bigwedge.gif"> }}}
+\newcommand{\bigodot}{\lciIf{\lciMathModeDisplay}{\lcRawHtml%
+  { <IMG BORDER=0 WIDTH=20 HEIGHT=29 ALIGN=MIDDLE SRC="cc_big_bigodot.gif"> }}%
+  {\lcRawHtml{ <IMG BORDER=0 WIDTH=14 HEIGHT=24 ALIGN=MIDDLE SRC="cc_bigodot.gif"> }}}
+\newcommand{\bigotimes}{\lciIf{\lciMathModeDisplay}{\lcRawHtml%
+  { <IMG BORDER=0 WIDTH=20 HEIGHT=29 ALIGN=MIDDLE SRC="cc_big_bigotimes.gif"> }}%
+  {\lcRawHtml{ <IMG BORDER=0 WIDTH=14 HEIGHT=24 ALIGN=MIDDLE SRC="cc_bigotimes.gif"> }}}
+\newcommand{\bigoplus}{\lciIf{\lciMathModeDisplay}{\lcRawHtml%
+  { <IMG BORDER=0 WIDTH=20 HEIGHT=29 ALIGN=MIDDLE SRC="cc_big_bigoplus.gif"> }}%
+  {\lcRawHtml{ <IMG BORDER=0 WIDTH=14 HEIGHT=24 ALIGN=MIDDLE SRC="cc_bigoplus.gif"> }}}
+\newcommand{\biguplus}{\lciIf{\lciMathModeDisplay}{\lcRawHtml%
+  { <IMG BORDER=0 WIDTH=14 HEIGHT=29 ALIGN=MIDDLE SRC="cc_big_biguplus.gif"> }}%
+  {\lcRawHtml{ <IMG BORDER=0 WIDTH=10 HEIGHT=24 ALIGN=MIDDLE SRC="cc_biguplus.gif"> }}}
+
+
+% +--------------------------------------------------------------------------
+% |     * this is actually a amssymb:
+% +--------------------------------------------------------------------------
+\newcommand{\gtreqless}{\lcRawHtml{ <span class="sym">&#8923;</span> }}
+
+% +--------------------------------------------------------------------------
+% |     * Log-like functions following Table 3.9 page 44 in Lamport.
+% +--------------------------------------------------------------------------
+\newcommand{\tan}{\mbox{tan} }
+\newcommand{\sin}{\mbox{sin} }
+\newcommand{\cos}{\mbox{cos} }
+\newcommand{\arctan}{\mbox{arctan} }
+\newcommand{\arcsin}{\mbox{arcsin} }
+\newcommand{\arccos}{\mbox{arccos} }
+\newcommand{\arg}{\mbox{arg} }
+\newcommand{\cosh}{\mbox{cosh} }
+\newcommand{\sinh}{\mbox{sinh} }
+\newcommand{\cot}{\mbox{cot} }
+\newcommand{\coth}{\mbox{coth} }
+\newcommand{\csc}{\mbox{csc} }
+\newcommand{\deg}{\mbox{deg} }
+\newcommand{\det}{\mbox{det} }
+\newcommand{\dim}{\mbox{dim} }
+\newcommand{\exp}{\mbox{exp} }
+\newcommand{\gcd}{\mbox{gcd} }
+\newcommand{\hom}{\mbox{hom} }
+\newcommand{\inf}{\mbox{inf} }
+\newcommand{\ker}{\mbox{ker} }
+\newcommand{\lg}{\mbox{lg} }
+\newcommand{\lim}{\mbox{lim} }
+\newcommand{\liminf}{\mbox{liminf} }
+\newcommand{\limsup}{\mbox{limsup} }
+\newcommand{\ln}{\mbox{ln} }
+\newcommand{\log}{\mbox{log} }
+\newcommand{\max}{\mbox{max} }
+\newcommand{\min}{\mbox{min} }
+\newcommand{\Pr}{\mbox{Pr} }
+\newcommand{\sec}{\mbox{sec} }
+\newcommand{\sinh}{\mbox{sinh} }
+\newcommand{\sup}{\mbox{sup} }
+\newcommand{\tanh}{\mbox{tanh} }
+\newcommand{\bmod}{\mbox{mod} }
+\newcommand{\pmod}[1]{(\mbox{mod} #1)}
+
+
+% +--------------------------------------------------------------------------
+% |     * Delimiters following Table 3.10 page 47 in Lamport.
+% +--------------------------------------------------------------------------
+\newcommand{\lfloor}{\lcRawHtml{<span class="sym">&lfloor;</span>}}
+\newcommand{\lceil}{\lcRawHtml{<span class="sym">&lceil;</span>}}
+\newcommand{\langle}{\lcRawHtml{<span class="sym">&lang;</span>}}
+\newcommand{\rfloor}{\lcRawHtml{<span class="sym">&rfloor;</span>}}
+\newcommand{\rceil}{\lcRawHtml{<span class="sym">&rceil;</span>}}
+\newcommand{\rangle}{\lcRawHtml{<span class="sym">&rang;</span>}}
+
+% +--------------------------------------------------------------------------
+% |     * Math mode accents following Table 3.11 page 50 in Lamport.
+% +--------------------------------------------------------------------------
+% many are not available yet. The others are mapped to normal accents.
+\newcommand{\hat}{\^}
+\newcommand{\acute}{\'}
+\newcommand{\grave}{\`}
+\newcommand{\tilde}{\~}
+\newcommand{\ddot}{\"}
+\newcommand{\bar}[1]{\lcRawHtml{<span style="text-decoration: overline;">#C1</span>}}
+
+% dummy commands to turn testsuite N's to Y's
+\newcommand{\nolimits}{}
+\newcommand{\mathop}[1]{}
+
+\newcommand{\overline}[1]{\lcRawHtml{<span style="text-decoration:overline">}#1\lcRawHtml{</span>}}
+\newcommand{\underline}[1]{\lcRawHtml{<span style="text-decoration:underline">}#1\lcRawHtml{</span>}}
+
+% ___________________________________________________________________________
+% ###########################################################################
+% |
+% |   o   C.4   Sectioning and Table of Contents
+% |
+% ###########################################################################
+
+% the counters used for enumerating are defined in C.8, see below
+
+
+% part
+\newcommand{\part}[1]{\part[#1]{#1}}
+\newcommand{\part@om}{%
+    \lcNoLinkSync
+    \lciEndPart
+
+    \lciCheckForLabelInsideHeading{#C2}%
+      {\lciCurrentPartName}%
+      {\lciCurrentPartLabel}%
+
+    \gdef{\lciIfHtmlLinks}{\lcTrue}%
+    \gdef{\lciIfHtmlIndex}{\lcTrue}%
+    \refstepcounter{part}%
+    %\setcounter{chapter}{0}%
+    \lciUndef{\lciTheFirstChapterHasAlreadyBeenProcessedFlag}
+    \lciHtmlPartToc{\thepart}{#1}
+}
+\newcommand{\part*}[1]{%
+    \gdef{\lciIfHtmlLinks}{\lcTrue}%
+    \gdef{\lciIfHtmlIndex}{\lcTrue}%
+    \lciHtmlPartHeader{}{#1}}
+
+\newcommand{\lciEndPart}{\lciEndChapter}
+
+\gdef\lciReplaceWithCurrentPathToken{REPLACE_WITH_CURRENT_PATH}%
+
+
+% chapter
+\newcommand{\chapter}[1]{\chapter[#1]{#1}}
+\newcommand{\chapter@om}{%
+    \lciEndChapter
+    \lciPushFootnotes
+    \gdef{\lciIfHtmlLinks}{\lcTrue}%
+    \gdef{\lciIfHtmlIndex}{\lcTrue}%
+    \refstepcounter{chapter}%
+    \gdef\ccValueOfPkgAuthor{}%
+
+    \lciCheckForLabelInsideHeading{#1}%
+      {\lciLocalVariableChapterNameTOC}%
+      {\lciLocalVariableLabel}%
+    \lciChapter% does also a PushOutput
+    \lciTocNewLayout{\lciHtmlMinitocBegin}{}
+    % cross linking rules
+    \lciPushOutput{anchor}%
+    \lcRawHtml{i Next_chapter_link_}\value{part}\_\value{createdfiles}%
+    \lcRawHtml{	<div class="NavNext">Next chapter: <a href="}%
+    \lcRawHtmlExpanded{\lciReplaceWithCurrentPathToken}%
+    \lcRawHtmlExpanded{\lciOutputBasename}%
+    \lcRawHtml{">}\lciRemoveNewlines{\lciLocalVariableChapterNameTOC}\lcRawHtml{</a></div>
+}%
+    \lcRawHtml{i Up_chapter_link_}\value{part}\_\value{createdfiles}%
+    \lcRawHtml{	<a href="}%
+    \lcRawHtmlExpanded{\lciReplaceWithCurrentPathToken}%
+    \lcRawHtmlExpanded{\lciOutputBasename}%
+    \lcRawHtml{">}Up\lcRawHtml{</a>&nbsp;&nbsp;
+}%
+    \lciPopOutput
+    \gdef\lciInsideListOfRefPages{\lcFalse}%
+    \ccEnableRawListOfRefpages
+    \gdef{\lciIfHtmlClassLinks}{\lcTrue}%
+    % ^^^ this was needed to make package Qt_widget work with a class Qt_widget.
+    % I _dont_ know what's going on, i.e. where the flag is set to false ..
+    % however, setting this to a default of TRUE at the beginning of each
+    % chapter seems safe.
+    % file header
+    \lciHtmlFileHeader{\lciLocalVariableChapterNameTOC}%
+    \lciHtmlNavigationTop
+    \lciHtmlChapterToc{\thechapter}{\lciLocalVariableChapterNameTOC}%
+    \lciIfLessExpanded{\lciCountersecnumdepth}{0}%
+      {\lciHtmlChapterHeader{#2}}%
+      {\lciHtmlChapterHeader{Chapter \thechapter\\#2}}%
+}
+\newcommand{\chapter*}[1]{%
+    \lciHtmlChapterHeader{#1}}
+
+\newcommand{\lciEndChapter}{\lciEndChapterX{chapter}}
+
+\newcommand{\lciEndChapterX}[1]{%
+  \lciTocNewLayout{\lciMinitocClose}{}%
+  \lciEndSection
+  \lciIfPrintRawListOfRefpages{}{\ccPrintSortedListOfRefpagesX}
+  \lciIfDefined{\lciTheFirstChapterHasAlreadyBeenProcessedFlag}{% check for first chapter
+    \lciPrintFootnotes\lciResetFootnotes
+    \lciPopFootnotes
+    % navigation footer
+    \addtocounter{createdfiles}{1}%
+    \lcRawHtml{[internal:Next_#GC1_link_}\value{part}\_\value{createdfiles}\lcRawHtml{]}
+    \lciHtmlNavigationBottom
+    \lciHtmlFileFooter
+    \lciPopOutput
+  }%
+  {\newcommand{\lciTheFirstChapterHasAlreadyBeenProcessedFlag}{}}%
+  % only do something, after the first chapter has already been processed
+}
+
+\newcommand{\lciSplitChapter}[3]{
+    \lciEndChapter%{chapterpart}
+    \lciPushFootnotes
+    \gdef{\lciIfHtmlLinks}{\lcTrue}%
+    \gdef{\lciIfHtmlIndex}{\lcTrue}%
+
+    \lciCheckForLabelInsideHeading{#2}%
+      {\lciLocalVariableChapterNameTOC}%
+      {\lciLocalVariableLabel}%
+    \gdef\lciCurrentLabel{\thechapter}%
+    \lciChapter% does also a PushOutput
+    \lciTocNewLayout{\lciHtmlMinitocBegin}{}
+    % cross linking rules
+    \lciPushOutput{anchor}%
+    \lcRawHtml{i Next_chapter_link_}\value{part}\_\value{createdfiles}%
+    \lcRawHtml{	<div class="NavNext">Next: <a href="}%
+    \lcRawHtmlExpanded{\lciReplaceWithCurrentPathToken}%
+    \lcRawHtmlExpanded{\lciOutputBasename}%
+    \lcRawHtml{">}\lciRemoveNewlines{#1}\lcRawHtml{</a></div>}
+    \lcRawHtml{i Up_chapter_link_}\value{part}\_\value{createdfiles}%
+    \lcRawHtml{	<a href="}%
+    \lcRawHtmlExpanded{\lciReplaceWithCurrentPathToken}%
+    \lcRawHtmlExpanded{\lciOutputBasename}%
+    \lcRawHtml{">}Up\lcRawHtml{</a>&nbsp;&nbsp;
+}%
+    \lciPopOutput%
+    \gdef\lciInsideListOfRefPages{\lcFalse}%
+    \ccEnableSortedListOfRefpages
+    \gdef{\lciIfHtmlClassLinks}{\lcTrue}%
+    % ^^^ this was needed to make package Qt_widget work with a class Qt_widget.
+    % I _dont_ know what's going on, i.e. where the flag is set to false ..
+    % however, setting this to a default of TRUE at the beginning of each
+    % chapter seems safe.
+    % file header
+    \lciHtmlFileHeader{\lciLocalVariableChapterNameTOC}%
+    \lciHtmlNavigationTop
+
+    \lciHtmlChapterPartToc{#1}
+    \lciHtmlChapterHeader{#3}%
+}
+
+% section
+\newcommand{\section}[1]{\section[#1]{#1}}
+\newcommand{\section@om}{%
+    \lciEndSection
+    \refstepcounter{section}%
+    \lciIfLessExpanded{\lciCountersecnumdepth}{1}{%
+      \lciHtmlSectionToc{\thesection}{}{#1}%
+      \lciHtmlSectionHeader{#2}}%
+    {\lciHtmlSectionToc{\thesection}{\thesection}{#1}%
+      \lciHtmlSectionHeader{\thesection~~~#2}}}
+\newcommand{\section*}[1]{%
+  \lciCheckIfWeNeedToCloseRefpageTable
+    \lciHtmlSectionHeader{#1}}
+
+\newcommand{\lciEndSection}{%
+  \lciEndSubsection
+  \lciIfEqualExpanded{\lciCountersection}{0}{}{% check for first section
+  }
+}
+
+% subsection
+\newcommand{\subsection}[1]{\subsection[#1]{#1}}
+\newcommand{\subsection@om}{%
+    \lciEndSubsection
+    \refstepcounter{subsection}%
+    \lciIfLessExpanded{\lciCountersecnumdepth}{2}{%
+      \lciHtmlSubsectionHeader{\thesubsection}{#2}%
+      \lciHtmlSubsectionToc{\thesubsection}{#1}}%
+    {\lciHtmlSubsectionHeader{\thesubsection}{\thesubsection~~~#2}%
+      \lciHtmlSubsectionToc{\thesubsection}{\thesubsection~~~#1}}}
+\newcommand{\subsection*}[1]{%
+  \lciCheckIfWeNeedToCloseRefpageTable
+    \lciHtmlSubsectionHeader{}{#1}}
+
+\newcommand{\lciEndSubsection}{%
+  \lciEndSubsubsection
+  \lciIfEqualExpanded{\lciCountersubsection}{0}{}{% check for first subsection
+  }}
+
+% subsubsection
+\newcommand{\subsubsection}[1]{\subsubsection[#1]{#1}}
+\newcommand{\subsubsection@om}{%
+    \lciEndSubsubsection
+    \refstepcounter{subsubsection}%
+    \lciIfLessExpanded{\lciCountersecnumdepth}{3}{%
+      \lciHtmlSubsubsectionHeader{\thesubsubsection}{#2}%
+      \lciHtmlSubsubsectionToc{\thesubsubsection}{#1}}%
+   {\lciHtmlSubsubsectionHeader{\thesubsubsection}{\thesubsubsection~~~#2}%
+     \lciHtmlSubsubsectionToc{\thesubsubsection}{\thesubsubsection~~~#1}}}
+\newcommand{\subsubsection*}[1]{%
+  \lciCheckIfWeNeedToCloseRefpageTable
+    \lciHtmlSubsubsectionHeader{}{#1}}
+
+
+\newcommand{\lciEndSubsubsection}{%
+  \lciCheckIfWeNeedToCloseRefpageTable
+  % see cc_manual.sty. there, a corresponding table has been opened
+  % for the alphabetical listing of refpages
+  \lciEndParagraph
+  \lciIfEqualExpanded{\lciCountersubsubsection}{0}{}{% check 1st. subsubsection
+  }
+}
+
+\newcommand{\lciCheckIfWeNeedToCloseRefpageTable}{
+  \lciIfPrintRawListOfRefpages{%
+    % if we are inside a listing of refpages _and_ outside the actual refpage
+    % (ie., we are in Chapter_intro.html), close the table-environment
+    \lciInsideListOfRefPages{%
+      \lciIfEmpty{\ccRefName}{
+        \lcRawHtml{</table>}%
+        \gdef\lciInsideListOfRefPages{\lcFalse}%
+      }{}
+    }{}%
+  }{}
+}
+
+% paragraph
+\newcommand{\paragraph}[1]{\paragraph[#1]{#1}}
+\newcommand{\paragraph@om}{%
+    \lciEndParagraph
+    \refstepcounter{paragraph}%
+    \lciIfLessExpanded{\lciCountersecnumdepth}{4}{%
+      \lciHtmlParagraphHeader{\theparagraph}{#2}%
+      \lciHtmlParagraphToc{\theparagraph}{#1}}%
+    {\lciHtmlParagraphHeader{\theparagraph}{\theparagraph~~~#2}%
+      \lciHtmlParagraphToc{\theparagraph}{\theparagraph~~~#1}}}
+\newcommand{\paragraph*}[1]{%
+    \lciHtmlParagraphHeader{}{#1}}
+
+\newcommand{\lciEndParagraph}{%
+  \lciEndSubparagraph
+  \lciIfEqualExpanded{\lciCounterparagraph}{0}{}{% check for first paragraph
+  }}
+
+% subparagraph
+\newcommand{\subparagraph}[1]{\subparagraph[#1]{#1}}
+\newcommand{\subparagraph@om}{%
+    \lciEndSubparagraph
+    \refstepcounter{subparagraph}%
+    \lciIfLessExpanded{\lciCountersecnumdepth}{5}{%
+      \lciHtmlSubparagraphHeader{\thesubparagraph}{#2}%
+      \lciHtmlSubparagraphToc{\thesubparagraph}{#1}}%
+    {\lciHtmlSubparagraphHeader{\thesubparagraph}{\thesubparagraph~~~#2}%
+      \lciHtmlSubparagraphToc{\thesubparagraph}{\thesubparagraph~~~#1}}}
+\newcommand{\subparagraph*}[1]{%
+    \lciHtmlSubparagraphHeader{}{#1}}
+
+\newcommand{\lciEndSubparagraph}{%
+  \lciIfEqualExpanded{\lciCountersubparagraph}{0}{}{% check 1st subparagraph
+}%
+}
+
+
+% appendix changes numbering of chapters
+\newcommand{\appendix}{%
+  \lciIfEqualExpanded{\lciDocumentClass}{article}{%
+    \gdef{\thesection}{\Alph{section}}\setcounter{section}{0}}{%
+    \gdef{\thechapter}{\Alph{chapter}}\setcounter{chapter}{0}}}
+
+\newcommand{\minitoc}{%
+\lciTocNewLayout%
+{\lcRawHtml{LATEX_TO_HTML_REPLACE_WITH_MINITOC_HERE}}
+{}%
+}
+\newcommand{\tableofcontents}{}
+\newcommand{\listoffigures}{}
+\newcommand{\listoftables}{}
+%\newcommand{\listofexamples}{}
+\newcommand{\listofrefpages}{}
+
+% ___________________________________________________________________________
+% ###########################################################################
+% |
+% |   o   C.5   Classes, Packages, and Page Styles
+% |
+% ###########################################################################
+
+\newcommand{\documentclass}[1]{%
+    \gdef{\lciDocumentClass}{#C1}%
+    \lcTryStyleFile{documentclass_#C1}}
+\newcommand{\documentclass@om}[1]{\documentclass{#2}}
+\newcommand{\documentstyle}[1]{\documentclass{#1}}
+\newcommand{\documentstyle@om}[1]{\documentclass{#2}}
+\newcommand{\usepackage}[1]{\lcTryStyleFile{#C1}}
+\newcommand{\usepackage@om}[1]{\lcTryStyleFile{#C2}}
+\newcommand{\pagestyle}[1]{}
+\newcommand{\thispagestyle}[1]{}
+\newcommand{\markright}[1]{}
+\newcommand{\markboth}[2]{}
+\newcommand{\pagenumbering}[1]{}
+
+\newcommand{\twocolumn}{}
+\newcommand{\twocolumn@o}{#1}
+\newcommand{\onecolumn}{}
+
+\gdef\lcIfTitlePageInline{\lcFalse}
+\gdef\lciTitlePageTitle{}
+\gdef\lciTitlePageAuthor{}
+\gdef\lciTitlePageDate{\today}
+\newcommand{\title}[1]{\gdef\lciTitlePageTitle{#1}}
+\newcommand{\author}[1]{\gdef\lciTitlePageAuthor{#1}}
+\newcommand{\date}[1]{\gdef\lciTitlePageDate{#1}}
+\newcommand{\thanks}[1]{%
+  % change footnote symbols to \fnsymbol if we have documentclass article
+  \lciIfEqualExpanded{\lciDocumentClass}{article}{%
+    \gdef{\lciFootnoteStyle}{\lciFootnoteSymbol}\gdef{\lciFootnotePrefix}{fn_}%
+    \footnote{#1}%
+    \gdef{\lciFootnoteStyle}{}\gdef{\lciFootnotePrefix}{}%
+  }{%
+    \footnote{#1}%
+  }}
+
+\newenvironment{titlepage}{%
+  \lcIfTitlePageInline{\lciIfEqualExpanded{\lciDocumentClass}{article}{%
+    % switch to \fnsymbol style footnote numbers and reset counter for that
+    \lciPushGlobalStack{\lciFootnoteStack}{\lciCounterfootnote}%
+    \setcounter{footnote}{0}}{}%
+  }{%
+    \lciPushFootnotes
+    \lciOpenTmpFile{\lciTitleFilename}%
+    \lciTitleFileHeader
+  }
+}{%
+  \lcIfTitlePageInline{\lciIfEqualExpanded{\lciDocumentClass}{article}{%
+      \lciTopGlobalStack{\lciFootnoteStack}{\lciCounterfootnote}%
+      \lciPopGlobalStack{\lciFootnoteStack}}{}%
+  }{%
+    \lciPrintFootnotes\lciPopFootnotes
+    \lciTitleFileFooter
+    \lciCloseFile
+  }
+}
+
+\newcommand{\maketitle}{\begin{titlepage}
+  \begin{center}
+    \lcRawHtml{<br><br><br><br>
+
+<h1 class="TitlePageTitle">}\lciTitlePageTitle\lcRawHtml{</h1>}
+
+    \lciIfEmpty{\lciTitlePageAuthor}{}{%
+      \lciBeginScope%
+      \newcommand{\and}{\lcRawHtml{  &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+}}\lcRawHtml{<br><br><p class="TitlePageAuthor">
+}\lciTitlePageAuthor\lcRawHtml{</p>}%
+      \lciEndScope%
+    }%
+
+    \lciIfEmpty{\lciTitlePageDate}{}{%
+      \lcRawHtml{<br><p class="TitlePageDate">}\lciTitlePageDate\lcRawHtml{</p>}%
+    }%
+
+    \lcRawHtml{<br><br><br>}
+  \end{center}
+\end{titlepage}}
+
+
+\newenvironment{abstract}{%
+    \lcRawHtml{<CENTER><B>Abstract</B></CENTER><P><BLOCKQUOTE><SUB>}}{
+    \lcRawHtml{</SUB></BLOCKQUOTE>}}
+
+
+
+% ___________________________________________________________________________
+% ###########################################################################
+% |
+% |   o   C.6   Displayed Paragraphs
+% |
+% ###########################################################################
+
+\newenvironment{center}{\lcRawHtml{<CENTER>}}{\lcRawHtml{</CENTER>}}
+\newenvironment{flushleft}{}{}
+\newenvironment{flushright}{\lcRawHtml{<P ALIGN=RIGHT>}}{}
+
+
+\newenvironment{quote}{\lcRawHtml{<BLOCKQUOTE>}}{\lcRawHtml{</BLOCKQUOTE>}}
+\newenvironment{quotation}{\lcRawHtml{<BLOCKQUOTE>}}{\lcRawHtml{</BLOCKQUOTE>}}
+\newenvironment{verse}{\lcRawHtml{<BLOCKQUOTE>}}{\lcRawHtml{</BLOCKQUOTE>}}
+
+\newenvironment{itemize}{\lcRawHtml{<UL>}}{\lcRawHtml{</UL>}}
+\newenvironment{enumerate}{\lcRawHtml{<OL>}}{\lcRawHtml{</OL>}}
+\newenvironment{description}{\lcRawHtml{<DL>}}{\lcRawHtml{</DL>}}
+\newcommand{\item}{\lcRawHtml{<LI>}}
+\newcommand{\item@o}{\lcRawHtml{<DT><B>}#1\lcRawHtml{</B><DD>}}
+
+\newcommand{\lciLocalVerbatim}[1]{%
+  \lcRawHtml{<pre class="Verbatim">}\lciAsciiOutputN{#L1}#1\lcRawHtml{</pre>}}
+\newenvironment{verbatim}{[cccbegin]%
+    \lciParseUntilEndToken{\lciLocalVerbatim}{verbatim}}{[cccend]}
+\newenvironment{verbatim*}{[cccbegin]%
+    \lciParseUntilEndToken{\lciLocalVerbatim}{verbatim*}}{[cccend]}
+
+\newcommand{\lciLocalVerb}[1]{[cccbegin]{\tt\lciAsciiOutputN{#L1}#1}[cccend]}
+\newcommand{\verb}{\lciParseUntilDelimiter{\lciLocalVerb}}
+\newcommand{\verb*}{\lciParseUntilDelimiter{\lciLocalVerb}}
+
+
+% ___________________________________________________________________________
+% ###########################################################################
+% |
+% |   o   C.7   Mathematical Formulas
+% |
+% ###########################################################################
+
+\newcommand{\lciMathMode}{\lcFalse}        % for all math environments
+\newcommand{\lciMathModeDisplay}{\lcFalse} % in addition for display math env.
+% declare TeX compatible \ifmmode (can be used in the ifthen.sty)
+\newcommand{\ifmmode}{\lciMathMode}
+
+\newcommand{\(}{\newcommand{\lciMathMode}{\lcTrue}\lcRawHtml{<span class="math">}}
+\newcommand{\)}{\newcommand{\lciMathMode}{\lcFalse}\lcRawHtml{</span>}}
+\newenvironment{math}{\(}{\)}
+\newcommand{\lciToggleMathMode}{\lciIf{\lciMathMode}{\)}{\(}}
+
+\newcommand{\[}{\lcRawHtml{<TABLE ALIGN=CENTER><TR><TD NOWRAP>
+}\(\newcommand{\lciMathModeDisplay}{\lcTrue}}
+\newcommand{\]}{\)\newcommand{\lciMathModeDisplay}{\lcFalse}\lcRawHtml{</TABLE>}}
+\newenvironment{displaymath}{\[}{\]}
+
+%% Called for TeX $$ sequence:
+\newcommand{\lciTexToggleDisplayMathMode}{\lciIf{\lciMathModeDisplay}{\]}{\[}}
+
+\newenvironment{equation}{\[}{\]}
+
+\newcommand{\ensuremath}[1]{\lciIf{\lciMathMode}{#1}{$#1$}}
+
+%% --> see C.10 for array and eqnarray.
+
+\newcommand{\sqrt}[1]{\lcRawHtml{&radic;<span style="text-decoration:overline">}#1\lcRawHtml{</span>}}
+\newcommand{\sqrt@om}{\lcRawHtml{root<SUB>}#1\lcRawHtml{</SUB>}(#2)}
+
+\newcommand{\frac}[2]{\lciIf{\lciMathModeDisplay}
+  {\lcRawHtml{<TD NOWRAP><TABLE><TR><TD ALIGN=CENTER NOWRAP><TABLE><TR><TD NOWRAP class="math">}#1%
+   \lcRawHtml{</TABLE><TR class="frac"><TD ALIGN=CENTER><hr style="color:black" noshade><TR><TD ALIGN=CENTER NOWRAP><TABLE><TR><TD NOWRAP class="math">}#2%
+   \lcRawHtml{</TABLE></TABLE><TD NOWRAP class="math">}}%
+  {\lcRawHtml{<span class="sym">(</span>}#1\lcRawHtml{<span class="sym">)</span>/<span class="sym">(</span>}#2\lcRawHtml{<span class="sym">)</span>}}}
+
+\newcommand{\over}{<span class="sym">/</span>}  %% TeX style fraction
+
+\newcommand{\dots}{\lcRawHtml{ <span class="sym">&#x0085;</span> }}
+\newcommand{\ldots}{\lcRawHtml{ <span class="sym">&#x0085;</span> }}
+\newcommand{\cdot}{\lcRawHtml{ <span class="sym">&sdot;</span> }}
+\newcommand{\cdots}{\lcRawHtml{ <span class="sym">&#8943;</span> }}
+\newcommand{\vdots}{\lcRawHtml{ <span class="sym">&#8942;</span> }}
+\newcommand{\ddots}{\lcRawHtml{ <span class="sym">&#8945;</span> }}
+
+\newcommand{\left}{}
+\newcommand{\right}{}
+
+\newcommand{\mathrm}{\textrm}
+\newcommand{\mathit}{\textit}
+\newcommand{\mathbf}{\textbf}
+\newcommand{\mathsf}{\textsf}
+\newcommand{\mathtt}{\texttt}
+
+\newcommand{\boldmath}{\bfseries}
+\newcommand{\unboldmath}{\mdseries}
+
+\newcommand{\displaystyle}{}
+\newcommand{\textstyle}{}
+\newcommand{\scriptstyle}{}
+\newcommand{\scriptscriptstyle}{}
+
+% ___________________________________________________________________________
+% ###########################################################################
+% |
+% |   o   C.8   Definitions, Numbering, and Programming
+% |
+% ###########################################################################
+% --> see latex_to_html.sty
+
+\gdef{\lciListOfAlreadyDefinedCounters}{}
+
+\newcommand{\newtheorem}[2]{%
+    \gdef{\begin@#C1}{{\bf #2}~~\lcRawHtml{<EM>}}%
+    \gdef{\begin@#C1@o}{{\bf #2 (##1)}~~\lcRawHtml{<EM>}}%
+    \gdef{\end#C1}{\lcRawHtml{</EM>}}%
+}
+\newcommand{\newcounter}[1]{%
+    \lciPushGlobalStack{\lciListOfAlreadyDefinedCounters}{#C1}%
+    \gdef{\lciCounter#C1}{0}%
+    \gdef{\the#C1}{\arabic{#1}}%
+    \gdef{\lciDependantCounter#C1}{}%
+}
+\newcommand{\newcounter@mo}{%
+    \lciPushGlobalStack{\lciListOfAlreadyDefinedCounters}{#C1}%
+    \gdef{\lciCounter#C1}{0}%
+    \gdef{\the#C1}{\arabic{#1}}%
+    \gdef{\lciDependantCounter#C1}{}%
+    \lciAddToDependantList{\lciDependantCounter#GC2}%
+        {\gdef{\lciCounter#GC1}{0}\lciDependantCounter#GC1}}
+%% Args: #1 = dependant list, #2 command to be added to the list
+\newcommand{\lciAddToDependantList}[2]{%
+    \gdef{#1}{#XC1#C2}}
+
+% Args: <counter> <dependant-counter>: same as \newcounter{#1}[#2], except
+% that \the<counter> is redefined as \the<dependant-counter>.\arabic{<counter>}
+\newcommand{\lciNewCounter}[2]{%
+    \newcounter{#1}[#2]%
+    \gdef{\the#C1}{\the#GC2.\arabic{#1}}}
+
+\newcommand{\setcounter}[2]{\gdef{\lciCounter#C1}{#XC2}}
+\newcommand{\addtocounter}[2]{\lciGlobalAddTo{\lciCounter#GC1}{#XC2}}
+\newcommand{\value}[1]{\lciCounter#GC1}
+
+\newcommand{\stepcounterX}[1]{%
+  % do not update the current label, for reference pages (counter only used internally)
+  \lciIfEqual{#1}{\thereferencepage}{}{%
+    \gdef\lciCurrentLabel{#X1}%
+  }%
+}
+
+\newcommand{\stepcounter}[1]{%
+    \lciGlobalAddTo{\lciCounter#GC1}{1}%
+    \lciGlueTwoParam{\lciDependantCounter}{#C1}%
+    \stepcounterX{\the#GC1}%
+}
+\newcommand{\refstepcounter}{\stepcounter}
+
+% counter to string conversions
+\newcommand{\lciExpandedCallOne}[2]{%
+    #1{#X2}}
+\newcommand{\arabic}[1]{\value{#1}}
+\newcommand{\roman}[1]{\lciExpandedCallOne\lciToRoman{\lciCounter#GC1}}
+\newcommand{\Roman}[1]{\lciExpandedCallOne\lciToRomanUpper{\lciCounter#GC1}}
+\newcommand{\alph}[1]{\lciExpandedCallOne\lciToAlpha{\lciCounter#GC1}}
+\newcommand{\Alph}[1]{\lciExpandedCallOne\lciToAlphaUpper{\lciCounter#GC1}}
+\newcommand{\fnsymbol}[1]{%
+    \lciIfEqualExpanded{\lciCounter#GC1}{1}{\ast}{%
+      \lciIfEqualExpanded{\lciCounter#GC1}{2}{\dag}{%
+        \lciIfEqualExpanded{\lciCounter#GC1}{3}{\ddag}{%
+          \lciIfEqualExpanded{\lciCounter#GC1}{4}{\S}{%
+            \lciIfEqualExpanded{\lciCounter#GC1}{5}{\P}{%
+              \lciIfEqualExpanded{\lciCounter#GC1}{6}{\parallel}{%
+                \lciIfEqualExpanded{\lciCounter#GC1}{7}{\ast\ast}{%
+                  \lciIfEqualExpanded{\lciCounter#GC1}{8}{\dag\dag}{%
+                    \lciIfEqualExpanded{\lciCounter#GC1}{9}{\ddag\ddag}{%
+                      \lciError{Counter must be between 1 and 9 in \\fnsymbol}%
+                    }}}}}}}}}}
+
+
+% Counters defined for part, chapter and sectioning commands in C.4.
+\newcounter{part}
+\gdef{\thepart}{\Roman{part}}
+
+\newcounter{chapter}
+\newcounter{createdfiles}
+\lciNewCounter{section}{chapter}
+\lciNewCounter{subsection}{section}
+\lciNewCounter{subsubsection}{subsection}
+\lciNewCounter{paragraph}{subsubsection}
+\lciNewCounter{subparagraph}{paragraph}
+
+\newcounter{secnumdepth}\setcounter{secnumdepth}{2}
+\newcounter{tocdepth}\setcounter{tocdepth}{2}
+
+% Counter defined for footnotes in C.3
+\newcounter{footnote}
+
+
+% ___________________________________________________________________________
+% ###########################################################################
+% |
+% |   o   C.9   Figures and Other Floating Bodies
+% |
+% ###########################################################################
+
+\newenvironment{figure}
+  {\newcommand{\lciLabelTitle}{\stepcounter{figure}{\bf Figure \thefigure:~~}}}
+  {}
+\newenvironment{figure*}
+  {\newcommand{\lciLabelTitle}{{\bf Figure:~~}}}
+  {}
+\newenvironment{figure@o}
+  {\newcommand{\lciLabelTitle}{\stepcounter{figure}{\bf Figure \thefigure:~~}}}
+  {}
+\newenvironment{figure*@o}
+  {\newcommand{\lciLabelTitle}{{\bf Figure:~~}}}
+  {}
+
+\newenvironment{table}
+  {\newcommand{\lciLabelTitle}{\stepcounter{figure}{\bf Table \thetable:~~}}}
+  {}
+\newenvironment{table*}
+  {\newcommand{\lciLabelTitle}{{\bf Table:~~}}}
+  {}
+\newenvironment{table@o}
+  {\newcommand{\lciLabelTitle}{\stepcounter{figure}{\bf Table \thetable:~~}}}
+  {}
+\newenvironment{table*@o}
+  {\newcommand{\lciLabelTitle}{{\bf Table:~~}}}
+  {}
+
+\newcommand{\caption}[1]{\lciLabelTitle #1}
+\newcommand{\caption@om}{\lciLabelTitle #1}
+
+\newcommand{\suppressfloats}{}
+\newcommand{\suppressfloats@o}{}
+
+\newcommand{\marginpar}[1]{%
+    \lcRawHtml{<TABLE ALIGN=RIGHT WIDTH=100 BORDER=2><TR><TD>}%
+    #1\lcRawHtml{</TABLE>}}
+\newcommand{\marginpar@om}{\marginpar{#2}}
+
+\newcommand{\reversemarginpar}{}
+\newcommand{\normalmarginpar}{}
+
+\newcommand{\marginparwidth}{\lciSkipNonWhiteSpace}
+\newcommand{\marginparsep}{\lciSkipNonWhiteSpace}
+\newcommand{\marginparpush}{\lciSkipNonWhiteSpace}
+
+
+% ___________________________________________________________________________
+% ###########################################################################
+% |
+% |   o   C.10  Lining It Up in Columns
+% |
+% ###########################################################################
+
+% +--------------------------------------------------------------------------
+% |     * Tabbing Environment
+% +--------------------------------------------------------------------------
+
+\newenvironment{tabbing}{\lciTabbingBegin}{\lciTabbingEnd}
+
+\newcommand{\lciTabbingBegin}{\lcRawHtml{
+<TABLE><TR><TD ALIGN=LEFT VALIGN=TOP NOWRAP>
+}%
+    \newcommand{\=}{\lciTabbingSkip}%
+    \newcommand{\>}{\lciTabbingSkip}%
+    \renewcommand{\\}{\lciTabbingNL}%
+    \renewcommand{\\*}{\lciTabbingNL}%
+    \renewcommand{\\@o}{\lciTabbingNL}%
+    \renewcommand{\\*@o}{\lciTabbingNL}%
+}
+\newcommand{\lciTabbingEnd}{\lcRawHtml{
+</TABLE>
+}%% We rely on the scoping rules of definitions in environments to
+  % restore the old definitions of \=, \> and \\.
+}
+\newcommand{\lciTabbingNL}{\lcRawHtml{
+    <TR><TD ALIGN=LEFT VALIGN=TOP NOWRAP>
+}\lciSkipWhiteSpace
+}
+\newcommand{\lciTabbingSkip}{\lcRawHtml{
+        <TD ALIGN=LEFT VALIGN=TOP NOWRAP>
+}}
+
+
+% +--------------------------------------------------------------------------
+% |     * Tabular Environment
+% +--------------------------------------------------------------------------
+
+\newenvironment{tabular}{\lciTabularBegin{}}{\lciTabularEnd}
+\newenvironment{tabular*}{\lciTabularBegin}{\lciTabularEnd}
+\newenvironment{array}{\lcRawHtml{<TD class="math">}\lciTabularBegin{}}{\lciTabularEnd\lcRawHtml{<TD nowrap="nowrap" class="math">}}
+\newenvironment{eqnarray}{\[\lciTabularBegin{}{lll}}{\lciTabularEnd\]}
+\newenvironment{eqnarray*}{\[\lciTabularBegin{}{lll}}{\lciTabularEnd\]}
+\newcommand{lefteqn}[1]{#1}
+
+\gdef\lcTabularBorder{0} %% Set this to [1..] to get a table with border [1..]
+
+%% Args: column format string
+\newcommand{\lciTabularBegin}[2]{
+  \lciIfEqual{#1}{}%
+    {\lcRawHtml{<TABLE CELLSPACING=5 }}%
+    {\lcRawHtml{<TABLE CELLSPACING=5 WIDTH="}\lciToHtmlWidth{#1}\lcRawHtml{"}}%
+  \lciIfEqualExpanded{\lcTabularBorder}{0}%
+    {}%
+    {\lcRawHtml{ BORDER=}\lcTabularBorder}%
+  \lcRawHtml{>}%
+  \newcommand{\lciTabularColumns}{0}%
+  \newcommand{&}{\lciTabularSkip}%
+  \renewcommand{\\}{\lciTabularNL}%
+  \renewcommand{\\*}{\lciTabularNL}%
+  \renewcommand{\\@o}{\lciTabularNL}%
+  \renewcommand{\\*@o}{\lciTabularNL}%
+  \newcommand{\tdAttrib}{}%
+  \newcommand{\tdAttribOrig}{}%
+  \newcommand{\popTDAttrib}{%
+    \lciTopStack{\tdAttrib}{\lcTabularLocalVariable}%
+    \lciPopStack{\tdAttrib}%
+    \lcTabularLocalVariable{}%
+  }%
+  \newcommand{\popTDAttribQuiet}{\lciPopStack{\tdAttrib}}%
+  \lciTabularCountColumns #2\*%
+  \lciReverseStack{\tdAttrib}{\tdAttribOrig}%
+  \lciTabularContNL
+}
+%\newcommand{\lciTabularBegin@om}{\lciTabularBegin{#2}}
+
+%% Args: a character of the column format string. Parses until \* detected.
+\newcommand{\lciTabularCountColumns}[1]{%
+  \lciIfEqual{#C1}{\*}{}{%
+    \lciIfEqual{#C1}{l}{\lciAddTo{\lciTabularColumns}{1}\lciPushStack{\tdAttrib}{ALIGN=LEFT NOWRAP}} {%
+    \lciIfEqual{#C1}{c}{\lciAddTo{\lciTabularColumns}{1}\lciPushStack{\tdAttrib}{ALIGN=CENTER NOWRAP}} {%
+    \lciIfEqual{#C1}{r}{\lciAddTo{\lciTabularColumns}{1}\lciPushStack{\tdAttrib}{ALIGN=RIGHT NOWRAP}} {%
+    \lciIfEqual{#C1}{X}{\lciAddTo{\lciTabularColumns}{1}\lciPushStack{\tdAttrib}{ALIGN=LEFT}} {%
+    \lciIfEqual{#C1}{p}{\lciAddTo{\lciTabularColumns}{1}\lciPushStack{\tdAttrib}{ALIGN=LEFT}} {%
+    \lciIfEqual{#C1}{m}{\lciAddTo{\lciTabularColumns}{1}\lciPushStack{\tdAttrib}{ALIGN=LEFT}} {%
+}}}}}}\lciTabularCountColumns}}
+
+%% Args: either \hline, \end, or next character in table entry
+\newcommand{\lciTabularContNL}[1]{\lciIfEqual{#C1}{\hline}{% \hline
+        \lciTabularHline{\lciTabularColumns}%
+    }{\lciIfEqual{#C1}{\end}{% \end{envir}
+        \newcommand{\lciNoTabularClosing}{}#1%
+    }{% else next character in table entry
+        \lcRawHtml{
+  <TR>}%
+\edef\tdAttrib{\tdAttribOrig}%
+\lciTabularCont{#1}}}}
+
+%% Args: either \multicolumn, or next character in table entry
+\newcommand{\lciTabularCont}[1]{%
+  \lciIfEqual{#C1}{\multicolumn}%
+    {\lciTabularMulticolumn}%
+    {\lcRawHtml{
+    <TD class="math" }\popTDAttrib\lcRawHtml{>}
+#1%
+    }% else next character in table entry
+}
+
+
+%% Args: total number of cols, another \hline, an \end or next char in table
+\newcommand{\lciTabularHline}[2]{%
+    \lciIfEqualExpanded{\lcTabularBorder}{0}%
+    {%
+      \lcRawHtml{
+  <TR><TD ALIGN=LEFT NOWRAP COLSPAN=#XC1><HR>}%
+    }%
+    {}%
+    \lciIfEqual{#C2}{\hline}
+      {\lciTabularContNL} % \hline omit second \hline, if any.
+      {\lciTabularContNL{#2}}%
+}
+
+%% Args: number of cols, column format string, table entry
+\newcommand{\lciTabularMulticolumn}[3]{%
+ \lciExpandN{#X1}{\popTDAttribQuiet}%
+    \lcRawHtml{
+    <TD }%
+    \lciIfEqual{#2}{l}{ALIGN=LEFT NOWRAP} {%
+    \lciIfEqual{#2}{c}{ALIGN=CENTER NOWRAP} {%
+    \lciIfEqual{#2}{r}{ALIGN=RIGHT NOWRAP}%
+    {ALIGN=LEFT}}}% default alignment.
+    \lcRawHtml{ COLSPAN=#XC1>
+}#3}
+
+\newcommand{\lciTabularEnd}{%
+  \lciIfDefined{\lciNoTabularClosing}{}{}
+\lcRawHtml{</TABLE>
+}%% We rely on the scoping rules of definitions in environments to
+  % restore the old definitions of & and \\.
+  \gdef\lcTabularBorder{0}%
+}
+
+\newcommand{\lciTabularNL}{\lciTabularContNL}
+\newcommand{\lciTabularSkip}{\lciTabularCont}
+
+\newcommand{\hline}{\lcRawHtml{<HR>}}
+\newcommand{\vline}{}
+
+
+% ___________________________________________________________________________
+% ###########################################################################
+% |
+% |   o   C.11  Moving Information Around
+% |
+% ###########################################################################
+
+% +--------------------------------------------------------------------------
+% |     * Cross-References
+% +--------------------------------------------------------------------------
+\newcommand{\ref}[1]{\lcAsciiToHtml{[ref:#1]}}
+\newcommand{\pageref}[1]{\lcAsciiToHtml{[reftext:\icon][ref:#1]}}
+
+\newcommand{\ccRef}[1]{\lcAsciiToHtml{[ref:#1]}}
+\newcommand{\ccRef@om}{\lcAsciiToHtml{[reftext:#1][ref:#2]}}
+
+\newcommand{\label}[1]{\lcRawHtml{<A NAME="#C1"></A>}%
+    \edef\lciOut{\lciOutputBasename}%
+    \edef\lciOutPath{\lciReplaceWithCurrentPathToken}%
+    %\edef\lciOutPath{\lciOutputPath}%
+    \lciPushOutput{anchor}%
+    \lciLabel{#1}{\lciOutPath}{\lciOut}%
+    \lciPopOutput%
+}
+
+\gdef\lciCurrentLabel{}
+\newcommand{\lciLabel}[3]{%
+  \lciRawOutput{l #C1	#XC2#XC3###C1
+}%
+  \lciRawOutput{lt #C1	}\lciCurrentLabel{}
+}
+
+% +--------------------------------------------------------------------------
+% |     * Bibliography and Citation
+% +--------------------------------------------------------------------------
+\newcommand{\newblock}{}
+\newcommand{\bibliographystyle}[1]{}
+\newcommand{\bibliography}[1]{}
+
+\newenvironment{thebibliography}[1]{%
+    \newcommand{\lciFirstBibItem}{}%
+    \lciOpenTmpFile{\lciBibFilename}%
+    \lciBibFileHeader
+}{%
+    \lcNoLinkEnd
+    \lciBibFileFooter
+    \lciCloseFile
+}
+
+\newcommand{\cite}[1]{[\lciCite {#1}]}
+\newcommand{\cite@om}{[\lciCite {#2}, #1]}
+\newcommand{\lciCite}[1]{\lciIfEmpty{#C1}{%
+    \lciError{Empty argument to a cite command}}{%
+    \newcommand{\lciCiteDelim}{}%
+    \lciParseUntilDelimiter{\lciLocalCite},#1,,}}
+\newcommand{\lciLocalCite}[1]{\lciIfEmpty{#C1}{}{%
+    \lciCiteDelim\lcRawHtml{<A HREF="}\lciOutputUppath\lciBibFilename
+    \lcRawHtml{##Biblio_}#C1\lcRawHtml{">}#C1\lcRawHtml{</A>}%
+    \newcommand{\lciCiteDelim}{, }%
+    \lciParseUntilDelimiter{\lciLocalCite},}}
+
+\newcommand{\bibcite}[2]{%
+    \lciPushOutput{anchor}%
+    \lciLocalBibCite{#1}{#2}{\lciBibFilename}\lciPopOutput}
+
+%% Args: key, replacement text, bibliography filename
+\newcommand{\lciLocalBibCite}[3]{%
+    \lciRawOutput{b #C1	}#C2
+}
+
+\newcommand{\bibitem}[1]{\lciFirstBibItem
+    \newcommand{\lciFirstBibItem}{\lcNoLinkEnd}%
+    \lcRawHtml{<TR><TD ALIGN=LEFT VALIGN=TOP NOWRAP>
+        <A NAME="Biblio_#C1"></A><B>[#C1]</B>
+    <TD ALIGN=LEFT VALIGN=TOP>}%
+    \lcNoLinkBegin
+}
+\newcommand{\bibitem@om}{\bibcite{#2}{#1}\bibitem{#2}}
+
+\newcommand{\nocite}[1]{}
+
+% +--------------------------------------------------------------------------
+% |     * Splitting the Input
+% +--------------------------------------------------------------------------
+
+\newcommand{\includeonly}[1]{\lciIncludeOnly{#GXC1}}
+
+
+\newcommand{\include}[1]{%
+  \lciIfToBeIncluded{#GXC1}{%
+    \lciInclude{#GXC1}%
+    \begingroup
+      \newcommand{\printItem}[1]{
+\lciBackslash{}setcounter\{##1\}\{\value{##X1}\}%
+      }%
+      \lciOpenFile{#GXC1.hax}%
+      \lciForeachElementInStack{\lciListOfAlreadyDefinedCounters}{\printItem}%
+      \lciCloseFile%
+    \endgroup%
+  }%
+  {\lciIfFileExists{#GXC1.hax}{\input{#GXC1.hax}}{}}%
+}
+
+\newcommand{\input}[1]{\lciInclude{#GXC1}}
+
+
+% +--------------------------------------------------------------------------
+% |     * Index and Glossary
+% +--------------------------------------------------------------------------
+%% Not supported, but the creation commands are ignored.
+
+\newcommand{\makeindex}{}
+\newcommand{\printindex}{}
+\newcommand{\makeglossary}{}
+\newcommand{\index}[1]{}
+\newcommand{\glossary}[1]{}
+
+% +--------------------------------------------------------------------------
+% |     * Terminal Input and Output
+% +--------------------------------------------------------------------------
+
+\newcommand{\typeout}[1]{\lciMessage{
+#X1
+}}
+
+% ___________________________________________________________________________
+% ###########################################################################
+% |
+% |   o   C.12  Line and Page Breaking
+% |
+% ###########################################################################
+
+\newcommand{\linebreak}{}
+\newcommand{\linebreak@o}{}
+\newcommand{\nolinebreak}{}
+\newcommand{\nolinebreak@o}{}
+
+\newcommand{\newline}{\\}
+
+\newcommand{\hyphenation}[1]{}
+
+\newcommand{\sloppy}{}
+\newcommand{\fussy}{}
+\newenvironment{sloppypar}{}{}
+
+\newcommand{\pagebreak}{}
+\newcommand{\pagebreak@o}{}
+\newcommand{\nopagebreak}{}
+\newcommand{\nopagebreak@o}{}
+
+\newcommand{\samepage}{}
+
+\newcommand{\enlargethispage}[1]{}
+\newcommand{\enlargethispage*}[1]{}
+
+\newcommand{\newpage}{\lcRawHtml{<P>}}
+\newcommand{\clearpage}{\lcRawHtml{<P>}}
+\newcommand{\cleardoublepage}{\lcRawHtml{<P>}}
+
+
+% ___________________________________________________________________________
+% ###########################################################################
+% |
+% |   o   C.13  Lengths, Spaces, and Boxes
+% |
+% ###########################################################################
+
+\newcommand{\fill}{}
+\newcommand{\stretch}[1]{}
+
+\newcommand{\hspace}[1]{}
+\newcommand{\hspace*}[1]{}
+\newcommand{\vspace}[1]{}
+\newcommand{\vspace*}[1]{}
+
+\newcommand{\smallskip}{\lcRawHtml{<BR>}}
+\newcommand{\medskip}{\lcRawHtml{<BR><BR>}}
+\newcommand{\bigskip}{\lcRawHtml{<BR><BR><BR>}}
+
+\newcommand{\quad}{~~}
+\newcommand{\qquad}{~~~~}
+
+\newcommand{\addvspace}[1]{}
+
+\newcommand{\hfill}{}
+\newcommand{\vfill}{}
+
+
+\newcommand{\setlength}[2]{}
+
+\newcommand{\mbox}[1]{\lcRawHtml{<span class="mbox">}{#1}\lcRawHtml{</span>}}
+\newcommand{\makebox}[1]{\mbox{#1}}
+\newcommand{\makebox@om}{\mbox{#2}}
+\newcommand{\makebox@oom}{\mbox{#3}}
+
+\newcommand{\fbox}[1]{\lcRawHtml{<TABLE BORDER=2><TR><TD>}#1\lcRawHtml{</TABLE>}}
+\newcommand{\framebox}[1]{\fbox{#1}}
+\newcommand{\framebox@om}{\fbox{#2}}
+\newcommand{\framebox@oom}{\fbox{#3}}
+
+\newcommand{\newsavebox}[1]{\gdef{#C1}{}}
+
+\newcommand{\lciStoreSaveboxX}[1]{\lciStoreSavebox{#Y1}}
+\newenvironment{savebox}[1]
+  {\gdef\lciCurrentSaveboxName{#C1}\lciPushOutput{savebox}}
+  {\lciPopOutput\lciStoreSaveboxX{\lciCurrentSaveboxName}}
+
+\newcommand{\sbox}[2]{%
+  \begin{savebox}{#1}%
+  #2%
+  \end{savebox}%
+}
+\newcommand{\savebox}[2]{\sbox{#1}{#2}}
+\newcommand{\savebox@mom}{\sbox{#1}{#3}}
+\newcommand{\savebox@moom}{\sbox{#1}{#4}}
+
+\newenvironment{lrbox}[1]{%
+    \lciUndef{#C1}%
+    \gdef\lciLrboxTmp{#C1}%
+    \lciParseUntilEndToken{\lciLrbox}{lrbox}}{}
+\newcommand{\lciLrbox}[1]{\lciLrboxX{\lciLrboxTmp}{#C1}}
+\newcommand{\lciLrboxX}[2]{\sbox{#XC1}{#C2}}
+
+\newcommand{\usebox}[1]{\lcRawHtml{#X1}}
+
+\newcommand{\parbox}[2]{#2}
+\newcommand{\parbox@omm}{#2}
+
+\newenvironment{minipage}[1]{}{}
+\newcommand{\begin@minipage@om}{}
+
+
+% ___________________________________________________________________________
+% ###########################################################################
+% |
+% |   o   C.14  Pictures and Color
+% |
+% ###########################################################################
+%% Not supported yet.
+
+\newcommand{\thinlines}{}
+\newcommand{\thicklines}{}
+\newcommand{\linethickness}[1]{}
+
+% ___________________________________________________________________________
+% ###########################################################################
+% |
+% |   o   C.15  Font Selection
+% |
+% ###########################################################################
+
+%% A font is a size and style of type. A type style is specified by three
+%% separate components: shape, series and family.
+
+\newcommand{\lciFontSize}{0}  %% possible values range from \tiny to \Huge.
+
+\newcommand{\tiny}{\lciSetFontSize{-4}}
+\newcommand{\scriptsize}{\lciSetFontSize{-3}}
+\newcommand{\footnotesize}{\lciSetFontSize{-2}}
+\newcommand{\small}{\lciSetFontSize{-1}}
+\newcommand{\normalsize}{\lciSetFontSize{0}}
+\newcommand{\large}{\lciSetFontSize{1}}
+\newcommand{\Large}{\lciSetFontSize{2}}
+\newcommand{\LARGE}{\lciSetFontSize{3}}
+\newcommand{\huge}{\lciSetFontSize{4}}
+\newcommand{\Huge}{\lciSetFontSize{5}}
+
+
+\newcommand{\lciFontFamily}{}  %% possible values: none = roman,
+                               %%     TT = sans serife or typewriter
+\newcommand{\lciFontSeries}{}  %% possible values: none = medium, B = bold
+\newcommand{\lciFontShape}{}   %% possible values: none = upright,
+                               %%     I = italics or slanted, SC = small caps
+
+\newcommand{\textrm}[1]{\lciFontToDecl{\rmfamily}{#1}}
+\newcommand{\textsf}[1]{\lciFontToDecl{\sffamily}{#1}}
+\newcommand{\texttt}[1]{\lciFontToDecl{\ttfamily}{#1}}
+\newcommand{\textmd}[1]{\lciFontToDecl{\mdseries}{#1}}
+\newcommand{\textbf}[1]{\lciFontToDecl{\bfseries}{#1}}
+\newcommand{\textup}[1]{\lciFontToDecl{\upshape}{#1}}
+\newcommand{\textit}[1]{\lciFontToDecl{\itshape}{#1}}
+\newcommand{\textsl}[1]{\lciFontToDecl{\slshape}{#1}}
+\newcommand{\textsc}[1]{\lciFontToDecl{\scshape}{#1}}
+\newcommand{\textnormal}[1]{\lciFontToDecl{\normalfont}{#1}}
+
+%% Hack to get a seperator behind font declaration, so that we can
+%% omit the space, which is the usual TeX seperator. This is for alltt.
+\newcommand{\lciFontToDecl}[2]{{#1#2}}
+
+\newcommand{\rmfamily}{\lciSetFontFamily{}}
+\newcommand{\sffamily}{\lciSetFontFamily{TT}}
+\newcommand{\ttfamily}{\lciSetFontFamily{TT}}
+\newcommand{\mdseries}{\lciSetFontSeries{}}
+\newcommand{\bfseries}{\lciSetFontSeries{B}}
+\newcommand{\upshape}{\lciSetFontShape{}}
+\newcommand{\itshape}{\lciSetFontShape{I}}
+\newcommand{\slshape}{\lciSetFontShape{I}}
+\newcommand{\scshape}{\lciSetFontShape{SC}}
+
+\newcommand{\normalfont}{\lciSetNewFont{\lciFontSize}{}{}{}}
+
+
+%% The order of font type changes is size, family, series, and shape.
+%% For each font type change and scope change we always close all
+%% open font scopes in HTML and reopen them according to the new
+%% font type. Matching closing and opening tags will be discarded.
+
+%% Args: old-size, old-family, old-series, old-shape,
+%%       new-size, new-family, new-series, new-shape
+\newcommand{\lciSetFont}[8]{%
+    \lciIfEqual{#X1}{#X5}{%
+        \lciIfEqual{#X2}{#X6}{%
+            \lciIfEqual{#X3}{#X7}{%
+                \lciIfEqual{#X4}{#X8}{}{%
+                    \lciFontCloseShape{#X4}%
+                    \lciFontOpenShape{#X8}%
+                }%
+            }{%
+                \lciFontCloseShape{#X4}%
+                \lciIfEmpty{#3}{}{\lcRawHtml{</#XC3>}}%
+                \lciIfEmpty{#7}{}{\lcRawHtml{<#XC7>}}%
+                \lciFontOpenShape{#X8}%
+            }%
+        }{%
+            \lciFontCloseShape{#X4}%
+            \lciIfEmpty{#3}{}{\lcRawHtml{</#XC3>}}%
+            \lciIfEmpty{#2}{}{\lcRawHtml{</#XC2>}}%
+            \lciIfEmpty{#6}{}{\lcRawHtml{<#XC6>}}%
+            \lciIfEmpty{#7}{}{\lcRawHtml{<#XC7>}}%
+            \lciFontOpenShape{#X8}%
+        }%
+    }{%
+        \lciFontCloseShape{#X4}%
+        \lciIfEmpty{#3}{}{\lcRawHtml{</#XC3>}}%
+        \lciIfEmpty{#2}{}{\lcRawHtml{</#XC2>}}%
+        %% does nothing if #1 is not positive
+        \lciFor{\lciFontSizeCount}{1}{#1}{\lcRawHtml{</BIG>}}%
+        %% does nothing if #1 is not negative
+        \lciFor{\lciFontSizeCount}{#1}{-1}{\lcRawHtml{</SMALL>}}%
+        %% does nothing if #1 is not positive
+        \lciFor{\lciFontSizeCount}{1}{#5}{\lcRawHtml{<BIG>}}%
+        %% does nothing if #1 is not negative
+        \lciFor{\lciFontSizeCount}{#5}{-1}{\lcRawHtml{<SMALL>}}%
+        \lciIfEmpty{#6}{}{\lcRawHtml{<#XC6>}}%
+        \lciIfEmpty{#7}{}{\lcRawHtml{<#XC7>}}%
+        \lciFontOpenShape{#X8}%
+    }%
+    %% Set the state variables to the new font type
+    \renewcommand{\lciFontSize}{#XC5}%
+    \renewcommand{\lciFontFamily}{#XC6}%
+    \renewcommand{\lciFontSeries}{#XC7}%
+    \renewcommand{\lciFontShape}{#XC8}%
+}
+
+\newcommand{\lciFontCloseShape}[1]{%
+    \lciIfEqual{}{#1}{}{\lciIfEqual{SC}{#1}{%
+        \lcRawHtml{</span>}}{%
+        \lcRawHtml{</#C1>}%
+    }}}%
+
+\newcommand{\lciFontOpenShape}[1]{%
+    \lciIfEqual{}{#1}{}{\lciIfEqual{SC}{#1}{%
+        \lcRawHtml{<span class="textsc">}}{%
+        \lcRawHtml{<#C1>}%
+    }}}%
+
+%% Args: closing tags stack, opening tags stack
+\newcommand{\lciFontOptimizeChange}[2]{%
+    \lciIfEmpty{#1}{}{\lciIfEmpty{#2}{}{%
+        \lciTopStack{#1}{\lciFontTmpX}\lciTopStack{#2}{\lciFontTmpY}%
+        \lciIfEqualExpanded{\lciFontTmpX}{\lciFontTmpY}{%
+            \lciPopStack{#1}\lciPopStack{#2}\lciFontOptimizeChange{#1}{#2}%
+        }{}%
+}}}
+
+%% Args: prefix, stack, postfix. Destructive.
+\newcommand{\lciFontWriteStack}[3]{\lciIfEmpty{#2}{}{%
+    \lciTopStack{#2}{\lciFontTmpX}%
+    #1\lciFontTmpX#3\lciPopStack{#2}\lciFontWriteStack{#1}{#2}{#3}}}
+
+
+%% Args: new-size, new-family, new-series, new-shape
+\newcommand{\lciSetNewFont}[4]{%
+    \lciSetFont{\lciFontSize}{\lciFontFamily}{\lciFontSeries}{\lciFontShape}%
+    {#1}{#2}{#3}{#4}}
+
+%% Args: size, family, series, shape
+%% Store font type in global variables that survive a closing scope.
+\newcommand{\lciSetGlobalFontState}[4]{%
+    \gdef\lciGlobalFontSize{#XC1}%
+    \gdef\lciGlobalFontFamily{#XC2}%
+    \gdef\lciGlobalFontSeries{#XC3}%
+    \gdef\lciGlobalFontShape{#XC4}%
+}
+
+%% Restore current front, based on the global font state.
+%% Used to recover from a closing scope.
+\newcommand{\lciRestoreFont}{%
+    \lciSetFont{\lciGlobalFontSize}{\lciGlobalFontFamily}%
+    {\lciGlobalFontSeries}{\lciGlobalFontShape}%
+    {\lciFontSize}{\lciFontFamily}{\lciFontSeries}{\lciFontShape}}
+
+\newcommand{\lciSetFontSize}[1]{%
+    \lciSetNewFont{#1}{\lciFontFamily}{\lciFontSeries}{\lciFontShape}}
+\newcommand{\lciSetFontFamily}[1]{%
+    \lciSetNewFont{\lciFontSize}{#1}{\lciFontSeries}{\lciFontShape}}
+\newcommand{\lciSetFontSeries}[1]{%
+    \lciSetNewFont{\lciFontSize}{\lciFontFamily}{#1}{\lciFontShape}}
+\newcommand{\lciSetFontShape}[1]{%
+    \lciSetNewFont{\lciFontSize}{\lciFontFamily}{\lciFontSeries}{#1}}
+
+
+%% Old style declarations:
+\newcommand{\rm}{\rmfamily}
+\newcommand{\tt}{\ttfamily}
+\newcommand{\sf}{\sffamily}
+\newcommand{\bf}{\bfseries}
+\newcommand{\it}{\itshape}
+\newcommand{\sl}{\slshape}
+\newcommand{\sc}{\scshape}
+
+\newcommand{\em}{\lciIfEqualExpanded{\lciFontShape}{I}{\upshape}{\itshape}}
+\newcommand{\emph}[1]{{\em #1}}
+
+%% --> see C.7 for amth fonts.
+
+% ___________________________________________________________________________
+% ###########################################################################
+% |
+% |   o   Default Style for Latex to HTML Converter
+% |
+% ###########################################################################
+
+\lcStyle{default}
+
+
+% ___________________________________________________________________________
+% ###########################################################################
+% | EOF
+% ###########################################################################

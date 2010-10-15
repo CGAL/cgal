@@ -1,0 +1,76 @@
+\renewcommand\ccRefPageBegin{\ccParDims\cgalColumnLayout\begin{ccAdvanced}}
+\renewcommand\ccRefPageEnd{\ccParDims\cgalColumnLayout\end{ccAdvanced}}
+\begin{ccRefFunction}{convex_partition_is_valid_2}
+
+\ccDefinition
+Function that determines if a given set of polygons represents
+a valid convex partitioning for a given sequence of points that represent a
+simple, counterclockwise-oriented polygon.  
+A convex partition is valid if the 
+polygons do not overlap, the union of the polygons is the same as the original
+polygon given by the sequence of points, and if each partition polygon is 
+convex. 
+\ccIndexSubsubitem{polygon partitioning}{convex}{valid}
+
+\ccInclude{CGAL/partition_is_valid_2.h}
+
+\ccFunction{
+template<class InputIterator, class ForwardIterator, class Traits>
+bool
+convex_partition_is_valid_2 (InputIterator point_first, 
+                             InputIterator point_beyond,
+                             ForwardIterator poly_first, 
+                             ForwardIterator poly_beyond,
+                             const Traits& traits = Default_traits);
+}
+{
+determines if the polygons in the range [\ccc{poly_first}, \ccc{poly_beyond})
+define a valid convex partition of the polygon defined by the points in the 
+range [\ccc{point_first}, \ccc{point_beyond}). 
+The function returns \ccc{true} iff the partition is valid and otherwise
+returns \ccc{false}.
+\ccPrecond The points in the range [\ccc{point_first}, \ccc{point_beyond}) 
+define a simple, counterclockwise-oriented polygon.
+}
+
+\ccHeading{Requirements}
+\ccIndexSubitem[C]{convex_partition_is_valid_2}{preconditions}
+\begin{enumerate}
+    \item \ccc{Traits} is a model of the concept
+          \ccc{ConvexPartitionIsValidTraits_2}%
+          \ccIndexMainItem[c]{ConvexPartitionIsValidTraits_2}.
+    \item \ccc{InputIterator::value_type} should be \ccc{Traits::Point_2},
+          which should also be the type of the points stored in an object
+          of type \ccc{Traits::Polygon_2}.
+    \item \ccc{ForwardIterator::value_type} should be 
+          \ccc{Traits::Polygon_2}.
+\end{enumerate}
+
+The default traits class \ccc{Default_traits} is \ccc{Partition_traits_2},%
+\ccIndexTraitsClassDefault{convex_partition_is_valid_2} 
+with the representation type determined by \ccc{InputIterator::value_type}.
+
+\ccSeeAlso
+
+\ccRefIdfierPage{CGAL::approx_convex_partition_2} \\
+\ccRefIdfierPage{CGAL::greene_approx_convex_partition_2} \\
+\ccRefIdfierPage{CGAL::optimal_convex_partition_2}\\
+\ccRefIdfierPage{CGAL::partition_is_valid_2} \\
+\ccc{CGAL::is_convex_2}
+
+\ccImplementation
+
+This function calls \ccc{partition_is_valid_2} using the function object
+\ccc{Is_convex_2} to determine the convexity of each partition polygon.
+Thus the time required by this function is $O(n \log n + e \log e)$ where
+$n$ is the total number of vertices in the partition polygons and $e$ the
+total number of edges.
+
+\ccExample
+
+See the example presented with the function \ccc{approx_convex_partition_2}
+for an illustration of the use of this function.
+
+\end{ccRefFunction}
+\renewcommand\ccRefPageBegin{\ccParDims\cgalColumnLayout}
+\renewcommand\ccRefPageEnd{\ccParDims\cgalColumnLayout}

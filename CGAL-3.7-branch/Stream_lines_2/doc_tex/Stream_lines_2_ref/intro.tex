@@ -1,0 +1,71 @@
+% +------------------------------------------------------------------------+
+% | Reference manual page: Stream_lines_2.tex
+% +------------------------------------------------------------------------+
+% | 08.12.2004   Abdelkrim Mebarki
+% | Package: Stream_lines_2
+% | 
+\RCSdef{\RCSStreamlinesRev}{$Id$}
+\RCSdefDate{\RCSStreamlinesDate}{$Date$}
+% |
+%%RefPage: end of header, begin of main body
+% +------------------------------------------------------------------------+
+
+%\clearpage
+%\section{Reference pages for 2D placement of streamlines}
+\ccRefChapter{2D Placement of Streamlines\label{ref_chapter_2D_Streamlines}}
+
+\ccChapterAuthor{Abdelkrim Mebarki}
+
+
+
+Vector and direction fields are commonly used for modeling physical
+phenomena, where a direction and magnitude, namely a vector is assigned to
+each point inside a domain.\\
+
+A streamline is a curve everywhere tangent to the field. It can be
+considered as the path traced by an imaginary massless particle
+dropped into a steady fluid flow described by the field.\\
+
+A streamline is represented as a polyline iteratively elongated by
+bidirectional numerical integration started from a seed point, until
+it comes close to another streamline, hits the domain boundary, or
+reaches a critical point.\\
+
+The \ccc{Stream_lines_2} class consists of saturating the domain with
+a set of tangential streamlines in accordance with a specified
+density.\\
+
+Streamlines are represented as containers of points, manipulated by an
+iterator range of points, and the whole placement is accessible via an
+iterator range of streamlines.\\
+
+The main class in this package, the \ccc{Stream_lines_2} class of \cgal\ depends on two template
+parameters.  The first template parameter stands for a class which
+represents both the vector field and the visualization domain with
+operations on them, and should be instantiated by a model of the concept
+\ccc{VectorField_2}.  The second template parameter stands for a
+function object that ensures the numerical integration used to
+construct the streamlines, and should be instantiated by a model of the concept
+\ccc{Integrator_2}.
+
+\section{Classified Reference Pages}
+
+\subsection*{Concepts}
+\ccRefConceptPage{StreamLinesTraits_2} \\
+\ccRefConceptPage{Integrator_2} \\
+\ccRefConceptPage{VectorField_2} \\
+
+\subsection*{Classes}
+
+
+\ccRefIdfierPage{CGAL::Stream_lines_2<VectorField_2,Integrator_2>}\\
+\ccRefIdfierPage{CGAL::Euler_integrator_2<VectorField_2>}\\
+\ccRefIdfierPage{CGAL::Runge_kutta_integrator_2<VectorField_2>}\\
+\ccRefIdfierPage{CGAL::Regular_grid_2<StreamLinesTraits_2>}\\
+\ccRefIdfierPage{CGAL::Triangular_field_2<StreamLinesTraits_2>}\\
+
+
+% +------------------------------------------------------------------------+
+%%RefPage: end of main body, begin of footer
+% EOF
+% +------------------------------------------------------------------------+

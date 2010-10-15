@@ -1,0 +1,47 @@
+% +------------------------------------------------------------------------+
+% | Cbp Reference Manual:  intro.tex
+% +------------------------------------------------------------------------+
+% | Nef_polyhedron_S2 reference manual pages
+% |
+% | 26.5.2004   Peter Hachenberger
+\RCSdef{\Nef_polyhedronRefRev}{$Id$}
+\RCSdefDate{\Nef_polyhedronRefDate}{$Date$}
+% +------------------------------------------------------------------------+
+
+\clearpage
+\ccRefChapter{2D Boolean Operations on Nef Polygons Embedded on the Sphere\label{chapterNefpolyhedronRef}}
+\ccChapterAuthor{Peter Hachenberger \and Lutz Kettner \and Michael Seel}
+
+% +------------------------------------------------------------------------+
+
+
+Nef polyhedra are defined as a subset of the d-dimensional space obtained by
+a finite number of set complement and set intersection operations on
+halfspaces. 
+
+Due to the fact that all other binary set operations like union,
+difference and symmetric difference can be reduced to intersection and
+complement calculations, Nef polyhedra are also closed under those
+operations. Also, Nef polyhedra are closed under topological unary 
+set operations. Given a Nef polyhedron one can determine its interior, its
+boundary, and its closure.
+
+Additionally, a d-dimensional Nef polyhedron has the property, that its boundary
+is a (d-1)-dimensional Nef polyhedron. This property can be used as a way to
+represent 3-dimensional Nef polyhedra by means of planar Nef polyhedra.
+This is done by intersecting the neighborhood of a vertex in a 3D Nef polyhedron
+with an $\epsilon$-sphere. The result is a planar Nef polyhedron embedded
+on the sphere.
+
+The intersection of a halfspace going through the center of the $\epsilon$-sphere,
+with the $\epsilon$-sphere, results in a halfsphere which is bounded by
+a great circle. A binary operation of two halfspheres cuts the great circles
+into great arcs.
+
+The incidence structure of planar Nef polyhedra can be reused. The items
+are denoted as $svertex$, $shalfedge$ and $sface$, analogous 
+to their counterparts in \ccc{Nef_polyhedron_2}. Additionally, there is the
+\emph{shalfloop} representing the great circles.
+
+%\input{Nef_S2_ref/Spherical_geometry.tex}
+

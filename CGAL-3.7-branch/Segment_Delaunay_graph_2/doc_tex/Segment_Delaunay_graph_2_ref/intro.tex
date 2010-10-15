@@ -1,0 +1,74 @@
+%% Copyright (c) 2003,2004,2005  INRIA Sophia-Antipolis (France) and
+%% Notre Dame University (U.S.A.).  All rights reserved.
+%%
+%% This file is part of CGAL (www.cgal.org); you may redistribute it under
+%% the terms of the Q Public License version 1.0.
+%% See the file LICENSE.QPL distributed with CGAL.
+%%
+%% Licensees holding a valid commercial license may use this file in
+%% accordance with the commercial license agreement provided with the software.
+%%
+%% This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
+%% WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
+%%
+%% $URL$
+%% $Id$
+%% 
+%%
+%% Author(s)     : Menelaos Karavelas <mkaravel@cse.nd.edu>
+
+
+
+\ccRefChapter{2D Segment Delaunay Graphs\label{ref-chapter-segdel2}}
+\ccChapterAuthor{Menelaos Karavelas}
+
+%\ccHeading{Definition}
+
+\cgal\ provides the class
+\ccc{CGAL::Segment_Delaunay_graph_2<Gt,DS>} for
+computing the 2D Delaunay graph of segments and points. The two
+template parameters must be models of the
+\ccc{SegmentDelaunayGraphTraits_2} and
+\ccc{SegmentDelaunayGraphDataStructure_2} concepts. The first concept
+is related to the geometric objects and predicates associated with
+segment Delaunay graphs, whereas the second concept refers to the data
+structure used to represent the segment Delaunay graph, which is dual
+to the 2D Voronoi diagram of segments and points.
+The classes \ccc{Segment_Delaunay_graph_traits_2<K,MTag>},
+\ccc{Segment_Delaunay_graph_traits_without_intersections_2<K,MTag>}
+\ccc{Segment_Delaunay_graph_filtered_traits_2<K,MTag>}
+\ccc{Segment_Delaunay_graph_filtered_traits_without_intersections_2<K,MTag>}
+are models of the \ccc{SegmentDelaunayGraphTraits_2} concept, whereas
+the class
+\ccc{Triangulation_data_structure_2<Vb,Fb>} is a model of the
+\ccc{SegmentDelaunayGraphDataStructure_2} concept.
+
+
+\section{Classified Reference Pages}
+
+\ccHeading{Concepts}
+\ccRefConceptPage{SegmentDelaunayGraphSite_2}\\
+\ccRefConceptPage{SegmentDelaunayGraphStorageSite_2}\\
+\ccRefConceptPage{SegmentDelaunayGraphDataStructure_2}\\
+\ccRefConceptPage{SegmentDelaunayGraphVertexBase_2}\\
+\ccRefConceptPage{SegmentDelaunayGraphTraits_2}\\
+\ccRefConceptPage{SegmentDelaunayGraphHierarchyVertexBase_2}%
+
+\ccHeading{Classes}
+\ccRefIdfierPage{CGAL::Segment_Delaunay_graph_2<Gt,DS>}\\
+\ccRefIdfierPage{CGAL::Segment_Delaunay_graph_site_2<K>}\\
+\ccRefIdfierPage{CGAL::Segment_Delaunay_graph_storage_site_2<Gt>}\\
+\ccRefIdfierPage{CGAL::Segment_Delaunay_graph_vertex_base_2<Gt,SSTag>}\\
+\ccRefIdfierPage{CGAL::Segment_Delaunay_graph_traits_2<K,MTag>}\\
+\ccRefIdfierPage{CGAL::Segment_Delaunay_graph_traits_without_intersections_2<K,MTag>}\\
+\ccRefIdfierPage{CGAL::Segment_Delaunay_graph_filtered_traits_2<CK,CM,EK,EM,FK,FM>}\\
+\ccRefIdfierPage{CGAL::Segment_Delaunay_graph_filtered_traits_without_intersections_2<CK,CM,EK,EM,FK,FM>}\\
+\ccRefIdfierPage{CGAL::Segment_Delaunay_graph_hierarchy_2<Gt,STag,DS>}\\
+\ccRefIdfierPage{CGAL::Segment_Delaunay_graph_hierarchy_vertex_base_2<Vbb>}
+
+
+
+% +------------------------------------------------------------------------+
+%%RefPage: end of main body, begin of footer
+% EOF
+% +------------------------------------------------------------------------+

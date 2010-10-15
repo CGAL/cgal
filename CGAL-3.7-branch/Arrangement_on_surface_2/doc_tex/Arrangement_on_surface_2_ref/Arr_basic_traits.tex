@@ -1,0 +1,445 @@
+% Reference manual page: ArrangementBasicTraits.tex
+% Package: Arrangement_2
+
+\ccRefPageBegin
+\begin{ccRefConcept}{ArrangementBasicTraits_2}
+
+\ccDefinition
+% ===========
+The concept \ccRefName{} defines the minimal set of geometric
+predicates needed for the constrcution and maintenance of objects of the
+class \ccc{Arrangement_2}, as well as performing simple queries (such as
+point-location queries) on such arrangements.
+
+A model of this concept must define nested \ccc{Point_2} and
+\ccc{X_monotone_curve_2} types, which represent planar points and
+continuous $x$-monotone curves (a vertical segment is also considered to be
+{\sl weakly} $x$-monotone), respectively. The $x$-monotone curves are assumed
+to be pairwise disjoint in their interiors, so they do not intersect
+except at their endpoints.
+
+The $x$-monotone curves may be {\em unbounded}, namely they may have unbounded
+ends that lie at infinity, or {\em bounded}, in which case their have finite
+endpoints are representable as \ccc{Point_2} objects. An $x$-monotone curve
+may also have one unbounded end and one finite endpoint (e.g. a ray).
+If unbounded curves are supported, the requirements from the traits class
+are extended a bit, as described below. In particular, the traits class needs
+to support comparisons at infinity, where we interpret comparisons at infinity
+as follows: Suppose we wish to compare the $y$-position of the hyperbolas
+$y_1 = \frac{1}{x}$ and $y_2 = \frac{2}{x}$ at $x = \infty$; than since there
+exists $x_0$ such that for each finite $x > x_0$ we have $y_2(x) > y_1(x)$
+(in our case we can take $x_0 = 0$), we say that $y_2$ is {\em above} $y_1$ at
+infinity. Similarly, when comparing the $x$-positions of the vertical line
+$x = 0$ and the $xy$-minimal end of parabola $y = \frac{1}{x}$ for $x > 0$
+(which has a vertical asymptote at $x = 0$), we define that the line lies to
+the {\em left} of the hyperbola. Namely, comparing curves at their unbounded
+ends should return the comparison result \ccc{EQUAL} only if the curves
+overlap.
+
+\ccRefines{DefaultConstructible, CopyConstructible, Assignable}
+
+\ccTypes
+% ======
+\ccNestedType{Point_2}{models the concept \ccc{ArrTraits::Point_2}.}
+\ccGlue
+\ccNestedType{X_monotone_curve_2}
+  {models the concept \ccc{ArrTraits::XMonotoneCurve_2}.}
+
+\ccHeading{Categories}
+% ==============
+\ccNestedType{Has_left_category}
+  {indicates whether the nested functor \ccc{Compare_at_x_left_2} is
+  provided.} 
+
+\ccNestedType{Arr_left_side_category}
+  {indicates the type of the left boundary-side. Must be either
+  \ccc{Arr_oblivious_side_tag} or \ccc{Arr_open_side_tag}.}
+\ccNestedType{Arr_bottom_side_category}
+  {indicates the type of the bottom boundary-side. Must be either
+  \ccc{Arr_oblivious_side_tag} or \ccc{Arr_open_side_tag}.}
+\ccNestedType{Arr_top_side_category}
+  {indicates the type of the top boundary-side. Must be either
+  \ccc{Arr_oblivious_side_tag} or \ccc{Arr_open_side_tag}.}
+\ccNestedType{Arr_right_side_category}
+  {indicates the type of the right boundary-side. Must be either
+  \ccc{Arr_oblivious_side_tag} or \ccc{Arr_open_side_tag}.}
+
+\ccHeading{Functor Types}
+% =======================
+\ccThree{Compare_y_at_x_2}{}{\hspace*{14cm}}
+\ccThreeToTwo
+\ccNestedType{Compare_x_2}{models the concept \ccc{ArrTraits::CompareX_2}.}
+\ccGlue
+\ccNestedType{Compare_xy_2}{models the concept \ccc{ArrTraits::CompareXy_2}.}
+\ccGlue
+\ccNestedType{Parameter_space_in_x_2}
+  {models the concept \ccc{ArrTraits::ParameterSpaceInX_2}.
+  Required only if the traits class supports unbounded curves
+  (the \ccc{Has_boundary_category} category is defined as \ccc{Tag_true}).}
+\ccGlue
+\ccNestedType{Parameter_space_in_y_2}
+  {models the concept \ccc{ArrTraits::ParameterSpaceInY_2}.
+  Required only if the traits class supports unbounded curves
+  (the \ccc{Has_boundary_category} category is defined as \ccc{Tag_true}).}
+\ccGlue
+\ccNestedType{Construct_min_vertex_2}
+  {models the concept \ccc{ArrTraits::ConstructMinVertex_2}.}
+\ccGlue
+\ccNestedType{Construct_max_vertex_2}
+  {models the concept \ccc{ArrTraits::ConstructMaxVertex_2}.}
+\ccGlue
+\ccNestedType{Is_vertical_2}{models the concept \ccc{ArrTraits::IsVertical_2}.}
+\ccGlue
+\ccNestedType{Compare_y_at_x_2}
+  {models the concept \ccc{ArrTraits::CompareYAtX_2}.
+  If the traits class supports unbounded curves (i.e., the
+  \ccc{Has_boundary_category} category is defined as \ccc{Tag_true}), then
+  the type models the concept \ccc{ArrTraits::CompareYNearBoundary_2}.}
+\ccGlue
+\ccNestedType{Compare_y_at_x_left_2}
+  {models the concept \ccc{ArrTraits::CompareYAtXLeft_2}.
+  Required only if the \ccc{Has_left_category} category is defined as
+  \ccc{Tag_true}.}
+\ccGlue
+\ccNestedType{Compare_y_at_x_right_2}
+  {models the concept \ccc{ArrTraits::CompareYAtXRight_2}.}
+\ccGlue
+\ccNestedType{Equal_2}{models the concept \ccc{ArrTraits::Equal_2}.}
+\ccGlue
+\ccNestedType{compare_x_near_boundary_2}
+  {models the concept \ccc{ArrTraits::CompareXNearBoundary_2}.
+  Required only if the traits class supports unbounded curves
+  (the \ccc{Has_boundary_category} category is defined as \ccc{Tag_true}).}
+\ccGlue
+\ccNestedType{compare_y_near_boundary_2}
+  {models the concept \ccc{ArrTraits::CompareYNearBoundary_2}.
+  Required only if the traits class supports unbounded curves
+  (the \ccc{Has_boundary_category} category is defined as \ccc{Tag_true}).}
+
+% \ccCreation
+\ccCreationVariable{traits}
+% =========================
+
+\ccHeading{Accessing Functor Objects}
+% ===================================
+\ccThree{Compare_y_at_x_right_2~~~}{}{\hspace*{14cm}}
+\ccThreeToTwo
+\ccMethod{Compare_x_2 compare_x_2_object() const;} {}
+\ccGlue
+\ccMethod{Compare_xy_2 compare_xy_2_object() const;} {}
+\ccGlue
+\ccMethod{Construct_min_vertex_2 construct_min_vertex_2_object() const;} {}
+\ccGlue
+\ccMethod{Construct_max_vertex_2 construct_max_vertex_2_object() const;} {}
+\ccGlue
+\ccMethod{Is_vertical_2 is_vertical_2_object() const;} {}
+\ccGlue
+\ccMethod{Compare_y_at_x_2 compare_y_at_x_2_object() const;} {}
+\ccGlue
+\ccMethod{Compare_y_at_x_left_2 compare_y_at_x_left_2_object() const;} {}
+\ccGlue
+\ccMethod{Compare_y_at_x_right_2 compare_y_at_x_right_2_object() const;} {}
+\ccGlue
+\ccMethod{Equal_2 equal_2_object() const;} {}
+\ccGlue
+\ccMethod{Parameter_space_in_x_2 parameter_space_in_x_2_object() const;} {}
+\ccGlue
+\ccMethod{Parameter_space_in_y_2 parameter_space_in_y_2_object() const;} {}
+\ccGlue
+\ccMethod{Compare_x_near_boundary_2 compare_x_near_boundary_2_object() const;} {}
+\ccGlue
+\ccMethod{Compare_y_near_boundary_2 compare_y_near_boundary_2_object() const;} {}
+
+\ccHasModels
+% ==========
+\ccc{CGAL::Arr_segment_traits_2<Kernel>}\\
+\ccc{CGAL::Arr_non_caching_segment_basic_traits_2<Kernel>}\\
+\ccc{CGAL::Arr_non_caching_segment_traits_2<Kernel>}\\
+\ccc{CGAL::Arr_linear_traits_2<Kernel>}\\
+\ccc{CGAL::Arr_polyline_traits_2<SegmentTraits>}\\
+\ccc{CGAL::Arr_circle_segment_traits_2<Kernel>}\\
+\ccc{CGAL::Arr_line_arc_traits_2<CircularKernel>}\\
+\ccc{CGAL::Arr_circular_arc_traits_2<CircularKernel>}\\
+\ccc{CGAL::Arr_circular_line_arc_traits_2<CircularKernel>}\\
+\ccc{CGAL::Arr_conic_traits_2<RatKernel,AlgKernel,NtTraits>}\\
+\ccc{CGAL::Arr_rational_arc_traits_2<AlgKernel,NtTraits>}\\
+\ccc{CGAL::Arr_Bezier_curve_traits_2<RatKernel,AlgKernel,NtTraits>}\\
+\ccc{CGAL::Arr_algebraic_segment_traits_2<Coefficient>}\\
+\ccc{CGAL::Arr_curve_data_traits_2<Tr,XData,Mrg,CData,Cnv>}\\
+\ccc{CGAL::Arr_consolidated_curve_data_traits_2<Traits,Data>}
+
+\end{ccRefConcept}
+\ccRefPageEnd
+
+%%%%%%%% Geometric Objects %%%%%%%%
+% =================================
+
+%%%%%%%% Point_2
+% ==============
+\ccRefPageBegin
+\begin{ccRefConcept}{ArrTraits::Point_2}
+\ccDefinition
+Represents a point in the plane.
+
+\ccRefines{DefaultConstructible, CopyConstructible, Assignable}
+
+\ccHasModels\ccc{ArrangementBasicTraits_2::Point_2}
+\end{ccRefConcept}
+\ccRefPageEnd
+
+%%%%%%%% XMonotoneCurve_2
+% =======================
+\ccRefPageBegin
+\begin{ccRefConcept}{ArrTraits::XMonotoneCurve_2}
+\ccDefinition
+Represents a planar (weakly) $x$-monotone curve.
+
+\ccRefines{DefaultConstructible, CopyConstructible, Assignable}
+
+\ccHasModels\ccc{ArrangementBasicTraits_2::X_monotone_curve_2}
+\end{ccRefConcept}
+\ccRefPageEnd
+
+%%%%%%%% Functors %%%%%%%%
+% ========================
+
+%%%%%%%% CompareX_2
+% =================
+\ccRefPageBegin
+\begin{ccRefConcept}{ArrTraits::CompareX_2}
+\ccRefines{Functor}
+
+\ccHasModels\ccc{ArrangementBasicTraits_2::Compare_x_2}
+
+\ccCreationVariable{fo}
+\ccMethod{Comparison_result operator()(ArrTraits::Point_2 p1,
+                                       ArrTraits::Point_2 p2);}
+  {returns \ccc{SMALLER}, \ccc{EQUAL}, or \ccc{LARGER}
+  according to the $x$-ordering of points \ccc{p1} and \ccc{p2}.}
+\end{ccRefConcept}
+\ccRefPageEnd
+
+%%%%%%%% CompareXy_2
+% ==================
+\ccRefPageBegin
+\begin{ccRefConcept}{ArrTraits::CompareXy_2}
+\ccRefines{Functor}
+
+\ccHasModels\ccc{ArrangementBasicTraits_2::Compare_xy_2}
+
+\ccCreationVariable{fo}
+\ccMethod{Comparison_result operator()(ArrTraits::Point_2 p1,
+                                       ArrTraits::Point_2 p2);}
+  {returns \ccc{SMALLER}, \ccc{EQUAL}, or \ccc{LARGER} according 
+  to the lexicographic $xy$-order of the points \ccc{p1} and \ccc{p2}.}
+\end{ccRefConcept}
+\ccRefPageEnd
+
+%%%%%%%% ConstructMinVertex_2
+% ===========================
+\ccRefPageBegin
+\begin{ccRefConcept}{ArrTraits::ConstructMinVertex_2}
+\ccRefines{Functor}
+
+\ccHasModels\ccc{ArrangementBasicTraits_2::Construct_min_vertex_2}
+
+\ccCreationVariable{fo}
+\ccMethod{ArrTraits::Point_2 operator()(ArrTraits::X_monotone_curve_2 xc);}
+  {returns the lexicographically smaller (left) endpoint of \ccc{xc}.}
+\end{ccRefConcept}
+\ccRefPageEnd
+
+%%%%%%%% ConstructMaxVertex_2
+% ===========================
+\ccRefPageBegin
+\begin{ccRefConcept}{ArrTraits::ConstructMaxVertex_2}
+\ccRefines{Functor}
+
+\ccHasModels\ccc{ArrangementBasicTraits_2::Construct_max_vertex_2}
+
+\ccCreationVariable{fo}
+\ccMethod{ArrTraits::Point_2 operator()(ArrTraits::X_monotone_curve_2 xc);}
+  {returns the lexicographically larger (right) endpoint of \ccc{xc}.}
+\end{ccRefConcept}
+\ccRefPageEnd
+
+%%%%%%%% IsVertical_2
+% ===================
+\ccRefPageBegin
+\begin{ccRefConcept}{ArrTraits::IsVertical_2}
+\ccRefines{Functor}
+
+\ccHasModels\ccc{ArrangementBasicTraits_2::Is_vertical_2}
+
+\ccCreationVariable{fo}
+\ccMethod{bool operator()(ArrTraits::X_monotone_curve_2 xc);}
+  {determines whether \ccc{xc} is a vertical segment.}
+\end{ccRefConcept}
+\ccRefPageEnd
+
+%%%%%%%% CompareYAtX_2
+% ====================
+\ccRefPageBegin
+\begin{ccRefConcept}{ArrTraits::CompareYAtX_2}
+\ccRefines{Functor}
+
+\ccHasModels\ccc{ArrangementBasicTraits_2::Compare_y_at_x_2}
+
+\ccCreationVariable{fo}
+\ccMethod{Comparison_result operator()(ArrTraits::Point_2 p,
+                                       ArrTraits::X_monotone_curve_2 xc);}
+  {compares the $y$-coordinates of \ccc{p} and the vertical 
+  projection of \ccc{p} on \ccc{xc}, and returns \ccc{SMALLER}, \ccc{EQUAL},
+  or \ccc{LARGER} according to the result.}
+\end{ccRefConcept}
+\ccRefPageEnd
+
+%%%%%%%% CompareYAtXLeft_2
+% ========================
+\ccRefPageBegin
+\begin{ccRefConcept}{ArrTraits::CompareYAtXLeft_2}
+\ccRefines{Functor}
+
+\ccHasModels\ccc{ArrangementBasicTraits_2::Compare_y_at_x_left_2}
+
+\ccCreationVariable{fo}
+\ccMethod{Comparison_result operator()(ArrTraits::X_monotone_curve_2 xc1,
+                                       ArrTraits::X_monotone_curve_2 xc2,
+                                       ArrTraits::Point_2 p);}
+  {accepts two $x$-monotone curves \ccc{xc1} and \ccc{xc2}
+  that have a common right endpoint \ccc{p}, and returns \ccc{SMALLER,
+  EQUAL} or \ccc{LARGER} according to the relative position of the two
+  curves immediately to the left of $p$. Note that in case one of the
+  $x$-monotone curves is a vertical segment (emanating downward from
+  \ccc{p}), it is always considered to be {\sl below} the other curve.}
+\end{ccRefConcept}
+\ccRefPageEnd
+
+%%%%%%%% CompareYAtXRight_2
+% =========================
+\ccRefPageBegin
+\begin{ccRefConcept}{ArrTraits::CompareYAtXRight_2}
+\ccRefines{Functor}
+
+\ccHasModels\ccc{ArrangementBasicTraits_2::Compare_y_at_x_right_2}
+
+\ccCreationVariable{fo}
+\ccMethod{Comparison_result operator()(ArrTraits::X_monotone_curve_2 xc1,
+                                       ArrTraits::X_monotone_curve_2 xc2,
+                                       ArrTraits::Point_2 p);}
+  {accepts two $x$-monotone curves \ccc{xc1} and \ccc{xc2}
+  that have a common left endpoint \ccc{p}, and returns \ccc{SMALLER,
+  EQUAL} or \ccc{LARGER} according to the relative position of the two
+  curves immediately to the right of $p$. Note that in case one of the
+  $x$-monotone curves is a vertical segment emanating upward from
+  \ccc{p}, it is always considered to be {\sl above} the other curve.}
+\end{ccRefConcept}
+\ccRefPageEnd
+
+%%%%%%%% Equal_2
+% ==============
+\ccRefPageBegin
+\begin{ccRefConcept}{ArrTraits::Equal_2}
+\ccRefines{Functor}
+
+\ccHasModels\ccc{ArrangementBasicTraits_2::Equal_2}
+
+\ccCreationVariable{fo}
+\ccMethod{bool operator()(ArrTraits::Point_2 p1, ArrTraits::Point_2 p2);}
+  {determines whether \ccc{p1} and \ccc{p2} are geometrically 
+  equivalent.}
+\ccGlue
+\ccMethod{bool operator()(ArrTraits::X_monotone_curve_2 xc1,
+                          ArrTraits::X_monotone_curve_2 xc2);}
+  {determines whether \ccc{xc1} and \ccc{xc2} are
+  geometrically equivalent (have the same graph).}
+\end{ccRefConcept}
+\ccRefPageEnd
+
+%%%%%%%% ParameterSpaceInX_2
+% ==========================
+\ccRefPageBegin
+\begin{ccRefConcept}{ArrTraits::ParameterSpaceInX_2}
+\ccRefines{Functor}
+
+\ccHasModels\ccc{ArrangementBasicTraits_2::Parameter_space_in_x_2}
+
+\ccCreationVariable{fo}
+\ccMethod{Arr_parameter_space operator()(ArrTraits::X_monotone_curve_2 xc,
+                                         Arr_curve_end ce);}
+  {determines the placement of the $x$-coordinate of the minimal end or 
+  maximal end of \ccc{xc} in the parameter space, that is,
+  \ccc{ARR_LEFT_BOUNDARY}, \ccc{ARR_INTERIOR}, or \ccc{ARR_RIGHT_BOUNDARY}.}
+\end{ccRefConcept}
+\ccRefPageEnd
+
+%%%%%%%% ParameterSpaceInY_2
+% ==========================
+\ccRefPageBegin
+\begin{ccRefConcept}{ArrTraits::ParameterSpaceInY_2}
+\ccRefines{Functor}
+
+\ccHasModels\ccc{ArrangementBasicTraits_2::Parameter_space_in_y_2}
+
+\ccCreationVariable{fo}
+\ccMethod{Arr_parameter_space operator()(ArrTraits::X_monotone_curve_2 xc,
+                                         Arr_curve_end ce);}
+  {determines the placement of the $y$-coordinate of the minimal end or 
+  maximal end of \ccc{xc} in the parameter space, that is,
+  \ccc{ARR_BOTTOM_BOUNDARY}, \ccc{ARR_INTERIOR}, or \ccc{ARR_TOP_BOUNDARY}.}
+\end{ccRefConcept}
+\ccRefPageEnd
+
+%%%%%%%% CompareXNearBoundary_2
+% =============================
+\ccRefPageBegin
+\begin{ccRefConcept}{ArrTraits::CompareXNearBoundary_2}
+\ccRefines\ccc{ArrTraits::CompareX_2}
+
+\ccHasModels\ccc{ArrangementBasicTraits_2::Compare_x_near_boundary_2}
+
+\ccCreationVariable{fo}
+\ccMethod{Comparison_result operator()(ArrTraits::Point_2 p,
+                                       ArrTraits::X_monotone_curve_2 xc,
+                                       Arr_curve_end ce);}
+  {returns \ccc{SMALLER}, \ccc{EQUAL}, or \ccc{LARGER} according
+  to the $x$-ordering of a vertical line passing through the point
+  \ccc{p} and an unbounded end of the curve \ccc{xc}. The relevant end
+  is the minimal end, if \ccc{ce} is \ccc{MIN_END} and the maximal
+  end if \ccc{ce} is \ccc{MAX_END}.
+  \ccPrecond{the curve end has a bounded $x$-coordinate and an
+  unbounded $y$-coordinate. Namely \ccc{xc} is vertical or has a
+  vertical asymptote.}}
+\ccGlue
+\ccMethod{Comparison_result operator()(ArrTraits::X_monotone_curve_2 xc1,
+                                       Arr_curve_end ce1,
+                                       ArrTraits::X_monotone_curve_2 xc2,
+                                       Arr_curve_end ce2);}
+  {returns \ccc{SMALLER}, \ccc{EQUAL}, or \ccc{LARGER}
+  according to the $x$-ordering of the unbounded curve ends of
+  \ccc{xc1} and \ccc{xc2}.
+  \ccPrecond{the curve ends have a bounded $x$-coordinate and an
+  unbounded $y$-coordinate. Namely each of \ccc{xc1} and \ccc{xc2} is
+  vertical or has a vertical asymptote.}}
+\end{ccRefConcept}
+\ccRefPageEnd
+
+%%%%%%%% CompareYNearBoundary_2
+% =============================
+\ccRefPageBegin
+\begin{ccRefConcept}{ArrTraits::CompareYNearBoundary_2}
+\ccRefines\ccc{CompareYAtX_2}
+
+\ccHasModels\ccc{ArrangementBasicTraits_2::Compare_y_near_boundary_2}
+
+\ccCreationVariable{fo}
+\ccMethod{Comparison_result operator()(ArrTraits::X_monotone_curve_2 xc1,
+                                       ArrTraits::X_monotone_curve_2 xc2,
+                                       Arr_curve_end ce);}
+  {returns \ccc{SMALLER, EQUAL} or \ccc{LARGER} according to the
+  $y$-ordering of the two curves \ccc{xc1} and \ccc{xc2} at $x = -\infty$
+  (if \ccc{ce} is \ccc{MIN_END}) or at $x = \infty$ (if \ccc{ce} is 
+  \ccc{MAX_END}), with the precondition that both curves have unbounded
+  minimal (or maximal) ends that lie at $x = \pm\infty$.}
+\end{ccRefConcept}
+\ccRefPageEnd

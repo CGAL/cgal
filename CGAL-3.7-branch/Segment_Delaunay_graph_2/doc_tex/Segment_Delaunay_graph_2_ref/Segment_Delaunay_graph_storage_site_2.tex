@@ -1,0 +1,91 @@
+%% Copyright (c) 2003,2004,2005  INRIA Sophia-Antipolis (France) and
+%% Notre Dame University (U.S.A.).  All rights reserved.
+%%
+%% This file is part of CGAL (www.cgal.org); you may redistribute it under
+%% the terms of the Q Public License version 1.0.
+%% See the file LICENSE.QPL distributed with CGAL.
+%%
+%% Licensees holding a valid commercial license may use this file in
+%% accordance with the commercial license agreement provided with the software.
+%%
+%% This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
+%% WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
+%%
+%% $URL$
+%% $Id$
+%% 
+%%
+%% Author(s)     : Menelaos Karavelas <mkaravel@cse.nd.edu>
+
+
+
+
+\begin{ccRefClass}{Segment_Delaunay_graph_storage_site_2<Gt>}
+%% add template arg's if necessary
+
+%% \ccHtmlCrossLink{}     %% add further rules for cross referencing links
+%% \ccHtmlIndexC[class]{} %% add further index entries
+
+\ccDefinition
+  
+The class \ccRefName\ is a model for the concept
+\ccc{SegmentDelaunayGraphStorageSite_2}. It is parametrized by a single
+template parameter \ccc{Gt}, which must be a model of the
+\ccc{SegmentDelaunayGraphTraits_2} concept.
+
+\ccInclude{CGAL/Segment_Delaunay_graph_storage_site_2.h}
+
+\ccIsModel
+\ccc{SegmentDelaunayGraphStorageSite_2}
+
+\ccTypes
+
+The class \ccRefName\ introduces the following type in addition to the
+types in the concept \ccc{SegmentDelaunayGraphStorageSite_2}.
+
+\ccThree{typedef Gt}{Geom_traits+}{}
+\ccTypedef
+{typedef Gt Geom_traits;}{A type for the template parameter \ccc{Gt}.}
+
+%% \ccCreation
+%% \ccTwo{Segment_Delaunay_graph_storage_site_2<Gt,H> ss(Point_handle hp)+}{}
+%% \ccCreationVariable{ss}  %% choose variable name
+
+%% \ccConstructor{Segment_Delaunay_graph_storage_site_2<Gt,H>()}{Default
+%%   constructor}
+%% %\ccGlue
+%% \ccConstructor{Segment_Delaunay_graph_storage_site_2<Gt,H>(Point_handle
+%%   hp)}{}
+%% %\ccGlue
+%% \ccConstructor{Segment_Delaunay_graph_storage_site_2<Gt,H>(Point_handle
+%%   hp1, Point_handle hp2)}{} 
+%% %\ccGlue
+%% \ccConstructor{Segment_Delaunay_graph_storage_site_2<Gt,H>(Point_handle
+%%   hp1, Point_handle hp2, Point_handle hq1, Point_handle hq2)}{}
+%% %\ccGlue
+%% \ccConstructor{Segment_Delaunay_graph_storage_site_2<Gt,H>(Point_handle
+%%   hp1, Point_handle hp2, Point_handle hq1, Point_handle hq2, bool b)}{}
+%% %\ccGlue
+%% \ccConstructor{Segment_Delaunay_graph_storage_site_2<Gt,H>(Point_handle
+%%   hp1, Point_handle hp2, Point_handle hq1, Point_handle hq2,
+%%   Point_handle hr1, Point_handle hr2)}{}
+%% %\ccGlue
+%% \ccConstructor{Segment_Delaunay_graph_site_2<Gt,H>(
+%%   Segment_Delaunay_graph_storage_site_2<Gt,PH> other)}{Copy constructor.}
+
+\ccSeeAlso
+\ccc{SegmentDelaunayGraphSite_2}\\
+\ccc{SegmentDelaunayGraphTraits_2}\\
+\ccc{CGAL::Segment_Delaunay_graph_site_2<K>}\\
+\ccc{CGAL::Segment_Delaunay_graph_traits_2<K,MTag>}\\
+\ccc{CGAL::Segment_Delaunay_graph_traits_without_intersections_2<K,MTag>}\\
+\ccc{CGAL::Segment_Delaunay_graph_filtered_traits_2<CK,CM,EK,EM,FK,FM>}\\
+\ccc{CGAL::Segment_Delaunay_graph_filtered_traits_without_intersections_2<CK,CM,EK,EM,FK,FM>}
+
+\end{ccRefClass}
+
+% +------------------------------------------------------------------------+
+%%RefPage: end of main body, begin of footer
+% EOF
+% +------------------------------------------------------------------------+
+

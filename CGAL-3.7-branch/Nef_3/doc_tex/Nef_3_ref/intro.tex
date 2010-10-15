@@ -1,0 +1,77 @@
+% +------------------------------------------------------------------------+
+% | CGAL Reference Manual:  intro.tex
+% +------------------------------------------------------------------------+
+% | Nef 3 reference manual pages
+% |
+\RCSdef{\polyhedronRefRev}{$Id$}
+\RCSdefDate{\polyhedronRefDate}{$Date$}
+% +------------------------------------------------------------------------+
+
+\ccRefChapter{3D Boolean Operations on Nef Polyhedra\label{chapterNef3Ref}}
+\ccChapterAuthor{Peter Hachenberger \and Lutz Kettner \and Michael Seel}
+
+% +------------------------------------------------------------------------+
+
+
+A Nef polyhedron is any point set generated from a finite number of
+open halfspaces by set complement and set intersection operations.  In
+our implementation of Nef polyhedra in 3-dimensional space, we offer a
+B-rep data structures that is closed under boolean operations and with
+all their generality. Starting from halfspaces (and also directly from
+oriented 2-manifolds), we can work with set union, set intersection,
+set difference, set complement, interior, exterior, boundary, closure,
+and regularization operations. In essence, we can evaluate a CSG-tree
+with halfspaces as primitives and convert it into a B-rep
+representation.
+
+In fact, we work with two data structures; one that represents the
+local neighborhoods of vertices, which is in itself already a complete
+description, and a data structure that connects these neighborhoods up
+to a global data structure with edges, facets, and volumes. We offer a
+rich interface to investigate these data structures, their different
+elements and their connectivity. We provide affine (rigid)
+tranformations and a point location query operation. We have a custom
+file format for storing and reading Nef polyhedra from files. We offer
+a simple OpenGL visualization for debugging and illustrations.
+
+\section{Classified Reference Pages}
+
+\subsection*{Classes}
+
+\ccRefIdfierPage{CGAL::Nef_polyhedron_3<Traits>}\\ 
+\ccRefIdfierPage{CGAL::Nef_polyhedron_3<Traits>::Vertex}\\ 
+\ccRefIdfierPage{CGAL::Nef_polyhedron_3<Traits>::Halfedge}\\ 
+\ccRefIdfierPage{CGAL::Nef_polyhedron_3<Traits>::Halffacet}\\ 
+\ccRefIdfierPage{CGAL::Nef_polyhedron_3<Traits>::Volume}\\ 
+\ccRefIdfierPage{CGAL::Nef_polyhedron_3<Traits>::SHalfedge}\\ 
+\ccRefIdfierPage{CGAL::Nef_polyhedron_3<Traits>::SHalfloop}\\ 
+\ccRefIdfierPage{CGAL::Nef_polyhedron_3<Traits>::SFace}\\ 
+\ccRefIdfierPage{CGAL::Nef_polyhedron_3<Traits>::SFace_cycle_iterator} 
+%\ccRefIdfierPage{CGAL::Nef_polyhedron_3<Traits>::Shell_entry_iterator} 
+
+\subsection*{Functions}
+\ccThree{ostream&}{}{page 999.}
+
+\ccHtmlNoLinks\ccHtmlNoIndex
+\ccFunction{template<class Nef_polyhedron_3>
+            std::size_t OFF_to_nef_3(std::istream& in, Nef_polyhedron_3& N);}
+    {\lcRawHtml{<A HREF="Function_OFF_to_nef_3.html">(go there)</A>}
+     \lcTex{\hfill page~\pageref{refOFF_to_nef_3}}}
+
+\ccHtmlNoLinks\ccHtmlNoIndex
+\ccFunction{template <class Traits>
+            ostream& operator<<( ostream& out, 
+                                 const CGAL::Nef_polyhedron_3<Traits>& N);}
+    {\lcRawHtml{<A HREF="Function_operator.html">(go there)</A>}
+     \lcTex{\hfill page~\pageref{refNef_polyhedron_operator_leftshift_3}}}
+
+\ccHtmlNoLinks\ccHtmlNoIndex
+\ccFunction{template <class Traits>
+            istream& operator>>( istream& in, 
+                                 CGAL::Nef_polyhedron_3<Traits>& N);}
+    {\lcRawHtml{<A HREF="Function_operator--.html">(go there)</A>}
+     \lcTex{\hfill page~\pageref{refNef_polyhedron_operator_rightshift_3}}}
+
+
+
+%% EOF %%

@@ -1,0 +1,84 @@
+#!/bin/tcsh -f
+# **************************************************************************
+# 
+#  cc_gif_creator
+#  ===================
+#  A script that uses 
+#
+#  Author    : (c) 1998 Lutz Kettner
+#              as of version 3.3 (Sept. 1999) maintained by Susan Hert
+#  Revision  : $Id$
+#  Date      : $Date$
+# 
+# **************************************************************************
+
+set math_mode  = 0
+set figure_env = 0
+
+if ( $#argv < 1) goto usage
+while ( $#argv > 1)
+    if ( "$1" == "-m") then
+	set math_mode = 1
+	shift
+    endif
+    if ( "$1" == "-v") then
+	set verbose = 1
+	shift
+    endif
+    if ( "$1" == "-f") then
+	set figure_env = 1
+	shift
+    endif
+end
+
+set dir     = cc_gif_dir
+set outfile = cc_mathbb_$1.gif
+set texfile = $1.tex
+
+if ( -d $dir) then
+    echo "Output directory '$dir' already exists, abort."
+    exit (2)
+endif
+mkdir $dir
+cd $dir
+
+echo "\documentclass[12pt]{article}" > $texfile
+echo "\usepackage{latexsym}" >> $texfile
+echo "\usepackage{amssymb}" >> $texfile
+echo "\begin{document}" >> $texfile
+if ( $figure_env) echo "\begin{figure}" >> $texfile
+if ( $math_mode) then
+    echo '$'"\mathbb{$1}"'$' >> $texfile
+else
+    echo "\$1" >> $texfile
+endif
+if ( $figure_env) echo "\end{figure}" >> $texfile
+echo "\end{document}" >> $texfile
+
+if ( $?verbose) then
+    latex2html -no_navigation $texfile
+else
+    latex2html -no_navigation $texfile >& /dev/null
+endif
+
+if ( -r $1/img1.gif) then
+    cp $1/img1.gif ../$outfile
+    set imgtag = `grep img1.gif $1/$1.html | sed 's/.*<IMG /<IMG /' | sed 's/ALT.*/SRC="'$outfile'">/'`
+    echo "\newcommand{\$1}{\ccRawHtml"
+    echo "    { $imgtag }}"
+else
+    echo "Sorry, no GIF file produced. Try -f for a figure environment."
+endif
+
+cd ..
+if ( ! $?verbose) rm -r $dir
+exit (0)
+
+usage:
+echo "$0 "'$Id$'" (c) Lutz Kettner"
+echo "Usage: $0 [<options>] <tex-macro>"
+echo "           -m         process macro in math-mode."
+echo "           -f         process macro within a figure environment."
+echo "           -v         verbose."
+exit (1)
+

@@ -1,0 +1,103 @@
+%% Copyright (c) 2007 GeometryFactory (France).  All rights reserved.
+%%
+%% This file is part of CGAL (www.cgal.org); you may redistribute it under
+%% the terms of the Q Public License version 1.0.
+%% See the file LICENSE.QPL distributed with CGAL.
+%%
+%% Licensees holding a valid commercial license may use this file in
+%% accordance with the commercial license agreement provided with the software.
+%%
+%% This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
+%% WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
+%%
+%% 
+%%
+%% Author(s)     : Fernando Cacciola <fernando.cacciola@geometryfactory.com>
+
+\begin{ccRefConcept}{EdgeProfile}
+
+%% \ccHtmlCrossLink{}     %% add further rules for cross referencing links
+%% \ccHtmlIndexC[concept]{} %% add further index entries
+
+\ccDefinition
+
+The concept \ccRefName\ describes the requirements for a data structure that caches the local topology and geometry in the surroundings of an undirected edge.
+
+This profile is used by the stop, cost and placement policies.
+
+\ccTypes
+  \ccNestedType{ECM}
+  {The type of the surface to simplify. Must be a model of the \ccc{EdgeCollapsableMesh} concept.}{}
+\ccGlue    
+  \ccTypedef{typename boost::graph_traits<ECM>::vertex_descriptor vertex_descriptor;}
+  {A {\sc Bgl} vertex descriptor representing a vertex of the surface.}
+\ccGlue    
+  \ccTypedef{typename boost::graph_traits<ECM>::edge_descriptor edge_descriptor;}
+  {A {\sc Bgl} edge descriptor representing an edge of the surface.}
+\ccGlue    
+  \ccTypedef{typename CGAL::halfedge_graph_traits<ECM>::Point Point;}
+  {The point type for the surface vertex.  Must be a model of \ccc{Point_3}.}
+
+\ccCreationVariable{ep}  %% choose variable name
+
+\ccAccessFunctions
+  \ccMethod{vertex_descriptor v0() const;}{One of vertices of the edge to be collapsed.}
+\ccGlue    
+  \ccMethod{vertex_descriptor v1() const;}{The other vertex of the edge to be collapsed.}
+\ccGlue    
+  \ccMethod{edge_descriptor v0v1() const;}{One of the directed edges corresponding to the undirected
+   edge being collapsed.}
+\ccGlue    
+  \ccMethod{edge_descriptor v1v0() const;}{The other directed edge corresponding to the undirected
+  edge being collapsed.}
+\ccGlue    
+  \ccMethod{Point const& p0() const;}{The point of vertex $v0$.}
+\ccGlue    
+  \ccMethod{Point const& p1() const;}{The point of vertex $v1$.}
+\ccGlue    
+  \ccMethod{vertex_descriptor vL() const;}
+           {If $v0v1$ belongs to a finite face (is not a border edge)
+           the third vertex of that triangular face, a {\em null descriptor} otherwise.}
+\ccGlue    
+  \ccMethod{edge_descriptor v1vL() const;}
+           {If $v0v1$ belongs to a finite face (is not a border edge) 
+           the directed edge from $v1$ to $vL$, a {\em null descriptor} otherwise.}
+\ccGlue    
+  \ccMethod{edge_descriptor vLv0() const;}
+           {If $v0v1$ belongs to a finite face (is not a border edge) 
+           the directed edge from $vL$ to $v0$, a {\em null descriptor} otherwise.}
+\ccGlue    
+  \ccMethod{vertex_descriptor vR() const;}
+           {If $v1v0$ belongs to a finite face (is not a border edge)
+           the third vertex of that triangular face, a {\em null descriptor} otherwise.}
+\ccGlue    
+  \ccMethod{edge_descriptor v0vR() const;}
+           {If $v1v0$ belongs to a finite face (is not a border edge) 
+           the directed edge from $v0$ to $vR$, a {\em null descriptor} otherwise.}
+\ccGlue    
+  \ccMethod{edge_descriptor vRv1() const;}
+           {If $v1v0$ belongs to a finite face (is not a border edge) 
+           the directed edge from $vR$ to $v1$, a {\em null descriptor} otherwise.}
+\ccGlue    
+  \ccMethod{std::vector<vertex_descriptor> link() const;}{The unique sequence of the vertices 
+           around $v0v1$ in topological order ({\em ccw} or {\em ccw} depending 
+           on the relative ordering of \ccc{v0} and \ccc{v1} in the profile).}
+\ccGlue    
+  \ccMethod{std::vector<edge_descriptor> border_edges() const;}
+   {The unique collection of the border directed edges incident upon $v0$ and $v1$.}
+\ccGlue    
+  \ccMethod{bool left_face_exits() const;}
+  {Indicates if \ccc{v0v1} belongs to a finite face of the mesh (i.e, \ccc{v0v1} is not a border edge).}
+\ccGlue    
+  \ccMethod{bool right_face_exits() const;}
+  {Indicates if \ccc{v0v1} belongs to a finite face of the mesh (i.e, \ccc{v1v0} is not a border edge).}
+ 
+\ccHasModels
+\ccRefIdfierPage{CGAL::Surface_mesh_simplification::Edge_profile<ECM>}
+
+\end{ccRefConcept}
+
+% +------------------------------------------------------------------------+
+%%RefPage: end of main body, begin of footer
+% EOF
+% +------------------------------------------------------------------------+

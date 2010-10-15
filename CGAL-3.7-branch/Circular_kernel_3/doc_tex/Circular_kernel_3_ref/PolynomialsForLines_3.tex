@@ -1,0 +1,44 @@
+\begin{ccRefConcept}{AlgebraicKernelForSpheres::PolynomialsForLines_3}
+
+\ccDefinition
+
+Concept to represent a system of polynomials on \ccc{FieldNumberType}
+capable of storing equations of lines. 
+
+\ccRefines
+CopyConstructible, Assignable, DefaultConstructible
+
+%\ccAccessFunctions
+
+%\ccFunction{const RT & a() const;}{}
+%\ccGlue
+
+%\ccOperations
+
+%The comparison operator \ccc{==} must be provided. 
+
+% also proportional polynomials
+
+\ccHasModels
+
+\ccc{CGAL::Polynomials_for_lines_3}
+
+\ccSeeAlso
+
+\ccRefIdfierPage{AlgebraicKernelForSpheres}
+
+\end{ccRefConcept}
+
+\begin{ccRefClass}{Polynomials_for_lines_3<FT>}
+
+\ccInclude{CGAL/Polynomials_for_line_3.h}
+
+\ccIsModel
+
+\ccc{AlgebraicKernelForSpheres::PolynomialsForLines_3}
+
+\ccSeeAlso
+
+\ccRefIdfierPage{AlgebraicKernelForSpheres}
+
+\end{ccRefClass}

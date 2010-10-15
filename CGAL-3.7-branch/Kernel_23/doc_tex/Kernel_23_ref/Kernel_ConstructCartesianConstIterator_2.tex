@@ -1,0 +1,28 @@
+\begin{ccRefFunctionObjectConcept}{Kernel::ConstructCartesianConstIterator_2}
+A model for this must provide:
+
+\ccCreationVariable{fo}
+
+
+\ccMemberFunction{Kernel::Cartesian_const_iterator_2 operator()(const Kernel::Point_2
+  &p);} {returns an iterator on the 0'th  \ccHtmlNoLinksFrom{Cartesian} coordinate of \ccc{p}.}
+
+\ccMemberFunction{Kernel::Cartesian_const_iterator_2 operator()(const Kernel::Point_2
+  &p, int);} {returns the past the end iterator of the  \ccHtmlNoLinksFrom{Cartesian} coordinates of \ccc{p}.}
+
+
+\ccMemberFunction{Kernel::Cartesian_const_iterator_2 operator()(const Kernel::Vector_2
+  &v);} {returns an iterator on the 0'th  \ccHtmlNoLinksFrom{Cartesian} coordinate of \ccc{v}.}
+
+\ccMemberFunction{Kernel::Cartesian_const_iterator_2 operator()(const Kernel::Vector_2
+  &v, int);} {returns the past the end iterator of the  \ccHtmlNoLinksFrom{Cartesian} coordinates of \ccc{v}.}
+
+
+
+\ccRefines
+\ccc{AdaptableFunctor} (with one argument)
+
+\ccSeeAlso
+\ccRefConceptPage{Kernel::CartesianConstIterator_2} \\
+
+\end{ccRefFunctionObjectConcept}

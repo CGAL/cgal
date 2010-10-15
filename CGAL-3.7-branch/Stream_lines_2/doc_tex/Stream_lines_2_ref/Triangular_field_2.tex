@@ -1,0 +1,64 @@
+%% +------------------------------------------------------------------------+
+% | Reference manual page: Triangular_field_2.tex
+% +------------------------------------------------------------------------+
+% | 07.12.2004 Abdelkrim Mebarki
+% | Package: Stream_lines_2
+% | 
+\RCSdef{\RCSTriangularfieldRev}{$Id$}
+\RCSdefDate{\RCSTriangularfieldDate}{$Date$}
+% |
+%%RefPage: end of header, begin of main body
+% +------------------------------------------------------------------------+
+
+
+\begin{ccRefClass}{Triangular_field_2<StreamLinesTraits_2>}  %% add template arg's if necessary
+
+%% \ccHtmlCrossLink{}     %% add further rules for cross referencing links
+%% \ccHtmlIndexC[class]{} %% add further index entries
+\ccCreationVariable{tfield_2}
+\ccDefinition
+
+The template parameter \ccc{StreamLinesTraits_2} has to be
+instantiated by a model of the concept \ccc{StreamLinesTraits_2}.\\
+
+This class provides a vector field specified by a set of sample points
+defined on a triangulated domain. All sample points are inserted to a
+\ccc{Delaunay triangulation}, and for each point \ccc{p} in the domain
+located in a face \ccc{f}, its vector value is interpolated from the
+vertices of the face \ccc{f}.
+
+\ccTypes
+\ccThree{typedef VectorField_2:::Point_iterator_x}{xxx_xxxx_xxx;}{}
+\ccTypedef{typedef StreamLinesTraits_2::FT FT;}{the scalar type.}
+\ccGlue
+\ccTypedef{typedef StreamLinesTraits_2::Point_2 Point_2;}{the point type.}
+\ccGlue
+\ccTypedef{typedef StreamLinesTraits_2::Vector_2 Vector_2;}{the vector type.}
+
+\ccCreation
+\ccCreationVariable{tfield_2}  %% choose variable name
+
+
+\ccThree{Triangular_field_2<StreamLinesTraits>}{Triangular_field_2 triangular_field_2}{}
+\ccThreeToTwo
+\ccConstructor{Triangular_field_2( InputIterator1 first_point, InputIterator1 last_point, InputIterator2 first_vector)}
+{		Defines the points in the range  
+		$\left[\right.$\ccc{first_point}, \ccc{last_point}$\left.\right)$ 
+		as the sample points of the grid, with the corresponding number of vectors started at \ccc{first_vector}.
+\ccPrecond The \ccc{value_type} of \ccc{InputIterator1} is \ccc{Point}.
+\ccPrecond The \ccc{value_type} of \ccc{InputIterator2} is \ccc{Vector}.}
+
+\ccIsModel 
+
+\ccc{VectorField_2} \\
+
+
+\ccSeeAlso
+\ccc{Regular_grid_2<StreamLinesTraits_2>} \\
+\end{ccRefClass}
+
+% +------------------------------------------------------------------------+
+%%RefPage: end of main body, begin of footer
+% EOF
+% +------------------------------------------------------------------------+
+

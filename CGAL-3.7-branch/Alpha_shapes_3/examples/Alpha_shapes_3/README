@@ -1,0 +1,12 @@
+ex_alpha_shapes_3 : read input points, compute the alpha shape in 
+regularized mode and find the optimal value of $\alpha$, i. e. the smallest
+$\alpha$ such that all input points are in the interior or on the boundary of
+the alpha shape, and the alpha shape has a single connected component.
+
+ex_alpha_shapes_with_fast_location_3 : build the alpha shape using an
+underlying Delaunay triangulation with Fast_location policy, for efficient
+point location.
+
+ex_weighted_alpha_shapes_3 : build the weighted alpha shape of a small
+set of spheres and explore the boundary of the alpha complex for $\alpha=0$.
+This complex is the nerve of the union of the spheres.

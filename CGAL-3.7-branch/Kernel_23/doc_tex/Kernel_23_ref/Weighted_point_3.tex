@@ -1,0 +1,137 @@
+\begin{ccRefClass} {Weighted_point_3<Kernel, Weight>}
+
+\ccDefinition
+An object of the class \ccRefName\ is a point in the three-dimensional
+Euclidean space $\E^3$ with an associated weight (and thus can also be 
+viewed as a sphere centered at the point with radius equal to the weight). 
+The default type of \ccc{Weight} is \ccc{Kernel::FT}, the
+field type of the defining kernel.
+
+\ccInheritsFrom
+\ccc{Kernel::Point_3}
+
+\ccTypes
+
+\ccNestedType{Kernel}{the kernel in which the point lies}
+\ccNestedType{Weight}{the type of the weight associated with this point}
+
+\ccCreation
+\ccCreationVariable{p}
+
+
+\ccHidden \ccConstructor{Weighted_point_3();}
+             {introduces an uninitialized variable \ccVar.}
+
+\ccHidden \ccConstructor{Weighted_point_3(const Weighted_point_3<Kernel> &q);}
+            {copy constructor.}
+
+\ccConstructor{Weighted_point_3(const Origin &ORIGIN, const Weight& w = 0);}
+            {introduces a point with \ccHtmlNoLinks{Cartesian} 
+             coordinates $(0,0,0)$ and weight \ccc{w}.}
+
+\ccConstructor{Weighted_point_3(const Kernel::RT &hx, const Kernel::RT &hy, 
+                                const Kernel::RT &hz, const Kernel::RT &hw = RT(1),
+                                const Weight& w = 0);}
+            {introduces a point \ccVar\ initialized to $(hx/hw,hy/hw, hz/hw)$
+             with weight \ccc{w}.
+             \ccPrecond \ccc{hw} $\neq$ 0.}
+
+\ccConstructor{Weighted_point_3(const Point_3<Kernel> &p, const Weight& w = 0);}
+            {introduces a variable \ccVar\ with \ccHtmlNoLinksFrom{Cartesian}
+             coordinates \ccc{(p.x(),p.y(),p.z())} and weight \ccc{w}.}
+
+\ccOperations
+%\ccSetTwoOfThreeColumns{5cm}{4cm}
+
+\ccHidden \ccMethod{Weighted_point_3<Kernel> & operator=(const Weighted_point_3<Kernel> &q);}
+        {Assignment.}
+
+\ccMethod{bool operator==(const Weighted_point_3<Kernel> &q) const;}
+       {Test for equality: Two points are equal, iff their $x$, $y$ and $z$
+        coordinates are equal.}
+
+\ccMethod{bool operator!=(const Weighted_point_3<Kernel> &q) const;}
+       {Test for inequality.}
+
+There are two sets of coordinate access functions, namely to the
+homogeneous and to the \ccHtmlNoLinksFrom{Cartesian} coordinates. They can be used
+independently from the chosen kernel model.
+
+\ccMethod{Kernel::RT hx() const;}
+       {returns the homogeneous $x$ coordinate.}
+\ccGlue
+\ccMethod{Kernel::RT hy() const;}
+       {returns the homogeneous $y$ coordinate.}
+\ccGlue
+\ccMethod{Kernel::RT hz() const;}
+       {returns the homogeneous $z$ coordinate.}
+\ccGlue
+\ccMethod{Kernel::RT hw() const;}
+       {returns the homogenizing  coordinate.}
+
+Note that you do not loose information with the homogeneous
+representation, because the \ccc{FieldNumberType} is a quotient.
+
+\ccMethod{Kernel::FT x() const;}
+       {returns the \ccHtmlNoLinks{Cartesian} $x$ coordinate, that is $hx/hw$.}
+\ccGlue
+\ccMethod{Kernel::FT y() const;}
+       {returns the \ccHtmlNoLinks{Cartesian} $y$ coordinate, that is $hy/hw$.}
+\ccGlue
+\ccMethod{Kernel::FT z() const;}
+       {returns the \ccHtmlNoLinks{Cartesian} $z$ coordinate, that is $hz/hw$.}
+       
+The following operations are for convenience and for compatibility
+with higher dimensional points. Again they come in a
+\ccHtmlNoLinksFrom{Cartesian} and homogeneous flavor.
+
+\ccMethod{Kernel::RT homogeneous(int i) const;}
+       {returns the i'th homogeneous coordinate of \ccVar, starting with 0.
+        \ccPrecond $0\leq i \leq 3$.}
+
+\ccMethod{Kernel::FT cartesian(int i) const;}
+       {returns the i'th \ccHtmlNoLinks{Cartesian} coordinate of \ccVar, starting with 0.
+        \ccPrecond $0\leq i \leq 2$.}
+
+\ccMethod{Kernel::FT operator[](int i) const;}
+       {returns \ccStyle{cartesian(i)}.
+        \ccPrecond $0\leq i \leq 2$.}
+
+\ccMethod{int dimension() const;}
+       {returns the dimension (the constant 3).}
+
+\ccMethod{Bbox_3 bbox() const;}
+       {returns a bounding box containing \ccVar.}
+
+\ccMethod{Weighted_point_3<Kernel>  transform(const Aff_transformation_3<Kernel> &t) const;}
+       {returns the point obtained by applying $t$ on \ccVar.}
+
+Here are the access functions for the components of the weighted point.
+
+\ccMethod{Weight weight() const;}
+       {returns the weight associated with the point.}
+\ccGlue
+\ccMethod{Point_3<Kernel> point() const;}
+       {returns the unweighted point.}
+
+\ccHeading{Operators}
+
+The following operations can be applied on weighted points:
+
+\ccFunction{Weighted_point_3<Kernel> operator+(const Weighted_point_3<Kernel> &p,
+                                          const Vector_3<Kernel> &v);}
+       {returns the point obtained by translating \ccStyle{p} by the 
+        vector \ccStyle{v}.}
+
+\ccFunction{Weighted_point_3<Kernel> operator-(const Weighted_point_3<Kernel> &p,
+                                          const Vector_3<Kernel> &v);}
+       {returns the point obtained by translating \ccStyle{p} by the 
+        vector -\ccStyle{v}.}
+
+\ccSeeAlso
+
+\ccRefIdfierPage{CGAL::Point_3<Kernel>} \\
+\ccRefIdfierPage{CGAL::Weighted_point_2<Kernel>}
+
+\end{ccRefClass} 
+

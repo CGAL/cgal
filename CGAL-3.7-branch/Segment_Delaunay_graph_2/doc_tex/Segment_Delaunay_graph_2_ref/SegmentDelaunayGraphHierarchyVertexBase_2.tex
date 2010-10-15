@@ -1,0 +1,117 @@
+%% Copyright (c) 2003,2004,2005  INRIA Sophia-Antipolis (France) and
+%% Notre Dame University (U.S.A.).  All rights reserved.
+%%
+%% This file is part of CGAL (www.cgal.org); you may redistribute it under
+%% the terms of the Q Public License version 1.0.
+%% See the file LICENSE.QPL distributed with CGAL.
+%%
+%% Licensees holding a valid commercial license may use this file in
+%% accordance with the commercial license agreement provided with the software.
+%%
+%% This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
+%% WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
+%%
+%% $URL$
+%% $Id$
+%% 
+%%
+%% Author(s)     : Menelaos Karavelas <mkaravel@cse.nd.edu>
+
+
+\begin{ccRefConcept}{SegmentDelaunayGraphHierarchyVertexBase_2}
+
+%% \ccHtmlCrossLink{}     %% add further rules for cross referencing links
+%% \ccHtmlIndexC[concept]{} %% add further index entries
+\ccCreationVariable{hvb}
+
+
+\ccDefinition 
+The vertex of a segment Delaunay graph
+included in a segment Delaunay graph hierarchy has to provide
+some pointers to the corresponding vertices in the
+graphs of the next and preceeding levels.
+Therefore, the concept \ccc{SegmentDelaunayGraphHierarchyVertexBase_2}
+refines the concept \ccc{SegmentDelaunayGraphVertexBase_2}, by
+adding two vertex handles to the correponding vertices for the
+next and previous level graphs.
+
+
+\ccRefines
+\ccc{SegmentDelaunayGraphVertexBase_2}
+
+
+\ccTypes
+\ccc{SegmentDelaunayGraphHierarchyVertexBase_2} does not introduce
+any types in addition to those of
+\ccc{SegmentDelaunayGraphVertexBase_2}.
+
+
+\ccCreation
+\ccCreationVariable{v}  %% choose variable name
+\ccTwo{SegmentDelaunayGraphHierarchyVertexBase_2 v;+++}{}
+%
+
+The \ccc{SegmentDelaunayGraphHierarchyVertexBase_2} concept does not
+introduce any constructors in addition to those of the
+\ccc{SegmentDelaunayGraphVertexBase_2} concept.
+
+%% In addition to the default and copy constructors the following
+%% constructors must be defined.
+
+%% \ccConstructor{SegmentDelaunayGraphHierarchyVertexBase_2(Storage_site_2 ss);}
+%% {Constructs a vertex associated with the site represented by the
+%%   storage site \ccc{ss}.}
+%% %
+%% \ccGlue
+%% \ccConstructor
+%% {SegmentDelaunayGraphHierarchyVertexBase_2(Storage_site_2 s,
+%%   Face_handle f);}
+%% {Constructs a vertex associated with
+%% the site represented by the storage site \ccc{ss} and pointing to the
+%% face associated with the face handle \ccc{f}.}
+
+
+\ccOperations
+\ccThree{Vertex_handle}{v.set_down(Vertex_handle d)+}{}
+%
+\ccMethod{Vertex_handle up();}{Returns a handle to the corresponding
+  vertex of the next level segment Delaunay graph. If such a vertex
+  does not exist \ccc{Vertex_handle()} is returned.}
+%
+\ccGlue
+\ccMethod{Vertex_handle down();}{Returns a handle to the corresponding
+  vertex of the previous level segment Delaunay graph. If such a
+  vertex does not exist \ccc{Vertex_handle()} is returned.}
+%
+\ccGlue
+\ccMethod{void set_up(Vertex_handle u);}{Sets the handle for the
+  vertex of the next level segment Delaunay graph.}
+%
+\ccGlue 
+\ccMethod{void set_down(Vertex_handle d);}{Sets the handle for the
+  vertex of the previous level segment Delaunay graph.}
+
+
+
+
+\ccHasModels
+
+\ccc{CGAL::Segment_Delaunay_graph_hierarchy_vertex_base_2<CGAL::Segment_Delaunay_graph_vertex_base_2<Gt,SSTag> >}
+
+
+\ccSeeAlso
+
+\ccc{SegmentDelaunayGraphDataStructure_2} \\
+\ccc{SegmentDelaunayGraphVertexBase_2}\\
+\ccc{CGAL::Segment_Delaunay_graph_hierarchy_2<Gt,DS>}\\
+\ccc{CGAL::Triangulation_data_structure_2<Vb,Fb>}\\
+\ccc{CGAL::Segment_Delaunay_graph_vertex_base_2<Gt,SSTag>}\\
+\ccc{CGAL::Segment_Delaunay_graph_hierarchy_vertex_base_2<Vbb>}
+
+\end{ccRefConcept}
+
+
+% +------------------------------------------------------------------------+
+%%RefPage: end of main body, begin of footer
+% EOF
+% +------------------------------------------------------------------------+

@@ -1,0 +1,47 @@
+% +------------------------------------------------------------------------+
+% | Reference manual page: Event.tex
+% +------------------------------------------------------------------------+
+% | 20.03.2005   Author
+% | Package: Kinetic_data_structures
+% | 
+\RCSdef{\RCSEventRev}{$Id$}
+\RCSdefDate{\RCSEventDate}{$Date$}
+% |
+%%RefPage: end of header, begin of main body
+% +------------------------------------------------------------------------+
+
+
+\begin{ccRefConcept}{Kinetic::Certificate}
+
+%% \ccHtmlCrossLink{}     %% add further rules for cross referencing links
+%% \ccHtmlIndexC[concept]{} %% add further index entries
+
+\ccDefinition
+  
+The concept \ccClassName\ represents certificate. Its main purpose is
+to provide a way of creating \ccc{Time} objects corresponding to when
+the certificate fails and to cache any useful work done in find the
+\ccc{Time} for later.
+
+\ccOperations
+
+\ccCreationVariable{c}
+
+\ccMethod{Time failure_time();}{Returns the next failure time.}
+
+\ccMethod{bool will_fail();}{Returns true if the certificate will ever fail.}
+
+\ccMethod{void pop_failure_time();}{Advances to the next failure time (the next root of the certificate functions).}
+
+
+\ccSeeAlso
+
+\ccc{Kinetic::Kernel}.
+
+\end{ccRefConcept}
+
+% +------------------------------------------------------------------------+
+%%RefPage: end of main body, begin of footer
+% EOF
+% +------------------------------------------------------------------------+
+

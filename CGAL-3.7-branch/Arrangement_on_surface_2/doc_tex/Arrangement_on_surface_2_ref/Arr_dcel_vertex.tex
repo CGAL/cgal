@@ -1,0 +1,115 @@
+% +------------------------------------------------------------------------+
+% | Reference manual page: Arr_dcel_vertex.tex
+% +------------------------------------------------------------------------+
+% | 
+% | Package: Arrangement_2
+% | 
+% +------------------------------------------------------------------------+
+
+\ccRefPageBegin
+
+\begin{ccRefConcept}{ArrangementDcelVertex}
+
+\ccDefinition
+
+A vertex record in a \dcel\ data structure. A vertex is always associated
+with a point. However, the vertex record only stores a pointer to the
+associated point, and the actual \ccc{Point} object is stored elsewhere.
+
+A vertex usually has several halfedges incident to it, such that it is
+possible to access one of these halfedges directly and to traverse all
+incident halfedges around the vertex. However, the \dcel\ may also contain
+isolated vertices that have no incident halfedges. In this case, the vertex
+stores an isolated vertex-information record, indicating the face that
+contains this vertex in its interior.
+
+\ccCreationVariable{v}
+
+\ccTypes
+%=======
+
+\ccNestedType{Halfedge}{the corresponding \dcel\ halfedge type.}
+\ccGlue
+\ccNestedType{Isolated_vertex}{the corresponding \dcel\ isolated
+                               vertex-information type.}
+
+\ccNestedType{Point}{the point type associated with the vertex.} 
+
+\ccCreation
+%==========
+
+\ccConstructor{Arr_dcel_vertex();}
+   {default constructor.}
+
+\ccMethod{void assign (const Self& other);}
+   {assigns \ccVar{} with the contents of the \ccc{other} vertex.}
+
+\ccHtmlNoLinksFrom{   % to avoid linkage of Vertex, etc to HDS::Vertex
+
+\ccAccessFunctions
+%=================
+
+All functions below also have \ccc{const} counterparts, returning non-mutable
+pointers or references:
+
+\ccMethod{bool is_isolated() const;}
+    {returns whether the vertex is isolated (has no incident halfedges).}
+
+\ccMethod{Halfedge* halfedge();}
+    {returns an incident halfedge that has \ccVar{} as its target.
+     \ccPrecond{\ccVar{} is {\em not} an isolated vertex.}}
+
+\ccMethod{Isolated_vertex* isolated_vertex();}
+    {returns the isolated vertex-information record.
+     \ccPrecond{\ccVar{} is an isolated vertex.}}
+
+\ccMethod{bool has_null_point () const;}
+    {returns whether the vertex is not associated with a valid point (i.e. it
+     lies at infinity).}
+
+\ccMethod{Point& point();}
+    {returns the associated point.
+     \ccPrecond{\ccVar() is associated with a valid point.}}
+
+\ccMethod{Arr_parameter_space parameter_space_in_x () const;}
+    {returns the placement of the $x$-coordinate in the parameter space,
+    that is, either the left boundary-side, the interior, or the right
+    boundary-side.}
+
+\ccMethod{Arr_parameter_space parameter_space_in_y () const;}
+    {returns the placement of the $y$-coordinate in the parameter space,
+    that is, either the bottom boundary-side, the interior, or the top
+    boundary-side.}
+
+\ccModifiers
+%===========
+
+\ccMethod{void set_halfedge (Halfedge* e);}
+    {sets the incident halfedge, marking \ccVar{} as a regular vertex.}
+
+\ccMethod{void set_isolated_vertex (Isolated_vertex* iv);}
+    {sets the isolated vertex-information record, marking \ccVar{}
+     as an isolated vertex.}
+
+\ccMethod{void set_point (Point* p);}
+    {sets the associated point.}
+
+\ccMethod{void set_boundary (Arr_parameter_space inf_x, Arr_parameter_space inf_y);}
+    {sets \ccVar{} as a vertex on a boundary side.
+     \ccPrecond{Either \ccc{inf_x} or \ccc{inf_y} is not \ccc{ARR_INTERIOR}.}}
+
+} % ccHtmlNoLinksFrom
+
+\ccSeeAlso
+
+\ccc{ArrangementDcel}\lcTex{ 
+     (\ccRefPage{ArrangementDcel})}\\
+\ccc{ArrangementDcelHalfedge}\lcTex{
+     (\ccRefPage{ArrangementDcelHalfedge})}\\
+\ccc{ArrangementDcelIsolatedVertex}\lcTex{
+     (\ccRefPage{ArrangementDcelIsolatedVertex})}
+
+\end{ccRefConcept}  
+
+\ccRefPageEnd
+

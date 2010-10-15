@@ -1,0 +1,19 @@
+\begin{ccRefFunctionObjectConcept}{Kernel::ConstructRadicalPlane_3}
+A model for this must provide:
+
+\ccCreationVariable{fo}
+
+\ccMemberFunction{Kernel::Plane_3 operator()
+			(const Kernel::Sphere_3& sphere1,
+				const Kernel::Sphere_3& sphere2);}
+       {returns the radical plane of the spheres.
+	\ccPrecond{The two spheres don't have the same center.}}
+
+\ccRefines
+\ccc{AdaptableFunctor} (with two argument)
+
+\ccSeeAlso
+\ccRefIdfierPage{CGAL::Sphere_3<Kernel>} \\
+
+\end{ccRefFunctionObjectConcept}
+

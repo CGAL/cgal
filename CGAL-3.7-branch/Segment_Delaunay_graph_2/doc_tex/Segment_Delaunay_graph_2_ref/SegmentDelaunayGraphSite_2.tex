@@ -1,0 +1,300 @@
+%% Copyright (c) 2003,2004,2005  INRIA Sophia-Antipolis (France) and
+%% Notre Dame University (U.S.A.).  All rights reserved.
+%%
+%% This file is part of CGAL (www.cgal.org); you may redistribute it under
+%% the terms of the Q Public License version 1.0.
+%% See the file LICENSE.QPL distributed with CGAL.
+%%
+%% Licensees holding a valid commercial license may use this file in
+%% accordance with the commercial license agreement provided with the software.
+%%
+%% This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
+%% WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
+%%
+%% $URL$
+%% $Id$
+%% 
+%%
+%% Author(s)     : Menelaos Karavelas <mkaravel@cse.nd.edu>
+
+
+
+\begin{ccRefConcept}{SegmentDelaunayGraphSite_2} 
+%% add template arg's if necessary
+
+%% \ccHtmlCrossLink{}     %% add further rules for cross referencing links
+%% \ccHtmlIndexC[class]{} %% add further index entries
+
+\ccDefinition
+  
+The concept \ccc{SegmentDelaunayGraphSite_2} provides the
+requirements for the sites of a segment Delaunay graph.
+
+\ccRefines
+\ccc{DefaultConstructible}\\
+\ccc{CopyConstructible}\\
+\ccc{Assignable}
+
+\ccTwo{SegmentDelaunayGraphSite_2::Segment_2+}{}
+\ccTypes
+\ccNestedType{Point_2}{The point type.}
+\ccGlue
+\ccNestedType{Segment_2}{The segment type.}
+\ccGlue
+\ccNestedType{FT}{The field number type.}
+\ccGlue
+\ccNestedType{RT}{The ring number type.}
+
+
+
+
+\ccCreation
+\ccThree{SegmentDelaunayGraphSite_2+}{construct_site_2(Point_2 p)+}{}
+
+
+\ccCreationVariable{s}  %% choose variable name
+
+In addition to the default and copy constructors the following static
+methods are available for constructing sites:
+
+\ccMethod{SegmentDelaunayGraphSite_2
+  construct_site_2(Point_2 p);}{Constructs a site from a point: the site
+  represents the point \ccc{p}.}
+%
+\ccGlue
+\ccMethod{SegmentDelaunayGraphSite_2 construct_site_2(Point_2 p1,
+  Point_2 p2);}{Constructs a site from two points: the site represents
+  the (open) segment \ccc{(p1,p2)}.}
+%
+\ccGlue
+\ccMethod{SegmentDelaunayGraphSite_2 construct_site_2(Point_2 p1,
+  Point_2 p2, Point_2 q1, Point_2 q2);}%
+{Constructs a site from four points: the site represents the
+  point of intersection of the segments \ccc{(p1,p2)} and
+  \ccc{(q1,q2)}.}
+%
+\ccGlue
+\ccMethod{SegmentDelaunayGraphSite_2 construct_site_2(Point_2 p1,
+  Point_2 p2, Point_2 q1,
+  Point_2 q2, bool b);}{Constructs a site from four points and a boolean: the
+  site represents a segment. If \ccc{b} is \ccc{true} the endpoints
+  are \ccc{p1} and $p_\times$, otherwise $p_\times$ and
+  \ccc{p2}. $p_\times$ is the point of intersection of the segments
+  \ccc{(p1,p2)},\ccc{(q1,q2)}.}
+
+%
+\ccGlue
+\ccMethod{SegmentDelaunayGraphSite_2 construct_site_2(Point_2 p1,
+  Point_2 p2, Point_2 q1,
+  Point_2 q2, Point_2 r1, Point_2 r2);}{Constructs a site from six
+  points: the site represents the segment with endpoints the points of
+  intersection of the pairs of segments \ccc{(p1,p2)},\ccc{(q1,q2)}
+  and \ccc{(p1,p2)},\ccc{(r1,r2)}.}
+
+\ccPredicates
+\ccThree{bool}{s.is_input(unsigned int i)+}{}
+\ccMethod{bool is_defined();}{Returns \ccc{true} if the site
+  represents a valid point or segment.}
+%
+\ccGlue
+\ccMethod{bool is_point();}{Returns \ccc{true} if the site represents
+  a point.}
+%
+\ccGlue
+\ccMethod{bool is_segment();}{Returns \ccc{true} if the site
+  represents a segment.}
+%
+\ccGlue
+\ccMethod{bool is_input();}{Returns \ccc{true} if the site
+  represents an input point or a segment defined by two input
+  points. Returns \ccc{false} if it represents a point of intersection
+  of two segments, or if it represents a segment, at least one
+  endpoint of which is a point of intersection of two segments.}
+%
+\ccGlue
+\ccMethod{bool is_input(unsigned int i);}{Returns \ccc{true} if the
+  \ccc{i}-th endpoint of the site is an input point. Returns \ccc{false}
+  if the \ccc{i}-th endpoint of the site is the intersection of two
+  segments.
+  \ccPrecond{\ccc{i} must be at most $1$, and \ccc{s.is_segment()}
+    must be \ccc{true}.}}
+
+
+
+
+\ccAccessFunctions
+%\ccThree{Segment_2}{s.point(unsigned int i)+}{}
+\ccThree{Segment_2}{s.segment()+}{}
+%% \ccMethod{Point_2 point(unsigned int i) const;}{
+%%   Returns the \ccc{i}-th point of the site's representation. The valid
+%%   values for \ccc{i} are $0$ through the number of points in the
+%%   \ccc{construct_site_2} used to construct the site.
+%%   \ccPrecond{\ccc{i} must be at most $5$. The site must be of the
+%%     correct type in order to access the corresponding point.}}
+%% %
+%% \ccGlue
+\ccMethod{Point_2 point() const;}{Returns the point represented by the
+  site \ccc{s}.
+  \ccPrecond{ \ccc{s.is_point()} must be \ccc{true}.}}
+%
+\ccGlue
+\ccMethod{Segment_2 segment() const;}{Returns the segment represented
+  by the site \ccc{s}.
+  \ccPrecond{ \ccc{s.is_segment()} must be \ccc{true}.}}
+%
+\ccGlue
+\ccMethod{Point_2 source() const;}{Returns the source endpoint of the
+  segment. Note that this method can construct an inexact point if the
+  number type used is inexact.
+  \ccPrecond{\ccc{s.is_segment()} must be \ccc{true}.}}
+%
+\ccGlue
+\ccMethod{Point_2 target() const;}{Returns the target endpoint of the
+  segment. Note that this method can construct an inexact point if the
+  number type used is inexact.
+  \ccPrecond{\ccc{s.is_segment()} must be \ccc{true}.}}
+%
+%\ccThree{SegmentDelaunayGraphSite_2}{s.ps}{}
+\ccThree{SegmentDelaunayGraphSite_2}{}{}
+\ccGlue
+\ccMethod{SegmentDelaunayGraphSite_2 supporting_site();}
+         {Returns a segment site object representing the segment
+           that supports the segment represented by the site. Both
+           endpoints of the returned site are input points.
+  \ccPrecond{\ccc{s.is_segment()} must be \ccc{true}.}}
+%
+\ccGlue
+\ccMethod{SegmentDelaunayGraphSite_2 supporting_site(unsigned int i);}
+         {Returns a segment site object representing the \ccc{i}-th
+           segment that supports the point of intersection represented
+           by the site. Both endpoints of the returned site are input
+           points.
+  \ccPrecond{\ccc{i} must be at most $1$, \ccc{s.is_point()} must be
+    \ccc{true} and \ccc{s.is_input()} must be \ccc{false}.}}
+%
+\ccGlue
+\ccMethod{SegmentDelaunayGraphSite_2 crossing_site(unsigned int i);}
+         {Returns a segment site object representing the \ccc{i}-th
+           segment that supports the $i$-th endpoint of the site
+           which is not the supporting segment of the site. Both
+           endpoints of the returned site are input points.
+           \ccPrecond{\ccc{i} must be at most $1$,
+             \ccc{s.is_segment()} must be \ccc{true} and
+             \ccc{s.is_input(i)} must be \ccc{false}.}}
+%
+\ccGlue
+\ccMethod{SegmentDelaunayGraphSite_2 source_site();}
+         {Returns a point site object representing the source point of
+           the site.
+         \ccPrecond{\ccc{s.is_segment()} must be \ccc{true}.}}
+%
+\ccGlue
+\ccMethod{SegmentDelaunayGraphSite_2 target_site();}
+         {Returns a point site object representing the target point of
+           the site.
+         \ccPrecond{\ccc{s.is_segment()} must be \ccc{true}.}}
+%
+\ccGlue
+\ccMethod{Point_2 source_of_supporting_site();}
+{ Returns the source point of the supporting site of the this site.
+\ccPrecond{\ccc{is_segment()} must be \ccc{true}.}}
+%
+\ccGlue
+\ccMethod{Point_2 target_of_supporting_site();}
+{ Returns the target point of the supporting site of the this site.
+\ccPrecond{\ccc{is_segment()} must be \ccc{true}.}}
+%
+\ccGlue
+\ccMethod{Point_2 source_of_supporting_site(unsigned int i);}
+{ Returns the source point of the \ccc{i}-th supporting site of the
+  this site.
+\ccPrecond{\ccc{is_point()} must be \ccc{true}, \ccc{is_input()}
+  must be \ccc{false} and \ccc{i} must either be \ccc{0} or \ccc{1}.}}
+%
+\ccGlue
+\ccMethod{Point_2 target_of_supporting_site(unsigned int i);}
+{ Returns the target point of the \ccc{i}-th supporting site of the
+  this site.
+\ccPrecond{\ccc{is_point()} must be \ccc{true}, \ccc{is_input()}
+  must be \ccc{false} and \ccc{i} must either be \ccc{0} or \ccc{1}.}}
+%
+\ccGlue
+\ccMethod{Point_2 source_of_crossing_site(unsigned int i);}
+{ Returns the source point of the \ccc{i}-th crossing site of the
+  this site.
+\ccPrecond{\ccc{is_segment()} must be \ccc{true}, \ccc{is_input(i)}
+  must be \ccc{false} and \ccc{i} must either be \ccc{0} or \ccc{1}.}}
+%
+\ccGlue
+\ccMethod{Point_2 target_of_crossing_site(unsigned int i);}
+{ Returns the target point of the \ccc{i}-th supporting site of the
+  this site.
+\ccPrecond{\ccc{is_segment()} must be \ccc{true}, \ccc{is_input(i)}
+  must be \ccc{false} and \ccc{i} must either be \ccc{0} or \ccc{1}.}}
+%% %
+%% \ccGlue
+%% \ccMethod{SegmentDelaunayGraphSite_2 opposite_site();}
+%%          {Returns a segment site object representing the segment site
+%%            with its endpoints reversed.
+%%          \ccPrecond{\ccc{s.is_segment()} must be \ccc{true}.}}
+
+
+
+
+%% \ccHeading{Set methods}
+%% \ccThree{void}{s.set_point(Point_2 p)+}{}
+%% %\ccThree{void}{s.set_segment(Point_2 p1, Point_2 p2)+}{}
+%% \ccMethod{void set_point(Point_2 p);}
+%%          {Sets the site to be a point site with \ccc{p} as the
+%%            point.}
+%% %
+%% %\ccGlue
+%% \ccMethod{void set_point(Point_2 p1, Point_2 p2, Point_2 q1, Point_2 q2);}
+%%          {Sets the site to be a point site with the point being the
+%%            intersection point of the segments \ccc{(p1,p2)} and
+%%            \ccc{(q1,q2)}.}
+%% %
+%% \ccGlue
+%% \ccMethod{void set_segment(Point_2 p1, Point_2 p2);}
+%%          {Sets the site to be an segment site with \ccc{(p1,p2)}
+%%            as the segment.}
+%% %
+%% \ccGlue
+%% \ccMethod{void set_segment(Point_2 p1, Point_2 p2, Point_2 q1, Point_2
+%%   q2, bool b);}
+%%          {Sets the site to be a segment site. If \ccc{b} is
+%%            \ccc{true} the endpoints of the segment are \ccc{p1} and
+%%            the point of intersection of the segments \ccc{(p1,p2)} and
+%%            \ccc{(q1,q2)}. If \ccc{b} is \ccc{false} the endpoints of
+%%            the segment are the point of intersection of the segments
+%%            \ccc{(p1,p2)} and \ccc{(q1,q2)} and \ccc{p2}.}
+%% %
+%% \ccGlue
+%% \ccMethod{void set_segment(Point_2 p1, Point_2 p2, Point_2 q1, Point_2
+%%   q2, Point_2 r1, Point_2 r2);}
+%%          {Sets the site to be a segment site with endpoints the
+%%            points of intersection of the pairs of segments
+%%            \ccc{(p1,p2)}, \ccc{(q1,q2)} and \ccc{(p1,p2)},
+%%            \ccc{(r1,r2)}.}
+
+
+
+\ccHasModels
+\ccc{CGAL::Segment_Delaunay_graph_site_2<K>}
+
+
+\ccSeeAlso
+\ccc{SegmentDelaunayGraphTraits_2}\\
+\ccc{CGAL::Segment_Delaunay_graph_site_2<K>}\\
+\ccc{CGAL::Segment_Delaunay_graph_traits_2<K,MTag>}\\
+\ccc{CGAL::Segment_Delaunay_graph_traits_without_intersections_2<K,MTag>}\\
+\ccc{CGAL::Segment_Delaunay_graph_filtered_traits_2<CK,CM,EK,EM,FK,FM>}\\
+\ccc{CGAL::Segment_Delaunay_graph_filtered_traits_without_intersections_2<CK,CM,EK,EM,FK,FM>}
+
+\end{ccRefConcept}
+
+% +------------------------------------------------------------------------+
+%%RefPage: end of main body, begin of footer
+% EOF
+% +------------------------------------------------------------------------+
+

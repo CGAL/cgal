@@ -1,0 +1,81 @@
+\begin{ccRefFunction}{greene_approx_convex_partition_2}
+
+\ccDefinition
+Function that produces a set of 
+convex polygons that represent a partitioning of a polygon defined
+on a sequence of points.
+The number of convex polygons produced is 
+no more than four times the minimal number.%
+\ccIndexSubsubitem{polygon partitioning}{convex}{approximately optimal}
+
+\ccInclude{CGAL/partition_2.h}
+
+\ccFunction{
+template <class InputIterator, class OutputIterator, class Traits>
+OutputIterator greene_approx_convex_partition_2(InputIterator first,
+                                                InputIterator beyond,
+                                                OutputIterator result,
+                                                const Traits& traits = Default_traits);
+}
+{
+computes a partition of the polygon defined 
+by the points in the range [\ccc{first}, \ccc{beyond}) into convex 
+polygons. The counterclockwise-oriented partition polygons are written to
+the sequence starting at position \ccc{result}.  The past-the-end iterator for 
+the resulting sequence of polygons is returned.
+\ccPrecond The points in the range [\ccc{first}, \ccc{beyond}) define a simple,
+counterclockwise-oriented polygon.
+%\ccIndexSubitem[C]{greene_approx_convex_partition_2}{preconditions}
+}
+
+\ccHeading{Requirements}
+\begin{enumerate}
+    \item \ccc{Traits} is a model of the concepts \ccc{PartitionTraits_2}
+          %\ccIndexMainItem[c]{PartitionTraits_2}
+          and \ccc{YMonotonePartitionTraits_2}.
+          %\ccIndexMainItem[c]{YMonotonePartitionTraits_2}. 
+          For the purpose of 
+          checking the validity of the $y$-monotone partition produced as
+          a preprocessing step for the convex partitioning, it must also 
+          be a model of \ccc{YMonotonePartitionIsValidTraits_2}.
+          %\ccIndexMainItem[c]{YMonotonePartitionIsValidTraits_2}. 
+          For the purpose of checking
+          the postcondition that the convex partition is valid, \ccc{Traits}
+          must also be a model of \ccc{ConvexPartitionIsValidTraits_2}.
+          %\ccIndexMainItem[c]{ConvexPartitionIsValidTraits_2}. 
+    \item \ccc{OutputIterator::value_type} is equivalent to 
+          \ccc{Traits::Polygon_2}.
+    \item \ccc{InputIterator::value_type} is equivalent to 
+          \ccc{Traits::Point_2},
+          which should also be equivalent to the type of the points stored in 
+          an object of type \ccc{Traits::Polygon_2}.
+\end{enumerate}
+
+The default traits class \ccc{Default_traits} is \ccc{Partition_traits_2},
+%\ccIndexTraitsClassDefault{greene_approx_convex_partition_2}
+with the representation type determined by \ccc{InputIterator::value_type}.
+
+\ccSeeAlso
+\ccRefIdfierPage{CGAL::approx_convex_partition_2} \\
+\ccRefIdfierPage{CGAL::convex_partition_is_valid_2} \\
+\ccRefIdfierPage{CGAL::optimal_convex_partition_2} \\
+\ccRefIdfierPage{CGAL::partition_is_valid_2} \\
+\ccRefIdfierPage{CGAL::y_monotone_partition_2} 
+
+\ccImplementation
+This function implements the approximation algorithm of 
+Greene \cite{g-dpcp-83} and requires $O(n \log n)$ time and $O(n)$ space
+to produce a convex partitioning given a $y$-monotone partitioning of a
+polygon with $n$ vertices.  The function \ccc{y_monotone_partition_2} 
+is used to produce the monotone partition.
+
+\ccExample
+The following program computes an approximately optimal
+convex partitioning of a polygon using the default
+traits class and stores the partition polygons in the list 
+\ccc{partition_polys}.
+
+\ccIncludeExampleCode{Partition_2/greene_approx_convex_partition_2.cpp}
+
+
+\end{ccRefFunction}

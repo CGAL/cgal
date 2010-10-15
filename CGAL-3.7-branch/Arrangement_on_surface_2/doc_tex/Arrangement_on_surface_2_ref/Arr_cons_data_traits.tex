@@ -1,0 +1,121 @@
+% Reference manual page: Arr_cons_data_traits.tex
+% Package: Arrangement_2
+
+\ccRefPageBegin
+\begin{ccRefClass}{Arr_consolidated_curve_data_traits_2<Traits,Data>}
+
+\ccDefinition
+%============
+The class \ccRefName\ is a model of the concept \ccc{ArrangementTraits_2},
+and serves as a decorator class that enables the extension of the curve
+type defined by the \ccc{Traits} parameter. The traits class inherits its 
+point type from \ccc{Traits::Point_2}, and defines the types
+\ccc{Curve_2} and \ccc{X_monotone_curve_2} extended with extraneous data
+fields of type \ccc{Data}.
+
+Each \ccc{Curve_2} object is associated with a single data field of type
+\ccc{Data}, and each \ccc{X_monotone_curve_2} object is associated with 
+a set of unique data objects. When a curve is subdivided into $x$-monotone
+subcurves, all resulting subcurves are associated with a list containing 
+a single data object, copied from the inducing curve. When an $x$-monotone 
+curve is split, its data set is duplicated, and inserted into the sets of 
+both resulting subcurves. In case two (or more) $x$-monotone curves 
+overlap, their data sets are consolidated, and are inserted into the set
+of the $x$-monotone curve that represents the overlap.
+
+\ccInclude{CGAL/Arr_consolidated_curve_data_traits_2.h}
+ 
+\ccIsModel\ccc{ArrangementTraits_2}
+
+\ccInheritsFrom
+\begin{tabbing}
+\ccc{Arr_curve_data_traits_2<}\=\ccc{Traits,}\\
+                              \>\ccc{_Unique_list<Data>,}\\
+                              \>\ccc{_Consolidate_unique_lists<Data>,}\\
+                              \>\ccc{Data>}
+\end{tabbing}
+
+\ccTypes
+% ======
+\ccTypedef{typedef Traits Base_traits_2;}{the base traits-class.}
+\ccGlue
+\ccTypedef{typedef typename Base_traits_2::Curve_2 Base_curve_2;}%
+  {the base curve.}
+\ccGlue
+\ccTypedef{typedef typename Base_traits_2::X_monotone_curve_2 Base_x_monotone_curve_2;}%
+  {the base $x$-monotone curve curve.}
+
+\ccNestedType{typedef Data_container}%
+  {a set of data objects that is associated with an $x$-monotone curve.}
+\ccGlue
+\ccNestedType{typedef Data_iterator}%
+  {a non-mutable iterator for the data objects in the data container.}
+
+\subsection*{Class Arr\_consolidated\_curve\_data\_traits\_2$<$Traits,Data$>$::Data\_container}
+%=============================================================================
+
+The \ccc{Data_container} class nested within the consolidated 
+curve-data traits and associated with the \ccc{Traits::X_monotone_curve_2}
+type is maintained as a list with unique data objects. This representation is
+simple and efficient in terms of memory consumption. It also requires that
+the \ccc{Data} class supports only the equality operator. Note however that
+most set operations require linear time.
+
+\begin{ccClass}{Arr_consolidated_curve_data_traits_2<Traits,Data>::
+                Data_container}
+
+\ccCreationVariable{dset}
+
+\ccCreation
+% =======================
+\ccConstructor{Data_container ();}%
+  {default constructor.}
+
+\ccConstructor{Data_container (const Data& data);}%
+  {constructs set containing a single \ccc{data} object.}
+
+\ccAccessFunctions
+%-----------------
+
+\ccMethod{std::size_t size () const;}%
+  {returns the number of data objects in the set.}
+
+\ccMethod{Data_iterator begin () const;}%
+  {returns an iterator pointing to the first data object.}
+
+\ccMethod{Data_iterator end () const;}%
+  {returns a past-the-end iterator for the data objects.}
+
+\ccMethod{const Data& front () const;}{%
+  returns the first data object inserted into the set.
+  \ccPrecond{The number of data objects is not $0$.}}
+
+\ccMethod{const Data& back () const;}{%
+  returns the last data object inserted into the set.
+  \ccPrecond{The number of data objects is not $0$.}}
+
+\ccPredicates
+% ===========
+\ccMethod{bool operator== (const Data_container& other) const;}
+  {check if the two sets contain the same data objects (regardless of order).}
+
+\ccMethod{Data_iterator find (const Data& data);}{%
+  find the given \ccc{data} object in the set and returns an iterator
+  for this object, or \ccc{end()} if it is not found.}
+
+\ccModifiers
+% ==========
+\ccMethod{bool insert (const Data& data);}{%
+  inserts the given \ccc{data} object into the set. Returns \ccc{true} on
+  success, or \ccc{false} if the set already contains the object.}
+
+\ccMethod{bool erase (const Data& data);}{%
+  erases the given \ccc{data} object from the set. Returns \ccc{true} on
+  success, or \ccc{false} if the set does not contain the object.}
+
+\ccMethod{void clear ();}{clears the set.}
+
+\end{ccClass}
+
+\end{ccRefClass}
+\ccRefPageEnd

@@ -1,0 +1,207 @@
+#! /bin/sh
+
+#
+# This script is a modified version of cgal_test_with_cmake which:
+# - is cross-platform Unix/make and Cygwin/VisualC++
+# - concats all log files to cgal_test_with_cmake.log
+# - does not clean up object files and executables if $NEED_CLEAN==n
+#
+
+# This is a script for the CGAL test suite. Such a script must obey
+# the following rules:
+#
+# - the name of the script is cgal_test_with_cmake
+# - for every target two one line messages are written to the file 'error.txt'
+#     the first one indicates if the compilation was successful
+#     the second one indicates if the execution was successful
+#   if one of the two was not successful, the line should start with 'ERROR:'
+# - running the script should not require any user interaction
+# - the script should clean up object files and executables
+
+  ERRORFILE=error.txt
+  DO_RUN=y
+  case "$CMAKE_GENERATOR" in
+    -GVisual* ) # if Visual Studio
+        MAKE_CMD="devenv.com *.sln /Build Release /Project"
+        MAKE_CLEAN_CMD="devenv.com *.sln /Clean Release"
+        ;;
+    -GNMake* ) # if nmake
+        if [ -z "$MAKE_CMD" ]; then 
+            MAKE_CMD="nmake"
+        fi
+        MAKE_CMD="${MAKE_CMD} -fMakefile"
+        MAKE_CLEAN_CMD="${MAKE_CMD} clean"
+        ;;
+    * ) # if make
+        if [ -z "${MAKE_CMD}" ]; then
+          MAKE_CMD=make
+        fi
+        MAKE_CMD="${MAKE_CMD} -fMakefile"
+        MAKE_CLEAN_CMD="${MAKE_CMD} clean"
+        ;;
+  esac
+
+#---------------------------------------------------------------------#
+#                    configure
+#---------------------------------------------------------------------#
+
+configure()
+{
+  echo "Configuring... "
+
+  if eval 'cmake "$CMAKE_GENERATOR" -DRUNNING_CGAL_AUTO_TEST=TRUE  \
+                                     -DCGAL_DIR="$CGAL_DIR" \
+                                     .' ; then
+
+    echo "   successful configuration" >> $ERRORFILE
+  else
+    echo "   ERROR:     configuration" >> $ERRORFILE
+  fi
+}
+
+#---------------------------------------------------------------------#
+#                    find_executable <target>
+#---------------------------------------------------------------------#
+
+find_executable()
+{
+  PARAM_APPLICATION=""
+  [ -f ./release/$1.exe ] && PARAM_APPLICATION="./release/$1.exe"
+  [ -x ./$1 ] && PARAM_APPLICATION="./$1"
+  echo "$PARAM_APPLICATION"
+}
+
+#---------------------------------------------------------------------#
+#                    can_compile <target>
+#---------------------------------------------------------------------#
+
+can_compile()
+{
+  case "$CMAKE_GENERATOR" in
+    -GVisual* ) # if Visual Studio
+        if [ -f "$1.vcproj" ]; then
+          echo y
+        else
+          echo n
+        fi
+        ;;
+    * ) # if make or nmake
+        if ${MAKE_CMD} help | grep "$1\$" > /dev/null; then
+          echo y
+        else
+          echo n
+        fi
+        ;;
+  esac
+}
+
+#---------------------------------------------------------------------#
+#                    compile_and_run <target>
+#---------------------------------------------------------------------#
+
+compile_and_run()
+{
+  echo "Compiling $1 ... "
+  SUCCESS="y"
+
+  if eval '${MAKE_CMD} $1' ; then
+    echo "   successful compilation of $1" >> $ERRORFILE
+  else
+    echo "   ERROR:     compilation of $1" >> $ERRORFILE
+    SUCCESS=""
+  fi
+
+  if [ -n "$DO_RUN" ] ; then
+    if [ -n "${SUCCESS}" ] ; then
+      OUTPUTFILE=ProgramOutput.$1.$PLATFORM
+      rm -f $OUTPUTFILE
+      COMMAND="`find_executable $1`"
+      if [ -f $1.cmd ] ; then
+        COMMAND="$COMMAND `cat $1.cmd`"
+      fi
+      if [ -f $1.cin ] ; then
+        COMMAND="cat $1.cin | $COMMAND"
+      fi
+      echo "Executing $1 ... "
+      echo
+      ulimit -t 3600 2> /dev/null
+      if eval $COMMAND > $OUTPUTFILE 2>&1 ; then
+        echo "   successful execution   of $1" >> $ERRORFILE
+      else
+        echo "   ERROR:     execution   of $1" >> $ERRORFILE
+      fi
+    else
+      echo   "   ERROR:     not executed   $1" >> $ERRORFILE
+    fi
+  fi
+}
+
+#---------------------------------------------------------------------#
+#                    catenate all logs in cgal_test_with_cmake.log
+#---------------------------------------------------------------------#
+
+[ -f cgal_test_with_cmake.log ] && mv -f cgal_test_with_cmake.log cgal_test_with_cmake.log.bak
+
+echo "------------------------------------------------------------------" >> cgal_test_with_cmake.log
+echo "- Compiler output from platform $PLATFORM"                          >> cgal_test_with_cmake.log
+echo "------------------------------------------------------------------" >> cgal_test_with_cmake.log
+echo                                                                      >> cgal_test_with_cmake.log
+(
+
+#---------------------------------------------------------------------#
+#                    remove the previous error file
+#---------------------------------------------------------------------#
+
+rm -f $ERRORFILE
+touch $ERRORFILE
+
+#---------------------------------------------------------------------#
+#                    configure, compile and run the tests
+#---------------------------------------------------------------------#
+
+configure
+
+if [ $# -ne 0 ] ; then
+  for file in $* ; do
+    compile_and_run $file
+  done
+else
+  echo "Run all tests."
+  if [ `can_compile poisson_reconstruction_test` = "y" ]; then
+    compile_and_run poisson_reconstruction_test
+    [ -z "${NEED_CLEAN}" ] && NEED_CLEAN=y
+  fi
+fi
+
+#
+# The clean target generated by CMake under cygwin
+# always fails for some reason
+#
+if [ "${NEED_CLEAN}" = "y" ]; then
+  if ! ( uname | grep -q "CYGWIN" ) ; then
+    ${MAKE_CLEAN_CMD}
+  fi
+fi
+
+) 2>&1 | tee -a cgal_test_with_cmake.log
+echo                                                                      >> cgal_test_with_cmake.log
+
+#---------------------------------------------------------------------#
+#                    catenate all logs in cgal_test_with_cmake.log
+#---------------------------------------------------------------------#
+
+if [ -n "$DO_RUN" ] ; then
+  for f in ProgramOutput.*.$PLATFORM ; do
+    echo "------------------------------------------------------------------" >> cgal_test_with_cmake.log
+    echo "- $f"                                                               >> cgal_test_with_cmake.log
+    echo "------------------------------------------------------------------" >> cgal_test_with_cmake.log
+    cat $f                                                                    >> cgal_test_with_cmake.log
+    echo                                                                      >> cgal_test_with_cmake.log
+  done
+fi
+
+echo "------------------------------------------------------------------" >> cgal_test_with_cmake.log
+echo "- Error output from platform $PLATFORM"                             >> cgal_test_with_cmake.log
+echo "------------------------------------------------------------------" >> cgal_test_with_cmake.log
+echo                                                                      >> cgal_test_with_cmake.log
+cat $ERRORFILE                                                            >> cgal_test_with_cmake.log

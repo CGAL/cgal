@@ -1,0 +1,97 @@
+% +------------------------------------------------------------------------+
+% | Reference manual page: ApolloniusGraphHierarchyVertexBase_2.tex
+% +------------------------------------------------------------------------+
+% | 12.04.2000   Author
+% | Package: Package
+% | 
+%\RCSdef{\RCSRegulartriangulationtraitsRev}{$Id$}
+%\RCSdefDate{\RCSRegulartriangulationtraitsDate}{$Date$}
+% |
+%%RefPage: end of header, begin of main body
+% +------------------------------------------------------------------------+
+
+\begin{ccRefConcept}{ApolloniusGraphHierarchyVertexBase_2}
+
+%% \ccHtmlCrossLink{}     %% add further rules for cross referencing links
+%% \ccHtmlIndexC[concept]{} %% add further index entries
+\ccCreationVariable{hvb}
+
+
+\ccDefinition 
+The vertex of an Apollonius graph
+included in an Apollonius graph hierarchy has to provide
+some pointers to the corresponding vertices in the
+graphs of the next and preceding levels.
+Therefore, the concept \ccc{ApolloniusGraphHierarchyVertexBase_2}
+refines the concept \ccc{ApolloniusGraphVertexBase_2}, by
+adding two vertex handles to the corresponding vertices for the
+next and previous level graphs.
+
+
+\ccRefines
+\ccc{ApolloniusGraphVertexBase_2}
+
+
+\ccTypes
+\ccc{ApolloniusGraphHierarchyVertexBase_2} does not introduce any
+types in addition to those of \ccc{ApolloniusGraphVertexBase_2}.
+
+
+\ccCreation
+\ccCreationVariable{v}  %% choose variable name
+\ccTwo{ApolloniusGraphHierarchyVertexBase_2 v(Site_2 s, Face_handle f);++}{}
+%
+\ccConstructor{ApolloniusGraphHierarchyVertexBase_2();}{Default
+constructor.}
+\ccGlue
+\ccConstructor{ApolloniusGraphHierarchyVertexBase_2(Site_2 s).}
+{Constructs a vertex associated with the site \ccc{s} and
+  embedded at the center of \ccc{s}.}
+\ccGlue
+\ccConstructor
+{ApolloniusGraphHierarchyVertexBase_2(Site_2 s, Face_handle f).}
+{Constructs a vertex associated with
+the site \ccc{s}, embedded at the center of \ccc{s},
+and pointing to face \ccc{f}.}
+
+
+\ccOperations
+\ccThree{Vertex_handle}{v.set_down(Vertex_handle d)+}{}
+%
+\ccMethod{Vertex_handle up();}{Returns a handle to the corresponding
+  vertex of the next level Apollonius graph. If such a vertex does not
+  exist \ccc{Vertex_handle(NULL)} is returned.}
+\ccGlue
+\ccMethod{Vertex_handle down();}{Returns a handle to the corresponding
+  vertex of the previous level Apollonius graph.}
+\ccGlue
+\ccMethod{void set_up(Vertex_handle u);}{Sets the handle for the
+  vertex of the next level Apollonius graph.} 
+\ccGlue 
+\ccMethod{void set_down(Vertex_handle d);}{Sets the handle for the
+  vertex of the previous level Apollonius graph;}
+
+
+
+
+\ccHasModels
+
+\ccc{CGAL::Apollonius_graph_hierarchy_vertex_base_2<CGAL::Apollonius_graph_vertex_base_2<Gt,StoreHidden> >}
+
+
+\ccSeeAlso
+
+\ccc{ApolloniusGraphDataStructure_2} \\
+\ccc{ApolloniusGraphVertexBase_2}\\
+\ccc{CGAL::Apollonius_graph_hierarchy_2<Gt,Agds>}\\
+\ccc{CGAL::Triangulation_data_structure_2<Vb,Fb>}\\
+\ccc{CGAL::Apollonius_graph_vertex_base_2<Gt,StoreHidden>}\\
+\ccc{CGAL::Apollonius_graph_hierarchy_vertex_base_2<Agvb>}
+
+\end{ccRefConcept}
+
+
+% +------------------------------------------------------------------------+
+%%RefPage: end of main body, begin of footer
+% EOF
+% +------------------------------------------------------------------------+

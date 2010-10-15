@@ -1,0 +1,10 @@
+#!/bin/sh
+CGALVER=3.2.1
+cd $2/CGAL-$CGALVER
+QTDIR=/Developer/qt
+DYLD_LIBRARY_PATH=/Developer/qt/lib
+export QTDIR DYLD_LIBRARY_PATH
+touch upgrade.cgal
+touch MacOSX-install.log
+./install_cgal -ni --CXX /usr/bin/g++ >> $2/CGAL-$CGALVER/MacOSX-install.log
+exit 0

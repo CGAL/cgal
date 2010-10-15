@@ -1,0 +1,9 @@
+This class is simply a wrapper for existing iterators, and it does not
+copy the program data.
+
+It frequently happens that all values in one of the vectors from
+above are the same, for example if the system $Ax\qprel b$ is 
+actually a system of equations $Ax=b$. To get an iterator over such a 
+vector, it is not necessary to store multiple copies of the value in
+some container; an instance of the class \ccc{Const_oneset_iterator<T>},
+constructed from the value in question, does the job more efficiently.

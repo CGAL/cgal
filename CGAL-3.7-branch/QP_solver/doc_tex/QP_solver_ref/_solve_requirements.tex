@@ -1,0 +1,21 @@
+\ccHeading{Requirements}
+\ccc{ET} is a model of the concepts \ccc{IntegralDomain} and
+\ccc{RealEmbeddable}; it must
+be an exact type, and all entries of \ccc{qp} are convertible to 
+\ccc{ET}.
+
+Here are some recommended combinations of input type (the type of
+the \ccc{qp} entries) and \ccc{ET}.
+
+\begin{tabular}{lll} 
+input type        &| &  \ccc{ET} \\ \hline
+\ccc{double}      &| & \ccc{MP_Float}, \ccc{Gmpzf}, or \ccc{Gmpq} \\
+\ccc{int}         &| & \ccc{MP_Float}, or \ccc{Gmpz} \\
+any exact type \ccc{NT} &|&  \ccc{NT}
+\end{tabular}
+
+{\bf Note:} by default, this function performs a large number of 
+runtime-checks to ensure consistency during the solution process.
+However, these checks slow down the computations by a considerable
+factor. For maximum efficiency, it is advisable to define the macros
+\texttt{CGAL\_QP\_NO\_ASSERTIONS} or \texttt{NDEBUG}.

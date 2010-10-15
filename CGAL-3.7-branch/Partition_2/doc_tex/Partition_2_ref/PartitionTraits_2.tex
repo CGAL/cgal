@@ -1,0 +1,223 @@
+% +------------------------------------------------------------------------+
+% | Reference manual page: PartitionTraits_2.tex
+% +------------------------------------------------------------------------+
+% | 10.05.2000   Susan Hert
+% | Package: Decomposition_2
+% | 
+% |
+% +------------------------------------------------------------------------+
+
+
+\begin{ccRefConcept}{PartitionTraits_2}
+
+\ccDefinition
+  
+The polygon partitioning functions are each parameterized by a traits class 
+that defines the primitives used in the algorithms.  Many requirements are 
+common
+to all traits classes.  The concept \ccRefName\ defines this common set of
+requirements.  
+
+\ccTypes
+
+\ccNestedType{Point_2}{The point type on which the partitioning algorithm operates.}
+
+\ccNestedType{Polygon_2}{The polygon type to be created by the partitioning 
+algorithm. For testing the validity postcondition of the partition, this 
+type should provide a nested type \ccc{Vertex_const_iterator} that is the
+type of the iterator over the polygon vertices and member functions
+\ccc{Vertex_const_iterator vertices_begin()} and
+\ccc{Vertex_const_iterator vertices_end()}.}%
+\ccIndexSubitem[C]{approx_convex_partition_2}{postconditions}
+\ccIndexSubitem[C]{greene_approx_convex_partition_2}{postconditions}
+\ccIndexSubitem[C]{optimal_convex_partition_2}{postconditions}
+\ccIndexSubitem[C]{y_monotone_partition_2}{postconditions}
+
+\ccNestedType{Less_xy_2}{
+Predicate object type that compares \ccc{Point_2}s lexicographically.
+Must provide \ccc{bool operator()(Point_2 p, Point_2 q)} where \ccc{true}
+is returned iff $p <_{xy} q$.
+We have $p<_{xy}q$, iff $p_x < q_x$ or $p_x = q_x$ and $p_y < q_y$,
+where $p_x$ and $p_y$ denote the $x$ and $y$ coordinates of point $p$, 
+respectively.
+}
+
+\ccNestedType{Less_yx_2}{
+Same as \ccc{Less_xy_2} with the roles of $x$ and $y$ interchanged.}
+
+
+\ccNestedType{Left_turn_2}{
+Predicate object type that provides 
+\ccc{bool operator()(Point_2 p,Point_2 q,Point_2 r)}, which
+returns \ccc{true} iff \ccc{r} lies to the left of the 
+oriented line through \ccc{p} and \ccc{q}.}
+
+\ccNestedType{Orientation_2}{Predicate object type that provides
+\ccc{CGAL::Orientation operator()(Point_2 p, Point_2 q, Point_2 r)} that
+returns \ccStyle{CGAL::LEFT_TURN}, if $r$ lies to the left of the oriented 
+line $l$ defined by $p$ and $q$, returns \ccStyle{CGAL::RIGHT_TURN} if $r$ 
+lies to the right of $l$, and returns \ccStyle{CGAL::COLLINEAR} if $r$ lies
+on $l$.}
+
+\ccNestedType{Compare_y_2}{Predicate object type that provides
+\ccc{CGAL::Comparision_result operator()(Point_2 p, Point_2 q)} to compare
+the $y$ values of two points.  The operator must return
+\ccc{CGAL::SMALLER} if $p_y < q_y$, \ccc{CGAL::LARGER} if $p_y > q_y$ and
+\ccc{CGAL::EQUAL} if $p_y = q_y$.}
+
+\ccNestedType{Compare_x_2}{The same as \ccc{Compare_y_2}, except that $x$ 
+coordinates are compared instead of $y$.}
+
+%\ccNestedType{Construct_line_2}{Predicate object type that provides
+%\ccc{Line_2 operator()(Point_2 p, Point_2 q)}, which constructs and
+%returns the line defined by the points $p$ and $q$.}
+
+
+\ccCreation
+\ccCreationVariable{traits}  %% choose variable name
+
+A copy constructor and default constructor are required.
+
+\ccConstructor{PartitionTraits_2()}{}
+
+\ccConstructor{PartitionTraits_2(PartitionTraits_2& tr)}{}
+
+\ccOperations
+
+The following functions that create instances of the above predicate object
+types must exist.
+
+\ccMethod{Less_yx_2 less_yx_2_object();}{}
+
+\ccMethod{Less_xy_2 less_xy_2_object();}{}
+
+\ccMethod{Left_turn_2 left_turn_2_object();}{}
+
+\ccMethod{Orientation_2 orientation_2_object();}{}
+
+\ccMethod{Compare_y_2 compare_y_2_object();}{}
+
+\ccMethod{Compare_x_2 compare_x_2_object();}{}
+
+%\ccMethod{Construct_line_2 construct_line_2_object();}{}
+
+%The following functions are required by the functions \ccc{is_simple_2} and
+%\ccc{orientation_2}, which are used to test the simplicity and CCW order 
+%preconditions of the partitioning functions. 
+%
+%\ccMemberFunction{
+%    Comparison_result compare_x(const Point_2 &p, const Point_2 &q) const;
+%}
+%{
+%\lcTex{
+%Returns
+%$
+%  \left\{
+%  \begin{array}{lll}
+%     \ccStyle{SMALLER} & \mbox{if} & p_x < q_x \\
+%     \ccStyle{EQUAL}   & \mbox{if} & p_x = q_x \\
+%     \ccStyle{LARGER}  & \mbox{if} & p_x > q_x
+%  \end{array}
+%  \right.%}
+%$
+%}
+%\lcHtml{
+%Returns SMALLER if p_x < q_x, EQUAL if p_x = q_x and LARGER if p_x > q_x
+%}
+%}
+%
+%
+%\ccMemberFunction{
+%    Comparison_result compare_y(const Point_2 &p, const Point_2 &q) const;
+%}
+%{
+%\lcTex{
+%Returns
+%$
+%  \left\{
+%  \begin{array}{lll}
+%     \ccStyle{SMALLER} & \mbox{if} & p_y < q_y \\
+%     \ccStyle{EQUAL}   & \mbox{if} & p_y = q_y \\
+%     \ccStyle{LARGER}  & \mbox{if} & p_y > q_y
+%  \end{array}
+%  \right.%}
+%$
+%}
+%\lcHtml{
+%Returns SMALLER if p_y < q_y, EQUAL if p_y = q_y and LARGER if p_y > q_y
+%}
+%}
+%
+%\ccMemberFunction{
+%    FT cross_product_2(const Vector_2& p, const Vector_2& q) const;
+%}
+%{
+%Returns $p_x q_y - p_y q_x$.
+%}
+%
+%\ccMemberFunction{
+%    bool do_intersect(const Point_2& p1,
+%                      const Point_2& q1,
+%                      const Point_2& p2,
+%                      const Point_2& q2) const;
+%}
+%{
+%Returns \ccc{true} iff the segments \ccStyle{[p1,q1]} and \ccStyle{[p2,q2]}
+%intersect.
+%}
+%
+%\ccMemberFunction{
+%    bool have_equal_direction(const Vector_2& v1,
+%                              const Vector_2& v2 ) const;
+%}
+%{
+%Returns \ccc{true} iff the vectors \ccStyle{v1} and \ccStyle{v2} have the
+%same direction.
+%}
+%
+%\ccMemberFunction{
+%    bool is_negative(const FT& x) const;
+%}
+%{
+%Returns \ccStyle{true} iff \ccStyle{x<0}.
+%}
+%
+%\ccMemberFunction{
+%    bool lexicographically_yx_smaller_or_equal(const Point_2& p,
+%                                               const Point_2& q) const;
+%}
+%{
+%Returns \ccc{true} iff $p_y \leq q_y$ or $p_y = q_y$ and $p_x \leq q_x$.
+%}
+%
+%\ccMethod{
+%    Orientation
+%    orientation(const Point_2& p, const Point_2& q, const Point_2& r) const;
+%}
+%{
+%Returns \ccStyle{LEFT_TURN}, if $r$ lies to the left of the oriented
+%line $l$ defined by $p$ and $q$, returns \ccStyle{RIGHT_TURN} if $r$
+%lies to the right of $l$, and returns \ccStyle{COLLINEAR} if $r$ lies
+%on $l$.
+%%}
+
+
+
+\ccHasModels
+
+\ccRefIdfierPage{CGAL::Partition_traits_2<R>}
+
+\ccSeeAlso
+
+\ccRefIdfierPage{CGAL::approx_convex_partition_2} \\
+\ccRefIdfierPage{CGAL::greene_approx_convex_partition_2} \\
+\ccRefIdfierPage{CGAL::optimal_convex_partition_2} \\
+\ccRefIdfierPage{CGAL::y_monotone_partition_2}
+
+\end{ccRefConcept}
+
+% +------------------------------------------------------------------------+
+%%RefPage: end of main body, begin of footer
+% EOF
+% +------------------------------------------------------------------------+
+

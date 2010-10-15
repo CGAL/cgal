@@ -1,0 +1,50 @@
+%% Copyright (c) 2004  SciSoft.  All rights reserved.
+%%
+%% This file is part of CGAL (www.cgal.org); you may redistribute it under
+%% the terms of the Q Public License version 1.0.
+%% See the file LICENSE.QPL distributed with CGAL.
+%%
+%% Licensees holding a valid commercial license may use this file in
+%% accordance with the commercial license agreement provided with the software.
+%%
+%% This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
+%% WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
+%%
+%% 
+%%
+%% Author(s)     : Fernando Cacciola <fernando_cacciola@hotmail.com>
+
+\begin{ccRefConcept}{StraightSkeleton_2}
+
+%% \ccHtmlCrossLink{}     %% add further rules for cross referencing links
+%% \ccHtmlIndexC[concept]{} %% add further index entries
+
+\ccDefinition
+
+The concept \ccRefName\ describes the requirements for the data structure
+used to represent a straight skeleton. It refines the concept
+\ccc{HalfedgeDS} and adds additional requirements on the nested types
+\ccc{Vertex}, \ccc{Halfedge}, and \ccc{Face} of the halfedge data structure.
+
+\ccRefines
+\ccc{HalfedgeDS}
+
+\ccTypes
+  \ccNestedType{Vertex}{A model of the \ccc{StraightSkeletonVertex_2} concept used to represent the vertices of the straight skeleton}{}
+  \ccGlue
+  \ccNestedType{Halfedge}{A model of the \ccc{StraightSkeletonHalfedge_2} concept used to represent the halfedges of the straight skeleton}{}
+  \ccGlue
+  \ccNestedType{Face}{Any model of the \ccc{StraightSkeletonFace_2} concept used to represent the faces of the straight skeleton}{}
+
+\ccHasModels
+
+\ccc{CGAL::Straight_skeleton_2<Traits,Items,Alloc>}.
+
+This concept explicitly protects all the modifying operations of the base \ccc{HalfedgeDS} concept. Only the algorithm classes, or clients explicitly bypassing the protection mechanism, can modify a straight skeleton.
+ 
+\end{ccRefConcept}
+
+% +------------------------------------------------------------------------+
+%%RefPage: end of main body, begin of footer
+% EOF
+% +------------------------------------------------------------------------+

@@ -1,0 +1,72 @@
+% +------------------------------------------------------------------------+
+% | Reference manual page: Fuzzy_iso_box.tex
+% +------------------------------------------------------------------------+
+% | 1.07.2001   Johan W.H. Tangelder
+% | Package: ASPAS
+% | 
+\RCSdef{\RCSFuzzyisoboxdRev}{$Id$}
+\RCSdefDate{\RCSFuzzyisoboxdDate}{$Date$}
+% |
+%%RefPage: end of header, begin of main body
+% +------------------------------------------------------------------------+
+
+
+\begin{ccRefClass}{Fuzzy_iso_box<Traits>}  %% add template arg's if necessary
+
+%% \ccHtmlCrossLink{}     %% add further rules for cross referencing links
+%% \ccHtmlIndexC[class]{} %% add further index entries
+
+\ccDefinition
+  
+The class \ccRefName\ implements fuzzy $d$-dimensional iso boxes.  A
+fuzzy iso box with fuzziness value $\epsilon$ has as outer
+approximation a box dilated, and as inner approximation a box eroded
+by a $d$-dim square with side length $\epsilon$.
+
+\ccInclude{CGAL/Fuzzy_iso_box.h}
+
+\ccParameters
+Expects for the template argument a model of the concept
+\ccc{SearchTraits}, for example \ccc{CGAL::Search_traits_2<CGAL::Simple_cartesian<double> >}.
+
+
+ 
+\ccIsModel
+
+\ccc{FuzzyQueryItem}
+
+\ccTypes
+
+\ccTypedef{Traits::Point_d Point_d;}{Point type.}
+
+\ccTypedef{Traits::FT FT;}{Number type.}
+
+\ccCreation
+\ccCreationVariable{b}  %% choose variable name
+
+\ccConstructor{Fuzzy_iso_box(Point_d p, Point_d q, FT epsilon=FT(0));}{Constructs a fuzzy iso box
+specified by the minimal iso box containing \ccc{p} and \ccc{q} and fuzziness value \ccc{epsilon}.
+\ccPrecond{ \ccc{p} must be lexicographically smaller than \ccc{q}.}}
+
+\ccOperations
+
+\ccMethod{bool contains(Point_d p);}{test whether \ccVar\ contains \ccc{p}.}
+
+\ccMethod{bool inner_range_intersects(const Kd_tree_rectangle<FT>& rectangle);}
+{test whether the inner box intersects the rectangle
+associated with a node of a tree.}
+
+\ccMethod{bool outer_range_contains(const Kd_tree_rectangle<FT>& rectangle);}
+{test whether the outer box encloses the rectangle associated with a node of a tree.}
+
+\ccSeeAlso
+
+\ccc{FuzzyQueryItem}
+
+\end{ccRefClass}
+
+% +------------------------------------------------------------------------+
+%%RefPage: end of main body, begin of footer
+% EOF
+% +------------------------------------------------------------------------+
+

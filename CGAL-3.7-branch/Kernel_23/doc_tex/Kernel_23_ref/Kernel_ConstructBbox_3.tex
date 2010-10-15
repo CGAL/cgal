@@ -1,0 +1,33 @@
+\begin{ccRefFunctionObjectConcept}{Kernel::ConstructBbox_3}
+A model for this must provide:
+
+\ccCreationVariable{fo}
+
+\ccMemberFunction{CGAL::Bbox_3 operator()(const Kernel::Circle_3
+  &c);} {returns a bounding box of \ccc{c}.}
+
+\ccMemberFunction{CGAL::Bbox_3 operator()(const Kernel::Point_3
+  &p);} {returns a bounding box of \ccc{p}.}
+
+\ccMemberFunction{CGAL::Bbox_3 operator()(const Kernel::Segment_3
+  &s);} {returns a bounding box of \ccc{s}.}
+
+\ccMemberFunction{CGAL::Bbox_3 operator()(const Kernel::Triangle_3
+  &t);} {returns a bounding box of \ccc{t}.}
+
+\ccMemberFunction{CGAL::Bbox_3 operator()(const Kernel::Tetrahedron_3
+  &t);} {returns a bounding box of \ccc{t}.}
+
+\ccMemberFunction{CGAL::Bbox_3 operator()(const Kernel::Iso_Cuboid_3
+  &i);} {returns a bounding box of \ccc{i}.}
+
+\ccMemberFunction{CGAL::Bbox_3 operator()(const Kernel::Sphere_3
+  &s);} {returns a bounding box of \ccc{s}.}
+
+
+\ccRefines
+\ccc{AdaptableFunctor} (with one argument)
+
+
+
+\end{ccRefFunctionObjectConcept}

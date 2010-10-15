@@ -1,0 +1,27 @@
+\ccRefPageBegin
+
+\begin{ccRefClass}{General_polygon_with_holes_2<Polygon>}
+
+\ccThree{General_polygon_with_holes_2<Polygon>}{holes_begin()}{}
+\ccThreeToTwo
+
+\ccDefinition
+%============
+The class \ccRefName\ models the concept \ccc{GeneralPolygonWithHoles_2}.
+It represents a general polygon with holes. It is parameterized with a
+type \ccc{Polygon} used to define the exposed type \ccc{General_polygon_2}.
+This type represents the outer boundary of the general polygon and the
+outer boundaries of each hole.
+
+\ccInclude{CGAL/General_polygon_with_holes_2.h}
+ 
+\ccThree{General_polygon_with_holes_2}{Hole_const_iterator~}{}
+\ccThreeToTwo
+
+\ccTypedef{typedef Polygon General_polygon_2;}{}
+
+\ccIsModel
+    \ccc{GeneralPolygonWithHoles_2}
+
+\end{ccRefClass}
+\ccRefPageEnd

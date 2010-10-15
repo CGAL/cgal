@@ -1,0 +1,65 @@
+% +------------------------------------------------------------------------+
+% | Reference manual page: quadratic_interpolation.tex
+% +------------------------------------------------------------------------+
+% | 
+% | August 2003  Julia Floetotto
+% | Package:   Interpolation
+% | 
+% |
+% +------------------------------------------------------------------------+
+
+\begin{ccRefFunction}{quadratic_interpolation}
+
+\ccDefinition
+  
+The function \ccRefName\ interpolates the function values and first degree 
+functions defined from the function gradients. Both, function values and 
+gradients, must be provided by functors.
+
+\ccInclude{CGAL/interpolation_functions.h}
+
+\ccParameters 
+See \ccc{sibson_c1_interpolation}.
+
+\ccFunction{template < class ForwardIterator, class Functor, class
+  GradFunctor, class Traits> typename Functor::result_type
+  quadratic_interpolation(ForwardIterator first, ForwardIterator
+  beyond, const typename std::iterator_traits<ForwardIterator>::
+  value_type::second_type& norm, Functor function_value, GradFunctor
+  function_gradient,const Traits& traits);} {
+ % \ccc{ForwardIterator::value_type} is a pair associating a point to a
+ % (non-normalized) barycentric coordinate.  \ccc{norm} is the
+ % normalization factor.  \ccc{function_value} allows to access a value
+ % given a point and \ccc{function_gradient} allows to access a
+ % function gradient given a point.  
+  This function generates the
+  interpolated function value as the weighted sum of the values plus a
+  linear term in the gradient for each point of the point/coordinate
+  pairs in the range $\left[\right.$ \ccc{first},
+  \ccc{beyond}$\left.\right)$.  See also
+  \ccc{sibson_c1_interpolation}. \ccPrecond{\ccc{norm} $\neq 0$ 
+    \ccc{function_value(p).second == true} for all points
+    \ccc{p} of the point/coordinate pairs in the range
+    $\left[\right.$\ccc{first}, \ccc{beyond}$\left.\right)$.}}
+
+
+\ccHeading{Requirements} Same requirements as for
+\ccc{sibson_c1_interpolation} only that \ccc{Traits::FT} does not need
+to provide the square root operation.
+
+\ccSeeAlso
+\ccRefConceptPage{InterpolationTraits}\\
+\ccRefConceptPage{GradientFittingTraits}\\
+\ccRefIdfierPage{CGAL::Data_access<Map>}\\
+\ccRefIdfierPage{CGAL::sibson_gradient_fitting} \\
+\ccRefIdfierPage{CGAL::linear_interpolation} \\
+%\ccRefIdfierPage{CGAL::farin_c1_interpolation} \\
+%\ccRefIdfierPage{CGAL::quadratic_interpolation} \\
+\ccRefIdfierPage{CGAL::Interpolation_traits_2<K>} \\
+\ccRefIdfierPage{CGAL::Interpolation_gradient_fitting_traits_2<K>} \\
+\ccRefIdfierPage{CGAL::natural_neighbor_coordinates_2}\\
+\ccRefIdfierPage{CGAL::regular_neighbor_coordinates_2} \\
+\ccRefIdfierPage{CGAL::surface_neighbor_coordinates_3}\\
+%\ccImplementation
+
+\end{ccRefFunction}

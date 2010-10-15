@@ -1,0 +1,110 @@
+% +------------------------------------------------------------------------+
+% | CGAL Reference Manual: Reference manual for Qt_widget.tex
+% +------------------------------------------------------------------------+
+% |
+% | 13.12.2001	Radu Ursu
+% | 
+% | \RCSdef{\qtwidgetRev}{$Id$}
+% | \RCSdefDate{\qtwidgetDate}{$Date$}
+% +------------------------------------------------------------------------+
+
+% +-----------------------------------------------------+
+
+\ccHeading{Operators for Output}
+
+The output operator is defined for all geometric classes in the \cgal\ kernel.
+
+\ccFunction{template<class R> Qt_widget& operator<<(Qt_widget& win, const
+Point_2<R>& p);}{}
+
+\ccFunction{template<class R> Qt_widget& operator<<(Qt_widget& win, const
+Segment_2<R>& s);}{}
+
+\ccFunction{template<class R> Qt_widget& operator<<(Qt_widget& win, const
+Line_2<R>& l);}{}
+
+\ccFunction{template<class R> Qt_widget& operator<<(Qt_widget& win, const
+Ray_2<R>& r);}{}
+
+\ccFunction{template<class R> Qt_widget& operator<<(Qt_widget& win, const
+Triangle_2<R>& t);}{}
+
+\ccFunction{template<class R>Qt_widget& operator<<(Qt_widget& win, const 
+Iso_rectangle_2<R>& r);}{}
+
+\ccFunction{template<class R> Qt_widget& operator<<(Qt_widget& win, const
+Circle_2<R>& c);}{}
+
+To use the other operators described you have to include the right header.
+
+\ccInclude{CGAL/IO/Qt_widget_Polygon_2.h}
+\ccGlue
+
+\ccFunction{template<class Tr, class Co> Qt_widget& operator<<(Qt_widget& win, 
+const Polygon_2<Tr,Co>& pol);}{}
+
+\ccInclude{CGAL/IO/Qt_widget_Min_ellipse_2.h}
+\ccGlue
+
+\ccFunction{template<class Traits_> Qt_widget& operator<<( Qt_widget
+&win, const Min_ellipse_2<Traits_>& min_ellipse);}{}
+
+\ccInclude{CGAL/IO/Qt_widget_Optimisation_ellipse_2.h}
+\ccGlue
+
+\ccFunction{template<class Traits_> Qt_widget& operator<<( Qt_widget
+&win, const Optimisation_ellipse_2<Traits_>& oe);}{}
+
+\ccInclude{CGAL/IO/Qt_widget_Optimisation_circle_2.h}
+\ccGlue
+
+\ccFunction{template<class Traits> Qt_widget& operator<<( Qt_widget
+&win, const Optimisation_circle_2<Traits_>& oc);}{}
+
+\ccInclude{CGAL/IO/Qt_widget_Conic_2.h}
+\ccGlue
+
+\ccFunction{template<class R> Qt_widget& operator<<( Qt_widget& win,
+const Conic_2<R>& c);}{}
+
+\ccInclude{CGAL/IO/Qt_widget_Triangulation_2.h}
+\ccGlue
+
+\ccFunction{template <class Gt, class Tds> Qt_widget&
+operator<<(Qt_widget& win, const Triangulation_2<Gt, Tds>& t);}{}
+
+\ccInclude{CGAL/IO/Qt_widget_Alpha_shape_2.h}
+\ccGlue
+
+\ccFunction{template <class Dt> Qt_widget&
+operator<<(Qt_widget& win, const Alpha_shape_2<Dt>& As);}{}
+
+
+\ccInclude{CGAL/IO/Qt_widget_Delaunay_triangulation_2.h}
+\ccGlue
+
+\ccFunction{template<class Gt, class Tds> Qt_widget& operator<<(Qt_widget& win,
+ const Delaunay_triangulation_2<R>& dt);}{}
+
+\ccInclude{CGAL/IO/Qt_widget_Constrained_triangulation_2.h}
+\ccGlue
+
+\ccFunction{template<class Gt, class Tds> Qt_widget& operator<<(Qt_widget& win,
+ const Constrained_triangulation_2<Gt, Tds>& t);}{}
+
+\ccInclude{CGAL/IO/Qt_widget_Regular_triangulation_2.h}
+\ccGlue
+
+\ccFunction{template<class Gt, class Tds> Qt_widget& operator<<(Qt_widget& win,
+ const Regular_triangulation_2<Gt, Tds>& t);}{}
+
+
+% +-----------------------------------------------------+
+% EOF
+
+
+
+
+
+
+

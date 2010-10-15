@@ -1,0 +1,82 @@
+% $Id$
+% $Date$
+% author : Sylvain Pion
+
+\begin{ccRefClass} {Number_type_checker<NT1,NT2,Comparator>}
+
+\ccDefinition
+\ccc{Number_type_checker} is a number type whose instances store two numbers
+of types \ccc{NT1} and \ccc{NT2}.  It forwards all arithmetic operations to
+them, and calls the binary predicate \ccc{Comparator} to check the equality of
+the instances after each modification, as well as for each comparison.
+
+This is a debugging tool which is useful when dealing with number types.
+
+\ccParameters
+
+\ccc{NT1} must be a model of some algebraic structure concept. 
+\ccc{NT2} must be a model of the same algebraic structure concept.
+%This is due to the constructor from double :-/ 
+\ccc{NT1} and \ccc{NT2} must be \ccc{FromDoubleConstructible}.
+%If \ccc{NT1} is a model of \ccc{RealEmbeddable}, then \ccc{NT2} must be a model 
+%of \ccc{RealEmbeddable} too. \\
+\ccc{Comparator} has to be a model of a binary predicate taking \ccc{NT1}
+as first argument, and \ccc{NT2} as second.  The \ccc{Comparator} parameter
+has a default value which is a functor calling \ccc{operator==} between
+the two arguments.
+
+
+\ccInclude{CGAL/Number_type_checker.h}
+
+\ccIsModel
+\ccc{IntegralDomainWithoutDivision} (same as \ccc{NT1})\\
+\ccc{RealEmbeddable}
+\ccCreation
+\ccCreationVariable{c}
+
+\ccConstructor{Number_type_checker();}
+{introduces an uninitialized variable \ccVar.}
+\ccGlue
+\ccConstructor{Number_type_checker(int i)}
+{introduces the integral value i.}
+\ccGlue
+\ccConstructor{Number_type_checker(double d)}
+{introduces the floating point value d.}
+\ccGlue
+\ccConstructor{Number_type_checker(const NT1 &n1, const NT2 &n2)}
+{introduces a variable storing the pair \ccc{n1, n2}.}
+
+\ccOperations
+
+Some operations have a particular behavior documented here.
+
+\ccMethod{const NT1 & n1() const;}
+{returns a const reference to the object of type \ccc{NT1}.}
+\ccGlue
+\ccMethod{const NT2 & n2() const;}
+{returns a const reference to the object of type \ccc{NT2}.}
+\ccGlue
+\ccMethod{NT1 & n1();}
+{returns a reference to the object of type \ccc{NT1}.}
+\ccGlue
+\ccMethod{NT2 & n2();}
+{returns a reference to the object of type \ccc{NT2}.}
+\ccGlue
+\ccMethod{bool is_valid() const;}
+{calls the \ccc{Comparator} binary predicate on the two stored objects
+ and returns its result.}
+
+%No need to document this, due to concept RealEmbeddable 
+%\ccFunction{double to_double(const Number_type_checker& c);}
+%{returns \ccc{to_double(c.n1())}.  No particular check is made here.}
+%\ccFunction{std::pair<double,double> to_interval(const Number_type_checker& c);}
+%{returns \ccc{to_interval(c.n1())}.  No particular check is made here.}
+
+\ccFunction{std::ostream& operator<<(std::ostream& out, const Number_type_checker& c);}
+{writes \ccc{c.n1()} to the ostream \ccc{out}.}
+
+\ccFunction{std::istream& operator>>(std::istream& in, Number_type_checker& c);}
+{reads an \ccc{NT1} from \ccc{in}, then converts it to an \ccc{NT2},
+ so a conversion from \ccc{NT1} to \ccc{NT2} is required here.}
+
+\end{ccRefClass} 

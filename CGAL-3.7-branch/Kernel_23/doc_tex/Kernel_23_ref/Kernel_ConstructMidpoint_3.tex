@@ -1,0 +1,16 @@
+\begin{ccRefFunctionObjectConcept}{Kernel::ConstructMidpoint_3}
+A model for this must provide:
+
+\ccCreationVariable{fo}
+
+\ccMemberFunction{Kernel::Point_3 operator()(const Kernel::Point_3& p,
+                                             const Kernel::Point_3& q );}
+ {computes the midpoint of the segment $pq$.}
+
+\ccRefines
+\ccc{AdaptableFunctor} (with two arguments)
+
+\ccSeeAlso
+\ccRefIdfierPage{CGAL::midpoint} \\
+
+\end{ccRefFunctionObjectConcept}

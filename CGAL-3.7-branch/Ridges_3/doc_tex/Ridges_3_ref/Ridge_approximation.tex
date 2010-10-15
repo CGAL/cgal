@@ -1,0 +1,98 @@
+% +------------------------------------------------------------------------+
+% | Reference manual page: Ridge_approximation.tex
+% +------------------------------------------------------------------------+
+% | 15.09.2006   Marc Pouget and Frédéric Cazals
+% | Package: Ridges_3
+% | 
+\RCSdef{\RCSRidgeapproximationRev}{$Id$}
+\RCSdefDate{\RCSRidgeapproximationDate}{$Date$}
+% |
+%%RefPage: end of header, begin of main body
+% +------------------------------------------------------------------------+
+
+
+\begin{ccRefClass}{Ridge_approximation<TriangulatedSurfaceMesh,Vertex2FTPropertyMap,Vertex2VectorPropertyMap>} 
+%% add templatearg's if necessary
+
+%% \ccHtmlCrossLink{}     %% add further rules for cross referencing links
+%% \ccHtmlIndexC[class]{} %% add further index entries
+
+\ccDefinition
+  
+The class \ccRefName\ computes the approximation of
+ridges of a triangular polyhedral surface. 
+
+\ccInclude{CGAL/Ridges.h}
+
+\ccParameters
+The class \ccRefName\ has three template parameters. 
+\ccc{TriangulatedSurfaceMesh} provides  the surface. 
+ Parameters  \ccc{Vertex2FTPropertyMap}
+and \ccc{Vertex2VectorPropertyMap} provide the differential properties of
+the surface associated to its vertices.
+
+Requirements (checked at compile time) : the types
+\ccc{TriangulatedSurfaceMesh::Traits::FT} and
+\ccc{Vertex2FTPropertyMap::value_type} must coincide; the types
+\ccc{TriangulatedSurfaceMesh::Traits::Vector_3} and
+\ccc{Vertex2VectorPropertyMap::value_type} must coincide; the types
+\ccc{TriangulatedSurfaceMesh::Vertex_handle},
+\ccc{Vertex2FTPropertyMap::key_type} and
+\ccc{Vertex2VectorPropertyMap::key_type} must coincide;
+
+\ccTypes
+
+%\ccNestedType{TYPE}{some nested types}
+\ccEnum{ enum Tag_order {Tag_3, Tag_4};} {Order of differential
+  quantities used to distinguish elliptic and hyperbolic ridges. Third
+  (\ccc{Tag_3}) or fourth (\ccc{Tag_4}) order quantities may be used as
+  explained in section \ref{ridge-mesh} of the user manual.}
+
+
+\ccCreation
+\ccCreationVariable{ridge_approximation}  %% choose variable name, given by \ccVar
+
+\ccConstructor{Ridge_approximation(const TriangulatedSurfaceMesh &P,
+		      const Vertex2FTPropertyMap& vertex2k1_pm, const
+		      Vertex2FTPropertyMap& vertex2k2_pm, const
+		      Vertex2FTPropertyMap& vertex2b0_pm, const
+		      Vertex2FTPropertyMap& vertex2b3_pm, const
+		      Vertex2VectorPropertyMap& vertex2d1_pm, const
+		      Vertex2VectorPropertyMap& vertex2d2_pm, const
+		      Vertex2FTPropertyMap& vertex2P1_pm, const
+		      Vertex2FTPropertyMap& vertex2P2_pm);}
+		      {%Precondition : all faces of P must be triangular. \\
+                        The two last property maps may
+		      not be used if computations are performed with
+		      the parameter \ccc{Tag_3}, in which case these
+		      property maps shall be initialized with their
+		      default constructors.}
+
+%\ccOperations
+
+\ccMethod{ template <class OutputIterator> OutputIterator compute_max_ridges(OutputIterator it, Tag_order ord = Tag_3);}
+{Outputs ridges of types \ccc{MAX_ELLIPTIC_RIDGE} and \ccc{MAX_HYPERBOLIC_RIDGE}.
+ Parameter \ccc{it} is a  {\sc Stl} output iterator whose
+\ccc{value_type} is \ccc{Ridge_line*}.}
+\ccGlue
+\ccMethod{ template <class OutputIterator> OutputIterator compute_min_ridges(OutputIterator it, Tag_order ord = Tag_3);}
+{Outputs ridges of types \ccc{MIN_ELLIPTIC_RIDGE} and \ccc{MIN_HYPERBOLIC_RIDGE}.
+ Parameter \ccc{it} is a  {\sc Stl} output iterator whose
+\ccc{value_type} is \ccc{Ridge_line*}.}
+\ccGlue
+\ccMethod{ template <class OutputIterator> OutputIterator compute_crest_ridges(OutputIterator it, Tag_order ord = Tag_3);}
+{Outputs ridges of types \ccc{MAX_CREST_RIDGE} and \ccc{MIN_CREST_RIDGE}.
+ Parameter \ccc{it} is a  {\sc Stl} output iterator whose
+\ccc{value_type} is \ccc{Ridge_line*}.}
+
+\ccSeeAlso
+
+\ccc{Ridge_line}
+
+\end{ccRefClass}
+
+% +------------------------------------------------------------------------+
+%%RefPage: end of main body, begin of footer
+% EOF
+% +------------------------------------------------------------------------+
+

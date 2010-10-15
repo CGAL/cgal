@@ -1,0 +1,31 @@
+\begin{ccRefFunctionObjectConcept}{ModularTraits::ModularImage}
+
+\ccDefinition
+
+This \ccc{AdaptableUnaryFunction} computes the modular image of the given value 
+with respect to a homomorphism $\varphi$ from the 
+\ccc{ModularTraits::Type} into the \ccc{ModularTraits::Residue_type}.
+
+The homomorphism preserves the mapping of \ccc{int} into both types
+, i.e., $\varphi(Type(i)) == Residue\_type(i)$.
+
+
+\ccTypes
+\ccTypedef{typedef ModularTraits::Residue_type result_type;}{}
+\ccTypedef{typedef ModularTraits::Type         argument_type;}{}
+
+\ccCreationVariable{fo}
+
+\ccMethod{
+result_type
+operator()(const  argument_type & x);}{
+computes $\varphi(x)$.
+} 
+ 
+\ccRefines 
+\ccc{AdaptableUnaryFunction} 
+
+\ccSeeAlso
+\ccRefConceptPage{ModularTraits}
+
+\end{ccRefFunctionObjectConcept}

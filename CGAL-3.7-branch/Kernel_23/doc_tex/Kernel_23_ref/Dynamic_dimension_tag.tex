@@ -1,0 +1,29 @@
+\begin{ccRefClass} {Dynamic_dimension_tag}
+
+\ccDefinition
+An object of the class \ccRefName\ is an empty object which can be used
+for dispatching functions based on the dimension of an object.
+\ccRefName\ indicates that the dimension is not known at compile-time.
+\ccc{Dimension_tag} is the tag class dealing with compile-time dimensions.
+
+\ccInclude{CGAL/Dimension.h}
+
+\ccExample
+
+The following code declares two functions constructing two points at the origin,
+either in 2D or in 3D.
+
+\begin{cprog}
+  Point_2<K> get_origin(Dimension_tag<2>) { return Point_2<K>(ORIGIN); }
+  Point_3<K> get_origin(Dimension_tag<3>) { return Point_3<K>(ORIGIN); }
+  Point_d<K> get_origin(Dynamic_dimension_tag) { return Point_d<K>(ORIGIN); }
+
+  std::cout << get_origin(Dynamic_dimension_tag())) << std::endl;
+\end{cprog}
+
+\ccSeeAlso
+\ccRefConceptPage{CGAL::Dimension_tag<int dim>} \\
+\ccRefConceptPage{CGAL::Ambient_dimension<T, K>} \\
+\ccRefConceptPage{CGAL::Feature_dimension<T, K>}
+
+\end{ccRefClass}

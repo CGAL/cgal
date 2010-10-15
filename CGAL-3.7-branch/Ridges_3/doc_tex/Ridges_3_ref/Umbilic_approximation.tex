@@ -1,0 +1,79 @@
+% +------------------------------------------------------------------------+
+% | Reference manual page: Umbilic_approximation.tex
+% +------------------------------------------------------------------------+
+% | 15.09.2006   Marc Pouget and Frédéric Cazals
+% | Package: Ridges_3
+% | 
+\RCSdef{\RCSUmbilicapproximationRev}{$Id$}
+\RCSdefDate{\RCSUmbilicapproximationDate}{$Date$}
+% |
+%%RefPage: end of header, begin of main body
+% +------------------------------------------------------------------------+
+
+
+\begin{ccRefClass}{Umbilic_approximation<TriangulatedSurfaceMesh,Vertex2FTPropertyMap,Vertex2VectorPropertyMap>} 
+ %% add template arg's if necessary
+
+%% \ccHtmlCrossLink{}     %% add further rules for cross referencing links
+%% \ccHtmlIndexC[class]{} %% add further index entries
+
+\ccDefinition
+  
+The class \ccRefName\ computes the approximation of
+umbilics on a triangular polyhedral surface. 
+
+
+\ccInclude{CGAL/Umbilics.h}
+
+\ccParameters The class \ccRefName\ has three template parameters.
+\ccc{TriangulatedSurfaceMesh} provides the surface. Parameters
+\ccc{Vertex2FTPropertyMap} and \ccc{Vertex2VectorPropertyMap} provide
+the differential properties of the surface associated to its vertices.
+
+Requirements (checked at compile time) : the types
+\ccc{TriangulatedSurfaceMesh::Traits::FT} and
+\ccc{Vertex2FTPropertyMap::value_type} must coincide; the types
+\ccc{TriangulatedSurfaceMesh::Traits::Vector_3} and
+\ccc{Vertex2VectorPropertyMap::value_type} must coincide; the types
+\ccc{TriangulatedSurfaceMesh::Vertex_handle},
+\ccc{Vertex2FTPropertyMap::key_type} and
+\ccc{Vertex2VectorPropertyMap::key_type} must coincide;
+
+
+\ccTypes
+
+\ccTypedef{  typedef typename TriangulatedSurfaceMesh::Traits::FT       FT;}{}
+
+\ccCreation
+\ccCreationVariable{umbilic_approximation}  %% choose variable name
+
+\ccConstructor{Umbilic_approximation(const TriangulatedSurfaceMesh& P, 
+			const Vertex2FTPropertyMap& vertex2k1_pm, 
+			const Vertex2FTPropertyMap& vertex2k2_pm,
+			const Vertex2VectorPropertyMap& vertex2d1_pm, 
+			const Vertex2VectorPropertyMap& vertex2d2_pm);}
+ {default constructor.}
+
+\ccOperations
+
+\ccMethod{template <class OutputIterator>  OutputIterator compute(OutputIterator it, FT size);}
+{Performs the approximation, \ccc{size} determines the size of the
+patches around vertices, taken as  \ccc{size} times the size of the
+1-ring. Umbilics are output through the \ccc{OutputIterator} which is a
+concept of output iterator of the  {\sc Stl} with value type \ccc{Umbilic*}.}
+
+\ccSeeAlso
+
+\ccc{Umbilic}
+\ccc{TriangulatedSurfaceMesh}
+\ccc{Vertex2FTPropertyMap}
+\ccc{Vertex2VectorPropertyMap}
+
+
+\end{ccRefClass}
+
+% +------------------------------------------------------------------------+
+%%RefPage: end of main body, begin of footer
+% EOF
+% +------------------------------------------------------------------------+
+

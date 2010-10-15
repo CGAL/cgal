@@ -1,0 +1,32 @@
+\begin{ccRefConcept}{RealEmbeddableTraits::IsFinite}
+
+\ccDefinition
+
+\ccc{AdaptableUnaryFunction} determines whether the argument represents 
+a value in $\R$, this implies that the argument \ccc{is_valid}.
+
+\ccRefines 
+
+\ccc{AdaptableUnaryFunction} 
+
+
+\ccTypes
+\ccNestedType{result_type} 
+        { Type convertible to \ccc{bool}.}
+\ccNestedType{argument_type}
+        { Is \ccc{RealEmbeddableTraits::Type}.}
+
+\ccOperations
+\ccCreationVariable{is_finite}
+\ccThree{xxxxxxxxxxx}{xxxxxxxxxxx}{}
+
+\ccMethod{result_type operator()(argument_type  x);}
+        { Determines whether the argument represents a value in $\R$. }
+
+%\ccHasModels
+
+\ccSeeAlso
+
+\ccRefIdfierPage{RealEmbeddableTraits}\\
+
+\end{ccRefConcept} 

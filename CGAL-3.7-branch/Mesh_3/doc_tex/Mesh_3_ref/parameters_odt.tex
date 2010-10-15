@@ -1,0 +1,66 @@
+% +------------------------------------------------------------------------+
+% | Reference manual page: parameters_odt.tex
+% +------------------------------------------------------------------------+
+% | 20.10.2009   Stephane Tayeb
+% | Package: Mesh_3
+% |
+\RCSdef{\RCSodtRev}{$Id$}
+\RCSdefDate{\RCSodtDate}{$Date$}
+% |
+\ccRefPageBegin
+%%RefPage: end of header, begin of main body
+% +------------------------------------------------------------------------+
+
+
+\begin{ccRefFunction}{parameters::odt}  %% add template arg's if necessary
+
+%% \ccHtmlCrossLink{}     %% add further rules for cross referencing links
+%% \ccHtmlIndexC[function]{} %% add further index entries
+
+\ccDefinition
+  
+The function \ccRefName\ allows the user to trigger a call to
+\ccc{odt_optimize_mesh_3} in
+\ccc{make_mesh_3} and \ccc{refine_mesh_3} mesh optimization functions. It also
+allows the user to pass parameters to the optimization function 
+\ccc{odt_optimize_mesh_3} through these mesh generation functions.
+
+\ccInclude{CGAL/refine_mesh_3.h}
+
+\ccGlobalFunction{parameters::internal::Odt parameters::odt(
+  double time_limit = 0,
+          std::size_t max_iteration_number = 0,
+          double convergence = 0.02,
+          double freeze_bound = 0.01);}
+
+\ccParameters
+
+The parameters are named parameters. They are the same (i.e. they have the same
+name and the same default values) as the parameters of \ccc{odt_optimize_mesh_3}
+function. See its manual page for further details.
+
+\ccSeeAlso
+
+\ccc{no_odt} \\
+\ccc{odt_optimize_mesh_3} \\
+\ccc{make_mesh_3} \\
+\ccc{refine_mesh_3} 
+
+
+\ccExample
+
+\begin{ccExampleCode}
+// Mesh generation with odt optimization step
+C3t3 c3t3 = make_mesh_3<c3t3>(domain, criteria, parameters::odt());
+refine_mesh_3(c3t3, domain, criteria, parameters::odt(parameters::time_limit=10));
+\end{ccExampleCode}
+
+
+\end{ccRefFunction}
+
+% +------------------------------------------------------------------------+
+%%RefPage: end of main body, begin of footer
+\ccRefPageEnd
+% EOF
+% +------------------------------------------------------------------------+
+

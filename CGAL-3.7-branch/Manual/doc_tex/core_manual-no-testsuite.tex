@@ -1,0 +1,61 @@
+% +------------------------------------------------------------------------+
+% | core_manual.tex
+% | CGAL User and Reference Manual for core LGPL packages that suffice
+% | to use various quite independant packages
+% +------------------------------------------------------------------------+
+
+\documentclass{book}
+\usepackage{Manual/cgal_manual}
+\gdef\lciManualTitle{CGAL User and Reference Manual}
+
+\makeindex
+
+% Make the table of contents use two columns
+\lcHtml{\lcTwoColumnToc}
+
+\begin{document}
+
+\cgaltitlepage{User and Reference Manual: \\
+  Core Foundation Parts under LGPL License}
+
+\pagestyle{plain}
+\pagenumbering{roman}
+\setcounter{page}{1}
+\cleardoublepage
+\ifthenelse{\boolean{useminitoc}}{\lcTex{\dominitoc}}{}
+\tableofcontents
+\cleardoublepage
+\pagenumbering{arabic}
+
+\cgalchapters{
+    \entry{\part{Preface}}
+    \lcTex{\entryright{\listofrefpages}}
+    \packageleftright{Introduction}{Introduction_ref}
+
+    \entry{\part{Kernel}}
+    \packageleftright{Kernel_23}{Kernel_23_ref}
+    \packageleftright{Kernel_d}{Kernel_d_ref}
+
+    \entry{\part{Basic Library}}
+    \packageleftright{Polygon}{Polygon_ref}
+    \packageleftright{HalfedgeDS}{HalfedgeDS_ref}
+
+    \entry{\part{Support Library}}
+    \packageleftright{STL_Extension}{STL_Extension_ref}
+    \packageleftright{BGL}{BGL_ref}
+    \packageleftright{Property_map}{Property_map_ref}
+    \packageleftright{Circulator}{Circulator_ref}
+    \packageleftright{Generator}{Generator_ref}
+    \packageleftright{Miscellany}{Miscellany_ref}
+    \packageleftright{IOstream}{IOstream_ref}
+    \packageleftright{Geomview}{Geomview_ref}
+    \packageleftright{GraphicsView}{GraphicsView_ref}
+    \packageleftright{CGAL_ipelets}{CGAL_ipelets_ref}
+}
+
+\bibliographystyle{alpha}
+\bibliography{Manual/cgal_manual,Manual/geom}
+
+\printindex
+
+\end{document}

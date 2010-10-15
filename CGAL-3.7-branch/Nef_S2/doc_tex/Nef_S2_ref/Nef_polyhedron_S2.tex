@@ -1,0 +1,314 @@
+% begin cgal manual page
+
+\begin{ccRefClass}{Nef_polyhedron_S2<Traits>}\ccCreationVariable{N}
+  
+\ccDefinition
+
+An instance of data type \ccc{Nef_polyhedron_S2<Traits>} is a subset of
+the sphere $S_2$ that is the result of forming complements and 
+intersections starting from a finite set \ccc{H} of halfspaces 
+bounded by a plane containing the origin. Halfspaces correspond to 
+hemispheres of $S_2$ and are therefore modeled by oriented great 
+circles of type \ccc{Sphere_circle}. \ccc{Nef_polyhedron_S2} is 
+closed under all binary set operations \ccc{intersection}, \ccc{union},
+\ccc{difference}, \ccc{complement} and under the topological
+operations \ccc{boundary}, \ccc{closure}, and \ccc{interior}.
+
+\ccInclude{CGAL/Nef_polyhedron_S2.h}
+
+\ccParameters
+
+\begin{tabbing}
+\ccc{template <} \=\ccc{class Nef_polyhedronTraits_S2,}\\
+                 \>\ccc{class Nef_polyhedronItems_S2 = CGAL::SM_items,}\\
+                 \>\ccc{class Nef_polyhedronMarks = bool}\\
+    \ccc{class Nef_polyhedron_S2;}
+\end{tabbing}
+
+The first parameter requires one of the following exact kernels:
+\ccc{Homogeneous}, \ccc{Simple_homogeneous} 
+parametrized with \ccc{Gmpz}, \ccc{leda_integer} or any other number type
+modeling \Z, or \ccc{Cartesian}, \ccc{Simple_cartesian} parametrized with 
+\ccc{Gmpq}, \ccc{leda_rational},\ccc{Quotient<Gmpz>} or any other number 
+type modeling \Q.
+
+The second parameter and the third parameter are for future considerations.
+Neither \ccc{Nef_polyhedronItems_S2} nor \ccc{Nef_polyhedronMarks} is
+specifed, yet. Do not use other than the default types for these two 
+template parameters.
+
+\ccThree{Nef_poly:SHalfedge_const_iterator}{h.halfedge() const;;}{}
+\ccThreeToTwo
+
+\ccTypes
+
+\ccNestedType{Sphere_point}{points in the sphere surface.}
+\ccGlue
+\ccNestedType{Sphere_segment}{segments in the sphere surface.}
+\ccGlue
+\ccNestedType{Sphere_circle}{oriented great circles modeling spatial
+  half-spaces.}
+
+\ccNestedType{SVertex_const_handle}{non-mutable handle to svertex.}
+\ccGlue
+\ccNestedType{SHalfedge_const_handle}{non-mutable handle to shalfedge.}
+\ccGlue
+\ccNestedType{SHalfloop_const_handle}{non-mutable handle to shalfloop.}
+\ccGlue
+\ccNestedType{SFace_const_handle}{non-mutable handle to sface.}
+
+\ccNestedType{SVertex_const_iterator}{non-mutable iterator over all svertices.}
+\ccGlue
+\ccNestedType{SHalfedge_const_iterator}{non-mutable iterator over all shalfedges.}
+\ccGlue
+\ccNestedType{SHalfloop_const_iterator}{non-mutable iterator over all shalfloops.}
+\ccGlue
+\ccNestedType{SFace_const_iterator}{non-mutable iterator over all sfaces.}
+
+\ccNestedType{SHalfedge_around_svertex_const_circulator}{circulating the
+  adjacency list of an svertex \ccc{v}.  }
+\ccGlue
+\ccNestedType{SHalfedge_around_sface_const_circulator}{circulating the
+  sface cycle of an sface \ccc{f}.  }
+\ccGlue
+\ccNestedType{SFace_cycle_const_iterator}{iterating all sface cycles of
+  an sface \ccc{f}.  The iterator has method \ccc{bool is_svertex()},
+  \ccc{bool is_shalfedge()}, \ccc{bool is_shalfloop()}, and can be
+  converted to the corresponding handles \ccc{SVertex_const_handle},
+  \ccc{SHalfedge_const_handle}, or \ccc{SHalfloop_const_handle}.  }
+
+\ccNestedType{Mark}{attributes of objects (vertices, edges, faces).}
+
+\ccNestedType{size_type}{size type}
+
+\ccEnum{enum Boundary { EXCLUDED, INCLUDED }}{construction selection.}
+
+\ccEnum{enum Content { EMPTY, COMPLETE }}{construction selection.}
+
+\ccSetOneOfTwoColumns{3cm}
+
+\ccCreation
+
+\ccConstructor{Nef_polyhedron_S2<K>(Content sphere = EMPTY)}{creates
+  an instance \ccc{N} of type \ccc{Nef_polyhedron_S2<K>} and
+  initializes it to the empty set if \ccc{sphere == EMPTY} and to the
+  whole sphere if \ccc{sphere == COMPLETE}.  }
+
+\ccConstructor{Nef_polyhedron_S2<K>(Sphere_circle c, Boundary circle =
+  INCLUDED)}{creates a Nef polyhedron \ccc{N} containing the
+  half-sphere left of \ccc{c} including \ccc{c} if
+  \ccc{circle==INCLUDED}, excluding \ccc{c} if \ccc{circle==EXCLUDED}.
+  }
+
+\ccConstructor{template <class Forward_iterator>
+  Nef_polyhedron_S2<K>(Forward_iterator first, Forward_iterator
+  beyond, Boundary b = INCLUDED)}{creates a Nef polyhedron \ccc{N}
+  from the set of sphere segments in the iterator range
+  \ccc{[first,beyond)}. If the set of sphere segments is a simple
+  polygon that separates the sphere surface into two regions, then the
+  polygonal region that is left of the segment \ccc{*first} is
+  selected. The polygonal region includes its boundary if \ccc{b =
+    INCLUDED} and excludes the boundary otherwise.
+  \ccc{Forward_iterator} has to be an iterator with value type
+  \ccc{Sphere_segment}.  }
+
+\ccSetTwoOfThreeColumns{3.4cm}{3cm}
+
+\ccOperations
+
+\ccMethod{ void clear(Content plane = EMPTY) ;}{makes \ccc{N} the
+  empty set if \ccc{plane == EMPTY} and the full plane if \ccc{plane
+    == COMPLETE}.  }
+
+\ccMethod{ bool is_empty() ;}{returns true if \ccc{N} is empty, false
+  otherwise.  }
+
+\ccMethod{ bool is_sphere() ;}{returns true if \ccc{N} is the whole
+  sphere, false otherwise.  }
+
+\ccHeading{Constructive Operations} 
+
+\ccMethod{ Nef_polyhedron_S2<K> complement() ;}{returns the complement
+  of \ccc{N} in the plane.  }
+
+\ccMethod{ Nef_polyhedron_S2<K> interior() ;}{returns the interior of
+  \ccc{N}.  }
+
+\ccMethod{ Nef_polyhedron_S2<K> closure() ;}{returns the closure of
+  \ccc{N}.  }
+
+\ccMethod{ Nef_polyhedron_S2<K> boundary() ;}{returns the boundary of
+  \ccc{N}.  }
+
+\ccMethod{ Nef_polyhedron_S2<K> regularization() ;}{returns the
+  regularized polyhedron (closure of interior).  }
+
+\ccMethod{ Nef_polyhedron_S2<K> intersection(const
+  Nef_polyhedron_S2<K>& N1) ;}{returns \ccc{N} $\cap$ \ccc{N1}.  }
+
+\ccMethod{ Nef_polyhedron_S2<K> join(const Nef_polyhedron_S2<K>& N1)
+  ;}{returns \ccc{N} $\cup$ \ccc{N1}.  }
+
+\ccMethod{ Nef_polyhedron_S2<K> difference(const Nef_polyhedron_S2<K>&
+  N1) ;}{returns \ccc{N} $-$ \ccc{N1}.  }
+
+\ccMethod{ Nef_polyhedron_S2<K> symmetric_difference( const
+  Nef_polyhedron_S2<K>& N1) ;}{returns the symmectric difference
+  \ccc{N - T} $\cup$ \ccc{T - N}.  }
+
+Additionally there are operators \ccc{*,+,-,^,!} which implement the
+binary operations \emph{intersection}, \emph{union},
+\emph{difference}, \emph{symmetric difference}, and the unary
+operation \emph{complement} respectively. There are also the
+corresponding modification operations \ccc{*=,+=,-=,^=}.
+
+There are also comparison operations like \ccc{<,<=,>,>=,==,!=} which
+implement the relations subset, subset or equal, superset, superset or
+equal, equality, inequality, respectively.
+
+\ccHeading{Statistics and Integrity} 
+
+\ccThree{Size_type}{N.number_of_sface_cycles();}{}
+
+\ccMethod{Size_type number_of_svertices() ;}{returns the number of
+  svertices.  }
+\ccGlue
+\ccMethod{Size_type number_of_shalfedges() ;}{returns the number of
+  shalfedges.  }
+
+\ccMethod{Size_type number_of_sedges() ;}{returns the number of sedges.
+  }
+\ccGlue
+\ccMethod{Size_type number_of_shalfloops() ;}{returns the number of
+  shalfloops.  }
+\ccGlue
+\ccMethod{Size_type number_of_sloops() ;}{returns the number of sloops.
+  }
+\ccGlue
+\ccMethod{Size_type number_of_sfaces() ;}{returns the number of sfaces.
+  }
+\ccGlue
+\ccMethod{Size_type number_of_sface_cycles() ;}{returns the number of
+  sface cycles.  }
+\ccGlue
+\ccMethod{Size_type number_of_connected_components() ;}{calculates the
+  number of connected components of \ccc{P}.  }
+\ccGlue
+\ccMethod{void print_statistics(std::ostream& os = std::cout) ;}{print
+  the statistics of \ccc{P}: the number of vertices, edges, and faces.
+  }
+\ccGlue
+\ccMethod{void check_integrity_and_topological_planarity(bool
+  faces=true) ;}{checks the link structure and the genus of \ccc{P}.
+  }
+
+\ccHeading{Exploration - Point location - Ray shooting} As Nef
+polyhedra are the result of forming complements and intersections
+starting from a set \ccc{H} of half-spaces that are defined by
+oriented lines in the plane, they can be represented by an attributed
+plane map $M = (V,E,F)$. For topological queries within \ccc{M} the
+following types and operations allow exploration access to this
+structure.
+
+\ccSetOneOfTwoColumns{3cm}
+
+\ccTypes
+
+\ccNestedType{Object_handle}{a generic handle to an object of the
+  underlying plane map. The kind of object \ccc{(vertex, halfedge,
+    face)} can be determined and the object can be assigned to a
+  corresponding
+  handle by the three functions:\\
+  \ccc{bool assign(Vertex_const_handle& h, Object_handle)}\\
+  \ccc{bool assign(Halfedge_const_handle& h, Object_handle)}\\
+  \ccc{bool assign(Face_const_handle& h, Object_handle)}\\
+  where each function returns \ccc{true} iff the assignment to \ccc{h}
+  was done.  }
+
+\ccSetTwoOfThreeColumns{3cm}{1cm}
+
+\ccOperations
+
+\ccMethod{ bool contains(Object_handle h) ;}{returns true iff the
+  object \ccc{h} is contained in the set represented by \ccc{N}.  }
+
+\ccMethod{ bool contained_in_boundary(Object_handle h) ;}{returns true
+  iff the object \ccc{h} is contained in the $1$-skeleton of \ccc{N}.
+  }
+
+\ccMethod{ Object_handle locate(const Sphere_point& p) ;}{returns a
+  generic handle \ccc{h} to an object (face, halfedge, vertex) of the
+  underlying plane map that contains the point \ccc{p} in its relative
+  interior. The point \ccc{p} is contained in the set represented by
+  \ccc{N} if \ccc{N.contains(h)} is true. The location mode flag
+  \ccc{m} allows one to choose between different point location
+  strategies.  }
+
+\ccMethod{ Object_handle ray_shoot(const Sphere_point& p, const
+  Sphere_direction& d) ;}{returns a handle \ccc{h} with
+  \ccc{N.contains(h)} that can be converted to a
+  \ccc{Vertex_/Halfedge_/Face_const_handle} as described above. The
+  object returned is intersected by the ray starting in \ccc{p} with
+  direction \ccc{d} and has minimal distance to \ccc{p}.  The
+  operation returns an empty \ccc{Object_handle} if the ray shoot along
+  \ccc{d} does not hit any object \ccc{h} of \ccc{N} with
+  \ccc{N.contains(h)}.  }
+
+\ccMethod{ Object_handle ray_shoot_to_boundary(const Sphere_point& p,
+  const Sphere_direction& d) ;}{returns a handle \ccc{h} that can be
+  converted to a \ccc{Vertex_/Halfedge_const_handle} as described
+  above. The object returned is part of the $1$-skeleton of \ccc{N},
+  intersected by the ray starting in \ccc{p} with direction \ccc{d}
+  and has minimal distance to \ccc{p}.  The operation returns an
+  empty \ccc{Object_handle} if the ray shoot along \ccc{d} does not hit any
+  $1$-skeleton object \ccc{h} of \ccc{N}. The location mode flag
+  \ccc{m} allows one to choose between different point location
+  strategies.  }
+
+\ccHeading{Iteration} 
+
+\ccThree{SHalfloop_const_handle;}{N.has_shalfloop();;}{}
+
+\ccMethod{bool has_shalfloop() const;}{returns true iff there is 
+  a shalfloop.  }
+
+\ccMethod{SHalfloop_const_handle shalfloop() const;}{returns access to the
+  sloop.  }
+
+The list of all objects can be accessed via iterator ranges.
+For comfortable iteration we also provide iterations macros. 
+The iterator range access operations are of the following kind:\\
+\ccc{SVertex_iterator   svertices_begin()/svertices_end()}\\
+\ccc{SHalfedge_iterator shalfedges_begin()/shalfedges_end()}\\
+\ccc{SHalfloop_iterator shalfloops_begin()/shalfloops_end()}\\
+\ccc{SFace_iterator     sfaces_begin()/sfaces_end()}
+
+The macros are then \ccc{CGAL_forall_svertices(v,M)},
+\ccc{CGAL_forall_shalfedges(e,M)}, \ccc{CGAL_forall_sfaces(f,M)},
+\ccc{CGAL_forall_sface_cycles_of(fc,F)} where \ccc{M} is a sphere map
+and \ccc{F} is a sface.
+
+\ccHeading{Input and Output} A Nef polyhedron \ccc{N} can be
+visualized in an open GL window. The output operator is defined in the
+file \ccc{CGAL/IO/Nef_\-poly\-hedron_2_\-Win\-dow_\-stream.h}.
+   
+\ccImplementation
+
+Nef polyhedra are implemented on top of a halfedge data structure and
+use linear space in the number of vertices, edges and facets.
+Operations like \ccc{empty} take constant time. The operations
+\ccc{clear}, \ccc{complement}, \ccc{interior}, \ccc{closure},
+\ccc{boundary}, \ccc{regularization}, input and output take linear
+time. All binary set operations and comparison operations take time
+$O(n \log n)$ where $n$ is the size of the output plus the size of the
+input.
+
+The point location and ray shooting operations are implemented in the
+naive way. The operations run in linear query time without any
+preprocessing.
+
+
+
+\end{ccRefClass}
+
+

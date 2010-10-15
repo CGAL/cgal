@@ -1,0 +1,29 @@
+\begin{ccRefFunctionObjectConcept}{AlgebraicKernel_d_1::NumberOfSolutions_1}
+
+\ccDefinition
+Computes the number of real solutions of the given univariate polynomial. 
+ 
+\ccRefines 
+\ccc{AdaptableUnaryFunction}
+
+\ccTypes \ccThree{}{+++++++++++++}{++++++++}
+%\ccThree{typedef AlgebraicKernel_d_1::Polynomial_1}{argument_type+}{}
+\ccTypedef{typedef AlgebraicKernel_d_1::size_type     result_type;}{}
+\ccGlue
+\ccTypedef{typedef AlgebraicKernel_d_1::Polynomial_1  argument_type;}{}
+
+A model of this type must provide:
+
+\ccOperations \ccThree{+++++++++}{+++++++++}{}
+\ccCreationVariable{fo}
+%\ccThree{xxxxxxxxxxx}{xxxxxxxxxxxxxxxxxxxxxxxxxxxx}{}
+
+\ccMethod{result_type operator()(argument_type p);}
+{Returns the number of real solutions of $p$.
+\ccPrecond{ $p$ is square free.}}
+
+%\ccHasModels
+\ccSeeAlso
+\ccRefIdfierPage{AlgebraicKernel_d_1::ConstructAlgebraicReal_1}\\
+
+\end{ccRefFunctionObjectConcept} 

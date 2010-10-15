@@ -1,0 +1,46 @@
+\begin{ccRefClass}{Homogeneous_converter<K1, K2, RTConverter, FTConverter>}
+
+\KernelRefLayout\gdef\ccTagOperatorLayout{\ccFalse}
+
+\ccDefinition
+
+\ccClassTemplateName converts objects from the kernel traits \ccc{K1} to
+the kernel traits \ccc{K2}.  Those traits must be of the form
+\ccc{Homogeneous<RT1>} and \ccc{Homogeneous<RT2>} (or the equivalent with
+\ccc{Simple_homogeneous}).  It then provides the following operators to
+convert objects from \ccc{K1} to \ccc{K2}.
+
+The third template parameter \ccc{RT_Converter} is a function object that must
+provide \ccc{K2::RT operator()(const K1::RT &n);} that 
+converts \ccc{n} to an \ccc{K2::RT} that has the same value.
+
+The default value of this parameter is \ccc{CGAL::NT_converter<K1::RT, K2::RT>},
+which uses the conversion operator from
+\ccc{K1::RT} to \ccc{K2::RT}.
+
+Similarly, the fourth template parameter must provide
+\ccc{K2::FT operator()(const K1::FT &n);} that
+converts \ccc{n} to an \ccc{K2::FT} that has the same value.  Its
+default value is  \ccc{CGAL::NT_converter<K1::FT, K2::FT>}.
+
+\ccInclude{CGAL/Homogeneous_converter.h}
+
+\ccCreation
+\ccCreationVariable{conv}
+
+\ccConstructor{Homogeneous_converter<>();}{Default constructor.}
+
+\ccOperations
+
+\ccMemberFunction{K2::Point_2 operator()(const K1::Point_2&p);}
+{ returns a \ccc{K2::Point_2} which coordinates are those of \ccc{p},
+converted by \ccc{RTConverter}.}
+
+Similar operators are defined for the other kernel traits geometric types
+\ccc{Point_3}, \ccc{Vector_2}...
+
+\ccSeeAlso
+\ccRefIdfierPage{CGAL::Homogeneous<RingNumberType>} \\
+\ccRefIdfierPage{CGAL::Simple_homogeneous<RingNumberType>} \\
+
+\end{ccRefClass}

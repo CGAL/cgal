@@ -1,0 +1,241 @@
+%OPEN: new name for template argument ROOT ?
+%But this will cause changes in the interface  i.e. root() should change too.
+
+\begin{ccRefClass}{Sqrt_extension<NT,ROOT>}
+\def\ccTagOperatorLayout{\ccFalse}
+
+\ccDefinition
+
+An instance of this class represents an extension of the type \ccc{NT} by
+\textbf{one} square root of the type \ccc{ROOT}. \\ 
+\ccc{NT} is required to be constructible from \ccc{ROOT}. \\
+\ccc{NT} is required to be an \ccc{IntegralDomainWithoutDivision}. \\
+\ccRefName\ is \ccc{RealEmbeddable} if NT is  \ccc{RealEmbeddable}.
+
+For example: Let \ccc{Integer} be some type representing $\Z$, then 
+\ccc{Sqrt_extension<Integer,Integer>} is able to represent $\Z[\sqrt{root}]$
+for some arbitrary value $root$. The value of $root$ is set at 
+construction time, or left open if $root$ is not specified.
+
+Note that the given $root$ is stored as it is given to the constructor. In particular, an extension by a square root of a square is considered as an extension.  
+
+
+\textbf {It is not possible to interoperate two values from two different 
+extensions $\Z[\sqrt{a}]$ and $\Z[\sqrt{b}]$, since the result is in 
+$\Z[\sqrt{a},\sqrt{b}]$, which is not representable by 
+\ccc{Sqrt_extension<Integer,Integer>}. }
+
+%However, both \ccc{NT} and \ccc{ROOT} can themselves be an instance of
+%\ccc{Sqrt_extension}, yielding a nested extension, e.g.,
+%\ccc{Sqrt_extension<Sqrt_extension<Integer,Integer>,Integer>} is able to represent 
+%$\Z[\sqrt{a}][\sqrt{b}]$ for some integers $a$ and $b$. 
+
+
+\begin{ccAdvanced}
+ Since elements of \ccRefName\ that lie in different extensions 
+are not interoperable with respect to any arithmetic operations, the full
+ value range of \ccRefName\ does not represent an algebraic structure.
+ However, each subset of the value range that represents the extension of
+ NT by a particular square root is a valid algebraic structure, since 
+this subset is closed under all provided arithmetic  operations.
+
+From there, \ccRefName\ can be used as if it were a model of an algebraic structure concept, with the following correspondence:
+
+\begin{tabular}{ll}
+ NT & \ccRefName\  \\
+\hline \\
+\ccc{IntegralDomainWithoutDivision} & \ccc{IntegralDomainWithoutDivision}\\
+\ccc{IntegralDomain}                & \ccc{IntegralDomain}\\
+\ccc{UniqueFactorizationDomain}     & \ccc{IntegralDomain}\\
+\ccc{EuclideanRing}                 & \ccc{IntegralDomain}\\
+\ccc{Field}                         & \ccc{Field}\\
+\hline 
+\end{tabular}
+
+The extension of an \ccc{UniqueFactorizationDomain} or 
+\ccc{EuclideanRing} is just an \ccc{IntegralDomain}, since the extension in general destroys the unique factorization property, e.g., 
+\[10 = \sqrt{10} \cdot \sqrt{10} = 2 \cdot 5 \mbox{ over} \Z[\sqrt{10}]\]
+
+%For example take $\Z[\sqrt{10}]$:  \\
+%as indicated by \cite{e-eacfcc-03} referring to \cite{hardy-wright,hasse}:
+%For the fact that $2$, $5$, and $\sqrt{10}$ are irreducible elements 
+%of $\Z[\sqrt{10}]$. It follows immediately that $\Z[\sqrt{10}]$ is not a 
+%\ccc{UniqueFactorizationDomain}, 
+%because \[10 = \sqrt{10} \cdot \sqrt{10} = 2 \cdot 5\]$ factors in two essentially
+%different ways. \\
+
+\textbf{ Note that the user is responsible for checking that the elements of 
+\ccRefName\ that are manipulated are actually in a same extension field. 
+If different extension fields are mixed together, 
+the code may crash at runtime!} \\
+
+%However, \ccRefName\ is useful for lengthy computations 
+%over one quadratic extension, e.g. it can be used as coefficient type for 
+%polynomials, vectors or matrices. In particular it may be preferable to use 
+%\ccc{Sqrt_extension} in place of \ccc{leda_real} or \ccc{CORE::Expr}, 
+%since it does not suffer from growing expression trees.
+
+In the same way \ccc{Sqrt_extension} can be used as if it were a model of \ccc{RealEmbeddable} if \ccc{NT} is model of \ccc{RealEmbeddable}. \textbf{Comparisons of two values from different extension via operators is not allowed.} However, the 
+member function compare provides this comparison. 
+\end{ccAdvanced}
+
+\ccIsModel 
+\begin{tabular}{ll}
+\ccc{Assignable}\\
+\ccc{CopyConstructible}\\
+\ccc{DefaultConstructible}\\
+\ccc{EqualityComparable}\\
+\ccc{ImplicitInteroperable} & with int\\
+\ccc{ImplicitInteroperable} & with NT\\
+\ccc{Fraction}          & if NT is a \ccc{Fraction}\\
+\end{tabular}
+
+%\begin{ccAdvanced}
+%\ccc{Sqrt_extension} is \ccc{Modularizable} in case \ccc{NT} is 
+%\ccc{Modularizable}.
+%\end{ccAdvanced}
+
+\ccCreation
+
+\ccCreationVariable{ext}
+\ccConstructor{Sqrt_extension ();} 
+        {Introduces an variable initialized with 0.}
+\ccConstructor{Sqrt_extension (const Sqrt_extension& x);}
+ 	{copy constructor.}
+\ccConstructor{Sqrt_extension (const int &i);}
+        {Constructor from int.}
+\ccConstructor{Sqrt_extension (const NT &x);}
+        {Constructor from type NT.}
+\ccConstructor{Sqrt_extension (int a0, int a1, int r);}
+ 	{Constructor from int: \ccVar $= a0 +a1 \cdot sqrt(r)$. \ccPrecond{$r \neq 0$}}
+\ccConstructor{Sqrt_extension (NT a0, NT a1, ROOT r);}
+ 	{General constructor: \ccVar $= a0 + a1 \cdot sqrt(r)$. \ccPrecond{$r \neq 0$}}
+
+\ccOperations
+
+An object of type \ccc{Sqrt_extension} represent an expression of the form: 
+$a0 + a1 * sqrt(root)$. 
+
+\ccMethod{bool is_extended () const;}
+ 	{Returns true in case root of \ccVar\ is not zero.  \\
+         Note that $a1 == 0 $ does not imply $root == 0$. }   
+
+\ccMethod{const NT & a0 () const ;    }{Const access operator for a0} \ccGlue
+%\ccMethod{NT & 	a0 ()    ;    }{Access operator for a0.}\ccGlue
+\ccMethod{const NT & a1 () const ;    }{Const access operator for a1}\ccGlue
+%\ccMethod{NT & 	a1 ()    ;    }{Access operator for a1.}\ccGlue
+\ccMethod{const ROOT & 	root () const;}{Const access operator for root}\ccGlue
+%\ccMethod{ROOT & 	root ()  ;    }{Access operator for root.}
+
+%Member functions:\\
+\ccMethod{void 	simplify ();}
+        { Propagates the simplify command to members of \ccVar. \\
+          see also: \ccc{AlgebraicStructureTraits::Simplify}.}
+\ccMethod{bool 	is_zero () const;}
+        {returns true if \ccVar\ represents the value zero.}
+
+\ccMethod{CGAL::Sign sign () const;}
+        {Determines sign of \ccVar\ by (repeated) squaring.
+        \ccPrecond \ccc{Sqrt_extension} is \ccc{RealEmbeddable}.}
+\ccMethod{Sqrt_extension abs () const;}
+ 	{returns the absolute value of \ccVar. 
+        \ccPrecond \ccc{Sqrt_extension} is \ccc{RealEmbeddable}.}
+
+\ccMethod{
+CGAL::Comparison_result compare 
+(const Sqrt_extension& y, bool in_same_extension = true) const;}{
+  Compares \ccVar\ with y. \\
+  The optional bool \ccc{in_same_extension} indicates whether \ccVar\ 
+  and $y$ are in the same extension of NT.
+}
+
+
+\ccFunction{Sqrt_extension operator+(const Sqrt_extension&a,const Sqrt_extension& b);}
+{\ccPrecond \ccc{(a.root()==0 or b.root()==0 or a.root() == b.root())} }\ccGlue
+\ccFunction{Sqrt_extension operator-(const Sqrt_extension&a,const Sqrt_extension& b);}
+{\ccPrecond \ccc{(a.root()==0 or b.root()==0 or a.root() == b.root())} }\ccGlue
+\ccFunction{Sqrt_extension operator*(const Sqrt_extension&a,const Sqrt_extension& b);}
+{\ccPrecond \ccc{(a.root()==0 or b.root()==0 or a.root() == b.root())} }\ccGlue
+
+
+\ccMethod{Sqrt_extension & operator+=(const Sqrt_extension& a);}
+{\ccPrecond \ccc{(this->root()==0 or a.root()==0 or this->root() == a.root())} }\ccGlue
+
+\ccMethod{Sqrt_extension & operator-=(const Sqrt_extension& a);}
+{\ccPrecond \ccc{(this->root()==0 or a.root()==0 or this->root() == a.root())} }\ccGlue
+
+\ccMethod{Sqrt_extension & operator*=(const Sqrt_extension& a);}
+{\ccPrecond \ccc{(this->root()==0 or a.root()==0 or this->root() == a.root())} }\ccGlue
+
+In case \ccc{NT} is an \ccc{IntegralDomain} operator/ implements integral division. 
+%In case \ccc{NT} is a \ccc{Field} operator/ implements the field division.    
+
+\ccFunction{Sqrt_extension operator/(const Sqrt_extension&a,const Sqrt_extension& b);}
+{\ccPrecond \ccc{(a.root()==0 or b.root()==0 or a.root() == b.root())} }\ccGlue
+\ccMethod{Sqrt_extension & operator/=(const Sqrt_extension& a);}
+{\ccPrecond \ccc{(this->root()==0 or a.root()==0 or this->root() == a.root())} }\ccGlue
+\ccFunction{bool operator==(const Sqrt_extension&a,const Sqrt_extension& b);}
+{\ccPrecond \ccc{(a.root()==0 or b.root()==0 or a.root() == b.root())} }\ccGlue
+\ccFunction{bool operator!=(const Sqrt_extension&a,const Sqrt_extension& b);}
+{\ccPrecond \ccc{(a.root()==0 or b.root()==0 or a.root() == b.root())} }\ccGlue
+
+In case  \ccc{Sqrt_extension} is \ccc{RealEmbeddable}:
+
+\ccFunction{bool operator< (const Sqrt_extension&a,const Sqrt_extension& b);}
+{\ccPrecond \ccc{(a.root()==0 or b.root()==0 or a.root() == b.root())} }\ccGlue
+\ccFunction{bool operator<=(const Sqrt_extension&a,const Sqrt_extension& b);}
+{\ccPrecond \ccc{(a.root()==0 or b.root()==0 or a.root() == b.root())} }\ccGlue
+\ccFunction{bool operator> (const Sqrt_extension&a,const Sqrt_extension& b);}
+{\ccPrecond \ccc{(a.root()==0 or b.root()==0 or a.root() == b.root())} }\ccGlue
+\ccFunction{bool operator>=(const Sqrt_extension&a,const Sqrt_extension& b);}
+{\ccPrecond \ccc{(a.root()==0 or b.root()==0 or a.root() == b.root())} }\ccGlue
+
+
+
+\ccIgnore{ 
+% Mixed operations with NT (don't forget int in case you want to re add them)
+\ccFunction{Sqrt_extension operator+(const Sqrt_extension&a, const NT &b);}{}\ccGlue
+\ccFunction{Sqrt_extension operator-(const Sqrt_extension&a, const NT &b);}{}\ccGlue
+\ccFunction{Sqrt_extension operator*(const Sqrt_extension&a, const NT &b);}{}\ccGlue
+\ccFunction{Sqrt_extension operator+(const NT&a, const Sqrt_extension &b);}{}\ccGlue
+\ccFunction{Sqrt_extension operator-(const NT&a, const Sqrt_extension &b);}{}\ccGlue
+\ccFunction{Sqrt_extension operator*(const NT&a, const Sqrt_extension &b);}{}\ccGlue
+\ccMethod{Sqrt_extension & 	operator += (const NT &a);}{}\ccGlue
+\ccMethod{Sqrt_extension & 	operator -= (const NT &a);}{}\ccGlue
+\ccMethod{Sqrt_extension & 	operator *= (const NT &a);}{}\ccGlue
+\ccFunction{Sqrt_extension operator/(const Sqrt_extension&a, const NT &b);}{}\ccGlue
+\ccFunction{Sqrt_extension operator/(const NT&a, const Sqrt_extension &b);}{}\ccGlue
+\ccMethod{Sqrt_extension & 	operator /= (const NT &a);}{}
+\ccFunction{bool operator==(const NT&a, const Sqrt_extension &b);}{}\ccGlue
+\ccFunction{bool operator!=(const NT&a, const Sqrt_extension &b);}{}\ccGlue
+\ccFunction{bool operator==(const Sqrt_extension&a, const NT &b);}{}\ccGlue
+\ccFunction{bool operator!=(const Sqrt_extension&a, const NT &b);}{}
+\ccFunction{bool operator< (const NT&a, const Sqrt_extension &b);}{}\ccGlue
+\ccFunction{bool operator<=(const NT&a, const Sqrt_extension &b);}{}\ccGlue
+\ccFunction{bool operator> (const NT&a, const Sqrt_extension &b);}{}\ccGlue
+\ccFunction{bool operator>=(const NT&a, const Sqrt_extension &b);}{}
+\ccFunction{bool operator< (const Sqrt_extension&a, const NT &b);}{}\ccGlue
+\ccFunction{bool operator<=(const Sqrt_extension&a, const NT &b);}{}\ccGlue
+\ccFunction{bool operator> (const Sqrt_extension&a, const NT &b);}{}\ccGlue
+\ccFunction{bool operator>=(const Sqrt_extension&a, const NT &b);}{}
+}
+
+The stream operations are available as well. 
+They assume that corresponding stream operators for type \ccc{NT} and \ccc{ROOT} exist.
+
+\ccFunction{std::ostream& operator<<(std::ostream& os, const Sqrt_extension<NT,ROOT> &ext);}
+{writes \ccc{ext} to ostream \ccc{os}. The format depends on the \ccc{CGAL::IO::MODE} of \ccc{os}.\\
+        In case the mode is \ccc{CGAL::IO::ASCII} the format is {\tt EXT[a0,a1,root]}. \\
+        In case the mode is \ccc{CGAL::IO::PRETTY} the format is human readable. \\
+        }
+
+\ccFunction{std::istream& operator>>(std::istream& is, const Sqrt_extension<NT,ROOT> &ext);}
+{reads \ccc{ext} from istream \ccc{is} in format {\tt EXT[a0,a1,root]}, the output format in mode \ccc{CGAL::IO::ASCII} }
+
+
+
+%void 	output_maple (std::ostream &os) const
+% 	write Sqrt_extension to os in LiS::IO::PRETTY format
+%void 	output_ascii (std::ostream &os) const
+% 	write Sqrt_extension to os in a format readable by input_ascii()
+\end{ccRefClass}

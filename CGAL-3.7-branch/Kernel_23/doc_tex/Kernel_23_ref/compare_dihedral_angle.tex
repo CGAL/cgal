@@ -1,0 +1,63 @@
+\begin{ccRefFunction}{compare_dihedral_angle}
+
+\ccFunction{Comparison_result
+  compare_dihedral_angle(const Point_3<K>& a1,
+                         const Point_3<K>& b1, 
+                         const Point_3<K>& c1,
+                         const Point_3<K>& d1, 
+                         const K::FT& cosine);}
+      {compares the dihedral angles $\theta_1$ and $\theta_2$, where
+        $\theta_1$ is the dihedral angle, in $[0, \pi]$, of the tetrahedron
+        $(a_1, b_1, c_1, d_1)$ at the edge $(a_1, b_1)$, and $\theta_2$ is
+        the angle in $[0, \pi]$ such that $cos(\theta_2) = cosine$.
+        The result is the same as \ccc{compare_dihedral_angle(b1-a1,
+          c1-a1, d1-a1, cosine)}.
+        \ccPrecond{$a_1$, $b_1$, $c_1$ are not collinear,
+          and $a_1$, $b_1$, $d_1$ are not collinear.}}
+
+\ccFunction{Comparison_result
+  compare_dihedral_angle(const Point_3<K>& a1,
+                         const Point_3<K>& b1, 
+                         const Point_3<K>& c1,
+                         const Point_3<K>& d1, 
+                         const Point_3<K>& a2, 
+                         const Point_3<K>& b2, 
+                         const Point_3<K>& c2,
+                         const Point_3<K>& d2);}
+      {compares the dihedral angles $\theta_1$ and $\theta_2$, where
+        $\theta_i$ is the dihedral angle in the tetrahedron $(a_i, b_i,
+        c_i, d_i)$ at the edge $(a_i, b_i)$. These two angles are computed
+        in $[0, \pi]$.
+        The result is the same as \ccc{compare_dihedral_angle(b1-a1,
+          c1-a1, d1-a1, b2-a2, c2-a2, d2-a2)}.
+        \ccPrecond{For $i \in \{1,2\}$, $a_i$, $b_i$, $c_i$ are not collinear,
+          and $a_i$, $b_i$, $d_i$ are not collinear.}}
+
+\ccFunction{Comparison_result
+  compare_dihedral_angle(const K::Vector_3& u1,
+                         const K::Vector_3& v1, 
+                         const K::Vector_3& w1,
+                         const K::FT& cosine);}
+      {compares the dihedral angles $\theta_1$ and $\theta_2$, where
+        $\theta_1$ is the dihedral angle, in $[0, \pi]$, between the
+        vectorial planes defined by $(u_1, v_1)$ and $(u_1, w_1)$, and
+        $\theta_2$ is the angle in $[0, \pi]$ such that $cos(\theta_2) =
+        cosine$.
+        \ccPrecond{$u_1$ and $v_1$ are not collinear,
+          and $u_1$ and $w_1$ are not collinear.}}
+
+\ccFunction{Comparison_result
+  compare_dihedral_angle(const K::Vector_3& u1,
+                         const K::Vector_3& v1, 
+                         const K::Vector_3& w1,
+                         const K::Vector_3& u2, 
+                         const K::Vector_3& v2, 
+                         const K::Vector_3& w2);}
+      {compares the dihedral angles $\theta_1$ and $\theta_2$, where
+        $\theta_i$ is the dihedral angle between the vectorial planes
+        defined by $(u_i, v_i)$ and $(u_i, w_i)$. These two angles are
+        computed in $[0, \pi]$.
+        \ccPrecond{For $i \in \{1,2\}$, $u_i$ and $v_i$ are not collinear,
+          and $u_i$ and $w_i$ are not collinear.}}
+
+\end{ccRefFunction}

@@ -1,0 +1,97 @@
+% +------------------------------------------------------------------------+
+% | Reference manual page: Triangulation_2::Vertex_base.tex
+% +------------------------------------------------------------------------+
+% | 11.04.2000   Author
+% | Package: Package
+% | 
+\RCSdef{\RCSTriangulation::VertexbaseRev}{$Id$}
+\RCSdefDate{\RCSTriangulation::VertexbaseDate}{$Date$}
+% |
+%%RefPage: end of header, begin of main body
+% +------------------------------------------------------------------------+
+
+
+\begin{ccRefConcept}{TriangulationVertexBase_2}
+
+%% \ccHtmlCrossLink{}     %% add further rules for cross referencing links
+%% \ccHtmlIndexC[concept]{} %% add further index entries
+
+\ccDefinition
+  
+The concept \ccRefName\ describes the requirements for the
+vertex base class of a triangulation data structure
+to be plugged in a basic, Delaunay or constrained
+triangulations.
+
+The concept \ccRefName\ refines the concept
+\ccc{TriangulationDSVertexBase_2}
+adding geometric information :
+the vertex base of a triangulation stores a point.
+
+\ccRefines{\ccc{TriangulationDSVertexBase_2}}
+
+\ccTypes
+\ccNestedType{Point}
+{Must be the same as the point type \ccc{TriangulationTraits_2::Point_2}
+defined by the geometric traits class of the triangulation.} 
+
+\ccCreation
+\ccCreationVariable{v}  %% choose variable name
+
+
+\ccConstructor{TriangulationVertexBase_2(Point p);}
+{constructs a vertex embedded in point \ccc{p}.}
+\ccConstructor{TriangulationVertexBase_2(Point p, Face_handle f);}
+{constructs a vertex embedded in point \ccc{p} and pointing on face \ccc{f}.}
+
+\ccAccessFunctions
+\ccThree{istream&}{istream& is << & v }{}
+\ccMethod{Point point() const;}
+{returns  the point.}
+%\ccGlue
+%\ccMethod{void* face() const;}{ returns a pointer to an incident face.}
+
+\ccHeading{Setting}
+\ccMethod{void set_point(Point p);}
+{sets the point.}
+
+\ccHeading{I/O}
+
+\ccFunction{istream& operator>>
+(istream& is, TriangulationVertexBase_2 & v);}
+{Inputs the non-combinatorial information given by the vertex: 
+the point and other possible information.}
+%\ccPrecond{The point and the other information have a corresponding
+%operator \ccc{>>}. \textit{This precondition is optional for the
+%triangulation data structure alone.}}}  
+
+\ccFunction{ostream& operator<< (ostream& os, 
+			const TriangulationVertexBase_2 & v);}
+{Outputs the non combinatorial operation given by the vertex: the
+point and other possible information.}
+%\ccPrecond{The point and the other information have a corresponding
+%operator \ccc{<<}. \textit{This precondition is optional for the
+%triangulation data structure alone.}}} 
+
+
+
+
+\ccHasModels
+
+\ccc{CGAL::TriangulationVertexBase_2<Traits>}.
+
+
+\ccSeeAlso
+
+\ccc{TriangulationDataStructure_2} \\
+\ccc{TriangulationDataStructure_2::Vertex} \\
+\ccc{CGAL::Triangulation_vertex_base_2<Traits>}
+
+
+\end{ccRefConcept}
+
+% +------------------------------------------------------------------------+
+%%RefPage: end of main body, begin of footer
+% EOF
+% +------------------------------------------------------------------------+
+

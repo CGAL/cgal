@@ -1,0 +1,76 @@
+% +------------------------------------------------------------------------+
+% | Reference manual page: SkinSurfaceTraits_3.tex
+% +------------------------------------------------------------------------+
+% | 27.09.2005   Nico Kruithof
+% | Package: Skin_surface_3
+% | 
+\RCSdef{\RCSSkinSurfaceTraitsRev}{$Id$}
+\RCSdefDate{\RCSSkinSurfaceTraitsDate}{$Date$}
+% +------------------------------------------------------------------------+
+
+\ccRefPageBegin
+
+%%RefPage: end of header, begin of main body
+% +------------------------------------------------------------------------+
+
+\begin{ccRefConcept}{SkinSurfaceTraits_3}
+  Required types and member functions for the \ccRefName\ concept.
+  This geometric traits concept is used for the construction of a
+  polyhedral mesh approximating a skin surface
+  \ccc{CGAL::skin_surface_3<Traits>}.
+
+  \ccRefines
+  \ccc{RegularTriangulationTraits_3} 
+
+  % \ccc{CopyConstructable}, \ccc{Assignable}.
+
+  \ccThree{Skin_surface_traits_3}{Triang}{}
+  \ccThreeToTwo
+  \ccTypes
+
+  \ccNestedType{RT}{The number type.}
+
+  \ccNestedType{Construct_anchor_point_3}{A constructor object which
+    provides the following function operator:\\
+    \ccc{Point operator()(const Point &center_del, const
+      Point &center_vor);}\\
+    Constructs the anchor point in between the Delaunay and Voronoi
+    centers, i.e., the point $(1-s)\cdot$\ccc{center_del} +
+    $s\cdot$\ccc{center_vor}, where $s$ is the shrink factor.}
+
+\ccCreation
+\ccCreationVariable{traits}
+
+\ccConstructor{SkinSurfaceTraits_3(RT s=.5);}{ constructor that takes
+  the shrink factor as argument. For meshing the boundary of the union
+  of a set of balls, the shrink factor is discarded.}
+
+\ccHasModels
+
+\ccRefIdfierPage{CGAL::Skin_surface_traits_3<K>}
+
+
+\ccThree{Construct_anchor_point_3}{traits.shrink_factor()}{}
+\ccThreeToTwo
+
+\ccOperations
+The following functions give access to the constructor objects:
+
+\ccMethod{
+  Regular_RT shrink_factor() const;}{Returns the shrink factor.}
+
+\ccMethod{Construct_anchor_point_3 construct_anchor_point_3_object()
+  const;}{returns a \ccc{Construct_anchor_point_3} object.}
+
+\ccSeeAlso
+\ccRefIdfierPage{CGAL::Skin_surface_3<SkinSurfaceTraits_3>}\\
+\ccRefIdfierPage{CGAL::Skin_surface_traits_3<K>}
+
+\end{ccRefConcept}
+
+% +------------------------------------------------------------------------+
+%%RefPage: end of main body, begin of footer
+\ccRefPageEnd
+% EOF
+% +------------------------------------------------------------------------+
+

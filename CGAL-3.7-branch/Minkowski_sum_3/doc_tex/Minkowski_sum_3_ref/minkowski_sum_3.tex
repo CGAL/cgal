@@ -1,0 +1,60 @@
+% +------------------------------------------------------------------------+
+% | Reference manual page: minkowski_sum_3.tex
+% +------------------------------------------------------------------------+
+% | 11.06.2008   Peter Hachenberger
+% | Package: Minkowski_sum_3
+% | 
+\RCSdef{\RCSminkowski_sum_3Rev}{$Id$}
+\RCSdefDate{\RCminkowski_sum_3Date}{$Date$}
+% |
+%%RefPage: end of header, begin of main body
+% +------------------------------------------------------------------------+
+
+\ccHtmlNoClassLinks
+\begin{ccRefFunction}{minkowski_sum_3}
+\label{refminkowski_sum_3}
+
+\ccDefinition
+
+The function \ccc{minkowski_sum_3} computes the Minkowski sum of two
+given 3D Nef polyhedra $N0$ and $N1$. Note that the function runs in
+$O(n^3m^3)$ time in the worst case, where $n$ and
+$m$ are the complexities of the two input polyhedra (the complexity of
+a \ccc{Nef_polyhedron_3} is the sum of its \ccc{Vertices},
+\ccc{Halfedges} and \ccc{SHalfedges}).
+
+\ccGlobalFunction{Nef_polyhedron_3 minkowski_sum_3(Nef_polyhedron_3 N0, Nef_polyhedron_3 N1);}
+
+\ccPrecond
+
+An input polyhedron may consist of:
+\begin{enumerate}
+\item singular vertices
+\item singular edges
+\item singular convex facets without holes
+\item surfaces with convex facets that have no holes.
+\item three-dimensional features, whose coplanar facets have
+common selection marks (this includes open and closed solids)
+\end{enumerate}
+
+Taking a different viewpoint, the implementation is restricted as
+follows:
+\begin{enumerate}
+\item The input polyhedra must be bounded (selected outer volume is ignored).
+\item All sets of coplanar facets of a full-dimensional
+feature must have the same selection mark (in case of different
+selection marks, unselected is assumed).
+\item All facets of lower-dimensional features need to be convex and 
+must not have holes (non-convex facets and holes are ignored).
+\end{enumerate}
+
+\ccPostcond
+
+If either of the input polyhedra is non-convex, it is modified during
+the computation, i.e., it is decomposed into convex pieces.
+
+\ccSeeAlso
+\ccRefIdfierPage{CGAL::Nef_polyhedron_3<Traits>}\\ 
+\ccRefIdfierPage{CGAL::convex_decomposition_3}\\ 
+
+\end{ccRefFunction}

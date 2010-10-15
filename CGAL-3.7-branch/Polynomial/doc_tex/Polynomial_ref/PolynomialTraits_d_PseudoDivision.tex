@@ -1,0 +1,52 @@
+\begin{ccRefConcept}{PolynomialTraits_d::PseudoDivision}
+
+\ccDefinition
+
+This \ccc{AdaptableFunctor} computes the {\em pseudo division} 
+of two polynomials $f$ and $g$. 
+     
+Given $f$ and $g \neq 0$ this functor computes quotient $q$ and
+remainder $r$ such that $D \cdot f = g \cdot q + r$ and $degree(r) < degree(g)$,
+where $ D = leading\_coefficient(g)^{max(0, degree(f)-degree(g)+1)}$
+
+This functor is useful if the regular division is not available, 
+which is the case if \ccc{PolynomialTraits_d::Coefficient_type} is not a \ccc{Field}. 
+Hence in general it is not possible to invert the leading coefficient of $g$. 
+Instead $f$ is extended by $D$ allowing integral divisions in the internal 
+computation. 
+
+
+\ccRefines 
+\ccc{AdaptableFunctor}\\
+\ccc{CopyConstructible}\\
+\ccc{DefaultConstructible}\\
+
+\ccTypes
+
+\ccSetThreeColumns{xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx}{xxx}{}
+\ccCreationVariable{fo}
+
+\ccTypedef{typedef void                               result_type;}{}\ccGlue
+
+\ccOperations
+
+\ccMethod{result_type operator()(PolynomialTraits_d::Polynomial_d    f,
+                                 PolynomialTraits_d::Polynomial_d    g,
+                                 PolynomialTraits_d::Polynomial_d &  q,
+                                 PolynomialTraits_d::Polynomial_d &  r,
+                                 PolynomialTraits_d::Coefficient_type  &  D);}{ 
+        Computes the pseudo division with respect to the outermost variable 
+        $x_{d-1}$.
+        }
+
+%\ccHasModels
+
+\ccSeeAlso
+
+\ccRefIdfierPage{Polynomial_d}\\
+\ccRefIdfierPage{PolynomialTraits_d}\\
+\ccRefIdfierPage{PolynomialTraits_d::PseudoDivision}\\
+\ccRefIdfierPage{PolynomialTraits_d::PseudoDivisionRemainder}\\
+\ccRefIdfierPage{PolynomialTraits_d::PseudoDivisionQuotient}\\
+
+\end{ccRefConcept}

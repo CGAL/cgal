@@ -1,0 +1,31 @@
+body  {color: black; background-color: #C0C0D0}
+
+P {
+width: 80ex
+}
+
+TABLE.result { font-weight: bold; background-color: white; padding: 1em; }
+
+TABLE.summary TD { white-space: nowrap }
+
+TD.ok {background-color: rgb(50%,100%,50%)}
+TD.warning {background-color: rgb(100%,100%,50%)}
+TD.error {background-color: rgb(100%,50%,50%)}
+TD.na {background-color: white;}
+
+TH.ok {background-color: rgb(50%,100%,50%)}
+TH.warning {background-color: rgb(100%,100%,50%)}
+TH.error {background-color: rgb(100%,50%,50%)}
+
+
+TD.ok A {font-size:large; text-decoration: none}
+TD.ok A:link {color: rgb(0%,0%,100%)}
+TD.ok A:visited {color: rgb(0%,80%,100%)}
+
+TD.warning A {font-size:large; text-decoration: none}
+TD.warning A:link {color: rgb(0%,0%,100%)}
+TD.warning A:visited {color: rgb(80%,80%,100%)}
+
+TD.error A {font-size: large; text-decoration: none}
+TD.error A:link {color: rgb(0%,0%,100%)}
+TD.error A:visited {color: rgb(80%,0%,100%)}

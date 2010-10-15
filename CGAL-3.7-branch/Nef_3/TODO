@@ -1,0 +1,43 @@
+Nef_3 Package: TODO
+---------------------------------------------------------------------
+
+See also demo/Nef_3/README for more todo items.
+
+- Add SNC_const_decorator that can be used as Explorer (i.e. the
+  interface for the external user of the Nef_polyhedron_3 class).
+  See the Nef_polyhedron_2 for the Explorer.
+
+- Add a 'Bbox_3 bounded_bbox()' (or similar named) member function that
+  returns the bounding box of all vertices that are not on the infimaximal
+  box. Return the bbox (-1,-1,-1,1,1,1) if there is no such vertex.
+
+- Use the bounded_bbox() in the visualizer. Use an appropriate
+  glScaled() call to have the object nicely scaled in the viewer.
+
+- Isolate the handling of the infimaximal box into its own class
+  (whether it gets created, how to create it, how to test whether 
+  an element is on the infimaximal box, etc.): The idea is that 
+  we can have to versions, one without such a box (and therefore also
+  no halfspaces and no unbounded elements at all, but a faster geometric
+  kernel), and one with a box (and therefore more general but with a 
+  slower extended kernel).
+
+- Replace template signature
+
+    template <typename T>
+    class Nef_polyhedron_3;
+
+  with
+
+    template <typename Kernel_, class Items_ = CGAL::SNC_items<Kernel_,bool> >
+    class Nef_polyhedron_3;
+
+- Exclude infimaximal box objects during the binary operations.
+  (Lutz remark: that sounds not true to me)
+- Change &D.mark() to D.set_mark(...) and D.get_mark(...)
+- Extended kernel with infimaximal box
+- Define endpoint of segments used for ray shoting to be in the 
+  infimaximal box.
+- Constructor from a halfspace.
+- Write a SNC_const_decorator class cloning the current SNC_decorator
+  class methods but using constant attributes.

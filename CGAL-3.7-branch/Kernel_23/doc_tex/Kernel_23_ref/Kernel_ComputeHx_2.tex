@@ -1,0 +1,17 @@
+\begin{ccRefFunctionObjectConcept}{Kernel::ComputeHx_2}
+A model for this must provide:
+
+\ccCreationVariable{fo}
+
+\ccMemberFunction{Kernel::FT operator()(const Kernel::Point_2& p) const;}
+       {returns the homogeneous $x$-coordinate of the point.}
+
+\ccMemberFunction{Kernel::FT operator()(const Kernel::Vector_2& v) const;}
+       {returns the homogeneous $x$-coordinate of the vector.}
+
+\ccRefines
+\ccc{AdaptableFunctor}
+
+
+
+\end{ccRefFunctionObjectConcept}

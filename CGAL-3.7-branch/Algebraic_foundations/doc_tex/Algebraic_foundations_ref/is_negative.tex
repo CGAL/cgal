@@ -1,0 +1,20 @@
+\begin{ccRefFunction}{is_negative}
+
+\ccDefinition
+
+The template function \ccRefName\ determines if a value is negative or not.
+The function is guaranteed to be well defined in case the argument type 
+is a model of the \ccc{RealEmbeddable} concept. 
+
+ 
+\ccInclude{CGAL/number_utils.h}
+
+\ccFunction{result_type is_negative(const NT& x);}{
+        The \ccc{result_type} is convertible to \ccc{bool}. 
+}
+
+\ccSeeAlso
+\ccRefConceptPage{RealEmbeddable} \\
+\ccRefConceptPage{RealEmbeddableTraits::IsNegative}\\
+
+\end{ccRefFunction}

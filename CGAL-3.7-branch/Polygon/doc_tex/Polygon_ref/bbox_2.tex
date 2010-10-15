@@ -1,0 +1,57 @@
+% +------------------------------------------------------------------------+
+% | Reference manual page: bbox_2.tex
+% +------------------------------------------------------------------------+
+% | 21.06.2001   Author
+% | Package: Polygon
+% | 
+\RCSdef{\RCSleftvertexRev}{$Id$}
+\RCSdefDate{\RCSleftvertexDate}{$Date$}
+% |
+%%RefPage: end of header, begin of main body
+% +------------------------------------------------------------------------+
+
+
+\begin{ccRefFunction}{bbox_2}
+
+%% \ccHtmlCrossLink{}     %% add further rules for cross referencing links
+%% \ccHtmlIndexC[function]{} %% add further index entries
+
+\ccDefinition
+  
+%The function \ccRefName\ does this and that.
+
+\ccInclude{CGAL/Polygon_2_algorithms.h}
+
+\ccFunction{template <class InputIterator, class Traits>
+Bbox_2 bbox_2(InputIterator first,
+                                   InputIterator last,
+                                   const Traits& traits);}
+{
+Returns the bounding box of the range \ccStyle{[first,last)}. 
+}
+
+\ccHeading{Requirements}
+%\ccIndexSubitem[C]{bbox_2}{requirements}
+\begin{enumerate}
+    \item \ccc{Traits} is a model of the concept 
+	  \ccc{PolygonTraits_2}\ccIndexMainItem[c]{PolygonTraits_2}.
+	  In fact, only the members \ccc{Construct_bbox_2} and
+	  \ccc{construct_bbox_2_object()} are used.
+    \item The value type of \ccc{InputIterator} must be \ccc{Traits::Point_2},
+\end{enumerate}
+
+
+\ccSeeAlso
+\ccRefIdfierPage{CGAL::Polygon_2<PolygonTraits_2, Container>}
+
+%\ccExample
+%
+%% \ccIncludeExampleCode{Polygon/bbox_2_prog.cpp}
+
+\end{ccRefFunction}
+
+% +------------------------------------------------------------------------+
+%%RefPage: end of main body, begin of footer
+% EOF
+% +------------------------------------------------------------------------+
+

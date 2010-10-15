@@ -1,0 +1,87 @@
+\section{Interoperability}
+
+This section introduces two concepts for interoperability of types, 
+namely \ccc{ImplicitInteroperable} and \ccc{ExplicitInteroperable}. While 
+\ccc{ExplicitInteroperable} is the base concept, we start with 
+\ccc{ImplicitInteroperable} since it is the more intuitive one.
+
+In general mixed operations are provided by overloaded operators and
+functions or just via implicit constructor calls. 
+This level of interoperability is reflected by the concept 
+\ccc{ImplicitInteroperable}. However, within template code the result type, 
+or so called coercion type, of an mixed arithmetic operation may be unclear.
+Therefore, the package introduces \ccc{CGAL::Coercion_traits}
+giving access to the coercion type via \ccc{CGAL::Coercion_traits<A,B>::Type}
+for two interoperable types \ccc{A} and \ccc{B}. 
+
+%Examples for \ccc{ImplicitInteroperable} types are: \\
+%\begin{tabular}{|l|l|l|}
+%\hline
+%A&B&Coercion type\\
+%\hline
+% \ccc{int}& \ccc{double} & \ccc{double} \\
+%  \ccc{leda_integer}& \ccc{leda_rational}& \ccc{leda_rational}\\
+%  \ccc{CORE::BigInt} & \ccc{CORE::BigRat} & \ccc{CORE::BigRat}\\
+%  \ccc{CGAL::Gmpz}& \ccc{CGAL::Gmpq}& \ccc{CGAL::Gmpq}\\
+%\hline
+%\end{tabular}
+
+Some trivial example are \ccc{int} and \ccc{double} with coercion type double 
+or \ccc{CGAL::Gmpz} and \ccc{CGAL::Gmpq} with coercion type \ccc{CGAL::Gmpq}.
+However, the coercion type is not necessarily one of the input types,
+e.g. the coercion type of a polynomial 
+with integer coefficients that is multiplied by a rational type 
+is supposed to be a polynomial with rational coefficients.
+
+\ccc{CGAL::Coercion_traits} is also
+required to provide a functor \ccc{CGAL::Coercion_traits<A,B>::Cast()}, that 
+converts from an input type into the coercion type. This is in fact the core
+of the more basic concept \ccc{ExplicitInteroperable}. 
+\ccc{ExplicitInteroperable} has been introduced to cover more complex cases 
+for which it is hard or impossible to guarantee implicit interoperability.  
+Note that this functor can be useful for \ccc{ImplicitInteroperable} types 
+as well, since it can be used to void redundant type conversions.  
+
+In case two types \ccc{A} and \ccc{B} are \ccc{ExplicitInteroperable} with 
+coercion type \ccc{C} they are valid argument types for all binary functors 
+provided by \ccc{Algebraic_structure_traits} and \ccc{Real_embeddable_traits} of
+\ccc{C}. This is also true for the according global functions. 
+
+\subsection{Examples}
+
+The following example illustrates how two write code for 
+\ccc{ExplicitInteroperable} types.
+
+\ccIncludeExampleCode{Algebraic_foundations/interoperable.cpp}
+
+The following example illustrates a dispatch for \ccc{ImplicitInteroperable} and 
+\ccc{ExplicitInteroperable} types. 
+The binary function (that just multiplies its two arguments) is supposed to 
+take two \ccc{ExplicitInteroperable} arguments. For \ccc{ImplicitInteroperable}
+types a variant that avoids the explicit cast is selected. 
+
+\ccIncludeExampleCode{Algebraic_foundations/implicit_interoperable_dispatch.cpp}
+
+\ccIgnore{
+A frequent problem in generic programming is how to handle mixed operations
+of two types. 
+In most cases it is possible to rely on implicit interoperability 
+of the involved types, which is in general achieved by implicit constructors
+or operator and function overloads. This level of interoperability is 
+reflected by the concept \ccc{ImplicitInteroperable}.
+For template code, th
+But in case of template code, the
+result type, or so called coercion type, of an mixed operation can be unclear. 
+For these cases the package provides the class 
+\ccc{CGAL::Coercion_traits}, which gives access to the coercion type via
+\ccc{CGAL::Coercion_traits<A,B>::Type} for two \ccc{ImplicitInteroperable} 
+types \ccc{A} and \ccc{B}.
+
+
+The concept \ccc{ExplicitInteroperable} has been introduced for cases in 
+which is not possible or very hard to provide implicit interoperability.
+\ccc{ExplicitInteroperable} is more basic than \ccc{ImplicitInteroperable} 
+and  just requires \ccc{Coercion_traits}  to provide a suitable coercion 
+type and a functor \ccc{Coercion_traits<A,B>::Cast()} that converts each of 
+the input types into the coercion type. 
+}

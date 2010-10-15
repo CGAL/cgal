@@ -1,0 +1,57 @@
+% +------------------------------------------------------------------------+
+% | Reference manual page: compute_average_spacing.tex
+% +------------------------------------------------------------------------+
+% | 02.06.2008   Pierre Alliez, Laurent Saboret, Gael Guennebaud
+% | Package: Point_set_processing_3
+% |
+\RCSdef{\RCSaveragespacingRev}{$Id$}
+\RCSdefDate{\RCSaveragespacingDate}{$Date$}
+% |
+\ccRefPageBegin
+%%RefPage: end of header, begin of main body
+% +------------------------------------------------------------------------+
+
+
+\begin{ccRefFunction}{compute_average_spacing}  %% add template arg's if necessary
+
+%% \ccHtmlCrossLink{}     %% add further rules for cross referencing links
+%% \ccHtmlIndexC[function]{} %% add further index entries
+
+\ccDefinition
+
+\ccc{CGAL::compute_average_spacing()} computes the average spacing of all points from the input set to their $k$ nearest neighbors. This value depends on the \ccc{k} parameter which can be set to 6 for isotropically sampled surfaces.
+
+\ccInclude{CGAL/compute_average_spacing.h}
+
+% The section below is automatically generated. Do not edit!
+%START-AUTO(\ccDefinition)
+
+% Reduce left margin
+\ccThree{123456789012345}{6789012}{}
+
+\ccFunction{template<typename InputIterator, typename PointPMap, typename Kernel> Kernel::FT compute_average_spacing(InputIterator first, InputIterator beyond, PointPMap point_pmap, unsigned int k, const Kernel& kernel);}
+{
+Computes average spacing from k nearest neighbors.
+\ccPrecond k $>$= 2.
+\ccCommentHeading{Template Parameters}  \\
+\ccc{InputIterator}: iterator over input points. \ccc{PointPMap}: is a model of \ccc{boost::ReadablePropertyMap} with a \ccc{value_type} = \ccc{Point_3<Kernel>}. It can be omitted if \ccc{InputIterator} \ccc{value_type} is convertible to \ccc{Point_3<Kernel>}. \ccc{Kernel}: Geometric traits class. It can be omitted and deduced automatically from \ccc{PointPMap} \ccc{value_type}.
+\ccCommentHeading{Returns} average spacing (scalar).
+\ccCommentHeading{Parameters}  \\
+\ccc{first}: iterator over the first input point. \ccc{beyond}: past-the-end iterator over the input points. \ccc{point_pmap}: property map \ccc{InputIterator} -$>$ \ccc{Point_3}. \ccc{k}: number of neighbors. \ccc{kernel}: geometric traits.
+}
+\ccGlue
+
+%END-AUTO(\ccDefinition)
+
+\ccExample
+
+See \ccc{average_spacing_example.cpp}.
+
+\end{ccRefFunction}
+
+% +------------------------------------------------------------------------+
+%%RefPage: end of main body, begin of footer
+\ccRefPageEnd
+% EOF
+% +------------------------------------------------------------------------+
+

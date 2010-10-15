@@ -1,0 +1,30 @@
+
+\ccDefGlobalScope{CGAL::}
+\begin{ccRefClass}[Qt::]{GraphicsItem}
+
+\ccDefinition
+The \cgal\ graphics items hold pointers to \cgal\ datastructures. When a datastructure changes, 
+a signal is emitted. An object derived from type \ccRefName\ must provide an implementation of the 
+virtual slot \ccc{modelChanged()}.  This typically triggers redrawing, as well as recomputation 
+of the bounding box which in turn may trigger redrawing of overlapping graphics items.
+
+\ccInclude{CGAL/Qt/GraphicsItem.h}
+
+
+
+\ccInheritsFrom
+\ccc{QGraphicsItem}
+
+\ccHeading{Slots}
+\ccCreationVariable{gi}
+
+\ccMethod{virtual void modelChanged();}{This slot must be provided by derived classes.}
+
+\end{ccRefClass}
+
+
+
+
+
+
+

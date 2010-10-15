@@ -1,0 +1,17 @@
+\begin{ccRefFunctionObjectConcept}{Kernel::Collinear_3}
+A model for this must provide:
+
+\ccCreationVariable{fo}
+
+\ccMemberFunction{bool operator()(const Kernel::Point_3&p, 
+                                  const Kernel::Point_3&q, 
+                                  const Kernel::Point_3&r);}
+{returns \ccStyle{true}, if $p$, $q$, and $r$ are collinear.}
+
+\ccRefines
+\ccc{AdaptableFunctor} (with three arguments)
+
+\ccSeeAlso
+\ccRefIdfierPage{CGAL::collinear}  \\
+
+\end{ccRefFunctionObjectConcept}

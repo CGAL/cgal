@@ -1,0 +1,6 @@
+To update the sub-directory Biblio/, modify
+Manual/doc_tex/Manual/manual-x.y.bib, then call ./makebiblio
+with the full path to manual-x.y.bib 
+
+Do not forget to commit both Manual/doc_tex/Manual/ and this ./Biblio
+sub-directory, at the end.

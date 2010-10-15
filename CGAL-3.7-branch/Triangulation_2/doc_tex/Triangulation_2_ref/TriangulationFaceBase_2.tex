@@ -1,0 +1,53 @@
+% +------------------------------------------------------------------------+
+% | Reference manual page: Triangulation_2::Face_base.tex
+% +------------------------------------------------------------------------+
+% | 11.04.2000   Author
+% | Package: Package
+% | 
+\RCSdef{\RCSTriangulation::FacebaseRev}{$Id$}
+\RCSdefDate{\RCSTriangulation::FacebaseDate}{$Date$}
+% |
+%%RefPage: end of header, begin of main body
+% +------------------------------------------------------------------------+
+
+
+\begin{ccRefConcept}{TriangulationFaceBase_2}
+
+%% \ccHtmlCrossLink{}     %% add further rules for cross referencing links
+%% \ccHtmlIndexC[concept]{} %% add further index entries
+
+\ccDefinition
+  
+The concept \ccRefName\ describes the requirements for
+the base face class of a triangulation data structure
+that is itself plugged into a basic triangulation
+or a Delaunay triangulation.
+
+This concept refines the concept \ccc{TriangulationDSFaceBase_2}
+and could add  geometric information. In fact, 
+currently the triangulations of
+CGAL do not  store any geometric information in the faces
+and, thus this concept is just equal to \ccc{TriangulationDSFaceBase_2}
+and only provided for symmetry with the vertex case.
+
+
+\ccRefines
+\ccc{TriangulationDSFaceBase_2}
+
+\ccHasModels
+\ccc{CGAL::Triangulation_face_base_2<Traits>}
+
+
+\ccSeeAlso
+\ccc{TriangulationVertexBase_2} \\
+\ccc{CGAL::Triangulation_face_base_2<Traits>} \\
+\ccc{CGAL::Triangulation_2<Traits,Tds>} \\
+\ccc{CGAL::Delaunay_triangulation_2<Traits,Tds>}
+
+\end{ccRefConcept}
+
+% +------------------------------------------------------------------------+
+%%RefPage: end of main body, begin of footer
+% EOF
+% +------------------------------------------------------------------------+
+

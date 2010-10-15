@@ -1,0 +1,47 @@
+% +------------------------------------------------------------------------+
+% | Reference manual page: AABB_traits_base.tex
+% +------------------------------------------------------------------------+
+% | 21.02.2009   Author
+% | Package: Package
+% |
+\RCSdef{\RCSAABBtraitsbaseRev}{$Id: header.tex 40270 2007-09-07 15:29:10Z lsaboret $}
+\RCSdefDate{\RCSAABBtraitsbaseDate}{$Date: 2007-09-07 17:29:10 +0200 (Ven, 07 sep 2007) $}
+% |
+\ccRefPageBegin
+%%RefPage: end of header, begin of main body
+% +------------------------------------------------------------------------+
+
+
+\begin{ccRefClass}{AABB_polyhedron_triangle_primitive<GeomTraits,Polyhedron>}
+
+%% \ccHtmlCrossLink{}     %% add further rules for cross referencing links
+%% \ccHtmlIndexC[class]{} %% add further index entries
+
+\ccDefinition
+  
+The class \ccRefName\ is a model of the concept \ccc{AABBPrimitive}. It wraps a facet handle of a polyhedron, which is used as id, and allows the construction of the datum on the fly. Since only the facet handle is stored in this primitive, the polyhedron from which the AABB tree is built should not be deleted while the AABB tree is in use.
+
+\ccParameters
+The template parameter \ccc{GeomTraits} provides a \ccc{Point_3} type, used as \ccc{Point}, and a \ccc{Triangle_3} type, used as \ccc{Datum} and constructible from three arguments of type \ccc{Point}. The template parameter \ccc{Polyhedron} should be a \ccc{CGAL::Polyhedron} whose points have type \ccc{Point}.
+
+\ccInclude{CGAL/AABB_polyhedron_triangle_primitive.h}
+
+\ccTypes
+
+\ccTypedef{typedef GeomTraits::Triangle_3 Datum;}{Geometric data type.}
+\ccGlue
+\ccTypedef{typedef Polyhedron::Facet_handle Id;}{Id type.}
+
+\ccSeeAlso
+
+\ccc{AABBPrimitive},\\
+\ccc{AABB_polyhedron_segment_primitive<GeomTraits,Polyhedron>}\\
+
+\end{ccRefClass}
+
+% +------------------------------------------------------------------------+
+%%RefPage: end of main body, begin of footer
+\ccRefPageEnd
+% EOF
+% +------------------------------------------------------------------------+
+

@@ -1,0 +1,97 @@
+% Reference manual page: ArrangementLandmarkTraits.tex
+% Package: Arrangement_2
+
+\ccRefPageBegin
+\begin{ccRefConcept}{ArrangementLandmarkTraits_2}
+
+\ccDefinition
+% ===========
+The concept \ccRefName{} refines the general traits concept by adding
+operations needed for the landmarks point-location strategy, namely ---
+approximating points and connecting points with a simple $x$-monotone
+curve.
+
+A model of this concept must define the \ccc{Approximate_number_type}, which
+is used to approximate the coordinates of \ccc{Point_2} instances. It is
+recommended to define the approximated number type as the built-in
+\ccc{double} type. 
+
+\ccRefines
+\ccc{ArrangementTraits_2}
+
+\ccTypes
+% ======
+\ccNestedType{Approximate_number_type}%
+  {the number type used to approximate point coordinates.}
+
+\ccHeading{Functor Types}
+% =======================
+\ccThree{Construct_x_monotone_curve_2}{}{\hspace*{14cm}}
+\ccThreeToTwo
+\ccNestedType{Approximate_2}%
+  {models the concept \ccc{ArrTraits::Approximate_2}.}
+
+\ccNestedType{Construct_x_monotone_curve_2}%
+  {models the concept \ccc{ArrTraits::ConstructXMonotoneCurve_2}.}
+
+\ccCreationVariable{traits}
+% \ccCreation
+% ===========
+
+\ccHeading{Accessing Functor Objects}
+% ===================================
+\ccMethod{Approximate_2 approximate_2_object() const;} {}
+\ccGlue
+\ccMethod{Construct_x_monotone_curve_2 
+          construct_x_monotone_curve_2_object() const;}{}
+
+\ccHasModels
+% ==========
+\ccc{CGAL::Arr_non_caching_segment_traits_2<Kernel>}\\
+\ccc{CGAL::Arr_segment_traits_2<Kernel>}\\
+\ccc{CGAL::Arr_linear_traits_2<Kernel>}\\
+\ccc{CGAL::Arr_polyline_traits_2<SegmentTraits>}\\
+\ccc{CGAL::Arr_conic_traits_2<RatKernel,AlgKernel,NtTraits>}
+
+\ccSeeAlso
+%=========
+\ccc{ArrangementTraits_2}\lcTex{(\ccRefPage{ArrangementTraits_2})}
+
+\end{ccRefConcept}
+\ccRefPageEnd
+
+%%%%%%%% Functors %%%%%%%%
+% ========================
+
+%%%%%%%% Approximate_2
+\ccRefPageBegin
+\begin{ccRefConcept}{ArrTraits::Approximate_2}
+\ccRefines{Functor}
+
+\ccHasModels\ccc{ArrangementLandmarkTraits_2::Approximate_2}
+
+\ccCreationVariable{fo}
+
+\ccMethod{Approximate_number_type operator()( ArrTraits::Point_2 p,
+                                              int i);}{%
+  returns an approximation of \ccc{p}'s $x$-coordinate (if \ccc{i == 0}),
+  or of \ccc{p}'s $y$-coordinate (if \ccc{i == 1}).}
+\end{ccRefConcept}
+\ccRefPageEnd
+
+%%%%%%%% ConstructXMonotoneCurve_2
+\ccRefPageBegin
+\begin{ccRefConcept}{ArrTraits::ConstructXMonotoneCurve_2}
+\ccRefines{Functor}
+
+\ccHasModels\ccc{ArrangementLandmarkTraits_2::Construct_x_monotone_curve_2}
+
+\ccCreationVariable{fo}
+
+\ccMethod{ArrTraits::X_monotone_curve_2 operator() ( ArrTraits::Point_2 p1,
+                                                     ArrTraits::Point_2 p2);}{%
+  returns an $x$-monotone curve connecting \ccc{p1} and \ccc{p2} (i.e., the
+  two input points are its endpoints).}
+\end{ccRefConcept}
+\ccRefPageEnd
+

@@ -1,0 +1,36 @@
+\ccDefGlobalScope{CGAL::}
+\begin{ccRefClass}[Qt::]{CircularArcGraphicsItem<CK>}
+
+\ccDefinition
+An object of type \ccRefName\ is a graphics item that encapsulates a circular arc.
+
+\ccInclude{CGAL/Qt/CircularArcGraphicsItem.h}
+
+\ccParameters
+
+The template parameter of \ccRefName\ must be a
+\cgal\ \ccc{CircularKernel}.
+
+
+\ccInheritsFrom
+\ccc{Qt::GraphicsItem}
+
+\ccCreation
+\ccCreationVariable{cagi}
+
+\ccConstructor{CircularArcGraphicsItem<CK>();}{Constructs a graphics
+  item for a circular arc.}
+
+\ccOperations
+
+\ccMethod{QPen edgesPen()() const;}{Returns the pen used to draw edges.}
+\ccMethod{void setEdgesPen()(const QPen& p);}{Sets the pen used to draw edges.}
+\ccMethod{void setArc(const Circular_arc_2<CK>& ca2);}{Sets the circular arc.}
+\end{ccRefClass}
+
+
+
+
+
+
+

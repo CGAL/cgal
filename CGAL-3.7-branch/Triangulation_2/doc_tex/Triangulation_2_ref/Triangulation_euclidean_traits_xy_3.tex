@@ -1,0 +1,206 @@
+% +------------------------------------------------------------------------+
+% | Reference manual page: Triangulation_euclidean_traits_xy_3.tex
+% +------------------------------------------------------------------------+
+% | 06.04.2000   Author
+% | Package: Package
+% | 
+\RCSdef{\RCSTriangulationeuclideantraitsxyRev}{$Id$}
+\RCSdefDate{\RCSTriangulationeuclideantraitsxyDate}{$Date$}
+% |
+%%RefPage: end of header, begin of main body
+% +------------------------------------------------------------------------+
+
+
+\begin{ccRefClass}{Triangulation_euclidean_traits_xy_3<K>}  %% add template arg's if necessary
+
+%% \ccHtmlCrossLink{}     %% add further rules for cross referencing links
+%% \ccHtmlIndexC[class]{} %% add further index entries
+\ccCreationVariable{traits}
+\ccDefinition
+  
+The class \ccRefName\ is a geometric traits class which allows to
+triangulate
+a terrain. This traits class is designed to build 
+a two dimensional triangulation  embedded in 3D space,
+i.e. a triangulated surface, such that 
+its
+on the $xy$ plane  is a Delaunay triangulation.
+This is a usual construction for GIS terrains.
+Instead of really projecting the 3D points and
+maintaining a mapping between each point and its projection
+ (which costs space and is error prone)
+the class \ccRefName\  supplies geometric predicates that ignore the
+\ccc{z}-coordinate of the points.
+
+The class is a model of the concept \ccc{DelaunayTriangulationTraits_2} 
+except that it does not provide the type and constructors
+required to build the dual Voronoi diagram. The class is also a model
+of the concept \ccc{ConstrainedTriangulationTraits_2}.
+
+\ccParameters
+The template parameter \ccc{K}  has to
+be instantiated by a model of the \ccc{Kernel} concept.
+\ccRefName\ uses types 
+and predicates defined in \ccc{K}.
+
+\ccInclude{CGAL/Triangulation_euclidean_traits_xy_3.h}
+
+\ccTypes
+\ccTwo{typedef Triangle_3<K>}{}
+\ccTypedef{typedef Point_3<K>   Point_2;}{}
+\ccGlue
+\ccTypedef{typedef Segment_3<K>   Segment_2;}{}
+\ccGlue
+\ccTypedef{typedef Triangle_3<K>   Triangle_2;}{}
+\ccGlue
+\ccTypedef{typedef Line_3<K>   Line_2;}{}
+
+The following predicates and constructor types are provided
+
+\ccNestedType{Construct_segment_2}
+{A constructor object for
+\ccc{Segment_2}. Provides~: \\
+\ccc{Segment_2 operator()(Point_2 p,Point_2 q)}, \\ 
+which constructs a  segment from two points.}
+\ccGlue
+\ccNestedType{Construct_triangle_2}{A constructor object for
+\ccc{Triangle_2}. Provides~: \\
+\ccc{Triangle_2 operator()(Point_2 p,Point_2 q,Point_2 r )}, \\
+which constructs a triangle from three points.}
+\ccGlue
+\ccNestedType{Construct_line_2}{A constructor object for
+\ccc{Line_2}. Provides~: \\
+\ccc{Line_2 operator()(Point_2 p,Point_2 q)}, \\
+which constructs a line from two points.}
+\ccGlue
+\ccNestedType{Compute_squared_distance_2}{A construction object.
+Provides the operator~:\\
+\ccc{RT operator()(Line_2 l, Point_2 p);}
+which returns the squared distance between the projection of \ccc{p} 
+and the projection of \ccc{l}.}
+\ccGlue
+\ccNestedType{Intersect_2}{A construction object.
+Provides the operator~:\\
+\ccc{Object_2 operator()(Segment_2 s1, Segment_2 s2);}
+which returns the intersection of the projection of \ccc{s1}
+and the projection of \ccc{s2} embedded in \ccc{3D}. If the intersection
+is a segment, the \ccc{z}-coordinates of its extremities is \ccc{0}.
+If the intersection is a point \ccc{p}, let \ccc{p1} and \ccc{p2} be the points on \ccc{s1}
+and \ccc{s2} respectively, such that their projections are \ccc{p}. The point returned is the
+middle of the segment \ccc{p1}\ccc{p2}.
+\ccPrecond{The projection of \ccc{s1} and the projection of \ccc{s2} are non-degenerate 
+\ccc{2D} segments.}
+}
+\ccGlue
+\ccNestedType{Compare_x_2}{Predicate object. Provides
+the operator~: \\
+\ccc{Comparison_result operator()(Point_2 p, Point_2 q)} \\
+which returns 
+\ccc{SMALLER, EQUAL} or \ccc{ LARGER}
+ according to the
+$x$-ordering of points \ccc{p} and \ccc{q}.}
+\ccGlue
+\ccNestedType{Compare_y_2}{Predicate object. Provides
+the operator~: \\ 
+\ccc{Comparison_result operator()(Point_2 p, Point_2 q)}\\
+which returns 
+(\ccc{SMALLER, EQUAL} or \ccc{ LARGER})
+according to the
+$y$-ordering of points \ccc{p} and \ccc{q}.}
+\ccGlue
+\ccNestedType{Orientation_2}{Predicate object. Provides
+the  operator~: \\
+\ccc{Orientation operator()(Point_2 p, Point_2 q, Point_2 r)}\\
+which returns
+\ccc{LEFT_TURN}, \ccc{RIGHT_TURN} or \ccc{COLLINEAR}
+ according to the position of the projection of $r$
+with respect to the projection of the 
+oriented line \ccc{pq}.}
+\ccGlue
+\ccNestedType{Side_of_oriented_circle_2}{Predicate object. 
+Provides the operator~:
+\ccc{Oriented_side operator()(Point_2 p, Point_2 q, Point_2 r, Point_2 s)}
+which takes four points $p, q, r, s$ as arguments and returns
+\ccc{ON_POSITIVE_SIDE}, \ccc{ON_NEGATIVE_SIDE} or, 
+\ccc{ON_ORIENTED_BOUNDARY} according to the position of 
+the projection of point\ccc{s}
+with respect to the oriented circle through the projections of $p,q$
+and $r$.}
+\ccGlue
+\ccNestedType{Compare_distance_2} {Predicate object. Provides
+ the operator : \\
+\ccc{Comparison_result operator()(Point_2 p, Point_2 q, Point_2 r)}
+which returns \ccc{SMALLER}, \ccc{EQUAL} or \ccc{LARGER}
+according to the distance between the projection of p and the projection of q being smaller, equal or larger
+than the distance between the projection of p and the projection of r.}
+
+\ccCreation
+\ccCreationVariable{traits}  %% choose variable name
+Only a default constructor, copy constructor
+ and an assignment operator are required. 
+Note that further constructors
+can be provided. 
+\ccThree{Triangulation_euclidean_traits_xy_3()}{traits=tr  }{}
+
+\ccConstructor{Triangulation_euclidean_traits_xy_3();}{
+default constructor.}
+\ccGlue
+\ccConstructor{Triangulation_euclidean_traits_xy_3(
+                      Triangulation_euclidean_traits_xy_3 tr);}
+{Copy constructor.}
+\ccMethod{Triangulation_euclidean_traits_xy_3 operator=
+              (Triangulation_euclidean_traits_xy_3  tr);}
+{Assignment operator.}
+
+
+\ccHeading{Access to predicate objects}
+The following access functions are provided
+
+\ccThree{Side_of_oriented_circle_2}{side_of_oriented_circle_2_object();}{}
+\ccMethod{Construct_segment_2 construct_segment_2_object();}{}
+\ccGlue
+\ccMethod{Construct_triangle_2 construct_triangle_2_object();}{}
+\ccGlue
+\ccMethod{Construct_line_2 construct_line_2_object();}{}
+\ccGlue
+\ccMethod{Comparison_x_2 compare_x_2_object();}{}
+\ccGlue
+\ccMethod{Comparison_y_2 compare_y_2_object();}{}
+\ccGlue
+\ccMethod{Orientation_2  orientation_2_object();}{}
+\ccGlue
+\ccMethod{Side_of_oriented_circle_2
+side_of_oriented_circle_2_object();}{}
+\ccGlue
+\ccMethod{Compare_distance_2
+compare_distance_2_object();} {}
+\ccGlue
+\ccMethod{Intersect_2  intersect_2_object();}{}
+\ccGlue
+\ccMethod{Compute_squared_distance_2 compute_squared_distance_2_object();}
+
+\ccSeeAlso
+\ccc{TriangulationTraits_2} \\
+\ccc{DelaunayTriangulationTraits_2} \\
+\ccc{CGAL::Triangulation_2<Traits,Tds>}\\
+\ccc{CGAL::Delaunay_triangulation_2<Traits,Tds>} 
+
+
+\cgal\ provides also predefined geometric traits class
+\ccc{Triangulation_euclidean_traits_yz_3<K>} and
+\ccc{Triangulation_euclidean_traits_zx_3<K>} to
+deal with projections on the
+ \ccc{xz}- or  the \ccc{yz}-plane,
+respectively.
+
+\ccInclude{CGAL/Triangulation_euclidean_traits_xz_3.h}\\
+\ccInclude{CGAL/Triangulation_euclidean_traits_yz_3.h}
+
+
+\end{ccRefClass}
+
+% +------------------------------------------------------------------------+
+%%RefPage: end of main body, begin of footer
+% EOF
+% +------------------------------------------------------------------------+
+

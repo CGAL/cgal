@@ -1,0 +1,116 @@
+% =============================================================================
+% The CGAL Reference Manual
+% Chapter: Geometric Object Generators
+% Section: Random Numbers Generator
+% -----------------------------------------------------------------------------
+% file  : doc_tex/support/Generator/Random.tex
+% author: Sven Schönherr <sven@inf.ethz.ch>
+% -----------------------------------------------------------------------------
+% $CGAL_Chapter: Geometric Object Generators $
+% $CGAL_Package: Random_numbers WIP $
+% $Id$
+% $Date$
+% =============================================================================
+
+\begin{ccRefClass}{Random}
+\label{sec:random_numbers_generator}
+
+% -----------------------------------------------------------------------------
+\ccDefinition
+
+The class \ccRefName is a random numbers generator. It generates
+uniformly distributed random \ccc{bool}s, \ccc{int}s and \ccc{double}s. 
+It can be used as the random number generating function object in the 
+\stl\ algorithm \ccc{random_shuffle}.
+
+Instances of \ccClassName\ can be seen as input streams. Different
+streams are \emph{independent} of each other, i.e.\ the sequence of
+numbers from one stream does \emph{not} depend upon how many numbers
+were extracted from the other streams. At each time, an instance has 
+a \emph{state} that uniquely determines the subsequent numbers being
+produced.
+
+It can be very useful, e.g.\ for debugging, to reproduce a sequence of
+random numbers. This can be done by either initialising with a fixed
+seed, or by using the state functions as described below.
+
+\ccInclude{CGAL/Random.h}
+
+% -----------------------------------------------------------------------------
+\ccTypes
+
+\ccUnchecked
+\ccNestedType{State}{The State type.}
+
+% -----------------------------------------------------------------------------
+\ccCreation
+\ccCreationVariable{random}
+
+\ccConstructor{ Random( );}{
+        introduces a variable \ccVar\ of type \ccClassTemplateName. The
+        seed is chosen ``randomly'', depending on the system time.}
+
+\ccConstructor{ Random( unsigned int seed);}{
+        introduces a variable \ccVar\ of type \ccClassTemplateName\
+        and initializes its internal state using \ccc{seed}. Equal
+        values for \ccc{seed} result in equal sequences of random
+        numbers.}
+
+% -----------------------------------------------------------------------------
+\ccOperations
+
+\ccMemberFunction{ bool get_bool( );}{
+        returns a random \ccc{bool}.}
+
+\ccMemberFunction{ template <int b> int get_bits();}{
+        returns a random \ccc{int} value from the interval
+        $[\mbox{\ccc{0},\ccc{2^b}})$.  This is supposed to
+	be efficient.}
+
+\ccMemberFunction{ int get_int( int lower, int upper);}{
+        returns a random \ccc{int} from the interval
+        $[\mbox{\ccc{lower},\ccc{upper}})$.}
+
+\ccMemberFunction{ double get_double( double lower = 0.0,
+                                      double upper = 1.0);}{
+        returns a random \ccc{double} from the interval
+        $[\mbox{\ccc{lower},\ccc{upper}})$.}
+
+\ccMemberFunction{ int operator() ( int upper);}{
+        returns \ccVar\ccc{.get_int( 0, upper)}.}
+
+% -----------------------------------------------------------------------------
+\ccHeading{Seed and State Functions}
+
+\ccMemberFunction{ unsigned int get_seed() const;}{
+        returns the seed used for initialization.}
+
+\ccMemberFunction{ void save_state( State& state) const;}{
+        saves the current internal state in \ccc{state}.}
+
+\ccMemberFunction{ void restore_state( State const& state);}{
+        restores the internal state from \ccc{state}.}
+
+% -----------------------------------------------------------------------------
+\ccHeading{Equality Test}
+
+\ccMemberFunction{ bool  operator == ( Random const& random2) const;}{
+        returns \ccc{true}, iff \ccVar\ and \ccc{random2} have equal
+        internal states.}
+
+% -----------------------------------------------------------------------------
+\ccImplementation
+
+We use the C library function \ccc{rand} to generate the random
+numbers, \textit{i.e.}, the sequence of numbers depends on the implementation
+of \ccc{rand} on your specific platform.
+
+
+
+\ccSeeAlso
+
+\ccRefIdfierPage{CGAL::default_random}\\
+
+\end{ccRefClass}
+
+% ===== EOF ===================================================================

@@ -1,0 +1,206 @@
+
+All classes in the \cgal\ kernel provide input and output operators for
+IO streams.  Classes external to \cgal\ are also supported, by means of \ccc{oformat} (Section \ref{sec:iofornoncgaltypes}).
+The basic task of such an operator is to produce a
+representation of an object that can be written as a sequence of
+characters on devices as a console, a file, or a pipe. In \cgal\
+we distinguish between  a raw ascii, a raw binary and a
+pretty printing format.
+
+\ccEnum{enum Mode {ASCII = 0, BINARY, PRETTY};}{}
+
+
+In \ccc{ASCII} mode, objects are written as
+a set of  numbers, e.g.\ the coordinates of a point or
+the coefficients of a line, in a machine independent format.
+In \ccc{BINARY} mode,
+data are written in a binary format, e.g.\ a double is represented
+as a sequence of four byte. The format depends on the machine.
+The mode  \ccc{PRETTY}
+serves mainly for debugging as the type of the geometric
+object is written, as well as the data defining the object. For example
+for a point at the origin with Cartesian double coordinates, the output
+would be \ccc{PointC2(0.0, 0.0)}.  At the moment \cgal\ does not
+provide input operations for pretty printed data. By default a stream
+is in {\sc ascii} mode.
+
+\ccThree{IO::Mode}{set_mode(std::ios& s, IO::Mode m);}{}
+
+\cgal\ provides the following functions to modify the mode of an IO stream.
+
+\ccFunction{IO::Mode  set_mode(std::ios& s, IO::Mode m);}{}
+
+\ccFunction{IO::Mode  set_ascii_mode(std::ios& s);}{}
+\ccGlue
+\ccFunction{IO::Mode  set_binary_mode(std::ios& s);}{}
+\ccGlue
+\ccFunction{IO::Mode  set_pretty_mode(std::ios& s);}{}
+
+The following functions allow to test whether a stream is in a certain mode.
+
+\ccFunction{IO::Mode  get_mode(std::ios& s);}{}
+
+\ccFunction{bool is_ascii(std::ios& s);}{}
+\ccGlue
+\ccFunction{bool is_binary(std::ios& s);}{}
+\ccGlue
+\ccFunction{bool is_pretty(std::ios& s);}{}
+
+
+%\newpage
+
+\ccThree{ostream&}{operator<<( const Class &c);}{}
+
+%\begin{ccClass} {ostream}
+\section{Output Operator}
+%\ccCreationVariable{os}
+
+%\ccDefinition
+\cgal\  defines output operators for classes that are derived
+from the class \ccStyle{ostream}. This allows to write to ostreams
+as \ccStyle{cout} or \ccStyle{cerr}, as well as to strstreams
+and fstreams.
+The output operator is defined for all classes in the \cgal\ kernel and for the class \ccc{Color} as well.
+Let \ccc{os}  be an output stream.
+
+\ccFunction{ostream& operator<<(ostream& os, Class c);}
+{Inserts object \ccStyle{c} in the stream \ccc{os}. Returns \ccc{os}.}
+
+
+\ccExample
+
+\begin{ccExampleCode}
+
+#include <CGAL/basic.h>
+#include <iostream>
+#include <fstream>
+
+#include <CGAL/Cartesian.h>
+#include <CGAL/Segment_2.h>
+
+typedef CGAL::Point_2< CGAL::Cartesian<double> >     Point;
+typedef CGAL::Segment_2< CGAL::Cartesian<double> >   Segment;
+
+int main()
+{
+    Point p(0,1), q(2,2);
+    Segment s(p,q);
+
+    CGAL::set_pretty_mode(std::cout);
+    std::cout << p << std::endl << q  << std::endl;
+
+    std::ofstream f("data.txt");
+    CGAL::set_binary_mode(f);
+    f << s << p ;
+
+    return 1;
+}
+\end{ccExampleCode}
+%\end{ccClass}
+
+
+%\newpage
+%\begin{ccClass} {istream}
+\section{Input Operator}
+
+
+%\ccDefinition
+\cgal\  defines input operators for classes that are derived
+from the class \ccStyle{istream}. This allows to read from istreams
+as \ccStyle{cin}, as well as from strstreams and fstreams.
+The input operator is defined for all classes in the \cgal\ kernel.
+Let \ccc{is} be an input stream.
+
+\ccFunction{istream& operator>>(istream& is, Class c);}
+   {Extracts object \ccStyle{c} from the stream \ccc{is}. Returns \ccc{is}.}
+
+
+\ccExample
+
+\begin{ccExampleCode}
+
+#include <CGAL/basic.h>
+#include <iostream>
+#include <fstream>
+
+#include <CGAL/Cartesian.h>
+#include <CGAL/Segment_2.h>
+
+typedef CGAL::Point_2< CGAL::Cartesian<double> >     Point;
+typedef CGAL::Segment_2< CGAL::Cartesian<double> >   Segment;
+
+int
+main()
+{
+    Point p, q;
+    Segment s;
+
+    CGAL::set_ascii_mode(std::cin);
+    std::cin >> p >> q;
+
+    std::ifstream f("data.txt");
+    CGAL::set_binary_mode(f);
+    f >> s >> p;
+
+    return 1;
+}
+\end{ccExampleCode}
+%\end{ccClass}
+
+\section{IO for non-\cgal\ types\label{sec:iofornoncgaltypes}}
+
+
+\subsection{Using Output Formatting}
+To ensure that non-\cgal\ types are formatted correctly (i.e., respecting \ccc{IO::Mode}), \ccc{oformat} can be used. For types with a \ccc{Output_rep} specialization, the respective output routine of \ccc{Output_rep} will be called by \ccc{oformat}. Otherwise, the stream output operator will be called.
+
+\ccExample
+\begin{ccExampleCode}
+std::cout << CGAL::oformat( myobject );
+\end{ccExampleCode}
+
+Optional, you can provide a second template parameter \texttt{F} as a formatting tag:
+
+\ccExample
+\begin{ccExampleCode}
+std::cout << CGAL::oformat( myobject, My_formatting_tag() );
+\end{ccExampleCode}
+
+For a list of formatting tags supported by the type \texttt{T}, please refer to the documentation of the respective type.
+
+\subsection{Customizing Output Formatting}
+In some situations, you want to control the output formatting for a type \texttt{T}. For external types (third party libraries etc.), there might be problems if their stream output operator does not respect \ccc{IO::Mode}. The purpose of \ccc{Output_rep} is to provide a way to control output formatting that works independently of the object's stream output operator.
+
+Instead of putting \texttt{T} directly into an output stream, \texttt{T} is wrapped into an output representation \ccc{Output_rep}. For convenience, a function \ccc{oformat} exists which constructs an instance of \ccc{Output_rep}.
+
+If you do not specialize \ccc{Output_rep} for \texttt{T}, \texttt{T}'s stream output operator is called from within \ccc{Output_rep}, by default. If you want another behaviour for your type \texttt{T}, you have to provide a specialization for that type. Furthermore, you can provide specializations with a second template parameter (a formatting tag). The second template parameter defaults to \ccc{Null_tag} and means \textit{default behaviour}.
+
+For example, specializing \ccc{Output_rep} for \ccc{CORE::BigRat} (without a formatting tag parameter) could look like this:
+
+\ccExample
+\begin{ccExampleCode}
+template <class F>
+class Output_rep< ::CORE::BigRat, F> {
+    const ::CORE::BigRat& t;
+public:
+    Output_rep( const ::CORE::BigRat& tt) : t(tt) {}
+
+    std::ostream& operator()( std::ostream& out) const {
+        switch (get_mode(out)) {
+        case IO::PRETTY:{
+            if(CGAL_CORE_DENOMINATOR(t) == ::CORE::BigRat(1))
+                return out <<CGAL_CORE_NUMERATOR(t);
+            else
+                return out << CGAL_CORE_NUMERATOR(t)
+                           << "/"
+                           << CGAL_CORE_DENOMINATOR(t);
+            break;
+        }
+
+        default:
+            return out << CGAL_CORE_NUMERATOR(t)
+                       << "/"
+                       << CGAL_CORE_DENOMINATOR(t);
+        }
+    }
+};
+\end{ccExampleCode}

@@ -1,0 +1,20 @@
+\section{Examples\label{subsec:pca_examples}}
+
+\subsection{Bounding Box of 2D and 3D Point Sets}
+In the following example we use \stl\ containers of 2D points and 3D points, and compute their axis-aligned bounding box. 
+\ccIncludeExampleCode{Principal_component_analysis/bounding_box.cpp}
+
+\subsection{Centroid of 2D and 3D Objects}
+In the following example we use \stl\ containers of 2D, 3D points and 3D triangles, and compute their centroid. The dimension tag indicates the dimension of the objects being fitted (0 for points, 2 for triangles). Note that it is also possible to compute the centroid of the triangle edges (3D segments) by specifying 1 as dimension tag, and to compute the centroid of the triangle vertices (3D points) by specifying 0 as dimension tag. \ccIncludeExampleCode{Principal_component_analysis/centroid.cpp}
+
+\subsection{Barycenter of a Set of Weighted Points}
+In the following example we use \stl\ containers of 2D and 3D weighted points, and compute their barycenter.  \ccIncludeExampleCode{Principal_component_analysis/barycenter.cpp}
+
+\subsection{Least Squares Fitting of a Line to a 2D Point Set}
+In the following example we use a \stl\ container of 2D points, and compute the best fitting line in the least squares sense. 
+\ccIncludeExampleCode{Principal_component_analysis/linear_least_squares_fitting_points_2.cpp}
+
+\subsection{Least Squares Fitting of a Line and a Plane to a 3D Triangle Set}
+In the following example we use a \stl\ container of 3D triangles, and compute the best fitting line and plane in the least squares sense. Note that we can fit either the whole triangles, the triangle edges or the triangle vertices.
+\ccIncludeExampleCode{Principal_component_analysis/linear_least_squares_fitting_triangles_3.cpp}
+

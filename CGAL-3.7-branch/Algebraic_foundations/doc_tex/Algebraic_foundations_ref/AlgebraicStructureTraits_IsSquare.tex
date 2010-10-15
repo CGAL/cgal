@@ -1,0 +1,50 @@
+
+
+\begin{ccRefFunctionObjectConcept}{AlgebraicStructureTraits::IsSquare}
+
+\ccDefinition
+
+\ccc{AdaptableBinaryFunction} that computes whether the first argument is a square. 
+If the first argument is a square the second argument, which is taken by reference, contains the square root. 
+Otherwise, the content of the second argument is undefined. 
+
+A ring element $x$ is said to be a square iff there exists a ring element $y$ such
+that $x= y*y$. In case the ring is a \ccc{UniqueFactorizationDomain},
+$y$ is uniquely defined up to multiplication by units. \\
+
+%Note that this is an optional functor and not required by any algebraic structure concept. 
+
+\ccRefines 
+
+\ccc{AdaptableBinaryFunction} 
+
+\ccTypes
+\ccNestedType{result_type} 
+        { Is \ccc{AlgebraicStructureTraits::Boolean}.}
+\ccGlue
+\ccNestedType{first_argument} 
+        { Is \ccc{AlgebraicStructureTraits::Type}.}
+\ccGlue
+\ccNestedType{second_argument} 
+        { Is \ccc{AlgebraicStructureTraits::Type&}.}
+
+\ccOperations
+\ccCreationVariable{is_square}
+\ccThree{xxxxxxxxxxx}{xxxxxxxxxxx}{}
+
+\ccMethod{result_type operator()(first_argument_type  x, 
+                                 second_argument_type y);}
+        { returns {\tt true} in case $x$ is a square, i.e. $x = y*y$.
+          \ccPostcond $unit\_part(y) == 1$. 
+        }
+\ccMethod{result_type operator()(first_argument_type  x);}
+        { returns {\tt true} in case $x$ is a square.
+        }
+
+%\ccHasModels
+
+\ccSeeAlso
+
+\ccRefIdfierPage{AlgebraicStructureTraits}
+
+\end{ccRefFunctionObjectConcept} 

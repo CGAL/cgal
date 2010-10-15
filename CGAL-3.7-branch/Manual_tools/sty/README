@@ -1,0 +1,25 @@
+This is the directory containing the cc_manual.sty, cc_manual_index.sty,
+cprog.sty, nonlinkedpath.sty and test documents. The directory structure is:
+
+    README                this file.
+
+    cc_manual.sty         macros for the manual.
+    cc_manual_index.sty   macros for indexing the manual.
+    latex_to_html.sty     new macros supporting the HTML conversion.
+    cprog.sty             an environment to format C programs.
+
+    nonlinkedpath.sty     defines a command \nonlinkedpath that is an alias
+                          for the \path command. This command differs from
+                          the \path command only for the HTML manual, where 
+                          it does not produce a link.
+    test.tex              The test suite for the cc_manual style.
+    test_parts.tex        The test suite for the cc_manual style using \part
+                          commands.
+    test_chaps/           Directory containing input files for test_parts.tex
+    index_test.tex        The test suite for the cc_manual_index style.
+    eps_tabs/             Directory containing the encapsulated PostScript 
+                          figures for the reference manual tabs
+
+EOF
+
+

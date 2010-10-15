@@ -1,0 +1,81 @@
+% +------------------------------------------------------------------------+
+% | Reference manual page: Nef_polyhedron_S2_SVertex.tex
+% +------------------------------------------------------------------------+
+% | 14.05.2004   Peter Hachenberger
+% | Package: Nef_S2
+% | 
+\RCSdef{\RCSNefS2SVertexeRev}{$Id$}
+\RCSdefDate{\RCSNefS2SVertexDate}{$Date$}
+% +------------------------------------------------------------------------+
+
+\ccRefPageBegin
+
+%%RefPage: end of header, begin of main body
+% +------------------------------------------------------------------------+
+
+
+\begin{ccRefClass}[Nef_polyhedron_S2<Traits>::]{SVertex}
+
+\ccDefinition
+ 
+Figure~\ref{figureNefS2SVertexIncidences} illustrates the incidence of a svertex on a sphere map. 
+
+The member function 
+\ccc{out_sedge} returns the first outgoing shalfedge, and \ccc{incident_sface}
+returns the incident sface.
+
+\ccInclude{CGAL/Nef_polyhedron_S2.h}
+
+\ccTypes
+\ccThree{SHalfedge_const_handle}{h.halfedge() const;;}{}
+\ccThreeToTwo
+
+The following types are the same as in \ccc{Nef_polyhedron_S2<Traits>}.
+
+\ccNestedType{Mark}{type of mark.}
+
+\ccNestedType{Sphere_point}{sphere point type stored in SVertex.}
+
+\ccNestedType{SVertex_const_handle}{const handle to SVertex.}
+\ccGlue
+\ccNestedType{SHalfedge_const_handle}{const handle to SHalfedge.}
+\ccGlue
+\ccNestedType{SFace_const_handle}{const handle to SFace.}
+
+\ccCreation
+\ccCreationVariable{e}
+
+There is no need for a user to create a \ccc{SVertex} explicitly. The
+class \ccc{Nef_polyhedron_S2<Traits>} manages the needed svertices internally.
+
+\ccOperations
+
+\ccMethod{const Mark& mark() const;}{the mark of \ccVar\ .}
+
+\ccMethod{const Sphere_point& point() const;}{the sphere point of \ccVar\ .}
+
+\ccMethod{bool is_isolated() const;}
+{returns |true| if \ccVar\ has no adjacent sedges.}
+
+\ccMethod{SVertex_const_handle twin() const;}{the twin of \ccVar\ .}
+
+\ccMethod{SHalfedge_const_handle out_sedge() const;}
+{the first out sedege of \ccVar\ .}
+
+\ccMethod{SFace_const_handle incident_sface() const;}
+{the incident sface of \ccVar\ .}
+
+\ccSeeAlso
+
+\ccRefIdfierPage{CGAL::Nef_polyhedron_S2<Traits>::SHalfedge}\\
+\ccRefIdfierPage{CGAL::Nef_polyhedron_S2<Traits>::SFace} \\
+\ccRefIdfierPage{CGAL::Nef_polyhedron_S2<Traits>::Sphere_point}
+
+\ccTagDefaults
+\end{ccRefClass}
+
+% +------------------------------------------------------------------------+
+%%RefPage: end of main body, begin of footer
+\ccRefPageEnd
+% EOF
+% +------------------------------------------------------------------------+

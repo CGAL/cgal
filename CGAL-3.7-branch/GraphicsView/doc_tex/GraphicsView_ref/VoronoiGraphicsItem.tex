@@ -1,0 +1,38 @@
+\ccDefGlobalScope{CGAL::}
+\begin{ccRefClass}[Qt::]{VoronoiGraphicsItem<DT>}
+
+\ccDefinition An object of type \ccRefName\ is a graphics item that
+encapsulates a Delaunay triangulation in order to draw its dual, the
+Voronoi diagram.
+
+\ccInclude{CGAL/Qt/VoronoiGraphicsItem.h}
+
+\ccParameters
+
+The template parameter \ccc{DT} of \ccRefName\ must be a
+\cgal\ 2D Delaunay triangulation class.
+
+
+\ccInheritsFrom
+\ccc{Qt::GraphicsItem}
+
+\ccCreation
+\ccCreationVariable{vgi}
+
+\ccConstructor{VoronoiGraphicsItem<DT>(DT* dt);}{Constructs a graphics item for the dual of the 
+Delaunay triangulation \ccc{dt}.}
+
+\ccOperations
+\ccMethod{QPen edgesPen()() const;}{Returns the pen used to draw edges.}
+\ccMethod{void setEdgesPen()(const QPen& p);}{Set the pen used to draw edges.}
+
+\ccMethod{bool visibleEdges();}{Returns \ccc{true}, iff edges are drawn.}
+\ccMethod{bool setVisibleEdges(bool b);}{Set the property.}
+\end{ccRefClass}
+
+
+
+
+
+
+

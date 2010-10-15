@@ -1,0 +1,7 @@
+
+norway
+17.5 sec Core, Filtered traits, hierarchy, intersections
+8    sec Filtered traits, no hierarchy, spatial sort, intersections
+
+It gets slower when I use the traits class without intersections,
+probably because I don't know which kernel to choose.

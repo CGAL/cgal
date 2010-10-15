@@ -1,0 +1,11 @@
+\section{Output}
+
+The surface reconstructed by \ccc{make_surface_mesh()} is required to be a model of the concept \ccc{SurfaceMeshComplex_2InTriangulation_3}, a data structure devised to represent a two dimensional complex embedded into a three dimensional triangulation.
+
+\ccc{SurfaceMeshComplex_2InTriangulation_3} defines the methods to traverse the reconstructed surface, and e.g. convert it to a triangle soup.
+
+Other \cgal\ components provide functions to write the reconstructed surface mesh to the Object File Format (OFF)~\cite{cgal:p-gmgv16-96} and to convert it to a polyhedron (when it is manifold): \\
+\ccc{CGAL::output_surface_facets_to_off}  \\
+\ccc{CGAL::output_surface_facets_to_polyhedron}  \\
+
+See \ccc{poisson_reconstruction_example.cpp} example above.

@@ -1,0 +1,52 @@
+
+
+\begin{ccRefClass}{Polyhedron_vertex_point_const_property_map<Traits>}
+
+%% add template arg's if necessary
+
+%% \ccHtmlCrossLink{}     %% add further rules for cross referencing links
+%% \ccHtmlIndexC[class]{} %% add further index entries
+\ccDefinition
+
+The class \ccRefName\ provides a {\sc Bgl} 
+\ccAnchor{http://www.boost.org/libs/property_map/ReadablePropertyMap.html}
+{readable property map} 
+for the {\em internal property} \ccc{vertex_point}
+required by the \ccc{HalfedgeGraph} concept.
+
+It provides read-only access to the point of a \ccc{Polyhedron_3} vertex.
+
+The template parameter \ccc{Traits} is the same \ccc{Traits} parameter of 
+\ccc{CGAL::Polyhedron_3<Traits>}.
+
+\ccInclude{CGAL/boost/graph/Polyhedron_BGL_properties.h}
+
+\ccTypes
+  \ccTypedef{boost::readable_property_map_tag category;}
+    {Indicates that this property is read-only.}
+  
+  \ccTypedef{typename Polyhedron::Point_3 value_type;}
+    {The type of the property.}
+    
+  \ccTypedef{value_type const& reference;}
+    {The result type of the map operator.}
+    
+  \ccTypedef{typename boost::graph_traits< Polyhedron_3<Traits> const>::vertex_descriptor key_type;}
+  {The key type of the property map: A \ccc{Polyhedron_3::Vertex_const_handle}.}
+
+\ccCreation
+\ccCreationVariable{pm}  %% choose variable name
+
+\ccConstructor{CGAL::Polyhedron_vertex_point_const_property_map<Traits>(); }
+{Default constructor.}
+
+\ccOperations
+
+\ccMethod
+  {reference operator[]( key_type const& vertex ) const;}
+  {Returns \ccc{vertex->point()}.}  
+    
+\ccIsModel
+\ccAnchor{http://www.boost.org/libs/property_map/ReadablePropertyMap.html}{ReadablePropertyMap} 
+
+\end{ccRefClass}

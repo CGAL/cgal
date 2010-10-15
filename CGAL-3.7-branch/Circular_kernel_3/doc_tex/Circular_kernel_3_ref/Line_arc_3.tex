@@ -1,0 +1,82 @@
+\begin{ccRefClass}{Line_arc_3<SphericalKernel>}
+
+\ccInclude{CGAL/Line_arc_3.h}
+
+\ccIsModel
+
+\ccc{SphericalKernel::LineArc_3}
+
+\ccCreation
+\ccCreationVariable{la}
+
+\ccThree{Circular_arc_point_3}{ca.is_x_monotone()}{}
+\ccThreeToTwo
+
+\ccConstructor{Line_arc_3(const Line_3<SphericalKernel> &l,
+		const Circular_arc_point_3<SphericalKernel> &p1,
+		const Circular_arc_point_3<SphericalKernel> &p2)}
+{Construct the line segment supported by \ccc{l}, whose source 
+is \ccc{p1}, and whose target is \ccc{p2}.
+\ccPrecond{\ccc{p1} and \ccc{p2} lie on \ccc{l}. 
+\ccc{p1} and \ccc{p2} are different.}}
+
+\ccConstructor{Line_arc_3(const Line_3<SphericalKernel> &l,
+		const Point_3<SphericalKernel> &p1,
+		const Point_3<SphericalKernel> &p2)}
+{Same.}
+
+\ccConstructor{Line_arc_3(const Segment_3<SphericalKernel> &s)}
+{}
+
+\ccAccessFunctions
+
+\ccThree{Circular_arc_point_3<SphericalKernel>}{ca.is_x_monotone()}{}
+\ccThreeToTwo
+
+\ccMethod{Line_3<SphericalKernel> supporting_line();}{}
+
+\ccMethod{Circular_arc_point_3<SphericalKernel> source();}{}
+\ccGlue
+\ccMethod{Circular_arc_point_3<SphericalKernel> target();}{}
+
+\ccMethod{Circular_arc_point_3<SphericalKernel> min();}
+{Constructs the minimum vertex according to the lexicographic ordering 
+of coordinates.} 
+\ccGlue
+\ccMethod{Circular_arc_point_3<SphericalKernel> max();}
+{Same for the maximum vertex.}
+
+\ccQueryFunctions
+
+\ccMethod{bool is_vertical();}{Returns true \ccc{iff} the segment is
+  vertical.}
+
+\ccOperations
+
+\ccFunction{bool operator==(const Line_arc_3<SphericalKernel> &s1,
+			const Line_arc_3<SphericalKernel> &s2);}
+{Test for equality. Two segments are equal, iff their non-oriented
+  supporting lines are equal (i.e. they define the same set of
+  points), and their endpoints are the same.}
+
+\ccFunction{bool operator!=(const Line_arc_3<SphericalKernel> &s1,
+			const Line_arc_3<SphericalKernel> &s2);}
+{Test for nonequality.} 
+
+\ccHeading{I/O}
+
+\ccFunction{istream& operator>> (std::istream& is, Line_arc_3 & ca);}{}
+\ccGlue
+\ccFunction{ostream& operator<< (std::ostream& os, const Line_arc_3 & ca);}{}
+
+The format for input/output is, for each line arc: a \ccc{Line_3} 
+(the supporting line) and two \ccc{Circular_arc_point_3} (the two endpoints), 
+under the condition that the endpoints are actually lying on the line.
+
+\ccSeeAlso
+
+\ccRefIdfierPage{CGAL::Circular_arc_point_3<SphericalKernel>}\\
+\ccRefIdfierPage{CGAL::Circular_arc_3<SphericalKernel>}
+
+\end{ccRefClass}
+

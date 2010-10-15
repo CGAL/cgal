@@ -1,0 +1,102 @@
+%% Copyright (c) 2006  SciSoft.  All rights reserved.
+%%
+%% This file is part of CGAL (www.cgal.org); you may redistribute it under
+%% the terms of the Q Public License version 1.0.
+%% See the file LICENSE.QPL distributed with CGAL.
+%%
+%% Licensees holding a valid commercial license may use this file in
+%% accordance with the commercial license agreement provided with the software.
+%%
+%% This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
+%% WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
+%%
+%% 
+%%
+%% Author(s)     : Fernando Cacciola <fernando_cacciola@hotmail.com>
+
+
+\begin{ccRefClass}{Straight_skeleton_builder_2<Gt,Ss,Visitor>}
+
+\ccDefinition
+The class \ccRefName\  encapsulates the construction of the 2D straight skeleton in the interior of a polygon with holes. Its first template parameter, \ccc{Gt}, must be a model of the \ccc{StraightSkeletonBuilderTraits_2} concept, its second template parameter, \ccc{Ss}, must be a model of the \ccc{StraightSkeleton_2} concept, and its third template paramter, \ccc{Visitor}, must be a model of the \ccc{StraightSkeletonBuilder_2_Visitor} concept. If this last parameter is ommitted, the class \ccc{CGAL::Dummy_straight_skeleton_builder_2_visitor<Skel>} is used.
+
+\ccInclude{CGAL/Straight_skeleton_builder_2.h}
+ 
+\ccTypes
+  \ccNestedType{Gt}{The geometric traits (first template parameter)}{}
+\ccGlue
+  \ccNestedType{Ss}{The straight skeleton (second template parameter)}{}
+\ccGlue
+  \ccNestedType{Point_2}{The 2D point type as defined by the geometric traits}{}
+
+\ccCreation
+\ccCreationVariable{b}
+
+\ccConstructor{StraightSkeletonBuilder_2();}{Default constructs the builder class.}
+
+\ccHeading{Methods}
+\ccMethod{template<class InputPointIterator>  Straight_skeleton_builder_2& enter_contour( InputPointIterator aBegin, InputPointIterator aEnd );}
+{Defines the \textit{contours} that form the \textit{non-degenerate strictly-simple polygon with holes} whose \textit{straight skeleton} is to be built. 
+
+Each contour must be input in turn starting with the \textit{outer contour} and following with the holes (if any). The order of the holes is unimportant but the outer contour must be entered first. The outer contour must be oriented counter-clockwise while holes must be oriented clockwise. 
+
+It is an error to enter more than one outer contour or to enter a hole which is not inside the outer contour or inside another hole. It is also an error to enter a contour which crosses or touches any one another. It is possible however to enter a contour that touches itself in such a way that its interior region is still well defined and singly-connected (see the User Manual for examples).
+
+The sequence [aBegin,aEnd) must iterate over each 2D point that corresponds to a vertex of the contour being entered. Vertices cannot be coincident (except consecutively since the method simply skip consecutive coincident vertices). Consecutive collinear edges are allowed.
+
+InputPointIterator must be an \textit{InputIterator} whose \ccc{value\_type} is \ccc{Point_2}.}
+   
+\ccGlue
+\ccMethod{boost::shared_ptr<Ss> construct_skeleton();}
+{Constructs and returns the 2D straight skeleton in the interior of the polygon with holes as defined by the contours entered first by calling \ccc{enter_contour}. All the contours of the polygon with holes must be entered before calling \ccc{construct_skeleton}.
+
+After \ccc{construct_skeleton} completes, you cannot enter more contours and/or call \ccc{construct_skeleton()} again. If you need another straight skeleton for another polygon you must instantiate and use another builder.
+
+The result is a dynamically allocated instance of the \ccc{Ss} class, wrapped in a \ccc{boost::shared_ptr}.
+
+If the construction process fails for whatever reason (such as a nearly-degenerate vertex whose internal or external angle is almost zero), the return value will be {\em null}, represented by a default constructed \ccc{shared_ptr}.
+
+The algorithm automatically checks the consistency of the result, thus, if it is not {\em null}, it is guaranteed to be valid.
+}
+
+
+
+\ccHeading{Algorithm}
+
+The implemented algorithm is closely based on \cite{cgal:fo-ss-98} with the addition of \textit{vertex events} as described in \cite{cgal:ee-rrccpp-98}.
+
+It simulates  a grassfire propagation of moving polygon edges as they move inward at constant
+and equal speed. That is, the continuous inward offsetting of the polygon.\\
+Since edges move at equal speed their movement can be characterized in a simpler setup as the movement of vertices. Vertices move along the angular bisector of adjacent edges.\\
+The trace of a moving vertex is described by the algorithm as a {\em bisector}. 
+Every position along a bisector corresponds to the vertex between two offset (moved) edges. Since edges move at constant speed, every position along a bisector also corresponds to the distance those two edges moved so far.\\
+From the perspective of a dynamic system of moving edges, such a distance can be regarded as an 
+{\em instant} (in time). Therefore, every distinct position along a bisector corresponds to a distinct instant in the offsetting process.\\
+As they move inward, edges can expand or contract w.r.t to the endpoints sharing a vertex. If a vertex has an internal angle $<pi$, its incident edges will contract but if its internal angle $>pi$, they will expand. The movement of the edges, along with their extent change, result in collisions between non-adjacent edges. These collisions are called {\em events}, and they occur when the colliding edges have moved a certain distance, that is, at certain \textit{instants}.\\
+If non-consecutive edges \ccc{E(j),E(k)} move while edge \ccc{E(i)} contracts, they can collide at the point when \ccc{E(i)} shrinks to nothing (that is, the three edges might meet at a certain offset). This introduces a \textit{topological change} in the polygon: Edges \ccc{E(j),E(k)} are now adjacent, edge \ccc{E(i)} disappears, and a new vertex appears. This topological change is called an {\em edge event}.\\
+Similarly, consecutive expanding edges \ccc{E(i),E(i+1)} sharing a reflex vertex (internal angle $>=pi$) might collide with any edge \ccc{E(j)} on the rest of the same connected component of the polygon boundary (even far away from the initial edge's position). This also introduces a topological change: \ccc{E(j)} gets split in two edges and the connected component having \ccc{E(i),E(i+1) and E(j)} is split in two unconnected parts: one having \ccc{E(i)} and the corresponding subsegment of \ccc{E(j)} and the other with \ccc{E(i+1)} and the rest of \ccc{E(j)}. This is called a {\em split event}.\\ If a reflex vertex hits not an edge \ccc{E(j)} but another reflex vertex \ccc{E(j),E(j+1)}, and vice-versa (the reflex vertex V(j) hits V(i)), there is no actual split and the two unconnected parts have \ccc{E(i),E(j)} and \ccc{E(i+1),E(j+1)} (or \ccc{E(i),E(j+1)} and \ccc{E(i+1),E(j)}). This topological change is called a {\em vertex event}. Although similar to a split event in the sense that two new unconnected contours emerge introducing two new contour vertices, in the case of a vertex event one of the new contour vertices might be reflex; that is, a vertex event \textit{may} result in one of the offset polygons having a \textit{reflex} contour vertex which was not in the original polygon.
+
+Edges movement is described by vertices movement, and these by bisectors. Therefore, the collision between edges \ccc{E(j),E(i),E(k)} (all in the same connected component) occurs when the moving vertices \ccc{E(j)->E(i)} and \ccc{E(i)->E(k)} meet ; that is, when the two bisectors describing the moving vertices 
+{\em intersect} (Note: as the edges move inward and events occur, a vertex between edges A and B might exist even if A and B are not consecutive; that is, j and k are not necessarily i-1 and i+1 respectively, although initially they are).\\
+Similarly, the collision between \ccc{E(i),E(i+1)} with \ccc{E(j)} (all in the same connected component) occurs when the bisector corresponding to the moving vertex \ccc{E(i)->E(i+1)} hits the moving edge \ccc{E(j)}.\\
+Since each event changes the topology of the moving polygon, it is not possible or practical to foresee all events at once. Rather, the algorithm starts by estimating an initial set of potential events and from there it computes one next event at a time based on the previous one. The chaining of events is governed by their relative instants: events that occur first are processed first.\\
+An initial set of \textit{potential} split events is first computed independently (the computation of a potential split event is based solely on a reflex vertex and all other edges in the same connected component); and an initial set of \textit{potential} edge events between initially consecutive bisectors is first computed independently (based solely on each bisector pair under consideration).\\
+Events occur at certain instants and the algorithm must be able to order them
+accordingly. The correctness of the algorithm is uniquely and directly governed by the correct computation and ordering of the events. Any potential event might no longer be applicable after the topological change introduced by a prior event.\\
+A grassfire propagation picks the next unprocessed event (starting from the first) and if it is still applicable processes it. Processing an event involves connecting edges, adding a new skeleton vertex (which corresponds the a contour vertex of the offset polygon) and calculating one new potential future event (which can be either an edge event or a split event -because of a prior vertex event-), based on the topological change just introduced. The propagation finishes when there are no new future events.
+
+\ccSeeAlso
+\ccc{StraightSkeletonBuilderTraits_2}\\
+\ccc{StraightSkeletonVertex_2}\\
+\ccc{StraightSkeletonHalfedge_2}\\
+\ccc{StraightSkeleton_2}\\
+\ccc{CGAL::Straight_skeleton_builder_traits_2<K>}\\
+\ccc{CGAL::Straight_skeleton_vertex_base_2<Refs,P,FT>}\\
+\ccc{CGAL::Straight_skeleton_halfedge_base_2<Refs>}\\
+\ccc{CGAL::Straight_skeleton_2<Traits,Items,Alloc>}\\
+\end{ccRefClass}
+
+% +------------------------------------------------------------------------+
+%%RefPage: end of main body, begin of footer
+% EOF
+% +------------------------------------------------------------------------+

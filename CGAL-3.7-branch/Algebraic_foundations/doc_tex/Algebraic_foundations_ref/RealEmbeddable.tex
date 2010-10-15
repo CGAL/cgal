@@ -1,0 +1,62 @@
+\begin{ccRefConcept}{RealEmbeddable}
+
+\ccDefinition
+
+A model of this concepts represents numbers that are embeddable on the real 
+axis. The type obeys the algebraic structure and compares two values according 
+to the total order of the real numbers.
+
+Moreover, \ccc{CGAL::Real_embeddable_traits< RealEmbeddable >} is a model of 
+\ccc{RealEmbeddableTraits}\\
+with:\\ 
+- \ccc{CGAL::Real_embeddable_traits< RealEmbeddable >::Is_real_embeddable} set to \ccc{Tag_true} \\
+and functors :\\
+- \ccc{CGAL::Real_embeddable_traits< RealEmbeddable >::Is_zero}  \\
+- \ccc{CGAL::Real_embeddable_traits< RealEmbeddable >::Abs}  \\
+- \ccc{CGAL::Real_embeddable_traits< RealEmbeddable >::Sgn}  \\
+- \ccc{CGAL::Real_embeddable_traits< RealEmbeddable >::Is_positive}  \\
+- \ccc{CGAL::Real_embeddable_traits< RealEmbeddable >::Is_negative}  \\
+- \ccc{CGAL::Real_embeddable_traits< RealEmbeddable >::Compare}  \\
+- \ccc{CGAL::Real_embeddable_traits< RealEmbeddable >::To_double}  \\
+- \ccc{CGAL::Real_embeddable_traits< RealEmbeddable >::To_interval}  \\
+
+Remark:\\
+If a number type is a model of both \ccc{IntegralDomainWithoutDivision} and 
+\ccc{RealEmbeddable}, it follows that the ring represented by such a number type 
+is a sub-ring of the real numbers and hence has characteristic zero.
+%( see http://mathworld.wolfram.com/CharacteristicField.html ).
+
+\ccRefines
+\ccc{Equality Comparable}\\
+\ccc{LessThanComparable}
+
+\ccOperations
+
+\ccFunction{bool operator==(const RealEmbeddable &a, 
+                            const RealEmbeddable &b);}{}
+\ccGlue
+\ccFunction{bool operator!=(const RealEmbeddable &a, 
+                            const RealEmbeddable &b);}{}
+
+\ccFunction{bool operator< (const RealEmbeddable &a, 
+                            const RealEmbeddable &b);}{}
+\ccGlue
+\ccFunction{bool operator<=(const RealEmbeddable &a, 
+                            const RealEmbeddable &b);}{}
+\ccGlue
+\ccFunction{bool operator> (const RealEmbeddable &a, 
+                            const RealEmbeddable &b);}{}
+\ccGlue
+\ccFunction{bool operator>=(const RealEmbeddable &a, 
+                            const RealEmbeddable &b);}{}
+\ccGlue
+
+
+
+\ccSeeAlso
+
+\ccRefIdfierPage{RealEmbeddableTraits}\\
+
+%\ccHasModels
+
+\end{ccRefConcept}

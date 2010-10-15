@@ -1,0 +1,177 @@
+\begin{ccRefClass} {Vector_3<Kernel>}
+
+\ccDefinition
+
+An object of the class \ccRefName\ is a vector in the three-dimensional 
+vector space $\R^3$. Geometrically spoken a vector is the difference
+of two points $p_2$, $p_1$ and denotes the direction and the distance
+from   $p_1$ to $p_2$. 
+
+\cgal\ defines a symbolic constant \ccStyle{NULL_VECTOR}. We 
+will explicitly state where you can pass this constant as an argument
+instead of a vector initialized with zeros.
+
+\ccTypes
+\ccThree{Cartesian_const_iterator}{Facet }{}
+\ccThreeToTwo
+
+\ccNestedType{Cartesian_const_iterator}{An iterator for enumerating the
+      \ccHtmlNoLinksFrom{Cartesian} coordinates of a vector.}
+
+\ccCreation
+\ccCreationVariable{v}
+
+
+\ccHidden\ccConstructor{Vector_3();}
+             {introduces an uninitialized variable \ccVar.}
+
+\ccHidden \ccConstructor{Vector_3(const Vector_3<Kernel> &w);}
+            {copy constructor.}
+
+\ccConstructor{Vector_3(const Point_3<Kernel> &a, const Point_3<Kernel> &b);}
+            {introduces the vector $b-a$.}
+
+\ccConstructor{Vector_3(const Segment_3<Kernel> &s);}
+            {introduces the vector $s.target()-s.source()$.}
+
+\ccConstructor{Vector_3(const Ray_3<Kernel> &r);}
+            {introduces a vector having the same direction as $r$.}
+
+\ccConstructor{Vector_3(const Line_3<Kernel> &l);}
+            {introduces a vector having the same direction as $l$.}
+
+\ccConstructor{Vector_3(const Null_vector &NULL_VECTOR);}
+            {introduces a null vector \ccVar.}
+
+\ccConstructor{Vector_3(int x, int y, int z);}
+            {introduces a vector \ccVar\ initialized to $(x, y, z)$.}
+
+\ccConstructor{Vector_3(double x, double y, double z);}
+            {introduces a vector \ccVar\ initialized to $(x, y, z)$.}
+
+\ccConstructor{Vector_3(const Kernel::RT &hx, const Kernel::RT &hy, const Kernel::RT &hz, const Kernel::RT &hw = RT(1));}
+            {introduces a vector \ccVar\ initialized to $(hx/hw, hy/hw, hz/hw)$.}
+
+\ccConstructor{Vector_3(const Kernel::FT &x, const Kernel::FT &y, const Kernel::FT &z);}
+            {introduces a vector \ccVar\ initialized to $(x, y, z)$.}
+
+
+\ccOperations
+
+\ccHidden \ccMethod{Vector_3<Kernel> & operator=(const Vector_3<Kernel> &w);}
+        {Assignment.}
+
+\ccMethod{bool operator==(const Vector_3<Kernel> &w) const;}
+       {Test for equality: two vectors are equal, iff their $x$, $y$ 
+        and $z$ coordinates are equal. You can compare a vector with the
+        \ccStyle{NULL_VECTOR}.}
+
+\ccMethod{bool operator!=(const Vector_3<Kernel> &w) const;}
+       {Test for inequality. You can compare a vector with the
+        \ccStyle{NULL_VECTOR}.}
+
+There are two sets of coordinate access functions, namely to the
+homogeneous and to the \ccHtmlNoLinksFrom{Cartesian} coordinates. They can be used
+independently from the chosen kernel model.
+
+\ccMethod{Kernel::RT hx() const;}
+       {returns the homogeneous $x$ coordinate.}
+\ccGlue
+\ccMethod{Kernel::RT hy() const;}
+       {returns the homogeneous $y$ coordinate.}
+\ccGlue
+\ccMethod{Kernel::RT hz() const;}
+       {returns the homogeneous $z$ coordinate.}
+\ccGlue
+\ccMethod{Kernel::RT hw() const;}
+       {returns the homogenizing  coordinate.}
+
+Note that you do not loose information with the homogeneous
+representation, because the \ccc{FieldNumberType} is a quotient.
+
+\ccMethod{Kernel::FT x() const;}
+       {returns the \ccStyle{x}-coordinate of \ccVar, that is $hx/hw$.}
+\ccGlue
+\ccMethod{Kernel::FT y() const;}
+       {returns the \ccStyle{y}-coordinate of \ccVar, that is $hy/hw$.}
+\ccGlue
+\ccMethod{Kernel::FT z() const;}
+       {returns the \ccStyle{z} coordinate of \ccVar, that is $hz/hw$.}
+
+The following operations are for convenience and for compatibility
+with higher dimensional vectors.  Again they come in a
+\ccHtmlNoLinksFrom{Cartesian} and homogeneous flavor.
+
+\ccMethod{Kernel::RT homogeneous(int i) const;}
+       {returns the i'th homogeneous coordinate of \ccVar, starting with 0.
+        \ccPrecond $0\leq i \leq 3$.}
+
+\ccMethod{Kernel::FT cartesian(int i) const;}
+       {returns the i'th \ccHtmlNoLinksFrom{Cartesian} coordinate of \ccVar, starting at 0.
+        \ccPrecond $0\leq i \leq 2$.}
+
+\ccMethod{Kernel::FT operator[](int i) const;}
+       {returns  \ccStyle{cartesian(i)}.
+        \ccPrecond $0\leq i \leq 2$.}
+
+\ccMethod{Cartesian_const_iterator cartesian_begin() const;}
+       {returns an iterator to the \ccHtmlNoLinksFrom{Cartesian} coordinates 
+        of \ccVar, starting with the 0th coordinate.}
+
+\ccMethod{Cartesian_const_iterator cartesian_end() const;}
+       {returns an off the end iterator to the \ccHtmlNoLinksFrom{Cartesian} 
+        coordinates of \ccVar.}
+
+\ccMethod{int dimension() const;}
+       {returns the dimension (the constant 3).}
+
+\ccMethod{Vector_3<Kernel>  transform(const Aff_transformation_3<Kernel> &t) const;}
+       {returns the vector obtained by applying $t$ on \ccVar.}
+
+\ccMethod{Direction_3<Kernel> direction() const;}
+       {returns the direction of \ccVar.}
+
+\ccHeading{Operators}
+
+The following operations can be applied on vectors:
+
+\ccMethod{Vector_3<Kernel>        operator+(const Vector_3<Kernel> &w) const;}
+       {Addition.}
+
+\ccMethod{Vector_3<Kernel>        operator-(const Vector_3<Kernel> &w) const;}
+       {Subtraction.}
+
+\ccMethod{Vector_3<Kernel>        operator-() const;}
+       {Returns the opposite vector.}
+
+\ccMethod{Kernel::FT              operator*(const Vector_3<Kernel> &w) const;}
+       {returns the scalar product (= inner product) of the two vectors.}
+
+\ccFunction{Vector_3<Kernel>
+            operator*(const Vector_3<Kernel> &v, const Kernel::RT &s);}
+       {Multiplication with a scalar from the right.}
+
+\ccFunction{Vector_3<Kernel>
+            operator*(const Vector_3<Kernel> &v, const Kernel::FT &s);}
+       {Multiplication with a scalar from the right.}
+
+\ccFunction{Vector_3<Kernel>
+            operator*(const Kernel::RT &s, const Vector_3<Kernel> &v);}
+       {Multiplication with a scalar from the left.}
+
+\ccFunction{Vector_3<Kernel>
+            operator*(const Kernel::FT &s, const Vector_3<Kernel> &v);}
+       {Multiplication with a scalar from the left.}
+
+\ccMethod{Vector_3<Kernel>        operator/(const Kernel::RT &s) const;}
+       {Division by a scalar.}
+
+\ccMethod{Kernel::FT squared_length() const;}
+       {returns the squared length of \ccVar. }
+
+\ccSeeAlso
+\ccRefConceptPage{Kernel::Vector_3} \\
+\ccRefIdfierPage{CGAL::cross_product} \\
+\ccRefIdfierPage{CGAL::determinant} \\
+
+\end{ccRefClass} 

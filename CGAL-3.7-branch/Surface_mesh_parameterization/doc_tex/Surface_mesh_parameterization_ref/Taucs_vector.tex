@@ -1,0 +1,144 @@
+% +------------------------------------------------------------------------+
+% | Reference manual page: Taucs_vector.tex
+% +------------------------------------------------------------------------+
+% | 21.09.2005   Laurent Saboret, Pierre Alliez, Bruno Levy
+% | Package: Surface_mesh_parameterization
+% |
+\RCSdef{\RCSTaucsvectorRev}{$Id$}
+\RCSdefDate{\RCSTaucsvectorDate}{$Date$}
+% |
+\ccRefPageBegin
+%%RefPage: end of header, begin of main body
+% +------------------------------------------------------------------------+
+
+
+\begin{ccRefClass}{Taucs_vector<T>}
+
+%% \ccHtmlCrossLink{}     %% add further rules for cross referencing links
+%% \ccHtmlIndexC[class]{} %% add further index entries
+
+
+\ccDefinition
+
+% The section below is automatically generated. Do not edit!
+%START-AUTO(\ccDefinition)
+
+The class \ccc{Taucs_vector} is a C++ wrapper around TAUCS' vector type, which is a simple array.
+
+%END-AUTO(\ccDefinition)
+
+% The section below is automatically generated. Do not edit!
+%START-AUTO(\ccInclude)
+
+\ccInclude{CGAL/Taucs_vector.h}
+
+%END-AUTO(\ccInclude)
+
+
+\ccIsModel
+
+% The section below is automatically generated. Do not edit!
+%START-AUTO(\ccIsModel)
+
+Model of the \ccc{SparseLinearAlgebraTraits_d::Vector} concept.
+
+%END-AUTO(\ccIsModel)
+
+
+\ccParameters
+
+The full template declaration is:
+
+% The section below is automatically generated. Do not edit!
+%START-AUTO(\ccParameters)
+
+template$<$class T$>$   \\
+class \ccc{Taucs_vector};
+
+%END-AUTO(\ccParameters)
+
+
+\ccTypes
+
+% The section below is automatically generated. Do not edit!
+%START-AUTO(\ccTypes)
+
+\ccNestedType{NT}
+{
+}
+\ccGlue
+
+%END-AUTO(\ccTypes)
+
+
+\ccCreation
+\ccCreationVariable{v}  %% variable name for \ccMethod
+
+% The section below is automatically generated. Do not edit!
+%START-AUTO(\ccCreation)
+
+\ccConstructor{Taucs_vector(int dimension);}
+{
+Create a vector initialized with zeros.
+}
+\ccGlue
+\ccConstructor{Taucs_vector(const Taucs_vector<T>& toCopy);}
+{
+Copy constructor.
+}
+\ccGlue
+
+%END-AUTO(\ccCreation)
+
+
+\ccOperations
+
+% The section below is automatically generated. Do not edit!
+%START-AUTO(\ccOperations)
+
+\ccMethod{int dimension() const;}
+{
+Return the vector's number of coefficients.
+}
+\ccGlue
+\ccMethod{T operator[](int i) const;}
+{
+Read/write access to a vector coefficient.
+\ccCommentHeading{Preconditions} 0 $<$= i $<$ dimension().
+}
+\ccGlue
+\ccMethod{T& operator[](int i);}
+{
+}
+\ccGlue
+\ccMethod{const T* get_taucs_vector() const;}
+{
+Get TAUCS vector wrapped by this object.
+}
+\ccGlue
+\ccMethod{T* get_taucs_vector();}
+{
+}
+\ccGlue
+
+%END-AUTO(\ccOperations)
+
+
+\ccSeeAlso
+
+\ccRefIdfierPage{CGAL::Taucs_solver_traits<T>}  \\
+\ccRefIdfierPage{CGAL::Taucs_symmetric_solver_traits<T>}  \\
+\ccRefIdfierPage{CGAL::Taucs_matrix<T>}  \\
+\ccRefIdfierPage{CGAL::Taucs_symmetric_matrix<T>}  \\
+\ccc{OpenNL::DefaultLinearSolverTraits<COEFFTYPE, MATRIX, VECTOR, SOLVER>} in OpenNL package  \\
+\ccc{OpenNL::SymmetricLinearSolverTraits<COEFFTYPE, MATRIX, VECTOR, SOLVER>} in OpenNL package  \\
+
+
+\end{ccRefClass}
+
+% +------------------------------------------------------------------------+
+%%RefPage: end of main body, begin of footer
+\ccRefPageEnd
+% EOF
+% +------------------------------------------------------------------------+
+

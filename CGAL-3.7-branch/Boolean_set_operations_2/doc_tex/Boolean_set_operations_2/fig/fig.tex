@@ -1,0 +1,14 @@
+%file used by efi's makefile to convert .tex files to .dvi figures
+%
+\documentclass{article}
+\usepackage{txfonts}
+\usepackage{pstricks}
+% \usepackage{pstcol}
+\usepackage{pst-plot,pst-tree,pst-eps,pst-node}
+\usepackage{multido}
+\usepackage{graphicx}        % for PostScript figures
+\pagestyle{empty}
+\begin{document}
+% \Large
+\input{tmp.tex}
+\end{document}

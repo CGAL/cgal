@@ -1,0 +1,49 @@
+% +------------------------------------------------------------------------+
+% | Reference manual page: Predicate_traits_d.tex
+% +------------------------------------------------------------------------+
+
+\begin{ccRefClass}[Box_intersection_d::]{Predicate_traits_d<BoxTraits,bool closed>}
+\begin{ccAdvanced}
+
+\ccDefinition
+
+Default implementation of the \ccc{BoxIntersectionPredicateTraits_d}
+concept. This very fine-grained predicate traits concept allows the
+hand-crafted implementation of the individual interval comparison
+tests. This is only for experts and might only be useful in the
+context of special number types or exploitation of special assembler
+instructions!  This generic default implementation is likely to
+suffice for all practical purposes.
+
+\begin{itemize}
+  \item
+    \ccc{BoxTraits}: requires the \ccc{BoxIntersectionTraits_d} concept.
+  \item
+    \ccc{bool closed}: specifies the topology, which can be half-open
+    or closed. In the half-open case, two adjacent boxes do not
+    intersect, whereas in the closed case they do.
+\end{itemize}
+
+\ccInclude{CGAL/Box_intersection_d/Box_traits_d.h}
+and also automatically with\\
+\ccInclude{CGAL/box_intersection_d.h}
+
+\ccIsModel
+
+\ccRefConceptPage{BoxIntersectionPredicateTraits_d}
+
+\ccCreation
+\ccCreationVariable{traits}
+
+\ccConstructor{Predicate_traits_d();}{default constructor.}
+
+\ccSeeAlso
+
+\ccRefIdfierPage{CGAL::box_intersection_custom_predicates_d}\\
+\ccRefIdfierPage{CGAL::box_intersection_all_pairs_custom_predicates_d}
+
+\ccRefConceptPage{BoxIntersectionTraits_d}
+
+\end{ccAdvanced}
+\end{ccRefClass}
+

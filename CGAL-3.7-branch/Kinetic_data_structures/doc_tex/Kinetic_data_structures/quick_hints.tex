@@ -1,0 +1,28 @@
+\section{Quick Hints \label{sec:quick_hints}}
+
+This section gives quick answers to some questions people might have.
+It presumes knowledge of kinetic data structures and this framework.
+
+\subsubsection{How do I store extra information allow with, for example, a kinetic Point\_2?}
+
+See the example
+\ccReferToExampleCode{Kinetic_framework/defining_a_simulation_traits.cpp} to see how
+to define a new \ccc{SimulationTraits} class where the
+\ccc{Active\-Objects\-Table} contains extra data along with the point.
+
+\subsubsection{Where is the best place to look if I want to write my own kinetic data structure?}
+We provide two simple kinetic data structures, first most trivial is
+\ccReferToExampleCode{Kinetic_framework/trivial_kds.cpp} and a slightly more
+complicated one is:
+
+\ccInclude{CGAL/Kinetic/Sort.h}
+
+\subsubsection{How can I use kinetic data structures to update Delaunay triangulations?}
+We are working on that one, but you will have to wait.
+
+
+
+%%% Local Variables: 
+%%% mode: latex
+%%% TeX-master: t
+%%% End: 

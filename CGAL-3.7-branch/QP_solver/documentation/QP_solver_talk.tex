@@ -1,0 +1,568 @@
+\documentclass{slides}
+\usepackage{html}
+\usepackage[dvips]{graphics,color,epsfig}
+\usepackage{path}
+\usepackage{amssymb}
+\usepackage{amsfonts}
+\usepackage{amsmath}
+\usepackage{amsthm}
+\usepackage{psfrag}
+\usepackage{algorithm}
+\usepackage{algpseudocode}
+\newcommand{\N}{\ensuremath{\mathbb{N}}}
+\newcommand{\F}{\ensuremath{\mathbb{F}}}
+\newcommand{\Z}{\ensuremath{\mathbb{Z}}}
+\newcommand{\R}{\ensuremath{\mathbb{R}}}
+\newcommand{\Q}{\ensuremath{\mathbb{Q}}}
+\newcommand{\C}{\ensuremath{\mathbb{C}}}
+\newtheorem{lemma}{Lemma}
+\newtheorem{assumption}{Assumption}
+\newtheorem{definition}{Definition}
+\newtheorem{theorem}{Theorem}
+
+
+%\onlyslides{ 2, 3, 8}
+%\onlyslides{0, 1, 2, 3, 4, 7, 8, 9, 10, 11, 12, 13, 14, 15, 18}
+
+
+
+\title{QP\_solver}
+\author{}
+%
+\begin{document}
+\maketitle
+\begin{slide}
+\emph{QP:}
+\begin{eqnarray*}
+minimize & c^{T}x+x^{T}Dx & \\
+s.t.     & Ax \leq b & \\
+         & x \geq 0 ,&
+\end{eqnarray*}
+where
+$A \in \R^{m \times n}$, $b \in \R^{m}$, $c \in \R^{n}$ and $D \in \R^{n
+\times n}$ positive-semidefinite.
+
+
+\end{slide}
+
+\begin{note}
+\begin{itemize}
+\item linear part of objective function: $c$
+\item quadratic part of objective function: $D$
+\item constraint matrix: $A$
+\begin{itemize}
+\item $n$ variables
+\item $m$ constraints
+\end{itemize}
+\item all of the variables are required to be greater equal zero.
+\item The solver is tailored to quadratic programs where
+$\min\{n,m\}$ is small.
+\item an example where this is the case is POLYTOPE DISTANCE
+\end{itemize}
+\end{note}
+
+\begin{slide}
+\emph{Polytope distance}
+
+Given two point sets in $d$-dimensional space,
+\[
+P=\{p_{1}, \ldots, p_{r} \},
+\quad
+Q=\{q_{1}, \ldots, q_{s} \}
+\]
+with $r+s=n$. Let
+\[
+C=(p_{1}, \ldots , p_{r}, -q_{1}, \ldots, -q_{s}).
+\]
+Then 
+\begin{eqnarray*}
+(PD) & minimize & x^{T}C^{T}Cx  \\
+     & s.t.     & \sum_{i=1}^{r}x_{i} = 1 \\
+     &          & \sum_{i=r+1}^{n}x_{i} = 1 \\
+     &          & x \geq 0,
+\end{eqnarray*}
+minimizes the square of the euclidean distance between $conv(P)$ and $conv(Q)$.
+\end{slide}
+
+\begin{note}
+\begin{itemize}
+\item $Cx$ is the difference vector of some convex combinations over the point
+sets $P$, $Q$.
+\item Note, here $\min\{n,m\}=2$
+\end{itemize}
+\end{note}
+
+\begin{slide}
+\emph{Features:}
+\begin{itemize}
+\item hybrid arithmetic: ($ET$, $NT$)
+\item configurability for specific situations:
+  \begin{enumerate}
+  \item compile time tags: 
+%  \begin{itemize}
+%   \item Is\_linear
+%   \item Is\_symmetric
+%   \item Has\_full\_row\_rank
+%   \item Use\_perturbation
+%  \end{itemize}
+  \item Pricing strategies
+  \end{enumerate}
+\item symbolic perturbation
+\item handling of implicitly given matrices
+\end{itemize}
+\end{slide}
+
+\begin{note}
+\begin{itemize}
+\item \emph{hybrid arithmetic}: exact number type and fast, usually inexact
+number type $NT$ are used by the solver. The fast number type is used in
+connection with some pricing strategies.
+\item \emph{configurability}: different compile time tags, most of them
+improving performance for specific optimization problems.$\rightarrow$ example
+\item \emph{pricing strategies}: $4$ ready-to-use pricing strategies are
+provided, which can be specified in the solvers constructor.
+\item \emph{symbolic perturbation}: guarantees termination.  
+There are indications that cycling occurs more often with exact arithmetic as
+one would expect, for most of the times it goes unnoticed with inexact
+arithmetic.
+\item \emph{implicitly given matrices}: $\rightarrow$ example. 
+\end{itemize}
+\end{note}
+
+
+
+\begin{slide}
+Example:
+
+\begin{eqnarray*}
+minimize & c^{T}x+x^{T}Dx & \\
+s.t.     & Ax \geq b & \\
+         & x \geq 0  ,&
+\end{eqnarray*}
+where
+\[
+A:=
+\left(
+\begin{array}{rrr}
+-4 & 2 & 0 \\
+1  & 1 & 1 \\
+\end{array}
+\right),
+\quad
+b:=
+\left(
+\begin{array}{r}
+-8 \\
+2
+\end{array}
+\right),
+\]
+\[
+c^{T}:=
+\left(
+\begin{array}{rrr}
+0 & 5 & 0
+\end{array}
+\right),
+\quad
+D:=
+\left(
+\begin{array}{rrr}
+64  & -16 & 0 \\
+-16 &   4 & 2 \\
+0   &  -2 & 0 
+\end{array}
+\right).
+\]
+\end{slide}
+
+
+\begin{note}
+\begin{itemize}
+\item  matrix $A$ has full row rank
+\item  matrix $D$ is not symmetric
+\item all constraints are greater equal constraints 
+\end{itemize}
+\end{note}
+
+\begin{slide}
+QP\_solver\_talk\_example.cpp first part
+\end{slide}
+
+\begin{note}
+\begin{itemize}
+\item exact number type $ET$.
+\item \emph{A\_iterator, D\_iterator}: model of the STL-concept
+RandomAccessIterator referring to an iterator, which in turn refers to the
+elements of a column/row of the matrix $A/D$.
+\item \emph{B\_iterator}, \emph{C\_iterator}: model of the STL-concept
+RandomAccessIterator referring to the entries of $b$ and $c$.
+\item \emph{Row\_type\_iterator}: model of the STL-concept
+RandomAccessIterator referring to the constraint types of the rows of constr.
+matrix $A$.  
+\item element types of $A$, $b$, $c$ and $D$ must provide implicit conversions
+to $ET$.
+\item \emph{QP\_const\_value\_iterator} convenience class template
+\end{itemize}
+\end{note}
+
+\begin{slide}
+QP\_solver\_talk\_example.cpp second part
+\end{slide}
+
+\begin{note}
+\begin{itemize}
+\item show how columns of $A$ and rows of $D$ are inserted.
+\item \emph{QP\_solver$<$QPSolverTraits$>$} constructor defaulting to
+\emph{full exact pricing} strategy
+\item QP\_solver solution query: qp.status()
+\item Variable\_value\_iterator: qp.variables\_value\_begin(),
+qp.variables\_value\_end()
+\end{itemize}
+\end{note}
+
+%
+%\begin{slide}
+%\begin{itemize}
+%\item The solver is tailored to quadratic programs where
+%$\min\{n,m\}$ is small.
+%\end{itemize}
+%\end{slide}
+
+%\begin{note}
+%\begin{itemize}
+%\item $QP$-bases are generalizations of $LP$-bases, coincide if $D=0$
+%\item computations with basis inverses exact $\rightarrow$ slow
+%\item ok, as long as $\min\{m,n\}$ is small
+%\item and pricing is fast
+%\end{itemize}
+%\end{note}
+
+
+\begin{slide}
+\emph{compile time tags:}
+\begin{itemize}
+\item \emph{Is\_linear}: specifies whether the problem to be solved is a linear
+program or a quadratic program.
+\item \emph{Is\_symmetric}: specifies whether the matrix $D$ is symmetric.  
+\item \emph{Has\_full\_row\_rank}: specifies whether the constraint matrix $A$
+has full row rank.
+\item \emph{Use\_perturbation}: specifies whether symbolic perturbation is 
+used to guarantee termination.
+\end{itemize}
+\end{slide}
+
+\begin{note}
+\begin{itemize}
+\item almost no overhead incurred for the linear case
+\item $D$ symmetric halves accesses to the matrix $D$
+\item Enhances performance, if constraint matrix $A$ has full row rank
+\item Avoids cycling at the cost of a small performance penalty 
+\end{itemize}
+\end{note}
+
+\begin{slide}
+\begin{itemize}
+\item The solver uses an \emph{iterative algorithm}, each iteration yields a
+\emph{feasible solution} $x$, which is characterized by a subset
+$B \subseteq \left[n\right]$, such that $x_{B} \geq 0$, variables not in $B$
+are \emph{nonbasic}. Nonbasic variables have value zero.   
+
+\item The \emph{pricing step} of the solvers algorithm
+determines whether the current solution is optimal;
+if not, an \emph{entering variable} among the nonbasic variables is determined.
+
+\item A nonbasic variable $x_{j}$ \emph{qualifies} as entering variable,
+if some associated value $\mu_{j}$ is strictly negative. If none of the
+nonbasic variables qualifies as entering variable the current solution is
+\emph{optimal}.
+
+\item The \emph{pricing strategy} is the part of the algorithms
+pricing step that selects an entering variable among the
+nonbasic variables that qualify as entering variable.
+\end{itemize}
+\end{slide}
+
+\begin{note}
+\begin{itemize}
+\item mention algorithm used is actually a generalization of LP-simplex
+\item for the linear case the notions of $\mu_{j}$ and reduced cost coincide
+\end{itemize}
+\end{note}
+
+\begin{slide}
+Four ready-to-use pricing strategies are provided:
+\begin{itemize}
+\item \emph{full exact pricing} 
+\item \emph{full filtered pricing}
+\item \emph{partial exact pricing}
+\item \emph{partial filtered pricing}
+\end{itemize}
+User provided pricing strategies may be specified by means of inheritance.
+\end{slide}
+
+\begin{note}
+\begin{itemize}
+\item User provided pricing strategies inherit from the base class
+\begin{verbatim}
+QP_pricing_strategy<Traits>
+\end{verbatim}
+
+\item issue: should this base class be made public?
+\item currently used as developers feature
+\item interface between solver and the pricing strategy becomes fat
+\end{itemize}
+\end{note}
+
+
+\begin{slide}
+\emph{Full exact pricing}
+
+The $\mu_{j}$ associated with the nonbasic $x_{j}$, $j \in N$, are
+evaluated using the exact number type $ET$.
+
+\emph{Creation:}
+\begin{verbatim}
+QP_full_exact_pricing<Traits> feps();
+\end{verbatim}
+\end{slide}
+
+\begin{note}
+\begin{itemize}
+\item is the default pricing strategy
+\end{itemize}
+\end{note}
+
+\begin{slide}
+\emph{Full filtered pricing}
+
+\begin{itemize}
+\item Approximations $\tilde{\mu}_{j}$, $j \in N$, are computed using the fast
+(compared to $ET$) number type $NT$ at beginning of the pricing step.
+
+\item If $\mu_{j_{N}} < 0$, $j_{N}=\arg\min_{j \in N}\tilde{\mu}_{j}$, then 
+$\mu_{j_{N}}$ is the entering variable.
+
+\item Otherwise, \emph{nonnegativity} for part of the nonbasic variables is
+\emph{certified} using an error bound $b$ on
+$\left|\tilde{\mu}_{j}-\mu_{j}\right|$: if $\tilde{\mu}_{j} \geq b$ then
+$\mu_{j}$ is known to be nonnegative.
+
+\item The $\tilde{\mu}_{j}$, $j \in N$ whose exact $\mu_{j}$ values cannot be
+certified to be nonnegative by this \emph{floating point filter} are then
+evaluated using exact arithmetic. 
+\end{itemize}
+\end{slide}
+
+\begin{note}
+\begin{itemize}
+\item One of the two pricing strategies that uses hybrid arithmetic,
+basic idea: use (fast) approx for $\mu_{j}$ and an error bound
+\item Since $\mu_{j}$ is basically a scalar product, one can estimate the 
+absolute value of the diff between $\mu_{j}$ and its approximation by a bound
+$b$. If the approximated value is larger than bound $b$, $\mu_{j}$ is
+\emph{certified} to be nonnegative
+\item (slide): the minimal value of the approximated $\mu_{j}$ is chosen because
+it has highest prob. to be strictly negative.
+\item Note, the error bound consists actually of two bounds, one
+independent of $j$ and one depending on $j$, bound $b$ can be evaluated
+using the fast (inexact) number type $NT$.
+\item improves performance if number type $NT$ is fast compared to $ET$
+\end{itemize}
+\end{note}
+
+
+\begin{slide}
+\emph{Full filtered pricing}
+
+\emph{Creation:}
+\begin{verbatim}
+QP_full_filtered_pricing<Traits, NT, ET2NT>
+  ffps( ET2NT et2nt = ET2NT());
+\end{verbatim}
+\end{slide}
+
+\begin{note}
+\begin{itemize}
+\item The input types of $A$, $b$, $c$, as well as $D$ are required to provide
+implicit lossless conversion to $NT$.
+\item Currently $NT$ is supported only for $double$.
+\end{itemize}
+\end{note}
+
+\begin{slide}
+\emph{Partial exact pricing}
+
+\begin{itemize}
+\item A set $S$ of \emph{active variables}, $S \subseteq N$, is kept
+and an entering variable is chosen among the variables in $S$ that
+qualify as entering variable.
+
+\item If none of the variables in $S$ qualifies as entering variable
+the set $S$ is augmented by
+$V:=\{k \in N \setminus S \left|\right. \mu_{k} < 0\}$.
+
+\item Initially, $\left|S\right|=\min\{m\sqrt{n/2}, n\}$.
+\end{itemize}
+
+
+\emph{Creation:}
+\begin{verbatim}
+QP_partial_exact_pricing<Traits> peps(
+  bool randomize = false, 
+  Random& random = default_random);
+\end{verbatim}
+\end{slide}
+
+\begin{note}
+\begin{itemize}
+\item intuition of \emph{partial pricing}: to maintain a set of active
+variables, which is initially relatively small and to find the entering
+variable in the set of active variables.
+\item first try the set of \emph{active variables}, if this fails try the
+complement $S$ with respect to the nonbasic variables.
+\item (slide) $S:=S \cup V$ for next iteration. 
+\item constructor and choices for the initial set, either as the first
+$\min\{m\sqrt{n/2},n\}$ nonbasic variables determined by the initial feasible
+solution or chosen randomly out of the nonbasic variables determined by the
+initial feasible solution. 
+\item \emph{partial exact pricing} improves performance for optimization
+problems with high \emph{variables-to-constraint} ratios.
+\end{itemize}
+\end{note}
+
+
+\begin{slide}
+\emph{Partial filtered pricing}
+
+\begin{itemize}
+\item If $\mu_{j_{S}} < 0$, $j_{S}:=\arg\min_{j \in S}\tilde{\mu}_{j}$, then
+$x_{j_{S}}$ is the entering variable.
+
+\item Otherwise, $V:=\{k \in N \setminus S \left|\right. \tilde{\mu}_{j} <0\}$
+is determined. If $V \neq \emptyset$ and $\mu_{j_{V}} <0$,
+$j_{V}:=\arg\min_{j \in V}\tilde{\mu}_{j}$, then $x_{j_{V}}$ is the entering
+variable.
+
+\item If $V=\emptyset$, that is
+$\tilde{\mu}_{j} \geq 0$ for $k \in N \setminus S$, or $\mu_{j_{V}} \geq 0$
+the nonnegativity for
+$\mu_{j}$, $j \in N$ is
+either certified using the error bound, $\tilde{\mu}_{j} \geq b$,
+or the exact value $\mu_{j}$ is evaluated.
+\end{itemize}
+
+\emph{Creation:}
+\begin{verbatim}
+QP_partial_filtered_pricing<Traits, NT, ET2NT>
+  pfps( ET2NT et2nt = ET2NT());
+\end{verbatim}
+\end{slide}
+
+\begin{note}
+\begin{itemize}
+\item \emph{partial filtered pricing} is the combination of partial pricing
+and filtered pricing
+\item As with partial exact pricing we have a set of \emph{active variables} and
+as with full filtered pricing we use approx. and try to certify noneg. using
+the floating point filter $\rightarrow$ slide
+\item Again as with full filtered pricing the input types of $A$, $b$, $c$,
+as well as $D$ are required to provide implicit lossless conversion to $NT$.
+Currently $NT$ is supported only for $double$. 
+\item improves performance of QP with high \emph{variables-to-constraints}
+ratio and number types $NT$ that are fast compared to the number type $ET$.
+\end{itemize}
+\end{note}
+
+
+\begin{slide}
+\emph{Polytope distance}
+
+Given two point sets in $d$-dimensional space,
+\[
+P=\{p_{1}, \ldots, p_{r} \},
+\quad
+Q=\{q_{1}, \ldots, q_{s} \}
+\]
+with $r+s=n$. Let
+\[
+C=(p_{1}, \ldots , p_{r}, -q_{1}, \ldots, -q_{s}).
+\]
+Then 
+\begin{eqnarray*}
+(PD) & minimize & x^{T}C^{T}Cx  \\
+     & s.t.     & \sum_{i=1}^{r}x_{i} = 1 \\
+     &          & \sum_{i=r+1}^{n}x_{i} = 1 \\
+     &          & x \geq 0,
+\end{eqnarray*}
+minimizes the square of the euclidean distance between $conv(P)$ and $conv(Q)$.
+Here, $D=C^{T}C$ is an
+$n \times n$-matrix, but its rank is only $d$.
+\end{slide}
+
+\begin{note}
+\begin{itemize}
+\item $c$ is $0$-vector
+\item $b$ is const vector
+\item row\_types are all equality constraints
+\item $D$ is $n \times n$ matrix, given in terms of the $d \times n$
+matrix $C$.  
+\end{itemize}
+\end{note}
+
+\begin{slide}
+example PD\_D\_iterator
+\end{slide}
+
+\begin{note}
+\begin{itemize}
+\item start with constructor
+\begin{enumerate}
+\item point\_it: iterator referring to $C$ matrix
+\item i current row index
+\end{enumerate}
+\item dereference operator, returns a PD\_D\_row\_iterator
+\end{itemize}
+\end{note}
+
+\begin{slide}
+example PD\_D\_row\_iterator
+\end{slide}
+
+\begin{note}
+\begin{itemize}
+\item constructor: point\_it referring to point matrix $C$
+\item dereference operator returns scalar product of columns $i$ and $j$ of the
+$C$ matrix.
+\end{itemize}
+\end{note}
+
+\begin{slide}
+\begin{theorem}(G\"{a}rtner)
+Every QP-basis $B$ satisfies
+\[
+\left|B\right| \leq m + Rank(D).
+\]
+\end{theorem}
+\end{slide}
+
+\begin{note}
+\begin{itemize}
+\item in general our $B$ and QP-basis $B$ are different, but in this particular
+instance they coincide
+\item thus here $\left|B\right| \leq 2 + d$.
+\end{itemize}
+\end{note}
+
+
+%\begin{slide}
+%Applications:
+%\begin{itemize}
+%\item solver is suitable for problems with $\min\{n,m\}$ small, in contrast to
+%the \emph{operations research} setting, where $m$ and $n$ are large and
+%$A$ and $D$ \emph{sparse} 
+%\item implicitly given matrices
+%\item Polytope Distance (primal version) example
+%\end{itemize}
+%\end{slide}
+\end{document}

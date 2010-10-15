@@ -1,0 +1,23 @@
+\begin{ccRefFunctionObjectConcept}{Kernel::IsHorizontal_2}
+A model for this must provide:
+
+\ccCreationVariable{fo}
+
+\ccMemberFunction{bool operator()(const Kernel::Line_2&o);} 
+{returns true iff $o$ is horizontal.}
+
+\ccMemberFunction{bool operator()(const Kernel::Ray_2&o);} 
+{returns true iff $o$ is horizontal.}
+
+\ccMemberFunction{bool operator()(const Kernel::Segment_2&o);} 
+{returns true iff $o$ is horizontal.}
+
+\ccRefines
+\ccc{AdaptableFunctor} (with one argument)
+
+\ccSeeAlso
+\ccRefIdfierPage{CGAL::Line_2<Kernel>} \\
+\ccRefIdfierPage{CGAL::Ray_2<Kernel>} \\
+\ccRefIdfierPage{CGAL::Segment_2<Kernel>} \\
+
+\end{ccRefFunctionObjectConcept}

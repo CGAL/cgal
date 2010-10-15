@@ -1,0 +1,37 @@
+\begin{ccRefFunction}{compare_distance_to_point}
+
+\ccFunction{Comparison_result
+compare_distance_to_point(const Point_2<Kernel>& p,
+                          const Point_2<Kernel>& q,
+                          const Point_2<Kernel>& r);}
+          {compares the distances of points \ccStyle{q} and
+           \ccStyle{r} to point \ccStyle{p}.
+          returns \ccStyle{SMALLER}, iff \ccStyle{q} is closer
+          to \ccStyle{p} than \ccStyle{r}, \ccStyle{LARGER}, iff
+          \ccStyle{r} is closer to \ccStyle{p} than \ccStyle{q}, and
+          \ccStyle{EQUAL} otherwise.}
+
+\ccFunction{Comparison_result
+compare_distance_to_point(const Point_3<Kernel>& p,
+                          const Point_3<Kernel>& q,
+                          const Point_3<Kernel>& r);}
+          {compares the distances of points \ccStyle{q} and
+           \ccStyle{r} to point \ccStyle{p}.
+          returns \ccStyle{SMALLER}, iff \ccStyle{q} is closer
+          to \ccStyle{p} than \ccStyle{r}, \ccStyle{LARGER}, iff
+          \ccStyle{r} is closer to \ccStyle{p} than \ccStyle{q}, and
+          \ccStyle{EQUAL} otherwise.}
+
+\ccSeeAlso
+\ccRefIdfierPage{CGAL::compare_squared_distance} \\
+\ccRefIdfierPage{CGAL::compare_signed_distance_to_line} \\
+\ccRefIdfierPage{CGAL::compare_signed_distance_to_plane} \\
+\ccRefIdfierPage{CGAL::has_larger_distance_to_point} \\
+\ccRefIdfierPage{CGAL::has_larger_signed_distance_to_line} \\
+\ccRefIdfierPage{CGAL::has_larger_signed_distance_to_plane} \\
+\ccRefIdfierPage{CGAL::has_smaller_distance_to_point} \\
+\ccRefIdfierPage{CGAL::has_smaller_signed_distance_to_line} \\
+\ccRefIdfierPage{CGAL::has_smaller_signed_distance_to_plane} \\
+
+\end{ccRefFunction}
+

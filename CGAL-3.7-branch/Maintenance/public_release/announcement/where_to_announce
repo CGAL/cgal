@@ -1,0 +1,32 @@
+Only feature releases go to all the lists.
+Bug fix releases only go to the CGAL announce
+and discuss lists.
+
+
+Mailing lists:
+
+  cgal-develop@lists-sop.inria.fr (best sent as blind carbon copy)
+  cgal-discuss@lists-sop.inria.fr
+  cgal-announce@lists-sop.inria.fr
+
+And only for feature releases (not bug-fixes):
+
+  compgeom-announce@lists-sop.inria.fr
+  mesh@sandia.gov
+
+
+Newsgroups:
+
+(Better send as small cross-post blocks,
+ otherwise it gets filtered out somewhere...)
+
+  sci.image.processing,
+  comp.graphics.algorithms,
+  comp.robotics.misc,
+  comp.infosystems.gis
+
+
+Moderated newsgroups:
+
+  comp.simulation,
+  comp.robotics.research

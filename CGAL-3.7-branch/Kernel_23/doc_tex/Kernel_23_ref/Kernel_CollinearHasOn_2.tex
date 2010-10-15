@@ -1,0 +1,23 @@
+\begin{ccRefFunctionObjectConcept}{Kernel::CollinearHasOn_2}
+A model for this must provide:
+
+\ccCreationVariable{fo}
+
+\ccMemberFunction{bool operator()(const Kernel::Ray_2& r, 
+                                  const Kernel::Point_2&p);}
+       {checks if point $p$ is on $r$. 
+        \ccPrecond{$p$ is on the supporting line of $r$.}}
+
+\ccMemberFunction{bool operator()(const Kernel::Segment_2& s, 
+                                  const Kernel::Point_2&p);}
+       {checks if point $p$ is on $s$. 
+        \ccPrecond{$p$ is on the supporting line of $s$.}}
+
+\ccRefines
+\ccc{AdaptableFunctor} (with two arguments)
+
+\ccSeeAlso
+\ccRefIdfierPage{CGAL::Ray_2<Kernel>} \\
+\ccRefIdfierPage{CGAL::Segment_2<Kernel>}  \\
+
+\end{ccRefFunctionObjectConcept}

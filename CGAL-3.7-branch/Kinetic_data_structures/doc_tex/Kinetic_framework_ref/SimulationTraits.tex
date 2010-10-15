@@ -1,0 +1,174 @@
+% +------------------------------------------------------------------------+
+% | Reference manual page: SimulationTraits.tex
+% +------------------------------------------------------------------------+
+% | 20.03.2005   Author
+% | Package: Kinetic_data_structures
+% | 
+% |
+%%RefPage: end of header, begin of main body
+% +------------------------------------------------------------------------+
+
+
+\begin{ccRefConcept}{Kinetic::SimulationTraits}
+
+%% \ccHtmlCrossLink{}     %% add further rules for cross referencing links
+%% \ccHtmlIndexC[concept]{} %% add further index entries
+
+\ccDefinition
+  
+This concept ties together the parts needed in order to run a kinetic
+data structure. We provide several models of this concept:
+\begin{itemize}
+\item \ccc{Kinetic::Exact_simulation_traits}
+\item \ccc{Kinetic::Inexact_simulation_traits}
+\item \ccc{Kinetic::Regular_triangulation_exact_simulation_traits}
+\item \ccc{Kinetic::Regular_triangulation_inexact_simulation_traits}
+\end{itemize}
+
+All support trajectories defined by polynomial coordinates. The
+\ccc{Exact} vs \ccc{Inexect} picks whether the roots of the
+certificate functions are compared exactly or approximated
+numerically. The regular triangulation models have weighted points of
+the appropriate dimension as the primitive used in the
+\ccc{Kinetic::InstantaneousKernel} and the
+\ccc{Kinetic::ActiveObjectsTable}.
+
+
+\ccTypes
+
+\ccNestedType{NT}{The number type used for representation.}
+
+\ccNestedType{Instantaneous_kernel}{A model of
+  \ccc{Kinetic::InstantaneousKernel} which can be used to apply static CGAL
+  data structures to snapshots of moving data.}
+
+\ccNestedType{Kinetic_kernel}{A model of \ccc{Kinetic::Kernel}.}
+
+\ccNestedType{Function_kernel}{A model of \ccc{Kinetic::FunctionKernel}.}
+
+\ccNestedType{Active_points_[123]_table}{A model of
+  \ccc{Kinetic::ActiveObjectsTable} which holds the relevant kinetic
+  primitives.}
+
+\ccNestedType{Simulator}{A model of \ccc{Kinetic::Simulator} which will be
+used by all the kinetic data structures.}
+
+%\ccNestedType{Active_objects_table}{A model of \ccc{Kinetic::ActiveObjectsTable} which can be used to store moving points of an appropriate dimension. This is really optional and not needed if no kinetic data structures use points.}
+
+\ccOperations
+\ccCreationVariable{st}
+
+\ccMethod{Instantaneous_kernel instantaneous_kernel_object();}{Get a new instantaneous kernel.}
+
+\ccMethod{Kinetic_kernel kinetic_kernel_object();}{Get a new kinetic kernel.}
+
+\ccMethod{Function_kernel function_kernel_object();}{Get a new function kernel.}
+
+\ccMethod{Simulator::Handle simulator_handle();}{Return a pointer to the \ccc{Kinetic::Simulator} which is to be used in the simulation.}
+
+\ccMethod{Active_points_[123]_table::Handle
+  active_points_[123]_table_handle();}{Return a pointer to the
+  \ccc{Kinetic::ActiveObjectsTable} which is to be used in the
+  simulation.}
+
+%\ccMethod{Active_objects_table* active_objects_table_pointer();}{Return a pointer to the table holding points which is to be used in the simulation.}
+
+\ccHasModels
+
+\ccc{Kinetic::Exact_simulation_traits},
+\ccc{Kinetic::Inexact_simulation_traits},
+\ccc{Kinetic::Regular_triangulation_exact_simulation_traits},
+\ccc{Kinetic::Regular_triangulation_inexact_simulation_traits}
+
+\end{ccRefConcept}
+
+
+\ccExample
+
+The simulation traits class is simply there for convenience in order to bundle a set of related typedefs and create a few objects. As a resulting, creating your own requires little though, and just copying and changing a few lines. An example is below which sets up to use the CORE Sturm sequences to solve polynomials rather than our own (faster) solvers. It can be found in examples/Kinetic\_framework/defining\_a\_simulation\_traits.cpp.
+
+\begin{ccExampleCode}
+
+#include <CGAL/Polynomial/Sturm_root_stack_traits.h>
+#include <CGAL/Polynomial/Sturm_root_stack.h>
+#include <CGAL/Kinetic/Active_objects_vector.h>
+#include <CGAL/Kinetic/Default_instantaneous_kernel.h>
+#include <CGAL/Kinetic/Cartesian.h>
+#include <CGAL/Kinetic/Handle_degeneracy_function_kernel.h>
+#include <CGAL/Kinetic/Default_simulator.h>
+#include <CGAL/Kinetic/Two_list_pointer_event_queue.h>
+#include <CGAL/Exact_predicates_exact_constructions_kernel.h>
+
+using namespace CGAL::Kinetic;
+
+struct My_simulation_traits {
+  typedef My_simulation_traits This;
+
+  typedef CGAL::Exact_predicates_exact_constructions_kernel Static_kernel;
+  //typedef CGAL::Regular_triangulation_euclidean_traits_3<Static_kernel_base> Static_kernel;
+  typedef CGAL::POLYNOMIAL::Polynomial<Static_kernel::FT> Function;
+  typedef CGAL::POLYNOMIAL::Sturm_root_stack_traits<Function> Root_stack_traits;
+  typedef CGAL::POLYNOMIAL::Sturm_root_stack<Root_stack_traits> Root_stack;
+  typedef CGAL::POLYNOMIAL::Kernel<Function, Root_stack> Function_kernel;
+
+  typedef CGAL::Kinetic::Handle_degeneracy_function_kernel<Function_kernel, false>  Simulator_function_kernel_base;
+  struct Simulator_function_kernel: public Simulator_function_kernel_base{};
+
+  typedef Cartesian<Simulator_function_kernel> Kinetic_kernel;
+  typedef Two_list_pointer_event_queue<Function_kernel> Event_queue;
+  typedef Default_simulator<Simulator_function_kernel, Event_queue > Simulator;
+
+  typedef Active_objects_vector<Kinetic_kernel::Point_1> Active_points_1_table;
+  typedef Active_objects_vector<Kinetic_kernel::Point_2> Active_points_2_table;
+  typedef Active_objects_vector<Kinetic_kernel::Point_3> Active_points_3_table;
+  // typedef Active_objects_vector<Kinetic_kernel::Weighted_point_3> Active_weighted_points_3_table;
+ 
+  typedef Default_instantaneous_kernel<This> Instantaneous_kernel;
+
+  Active_points_1_table* active_points_1_table_handle() const { return ap1_.get();}
+  Active_points_2_table* active_points_2_table_handle() const {return ap2_.get();}
+  Active_points_3_table* active_points_3_table_handle() const {return ap3_.get();}
+  //Active_weighted_points_3_table* active_weighted_points_3_table_handle() const {return awp3_.get();}
+
+  Simulator* simulator_handle() const { return sim_.get();}
+  const Static_kernel& static_kernel_object() const {return k_;}
+  const Kinetic_kernel& kinetic_kernel_object() const {return kk_;}
+ 
+  Instantaneous_kernel instantaneous_kernel_object() const {
+    return Instantaneous_kernel(*this);
+  }
+
+  My_simulation_traits(const Simulator::Time &lb,
+			  const Simulator::Time &ub): sim_(new Simulator(lb, ub)),
+						      ap1_(new Active_points_1_table()),
+						      ap2_(new Active_points_2_table()),
+						      ap3_(new Active_points_3_table())
+						      //awp3_(new Active_weighted_points_3_table())
+{}
+ 
+  
+  bool is_exact() const {
+    return true;
+  }
+protected:
+  Simulator::Handle sim_;
+  Active_points_1_table::Handle ap1_;
+  Active_points_2_table::Handle ap2_;
+  Active_points_3_table::Handle ap3_;
+  //Active_weighted_points_3_table::Handle awp3_;
+  Static_kernel k_;
+  Kinetic_kernel kk_;
+  Function_kernel fk_;
+};
+
+#endif
+
+
+
+\end{ccExampleCode}
+
+% +------------------------------------------------------------------------+
+%%RefPage: end of main body, begin of footer
+% EOF
+% +------------------------------------------------------------------------+
+

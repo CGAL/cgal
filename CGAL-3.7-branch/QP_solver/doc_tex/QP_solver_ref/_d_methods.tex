@@ -1,0 +1,7 @@
+\ccMethod{D_iterator get_d() const;}{returns an iterator over the rows of
+  $2D$. The corresponding past-the-end iterator is \ccc{get_d()+get_n()}.
+  For $i=0,\ldots,n-1$, $\ccc{*(get_d()+i)}$ is a random access
+  iterator for the entries in row $i$ \emph{below or on the diagonal}.
+  The valid range of this iterator is 
+  guaranteed to have length $i+1$ but not more. Values to the right 
+  of the diagonal are deduced from the symmetry requirement on $D$.}

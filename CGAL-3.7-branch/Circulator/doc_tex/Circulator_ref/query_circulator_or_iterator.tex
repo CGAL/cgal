@@ -1,0 +1,47 @@
+% +------------------------------------------------------------------------+
+% | CGAL Reference Manual: query_circulator_or_iterator.tex
+% +------------------------------------------------------------------------+
+% | Requirements for circulators in analogy to STL iterators.
+% | Adaptors between circulators and iterators.
+% | Proposal for CGAL.
+% |
+% | 11.10.1996   Lutz Kettner
+% | 
+% | \RCSdef{\circRev}{$Id$}
+% | \RCSdefDate{\circDate}{$Date$}
+% +------------------------------------------------------------------------+
+
+% +-----------------------------------------------------+
+\begin{ccRefFunction}{query_circulator_or_iterator}
+
+\ccDefinition
+
+The following function distinguishes between circulators and
+iterators.  It is based on iterator 
+traits~\cite{cgal:ansi-is14882-98,cgal:m-tnutt-95} 
+and \ccc{Circulator_traits}.
+
+\ccInclude{CGAL/circulator.h}
+
+\ccSetThreeColumns{Circulator_tag}{distance_type( C c);}{}
+
+\ccFunction{template <class I>
+  Iterator_tag query_circulator_or_iterator( const I& i);}{
+      if the iterator category of \ccc{I} belongs to an iterator.}
+
+\ccFunction{template <class C>
+  Circulator_tag query_circulator_or_iterator( const C& c);}{
+      if the iterator category of \ccc{C} belongs to a circulator.}
+
+\ccSeeAlso
+
+\ccc{Circulator_tag},
+\ccc{Circulator_traits},
+\ccc{Assert_circulator},
+\ccc{Circulator}.
+
+
+\end{ccRefFunction}
+
+% +-----------------------------------------------------+
+% EOF

@@ -1,0 +1,88 @@
+3 septembre 2009
+fix the demo of Deaunay :
+for every button, the drawing should follow the mouse,
+be it circumcircle, conflict zone of updated triangulation
+and insertion take place on the click.
+
+
+8 avril 2004\- fix the incidence-adjacence stuff
+
+
+6 avril 2009
+-Triangulation d'une region polygonale :
+insister dans la doc sur le fait que la triangulation remplit l'enveloppe convexe
+et  montrer comment les traiter  les regions polygonales  en  marquant les faces.
+Ajouter un example dans le user manuel,
+ou modifier l'example des triangulation avec colored face
+pour montrer comment on peut marquer les faces
+interieures a un domaine
+
+
+
+- regarder le bug dans la test suite de TriangulationContrainte
+ revele par le lzigzag locate
+  semble venir de find_conflicts 
+  lorsque le point est localise sur une arete de l'enveloppe convexe
+le find_conflicts ne donne pas le meme resultat qu'on parte de la face finie
+ou de la face infini 
+  
+- bencher Triangulation_2 avec un insert virtuel
+  insert virtuel permettrait de resoudre le pb de design
+  de Mesh_2 et Alpha_shapes_[23]
+- documenter Triangulation_2traits_3
+- doc : relier nerarest-vertex queries a localisation dans Voronoi
+- doc de la triangulation reguliere a mettre a jour
+- input output of regular triangulation
+  (may be outputing for each face the hidden points
+   in the output operator for faces)
+  could be envisaged in a more thoroughfull treatment of
+  input-output operation
+- write a function
+  temp< Pointit, OutFacesIt>
+  bool	finite_faces_inside( Pointit begin, Pointit end, OutFacesIt fit) 
+	given a range of point, find all finites faces inside or intersecting
+        the polygon discribed by the sequence of points.
+        bool = false if none is found
+ - bencher Delaunay_2 avec un insert utilisant
+  find_conflict + star_hole
+
+
+- suppress function set_number_of_vertices(int )
+- Regular_triangulation_2 : remplacer degenerate_power_test_2(p,q,r)
+  par power_test_2(p,q,r)
+
+
+- Check if copy constructor and assignement operator of
+  constrained riangulation transfers the contrained marks.
+- Something still tobe done for remove in Constrained
+  Delaunay_constrained and  Constrained_triangulation_plus
+- Harmoniser find_conflicts() avec le 3d
+- tester entree vrml
+- eclaircir ce qui arrive
+  quand il y a des points en trop dand un fichier d'entre .off
+- faire des fonctions globales pour les entrees sorties
+  les mettre dans un fichier separe
+  pour ne pas etre oblige d'inclure iostream obligatoirement
+
+- k orderVoronoi diagram (code de Julia)
+- Natural neighbor (code de Franck)
+- Constrained_triangulation_3 (stage de Douc)
+- Conforming triangulation (David)
+- Vrml output
+- Triangulation_2_traits_3 : 
+  a traits is needed for the case where points are not exactly coplanar
+  but where the unit normal to the plane is known.
+  This could solve some robustness issues
+
+
+- rendre les iterator vraiment const
+  creer les classe const_handle
+
+A verifier
+- Corriger la doc pour includes_edge in Triangulation_2
+- test removal and meshing functions in constrained 
+  and Delaunay constrained triangulation
+- mesh
+- add set_weight(Weight w) to weighted point
+- iterator de faces intersectees par un segment
+- oriented_side ne marche pas quand le point est sur un sommet...

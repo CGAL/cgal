@@ -1,0 +1,207 @@
+\begin{ccRefFunctionObjectConcept}{SphericalKernel::HasOn_3}
+
+\ccRefines
+
+\ccc{Kernel::HasOn_3}
+
+\ccCreationVariable{fo}
+
+An object \ccVar\ of this type must provide:
+
+\ccMemberFunction{bool 
+	operator()(const Type1 &obj1, const Type2 &obj2);}
+{Returns \ccc{true} when \ccc{obj1} contains \ccc{obj2},}
+
+where \ccc{Type1} and \ccc{Type2} can be respectively:
+
+\begin{tabular}{|l|l|}
+\hline
+\ccc{Type1} & \ccc{Type2} \\
+\hline
+\ccc{SphericalKernel::Sphere_3}, & \ccc{SphericalKernel::Circular_arc_point_3}\\
+\ccc{SphericalKernel::Plane_3}, & \\
+\ccc{SphericalKernel::Line_3}, & \\
+\ccc{SphericalKernel::Circle_3}, & \\
+\ccc{SphericalKernel::Line_arc_3}, or & \\
+\ccc{SphericalKernel::Circular_arc_3} & \\
+\hline
+\ccc{SphericalKernel::Plane_3}, & \ccc{SphericalKernel::Line_arc_3}\\
+\ccc{SphericalKernel::Line_3} & \\
+\hline
+\ccc{SphericalKernel::Sphere_3}, & \ccc{SphericalKernel::Circular_arc_3} \\
+\ccc{SphericalKernel::Circle_3}, or & \\
+\ccc{SphericalKernel::Plane_3} & \\
+\hline
+\end{tabular}
+
+\end{ccRefFunctionObjectConcept}
+\begin{ccRefFunctionObjectConcept}{SphericalKernel::DoOverlap_3}
+
+\ccRefines
+
+\ccc{Kernel::DoOverlap_3}
+
+\ccCreationVariable{fo}
+
+An object \ccVar\ of this type must provide:
+
+\ccMemberFunction{bool operator()
+	(const SphericalKernel::Line_arc_3 & l0,
+	const SphericalKernel::Line_arc_3 & l1,
+	const bool known_equal_supporting_line = false);}
+{For two line arcs.}
+
+\ccMemberFunction{bool operator()
+	(const SphericalKernel::Circular_arc_3 & a0,
+	const SphericalKernel::Circular_arc_3 & a1,
+	const bool known_equal_supporting_circle = false);}
+{For two circular arcs.}
+
+The computation may be faster when the boolean is set to \ccc{true}.
+
+\end{ccRefFunctionObjectConcept}
+\begin{ccRefFunctionObjectConcept}{SphericalKernel::DoIntersect_3}
+
+\ccDefinition
+
+Testing whether two curves intersect.
+
+\ccRefines
+
+\ccc{Kernel::DoIntersect_3}
+
+\ccCreationVariable{fo}
+
+An object \ccVar\ of this type must provide:
+
+\ccMemberFunction{bool operator()
+	(const Type1 & obj1, const Type2 & obj2);}
+{determines if two geometric objects of type Type1 and Type2 intersect or not.}
+
+for all pairs \ccc{Type1} and \ccc{Type2}, where the types 
+\ccc{Type1} and \ccc{Type2} can be  either, any of the following:
+\begin{itemize}
+\item {} \ccc{SphericalKernel::Plane_3}
+\item {} \ccc{SphericalKernel::Line_3}
+\item {} \ccc{SphericalKernel::Line_arc_3}
+\item {} \ccc{SphericalKernel::Sphere_3}
+\item {} \ccc{SphericalKernel::Circle_3}
+\end{itemize} 
+
+\ccSeeAlso
+
+\ccRefIdfierPage[Kernel::do_intersect]{CGAL::do_intersect}
+
+\end{ccRefFunctionObjectConcept}
+\begin{ccRefFunctionObjectConcept}{SphericalKernel::BoundedSide_3}
+
+\ccRefines
+
+\ccc{Kernel::BoundedSide_3}
+
+\ccCreationVariable{fo}
+
+An object \ccVar\ of this type must provide:
+
+\ccMemberFunction{Bounded_side 
+	operator()
+	(const SphericalKernel::Sphere_3& s, 
+	const SphericalKernel::Circular_arc_point_3& p);}
+{For a sphere.}
+
+\ccMemberFunction{Bounded_side
+	operator()
+	(const SphericalKernel::Circle_3& s, 
+	const SphericalKernel::Circular_arc_point_3& p);}
+{For a circle.}
+
+\ccSeeAlso
+
+\ccRefIdfierPage{SphericalKernel::HasOnBoundedSide_3}\\
+\ccRefIdfierPage{SphericalKernel::HasOnUnboundedSide_3}
+
+\end{ccRefFunctionObjectConcept}
+\begin{ccRefFunctionObjectConcept}{SphericalKernel::HasOnBoundedSide_3}
+
+\ccRefines
+
+\ccc{Kernel::HasOnBoundedSide_3}
+
+\ccCreationVariable{fo}
+
+An object \ccVar\ of this type must provide:
+
+\ccMemberFunction{bool
+	operator()
+	(const SphericalKernel::Sphere_3& s, 
+	const SphericalKernel::Circular_arc_point_3& p);}
+{For a sphere.}
+
+\ccMemberFunction{bool
+	operator()
+	(const SphericalKernel::Circle_3& s, 
+	const SphericalKernel::Circular_arc_point_3& p);}
+{For a circle.}
+
+\ccSeeAlso
+
+\ccRefIdfierPage{SphericalKernel::BoundedSide_3}\\
+\ccRefIdfierPage{SphericalKernel::HasOnUnboundedSide_3}
+
+\end{ccRefFunctionObjectConcept}
+\begin{ccRefFunctionObjectConcept}{SphericalKernel::HasOnUnboundedSide_3}
+
+\ccRefines
+
+\ccc{Kernel::HasOnUnboundedSide_3}
+
+\ccCreationVariable{fo}
+
+An object \ccVar\ of this type must provide:
+
+\ccMemberFunction{bool
+	operator()
+	(const SphericalKernel::Sphere_3& s, 
+	const SphericalKernel::Circular_arc_point_3& p);}
+{For a sphere.}
+
+\ccMemberFunction{bool
+	operator()
+	(const SphericalKernel::Circle_3& s, 
+	const SphericalKernel::Circular_arc_point_3& p);}
+{For a circle.}
+
+\ccSeeAlso
+
+\ccRefIdfierPage{SphericalKernel::BoundedSide_3}\\
+\ccRefIdfierPage{SphericalKernel::HasOnBoundedSide_3}
+
+\end{ccRefFunctionObjectConcept}
+
+
+\begin{ccRefFunctionObjectConcept}{SphericalKernel::IsThetaMonotone_3} 
+
+\ccCreationVariable{fo}
+
+An object \ccVar\ of this type must provide: 
+
+% \ccConstructor{IsThetaMonotone_3(const Sphere_3 &sphere)}
+% {Constructs a functor \ccVar\ to test if an arc is $\theta$-monotone relatively to \ccc{sphere}.}
+
+\ccMemberFunction{bool operator()
+	(const SphericalKernel::Circular_arc_3 &a);}
+{Tests whether the arc $a$ is $\theta$-monotone, i.e. the intersection of
+any meridian anchored at the poles of the context sphere used by the function \ccc{SphericalKernel::is_theta_monotone_3_object}
+and the arc $a$ is reduced to at most one point in general, and two points if a pole of that sphere is
+an endpoint of \ccc{a}. Note that a bipolar circle has no such arcs.
+\ccPrecond{\ccc{a} lies on the context sphere used by the function \ccc{SphericalKernel::is_theta_monotone_3_object},
+and the supporting circle of \ccc{a} is not bipolar.}
+}
+
+
+\ccSeeAlso
+
+\ccRefIdfierPage{SphericalKernel::MakeThetaMonotone_3}
+
+
+\end{ccRefFunctionObjectConcept}

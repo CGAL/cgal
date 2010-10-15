@@ -1,0 +1,73 @@
+% +------------------------------------------------------------------------+
+% | CGAL Reference Manual: Circulator_traits
+% +------------------------------------------------------------------------+
+% | Requirements for circulators in analogy to STL iterators.
+% | Adaptors between circulators and iterators.
+% | Proposal for CGAL.
+% |
+% | 11.10.1996   Lutz Kettner
+% | 
+% | \RCSdef{\circRev}{$Id$}
+% | \RCSdefDate{\circDate}{$Date$}
+% +------------------------------------------------------------------------+
+
+% +-----------------------------------------------------+
+\begin{ccRefClass}{Circulator_traits<C>}
+
+\ccDefinition
+
+The circulator traits class distinguishes between circulators and
+iterators. It defines a local type \ccc{category} that is identical to the
+type \ccc{Circulator_tag} if the iterator category of the argument
+\ccc{C} is a circulator category. Otherwise it is identical to the type
+\ccc{Iterator_tag}.
+
+The local type \ccc{iterator_category} gives the corresponding
+iterator category for circulators, i.e.~one of
+\ccc{forward_iterator_tag}, \ccc{bidirectional_iterator_tag}, or
+\ccc{random_access_iterator_tag}.
+
+The local type \ccc{circulator_category} gives the corresponding
+circulator category for iterators, i.e.~one of
+\ccc{Forward_circulator_tag}, \ccc{Bidirectional_circulator_tag}, or
+\ccc{Random_access_circulator_tag}.
+
+\ccInclude{CGAL/circulator.h}
+
+\ccTypes
+
+\ccTwo{Circulator_traits<C>:: \ \ circulator_category}{}
+
+\ccNestedType{category}{either \ccc{Iterator_tag} or 
+  \ccc{Circulator_tag}.}
+\ccNestedType{iterator_category}{
+  corresponding iterator category for circulators.}
+\ccNestedType{circulator_category}{
+  corresponding circulator category for iterator}
+
+\ccExample
+
+A generic function \ccc{bar} that distinguishes between a call with a 
+circulator range and a call with an iterator range:
+
+\begin{ccExampleCode}
+template <class I>
+void bar( I i, I j, CGAL::Iterator_tag) {
+    CGAL::Assert_iterator(i);
+    // This function is called for iterator ranges [i,j).
+}
+template <class C>
+void bar( C c, C d, CGAL::Circulator_tag) {
+    CGAL::Assert_circulator(c);
+    // This function is called for circulator ranges [c,d).
+}
+template <class IC>
+void bar( IC i, IC j) {  // calls the correct function
+    return bar( i, j, typename CGAL::Circulator_traits<IC>::category());
+}
+\end{ccExampleCode}
+
+\end{ccRefClass}
+% +-----------------------------------------------------+
+
+% EOF

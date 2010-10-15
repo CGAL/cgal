@@ -1,0 +1,5 @@
+#!/bin/sh
+
+touch /tmp/CGAL-test-`whoami`
+SSH_AUTH_SOCK="" scp /tmp/CGAL-test-`whoami` cgaltest@cgal.geometryfactory.com:incoming
+rm -f /tmp/CGAL-test-`whoami`

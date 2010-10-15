@@ -1,0 +1,117 @@
+% +------------------------------------------------------------------------+
+% | Reference manual page: ArrangementDirectionalXMonotoneTraits.tex
+% +------------------------------------------------------------------------+
+
+\ccRefPageBegin
+
+\begin{ccRefConcept}{ArrangementDirectionalXMonotoneTraits_2}
+
+\ccDefinition
+
+This concept refines the basic arrangement $x$-monotone traits concept.
+A model of this concept is able to handle \emph{directed} $x$-monotone curves
+that intersect in their interior. Namely, an instance of the
+\ccc{X_monotone_curve_2} type defined by a model of the concept
+\ccc{ArrangementXMonotoneTraits_2} is only required to have a \emph{left}
+(lexicographically smaller) endpoint and a \emph{right} endpoint.
+If the traits class is also a model of
+\ccc{ArrangementDirectionalXMonotoneTraits_2}, the $x$-monotone curve is
+also required to have a direction, namely one of these two endpoint is
+viewed as its \emph{source} and the other as its \emph{target}.
+
+\ccRefines
+\ccc{ArrangementXMonotoneTraits_2}
+
+\ccHeading{Functor Types}
+%========================
+
+\ccThree{Compare_y_at_x_2~~~}{}{\hspace*{12cm}}
+\ccThreeToTwo
+
+\ccNestedType{Compare_endpoints_xy_2}
+{provides the operator~: \\
+ \ccc{Comparison_result operator() (X_monotone_curve_2 c)} \\
+ which accepts an input curve \ccc{c} and compare its source and target
+ point. It returns \ccc{SMALLER} if the curve is directed from left to right
+ (lexicographically --- i.e., in case of a vertical line segment, this means
+ it is directed upward), and \ccc{LARGER} if it is directed from right to
+ left.}
+
+\ccNestedType{Construct_opposite_2}
+{provides the operator~: \\
+ \ccc{X_monotone_curve_2 operator() (X_monotone_curve_2 c)} \\
+ which accepts an $x$-monotone curve \ccc{c} and returns its opposite curve,
+ namely a curve whose graph is the same as \ccc{c}'s, and whose source and
+ target are swapped with respect to \ccc{c}'s source and target.}
+
+In addition, the two following functors, required by the concept
+\ccc{ArrangementXMonotoneTraits_2} should operate as follows:
+
+\ccNestedType{Intersect_2}
+{provides the operator (templated by the \ccc{OutputIterator} type)~: \\
+ \ccc{OutputIterator operator() (X_monotone_curve_2 c1, X_monotone_curve_2 c2,
+                                 OutputIterator oi)} \\
+ which computes the intersections of \ccc{c1} and \ccc{c2} and inserts them
+ {\sl in an ascending lexicographic $xy$-order} into the output iterator.
+ The value-type of \ccc{OutputIterator} is \ccc{CGAL::Object}, where each
+ \ccc{Object} either wraps a \ccc{pair<Point_2,Multiplicity>} instance, which
+ represents an intersection point with its multiplicity (in case the
+ multiplicity is undefined or not known, it should be set to $0$) or an
+ \ccc{X_monotone_curve_2} instance, representing an overlapping subcurve of
+ \ccc{c1} and \ccc{c2}. In the latter case, if \ccc{c1} and \ccc{c2} have the
+ same direction, then the overlapping subcurves should also be directed the
+ same way; otherwise, they can be associated with an arbitrary direction.
+ The operator returns a past-the-end iterator for the output sequence.}
+
+\ccNestedType{Split_2}
+{provides the operator~: \\
+ \ccc{void operator() (X_monotone_curve_2 c, Point_2 p,
+                       X_monotone_curve_2& c1, X_monotone_curve_2& c2)} \\
+ which accepts an input curve \ccc{c} and a split point \ccc{p} in its
+ interior. It splits \ccc{c} at the split point into two subcurves \ccc{c1}
+ and \ccc{c2}, such that \ccc{p} is \ccc{c1}'s {\sl right} endpoint and
+ \ccc{c2}'s {\sl left} endpoint. The direction of \ccc{c} should be preserved:
+ in case \ccc{c} is directed from left to right then \ccc{p} becomes \ccc{c1}'s
+ target and \ccc{c2}'s source; otherwise, \ccc{p} becomes \ccc{c2}'s
+ target and \ccc{c1}'s source.} 
+
+\ccCreation
+\ccCreationVariable{traits}
+%==========================
+
+\ccThree{Construct_x_monotone_curve_2~~~}{}{\hspace*{7cm}}
+\ccThreeToTwo
+
+\ccConstructor{ArrangementDirectionalXMonotoneTraits_2();}{default constructor.}
+\ccGlue
+\ccConstructor{ArrangementDirectionalXMonotoneTraits_2(ArrangementDirectionalXMonotoneTraits_2 other);}
+{copy constructor}
+\ccGlue
+\ccMethod{ArrangementDirectionalXMonotoneTraits_2  operator=(other);}{assignment operator.}
+
+
+\ccHeading{Accessing Functor Objects}
+%====================================
+
+\ccMethod{Compare_endpoints_xy_2 compare_endpoints_xy_2_object();} {}
+\ccGlue
+\ccMethod{Construct_opposite_2 construct_opposite_2_object();} {}
+
+\ccHasModels
+%===========
+
+\ccc{CGAL::Arr_segment_traits_2<Kernel>} \\
+\ccc{CGAL::Arr_non_caching_segment_traits_2<Kernel>} \\
+\ccc{CGAL::Arr_circle_segment_traits_2<Kernel>} \\
+\ccc{CGAL::Arr_conic_traits_2<RatKernel,AlgKernel,NtTraits>} \\
+\ccc{CGAL::Arr_rational_arc_traits_2<AlgKernel,NtTraits>}
+
+\ccSeeAlso
+%=========
+
+\ccc{ArrangementXMonotoneTraits_2}\lcTex{ 
+      (\ccRefPage{ArrangementXMonotoneTraits_2})}
+
+\end{ccRefConcept}
+
+\ccRefPageEnd

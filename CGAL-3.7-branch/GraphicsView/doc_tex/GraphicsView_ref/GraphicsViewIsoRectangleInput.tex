@@ -1,0 +1,38 @@
+\ccDefGlobalScope{CGAL::}
+\begin{ccRefClass}[Qt::]{GraphicsViewIsoRectangleInput<K>}
+
+\ccDefinition
+An object of type \ccRefName\ creates an axis parallel rectangle.
+
+
+\ccInclude{CGAL/Qt/GraphicsViewIsoRectangleInput.h}
+
+\ccParameters
+
+The template parameter of \ccRefName\ must be a \cgal\ \ccc{Kernel}. 
+
+\ccInheritsFrom
+\ccc{GraphicsViewInput}
+
+\ccGlue
+
+\ccCreation
+\ccCreationVariable{in}
+\ccSetTwoColumns{GraphicsViewIsoRectangleInput}{}
+
+\ccConstructor{GraphicsViewIsoRectangleInput<T>(QObject *p, QGraphicsScene* s);}
+{\ccc{p} is a parent object. \ccc{s} is the scene where the iso rectangle is generated.}
+
+
+\ccHeading{Signals}
+ 
+\ccMethod{void generate(Object o);}{The object \ccc{o} contains a \ccc{K::Iso_rectangle_2}.}
+
+\end{ccRefClass}
+
+
+
+
+
+
+

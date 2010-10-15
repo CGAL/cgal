@@ -1,0 +1,22 @@
+\begin{ccRefFunctionObjectConcept}{Kernel::ComputeArea_3}
+A model for this must provide:
+
+\ccCreationVariable{fo}
+
+\ccMemberFunction{Kernel::FT operator()(const Kernel::Triangle_3& t);}
+       {returns the area of $t$. This requires that \ccc{Kernel::FT}
+        supports the \ccc{sqrt} operation.}
+
+\ccMemberFunction{Kernel::FT operator()(const Kernel::Point_3& p,
+                                        const Kernel::Point_3& q,
+                                        const Kernel::Point_3& r);}
+{returns the area of the triangle \ccc{p}, \ccc{q}, \ccc{r}.
+This requires that \ccc{Kernel::FT} supports the \ccc{sqrt} operation. }
+
+\ccRefines
+\ccc{AdaptableFunctor} (with one argument)
+
+\ccSeeAlso
+\ccRefIdfierPage{CGAL::Triangle_3<Kernel>}\\
+
+\end{ccRefFunctionObjectConcept}

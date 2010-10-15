@@ -1,0 +1,70 @@
+% +------------------------------------------------------------------------+
+% | Reference manual page: Periodic_3TriangulationDSCellBase_3.tex
+% +------------------------------------------------------------------------+
+% | 19.2.2009   Monique Teillaud, Manuel Caroli
+% | Package: Periodic_3_triangulation_3
+% | 
+\RCSdef{\RCSPeriodicTriangulationDSCellBaseRev}{$Id$}
+\RCSdefDate{\RCSPeriodicTriangulationDSCellBaseDate}{$Date$}
+% |
+%%RefPage: end of header, begin of main body
+% +------------------------------------------------------------------------+
+
+
+\begin{ccRefConcept}{Periodic_3TriangulationDSCellBase_3}
+
+%% \ccHtmlCrossLink{}     %% add further rules for cross referencing links
+%% \ccHtmlIndexC[concept]{} %% add further index entries
+
+\ccDefinition
+  
+At the base level (see Sections~\ref{P3Triangulation3-sec-design} 
+and~\ref{TDS3-sec-design}), a cell stores handles to its four vertices
+and to its four neighbor cells.  The vertices and neighbors are
+indexed 0, 1, 2 and 3. Neighbor $i$ lies opposite to vertex $i$.
+
+\ccRefines \ccc{TriangulationDSCellBase_3}
+
+For periodic triangulation the cell base class needs to additionally
+store an offset for each vertex.
+Only the last three bits of each integer are required to be
+stored. The remaining part does not contain any information.
+
+% As cells cannot span more than one domain per direction of space in a
+% periodic Delaunay triangulation, it is enough to store offsets
+% $\in\{0,1\}^3$. For optimization purposes we encode all
+% four offsets in one integer. Each offset needs three bits. If we
+% number the bits from {\em right to left} then bits $3*i$ to $3*i+2$
+% contain the offset corresponding to vertex $i$. The offsets itself
+% are encoded as described in the concept \ccc{Periodic_3Offset_3}.
+
+\ccCreationVariable{c}
+
+\ccAccessFunctions
+\ccThree{voidx}{c.offset(int i)x}{}
+
+\ccMethod{int offset(int i) const;}
+{Returns the offset of vertex \ccc{i}.
+\ccPrecond{$i \in \{0, 1, 2, 3\}$.}}
+
+\ccHeading{Setting}
+
+\ccMethod{void set_offsets(int off0, int off1, int off2, int off3);}
+{Sets the vertex offsets according to \ccc{off0} to \ccc{off3}.}
+
+\ccHasModels
+
+\ccc{CGAL::Periodic_3_triangulation_ds_cell_base_3}
+
+\ccSeeAlso
+
+\ccc{TriangulationDataStructure_3}\\
+\ccc{TriangulationDSCellBase_3}\\
+\ccc{Periodic_3TriangulationDSVertexBase_3}
+
+
+%% \ccExample
+
+%% \ccIncludeExampleCode{Triangulation3/Triangulation_cb_3_prog.C}
+
+\end{ccRefConcept}

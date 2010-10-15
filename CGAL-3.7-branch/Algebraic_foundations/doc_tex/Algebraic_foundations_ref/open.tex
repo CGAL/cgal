@@ -1,0 +1,58 @@
+\section{Overview - TODO - OPEN Questions for Release 3.3}
+
+\subsection{Overview}
+{\em this section is for the reviewer and to be removed for the release. }
+
+We introduced four traits classes and related concepts, for more details see 
+section \ref{caf_ref::classified_refernce_pages}
+\begin{itemize}
+\item \ccc{Algebraic_structure_traits} reflects the algebraic concepts of a 
+      type. e.g. \ccc{Field}, \ccc{EuclideanRing}
+\item \ccc{Real_embeddable_traits} is use for number types that are embedded on 
+      the real axis. 
+\item \ccc{Coercion_traits}, reflects interoperability of types. 
+\item \ccc{Fraction_traits}, more general than \ccc{Rational_traits}.
+\end{itemize}
+
+Number types, polynomials and linear algebra are not part of this package. 
+
+\subsection{Changes}
+\begin{itemize}
+\item added concept \ccc{FromDoubleConstructible}
+\item \ccc{FromSmallIntConstructible} -> \ccc{FromIntConstructible}
+\item rm IsFinite from \ccc{RealEmbeddable} concept
+      function \ccc{CGAL::is_finite} for float, double, long double 
+\item Moved Max/Min/Is\_valid/Boolean\_tag.. to STL-extension 
+\item mv \ccc{AdaptableUnaryFunction} and \ccc{AdaptableBinaryFunction} 
+      to STL-extension
+\item \ccc{Coercion_traits} replaces \ccc{Binary_operator_result}
+\item \ccc{Algebraic_structure_traits} replaces \ccc{Number_type_traits} 
+\item \ccc{Fraction_traits} should be used instead of \ccc{Rational_traits}\\
+      \ccc{Rational_traits} is kept for backward compatibility.
+\item gcd(0,0)=0, in particular gcd(x,0) is allowed now and is the unit normal 
+      of x. For more details see \ccc{AlgebraicStructureTraits::Gcd}. \\
+\end{itemize}
+
+TODO:
+\begin{itemize} 
+\item add a new entry in the globally maintained Bib file.
+\end{itemize}
+
+Keep in mind: 
+\begin{itemize} 
+\item Should we add Ipower? motivation see introduction of Square. 
+\item generic interoperable operators via Coercion Traits
+\item may add arithmetic functors as Add, Sub to Algebraic Structure Traits
+\item may add more fundamental concepts, such as Abelian Group.
+\item The second operator of \ccc{AlgebraicStructureTraits::RootOf} is not 
+        part of the concept, since the difference in the interface of the 
+        according function provided by the two possible models \ccc{leda::real}
+        and \ccc{CORE::Expr} is to large.  
+\item can we do better for \ccc{mpz_class}, \ccc{mpq_class }
+\item ToDoubleInterval etc. 
+\item what about namespace of leda types ? 
+     \ccc{leda_integer} vs. \ccc{leda::integer}
+\item We had a quick look at \ccc{Nef_polynomial}. \\ 
+      is it \ccc{RealEmbeddable}?
+\end{itemize}
+

@@ -1,0 +1,43 @@
+% +------------------------------------------------------------------------+
+% | Reference manual page: Data_access.tex
+% +------------------------------------------------------------------------+
+% | 
+% | August 2003  Julia Floetotto
+% | Package:   Interpolation
+% | 
+% |
+% +------------------------------------------------------------------------+
+\begin{ccRefClass}{Data_access<Map>}  %% add template arg's if necessary
+
+\ccDefinition
+  
+The struct \ccRefName\ implements a functor that allows to retrieve
+data from an associative container. The functor keeps a reference to
+the container. Given an instance of the container's key type, it
+returns a pair of the container's value type and a Boolean indicating
+whether the retrieval was successful.\\
+
+This class can be used to provide the values and gradients of the
+interpolation functions.
+
+\ccInclude{CGAL/interpolation_functions.h} 
+
+\ccParameters The class
+\ccRefName\ has the container type \ccc{Map} as template parameter.
+
+\ccTypes 
+\ccTypedef{typedef Map::mapped_type Data_type;}{}
+\ccGlue
+\ccTypedef{typedef Map::key_type Key_type;}{}
+\ccCreation
+\ccCreationVariable{data_access}  %% choose variable name
+\ccConstructor{Data_acces(const Map& map);}
+{Introduces a \ccc{Data_access} to the container \ccc{map}.}
+
+
+\ccMethod{std::pair< Data_type, bool> operator()(const Key_type& p);} {If
+  there is an entry for \ccc{p} in the container \ccc{map}, then the
+  pair of \ccc{map.find(p)} and \ccc{true} is returned. Otherwise, the
+  Boolean value of the pair is \ccc{false}.}
+
+\end{ccRefClass}

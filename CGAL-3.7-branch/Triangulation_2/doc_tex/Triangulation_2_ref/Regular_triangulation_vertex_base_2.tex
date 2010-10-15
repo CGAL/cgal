@@ -1,0 +1,54 @@
+% +------------------------------------------------------------------------+
+% | Reference manual page: Regular_triangulation_vertex_base_2.tex
+% +------------------------------------------------------------------------+
+% | 12.04.2000   Author
+% | Package: Package
+% | 
+\RCSdef{\RCSRegulartriangulationvertexbaseRev}{$Id$}
+\RCSdefDate{\RCSRegulartriangulationvertexbaseDate}{$Date$}
+% |
+%%RefPage: end of header, begin of main body
+% +------------------------------------------------------------------------+
+
+
+\begin{ccRefClass}{Regular_triangulation_vertex_base_2<Traits,Vb>}  %% add template arg's if necessary
+
+%% \ccHtmlCrossLink{}     %% add further rules for cross referencing links
+%% \ccHtmlIndexC[class]{} %% add further index entries
+
+\ccDefinition  
+The class \ccRefName\ is a model of the concept
+\ccc{RegularTriangulationVertexBase_2}. It is the default
+vertex base class of regular triangulations.
+
+
+\ccInclude{CGAL/Regular_triangulation_vertex_base_2.h}
+
+\ccParameters
+The template parameters \ccc{Traits} has to be a model
+of \ccc{RegularTriangulationTraits_2}.
+
+The template parameters \ccc{Vb} has to be a model
+of the concept \ccc{TriangulationVertexBase_2} and is by default
+instantiated by \ccc{CGAL::Triangulation_vertex_base_2<Traits>}.
+
+
+\ccIsModel
+\ccc{RegularTriangulationVertexBase_2}
+
+\ccInheritsFrom
+\ccc{Vb}
+
+\ccSeeAlso
+\ccc{CGA::Triangulation_vertex_base_2<Traits,Vb>} \\
+\ccc{CGAL::Regular_triangulation_2<Traits,Tds>} \\
+\ccc{CGAL::Regular_triangulation_face_base_2<Traits,Fb>}
+
+
+\end{ccRefClass}
+
+% +------------------------------------------------------------------------+
+%%RefPage: end of main body, begin of footer
+% EOF
+% +------------------------------------------------------------------------+
+

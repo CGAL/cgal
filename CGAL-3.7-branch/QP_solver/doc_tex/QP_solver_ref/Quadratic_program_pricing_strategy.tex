@@ -1,0 +1,68 @@
+\begin{ccRefClass}{Quadratic_program_pricing_strategy}
+
+\ccInclude{CGAL/QP_options.h}
+
+\ccDefinition
+This is an enumeration type containing the values
+\ccc{QP_CHOOSE_DEFAULT}, \ccc{QP_DANTZIG}, 
+\ccc{QP_PARTIAL_DANTZIG}, \ccc{QP_FILTERED_DANTZIG},
+\ccc{QP_PARTIAL_FILTERED_DANTZIG}, and\ccc{QP_BLAND}. 
+
+It indicates the pricing strategy to be used in
+solving a linear or quadratic program. This strategy determines
+how the solver gets from one intermediate solution to the next
+during any of its iterations.
+
+Here we briefly describe when to choose which strategy.
+
+\ccHeading{\ccc{QP_CHOOSE_DEFAULT}}
+This is the default value of the pricing strategy in
+\ccc{Quadratic_program_options}, and it lets the solver choose the
+strategy that it thinks is most appropriate for the problem at hand.
+There are only few reasons to deviate from this default, but you are
+free to experiment, of course.
+
+\ccHeading{\ccc{QP_PARTIAL_DANTZIG}} 
+If the input type is \textbf{not} \ccc{double}, this is usually the 
+best choice for linear and quadratic programs of medium size.
+
+\ccHeading{\ccc{QP_DANTZIG}}
+If the input type is \textbf{not} \ccc{double}, this can sometimes
+make a difference (be faster or slowe) than \ccc{QP_PARTIAL_DANTZIG} 
+for problems with a high variable/constraint or constraint/variable ratio.
+
+\ccHeading{\ccc{QP_PARTIAL_FILTERED_DANTZIG}} 
+If the input type \textbf{is} \ccc{double}, this is usually the best choice
+for linear and quadratic programs of medium size.
+If the input type is not \ccc{double}, this choice is equivalent 
+to \ccc{QP_PARTIAL_DANTZIG}.
+
+
+{\bf Note:} filtered strategies may in rare cases fail due to double 
+exponent overflows, see
+Section \ref{sec:QP-customization-filtering}. 
+In this case, the slower fallback option is
+the non-filtered variant \ccc{QP_PARTIAL_DANTZIG} of this strategy.
+
+\ccHeading{\ccc{QP_FILTERED_DANTZIG}}
+If the input type \textbf{is} \ccc{double}, this can sometimes
+make a difference (be faster or slowe) than \ccc{QP_PARTIAL_FILTERED_DANTZIG} 
+for problems with a high variable/constraint or constraint/variable ratio.
+If the input type is not \ccc{double}, this choice is equivalent 
+to \ccc{QP_DANTZIG}.
+
+{\bf Note:} filtered strategies may in rare cases fail due to double 
+exponent overflows, see
+Section \ref{sec:QP-customization-filtering}.
+In this case, the slower fallback option is
+the non-filtered variant \ccc{QP_DANTZIG} of this strategy.
+
+\ccHeading{\ccc{QP_BLAND}}
+This is hardly ever the most efficient choice, but it is guaranteed
+to avoid internal cycling of the solution algorithm, see
+Section \ref{sec:QP-customization-cycling}.
+
+\ccSeeAlso
+
+\ccc{Quadratic_program_options}
+\end{ccRefClass}

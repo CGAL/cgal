@@ -1,0 +1,113 @@
+Installation of the Supporting Tools:
+=====================================
+(see ../INSTALLATION for the manual and TeX style files)
+
+
+(1)  System Requirements:
+
+     *  C/C++ Compiler (tested: Gnu g++ 3.3 and 3.4)
+     *  flex and bison (NOTE: flex versions >  2.5.4 are NOT yet supported)
+     *  perl 5
+     *  Unix environment with tools like grep, sed, awk, ...
+     *  GNU make
+
+(2)  Configuring the installation and the use of the tools:
+
+     The installation can be configured in two ways: (A) either by setting
+     appropriate environment variables, or (B) by setting these variables
+     explicitly in the Makefile and the shell scripts provided. Version (A)
+     is more convinient in the case of future updates.
+
+     (A)  The configuration option (A) allows to configure the installation
+	  and the use of the tools with a few environment variables without
+	  editing further files. The installation expects the following
+	  environment variables to be set:
+
+	  - LATEX_CONV_CONFIG
+	      The path to the configuration files of the LaTeX converter.
+	      The installation copies the config files of the converter
+	      into this directory and compiles this path into the 
+	      cc_extract_html program as the default for the config path.
+
+	  - LATEX_CONV_BIN
+	      Path where the executables are copied during the installation.
+
+	  - CXX, CXXFLAGS, CC, CPPFLAGS, LDFLAGS
+              The usual variables for the C++ compiler, its options, the
+              C compiler, the C preprocessor options (used for C and C++),
+              and the linker options (used for C and C++) respectively.
+              Tested compilers are: Gnu g++ 2.8.1 and SGI CC 7.2.
+
+	  The tools expect the following environment variables to be set:
+
+	  - LATEX_CONV_CONFIG
+	      The same variable is used in the latex_to_html script.
+
+
+	  - LATEX_CONV_HEADER
+              The header files within the \ccInclude macro can be linked
+              to the original header files if the -header option is given
+              to the cc_extract_html program. LATEX_CONV_HEADER is used as
+              default path for the header files. If it is not set, the 
+              default setting is empty and include files are not linked.
+
+          - CC
+              The C compiler. 
+
+	  - LATEX_CONV_DATE
+	  - LATEX_CONV_AUTHOR
+	  - LATEX_CONV_TITLE
+	  - LATEX_CONV_RELEASE
+	      Default parameters used in calling the cc_extract_html program
+              to present date, author, title, and manual release number in
+              the manual header and footer information. They are not 
+              necessarily supposed to be set in the environment and
+              reasonable defaults are prepared, see latex_to_html.
+
+          An example setting for the Gnu g++ and the C-shell could look like
+          the following example. Note that the installation on different
+          platforms can be supported easily with LATEX_CONV_BIN.
+
+	  setenv LATEX_CONV_CONFIG  /home/CGAL/Tools/latex_converter_config
+	  setenv LATEX_CONV_BIN     /usr/local/bin
+	  setenv LATEX_CONV_HEADER  /home/CGAL/include
+	  setenv CXX                g++
+	  setenv CXXFLAGS
+	  setenv CC                 gcc
+	  setenv CPPFLAGS           -g
+	  setenv LDFLAGS
+
+	  The following environment variable is optional: 
+
+	  - LATEX_CONV_INPUTS
+	      This is the analog of the TEXINPUTS environment variable for
+              the cc_extract_html program.  It should contain a colon-separated
+              list of directories where the input files can be found.  If
+              this is not set, the default is that files are looked for in
+              the current directory.  If this is set, then directories are 
+              searched in the order provided in this variable (so "." should
+              be included in the list if some input files are in the current
+              directory).
+
+     (B)  The configuration option (B) expects that in the following
+          files the installation section will be edited according to the
+          comments in these files. The description of the environment
+          variables in section (A) applies here as well. The files to
+          edit are:
+
+          - Makefile
+          - latex_to_html
+          - ../install.config
+
+
+(3)  Compilation:
+
+     Do _not_ invoke `make' from within this directory.
+     Use ../install.sh instead. Exception: `make clean' will
+     remove all generated files.
+
+     In principle, no warnings should show up besides possible 
+     warnings about unreachable statements from flex sources. However,
+     other compilers or STL's might produce more warnings. 
+
+EOF

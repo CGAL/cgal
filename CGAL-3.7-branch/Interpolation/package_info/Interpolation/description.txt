@@ -1,0 +1,3 @@
+Package Interpolation: provides interpolation functions and functions for computing natural neighbor coordinates
+
+natural_neighbor_coordinates_3 offers both Sibson and Laplace coordinates

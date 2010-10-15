@@ -1,0 +1,21 @@
+* Number-type: floating-point
+* Description: Test
+* Generated-by: data2mps
+NAME Test
+ROWS
+  N obj
+  G c0
+COLUMNS
+  x0  obj  0
+  x0  c0  1
+  x1  obj  0
+  x1  c0  1
+RHS
+  rhs c0  1
+BOUNDS
+  MI  BND  x0
+  MI  BND  x1
+QMATRIX
+  x0  x0  2
+  x1  x1  4
+ENDATA

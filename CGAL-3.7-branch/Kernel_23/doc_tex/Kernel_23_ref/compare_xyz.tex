@@ -1,0 +1,52 @@
+\begin{ccRefFunction}{compare_xyz}
+
+
+Depending on which \cgal\ \ccHtmlNoLinksFrom{kernel} is used,
+different versions of this global function are available. This is
+described below.
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\paragraph{With the basic 3D Kernel} (see Chapter~\ref{chapter-kernel-23})
+
+\ccFunction{Comparison_result
+compare_xyz(const Point_3<Kernel>& p, const Point_3<Kernel>& q);}
+      {Compares the Cartesian coordinates of points \ccStyle{p} and
+       \ccStyle{q} lexicographically in $xyz$ order: first 
+       $x$-coordinates are compared, if they are equal, $y$-coordinates
+       are compared, and if both $x$- and $y$- coordinate are equal,
+       $z$-coordinates are compared.}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\paragraph{With the 3D Spherical Kernel} (see Chapter~\ref{chapter-spherical-kernel}) 
+
+\ccInclude{CGAL/global_functions_spherical_kernel_3.h}
+
+If this kernel is used, in addition to the function and the
+combination of 2D types described above, another version of the function
+is provided.
+
+\ccFunction{Comparison_result 
+  compare_xyz(const Circular_arc_point_3<SphericalKernel> &p,
+            const Circular_arc_point_3<SphericalKernel> &q);}
+{Compares the Cartesian coordinates of points \ccStyle{p} and
+       \ccStyle{q} lexicographically.}
+
+\ccFunction{Comparison_result 
+  compare_xyz(const Circular_arc_point_3<SphericalKernel> &p,
+            const Point_3<SphericalKernel> &q);}
+{Compares the Cartesian coordinates of points \ccStyle{p} and
+       \ccStyle{q} lexicographically.}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\ccSeeAlso
+\ccRefIdfierPage{CGAL::compare_xy} \\
+\ccRefIdfierPage{CGAL::compare_x} \\
+\ccRefIdfierPage{CGAL::compare_x_at_y} \\
+\ccRefIdfierPage{CGAL::compare_y} \\
+\ccRefIdfierPage{CGAL::compare_yx} \\
+\ccRefIdfierPage{CGAL::compare_y_at_x} \\
+\ccRefIdfierPage{CGAL::compare_z} \\
+
+\end{ccRefFunction}
+

@@ -1,0 +1,117 @@
+% +------------------------------------------------------------------------+
+% | Reference manual page: Monge_form.tex
+% +------------------------------------------------------------------------+
+% | 09.02.2006   Marc Pouget and Frédéric Cazals
+% | Package: Jet_fitting_3
+% | 
+\RCSdef{\RCSMongeformRev}{$Id$}
+\RCSdefDate{\RCSMongeformDate}{$Date$}
+% |
+%%RefPage: end of header, begin of main body
+% +------------------------------------------------------------------------+
+
+
+\begin{ccRefClass}[Monge_via_jet_fitting< DataKernel, LocalKernel, SvdTraits>::]{Monge_form}  %% add template arg's if necessary
+
+%% \ccHtmlCrossLink{}     %% add further rules for cross referencing links
+%% \ccHtmlIndexC[class]{} %% add further index entries
+
+\ccDefinition
+  
+The class \ccRefName\ stores the Monge representation, i.e., the Monge
+coordinate system and the coefficients of the Monge form in this
+system.
+
+\ccInclude{CGAL/Monge_via_jet_fitting.h}
+
+\ccTypes
+% +--------------------------------------------------------------
+%\ccNestedType{TYPE}{some nested types}
+\ccTypedef{  typedef typename DataKernel::FT        FT; }{}
+\ccGlue
+\ccTypedef{  typedef typename DataKernel::Point_3   Point_3; }{}
+\ccGlue
+\ccTypedef{   typedef typename DataKernel::Vector_3  Vector_3;}{}
+\ccGlue
+
+
+
+\ccCreation
+% +--------------------------------------------------------------
+\ccCreationVariable{monge_form}  %% choose variable name
+
+\ccConstructor{Monge_form();}{default constructor.}
+
+\ccAccessFunctions
+% +--------------------------------------------------------------
+
+\ccMemberFunction{Point_3 origin();}{Point on the fitted surface where
+differential quantities are computed.}
+
+The Monge basis is given by:
+
+\ccMemberFunction{Vector_3 maximal_principal_direction();}{}
+\ccGlue
+\ccMemberFunction{Vector_3 minimal_principal_direction(); }{}
+\ccGlue
+\ccMemberFunction{Vector_3 normal_direction(); }{}
+
+The Monge coefficients are given by:
+
+\ccMemberFunction{FT principal_curvatures(size_t i);}
+{$i=0$ for the maximum and $i=1$ for the minimum.}
+\ccGlue
+\ccMemberFunction{FT third_order_coefficients(size_t i); }{$0 \leq i \leq 3$}
+\ccGlue
+\ccMemberFunction{FT fourth_order_coefficients(size_t i); }{$0 \leq i \leq 4$}
+
+\ccOperations
+% +--------------------------------------------------------------
+%\ccMemberFunction{void set_up(int degree);}{Set the number of coefficients according 
+%to the degree of the Monge representation given. The
+%$(degree+1)(degree+2)/2-4$ coefficients are set to 0.}
+\ccMemberFunction{void comply_wrt_given_normal(const Vector_3 given_normal);}
+{ change principal basis and Monge coefficients so that the
+given\_normal and the Monge normal make an acute angle.\\ If
+given\_normal.monge\_normal $< 0$ then change the orientation: if
+$z=g(x,y)$ in the basis (d1,d2,n) then in the basis (d2,d1,-n)
+$z=h(x,y)=-g(y,x)$. }
+
+% \ccMemberFunction{void dump_verbose(std::ofstream& out_stream);}
+% { Outputs the data in a human readable way, an alternative is to use the
+% operator $<<$ defined for the class.}
+% \ccMemberFunction{void dump_4ogl(std::ofstream& out_stream, const FT scale);}
+% { Outputs the data for further visualization with successively~: the
+% coordinates of m\_origin\_pt, the coordinates of m\_d1 scaled by scale,
+% the coordinates of m\_d2 scaled by scale, the maximal principal
+% curvature, the minimal principal curvature.}
+
+
+
+The usual insert operator (\ccc{operator<<}) is overloaded for
+\ccc{Monge_form}, it gives the Monge coordinate system (the origin and
+an orthonormal basis) and the coefficients of the Monge form in this
+system.
+
+\ccSeeAlso
+
+\ccc{Monge_via_jet_fitting}
+%\ccc{some_other_function}.
+
+%\ccExample
+
+
+%\begin{ccExampleCode}
+%void your_example_code() {
+%}
+%\end{ccExampleCode}
+
+%%% \ccIncludeExampleCode{Jet_fitting_3/Monge_rep.cpp}
+
+\end{ccRefClass}
+
+% +------------------------------------------------------------------------+
+%%RefPage: end of main body, begin of footer
+% EOF
+% +------------------------------------------------------------------------+
+

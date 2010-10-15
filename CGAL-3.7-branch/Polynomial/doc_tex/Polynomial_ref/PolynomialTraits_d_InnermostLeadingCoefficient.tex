@@ -1,0 +1,32 @@
+\begin{ccRefConcept}{PolynomialTraits_d::InnermostLeadingCoefficient}
+
+\ccDefinition
+
+This \ccc{AdaptableUnaryFunction} computes the innermost leading coefficient
+of a \ccc{PolynomialTraits_d::Polynomial_d} $p$. The innermost leading coefficient is recursively defined as the innermost leading coefficient of the leading coefficient of $p$. In case $p$ is univariate it coincides with the leading coefficient. 
+
+\ccRefines 
+\ccc{AdaptableUnaryFunction}\\
+\ccc{CopyConstructible}\\
+\ccc{DefaultConstructible}\\
+
+\ccTypes
+\ccCreationVariable{fo}
+\ccSetThreeColumns{xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx}{xxx}{}
+\ccTypedef{typedef PolynomialTraits_d::Innermost_coefficient_type result_type;}{}
+\ccGlue
+\ccTypedef{typedef PolynomialTraits_d::Polynomial_d   argument_type;}{}
+\ccGlue
+
+\ccOperations
+\ccMethod{result_type operator()(argument_type p);}
+         {Computes the innermost leading coefficient of $p$.}
+
+%\ccHasModels
+ 
+\ccSeeAlso
+
+\ccRefIdfierPage{Polynomial_d}\\
+\ccRefIdfierPage{PolynomialTraits_d}
+
+\end{ccRefConcept}

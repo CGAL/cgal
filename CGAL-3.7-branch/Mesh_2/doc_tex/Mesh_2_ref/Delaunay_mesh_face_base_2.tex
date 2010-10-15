@@ -1,0 +1,33 @@
+\begin{ccRefClass}{Delaunay_mesh_face_base_2<Traits, Fb>}
+
+\ccDefinition
+
+The class \ccRefName\ is a model for the concept
+\ccc{DelaunayMeshFaceBase_2}.
+
+This class can be used directly or it can serve as a base to derive other
+classes with some additional attributes (a color for example) tuned to a
+specific application.
+
+\ccInclude{CGAL/Delaunay_mesh_face_base_2.h}
+
+\ccParameters
+
+\begin{itemize}
+\item The first parameter \ccc{Traits} is the geometric traits class. It must
+  be the same as the one used for the Delaunay mesh.
+\item The second parameter \ccc{Fb} is the base class from which \ccRefName\ 
+  derives. It must be a model of the \ccc{TriangulationFaceBase_2} concept.
+\end{itemize}
+\ccInheritsFrom
+\ccc{Fb}
+
+\ccIsModel
+\ccc{DelaunayMeshFaceBase_2}
+\end{ccRefClass}
+
+%%% For emacs/AucTeX:
+%%% Local Variables: ***
+%%% mode:latex ***
+%%% TeX-master: "../Mesh_2.tex"  ***
+%%% End: ***

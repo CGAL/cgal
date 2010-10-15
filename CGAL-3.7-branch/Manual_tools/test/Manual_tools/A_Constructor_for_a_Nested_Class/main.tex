@@ -1,0 +1,33 @@
+
+The method how it should work:
+
+\begin{ccClass}{CGAL_SegmentTree_2d<T1>::SegTree}
+
+The classname is \ccClassTemplateName.
+
+\ccCreationVariable{t}
+\ccConstructor{CGAL_SegmentTree_2d<T1>::SegTree
+(S2dList::const_iterator first);}{constructor.}
+
+\ccMemberFunction{CGAL_SegmentTree_2d<T1>::SegTree
+    foo (CGAL_SegmentTree_2d<T1>::SegTree same);}{%
+    removal of own type in parameterlist of a member function.} 
+\end{ccClass}
+
+
+The hack I have recommended previously.
+
+\ccFunction{CGAL_SegmentTree_2d<T1>::SegTree
+t(S2dList::const_iterator first);}{fake constructor.}
+
+Another check with the trouble making operator in a member function.
+
+\begin{ccClass}{ClassC}
+\ccCreationVariable{pp}
+  \ccMethod{ClassC operator+(ClassC qq);}{%
+      Declaration of an operator as a member function.}
+\end{ccClass}
+
+
+\ccTexHtml{\ccAutoIndexingOff}{}
+% ----------------------------------------------------------------------

@@ -1,0 +1,111 @@
+\begin{ccRefClass}{Circular_arc_3<SphericalKernel>}
+
+\ccInclude{CGAL/Circular_arc_3.h}
+
+\ccIsModel
+
+\ccc{SphericalKernel::CircularArc_3}
+
+\ccCreation
+\ccCreationVariable{ca}
+
+\ccThree{Circular_arc_point_3}{ca.is_x_monotone()}{}
+\ccThreeToTwo
+
+\ccConstructor{Circular_arc_3(const Circle_3<SphericalKernel> &c)}
+{Constructs an arc from a full circle.}
+
+\ccConstructor{Circular_arc_3(const Circle_3<SphericalKernel> &c, const Circular_arc_point_3& pt)}
+{Constructs an arc from a full circle, using pt as source and target.}
+
+\ccConstructor{Circular_arc_3(const Circle_3<SphericalKernel> &c,
+		const Circular_arc_point_3<SphericalKernel> &p,
+		const Circular_arc_point_3<SphericalKernel> &q)}
+{Constructs the circular arc supported by \ccc{c}, whose source and target 
+are \ccc{p} and \ccc{q}, respectively.
+\ccPrecond{\ccc{p} and \ccc{q} lie on \ccc{c} and are different.}}
+
+The circular arc constructed from a circle, a source, and a target, is
+defined as the set of points of the circle that lie between the source \ccc{p1}
+and the target \ccc{p2}, when traversing the circle counterclockwise
+seen from the side of the plane of the circle pointed by its \textit{positive} normal 
+vectors.
+
+In this definition, we say that a normal vector (a,b,c) is \textit{positive} if 
+$(a,b,c)>(0,0,0)$ (i.e. $(a>0) || (a==0) \&\& (b>0) || (a==0)\&\&(b==0)\&\&(c>0)$).
+
+\ccConstructor{Circular_arc_3(const Point_3<SphericalKernel> &p,
+                              const Point_3<SphericalKernel> &q,
+                              const Point_3<SphericalKernel> &r)}
+{Constructs an arc that is supported by the circle of type
+  \ccc{Circle_3<SphericalKernel>} passing through the points \ccc{p},
+  \ccc{q} and \ccc{r}. The source and target are respectively \ccc{p}
+  and \ccc{r}, when traversing the supporting circle in the
+  counterclockwise direction 
+  seen from the side of the plane containing the circle pointed by its \textit{positive}
+  normal vectors.
+  Note that, depending on the orientation of the point triple
+  \ccc{(p,q,r)}, \ccc{q} may not lie on the arc. 
+\ccPrecond{\ccc{p}, \ccc{q}, and \ccc{r} are not collinear.}}
+
+\ccAccessFunctions
+
+\ccThree{SphericalKernel::Circular_arc_point_3}{ca.is_x_monotone()}{}
+\ccThreeToTwo
+
+\ccMethod{Circle_3<SphericalKernel> supporting_circle();}{}
+
+\ccMethod{Point_3<SphericalKernel> const& center( ) const;}{
+        returns the center of the supporting circle.}
+\ccGlue
+\ccMemberFunction{SphericalKernel::FT const& squared_radius( ) const;}{
+        returns the squared radius of the supporting circle.}
+
+\ccMethod{Plane_3<SphericalKernel> supporting_plane();}{}
+\ccGlue
+\ccMethod{Sphere_3<SphericalKernel> diametral_sphere();}{}
+
+\ccMethod{Circular_arc_point_3<SphericalKernel> source();}{}
+\ccGlue
+\ccMethod{Circular_arc_point_3<SphericalKernel> target();}{}
+
+When the methods \ccc{source} and \ccc{target} return the same point, then 
+the arc is in fact a full circle. %\footnote{so far, arcs of zero length are
+%points, not arcs. But see Menelaos' remark: add functors to test whether an
+%arc is degenerate... to be fixed}
+
+When the arc was constructed from its (full) underlying circle, then
+source and target both return the smallest $x$-extremal point of the
+circle if the circle is not contained in a plane $x=A$, and the smallest
+$y$-extremal point otherwise.
+
+\ccOperations
+
+\ccFunction{bool operator==(const Circular_arc_3<SphericalKernel> &a1,
+			const Circular_arc_3<SphericalKernel> &a2);}
+{Test for equality. Two arcs are equal, iff their non-oriented
+  supporting planes are equal, and the centers and squared
+  radii of their respective supporting circles are equal, and their
+  sources and targets are equal.} 
+
+\ccFunction{bool operator!=(const Circular_arc_3<SphericalKernel> &a1,
+			const Circular_arc_3<SphericalKernel> &a2);}
+{Test for nonequality.} 
+
+\ccHeading{I/O}
+
+\ccFunction{istream& operator>> (std::istream& is, Circular_arc_3 & ca);}{}
+\ccGlue
+\ccFunction{ostream& operator<< (std::ostream& os, const Circular_arc_3 & ca);}{}
+
+The input/output format of a circular arc consists of the supporting circle 
+represented as a \ccc{Circle_3} object followed by the source and target 
+points of the arc represented as two \ccc{Circular_arc_point_3} objects. 
+The defined arc is the unique arc constructed from such three objects. 
+
+\ccSeeAlso
+
+\ccRefIdfierPage{CGAL::Circular_arc_point_3<SphericalKernel>}\\
+\ccRefIdfierPage{CGAL::Line_arc_3<SphericalKernel>}
+
+\end{ccRefClass}

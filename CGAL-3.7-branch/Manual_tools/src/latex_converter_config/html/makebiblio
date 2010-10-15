@@ -1,0 +1,59 @@
+#!/bin/sh
+
+if [ ! -x "`which bibtex2html`" ]; then
+    echo "You need to install bibtex2html first!"
+    exit 1
+fi
+
+if [ ! -f "$1" ]; then
+    echo "Usage: makebiblio path/to/manual-x.y.bib"
+    echo "Note that the file manual-x.y.bib, with x.y equal to the current version of CGAL"
+    echo "should be in the 'Manual' package, in Manual/doc_tex/Manual/..."
+    exit 1
+fi
+rm -f Biblio/how_to_cite_*.*
+rm -f index.html
+bibtex2html $1
+perl -ni.bak -e 'BEGIN {
+                   sub TeXencode($) {
+                      my $url = shift;
+                      $url =~ s/#/\\#/g;
+                      $url =~ s/_/\\_/g;
+                      $url =~ s/~/\\~/g;
+                      $url =~ s/:/\\:/g;
+                      $url =~ s/{/\\{/g;
+                      return $url;
+                   }
+                 }
+                 /^   OPT[A-Z]/ && next;
+                 s/CGAL /{CGAL} /g;
+                 s/The {CGAL} Project/{The CGAL Project}/g;
+                 s/{CGAL} Editorial Board/{CGAL Editorial Board}/g;
+                 s/\{([0-9]\.[0-9])\}/{{$1}}/g;
+                 s/3D /{3D} /g;
+                 s/2D /{2D} /g;
+                 s/dD /{dD} /g;
+                 s/Delaunay /{Delaunay} /g;
+                 s/Voronoi /{Voronoi} /g;
+                 s/Minkowski /{Minkowski} /g;
+                 s/Nef /{Nef} /g;
+                 s/Apollonius /{Apollonius} /g;
+                 s/Boolean /{Boolean} /g;
+                 if(/   URL          = /) {
+                   (my $url) = (/   URL          = {(.*)}/);
+                   printf "   NOTE         = {%s},\n", TeXencode($url);
+                   printf "   ALTNOTE      = {\\url{%s}},\n", $url;
+                   next;
+                 }
+                 s/   URL          = /   NOTE         = /;
+                 print;' Biblio/how_to_cite_cgal.bib
+
+perl -pi.bak -e 's/All publications/CGAL Manual Chapters/g;
+                 s|-([0-9]{1,2})]|-$1 - <a href="./how_to_cite_cgal.bib">bibtex file</a>]|g;
+                 s/#669999/#C0C0D0/g;
+                 s/#badfe1/#C0C0D0/g;
+                 s|http://www.cgal.org/Manual/[0-9.]*/doc_html/cgal_manual/|../|g;' Biblio/how_to_cite_cgal.html
+rm -f index.html
+
+echo 
+echo "Do not forget to commit, now!"

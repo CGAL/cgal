@@ -1,0 +1,23 @@
+This chapter describes \cgal's interpolation package which implements
+natural neighbor coordinate functions as well as different
+methods for scattered data interpolation most of which are based on
+natural neighbor coordinates. The functions for computing natural neighbor 
+coordinates in Euclidean space are described in 
+Section~\ref{sec:coordinates}, 
+the functions concerning the coordinate and neighbor 
+computation on surfaces are discussed in Section~\ref{sec:surface}. 
+In Section~\ref{sec:interpolation}, we describe the different interpolation 
+functions.   
+
+Scattered data interpolation solves the following problem: given
+measures of a function on a set of discrete data points, the task is
+to interpolate this function on an arbitrary query point.
+More formally, let $\mathcal{P}=\{\mathbf{p_1},\ldots ,\mathbf{p_n}\}$ be a set of
+$n$ points in $\mathbb{R}^2$ or $\mathbb{R}^3$ and $\Phi$ be a scalar
+function defined on the convex hull of $\mathcal{P}$. We assume that
+the function values are known at the points of $\mathcal{P}$, i.e. to
+each $\mathbf{p_i} \in \mathcal{P}$, we associate $z_i =
+\Phi(\mathbf{p_i})$. Sometimes, the gradient of $\Phi$ is also known
+at $\mathbf{p_i}$. It is denoted $\mathbf{g_i}= \nabla
+\Phi(\mathbf{p_i})$. The interpolation is carried out for an arbitrary query point
+$\mathbf{x}$ on the convex hull of $\mathcal{P}$.

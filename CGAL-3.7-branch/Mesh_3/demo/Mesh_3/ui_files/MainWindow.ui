@@ -1,0 +1,536 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
+ <class>MainWindow</class>
+ <widget class="QMainWindow" name="MainWindow">
+  <property name="geometry">
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>978</width>
+    <height>594</height>
+   </rect>
+  </property>
+  <property name="windowTitle">
+   <string>CGAL 3D mesh generator demo</string>
+  </property>
+  <property name="windowIcon">
+   <iconset resource="Mesh_3.qrc">
+    <normaloff>:/cgal/icons/resources/cgal_logo.xpm</normaloff>:/cgal/icons/resources/cgal_logo.xpm</iconset>
+  </property>
+  <widget class="QWidget" name="centralwidget">
+   <layout class="QVBoxLayout" name="verticalLayout_2">
+    <item>
+     <widget class="Viewer" name="viewer" native="true">
+      <property name="sizePolicy">
+       <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
+        <horstretch>0</horstretch>
+        <verstretch>1</verstretch>
+       </sizepolicy>
+      </property>
+     </widget>
+    </item>
+   </layout>
+  </widget>
+  <widget class="QMenuBar" name="menubar">
+   <property name="geometry">
+    <rect>
+     <x>0</x>
+     <y>0</y>
+     <width>978</width>
+     <height>22</height>
+    </rect>
+   </property>
+   <widget class="QMenu" name="menuFile">
+    <property name="title">
+     <string>&amp;File</string>
+    </property>
+    <addaction name="actionLoad"/>
+    <addaction name="actionErase"/>
+    <addaction name="actionEraseAll"/>
+    <addaction name="actionDuplicate"/>
+    <addaction name="actionSaveAs"/>
+    <addaction name="separator"/>
+    <addaction name="actionQuit"/>
+   </widget>
+   <widget class="QMenu" name="menuEdit">
+    <property name="title">
+     <string>&amp;Edit</string>
+    </property>
+    <addaction name="actionShowHide"/>
+    <addaction name="actionSetPolyhedronA"/>
+    <addaction name="actionSetPolyhedronB"/>
+   </widget>
+   <widget class="QMenu" name="menuOperations">
+    <property name="title">
+     <string>&amp;Operations</string>
+    </property>
+    <widget class="QMenu" name="menuGlobalOptimization">
+     <property name="title">
+      <string>Global optimization</string>
+     </property>
+     <addaction name="actionOdt"/>
+     <addaction name="actionLloyd"/>
+    </widget>
+    <widget class="QMenu" name="menuSliverRemoval">
+     <property name="title">
+      <string>Sliver removal</string>
+     </property>
+     <addaction name="actionPerturb"/>
+     <addaction name="actionExude"/>
+    </widget>
+    <addaction name="actionMeshing"/>
+    <addaction name="separator"/>
+    <addaction name="menuGlobalOptimization"/>
+    <addaction name="menuSliverRemoval"/>
+   </widget>
+   <widget class="QMenu" name="menuView">
+    <property name="title">
+     <string>&amp;View</string>
+    </property>
+    <widget class="QMenu" name="menuDockWindows">
+     <property name="title">
+      <string>Dock windows</string>
+     </property>
+     <addaction name="dummyAction"/>
+    </widget>
+    <addaction name="actionAntiAliasing"/>
+    <addaction name="actionDraw_two_sides"/>
+    <addaction name="menuDockWindows"/>
+   </widget>
+   <addaction name="menuFile"/>
+   <addaction name="menuEdit"/>
+   <addaction name="menuOperations"/>
+   <addaction name="menuView"/>
+  </widget>
+  <widget class="QStatusBar" name="statusbar"/>
+  <widget class="QDockWidget" name="sceneDockWidget">
+   <property name="locale">
+    <locale language="English" country="UnitedStates"/>
+   </property>
+   <property name="windowTitle">
+    <string>Objects</string>
+   </property>
+   <attribute name="dockWidgetArea">
+    <number>1</number>
+   </attribute>
+   <widget class="QWidget" name="dockWidgetContent">
+    <layout class="QGridLayout" name="gridLayout_2">
+     <item row="0" column="0">
+      <layout class="QVBoxLayout" name="verticalLayout">
+       <item>
+        <layout class="QHBoxLayout" name="horizontalLayout">
+         <item>
+          <widget class="QToolButton" name="addButton">
+           <property name="text">
+            <string>+</string>
+           </property>
+           <property name="icon">
+            <iconset resource="Mesh_3.qrc">
+             <normaloff>:/cgal/icons/plus</normaloff>:/cgal/icons/plus</iconset>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <widget class="QToolButton" name="removeButton">
+           <property name="text">
+            <string>-</string>
+           </property>
+           <property name="icon">
+            <iconset resource="Mesh_3.qrc">
+             <normaloff>:/cgal/icons/minus</normaloff>:/cgal/icons/minus</iconset>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <widget class="QToolButton" name="duplicateButton">
+           <property name="text">
+            <string>...</string>
+           </property>
+           <property name="icon">
+            <iconset resource="Mesh_3.qrc">
+             <normaloff>:/cgal/icons/duplicate</normaloff>:/cgal/icons/duplicate</iconset>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <spacer name="horizontalSpacer">
+           <property name="orientation">
+            <enum>Qt::Horizontal</enum>
+           </property>
+           <property name="sizeHint" stdset="0">
+            <size>
+             <width>40</width>
+             <height>20</height>
+            </size>
+           </property>
+          </spacer>
+         </item>
+        </layout>
+       </item>
+       <item>
+        <widget class="QTreeView" name="treeView">
+         <property name="editTriggers">
+          <set>QAbstractItemView::DoubleClicked|QAbstractItemView::EditKeyPressed|QAbstractItemView::SelectedClicked</set>
+         </property>
+         <property name="alternatingRowColors">
+          <bool>true</bool>
+         </property>
+         <property name="indentation">
+          <number>0</number>
+         </property>
+        </widget>
+       </item>
+      </layout>
+     </item>
+    </layout>
+   </widget>
+  </widget>
+  <widget class="QDockWidget" name="consoleDockWidget">
+   <property name="allowedAreas">
+    <set>Qt::BottomDockWidgetArea|Qt::LeftDockWidgetArea|Qt::TopDockWidgetArea</set>
+   </property>
+   <property name="windowTitle">
+    <string>Console</string>
+   </property>
+   <attribute name="dockWidgetArea">
+    <number>1</number>
+   </attribute>
+   <widget class="QWidget" name="dockWidgetContents">
+    <layout class="QVBoxLayout" name="verticalLayout_3">
+     <item>
+      <widget class="QTextEdit" name="consoleTextEdit">
+       <property name="font">
+        <font>
+         <pointsize>11</pointsize>
+        </font>
+       </property>
+       <property name="readOnly">
+        <bool>true</bool>
+       </property>
+      </widget>
+     </item>
+    </layout>
+   </widget>
+  </widget>
+  <widget class="QDockWidget" name="infoDockWidget">
+   <property name="windowTitle">
+    <string>Infos</string>
+   </property>
+   <attribute name="dockWidgetArea">
+    <number>1</number>
+   </attribute>
+   <widget class="QWidget" name="dockWidgetContents_2">
+    <layout class="QHBoxLayout" name="horizontalLayout_2">
+     <item>
+      <layout class="QVBoxLayout" name="verticalLayout_4" stretch="0,0">
+       <property name="spacing">
+        <number>0</number>
+       </property>
+       <item>
+        <widget class="QLabel" name="infoLabel">
+         <property name="lineWidth">
+          <number>0</number>
+         </property>
+         <property name="alignment">
+          <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignTop</set>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <widget class="QLabel" name="displayLabel">
+         <property name="text">
+          <string/>
+         </property>
+        </widget>
+       </item>
+      </layout>
+     </item>
+    </layout>
+   </widget>
+  </widget>
+  <action name="actionQuit">
+   <property name="text">
+    <string>&amp;Quit</string>
+   </property>
+   <property name="shortcut">
+    <string>Ctrl+Q</string>
+   </property>
+  </action>
+  <action name="actionSimplify">
+   <property name="text">
+    <string>&amp;Simplification</string>
+   </property>
+  </action>
+  <action name="actionCatmullClark">
+   <property name="text">
+    <string>&amp;Catmull-Clark</string>
+   </property>
+  </action>
+  <action name="actionKernel">
+   <property name="text">
+    <string>&amp;Kernel</string>
+   </property>
+  </action>
+  <action name="actionUnion">
+   <property name="text">
+    <string>&amp;Union</string>
+   </property>
+   <property name="shortcut">
+    <string>Ctrl+O, U</string>
+   </property>
+  </action>
+  <action name="actionIntersection">
+   <property name="text">
+    <string>&amp;Intersection</string>
+   </property>
+   <property name="shortcut">
+    <string>Ctrl+O, I</string>
+   </property>
+  </action>
+  <action name="actionDifference">
+   <property name="text">
+    <string>&amp;Difference</string>
+   </property>
+   <property name="shortcut">
+    <string>Ctrl+O, D</string>
+   </property>
+  </action>
+  <action name="actionFitPlane">
+   <property name="text">
+    <string>Fit &amp;plane</string>
+   </property>
+  </action>
+  <action name="actionFitLine">
+   <property name="text">
+    <string>Fit &amp;line</string>
+   </property>
+  </action>
+  <action name="actionEstimateCurvature">
+   <property name="text">
+    <string>&amp;Curvature estimation</string>
+   </property>
+  </action>
+  <action name="actionLoad">
+   <property name="icon">
+    <iconset resource="Mesh_3.qrc">
+     <normaloff>:/cgal/icons/plus</normaloff>:/cgal/icons/plus</iconset>
+   </property>
+   <property name="text">
+    <string>&amp;Load...</string>
+   </property>
+   <property name="shortcut">
+    <string>Ctrl+L</string>
+   </property>
+  </action>
+  <action name="actionErase">
+   <property name="icon">
+    <iconset resource="Mesh_3.qrc">
+     <normaloff>:/cgal/icons/minus</normaloff>:/cgal/icons/minus</iconset>
+   </property>
+   <property name="text">
+    <string>&amp;Erase</string>
+   </property>
+   <property name="shortcut">
+    <string>Del</string>
+   </property>
+  </action>
+  <action name="actionDuplicate">
+   <property name="icon">
+    <iconset resource="Mesh_3.qrc">
+     <normaloff>:/cgal/icons/duplicate</normaloff>:/cgal/icons/duplicate</iconset>
+   </property>
+   <property name="text">
+    <string>&amp;Duplicate</string>
+   </property>
+   <property name="shortcut">
+    <string>Ctrl+D</string>
+   </property>
+  </action>
+  <action name="actionSqrt3">
+   <property name="text">
+    <string>&amp;Sqrt3</string>
+   </property>
+  </action>
+  <action name="actionAntiAliasing">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="text">
+    <string>&amp;Antialiasing</string>
+   </property>
+  </action>
+  <action name="dummyAction">
+   <property name="text">
+    <string>n/a</string>
+   </property>
+  </action>
+  <action name="actionConvexHull">
+   <property name="text">
+    <string>&amp;Convex hull</string>
+   </property>
+  </action>
+  <action name="actionEraseAll">
+   <property name="text">
+    <string>&amp;Erase all</string>
+   </property>
+  </action>
+  <action name="actionOptions">
+   <property name="text">
+    <string>&amp;Options...</string>
+   </property>
+  </action>
+  <action name="actionLoop">
+   <property name="text">
+    <string>&amp;Loop</string>
+   </property>
+  </action>
+  <action name="actionSaveAs">
+   <property name="text">
+    <string>Save &amp;as...</string>
+   </property>
+  </action>
+  <action name="actionSave">
+   <property name="text">
+    <string>&amp;Save</string>
+   </property>
+  </action>
+  <action name="actionSaveAll">
+   <property name="text">
+    <string>Save a&amp;ll</string>
+   </property>
+  </action>
+  <action name="actionMergeAll">
+   <property name="text">
+    <string>Mer&amp;ge all</string>
+   </property>
+  </action>
+  <action name="actionMerge">
+   <property name="text">
+    <string>&amp;Merge</string>
+   </property>
+  </action>
+  <action name="actionSelfIntersection">
+   <property name="text">
+    <string>Self-&amp;intersection</string>
+   </property>
+  </action>
+  <action name="actionSelectAll">
+   <property name="text">
+    <string>Select &amp;all</string>
+   </property>
+  </action>
+  <action name="actionSelectNone">
+   <property name="text">
+    <string>Select &amp;none</string>
+   </property>
+  </action>
+  <action name="actionSelectInvert">
+   <property name="text">
+    <string>&amp;Invert selection</string>
+   </property>
+  </action>
+  <action name="actionShowHide">
+   <property name="text">
+    <string>Show/Hide</string>
+   </property>
+   <property name="shortcut">
+    <string>Ctrl+Space</string>
+   </property>
+  </action>
+  <action name="actionSetPolyhedronA">
+   <property name="text">
+    <string>Set polyhedron A</string>
+   </property>
+   <property name="shortcut">
+    <string>Ctrl+A</string>
+   </property>
+  </action>
+  <action name="actionSetPolyhedronB">
+   <property name="text">
+    <string>Set polyhedron B</string>
+   </property>
+   <property name="shortcut">
+    <string>Ctrl+B</string>
+   </property>
+  </action>
+  <action name="actionInsideOut">
+   <property name="text">
+    <string>Inside-out</string>
+   </property>
+  </action>
+  <action name="actionMeshing">
+   <property name="text">
+    <string>Create a tetrahedral mesh</string>
+   </property>
+  </action>
+  <action name="actionMVC">
+   <property name="text">
+    <string>Mean value coordinates</string>
+   </property>
+  </action>
+  <action name="actionDCP">
+   <property name="text">
+    <string>Discrete conformal maps</string>
+   </property>
+  </action>
+  <action name="actionExplode">
+   <property name="text">
+    <string>Explode</string>
+   </property>
+  </action>
+  <action name="actionToNef">
+   <property name="text">
+    <string>Convert to nef polyhedron</string>
+   </property>
+  </action>
+  <action name="actionToPoly">
+   <property name="text">
+    <string>Convert to normal polyhedron</string>
+   </property>
+  </action>
+  <action name="actionDraw_two_sides">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="text">
+    <string>Draw two sides</string>
+   </property>
+  </action>
+  <action name="actionOdt">
+   <property name="text">
+    <string>Odt-smoothing</string>
+   </property>
+  </action>
+  <action name="actionLloyd">
+   <property name="text">
+    <string>Lloyd-smoothing</string>
+   </property>
+  </action>
+  <action name="actionPerturb">
+   <property name="text">
+    <string>Sliver perturbation</string>
+   </property>
+  </action>
+  <action name="actionExude">
+   <property name="text">
+    <string>Sliver exudation</string>
+   </property>
+  </action>
+  <action name="actionToto">
+   <property name="text">
+    <string>toto</string>
+   </property>
+  </action>
+ </widget>
+ <customwidgets>
+  <customwidget>
+   <class>Viewer</class>
+   <extends>QWidget</extends>
+   <header>CGAL_demo/Viewer.h</header>
+  </customwidget>
+ </customwidgets>
+ <resources>
+  <include location="Mesh_3.qrc"/>
+ </resources>
+ <connections/>
+</ui>

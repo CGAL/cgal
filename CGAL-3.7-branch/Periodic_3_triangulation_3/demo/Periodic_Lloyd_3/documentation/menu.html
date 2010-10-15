@@ -1,0 +1,94 @@
+<html>
+    <head>
+	<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+	<title>Menu</title>
+        <a name="File">
+    </head>
+    <body style="font-size:12pt;font-family:helvetica">
+
+	<p><h3><a name="File">File</a></h3></p>
+
+        <table cellspacing="16">
+	  <tr>
+	    <td width="32" align="center" valign="top">
+	      <img src="../icons/fileNew.png" />  
+	    </td>
+	    <td>
+	  <b><i>New Point Set</i></b><br>
+	  Asks for the wanted number of points and creates a uniformly
+	  distributed random point set. 
+	    </td>
+	  </tr>
+
+	  <tr>
+	    <td width="32" align="center" valign="top">
+	      <img src="../icons/fileOpen.png" />  
+	    </td>
+	    <td>
+	  <b><i>Load Points</i></b><br>
+	  Shows a "Open file" dialog. A readable file is supposed to
+	  consist of
+	      <ul>
+		<li> an Iso_cuboid_3 given by six values in the order
+		xmin ymin zmin xmax ymax zmax, separated by white spaces,
+	        <li> a list of points that are separated by white
+	    spaces. A point has to be represented as a list of three
+	    coordinates that again are separated by white spaces. 
+	      </ul>
+	    </td>
+	  </tr>
+
+	  <tr>
+	    <td width="32" align="center" valign="top">
+	      <img src="../icons/fileSave.png" />  
+	    </td>
+	    <td>
+	  <b><i>Save Points</i></b><br>
+	  Shows a "Save file" dialog and saves the current points in
+	    the same format as expected by "Load Points".
+	    </td>
+	  </tr>
+	</table>
+
+	<p><h3><a name="Control">Control</a></h3></p>
+
+	<table cellspacing="16">
+	  <tr>
+	    <td valign="top">
+	      <img src="../icons/step.png" width="32" />  
+	    </td>
+	  <td><b><i>Step</i></b><br>
+	  Performs one Lloyd step.</td></tr>
+	  
+	  <tr>
+	    <td valign="top">
+	      <img src="../icons/play.png" width="32" />  
+	    </td>
+	  <td><b><i>Play</i></b><br>
+	    Starts performing repeated Lloyd steps.
+	  </td></tr>
+	  <tr>
+ 	    <td valign="top">
+	      <img src="../icons/cp8.png" width="32" />  
+	    </td>
+	  <td><b><i>Show 8 copies</i></b><br>
+	  Shows eight periodic copies arranged in a 2x2x2 cube. This
+	    is useful for small point sets to better see what the
+	    Voronoi cells look like.
+	  </td></tr>
+	  <tr>
+	    <td valign="top">
+	      <img src="../icons/planar.png" width="32" />  
+	    </td>
+	  <td><b><i>2D version</i></b><br>
+	    Switches to 2D. The 2D version is simulated using the 3D
+	    periodic triangulation, so it is very slow. 
+	    The 2D version only works for random point sets.
+	  </td></tr>
+        </table>
+
+	<br>
+	The speed slider can be used to increase the pauses between
+	two separate Lloyd steps. By default the demo runs on maximum
+	speed.
+	</body>

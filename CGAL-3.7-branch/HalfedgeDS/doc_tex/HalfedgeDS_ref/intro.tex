@@ -1,0 +1,74 @@
+% +------------------------------------------------------------------------+
+% | CBP Reference Manual:  intro.tex
+% +------------------------------------------------------------------------+
+% | Polyhedron reference manual pages
+% |
+% | 14.05.1998   Lutz Kettner
+\RCSdef{\halfedgeDSRefRev}{$Id$}
+\RCSdefDate{\halfedgeDSRefDate}{$Date$}
+% +------------------------------------------------------------------------+
+
+\ccRefChapter{Halfedge Data Structure\label{chapterHalfedgeDSRef}}
+\ccChapterRelease{\halfedgeDSRefRev. \ \halfedgeDSRefDate}
+\ccChapterAuthor{Lutz Kettner}
+
+% +------------------------------------------------------------------------+
+
+A halfedge data structure (abbreviated as \ccc{HalfedgeDS}, or
+\ccc{HDS} for template parameters) is an edge-centered data structure
+capable of maintaining incidence information of vertices, edges and
+faces, for example for planar maps or polyhedral surfaces. It is a
+combinatorial data structure, geometric interpretation is added by
+classes built on top of the halfedge data structure.  These classes
+might be more convenient to use than the halfedge data structure
+directly, since the halfedge data structure is meant as an
+implementation layer.  See for example the \ccc{CGAL::Polyhedron_3}
+class in Chapter~\ref{chapterPolyhedronRef}.
+
+The data structure provided here is known as the
+FE-structure~\cite{w-ebdss-85}, as
+halfedges~\cite{m-ism-88,cgal:bfh-mgedm-95} or as the doubly connected edge
+list (DCEL)~\cite{bkos-cgaa-97}, although the original reference for
+the DCEL~\cite{mp-fitcp-78} describes a related but different data
+structure. The halfedge data structure can also be seen as one of the
+variants of the quad-edge data structure~\cite{gs-pmgsc-85}. In
+general, the quad-edge data can represent non-orientable 2-manifolds,
+but the variant here is restricted to orientable 2-manifolds only. An
+overview and comparison of these different data structures together
+with a thorough description of the design implemented here can be
+found in~\cite{k-ugpdd-99}.
+
+
+\section{Classified Reference Pages}
+
+\subsection*{Concepts}
+
+\ccRefConceptPage{HalfedgeDS<Traits,Items,Alloc>}\\ 
+\ccRefConceptPage{HalfedgeDSItems}\\ 
+\ccRefConceptPage{HalfedgeDSVertex}\\ 
+\ccRefIdfierPage{HalfedgeDSHalfedge}\\ 
+\ccRefIdfierPage{HalfedgeDSFace}
+
+\subsection*{Classes}
+
+\ccRefIdfierPage{CGAL::HalfedgeDS_default<Traits,HalfedgeDSItems,Alloc>}\\ 
+\ccRefIdfierPage{CGAL::HalfedgeDS_list<Traits,HalfedgeDSItems,Alloc>}\\
+\ccRefIdfierPage{CGAL::HalfedgeDS_vector<Traits,HalfedgeDSItems,Alloc>}
+
+\ccRefIdfierPage{CGAL::HalfedgeDS_min_items}\\
+\ccRefIdfierPage{CGAL::HalfedgeDS_items_2}
+
+\ccRefIdfierPage{CGAL::HalfedgeDS_vertex_base<Refs>}\\ 
+\ccRefIdfierPage{CGAL::HalfedgeDS_halfedge_base<Refs>}\\ 
+\ccRefIdfierPage{CGAL::HalfedgeDS_face_base<Refs>}
+
+\ccRefIdfierPage{CGAL::HalfedgeDS_vertex_min_base<Refs>}\\ 
+\ccRefIdfierPage{CGAL::HalfedgeDS_halfedge_min_base<Refs>}\\ 
+\ccRefIdfierPage{CGAL::HalfedgeDS_face_min_base<Refs>}
+
+\ccRefIdfierPage{CGAL::HalfedgeDS_items_decorator<HDS>}\\
+\ccRefIdfierPage{CGAL::HalfedgeDS_decorator<HDS>}\\
+\ccRefIdfierPage{CGAL::HalfedgeDS_const_decorator<HDS>}
+
+
+%% EOF %%

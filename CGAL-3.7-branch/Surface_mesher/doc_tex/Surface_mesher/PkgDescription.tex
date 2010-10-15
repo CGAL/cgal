@@ -1,0 +1,25 @@
+
+\begin{ccPkgDescription}{3D Surface Mesh Generation\label{Pkg:SurfaceMesher3}}
+\ccPkgHowToCiteCgal{cgal:ry-smg-10}
+\ccPkgSummary{
+This package provides functions to generate
+surface  meshes that interpolate
+smooth surfaces. The  meshing algorithm is based on Delaunay
+refinement and provides some guarantees on the resulting mesh:
+the user is able to control the size and shape of the mesh
+elements and  the accuracy of the surface approximation.
+There is no restriction on the topology and number of components
+of input surfaces. The surface mesh generator may also be used
+for non smooth surfaces but without guarantee.
+
+Currently, implementations
+are provided for implicit surfaces described as the zero level set
+of some function and surfaces described as a gray
+level set in a three-dimensional image.}
+
+%\ccPkgDependsOn{ }
+\ccPkgIntroducedInCGAL{3.2}
+\ccPkgLicense{\ccLicenseQPL}
+\ccPkgDemo{Surface Mesh Generator}{surface_mesher.zip}
+\ccPkgIllustration{Surface_mesher/segmented_head-small.png}{Surface_mesher/segmented_head.png}
+\end{ccPkgDescription}

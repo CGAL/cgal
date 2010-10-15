@@ -1,0 +1,32 @@
+\begin{ccRefFunctionObjectConcept}{Kernel::Orientation_3}
+A model for this must provide:
+
+\ccCreationVariable{fo}
+
+\ccMemberFunction{Orientation operator()(const Kernel::Point_3&p, 
+                                         const Kernel::Point_3&q, 
+                                         const Kernel::Point_3&r, 
+                                         const Kernel::Point_3&s);}
+{returns \ccStyle{POSITIVE}, if $s$ lies on the positive side of the oriented 
+plane $h$ defined by $p$, $q$, and $r$, returns \ccStyle{NEGATIVE} if $s$ 
+lies on the negative side of $h$, and returns \ccStyle{COPLANAR} if $s$ lies
+on $h$.}
+
+\ccMemberFunction{Orientation operator()(const Kernel::Vector_3&u, 
+                                         const Kernel::Vector_3&v,
+                                         const Kernel::Vector_3&w);}
+{returns \ccStyle{POSITIVE} if $u$, $v$ and $w$ are positively oriented,
+returns \ccStyle{NEGATIVE} if $u$, $v$ and $w$ are negatively oriented,
+and returns \ccStyle{COPLANAR} if $u$, $v$ and $w$ are coplanar.}
+
+
+\ccMemberFunction{Orientation operator()(const Kernel::Sphere_3&s);}
+{returns the orientation of the sphere \ccc{s}.}
+
+\ccRefines
+\ccc{AdaptableFunctor} (with four arguments)
+
+\ccSeeAlso
+\ccRefIdfierPage{CGAL::orientation} \\
+
+\end{ccRefFunctionObjectConcept}

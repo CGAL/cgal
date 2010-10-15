@@ -1,0 +1,77 @@
+\begin{ccRefConcept}{PolynomialTraits_d::PolynomialSubresultants}
+
+\textbf{Note:} This functor is optional!
+
+\ccDefinition
+
+Computes the polynomial subresultant of two polynomials $p$ and $q$ of 
+type \ccc{PolynomialTraits_d::Polynomial_d} with respect to outermost variable.
+Let 
+$p=\ccSum{i=0,\ldots,n}{} p_i x^i$ and 
+$q=\ccSum{i=0,\ldots,m}{} q_i x^i$, where $x$
+is the outermost variable.
+The $i$-th subresultant (with $i=0,\ldots,\min\{n,m\}$) is defined by
+
+\begin{ccTexOnly}
+\begin{eqnarray*}
+\mathrm{Sres}_i(p,q)&=&\det \left(\begin{array}{ccccccc}
+p_n & \ldots &&\ldots& p_{2i-m+2}&x^{m-i-1}p \\
+&\ddots&&&\vdots&\vdots\\
+&&p_n&\ldots&p_{i+1}&p\\
+q_m & \ldots &&\ldots & q_{2i-n+2}&x^{n-i-1}q \\
+&\ddots&&&\vdots&\vdots\\
+&&q_m&\ldots&q_{i+1}&q
+\end{array}\right)
+\end{eqnarray*}
+\end{ccTexOnly}
+
+\begin{ccHtmlOnly}
+<CENTER>
+<IMG BORDER=0 SRC="./subresultant_def.gif" ALIGN=middle ALT="Subresultants">
+</CENTER>
+\end{ccHtmlOnly}
+
+where $p_i$ and $q_i$ are set to zero if $i<0$.
+In the case that $n=m$, $\mathrm{Sres_n}$ is set to $q$.
+
+The result is written in an output range, starting with the $0$-th subresultant
+$\mathrm{Sres}_0(p,q)$
+(aka as the resultant of $p$ and $q$).
+
+
+\ccRefines 
+\ccc{AdaptableBinaryFunction}\\
+\ccc{CopyConstructible}\\
+\ccc{DefaultConstructible}\\
+
+\ccCreationVariable{fo}
+
+\ccOperations
+\ccMethod{template<typename OutputIterator> 
+        OutputIterator operator()(Polynomial_d   p,
+                                  Polynomial_d   q,
+                                  OutputIterator out);}
+         { computes the polynomial subresultants of $p$ and $q$, 
+           with respect to the outermost variable. Each element is of type
+           \ccc{PolynomialTraits_d::Polynomial_d}.}
+
+\ccMethod{template<typename OutputIterator>
+        OutputIterator operator()(Polynomial_d   p,
+                                  Polynomial_d   q,
+                                  OutputIterator out,
+                                  int i);}
+         { computes the polynomial subresultants of $p$ and $q$, 
+           with respect to the variable $x_i$.}
+
+%\ccHasModels
+
+\ccSeeAlso
+
+\ccRefIdfierPage{Polynomial_d}\\
+\ccRefIdfierPage{PolynomialTraits_d}\\
+\ccRefIdfierPage{PolynomialTraits_d::Resultant}\\
+\ccRefIdfierPage{PolynomialTraits_d::PrincipalSubresultants}\\
+\ccRefIdfierPage{PolynomialTraits_d::PolynomialSubresultantsWithCofactors}\\
+\ccRefIdfierPage{PolynomialTraits_d::SturmHabichtSequence}\\
+
+\end{ccRefConcept}

@@ -1,0 +1,66 @@
+\begin{ccRefConcept}{Field}
+
+
+\ccDefinition
+
+A model of \ccc{Field} is an \ccc{IntegralDomain} in which every non-zero element
+has a multiplicative inverse. 
+Thus, one can divide by any non-zero element. 
+Hence division is defined for any divisor != 0. 
+For a Field, we require this division operation to be available through 
+operators / and /=.
+
+Moreover, \ccc{CGAL::Algebraic_structure_traits< Field >} is a model of 
+\ccc{AlgebraicStructureTraits} providing:\\
+- \ccc{CGAL::Algebraic_structure_traits< Field >::Algebraic_type} derived 
+from \ccc{Field_tag} \\
+  
+\ccRefines
+ \ccc{IntegralDomain}
+
+\ccOperations
+\ccCreationVariable{a}
+\ccFunction{Field operator/(const Field &a, const Field &b);}{}
+\ccGlue
+\ccMethod{Field operator/=(const Field &b);}{}
+
+\ccSeeAlso
+
+\ccRefIdfierPage{IntegralDomainWithoutDivision}\\
+\ccRefIdfierPage{IntegralDomain}\\
+\ccRefIdfierPage{UniqueFactorizationDomain}\\
+\ccRefIdfierPage{EuclideanRing}\\
+\ccRefIdfierPage{Field}\\
+\ccRefIdfierPage{FieldWithSqrt}\\
+\ccRefIdfierPage{FieldWithKthRoot}\\
+\ccRefIdfierPage{FieldWithRootOf}\\
+\ccRefIdfierPage{AlgebraicStructureTraits}\\
+
+%\ccHasModels
+%\ccc{float}\\
+%\ccc{double}\\
+%\ccc{long_double}\\
+
+%\ccc{CGAL::Gmpq} \\
+
+%\ccc{mpq_class} \\
+%%\ccc{mpf_class} \\
+
+%\ccc{leda_rational} \\
+%\ccc{leda_bigfloat} \\
+%\ccc{leda_real} \\
+
+%\ccc{CORE::BigRat} \\
+%%\ccc{CORE::BigFloat} \\
+%\ccc{CORE::Expr} \\
+
+%%\ccc{CGAL::Interval_nt} \\
+%%\ccc{CGAL::Interval_nt_advanced} \\
+
+%\ccc{CGAL::MP_Float} (inexact version)\\
+%\ccc{CGAL::Lazy_exact_nt< NT >} (depends on NT) \\
+%\ccc{CGAL::Quotient< NT >} \\
+
+%\ccc{CGAL::Sqrt_extension< NT, Root >} (depends on NT) \\
+
+\end{ccRefConcept}

@@ -1,0 +1,415 @@
+% =============================================================================
+% The CGAL Developers' Manual
+% Chapter: Coding Conventions
+% -----------------------------------------------------------------------------
+% file   : coding.tex
+% authors: Sven Schoenherr <sven@inf.ethz.ch>
+% -----------------------------------------------------------------------------
+% $Id$
+% $Date$
+% =============================================================================
+
+
+\chapter{Coding Conventions\label{chap:code_format}}
+
+\ccChapterRelease{Chapter Version: 1.1}
+\ccChapterAuthor{Sven Sch{\"o}nherr ({\tt sven@inf.ethz.ch})}
+
+We do not want to impose very strict coding rules on the developers.
+What is most important is to follow the \cgal\ naming scheme
+described in the next section. However, there are some programming conventions
+(Section~\ref{sec:programming_conventions}) that should be adhered to,
+rules for the code format
+(Section~\ref{sec:code_format}), and a mandatory heading for each
+source file (Section~\ref{sec:file_header})
+
+
+% -----------------------------------------------------------------------------
+\section{Naming scheme\label{sec:naming_scheme}}
+\ccIndexMainItemBegin{naming scheme}
+
+The \cgal\ naming scheme is intended to help the user
+use the library and the developer develop the
+library. The rules are simple and easy to remember. Where appropriate,
+they aim for similarity with the names used in the \stl. Deviations from the
+given rules should be avoided; however, exceptions are possible if
+there are \emph{convincing} reasons.
+
+\subsection*{General rules}
+
+\begin{itemize}
+\item Words in the names of everything except concepts should be separated by
+      underscores. For example, one would use \ccc{function_name} and
+       \ccc{Class_name} instead of \ccc{functionName} or \ccc{Classname}.
+      \ccIndexSubitem{naming scheme}{word separators}
+      \ccIndexSubitem{naming scheme}{underscores}
+\item Words in the names of concepts (\textit{e.g.}, template parameters)
+      \ccIndexSubitem{naming scheme}{concepts}
+      \ccIndexSubitem{naming scheme}{capitalization}
+      should be separated using capital letters.  The only use of underscores
+      in concept names is before the dimension suffix.  For example, one
+      should use a name such as ConvexHullTraits\_2 for the concept
+      in contrast to \ccc{Convex_hull_traits_2} for the name of the class that
+      is a model of this concept.  This different naming scheme for concepts
+      and classes was adopted mainly for two reasons (a) it is consistent with
+      the \stl\ (cf. InputIterator) and (b) it avoids name clashes between
+      concepts and classes that would require one or the other to have a
+      rather contrived name.
+\item Abbreviations of words are to be avoided%
+      \ccIndexSubitem{naming scheme}{abbreviations}
+      ({\em e.g.}, use
+      \ccc{Triangulation} instead of \ccc{Tri}).  The only exceptions
+      might be standard geometric abbreviations (such as ``CH'' for ``convex
+      hull'') and standard data structure abbreviations (such as ``DS'' for
+      ``data structure'').  Unfortunately, the long names that result from
+      the absence of abbreviations are known to cause problems with some
+      compilers.\ccIndexMainItem{long-name problem}
+%      See Section~\ref{sec:long_name_problem}
+%      for further information about the so-called ``long-name problem.''
+\ccIndexSubitemBegin{naming scheme}{capitalization}
+\item Names of constants are uppercase ({\em e.g.}, \ccc{ORIGIN}).
+      \ccModifierCrossRefOff
+      \ccIndexSubitem{constants, global}{naming}
+      \ccModifierCrossRefOn
+\item The first word of a class or enumeration name should be capitalized
+      ({\em e.g.}, \ccc{Quotient}, \ccc{Orientation}).
+      \ccIndexSubitem{classes}{naming}
+      \ccIndexSubitem{enumerations}{naming}
+\item Function names are in lowercase
+      ({\em e.g.}, \ccc{is_zero}).
+      \ccIndexSubitem{functions}{naming}
+\ccIndexSubitemEnd{naming scheme}{capitalization}
+\item Boolean function names should begin with a verb.  For example, use
+      \ccc{is_empty} instead of simply \ccc{empty} and
+      \ccc{has_on_bounded_side} instead of \ccc{on_bounded_side}.%
+      \ccIndexSubitem{functions}{naming}%
+      \ccIndexSubitem{naming scheme}{boolean functions}%
+      \ccIndexSubitem{naming scheme}{predicates}
+\item Names of macros should begin with the prefix \ccc{CGAL_}.
+      \ccIndexSubitem{macros}{naming}
+\end{itemize}
+
+\subsection*{Geometric objects}
+\ccIndexSubitemBegin{naming scheme}{geometric objects}
+\ccIndexSubitemBegin{naming scheme}{dimension number}
+\ccIndexSubitemBegin{geometric objects}{naming}
+
+\begin{itemize}
+\item All geometric objects have the dimension as a suffix (\eg, \ccc{Vector_2}
+      and \ccc{Plane_3}).
+     \textbf{Exception:} For $d$-dimensional objects there may be a dynamic
+     and a static version. The former has the suffix \ccc{_d}
+     (\eg, \ccc{Point_d}), while the latter has the dimension as the first
+     template parameter (\eg, \ccc{Point<d>}).
+\end{itemize}
+\ccIndexSubitemEnd{geometric objects}{naming}
+\ccIndexSubitemEnd{naming scheme}{dimension number}
+\ccIndexSubitemEnd{naming scheme}{geometric objects}
+
+\subsection*{Geometric data structures and algorithms}
+\ccIndexSubitemBegin{naming scheme}{data structures}
+\ccIndexSubitemBegin{naming scheme}{algorithms}
+\ccIndexSubitemBegin{data structures}{naming}
+\begin{itemize}
+\item Names for geometric data structures and algorithms should follow
+      the ``spirit'' of the rules given so far, \eg~a data structure for
+      triangulations in the plane is named \ccc{Triangulation_2}, and a
+      convex hull algorithm in 3-space is named \ccc{convex_hull_3}.
+\item Member functions realizing predicates should start with \ccc{is_} or
+      \ccc{has_}, \eg~the data structure \ccc{Min_ellipse_2} has member
+      functions \ccc{is_empty} and \ccc{has_on_bounded_side}.
+      \ccIndexSubitem{naming scheme}{predicates}
+\item Access to data structures is given via iterators and
+      circulators (Chapter~\ref{chap:iterators_and_circulators}).
+      For iterators and functions
+      returning them we extend
+      the \stl\ names with a prefix describing the items to be accessed.
+      For example, the functions \ccc{vertices_begin} and \ccc{vertices_end}
+      return a \ccc{Vertex_iterator}. (Note that we use the name of the items
+      in singular for the iterator type name and in plural for the functions
+      returning the iterator.) Names related to circulators are handled
+      similarly, using the suffix \ccc{_circulator}. For example, the
+      function \ccc{edges_circulator} returns an \ccc{Edge_circulator}.
+      \ccIndexSubitem{naming scheme}{iterators}
+      \ccIndexSubitem{naming scheme}{circulators}
+      \ccIndexSubitem{naming scheme}{access functions}
+      \ccIndexSubitem{iterators}{naming}
+      \ccIndexSubitem{circulators}{naming}
+      \ccIndexSubitem{access functions}{naming}
+\end{itemize}
+\ccIndexSubitemEnd{data structures}{naming}
+\ccIndexSubitemEnd{naming scheme}{algorithms}
+\ccIndexSubitemEnd{naming scheme}{data structures}
+
+
+\subsection*{Kernel traits}
+\ccIndexSubitemBegin{naming scheme}{kernel traits}
+\ccIndexSubitemBegin{kernel traits}{naming scheme}
+\ccIndexMainItemBegin{functors}
+
+All types in the kernel concept are functor types. We distinguish the
+following four categories:
+\begin{enumerate}
+\item\textbf{generalized predicates}, that is, standard predicates
+  returning a Boolean value as well as functions such as
+  \ccc{orientation()} that return an enumeration type (values from a
+  finite discrete set).
+\item\textbf{construction objects}, which replace constructors in the
+  kernel,
+\item\textbf{constructive procedures} and
+\item\textbf{functors replacing operators}.
+\end{enumerate}
+
+\ccIndexSubitemBegin{functors}{naming} As detailed below, the names of
+these functors reflect the actions performed by calls to
+\ccc{operator()}.  This naming scheme was chosen instead of one in
+which the computed object determines the name because this latter
+naming scheme is more natural for functions that compute values where
+the function call can be seen as a name for the object returned
+instead of functors that simply maintain data associated with the
+computation.  It was also noted that the naming of functions and
+functors is not consistent, either in \cgal\ or in the \stl\ (In some
+cases the action performed by a function determines its name (\eg,
+\ccc{multiply()}) while in others the result of the action determines
+the name (\eg, \ccc{product()}).), so achieving complete consistency
+with an existing naming scheme is not possible.
+
+Here are the naming rules:
+\begin{itemize}
+\item All names in the kernel traits have the dimension as a suffix.
+      This is necessary because in some cases (\eg, the \ccc{Orientation_2}
+      object) the absence of the suffix would cause a name conflict with
+      an existing type or class (\eg, the enumeration type \ccc{Orientation}).
+    \item The names of generalized predicates are determined by their
+      results.  Furthermore, names are as much as possible consistent
+      with the current kernel and the \stl. So, for example, we have
+      objects like \ccc{Has_on_bounded_side_2}, \ccc{Is_degenerate_2},
+      and \ccc{Is_horizontal_2}.  According to the current kernel we
+      also have \ccc{Left_turn_2}.  For reasons of consistency with
+      \stl, all ``less-than''-objects start with \ccc{Less_},
+      \eg,~\ccc{Less_xy_2}.  Further examples are
+      \ccc{Less_distance_to_point_2} and
+      \ccc{Less_distance_to_line_2}. However, we have \ccc{Equal_2},
+      whereas the corresponding \stl\ functor is called
+      \ccc{equal_to}. Here, we give our dimension rule higher
+      priority.
+    \item The names of construction objects (category 2 above) follow
+      the pattern \ccc{Construct_type_d}, where \texttt{type\_d}
+      is the type constructed, \eg,~\ccc{Construct_point_2} and
+      \ccc{Construct_line_2}.  The \ccc{operator()} of these functor
+      classes is overloaded.  This reduces the number of names to
+      remember drastically, while replacing one of the constructions
+      gets more complicated, but is still possible.
+    \item Functors in category 3 above can be further subdivided into
+      two classes:
+      \begin{itemize}
+         \item constructive procedures that construct objects whose types are
+               known {\em a priori}
+         \item procedures that construct objects whose types are not known
+               {\em a priori}
+      \end{itemize}
+
+      The names of functors in the first class also start with
+      \ccc{Construct_} whenever a geometric object is constructed,
+      otherwise they start with \ccc{Compute_}.  Here, real numbers
+      are not considered to be 1-dimensional geometric objects.  For
+      example, on the one hand we have
+      \ccc{Construct_perpendicular_vector_2},
+      \ccc{Construct_midpoint_3}, \ccc{Construct_circumcenter_d},
+      \ccc{Construct_bisector_2}, and \ccc{Construct_point_on_3},
+      while on the other hand there are \ccc{Compute_area_2} and
+      \ccc{Compute_squared_length_3}.
+
+      For the second class, the names of the objects describe the (generic)
+      action, \eg~\ccc{Intersect_2}.
+\item The equality operator (\ccc{operator==()}) is replaced by function
+      objects with names of the form \ccc{Equal_k}, where {\tt k} is
+      the dimension number (\ie, 2, 3, or \ccc{d}).
+      For replacing arithmetic operators, we might also provide \ccc{Add_2},
+      \ccc{Subtract_2}, \ccc{Multiply_2}, and \ccc{Divide_2}. (As mentioned
+      above, the action determines the name, not the result.) We think
+      that these objects are not really needed.  They are likely to be
+      part of primitive operations that have a corresponding function
+      object in the traits.
+\end{itemize}
+\ccIndexSubitemEnd{kernel traits}{naming scheme}
+\ccIndexSubitemEnd{functors}{naming}
+\ccIndexMainItemEnd{functors}
+
+In addition, for each functor the kernel traits class has a member
+function that returns an instance of this functor.  The name of this
+function should be the (uncapitalized) name of the
+functor followed by the suffix \ccc{_object}.%
+%\index{object functions@{\ccFont \_object} functions}
+For example, the function that retuns an instance of the
+\ccc{Less_xy_2} functor is called \ccc{less_xy_2_object}.
+\ccIndexSubitemEnd{naming scheme}{kernel traits}
+
+\subsection*{File names}
+\ccIndexSubitemBegin{naming scheme}{source files}
+\ccIndexSubitemBegin{source files}{naming scheme}
+
+\begin{itemize}
+\item File names should be chosen in the ``spirit'' of the naming rules given
+      above.
+\item If a single geometric object, data structure, or algorithm is provided
+      in a single file, its name (and its capitalization) should be used for
+      the file name. For
+      example, the file \ccc{Triangulation_2.h} contains the data structure
+      \ccc{Triangulation\_2}.
+\item If a file does not contain a single class, its name should not begin
+      with a capital letter.
+\item No two files should have the same names even when capitalization is
+      ignored.  This is to prevent overwriting of files on operating systems
+      where file names are not case sensitive.  A package that contains
+      file names that are the same as files already in the release will be
+      rejected by the submission script.
+\item The names of files should not contain any characters not allowed by
+      all the platforms the library supports.  In particular, it should not
+      contain the characters `:', `*', or `\ '.
+\item Internal header files -- which are not documented to the user -- should
+      have {\tt /internal/} as a directory higher up in their hierarchy.
+      For example {\tt CGAL/internal/foo.h} or
+      {\tt CGAL/Package/internal/predicates/my\_pred.h}.
+\end{itemize}
+\ccIndexSubitemEnd{source files}{naming scheme}
+\ccIndexSubitemEnd{naming scheme}{source files}
+\ccIndexMainItemEnd{naming scheme}
+
+
+% -----------------------------------------------------------------------------
+\section{Programming conventions\label{sec:programming_conventions}}
+\ccIndexMainItemBegin{programming conventions}
+
+The first list of items are meant as rules, \ie,~you should follow them.
+
+\begin{itemize}
+\item Give typedefs for all template arguments of a class that may be
+      accessed later from outside the class.
+
+     The template parameter is a concept and should follow the concept naming
+     scheme outlines in the previous section.  As a general rule, the typedef
+     should identify the template parameter with a type of the same name that
+     follows the naming convention of types.  For example
+     \begin{verbatim}
+     template < class GeometricTraits_2 >
+     class Something {
+       public:
+         typedef GeometricTraits_2 Geometric_traits_2;
+     };
+     \end{verbatim}
+     For one-word template arguments, the template parameter name should be
+     followed by an underscore.  (Note that using a preceding
+     underscore is not allowed according to the \CC\ standard; all such names
+     are reserved.)\index{C++ standard@\CC\ standard!underscores}%
+     \begin{verbatim}
+     template < class Arg_ >
+     class Something {
+       public:
+         typedef  Arg_  Arg;
+     };
+     \end{verbatim}
+  \ccIndexSubitem{underscores}{in names}%
+  \ccIndexSubitem{naming scheme}{underscores}%
+  \ccIndexSubitem{naming scheme}{template parameters}%
+\item Use \ccc{const} when a call by reference argument is not
+      modified, e.g.~\ccc{int f( const A& a)}%
+     \index{call by reference!const and@{\ccFont const} and}.
+\item Use \ccc{const} to indicate that a member function does not
+      modify the object to which it is applied,
+      \eg,~\ccStyle{class A \{ int f( void) const; \};}. This should also be
+      done when it is only conceptually \ccc{const}%
+      \index{conceptual const-ness@conceptual {\ccFont const}-ness|textbf}.
+      This means that the member function \ccc{f()} is {\ccFont const} as seen from
+      the outside, but internally it may modify some data members
+      that are declared {\ccFont mutable}\ccIndexMainItem{\ccFont mutable}. An example
+      is the caching of results from expensive computations.  For more
+      information about conceptually {\ccFont const} functions and mutable data
+      members see \cite{cgal:m-ec-97}.
+\item Prefer \CC-style to C-style casts,%
+      \index{casts!C++-style vs. C-style@\CC- style vs. C-style}
+      \eg,~use \ccc{static_cast<double>( i)} instead of {\ccFont (double)i}.
+\item Protect header files against multiple inclusion,
+      \ccIndexSubitem{header files}{multiple inclusion of}
+      \eg~the file {\tt This\_is\_an\_example.h} should begin/end with
+      \begin{verbatim}
+         #ifndef CGAL_THIS_IS_AN_EXAMPLE_H
+         #define CGAL_THIS_IS_AN_EXAMPLE_H
+         ...
+         #endif // CGAL_THIS_IS_AN_EXAMPLE_H
+     \end{verbatim}
+\end{itemize}
+
+The following items can be seen as recommendations
+in contrast to the rules of previous paragraph.
+
+\begin{itemize}
+\item Use \verb|#define| sparingly.
+\item Do not rename the base types of \CC\ using {\ccFont typedef}.
+\item When using an overloaded call, always give the exact match. Use
+  explicit casting if necessary.
+\item Do not call global functions unqualified, that is, always
+  specify explicitly the namespace where the function is defined.
+\end{itemize}
+\ccIndexMainItemEnd{programming conventions}
+
+
+% -----------------------------------------------------------------------------
+\section{Code format\label{sec:code_format}}
+\ccIndexMainItemBegin{code format}
+
+\begin{itemize}
+\item Use indentation with at least two spaces extra per level.%
+      \ccIndexSubitem{code format}{indentation}
+\item Write only one statement per line.
+\item Use \CC-style comments, \eg,~{\ccFont // some comment}.%
+      \ccIndexSubitem{code format}{comments}
+\end{itemize}
+\ccIndexMainItemEnd{code format}
+
+
+% -----------------------------------------------------------------------------
+\section{File header\label{sec:file_header}}
+\ccIndexSubitemBegin{source files}{headings for}
+
+Each \cgal\ source file must start with a heading that allows for an easy
+identification of the file.  The file header contains:
+\begin{itemize}
+\item a copyright notice, specifying all the years during which the file has
+been written or modified, as well as the owner(s) (typically the institutions
+employing the authors) of this work,
+\item the corresponding license (at the moment, only LGPL v2.1 and QPL v1.0
+are allowed in \cgal), and a pointer to the file containing its text in the
+\cgal\ distribution,
+\item a disclaimer notice,
+\item then, there are 2 keywords, which are automatically expanded by SVN
+(there are options in SVN to suppress these expansions if you need):
+\begin{itemize}
+% Note : the {} are there to prevent the expansion of the keywords here.
+\item \${}URL: \$ : the name of the source file in the repository, it also
+helps figuring out which package the file comes from,
+\item \${}Id: \$ : the SVN revision number of the file, the date of this revision,
+and the author of the last commit.
+\end{itemize}
+\item Then the authors of (non-negligible parts of) this file are listed, with
+optional affiliation or e-mail address.
+\end{itemize}
+
+\ccIndexSubitem{example programs}{headings for}
+\ccIndexSubitem{demo programs}{headings for}
+For example and demo programs, the inclusion of the copyright notice is not
+necessary as this will get in the way if the program is included in the
+documentation.  However, these files should always contain the name of
+the file realtive to the \texttt{CGAL\_HOME} directory
+(\eg, \nonlinkedpath|examples/Convex_hull_3/convex_hull_3.cpp|)
+so the file can be located when seen out of context (\eg, in the documentation
+or from the demos web page).
+
+For the test-suite and the documentation source, these are not distributed at
+the moment, so there is no policy for now.
+
+\InternalOnly{
+\input{Developers_manual/code_format_internal}
+}
+
+% ===== EOF ===================================================================

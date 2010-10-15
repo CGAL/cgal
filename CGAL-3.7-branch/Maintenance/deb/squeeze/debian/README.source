@@ -1,0 +1,7 @@
+README.source
+-------------
+
+The package uses dpatch to manage patches to the original source.
+See /usr/share/doc/dpatch/README.source.gz for details.
+
+ -- Joachim Reichel <reichel@debian.org>  Mon, 28 Sep 2009 21:19:03 +0200

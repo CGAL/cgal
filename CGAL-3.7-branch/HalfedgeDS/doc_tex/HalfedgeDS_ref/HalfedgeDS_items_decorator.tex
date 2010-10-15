@@ -1,0 +1,247 @@
+% +------------------------------------------------------------------------+
+% | Reference manual page: HalfedgeDS_items_decorator.tex
+% +------------------------------------------------------------------------+
+% | 22.03.1999   Lutz Kettner
+% | Package: HalfedgeDS
+% | 
+\RCSdef{\RCSHalfedgeDSitemsdecoratorRev}{$Id$}
+\RCSdefDate{\RCSHalfedgeDSitemsdecoratorDate}{$Date$}
+% +------------------------------------------------------------------------+
+
+\ccRefPageBegin
+
+%%RefPage: end of header, begin of main body
+% +------------------------------------------------------------------------+
+
+
+\begin{ccRefClass}{HalfedgeDS_items_decorator<HDS>}
+
+\ccDefinition
+
+The classes \ccc{CGAL::HalfedgeDS_items_decorator<HDS>},
+\ccc{CGAL::HalfedgeDS_decorator<HDS>}, and
+\ccc{CGAL::HalfedgeDS_const_decorator<HDS>} provide additional functions
+to examine and to modify a halfedge data structure \ccc{HDS}. The class
+\ccc{CGAL::HalfedgeDS_items_decorator<HDS>} provides additional functions
+for vertices, halfedges, and faces of a halfedge data structure
+without knowing the containing halfedge data structure. The class
+\ccc{CGAL::HalfedgeDS_decorator<HDS>} stores a reference to the halfedge
+data structure and provides functions that modify the halfedge data
+structure, for example Euler-operators. The class
+\ccc{CGAL::HalfedgeDS_const_decorator<HDS>} stores a const reference to
+the halfedge data structure. It contains non-modifying functions, for
+example the test for validness of the data structure.
+
+All these additional functions take care of the different capabilities
+a halfedge data structure may have or may not have.  The functions
+evaluate the type tags of the halfedge data structure to decide on the
+actions. If a particular feature is not supported nothing is done.
+Note that for example the creation of new halfedges is mandatory for
+all halfedge data structures and will not appear here again.
+
+\ccInclude{CGAL/HalfedgeDS_items_decorator.h}
+
+\ccTypes
+
+\ccThree{Halfedge_handle}{D.get_vertex_halfedge( Vertex_handle v);}{}
+\ccThreeToTwo
+
+\ccNestedType{HalfedgeDS}{halfedge data structure.}
+\ccGlue
+\ccNestedType{Traits}{traits class.}
+\ccGlue
+\ccNestedType{Vertex}{vertex type of \ccc{HalfedgeDS}.}
+\ccGlue
+\ccNestedType{Halfedge}{halfedge type of \ccc{HalfedgeDS}.}
+\ccGlue
+\ccNestedType{Face}{face type of \ccc{HalfedgeDS}.}
+
+\ccNestedType{Vertex_handle}{}
+\ccGlue
+\ccNestedType{Halfedge_handle}{}
+\ccGlue
+\ccNestedType{Face_handle}{}
+\ccGlue
+\ccNestedType{Vertex_iterator}{}
+\ccGlue
+\ccNestedType{Halfedge_iterator}{}
+\ccGlue
+\ccNestedType{Face_iterator}{}
+
+The respective \ccc{const_handle}'s and \ccc{const_iterator}'s are
+available as well.
+
+\ccNestedType{size_type}{}
+\ccGlue
+\ccNestedType{difference_type}{}
+\ccGlue
+\ccNestedType{iterator_category}{}
+
+\ccNestedType{Supports_vertex_halfedge}{}
+\ccGlue
+\ccNestedType{Supports_halfedge_prev}{}
+\ccGlue
+\ccNestedType{Supports_halfedge_vertex}{}
+\ccGlue
+\ccNestedType{Supports_halfedge_face}{}
+\ccGlue
+\ccNestedType{Supports_face_halfedge}{}
+\ccGlue
+\ccNestedType{Supports_removal}{}
+
+
+\ccCreation
+\ccCreationVariable{D}
+
+\ccConstructor{HalfedgeDS_items_decorator();}{default constructor.}
+
+% -----------------------------------------
+\ccHeading{Access Functions}
+
+\ccMethod{Halfedge_handle get_vertex_halfedge( Vertex_handle v);}
+    {returns the incident halfedge of $v$ if supported, 
+    \ccc{Halfedge_handle()} otherwise.}
+\ccGlue
+\ccMethod{Vertex_handle get_vertex(Halfedge_handle h);}
+    {returns the incident vertex of $h$ if supported, \ccc{Vertex_handle()} 
+     otherwise.}
+\ccGlue
+\ccMethod{Halfedge_handle get_prev(Halfedge_handle h);}
+    {returns the previous halfedge of $h$ if supported, 
+     \ccc{Halfedge_handle()} otherwise.}
+\ccGlue
+\ccMethod{Halfedge_handle find_prev(Halfedge_handle h);}
+    {returns the previous halfedge of $h$. Uses the \ccc{prev()} method 
+     if supported or performs a search around the face using \ccc{next()}.}
+\ccGlue
+\ccMethod{Halfedge_handle find_prev_around_vertex(Halfedge_handle h);}
+    {returns the previous halfedge of $h$. Uses the \ccc{prev()} method 
+     if supported or performs a search around the vertex using \ccc{next()}.}
+\ccGlue
+\ccMethod{Face_handle get_face(Halfedge_handle h);}
+    {returns the incident face of $h$ if supported, 
+    \ccc{Face_handle()} otherwise.}
+\ccGlue
+\ccMethod{Halfedge_handle get_face_halfedge( Face_handle f);}
+    {returns the incident halfedge of $f$ if supported, 
+    \ccc{Halfedge_handle()} otherwise.}
+
+Corresponding member functions for \ccc{const_handle}'s are provided as well.
+
+% -----------------------------------------
+\ccHeading{Modifying Functions (Composed)}
+
+\ccMethod{void close_tip( Halfedge_handle h) const;}
+    {makes \ccc{h->opposite()} the successor of $h$.}
+
+\ccMethod{void close_tip( Halfedge_handle h, Vertex_handle v) const;}
+    {makes \ccc{h->opposite()} the successor of $h$ and sets the
+    incident vertex of $h$ to $v$.}
+
+\ccMethod{void insert_tip( Halfedge_handle h, Halfedge_handle v) const;}
+    {inserts the tip of the edge $h$ into the halfedges around the vertex 
+    pointed to by $v$. Halfedge \ccc{h->opposite()} is the new successor of 
+    $v$ and \ccc{h->next()} will be set to \ccc{v->next()}. The vertex of $h$
+    will be set to the vertex $v$ refers to if vertices are supported.}
+
+\ccMethod{void remove_tip( Halfedge_handle h) const;}
+   {removes the edge \ccc{h->next()->opposite()} from the halfedge
+   circle around the vertex referred to by $h$. The new successor
+   halfedge of $h$ will be  \ccc{h->next()->opposite()->next()}.}
+
+\ccMethod{void insert_halfedge( Halfedge_handle h, Halfedge_handle f) const;}
+    {inserts the halfedge $h$ between $f$ and \ccc{f->next()}.
+    The face of $h$ will be the one $f$ refers to if faces
+    are supported.}
+
+\ccMethod{void remove_halfedge( Halfedge_handle h) const;}
+   {removes edge \ccc{h->next()} from the halfedge circle around 
+    the face referred to by $h$. The new successor of $h$ will be 
+    \ccc{h->next()->next()}.}
+
+\vspace*{-1mm}
+\ccMethod{void set_vertex_in_vertex_loop( Halfedge_handle h, 
+                                          Vertex_handle v) const;}
+   {loops around the vertex incident to $h$ and sets all vertex
+    pointers to $v$. \ccPrecond \ccc{h != Halfedge_handle()}.}
+
+\vspace*{-1mm}
+\ccMethod{void set_face_in_face_loop( Halfedge_handle h, Face_handle f) const;}
+   {loops around the face incident to $h$ and sets all face 
+    pointers to $f$. \ccPrecond \ccc{h != Halfedge_handle()}.}
+
+\ccMethod{Halfedge_handle flip_edge( Halfedge_handle h) const;}
+   {performs an edge flip. It returns $h$ after rotating the edge $h$ one
+    vertex in the direction of the face orientation. 
+    \ccPrecond \ccc{h != Halfedge_handle()} and both incident faces 
+    of $h$ are triangles.}
+
+% -----------------------------------------
+\vspace*{-2mm}
+\ccHeading{Modifying Functions (Primitives)}
+
+\ccThree{void}{D.set_face_halfedge( Face_handle f, Halfedge_handle g)}{}
+
+\ccMethod{void set_vertex_halfedge( Vertex_handle v, Halfedge_handle g) const;}
+    {sets the incident halfedge of $v$ to $g$.}
+\ccGlue
+\ccMethod{void set_vertex_halfedge( Halfedge_handle h) const;}
+    {sets the incident halfedge of the vertex incident to $h$ to $h$.}
+\ccGlue
+\ccMethod{void set_vertex( Halfedge_handle h, Vertex_handle v) const;}
+    {sets the incident vertex of $h$ to $v$.}
+\ccGlue
+\ccMethod{void set_prev( Halfedge_handle h, Halfedge_handle g) const;}
+    {sets the previous link of $h$ to $g$.}
+\ccGlue
+\ccMethod{void set_face( Halfedge_handle h, Face_handle f) const;}
+    {sets the incident face of $h$ to $f$.}
+\ccGlue
+\ccMethod{void set_face_halfedge( Face_handle f, Halfedge_handle g) const;}
+    {sets the incident halfedge of $f$ to $g$.}
+\ccGlue
+\ccMethod{void set_face_halfedge( Halfedge_handle h) const;}
+    {sets the incident halfedge of the face incident to $h$ to $h$.}
+
+
+\ccSeeAlso
+
+\ccRefIdfierPage{CGAL::HalfedgeDS_decorator<HDS>}\\
+\ccRefIdfierPage{CGAL::HalfedgeDS_const_decorator<HDS>}
+
+\ccExample
+
+The following program fragment illustrates how a refined halfedge
+class for a polyhedron can make use of the \ccc{find_prev()} member
+function to implement a \ccc{prev()} member function that works
+regardless of whether the halfedge data structure \ccc{HDS} provides a
+\ccc{prev()} member function for its halfedges or not. In the case that not,
+the implementation given here runs in time proportional to the size of the 
+incident face. For const-correctness a second implementation with signature
+\ccc{Halfedge_const_handle  prev() const;} is needed.
+
+Note also the use of the static member function \ccc{halfedge_handle()}
+of the halfedge data structure. It converts a pointer to the halfedge
+into a halfedge handle. This conversion encapsulates possible
+adjustments for hidden data members in the true halfedge type, such as
+linked-list pointers.
+
+\begin{ccExampleCode}
+struct Polyhedron_halfedge {
+    // ...
+    Halfedge_handle  prev() {
+        CGAL::HalfedgeDS_items_decorator<HDS> decorator;
+        return decorator.find_prev( HDS::halfedge_handle(this));
+    }
+};
+\end{ccExampleCode}
+
+
+\end{ccRefClass}
+
+% +------------------------------------------------------------------------+
+%%RefPage: end of main body, begin of footer
+\ccRefPageEnd
+% EOF
+% +------------------------------------------------------------------------+
+

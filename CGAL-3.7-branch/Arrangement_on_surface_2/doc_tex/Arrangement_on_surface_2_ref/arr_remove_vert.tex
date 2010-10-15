@@ -1,0 +1,32 @@
+\ccRefPageBegin
+
+\begin{ccRefFunction}{remove_vertex}
+
+\ccDefinition
+
+The function \ccRefName{} attempts to removed a given vertex from a given
+arrangement. The vertex can be removed if it is either an isolated vertex,
+(and has no incident edge,) or if it is a {\em redundant} vertex. That
+is, it has exactly two incident edges, whose associated curves can be
+merged to form a single $x$-monotone curve.
+The function returns a boolean value that indicates whether it succeeded
+removing the vertex from the arrangement.
+
+\ccInclude{CGAL/Arrangement_2.h}
+
+\ccGlobalFunction{template <typename Traits, typename Dcel>
+   bool remove_vertex (Arrangement_2<Traits,Dcel>& arr,
+                       typename Arrangement_2<Traits,Dcel>::Vertex_handle v);}
+
+\ccRequirements
+\begin{itemize}
+\item The instantiated \ccc{Traits} class must model the
+  \ccc{ArrangementXMonotoneTraits_2} concept. Not all expressions listed 
+  by this concept are required. In fact the traits class must model the 
+  \ccc{ArrangementBasicTraits_2} concept and support the merging
+  functionality.
+\end{itemize}
+
+\end{ccRefFunction}
+
+\ccRefPageEnd

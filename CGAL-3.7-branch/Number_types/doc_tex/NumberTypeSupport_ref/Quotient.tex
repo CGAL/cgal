@@ -1,0 +1,102 @@
+
+\begin{ccRefClass} {Quotient<NT>}
+\label{Quotient}
+%\subsection{Quotient}
+
+\ccDefinition
+An object of the class \ccStyle{Quotient<NT>} is an element of the 
+field of quotients of the integral domain type \ccStyle{NT}.
+If \ccStyle{NT} behaves like an integer, \ccStyle{Quotient<NT>}
+behaves like a rational number. 
+{\leda}'s class \ccStyle{rational} (see Section~\ref{leda-nt})
+has been the basis for \ccStyle{Quotient<NT>}.
+A \ccStyle{Quotient<NT>} \ccStyle{q} is represented as a pair of 
+\ccStyle{NT}s, representing numerator and denominator.
+
+\ccc{NT} must be at least model of concept \ccc{IntegralDomainWithoutDivision}.\\
+\ccc{NT} must be a model of concept \ccc{RealEmbeddable}. \\
+
+
+\ccInclude{CGAL/Quotient.h}
+
+\ccIsModel
+
+\ccc{Field}\\
+\ccc{RealEmbeddable}\\
+\ccc{Fraction}
+
+\ccCreation
+\ccCreationVariable{q}
+
+\ccConstructor{Quotient();}
+             {introduces an uninitialized variable \ccVar.}
+
+\ccHidden \ccConstructor{Quotient(const Quotient<NT> &q);}
+ 	    {copy constructor.}
+\ccGlue
+\ccConstructor{template <class T> Quotient<NT>(const T& t);}
+{introduces the quotient \ccStyle{t/1}. NT needs to have a constructor from T.}
+\ccGlue
+\ccConstructor{template <class T> Quotient<NT>(const Quotient<T>& t);}
+{introduces the quotient \ccStyle{NT(t.numerator())/NT(t.denominator())}.
+NT needs to have a constructor from T.}
+\ccGlue
+\ccConstructor{Quotient(const NT& n, const NT& d)}
+            {introduces the quotient \ccStyle{n/d}.\\
+            \ccPrecond $d \neq 0$.         }
+
+
+\ccOperations
+
+%\ccSetTwoOfThreeColumns{5cm}{4cm}
+%SetThreeColumns{std::ostream& }{}{\hspace*{8cm}}
+
+There are two access functions, namely to the
+numerator and the denominator of a quotient.
+Note that these values are not uniquely defined. 
+It is guaranteed that \ccStyle{q.numerator()} and 
+\ccStyle{q.denominator()} return values \ccStyle{nt_num} and
+\ccStyle{nt_den} such that \ccStyle{q = nt_num/nt_den}, only
+if  \ccStyle{q.numerator()} and \ccStyle{q.denominator()} are called
+consecutively wrt \ccStyle{q}, i.e.~\ccStyle{q} is not involved in 
+any other operation between these calls.
+
+\ccMethod{NT numerator() const;}
+       {returns a numerator of \ccStyle{q}.}
+\ccGlue
+\ccMethod{NT denominator() const;}
+       {returns a denominator of \ccStyle{q}.}
+
+\ccHidden \ccMethod{Quotient<NT>& normalize();}
+{}
+
+The stream operations are available as well. 
+They assume that corresponding stream operators for type \ccc{NT} exist.
+
+\ccFunction{std::ostream& operator<<(std::ostream& out, const Quotient<NT>& q);}
+       {writes \ccc{q} to ostream \ccc{out} in format ``{\tt n/d}'', where
+       {\tt n}$==$\ccc{q.numerator()} and {\tt d}$==$\ccc{q.denominator()}.}
+
+\ccFunction{std::istream& operator>>(std::istream& in, Quotient<NT>& q);}
+       {reads \ccc{q} from istream \ccc{in}. Expected format is
+        ``{\tt n/d}'', where {\tt n} and {\tt d} are of type \ccc{NT}.
+        A single {\tt n} which is not followed by a {\tt /}\  is also
+        accepted and interpreted as {\tt n/1}.}
+
+The following functions are added to fulfill the \cgal\ requirements
+on number types.
+
+\ccFunction{double to_double(const Quotient<NT>& q);}
+       {returns some double approximation to \ccStyle{q}.}
+\ccGlue
+\ccFunction{bool  is_valid(const Quotient<NT>& q);}
+       {returns true, if numerator and denominator are valid.}
+\ccGlue
+\ccFunction{bool  is_finite(const Quotient<NT>& q);}
+       {returns true, if numerator and denominator are finite.}
+\ccGlue
+\ccFunction{Quotient<NT>  sqrt(const Quotient<NT>& q);}
+       {returns the square root of \ccc{q}.  This is supported if and only if
+        \ccc{NT} supports the square root as well.}
+
+\end{ccRefClass} 

@@ -1,0 +1,89 @@
+#! /bin/sh
+
+# This is a script for the CGAL test suite. Such a script must obey
+# the following rules:
+#
+# - the name of the script is cgal_test
+# - for every target two one line messages are written to the file 'error.txt'
+#     the first one indicates if the compilation was successful
+#     the second one indicates if the execution was successful
+#   if one of the two was not successful, the line should start with 'ERROR:'
+# - running the script should not require any user interaction
+# - the script should clean up object files and executables
+
+ERRORFILE=error.txt
+
+#---------------------------------------------------------------------#
+#                    compile <target>
+#---------------------------------------------------------------------#
+
+CMP='diff -b'
+
+compile()
+{
+  echo "Compiling $1 ... "
+  EXTRA_FLAGS=""
+  export EXTRA_FLAGS
+
+  if eval 'make CGAL_MAKEFILE=$CGAL_MAKEFILE \
+           TESTSUITE_CXXFLAGS="$TESTSUITE_CXXFLAGS" \
+           TESTSUITE_LDFLAGS="$TESTSUITE_LDFLAGS" $1' ; then
+    echo "   compilation of $1 succeeded" >> $ERRORFILE
+  else
+    echo "   ERROR: compilation of $1 failed" >> $ERRORFILE
+  fi
+}
+
+#---------------------------------------------------------------------#
+#                    run <target>
+#---------------------------------------------------------------------#
+
+run()
+{
+  data_dir="data"
+  datafiles="data/data*"
+  for DATAFILE in ${datafiles}
+  do
+    if [ -f $DATAFILE ] ; then
+      DATANAME=`basename $DATAFILE`
+      OUTPUTFILE=ProgramOutput.$1.$DATANAME.$PLATFORM
+      rm -f $OUTPUTFILE
+      COMMAND="./$1 $DATAFILE > ${data_dir}/out"
+      echo "Executing ./$1 $DATAFILE > ${data_dir}/out"
+      echo
+      if eval 2>&1 $COMMAND > $OUTPUTFILE ; then
+	  echo "   execution of $1 ${data_dir}/${DATAFILE} > ${data_dir}/out succeeded" >> $ERRORFILE
+	  if ${CMP} ${data_dir}/out "${data_dir}/gold_$DATANAME" ; then
+	      echo "   no differences between output and gold were found" >> $ERRORFILE
+	  else
+	      echo "   ERROR:  differences between output and gold were found" >> $ERRORFILE
+	      echo "   ERROR:  differences between output and gold were found :" >> $OUTPUTFILE
+              ${CMP} ${data_dir}/out "${data_dir}/gold_$DATANAME" >> $OUTPUTFILE
+	  fi
+      else
+	  echo "   ERROR: execution of $1 $DATAFILE $2 ${data_dir}/out failed" >> $ERRORFILE
+      fi
+    else
+      echo "   ERROR: could not execute $1" >> $ERRORFILE
+    fi
+  done
+}
+
+#---------------------------------------------------------------------#
+#                    remove the previous error file
+#---------------------------------------------------------------------#
+
+  rm -f $ERRORFILE
+  touch $ERRORFILE
+
+#---------------------------------------------------------------------#
+#                    compile and run the tests
+#---------------------------------------------------------------------#
+
+  compile test 
+
+  run test
+
+  eval "2>&1 make CGAL_MAKEFILE=$CGAL_MAKEFILE clean > /dev/null " 
+
+#EOF

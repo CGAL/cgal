@@ -1,0 +1,154 @@
+% +------------------------------------------------------------------------+
+% | Reference manual page: LSCM_parameterizer_3.tex
+% +------------------------------------------------------------------------+
+% | 21.09.2005   Laurent Saboret, Pierre Alliez, Bruno Levy
+% | Package: Surface_mesh_parameterization
+% |
+\RCSdef{\RCSLSCMparameterizerRev}{$Id$}
+\RCSdefDate{\RCSLSCMparameterizerDate}{$Date$}
+% |
+\ccRefPageBegin
+%%RefPage: end of header, begin of main body
+% +------------------------------------------------------------------------+
+
+
+\begin{ccRefClass}{LSCM_parameterizer_3<ParameterizationMesh_3, BorderParameterizer_3, SparseLinearAlgebraTraits_d>}
+
+%% \ccHtmlCrossLink{}     %% add further rules for cross referencing links
+%% \ccHtmlIndexC[class]{} %% add further index entries
+
+
+\ccDefinition
+
+% The section below is automatically generated. Do not edit!
+%START-AUTO(\ccDefinition)
+
+The class \ccc{LSCM_parameterizer_3} implements the Least Squares Conformal Maps (LSCM) parameterization \cite{cgal:lprm-lscm-02}.
+
+This is a conformal parameterization, i.e. it attempts to preserve angles.
+
+This is a free border parameterization. No need to map the surface's border onto a convex polygon (only two pinned vertices are needed to ensure a unique solution), but one-to-one mapping is {\bf not} guaranteed.
+
+%END-AUTO(\ccDefinition)
+
+% The section below is automatically generated. Do not edit!
+%START-AUTO(\ccInclude)
+
+\ccInclude{CGAL/LSCM_parameterizer_3.h}
+
+%END-AUTO(\ccInclude)
+
+
+\ccInheritsFrom
+
+% The section below is automatically generated. Do not edit!
+%START-AUTO(\ccInheritsFrom)
+
+\ccc{Parameterizer_traits_3<ParameterizationMesh_3>}
+
+%END-AUTO(\ccInheritsFrom)
+
+
+\ccIsModel
+
+% The section below is automatically generated. Do not edit!
+%START-AUTO(\ccIsModel)
+
+Model of the \ccc{ParameterizerTraits_3} concept.
+
+%END-AUTO(\ccIsModel)
+
+
+\ccHeading{Design Pattern}
+
+% The section below is automatically generated. Do not edit!
+%START-AUTO(\ccHeading{Design Pattern})
+
+\ccc{LSCM_parameterizer_3} class is a Strategy \cite{cgal:ghjv-dpero-95}: it implements a strategy of surface parameterization for models of \ccc{ParameterizationMesh_3}.
+
+%END-AUTO(\ccHeading{Design Pattern})
+
+
+\ccParameters
+
+The full template declaration is:
+
+% The section below is automatically generated. Do not edit!
+%START-AUTO(\ccParameters)
+
+template$<$class \ccc{ParameterizationMesh_3}, class \ccc{BorderParameterizer_3} = \ccc{Two_vertices_parameterizer_3<ParameterizationMesh_3>}, class \ccc{SparseLinearAlgebraTraits_d} = \ccc{OpenNL::SymmetricLinearSolverTraits<typename ParameterizationMesh_3::NT>}$>$   \\
+class \ccc{LSCM_parameterizer_3};
+
+%END-AUTO(\ccParameters)
+
+
+\ccTypes
+
+% The section below is automatically generated. Do not edit!
+%START-AUTO(\ccTypes)
+
+\ccNestedType{Border_param}
+{
+Export \ccc{BorderParameterizer_3} template parameter.
+}
+\ccGlue
+\ccNestedType{Sparse_LA}
+{
+Export \ccc{SparseLinearAlgebraTraits_d} template parameter.
+}
+\ccGlue
+
+%END-AUTO(\ccTypes)
+
+
+\ccCreation
+\ccCreationVariable{param}  %% choose variable name for \ccMethod
+
+% The section below is automatically generated. Do not edit!
+%START-AUTO(\ccCreation)
+
+\ccConstructor{LSCM_parameterizer_3(Border_param border_param = Border_param(), Sparse_LA sparse_la = Sparse_LA());}
+{
+Constructor.
+\ccCommentHeading{Parameters}  \\
+\ccc{border_param}: Object that maps the surface's border to 2D space. \ccc{sparse_la}: Traits object to access a sparse linear system.
+}
+\ccGlue
+
+%END-AUTO(\ccCreation)
+
+
+\ccOperations
+
+% The section below is automatically generated. Do not edit!
+%START-AUTO(\ccOperations)
+
+\ccMethod{Error_code parameterize(Adaptor& mesh);}
+{
+Compute a one-to-one mapping from a triangular 3D surface \ccc{mesh} to a piece of the 2D space. The mapping is linear by pieces (linear in each triangle). The result is the (u, v) pair image of each vertex of the 3D surface.
+\ccCommentHeading{Preconditions}  \\
+\ccc{mesh} must be a surface with one connected component. \ccc{mesh} must be a triangular mesh.
+}
+\ccGlue
+
+%END-AUTO(\ccOperations)
+
+
+\ccSeeAlso
+
+\ccRefIdfierPage{CGAL::Parameterizer_traits_3<ParameterizationMesh_3>}  \\
+\ccRefIdfierPage{CGAL::Fixed_border_parameterizer_3<ParameterizationMesh_3, BorderParameterizer_3, SparseLinearAlgebraTraits_d>}  \\
+\ccRefIdfierPage{CGAL::Barycentric_mapping_parameterizer_3<ParameterizationMesh_3, BorderParameterizer_3, SparseLinearAlgebraTraits_d>}  \\
+\ccRefIdfierPage{CGAL::Discrete_authalic_parameterizer_3<ParameterizationMesh_3, BorderParameterizer_3, SparseLinearAlgebraTraits_d>}  \\
+\ccRefIdfierPage{CGAL::Discrete_conformal_map_parameterizer_3<ParameterizationMesh_3, BorderParameterizer_3, SparseLinearAlgebraTraits_d>}  \\
+\ccRefIdfierPage{CGAL::Mean_value_coordinates_parameterizer_3<ParameterizationMesh_3, BorderParameterizer_3, SparseLinearAlgebraTraits_d>}  \\
+
+
+\end{ccRefClass}
+
+% +------------------------------------------------------------------------+
+%%RefPage: end of main body, begin of footer
+\ccRefPageEnd
+% EOF
+% +------------------------------------------------------------------------+
+

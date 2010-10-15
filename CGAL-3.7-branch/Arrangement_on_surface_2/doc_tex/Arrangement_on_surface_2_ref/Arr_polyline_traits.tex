@@ -1,0 +1,153 @@
+% +------------------------------------------------------------------------+
+% | Reference manual page: Arr_polyline_traits.tex
+% +------------------------------------------------------------------------+
+% | 
+% | Package: Arrangement_2
+% | 
+% +------------------------------------------------------------------------+
+
+\ccRefPageBegin
+\begin{ccRefClass}{Arr_polyline_traits_2<SegmentTraits>}
+
+\ccDefinition
+%============
+
+The traits class \ccRefName\ is a model of the \ccc{ArrangementTraits_2}
+concept. It handles piecewise linear curves, commonly referred to as
+polylines. Each polyline is a chain of segments, where each two neighboring
+segments in the chain share a common endpoint. The traits class exploits the
+functionality of the \ccc{SegmentTraits} template-parameter to handle the
+segments that comprise the polyline curves.
+
+The class instantiated for the template parameter \ccc{SegmentTraits} must
+be a model of the \ccc{ArrangementTraits_2} concept that handles line
+segments (e.g., \ccc{Arr_segment_traits_2<Kernel>} or 
+\ccc{Arr_non_caching_segment_traits_2<Kernel>}, where the first
+alternative is recommended).
+
+The number type used by the injected segment traits should support exact
+rational arithmetic (that is, the number type should support
+the arithmetic operations $+$, $-$, $\times$ and $\div$ that should be
+carried out without loss of precision), in order to avoid robustness
+problems, although other inexact number types could be used at the user's
+own risk.
+
+\ccInclude{CGAL/Arr_polyline_traits_2.h}
+
+\ccIsModel
+  \ccc{ArrangementTraits_2}\\
+  \ccc{ArrangementLandmarkTraits_2}\\
+
+\subsection*{Class Arr\_polyline\_traits\_2$<$SegmentTraits$>$::Curve\_2}
+%========================================================================
+
+The \ccc{Curve_2} class nested within the polyline traits is used to
+represent general continuous piecewise-linear curves (a polyline can be
+self-intersecting) and support their construction from any range of points.
+
+The copy and default constructor as well as 
+the assignment operator are provided for polyline curves. In addition, 
+an \ccc{operator<<} for the curves is defined for standard output streams,
+and an \ccc{operator>>} for the curves is defined for standard input streams.
+
+\begin{ccClass}{Arr_polyline_traits_2<SegmentTraits>::Curve_2}
+%=============================================================
+
+\ccTypes
+%-------
+
+\ccNestedType{const_iterator}{A bidirectional iterator that allows
+traversing the points that comprise a polyline curve.}
+
+\ccNestedType{const_reverse_iterator}{A bidirectional iterator that
+allows traversing the points that comprise a polyline curve.}
+
+\ccCreation
+\ccCreationVariable{pi}
+%----------------------
+
+\ccConstructor{Curve_2 ();}
+  {default constructor that constructs an empty polyline.}
+
+\ccConstructor{template <class InputIterator>
+               Curve_2 (Iterator first, Iterator last);}
+  {constructs a polyline defined by the given range of points
+   \ccc{[first, last)} (the value-type of \ccc{InputIterator} must be
+   \ccc{SegmentTraits::Point_2}.
+   If the range contains $(n + 1)$ points labeled $(p_{0},p_{1},\ldots,p_{n})$,
+   the generated polyline consists of $n$ segments, where the $k$th segment 
+   is defined by the endpoints $[p_{k-1},p_{k}]$. The first point in the 
+   range is considered as the source point of the polyline while the last 
+   point is considered as its target.
+   \ccPrecond{There are at least two points in the range}.}
+
+\ccAccessFunctions
+%-----------------
+
+\ccMethod{size_t points() const;}
+  {returns the number of points that comprise the polyline.
+   Note that if there are $n$ points in the polyline, it is comprised
+   of $(n - 1)$ segments.}
+
+\ccMethod{const_iterator begin() const;}
+  {returns an iterator pointing at the source point of the polyline.}
+
+\ccMethod{const_iterator end() const;}
+  {returns an iterator pointing after the end of the polyline.}
+
+\ccMethod{const_iterator rbegin() const;}
+  {returns an iterator pointing at the target point of the polyline.}
+
+\ccMethod{const_iterator rend() const;}
+  {returns an iterator pointing before the beginning of the polyline.}
+
+\ccMethod{size_t size() const;}
+  {returns the number of line segments comprising the polyline
+   (equivalent to \ccc{pi.points() - 1}).}
+
+\ccMethod{typename SegmentTraits::X_monotone_curve_2
+          operator[] (size_t k) const;}
+  {returns the $k$th segment of the polyline.
+   \ccPrecond{\ccc{k} is not greater or equal to \ccc{pi.size() - 1}.}}
+
+\ccMethod{Bbox_2 bbox() const;}
+  {return a bounding box of the polyline \ccVar{}.}
+
+\ccOperations
+%------------
+
+\ccMethod{void push_back (const Point_2 & p);}
+  {adds a new point to the polyline, which becomes the new target point
+   of \ccVar{}.}
+
+\ccMethod{void clear();}
+  {resets the polyline.}
+
+\end{ccClass}
+
+\subsection*{Class 
+  Arr\_polyline\_traits\_2$<$SegmentTraits$>$::X\_monotone\_curve\_2}
+%====================================================================
+
+The \ccc{X_monotone_curve_2} class nested within the polyline traits is used
+to represent $x$-monotone piecewise linear curves. It inherits from the
+\ccc{Curve_2} type. It has a default constructor and a constructor from a
+range of points, just like the \ccc{Curve_2} class. However, there is
+precondition that the point range define an $x$-monotone polyline.
+
+The points that define the $x$-monotone polyline are
+always stored in an ascending lexicographical $xy$-order, so their order may
+be reversed with respect to the input sequence. Also note that the
+$x$-monotonicity ensures that an $x$-monotone polyline is never
+self-intersecting (thus, a self-intersecting polyline will be subdivided
+to several interior-disjoint $x$-monotone subcurves).
+
+\begin{ccClass}{Arr_polyline_traits_2<SegmentTraits>::X_monotone_curve_2}
+\end{ccClass}
+
+\ccSeeAlso
+    \ccc{Arr_segment_traits_2<Kernel>}\\
+    \ccc{Arr_non_caching_segment_traits_2<Kernel>}\\
+
+\end{ccRefClass}
+\ccRefPageEnd

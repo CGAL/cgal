@@ -1,0 +1,113 @@
+\subsection{Adding a New Certificate Type\label{sec:kds_add_cert}}
+
+
+The following example shows how to add a new type of certificate to a simulation. 
+
+First we code the actual certificate function generator. It must take
+some sort (or sorts) of kinetic primitives, compute some function from
+their coordinates.
+
+\begin{ccExampleCode}
+template <class KineticKernel>
+struct Positive_x_f_2 {
+  typedef typename KineticKernel::Certificate_function result_type;
+  typedef typename KineticKernel::Point_2 argument_type;
+  result_type operator()(const argument_type &p){
+    return result_type(p.x()- result_type(0));
+  }
+};
+\end{ccExampleCode}
+
+Then we define a kinetic kernel which includes this predicate. To do
+this we wrap the function generator generator in a
+\ccc{Kinetic::Certificate_generator<Kernel, Generator>}.
+This wrapper uses the generator to create the certificate function and
+then the \ccc{Kinetic::FunctionKernel} to solve the certificate
+function. The result is wrapped in a \ccc{Kinetic::Certificate}
+object.
+
+\begin{ccExampleCode}
+template <class FunctionKernel> 
+class My_kinetic_kernel:
+  public CGAL::Kinetic::Cartesian<FunctionKernel> {
+  typedef CGAL::Kinetic::Cartesian<FunctionKernel> P;
+  typedef My_kinetic_kernel<FunctionKernel> This;
+public:
+  typedef CGAL::Kinetic::internal::Certificate_generator<This, Positive_x_f_2<This> > Positive_x_2;
+  Positive_x_2 positive_x_2_object() const
+  {
+    return Positive_x_2(P::function_kernel_object());
+  }
+};
+\end{ccExampleCode}
+
+Now we have the unfortunately rather messy part of assembling a new
+\ccc{Kinetic::SimulationTraits} model. This is done in two steps for convenience.
+
+\begin{ccExampleCode}
+struct My_simulation_traits {
+  typedef My_simulation_traits This;
+
+  typedef CGAL::Exact_predicates_exact_constructions_kernel Static_kernel;
+  //typedef CGAL::Regular_triangulation_euclidean_traits_3<Static_kernel_base> Static_kernel;
+  typedef CGAL::POLYNOMIAL::Polynomial<Static_kernel::FT> Function;
+  typedef CGAL::POLYNOMIAL::Sturm_root_stack_traits<Function> Root_stack_traits;
+  typedef CGAL::POLYNOMIAL::Sturm_root_stack<Root_stack_traits> Root_stack;
+  typedef CGAL::POLYNOMIAL::Kernel<Function, Root_stack> Function_kernel;
+
+  typedef CGAL::Kinetic::Handle_degeneracy_function_kernel<Function_kernel, false>  Simulator_function_kernel_base;
+  struct Simulator_function_kernel: public Simulator_function_kernel_base{};
+
+  typedef My_kinetic_kernel<Simulator_function_kernel> Kinetic_kernel;
+  typedef CGAL::Kinetic::Two_list_pointer_event_queue<Function_kernel> Event_queue;
+  typedef CGAL::Kinetic::Default_simulator<Simulator_function_kernel, Event_queue > Simulator;
+
+  typedef CGAL::Kinetic::Active_objects_vector<Kinetic_kernel::Point_1> Active_points_1_table;
+  typedef CGAL::Kinetic::Active_objects_vector<Kinetic_kernel::Point_2> Active_points_2_table;
+  typedef CGAL::Kinetic::Active_objects_vector<Kinetic_kernel::Point_3> Active_points_3_table;
+  // typedef Active_objects_vector<Kinetic_kernel::Weighted_point_3> Active_weighted_points_3_table;
+ 
+  typedef CGAL::Kinetic::Default_instantaneous_kernel<This> Instantaneous_kernel;
+
+  Active_points_1_table* active_points_1_table_handle() const { return ap1_.get();}
+  Active_points_2_table* active_points_2_table_handle() const {return ap2_.get();}
+  Active_points_3_table* active_points_3_table_handle() const {return ap3_.get();}
+  //Active_weighted_points_3_table* active_weighted_points_3_table_handle() const {return awp3_.get();}
+
+  Simulator* simulator_handle() const { return sim_.get();}
+  const Static_kernel& static_kernel_object() const {return k_;}
+  const Kinetic_kernel& kinetic_kernel_object() const {return kk_;}
+ 
+  Instantaneous_kernel instantaneous_kernel_object() const {
+    return Instantaneous_kernel(*this);
+  }
+
+  My_simulation_traits(const Simulator::Time &lb,
+		       const Simulator::Time &ub): sim_(new Simulator(lb, ub)),
+						   ap1_(new Active_points_1_table()),
+						   ap2_(new Active_points_2_table()),
+						   ap3_(new Active_points_3_table())
+  {}
+ 
+  
+  bool is_exact() const {
+    return true;
+  }
+protected:
+  Simulator::Handle sim_;
+  Active_points_1_table::Handle ap1_;
+  Active_points_2_table::Handle ap2_;
+  Active_points_3_table::Handle ap3_;
+  //Active_weighted_points_3_table::Handle awp3_;
+  Static_kernel k_;
+  Kinetic_kernel kk_;
+  Function_kernel fk_;
+};
+
+\end{ccExampleCode}
+
+Now the simulation traits can be used by a kinetic data structure.
+Note that we define active point table for all dimensions. This is
+needed by the \ccc{Kinetic::InstantaneousKernel}, even if they are not
+used.
+

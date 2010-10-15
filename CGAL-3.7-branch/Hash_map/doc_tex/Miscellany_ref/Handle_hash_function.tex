@@ -1,0 +1,64 @@
+% +------------------------------------------------------------------------+
+% | Reference manual page: Handle_hash_function.tex
+% +------------------------------------------------------------------------+
+% | 08.07.2001   Lutz Kettner
+% | Package: Hash_map
+% | 
+\RCSdef{\RCSHandlehashfunctionRev}{$Id$}
+\RCSdefDate{\RCSHandlehashfunctionDate}{$Date$}
+% |
+%%RefPage: end of header, begin of main body
+% +------------------------------------------------------------------------+
+
+
+\begin{ccRefClass}{Handle_hash_function}
+
+\ccDefinition
+  
+The class \ccRefName\ is a model for the \ccc{UniqueHasFunction}
+concept.  It is applicable for all key types with pointer-like
+functionality, such as handles, iterators, and circulators.
+Specifically, for a \ccc{key} value the expression \ccc{&*key} must
+return a unique address.
+
+\ccInclude{CGAL/Handle_hash_function.h}
+
+\ccIsModel
+
+\ccRefConceptPage{UniqueHashFunction}
+
+\ccCreation
+\ccCreationVariable{hash}
+
+\ccConstructor{Handle_hash_function();}{default constructor.}
+
+\ccOperations
+
+\ccMethod{template <class Handle>
+          std::size_t operator()( const Handle& key);}{
+    returns unique hash value for any \ccc{Handle}
+    type for which \ccc{&*key} gives a unique address.
+    \ccCommentHeading{Requirement} The type 
+    \ccc{std::iterator_traits<Handle>::value_type} has to be defined
+    (which it is already for pointers, handles, iterators, and 
+    circulators).}
+
+\ccSeeAlso
+
+\ccRefIdfierPage{CGAL::Unique_hash_map<Key,Data,UniqueHashFunction>}
+
+\ccImplementation
+
+Plain type cast of \ccc{&*key} to \ccc{std::size_t} and devided
+by the size of the \ccc{std::iterator_traits<Handle>::value_type} to
+avoid correlations with the internal table size, which is a power of
+two.
+
+\end{ccRefClass}
+
+% +------------------------------------------------------------------------+
+%%RefPage: end of main body, begin of footer
+% EOF
+% +------------------------------------------------------------------------+
+
+

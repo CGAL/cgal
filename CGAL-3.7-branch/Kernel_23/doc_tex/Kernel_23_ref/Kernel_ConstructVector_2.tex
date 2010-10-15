@@ -1,0 +1,53 @@
+\begin{ccRefFunctionObjectConcept}{Kernel::ConstructVector_2}
+A model for this must provide:
+
+\ccCreationVariable{fo}
+
+\ccMemberFunction{Kernel::Vector_2 operator()(const Kernel::Point_2 &a,
+                                              const Kernel::Point_2 &b);}
+            {introduces the vector $b-a$.}
+
+\ccMemberFunction{Kernel::Vector_2 operator()(const Origin &o,
+                                              const Kernel::Point_2 &b);}
+            {introduces the vector $b$.}
+
+\ccMemberFunction{Kernel::Vector_2 operator()(const Kernel::Point_2 &a,
+                                              const Origin &o);}
+            {introduces the vector $-a$.}
+
+\ccMemberFunction{Kernel::Vector_2 operator()(const Kernel::Segment_2 &s);}
+            {introduces the vector $s.target()-s.source()$.}
+
+\ccMemberFunction{Kernel::Vector_2 operator()(const Kernel::Ray_2 &r);}
+            {introduces a vector having the same direction as $r$.}
+
+\ccMemberFunction{Kernel::Vector_2 operator()(const Kernel::Line_2 &l);}
+            {introduces a vector having the same direction as $l$.}
+
+\ccMemberFunction{Kernel::Vector_2 operator()(const Null_vector &NULL_VECTOR);}
+            {introduces a null vector .}
+
+\ccHidden\ccMemberFunction{Kernel::Vector_2 operator()(int x, int y);}
+            {introduces a vector  initialized to $(x,y)$.}
+
+\ccHidden\ccMemberFunction{Kernel::Vector_2 operator()(double x, double y);}
+            {introduces a vector  initialized to $(x,y)$.}
+
+\ccHidden\ccMemberFunction{Kernel::Vector_2 operator()(const Kernel::RT &hx, const Kernel::RT &hy, const Kernel::RT &hw = Kernel::RT(1));}
+            {introduces a vector  initialized to $(hx/hw,hy/hw)$.
+             If the third argument is not explicitly given, it defaults
+             to \ccStyle{Kernel::RT(1)}.
+             \ccPrecond $hw\neq 0$}
+
+\ccHidden\ccMemberFunction{Kernel::Vector_2 operator()(const Kernel::FT &x, const Kernel::FT &y);}
+            {introduces a vector  initialized to $(x,y)$.}
+
+
+\ccRefines
+\ccc{AdaptableFunctor} (with two arguments)
+
+\ccSeeAlso
+\ccRefIdfierPage{CGAL::Vector_2<Kernel>}\\
+\ccRefIdfierPage{Kernel::ConstructScaledVector_2}\\
+
+\end{ccRefFunctionObjectConcept}

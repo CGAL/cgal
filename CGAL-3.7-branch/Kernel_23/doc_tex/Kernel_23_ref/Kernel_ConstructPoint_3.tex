@@ -1,0 +1,30 @@
+\begin{ccRefFunctionObjectConcept}{Kernel::ConstructPoint_3}
+A model for this must provide:
+
+\ccCreationVariable{fo}
+
+\ccMemberFunction{Kernel::Point_3 operator()(const Origin &ORIGIN);}
+            {introduces a point with Cartesian coordinates$(0,0,0)$.}
+
+\ccHidden\ccMemberFunction{Kernel::Point_3 operator()(int x, int y, int z);}
+            {introduces a point  initialized to $(x,y,z)$.}
+
+\ccHidden\ccMemberFunction{Kernel::Point_3 operator()(double x, double y, double z);}
+            {introduces a point  initialized to $(x,y,z)$.}
+
+\ccHidden\ccMemberFunction{Kernel::Point_3 operator()(const Kernel::RT &hx, const Kernel::RT &hy, const Kernel::RT &hz, const Kernel::RT &hw = Kernel::RT(1));}
+            {introduces a point  initialized to $(hx/hw,hy/hw, hz/hw)$.
+             If the third argument is not explicitly given it defaults
+             to \ccStyle{Kernel::RT(1)}.
+             \ccPrecond \ccc{hw} $\neq$ \ccc{Kernel::RT(0)}. }
+
+\ccHidden\ccMemberFunction{Kernel::Point_3 operator()(const Kernel::FT &x, const Kernel::FT &y, const Kernel::FT &z);}
+            {introduces a point  initialized to $(x,y,z)$.}
+
+\ccRefines
+\ccc{AdaptableFunctor} (with one argument)
+
+\ccSeeAlso
+\ccRefIdfierPage{CGAL::Point_3<Kernel>} \\
+
+\end{ccRefFunctionObjectConcept}

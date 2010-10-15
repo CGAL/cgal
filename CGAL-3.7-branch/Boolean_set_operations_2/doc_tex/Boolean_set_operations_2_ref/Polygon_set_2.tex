@@ -1,0 +1,35 @@
+\ccRefPageBegin
+
+\begin{ccRefClass}{Polygon_set_2<Kernel,Container,Dcel>}
+
+\ccThree{Polygon_set_2<Kernel,Container,Dcel>}{Polygon_2}{}
+\ccThreeToTwo
+    
+\ccDefinition
+%============
+
+The class \ccRefName{} represents sets of linear polygons with holes.
+The first two template parameters (\ccc{Kernel} and \ccc{Container}) 
+are used to instantiate the type \ccc{CGAL::Polygon_2<Kernel,Container>}. 
+This type is used to represents the outer boundary of every set member
+and the boundaries of all holes of every set member.
+
+The third template parameter \ccc{Dcel} should be instantiated with a
+model of the concept \ccc{GeneralPolygonSetDcel}. It is instantiated
+by default with the type \ccc{Gps_default_dcel<Traits>}. You can override 
+this default, with a different {\sc Dcel} class, typically an extension
+of the \ccc{Gps_default_dcel} class template. Overriding the default is 
+necessary only if you intend to obtain the underlying internal arrangement 
+and process it further.
+
+\ccInclude{CGAL/Polygon_set_2.h}
+
+\ccInheritsFrom
+  \ccc{General_polygon_set_2<Gps_segment_traits_2<Kernel,Container> >}
+
+\ccSeeAlso
+  \ccc{General_polygon_set_2}\lcTex{(\ccRefPage{CGAL::General_polygon_set_2<Traits,Dcel>})}\\
+  \ccc{Gps_segment_traits_2}\lcTex{(\ccRefPage{CGAL::Gps_segment_traits_2<Kernel,Container,ArrSegmentTraits>})}
+
+\end{ccRefClass}
+\ccRefPageEnd

@@ -1,0 +1,80 @@
+% +------------------------------------------------------------------------+
+% | Reference manual page: DelaunayConstrainedTriangulationTraits_2.tex
+% +------------------------------------------------------------------------+
+% | 05.02.2002   Mariette Yvinec
+% | Package: Triangulation_2
+% | 
+\RCSdef{\RCSConstrainedDelaunayTriangulationTraitsRev}{$Id$}
+\RCSdefDate{\RCSConstrainedDelaunayTriangulationTraitsDate}{$Date$}
+% |
+%%RefPage: end of header, begin of main body
+% +------------------------------------------------------------------------+
+
+
+\begin{ccRefConcept}{ConstrainedDelaunayTriangulationTraits_2}
+
+%% \ccHtmlCrossLink{}     %% add further rules for cross referencing links
+%% \ccHtmlIndexC[concept]{} %% add further index entries
+
+\ccDefinition
+  
+
+The concept \ccRefName\ defines the requirements for the geometric
+traits class of a constrained Delaunay  triangulation
+that supports intersections of input constraints.
+This is the case
+when the template parameter \ccc{Itag} 
+of ( \ccc{Constrained_Delaunay_triangulation_2<Traits,Tds,Itag>})
+is instantiated
+by one of the tag classes \ccc{Exact_intersections_tag} or
+\ccc{Exact_predicates_tag}). 
+The concept \ccRefName\  refines both the concept
+\ccc{DelaunayTriangulationTraits_2} and the concept
+\ccc{ConstrainedTriangulationTraits_2}.
+
+\ccRefines
+\ccc{DelaunayTriangulationTraits_2} \\
+\ccc{ConstrainedTriangulationTraits_2}
+
+
+
+\ccCreationVariable{traits}  %% choose variable name
+
+
+
+\ccHasModels
+The kernels of \cgal\ are models for this traits class.\\
+\ccc{Triangulation_euclidean_traits_xy<K>}\\
+\ccc{Triangulation_euclidean_traits_yz<K>}\\
+\ccc{Triangulation_euclidean_traits_xz<K>}
+
+\ccSeeAlso
+\ccc{TriangulationTraits_2} \\
+\ccc{ConstrainedTriangulationTraits_2} \\
+\ccc{Constrained_triangulation_2<Gt,Tds,Itag>} \\
+\ccc{Constrained_Delaunay_triangulation_2<Gt,Tds,Itag>} 
+
+
+%\ccExample
+
+%A short example program.
+%Instead of a short program fragment, a full running program can be
+%included using the 
+%\verb|\ccIncludeExampleCode{Package/ConstrainedTriangulationPlusTraits_2_prog.cpp}| 
+%macro. The program example would be part of the source code distribution and
+%also part of the automatic test suite.
+
+%\begin{ccExampleCode}
+%void your_example_code() {
+%}
+%\end{ccExampleCode}
+
+%% \ccIncludeExampleCode{Package/ConstrainedTriangulationPlusTraits_2_prog.cpp}
+
+\end{ccRefConcept}
+
+% +------------------------------------------------------------------------+
+%%RefPage: end of main body, begin of footer
+% EOF
+% +------------------------------------------------------------------------+
+

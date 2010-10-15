@@ -1,0 +1,29 @@
+Subject: CGAL 3.5.1 Released, Computational Geometry Algorithms Library
+Body:
+
+The CGAL Open Source Project is pleased to announce the release 3.5.1 of
+CGAL, the Computational Geometry Algorithms Library.
+
+Version 3.5.1 is a bug-fix release for version 3.5. No new feature has 
+been added in 3.5.1.  The following corrections have been made:
+
+Documentation:
+  - Fixes in the documentation (the online documentation of CGAL-3.5 is now
+    based on CGAL-3.5.1).
+  - Fixes to the bibliographic references.
+
+Windows installer:
+  - The Windows installer of CGAL-3.5.1 fixes an issue with downloading of
+    precompiled binaries of the external library TAUCS.
+
+Bug fixes in the following CGAL packages:
+  - AABB tree:
+    - Fix a linker issue in do_intersect(Bbox_3,Bbox_3).
+    - Fix compilation issue in do_intersect(Bbox_3,Ray_3) when using the
+      parameters in this order.
+  - 3D Mesh Generation:
+    - Fix a bug in initial points construction of a polyhedral surface.
+
+
+For further information and for downloading the library and its
+documentation, please visit the CGAL web site: http://www.cgal.org/

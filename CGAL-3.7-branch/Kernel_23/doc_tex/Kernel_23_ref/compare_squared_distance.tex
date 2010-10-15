@@ -1,0 +1,38 @@
+\begin{ccRefFunction}{compare_squared_distance}
+
+\ccFunction{Comparison_result
+compare_squared_distance(const Point_2<Kernel>& p,
+                 const Point_2<Kernel>& q,
+                 const typename Kernel::FT& d2);}
+          {compares the squared distance of points \ccStyle{p} and
+           \ccStyle{q} to \ccStyle{d2}.}
+
+\ccFunction{Comparison_result
+compare_squared_distance(const Point_3<Kernel>& p,
+                 const Point_3<Kernel>& q,
+                 const typename Kernel::FT& d2);}
+          {compares the squared distance of points \ccStyle{p} and
+           \ccStyle{q} to \ccStyle{d2}.}
+
+% Deprecated: use compare_distance(..) instead
+% \ccFunction{Comparison_result
+% compare_squared_distance(const Point_3<Kernel>& p,
+%                  const Point_3<Kernel>& q,
+%                  const Point_3<Kernel>& r,
+%                  const Point_3<Kernel>& s);}
+%           {compares the squared distance of points \ccStyle{p} and
+%            \ccStyle{q} to the squared distance of points \ccStyle{r} and
+%            \ccStyle{s}.}
+
+\ccSeeAlso
+\ccRefIdfierPage{CGAL::compare_distance_to_point} \\
+\ccRefIdfierPage{CGAL::compare_signed_distance_to_line} \\
+\ccRefIdfierPage{CGAL::compare_signed_distance_to_plane} \\
+\ccRefIdfierPage{CGAL::has_larger_distance_to_point} \\
+\ccRefIdfierPage{CGAL::has_larger_signed_distance_to_line} \\
+\ccRefIdfierPage{CGAL::has_larger_signed_distance_to_plane} \\
+\ccRefIdfierPage{CGAL::has_smaller_distance_to_point} \\
+\ccRefIdfierPage{CGAL::has_smaller_signed_distance_to_line} \\
+\ccRefIdfierPage{CGAL::has_smaller_signed_distance_to_plane} \\
+
+\end{ccRefFunction}

@@ -1,0 +1,64 @@
+% +------------------------------------------------------------------------+
+% | Reference manual page: grid_simplify_point_set.tex
+% +------------------------------------------------------------------------+
+% | 02.06.2008   Pierre Alliez, Laurent Saboret, Gael Guennebaud
+% | Package: Point_set_processing_3
+% |
+\RCSdef{\RCSmergesimplificationRev}{$Id$}
+\RCSdefDate{\RCSmergesimplificationDate}{$Date$}
+% |
+\ccRefPageBegin
+%%RefPage: end of header, begin of main body
+% +------------------------------------------------------------------------+
+
+
+\begin{ccRefFunction}{grid_simplify_point_set}  %% add template arg's if necessary
+
+%% \ccHtmlCrossLink{}     %% add further rules for cross referencing links
+%% \ccHtmlIndexC[function]{} %% add further index entries
+
+\ccDefinition
+
+Function \ccc{CGAL::grid_simplify_point_set()} considers a regular grid covering the bounding box of the input point set, and clusters all points sharing the same cell of the grid by picking as representant one arbitrarily chosen point.
+
+This method modifies the order of input points so as to pack all remaining points first, and returns an iterator over the first point to remove (see erase-remove idiom). For this reason it should not be called on sorted containers.
+
+\ccInclude{CGAL/grid_simplify_point_set.h}
+
+% The section below is automatically generated. Do not edit!
+%START-AUTO(\ccDefinition)
+
+% Reduce left margin
+\ccThree{123456789012345}{6789012}{}
+
+\ccFunction{template<typename ForwardIterator, typename PointPMap, typename Kernel> ForwardIterator grid_simplify_point_set(ForwardIterator first, ForwardIterator beyond, PointPMap point_pmap, double epsilon, const Kernel& kernel);}
+{
+Merges points which belong to the same cell of a grid of cell size = epsilon.  \\
+This method modifies the order of input points so as to pack all remaining points first, and returns an iterator over the first point to remove (see erase-remove idiom). For this reason it should not be called on sorted containers.
+\ccPrecond epsilon $>$ 0.
+\ccCommentHeading{Template Parameters}  \\
+\ccc{ForwardIterator}: iterator over input points. \ccc{PointPMap}: is a model of \ccc{boost::ReadablePropertyMap} with a \ccc{value_type} = \ccc{Point_3<Kernel>}. It can be omitted if \ccc{ForwardIterator} \ccc{value_type} is convertible to \ccc{Point_3<Kernel>}. \ccc{Kernel}: Geometric traits class. It can be omitted and deduced automatically from \ccc{PointPMap} \ccc{value_type}.
+\ccCommentHeading{Returns} iterator over the first point to remove.
+\ccCommentHeading{Parameters}  \\
+\ccc{first}: iterator over the first input point. \ccc{beyond}: past-the-end iterator over the input points. \ccc{point_pmap}: property map \ccc{ForwardIterator} -$>$ \ccc{Point_3}. \ccc{epsilon}: tolerance value when merging 3D points. \ccc{kernel}: geometric traits.
+}
+\ccGlue
+
+%END-AUTO(\ccDefinition)
+
+\ccSeeAlso
+
+\ccRefIdfierPage{CGAL::random_simplify_point_set}  \\
+
+\ccExample
+
+See \ccc{grid_simplification_example.cpp}.
+
+\end{ccRefFunction}
+
+% +------------------------------------------------------------------------+
+%%RefPage: end of main body, begin of footer
+\ccRefPageEnd
+% EOF
+% +------------------------------------------------------------------------+
+

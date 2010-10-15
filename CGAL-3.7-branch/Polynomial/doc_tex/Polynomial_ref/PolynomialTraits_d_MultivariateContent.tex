@@ -1,0 +1,38 @@
+\begin{ccRefConcept}{PolynomialTraits_d::MultivariateContent}
+%\begin{ccAdvanced}
+\ccDefinition
+
+This \ccc{AdaptableUnaryFunction} computes the content of a 
+\ccc{PolynomialTraits_d::Polynomial_d} with respect to the symmetric 
+view on the polynomial, that is, it computes the gcd of all innermost coefficients. 
+
+This functor is well defined if \ccc{PolynomialTraits_d::Innermost_coefficient_type} is a 
+\ccc{Field} or a \ccc{UniqueFactorizationDomain}. 
+
+\ccRefines 
+\ccc{AdaptableUnaryFunction}\\
+\ccc{CopyConstructible}\\
+\ccc{DefaultConstructible}\\
+
+\ccTypes
+
+\ccCreationVariable{fo}
+\ccSetThreeColumns{xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx xxxxxx}{xxx}{}
+\ccTypedef{typedef PolynomialTraits_d::Innermost_coefficient_type   result_type;}{}
+\ccGlue
+\ccTypedef{typedef PolynomialTraits_d::Polynomial_d          argument_type;}{}
+
+\ccOperations
+
+\ccMethod{result_type operator()(argument_type p);}
+         {Computes the $gcd$ of all innermost coefficients of $p$. }
+
+%\ccHasModels
+
+\ccSeeAlso
+
+\ccRefIdfierPage{Polynomial_d}\\
+\ccRefIdfierPage{PolynomialTraits_d}\\
+
+%\end{ccAdvanced}
+\end{ccRefConcept}

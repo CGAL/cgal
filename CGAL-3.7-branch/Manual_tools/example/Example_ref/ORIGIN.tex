@@ -1,0 +1,54 @@
+% +------------------------------------------------------------------------+
+% | Reference manual page: ORIGIN.tex
+% +------------------------------------------------------------------------+
+% | 19.07.2000   Lutz Kettner
+% | Package: Example
+% | 
+\RCSdef{\RCSORIGINRev}{$Id$}
+\RCSdefDate{\RCSORIGINDate}{$Date$}
+% |
+%%RefPage: end of header, begin of main body
+% +------------------------------------------------------------------------+
+
+
+\begin{ccRefConstant}{ORIGIN}  %% add template arg's if necessary
+
+%% \ccHtmlCrossLink{}     %% add further rules for cross referencing links
+%% \ccHtmlIndexC[variable]{} %% add further index entries
+
+\ccDefinition
+  
+The constant \ccRefName\ does this and that.
+
+\ccInclude{ORIGIN.h}
+
+\ccGlobalVariable{type ORIGIN = init_value;}
+
+\ccSeeAlso
+
+\ccc{Some_other_variable},
+\ccc{some_other_function}.
+
+\ccExample
+
+A short example program.
+Instead of a short program fragment, a full running program can be
+included using the 
+\verb|\ccIncludeExampleCode{Example/ORIGIN_prog.C}| 
+macro. The program example would be part of the source code distribution and
+also part of the automatic test suite.
+
+\begin{ccExampleCode}
+void your_example_code() {
+}
+\end{ccExampleCode}
+
+%% \ccIncludeExampleCode{Example/ORIGIN_prog.C}
+
+\end{ccRefConstant}
+
+% +------------------------------------------------------------------------+
+%%RefPage: end of main body, begin of footer
+% EOF
+% +------------------------------------------------------------------------+
+

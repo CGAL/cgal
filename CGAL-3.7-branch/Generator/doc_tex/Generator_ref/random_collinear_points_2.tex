@@ -1,0 +1,46 @@
+\begin{ccRefFunction}{random_collinear_points_2}
+
+\ccDefinition
+
+\ccInclude{CGAL/point_generators_2.h}
+
+\def\ccLongParamLayout{\ccTrue}
+\ccFunction{template <class RandomAccessIterator, class OutputIterator>
+    OutputIterator random_collinear_points_2( RandomAccessIterator first,
+        RandomAccessIterator last, 
+        std::size_t n, OutputIterator first2, Random& rnd = default_random,
+        Creator creator = Creator_uniform_2<Kernel_traits<P>::Kernel::RT,P>);}
+{ randomly chooses two points from the range $[\ccc{first},\ccc{last})$,
+    creates a random third point on the segment connecting these two
+    points, writes it to \ccc{first2}, and repeats this $n$ times, thus
+    writing $n$ points to \ccc{first2} that are collinear with points
+    in the range $[\ccc{first},\ccc{last})$.
+    Three random numbers are needed from \ccc{rnd} for each point.
+    Returns the value of \ccc{first2} after inserting the $n$ points.
+}
+\def\ccLongParamLayout{\ccFalse}
+
+\ccRequirements
+\begin{itemize}
+  \item  \ccc{Creator} must be a function object accepting two
+         \ccc{double} values $x$ and $y$ and returning an initialized point
+         \ccc{(x,y)} of type \ccc{P}. Predefined implementations for these
+         creators like the default can be found in
+         Section~\ref{sectionCreatorFunctionObjects}. 
+  \item The \ccc{value_type} of the \ccc{RandomAccessIterator} must be 
+        assignable to \ccc{P}.  \ccc{P} is equal to the \ccc{value_type} of the
+        \ccc{RandomAccessIterator} when using the default initializer.
+  \item The expressions \ccc{to_double((*first).x())} and
+        \ccc{to_double((*first).y())} must result in the respective
+        coordinate values.
+\end{itemize}
+
+\ccSeeAlso
+
+\ccRefIdfierPage{CGAL::perturb_points_2} \\
+\ccRefIdfierPage{CGAL::points_on_segment_2} \\
+\ccRefIdfierPage{CGAL::points_on_square_grid_2} \\
+\ccRefIdfierPage{CGAL::random_selection} \\
+\ccc{std::random_shuffle} \\
+
+\end{ccRefFunction}

@@ -1,0 +1,225 @@
+% +------------------------------------------------------------------------+
+% | Reference manual page: Arr_with_history_2.tex
+% +------------------------------------------------------------------------+
+% | 
+% | Package: Arrangement_2
+% | 
+% +------------------------------------------------------------------------+
+
+\ccRefPageBegin
+
+\begin{ccRefClass}{Arrangement_with_history_2<Traits,Dcel>}
+\label{arr_ref:arr_with_hist}
+    
+\ccDefinition
+%============
+
+An object \ccc{arr} of the class \ccClassTemplateName\ represents the
+planar subdivision induced by a set of input curves $\calC$.
+The arrangement is represented as a doubly-connected edge-list ({\sc Dcel}).
+As is the case for the \ccc{Arrangement_2<Traits,Dcel>}, each {\sc Dcel}
+vertex is associated with a point and each edge is associated with an
+$x$-monotone curve whose interior is disjoint from all other edges and
+vertices. Each such $x$-monotone curve is a subcurve of some 
+$C \in \calC$ --- or may represent an overlap among several curves
+in $\calC$.
+
+The \ccClassTemplateName\ class-template extends the \ccc{Arrangement_2}
+class-template by keeping an additional container of input curves 
+representing $\calC$, and by maintaining a cross-mapping between these
+curves and the arrangement edges they induce. This way it is possible
+to determine the inducing curve(s) of each arrangement edge. This mapping 
+also allows the traversal of input curves, and the traversal of edges
+induced by each curve.
+
+The \ccClassTemplateName\ template has two parameters:
+\begin{itemize}
+\item The \ccc{Traits} template-parameter should be instantiated with
+a model of the \ccc{ArrangementTraits_2} concept. The traits
+class defines the \ccc{Curve_2} type, which represents an input curve.
+It also defines the types of $x$-monotone curves and two-dimensional
+points, namely \ccc{X_monotone_curve_2} and \ccc{Point_2},
+respectively, and supports basic geometric predicates on them.
+\item The \ccc{Dcel} template-parameter should be instantiated with
+a class that is a model of the \ccc{ArranagementDcelWithRebind} concept. The
+value of this parameter is by default
+\ccc{Arr_default_dcel<Traits>}.
+\end{itemize}
+
+\ccInheritsFrom\ccc{Arrangement_2<Traits,Dcel>}
+
+\ccInclude{CGAL/Arrangement_with_history_2.h}
+
+\ccTypes
+%=======
+
+\ccTypedef{typedef Arrangement_with_history_2<Traits_2,Dcel> Self;}
+  {a private type used as an abbreviation of the \ccRefName\ type hereafter.}
+  
+\ccNestedType{Traits_2}{the traits class in use.}
+\ccGlue
+\ccNestedType{Dcel}{the {\sc Dcel} representation of the arrangement.}
+
+\ccTypedef{typedef typename Traits_2::Point_2 Point_2;}
+  {the point type, as defined by the traits class.}
+\ccGlue
+\ccTypedef{typedef typename Traits_2::X_monotone_curve_2 X_monotone_curve_2;}
+  {the $x$-monotone curve type, as defined by the traits class.}
+\ccGlue
+\ccTypedef{typedef typename Traits_2::Curve_2 Curve_2;}
+  {the curve type, as defined by the traits class.}
+
+In addition, the nested types \ccc{Vertex}, \ccc{Halfedge} and \ccc{Face}
+are defined, as well as all handle, iterator and circualtor types, as
+defined by the \ccc{Arrangement_2}
+class-template~\lcTex{(\ccRefPage{CGAL::Arrangement_2<Traits,Dcel>})}.
+
+\ccNestedType{Curve_handle}{a handle for an input curve.}
+\ccGlue
+\ccNestedType{Curve_iterator}{a bidirectional iterator over the
+       curves that induce the arrangement. Its value-type is
+       \ccc{Curve_2}.}
+
+\ccNestedType{Induced_edge_iterator}
+       {an iterator over the edges induced by an input curve.
+        Its value type is \ccc{Halfedge_handle}.}
+
+\ccNestedType{Originating_curve_iterator}
+    {an iterator for the curves that originate a given arrangement edge.
+     Its value type is \ccc{Curve_handle}.}
+
+\ccCreation
+\ccCreationVariable{arr}
+%=======================
+    
+\ccConstructor{Arrangement_with_history_2<Traits, Dcel>();} 
+    {constructs an empty arrangement containing one unbounded face,
+     which corresponds to the
+     whole plane.}
+    
+\ccConstructor{Arrangement_with_history_2<Traits, Dcel>(const Self& other);}
+    {copy constructor.}
+        
+\ccConstructor{Arrangement_with_history_2<Traits, Dcel>(Traits_2 *traits);}
+    {constructs an empty arrangement that uses the given \ccc{traits}
+     instance for performing the geometric predicates.}
+
+
+\ccHeading{Assignment Methods}
+%=============================
+
+\ccMethod{Self& operator= (other);}
+    {assignment operator.}
+
+\ccMethod{void assign (const Self& other);}
+    {assigns the contents of another arrangement.}
+
+\ccMethod{void clear ();}
+    {clears the arrangement.}
+
+
+\ccAccessFunctions
+%=================
+
+See the \ccc{Arrangement_2} referrence 
+pages~\lcTex{(\ccRefPage{CGAL::Arrangement_2<Traits,Dcel>})} for the full list.
+
+
+$\bullet$ {\sl Accessing the Input Curves:}
+%---------------------------------------
+
+\ccMethod{Size number_of_curves() const;}
+    {returns the number of input curves that induce the arrangement.}
+
+\ccMethod{Curve_iterator curves_begin();}
+    {returns the begin-iterator of the curves inducing the arrangement.}
+\ccGlue    
+\ccMethod{Curve_iterator curves_end();}
+    {returns the past-the-end iterator of the curves inducing the arrangement.}
+
+\ccMethod{Size number_of_induced_edges (Curve_handle ch) const;}
+    {returns the number of arrangement edges induced by the curve \ccc{ch}.}
+
+\ccMethod{Induced_edge_iterator 
+          induced_edges_begin (Curve_handle ch) const;}
+    {returns the begin-iterator of the edges induced by the curve \ccc{ch}.}
+\ccGlue
+\ccMethod{Induced_edge_iterator 
+          induced_edges_end (Curve_handle ch) const;}
+    {returns the past-the-end iterator of the edges induced by the curve \ccc{ch}.}
+    
+\ccMethod{Size number_of_originating_curves (Halfedge_handle e) const;}
+    {returns the number of input curves that originate the edge \ccc{e}.}
+
+\ccMethod{Originating_curve_iterator 
+          originating_curves_begin (Halfedge_handle e) const;}
+    {returns the begin-iterator of the curves originating the edge \ccc{e}.}
+\ccGlue
+\ccMethod{Originating_curve_iterator 
+          originating_curves_end (Halfedge_handle e) const;}
+    {returns the past-the-end iterator  of the curves originating the edge 
+     \ccc{e}.}
+    
+\ccModifiers
+%===========
+
+See the \ccc{Arrangement_2} referrence
+pages~\lcTex{(\ccRefPage{CGAL::Arrangement_2<Traits,Dcel>})} for the full
+list of functions for modifying arrangement vertices.
+
+$\bullet$ {\sl Modifying Arrangement Edges:}
+%----------------------------------------
+
+The following functions override their counterparts in the \ccc{Arrangement_2}
+class, as they also maintain the cross-relationships between the input
+curves and the edges they induce.
+
+\ccMethod{Halfedge_handle split_edge (Halfedge_handle e,
+                                      const Point_2& p);}
+  {splits the edge \ccc{e} into two edges (more precisely, into two halfedge
+   pairs), at a given split point \ccc{p}.
+   The function returns a handle for the halfedge whose source is the same
+   as \ccc{e->source()} and whose target vertex is the split point.
+   \ccPrecond{\ccc{p} lies in the interior of the curve associated with
+   \ccc{e}.}}
+
+\ccMethod{Halfedge_handle merge_edge (Halfedge_handle e1,
+                                      Halfedge_handle e2);}
+  {merges the edges represented by \ccc{e1} and \ccc{e2} into
+   a single edge. 
+   The function returns a handle for one of the merged halfedges.
+   \ccPrecond{\ccc{e1} and \ccc{e2} share a common end-vertex, of degree
+   $2$, and the $x$-monotone curves associated with \ccc{e1} and \ccc{e2}
+   are mergeable into a single $x$-monotone curves.}}
+
+\ccMethod{Face_handle remove_edge(Halfedge_handle e,
+                                  bool remove_source = true,
+                                  bool remove_target = true);}
+  {removes the edge \ccStyle{e} from the arrangement. Since the \ccc{e} may
+   be the only edge incident to its source vertex (or its target vertex),
+   this vertex can be removed as well. The flags \ccc{remove_source} and
+   \ccc{remove_target} indicate whether the endpoints of \ccc{e} should be
+   removed, or whether they should be left as isolated vertices in the
+   arrangement.
+   If the operation causes two faces to merge, the merged face is returned.
+   Otherwise, the face to which the edge was incident is returned.}
+
+\ccSeeAlso
+    \ccc{ArrangementDcel}\lcTex{ 
+      (\ccRefPage{ArrangementDcel})}\\
+    \ccc{Arr_default_dcel<Traits>}\lcTex{ 
+      (\ccRefPage{CGAL::Arr_default_dcel<Traits>})}\\
+    \ccc{ArrangementTraits_2}\lcTex{ 
+      (\ccRefPage{ArrangementTraits_2})}\\
+    \ccc{Arrangement_2<Traits,Dcel>}\lcTex{ 
+      (\ccRefPage{CGAL::Arrangement_2<Traits,Dcel>})} \\
+    \ccc{insertion functions}\lcTex{ 
+      (\ccRefPage{CGAL::insert})} \\
+    \ccc{removal functions}\lcTex{ 
+      (\ccRefPage{CGAL::remove_curve})} \\
+    \ccc{overlaying arrangements}\lcTex{ 
+      (\ccRefPage{CGAL::overlay})}
+
+\end{ccRefClass}
+
+\ccRefPageEnd

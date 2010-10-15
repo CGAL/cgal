@@ -1,0 +1,84 @@
+\begin{ccRefFunctionObjectConcept}{SphericalKernel::Split_3}
+
+\ccCreationVariable{fo}
+
+A model \ccVar\ of this type must provide:
+
+\ccMemberFunction{void operator()
+	(const SphericalKernel::Circular_arc_3 &a, 
+	const SphericalKernel::Circular_arc_point_3 &p,
+	SphericalKernel::Circular_arc_3 &a1, 
+	SphericalKernel::Circular_arc_3 &a2);}
+{Splits arc $a$ at point $p$, which creates arcs $a1$ and $a2$.
+\ccPrecond{The point \ccc{p} lies in the interior of the input arc \ccc{a}.}}
+
+\ccMemberFunction{void operator()
+	(const SphericalKernel::Line_arc_3 &l, 
+	 const SphericalKernel::Circular_arc_point_3 &p,
+	 SphericalKernel::Line_arc_3 &l1, SphericalKernel::Line_arc_3 &l2);}
+{Same for a line arc.}
+
+\end{ccRefFunctionObjectConcept}
+
+\begin{ccRefFunctionObjectConcept}{SphericalKernel::MakeThetaMonotone_3}
+
+\ccCreationVariable{fo}
+
+A model \ccVar\ of this concept must provide:
+
+% \ccConstructor{MakeThetaMonotone_3(const Sphere_3 &sphere)}
+% {Constructs a functor \ccVar\ to build $\theta$-monotone circular arcs from a circle or a circular arc, 
+% relatively to \ccc{sphere}.}
+
+\ccMemberFunction{
+  template<class OutputIterator>
+  OutputIterator operator()
+	(const SphericalKernel::Circular_arc_3 &a,OutputIterator res);}
+{
+Copies in the output iterator the results of the split of arc $a$ at the $\theta$-extremal
+point(s) of its supporting circle relatively to the context sphere used by the function \ccc{SphericalKernel::make_theta_monotone_3_object}
+(Refer to section~\ref{section-SK-objects} for the definition of these points.)
+The output iterator may contain no arc (if the supporting circle is a bipolar circle),
+one arc (if $a$ is already $\theta$-monotone), two arcs (if only one $\theta$-extremal point is on $a$), or
+three arcs (if two $\theta$-extremal points are on $a$).
+\ccPrecond{\ccc{a} lies on the context sphere used by the function \ccc{SphericalKernel::make_theta_monotone_3_object},
+and the supporting circle of \ccc{a} is not bipolar. }
+}
+
+
+\ccMemberFunction{
+  template<class OutputIterator>
+  OutputIterator operator()
+	(const SphericalKernel::Circle_3 &c,OutputIterator res);}
+{Copies in the output iterator the results of the split of circle $c$ at its $\theta$-extremal
+point(s) relatively to the context sphere used by the function \ccc{SphericalKernel::make_theta_monotone_3_object}.
+(Refer to section~\ref{section-SK-objects} for the definition of these points.)
+The output iterator may contain no arc (if the circle is bipolar),
+one arc (if the circle is polar or threaded), or two arcs (if the circle is normal).
+
+The source and target are such that
+the circular arc is the set of points of the circle that lie between the source 
+and the target when traversing the circle counterclockwise
+seen from the positive side of the plane of the circle.
+
+In this definition, we say that a normal vector (a,b,c) is \textit{positive} if 
+$(a>0) || (a==0) \&\& (b>0) || (a==0)\&\&(b==0)\&\&(c>0)$.
+
+
+For a threaded circle, the arc returned the one built using the full circle.
+
+For a polar circle, the arc returned is the full circle, the source and target correspond to the pole the circle goes through.
+\ccPrecond{\ccc{c} lies on the context sphere used by the function \ccc{SphericalKernel::make_theta_monotone_3_object},
+and \ccc{c} is not bipolar.}
+}
+
+\ccSeeAlso
+
+\ccRefIdfierPage{SphericalKernel::IsThetaMonotone_3}
+
+\end{ccRefFunctionObjectConcept}
+
+
+
+
+

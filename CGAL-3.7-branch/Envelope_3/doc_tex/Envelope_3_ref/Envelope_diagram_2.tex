@@ -1,0 +1,157 @@
+% +------------------------------------------------------------------------+
+% | Reference manual page: Envelope_diagram.tex
+% +------------------------------------------------------------------------+
+% | 
+% | Package: Envelope_3
+% | 
+% +------------------------------------------------------------------------+
+
+\ccRefPageBegin
+
+\begin{ccRefClass}{Envelope_diagram_2<EnvTraits>}
+
+\ccDefinition
+%============
+
+The class-template \ccClassTemplateName\ represents the minimization
+diagram that corresponds to the lower envelope of a set of curves, or the
+maximization diagram that corresponds to their upper envelope. It is
+parameterized by a traits class that must be a model of the
+\ccc{EnvelopeTraits_3} concept, and is basically a planar arrangement of
+$x$-monotone curves, as defined by this traits class. These $x$-monotone
+curves are the projections of boundary curves of $xy$-monotone surfaces,
+or the intersection curves between such surfaces, onto the $xy$-plane.
+Thus, it is possible to traverse the envelope diagram using the
+methods inherited from the \ccc{Arrangement_2} class.
+
+The envelope diagram extends the arrangement features (namely the vertices,
+halfedges, and faces), such that each feature stores a container of
+originators --- namely, the $xy$-monotone surfaces (instances of the type
+\ccc{EnvTraits::Xy_monotone_surface_3}) that induce the lower envelope
+(or the upper envelope, in case of a maximization diagram) over this
+feature. The envelope diagram provides access methods to these originators.
+
+\ccInclude{CGAL/envelope_3.h}
+ 
+\ccInheritsFrom
+    \ccc{Arrangement_2<EnvTraits>}
+
+\ccTypes
+%=======
+
+\ccTypedef{typedef Envelope_diagram_2<EnvTraits> Self;}{}
+\ccGlue
+\ccTypedef{typedef Arrangement_2<EnvTraits> Base;}{}
+
+\ccNestedType{Surface_const_iterator}
+{an iterator for the $xy$-monotone surfaces that induce a diagram feature.
+ Its value-type is \ccc{EnvTraits::Xy_monotone_surface_3}.}
+
+\ccCreation
+\ccCreationVariable{diag}
+%========================
+
+\ccConstructor{Envelope_diagram_2();} 
+    {constructs an empty diagram containing one unbounded face,
+     which corresponds to the entire plane and has no originators.}
+    
+\ccConstructor{Envelope_diagram_2 (const Self& other);}
+    {copy constructor.}
+        
+\ccConstructor{Envelope_diagram_2 (EnvTraits *traits);}
+    {constructs an empty diagram that uses the given \ccc{traits}
+     instance for performing the geometric predicates.}
+
+%~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+\subsection*{Class Envelope\_diagram\_2$<$EnvTraits$>$::Vertex}
+%==============================================================
+
+\begin{ccClass}{Envelope_diagram_2<EnvTraits>::Vertex}
+
+\ccInheritsFrom
+    \ccc{Base::Vertex}
+
+\ccCreationVariable{v}
+\ccAccessFunctions
+%-----------------
+
+\ccMethod{size_t number_of_surfaces () const;}
+{returns the number of $xy$-monotone surfaces that induce \ccVar.}
+
+\ccMethod{Surface_const_iterator surfaces_begin () const;}
+{returns an iterator for the first $xy$-monotone surface that induces \ccVar.}
+\ccGlue
+\ccMethod{Surface_const_iterator surfaces_end () const;}
+{returns a past-the-end iterator for the $xy$-monotone surfaces that induce
+ \ccVar.}
+ \ccMethod{Xy_monotone_surface_3 surface () const;}
+{returns the first $xy$-monotone surface that induce \ccVar.
+ \ccPrecond{The number of surfaces is not 0.}}
+
+\end{ccClass}
+
+%~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+\subsection*{Class Envelope\_diagram\_2$<$EnvTraits$>$::Halfedge}
+%================================================================
+
+\begin{ccClass}{Envelope_diagram_2<EnvTraits>::Halfedge}
+
+\ccInheritsFrom
+    \ccc{Base::Halfedge}
+
+\ccCreationVariable{e}
+\ccAccessFunctions
+%-----------------
+
+\ccMethod{size_t number_of_surfaces () const;}
+{returns the number of $xy$-monotone surfaces that induce \ccVar.}
+
+\ccMethod{Surface_const_iterator surfaces_begin () const;}
+{returns an iterator for the first $xy$-monotone surface that induces \ccVar.}
+\ccGlue
+\ccMethod{Surface_const_iterator surfaces_end () const;}
+{returns a past-the-end iterator for the $xy$-monotone surfaces that induce
+ \ccVar.}
+ \ccMethod{Xy_monotone_surface_3 surface () const;}
+{returns the first $xy$-monotone surface that induce \ccVar.
+ \ccPrecond{The number of surfaces is not 0.}}
+
+\end{ccClass}
+
+%~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+\subsection*{Class Envelope\_diagram\_2$<$EnvTraits$>$::Face}
+%============================================================
+
+\begin{ccClass}{Envelope_diagram_2<EnvTraits>::Face}
+
+\ccInheritsFrom
+    \ccc{Base::Face}
+
+\ccCreationVariable{f}
+\ccAccessFunctions
+%-----------------
+
+\ccMethod{size_t number_of_surfaces () const;}
+{returns the number of $xy$-monotone surfaces that induce \ccVar.}
+
+\ccMethod{Surface_const_iterator surfaces_begin () const;}
+{returns an iterator for the first $xy$-monotone surface that induces \ccVar.}
+\ccGlue
+\ccMethod{Surface_const_iterator surfaces_end () const;}
+{returns a past-the-end iterator for the $xy$-monotone surfaces that induce
+ \ccVar.}
+ \ccMethod{Xy_monotone_surface_3 surface () const;}
+{returns the first $xy$-monotone surface that induce \ccVar.
+ \ccPrecond{The number of surfaces is not 0.}}
+
+\end{ccClass}
+
+%~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+\end{ccRefClass}
+
+\ccRefPageEnd
+

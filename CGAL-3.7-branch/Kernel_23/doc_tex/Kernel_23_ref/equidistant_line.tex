@@ -1,0 +1,12 @@
+\begin{ccRefFunction}{equidistant_line}
+
+\ccFunction{Line_3<Kernel> equidistant_line(const Point_3<Kernel> &p,
+                                            const Point_3<Kernel> &q,
+                                            const Point_3<Kernel> &r);}
+{constructs the line which is at the same distance from the three points
+\ccc{p}, \ccc{q} and \ccc{r}.
+%The bisector is oriented in such a way that \ccc{p} lies on its
+%positive side.
+\ccPrecond{\ccc{p}, \ccc{q} and \ccc{r} are not collinear.}}
+
+\end{ccRefFunction}

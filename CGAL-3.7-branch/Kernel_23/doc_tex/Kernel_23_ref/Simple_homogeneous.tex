@@ -1,0 +1,34 @@
+\begin{ccRefClass}{Simple_homogeneous<RingNumberType>}
+\ccInclude{CGAL/Simple_homogeneous.h}
+
+\ccDefinition
+A model for a \ccc{Kernel} using homogeneous coordinates to represent the
+geometric objects. In order for \ccRefName\ to model Euclidean geometry
+in $E^2$ and/or $E^3$, for some mathematical ring $E$ (\textit{e.g.},
+the integers \Z\ or the rationals \Q), the template parameter \ccc{RingNumberType}
+must model the mathematical ring $E$.  That is, the ring operations on this
+number type must compute the mathematically correct results.  If the number
+type provided as a model for \ccc{RingNumberType} is only an approximation of a
+ring (such as the built-in type \ccc{double}), then the geometry provided by
+the kernel is only an approximation of Euclidean geometry.
+
+
+
+\ccIsModel
+\ccRefConceptPage{Kernel}
+
+\ccTexHtml{\ccSetThreeColumns{typedef Quotient<RingNumberType>}{}{\hspace*{8.5cm}}}{}
+\ccTypes
+\ccTypedef{typedef Quotient<RingNumberType> FT;}{}
+\ccGlue
+\ccTypedef{typedef RingNumberType RT;}{}
+
+\ccImplementation In contrast to \ccc{Homogeneous}, no reference counting
+is used internally. This eases debugging, but may slow down algorithms
+that copy objects intensively, or slightly speed up others.
+
+\ccSeeAlso
+\ccRefIdfierPage{CGAL::Cartesian<FieldNumberType>} \\
+\ccRefIdfierPage{CGAL::Homogeneous<RingNumberType>} \\
+\ccRefIdfierPage{CGAL::Simple_cartesian<FieldNumberType>} \\
+\end{ccRefClass}

@@ -1,0 +1,37 @@
+- For release:
+  * add example that demostrates how to get edge info
+  * remove enumeration type Arrangment_type as an enum type and add small
+    is_*() methods that query the type
+  * add test suites for {insert,remove}_degree_2 in TDS_2
+  * add test suites for join_vertices & split_vertex in TDS_2
+  * customize traits with predefined kernels, as well as add something
+    in the doc for that
+
+- add hierarchy specific tests in the hierarchy test suite
+- make sure that the assignment operator and copy constructor for the
+  segment Voronoi diagram hierarchy class do not have any bugs
+- in predicates/Svd_arrangement_type_C2.h put all functions inside the class
+- add a method insert_point_no_search in the segment Voronoi diagram class
+  that inserts a point without searching for the nearest neighbor;
+  the assumption here is that the nearest neighbor given is already known
+  and we do not need to search again; the insert_point method should be 
+  rewritten so that it uses insert_point_no_search as a subroutine; the
+  segment Voronoi diagram hierarchy needs this method when inserting a point:
+  the nearest neighbors of the point at all levels are known...
+- use the input sites container as the container where point handles
+  are gotten from
+- in class Svd_basic_constructions_C2.h, inside method to_ft, check
+  if sqrt is supported by the number type; actually this is ok for predicates
+  but constructions also need to use this too.
+- add the methods insert_polyline and insert_polygon that do some
+  optimized insertion for polylines and polygons; add these in both
+  the one-level and hierarchy classes
+- add/document method that takes two vertex handles corresponding to
+  input points and adds the segment that connects them
+- add test program for hierarchy with the two data sets that have overlapping
+  segments
+- add test suite for info (new design using storage traits)
+- add examples that use the info
+- add a demo that uses the red-blue info stuff; the demo should
+  automatically color the segments/points
+- rename file names to match the names of the classes they contain

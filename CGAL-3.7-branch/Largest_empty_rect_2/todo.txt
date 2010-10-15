@@ -1,0 +1,9 @@
+- Make get_left_bottom_right_top() const
+  which means making some variables mutable so that update() becomes "const"
+- Check if the lengthy name problem is still an issue
+- Do we also want to offer functions left(), right(), top(), bottom() ???
+- Find a better name for method get_bounding_box.
+- Shall we store the iso-rectangle passed in the constructor
+  in order to return the one that was passed to the constructor
+  instead of a new one
+

@@ -1,0 +1,18 @@
+\begin{ccRefFunctionObjectConcept}{Kernel::LessDistanceToPoint_3}
+A model for this must provide:
+
+\ccCreationVariable{fo}
+
+\ccMemberFunction{bool operator()(const Kernel::Point_3&p,
+                                  const Kernel::Point_3&q,
+                                  const Kernel::Point_3&r);}
+{returns true iff the distance of $q$ to $p$ is
+smaller than the distance of $r$ to $p$.}
+
+\ccRefines
+\ccc{AdaptableFunctor} (with three arguments)
+
+\ccSeeAlso
+\ccRefIdfierPage{CGAL::has_smaller_distance_to_point}
+
+\end{ccRefFunctionObjectConcept}

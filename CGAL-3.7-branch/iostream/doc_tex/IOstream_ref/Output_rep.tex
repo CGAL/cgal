@@ -1,0 +1,20 @@
+\begin{ccRefClass}{Output_rep<T,F>}
+
+\ccDefinition
+The purpose of \ccc{Output_rep} is to provide a way to control output formatting that works independently of the object's stream output operator.
+
+If you dont specialize \ccc{Output_rep} for \texttt{T}, \texttt{T}'s stream output operator is called from within \ccc{Output_rep}, by default. If you want another behaviour for your type \texttt{T}, you have to provide a specialization for that type. Furthermore, you can provide specializations with a second template parameter (a formatting tag). The second template parameter defaults to \ccc{Null_tag} and means \textsc{default behaviour}.
+
+Specializations of \ccc{Output_rep} should provide the following features:
+
+\begin{ccExampleCode}
+template< class F >
+struct Output_rep< Some_type, F > {
+    Output_rep( const Some_type& t );
+    std::ostream& operator()( std::ostream& out ) const;
+};
+\end{ccExampleCode}
+
+You can also specialize for a formatting tag \texttt{F}.
+
+\end{ccRefClass}

@@ -1,0 +1,601 @@
+%% Copyright (c) 2004,2005  INRIA Sophia-Antipolis (France) and
+%% Notre Dame University (U.S.A.).  All rights reserved.
+%%
+%% This file is part of CGAL (www.cgal.org); you may redistribute it under
+%% the terms of the Q Public License version 1.0.
+%% See the file LICENSE.QPL distributed with CGAL.
+%%
+%% Licensees holding a valid commercial license may use this file in
+%% accordance with the commercial license agreement provided with the software.
+%%
+%% This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
+%% WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
+%%
+%% $URL$
+%% $Id$
+%% 
+%%
+%% Author(s)     : Menelaos Karavelas <mkaravel@cse.nd.edu>
+
+This chapter describes the two-dimensional segment Delaunay graph
+package of \cgal. We start with a few definitions in 
+Section~\ref{sec:sdg2-definitions}.
+The software design of the 2D segment Delaunay graph package is
+described in Section~\ref{sec:sdg2-design}.
+In Section~\ref{sec:sdg2-traits} we discuss the geometric
+traits of the 2D segment Delaunay graph package and in Section
+\ref{sec:sdg2-hierarchy} the segment Delaunay graph hierarchy, a
+data structure suitable for fast nearest neighbor queries, is briefly
+described.
+
+
+\section{Definitions\label{sec:sdg2-definitions}}
+
+\begin{figure}[htb]
+\begin{ccTexOnly}
+\begin{center}
+\includegraphics[width=0.4\textwidth]%
+{Segment_Delaunay_graph_2/svd-weakly-bw}
+\hfil
+\includegraphics[width=0.4\textwidth]%
+{Segment_Delaunay_graph_2/svd-strongly-bw} 
+\end{center}
+\end{ccTexOnly}
+\begin{ccHtmlOnly}
+  <center>
+  <img border=1 src="./svd-weakly-bw.jpg" align=middle
+  alt="The segment Voronoi diagram for a set of weakly intersecting sites"
+  title="The segment Voronoi diagram for a set of weakly intersecting sites">
+  <!-- -->
+  <img border=1 src="./svd-strongly-bw.gif" align=middle
+  alt="The segment Voronoi diagram for a set of strongly intersecting sites"
+  title="The segment Voronoi diagram for a set of strongly intersecting sites">
+</center>
+\end{ccHtmlOnly}
+\begin{ccHtmlOnly}
+<font size=-1>
+\end{ccHtmlOnly}
+\begin{center}
+\caption{The segment Voronoi diagram for a set of weakly (left) and
+  strongly (right) intersecting sites.}\label{fig-svd}
+\end{center}
+\begin{ccHtmlOnly}
+</font>
+\end{ccHtmlOnly}
+\end{figure}
+
+The 2D segment Delaunay graph package of \cgal\ is designed to
+compute the Delaunay graph of a set of possibly intersecting segments
+on the plane. Although we compute the Delaunay graph, we 
+will often refer to its dual, the segment Voronoi diagram, since it is
+easier to explain and understand. The algorithm that has been
+implemented is incremental. The corresponding \cgal\ class is called
+\ccc{Segment_Delaunay_graph_2<SegmentDelaunayGraphTraits_2,SegmentDelaunayGraphStructure_2>}
+and will be discussed in more detail in the sequel. The interested
+reader may want to refer to the paper by Karavelas
+\cite{cgal:k-reisv-04} for the general idea as well as the details of
+the algorithm implemented.
+
+\paragraph{Definitions.}
+Before describing the details of the implementation we make a brief
+introduction to the theory of segment Delaunay graphs and segment
+Voronoi diagrams.
+The segment Voronoi diagram is defined over a set of non-intersecting
+sites, which can either be points or linear segments, which we assume
+that are given through their endpoints. The segment Voronoi diagram a
+subdivision of the plane into connected regions, called {\em cells},
+associated with the sites. The dual graph of the segment Voronoi
+diagram is called the segment Delaunay graph. The cell of a site $t_i$
+is the locus of points on the plane that are closer to $t_i$ than any
+other site $t_j$, $j\neq i$.
+The distance $\delta(x, t_i)$ of a point $x$ in the plane to a 
+site $t_i$ is defined as the minimum of the Euclidean distances of $x$
+from the points in $t_i$. Hence, if $t_i$ is a point $p_i$, then
+\[      \delta(x,t_i)=\|x-t_i\|,  \]
+whereas if $t_i$, is a segment, then
+\[      \delta(x,t_i)=\min_{y\in t_i}\|x-y\|, \]
+where $\|\cdot\|$ denotes the Euclidean norm.
+It can easily be seen that it is a generalization of the Voronoi
+diagram for points.
+
+In many applications the restriction that sites are non-intersecting
+is too strict. Often we want to allow segments that touch at their
+endpoints, or even segments that overlap or intersect properly at
+their interior (for example, see Fig. \ref{fig-svd}). Allowing such
+configurations poses certain problems. More specifically, when we allow
+segments to touch at their endpoints we may end up with pairs of
+segments whose bisector is two-dimensional. If we allow pairs of
+segments that intersect properly at their interior, the interiors of
+their Voronoi cells are no longer simply connected. In both cases
+above the resulting Voronoi diagrams are no longer instances of
+abstract Voronoi diagrams (cf. \cite{k-cavd-89}), which has a direct
+consequence on the efficient computation of the corresponding Voronoi
+diagram. The remedy to these problems is to consider linear segments
+not as one object, but rather as three, namely the two endpoints and
+the interior. This choice guarantees that all bisectors in the Voronoi
+diagram are one-dimensional and that all Voronoi cells are simply
+connected. Moreover, we further distinguish between two cases,
+according to the type of intersecting pair that our input data set
+contains. A pair of sites is called \emph{weakly intersecting} if they
+have a single common point and this common point does not lie in the
+interior of any of the two sites. A pair of sites is called
+\emph{strongly intersecting} if they intersect and they either have
+more than one common point or their common point lies in the interior
+of at least one of the two sites. As it will be seen later the two
+cases have different representation (and thus storage) requirements,
+as well as they require a somehow different treatment on how the
+predicates are evaluated. Having made the distinction between weakly
+and strongly intersecting sites, and having said that segment sites
+are treated as three objects, we are now ready to precisely define the
+Delaunay graph we compute. Given a set $\mathcal{S}$ of input sites,
+let $\mathcal{S}_{\mathcal{A}}$ be the set of points and
+(open) segments in the arrangement $\mathcal{A}(\mathcal{S})$ of
+$\mathcal{S}$. The 2D segment Delaunay graph package of \cgal\
+computes the (triangulated) Delaunay graph that is dual to the
+Euclidean Voronoi diagram of the sites in the set $\mathcal{S}_{\mathcal{A}}$.
+
+The segment Delaunay graph is uniquely defined once we
+have the segment Voronoi diagram. If the all sites are in
+\emph{general position}, then Delaunay graph is a graph with triangular
+faces away from the convex hull of the set of sites. To unify our approach
+and handling of the Delaunay graph we add to the set of (finite) sites
+a fictitious site at infinity, which we call the
+{\em site at infinity}. We can then connect all vertices of the outer
+face of the Delaunay graph to the site at infinity which gives us
+a graph with the property that all of its faces are now
+triangular. However, the Delaunay graph is not a triangulation for
+two main reasons: we cannot always embed it on the plane with straight
+line segments that yield a triangulation and, moreover, we may have two
+faces of the graph that have two edges in common, which is not allowed
+in a triangulation.
+
+We would like to finish our brief introduction to the theory of
+segment Delaunay graphs and segment Voronoi diagrams by discussing the
+concept of general position. We say that a set of sites is in general
+position if no two triplets of sites have the same tritangent Voronoi
+circle. This statement is rather technical and it is best understood
+in the context of points. The equivalent statement for points is that
+we have no two triplets of points that define the same circumcircle,
+or equivalently that no four points are co-circular. The statement
+about general position made above is a direct generalization of the
+(much simpler to understand) statement about points. On the contrary,
+when we have sites in degenerate position, the Delaunay graph has faces
+with more than three edges on their boundary. We can get a
+triangulated version of the Delaunay graph by simply {\em triangulating}
+the corresponding faces in an arbitrary way. In fact the algorithm
+that has been implemented in \cgal\ has the property that it always
+returns a valid {\em triangulated} version of the segment Delaunay graph.
+By valid we mean that it contains the actual (non-triangulated)
+Delaunay graph, and whenever there are faces with more than three faces
+then they are triangulated. The way that they are triangulated depends
+on the order of insertion of the sites in the diagram.
+
+One final remark has to be made with respect to the difference between
+the set of \emph{input sites} and the set of \emph{output sites}. The
+set of input sites consists of the closed sites that the user inserts
+in the diagram. Since segment sites are treated as three objects,
+internally our algorithm sees only points and open segments. As a
+result, from the point of view of the algorithm, the input sites have
+no real meaning. What has real meaning is the set of sites that
+correspond to cells of the Voronoi diagram and this is the set of
+output sites.
+
+\paragraph{Degenerate Dimensions.}
+The dimension of the segment Delaunay graph is in general 2. The
+exceptions to this rule are as follows:
+\begin{itemize}
+\item The dimension is $-1$ if the segment Delaunay graph contains no
+  sites.
+\item The dimension is $0$ if the segment Delaunay graph contains exactly
+  one (output) site.
+\item The dimension is $1$ is the segment Delaunay graph contains exactly
+  two (output) sites.
+\end{itemize}
+
+
+\section{Software Design\label{sec:sdg2-design}}
+
+The 2D segment Delaunay graph class
+\ccc{Segment_Delaunay_graph_2<SegmentDelaunayGraphTraits_2,SegmentDelaunayGraphDataStructure_2>}
+follows the design of the triangulation package of \cgal. It is
+parametrized by two arguments:
+\begin{itemize}
+\item the {\bf geometric traits} class. It provides the basic
+  geometric objects involved in the algorithm, such as sites, points
+  etc. It also provides the geometric predicates for the computation
+  of the segment Delaunay graph, as well as some basic constructions
+  that can be used, for example, to visualize the diagram.
+  The geometric traits for the segment Delaunay graph will be
+  discussed in more detail in the next section.
+\item the {\bf segment Delaunay graph data structure}. This is
+  essentially the same as the Apollonius graph data structure (discussed
+  in Chapter \ref{sec:apollonius2-design}), augmented with some
+  additional operations that are specific to segment Voronoi
+  diagrams. The corresponding concept is that of
+  \ccc{SegmentDelaunayGraphDataStructure_2}, which in fact is a refinement
+  of the \ccc{ApolloniusGraphDataStructure_2} concept. The class
+  \ccc{Triangulation_data_structure_2<Vb,Fb>} is a model of
+  the concept \ccc{SegmentDelaunayGraphDataStructure_2}. A default value
+  for the corresponding template parameter is provided, so the user
+  does not need to specify it.
+\end{itemize}
+
+
+\paragraph{Strongly Intersecting Sites and their Representation.}
+As we have mentioned above, the segment Delaunay graph package of
+\cgal\ is designed to support the computation of the segment Voronoi
+diagram even when the input segment sites are intersecting. This
+choice poses certain issues for the design of the software
+package. The major concern is the representation of the subsegments
+that appear in the arrangement of the these sites, because the sites
+in the arrangement are the ones over which the diagram is actually
+defined. A direct consequence of the choice of representation is the
+algebraic degree of the predicates involved in the computation of the
+segment Delaunay graph, as well as the storage requirements for the
+subsegments and points on intersection in the arrangement.
+
+The case of weakly intersecting sites does not require any special
+treatment. We can simply represent points by their coordinates and
+segments by their endpoints.
+In the case of strongly intersecting sites,
+the obvious choice to use the afore-mentioned representation
+%represent points by their coordinates and segments by their endpoints 
+has severe disadvantages. Consider two
+strongly intersecting segments $t_i$ and $t_j$, whose endpoints have
+homogeneous coordinates of size $b$. Their intersection point will
+have homogeneous coordinates of bit size $6b+O(1)$. This effect can be
+cascaded, which implies that after inserting $k$ (input) segments we
+can arrive at having points of intersection whose bit sizes are
+exponential with respect to $k$, i.e., their homogeneous coordinates
+will have bit size $\Omega(2^kb)$. Not only the points of
+intersection, but also the adjacent subsegments will be represented by
+quantities of arbitrarily high bit size, and as a result we would not
+be able to give a bound on the bit sizes of the coordinates of the
+points of intersection. As a result, we would not be able to give
+a bound on the memory needed to store these coordinates. An equally
+important consequence is that we would also not be able to give a
+bound on the algebraic degree of the algebraic expressions involved in
+the evaluation of the predicates.
+
+Such a behavior is obviously undesirable. For robustness, efficiency,
+and scalability purposes, it is critical that the bit size of the
+algebraic expressions in the predicates does not depend on the input
+size. For this reason, as well as for others to be discussed below,
+we decided to represent sites in a implicit manner, which somehow
+encodes the history of their construction. In particular, we exploit
+the fact that points of intersection always lie on two input segments,
+and that segments that are not part of the input are always supported
+by input segments.
+
+For example, let us consider the configuration in
+Fig. \ref{fig:sdg2-siterep}. We assume that the segments
+$t_i=p_iq_i$, $i=1,2,3$, are inserted in that order. Upon the
+insertion of $t_2$, our algorithm will split the segment $t_1$ into
+the subsegments
+$p_1s_1$ and $s_1q_1$, then add $s_1$, and finally insert the
+subsegments $p_2s_1$ and $s_1q_2$. How do we represent the five new
+sites? $s_1$ will be represented by its two defining segments $t_1$
+and $t_2$. The segment $p_1s_1$ will be represented by two segments, a
+point, and a boolean. The first segment is $t_1$, which is always the
+segment with the same support as the newly created segment. The second
+segment is $t_2$ and the point is $p_1$. The boolean indicates whether
+the first endpoint of $p_1s_1$ is an input point; in this case the
+boolean is equal to \ccc{true}. The segment $s_1q_1$ will also be
+represented by two segments, a point, and a boolean, namely, $t_1$
+(the supporting segment of $s_1q_1$), $t_2$ and \ccc{false} (it is the
+second endpoint of $s_1q_1$ that is an input point). Subsegments
+$p_2s_1$ and $s_1q_2$ are represented analogously.
+Consider now what happens when we insert $t_3$. The point 
+$s_2$ will again be represented by two segments, but not $s_1q_1$ and
+$t_3$. In fact, it will be represented by $t_1$ (the supporting
+segment of $s_1q_1$) and $t_3$. $s_2q_1$ will be represented
+by two segments, a point, and a boolean ($t_1$, $t_3$, $q1$ and
+\ccc{false}), and similarly for $p_3s_2$ and $s_2q_3$. On the other
+hand, both endpoints of $s_1s_2$ are non-input points. In such a
+case we represent the segment by three input segments.
+More precisely, $s_1s_2$ is represented by the segments $t_1$ (the
+supporting segment of $s_1q_1$), $t_2$ (it defines $s_1$ along with
+$t_1$) and $t_3$ (it defines $s_2$ along with $t_1$).
+
+\begin{figure}[!t]
+  \begin{ccTexOnly}
+    \begin{center}
+      \includegraphics[width=0.3\textwidth]%
+      {Segment_Delaunay_graph_2/sdg-rep}
+    \end{center}
+  \end{ccTexOnly}
+  \begin{ccHtmlOnly}
+    <center>
+    <img border=1 src="./sdg-rep.gif" align=middle
+    alt="Site representation" title="Site representation">
+    </center>
+  \end{ccHtmlOnly}
+  \begin{ccHtmlOnly}
+    <font size=-1>
+  \end{ccHtmlOnly}
+  \begin{center}
+    \caption{Site representation. The point $s_1$ is represented by the
+      four points $p_1$, $q_1$, $p_2$ and $q_2$. The segment $p_1s_1$ is
+      represented by the points $p_1$, $q_1$, $p_2$, $q_2$ and a boolean
+      which is set to \emph{true} to indicate that the first endpoint in
+      not a point of intersection. The segment $s_1s_2$ is represented by
+      the six points: $p_1$, $q_1$, $p_2$, $q_2$, $p_3$ and $q_3$. The
+      remaining (non-input) points and segments in the figure are
+      represented similarly.}\label{fig:sdg2-siterep}
+  \end{center}
+  \begin{ccHtmlOnly}
+    </font>
+  \end{ccHtmlOnly}
+\end{figure}
+
+The five different presentations, two for points (coordinates; two
+input segments) and three for segments (two input points; two input
+segments, an input point and a boolean; three input segments),
+form a closed set of representations and thus represent
+any point of intersection or subsegment regardless of the number of
+input segments. Moreover, every point (input or intersection) has
+homogeneous coordinates of bit size at most $3b+O(1)$.
+The supporting lines of the segments (they are needed in some of
+the predicates) have coefficients which are always of bit size
+$2b+O(1)$. As a result, the bit size of the expressions involved in
+our predicates will always be $O(b)$, independently of the
+size of the input.
+%
+The \ccc{SegmentDelaunayGraphSite_2} concept encapsulates the ideas
+presented above. A site is represented in this concept by up to four
+points and a boolean, or up to six points, depending on its type. The
+class \ccc{Segment_Delaunay_graph_site_2<K>} implements this
+concept.
+
+%% Notice, however a drawback in our approach: we only need up
+%% to two points to represent a site, when the input data set consists of
+%% only weakly intersecting sites. In other words, we penalize the
+%% representation of sites with an overhead of up to four points, which
+%% dramatically increases the storage requirements of our
+%% implementation. For this reason we have a model for the
+%% \ccc{SegmentDelaunayGraphSite_2} concept that implements the concept
+%% in a custom way, when we only have weakly intersecting sites. The
+%% corresponding class is called
+%% \ccc{Segment_Delaunay_graph_simple_site_2<K>} and it only stores 2
+%% points, in contrast to the 6 points stored by the
+%% \ccc{Segment_Delaunay_graph_2<K>} class.
+
+Even this representation, however, has some degree of redundancy. The
+endpoint of a segment appears in both the representation of the (open)
+segment site as well as the representation of the point site
+itself. The situation becomes even worse in the presence of strongly
+intersecting sites: a 
+point may appear in the representation of multiple subsegments and/or
+points of intersection. To avoid this redundancy, input points are
+stored in a container, and the various types of sites (input points
+and segments, points of intersection, subsegments with one or two
+points of intersection as endpoints) only store handles to the points
+in the container. This is achieved by the
+\ccc{Segment_Delaunay_graph_storage_site_2<Gt>} class which is a
+model of the corresponding concept:
+\ccc{SegmentDelaunayGraphStorageSite_2}. This concept enforces a site
+to be represented by up to 6 handles (which are very lightweight
+objects) instead of 6 points, which are, compared to handles of
+course, very heavy objects.
+
+\paragraph{Optimizing Memory Allocation.}
+There are applications where we know beforehand that the input
+consists of only weakly intersecting sites. In these cases the site
+representation described above poses a significant overhead in the
+memory requirements of our implementation: instead of representing
+sites with up to two points (or ultimately with to two handles), we
+require sites to store six points (respectively, six handles). To
+avoid this overhead we have introduced two series of traits classes:
+\begin{itemize}
+\item One that supports the full-fledged sites, and is suitable when
+  the input consists of strongly intersecting sites. This series
+  consists of the 
+  \ccc{Segment_Delaunay_graph_traits_2<K,MTag>} and
+  \ccc{Segment_Delaunay_graph_filtered_traits_2<CK,CM,EK,EM,FK,FM>} 
+  classes.
+\item One that is customized for input that contain only weakly
+  intersecting sites. This series consists of the
+  \ccc{Segment_Delaunay_graph_traits_without_intersections_2<K,MTag>} and
+  \ccc{Segment_Delaunay_graph_filtered_traits_without_intersections_2<CK,CM,EK,EM,FK,FM>}
+  classes.
+\end{itemize}
+The advantages of having different traits classes are as follows:
+\begin{itemize}
+\item When the user chooses to use one of the traits classes in the
+  second series we only store two handles per site. This implies a
+  reduction by a factor of three in the memory allocated per site with
+  respect to the first series of traits classes.
+\item In the case of the first series of traits classes, we can better
+  exploit the knowledge that have strongly intersecting sites, in
+  order to further apply geometric filters (see below) during the
+  evaluation of the predicates. On the contrary, if the second series
+  of traits classes is used, we can avoid geometric filtering tests
+  that have meaning only in the case of strongly intersecting sites.
+\end{itemize}
+
+
+\section{The Geometric Traits\label{sec:sdg2-traits}}
+
+The predicates required for the computation of the segment Voronoi
+diagram are rather complicated. It is not the purpose of this document to
+discuss them in detail. The interested reader may refer to Burnikel's
+thesis \cite{b-ecvdl-96}, where it is shown that in the case of weakly
+intersecting sites represented in homogeneous coordinates of bit size
+$b$, the maximum bit size of the algebraic expressions involved in the
+predicates is $40 b+O(1)$. Given our site representation given above we
+can guarantee that even in the case of strongly intersecting sites,
+the algebraic degree of the predicates remains $O(b)$, independently
+of the size of the input. What we want to focus in the remainder of
+this section are the different kinds of filtering techniques that we
+have employed in our implementation.
+
+\paragraph{Geometric Filtering.}
+Our representation of sites is coupled very naturally, with what we
+call {\em geometric filtering}. The technique
+amounts to performing simple geometric tests exploiting the
+representation of our data, as well as the geometric structure
+inherent in our problem, in order to evaluate predicates in seemingly
+degenerate configurations. Geometric filtering can be seen as a
+preprocessing step before performing arithmetic filtering.
+Roughly speaking, by arithmetic filtering we mean that we first try to
+evaluate the predicates using a fixed-precision floating-point number
+type (such as {\tt double}), and at the same time keep error bounds on
+the numerical errors of the computations we perform. If the numerical
+errors are too big and do not permit us to evaluate the predicate, we
+switch to an exact number type, and repeat the evaluation of the
+predicate. Geometric filtering can help by eliminating situations in
+which the arithmetic filter will fail, thus decreasing the number
+of times we need to evaluate a predicate using exact arithmetic.
+
+To illustrate the application and effectiveness of this approach,
+let us consider a very simple example usage.
+Suppose we want to determine if two non-input points are
+identical (we assume here that the input sites are represented by
+\ccc{double}s). In order to do that we need to compute their
+coordinates and compare them. If the two points are identical, the
+answer to our question using \ccc{double} arithmetic may be 
+wrong (due to numerical errors), in which case we will have to reside
+to the more expensive exact computation. Instead, before testing the
+coordinates for equality, we can use the representation of the points
+to potentially answer the question. More specifically, and this is the
+geometric filtering part of the computation, we can first
+test if the defining segments of the two points are the same. If they
+are not, then we proceed to comparing their coordinates as
+usual. Testing the defining segments for equality does not involve any
+arithmetic operations on the input, but rather only comparisons on
+\ccc{double}s. By performing this very simple test we avoid a
+numerically difficult computation, which could be performed
+thousands of times during the computation of a Delaunay graph.
+
+Geometric filtering has been implemented in all our models of the
+\ccc{SegmentDelaunayGraphTraits_2} concept. These models are the
+classes:
+\ccc{Segment_Delaunay_graph_traits_2<K,MTag>},
+\ccc{Segment_Delaunay_graph_traits_without_intersections_2<K,MTag>},
+\ccc{Segment_Delaunay_graph_filtered_traits_2<CK,CM,EK,EM,FK,FM>} and
+\ccc{Segment_Delaunay_graph_filtered_traits_without_intersections_2<CK,CM,EK,EM,FK,FM>}.
+
+
+
+\paragraph{Arithmetic Filtering.}
+As mentioned above, performing computations with exact arithmetic
+can be very costly. For this reason we have devoted considerable
+effort in implementing different kinds of arithmetic filtering
+mechanisms. Presently, there two ways of performing arithmetic
+filtering for the predicates involved in the computation of
+segment Delaunay graphs:
+\begin{enumerate}
+\item The user can define his/her kernel using as number type, a
+  number type of the form \ccc{CGAL::Filtered_exact<CT,ET>}. Then this
+  kernel can be entered as the first template parameter in the
+  \ccc{Segment_Delaunay_graph_2<K,MTag>} or
+  \ccc{Segment_Delaunay_graph_without_intersections_2<K,MTag>} class.
+\item The user can define up to three different kernels \ccc{CK},
+  \ccc{FK} and \ccc{EK} (default values are provided for most
+  parameters). The first kernel \ccc{CK} is used only for
+  constructions. The second kernel \ccc{FK} is the filtering kernel:
+  the traits class will attempt to compute the predicates using this
+  kernel. If the filtering kernel fails to successfully compute a
+  predicate, the exact kernel \ccc{EK} will be used. These three
+  kernels are then used in the 
+  \ccc{Segment_Delaunay_graph_filtered_traits_2<CK,CM,EK,EM,FK,FM>} and
+  \ccc{Segment_Delaunay_graph_filtered_traits_without_intersections_2<CK,CM,EK,EM,FK,FM>}
+  classes, which have been implemented using the
+  \ccc{Filtered_predicate<EP,FP>} mechanism.
+\end{enumerate}
+Our experience so far has shown that for all reasonable and valid
+values of the template parameters, the second method for arithmetic
+filtering is more efficient among the two.
+
+Let's consider once more the classes
+\ccc{Segment_Delaunay_graph_2<K,MTag>} and 
+\ccc{Segment_Delaunay_graph_without_intersections_2<K,MTag>}.
+The template parameter \ccc{MTag} provides another degree of freedom
+to the user, who can indicate the type of arithmetic operations to
+be used in the evaluation of the predicates. More specifically, in
+both classes, \ccc{MTag} can be \ccc{CGAL::Field_with_sqrt_tag}, in
+which case the predicates will be evaluated using all four basic
+arithmetic operations plus square roots; this requires, of course,
+that the number type used in the kernel \ccc{K} supports these
+operations exactly. The second choices are \ccc{CGAL::Field_tag} for
+the \ccc{Segment_Delaunay_graph_2<K,MTag>} class, and
+\ccc{CGAL::Euclidean_ring_tag} for the
+\ccc{Segment_Delaunay_graph_without_intersections_2<K,MTag>}
+class. In the first case we indicate that we want the predicates to be
+computed using only the four basic arithmetic operations, whereas in
+the second case we evaluate the predicates using only ring operations.
+Again, for the predicates to be evaluated correctly, the number type
+used in the kernel \ccc{K} must support the corresponding operations
+exactly.
+
+The semantics for the template parameters \ccc{CM}, \ccc{FM} and
+\ccc{EM} in the
+\ccc{Segment_Delaunay_graph_filtered_traits_2<CK,CM,EK,EM,FK,FM>} and 
+\ccc{Segment_Delaunay_graph_filtered_traits_without_intersections_2<CK,CM,EK,EM,FK,FM>}
+classes are analogous. With each of these template parameters we can
+control the type of arithmetic operations that are going to be used in
+calculations involving each of the corresponding kernels \ccc{CK},
+\ccc{FK} and \ccc{EK}. When the
+\ccc{Segment_Delaunay_graph_filtered_traits_2<CK,CM,EK,EM,FK,FM>} is
+used the possible values for \ccc{CM}, \ccc{FM} and \ccc{EM} are
+\ccc{CGAL::Field_with_sqrt_tag} and \ccc{CGAL::Field_tag}, whereas if the 
+\ccc{Segment_Delaunay_graph_filtered_traits_without_intersections_2<CK,CM,EK,EM,FK,FM>}
+class is used, the possible values are \ccc{CGAL::Field_with_sqrt_tag} and
+\ccc{CGAL::Euclidean_ring_tag}. The semantics are the same as in the case of the 
+\ccc{Segment_Delaunay_graph_2<K,MTag>} and 
+\ccc{Segment_Delaunay_graph_without_intersections_2<K,MTag>} classes.
+
+
+
+
+
+
+\section{The Segment Delaunay Graph Hierarchy\label{sec:sdg2-hierarchy}}
+
+
+The
+\ccc{Segment_Delaunay_graph_hierarchy_2<SegmentDelaunayGraphTraits_2,
+  SSTag, SegmentDelaunayGraphDataStructure_2>} class is the analogue
+of the \ccc{Triangulation_hierarchy_2} or the
+\ccc{Apollonius_graph_hierarchy_2} classes, applied to the segment
+Delaunay graph. It consists of a hierarchy of
+segment Delaunay graphs constructed in a manner analogous to the
+Delaunay hierarchy by Devillers \cite{cgal:d-dh-02}. Unlike the
+triangulation hierarchy or the Apollonius graph hierarchy, the
+situation here is more complicated because of two factors: firstly,
+segments are treated as three objects instead of one (the two
+endpoints and the interior of the segments), and secondly, the
+presence of strongly intersecting sites complicates significantly the
+way the hierarchy is constructed. The interested reader may refer to
+the paper by Karavelas \cite{cgal:k-reisv-04} for the details of the
+construction of the hierarchy.
+Another alternative is to have a hybrid hierarchy that consists of the
+segment Delaunay graph at the bottom-most level and point Voronoi
+diagrams at all other levels. This choice seems to work very well in
+practice , primarily because it avoids the overhead of maintaining a
+Delaunay graph for segments at the upper levels of the
+hierarchy. However, it seems much less likely to be possible to give
+any theoretical guarantees for its performance, in contrast to the
+hierarchy with segment Delaunay graphs at all levels
+(cf. \cite{cgal:k-reisv-04}). The user can choose between the two
+types of hierarchies by means of the template parameter
+\ccc{SSTag}. If \ccc{SSTag} is set to \ccc{false} (which is also the
+default value), the upper levels of the hierarchy consist of point
+Delaunay graphs. If \ccc{SSTag} is set to \ccc{true}, we have segment
+Delaunay graphs at all levels of the hierarchy.
+
+The class
+\ccc{Segment_Delaunay_graph_hierarchy_2<SegmentDelaunayGraphTraits_2,
+  SSTag, SegmentDelaunayGraphDataStructure_2>}
+has exactly the same interface and functionality as the
+\ccc{Segment_Delaunay_graph_2<SegmentDelaunayGraphTraits_2,SegmentDelaunayGraphDataStructure_2>}
+class. Using the segment Delaunay graph hierarchy involves an
+additional cost in space and time for maintaining the hierarchy. Our
+experiments have shown that it usually pays off to use the hierarchy
+for inputs consisting of more than about 1,000 sites. 
+
+%This threshold holds
+%for both the construction of the  diagram itself, as well as for
+%nearest neighbor queries.
+
+%EOF

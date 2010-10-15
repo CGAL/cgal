@@ -1,0 +1,58 @@
+% +------------------------------------------------------------------------+
+% | Reference manual page: Qt_widget_Nef3.tex
+% +------------------------------------------------------------------------+
+% | 14.05.2004   Peter Hachenberger
+% | Package: Nef_3
+% | 
+\RCSdef{\RCSQtRev}{$Id$}
+\RCSdefDate{\RCSQtDate}{$Date$}
+% +------------------------------------------------------------------------+
+
+\ccRefPageBegin
+
+%%RefPage: end of header, begin of main body
+% +------------------------------------------------------------------------+
+
+
+\begin{ccRefClass}{Qt_widget_Nef_3<Nef_polyhedron_3>}
+
+\ccDefinition
+ 
+The class \ccc{Qt_widget_Nef_3} uses the OpenGL interface of Qt to display a
+\ccc{Nef_polyhedron_3}. Its purpose is to provide an easy to use viewer for 
+\ccc{Nef_polyhedron_3}. There are no means provided to enhance the 
+functionality of the viewer.
+
+In addition to the functions inherited from the Qt class \ccc{OGLWidget} via,
+ \ccc{Qt_widget_Nef_3} only has a single public 
+constructor. For the usage of \ccc{Qt_widget_Nef_3} see the example 
+below.
+
+\ccInclude{CGAL/IO/Qt_widget_Nef_3.h}
+
+\ccParameters
+The template parameter expects an instantiation of \ccc{Nef_polyhedron_3<Traits>}.
+
+\ccCreation
+\ccCreationVariable{W}
+
+\ccConstructor{Qt_widget_Nef_3(const Nef_polyhedron_3& N);}
+{Creates a widget \ccVar\ for displaying the 3D Nef polyhedron N.}
+
+\ccSeeAlso
+
+\ccRefIdfierPage{CGAL::Nef_polyhedron_3<Traits>}
+
+\ccExample
+This example reads a 3D Nef polyhedron from standard input and displays it
+in a Qt widget.
+
+\ccIncludeExampleCode{Nef_3/visualization_SNC.cpp}
+
+\end{ccRefClass}
+
+% +------------------------------------------------------------------------+
+%%RefPage: end of main body, begin of footer
+\ccRefPageEnd
+% EOF
+% +------------------------------------------------------------------------+

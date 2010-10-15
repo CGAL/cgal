@@ -1,0 +1,71 @@
+% +------------------------------------------------------------------------+
+% | installation_manual.tex
+% | CGAL Installation Guide
+% +------------------------------------------------------------------------+
+
+\documentclass[twoside]{article}
+\usepackage{Manual/cgal_manual}
+\gdef\lciManualTitle{CGAL Installation Guide}
+\lcHtml{\lcOneColumnToc}
+
+\makeindex
+\setcounter{tocdepth}{2}
+
+\begin{document}
+
+\pagestyle{empty}
+\begin{titlepage}\mbox{}\vspace{3cm}
+\lcTex{\centerline{%
+    \includegraphics[scale=0.25]{Manual/fig/c-simp}~
+    \includegraphics[scale=0.25]{Manual/fig/g-simp}~
+    \includegraphics[scale=0.25]{Manual/fig/a-simp}~
+    \includegraphics[scale=0.25]{Manual/fig/l-simp}}}
+\lcRawHtml{
+<p align=center>
+  <img border="0" src="Manual/fig/cgal_small_FAF8E8.gif" align="center"
+    alt="[Computational Geometry Algorithms Library]">
+</p>}
+\vspace{2cm}
+
+\centerline{{\huge Installation Guide}}\vspace{2cm}
+
+\centerline{{\Large \cgalversion}}\vspace{1cm}
+
+\centerline{{\Large \cgalversiondate}}
+\end{titlepage}  
+
+\setcounter{page}{2}
+
+\newcommand{\myownfrontmatter}{
+\section*{Authors}
+
+Joachim Reichel\\
+Fernando Cacciola
+
+}
+
+
+\lcTex{\myownfrontmatter}
+\cleardoublepage
+\pagestyle{plain}
+\pagenumbering{roman}
+\setcounter{page}{1}
+\tableofcontents
+\cleardoublepage
+\pagenumbering{arabic}
+\cgalColumnLayout
+ 
+\lcHtml{
+  \chapter{Installation Manual}
+  \myownfrontmatter
+}
+\input{Installation/installation}
+\appendix
+\input{Installation/appendix}
+
+\bibliographystyle{alpha}
+\bibliography{Manual/cgal_manual,Manual/geom}
+
+\printindex
+
+\end{document}

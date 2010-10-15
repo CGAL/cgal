@@ -1,0 +1,274 @@
+% =============================================================================
+% The CGAL Developers' Manual
+% Chapter: Traits Classes
+% -----------------------------------------------------------------------------
+% file   : traits_classes.tex
+% authors: Bernd Gaertner <gaertner@inf.ethz.ch>
+% -----------------------------------------------------------------------------
+% $Id$
+% $Date$
+% =============================================================================
+
+\chapter{Traits Classes\label{chap:traits_classes}}
+\ccChapterRelease{Chapter Version: 1.0}
+\ccChapterAuthor{Bernd G\"artner ({\tt gaertner@inf.ethz.ch})}
+\ccIndexMainItemBegin{traits class}
+
+The concept of a traits class is central to \cgal. The name ``traits
+class'' comes from a standard \CC\ design pattern
+\cite{cgal:m-tnutt-95}; you may have heard about iterator traits which
+follow this design pattern. In \cgal, traits classes are something
+different, although the philosophy is similar in a certain sense.
+
+\section{What are traits classes in \cgal?\label{sec:what_is_a_traits_class}}
+\ccIndexMainItemDef{traits class}
+
+The algorithms in \cgal's basic library are implemented as function templates
+or class templates, usually having a template parameter whose name contains
+the word \ccc{Traits}.  This template parameter 
+represents a concept and so has a corresponding set of requirements that
+define the interface between the algorithm and the geometric (or numeric) 
+primitives it uses.  Any concrete class that serves as a model for this 
+concept is a traits class for the given algorithm or data structure.
+
+\section{Why are traits classes in \cgal?\label{sec:why_traits_classes}}
+
+Using traits concepts as template parameters allows for customization
+of the behavior of algorithms without changing implementations.  At
+least one model for each traits concept should be provided in \cgal\ 
+(in the simplest case, the kernel models fit; see
+Section~\ref{sec:kernel_traits}), but often more than one are provided
+in order to supply certain customizations that users may want.  The
+user is also free to supply his or her own class as a model of the
+traits concept when the desired tailoring is not present in the
+library.
+
+Traits classes allow for tailoring of algorithms not only at compile
+time but also at run time.  Some primitive operations that appear in
+the traits class (in the form of functor types) may need additional
+data that are not known at compile time.  A standard example is the
+following: we have three-dimensional points, but we want the convex
+hull of the two-dimensional points that arise after projecting along
+some direction in space, which is computed as the program runs. How
+does the algorithm get to know about this direction? If there is a
+traits class object as a parameter, the information can be provided to
+the proper primitives through a proper initialization of the traits
+class object.  For this reason, traits class objects are passed as
+parameters to functions.\ccIndexSubitem{traits class}{as parameter}
+
+\section{An example -- planar convex hulls\label{sec:traits_class_example}}
+\ccIndexSubitemBegin{traits class}{example}
+
+Consider convex hulls in the plane. What are the geometric primitives a 
+typical 
+convex hull algorithm uses? Of course, this depends on the algorithm, so
+let us consider what is probably the simplest efficient algorithm, the 
+so-called Graham Scan. This algorithm first sorts the points from left to right,
+and then builds the convex hull incrementally by adding one point after
+another from the sorted list. To do this, it must at least know about 
+some point type, it should have some idea how to sort those points, and
+it must be able to evaluate the orientation of a triple of points. The
+signature of the Graham Scan algorithm in \cgal\ (actually a variation 
+due to Andrews) is as follows:
+
+\ccAutoIndexingOff
+\lcRawHtml{<A NAME="ch_graham_andrew">}
+\ccFunction{template <class InputIterator, class OutputIterator, class Traits>
+            OutputIterator
+            ch_graham_andrew( InputIterator  first,
+                                   InputIterator  beyond,
+                                   OutputIterator result,
+                                   const Traits &      ch_traits);}
+           {{\sc traits}: operates on \ccc{Traits::Point_2} using
+            \ccc{Traits::Left_turn_2} and 
+            \ccc{Traits::Less_xy_2}.
+           }
+\lcRawHtml{</A>}
+\ccAutoIndexingOn
+
+You notice that there is a template parameter named \ccc{Traits}, 
+and you also see a comment that mentions three identifiers (\ccc{Point_2}, 
+\ccc{Left_turn_2} and \ccc{Less_xy_2}) that have to be defined in the
+scope of the traits class in order for the algorithm to work.
+As you can guess, \ccc{Left_turn_2} is responsible for the orientation 
+test, while \ccc{Less_xy_2} does the sorting. So, obviously, the traits class
+must provide these three identifiers. The requirements it has to satisfy
+beyond that are documented in full with the concept ConvexHullTraits\_2.
+
+\subsection{Traits class requirements\label{subsec:traits_class_requirements}}
+\ccIndexSubitemBegin{traits class}{requirements}
+
+Whenever you write a function or class that is  parameterized with a traits
+class, you must provide the requirements that class has to fulfill. These
+requirements should be documented as a concept.  For the
+example above, if you look in the manual at the description of the concept
+\ccAnchor{http://www.cgal.org/Manual/doc_html/basic_lib/Convex_hull_2_ref/Concept_ConvexHullTraits_2.html}{ConvexHullTraits\_2}, you will find  that the
+traits class itself and the identifiers that are mentioned have to meet the 
+following specifications:
+
+\begin{ccRefConcept}{ConvexHullTraits_2}
+\ccTypes
+\ccAutoIndexingOff
+\ccSetTwoColumns{ConvexHullTraits_2::Left_of_line_2}{}
+
+\ccNestedType{Point_2}%
+       {The point type on which the convex hull functions operate.}
+
+\ccNestedType{Less_xy_2}%
+       {Binary predicate object type comparing \ccc{Point_2}s
+        lexicographically.  Must provide
+        \ccc{bool operator()(Point_2 p, Point_2 q)} where \ccc{true}
+        is returned iff $p <_{xy} q$.
+        We have $p<_{xy}q$, iff $p_x < q_x$ or $p_x = q_x$ and $p_y < q_y$,
+        where $p_x$ and $p_y$ denote $x$ and $y$ coordinate of point $p$,
+        respectively.
+       }
+\ccNestedType{Left_turn_2}%
+       {Predicate object type that must provide
+        \ccc{bool operator()(Point_2 p,Point_2 q,Point_2 r)}, which
+        returns \ccc{true} iff \ccc{r} lies to the left of the
+        oriented line through \ccc{p} and \ccc{q}.}
+\ccCreation
+\ccCreationVariable{traits}  %% choose variable name
+
+Only a copy constructor is required.
+
+\ccConstructor{ConvexHullTraits_2(ConvexHullTraits_2& t);}{}
+
+\ccOperations
+The following member functions to create instances of the above predicate
+object types must exist.
+
+\setlength\parskip{0mm}
+\ccMemberFunction{Less_xy_2 less_xy_2_object(); }{}
+\ccGlue
+\ccMemberFunction{Left_turn_2 left_turn_2_object(); }{}
+
+\end{ccRefConcept}
+\ccAutoIndexingOn
+
+This ends the copied manual text.  Some comments are in order here.
+You might have expected \ccc{Less_xy_2} and \ccc{Left_turn_2} to be
+simply member functions of the traits class.
+\ccIndexMainItemBegin{functors} Instead, they are functor types, and
+there are member functions generating instances of these types, \ie,
+the actual functors. Reasons for this are the following.
+\begin{itemize}
+\item \cgal\ is designed to have an \stl-like look-and-feel.  All
+  algorithms in the \stl\ that depend on computational primitives
+  (like a sorting algorithm depending on a comparison operator),
+  receive those primitives via parameters which are functors. (The
+  only way to pass an actual function as a parameter would be via
+  function pointers.)
+\item More flexibility. In contrast to member functions, functors can
+  carry data. For example, repeated calls to a function with only
+  slightly different parameters might be handled efficiently by
+  storing intermediate results. Functors are the natural framework
+  here. See~\cite{hhkps-aegk-01} for more exposition.
+\end{itemize}
+\ccIndexMainItemEnd{functors}
+If you really look up the documentation of the 
+\ccAnchor{http://www.cgal.org/Manual/doc_html/basic_lib/Convex_hull_2_ref/Concept_ConvexHullTraits_2.html}{concept} in the manual, you will find a larger
+list of requirements. 
+A traits class fulfilling this complete list of requirements can be used
+for all of the 2-dimensional convex hull algorithms provided in \cgal. 
+For example, there are also
+algorithms that require a sorting of points by angle, and a traits class for
+that algorithm has to supply appropriate predicates for that. Still, to use
+the Graham Scan, a traits class meeting only the specifications listed above
+is sufficient.
+\ccIndexSubitemEnd{traits class}{requirements}
+
+\subsection{\cgal-provided traits classes\label{subsec:cgal_traits_classes}}
+\ccIndexSubitemBegin{traits class}{providing}
+
+As mentioned in Section~\ref{sec:what_is_a_traits_class},
+the traits class requirements define a concept. An
+actual traits class that complies with these requirements is a model for
+that concept. At least one such model must be provided for all \cgal\ 
+algorithms.\ccIndexSubitem{traits class}{model}
+Often this is called the default traits class.%
+\ccIndexSubitem{traits class}{default}
+Default traits classes are very
+easy to use, especially when they are invoked via default arguments.
+Look at the function \ccAnchor{#ch_graham_andrews}{\ccc{ch_graham_andrews}} 
+again. The signature does not
+tell the whole story. In reality, the third template parameter defaults
+to the default traits class, and the last function parameter defaults to
+a default instance of the default traits class. Of course, such behavior
+must be specified in the \ccAnchor{http://www.cgal.org/Manual/doc_html/basic_lib/Convex_hull_2_ref/Function_ch_graham_andrew.html}{description of the function}.
+\ccIndexSubitem{documentation}{of default traits class}
+
+The implication is that a user can call \ccc{ch_graham_andrews} with
+just three parameters, which delimit the iterator range to be handled and 
+supply the iterator for the result. The types
+and primitives used by the algorithm in this case are the ones from the \cgal\
+2D and 3D kernel. 
+
+In many cases, there are more than one traits classes provided by \cgal. In the
+case of convex hulls, for example, there are traits classes that interface
+the algorithms with the geometry kernel of \leda. Though the user who has
+a third-party geometric kernel will not be able to profit from the \cgal\
+or \leda\ traits, he or she can still provide own traits classes, which meet
+the specified requirements.
+\ccIndexSubitemEnd{traits class}{providing}
+\ccIndexSubitemEnd{traits class}{example}
+
+
+\section{Kernel as traits\label{sec:kernel_traits}}
+
+\ccIndexSubitemBegin{kernel}{as traits} %
+Most default traits classes in \cgal\ are written in terms of the
+types and classes provided in the \cgal\ kernel.  So one may wonder
+why it is not possible to plug the kernel in as a traits class
+directly.  Ideally, it provides all the primitives an algorithm needs.
+However, some algorithms and data structures require specialized
+predicates that would not be appropriate to add to a general-purpose
+kernel.  The traits classes for these algorithms and data structures
+should use kernel primitives wherever possible, and for those
+primitives not provided by the kernel the fixed naming scheme for
+predicates and constructions (Section~\ref{sec:naming_scheme}) should
+be used to make the library more consistent and thus easier to use.
+\ccIndexSubitemEnd{kernel}{as traits} %
+
+\InternalOnly{
+\section{Requirements and recommendations\label{sec:traits_class_req_and_rec}}
+\ccIndexSubitemBegin{traits class}{design}
+
+This section condenses the previous material into a few guidelines you
+have to observe when you design a traits class yourself.
+\begin{itemize}
+\item Keep it small and simple. In particular, avoid redundant functionality
+      in the traits class requirements. For example, if you require 
+      \ccc{Less_xy_2}, there is no reason to require \ccc{Greater_xy_2}, 
+      because the latter can be constructed from the former. In general, 
+      designing a good traits class requires a deep understanding of the 
+      algorithm it is made for. Finding the ``right'' set of geometric 
+      primitives required by the algorithm can be a nontrivial task. 
+      However, spending effort on that task decreases the effort needed 
+      later to implement traits classes and increases the ease of use of 
+      the algorithm. 
+
+\item Obey the naming conventions (Section~\ref{sec:naming_scheme}).
+  
+\item Use functors instead of member functions for the predicates
+  required. This is not only necessary for the kernel traits, it also
+  gives the benefit of more flexibility. For each type you must
+  provide a member function to get the actual functor and thus this
+  seems to increase the size of the traits class.  However, if you
+  follow the naming scheme, the signatures of these functions are
+  obvious and obtainable mechanically.
+  
+\item Provide at least one model (which should normally be the kernel
+  traits class) for every traits concept.
+  
+\item Define and document a default traits class so the user need not
+  provide a traits class argument if customization of the algorithm is
+  not needed.
+
+\end{itemize} 
+}
+
+\ccIndexSubitemEnd{traits class}{design}
+\ccIndexMainItemEnd{traits class}
+

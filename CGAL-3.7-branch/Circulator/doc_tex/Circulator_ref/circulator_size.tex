@@ -1,0 +1,44 @@
+% +------------------------------------------------------------------------+
+% | CGAL Reference Manual: circulator_size
+% +------------------------------------------------------------------------+
+% | Requirements for circulators in analogy to STL iterators.
+% | Adaptors between circulators and iterators.
+% | Proposal for CGAL.
+% |
+% | 11.10.1996   Lutz Kettner
+% | 
+% | \RCSdef{\circRev}{$Id$}
+% | \RCSdefDate{\circDate}{$Date$}
+% +------------------------------------------------------------------------+
+
+% +-----------------------------------------------------+
+\begin{ccRefFunction}{circulator_size}
+
+\ccDefinition
+
+\ccSetThreeColumns{template <class C> sieze_t}{XXX}{}
+
+The size of a circulator is the size of the data structure it refers
+to. It is zero for a circulator on an empty sequence. The size can be
+computed in linear time for forward and bidirectional circulators, and
+in constant time for random access circulators using the minimal
+circulator. The function \ccStyle{circulator_size(c)}
+returns the circulator size. It uses the
+\ccStyle{c.min_circulator()} function if $c$ is a random
+access circulator.
+
+\ccInclude{CGAL/circulator.h}
+
+\ccGlobalFunction{template <class C> C::size_type circulator_size(C c);}
+
+\ccSeeAlso
+
+\ccc{circulator_distance},
+\ccc{iterator_distance},
+\ccc{is_empty_range},
+\ccc{Circulator}.
+
+\end{ccRefFunction}
+
+% +-----------------------------------------------------+
+% EOF

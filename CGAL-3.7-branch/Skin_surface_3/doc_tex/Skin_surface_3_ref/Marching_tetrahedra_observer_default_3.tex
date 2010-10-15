@@ -1,0 +1,64 @@
+% +------------------------------------------------------------------------+
+% | Reference manual page: Marching_tetrahedra_observer_default_3.tex
+% +------------------------------------------------------------------------+
+% | 27.09.2005   Nico Kruithof
+% | Package: Skin_surface
+% | 
+\RCSdef{\RCSMarchingtetsobsskinRev}{$Id$}
+\RCSdefDate{\RCSMarchingtetobsskinDate}{$Date$}
+% +------------------------------------------------------------------------+
+\ccRefPageBegin
+%%RefPage: end of header, begin of main body
+% +------------------------------------------------------------------------+
+
+\begin{ccRefClass}{Marching_tetrahedra_observer_default_3<MarchingTetrahedraTraits_3>}
+
+\ccDefinition
+  
+  The class \ccRefName\ provides a default implementation for the
+  concept \ccc{MarchingTetrahedraObserver_3} with empty bodies.
+
+\ccInclude{CGAL/Marching_tetrahedra_observer_default_3.h}
+
+\ccIsModel
+
+\ccRefConceptPage{MarchingTetrahedraObserver_3}
+
+
+\ccThree{typedef MarchingTetrahedraTraits_3 Traitsxxx;}{xxx}{}
+\ccThreeToTwo
+\ccTypes
+%NGHK: CHECK OTHER TYPES
+\ccTypedef{typedef MarchingTetrahedraTraits_3 Traits;}{}
+\ccGlue
+\ccTypedef{typedef Traits::Triangulation Triangulation;}{}
+\ccGlue
+\ccTypedef{typedef Traits::Halfedge_DS Halfedge_DS;}{}
+\ccTypedef{typedef Triangulation::Cell_handle Triangulation_cell_handle;}{}
+\ccGlue
+\ccTypedef{typedef Halfedge_DS::Vertex_handle Polyhedron_vertex_handle;}{}
+\ccGlue
+\ccTypedef{typedef Halfedge_DS::Facet_handle Polyhedron_facet_handle;}{}
+
+
+\ccCreation
+\ccCreationVariable{observer}
+
+\ccConstructor{Marching_tetrahedra_observer_default_3();}{}
+
+\ccThree{void}{typedef }{}
+\ccThreeToTwo
+\ccOperations
+\ccMethod{void after_vertex_insertion(Triangulation_cell_handle ch,
+  int i, int j, Polyhedron_vertex_handle vh);}{Empty function.}
+\ccMethod{void after_facet_insertion(Triangulation_cell_handle ch,
+  Polyhedron_facet_handle fh);}{Empty function.}
+
+\end{ccRefClass}
+
+% +------------------------------------------------------------------------+
+%%RefPage: end of main body, begin of footer
+\ccRefPageEnd
+% EOF
+% +------------------------------------------------------------------------+
+

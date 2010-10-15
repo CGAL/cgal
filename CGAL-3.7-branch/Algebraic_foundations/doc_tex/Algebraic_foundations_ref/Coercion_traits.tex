@@ -1,0 +1,33 @@
+\begin{ccRefClass}{Coercion_traits<A,B>}
+
+\ccDefinition
+
+An instance of \ccClassTemplateName\ reflects the type coercion of the types
+{\sc A} and {\sc B}, it is symmetric in the two template arguments. 
+
+\ccInclude{CGAL/Coercion_traits.h}
+
+\ccTypes
+%=======
+
+%%ThreeToTwo
+
+\ccNestedType{Are_explicit_interoperable}
+        { Tag indicating whether the two types A and B are a model of \ccc{ExplicitInteroperable} \\
+          This is either \ccc{CGAL::Tag_true} or \ccc{CGAL::Tag_false}. }
+\ccNestedType{Are_implicit_interoperable}
+        { Tag indicating whether the two types A and B are a model of \ccc{ImplicitInteroperable} \\
+          This is either \ccc{CGAL::Tag_true} or \ccc{CGAL::Tag_false}. }
+
+\ccNestedType{Type}
+        {The coercion type of \ccc{ A} and \ccc{ B}. \\
+        In case A and B are not \ccc{ExplicitInteroperable} this is undefined.  }
+\ccNestedType{Cast}
+        {A model of the \ccc{AdaptableFunctor} concept, providing the conversion of \ccc{ A} or \ccc{ B} to \ccc{ Type}. \\
+        In case A and B are not \ccc{ExplicitInteroperable} this is undefined.  }
+
+
+\ccSeeAlso
+\ccRefConceptPage{ExplicitInteroperable} \\
+\ccRefConceptPage{ImplicitInteroperable} \\
+\end{ccRefClass} 

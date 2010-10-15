@@ -1,0 +1,67 @@
+% +------------------------------------------------------------------------+
+% | Reference manual page: Triangulation_hierarchy_vertex_base.tex
+% +------------------------------------------------------------------------+
+% | 16.08.2000   Author
+% | Package: Package
+% | 
+\RCSdef{\RCSTriangulationhierarchyvertexbaseRev}{$Id$}
+\RCSdefDate{\RCSTriangulationhierarchyvertexbaseDate}{$Date$}
+% |
+%%RefPage: end of header, begin of main body
+% +------------------------------------------------------------------------+
+
+
+\begin{ccRefConcept}{TriangulationHierarchyVertexBase_2}
+
+%% \ccHtmlCrossLink{}     %% add further rules for cross referencing links
+%% \ccHtmlIndexC[concept]{} %% add further index entries
+
+\ccDefinition 
+The vertex of a triangulation  
+included in a  triangulation hierarchy has to provide
+some pointers to the corresponding vertices in the
+triangulations of the next and preceding levels.
+Therefore, the concept \ccc{TriangulationHierarchyVertexBase_2}
+refines the concept \ccc{TriangulationVertexBase_2},
+adding handles to the corresponding vertices in the
+next and previous level triangulations.
+
+
+
+\ccRefines
+\ccc{TriangulationVertexBase_2}
+
+
+
+\ccCreationVariable{v}  %% choose variable name
+
+\ccOperations
+\ccThree{Vertex_handle}{v.set_down(Vertex_handle d)x;}{}
+\ccMethod{Vertex_handle  up();}{returns the corresponding vertex
+(if any) of the next level triangulation;}
+\ccGlue
+\ccMethod{Vertex_handle  down();}{returns the corresponding vertex
+ of the previous level triangulation;}
+\ccGlue
+\ccMethod{void set_up(Vertex_handle u);}
+{sets the handle pointing to  to the corresponding vertex
+of the next level triangulation;} 
+\ccGlue 
+\ccMethod{void set_down(Vertex_handle d);}
+{sets the handle pointing  to the corresponding vertex
+of the previous level triangulation;}
+
+\ccHasModels
+\ccc{CGAL::Triangulation_hierarchy_vertex_base_2<Vb>}
+
+\ccSeeAlso
+\ccc{Triangulation_hierarchy_2<Tr>} 
+
+
+\end{ccRefConcept}
+
+% +------------------------------------------------------------------------+
+%%RefPage: end of main body, begin of footer
+% EOF
+% +------------------------------------------------------------------------+
+

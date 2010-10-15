@@ -1,0 +1,165 @@
+\ccRefChapter{3D Spherical Geometry Kernel}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\section{Geometric Concepts}
+
+\ccRefConceptPage{SphericalKernel}
+
+\subsubsection*{Object types}
+\ccRefConceptPage{SphericalKernel::CircularArc_3}\\
+\ccRefConceptPage{SphericalKernel::CircularArcPoint_3}\\
+\ccRefConceptPage{SphericalKernel::LineArc_3}\\
+  
+\subsubsection*{Functors}
+
+\ccRefConceptPage{SphericalKernel::ConstructPlane_3}\\
+\ccRefConceptPage{SphericalKernel::ConstructSphere_3}\\
+\ccRefConceptPage{SphericalKernel::ConstructLine_3}\\
+\ccRefConceptPage{SphericalKernel::ConstructCircle_3}\\
+\ccRefConceptPage{SphericalKernel::ConstructCircularArcPoint_3}\\
+\ccRefConceptPage{SphericalKernel::ConstructLineArc_3}\\
+\ccRefConceptPage{SphericalKernel::ConstructCircularArc_3}\\
+
+\ccRefConceptPage{SphericalKernel::ConstructCircularMinVertex_3}\\
+\ccRefConceptPage{SphericalKernel::ConstructCircularMaxVertex_3}\\
+\ccRefConceptPage{SphericalKernel::ConstructCircularSourceVertex_3}\\
+\ccRefConceptPage{SphericalKernel::ConstructCircularTargetVertex_3}
+
+\ccRefConceptPage{SphericalKernel::ConstructBbox_3}
+
+\ccRefConceptPage{SphericalKernel::CompareX_3}\\
+\ccRefConceptPage{SphericalKernel::CompareY_3}\\
+\ccRefConceptPage{SphericalKernel::CompareZ_3}\\
+\ccRefConceptPage{SphericalKernel::CompareXY_3}\\
+\ccRefConceptPage{SphericalKernel::CompareXYZ_3}\\
+\ccRefConceptPage{SphericalKernel::CompareTheta_3}\\
+\ccRefConceptPage{SphericalKernel::CompareThetaZ_3}\\
+\ccRefConceptPage{SphericalKernel::CompareZAtTheta_3}\\
+\ccRefConceptPage{SphericalKernel::CompareZToRight_3}
+
+
+\ccRefConceptPage{SphericalKernel::Equal_3}
+
+\ccRefConceptPage{SphericalKernel::HasOn_3}
+
+\ccRefConceptPage{SphericalKernel::DoOverlap_3}
+
+\ccRefConceptPage{SphericalKernel::DoIntersect_3}
+
+\ccRefConceptPage{SphericalKernel::IsThetaMonotone_3}
+
+
+\ccRefConceptPage{SphericalKernel::BoundedSide_3}\\
+\ccRefConceptPage{SphericalKernel::HasOnBoundedSide_3}\\
+\ccRefConceptPage{SphericalKernel::HasOnUnboundedSide_3}
+
+\ccRefConceptPage{SphericalKernel::Intersect_3}
+
+\ccRefConceptPage{SphericalKernel::Split_3}
+
+\ccRefConceptPage{SphericalKernel::MakeThetaMonotone_3}
+
+\ccRefConceptPage{SphericalKernel::ComputeCircularX_3}\\
+\ccRefConceptPage{SphericalKernel::ComputeCircularY_3}\\
+\ccRefConceptPage{SphericalKernel::ComputeCircularZ_3}\\
+
+\ccRefConceptPage{SphericalKernel::ComputeApproximateSquaredLength_3}\\
+\ccRefConceptPage{SphericalKernel::ComputeApproximateAngle_3}
+
+\ccRefConceptPage{SphericalKernel::GetEquation}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\section{Geometric Kernels and Classes}
+
+	\subsubsection*{Kernels}
+
+\ccRefIdfierPage{CGAL::Spherical_kernel_3<Kernel,AlgebraicKernelForSpheres>}\\
+\ccRefIdfierPage{CGAL::Exact_spherical_kernel_3}
+
+	\subsubsection*{Points}
+
+\ccRefIdfierPage{CGAL::Circular_arc_point_3<SphericalKernel>}\\
+
+	\subsubsection*{Arcs}
+
+\ccRefIdfierPage{CGAL::Line_arc_3<SphericalKernel>}\\
+\ccRefIdfierPage{CGAL::Circular_arc_3<SphericalKernel>}\\
+
+\subsubsection*{Constants and Enumerations}
+\ccRefIdfierPage{CGAL::Circle_type}
+
+
+\section{Geometric Global Functions}
+
+\ccRefIdfierPage{CGAL::compare_x}\\
+\ccRefIdfierPage{CGAL::compare_y}\\
+\ccRefIdfierPage{CGAL::compare_z}\\
+\ccRefIdfierPage{CGAL::compare_xy}\\
+\ccRefIdfierPage{CGAL::compare_xyz}\\
+\ccRefIdfierPage{CGAL::compare_theta}\\
+\ccRefIdfierPage{CGAL::compare_theta_z}
+
+\ccRefIdfierPage{CGAL::is_theta_monotone}
+
+\ccRefIdfierPage{CGAL::classify}
+
+\ccRefIdfierPage{CGAL::x_extremal_point}\\
+\ccRefIdfierPage{CGAL::y_extremal_point}\\
+\ccRefIdfierPage{CGAL::z_extremal_point}\\
+\ccRefIdfierPage{CGAL::theta_extremal_point}\\
+\ccRefIdfierPage{CGAL::x_extremal_points}\\
+\ccRefIdfierPage{CGAL::y_extremal_points}\\
+\ccRefIdfierPage{CGAL::z_extremal_points}\\
+\ccRefIdfierPage{CGAL::theta_extremal_points}
+
+\ccRefIdfierPage[Kernel::do_intersect]{CGAL::do_intersect}\\
+\ccRefIdfierPage[Kernel::intersection]{CGAL::intersection}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\section{Algebraic Concepts}
+
+\ccRefConceptPage{AlgebraicKernelForSpheres}
+
+	\subsubsection*{Functors}
+
+\ccRefConceptPage{AlgebraicKernelForSpheres::ConstructPolynomial_1_3}\\
+\ccRefConceptPage{AlgebraicKernelForSpheres::ConstructPolynomialForSpheres_2_3}
+
+\ccRefConceptPage{AlgebraicKernelForSpheres::ConstructPolynomialsForLines_3}
+%\ccRefConceptPage{AlgebraicKernelForSpheres::ConstructPolynomialsForCircles_2}
+
+\ccRefConceptPage{AlgebraicKernelForSpheres::CompareX}\\
+\ccRefConceptPage{AlgebraicKernelForSpheres::CompareY}\\
+\ccRefConceptPage{AlgebraicKernelForSpheres::CompareZ}\\
+\ccRefConceptPage{AlgebraicKernelForSpheres::CompareXY}\\
+\ccRefConceptPage{AlgebraicKernelForSpheres::CompareXYZ}
+
+\ccRefConceptPage{AlgebraicKernelForSpheres::SignAt}
+
+\ccRefConceptPage{AlgebraicKernelForSpheres::XCriticalPoints}\\
+\ccRefConceptPage{AlgebraicKernelForSpheres::YCriticalPoints}\\
+\ccRefConceptPage{AlgebraicKernelForSpheres::ZCriticalPoints}
+
+\ccRefConceptPage{AlgebraicKernelForSpheres::Solve}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\section{Algebraic Kernel and Classes}
+
+	\subsubsection*{Kernel}
+
+\ccRefIdfierPage{CGAL::Algebraic_kernel_for_spheres_2_3<RT>}
+
+	\subsubsection*{Polynomials} 
+
+\ccRefIdfierPage{CGAL::Polynomial_1_3<RT>}\\
+\ccRefIdfierPage{CGAL::Polynomial_for_spheres_2_3<FT>}
+
+\ccRefIdfierPage{CGAL::Polynomials_for_lines_3<FT>}
+%\ccRefIdfierPage{CGAL::Polynomials_for_circles_3<FT>}
+
+	\subsubsection*{Roots of Polynomials}
+
+\ccRefIdfierPage{CGAL::Root_of_2<RT>}\\
+\ccRefIdfierPage{CGAL::Root_for_spheres_2_3<RT>}
+
+\ccRefIdfierPage{CGAL::Root_of_traits_2<RT>}

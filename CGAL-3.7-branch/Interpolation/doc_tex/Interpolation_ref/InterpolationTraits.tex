@@ -1,0 +1,72 @@
+% +------------------------------------------------------------------------+
+% | Reference manual page: InterpolationTraits.tex
+% +------------------------------------------------------------------------+
+% | 06.04.2000   Author
+% | Package: Package
+% | 
+\RCSdef{\RCSInterpolationtraitsRev}{$Id$}
+\RCSdefDate{\RCSInterpolationtraitsDate}{$Date$}
+% |
+%%RefPage: end of header, begin of main body
+% +------------------------------------------------------------------------+
+
+
+\begin{ccRefConcept}{InterpolationTraits}
+
+\ccDefinition
+  
+Most interpolation functions are parameterized by a traits class that
+defines the primitives used in the interpolation algorithms.  The concept
+\ccRefName\ defines this common set of requirements.  
+
+
+\ccTypes \ccNestedType{FT}{The number type must follow the model
+  \ccc{FieldNumberType}.}  \ccNestedType{Point_d}{The point type on
+  which the function is defined and interpolated.}
+\ccNestedType{Vector_d}{The corresponding vector type.}
+\ccNestedType{Construct_vector_d} {A constructor object for
+  \ccc{Vector_d}.
+  Provides~: \\
+  \ccc{Vector_d operator() (Point_d a, Point_d b)} which produces the
+  vector \ccc{b -
+    a} and \\
+  \ccc{Vector_d operator() (Null_vector NULL_VECTOR)} which introduces
+  the null vector.}
+\ccNestedType{Construct_scaled_vector_d}{Constructor object for
+  \ccc{Vector_d}.
+  Provides~: \\
+  \ccc{Vector_d operator() (Vector_d v,FT scale)} which produces the
+  vector \ccc{v} scaled by a factor \ccc{scale}.}
+\ccNestedType{Compute_squared_distance_d} {Constructor
+  object for \ccc{FT}. Provides the operator:\\
+  \ccc{FT operator() (Point_d a, Point_d b)} returning the squared
+  distance between \ccc{a} and \ccc{b}.}
+
+%\ccCreation
+\ccCreationVariable{traits}  %% choose variable name
+\ccConstructor{InterpolationTraits();}{default constructor.}
+
+
+\ccHeading{Construction objects} The following functions that
+create instances of the above constructor object types must exist.
+\ccMethod{Construct_vector_d construct_vector_d_object();}{}
+\ccGlue
+\ccMethod{Construct_scaled_vector_d construct_scaled_vector_d_object();}{}
+\ccGlue
+\ccMethod{Compute_squared_distance_d compute_squared_distance_d_object();}{}
+
+\ccHasModels
+\ccRefIdfierPage{CGAL::Interpolation_traits_2<K>}\\
+\ccRefIdfierPage{CGAL::Interpolation_gradient_fitting_traits_2<K>}\\
+
+\ccSeeAlso
+\ccRefConceptPage{GradientFittingTraits}\\
+\ccRefIdfierPage{CGAL::sibson_c1_interpolation} \\
+\ccRefIdfierPage{CGAL::sibson_gradient_fitting} \\
+\ccRefIdfierPage{CGAL::farin_c1_interpolation} \\
+\ccRefIdfierPage{CGAL::quadratic_interpolation} \\
+%\ccRefIdfierPage{CGAL::natural_neighbor_coordinates_2}\\
+%\ccRefIdfierPage{CGAL::regular_neighbor_coordinates_2} \\
+%\ccRefIdfierPage{CGAL::surface_neighbor_coordinates_3}\\
+
+\end{ccRefConcept}

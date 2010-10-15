@@ -1,0 +1,99 @@
+% +------------------------------------------------------------------------+
+% | Reference manual page: HalfedgeDS_default.tex
+% +------------------------------------------------------------------------+
+% | 22.03.1999   Lutz Kettner
+% | Package: HalfedgeDS
+% | 
+\RCSdef{\RCSHalfedgeDSdefaultRev}{$Id$}
+\RCSdefDate{\RCSHalfedgeDSdefaultDate}{$Date$}
+% +------------------------------------------------------------------------+
+
+\ccRefPageBegin
+
+%%RefPage: end of header, begin of main body
+% +------------------------------------------------------------------------+
+
+
+\begin{ccRefClass}{HalfedgeDS_default<Traits,HalfedgeDSItems,Alloc>}
+\ccRefLabel{CGAL::HalfedgeDS_default}
+\ccRefLabel{CGAL_HALFEDGEDS_DEFAULT}
+
+\ccHtmlCrossLink{CGAL_HALFEDGEDS_DEFAULT}
+\ccIndexMainItem[C]{CGAL_HALFEDGEDS_DEFAULT}
+
+\ccDefinition
+
+\begin{tabbing}
+\ccc{template <} \=\ccc{class Traits,}\\
+                 \>\ccc{class HalfedgeDSItems = CGAL::HalfedgeDS_items_2,}\\
+                 \>\ccc{class Alloc           = CGAL_ALLOCATOR(int)>}\\
+     \ccc{class HalfedgeDS_default;}
+\end{tabbing}
+
+The class \ccRefName\ is a model for the \ccc{HalfedgeDS} concept. The
+second template parameter \ccc{HalfedgeDSItems} has a default argument
+\ccc{CGAL::HalfedgeDS_items_2}. The third template parameter \ccc{Alloc}
+uses the \cgal\ default allocator as default setting. \ccRefName\ is a
+list-based representation with bidirectional iterators that supports
+removal.
+
+\ccInclude{CGAL/HalfedgeDS_default.h}
+
+\ccIsModel
+
+\ccRefConceptPage{HalfedgeDS<Traits,Items,Alloc>}
+
+\ccTypes
+\ccThree{typedef bidirectional_iterator_tag;}{Supports_removal;;}{}
+
+\ccTypedef{typedef bidirectional_iterator_tag iterator_category;}{}
+\ccGlue
+\ccTypedef{typedef CGAL::Tag_true Supports_removal;}{}
+
+\ccSeeAlso
+
+\ccRefIdfierPage{CGAL::HalfedgeDS_list}\\
+\ccRefIdfierPage{CGAL::HalfedgeDS_vector}\\
+\ccRefConceptPage{HalfedgeDSItems}\\
+\ccRefIdfierPage{CGAL::HalfedgeDS_items_2}\\
+\ccRefIdfierPage{CGAL::Polyhedron_3<Traits>}\\
+\ccRefIdfierPage{CGAL::HalfedgeDS_items_decorator<HDS>}\\
+\ccRefIdfierPage{CGAL::HalfedgeDS_decorator<HDS>}\\
+\ccRefIdfierPage{CGAL::HalfedgeDS_const_decorator<HDS>}
+
+
+\ccImplementation
+
+Currently, \ccRefName\ is derived from \ccc{CGAL::HalfedgeDS_list<Traits>}.
+The copy constructor and the assignment operator need $O(n)$ time with
+$n$ the total number of vertices, halfedges, and faces. The former 
+suboptimal implementation with an $O(n \log n)$ runtime has been replaced
+with a faster implementation based on hashing for the pointer lookup.
+
+Due to a workaround for the flag \ccc{CGAL_CFG_NO_TMPL_IN_TMPL_PARAM},
+a halfedge data structure cannot be instantiated directly. For the
+\ccRefName\ a macro simplifies its direct use. However, when using a
+halfedge data structure as an argument for another class template,
+the class template name \ccc{HalfedgeDS_default} must be used, not 
+the macro.
+
+\begin{ccExampleCode}
+// The macro definition.
+#ifndef CGAL_CFG_NO_TMPL_IN_TMPL_PARAM
+    #define CGAL_HALFEDGEDS_DEFAULT  ::CGAL::HalfedgeDS_default
+#else
+    #define CGAL_HALFEDGEDS_DEFAULT  ::CGAL::HalfedgeDS_default::HDS
+#endif
+
+// The direct instantiation of the default HalfedgeDS given a Traits class.
+typedef CGAL_HALFEDGEDS_DEFAULT<Traits> HDS;
+\end{ccExampleCode}
+
+\end{ccRefClass}
+
+% +------------------------------------------------------------------------+
+%%RefPage: end of main body, begin of footer
+\ccRefPageEnd
+% EOF
+% +------------------------------------------------------------------------+
+

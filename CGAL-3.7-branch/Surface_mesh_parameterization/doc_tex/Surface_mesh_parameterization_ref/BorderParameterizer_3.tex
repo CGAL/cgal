@@ -1,0 +1,113 @@
+% +------------------------------------------------------------------------+
+% | Reference manual page: BorderParameterizer_3.tex
+% +------------------------------------------------------------------------+
+% | 23.08.2005   Laurent Saboret, Pierre Alliez, Bruno Levy
+% | Package: Surface_mesh_parameterization
+% |
+\RCSdef{\RCSBorderParameterizerRev}{$Id$}
+\RCSdefDate{\RCSBorderParameterizerDate}{$Date$}
+% |
+\ccRefPageBegin
+%%RefPage: end of header, begin of main body
+% +------------------------------------------------------------------------+
+
+
+\begin{ccRefConcept}{BorderParameterizer_3}
+
+%% \ccHtmlCrossLink{}     %% add further rules for cross referencing links
+%% \ccHtmlIndexC[concept]{} %% add further index entries
+
+
+\ccDefinition
+
+% The section below is automatically generated. Do not edit!
+%START-AUTO(\ccDefinition)
+
+\ccc{BorderParameterizer_3} is a concept of class that parameterizes a given type of mesh, \ccc{Adaptor}, which is a model of the \ccc{ParameterizationMesh_3} concept.
+
+Implementation note: To simplify the implementation, \ccc{BorderParameterizer_3} models know only the \ccc{ParameterizationMesh_3} class. They do not know the parameterization algorithm requirements or the kind of sparse linear system used.
+
+%END-AUTO(\ccDefinition)
+
+
+\ccHeading{Design Pattern}
+
+% The section below is automatically generated. Do not edit!
+%START-AUTO(\ccHeading{Design Pattern})
+
+\ccc{BorderParameterizer_3} models are Strategies \cite{cgal:ghjv-dpero-95}: they implement a strategy of border parameterization for models of \ccc{ParameterizationMesh_3}.
+
+%END-AUTO(\ccHeading{Design Pattern})
+
+
+\ccTypes
+
+% The section below is automatically generated. Do not edit!
+%START-AUTO(\ccTypes)
+
+\ccNestedType{Adaptor}
+{
+Export \ccc{ParameterizationMesh_3} template parameter.
+}
+\ccGlue
+\ccNestedType{Error_code}
+{
+The various errors detected by this package.
+}
+\ccGlue
+
+%END-AUTO(\ccTypes)
+
+
+\ccCreation
+\ccCreationVariable{bp}  %% variable name for \ccMethod below
+
+Construction and destruction are undefined.
+
+% The section below is automatically generated. Do not edit!
+%START-AUTO(\ccCreation)
+%END-AUTO(\ccCreation)
+
+
+\ccOperations
+
+% The section below is automatically generated. Do not edit!
+%START-AUTO(\ccOperations)
+
+\ccMethod{Error_code parameterize_border(Adaptor& mesh);}
+{
+Assign to mesh's border vertices a 2D position (i.e. a (u, v) pair) on border's shape. Mark them as {\em parameterized}. Return false on error.
+}
+\ccGlue
+\ccMethod{bool is_border_convex();}
+{
+Indicate if border's shape is convex.
+}
+\ccGlue
+
+%END-AUTO(\ccOperations)
+
+
+\ccHasModels
+
+\ccRefIdfierPage{CGAL::Circular_border_arc_length_parameterizer_3<ParameterizationMesh_3>}  \\
+\ccRefIdfierPage{CGAL::Circular_border_uniform_parameterizer_3<ParameterizationMesh_3>}  \\
+\ccRefIdfierPage{CGAL::Square_border_arc_length_parameterizer_3<ParameterizationMesh_3>}  \\
+\ccRefIdfierPage{CGAL::Square_border_uniform_parameterizer_3<ParameterizationMesh_3>}  \\
+\ccRefIdfierPage{CGAL::Two_vertices_parameterizer_3<ParameterizationMesh_3>}  \\
+
+
+\ccSeeAlso
+
+\ccRefIdfierPage{ParameterizerTraits_3}  \\
+\ccRefIdfierPage{ParameterizationMesh_3}  \\
+
+
+\end{ccRefConcept}
+
+% +------------------------------------------------------------------------+
+%%RefPage: end of main body, begin of footer
+\ccRefPageEnd
+% EOF
+% +------------------------------------------------------------------------+
+

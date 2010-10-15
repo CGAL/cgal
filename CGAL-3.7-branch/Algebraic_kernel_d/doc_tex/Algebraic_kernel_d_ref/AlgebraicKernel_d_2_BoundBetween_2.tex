@@ -1,0 +1,78 @@
+\begin{ccRefFunctionObjectConcept}{AlgebraicKernel_d_2::BoundBetweenX_2}
+
+\ccDefinition
+Computes a number of type 
+\ccc{AlgebraicKernel_d_1::Bound} in-between the first coordinates of two 
+\ccc{AlgebraicKernel_d_2::AlgebraicReal_2}.
+
+\ccRefines 
+\ccc{AdaptableBinaryFunction} 
+
+\ccTypes \ccThree{}{+++++++++++++}{++++++++}
+%\ccThree{typedef AlgebraicKernel_d_2::Algebraic_real_2}{second_argument_type+}{}
+\ccTypedef{typedef AlgebraicKernel_d_1::Bound         result_type;}{}
+\ccGlue
+\ccTypedef{typedef AlgebraicKernel_d_2::Algebraic_real_2 first_argument_type;}{}
+\ccGlue
+\ccTypedef{typedef AlgebraicKernel_d_2::Algebraic_real_2 second_argument_type;}{}
+
+\ccOperations \ccThree{+++++++++}{+++++++++}{}
+\ccCreationVariable{fo}
+
+
+%\ccThree{result_type}{fo(first_argument_type,++}{}
+\ccMethod{
+result_type
+operator()(const first_argument_type & a,
+           const second_argument_type & b);}{
+Computes a number of type \ccc{AlgebraicKernel_d_1::Bound}
+in-between the first coordinates of $a$ and $b$.
+\ccPrecond{$a_x \neq b_x$}.
+} 
+
+\ccSeeAlso
+
+
+\ccRefIdfierPage{AlgebraicKernel_d_2::BoundBetweenY_2}\\
+
+\end{ccRefFunctionObjectConcept}
+
+
+\begin{ccRefFunctionObjectConcept}{AlgebraicKernel_d_2::BoundBetweenY_2}
+
+\ccDefinition
+Computes a number of type 
+\ccc{AlgebraicKernel_d_1::Bound} in-between the second coordinates of two 
+\ccc{AlgebraicKernel_d_2::AlgebraicReal_2}.
+
+\ccRefines 
+\ccc{AdaptableBinaryFunction} 
+
+\ccTypes \ccThree{}{+++++++++++++}{++++++++}
+%\ccThree{typedef AlgebraicKernel_d_2::Algebraic_real_2}{second_argument_type+}{}
+\ccTypedef{typedef AlgebraicKernel_d_1::Bound         result_type;}{}
+\ccGlue
+\ccTypedef{typedef AlgebraicKernel_d_2::Algebraic_real_2 first_argument_type;}{}
+\ccGlue
+\ccTypedef{typedef AlgebraicKernel_d_2::Algebraic_real_2 second_argument_type;}{}
+
+\ccOperations \ccThree{+++++++++}{+++++++++}{}
+\ccCreationVariable{fo}
+
+
+%\ccThree{result_type}{fo(first_argument_type,++}{}
+\ccMethod{
+result_type
+operator()(const first_argument_type & a,
+           const second_argument_type & b);}{
+Computes a number of type \ccc{AlgebraicKernel_d_1::Bound}
+in-between the second coordinates of $a$ and $b$.
+\ccPrecond{$a_y \neq b_y$}.
+} 
+
+\ccSeeAlso
+
+
+\ccRefIdfierPage{AlgebraicKernel_d_2::BoundBetweenX_2}\\
+
+\end{ccRefFunctionObjectConcept}

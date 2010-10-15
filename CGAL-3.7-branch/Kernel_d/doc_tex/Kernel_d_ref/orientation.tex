@@ -1,0 +1,22 @@
+\begin{ccRefFunction}{orientation}
+\ccInclude{CGAL/predicates_d.h}
+\ccHtmlNoLinks
+
+\ccFunction{template <class ForwardIterator> Orientation
+  orientation(ForwardIterator first, ForwardIterator last);}{
+  determines the orientation of the points of the tuple \ccc{A =
+    tuple [first,last)} where $A$ consists of $d+1$ points in
+  $d$-space. This is the sign of the determinant
+  \[ \left| \begin{array}{cccc}
+  1 & 1 & 1 & 1 \\
+  A[0] & A[1] & \dots & A[d]
+  \end{array}  \right|  \]
+  where \ccc{A[i]} denotes the \ccHtmlNoLinksFrom{Cartesian} coordinate vector of 
+  the $i$-th point in $A$.
+  \ccPrecond \ccc{size [first,last) == d+1} and 
+  \ccc{A[i].dimension() == d} $\forall 0 \leq i \leq d$.
+  \ccRequire The value type of \ccc{ForwardIterator} is \ccc{Point_d<R>}.
+}
+
+\end{ccRefFunction}
+

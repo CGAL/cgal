@@ -1,0 +1,11 @@
+20 June 2006
+  * Add a test driver that uses font outlines as shapes [DONE]
+
+25 February 2006
+
+  * Add a few more pictures to the docs [DONE]
+  * Update de docs according to latest review [DONE]
+  * Test with additional real-world cases [DONE... test suite of ~ 2000 (and growing) real world cases in use now]
+
+  * Get rid of the sqrt() in the predicates to improve robustness with Exact_predicates_inexact_constructions_kernel
+

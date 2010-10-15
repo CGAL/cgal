@@ -1,0 +1,89 @@
+% +------------------------------------------------------------------------+
+% | CGAL Reference Manual: Assert_circulator.tex
+% +------------------------------------------------------------------------+
+% | Requirements for circulators in analogy to STL iterators.
+% | Adaptors between circulators and iterators.
+% | Proposal for CGAL.
+% |
+% | 11.10.1996   Lutz Kettner
+% | 
+% | \RCSdef{\circRev}{$Id$}
+% | \RCSdefDate{\circDate}{$Date$}
+% +------------------------------------------------------------------------+
+
+% +-----------------------------------------------------+
+\begin{ccRefFunction}{Assert_circulator}
+
+\ccHtmlCrossLink{CGAL::Assert_iterator}
+\ccHtmlCrossLink{CGAL::Assert_circulator_or_iterator}
+\ccHtmlCrossLink{CGAL::Assert_input_category}
+\ccHtmlCrossLink{CGAL::Assert_output_category}
+\ccHtmlCrossLink{CGAL::Assert_forward_category}
+\ccHtmlCrossLink{CGAL::Assert_bidirectional_category}
+\ccHtmlCrossLink{CGAL::Assert_random_access_category}
+\ccHtmlCrossLink{Assert_iterator}
+\ccHtmlCrossLink{Assert_circulator_or_iterator}
+\ccHtmlCrossLink{Assert_input_category}
+\ccHtmlCrossLink{Assert_output_category}
+\ccHtmlCrossLink{Assert_forward_category}
+\ccHtmlCrossLink{Assert_bidirectional_category}
+\ccHtmlCrossLink{Assert_random_access_category}
+
+\ccDefinition
+
+Each of the following assertions, applicable to an iterator 
+or a circulator or both,
+ checks at compile time if its argument
+is of the kind stated in the assertions name, i.e.~a circulator, an
+iterator, or a particular category of either an iterator or
+a circulator.  Note that neither input nor output circulators exists.
+
+\ccInclude{CGAL/circulator.h}
+
+\def\ccTagTemplateInline{\ccTrue}
+\ccSetThreeColumns{template <class IC> void}{X}{}
+
+\ccGlobalFunction{template <class C> 
+    void Assert_circulator( const C &c);}
+\ccGlue
+
+\ccGlobalFunction{template <class I> 
+    void Assert_iterator( const I &i);}
+\ccGlue
+
+\ccGlobalFunction{template< class IC> 
+    void Assert_circulator_or_iterator(const IC& i);}
+
+\ccGlobalFunction{template <class I> 
+    void Assert_input_category( const I &i);} 
+\ccGlue
+
+\ccGlobalFunction{template <class I> 
+    void Assert_output_category( const I &i);} 
+\ccGlue
+
+\ccGlobalFunction{template <class IC> 
+    void Assert_forward_category( const IC &ic);} 
+\ccGlue
+
+\ccGlobalFunction{template <class IC> 
+    void Assert_bidirectional_category( const IC &ic);}
+\ccGlue
+
+\ccGlobalFunction{template <class IC> 
+    void Assert_random_access_category( const IC &ic);} 
+
+\def\ccTagTemplateInline{\ccFalse}
+
+\ccSeeAlso
+
+\ccc{Circulator_tag},
+\ccc{Circulator_traits},
+\ccc{query_circulator_or_iterator},
+\ccc{Circulator}.
+
+
+\end{ccRefFunction}
+
+% +-----------------------------------------------------+
+% EOF

@@ -1,0 +1,264 @@
+<ui version="4.0" >
+ <class>MainWindow</class>
+ <widget class="QMainWindow" name="MainWindow" >
+  <property name="geometry" >
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>635</width>
+    <height>504</height>
+   </rect>
+  </property>
+  <property name="windowTitle" >
+   <string>CGAL 3D Periodic Lloyd</string>
+  </property>
+  <property name="windowIcon" >
+   <iconset resource="../resources/CGAL.qrc" >
+    <normaloff>:/cgal/logos/cgal_icon</normaloff>:/cgal/logos/cgal_icon</iconset>
+  </property>
+  <widget class="QWidget" name="centralwidget" >
+   <layout class="QVBoxLayout" >
+    <item>
+     <layout class="QHBoxLayout" name="horizontalLayout" >
+      <item>
+       <widget class="QLabel" name="alphaLabel" >
+        <property name="sizePolicy" >
+         <sizepolicy vsizetype="Fixed" hsizetype="Fixed" >
+          <horstretch>0</horstretch>
+          <verstretch>0</verstretch>
+         </sizepolicy>
+        </property>
+        <property name="font" >
+         <font>
+          <weight>75</weight>
+          <bold>true</bold>
+         </font>
+        </property>
+        <property name="text" >
+         <string>Speed:</string>
+        </property>
+       </widget>
+      </item>
+      <item>
+       <widget class="QSlider" name="speedSlider" >
+        <property name="sizePolicy" >
+         <sizepolicy vsizetype="Fixed" hsizetype="Preferred" >
+          <horstretch>0</horstretch>
+          <verstretch>0</verstretch>
+         </sizepolicy>
+        </property>
+        <property name="minimum" >
+         <number>0</number>
+        </property>
+        <property name="maximum" >
+         <number>100</number>
+        </property>
+        <property name="singleStep" >
+         <number>1</number>
+        </property>
+        <property name="value" >
+         <number>100</number>
+        </property>
+        <property name="orientation" >
+         <enum>Qt::Horizontal</enum>
+        </property>
+       </widget>
+      </item>
+     </layout>
+    </item>
+    <item>
+     <widget class="Viewer" native="1" name="viewer" />
+    </item>
+   </layout>
+  </widget>
+  <widget class="QMenuBar" name="menubar" >
+   <property name="geometry" >
+    <rect>
+     <x>0</x>
+     <y>0</y>
+     <width>635</width>
+     <height>22</height>
+    </rect>
+   </property>
+   <widget class="QMenu" name="menuFile" >
+    <property name="title" >
+     <string>File</string>
+    </property>
+    <addaction name="actionNew_Point_Set" />
+    <addaction name="actionLoad_points" />
+    <addaction name="actionSave_points" />
+    <addaction name="separator" />
+    <addaction name="actionRender_Video" />
+    <addaction name="separator" />
+    <addaction name="actionQuit" />
+   </widget>
+   <widget class="QMenu" name="menuControl" >
+    <property name="title" >
+     <string>Control</string>
+    </property>
+    <addaction name="actionStep" />
+    <addaction name="actionPlay" />
+    <addaction name="separator" />
+    <addaction name="actionShow_8_Copies" />
+    <addaction name="action2D_version" />
+   </widget>
+   <widget class="QMenu" name="menuHelp" >
+    <property name="title" >
+     <string>Help</string>
+    </property>
+    <addaction name="actionDemo_Help" />
+   </widget>
+   <addaction name="menuFile" />
+   <addaction name="menuControl" />
+   <addaction name="menuHelp" />
+  </widget>
+  <widget class="QStatusBar" name="statusbar" />
+  <widget class="QToolBar" name="toolBar" >
+   <property name="windowTitle" >
+    <string>toolBar</string>
+   </property>
+   <attribute name="toolBarArea" >
+    <enum>TopToolBarArea</enum>
+   </attribute>
+   <attribute name="toolBarBreak" >
+    <bool>false</bool>
+   </attribute>
+   <addaction name="actionNew_Point_Set" />
+   <addaction name="actionLoad_points" />
+   <addaction name="actionSave_points" />
+   <addaction name="separator" />
+   <addaction name="actionStep" />
+   <addaction name="actionPlay" />
+   <addaction name="separator" />
+   <addaction name="actionShow_8_Copies" />
+   <addaction name="action2D_version" />
+  </widget>
+  <action name="actionQuit" >
+   <property name="text" >
+    <string>Quit</string>
+   </property>
+  </action>
+  <action name="actionRender_Video" >
+   <property name="enabled" >
+    <bool>false</bool>
+   </property>
+   <property name="text" >
+    <string>Render Video</string>
+   </property>
+  </action>
+  <action name="actionNew_Point_Set" >
+   <property name="icon" >
+    <iconset resource="Periodic_Lloyd_3.qrc" >
+     <normaloff>:/Periodic_Lloyd_3/icons/fileNew.png</normaloff>:/Periodic_Lloyd_3/icons/fileNew.png</iconset>
+   </property>
+   <property name="text" >
+    <string>New Point Set</string>
+   </property>
+   <property name="shortcut" >
+    <string>Ctrl+N</string>
+   </property>
+  </action>
+  <action name="actionPlay" >
+   <property name="checkable" >
+    <bool>true</bool>
+   </property>
+   <property name="checked" >
+    <bool>false</bool>
+   </property>
+   <property name="icon" >
+    <iconset resource="Periodic_Lloyd_3.qrc" >
+     <normaloff>:/Periodic_Lloyd_3/icons/play.png</normaloff>
+     <normalon>:/Periodic_Lloyd_3/icons/pause.png</normalon>:/Periodic_Lloyd_3/icons/play.png</iconset>
+   </property>
+   <property name="text" >
+    <string>Stop</string>
+   </property>
+   <property name="shortcut" >
+    <string>P</string>
+   </property>
+  </action>
+  <action name="actionShow_8_Copies" >
+   <property name="checkable" >
+    <bool>true</bool>
+   </property>
+   <property name="icon" >
+    <iconset resource="Periodic_Lloyd_3.qrc" >
+     <normaloff>:/Periodic_Lloyd_3/icons/cp8.png</normaloff>:/Periodic_Lloyd_3/icons/cp8.png</iconset>
+   </property>
+   <property name="text" >
+    <string>Show 8 Copies</string>
+   </property>
+   <property name="shortcut" >
+    <string>C</string>
+   </property>
+  </action>
+  <action name="action2D_version" >
+   <property name="checkable" >
+    <bool>true</bool>
+   </property>
+   <property name="icon" >
+    <iconset resource="Periodic_Lloyd_3.qrc" >
+     <normaloff>:/Periodic_Lloyd_3/icons/planar.png</normaloff>:/Periodic_Lloyd_3/icons/planar.png</iconset>
+   </property>
+   <property name="text" >
+    <string>2D version</string>
+   </property>
+   <property name="shortcut" >
+    <string>2</string>
+   </property>
+  </action>
+  <action name="actionStep" >
+   <property name="icon" >
+    <iconset resource="Periodic_Lloyd_3.qrc" >
+     <normaloff>:/Periodic_Lloyd_3/icons/step.png</normaloff>:/Periodic_Lloyd_3/icons/step.png</iconset>
+   </property>
+   <property name="text" >
+    <string>Step</string>
+   </property>
+   <property name="shortcut" >
+    <string>Return, Enter</string>
+   </property>
+  </action>
+  <action name="actionLoad_points" >
+   <property name="icon" >
+    <iconset resource="Periodic_Lloyd_3.qrc" >
+     <normaloff>:/Periodic_Lloyd_3/icons/fileOpen.png</normaloff>:/Periodic_Lloyd_3/icons/fileOpen.png</iconset>
+   </property>
+   <property name="text" >
+    <string>Load points</string>
+   </property>
+   <property name="shortcut" >
+    <string>Ctrl+O</string>
+   </property>
+  </action>
+  <action name="actionSave_points" >
+   <property name="icon" >
+    <iconset resource="Periodic_Lloyd_3.qrc" >
+     <normaloff>:/Periodic_Lloyd_3/icons/fileSave.png</normaloff>:/Periodic_Lloyd_3/icons/fileSave.png</iconset>
+   </property>
+   <property name="text" >
+    <string>Save points</string>
+   </property>
+   <property name="shortcut" >
+    <string>Ctrl+S</string>
+   </property>
+  </action>
+  <action name="actionDemo_Help" >
+   <property name="text" >
+    <string>Demo Help</string>
+   </property>
+  </action>
+ </widget>
+ <customwidgets>
+  <customwidget>
+   <class>Viewer</class>
+   <extends>QWidget</extends>
+   <header>Viewer.h</header>
+  </customwidget>
+ </customwidgets>
+ <resources>
+  <include location="../resources/CGAL.qrc" />
+  <include location="Periodic_Lloyd_3.qrc" />
+ </resources>
+ <connections/>
+</ui>

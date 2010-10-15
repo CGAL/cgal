@@ -1,0 +1,178 @@
+\begin{ccRefConcept}{AlgebraicStructureTraits}
+
+
+\ccDefinition
+
+A model of \ccc{AlgebraicStructureTraits} reflects the algebraic structure
+of an associated type \ccc{Type}. 
+
+
+Depending on the concepts that \ccc{Type} fulfills, 
+it contains various functors and descriptive tags. 
+Moreover it gives access to the several possible 
+algebraic operations within that structure.
+
+
+\ccTypes
+\ccSetTwoColumns{xxxxxxxxxxxxxx}{}
+A model of \ccc{AlgebraicStructureTraits} is supposed to provide:\\
+
+\ccNestedType{Type} {The associated type.}
+
+\ccNestedType{Algebraic_category}
+        { Tag indicating the algebraic structure of the associated type. \\
+
+        \begin{tabular}{|l|l|}
+        \hline
+        Tag is: & \ccc{Type} is model of:\\
+        \hline
+          \ccc{CGAL::Null_tag}                       & no algebraic concept\\
+          \ccc{CGAL::Integral_domain_without_division_tag}& \ccc{IntegralDomainWithoutDivision}\\     
+          \ccc{CGAL::Integral_domain_tag}            & \ccc{IntegralDomain}\\     
+          \ccc{CGAL::Unique_factorization_domain_tag}                   & \ccc{UniqueFactorizationDomain}\\     
+          \ccc{CGAL::Euclidean_ring_tag}             & \ccc{EuclideanRing}\\     
+          \ccc{CGAL::Field_tag}                      & \ccc{Field}\\     
+          \ccc{CGAL::Field_with_sqrt_tag}            & \ccc{FieldWithSqrt}\\
+          \ccc{CGAL::Field_with_kth_root_tag}            & \ccc{FieldWithKthRoot}\\
+          \ccc{CGAL::Field_with_root_of_tag}            & \ccc{FieldWithRootOf}\\
+        \hline
+        \end{tabular}        
+        }
+
+\ccNestedType{Is_exact}
+        { Tag indicating whether \ccc{Type} is exact. \\
+          This is either \ccc{CGAL::Tag_true} or \ccc{CGAL::Tag_false}.\\
+          An algebraic structure is considered exact, if all operations 
+          required by its concept are computed such that a comparison 
+          of two algebraic expressions is always correct.
+          The exactness covers only those operations that are required by 
+          the algebraic structure concept. \\
+          e.g. an exact \ccc{Field} may have a \ccc{Sqrt} functor that 
+          is not exact. \\   
+        }
+
+\ccNestedType{Is_numerical_sensitive}
+        { Tag indicating whether \ccc{Type} is numerical sensitive. \\
+          This is either \ccc{CGAL::Tag_true} or \ccc{CGAL::Tag_false}.\\
+          An algebraic structure is  considered as numerically sensitive,
+          if the performance of the type is sensitive to the condition 
+          number of an algorithm.
+        }
+
+\ccNestedType{Boolean}
+        { This type specifies the return type of the predicates provided
+          by this traits. The type must be convertible to \ccc{bool} and 
+          typically the type indeed maps to \ccc{bool}. However, there are also 
+          cases such as interval arithmetic, in which it is \ccc{Uncertain<bool>} 
+          or some similar type. 
+        }
+
+\ccHeading{Functors}
+
+In case a functor is not provided, it is set to \ccc{CGAL::Null_functor}.
+
+\ccNestedType{Is_zero}{ 
+A model of \ccc{AlgebraicStructureTraits::IsZero}.\\
+Required by the concept \ccc{IntegralDomainWithoutDivision}.
+In case \ccc{Type} is also model of \ccc{RealEmbeddable} this is a 
+model of \ccc{RealEmbeddableTraits::IsZero}. 
+}
+
+\ccNestedType{Is_one}{ 
+A model of \ccc{AlgebraicStructureTraits::IsOne}.\\
+Required by the concept \ccc{IntegralDomainWithoutDivision}.
+}
+
+\ccNestedType{Square}{ 
+A model of \ccc{AlgebraicStructureTraits::Square}.\\
+Required by the concept \ccc{IntegralDomainWithoutDivision}.
+}
+
+\ccNestedType{Simplify}{ 
+A model of \ccc{AlgebraicStructureTraits::Simplify}.\\
+Required by the concept \ccc{IntegralDomainWithoutDivision}.
+}
+
+\ccNestedType{Unit_part}{ 
+A model of \ccc{AlgebraicStructureTraits::UnitPart}.\\
+Required by the concept \ccc{IntegralDomainWithoutDivision}.
+}
+
+\ccNestedType{Integral_division}{ 
+A model of \ccc{AlgebraicStructureTraits::IntegralDivision}.\\
+Required by the concept \ccc{IntegralDomain}.
+}
+\ccNestedType{Divides}{ 
+A model of \ccc{AlgebraicStructureTraits::Divides}.\\
+Required by the concept \ccc{IntegralDomain}.
+}
+
+\ccNestedType{Is_square}{ 
+A model of \ccc{AlgebraicStructureTraits::IsSquare}.\\
+Required by the concept \ccc{IntegralDomainWithoutDivision}.
+}
+
+\ccNestedType{Gcd}{ 
+A model of \ccc{AlgebraicStructureTraits::Gcd}.\\
+Required by the concept \ccc{UniqueFactorizationDomain}.
+}
+
+
+\ccNestedType{Mod}{ 
+A model of \ccc{AlgebraicStructureTraits::Mod}.\\
+Required by the concept \ccc{EuclideanRing}.
+}      
+
+\ccNestedType{Div}{ 
+A model of \ccc{AlgebraicStructureTraits::Div}.\\
+Required by the concept \ccc{EuclideanRing}.
+}
+\ccNestedType{Div_mod}{ 
+A model of \ccc{AlgebraicStructureTraits::DivMod}.\\
+Required by the concept \ccc{EuclideanRing}.
+}
+
+\ccNestedType{Sqrt}{ 
+A model of \ccc{AlgebraicStructureTraits::Sqrt}.\\
+Required by the concept \ccc{FieldWithSqrt}.
+}
+
+%\begin{ccAdvanced}
+\ccNestedType{Kth_root}{ 
+A model of \ccc{AlgebraicStructureTraits::KthRoot}.\\
+Required by the concept \ccc{FieldWithKthRoot}.
+}
+
+\ccNestedType{Root_of}{ 
+A model of \ccc{AlgebraicStructureTraits::RootOf}.\\
+Required by the concept \ccc{FieldWithRootOf}.
+}
+%\end{ccAdvanced}
+
+%\ccHasModels
+
+\ccSeeAlso
+
+
+\ccRefIdfierPage{IntegralDomainWithoutDivision}\\
+\ccRefIdfierPage{IntegralDomain}\\
+\ccRefIdfierPage{UniqueFactorizationDomain}\\
+\ccRefIdfierPage{EuclideanRing}\\
+\ccRefIdfierPage{Field}\\
+\ccRefIdfierPage{FieldWithSqrt}\\
+\ccRefIdfierPage{FieldWithKthRoot}\\
+\ccRefIdfierPage{FieldWithRootOf}\\
+\\
+\ccRefIdfierPage{CGAL::Integral_domain_without_division_tag}\\
+\ccRefIdfierPage{CGAL::Integral_domain_tag}\\
+\ccRefIdfierPage{CGAL::Unique_factorization_domain_tag}\\
+\ccRefIdfierPage{CGAL::Euclidean_ring_tag}\\
+\ccRefIdfierPage{CGAL::Field_tag}\\
+\ccRefIdfierPage{CGAL::Field_with_sqrt_tag}\\
+\ccRefIdfierPage{CGAL::Field_with_kth_root_tag}\\
+\ccRefIdfierPage{CGAL::Field_with_root_of_tag}\\
+
+\ccHasModels
+\ccRefIdfierPage{CGAL::Algebraic_structure_traits<T>}\\
+
+\end{ccRefConcept}

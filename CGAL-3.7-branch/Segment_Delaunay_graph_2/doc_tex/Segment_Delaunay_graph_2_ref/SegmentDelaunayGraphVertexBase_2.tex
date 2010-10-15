@@ -1,0 +1,146 @@
+%% Copyright (c) 2003,2004,2005  INRIA Sophia-Antipolis (France) and
+%% Notre Dame University (U.S.A.).  All rights reserved.
+%%
+%% This file is part of CGAL (www.cgal.org); you may redistribute it under
+%% the terms of the Q Public License version 1.0.
+%% See the file LICENSE.QPL distributed with CGAL.
+%%
+%% Licensees holding a valid commercial license may use this file in
+%% accordance with the commercial license agreement provided with the software.
+%%
+%% This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
+%% WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
+%%
+%% $URL$
+%% $Id$
+%% 
+%%
+%% Author(s)     : Menelaos Karavelas <mkaravel@cse.nd.edu>
+
+
+
+\begin{ccRefConcept}{SegmentDelaunayGraphVertexBase_2}
+
+%% \ccHtmlCrossLink{}     %% add further rules for cross referencing links
+%% \ccHtmlIndexC[concept]{} %% add further index entries
+\ccCreationVariable{vb}
+\ccDefinition
+
+The concept \ccc{SegmentDelaunayGraphVertexBase_2} describes the
+requirements for the vertex base class of the
+\ccc{SegmentDelaunayGraphDataStructure_2} concept. A vertex stores a
+site of the segment Delaunay graph and provides access to one of its
+incident faces through a \ccc{Face_handle}.
+
+\ccRefines
+\ccc{DefaultConstructible}\\
+\ccc{CopyConstructible}\\
+\ccc{Assignable}
+
+\ccTypes
+%\ccTwo{SegmentDelaunayGraphVertexBase_2::Point_container+}{}
+\ccThree{typedef typename Point_container::iterator+}{Point_handle+}{}
+\ccThreeToTwo
+\ccNestedType{Geom_traits}{A type for the geometric traits that defines
+the site. \ccPrecond{The type \ccc{Geom_traits} must
+define the type \ccc{Site_2}.}}
+%
+\ccGlue
+\ccNestedType{Site_2}{A type for the site. This type must coincide
+  with the type \ccc{Geom_traits::Site_2}.}
+%
+\ccGlue
+\ccNestedType{Storage_site_tag}{A type that indicates what kind of
+  storage type to use. \ccc{Storage_site_tag} must either be
+    \ccc{CGAL::Tag_true} or \ccc{CGAL::Tag_false}.}
+%
+\ccGlue
+\ccNestedType{Storage_site_2}{A type for the internal representation
+  of sites. This type must satisfy the requirements of the concept
+\ccc{SegmentDelaunayGraphStorageSite_2}.}
+%
+\ccGlue
+\ccNestedType{Data_structure}{A type for the
+  underlying data structure, to which the vertex belongs to.}
+%
+\ccGlue
+\ccNestedType{Vertex_handle}{A type for the vertex handle of the
+  segment Delaunay graph data structure.}
+%
+\ccGlue
+\ccNestedType{Face_handle}{A type for the face handle of the
+  segment Delaunay graph data structure.}
+%
+
+\ccCreation
+\ccCreationVariable{v}  %% choose variable name
+
+\ccTwo{SegmentDelaunayGraphVertexBase_2 v(Storage_site_2 ss);++}{}
+%
+%\ccConstructor{SegmentDelaunayGraphVertexBase_2();}{Default constructor.}
+%\ccGlue
+
+In addition to the default and copy constructors and following
+constructors are required:
+
+\ccConstructor{SegmentDelaunayGraphVertexBase_2(Storage_site_2 ss);}
+{Constructs a vertex associated with the site represented by the
+  storage site \ccc{ss}.}
+\ccGlue
+\ccConstructor{SegmentDelaunayGraphVertexBase_2(Storage_site_2 ss,
+  Face_handle f);}{Constructs a vertex associated with
+  the site represented by the storage site \ccc{ss},
+  and pointing to the face associated with the face handle \ccc{f}.}
+
+
+
+
+
+\ccAccessFunctions
+\ccThree{Storage_site_2}{v.storage_site()+}{}
+%
+\ccMethod{Storage_site_2 storage_site();}
+{Returns  the storage site representing the site.}
+\ccGlue
+\ccMethod{Site_2 site();}
+{Returns  the site.}
+\ccGlue
+\ccMethod{Face_handle face();}{Returns a handle to an incident face.}
+
+
+
+\ccHeading{Setting}
+\ccThree{void}{v.set_site(Storage_site_2 ss)+}{}
+\ccMethod{void set_site(Storage_site_2 ss);}
+{Sets the storage site.}
+\ccGlue
+\ccMethod{void set_face(Face_handle f);}{Sets the incident face.}
+
+\ccThree{bool}{v.is_valid(bool verbose, int level)+}{}
+\ccHeading{Checking}
+\ccMethod{bool is_valid(bool verbose, int level) const;}
+{Performs any required tests on a vertex.}
+
+
+\ccHasModels
+
+\ccc{CGAL::Segment_Delaunay_graph_vertex_base_2<Gt>}.
+
+
+\ccSeeAlso
+
+\ccc{SegmentDelaunayGraphDataStructure_2}\\
+\ccc{SegmentDelaunayGraphTraits_2}\\
+\ccc{SegmentDelaunayGraphSite_2}\\
+\ccc{SegmentDelaunayGraphStorageSite_2}\\
+\ccc{CGAL::Segment_Delaunay_graph_vertex_base_2<Gt>}\\
+\ccc{CGAL::Segment_Delaunay_graph_site_2<K>}\\
+\ccc{CGAL::Segment_Delaunay_graph_storage_site_2<Gt,SSTag>}\\
+\ccc{CGAL::Triangulation_data_structure_2<Vb,Fb>}
+
+\end{ccRefConcept}
+
+% +------------------------------------------------------------------------+
+%%RefPage: end of main body, begin of footer
+% EOF
+% +------------------------------------------------------------------------+

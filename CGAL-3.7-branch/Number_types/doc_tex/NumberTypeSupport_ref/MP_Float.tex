@@ -1,0 +1,77 @@
+% $Id$
+% $Date$
+% author : Sylvain Pion
+
+\begin{ccRefClass} {MP_Float}
+%\subsection{Multi Precision Floats}
+%\label{mpfloat}
+
+\ccDefinition
+An object of the class \ccc{MP_Float} is able to represent a floating point
+value with arbitrary precision.  This number type has the property that
+additions, subtractions and multiplications are computed exactly, as well as
+the construction from \ccc{float}, \ccc{double} and \ccc{long double}.
+
+Division and square root are not enabled by default since \cgal\ release 3.2,
+since they are computed approximately.  We suggest that you use
+rationals like \ccc{Quotient<MP_Float>} when you need exact divisions.
+
+Note on the implementation : although the mantissa length is basically only
+limited by the available memory, the exponent is currently represented by a
+(integral valued) \ccc{double}, which can overflow in some circumstances.  We
+plan to also have a multiprecision exponent to fix this issue.
+
+\ccInclude{CGAL/MP_Float.h}
+
+\ccIsModel
+\ccc{EuclideanRing}.\\
+\\
+\ccc{RealEmbeddable}
+
+\ccCreation
+\ccCreationVariable{m}
+
+\ccConstructor{MP_Float();}
+{introduces an uninitialized variable \ccVar.}
+\ccGlue
+\ccConstructor{MP_Float(const MP_Float &);}
+{copy constructor.}
+\ccGlue
+\ccConstructor{MP_Float(int i)}
+{introduces the integral value i.}
+\ccGlue
+\ccConstructor{MP_Float(float d)}
+{introduces the floating point value d (exact conversion).}
+\ccGlue
+\ccConstructor{MP_Float(double d)}
+{introduces the floating point value d (exact conversion).}
+\ccGlue
+\ccConstructor{MP_Float(long double d)}
+{introduces the floating point value d (exact conversion).}
+
+\ccOperations
+
+\ccFunction{std::ostream& operator<<(std::ostream& out, const MP_Float& m);}
+{writes a double approximation of \ccc{m} to the ostream \ccc{out}.}
+
+\ccFunction{std::istream& operator>>(std::istream& in, MP_Float& m);}
+{reads a \ccc{double} from \ccc{in}, then converts it to an \ccc{MP_Float}.}
+
+\ccFunction{MP_Float approximate_division(const MP_Float &a, const MP_Float &b);}
+{computes an approximation of the division by converting the operands to
+\ccc{double}, performing the division on \ccc{double}, and converting back to
+\ccc{MP_Float}.}
+
+\ccFunction{MP_Float approximate_sqrt(const MP_Float &a);}
+{computes an approximation of the square root by converting the operand to
+\ccc{double}, performing the square root on \ccc{double}, and converting back
+to \ccc{MP_Float}.}
+
+
+\ccImplementation 
+The implementation of \ccc{MP_Float} is simple but provides a quadratic
+complexity for multiplications.  This can be a problem for large operands.
+For faster implementations of the same functionality with large integral
+values, you may want to consider using \ccc{GMP} or \ccc{LEDA} instead.
+
+\end{ccRefClass} 

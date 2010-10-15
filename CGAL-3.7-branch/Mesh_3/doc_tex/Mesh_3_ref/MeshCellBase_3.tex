@@ -1,0 +1,133 @@
+% +------------------------------------------------------------------------+
+% | Reference manual page: MeshCellBase_3.tex
+% +------------------------------------------------------------------------+
+% | 19.05.2008   Laurent Rineau
+% | Package: Mesh_3
+% |
+\RCSdef{\RCSMeshCellBaseRev}{$Id$}
+\RCSdefDate{\RCSMeshCellBaseDate}{$Date$}
+% |
+\ccRefPageBegin
+%%RefPage: end of header, begin of main body
+% +------------------------------------------------------------------------+
+
+
+\begin{ccRefConcept}{MeshCellBase_3}
+
+%% \ccHtmlCrossLink{}     %% add further rules for cross referencing links
+%% \ccHtmlIndexC[concept]{} %% add further index entries
+
+\ccDefinition
+  
+The concept \ccRefName\ describes the  requirements 
+for the \ccc{Cell} type  of the triangulation
+used in the 3D mesh generation process. The type \ccRefName\
+refines the concept \ccc{RegularTriangulationCellBase_3}.
+As a \cgal{} 3D triangulation triangulates the whole convex hull of its vertices,
+it is needed to specify whether a given cell of the triangulation
+is inside the domain or not and which subdomain it belongs to
+in case of a multi-domain. 
+
+Moreover, this concept adds four markers per cell to mark the facets
+of the triangulation that are surface facets,
+and four additional helper markers
+used in some operations to mark for instance
+the facets that have been visited.
+
+This concept also provides storage for  the centers of  Delaunay surface
+balls.
+Each surface facet has a  Delaunay surface ball, i. e. 
+a circumscribing ball, centered 
+on an input complex  surface patch,  
+ and empty of triangulation vertices. 
+In the following we call \ccc{surface center}
+of a surface facet, the center of its biggest Delaunay surface ball.
+
+\ccRefines
+\ccc{RegularTriangulationCellBase_3} \\
+
+\ccTypes
+
+\ccNestedType{Point}{Point type, required to match the point type
+of the 3D triangulation in which the mesh is embedded.}
+
+% \ccNestedType{Subdomain_index}
+% {Type of indices for cells of the
+%   input complex. Must be a model of CopyConstructible,
+%   Assignable, DefaultConstructible and EqualityComparable. 
+% This type must be convertible to  the nested type \ccc{MeshDomain_3::Subdomain_index}.
+% The default constructed value must
+%   be the label of the exterior of the domain (which contains at least the
+%   unbounded component).}
+
+% \ccNestedType{Surface_index}{Type of indices for surface patches of the
+%   input complex. Must be a model of CopyConstructible,
+%   Assignable, DefaultConstructible and EqualityComparable.
+% This type must be convertible 
+% to the nested type \ccc{MeshDomain_3::Surface_index}. The default constructed
+% value must be different from values taken by indices of surface facets,
+% as it may be used to
+% distinguish between a surface facet and an internal (or outside) one.}
+
+\ccNestedType{Subdomain_index;}
+{Type of indices for cells of the input complex. Must match the type \ccc{MeshDomain_3::Subdomain_index}.}
+\ccGlue
+\ccNestedType{Surface_index;}
+{Type of indices for surface patches of the input complex. Must match the type \ccc{MeshDomain_3::Surface_index}.}
+
+\ccCreationVariable{cell}  %% choose variable name
+
+\ccOperations
+
+\ccMethod{Subdomain_index subdomain_index();}{Returns the
+  index of the input subdomain that contains the cell \ccc{cell}
+  of the triangulation.}
+
+\ccMethod{void set_subdomain_index(Subdomain_index index);}{Sets
+  the subdomain index of the cell.}
+
+\ccMethod
+{bool is_facet_on_surface(int i);}
+{returns \ccc{true} iff \ccc{facet(i)} is a surface facet. }
+\ccGlue
+\ccMethod
+{void set_facet_on_surface(int i, Surface_index index);}
+{Sets \ccc{facet(i)} as a surface facet  iff \ccc{index} is
+  different from \ccc{Surface_index} default value.}
+
+\ccMethod
+{bool is_facet_visited (int i);}
+{Returns \ccc{true} iff \ccc{facet(i)} has been visited.}
+\ccGlue
+\ccMethod
+{void set_facet_visited (int i, bool b);} 
+{Marks \ccc{facet(i)} as visited if \ccc{b} is \ccc{true}
+ and non-visited otherwise.}
+
+\ccMethod
+{const Point& facet_surface_center(int i);}
+{Returns a const reference to the surface center of \ccc{facet(i)}.}
+\ccGlue
+\ccMethod
+{void set_facet_surface_center (int i, Point p);} 
+{Sets point \ccc{p} as the surface center of \ccc{facet(i)}.}
+
+
+\ccHasModels
+\ccc{Mesh_cell_base_3<MD,Gt,Cb>}
+
+
+\ccSeeAlso
+
+\ccc{make_mesh_3} \\
+\ccc{MeshDomain_3} \\
+\ccc{Complex_3InTriangulation_3}
+
+\end{ccRefConcept}
+
+% +------------------------------------------------------------------------+
+%%RefPage: end of main body, begin of footer
+\ccRefPageEnd
+% EOF
+% +------------------------------------------------------------------------+
+

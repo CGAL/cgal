@@ -1,0 +1,48 @@
+% +------------------------------------------------------------------------+
+% | Reference manual page: Triangulated_mixed_complex_cell_3.tex
+% +------------------------------------------------------------------------+
+% | 27.09.2005   Nico Kruithof
+% | Package: Skin_surface
+% | 
+\RCSdef{\RCSTriangulatedmixedcomplexcellRev}{$Id$}
+\RCSdefDate{\RCSTriangulatedmixedcomplexcellDate}{$Date$}
+% +------------------------------------------------------------------------+
+
+\ccRefPageBegin
+
+%%RefPage: end of header, begin of main body
+% +------------------------------------------------------------------------+
+
+
+\begin{ccRefClass}{Triangulated_mixed_complex_cell_3<GT,SurfaceKernel,Cb>}
+\label{refTriangulatedmixedcomplexcell}
+
+\ccDefinition 
+%
+The \ccRefName\ defines the cell type of a triangulation that can be
+used in the function \ccc{triangulate_mixed_complex_3} to construct a
+triangulated mixed complex. It provides a pointer to a
+\ccc{CGAL::Skin_surface_quadratic_surface_3} that uses the
+\ccc{SurfaceKernel} as its kernel.
+
+\ccInclude{CGAL/Triangulated_mixed_complex_cell_3.h}
+
+\ccParameters 
+The first template argument is the geometric traits class
+\ccc{TriangulationTraits_3} of the \ccc{Cb}.
+
+The second template argument is a kernel that is used to define the
+quadratic surface.
+
+The last template argument is the base class from which \ccRefName\
+derives. By default it is \ccc{Triangulation_cell_base_3<GT>}.
+
+\ccInheritsFrom
+\ccc{Cb}
+
+\ccSeeAlso
+\ccRefIdfierPage{CGAL::Triangulation_3<TriangulationTraits_3,TriangulationDataStructure_3>}\\
+\ccRefIdfierPage{CGAL::Triangulation_cell_base_3<TriangulationTraits_3, TriangulationDSCellBase_3>}\\
+\ccRefIdfierPage{CGAL::Triangulated_mixed_complex_3<SkinSurfaceTraits_3,GT,PolyhedronKernel_3,Tds>}
+
+\end{ccRefClass}

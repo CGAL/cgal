@@ -1,0 +1,47 @@
+% +------------------------------------------------------------------------+
+% | Skin_surface_3/doc_tex/Skin_surface_3/intro.tex
+% +------------------------------------------------------------------------+
+% | 2005 Nico Kruithof
+% | Meshing the 3d Skin surface defined for a set of spheres.
+% | 
+\RCSdef{\skinSurfaceRefRev}{$Id$}
+\RCSdefDate{\skinSurfaceRefDate}{$Date$}
+% +------------------------------------------------------------------------+
+
+\ccRefChapter{3D Skin Surface Meshing\label{chapterSkinSurfaceRef}}
+\ccChapterRelease{\skinSurfaceRefRev. \ \skinSurfaceRefDate}
+\ccChapterAuthor{Nico Kruithof}
+
+Skin surfaces form a class of tangent continuous surfaces defined by a
+set of balls and a scalar called the shrink factor. The skin surface
+package constructs an triangular mesh isotopic to the skin surface,
+using the algorithm described in \cite{cgal:kv-mssct-05}. The mesh is
+stored in a \ccc{CGAL::Polyhedron_3}.
+
+\subsection*{Concepts}
+\ccRefIdfierPage{SkinSurface_3}\\
+\ccRefIdfierPage{SkinSurfaceTraits_3}\\
+%\ccRefIdfierPage{Polyhedron_3}\\
+
+%\ccRefIdfierPage{HDS}\\
+%\ccRefIdfierPage{MarchingTetrahedraObserver_3}\\
+%\ccRefIdfierPage{MarchingTetrahedraPolicy_3}\\
+%\ccRefIdfierPage{Triangulation_3}
+
+
+\subsection*{Classes}
+\ccRefIdfierPage{CGAL::Skin_surface_3<SkinSurfaceTraits_3>}\\
+\ccRefIdfierPage{CGAL::Union_of_balls_3<SkinSurfaceTraits_3>}\\
+
+\ccRefIdfierPage{CGAL::Skin_surface_traits_3<K>}\\
+%\ccRefIdfierPage{CGAL::Marching_tetrahedra_observer_default_3<MarchingTetrahedraTraits_3>}\\
+
+\subsection*{Functions}
+\ccRefIdfierPage{CGAL::make_skin_surface_mesh_3<Polyhedron_3>}\\
+\ccRefIdfierPage{CGAL::mesh_skin_surface_3<SkinSurface_3, Polyhedron_3>}\\
+\ccRefIdfierPage{CGAL::subdivide_skin_surface_mesh_3<SkinSurface_3, Polyhedron_3>}
+
+%NGHK: Move ???
+%\ccRefIdfierPage{CGAL::marching_tetrahedra_3}
+
+%% EOF %%

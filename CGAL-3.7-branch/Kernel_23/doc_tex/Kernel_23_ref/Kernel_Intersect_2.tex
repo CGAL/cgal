@@ -1,0 +1,27 @@
+\begin{ccRefFunctionObjectConcept}{Kernel::Intersect_2}
+A model for this must provide
+
+\ccCreationVariable{fo}
+
+\ccMemberFunction{Kernel::Object_2 operator()(Type1 obj1, Type2 obj2);}
+{computes the \ccHtmlNoLinksFrom{intersection} region of two geometrical objects of type 
+\ccStyle{Type1} and \ccStyle{Type2}}
+
+for all pairs \ccStyle{Type1} and \ccStyle{Type2}, where
+the types \ccStyle{Type1} and \ccStyle{Type2} can be any of the
+following:
+\begin{itemize}\ccTexHtml{\itemsep0pt\topsep0pt\partopsep0pt\parskip0pt\parsep0pt}{}
+\item \ccStyle{Kernel::Line_2}
+\item \ccStyle{Kernel::Ray_2}
+\item \ccStyle{Kernel::Segment_2}
+\item \ccStyle{Kernel::Triangle_2}
+\item \ccStyle{Kernel::Iso_rectangle_2}
+\end{itemize}
+
+\ccRefines
+\ccc{AdaptableFunctor} (with two arguments)
+
+\ccSeeAlso
+\ccRefIdfierPage{CGAL::intersection}\\
+
+\end{ccRefFunctionObjectConcept}

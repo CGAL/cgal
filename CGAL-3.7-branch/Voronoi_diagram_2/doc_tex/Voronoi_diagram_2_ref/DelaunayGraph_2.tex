@@ -1,0 +1,361 @@
+%% Copyright (c) 2005  Foundation for Research and Technology-Hellas (Greece).
+%% All rights reserved.
+%%
+%% This file is part of CGAL (www.cgal.org); you may redistribute it under
+%% the terms of the Q Public License version 1.0.
+%% See the file LICENSE.QPL distributed with CGAL.
+%%
+%% Licensees holding a valid commercial license may use this file in
+%% accordance with the commercial license agreement provided with the software.
+%%
+%% This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
+%% WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
+%%
+%% $URL$
+%% $Id$
+%% 
+%%
+%% Author(s)     : Menelaos Karavelas <mkaravel@iacm.forth.gr>
+
+
+\begin{ccRefConcept}{DelaunayGraph_2}
+
+%% \ccHtmlCrossLink{}     %% add further rules for cross referencing links
+%% \ccHtmlIndexC[concept]{} %% add further index entries
+\ccDefinition
+
+The concept \ccc{DelaunayGraph_2} defines the requirements for the
+first template parameter of the \ccc{Voronoi_diagram_2<DG,AT,AP>}
+class. The \ccc{DelaunayGraph_2} concept essentially defines the
+requirements that a class representing a Delaunay graph must obey so
+that the Voronoi diagram adaptor can adapt it.
+
+\ccRefines
+\ccc{DefaultConstructible}, \ccc{CopyConstructible}, \ccc{Assignable}
+
+\ccTypes
+%\ccTwo{VoronoiDiagram_2::Triangulation_data_structure+}{}
+\ccThree{typedef std::pair<Face_handle,int>+++}{Edge+}{}
+\ccThreeToTwo
+%
+\ccNestedType{size_type}{A type for sizes.}
+\ccGlue
+\ccNestedType{Geom_traits}{A type for the geometric traits associated
+  with the Delaunay graph.}
+%\ccGlue
+%\ccNestedType{Point_2}{A type for a point.}
+%\ccGlue
+%\ccNestedType{Site_2}{A type for the sites of the Voronoi diagram.}
+\ccGlue
+\ccNestedType{Triangulation_data_structure}{A type for the underlying
+  triangulation data structure. It must be a model of the concept
+  \ccc{TriangulationDataStructure_2.}}
+\ccGlue
+\ccNestedType{Vertex}{A type for the vertices of the Delaunay graph.}
+\ccGlue
+\ccNestedType{Face}{A type for the faces of the Delaunay graph.}
+\ccGlue
+\ccTypedef{typedef std::pair<Face_handle,int> Edge;}{The type of the
+  edges of the Delaunay graph.}
+\ccGlue
+\ccNestedType{Vertex_handle}{Handle to the vertices of the Delaunay graph.}
+\ccGlue
+\ccNestedType{Face_handle}{Handle to the faces of the Delaunay graph.}
+
+The following iterators and circulators must be defined. All iterators
+and circulators must be assignable and convertible to their
+corresponding handles.
+
+\ccNestedType{All_edges_iterator}{A type for an iterator over all edges of
+  the Delaunay graph. Its value type must be \ccc{Edge}.}
+\ccGlue
+\ccNestedType{Finite_edges_iterator}{A type for an iterator over the finite
+  edges of the Delaunay graph. Its value type must be \ccc{Edge}.}
+\ccGlue
+\ccNestedType{All_faces_iterator}{A type for an iterator over all faces of
+  the Delaunay graph. Its value type must be \ccc{Face}.}
+\ccGlue
+\ccNestedType{Finite_faces_iterator}{A type for an iterator over the finite
+  faces of the Delaunay graph. Its value type must be \ccc{Face}.}
+\ccGlue
+\ccNestedType{All_vertices_iterator}{A type for an iterator over all
+  vertices of the Delaunay graph. Its value type must be \ccc{Vertex}.}
+\ccGlue
+\ccNestedType{Finite_vertices_iterator}{A type for an iterator over
+  the finite vertices of the Delaunay graph. Its value type must be
+  \ccc{Vertex}.}
+\ccGlue
+\ccNestedType{Face_circulator}{A type for a circulator over the
+  adjacent faces of a vertex of the Delaunay graph. Its value type
+  must be \ccc{Face}.}
+\ccGlue
+\ccNestedType{Vertex_circulator}{A type for a circulator over the
+  adjacent vertices of a vertex of the Delaunay graph. Its value type
+  must be \ccc{Vertex}.}
+\ccGlue
+\ccNestedType{Edge_circulator}{A type for a circulator over the
+  adjacent edges of a vertex of the Delaunay graph. Its value type
+  must be \ccc{Edge}.}
+
+
+%
+%\ccTwo{DelaunayGraph_2}{}
+% 
+
+\ccCreationVariable{dg}  %% choose variable name
+
+\ccThree{DelaunayGraph_2}{dg(It begin, It beyond, Geom_traits gt)+}{}
+\ccThreeToTwo
+
+\ccCreation
+In addition to the default and copy constructors, as well as the assignment
+operator, the following constructors are required.
+
+\ccConstructor{DelaunayGraph_2(Geom_traits gt);}
+{Constructor that takes an instance of the geometric traits.}
+\ccGlue
+\ccConstructor{template<class It> DelaunayGraph_2(It first, It beyond);}
+{Constructor that takes an iterator range. The value type of the
+  iterator must be the type of the sites of the Delaunay graph.}
+\ccGlue
+\ccConstructor{template<class It> DelaunayGraph_2(It first, It beyond,
+  Geom_traits gt);}
+{Constructor that takes an iterator range and an instance of the
+  geometric traits. The value type of the iterator must be the type of
+  the sites of the Delaunay graph.}
+
+
+\ccHeading{Access methods}
+\ccThree{Triangulation_data_structure}{dg.number_of_vertices()+}{}
+\ccMethod{Triangulation_data_structure tds();}
+{Returns a reference to the underlying triangulation data structure.}
+\ccGlue
+\ccMethod{Geom_traits geom_traits();}
+{Returns a reference to the geometric traits object.}
+\ccGlue
+\ccMethod{Vertex_handle infinite_vertex();}
+{Returns a handle to the infinite vertex.}
+\ccGlue
+\ccMethod{Vertex_handle finite_vertex();}
+{Returns a handle to a finite vertex, provided there exists one.}
+\ccGlue
+\ccMethod{Face_handle infinite_face();}
+{Returns a handle to a face incident to the infinite vertex.}
+\ccGlue
+\ccMethod{int dimension();}
+{Returns the dimension of the Delaunay graph.}
+\ccGlue
+\ccMethod{size_type number_of_vertices();}
+{Returns the number of finite vertices.}
+\ccGlue
+\ccMethod{size_type number_of_faces();}
+{Returns the number of faces (both finite and infinite).}
+
+
+\ccHeading{Traversal of the Delaunay graph}
+
+A model of the \ccc{DelaunayGraph_2} concept must provide several
+iterators and circulators that allow to traverse it (completely or
+partially). All iterators and circulators must be convertible to the
+corresponding handles.
+
+
+\ccHeading{Face, Edge and Vertex Iterators}
+
+\ccThree{Finite_vertices_iterator}{dg.finite_vertices_begin()+}{}
+
+The following iterators must allow, respectively, to visit 
+finite faces,  finite edges and  finite vertices
+of the Delaunay graph. These iterators must be non-mutable,
+bidirectional and their value types are respectively
+\ccc{Face}, \ccc{Edge} and \ccc{Vertex}.
+%They are all invalidated by any change in the Delaunay graph.
+
+\ccMethod{Finite_vertices_iterator finite_vertices_begin();}
+{Starts at an arbitrary finite vertex.}
+\ccGlue
+\ccMethod{Finite_vertices_iterator finite_vertices_end();}
+{Past-the-end iterator.}
+
+\ccMethod{Finite_edges_iterator finite_edges_begin();}
+{Starts at an arbitrary finite edge.}
+\ccGlue
+\ccMethod{Finite_edges_iterator finite_edges_end();}
+{Past-the-end iterator.}
+
+\ccMethod{Finite_faces_iterator finite_faces_begin();}
+{Starts at an arbitrary finite face.}
+\ccGlue
+\ccMethod{Finite_faces_iterator finite_faces_end()
+const;}{Past-the-end iterator.}
+
+The following iterators must allow, respectively, to visit all
+(both finite and infinite) faces, edges and vertices
+of the Delaunay graph. These iterators are non-mutable, bidirectional
+and their value types are respectively
+\ccc{Face}, \ccc{Edge} and \ccc{Vertex}. 
+%They are all invalidated by any change in the Delaunay graph.
+
+\ccMethod{All_vertices_iterator all_vertices_begin();}
+{Starts at an arbitrary  vertex.}
+\ccGlue
+\ccMethod{All_vertices_iterator all_vertices_end();}
+{Past-the-end iterator.}
+
+\ccMethod{All_edges_iterator all_edges_begin();}
+{Starts at an arbitrary edge.}
+\ccGlue
+\ccMethod{All_edges_iterator all_edges_end();}
+{Past-the-end iterator.}
+
+\ccMethod{All_faces_iterator all_faces_begin();}
+{Starts at an arbitrary face.}
+\ccGlue
+\ccMethod{All_faces_iterator all_faces_end();}
+{Past-the-end iterator.}
+
+
+\ccThree{Vertex_circulator}
+{dg.incident_vertices(Vertex_handle v)+++}{}
+\ccThreeToTwo
+
+
+\ccHeading{Face, Edge and Vertex Circulators}
+
+A model of the \ccc{DelaunayGraph_2} concept must also provide
+circulators that allow to visit, respectively, all faces or edges
+incident to a given vertex or all vertices adjacent to a given
+vertex. These circulators are non-mutable and bidirectional. The
+operator \ccc{operator++} must move the circulator counterclockwise
+around the vertex while the \ccc{operator--} must move the circulator
+clockwise.
+%A face circulator is invalidated by any modification of the face
+%pointed to.
+%An edge circulator is invalidated by any modification
+%in one of the two faces incident to the edge pointed to.
+%A vertex circulator is invalidated by any modification
+%in any of the faces adjacent to the vertex pointed to.
+
+\ccMethod{Face_circulator incident_faces(Vertex_handle v);}
+{Starts at an arbitrary face incident to \ccc{v}.}
+\ccGlue
+\ccMethod{Face_circulator incident_faces(Vertex_handle v, Face_handle f);}
+{Starts at face \ccc{f}.
+\ccPrecond Face \ccc{f} must be incident to vertex \ccc{v}.}
+%\ccGlue
+\ccMethod{Edge_circulator incident_edges(Vertex_handle v);}
+{Starts at an arbitrary edge incident to \ccc{v}.}
+\ccGlue
+\ccMethod{Edge_circulator incident_edges(Vertex_handle v, Face_handle f);}
+{Starts at the first edge of \ccc{f} incident to \ccc{v}, in
+  counterclockwise order around \ccc{v}.
+\ccPrecond Face \ccc{f} must be incident to vertex \ccc{v}.}
+%\ccGlue
+\ccMethod{Vertex_circulator incident_vertices(Vertex_handle v);}
+{Starts at an arbitrary  vertex incident to \ccc{v}.}
+\ccGlue
+\ccMethod{Vertex_circulator incident_vertices(Vertex_handle v, Face_handle f);}
+{Starts at the first vertex of \ccc{f} adjacent  to \ccc{v} in
+  counterclockwise order around \ccc{v}.
+\ccPrecond Face \ccc{f} must be incident to vertex \ccc{v}.}
+
+
+
+\ccPredicates
+A model of the \ccc{DelaunayGraph_2} concept must provide methods to test
+the finite or infinite character of any feature.
+\ccThree{bool }{dg.is_infinite(Face_handle f, int i)+}{}
+
+%
+\ccMethod{bool is_infinite(Vertex_handle v);}
+{\ccc{true}, iff \ccc{v} is the \ccc{infinite_vertex}.}
+\ccGlue
+\ccMethod{bool is_infinite(Face_handle f);}
+{\ccc{true}, iff face \ccc{f} is infinite.}
+\ccGlue
+\ccMethod{bool is_infinite(Face_handle f, int i);}
+{\ccc{true}, iff edge \ccc{(f,i)} is infinite.}
+\ccGlue
+\ccMethod{bool is_infinite(Edge e);}
+{\ccc{true}, iff edge \ccc{e} is infinite.}
+\ccGlue
+\ccMethod{bool is_infinite(Edge_circulator ec);}
+{\ccc{true}, iff edge \ccc{*ec} is infinite.}
+
+
+
+%\ccHeading{Insertion}
+%\ccThree{Vertex_handle }{dg.insert(Site_2 s)+}{}
+%%
+%The following insertion methods are in some sense optional. They are
+%only required if in the corresponding Voronoi traits the
+%\ccc{Has_insert} tag is set to \ccc{CGAL::Tag_true}.
+%
+%\ccMethod{Vertex_handle  insert(Site_2 s);}{Inserts the
+%site \ccc{s} in the Delaunay graph.}
+%%
+%\ccMethod{template<class Iterator>
+%size_type  insert(Iterator first, Iterator beyond);}{Inserts the
+%sites in the iterator range \ccc{[first,beyond)} in the Delaunay graph.
+%The \ccc{Iterator} type must be a model of \ccc{OutputIterator} and its
+%value type must be \ccc{Site_2}}.
+
+
+%\ccHeading{Nearest neighbor location}
+%\ccThree{Vertex_handle }{dg.nearest_neighbor(Point_2 p)+}{}
+%%
+%\ccMethod{Vertex_handle  nearest_neighbor(Point_2 p);}
+%{Finds the nearest neighbor of the point \ccc{p}. In other words it
+%finds the site whose Voronoi cell contains \ccc{p}. Ties are broken
+%arbitrarily and one of the nearest neighbors of \ccc{p} is
+%returned. If the number of vertices of the Delaunay graph is zero
+%\ccc{Vertex_handle(NULL)} should be returned.}
+%\ccGlue
+%\ccMethod{Vertex_handle  nearest_neighbor(Point_2 p,
+%Vertex_handle vnear);}{Finds the nearest neighbor of the point
+%\ccc{p} using the site associated with \ccc{vnear} as an
+%estimate for the nearest neighbor of \ccc{p}. Ties are broken
+%arbitrarily and one of the nearest neighbors of \ccc{p} is
+%returned. If the number of vertices of the Delaunay graph is zero
+%\ccc{Vertex_handle(NULL)} is returned.}
+
+
+\ccHeading{Validity check}
+\ccThree{bool}{dg.is_valid(bool verbose = false)+}{}
+%
+\ccMethod{bool is_valid(bool verbose = false);}
+{Checks the validity of the Delaunay graph. If \ccc{verbose} is
+\ccc{true} a short message is sent to \ccc{std::cerr}.}
+
+\ccHeading{Miscellaneous}
+\ccThree{bool}{dg.swap(other)+}{}
+%
+\ccMethod{void clear();}{Clears all contents of the Delaunay graph.}
+\ccGlue
+\ccMethod{void swap(DelaunayGraph_2 other);}{The Delaunay graphs
+  \ccc{other} and \ccVar\ are swapped. \ccVar.\ccc{swap(other)}
+  should be preferred to \ccVar\ccc{ = other} or to
+  \ccVar\ccc{(other)} if \ccc{other} is deleted afterwards.}
+
+
+\ccHasModels
+\ccc{CGAL::Delaunay_triangulation_2<Traits,Tds>}\\
+\ccc{CGAL::Regular_triangulation_2<Traits,Tds>}\\
+\ccc{CGAL::Triangulation_hierarchy_2<Tr>} provided that \ccc{Tr} is a
+model of \ccc{DelaunayGraph_2}\\
+\ccc{CGAL::Segment_Delaunay_graph_2<Gt,DS>}\\
+\ccc{CGAL::Segment_Delaunay_graph_hierarchy_2<Gt,STag,DS>}\\
+\ccc{CGAL::Apollonius_graph_2<Gt,Agds>}\\
+\ccc{CGAL::Apollonius_graph_hierarchy_2<Gt,Agds>}\\
+
+\ccSeeAlso
+\ccc{AdaptationTraits_2}\\
+\ccc{AdaptationPolicy_2}\\
+\ccc{CGAL::Voronoi_diagram_2<DG,AT,AP>}
+\end{ccRefConcept}
+
+% +------------------------------------------------------------------------+
+%%RefPage: end of main body, begin of footer
+% EOF
+% +------------------------------------------------------------------------+
+

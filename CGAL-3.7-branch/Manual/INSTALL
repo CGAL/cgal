@@ -1,0 +1,13 @@
+========================================================================
+Installation of the Manual package
+========================================================================
+
+In order to be able to create CGAL's manuals you need to do the following:
+
+(1)  install the manual conversion tools (available as package Manual_tools
+     on the SVN server or from http://www.cgal.org/Members/Manual_tools)
+
+(2)  make the cgal_manual script in 'developer_scripts/' accessible via
+     the standard execution path.
+
+Follow the directions in the Developers Manual to create a manual.

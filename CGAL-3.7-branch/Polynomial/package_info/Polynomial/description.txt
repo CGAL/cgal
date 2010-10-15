@@ -1,0 +1,4 @@
+concept Polynomial
+concept PolynomialTraits
+class Polynomial<T> (mutivariat by recursion)
+class Polynomial_traits<Polynomial>

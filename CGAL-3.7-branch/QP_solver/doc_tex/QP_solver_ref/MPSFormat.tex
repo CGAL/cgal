@@ -1,0 +1,161 @@
+\begin{ccRefConcept}{MPSFormat}
+
+MPS is a commonly used file format for storing linear and quadratic 
+programs according to the concepts \ccc{QuadraticProgram},
+\ccc{LinearProgram},
+\ccc{NonnegativeQuadraticProgram}, and
+\ccc{NonnegativeLinearProgram}, see also
+\path'http://en.wikipedia.org/wiki/MPS_(format)'.
+
+\cgal\ supports a large subset of
+this format, but there are MPS files around that we cannot read (for
+example, files that encode integrality constraints on the variables).
+Also, there might be some other MPS-based solvers that will not be able 
+to read the MPS files written by \cgal, since we do not strictly
+adhere to the very rigid layout requirements of the original MPS 
+format.
+
+Let's look at an example first. The quadratic program 
+
+\[
+\begin{array}{lrcl}
+\mbox{minimize}       & x^2 + 4(y-4)^2 &(=& x^2 + 4y^2 - 32y + 64) \\
+\mbox{subject to}     & x + y &\leq& 7 \\
+                      & -x + 2y &\leq& 4 \\
+                      & x &\geq& 0 \\
+                      & y &\geq& 0 \\
+                      & y &\leq& 4
+\end{array}
+\]
+
+has the following description in MPS format. 
+
+\begin{verbatim}
+NAME first_qp
+ROWS
+  N obj
+  L c0
+  L c1
+COLUMNS
+  x0  c0  1
+  x0  c1  -1
+  x1  obj  -32
+  x1  c0  1
+  x1  c1  2
+RHS
+  rhs obj -64
+  rhs c0  7
+  rhs c1  4
+BOUNDS
+  UP  BND  x1  4
+QMATRIX
+  x0  x0  2
+  x1  x1  8
+ENDATA
+\end{verbatim}
+
+Here comes a semiformal description of the format in general.
+
+\section*{NAME section}
+This (mandatory) section consists of a single line
+starting with \texttt{NAME}. Everything starting from the
+first non-whitespace after that until the end of the line
+constitutes the name of the problem.
+
+\section*{ROWS section}
+In the (mandatory) \texttt{ROW} section, you find one line for every
+constraint, where the letter \texttt{L} indicates relation $\leq$,
+letter \texttt{G} stands for $\geq$, and \texttt{E} for $=$. In
+addition, there is a row for the linear objective function (indicated
+by letter \texttt{N}). In that section, names are asigned to the
+constraints (here: \texttt{c0, c1}) and the objective function (here:
+\texttt{obj}).  An MPS file may encode several linear objective
+functions by using several rows starting with \texttt{N}, but we ignore
+all but the first.
+
+\section*{COLUMNS section}
+The (mandatory) \texttt{COLUMNS} section encodes the constraint matrix
+$A$ and the linear objective function vector $c$. Every line consists
+of one or two sequences of three tokens $j i val$, where $j$ is the
+name of a variable (here, we have variables \texttt{x0,x1}), $i$ is
+the name of a constraint or the objective function, and $val$ is the
+value $A_{ij}$ (if $i$ names a constraint), or $c_j$ (if $i$ names the
+linear objective function). Values for pairs $(i,j)$ that are not 
+specified in this section default to $0$. Otherwise, for every pair 
+$(i,j)$, the \emph{last} specified value determines $A_{ij}$ or $c_j$.
+
+\section*{RHS section}
+This (mandatory) section encodes the right-hand side vector $b$ and
+the constant term $c_0$ in the objective function. The first token in
+every line is an identifier (here: \texttt{rhs}). An MPS file may
+encode several right-hand sides $b$ by using several such identifiers,
+but we ignore all lines having an identifier different from that of
+the first line.
+
+The right-hand side identifier is succeeded by one or two sequences
+of tokens $i val$, where $i$ names a constraint or the linear 
+objective function, and $val$ specifies the value $b_i$ (if
+$i$ names a constraint), or $-c_0$ (if $i$ names the linear objective
+function). Values that are not specified in this section default to $0$.
+Otherwise, for every $i$, the \emph{last} specified value determines 
+$b_{i}$ or $-c_0$.
+
+\section*{BOUNDS section}
+This (optional) section encodes the lower and upper bound vectors $l$ 
+and $u$ for the variables. The default bounds for any variable $x_j$ are
+$0\leq x_j\leq \infty$; the
+\texttt{BOUNDS} section is used to override these defaults. In particular,
+if there is no \texttt{BOUNDS} section, the program is nonnegative and
+actually a model of the concept \ccc{NonnegativeQuadraticProgram} 
+or \ccc{NonnegativeLinearProgram}.
+
+The first token in every line is succeeded by an (optional) identifier
+(here: \texttt{BND}). An MPS file may encode several bound vectors $l$
+and $u$ by using several such identifiers, but we ignore all lines
+having an identifier different from that of the first line. The first
+token $t$ itself determines the type of the bound, and the token $j$
+after the bound identifier names the variable to which the bound applies
+In case of bound types \texttt{FX}, \texttt{LO}, and
+\texttt{UP}, there is another token $val$ that specifices the bound
+value. Here is how bound type and value determine a bound for variable
+$x_j$. There may be several bound specifications for a single variable, and
+they are processed in order of appearance.
+
+\begin{tabular}{l|l}
+bound type & resulting bound \\ \hline
+FX & $x_j = val$ ($x_j$ becomes a fixed variable) \\
+LO & $x_j \geq val$ (upper bound remains unchanged) \\
+UP & $x_j \leq val$ (lower bound remains unchanged, except if $val<0$; then, 
+a zero lower bound is reset to $-\infty$)\\
+FR & $-\infty \leq x_j\leq\infty$ (previous bounds are discarded)\\
+MI & $x_j\geq -\infty$ (upper bound remains unchanged)\\
+PL & $x_j\leq \infty$ (lower bound remains unchanged)    
+\end{tabular}
+
+\section*{QMATRIX / QUADOBJ / DMATRIX section}
+This (optional) section encodes the quadratic objective
+function matrix $D$. Every line is a sequence $i j val$ of
+three tokens, where both $i$ and $j$ name variables, and
+$val$ is the value $2D_{i,j}$ (in case of \texttt{QMATRIX}
+or \texttt{QUADOBJ}), or $D_{ij}$ (in case of \texttt{DMATRIX}).
+
+In case of \texttt{QMATRIX} and \texttt{DMATRIX}, \emph{all} nonzero
+entries must be specified: if there is a line $i j val$, then there
+must also be a line $j i val$, since $D$ is required to be symmetric.
+In case of \texttt{QUADOBJ}, only the entries of $2D$ on or below the 
+diagonal must be specified, entries above the diagonal are deduced from 
+symmetry. It is not allowed to specify two or more \emph{different} 
+nonzero values for an unordered pair $\{i,j\}$.
+
+If this section is missing or does not contain nonzero values, the
+program is a model of the concept \ccc{LinearProgram}.
+
+\section*{Miscellaneous}
+Our MPS format also supports an (optional) \texttt{RANGES} section,
+but we don't explain this here.
+
+\ccSeeAlso
+
+\ccc{Quadratic_program_from_mps<NT>}
+
+\end{ccRefConcept}

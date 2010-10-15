@@ -1,0 +1,7 @@
+An Arithmetic_kernel is required to provide at least the following public types: 
+Integer, Rational, Bigfloat_interval. It is guranteed that these types are interoperable. Currently there are:
+Gmp_arithmetic_kernel
+CORE_arithmetic_kernel
+LEDA_arithmetic_kernel 
+
+Moreover, the package provides a class template Get_arithmetic_kernel<T>. This cclass provides the corresponding Arithmetic_kernel for T. Note that T may also be a non trivial type such as Sqrt_extension, Polynomial etc. 

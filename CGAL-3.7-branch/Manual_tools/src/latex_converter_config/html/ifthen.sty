@@ -1,0 +1,65 @@
+% ___________________________________________________________________________
+% |#########################################################################|
+% |                                                                         |
+% | Latex Converter Style File: ifthen.sty                                  |
+% | ------------------------------------------------------------------      |
+% | mimicks simple applications of the \ifthenelse macro packages           |
+% |                                                                         |
+% | (c) 2004    Lutz Kettner                                                |
+% | $Id$                                                       |
+% | $Date$                                            |
+% |_________________________________________________________________________|
+% |#########################################################################|
+
+% Args: <boolean-name>, set to false
+\newcommand{\newboolean}[1]{\newcommand{\if#C1}{\lcFalse}}
+
+% Args: <boolean-name>, not modified if it exists already
+\newcommand{\provideboolean}[1]{%
+   \ldciIfDefined{\if#C1}{}{\newcommand{\if#C1}{\lcFalse}}}
+
+% Args: <boolean-name> <value>: sets the boolean to \lcTrue if
+% <value> is one of 'true', 'True', 'TRUE' (ignoring other case choices)
+\newcommand{\setboolean}[2]{%
+  \lciIfEqual{#XC2}{true}{\newcommand{\if#C1}{\lcTrue}}{%
+    \lciIfEqual{#XC2}{True}{\newcommand{\if#C1}{\lcTrue}}{%
+      \lciIfEqual{#XC2}{TRUE}{\newcommand{\if#C1}{\lcTrue}}{%
+        \newcommand{\if#C1}{\lcFalse}}}}}
+
+
+
+% Args: <condition> <then-body> <else-body>
+% Only limited support for all the existing conditions of the ifthen.sty
+% Basically, the condition is just used literally, using \lcTrue and \lcFalse
+\newcommand{\ifthenelse}[3]{#1{#2}{#3}}
+
+%Args: <boolean-flag>: expands it, and negates its value
+\newcommand{\not}[1]{%
+    \lciIfEqual{#XC1}{\lcTrue}{\lcFalse}{\lcTrue}}
+\newcommand{\NOT}[1]{%
+    \lciIfEqual{#XC1}{\lcTrue}{\lcFalse}{\lcTrue}}
+
+% Args: <number>: true if number is odd
+\newcommand{\isodd}[1]{%
+    \newcommand{\isoddXlocalnum}{#XC1}%
+    \lciDivTo{\isoddXlocalnum}{2}%
+    \lciIfEqualExpanded{\isoddXlocalnum}{1}{\lcTrue}{\lcFalse}}
+
+% Args: <\command>: is true if \command is not defined
+\newcommand{\isundefined}[1]{\lciIfDefined{#1}{\lcFalse}{\lcTrue}}
+
+% Args: <name>: corresponds to \newboolean{name}, gives its boolean value,
+% i.e. just \if<name>. TeX compatible predefined are <true>, <false>,
+% and <mmode> for math mode.
+\newcommand{\boolean}[1]{\lciGlueTwoParam{\if}{#XC1}}
+
+
+% Args: <condition> <body>: executes body as long as condition is true
+\newcommand{\whiledo}[2]{%
+    \ifthenelse{#1}{#2\whiledo{#1}{#2}}{}}
+
+
+% ___________________________________________________________________________
+% ###########################################################################
+% | EOF
+% ###########################################################################

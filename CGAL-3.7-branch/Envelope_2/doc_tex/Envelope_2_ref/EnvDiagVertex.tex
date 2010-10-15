@@ -1,0 +1,98 @@
+% +------------------------------------------------------------------------+
+% | Reference manual page: EnvDiagVertex.tex
+% +------------------------------------------------------------------------+
+% | 
+% | Package: Envelope_2
+% | 
+% +------------------------------------------------------------------------+
+
+\ccRefPageBegin
+
+\begin{ccRefConcept}{EnvelopeDiagramVertex}
+
+\ccDefinition
+%============
+
+A vertex record in an envelope diagram. It is always associated with a point
+on the lower (upper) envelope of a non-empty set of curves. A vertex is also
+associated with a set of $x$-monotone curves that induce the envelope
+over this point. It is incident to two edges, one lying to its
+left and the other to its right.
+
+\ccTypes
+%=======
+
+\ccNestedType{Size}{the size type (convertible to \ccc{size_t}).}
+
+\ccNestedType{Edge}{the corresponding diagram-edge type.}
+
+\ccNestedType{Point_2}{the point type associated with the vertex.}
+\ccGlue
+\ccNestedType{X_monotone_curve_2}{the $x$-monotone curve type.} 
+
+\ccCreation
+\ccCreationVariable{v}
+%=====================
+
+\ccConstructor{EnvelopeDiagramVertex();} 
+    {default constructor.}
+    
+\ccConstructor{EnvelopeDiagramVertex (const EnvelopeDiagramVertex& other);}
+    {copy constructor.}
+
+\ccConstructor{EnvelopeDiagramVertex (const Point_2& p);} 
+    {constructs a vertex associated with the given point \ccc{p}.}
+        
+\ccAccessFunctions
+%=================
+
+\ccMethod{const Point_2& point () const;}
+    {returns the point associated with \ccVar.}
+
+\ccMethod{Size number_of_curves () const;}
+    {returns the number of $x$-monotone curves associated with \ccVar.}
+
+\ccMethod{Curve_const_iterator curves_begin () const;}
+    {return an iterator for the first $x$-monotone curve associated with \ccVar.}
+\ccGlue
+\ccMethod{Curve_const_iterator curves_end () const;}
+    {return a past-the-end iterator for the $x$-monotone curves associated with \ccVar.}
+
+\ccMethod{Edge_const_handle left() const;}
+    {returns the edge lying to \ccVar's left.}
+\ccGlue
+\ccMethod{Edge_const_handle right() const;}
+    {returns the edge lying to \ccVar's right.}
+
+\ccModifiers
+%===========
+
+\ccMethod{void set_point (const Point_2& p);}
+    {associates the point \ccc{p} with \ccVar.}
+
+\ccMethod{void clear_curves();}
+    {clears the set of curves associated with \ccVar.}
+\ccGlue
+\ccMethod{void add_curve (const X_monotone_curve_2& cv);}
+    {adds the $x$-monotone curve \ccc{cv} to the set of curves associated with \ccVar.}
+\ccGlue
+\ccMethod{void add_curves (Curve_const_iterator begin, 
+                           Curve_const_iterator end);}
+    {adds the given range of $x$-monotone curves to the set of curves associated with \ccVar.}
+
+\ccMethod{void set_left (Edge_const_handle e);}
+    {sets the edge lying to the left of \ccVar\ to be \ccc{e}.}
+\ccGlue
+\ccMethod{void set_right (Edge_const_handle e);}
+    {sets the edge lying to the right of \ccVar\ to be \ccc{e}.}
+
+\ccSeeAlso
+     \ccc{EnvelopeDiagram_1}\lcTex{ 
+     (\ccRefPage{EnvelopeDiagram_1})}\\
+     \ccc{EnvelopeDiagramEdge}\lcTex{
+     (\ccRefPage{EnvelopeDiagramEdge})}\\
+
+\end{ccRefConcept}
+
+\ccRefPageEnd
+

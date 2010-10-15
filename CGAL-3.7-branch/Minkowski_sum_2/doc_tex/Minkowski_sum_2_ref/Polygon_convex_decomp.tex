@@ -1,0 +1,58 @@
+% +------------------------------------------------------------------------+
+% | Reference manual page: Polygon_convex_decomp.tex
+% +------------------------------------------------------------------------+
+% | 
+% | Package: Minkowski_sum_2
+% | 
+% +------------------------------------------------------------------------+
+
+\ccRefPageBegin
+
+\begin{ccRefConcept}{PolygonConvexDecomposition_2}
+
+A model of the \ccRefName\ concept is capable of decomposing an input
+polygon $P$ into a set of convex sub-polygons $P_1, \ldots, P_k$, such
+that $\cup_{i=1}^{k}{P_k} = P$.
+
+\ccTypes
+%=======
+
+\ccNestedType{Kernel}{the geometric kernel type.}
+\ccGlue
+\ccNestedType{Point_2}{the point type, used to represent polygon vertices.}
+\ccGlue
+\ccNestedType{Polygon_2}{the polygon type.}
+
+\ccCreation
+\ccCreationVariable{decomp}
+%========================
+    
+\ccConstructor{PolygonConvexDecomposition_2 ();}
+   {default constructor.}
+
+\ccOperations
+%============
+
+\ccMethod{template <class OutputIterator>
+          OutputIterator operator() (const Polygon_2& P,
+                                     OutputIterator oi) const;}
+    {decomposes the input polygon \ccc{P} into convex sub-polygons,
+     and writes them to the output iterator \ccc{oi}. The value-type of the
+     output iterator must be \ccc{Polygon_2}.
+     The function returns a past-the-end iterator for the convex sub-polygons.}
+
+\ccHasModels
+
+\ccc{Small_side_angle_bisector_decomposition_2<Kernel,Container>}\lcTex{
+        (\ccRefPage{CGAL::Small_side_angle_bisector_decomposition_2<Kernel,Container>})}\\
+\ccc{Optimal_convex_decomposition_2<Kernel,Container>}\lcTex{
+        (\ccRefPage{CGAL::Optimal_convex_decomposition_2<Kernel,Container>})}\\
+\ccc{Hertel_Mehlhorn_convex_decomposition_2<Kernel,Container>}\lcTex{
+   (\ccRefPage{CGAL::Hertel_Mehlhorn_convex_decomposition_2<Kernel,Container>})}\\
+\ccc{Greene_convex_decomposition_2<Kernel,Container>}\lcTex{
+   (\ccRefPage{CGAL::Greene_convex_decomposition_2<Kernel,Container>})}
+
+\end{ccRefConcept}
+
+\ccRefPageEnd
+

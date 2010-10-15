@@ -1,0 +1,91 @@
+\begin{ccRefFunction}{barycenter}
+
+\ccFunction{Point_2<Kernel>
+barycenter( const Point_2<Kernel>& p1, const Kernel::FT&w1,
+            const Point_2<Kernel>& p2);}
+{compute the barycenter of the points $p1$ and $p2$ with corresponding
+ weights $w1$ and $1-w1$.}
+
+\ccFunction{Point_2<Kernel>
+barycenter( const Point_2<Kernel>& p1, const Kernel::FT&w1,
+            const Point_2<Kernel>& p2, const Kernel::FT&w2);}
+{compute the barycenter of the points $p1$ and $p2$ with corresponding
+ weights $w1$ and $w2$. \ccPrecond{w1+w2 != 0}.}
+
+\ccFunction{Point_2<Kernel>
+barycenter( const Point_2<Kernel>& p1, const Kernel::FT&w1,
+            const Point_2<Kernel>& p2, const Kernel::FT&w2,
+            const Point_2<Kernel>& p3);}
+{compute the barycenter of the points $p1$, $p2$ and $p3$ with corresponding
+ weights $w1$, $w2$ and $1-w1-w2$.}
+
+\ccFunction{Point_2<Kernel>
+barycenter( const Point_2<Kernel>& p1, const Kernel::FT&w1,
+            const Point_2<Kernel>& p2, const Kernel::FT&w2,
+            const Point_2<Kernel>& p3, const Kernel::FT&w3);}
+{compute the barycenter of the points $p1$, $p2$ and $p3$ with corresponding
+ weights $w1$, $w2$ and $w3$. \ccPrecond{w1+w2+w3 != 0}.}
+
+\ccFunction{Point_2<Kernel>
+barycenter( const Point_2<Kernel>& p1, const Kernel::FT&w1,
+            const Point_2<Kernel>& p2, const Kernel::FT&w2,
+            const Point_2<Kernel>& p3, const Kernel::FT&w3,
+            const Point_2<Kernel>& p4);}
+{compute the barycenter of the points $p1$, $p2$, $p3$ and $p4$ with corresponding
+ weights $w1$, $w2$, $w3$ and $1-w1-w2-w3$.}
+
+\ccFunction{Point_2<Kernel>
+barycenter( const Point_2<Kernel>& p1, const Kernel::FT&w1,
+            const Point_2<Kernel>& p2, const Kernel::FT&w2,
+            const Point_2<Kernel>& p3, const Kernel::FT&w3,
+            const Point_2<Kernel>& p4, const Kernel::FT&w4);}
+{compute the barycenter of the points $p1$, $p2$, $p3$ and $p4$ with corresponding
+ weights $w1$, $w2$, $w3$ and $w4$. \ccPrecond{w1+w2+w3+w4 != 0}.}
+
+
+\ccFunction{Point_3<Kernel>
+barycenter( const Point_3<Kernel>& p1, const Kernel::FT&w1,
+            const Point_3<Kernel>& p2);}
+{compute the barycenter of the points $p1$ and $p2$ with corresponding
+ weights $w1$ and $1-w1$.}
+
+\ccFunction{Point_3<Kernel>
+barycenter( const Point_3<Kernel>& p1, const Kernel::FT&w1,
+            const Point_3<Kernel>& p2, const Kernel::FT&w2);}
+{compute the barycenter of the points $p1$ and $p2$ with corresponding
+ weights $w1$ and $w2$. \ccPrecond{w1+w2 != 0}.}
+
+\ccFunction{Point_3<Kernel>
+barycenter( const Point_3<Kernel>& p1, const Kernel::FT&w1,
+            const Point_3<Kernel>& p2, const Kernel::FT&w2,
+            const Point_3<Kernel>& p3);}
+{compute the barycenter of the points $p1$, $p2$ and $p3$ with corresponding
+ weights $w1$, $w2$ and $1-w1-w2$.}
+
+\ccFunction{Point_3<Kernel>
+barycenter( const Point_3<Kernel>& p1, const Kernel::FT&w1,
+            const Point_3<Kernel>& p2, const Kernel::FT&w2,
+            const Point_3<Kernel>& p3, const Kernel::FT&w3);}
+{compute the barycenter of the points $p1$, $p2$ and $p3$ with corresponding
+ weights $w1$, $w2$ and $w3$. \ccPrecond{w1+w2+w3 != 0}.}
+
+\ccFunction{Point_3<Kernel>
+barycenter( const Point_3<Kernel>& p1, const Kernel::FT&w1,
+            const Point_3<Kernel>& p2, const Kernel::FT&w2,
+            const Point_3<Kernel>& p3, const Kernel::FT&w3,
+            const Point_3<Kernel>& p4);}
+{compute the barycenter of the points $p1$, $p2$, $p3$ and $p4$ with corresponding
+ weights $w1$, $w2$, $w3$ and $1-w1-w2-w3$.}
+
+\ccFunction{Point_3<Kernel>
+barycenter( const Point_3<Kernel>& p1, const Kernel::FT&w1,
+            const Point_3<Kernel>& p2, const Kernel::FT&w2,
+            const Point_3<Kernel>& p3, const Kernel::FT&w3,
+            const Point_3<Kernel>& p4, const Kernel::FT&w4);}
+{compute the barycenter of the points $p1$, $p2$, $p3$ and $p4$ with corresponding
+ weights $w1$, $w2$, $w3$ and $w4$. \ccPrecond{w1+w2+w3+w4 != 0}.}
+
+\ccSeeAlso
+\ccRefIdfierPage{CGAL::centroid}
+
+\end{ccRefFunction}

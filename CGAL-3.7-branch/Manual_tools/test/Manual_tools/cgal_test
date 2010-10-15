@@ -1,0 +1,223 @@
+#!/bin/sh
+
+# Color changing control sequences. Makes protocols more readable.
+# There is a translation to HTML format in the corresponding code below.
+OkColor=""
+ErrorColor=""
+ResetColor=""
+OkString="OK"
+ErrorString="failed"
+
+ExitCode=0
+
+
+
+if [ -t 1 ] ; then # is stdout connected to a terminal
+  case "$TERM" in
+    xterm* | vt100* | console* ) # terminals believed to have color capability
+      OkColor='\e[1;32m'         # green boldface
+      ErrorColor='\e[1;31m'      # red boldface
+      ResetColor='\e[30;00m'     # black, reset attribute      
+      OkString="[${OkColor}OK${ResetColor}]" # \r\e[70C
+      ErrorString="[${ErrorColor}FAILED${ResetColor}]" #\r\e[70C
+      ;;
+  esac
+fi
+
+
+echo_ok() {
+  printf "$OkString\n"
+}
+
+echo_failed() {
+  printf "$ErrorString\n"
+}
+
+
+
+test_dir() {
+  DIRECTORY=$1;
+  cd ${DIRECTORY};
+  REMOVE_WRAPPER_TEX=1;
+  if [ -e wrapper.tex ]; then
+    REMOVE_WRAPPER_TEX=0;
+  else
+    cat > wrapper.tex <<EOF
+\documentclass[12pt]{article}
+
+\usepackage{cc_manual}
+\usepackage{cc_manual_index}
+
+\lcTex{
+  \usepackage{latexsym}
+  \usepackage{amssymb}
+  \usepackage{makeidx}
+}
+
+\usepackage{latex_to_html}
+\usepackage{alltt}
+\usepackage{cprog}
+\usepackage{path}
+
+\makeindex
+
+\sloppy
+
+% ----------------------------------------------------------------------
+\title {Test Suite for the cc\_manual.sty}
+\author{Lutz Kettner and Susan Hert}
+\date{\ccRevision. \ccDate}
+
+\begin{document}
+
+\maketitle
+
+% ----------------------------------------------------------------------
+
+This document is a test suite for the {\tt cc\_manual.sty}. It is
+arbitrary structured and mostly no introductory explanations will be given.
+Each section will test a particularly feature. Sections were written
+while developing the style or while debugging. Thanks for bug-reports
+made so far and for future reports. Please send bug-reports to {\tt
+hert@mpi-sb.mpg.de}.
+
+
+% ----------------------------------------------------------------------
+
+\section{${DIRECTORY}}
+\input{main.tex}
+\bibliographystyle{plain}
+\bibliography{cgal}
+\lcTex{\printindex}
+\end{document}
+EOF
+  fi
+  printf "testing ${DIRECTORY}\n";
+  printf "    convert  ...  ";
+  if ${LATEX_CONV_BIN}/latex_to_html -date "1.1.1900" -config $LATEX_CONV_CONFIG wrapper.tex >& log; then
+    echo_ok
+    if [ -d html.orig ] ; then
+      printf "    compare  ...  ";
+      if diff -w  -I "^<\!-- by cc_extract" -I "<p class=\"TitlePageDate\">" html html.orig >> log; then
+        echo_ok
+      else
+        echo_failed
+        ExitCode=1
+      fi
+    else
+      echo "    creating html.orig"
+      cp -r html html.orig
+    fi
+  else
+    echo_failed
+    ExitCode=1
+  fi
+   
+    
+  if [ ${REMOVE_WRAPPER_TEX} -eq 1 ]; then
+    rm wrapper.tex
+  fi
+  if [[ $KeepHtml -eq 0 && $ExitCode -eq 0 ]] ; then
+    rm -rf html
+  fi
+  if [[ $KeepLog -eq 0 && $ExitCode -eq 0 ]] ; then
+    rm -rf log wrapper.hlg
+  fi
+  cd ..    
+}
+
+remove_htmlorig() {
+  DIRECTORY=$1;
+  rm -rf $DIRECTORY/html.orig
+}
+
+is_testdir() {
+  if [[ -d $1 && -e $1/main.tex ]]; then
+    return 0;
+  else
+    return 1;
+  fi
+}
+
+invoke() {
+  cmd=$1;
+  DIRECTORY=$2;
+  if is_testdir $2 ; then
+    eval $cmd ${DIRECTORY};
+  fi  
+}
+
+# $1 = function that accepts one parameter: a directory
+# $2 = list of test directories
+foreach_testdir() {
+  cmd=$1;
+  list=$2;
+  if [[ "$list" == "" ]]; then
+    list="*";
+  fi
+  for i in $list; do
+    invoke ${cmd} ${i};
+  done
+}
+
+# --------------------------------- main -------------------------
+
+OLDPWD=`pwd`
+ROOTDIR="`pwd`/../.."
+#ROOTDIR="${HOME}/cvs/Manual_tools"
+#TEXINPUTS=".:${ROOTDIR}/format"
+LATEX_CONV_BIN="${ROOTDIR}/src"
+LATEX_CONV_CONFIG="${LATEX_CONV_BIN}/latex_converter_config"
+KeepHtml=0
+KeepLog=0
+CreateOrig=0
+Parameters=""
+
+
+cd ${LATEX_CONV_BIN}
+make 
+cd ${OLDPWD}
+
+
+while [ $# -gt 0 ] ; do
+  case "$1" in
+    -keephtml) KeepHtml=1
+        ;;
+    -keeplog) KeepLog=1
+        ;;
+    -create_orig) CreateOrig=1
+        ;;
+    -*) printf "${ErrorColor}ERROR${ResetColor}: Unknow option '$1'.\n" 1>&2
+        exit 1
+        ;;
+    *)  Parameters="${Parameters} `echo $1 | sed 's/[/]$//'`"
+        # a trailing / (typical for directories) was removed
+        if ! is_testdir $1; then
+            printf "${ErrorColor}ERROR${ResetColor}: '$1' must be a directory containing a main.tex\n" 1>&2
+            exit 1
+        fi
+        ;;
+  esac
+  shift
+done
+
+
+# setup html.orig in each test directory
+tar xzf html.orig.tgz
+
+# if $DIR/html.orig is to be created: remove those html.orig directories 
+# that are to be created, to avoid dangling files that are not used anymore
+if [ $CreateOrig -eq 1 ]; then
+  foreach_testdir remove_htmlorig $Parameters
+fi
+
+foreach_testdir test_dir $Parameters;
+
+if [ $CreateOrig -eq 1 ]; then
+  rm -rf html.orig.tgz
+  tar czf html.orig.tgz `find . -name html.orig -maxdepth 2`  
+fi
+
+rm -rf `tar tzf html.orig.tgz` 
+
+exit $ExitCode

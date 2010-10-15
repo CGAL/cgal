@@ -1,0 +1,88 @@
+% +------------------------------------------------------------------------+
+% | Reference manual page: SurfaceMeshFacetsCriteria.tex
+% +------------------------------------------------------------------------+
+% | 02.12.2005   Mariette Yvinec, Laurent Rineau
+% | Package: Surface_mesher
+% | 
+\RCSdef{\RCSSurfaceMeshFacetsCriteriaRev}{$Id$}
+\RCSdefDate{\RCSSurfaceMeshFacetsCriteriaDate}{$Date$}
+% |
+%%RefPage: end of header, begin of main body
+% +------------------------------------------------------------------------+
+
+
+\begin{ccRefConcept}{SurfaceMeshFacetsCriteria_3}
+
+\ccDefinition
+  
+The Delaunay refinement process involved in  the 
+function template \ccc{make_surface_mesh} 
+is guided by a set of refinement criteria.
+The concept \ccRefName\ describes the type  which
+handles those criteria. 
+It corresponds to the requirements for the template parameter
+\ccc{FacetsCriteria} of the surface mesher function
+\ccc{make_surface_mesh<SurfaceMeshC2T3,Surface,FacetsCriteria,Tag>}
+%and the piecewise smooth mesher
+%function \ccc{make_piecewise_smooth_surface_mesh<SurfaceMeshC2T3,Surface,
+%  FacetsCriteria,EdgesCriteria,Tag>}
+.
+
+Typically the meshing criteria are a set
+of elementary criteria, each of which
+has to be met by  the facets of the final mesh.
+The meshing algorithm eliminates in turn  {\em bad} facets, i.e.,
+facets that do not meet all the criteria.
+
+The size and quality of the final mesh 
+depends on the order according to which bad facets
+are handled. Therefore, the meshing algorithm 
+needs to be able to quantify the facet qualities and to compare
+the qualities of different faces.
+The concept \ccRefName\ 
+defines a type \ccc{Quality} designed to measure
+the quality of a mesh facet. 
+Typically this quality
+is a multicomponent variable.  Each component corresponds to
+one criterion and measures how much the facet deviates from
+meeting this criterion. Then, the  comparison operator on qualities
+is just a lexicographical comparison. The meshing algorithm handles facets
+with lowest quality first. The qualities are computed by a function
+\ccc{is_bad(Facet f, Quality& q)}.
+
+\ccTypes
+
+\ccNestedType{Facet}{The type of facets. This type has to match
+the \ccc{Facet} type in  the triangulation type used  by 
+the mesher function. (This triangulation type
+is the type \ccc{SurfaceMeshC2T3::Triangulation} 
+provided by the model of
+\ccc{SurfaceMeshComplex_2InTriangulation_3} plugged 
+ as first template parameter of
+ \ccc{make_surface_mesh}).}
+
+\ccNestedType{Quality}{Default constructible, copy constructible,
+  assignable, and less-than comparable type.}
+
+\ccOperations
+\ccCreationVariable{criteria}
+
+\ccMethod{bool is_bad (const Facet& f, Quality& q);}{Assigns the quality
+  of the facet \ccc{f} to~\ccc{q}, and returns \ccc{true} is \ccc{f} does
+  not meet the criteria.}
+
+\ccHasModels
+
+\ccc{Surface_mesh_default_criteria_3<Tr>}
+
+\ccSeeAlso
+\ccc{make_surface_mesh<SurfaceMeshC2T3,Surface,FacetsCriteria,Tag>}
+
+
+\end{ccRefConcept}
+
+% +------------------------------------------------------------------------+
+%%RefPage: end of main body, begin of footer
+% EOF
+% +------------------------------------------------------------------------+
+

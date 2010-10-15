@@ -1,0 +1,31 @@
+\ccAutoIndexingOff
+\begin{ccRefClass}{Linear_algebraHd<RT>}
+\ccAutoIndexingOn
+\ccIndexTraitsClassBegin{Linear_algebraHd}{}{dD Kernel}
+
+\ccDefinition
+
+The class \ccRefName\ serves as the default traits class for the LA
+parameter of \ccc{CGAL::Homogeneous_d<RT,LA>}.  It implements linear
+algebra for Euclidean ring number types \ccc{RT}.
+
+\ccInclude{CGAL/Linear_algebraHd.h}
+
+\ccIsModel
+
+\ccRefConceptPage{LinearAlgebraTraits_d}%
+\ccIndexSubitem[c]{LinearAlgebraTraits_d}{model} \\
+
+\ccHeading{Requirements}
+
+To make a ring number type \ccc{RT} work with this class it has to
+provide a division \ccc{operator/} with remainder.
+
+\ccOperations
+
+Fits all operation requirements of the concept.
+
+\ccIndexTraitsClassEnd
+\ccAutoIndexingOff
+\end{ccRefClass}
+\ccAutoIndexingOn     

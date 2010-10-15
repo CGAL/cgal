@@ -1,0 +1,68 @@
+%% Copyright (c) 2004  SciSoft.  All rights reserved.
+%%
+%% This file is part of CGAL (www.cgal.org); you may redistribute it under
+%% the terms of the Q Public License version 1.0.
+%% See the file LICENSE.QPL distributed with CGAL.
+%%
+%% Licensees holding a valid commercial license may use this file in
+%% accordance with the commercial license agreement provided with the software.
+%%
+%% This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
+%% WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
+%%
+%% 
+%%
+%% Author(s)     : Fernando Cacciola <fernando_cacciola@hotmail.com>
+
+
+
+\begin{ccRefConcept}{StraightSkeletonHalfedge_2}
+
+\ccDefinition
+
+The concept \ccRefName\ describes the
+requirements for the halfedge type of the
+\ccc{StraightSkeleton_2} concept. It is a refinement of the
+\ccc{HalfedgeDSHalfedge} concept.
+The \ccRefName\ concept requires no geometric embedding at all. The only geometric embedding used by the Straight Skeleton Data Structure are the 2D points in the contour and skeleton vertices. However, for any halfedge, there is a 2D segment implicitly given by its \ccc{source} and \ccc{target} vertices.
+
+\ccRefines
+  \ccc{HalfedgeDSHalfedge}
+
+\ccCreation
+\ccCreationVariable{h}  %% choose variable name
+
+\ccConstructor{StraightSkeletonHalfedge_2();}{Default Constructor.}
+
+\ccConstructor{StraightSkeletonHalfedge_2( int id );}
+{Constructs a halfedge with ID \ccc{id}.\\
+It is the links to other halfedges what determines if this is a contour edge, a contour-skeleton edge or an inner-skeleton edge.}
+
+\ccAccessFunctions
+  \ccGlue
+  \ccMethod{Halfedge_handle defining_contour_edge();}{}
+  \ccGlue
+  \ccMethod{Halfedge_const_handle defining_contour_edge() const;}{If this is a bisector halfedge, returns a handle to the inward-facing (non-border) contour halfedge corresponding to the defining contour edge which is to its left; if this is a contour halfedge, returns a handle to itself if \ccc{is\_border()} is \ccc{false}, or to its opposite if it is \ccc{true}.}
+
+\ccHeading{Queries}
+\ccMethod{bool is_bisector() const;}{Returns \ccc{true} iff this is a bisector (or skeleton) halfedge (i.e. is not a contour halfedge).}
+\ccGlue
+\ccMethod{bool is_inner_bisector() const;}{Returns \ccc{true} iff this is a bisector and is inner (i.e. is not incident upon a contour vertex).}
+
+\ccHasModels
+
+\ccc{CGAL::Straight_skeleton_halfedge_2<Refs>}.
+
+\ccSeeAlso
+
+\ccc{StraightSkeleton_2}\\
+\ccc{StraightSkeletonHalfedge_2}\\
+\ccc{CGAL::Straight_skeleton_vertex_base_2<Refs,Point,FT>}\\
+\ccc{CGAL::Straight_skeleton_halfedge_base_2<Refs>}\\
+
+\end{ccRefConcept}
+
+% +------------------------------------------------------------------------+
+%%RefPage: end of main body, begin of footer
+% EOF
+% +------------------------------------------------------------------------+

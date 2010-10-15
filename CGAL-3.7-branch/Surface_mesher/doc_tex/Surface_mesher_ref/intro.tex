@@ -1,0 +1,85 @@
+\ccRefChapter{3D Surface Mesh Generation}
+\ccChapterAuthor{Laurent Rineau
+and Mariette Yvinec}
+
+
+The surface mesh generation package offers a function template
+which builds a triangular mesh approximating a surface.
+
+The meshing algorithms requires to know the surface to be meshed
+through an oracle that mainly can tell whether a
+given segment, ray or line  intersects the surface or not
+and can compute the compute the
+intersections point if any. The oracle is represented by a traits class
+which can be passed to the meshing function
+or automatically generated for certain types of surfaces.
+The current implementation provides 
+traits classes 
+to mesh implicit surfaces as well as  surfaces described 
+as a gray level in a three
+dimensional image.
+ 
+The output mesh conforms to some size and shape criteria 
+which are customizable. The criteria are passed to the mesher
+through a parameter 
+whose type is a model of the
+concept \ccc{SurfaceMeshFacetsCriteria_3}.
+
+The meshing algorithm is a Delaunay refinement process
+which is mainly guided by the criteria. 
+The output mesh may offer some guarantees, as being manifold,
+homeomorphic to the surface or within a given
+Hausdorff distance.  However, these guarantees depend 
+on the quality of the input surface (smoothness, with or without
+boundary, manifold or  not),
+the type and values of the given criteria. 
+The behavior of the refinement process can also be influenced through
+a tag, which allows for instance to enforce the manifold property
+of  the output mesh  while avoiding an over-refinement of the mesh.
+
+
+
+\section{Classified Reference Pages}
+
+\subsection*{Concepts}
+
+\ccRefConceptPage{SurfaceMeshComplex_2InTriangulation_3}\\
+%\ccRefConceptPage{PiecewiseSmoothSurfaceMeshComplex_2InTriangulation_3}\\
+\ccRefConceptPage{SurfaceMeshTraits_3} \\
+%\ccRefConceptPage{PiecewiseSmoothSurfaceMeshTraits_3} \\
+\ccRefConceptPage{SurfaceMeshFacetsCriteria_3} \\
+%\ccRefConceptPage{PiecewiseSmoothSurfaceMeshEdgesCriteria_3} \\
+\ccRefConceptPage{SurfaceMeshCellBase_3} \\
+\ccRefConceptPage{SurfaceMeshVertexBase_3} \\
+\ccRefConceptPage{SurfaceMeshTriangulation_3} \\
+\ccRefConceptPage{ImplicitFunction} \\
+\ccRefConceptPage{ImplicitSurfaceTraits_3}	
+
+
+\subsection*{Classes}
+\ccRefIdfierPage{CGAL::Surface_mesh_complex_2_in_triangulation_3<Tr, Edge_info = void>} \\
+\ccRefIdfierPage{CGAL::Surface_mesh_vertex_base_3<Gt,Vb>} \\
+\ccRefIdfierPage{CGAL::Surface_mesh_cell_base_3<Gt,Cb>} \\
+\ccRefIdfierPage{CGAL::Surface_mesh_default_criteria_3<Tr>} \\
+%\ccRefIdfierPage{CGAL::Piecewise_smooth_surface_mesh_default_edges_criteria_3<Tr>} \\
+\ccRefIdfierPage{CGAL::Surface_mesh_default_triangulation_3} \\
+\ccRefIdfierPage{CGAL::Surface_mesh_traits_generator_3<Surface>} \\
+\ccRefIdfierPage{CGAL::Implicit_surface_3<Traits, Function>} \\
+%\ccRefIdfierPage{CGAL::Polyhedral_surface_3<Traits>} \\
+\ccRefIdfierPage{CGAL::Gray_level_image_3<FT, Point>}
+
+\subsection*{Tag Classes}
+\ccRefIdfierPage{CGAL::Manifold_tag} \\
+\ccRefIdfierPage{CGAL::Manifold_with_boundary_tag} \\
+\ccRefIdfierPage{CGAL::Non_manifold_tag} \\
+
+
+\subsection*{Function Templates}
+\ccRefIdfierPage{CGAL::make_surface_mesh} \\
+%\ccRefIdfierPage{CGAL::make_piecewise_smooth_surface_mesh}  \\
+\ccRefIdfierPage{CGAL::output_surface_facets_to_polyhedron}  \\
+
+
+%\subsection*{Enums}
+
+

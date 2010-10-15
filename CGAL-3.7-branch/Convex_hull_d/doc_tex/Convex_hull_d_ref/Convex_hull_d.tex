@@ -1,0 +1,339 @@
+% begin cgal manual page
+
+\begin{ccRefClass}{Convex_hull_d<R>}\ccCreationVariable{C}
+
+\ccDefinition
+
+An instance \ccc{C} of type \ccc{Convex_hull_d<R>} is the convex hull
+of a multi-set \ccc{S} of points in $d$-dimensional space. We call
+\ccc{S} the underlying point set and $d$ or \ccc{dim} the dimension of
+the underlying space. We use \ccc{dcur} to denote the affine dimension
+of \ccc{S}.  The data type supports incremental construction of hulls.
+
+The closure of the hull is maintained as a simplicial complex, i.e.,
+as a collection of simplices. The intersection of any two is a face of
+both\footnote{The empty set if a facet of every simplex.}. In the
+sequel we reserve the word simplex for the simplices of dimension
+\ccc{dcur}. For each simplex there is a handle of type
+\ccc{Simplex_handle} and for each vertex there is a handle of type
+\ccc{Vertex_handle}.  Each simplex has $1 + \ccc{dcur}$ vertices
+indexed from $0$ to \ccc{dcur}; for a simplex $s$ and an index $i$,
+\ccc{C.vertex(s,i)} returns the $i$-th vertex of $s$. For any simplex
+$s$ and any index $i$ of $s$ there may or may not be a simplex $t$
+opposite to the $i$-th vertex of $s$.  The function
+\ccc{C.opposite_simplex(s,i)} returns $t$ if it exists and returns
+\ccc{Simplex_handle()} (the undefined handle) otherwise. If $t$ exists
+then $s$ and $t$ share \ccc{dcur} vertices, namely all but the vertex
+with index $i$ of $s$ and the vertex with index
+\ccc{C.index_of_vertex_in_opposite_simplex(s,i)} of $t$. Assume that
+$t$ exists and let \ccc{j =
+C.index_of_vertex_in_opposite_simplex(s,i)}.  Then $s =$
+\ccc{C.opposite_simplex(t,j)} and $i =$
+\ccc{C.index_of_vertex_in_opposite_simplex(t,j)}.
+
+The boundary of the hull is also a simplicial complex. All simplices
+in this complex have dimension $\ccc{dcur} - 1$.  For each boundary
+simplex there is a handle of type \ccc{Facet_handle}.  Each facet has
+\ccc{dcur} vertices indexed from $0$ to $\ccc{dcur} - 1$. If \ccc{dcur
+> 1} then for each facet $f$ and each index $i$, $0 \le i <
+\ccc{dcur}$, there is a facet $g$ opposite to the $i$-th vertex of
+$f$.  The function \ccc{C.opposite_facet(f,i)} returns $g$.  Two
+neighboring facets $f$ and $g$ share \ccc{dcur - 1} vertices, namely
+all but the vertex with index $i$ of $f$ and the vertex with index
+\ccc{C.index_of_vertex_in_opposite_facet(f,i)} of $g$.  Let \ccc{j =
+C.index_of_vertex_in_opposite_facet(f,i)}. Then \ccc{f =
+C.opposite_facet(g,j)} and \ccc{i =
+C.index_of_vertex_in_opposite_facet(g,j)}.
+
+
+\ccSetOneOfTwoColumns{6cm}
+
+\ccTypes
+
+\ccNestedType{R}{the representation class.}
+
+\ccNestedType{Point_d}{the point type.}
+
+\ccNestedType{Hyperplane_d}{the hyperplane type.}
+
+\ccNestedType{Simplex_handle}{handle for simplices.}
+
+\ccNestedType{Facet_handle}{handle for facets.}
+
+\ccNestedType{Vertex_handle}{handle for vertices.}
+
+\ccNestedType{Simplex_iterator}{iterator for simplices.}
+
+\ccNestedType{Facet_iterator}{iterator for facets.}
+
+\ccNestedType{Vertex_iterator}{iterator for vertices.}
+
+\ccNestedType{Hull_vertex_iterator}{iterator for vertices that are
+part of the convex hull.}
+
+Note that each iterator fits the handle concept, i.e. iterators can be
+used as handles. Note also that all iterator and handle types come
+also in a const flavor, e.g., \ccc{Vertex_const_iterator} is the
+constant version of \ccc{Vertex_iterator}. Const correctness requires
+to use the const version whenever the convex hull object is
+referenced as constant. The \ccc{Hull_vertex_iterator} is convertible
+to \ccc{Vertex_iterator} and \ccc{Vertex_handle}.
+
+\ccNestedType{Point_const_iterator}{const iterator for all inserted
+points.}
+
+\ccNestedType{Hull_point_const_iterator}{const iterator for all points
+that are part of the convex hull.}
+
+
+\ccSetOneOfTwoColumns{3cm}
+
+\ccCreation
+
+\ccConstructor{Convex_hull_d<R>(int d, R Kernel = R())}{creates an
+instance \ccc{C} of type \ccc{Convex_hull_d}. The dimension of the
+underlying space is $d$ and \ccc{S} is initialized to the empty point
+set. The traits class \ccc{R} specifies the models of all types and
+the implementations of all geometric primitives used by the convex
+hull class. The default model is one of the $d$-dimensional
+representation classes (e.g., \ccc{Homogeneous_d}).  }
+
+The data type \ccc{Convex_hull_d} offers neither copy constructor nor
+assignment operator. 
+
+\ccHeading{Requirements}
+
+\ccc{R} is a model of the concept \ccc{ConvexHullTraits_d}
+  \ccIndexMainItem[c]{ConvexHullTraits_d}.                    
+
+\ccSetTwoOfThreeColumns{3cm}{2cm} 
+
+\ccOperations
+
+All operations below that take a point \ccc{x} as argument have the
+common precondition that \ccc{x} is a point of ambient space.
+
+
+\ccMethod{int dimension() ;}{returns the dimension of ambient space }
+
+\ccMethod{int current_dimension() ;}{%
+returns the affine dimension \ccc{dcur} of $S$. }
+
+\ccMethod{Point_d  associated_point(Vertex_handle v) ;}{%
+returns the point associated with vertex $v$.}
+
+\ccMethod{Vertex_handle vertex_of_simplex(Simplex_handle s, int i)
+;}{returns the vertex corresponding to the $i$-th vertex of $s$.\\
+\ccPrecond $0 \leq i \leq \ccc{dcur}$.  }
+
+\ccMethod{Point_d point_of_simplex(Simplex_handle s,int i) ;}{same as
+\ccc{C.associated_point(C.vertex_of_simplex(s,i))}.  }
+
+\ccMethod{Simplex_handle opposite_simplex(Simplex_handle s,int i)
+;}{returns the simplex opposite to the $i$-th vertex of $s$
+(\ccc{Simplex_handle()} if there is no such simplex).  \ccPrecond $0
+\leq i \leq \ccc{dcur}$.  }
+
+\ccMethod{int index_of_vertex_in_opposite_simplex(Simplex_handle s,int
+i) ;}{returns the index of the vertex opposite to the $i$-th vertex of
+$s$. \ccPrecond $0 \leq i \leq \ccc{dcur}$ and there is a simplex
+opposite to the $i$-th vertex of $s$.  }
+
+\ccMethod{Simplex_handle simplex(Vertex_handle v) ;}{returns a simplex
+of which $v$ is a node. Note that this simplex is not unique.  }
+
+\ccMethod{int index(Vertex_handle v) ;}{returns the index of $v$ in
+\ccc{simplex(v)}.  }
+
+\ccMethod{Vertex_handle vertex_of_facet(Facet_handle f, int i)
+;}{returns the vertex corresponding to the $i$-th vertex of $f$.
+\ccPrecond $0 \leq i < \ccc{dcur}$.  }
+
+\ccMethod{Point_d point_of_facet(Facet_handle f, int i) ;}{same as
+\ccc{C.associated_point(C.vertex_of_facet(f,i))}.  }
+
+\ccMethod{Facet_handle opposite_facet(Facet_handle f, int i)
+;}{returns the facet opposite to the $i$-th vertex of $f$
+(\ccc{Facet_handle()} if there is no such facet). \ccPrecond $0 \leq i
+< \ccc{dcur}$ and \ccc{dcur > 1}.  }
+
+\ccMethod{int index_of_vertex_in_opposite_facet(Facet_handle f, int i)
+;}{returns the index of the vertex opposite to the $i$-th vertex of
+$f$. \ccPrecond $0 \leq i < \ccc{dcur}$ and \ccc{dcur > 1}.  }
+
+\ccMethod{Hyperplane_d hyperplane_supporting(Facet_handle f)
+;}{returns a hyperplane supporting facet \ccc{f}. The hyperplane is
+oriented such that the interior of \ccc{C} is on the negative side of
+it. \ccPrecond \ccc{f} is a facet of \ccc{C} and \ccc{dcur > 1}.  }
+
+\ccMethod{Vertex_handle insert(const Point_d& x);}{adds point \ccc{x}
+to the underlying set of points.  If $x$ is equal to (the point
+associated with) a vertex of the current hull this vertex is returned
+and its associated point is changed to $x$. If $x$ lies outside the
+current hull, a new vertex \ccc{v} with associated point $x$ is added
+to the hull and returned. In all other cases, i.e., if $x$ lies in the
+interior of the hull or on the boundary but not on a vertex, the
+current hull is not changed and \ccc{Vertex_handle()} is returned. If
+\ccc{CGAL_CHECK_EXPENSIVE} is defined then the validity check
+\ccc{is_valid(true)} is executed as a post condition.  }
+
+\ccMethod{template <typename Forward_iterator> void
+insert(Forward_iterator first, Forward_iterator last) ;}{adds \ccc{S =
+set [first,last)} to the underlying set of points. If any point
+\ccc{S[i]} is equal to (the point associated with) a vertex of the
+current hull its associated point is changed to \ccc{S[i]}.  }
+
+\ccMethod{bool is_dimension_jump(const Point_d& x) ;}{returns true if
+$x$ is not contained in the affine hull of \ccc{S}.  }
+
+\ccMethod{std::list<Facet_handle> facets_visible_from(const Point_d&
+x);}{returns the list of all facets that are visible from \ccc{x}.\\
+\ccPrecond \ccc{x} is contained in the affine hull of \ccc{S}.  }
+
+\ccMethod{Bounded_side bounded_side(const Point_d& x);}{returns
+\ccc{ON_BOUNDED_SIDE} (\ccc{ON_BOUNDARY},\ccc{ON_UNBOUNDED_SIDE}) if
+\ccc{x} is contained in the interior (lies on the boundary, is
+contained in the exterior) of \ccc{C}. \ccPrecond \ccc{x} is contained
+in the affine hull of \ccc{S}.  }
+
+\ccMethod{void clear(int d) ;}{re-initializes \ccc{C} to an empty hull
+in $d$-dimensional space.  }
+
+\ccMethod{int number_of_vertices() ;}{returns the number of vertices
+of \ccc{C}.  }
+
+\ccMethod{int number_of_facets() ;}{returns the number of facets of
+\ccc{C}.  }
+
+\ccMethod{int number_of_simplices() ;}{returns the number of bounded
+simplices of \ccc{C}.  }
+
+\ccMethod{void print_statistics() ;}{gives information about the size
+of the current hull and the number of visibility tests performed.  }
+
+\ccMethod{bool is_valid(bool throw_exceptions = false) ;}{checks the
+validity of the data structure.  If \ccc{throw_exceptions == thrue}
+then the program throws the following exceptions to inform about the
+problem.\\ \ccc{chull_has_center_on_wrong_side_of_hull_facet} the
+hyperplane supporting a facet has the wrong orientation.\\
+\ccc{chull_has_local_non_convexity} a ridge is locally non convex.\\
+\ccc{chull_has_double_coverage} the hull has a winding number larger
+than 1.  }
+
+\ccSetTwoOfThreeColumns{3cm}{3cm} 
+
+\ccHeading{Lists and Iterators}
+
+\ccMethod{Vertex_iterator vertices_begin() ;}{an iterator of \ccc{C} to
+start the iteration over all vertices of the complex.}
+
+\ccMethod{Vertex_iterator vertices_end() ;}{the past the end iterator
+for vertices.}
+
+\ccMethod{Simplex_iterator simplices_begin() ;}{an iterator of \ccc{C}
+to start the iteration over all simplices of the complex.}
+
+\ccMethod{Simplex_iterator simplices_end() ;}{the past the end
+iterator for simplices.}
+
+\ccMethod{Facet_iterator facets_begin() ;}{an iterator of \ccc{C} to
+start the iteration over all facets of the complex.}
+
+\ccMethod{Facet_iterator facets_end() ;}{the past the end iterator for
+facets.}
+
+\ccMethod{Hull_vertex_iterator hull_vertices_begin() ;}{an iterator to
+start the iteration over all vertices of \ccc{C} that are part of the
+convex hull.}
+
+\ccMethod{Hull_vertex_iterator hull_vertices_end() ;}{the past the end
+iterator for hull vertices.}
+
+
+\ccMethod{Point_const_iterator points_begin() ;}{returns the start
+iterator for all points that have been inserted to construct \ccc{C}.}
+
+\ccMethod{Point_const_iterator points_end() ;}{returns the past the
+end iterator for points.}
+
+\ccMethod{Hull_point_const_iterator hull_points_begin() ;}{returns an
+iterator to start the iteration over all points in the convex hull
+\ccc{C}. Included are points in the interior of facets.}
+
+\ccMethod{Hull_point_const_iterator hull_points_end() ;}{returns the
+past the end iterator for points in the convex hull.}
+
+\ccMethod{template <typename Visitor> void visit_all_facets(const
+Visitor& V) ;}{each facet of \ccc{C} is visited by the visitor object
+\ccc{V}.  \ccc{V} has to have a function call operator:\\ \ccc{void
+operator()(Facet_handle) const} }
+
+\ccMethod{const std::list<Point_d>& all_points() ;}{returns a list of
+all points that have been inserted to construct \ccc{C}.}
+
+\ccMethod{std::list<Vertex_handle> all_vertices() ;}{returns a list of
+all vertices of \ccc{C} (also interior ones).  }
+
+\ccMethod{std::list<Simplex_handle> all_simplices() ;}{returns a list
+of all simplices in \ccc{C}.  }
+
+\ccMethod{std::list<Facet_handle> all_facets() ;}{returns a list of
+all facets of \ccc{C}.}
+
+
+\ccHeading{Iteration Statements}
+
+{\bf forall\_ch\_vertices}($v,C$) $\{$ ``the vertices of $C$ are
+successively assigned to $v$'' $\}$
+
+{\bf forall\_ch\_simplices}($s,C$) $\{$ ``the simplices of $C$ are
+successively assigned to $s$'' $\}$
+
+{\bf forall\_ch\_facets}($f,C$) $\{$ ``the facets of $C$ are
+successively assigned to $f$'' $\}$
+
+
+\ccImplementation
+
+The implementation of type \ccc{Convex_hull_d} is based on
+\cite{cms-frric-93} and \cite{bms-dgc-94}.  The details
+of the implementation can be found in the implementation document
+available at the download site of this package.
+
+The time and space requirements are input dependent.  Let $C_1$, $C_2$,
+$C_3$, \ldots be the sequence of hulls constructed and for a point $x$
+let $k_i$ be the number of facets of $C_i$ that are visible from $x$
+and that are not already facets of $C_{i-1}$. Then the time for
+inserting $x$ is $O(\ccc{dim} \sum_i k_i)$ and the number of new simplices
+constructed during the insertion of $x$ is the number of facets of the
+hull which were not already facets of the hull before the insertion.
+
+The data type \ccc{Convex_hull_d} is derived from
+\ccc{Regular_complex_d}. The space requirement of regular complexes is
+essentially $12(\ccc{dim} +2)$ bytes times the number of simplices
+plus the space for the points. \ccc{Convex_hull_d} needs an additional
+$8 + (4 + x)\ccc{dim}$ bytes per simplex where $x$ is the space
+requirement of the underlying number type and an additional $12$ bytes
+per point. The total is therefore $(16 + x)\ccc{dim} + 32$ bytes times
+the number of simplices plus $28 + x \cdot \ccc{dim}$ bytes times the
+number of points.
+
+\ccHeading{Low Dimensional Conversion Routine}
+include \ccc{<CGAL/Convex_hull_d_to_polyhedron_3.h>}
+
+\ccFunction{template <class R, class T, class HDS>
+void convex_hull_d_to_polyhedron_3(   const Convex_hull_d<R>& C, Polyhedron_3<T,HDS>& P) ;}{converts the convex hull \ccc{C} to polyhedral surface stored in 
+   \ccc{P}.\\ \ccPrecond \ccc{dim == 3} and \ccc{dcur == 3}.  
+}
+
+\ccHeading{Low Dimensional Output Routines}
+
+
+\ccFunction{template <class R>
+void d3_surface_map(const Convex_hull_d<R>& C, GRAPH< typename Convex_hull_d<R>::Point_d ,int>& G);}{constructs the representation of the surface of \ccc{C} as a 
+bidirected LEDA graph \ccc{G}.\\ \ccPrecond \ccc{dim == 3}. 
+}
+
+\end{ccRefClass}
+
+

@@ -1,0 +1,209 @@
+#!/bin/sh
+
+# Copyright (c) 1999,2000,2002-2007
+# Utrecht University (The Netherlands),
+# ETH Zurich (Switzerland), Freie Universitaet Berlin (Germany),
+# INRIA Sophia-Antipolis (France), Martin-Luther-University Halle-Wittenberg
+# (Germany), Max-Planck-Institute Saarbruecken (Germany), RISC Linz (Austria),
+# and Tel-Aviv University (Israel).  All rights reserved.
+#
+# This file is part of CGAL (www.cgal.org); you can redistribute it and/or
+# modify it under the terms of the GNU Lesser General Public License as
+# published by the Free Software Foundation; version 2.1 of the License.
+# See the file LICENSE.LGPL distributed with CGAL.
+#
+# Licensees holding a valid commercial license may use this file in
+# accordance with the commercial license agreement provided with the software.
+#
+# This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
+# WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
+#
+# $URL: svn+ssh://fcacciola@scm.gforge.inria.fr/svn/cgal/trunk/Scripts/scripts/cgal_create_makefile $
+# $Id: cgal_create_makefile 36976 2007-03-09 22:53:24Z reichel $
+#
+# Author(s)     : various
+
+# This script creates a CGAL cmake script with entries for all .C and .cpp
+# files in the current directory.
+#
+# Usage: cgal_create_cmake_script -tTYPE
+#
+#  echo "  TYPE can be any of DEMO, EXAMPLE or TEST.. any other value is ignored"
+
+#VERSION=2.0
+
+create_cmake_script()
+{
+  # print makefile header
+  cat <<EOF
+# Created by the script cgal_create_cmake_script
+# This is the CMake script for compiling a CGAL application.
+
+
+project( ${PROJECT}_${TYPE} )
+EOF
+  cat <<'EOF'
+
+CMAKE_MINIMUM_REQUIRED(VERSION 2.4.5)
+
+set(CMAKE_ALLOW_LOOSE_LOOP_CONSTRUCTS true)
+ 
+if ( COMMAND cmake_policy )
+  cmake_policy( SET CMP0003 NEW )  
+endif()
+ 
+EOF
+
+  if [ "${TYPE}" = "demo" ] ; then
+    target_name="${PROJECT}_${TYPE}"
+    
+    for file in `ls *.C *.cpp 2>/dev/null | sort` ; do
+      all="$all $file"
+    done
+    cat <<'EOF'  
+find_package(CGAL QUIET COMPONENTS Core Qt3 )
+
+if ( CGAL_FOUND )
+
+  include( ${CGAL_USE_FILE} )
+  
+  find_package(Qt3-patched QUIET )
+  # FindQt3-patched.cmake is FindQt3.cmake patched by CGAL developers, so
+  # that it can be used together with FindQt4: all its variables are prefixed
+  # by "QT3_" instead of "QT_".
+  
+  if(CGAL_Qt3_FOUND AND QT3_FOUND)
+  
+    include( Qt3Macros-patched )
+EOF
+    echo "    qt3_automoc( ${all} )"
+    cat<<'EOF'
+
+    # Make sure the compiler can find generated .moc files
+    include_directories(BEFORE ${CMAKE_CURRENT_BINARY_DIR})
+  
+    include_directories( ${QT3_INCLUDE_DIR} )
+
+EOF
+    
+    if [ -d ../../include ] ; then
+      echo '  include_directories (BEFORE ../../include)'
+      echo
+    fi
+    if [ -d ../include ] ; then
+      echo '  include_directories (BEFORE ../include)'
+      echo
+    fi
+    if [ -d include ] ; then
+      echo '    include_directories (BEFORE include)'
+      echo
+    fi
+    cat <<EOF
+    add_executable  (${target_name} ${all})
+  
+    add_to_cached_list( CGAL_EXECUTABLE_TARGETS ${target_name} )
+  
+  
+    # Link the executable to CGAL and third-party libraries
+    target_link_libraries(${target_name} \${QT3_LIBRARIES} \${CGAL_LIBRARIES} \${CGAL_3RD_PARTY_LIBRARIES} )
+  else()
+  
+    message(STATUS "NOTICE: This demo requires Qt3 and the CGAL Qt3 library, and will not be compiled.")
+  
+  endif()
+  
+else()
+  
+    message(STATUS "NOTICE: This demo requires the CGAL library, and will not be compiled.")
+  
+endif()
+EOF
+    
+  else
+  
+    cat <<'EOF'
+find_package(CGAL QUIET COMPONENTS Core )
+
+if ( CGAL_FOUND )
+
+  include( ${CGAL_USE_FILE} )
+
+  include( CGAL_CreateSingleSourceCGALProgram )
+
+EOF
+    if [ -d ../../include ] ; then
+      echo '  include_directories (BEFORE ../../include)'
+      echo
+    fi
+    if [ -d ../include ] ; then
+      echo '  include_directories (BEFORE ../include)'
+      echo
+    fi
+    if [ -d include ] ; then
+      echo '  include_directories (BEFORE include)'
+      echo
+    fi
+    
+    for file in `ls *.C *.cpp 2>/dev/null | sort` ; do
+      # Create an executable for each cpp that  contains a function "main()"
+      BASE=`basename $file .C`
+      BASE=`basename $BASE .cpp`
+      egrep '\bmain[ \t]*\(' $file >/dev/null 2>&1
+      if [ $? -eq 0 ]; then
+        echo "  create_single_source_cgal_program( \"$file\" )"
+      fi
+    done
+    
+    cat <<'EOF'
+
+else()
+  
+    message(STATUS "This program requires the CGAL library, and will not be compiled.")
+  
+endif()
+EOF
+
+  fi
+  
+  echo
+
+}
+
+
+usage()
+{
+  echo "Usage: cgal_create_cmake_script [TYPE]"
+  echo
+  echo "  TYPE must be any of example, demo or test."
+  echo "  Default is example."
+  echo 
+}
+
+
+case $# in
+  0) TYPE="example";;
+  1) TYPE=$1;;
+  *) usage
+     exit 1
+esac
+
+
+
+if [ "${TYPE}" = "example" -o "${TYPE}" = "demo" -o "${TYPE}" = "test" ]; then
+  ok='y'
+fi 
+
+if [ -z "$ok" ]; then
+  echo "Invalid type: ${TYPE}. Valid values are example, demo or test"
+  exit 1
+fi 
+
+OUTPUTFILE=CMakeLists.txt
+PROJECT=`basename $PWD`
+
+if [ -f ${OUTPUTFILE} ] ; then
+  echo "moving $OUTPUTFILE to ${OUTPUTFILE}.bak ..."
+  mv -f $OUTPUTFILE ${OUTPUTFILE}.bak
+fi
+create_cmake_script > $OUTPUTFILE
+echo "created $OUTPUTFILE in $PWD ..."

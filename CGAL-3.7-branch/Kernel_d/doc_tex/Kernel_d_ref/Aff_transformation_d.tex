@@ -1,0 +1,112 @@
+% begin cgal manual page
+
+\begin{ccRefClass}{Aff_transformation_d<Kernel>}\ccCreationVariable{t}
+
+\ccDefinition
+
+An instance of the data type \ccc{Aff_transformation_d<Kernel>} is an
+affine transformation of $d$-dimensional space. It is specified by a
+square matrix $M$ of dimension $d + 1$. All entries in the last row of
+\ccc{M} except the diagonal entry must be zero; the diagonal entry
+must be non-zero.  A point $p$ with homogeneous coordinates $(p[0],
+\ldots, p[d])$ can be transformed into the point \ccc{p.transform(A)}
+= $Mp$, where \ccc{A} is an affine transformation created from \ccc{M}
+by the constructors below.
+
+\ccSetOneOfTwoColumns{4cm}
+
+\ccTypes
+
+% \ccNestedType{RT}{the ring type.  }
+
+% \ccNestedType{FT}{the field type.  }
+
+\ccNestedType{LA}{the linear algebra layer.  }
+
+\ccNestedType{Matrix}{the matrix type.  }
+
+\ccSetOneOfTwoColumns{3cm}
+
+\ccCreation
+
+\ccConstructor{Aff_transformation_d<Kernel>()}{introduces some
+transformation.}
+
+\ccConstructor{Aff_transformation_d<Kernel>(int d,
+  Identity_transformation)}{introduces the identity transformation in
+  $d$-dimensional space. }
+
+\ccConstructor{Aff_transformation_d<Kernel>(Matrix M)}{introduces the
+  transformation of $d$-space specified by matrix $M$. \ccPrecond
+  \ccc{M} is a square matrix of dimension $d + 1$ where entries in the
+  last row of \ccc{M} except the diagonal entry must be zero; the
+  diagonal entry must be non-zero.}
+
+\ccConstructor{template <typename Forward_iterator>
+  Aff_transformation_d<Kernel>(Scaling, Forward_iterator start,
+  Forward_iterator end)}{introduces the transformation of $d$-space
+  specified by a diagonal matrix with entries \ccc{set [start,end)} on
+  the diagonal (a scaling of the space). \ccPrecond \ccc{set
+    [start,end)} is a vector of dimension $d+1$.  }
+
+\ccConstructor{Aff_transformation_d<Kernel>(Translation, Vector_d<Kernel>
+  v)}{introduces the translation by vector $v$.  }
+
+\ccConstructor{Aff_transformation_d<Kernel>(int d, Scaling, RT num, RT
+  den)}{returns a scaling by a scale factor \ccc{num/den}.  \ccPrecond
+  \ccc{den !=0 }.}
+
+\ccConstructor{Aff_transformation_d<Kernel>(int d, Rotation, RT sin_num, RT
+  cos_num, RT den, int e1 = 0, int e2 = 1)}{returns a planar rotation
+  with sine and cosine values \ccc{sin_num/den} and \ccc{cos_num/den}
+  in the plane spanned by the base vectors $b_{e1}$ and $b_{e2}$ in
+  $d$-space. Thus the default use delivers a planar rotation in the
+  $x$-$y$ plane. \ccPrecond $\ccc{sin_num}^2 + \ccc{cos_num}^2 =
+  \ccc{den}^2$ and $0 \leq e_1 < e_2 < d$.  \ccPrecond \ccc{den != 0}
+  }
+
+\ccConstructor{Aff_transformation_d<Kernel>(int d, Rotation, Direction_d<Kernel>
+  dir, RT num, RT den, int e1 = 0, int e2 = 1)}{returns a planar
+  rotation within a two-dimensional linear subspace. The subspace is
+  spanned by the base vectors $b_{e1}$ and $b_{e2}$ in $d$-space.  The
+  rotation parameters are given by the $2$-dimensional direction
+  \ccc{dir}, such that the difference between the sines and cosines of
+  the rotation given by \ccc{dir} and the approximated rotation are at
+  most \ccc{num/den} each.\\ \ccPrecond \ccc{dir.dimension()==2},
+  \ccc{!dir.is_degenerate()} and \ccc{num < den} is positive, \ccc{den
+    != 0}, $0 \leq e_1 < e_2 < d$. }
+
+\ccSetTwoOfThreeColumns{5cm}{3cm}
+
+\ccOperations
+
+\ccMethod{int dimension() ;}{the dimension of the underlying space }
+
+\ccMethod{const Matrix& matrix() ;}{returns the transformation matrix
+  }
+
+\ccMethod{Aff_transformation_d<Kernel> inverse() ;}{returns the inverse
+  transformation.  \ccPrecond \ccc{t.matrix()} is invertible.  }
+
+\ccMethod{Aff_transformation_d<Kernel> operator*(const
+  Aff_transformation_d<Kernel>& s) ;}{composition of transformations. Note
+  that transformations are not necessarily commutative. \ccc{t*s} is
+  the transformation which transforms first by \ccc{t} and then by
+  \ccc{s}.  }
+
+\ccImplementation
+
+
+Affine Transformations are implemented by matrices of number type
+\ccc{RT} as a handle type. All operations like creation,
+initialization, input and output on a transformation $t$ take time
+$O(\ccc{t.dimension()}^2)$. \ccc{dimension()} takes constant time.
+The operations for inversion and composition have the cubic costs of
+the used matrix operations. The space requirement is
+$O(\ccc{t.dimension()}^2)$.
+
+
+
+\end{ccRefClass}
+
+

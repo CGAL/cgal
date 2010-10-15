@@ -1,0 +1,222 @@
+\section{Software Design}
+
+\subsection{Global Function parameterize()}
+
+This package's entry point is:
+
+\begin{ccExampleCode}
+// Compute a one-to-one mapping from a 3D triangle surface 'mesh' to a
+// 2D circle, using Floater Mean Value Coordinates algorithm.
+// A one-to-one mapping is guaranteed.
+template <class ParameterizationMesh_3>
+typename Parameterizer_traits_3<ParameterizationMesh_3>::Error_code
+parameterize(ParameterizationMesh_3& mesh)  // 3D mesh, model of ParameterizationMesh_3 concept
+{
+    Mean_value_coordinates_parameterizer_3<ParameterizationMesh_3> parameterizer;
+    return parameterizer.parameterize(mesh);
+}
+
+// Compute a one-to-one mapping from a 3D triangle surface 'mesh' to a
+// simple 2D domain.
+// One-to-one mapping may be guaranteed or not,
+// depending on the chosen ParametizerTraits_3 algorithm.
+template <class ParameterizationMesh_3, class ParameterizerTraits_3>
+typename Parameterizer_traits_3<ParameterizationMesh_3>::Error_code
+parameterize(ParameterizationMesh_3& mesh,          // 3D mesh, model of ParameterizationMesh_3
+             ParameterizerTraits_3 parameterizer)   // Parameterization method for 'mesh'
+{
+    return parameterizer.parameterize(mesh);
+}
+\end{ccExampleCode}
+
+You may notice that these global functions simply call the
+parameterize() method of a \ccc{ParameterizerTraits_3} object.
+The purpose of these global functions is:
+\begin{itemize}
+\item to be consistent with other \cgal\ algorithms that are also provided as
+      global functions, e.g. \ccc{CGAL::convex_hull_2()},
+\item to provide a default parameterization method (Floater Mean Value Coordinates),
+      which wouldn't be possible with a direct call to an object's method.
+\end{itemize}
+
+You may also wonder why there is not just one \ccc{CGAL::parameterize()} function
+with a default \ccc{ParameterizerTraits_3} argument equal to
+\ccc{CGAL::Mean_value_coordinates_parameterizer_3<ParameterizationMesh_3>}.
+The reason is simply that this is not allowed by the C++ standard (see
+\cite{cgal:ansi-is14882-98}, paragraph 14.1/9).
+
+
+\subsection{No Common Parameterization Algorithm}
+
+\ccc{ParameterizerTraits_3} models modify the behavior of the global function
+\ccc{CGAL::parameterize()} - hence the {\em Traits} in the name.
+On the other hand, \ccc{ParameterizerTraits_3} models do not modify the behavior
+of a common parameterization algorithm - as you might expect.
+
+In this package, we focus on triangulated surfaces that are homeomorphic to a
+disk and on piecewise linear mappings onto planar domains.
+A consequence is that the skeleton of all parameterization methods of this
+package is the same:
+\begin{itemize}
+\item Allocate a sparse linear system $A.X = B$
+\item Parameterize the mesh border and initialize $B$
+\item Parameterize the inner points of the mesh and set $A$ coefficients
+\item Solve the system
+\end{itemize}
+
+It is tempting to make the parameterization method a traits class that
+modifies the behavior of a common parameterization algorithm.
+On the other hand, there are several differences among methods:
+\begin{itemize}
+\item Fixed border methods need to parameterize all border vertices,
+      while free border methods parameterize only two vertices.
+\item Some methods create symmetric definite positive systems,
+      which may be solved more efficiently than general systems.
+\item Most parameterization methods use two \#vertices x \#vertices systems,
+      where Least Squares Conformal Maps uses one (2 * \#triangles) x \#vertices system.
+\item Most parameterization methods invert the $A$ matrix,
+      when Least Squares Conformal Maps solves the system in the least squares sense.
+\end{itemize}
+
+Therefore, the software design chosen is:
+\begin{itemize}
+\item Each \ccc{ParameterizerTraits_3} model implements its own version
+      of the parameterization algorithm as a parameterize() method.
+\item Each \ccc{ParameterizerTraits_3} model has template arguments
+      defining the border parameterization and sparse linear solver to use,
+      with default values adapted to the method.
+\item Code factorization is achieved using a class hierarchy and (few) virtual methods.
+\end{itemize}
+
+% Insert image parameterizer_class_diagram.png/eps with title
+% "A parameterizer UML class diagram (main types and methods only)" and scale = 1:1
+\begin{center}
+    \label{Surface_mesh_parameterization-fig-parameterizer_class_diagram}
+    % Image
+    \begin{ccTexOnly}
+        \includegraphics[width=1.0\textwidth]{Surface_mesh_parameterization/parameterizer_class_diagram}
+    \end{ccTexOnly}
+    \begin{ccHtmlOnly}
+        <img style="max-width: 100%;" border=0 src="./parameterizer_class_diagram.png"><P>
+    \end{ccHtmlOnly}
+    % Title
+    \begin{figure}[h]
+        \caption{A parameterizer UML class diagram (main types and methods only)}
+    \end{figure}
+\end{center}
+
+% Insert image parameterizers_class_hierarchy.png/eps with
+% title "Surface parameterizer classes hierarchy" and scale = 1:1
+\begin{center}
+    \label{Surface_mesh_parameterization-fig-parameterizers_class_hierarchy}
+    % Image
+    \begin{ccTexOnly}
+        \includegraphics[width=1.0\textwidth]{Surface_mesh_parameterization/parameterizers_class_hierarchy}
+    \end{ccTexOnly}
+    \begin{ccHtmlOnly}
+        <img style="max-width: 100%;" border=0 src="./parameterizers_class_hierarchy.png"><P>
+    \end{ccHtmlOnly}
+    % Title
+    \begin{figure}[h]
+        \caption{Surface parameterizer classes hierarchy}
+    \end{figure}
+\end{center}
+
+Note: \ccc{CGAL::Parameterizer_traits_3<ParameterizationMesh_3>} is the (pure virtual)
+superclass of all surface parameterization classes.
+
+
+\subsection{Fixed\_border\_parameterizer\_3 Class}
+
+Linear fixed border parameterization algorithms are very close. They mainly
+differ by the energy that they try to minimize, i.e. by the value of the $w_{ij}$
+coefficient of the $A$ matrix, for $v_i$ and $v_j$ neighbor vertices of the mesh
+\cite{cgal:fh-survey-05}. One consequence is that most of the code of the fixed border methods is factorized in the
+\ccc{CGAL::Fixed_border_parameterizer_3<ParameterizationMesh_3, BorderParameterizer_3, SparseLinearAlgebraTraits_d>} class.
+
+Subclasses:
+\begin{itemize}
+\item must provide \ccc{BorderParameterizer_3} and \ccc{SparseLinearAlgebraTraits_d}
+      default template parameters that make sense,
+\item must implement \ccc{compute_w_ij}() to compute $w_{ij}$ = (i, j) coefficient
+      of matrix $A$ for $v_j$ neighbor vertex of $v_i$,
+\item may implement an optimized version of \ccc{is_one_to_one_mapping}().
+\end{itemize}
+
+See \ccc{CGAL::Barycentric_mapping_parameterizer_3<ParameterizationMesh_3, BorderParameterizer_3, SparseLinearAlgebraTraits_d>}
+class as an example.
+
+
+\subsection{Border Parameterizations}
+
+Border Parameterizations are models of the \ccc{BorderParameterizer_3} concept.
+To simplify the implementation, \ccc{BorderParameterizer_3} models know only the
+\ccc{ParameterizationMesh_3} mesh class. They do not know the parameterization algorithm or the sparse linear solver used.
+
+
+\subsection{ParameterizationMesh\_3 and ParameterizationPatchableMesh\_3 Concepts}
+
+All parameterization methods are templated by the kind of mesh they are applied on.
+The mesh type must be a model of \ccc{ParameterizationMesh_3}.
+
+The purpose of such a model is to:
+\begin{enumerate}
+\item Support several kind of meshes.
+\item Hide the implementation of extra fields specific to the parameterization domain
+      (\ccc{index}, \ccc{u}, \ccc{v}, \ccc{is_parameterized}).
+\item Handle in the mesh type the complexity of \emph{virtually} cutting a mesh
+      to make it homeomorphic to a disk (instead of duplicating this
+      code in each parameterization method).
+\end{enumerate}
+
+Two options are possible for 1) and 2):
+\begin{itemize}
+\item Pass to all classes and methods a mesh pointer, a traits class to manipulate it,
+      and accessors to the extra field arrays.
+      This is the choice of the Boost Graph Library with \ccc{boost::graph_traits<>}
+      and the property maps.
+\item Pass to all classes and methods an object that points to the actual mesh and knows
+      how to access to its fields. This is the Adaptor concept \cite{cgal:ghjv-dpero-95}.
+\end{itemize}
+
+The current design of this package uses the second option, which is simpler.
+Of course, we may decide at some point to switch to the first one to reach a deeper integration
+of \cgal\ with Boost.
+
+Point 3) is solved by class \ccc{CGAL::Parameterization_mesh_patch_3<ParameterizationPatchableMesh_3>},
+which takes care of \emph{virtually} cutting
+a patch in a \ccc{ParameterizationPatchableMesh_3} mesh, to make it appear as a topological disk
+with a \ccc{ParameterizationMesh_3} interface.
+\ccc{ParameterizationPatchableMesh_3} inherits from concept \ccc{ParameterizationMesh_3} and adds
+the ability to support patches and virtual seams.
+
+This mainly means that:
+\begin{itemize}
+\item vertices can be tagged as inside or outside the patch to parameterize,
+\item the fields specific to parameterizations (\ccc{index}, \ccc{u}, \ccc{v}, \ccc{is_parameterized})
+      can be set {\em per corner} (which is a more general way of saying {\em per half-edge}).
+\end{itemize}
+
+
+\subsection{SparseLinearAlgebraTraits\_d Concept}
+
+This package solves sparse linear systems using solvers which are models
+of \ccc{SparseLinearAlgebraTraits_d}.
+
+\ccc{SparseLinearAlgebraTraits_d} is a sub-concept of the \ccc{LinearAlgebraTraits_d} concept
+in \ccc{Kernel_d}.
+The goal is to adapt easily code written for dense matrices to sparse ones,
+and vice-versa.
+
+
+\subsection{Cutting a Mesh}
+
+In this package, we focus on triangulated surfaces that are homeomorphic to a
+disk.
+
+Computing a cutting path that transforms a closed mesh of arbitrary genus into
+a topological disk is a research topic on its own. This package does
+not intend to cover this topic at the moment.
+
+
+

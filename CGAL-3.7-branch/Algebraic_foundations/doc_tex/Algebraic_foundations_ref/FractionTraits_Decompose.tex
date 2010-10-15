@@ -1,0 +1,27 @@
+\begin{ccRefFunctionObjectConcept}{FractionTraits::Decompose}
+
+\ccDefinition
+
+Functor decomposing a \ccc{Fraction} into its numerator and denominator.   
+
+\ccTypes
+
+\ccOperations
+%SetThreeColumns{xxxxxxxxxx}{xxxxx}{}
+\ccCreationVariable{decompose}
+\ccMethod{void operator()( FractionTraits::Type               f,
+                           FractionTraits::Numerator_type   & n,
+                           FractionTraits::Denominator_type & d);}
+        {decompose $f$ into numerator $n$ and denominator $d$. }
+
+%\ccHasModels
+
+\ccSeeAlso
+
+\ccRefConceptPage{Fraction}\\
+\ccRefConceptPage{FractionTraits}\\
+%\ccRefConceptPage{FractionTraits::Decompose}\\
+\ccRefConceptPage{FractionTraits::Compose}\\
+\ccRefConceptPage{FractionTraits::CommonFactor}\\
+
+\end{ccRefFunctionObjectConcept}

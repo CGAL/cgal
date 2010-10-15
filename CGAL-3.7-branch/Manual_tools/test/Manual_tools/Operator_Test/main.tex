@@ -1,0 +1,74 @@
+\begin{ccClass}{Demo_Class2}
+\ccCreationVariable{p}
+
+Type casting through a conversion operator is the default behavior 
+for the formatting routine if the return type before the {\tt 
+operator} keyword is empty.
+
+\ccThree{Demo_Class&&}{A< FT>(p);}{}
+  \ccMethod{ operator int () const;}{Conversion operator.}
+    \ccGlue
+  \ccMethod{operator A<FT>() const;}{Conversion operator.}
+
+Sometimes, there is a choice between
+implementing an operator as a method or as a function. Both
+declarations will produce the same formatting, as demonstrated
+with the next two declarations.
+
+
+  \ccFunction{Demo_Class2
+        operator+(Demo_Class2 p, Demo_Class2 q);}{Declaration via function.}
+    \ccGlue
+  \ccMethod{Demo_Class2
+        operator+(Demo_Class2 q);}{Declaration via method.}
+
+One can locally activate that the operator declaration is shown as it
+is written without operator formatting, {\tt const ...\&}, classname, or
+trailing const declarations for methods removal. This can be done with
+\verb+\+\verb+ccTagFullDeclarations+ within a scope of braces {\tt
+  \{...\}}.
+
+\ccTagFullDeclarations
+  \ccMethod{Demo_Class2
+        operator+(const Demo_Class2& q) const;}{Declaration via method.}
+\ccTagDefaults
+
+There is some laziness allowed in placing spaces around the operator
+characters. See the following examples:
+
+\ccMethod{A
+    operator+(Demo_Class2 q);}{\CC\ code: {\tt A operator+(Demo\_Class2 q);}}
+    \ccGlue
+\ccMethod{A
+    operator +(Demo_Class2 q);}{\CC\ code: {\tt A operator +(Demo\_Class2 q);}}
+    \ccGlue
+\ccMethod{A
+    operator+ (Demo_Class2 q);}{\CC\ code: {\tt A operator+ (Demo\_Class2 q);}}
+    \ccGlue
+\ccMethod{A
+    operator + (Demo_Class2 q);}{\CC\ code: 
+                                {\tt A operator + (Demo\_Class2 q);}}
+
+The keyword {\tt operator} is reserved, but it can appear as a
+substring in another name. See the following examples that this
+style can handle such cases:
+
+\ccMethod{A foo_operator(Demo_Class2 q);}{}
+    \ccGlue
+\ccMethod{A noperator(Demo_Class2 q);}{}
+    \ccGlue
+\ccMethod{A operatoro(Demo_Class2 q);}{}
+    \ccGlue
+\ccMethod{A operator_(Demo_Class2 q);}{}
+    \ccGlue
+\ccMethod{A operator0(Demo_Class2 q);}{}
+
+A problem has occured in detecting the operator keyword if it was
+directly preceded by an {\tt \&} or {\tt *} character. It is fixed as
+the following example demonstrates:
+
+\ccFunction{Int &operator+=( Int a, Int b);}{}
+
+\end{ccClass}
+
+%----------------------------------------------------------------------

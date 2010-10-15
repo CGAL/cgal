@@ -1,0 +1,82 @@
+% +------------------------------------------------------------------------+
+% | Reference manual page: Manhattan_distance_iso_box_point.tex
+% +------------------------------------------------------------------------+
+% | 1.07.2001   Johan W.H. Tangelder
+% | Package: ASPAS
+% | 
+\RCSdef{\RCSManhattandistanceisoboxpointRev}{$Id$}
+\RCSdefDate{\RCSManhattandistanceisoboxpointDate}{$Date$}
+% |
+%%RefPage: end of header, begin of main body
+% +------------------------------------------------------------------------+
+
+
+\begin{ccRefClass}{Manhattan_distance_iso_box_point<Traits>}  %% add template arg's if necessary
+
+%% \ccHtmlCrossLink{}     %% add further rules for cross referencing links
+%% \ccHtmlIndexC[class]{} %% add further index entries
+
+\ccDefinition
+  
+The class \ccRefName\ provides an implementation of
+the \ccc{GeneralDistance} concept
+for the Manhattan distance ($l_1$ metric)
+between a $d$-dimensional iso-box and a $d$-dimensional point 
+and the Manhattan distance between a $d$-dimensional iso-box
+and a $d$-dimensional iso-box defined as a $k$-$d$ tree rectangle.
+
+\ccInclude{CGAL/Manhattan_distance_iso_box_point.h}
+
+\ccParameters
+Expects for the template argument a model for the concept
+\ccc{SearchTraits}, for example \ccc{CGAL::Search_traits_3<CGAL::Cartesian<double> >}.
+
+
+\ccIsModel
+
+\ccc{GeneralDistance}
+
+\ccTypes
+
+\ccTypedef{Traits::FT FT;}{Number type.}
+\ccTypedef{Traits::Point_d Point_d;}{Point type.}
+\ccTypedef{Traits::Iso_box_d Query_item;}{Query item type.}
+
+\ccCreation
+\ccCreationVariable{md}  %% choose variable name
+
+\ccConstructor{Manhattan_distance_iso_box_point();}{Default constructor.}
+
+\ccOperations
+
+\ccMethod{FT transformed_distance(Query_item b, Point_d p);}{Returns the transformed 
+distance between \ccc{b} and \ccc{p}.}
+
+\ccMethod{FT transformed_distance(FT d);} {Returns the transformed value of of $d$.}
+
+\ccMethod{FT inverse_of_transformed_distance(FT d);} {Returns the value of the inverse 
+                                                      of the transform function applied to $d$.}
+
+\ccMethod{FT min_distance_to_rectangle(Query_item b, Kd_tree_rectangle<Traits> r);}
+{Returns the minimal distance between a point from \ccc{b} and a point from
+\ccc{r}.}
+
+\ccMethod{FT max_distance_to_rectangle(Query_item b, Kd_tree_rectangle<Traits> r);}
+{Returns the maximal distance between the iso-box \ccc{b} and
+a point from \ccc{r} furthest to \ccc{b}.}
+
+
+\ccSeeAlso
+
+\ccc{GeneralDistance}.
+
+
+
+
+\end{ccRefClass}
+
+% +------------------------------------------------------------------------+
+%%RefPage: end of main body, begin of footer
+% EOF
+% +------------------------------------------------------------------------+
+

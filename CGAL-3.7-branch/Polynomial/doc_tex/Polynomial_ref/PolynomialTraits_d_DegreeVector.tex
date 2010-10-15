@@ -1,0 +1,41 @@
+\begin{ccRefConcept}{PolynomialTraits_d::DegreeVector}
+
+\ccDefinition
+
+For a given \ccc{PolynomialTraits_d::Polynomial_d} $p$ 
+this \ccc{AdaptableUnaryFunction} returns the degree vector, that is, 
+it returns the exponent vector of the monomial of highest order in $p$, 
+where the monomial order is the lexicographic order giving outer 
+variables a higher priority. In particular, this is the monomial 
+that belongs to the innermost leading coefficient of $p$.  
+
+\ccRefines 
+\ccc{AdaptableUnaryFunction}\\
+\ccc{CopyConstructible}\\
+\ccc{DefaultConstructible}\\
+
+
+\ccTypes
+
+\ccSetThreeColumns{xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx}{xxx}{}
+
+\ccCreationVariable{fo}
+\ccTypedef{typedef Exponent_vector result_type;}{}\ccGlue
+\ccTypedef{typedef PolynomialTraits_d::Polynomial_d argument_type;}{}
+
+\ccOperations
+\ccMethod{result_type operator()(argument_type p);}
+         {Returns the degree vector.}
+
+%\ccHasModels
+
+\ccSeeAlso
+
+\ccRefIdfierPage{Polynomial_d}\\
+\ccRefIdfierPage{PolynomialTraits_d}\\
+\ccRefIdfierPage{PolynomialTraits_d::Degree}\\
+\ccRefIdfierPage{PolynomialTraits_d::TotalDegree}\\
+\ccRefIdfierPage{PolynomialTraits_d::InnermostLeadingCoefficient}\\
+
+\end{ccRefConcept}
+

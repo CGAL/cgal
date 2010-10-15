@@ -1,0 +1,86 @@
+% +------------------------------------------------------------------------+
+% | Reference manual page: parameterize.tex
+% +------------------------------------------------------------------------+
+% | 23.09.2005   Laurent Saboret, Pierre Alliez, Bruno Levy
+% | Package: Surface_mesh_parameterization
+% |
+\RCSdef{\RCSparameterizeRev}{$Id$}
+\RCSdefDate{\RCSparameterizeDate}{$Date$}
+% |
+\ccRefPageBegin
+%%RefPage: end of header, begin of main body
+% +------------------------------------------------------------------------+
+
+\begin{ccRefFunction}{parameterize}  %% add template arg's if necessary
+
+%% \ccHtmlCrossLink{}     %% add further rules for cross referencing links
+%% \ccHtmlIndexC[function]{} %% add further index entries
+
+\ccDefinition
+
+\ccc{CGAL::parameterize()} is the main entry-point of the \ccc{Surface_mesh_parameterization} package.
+
+It computes a one-to-one mapping from a 3D triangle surface 'mesh' to a simple 2D domain.
+The mapping is piecewise linear on the triangle mesh.
+The result is a pair (u,v) of parameter coordinates for each vertex of the input mesh.
+One-to-one mapping may be guaranteed or not, depending on the chosen \ccc{ParametizerTraits} algorithm.
+
+The \ccc{CGAL::parameterize()} function exists in two flavors, to provide a default parameterization algorithm
+of Floater Mean Value Coordinates.
+
+\ccInclude{CGAL/parameterize.h}
+
+% The section below is automatically generated. Do not edit!
+%START-AUTO(\ccDefinition)
+
+% Reduce left margin
+\ccThree{123456789012345}{6789012}{}
+
+\ccFunction{template<class ParameterizationMesh_3> Parameterizer_traits_3<ParameterizationMesh_3>::Error_code parameterize(ParameterizationMesh_3& mesh);}
+{
+Compute a one-to-one mapping from a 3D triangle surface \ccc{mesh} to a 2D circle, using Floater Mean Value Coordinates algorithm. A one-to-one mapping is guaranteed.  \\
+The mapping is piecewise linear on the input mesh triangles. The result is a (u, v) pair of parameter coordinates for each vertex of the input mesh.
+\ccCommentHeading{Preconditions}  \\
+\ccc{mesh} must be a surface with one connected component. \ccc{mesh} must be a triangular mesh.
+\ccCommentHeading{Parameters}  \\
+\ccc{mesh}: 3D mesh, model of \ccc{ParameterizationMesh_3} concept.
+}
+\ccGlue
+\ccFunction{template<class ParameterizationMesh_3, class ParameterizerTraits_3> Parameterizer_traits_3<ParameterizationMesh_3>::Error_code parameterize(ParameterizationMesh_3& mesh, ParameterizerTraits_3 parameterizer);}
+{
+Compute a one-to-one mapping from a 3D triangle surface \ccc{mesh} to a simple 2D domain. The mapping is piecewise linear on the triangle mesh. The result is a pair (u, v) of parameter coordinates for each vertex of the input mesh.  \\
+One-to-one mapping may be guaranteed or not, depending on the chosen \ccc{ParametizerTraits_3} algorithm.
+\ccCommentHeading{Preconditions}  \\
+\ccc{mesh} must be a surface with one connected component. \ccc{mesh} must be a triangular mesh. The mesh border must be mapped onto a convex polygon (for fixed border parameterizations).
+\ccCommentHeading{Parameters}  \\
+\ccc{mesh}: 3D mesh, model of \ccc{ParameterizationMesh_3}. \ccc{parameterizer}: Parameterization method for \ccc{mesh}.
+}
+\ccGlue
+
+%END-AUTO(\ccDefinition)
+
+\ccSeeAlso
+
+\ccRefIdfierPage{CGAL::Barycentric_mapping_parameterizer_3<ParameterizationMesh_3, BorderParameterizer_3, SparseLinearAlgebraTraits_d>}  \\
+\ccRefIdfierPage{CGAL::Discrete_authalic_parameterizer_3<ParameterizationMesh_3, BorderParameterizer_3, SparseLinearAlgebraTraits_d>}  \\
+\ccRefIdfierPage{CGAL::Discrete_conformal_map_parameterizer_3<ParameterizationMesh_3, BorderParameterizer_3, SparseLinearAlgebraTraits_d>}  \\
+\ccRefIdfierPage{CGAL::LSCM_parameterizer_3<ParameterizationMesh_3, BorderParameterizer_3, SparseLinearAlgebraTraits_d>}  \\
+\ccRefIdfierPage{CGAL::Mean_value_coordinates_parameterizer_3<ParameterizationMesh_3, BorderParameterizer_3, SparseLinearAlgebraTraits_d>}  \\
+
+\ccExample
+
+See \ccc{Simple_parameterization.cpp} example.
+
+\ccImplementation
+
+This function simply calls the parameterize() method of the parameterization
+algorithm chosen.
+
+\end{ccRefFunction}
+
+% +------------------------------------------------------------------------+
+%%RefPage: end of main body, begin of footer
+\ccRefPageEnd
+% EOF
+% +------------------------------------------------------------------------+
+

@@ -1,0 +1,62 @@
+% +------------------------------------------------------------------------+
+% | Reference manual page: Qt_widget_Nef_S2.tex
+% +------------------------------------------------------------------------+
+% | 13.09.2004   Peter Hachenberger
+% | Package: Nef_S2
+% | 
+\RCSdef{\RCSQtRev}{$Id$}
+\RCSdefDate{\RCSQtDate}{$Date$}
+% +------------------------------------------------------------------------+
+
+\ccRefPageBegin
+
+%%RefPage: end of header, begin of main body
+% +------------------------------------------------------------------------+
+
+
+\begin{ccRefClass}{Qt_widget_Nef_S2<Nef_polyhedron_S2>}
+
+\ccDefinition
+ 
+The class \ccc{Qt_widget_Nef_S2} uses the OpenGL interface of Qt in order to 
+display a
+\ccc{Nef_polyhedron_S2}. Its purpose is to provide an easy to use viewer for 
+\ccc{Nef_polyhedron_S2}. There are no means provided to enhance the 
+functionality of the viewer.
+
+In addition to the functions inherited from the Qt class \ccc{QGLWidget}, 
+\ccc{Qt_widget_Nef_S2} only has a single public 
+constructor. For the usage of \ccc{Qt_widget_Nef_S2} see the example 
+below.
+
+\ccInclude{CGAL/IO/Qt_widget_Nef_S2.h}
+
+\ccParameters
+The template parameter expects an instantiation of \ccc{Nef_polyhedron_S2<Traits>}.
+
+
+\ccCreation
+\ccCreationVariable{W}
+
+\ccConstructor{Qt_widget_Nef_3(const Nef_polyhedron_S2& N);}
+{Creates a widget \ccVar\ for displaying the \ccc{Nef_polyhedron_S2} N.}
+
+\ccSeeAlso
+
+%\ccRefIdfierPage{CGAL::Qt_widget_OpenGL}\\
+\ccRefIdfierPage{CGAL::Nef_polyhedron_S2<Traits>}
+
+\ccExample
+This example creates some random \ccc{Sphere_segments} and distributes them on
+two \ccc{Nef_polyhedron_2}. The two Nef polyhedra are combined by a symmetric
+diffrence and the result is displayed in a Qt widget.
+
+\ccIncludeExampleCode{Nef_S2/nef_S2.cpp}
+
+\end{ccRefClass}
+
+% +------------------------------------------------------------------------+
+%%RefPage: end of main body, begin of footer
+\ccRefPageEnd
+% EOF
+% +------------------------------------------------------------------------+

@@ -1,0 +1,55 @@
+\begin{ccRefFunctionObjectConcept}{AlgebraicStructureTraits::Divides}
+
+\ccDefinition
+
+\ccc{AdaptableBinaryFunction}, 
+returns true if the first argument divides the second argument. 
+
+Integral division (a.k.a. exact division or division without remainder) maps 
+ring elements $(n,d)$ to ring element $c$ such that $n = dc$ if such a $c$ 
+exists. In this case it is said that $d$ divides $n$. 
+
+This functor is required to provide two operators. The first operator takes two
+arguments and returns true if the first argument divides the second argument. 
+The second operator returns $c$ via the additional third argument. 
+
+\ccRefines 
+
+\ccc{AdaptableBinaryFunction} 
+
+\ccTypes
+\ccNestedType{result_type} 
+        { Is \ccc{AlgebraicStructureTraits::Boolean}.}
+\ccGlue
+\ccNestedType{first_argument} 
+        { Is \ccc{AlgebraicStructureTraits::Type}.}
+\ccGlue
+\ccNestedType{second_argument} 
+        { Is \ccc{AlgebraicStructureTraits::Type}.}
+
+\ccOperations
+\ccCreationVariable{divides}
+\ccThree{xxxxxxxxxxx}{xxxxxxxxxxx}{}
+
+\ccMethod{result_type operator()(first_argument_type  d, 
+                                 second_argument_type n);}
+        { Computes whether $d$ divides $n$. }
+
+\ccMethod{result_type operator()(
+        first_argument_type  d, 
+        second_argument_type n,
+        AlgebraicStructureTraits::Type& c);}
+        { 
+        Computes whether $d$ divides $n$.
+        Moreover it computes $c$ if $d$ divides $n$, 
+        otherwise the value of $c$ is undefined. 
+        }
+
+%\ccHasModels
+
+\ccSeeAlso
+
+\ccRefIdfierPage{AlgebraicStructureTraits}\\
+\ccRefIdfierPage{AlgebraicStructureTraits::IntegralDivision}
+
+\end{ccRefFunctionObjectConcept} 

@@ -1,0 +1,118 @@
+% +------------------------------------------------------------------------+
+% | Reference manual page: Kd_tree.tex
+% +------------------------------------------------------------------------+
+% | 1.07.2001   Johan W.H. Tangelder
+% | Package: ASPAS
+% | 
+\RCSdef{\RCSKdtreeRev}{$Id$}
+\RCSdefDate{\RCSKdtreeDate}{$Date$}
+% |
+%%RefPage: end of header, begin of main body
+% +------------------------------------------------------------------------+
+
+
+\begin{ccRefClass}{Kd_tree<Traits, Splitter, UseExtendedNode>}  %% add template arg's if necessary
+
+%% \ccHtmlCrossLink{}     %% add further rules for cross referencing links
+%% \ccHtmlIndexC[class]{} %% add further index entries
+
+\ccDefinition  
+The class \ccRefName\ defines a $k$-$d$ tree. 
+
+\ccInclude{CGAL/Kd_tree.h}
+
+\ccParameters
+
+Expects for the first template argument a model of the concept
+\ccc{SearchTraits}, for example \ccc{CGAL::Search_traits_2<CGAL::Cartesian<double> >}.
+
+Excepts for the second template argument a model for the concept \ccc{Splitter}.
+It defaults  to \ccc{Sliding_midpoint<Traits>}.
+
+Expects for the third template argument \ccc{CGAL::Tag_true}, if the 
+tree shall be built with extended nodes, and \ccc{CGAL::Tag_false} otherwise.
+
+\ccTypes
+
+\ccTypedef{Traits::Point_d Point_d;} {Point class.}
+\ccTypedef{Traits::FT FT;}{Number type.}
+\ccNestedType{Splitter}{Splitter type.}
+
+\ccNestedType{iterator}{Bidirectional iterator with value type \ccc{Point_d} that allows
+	to enumerate all points in the tree.}
+
+\begin{ccAdvanced}
+\ccNestedType{Node_handle}{A handle with value type \ccc{Kd_tree_node<Traits,Splitter>}.}
+\ccNestedType{Point_d_iterator} {Random access iterator 
+with value type \ccc{Point_d*}.}
+\end{ccAdvanced}
+
+\ccCreation
+\ccCreationVariable{tree}
+
+\ccConstructor{Kd_tree(Splitter s=Splitter());}{Constructs an empty $k$-$d$ tree.}
+
+\ccConstructor
+{template <class InputIterator> Kd_tree(InputIterator first, InputIterator beyond, Splitter s=Splitter());}
+{
+Constructs a $k$-$d$ tree on the elements from the sequence 
+\ccc{[first, beyond)} using the splitting rule implemented by \ccc{s}. 
+The value type of the \ccc{InputIterator} must be \ccc{Point_d}.
+}
+
+% -----------------------------------
+\ccOperations
+
+\ccMethod{void insert(Point_d p);}
+{Inserts the point \ccc{p} in the $k$-$d$ tree.}
+
+\ccMethod{template <class InputIterator> void insert(InputIterator first, InputIterator beyond);}
+{Inserts the elements from the sequence \ccc{[first, beyond)} in the $k$-$d$ tree.
+The value type of the \ccc{InputIterator} must be \ccc{Point_d}.}
+
+\ccMethod{
+template <class OutputIterator, class FuzzyQueryItem>
+OutputIterator search(OutputIterator it, FuzzyQueryItem q);}
+{Reports the points that are approximately contained by~\ccc{q}.
+The types \ccc{FuzzyQueryItem::Point_d} and \ccc{Point_d} must be equivalent.} 
+
+\ccMethod{iterator begin();}{Returns an iterator to the first point in the tree.}
+\ccMethod{iterator end();}{Returns the corresponding past-the-end iterator.}
+
+\ccMethod{void clear() const;}{Removes all points from the $k$-$d$ tree.}
+
+
+\ccMethod{unsigned int size();}
+{Returns the number of points that are stored in the tree.}
+
+\begin{ccAdvanced}
+
+\ccMethod{Node_handle root();}
+{Returns a handle to the root node of the tree.}
+
+\ccMethod{const Kd_tree_rectangle<Traits>& bounding_box();}{returns a const reference
+to the bounding box of the root node of the tree.}
+
+\ccMethod{std::ostream& statistics(std::ostream& s);}
+{
+Inserts statistics of the tree into the output stream \ccc{s}.
+}
+
+\end{ccAdvanced}
+
+% -----------------------------------
+
+\ccSeeAlso
+Tree.
+\ccc{CGAL::Kd_tree_node<Traits>},\\
+\ccc{CGAL::Search_traits_2<Kernel>},\\
+\ccc{CGAL::Search_traits_3<Kernel>},\\
+\ccc{CGAL::Search_traits<FT_,Point,CartesianIterator,ConstructCartesianIterator>}.
+
+\end{ccRefClass}
+
+% +------------------------------------------------------------------------+
+%%RefPage: end of main body, begin of footer
+% EOF
+% +------------------------------------------------------------------------+
+

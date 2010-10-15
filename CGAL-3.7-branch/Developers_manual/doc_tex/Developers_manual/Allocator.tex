@@ -1,0 +1,75 @@
+% =============================================================================
+% The CGAL Developers' Manual
+% Chapter: Memory Management
+% -----------------------------------------------------------------------------
+% file   : Allocator.tex
+% authors: Michael Seel <seel@mpi-sb.mpg.de>
+% -----------------------------------------------------------------------------
+% $Id$
+% $Date$
+% =============================================================================
+
+\ccHtmlNoClassLinks
+\ccAutoIndexingOff
+\begin{ccClassTemplate}{allocator<T>}
+\ccCreationVariable{A}
+
+\ccHeading{Class \ccc{CGAL::allocator<T>}}
+
+\ccDefinition
+
+An instance \ccc{A} of the data type \ccc{allocator<T>} is
+a memory allocator according to the \CC standard. 
+
+\ccSetOneOfTwoColumns{3.5cm}
+
+\ccTypes
+
+Local types are \ccc{size_type}, \ccc{difference_type}, \ccc{value_type},
+\ccc{pointer}, \ccc{reference}, \ccc{const_pointer}, and \ccc{const_reference}. 
+
+
+\ccNestedType{template <class T1> rebind}{allows the construction of a derived allocator:\\
+     \ccc{allocator<T>::template rebind<T1>::other}\\ is the type
+     \ccc{allocator<T1>}.  
+}
+
+\ccSetOneOfTwoColumns{3cm}
+
+\ccCreation
+
+\ccConstructor{allocator<T>()}{introduces a variable \ccc{A} of type \ccc{allocator<T>}.  
+}
+
+\ccSetTwoOfThreeColumns{2.5cm}{1cm}
+
+\ccOperations
+
+\ccMethod{pointer allocate(size_type n, const_pointer = 0) ;}{returns a pointer to a newly allocated memory range of size
+        \ccc{n * sizeof(T)}. 
+}
+
+\ccMethod{void deallocate(pointer p, size_type n) ;}{deallocates a memory range of \ccc{n * sizeof(T)} starting
+        at \ccc{p}. \ccPrecond the memory range was obtained via \ccc{allocate(n)}. 
+}
+
+\ccMethod{pointer address(reference r) ;}{returns \ccc{&r}. 
+}
+
+\ccMethod{const_pointer address(const_reference r) ;}{returns \ccc{&r}. 
+}
+
+\ccMethod{void construct(pointer p, const_reference r) ;}{copies the object referenced by \ccc{r} to \ccc{*p}.
+(Technically this is achieved by an inplace new \ccc{new( (void*)p ) 
+T(r)}). 
+}
+
+\ccMethod{void destroy(pointer p) ;}{destroys the object referenced via \ccc{p} by calling \lcTex{\ccc{p->\ccTilde T()}}\lcHtml{\ccc{p->~T()}}. 
+}
+
+\ccMethod{size_type max_size() ;}{the largest value \ccc{n} for which the call \ccc{allocate(n,0)} 
+    might succeed. 
+}
+
+\end{ccClassTemplate}
+\ccAutoIndexingOn

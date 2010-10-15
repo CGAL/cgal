@@ -1,0 +1,40 @@
+\begin{ccRefConcept}{PolynomialTraits_d::Negate}
+\ccDefinition
+
+This \ccc{AdaptableUnaryFunction} computes $p(-x)$ for a given polynomial $p$. 
+
+Note that this functor operates on the polynomial in the univariate view, that is, 
+the polynomial is considered as a univariate polynomial in one specific variable. 
+
+This functor is provided for efficiency reasons, since this operation just flips the sign 
+of all odd coefficients with respect to the specified variable.  
+
+\ccRefines 
+\ccc{AdaptableUnaryFunction}\\
+\ccc{CopyConstructible}\\
+\ccc{DefaultConstructible}\\
+
+\ccTypes
+\ccSetThreeColumns{xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx}{xxx}{}
+\ccCreationVariable{fo}
+\ccTypedef{typedef PolynomialTraits_d::Polynomial_d   result_type;}{}\ccGlue
+\ccTypedef{typedef PolynomialTraits_d::Polynomial_d   argument_type;}{}
+
+\ccOperations
+\ccMethod{result_type operator()(argument_type  p);}
+         { Returns $p(-x)$, with respect to the outermost variable. }
+
+\ccMethod{result_type operator()(argument_type  p,
+                                 int i);}
+         { Returns $p(-x)$, with respect to variable $x_i$. 
+           \ccPrecond $0 \leq i  < d$
+         }
+
+%\ccHasModels
+
+\ccSeeAlso
+
+\ccRefIdfierPage{Polynomial_d}\\
+\ccRefIdfierPage{PolynomialTraits_d}\\
+
+\end{ccRefConcept}

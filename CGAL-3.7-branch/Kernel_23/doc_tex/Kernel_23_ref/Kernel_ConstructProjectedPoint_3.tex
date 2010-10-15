@@ -1,0 +1,21 @@
+\begin{ccRefFunctionObjectConcept}{Kernel::ConstructProjectedPoint_3}
+A model for this must provide:
+
+\ccCreationVariable{fo}
+
+\ccMemberFunction{Kernel::Point_3 operator()(const Kernel::Line_3& l,
+                                             const Kernel::Point_3& p);}
+       {returns the orthogonal projection of \ccc{p} onto \ccc{l}.}
+
+\ccMemberFunction{Kernel::Point_3 operator()(const Kernel::Plane_3& h,
+                                             const Kernel::Point_3& p);}
+       {returns the orthogonal projection of \ccc{p} onto \ccc{h}.}
+
+\ccRefines
+\ccc{AdaptableFunctor} (with two arguments)
+
+\ccSeeAlso
+\ccRefIdfierPage{CGAL::Line_3<Kernel>} \\
+\ccRefIdfierPage{CGAL::Plane_3<Kernel>} \\
+
+\end{ccRefFunctionObjectConcept}

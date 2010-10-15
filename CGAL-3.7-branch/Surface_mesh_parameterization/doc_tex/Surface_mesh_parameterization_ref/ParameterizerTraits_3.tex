@@ -1,0 +1,120 @@
+% +------------------------------------------------------------------------+
+% | Reference manual page: ParameterizerTraits_3.tex
+% +------------------------------------------------------------------------+
+% | 21.09.2005   Laurent Saboret, Pierre Alliez, Bruno Levy
+% | Package: Surface_mesh_parameterization
+% |
+\RCSdef{\RCSParameterizerTraitsRev}{$Id$}
+\RCSdefDate{\RCSParameterizerTraitsDate}{$Date$}
+% |
+\ccRefPageBegin
+%%RefPage: end of header, begin of main body
+% +------------------------------------------------------------------------+
+
+
+\begin{ccRefConcept}{ParameterizerTraits_3}
+
+%% \ccHtmlCrossLink{}     %% add further rules for cross referencing links
+%% \ccHtmlIndexC[concept]{} %% add further index entries
+
+
+\ccDefinition
+
+% The section below is automatically generated. Do not edit!
+%START-AUTO(\ccDefinition)
+
+\ccc{ParameterizerTraits_3} is a concept of parameterization object for a given type of mesh, \ccc{Adaptor}, which is a model of the \ccc{ParameterizationMesh_3} concept.
+
+%END-AUTO(\ccDefinition)
+
+
+\ccHeading{Design Pattern}
+
+% The section below is automatically generated. Do not edit!
+%START-AUTO(\ccHeading{Design Pattern})
+
+\ccc{ParameterizerTraits_3} models are Strategies \cite{cgal:ghjv-dpero-95}: they implement a strategy of surface parameterization for models of \ccc{ParameterizationMesh_3}.
+
+%END-AUTO(\ccHeading{Design Pattern})
+
+
+\ccTypes
+
+% The section below is automatically generated. Do not edit!
+%START-AUTO(\ccTypes)
+
+\ccNestedType{Adaptor}
+{
+Export the type of mesh to parameterize.
+}
+\ccGlue
+
+%END-AUTO(\ccTypes)
+
+
+\ccConstants
+
+% The section below is automatically generated. Do not edit!
+%START-AUTO(\ccConstants)
+
+\ccEnum{enum Error_code { OK, ERROR_EMPTY_MESH, ERROR_NON_TRIANGULAR_MESH, ERROR_NO_TOPOLOGICAL_DISC, ERROR_BORDER_TOO_SHORT, ERROR_NON_CONVEX_BORDER, ERROR_CANNOT_SOLVE_LINEAR_SYSTEM, ERROR_NO_1_TO_1_MAPPING, ERROR_OUT_OF_MEMORY, ERROR_WRONG_PARAMETER };}
+{
+List of errors detected by this package.
+\ccCommentHeading{Values}  \\
+\ccc{OK}: Success. \ccc{ERROR_EMPTY_MESH}: Input mesh is empty. \ccc{ERROR_NON_TRIANGULAR_MESH}: Input mesh is not triangular. \ccc{ERROR_NO_TOPOLOGICAL_DISC}: Input mesh is not a topological disc. \ccc{ERROR_BORDER_TOO_SHORT}: This border parameterization requires a longer border. \ccc{ERROR_NON_CONVEX_BORDER}: This parameterization method requires a convex border. \ccc{ERROR_CANNOT_SOLVE_LINEAR_SYSTEM}: Cannot solve linear system. \ccc{ERROR_NO_1_TO_1_MAPPING}: Parameterization failed: no one-to-one mapping. \ccc{ERROR_OUT_OF_MEMORY}: Not enough memory. \ccc{ERROR_WRONG_PARAMETER}: A method received an unexpected parameter.
+}
+\ccGlue
+
+%END-AUTO(\ccConstants)
+
+
+\ccCreation
+\ccCreationVariable{param}  %% variable name for \ccMethod
+
+Construction and destruction are undefined.
+
+% The section below is automatically generated. Do not edit!
+%START-AUTO(\ccCreation)
+%END-AUTO(\ccCreation)
+
+
+\ccOperations
+
+% The section below is automatically generated. Do not edit!
+%START-AUTO(\ccOperations)
+
+\ccMethod{Error_code parameterize(Adaptor& mesh);}
+{
+Compute a one-to-one mapping from a triangular 3D surface \ccc{mesh} to a piece of the 2D space. The mapping is linear by pieces (linear in each triangle). The result is the (u, v) pair image of each vertex of the 3D surface.
+\ccCommentHeading{Preconditions}  \\
+\ccc{mesh} must be a surface with one connected component and no hole. \ccc{mesh} must be a triangular mesh.
+}
+\ccGlue
+
+%END-AUTO(\ccOperations)
+
+
+\ccHasModels
+
+\ccRefIdfierPage{CGAL::Parameterizer_traits_3<ParameterizationMesh_3>}  \\
+\ccRefIdfierPage{CGAL::Fixed_border_parameterizer_3<ParameterizationMesh_3, BorderParameterizer_3, SparseLinearAlgebraTraits_d>}  \\
+\ccRefIdfierPage{CGAL::Barycentric_mapping_parameterizer_3<ParameterizationMesh_3, BorderParameterizer_3, SparseLinearAlgebraTraits_d>}  \\
+\ccRefIdfierPage{CGAL::Discrete_authalic_parameterizer_3<ParameterizationMesh_3, BorderParameterizer_3, SparseLinearAlgebraTraits_d>}  \\
+\ccRefIdfierPage{CGAL::Discrete_conformal_map_parameterizer_3<ParameterizationMesh_3, BorderParameterizer_3, SparseLinearAlgebraTraits_d>}  \\
+\ccRefIdfierPage{CGAL::LSCM_parameterizer_3<ParameterizationMesh_3, BorderParameterizer_3, SparseLinearAlgebraTraits_d>}  \\
+\ccRefIdfierPage{CGAL::Mean_value_coordinates_parameterizer_3<ParameterizationMesh_3, BorderParameterizer_3, SparseLinearAlgebraTraits_d>}  \\
+
+
+\ccSeeAlso
+
+\ccRefIdfierPage{ParameterizationMesh_3}  \\
+
+
+\end{ccRefConcept}
+
+% +------------------------------------------------------------------------+
+%%RefPage: end of main body, begin of footer
+\ccRefPageEnd
+% EOF
+% +------------------------------------------------------------------------+
+

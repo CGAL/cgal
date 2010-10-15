@@ -1,0 +1,16 @@
+INSTALL.rtf
+cgal-16.ico
+CGAL.bmp
+cgal.ico
+cgal_very_small_FFFFFF.bmp
+default_variants.ini
+environment_variables.ini
+fixup_projects.ini
+script_cgal_3_0.nsi
+script_cgal_3_3.nsh
+script_cgal_3_3.nsi
+TextLog.nsh
+WriteEnvStr.nsh
+ReplaceInFile.nsh
+StrRep.nsh
+zirkel.bmp

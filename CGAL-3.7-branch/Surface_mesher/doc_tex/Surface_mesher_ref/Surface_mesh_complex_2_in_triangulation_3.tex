@@ -1,0 +1,96 @@
+% +------------------------------------------------------------------------+
+% | Reference manual page: Surface_mesh_complex_2_in_triangulation_3.tex
+% +------------------------------------------------------------------------+
+% | 07.12.2005   Author
+% | Package: Package
+% | 
+\RCSdef{\RCSSurfacemeshCTRev}{$Id$}
+\RCSdefDate{\RCSSurfacemeshCTDate}{$Date$}
+% |
+%%RefPage: end of header, begin of main body
+% +------------------------------------------------------------------------+
+
+
+\begin{ccRefClass}{Surface_mesh_complex_2_in_triangulation_3<Tr, Edge_info = void>}
+
+%% \ccHtmlCrossLink{}     %% add further rules for cross referencing links
+%% \ccHtmlIndexC[class]{} %% add further index entries
+
+\ccDefinition
+  
+The class \ccRefName\  implements a data structure to store
+the restricted Delaunay triangulation used by the surface mesh generator.
+The restricted Delaunay triangulation is stored as a two dimensional
+complex embedded in a three dimensional triangulation.
+
+
+The class  \ccRefName\ is a model of the concept \ccc{SurfaceMeshComplex_2InTriangulation_3}
+and can be plugged as the template parameter \ccc{C2T3}
+in the function template \ccc{make_surface_mesh}.
+
+
+The template parameter \ccc{Tr} has to be instantiated
+with a model of the concept \ccc{SurfaceMeshTriangulation_3}.
+(Any three dimensional   triangulation of
+\cgal\ is a model of \ccc{Triangulation_3}
+provided that its vertex and cell base class be models
+of the concept \ccc{SurfaceMeshVertexBase_3} and
+\ccc{SurfaceMeshCellBase_3}
+respectively.)
+
+
+%Additionally, if \ccc{Edge_info} is not \ccc{void}, \ccRefName\ is a model
+%of the concept \ccc{PiecewiseSmoothSurfaceMeshComplex_2InTriangulation_3}, if
+%\ccc{Edge_info} has data members required by that concept.
+
+
+\ccInclude{CGAL/Surface_mesh_complex_2_in_triangulation_3.h}
+
+\ccIsModel
+
+\ccc{SurfaceMeshComplex_2InTriangulation_3}
+
+
+
+
+%\ccTypes
+
+%\ccNestedType{TYPE}{some nested types}
+
+%\ccCreation
+%\ccCreationVariable{a}  %% choose variable name
+
+%\ccConstructor{Surface_mesh_complex_2_in_triangulation_3();}{default constructor.}
+
+%\ccOperations
+
+%\ccMethod{void foo();}{some member functions}
+
+\ccSeeAlso
+
+\ccc{make_surface_mesh}\\
+\ccc{SurfaceMeshTriangulation_3}
+
+%\ccExample
+
+%A short example program.
+%Instead of a short program fragment, a full running program can be
+%included using the 
+%\verb|\ccIncludeExampleCode{Package/Surface_mesh_complex_2_in_triangulation_3.cpp}| 
+%macro. The program example would be part of the source code distribution and
+%also part of the automatic test suite.
+
+%\begin{ccExampleCode}
+%void your_example_code() {
+%}
+%\end{ccExampleCode}
+
+%%% \ccIncludeExampleCode{Package/Surface_mesh_complex_2_in_triangulation_3.cpp}
+
+\end{ccRefClass}
+
+% +------------------------------------------------------------------------+
+%%RefPage: end of main body, begin of footer
+% EOF
+% +------------------------------------------------------------------------+
+

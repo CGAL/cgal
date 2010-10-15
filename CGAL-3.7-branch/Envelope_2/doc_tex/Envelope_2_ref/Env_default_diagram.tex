@@ -1,0 +1,35 @@
+% +------------------------------------------------------------------------+
+% | Reference manual page: Env_default_diagram.tex
+% +------------------------------------------------------------------------+
+% | 
+% | Package: Envelope_2
+% | 
+% +------------------------------------------------------------------------+
+
+\ccRefPageBegin
+
+\begin{ccRefClass}{Env_default_diagram_1<Traits>}
+
+\ccDefinition
+%============
+
+This class is the default envelope-diagram class used by envelope functions
+to represent the minimization or the maximization diagram of a set of curves. 
+It represents the diagram as a doubly-linked list of interleaved vertices
+and edges. Thus, all operations provided by the envelope diagram take constant
+time, and the space needed to store the diagram class is linear in the
+complexity of the envelope.
+
+The envelope-diagram class is parameterized by a traits class, which is a
+model of the \ccc{ArrangementXMonotoneTraits_2} concept, in case we handle
+only envelopes of $x$-monotone curves, or of the refined
+\ccc{ArrangementTraits_2} concept in case we handle arbitrary planar curves.
+
+\ccInclude{CGAL/Env_default_diagram_1.h}
+
+\ccIsModel
+    \ccc{EnvelopeDiagram_1}
+
+\end{ccRefClass}
+
+\ccRefPageEnd

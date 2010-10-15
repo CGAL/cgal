@@ -1,0 +1,27 @@
+\ccMethod{FL_iterator get_fl() const;}{returns an iterator over the
+  existence of the lower bounds $l_j, j=0,\ldots,n-1$. 
+  The corresponding past-the-end iterator is \ccc{get_fl()+get_n()}. If 
+  \ccc{*(get_fl()+j)} has value $true$, the variable $x_j$ has a lower
+  bound given by \ccc{*(get_l()+j)}, otherwise it has no lower bound.}
+
+\ccMethod{L_iterator get_l() const;}{returns an iterator over the
+  entries of $\qpl$. 
+  The corresponding past-the-end iterator is \ccc{get_l()+get_n()}.
+  If \ccc{*(get_fl()+j)} has value $false$, the value 
+  \ccc{*(get_l()+j)} is not accessed. \ccPrecond if both 
+  \ccc{*(get_fl()+j)} and \ccc{*(get_fu()+j)} have value $true$, then
+  $\ccc{*(get_l()+j)}\leq \ccc{*(get_u()+j)}$}
+
+\ccMethod{FU_iterator get_fu() const;}{returns an iterator over the
+  existence of the upper bounds $u_j, j=0,\ldots,n-1$. 
+  The corresponding past-the-end iterator is \ccc{get_fu()+get_n()}. If 
+  \ccc{*(get_fu()+j)} has value $true$, the variable $x_j$ has an upper
+  bound given by \ccc{*(get_u()+j)}, otherwise it has no upper bound.}
+
+\ccMethod{L_iterator get_u() const;}{returns an iterator over the
+  entries of $\qpu$. 
+  The corresponding past-the-end iterator is \ccc{get_u()+get_n()}.
+  If \ccc{*(get_fu()+j)} has value $false$, the value 
+  \ccc{*(get_u()+j)} is not accessed. \ccPrecond if both 
+  \ccc{*(get_fl()+j)} and \ccc{*(get_fu()+j)} have value $true$, then
+  $\ccc{*(get_l()+j)}\leq \ccc{*(get_u()+j)}$}

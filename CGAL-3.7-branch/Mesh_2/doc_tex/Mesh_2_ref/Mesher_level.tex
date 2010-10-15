@@ -1,0 +1,302 @@
+% +------------------------------------------------------------------------+
+% | Reference manual page: Mesher_level.tex
+% +------------------------------------------------------------------------+
+% | 21.07.2005   Author
+% | Package: Package
+% | 
+\RCSdef{\RCSMesherlevelRev}{$Id$}
+\RCSdefDate{\RCSMesherlevelDate}{$Date$}
+% |
+%%RefPage: end of header, begin of main body
+% +------------------------------------------------------------------------+
+
+
+\begin{ccRefClass}{Mesher_level_base<Tr, Mesher_level, Element, Lower,
+Tr_traits >}  %% add template arg's if necessary
+
+%% \ccHtmlCrossLink{}     %% add further rules for cross referencing links
+%% \ccHtmlIndexC[class]{} %% add further index entries
+
+\ccDefinition
+  
+The class \ccRefName\ is a generic class 
+that helps to implement meshing algorithms 
+based on Delaunay refinement.
+Typically, a  Delaunay refinement algorithm
+involves not only  the refinement of the mesh cells
+but also the refinements of lower dimensional mesh elements
+which represents  constraints including e.g.
+the boundary of the domain to be meshed. 
+Such a process can be seen
+as a cascade of processes called mesher level  where each  level
+handles the refinement of elements of a given dimension.
+The class  \ccRefName\ is intended to provide a generic implementation
+of a mesher level.
+For example, a 3D mesh generator taking into account
+constrained facets (that is 2dimensional constraints)
+and edges (1-dimensional constraints) will involve
+three  instances of \ccRefName\ .
+The class \ccRefName\ 
+is designed to serve as the base class
+in a CRTP (curiously recurring template pattern ).
+It captures what can be seen as the common functionalities
+of mesher levels, deferring the  detailed implementation
+of elementary operations to its derived classes.
+
+
+\ccInclude{CGAL/Mesher_level_base.h}
+
+\ccParameters
+The class \ccRefName\ has five template parameters: \\
+- The parameter \ccc{Tr} is the type of the triangulation underlying
+ the refinement process. It must be a model of the concept 
+ \ccc{MeshTriangulation}.\\
+- The parameter \ccc{Mesher_level} stands for the derived class
+in the CRTP pattern. This classes provides the implementation
+of basic operation in  the refinement process and will be the actual
+mesher level used by the meshing application. 
+It must be a model of the concept \ccc{MesherLevel} \\
+- The parameter \ccc{Element} is the type of mesh elements 
+refined at  this level refines. It is a model of the concept
+\ccc{MeshElement} for which there is no requirements..
+- The parameter \ccc{Lower} stands for the  next lower  mesher level
+ in the cascade, handling refinement of lower dimensional mesh
+elements.  It is a model of the concept
+\ccc{LowerMesherLevel} which is just a subconcept of
+\ccc{MesherLevel}.\\
+- The parameter \ccc{Tr_traits} provides some types related
+to the triangulation and in particular the type \ccc{Zone} 
+ It is a model of the concept \ccc{xxx}.
+
+%\ccIsModel
+
+%Concept
+
+
+\ccTypedef{typedef Tr       Triangulation;}
+{The type of the underlying triangulation.}
+\ccGlue
+\ccTypedef{typedef Tr::Point Point;}
+{The type of points inserted into the triangulation.}
+\ccGlue
+\ccTypedef{typedef Tr::Vertex_handle Vertex_handle;}
+{ The vertex handles of the triangulation.}
+\ccGlue
+\ccTypedef{typedef Tr_traits::Zone Zone;}
+{A type describing the conflict zone of a query point in the triangulation,
+i.e. the set of elements that would disappear if the query point is
+inserted.
+}
+
+XXXXXXXXXX
+Suggestion: Having a templated \ccc{Triangulation_traits}
+ \ccc{template< class Tr>
+Triangulation_traits}
+with a default parameter \ccc{Triangulation_traits<Tr>} 
+for the fifth parameter of \ccc{Mesher_level}  
+xxxxxxxxxxxxxxxxxxxxxxx
+
+%\ccNestedType{TYPE}{some nested types}
+
+\ccCreation
+\ccCreationVariable{ml}  %% choose variable name
+
+\ccConstructor{Mesher_level(Lower& lower);}
+{Construct a mesher level with \ccc{previous} as previous 
+(lower dimensional) mesher level.}
+
+
+
+\ccHeading{Methods for handling the meshing process}
+The following functions use the functions that are implemented in 
+the derived classes.
+
+\ccMethod{void scan_triangulation();}
+	{ Called before the first refinement, to initialized the queue of
+      	elements that should be refined.}
+
+
+ 
+
+\ccMethod {  template <class Mesh_visitor>
+  void refine(Mesh_visitor& visitor);}
+{ Performs the refinement;}
+
+
+%All these commented function should appear
+%under their impl form in the concept for ``Mesher level''
+
+
+%\ccMethod{ bool no_longer_element_to_refine();}
+%        { Returns \ccc{true} when there is no  \ccc{Element}
+%          to be refined in this level.}
+
+%\ccMethod {  template <class Mesh_visitor>
+%  bool process_one_element(Mesh_visitor& visitor);}
+%{ Get the next elements from the queue of to be refined elements
+%and try to refine it. Returns \ccc{true} if one point has been inserted.}
+ 
+%\ccMethod {
+%  template <class Mesh_visitor>
+%  Mesher_level_conflict_status
+%  try_to_refine_element(Element e, Mesh_visitor& visitor);}
+% {Try to refine element \ccc{e}.}
+
+
+%\ccMethod {  Element get_next_element();}
+%{ Retrieves the next element that could be refined.}
+  
+%\ccMethod {  void pop_next_element();}
+%{Remove from the list of to be refined elements
+%the next element that could be refined.}
+
+
+%\ccMethod {  Point refinement_point(const Element& e);}
+%{Compute the point that should be inserted to refine the element \ccc{e}}
+
+%XXXXXX  il y a trop de conflits et ils devraient etre definis.
+%Les conflits de " \ccc{conflicts_zone} " ne sont pas les memes que celles des
+%\ccc{test_point_conflict} XXXXXXXXXXXXX
+
+
+%\ccMethod{ Zone conflicts_zone(const Point& p, Element e);}
+%	{Returns the conflict zone of \ccc{p} starting from the
+%	mesh element \ccc{e}.
+%       \ccPrecond{ \ccc{e} is assumed to be in conflict with \ccc{p}.}}
+
+%\ccMethod {  Mesher_level_conflict_status 
+%	private_test_point_conflict(const Point& p, Zone& zone);}
+%{ Tells if, as regards this level of the refinement process, the
+%  point \ccc{p} with conflict zone \ccc{zone} may be inserted.
+%  The return   type is made of two booleans:
+%        - the first one tells if the point can be inserted,
+%        - in case of, the first one is \ccc{false}, the second one tells if
+%        the tested element should be reconsidered latter..}
+ 
+
+%\ccMethod {
+%  Mesher_level_conflict_status
+%  test_conflict_from_higher(const Point& p,
+%				    Zone& zone);}
+%{ Tells if, as regards this level of the refinement process, the
+%      point  \ccc{p}, 
+% constructed as the refinement point of an element of
+% higher dimension,  may be inserted.  
+%  \ccPrecond{The argument  \ccc{zone} 
+% is the connflict zone of \ccc{p}.}}
+% The return   type is  a 
+% \ccc{Mesher_level_conflict_status}
+% telling if 
+%        - the point can be inserted,
+%        - the point cannot be inserted but the element
+%           that would be refined by this point has to  be reconsidered latter.
+%        -  the point cannot be inserted and  the element
+%           that would be refined by this point has to  be dropped.
+
+
+%\ccMethod{ Vertex_handle insert(Point p, Zone& z);}
+%        { Insertion of point \ccc{p} as a new vertex.
+%	\ccc{z} is assumed to be the precomputed conflict zone of
+%	\ccc{p}.}	
+	
+
+ 
+
+
+
+
+
+\ccHeading{ Helping methods to  maintain the data structures}
+
+\ccMethod{Triangulation& triangulation();}{Access to the triangulation.}
+\ccGlue
+\ccMethod{const Triangulation& triangulation();}
+         {Const access to the triangulation.}
+
+\ccMethod{
+  template <typename Mesh_visitor>
+  void before_conflicts(const Element& e, const Point& p,
+			Mesh_visitor& visitor);}
+{Actions to be performed before testing conflicts 
+for point \ccc{p} and element \ccc{e}.}
+
+
+\ccMethod{ template <class Mesh_visitor>
+  void before_insertion(Element& e, const Point& p, Zone& zone, 
+                        Mesh_visitor& visitor);}
+{
+  Actions before inserting the point \ccc{p} in order to refine the
+  element \ccc{e}. 
+ \ccPrecond{The zone of conflicts of \ccc{p} is \ccc{zone}}.}
+ 
+
+  \ccMethod{template <class Mesh_visitor>
+  void after_insertion(Vertex_handle vh, Mesh_visitor& visitor);}
+{ Actions to be performed after insertion of a point.
+  \ccc{vh} is the Vertex handle returned by the insertion
+and visitor is the visitor.}
+
+  \ccMethod{  template <class Mesh_visitor>
+  void after_no_insertion(const Element& e, const Point& p, Zone& zone,
+			  Mesh_visitor& visitor);}
+{ Actions  to be performed when  point \ccc{p}  
+  with conflict zone \ccc{zone} has been tested for insertion and
+rejected, meaning that an insertion took place.}
+
+
+ 
+\begin{ccAdvanced}
+\ccHeading{ Method for step by step advance of the meshing}
+ 
+  \ccMethod{ template <class Mesh_visitor>
+  bool try_to_insert_one_point(Mesh_visitor& visitor);}
+ {Inserts exactly one new vertex in the mesh  and returns \ccc{true}
+ except when the algorithm is done, in which case no point is inserted
+and \ccc{false} is returned.}
+\ccGlue  
+  \ccMethod{template <class Mesh_visitor>
+  bool one_step(Mesh_visitor& visitor);}
+ {Applies one step of the algorithm, i. e.tries to refine one element of
+   lower levels or one element of this level. Returns \c false iff 
+   \ccc{is_algorithm_done()==true}. }
+
+\ccMethod { bool is_algorithm_done();}
+{Returns \ccc{true} when there is no more elements to refine
+in this mesher level and in all the cascaded previous levels.}
+
+\end{ccAdvanced}
+
+
+
+
+
+
+
+\ccSeeAlso
+
+\ccc{Some_other_class},
+\ccc{some_other_function}.
+
+\ccExample
+
+A short example program.
+Instead of a short program fragment, a full running program can be
+included using the 
+\verb|\ccIncludeExampleCode{Package/Mesher_level.cpp}| 
+macro. The program example would be part of the source code distribution and
+also part of the automatic test suite.
+
+\begin{ccExampleCode}
+void your_example_code() {
+}
+\end{ccExampleCode}
+
+%% \ccIncludeExampleCode{Package/Mesher_level.cpp}
+
+\end{ccRefClass}
+
+% +------------------------------------------------------------------------+
+%%RefPage: end of main body, begin of footer
+% EOF
+% +------------------------------------------------------------------------+
+

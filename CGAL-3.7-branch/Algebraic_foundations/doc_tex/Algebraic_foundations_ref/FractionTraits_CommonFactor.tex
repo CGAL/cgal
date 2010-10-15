@@ -1,0 +1,41 @@
+\begin{ccRefFunctionObjectConcept}{FractionTraits::CommonFactor}
+
+\ccDefinition
+
+\ccc{AdaptableBinaryFunction}, finds great common factor of denominators.
+
+This can be considered as a relaxed version of \ccc{AlgebraicStructureTraits::Gcd}, 
+this is needed because it is not guaranteed that \ccc{FractionTraits::Denominator_type} is a model of 
+\ccc{UniqueFactorizationDomain}. 
+
+
+\ccRefines 
+
+\ccc{AdaptableBinaryFunction} 
+
+\ccTypes
+%SetThreeColumns{xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx}{xxxxxxxxxxxxxxxxxxxxxxx}{}
+
+\ccTypedef{typedef FractionTraits::Denominator_type result_type;}{}
+\ccTypedef{typedef FractionTraits::Denominator_type first_argument_type;}{}
+\ccTypedef{typedef FractionTraits::Denominator_type second_argument_type;}{}
+
+\ccOperations
+%SetThreeColumns{xxxxxxxxxx}{xxxxx}{}
+\ccCreationVariable{common_factor}
+\ccMethod{result_type operator()(first_argument_type d1, second_argument_type d2);}
+        {return a great common factor of $d1$ and $d2$.\\
+         Note: {\tt operator()(0,0) = 0} }
+
+%\ccHasModels
+
+\ccSeeAlso
+
+\ccRefConceptPage{Fraction}\\
+\ccRefConceptPage{FractionTraits}\\
+\ccRefConceptPage{FractionTraits::Decompose}\\
+\ccRefConceptPage{FractionTraits::Compose}\\
+%\ccRefConceptPage{FractionTraits::CommonFactor}\\
+\ccRefConceptPage{AlgebraicStructureTraits::Gcd}\\
+
+\end{ccRefFunctionObjectConcept}

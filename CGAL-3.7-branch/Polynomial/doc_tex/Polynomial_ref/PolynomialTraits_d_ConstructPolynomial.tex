@@ -1,0 +1,71 @@
+\begin{ccRefConcept}{PolynomialTraits_d::ConstructPolynomial}
+
+\ccDefinition
+
+This \ccc{AdaptableFunctor} provides several operators 
+to construct objects of type \ccc{PolynomialTraits_d::Polynomial_d}.
+
+\ccRefines 
+\ccc{AdaptableFunctor}\\
+\ccc{CopyConstructible}\\
+\ccc{DefaultConstructible}\\
+
+\ccTypes
+
+\ccSetThreeColumns{xxxxxxxxxxxxxxxxxxx}{xxxxxxxxxxx}{}
+\ccTypedef{typedef PolynomialTraits_d::Polynomial_d result_type;}{}
+
+\ccCreationVariable{fo}
+\ccOperations
+\ccMethod{result_type operator()();}
+         {Construct the zero polynomial.}
+
+\ccMethod{result_type operator()(int i);}
+         {Construct the constant polynomial equal to $i$. }
+
+\ccMethod{result_type operator()
+        (PolynomialTraits_d::Innermost_coefficient_type a);}
+         {Construct the constant polynomial equal to $a$. }
+
+\ccMethod{result_type operator()
+        (PolynomialTraits_d::Coefficient_type a);}
+         {Construct the polynomial equal to $a$.}
+
+\ccMethod{template < class InputIterator >
+        result_type operator()(InputIterator begin, InputIterator end);}
+        {\ccPrecond The value type of \ccc{InputIterator} is
+        \ccc{PolynomialTraits_d::Coefficient_type}. \\
+        
+        The operator constructs the a polynomial from the iterator range, 
+        with respect to the outermost variable, $x_{d-1}$. \\
+        The range starts with the coefficient for $x_{d-1}^0$. \\
+        In case the range is empty, the zero polynomial is constructed. 
+        }
+
+
+\ccMethod{template < class InputIterator >
+        result_type operator()(InputIterator begin, InputIterator end, bool is_sorted= false);}{
+        %result_type operator()(InputIterator begin, InputIterator end, bool is_sorted = false);}{  
+   
+        Constructs a \ccc{Polynomial_d} from a given iterator range of 
+        \ccc{std::pair<Exponent_vector, PolynomialTraits_d::Innermost_coefficient_type>}. 
+        
+        The optional parameter \ccc{is_sorted} indicates whether the given iterator range is 
+        already sorted.  
+
+        \ccPrecond The value type of \ccc{InputIterator} is
+        \ccc{std::pair<Exponent_vector, 
+        PolynomialTraits_d::Innermost_coefficient_type>}.    
+        \ccPrecond Each \ccc{Exponent_vector} must have size $d$.
+        \ccPrecond All appearing \ccc{Exponent_vector}s are different.  
+       
+        }
+
+%\ccHasModels
+
+\ccSeeAlso
+
+\ccRefIdfierPage{Polynomial_d}\\
+\ccRefIdfierPage{PolynomialTraits_d}
+
+\end{ccRefConcept}

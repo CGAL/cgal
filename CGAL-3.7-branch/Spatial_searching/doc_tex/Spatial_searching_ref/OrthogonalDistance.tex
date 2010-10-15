@@ -1,0 +1,73 @@
+% +------------------------------------------------------------------------+
+% | Reference manual page: OrthogonalDistance.tex
+% +------------------------------------------------------------------------+
+% | 1.07.2001   Johan W.H. Tangelder
+% | Package: ASPAS
+% | 
+\RCSdef{\RCSOrthogonalDistanceRev}{$Id$}
+\RCSdefDate{\RCSOrthogonalDistanceDate}{$Date$}
+% |
+%%RefPage: end of header, begin of main body
+% +------------------------------------------------------------------------+
+
+
+\begin{ccRefConcept}{OrthogonalDistance}
+
+%% \ccHtmlCrossLink{}     %% add further rules for cross referencing links
+%% \ccHtmlIndexC[concept]{} %% add further index entries
+
+\ccDefinition
+  
+Requirements of an orthogonal distance class supporting incremental distance updates.
+To optimize distance computations transformed distances are used. 
+E.g., for an Euclidean distance the transformed distance is the squared Euclidean distance.
+
+\ccRefines
+
+\ccc{GeneralDistance}
+
+\ccHasModels
+
+\ccc{CGAL::Euclidean_distance<Traits>},\\
+\ccc{CGAL::Weighted_Minkowski_distance<Traits>}
+
+\ccTypes
+
+\ccNestedType{FT}{Number type.}
+\ccNestedType{Point_d}{Point type.}
+\ccNestedType{Query_item}{Query item type.}
+
+\ccCreation
+\ccCreationVariable{od}  %% choose variable name
+
+\ccConstructor{OrthogonalDistance(int d);}{Constructor implementing distance for $d$-dimensional points.}
+
+\ccOperations
+
+\ccMethod{FT transformed_distance(Query_item q, Point_d r);}{Returns the transformed distance between \ccc{q} and~\ccc{r}.}
+
+\ccMethod{FT min_distance_to_rectangle(Query_item q, Kd_tree_rectangle<Traits> r);}
+{Returns the transformed distance between \ccc{q} and
+the point on the boundary of \ccc{r} closest to \ccc{q}.}
+
+\ccMethod{FT max_distance_to_rectangle(Query_item q, Kd_tree_rectangle<Traits> r);}
+{Returns the transformed distance between \ccc{q} and
+the point on the boundary of \ccc{r} farthest to \ccc{q}.}
+
+\ccMethod{FT transformed_distance(FT d);} {Returns the transformed distance.}
+
+\ccMethod{FT inverse_of_transformed_distance(FT d);} {Returns the inverse of the transformed distance.}
+
+\ccMethod{FT new_distance(FT dist, FT old_off, FT new_off, int cutting_dimension);} {Updates 
+\ccc{dist} incrementally and returns the updated distance.}
+
+
+
+
+\end{ccRefConcept}
+
+% +------------------------------------------------------------------------+
+%%RefPage: end of main body, begin of footer
+% EOF
+% +------------------------------------------------------------------------+
+

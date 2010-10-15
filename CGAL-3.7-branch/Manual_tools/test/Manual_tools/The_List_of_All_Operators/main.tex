@@ -1,0 +1,165 @@
+\ccTagDefaults
+\begin{ccClass}{ClassA}
+
+  \ccFunction{Ptr_Class
+        operator->(ClassA p);}{}
+  \ccGlue
+  \ccFunction{ClassA
+        operator[](ClassA p, int i);}{}
+
+  \ccFunction{ClassA
+        operator()(ClassA p);}{}
+  \ccGlue
+  \ccFunction{ClassA
+        operator()(ClassA p, int i);}{}
+  \ccGlue
+  \ccFunction{ClassA
+        operator()(ClassA p, int i, int j);}{}
+  \ccGlue
+  \ccFunction{ClassA
+        operator()(ClassA p, int i, int j, int k);}{}
+  \ccGlue
+  \ccFunction{ClassA
+        operator()(ClassA p,
+                   const A& a, B& b, C c, const D& d, ClassA
+                   e);}{all number and types of parameters are possible.}
+
+  \ccFunction{ClassA
+        operator++(ClassA p);}{}
+  \ccGlue
+  \ccFunction{ClassA
+        operator++(ClassA p, int);}{The postfix incr.\ operator
+        has a hidden {\tt int} parameter that the formatting does not show.}
+
+  \ccFunction{ClassA
+        operator--(ClassA p);}{}
+  \ccGlue
+  \ccFunction{ClassA
+        operator--(ClassA p, int);}{}
+
+  \ccFunction{ClassA
+        operator~(ClassA p);}{}
+  \ccGlue
+  \ccFunction{ClassA
+        operator!(ClassA p);}{}
+  \ccGlue
+  \ccFunction{ClassA
+        operator-(ClassA p);}{}
+  \ccGlue
+  \ccFunction{ClassA
+        operator+(ClassA p);}{}
+  \ccGlue
+  \ccFunction{ClassA
+        operator&(ClassA p);}{}
+  \ccGlue
+  \ccFunction{ClassA
+        operator*(ClassA p);}{}
+
+  \ccMethod{ void*
+        operator new( size_t);}{Hidden parameters are not shown. \CC\ code: 
+        $\backslash${\tt method\{ void* operator new( size\_t);\}}.}
+
+  \ccMethod{ void
+        operator delete( void*, size_t);}{Hidden parameters are not shown.
+        \CC\ code: $\backslash${\tt method\{ void operator 
+            delete( void*, size\_t);\}}}
+
+  \ccMethod{ void
+        operator delete[]( void*, size_t);}{Hidden parameters are not
+        shown again. 
+        \CC\ code: $\backslash${\tt method\{ void operator
+            delete[]( void*, size\_t);\}}}
+
+  \ccFunction{Member_Ptr
+        operator->*(ClassA p);}{}
+
+  \ccFunction{ClassA
+        operator*(ClassA p, ClassA q);}{}
+  \ccGlue
+  \ccFunction{ClassA
+        operator/(ClassA p, ClassA q);}{}
+  \ccGlue
+  \ccFunction{ClassA
+        operator%(ClassA p, ClassA q);}{}
+  \ccGlue
+  \ccFunction{ClassA
+        operator+(ClassA p, ClassA q);}{}
+  \ccGlue
+  \ccFunction{ClassA
+        operator-(ClassA p, ClassA q);}{}
+  \ccGlue
+  \ccFunction{ClassA
+        operator<<(ClassA p, int i);}{}
+  \ccGlue
+  \ccFunction{ClassA
+        operator>>(ClassA p, int i);}{}
+
+  \ccFunction{ClassA
+        operator<(ClassA p, ClassA q);}{}
+  \ccGlue
+  \ccFunction{ClassA
+        operator<=(ClassA p, ClassA q);}{}
+  \ccGlue
+  \ccFunction{ClassA
+        operator>(ClassA p, ClassA q);}{}
+  \ccGlue
+  \ccFunction{ClassA
+        operator>=(ClassA p, ClassA q);}{}
+  \ccGlue
+  \ccFunction{ClassA
+        operator==(ClassA p, ClassA q);}{}
+  \ccGlue
+  \ccFunction{ClassA
+        operator!=(ClassA p, ClassA q);}{}
+
+  \ccFunction{ClassA
+        operator&(ClassA p, ClassA q);}{}
+  \ccGlue
+  \ccFunction{ClassA
+        operator^(ClassA p, ClassA q);}{}
+  \ccGlue
+  \ccFunction{ClassA
+        operator|(ClassA p, ClassA q);}{}
+
+  \ccFunction{ClassA
+        operator&&(ClassA p, ClassA q);}{}
+  \ccGlue
+  \ccFunction{ClassA
+        operator||(ClassA p, ClassA q);}{}
+
+  \ccFunction{ClassA
+        operator=(ClassA p, ClassA q);}{}
+  \ccGlue
+  \ccFunction{ClassA
+        operator*=(ClassA p, ClassA q);}{}
+  \ccGlue
+  \ccFunction{ClassA
+        operator/=(ClassA p, ClassA q);}{}
+  \ccGlue
+  \ccFunction{ClassA
+        operator%=(ClassA p, ClassA q);}{}
+  \ccGlue
+  \ccFunction{ClassA
+        operator+=(ClassA p, ClassA q);}{}
+  \ccGlue
+  \ccFunction{ClassA
+        operator-=(ClassA p, ClassA q);}{}
+  \ccGlue
+  \ccFunction{ClassA
+        operator<<=(ClassA p, ClassA q);}{}
+  \ccGlue
+  \ccFunction{ClassA
+        operator>>=(ClassA p, ClassA q);}{}
+  \ccGlue
+  \ccFunction{ClassA
+        operator&=(ClassA p, ClassA q);}{}
+  \ccGlue
+  \ccFunction{ClassA
+        operator|=(ClassA p, ClassA q);}{}
+  \ccGlue
+  \ccFunction{ClassA
+        operator^=(ClassA p, ClassA q);}{}
+
+\end{ccClass}
+
+% ----------------------------------------------------------------------

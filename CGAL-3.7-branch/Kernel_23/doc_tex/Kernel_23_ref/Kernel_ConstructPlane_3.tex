@@ -1,0 +1,58 @@
+\begin{ccRefFunctionObjectConcept}{Kernel::ConstructPlane_3}
+A model for this must provide:
+
+\ccCreationVariable{fo}
+
+\ccMemberFunction{Kernel::Plane_3 operator()(const Kernel::RT &a, 
+                       const Kernel::RT &b,
+                       const Kernel::RT &c,
+                       const Kernel::RT &d);}
+{creates a plane defined by the equation
+ $a\, x +b\, y +c\, z + d = 0$.
+Notice that it is degenerate if $a = b = c = 0$.}
+
+\ccMemberFunction{Kernel::Plane_3 operator()(const Kernel::Point_3 &p,
+                       const Kernel::Point_3 &q,
+                       const Kernel::Point_3 &r);}
+{creates a plane passing through the points \ccStyle{p},
+ \ccStyle{q} and \ccStyle{r}. The plane is oriented such that \ccStyle{p}, 
+ \ccStyle{q} and \ccStyle{r} are oriented in a positive sense 
+ (that is counterclockwise) when seen from the positive side of the plane.
+Notice that it is degenerate if the points are collinear.}
+
+
+\ccMemberFunction{Kernel::Plane_3 operator()(const Kernel::Point_3 &p,
+                          const Kernel::Direction_3&d);}
+{introduces a plane that passes through point \ccStyle{p} and
+ that has as an orthogonal direction equal to \ccStyle{d}.}
+
+\ccMemberFunction{Kernel::Plane_3 operator()(const Kernel::Point_3 &p,
+                          const Kernel::Vector_3 &v);}
+{introduces a plane that passes through point \ccStyle{p} and
+ that is orthogonal to \ccStyle{v}.}
+
+\ccMemberFunction{Kernel::Plane_3 operator()(const Kernel::Line_3 &l,
+                          const Kernel::Point_3 &p);}
+{introduces a plane that is defined through the three points 
+ \ccStyle{l.point(0)}, \ccStyle{l.point(1)} and \ccStyle{p}.}
+
+\ccMemberFunction{Kernel::Plane_3 operator()(const Kernel::Ray_3 &r,
+                          const Kernel::Point_3 &p);}
+{introduces a plane that is defined through the three points 
+ \ccStyle{r.point(0)}, \ccStyle{r.point(1)} and \ccStyle{p}.}
+
+\ccMemberFunction{Kernel::Plane_3 operator()(const Kernel::Segment_3 &s,
+                          const Kernel::Point_3 &p);}
+{introduces a plane that is defined through the three points 
+ \ccStyle{s.source()}, \ccStyle{s.target()} and \ccStyle{p}.}
+
+\ccMemberFunction{Kernel::Plane_3 operator()(const Kernel::Circle_3 &c);}
+{introduces a plane that is defined as the plane containing the circle.}
+
+\ccRefines
+\ccc{AdaptableFunctor} (with two arguments)
+
+\ccSeeAlso
+\ccRefIdfierPage{CGAL::Plane_3<Kernel>} \\
+
+\end{ccRefFunctionObjectConcept}

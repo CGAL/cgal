@@ -1,0 +1,56 @@
+% +------------------------------------------------------------------------+
+% | Reference manual page: Event.tex
+% +------------------------------------------------------------------------+
+% | 20.03.2005   Author
+% | Package: Kinetic_data_structures
+% | 
+\RCSdef{\RCSEventRev}{$Id$}
+\RCSdefDate{\RCSEventDate}{$Date$}
+% |
+%%RefPage: end of header, begin of main body
+% +------------------------------------------------------------------------+
+
+\ccDefGlobalScope{CGAL::}
+\begin{ccRefConcept}[Kinetic::Simulator::]{Time}
+
+%% \ccHtmlCrossLink{}     %% add further rules for cross referencing links
+%% \ccHtmlIndexC[concept]{} %% add further index entries
+
+\ccDefinition
+  
+The concept \ccClassName\ represents time in the simulator.
+
+\ccCreationVariable{a}  %% choose variable name
+
+\ccConstructor{Time(NT);}{Construct an instance of time from a number
+type, where NT is the number type used in the simulation.}
+
+\ccOperations
+
+%\ccMethod{std::pair<NT, NT> isolating_interval();}{Return an interval (not necessarily a narrow one), containing the time represented by this object.}
+
+\ccGlobalFunction{std::ostream& operator<<(std::ostream&, Time);}{Write it to a stream.}
+
+\ccGlobalFunction{double to_double(Time);}{Return a double approximation of the time value.}
+
+\ccGlobalFunction{std::pair<double, double> to_interval(Time);}{Return an interval containing the time value.}
+
+Comparisons with other \ccc{Kinetic::Simulator::Time} objects are supported.
+
+\ccHasModels
+
+\ccc{double}, 
+\ccc{Kinetic::FunctionKernel::Root}
+
+\ccSeeAlso
+
+\ccc{Kinetic::Simulator}
+
+
+\end{ccRefConcept}
+
+% +------------------------------------------------------------------------+
+%%RefPage: end of main body, begin of footer
+% EOF
+% +------------------------------------------------------------------------+
+

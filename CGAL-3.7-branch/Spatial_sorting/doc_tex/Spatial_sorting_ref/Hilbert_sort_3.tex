@@ -1,0 +1,28 @@
+% +------------------------------------------------------------------------+
+% | Reference manual page: Hilbert_sort_2.tex
+% +------------------------------------------------------------------------+
+
+\begin{ccRefFunctionObjectClass}{Hilbert_sort_3<Traits>}
+\ccDefinition The function object \ccRefName\ sorts iterator ranges of
+\ccc{Traits::Point_3} along a Hilbert curve.
+
+\ccRequirements \ccc{Traits} is a model for \ccc{SpatialSortingTraits_3}.
+
+\ccTagFullDeclarations
+\ccCreationVariable{o}
+\ccCreation
+\ccConstructor{Hilbert_sort_3(const Traits &traits = Traits())}{constructs an instance with \ccc{traits} as traits class instance.}
+\ccOperations
+\ccThree{void;;}{A}{}
+
+\ccMethod{template <class RandomAccessIterator> void operator() (RandomAccessIterator begin, RandomAccessIterator end) const;}{sorts the range [\ccc{begin}, \ccc{end}).
+    \ccRequire \ccc{RandomAccessIterator::value_type} equals to \ccc{Traits::Point_3}.}
+
+    \ccTagDefaults
+
+\end{ccRefFunctionObjectClass}
+% +------------------------------------------------------------------------+
+%%RefPage: end of main body, begin of footer
+% EOF
+% +------------------------------------------------------------------------+
+

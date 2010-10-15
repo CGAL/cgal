@@ -1,0 +1,96 @@
+% +------------------------------------------------------------------------+
+% | Reference manual page: SvdTraits.tex
+% +------------------------------------------------------------------------+
+% | 09.02.2006   Marc Pouget and Frédéric Cazals
+% | Package: Jet_fitting_3
+% | 
+\RCSdef{\RCSSvdTraitsRev}{$Id$}
+\RCSdefDate{\RCSSvdTraitsDate}{$Date$}
+% |
+%%RefPage: end of header, begin of main body
+% +------------------------------------------------------------------------+
+
+
+\begin{ccRefConcept}{SvdTraits}
+
+%% \ccHtmlCrossLink{}     %% add further rules for cross referencing links
+%% \ccHtmlIndexC[concept]{} %% add further index entries
+
+\ccDefinition
+% +------------------------------------------------------------------
+The concept \ccRefName\ describes the set of requirements to be
+fulfilled by any class used to instantiate the third template
+parameter of the class
+\ccc{Monge_via_jet_fitting<DataKernel,LocalKernel,SvdTraits>}.
+
+It describes the linear algebra types and algorithms needed by the
+class \ccc{Monge_via_jet_fitting}. 
+
+\ccRequirements
+% +------------------------------------------------------------------
+The scalar type, \ccc{SvdTraits::FT}, must be the same as that of
+the \ccc{LocalKernel} concept~: \ccc{LocalKernel::FT}.
+
+\ccTypes
+% +------------------------------------------------------------------
+\ccNestedType{FT}{The scalar type.}
+\ccGlue
+\ccNestedType{Vector }{The vector type.}
+\ccGlue
+\ccNestedType{Matrix }{The matrix type.}
+
+%\ccCreation
+%\ccCreationVariable{a}  %% choose variable name
+
+%\ccConstructor{SvdTraits();}{default constructor.}
+\ccOperations
+\ccCreationVariable{vector} %choose variable name
+
+\ccConstructor{Vector(size_t n);} { initialize all the elements of the vector to zero.} 
+The type \ccc{Vector} has the access methods
+
+\ccMethod{size_t size();}{}
+\ccGlue
+\ccMethod{FT operator()(size_t i); }{return the $i^{th}$ entry, $i$ from $0$ to $size()-1$.}
+\ccGlue
+\ccMethod{void set(size_t i, const FT value);}{set the $i^{th}$ entry to $value$.}
+
+The type \ccc{Matrix} has the access methods
+
+\ccCreationVariable{matrix} %choose variable name
+\ccConstructor{Matrix(size_t n1, size_t n2);} { initialize all the entries of the matrix to zero.} 
+\ccMethod{size_t number_of_rows();}{}
+\ccGlue
+\ccMethod{size_t number_of_columns();}{}
+\ccGlue
+\ccMethod{FT operator()(size_t i, size_t j); }
+{return the entry at row $i$ and column $j$, $i$ from $0$ to \ccc{number_of_rows - 1}, 
+$j$ from $0$ to \ccc{number_of_columns - 1}.}
+\ccGlue
+\ccMethod{void set(size_t i, size_t j, const FT value); }
+    {set the entry at row $i$ and column $j$ to $value$.}
+
+The concept \ccc{SvdTraits} has a linear solver using a singular value decomposition
+algorithm.
+\ccCreationVariable{traits} %choose variable name
+
+\ccMethod{FT solve(Matrix& M, Vector& B);}
+{ Solves the system $MX=B$ (in the least square sense if $M$ is not
+square) using a singular value decomposition and returns the condition
+number of $M$. The solution is stored in $B$.}
+
+\ccHasModels
+% +------------------------------------------------------------------
+\ccc{Lapack_svd}. 
+
+\ccSeeAlso
+% +------------------------------------------------------------------
+\ccc{LocalKernel}
+
+\end{ccRefConcept}
+
+% +------------------------------------------------------------------------+
+%%RefPage: end of main body, begin of footer
+% EOF
+% +------------------------------------------------------------------------+
+

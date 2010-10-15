@@ -1,0 +1,17 @@
+\begin{ccRefFunctionObjectConcept}{Kernel::LessX_2}
+A model for this must provide:
+
+\ccCreationVariable{fo}
+
+\ccMemberFunction{bool operator()(const Kernel::Point_2&p, 
+                                  const Kernel::Point_2&q);}
+{returns true iff the $x$-coordinate of $p$ is smaller than the
+$x$-coordinate of $q$.}
+
+\ccRefines
+\ccc{AdaptableFunctor} (with two arguments)
+
+\ccSeeAlso
+\ccRefIdfierPage{CGAL::compare_x}\\
+
+\end{ccRefFunctionObjectConcept}

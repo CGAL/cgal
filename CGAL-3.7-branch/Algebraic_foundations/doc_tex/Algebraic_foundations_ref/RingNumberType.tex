@@ -1,0 +1,34 @@
+\begin{ccRefConcept}{RingNumberType}
+
+\ccDefinition
+
+The concept \ccRefName\ combines the requirements of the concepts 
+\ccc{IntegralDomainWithoutDivision} and \ccc{RealEmbeddable}. 
+A model of \ccRefName\ can be used as a template parameter 
+for Homogeneous kernels.
+
+\ccRefines
+
+\ccc{IntegralDomainWithoutDivision}\\
+\ccc{RealEmbeddable}
+
+\ccHasModels
+
+\CC\ built-in number types \\
+\ccc{CGAL::Gmpq} \\
+\ccc{CGAL::Gmpz} \\
+\ccc{CGAL::Interval_nt} \\
+\ccc{CGAL::Interval_nt_advanced} \\
+\ccc{CGAL::Lazy_exact_nt<RingNumberType>} \\
+\ccc{CGAL::MP_Float} \\
+\ccc{CGAL::Gmpzf} \\
+\ccc{CGAL::Quotient<RingNumberType>} \\
+\ccc{leda_integer} \\
+\ccc{leda_rational} \\
+\ccc{leda_bigfloat} \\
+\ccc{leda_real} \\
+
+\ccSeeAlso
+\ccRefConceptPage{FieldNumberType} \\
+
+\end{ccRefConcept}

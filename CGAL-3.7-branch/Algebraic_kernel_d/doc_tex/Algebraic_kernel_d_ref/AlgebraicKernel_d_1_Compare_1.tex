@@ -1,0 +1,40 @@
+\begin{ccRefFunctionObjectConcept}{AlgebraicKernel_d_1::Compare_1}
+
+\ccDefinition
+Compares \ccc{AlgebraicKernel_d_1::Algebraic_real_1} values. 
+ 
+\ccRefines 
+\ccc{AdaptableBinaryFunction} 
+
+\ccTypes \ccThree{}{+++++++++++++}{++++++++}
+%\ccThree{typedef AlgebraicKernel_d_1::Algebraic_real_1++}{Type convertible to CGAL::Comparison_result++}{}
+\ccNestedType{result_type}{Type convertible to \ccc{CGAL::Comparison_result}}
+\ccGlue
+\ccTypedef{typedef AlgebraicKernel_d_1::Algebraic_real_1 first_argument_type;}{}
+\ccGlue
+\ccTypedef{typedef AlgebraicKernel_d_1::Algebraic_real_1 second_argument_type;}{}
+
+
+\ccOperations \ccThree{+++++++++}{+++++++++}{}
+\ccCreationVariable{fo}
+%%\ccThree{xxxxxxxxxxx}{xxxxxxxxxxx}{}
+%\ccThree{result_type}{fo(first_argument_type,++}{}
+
+The following operators and their symmetric counterparts are required:
+
+%\ccThree{result_type}{fo(first_argument_type,++}{}
+\ccMethod{result_type operator()(AlgebraicKernel_d_1::Algebraic_real_1 a, AlgebraicKernel_d_1::Algebraic_real_1 b);}
+{Compares \ccc{a} and \ccc{b}.}
+\ccMethod{result_type operator()(AlgebraicKernel_d_1::Algebraic_real_1 a, int b);}
+{Compares \ccc{a} and \ccc{b}.}
+\ccMethod{result_type operator()(AlgebraicKernel_d_1::Algebraic_real_1 a, AlgebraicKernel_d_1::Bound b);}
+{Compares \ccc{a} and \ccc{b}.}
+\ccMethod{result_type operator()(AlgebraicKernel_d_1::Algebraic_real_1 a, AlgebraicKernel_d_1::Coefficient b);}
+{Compares \ccc{a} and \ccc{b}.}
+
+%\ccHasModels
+%\ccSeeAlso
+
+
+
+\end{ccRefFunctionObjectConcept} 

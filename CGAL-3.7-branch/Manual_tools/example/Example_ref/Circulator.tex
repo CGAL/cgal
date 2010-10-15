@@ -1,0 +1,72 @@
+% +------------------------------------------------------------------------+
+% | Reference manual page: Circulator.tex
+% +------------------------------------------------------------------------+
+% | 03.09.1999   Lutz Kettner
+% | Package: Example
+% | 
+\RCSdef{\RCSCirculatorRev}{$Id$}
+\RCSdefDate{\RCSCirculatorDate}{$Date$}
+% |
+%%RefPage: end of header, begin of main body
+% +------------------------------------------------------------------------+
+
+\gdef\ccRefPageBegin{\ccParDims\cgalColumnLayout\begin{ccAdvanced}}
+\gdef\ccRefPageEnd{\ccParDims\cgalColumnLayout\end{ccAdvanced}}
+\begin{ccRefConcept}{Circulator}
+
+%% \ccHtmlCrossLink{}     %% add further rules for cross referencing links
+%% \ccHtmlIndexC[concept]{} %% add further index entries
+
+\ccDefinition
+  
+The concept \ccRefName\ does this and that.
+
+\ccTypes
+
+\ccNestedType{TYPE}{some nested types}
+
+\ccCreation
+\ccCreationVariable{a}  %% choose variable name
+
+\ccConstructor{Circulator();}{default constructor.}
+
+\ccOperations
+
+\ccMethod{void foo();}{some member functions}
+
+\clearpage
+\ccHasModels
+
+\ccc{Some_class},
+\ccc{Some_other_class}.
+
+\ccSeeAlso
+
+\ccc{Some_other_concept},
+\ccc{some_other_function}.
+
+\ccExample
+
+A short example program.
+Instead of a short program fragment, a full running program can be
+included using the 
+\verb|\ccIncludeExampleCode{Example/Circulator_prog.C}| 
+macro. The program example would be part of the source code distribution and
+also part of the automatic test suite.
+
+\begin{ccExampleCode}
+void your_example_code() {
+}
+\end{ccExampleCode}
+
+%% \ccIncludeExampleCode{Example/Circulator_prog.C}
+
+\end{ccRefConcept}
+\gdef\ccRefPageBegin{\ccParDims\cgalColumnLayout}
+\gdef\ccRefPageEnd{\ccParDims\cgalColumnLayout}
+
+% +------------------------------------------------------------------------+
+%%RefPage: end of main body, begin of footer
+% EOF
+% +------------------------------------------------------------------------+
+

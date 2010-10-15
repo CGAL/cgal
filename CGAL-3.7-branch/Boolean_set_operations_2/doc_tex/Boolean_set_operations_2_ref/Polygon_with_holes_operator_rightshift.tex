@@ -1,0 +1,54 @@
+\RCSdef{\RCSPolygonwithholesoperatorostreamRev}{$Id$}
+\RCSdefDate{\RCSPolygonwithholesoperatorostreamDate}{$Date$}
+
+\ccHtmlNoClassLinks
+\begin{ccRefFunction}{operator>>}
+\label{refPolygon_with_holes_operator_rightshift}
+
+\ccDefinition
+
+This operator imports a polygon with holes, a general polygon, or a general 
+polygon with holes from the input stream \ccc{in}.
+
+An ASCII and a binary format exist. The stream detects the
+format automatically and can read both.
+
+\ccInclude{CGAL/Polygon_with_holes_2.h}
+\ccGlobalFunction{template <class Kernel, Class Container>
+    istream& operator>>(istream& in,
+                        CGAL::Polygon_with_holes_2<Kernel, Container>& P);}
+The format consists of the number of points of the outer boundary followed 
+by the points themselves in counterclockwise order, followed by the number of holes,
+and for each hole, the number of points of the outer boundary is followed 
+by the points themselves in clockwise order.
+
+\ccInclude{CGAL/General_polygon_2.h}
+\ccGlobalFunction{template <class ArrTraits>
+    istream& operator>>(istream& in,
+                        CGAL::General_polygon_2<ArrTraits>& P);}
+
+The format consists of the number of curves of the outer boundary followed
+by the curves themselves in counterclockwise order.
+
+\ccInclude{CGAL/General_polygon_with_holes_2.h}
+\ccGlobalFunction{template <class Polygon>
+  istream& operator>>(istream& in,
+                      CGAL::General_polygon_with_holes_2<Polygon>& P);}
+
+The format consists of the number of curves of the outer boundary followed 
+by the curves themselves in counterclockwise order, followed by the number of holes,
+and for each hole, the number of curves on its outer boundary is 
+followed by the curves themselves in clockwise order.
+
+\ccSeeAlso
+
+\ccRefIdfierPage{CGAL::Polygon_2<PolygonTraits_2, Container>}\\ 
+\ccRefIdfierPage{CGAL::General_polygon_2<ArrTraits>}\\ 
+\ccRefIdfierPage{CGAL::General_polygon_with_holes_2<Polygon>}\\ 
+  \lcTex{\ccc{operator<<} \dotfill\ page~\pageref{refPolygon_with_holes_operator_leftshift}}%
+  \lcRawHtml{<I><A HREF="Function_operator.html">operator&lt;&lt;</A></I>}
+
+% \ccImplementation
+
+\end{ccRefFunction}
+

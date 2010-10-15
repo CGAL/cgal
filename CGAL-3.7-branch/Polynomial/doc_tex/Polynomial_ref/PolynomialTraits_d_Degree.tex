@@ -1,0 +1,50 @@
+\begin{ccRefConcept}{PolynomialTraits_d::Degree}
+
+\ccDefinition
+
+This \ccc{AdaptableUnaryFunction} computes the degree 
+of a \ccc{PolynomialTraits_d::Polynomial_d} with respect to a certain variable. 
+
+The degree of $p$ with respect to a certain variable $x_i$, 
+is the highest power $e$ of $x_i$ such that the coefficient of $x_i^{e}$ in 
+$p$ is not zero.\\
+For instance the degree of $p = x_0^2x_1^3+x_1^4$ with respect to $x_1$ is $4$.
+
+The degree of the zero polynomial is set to $0$. 
+From the mathematical point of view this should 
+be $-infinity$, but this would imply an inconvenient return type. 
+
+ 
+
+\ccRefines 
+\ccc{AdaptableUnaryFunction}\\
+\ccc{CopyConstructible}\\
+\ccc{DefaultConstructible}\\
+
+
+\ccTypes
+
+\ccSetThreeColumns{xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx}{xxx}{}
+
+\ccCreationVariable{fo}
+\ccTypedef{typedef int result_type;}{}\ccGlue
+\ccTypedef{typedef PolynomialTraits_d::Polynomial_d argument_type;}{}
+
+\ccOperations
+\ccMethod{result_type operator()(argument_type p);}
+         {Computes the degree of $p$ with respect to the outermost variable $x_{d-1}$.}
+\ccMethod{result_type operator()(argument_type p, int i);}
+         {Computes the degree of $p$ with respect to variable $x_i$.
+         \ccPrecond $0 \leq i  < d$
+         }
+
+%\ccHasModels
+
+\ccSeeAlso
+
+\ccRefIdfierPage{Polynomial_d}\\
+\ccRefIdfierPage{PolynomialTraits_d}\\
+\ccRefIdfierPage{PolynomialTraits_d::TotalDegree}\\
+\ccRefIdfierPage{PolynomialTraits_d::DegreeVector}
+
+\end{ccRefConcept}

@@ -1,0 +1,79 @@
+% +------------------------------------------------------------------------+
+% | Reference manual page: output_op.tex
+% +------------------------------------------------------------------------+
+% | 10.04.2002   Author
+% | Package: Package
+% | 
+\RCSdef{\RCSoutputopRev}{$Id$}
+\RCSdefDate{\RCSoutputopDate}{$Date$}
+% |
+%%RefPage: end of header, begin of main body
+% +------------------------------------------------------------------------+
+
+
+\ccHtmlNoClassLinks
+\begin{ccRefFunction}{operator<<}  %% add template arg's if necessary
+
+%% \ccHtmlCrossLink{}     %% add further rules for cross referencing links
+%% \ccHtmlIndexC[function]{} %% add further index entries
+
+\ccDefinition
+\cgal\  defines output operators for classes that are derived
+from the class \ccStyle{ostream}. This allows to write to ostreams
+as \ccStyle{cout} or \ccStyle{cerr}, as well as to strstreams
+and fstreams. 
+The output operator is defined for all classes in the \cgal\ kernel and for the class \ccc{Color} as well.
+Let \ccc{os}  be an output stream.
+
+\ccFunction{ostream& operator>>(ostream& os, Class c);}
+{Inserts object \ccStyle{c} in the stream \ccc{os}. Returns \ccc{os}.}
+
+
+
+\ccSeeAlso
+\ccRefIdfierPage{CGAL::set_mode} \\
+\ccRefIdfierPage{CGAL::set_ascii_mode} \\
+\ccRefIdfierPage{CGAL::set_binary_mode}  \\
+\ccRefIdfierPage{CGAL::set_pretty_mode}  \\
+\ccRefIdfierPage{CGAL::get_mode} \\
+\ccRefIdfierPage{CGAL::is_ascii} \\
+\ccRefIdfierPage{CGAL::is_binary} \\
+\ccRefIdfierPage{CGAL::is_pretty} \\
+\ccRefIdfierPage{CGAL::operator>>}
+
+\ccExample
+\begin{cprog}
+
+#include <CGAL/basic.h>
+#include <iostream>
+#include <fstream>
+
+#include <CGAL/Cartesian.h>
+#include <CGAL/Segment_2.h>
+
+typedef CGAL::Point_2< CGAL::Cartesian<double> >     Point;
+typedef CGAL::Segment_2< CGAL::Cartesian<double> >   Segment;
+
+int main()
+{
+    Point p(0,1), q(2,2);
+    Segment s(p,q);
+
+    CGAL::set_pretty_mode(std::cout);
+    std::cout << p << std::endl << q  << std::endl;
+
+    std::ofstream f("data.txt");
+    CGAL::set_binary_mode(f);
+    f << s << p ;
+
+    return 1;
+}
+\end{cprog} 
+
+\end{ccRefFunction}
+
+% +------------------------------------------------------------------------+
+%%RefPage: end of main body, begin of footer
+% EOF
+% +------------------------------------------------------------------------+
+

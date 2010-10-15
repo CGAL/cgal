@@ -1,0 +1,41 @@
+% +------------------------------------------------------------------------+
+% | Reference manual page: Ridge_type.tex
+% +------------------------------------------------------------------------+
+% | 15.09.2006   Marc Pouget and Frédéric Cazals
+% | Package: Ridges_3
+% | 
+\RCSdef{\RCSRidgetypeRev}{$Id$}
+\RCSdefDate{\RCSRidgetypeDate}{$Date$}
+% |
+%%RefPage: end of header, begin of main body
+% +------------------------------------------------------------------------+
+
+
+\begin{ccRefEnum}{Ridge_type}  %% add template arg's if necessary
+
+%% \ccHtmlCrossLink{}     %% add further rules for cross referencing links
+%% \ccHtmlIndexC[enum]{} %% add further index entries
+
+\ccDefinition
+  
+The enum \ccRefName\ describes the types for the class \ccc{Ridge_line}.
+
+\ccInclude{CGAL/Ridges.h}
+
+\ccGlobalEnum{enum Ridge_type { 
+		 MAX_ELLIPTIC_RIDGE = 1, MAX_HYPERBOLIC_RIDGE,
+		 MAX_CREST_RIDGE, MIN_ELLIPTIC_RIDGE,
+		 MIN_HYPERBOLIC_RIDGE, MIN_CREST_RIDGE };}
+
+
+\ccSeeAlso
+
+\ccc{Ridge_line}
+
+\end{ccRefEnum}
+
+% +------------------------------------------------------------------------+
+%%RefPage: end of main body, begin of footer
+% EOF
+% +------------------------------------------------------------------------+
+

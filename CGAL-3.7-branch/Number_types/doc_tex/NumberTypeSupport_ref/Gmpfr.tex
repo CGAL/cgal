@@ -1,0 +1,364 @@
+\begin{ccRefClass} {Gmpfr}
+\label{Gmpfr}
+
+\ccDefinition
+
+An object of the class \ccc{Gmpfr} is a fixed precision floating-point
+number, based on the \mpfr\ library. This type is inexact, due to the fact
+that the mantissa of each number is represented by a fixed amount of bits
+(this amount is called \emph{precision}). If an operation needs more bits
+than the precision of the result number, the results are rounded following
+different possible criteria (called \emph{rounding modes}).
+
+Currently, \mpfr\ supports four rounding modes: round to nearest,
+round toward zero, round down (or toward \(-\infty\)) and round up
+(or toward \(+\infty\)).  When not specified explicitly, the
+operations use the default rounding mode, which is in practice a
+variable local to each execution thread. The default rounding mode
+can be set to any of the four rounding modes (initially, it is set
+to nearest). To specify rounding modes for operations, the type
+used is \ccc{std::float_round_style}.
+
+This type is \ccc{ImplicitInteroperable} with \ccc{Gmpz}, \verb-long-,
+\verb-unsigned long-, \verb-int-, \verb-double- and \verb-long double-.
+
+\ccInclude{CGAL/Gmpfr.h}
+
+\ccIsModel
+\ccc{FieldWithKthRoot}\\
+\ccc{RealEmbeddable}
+
+\ccTypes
+
+\ccNestedType{Precision_type}
+                {Type representing the precision (number of bits
+                used to represent the mantissa) of a number.}
+
+\ccCreation
+\ccCreationVariable{f}
+
+\ccConstructor{Gmpfr();}
+        {Creates an uninitialized \ccc{Gmpfr} \ccVar.}
+
+\ccConstructor{Gmpfr(const Gmpfr& n);}
+        {Copy constructor. The copied object inherits the precision of
+        \ccc{n}, and thus it is not rounded.}
+
+%--------------------------------------------------
+% \ccConstructor{Gmpfr(mpfr_srcptr p);}
+%         {Creates a \mpfr\ number, initialized with the value of \ccc{p},
+%         a \mpfr\ number used in a C implementation. The data structure
+%         containing \ccc{p} will not be cleared after object's
+%         destruction.}
+%--------------------------------------------------
+
+\ccConstructor{Gmpfr(long si);}
+        {Creates \ccc{Gmpfr}, initialized with the value of \ccc{si}.}
+
+\ccConstructor{Gmpfr(unsigned long ui);}
+        {Creates a \ccc{Gmpfr}, initialized with the value of \ccc{ui}.}
+
+\ccConstructor{Gmpfr(int i);}
+        {Creates a \ccc{Gmpfr}, initialized with the value of \ccc{i}.}
+
+\ccConstructor{Gmpfr(double d);}
+        {Creates a \ccc{Gmpfr}, initialized with the value of \ccc{d}.}
+
+\ccConstructor{Gmpfr(long double ld);}
+        {Creates a \ccc{Gmpfr}, initialized with the value of \ccc{ld}.}
+
+\ccConstructor{Gmpfr(const Gmpz &z);}
+        {Creates a \ccc{Gmpfr}, initialized with the value of \ccc{z}.}
+
+\ccConstructor{Gmpfr(const Gmpzf &zf);}
+        {Creates a \ccc{Gmpfr}, initialized with the value of \ccc{zf}.}
+
+\ccConstructor{Gmpfr(std::pair<Gmpz,long> ie);}
+        {Creates a \ccc{Gmpfr}, initialized with the value of
+        \( ie.first \times 2^{ie.second} \) .}
+
+Note that all constructors can be called with two optional parameters.
+One can specify as second parameter the rounding mode desired for
+the conversion from the source number and as a third parameter the
+precision with which this \ccc{Gmpfr} will be created.  If only one
+optional parameter is specified, it can be either the rounding mode
+or the precision. If no optional parameters are specified, the
+precision of the created object is chosen in such a way that the
+conversion is exact (i.e., no rounding is performed).
+
+These optional parameters, along with other functions which will be
+explained below, allow users to control the rounding and precision.
+%--------------------------------------------------
+% For example, let
+% \ccc{i} be an integer with value \(1001\): this number can be represented
+% in floating-point with ten bits of mantissa. If we want to work with a
+% smaller precision of, say, eight bits, we can not represent exactly its
+% value. In this case, we are interested in telling \ccc{Gmpfr} how to handle
+% this lack of precision. If we do \verb-Gmpfr(i,8,std::round_to_nearest)-,
+% \verb-i- will have the value of \(1000\), because it is the closest value
+% to \verb-i- one can represent with eight bits.
+%--------------------------------------------------
+For example, being \verb-z- \ a \ccc{Gmpz},
+\verb-Gmpfr g(z,53,std::round_toward_neg_infinity)-\ will construct a
+\ccc{Gmpfr} \verb-g- \ having as value the biggest 53-bit
+floating-point number that is equal or smaller than to \verb-z-.
+
+
+\ccOperations
+
+\ccSetThreeColumns
+        {static Rounding\_mode}
+        {add( a, b, Rounding\_mode r)}
+        {}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% precision
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+Each Gmpfr object has a precision associated to it. The precision is the
+amount of bits needed to represent the mantissa. \mpfr\ has a default
+precision value, which can be controlled by static functions of the Gmpfr
+class (in practice, this default value is a variable local to each
+execution thread). There are also functions to get and set the precision of
+each Gmpfr object.
+
+\ccFunction{static Precision_type get_default_precision();}
+        {This returns the current precision used in \ccc{Gmpfr}
+        creation by default.}
+
+\ccFunction{static Precision_type set_default_precision(Precision_type p);}
+        {This function sets the default \mpfr\ precision to p, and returns
+        the old one.}
+
+\ccMethod{Precision_type get_precision()const;}
+        {Returns the precision of \ccVar.}
+
+\ccMethod{Gmpfr round(Precision_type p, std::float_round_style r)const;}
+        {Returns the value of \ccVar, rounded with precision \ccc{p}
+        in the direction \ccc{r}.}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% rounding modes
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\ccFunction{static std::float_round_style get_default_rndmode();}
+        {This function returns the current rounding mode used by \mpfr.}
+
+\ccFunction{static std::float_round_style
+            set_default_rndmode(std::float_round_style r);}
+        {This function sets the \mpfr\ rounding mode to \ccc{r} and returns
+        the old one.}
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%% inexact flags handling functions
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\mpfr\ provides some flags to know whether performed operations were exact
+or not, or they incurred in overflow or underflow, if the exponent is
+out of range, or the result was \ccc{NaN} (not-a-number). One can clear the
+flags before a set of operations and inspect them afterward, in order to
+see if something unexpected happened during the operations. The static
+functions used to handle flags are:
+
+\ccFunction{static void clear_flags();}
+        {Clears all the flags set by \mpfr (they are not cleared
+        automatically).}
+
+\ccFunction{static bool underflow_flag();}
+        {Shows whether an operation incurred in underflow.}
+
+\ccFunction{static bool overflow_flag();}
+        {Shows whether an operation incurred in overflow.}
+
+\ccFunction{static bool nan_flag();}
+        {Shows whether the result of an operation was \ccc{NaN}.}
+
+\ccFunction{static bool inex_flag();}
+        {Shows whether an operation was inexact.}
+
+\ccFunction{static bool erange_flag();}
+        {Returns \ccc{true} iff a range error occurred. Such an exception
+        occurs when some function which does not return a \ccc{Gmpfr}
+        has an invalid result. For example, this flag will be set if
+        one of the operands of a comparison is \ccc{NaN}.}
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% arithmetic operators
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+Arithmetic operators \verb=+= , \verb=-= , \verb=*= \ and \verb=/= \
+are overloaded, but special care must be taken when applying them.
+The precision of an operation between two \ccc{Gmpfr}s is defined
+as the maximum of the operands precision and the default precision.
+
+The second operand of the former operations can be a \verb=Gmpfr=,
+\verb=int=, \verb=long=, \verb=unsigned=, \verb=unsigned long=, or
+\verb=Gmpz=. The precision of an operation between a \ccc{Gmpfr}
+and a number of another type is defined as the maximum between the
+number's precision and the default precision.
+
+To specify the rounding mode and/or the precision to perform an operation,
+this class provides the four static functions \verb=add=, \verb=sub=,
+\verb=mul=~and \verb=div=. Only one of them is shown here, since their
+interfaces are similar:
+
+\ccFunction{static Gmpfr add (const Gmpfr &a,const Gmpfr &b);}{}
+\ccFunction{static Gmpfr add (const Gmpfr &a,const Gmpfr &b,
+                              std::float_round_style r);}{}
+\ccFunction{static Gmpfr add (const Gmpfr &a,const Gmpfr &b,Precision_type p);}
+        {}
+\ccFunction{static Gmpfr add (const Gmpfr &a,const Gmpfr &b,Precision_type p,
+                                std::float_round_style r);}{}
+
+When the precision is not specified in this family of functions, it is
+defined as in the overloaded operators. When the rounding mode is not
+specified, the default is used.
+
+Other arithmetic functions provided by the class are:
+
+\ccMethod{Gmpfr abs(Precision_type p,
+                    std::float_round_style r=get_default_rndmode())const;}
+        {Returns the absolute value of \ccVar, rounded with precision
+        \ccc{p} in the direction \ccc{r}. If \ccc{p} is not specified,
+        the precision used is the maximum between \ccVar 's precision
+        and the default.}
+
+\ccMethod{Gmpfr sqrt(Precision_type p,
+                     std::float_round_style r=get_default_rndmode())const;}
+        {Returns the square root of \ccVar, rounded with precision
+        \ccc{p} in the direction \ccc{r}. If \ccc{p} is not specified,
+        the precision used is the maximum between \ccVar 's precision
+        and the default.}
+
+%\ccMethod{Gmpfr cbrt(Precision_type p,
+%                     std::float_round_style r=get_default_rndmode())const;}
+%        {Returns the cubic root of \ccVar, rounded with precision
+%        \ccc{p} in the direction \ccc{r}. If \ccc{p} is not specified,
+%        the precision used is the maximum between \ccVar 's precision
+%        and the default.}
+
+\ccMethod{Gmpfr kthroot(int k,
+                        Precision_type p,
+                        std::float_round_style r=get_default_rndmode())const;}
+        {Returns the k-th root of \ccVar, rounded with precision
+        \ccc{p} in the direction \ccc{r}. If \ccc{p} is not specified,
+        the precision used is the maximum between \ccVar 's precision
+        and the default.}
+
+\ccMethod{Gmpfr square(Precision_type p,
+                       std::float_round_style r=get_default_rndmode())const;}
+        {Returns the square of \ccVar, rounded with precision \ccc{p} in
+        the direction \ccc{r}. If \ccc{p} is not specified, the precision
+        used is the maximum between \ccVar 's precision and the default.}
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% conversions
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\ccMethod{double to_double(std::float_round_style r=get_default_rndmode());}
+        {Returns a double precision approximation of \ccVar~using the
+        rounding mode \ccc{r}.}
+
+\ccMethod{std::pair<double,double> to_interval();}
+        {Returns an interval of doubles which contains \ccVar. If a
+        rounded enpoint does not fit in a double, the double is set to plus
+        or minus infinity and the \ccc{overflow} or \ccc{underflow} flag.}
+
+\ccMethod{std::pair<double,long> to_double_exp
+                (std::float_round_style r=get_default_rndmode());}
+        {Returns the pair \( (d,e) \) such that \( 0.5 \le |d| < 1 \) and
+        \( d \times 2^e \) equals \ccVar~rounded to double precision,
+        using the rounding mode \ccc{r}. If \ccVar~is \ccc{NaN} or
+        infinity, then the corresponding double is returned, leaving
+        the exponent undefined and setting the appropriate error flag.}
+
+\ccMethod{std::pair<std::pair<double,double>,long> to_interval_exp();}
+        {Returns \( ((m,M),e) \) such that \( m \times 2^e \le \ccVar
+        \le M \times 2^e \). If \ccVar~is \ccc{NaN} or infinity, then
+        the corresponding doubles are returned, leaving the exponent
+        undefined and setting the appropriate error flag.}
+
+\ccMethod{std::pair<Gmpz,long> to_integer_exp();}
+        {Returns a pair of integers \( (m,e) \), such that
+        \( \ccVar = m \times 2^e \). Note that the returned value of \(m\)
+        is not necessarily the smallest possible value of \(m\) (that is,
+        it might be that \(2|m\)).}
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% comparisons
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\ccHeading{Comparisons}
+
+Comparison operators \verb-==-, \verb-!=-, \verb->-, \verb-<-,
+\verb->=- \ and \verb-<=- \ are also overloaded. A \ccc{Gmpfr} can
+be compared with other \ccc{Gmpfr}, as well as with a \ccc{Gmpz},
+\verb=long=, \verb=unsigned long=, \verb=int=, \verb=double= \ or
+\verb=long double=. It is worth noting that the numbers are never
+converted nor rounded before comparison. In the case where one of
+the compared numbers is \ccc{NaN}, the \ccc{erange} flag is set.
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% query functions
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\ccQueryFunctions
+
+\ccMethod{Sign sign();}
+        {Returns the sign of \ccVar.}
+
+\ccMethod{bool is_zero();}
+        {Returns \ccc{true} iff \ccVar~is zero.}
+
+\ccMethod{bool is_one();}
+        {Returns \ccc{true} iff \ccVar~is one.}
+
+\ccMethod{bool is_nan();}
+        {Returns \ccc{true} iff \ccVar~is NaN (not-a-number).}
+
+\ccMethod{bool is_inf();}
+        {Returns \ccc{true} iff \ccVar~is plus or minus infinity.}
+
+\ccMethod{bool is_number();}
+        {Returns \ccc{true} iff \ccVar~is a valid number.}
+
+\ccMethod{bool is_square();}
+        {Returns \ccc{true} iff \ccVar~is the square of a number
+        representable by an object of this type.}
+
+\ccMethod{bool is_square(const Gmpfr &y);}
+        {Returns \ccc{true} iff \ccVar~is the square of a number
+        representable by an object of this type, calculating it and storing
+        it in \ccc{y}.}
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% input/output
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\ccHeading{Input/Output}
+
+% TODO: add precision to i/o
+\ccFunction{std::istream& operator>>(std::istream& in, Gmpfr& f);}
+        {Reads a floating-point number from \ccc{in}. The number
+        \(M \times 2^E\) must be in the form \(MeE\), where the mantissa
+        \(M\) and the exponent \(E\) are integers in base 10.}
+
+\ccFunction{std::ostream& operator<<(std::ostream& out, const Gmpfr& f);}
+        {Writes \ccc{f} to the ostream \ccc{out}, in the form
+        \(MeE\), where \(M\) is its mantissa and \(E\) is its exponent,
+        both in base 10.}
+
+
+\ccImplementation
+\ccc{Gmpfr}s are reference counted. Since the \mpfr\ library can be compiled
+to be thread-safe, this interface is designed to keep the thread-safety.
+
+\ccSeeAlso
+\ccRefIdfierPage{RealEmbeddable}\\
+\ccRefIdfierPage{FieldWithKthRoot}
+
+\end{ccRefClass}
+\ccDefGlobalScope{CGAL::}

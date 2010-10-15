@@ -1,0 +1,26 @@
+\ccRefChapter{2D Complex embedded in a 3D Triangulation\label{ref_chapter_Complex2inTriangulation3}}
+\label{ref_chapter_C2inT3}
+
+\vspace*{-15mm}
+\minitoc
+\vspace*{30mm}
+
+This package provides a data structure to  represent 
+2D simplicial complex as a subcomplex of a 3D triangulation.
+A priori the represented 2D complex is a  simplicial complex
+because its faces are part of a 3D triangulation.
+It does not need to be connected, nor to be a pure complex.
+which  means that the complex can have antenna edges 
+that is edges which do not belong to a facet or
+isolated vertices that is vertices  which do not belong to
+an edge.
+
+The data structure allows to mark certain edges of the 2D complex.
+This feature enables  to have  constrained edges
+and to represent constrained 3D triangulations
+where the constraints are described 
+as a non simplicial complex like the piecewise linear complex
+introduced  e.g. in \cite{s-cgehd-98}.
+
+\subsection*{Classes}
+\ccRefIdfierPage{CGAL::Complex_2_in_triangulation_3<Triangulation, Facet_Info, Edge_info>}

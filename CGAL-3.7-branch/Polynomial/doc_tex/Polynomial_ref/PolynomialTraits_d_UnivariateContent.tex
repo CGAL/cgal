@@ -1,0 +1,42 @@
+\begin{ccRefConcept}{PolynomialTraits_d::UnivariateContent}
+
+\ccDefinition
+
+This \ccc{AdaptableUnaryFunction} computes the content of a 
+\ccc{PolynomialTraits_d::Polynomial_d} 
+with respect to the univariate (recursive) view on the 
+polynomial, that is, it computes the gcd of all 
+coefficients  with respect to one variable. 
+
+This functor is well defined if \ccc{PolynomialTraits_d::Coefficient_type} is 
+a \ccc{Field} or a \ccc{UniqueFactorizationDomain}.
+
+\ccRefines 
+\ccc{AdaptableUnaryFunction}\\
+\ccc{CopyConstructible}\\
+\ccc{DefaultConstructible}\\
+
+\ccTypes
+
+\ccCreationVariable{fo}
+\ccSetThreeColumns{xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx}{xxx}{}
+\ccTypedef{typedef PolynomialTraits_d::Coefficient_type    result_type;}{}\ccGlue
+\ccTypedef{typedef PolynomialTraits_d::Polynomial_d argument_type;}{}\ccGlue
+
+\ccOperations
+\ccMethod{result_type operator()(argument_type p);}
+         {Computes the content of $p$ with respect to the outermost variable $x_{d-1}$. }
+
+%\ccMethod{result_type operator()(argument_type p, int i);}
+%         {Computes the content of $p$ with respect to variable $x_i$. 
+%          \ccPrecond $0 \leq i  < d$
+%         }
+
+%\ccHasModels
+
+\ccSeeAlso
+
+\ccRefIdfierPage{Polynomial_d}\\
+\ccRefIdfierPage{PolynomialTraits_d}
+
+\end{ccRefConcept}

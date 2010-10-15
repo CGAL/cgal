@@ -1,0 +1,132 @@
+% +------------------------------------------------------------------------+
+% | Reference manual page: TriangulationDSVertexBase_3.tex
+% +------------------------------------------------------------------------+
+% | 29.3.2000   Monique Teillaud
+% | Package: Triangulation3
+% | 
+\RCSdef{\RCSTriangulationvbRev}{$Id$}
+\RCSdefDate{\RCSTriangulationvbDate}{$Date$}
+% |
+%%RefPage: end of header, begin of main body
+% +------------------------------------------------------------------------+
+
+
+\begin{ccRefConcept}{TriangulationDSVertexBase_3}
+
+\ccDefinition
+  
+At the bottom level of 3D-triangulations 
+(see Sections~\ref{Triangulation3-sec-design} and~\ref{TDS3-sec-design}),
+a vertex provides access to one of its incident cells through a handle.
+
+Note that when you use the triangulation data structure as parameter of a
+geometric triangulation, the vertex base class has additional geometric
+requirements : it has to match the \ccc{TriangulationVertexBase_3} concept.
+
+Since the Triangulation data structure is the class which defines the handle
+types, the vertex base class has to be somehow parameterized by the
+Triangulation data structure.  But since it is itself parameterized by the cell
+and vertex base classes, there is a cycle in the definition of these classes.
+In order to break the cycle, the base classes for vertex and cell which are
+given as arguments for the Triangulation data structure use \ccc{void} as
+Triangulation data structure parameter, and the Triangulation data structure
+then uses a {\it rebind}-like mechanism (similar to the one specified in
+\ccc{std::allocator}) in order to put itself as parameter to the vertex and
+cell classes.  The {\it rebound} base classes so obtained are the classes which
+are used as base classes for the final vertex and cell classes.
+More information can be found in Section~\ref{TDS3-sec-design}.
+
+\ccTypes
+\ccThree{typedef TriangulationDataStructure_3::Vertex_handle}{}{}
+\ccThreeToTwo
+The class \ccRefName\ has to define the following types.
+
+\ccNestedType{
+  template <typename TDS2>
+  struct Rebind_TDS}
+{This nested template class has to define a type \ccc{Other} which is the
+{\it rebound} vertex, that is, the one whose \ccc{Triangulation_data_structure}
+will be the actually used one.  The \ccc{Other} type will be the real base
+class of \ccc{Triangulation_data_structure_3::Vertex}.}
+
+\ccTypedef{typedef TriangulationDataStructure_3 Triangulation_data_structure;}{}
+\ccGlue
+\ccTypedef{typedef TriangulationDataStructure_3::Vertex_handle Vertex_handle;}{}
+\ccGlue
+\ccTypedef{typedef TriangulationDataStructure_3::Cell_handle Cell_handle;}{}
+
+
+\ccCreation
+\ccCreationVariable{v}  %% choose variable name
+
+\ccThree{Triangulation}{Facetxxxxxxxxxxxxxxxxxxxxxxxxx}{}
+
+\ccConstructor{TriangulationVertexBase_3();}
+{Default constructor.}
+\ccGlue
+\ccConstructor{TriangulationVertexBase_3(Cell_handle c);}
+{Constructs a vertex pointing to cell \ccc{c}.}
+
+\ccOperations
+
+\ccAccessFunctions
+
+\ccMethod{Cell_handle cell() const;}
+{Returns the pointer to an incident cell}
+
+\ccHeading{Setting}
+
+\ccMethod{void set_cell(Cell_handle c);}
+{Sets the incident cell.}
+
+\begin{ccDebug}
+\ccHeading{Checking}
+\ccMethod{bool is_valid(bool verbose=false, int level=0) const;}
+{Performs any desired test on a vertex. Checks that the
+pointer to an incident cell is not the default constructed handle.}
+\end{ccDebug}
+
+\ccHeading{Various}
+
+\ccMethod{void * for_compact_container() const;}{}
+\ccGlue
+\ccMethod{void * & for_compact_container();}{}
+{ These member functions are required by \ccc{Triangulation_data_structure_3}
+  because it uses \ccc{Compact_container} to store its cells.  See the
+  documentation of \ccc{Compact_container} for the exact requirements.}
+
+\ccHeading{I/O}
+
+\ccFunction{istream& operator>>
+(istream& is, TriangulationDSVertexBase_3 & v);}
+{Inputs the non-combinatorial information given by the vertex.}
+%\ccPrecond{The point and the other information have a corresponding
+%operator \ccc{>>}. \textit{This precondition is optional for the
+%triangulation data structure alone.}}}  
+
+\ccFunction{ostream& operator<< (ostream& os, 
+			const TriangulationDSVertexBase_3 & v);}
+{Outputs the non-combinatorial information given by the vertex.}
+%\ccPrecond{The point and the other information have a corresponding
+%operator \ccc{<<}. \textit{This precondition is optional for the
+%triangulation data structure alone.}}} 
+
+\ccHasModels
+
+\ccc{CGAL::Triangulation_ds_vertex_base_3}\\
+\ccc{CGAL::Triangulation_vertex_base_3}\\
+\ccc{CGAL::Triangulation_vertex_base_with_info_3}\\
+\ccc{CGAL::Triangulation_hierarchy_vertex_base_3}
+
+\ccSeeAlso
+
+\ccc{TriangulationVertexBase_3}\\
+\ccc{TriangulationHierarchyVertexBase_3}\\
+\ccc{TriangulationDSCellBase_3}\\
+\ccc{TriangulationCellBase_3}
+
+%% \ccExample
+
+%% \ccIncludeExampleCode{Triangulation3/Triangulation_vb_prog.C}
+
+\end{ccRefConcept}

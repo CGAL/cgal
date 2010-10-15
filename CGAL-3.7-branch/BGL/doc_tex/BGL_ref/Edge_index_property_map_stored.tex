@@ -1,0 +1,60 @@
+
+\begin{ccRefClass}{Edge_index_property_map_stored<Graph>}
+
+%% add template arg's if necessary
+
+%% \ccHtmlCrossLink{}     %% add further rules for cross referencing links
+%% \ccHtmlIndexC[class]{} %% add further index entries
+\ccDefinition
+
+The class \ccRefName\ provides a model for the concept 
+\ccAnchor{http://www.boost.org/libs/property_map/ReadablePropertyMap.html}{ReadablePropertyMap} 
+that maps an edge in a {\sc Bgl}
+\ccAnchor{http://www.boost.org/libs/graph/doc/Graph.html}{graph}
+to the integer numbers in the range \ccc{[0,boost::num_edges(graph))}
+by accessing the index directly from the edge.
+
+The template parameter \ccc{Graph} must be a model of a {\sc Bgl}
+\ccAnchor{http://www.boost.org/libs/graph/doc/Graph.html}{graph}
+
+\ccInclude{CGAL/boost/graph/Edge_index_property_map_stored.h}
+
+\ccTypes
+  \ccTypedef{std::size_type value_type;}
+    {The type of the property.}
+\ccGlue
+  \ccTypedef{std::size_type reference;}
+    {The result type of the map operator.}
+\ccGlue
+  \ccNestedType{Graph}{The Graph template parameter.}
+\ccGlue
+  \ccTypedef{typename boost::graph_traits<Graph>::edge_descriptor key_type;}
+  {The type of {\sc Bgl} edge descriptor used as key.\\
+   This edge must have a member function \ccc{std::size_t id() const;}
+   returning the actual index, which is required to be unique for each edge
+   and in the range \ccc{[0,num_edges(graph))}.
+  }
+
+\ccCreation
+\ccCreationVariable{pm}  %% choose variable name
+
+\ccConstructor{CGAL::Edge_index_property_map_stored<Graph>(); }
+{Default constructor.}
+
+\ccOperations
+
+\ccMethod
+  {reference operator[]( key_type const& edge ) const;}
+  {Returns \ccc{edge->id()}.}  
+    
+\ccIsModel
+\ccc{EdgeIndexPropertyMap}
+
+
+\end{ccRefClass}
+
+% +------------------------------------------------------------------------+
+%%RefPage: end of main body, begin of footer
+% EOF
+% +------------------------------------------------------------------------+
+

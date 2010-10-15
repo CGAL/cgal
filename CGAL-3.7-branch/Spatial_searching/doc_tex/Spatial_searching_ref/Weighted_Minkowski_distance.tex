@@ -1,0 +1,90 @@
+% +------------------------------------------------------------------------+
+% | Reference manual page: Weighted_Minkowski_distance.tex
+% +------------------------------------------------------------------------+
+% | 1.07.2001   Johan W.H. Tangelder
+% | Package: ASPAS
+% | 
+\RCSdef{\RCSWeightedMinkowskidistanceRev}{$Id$}
+\RCSdefDate{\RCSWeightedMinkowskidistanceDate}{$Date$}
+% |
+%%RefPage: end of header, begin of main body
+% +------------------------------------------------------------------------+
+
+
+\begin{ccRefClass}{Weighted_Minkowski_distance<Traits>}  %% add template arg's if necessary
+
+%% \ccHtmlCrossLink{}     %% add further rules for cross referencing links
+%% \ccHtmlIndexC[class]{} %% add further index entries
+
+\ccDefinition
+   
+The class \ccRefName\ provides an implementation of the concept \ccc{OrthogonalDistance}, with a weighted 
+Minkowski metric on $d$-dimensional points
+defined by $l_p(w)(r,q)= ({\Sigma_{i=1}^{i=d} \, w_i(r_i-q_i)^p})^{1/p}$ for $0 < p <\infty$ and
+defined by $l_{\infty}(w)(r,q)=max \{w_i |r_i-q_i| \mid 1 \leq i \leq d\}$.
+For the purpose of the distance computations it is more efficient to compute
+the transformed distance ${\sigma_{i=1}^{i=d} \, w_i(r_i-q_i)^p}$ instead of the actual distance.
+
+\ccInclude{CGAL/Weighted_Minkowski_distance.h}
+
+\ccParameters
+
+Expects for the template argument a model of the concept
+\ccc{SearchTraits}, for example \ccc{CGAL::Search_traits_2<Kernel>}.
+
+\ccIsModel
+
+\ccc{OrthogonalDistance}
+
+\ccTypes
+
+\ccTypedef{Traits::FT FT;}{Number type.}
+\ccTypedef{Traits::Point_d Point_d;}{Point type.}
+
+ 
+
+\ccCreation
+\ccCreationVariable{wd}  %% choose variable name
+
+\ccConstructor{Weighted_Minkowski_distance(int d);}{Constructor implementing $l_2$ metric for $d$-dimensional points.}
+
+\ccConstructor{template <class InputIterator>
+               Weighted_Minkowski_distance(FT power, int dim, InputIterator wb, InputIterator we);}
+{Constructor implementing the $l_{power}(weights)$ metric. $power \leq 0$ denotes the $l_{\infty}(weights)$ metric.
+The values in the iterator range \ccc{[wb,we)} are the weight. }
+
+\ccOperations
+
+
+\ccMethod{FT transformed_distance(Point_d q, Point_d r);}{Returns $d^{power}$, 
+where $d$ denotes the distance between \ccc{q} and~\ccc{r}.}
+
+\ccMethod{FT min_distance_to_rectangle(Point_d q, Kd_tree_rectangle<Traits> r;);}
+{Returns $d^{power}$, where $d$ denotes the distance between the query item \ccc{q} and
+the point on the boundary of \ccc{r} closest to \ccc{q}.}
+
+\ccMethod{FT max_distance_to_rectangle(Point_d q, Kd_tree_rectangle<Traits> r;);}
+{Returns $d^{power}$, where $d$ denotes the distance between the query item \ccc{q} and
+the point on the boundary of \ccc{r} farthest to \ccc{q}.}
+
+\ccMethod{FT new_distance(FT dist, FT old_off, FT new_off, int cutting_dimension);} {Updates \ccc{dist} incrementally
+and returns the updated distance.}
+
+\ccMethod{FT transformed_distance(FT d);} {Returns $d^p$ for $0 < p <\infty$ . Returns $d$ for $p=\infty$ .}
+
+\ccMethod{FT inverse_of_transformed_distance(FT d);} {Returns $d^{1/p}$ for $0 < p <\infty$.
+Returns $d$ for $p=\infty$.}
+ 
+
+\ccSeeAlso
+
+\ccc{OrthogonalDistance}\\
+\ccc{CGAL::Euclidean_distance<Traits>}
+
+\end{ccRefClass}
+
+% +------------------------------------------------------------------------+
+%%RefPage: end of main body, begin of footer
+% EOF
+% +------------------------------------------------------------------------+
+

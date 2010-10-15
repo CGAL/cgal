@@ -1,0 +1,84 @@
+% +------------------------------------------------------------------------+
+% | Reference manual page: Event.tex
+% +------------------------------------------------------------------------+
+% | 20.03.2005   Author
+% | Package: Kinetic_data_structures
+% | 
+\RCSdef{\RCSEventRev}{$Id$}
+\RCSdefDate{\RCSEventDate}{$Date$}
+% |
+%%RefPage: end of header, begin of main body
+% +------------------------------------------------------------------------+
+
+\ccDefGlobalScope{CGAL::}
+\begin{ccRefConcept}[Kinetic::]{CertificateGenerator}
+
+%% \ccHtmlCrossLink{}     %% add further rules for cross referencing links
+%% \ccHtmlIndexC[concept]{} %% add further index entries
+
+\ccDefinition
+  
+This functor allows you to create certificate objects of some type.
+The models of this ``concept'' take some set of arguments which depend
+on the certificate being computed (for example three points for a two
+dimensional orientation) followed by either one or two instances of
+the \ccc{Kinetic::Simulator::Time} concept. The functions either
+return a \ccc{Certificate} or the corresponding value at the current
+time (if only a time value rather than an interval is passed).
+
+\ccCreationVariable{a}  %% choose variable name
+
+%\ccTypes
+
+%\ccNestedType{Certificate}{}
+
+\ccOperations
+
+\ccMethod{Certificate operator()(Args, Time begin, Time end);}{Return a \ccc{Certifate} object for the corresponding certificate.}
+
+\ccMethod{CGAL::Sign operator()(Args, Time t);}{Compute the sign of the
+  function at $\lim_{\delta\rightarrow 0} t+\delta$. This can be used to evaluate predicates at the current moment.}
+
+
+\ccHasModels
+
+All over the place.
+
+\ccSeeAlso
+
+\ccc{Kinetic::KineticKernel}
+
+\ccExample
+
+Here you see how to use both functions on an orientation predicate.
+
+\begin{ccExampleCode}
+KineticKernel::Point_2 a,b,c;
+Simulator::Handle sh;
+KineticKernek kk;
+
+KineticKernel::Orientation_2 o2= kk.orientation_2_object();
+
+KineticKernel::Certificate c= o2(a,b,c, sh->current_time(), sh->end_time());
+if (c.will_fail()) {
+  std::cout << "Certificate will fail" << std::endl;
+}
+// Compute the sign immediately following the current time
+CGAL::Sign sn= o2(a,c,b, sh->current_time());
+CGAL_postcondition(sn==CGAL::NEGATIVE);
+
+\end{ccExampleCode}
+
+
+\end{ccRefConcept}
+
+% +------------------------------------------------------------------------+
+%%RefPage: end of main body, begin of footer
+% EOF
+% +------------------------------------------------------------------------+
+
+
+%%% Local Variables: 
+%%% mode: latex
+%%% TeX-master: t
+%%% End: 

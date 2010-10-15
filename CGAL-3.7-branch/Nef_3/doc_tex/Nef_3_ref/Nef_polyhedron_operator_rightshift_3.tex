@@ -1,0 +1,54 @@
+% +------------------------------------------------------------------------+
+% | Reference manual page: Polyhedron_operator_rightshift.tex
+% +------------------------------------------------------------------------+
+% | 05.04.2004   Peter Hachenberger
+% | Package: Nef_3
+% | 
+\RCSdef{\RCSNefpolyhedron3operatorostreamRev}{$Id$}
+\RCSdefDate{\RCSNefpolyhedron3operatorostreamDate}{$Date$}
+% |
+%%RefPage: end of header, begin of main body
+% +------------------------------------------------------------------------+
+
+\ccHtmlNoClassLinks
+\begin{ccRefFunction}{operator>>}
+\label{refNef_polyhedron_operator_rightshift_3}
+
+\ccDefinition
+
+This operator reads a Nef polyhedron, which is given in the proprietary file
+format written by the input operator \emph{in} and assigns it to \emph{N}. It includes the 
+complete incidence structure, the geometric data, and the marks of each item.
+
+It is recommended to use the \cgal\ kernels \ccc{Homogeneous}, 
+\ccc{Simple_homogeneous}, 
+or \ccc{Extended_homogeneous} parametrized with any exact number type that models 
+$\mathbb{Z}$ (e.g.\ccc{Gmpz} or \ccc{leda_integer}). The input and 
+output iterators of Nef polyhedra parametrized with
+either of these kernels are compatible as long as the Nef polyhedron is bounded.
+An unbounded Nef polyhedron can only be read by a Nef polyhedron parametrized with
+an extended kernel. It is also recommended to use the \cgal\ stream modifier 
+\ccc{set_ascii_mode}.
+
+
+\ccInclude{CGAL/IO/Nef_polyhedron_iostream_3.h}
+
+\ccGlobalFunction{template <class Traits>
+    istream& operator>>( istream& in,
+                         CGAL::Nef_polyhedron_3<Traits>& N);}
+  
+\ccSeeAlso
+
+\ccRefIdfierPage{CGAL::Nef_polyhedron_3<Traits>}\\ 
+\lcTex{\ccc{operator<<} \dotfill\ 
+    page~\pageref{refNef_polyhedron_operator_leftshift_3}}%
+\lcRawHtml{
+    <I><A HREF="Function_operator.html">operator&lt;&lt;</A></I>.
+}
+
+\end{ccRefFunction}
+
+% +------------------------------------------------------------------------+
+%%RefPage: end of main body, begin of footer
+% EOF
+% +------------------------------------------------------------------------+

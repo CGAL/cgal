@@ -1,0 +1,95 @@
+% +------------------------------------------------------------------------+
+% | Reference manual page: Tds_vertex_3.tex
+% +------------------------------------------------------------------------+
+% | 29.3.2000   Monique Teillaud
+% | Package: Triangulation3
+% | 
+\RCSdef{\RCSTdsvertexRev}{$Id$}
+\RCSdefDate{\RCSTdsvertexDate}{$Date$}
+% |
+%%RefPage: end of header, begin of main body
+% +------------------------------------------------------------------------+
+
+
+\begin{ccRefConcept}[TriangulationDataStructure_3::]{Vertex}
+
+%% \ccHtmlCrossLink{}     %% add further rules for cross referencing links
+%% \ccHtmlIndexC[concept]{} %% add further index entries
+
+\ccDefinition
+  
+The concept \ccRefName\ represents the vertex class of a 3D-triangulation
+data structure. It must define
+the types and operations listed in this section. Some of these
+requirements are of geometric nature, they are \textit{optional}
+when using the triangulation data structure class alone. They become
+compulsory when the triangulation data structure is used as a layer
+for the geometric triangulation class. (See Section~\ref{TDS3-sec-design}.)
+
+\ccTypes
+\ccThree{typedef TriangulationDataStructure_3::}{Facet }{}
+\ccThreeToTwo
+\ccNestedType{Point}{\textit{Optional for the triangulation data
+structure alone.}} 
+
+The class \ccRefName\ defines types that are the same as some of the 
+types defined by the triangulation data structure class
+\ccc{TriangulationDataStructure_3}.
+
+\ccThree{typedef TriangulationDataStructure_3::Vertex_handle}{Facet }{}
+
+\ccTypedef{typedef TriangulationDataStructure_3 Triangulation_data_structure;}{}
+\ccGlue
+\ccTypedef{typedef TriangulationDataStructure_3::Vertex_handle Vertex_handle;}{}
+\ccGlue
+\ccTypedef{typedef TriangulationDataStructure_3::Cell_handle Cell_handle;}{}
+
+\ccCreation
+\ccCreationVariable{v}  %% choose variable name
+
+In order to obtain new vertices or destruct unused vertices, the user must
+call the \ccc{create_vertex()} and \ccc{delete_vertex()} methods of the
+triangulation data structure.
+
+\ccOperations
+\ccThree{Vertex_handle}{v.set_point(Vertex_handle v)}{}
+
+\ccAccessFunctions
+
+\ccMethod{Cell_handle cell() const;}
+{Returns a cell of the triangulation having \ccVar\ as vertex.}
+
+\ccMethod{Point point() const;}
+{Returns the point stored in the vertex.
+{\textit{Optional for the triangulation data structure alone.}}}
+
+\ccHeading{Setting}
+
+\ccMethod{void set_cell(Cell_handle c);}
+{Sets the incident cell to \ccc{c}.}
+
+\ccMethod{void set_point(const Point & p);}
+{Sets the point to \ccc{p}. {\textit{Optional for the
+triangulation data structure alone.}}}
+
+\begin{ccDebug}
+\ccHeading{Checking}
+
+\ccMethod{bool is_valid(bool verbose = false) const;}
+{Checks the validity of the vertex. Must check that its incident cell
+has this vertex. The validity of the base vertex is also checked.\\
+When \ccc{verbose} is set to \ccc{true}, messages are printed to give
+a precise indication on the kind of invalidity encountered.}
+\end{ccDebug}
+
+\ccSeeAlso
+
+\ccc{TriangulationDataStructure_3::Cell}.
+
+\end{ccRefConcept}
+
+% +------------------------------------------------------------------------+
+%%RefPage: end of main body, begin of footer
+% EOF
+% +------------------------------------------------------------------------+
+

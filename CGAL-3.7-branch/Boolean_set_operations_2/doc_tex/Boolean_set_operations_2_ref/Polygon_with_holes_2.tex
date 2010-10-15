@@ -1,0 +1,22 @@
+\ccRefPageBegin
+
+\begin{ccRefClass}{Polygon_with_holes_2<Kernel,Container>}
+
+\ccThree{Polygon_with_holes_2<Kernel,Container>}{holes_begin()}{}
+\ccThreeToTwo
+
+\ccDefinition
+%============
+The class \ccRefName\ models the concept \ccc{GeneralPolygonWithHoles_2}.
+It represents a linear polygon with holes. It is parameterized with two
+types (\ccc{Kernel} and \ccc{Container}) that are used to instantiate
+the type \ccc{CGAL::Polygon_2<Kernel,Container>}. The latter is used to
+represents the outer boundary and the boundary of the holes (if any exist).
+
+\ccInclude{CGAL/Polygon_with_holes_2.h}
+ 
+\ccIsModel
+    \ccc{GeneralPolygonWithHoles_2}
+
+\end{ccRefClass}
+\ccRefPageEnd

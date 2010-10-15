@@ -1,0 +1,47 @@
+% +------------------------------------------------------------------------+
+% | CGAL Reference Manual: Reference manual for Qt_widget.tex
+% +------------------------------------------------------------------------+
+% |
+% | 03.01.2001	Radu Ursu
+% | 
+% | \RCSdef{\qtwidgetRev}{$Id$}
+% | \RCSdefDate{\qtwidgetDate}{$Date$}
+% +------------------------------------------------------------------------+
+
+% +-----------------------------------------------------+
+\begin{ccRefClass}{Navigation_layer}
+
+\ccInclude{CGAL/IO/Navigation_layer.h}
+
+\ccInheritsFrom
+\ccc{Qt_widget_layer}
+
+\ccGlue
+
+\ccCreation
+\ccCreationVariable{nav_layer}
+\ccSetTwoColumns{Navigation_layer}{}
+
+\ccConstructor{Navigation_layer(QObject* parent = 0, const char* name =
+0);}{\ccc{parent} is the parent widget and \ccc{name} is the name you 
+give to this layer.}
+
+This layer is used to provide basic navigation control over the 
+\ccc{Qt_widget}. When this layer is attached and active, you may use 
+the arrows to navigate the equivalent in world coordinates of 10 pixels 
+in the desired direction. You can also use the PageUp, PageDown keys to 
+scroll the equivalent in world coordinates of half screenheight on the Y axes.
+
+
+\end{ccRefClass}
+
+% +-----------------------------------------------------+
+% EOF
+
+
+
+
+
+
+
+

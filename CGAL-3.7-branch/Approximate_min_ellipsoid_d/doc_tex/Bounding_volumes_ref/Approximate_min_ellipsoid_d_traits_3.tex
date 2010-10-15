@@ -1,0 +1,64 @@
+
+\ccAutoIndexingOff
+
+\begin{ccRefClass}{Approximate_min_ellipsoid_d_traits_3<K,ET>}
+\ccIndexTraitsClassBegin{Approximate_min_ellipsoid_d_traits_3}{Approximate_min_ellipsoid_d}{}
+
+\ccAutoIndexingOn
+
+% -----------------------------------------------------------------------------
+\ccDefinition
+
+The class \ccRefName\ is a traits class for
+\ccc{CGAL::Approximate_min_ellipsoid_d<Traits>} using the
+$3$-di\-men\-sional \cgal\ kernel. In order to use this class, 
+ an exact number-type \ccc{ET} has to be provided which
+\ccc{Approximate_min_ellipsoid_d<Traits>} will use for its internal
+exact computations.
+
+\ccInclude{CGAL/Approximate_min_ellipsoid_d_traits_3.h}
+
+% -----------------------------------------------------------------------------
+\ccRequirements
+
+The template parameter \ccc{K} must be a model for concept
+\ccc{Kernel}. The template parameter \ccc{ET} must be a model for concept
+\ccc{RingNumberType} with exact arithmetic operations, i.e., the type
+\ccc{CGAL::Number_type_traits<ET>::Has_exact_ring_operations} must be
+\ccc{CGAL::Tag_true}. In addition, \ccc{ET} must be able to exactly
+represent any finite \ccc{double} value. (Examples of such a
+number-type are \ccc{CGAL::MP_Float}, \ccc{CORE::Expr}, and \ccc{CGAL::Gmpq}.)
+
+% -----------------------------------------------------------------------------
+\ccIsModel
+
+\ccc{ApproximateMinEllipsoid_d_Traits_d}
+
+% -----------------------------------------------------------------------------
+\ccTypes
+
+\ccSaveThreeColumns
+%\ccSetTwoColumns{Approximate_min_ellipsoid_d_traits_3<K,ET>::Point}{}
+
+\ccNestedType{FT}{\ccc{typedef double FT}.  The kernel's number type
+\ccc{K::RT} must be convertible to \ccc{double}.}
+\ccNestedType{ET}{typedef to the second template argument, \ccc{ET}.}
+\ccNestedType{Point}{\ccc{typedef K::Point_3 Point}}
+\ccNestedType{Cartesian_const_iterator}{\ccc{typedef K::Cartesian_const_iterator_3 Cartesian_const_iterator}}
+
+\ccSeeAlso
+
+\ccRefIdfierPage{CGAL::Approximate_min_ellipsoid_d_traits_2<K,ET>}\\%
+\ccRefIdfierPage{CGAL::Approximate_min_ellipsoid_d_traits_d<K,ET>}\\%
+\ccc{ApproximateMinEllipsoid_d_Traits_d}
+
+% -----------------------------------------------------------------------------
+
+\ccAutoIndexingOff
+
+\ccIndexTraitsClassEnd
+\end{ccRefClass}
+
+\ccAutoIndexingOn
+
+

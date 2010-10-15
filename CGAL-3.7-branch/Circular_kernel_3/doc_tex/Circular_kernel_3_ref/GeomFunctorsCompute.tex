@@ -1,0 +1,53 @@
+\begin{ccRefFunctionObjectConcept}{SphericalKernel::ComputeCircularX_3}
+
+\ccCreationVariable{fo}
+
+\ccMemberFunction{SphericalKernel::Root_of_2 
+		 operator()(const SphericalKernel::Circular_arc_point_3 & p) const;}
+       {returns the $x$-coordinate of the point \ccc{p}.}
+
+\end{ccRefFunctionObjectConcept}
+\begin{ccRefFunctionObjectConcept}{SphericalKernel::ComputeCircularY_3}
+
+\ccCreationVariable{fo}
+
+\ccMemberFunction{SphericalKernel::Root_of_2 
+		 operator()(const SphericalKernel::Circular_arc_point_3 & p) const;}
+       {returns the $y$-coordinate of the point \ccc{p}.}
+
+\end{ccRefFunctionObjectConcept}
+\begin{ccRefFunctionObjectConcept}{SphericalKernel::ComputeCircularZ_3}
+
+\ccCreationVariable{fo}
+
+\ccMemberFunction{SphericalKernel::Root_of_2 
+		 operator()(const SphericalKernel::Circular_arc_point_3 & p) const;}
+       {returns the $z$-coordinate of the point \ccc{p}.}
+
+\end{ccRefFunctionObjectConcept}
+
+\begin{ccRefFunctionObjectConcept}{SphericalKernel::ComputeApproximateSquaredLength_3}
+
+\ccRefines
+
+\ccc{Kernel::ComputeApproximateSquaredLength_3}
+
+\ccCreationVariable{fo}
+
+In addition, an object \ccVar\ of this type must provide:
+
+\ccMemberFunction{double
+	operator()(const SphericalKernel::Circular_arc_3 & a);}
+{Computes an approximation of the squared length of the arc \ccc{a}.}
+
+\end{ccRefFunctionObjectConcept}
+\begin{ccRefFunctionObjectConcept}{SphericalKernel::ComputeApproximateAngle_3}
+\ccCreationVariable{fo}
+
+An object \ccVar\ of this type must provide:
+
+\ccMemberFunction{double
+	operator()(const SphericalKernel::Circular_arc_3 & a);}
+{Computes an approximation of the angle of the arc in radians \ccc{a}.}
+
+\end{ccRefFunctionObjectConcept}
