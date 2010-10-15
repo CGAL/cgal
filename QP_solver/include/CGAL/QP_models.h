@@ -426,7 +426,8 @@ private:
 				    boost::counting_iterator<int> >
   Sparse_vector_iterator;  
   typedef boost::transform_iterator<CGAL::Map_with_default<Sparse_r_vector>,
-  boost::counting_iterator<int> >
+  boost::counting_iterator<int,boost::use_default,int> >
+  //boost::counting_iterator<int,boost::use_default,boost::use_default> >
   Sparse_r_vector_iterator;
   typedef boost::transform_iterator<CGAL::Map_with_default<Sparse_f_vector>,
 				    boost::counting_iterator<int> >
@@ -529,7 +530,8 @@ public:
   R_iterator get_r() const    
   { 
     CGAL_qpe_assertion(is_valid());
-    return R_iterator (boost::counting_iterator<int>(0),
+    return R_iterator (boost::counting_iterator<int,boost::use_default,int>(0),
+    //return R_iterator (boost::counting_iterator<int,boost::use_default,boost::use_default>(0),
 		        CGAL::Map_with_default<Sparse_r_vector>
 		       (&r_vector, default_r));
   }
