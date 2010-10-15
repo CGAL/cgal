@@ -47,7 +47,7 @@ namespace internal {
     for(int i = 0; i < 3; ++i) {
       if(p[i] <= q[i]) {
         if(q[i] <= r[i]) { // pqr
-          if(bbox.max(i) < p[i] || bbox.min(i) > r[i])
+          if((bbox.max(i) < p[i]) || (bbox.min(i) > r[i]))
             return false;
         }
         else {
@@ -162,15 +162,31 @@ namespace internal {
     }
   }
 
+  //given a vector checks whether it is collinear to a base vector
+  //of the orthonormal frame. return -1 otherwise
+  template <class K>
+  inline
+  int
+  collinear_axis(typename K::Vector_3 side){
+    if ( certainly(side[0]==0) ){
+      if ( certainly(side[1]==0) )        return 2;
+      if ( certainly(side[2]==0) )        return 1;
+    }
+    else{
+        if ( certainly(side[1]==0) && 
+            certainly(side[2]==0) )       return 0;
+    }
+    return -1;
+  }
 
   template <class K, int AXE, int SIDE>
   inline
-  bool do_axis_intersect(const typename K::Triangle_3& triangle,
-                         const typename K::Vector_3* sides,
-                         const CGAL::Bbox_3& bbox)
+  Uncertain<bool> do_axis_intersect(const typename K::Triangle_3& triangle,
+                                    const typename K::Vector_3* sides,
+                                    const CGAL::Bbox_3& bbox)
   {
-    const typename K::Point_3& j = triangle.vertex(SIDE);
-    const typename K::Point_3& k = triangle.vertex((SIDE+2)%3);
+    const typename K::Point_3* j = & triangle.vertex(SIDE);
+    const typename K::Point_3* k = & triangle.vertex((SIDE+2)%3);
 
     typename K::Point_3 p_min, p_max;
     get_min_max<K, AXE>(AXE==0? 0: AXE==1? sides[SIDE].z(): -sides[SIDE].y(),
@@ -180,83 +196,180 @@ namespace internal {
 
     switch ( AXE )
     {
-    case 0:
+    case 0: {
       // t_max >= t_min
-      if ( do_axis_intersect_aux<K,AXE,SIDE>(k.y()-j.y(), k.z()-j.z(), sides) >= 0 )
-      {
-        return ( do_axis_intersect_aux<K,AXE,SIDE>(p_min.y()-k.y(), p_min.z()-k.z(), sides) <= 0
-                || do_axis_intersect_aux<K,AXE,SIDE>(p_max.y()-j.y(), p_max.z()-j.z(), sides) >= 0 );
-      }
-      else
-      {
-        return ( do_axis_intersect_aux<K,AXE,SIDE>(p_min.y()-j.y(), p_min.z()-j.z(), sides) <= 0
-                || do_axis_intersect_aux<K,AXE,SIDE>(p_max.y()-k.y(), p_max.z()-k.z(), sides) >= 0 );
-      }
-    case 1:
+      Uncertain<bool> b =  do_axis_intersect_aux<K,AXE,SIDE>(k->y()-j->y(), k->z()-j->z(), sides) >= 0;
+      if (is_indeterminate(b))
+        return b;
+      if(b) std::swap(j,k);
+      return CGAL_OR( (do_axis_intersect_aux<K,AXE,SIDE>(p_min.y()-j->y(), p_min.z()-j->z(), sides) <= 0),
+                      (do_axis_intersect_aux<K,AXE,SIDE>(p_max.y()-k->y(), p_max.z()-k->z(), sides) >= 0) );      
+    }
+    case 1: {
       // t_max >= t_min
-      if ( do_axis_intersect_aux<K,AXE,SIDE>(k.x()-j.x(), k.z()-j.z(), sides) >= 0 )
-      {
-        return ( do_axis_intersect_aux<K,AXE,SIDE>(p_min.x()-k.x(), p_min.z()-k.z(), sides) <= 0
-                || do_axis_intersect_aux<K,AXE,SIDE>(p_max.x()-j.x(), p_max.z()-j.z(), sides) >= 0 );
-      }
-      else
-      {
-        return ( do_axis_intersect_aux<K,AXE,SIDE>(p_min.x()-j.x(), p_min.z()-j.z(), sides) <= 0
-                || do_axis_intersect_aux<K,AXE,SIDE>(p_max.x()-k.x(), p_max.z()-k.z(), sides) >= 0 );
-      }
-    case 2:
+      Uncertain<bool> b =  do_axis_intersect_aux<K,AXE,SIDE>(k->x()-j->x(), k->z()-j->z(), sides) >= 0;
+      if (is_indeterminate(b))
+        return b;
+      if(b) std::swap(j,k);
+      return  CGAL_OR( (do_axis_intersect_aux<K,AXE,SIDE>(p_min.x()-j->x(), p_min.z()-j->z(), sides) <= 0),
+                       (do_axis_intersect_aux<K,AXE,SIDE>(p_max.x()-k->x(), p_max.z()-k->z(), sides) >= 0) );
+
+    }
+    case 2: {
       // t_max >= t_min
-      if ( do_axis_intersect_aux<K,AXE,SIDE>(k.x()-j.x(), k.y()-j.y(), sides) >= 0 )
-      {
-        return ( do_axis_intersect_aux<K,AXE,SIDE>(p_min.x()-k.x(), p_min.y()-k.y(), sides) <= 0
-                || do_axis_intersect_aux<K,AXE,SIDE>(p_max.x()-j.x(), p_max.y()-j.y(), sides) >= 0 );
-      }
-      else
-      {
-        return ( do_axis_intersect_aux<K,AXE,SIDE>(p_min.x()-j.x(), p_min.y()-j.y(), sides) <= 0
-                || do_axis_intersect_aux<K,AXE,SIDE>(p_max.x()-k.x(), p_max.y()-k.y(), sides) >= 0 );
-      }
+      Uncertain<bool> b = do_axis_intersect_aux<K,AXE,SIDE>(k->x()-j->x(), k->y()-j->y(), sides) >= 0;
+      if ( is_indeterminate(b))
+        return b;
+      if(b) std::swap(j,k);
+      return  CGAL_OR( (do_axis_intersect_aux<K,AXE,SIDE>(p_min.x()-j->x(), p_min.y()-j->y(), sides) <= 0),
+                       (do_axis_intersect_aux<K,AXE,SIDE>(p_max.x()-k->x(), p_max.y()-k->y(), sides) >= 0) );
+    }
     default:
       // Should not happen
       CGAL_error();
-      return false;
+      return make_uncertain(false);
     }
   }
 
-  // assumes that the intersection with the supporting plane has
-  // already been checked.
   template <class K>
-  bool do_intersect(const typename K::Triangle_3& triangle,
-    const CGAL::Bbox_3& bbox,
-    const K&)
+  bool do_intersect(const typename K::Triangle_3& a_triangle,
+    const CGAL::Bbox_3& a_bbox,
+    const K& k)
   {
-    if(! do_bbox_intersect<K>(triangle, bbox))
+
+    if(certainly_not( do_bbox_intersect<K>(a_triangle, a_bbox) ))
+      return false;
+
+    if(certainly_not( do_intersect(a_triangle.supporting_plane(), a_bbox, k) ))
       return false;
 
     typename K::Vector_3 sides[3];
-    sides[0] = triangle[1] - triangle[0];
-    sides[1] = triangle[2] - triangle[1];
-    sides[2] = triangle[0] - triangle[2];
+    sides[0] = a_triangle[1] - a_triangle[0];
+    sides[1] = a_triangle[2] - a_triangle[1];
+    sides[2] = a_triangle[0] - a_triangle[2];    
+    int forbidden_axis=-1;
+    int forbidden_size=-1;
+    //determine whether one vector is collinear with an axis
+    int tmp=collinear_axis<K>(sides[0]);
+    if ( tmp!= -1){
+      forbidden_axis=tmp;
+      forbidden_size=0;
+    }
+    else{
+      tmp=collinear_axis<K>(sides[1]);
+      if ( tmp!= -1){
+        forbidden_axis=tmp;
+        forbidden_size=1;
+      }
+      else{
+        tmp=collinear_axis<K>(sides[2]);
+        if ( tmp!= -1){
+          forbidden_axis=tmp;
+          forbidden_size=2;
+        }        
+      }
+    }
+    
+#if 0
+    typename K::Point_3 p(a_bbox.xmin(), a_bbox.ymin(), a_bbox.zmin());
+    typename K::Point_3 q(a_bbox.xmax(), a_bbox.ymax(), a_bbox.zmax());
+    
+    typename K::Point_3 m = CGAL::midpoint(p,q);
+    typename K::Vector_3 v = m - CGAL::ORIGIN;
+    
+    typename K::Triangle_3 triangle(a_triangle[0]-v, a_triangle[1]-v, a_triangle[2]-v);
+  
+    Bbox_3 bbox( (p-v).bbox() + (q-v).bbox());
 
-    if(! do_axis_intersect<K,0,0>(triangle, sides, bbox))
-      return false;
-    if(! do_axis_intersect<K,0,1>(triangle, sides, bbox))
-      return false;
-    if(! do_axis_intersect<K,0,2>(triangle, sides, bbox))
-      return false;
-    if(! do_axis_intersect<K,1,0>(triangle, sides, bbox))
-      return false;
-    if(! do_axis_intersect<K,1,1>(triangle, sides, bbox))
-      return false;
-    if(! do_axis_intersect<K,1,2>(triangle, sides, bbox))
-      return false;
-    if(! do_axis_intersect<K,2,0>(triangle, sides, bbox))
-      return false;
-    if(! do_axis_intersect<K,2,1>(triangle, sides, bbox))
-      return false;
-    if(! do_axis_intersect<K,2,2>(triangle, sides, bbox))
-      return false;
-    return true;
+#else 
+    const typename K::Triangle_3&  triangle = a_triangle;
+    const Bbox_3& bbox = a_bbox;
+#endif    
+    
+    Uncertain<bool> ind = make_uncertain(true);
+    
+    Uncertain<bool> b = make_uncertain(true);
+    if (forbidden_axis!=0){
+      if (forbidden_size!=0){
+        b = do_axis_intersect<K,0,0>(triangle, sides, bbox);
+        if(is_indeterminate(b)){
+          ind = b;
+        } else if(! b){
+          return false;
+        }
+      }
+      if (forbidden_size!=1){
+        b = do_axis_intersect<K,0,1>(triangle, sides, bbox);
+        if(is_indeterminate(b)){
+          ind = b;
+        } else if(! b){
+          return false;
+        }
+      }
+      if (forbidden_size!=2){
+        b = do_axis_intersect<K,0,2>(triangle, sides, bbox);
+        if(is_indeterminate(b)){
+          ind = b;
+        } else if(! b){
+          return false;
+        }
+      }
+    }
+    
+    if (forbidden_axis!=1){
+      if (forbidden_size!=0){
+        b = do_axis_intersect<K,1,0>(triangle, sides, bbox);
+        if(is_indeterminate(b)){
+          ind = b;
+        } else if(! b){
+          return false;
+        }
+      }
+      if (forbidden_size!=1){
+        b = do_axis_intersect<K,1,1>(triangle, sides, bbox);
+        if(is_indeterminate(b)){
+          ind = b;
+        } else if(! b){
+          return false;
+        }
+      }
+      if (forbidden_size!=2){
+        b = do_axis_intersect<K,1,2>(triangle, sides, bbox);
+        if(is_indeterminate(b)){
+          ind = b;
+        } else if(! b){
+          return false;
+        }
+      }
+    }
+    
+    if (forbidden_axis!=2){
+      if (forbidden_size!=0){
+        b = do_axis_intersect<K,2,0>(triangle, sides, bbox);
+        if(is_indeterminate(b)){
+          ind = b;
+        } else if(! b){
+          return false;
+        }
+      }
+      if (forbidden_size!=1){
+        b = do_axis_intersect<K,2,1>(triangle, sides, bbox);
+        if(is_indeterminate(b)){
+          ind = b;
+        } else if(! b){
+          return false;
+        }
+      }
+      if (forbidden_size!=2){
+        b = do_axis_intersect<K,2,2>(triangle, sides, bbox);
+        if(is_indeterminate(b)){
+          ind = b;
+        } else if(! b){
+          return false;
+        }
+      }
+    }
+    return ind; // throws exception in case it is indeterminate
   }
 
   template <class K>
