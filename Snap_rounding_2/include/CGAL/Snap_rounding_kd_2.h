@@ -38,9 +38,9 @@ private:
 public:
   Point_2 orig;
   SAVED_OBJECT object;
-  My_point(Point_2 p, Point_2 inp_orig, SAVED_OBJECT obj) :
+  My_point(const Point_2& p, const Point_2& inp_orig, SAVED_OBJECT obj) :
            Point_2(p), orig(inp_orig), object(obj) {}
-  My_point(Point_2 p) : Point_2(p), orig(Point_2(0, 0)) {}
+  My_point(const Point_2& p) : Point_2(p), orig(Point_2(0, 0)) {}
   My_point() : Point_2(),orig() {}
   My_point(NT x, NT y) : Point_2(x, y), orig(Point_2(0, 0)) {}
 };

@@ -55,8 +55,8 @@ public:
   Segment_data();
   Segment_data(const Point_2 & p_inp,const Point_2 & q_inp);
   Segment_2 segment() const { return(Segment_2(p, q)); }
-  Point_2 source() const { return(p); }
-  Point_2 target() const { return(q); }
+  const Point_2& source() const { return(p); }
+  const Point_2& target() const { return(q); }
   inline void set_data(const Point_2 & inp_p,const Point_2 & inp_q);
   void determine_direction(SEG_Direction & seg_dir);
   bool equal(const Segment_2 & s);
