@@ -1,0 +1,6 @@
+libCGAL 6 libcgal6
+# libCGAL_Core exists only on 32bit systems
+libCGAL_Core 6 libcgal6
+libCGAL_ImageIO 6 libcgal6
+libCGAL_Qt3 6 libcgal6
+libCGAL_Qt4 6 libcgal6
