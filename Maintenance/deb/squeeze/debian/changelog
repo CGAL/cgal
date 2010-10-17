@@ -1,8 +1,23 @@
-cgal (3.6.1-1~squeeze1) testing; urgency=low
+cgal (3.7-1~squeeze1) testing; urgency=low
 
-  * Backport for squeeze.
+  * New upstream release.
+  * Rename binary package libcgal5 to libcgal6 to reflect SONAME change.
+  * Rename binary package libcgal5-ipelets to libcgal-ipelets because it is
+    not possible to install the ipelets for different SONAMEs in parallel.
+  * Remove ipe-default-to-version-7.dpatch: the Ipe version is now
+    auto-detected.
+  * Remove fix-core-64bit.dpatch (fixed upstream).
+  * Add qt4-dev-tools to Suggests: of libcgal-demo for qcollectiongenerator.
+  * Update Standards-Version to 3.9.1 (-D_REENTRANT no longer needed).
 
- -- Joachim Reichel <reichel@debian.org>  Sat, 03 Jul 2010 20:39:59 +0200
+ -- Joachim Reichel <reichel@debian.org>  Sun, 17 Oct 2010 14:27:54 +0200
+
+cgal (3.6.1-2) unstable; urgency=low
+
+  * Add fix-core-64bit.dpatch: use CORE::CHUNK_BIT instead of hard-coded
+    constant 14.
+
+ -- Joachim Reichel <reichel@debian.org>  Tue, 24 Aug 2010 19:46:36 +0200
 
 cgal (3.6.1-1) unstable; urgency=low
 

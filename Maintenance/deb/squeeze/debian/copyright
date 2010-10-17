@@ -156,8 +156,8 @@ Copyright (from upstream file LICENSE)
 
    The source code of the CGAL library can be found in the directories
    "src/CGAL", "src/CGALQt", "src/CGALQt4" and "include/CGAL" (with the
-   exception of "include/CGAL/CORE", "include/CGAL/OpenNL" and
-   "include/CGAL/PDB"). It is specified in each file of the CGAL library which
+   exception of "include/CGAL/CORE", and "include/CGAL/OpenNL").
+   It is specified in each file of the CGAL library which
    license applies to it. This is either the GNU Lesser General Public License
    (as published by the Free Software Foundation; version 2.1 of the License)
    or the Q Public License (version 1.0), *depending on each file*. The texts
@@ -171,8 +171,6 @@ Copyright (from upstream file LICENSE)
      licensed under the QPL (see LICENSE.QPL).
    - ImageIO, in the directory "src/CGALimageIO", is licensed under the LGPL
      (see LICENSE.LGPL).
-   - PDB, in the directory "include/CGAL/PDB" and "src/CGALPDB" is licensed
-     under the LGPL (see LICENSE.LGPL).
    - OpenNL, in the directory "include/CGAL/OpenNL", is licensed under the LGPL
      (see LICENSE.LGPL).
 
@@ -308,34 +306,6 @@ src/CGALimageIO.
 
    These files are provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
    WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
-
-
-
-PDB
-===
-
-The following copyright statement applies to the PDB library in
-include/CGAL/PDB and src/CGALPDB.
-
-   Copyright 2004
-   Stanford University
-
-   This file is part of the DSR PDB Library.
-
-   The DSR PDB Library is free software; you can redistribute it and/or modify
-   it under the terms of the GNU Lesser General Public License as published by
-   the Free Software Foundation; either version 2.1 of the License, or (at your
-   option) any later version.
-
-   The DSR PDB Library is distributed in the hope that it will be useful, but
-   WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY
-   or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU Lesser General Public
-   License for more details.
-
-   You should have received a copy of the GNU Lesser General Public License
-   along with the DSR PDB Library; see the file /usr/share/common-licenses/LGPL-2.1.
-   If not, write to the Free Software Foundation, Inc., 51 Franklin Street,
-   Fifth Floor, Boston,  MA 02110-1301, USA.
 
 
 
