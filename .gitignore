@@ -494,6 +494,7 @@ Mesh_3/examples/Mesh_3/*.mesh.*
 Mesh_3/examples/Mesh_3/*.off
 Mesh_3/examples/Mesh_3/*.png
 Mesh_3/examples/Mesh_3/.*.deps
+Mesh_3/examples/Mesh_3/Makefile
 Mesh_3/examples/Mesh_3/applications
 Mesh_3/examples/Mesh_3/cgal_to_medit
 Mesh_3/examples/Mesh_3/chair-after.mesh
@@ -527,6 +528,8 @@ Mesh_3/test/Mesh_3/*.out*
 Mesh_3/test/Mesh_3/*.png
 Mesh_3/test/Mesh_3/*.surface*
 Mesh_3/test/Mesh_3/.*.deps
+Mesh_3/test/Mesh_3/CTestTestfile.cmake
+Mesh_3/test/Mesh_3/Makefile
 Mesh_3/test/Mesh_3/ProgramOutput.*
 Mesh_3/test/Mesh_3/applications
 Mesh_3/test/Mesh_3/cgal_to_medit
@@ -547,6 +550,7 @@ Mesh_3/test/Mesh_3/slivers_exuder
 Mesh_3/test/Mesh_3/stat_mesh
 Mesh_3/test/Mesh_3/test_io_methods
 Mesh_3/test/Mesh_3/test_off
+Mesh_3/test/Mesh_3/test_robust_weighted_circumcenter
 Min_annulus_d/*.aux
 Min_annulus_d/*.bbl
 Min_annulus_d/*.blg
