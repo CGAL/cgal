@@ -1267,6 +1267,7 @@ struct NT_converter < Lazy_exact_nt<ET>, ET >
   { return a.exact(); }
 };
 
+namespace internal {
 // Returns true if the value is representable by a double and to_double()
 // would return it.  False means "don't know" (the exact number type is not
 // queried).
@@ -1275,6 +1276,7 @@ inline bool
 fit_in_double(const Lazy_exact_nt<ET>& l, double& r)
 { return fit_in_double(l.approx(), r); }
 
+} // namespace internal
 
 // We create a type of new node in Lazy_exact_nt's DAG
 // for the make_root_of_2() operation.
