@@ -41,6 +41,39 @@ struct Project_vertex_point {
   const Object& operator()( const Node& x) const { return x.vertex()->point();}
 };
 
+//SL: I added this mechanism so that it can work with
+//Polyhedron_traits_with_normals_3 where the plane is
+//a vector.
+namespace internal
+{
+  template <class T>
+  struct Plane_constructor;
+  
+  template <class K>
+  struct Plane_constructor< CGAL::Plane_3<K> >
+  {
+    template <class Facet>
+    static const CGAL::Plane_3<K>& get_plane(Facet,const CGAL::Plane_3<K>& plane){return plane;}
+    static CGAL::Plane_3<K> get_type_plane(const CGAL::Point_3<K>& p,const CGAL::Vector_3<K>& vector){return CGAL::Plane_3<K>(p,vector);} 
+    static CGAL::Vector_3<K> get_opposite_orthogonal_vector(const CGAL::Plane_3<K>& plane){return plane.opposite().orthogonal_vector();}
+  };
+  
+  template <class K>
+  struct Plane_constructor< CGAL::Vector_3<K> >
+  {
+    template <class Facet>
+    static CGAL::Plane_3<K> get_plane(Facet f,const CGAL::Vector_3<K>& vector){
+      return CGAL::Plane_3<K>(f->halfedge()->vertex()->point(),vector);
+    }
+    static const CGAL::Vector_3<K>& get_type_plane(const CGAL::Point_3<K>&,const CGAL::Vector_3<K>& vector){
+      return vector;
+    }
+    
+    static CGAL::Vector_3<K> get_opposite_orthogonal_vector(const CGAL::Vector_3<K>& vector){return -vector;}
+  };
+
+} //namespace internal
+
 struct Facet_plane_3 {
   template < class Facet_>
   typename Facet_::Plane_3 operator()( Facet_& f) {
@@ -67,10 +100,10 @@ struct Facet_plane_3 {
     Vector plane_orthogonal_vector;
     normal_vector_newell_3( point_cir, point_cir, plane_orthogonal_vector);
     CGAL_NEF_TRACEN( *point_cir);
-    CGAL_NEF_TRACEN(Plane( *point_cir, Vector( plane_orthogonal_vector)));
+    CGAL_NEF_TRACEN(internal::Plane_constructor<Plane>::get_type_plane(*point_cir, Vector( plane_orthogonal_vector)));
     if(plane_orthogonal_vector == Vector(0,0,0))
       std::cerr << "Error !!!!!!!!!!!!!!!!!!!!!!!" << std::endl;
-    return( Plane( *point_cir, Vector( plane_orthogonal_vector)));
+    return(internal::Plane_constructor<Plane>::get_type_plane( *point_cir, Vector( plane_orthogonal_vector)));
   }
 };
 
@@ -143,6 +176,8 @@ template <class Polyhedron_, class SNC_structure>
 void polyhedron_3_to_nef_3(Polyhedron_& P, SNC_structure& S)
 {
   typedef Polyhedron_                                Polyhedron;
+  typedef typename Polyhedron::Facet::Plane_3        Plane;
+  typedef typename Polyhedron::Traits::Kernel        Kernel;
   typedef typename SNC_structure::SNC_decorator      SNC_decorator;
   typedef typename SNC_structure::SM_decorator       SM_decorator;
   typedef typename SNC_structure::Vertex_handle      Vertex_handle;
@@ -214,21 +249,21 @@ void polyhedron_3_to_nef_3(Polyhedron_& P, SNC_structure& S)
       }
       */
       CGAL_assertion(pe_prev->is_border() ||
-		     !pe_prev->facet()->plane().is_degenerate());
+                     !internal::Plane_constructor<Plane>::get_plane(pe_prev->facet(),pe_prev->facet()->plane()).is_degenerate());
       CGAL_assertion(pe_prev->is_border() ||
-		     pe_prev->facet()->plane().
+		     internal::Plane_constructor<Plane>::get_plane(pe_prev->facet(),pe_prev->facet()->plane()).
 		     has_on(pe_prev->opposite()->vertex()->point()));
       CGAL_assertion(pe_prev->is_border() || 
-		     pe_prev->facet()->plane().has_on(pe_target));
+		     internal::Plane_constructor<Plane>::get_plane(pe_prev->facet(),pe_prev->facet()->plane()).has_on(pe_target));
       CGAL_assertion(pe_prev->is_border() || 
-		     pe_prev->facet()->plane().has_on(pv.point()));
+		     internal::Plane_constructor<Plane>::get_plane(pe_prev->facet(),pe_prev->facet()->plane()).has_on(pv.point()));
 
       if(pe_prev->is_border())
 	with_border = true;
       else {
-	typename Polyhedron::Facet::Plane_3 ss_plane
+	typename Kernel::Plane_3 ss_plane
 	  (CGAL::ORIGIN, 
-	   pe_prev->facet()->plane().opposite().orthogonal_vector());
+           internal::Plane_constructor<Plane>::get_opposite_orthogonal_vector(pe_prev->facet()->plane()));
 	Sphere_circle ss_circle(ss_plane);
 	
 	CGAL_assertion(ss_circle.has_on(sp));
@@ -252,27 +287,27 @@ void polyhedron_3_to_nef_3(Polyhedron_& P, SNC_structure& S)
     CGAL_assertion(pe_prev->vertex()->point()==pv.point());
     CGAL_assertion(pe_0->vertex()->point()==pv.point());
 
-    CGAL_NEF_TRACEN(pe_prev->facet()->plane());
+    CGAL_NEF_TRACEN(internal::Plane_constructor<Plane>::get_plane(pe_prev->facet(),pe_prev->facet()->plane()));
     CGAL_NEF_TRACEN(pe_target_0);
     CGAL_NEF_TRACEN(pe_prev->opposite()->vertex()->point());
     CGAL_assertion(pe_prev->is_border() ||
-		   !pe_prev->facet()->plane().is_degenerate());
+		   !internal::Plane_constructor<Plane>::get_plane(pe_prev->facet(),pe_prev->facet()->plane()).is_degenerate());
     CGAL_assertion(pe_prev->is_border() ||
-		   pe_prev->facet()->plane().
+		   internal::Plane_constructor<Plane>::get_plane(pe_prev->facet(),pe_prev->facet()->plane()).
 		   has_on(pe_prev->opposite()->vertex()->point()));
     CGAL_assertion(pe_prev->is_border() || 
-		   pe_prev->facet()->plane().has_on(pe_target_0));
+		   internal::Plane_constructor<Plane>::get_plane(pe_prev->facet(),pe_prev->facet()->plane()).has_on(pe_target_0));
     CGAL_assertion(pe_prev->is_border() ||
-		   pe_prev->facet()->plane().has_on(pv.point()));
+		   internal::Plane_constructor<Plane>::get_plane(pe_prev->facet(),pe_prev->facet()->plane()).has_on(pv.point()));
 
     SHalfedge_handle e;
     if(pe_prev->is_border()) {
       with_border = true;
       e = sv_prev->out_sedge();
     } else {
-      typename Polyhedron::Facet::Plane_3 ss_plane
+      typename Kernel::Plane_3 ss_plane
 	(CGAL::ORIGIN,
-	 pe_prev->facet()->plane().opposite().orthogonal_vector());
+         internal::Plane_constructor<Plane>::get_opposite_orthogonal_vector(pe_prev->facet()->plane()));
       Sphere_circle ss_circle(ss_plane);
       
       CGAL_assertion(ss_plane.has_on(sv_prev->point()));
