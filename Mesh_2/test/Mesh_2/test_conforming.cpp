@@ -92,8 +92,12 @@ struct Tester {
     // Gabriel for cdt
     make_conforming_Gabriel_2(cdt);
     assert(cdt.is_valid());
+    CGAL::Triangulation_conformer_2<CDT> conformer(cdt);
+    assert( conformer.is_conforming_Gabriel() );
     // Delaunay, then Gabriel for cdt2
     make_conforming_Delaunay_2(cdt2);
+    CGAL::Triangulation_conformer_2<CDT> conformer2(cdt2);
+    assert( conformer2.is_conforming_Delaunay() );    
     assert(cdt2.is_valid());
     std::cout << "Number of vertices after make_conforming_Delaunay_2: "
               << cdt2.number_of_vertices() << "\n";

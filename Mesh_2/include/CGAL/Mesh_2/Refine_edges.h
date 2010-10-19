@@ -101,7 +101,7 @@ namespace Mesh_2 {
     typedef typename Tr::Geom_traits Geom_traits;
 
     /** Operator that takes an edge (\c fh, \c index). */
-    bool operator()(Tr& tr,
+    bool operator()(const Tr& tr,
                     const Face_handle& fh,
                     const int i) const
     {
@@ -120,7 +120,7 @@ namespace Mesh_2 {
     }
 
     /** Operator that takes an edge (\c va, \c vb). */
-    bool operator()(Tr& tr,
+    bool operator()(const Tr& tr,
                     const Vertex_handle& va,
                     const Vertex_handle& vb) const
     {
@@ -137,7 +137,7 @@ namespace Mesh_2 {
      * Operator that takes an edge (\c fh, \c index) and a point \c p.
      * Tests if the point encroached the edge.
      */
-    bool operator()(Tr& tr,
+    bool operator()(const Tr& tr,
                     const Face_handle& fh,
                     const int i,
                     const Point& p) const
@@ -152,7 +152,7 @@ namespace Mesh_2 {
      * Operator that takes an edge (\c va, \c vb) and a point \c p.
      * Tests if the point encroached the edge.
      */
-    bool operator()(Tr& tr,
+    bool operator()(const Tr& tr,
                     const Vertex_handle& va,
                     const Vertex_handle& vb,
                     const Point& p) const
@@ -182,7 +182,7 @@ namespace Mesh_2 {
     typedef typename Tr::Geom_traits Geom_traits;
 
     /** Operator that takes an edge (\c fh, \c index). */
-    bool operator()(Tr& tr,
+    bool operator()(const Tr& tr,
                     const Face_handle& fh,
                     const int i) const
     {
@@ -200,7 +200,7 @@ namespace Mesh_2 {
     }
 
     /** Operator that takes an edge (\c va, \c vb). */
-    bool operator()(Tr& tr,
+    bool operator()(const Tr& tr,
                     const Vertex_handle& va,
                     const Vertex_handle& vb) const
     {
@@ -226,7 +226,7 @@ namespace Mesh_2 {
 	fh->neighbor(i)) and return true if one of them is infinite.
     */
     bool
-    aux_get_vi_mvi(Tr& tr,
+    aux_get_vi_mvi(const Tr& tr,
 		   const Face_handle& fh,
 		   const int i,
 		   Vertex_handle& vi,
@@ -242,7 +242,7 @@ namespace Mesh_2 {
 	oriented circle passing through vp, vq and vr.
     */
     bool
-    aux_outside_of_circle(Tr& tr,
+    aux_outside_of_circle(const Tr& tr,
 			  const Vertex_handle& vp,
 			  const Vertex_handle& vq,
 			  const Vertex_handle& vr,

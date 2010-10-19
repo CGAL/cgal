@@ -77,7 +77,7 @@ private:
         ei != tr.finite_edges_end();
         ++ei)
       if(ei->first->is_constrained(ei->second) &&
-         !is_locally_conform(this, ei->first, ei->second) )
+         !is_locally_conforming(tr, ei->first, ei->second) )
         return false;
     return true;
   }
