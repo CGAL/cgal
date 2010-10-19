@@ -274,7 +274,7 @@ angle bound greater than $20.7$~degrees, but there is no such guarantee.
 Meshes are obtained from
 constrained Delaunay triangulations by calling the global function \\
 \ccc{template<class CDT, class Criteria> void refine_Delaunay_mesh_2 (CDT
-  &t, typename CDT::Geom_traits gt)}. \\
+  &t, const Criteria& criteria)}. \\
 The template parameter \ccc{CDT} must be instantiated by a constrained
 Delaunay triangulation class, which is a model of the concept
 \ccc{ConstrainedDelaunayTriangulation_2}. In order to override the domain,
