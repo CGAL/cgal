@@ -100,12 +100,12 @@ of the 3D triangulation in which the mesh is embedded.}
 {Returns \ccc{true} iff \ccc{facet(i)} has been visited.}
 \ccGlue
 \ccMethod
-{void set_facet_visited (int i, bool b);} 
+{void set_facet_visited (int i);} 
 {Marks \ccc{facet(i)} as visited if \ccc{b} is \ccc{true}
  and non-visited otherwise.}
 
 \ccMethod
-{const Point& facet_surface_center(int i);}
+{const Point& get_facet_surface_center(int i);}
 {Returns a const reference to the surface center of \ccc{facet(i)}.}
 \ccGlue
 \ccMethod
