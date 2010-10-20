@@ -17,11 +17,11 @@ The termination of the algorithm is guaranteed when criteria are shape
 criteria corresponding to a bound on smallest angles not less than
 $20.7$ degrees (this corresponds to a radius-edge ratio bound not less
 than $\sqrt{2}$). Any size criteria that are satisfied by small enough
-tetrahedra can be added to the set of criteria without compromising
+triangle can be added to the set of criteria without compromising
 the termination.
 
 Note that, in the presence of input angles smaller than $60$~degrees,
-some bad shaped triangles can appear in the finale mesh in the
+some bad shaped triangles can appear in the final mesh in the
 neighboring of small angles. To achieve termination and the respect of
 size criteria everywhere, the \ccc{Is_bad} predicate has to return
 \ccc{IMPERATIVELY_BAD} when size criteria are not satisfied, and
