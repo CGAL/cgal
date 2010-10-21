@@ -201,7 +201,7 @@ public:
                 CGAL::Polynomial_traits_d<Coefficient>::Get_coefficient coeff;
             std::vector<Bigfloat_interval> coeffs(CGAL::degree(f)+1);
             for(int i = 0; i <= CGAL::degree(f); i++) {
-                coeffs.push_back(CGAL::convert_to_bfi(coeff(f,i)));
+                coeffs[i] = CGAL::convert_to_bfi(coeff(f,i));
             }
             return typename CGAL::Polynomial_traits_d<Coefficient>
                 ::template Rebind<Bigfloat_interval,1>::Other
