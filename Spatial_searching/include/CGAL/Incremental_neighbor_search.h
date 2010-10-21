@@ -173,6 +173,16 @@ namespace CGAL {
 	if (ptr != 0) ptr->reference_count++;
       }
       
+      iterator& operator=(const iterator& Iter)
+      {
+        if (ptr != 0 && --(ptr->reference_count)==0) {
+	    delete ptr;
+        }
+        ptr = Iter.ptr;
+        if (ptr != 0) ptr->reference_count++;
+        return *this;
+      }      
+      
       Point_with_transformed_distance& 
       operator* () 
       {

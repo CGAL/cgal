@@ -421,6 +421,17 @@ namespace CGAL {
         if (Ptr_implementation != 0) Ptr_implementation->reference_count++;
       }
 
+      iterator& operator=(const iterator& Iter)
+      {
+        if (Ptr_implementation != 0 && --(Ptr_implementation->reference_count)==0) {
+	    delete Ptr_implementation;
+        }
+        Ptr_implementation = Iter.Ptr_implementation;
+        if (Ptr_implementation != 0) Ptr_implementation->reference_count++;
+        return *this;
+      }      
+      
+      
       const Point_with_transformed_distance& 
       operator* () const 
       {
