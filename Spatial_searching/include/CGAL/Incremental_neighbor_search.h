@@ -180,11 +180,13 @@ namespace CGAL {
       
       iterator& operator=(const iterator& Iter)
       {
-        if (ptr != 0 && --(ptr->reference_count)==0) {
-	    delete ptr;
+        if (ptr!=Iter.ptr){
+          if (ptr != 0 && --(ptr->reference_count)==0) {
+              delete ptr;
+          }
+          ptr = Iter.ptr;
+          if (ptr != 0) ptr->reference_count++;
         }
-        ptr = Iter.ptr;
-        if (ptr != 0) ptr->reference_count++;
         return *this;
       }      
       
