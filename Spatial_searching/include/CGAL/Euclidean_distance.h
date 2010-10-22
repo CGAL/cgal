@@ -89,7 +89,7 @@ namespace CGAL {
 	inline FT new_distance(FT dist, FT old_off, FT new_off,
 			       int /* cutting_dimension */)  const {
 		
-		FT new_dist = dist + new_off*new_off - old_off*old_off;
+		FT new_dist = dist + (new_off*new_off - old_off*old_off);
                 return new_dist;
 	}
 
