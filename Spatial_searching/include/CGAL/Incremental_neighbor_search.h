@@ -142,9 +142,14 @@ namespace CGAL {
     public:
 
       typedef std::input_iterator_tag iterator_category;
-      typedef Point_with_transformed_distance value_type;
+      typedef Point_with_transformed_distance       value_type;
+      typedef Point_with_transformed_distance*      pointer;
+      typedef const Point_with_transformed_distance&      reference;
+      typedef std::size_t               size_type;
+      typedef std::ptrdiff_t            difference_type;
       typedef int distance_type;
-
+    
+    
       class Iterator_implementation;
       Iterator_implementation *ptr;
 
@@ -184,7 +189,7 @@ namespace CGAL {
       }      
       
       Point_with_transformed_distance& 
-      operator* () 
+      operator* () const
       {
 	return *(*ptr);
       }

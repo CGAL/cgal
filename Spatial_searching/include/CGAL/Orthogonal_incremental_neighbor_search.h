@@ -383,7 +383,7 @@ namespace CGAL {
 
     public:
 
-      typedef std::forward_iterator_tag iterator_category;
+      typedef std::input_iterator_tag iterator_category;
       typedef Point_with_transformed_distance       value_type;
       typedef Point_with_transformed_distance*      pointer;
       typedef const Point_with_transformed_distance&      reference;
