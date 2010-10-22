@@ -79,7 +79,7 @@ Gaussian_elimination(const Matrix &M,
     // Total pivoting, without looking for the maximum entry
     for (i=k,j=k;
          j<cdim && U[i][j] == FT(0);
-         (++i==dim)? ++j,i=k : 0 ) {}
+         (void)((++i==dim)? ++j,i=k : 0 )) {}
       CGAL_KD_TRACEN("before swap [k="<<k<<"] :");
       CGAL_KD_TRACEN(" found i="<<i<<" and j="<<j);
       CGAL_KD_TRACEV(U);
