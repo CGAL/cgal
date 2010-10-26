@@ -60,7 +60,7 @@ struct Project_vertex_output_iterator
   template<class Vertex_pair>
   Project_vertex_output_iterator&
   operator=(const Vertex_pair& x){
-    _base=std::make_pair(x.first->point(), x.second);
+    *_base=std::make_pair(x.first->point(), x.second);
     return *this;
   }
 };
