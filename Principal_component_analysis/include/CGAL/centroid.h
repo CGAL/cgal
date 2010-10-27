@@ -823,7 +823,7 @@ struct Dispatch_centroid_3
   }
 };
 
-#if defined(_MSC_VER) || defined (__INTEL_COMPILER)
+#if defined(_MSC_VER) || defined (__INTEL_COMPILER) || defined(__clang__)
   // Workaround for VC++ and Intel compiler
   // (avoids wrong template function instanciation)
   template <typename K>
