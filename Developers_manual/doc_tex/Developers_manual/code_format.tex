@@ -351,8 +351,8 @@ in contrast to the rules of previous paragraph.
 \item Do not call global functions unqualified, that is, always
   specify explicitly the namespace where the function is defined.
 \item Do not give private types or typedefs a name likely to be used as
-  a public interface by an other class, {\em e.g.} prefer \ccc{Point3}
-  to \ccc{Point_3}. The reason for this convention is that
+  a public interface by an other class, {\em e.g.} prefer \ccc{Point_3_}
+  to \ccc{Point_3} (in general, add an underscore as suffix). The reason for this convention is that
   \ccAnchor{https://lists-sop.inria.fr/sympa/arc/cgal-develop/2010-10/msg00118.html}{SFINAE
   does not extend to access control} (meaning that the existence of a
   private type can break overloading for other classes).
