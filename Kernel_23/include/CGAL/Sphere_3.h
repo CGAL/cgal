@@ -37,7 +37,8 @@ template <class R_>
 class Sphere_3 : public R_::Kernel_base::Sphere_3
 {
   typedef typename R_::FT                    FT;
-  typedef typename R_::Point_3               Point_3;
+// http://www.cgal.org/Members/Manual_test/LAST/Developers_internal_manual/Developers_manual/Chapter_code_format.html#sec:programming_conventions
+  typedef typename R_::Point_3               Point_3_;
   typedef typename R_::Circle_3              Circle_3;
   typedef typename R_::Aff_transformation_3  Aff_transformation_3;
 
@@ -68,23 +69,23 @@ public:
   Sphere_3(const Rep& s)
    : Rep(s) {}
 
-  Sphere_3(const Point_3& p, const FT& sq_rad,
+  Sphere_3(const Point_3_& p, const FT& sq_rad,
            const Orientation& o = COUNTERCLOCKWISE)
    : Rep(typename R::Construct_sphere_3()(Return_base_tag(), p, sq_rad, o)) {}
 
-  Sphere_3(const Point_3& p, const Point_3& q,
-           const Point_3& r, const Point_3& u)
+  Sphere_3(const Point_3_& p, const Point_3_& q,
+           const Point_3_& r, const Point_3_& u)
    : Rep(typename R::Construct_sphere_3()(Return_base_tag(), p, q, r, u)) {}
 
-  Sphere_3(const Point_3& p, const Point_3& q, const Point_3& r,
+  Sphere_3(const Point_3_& p, const Point_3_& q, const Point_3_& r,
            const Orientation& o = COUNTERCLOCKWISE)
    : Rep(typename R::Construct_sphere_3()(Return_base_tag(), p, q, r, o)) {}
 
-  Sphere_3(const Point_3& p, const Point_3&  q,
+  Sphere_3(const Point_3_& p, const Point_3_&  q,
            const Orientation& o = COUNTERCLOCKWISE)
    : Rep(typename R::Construct_sphere_3()(Return_base_tag(), p, q, o)) {}
 
-  explicit Sphere_3(const Point_3& p, const Orientation& o = COUNTERCLOCKWISE)
+  explicit Sphere_3(const Point_3_& p, const Orientation& o = COUNTERCLOCKWISE)
    : Rep(typename R::Construct_sphere_3()(Return_base_tag(), p, o)) {}
 
   explicit Sphere_3(const Circle_3& c)
@@ -94,7 +95,7 @@ public:
 
   // FIXME : why doesn't Qrt work here ?  We loose optimization !
   //typename Qualified_result_of<typename R::Construct_center_3, Sphere_3>::type
-  Point_3
+  Point_3_
   center() const
   {
     return R().construct_center_3_object()(*this);
@@ -118,19 +119,19 @@ public:
   }
 
   typename R::Bounded_side
-  bounded_side(const Point_3 &p) const
+  bounded_side(const Point_3_ &p) const
   {
     return R().bounded_side_3_object()(*this, p);
   }
 
   typename R::Oriented_side
-  oriented_side(const Point_3 &p) const
+  oriented_side(const Point_3_ &p) const
   {
     return R().oriented_side_3_object()(*this, p);
   }
 
   typename R::Boolean
-  has_on(const Point_3 &p) const
+  has_on(const Point_3_ &p) const
   {
     return R().has_on_3_object()(*this, p);
   }  
@@ -142,26 +143,26 @@ public:
   }
   
   typename R::Boolean
-  has_on_boundary(const Point_3 &p) const
+  has_on_boundary(const Point_3_ &p) const
   {
     return R().has_on_boundary_3_object()(*this, p);
     //return bounded_side(p) == ON_BOUNDARY;
   }
 
   typename R::Boolean
-  has_on_bounded_side(const Point_3 &p) const
+  has_on_bounded_side(const Point_3_ &p) const
   {
     return bounded_side(p) == ON_BOUNDED_SIDE;
   }
 
   typename R::Boolean
-  has_on_unbounded_side(const Point_3 &p) const
+  has_on_unbounded_side(const Point_3_ &p) const
   {
     return bounded_side(p) == ON_UNBOUNDED_SIDE;
   }
 
   typename R::Boolean
-  has_on_negative_side(const Point_3 &p) const
+  has_on_negative_side(const Point_3_ &p) const
   {
     if (orientation() == COUNTERCLOCKWISE)
       return has_on_unbounded_side(p);
@@ -169,7 +170,7 @@ public:
   }
 
   typename R::Boolean
-  has_on_positive_side(const Point_3 &p) const
+  has_on_positive_side(const Point_3_ &p) const
   {
     if (orientation() == COUNTERCLOCKWISE)
       return has_on_bounded_side(p);
