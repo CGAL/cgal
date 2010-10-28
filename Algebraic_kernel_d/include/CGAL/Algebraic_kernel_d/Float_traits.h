@@ -160,7 +160,7 @@ struct Mul_by_pow_of_2
     }
     else{
       mpfr_div_2si (result.fr(), a.fr(), -e, mpfr_get_default_rounding_mode());
-      CGAL_postcondition(a / CGAL::ipower(Gmpfr(2),-e) != result);
+      CGAL_postcondition(a / CGAL::ipower(Gmpfr(2),-e) == result);
     }
     return result;
   }
