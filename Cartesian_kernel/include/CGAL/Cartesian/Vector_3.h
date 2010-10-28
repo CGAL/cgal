@@ -33,7 +33,8 @@ namespace CGAL {
 template < class R_ >
 class VectorC3
 {
-  typedef typename R_::FT                   FT;
+// http://www.cgal.org/Members/Manual_test/LAST/Developers_internal_manual/Developers_manual/Chapter_code_format.html#sec:programming_conventions
+  typedef typename R_::FT                   FT_;
   typedef typename R_::Point_3              Point_3;
   typedef typename R_::Vector_3             Vector_3;
   typedef typename R_::Ray_3                Ray_3;
@@ -41,7 +42,7 @@ class VectorC3
   typedef typename R_::Line_3               Line_3;
   typedef typename R_::Direction_3          Direction_3;
 
-  typedef cpp0x::array<FT, 3>               Rep;
+  typedef cpp0x::array<FT_, 3>               Rep;
   typedef typename R_::template Handle<Rep>::type  Base;
 
   Base base;
@@ -69,41 +70,41 @@ public:
   explicit VectorC3(const Line_3 &l)
   { *this = R().construct_vector_3_object()(l); }
 
-  VectorC3(const FT &x, const FT &y, const FT &z)
+  VectorC3(const FT_ &x, const FT_ &y, const FT_ &z)
     : base(CGAL::make_array(x, y, z)) {}
 
-  VectorC3(const FT &x, const FT &y, const FT &z, const FT &w)
-    : base( w != FT(1) ? CGAL::make_array(x/w, y/w, z/w)
+  VectorC3(const FT_ &x, const FT_ &y, const FT_ &z, const FT_ &w)
+    : base( w != FT_(1) ? CGAL::make_array(x/w, y/w, z/w)
                        : CGAL::make_array(x, y, z) ) {}
 
-  const FT & x() const
+  const FT_ & x() const
   {
       return get(base)[0];
   }
-  const FT & y() const
+  const FT_ & y() const
   {
       return get(base)[1];
   }
-  const FT & z() const
+  const FT_ & z() const
   {
       return get(base)[2];
   }
 
-  const FT & hx() const
+  const FT_ & hx() const
   {
       return x();
   }
-  const FT & hy() const
+  const FT_ & hy() const
   {
       return y();
   }
-  const FT & hz() const
+  const FT_ & hz() const
   {
       return z();
   }
-  const FT & hw() const
+  const FT_ & hw() const
   {
-      return constant<FT, 1>();
+      return constant<FT_, 1>();
   }
 
   Cartesian_const_iterator cartesian_begin() const
@@ -116,9 +117,9 @@ public:
     return get(base).end();
   }
 
-  const FT & cartesian(int i) const;
-  const FT & operator[](int i) const;
-  const FT & homogeneous(int i) const;
+  const FT_ & cartesian(int i) const;
+  const FT_ & operator[](int i) const;
+  const FT_ & homogeneous(int i) const;
 
   int dimension() const
   {
@@ -128,8 +129,8 @@ public:
   Vector_3 operator+(const VectorC3 &w) const;
   Vector_3 operator-(const VectorC3 &w) const;
   Vector_3 operator-() const;
-  Vector_3 operator/(const FT &c) const;
-  FT squared_length() const;
+  Vector_3 operator/(const FT_ &c) const;
+  FT_ squared_length() const;
   Direction_3 direction() const;
 };
 
@@ -184,7 +185,7 @@ operator!=(const Null_vector &n, const VectorC3<R> &v)
 
 template < class R >
 inline
-const typename VectorC3<R>::FT &
+const typename VectorC3<R>::FT_ &
 VectorC3<R>::cartesian(int i) const
 {
   CGAL_kernel_precondition( (i>=0) & (i<3) );
@@ -195,14 +196,14 @@ VectorC3<R>::cartesian(int i) const
 
 template < class R >
 inline
-const typename VectorC3<R>::FT &
+const typename VectorC3<R>::FT_ &
 VectorC3<R>::operator[](int i) const
 {
   return cartesian(i);
 }
 
 template < class R >
-const typename VectorC3<R>::FT &
+const typename VectorC3<R>::FT_ &
 VectorC3<R>::homogeneous(int i) const
 {
   if (i==3) return hw();
@@ -236,7 +237,7 @@ VectorC3<R>::operator-() const
 
 template < class R >
 inline
-typename VectorC3<R>::FT
+typename VectorC3<R>::FT_
 VectorC3<R>::squared_length() const
 {
   return CGAL_NTS square(x()) + CGAL_NTS square(y()) + CGAL_NTS square(z());
@@ -246,7 +247,7 @@ template < class R >
 inline
 typename VectorC3<R>::Vector_3
 VectorC3<R>::
-operator/(const typename VectorC3<R>::FT &c) const
+operator/(const typename VectorC3<R>::FT_ &c) const
 {
   return VectorC3<R>(x()/c, y()/c, z()/c);
 }
