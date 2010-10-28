@@ -264,6 +264,33 @@ intersection(const Segment_3<R> &s,
 
 template <class R>
 Object
+intersection(const Line_3<R> &,
+             const Ray_3<R> &);
+             
+template <class R>
+Object
+intersection(const Ray_3<R> &r,
+             const Line_3<R> &l)
+{return intersection(l,r);}
+
+template <class R>
+Object
+intersection(const Ray_3<R> &,
+             const Segment_3<R> &);
+             
+template <class R>
+Object
+intersection(const Segment_3<R> &s,
+             const Ray_3<R> &r)
+{return intersection(r,s);}
+
+template <class R>
+Object
+intersection(const Ray_3<R> &,
+             const Ray_3<R> &);
+
+template <class R>
+Object
 intersection(const Sphere_3<R> &s1,
              const Sphere_3<R> &s2);
 
@@ -300,6 +327,33 @@ bool
 do_intersect(const Segment_3<R> &s,
              const Line_3<R> &l)
 {return do_intersect(l,s);}
+
+template <class R>
+bool
+do_intersect(const Line_3<R> &,
+             const Ray_3<R> &);
+             
+template <class R>
+bool
+do_intersect(const Ray_3<R> &r,
+             const Line_3<R> &l)
+{return do_intersect(l,r);}
+
+template <class R>
+bool
+do_intersect(const Ray_3<R> &,
+             const Segment_3<R> &);
+             
+template <class R>
+bool
+do_intersect(const Segment_3<R> &s,
+             const Ray_3<R> &r)
+{return do_intersect(r,s);}
+
+template <class R>
+bool
+do_intersect(const Ray_3<R> &r1,
+             const Ray_3<R> &r2);
 
 template <class R>
 bool

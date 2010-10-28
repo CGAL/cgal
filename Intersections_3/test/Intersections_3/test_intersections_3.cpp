@@ -321,6 +321,65 @@ struct Test {
     check_intersection     ( S(P(0,0,0),P(12,0,0)),L(P(0,1,0),P(0,-1,0)),P(0,0,0),true);
     check_intersection     ( S(P(-12,0,0),P(12,0,0)),L(P(0,1,0),P(0,-1,0)),P(0,0,0),true);
   }
+  
+  void R_L()
+  {
+    std::cout << "Ray - Line\n";
+    check_intersection     (L(P(0,0,0),P(1,0,0)),R(P(3,0,0),P(6,0,0)),R(P(3,0,0),P(6,0,0)));
+    check_no_intersection  (L(P(0,0,0),P(1,0,0)),R(P(3,0,1),P(6,0,1)));
+    check_intersection     (L(P(0,0,0),P(1,0,0)),R(P(3,0,0),P(6,4,0)),P(3,0,0));
+    check_intersection     (L(P(0,0,0),P(1,0,0)),R(P(0,-2,0),P(0,-1,0)),P(0,0,0));
+    check_no_intersection  (L(P(0,0,0),P(1,0,0)),R(P(0, 2,0),P(0,4,0)));
+    check_intersection     (L(P(0,0,0),P(1,0,0)),R(P(5,-2,0),P(5,-1,0)),P(5,0,0));
+    check_no_intersection  (L(P(0,0,0),P(1,0,0)),R(P(6, 2,0),P(5,4,0)));
+  }
+
+  void R_S()
+  {
+    std::cout << "Ray - Segment\n";
+    check_intersection     (S(P(-3,0,0),P(3,0,0)),R(P(0,-2,0),P(0,-1,0)),P(0,0,0));
+    check_intersection     (S(P(-3,0,0),P(3,0,0)),R(P(-3,-2,0),P(-3,-1,0)),P(-3,0,0));
+    check_intersection     (S(P(-3,0,0),P(3,0,0)),R(P(3,-2,0),P(3,-1,0)),P(3,0,0));
+    check_intersection     (S(P(-3,0,0),P(3,0,0)),R(P(0,0,0),P(0,-1,0)),P(0,0,0));
+    check_intersection     (S(P(-3,0,0),P(3,0,0)),R(P(-3,0,0),P(-3,-1,0)),P(-3,0,0));
+    check_intersection     (S(P(-3,0,0),P(3,0,0)),R(P(3,0,0),P(3,-1,0)),P(3,0,0));
+    check_intersection     (S(P(-3,0,0),P(3,0,0)),R(P(0,-2,0),P(0,0,0)),P(0,0,0));
+    check_intersection     (S(P(-3,0,0),P(3,0,0)),R(P(-3,-2,0),P(-3,0,0)),P(-3,0,0));
+    check_intersection     (S(P(-3,0,0),P(3,0,0)),R(P(3,-2,0),P(3,0,0)),P(3,0,0));
+    check_no_intersection  (S(P(-3,0,0),P(3,0,0)),R(P(0,-1,0),P(0,-2,0)));
+    check_no_intersection  (S(P(-3,0,0),P(3,0,0)),R(P(-3,-1,0),P(-3,-2,0)));
+    check_no_intersection  (S(P(-3,0,0),P(3,0,0)),R(P(3,-1,0),P(3,-2,0)));
+    check_intersection     (S(P(-3,0,0),P(3,0,0)),R(P(-4,0,0),P(-2,0,0)),S(P(-3,0,0),P(3,0,0)));
+    check_intersection     (S(P(-3,0,0),P(3,0,0)),R(P(-4,0,0),P(7,0,0)),S(P(-3,0,0),P(3,0,0)));
+    check_intersection     (S(P(-3,0,0),P(3,0,0)),R(P(-3,0,0),P(-2,0,0)),S(P(-3,0,0),P(3,0,0)));
+    check_intersection     (S(P(-3,0,0),P(3,0,0)),R(P(-3,0,0),P(7,0,0)),S(P(-3,0,0),P(3,0,0)));
+    check_intersection     (S(P(-3,0,0),P(3,0,0)),R(P(0,0,0),P(-2,0,0)),S(P(0,0,0),P(-3,0,0)));
+    check_intersection     (S(P(-3,0,0),P(3,0,0)),R(P(0,0,0),P(2,0,0)),S(P(0,0,0),P(3,0,0)));
+    check_intersection     (S(P(-3,0,0),P(3,0,0)),R(P(-3,0,0),P(-4,0,0)),P(-3,0,0));
+    check_intersection     (S(P(-3,0,0),P(3,0,0)),R(P(3,0,0),P(4,0,0)),P(3,0,0));
+    check_no_intersection  (S(P(-3,0,0),P(3,0,0)),R(P(4,0,0),P(5,0,0)));
+    check_no_intersection  (S(P(-3,0,0),P(3,0,0)),R(P(-5,0,0),P(-8,0,0)));
+  }
+
+  void R_R()
+  {
+    std::cout << "Ray - Ray\n";
+    check_intersection     (R(P(0,0,0),P(1,0,0)),R(P(0,0,0),P(-1,0,0)),P(0,0,0));
+    check_intersection     (R(P(0,0,0),P(1,0,0)),R(P(0,0,0),P(0,1,0)),P(0,0,0));
+    check_intersection     (R(P(0,0,0),P(1,0,0)),R(P(5,0,0),P(5,1,0)),P(5,0,0));
+    check_intersection     (R(P(0,0,0),P(1,0,0)),R(P(-1,0,0),P(3,0,0)),R(P(0,0,0),P(1,0,0)));
+    check_intersection     (R(P(0,0,0),P(1,0,0)),R(P(2,0,0),P(3,0,0)),R(P(2,0,0),P(6,0,0)));
+    check_intersection     (R(P(0,0,0),P(1,0,0)),R(P(2,0,0),P(-3,0,0)),S(P(0,0,0),P(2,0,0)),false);
+    check_intersection     (R(P(2,0,0),P(-3,0,0)),R(P(0,0,0),P(1,0,0)),S(P(2,0,0),P(0,0,0)),false);
+    check_no_intersection  (R(P(0,0,0),P(1,0,0)),R(P(-2,0,0),P(-3,0,0)));
+    check_intersection     (R(P(0,0,0),P(1,0,0)),R(P(1,0,0),P(1,1,0)),P(1,0,0));
+    check_intersection     (R(P(0,0,0),P(1,0,0)),R(P(1,-1,0),P(1,1,0)),P(1,0,0));
+    check_intersection     (R(P(0,0,0),P(1,0,0)),R(P(1,-2,0),P(1,-1,0)),P(1,0,0));
+    check_no_intersection  (R(P(0,0,0),P(1,0,0)),R(P(1,-1,0),P(1,-2,0)));
+    check_no_intersection  (R(P(0,0,0),P(1,0,0)),R(P(0,-1,0),P(0,-2,0)));
+    check_no_intersection  (R(P(0,0,0),P(1,0,0)),R(P(0,1,0),P(0,2,0)));
+  }
+  
 
   void run()
   {
@@ -336,6 +395,9 @@ struct Test {
     S_Cub();
     Pl_Tr();
     S_L();
+    R_L();
+    R_S();
+    R_R();
   }
 
 };
