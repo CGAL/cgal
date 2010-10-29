@@ -115,7 +115,7 @@ necessarily neighbors in the Delaunay triangulation of $\mathcal{P}
   surface_neighbors_3(const Dt& dt, const typename
   Dt::Geom_traits::Point_3& p, const typename
   Dt::Geom_traits::Vector_3& normal, OutputIterator out, typename
-  Dt::Face_handle start = typename Dt::Face_handle());} {computes
+  Dt::Cell_handle start = typename Dt::Cell_handle());} {computes
   the surface neighbor coordinates with respect to the points that are
   vertices of the Delaunay triangulation \ccc{dt}. The type \ccc{Dt}
   must be equivalent to \ccc{Delaunay_triangulation_3<Gt, Tds>}. The
@@ -130,8 +130,8 @@ necessarily neighbors in the Delaunay triangulation of $\mathcal{P}
   class ITraits> 
   OutputIterator surface_neighbors_3(const Dt& dt,
   const typename Dt::Geom_traits::Point_2& p, OutputIterator out,
-  const ITraits& traits, typename Dt::Face_handle start = typename
-  Dt::Face_handle());}
+  const ITraits& traits, typename Dt::Cell_handle start = typename
+  Dt::Cell_handle());}
 %
 {The same as above only that the parameter \ccc{traits} instantiates
   the geometric traits class. Its type \ccc{ITraits} must be
