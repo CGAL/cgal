@@ -104,7 +104,6 @@ namespace CGAL_MINIBALL_NAMESPACE {
   
     template<typename InputIterator>
     inline void insert(InputIterator begin,InputIterator end) {
-      std::size_t s = S.size();
       S.insert(S.end(), begin, end);
       is_up_to_date = false;
 #ifdef CGAL_MINIBALL_DEBUG
