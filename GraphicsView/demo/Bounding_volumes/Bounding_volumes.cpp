@@ -451,7 +451,7 @@ MainWindow::on_actionInsertRandomPoints_triggered()
 
   // wait cursor
   QApplication::setOverrideCursor(Qt::WaitCursor);
-  for(std::size_t i = 0; i < number_of_points; ++i){
+  for(int i = 0; i < number_of_points; ++i){
     Point_2 p = *pg++;
     mc.insert(p);
     me.insert(p);
