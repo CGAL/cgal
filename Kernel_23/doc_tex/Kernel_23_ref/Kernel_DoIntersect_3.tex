@@ -8,8 +8,7 @@ A model for this must provide
 \ccStyle{Type1} and \ccStyle{Type2} intersect or not}
 
 for all pairs \ccStyle{Type1} and \ccStyle{Type2}, where
-the type \ccStyle{Type1} is \ccStyle{Kernel::Plane_3} or
-\ccStyle{Kernel::Triangle_3} and 
+the types \ccStyle{Type1} and 
 \ccStyle{Type2} can be any of the following:
 \begin{itemize}\ccTexHtml{\itemsep0pt\topsep0pt\partopsep0pt\parskip0pt\parsep0pt}{}
 \item \ccStyle{Kernel::Plane_3}
@@ -17,21 +16,12 @@ the type \ccStyle{Type1} is \ccStyle{Kernel::Plane_3} or
 \item \ccStyle{Kernel::Ray_3}
 \item \ccStyle{Kernel::Segment_3}
 \item \ccStyle{Kernel::Triangle_3}
-\end{itemize}
-and also where \ccc{Type1} is \ccc{Bbox_3} and \ccc{Type2} can be any of the following:
-\begin{itemize}\ccTexHtml{\itemsep0pt\topsep0pt\partopsep0pt\parskip0pt\parsep0pt}{}
 \item \ccStyle{Bbox_3}
-\item \ccStyle{Kernel::Line_3}
-\item \ccStyle{Kernel::Ray_3}
-\item \ccStyle{Kernel::Segment_3}
 \end{itemize}
 and also for \ccc{Type1} and \ccc{Type2} of respective types
 \begin{itemize}\ccTexHtml{\itemsep0pt\topsep0pt\partopsep0pt\parskip0pt\parsep0pt}{}
 \item \ccStyle{Kernel::Triangle_3} and \ccc{Kernel::Tetrahedron_3}
-\item \ccStyle{Kernel::Line_3} and \ccStyle{Kernel::Line_3}
 \item \ccStyle{Kernel::Plane_3} and \ccStyle{Kernel::Sphere_3} (or the contrary)
-\item \ccStyle{Kernel::Segment_3} and \ccStyle{Kernel::Line_3} (or the contrary)
-\item \ccStyle{Kernel::Segment_3} and \ccStyle{Kernel::Segment_3}
 \item \ccStyle{Kernel::Sphere_3} and \ccStyle{Kernel::Sphere_3}.
 \end{itemize}
 
