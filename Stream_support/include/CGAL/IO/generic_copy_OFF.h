@@ -60,7 +60,7 @@ generic_copy_OFF( File_scanner_OFF& scanner,
 
     // read in all vertices
     double  x,  y,  z;  // Point coordinates.
-    int  i;
+    std::size_t  i;
     for ( i = 0; i < scanner.size_of_vertices(); i++) {
         scanner.scan_vertex( x, y, z);
         writer.write_vertex( x, y, z);
@@ -75,7 +75,7 @@ generic_copy_OFF( File_scanner_OFF& scanner,
         std::size_t no;
         scanner.scan_facet( no, i);
         writer.write_facet_begin( no);
-        for ( int j = 0; j < no; j++) {
+        for ( std::size_t j = 0; j < no; j++) {
           std::size_t index;
             scanner.scan_facet_vertex_index( index, i);
             writer.write_facet_vertex_index( index);
