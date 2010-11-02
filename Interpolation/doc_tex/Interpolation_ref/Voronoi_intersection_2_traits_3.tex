@@ -81,8 +81,11 @@
   \ccGlue
   \ccTypedef{ typedef Compare_second_projection_3<Point_2>             Compare_y_2;}{}
   
-  
-\ccOperations
+\ccCreation
+\ccCreationVariable{traits}  %% choose variable name
+\ccConstructor{Voronoi_intersection_2_traits_3(const K::Point_3& point=K::Point_3(), const K::Vector_3& normal=NULL_VECTOR);}
+{The plane associated to the traits class contains \cc{point} and has as normal vector \cc{normal}.}
+
 \ccAutoIndexingOff
 
 

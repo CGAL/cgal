@@ -129,7 +129,7 @@ necessarily neighbors in the Delaunay triangulation of $\mathcal{P}
 \ccFunction{template < class Dt, class OutputIterator,
   class ITraits> 
   OutputIterator surface_neighbors_3(const Dt& dt,
-  const typename Dt::Geom_traits::Point_2& p, OutputIterator out,
+  const typename ITraits::Point_2& p, OutputIterator out,
   const ITraits& traits, typename Dt::Cell_handle start = typename
   Dt::Cell_handle());}
 %
