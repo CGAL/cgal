@@ -80,7 +80,7 @@ been considered.
 \ccFunction{template <class OutputIterator, class InputIterator, class
   Kernel> std::pair< OutputIterator, bool >
   surface_neighbors_certified_3(InputIterator first,
-  InputIterator beyond, const typename Kernel::Point_2& p, const
+  InputIterator beyond, const typename ITraits::Point_2& p, const
   typename Kernel::FT& max_distance, OutputIterator out, const
   Kernel& kernel);} { The same as above except that this function
   takes the maximal distance from \ccc{p} to the points in the range
