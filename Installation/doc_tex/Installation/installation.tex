@@ -658,8 +658,13 @@ cmake -DCGAL_DIR=CGAL-3.7 -DCMAKE_BUILD_TYPE=Debug -DCMAKE_CXX_FLAGS=-O2 -DCGAL_
 \end{ccAdvanced}
 
 
+\subsection{Creating a cmake script for a program using \cgal}
 
-
+For relatively simple programs the Bourne-shell script \texttt{cgal\_create\_cmake\_script} can be used
+(a short description of this file is provided in Appendix \ref{sec:create_cgal_cmake_script}).
+More generally, within a cmake script, once CGAL has been found using \texttt{find\_package}
+the variable \texttt{CGAL\_USE\_FILE} is set to a compilation environment CMake file. Including
+this file within a cmake script sets up include paths and libraries to link with of CGAL and third party libraries.
 
 
 \section{Summary of Configuration Variables}
