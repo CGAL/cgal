@@ -103,6 +103,23 @@ if( NOT CGAL_MACROS_FILE_INCLUDED )
       endforeach()
     endif()
   endmacro()
+
+  function( CGAL_display_compiler_version )
+    message(STATUS "Compiler version:")
+    set(version "Unknown compiler. Cannot display its version")
+    foreach(flag "-V" "--version" "-v")
+      execute_process(COMMAND ${CMAKE_CXX_COMPILER} ${flag}
+        RESULT_VARIABLE ok
+        OUTPUT_VARIABLE out_version
+        ERROR_VARIABLE out_version
+        TIMEOUT 5)
+      if(ok EQUAL 0)
+        set(version "${out_version}")
+        break()
+      endif()
+    endforeach()
+    message(STATUS "${version}")
+  endfunction()
   
   macro( get_dependency_version LIB )
   

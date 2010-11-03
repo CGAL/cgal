@@ -97,6 +97,13 @@ cgal_setup_module_path()
 message( STATUS "CGAL_REFERENCE_CACHE_DIR=${CGAL_REFERENCE_CACHE_DIR}" )
 
 if ( RUNNING_CGAL_AUTO_TEST )
+  message(STATUS "Operating system:")
+  execute_process(COMMAND uname -a
+    TIMEOUT 5
+    OUTPUT_VARIABLE uname_a
+    ERROR_VARIABLE uname_a)
+  message(STATUS "${uname_a}")
+  CGAL_display_compiler_version()
   if ( NOT "${CGAL_REFERENCE_CACHE_DIR}" STREQUAL "" )
     if ( EXISTS ${CGAL_REFERENCE_CACHE_DIR} )
       if ( EXISTS ${CGAL_REFERENCE_CACHE_DIR}/CMakeCache.txt )
