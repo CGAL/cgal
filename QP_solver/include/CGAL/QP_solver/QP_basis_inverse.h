@@ -761,7 +761,7 @@ class QP_basis_inverse {
     
     // append row in Q if no allocated row available
     void ensure_physical_row (unsigned int row) {
-    	unsigned int rows = M.size();
+    	unsigned int rows = static_cast<unsigned int>(M.size());
 	CGAL_qpe_assertion(rows >= row);
 	if (rows == row) {
             M.push_back(Row(row+1, et0));

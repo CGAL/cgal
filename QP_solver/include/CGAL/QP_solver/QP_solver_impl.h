@@ -444,13 +444,13 @@ ratio_test_init__A_Cj( Value_iterator A_Cj_it, int j_, Tag_false)
       k -= qp_n;
       std::fill_n( A_Cj_it, C.size(), et0);
 
-      if ( k < slack_A.size()) {                      // slack variable
+      if ( k < static_cast<unsigned int>(slack_A.size())) {                      // slack variable
 
         A_Cj_it[ in_C[ slack_A[ k].first]] = ( slack_A[ k].second ? -et1
 						                      :  et1);
 
       } else {                                        // artificial variable
-        k -= slack_A.size();
+        k -= static_cast<unsigned int>(slack_A.size());
 
         if ( j_ != art_s_i) {                           // normal art.
 
@@ -559,11 +559,11 @@ ratio_test_1( )
     // diagnostic output
     CGAL_qpe_debug {
         if ( vout2.verbose()) {
-            for ( unsigned int k = 0; k < B_O.size(); ++k) {
+            for ( unsigned int k = 0; k < static_cast<unsigned int>(B_O.size()); ++k) {
                 print_ratio_1_original(k, x_B_O[k], q_x_O[k]);
             }     
             if ( has_ineq) {
-                for ( unsigned int k = 0; k < B_S.size(); ++k) {
+                for ( unsigned int k = 0; k < static_cast<unsigned int>(B_S.size()); ++k) {
                     /*
                     vout2.out() << "t_S_" << k << ": "
 				    << x_B_S[ k] << '/' << q_x_S[ k]
@@ -591,7 +591,7 @@ ratio_test_1( )
 	vout  << i;
 	CGAL_qpe_debug {
 	  if ( vout2.verbose()) {
-	    if ( ( i < qp_n) || ( i >= (int)( qp_n+slack_A.size()))) {
+	    if ( ( i < qp_n) || ( i >= static_cast<int>( qp_n+slack_A.size())) ) {
 	      vout2.out() << " (= B_O[ " << in_B[ i] << "]: "
 			  << variable_type( i) << ')';
 	    } else {
@@ -1095,13 +1095,13 @@ ratio_test_2( Tag_false)
 
     CGAL_qpe_debug {
 	if ( vout2.verbose()) {
-	    for ( unsigned int k = 0; k < B_O.size(); ++k) {
+	    for ( unsigned int k = 0; k < static_cast<unsigned int>(B_O.size()); ++k) {
 		vout2.out() << "mu_j_O_" << k << ": - "
 			    << x_B_O[ k] << '/' << q_x_O[ k]
 			    << ( ( q_i < et0) && ( i == B_O[ k]) ? " *" : "")
 			    << std::endl;
 	    }
-	    for ( unsigned int k = 0; k < B_S.size(); ++k) {
+	    for ( unsigned int k = 0; k < static_cast<unsigned int>(B_S.size()); ++k) {
 		vout2.out() << "mu_j_S_" << k << ": - "
 			    << x_B_S[ k] << '/' << q_x_S[ k]
 			    << ( ( q_i < et0) && ( i == B_S[ k]) ? " *" : "")
@@ -1491,7 +1491,7 @@ replace_variable_slack_original( )
 
     // enter slack variable [ in: j ]
     int  old_row = slack_A[ j-qp_n].first;
-    in_B  [ j] = B_S.size();
+    in_B  [ j] = static_cast<int>(B_S.size());
        B_S.push_back( j);
        S_B.push_back( old_row);
 
@@ -1564,7 +1564,7 @@ replace_variable_original_slack( )
 	  : -ET( *(qp_c+ j)));
     
 
-    in_B  [ j] = B_O.size();
+    in_B  [ j] = static_cast<int>(B_O.size());
        B_O.push_back( j);
 
     if ( is_phaseI && ( j >= qp_n)) ++art_basic;
@@ -1581,7 +1581,7 @@ replace_variable_original_slack( )
     int new_row = slack_A[ i-qp_n].first;
 
      b_C[ C.size()] = ET( *(qp_b+ new_row));
-    in_C[ new_row ] = C.size();
+    in_C[ new_row ] = static_cast<int>(C.size());
        C.push_back( new_row);
     // diagnostic output
     CGAL_qpe_debug {
@@ -1775,7 +1775,7 @@ enter_variable( )
 	minus_c_B[B_O.size()] = -ET(*(qp_c+ j)); // Note: B_O has always the
 					       // correct size.
 	
-	in_B[j] = B_O.size();
+	in_B[j] = static_cast<int>(B_O.size());
 	B_O.push_back(j);
 
 	// diagnostic output
@@ -1794,7 +1794,7 @@ enter_variable( )
         enter_variable_slack_upd_w_r(Is_nonnegative());
 
 	// enter slack variable [ in: j ]:
-	in_B  [ j] = B_S.size();
+	in_B  [ j] = static_cast<int>(B_S.size());
 	   B_S.push_back( j);
 	   S_B.push_back( slack_A[ j-qp_n].first);
 
@@ -1822,7 +1822,7 @@ enter_variable( )
     }
 
     // variable entered:
-    j -= in_B.size();
+    j -= static_cast<int>(in_B.size());
 }
 
 // update of the vectors w and r for U_1 with upper bounding, note that we 
@@ -1933,7 +1933,7 @@ leave_variable( )
 	A_Cj[ C.size()] = ( j < qp_n ? ET( *((*(qp_A + j))+ new_row)) : et0);
 
 	 b_C[ C.size()] = ET( *(qp_b+ new_row));
-	in_C[ new_row ] = C.size();
+	in_C[ new_row ] = static_cast<int>(C.size());
 	   C.push_back( new_row);
 
 	// diagnostic output
@@ -2028,7 +2028,7 @@ z_replace_variable( )
 
     // pivot step not yet completely done
     i = -1;
-    j -= in_B.size();
+    j -= static_cast<int>(in_B.size());
     is_RTS_transition = true;
 }
 
@@ -2048,8 +2048,8 @@ void QP_solver<Q, ET, Tags>::
 z_replace_variable( Tag_false)
 {
     // determine type of variables
-    bool  enter_original = ( (j < qp_n) || (j >= (int)( qp_n+slack_A.size())));
-    bool  leave_original = ( (i < qp_n) || (i >= (int)( qp_n+slack_A.size())));
+    bool  enter_original = ( (j < qp_n) || (j >= static_cast<int>( qp_n+slack_A.size())));
+    bool  leave_original = ( (i < qp_n) || (i >= static_cast<int>( qp_n+slack_A.size())));
 
     // update basis and basis inverse
     if ( leave_original) {
@@ -2154,7 +2154,7 @@ z_replace_variable_original_by_slack( )
 
     // enter slack variable [ in: j ]
     int  old_row = slack_A[ j-qp_n].first;
-    in_B  [ j] = B_S.size();
+    in_B  [ j] = static_cast<int>(B_S.size());
        B_S.push_back( j);
        S_B.push_back( old_row);
 
@@ -2251,7 +2251,7 @@ z_replace_variable_slack_by_original( )
     minus_c_B[ B_O.size()] = -ET( *(qp_c+ j));
     
 
-    in_B  [ j] = B_O.size();
+    in_B  [ j] = static_cast<int>(B_O.size());
        B_O.push_back( j);
 
 
@@ -2267,7 +2267,7 @@ z_replace_variable_slack_by_original( )
     int new_row = slack_A[ i-qp_n].first;
 
      b_C[ C.size()] = ET( *(qp_b+ new_row));
-    in_C[ new_row ] = C.size();
+    in_C[ new_row ] = static_cast<int>(C.size());
        C.push_back( new_row);
     
     // diagnostic output
@@ -2824,8 +2824,8 @@ check_basis_inverse( Tag_true)
 	vout4 << std::endl;
     }
     bool res = true;
-    unsigned int    row, rows =   C.size();
-    unsigned int    col, cols = B_O.size();
+    unsigned int    row, rows =   static_cast<unsigned int>(C.size());
+    unsigned int    col, cols = static_cast<unsigned int>(B_O.size());
     Index_iterator  i_it = B_O.begin();
     Value_iterator  q_it;
 
@@ -2870,8 +2870,8 @@ bool  QP_solver<Q, ET, Tags>::
 check_basis_inverse( Tag_false)
 {
     bool res = true;
-    unsigned int    row, rows =   C.size();
-    unsigned int    col, cols = B_O.size();
+    unsigned int    row, rows =   static_cast<unsigned int>(C.size());
+    unsigned int    col, cols = static_cast<unsigned int>(B_O.size());
     Value_iterator  v_it;
     Index_iterator  i_it;
 
@@ -2887,11 +2887,11 @@ check_basis_inverse( Tag_false)
 	v_it = tmp_x.begin();
 	for ( i_it = B_O.begin(); i_it != B_O.end(); ++i_it, ++v_it) {
 	    *v_it = ( *i_it < qp_n ? *((*(qp_A+ *i_it))+ row) :  // original
-		      art_A[ *i_it - qp_n].first != (int)row ? et0 :// artific.
+		      art_A[ *i_it - qp_n].first != static_cast<int>(row) ? et0 :// artific.
 		      ( art_A[ *i_it - qp_n].second ? -et1 : et1));
 	}
 // 	if ( art_s_i >= 0) {              // special artificial variable?
-// 	  CGAL_qpe_assertion ((int)in_B.size() == art_s_i+1);  
+// 	  CGAL_qpe_assertion (static_cast<int>(in_B.size()) == art_s_i+1);  
 // 	  // the special artificial variable has never been
 // 	  // removed from the basis, consider it
 // 	  tmp_x[ in_B[ art_s_i]] = art_s[ row];
@@ -3078,7 +3078,7 @@ print_program( ) const
 	// slack variables
 	if ( ! slack_A.empty()) {
 	    vout4.out() << " |  ";
-	    for ( i = 0; i < (int)slack_A.size(); ++i) {
+	    for ( i = 0; i < static_cast<int>(slack_A.size()); ++i) {
 		vout4.out() << ( slack_A[ i].first != row ? " 0" :
 		               ( slack_A[ i].second ? "-1" : "+1")) << ' ';
 	    }
@@ -3087,8 +3087,8 @@ print_program( ) const
 	// artificial variables
 	if ( ! art_A.empty()) {
 	    vout4.out() << " |  ";
-	    for ( i = 0; i < (int)art_A.size(); ++i) {
-	      if (art_s_i == i+qp_n+(int)slack_A.size())
+	    for ( i = 0; i < static_cast<int>(art_A.size()); ++i) {
+	      if (art_s_i == i+qp_n+static_cast<int>(slack_A.size()))
 		vout4.out() << " * ";          // for special artificial column
 	      vout4.out() << ( art_A[ i].first != row ? " 0" :
 		             ( art_A[ i].second ? "-1" : "+1")) << ' ';
@@ -3371,7 +3371,7 @@ const char*  QP_solver<Q, ET, Tags>::
 variable_type( int k) const
 {
     return ( k <        qp_n                 ? "original"  :
-	   ( k < (int)( qp_n+slack_A.size()) ? "slack"     :
+	   ( k < static_cast<int>( qp_n+slack_A.size()) ? "slack"     :
 	                                       "artificial"));
 }
 
@@ -3379,7 +3379,7 @@ template < typename Q, typename ET, typename Tags >
 bool QP_solver<Q, ET, Tags>::
 is_artificial(int k) const
 {
-    return (k >= (int)(qp_n+slack_A.size())); 
+    return (k >= static_cast<int>(qp_n+slack_A.size())); 
 }
 
 template < typename Q, typename ET, typename Tags > 

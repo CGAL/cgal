@@ -1427,14 +1427,14 @@ private:
   {
     j -= qp_n;
 
-    if ( j < (int)slack_A.size()) {                 // slack variable
+    if ( j < static_cast<int>(slack_A.size())) {                 // slack variable
 
       // A_Cj^T * lambda_C
       mu_j = lambda_it[ in_C[ slack_A[ j].first]];
       if ( slack_A[ j].second) mu_j = -mu_j;
 
     } else {                                        // artificial variable
-      j -= slack_A.size();
+      j -= static_cast<int>(slack_A.size());
 
       // A_Cj^T * lambda_C
       mu_j = lambda_it[ in_C[ art_A[ j].first]];
@@ -1830,8 +1830,8 @@ void  QP_solver<Q, ET, Tags>::
 replace_variable( Tag_false)
 {
   // determine type of variables
-  bool  enter_original = ( (j < qp_n) || (j >= (int)( qp_n+slack_A.size())));
-  bool  leave_original = ( (i < qp_n) || (i >= (int)( qp_n+slack_A.size())));
+  bool  enter_original = ( (j < qp_n) || (j >= static_cast<int>( qp_n+slack_A.size())));
+  bool  leave_original = ( (i < qp_n) || (i >= static_cast<int>( qp_n+slack_A.size())));
 
   // update basis & basis inverse
   if ( leave_original) {
