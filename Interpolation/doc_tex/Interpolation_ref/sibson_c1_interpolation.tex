@@ -83,7 +83,9 @@ function gradient given a point.
   sibson_c1_interpolation_square(ForwardIterator first,
   ForwardIterator beyond, const typename
   std::iterator_traits<ForwardIterator>::value_type::second_type&
-  norm, Functor function_value, GradFunctor function_gradient,const
+  norm,  const typename
+  std::iterator_traits<ForwardIterator>::value_type::first_type& p,
+  Functor function_value, GradFunctor function_gradient,const
   Traits& traits);} {The same as above except that no square root
   operation is needed for \ccc{FT}.}
 

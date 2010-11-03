@@ -26,7 +26,9 @@ associating a point to a (non-normalized) barycentric coordinate.  See
   farin_c1_interpolation(RandomAccessIterator first,
   RandomAccessIterator beyond, const typename
   std::iterator_traits<RandomAccessIterator>::value_type::second_type&
-  norm, Functor function_value, GradFunctor function_gradient, const
+  norm, const typename
+  std::iterator_traits<ForwardIterator>::value_type::first_type& p,
+  Functor function_value, GradFunctor function_gradient, const
   Traits& traits);} {generates the interpolated function value
   computed by Farin's interpolant \cite{f-sodt-90}.  See also
   \ccc{sibson_c1_interpolation}.  \ccPrecond{\ccc{norm} $\neq 0$.

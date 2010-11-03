@@ -19,7 +19,7 @@ values which must be provided via a functor.
 \ccInclude{CGAL/interpolation_functions.h}
 
 \ccFunction{template < class ForwardIterator, class Functor> typename
-  Functor::result_type linear_interpolation(ForwardIterator first,
+  Functor::result_type::first_type linear_interpolation(ForwardIterator first,
   ForwardIterator beyond, const typename
   std::iterator_traits<ForwardIterator>::value_type::second_type&
   norm, Functor function_values);}{\ccc{ForwardIterator::value_type}
