@@ -36,13 +36,11 @@ static CGAL::Random my_rnd(346); // some seed
 #define ASSERT_IS_NULL_FUNCTOR(T)                                       \
   BOOST_STATIC_ASSERT((boost::is_same<T,CGAL::Null_functor >::value))   
  
- 
-
 
 
 template <class Polynomial_d_>
 Polynomial_d_
-generate_sparse_random_polynomial(int max_degree = 10){
+generate_sparse_random_polynomial_(int max_degree = 10){
   typedef CGAL::Polynomial_traits_d<Polynomial_d_> PT;
   CGAL_SNAP_CGALi_TRAITS_D(PT);
   typedef typename PT::Construct_polynomial Constructor;
@@ -72,6 +70,19 @@ generate_sparse_random_polynomial(int max_degree = 10){
   return result;
 }
 
+// generates a random polynomial that contains at least one coefficient 
+// that effects the outer most variable. 
+// Several test in this file rely on this fact.
+// The other case is usually handled as a special case. 
+template <class Polynomial_d_>
+Polynomial_d_
+generate_sparse_random_polynomial(int max_degree = 10){
+  Polynomial_d_ p; 
+  while(p.degree()==0){
+    p = generate_sparse_random_polynomial_<Polynomial_d_>(max_degree);
+  }
+  return p; 
+}
 
 template <class Polynomial_traits_d> class Construct_test_polynomial {
   CGAL_SNAP_CGALi_TRAITS_D(Polynomial_traits_d)
