@@ -157,7 +157,7 @@ bool may_have_multiple_factor_(const Polynomial<NT>& P, CGAL::Tag_true ){
     // Check modular image to be square free
     typename CGAL::Polynomial_traits_d< Polynomial_mt >::Is_square_free 
         is_square_free;
-        
+
     return( !is_square_free( m ) ); 
 }
 
@@ -168,7 +168,7 @@ bool may_have_multiple_factor_( const Polynomial<NT>&, CGAL::Tag_false ) {
 
 template< class NT > inline
 bool may_have_multiple_factor( const Polynomial<NT>& P ) {
-    if(P.degree() <= 1)
+  if(CGAL::total_degree(P) <= 1)
         return false;
 
     // Modular filter
