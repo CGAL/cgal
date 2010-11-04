@@ -1048,7 +1048,10 @@ Triangulation_2/demo/Triangulation_2/constrained_delaunay_triangulation_2
 Triangulation_2/demo/Triangulation_2/delaunay_triangulation_2
 Triangulation_2/demo/Triangulation_2/regular_triangulation_2
 Triangulation_2/test/Triangulation_2/*.exe
+Triangulation_2/test/Triangulation_2/CMakeLists.txt
+Triangulation_2/test/Triangulation_2/Makefile
 Triangulation_2/test/Triangulation_2/T??.triangulation
+Triangulation_2/test/Triangulation_2/cgal_test_with_cmake
 Triangulation_2/test/Triangulation_2/file_tds*
 Triangulation_2/test/Triangulation_2/makefile
 Triangulation_2/test/Triangulation_2/test_const_del_triangulation_2
