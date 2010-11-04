@@ -68,7 +68,9 @@ Algebraic_foundations/doc_tex/Algebraic_foundations/interoperability.tex -text
 Algebraic_foundations/doc_tex/Algebraic_foundations/real_embeddable.tex -text
 Algebraic_foundations/doc_tex/Algebraic_foundations/real_number_types.tex -text
 Algebraic_foundations/doc_tex/Algebraic_foundations_ref/AlgebraicStructureTraits_Divides.tex -text
+Algebraic_foundations/doc_tex/Algebraic_foundations_ref/AlgebraicStructureTraits_Inverse.tex -text
 Algebraic_foundations/doc_tex/Algebraic_foundations_ref/Fraction.tex -text
+Algebraic_foundations/doc_tex/Algebraic_foundations_ref/inverse.tex -text
 Algebraic_foundations/examples/Algebraic_foundations/algebraic_structure_dispatch.cpp -text
 Algebraic_foundations/examples/Algebraic_foundations/fraction_traits.cpp -text
 Algebraic_foundations/examples/Algebraic_foundations/implicit_interoperable_dispatch.cpp -text

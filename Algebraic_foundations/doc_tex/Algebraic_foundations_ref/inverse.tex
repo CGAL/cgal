@@ -1,0 +1,22 @@
+\begin{ccRefFunction}{inverse}
+
+\ccDefinition
+
+The function \ccRefName\ returns the inverse element with respect to multiplication.
+
+The function is guaranteed to be well defined in case the argument type 
+is a model of the \ccc{Field} concept. 
+
+\ccInclude{CGAL/number_utils.h}
+
+\ccFunction{template <class NT> NT inverse(const NT& x);}
+{\ccPrecond $x \neq 0$}
+
+
+
+\ccSeeAlso
+
+\ccRefConceptPage{Field}\\
+\ccRefConceptPage{AlgebraicStructureTraits::Inverse}\\
+
+\end{ccRefFunction}

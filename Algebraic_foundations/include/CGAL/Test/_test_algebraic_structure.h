@@ -358,6 +358,11 @@ void test_algebraic_structure_intern( const CGAL::Field_tag& ) {
     assert(!ie || tmp == AS(5)/AS(2));
     assert(CGAL_NTS divides(AS(5),AS(2),tmp));
     assert(!ie || tmp == AS(2)/AS(5));
+
+    typename AST::Inverse inverse;
+    assert(AS(1)/AS(2) == inverse(AS(2)));
+    assert(AS(1)/AS(2) == CGAL::inverse(AS(2)));
+    
     
 }
 

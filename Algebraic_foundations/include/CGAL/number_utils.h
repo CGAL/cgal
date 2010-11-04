@@ -74,6 +74,16 @@ square( const AS& x ) {
     typename Algebraic_structure_traits< AS >::Square square;
     return square( x );
 }
+
+
+template< class AS >
+inline
+typename Algebraic_structure_traits< AS >::Inverse::result_type
+inverse( const AS& x ) {
+    typename Algebraic_structure_traits< AS >::Inverse inverse;
+    return inverse( x );
+}
+
 template< class AS >
 inline 
 typename Algebraic_structure_traits<AS>::Is_one::result_type

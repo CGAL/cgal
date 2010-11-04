@@ -85,6 +85,7 @@ class Algebraic_structure_traits  {
     typedef Null_functor Kth_root;
     typedef Null_functor Root_of; 
     typedef Null_functor Divides; 
+    typedef Null_functor Inverse; 
 };
 
 // The algebraic structure traits base class
@@ -462,6 +463,17 @@ class Algebraic_structure_traits_base< Type_, Field_tag >
         }
       CGAL_IMPLICIT_INTEROPERABLE_BINARY_OPERATOR( Type )
     };
+  
+  // maps to \c 1/x by default.
+  class Inverse 
+    : public std::unary_function< Type, Type > { 
+  public:
+    Type operator()( const Type& x ) const { 
+      static const Type& one = Type(1);
+      return one/x;
+    }
+  };
+  
 
   // Default implementation of Divides functor for Field: 
   // returns always true
