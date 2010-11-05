@@ -2550,7 +2550,7 @@ public:
             
             int i, n = cpa_2.number_of_status_lines_with_event();
 	    for(i = 0; i < n; i++) {
-	      _m_kernel->solve_at_x_2_object()(cpa_2,i,res);
+              _m_kernel->solve_at_x_2_object()(cpa_2,i,res);
             }
             return res;
         }
