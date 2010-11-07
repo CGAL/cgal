@@ -194,9 +194,6 @@ public:
         typename CGAL::Polynomial_traits_d<Coefficient>
         ::template Rebind<Bigfloat_interval,1>::Other::Type
         _convert_polynomial_to_bfi(Coefficient f) const {
-
-            typename
-                CGAL::Polynomial_traits_d<Coefficient>::Degree degree;
             typename
                 CGAL::Polynomial_traits_d<Coefficient>::Get_coefficient coeff;
             std::vector<Bigfloat_interval> coeffs(CGAL::degree(f)+1);
