@@ -627,7 +627,7 @@ public:
             NT1 q1,r1;
             NT2 q2,r2;
             typename AST1::Div_mod()(a.n1(),b.n1(),q1,r1);
-            typename AST1::Div_mod()(a.n2(),b.n2(),q2,r2);
+            typename AST2::Div_mod()(a.n2(),b.n2(),q2,r2);
             q = Type(q1,q2);
             r = Type(r1,r2);
         }
@@ -640,7 +640,24 @@ class NTC_AST_base
       < Number_type_checker< NT1, NT2, Cmp> , Field_tag >
       :public  NTC_AST_base
       < Number_type_checker< NT1, NT2, Cmp> , Integral_domain_tag >
-{};
+{
+private:
+  typedef Algebraic_structure_traits<NT1> AST1;
+  typedef Algebraic_structure_traits<NT2> AST2;
+  typedef Number_type_checker<NT1, NT2, Cmp> Type;
+public:  
+  class Inverse
+    : public std::unary_function< Type, Type > {
+  public:
+    Type operator()( const Type& a ) const {
+      NT1 r1 = typename AST1::Inverse()(a.n1());
+      NT2 r2 = typename AST2::Inverse()(a.n2());
+      return Type(r1,r2); 
+    }
+  };
+
+
+};
 
 template < typename NT1, typename NT2, typename Cmp >
 class NTC_AST_base

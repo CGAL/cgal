@@ -165,6 +165,15 @@ class Sqrt_extension_algebraic_structure_traits_base< Type,
           return( x == Type(0) ? Type(1) : x );
         }
     };
+  class Inverse
+    : public std::unary_function< Type, Type > {
+  public:
+    Type operator()( const Type& x ) const {
+      return Type(1)/x ;
+    }
+  };
+  
+  
 };
 
 template< class Type >
