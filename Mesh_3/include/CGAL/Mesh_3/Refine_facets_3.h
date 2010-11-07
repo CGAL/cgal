@@ -35,6 +35,8 @@
 #include <CGAL/tuple.h>
 #include <sstream>
 
+#include <CGAL/Kernel/global_functions_3.h>
+
 namespace CGAL {
 
 namespace Mesh_3 {

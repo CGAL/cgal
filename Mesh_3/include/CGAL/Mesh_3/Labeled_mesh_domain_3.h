@@ -35,6 +35,7 @@
 #include <boost/optional.hpp>
 #include <CGAL/tuple.h>
 #include <CGAL/Origin.h>
+#include <CGAL/intersections.h>
 
 namespace CGAL {
 
