@@ -856,6 +856,21 @@ struct Div_selector< NT, Null_functor > {
 };
 
 template< class NT, class Functor >
+struct Inverse_selector {
+  struct Inverse  {
+    typedef NT result_type;
+    NT operator()( const NT& x ) const {
+      return NT( 1 ) / x ;
+    }
+  };
+};
+
+template< class NT >
+struct Inverse_selector< NT, Null_functor > {
+  typedef Null_functor Inverse;
+};
+
+template< class NT, class Functor >
 struct Mod_selector {
   struct Mod : public std::binary_function<NT, NT, NT > {
     NT operator()( const NT& x, const NT& y ) const {
@@ -963,6 +978,9 @@ public:
 
     typedef typename INTERN_LAZY_EXACT_NT::Div_mod_selector
     <Lazy_exact_nt<ET>, typename AST_ET::Div_mod > ::Div_mod Div_mod;
+    
+    typedef typename INTERN_LAZY_EXACT_NT::Inverse_selector
+    <Lazy_exact_nt<ET>, typename AST_ET::Inverse > ::Inverse Inverse;    
 };
 
 
