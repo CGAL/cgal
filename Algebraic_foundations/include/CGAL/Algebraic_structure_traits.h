@@ -125,7 +125,8 @@ class Algebraic_structure_traits_base< Type_, Null_tag > {
     typedef Null_functor Sqrt;
     typedef Null_functor Kth_root;
     typedef Null_functor Root_of; 
-    typedef Null_functor Divides; 
+    typedef Null_functor Divides;
+    typedef Null_functor Inverse;
 };
 
 //! The template specialization that is used if the number type is
@@ -469,6 +470,7 @@ class Algebraic_structure_traits_base< Type_, Field_tag >
     : public std::unary_function< Type, Type > { 
   public:
     Type operator()( const Type& x ) const { 
+      //warning THIS IS NOT THREAD SAFE
       static const Type& one = Type(1);
       return one/x;
     }
