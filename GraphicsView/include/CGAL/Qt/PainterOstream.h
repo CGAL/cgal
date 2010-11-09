@@ -98,6 +98,11 @@ public:
     return *this;
   }
 
+  PainterOstream& operator<<(const Bbox_2& bb)
+  {
+    qp->drawRect(convert(bb));
+    return *this;
+  }
 
   PainterOstream& operator<<(const Circle_2& c)
   {
