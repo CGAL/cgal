@@ -470,9 +470,7 @@ class Algebraic_structure_traits_base< Type_, Field_tag >
     : public std::unary_function< Type, Type > { 
   public:
     Type operator()( const Type& x ) const { 
-      //warning THIS IS NOT THREAD SAFE
-      static const Type& one = Type(1);
-      return one/x;
+      return Type(1)/x;
     }
   };
   
