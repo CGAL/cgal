@@ -99,9 +99,10 @@ public:
                            Status_line_iterator /* iter */,
                            bool /* flag */)
   {
-    if ((m_includeEndPoints ||
-         event->is_intersection() ||
-         event->is_weak_intersection()) && event->is_closed())
+    if ( ( event->is_intersection() ||
+           ( m_includeEndPoints && event->is_weak_intersection() ) )
+        &&
+          event->is_closed() )
     {
       *m_out = event->point();
       ++m_out;
