@@ -212,10 +212,8 @@ private:
     emit(changed());
   }
 
-protected slots:
-void open(QString);
-
 public slots:
+  void open(QString);
 
   void processInput(CGAL::Object o);
 
@@ -704,5 +702,12 @@ int main(int argc, char **argv)
 
   MainWindow mainWindow;
   mainWindow.show();
+
+  QStringList args = app.arguments();
+  args.removeAt(0);
+  Q_FOREACH(QString filename, args) {
+    mainWindow.open(filename);
+  }
+
   return app.exec();
 }
