@@ -11,28 +11,44 @@
 #include <fstream>
 #include <CGAL/Timer.h>
 
+//bbox filtering
+#include <CGAL/Filtered_bbox_circular_kernel_2.h>
+
 typedef CGAL::Gmpq                                              Number_type;
+typedef CGAL::Lazy_exact_nt<CGAL::Gmpq>                         Lazy_nt;
 typedef CGAL::Cartesian<Number_type>                            Kernel;        
+typedef CGAL::Cartesian<Lazy_nt>                                Kernel_with_LK;
 typedef CGAL::Lazy_kernel< Kernel >                             Lazy_Kernel;
 typedef CGAL::Arr_circle_segment_traits_2<Lazy_Kernel>          Lazy_Traits;
 typedef CGAL::Arr_circle_segment_traits_2<Kernel>               Traits;
+typedef CGAL::Arr_circle_segment_traits_2<Kernel_with_LK>       Traits_with_LK;
 
-typedef CGAL::Cartesian<CGAL::Gmpq>                             K_exact;
-typedef CGAL::Algebraic_kernel_for_circles_2_2<CGAL::Gmpq>      AK_exact;
-typedef CGAL::Circular_kernel_2<K_exact,AK_exact>               CK_exact;
+typedef CGAL::Algebraic_kernel_for_circles_2_2<Number_type>     AK_exact;
+typedef CGAL::Circular_kernel_2<Kernel,AK_exact>                CK_exact;
 
 typedef CGAL::Interval_nt_advanced                              ANT;
 typedef CGAL::Cartesian<ANT>                                    ALK;
 typedef CGAL::Algebraic_kernel_for_circles_2_2<ANT>             AAK;
 typedef CGAL::Circular_kernel_2 <ALK,AAK>                       ACK;
-typedef CGAL::Lazy_circular_kernel_2<CK_exact,ACK>              CK;
+typedef CGAL::Lazy_circular_kernel_2<CK_exact,ACK>              Lazy_CK;
 
-typedef CGAL::Arr_circular_line_arc_traits_2<CK>                Lazy_Traits_with_CK;
+typedef CGAL::Algebraic_kernel_for_circles_2_2<Lazy_nt>         AK_lazy;
+typedef CGAL::Circular_kernel_2<Kernel_with_LK,AK_lazy>         CK_with_LK;
+
+
+typedef CGAL::Arr_circular_line_arc_traits_2<Lazy_CK>           Lazy_Traits_with_CK;
 typedef CGAL::Arr_circular_line_arc_traits_2<CK_exact>          Traits_with_CK;
+typedef CGAL::Arr_circular_line_arc_traits_2<CK_with_LK>        Traits_with_CK_with_LK;
+
+typedef CGAL::Filtered_bbox_circular_kernel_2<CK_exact>         Fbb_CK_exact;
+typedef CGAL::Arr_circular_line_arc_traits_2<Fbb_CK_exact>      Traits_Fbb_CK_exact;
+
+typedef CGAL::Filtered_bbox_circular_kernel_2<Lazy_CK>          Fbb_Lazy_CK;
+typedef CGAL::Arr_circular_line_arc_traits_2<Fbb_Lazy_CK>       Traits_Fbb_Lazy_CK;
 
 template <class CK>
 struct Get_exact{
-  typename CK::EK::Root_of_2 operator()(const typename CK::Root_of_2& t) const {
+  typename CK::Root_of_2::Exact_type operator()(const typename CK::Root_of_2& t) const {
     return CGAL::exact(t);
   }
 };
@@ -116,10 +132,9 @@ struct Benchmark
       Arrangement_2    arr;
       insert (arr, curves.begin(), curves.end());
       // Print the size of the arrangement.
-      std::cout << "The arrangement size:" << std::endl
-                << "   V = " << arr.number_of_vertices()
-                << ",  E = " << arr.number_of_edges() 
-                << ",  F = " << arr.number_of_faces() << std::endl;
+      std::cout << "(" << arr.number_of_vertices()
+                << "," << arr.number_of_edges() 
+                << "," << arr.number_of_faces() << ")" << std::endl;  
       time.stop();
       std::cout << "Time for Arr_circle_segment_traits_2 " <<  time.time() << "\n";
     }
@@ -128,25 +143,27 @@ struct Benchmark
       CGAL::Timer time; time.start();
       Arrangement_2_with_CK      ck_arr;
       insert (ck_arr, ac.begin(), ac.end(),boost::false_type());
-      std::cout << "The arrangement size:" << std::endl
-                << "   V = " << ck_arr.number_of_vertices()
-                << ",  E = " << ck_arr.number_of_edges() 
-                << ",  F = " << ck_arr.number_of_faces() << std::endl;  
+      std::cout << "(" << ck_arr.number_of_vertices()
+                << "," << ck_arr.number_of_edges() 
+                << "," << ck_arr.number_of_faces() << ")" << std::endl;  
       time.stop();
       std::cout << "Time for Arr_circular_line_arc_traits_2 " <<  time.time() << "\n";
     }
   }
   
 };
-  
+
 int main( int argc, char* argv[] )
 {
-  std::cout << "Running with Lazy\n";
+  std::cout << "Running with Lazy_kernel\n";
   Benchmark<Lazy_Traits,Lazy_Traits_with_CK> bench_lazy;
   bench_lazy.run(argv[1]);
   std::cout << "Running with Exact\n";
   Benchmark<Traits,Traits_with_CK> bench;
   bench.run(argv[1]);
+  std::cout << "Running with Lazy_exact_nt\n";
+  Benchmark<Traits_with_LK,Traits_with_CK_with_LK> bench_with_LK;
+  bench_with_LK.run(argv[1]);
   return 0;
 }
 
