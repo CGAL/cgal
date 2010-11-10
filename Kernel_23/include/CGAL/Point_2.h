@@ -39,7 +39,6 @@ class Point_2 : public R_::Kernel_base::Point_2
 {
   typedef typename R_::RT                    RT;
   typedef typename R_::FT                    FT;
-  typedef typename R_::Vector_2              Vector_2;
   typedef typename R_::Aff_transformation_2  Aff_transformation_2;
   typedef typename R_::Kernel_base::Point_2  RPoint_2;
 
