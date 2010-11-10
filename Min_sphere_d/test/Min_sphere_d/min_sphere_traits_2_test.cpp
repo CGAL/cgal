@@ -24,9 +24,6 @@
 //
 // implementation: dD Smallest Enclosing Sphere
 // ============================================================================
-// hack to overcome internal compiler error of egcs
-#define FT_(x) FT(x,1)
-#define RT_(x) RT(x,1)
 
 // hack to overcome external linkage conflict warning in MIPS
 #define __SGI_STL_INTERNAL_RELOPS

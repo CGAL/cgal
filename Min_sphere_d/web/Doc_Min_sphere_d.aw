@@ -2388,10 +2388,6 @@ it with the written one.
 Here is the complete test program.
 
 @macro <Min_sphere_d test program> many = @begin
-    // hack to overcome internal compiler error of egcs
-    #define FT_(x) FT(x,1)
-    #define RT_(x) RT(x,1)
-
     // hack to overcome external linkage conflict warning in MIPS
     #define __SGI_STL_INTERNAL_RELOPS
 
@@ -2439,10 +2435,6 @@ Here we basically aim at code coverage for the traits class -- the
 @prg{Min_sphere_d} functionality has extensively been tested above.
 
 @macro <Min_sphere_d_traits_2 test program> many = @begin
-    // hack to overcome internal compiler error of egcs
-    #define FT_(x) FT(x,1)
-    #define RT_(x) RT(x,1)
-
     // hack to overcome external linkage conflict warning in MIPS
     #define __SGI_STL_INTERNAL_RELOPS
 
@@ -2577,10 +2569,6 @@ Here we basically aim at code coverage for the traits class -- the
 @prg{Min_sphere_d} functionality has extensively been tested above.
 
 @macro <Min_sphere_d_traits_3 test program> many = @begin
-    // hack to overcome internal compiler error of egcs
-    #define FT_(x) FT(x,1)
-    #define RT_(x) RT(x,1)
-
     // hack to overcome external linkage conflict warning in MIPS
     #define __SGI_STL_INTERNAL_RELOPS
 
