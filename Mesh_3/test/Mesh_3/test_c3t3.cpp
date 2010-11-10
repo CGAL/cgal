@@ -200,6 +200,57 @@ struct Tester
     assert(c3t3.number_of_facets() == (size_type)std::distance(c3t3.facets_begin(),
                                                                c3t3.facets_end()));
     //-------------------------------------------------------
+    // Test I/O operators
+    //-------------------------------------------------------
+    {
+    std::cout << "Test I/O operators in ascii mode.\n" 
+              << "Save c3t3 to \"c3t3_dump\"..." << std::endl;
+    std::ofstream out_file("c3t3.dump.ascii");
+    out_file << c3t3;
+    assert(out_file.good());
+    out_file.close();
+
+    std::cout << "Then reload this file to c3t3_reload..." << std::endl;
+    std::ifstream in_file("c3t3.dump.ascii");
+    C3t3 c3t3_loaded;
+    in_file >> c3t3_loaded;
+    assert(in_file.good());
+    in_file.close();
+
+    std::cerr << "\tNumber of cells in c3t3_loaded: " 
+              << c3t3_loaded.number_of_cells() << std::endl;
+    std::cerr << "\tNumber of facets in c3t3_loaded: " 
+              << c3t3_loaded.number_of_facets() << std::endl;
+    assert( c3t3_loaded.number_of_cells() ==  c3t3.number_of_cells() );
+    assert( c3t3_loaded.number_of_facets() ==  c3t3.number_of_facets() );
+    }
+    if(!boost::is_same<K, K_e_e>::value) {
+    std::cout << "Test I/O operators in binary mode.\n" 
+              << "Save c3t3 to \"c3t3_dump\"..." << std::endl;
+    std::ofstream out_file("c3t3.dump",
+                           std::ios_base::out|std::ios_base::binary);
+    CGAL::set_binary_mode(out_file);
+    out_file << c3t3;
+    assert(out_file.good());
+    out_file.close();
+
+    std::cout << "Then reload this file to c3t3_reload..." << std::endl;
+    std::ifstream in_file("c3t3.dump",
+                          std::ios_base::in|std::ios_base::binary);
+    CGAL::set_binary_mode(in_file);
+    C3t3 c3t3_loaded;
+    in_file >> c3t3_loaded;
+    assert(in_file.good());
+    in_file.close();
+
+    std::cerr << "\tNumber of cells in c3t3_loaded: " 
+              << c3t3_loaded.number_of_cells() << std::endl;
+    std::cerr << "\tNumber of facets in c3t3_loaded: " 
+              << c3t3_loaded.number_of_facets() << std::endl;
+    assert( c3t3_loaded.number_of_cells() ==  c3t3.number_of_cells() );
+    assert( c3t3_loaded.number_of_facets() ==  c3t3.number_of_facets() );
+    }
+    //-------------------------------------------------------
     // Create c3t3_bis
     //-------------------------------------------------------
     std::cout << "Insert 6 points from domain in c3t3_bis, add 1 cell to c3t3_bis\n";
