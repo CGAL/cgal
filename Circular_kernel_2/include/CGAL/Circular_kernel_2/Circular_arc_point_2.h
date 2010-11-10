@@ -86,13 +86,13 @@ namespace internal {
 	      << p.x() << ", " << p.y() << ')';
   }
 
-template < typename BK >
+template < typename BK, typename Base_CK >
 class Filtered_bbox_circular_arc_point_2_base
-  : public Circular_arc_point_2_base<BK> 
+  : public Base_CK::Circular_arc_point_2
 {
 public:
-  typedef Filtered_bbox_circular_arc_point_2_base<BK> Self;
-  typedef Circular_arc_point_2_base<BK> P_point;
+  typedef Filtered_bbox_circular_arc_point_2_base<BK,Base_CK> Self;
+  typedef typename Base_CK::Circular_arc_point_2 P_point;
 
   typedef typename BK::Point_2               Point_2;
   typedef typename BK::Root_for_circles_2_2  Root_for_circles_2_2;
@@ -100,6 +100,10 @@ public:
   ////Construction/////
   Filtered_bbox_circular_arc_point_2_base()
     : P_point(), bb(NULL)
+  {}
+
+  Filtered_bbox_circular_arc_point_2_base(const P_point& pt)
+    : P_point(pt), bb(NULL)
   {}
 
   explicit Filtered_bbox_circular_arc_point_2_base(const Root_for_circles_2_2 & np)

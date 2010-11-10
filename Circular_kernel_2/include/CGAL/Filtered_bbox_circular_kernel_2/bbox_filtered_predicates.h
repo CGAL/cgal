@@ -36,11 +36,12 @@ namespace CGAL {
 namespace Bbox_functors {
 
 template <class BK>
-class Compare_x_2 : public CircularFunctors::Compare_x_2<BK>
+class Compare_x_2 : public BK::Circular_kernel:: template Base< BK >::Type::Compare_x_2
 {
   typedef typename BK::Circular_arc_point_2                    Circular_arc_point_2;
   typedef typename BK::Point_2                                 Point_2;
-  typedef CircularFunctors::Compare_x_2<BK> CK_Compare_x_2;
+  typedef typename BK::Circular_kernel:: 
+    template Base< BK >::Type::Compare_x_2                     CK_Compare_x_2;
 
 public:
 
@@ -103,11 +104,12 @@ public:
 
 
 template <class BK>
-class Compare_y_2 : public CircularFunctors::Compare_y_2<BK>
+class Compare_y_2 : public BK::Circular_kernel:: template Base< BK >::Type::Compare_y_2
 {
   typedef typename BK::Circular_arc_point_2                    Circular_arc_point_2;
   typedef typename BK::Point_2                                 Point_2;
-  typedef CircularFunctors::Compare_y_2<BK> CK_Compare_y_2;
+  typedef typename BK::Circular_kernel:: 
+    template Base< BK >::Type::Compare_y_2                     CK_Compare_y_2;
 
 public:
 
@@ -169,9 +171,10 @@ public:
 };
 
 template <class BK>
-class Compare_xy_2 : public CircularFunctors::Compare_xy_2<BK>
+class Compare_xy_2 : public BK::Circular_kernel:: template Base< BK >::Type::Compare_xy_2
 {
-  typedef CircularFunctors::Compare_xy_2<BK> CK_Compare_xy_2;
+  typedef typename BK::Circular_kernel::
+    template Base< BK >::Type::Compare_xy_2                    CK_Compare_xy_2;
   typedef typename BK::Circular_arc_point_2                    Circular_arc_point_2;
   typedef typename BK::Point_2                                 Point_2;
 
@@ -205,9 +208,10 @@ public:
 
 
 template <class BK>
-class In_x_range_2 : public CircularFunctors::In_x_range_2<BK>
+class In_x_range_2 : public BK::Circular_kernel:: template Base< BK >::Type::In_x_range_2
 {
-  typedef CircularFunctors::In_x_range_2<BK> CK_In_x_range_2;
+  typedef typename BK::Circular_kernel:: 
+    template Base< BK >::Type::In_x_range_2                    CK_In_x_range_2;
   typedef typename BK::Circular_arc_point_2                    Circular_arc_point_2;
   typedef typename BK::Circular_arc_2                          Circular_arc_2;
   typedef typename BK::Line_arc_2                              Line_arc_2;
@@ -266,9 +270,10 @@ public:
 
 
 template <class BK>
-class Compare_y_at_x_2 : public CircularFunctors::Compare_y_at_x_2<BK>
+class Compare_y_at_x_2 : public BK::Circular_kernel:: template Base< BK >::Type::Compare_y_at_x_2
 {
-  typedef CircularFunctors::Compare_y_at_x_2<BK> CK_Compare_y_at_x_2;
+  typedef typename BK::Circular_kernel:: 
+    template Base< BK >::Type::Compare_y_at_x_2                         CK_Compare_y_at_x_2;
   typedef typename BK::Circular_arc_2                                   Circular_arc_2;
   typedef typename BK::Circular_arc_point_2                             Circular_arc_point_2;
   typedef typename BK::Line_arc_2                                       Line_arc_2;
@@ -315,9 +320,10 @@ public:
 
 
 template <class BK>
-class Has_on_2 : public CircularFunctors::Has_on_2<BK>
+class Has_on_2 : public BK::Circular_kernel:: template Base< BK >::Type::Has_on_2
 {
-  typedef CircularFunctors::Has_on_2<BK> CK_Has_on_2;
+  typedef typename BK::Circular_kernel:: 
+    template Base< BK >::Type::Has_on_2                                 CK_Has_on_2;
   typedef typename BK::Circular_arc_2                                   Circular_arc_2;
   typedef typename BK::Circular_arc_point_2                             Circular_arc_point_2;
   typedef typename BK::Line_arc_2                                       Line_arc_2;
@@ -360,20 +366,21 @@ public:
 template <class BK>
 class Equal_2
 #ifndef CGAL_CFG_MATCHING_BUG_6
-  : public CircularFunctors::Equal_2<BK>
+  : public BK::Circular_kernel:: template Base< BK >::Type::Equal_2
 #endif
 {
-  typedef CircularFunctors::Equal_2<BK> CK_Equal_2;
+  typedef typename BK::Circular_kernel:: 
+    template Base< BK >::Type::Equal_2                                  CK_Equal_2;
   typedef typename BK::Circular_arc_2                                   Circular_arc_2;
   typedef typename BK::Point_2                                          Point_2;
-  typedef typename BK::Direction_2                                          Direction_2;
-  typedef typename BK::Vector_2                                          Vector_2;
-  typedef typename BK::Segment_2                                         Segment_2 ;
-  typedef typename BK::Ray_2                                          Ray_2;
-  typedef typename BK::Line_2                                          Line_2;
-  typedef typename BK::Circle_2                                          Circle_2;
-  typedef typename BK::Triangle_2                                          Triangle_2;
-  typedef typename BK::Iso_rectangle_2 Iso_rectangle_2;
+  typedef typename BK::Direction_2                                      Direction_2;
+  typedef typename BK::Vector_2                                         Vector_2;
+  typedef typename BK::Segment_2                                        Segment_2 ;
+  typedef typename BK::Ray_2                                            Ray_2;
+  typedef typename BK::Line_2                                           Line_2;
+  typedef typename BK::Circle_2                                         Circle_2;
+  typedef typename BK::Triangle_2                                       Triangle_2;
+  typedef typename BK::Iso_rectangle_2                                  Iso_rectangle_2;
   typedef typename BK::Circular_arc_point_2                             Circular_arc_point_2;
   typedef typename BK::Line_arc_2                                       Line_arc_2;
 
@@ -522,9 +529,10 @@ public:
 
 
 template <class BK>
-class Do_overlap_2 : public CircularFunctors::Do_overlap_2<BK>
+class Do_overlap_2 : public BK::Circular_kernel:: template Base< BK >::Type::Do_overlap_2
 {
-  typedef CircularFunctors::Do_overlap_2<BK> CK_Do_overlap_2;
+  typedef typename BK::Circular_kernel:: 
+    template Base< BK >::Type::Do_overlap_2                           CK_Do_overlap_2;
   typedef typename BK::Circular_arc_2                                 Circular_arc_2;
   typedef typename BK::Line_arc_2                                     Line_arc_2;
 
@@ -577,10 +585,11 @@ public:
 
 
 template < class BK >
-class Intersect_2 : public CircularFunctors::Intersect_2<BK>
+class Intersect_2 : public BK::Circular_kernel:: template Base< BK >::Type::Intersect_2
 {
 public:
-  typedef CircularFunctors::Intersect_2<BK> CK_Intersect_2;
+  typedef typename BK::Circular_kernel:: 
+    template Base< BK >::Type::Intersect_2      CK_Intersect_2;
 
   typedef typename BK::Circular_arc_2           Circular_arc_2;
   typedef typename BK::Circular_arc_point_2     Circular_arc_point_2;

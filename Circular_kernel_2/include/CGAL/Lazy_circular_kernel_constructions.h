@@ -47,18 +47,19 @@ make_lazy_CK(const Object& eto)
            object_cast<std::pair<typename EK::Circular_arc_point_2,
 	                         unsigned > >(&eto))){
            return make_object(std::make_pair(typename LK::Circular_arc_point_2(
+           typename LK::Circular_arc_point_2::Rep(
 	   new Lazy_rep_0<typename AK::Circular_arc_point_2, 
-	   typename EK::Circular_arc_point_2, E2A>(ptr->first)),ptr->second));
+	   typename EK::Circular_arc_point_2, E2A>(ptr->first))),ptr->second));
   } else if(const typename EK::Circular_arc_2* ptr = 
             object_cast<typename EK::Circular_arc_2>(&eto)){
-            return make_object(typename LK::Circular_arc_2(
+            return make_object(typename LK::Circular_arc_2(typename LK::Circular_arc_2::Rep(
 	    new Lazy_rep_0<typename AK::Circular_arc_2, 
-	    typename EK::Circular_arc_2, E2A>(*ptr)));
+	    typename EK::Circular_arc_2, E2A>(*ptr))));
   } else if(const typename EK::Line_arc_2* ptr = 
             object_cast<typename EK::Line_arc_2>(&eto)){
-            return make_object(typename LK::Line_arc_2(
+            return make_object(typename LK::Line_arc_2(typename LK::Line_arc_2::Rep(
 	    new Lazy_rep_0<typename AK::Line_arc_2, 
-	    typename EK::Line_arc_2, E2A>(*ptr)));
+	    typename EK::Line_arc_2, E2A>(*ptr))));
   } else{
     std::cerr << "object_cast inside Lazy_construction_rep::operator() failed. It needs more else if's" << std::endl;
   }            
@@ -103,24 +104,25 @@ public:
 	if((temp_p=object_cast<std::pair<typename AK::Circular_arc_point_2,
 	                         unsigned > >(& (lv.approx()[i])))){
 	  *it = make_object(std::make_pair(typename LK::Circular_arc_point_2(
+                             typename LK::Circular_arc_point_2::Rep(
 	  new Lazy_rep_1<Ith<typename AK::Circular_arc_point_2>, 
 	  Ith<typename EK::Circular_arc_point_2>, E2A, 
 	  Lazy_vector>(Ith<typename AK::Circular_arc_point_2>(i,false), 
-	  Ith<typename EK::Circular_arc_point_2>(i,false), lv)),temp_p->second)); 
+	  Ith<typename EK::Circular_arc_point_2>(i,false), lv))),temp_p->second)); 
 	  ++it;
 	} else if(object_cast<typename AK::Circular_arc_2>(& (lv.approx()[i]))){
-	  *it = make_object(typename LK::Circular_arc_2(
+	  *it = make_object(typename LK::Circular_arc_2( typename LK::Circular_arc_2::Rep(
 	  new Lazy_rep_1<Ith<typename AK::Circular_arc_2>, 
 	  Ith<typename EK::Circular_arc_2>,E2A, 
 	  Lazy_vector>(Ith<typename AK::Circular_arc_2>(i), 
-	  Ith<typename EK::Circular_arc_2>(i), lv)));
+	  Ith<typename EK::Circular_arc_2>(i), lv))));
 	  ++it;
 	} else if(object_cast<typename AK::Line_arc_2>(& (lv.approx()[i]))){
-	  *it = make_object(typename LK::Line_arc_2(
+	  *it = make_object(typename LK::Line_arc_2( typename LK::Line_arc_2::Rep(
 	  new Lazy_rep_1<Ith<typename AK::Line_arc_2>, 
 	  Ith<typename EK::Line_arc_2>,E2A, 
 	  Lazy_vector>(Ith<typename AK::Line_arc_2>(i), 
-	  Ith<typename EK::Line_arc_2>(i), lv)));
+	  Ith<typename EK::Line_arc_2>(i), lv))));
 	  ++it;
 	} else{
 	       std::cout << "UNEXPECTED CONSTRUCT_INTERSECTIONS_2 PRODUCT" << std::endl;
@@ -178,17 +180,18 @@ public:
       for(unsigned int i = 0; i < lv.approx().size(); i++){
           if(object_cast<typename AK::Circular_arc_2>(& (lv.approx()[i]))){
 	  *it = make_object(typename LK::Circular_arc_2(
+          typename LK::Circular_arc_2::Rep(  
 	  new Lazy_rep_1<Ith<typename AK::Circular_arc_2>, 
 	  Ith<typename EK::Circular_arc_2>,E2A, 
 	  Lazy_vector>(Ith<typename AK::Circular_arc_2>(i), 
-	  Ith<typename EK::Circular_arc_2>(i), lv)));
+	  Ith<typename EK::Circular_arc_2>(i), lv))));
 	  ++it;
 	} else if(object_cast<typename AK::Line_arc_2>(& (lv.approx()[i]))){
-	  *it = make_object(typename LK::Line_arc_2(
+	  *it = make_object(typename LK::Line_arc_2(typename LK::Line_arc_2::Rep(
 	  new Lazy_rep_1<Ith<typename AK::Line_arc_2>, 
 	  Ith<typename EK::Line_arc_2>,E2A, 
 	  Lazy_vector>(Ith<typename AK::Line_arc_2>(i), 
-	  Ith<typename EK::Line_arc_2>(i), lv)));
+	  Ith<typename EK::Line_arc_2>(i), lv))));
 	  ++it;
 	} 
 	else {
@@ -245,18 +248,18 @@ public:
       // that is, when we get here we have constructed all approximate results
       for(unsigned int i = 0; i < lv.approx().size(); i++){
           if(object_cast<typename AK::Circular_arc_2>(& (lv.approx()[i].first))){
-	  *it = std::make_pair(make_object(typename LK::Circular_arc_2(
+	  *it = std::make_pair(make_object(typename LK::Circular_arc_2(typename LK::Circular_arc_2::Rep(
 	  new Lazy_rep_1<Ith<typename AK::Circular_arc_2>, 
 	  Ith<typename EK::Circular_arc_2>,E2A, 
 	  Lazy_vector>(Ith<typename AK::Circular_arc_2>(i), 
-	  Ith<typename EK::Circular_arc_2>(i), lv))),lv.approx()[i].second);
+	  Ith<typename EK::Circular_arc_2>(i), lv)))),lv.approx()[i].second);
 	  ++it;
 	} else if(object_cast<typename AK::Line_arc_2>(& (lv.approx()[i].first))){
-	  *it = std::make_pair(make_object(typename LK::Line_arc_2(
+	  *it = std::make_pair(make_object(typename LK::Line_arc_2(typename LK::Line_arc_2::Rep(
 	  new Lazy_rep_1<Ith<typename AK::Line_arc_2>, 
 	  Ith<typename EK::Line_arc_2>,E2A, 
 	  Lazy_vector>(Ith<typename AK::Line_arc_2>(i), 
-	  Ith<typename EK::Line_arc_2>(i), lv))),lv.approx()[i].second);
+	  Ith<typename EK::Line_arc_2>(i), lv)))),lv.approx()[i].second);
 	  ++it;
 	} 
 	else{
@@ -324,25 +327,26 @@ template <typename L1>
 	        Object_cast<typename EK::Circular_arc_point_2>, E2A, Lazy_object> Lcr;
 	        Lcr * lcr = new Lcr(Object_cast<typename AK::Circular_arc_point_2>(), 
 	        Object_cast<typename EK::Circular_arc_point_2>(), lo); 
-	        return make_object(std::make_pair(typename LK::Circular_arc_point_2(lcr),temp_p->second));
+	        return make_object(std::make_pair(typename LK::Circular_arc_point_2(
+                  typename LK::Circular_arc_point_2::Rep(lcr)),temp_p->second));
       } else if(object_cast<typename AK::Circular_arc_point_2>(& (lo.approx()))){
 	typedef Lazy_rep_1<Object_cast<typename AK::Circular_arc_point_2>, 
 	        Object_cast<typename EK::Circular_arc_point_2>, E2A, Lazy_object> Lcr;
 	        Lcr * lcr = new Lcr(Object_cast<typename AK::Circular_arc_point_2>(), 
 	        Object_cast<typename EK::Circular_arc_point_2>(), lo); 
-	        return make_object(typename LK::Circular_arc_point_2(lcr));
+	        return make_object(typename LK::Circular_arc_point_2(typename LK::Circular_arc_point_2::Rep(lcr)));
       } else if(object_cast<typename AK::Circular_arc_2>(& (lo.approx()))){
 	typedef Lazy_rep_1<Object_cast<typename AK::Circular_arc_2>, 
 	        Object_cast<typename EK::Circular_arc_2>, E2A, Lazy_object> Lcr;
 	        Lcr * lcr = new Lcr(Object_cast<typename AK::Circular_arc_2>(), 
 		Object_cast<typename EK::Circular_arc_2>(), lo); 
-	        return make_object(typename LK::Circular_arc_2(lcr));}
+	        return make_object(typename LK::Circular_arc_2(typename LK::Circular_arc_2::Rep(lcr)));}
 	else if(object_cast<typename AK::Line_arc_2>(& (lo.approx()))){
 	typedef Lazy_rep_1<Object_cast<typename AK::Line_arc_2>, 
 	        Object_cast<typename EK::Line_arc_2>, E2A, Lazy_object> Lcr;
 	        Lcr * lcr = new Lcr(Object_cast<typename AK::Line_arc_2>(), 
 		Object_cast<typename EK::Line_arc_2>(), lo); 
-	        return make_object(typename LK::Line_arc_2(lcr));}
+	        return make_object(typename LK::Line_arc_2(typename LK::Line_arc_2::Rep(lcr)));}
         else {
 	std::cerr << "object_cast inside Lazy_construction_rep::operator() failed. It needs more else if's" << std::endl;
       }
@@ -374,25 +378,26 @@ template <typename L1>
 	        Object_cast<typename EK::Circular_arc_point_2>, E2A, Lazy_object> Lcr;
 	        Lcr * lcr = new Lcr(Object_cast<typename AK::Circular_arc_point_2>(), 
 	        Object_cast<typename EK::Circular_arc_point_2>(), lo); 
-	        return make_object(std::make_pair(typename LK::Circular_arc_point_2(lcr),temp_p->second));
+	        return make_object(std::make_pair(typename LK::Circular_arc_point_2(
+                  typename LK::Circular_arc_point_2::Rep(lcr)),temp_p->second));
       } else if(object_cast<typename AK::Circular_arc_point_2>(& (lo.approx()))){
 	typedef Lazy_rep_1<Object_cast<typename AK::Circular_arc_point_2>, 
 	        Object_cast<typename EK::Circular_arc_point_2>, E2A, Lazy_object> Lcr;
 	        Lcr * lcr = new Lcr(Object_cast<typename AK::Circular_arc_point_2>(), 
 	        Object_cast<typename EK::Circular_arc_point_2>(), lo); 
-	        return make_object(typename LK::Circular_arc_point_2(lcr));
+	        return make_object(typename LK::Circular_arc_point_2(typename LK::Circular_arc_point_2::Rep(lcr)));
       } else if(object_cast<typename AK::Circular_arc_2>(& (lo.approx()))){
 	typedef Lazy_rep_1<Object_cast<typename AK::Circular_arc_2>, 
 	        Object_cast<typename EK::Circular_arc_2>, E2A, Lazy_object> Lcr;
 	        Lcr * lcr = new Lcr(Object_cast<typename AK::Circular_arc_2>(), 
 		Object_cast<typename EK::Circular_arc_2>(), lo); 
-	        return make_object(typename LK::Circular_arc_2(lcr));}
+	        return make_object(typename LK::Circular_arc_2(typename LK::Circular_arc_2::Rep(lcr)));}
 	else if(object_cast<typename AK::Line_arc_2>(& (lo.approx()))){
 	typedef Lazy_rep_1<Object_cast<typename AK::Line_arc_2>, 
 	        Object_cast<typename EK::Line_arc_2>, E2A, Lazy_object> Lcr;
 	        Lcr * lcr = new Lcr(Object_cast<typename AK::Line_arc_2>(), 
 		Object_cast<typename EK::Line_arc_2>(), lo); 
-	        return make_object(typename LK::Line_arc_2(lcr));}
+	        return make_object(typename LK::Line_arc_2(typename LK::Line_arc_2::Rep(lcr)));}
         else {
 	std::cerr << "object_cast inside Lazy_construction_rep::operator() failed. It needs more else if's" << std::endl;
       }

@@ -37,10 +37,9 @@ namespace internal {
 template < class FilteredBboxKernel, class CircularKernel >
 struct Filtered_bbox_circular_kernel_base_ref_count : public CircularKernel
 {
-	
-  typedef internal::Filtered_bbox_circular_arc_2_base<FilteredBboxKernel> Circular_arc_2;
-  typedef internal::Filtered_bbox_line_arc_2_base<FilteredBboxKernel> Line_arc_2;
-  typedef internal::Filtered_bbox_circular_arc_point_2_base<FilteredBboxKernel>     Circular_arc_point_2;
+  typedef internal::Filtered_bbox_circular_arc_2_base<FilteredBboxKernel,CircularKernel>       Circular_arc_2;
+  typedef internal::Filtered_bbox_line_arc_2_base<FilteredBboxKernel,CircularKernel>           Line_arc_2;
+  typedef internal::Filtered_bbox_circular_arc_point_2_base<FilteredBboxKernel,CircularKernel> Circular_arc_point_2;
 
   // The mechanism that allows to specify reference-counting or not.
   template < typename T >

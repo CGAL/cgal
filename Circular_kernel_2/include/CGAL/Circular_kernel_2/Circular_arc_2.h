@@ -724,11 +724,11 @@ public:
   }     
 
 
-template < typename CK >
-class Filtered_bbox_circular_arc_2_base : public Circular_arc_2_base<CK>
+template < typename CK, typename Base_CK>
+class Filtered_bbox_circular_arc_2_base : public Base_CK::Circular_arc_2
 {
-  typedef Filtered_bbox_circular_arc_2_base<CK> Self;
-  typedef Circular_arc_2_base<CK> P_arc;
+  typedef Filtered_bbox_circular_arc_2_base<CK,Base_CK> Self;
+  typedef typename Base_CK::Circular_arc_2   P_arc;
   typedef typename CK::FT                    FT;
   typedef typename CK::Point_2               Point_2;
   typedef typename CK::Line_2                Line_2;
@@ -740,6 +740,8 @@ public:
   ///////////Construction/////////////
 
   Filtered_bbox_circular_arc_2_base() : P_arc(), bb(NULL) {}
+    
+  Filtered_bbox_circular_arc_2_base(const P_arc& arc) : P_arc(arc), bb(NULL) {}
 
   // otherwise it will lead to ambiguos definitions
   explicit Filtered_bbox_circular_arc_2_base(const Circle_2 &c)
