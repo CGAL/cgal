@@ -452,6 +452,7 @@ MainWindow::loadPolygonConstraints(QString fileName)
   int n;
   // int counter = 0;
   while(ifs >> n){
+    int poly_size = n;
     ifs >> first;
     p = first;
     vfirst = vp = cdt.insert(p);
@@ -466,7 +467,7 @@ MainWindow::loadPolygonConstraints(QString fileName)
       p = q;
       vp = vq;
     }
-    if(vp != vfirst) {
+    if(poly_size != 2 && vp != vfirst) {
       cdt.insert_constraint(vp, vfirst);
     }
   }
