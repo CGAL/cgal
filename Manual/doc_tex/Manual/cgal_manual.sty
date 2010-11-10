@@ -114,7 +114,10 @@
 %
 \fi
 }
-
+\lcHtml{
+  % macro for the latex_to_html converter, when hyperref is not used
+  \newcommand{\texorpdfstring}[2]{#1}
+}
 
 % include minitoc if selected above
 % The option 'nohints' is passed to minitoc, so that it does not complain
