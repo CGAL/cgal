@@ -33,15 +33,16 @@ class PointC2
 {
   typedef PointC2<R_>                       Self;
   typedef typename R_::FT                   FT;
-  typedef typename R_::Vector_2             Vector_2;
+// http://www.cgal.org/Members/Manual_test/LAST/Developers_internal_manual/Developers_manual/Chapter_code_format.html#sec:programming_conventions
+  typedef typename R_::Vector_2             Vector_2_;
   typedef typename R_::Point_2              Point_2;
 
   // We do not use reference counting here as it is done at the Vector_2 level.
-  Vector_2 base;
+  Vector_2_ base;
 
 public:
 
-  typedef typename Vector_2::Cartesian_const_iterator Cartesian_const_iterator;
+  typedef typename Vector_2_::Cartesian_const_iterator Cartesian_const_iterator;
   
   typedef R_                                R;
 
