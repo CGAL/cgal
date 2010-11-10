@@ -143,7 +143,7 @@ CMAKE_COLOR_MAKEFILE:BOOL=ON
 CMAKE_CXX_COMPILER:FILEPATH=/usr/local/bin/g++43
 
 //User-defined flags
-CMAKE_CXX_FLAGS:STRING=-Wall  -frounding-math
+CMAKE_CXX_FLAGS:STRING=-Wall  -frounding-math -DCGAL_NO_DEPRECATED_CODE
 
 //No help, variable specified on the command line.
 CMAKE_CXX_FLAGS_DEBUG:STRING=
