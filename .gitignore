@@ -1054,6 +1054,7 @@ Triangulation_2/test/Triangulation_2/T??.triangulation
 Triangulation_2/test/Triangulation_2/cgal_test_with_cmake
 Triangulation_2/test/Triangulation_2/file_tds*
 Triangulation_2/test/Triangulation_2/makefile
+Triangulation_2/test/Triangulation_2/test_cdt_degenerate_case
 Triangulation_2/test/Triangulation_2/test_const_del_triangulation_2
 Triangulation_2/test/Triangulation_2/test_const_triang_plus_2
 Triangulation_2/test/Triangulation_2/test_constrained_triangulation_2

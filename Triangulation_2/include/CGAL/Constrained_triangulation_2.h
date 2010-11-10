@@ -681,6 +681,9 @@ intersect(Face_handle f, int i,
     case 2 : vi = vcc; break;
     case 3 : vi = vdd; break; 
     }
+    if(vi == vaa || vi == vbb) {
+      remove_constrained_edge(f, i);
+    }
   }
   else{ //intersection computed
     remove_constrained_edge(f, i);
@@ -1166,6 +1169,7 @@ intersection(const Gt& gt,
 {
   return compute_intersection(gt,pa,pb,pc,pd,pi);
 }
+
 
 template<class Gt>
 bool
