@@ -214,13 +214,9 @@ public:
       }
 };
 
-CGAL_END_NAMESPACE
-
-namespace boost
-{
-inline void intrusive_ptr_add_ref( CGAL::Ref_counted_base const* p ) { p->AddRef(); }
-inline void intrusive_ptr_release( CGAL::Ref_counted_base const* p ) { p->Release(); }
-} // namespace boost
+inline void intrusive_ptr_add_ref( Ref_counted_base const* p ) { p->AddRef(); }
+inline void intrusive_ptr_release( Ref_counted_base const* p ) { p->Release(); }
+} // namespace CGAL
 
 
 
