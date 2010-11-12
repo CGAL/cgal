@@ -14,7 +14,7 @@ namespace CGAL {
 
 template <class CDT>
 class Constraints_loader {
-  typedef typename CDT::Point_2 Point; // AF
+  typedef typename CDT::Point_2 Point;
 
   typedef std::vector<Point> Points_container;
 
@@ -105,23 +105,16 @@ class Constraints_loader {
     timer.start();
     Vertices vertices;
     vertices.resize(points.size());
-    typename CDT::Vertex_handle hint;  // AF
+    typename CDT::Vertex_handle hint;
     for(typename Indices::const_iterator 
           pt_it_it = indices.begin(), end = indices.end();
         pt_it_it != end; ++pt_it_it) {
       typename CDT::Vertex_handle vh = cdt.insert(**pt_it_it, hint);
-      hint = vh; // AF
+      hint = vh;
       vertices[*pt_it_it - points.begin()] = vh;
     }
     timer.stop();
     std::cerr << " done (" << timer.time() << "s)\n";
-
-    const double max = std::max(std::max(std::abs(points_bbox.xmin()),
-                                         std::abs(points_bbox.ymin())),
-                                std::max(std::abs(points_bbox.xmax()),
-                                         std::abs(points_bbox.ymax())));
-    // AF cdt.set_snapping_distance((boost::math::float_next(max) - max) * 4);
-    // AF std::cerr << "Snapping distance: " << cdt.snapping_distance() << std::endl;
 
     std::cerr << "Inserting constraints...\n";
     boost::progress_display show_progress(constraints.size(), 
@@ -137,12 +130,7 @@ class Constraints_loader {
       const typename CDT::Vertex_handle& v2 = vertices[cit->second];
       if(v1 != v2)
          {
-           /*
-        const Point& pa = v1->point();
-        const Point& pb = v2->point();
-        std::cerr << "\n" << pa << "  --  " << pb << "\n";
-        */
-           cdt.insert(v1, v2); // AF
+           cdt.insert(v1, v2);
       }
     }
     timer.stop();
