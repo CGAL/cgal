@@ -88,6 +88,8 @@ regular_neighbor_coordinates_vertex_2(const Rt& rt,
   typedef typename Rt::Edge               Edge;
   typedef typename Rt::Locate_type        Locate_type;
 
+  CGAL_precondition(rt.dimension() == 2);
+  
   Locate_type lt;
   int li;
   Face_handle fh = rt.locate(p, lt, li, start);
@@ -311,6 +313,8 @@ regular_neighbor_coordinates_2(const Rt& rt,
   // recomputation)
   Project_vertex_output_iterator<OutputIterator> op(out);
 
+  CGAL_precondition(rt.dimension() == 2);
+  
   Triple< Project_vertex_output_iterator<OutputIterator>,
     typename Rt::Geom_traits::FT, bool >  result =
     regular_neighbor_coordinates_vertex_2
@@ -383,6 +387,8 @@ regular_neighbor_coordinates_2(const Rt& rt,
   // natural neighbor coordinates of vh->point() wrt. it.
   typedef typename Rt::Vertex_circulator     Vertex_circulator;
 
+  CGAL_precondition(rt.dimension() == 2);
+  
   Rt t2;
   Vertex_circulator vc = rt.incident_vertices(vh),
     done(vc);

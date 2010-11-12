@@ -104,7 +104,8 @@ natural_neighbor_coordinates_vertex_2(const Dt& dt,
   typedef typename Dt::Locate_type       Locate_type;
   typedef typename Traits::Equal_x_2     Equal_x_2;
 
-
+  CGAL_precondition(dt.dimension() == 2);
+  
   Locate_type lt;
   int li;
   Face_handle fh = dt.locate(p, lt, li, start);
@@ -295,6 +296,8 @@ natural_neighbor_coordinates_2(const Dt& dt,
 			       CGAL_TYPENAME_DEFAULT_ARG Dt::Face_handle() )
 
 {
+  CGAL_precondition(dt.dimension() == 2);
+  
   Project_vertex_output_iterator<OutputIterator> op(out);
 
   Triple< Project_vertex_output_iterator<OutputIterator>,
@@ -315,6 +318,8 @@ natural_neighbor_coordinates_2(const Dt& dt,
 			       OutputIterator out, EdgeIterator
 			       hole_begin, EdgeIterator hole_end)
 {
+  CGAL_precondition(dt.dimension() == 2);
+  
   Project_vertex_output_iterator<OutputIterator> op(out);
 
   Triple< Project_vertex_output_iterator<OutputIterator>,
@@ -341,6 +346,8 @@ natural_neighbor_coordinates_2(const Dt& dt,
   // natural neighbor coordinates of ch->point() wrt. it.
   typedef typename Dt::Vertex_circulator     Vertex_circulator;
 
+  CGAL_precondition(dt.dimension() == 2);
+  
   Dt t2;
   Vertex_circulator vc = dt.incident_vertices(vh),
     done(vc);
