@@ -77,8 +77,6 @@ public:
         traits.compute_area_2_object();
       Compute_squared_distance_2 squared_distance = 
 	traits.compute_squared_distance_2_object();
-      Construct_triangle_2 triangle =
-        traits.construct_triangle_2_object();
 
       const Point_2& pa = fh->vertex(0)->point();
       const Point_2& pb = fh->vertex(1)->point();
