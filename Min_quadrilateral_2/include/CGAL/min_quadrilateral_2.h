@@ -434,7 +434,7 @@ min_rectangle_2(
 
     Rectangle_2 test_rect = rectangle(*(curr[0]), dir[event],
                                       *(curr[1]), *(curr[2]), *(curr[3]));
-    if (t.area_less_rectangle_2_object()(test_rect, rect_so_far))
+    if (area_less(test_rect, rect_so_far))
       rect_so_far = test_rect;
 
   } // for (;;)
