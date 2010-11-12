@@ -110,7 +110,7 @@ namespace CGAL {
 #ifdef CGAL_SURFACE_MESHER_TAG_BAD
       return bits[facet+4];
 #else
-      return (bits & (1 << (facet+4)) != 0);
+      return (bits & (1 << (facet+4))) != 0;
 #endif
     }
     
