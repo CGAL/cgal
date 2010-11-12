@@ -145,7 +145,6 @@ bool check_envelope (const Curve_list& segs,
   Kernel::Construct_midpoint_2   midpoint = ker.construct_midpoint_2_object();
   Kernel::Construct_min_vertex_2 min_ver = ker.construct_min_vertex_2_object();
   Kernel::Construct_max_vertex_2 max_ver = ker.construct_max_vertex_2_object();
-  Kernel::Compare_x_2            comp_x = ker.compare_x_2_object();
   Kernel::Compare_y_at_x_2       comp_y_at_x = ker.compare_y_at_x_2_object();
   Point_2                        p_mid;
   CGAL::Comparison_result        res1, res2;
