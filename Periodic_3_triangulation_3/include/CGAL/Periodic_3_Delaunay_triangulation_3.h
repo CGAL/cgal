@@ -456,9 +456,9 @@ bool is_canonical(const Facet &f) const {
     Offset o2 = combine_offsets(-p2.second,-off);
     Offset cumm_off(std::min(o1.x(),o2.x()),
 	std::min(o1.y(),o2.y()),std::min(o1.z(),o2.z()));
-    ps = make_array(
-	std::make_pair(point(p1), o1 - cumm_off),
-	std::make_pair(point(p2), o2 - cumm_off));
+    const std::pair<Point,Offset> pp1 = std::make_pair(point(p1), o1-cumm_off);
+    const std::pair<Point,Offset> pp2 = std::make_pair(point(p2), o2-cumm_off);
+    ps = make_array(pp1,pp2);
     return (cumm_off == Offset(0,0,0));
   }
 
