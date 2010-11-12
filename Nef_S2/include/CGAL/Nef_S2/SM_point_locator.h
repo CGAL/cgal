@@ -336,7 +336,6 @@ public:
   { 
     Sphere_circle c(d.circle());
     Sphere_segment s;
-    bool s_init(false);
     Object_handle h = this->locate(p);
     SVertex_handle v; 
     SHalfedge_handle e; 
@@ -351,7 +350,7 @@ public:
 #if 0
     HASEN: s am anfang circle, ab wann segment ?
 	   wo loop ?
-
+    bool s_init(false);
     CGAL_forall_svertices (v,*this) {
       Point pv = v->point();
       if ( !(s_init && s.has_on(pv) ||
