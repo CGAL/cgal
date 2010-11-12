@@ -274,6 +274,59 @@ EOF
     }
 }
 
+sub sort_pf
+{
+    # MSVS first
+    if($a =~ m/^MS/) { 
+        if($b =~ m/^MS/) {
+            return $a cmp $b;
+        }
+        else 
+        {
+            return -1;
+        }
+    }
+    if($b =~ m/^MS/) { return 1; }
+
+    # g++/gcc second
+    if($a =~ m/^g[c+][c+]/) { 
+        if($b =~ m/^g[c+][c+]/) {
+            return $a cmp $b;
+        }
+        else 
+        {
+            return -1;
+        }
+    }
+    if($b =~ m/^g[c+][c+]/) { return 1; }
+
+    # Intel third
+    if($a =~ m/^[iI]/) { 
+        if($b =~ m/^[iI]/) {
+            return $a cmp $b;
+        }
+        else 
+        {
+            return -1;
+        }
+    }
+    if($b =~ m/^[iI]/) { return 1; }
+
+    # SunPro last
+    if($a =~ m/^[Ss][uU[Nn]/) { 
+        if($b =~ m/^[Ss][uU[Nn]/) {
+            return $a cmp $b;
+        }
+        else 
+        {
+            return 1;
+        }
+    }
+    if($b =~ m/^[Ss][uU[Nn]/) { return -1; }
+
+    return $a cmp $b;
+}
+
 sub parse_platform($)
 {
     my ($pf) = @_;
@@ -346,7 +399,7 @@ sub choose_platforms()
 # Make a list of all the platforms that are to be treated, in the order they
 # appear in the list of known_platforms.
     @platforms_to_do = ();
-    @known_platforms = sort(@known_platforms);
+    @known_platforms = sort sort_pf @known_platforms;
     for ($index=0; $index < @known_platforms; $index += 1) {
 	$pf = $known_platforms[$index];
 	my $ind2 = 0;
@@ -431,7 +484,11 @@ EOF
 	    while ($index) {
 	        $index--;
 		$_ = $tmp[$index];
-		print OUTPUT "<td align=\"center\">$_</td>\n";
+                if($index > 2) {
+                    print OUTPUT "<td align=\"center\">$_</td>\n";
+                } else {
+                    print OUTPUT "<td>$_</td>\n";
+                }                    
 	    }
 	} else {
 	    my $index = 12;
