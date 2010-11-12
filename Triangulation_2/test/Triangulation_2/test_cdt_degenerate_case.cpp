@@ -1,6 +1,7 @@
 #include <CGAL/basic.h>
 #include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
 #include <CGAL/Constrained_Delaunay_triangulation_2.h>
+#include <CGAL/Constrained_triangulation_plus_2.h>
 #include <iostream>
 
 typedef CGAL::Exact_predicates_inexact_constructions_kernel EPIC;
@@ -10,9 +11,10 @@ typedef CGAL::Constrained_triangulation_face_base_2<EPIC> Fb;
 typedef CGAL::Triangulation_data_structure_2<Vb, Fb> TDS;
 typedef CGAL::Exact_predicates_tag Itag;
 typedef CGAL::Constrained_Delaunay_triangulation_2<EPIC, TDS, Itag> CDT;
+typedef CGAL::Constrained_triangulation_plus_2<CDT> CDTp2;
 
-int main()
-{
+template <class CDT>
+void test() {
   CDT cdt;
   cdt.insert_constraint(Point_2(  48.0923419883269,   299.7232779774145  ), 
                         Point_2(  66.05373710316852,  434.231770798343   ));
@@ -25,5 +27,14 @@ int main()
   // The insertion of the last constraint can lead to an infinite loop,
   // that actually ends with a segfault once the stack overflows.
   std::cout << cdt.number_of_vertices() << std::endl;
+}
+
+int main()
+{
+  std::cout << "Test Constrained_Delaunay_triangulation_2<EPIC,TDS,"
+            << "Exact_predicates_tag" << std::endl;
+  test<CDT>();
+  std::cout << "Test within CT_plus_2" << std::endl;
+  test<CDTp2>();
   return 0;
 }
