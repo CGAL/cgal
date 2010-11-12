@@ -236,6 +236,7 @@ public:
   { return Construct_aff_transformation_d(); }
 
   // function objects:
+  typedef Compute_coordinateHd<Self> Compute_coordinate_d;
   typedef Lift_to_paraboloidHd<Self> Lift_to_paraboloid_d;
   typedef Project_along_d_axisHd<Self> Project_along_d_axis_d;
   typedef MidpointHd<Self> Midpoint_d;
@@ -259,6 +260,8 @@ public:
   typedef Linearly_independentHd<Self> Linearly_independent_d;
   typedef Linear_baseHd<Self> Linear_base_d;
 
+  Compute_coordinate_d compute_coordinate_d_object() const
+  { return Compute_coordinate_d(); }
   Lift_to_paraboloid_d lift_to_paraboloid_d_object() const
   { return Lift_to_paraboloid_d(); }
   Project_along_d_axis_d project_along_d_axis_d_object() const

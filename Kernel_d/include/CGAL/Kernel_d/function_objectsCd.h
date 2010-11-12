@@ -36,6 +36,19 @@
  
 namespace CGAL {
 
+template <typename K>
+class Compute_coordinateCd {
+  typedef typename K::FT             FT;
+  typedef typename K::Point_d        Point_d;
+  public:
+  typedef FT                         result_type;
+  const result_type 
+    operator()(const Point_d& p, int i) const
+  {
+    return p.cartesian(i);
+  }
+};
+
 template <class R>
 struct Lift_to_paraboloidCd {
 typedef typename R::Point_d Point_d;
