@@ -128,8 +128,6 @@ namespace CGAL {
           GT().compute_scalar_product_3_object();
         typename GT::Compute_squared_distance_3 squared_distance = 
           GT().compute_squared_distance_3_object();
-        typename GT::Compute_squared_radius_3 radius =
-          GT().compute_squared_radius_3_object();
         typename GT::Construct_center_3 center =
           GT().construct_center_3_object();
         typename GT::Compute_squared_radius_3 squared_radius =
