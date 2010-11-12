@@ -76,12 +76,10 @@ public:
 
   template <class Polyhedron_3>
   void mesh_skin_surface_3(Polyhedron_3 &p) const {
-    bool use_mesh_surface_3;
     Base::mesh_surface_3(p);
   }
   template <class Polyhedron_3>
   void subdivide_skin_surface_mesh_3(Polyhedron_3 &p) const {
-    bool use_subdivide_mesh_3;
     Base::subdivide_mesh_3(p);
   }
 };
