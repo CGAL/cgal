@@ -87,7 +87,6 @@ intersection_coplanar_triangles(
   const typename Kernel::Triangle_3& t2,
   const Kernel& k)
 {
-  typename Kernel::Has_on_3 has_on=k.has_on_3_object();
   const typename Kernel::Point_3& p=t1.vertex(0),q=t1.vertex(1),r=t1.vertex(2);
   
   std::list<typename Kernel::Point_3> inter_pts;
