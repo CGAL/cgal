@@ -471,9 +471,10 @@ insert_constraint(Vertex_handle  vaa, Vertex_handle vbb)
     }
     return;
   }
-
+      
   List_faces intersected_faces;
   List_edges conflict_boundary_ab, conflict_boundary_ba;
+     
   bool intersection  = find_intersected_faces( vaa, vbb,
 			                       intersected_faces,
 					       conflict_boundary_ab,
@@ -488,6 +489,7 @@ insert_constraint(Vertex_handle  vaa, Vertex_handle vbb)
     return;
   }
 
+  //no intersection
   triangulate_hole(intersected_faces,
 		   conflict_boundary_ab,
 		   conflict_boundary_ba);
