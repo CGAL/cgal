@@ -46,13 +46,6 @@ struct Triangulation_data_structure_helper_2
     return r;
   }
 
-
-  static Edge mirror_edge(const Edge &e) {
-    int i= e.first->mirror_index(e.second);
-    return Edge(e.first->neighbor(e.second), i);
-  }
-
-
   static Vertex_handle origin(const Edge &e) {
     int o= e.first->ccw(e.second);
     return e.first->vertex(o);
@@ -65,9 +58,6 @@ struct Triangulation_data_structure_helper_2
 
   static Vertex_handle third_vertex(const Edge &e) {
     return e.first->vertex(e.second);
-  }
-  static Vertex_handle mirror_vertex(const Edge &e) {
-    return third_vertex(mirror_edge(e));
   }
 };
 

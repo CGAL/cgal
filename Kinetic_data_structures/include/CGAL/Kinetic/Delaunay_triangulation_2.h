@@ -78,7 +78,8 @@ struct Delaunay_edge_failure_event: public Event_base<KDel*> {
     out << "Flip " << KDel::TDS_helper::origin(edge())->point() << ","
 	<< KDel::TDS_helper::destination(edge())->point() 
 	<< " to " << KDel::TDS_helper::third_vertex(edge())->point() 
-	<< ", " << KDel::TDS_helper::mirror_vertex(edge())->point() ;
+	<< ", " << kdel()->triangulation_data_structure().mirror_vertex(edge().first, 
+                                                                        edge().second)->point() ;
     return out;
   }
 
@@ -593,7 +594,7 @@ public:
 		     << TDS_helper::origin(e)->point()
 		     << TDS_helper::destination(e)->point() 
 		     << " to get " << TDS_helper::third_vertex(e)->point()
-		     << ", " << TDS_helper::mirror_vertex(e)->point()<< std::endl);
+		     << ", " << del_.mirror_vertex(e.first, e.second)->point()<< std::endl);
     //CGAL_LOG(Log::NONE, TDS_helper::destination(e)->point() << std::endl);
     //CGAL_LOG(Log::SOME, " at "  << traits_.simulator()->current_time() << std::endl);
 
@@ -610,7 +611,7 @@ public:
     int bei;
 
     if (!traits_.is_exact()
-	&& del_.is_edge(TDS_helper::third_vertex(e), TDS_helper::mirror_vertex(e),
+	&& del_.is_edge(TDS_helper::third_vertex(e), del_.mirror_vertex(e.first, e.second),
 			bef, bei)) {
       // we have a numeric error, lets try to rebuild the neighboring certificates
       CGAL_LOG(Log::SOME,
@@ -640,7 +641,7 @@ public:
 	return e;
       }
     }
-    CGAL_precondition(!del_.is_edge(TDS_helper::third_vertex(e), TDS_helper::mirror_vertex(e),
+    CGAL_precondition(!del_.is_edge(TDS_helper::third_vertex(e), del_.mirror_vertex(e.first, e.second),
 				    bef, bei));
 
     set_directed_edge_label(e, Event_key());
@@ -661,7 +662,7 @@ public:
 
     Edge flipped_edge(face,index);
     Edge mirror_flipped_edge(face->neighbor(index), mirror_index);
-    CGAL_assertion(mirror_flipped_edge == TDS_helper::mirror_edge(flipped_edge));
+    CGAL_assertion(mirror_flipped_edge == mirror_edge(flipped_edge));
     //CGAL_postcondition(del_.is_face(face));
 
     CGAL_assertion(mirror_index == face->neighbor(index)->index(face));
@@ -894,7 +895,7 @@ protected:
     ks[0]= TDS_helper::origin(e)->point();
     ks[1]= TDS_helper::third_vertex(e)->point();
     ks[2]= TDS_helper::destination(e)->point();
-    ks[3]= TDS_helper::mirror_vertex(e)->point();
+    ks[3]= del_.mirror_vertex(e.first, e.second)->point();
 
     bool odd_parity=false;
     bool infinity=false;
@@ -917,7 +918,7 @@ protected:
 
 
   /*bool is_hull_edge(const Edge &e) const {
-    return ! TDS_helper::mirror_vertex(e)->point().is_valid()
+    return ! del_.mirror_vertex(e.first, e.second)->point().is_valid()
       || ! TDS_helper::third_vertex(e)->point().is_valid()
       || ! TDS_helper::origin(e)->point().is_valid()
       || ! TDS_helper::destination(e)->point().is_valid();
@@ -929,7 +930,7 @@ protected:
     ks[0]= TDS_helper::origin(e)->point();
     ks[1]= TDS_helper::third_vertex(e)->point();
     ks[2]= TDS_helper::destination(e)->point();
-    ks[3]= TDS_helper::mirror_vertex(e)->point();
+    ks[3]= del_.mirror_vertex(e.first, e.second)->point();
   }
 
   // very dangerous
@@ -939,7 +940,7 @@ protected:
     ks[0]= TDS_helper::origin(e)->point();
     ks[1]= TDS_helper::third_vertex(e)->point();
     ks[2]= TDS_helper::destination(e)->point();
-    ks[3]= TDS_helper::mirror_vertex(e)->point();
+    ks[3]= del_.mirror_vertex(e.first, e.second)->point();
 
     bool odd_parity=false;
     bool infinity=false;
@@ -964,7 +965,7 @@ protected:
     CGAL_precondition(get_undirected_edge_label(e) == Event_key());
     CGAL_DELAUNAY_2_DEBUG(std::cout << "\nMaking certificate for " << TDS_helper::origin(e)->point() << " " 
 			  << TDS_helper::destination(e)->point() 
-			  << " which would make " << TDS_helper::mirror_vertex(e)->point() << " " 
+			  << " which would make " << del_.mirror_vertex(e.first, e.second)->point() << " " 
 			  << TDS_helper::third_vertex(e)->point()
 			  << std::endl);
 
@@ -996,10 +997,16 @@ protected:
     }
   }
 
+  Edge 
+  mirror_edge(const Edge e) const 
+  {
+    return Edge(e.first->neighbor(e.second),
+                del_.mirror_index(e.first,  e.second));
+  }
 
   Edge canonicalize(Edge e) const {
     if (e.first->neighbor(e.second) < e.first) {
-      return TDS_helper::mirror_edge(e);
+      return mirror_edge(e);
     } else {
       return e;
     }
@@ -1009,15 +1016,15 @@ protected:
     return e.first->get_edge_label(e.second);
   }
 
-  static Event_key get_undirected_edge_label(const Edge &e) {
+  Event_key get_undirected_edge_label(const Edge &e) const {
 #ifndef NDEBUG
-    if (get_directed_edge_label(e) != get_directed_edge_label(TDS_helper::mirror_edge(e))) {
+    if (get_directed_edge_label(e) != get_directed_edge_label(mirror_edge(e))) {
       std::cerr << "FAILURE Edge from " << TDS_helper::origin(e)->point() << " to " 
 		<< TDS_helper::destination(e)->point() << " is screwed." << std::endl;
       std::cerr << get_directed_edge_label(e) << " "
-                <<  get_directed_edge_label(TDS_helper::mirror_edge(e)) << std::endl;
+                <<  get_directed_edge_label(mirror_edge(e)) << std::endl;
       CGAL_precondition(get_directed_edge_label(e)
-			== get_directed_edge_label(TDS_helper::mirror_edge(e)));
+			== get_directed_edge_label(mirror_edge(e)));
     }
 #endif
     return e.first->get_edge_label(e.second);
@@ -1028,10 +1035,10 @@ protected:
     e.first->set_edge_label(e.second, l);
   }
 
-  static void set_undirected_edge_label(const Edge &e,
-					Event_key l) {
+  void set_undirected_edge_label(const Edge &e,
+					Event_key l) const {
     set_directed_edge_label(e,l);
-    set_directed_edge_label(TDS_helper::mirror_edge(e),l);
+    set_directed_edge_label(mirror_edge(e),l);
   }
 
 };
@@ -1121,7 +1128,7 @@ void Delaunay_triangulation_2<Sim, Del, W, T>::audit() const
 	 fit != del_.finite_edges_end(); ++fit){
       Point_key k0= fit->first->vertex((fit->second+1)%3)->point();
       Point_key k2= fit->first->vertex((fit->second+2)%3)->point();
-      Point_key k3= TDS_helper::mirror_vertex(*fit)->point();
+      Point_key k3= del_.mirror_vertex(fit->first, fit->second)->point();
       Point_key k1= TDS_helper::third_vertex(*fit)->point();
       if (k1== Point_key() || k3== Point_key()) continue;
       typename Triangulation::Geom_traits::Current_coordinates cc= del_.geom_traits().current_coordinates_object();
@@ -1142,12 +1149,12 @@ void Delaunay_triangulation_2<Sim, Del, W, T>::audit() const
 
     for (typename Triangulation::Edge_iterator fit = del_.edges_begin(); fit != del_.edges_end(); ++fit){
       if (get_directed_edge_label(*fit) != 
-	  get_directed_edge_label(TDS_helper::mirror_edge(*fit))) {
+	  get_directed_edge_label(mirror_edge(*fit))) {
 	CGAL_LOG(Log::NONE, "AUDIT FAILURE mismatched labels on " 
 			 << TDS_helper::origin(*fit)->point() << " " 
 			 << TDS_helper::destination(*fit)->point() 
 			 << " front has " << get_directed_edge_label(*fit)
-			 << " and back has " << get_directed_edge_label(TDS_helper::mirror_edge(*fit))<< std::endl);
+			 << " and back has " << get_directed_edge_label(mirror_edge(*fit))<< std::endl);
       }
       if (del_.degree(TDS_helper::origin(*fit))==3 || del_.degree(TDS_helper::destination(*fit))==3) {
 	if (get_undirected_edge_label(*fit) != Event_key()) {
