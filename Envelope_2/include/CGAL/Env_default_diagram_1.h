@@ -47,7 +47,7 @@ public:
    * Representation of a diagram vertex, which stores the point it represents
    * and a list of all curves that pass at that point.
    */
-  struct Edge;
+  class Edge;
 
   class Vertex
   {
