@@ -359,7 +359,6 @@ public:
 	get_offset(c,2), get_offset(c,3));
 
     // check that v lies within the domain. If not: translate
-    Covering_sheets nos = number_of_sheets();
     Iso_cuboid dom = domain();
     if (   !(v.x() < dom.xmin()) && v.x()<dom.xmax()
 	&& !(v.y() < dom.ymin()) && v.y()<dom.ymax()
