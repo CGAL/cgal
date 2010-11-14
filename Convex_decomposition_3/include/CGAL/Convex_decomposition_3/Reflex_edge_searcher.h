@@ -113,8 +113,8 @@ class Reflex_edge_searcher : public Modifier_base<typename Nef_::SNC_structure> 
     CGAL_For_all(svc, send) {
       int isrse = CGAL::is_reflex_sedge<SNC_structure>(svc, dir);
       if(isrse == 0) continue;
-      if((pushed&=1==0) && (isrse&1==1)) pos.insert(svc->source());
-      if((pushed&=2==0) && (isrse&2==2)) neg.insert(svc->source());
+      if((pushed&=1==0) && ((isrse&1)==1)) pos.insert(svc->source());
+      if((pushed&=2==0) && ((isrse&2)==2)) neg.insert(svc->source());
       pushed |= isrse;
       if(pushed == 3)
 	break;
