@@ -173,7 +173,7 @@ Bench bench;			//If you want create table with all datasets you supose to use th
   typedef CircularKernel::Line_arc_2                                      Line_arc_2;
   typedef CGAL::Arr_circular_line_arc_traits_2<CircularKernel>  CircularK_Variant_Traits;
  
-  typedef boost::variant< Circular_arc_2, Line_arc_2 >        CircularKVarArc;
+  typedef CircularK_Variant_Traits::Curve_2                   CircularKVarArc;
   typedef std::vector<CircularKVarArc>                        CircularKVarArcContainer; 
   
   bench.kernel("CKVar");
@@ -221,9 +221,9 @@ bench.Compute_no_dxf<CircularKernel,CircularK_Variant_Traits,CircularKVarArcCont
  
   typedef LazyCurvedK::Circular_arc_2  Circular_arc_3;
   typedef LazyCurvedK::Line_arc_2  Line_arc_3; 
-  typedef boost::variant<Circular_arc_3,Line_arc_3 >               LazyVarArc;
-  typedef std::vector<LazyVarArc>                                  LazyVarContainer;
   typedef CGAL::Arr_circular_line_arc_traits_2<LazyCurvedK> LazyCurvedK_Variant_Traits;
+  typedef LazyCurvedK_Variant_Traits::Curve_2                      LazyVarArc;
+  typedef std::vector<LazyVarArc>                                  LazyVarContainer;  
   
   bench.kernel("LazyKVar");
   
@@ -256,9 +256,9 @@ bench.Compute_no_dxf<CircularKernel,CircularK_Variant_Traits,CircularKVarArcCont
 
   typedef CircularKernelHexagon::Circular_arc_2                                                   Circular_arc_4;
   typedef CircularKernelHexagon::Line_arc_2                                                       Line_arc_4;
-  typedef boost::variant<  Circular_arc_4, Line_arc_4 >                          CircularKernHexVarArc;
-  typedef std::vector<CircularKernHexVarArc>                                     CircularKernHexVarArcContainer; 
   typedef CGAL::Arr_circular_line_arc_traits_2<CircularKernelHexagon>  CircularKernHex_Variant_Traits;
+  typedef CircularKernHex_Variant_Traits::Curve_2                                CircularKernHexVarArc;
+  typedef std::vector<CircularKernHexVarArc>                                     CircularKernHexVarArcContainer;   
   
   bench.kernel("CK Hex VarTraits");
  
@@ -291,9 +291,9 @@ bench.Compute_no_dxf<CircularKernel,CircularK_Variant_Traits,CircularKVarArcCont
   
   typedef LazyKernelHexagon::Circular_arc_2                                        Circular_arc_5;
   typedef LazyKernelHexagon::Line_arc_2                                            Line_arc_5;
-  typedef boost::variant<Circular_arc_5,Line_arc_5 >                  HxLazyVarArc;
-  typedef std::vector<HxLazyVarArc>                                   HxLazyVarContainer;
   typedef CGAL::Arr_circular_line_arc_traits_2<LazyKernelHexagon>  HxLazyVariantTraits; 
+  typedef HxLazyVariantTraits::Curve_2                                HxLazyVarArc;
+  typedef std::vector<HxLazyVarArc>                                   HxLazyVarContainer;
   
   bench.kernel("LazyK Hex  VarTraits") ;
 
@@ -323,9 +323,9 @@ bench.Compute_no_dxf<LazyKernelHexagon,HxLazyVariantTraits,HxLazyVarContainer>()
  
   typedef BBCircularKernel::Circular_arc_2                                        Circular_arc_6;
   typedef BBCircularKernel::Line_arc_2                                            Line_arc_6;
-  typedef boost::variant<Circular_arc_6,Line_arc_6 >                  BBCircVarArc;
-  typedef std::vector<BBCircVarArc>                                   BBCircVarContainer;
   typedef CGAL::Arr_circular_line_arc_traits_2<BBCircularKernel>  BBCircVariantTraits; 
+  typedef BBCircVariantTraits::Curve_2                                BBCircVarArc;
+  typedef std::vector<BBCircVarArc>                                   BBCircVarContainer;
   
   bench.kernel("CK BBox VarTraits") ;
   
@@ -357,9 +357,9 @@ bench.Compute_no_dxf<LazyKernelHexagon,HxLazyVariantTraits,HxLazyVarContainer>()
 
   typedef BBLazyCurvedK::Circular_arc_2                                        Circular_arc_7;
   typedef BBLazyCurvedK::Line_arc_2                                            Line_arc_7;
-  typedef boost::variant<Circular_arc_7,Line_arc_7 >                  BBLazyVarArc;
-  typedef std::vector< BBLazyVarArc>                                    BBLazyVarContainer;
   typedef CGAL::Arr_circular_line_arc_traits_2<BBLazyCurvedK>   BBLazyVariantTraits; 
+  typedef BBLazyVariantTraits::Curve_2                                  BBLazyVarArc;
+  typedef std::vector< BBLazyVarArc>                                    BBLazyVarContainer;
   
   bench.kernel("LLazyK BBox VarTraits") ;
   

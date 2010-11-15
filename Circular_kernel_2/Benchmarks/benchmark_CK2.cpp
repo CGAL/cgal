@@ -34,12 +34,12 @@ typedef CGAL::Cartesian<NT1> Linear_k1;
 typedef CGAL::Algebraic_kernel_for_circles_2_2<NT1> Algebraic_k1;
 typedef CGAL::Circular_kernel_2<Linear_k1, Algebraic_k1> CircularKernel;
 typedef CGAL::Arr_circular_arc_traits_2<CircularKernel> CircularK_CA_Traits;
-typedef CircularKernel::Circular_arc_2 CircularKArc;
+typedef CircularK_CA_Traits::Curve_2 CircularKArc;
 typedef std::vector<CircularKArc> CircularKArcContainer;
 typedef CircularKernel::Circular_arc_2 Circular_arc_2;
 typedef CircularKernel::Line_arc_2 Line_arc_2;
 typedef CGAL::Arr_circular_line_arc_traits_2<CircularKernel>   CircularK_Variant_Traits;
-typedef boost::variant< Circular_arc_2, Line_arc_2 > CircularKVarArc;
+typedef CircularK_Variant_Traits::Curve_2 CircularKVarArc;
 typedef std::vector<CircularKVarArc> CircularKVarArcContainer; 
 
 // LAZY KERNEL TYPEDEFS
@@ -49,21 +49,20 @@ typedef CGAL::Algebraic_kernel_for_circles_2_2<NT3> Algebraic_k3;
 typedef CGAL::Circular_kernel_2 <Linear_k3,Algebraic_k3> CK3_;
 typedef CGAL::Lazy_circular_kernel_2<CircularKernel,CK3_> LazyCurvedK;
 typedef CGAL::Arr_circular_arc_traits_2<LazyCurvedK> LazyCurvedK_CA_Traits;
-typedef LazyCurvedK::Circular_arc_2 LazyArc;
+typedef LazyCurvedK_CA_Traits::Curve_2 LazyArc;
 typedef std::vector<LazyArc> LazyArcContainer;
 typedef LazyCurvedK::Circular_arc_2 Circular_arc_3;
 typedef LazyCurvedK::Line_arc_2 Line_arc_3; 
-typedef boost::variant<Circular_arc_3,Line_arc_3 > LazyVarArc;
-typedef std::vector<LazyVarArc> LazyVarContainer;
-//~ typedef CGAL::Arr_circular_line_arc_traits_2<LazyCurvedK,Line_arc_3,Circular_arc_3> LazyCurvedK_Variant_Traits;
 typedef CGAL::Arr_circular_line_arc_traits_2<LazyCurvedK> LazyCurvedK_Variant_Traits;
+typedef LazyCurvedK_Variant_Traits::Curve_2 LazyVarArc;
+typedef std::vector<LazyVarArc> LazyVarContainer;
 
 // BBOX TYPEDEFS
 typedef CGAL::Filtered_bbox_circular_kernel_2<CircularKernel>
   BBCircularKernel ;
 typedef CGAL::Arr_circular_arc_traits_2<BBCircularKernel>
   BBCircularKernel_CA_Traits;
-typedef BBCircularKernel::Circular_arc_2
+typedef BBCircularKernel_CA_Traits::Curve_2
   BBCircularKernelArc;
 typedef std::vector<BBCircularKernelArc>
   BBCircularKernelArcContainer;
@@ -71,18 +70,16 @@ typedef BBCircularKernel::Circular_arc_2
   Circular_arc_6;
 typedef BBCircularKernel::Line_arc_2
   Line_arc_6;
-typedef boost::variant<Circular_arc_6,Line_arc_6 >
-  BBCircVarArc;
-typedef std::vector<BBCircVarArc>
-  BBCircVarContainer; 
 typedef CGAL::Arr_circular_line_arc_traits_2<BBCircularKernel>  BBCircVariantTraits; 
+typedef BBCircVariantTraits::Curve_2  BBCircVarArc;
+typedef std::vector<BBCircVarArc>  BBCircVarContainer; 
 
 // BBOX(LAZY)
 typedef CGAL::Filtered_bbox_circular_kernel_2<LazyCurvedK>
   BBLazyKernel ;
 typedef CGAL::Arr_circular_arc_traits_2<BBLazyKernel>
   BBLazyKernel_CA_Traits;
-typedef BBLazyKernel::Circular_arc_2
+typedef BBLazyKernel_CA_Traits::Curve_2
   BBLazyKernelArc;
 typedef std::vector<BBLazyKernelArc>
   BBLazyKernelArcContainer;
@@ -90,11 +87,9 @@ typedef BBLazyKernel::Circular_arc_2
   Circular_arc_lazybb;
 typedef BBLazyKernel::Line_arc_2
   Line_arc_lazybb;
-typedef boost::variant<Circular_arc_lazybb,Line_arc_lazybb >
-  BBLazyVarArc;
-typedef std::vector<BBLazyVarArc>
-  BBLazyVarContainer; 
 typedef CGAL::Arr_circular_line_arc_traits_2<BBLazyKernel>  BBLazyVariantTraits;
+typedef BBLazyVariantTraits::Curve_2  BBLazyVarArc;
+typedef std::vector<BBLazyVarArc>  BBLazyVarContainer; 
 
 template <class CK,class Traits,class ArcContainer>
 void do_main(const char *s) {

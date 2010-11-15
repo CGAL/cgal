@@ -43,8 +43,8 @@ typedef CGAL::Arr_circular_line_arc_traits_2<CK_with_LK>        Traits_with_CK_w
 typedef CGAL::Filtered_bbox_circular_kernel_2<CK_exact>         Fbb_CK_exact;
 typedef CGAL::Arr_circular_line_arc_traits_2<Fbb_CK_exact>      Traits_Fbb_CK_exact;
 
-typedef CGAL::Filtered_bbox_circular_kernel_2<Lazy_CK>          Fbb_Lazy_CK;
-typedef CGAL::Arr_circular_line_arc_traits_2<Fbb_Lazy_CK>       Traits_Fbb_Lazy_CK;
+typedef CGAL::Filtered_bbox_circular_kernel_2<CK_with_LK>       Fbb_CK_with_Lazy;
+typedef CGAL::Arr_circular_line_arc_traits_2<Fbb_CK_with_Lazy>  Traits_Fbb_CK_with_Lazy;
 
 template <class CK>
 struct Get_exact{
@@ -142,7 +142,7 @@ struct Benchmark
     {
       CGAL::Timer time; time.start();
       Arrangement_2_with_CK      ck_arr;
-      insert (ck_arr, ac.begin(), ac.end(),boost::false_type());
+      insert (ck_arr, ac.begin(), ac.end());
       std::cout << "(" << ck_arr.number_of_vertices()
                 << "," << ck_arr.number_of_edges() 
                 << "," << ck_arr.number_of_faces() << ")" << std::endl;  
@@ -164,6 +164,9 @@ int main( int argc, char* argv[] )
   std::cout << "Running with Lazy_exact_nt\n";
   Benchmark<Traits_with_LK,Traits_with_CK_with_LK> bench_with_LK;
   bench_with_LK.run(argv[1]);
+  std::cout << "Running with Bbox filtering\n";
+  Benchmark<Traits_with_LK,Traits_Fbb_CK_with_Lazy> bench_with_BB;
+  bench_with_BB.run(argv[1]);  
   return 0;
 }
 
