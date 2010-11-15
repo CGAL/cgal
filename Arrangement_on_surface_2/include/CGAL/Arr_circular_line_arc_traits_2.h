@@ -268,9 +268,9 @@ namespace CGAL {
       typedef typename CircularKernel::Circular_arc_point_2      
                                                   Circular_arc_point_2;
 
-      template < class OutputIterator >
+      template < class OutputIterator,class Not_X_Monotone >
       OutputIterator
-      operator()(const boost::variant<Arc1, Arc2> &A, OutputIterator res) const
+      operator()(const boost::variant<Arc1, Arc2, Not_X_Monotone> &A, OutputIterator res) const
       {
         if ( const Arc1* arc1 = boost::get<Arc1>( &A ) ){
 	  std::vector<CGAL::Object> container;
@@ -529,8 +529,10 @@ namespace CGAL {
     typedef Arr_oblivious_side_tag                 Arr_top_side_category;
     typedef Arr_oblivious_side_tag                 Arr_right_side_category;
     
-    typedef boost::variant< Arc1, Arc2 > Curve_2;
-    typedef boost::variant< Arc1, Arc2 > X_monotone_curve_2;
+    struct Not_X_Monotone{};
+  
+    typedef boost::variant< Arc1, Arc2, Not_X_Monotone >        Curve_2;
+    typedef boost::variant< Arc1, Arc2 >                        X_monotone_curve_2;
 
   private:
     CircularKernel ck;

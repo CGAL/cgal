@@ -38,6 +38,60 @@
 
 namespace CGAL {
 
+namespace internal{
+template <class CircularKernel> 
+class Non_x_monotonic_Circular_arc_2
+  : public CircularKernel::Circular_arc_2
+{
+  typedef typename CircularKernel::FT             FT;
+  typedef typename CircularKernel::Point_2        Point_2;
+  typedef typename CircularKernel::Line_2         Line_2;
+  typedef typename CircularKernel::Circle_2       Circle_2;
+  typedef typename CircularKernel::Circular_arc_point_2
+                                                Circular_arc_point_2;
+  
+  typedef typename CircularKernel::Circular_arc_2 Base;
+  
+public:
+  Non_x_monotonic_Circular_arc_2(): Base(){}
+
+  Non_x_monotonic_Circular_arc_2(const Circle_2 &c): Base(c){}
+  // Not Documented
+  Non_x_monotonic_Circular_arc_2(const Circle_2 &support, 
+                                 const Line_2 &l1, const bool b_l1,
+                                 const Line_2 &l2, const bool b_l2)
+    : Base(support,l1,b_l1,l2,b_l2){}
+
+  // Not Documented
+  Non_x_monotonic_Circular_arc_2(const Circle_2 &c, 
+                                 const Circle_2 &c1, const bool b_1,
+                                 const Circle_2 &c2, const bool b_2)
+    : Base(c,c1,b_1,c2,b_2)
+  {}
+
+  Non_x_monotonic_Circular_arc_2(const Point_2 &start,
+                                 const Point_2 &middle,
+                                 const Point_2 &end)
+    : Base(start,middle,end)
+  {}
+  
+  Non_x_monotonic_Circular_arc_2(const Circle_2 &support,
+                                 const Circular_arc_point_2 &begin,
+                                 const Circular_arc_point_2 &end)
+    : Base(support,begin,end)
+  {}
+
+  Non_x_monotonic_Circular_arc_2(const Point_2 &start,
+                                 const Point_2 &end,
+                                 const FT &bulge)
+    : Base(start,end,bulge)
+  {}
+  
+ Non_x_monotonic_Circular_arc_2(const Base& a) : Base(a) {}
+};  
+  
+} //namespace internal
+  
 // Traits class for CGAL::Arrangement_2 (and similar) based on a 
 // CircularKernel.
 
@@ -49,8 +103,8 @@ class Arr_circular_arc_traits_2 {
 public:
 
   typedef CircularKernel Kernel;
-  typedef typename CircularKernel::Circular_arc_2  Curve_2;
-  typedef typename CircularKernel::Circular_arc_2  X_monotone_curve_2;
+  typedef internal::Non_x_monotonic_Circular_arc_2<CircularKernel>  Curve_2;
+  typedef typename CircularKernel::Circular_arc_2                   X_monotone_curve_2;
 
   typedef typename CircularKernel::Circular_arc_point_2 Point;
   typedef typename CircularKernel::Circular_arc_point_2 Point_2;
