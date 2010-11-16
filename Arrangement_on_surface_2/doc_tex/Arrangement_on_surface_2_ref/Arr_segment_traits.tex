@@ -22,15 +22,15 @@ arithmetic --- that is, the number type should support the arithmetic
 operations $+$, $-$, $\times$ and $\div$ that should be carried out
 without loss of precision.
 
-For example, instatiating the traits
+For example, instantiating the traits
 template with kernels such as \ccStyle{Cartesian<Quotient<MP_Float> >},
 or \ccStyle{Homogeneous<Gmpz>} ensures the exact and robust operation of
 the application. In particular, the \ccStyle{Cartesian<Gmpq>} achieves
 the fastest running times in most cases. Using other (inexact) number
-types (for example, instatiating the template with
+types (for example, instantiating the template with
 \ccStyle{Simple_cartesian<double>}) is possible at the user's own risk:
 selecting an inexact number type usually leads to faster running time at
-the expence of possible robustness problems.
+the expense of possible robustness problems.
 
 For optimal performance, we recommend instantiating the traits class with
 the default \ccc{Exact_predicates_exact_constructions_kernel} provided by
@@ -44,8 +44,8 @@ expect. The reason is that the kernel segment is represented by its
 two endpoints only, while the traits class needs to store extra data
 with its segments, in order to efficiently operate on them. Nevertheless,
 the nested \ccc{X_monotone_curve_2} and \ccc{Curve_2} types (in this
-case both types refer to the same class, as {\sl every} line segement
-is (weakly) $x$-monotone) are however convertable to the
+case both types refer to the same class, as {\sl every} line segment
+is (weakly) $x$-monotone) can however be converted to the type
 \ccc{Kernel::Segment_2}.
 
 \ccRefName\ achieves faster running times than the

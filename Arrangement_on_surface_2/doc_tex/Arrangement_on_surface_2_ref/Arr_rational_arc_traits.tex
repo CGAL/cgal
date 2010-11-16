@@ -14,7 +14,7 @@
 
 The traits class \ccRefName\ is a model of the \ccc{ArrangementTraits_2}
 concept. It handles bounded or unbounded segments of rational functions,
-referred to as {\sl rational arcs} (in particaular, a rational arc may
+referred to as {\sl rational arcs} (in particular, a rational arc may
 correspond to the entire graph of a rational function), and enables the
 construction and maintenance of arrangements of such arcs. Rational
 functions, and polynomial functions in particular, are not only interesting
@@ -37,13 +37,13 @@ yet $Q$ has zeros in this interval.
 In our representation, all polynomial coefficients (the coefficients of $P$
 and $Q$) must be rational numbers. This guarantees that the
 $x$-coordinates of all arrangement vertices (in particular, those
-representing instersection points) can be represneted as roots of
+representing intersection points) can be represented as roots of
 polynomials with integer coefficients --- namely, algebraic numbers.
 The $y$-coordinates can be obtained by simple arithmetic operations on
 the $x$-coordinates, hence they are also algebraic numbers.
 
 We therefore require separate representations of the curve coefficients and
-the point coordiantes. The \ccc{NtTraits} should be instantiated with a class
+the point coordinates. The \ccc{NtTraits} should be instantiated with a class
 that defines nested \ccc{Integer}, \ccc{Rational} and \ccc{Algebraic} number
 types and supports various operations on them, yielding certified computation
 results (for example, in can convert rational numbers to algebraic numbers
@@ -153,7 +153,7 @@ assignment operator are provided for rational arcs. In addition, an
 
 \ccMethod{bool is_continuous() const;}
   {returns whether \ccVar\ is continuous, namely whether it does not
-   conatains any poles in its interior. $x$-monotone curves are always
+   contain any poles in its interior. $x$-monotone curves are always
    continuous.}
 
 \ccMethod{const Polynomial& numerator () const;}

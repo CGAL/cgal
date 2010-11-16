@@ -45,7 +45,7 @@ results (for example, in can convert rational numbers to algebraic numbers
 and can compute roots of polynomials with integer coefficients).
 The other template parameters, \ccc{RatKernel} and \ccc{AlgKernel} should be
 geometric kernels templated with the \ccc{NtTraits::Rational} and
-\ccc{NtTraits::Algebraic} number types, repectively. It is recommended to
+\ccc{NtTraits::Algebraic} number types, respectively. It is recommended to
 instantiate the \ccc{CORE_algebraic_number_traits} class as the \ccc{NtTraits}
 parameter, with \ccc{Cartesian<NtTraits::Rational>} and
 \ccc{Cartesian<NtTraits::Algebraic>} instantiating the two kernel types,
@@ -75,7 +75,7 @@ to represent a B\'ezier curve of arbitrary degree, which is defined by a
 sequence of rational control points. In addition to the methods listed
 below, the I/O operators \ccc{operator<<} and \ccc{operator>>} for
 standard output-streams are also supported. The copy constructor and
-assigment operator are supported as well.
+assignment operator are supported as well.
 
 \begin{ccClass}{Arr_Bezier_curve_traits_2<AlgKernel,NtTraits>::Curve_2}
 %======================================================================
@@ -131,7 +131,7 @@ construction, such point are not computed in an exact manner, and instead
 are given in an approximate representation. Note that the exact coordinates
 of a point may only be accessed if it is exactly computed.
 
-In addition to the methods listed below, the copy constructor and assigment
+In addition to the methods listed below, the copy constructor and assignment
 operator for \ccc{Point_2} objects are also supported.
 
 \begin{ccClass}{Arr_Bezier_curve_traits_2<AlgKernel,NtTraits>::Point_2}
@@ -188,12 +188,12 @@ used to represent $x$-monotone subcurves of B\'ezier curves. The subcurve is
 defined by a supporting B\'ezier curve $B(t)$ and a range of definition in
 the parameter space $[t_1, t_2] \subseteq [0, 1]$, where $B(t_1)$ is the
 subcurve source and $B(t_2)$ is its target. Note that as the point endpoints
-may only be approxiamted, the parameter range definining the subcurve may
+may only be approximated, the parameter range defining the subcurve may
 only be approximately known.
 
 It is not possible to construct $x$-monotone subcurves directly. Instead,
 use the \ccc{Make_x_monotone_2} functor supplied by the traits class to
-subdivide a \ccc{Curve_2} object into $x$-monotone cubcurves.
+subdivide a \ccc{Curve_2} object into $x$-monotone subcurves.
 
 \begin{ccClass}{Arr_Bezier_curve_traits_2<AlgKernel,NtTraits>::X_monotone_curve_2}
 %===========================================================================

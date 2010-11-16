@@ -17,7 +17,7 @@
 The \ccRefName\ class implements the incremental randomized algorithm
 introduced by Mulmuley~\cite{m-fppa-90} as presented by
 Seidel~\cite{s-sfira-91} (see also~\cite[Chapter~6]{bkos-cgaa-00}).
-It subdivides each arrangement face to pseuso-trapezoidal cells, each
+It subdivides each arrangement face to pseudo-trapezoidal cells, each
 of constant complexity, and constructs and maintains a search
 structure on top of these cells, such that each query can be answered
 in $O(\log n)$ time, where $n$ is the complexity of the arrangement.
@@ -26,7 +26,7 @@ Constructing the search structures takes $O(n \log n)$ time, such that
 attaching a trapezoidal point-location object to an existing arrangement
 may incur some overhead in running times. In addition, the point-location
 object needs to keep its auxiliary data structures up-to-date as the
-arrangement goes thorugh structural changes. It is therefore recommended
+arrangement goes through structural changes. It is therefore recommended
 to use this point-location strategy for static arrangements (or arrangement
 that do not alter frequently), and when the number of issued queries
 is relatively large.

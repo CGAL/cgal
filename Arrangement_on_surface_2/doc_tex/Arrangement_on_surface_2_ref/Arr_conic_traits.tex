@@ -52,19 +52,19 @@ contain only circular arcs and line segments, it is recommended to use the
 
 In our representation, all conic coefficients (namely $r, s, t, u, v, w$)
 must be rational numbers. This guarantees that the coordinates of all
-arrangement vertices (in particular, those representing instersection
+arrangement vertices (in particular, those representing intersection
 points) are algebraic numbers of degree $4$ (a real number $\alpha$
 is an algebraic number of degree $d$ if there exist a polynomial $p$ with
 {\sl integer} coefficient of degree $d$ such that $p(\alpha) = 0$).
 We therefore require separate representations of the curve coefficients and
-the point coordiantes. The \ccc{NtTraits} should be instantiated with a class
+the point coordinates. The \ccc{NtTraits} should be instantiated with a class
 that defines nested \ccc{Integer}, \ccc{Rational} and \ccc{Algebraic}
 number types and supports various operations on them, yielding certified
 computation results (for example, it can convert rational numbers to algebraic
 numbers and can compute roots of polynomials with integer coefficients).
 The other template parameters, \ccc{RatKernel} and \ccc{AlgKernel} should be
 geometric kernels templated with the \ccc{NtTraits::Rational} and
-\ccc{NtTraits::Algebraic} number types, repectively.
+\ccc{NtTraits::Algebraic} number types, respectively.
 It is recommended to instantiate the \ccc{CORE_algebraic_number_traits}
 class as the \ccc{NtTraits} parameter, with
 \ccc{Cartesian<NtTraits::Rational>} and \ccc{Cartesian<NtTraits::Algebraic>}
@@ -187,11 +187,11 @@ for the curves is defined for standard output streams.
      $r x^2 + s y^2 + t x y + u x + v y + w = 0$, going
      in the given orientation \ccc{o} from its source point to its target
      point. In this case only some approximations of the endpoints
-     (\ccc{app_ps} and \ccc{app_pt}, repsectively) is available,
+     (\ccc{app_ps} and \ccc{app_pt}, respectively) is available,
      and their exact locations are given implicitly, specified by the
      intersections of the supporting conic curve with 
      $r_1 x^2 + s_1 y^2 + t_1 x y + u_1 x + v_1 y + w_1 = 0$ and
-     $r_2 x^2 + s_2 y^2 + t_2 x y + u_2 x + v_2 y + w_2 = 0$, repsectively.
+     $r_2 x^2 + s_2 y^2 + t_2 x y + u_2 x + v_2 y + w_2 = 0$, respectively.
      \ccPrecond{The two auxiliary curves specifying the endpoints really
                 intersect with the supporting conic curve, such that
                 the arc endpoints define a bounded segment of the supporting
@@ -230,7 +230,7 @@ for the curves is defined for standard output streams.
    a circle).}
 
 The six following methods return the coefficients of the supported conic,
-after their conversion to integer number (reprsented by the \ccc{Integer}
+after their conversion to integer number (represented by the \ccc{Integer}
 type of the \ccc{NtTraits} class):
 
 \ccThree{typename NtTraits::Integer}{}{\hspace*{8.5cm}}
