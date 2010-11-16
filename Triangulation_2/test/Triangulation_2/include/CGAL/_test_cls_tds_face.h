@@ -31,6 +31,7 @@ _test_cls_tds_face( const Tds )
 {
   std::cout << "Face Tds constructors" << std::endl;
 
+  typedef typename Tds::Edge                 Edge;
   typedef typename Tds::Face_handle          Face_handle;
   typedef typename Tds::Vertex_handle        Vertex_handle;
 
@@ -147,6 +148,7 @@ _test_cls_tds_face( const Tds )
   assert( tds.mirror_vertex(fh2, 1) == vh2);
   assert( tds.mirror_vertex(fh3, 2) == vh3);
   assert( tds.mirror_index(gh4, 0) == 0);
+  assert( tds.mirror_edge(Edge(gh4, 0)) == Edge(fh1, 0));
   assert( tds.mirror_index(fh1, 0) == 0);
   assert( tds.mirror_index(fh2, 1) == 1);
   assert( tds.mirror_index(fh3, 2) == 2);

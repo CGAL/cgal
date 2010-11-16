@@ -511,6 +511,9 @@ _test_cls_triangulation_2( const Triangul & )
   assert(T2_1.is_face(v0,v1,v2));
   assert(T2_1.is_face(v0,v2,v1));
   assert(T2_1.is_face(v1,v2,v3,ff) && ff == f->neighbor(0));
+  const Edge e = T2_1.mirror_edge(Edge(f, 0));
+  assert(e.first == ff);
+  assert(e.second == ff->index(v3));
   assert(! T2_1.is_face(v0,v3,v1));
   assert(T1_5.includes_edge(v1_5_1,v1_5_2,v0,f,li));
   assert(v0 == v1_5_3);

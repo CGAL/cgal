@@ -379,6 +379,7 @@ public:
 
   Vertex_handle mirror_vertex(Face_handle f, int i) const;
   int mirror_index(Face_handle v, int i) const;
+  Edge mirror_edge(Edge e) const;
 
   Line_face_circulator    line_walk(const Point& p,
 				    const Point& q,
@@ -3016,6 +3017,15 @@ Triangulation_2<Gt, Tds>::
 mirror_index(Face_handle f, int i) const
 {
   return _tds.mirror_index(f,i);
+}
+
+template <class Gt, class Tds >
+inline
+typename Triangulation_2<Gt, Tds>::Edge
+Triangulation_2<Gt, Tds>::    
+mirror_edge(const Edge e) const
+{
+  return _tds.mirror_edge(e);
 }
 
 template <class Gt, class Tds >

@@ -201,7 +201,7 @@ public:
     CGAL_triangulation_precondition ( f->neighbor(i) != Face_handle()
 				    && f->dimension() >= 1);
   return f->neighbor(i)->vertex(mirror_index(f,i));
-}
+  }
 
   int
   mirror_index(Face_handle f, int i) const
@@ -213,7 +213,16 @@ public:
       return 1 - (f->neighbor(i)->index(f->vertex(1-i)));
     }
     return ccw( f->neighbor(i)->index(f->vertex(ccw(i))));
-}
+  }
+
+  Edge 
+  mirror_edge(const Edge e) const 
+  {
+    CGAL_triangulation_precondition(e.first->neighbor(e.second) != Face_handle()
+                                    && e.first->dimension() >= 1);
+    return Edge(e.first->neighbor(e.second),
+                mirror_index(e.first,  e.second));
+  }
 
   // MODIFY
   void flip(Face_handle f, int i);
