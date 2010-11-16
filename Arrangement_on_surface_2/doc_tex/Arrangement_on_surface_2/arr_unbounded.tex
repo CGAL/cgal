@@ -243,15 +243,21 @@ following methods, in addition to the ones listed in
 Section~\ref{arr_ssec:traverse}:
 \begin{itemize}
 \item
-The \ccc{Vertex} class provides three-valued predicates
-\ccc{boundary_in_x()} and \ccc{boundary_in_y()}, which
-return \ccc{NO_BOUNDARY} if the vertex has a finite $x$-coordinate (or
-$y$-coordinate) and \ccc{MINUS_INFINITY} or \ccc{PLUS_INFINITY} if
-the vertex lies at infinity. The Boolean predicate
-\ccc{is_at_infinity()} is also supported, where we can access the
-point associated with a vertex only if it is not a vertex at infinity
-(recall that a vertex at infinity is not associated with a
-\ccc{Point_2} object).
+The \ccc{Vertex} type provides the three-valued predicates
+\ccc{parameter_space_in_x()} and \ccc{parameter_space_in_y()}.
+The former returns \ccc{ARR_INTERIOR} if the point associated with the
+vertex has a finite $x$-coordinate, \ccc{ARR_LEFT_BOUNDARY}
+if the vertex lies on the left boundary of the parameter space, and
+\ccc{ARR_RIGHT_BOUNDARY} if the vertex lies on the right boundary of
+the parameter space. Similarly, \ccc{parameter_space_in_y()} returns
+\ccc{ARR_INTERIOR}, \ccc{ARR_BOTTOM_BOUNDARY}, or
+\ccc{ARR_TOP_BOUNDARY} depending on whether the point associated with
+the vertex has a finite $y$-coordinate, lies on the bottom boundary of
+the parameter space, or lies on the top boundary. The Boolean predicate
+\ccc{is_at_open_boundary()} is also supported. It checks whether the
+vertex lies at infinity. You can access the point associated with a
+vertex only if it does not lie at infinity (recall that a vertex at
+infinity is not associated with a \ccc{Point_2} object).
 %
 \item
 The nested \ccc{Halfedge} class provides the Boolean predicate
