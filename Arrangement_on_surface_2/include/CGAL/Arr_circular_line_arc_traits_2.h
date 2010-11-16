@@ -501,6 +501,15 @@ namespace CGAL {
     };
 
   }
+  
+
+  // a empty class used to have different types between Curve_2 and X_monotone_curve_2
+  // in Arr_circular_line_arc_traits_2.
+  namespace internal_Argt_traits{
+    struct Not_X_Monotone{};
+    std::ostream& operator<<(std::ostream& os,const Not_X_Monotone&) {return os;}
+  }
+  
   /// Traits class for CGAL::Arrangement_2 (and similar) based on a CircularKernel.
 
   template < typename CircularKernel>
@@ -529,7 +538,7 @@ namespace CGAL {
     typedef Arr_oblivious_side_tag                 Arr_top_side_category;
     typedef Arr_oblivious_side_tag                 Arr_right_side_category;
     
-    struct Not_X_Monotone{};
+    typedef internal_Argt_traits::Not_X_Monotone                Not_X_Monotone;
   
     typedef boost::variant< Arc1, Arc2, Not_X_Monotone >        Curve_2;
     typedef boost::variant< Arc1, Arc2 >                        X_monotone_curve_2;
