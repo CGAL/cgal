@@ -107,7 +107,7 @@ protected:
 	Static_segment ss(o,d);
 
 	if (angle1+angle2 < threshold_*3.1415) {
-	  if (kdel_->visitor().contains(*fit) || kdel_->visitor().contains(TDS_helper::mirror_edge(*fit))) {
+	  if (kdel_->visitor().contains(*fit) || kdel_->visitor().contains(tri.mirror_edge(*fit))) {
 	    w<< CGAL::Color(255,0,0);
 	  }
 	  else {
