@@ -29,8 +29,8 @@ include(CGAL_Macros)
 # Otherwise, LIBRARIES is set to FALSE.
 # N.B. _prefix is the prefix applied to the names of all cached variables that
 # are generated internally and marked advanced by this macro.
-macro(check_fortran_libraries DEFINITIONS LIBRARIES _prefix _name _flags _list _path)
-  #message("DEBUG: check_fortran_libraries(${_list} in ${_path})")
+macro(check_fortran_libraries DEFINITIONS LIBRARIES _prefix _name _flags _list _path1 _path2)
+  message("DEBUG: check_fortran_libraries(${_list} in ${_path1} ${_path2} )")
 
   # Check for the existence of the libraries given by _list
   set(_libraries_found TRUE)
@@ -42,10 +42,10 @@ macro(check_fortran_libraries DEFINITIONS LIBRARIES _prefix _name _flags _list _
     set(_combined_name ${_combined_name}_${_library})
 
     if(_libraries_found)
-      # search first in ${_path}
+      # search first in ${_path1} ${_path2} 
       find_library(${_prefix}_${_library}_LIBRARY
                   NAMES ${_library}
-                  PATHS ${_path} NO_DEFAULT_PATH
+                  PATHS ${_path1} ${_path2}  NO_DEFAULT_PATH
                   )
       # if not found, search in environment variables and system
       if ( WIN32 )
@@ -157,6 +157,7 @@ else()
 
   # Read environment variables
   fetch_env_var(MKL_LIB_DIR)
+  fetch_env_var(INTEL_RTL_LIB_DIR)
 
   # intel mkl 10 library?
   # TODO: add shared variants
@@ -171,7 +172,7 @@ else()
       ""
       "mkl_solver;mkl_intel_c;mkl_intel_thread;mkl_core;libiomp5md"
       #"mkl_solver_sequential;mkl_intel_c;mkl_sequential;mkl_core"
-      "${MKL_LIB_DIR}"
+      "${MKL_LIB_DIR}" "${INTEL_RTL_LIB_DIR}"
       )
     endif()
 
@@ -185,7 +186,7 @@ else()
       ""
       "mkl_solver_lp64;mkl_intel_lp64;mkl_intel_thread;mkl_core;libiomp5md"
       #"mkl_solver_ilp64_sequential;mkl_intel_ilp64;mkl_sequential;mkl_core"
-      "${MKL_LIB_DIR}"
+      "${MKL_LIB_DIR}" "${INTEL_RTL_LIB_DIR}"
       )
     endif()
   else(WIN32)
@@ -197,8 +198,8 @@ else()
       MKL
       sgemm
       ""
-      "mkl_solver;mkl_intel;mkl_intel_thread;mkl_core;iomp5;pthread"
-      "${MKL_LIB_DIR}"
+      "mkl_solver;mkl_intel;mkl_intel_thread;mkl_core;iomp5;pthread;m"
+      "${MKL_LIB_DIR}" "${INTEL_RTL_LIB_DIR}"
       )
     endif()
 
@@ -210,8 +211,8 @@ else()
       MKL
       sgemm
       ""
-      "mkl_solver_lp64;mkl_intel_lp64;mkl_intel_thread;mkl_core;iomp5;pthread"
-      "${MKL_LIB_DIR}"
+      "mkl_solver_lp64;mkl_intel_lp64;mkl_intel_thread;mkl_core;iomp5;pthread;m"
+      "${MKL_LIB_DIR}" "${INTEL_RTL_LIB_DIR}"
       )
     endif()
   endif (WIN32)
@@ -227,7 +228,7 @@ else()
     sgemm
     ""
     "mkl_solver;mkl_lapack;mkl;guide;pthread"
-    "${MKL_LIB_DIR}"
+    "${MKL_LIB_DIR}" "${INTEL_RTL_LIB_DIR}"
     )
   endif()
 
@@ -240,7 +241,7 @@ else()
     sgemm
     ""
     "mkl_solver;mkl_lapack;mkl_ia32;guide;pthread"
-    "${MKL_LIB_DIR}"
+    "${MKL_LIB_DIR}" "${INTEL_RTL_LIB_DIR}"
     )
   endif()
 
@@ -253,7 +254,7 @@ else()
     sgemm
     ""
     "mkl_solver;mkl_lapack;mkl_ipf;guide;pthread"
-    "${MKL_LIB_DIR}"
+    "${MKL_LIB_DIR}" "${INTEL_RTL_LIB_DIR}"
     )
   endif()
 
@@ -266,7 +267,7 @@ else()
     sgemm
     ""
     "mkl_solver;mkl_lapack;mkl_em64t;guide;pthread"
-    "${MKL_LIB_DIR}"
+    "${MKL_LIB_DIR}" "${INTEL_RTL_LIB_DIR}"
     )
   endif()
 
