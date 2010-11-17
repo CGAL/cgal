@@ -45,6 +45,10 @@ Apollonius_graph_2/demo/Apollonius_graph_2/*.exe
 Apollonius_graph_2/demo/Apollonius_graph_2/*.vcproj
 Apollonius_graph_2/demo/Apollonius_graph_2/Makefile
 Apollonius_graph_2/demo/Apollonius_graph_2/apollonius_graph_2
+Arrangement_on_surface_2/examples/Arrangement_on_surface_2/Bezier_curves
+Arrangement_on_surface_2/examples/Arrangement_on_surface_2/CMakeLists.txt
+Arrangement_on_surface_2/examples/Arrangement_on_surface_2/dual_lines
+Arrangement_on_surface_2/test/Arrangement_on_surface_2/CMakeLists.txt
 BGL/examples/BGL_arrangement_2/CMakeLists.txt
 BGL/examples/BGL_arrangement_2/Makefile
 BGL/examples/BGL_arrangement_2/cgal_test_with_cmake
