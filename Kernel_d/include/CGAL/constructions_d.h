@@ -24,6 +24,8 @@
 #ifndef CGAL_CONSTRUCTIONS_D_H
 #define CGAL_CONSTRUCTIONS_D_H
 
+#include <CGAL/Kernel_d/Point_d.h>
+
 namespace CGAL {
 
 /*{\Moptions outfile=constructions_d.man}*/
