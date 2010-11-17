@@ -219,29 +219,6 @@ public:
   bool is_valid(bool, int) const
   { return true; }
 
-#ifndef CGAL_NO_DEPRECATED_CODE
-  // Obsolete, kept for backward compatibility.
-  // This should emit a warning.
-  int mirror_index(int i) const
-  {
-      bool WARNING_THIS_FUNCTION_IS_OBSOLETE;
-      CGAL_triangulation_precondition ( i>=0 && i<4 );
-      Cell_handle ni = neighbor(i);
-      if (&*ni->neighbor(0) == this) return 0;
-      if (&*ni->neighbor(1) == this) return 1;
-      if (&*ni->neighbor(2) == this) return 2;
-      CGAL_triangulation_assertion(&*ni->neighbor(3) == this);
-      return 3;
-  }
-
-  // Obsolete as above.
-  Vertex_handle mirror_vertex(int i) const
-  {
-      bool WARNING_THIS_FUNCTION_IS_OBSOLETE;
-      return neighbor(i)->vertex(mirror_index(i));
-  }
-#endif
-
   // For use by Compact_container.
   void * for_compact_container() const { return N[0].for_compact_container(); }
   void * & for_compact_container()     { return N[0].for_compact_container(); }
