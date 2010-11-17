@@ -24,7 +24,58 @@
 
 #include <list>
 
+//TO DEBUG
+template <class AS>
+void
+show_triangulation(AS& A)
+{
+  std::cerr << "number of finite cells " << A.tds().number_of_cells() 
+	    << std::endl;
+  std::cerr << "number of finite faces " << A.tds().number_of_facets() 
+	    << std::endl;
+  std::cerr << "number of finite edges " << A.tds().number_of_edges() 
+	    << std::endl;
 
+  typedef typename AS::Finite_cells_iterator Finite_cells_iterator;
+  for (  Finite_cells_iterator cit = A.finite_cells_begin();
+	 cit != A.finite_cells_end(); ++cit) {
+    std::cerr << "cell " <<  "alpha " << cit->get_alpha() << std::endl;
+    std::cerr << A.point(A.periodic_point(cit,0)) << std::endl
+	      << A.point(A.periodic_point(cit,1)) << std::endl
+	      << A.point(A.periodic_point(cit,2)) << std::endl
+	      << A.point(A.periodic_point(cit,3)) << std::endl;
+  }
+}
+
+template <class AS>
+void show_alpha_values(AS& A)
+{
+  typedef typename AS::Alpha_iterator Alpha_iterator;
+
+  std::cerr <<"Alpha spectrum \n";
+  for (Alpha_iterator alpha_it = A.alpha_begin();
+       alpha_it!=A.alpha_end(); alpha_it++){
+    std::cerr<< *alpha_it <<std::endl;
+  }
+
+}
+
+template <class AS>
+void show_alpha_status(AS& A, const typename AS::Alpha_status&  as)
+{
+  if (A.get_mode() == AS::REGULARIZED || !(as.is_Gabriel())){
+    std::cerr << "*****" << "\t" ;
+  } else{
+    std::cerr << as.alpha_min() << "\t";
+  }
+  std::cerr << as.alpha_mid() << "\t";
+  if (as.is_on_chull())  std::cerr << "*****" << std::endl;
+  else  std::cerr << as.alpha_max() << std::endl;
+  return;
+}
+   
+
+//TESTS
 template <class AS>
 void 
 count_faces(const AS &A, bool verbose)
@@ -226,7 +277,7 @@ test_filtration(AS &A, bool verbose)
       if(assign(vertex, *filtre_it)) {
 	as = *(vertex->get_alpha_status());
 	if(verbose) std::cerr << "Vertex" << "\t";
-	if(verbose)show_alpha_status(A,as);
+	if(verbose) show_alpha_status(A,as);
 	count_vertices++;
       }
       if(assign(edge, *filtre_it)) {
@@ -264,56 +315,5 @@ test_filtration(AS &A, bool verbose)
     assert(count_facets == A.tds().number_of_facets());
     assert(count_cells ==  A.tds().number_of_cells());	   
 }
-
-//TO DEBUG
-template <class AS>
-void
-show_triangulation(AS& A)
-{
-  std::cerr << "number of finite cells " << A.tds().number_of_cells() 
-	    << std::endl;
-  std::cerr << "number of finite faces " << A.tds().number_of_facets() 
-	    << std::endl;
-  std::cerr << "number of finite edges " << A.tds().number_of_edges() 
-	    << std::endl;
-
-  typedef typename AS::Finite_cells_iterator Finite_cells_iterator;
-  for (  Finite_cells_iterator cit = A.finite_cells_begin();
-	 cit != A.finite_cells_end(); ++cit) {
-    std::cerr << "cell " <<  "alpha " << cit->get_alpha() << std::endl;
-    std::cerr << A.point(A.periodic_point(cit,0)) << std::endl
-	      << A.point(A.periodic_point(cit,1)) << std::endl
-	      << A.point(A.periodic_point(cit,2)) << std::endl
-	      << A.point(A.periodic_point(cit,3)) << std::endl;
-  }
-}
-
-template <class AS>
-void show_alpha_values(AS& A)
-{
-  typedef typename AS::Alpha_iterator Alpha_iterator;
-
-  std::cerr <<"Alpha spectrum \n";
-  for (Alpha_iterator alpha_it = A.alpha_begin();
-       alpha_it!=A.alpha_end(); alpha_it++){
-    std::cerr<< *alpha_it <<std::endl;
-  }
-
-}
-
-template <class AS>
-void show_alpha_status(AS& A, const typename AS::Alpha_status&  as)
-{
-  if (A.get_mode() == AS::REGULARIZED || !(as.is_Gabriel())){
-    std::cerr << "*****" << "\t" ;
-  } else{
-    std::cerr << as.alpha_min() << "\t";
-  }
-  std::cerr << as.alpha_mid() << "\t";
-  if (as.is_on_chull())  std::cerr << "*****" << std::endl;
-  else  std::cerr << as.alpha_max() << std::endl;
-  return;
-}
-   
 
 #endif //  CGAL_COUNT_ALPHA_H
