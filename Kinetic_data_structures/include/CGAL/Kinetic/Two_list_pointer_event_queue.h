@@ -115,9 +115,8 @@ class Two_list_event_queue_item:
 
   typedef Two_list_event_queue_item<Priority> This;
 
-  Two_list_event_queue_item(const Two_list_event_queue_item &o){bool do_not_copy;}
+  Two_list_event_queue_item(const Two_list_event_queue_item &o){}
   void operator=(const Two_list_event_queue_item &o) {
-    bool do_not_copy;
   }
 public:
   typedef Two_list_pointer_event_queue_key<This> Key;
