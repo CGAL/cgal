@@ -168,8 +168,8 @@ private:
             std::size_t no;
             m_scan->scan_facet( no, m_cnt);
             m_indices.reserve( no);
-            std::size_t index = -1; 
-            // -1 is a huge unsigned which helps to detect a potential
+            std::size_t index = numeric_limits<std::size_t>::max(); 
+            //  A huge value helps to detect a potential
             //  error in the function scan_facet_vertex_index
             for (std::size_t i = 0; i < no; ++i) {
                 m_scan->scan_facet_vertex_index( index, m_cnt);
