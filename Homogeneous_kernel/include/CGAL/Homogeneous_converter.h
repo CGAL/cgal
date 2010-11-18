@@ -240,8 +240,9 @@ private:
 // Specialization when converting to the same kernel,
 // to avoid making copies.
 template < class K, class C1, class C2 >
-struct Homogeneous_converter <K, K, C1, C2>
+class Homogeneous_converter <K, K, C1, C2>
 {
+public:
   template < typename T >
   const T& operator()(const T&t) const { return t; }
 };
