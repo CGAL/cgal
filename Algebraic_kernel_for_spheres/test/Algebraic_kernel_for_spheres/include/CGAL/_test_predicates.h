@@ -822,8 +822,6 @@ void _test_critical_points_circle( const std::pair<
   typedef typename AK::FT FT;
   typedef typename AK::Root_of_2 Root_of_2;
   typedef typename AK::Root_for_spheres_2_3 Root_for_spheres_2_3;
-  typename AK::Construct_polynomial_for_spheres_2_3 theConstruct_2_3 =
-    AK().construct_polynomial_for_spheres_2_3_object();
   typename AK::X_critical_points theX_critical_points =
     AK().x_critical_points_object();
   typename AK::Y_critical_points theY_critical_points =
