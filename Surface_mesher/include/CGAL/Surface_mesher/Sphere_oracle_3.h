@@ -331,8 +331,6 @@ namespace CGAL {
         
         typename GT::Construct_point_on_3 point_on =
           GT().construct_point_on_3_object();
-        typename GT::Has_on_bounded_side_3 on_bounded_side_of_sphere =
-          GT().has_on_bounded_side_3_object();
         typename GT::Construct_vector_3 vector =
           GT().construct_vector_3_object();
         typename GT::Construct_scaled_vector_3 scaled_vector = 
@@ -372,8 +370,6 @@ namespace CGAL {
         
         typename GT::Construct_point_on_3 point_on =
           GT().construct_point_on_3_object();
-        typename GT::Has_on_bounded_side_3 on_bounded_side_of_sphere =
-          GT().has_on_bounded_side_3_object();
         typename GT::Construct_vector_3 vector =
           GT().construct_vector_3_object();
         typename GT::Construct_scaled_vector_3 scaled_vector = 
