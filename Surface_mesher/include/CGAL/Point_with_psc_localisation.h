@@ -110,7 +110,7 @@ class Point_traits<Point_with_psc_localisation<Point> >
 };
 
 template <class Point>
-class Is_weighted<Point_with_psc_localisation<Point> >
+struct Is_weighted<Point_with_psc_localisation<Point> >
   : public Is_weighted<Point>
 {
 };
