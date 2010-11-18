@@ -4,6 +4,7 @@
 #include <CGAL/basic.h>
 #include <cassert>
 #include <CGAL/enum.h>
+#include <CGAL/Testsuite/use.h>
 
 #include <CGAL/Vector_2.h> // this is done in order to avoid error
 // when the  Segment_2_Segment_2_intersection.h file is included from
@@ -532,6 +533,8 @@ bool test_algo_generic(InputStream& is)
   // passing this to a dummy function to avoid warning when
   // CGAL_NO_ASSERTIONS is defined.
   dummy( static_cast<unsigned int>(num_all) == wp_list.size() );
+
+  CGAL_USE(tr);
 
   Face_handle inf_f = ag.infinite_face();
   Vertex_handle v1 = ag.infinite_vertex();
