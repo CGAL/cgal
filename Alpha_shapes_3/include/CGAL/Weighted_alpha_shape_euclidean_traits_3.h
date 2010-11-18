@@ -35,8 +35,8 @@ class Weighted_alpha_shape_euclidean_traits_3 : public
 Regular_triangulation_euclidean_traits_3<K>
 {};
 
-} //namespace CGAL
 #endif //CGAL_NO_DEPRECATED_CODE
   
+} //namespace CGAL
   
 #endif //CGAL_WEIGHTED_ALPHA_SHAPE_EUCLIDEAN_TRAITS_3_H 
