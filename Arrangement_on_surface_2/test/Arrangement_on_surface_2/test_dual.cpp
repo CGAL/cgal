@@ -7,14 +7,13 @@
 #include <boost/graph/dijkstra_shortest_paths.hpp>
 
 #include <CGAL/graph_traits_Dual_Arrangement_2.h>
-#include <CGAL/Arr_face_map.h>
 
 #ifdef CGAL_USE_GMP
 
   // GMP is installed. Use the GMP rational number-type.
   #include <CGAL/Gmpq.h>
 
-  typedef CGAL::Gmpq                                    Number_type;
+  typedef CGAL::Gmpq                                         Number_type;
 
 #else
 
@@ -22,18 +21,17 @@
   #include <CGAL/MP_Float.h>
   #include <CGAL/Quotient.h>
 
-  typedef CGAL::Quotient<CGAL::MP_Float>                Number_type;
+  typedef CGAL::Quotient<CGAL::MP_Float>                     Number_type;
 
 #endif
 
-typedef CGAL::Cartesian<Number_type>                    Kernel;
-typedef CGAL::Arr_segment_traits_2<Kernel>              Traits_2;
-typedef Traits_2::Point_2                               Point_2;
-typedef Traits_2::X_monotone_curve_2                    Segment_2;
-typedef CGAL::Arr_face_extended_dcel<Traits_2,
-                                     unsigned int>      Dcel;
-typedef CGAL::Arrangement_2<Traits_2, Dcel>             Arrangement_2;
-typedef CGAL::Dual<Arrangement_2>                       Dual_arrangement_2;
+typedef CGAL::Cartesian<Number_type>                         Kernel;
+typedef CGAL::Arr_segment_traits_2<Kernel>                   Traits_2;
+typedef Traits_2::Point_2                                    Point_2;
+typedef Traits_2::X_monotone_curve_2                         Segment_2;
+typedef CGAL::Arr_face_extended_dcel<Traits_2, unsigned int> Dcel;
+typedef CGAL::Arrangement_2<Traits_2, Dcel>                  Arrangement_2;
+typedef CGAL::Dual<Arrangement_2>                            Dual_arrangement_2;
 
 int main()
 {
