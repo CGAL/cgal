@@ -21,6 +21,7 @@
 //    \brief provides test functions for the \c Bigfloat_Interval concept.
 
 #include <CGAL/basic.h>
+#include <CGAL/Testsuite/use.h>
 
 #include <cstddef>
 #include <boost/static_assert.hpp>
@@ -53,6 +54,11 @@ void test_bigfloat_interval_traits() {
   const typename BFIT::Relative_precision relative_precision 
     = typename BFIT::Relative_precision();
    
+  CGAL_USE(construct);
+  CGAL_USE(set_precision);
+  CGAL_USE(get_precision);
+  CGAL_USE(relative_precision);
+
   CGAL::set_precision(BFI(),15);
   assert(CGAL::get_precision(BFI())    == 15);
   assert(CGAL::set_precision(BFI(),23) == 15);
