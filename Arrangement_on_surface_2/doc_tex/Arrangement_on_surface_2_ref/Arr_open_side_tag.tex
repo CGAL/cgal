@@ -1,0 +1,32 @@
+% +------------------------------------------------------------------------+
+% | Reference manual page: Arr_open_side_tag.tex
+% +------------------------------------------------------------------------+
+% | 
+% | Package: Arrangement_2
+% | 
+% +------------------------------------------------------------------------+
+
+\ccRefPageBegin
+
+\begin{ccRefClass}{Arr_open_side_tag}
+
+\ccDefinition
+%============
+
+\ccRefName{} is an empty construct used for dispatching functions based on
+type of curves that induce the arrangement. If some curves are expected to
+approach the left, right, bottom, or top sides of the boundary of the
+parameter space, the categories \ccc{Arr_left_side_category},
+\ccc{Arr_right_side_category}, \ccc{Arr_bottom_side_category}, and
+\ccc{Arr_top_side_category}, nested in any model of the
+\ccc{ArrangementBasicTraits_2}, must be defined as \ccRefName{}, respectively.
+
+\ccInclude{CGAL/IO/Arr_tags.h}
+
+\ccSeeAlso
+    \ccc{Arr_oblivious_side_tag}\lcTex{(\ccRefPage{Arr_oblivious_side_tag})}\\
+    \ccc{ArrangementBasicTraits_2}\lcTex{(\ccRefPage{ArrangementBasicTraits_2})}
+
+\end{ccRefClass}
+
+\ccRefPageEnd
