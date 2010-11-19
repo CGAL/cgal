@@ -7,7 +7,7 @@ LOCK_FILE="${CGAL_ROOT}/autotest_cgal_with_cmake.lock"
 
 REFERENCE_PLATFORMS_DIR=/home/lrineau/CGAL/releases-and-testsuites-with-cmake/reference-platforms
 
-COMPILERS_localhost="i686_Linux-2.6_g++-3.4.6_CentOS-5.1-O2 i686_Linux-2.6_g++-4.1.2_CentOS-5.1  i686_Linux-2.6_g++-4.1.2_CentOS-5.1-O2  i686_Linux-2.6_g++-4.1.2_CentOS-5.1-O3  i686_Linux-2.6_g++-4.3.3_CentOS-5.1  i686_Linux-2.6_g++-4.3.3_CentOS-5.1-O2 i686_Linux-2.6_g++-4.3.3_CentOS-5.1-O3"
+COMPILERS_localhost="i686_Linux-2.6_g++-3.4.6_CentOS-5.1-O2 i686_Linux-2.6_g++-4.1.2_CentOS-5.1  i686_Linux-2.6_g++-4.1.2_CentOS-5.1-O2  i686_Linux-2.6_g++-4.1.2_CentOS-5.1-O3  i686_Linux-2.6_g++-4.3.3_CentOS-5.1  i686_Linux-2.6_g++-4.3.3_CentOS-5.1-O2-NO-DEPRECATED i686_Linux-2.6_g++-4.3.3_CentOS-5.1-O3"
 # Ignored: i686_Linux-2.6_g++-4.1.2_CentOS-5.1-NOGMP
 
 
