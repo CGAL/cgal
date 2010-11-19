@@ -1810,8 +1810,8 @@ Maintenance/infrastructure/cgal.geometryfactory.com/reference-platforms/i686_Lin
 Maintenance/infrastructure/cgal.geometryfactory.com/reference-platforms/i686_Linux-2.6_g++-4.1.2_CentOS-5.1-O3/setup -text
 Maintenance/infrastructure/cgal.geometryfactory.com/reference-platforms/i686_Linux-2.6_g++-4.1.2_CentOS-5.1/CMakeCache.txt -text
 Maintenance/infrastructure/cgal.geometryfactory.com/reference-platforms/i686_Linux-2.6_g++-4.1.2_CentOS-5.1/setup -text
-Maintenance/infrastructure/cgal.geometryfactory.com/reference-platforms/i686_Linux-2.6_g++-4.3.3_CentOS-5.1-O2/CMakeCache.txt -text
-Maintenance/infrastructure/cgal.geometryfactory.com/reference-platforms/i686_Linux-2.6_g++-4.3.3_CentOS-5.1-O2/setup -text
+Maintenance/infrastructure/cgal.geometryfactory.com/reference-platforms/i686_Linux-2.6_g++-4.3.3_CentOS-5.1-O2-NO-DEPRECATED/CMakeCache.txt -text
+Maintenance/infrastructure/cgal.geometryfactory.com/reference-platforms/i686_Linux-2.6_g++-4.3.3_CentOS-5.1-O2-NO-DEPRECATED/setup -text
 Maintenance/infrastructure/cgal.geometryfactory.com/reference-platforms/i686_Linux-2.6_g++-4.3.3_CentOS-5.1-O3/CMakeCache.txt -text
 Maintenance/infrastructure/cgal.geometryfactory.com/reference-platforms/i686_Linux-2.6_g++-4.3.3_CentOS-5.1-O3/setup -text
 Maintenance/infrastructure/cgal.geometryfactory.com/reference-platforms/i686_Linux-2.6_g++-4.3.3_CentOS-5.1/CMakeCache.txt -text
@@ -1830,6 +1830,7 @@ Maintenance/infrastructure/matisse.geometryfactory.com/reference-platforms/x86-6
 Maintenance/infrastructure/matisse.geometryfactory.com/reference-platforms/x86-64_Linux-2.6_g++-4.5-branch_Release-F13/setup -text
 Maintenance/infrastructure/matisse.geometryfactory.com/reference-platforms/x86-64_Linux-2.6_g++-trunk_CXX0X-F13/setup -text
 Maintenance/infrastructure/matisse.geometryfactory.com/reference-platforms/x86-64_Linux-2.6_llvm-clang-with-g++-4.4.1_F13/setup -text
+Maintenance/infrastructure/scripts/rename_a_test_platform -text
 Maintenance/public_release/announcement/CGAL-3.2 -text
 Maintenance/public_release/announcement/CGAL-3.3 -text
 Maintenance/public_release/announcement/CGAL-3.3-RC -text

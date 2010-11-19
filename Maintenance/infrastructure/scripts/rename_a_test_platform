@@ -1,0 +1,48 @@
+#!/bin/sh
+
+DEBUG=
+SVN=
+
+function usage() {
+    echo "Usage:"
+    printf "  %s <platform_dir> <new_platform_dir>\n" "$0"
+}
+
+function error() {
+    printf "ERROR: "
+    printf "$@"
+    usage
+    exit 1
+}
+
+case "$1" in
+    --debug) DEBUG="echo "; shift;;
+    *) ;;
+esac
+
+OLD=$1
+NEW=$2
+
+[ -e "$OLD" ] || error "\"%s\" does not exists.\n" "$OLD"
+[ -d "$OLD" ] || error "\"%s\" does not seem to be a directory.\n" "$OLD"
+[ -e "$OLD/CMakeCache.txt" ] || error "\"%s\" does not seem to be a platform directory.\n" "$OLD"
+
+if grep -q CGAL_REFERENCE_CACHE_DIR "$OLD/CMakeCache.txt"; then 
+    error "\"%s\" seems to be\n       the cache of a test platform directory in use in the testsuite, and\n       not the cache of a *reference* test platform.\n       Reason: the cache contains a variable CGAL_REFERENCE_CACHE_DIR.\n" "$OLD/CMakeCache.txt"
+fi
+
+[ -e "$NEW" ] && error "the destination directory already exists.\n"
+
+if [ -e "$OLD/.svn" ]; then
+  SVN=y
+  $DEBUG svn cp "$OLD/" "$NEW" || error "Cannot \"svn cp\" from \"%s\" to \"%s\"\n" "$OLD" "$NEW"
+else
+  $DEBUG rsync -aC "$OLD/" "$NEW" || error "Cannot copy from \"%s\" to \"%s\"\n" "$OLD" "$NEW"
+fi
+$DEBUG sed -i.bak -e "s,$OLD,$NEW,g" "$NEW"/CMakeCache.txt
+[ -e "$NEW/setup" ] && sed -i.bak -e 's|$OLD|$NEW|g' "$NEW"/setup
+if [ -n "$SVN" ]; then
+  $DEBUG svn rm "$OLD"
+else 
+  $DEBUG rm -rf "$OLD" || error "Cannot erase the original directory \"%s\"\n" "$OLD"
+fi
