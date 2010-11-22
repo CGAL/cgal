@@ -129,7 +129,7 @@ OFF_to_nef_3 (std::istream &i_st, Nef_3 &nef_union, bool verb=false)
 
    // declarations and defaults
    std::size_t discarded_facets=0;
-   long idx;
+   std::size_t idx;
 
 #ifdef CGAL_NEF_OFF_TO_NEF_TIMER
    CGAL::Timer t_convert, t_union;
