@@ -260,7 +260,6 @@ void Sweep_line_2<Tr, Vis, Subcv, Evnt, Alloc>::_handle_right_curves ()
         (static_cast<Subcurve*>(*currentOne),
          static_cast<Subcurve*>(*prevOne)))
     {
-      this->m_currentEvent->set_intersection();
       _intersect(*prevOne, *currentOne);
     }
 
