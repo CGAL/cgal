@@ -1689,9 +1689,6 @@ void
 Triangulation_2<Gt, Tds>::
 fill_hole_delaunay(std::list<Edge> & first_hole)
 {
-  typename Gt::Side_of_oriented_circle_2
-    in_circle = geom_traits().side_of_oriented_circle_2_object();
-
   typedef std::list<Edge> Hole;
   typedef std::list<Hole> Hole_list;
   
