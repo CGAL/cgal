@@ -136,7 +136,7 @@ struct Construct_offset_point_2 : Functor_base_2<K>
       bool e0_is_clearly_wrong = e0_is_not_very_short && is_possibly_inexact_distance_clearly_not_equal_to(d0,tt) ;
       bool e1_is_clearly_wrong = e1_is_not_very_short && is_possibly_inexact_distance_clearly_not_equal_to(d1,tt) ;
               
-      bool rR = e0_is_clearly_wrong || e1_is_clearly_wrong ;        
+      rR = e0_is_clearly_wrong || e1_is_clearly_wrong ;        
       
       CGAL_stskel_intrinsic_test_trace_if(rR
                                         , "\nOffset point calculation is clearly wrong:"
