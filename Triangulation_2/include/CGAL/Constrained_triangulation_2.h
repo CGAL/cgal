@@ -1013,7 +1013,7 @@ triangulate_half_hole(List_edges & list_edges,  List_edges & new_edges)
   // the edges that are created are put in list new_edges
   // takes linear time
 {
-  Vertex_handle va,vb; // first and last vertices of list_edges 
+  Vertex_handle va; // first vertex of list_edges 
   Face_handle newlf;
   Face_handle n1,n2,n;
   int ind1, ind2,ind;
@@ -1021,11 +1021,8 @@ triangulate_half_hole(List_edges & list_edges,  List_edges & new_edges)
     
   typename List_edges::iterator current, next, tempo;
   current=list_edges.begin();
-  tempo=list_edges.end(); 
-  --tempo; 
 
   va=((*current).first)->vertex(ccw((*current).second));
-  vb=((*tempo).first)->vertex(cw((*tempo).second));
   next=current; 
   ++next;
 
@@ -1095,7 +1092,7 @@ triangulate_half_hole(List_edges & list_edges,  List_edges & new_edges)
 	++current; ++next;
 	break;
       }
-    } while (list_edges.size()>1);
+    } while (next != list_edges.end());
 }
 
 template < class Gt, class Tds, class Itag >
