@@ -293,7 +293,7 @@ bool sEnableTraitsTrace = false ;
 #  include<iostream>
 #  include<sstream>
 
-CGAL_BEGIN_NAMESPACE
+namespace CGAL {
 
 namespace CGAL_STRAIGHT_SKELETON_i_profiling
 {
@@ -307,7 +307,7 @@ template<> char const* kernel_type<CORE::Expr>          () { return "Expr" ;    
 
 } // CGAL_STRAIGHT_SKELETON_i_profiling
 
-CGAL_END_NAMESPACE
+} // end namespace CGAL
 
 #define CGAL_STSKEL_ASSERT_PREDICATE_RESULT(expr,K,pred,error) \
         { \

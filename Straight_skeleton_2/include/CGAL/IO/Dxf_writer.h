@@ -30,7 +30,7 @@
 #include <string>
 #include <list>
 
-CGAL_BEGIN_NAMESPACE
+namespace CGAL {
 
 class Dxf_writer
 {
@@ -278,6 +278,6 @@ private:
 
 } ;
 
-CGAL_END_NAMESPACE
+} // end namespace CGAL
 
 #endif // CGAL_IO_DXF_WRITER_H

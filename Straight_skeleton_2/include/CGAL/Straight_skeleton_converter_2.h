@@ -22,7 +22,7 @@
 
 #include <CGAL/Straight_skeleton_2.h>
 
-CGAL_BEGIN_NAMESPACE
+namespace CGAL {
 
 template<class Source_skeleton_
         ,class Target_skeleton_
@@ -293,7 +293,7 @@ convert_straight_skeleton_2 ( Source_skeleton const& aSrc )
     
 }
 
-CGAL_END_NAMESPACE
+} // end namespace CGAL
 
 
 #endif // CGAL_STRAIGHT_SKELETON_2_CONVERTER_H //

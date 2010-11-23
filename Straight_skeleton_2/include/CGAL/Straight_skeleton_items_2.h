@@ -22,7 +22,7 @@
 #include <CGAL/Straight_skeleton_halfedge_base_2.h>
 #include <CGAL/Straight_skeleton_face_base_2.h>
 
-CGAL_BEGIN_NAMESPACE
+namespace CGAL {
 
 class Straight_skeleton_items_2
 {
@@ -50,7 +50,7 @@ public:
   } ;
 };
 
-CGAL_END_NAMESPACE
+} // end namespace CGAL
 
 #endif // CGAL_STRAIGHT_SKELETON_ITEMS_2_H //
 // EOF //

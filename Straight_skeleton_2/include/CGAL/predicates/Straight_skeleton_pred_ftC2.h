@@ -22,7 +22,7 @@
 #include <CGAL/Uncertain.h>
 #include <CGAL/certified_quotient_predicates.h>
 
-CGAL_BEGIN_NAMESPACE
+namespace CGAL {
 
 namespace CGAL_SS_i
 {
@@ -523,6 +523,6 @@ Uncertain<bool> are_events_simultaneousC2 ( intrusive_ptr< Trisegment_2<K> > con
 
 } // namespace CGAL_SS_i
 
-CGAL_END_NAMESPACE
+} // end namespace CGAL
 
 #endif // CGAL_STRAIGHT_SKELETON_PREDICATES_FTC2_H //

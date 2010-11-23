@@ -27,7 +27,7 @@
 #include <CGAL/algorithm.h>
 #include <CGAL/Polygon_offset_builder_traits_2.h>
 
-CGAL_BEGIN_NAMESPACE
+namespace CGAL {
 
 template<class ForwardPointIterator, class Traits>
 boost::optional< typename Traits::FT > compute_outer_frame_margin ( ForwardPointIterator aBegin
@@ -113,7 +113,7 @@ boost::optional<FT> compute_outer_frame_margin ( ForwardPointIterator aBegin, Fo
   return compute_outer_frame_margin(aBegin,aEnd,aOffset,traits);
 }                                                                 
 
-CGAL_END_NAMESPACE
+} // end namespace CGAL
 
 #endif // CGAL_COMPUTE_OUTER_FRAME_MARGIN_H //
 // EOF //

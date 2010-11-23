@@ -25,7 +25,7 @@
 #include <CGAL/constructions/Straight_skeleton_cons_ftC2.h>
 #include <CGAL/Exact_predicates_exact_constructions_kernel.h>
 
-CGAL_BEGIN_NAMESPACE
+namespace CGAL {
 
 namespace CGAL_SS_i {
 
@@ -533,7 +533,7 @@ CGAL_STRAIGHT_SKELETON_CREATE_FUNCTOR_ADAPTER(Are_ss_edges_collinear_2)
 CGAL_STRAIGHT_SKELETON_CREATE_FUNCTOR_ADAPTER(Construct_ss_event_time_and_point_2)
 CGAL_STRAIGHT_SKELETON_CREATE_FUNCTOR_ADAPTER(Construct_ss_trisegment_2)
 
-CGAL_END_NAMESPACE
+} // end namespace CGAL
 
 #endif // CGAL_STRAIGHT_SKELETON_BUILDER_TRAITS_2_H //
 // EOF //

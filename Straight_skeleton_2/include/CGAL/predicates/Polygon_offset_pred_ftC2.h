@@ -20,7 +20,7 @@
 
 #include <CGAL/constructions/Straight_skeleton_cons_ftC2.h>
 
-CGAL_BEGIN_NAMESPACE
+namespace CGAL {
 
 namespace CGAL_SS_i
 {
@@ -57,7 +57,7 @@ Uncertain<Comparison_result> compare_offset_against_isec_timeC2 ( typename K::FT
 
 } // namespace CGAL_SS_i
 
-CGAL_END_NAMESPACE
+} // end namespace CGAL
 
 #endif // CGAL_POLYGON_OFFSET_PRED_FTC2_H //
 // EOF //

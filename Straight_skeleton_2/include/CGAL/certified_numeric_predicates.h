@@ -23,7 +23,7 @@
 #include <CGAL/Interval_arithmetic.h>
 #include <CGAL/Uncertain.h>
 
-CGAL_BEGIN_NAMESPACE
+namespace CGAL {
 
 inline Uncertain<bool> logical_or ( Uncertain<bool> a, Uncertain<bool> b ) { return a | b ; }
 inline Uncertain<bool> logical_and( Uncertain<bool> a, Uncertain<bool> b ) { return a & b ; }
@@ -139,7 +139,7 @@ inline Uncertain<Sign> certified_sign_of_determinant2x2( const NT& a00
   return certified_compare(a00*a11, a10*a01) ;
 }
 
-CGAL_END_NAMESPACE
+} // end namespace CGAL
 
 #endif // CGAL_CERTIFIED_NUMERIC_PREDICATES_H
 

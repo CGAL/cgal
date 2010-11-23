@@ -38,7 +38,7 @@
 #include <CGAL/HalfedgeDS_const_decorator.h>
 #include <CGAL/enum.h>
 
-CGAL_BEGIN_NAMESPACE
+namespace CGAL {
 
 template<class SSkel_>
 struct Dummy_straight_skeleton_builder_2_visitor
@@ -925,7 +925,7 @@ public:
 
 } ;
 
-CGAL_END_NAMESPACE
+} // end namespace CGAL
 
 #include <CGAL/Straight_skeleton_2/Straight_skeleton_builder_2_impl.h>
 

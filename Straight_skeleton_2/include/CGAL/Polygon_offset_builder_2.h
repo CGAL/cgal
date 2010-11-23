@@ -28,7 +28,7 @@
 
 #include <CGAL/Polygon_offset_builder_traits_2.h>
 
-CGAL_BEGIN_NAMESPACE
+namespace CGAL {
 
 template<class Traits_, class SSkel_>
 struct Default_polygon_offset_builder_2_visitor
@@ -246,7 +246,7 @@ private:
   CGAL_POLYOFFSET_DEBUG_CODE( int mStepID ; )
 };
 
-CGAL_END_NAMESPACE
+} // end namespace CGAL
 
 #include <CGAL/Straight_skeleton_2/Polygon_offset_builder_2_impl.h>
 

@@ -30,7 +30,7 @@
 #  pragma warning(disable:4355) // complaint about using 'this' to
 #endif                          // initialize a member
 
-CGAL_BEGIN_NAMESPACE
+namespace CGAL {
 
 
 template<class Gt, class Ss, class V>
@@ -1806,7 +1806,7 @@ typename Straight_skeleton_builder_2<Gt,Ss,V>::SSkelPtr Straight_skeleton_builde
   return mSSkel ;
 }
 
-CGAL_END_NAMESPACE
+} // end namespace CGAL
 
 #if defined(BOOST_MSVC)
 #  pragma warning(pop)

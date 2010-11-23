@@ -22,7 +22,7 @@
 #include <CGAL/certified_numeric_predicates.h>
 #include <CGAL/Quotient.h>
 
-CGAL_BEGIN_NAMESPACE 
+namespace CGAL { 
 
 template <class NT>
 inline Uncertain<bool> certified_quotient_is_positive(const Quotient<NT>& x) 
@@ -129,7 +129,7 @@ inline Uncertain<Comparison_result> certified_compare(const Quotient<NT1>& n1, c
   return certified_quotient_compare(n1,n2);
 }
 
-CGAL_END_NAMESPACE
+} // end namespace CGAL
 
 #endif // CGAL_CERTIFIED_QUOTIENT_PREDICATES_H
 

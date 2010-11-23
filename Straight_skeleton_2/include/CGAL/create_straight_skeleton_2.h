@@ -23,7 +23,7 @@
 #include <CGAL/compute_outer_frame_margin.h>
 #include <CGAL/Polygon_2.h>
 
-CGAL_BEGIN_NAMESPACE
+namespace CGAL {
 
 namespace CGAL_SS_i
 {
@@ -238,7 +238,7 @@ create_exterior_straight_skeleton_2 ( FT const& aMaxOffset, Polygon const& aPoly
                                             );
 }
 
-CGAL_END_NAMESPACE
+} // end namespace CGAL
 
 
 #endif // CGAL_STRAIGHT_SKELETON_BUILDER_2_H //

@@ -22,7 +22,7 @@
 
 #include <CGAL/basic.h>
 
-CGAL_BEGIN_NAMESPACE
+namespace CGAL {
 
 template <class CAP>
 class Unfiltered_predicate_adaptor
@@ -249,6 +249,6 @@ Unfiltered_predicate_adaptor<CAP>::
 }
 #endif
 
-CGAL_END_NAMESPACE
+} // end namespace CGAL
 
 #endif // CGAL_UNFILTERED_PREDICATE_ADAPTOR_H

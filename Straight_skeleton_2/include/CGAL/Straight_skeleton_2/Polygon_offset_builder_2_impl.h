@@ -18,7 +18,7 @@
 #ifndef CGAL_POLYGON_OFFSET_BUILDER_2_IMPL_H
 #define CGAL_POLYGON_OFFSET_BUILDER_2_IMPL_H 1
 
-CGAL_BEGIN_NAMESPACE
+namespace CGAL {
 
 
 template<class Ss, class Gt, class Cont, class Visitor>
@@ -410,7 +410,7 @@ Polygon_offset_builder_2<Ss,Gt,Cont,Visitor>::GetSeedVertex ( Vertex_const_handl
   return rSeed ;
 }
 
-CGAL_END_NAMESPACE
+} // end namespace CGAL
 
 #endif // CGAL_POLYGON_OFFSET_BUILDER_2_IMPL_H //
 // EOF //

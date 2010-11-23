@@ -22,7 +22,7 @@
 
 #include <CGAL/Straight_skeleton_2/Straight_skeleton_aux.h>
 
-CGAL_BEGIN_NAMESPACE
+namespace CGAL {
 
 namespace CGAL_SS_i
 {
@@ -253,7 +253,7 @@ private :
 
 }
 
-CGAL_END_NAMESPACE
+} // end namespace CGAL
 
 #endif // CGAL_STRAIGHT_SKELETON_BUILDER_EVENTS_2_H //
 // EOF //

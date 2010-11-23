@@ -23,7 +23,7 @@
 
 #include <boost/iterator/iterator_facade.hpp>
 
-CGAL_BEGIN_NAMESPACE
+namespace CGAL {
 
 template < class Refs, class P, class N >
 class Straight_skeleton_vertex_base_base_2
@@ -294,7 +294,7 @@ private:
   
 } ;
 
-CGAL_END_NAMESPACE
+} // end namespace CGAL
 
 #endif // CGAL_STRAIGHT_SKELETON_VERTEX_BASE_2_H //
 // EOF //

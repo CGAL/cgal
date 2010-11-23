@@ -22,7 +22,7 @@
 #include <boost/shared_ptr.hpp>
 #include <CGAL/Polygon_with_holes_2.h>
 
-CGAL_BEGIN_NAMESPACE
+namespace CGAL {
 
 //
 // This should only be used to arrange the polygons coming from Polygon_offset_builder
@@ -109,7 +109,7 @@ arrange_offset_polygons_2 ( std::vector< boost::shared_ptr< Polygon_2<K> > > con
   return rResult ;
 }
 
-CGAL_END_NAMESPACE
+} // end namespace CGAL
 
 
 #endif 

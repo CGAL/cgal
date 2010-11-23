@@ -23,7 +23,7 @@
 #include <CGAL/Polygon_with_holes_2.h>
 #include <CGAL/arrange_offset_polygons_2.h>
 
-CGAL_BEGIN_NAMESPACE
+namespace CGAL {
 
 template<class FT, class OfK, class SsK>
 std::vector< boost::shared_ptr< Polygon_2<OfK> > >
@@ -97,7 +97,7 @@ create_exterior_skeleton_and_offset_polygons_with_holes_2 ( FT const&           
 
 
 
-CGAL_END_NAMESPACE
+} // end namespace CGAL
 
 
 #endif 

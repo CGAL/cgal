@@ -20,7 +20,7 @@
 
 #include <CGAL/constructions/Straight_skeleton_cons_ftC2.h>
 
-CGAL_BEGIN_NAMESPACE
+namespace CGAL {
 
 namespace CGAL_SS_i
 {
@@ -105,7 +105,7 @@ optional< Point_2<K> > construct_offset_pointC2 ( typename K::FT const&         
 
 } // namespace CGAL_SS_i
 
-CGAL_END_NAMESPACE
+} // end namespace CGAL
 
 #endif // CGAL_POLYGON_OFFSET_CONS_FTC2_H //
 // EOF //

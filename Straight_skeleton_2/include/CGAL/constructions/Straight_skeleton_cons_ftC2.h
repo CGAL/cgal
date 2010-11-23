@@ -20,7 +20,7 @@
 
 #include <CGAL/predicates/Straight_skeleton_pred_ftC2.h>
 
-CGAL_BEGIN_NAMESPACE 
+namespace CGAL { 
 
 namespace CGAL_SS_i
 {
@@ -673,7 +673,7 @@ optional< Point_2<K> > construct_offset_lines_isecC2 ( intrusive_ptr< Trisegment
 
 } // namnepsace CGAIL_SS_i
 
-CGAL_END_NAMESPACE
+} // end namespace CGAL
 
 #endif // CGAL_STRAIGHT_SKELETON_CONS_FTC2_H //
 // EOF //

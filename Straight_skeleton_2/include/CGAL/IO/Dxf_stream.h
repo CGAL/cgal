@@ -32,7 +32,7 @@
 #include <fstream>
 #include <stdio.h>
 
-CGAL_BEGIN_NAMESPACE
+namespace CGAL {
 
 class Dxf_layer
 {
@@ -317,6 +317,6 @@ protected:
   
 };
 
-CGAL_END_NAMESPACE
+} // end namespace CGAL
 
 #endif

@@ -22,7 +22,7 @@
 #include <CGAL/create_straight_skeleton_2.h>
 #include <CGAL/Polygon_with_holes_2.h>
 
-CGAL_BEGIN_NAMESPACE
+namespace CGAL {
 
 template<class K>
 boost::shared_ptr< Straight_skeleton_2<K> >
@@ -37,7 +37,7 @@ create_interior_straight_skeleton_2 ( Polygon_with_holes_2<K> const& aPolyWithHo
                                             );
 }
 
-CGAL_END_NAMESPACE
+} // end namespace CGAL
 
 
 #endif // CGAL_STRAIGHT_SKELETON_BUILDER_2_H //
