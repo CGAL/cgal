@@ -151,22 +151,6 @@ public:
       a6=v6;
     }
   };
-
-  //a vector that calls reserve in its constructor 
-  //(since it is used as a static variable in a function,
-  //it avoid multiple call to reserve)
-  template <class T,int N>
-  class Vector_with_reserve: public std::vector<T> {
-  public:
-    using std::vector<T>::reserve;
-    using std::vector<T>::pop_back;
-    using std::vector<T>::push_back;
-    using std::vector<T>::empty;
-  
-    Vector_with_reserve(){
-      this->reserve(N);
-    }
-  };
 #endif  
  
 
@@ -1159,13 +1143,15 @@ create_star_3(Vertex_handle v, Cell_handle c, int li,
     set_adjacency(cnew, li, c_li, c_li->index(c));
     
 #ifdef CGAL_HAS_THREADS  
-    static boost::thread_specific_ptr< Vector_with_reserve<iAdjacency_info,64> > stack_safe_ptr;
+  static boost::thread_specific_ptr< std::vector<iAdjacency_info> > stack_safe_ptr;
     if (stack_safe_ptr.get() == NULL) {
-      stack_safe_ptr.reset(new Vector_with_reserve<iAdjacency_info,64>());
+      stack_safe_ptr.reset(new std::vector<iAdjacency_info>());
+      stack_safe_ptr.get()->reserve(64);
     }
-    Vector_with_reserve<iAdjacency_info,64>& adjacency_info_stack=* stack_safe_ptr.get();
+  std::vector<iAdjacency_info>& adjacency_info_stack=* stack_safe_ptr.get();  
 #else
-    static Vector_with_reserve<iAdjacency_info,64> adjacency_info_stack;
+    static std::vector<iAdjacency_info> adjacency_info_stack;
+    adjacency_info_stack.reserve(64);
 #endif  
   
     int ii=0;
