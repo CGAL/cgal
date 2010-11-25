@@ -33,7 +33,7 @@ Boost_THREAD_LIBRARY_RELEASE:FILEPATH=/usr/lib64/libboost_thread-mt.so
 CGAL_BINARY_DIR:STATIC=/home/lrineau/CGAL/CGAL-I-REF/cmake/platforms/x86-64_Linux-2.6_llvm-clang-with-g++-4.4.1_F13
 
 //User-defined flags
-CGAL_CXX_FLAGS:STRING= -fno-strict-aliasing -DCGAL_FPU_HAS_EXCESS_PRECISION
+CGAL_CXX_FLAGS:STRING= -fno-strict-aliasing -DCGAL_FPU_HAS_EXCESS_PRECISION -Wall
 
 //Set this to TRUE if you want to define or modify any of CMAKE_*_FLAGS.
 // When this is FALSE, all the CMAKE_*_FLAGS flags are overriden
@@ -143,7 +143,7 @@ CMAKE_COLOR_MAKEFILE:BOOL=ON
 CMAKE_CXX_COMPILER:FILEPATH=/usr/local/packages/llvm-trunk/bin/clang++
 
 //User-defined flags
-CMAKE_CXX_FLAGS:STRING= -fno-strict-aliasing -DCGAL_FPU_HAS_EXCESS_PRECISION
+CMAKE_CXX_FLAGS:STRING= -fno-strict-aliasing -DCGAL_FPU_HAS_EXCESS_PRECISION -Wall
 
 //Flags used by the compiler during debug builds.
 CMAKE_CXX_FLAGS_DEBUG:STRING=
