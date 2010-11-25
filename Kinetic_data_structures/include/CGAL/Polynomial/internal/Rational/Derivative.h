@@ -94,6 +94,9 @@ private:
       i_+= i;
       return *this;
     }
+    It operator+(difference_type i) const {
+      return It(cit_+i, i_+i);
+    }
   protected:
     int i_;
     MCit cit_;
