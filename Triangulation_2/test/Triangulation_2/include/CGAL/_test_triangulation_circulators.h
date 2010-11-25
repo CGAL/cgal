@@ -37,8 +37,8 @@ _test_circulators( const Tr &T )
   typedef typename Tr::Vertex_circulator Vertex_circulator;
   typedef typename Tr::Edge_circulator   Edge_circulator;
 
-  int nvi = 0;
-  int nvi_r = 0;
+  typename Tr::size_type nvi = 0;
+  typename Tr::size_type nvi_r = 0;
   All_vertices_iterator vit;
   Vertex_circulator vc, vc0;
   for (vit = T.all_vertices_begin(); vit != T.all_vertices_end(); ++vit)
@@ -63,8 +63,8 @@ _test_circulators( const Tr &T )
       assert(nvi_r == nvi);
     }
   
-  int nfi = 0;
-  int nfi_r = 0;
+  typename Tr::size_type nfi = 0;
+  typename Tr::size_type nfi_r = 0;
   Face_circulator fc, fc0;
   for (vit = T.all_vertices_begin(); vit != T.all_vertices_end(); ++vit)
     {
@@ -85,8 +85,8 @@ _test_circulators( const Tr &T )
     }
   
 
-  int nei = 0;
-  int nei_r = 0;
+  typename Tr::size_type nei = 0;
+  typename Tr::size_type nei_r = 0;
   Edge_circulator ec, ec0;
   for (vit = T.all_vertices_begin(); vit != T.all_vertices_end(); ++vit)
     {
