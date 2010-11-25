@@ -49,8 +49,8 @@ void test_bigfloat_interval_traits() {
   BOOST_STATIC_ASSERT(( ::boost::is_same< Is_bigfloat_interval, CGAL::Tag_true>::value));
   
   const typename BFIT::Construct construct = typename BFIT::Construct();
-  const typename BFIT::Set_precision set_precsion = typename BFIT::Set_precision();
-  const typename BFIT::Get_precision get_precsion = typename BFIT::Get_precision();
+  const typename BFIT::Set_precision set_precision = typename BFIT::Set_precision();
+  const typename BFIT::Get_precision get_precision = typename BFIT::Get_precision();
   const typename BFIT::Relative_precision relative_precision 
     = typename BFIT::Relative_precision();
    
