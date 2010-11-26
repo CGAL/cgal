@@ -815,6 +815,14 @@ Polytope_distance_d/.tmp
 Polytope_distance_d/Makefile
 Polytope_distance_d/bin
 Polytope_distance_d/doc_ps
+QP_solver/documentation/Degeneracies.aux
+QP_solver/documentation/Degeneracies.log
+QP_solver/documentation/Degeneracies.pdf
+QP_solver/documentation/Degeneracies.synctex.gz
+QP_solver/documentation/UpdateZ.aux
+QP_solver/documentation/UpdateZ.log
+QP_solver/documentation/UpdateZ.pdf
+QP_solver/documentation/UpdateZ.synctex.gz
 Qt_widget/.env
 Qt_widget/src/CGALQt/*.moc
 Qt_widget/test/Qt_widget/test_qt_version
