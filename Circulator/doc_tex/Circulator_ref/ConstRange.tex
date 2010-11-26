@@ -13,6 +13,8 @@ Boost's Range concept
 \ccTypes
 
 \ccNestedType{const_iterator} {The constant iterator type.}
+\ccNestedType{size_type} {An unsigned integral type that can represent the
+  size of a range.} 
 
 \ccHeading{Member functions}
 
@@ -22,7 +24,7 @@ Boost's Range concept
 \ccGlue
 \ccMethod{const_iterator end() const;}{returns the past-the-end const iterator.}
 
-\ccMethod{difference_type size() const;}{returns the size of the range.}
+\ccMethod{size_type size() const;}{returns the size of the range.}
 \ccGlue
 \ccMethod{bool empty() const;}{returns whether the range is empty.}
 
