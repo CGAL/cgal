@@ -45,7 +45,7 @@ int main( int argc, char **argv) {
     int n = 0; // number of filenames
     char *filename[2];
     bool help = false;
-    int i = 1;
+    std::size_t i = 1;
     for ( ; i < argc; i++) { // check commandline options
         if ( strcmp( "-v", argv[i]) == 0)
             verbose = true;
