@@ -138,13 +138,13 @@ namespace CGAL {
 namespace INTERN_CT{ 
 template< class FROM, class TO >struct Cast_from_to{
     typedef TO result_type;
-    TO operator()(const TO& x){return x;}
-    TO operator()(const FROM& x){return TO(x);}
+    TO operator()(const TO& x) const {return x;}
+    TO operator()(const FROM& x) const {return TO(x);}
 };
 template< class TO>
 struct Cast_from_to<TO,TO>{
     typedef TO result_type;
-    TO operator()(const TO& x){return x;}
+    TO operator()(const TO& x) const {return x;}
 };
 }
 
