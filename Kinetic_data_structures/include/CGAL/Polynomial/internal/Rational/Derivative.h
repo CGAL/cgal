@@ -23,6 +23,7 @@
 
 #include <CGAL/Polynomial/basic.h>
 #include <iterator>
+#include <boost/iterator/iterator_facade.hpp>
 
 namespace CGAL { namespace POLYNOMIAL { namespace internal {
 
@@ -31,76 +32,40 @@ struct Derivative
 {
 private:
   typedef typename Fn::iterator Cit;
-  struct It
+  struct It :     
+    public boost::iterator_facade<It, 
+                                  typename std::iterator_traits<typename Fn::iterator>::value_type,
+                                  typename std::iterator_traits<typename Fn::iterator>::iterator_category,
+                                  // Use value_type as reference (see
+                                  // dereference() below()) 
+                                  typename std::iterator_traits<typename Fn::iterator>::value_type,
+                                  typename std::iterator_traits<typename Fn::iterator>::difference_type>
   {
     It(Cit it, int i): i_(i), cit_(it) {}
     It(){}
+
+  private:
     typedef typename Fn::iterator MCit;
     typedef typename std::iterator_traits<MCit> Traits;
-    typedef typename Traits::iterator_category iterator_category;
-    typedef typename Traits::value_type value_type;
-    typedef typename Traits::pointer pointer;
-    typedef typename Traits::reference reference;
-    typedef typename Traits::difference_type difference_type;
 
-    value_type operator*() const
-    {
-      return value_type(i_)**cit_;
-    }
-    pointer operator->() const
-    {
-      return value_type(i_)**cit_;
-    }	  
-    bool operator<(It o) const
-    {
-      return cit_ < o.cit_;
-    }
-    It operator++() {
-      ++i_;
-      ++cit_;
-      return *this;
-    }
-    It operator++(int) {
-      It t=*this;
-      ++i_;
-      ++cit_;
-      return t;
-    }
-    It operator--() {
-      --i_;
-      --cit_;
-      return *this;
-    }
-    It operator--(int) {
-      It t=*this;
-      --i_;
-      --cit_;
-      return t;
-    }
-    bool operator==(It o) const
-    {
-      return cit_ == o.cit_;
-    }
-    bool operator!=(It o) const
-    {
-      return cit_ != o.cit_;
-    }
-    difference_type operator-(It o) const
-    {
-      return cit_-o.cit_;
-    }
-    It operator+=(difference_type i) {
-      cit_+= i;
-      i_+= i;
-      return *this;
-    }
-    It operator+(difference_type i) const {
-      return It(cit_+i, i_+i);
-    }
+  public:
+    typedef typename Traits::difference_type difference_type;
+    typedef typename Traits::value_type value_type;
+
+  private:
+    friend class boost::iterator_core_access;
+    value_type dereference() const { return value_type(i_)**cit_; }
+    void increment() { ++i_; ++cit_;}
+    bool equal(const It& i) const { return (i_ == i.i_) && (cit_ == i.cit_); }
+    void decrement() { --i_; --cit_;}
+    void advance(const difference_type n) { i_ += n; cit_ += n; }
+    difference_type distance_to(const It& o) const { return o.cit_ - cit_; }
+
   protected:
     int i_;
     MCit cit_;
-  };
+  }; // end nested struct It
+
 public:
   typedef Fn result_type;
   typedef Fn argument_type;
