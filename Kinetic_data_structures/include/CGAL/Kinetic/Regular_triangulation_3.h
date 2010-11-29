@@ -781,7 +781,6 @@ public:
 	     it != redundant_cells_.end(); ++it) {
 	  CGAL_LOG(Log::LOTS, "On init " << it->second 
 			   << " is redundant" << std::endl);
-	  typename Triangulation::Cell_handle h= it->first;
 	  CGAL_precondition(redundant_points_[it->second]==Event_key());
 	  handle_redundant(it->second, it->first);
 	}
@@ -855,7 +854,6 @@ protected:
 	  CGAL_assertion(vit->info() != Event_key() || !k.is_valid());
 	}
 	else {
-	  CGAL_assertion_code(Point_key k= vit->point());
 	  CGAL_assertion(vit->info() == Event_key());
 	}
 	CGAL_assertion(redundant_points_.find(vit->point())== redundant_points_.end());
@@ -891,13 +889,13 @@ protected:
 protected:
   //! also much check for vertex_events
   void flip(const typename Triangulation::Edge &edge) {
-    typename Triangulation::Facet f= kdel_.flip(edge);
+    kdel_.flip(edge);
 
     on_geometry_changed();
   }
 
   void flip(const typename KDel::Facet &flip_facet) {
-    typename Triangulation::Edge edge=  kdel_.flip(flip_facet);
+    kdel_.flip(flip_facet);
 
     on_geometry_changed();
   }

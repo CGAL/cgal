@@ -238,7 +238,7 @@ public:
     if (interval_.first > interval_.second) {
       //std::cout << "Computing interval for ";
       //write_raw(std::cout) << std::endl;
-      std::pair<double,double> r= internal_compute_interval(accuracy);
+      internal_compute_interval(accuracy);
       /*std::cout << "Got " << CGAL::to_interval(ii_.first).first << "..." 
 	<< CGAL::to_interval(ii_.second).second << std::endl;*/
       interval_=std::make_pair(CGAL::to_interval(ii_.first).first, CGAL::to_interval(ii_.second).second);

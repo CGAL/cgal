@@ -351,7 +351,7 @@ public:
 
       //NT cp1= coef+NT(1);
       unsigned int pow;
-      char p= in.peek();
+      in.peek();
       if (in.peek() =='*') {
 	in >> t >> vc;
 	if (t != '*') {
@@ -365,7 +365,7 @@ public:
 	  //return in;
 	}
 	v=vc;
-	p=in.peek();
+        in.peek();
 	if (in.peek() =='^') {
 	  char c;
 	  in  >> c >> pow;
