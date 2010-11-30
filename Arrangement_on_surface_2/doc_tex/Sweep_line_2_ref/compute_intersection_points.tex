@@ -11,8 +11,11 @@ OutputIterator compute_intersection_points (InputIterator curves_begin,
                                         bool report_endpoints = false,
                                         Traits traits = Default_traits());}
 {given a range of curves, compute all intersection points between two (or more)
- input curves. If the flag \ccc{report_endpoints} is \ccc{true}, then the
- curve endpoints are reported as well. The \ccc{Traits} type must be a model
+ input curves.
+  In addition, when the flag \ccc{report_endpoints} is \ccc{true}, 
+  this function reports all the curve endpoints (if a curve endpoint is also
+  an intersection point, it is reported once). 
+  The \ccc{Traits} type must be a model
  of the \ccc{ArrangementTraits_2} concept, such that the value-type of
  \ccc{InputIterator} is \ccc{Traits::Curve_2}, and the value-type of
  \ccc{OutputIterator} is \ccc{Traits::Point_2}.
