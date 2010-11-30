@@ -91,7 +91,7 @@ public:
 
 private:
   // Triangulated_mixed_complex:
-  typedef Simple_cartesian<Interval_nt_advanced>                       FK;
+  typedef CGAL::Exact_predicates_exact_constructions_kernel            FK;
   typedef Triangulation_vertex_base_with_info_3<Vertex_info, FK>       Vb;
   typedef Triangulation_cell_base_with_info_3<Cell_info, FK>           Cb;
   typedef Triangulation_data_structure_3<Vb,Cb>                        Tds;
@@ -364,10 +364,7 @@ void
 Skin_surface_base_3<MixedComplexTraits_3>::
 intersect(TMC_Cell_handle ch, int i, int j,
           Bare_point &p) const {
-  typedef typename Bare_point::R  Traits;
-  typedef typename Traits::FT FT;
-  Cartesian_converter<FK, 
-    typename Geometric_traits::Bare_point::R> converter;
+  Cartesian_converter<FK, Gt> converter;
 
   Bare_point p1 = converter(ch->vertex(i)->point());
   Bare_point p2 = converter(ch->vertex(j)->point());
@@ -523,7 +520,7 @@ construct_bounding_box()
     Bare_point mid(bbox.xmin() + dx/2, 
 		   bbox.ymin() + dy/2, 
 		   bbox.zmin() + dz/2);
-    double dr = 
+    FT dr = 
       (dx+dy+dz+sqrt(CGAL::to_double(max_weight))+.001) / gt.get_shrink();
 
     Weighted_point wp;

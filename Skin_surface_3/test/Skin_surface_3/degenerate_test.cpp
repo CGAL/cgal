@@ -1,5 +1,6 @@
 // examples/Skin_surface_3/skin_surface_simple.C
 #include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
+#include <CGAL/Exact_predicates_exact_constructions_kernel.h>
 #include <CGAL/Skin_surface_3.h>
 #include <CGAL/Polyhedron_3.h>
 #include <CGAL/mesh_skin_surface_3.h>
@@ -9,13 +10,18 @@
 #include <fstream>
 #include <algorithm>
 
+#ifdef CGAL_SKIN_SURFACE_USE_EXACT_CONSTRUCTION_KERNEL
+typedef CGAL::Exact_predicates_exact_constructions_kernel K;
+#else
 typedef CGAL::Exact_predicates_inexact_constructions_kernel K;
+#endif
 typedef CGAL::Skin_surface_traits_3<K>                     Traits;
 typedef CGAL::Skin_surface_3<Traits>                        Skin_surface_3;
 typedef Skin_surface_3::FT                                  FT;
 typedef Skin_surface_3::Weighted_point                      Weighted_point;
 typedef Weighted_point::Point                               Bare_point;
-typedef CGAL::Polyhedron_3<K>                               Polyhedron;
+typedef CGAL::Exact_predicates_inexact_constructions_kernel IK;
+typedef CGAL::Polyhedron_3<IK>                              Polyhedron;
 
 class Test_file {
 public:

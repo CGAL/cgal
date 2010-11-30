@@ -132,7 +132,7 @@ public:
       _tmc(triangulated_mixed_complex),
       observer(observer),
       triangulation_incr_builder(triangulated_mixed_complex), 
-      construct_anchor_point_3_obj(shrink),
+      construct_anchor_point_3_obj(r2t_converter_object(shrink)),
       compute_anchor_obj(regular),
       verbose(verbose)  {
     
