@@ -23,7 +23,7 @@
 #include <CGAL/Kinetic/basic.h>
 #include <CGAL/Kinetic/Event_base.h>
 
-namespace CGAL { namespace Kinetic {;
+namespace CGAL { namespace Kinetic {
 
 //! Delete a single moving object from the MOT at a particular time.
 /*!
