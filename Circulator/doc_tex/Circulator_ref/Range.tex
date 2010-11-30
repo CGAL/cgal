@@ -14,7 +14,10 @@ arguments separately.
 Ranges come in different categories depending on the category of their iterator :
 mutable or constant (modifiability of the elements pointed to), and forward,
 bidirectional or random-access.  The category can be queried using
-\ccc{std::iterator_traits} and the corresponding iterator type.
+\ccc{std::iterator_traits} and the corresponding iterator type.  Note that
+the concepts \ccc{Range} and \ccc{ConstRange} do not require anything on
+the category or the value type of the iterator.  It must be precised in the
+documentation of any model of these concepts.
 
 Boost also offers the
 \ccAnchor{http://www.boost.org/libs/range/}{Boost.Range library}
@@ -35,15 +38,26 @@ Boost's Range concept
 
 \ccTypes
 
+\ccNestedType{const_iterator} {The constant iterator type.}
 \ccNestedType{iterator} {The iterator type.  It must be convertible to \ccc{const_iterator}.}
+\ccNestedType{size_type} {An unsigned integral type that can represent the
+  size of a range.} 
 
 \ccHeading{Member functions}
 
 \def\ccTagRmTrailingConst{\ccFalse}
 
+\ccMethod{const_iterator begin() const;}{returns the const iterator pointing to the first element.}
+\ccGlue
+\ccMethod{const_iterator end() const;}{returns the past-the-end const iterator.}
+\ccGlue
 \ccMethod{iterator begin();}{returns the iterator pointing to the first element.}
 \ccGlue
 \ccMethod{iterator end();}{returns the past-the-end iterator.}
+
+\ccMethod{size_type size() const;}{returns the size of the range.}
+\ccGlue
+\ccMethod{bool empty() const;}{returns whether the range is empty.}
 
 \def\ccTagRmTrailingConst{\ccTrue}
 
