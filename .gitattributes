@@ -1531,6 +1531,7 @@ HalfedgeDS/examples/HalfedgeDS/hds_prog_graph_with_ccb.cpp -text
 Installation/INSTALL -text
 Installation/LICENSE.FREE_USE -text
 Installation/auxiliary/cgal_create_cmake_script.1 -text
+Installation/cgal.css svneol=native#text/css
 Installation/changes.html svneol=native#text/html
 Installation/cmake/modules/2.6.2-to-2.8.1/FindQt4.cmake -text
 Installation/cmake/modules/2.6.2-to-2.8.1/Qt4ConfigDependentSettings.cmake -text
