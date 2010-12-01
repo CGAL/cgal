@@ -282,6 +282,11 @@ for DIR in $TEST_DIRECTORIES ; do
       rm -f "${TEST_REPORT}"
       touch "$TEST_REPORT"
     fi
+    if [ -f .scm-urls ]; then
+      echo "------------------------------------------------------------------" >> "$TEST_REPORT"
+      echo "  Test files from:" >> "$TEST_REPORT"
+      cat .scm-urls
+    fi
 
     if [ ! -f ErrorOutput_${CGAL_TEST_PLATFORM} ] ; then
       echo "Error: file $DIR/ErrorOutput_${CGAL_TEST_PLATFORM} does not exist!"
@@ -320,3 +325,7 @@ gzip -9f $OUTPUT_FILE
 echo "results written to file $OUTPUT_FILE.gz"
 echo
 
+
+# Local Variables:
+# standard-indent: 2
+# End:
