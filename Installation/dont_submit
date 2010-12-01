@@ -1,1 +1,3 @@
 cmake/modules/CGAL_CreateSingleSourceCGALProgramQt4.cmake
+changes.html
+cgal.css
