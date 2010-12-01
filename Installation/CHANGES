@@ -1,13 +1,10 @@
+
+#
+#  DO NOT MODIFY THIS GENERATED FILE
+#  The source file is  ./changes.html
+#
+
 Release notes of CGAL.
-
------------------------------ Release 3.8 ----------------------------------
-
-x.y Package title example
-  - changes note
-
-x.y Geometric Object Generators
-  
-  - CGAL::Random uses boost::rand48 instead of std::rand
 
 ----------------------------- Release 3.7 ----------------------------------
 
