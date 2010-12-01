@@ -285,7 +285,7 @@ for DIR in $TEST_DIRECTORIES ; do
     if [ -f .scm-urls ]; then
       echo "------------------------------------------------------------------" >> "$TEST_REPORT"
       echo "  Test files from:" >> "$TEST_REPORT"
-      cat .scm-urls
+      cat .scm-urls >> "$TEST_REPORT"
     fi
 
     if [ ! -f ErrorOutput_${CGAL_TEST_PLATFORM} ] ; then
