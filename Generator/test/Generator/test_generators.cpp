@@ -18,6 +18,7 @@
 // revision      : $Id$
 // revision_date : $Date$
 // author(s)     : Lutz Kettner  <kettner@inf.ethz.ch>
+//                 Olivier Devillers <Olivier.Devillers@sophia.inria.fr>
 //
 // coordinator   : INRIA, Sophia Antipolis
 //
@@ -25,21 +26,26 @@
 // ============================================================================
 
 
-#include <CGAL/basic.h>
 #include <cstddef>
 #include <vector>
 #include <algorithm>
 #include <CGAL/Cartesian.h>
+#include <CGAL/Cartesian_d.h>
 #include <CGAL/Point_2.h>
 #include <CGAL/Point_3.h>
 #include <CGAL/point_generators_2.h>
 #include <CGAL/point_generators_3.h>
+#include <CGAL/point_generators_d.h>
+#include <CGAL/constructions_d.h>
 #include <CGAL/algorithm.h>
 #include <CGAL/random_selection.h>
 
 using namespace CGAL;
 
 typedef Cartesian<double>                R;
+typedef CGAL::Cartesian_d<double>        Kd;
+
+
 
 
 void test_point_generators_2() {
@@ -139,9 +145,107 @@ void test_point_generators_3() {
     }
 }
 
+void test_point_generators_d()
+{
+ typedef Kd::Point_d Point;
+ typedef CGAL::Creator_uniform_d<std::vector<double>::iterator, Point>Creator_d;
+
+    std::vector<Point> points;
+    int nb_g=10000;
+    points.reserve (nb_g+403);
+    int i=0,ii;
+    
+
+#ifndef CGAL_NO_DEPRECATED_CODE
+    {
+      // Random_points_in_iso_box_d is deprecated
+      std::cout<<"    deprecated iso_box dim 6"<<std::flush;
+      Random_points_in_iso_box_d<Point> gen (6, 1.0);
+      Point p= *++gen;
+      std::cout<<" done"<<std::endl;
+    }
+#endif // CGAL_NO_DEPRECATED_CODE
+
+
+    {
+    // 100 random points in dim 36
+      std::cout<<"    cube dim 36"<<std::flush;
+      CGAL::Random_points_in_cube_d<Point> gen (36, 1.0);
+      CGAL::copy_n( gen, 100, std::back_inserter(points));
+      i+=100;
+      std::cout<<" done"<<std::endl;
+    }
+    double o[26]={0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0};
+    {
+    // 100 random points in dim 4
+      std::cout<<"    in ball 4D"<<std::flush;
+      Point o4(4,o,o+4);
+      CGAL::Random_points_in_ball_d<Point> gen (4, 100.0);
+      CGAL::copy_n( gen, 100, std::back_inserter(points));
+      std::cout<<" done"<<std::flush;
+      for(ii=i+100; i<ii; ++i)
+	CGAL_assertion( CGAL::squared_distance(o4,points[i]) <= 10000.0);
+      std::cout<<" checked"<<std::endl;
+    }
+    {
+      // nb_g random points in dim 3
+      std::cout<<"    in ball 3D"<<std::flush;
+      Point o3(3,o,o+3);
+      Point g=o3;
+      CGAL::Random_points_in_ball_d<Point> gen (3, 1.0);
+      CGAL::copy_n( gen, nb_g, std::back_inserter(points));
+      std::cout<<" done"<<std::flush;
+      for(ii=i+nb_g; i<ii; ++i){
+	CGAL_assertion( CGAL::squared_distance(o3,points[i]) <= 1.0);
+	if (points[i][0] >0) 
+	  g = g + (points[i] - o3);
+      }
+      CGAL_assertion( std::fabs( g[0]/nb_g - 3.0/16.0) < 0.01 );
+      std::cout<<" center of mass 3/16~="<<g[0]/nb_g<<" checked"<<std::endl;
+    }
+    {
+      // 100 random points in dim 26
+      std::cout<<"    on sphere 26D"<<std::flush;
+      Point o26(26,o,o+26);
+      CGAL::Random_points_on_sphere_d<Point> gen (26, 1.0);
+      CGAL::copy_n( gen, 100, std::back_inserter(points));
+      std::cout<<" done"<<std::flush;
+      for(ii=i+100; i<ii; ++i) {
+	CGAL_assertion( CGAL::squared_distance(o26,points[i]) - 1.0 <= 0.1);
+      }
+      std::cout<<" checked"<<std::endl;
+    }
+    
+    {
+      std::cout<<"    on grid "<<std::flush;
+      int dim =4;
+      // 100 grid points in dim 4
+      CGAL::points_on_cube_grid_d (dim, 1.0, (std::size_t) 100, 
+				   std::back_inserter(points), Creator_d(dim) );
+      // 1 grid points in dim 4
+      CGAL::points_on_cube_grid_d (dim, 1.0, (std::size_t) 1, 
+				   std::back_inserter(points), Creator_d(dim) );
+      // 2 grid points in dim 4
+      CGAL::points_on_cube_grid_d (dim, 1.0, (std::size_t) 2, 
+				   std::back_inserter(points), Creator_d(dim) );
+      i=i+103;
+      std::cout<<" done"<<std::endl;
+    }
+}
+
+
 int main(){
+    std::cout<<"testing 2D"<<std::flush;
     test_point_generators_2();
+    std::cout<<" done"<<std::endl;
+
+    std::cout<<"testing 3D"<<std::flush;
     test_point_generators_3();
+    std::cout<<" done"<<std::endl;
+
+    std::cout<<"testing high D"<<std::endl;
+    test_point_generators_d();
+    std::cout<<" done"<<std::endl;
     return 0;
 }
 // EOF //

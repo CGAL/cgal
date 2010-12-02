@@ -1,0 +1,44 @@
+\begin{ccRefFunction}{points_on_cube_grid_d}
+
+\ccDefinition
+
+The function \ccRefName\ generates a given number of points on a cubic
+grid in any dimension 
+whose size is determined by the number of points to be generated.
+
+\ccInclude{CGAL/point_generators_d.h}
+
+\def\ccLongParamLayout{\ccTrue}
+\ccFunction{template <class OutputIterator, Creator creator>
+    OutputIterator
+    points_on_cube_grid_d(int dim, double a, std::size_t n, OutputIterator o,
+                             Creator creator);}
+{ creates the first $n$ points on the regular $\lceil n^{1/dim}\,\rceil
+    \times \lceil  n^{1/dim}\,\rceil\times \ldots \times \lceil  n^{1/dim}\,\rceil$ 
+    grid within the hypercube
+    $[-a,a]^{dim}$. Returns the value of $o$ after 
+    inserting the $n$ points. 
+}
+\def\ccLongParamLayout{\ccFalse}
+
+\ccRequirements
+\begin{itemize}
+    \item \ccc{Creator} must be a functor accepting an integer (the dimension)
+          and  two iterators and returning an initialized 
+           point  of type \ccc{P} whose coordinates are given by the iterator.
+ For example: 
+  \ccc{Creator_uniform_d<Kernel_traits<Point_d>::Kernel::RT, Point_d>}.
+  The dimension of \ccc{Creator} should be $dim$.
+   \item The \ccc{OutputIterator} must accept values of type \ccc{P}. 
+   %If the
+     %     \ccc{OutputIterator} has a \ccc{value_type} the default
+       %   initializer of the \ccc{creator} can be used. \ccc{P} is set to
+         %  the \ccc{value_type} in this case.
+\end{itemize}
+
+\ccRefIdfierPage{CGAL::points_on_square_grid_2} \\
+\ccRefIdfierPage{CGAL::points_on_cube_grid_3} \\
+
+
+
+\end{ccRefFunction}

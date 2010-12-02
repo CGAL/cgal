@@ -5,6 +5,9 @@
 The class \ccRefName\ is an input iterator creating points uniformly
 distributed on a sphere. The default \ccc{Creator} is
 \ccc{Creator_uniform_3<Kernel_traits<P>::Kernel::RT,P>}.
+The generated points are computed using floating point arithmetic,
+whatever the Kernel is, thus they are on the circle/sphere only up to
+rounding errors.
 
 \ccIsModel
 InputIterator \\

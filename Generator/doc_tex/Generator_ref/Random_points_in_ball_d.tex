@@ -1,0 +1,47 @@
+\begin{ccRefClass}{Random_points_in_ball_d<Point_d>}
+
+\ccDefinition
+
+The class \ccRefName\ is an input iterator creating points uniformly
+distributed in an open ball in any dimension.
+
+\ccIsModel
+InputIterator \\
+\ccRefConceptPage{PointGenerator}
+
+\ccInclude{CGAL/point_generators_d.h}
+
+\ccTypes
+
+\ccThree{typedef std::input_iterator_tagxxx}{xxxiterator_category;}{}
+\ccTypedef{typedef std::input_iterator_tag iterator_category;}{}
+\ccGlue
+\ccTypedef{typedef Point_d                 value_type;}{}
+\ccGlue
+\ccTypedef{typedef std::ptrdiff_t          difference_type;}{}
+\ccGlue
+\ccTypedef{typedef const Point_d*          pointer;}{}
+\ccGlue
+\ccTypedef{typedef const Point_d&          reference;}{}
+
+\ccOperations
+
+\ccCreationVariable{g}
+\ccConstructor{Random_points_in_ball_d(int dim, double r);}{%
+  $g$ is an input iterator creating points of type \ccc{Point_d} uniformly
+  distributed in the open ball in dimension $dim$ with radius $r$,
+  i.e.~$|\ccc{*g}| < r$~.  $2\cdot dim+1$ random numbers are needed from
+  \ccc{rnd} for each point.
+} 
+
+\ccSeeAlso
+
+\ccRefIdfierPage{CGAL::copy_n} \\
+\ccRefIdfierPage{CGAL::Counting_iterator} \\
+\ccRefIdfierPage{CGAL::Random_points_in_disc_2<Point_2, Creator>} \\
+\ccRefIdfierPage{CGAL::Random_points_in_sphere_3<Point_3, Creator>} \\
+\ccRefIdfierPage{CGAL::Random_points_in_cube_d<Point_d>} \\
+\ccRefIdfierPage{CGAL::Random_points_on_sphere_d<Point_d>}
+
+
+\end{ccRefClass}

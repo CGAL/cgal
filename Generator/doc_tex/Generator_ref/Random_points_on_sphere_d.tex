@@ -1,0 +1,51 @@
+\begin{ccRefClass}{Random_points_on_sphere_d<Point_d>}
+
+\ccDefinition
+
+The class \ccRefName\ is an input iterator creating points uniformly
+distributed on a sphere.
+
+The generated points are computed using floating point arithmetic,
+whatever the Kernel is, thus they are on the sphere only up to
+rounding errors.
+
+\ccIsModel
+InputIterator \\
+\ccRefConceptPage{PointGenerator}
+
+\ccInclude{CGAL/point_generators_d.h}
+
+\ccTypes
+
+\ccThree{typedef std::input_iterator_tagxxx}{xxxiterator_category;}{}
+\ccTypedef{typedef std::input_iterator_tag iterator_category;}{}
+\ccGlue
+\ccTypedef{typedef Point_d                 value_type;}{}
+\ccGlue
+\ccTypedef{typedef std::ptrdiff_t          difference_type;}{}
+\ccGlue
+\ccTypedef{typedef const Point_d*          pointer;}{}
+\ccGlue
+\ccTypedef{typedef const Point_d&          reference;}{}
+
+\ccOperations
+
+\ccCreationVariable{g}
+\ccConstructor{Random_points_on_sphere_d(int dim,  double r, Random& rnd =
+  default_random);}{%
+  $g$ is an input iterator creating points of type \ccc{Point_d} uniformly
+  distributed on a sphere in dimension $dim$ with radius $r$,
+  i.e.~$|\ccc{*g}| == r$~. $2\cdot dim$ random numbers are needed from
+  \ccc{rnd} for each point.
+} 
+
+\ccSeeAlso
+
+\ccRefIdfierPage{CGAL::copy_n} \\
+\ccRefIdfierPage{CGAL::Counting_iterator} \\
+\ccRefIdfierPage{CGAL::Random_points_on_circle_2<Point_2, Creator>} \\
+\ccRefIdfierPage{CGAL::Random_points_on_sphere_3<Point_3, Creator>} \\
+\ccRefIdfierPage{CGAL::Random_points_in_cube_d<Point_d>} \\
+\ccRefIdfierPage{CGAL::Random_points_in_ball_d<Point_d>} \\
+
+\end{ccRefClass}

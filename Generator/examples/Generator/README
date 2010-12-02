@@ -16,3 +16,37 @@ generators_example2.C
 random_polzgon_ex.C
     generates a random polygon from a randomly chosen number of points
     and prints the polygon to standard output
+
+random_grid.cpp
+    generates 250 points on a grid and 250 random points within a disc
+
+random_polygon.cpp
+    generates random points in a square and call random_polygon_2 to order them
+    on a simple polygon.
+
+random_polygon2.cpp
+    generates a random simple polygon.
+
+random_convex_set.cpp            
+
+random_segments1.cpp
+    generates random points on a segment and on a circle.
+
+random_segments2.cpp
+    program for the generic segment generator
+    using precomputed point locations.
+
+random_degenerate_point_set.cpp  
+ 
+sphere_d.cpp
+    generates random points on the hyper surface of a sphere in dim d.
+
+ball_d.cpp                       
+    generates random points within an hyper ball in dim d.
+
+cube_d.cpp                       
+    generates random points wthin an hyper cube in dim d.
+
+grid_d.cpp                       
+    generates points on a grid in dim d.
+

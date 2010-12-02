@@ -1399,6 +1399,8 @@ Generator/doc_tex/Generator/Segment_generator_prog2.png -text svneol=unset#image
 Generator/doc_tex/Generator/dice.png -text
 Generator/doc_tex/Generator/generators_prog1.png -text svneol=unset#image/png
 Generator/doc_tex/Generator/generators_prog2.png -text svneol=unset#image/png
+Generator/doc_tex/Generator/hypergrid.gif -text svneol=unset#image/gif
+Generator/doc_tex/Generator/hypergrid.pdf -text svneol=unset#application/pdf
 Geomview/demo/Geomview/CMakeLists.txt -text
 Geomview/doc_tex/Geomview/geomview.gif -text
 GraphicsView/GraphicsView.odp -text

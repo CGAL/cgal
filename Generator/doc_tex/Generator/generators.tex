@@ -48,6 +48,17 @@ For generating 3D grid points, we provide the function
 \ccc{points_on_cube_grid_3} that writes to
 an output iterator.
 
+\ccIndexSubitem[c]{generator}{dD point}
+\ccIndexSubitem[c]{point, dD}{generator}
+For higher dimensions, input iterators are provided for random points uniformly 
+distributed in a $d$-dimensional cube (\ccc{Random_points_in_cube_d})
+or $d$-dimensional ball (\ccc{Random_points_in_ball_d}) or on the boundary of a 
+sphere (\ccc{Random_points_on_sphere_d}).
+For generating grid points, we provide the function 
+\ccc{points_on_grid_d} that writes to
+an output iterator.
+
+
 We also provide two functions for generating more complex geometric objects.
 The function \ccc{random_convex_set_2} computes a random convex planar
 point set of a given size where the points are drawn from a specific
@@ -227,6 +238,100 @@ used.
 \end{ccHtmlOnly}
 \lcTex{\ccIndexSubitemEnd[c]{generator}{segment}}
 
+
+\section{Example Generating Point Sets in \texorpdfstring{$d$}{d} dimensions}
+
+The following example generates points inside a cube in dimension 5
+(examples for ball and sphere are available in the example directory) :
+
+\ccIncludeExampleCode{Generator/cube_d.cpp}
+
+The output of this example looks like:
+\begin{verbatim}
+Generating 10 random points in a cube in 5D, coordinates from -100 to 100
+ 5 32.9521 26.0403 59.3979 -99.2553 15.5102 
+ 5 80.3731 30.809 7.32491 -90.2544 94.5635 
+ 5 -71.3412 -31.933 -98.0734 79.6493 66.6104 
+ 5 -78.5065 -58.2397 -33.9096 81.2196 57.2512 
+ 5 21.4093 26.7661 57.6083 23.4958 93.1047 
+ 5 10.5895 -21.8914 70.9726 36.756 -42.2667 
+ 5 23.9813 54.4519 -26.0894 -85.18 -21.0775 
+ 5 -48.7499 59.9873 6.22335 -4.16011 81.0727 
+ 5 -11.6615 5.53147 -32.6578 -79.9283 44.5679 
+ 5 53.0183 78.3228 -28.5665 83.3503 68.0482 
+\end{verbatim}
+
+
+Next example generates grid points in dimension $dim=4$.
+Since the required number of
+points, 20 is between $2^{dim}$ and $3^{dim}$ the supporting grid has
+$3\times 3\times 3\times 3$ points.
+Since the size parameter is 5, the
+coordinates are in $\{-5, 0, 5\}$, but  since the number of points
+verifies $20\leq 3^{dim-1}$, all
+generated points have the same last coordinate $-5$. 
+
+\ccIncludeExampleCode{Generator/grid_d.cpp}
+
+The output of previous example corresponds to the points of this
+figure depicted in red or pink (pink points are ``inside'' the cube). 
+The output is:
+\begin{verbatim}
+Generating 20 grid points in 4D
+  4 -5 -5 -5 -5 
+  4 0 -5 -5 -5 
+  4 5 -5 -5 -5 
+  4 -5 0 -5 -5 
+  4 0 0 -5 -5 
+  4 5 0 -5 -5 
+  4 -5 5 -5 -5 
+  4 0 5 -5 -5 
+  4 5 5 -5 -5 
+  4 -5 -5 0 -5 
+  4 0 -5 0 -5 
+  4 5 -5 0 -5 
+  4 -5 0 0 -5 
+  4 0 0 0 -5 
+  4 5 0 0 -5 
+  4 -5 5 0 -5 
+  4 0 5 0 -5 
+  4 5 5 0 -5 
+  4 -5 -5 5 -5 
+  4 0 -5 5 -5 
+\end{verbatim}
+
+\begin{ccHtmlOnly}
+<center>
+<img border=0 src="./hypergrid.gif" align=middle>
+</center>
+\end{ccHtmlOnly} 
+\begin{ccTexOnly}
+\begin{center}
+\includegraphics[width=11.5cm]{Generator/hypergrid}
+\end{center}
+\end{ccTexOnly}
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\section{Design and Implementation History}
+
+Lutz Kettner coded generators in 2D and 3D
+For points {\em in} and {\em on} sphere, points are generated in a cube up
+to the moment the point is inside the sphere, then it is normalized to go on the
+boundary if needed. 
+
+Sven Schönherr implemented the Random class.
+ 
+Michael Hoffmann coded the random convex polygon,
+
+Geert-Jan Giezeman and Susan Hert coded the random simple polygon.
+
+Olivier Devillers coded generators in high dimensions.
+For points {\em in ball} and {\em on sphere}, points are generated on a
+sphere/ball  boundary as a product of normal distributions, then it is
+normalized.
+If needed a random radius (with relevant distribution)
+ is used to put the point inside the ball.
 
 % +--------------------------------------------------------+
 % restore default column and paragraph layout
