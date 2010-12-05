@@ -42,7 +42,7 @@ public:
 
 template <class T, class Stream>
 class Ostream_iterator {
-    Stream& stream;
+    Stream* stream;
 public:
     typedef  T                         value_type;
     typedef  T&                        reference;
@@ -52,11 +52,11 @@ public:
     typedef  std::ptrdiff_t            difference_type;
     typedef  std::output_iterator_tag  iterator_category;
 
-    Ostream_iterator( Stream& s) : stream(s) {}
+    Ostream_iterator( Stream& s) : stream(&s) {}
     Ostream_iterator<T,Stream>& operator++()      { return *this;}
     Ostream_iterator<T,Stream>  operator++(int)   { return *this;}
     Ostream_proxy<T,Stream>     operator*() const {
-        return Ostream_proxy<T,Stream>(stream);
+        return Ostream_proxy<T,Stream>(*stream);
     }
 };
 
