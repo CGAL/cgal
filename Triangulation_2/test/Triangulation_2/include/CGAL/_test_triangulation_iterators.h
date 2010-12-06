@@ -24,6 +24,31 @@
 #define TEST_TRIANGULATION_ITERATORS_C
 
 template < class Triangulation >
+typename Triangulation::size_type
+_test_cls_face_iterator( const Triangulation &T );
+
+
+template < class Triangulation >
+typename Triangulation::size_type
+_test_cls_face_iterator( const Triangulation &T );
+
+
+template < class Triangulation >
+typename Triangulation::size_type
+_test_cls_vertex_iterator( const Triangulation &T );
+
+
+template < class Triangulation >
+typename Triangulation::size_type
+_test_cls_point_iterator( Triangulation &T );
+
+
+template < class Triangulation >
+typename Triangulation::size_type
+_test_cls_edge_iterator( const Triangulation &T );
+
+
+template < class Triangulation >
 void
 _test_iterators( const Triangulation &T )
 {

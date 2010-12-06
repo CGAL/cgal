@@ -28,6 +28,17 @@
 #include <CGAL/_test_cls_tds_face.h>
 
 
+template< class Tds>
+void
+_test_tds_circulators( const Tds&  tds);
+
+
+template< class Tds>
+void
+_test_tds_iterators( const Tds&  tds);
+
+
+
 
 template <class Tds>
 void

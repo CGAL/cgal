@@ -33,6 +33,10 @@
 #include <CGAL/_test_triangulation_circulators.h>
 
 
+template <class Del>
+void
+_test_regular_duality( const Del &T );
+
 
 template < class Triangulation, class Point, class Face_handle >
 bool

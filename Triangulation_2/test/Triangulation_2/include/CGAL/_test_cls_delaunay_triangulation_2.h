@@ -28,6 +28,12 @@
 #include <cstdlib>
 using std::rand;
 
+
+template <class Del>
+void
+_test_delaunay_duality( const Del &T );
+
+
 template <class Del>
 void
 _test_cls_delaunay_triangulation_2( const Del & )
