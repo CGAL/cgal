@@ -45,19 +45,19 @@ struct Line_to_epoint {
     RT adx = CGAL_NTS abs(dx(l)), ady = CGAL_NTS abs(dy(l));
     int sdx = CGAL_NTS sign(dx(l)), sdy = CGAL_NTS sign(dy(l));
     int cmp_dx_dy = CGAL_NTS compare(adx,ady), s(1);
-    if (sdx < 0 && ( cmp_dx_dy > 0 || cmp_dx_dy == 0 && 
-        sdy != (s = CGAL_NTS sign(ordinate_distance(l))))) {
+    if ( (sdx < 0) && ( (cmp_dx_dy > 0) || ( (cmp_dx_dy == 0) && 
+                                             (sdy != (s = CGAL_NTS sign(ordinate_distance(l))))))) {
       if (0 == s) return ( sdy < 0 ? SWCORNER : NWCORNER );
       else        return LEFTFRAME;
-    } else if (sdx > 0 && ( cmp_dx_dy > 0 || cmp_dx_dy == 0 && 
-               sdy != (s = CGAL_NTS sign(ordinate_distance(l))))) { 
+    } else if ( (sdx > 0) && ( (cmp_dx_dy > 0) || ( (cmp_dx_dy == 0) && 
+                                                    (sdy != (s = CGAL_NTS sign(ordinate_distance(l))))))) { 
       if (0 == s) return ( sdy < 0 ? SECORNER : NECORNER );
       else        return RIGHTFRAME;
-    } else if (sdy < 0 && ( cmp_dx_dy < 0 || cmp_dx_dy == 0 && 
-               ordinate_distance(l) < FT(0))) {
+    } else if ( (sdy < 0) && ( (cmp_dx_dy < 0) || ( (cmp_dx_dy == 0) && 
+                                                    (ordinate_distance(l) < FT(0))))) {
       return BOTTOMFRAME;
-    } else if (sdy > 0 && ( cmp_dx_dy < 0 || cmp_dx_dy == 0 && 
-               ordinate_distance(l) > FT(0))) {
+    } else if ( (sdy > 0) && ( (cmp_dx_dy < 0) || ( (cmp_dx_dy == 0) && 
+                                                    (ordinate_distance(l) > FT(0))))) {
       return TOPFRAME;
     }
     CGAL_error_msg(" determine_type: degenerate line.");

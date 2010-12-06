@@ -303,9 +303,9 @@ public:
     Vertex_const_handle v;
     Halfedge_const_handle e;
     Face_const_handle f;
-    if ( assign(v,h) && M(v) ||
-         assign(e,h) && M(e) ||
-         assign(f,h) && M(f) ) return h;
+    if ( ( assign(v,h) && M(v) ) ||
+         ( assign(e,h) && M(e) ) ||
+         ( assign(f,h) && M(f) ) ) return h;
     h = Object_handle();
     CGAL_NEF_TRACEN("not contained");
     for (v = this->vertices_begin(); v != this->vertices_end(); ++v) {

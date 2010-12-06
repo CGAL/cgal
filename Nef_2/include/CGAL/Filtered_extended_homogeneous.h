@@ -767,8 +767,8 @@ bool contains(const Extended_segment<RT>& s,
 { int p_rel_source = compare_xy(p,s.source());
   int p_rel_target = compare_xy(p,s.target());
   return ( orientation(s,p) == 0 ) &&
-         ( p_rel_source >= 0 && p_rel_target <= 0 ||
-           p_rel_source <= 0 && p_rel_target >= 0 );
+    ( ( p_rel_source >= 0 && p_rel_target <= 0 ) ||
+      ( p_rel_source <= 0 && p_rel_target >= 0 ) );
 }
 
 
@@ -1024,19 +1024,19 @@ Point_type determine_type(const Standard_line_2& l) const
   int sdx = CGAL_NTS sign(dx(l)), sdy = CGAL_NTS sign(dy(l));
   int cmp_dx_dy = CGAL_NTS compare(adx,ady), s(1);
   // CGAL_NEF_TRACEN("   "<<cmp_dx_dy<<" "<<sdx<<" "<<sdy);
-  if (sdx < 0 && ( cmp_dx_dy > 0 || cmp_dx_dy == 0 && 
-      sdy != (s=CGAL_NTS sign(abscissa_distance(l))))) {
+  if (sdx < 0 && ( cmp_dx_dy > 0 || ( cmp_dx_dy == 0 && 
+                                      sdy != (s=CGAL_NTS sign(abscissa_distance(l)))))) {
     if (0 == s) return ( sdy < 0 ? SWCORNER : NWCORNER );
     else        return LEFTFRAME;
-  } else if (sdx > 0 && ( cmp_dx_dy > 0 || cmp_dx_dy == 0 && 
-             sdy != (s=CGAL_NTS sign(abscissa_distance(l))))) { 
+  } else if (sdx > 0 && ( cmp_dx_dy > 0 || ( cmp_dx_dy == 0 && 
+                                             sdy != (s=CGAL_NTS sign(abscissa_distance(l)))))) { 
     if (0 == s) return ( sdy < 0 ? SECORNER : NECORNER );
     else        return RIGHTFRAME;
-  } else if (sdy < 0 && ( cmp_dx_dy < 0 || cmp_dx_dy == 0 && 
-             abscissa_distance(l) < Standard_FT(0))) {
+  } else if (sdy < 0 && ( cmp_dx_dy < 0 || ( cmp_dx_dy == 0 && 
+                                             abscissa_distance(l) < Standard_FT(0)))) {
     return BOTTOMFRAME;
-  } else if (sdy > 0 && ( cmp_dx_dy < 0 || cmp_dx_dy == 0 && 
-             abscissa_distance(l) > Standard_FT(0))) {
+  } else if (sdy > 0 && ( cmp_dx_dy < 0 || ( cmp_dx_dy == 0 && 
+                                             abscissa_distance(l) > Standard_FT(0)))) {
     return TOPFRAME;
   }
   CGAL_error_msg(" determine_type: degenerate line.");
