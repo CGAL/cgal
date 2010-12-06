@@ -341,10 +341,10 @@ public:
     SHalfedge_handle e; 
     SHalfloop_handle l; 
     SFace_handle f;
-    if ( CGAL::assign(v,h) && M(v) ||
-         CGAL::assign(e,h) && M(e) ||
-	 CGAL::assign(l,h) && M(l) ||
-         CGAL::assign(f,h) && M(f) ) return h;
+    if ( ( CGAL::assign(v,h) && M(v) ) ||
+         ( CGAL::assign(e,h) && M(e) ) ||
+         ( CGAL::assign(l,h) && M(l) ) ||
+         ( CGAL::assign(f,h) && M(f) ) ) return h;
     h = Object_handle(); 
     CGAL_NEF_TRACEN("not contained");
 #if 0
