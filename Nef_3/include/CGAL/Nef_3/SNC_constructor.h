@@ -1202,12 +1202,12 @@ public:
 	CGAL_NEF_TRACEN(src << "->" << trg << " has on " << *pi << src.x() << " : " );
 	CGAL_NEF_TRACEN((src.x()-pi->x() <= 0) << "|" << (src.y()-pi->y() <= 0) << "|" << (src.z()-pi->z() <= 0) );
 	CGAL_NEF_TRACEN((pi->x()-trg.x() <= 0) << "|" << (pi->y()-trg.y() <= 0) << "|" << (pi->z()-trg.z() <= 0) );
-	if((src.x()-pi->x() <= 0 && pi->x()-trg.x() <= 0 || 
-	    src.x()-pi->x() >= 0 && pi->x()-trg.x() >= 0) &&
-	   (src.y()-pi->y() <= 0 && pi->y()-trg.y() <= 0 || 
-	    src.y()-pi->y() >= 0 && pi->y()-trg.y() >= 0) &&
-	   (src.z()-pi->z() <= 0 && pi->z()-trg.z() <= 0 ||
-	    src.z()-pi->z() >= 0 && pi->z()-trg.z() >= 0)) {
+	if(( (src.x()-pi->x() <= 0 && pi->x()-trg.x() <= 0) || 
+             (src.x()-pi->x() >= 0 && pi->x()-trg.x() >= 0)) &&
+	   ((src.y()-pi->y() <= 0 && pi->y()-trg.y() <= 0) || 
+	    (src.y()-pi->y() >= 0 && pi->y()-trg.y() >= 0)) &&
+	   ((src.z()-pi->z() <= 0 && pi->z()-trg.z() <= 0) ||
+	    (src.z()-pi->z() >= 0 && pi->z()-trg.z() >= 0))) {
 	  pprev = pi;
 	  ++pi;
 	  res.push_back(*pprev);
