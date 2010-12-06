@@ -44,7 +44,7 @@ public:
   };
 
 private:  
-  using Base::Node_handle;
+  typedef typename Base::Node_handle Node_handle; 
   using Base::branch;
 
   void 
