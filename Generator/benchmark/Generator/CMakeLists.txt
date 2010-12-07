@@ -18,6 +18,11 @@ if ( CGAL_FOUND )
 
   include( ${CGAL_USE_FILE} )
 
+  find_package(Boost REQUIRED program_options)
+  
+  include_directories(${Boost_INCLUDE_DIRS})
+  link_libraries(${Boost_LIBRARIES})
+
   include( CGAL_CreateSingleSourceCGALProgram )
 
   include_directories (BEFORE ../../include)
