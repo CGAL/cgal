@@ -41,17 +41,22 @@
 #include <vector>
 #include <cstdlib> // for drand48
 
-#if 0
+#ifdef SHOW_ITERATIONS
+#  undef SHOW_ITERATIONS
 #  define SHOW_ITERATIONS "\t( " << iterations << " iterations used)" << endl
 #else
 #  define SHOW_ITERATIONS endl
 #endif
 
+#ifndef BENCH_MIN_TIME
+#  define BENCH_MIN_TIME 1 // minimum time for a bench
+#endif
+
 using namespace std;
 using namespace CGAL;
 
-typedef Simple_cartesian<double>                       K;
-//typedef Exact_predicates_inexact_constructions_kernel  K;
+// typedef Simple_cartesian<double>                       K;
+typedef Exact_predicates_inexact_constructions_kernel  K;
 //typedef Exact_predicates_exact_constructions_kernel  K;
 typedef Regular_triangulation_euclidean_traits_3<K>    WK;
 typedef K::Point_3                                     Point;
@@ -118,7 +123,7 @@ void benchmark_construction()
 			mem_size = Memory_sizer().virtual_size();
 			// cout << "#vertices = " << tr.number_of_vertices() << endl;
 			// cout << "#cells = " << tr.number_of_cells() << endl;
-		} while (time < 1);
+		} while (time < BENCH_MIN_TIME);
 		cout << nb_pts << "\t" << time/iterations << SHOW_ITERATIONS;
 	}
 	cout << "\nMemory usage : " << (mem_size - mem_size_init)*1./max_pts << " Bytes/Point"
@@ -143,7 +148,7 @@ void benchmark_location()
 			// We do chunks of    100000 point locations at once.
 			for(size_t i = 0; i < 100000; ++i)
 				tr.locate(pts2[i]);
-		} while (time < 1);
+		} while (time < BENCH_MIN_TIME);
 		cout << nb_pts << "\t" << (time/iterations)/100000 << SHOW_ITERATIONS;
 	}
 }
@@ -174,7 +179,7 @@ void benchmark_remove()
 			// We do chunks of 1024 vertex removal at once.
 			for(size_t i = 0; i < 1024; ++i, ++j)
 				tr.remove(vhs[j]);
-		} while (time < 1);
+		} while (time < BENCH_MIN_TIME);
 		cout << nb_pts << "\t" << (time/iterations)/1024 << SHOW_ITERATIONS;
 	}
 }
