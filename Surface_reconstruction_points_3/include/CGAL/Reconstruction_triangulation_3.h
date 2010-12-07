@@ -260,15 +260,15 @@ public:
 
   // Repeat base class' public methods used below
   /// @cond SKIP_IN_MANUAL
-  Base::points_begin;
-  Base::points_end;
-  Base::number_of_vertices;
-  Base::finite_vertices_begin;
-  Base::finite_vertices_end;
-  Base::all_vertices_begin;
-  Base::all_vertices_end;
+  using Base::points_begin;
+  using Base::points_end;
+  using Base::number_of_vertices;
+  using Base::finite_vertices_begin;
+  using Base::finite_vertices_end;
+  using Base::all_vertices_begin;
+  using Base::all_vertices_end;
 
-  Base::geom_traits;
+  using Base::geom_traits;
   /// @endcond
 
   /// Gets first iterator over input vertices.
