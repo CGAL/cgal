@@ -949,8 +949,8 @@ bool operator<(const Extended_direction<RT>& d1,
 { Extended_direction<RT> d0(1,0);
   bool d0d1eq = (d1 == d0);
   bool d0d2eq = (d2 == d0);
-  return (d0d1eq && !d0d2eq) ||
-         strictly_ordered_ccw(d0,d1,d2) && !d0d2eq;
+  return ( (d0d1eq && !d0d2eq) ||
+           ( strictly_ordered_ccw(d0,d1,d2) && (! d0d2eq) ) );
 }
 
 
