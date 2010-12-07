@@ -1741,7 +1741,7 @@ _Bezier_x_monotone_2<RatKer, AlgKer, NtTrt, BndTrt>::_compare_slopes
 
   if (CGAL::sign (denom1) == CGAL::ZERO)
   {
-    inf_slope1 = CGAL::sign (numer1);
+    inf_slope1 = is_directed_right() ? CGAL::sign (numer1) : CGAL::opposite( CGAL::sign (numer1) );
 
     // If both derivatives are zero, we cannot perform the comparison:
     if (inf_slope1 == CGAL::ZERO)
@@ -1764,7 +1764,7 @@ _Bezier_x_monotone_2<RatKer, AlgKer, NtTrt, BndTrt>::_compare_slopes
 
   if (CGAL::sign (denom2) == CGAL::ZERO)
   {
-    inf_slope2 = CGAL::sign (numer2);
+    inf_slope2 = cv.is_directed_right() ? CGAL::sign (numer2) : CGAL::opposite( CGAL::sign (numer2) );
 
     // If both derivatives are zero, we cannot perform the comparison:
     if (inf_slope2 == CGAL::ZERO)
