@@ -443,7 +443,10 @@ compute_anchor_vor (Vertex_handle const v) {
           for (adj_vertex = adj_vertices.begin(); 
                adj_vertex != adj_vertices.end();
                adj_vertex++) {
-            if (v_other != (*adj_vertex)) {
+            if ((v_other != (*adj_vertex)) && (!reg.is_infinite(*adj_vertex))) {
+              CGAL_assertion(!reg.is_infinite(v));
+              CGAL_assertion(!reg.is_infinite(v_other));
+              CGAL_assertion(!reg.is_infinite(*adj_vertex));
               side = test_anchor(v->point(), v_other->point(),
                                  (*adj_vertex)->point());
               if (side==ZERO) {

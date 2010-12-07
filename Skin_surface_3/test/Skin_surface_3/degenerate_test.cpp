@@ -3,6 +3,7 @@
 #include <CGAL/Exact_predicates_exact_constructions_kernel.h>
 #include <CGAL/Skin_surface_3.h>
 #include <CGAL/Polyhedron_3.h>
+#include <CGAL/IO/Polyhedron_iostream.h>
 #include <CGAL/mesh_skin_surface_3.h>
 
 #include <list>
@@ -42,6 +43,8 @@ public:
     CGAL::mesh_skin_surface_3(skin_surface, p);
     
     CGAL_assertion(p.is_valid() && p.is_closed());
+
+    //std::cout << p << std::endl;
   }
 private:
   double s;
