@@ -564,21 +564,18 @@ public:
 
         for (pit = vpts.begin(); pit != vpts.end(); ++pit)
         {
-          *oi = CGAL::make_object (X_monotone_curve_2 (B, xid,
-                                                       p0, *pit,
-                                                       *p_cache));
-          ++oi;
-
+          *oi++ = CGAL::make_object (X_monotone_curve_2 (B, xid,
+                                                         p0, *pit,
+                                                         *p_cache));
           xid++;
           p0 = *pit;
         }
 
         Point_2    p1(B, Rational(1)); // A rational end point.
 
-        *oi = CGAL::make_object (X_monotone_curve_2 (B, xid,
-                                                     p0, p1,
-                                                     *p_cache));
-
+        *oi++ = CGAL::make_object (X_monotone_curve_2 (B, xid,
+                                                       p0, p1,
+                                                       *p_cache));
         return (oi);
       }
 
@@ -599,21 +596,18 @@ public:
       for (it = vt_list.begin(); it != vt_list.end(); ++it)
       {
         p1 = Point_2 (B, *it);
-        *oi = CGAL::make_object (X_monotone_curve_2 (B, xid,
-                                                     p0, p1,
-                                                     *p_cache));
-        ++oi;
-
+        *oi++ = CGAL::make_object (X_monotone_curve_2 (B, xid,
+                                                       p0, p1,
+                                                       *p_cache));
         xid++;
         p0 = p1;
       }
 
       // Create the final subcurve.
       p1 = Point_2 (B, Rational(1));
-      *oi = CGAL::make_object (X_monotone_curve_2 (B, xid,
-                                                   p0, p1,
-                                                   *p_cache));
-
+      *oi++ = CGAL::make_object (X_monotone_curve_2 (B, xid,
+                                                     p0, p1,
+                                                     *p_cache));
       return (oi);
     }
   };
