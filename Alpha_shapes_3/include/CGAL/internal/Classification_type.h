@@ -1,0 +1,9 @@
+#ifndef CGAL_INTERNAL_CLASSIFICATION_TYPE_H
+#define CGAL_INTERNAL_CLASSIFICATION_TYPE_H
+
+namespace CGAL{
+  namespace internal{
+    enum Classification_type {EXTERIOR,SINGULAR,REGULAR,INTERIOR};
+  }
+} 
+#endif //CGAL_INTERNAL_CLASSIFICATION_TYPE_H

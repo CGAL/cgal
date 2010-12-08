@@ -41,6 +41,11 @@ Alpha_shapes_3/demo/Alpha_shapes_3/*.vcproj
 Alpha_shapes_3/demo/Alpha_shapes_3/Makefile
 Alpha_shapes_3/demo/Alpha_shapes_3/alpha_shapes_3
 Alpha_shapes_3/demo/Alpha_shapes_3/weighted_alpha_shapes_3
+Alpha_shapes_3/test/Alpha_shapes_3/CMakeLists.txt
+Alpha_shapes_3/test/Alpha_shapes_3/cgal_test_with_cmake
+Alpha_shapes_3/test/Alpha_shapes_3/test_alpha_shape_3
+Alpha_shapes_3/test/Alpha_shapes_3/test_fixed_alpha_shape_3
+Alpha_shapes_3/test/Alpha_shapes_3/test_weighted_alpha_shape_3
 Apollonius_graph_2/demo/Apollonius_graph_2/*.exe
 Apollonius_graph_2/demo/Apollonius_graph_2/*.vcproj
 Apollonius_graph_2/demo/Apollonius_graph_2/Makefile

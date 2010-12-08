@@ -51,7 +51,8 @@
 %\section{Reference pages for Alpha Shapes in 3D}
 
 \ccRefChapter{3D Alpha Shapes}
-\ccChapterAuthor{Tran Kai Frank Da \and Mariette Yvinec}
+\ccChapterAuthor{Tran Kai Frank Da \and 
+S\'ebastien Loriot \and Mariette Yvinec}
 
 Alpha shapes definition is based on an underlying
 triangulation that may be a Delaunay triangulation 
@@ -65,7 +66,7 @@ The  alpha complex is a subcomplex
 of the Delaunay triangulation.
 For a given value of $\alpha$, the alpha complex includes
 all the simplices in the Delaunay triangulation which have
-an empty  circumsphere with squared radius equal or smaller than $\alpha$.
+an empty  circumscribing sphere with squared radius equal or smaller than $\alpha$.
 Here ``empty'' means  that the open sphere 
 do not include  any points of $S$.
 The alpha shape is then simply the domain covered by the simplices
@@ -76,11 +77,6 @@ This means in particular that the alpha complex may have
 singular faces.  For $0 \leq k \leq d-1$,
 a $k$-simplex of the alpha complex  is said to be
 singular if it is not a facet of a $(k+1)$-simplex of the complex
-CGAL provides two versions of the alpha shapes. In the general mode,
-the alpha shapes correspond strictly to the above definition.
-The regularized mode provides a regularized version of the alpha shapes
-corresponding to the domain covered by a regularized version
-of the alpha complex where singular faces are removed.
 
 The alpha shapes of a  set of points 
 $S$ form a discrete family, even though they
@@ -94,7 +90,6 @@ belongs to the alpha complex. Relying on this fact, the family of
 easily. Furthermore, we can select the optimal value
 of  $\alpha$ to get an alpha shape including all data points
 and having   less than a given number of connected components.
-
 
 The definition is analog in the case of weighted alpha shapes.
 The input set is now a set of weighted points (which can be regarded
@@ -110,8 +105,16 @@ regular triangulation triangulation
 such that there is a sphere orthogonal to the weighted points associated
 with the vertices of the simplex  and suborthogonal to all the other
 input weighted points. Once again the alpha shape is then defined as
-the domain covered by a the alpha complex and arise in two versions
-general or regularized.
+the domain covered by a the alpha complex.
+
+CGAL provides two versions to compute alpha shapes. 
+The first one gives access to an explicit classification of all the simplices for a fixed alpha value.
+The second one gives access to the entire family of alpha shapes of a set of points.
+This latter version comes with two modes. In the general mode,
+the alpha shapes correspond strictly to the definition previously made.
+The regularized mode provides a regularized version of the alpha shapes
+corresponding to the domain covered by a regularized version
+of the alpha complex where singular faces are removed.
 
 
 \section{Classified Reference Pages}
@@ -122,6 +125,10 @@ general or regularized.
 \ccRefConceptPage{WeightedAlphaShapeTraits_3} \\
 \ccRefConceptPage{AlphaShapeCell_3}\\
 \ccRefConceptPage{AlphaShapeVertex_3}\\
+\ccRefConceptPage{FixedAlphaShapeTraits_3}\\
+\ccRefConceptPage{FixedWeightedAlphaShapeTraits_3} \\
+\ccRefConceptPage{FixedAlphaShapeCell_3}\\
+\ccRefConceptPage{FixedAlphaShapeVertex_3}\\
 
 
 \subsection*{Classes}
@@ -130,3 +137,7 @@ general or regularized.
 %\ccRefIdfierPage{CGAL::Weighted_alpha_shape_euclidean_traits_3<K>}\\
 \ccRefIdfierPage{CGAL::Alpha_shape_vertex_base_3<Traits,Vb>}\\
 \ccRefIdfierPage{CGAL::Alpha_shape_cell_base_3<Traits,Fb>}
+
+\ccRefIdfierPage{CGAL::Fixed_alpha_shape_3<Dt>}\\
+\ccRefIdfierPage{CGAL::Fixed_alpha_shape_vertex_base_3<Traits,Vb>}\\
+\ccRefIdfierPage{CGAL::Fixed_alpha_shape_cell_base_3<Traits,Fb>}

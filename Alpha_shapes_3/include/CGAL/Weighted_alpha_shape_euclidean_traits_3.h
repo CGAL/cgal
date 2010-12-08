@@ -28,14 +28,15 @@ namespace CGAL {
    
 //------------------ Traits class -------------------------------------
 
-#ifndef CGAL_NO_DEPRECATED_CODE
+#ifdef CGAL_NO_DEPRECATED_CODE
+#error The class Weighted_alpha_shape_euclidean_traits_3<K> is deprecated in favor of Regular_triangulation_euclidean_traits_3<K>.
+#endif
 
 template <class K>
 class Weighted_alpha_shape_euclidean_traits_3 : public 
 Regular_triangulation_euclidean_traits_3<K>
 {};
-
-#endif //CGAL_NO_DEPRECATED_CODE
+  
   
 } //namespace CGAL
   

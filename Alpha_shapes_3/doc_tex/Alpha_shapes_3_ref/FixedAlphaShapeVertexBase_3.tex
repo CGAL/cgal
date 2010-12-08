@@ -1,0 +1,44 @@
+%----------------------------------------------------------------------
+
+\begin{ccRefConcept}{FixedAlphaShapeVertex_3}
+
+\ccDefinition
+This concept describes the requirements for the base vertex of a alpha shape with a fixed value alpha.
+
+
+\ccRefines
+\ccc{TriangulationVertexBase_3}.
+
+\ccCreationVariable{v}
+
+\ccTypes
+\ccNestedType{Point}
+{Must be the same as the point type provided by  
+the geometric traits class of the triangulation.} 
+
+\ccCreation
+\ccConstructor{Alpha_shape_vertex_base_3();}{default constructor.}
+\ccGlue
+\ccConstructor{Alpha_shape_vertex_base_3(Point p);}{constructor setting
+the point associated to.}
+\ccGlue
+\ccConstructor{Alpha_shape_vertex_base_3(Point p, const Cell_handle& c);} 
+{constructor setting the point  associated to and an incident cell.}
+
+
+\ccAccessFunctions
+\ccMethod{bool is_on_chull();}
+{Returns a boolean indicating whether the point is on the convex hull of the point of the triangulation.}
+\ccMethod{Classification_type get_classification_type();}
+{Returns the classification of the vertex.}
+
+
+\ccModifiers
+\ccMethod{void set_classification_type(Classification_type type);}
+{Sets the classification of the vertex.}
+
+\ccMethod{void is_on_chull(bool b);}
+{Sets whether the vertex is on the convex hull.}
+
+
+\end{ccRefConcept}

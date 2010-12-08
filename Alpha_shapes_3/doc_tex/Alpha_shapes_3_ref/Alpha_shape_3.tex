@@ -50,7 +50,7 @@
 \ccDefinition
 
 The class \ccClassTemplateName\ represents the family of
-alpha shapes of points in the 3D space for {\em all} positive
+alpha shapes of points in the 3D space for {\em all} real
 $\alpha$. It maintains an  underlying triangulation 
 of the class \ccc{Dt} which
 represents connectivity and order among its faces. Each
@@ -259,7 +259,7 @@ to \ccc{alpha}.}
 
 \ccMethod{Classification_type
            classify(Facet f, const FT& alpha = get_alpha()) const;}
-{Classifies the facet \ccc{e} of the underlying triangulation with
+{Classifies the facet \ccc{f} of the underlying triangulation with
 respect to \ccc{alpha}.}
 
 \ccMethod{Classification_type
@@ -282,7 +282,7 @@ of the underlying triangulation with respect to \ccc{alpha}.}
 				 const FT& alpha =  get_alpha());}
 {Write the cells which are of type \ccc{type} for 
 the alpha value \ccc{alpha} to the sequence
-pointed to by the output iterator \ccc{it}. Return past the end
+pointed to by the output iterator \ccc{it}. Returns past the end
 of the output sequence.}
 
 
@@ -293,7 +293,7 @@ template<class OutputIterator>
 				const FT& alpha=  get_alpha());}
 {Write the facets which are of type \ccc{type} for 
 the alpha value \ccc{alpha} to the sequence
-pointed to by the output iterator \ccc{it}. Return past the end
+pointed to by the output iterator \ccc{it}. Returns past the end
 of the output sequence.}
 
 \ccMethod {
@@ -303,17 +303,17 @@ template<class OutputIterator>
 			const FT& alpha =  get_alpha());}
 {Write the edges which are of type \ccc{type} for 
 the alpha value \ccc{alpha} to the sequence
-pointed to by the output iterator \ccc{it}. Return past the end
+pointed to by the output iterator \ccc{it}. Returns past the end
 of the output sequence.}
 
 \ccMethod {
  template<class OutputIterator>
    OutputIterator get_alpha_shape_vertices(OutputIterator it, 
 					Classification_type type,
-			const FT& alphaget_alpha());} 
+			const FT& alpha);} 
 {Write the vertices which are of type \ccc{type} for 
 the alpha value \ccc{alpha} to the sequence
-pointed to by the output iterator \ccc{it}. Return past the end
+pointed to by the output iterator \ccc{it}. Returns past the end
 of the output sequence.}
 
 \ccMethod {
@@ -383,7 +383,7 @@ is an internal format.
 \ccFunction{Geomview_stream& operator<<(Geomview_stream& W,
                          	const Alpha_shape_3<Dt>& A);}
 {Inserts the alpha shape \ccVar\ for the current alpha value into the Geomview stream \ccc{W}.
-\ccPrecond The insert operator must be defined for \ccc{Point} and \ccc{Triangle}.}
+\ccPrecond The insert operator must be defined for \ccc{GT::Point} and \ccc{GT::Triangle}.}
 
 \ccImplementation
 

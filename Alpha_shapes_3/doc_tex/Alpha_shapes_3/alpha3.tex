@@ -72,22 +72,47 @@ The  alpha complex is a subcomplex
 of the Delaunay triangulation.
 For a given value of $\alpha$, the alpha complex includes
 all the simplices in the Delaunay triangulation which have
-an empty  circumsphere with squared radius equal or smaller than $\alpha$.
+an empty  circumscribing sphere with squared radius equal or smaller than $\alpha$.
 Here ``empty'' means  that the open sphere 
 do not include  any points of $S$.
 The alpha shape is then simply the domain covered by the simplices
 of the alpha complex (see \cite{em-tdas-94}).
 
-In general, an alpha complex is a non-connected and non-pure complex.
+In general, an alpha complex is a disconnected and non-pure complex:
 This means in particular that the alpha complex may have
 singular faces.  For $0 \leq k \leq d-1$,
 a $k$-simplex of the alpha complex  is said to be
-singular if it is not a facet of a $(k+1)$-simplex of the complex
-CGAL provides two versions of the alpha shapes. In the general mode,
+singular if it is not a facet of a $(k+1)$-simplex of the complex.
+CGAL provides two versions of alpha shapes. In the general mode,
 the alpha shapes correspond strictly to the above definition.
-The regularized mode provides a regularized version of the alpha shapes
-corresponding to the domain covered by a regularized version
-of the alpha complex where singular faces are removed.
+The regularized mode provides a regularized version of the alpha shapes.
+It corresponds to the domain covered by a regularized version
+of the alpha complex where singular faces are removed 
+(See Figure \ref{fig-gen-reg-ex} for an example).
+
+
+\begin{figure}
+\begin{ccTexOnly}
+\begin{center}
+\includegraphics[width=15cm]{Alpha_shapes_3/gen-reg-ex.png}
+\end{center}
+\end{ccTexOnly}
+\begin{ccHtmlOnly}
+<CENTER>
+<img border=0 src="./gen-reg-ex.png" alt="General vs. regularized alpha-shape">
+</CENTER>
+\end{ccHtmlOnly}
+
+\caption{Comparison of general and regularized alpha-shape.
+\textbf{Left:} Some points are taken on the surface of a torus, 
+three points being taken relatively
+far from the surface of the torus;
+\textbf{Middle:} The general alpha-shape (for a large enough alpha value)
+contains the singular triangle facet of the three isolated points;
+\textbf{Right:} The regularized version (for the same value of alpha) does not contains any singular facet.
+\label{fig-gen-reg-ex}}
+\end{figure}
+
 
 
 
@@ -135,8 +160,8 @@ regular triangulation triangulation
 such that there is a sphere orthogonal to the weighted points associated
 with the vertices of the simplex  and suborthogonal to all the other
 input weighted points. Once again the alpha shape is then defined as
-the domain covered by a the alpha complex and arise in two versions
-general or regularized.
+the domain covered by a the alpha complex and comes in general and
+regularized versions.
 
 
 
@@ -144,6 +169,8 @@ general or regularized.
 %----------------------------------------------------------------------
 
 \section{Functionality \label{I1_SectAlpha_Shape_3}}
+
+\subsection{Family of alpha shapes}
 
 The class \ccc{CGAL::Alpha_shape_3<Dt>} represents the whole
 family of alpha shapes for a given set of points.
@@ -153,24 +180,9 @@ of the set,  and associates to each $k$-face of this triangulation
 for which values of $\alpha$ the face belongs to the
 alpha complex. 
 
-
-The class \ccc{CGAL::Alpha_shape_3<Dt>} provides functions to set and
+The class provides functions to set and
 get the current $\alpha$-value, as well as an iterator that enumerates
 the $\alpha$ values where the alpha shape changes.
-
-The class provides member functions to classify for a given value
-of $alpha$ the different faces of the triangulation as
-\ccc{EXTERIOR}, \ccc{SINGULAR}, \ccc{REGULAR} or 
-\ccc{INTERIOR} with respect
-to the alpha shape. A $k$ face  on the boundary of the alpha complex
-is said to be \ccc{REGULAR}  if it is a subface of the alpha complex
-which is  a subface of some $k+1$ face of the alpha complex
-and \ccc{SINGULAR} otherwise.
-
-The class  provides also output iterators  to  get for a given $alpha$ value
-the vertices, edges, facets and cells of the different types
-(\ccc{EXTERIOR}, \ccc{SINGULAR}, \ccc{REGULAR} or 
-\ccc{INTERIOR}).
 
 Also the class has a filtration member function that, given
 an  output iterator with \ccc{CGAL::object}
@@ -189,30 +201,84 @@ such that the alpha shape   satisfies the following two properties~\\
 \smallskip
 The current implementation is static, that is after its construction
 points cannot be inserted or removed.
+
+\subsection{Alpha shape for a fixed alpha}
+Given a value of alpha, the class \ccc{CGAL::Fixed_alpha_shape_3<Dt>} represents one 
+alpha shape for a given set of points.
+The class includes  the underlying triangulation \ccc{Dt}
+of the set,  and associates to each $k$-face of this triangulation
+a classification type. 
+
+\smallskip
+The current implementation of this class is dynamic, that is after its construction
+points can be inserted or removed.
+
+\subsection{Classification and iterators}
+Both classes provide member functions to classify for a (given) value
+of $alpha$ the different faces of the triangulation as
+\ccc{EXTERIOR}, \ccc{SINGULAR}, \ccc{REGULAR} or 
+\ccc{INTERIOR} with respect
+to the alpha shape. A $k$-face  on the boundary of the alpha complex
+is said to be: \ccc{REGULAR} if it is a subface of the alpha-complex which
+is a subface of a $(k+1)$-face of the alpha complex, and \ccc{SINGULAR} otherwise.
+A $k$-face of the alpha complex which is not on the boundary of the alpha complex
+is said to be \ccc{INTERIOR}. See Figure \ref{fig-classif} for a 2D illustration.
+
+
+\begin{figure}
+\begin{ccTexOnly}
+\begin{center}
+\includegraphics[width=15cm]{Alpha_shapes_3/classif}
+\end{center}
+\end{ccTexOnly}
+\begin{ccHtmlOnly}
+<CENTER>
+<img border=0 src="./classif.png" alt="Classification of simplices.">
+</CENTER>
+\end{ccHtmlOnly}
+
+\caption{Classification of simplices, a 2D example.
+\textbf{Left:} The 2D Delaunay triangulation of a set of points;
+\textbf{Right:} Classification of simplices for a given alpha (the squared radius of the red circle).
+\ccc{INTERIOR}, \ccc{REGULAR} and \ccc{SINGULAR} simplices are depicted in black, green and blue
+respectively. \ccc{EXTERIOR} simplices are not depicted. The vertex \ccc{s} and the edge \ccc{tu} are \ccc{SINGULAR}
+since all higher dimension simplices they are incident to are \ccc{EXTERIOR}.
+The facet \ccc{pqr} is \ccc{EXTERIOR} because the squared radius of its circumscribed circle is larger
+than alpha.
+\label{fig-classif}}
+\end{figure}
+
+
+The classes provide also output iterators  to  get for a given $alpha$ value
+the vertices, edges, facets and cells of the different types
+(\ccc{EXTERIOR}, \ccc{SINGULAR}, \ccc{REGULAR} or 
+\ccc{INTERIOR}).
+
+
 %----------------------------------------------------------------------
 
 \section{Concepts and Models\label{I1_SectDtClass3D}}
 
 
 We currently do not specify concepts for the underlying triangulation
-type. Models that work for a basic alpha-shape are the instantiations
+type. Models that work for a familly alpha-shapes are the instantiations
 of the classes \ccc{CGAL::Delaunay_triangulation_3} and
 \ccc{CGAL::Periodic_3_Delaunay_triangulation_3} (see
-example~\ref{l1_SectPeriodicAS3D}).
+example~\ref{l1_SectPeriodicAS3D}). A model that works for a fixed alpha-shape are the instantiations
+of the class \ccc{CGAL::Delaunay_triangulation_3}.
 A model that works for a weighted alpha-shape is 
-the class \ccc{CGAL::Regular_triangulation_3}.
+the class \ccc{CGAL::Regular_triangulation_3}. The triangulation needs a geometric traits class 
+and a triangulation data structure as template parameters.
 
-The triangulation needs a geometric traits class as argument.
-The requirements of this class are described in the 
-concept \ccc{CGAL::AlphaShapeTraits_3} for which
-the \cgal\ kernels are models in the non-weighted case, and for which
-the class \ccc{CGAL::Regular_triangulation_euclidean_traits_3} is model
+For the class \ccc{CGAL::Alpha_shape_3<Dt>}, the requirements of
+the traits class are described in the concepts \ccc{CGAL::AlphaShapeTraits_3}
+in the non-weighted case and \ccc{CGAL::WeightedAlphaShapeTraits_3} in the weighted case.
+The \cgal\ kernels are models in the non-weighted case, and 
+the class \ccc{CGAL::Regular_triangulation_euclidean_traits_3} is a model
 in the weighted case.
-
-The triangulation data structure of the triangulation with any 
-has to be a model of the concept \ccc{CGAL::TriangulationDataStructure_3}.
-However it must be parameterized with 
-vertex and cell classes, which are models of the concepts
+The triangulation data structure of the triangulation
+has to be a model of the concept \ccc{CGAL::TriangulationDataStructure_3},
+and it must be parameterized with vertex and cell classes, which are model of the concepts
 \ccc{AlphaShapeVertex_3} and \ccc{AlphaShapeCell_3}.
 The package provides by default the classes
 \ccc{CGAL::Alpha_shape_vertex_base_3<Gt>} and
@@ -223,6 +289,51 @@ triangulation the vertex and cell classes need to be models to both
 \ccc{Periodic_3TriangulationDSVertexBase_3} as well as
 \ccc{AlphaShapeCell_3} and \ccc{Periodic_3TriangulationDSCellBase_3}
 (see example~\ref{l1_SectPeriodicAS3D}). 
+
+
+
+For the class \ccc{CGAL::Fixed_alpha_shape_3<Dt>}, the requirements of
+the traits class are described in the concepts \ccc{CGAL::FixedAlphaShapeTraits_3}
+in the non-weighted case and \ccc{CGAL::FixedWeightedAlphaShapeTraits_3} in the weighted case.
+The \cgal\ kernels are models in the non-weighted case, and 
+the class \ccc{CGAL::Regular_triangulation_euclidean_traits_3} is a model
+in the weighted case.
+The triangulation data structure of the triangulation
+has to be a model of the concept \ccc{CGAL::TriangulationDataStructure_3},
+and it must be parameterized with vertex and cell classes, which are model of the concepts
+\ccc{FixedAlphaShapeVertex_3} and \ccc{FixedAlphaShapeCell_3}.
+The package provides models \ccc{CGAL::Fixed_alpha_shape_vertex_base_3<Gt>} 
+and \ccc{CGAL::Fixed_alpha_shape_cell_base_3<Gt>}, respectively.
+
+
+
+\section{\ccc{Alpha_shape_3} or \ccc{Fixed_alpha_shape_3}}
+
+The class \ccc{CGAL::Alpha_shape_3<Dt>} represents the whole family
+of alpha shapes for a given set of points while the class \ccc{CGAL::Fixed_alpha_shape_3<Dt>}
+represents only one alpha shape (for a fixed alpha). When using the same kernel,
+\ccc{CGAL::Fixed_alpha_shape_3<Dt>} being a lighter version, it is naturally much more efficient 
+when the alpha-shape is needed for a single given value of alpha.
+In addition note that the class \ccc{CGAL::Alpha_shape_3<Dt>}
+requires constructions (squared radius of simplices) while the 
+class \ccc{CGAL::Fixed_alpha_shape_3<Dt>} uses only predicates.
+This implies that a certified construction of one (several)
+alpha-shape, using the \ccc{CGAL::Alpha_shape_3<Dt>} requires a kernel
+with exact predicates and exact constructions while using a kernel 
+with exact predicates is sufficient for the class \ccc{CGAL::Fixed_alpha_shape_3<Dt>}.
+This makes the class \ccc{CGAL::Fixed_alpha_shape_3<Dt>} even more efficient in this setting.
+In addition, note that the \ccc{Fixed} version is the only of the
+two that supports incremental insertion and removal of points.
+
+We give the time spent while computing the alpha shape of a protein (considered
+as a set of weighted points) featuring 4251 atoms (using \ccc{gcc 4.3} under Linux with \ccc{-O3}
+and \ccc{-DNDEBUG} flags, on a 2.27GHz Intel(R) Xeon(R) E5520 CPU): 
+Using \ccc{CGAL::Exact_predicates_inexact_constructions_kernel}, building
+the regular triangulation requires 0.06s, then the class \ccc{CGAL::Fixed_alpha_shape_3<Dt>}
+required 0.05s while the class \ccc{CGAL::Alpha_shape_3<Dt>} requires 0.35s.
+
+
+
 
 
 %----------------------------------------------------------------------
@@ -241,7 +352,7 @@ as underlying triangulation.
 When many points are input in the alpha shape, say more than 10 000,
 it may pay off to use a Delaunay triangulation with \ccc{Fast_location}
 policy as underlying triangulation in order to speed up point location
-quesries (cf. \ref{Triangulation3-sec-locpol}).
+queries (cf. \ref{Triangulation3-sec-locpol}).
 
 \ccIncludeExampleCode{Alpha_shapes_3/ex_alpha_shapes_with_fast_location_3.cpp}
 %----------------------------------------------------------------------
@@ -254,6 +365,12 @@ The alpha shape is built in \ccc{GENERAL} mode.
 
 
 \ccIncludeExampleCode{Alpha_shapes_3/ex_weighted_alpha_shapes_3.cpp}
+
+\subsection{Example for Fixed Weighted Alpha-Shapes\label{I1_SectFxWeightedAS3D}}
+
+Same example as previous but using a fixed value of alpha.
+
+\ccIncludeExampleCode{Alpha_shapes_3/ex_fixed_weighted_alpha_shapes_3.cpp}
 
 \subsection{Example for periodic
   Alpha Shapes\label{l1_SectPeriodicAS3D}}
@@ -277,3 +394,5 @@ kernel needs to be used to compute the alpha shapes. Otherwise the
 results will suffer from round-off problems.
 
 \ccIncludeExampleCode{Alpha_shapes_3/ex_periodic_alpha_shapes_3.cpp}
+
+

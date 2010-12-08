@@ -1,0 +1,48 @@
+\begin{ccRefConcept}{FixedWeightedAlphaShapeTraits_3}
+
+%% \ccHtmlCrossLink{}     %% add further rules for cross referencing links
+%% \ccHtmlIndexC[concept]{} %% add further index entries
+
+\ccDefinition
+  
+The concept \ccRefName\ describes the requirements 
+for the geometric traits class of  the underlying  regular triangulation of a weighted alpha shape with fixed alpha value.
+
+\ccRefines
+\ccc{RegularTriangulationTraits_3}
+
+In addition to the requirements described in the concept 
+\ccc{RegularTriangulationTraits_3},
+the geometric traits class of a
+Regular triangulation plugged in a weighted alpha shape with fixed alpha value
+provides the following.
+
+\ccTypes
+\ccNestedType{Comparison_result}{\ccc{CGAL::Comparison_result} or \ccc{Uncertain<CGAL::Comparison_result>}}
+
+\ccNestedType{Compare_weighted_squared_radius_3}
+{An object constructor able to compare the squared radius of the
+ smallest sphere  orthogonal to either four, three, two or one weighted point(s)
+ to a given value of alpha.
+It provides:\\
+\ccc{Comparison_result operator()(Weighted_point_3 ,Weighted_point_3 ,Weighted_point_3 ,Weighted_point_3 )}\\
+\ccc{Comparison_result operator()(Weighted_point_3 ,Weighted_point_3 ,Weighted_point_3 )}\\
+\ccc{Comparison_result operator()(Weighted_point_3 ,Weighted_point_3 )}\\
+\ccc{Comparison_result operator()(Weighted_point_3 )}\\
+} 
+
+\ccCreation
+\ccCreationVariable{wast}  %% choose variable name
+
+\ccConstructor{WeightedAlphaShapeTraits_3();}{default constructor.}
+
+\ccAccessFunctions
+\ccMethod{Compare_weighted_squared_radius_3 compare_weighted_squared_radius_3_object();} {}
+
+
+\ccHasModels
+
+\ccc{CGAL::Regular_triangulation_euclidean_traits_3<K>},
+
+\end{ccRefConcept}
+
