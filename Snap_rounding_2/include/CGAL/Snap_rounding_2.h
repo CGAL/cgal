@@ -276,7 +276,6 @@ Hot_pixel<Traits_>::Hot_pixel(const Point_2 & inp_point, NT inp_pixel_size) :
   Point_2 rb(right_coord, bottom_coord);
   Point_2 lt(left_coord, top_coord);
   Point_2 rt(right_coord, top_coord);
-  
   right_seg = new Segment_2(construct_seg(rb, rt));
   left_seg = new Segment_2(construct_seg(lb, lt));
   top_seg = new Segment_2(construct_seg(lt, rt));
@@ -482,7 +481,7 @@ operator()(const Hot_pixel * h1, const Hot_pixel * h2) const
   Comparison_result cx = compare_x(h1->get_center(), h2->get_center());
   Comparison_result cy = compare_y(h1->get_center(), h2->get_center());
 
-  return(cx == SMALLER || cx == EQUAL && cy == SMALLER);
+  return(cx == SMALLER || ( cx == EQUAL && cy == SMALLER));
 }
 
 // a function for compare two hot pixels for the set of hot pixels a certain
