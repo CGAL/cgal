@@ -33,7 +33,7 @@ Boost_THREAD_LIBRARY_RELEASE:FILEPATH=/usr/lib64/libboost_thread-mt.so
 CGAL_BINARY_DIR:STATIC=/home/lrineau/CGAL/CGAL-3.5-I-140/cmake/platforms/x86-64_Linux-2.6_g++-4.4.1_F13-ansi
 
 //User-defined flags
-CGAL_CXX_FLAGS:STRING= -frounding-math -std=c++98 -Wall -pedantic-errors -Wno-long-long
+CGAL_CXX_FLAGS:STRING= -frounding-math -std=c++98 -Wall -pedantic-errors -Wno-long-long -fdiagnostics-show-option
 
 //Value Computed by CMake
 CGAL_Core_BINARY_DIR:STATIC=/home/lrineau/CGAL/CGAL-3.5-I-140/cmake/platforms/x86-64_Linux-2.6_g++-4.4.1_F13-ansi/src/CGALCore
