@@ -78,10 +78,10 @@ public:
   //! The base class for listeners for events.
   typedef Multi_listener<Listener_core> Listener;
   friend class  Multi_listener<Listener_core>;*/
-  CGAL_KINETIC_LISTEN1(Qt_widget, PICTURE_IS_CURRENT, draw());
-  CGAL_KINETIC_LISTEN1(Graphical_base, CURRENT_TIME, widget().set_picture_is_current(false));
+  CGAL_KINETIC_LISTEN1(Qt_widget, PICTURE_IS_CURRENT, draw())
+  CGAL_KINETIC_LISTEN1(Graphical_base, CURRENT_TIME, widget().set_picture_is_current(false))
 
-  CGAL_KINETIC_MULTILISTENER1(PICTURE_IS_VALID);
+  CGAL_KINETIC_MULTILISTENER1(PICTURE_IS_VALID)
 public:
   typedef Simulator_t Simulator;
   //typedef Const_ref_counted_pointer<This> Const_point;

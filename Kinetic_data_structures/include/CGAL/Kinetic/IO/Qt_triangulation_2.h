@@ -45,7 +45,7 @@ class Qt_triangulation_2: public Ref_counted<Qt_triangulation_2<KDel, IK, Qt_gui
   typedef typename Triangulation::Edge Edge;
 
   // maybe icl wants the class definition before the useage. 
-  CGAL_KINETIC_LISTEN1(Qt_gui, PICTURE_IS_VALID, draw());
+  CGAL_KINETIC_LISTEN1(Qt_gui, PICTURE_IS_VALID, draw())
 
 
 public:

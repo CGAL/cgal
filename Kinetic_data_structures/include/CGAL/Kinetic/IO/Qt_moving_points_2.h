@@ -52,7 +52,7 @@ protected:
   //  friend class CGAL::Kinetic::Simulator_objects_listener<Simulator_listener, This>;
   typedef typename Traits::Static_kernel::FT NT;
   //class Guil;
-  CGAL_KINETIC_LISTEN1(Simulator, DIRECTION_OF_TIME, reverse_time());
+  CGAL_KINETIC_LISTEN1(Simulator, DIRECTION_OF_TIME, reverse_time())
 public:
   //typedef typename CGAL::Ref_counted_pointer<This> Pointer;
   //typedef typename CGAL::Const_ref_counted_pointer<This> Const_handle;
@@ -133,7 +133,7 @@ public:
     }*/
 
 protected:
-  CGAL_KINETIC_LISTEN1(GUI,PICTURE_IS_VALID, draw());
+  CGAL_KINETIC_LISTEN1(GUI,PICTURE_IS_VALID, draw())
   /*class Guil: public Gui_listener
   {
     typedef Gui_listener P;

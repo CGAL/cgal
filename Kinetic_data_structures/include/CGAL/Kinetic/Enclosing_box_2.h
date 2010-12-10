@@ -72,7 +72,7 @@ class  Enclosing_box_2: public Ref_counted<Enclosing_box_2<Traits> >
   typedef typename Traits::Kinetic_kernel Kinetic_kernel;
   typedef typename Traits::Active_points_2_table Active_points_2_table;
 
-  CGAL_KINETIC_DECLARE_AOT_LISTENER(typename Active_points_2_table);
+  CGAL_KINETIC_DECLARE_AOT_LISTENER(typename Active_points_2_table)
   //typedef typename CGAL::Kinetic::Active_objects_listener_helper<typename Active_points_2_table::Listener, This> Active_points_2_table_listener;
   //friend class CGAL::Kinetic::Active_objects_listener_helper<typename Active_points_2_table::Listener, This>;
 
@@ -100,7 +100,7 @@ public:
     CGAL_LOG(Log::SOME, "Constructed box with sides [" << bounds_[LEFT] << "..." << bounds_[RIGHT]
 		 << "]x[" << bounds_[BOTTOM] << "..." << bounds_[TOP] << "]" << std::endl);
     CGAL_KINETIC_INITIALIZE_AOT_LISTENER(tr.active_points_2_table_handle());
-  };
+  }
 
   ~Enclosing_box_2() {
     for (typename std::map<Point_key, Event_key>::iterator it= certs_.begin(); it!= certs_.end(); ++it) {
