@@ -66,7 +66,7 @@ void add_random_points(int n, int d, int multiplicity, Point_list& list,
   // Adds n random d-dimensional points to the given list.
 {
   typedef typename Point_list::value_type Point;
-  CGAL::Random_points_in_iso_box_d<Point> rpg(d,100.0);
+  CGAL::Random_points_in_cube_d<Point> rpg(d,100.0);
   for (int i = 0; i < n; ++i) {
     for (int j = 0; j < multiplicity; ++j)
       list.push_back(*rpg);
@@ -82,7 +82,7 @@ void add_random_points(int n, int d, int multiplicity, Point_list& list,
 {
   typedef typename Point_list::value_type Point;
   typedef CGAL::Point_d<K_d> Point_d;
-  CGAL::Random_points_in_iso_box_d<Point_d> rpg(d,100.0);
+  CGAL::Random_points_in_cube_d<Point_d> rpg(d,100.0);
   for (int i = 0; i < n; ++i) {
     for (int j = 0; j < multiplicity; ++j) {
       Point_d p = *rpg;
@@ -100,7 +100,7 @@ void add_random_points(int n, int d, int multiplicity, Point_list& list,
 {
   typedef typename Point_list::value_type Point;
   typedef CGAL::Point_d<K_d> Point_d;
-  CGAL::Random_points_in_iso_box_d<Point_d> rpg(d,100.0);
+  CGAL::Random_points_in_cube_d<Point_d> rpg(d,100.0);
   for (int i = 0; i < n; ++i) {
     for (int j = 0; j < multiplicity; ++j) {
       Point_d p = *rpg;
