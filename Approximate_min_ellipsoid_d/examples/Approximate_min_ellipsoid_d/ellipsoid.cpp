@@ -22,7 +22,7 @@ int main()
 
   // create a set of random points:
   Point_list P;
-  CGAL::Random_points_in_iso_box_d<Point> rpg(d,100.0);
+  CGAL::Random_points_in_cube_d<Point> rpg(d,100.0);
   for (int i = 0; i < n; ++i) {
     P.push_back(*rpg);
     ++rpg;
