@@ -443,7 +443,7 @@ EOF
 	print OUTPUT "<tr>\n<td><a name=\"platform$pf_num_plus_one\">$pf_no</a>\n";
 	$pf_no++;
 	# my $pf_short = join('_',parse_platform_2($pf));
-	(my $pf_short) = ($pf =~ m/[a-z]+_(.*)/);
+	(my $pf_short) = ($pf =~ m/_(.*)/);
 	print OUTPUT "<td><a href=\"$release_name/Installation/TestReport_$pf.gz\">$pf_short</a>";
 
         ($platform_is_64bits{$pf}) = ($pf =~ m/(x86[-_]64)/);
