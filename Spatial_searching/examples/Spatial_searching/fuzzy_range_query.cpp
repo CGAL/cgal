@@ -8,7 +8,7 @@
 typedef CGAL::Cartesian_d<double> K;
 typedef K::Point_d Point_d;
 typedef CGAL::Search_traits_d<K> Traits;
-typedef CGAL::Random_points_in_iso_box_d<Point_d>       Random_points_iterator;
+typedef CGAL::Random_points_in_cube_d<Point_d>       Random_points_iterator;
 typedef CGAL::Counting_iterator<Random_points_iterator> N_Random_points_iterator;
 typedef CGAL::Kd_tree<Traits> Tree;
 typedef CGAL::Fuzzy_sphere<Traits> Fuzzy_sphere;

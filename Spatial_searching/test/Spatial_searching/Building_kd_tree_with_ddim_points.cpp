@@ -17,7 +17,7 @@
 typedef CGAL::Homogeneous_d<double> K;
 typedef CGAL::Point_d<K> Point;
 
-typedef CGAL::Random_points_in_iso_box_d<Point> Point_generator;
+typedef CGAL::Random_points_in_cube_d<Point> Point_generator;
 
 typedef K SearchTraits;
 typedef CGAL::Orthogonal_k_neighbor_search<SearchTraits> Orthogonal_k_neighbor_search;
