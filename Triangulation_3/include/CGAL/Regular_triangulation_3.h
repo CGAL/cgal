@@ -259,6 +259,51 @@ public:
       return std::make_pair(t.first, t.second);
   }
 
+  // Returns the vertices on the interior of the conflict hole.
+  template <class OutputIterator>
+  OutputIterator
+  vertices_inside_conflict_zone(const Weighted_point&p, Cell_handle c,
+                                OutputIterator res) const
+  {
+      CGAL_triangulation_precondition(dimension() >= 2);
+
+      // Get the facets on the boundary of the hole, and the cells of the hole
+      std::vector<Cell_handle> cells;
+      std::vector<Facet> facets;
+      find_conflicts(p, c, std::back_inserter(facets),
+	             std::back_inserter(cells), Emptyset_iterator());
+
+      // Put all vertices on the hole in 'vertices'
+      const int d = dimension();
+      std::set<Vertex_handle> vertices;
+      for (typename std::vector<Cell_handle>::const_iterator 
+             it = cells.begin(),
+             end = cells.end(); it != end; ++it) 
+      {
+        for(int i = 0; i <= d; ++i) {
+          vertices.insert((*it)->vertex(i));
+        }
+      }
+      // Then extract the vertices of the boundary and remove them from
+      // 'vertices'
+      if (dimension() == 3) {
+          for (typename std::vector<Facet>::const_iterator i = facets.begin();
+	       i != facets.end(); ++i) {
+	      vertices.erase(i->first->vertex((i->second+1)&3));
+	      vertices.erase(i->first->vertex((i->second+2)&3));
+	      vertices.erase(i->first->vertex((i->second+3)&3));
+          }
+      } else {
+          for (typename std::vector<Facet>::const_iterator i = facets.begin();
+	       i != facets.end(); ++i) {
+	      vertices.erase(i->first->vertex(cw(i->second)));
+	      vertices.erase(i->first->vertex(ccw(i->second)));
+          }
+      }
+
+      return std::copy(vertices.begin(), vertices.end(), res);
+  }
+
   // Returns the vertices on the boundary of the conflict hole.
   template <class OutputIterator>
   OutputIterator
@@ -297,6 +342,7 @@ public:
   template < typename InputIterator >
   size_type remove(InputIterator first, InputIterator beyond)
   {
+    CGAL_triangulation_precondition(!this->does_repeat_in_range(first, beyond));
     size_type n = number_of_vertices();
     while (first != beyond) {
       remove (*first);
@@ -312,6 +358,16 @@ public:
   // without hidden points at any time
   Vertex_handle move_if_no_collision(Vertex_handle v, const Weighted_point & p);
   Vertex_handle move(Vertex_handle v, const Weighted_point & p);
+
+  // REMOVE CLUSTER - works only when Regular has no hidden point at all
+  // "regular as Delaunay"
+  template < typename InputIterator >
+  size_type remove_cluster(InputIterator first, InputIterator beyond)
+  {
+    Self tmp;
+    Vertex_remover<Self> remover (tmp);
+    return Tr_Base::remove(first, beyond, remover);
+  }
 
 protected:
 

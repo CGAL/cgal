@@ -166,6 +166,27 @@ public:
     return n - number_of_vertices();
   }
 
+  template < typename InputIterator >
+  size_type remove_cluster(InputIterator first, InputIterator beyond)
+  {
+    CGAL_triangulation_precondition(!this->does_repeat_in_range(first, beyond));
+    CGAL_triangulation_precondition(!this->infinite_vertex_in_range(first, beyond));
+    size_type n = this->number_of_vertices();
+    std::vector<Vertex_handle> vo(first, beyond), vc;
+    int l=0;
+    while(1) {
+      int n = vo.size();
+      if(!n) break;
+      for(int i=0; i<n; i++) {
+        if(vo[i]->up() != Vertex_handle()) vc.push_back(vo[i]->up());
+      }
+      hierarchy[l++]->remove_cluster(vo.begin(), vo.end());
+      std::swap(vo,vc);
+      vc.clear();
+    }
+    return n - this->number_of_vertices();
+  }
+
 #ifndef CGAL_NO_DEPRECATED_CODE
   CGAL_DEPRECATED Vertex_handle move_point(Vertex_handle v, const Point & p);
 #endif
@@ -301,8 +322,9 @@ Triangulation_hierarchy_3<Tr>::
 ~Triangulation_hierarchy_3()
 {
   clear();
-  for(int i=1; i<maxlevel; ++i)
+  for(int i=1; i<maxlevel; ++i) {
     delete hierarchy[i];
+  }
 }
 
 template <class Tr>

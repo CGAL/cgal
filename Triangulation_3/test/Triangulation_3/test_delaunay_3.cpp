@@ -30,9 +30,11 @@ template class CGAL::Delaunay_triangulation_3<K>;
 
 int main()
 {
-  typedef CGAL::Delaunay_triangulation_3<K>  Cls;
+  typedef CGAL::Delaunay_triangulation_3<EPIC>  Cls;
+  typedef CGAL::Delaunay_triangulation_3<EPEC>  Cls_with_epec;
 
   _test_cls_delaunay_3( Cls() );
+  _test_cls_delaunay_3( Cls_with_epec() );
 
   // Second version for the circumcenter storing cell base class.
   typedef CGAL::Triangulation_vertex_base_3<K>                 Vb;

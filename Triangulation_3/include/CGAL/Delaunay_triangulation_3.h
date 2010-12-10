@@ -360,12 +360,21 @@ public:
   template < typename InputIterator >
   size_type remove(InputIterator first, InputIterator beyond)
   {
+    CGAL_triangulation_precondition(!this->does_repeat_in_range(first, beyond));
     size_type n = number_of_vertices();
     while (first != beyond) {
       remove(*first);
       ++first;
     }
     return n - number_of_vertices();
+  }
+	
+  template < typename InputIterator >
+  size_type remove_cluster(InputIterator first, InputIterator beyond)
+  {
+    Self tmp;
+    Vertex_remover<Self> remover (tmp);
+    return Tr_Base::remove(first, beyond, remover);
   }
 
   // MOVE

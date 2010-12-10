@@ -29,6 +29,7 @@
 
 #include "_test_cls_iterator.h"
 #include "_test_cls_circulator.h"
+#include "_test_remove_cluster.h"
 
 #include <CGAL/Random.h>
 
@@ -1177,6 +1178,11 @@ _test_cls_delaunay_3(const Triangulation &)
   // A simple test to see if move return the good vertex
   // when there is a collision
   assert(TM_3.move(TM_3.finite_vertices_begin(), vTM_3->point()) == vTM_3);
+
+  // Test remove cluster
+  {
+		_test_remove_cluster<Triangulation>();
+  }
 
 }
 

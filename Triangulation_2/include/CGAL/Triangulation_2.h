@@ -44,13 +44,35 @@
 #include <boost/random/uniform_smallint.hpp>
 #include <boost/random/variate_generator.hpp>
 
+#ifndef CGAL_NO_STRUCTURAL_FILTERING
+#include <CGAL/Triangulation_structural_filtering_traits.h>
+#include <CGAL/determinant.h>
+#endif // no CGAL_NO_STRUCTURAL_FILTERING
+
 namespace CGAL {
 template < class Gt, class Tds > class Triangulation_2;
 template < class Gt, class Tds > std::istream& operator>>
     (std::istream& is, Triangulation_2<Gt,Tds> &tr);
 template < class Gt, class Tds >  std::ostream& operator<<
   (std::ostream& os, const Triangulation_2<Gt,Tds> &tr);
-  
+
+#ifndef CGAL_NO_STRUCTURAL_FILTERING
+namespace internal {
+// structural filtering is performed only for EPIC
+struct Structural_filtering_2_tag {};
+struct No_structural_filtering_2_tag {};
+
+template <bool filter>
+struct Structural_filtering_selector_2 {
+  typedef No_structural_filtering_2_tag  Tag;
+};
+
+template <>
+struct Structural_filtering_selector_2<true> {
+  typedef Structural_filtering_2_tag  Tag;
+};
+}
+#endif // no CGAL_NO_STRUCTURAL_FILTERING
 
 template < class Gt, 
            class Tds = Triangulation_data_structure_2 <
@@ -331,6 +353,7 @@ public:
 		Locate_type& lt1, Locate_type& lt2,
 		int li1, int li2) const;
 
+#ifdef CGAL_NO_STRUCTURAL_FILTERING
   Face_handle
   locate(const Point& p,
 	 Locate_type& lt,
@@ -339,10 +362,70 @@ public:
 
   Face_handle
   locate(const Point &p,
-	 Face_handle start = Face_handle()) const;
-    
+	 Face_handle start = Face_handle()) const;	
+#else  // no CGAL_NO_STRUCTURAL_FILTERING
+#  ifndef CGAL_T2_STRUCTURAL_FILTERING_MAX_VISITED_CELLS
+#    define CGAL_T2_STRUCTURAL_FILTERING_MAX_VISITED_CELLS 2500
+#  endif // no CGAL_T2_STRUCTURAL_FILTERING_MAX_VISITED_CELLS
 
-  
+protected:
+  Face_handle
+  inexact_locate(const Point& p,
+                 Face_handle start, 
+                 int max_num_cells = 
+                 CGAL_T2_STRUCTURAL_FILTERING_MAX_VISITED_CELLS) const;
+
+  Face_handle
+  exact_locate(const Point& p,
+               Locate_type& lt,
+               int& li,
+               Face_handle start) const;
+	
+  Face_handle
+  generic_locate(const Point& p,
+                 Locate_type& lt,
+                 int& li,
+                 Face_handle start,
+                 internal::Structural_filtering_2_tag) const {
+    return exact_locate(p, lt, li, inexact_locate(p, start));
+  }	
+	
+  Face_handle
+  generic_locate(const Point& p,
+                 Locate_type& lt,
+                 int& li,
+                 Face_handle start,
+                 internal::No_structural_filtering_2_tag) const {
+    return exact_locate(p, lt, li, start);
+  }	
+	
+  Orientation
+  inexact_orientation(const Point &p, const Point &q,
+                      const Point &r) const;
+
+public:
+  Face_handle
+  locate(const Point & p,
+         Locate_type & lt, int & li, 
+         Face_handle start = Face_handle()) const
+  {
+    typedef Triangulation_structural_filtering_traits<Geom_traits> TSFT;
+    typedef typename internal::Structural_filtering_selector_2< 
+      TSFT::Use_structural_filtering_tag::value >::Tag Should_filter_tag;
+
+    return generic_locate(p, lt, li, start, Should_filter_tag());
+  }
+	
+  Face_handle
+  locate(const Point & p, Face_handle start = Face_handle()) const
+  {
+    Locate_type lt;
+    int li;
+    return locate(p, lt, li, start);
+  }
+	
+#endif // no CGAL_NO_STRUCTURAL_FILTERING
+	
   //TRAVERSING : ITERATORS AND CIRCULATORS
   Finite_faces_iterator finite_faces_begin() const;
   Finite_faces_iterator finite_faces_end() const;
@@ -2651,7 +2734,7 @@ march_locate_2D(Face_handle c,
 } 
 
 
-#else
+#else // not 1
 
 template <class Gt, class Tds >   typename Triangulation_2<Gt, Tds>::Face_handle
 Triangulation_2<Gt, Tds>::
@@ -2750,18 +2833,24 @@ march_locate_2D(Face_handle c,
 }    
 
 
-#endif
+#endif // not 1
 
 
 
-    
 template <class Gt, class Tds >
 typename Triangulation_2<Gt, Tds>::Face_handle
 Triangulation_2<Gt,Tds>::
+#ifdef CGAL_NO_STRUCTURAL_FILTERING
 locate(const Point& p,
        Locate_type& lt,
        int& li,
        Face_handle start) const
+#else // no CGAL_NO_STRUCTURAL_FILTERING
+exact_locate(const Point& p,
+       Locate_type& lt,
+       int& li,
+       Face_handle start) const
+#endif // no CGAL_NO_STRUCTURAL_FILTERING
 {
   if (dimension() < 0) {
       lt = OUTSIDE_AFFINE_HULL;
@@ -2783,7 +2872,7 @@ locate(const Point& p,
   if(dimension() == 1){
     return march_locate_1D(p, lt, li);
   }
-    
+
   if(start == Face_handle()){
     start = infinite_face()->
       neighbor(infinite_face()->index(infinite_vertex()));
@@ -2823,7 +2912,7 @@ locate(const Point& p,
 
 }
 
-
+#ifdef CGAL_NO_STRUCTURAL_FILTERING
 template <class Gt, class Tds >
 typename Triangulation_2<Gt, Tds>:: Face_handle
 Triangulation_2<Gt, Tds>::
@@ -2834,6 +2923,110 @@ locate(const Point &p,
   int li;
   return locate(p, lt, li, start);
 }
+#else
+template <class Gt, class Tds >
+inline 
+typename Triangulation_2<Gt, Tds>::Face_handle
+Triangulation_2<Gt, Tds>::
+inexact_locate(const Point & t, Face_handle start, int n_of_turns) const
+{
+  if(dimension() < 2) return start;
+	
+  if(start == Face_handle()){
+    start = infinite_face()->
+      neighbor(infinite_face()->index(infinite_vertex()));
+  } else if(is_infinite(start)){
+    start = start->neighbor(start->index(infinite_vertex()));
+  }
+
+  Face_handle prev = Face_handle(), c = start;
+  bool first = true;
+  while (1) {
+	
+    if(!(n_of_turns--)) return c;
+
+    if ( is_infinite(c) ) return c;
+    
+    const Point & p0 = c->vertex( 0 )->point();
+    const Point & p1 = c->vertex( 1 )->point();
+    const Point & p2 = c->vertex( 2 )->point();
+
+    if(first) {
+      prev = c;
+      first = false;
+      if(inexact_orientation(p0,p1,t) == NEGATIVE) {
+        c = c->neighbor( 2 );
+        continue;
+      }
+      if(inexact_orientation(p1,p2,t) == NEGATIVE) {
+        c = c->neighbor( 0 );
+        continue;
+      }
+      if (inexact_orientation(p2,p0,t) == NEGATIVE) {
+        c = c->neighbor( 1 );
+        continue;
+      }
+    } else {
+      if(c->neighbor(0) == prev){
+        prev = c;
+        if (inexact_orientation(p0,p1,t) == NEGATIVE) {
+          c = c->neighbor( 2 );
+          continue;
+        }
+        if (inexact_orientation(p2,p0,t) == NEGATIVE) {
+          c = c->neighbor( 1 );
+          continue;
+        }
+      } else if(c->neighbor(1) == prev){
+        prev = c;
+        if (inexact_orientation(p1,p2,t) == NEGATIVE) {
+          c = c->neighbor( 0 );
+          continue;
+        }
+        if (inexact_orientation(p0,p1,t) == NEGATIVE) {
+          c = c->neighbor( 2 );
+          continue;
+        }
+      } else {
+        prev = c;
+        if (inexact_orientation(p2,p0,t) == NEGATIVE) {
+          c = c->neighbor( 1 );
+          continue;
+        }
+        if (inexact_orientation(p1,p2,t) == NEGATIVE) {
+          c = c->neighbor( 0 );
+          continue;
+        }
+      }  
+    } 
+    break;
+  }
+  return c;
+}
+
+template <class Gt, class Tds >
+inline
+Orientation
+Triangulation_2<Gt, Tds>::
+inexact_orientation(const Point &p, const Point &q,
+                    const Point &r) const
+{ 
+  const double px = to_double(p.x()); const double py = to_double(p.y());
+  const double qx = to_double(q.x()); const double qy = to_double(q.y());
+  const double rx = to_double(r.x()); const double ry = to_double(r.y());
+
+  const double pqx = qx - px;
+  const double pqy = qy - py;
+  const double prx = rx - px;
+  const double pry = ry - py;
+
+  const double det = determinant(pqx, pqy, prx, pry);
+  if (det > 0)  return POSITIVE;
+  if (det < 0) return NEGATIVE;
+  return ZERO;
+}
+
+#endif
 
 template <class Gt, class Tds >
 typename Triangulation_2<Gt, Tds>::Finite_faces_iterator
@@ -2843,8 +3036,8 @@ finite_faces_begin() const
   if ( dimension() < 2 )
     return finite_faces_end();
   return CGAL::filter_iterator( all_faces_end(),
-			  Infinite_tester(this),
-			  all_faces_begin() );
+                                Infinite_tester(this),
+                                all_faces_begin() );
 } 
 
 template <class Gt, class Tds >
@@ -2853,7 +3046,7 @@ Triangulation_2<Gt, Tds>::
 finite_faces_end() const
 {
   return CGAL::filter_iterator(  all_faces_end(),
-			  Infinite_tester(this)   );
+                                 Infinite_tester(this)   );
 }
 
 template <class Gt, class Tds >
@@ -2864,8 +3057,8 @@ finite_vertices_begin() const
   if ( number_of_vertices() <= 0 ) 
     return finite_vertices_end();
   return CGAL::filter_iterator( all_vertices_end(),
-			 Infinite_tester(this),
-			 all_vertices_begin() );
+                                Infinite_tester(this),
+                                all_vertices_begin() );
 }
 
 template <class Gt, class Tds >
@@ -2874,7 +3067,7 @@ Triangulation_2<Gt, Tds>::
 finite_vertices_end() const
 {
   return CGAL::filter_iterator(all_vertices_end(),
-			 Infinite_tester(this)); 
+                               Infinite_tester(this)); 
 }
 
 template <class Gt, class Tds >
@@ -2883,10 +3076,10 @@ Triangulation_2<Gt, Tds>::
 finite_edges_begin() const
 {
   if ( dimension() < 1 )
-	  return finite_edges_end();
+    return finite_edges_end();
   return CGAL::filter_iterator( all_edges_end(),
-			 infinite_tester(),
-			  all_edges_begin());
+                                infinite_tester(),
+                                all_edges_begin());
 }
 
 template <class Gt, class Tds >
@@ -2894,8 +3087,8 @@ typename Triangulation_2<Gt, Tds>::Finite_edges_iterator
 Triangulation_2<Gt, Tds>::
 finite_edges_end() const
 {
-    return CGAL::filter_iterator(all_edges_end(),
-			   infinite_tester() );
+  return CGAL::filter_iterator(all_edges_end(),
+                               infinite_tester() );
 }
 
 template <class Gt, class Tds >

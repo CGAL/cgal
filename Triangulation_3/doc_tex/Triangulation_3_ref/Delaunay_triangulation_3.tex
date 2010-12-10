@@ -172,7 +172,17 @@ proposes a vertex removal.
 of value type \ccc{Vertex_handle}.
 \ccc{remove()} is called over each element of the range.
 The number of vertices removed is returned.
-\ccPrecond{All vertices of the range are finite vertices of the triangulation.}}
+\ccPrecond{(i) all vertices of the range are finite vertices of the triangulation; and (ii) no vertices are repeated in the range.}}
+
+\ccMethod{template < typename InputIterator >
+          int remove_cluster(InputIterator first, InputIterator beyond);}
+{This function has exactly the same result and the same preconditions as \ccc{remove(first, beyond)}.
+The difference is in the implementation and efficiency. This version does not re-triangulate the hole after each
+point removal but only after removing all vertices. This is more efficient if (and only if) the removed points
+are organized in a small number of connected components of the Delaunay triangulation.}
+
+If, due to some point removals, the size of the Delaunay triangulation decreases drastically, it might be interesting to defragment the 
+\ccc{CGAL::Compact_container} (used by the \ccc{Triangulation_data_structure_3}).
 
 \ccHeading{Queries}
 

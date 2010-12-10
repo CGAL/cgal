@@ -26,9 +26,11 @@ bool del=true;
 
 int main()
 {
-  typedef CGAL::Delaunay_triangulation_3<K, CGAL::Fast_location> Dh;
+  typedef CGAL::Delaunay_triangulation_3<EPIC, CGAL::Fast_location> Dh;
+  typedef CGAL::Delaunay_triangulation_3<EPEC, CGAL::Fast_location> Dh_with_epec;
 
   _test_cls_delaunay_3( Dh() );
+  _test_cls_delaunay_3( Dh_with_epec() );
 
   return 0;
 }

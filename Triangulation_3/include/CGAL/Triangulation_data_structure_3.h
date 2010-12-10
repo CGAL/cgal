@@ -88,10 +88,12 @@ public:
     void clear()            { conflict_state = 0; }
     void mark_in_conflict() { conflict_state = 1; }
     void mark_on_boundary() { conflict_state = 2; }
+    void mark_processed()   { conflict_state = 1; }
 
     bool is_clear()       const { return conflict_state == 0; }
     bool is_in_conflict() const { return conflict_state == 1; }
     bool is_on_boundary() const { return conflict_state == 2; }
+    bool processed() const { return conflict_state == 1; }
   };
 
 private:
