@@ -23,6 +23,7 @@
 #define CGAL_APOLLONIUS_GRAPH_2_ORIENTED_SIDE_OF_BISECTOR_C2_H
 
 #include <CGAL/Apollonius_graph_2/basic.h>
+#include <CGAL/functions_on_signs.h>
 
 
 namespace CGAL {
