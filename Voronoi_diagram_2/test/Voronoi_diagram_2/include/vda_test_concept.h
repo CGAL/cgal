@@ -26,6 +26,32 @@
 #include <list>
 #include <boost/variant.hpp>
 
+
+template<class DG, class AS>
+void test_as_concept(const DG& dg, const AS& as);
+
+template<class DG, class CVP>
+void test_cvp_concept(const DG& dg, const CVP& cvp);
+
+template<class DG, class AT>
+void test_ns_concept(const DG&, const AT&, CGAL::Tag_false);
+
+template<class DG, class AT>
+void test_ns_concept(const DG& dg, const AT& at, CGAL::Tag_true);
+
+template<class DG, class ER>
+void test_er_concept(const DG& dg, const ER& er);
+
+template<class DG, class FR>
+void test_fr_concept(const DG& dg, const FR& fr);
+
+template<class DG, class AT, class AP>
+  void test_si_concept(const DG&, const AT&, const AP&, CGAL::Tag_false);
+
+template<class DG, class AT, class AP>
+void test_si_concept(const DG& dg, const AT& at, const AP& ap, CGAL::Tag_true);
+
+
 //============================================================================
 //============================================================================
 

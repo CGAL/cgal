@@ -27,6 +27,17 @@
 
 #include "helper_functions.h"
 
+
+template<class VDA, class Projector, class Point_vector, class OStream>
+void test_locate_dg(const VDA& vda, const Projector& ,
+		    const Point_vector& vecp, OStream& os);
+
+template<class VDA, class Point_vector, class OStream>
+void test_locate_vd(const VDA& vda, const Point_vector& vecp,
+		    OStream& os, bool print_sites);
+
+
+
 template<class VDA, class Projector, class QStream, class OStream>
 void test_locate(const VDA& vda, const Projector& project,
 		 QStream& isq, OStream& os, bool print_sites)
