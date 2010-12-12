@@ -511,7 +511,7 @@ struct Pair_lexicographical_less_than {
      * returns \c true iff \c x is lexicograhically smaller than \c y
      * using \c Less1 and \c Less2 functors.
      */
-    bool operator () (const std::pair<T1,T2>& x, const std::pair<T1,T2>& y) {
+    bool operator () (const std::pair<T1,T2>& x, const std::pair<T1,T2>& y) const {
         Less1 lt1;
         Less2 lt2;
 
