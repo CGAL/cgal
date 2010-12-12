@@ -55,7 +55,7 @@ NearestNeighbor<T>::NearestNeighbor(QGraphicsScene* s,
                                     typename T::Tree * t,
                                     QObject* parent,
                                     int N)
-  :  GraphicsViewInput(parent), t(t), scene_(s), N(N)
+  :  GraphicsViewInput(parent), N(N), t(t), scene_(s)
 {
   pgi = new PointsGraphicsItem<std::vector<Point_2> >(&points);
   pgi->setVerticesPen(QPen(::Qt::red, 3, ::Qt::SolidLine, ::Qt::RoundCap, ::Qt::RoundJoin));
