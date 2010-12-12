@@ -97,7 +97,7 @@ template<typename Comparable>
 
 template<typename Comparable,typename Tag> struct Compare_for_vert_line_map_ 
     {
-      bool operator() (const Comparable& a, const Comparable& b) {
+      bool operator() (const Comparable& a, const Comparable& b) const {
 	return a<b;
       }	
 };
@@ -105,7 +105,7 @@ template<typename Comparable,typename Tag> struct Compare_for_vert_line_map_
 template<typename Comparable>
   struct Compare_for_vert_line_map_<Comparable,boost::true_type> {
 
-    bool operator() (const Comparable& a, const Comparable& b) {
+    bool operator() (const Comparable& a, const Comparable& b) const {
       return CGAL::Handle_id_less_than< Comparable >()(a,b);
     }
 };
@@ -125,7 +125,7 @@ template<typename Comparable> struct Compare_for_vert_line_map
   
   public:
 
-  bool operator() (const Comparable& a, const Comparable& b) {
+  bool operator() (const Comparable& a, const Comparable& b) const {
 
     return eval(a,b);
   }
