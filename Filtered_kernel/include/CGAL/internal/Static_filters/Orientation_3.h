@@ -34,6 +34,7 @@ class Orientation_3
   typedef typename K_base::Point_3          Point_3;
   typedef typename K_base::Vector_3         Vector_3;
   typedef typename K_base::Sphere_3         Sphere_3;
+  typedef typename K_base::Tetrahedron_3    Tetrahedron_3;
   typedef typename K_base::Orientation_3    Base;
 
 public:
@@ -52,6 +53,12 @@ public:
   operator()(const Sphere_3& s) const
   { 
     return Base::operator()(s);
+  }
+
+  result_type
+  operator()(const Tetrahedron_3& t) const
+  { 
+    return Base::operator()(t);
   }
 #endif
 
