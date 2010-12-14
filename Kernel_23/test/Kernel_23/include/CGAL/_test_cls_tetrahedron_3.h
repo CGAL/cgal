@@ -69,6 +69,9 @@ _test_cls_tetrahedron_3(const R& )
  CGAL::Tetrahedron_3<R> td2(p2,p2,p3,p4);
  t0 = t4;
 
+ assert( t3.orientation() == CGAL::POSITIVE );
+ assert( t4.orientation() == CGAL::NEGATIVE );
+
  assert( t4 == t4 );
  assert( t4 == t0 );
  assert( t6 == t3 );
