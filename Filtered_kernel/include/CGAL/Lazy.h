@@ -1119,13 +1119,17 @@ public :
 */
 
   Lazy()
-#if 1 // ndef CGAL_HAS_THREADS
     : Handle(zero()) {}
-#else
-  {
-    PTR = new Lazy_rep_0<AT, ET, E2A>();
-  }
-#endif
+
+  // Before Lazy::zero() used Boost.Thread, the definition of Lazy() was:
+  //   Lazy()
+  //   #ifndef CGAL_HAS_THREAD
+  //     : Handle(zero()) {}
+  //   #else
+  //   {
+  //     PTR = new Lazy_rep_0<AT, ET, E2A>();
+  //   }
+  //   #endif
 
   Lazy(Self_rep *r)
   {
