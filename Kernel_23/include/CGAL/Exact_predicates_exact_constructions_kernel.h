@@ -56,9 +56,9 @@ class Epeck
 #else
                true >
 #endif
-{};
+{}; // end class Epeck
 
-#else
+#else // no CGAL_USE_GMP
 // Equivalent to Filtered_kernel<Simple_cartesian<Lazy_exact_nt<Quotient<MP_Float> > > >
 class Epeck
   : public Filtered_kernel_adaptor<
@@ -68,10 +68,10 @@ class Epeck
 #else
                true >
 #endif
-{};
-#endif
+{}; // end class Epeck
+#endif // no CGAL_USE_GMP
 
-#else // CGAL_DONT_USE_LAZY_KERNEL
+#else // no CGAL_DONT_USE_LAZY_KERNEL
 
 #ifdef CGAL_USE_GMP
 // Equivalent to Lazy_kernel<Simple_cartesian<Gmpq> >
@@ -82,7 +82,7 @@ class Epeck
              Epeck >
 {};
 
-#else
+#else // no CGAL_USE_GMP
 // Equivalent to Lazy_kernel<Simple_cartesian<Quotient<MP_Float> > >
 class Epeck
   : public Type_equality_wrapper<
@@ -90,9 +90,9 @@ class Epeck
 	                       Cartesian_converter< Simple_cartesian<Quotient<MP_Float> >, Simple_cartesian<Interval_nt_advanced> >, Epeck>,
              Epeck >
 {};
-#endif
+#endif // no CGAL_USE_GMP
 
-#endif // CGAL_DONT_USE_LAZY_KERNEL
+#endif // no CGAL_DONT_USE_LAZY_KERNEL
 
 typedef Epeck Exact_predicates_exact_constructions_kernel;
 
