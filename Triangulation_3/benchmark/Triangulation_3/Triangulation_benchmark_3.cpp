@@ -55,9 +55,22 @@
 using namespace std;
 using namespace CGAL;
 
-// typedef Simple_cartesian<double>                       K;
+// Choose the kernel type by defining one of those macros:
+// - SC_DOUBLE,
+// - EPEC,
+// - or EPIC (the default)
+#ifdef SC_DOUBLE
+typedef Simple_cartesian<double>                       K;
+#elif defined(EPEC)
+#  ifdef CGAL_DONT_USE_LAZY_KERNEL
+typedef Epeck K;
+#  else
+typedef Simple_cartesian<Gmpq> SK;
+typedef Lazy_kernel<SK> K;
+#  endif
+#else // EPIC
 typedef Exact_predicates_inexact_constructions_kernel  K;
-//typedef Exact_predicates_exact_constructions_kernel  K;
+#endif
 typedef Regular_triangulation_euclidean_traits_3<K>    WK;
 typedef K::Point_3                                     Point;
 
