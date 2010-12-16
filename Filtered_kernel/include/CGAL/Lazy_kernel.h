@@ -78,6 +78,7 @@ public:
 
   enum { Has_filtered_predicates = true };
   enum { Has_static_filters = false };
+  typedef Boolean_tag<Has_filtered_predicates> Has_filtered_predicates_tag;
 
   // Types
   typedef CGAL::Lazy_exact_nt<typename Exact_kernel::FT>  FT;
