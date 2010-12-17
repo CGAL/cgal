@@ -58,22 +58,71 @@
 //   compiler.  g++ 4.0 should be able to cprop the second part...
 
 
+// Note about the second parameter of Static_filters<K,bool>:
+// - if the access to Cartesian exact coordinates is cheap
+//   (Simple_cartesian, Cartesian), then one can implement predicates that
+//   just compare coordinates without filtering, using unfiltered
+//   predicates defined in the namespace CartesianKernelFunctors.
+// 
+// - in the case of Lazy_kernel, where the access to p.x(), for a point p,
+//   triggers the construction of a Lazy_exact_nt object, one does not want
+//   to use the functors from the namespace CartesianKernelFunctors.
+
 namespace CGAL { namespace internal {
 
+// Here is the case when has_cheap_access_to_cartesian_coordinates, used by
+// Lazy_kernel
 // The K_base argument is supposed to provide exact primitives.
-template < typename K_base >
-class Static_filters : public K_base
-{
-  typedef Static_filters<K_base>                    Self;
+template < typename K_base, 
+           bool has_cheap_access_to_cartesian_coordinates = true>
+class Static_filters : public K_base {
+
+
+  typedef Static_filters<K_base, 
+                         has_cheap_access_to_cartesian_coordinates>         Self;
 
 public:
 
-  typedef Static_filters_predicates::Compare_y_at_x_2<K_base,Self>          Compare_y_at_x_2;
   typedef Static_filters_predicates::Orientation_2<K_base>                  Orientation_2;
   typedef Static_filters_predicates::Orientation_3<K_base>                  Orientation_3;
   typedef Static_filters_predicates::Side_of_oriented_circle_2<K_base>      Side_of_oriented_circle_2;
   typedef Static_filters_predicates::Side_of_oriented_sphere_3<K_base>      Side_of_oriented_sphere_3;
   typedef Static_filters_predicates::Compare_squared_radius_3<K_base>       Compare_squared_radius_3;
+
+  Orientation_2
+  orientation_2_object() const
+  { return Orientation_2(); }
+
+  Orientation_3
+  orientation_3_object() const
+  { return Orientation_3(); }
+
+  Side_of_oriented_circle_2
+  side_of_oriented_circle_2_object() const
+  { return Side_of_oriented_circle_2(); }
+
+  Side_of_oriented_sphere_3
+  side_of_oriented_sphere_3_object() const
+  { return Side_of_oriented_sphere_3(); }
+
+  Compare_squared_radius_3
+  compare_squared_radius_3_object() const
+  { return Compare_squared_radius_3(); }
+}; // end of class template Static_filters<K_base, false>
+
+
+// Here is the case when has_cheap_access_to_cartesian_coordinates is true,
+// the default, used by Filtered_kernel<CK>.
+// The K_base argument is supposed to provide exact primitives.
+template < typename K_base>
+class Static_filters<K_base, true> // has_cheap_access_to_cartesian_coordinates==true
+  : public Static_filters<K_base, false>
+{
+  typedef Static_filters<K_base, true>              Self;
+
+public:
+
+  typedef Static_filters_predicates::Compare_y_at_x_2<K_base,Self>          Compare_y_at_x_2;
 
   // The following do not require filtering as they only do
   // comparisons.  We must be careful that *all* their function
@@ -167,26 +216,6 @@ public:
   Compare_y_at_x_2
   compare_y_at_x_2_object() const
   { return Compare_y_at_x_2(); }
-
-  Orientation_2
-  orientation_2_object() const
-  { return Orientation_2(); }
-
-  Orientation_3
-  orientation_3_object() const
-  { return Orientation_3(); }
-
-  Side_of_oriented_circle_2
-  side_of_oriented_circle_2_object() const
-  { return Side_of_oriented_circle_2(); }
-
-  Side_of_oriented_sphere_3
-  side_of_oriented_sphere_3_object() const
-  { return Side_of_oriented_sphere_3(); }
-
-  Compare_squared_radius_3
-  compare_squared_radius_3_object() const
-  { return Compare_squared_radius_3(); }
 
   // The two following are for degenerate cases, so I'll update them later.
   //

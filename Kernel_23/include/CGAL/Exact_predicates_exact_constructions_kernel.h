@@ -28,12 +28,7 @@
 #include <CGAL/Filtered_kernel.h>
 #include <CGAL/Lazy_exact_nt.h>
 
-#ifdef CGAL_USE_GMP
-#  include <CGAL/Gmpq.h>
-#else
-#  include <CGAL/Quotient.h>
-#  include <CGAL/MP_Float.h>
-#endif
+#include <CGAL/internal/Exact_type_selector.h>
 
 #ifndef CGAL_DONT_USE_LAZY_KERNEL
 #  include <CGAL/Lazy_kernel.h>
@@ -41,56 +36,46 @@
 
 namespace CGAL {
 
+// Epeck_ft is either Gmpq of Quotient<MP_float>
+typedef internal::Exact_type_selector<double>::Type Epeck_ft;
+
 // The following are redefined kernels instead of simple typedefs in order to shorten
 // template name length (for error messages, mangling...).
 
 #ifdef CGAL_DONT_USE_LAZY_KERNEL
 
-#ifdef CGAL_USE_GMP
-// Equivalent to Filtered_kernel<Simple_cartesian<Lazy_exact_nt<Gmpq> > >
+// Equivalent to Filtered_kernel<Simple_cartesian<Lazy_exact_nt<Epeck_ft> > >
 class Epeck
   : public Filtered_kernel_adaptor<
-               Type_equality_wrapper< Simple_cartesian<Lazy_exact_nt<Gmpq> >::Base<Epeck>::Type, Epeck >,
+               Type_equality_wrapper< Simple_cartesian<Lazy_exact_nt<Epeck_ft> >::Base<Epeck>::Type, Epeck >,
 #ifdef CGAL_NO_STATIC_FILTERS
                false >
 #else
                true >
 #endif
 {}; // end class Epeck
-
-#else // no CGAL_USE_GMP
-// Equivalent to Filtered_kernel<Simple_cartesian<Lazy_exact_nt<Quotient<MP_Float> > > >
-class Epeck
-  : public Filtered_kernel_adaptor<
-               Type_equality_wrapper< Simple_cartesian<Lazy_exact_nt<Quotient<MP_Float> > >::Base<Epeck>::Type, Epeck >,
-#ifdef CGAL_NO_STATIC_FILTERS
-               false >
-#else
-               true >
-#endif
-{}; // end class Epeck
-#endif // no CGAL_USE_GMP
 
 #else // no CGAL_DONT_USE_LAZY_KERNEL
 
-#ifdef CGAL_USE_GMP
-// Equivalent to Lazy_kernel<Simple_cartesian<Gmpq> >
+// Equivalent to Lazy_kernel<Simple_cartesian<Epeck_ft> >
+#ifdef CGAL_LAZY_KERNEL_USE_STATIC_FILTERS_BY_DEFAULT
 class Epeck
-  : public Type_equality_wrapper<
-             Lazy_kernel_base< Simple_cartesian<Gmpq>, Simple_cartesian<Interval_nt_advanced>,
-	                       Cartesian_converter< Simple_cartesian<Gmpq>, Simple_cartesian<Interval_nt_advanced> >, Epeck>,
-             Epeck >
+  : public internal::Static_filters<
+      Type_equality_wrapper<
+             Lazy_kernel_base< Simple_cartesian<Epeck_ft>, Simple_cartesian<Interval_nt_advanced>,
+	                       Cartesian_converter< Simple_cartesian<Epeck_ft>, Simple_cartesian<Interval_nt_advanced> >, Epeck>,
+             Epeck >, false>
 {};
 
-#else // no CGAL_USE_GMP
-// Equivalent to Lazy_kernel<Simple_cartesian<Quotient<MP_Float> > >
+#else // no CGAL_LAZY_KERNEL_USE_STATIC_FILTERS_BY_DEFAULT
+
 class Epeck
   : public Type_equality_wrapper<
-             Lazy_kernel_base< Simple_cartesian<Quotient<MP_Float> >, Simple_cartesian<Interval_nt_advanced>,
-	                       Cartesian_converter< Simple_cartesian<Quotient<MP_Float> >, Simple_cartesian<Interval_nt_advanced> >, Epeck>,
+             Lazy_kernel_base< Simple_cartesian<Epeck_ft>, Simple_cartesian<Interval_nt_advanced>,
+	                       Cartesian_converter< Simple_cartesian<Epeck_ft>, Simple_cartesian<Interval_nt_advanced> >, Epeck>,
              Epeck >
 {};
-#endif // no CGAL_USE_GMP
+#endif // no CGAL_LAZY_KERNEL_USE_STATIC_FILTERS_BY_DEFAULT
 
 #endif // no CGAL_DONT_USE_LAZY_KERNEL
 
