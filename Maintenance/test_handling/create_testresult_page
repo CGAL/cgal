@@ -16,6 +16,12 @@ use Cwd;
 use strict;
 use Date::Format;
 
+my $server_url="https://cgal.geometryfactory.com/";
+my $cgal_members="${server_url}CGAL/Members/";
+my $manual_test_url="${cgal_members}Manual_test/";
+my $releases_url="${cgal_members}Releases/";
+my $test_results_url="${cgal_members}testsuite/";
+
 my ($PLATFORMS_BESIDE_RESULTS, $PLATFORMS_REF_BETWEEN_RESULTS)=(1,1);
 
 my $TEMPPAGE="tmp$$.html";
@@ -41,7 +47,7 @@ sub write_selects()
         $releases{"$1$3"}=1;
     }
     print OUTPUTV "<table><tr>\n";
-    print OUTPUTV "  <th>All releases</th>\n";
+    print OUTPUTV "  <th>All releases (<a href=\"${test_results_url}\">last one</a>)</th>\n";
     my $count = 0;
     foreach $_ (sort {$b cmp $a} (keys %releases)) {
         print OUTPUTV "  <th>CGAL-$_</th>\n";
@@ -571,11 +577,11 @@ on it.</p>
 <p><b>N.B. The detection of warnings is not exact.
 Look at the output to be sure!</b></p>
 <ol>
-<li><a href="../Releases/">
+<li><a href="${releases_url}">
 Downloading internal releases</a></li>
-<li><a href="https://cgal.geometryfactory.com/CGAL/Members/Manual_test/${release_name}/" style="color: red">
+<li><a href="${manual_test_url}${release_name}/" style="color: red">
 The documentation of this release</a>
-(and the <a href="https://cgal.geometryfactory.com/CGAL/Members/Manual_test/LAST/">last one</a>
+(and the <a href="${manual_test_url}LAST/">last one</a>
 directly)</li>
 EOF
     if ( -r "announce.html" ) {
