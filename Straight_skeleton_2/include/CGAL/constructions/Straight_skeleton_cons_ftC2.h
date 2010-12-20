@@ -25,14 +25,11 @@ namespace CGAL {
 namespace CGAL_SS_i
 {
 
-template<class Segment_2, class FT>
-Uncertain<Trisegment_collinearity> certified_trisegment_collinearity ( Segment_2 const& e0
-                                                                     , FT        const& w0
-                                                                     , Segment_2 const& e1
-                                                                     , FT        const& w1
-                                                                     , Segment_2 const& e2
-                                                                     , FT        const& w2
-                                                                       );
+template<class K>
+Uncertain<Trisegment_collinearity> certified_trisegment_collinearity ( Segment_2<K> const& e0
+                                                                     , Segment_2<K> const& e1
+                                                                     , Segment_2<K> const& e2
+                                                                     );
 #ifdef CGAL_USE_CORE  
 
 template<class NT>
