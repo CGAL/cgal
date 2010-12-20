@@ -679,7 +679,7 @@ optional< Point_2<K> > construct_offset_lines_isecC2 ( intrusive_ptr< Trisegment
                                                              : construct_degenerate_offset_lines_isecC2(tri) ;
 }
 
-} // namnepsace CGAIL_SS_i
+} // namespace CGAL_SS_i
 
 } // end namespace CGAL
 
