@@ -3904,7 +3904,7 @@ Triangulation_2/doc_tex/Triangulation_2_ref/remove.gif -text svneol=unset#image/
 Triangulation_2/doc_tex/Triangulation_2_ref/walk.gif -text svneol=unset#image/gif
 Triangulation_2/include/CGAL/internal/Triangulation_euclidean_traits_projected_3.h -text
 Triangulation_2/test/Triangulation_2/test_delaunay_triangulation_proj.cpp -text
-Triangulation_3/demo/Triangulation_3/Geomview_demos/CMakeLists.txt -text
+Triangulation_3/demo/Triangulation_3_Geomview_demos/CMakeLists.txt -text
 Triangulation_3/doc_tex/TriangulationDS_3/comborient.gif -text svneol=unset#image/gif
 Triangulation_3/doc_tex/TriangulationDS_3/comborient.pdf -text svneol=unset#application/pdf
 Triangulation_3/doc_tex/TriangulationDS_3/comborient.xml svneol=native#text/xml
