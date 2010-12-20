@@ -3904,6 +3904,46 @@ Triangulation_2/doc_tex/Triangulation_2_ref/remove.gif -text svneol=unset#image/
 Triangulation_2/doc_tex/Triangulation_2_ref/walk.gif -text svneol=unset#image/gif
 Triangulation_2/include/CGAL/internal/Triangulation_euclidean_traits_projected_3.h -text
 Triangulation_2/test/Triangulation_2/test_delaunay_triangulation_proj.cpp -text
+Triangulation_3/demo/Triangulation_3/CMakeLists.txt -text
+Triangulation_3/demo/Triangulation_3/MainWindow.cpp -text
+Triangulation_3/demo/Triangulation_3/MainWindow.h -text
+Triangulation_3/demo/Triangulation_3/PreferenceDlg.cpp -text
+Triangulation_3/demo/Triangulation_3/PreferenceDlg.h -text
+Triangulation_3/demo/Triangulation_3/Scene.cpp -text
+Triangulation_3/demo/Triangulation_3/Scene.h -text
+Triangulation_3/demo/Triangulation_3/T3_demo.cpp -text
+Triangulation_3/demo/Triangulation_3/Viewer.cpp -text
+Triangulation_3/demo/Triangulation_3/Viewer.h -text
+Triangulation_3/demo/Triangulation_3/documentation/about.html -text
+Triangulation_3/demo/Triangulation_3/documentation/about_CGAL.html -text
+Triangulation_3/demo/Triangulation_3/icons/about_CGAL.html -text
+Triangulation_3/demo/Triangulation_3/icons/cgal_logo.xpm -text
+Triangulation_3/demo/Triangulation_3/icons/clear.jpeg -text
+Triangulation_3/demo/Triangulation_3/icons/coordinates.jpeg -text
+Triangulation_3/demo/Triangulation_3/icons/empty_sphere.jpeg -text
+Triangulation_3/demo/Triangulation_3/icons/fileOpen.png -text
+Triangulation_3/demo/Triangulation_3/icons/fileSave.png -text
+Triangulation_3/demo/Triangulation_3/icons/flat.png -text
+Triangulation_3/demo/Triangulation_3/icons/grid.jpeg -text
+Triangulation_3/demo/Triangulation_3/icons/insert.jpeg -text
+Triangulation_3/demo/Triangulation_3/icons/insert_point.jpg -text
+Triangulation_3/demo/Triangulation_3/icons/move_1.jpeg -text
+Triangulation_3/demo/Triangulation_3/icons/nearest_nb.png -text
+Triangulation_3/demo/Triangulation_3/icons/normal_view.jpeg -text
+Triangulation_3/demo/Triangulation_3/icons/pause.jpeg -text
+Triangulation_3/demo/Triangulation_3/icons/play.jpeg -text
+Triangulation_3/demo/Triangulation_3/icons/pointRandom.png -text
+Triangulation_3/demo/Triangulation_3/icons/preferences.jpeg -text
+Triangulation_3/demo/Triangulation_3/icons/quit.jpeg -text
+Triangulation_3/demo/Triangulation_3/icons/select_hand.jpeg -text
+Triangulation_3/demo/Triangulation_3/icons/show_delaunay.jpeg -text
+Triangulation_3/demo/Triangulation_3/icons/show_facet.jpeg -text
+Triangulation_3/demo/Triangulation_3/icons/show_point.jpeg -text
+Triangulation_3/demo/Triangulation_3/icons/show_voronoi.jpeg -text
+Triangulation_3/demo/Triangulation_3/icons/stereo.png -text
+Triangulation_3/demo/Triangulation_3/icons/stop.jpeg -text
+Triangulation_3/demo/Triangulation_3/typedefs.h -text
+Triangulation_3/demo/Triangulation_3/ui_MainWindow.h -text
 Triangulation_3/demo/Triangulation_3_Geomview_demos/CMakeLists.txt -text
 Triangulation_3/doc_tex/TriangulationDS_3/comborient.gif -text svneol=unset#image/gif
 Triangulation_3/doc_tex/TriangulationDS_3/comborient.pdf -text svneol=unset#application/pdf
