@@ -9,7 +9,7 @@ export LD_LIBRARY_PATH QTDIR
 source /home/lrineau/CGAL/MPFI-RS/setup-rs
 source /home/lrineau/CGAL/CGAL-I-REF/cmake/platforms/setup-common
 
-BOOST_ROOT=/home/lrineau/CGAL/boost/1.44-beta1
+BOOST_ROOT=/home/lrineau/CGAL/boost/1.45
 export BOOST_ROOT
 
 CXXFLAGS=-I$BOOST_ROOT/include
