@@ -105,6 +105,7 @@
     <addaction name="actionYMonotonePartition"/>
     <addaction name="actionApproximateConvexPartition"/>
     <addaction name="actionOptimalConvexPartition"/>
+    <addaction name="actionSelfMinkowskiSum"/>
     <addaction name="actionInnerSkeleton"/>
     <addaction name="actionOuterOffset"/>
     <addaction name="actionLinearLeastSquaresFitting"/>
@@ -191,6 +192,11 @@
    </property>
    <property name="text">
     <string>Create Input Polygon</string>
+   </property>
+  </action>
+  <action name="actionSelfMinkowskiSum">
+   <property name="text">
+    <string>Minkowski sum with itself</string>
    </property>
   </action>
   <action name="actionInnerSkeleton">
