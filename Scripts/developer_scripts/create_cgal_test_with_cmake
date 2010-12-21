@@ -147,7 +147,7 @@ EOF
       tmp=`basename $file .C`
       tmp=`basename $tmp .cpp`
       cat <<EOF
-if  \${MAKE_CMD} -f Makefile help | grep "$tmp" > /dev/null; then
+if  \${MAKE_CMD} -f Makefile help | grep -E "$tmp\$" > /dev/null; then
   compile_and_run $tmp
   NEED_CLEAN=y
 fi
