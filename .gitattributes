@@ -3912,6 +3912,7 @@ Triangulation_3/demo/Triangulation_3/PreferenceDlg.h -text
 Triangulation_3/demo/Triangulation_3/Scene.cpp -text
 Triangulation_3/demo/Triangulation_3/Scene.h -text
 Triangulation_3/demo/Triangulation_3/T3_demo.cpp -text
+Triangulation_3/demo/Triangulation_3/T3_demo.qrc -text
 Triangulation_3/demo/Triangulation_3/Viewer.cpp -text
 Triangulation_3/demo/Triangulation_3/Viewer.h -text
 Triangulation_3/demo/Triangulation_3/documentation/about.html -text
