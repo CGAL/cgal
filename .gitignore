@@ -1120,6 +1120,7 @@ Triangulation_3/examples/Triangulation_3/simple_triangulation_3
 Triangulation_3/examples/Triangulation_3/simplex
 Triangulation_3/examples/Triangulation_3/tds
 Triangulation_3/test/Triangulation_3/CMakeLists.txt
+Triangulation_3/test/Triangulation_3/Makefile
 Triangulation_3/test/Triangulation_3/Test1_triangulation_IO_3_binary
 Triangulation_3/test/Triangulation_3/Test2_triangulation_IO_3_binary
 Triangulation_3/test/Triangulation_3/Test3_triangulation_IO_3_binary

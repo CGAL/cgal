@@ -133,7 +133,14 @@ void test_conflicts(T& T3_13, const P *q)
       std::vector<Facet>         F;
       std::vector<Vertex_handle> V;
 
-      T3_13.vertices_in_conflict(q[i], c, std::back_inserter(V));
+      T3_13.vertices_on_conflict_zone_boundary(q[i], c, std::back_inserter(V));
+#ifndef CGAL_NO_DEPRECATED_CODE
+      // test deprecated vertices_in_conflict
+      std::vector<Vertex_handle> V2;
+      T3_13.vertices_in_conflict(q[i], c, std::back_inserter(V2));
+      assert(V2.size() == V.size());
+#endif
+
       T3_13.find_conflicts(q[i], c, std::back_inserter(F),
                            std::back_inserter(C));
 
@@ -575,10 +582,10 @@ _test_cls_delaunay_3(const Triangulation &)
       assert(Tfromfile.number_of_vertices() == 22);
   }
 
-  // Testing find_conflicts(), vertices_in_conflict(), insert_in_hole()
+  // Testing find_conflicts(), vertices_on_conflict_zone_boundary(), insert_in_hole()
   // FIXME : Note that we do not test the version of find_conflicts()
   //         which returns the internal facets too...
-  std::cout << "    Testing find_conflicts/vertices_in_conflict/insert_in_hole"
+  std::cout << "    Testing find_conflicts/vertices_on_conflict_zone_boundary/insert_in_hole"
             << std::endl;
   Cls T3_13;
 

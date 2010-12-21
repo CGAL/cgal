@@ -85,7 +85,7 @@ traits class argument and calling \ccc{insert(first,last)}.}
 
 
 \ccHeading{Insertion}
-\ccThree{Vertex_handle}{dt.insertxx}{}
+\ccThree{OutputIterator}{dt.insertxx}{}
 
 The following methods, which already exist in \ccc{Triangulation_3}, are
 overloaded to ensure the property that all power spheres are regular.
@@ -128,13 +128,13 @@ following the order of \ccc{InputIterator}.
 It returns the difference of the number of vertices between after and
 before the insertions (it may be negative due to hidden points).
 \ccPrecond{The \ccc{value_type} of \ccc{first} and \ccc{last} is
-\ccc{Point}.}}
+\ccc{Weighted_point}.}}
 
 The following methods, which already exist in \ccc{Triangulation_3}, are
 overloaded to ensure that hidden points are well created and maintained.
 
 \ccMethod{template <class CellIt>
-     Vertex_handle insert_in_hole(Point p, CellIt cell_begin, CellIt cell_end,
+     Vertex_handle insert_in_hole(Weighted_point p, CellIt cell_begin, CellIt cell_end,
 	                          Cell_handle begin, int i);}
 {Creates a new vertex by starring a hole.  It takes an iterator range
 [\ccc{cell_begin}; \ccc{cell_end}[ of \ccc{Cell_handle}s which specifies
@@ -154,7 +154,7 @@ dimension 2) is connected, not empty, its boundary is connected, and \ccc{p}
 lies inside the hole, which is star-shaped wrt \ccc{p}}.}
 
 \ccMethod{template <class CellIt>
-     Vertex_handle insert_in_hole(Point p, CellIt cell_begin, CellIt cell_end,
+     Vertex_handle insert_in_hole(Weighted_point p, CellIt cell_begin, CellIt cell_end,
 	                          Cell_handle begin, int i, Vertex_handle newv);}
 { Same as above, except that \ccc{newv} will be used as the new vertex, which
   must have been allocated previously with e.g. \ccc{create_vertex}.}
@@ -166,7 +166,7 @@ lies inside the hole, which is star-shaped wrt \ccc{p}}.}
 {Removes the vertex \ccc{v} from the triangulation.}
 
 \ccHeading{Queries}
-\ccThree{Bounded_side}{rt.side of powerxx}{}
+\ccThree{OutputIterator}{rt.side of powerxx}{}
 
 Let us remark that 
 \[\Pi({p}^{(w)}-{z}^{(w)}) > 0\]
@@ -262,7 +262,7 @@ ${z(c)}^{(w)}$ is the power segment of the edge represented by
 \ccc{ON_UNBOUNDED_SIDE} if $\Pi({p}^{(w)}-{z(c)}^{(w)})>0$ .
 \ccPrecond{\ccVar.\ccc{dimension()} $= 1$.}}
 
-\ccMethod{Vertex_handle nearest_power_vertex(Point p,
+\ccMethod{Vertex_handle nearest_power_vertex(Weighted_point p,
                                        Cell_handle c = Cell_handle());}
 {Returns the vertex of the triangulation which is nearest to $p$
 with respect to the power distance. This  means that the power
@@ -278,7 +278,7 @@ specifying where to start the search.
 } 
 
 
-\ccMethod{Vertex_handle nearest_power_vertex_in_cell(Point p,
+\ccMethod{Vertex_handle nearest_power_vertex_in_cell(Weighted_point p,
                                        Cell_handle c);}
 {Returns the vertex of the cell \ccc{c} 
 that is nearest to $p$
@@ -321,12 +321,32 @@ Returns the \ccc{Triple} composed of the resulting output iterators.
 with \ccc{p}.}
 }
 
+\begin{ccDeprecated}
 \ccMethod{template <class OutputIterator>
   OutputIterator
-  vertices_in_conflict(Point p, Cell_handle c,
-                 OutputIterator res);}
+  vertices_in_conflict(Weighted_point p, Cell_handle c,
+                       OutputIterator res);}
+{This function is renamed \ccc{vertices_on_conflict_zone_boundary} since CGAL-3.8.}
+\end{ccDeprecated}
+\ccMethod{template <class OutputIterator>
+  OutputIterator
+  vertices_on_conflict_zone_boundary(Weighted_point p, Cell_handle c,
+                                     OutputIterator res);}
 {Similar to \ccc{find_conflicts()}, but reports the vertices which are on the
-boundary of the conflict hole of \ccc{p}, in the output iterator \ccc{res}.
+boundary of the conflict zone of \ccc{p}, in the output iterator \ccc{res}.
+Returns the resulting output iterator.
+\ccPrecond{\ccVar.\ccc{dimension()} $\geq 2$, and \ccc{c} is a cell containing
+ \ccc{p}.}
+}
+
+\ccMethod{template <class OutputIterator>
+  OutputIterator
+  vertices_inside_conflict_zone(Weighted_point p, Cell_handle c,
+                                OutputIterator res);}
+{Similar to \ccc{find_conflicts()}, but reports the vertices which are in
+  the interior of the conflict zone of \ccc{p}, in the output iterator
+  \ccc{res}. The vertices that are on the boundary of the conflict zone are
+  not reported.
 Returns the resulting output iterator.
 \ccPrecond{\ccVar.\ccc{dimension()} $\geq 2$, and \ccc{c} is a cell containing
  \ccc{p}.}
@@ -362,7 +382,7 @@ Note that the user should use a kernel with exact constructions in order
 to guarantee the computation of the Voronoi diagram (as opposed to computing
 the triangulation only, which requires only exact predicates).
 
-\ccMethod{Point dual(Cell_handle c) const;}
+\ccMethod{Weighted_point dual(Cell_handle c) const;}
 {Returns the weighted circumcenter of the four vertices of c.
 \ccPrecond{\ccVar.\ccc{dimension()}$=3$ and \ccc{c} is not infinite.}}
 

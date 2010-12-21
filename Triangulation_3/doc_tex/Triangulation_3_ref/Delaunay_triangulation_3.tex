@@ -70,7 +70,7 @@ construction of the Voronoi diagram:
 
 \ccCreation
 \ccCreationVariable{dt}
-\ccThree{Vertex_handle}{dt.remove(Point p)toto}{}
+\ccThree{OutputIterator}{dt.remove(Point p)toto}{}
 
 \ccConstructor{Delaunay_triangulation_3
 (const DelaunayTriangulationTraits_3& traits = DelaunayTriangulationTraits_3())}
@@ -99,7 +99,7 @@ triangulation is known not to be uniquely defined. In this case, \cgal\
 chooses a particular Delaunay triangulation using a symbolic perturbation
 scheme~\cite{cgal:dt-pvr3d-03}.
 
-\ccThree{Vertex_handle}{dt.remove()}{}
+\ccThree{OutputIterator}{dt.remove()}{}
 
 \ccMethod{Vertex_handle insert(const Point & p,
                                Cell_handle start = Cell_handle() );}
@@ -295,10 +295,17 @@ Returns the \ccc{Triple} composed of the resulting output iterators.
 with \ccc{p}.}
 }
 
+\begin{ccDeprecated}
 \ccMethod{template <class OutputIterator>
   OutputIterator
   vertices_in_conflict(Point p, Cell_handle c,
-                 OutputIterator res);}
+                       OutputIterator res);}
+{This function is renamed \ccc{vertices_on_conflict_zone_boundary} since CGAL-3.8.}
+\end{ccDeprecated}
+\ccMethod{template <class OutputIterator>
+  OutputIterator
+  vertices_on_conflict_zone_boundary(Point p, Cell_handle c,
+                                     OutputIterator res);}
 {Similar to \ccc{find_conflicts()}, but reports the vertices which are on the
 boundary of the conflict hole of \ccc{p}, in the output iterator \ccc{res}.
 Returns the resulting output iterator.

@@ -304,11 +304,21 @@ public:
       return std::copy(vertices.begin(), vertices.end(), res);
   }
 
+#ifndef CGAL_NO_DEPRECATED_CODE
   // Returns the vertices on the boundary of the conflict hole.
   template <class OutputIterator>
   OutputIterator
-  vertices_in_conflict(const Weighted_point&p, Cell_handle c,
-		       OutputIterator res) const
+  vertices_in_conflict(const Weighted_point&p, Cell_handle c, OutputIterator res) const
+  {
+    return vertices_on_conflict_zone_boundary(p, c, res);
+  }
+#endif // CGAL_NO_DEPRECATED_CODE
+
+  // Returns the vertices on the boundary of the conflict hole.
+  template <class OutputIterator>
+  OutputIterator
+  vertices_on_conflict_zone_boundary(const Weighted_point&p, Cell_handle c,
+                                     OutputIterator res) const
   {
       CGAL_triangulation_precondition(dimension() >= 2);
 

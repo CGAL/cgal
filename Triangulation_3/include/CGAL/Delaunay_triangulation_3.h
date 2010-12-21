@@ -317,10 +317,21 @@ public:
       return std::make_pair(t.first, t.second);
   }
 
+#ifndef CGAL_NO_DEPRECATED_CODE
   // Returns the vertices on the boundary of the conflict hole.
   template <class OutputIterator>
   OutputIterator
   vertices_in_conflict(const Point&p, Cell_handle c, OutputIterator res) const
+  {
+    return vertices_on_conflict_zone_boundary(p, c, res);
+  }
+#endif // CGAL_NO_DEPRECATED_CODE
+
+  // Returns the vertices on the boundary of the conflict hole.
+  template <class OutputIterator>
+  OutputIterator
+  vertices_on_conflict_zone_boundary(const Point&p, Cell_handle c,
+                                     OutputIterator res) const
   {
       CGAL_triangulation_precondition(dimension() >= 2);
 
