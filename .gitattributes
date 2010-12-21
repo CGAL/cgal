@@ -3907,6 +3907,7 @@ Triangulation_2/test/Triangulation_2/test_delaunay_triangulation_proj.cpp -text
 Triangulation_3/demo/Triangulation_3/CMakeLists.txt -text
 Triangulation_3/demo/Triangulation_3/MainWindow.cpp -text
 Triangulation_3/demo/Triangulation_3/MainWindow.h -text
+Triangulation_3/demo/Triangulation_3/MainWindow.ui -text
 Triangulation_3/demo/Triangulation_3/PreferenceDlg.cpp -text
 Triangulation_3/demo/Triangulation_3/PreferenceDlg.h -text
 Triangulation_3/demo/Triangulation_3/Scene.cpp -text
