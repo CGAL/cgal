@@ -1842,6 +1842,9 @@ Maintenance/infrastructure/cgal.geometryfactory.com/reference-platforms/i686_Lin
 Maintenance/infrastructure/cgal.geometryfactory.com/reference-platforms/i686_Linux-2.6_g++-4.3.3_CentOS-5.1/CMakeCache.txt -text
 Maintenance/infrastructure/cgal.geometryfactory.com/reference-platforms/i686_Linux-2.6_g++-4.3.3_CentOS-5.1/setup -text
 Maintenance/infrastructure/cgal.geometryfactory.com/reference-platforms/setup-common -text
+Maintenance/infrastructure/delaunay.geometryfactory.com/.autocgalrc -text
+Maintenance/infrastructure/delaunay.geometryfactory.com/reference-platforms/i686_Cygwin-Vista_MSVS2008-Release-32bits/setup -text
+Maintenance/infrastructure/delaunay.geometryfactory.com/reference-platforms/x64_Cygwin-Vista_MSVS2010-64bits/setup -text
 Maintenance/infrastructure/matisse.geometryfactory.com/.autocgalrc -text
 Maintenance/infrastructure/matisse.geometryfactory.com/reference-platforms/setup-common -text
 Maintenance/infrastructure/matisse.geometryfactory.com/reference-platforms/x86-64_Linux-2.6_IntelCompiler-11.0-with-g++-4.4.0_F13/setup -text
