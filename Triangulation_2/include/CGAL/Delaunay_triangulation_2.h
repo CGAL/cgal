@@ -599,6 +599,7 @@ typename Delaunay_triangulation_2<Gt,Tds>::Point
 Delaunay_triangulation_2<Gt,Tds>::
 dual (Face_handle f) const
 {
+  CGAL_triangulation_precondition(this->_tds.is_face(f));
   CGAL_triangulation_precondition (this->dimension()==2);
   return circumcenter(f);
 }
@@ -609,6 +610,8 @@ Object
 Delaunay_triangulation_2<Gt,Tds>::
 dual(const Edge &e) const
 {
+  CGAL_triangulation_precondition(this->_tds.is_edge(e.first,e.second));
+  
   typedef typename Geom_traits::Line_2        Line;
   typedef typename Geom_traits::Ray_2         Ray;
 
