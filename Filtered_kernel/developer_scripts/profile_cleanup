@@ -20,6 +20,7 @@ cat $@ | sed -e 's/CGAL:://g' \
              -e 's/CommonKernelFunctors:://g' \
              -e 's/CartesianKernelFunctors:://g' \
              -e 's/CircularFunctors:://g' \
+             -e 's/Filtered_kernel<Simple_cartesian<double>, true> /FK/g' \
              -e 's/typename Filtered_predicate<EP, AP, C2E, C2A, Protection>::result_type Filtered_predicate<EP, AP, C2E, C2A, Protection>::operator()//g' \
              -e 's/ const //g' \
              -e 's/, AP =.*]/]/g' \
