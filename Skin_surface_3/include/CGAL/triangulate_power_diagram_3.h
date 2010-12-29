@@ -522,8 +522,8 @@ add_cell(Tmc_Vertex_handle vh[], int orient, Rt_Simplex s) {
   CGAL_assertion((orient==0) || (orient==1));
   CGAL_assertion(vh[0] != Tmc_Vertex_handle()); CGAL_assertion(vh[1] != Tmc_Vertex_handle());
   CGAL_assertion(vh[2] != Tmc_Vertex_handle()); CGAL_assertion(vh[3] != Tmc_Vertex_handle());
-  CGAL_assertion(vh[1] != vh[2]); CGAL_assertion(vh[1] != vh[3]); CGAL_assertion(vh[1] != vh[4]);
-  CGAL_assertion(vh[2] != vh[3]); CGAL_assertion(vh[2] != vh[4]); CGAL_assertion(vh[3] != vh[4]);
+  CGAL_assertion(vh[0] != vh[1]); CGAL_assertion(vh[0] != vh[2]); CGAL_assertion(vh[0] != vh[3]);
+  CGAL_assertion(vh[1] != vh[2]); CGAL_assertion(vh[1] != vh[3]); CGAL_assertion(vh[2] != vh[3]);
 
   Tmc_Cell_handle ch;
 
