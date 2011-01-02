@@ -387,10 +387,10 @@
     <string>Insert Vertex</string>
    </property>
    <property name="toolTip">
-    <string>Insert a vertex and update the triangulation</string>
+    <string>Insert a point and update the triangulation</string>
    </property>
    <property name="statusTip">
-    <string>Insert a vertex and update the triangulation</string>
+    <string>Insert a point and update the triangulation</string>
    </property>
   </action>
   <action name="actionInsert_Point">
@@ -405,10 +405,10 @@
     <string>Insert Point</string>
    </property>
    <property name="toolTip">
-    <string>Insert a point and show its conflict region</string>
+    <string>Show the conflict region of a point and insert it</string>
    </property>
    <property name="statusTip">
-    <string>Insert a point and show its conflict region</string>
+    <string>Show the conflict region of a point and insert it</string>
    </property>
   </action>
   <action name="actionSelect_Vertex">
