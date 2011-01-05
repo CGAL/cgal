@@ -247,6 +247,7 @@ partition_outside_sets(const std::list<Facet_handle>& new_facets,
         std::list<Facet_handle>& pending_facets, 
         const Traits& traits)
 {
+  typedef typename UHM::Data Data;
    typedef typename Traits::Plane_3                   Plane_3;
    typename std::list<Facet_handle>::const_iterator        f_list_it;
    typename std::list<Point>::iterator  point_it;
@@ -261,12 +262,13 @@ partition_outside_sets(const std::list<Facet_handle>& new_facets,
    {
      Plane_3 plane;
       get_plane(plane, *f_list_it);
+      Data& point_list = outside_sets[(*f_list_it)];
       for (point_it = vis_outside_set.begin(); 
            point_it != vis_outside_set.end();)
       {
         if ( has_on_positive_side(plane, *point_it) )
         {
-           outside_sets[(*f_list_it)].push_back(*point_it);
+           point_list.push_back(*point_it);
            point_it = vis_outside_set.erase(point_it);
         }
         else
