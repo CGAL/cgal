@@ -303,6 +303,9 @@ ch_quickhull_3_scan(
   typedef std::list<Point_3>                              Outside_set;
   typedef typename std::list<Point_3>::iterator           Outside_set_iterator;
 
+  typedef typename CGAL::Unique_hash_map<typename Polyhedron_3::Facet_handle,
+    std::list<typename Traits::Point_3> >::Data Data;
+
   std::list<Facet_handle>                     visible_set;
   typename std::list<Facet_handle>::iterator  vis_set_it;
   Outside_set                                 vis_outside_set;
@@ -334,12 +337,10 @@ ch_quickhull_3_scan(
           vis_set_it++)
      {
         //   add its outside set to the global outside set list
-        std::copy(outside_sets[*vis_set_it].begin(),
-                  outside_sets[*vis_set_it].end(),
-                  std::back_inserter(vis_outside_set));
+        Data& point_list = outside_sets[*vis_set_it];
+        vis_outside_set.splice(vis_outside_set.end(), point_list, point_list.begin(), point_list.end());
         //   delete this visible facet
         P.erase_facet((*(*vis_set_it)).halfedge());
-        outside_sets[*vis_set_it].clear();
      }
 #ifdef CGAL_CH_3_WINDOW_DEBUG
      window << CGAL::RED;
