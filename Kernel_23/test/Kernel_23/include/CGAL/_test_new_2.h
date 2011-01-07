@@ -611,8 +611,6 @@ test_new_2(const R& rep)
   typename R::Angle_2 angle
         = rep.angle_2_object();
   Angle tmp58 = angle(p2,p3,p4);
-  tmp58 = angle(p1, p2, p3, p4);
-  tmp58 = angle(v2, v3);
 
   use(v1); use(v4); use(r1);
   use(d4); use(d5);

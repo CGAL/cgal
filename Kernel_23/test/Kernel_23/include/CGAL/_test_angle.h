@@ -32,23 +32,12 @@ _test_angle(const R&)
   typedef CGAL::Point_2<R>  Point_2;
   typedef CGAL::Point_3<R>  Point_3;
 
-  typedef CGAL::Vector_2<R> Vector_2;
-  typedef CGAL::Vector_3<R> Vector_3;
-
   Point_2 p(RT(2),RT(1));
   Point_2 q(RT(5),RT(4));
   Point_2 r(RT(5),RT(10));
-  Point_2 s(RT0, RT0);
-
-  Vector_2 qp = p - q;
-  Vector_2 qr = r - q;
 
   assert( CGAL::angle( p, q, r ) == CGAL::OBTUSE );
-  assert( CGAL::angle( qp , qr ) == CGAL::OBTUSE );
-  assert( CGAL::angle( q, p, q, r ) == CGAL::OBTUSE );
   assert( CGAL::angle( r, p, q ) == CGAL::ACUTE );
-  assert( CGAL::angle( p, s, q , r) == CGAL::OBTUSE );
-  assert( CGAL::angle( p, r, s , q) == CGAL::ACUTE );
 
   Point_2 e0( RT1, RT0);
   Point_2 e1( RT0, RT1);

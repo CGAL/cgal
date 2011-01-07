@@ -423,31 +423,11 @@ orientationC2(const FT &ux, const FT &uy, const FT &vx, const FT &vy)
 template < class FT >
 inline
 typename Same_uncertainty_nt<Angle, FT>::type
-angleC2(const FT &ux, const FT &uy,
-        const FT &vx, const FT &vy)
-{
-  return enum_cast<Angle>(CGAL_NTS sign(ux*vx + uy*vy));
-}
-
-template < class FT >
-inline
-typename Same_uncertainty_nt<Angle, FT>::type
 angleC2(const FT &px, const FT &py,
         const FT &qx, const FT &qy,
         const FT &rx, const FT &ry)
 {
   return enum_cast<Angle>(CGAL_NTS sign((px-qx)*(rx-qx)+(py-qy)*(ry-qy)));
-}
-
-template < class FT >
-inline
-typename Same_uncertainty_nt<Angle, FT>::type
-angleC2(const FT &px, const FT &py,
-        const FT &qx, const FT &qy,
-        const FT &rx, const FT &ry,
-        const FT &sx, const FT &sy)
-{
-  return enum_cast<Angle>(CGAL_NTS sign((px-qx)*(rx-sx)+(py-qy)*(ry-sy)));
 }
 
 template < class FT >

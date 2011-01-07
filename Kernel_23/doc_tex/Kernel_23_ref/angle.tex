@@ -2,27 +2,12 @@
 \begin{ccRefFunction}{angle}
 
 \ccHtmlNoLinks
-\ccFunction{Angle angle(const Vector_2<Kernel>&u, 
-                        const Vector_2<Kernel>&v);}
-{returns \ccStyle{OBTUSE}, \ccStyle{RIGHT} or \ccStyle{ACUTE} depending
-on the angle formed by the two vectors $u$ and $v$.}
-
-\ccHtmlNoLinks
 \ccFunction{Angle angle(const Point_2<Kernel>& p,
                         const Point_2<Kernel>& q,
                         const Point_2<Kernel>& r);}
 {returns \ccStyle{OBTUSE}, \ccStyle{RIGHT} or \ccStyle{ACUTE} depending
 on the angle formed by the three points $p$, $q$, $r$ ($q$ being the vertex of
-the angle). The returned value is the same as \ccc{angle(p - q, r - q)}.}
-
-\ccHtmlNoLinks
-\ccFunction{Angle angle(const Point_2<Kernel>& p,
-                        const Point_2<Kernel>& q,
-                        const Point_2<Kernel>& r,
-                        const Point_2<Kernel>& s);}
-{returns \ccStyle{OBTUSE}, \ccStyle{RIGHT} or \ccStyle{ACUTE} depending
-on the angle formed by the two vectors $pq$, $rs$. The returned value is
-the same as \ccc{angle(q - p, s - r)}.}
+the angle).}
 
 \ccHtmlNoLinks
 \ccFunction{Angle angle(const Point_3<Kernel>& p,

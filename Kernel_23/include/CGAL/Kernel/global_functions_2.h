@@ -52,31 +52,11 @@ operator!=(const Point_2<K> &p, const Origin& o)
 template < class K >
 inline
 Angle
-angle(const Vector_2<K> &u,
-      const Vector_2<K> &v)
-{
-  return internal::angle(u, v, K());
-}
-
-template < class K >
-inline
-Angle
 angle(const Point_2<K> &p,
       const Point_2<K> &q,
       const Point_2<K> &r)
 {
   return internal::angle(p, q, r, K());
-}
-
-template < class K >
-inline
-Angle
-angle(const Point_2<K> &p,
-      const Point_2<K> &q,
-      const Point_2<K> &r,
-      const Point_2<K> &s)
-{
-  return internal::angle(p, q, r, s, K());
 }
 
 template < class K >
