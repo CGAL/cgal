@@ -40,13 +40,28 @@ namespace CartesianKernelFunctors {
   template <typename K>
   class Angle_2
   {
-    typedef typename K::Point_2 Point_2;
+    typedef typename K::Point_2  Point_2;
+    typedef typename K::Vector_2 Vector_2;
   public:
     typedef typename K::Angle   result_type;
 
     result_type
+    operator()(const Vector_2& u, const Vector_2& v) const
+    { return angleC2(u.x(), u.y(), v.x(), v.y()); }
+
+    result_type
     operator()(const Point_2& p, const Point_2& q, const Point_2& r) const
     { return angleC2(p.x(), p.y(), q.x(), q.y(), r.x(), r.y()); }
+
+    result_type
+    operator()(const Point_2& p, const Point_2& q, 
+               const Point_2& r, const Point_2& s) const
+    {
+      return angleC2(p.x(), p.y(),
+		     q.x(), q.y(),
+		     r.x(), r.y(),
+                     s.x(), s.y());
+    }
   };
 
   template <typename K>

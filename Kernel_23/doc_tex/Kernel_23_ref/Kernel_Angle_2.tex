@@ -5,15 +5,25 @@ A model for this must provide:
 
 \ccCreationVariable{fo}
 
+\ccMemberFunction{Angle operator()(const Kernel::Vector_2&u, 
+                                   const Kernel::Vector_2&v);}
+{returns \ccStyle{OBTUSE}, \ccStyle{RIGHT} or \ccStyle{ACUTE} depending
+on the angle formed by the two vectors $u$ and $v$.}
+
 \ccMemberFunction{Angle operator()(const Kernel::Point_2&p, 
                                    const Kernel::Point_2&q, 
                                    const Kernel::Point_2&r);}
 {returns \ccStyle{OBTUSE}, \ccStyle{RIGHT} or \ccStyle{ACUTE} depending
 on the angle formed by the three points $p$, $q$, $r$ ($q$ being the vertex of
-the angle).}
+the angle). The returned value is the same as \ccc{operator()(p - q, r - q)}.}
 
-\ccRefines
-\ccc{AdaptableFunctor} (with three arguments)
+\ccMemberFunction{Angle operator()(const Kernel::Point_2&p, 
+                                   const Kernel::Point_2&q, 
+                                   const Kernel::Point_2&r, 
+                                   const Kernel::Point_2&s);}
+{returns \ccStyle{OBTUSE}, \ccStyle{RIGHT} or \ccStyle{ACUTE} depending
+on the angle formed by the two vectors $pq$, $rs$. The returned value is
+the same as \ccc{operator()(q - p, s - r)}.}
 
 \ccSeeAlso
 \ccRefIdfierPage{CGAL::angle}  \\
