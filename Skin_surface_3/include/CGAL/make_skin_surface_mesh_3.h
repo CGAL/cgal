@@ -20,7 +20,6 @@
 #ifndef CGAL_MAKE_SKIN_SURFACE_MESH_3_H
 #define CGAL_MAKE_SKIN_SURFACE_MESH_3_H
 
-#include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
 #include <CGAL/Skin_surface_traits_3.h>
 #include <CGAL/Skin_surface_3.h>
 #include <CGAL/mesh_skin_surface_3.h>
@@ -42,11 +41,10 @@ void make_skin_surface_mesh_3(Polyhedron_3 &p,
     make_union_of_balls_mesh_3(p,begin,end,nSubdivisions);
   }
 
+
   typedef typename WP_iterator::value_type              Weighted_point;
-  typedef typename Weighted_point::Point                Point;
-  typedef typename Point::R                             K;
+  typedef typename Kernel_traits<Weighted_point>::Kernel K;
   
-//   typedef Exact_predicates_inexact_constructions_kernel K;
   typedef Skin_surface_traits_3<K>                      Traits;
   typedef Skin_surface_3<Traits>                        Skin_surface;
   

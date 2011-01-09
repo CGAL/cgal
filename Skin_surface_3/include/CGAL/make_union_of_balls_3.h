@@ -20,7 +20,6 @@
 #ifndef CGAL_MAKE_UNION_OF_BALLS_MESH_3_H
 #define CGAL_MAKE_UNION_OF_BALLS_MESH_3_H
 
-#include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
 #include <CGAL/Skin_surface_traits_3.h>
 #include <CGAL/Union_of_balls_3.h>
 #include <CGAL/mesh_union_of_balls_3.h>
@@ -36,7 +35,9 @@ void make_union_of_balls_mesh_3(Polyhedron_3 &p,
 			      WP_iterator begin, WP_iterator end, 
 			      int nSubdivisions=0)
 {
-  typedef Exact_predicates_inexact_constructions_kernel K;
+  typedef typename WP_iterator::value_type              Weighted_point;
+  typedef typename Kernel_traits<Weighted_point>::Kernel K;
+
   typedef Skin_surface_traits_3<K>                      Traits;
   typedef Union_of_balls_3<Traits>                      Union_of_balls;
   
