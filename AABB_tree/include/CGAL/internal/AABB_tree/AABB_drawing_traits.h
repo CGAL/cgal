@@ -21,6 +21,7 @@
 #define CGAL_AABB_DRAWING_TRAITS_H
 
 #include <CGAL/Bbox_3.h>
+#include <CGAL/gl.h>
 
 namespace CGAL {
 
