@@ -12,7 +12,7 @@
 % +------------------------------------------------------------------------+
 
 
-\begin{ccRefClass}{Mesh_complex_3_in_triangulation_3<Tr>}  %% add template arg's if necessary
+\begin{ccRefClass}{Mesh_complex_3_in_triangulation_3<Tr,CornerIndex,CurveSegmentIndex>}  %% add template arg's if necessary
 
 %% \ccHtmlCrossLink{}     %% add further rules for cross referencing links
 %% \ccHtmlIndexC[class]{} %% add further index entries
@@ -25,26 +25,37 @@ to store the 3D restricted Delaunay triangulation used by a mesh
 generation process.
 
 This class is a model of the concept
-\ccc{MeshComplex_3InTriangulation_3}.
+\ccc{MeshComplexWithFeatures_3InTriangulation_3}.
 
 \ccParameters
 
-The template parameter \ccc{Tr} can be instanciated with any 3D
+The template parameter \ccc{Tr} can be instantiated with any 3D
 regular triangulation of \cgal{} provided that its
 vertex and cell base class are models of the concepts
 \ccc{MeshVertexBase_3} and \ccc{MeshCellBase_3}, respectively. 
+
+The template parameter \ccc{CornerIndex} is the type of the indices for corners and
+the template parameter \ccc{CurveSegmentIndex} is the type of the indices for curves segments.
+They must match the \ccc{Corner_index} and \ccc{Curve_segment_index} types of the model
+of the \ccc{MeshDomainWithFeatures_3} concept used for mesh generation.
+
+Those two last template parameters defaults to \ccc{int}, so that they can be ignored
+if the domain used for mesh generation does not include 0 and 1-dimensionnal features (i.e
+is a model of the concept \ccc{MeshDomain_3}).
 
 
 \ccInclude{CGAL/Mesh_complex_3_in_triangulation_3.h}
 
 \ccIsModel
-\ccc{MeshComplex_3InTriangulation_3}
+\ccc{MeshComplexWithFeatures_3InTriangulation_3}
 
 \ccTypes
 
 \ccTypedef{typedef Tr::Vertex::Index Index;}{Index type.}
-\ccTypedef{typedef Tr::Cell::Surface_index Surface_index;}{Surface index type.}
+\ccTypedef{typedef Tr::Cell::Surface_patch_index Surface_patch_index;}{Surface index type.}
 \ccTypedef{typedef Tr::Cell::Subdomain_index Subdomain_index;}{Subdomain index type.}
+\ccTypedef{typedef CornerIndex Corner_index;}{\ccc{Corner_index} type.}
+\ccTypedef{typedef CurveSegmentIndex Curve_segment_index;}{\ccc{Curve_segment_index} type.}
 
 \ccOperations
 \ccCreationVariable{c3t3}
@@ -53,11 +64,12 @@ vertex and cell base class are models of the concepts
     in medit format.}
 
 \ccSeeAlso
-\ccc{make_mesh_3} \\
-\ccc{refine_mesh_3} \\
-\ccc{MeshComplex_3InTriangulation_3} \\
-\ccc{MeshCellBase_3}, \\
-\ccc{MeshVertexBase_3}
+\ccRefIdfierPage{CGAL::make_mesh_3} \\
+\ccRefIdfierPage{CGAL::refine_mesh_3} \\
+\ccRefConceptPage{MeshComplex_3InTriangulation_3} \\
+\ccRefConceptPage{MeshComplexWithFeatures_3InTriangulation_3} \\
+\ccRefConceptPage{MeshCellBase_3}, \\
+\ccRefConceptPage{MeshVertexBase_3}
 
 \end{ccRefClass}
 

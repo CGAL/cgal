@@ -22,14 +22,14 @@
 //
 //******************************************************************************
 
-#ifndef TEST_UTILITIES_H_
-#define TEST_UTILITIES_H_
-
+#ifndef CGAL_MESH_3_TEST_TEST_UTILITIES_H
+#define CGAL_MESH_3_TEST_TEST_UTILITIES_H
 
 #include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
 #include <CGAL/Exact_predicates_exact_constructions_kernel.h>
 
 #include <CGAL/Mesh_triangulation_3.h>
+#include <CGAL/Mesh_complex_3_in_triangulation_3.h>
 #include <CGAL/Mesh_complex_3_in_triangulation_3.h>
 
 typedef CGAL::Exact_predicates_inexact_constructions_kernel K_e_i;
@@ -52,5 +52,4 @@ public:
 } // end namespace details
 } // end namespace CGAL
 
-
-#endif // TEST_UTILITIES_H_
+#endif // CGAL_MESH_3_TEST_TEST_UTILITIES_H

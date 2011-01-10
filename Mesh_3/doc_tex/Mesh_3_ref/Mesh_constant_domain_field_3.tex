@@ -1,0 +1,74 @@
+% +------------------------------------------------------------------------+
+% | Reference manual page: Mesh_constant_domain_field_3.tex
+% +------------------------------------------------------------------------+
+% | 28.07.2009   Stephane Tayeb
+% | Package: Mesh_3
+% |
+\RCSdef{\RCSMeshconstantdomainfieldRev}{$Id$}
+\RCSdefDate{\RCSMeshconstantdomainfieldDate}{$Date$}
+% |
+\ccRefPageBegin
+%%RefPage: end of header, begin of main body
+% +------------------------------------------------------------------------+
+
+
+\begin{ccRefFunctionObjectClass}{Mesh_constant_domain_field_3<Gt,Index>}  %% add template arg's if necessary
+
+%% \ccHtmlCrossLink{}     %% add further rules for cross referencing links
+%% \ccHtmlIndexC[class]{} %% add further index entries
+
+\ccDefinition
+  
+The class \ccRefName\ is a model of concept \ccc{MeshDomainField_3}. It provides
+a constant field accessible using queries on 3D-points.
+
+The class \ccRefName\ can also be customized through \ccc{set_size()} operations to become
+a piecewise constant field, i.e. a sizing field with a constant size on each subpart
+of the domain.
+
+
+\ccInclude{CGAL/Mesh_constant_domain_field_3.h}
+
+\ccParameters
+
+The parameter \ccc{Gt} is the geometric traits class. It must match the type \ccc{Triangulation::Geom_traits},
+where \ccc{Triangulation} is the nested type of the model of \ccc{MeshComplex_3InTriangulation_3} used
+in the meshing process.
+
+The parameter \ccc{Index} is the type of index of the vertices of the triangulation.
+It must match the type \ccc{Index} of the model of \ccc{MeshDomain_3} used in the meshing process.
+
+\ccIsModel
+
+\ccc{MeshDomainField_3}
+
+\ccTypes
+
+\ccTypedef{typedef Gt::FT FT;}{Numerical type.}\ccGlue
+\ccTypedef{typedef Gt::Point_3 Point_3;}{Point type.}
+\ccTypedef{typedef Index Index;}{Type of index of the vertices of the triangulation.}
+
+\ccCreation
+\ccCreationVariable{mcf}  %% choose variable name
+
+\ccConstructor{Mesh_constant_domain_field_3(FT size);}{
+Builds a constant domain field with size \ccc{size}.}
+
+\ccOperations
+\ccMethod{void set_size(FT size, int dimension, const Index& index);}{
+  Sets the size such as \ccc{operator()} will return size \ccc{size}
+  at any query point of dimension \ccc{dimension} and index \ccc{index}.}
+
+
+\ccSeeAlso
+
+\ccRefConceptPage{MeshDomainField_3} \\
+
+\end{ccRefFunctionObjectClass}
+
+% +------------------------------------------------------------------------+
+%%RefPage: end of main body, begin of footer
+\ccRefPageEnd
+% EOF
+% +------------------------------------------------------------------------+
+

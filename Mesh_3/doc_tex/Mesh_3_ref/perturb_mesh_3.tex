@@ -25,7 +25,7 @@ by changing the mesh vertices positions.
 
 The perturber tries to improve the dihedral angles of the worst cells in the mesh
 degree by degree: the
-step  number \emph{n} is considered as successfull 
+step  number \emph{n} is considered as successful 
 if after this step the worst tetrahedron of the mesh has a minimal dihedral
 angle larger than \emph{n} degrees.
 The perturber exits if this is not the case.
@@ -33,10 +33,10 @@ The perturber exits if this is not the case.
 \ccInclude{CGAL/perturb_mesh_3.h}
 
 \ccGlobalFunction{
-	template<typename C3T3, typename MeshDomain>
+	template<typename C3T3, typename MeshDomain_3>
 	Mesh_optimization_return_code
         perturb_mesh_3(C3T3& c3t3,
-          MeshDomain domain,
+          MeshDomain_3 domain,
           double parameters::time_limit=0,
           double parameters::sliver_bound=0);}{
  \ccPrecond{\ccc{time_limit} $\geq$ 0 and 0 $\leq$ \ccc{sliver_bound} $\leq$ 180} }
@@ -51,11 +51,11 @@ reference, provides the initial mesh
 and is modified  by the algorithm 
 to represent the final optimized mesh.
 
-Parameter \ccc{MeshDomain} is required to be a model of the concept
-\ccc{MeshDomain_3}. The argument \ccc{domain} must be the \ccc{MeshDomain}
-object used to create \ccc{c3t3} parameter.
+Parameter \ccc{MeshDomain_3} is required to be a model of the concept
+\ccc{MeshDomain_3}. The argument \ccc{domain} must be the \ccc{MeshDomain_3}
+object used to create the \ccc{c3t3} parameter.
 
-The function has two optional parameters which are named parameters (we use the Boost.Parameters library). 
+The function has two optional parameters which are named parameters (we use the Boost.Parameter library). 
 Therefore, when calling the function,  the parameters can be provided in any order 
 provided that the names of the parameters are used
  (see example at the bottom of this page).
@@ -70,13 +70,13 @@ The default value is \ccc{0} and means that there is no time limit.
 Parameter \ccc{sliver_bound}, whose name is \ccc{parameters::sliver_bound},
 is designed to give, in degree,  a targeted
 lower bound on dihedral angles of mesh cells.
-The function \ccRefName{} function runs as long as step are successfull
+The function \ccRefName\  runs as long as steps are successful
  and  step number \ccc{sliver_bound} (after which
 the worst tetrahedron in the mesh has a smallest angle larger than 
 \ccc{sliver_bound}  degrees) has not been reached.
 The default value is \ccc{0} and means that  there is no targeted bound: 
 the perturber  then runs as long as
-steps are successfull.
+steps are successful.
 \end{itemize}
 
 
@@ -88,17 +88,9 @@ which is:
 \begin{itemize}
 \item \ccc{BOUND_REACHED} when the targeted bound for the smallest dihedral angle in the mesh is reached.
 \item\ccc{TIME_LIMIT_REACHED} when the time limit is reached.
-\item \ccc{CANT_IMPROVE_ANYMORE} when exudation process stops because the last step is unsuccessfull.
+\item \ccc{CANT_IMPROVE_ANYMORE} when the perturbation process stops because the last step is unsuccessful.
 \end{itemize}
 
-\ccSeeAlso
-
-\ccc{Mesh_optimization_return_code} \\
-\ccc{make_mesh_3} \\
-\ccc{refine_mesh_3} \\
-\ccc{exude_mesh_3} \\
-\ccc{lloyd_optimize_mesh_3} \\
-\ccc{odt_optimize_mesh_3} \\
 
 
 \ccExample
@@ -107,6 +99,15 @@ which is:
 // No time bound is set
 perturb_mesh_3(c3t3, domain, parameters::sliver_bound=10);
 \end{ccExampleCode}
+
+\ccSeeAlso
+
+\ccRefIdfierPage{CGAL::Mesh_optimization_return_code} \\
+\ccRefIdfierPage{CGAL::make_mesh_3} \\
+\ccRefIdfierPage{CGAL::refine_mesh_3} \\
+\ccRefIdfierPage{CGAL::exude_mesh_3} \\
+\ccRefIdfierPage{CGAL::lloyd_optimize_mesh_3} \\
+\ccRefIdfierPage{CGAL::odt_optimize_mesh_3}
 
 \end{ccRefFunction}
 

@@ -79,7 +79,7 @@ struct Robust_intersection_traits_3
 : public K_
 {
   typedef Robust_intersection_3<K_> Intersect_3;
-  
+  typedef Robust_intersection_traits_3<K_> Kernel;
   Intersect_3
   intersect_3_object() const
   {

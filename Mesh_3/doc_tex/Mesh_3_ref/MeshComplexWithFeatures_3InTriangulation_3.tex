@@ -1,0 +1,218 @@
+% +------------------------------------------------------------------------+
+% | Reference manual page: MeshComplexWithFeatures_3InTriangulation_3.tex
+% +------------------------------------------------------------------------+
+% | 28.07.2009   Stephane Tayeb
+% | Package: Mesh_3
+% |
+\RCSdef{\RCSMeshComplexWithFeaturesInTriangulationRev}{$Id$}
+\RCSdefDate{\RCSMeshComplexWithFeaturesInTriangulationDate}{$Date$}
+% |
+\ccRefPageBegin
+%%RefPage: end of header, begin of main body
+% +------------------------------------------------------------------------+
+
+
+\begin{ccRefConcept}{MeshComplexWithFeatures_3InTriangulation_3}
+
+%% \ccHtmlCrossLink{}     %% add further rules for cross referencing links
+%% \ccHtmlIndexC[concept]{} %% add further index entries
+
+\ccDefinition
+  
+The concept \ccRefName\ describes a data structure 
+to represent and maintain a 3D complex embedded in a 3D triangulation.
+The concept \ccRefName\  refines the minimal concept 
+\ccc{MeshComplex_3InTriangulation_3}, designed to represent 
+3D complexes having only faces with dimension 2 and 3.
+Therefore, the concept \ccRefName\   may represent embedded complexes
+including {\em features}, i.e. faces with dimension $0$ and $1$.
+
+The data structure includes a 3D triangulation which is itself a 3D complex.
+To distinguish the faces of the embedded 3D complex from the
+faces of the triangulation,
+ we call  
+respectively {\em subdomains}, 
+{\em surface patches}
+{\em curve segments} and {\em corners} the faces
+of the complex with respective dimensions $3$, $2$, $1$ and $0$.
+The triangulations faces  are called respectively
+cells, facets, edges and vertices.
+
+Each subdomain of the embedded 3D complex is a union of 
+triangulation cells.
+Likewise,  each surface patch  is a union of 
+triangulation facets and each curve segment is a union of triangulation edges.
+The corners form a subset of the triangulation vertices.
+Note that subdomains, surface patches and and curved segments are not
+necessarily connected. Likewise each corner may be related to several
+mesh vertices.
+ Triangulation facets that belong to some
+surface patch are  called surface facets.
+
+
+The concept \ccRefName\  allows us to  mark and retrieve  the 
+cells of the triangulation belonging to the subdomains,
+the facets of the triangulation belonging to  surface patches,
+the edges belonging to curve segments and the vertices that are corners of the embedded complex.
+
+% The concept \ccRefName\  also  includes an index type  for vertices of the triangulation
+% and attaches an integer, called the {\em dimension} to each vertex.
+% When used for meshing algorithm, 
+% the index and the dimension  of each vertex  are used to store repectively
+% the lowest dimensional face of the input complex including the vertex
+% and the dimension of this face.
+
+Within the mesh generation functions,
+the concept \ccRefName\   is the concept describing
+the data structure used to maintain the current approximation of the input domain.
+At the end of the meshing process, the data structure encodes the resulting mesh.
+In particular, each subdomain (resp. surface patch) of the input domain
+ is then approximated by a subdomain  (resp. a surface patch) of the embedded complex
+while the curve segments and corners represent the $1$ and $0$-dimensional features
+of the input complex.
+ 
+
+\ccRefines
+
+\ccc{MeshComplex_3InTriangulation_3}
+
+\ccTypes
+
+\ccNestedType{Curve_segment_index}{A type for indexes of curve segment. The type must match the type 
+\ccc{MeshDomainWithFeatures_3::Curve_segment_index}
+when the concept is used for  mesh generation.}
+
+\ccNestedType{Corner_index}{ A type for indexes of corners.
+The type must match the type 
+\ccc{MeshDomainWithFeatures_3::Corner_index}
+when the concept is used for  mesh generation.}
+
+\ccNestedType{Edges_in_complex_iterator}{An iterator type to visit the edges
+of the triangulation belonging to curve segments.}
+\ccGlue
+\ccNestedType{Vertices_in_complex_iterator}{An iterator type to visit the vertices
+of the triangulation that are corners of the embedded complex.}
+
+\ccCreationVariable{c3t3}  %% choose variable name
+
+%\ccConstructor{MeshComplexWithFeatures_3InTriangulation_3();}{default constructor.}
+
+
+\ccModifiers
+
+\ccMethod{void add_to_complex(Edge e, const Curve_segment_index& index);}{
+  Adds edge \ccc{e}  as an element of the curve segment with  index \ccc{index}.}
+\ccGlue
+\ccMethod{void add_to_complex(const Vertex_handle& v1,
+  const Vertex_handle& v2, const Curve_segment_index& index);}{
+  Same as above with \ccc{e=(v1,v2)}.}
+
+\ccMethod{void add_to_complex(const Vertex_handle& v, const Corner_index& index);}{
+  Marks  vertex \ccc{v} as a corner with  index \ccc{index}.}
+
+\ccMethod{void remove_from_complex(const Edge& e);}{
+  Removes edge \ccc{e} from the embedded complex.}
+\ccGlue
+\ccMethod{void remove_from_complex(const Vertex_handle& v1,
+  const Vertex_handle& v2);}{
+  Same as above with \ccc{e=(v1,v2)}.}
+
+\ccMethod{void remove_from_complex(const Vertex_handle& v);}{
+  Removes vertex \ccc{v} from the embedded complex.}
+
+%\ccMethod{void set_curve_segment_index(Edge e, const Curve_segment_index& index)}{
+%  Sets the curve index of the edge \ccc{e} to \ccc{index}}
+
+
+
+
+\ccHeading{Queries}
+Queries on the 1D complex and 0D complex.
+
+\ccMethod{size_type number_of_edges() const;}{
+  Returns the number of edges which belong to curve segments.}
+\ccGlue
+\ccMethod{size_type number_of_edges(Curve_segment_index index) const;}{
+  Returns the number of edges which belong to curve segment with index \ccc{index}.}
+\ccGlue
+\ccMethod{size_type number_of_corners() const;}{
+  Returns the number of vertices which are corners of the complex.}
+\ccGlue
+\ccMethod{size_type number_of_corners(Corner_index index) const;}{
+  Returns the number of vertices which are corners of the complex with index \ccc{index}.}
+
+\ccMethod{bool is_in_complex(const Edge& e) const;}{Returns \ccc{true}
+  iff edge \ccc{e} belongs to some curve segment.}
+\ccGlue
+\ccMethod{bool is_in_complex(const Vertex_handle& v1,
+  const Vertex_handle& v2) const;}{
+  Same as above with \ccc{e=(v1,v2)}.}
+\ccGlue
+\ccMethod{bool is_in_complex(const Vertex_handle& v) const;}{
+  Returns \ccc{true} if  vertex \ccc{v} is a corner.}
+
+\ccMethod{Curve_segment_index curve_segment_index(const Edge& e);}{
+  Returns \ccc{Curve_segment_index} of edge \ccc{e}. The default \ccc{Curve_segment_index}
+  value is returned if edge \ccc{e} does not belong to any curve segment.}
+\ccGlue
+\ccMethod{Curve_segment_index curve_segment_index(const Vertex_handle& v1, const Vertex_handle& v2);}{
+  Same as above with \ccc{e=(v1,v2)}.}
+\ccGlue
+\ccMethod{Corner_index corner_index(const Vertex_handle& v);}{
+  Returns \ccc{Corner_index} of vertex \ccc{v}. The default \ccc{Corner_index} value
+  is returned if vertex \ccc{v} is not a corner of the complex.}
+
+\ccHeading{Traversal of the complex}
+
+\ccMethod{Edges_in_complex_iterator edges_in_complex_begin() const;}{
+  Returns an \ccc{Edges_in_complex_iterator} to visit the edges of the triangulation belonging to curve segments.}
+\ccGlue
+\ccMethod{Edge_in_complex_iterator edges_in_complex_end() const;}{
+  Returns the past-the-end iterator for the above iterator.}
+\ccGlue
+\ccMethod{Edges_in_complex_iterator edges_in_complex_begin(Curve_segment_index index) const;}{
+  Returns an \ccc{Edges_in_complex_iterator} to visit the edges of the triangulation belonging to curve segments
+  of index \ccc{index}.}
+\ccGlue
+\ccMethod{Edge_in_complex_iterator edges_in_complex_end(Curve_segment_index index) const;}{
+  Returns the past-the-end iterator for the above iterator.}
+
+\ccMethod{template <typename OutputIterator>
+  OutputIterator
+  adjacent_vertices_in_complex (const Vertex_handle& v, OutputIterator out) const;}{
+  Fills \ccc{out} with the vertices  of the triangulation that are adjacent to vertex \ccc{v} 
+  through an edge belonging to some curve segment.
+  The value type of \ccc{out}  must be \ccc{std::pair<Vertex_handle,Curve_segment_index>}.
+  \ccPrecond{\ccc{c3t3.in_dimension(v) < 2}}}
+
+\ccMethod{Vertices_in_complex_iterator  vertices_in_complex_begin() const;}{
+  Returns a \ccc{Vertices_in_complex_iterator} to visit the vertices of the triangulation
+that are corners.}
+\ccGlue
+\ccMethod{Vertices_in_complex_iterator  vertices_in_complex_end() const;}{
+  Returns the past-the-end iterator for the above iterator.}
+\ccGlue
+\ccMethod{Vertices_in_complex_iterator  vertices_in_complex_begin(Corner_index index) const;}{
+  Returns a \ccc{Vertices_in_complex_iterator} to visit the vertices of the triangulation
+that are corners of index \ccc{index}.}
+\ccGlue
+\ccMethod{Vertices_in_complex_iterator  vertices_in_complex_end(Corner_index index) const;}{
+  Returns the past-the-end iterator for the above iterator.}
+
+
+\ccHasModels
+
+\ccc{Mesh_complex_3_in_triangulation_3<Tr,CornerIndex,CurveSegmentIndex>}
+
+\ccSeeAlso
+\ccRefConceptPage{MeshComplex_3InTriangulation_3}\\
+\ccRefConceptPage{MeshDomainWithFeatures_3}
+
+\end{ccRefConcept}
+
+% +------------------------------------------------------------------------+
+%%RefPage: end of main body, begin of footer
+\ccRefPageEnd
+% EOF
+% +------------------------------------------------------------------------+
+

@@ -29,8 +29,7 @@
 
 namespace CGAL {
 
-#define INFINITE_SIZE 1e30
-#define INFINITE_MEASURE 1e30
+#define CGAL_MESH_3_INFINITE_SIZE 1e30
 
 namespace Mesh_3 {
 
@@ -53,7 +52,7 @@ public:
   Sizing_grid_node() 
   {
     m_done = false;
-    m_size = INFINITE_SIZE;
+    m_size = CGAL_MESH_3_INFINITE_SIZE;
     m_pRef_node = NULL;
     m_indices[0] = m_indices[1] = m_indices[2] = 0;
   }

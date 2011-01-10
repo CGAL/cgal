@@ -579,6 +579,7 @@ Mesh_3/test/Mesh_3/CTestTestfile.cmake
 Mesh_3/test/Mesh_3/Makefile
 Mesh_3/test/Mesh_3/ProgramOutput.*
 Mesh_3/test/Mesh_3/applications
+Mesh_3/test/Mesh_3/cgal_test_with_cmake
 Mesh_3/test/Mesh_3/cgal_to_medit
 Mesh_3/test/Mesh_3/combined_spheres
 Mesh_3/test/Mesh_3/combined_spheres-with-sphere-oracle
@@ -595,7 +596,18 @@ Mesh_3/test/Mesh_3/off_to_ghs
 Mesh_3/test/Mesh_3/read_mesh
 Mesh_3/test/Mesh_3/slivers_exuder
 Mesh_3/test/Mesh_3/stat_mesh
+Mesh_3/test/Mesh_3/test_backward_compatibility_MeshFoobarCriteria_3
+Mesh_3/test/Mesh_3/test_boost_has_xxx
+Mesh_3/test/Mesh_3/test_c3t3
+Mesh_3/test/Mesh_3/test_c3t3_with_features
+Mesh_3/test/Mesh_3/test_criteria
+Mesh_3/test/Mesh_3/test_domain_with_polyline_features
 Mesh_3/test/Mesh_3/test_io_methods
+Mesh_3/test/Mesh_3/test_mesh_criteria_creation
+Mesh_3/test/Mesh_3/test_meshing_3D_image
+Mesh_3/test/Mesh_3/test_meshing_implicit_function
+Mesh_3/test/Mesh_3/test_meshing_polyhedron
+Mesh_3/test/Mesh_3/test_meshing_polyhedron_with_features
 Mesh_3/test/Mesh_3/test_off
 Mesh_3/test/Mesh_3/test_robust_weighted_circumcenter
 Min_annulus_d/*.aux

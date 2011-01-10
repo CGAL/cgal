@@ -30,12 +30,6 @@ The function \ccRefName\ allows the user to tell mesh generation global function
 
 This function takes no parameter.
 
-\ccSeeAlso
-
-\ccc{parameters::perturb} \\
-\ccc{perturb_mesh_3} \\
-\ccc{make_mesh_3} \\
-\ccc{refine_mesh_3} 
 
 
 \ccExample
@@ -44,6 +38,13 @@ This function takes no parameter.
 // Mesh generation without perturbation
 C3t3 c3t3 = make_mesh_3<c3t3>(domain, criteria, parameters::no_perturb());
 \end{ccExampleCode}
+
+\ccSeeAlso
+
+\ccRefIdfierPage{CGAL::parameters::perturb} \\
+\ccRefIdfierPage{CGAL::perturb_mesh_3} \\
+\ccRefIdfierPage{CGAL::make_mesh_3} \\
+\ccRefIdfierPage{CGAL::refine_mesh_3} 
 
 
 \end{ccRefFunction}

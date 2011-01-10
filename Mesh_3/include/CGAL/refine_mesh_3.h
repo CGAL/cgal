@@ -47,7 +47,8 @@ namespace CGAL {
       
       typedef typename C3T3::Triangulation          Tr;
       typedef typename Tr::Vertex                   Vertex;
-      typedef typename Tr::Bare_point               Bare_point;
+      typedef typename Tr::Point                    Weighted_point;
+      typedef typename Tr::Point::Weight            Weight;
       
     public:
       Insert_vertex_in_c3t3(C3T3& c3t3)
@@ -56,10 +57,11 @@ namespace CGAL {
       void operator()(const Vertex& vertex) const
       {
         // Get vh properties
-        Bare_point point = vertex.point();
         int dimension = vertex.in_dimension();
+        Weight w = (dimension < 2) ? vertex.point().weight() : 0;
+        Weighted_point point(vertex.point().point(),w);
         Index index = vertex.index();
-        
+
         // Insert point and restore handle properties
         Vertex_handle new_vertex = r_c3t3_.triangulation().insert(point);
         r_c3t3_.set_index(new_vertex, index);
@@ -147,7 +149,12 @@ namespace parameters {
     };
     
   } // end namespace internal
-  
+#if defined(__GNUC__) && __GNUC__ >= 4 && __GNUC_MINOR__ > 5
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wunused-parameter"
+// remove a warning about an unused parameter "args" in the definition of
+// BOOST_PARAMETER_FUNCTION
+#endif
   // -----------------------------------
   // Perturb
   // -----------------------------------
@@ -228,6 +235,9 @@ namespace parameters {
   
   inline internal::Lloyd_options no_lloyd() { return internal::Lloyd_options(false); }
   
+#if defined(__GNUC__) && __GNUC__ >= 4 && __GNUC_MINOR__ > 5
+#pragma GCC diagnostic pop
+#endif
   
   // -----------------------------------
   // Reset_c3t3 (undocumented)
@@ -308,6 +318,7 @@ void refine_mesh_3_impl(C3T3& c3t3,
     std::for_each(c3t3.triangulation().finite_vertices_begin(),
                   c3t3.triangulation().finite_vertices_end(),
                   details::Insert_vertex_in_c3t3<C3T3>(tmp_c3t3));
+    // TODO: corners and edges are not restored
     c3t3.swap(tmp_c3t3);
   }
   

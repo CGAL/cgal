@@ -27,6 +27,7 @@
 #include <CGAL/linear_least_squares_fitting_3.h>
 #include <CGAL/Mesh_3/Triangulation_helpers.h>
 #include <CGAL/tuple.h>
+#include <CGAL/iterator.h>
 
 #include <boost/optional.hpp>
 #include <boost/iterator/transform_iterator.hpp>
@@ -60,9 +61,9 @@ class C3T3_helpers
   typedef typename Tr::Cell             Cell;
   typedef typename Tr::Facet            Facet;
   
-  typedef typename C3T3::Surface_index    Surface_index;
-  typedef typename C3T3::Subdomain_index  Subdomain_index;
-  typedef typename C3T3::Index            Index;
+  typedef typename C3T3::Surface_patch_index  Surface_patch_index;
+  typedef typename C3T3::Subdomain_index      Subdomain_index;
+  typedef typename C3T3::Index                Index;
   
   typedef std::vector<Cell_handle>      Cell_vector;
   typedef std::set<Cell_handle>         Cell_set;
@@ -72,7 +73,7 @@ class C3T3_helpers
   
   // Facet_boundary stores the boundary of surface facets
   typedef std::pair<Vertex_handle,Vertex_handle> Ordered_edge;
-  typedef std::set<std::pair<Ordered_edge,Surface_index> >  Facet_boundary;
+  typedef std::set<std::pair<Ordered_edge,Surface_patch_index> >  Facet_boundary;
   
   typedef Triangulation_helpers<Tr> Th;
   
@@ -165,9 +166,9 @@ public:
    * Moves \c old_vertex to \c new_location
    * Stores the cells which have to be updated in \c outdated_cells
    */
-  Vertex_handle smart_move_point(const Vertex_handle& old_vertex,
-                                 const Point_3& new_location,
-                                 Cell_set& outdated_cells);
+  Vertex_handle move_point(const Vertex_handle& old_vertex,
+                           const Point_3& new_location,
+                           Cell_set& outdated_cells);
   
   /**
    * Outputs to out the sliver (wrt \c criterion and \c sliver_bound) incident
@@ -207,10 +208,10 @@ public:
   /**
    * Reset cache validity of all cells of c3t3_
    */
-  void reset_cache()
+  void reset_cache() const
   {
     namespace bl = boost::lambda;
-    std::for_each(c3t3_.cells_begin(),c3t3_.cells_end(),
+    std::for_each(c3t3_.cells_in_complex_begin(),c3t3_.cells_in_complex_end(),
                   bl::bind(&Cell::reset_cache_validity, bl::_1) );
   }
   
@@ -474,9 +475,9 @@ private:
    * Returns the minimum criterion value of c3t3 cells contained in \c cells.
    */
   template <typename SliverCriterion>
-  FT min_sliver_filter_value(const Cell_vector& cells,
-                             const SliverCriterion& criterion,
-                             const bool use_cache = true) const
+  FT min_sliver_in_c3t3_value(const Cell_vector& cells,
+                              const SliverCriterion& criterion,
+                              const bool use_cache = true) const
   {
     // Get complex cells only
     Cell_vector c3t3_cells;
@@ -501,26 +502,91 @@ private:
   /**
    * Remove cells and facets of \c cells from c3t3
    */
-  void remove_from_c3t3(Cell_vector& cells)
+  template < typename ForwardIterator >
+  void remove_cells_and_facets_from_c3t3(ForwardIterator cells_begin,
+                                         ForwardIterator cells_end)
   {
-    Facet_vector facets = get_facets(cells);
+    Facet_vector facets = get_facets(cells_begin,cells_end);
     remove_from_c3t3(facets.begin(), facets.end());
-    remove_from_c3t3(cells.begin(), cells.end());
+    remove_from_c3t3(cells_begin, cells_end);    
   }
   
   /**
-   * Insert into \c out the vertices of \c 
+   * Insert into \c out the vertices of range [cells_begin,cells_end[
    */
-  template <typename OutputIterator>
-  void fill_modified_vertices(const Cell_vector& cells,
+  template <typename InputIterator, typename OutputIterator>
+  void fill_modified_vertices(InputIterator cells_begin,
+                              InputIterator cells_end,
                               const Vertex_handle& vertex,
                               OutputIterator out) const;
+  
+  
+  /**
+   * Update mesh iff sliver criterion value does not decrease.
+   */
+  template <typename SliverCriterion, typename OutputIterator>
+  std::pair<bool,Vertex_handle>
+  update_mesh_no_topo_change(const Point_3& new_point,
+                             const Vertex_handle& old_vertex,
+                             const SliverCriterion& criterion,
+                             OutputIterator modified_vertices);
+  
+  template <typename SliverCriterion, typename OutputIterator>
+  std::pair<bool,Vertex_handle>
+  update_mesh_topo_change(const Point_3& new_point,
+                          const Vertex_handle& old_vertex,
+                          const SliverCriterion& criterion,
+                          OutputIterator modified_vertices);
+  
+  /**
+   * Move point and returns the set of cells that are not valid anymore, and
+   * the set of cells which have been deleted by the move process.
+   */
+  template < typename OutdatedCellsOutputIterator,
+             typename DeletedCellsOutputIterator >
+  Vertex_handle move_point(const Vertex_handle& old_vertex,
+                           const Point_3& new_location,
+                           OutdatedCellsOutputIterator outdated_cells,
+                           DeletedCellsOutputIterator deleted_cells);
+  
+  template < typename OutdatedCellsOutputIterator,
+             typename DeletedCellsOutputIterator >
+  Vertex_handle
+  move_point_topo_change(const Vertex_handle& old_vertex,
+                         const Point_3& new_location,
+                         OutdatedCellsOutputIterator outdated_cells,
+                         DeletedCellsOutputIterator deleted_cells);
+  
+  template < typename ConflictCellsInputIterator,
+             typename OutdatedCellsOutputIterator,
+             typename DeletedCellsOutputIterator >
+  Vertex_handle 
+  move_point_topo_change_conflict_zone_known(
+     const Vertex_handle& old_vertex,
+     const Point_3& new_location,
+     ConflictCellsInputIterator conflict_cells_begin,
+     ConflictCellsInputIterator conflict_cells_end,
+     OutdatedCellsOutputIterator outdated_cells,
+     DeletedCellsOutputIterator deleted_cells);
+
+  Vertex_handle move_point_topo_change(const Vertex_handle& old_vertex,
+                                       const Point_3& new_location);
+  
+  template < typename OutdatedCellsOutputIterator >
+  Vertex_handle
+  move_point_no_topo_change(const Vertex_handle& old_vertex,
+                            const Point_3& new_location,
+                            OutdatedCellsOutputIterator outdated_cells);
+
+  Vertex_handle
+  move_point_no_topo_change(const Vertex_handle& old_vertex,
+                            const Point_3& new_location);
   
   /**
    * Returns the least square plane from v, using adjacent surface points
    */
   Plane_3 get_least_square_surface_plane(const Vertex_handle& v,
-                                         Point_3& ref_point = Point_3()) const;
+                                         Point_3& ref_point) const;
   
   /**
    * @brief Returns the projection of \c p, using direction of 
@@ -542,11 +608,17 @@ private:
     Point_3 new_point = new_vertex->point();
     
     // Move vertex
-    Vertex_handle revert_vertex = move_point(new_vertex, old_point);
+    Vertex_handle revert_vertex = move_point_topo_change(new_vertex, old_point);
+    CGAL_assertion(Vertex_handle() != revert_vertex);
     
     // Restore cell & facet attributes
     // TODO: optimize this to use knowledge on deleted elements ?
-    restore_mesh(get_conflict_zone(revert_vertex, new_point));
+    Cell_vector conflict_cells;
+    conflict_cells.reserve(64);
+    get_conflict_zone_topo_change(revert_vertex, new_point,
+                                  std::back_inserter(conflict_cells));
+    
+    restore_mesh(conflict_cells.begin(), conflict_cells.end());
     
     return revert_vertex;
   }
@@ -571,33 +643,18 @@ private:
   bool check_no_inside_vertices(const Facet_vector& facets) const;
   
   /**
-   * Returns the impacted cells when moving \c triangulation_vertex to
-   * \c conflict_point
+   * Returns the impacted cells when moving \c vertex to \c conflict_point
    */
-  Cell_vector get_conflict_zone(const Vertex_handle& triangulation_vertex,
-                                const Point_3& conflict_point) const;
+  template <typename OutputIterator>
+  OutputIterator
+  get_conflict_zone_no_topo_change(const Vertex_handle& vertex,
+                                   OutputIterator conflict_cells) const;
   
-  /**
-   * Moves old_vertex to new_point. The new vertex is returned.
-   */
-  Vertex_handle move_point(const Vertex_handle& old_vertex,
-                           const Point_3& new_point)
-  {
-    // Insert new_vertex, remove old_vertex
-    int dimension = c3t3_.in_dimension(old_vertex);
-    Index vertice_index = c3t3_.index(old_vertex);
-    FT meshing_info = old_vertex->meshing_info();
-    
-//    Vertex_handle new_vertex = tr_.move_point(old_vertex,new_point);
-    Vertex_handle new_vertex = tr_.insert(new_point,old_vertex->cell());
-    tr_.remove(old_vertex);
-    
-    c3t3_.set_dimension(new_vertex,dimension);
-    c3t3_.set_index(new_vertex,vertice_index);
-    new_vertex->set_meshing_info(meshing_info);
-    
-    return new_vertex;
-  }
+  template <typename OutputIterator>
+  OutputIterator
+  get_conflict_zone_topo_change(const Vertex_handle& vertex,
+                                const Point_3& conflict_point,
+                                OutputIterator conflict_cells) const;
   
   /**
    * Updates \c boundary wrt \c edge: if edge is already in boundary we remove
@@ -605,9 +662,11 @@ private:
    */
   void update_boundary(Facet_boundary& boundary,
                        const Ordered_edge& edge,
-                       const Surface_index& surface_index) const
+                       const Surface_patch_index& surface_index) const
   {
-    typename Facet_boundary::iterator boundary_it = boundary.find(std::make_pair(edge,surface_index));
+    typename Facet_boundary::iterator boundary_it =
+      boundary.find(std::make_pair(edge,surface_index));
+    
     if ( boundary_it != boundary.end() )
       boundary.erase(boundary_it);
     else
@@ -724,12 +783,11 @@ private:
    * Returns true if facets of \c facets have the same boundary as 
    * \c old_boundary
    */
-  bool check_mesh(const Facet_vector& facets,
-                  const Facet_boundary& old_boundary) const
+  bool check_surface_mesh(const Facet_vector& facets,
+                          const Facet_boundary& old_boundary) const
   {
     Facet_boundary new_boundary = get_surface_boundary(facets);
-    
-//    return check_no_inside_vertices(facets);
+
     return ( old_boundary.size() == new_boundary.size()
             && std::equal(new_boundary.begin(),
                           new_boundary.end(),
@@ -773,6 +831,16 @@ private:
     }
   }
 
+  template < typename ForwardIterator >
+  void reset_cache_validity(ForwardIterator cells_begin,
+                            ForwardIterator cells_end) const
+  {
+    namespace bl = boost::lambda;
+    std::for_each(cells_begin, cells_end,
+                  bl::bind(&Cell::reset_cache_validity, *bl::_1) );
+  }
+  
+  
 private:
   // -----------------------------------
   // Private data
@@ -787,94 +855,131 @@ template <typename C3T3, typename MD>
 template <typename SliverCriterion, typename OutputIterator>
 std::pair<bool,typename C3T3_helpers<C3T3,MD>::Vertex_handle>
 C3T3_helpers<C3T3,MD>::  
-update_mesh(const Point_3& new_point,
+update_mesh(const Point_3& new_location,
             const Vertex_handle& old_vertex,
             const SliverCriterion& criterion,
             OutputIterator modified_vertices)
 {
-  // Move do not change triangulation:
-  // we just have to relocate the vertex without inserting or removing anything
-  if ( Th().no_topological_change(tr_, old_vertex, new_point) )
+  if ( Th().no_topological_change(tr_, old_vertex, new_location) )
   {
-    Cell_vector conflict_cells;
-    conflict_cells.reserve(64);
-    tr_.incident_cells(old_vertex, std::back_inserter(conflict_cells));
-    
-    // Get old criterion value
-    FT old_value = min_sliver_filter_value(conflict_cells, criterion);
-    Point_3 old_point(old_vertex->point());
-    
-    // Move point
-    old_vertex->set_point(new_point);
-    
-    // Get new criterion value (conflict_zone did not change)
-    const FT new_criterion_value = 
-      min_sliver_filter_value(conflict_cells, criterion, false);
-    
-    // In this case, just check that surface facets are the same as before move
-    if ( (new_criterion_value > old_value) && verify_surface(conflict_cells) )
-    {
-      fill_modified_vertices(conflict_cells, old_vertex, modified_vertices);
-      return std::make_pair(true,old_vertex);
-    }
-    else
-    {
-      // revert move
-      old_vertex->set_point(old_point);
-      
-      // reset cache validity
-      namespace bl = boost::lambda;
-      for ( typename Cell_vector::iterator cit = conflict_cells.begin(),
-           end = conflict_cells.end() ; cit != end ; ++cit )
-      {
-        (*cit)->reset_cache_validity();
-      }
-      
-      return std::make_pair(false,old_vertex);
-    }
+    return update_mesh_no_topo_change(new_location,
+                                      old_vertex,
+                                      criterion,
+                                      modified_vertices);
   }
   else
   {
-    Cell_vector conflict_cells = get_conflict_zone(old_vertex, new_point);
-    
-    // May happen in case of new_point is located on a vertex
-    if ( Cell_vector() == conflict_cells )
-      return std::make_pair(false,old_vertex);
-    
-    // Get old criterion value
-    FT old_value = min_sliver_filter_value(conflict_cells, criterion);
-    Point_3 old_point(old_vertex->point());
-    
-    // Keep old boundary
-    Facet_boundary old_surface_boundary = get_surface_boundary(conflict_cells);
-    
-    // Move point
-    remove_from_c3t3(conflict_cells);
-    Vertex_handle new_vertex = move_point(old_vertex, new_point);
-    
-    // Get conflict zone in new triangulation
-    Cell_vector new_conflict_cells = get_conflict_zone(new_vertex, old_point);
-    
-    // Restore must be done first to compute correctly sliver value
-    // In this case, check that surface boundary do not change.
-    // This check ensures that vertices which are inside c3t3 stay inside. 
-    if ( restore_and_check_mesh(new_conflict_cells, old_surface_boundary)
-        && min_sliver_filter_value(new_conflict_cells, criterion) > old_value)
-    {
-      fill_modified_vertices(new_conflict_cells, new_vertex, modified_vertices);
-      return std::make_pair(true,new_vertex);
-    }
-    else
-    {
-      remove_from_c3t3(new_conflict_cells);
-      
-      // Revert move
-      Vertex_handle revert_vertex = revert_move(new_vertex, old_point);
-      return std::make_pair(false,revert_vertex);
-    }
+    return update_mesh_topo_change(new_location,
+                                   old_vertex,
+                                   criterion,
+                                   modified_vertices);
   }
 }
+
+template <typename C3T3, typename MD>
+template <typename SliverCriterion, typename OutputIterator>
+std::pair<bool,typename C3T3_helpers<C3T3,MD>::Vertex_handle>
+C3T3_helpers<C3T3,MD>::  
+update_mesh_no_topo_change(const Point_3& new_location,
+                           const Vertex_handle& vertex,
+                           const SliverCriterion& criterion,
+                           OutputIterator modified_vertices)
+{
+  // Get conflict zone
+  Cell_vector conflict_cells;
+  conflict_cells.reserve(64);
+  get_conflict_zone_no_topo_change(vertex, std::back_inserter(conflict_cells));
   
+  // Get old values
+  FT old_sliver_value = min_sliver_in_c3t3_value(conflict_cells, criterion);
+  Point_3 old_location = vertex->point();
+  
+  // Move point
+  move_point_no_topo_change(vertex,new_location);
+    
+  // Get new criterion value (conflict_zone did not change)
+  const FT new_sliver_value = 
+    min_sliver_in_c3t3_value(conflict_cells, criterion, false);
+  
+  // Check that mesh is still valid
+  if ( new_sliver_value > old_sliver_value && verify_surface(conflict_cells) )
+  {
+    fill_modified_vertices(conflict_cells.begin(), conflict_cells.end(),
+                           vertex, modified_vertices);
+    return std::make_pair(true,vertex);
+  }
+  else
+  {
+    // revert move
+    move_point_no_topo_change(vertex,old_location);
+    reset_cache_validity(conflict_cells.begin(), conflict_cells.end());
+    return std::make_pair(false,vertex);
+  }
+}
+
+
+template <typename C3T3, typename MD>
+template <typename SliverCriterion, typename OutputIterator>
+std::pair<bool,typename C3T3_helpers<C3T3,MD>::Vertex_handle>
+C3T3_helpers<C3T3,MD>::  
+update_mesh_topo_change(const Point_3& new_location,
+                        const Vertex_handle& old_vertex,
+                        const SliverCriterion& criterion,
+                        OutputIterator modified_vertices)
+{
+  Cell_vector conflict_cells;
+  conflict_cells.reserve(64);
+  get_conflict_zone_topo_change(old_vertex, new_location,
+                                std::back_inserter(conflict_cells));
+  
+  // May happen in case of new_point is located on a vertex
+  if ( conflict_cells.empty() )
+    return std::make_pair(false,old_vertex);
+  
+  FT old_sliver_value = min_sliver_in_c3t3_value(conflict_cells, criterion);
+  Point_3 old_location = old_vertex->point();
+  
+  // Keep old boundary
+  Facet_boundary old_surface_boundary = get_surface_boundary(conflict_cells);
+  
+  Cell_vector outdated_cells;
+  Vertex_handle new_vertex = 
+    move_point_topo_change_conflict_zone_known(old_vertex,
+                                               new_location,
+                                               conflict_cells.begin(),
+                                               conflict_cells.end(),
+                                               std::back_inserter(outdated_cells),
+                                               CGAL::Emptyset_iterator());
+  
+  // If nothing changed, return
+  if ( old_location == new_vertex->point() ) 
+  {
+    return std::make_pair(false,old_vertex);
+  }
+  
+  restore_mesh(outdated_cells.begin(),outdated_cells.end());
+  FT new_sliver_value = min_sliver_in_c3t3_value(outdated_cells, criterion);
+  
+  // Check that surface boundary do not change.
+  // This check ensures that vertices which are inside c3t3 stay inside. 
+  if ( new_sliver_value > old_sliver_value
+      && check_surface_mesh(get_facets(outdated_cells), old_surface_boundary) )
+  {
+    fill_modified_vertices(outdated_cells.begin(), outdated_cells.end(),
+                           new_vertex, modified_vertices);
+    return std::make_pair(true,new_vertex);
+  }
+  else
+  {
+    // Remove from c3t3 cells which will be destroyed by revert_move
+    remove_cells_and_facets_from_c3t3(outdated_cells.begin(),
+                                      outdated_cells.end());
+    
+    // Revert move
+    Vertex_handle revert_vertex = revert_move(new_vertex, old_location);
+    return std::make_pair(false,revert_vertex);
+  }
+}
   
 template <typename C3T3, typename MD>
 template <typename OutputIterator>  
@@ -885,53 +990,22 @@ update_mesh(const Point_3& new_point,
             OutputIterator modified_vertices,
             bool fill_vertices)
 {
-  // Move do not change triangulation:
-  // we just have to relocate the vertex without inserting or removing anything
-  if ( Th().no_topological_change(tr_, old_vertex, new_point) )
-  {
-    Cell_vector conflict_cells;
-    conflict_cells.reserve(64);
-    tr_.incident_cells(old_vertex, std::back_inserter(conflict_cells));
-    
-    // Move point
-    old_vertex->set_point(new_point);
-    
-    // Restore mesh
-    restore_mesh(conflict_cells);
-
-    // Fill modified vertices
-    if ( fill_vertices )
-      fill_modified_vertices(conflict_cells, old_vertex, modified_vertices);    
+  Cell_vector outdated_cells;
+  Vertex_handle new_vertex = move_point(old_vertex,
+                                        new_point,
+                                        std::back_inserter(outdated_cells),
+                                        CGAL::Emptyset_iterator());
   
-    return old_vertex;
-  }
-  else
+  restore_mesh(outdated_cells.begin(),outdated_cells.end());
+  
+  // Fill modified vertices
+  if ( fill_vertices )
   {
-    Cell_vector conflict_cells = get_conflict_zone(old_vertex, new_point);
-
-    // May happen in case of new_point is located on a vertex
-    if ( Cell_vector() == conflict_cells )
-      return old_vertex;
-
-    // Get old point
-    Point_3 old_point(old_vertex->point());
-
-    // Move point
-    remove_from_c3t3(conflict_cells);
-    Vertex_handle new_vertex = move_point(old_vertex, new_point);
-
-    // Get conflict zone in new triangulation
-    Cell_vector new_conflict_cells = get_conflict_zone(new_vertex, old_point);
-
-    // Restore mesh
-    restore_mesh(new_conflict_cells);
-
-    // Fill modified vertices
-    if ( fill_vertices )
-      fill_modified_vertices(new_conflict_cells, new_vertex, modified_vertices);
-
-    return new_vertex;
+    fill_modified_vertices(outdated_cells.begin(), outdated_cells.end(),
+                           new_vertex, modified_vertices);        
   }
+  
+  return new_vertex;  
 }
   
   
@@ -1016,53 +1090,181 @@ rebuild_restricted_delaunay(ForwardIterator first_cell,
 template <typename C3T3, typename MD>
 typename C3T3_helpers<C3T3,MD>::Vertex_handle 
 C3T3_helpers<C3T3,MD>:: 
-smart_move_point(const Vertex_handle& old_vertex,
-                 const Point_3& new_location,
-                 Cell_set& outdated_cells)
+move_point(const Vertex_handle& old_vertex,
+           const Point_3& new_location,
+           Cell_set& outdated_cells_set)
+{
+  Cell_vector outdated_cells;
+  Cell_vector deleted_cells;
+  
+  Vertex_handle new_vertex =
+    move_point(old_vertex,
+               new_location,
+               std::back_inserter(outdated_cells),
+               std::back_inserter(deleted_cells));
+
+  // Get Cell_set::erase and Cell_set::insert function pointers
+  namespace bl = boost::lambda;
+  typename Cell_set::size_type (Cell_set::*erase_cell)
+    (const typename Cell_set::key_type&) = &Cell_set::erase;
+  
+  std::pair<typename Cell_set::iterator,bool> (Cell_set::*insert_cell)
+    (const typename Cell_set::value_type&) = &Cell_set::insert;
+
+  // Update outdated_cells_set
+  std::for_each(deleted_cells.begin(),deleted_cells.end(),
+                bl::bind(erase_cell, &outdated_cells_set, bl::_1) );
+  
+  std::for_each(outdated_cells.begin(),outdated_cells.end(),
+                bl::bind(insert_cell, &outdated_cells_set, bl::_1) );
+  
+  return new_vertex;
+}  
+
+
+template <typename C3T3, typename MD>
+template <typename OutdatedCellsOutputIterator,
+          typename DeletedCellsOutputIterator>
+typename C3T3_helpers<C3T3,MD>::Vertex_handle 
+C3T3_helpers<C3T3,MD>:: 
+move_point(const Vertex_handle& old_vertex,
+           const Point_3& new_location,
+           OutdatedCellsOutputIterator outdated_cells,
+           DeletedCellsOutputIterator deleted_cells)
 {
   if ( Th().no_topological_change(tr_, old_vertex, new_location) )
   {
-    old_vertex->set_point(new_location);
-    
-    // Insert incident cell into outdated cells (nothing to remove here)
-    tr_.finite_incident_cells(old_vertex,
-                              std::inserter(outdated_cells,
-                                            outdated_cells.begin()));
-    
-    return old_vertex;
+    return move_point_no_topo_change(old_vertex,
+                                     new_location,
+                                     outdated_cells);
   }
   else
   {
-    // Get Cell_set::erase and Cell_set::insert function pointers
-    namespace bl = boost::lambda;
-    typename Cell_set::size_type (Cell_set::*erase_cell)
-      (const typename Cell_set::key_type&) = &Cell_set::erase;
-    
-    std::pair<typename Cell_set::iterator,bool> (Cell_set::*insert_cell)
-      (const typename Cell_set::value_type&) = &Cell_set::insert;
-    
-    // Save old_vertex_location
-    Point_3 old_point = old_vertex->point();
-    
-    // Remove conflict zone cells from c3t3 & outdated_cells
-    Cell_vector conflict_cells = get_conflict_zone(old_vertex, new_location);
-    remove_from_c3t3(conflict_cells);
-    std::for_each(conflict_cells.begin(),conflict_cells.end(),
-                  bl::bind(erase_cell, &outdated_cells, bl::_1) );
-    
-    // Move point
-    Vertex_handle new_vertex = move_point(old_vertex,new_location);
-    
-    // Get conflict zone in new triangulation and set cells outdated
-    Cell_vector new_conflict_cells = get_conflict_zone(new_vertex, old_point);
-    std::for_each(new_conflict_cells.begin(),new_conflict_cells.end(),
-                  bl::bind(insert_cell, &outdated_cells, bl::_1) );
-    
-    return new_vertex;
+    return move_point_topo_change(old_vertex,
+                                  new_location,
+                                  outdated_cells,
+                                  deleted_cells);
   }
-}  
+}
   
   
+template <typename C3T3, typename MD>
+template <typename OutdatedCellsOutputIterator,
+          typename DeletedCellsOutputIterator>
+typename C3T3_helpers<C3T3,MD>::Vertex_handle 
+C3T3_helpers<C3T3,MD>:: 
+move_point_topo_change(const Vertex_handle& old_vertex,
+                       const Point_3& new_location,
+                       OutdatedCellsOutputIterator outdated_cells,
+                       DeletedCellsOutputIterator deleted_cells)
+{
+  Cell_vector conflict_cells;
+  conflict_cells.reserve(64);
+  get_conflict_zone_topo_change(old_vertex, new_location,
+                                std::back_inserter(conflict_cells));
+  
+  return move_point_topo_change_conflict_zone_known(old_vertex,
+                                                    new_location,
+                                                    conflict_cells.begin(),
+                                                    conflict_cells.end(),
+                                                    outdated_cells,
+                                                    deleted_cells);
+}
+  
+
+template <typename C3T3, typename MD>
+template < typename ConflictCellsInputIterator,
+           typename OutdatedCellsOutputIterator,
+           typename DeletedCellsOutputIterator >
+typename C3T3_helpers<C3T3,MD>::Vertex_handle 
+C3T3_helpers<C3T3,MD>:: 
+move_point_topo_change_conflict_zone_known(
+    const Vertex_handle& old_vertex,
+    const Point_3& new_location,
+    ConflictCellsInputIterator conflict_cells_begin,
+    ConflictCellsInputIterator conflict_cells_end,
+    OutdatedCellsOutputIterator outdated_cells,
+    DeletedCellsOutputIterator deleted_cells)
+{
+  Point_3 old_location = old_vertex->point();
+  
+  // Remove conflict zone cells from c3t3 (cells will be destroyed)  
+  remove_cells_and_facets_from_c3t3(conflict_cells_begin, conflict_cells_end);
+  
+  // Move point
+  Vertex_handle new_vertex = move_point_topo_change(old_vertex,new_location);
+  
+  // If nothing changed, return
+  if ( Vertex_handle() == new_vertex )
+  {
+    std::copy(conflict_cells_begin,conflict_cells_end,outdated_cells);
+    return old_vertex;
+  }
+  
+  // Get conflict zone in new triangulation and set cells outdated
+  Cell_vector new_conflict_cells;
+  new_conflict_cells.reserve(64);
+  get_conflict_zone_topo_change(new_vertex, old_location,
+                                std::back_inserter(new_conflict_cells));
+  
+  std::copy(conflict_cells_begin,conflict_cells_end,deleted_cells);
+  std::copy(new_conflict_cells.begin(),new_conflict_cells.end(),outdated_cells);
+
+  return new_vertex;
+}
+
+
+template <typename C3T3, typename MD>
+typename C3T3_helpers<C3T3,MD>::Vertex_handle 
+C3T3_helpers<C3T3,MD>::
+move_point_topo_change(const Vertex_handle& old_vertex,
+                       const Point_3& new_location)
+{
+  // Insert new_vertex, remove old_vertex
+  int dimension = c3t3_.in_dimension(old_vertex);
+  Index vertice_index = c3t3_.index(old_vertex);
+  FT meshing_info = old_vertex->meshing_info();
+  
+  // insert new point
+  Vertex_handle new_vertex = tr_.insert(new_location,old_vertex->cell());
+  // If new_point is hidden, return default constructed handle
+  if ( Vertex_handle() == new_vertex ) { return Vertex_handle(); }
+  // remove old point
+  tr_.remove(old_vertex);
+  
+  c3t3_.set_dimension(new_vertex,dimension);
+  c3t3_.set_index(new_vertex,vertice_index);
+  new_vertex->set_meshing_info(meshing_info);
+  
+  return new_vertex;
+}
+  
+
+template <typename C3T3, typename MD>
+template <typename OutdatedCellsOutputIterator>
+typename C3T3_helpers<C3T3,MD>::Vertex_handle 
+C3T3_helpers<C3T3,MD>:: 
+move_point_no_topo_change(const Vertex_handle& old_vertex,
+                          const Point_3& new_location,
+                          OutdatedCellsOutputIterator outdated_cells)
+{
+  get_conflict_zone_no_topo_change(old_vertex, outdated_cells);
+  return move_point_no_topo_change(old_vertex, new_location);
+}
+
+
+template <typename C3T3, typename MD>
+typename C3T3_helpers<C3T3,MD>::Vertex_handle 
+C3T3_helpers<C3T3,MD>:: 
+move_point_no_topo_change(const Vertex_handle& old_vertex,
+                          const Point_3& new_location)
+{  
+  // Change vertex location
+  old_vertex->set_point(new_location);
+  return old_vertex;  
+}
+
+
 /**
  * @brief Returns the projection of \c p, using direction of 
  * \c projection_vector
@@ -1198,7 +1400,7 @@ min_incident_value(const Vertex_handle& vh,
   Cell_vector incident_cells;
   tr_.finite_incident_cells(vh,std::back_inserter(incident_cells));
   
-  return min_sliver_filter_value(incident_cells, criterion);
+  return min_sliver_in_c3t3_value(incident_cells, criterion);
 }
 
   
@@ -1241,9 +1443,7 @@ min_sliver_value(const Cell_vector& cells,
   
   if ( ! use_cache )
   { 
-    namespace bl = boost::lambda;
-    std::for_each(cells.begin(),cells.end(),
-                  bl::bind(&Cell::reset_cache_validity, *bl::_1) );
+    reset_cache_validity(cells.begin(),cells.end());
   }
   
   // Return min dihedral angle
@@ -1255,10 +1455,11 @@ min_sliver_value(const Cell_vector& cells,
   
   
 template <typename C3T3, typename MD>
-template <typename OutputIterator>
+template <typename InputIterator, typename OutputIterator>
 void
 C3T3_helpers<C3T3,MD>::
-fill_modified_vertices(const Cell_vector& cells,
+fill_modified_vertices(InputIterator cells_begin,
+                       InputIterator cells_end,
                        const Vertex_handle& vertex,
                        OutputIterator out) const
 {
@@ -1266,9 +1467,7 @@ fill_modified_vertices(const Cell_vector& cells,
   // Dont insert vertex in out
   already_inserted_vertices.insert(vertex);
   
-  for ( typename Cell_vector::const_iterator it = cells.begin();
-        it != cells.end() ;
-        ++it )
+  for ( InputIterator it = cells_begin ; it != cells_end ; ++it )
   {
     for ( int i=0 ; i<4 ; ++i )
     {
@@ -1287,24 +1486,31 @@ fill_modified_vertices(const Cell_vector& cells,
   
   
 template <typename C3T3, typename MD>
-typename C3T3_helpers<C3T3,MD>::Cell_vector
+template <typename OutputIterator>
+OutputIterator
 C3T3_helpers<C3T3,MD>::
-get_conflict_zone(const Vertex_handle& triangulation_vertex,
-                  const Point_3& conflict_point) const
+get_conflict_zone_no_topo_change(const Vertex_handle& vertex,
+                                 OutputIterator conflict_cells) const
+{  
+  return tr_.incident_cells(vertex,conflict_cells);
+}
+  
+template <typename C3T3, typename MD>
+template <typename OutputIterator>
+OutputIterator
+C3T3_helpers<C3T3,MD>::
+get_conflict_zone_topo_change(const Vertex_handle& vertex,
+                              const Point_3& conflict_point,
+                              OutputIterator conflict_cells) const
 {
   // Get triangulation_vertex incident cells
   Cell_vector incident_cells;
   incident_cells.reserve(64);
-  tr_.incident_cells(triangulation_vertex, std::back_inserter(incident_cells));
+  tr_.incident_cells(vertex, std::back_inserter(incident_cells));
   
   // Get conflict_point conflict zone
   Cell_vector deleted_cells;
-  Facet_vector internal_facets;
-  Facet_vector boundary_facets;
-  
   deleted_cells.reserve(64);
-  internal_facets.reserve(64);
-  boundary_facets.reserve(64);
   
   // Vertex removal is forbidden 
   int li=0;
@@ -1314,17 +1520,17 @@ get_conflict_zone(const Vertex_handle& triangulation_vertex,
                                 locate_type,
                                 li,
                                 lj,
-                                triangulation_vertex->cell());
+                                vertex->cell());
   
   if ( Tr::VERTEX == locate_type )
-    return Cell_vector();
+    return conflict_cells;
   
   // Find conflict zone
   tr_.find_conflicts(conflict_point,
                      cell,
-                     std::back_inserter(boundary_facets),
+                     CGAL::Emptyset_iterator(),
                      std::back_inserter(deleted_cells),
-                     std::back_inserter(internal_facets));
+                     CGAL::Emptyset_iterator());
   
   // Compute union of conflict_point conflict zone and triangulation_vertex
   // incident cells
@@ -1334,9 +1540,9 @@ get_conflict_zone(const Vertex_handle& triangulation_vertex,
   Cell_vector conflict_zone_cells;
   std::set_union(deleted_cells.begin(), deleted_cells.end(),
                  incident_cells.begin(), incident_cells.end(),
-                 std::back_inserter(conflict_zone_cells));
+                 conflict_cells);
   
-  return conflict_zone_cells;
+  return conflict_cells;
 }
   
   
@@ -1351,7 +1557,7 @@ get_surface_boundary(const Facet_vector& facets) const
   {
     if ( c3t3_.is_in_complex(*fit) )
     {
-      const Surface_index surface_index = c3t3_.surface_index(*fit);
+      const Surface_patch_index surface_index = c3t3_.surface_patch_index(*fit);
       const int k = fit->second;
       Vertex_handle v1 = fit->first->vertex((k+1)&3);
       Vertex_handle v2 = fit->first->vertex((k+2)&3);
@@ -1369,7 +1575,7 @@ get_surface_boundary(const Facet_vector& facets) const
         // fail (we know that this is not the case before)
         update_boundary(boundary,
                         Ordered_edge(Vertex_handle(),Vertex_handle()),
-                        Surface_index());
+                        Surface_patch_index());
         return boundary;
       }
       

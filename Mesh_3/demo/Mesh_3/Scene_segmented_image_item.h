@@ -15,7 +15,7 @@ class SCENE_SEGMENTED_IMAGE_ITEM_EXPORT Scene_segmented_image_item
   Q_OBJECT
 public:
 
-  Scene_segmented_image_item(Image* im);
+  Scene_segmented_image_item(Image* im, int drawing_scale);
   ~Scene_segmented_image_item();
 
   bool isFinite() const { return true; }
@@ -50,6 +50,7 @@ public:
 private:
   bool m_initialized;
   bool m_draw_edges;
+  int m_voxel_scale;
   GLuint m_vbo[3];
   GLuint m_ibo;
 };

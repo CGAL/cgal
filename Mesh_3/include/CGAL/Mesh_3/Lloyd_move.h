@@ -78,6 +78,11 @@ public:
       case 2:
         return lloyd_move_on_boundary(v,c3t3,sizing_field);
         break;
+      case 1:
+      case 0:
+        // Don't move edge or corner vertices
+        return CGAL::NULL_VECTOR;
+        break;
       default:
         // Should not happen
         CGAL_assertion(false);

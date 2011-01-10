@@ -28,6 +28,13 @@
 
 #include <CGAL/Regular_triangulation_cell_base_3.h>
 
+#ifdef _MSC_VER
+// Kill warning "C4351: new behavior: elements of array
+// 'CGAL::Mesh_3::Mesh_surface_cell_base_3<GT,MT,Cb>::surface_index_table_'
+// will be default initialized"
+#  pragma warning(disable:4351)
+#endif
+
 namespace CGAL {
 
 namespace Mesh_3 {
@@ -44,8 +51,8 @@ class Mesh_surface_cell_base_3
 {
 public:
   // Indices
-  typedef typename MT::Surface_index  Surface_index;
-  typedef typename MT::Index          Index;
+  typedef typename MT::Surface_patch_index  Surface_patch_index;
+  typedef typename MT::Index                Index;
 
   // Triangulation types
   typedef typename Cb::Triangulation_data_structure   Tds;
@@ -60,7 +67,6 @@ public:
     typedef typename Cb::template Rebind_TDS<TDS3>::Other Cb3;
     typedef Mesh_surface_cell_base_3 <GT, MT, Cb3> Other;
   };
-
 
   /// Constructors
   Mesh_surface_cell_base_3()
@@ -92,14 +98,14 @@ public:
   // Default copy constructor and assignment operator are ok
 
   /// Set surface index of \c facet to \c index
-  void set_surface_index(const int facet, const Surface_index& index)
+  void set_surface_patch_index(const int facet, const Surface_patch_index& index)
   {
     CGAL_precondition(facet>=0 && facet<4);
     surface_index_table_[facet] = index;
   }
 
   /// Returns surface index of facet \c facet
-  Surface_index surface_index(const int facet) const
+  Surface_patch_index surface_patch_index(const int facet) const
   {
     CGAL_precondition(facet>=0 && facet<4);
     return surface_index_table_[facet];
@@ -158,12 +164,29 @@ public:
   bool is_facet_on_surface(const int facet) const
   {
     CGAL_precondition(facet>=0 && facet<4);
-    return ( Surface_index() != surface_index_table_[facet]);
+    return ( Surface_patch_index() != surface_index_table_[facet]);
   }
+  
+  // -----------------------------------
+  // Backward Compatibility
+  // -----------------------------------
+#ifndef CGAL_MESH_3_NO_DEPRECATED_SURFACE_INDEX
+  typedef Surface_patch_index   Surface_index;
+  
+  void set_surface_index(const int facet, const Surface_index& index)
+  { set_surface_patch_index(facet,index); }
+  
+  /// Returns surface index of facet \c facet
+  Surface_index surface_index(const int facet) const
+  { return surface_patch_index(facet); }
+#endif // CGAL_MESH_3_NO_DEPRECATED_SURFACE_INDEX
+  // -----------------------------------
+  // End backward Compatibility
+  // -----------------------------------
 
 private:
   /// Stores surface_index for each facet of the cell
-  Surface_index surface_index_table_[4];
+  Surface_patch_index surface_index_table_[4];
   /// Stores surface center of each facet of the cell
   Point surface_center_table_[4];
   /// Stores surface center index of each facet of the cell
@@ -173,7 +196,46 @@ private:
 
 };  // end class Mesh_surface_cell_base_3
 
+#ifdef _MSC_VER
+#  pragma warning(default:4351)
+#endif
 
+template < class GT, class MT, class Cb >
+inline
+std::istream&
+operator>>(std::istream &is, Mesh_surface_cell_base_3<GT, MT, Cb> &c)
+{
+  typename Mesh_surface_cell_base_3<GT, MT, Cb>::Surface_patch_index index;
+  is >> static_cast<Cb&>(c);
+  for(int i = 0; i < 4; ++i)
+  {
+    if(is_ascii(is))
+      is >> index;
+    else
+    {
+      read(is, index);
+    }
+    c.set_surface_patch_index(i, index);
+  }
+  return is;
+}
+
+template < class GT, class MT, class Cb >
+inline
+std::ostream&
+operator<<(std::ostream &os,
+           const Mesh_surface_cell_base_3<GT, MT, Cb> &c)
+{
+  os << static_cast<const Cb&>(c);
+  for(int i = 0; i < 4; ++i)
+  {
+    if(is_ascii(os))
+      os << ' ' << c.surface_patch_index(i);
+    else
+      write(os, static_cast<int>(c.surface_patch_index(i)));
+  }
+  return os;
+}
 
 
 }  // end namespace Mesh_3

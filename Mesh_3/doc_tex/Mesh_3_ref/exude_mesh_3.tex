@@ -36,8 +36,8 @@ the  quality of the mesh improves.
 	template<typename C3T3>
         Mesh_optimization_return_code
         exude_mesh_3(C3T3& c3t3,
-                     double time_limit=0,
-                     double sliver_bound=0);}{
+                     double parameters::time_limit=0,
+                     double parameters::sliver_bound=0);}{
  \ccPrecond{\ccc{time_limit} $\geq$ 0 and 0 $\leq$ \ccc{sliver_bound} $\leq$ 180} }
 
 \ccParameters
@@ -49,7 +49,7 @@ reference, provides the initial mesh
 and is modified  by the algorithm 
 to represent the final optimized mesh.
 
-The function has two optional parameters which are named parameters (we use the Boost.Parameters library). 
+The function has two optional parameters which are named parameters (we use the Boost.Parameter library). 
 Therefore, when calling the function,  the parameters can be provided in any order 
 provided that the names of the parameters are used
  (see example at the bottom of this page). 
@@ -88,14 +88,6 @@ which is:
 the smallest dihedral angle of the set of cells incident to some vertex in the mesh.
 \end{itemize}
 
-\ccSeeAlso
-
-\ccc{Mesh_optimization_return_code} \\
-\ccc{make_mesh_3} \\
-\ccc{refine_mesh_3} \\
-\ccc{perturb_mesh_3} \\
-\ccc{lloyd_optimize_mesh_3} \\
-\ccc{odt_optimize_mesh_3} \\
 
 \ccExample
 
@@ -103,6 +95,15 @@ the smallest dihedral angle of the set of cells incident to some vertex in the m
 // Exude without sliver_bound, using at most 10s CPU time
 exude_mesh_3(c3t3, parameters::time_limit=10);
 \end{ccExampleCode}
+
+\ccSeeAlso
+
+\ccRefIdfierPage{CGAL::Mesh_optimization_return_code} \\
+\ccRefIdfierPage{CGAL::make_mesh_3} \\
+\ccRefIdfierPage{CGAL::refine_mesh_3} \\
+\ccRefIdfierPage{CGAL::perturb_mesh_3} \\
+\ccRefIdfierPage{CGAL::lloyd_optimize_mesh_3} \\
+\ccRefIdfierPage{CGAL::odt_optimize_mesh_3}
 
 
 \end{ccRefFunction}

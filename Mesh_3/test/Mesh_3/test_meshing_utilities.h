@@ -21,10 +21,13 @@
 // File Description : Test meshing utilities.
 //******************************************************************************
 
-#include <CGAL/Cartesian.h>
-#include <CGAL/Simple_cartesian.h>
+#ifndef CGAL_MESH_3_TEST_TEST_MESHING_UTILITIES
+#define CGAL_MESH_3_TEST_TEST_MESHING_UTILITIES
 
 #include "test_utilities.h"
+
+#include <CGAL/Mesh_complex_3_in_triangulation_3.h>
+#include <CGAL/Mesh_complex_3_in_triangulation_3.h>
 
 #include <CGAL/Mesh_criteria_3.h>
 #include <CGAL/make_mesh_3.h>
@@ -62,8 +65,8 @@ struct Tester
 
     // Store mesh properties
     size_type v = c3t3.triangulation().number_of_vertices();
-    size_type f = c3t3.number_of_facets();
-    size_type c = c3t3.number_of_cells();
+    size_type f = c3t3.number_of_facets_in_complex();
+    size_type c = c3t3.number_of_cells_in_complex();
 
     // Verify
     verify_c3t3(c3t3,
@@ -96,8 +99,8 @@ struct Tester
                     CGAL::parameters::no_reset_c3t3());
       
       v = c3t3.triangulation().number_of_vertices();
-      f = c3t3.number_of_facets();
-      c = c3t3.number_of_cells();      
+      f = c3t3.number_of_facets_in_complex();
+      c = c3t3.number_of_cells_in_complex();      
     }
     assert ( n < 11 );
 #endif
@@ -152,25 +155,25 @@ struct Tester
     //-------------------------------------------------------
     // Verifications
     //-------------------------------------------------------
-    std::cerr << "\tNumber of cells: " << c3t3.number_of_cells() << "\n";
-    std::cerr << "\tNumber of facets: " << c3t3.number_of_facets() << "\n";
-    std::cerr << "\tNumber of vertices: " << c3t3.number_of_vertices() << "\n";
+    std::cerr << "\tNumber of cells: " << c3t3.number_of_cells_in_complex() << "\n";
+    std::cerr << "\tNumber of facets: " << c3t3.number_of_facets_in_complex() << "\n";
+    std::cerr << "\tNumber of vertices: " << c3t3.triangulation().number_of_vertices() << "\n";
         
-    std::size_t dist_facets ( std::distance(c3t3.facets_begin(), 
-                                            c3t3.facets_end()) );
-    std::size_t dist_cells ( std::distance(c3t3.cells_begin(), 
-                                            c3t3.cells_end()) );
+    std::size_t dist_facets ( std::distance(c3t3.facets_in_complex_begin(), 
+                                            c3t3.facets_in_complex_end()) );
+    std::size_t dist_cells ( std::distance(c3t3.cells_in_complex_begin(), 
+                                            c3t3.cells_in_complex_end()) );
 
-    assert(min_vertices_expected <= c3t3.number_of_vertices());
-    assert(max_vertices_expected >= c3t3.number_of_vertices());
+    assert(min_vertices_expected <= c3t3.triangulation().number_of_vertices());
+    assert(max_vertices_expected >= c3t3.triangulation().number_of_vertices());
 
-    assert(min_facets_expected <= c3t3.number_of_facets());
-    assert(max_facets_expected >= c3t3.number_of_facets());
-    assert(dist_facets == c3t3.number_of_facets());
+    assert(min_facets_expected <= c3t3.number_of_facets_in_complex());
+    assert(max_facets_expected >= c3t3.number_of_facets_in_complex());
+    assert(dist_facets == c3t3.number_of_facets_in_complex());
     
-    assert(min_cells_expected <= c3t3.number_of_cells());
-    assert(max_cells_expected >= c3t3.number_of_cells());
-    assert(dist_cells == c3t3.number_of_cells());
+    assert(min_cells_expected <= c3t3.number_of_cells_in_complex());
+    assert(max_cells_expected >= c3t3.number_of_cells_in_complex());
+    assert(dist_cells == c3t3.number_of_cells_in_complex());
   }
   
   template<typename C3t3>
@@ -191,13 +194,13 @@ struct Tester
   {
     typedef typename C3t3::Triangulation::Geom_traits                 Gt;
     typedef typename CGAL::Mesh_3::Min_dihedral_angle_criterion<Gt>   Criterion;
-    typedef typename C3t3::Cell_iterator                              Cell_iterator;
+    typedef typename C3t3::Cells_in_complex_iterator                  Cell_iterator;
     
     Criterion criterion;
     double min_value = Criterion::max_value;
     
-    for ( Cell_iterator cit = c3t3.cells_begin(), end = c3t3.cells_end() ;
-         cit != end ; ++cit )
+    for ( Cell_iterator cit = c3t3.cells_in_complex_begin(),
+         end = c3t3.cells_in_complex_end() ; cit != end ; ++cit )
     {
       min_value = (std::min)(min_value, criterion(c3t3.triangulation().tetrahedron(cit)));
     }
@@ -206,3 +209,4 @@ struct Tester
   }
 };
 
+#endif // CGAL_MESH_3_TEST_TEST_MESHING_UTILITIES

@@ -19,10 +19,12 @@
 
 \ccDefinition
   
-The class \ccRefName\ is a model of \ccc{MeshFacetCriteria_3}. It provides
-a uniform  bound for the size criterion and/or 
-for the shape criterion s  and/or
-for thw  approximation error criterion.
+The class \ccRefName\ is a model of \ccc{MeshFacetCriteria_3}. 
+It provides a uniform  bound for the shape criterion,
+a uniform or variable sizing field
+for the size criterion and/or 
+a uniform or variable distance field
+for the  approximation error criterion.
 
 
 % \begin{itemize}
@@ -55,7 +57,7 @@ The parameter \ccc{Tr} must be identical to the nested type
 
 \ccTypes
 
-\ccTypedef{typedef Tr::FT FT;}{Numerical type}
+\ccTypedef{typedef Tr::Geom_traits::FT FT;}{Numerical type}
 
 \ccCreation
 \ccCreationVariable{mfc}  %% choose variable name
@@ -63,24 +65,40 @@ The parameter \ccc{Tr} must be identical to the nested type
 \ccConstructor{Mesh_facet_criteria_3(
   FT angle_bound,
   FT radius_bound,
-  FT distance_bound);}
-{Returns an object to serve as default criteria for facets. The argument 
+  FT distance_bound,
+  Mesh_facet_topology topology = FACET_VERTICES_ON_SURFACE);}
+{Returns an object to serve as criteria for facets. The argument 
 \ccc{angle_bound} is the lower bound for the angle in degrees of the
 surface mesh facets. The argument \ccc{radius_bound} is a uniform upper bound
 for the radius of the surface Delaunay balls. The argument
 \ccc{distance_bound} is an upper bound for the center-center distances
-of the surface mesh facets. See
+of the surface mesh facets. \ccc{topology} is the set of topological constraints
+which have to be verified by each surface facet. See
 section~\ref{introsec:param} for further details.
 Note that if one parameter is set to 0, then its corresponding criteria is ignored.}
+
+\ccConstructor{
+	template <class SizingField, class DistanceField>
+	Mesh_facet_criteria_3(
+  FT angle_bound,
+  SizingField radius_bound,
+  DistanceField distance_bound,
+  Mesh_facet_topology topology = FACET_VERTICES_ON_SURFACE);}
+{Returns an object to serve as criteria for facets. The types \ccc{SizingField} and
+\ccc{DistanceField} must
+be models of the concept \ccc{MeshDomainField_3}. The behavior and semantic of the arguments are the same 
+as above, except that the radius and distance bound parameters are functionals instead of constants.}
 
 
 
 \ccSeeAlso
 
-\ccc{MeshCriteria_3} \\
-\ccc{MeshFacetCriteria_3} \\
-\ccc{Mesh_criteria_3<Tr>} \\
-\ccc{make_mesh_3}
+\ccRefIdfierPage{CGAL::Mesh_facet_topology} \\
+\ccRefConceptPage{MeshCriteria_3} \\
+\ccRefConceptPage{MeshFacetCriteria_3} \\
+\ccRefConceptPage{Mesh_criteria_3<Tr>} \\
+\ccRefConceptPage{MeshDomainField_3} \\
+\ccRefIdfierPage{CGAL::make_mesh_3}
 
 
 

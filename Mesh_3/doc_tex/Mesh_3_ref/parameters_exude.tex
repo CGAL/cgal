@@ -19,7 +19,7 @@
 
 \ccDefinition
   
-The function \ccRefName\ allows the user to trigger a call to \ccc{make_mesh_3} in
+The function \ccRefName\ allows the user to trigger a call to \ccc{exude_mesh_3} in the
 \ccc{make_mesh_3} and \ccc{refine_mesh_3} mesh generation functions.
 It also allows the user to pass parameters
 to the optimization function \ccc{exude_mesh_3} through these mesh generation functions.
@@ -28,8 +28,8 @@ to the optimization function \ccc{exude_mesh_3} through these mesh generation fu
 \ccInclude{CGAL/refine_mesh_3.h}
 
 \ccGlobalFunction{parameters::internal::Exude parameters::exude(
-  double time_limit = 0, 
-  double sliver_bound = 0);}
+  double parameters::time_limit = 0, 
+  double parameters::sliver_bound = 0);}
 
 \ccParameters
 
@@ -38,12 +38,6 @@ name and the same default values) as the parameters of \ccc{exude_mesh_3}
 function. See its manual page for further details.
 
 
-\ccSeeAlso
-
-\ccc{no_exude} \\
-\ccc{exude_mesh_3} \\
-\ccc{make_mesh_3} \\
-\ccc{refine_mesh_3} 
 
 
 \ccExample
@@ -53,6 +47,13 @@ function. See its manual page for further details.
 C3t3 c3t3 = make_mesh_3<c3t3>(domain, criteria, parameters::exude());
 refine_mesh_3(c3t3, domain, criteria, parameters::exude(parameters::time_limit=10));
 \end{ccExampleCode}
+
+\ccSeeAlso
+
+\ccRefIdfierPage{CGAL::no_exude} \\
+\ccRefIdfierPage{CGAL::exude_mesh_3} \\
+\ccRefIdfierPage{CGAL::make_mesh_3} \\
+\ccRefIdfierPage{CGAL::refine_mesh_3} 
 
 
 \end{ccRefFunction}

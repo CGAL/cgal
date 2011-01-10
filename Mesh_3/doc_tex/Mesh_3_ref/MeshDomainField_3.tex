@@ -1,0 +1,63 @@
+% +------------------------------------------------------------------------+
+% | Reference manual page: MeshDomainField_3.tex
+% +------------------------------------------------------------------------+
+% | 28.07.2009   Stephane Tayeb
+% | Package: Mesh_3
+% |
+\RCSdef{\RCSMeshDomainFieldRev}{$Id$}
+\RCSdefDate{\RCSMeshDomainFieldDate}{$Date$}
+% |
+\ccRefPageBegin
+%%RefPage: end of header, begin of main body
+% +------------------------------------------------------------------------+
+
+
+\begin{ccRefFunctionObjectConcept}{MeshDomainField_3}
+
+%% \ccHtmlCrossLink{}     %% add further rules for cross referencing links
+%% \ccHtmlIndexC[concept]{} %% add further index entries
+
+\ccDefinition
+  
+The concept \ccRefName\ describes a scalar field which could be queried
+at any point of the space. 
+
+
+
+\ccTypes
+
+\ccNestedType{FT}{Numerical type.}
+\ccNestedType{Point_3}{Point type.}
+\ccNestedType{Index}{Index type for points. Must match the type \ccc{MeshDomain_3::Index}.}
+
+\ccCreationVariable{msf}  %% choose variable name
+\ccOperations
+The  \ccc{operator()} returns the field value at a query point.
+The field  value may depend  on the query point location and/or
+on the input feature including the query point.
+
+\ccMethod{FT operator()(const Point_3& p, int dimension, const Index& index) const;}{
+returns the value of the sizing field at the point \ccc{p}, 
+assumed to be included in the input complex feature with  dimension \ccc{dimension}
+and mesh vertex index \ccc{index}.}
+
+\ccHasModels
+
+\ccc{Mesh_constant_field_3<Gt,Index>}
+
+\ccSeeAlso
+\ccRefConceptPage{MeshDomain_3} \\
+\ccRefConceptPage{MeshDomainWithFeatures_3} \\
+\ccRefIdfierPage{CGAL::Mesh_edge_criteria_3<Tr>} \\
+\ccRefIdfierPage{CGAL::Mesh_facet_criteria_3<Tr>} \\
+\ccRefIdfierPage{CGAL::Mesh_cell_criteria_3<Tr>} \\
+
+
+\end{ccRefFunctionObjectConcept}
+
+% +------------------------------------------------------------------------+
+%%RefPage: end of main body, begin of footer
+\ccRefPageEnd
+% EOF
+% +------------------------------------------------------------------------+
+

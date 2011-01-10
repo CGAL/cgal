@@ -24,7 +24,6 @@
 #include <CGAL/Kernel_traits.h>
 
 #include <CGAL/Regular_triangulation_3.h>
-#include <CGAL/Regular_triangulation_filtered_traits_3.h>
 #include <CGAL/Regular_triangulation_euclidean_traits_3.h>
 #include <CGAL/Mesh_3/Robust_weighted_circumcenter_filtered_traits_3.h>
 

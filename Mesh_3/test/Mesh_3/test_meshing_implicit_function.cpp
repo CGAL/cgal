@@ -51,7 +51,7 @@ struct Implicit_tester : public Tester<K>
     
     typedef typename K::Sphere_3 Sphere_3;
     
-    typedef typename Mesh_domain::Surface_index Surface_index;
+    typedef typename Mesh_domain::Surface_patch_index Surface_patch_index;
     
     //-------------------------------------------------------
     // Data generation
@@ -76,7 +76,7 @@ struct Implicit_tester : public Tester<K>
     C3t3 c3t3;
     c3t3.insert_surface_points(initial_points.begin(),
                                initial_points.end(),
-                               domain.index_from_surface_index(Surface_index(0,1)));
+                               domain.index_from_surface_patch_index(Surface_patch_index(0,1)));
     
     CGAL::refine_mesh_3(c3t3, domain, criteria,
                         CGAL::parameters::no_exude(),
@@ -90,47 +90,9 @@ struct Implicit_tester : public Tester<K>
 
 int main()
 {
-  std::cerr << "TESTING WITH Exact_predicates_inexact_constructions_kernel...\n";
   Implicit_tester<K_e_i> test_epic;
   std::cerr << "Mesh generation from an implicit function:\n";
   test_epic.implicit();
   
-//  std::cerr << "TESTING WITH Filtered_kernel<Cartesian<float> > kernel...\n";
-//  Implicit_tester<Filtered_kernel<CGAL::Cartesian<float> > > test_cf;
-//  std::cerr << "Mesh generation from an implicit function:\n";
-//  test_cf.implicit();
-  
   return EXIT_SUCCESS;
-
-   
-  //  std::cerr << "TESTING WITH Filtered_kernel<Simple_cartesian<float> > kernel...\n";
-  //  Tester<Filtered_kernel<CGAL::Simple_cartesian<float> > > test_scf;
-  //  std::cerr << "Mesh generation from a polyhedron:\n";
-  //  test_scf.polyhedron();
-  //  std::cerr << "Mesh generation from an implicit function:\n";
-  //  test_scf.implicit();
-  //
-  //  std::cerr << "TESTING WITH Filtered_kernel<Cartesian<float> > kernel...\n";
-  //  Tester<Filtered_kernel<CGAL::Cartesian<float> > > test_cf;
-  //  std::cerr << "Mesh generation from a polyhedron:\n";
-  //  test_cf.polyhedron();
-  //  std::cerr << "Mesh generation from an implicit function:\n";
-  //  test_cf.implicit();
-  //
-  //  std::cerr << "TESTING WITH Filtered_kernel<Cartesian<double> > kernel...\n";
-  //  Tester<Filtered_kernel<CGAL::Cartesian<double> > > test_cd;
-  //  std::cerr << "Mesh generation from a polyhedron:\n";
-  //  test_cd.polyhedron();
-  //  std::cerr << "Mesh generation from an implicit function:\n";
-  //  test_cd.implicit();
-  
-  //  std::cerr << "\nTESTING WITH Exact_predicates_exact_constructions_kernel...\n";
-  //  Tester<K_e_e> test_epec;
-  //  std::cerr << "Mesh generation from a polyhedron:\n";
-  //  test_epec.polyhedron();
-  //  std::cerr << "Mesh generation from an implicit function:\n";
-  //  test_epec.implicit();
-  //  std::cerr << "Mesh generation from a 3D image:\n";
-  //  test_epec.image();
-  
 }

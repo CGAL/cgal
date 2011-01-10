@@ -23,10 +23,17 @@ The concept \ccRefName\ describes the  requirements
 for the \ccc{Cell} type  of the triangulation
 used in the 3D mesh generation process. The type \ccRefName\
 refines the concept \ccc{RegularTriangulationCellBase_3}.
-As a \cgal{} 3D triangulation triangulates the whole convex hull of its vertices,
-it is needed to specify whether a given cell of the triangulation
-is inside the domain or not and which subdomain it belongs to
-in case of a multi-domain. 
+The concept  \ccRefName\ 
+includes a way to store and retrieve 
+if a given cell of the triangulation
+is inside the domain or not 
+and which subdomain it belongs to
+in case of a multi-domain.
+% As a \cgal{} 3D triangulation triangulates the whole convex hull of its vertices,
+% it is needed 
+% to specify whether a given cell of the triangulation
+% is inside the domain or not and which subdomain it belongs to
+% in case of a multi-domain. 
 
 Moreover, this concept adds four markers per cell to mark the facets
 of the triangulation that are surface facets,
@@ -60,11 +67,11 @@ of the 3D triangulation in which the mesh is embedded.}
 %   be the label of the exterior of the domain (which contains at least the
 %   unbounded component).}
 
-% \ccNestedType{Surface_index}{Type of indices for surface patches of the
+% \ccNestedType{Surface_patch_index}{Type of indices for surface patches of the
 %   input complex. Must be a model of CopyConstructible,
 %   Assignable, DefaultConstructible and EqualityComparable.
 % This type must be convertible 
-% to the nested type \ccc{MeshDomain_3::Surface_index}. The default constructed
+% to the nested type \ccc{MeshDomain_3::Surface_patch_index}. The default constructed
 % value must be different from values taken by indices of surface facets,
 % as it may be used to
 % distinguish between a surface facet and an internal (or outside) one.}
@@ -72,8 +79,8 @@ of the 3D triangulation in which the mesh is embedded.}
 \ccNestedType{Subdomain_index;}
 {Type of indices for cells of the input complex. Must match the type \ccc{MeshDomain_3::Subdomain_index}.}
 \ccGlue
-\ccNestedType{Surface_index;}
-{Type of indices for surface patches of the input complex. Must match the type \ccc{MeshDomain_3::Surface_index}.}
+\ccNestedType{Surface_patch_index;}
+{Type of indices for surface patches of the input complex. Must match the type \ccc{MeshDomain_3::Surface_patch_index}.}
 
 \ccCreationVariable{cell}  %% choose variable name
 
@@ -91,20 +98,27 @@ of the 3D triangulation in which the mesh is embedded.}
 {returns \ccc{true} iff \ccc{facet(i)} is a surface facet. }
 \ccGlue
 \ccMethod
-{void set_facet_on_surface(int i, Surface_index index);}
-{Sets \ccc{facet(i)} as a surface facet  iff \ccc{index} is
-  different from \ccc{Surface_index} default value.}
+{Surface_patch_index surface_patch_index(int i);}
+{returns \ccc{Surface_patch_index} of facet \ccc{i}.}
+\ccGlue
+\ccMethod
+{void set_surface_patch_index(int i, Surface_patch_index index);}
+{sets \ccc{Surface_patch_index} of facet \ccc{i} to \ccc{index}.}
+%{void set_facet_on_surface(int i, Surface_patch_index index);}
+%{Sets \ccc{facet(i)} as a surface facet  iff \ccc{index} is
+%  different from \ccc{Surface_patch_index} default value.}
 
 \ccMethod
 {bool is_facet_visited (int i);}
 {Returns \ccc{true} iff \ccc{facet(i)} has been visited.}
 \ccGlue
 \ccMethod
-{void set_facet_visited (int i);} 
-{Marks \ccc{facet(i)} as visited.}
+{void set_facet_visited (int i, bool b);} 
+{Marks \ccc{facet(i)} as visited if \ccc{b} is \ccc{true}
+ and non-visited otherwise.}
 
 \ccMethod
-{const Point& get_facet_surface_center(int i);}
+{const Point& facet_surface_center(int i);}
 {Returns a const reference to the surface center of \ccc{facet(i)}.}
 \ccGlue
 \ccMethod
@@ -118,9 +132,9 @@ of the 3D triangulation in which the mesh is embedded.}
 
 \ccSeeAlso
 
-\ccc{make_mesh_3} \\
-\ccc{MeshDomain_3} \\
-\ccc{Complex_3InTriangulation_3}
+\ccRefIdfierPage{CGAL::make_mesh_3} \\
+\ccRefConceptPage{MeshDomain_3} \\
+\ccRefConceptPage{Complex_3InTriangulation_3}
 
 \end{ccRefConcept}
 

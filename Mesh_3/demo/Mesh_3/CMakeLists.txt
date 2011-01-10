@@ -16,6 +16,11 @@ endif(COMMAND cmake_policy)
 # Include this package's headers first
 include_directories( BEFORE ./ ./include ../../include )
 
+# Disable deprecated Mesh_3 names
+add_definitions(-DCGAL_MESH_3_NO_DEPRECATED_SURFACE_INDEX
+                -DCGAL_MESH_3_NO_DEPRECATED_C3T3_ITERATORS)
+
+
 # Add specific Find.cmake modules
 set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} ${CMAKE_CURRENT_SOURCE_DIR}/cmake/modules )
 
@@ -64,6 +69,7 @@ if(CGAL_Qt4_FOUND AND QT4_FOUND AND OPENGL_FOUND AND QGLVIEWER_FOUND)
   qt4_wrap_ui( optimUI_FILES  ui_files/Smoother_dialog.ui ui_files/LocalOptim_dialog.ui)
   qt4_wrap_ui( ribUI_FILES  ui_files/Rib_dialog.ui)
   qt4_wrap_ui( funcUI_FILES  ui_files/Function_dialog.ui)
+  qt4_wrap_ui( imgUI_FILES ui_files/Image_res_dialog.ui)
 
   include(AddFileDependencies)
 
@@ -206,7 +212,7 @@ if(CGAL_Qt4_FOUND AND QT4_FOUND AND OPENGL_FOUND AND QGLVIEWER_FOUND)
   endmacro(polyhedron_demo_plugin)
 
   set(IO_IMAGE_PLUGIN_LIB "${MESH_3_LIB_PREFIX}io_image_plugin")
-  polyhedron_demo_plugin(${IO_IMAGE_PLUGIN_LIB} Io_image_plugin)
+  polyhedron_demo_plugin(${IO_IMAGE_PLUGIN_LIB} Io_image_plugin ${imgUI_FILES})
   target_link_libraries(${IO_IMAGE_PLUGIN_LIB} ${SCENE_SEGMENTED_IMAGE_ITEM_LIB})
 
   if(GLEW_FOUND)

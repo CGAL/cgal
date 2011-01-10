@@ -1,0 +1,66 @@
+% +------------------------------------------------------------------------+
+% | Reference manual page: parameters_no_features.tex
+% +------------------------------------------------------------------------+
+% | 21.06.2010   Mariette Yvinec
+% | Package: Mesh_3
+% |
+\RCSdef{\RCSparametersnofeaturesRev}{$Id$}
+\RCSdefDate{\RCSparametersnofeaturesDate}{$Date$}
+% |
+\ccRefPageBegin
+%%RefPage: end of header, begin of main body
+% +------------------------------------------------------------------------+
+
+
+\begin{ccRefFunction}{parameters::no_features}  %% add template arg's if necessary
+
+%% \ccHtmlCrossLink{}     %% add further rules for cross referencing links
+%% \ccHtmlIndexC[function]{} %% add further index entries
+
+\ccDefinition
+  
+The function \ccRefName\ allows the user to prevent the handling 
+of $0$ and $1$ dimensional features. This is useful when the
+domain  is a model of  \ccc{MeshDomainWithFeatures_3}
+and the user does not want corners and curve segments
+ to be accurately represented
+in the mesh.
+
+
+\ccInclude{CGAL/refine_mesh_3.h}
+
+\ccGlobalFunction{Features parameters::no_features();}
+{Return a \ccc{Features} value that prevents the mesh generator
+to take into account  $0$ and $1$-dimensional input features.}
+
+
+\ccSeeAlso
+
+\ccRefIdfierPage{CGAL::make_mesh_3}, \\
+\ccRefIdfierPage{CGAL::refine_mesh_3}, \\
+\ccRefIdfierPage{CGAL::parameters::features}.
+
+% \ccExample
+
+% A short example program.
+% Instead of a short program fragment, a full running program can be
+% included using the 
+% \verb|\ccIncludeExampleCode{Package/parameters_no_features.C}| 
+% macro. The program example would be part of the source code distribution and
+% also part of the automatic test suite.
+
+% \begin{ccExampleCode}
+% void your_example_code() {
+% }
+% \end{ccExampleCode}
+
+%% \ccIncludeExampleCode{Package/parameters_no_features.C}
+
+\end{ccRefFunction}
+
+% +------------------------------------------------------------------------+
+%%RefPage: end of main body, begin of footer
+\ccRefPageEnd
+% EOF
+% +------------------------------------------------------------------------+
+

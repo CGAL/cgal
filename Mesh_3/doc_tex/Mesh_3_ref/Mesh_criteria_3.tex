@@ -19,16 +19,25 @@
 
 \ccDefinition
   
-The class \ccRefName\ is a model of \ccc{MeshCriteria_3}. 
-It gathers the criteria for  facets in the boundary surface meshes
-and for mesh tetrahedra.
+The class \ccRefName\ is a model of both concepts \ccc{MeshCriteria_3}
+and \ccc{MeshCriteriaWithFeatures_3}.
+It gathers the refinement criteria for mesh tetrahedra and
+surface facets where 
+surface facets  are facets in the mesh approximating the domain surface patches.
+In addition, for domain with exposed 1-dimensional features, 
+the class  \ccRefName\ 
+ handles the definition of  a sizing field to guide the discretization of 
+ 1-dimensional features.
 
 \ccInclude{CGAL/Mesh_criteria_3.h}
 
 \ccParameters
-The parameter \ccc{Tr} must be identical to the nested type
-\ccc{Triangulation} of the instance used as model of
-\ccc{MeshComplex_3InTriangulation_3}.
+The parameter \ccc{Tr} has to be instantiated with the type used for
+\ccc{C3T3::Triangulation},  
+where \ccc{C3T3} is the model of \ccc{MeshComplex_3InTriangulation_3}
+used in the mesh generation process,
+and  \ccc{C3T3::Triangulation} its nested triangulation type.
+
 
 \ccIsModel
 \ccc{MeshCriteria_3}
@@ -36,6 +45,9 @@ The parameter \ccc{Tr} must be identical to the nested type
 
 \ccTypes
 
+\ccTypedef{typedef Mesh_edge_criteria_3<Tr>
+  Edge_criteria;}{The criteria for edges.}
+\ccGlue
 \ccTypedef{typedef Mesh_facet_criteria_3<Tr>
   Facet_criteria;}{The criteria for facets.}
 \ccGlue
@@ -49,52 +61,138 @@ The parameter \ccc{Tr} must be identical to the nested type
 \ccConstructor{Mesh_criteria_3(
          Facet_criteria facet_criteria,
          Cell_criteria  cell_criteria);}
-{Construction from facet and cell criteria.}
+{Construction from facet and cell criteria. The edge criteria are ignored
+in this case.}
 
 \ccConstructor{Mesh_criteria_3(
-         double facet_angle=0,
-         double facet_size=0,
-         double facet_distance=0,
-         double cell_radius_edge=0,
-         double cell_size=0);}
-{Construction from facet and cell parameters. This constructor uses named
-  parameters (from \emph{boost::parameters}) for convenient criteria
-  construction. Parameters \ccc{facet_*} corresponds to the parameters of
-  \ccc{Mesh_facet_criteria_3<Tr>} and parameters \ccc{cell_*} corresponds to the parameters of
-  \ccc{Mesh_cell_criteria_3<Tr>}. They can be passed in any order provided
-  their name is given. The naming of these parameters
-  is the following: each argument \ccc{argument_name} of the
-  constructor is named \ccc{parameters::argument_name} 
- (e.g. \ccc{parameters::facet_angle} for \ccc{facet_angle}). The
- default values are such that the corresponding criterion is
- ignored if one parameter is not set (e.g. if \ccc{parameters::facet_angle} is
- not given, facet angular bound criterion is ignored).}
+				 Edge_criteria edge_criteria,
+         Facet_criteria facet_criteria,
+         Cell_criteria  cell_criteria);}
+{Construction from edge, facet and cell criteria.}
+
+\ccConstructor{
+template<typename FT,
+         typename ...Fieldi>
+%         typename Field2,
+%         typename Field3,
+%         typename Field4,
+%         typename Field5,
+%         typename Field6>
+Mesh_criteria_3(
+         Field1 parameters::edge_size = ignored,
+         FT parameters::facet_angle = ignored,
+         Field2 parameters::facet_size = ignored,
+         Field3 parameters::facet_distance = ignored,
+         Mesh_facet_topology parameters::facet_topology = CGAL::FACET_VERTICES_ON_SURFACE,
+         FT parameters::cell_radius_edge_ratio = ignored,
+         Field4 parameters::cell_size = ignored);}
+%         Field1 parameters::edge_sizing_field = ignored,
+%         Field2 parameters::edge_distance_field = ignored,
+%         Field3 parameters::facet_sizing_field = ignored,
+%         Field4 parameters::facet_distance_field = ignored,
+%         Field5 parameters::cell_sizing_field = ignored,
+%         Field6 parameters::sizing_field = ignored,
+%         Field7 parameters::distance_field = ignored);}
+{Construction from  criteria  parameters. This constructor uses named
+  parameters (from \emph{Boost.Parameter}) for convenient criteria
+  construction. See a complete description of these parameters below.}
+
+The template parameter \ccc{FT} should be a model of concept \ccc{FieldType}. 
+The template parameters  \ccc{Fieldi} ($i\in\{1..4\}$) should be either a model
+of the concept \ccc{FieldType} or a model of the concept \ccc{MeshDomainField_3}.
+
+The parameters are named parameters 
+and can be passed in any order provided their name is given (see example below).
+The name of each parameter is the one that is written in the description of
+the function (e.g. \ccc{parameters::facet_size}).
 
 
-\ccSeeAlso
 
-\ccc{MeshCriteria_3} \\
-\ccc{MeshCellCriteria_3} \\
-\ccc{MeshFacetCriteria_3}\\
-\ccc{Mesh_cell_criteria_3<Tr>} \\
-\ccc{Mesh_facet_criteria_3<Tr>}
+The description of each parameter is as follows:
 
+%-\ccc{edge_size}: a uniform  upper bound for the lengths of curve segment edges.\\
+-\ccc{edge_size}: a scalar field (resp. a constant) providing a space varying 
+  (resp. a uniform)
+  upper bound for the lengths of curve segment edges.
+%-\ccc{edge_distance}: a uniform upper bound for the distance between the
+%center of a  curve segment edge and the corresponding curve segment.\\
+%-\ccc{edge_distance_field}: a scalar field  describing  a space varying
+%  upper bound for the same distance.\\
+
+-\ccc{facet_angle}: a lower bound for the angles (in degrees) of the
+surface mesh facets.\\
+%-\ccc{facet_size}: a uniform upper bound for the radii of the surface Delaunay balls.\\
+-\ccc{facet_size}: a scalar field (resp. a constant) describing
+ a space varying (resp. a uniform) upper-bound or for the radii of the surface Delaunay balls. \\
+%-\ccc{facet_distance}: a uniform upper bound for the distance between the center
+%of a surface  facet  and the center of its surface Delaunay ball.\\
+-\ccc{facet_distance}: a scalar field (resp. a constant) describing a space varying (resp. a uniform)
+  upper bound for the same distance. \\
+-\ccc{facet_topology}: the set of topological constraints
+	which have to be verified by each surface facet. The default value is 
+	\ccc{CGAL::FACET_VERTICES_ON_SURFACE}. See \ccc{Mesh_facet_topology} manual page to
+	get all possible values.
+
+-\ccc{cell_radius_edge_ratio}: an upper bound for the radius-edge ratio of the  mesh tetrahedra.\\
+%-\ccc{cell_size}: a uniform  upper bound for the circumradii of the  mesh tetrahedra.\\
+-\ccc{cell_size}: a scalar field (resp. a constant) describing
+ a space varying (resp. a uniform) upper-bound for the circumradii of the  mesh tetrahedra.
+
+%-\ccc{sizing_field}: a unique scalar field to be used as a space varying upper bound
+%for the lengths of curve segment edges, the circumradii of surface Delaunay balls
+%and the circumradii of the  mesh tetrahedra. \\
+%-\ccc{distance_field}:  a unique scalar field to be used as a space varying upper bound
+%for the distances between centers of a  curve segment edge and the corresponding curve segments,
+%and for the distances between the centers
+%of surface  facets  and the centers of their surface Delaunay ball.
+
+
+Note that each size or distance parameter can be specified using two ways: either as 
+scalar field or as a numerical value when the field is uniform.
+%If both a  numerical value and  a scalar field are provided, only the numerical value
+%is taken into account.
+
+%The last two parameters \ccc{sizing_field} and \ccc{distance_field} are provided
+%for convenience. They allow the user to set a unique sizing field 
+%(resp. a unique  distance field)  to act on mesh faces of all dimensions.
+% If both the specialized parameter 
+%(e.g. \ccc{facet_sizing_field}) and the global parameter (e.g. \ccc{sizing_field}) are
+%specified, then the specialized parameter is prioritized.
+
+Each parameter has a special default value \ccc{ignored} which means that the 
+corresponding criteria will be ignored.
+ Numerical sizing or distance values, as well as scalar fields
+should be given in the unit used  for coordinates of points in the mesh domain class
+of the mesh generation process.
 
 \ccExample
 
 \begin{ccExampleCode}
-// Create a Mesh_criteria_3<Tr> object with all parameters set
+// Create a Mesh_criteria_3<Tr> object with all cell and facet parameters set
 Mesh_criteria_3<Tr> criteria (parameters::facet_angle=30,
                               parameters::facet_size=1,
                               parameters::facet_distance=0.1,
-                              parameters::cell_radius_edge=2,
+                              parameters::cell_radius_edge_ratio=2,
                               parameters::cell_size=1.5);
 
 // Create a Mesh_criteria_3<Tr> object with size ignored (note that the order changed)
-Mesh_criteria_3<Tr> criteria (parameters::cell_radius_edge=2,
+Mesh_criteria_3<Tr> criteria (parameters::cell_radius_edge_ratio=2,
                               parameters::facet_angle=30,
                               parameters::facet_distance=0.1);
 \end{ccExampleCode}
+
+\ccSeeAlso
+
+\ccRefConceptPage{MeshCriteria_3} \\
+\ccRefConceptPage{MeshCriteriaWithFeatures_3}\\
+\ccRefConceptPage{MeshCellCriteria_3} \\
+\ccRefConceptPage{MeshEdgeCriteria_3} \\
+\ccRefConceptPage{MeshFacetCriteria_3}\\
+\ccRefConceptPage{MeshDomainField_3}\\
+\ccRefIdfierPage{CGAL::Mesh_cell_criteria_3<Tr>} \\
+\ccRefIdfierPage{CGAL::Mesh_edge_criteria_3<Tr>} \\
+\ccRefIdfierPage{CGAL::Mesh_facet_criteria_3<Tr>} \\
+\ccRefIdfierPage{CGAL::Mesh_facet_topology}
 
 
 %% \ccIncludeExampleCode{Package/Mesh_criteria_3.C}

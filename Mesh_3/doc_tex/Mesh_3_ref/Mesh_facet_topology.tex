@@ -1,0 +1,61 @@
+% +------------------------------------------------------------------------+
+% | Reference manual page: Mesh_facet_topology.tex
+% +------------------------------------------------------------------------+
+% | 28.07.2009   Stephane Tayeb
+% | Package: Mesh_3
+% |
+\RCSdef{\RCSMeshfacettopologyRev}{$Id$}
+\RCSdefDate{\RCSMeshfacettopologyDate}{$Date$}
+% |
+\ccRefPageBegin
+%%RefPage: end of header, begin of main body
+% +------------------------------------------------------------------------+
+
+
+\begin{ccRefEnum}{Mesh_facet_topology}  %% add template arg's if necessary
+
+%% \ccHtmlCrossLink{}     %% add further rules for cross referencing links
+%% \ccHtmlIndexC[enum]{} %% add further index entries
+
+\ccDefinition
+  
+The enum \ccRefName\ is designed to tell which constraints have to
+be checked on each surface facet during the mesh refinement process.
+
+
+\ccInclude{CGAL/Mesh_facet_topology.h}
+
+\ccGlobalEnum{enum Mesh_facet_topology {
+	FACET_VERTICES_ON_SURFACE = 1,
+	FACET_VERTICES_ON_SAME_SURFACE_PATCH,
+	FACET_VERTICES_ON_SAME_SURFACE_PATCH_WITH_ADJACENCY_CHECK };}
+
+\ccHeading{Values}
+
+The following values are defined:
+\begin{itemize}
+\item \ccc{FACET_VERTICES_ON_SURFACE}: Each vertex of the facet have to be on the surface,
+on a curve segment, or on a corner.
+\item \ccc{FACET_VERTICES_ON_SAME_SURFACE_PATCH}: The three vertices of a facet belonging to
+a surface patch \ccc{s} have to be on the same surface patch \ccc{s}, on a curve segment or on a corner.
+\item \ccc{FACET_VERTICES_ON_SAME_SURFACE_PATCH_WITH_ADJACENCY_CHECK}: The three vertices of a
+facet belonging to a surface patch \ccc{s} have to be on the same surface patch \ccc{s},
+or on a curve segment incident to the surface patch \ccc{s} or on a corner incident to the surface patch \ccc{s}.
+\end{itemize}
+
+\ccSeeAlso
+
+\ccRefConceptPage{CGAL::Mesh_criteria_3<Tr>}, \\
+\ccRefConceptPage{CGAL::Mesh_facet_criteria_3<Tr>}.
+
+
+%% \ccIncludeExampleCode{Mesh_3/Mesh_facet_topology.C}
+
+\end{ccRefEnum}
+
+% +------------------------------------------------------------------------+
+%%RefPage: end of main body, begin of footer
+\ccRefPageEnd
+% EOF
+% +------------------------------------------------------------------------+
+

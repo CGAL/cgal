@@ -52,7 +52,7 @@ struct Tester
 
   typedef typename C3t3::Cell_handle Cell_handle;
   typedef typename C3t3::Facet Facet;
-  typedef typename C3t3::Surface_index Surface_index;
+  typedef typename C3t3::Surface_patch_index Surface_patch_index;
 
   typedef typename Tr::Geom_traits Gt;
   typedef typename Gt::FT FT;
@@ -93,7 +93,7 @@ struct Tester
 
   void init_facet(const Facet& f, const Point& p) const
   {
-    f.first->set_surface_index(f.second,Surface_index(0,1));
+    f.first->set_surface_patch_index(f.second,Surface_patch_index(0,1));
     f.first->set_facet_surface_center(f.second,p);
 
     for ( int i=0; i<4 ; ++i )

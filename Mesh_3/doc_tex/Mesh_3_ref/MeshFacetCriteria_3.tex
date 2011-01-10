@@ -20,11 +20,11 @@
 \ccDefinition
   
 The Delaunay refinement process involved in the 
-templated functions \ccc{make_mesh_3} and \ccc{refine_mesh_3}
+template functions \ccc{make_mesh_3} and \ccc{refine_mesh_3}
 is guided by a set of elementary refinement criteria
 that concern either mesh tetrahedra or surface facets.
 The concept \ccRefName\ describes the types that
-handle the refinement criteria for boundary facets.
+handle the refinement criteria for surface facets.
 
 
 \ccTypes
@@ -42,7 +42,7 @@ handle the refinement criteria for boundary facets.
   LessThanComparable. Between two facets, the one which has the lower
   quality must have the lower \ccc{Facet_quality}.}
 
-\ccNestedType{Facet_badness}{Type representing if a facet is bad or not. This type
+\ccNestedType{Is_facet_bad}{Type representing if a facet is bad or not. This type
 must be convertible to \ccc{bool}. If it converts to \ccc{true} then the facet is bad, otherwise
 the facet is good with regard to the criteria.
 
@@ -66,10 +66,11 @@ a natural model of this concept} % boost::optional
 \ccc{Mesh_facet_criteria_3<Tr>}
 
 \ccSeeAlso
-\ccc{MeshCellCriteria_3}\\
-\ccc{MeshCriteria_3} \\
-\ccc{make_mesh_3} \\
-\ccc{refine_mesh_3}\\
+\ccRefConceptPage{MeshCellCriteria_3}\\
+\ccRefConceptPage{MeshEdgeCriteria_3} \\
+\ccRefConceptPage{MeshCriteria_3} \\
+\ccRefIdfierPage{CGAL::make_mesh_3} \\
+\ccRefIdfierPage{CGAL::refine_mesh_3}\\
 
 
 \end{ccRefFunctionObjectConcept}

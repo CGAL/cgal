@@ -3,6 +3,7 @@
 #endif
 #include "Scene_segmented_image_item.h"
 #include "Image_type.h"
+#include "ui_Image_res_dialog.h"
 
 #include <CGAL_demo/Io_plugin_interface.h>
 #include <fstream>
@@ -47,9 +48,35 @@ Io_image_plugin::load(QFileInfo fileinfo) {
     delete image;
     return NULL;
   }
+  
+  // Get display precision
+  QDialog dialog;
+  Ui::ImagePrecisionDialog ui;
+  ui.setupUi(&dialog);
+  
+  connect(ui.buttonBox, SIGNAL(accepted()), &dialog, SLOT(accept()));
+  connect(ui.buttonBox, SIGNAL(rejected()), &dialog, SLOT(reject()));
+  
+  // Add precision values to the dialog
+  for ( int i=1 ; i<9 ; ++i )
+  {
+    QString s = tr("1:%1").arg(i*i*i);
+    ui.precisionList->addItem(s);
+  }
+  
+  // Open window
+  int return_code = dialog.exec();
+  if(return_code != QDialog::Accepted)
+  {
+    delete image;
+    return NULL;
+  }
+  
+  // Get selected precision
+  int voxel_scale = ui.precisionList->currentIndex() + 1;
 
   Scene_segmented_image_item* image_item = 
-    new Scene_segmented_image_item(image);
+    new Scene_segmented_image_item(image,voxel_scale);
   image_item->setName(fileinfo.baseName());
 
   return image_item;

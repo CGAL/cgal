@@ -1,0 +1,196 @@
+% +------------------------------------------------------------------------+
+% | Reference manual page: MeshDomainWithFeatures_3.tex
+% +------------------------------------------------------------------------+
+% | 28.07.2009   Stephane Tayeb
+% | Package: Mesh_3
+% |
+\RCSdef{\RCSMeshDomainWithFeaturesRev}{$Id$}
+\RCSdefDate{\RCSMeshDomainWithFeaturesDate}{$Date$}
+% |
+\ccRefPageBegin
+%%RefPage: end of header, begin of main body
+% +------------------------------------------------------------------------+
+
+
+\begin{ccRefConcept}{MeshDomainWithFeatures_3}
+
+%% \ccHtmlCrossLink{}     %% add further rules for cross referencing links
+%% \ccHtmlIndexC[concept]{} %% add further index entries
+
+\ccDefinition
+  
+The concept \ccRefName\ refines the concept \ccc{MeshDomain_3}. 
+While the concept
+\ccc{MeshDomain_3} only exposes the 2-dimensional and 3-dimensional features of
+the domain through different queries, the concept \ccRefName{} also exposes 0 and
+1-dimensional features.  The  exposed features  of the domain are respectively called 
+subdomains, surface patches, curve segments 
+and corners according to their respective dimensions 3,2,1 and 0.
+
+\ccRefines
+
+\ccc{MeshDomain_3} \\
+
+\ccTypes
+\ccTypedef{ typedef CGAL::Tag_true  Has_features;} {A type to distinguish
+\ccc{MeshDomain_3} models from \ccc{MeshDomainWithFeatures_3} models.}
+
+\ccNestedType{FT}{Numerical type.}
+\ccNestedType{Curve_segment_index}{Type of indices for curve segments ($1$-dimensional features)
+  of the input domain.
+  Must be a model of CopyConstructible, Assignable, DefaultConstructible and
+  LessThanComparable. The default constructed value must be the value of an edge which
+  does not approximate a 1-dimensional feature of the input domain.}
+%  Each curve should have a starting point and an ending point (which could be
+%  the same). This type must also permit to represent the orientation of the curve,
+%  i.e. if the curv}
+\ccNestedType{Corner_index}{Type of indices for corners (i.e. 0-dimensional features)
+  of the input domain.
+  Must be a model of CopyConstructible, Assignable, DefaultConstructible and
+  LessThanComparable.}
+
+
+
+\ccCreationVariable{md}  %% choose variable name
+
+\ccOperations
+
+Each connected component of a curve segment is assumed 
+ to be oriented. The orientation is defined by the ordering 
+of the two incident corners at the origin and endpoint.
+Therefore it is possible
+to defined the signed geodesic distance between two ordered
+points on the same connected component of a curve segment.
+A cycle is a connected component of a curve segment incident to
+0 or 1 corner.
+
+\ccMethod{Point_3 construct_point_on_curve_segment(
+  const Point_3& p, const Curve_segment_index& ci, FT d) const;}{
+  Returns a point on the curve segment with index \ccc{ci}
+  at signed geodesic distance \ccc{d} from point \ccc{p}.
+\ccPrecond{ Point \ccc{p} is supposed to be on curve segment \ccc{ci}.
+ If \ccc{ d > 0}, the signed
+  geodesic distance from \ccc{p} to the endpoint
+ of the connected  component
+of  \ccc{ci} including $p$, should be greater than $d$. 
+If \ccc{ d < 0}, the signed
+  geodesic distance from \ccc{p} to the origin of the connected component should be 
+less than $d$ from the origin of the connected component. }}
+
+Note that \ccc{construct_point_on_curve segment} is assumed to return
+a uniquely defined point. Therefore it is not possible to handle as a single 
+curve segment,  a singular curve with several branches incident
+to the same point.
+
+\ccHeading{Queries}
+
+\ccMethod{FT geodesic_distance(const Point_3& p,
+  const Point_3& q, const Curve_segment_index& ci) const;}{Returns the signed geodesic distance
+  between points \ccc{p} and \ccc{q} along the input curve segment
+  with index \ccc{ci}.
+\ccPrecond{Points \ccc{p} and \ccc{q} belong to the same connected
+  component
+of the curve segment with index \ccc{ci}. }}
+
+%\ccMethod{Curve_segment_index canonicalize(const Curve_segment_index& ci) const;}{
+%  Returns the canonical (i.e. unordered) \ccc{Curve_segment_index} associated to \ccc{ci}.}
+%\ccGlue
+%\ccMethod{Curve_segment_index uncanonicalize(const Point_3& p, const Point_3& q,
+%  const Curve_segment_index& ci) const;}{Returns the \ccc{Curve_segment_index} associated
+%  to \ccc{ci} ordered from \ccc{p} to \ccc{q}.}
+%\ccGlue
+%\ccMethod{Curve_segment_index opposite(const Curve_segment_index& ci) const;}{
+%  Returns the opposite \ccc{Curve_segment_index} of \ccc{ci}.}
+
+\ccMethod{CGAL::Sign distance_sign_along_cycle(const Point_3& p, const Point_3& q,
+  const Point_3& r, const Curve_segment_index& ci) const;}{
+  Returns \ccc{CGAL::POSITIVE} if the signed geodesic distance from
+  \ccc{p}
+to \ccc{q}  on the way through $r$ 
+   along cycle with index \ccc{ci}
+  is positive, \ccc{CGAL::NEGATIVE} if the distance is negative, and \ccc{CGAL::ZERO} if \ccc{(p = q = r)}.
+  \ccPrecond{Points \ccc{p}, \ccc{q} and \ccc{r} belongs to the
+ same  connected component of  curve segment \ccc{ci} and this
+ component is a cycle.}}
+  
+  
+\ccMethod{bool is_cycle(const Point_3& p, const Curve_segment_index& ci) const;}{
+	Returns \ccc{true} if the connected component of curve segment
+        \ccc{ci} including point \ccc{p} is a cycle.}
+
+\ccHeading{Retrieval of the input features and their incidences}
+
+\ccMethod{template <typename OutputIterator>
+  OutputIterator
+  get_corners(OutputIterator corners) const;}{Fills \ccc{corners} with
+  the  corners of the
+  input domain. \ccc{corners} value type must be \ccc{std::pair<Corner_index,Point_3>}.}
+
+\ccMethod{template <typename OutputIterator>
+  OutputIterator
+  get_curve_segments(OutputIterator curves) const;}{
+  Fills \ccc{curves} with the  curve segments
+  of the input domain. 
+\ccc{curves} value type must be 
+  \ccc{CGAL::cpp0x::tuple<Curve_segment_index,std::pair<Point_3,Index>,std::pair<Point_3,Index> >}.
+  If the curve segment  corresponding to an entry
+  in curves is not a cycle, the pair of associated points should
+  belong to
+  two corners  incident on the curve segment.
+  If it is a cycle, then the same \ccc{Point_3} should be given twice and must be any
+  point on the cycle.
+  The \ccc{Index} values associated to the points are their indices w.r.t. their dimension.}
+
+%\ccMethod{template <typename OutputIterator>
+%  OutputIterator
+%  incident_curve_segments(const Point_3& p, OutputIterator curves) const;}{
+%  Fills \ccc{curves} with the 
+%  curve segments  of the input domain incident to corner \ccc{p}. 
+%It also returns the ending corner, named
+%  \ccc{q}, of each curve segment(\ccc{p} is considered as the starting point). \ccc{curves} value type 
+%  should be \ccc{std::pair<Curve_segment_index,Point_3>}.
+%  \ccPrecond{\ccc{p} is a corner of the input domain.}}
+
+\ccMethod{bool are_incident_surface_patch_curve_segment(Surface_patch_index spi, Curve_segment_index csi);}
+{Returns \ccc{true} if the curve segment with index \ccc{csi} is incident to the surface patch with index \ccc{spi}.}
+
+\ccMethod{bool are_incident_surface_patch_corner(Surface_patch_index spi, Corner_index ci);}
+{Returns \ccc{true} if the corner with index \ccc{ci} is incident to the surface patch with index \ccc{spi}.}
+
+
+\ccHeading{Indices converters}
+
+\ccMethod{Index index_from_curve_segment_index(const Curve_segment_index& curve_segment_index) const;}{
+  Returns the index to be stored at a vertex lying on the curve segment identified
+  by \ccc{curve_segment_index}.}
+\ccGlue
+\ccMethod{Curve_segment_index curve_segment_index(const Index& index) const;}{
+  Returns the \ccc{Curve_segment_index} of the curve segment where lies a vertex with
+  dimension 1 and index \ccc{index}.}
+
+\ccMethod{Index index_from_corner_index(const Corner_index& corner_index) const;}{
+  Returns the index to be stored at a vertex lying on the corner identified
+  by \ccc{corner_index}.}
+\ccGlue
+\ccMethod{Corner_index corner_index(const Index& index) const;}{
+  Returns the \ccc{Corner_index} of the corner where lies a vertex with
+  dimension 0 and index \ccc{index}.} 
+
+
+\ccHasModels
+
+\ccc{Mesh_domain_with_polyline_features_3<MeshDomain_3>} \\
+\ccc{Polyhedral_mesh_domain_with_features_3<IGT>}
+
+\ccSeeAlso
+
+\ccRefConceptPage{MeshDomain_3}
+
+\end{ccRefConcept}
+
+% +------------------------------------------------------------------------+
+%%RefPage: end of main body, begin of footer
+\ccRefPageEnd
+% EOF
+% +------------------------------------------------------------------------+
+

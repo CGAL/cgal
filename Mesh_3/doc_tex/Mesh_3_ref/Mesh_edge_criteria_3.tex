@@ -1,0 +1,77 @@
+% +------------------------------------------------------------------------+
+% | Reference manual page: Mesh_edge_criteria_3.tex
+% +------------------------------------------------------------------------+
+% | 28.07.2009   Stephane Tayeb
+% | Package: Mesh_3
+% |
+\RCSdef{\RCSMeshedgecriteriaRev}{$Id$}
+\RCSdefDate{\RCSMeshedgecriteriaDate}{$Date$}
+% |
+\ccRefPageBegin
+%%RefPage: end of header, begin of main body
+% +------------------------------------------------------------------------+
+
+
+\begin{ccRefFunctionObjectClass}{Mesh_edge_criteria_3<Tr>}  %% add template arg's if necessary
+
+%% \ccHtmlCrossLink{}     %% add further rules for cross referencing links
+%% \ccHtmlIndexC[class]{} %% add further index entries
+
+\ccDefinition
+  
+The function object class \ccRefName\ is a model of \ccc{MeshEdgeCriteria_3}. It
+provides a bound for the size criterion.
+% and/or the approximation error criterion.
+
+\ccInclude{CGAL/Mesh_edge_criteria_3.h}
+
+\ccIsModel
+
+\ccc{MeshEdgeCriteria_3}
+
+\ccTypes
+
+\ccTypedef{typedef Tr::Geom_traits::FT FT;}{Numerical type.}
+
+\ccCreation
+\ccCreationVariable{mec}  %% choose variable name
+
+\ccConstructor{Mesh_edge_criteria_3(
+  FT length_bound);}
+%  FT distance_bound);}
+{Returns an object to serve as criteria for edges. 
+The argument \ccc{length_bound} is an upper bound
+for the length of the edges which are used to discretize the curve segments.
+% The argument
+%\ccc{distance_bound} is an upper bound for the distance between the center of a segment 
+%representing a piece of an edge and the edge itself.
+Note that if one parameter is set to 0, then its corresponding criteria is ignored.}
+
+\ccConstructor{
+	template <class SizingField, class DistanceField>
+	Mesh_edge_criteria_3(
+    SizingField length_bound);}
+%    DistanceField distance_bound);}
+{Returns an object to serve as criteria for edges. The type \ccc{SizingField} 
+%and \ccc{DistanceField}
+must be a model of concept \ccc{MeshDomainField_3}. The behavior and semantic of the argument are the same 
+as above, except that the length 
+%and distance bound
+ parameter is a functional instead of a constant.}
+
+
+\ccSeeAlso
+
+\ccRefConceptPage{MeshEdgeCriteria_3} \\
+\ccRefConceptPage{MeshCriteria_3} \\
+\ccRefIdfierPage{Mesh_criteria_3<Tr>} \\
+\ccRefConceptPage{MeshDomainField_3} \\
+
+\end{ccRefFunctionObjectClass}
+
+% +------------------------------------------------------------------------+
+%%RefPage: end of main body, begin of footer
+\ccRefPageEnd
+% EOF
+% +------------------------------------------------------------------------+
+

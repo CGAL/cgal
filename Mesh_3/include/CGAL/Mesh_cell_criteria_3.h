@@ -21,12 +21,12 @@
 #ifndef CGAL_MESH_CELL_CRITERIA_3_H
 #define CGAL_MESH_CELL_CRITERIA_3_H
 
-#include <iostream>
 #include <CGAL/Mesh_3/mesh_standard_cell_criteria.h>
 
 namespace CGAL {
   
-template <typename Tr, typename Visitor_ = Mesh_3::Cell_criterion_visitor<Tr> >
+template <typename Tr,
+          typename Visitor_ = Mesh_3::Cell_criteria_visitor_with_features<Tr> >
 class Mesh_cell_criteria_3
 {
   typedef Visitor_ Visitor;
@@ -49,14 +49,24 @@ public:
   Mesh_cell_criteria_3(const FT& radius_edge_bound,
                        const FT& radius_bound)
   {
-    typedef Mesh_3::Cell_radius_criterion<Tr,Visitor> Radius_criterion;
-    typedef Mesh_3::Cell_radius_edge_criterion<Tr,Visitor> Radius_edge_criterion;
-    
-    if ( 0 != radius_bound )
-      criteria_.add(new Radius_criterion(radius_bound));
-    
-    if ( 0 != radius_edge_bound )
-      criteria_.add(new Radius_edge_criterion(radius_edge_bound));
+    if ( FT(0) != radius_bound )
+      init_radius(radius_bound);
+
+    if ( FT(0) != radius_edge_bound )
+      init_radius_edge(radius_edge_bound);
+  }
+  
+  // Nb: SFINAE (dummy) to avoid wrong matches with built-in numerical types
+  // as int.
+  template <typename Sizing_field>
+  Mesh_cell_criteria_3(const FT& radius_edge_bound,
+                       const Sizing_field& radius_bound,
+                       typename Sizing_field::FT dummy = 0)
+  { 
+    init_radius(radius_bound);
+
+    if ( FT(0) != radius_edge_bound )
+      init_radius_edge(radius_edge_bound);
   }
   
   /// Destructor
@@ -70,6 +80,28 @@ public:
   Cell_badness operator()(const Cell_handle& cell) const
   {
     return criteria_(cell);
+  }
+
+private:
+  void init_radius_edge(const FT& radius_edge_bound)
+  {
+    typedef Mesh_3::Cell_radius_edge_criterion<Tr,Visitor> Radius_edge_criterion;
+    criteria_.add(new Radius_edge_criterion(radius_edge_bound));    
+  }
+  
+  void init_radius(const FT& radius_bound)
+  {
+    typedef Mesh_3::Cell_uniform_size_criterion<Tr,Visitor> Radius_criterion;
+    criteria_.add(new Radius_criterion(radius_bound));
+  }
+  
+  template < typename Sizing_field>
+  void init_radius(const Sizing_field& radius_bound)
+  {
+    typedef Mesh_3::Cell_variable_size_criterion<Tr,Visitor,Sizing_field>
+      Radius_criterion;
+    
+    criteria_.add(new Radius_criterion(radius_bound));
   }
   
 private:

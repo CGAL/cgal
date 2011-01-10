@@ -77,6 +77,8 @@ namespace Mesh_3 {
       Vector_3 w = cross_product(u,v);
       FT abs_sin = CGAL::sqrt(sq_length(w)) / product;
       
+      if ( abs_sin < FT(-1) ) { abs_sin = FT(-1); }
+      if ( abs_sin > FT(1) ) { abs_sin = FT(1); }
       CGAL_assertion(abs_sin >= -1);
       CGAL_assertion(abs_sin <= 1);
       

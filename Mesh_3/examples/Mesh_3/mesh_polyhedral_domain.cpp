@@ -1,5 +1,4 @@
 #include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
-#include <CGAL/Mesh_3/Robust_intersection_traits_3.h>
 
 #include <CGAL/Mesh_triangulation_3.h>
 #include <CGAL/Mesh_complex_3_in_triangulation_3.h>
@@ -12,12 +11,10 @@
 // IO
 #include <CGAL/IO/Polyhedron_iostream.h>
 
-// Domain 
-// (we use exact intersection computation with Robust_intersection_traits_3)
+// Domain
 typedef CGAL::Exact_predicates_inexact_constructions_kernel K;
-typedef CGAL::Mesh_3::Robust_intersection_traits_3<K> Geom_traits;
-typedef CGAL::Polyhedron_3<Geom_traits> Polyhedron;
-typedef CGAL::Polyhedral_mesh_domain_3<Polyhedron, Geom_traits> Mesh_domain;
+typedef CGAL::Polyhedron_3<K> Polyhedron;
+typedef CGAL::Polyhedral_mesh_domain_3<Polyhedron, K> Mesh_domain;
 
 // Triangulation
 typedef CGAL::Mesh_triangulation_3<Mesh_domain>::type Tr;

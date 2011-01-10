@@ -128,11 +128,11 @@ class Slivers_exuder
   typedef typename Tr::Geom_traits Geom_traits;
   typedef typename Geom_traits::Tetrahedron_3 Tetrahedron_3;
   
-  typedef typename C3T3::Cell_iterator Cell_iterator;
+  typedef typename C3T3::Cells_in_complex_iterator Cell_iterator;
   typedef std::vector<Cell_handle> Cell_vector;
   typedef std::vector<Facet> Facet_vector;
   
-  typedef typename C3T3::Surface_index Surface_index;
+  typedef typename C3T3::Surface_patch_index Surface_patch_index;
   typedef typename C3T3::Subdomain_index Subdomain_index;
   typedef typename C3T3::Index Index;
   
@@ -140,12 +140,12 @@ class Slivers_exuder
   // weighted point conflict zone. Such facets are represented by their edge
   // which do not contain the pumped vertex
   typedef std::pair<Vertex_handle,Vertex_handle> Ordered_edge;
-  typedef std::map<Ordered_edge, Surface_index > Umbrella;
+  typedef std::map<Ordered_edge, Surface_patch_index > Umbrella;
   
   // Boundary_facets_from_outside represents the facet of the conflict zone
-  // seen from outside of it. It stores Surface_index of the facet, and
+  // seen from outside of it. It stores Surface_patch_index of the facet, and
   // Subdomain_index of the cell which is inside the conflict zone. 
-  typedef std::map<Facet, std::pair<Surface_index,Subdomain_index> >
+  typedef std::map<Facet, std::pair<Surface_patch_index,Subdomain_index> >
     Boundary_facets_from_outside;
   
   /** Pre_star will represent the pre-star of a point. It is a (double)-map
@@ -294,8 +294,8 @@ private:
    */
   void initialize_cells_priority_queue()
   {
-    for( Cell_iterator cit = c3t3_.cells_begin() ;
-        cit != c3t3_.cells_end() ;
+    for( Cell_iterator cit = c3t3_.cells_in_complex_begin() ;
+        cit != c3t3_.cells_in_complex_end() ;
         ++cit)
     {
       const double value = sliver_criteria_(tr_.tetrahedron(cit));
@@ -373,7 +373,7 @@ private:
     {
       boundary_facets_from_outside.insert(std::make_pair(
         tr_.mirror_facet(*fit),
-        std::make_pair(c3t3_.surface_index(*fit),
+        std::make_pair(c3t3_.surface_patch_index(*fit),
                        c3t3_.subdomain_index(fit->first))));
     }
     
@@ -444,8 +444,8 @@ private:
    */
   bool check_sliver_bound() const
   {
-    for( Cell_iterator cit = c3t3_.cells_begin() ;
-        cit != c3t3_.cells_end() ;
+    for( Cell_iterator cit = c3t3_.cells_in_complex_begin() ;
+        cit != c3t3_.cells_in_complex_end() ;
         ++cit)
     {
       const double value = sliver_criteria_(tr_.tetrahedron(cit));
@@ -883,7 +883,7 @@ get_umbrella(const Facet_vector& facets,
     Ordered_edge edge = get_opposite_ordered_edge(*fit, v);
     
     if ( c3t3_.is_in_complex(*fit) )
-      umbrella.insert(std::make_pair(edge, c3t3_.surface_index(*fit)));
+      umbrella.insert(std::make_pair(edge, c3t3_.surface_patch_index(*fit)));
   }
   
   return umbrella;
@@ -921,7 +921,7 @@ restore_cells_and_boundary_facets(
     CGAL_assertion(it != boundary_facets_from_outside.end());
     
     // Restore facet attributes
-    if ( it->second.first != Surface_index() )
+    if ( it->second.first != Surface_patch_index() )
       c3t3_.add_to_complex(new_facet, it->second.first);
     
     // Restore cell attributes

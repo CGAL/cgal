@@ -20,7 +20,7 @@
 \ccDefinition
   
 The Delaunay refinement process involved in the 
-templated functions \ccc{make_mesh_3} and \ccc{refine_mesh_3}
+template functions \ccc{make_mesh_3} and \ccc{refine_mesh_3}
 is guided by a set of elementary refinement criteria
 that concern either mesh tetrahedra or surface facets.
 The concept \ccRefName\ describes the types  that
@@ -37,7 +37,8 @@ handle the refinement criteria for mesh  tetrahedra.
   cell. Must be a model of CopyConstructible and
   LessThanComparable. Between two cells, the one which has the lower
   quality must have the lower \ccc{Cell_quality}.}
-\ccNestedType{Cell_badness}{Type representing if a cell is bad or not. Must
+
+\ccNestedType{Is_cell_bad}{Type representing if a cell is bad or not. Must
 be convertible to \ccc{bool}. If it converts to \ccc{true} then the cell is bad, otherwise
 the cell is good with regard to the criteria.
 
@@ -60,10 +61,11 @@ Note that \ccc{boost::optional<Cell_quality>} is a natural model of this concept
 \ccc{Mesh_cell_criteria_3<Tr>}
 
 \ccSeeAlso
-\ccc{MeshFacetCriteria_3}\\
-\ccc{MeshCriteria_3} \\
-\ccc{make_mesh_3} \\
-\ccc{refine_mesh_3}\\
+\ccRefConceptPage{MeshEdgeCriteria_3}\\
+\ccRefConceptPage{MeshFacetCriteria_3}\\
+\ccRefConceptPage{MeshCriteria_3} \\
+\ccRefIdfierPage{CGAL::make_mesh_3} \\
+\ccRefIdfierPage{CGAL::refine_mesh_3}\\
 
 
 \end{ccRefFunctionObjectConcept}

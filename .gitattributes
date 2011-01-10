@@ -2333,6 +2333,7 @@ Mesh_3/demo/Mesh_3/resources/editcopy.png -text svneol=unset#image/png
 Mesh_3/demo/Mesh_3/resources/minus.png -text svneol=unset#image/png
 Mesh_3/demo/Mesh_3/resources/plus.png -text svneol=unset#image/png
 Mesh_3/demo/Mesh_3/ui_files/Function_dialog.ui -text
+Mesh_3/demo/Mesh_3/ui_files/Image_res_dialog.ui -text
 Mesh_3/demo/Mesh_3/ui_files/LocalOptim_dialog.ui -text
 Mesh_3/demo/Mesh_3/ui_files/MainWindow.ui -text
 Mesh_3/demo/Mesh_3/ui_files/Meshing_dialog.ui -text
@@ -2344,21 +2345,26 @@ Mesh_3/doc_tex/Mesh_3/mesh_3_user.tex -text
 Mesh_3/doc_tex/Mesh_3/pictures/bench_3d.jpg -text svneol=unset#image/jpeg
 Mesh_3/doc_tex/Mesh_3/pictures/bench_polyhedral.jpg -text svneol=unset#image/jpeg
 Mesh_3/doc_tex/Mesh_3/pictures/dihedral_angle_distribution.png -text svneol=unset#image/png
+Mesh_3/doc_tex/Mesh_3/pictures/fandisk.jpg -text svneol=unset#image/jpeg
 Mesh_3/doc_tex/Mesh_3/pictures/implicit_domain.jpg -text svneol=unset#image/jpeg
 Mesh_3/doc_tex/Mesh_3/pictures/implicit_domain_3.jpg -text svneol=unset#image/jpeg
 Mesh_3/doc_tex/Mesh_3/pictures/implicit_domain_4.jpg -text svneol=unset#image/jpeg
 Mesh_3/doc_tex/Mesh_3/pictures/implicit_domain_5.jpg -text svneol=unset#image/jpeg
 Mesh_3/doc_tex/Mesh_3/pictures/liver.jpg -text svneol=unset#image/jpeg
+Mesh_3/doc_tex/Mesh_3/pictures/liver_variable.jpg -text svneol=unset#image/jpeg
 Mesh_3/doc_tex/Mesh_3/pictures/multilabel_mesher.jpg -text svneol=unset#image/jpeg
 Mesh_3/doc_tex/Mesh_3/pictures/multilabel_mesher_small.jpg -text svneol=unset#image/jpeg
+Mesh_3/doc_tex/Mesh_3/pictures/optimization.jpg -text svneol=unset#image/jpeg
+Mesh_3/doc_tex/Mesh_3/pictures/paraboloid.jpg -text svneol=unset#image/jpeg
 Mesh_3/doc_tex/Mesh_3/pictures/polyhedral_domain.jpg -text svneol=unset#image/jpeg
 Mesh_3/doc_tex/Mesh_3/pictures/polyhedral_domain_2.jpg -text svneol=unset#image/jpeg
+Mesh_3/doc_tex/Mesh_3/pictures/sphere_variable.jpg -text svneol=unset#image/jpeg
+Mesh_3/doc_tex/Mesh_3/pictures/twospheres.jpg -text svneol=unset#image/jpeg
 Mesh_3/doc_tex/Mesh_3_ref/BisectionGeometricTraits_3.tex -text
 Mesh_3/doc_tex/Mesh_3_ref/Implicit_mesh_domain_3.tex -text
 Mesh_3/doc_tex/Mesh_3_ref/IntersectionGeometricTraits_3.tex -text
 Mesh_3/doc_tex/Mesh_3_ref/Labeled_image_mesh_domain_3.tex -text
 Mesh_3/doc_tex/Mesh_3_ref/MeshCellCriteria_3.tex -text
-Mesh_3/doc_tex/Mesh_3_ref/MeshTriangulation_3.tex -text
 Mesh_3/doc_tex/Mesh_3_ref/Mesh_cell_base_3.tex -text
 Mesh_3/doc_tex/Mesh_3_ref/Mesh_cell_criteria_3.tex -text
 Mesh_3/doc_tex/Mesh_3_ref/Mesh_complex_3_in_triangulation_3.tex -text
@@ -2369,7 +2375,9 @@ Mesh_3/doc_tex/Mesh_3_ref/Polyhedral_mesh_domain_3.tex -text
 Mesh_3/doc_tex/Mesh_3_ref/WSE/MeshWSETraits_3.tex -text
 Mesh_3/doc_tex/Mesh_3_ref/WSE/MeshWSEVertexBase_3.tex -text
 Mesh_3/doc_tex/Mesh_3_ref/WSE/make_mesh_3_with_sharp_edges.tex -text
+Mesh_3/examples/Mesh_3/cgal_test_with_cmake eol=lf
 Mesh_3/examples/Mesh_3/data/elephant.off -text svneol=unset#application/octet-stream
+Mesh_3/examples/Mesh_3/data/fandisk.off -text svneol=unset#application/octet-stream
 Mesh_3/examples/Mesh_3/data/liver.inr.gz -text svneol=unset#application/gzip
 Mesh_3/examples/Mesh_3/mesh_3D_image.cpp -text
 Mesh_3/examples/Mesh_3/mesh_polyhedral_domain.cpp -text

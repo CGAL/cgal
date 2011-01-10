@@ -11,7 +11,7 @@
 #include <CGAL/AABB_tree.h>
 #include <CGAL/AABB_traits.h>
 #include <CGAL/AABB_polyhedron_triangle_primitive.h>
-#include <CGAL/AABB_drawing_traits.h>
+#include <CGAL/internal/AABB_tree/AABB_drawing_traits.h>
 #include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
 
 #include <CGAL/bounding_box.h>

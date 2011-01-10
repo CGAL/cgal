@@ -7,6 +7,15 @@ project( Mesh_3_example )
 CMAKE_MINIMUM_REQUIRED(VERSION 2.4.5)
 
 include_directories(../../include)
+include_directories(../../../Triangulation_3/include)
+include_directories(../../../STL_Extension/include)
+include_directories(../../../AABB_tree/include)
+add_definitions(-DCGAL_MESH_3_NO_DEPRECATED_SURFACE_INDEX
+                -DCGAL_MESH_3_NO_DEPRECATED_C3T3_ITERATORS)
+
+if ( MESH_3_VERBOSE )
+  add_definitions(-DCGAL_MESH_3_VERBOSE)
+endif()
 
 set(CMAKE_ALLOW_LOOSE_LOOP_CONSTRUCTS true)
  
@@ -25,13 +34,17 @@ if ( CGAL_FOUND )
 
     # Compilable examples
     create_single_source_cgal_program( "mesh_implicit_sphere.cpp" )
+    create_single_source_cgal_program( "mesh_implicit_sphere_variable_size.cpp" )
+    create_single_source_cgal_program( "mesh_two_implicit_spheres_with_balls.cpp" )
 #    create_single_source_cgal_program( "mesh_implicit_domains.cpp" "implicit_functions.cpp" )
     if( CGAL_ImageIO_USE_ZLIB )
       create_single_source_cgal_program( "mesh_3D_image.cpp" )
+      create_single_source_cgal_program( "mesh_3D_image_variable_size.cpp" )
     else()
       message( STATUS "NOTICE: The example mesh_3D_image.cpp needs CGAL_ImageIO to be configured with ZLIB support, and will not be compiled." )
     endif()
     create_single_source_cgal_program( "mesh_polyhedral_domain.cpp" )
+    create_single_source_cgal_program( "mesh_polyhedral_domain_with_features.cpp" )
     create_single_source_cgal_program( "mesh_optimization_example.cpp" )
     create_single_source_cgal_program( "mesh_optimization_lloyd_example.cpp" )
 #    create_single_source_cgal_program( "mesh_polyhedral_implicit_function.cpp" )

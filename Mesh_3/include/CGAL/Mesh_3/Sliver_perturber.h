@@ -121,7 +121,9 @@ private:
     /// Is perturbable
     bool is_perturbable() const
     {
-      return ( (NULL != perturbation()) && (sliver_nb() != 0) );
+      return (   (vertex_handle_->in_dimension() > 1)
+              && (NULL != perturbation()) 
+              && (sliver_nb() != 0) );
     }
     
     /// Min sliver value

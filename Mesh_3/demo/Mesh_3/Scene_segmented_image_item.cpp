@@ -33,10 +33,458 @@ namespace {
 }
 
 
-Scene_segmented_image_item::Scene_segmented_image_item(Image* im)
+// -----------------------------------
+// Internal classes
+// -----------------------------------
+namespace internal {
+
+class Image_accessor
+{
+public:
+  Image_accessor(const Image& im, int dx=1, int dy=1, int dz=1);
+  
+  bool is_vertex_active(unsigned int i, unsigned int j, unsigned int k) const;
+  const QColor& vertex_color(unsigned int i, unsigned int j, unsigned int k) const;
+  void normal(unsigned int i, unsigned int j, unsigned int k,
+              float& x, float& y, float& z) const;
+  
+  int dx() const { return dx_; }
+  int dy() const { return dy_; }
+  int dz() const { return dz_; }
+  unsigned int xdim() const { return im_.xdim(); }
+  unsigned int ydim() const { return im_.ydim(); }
+  unsigned int zdim() const { return im_.zdim(); }
+  double vx() const { return im_.vx(); }
+  double vy() const { return im_.vy(); }
+  double vz() const { return im_.vz(); }
+  
+private:
+  unsigned char non_null_neighbor_data(unsigned int i,
+                                       unsigned int j,
+                                       unsigned int k) const;
+  
+  unsigned char image_data(unsigned int i, unsigned int j, unsigned int k) const;
+  
+  void add_to_normal(unsigned char v,
+                     float& x, float& y, float& z,
+                     int dx, int dy, int dz) const;
+  
+private:
+  const Image& im_;
+  int dx_, dy_, dz_;
+  const QColor default_color_;
+  std::map<unsigned char, QColor> colors_;
+};
+
+
+Image_accessor::Image_accessor(const Image& im, int dx, int dy, int dz)
+: im_(im)
+, dx_(dx)
+, dy_(dy)
+, dz_(dz)
+, default_color_()
+, colors_()
+{
+  const unsigned int xdim = im_.xdim();
+  const unsigned int ydim = im_.ydim();
+  const unsigned int zdim = im_.zdim();  
+  
+  for(unsigned int i=0 ; i<xdim ; i+=dx_)
+  { 
+    for(unsigned int j=0 ; j<ydim ; j+=dy_)
+    { 
+      for(unsigned int k=0 ; k<zdim ; k+=dz_)
+      {
+        unsigned char c = image_data(i,j,k);
+        if ( 0 != c ) { colors_.insert(std::make_pair(c,QColor())); }
+      }
+    }
+  }
+  
+  int i=0;
+  const double starting_hue = 45./360.; // magenta
+  for ( std::map<unsigned char, QColor>::iterator it = colors_.begin(),
+       end = colors_.end() ; it != end ; ++it, ++i )
+  {
+    double hue =  starting_hue + 1./colors_.size() * i;
+    if ( hue > 1. ) { hue -= 1.; }
+    it->second = QColor::fromHsvF(hue, .75, .75);
+  }
+}
+
+bool 
+Image_accessor::
+is_vertex_active(unsigned int i, unsigned int j, unsigned int k) const
+{
+  unsigned char v1 = image_data(i-dx_, j-dy_, k-dz_);
+  unsigned char v2 = image_data(i-dx_, j-dy_, k  );
+  unsigned char v3 = image_data(i-dx_, j    , k-dz_);
+  unsigned char v4 = image_data(i-dx_, j    , k  );
+  unsigned char v5 = image_data(i    , j-dy_, k-dz_);
+  unsigned char v6 = image_data(i    , j-dy_, k  );
+  unsigned char v7 = image_data(i    , j    , k-dz_);
+  unsigned char v8 = image_data(i    , j    , k  );
+  
+  // don't draw interior vertices
+  if ( v1 != 0 && v2 != 0 && v3 != 0 && v4 != 0 && 
+       v5 != 0 && v6 != 0 && v7 != 0 && v8 != 0 )
+  {
+    return false;
+  }
+  
+  return ( v1 != 0 || v2 != 0 || v3 != 0 || v4 != 0 || 
+           v5 != 0 || v6 != 0 || v7 != 0 || v8 != 0 ); 
+}
+
+const QColor&
+Image_accessor::vertex_color(unsigned int i, unsigned int j, unsigned int k) const
+{
+  unsigned char c = non_null_neighbor_data(i,j,k);
+  if ( 0 == c ) { return default_color_; }
+  
+  std::map<unsigned char, QColor>::const_iterator color = colors_.find(c);
+  if ( colors_.end() == color ) { return default_color_; }
+  
+  return color->second;
+}
+
+unsigned char
+Image_accessor::image_data(unsigned int i, unsigned int j, unsigned int k) const
+{
+  if ( i<im_.xdim() && j<im_.ydim() && k<im_.zdim() )
+    return CGAL::IMAGEIO::static_evaluate<unsigned char>(im_.image(),i,j,k);
+  else
+    return 0;
+}
+
+unsigned char
+Image_accessor::
+non_null_neighbor_data(unsigned int i, unsigned int j, unsigned int k) const
+{
+  unsigned char v = image_data(i-dx_, j-dy_, k-dz_);
+  if ( v != 0 ) { return v; }
+  
+  v = image_data(i-dx_, j-dy_, k  );
+  if ( v != 0 ) { return v; }
+
+  v = image_data(i-dx_, j    , k-dz_);
+  if ( v != 0 ) { return v; }
+
+  v = image_data(i-dx_, j    , k  );
+  if ( v != 0 ) { return v; }
+
+  v = image_data(i    , j-dy_, k-dz_);
+  if ( v != 0 ) { return v; }
+  
+  v = image_data(i    , j-dy_, k  );
+  if ( v != 0 ) { return v; }
+  
+  v = image_data(i    , j    , k-dz_);
+  if ( v != 0 ) { return v; }
+
+  v = image_data(i    , j    , k  );
+  if ( v != 0 ) { return v; }
+  
+  return 0;
+}
+
+void
+Image_accessor::
+normal(unsigned int i, unsigned int j, unsigned int k,
+       float& x, float& y, float& z) const
+{
+  unsigned char v = image_data(i-dx_, j-dy_, k-dz_);
+  add_to_normal(v,x,y,z,       1    , 1    , 1);
+  
+  v = image_data(        i-dx_, j-dy_, k);
+  add_to_normal(v,x,y,z, 1    , 1    , -1);
+  
+  v = image_data(        i-dx_, j    , k-dz_);
+  add_to_normal(v,x,y,z, 1    , -1   , 1);
+  
+  v = image_data(        i-dx_, j    , k  );
+  add_to_normal(v,x,y,z, 1    , -1   , -1);
+  
+  v = image_data(        i    , j-dy_, k-dz_);
+  add_to_normal(v,x,y,z, -1   , 1    , 1);
+  
+  v = image_data(        i    , j-dy_, k  );
+  add_to_normal(v,x,y,z, -1   , 1    , -1);
+  
+  v = image_data(        i    , j    , k-dz_);
+  add_to_normal(v,x,y,z, -1   , -1   , 1);
+  
+  v = image_data(        i    , j    , k);
+  add_to_normal(v,x,y,z, -1   , -1   , -1);
+}
+
+void
+Image_accessor::
+add_to_normal(unsigned char v,
+              float& x, float& y, float& z,
+              int dx, int dy, int dz) const
+{
+  if ( 0 != v )
+  {
+    x += dx;
+    y += dy;
+    z += dz;    
+  }
+}
+
+
+
+class Vertex_buffer_helper
+{
+public:
+  Vertex_buffer_helper(const Image_accessor& data);
+  ~Vertex_buffer_helper();
+  
+  void fill_buffer_data();
+
+  const GLfloat* colors() const { return color_array_; }
+  const GLfloat* normals() const { return normal_array_; }
+  const GLfloat* vertices() const { return vertex_array_; }
+  const GLuint* quads() const { return quad_array_; }
+  
+  const std::size_t color_size() const { return color_size_*sizeof(GLfloat); }
+  const std::size_t normal_size() const { return normal_size_*sizeof(GLfloat); }
+  const std::size_t vertex_size() const { return vertex_size_*sizeof(GLfloat); }
+  const std::size_t quad_size() const { return quad_size_*sizeof(GLuint); }
+  
+private:
+  void treat_vertex(unsigned int i, unsigned int j, unsigned int k);
+  
+  void push_color(unsigned int i, unsigned int j, unsigned int k);
+  void push_normal(unsigned int i, unsigned int j, unsigned int k);
+  void push_vertex(unsigned int i, unsigned int j, unsigned int k);
+  void push_quads(unsigned int i, unsigned int j, unsigned int k);
+  void push_quad(int pos1, int pos2, int pos3, int pos4);
+  
+  int compute_position(unsigned int i, unsigned int j, unsigned int k) const;
+  int vertex_index(unsigned int i, unsigned int j, unsigned int k) const;
+  
+  void create_arrays();
+  
+  template <typename T>
+  void create_array(T*& destination, std::size_t& size, const std::vector<T>& source);
+  
+  int dx() const { return data_.dx(); }
+  int dy() const { return data_.dy(); }
+  int dz() const { return data_.dz(); }
+  
+private:
+  static int vertex_not_found_;
+  
+  const Image_accessor& data_;
+  typedef std::map<int, std::size_t> Indices;
+  Indices indices_;
+  std::vector<GLfloat> colors_, normals_, vertices_;
+  std::vector<GLuint> quads_;
+  
+  GLfloat *color_array_, *normal_array_, *vertex_array_;
+  GLuint* quad_array_;
+  std::size_t color_size_, normal_size_, vertex_size_, quad_size_;
+};
+
+int Vertex_buffer_helper::vertex_not_found_ = -1;
+
+Vertex_buffer_helper::
+Vertex_buffer_helper(const Image_accessor& data)
+: data_(data)
+, color_array_(NULL)
+, normal_array_(NULL)
+, vertex_array_(NULL)
+, quad_array_(NULL)
+, color_size_(0)
+, normal_size_(0)
+, vertex_size_(0)
+, quad_size_(0)
+{
+}
+
+Vertex_buffer_helper::
+~Vertex_buffer_helper()
+{
+  delete[] color_array_;
+  delete[] normal_array_;
+  delete[] vertex_array_;
+  delete[] quad_array_;
+}
+
+void
+Vertex_buffer_helper::
+fill_buffer_data()
+{
+  unsigned int i,j,k;
+  
+  for ( i = 0 ; i <= data_.xdim() ; i+=dx() )
+  {  
+    for ( j = 0 ; j <= data_.ydim() ; j+=dy() )
+    {   
+      for ( k = 0 ; k <= data_.zdim() ; k+=dz() )
+      {
+        treat_vertex(i,j,k);
+      }
+    }
+  }
+  
+  create_arrays();
+}
+
+void
+Vertex_buffer_helper::treat_vertex(unsigned int i, unsigned int j, unsigned int k)
+{
+  if ( data_.is_vertex_active(i,j,k) )
+  {
+    push_vertex(i,j,k);
+    push_color(i,j,k);
+    push_normal(i,j,k);
+    push_quads(i,j,k);    
+  }
+}
+
+void
+Vertex_buffer_helper::push_color(unsigned int i, unsigned int j, unsigned int k)
+{
+  const QColor& color = data_.vertex_color(i,j,k);
+  if ( ! color.isValid() ) { return; }
+  
+  colors_.push_back(color.red()/255.f);
+  colors_.push_back(color.green()/255.f);
+  colors_.push_back(color.blue()/255.f);
+}
+
+void
+Vertex_buffer_helper::push_normal(unsigned int i, unsigned int j, unsigned int k)
+{
+  float x=0.f, y=0.f, z=0.f;
+  data_.normal(i,j,k,x,y,z);
+  
+  float norm = std::sqrt(x*x+y*y+z*z);
+  x = x / norm;
+  y = y / norm;
+  z = z / norm;
+  
+  normals_.push_back(x);
+  normals_.push_back(y);
+  normals_.push_back(z);
+}
+
+void
+Vertex_buffer_helper::push_vertex(unsigned int i, unsigned int j, unsigned int k)
+{
+  indices_.insert(std::make_pair(compute_position(i,j,k),
+                                 vertices_.size()/3)); 
+  
+  vertices_.push_back(i*data_.vx());
+  vertices_.push_back(j*data_.vy());
+  vertices_.push_back(k*data_.vz());
+}
+
+void
+Vertex_buffer_helper::push_quads(unsigned int i, unsigned int j, unsigned int k)
+{
+  int pos1 = vertex_index(i-dx(), j     , k);
+  int pos2 = vertex_index(i-dx(), j-dy(), k);
+  int pos3 = vertex_index(i     , j-dy(), k);
+  int pos4 = vertex_index(i     ,j      , k);
+  push_quad(pos1, pos2, pos3, pos4);
+  
+  pos1 = vertex_index(i-dx(), j, k);
+  pos2 = vertex_index(i-dx(), j, k-dz());
+  pos3 = vertex_index(i     , j, k-dz());
+  push_quad(pos1, pos2, pos3, pos4);
+
+  pos1 = vertex_index(i, j-dy(), k);
+  pos2 = vertex_index(i, j-dy(), k-dz());
+  pos3 = vertex_index(i, j     , k-dz());
+  push_quad(pos1, pos2, pos3, pos4);
+}
+
+void
+Vertex_buffer_helper::push_quad(int pos1, int pos2, int pos3, int pos4)
+{
+  if (   pos1 != vertex_not_found_
+      && pos2 != vertex_not_found_
+      && pos3 != vertex_not_found_ )
+  {
+    quads_.push_back(pos1);
+    quads_.push_back(pos2);
+    quads_.push_back(pos3);
+    quads_.push_back(pos4);    
+  }
+}
+
+int
+Vertex_buffer_helper::
+compute_position(unsigned int i, unsigned int j, unsigned int k) const
+{
+  return   i/dx() * (data_.ydim()/dy()+1) * (data_.zdim()/dz()+1)
+         + j/dy() * (data_.zdim()/dz()+1)
+         + k/dz();
+}
+
+int
+Vertex_buffer_helper::
+vertex_index(unsigned int i, unsigned int j, unsigned int k) const
+{
+  if (   i < 0            || j < 0            || k < 0 
+      || i > data_.xdim() || j > data_.ydim() || k > data_.zdim() )
+  {
+    return vertex_not_found_;
+  }
+  
+  int vertex_key = compute_position(i,j,k);
+  Indices::const_iterator it = indices_.find(vertex_key);
+  if ( it != indices_.end() )
+  {
+    return static_cast<int>(it->second);
+  }
+  
+  return vertex_not_found_;
+}
+
+
+void
+Vertex_buffer_helper::
+create_arrays()
+{
+  create_array(color_array_, color_size_, colors_);
+  create_array(normal_array_, normal_size_, normals_);
+  create_array(vertex_array_, vertex_size_, vertices_);
+  create_array(quad_array_, quad_size_, quads_);
+}
+
+template <typename T>
+void
+Vertex_buffer_helper::
+create_array(T*& destination, std::size_t& size, const std::vector<T>& source)
+{
+  size = source.size();
+  destination = new T[size];
+  
+  int i=0;
+  for ( typename std::vector<T>::const_iterator it = source.begin(),
+       end = source.end() ; it != end ; ++it )
+  {
+    destination[i++] = *it;
+  }
+}
+  
+} // namespace internal
+
+
+
+// -----------------------------------
+// Scene_segmented_image_item
+// -----------------------------------
+Scene_segmented_image_item::Scene_segmented_image_item(Image* im,
+                                                       int display_scale)
   : m_image(im)
   , m_initialized(false)
   , m_draw_edges(true)
+  , m_voxel_scale(display_scale)
 {
 #ifdef SCENE_SEGMENTED_IMAGE_GL_BUFFERS_AVAILABLE
   if(gl_vbo_available()) {
@@ -44,8 +492,9 @@ Scene_segmented_image_item::Scene_segmented_image_item(Image* im)
     ::glGenBuffers(1,&m_ibo);
   }
 #endif // SCENE_SEGMENTED_IMAGE_GL_BUFFERS_AVAILABLE
-
+  
   initialize_buffers();
+  setRenderingMode(Flat);
 }
 
 
@@ -120,8 +569,6 @@ Scene_segmented_image_item::supportsRenderingMode(RenderingMode m) const
   return false;
 }
 
-
-
 void
 Scene_segmented_image_item::initialize_buffers() 
 {
@@ -131,203 +578,32 @@ Scene_segmented_image_item::initialize_buffers()
     return;
   }
 
-  const unsigned int& xdim = m_image->xdim();
-  const unsigned int& ydim = m_image->ydim();
-  const unsigned int& zdim = m_image->zdim();
+  internal::Image_accessor image_data_accessor (*m_image,
+                                                m_voxel_scale,
+                                                m_voxel_scale,
+                                                m_voxel_scale);
   
-  // -----------------------------------
-  // Scan colors
-  // -----------------------------------
-  typedef std::map<unsigned char, QColor> ValueMap;
-  ValueMap values;
-  for(unsigned int i=0;i<xdim;i+=5)
-  { 
-    for(unsigned int j=0;j<ydim;j+=5)
-    { 
-      for(unsigned int k=0;k<zdim;k+=5)
-      {
-        unsigned char value = image_data(*m_image,i,j,k);
-        
-        if ( 0 < value )
-        {
-          values.insert(std::make_pair(value,QColor()));
-        }
-      }
-    }
-  }
-  
-  int i=0;
-  const double starting_hue = 300./360.; // magenta
-  for ( ValueMap::iterator it = values.begin(), end = values.end() ;
-       it != end ; ++it, ++i )
-  {
-    double hue =  starting_hue + 1./values.size() * i;
-    if ( hue > 1. ) { hue -= 1.; }
-    it->second = QColor::fromHsvF(hue, 1., 0.8);
-  }
-  
-  
-  // -----------------------------------
-  // Get data
-  // -----------------------------------
-  
-  // Get step size
-  int steps_max = 75;
-  int size_max = (std::max)((std::max)(xdim, ydim), zdim);
-  int d_max = (std::max)(1, size_max/steps_max);
-  int dx=d_max, dy=d_max, dz=d_max;
-  
-  // Normals
-  float a = std::sqrt(1.f/3.f);
-  GLfloat normal_array[24] = { -a,-a,-a, -a,-a,a, -a,a,a, -a,a,-a,
-                                a,-a,-a, a,-a,a, a,a,a, a,a,-a };
-  
-  // Cube faces
-  GLuint indice_array[24] = { 0,1,2,3, 0,1,5,4, 0,4,7,3,
-                              1,5,6,2, 2,3,7,6, 4,5,6,7 };
-  
-  // Cube vertices
-  int cube_array[24] = { 0,0,0, 0,0,1, 0,1,1, 0,1,0,
-                         1,0,0, 1,0,1, 1,1,1, 1,1,0 };
-  
-  // Tester (avoids drawing of interior cubes)
-  int tester[18] = { -1,0,0, 0,-1,0, 0,0,-1, 1,0,0, 0,1,0, 0,0,1 };
-                     // 0,1,1, 1,0,1, 1,1,0, 2,1,1, 1,2,1, 1,1,2 };
-  
-  // Stores Gl elements
-  std::vector<float> vertices, normals, colors;
-  std::vector<unsigned int> indices;
-  
-  unsigned int delta = 0;
-  for(unsigned int i=0;i<xdim;i+=dx)
-  { 
-    for(unsigned int j=0;j<ydim;j+=dy)
-    { 
-      for(unsigned int k=0;k<zdim;k+=dz)
-      {
-        unsigned char value = image_data(*m_image,i,j,k);
-        
-        if(value > 0)
-        {
-          // Don't draw interior cubes
-          unsigned int t=0;
-          while ( t < (sizeof(tester)/sizeof(int)) 
-                  && image_data(*m_image,
-                                i + dx*tester[t],
-                                j + dy*tester[t+1],
-                                k + dz*tester[t+2] ) > 0 )
-          {
-            t+=3;
-          }
-          
-          if ( sizeof(tester)/sizeof(int) == t )
-            continue;
-          
-          // Vertices
-          float x = m_image->vx() * i;
-          float y = m_image->vy() * j;
-          float z = m_image->vz() * k;
-          
-          float xdx = dx * m_image->vx();
-          float ydy = dy * m_image->vy();
-          float zdz = dz * m_image->vz();
-          
-          for ( int c=0; c<24; c+=3 )
-          { 
-            vertices.push_back(x + cube_array[c] * xdx );
-            vertices.push_back(y + cube_array[c+1] * ydy );
-            vertices.push_back(z + cube_array[c+2] * zdz );
-          }
-          
-          // Colors
-          for ( int c=0; c<24; c+=3)
-          {
-            unsigned char data = image_data(*m_image,
-                                            i+dx*cube_array[c],
-                                            j+dy*cube_array[c+1],
-                                            k+dz*cube_array[c+2]);
-            
-            QColor color = (data > 0) ? values[data] : values[value];
-            //color = color.darker(150);
-            
-            colors.push_back(color.red()/255.f);
-            colors.push_back(color.green()/255.f);
-            colors.push_back(color.blue()/255.f);
-          }
-          
-          // Normals
-          for ( int c=0; c<24; ++c )
-            normals.push_back(normal_array[c]);
-          
-          // Indices
-          for ( int c=0; c<24; ++c )
-            indices.push_back(indice_array[c]+delta);
-          
-          delta += 8;
-        }
-      }
-    }
-  }
-  
-  // -----------------------------------
-  // Create GL buffers
-  // -----------------------------------
-  CGAL_assertion( vertices.size() == normals.size() 
-                 && vertices.size() == colors.size() );
-  
-  std::size_t vertices_nb = vertices.size();
-  
-  GLfloat* vertices_array = new GLfloat[vertices_nb];
-  GLfloat* normals_array = new GLfloat[vertices_nb];
-  GLfloat* colors_array = new GLfloat[vertices_nb];
-  
-  i = 0;
-  for ( std::vector<float>::iterator 
-       vit = vertices.begin(), vend = vertices.end(),
-       nit = normals.begin(),  nend = normals.end(),
-       cit = colors.begin(),   cend = colors.end() ;
-       vit != vend && nit != nend && cit != cend ;
-       ++vit, ++nit, ++cit, ++i )
-  {
-    vertices_array[i] = *vit;
-    normals_array[i] = *nit;
-    colors_array[i] = *cit;
-  }
-  
-  std::size_t indices_size = indices.size();
-  GLuint* indices_array = new GLuint[indices_size];
-  
-  i = 0;
-  for ( std::vector<unsigned int>::iterator it = indices.begin(),
-       end = indices.end() ; it != end ; ++it, ++i )
-  {
-    indices_array[i] = *it;
-  }
+  internal::Vertex_buffer_helper helper (image_data_accessor);
+  helper.fill_buffer_data();
   
   // Vertex buffer
   ::glBindBuffer(GL_ARRAY_BUFFER, m_vbo[0]);
-  ::glBufferData(GL_ARRAY_BUFFER, vertices_nb*sizeof(GLfloat), vertices_array, GL_STATIC_DRAW);
+  ::glBufferData(GL_ARRAY_BUFFER, helper.vertex_size(), helper.vertices(), GL_STATIC_DRAW);
   
   ::glBindBuffer(GL_ARRAY_BUFFER, m_vbo[1]);
-  ::glBufferData(GL_ARRAY_BUFFER, vertices_nb*sizeof(GLfloat), normals_array, GL_STATIC_DRAW);
+  ::glBufferData(GL_ARRAY_BUFFER, helper.normal_size(), helper.normals(), GL_STATIC_DRAW);
   
   ::glBindBuffer(GL_ARRAY_BUFFER, m_vbo[2]);
-  ::glBufferData(GL_ARRAY_BUFFER, vertices_nb*sizeof(GLfloat), colors_array, GL_STATIC_DRAW);
+  ::glBufferData(GL_ARRAY_BUFFER, helper.color_size(), helper.colors(), GL_STATIC_DRAW);
   
   // Indices buffer
   ::glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, m_ibo);
-  ::glBufferData(GL_ELEMENT_ARRAY_BUFFER, indices_size*sizeof(GLuint), indices_array, GL_STATIC_DRAW);
+  ::glBufferData(GL_ELEMENT_ARRAY_BUFFER, helper.quad_size(), helper.quads(), GL_STATIC_DRAW);
   
   // Close buffers
   ::glBindBuffer(GL_ARRAY_BUFFER, 0);
   ::glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
   
-  // Cleanup
-  delete vertices_array;
-  delete normals_array;
-  delete colors_array;
-  delete indices_array;
-
 #endif // SCENE_SEGMENTED_IMAGE_GL_BUFFERS_AVAILABLE
 
   m_initialized = true;

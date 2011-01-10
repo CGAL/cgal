@@ -35,7 +35,6 @@
 #include <boost/optional.hpp>
 #include <CGAL/tuple.h>
 #include <CGAL/Origin.h>
-#include <CGAL/intersections.h>
 
 namespace CGAL {
 
@@ -76,11 +75,11 @@ public:
   typedef typename Function::return_type Subdomain_index;
   typedef boost::optional<Subdomain_index> Subdomain;
   /// Type of indexes for surface patch of the input complex
-  typedef std::pair<Subdomain_index, Subdomain_index> Surface_index;
-  typedef boost::optional<Surface_index> Surface_patch;
+  typedef std::pair<Subdomain_index, Subdomain_index> Surface_patch_index;
+  typedef boost::optional<Surface_patch_index> Surface_patch;
   /// Type of indexes to characterize the lowest dimensional face of the input
   /// complex on which a vertex lie
-  typedef boost::variant<Subdomain_index, Surface_index> Index;
+  typedef boost::variant<Subdomain_index, Surface_patch_index> Index;
   typedef CGAL::cpp0x::tuple<Point_3,Index,int> Intersection;
 
 
@@ -155,7 +154,7 @@ public:
    * subdomain boundary.
    * \ccc{Type} is either \ccc{Segment_3}, \ccc{Ray_3} or \ccc{Line_3}.
    * Parameter index is set to the index of the intersected surface patch
-   * if \ccc{true} is returned and to the default \ccc{Surface_index}
+   * if \ccc{true} is returned and to the default \ccc{Surface_patch_index}
    * value otherwise.
    */
   struct Do_intersect_surface
@@ -292,9 +291,8 @@ public:
         {
           return Intersection(
               mid,
-              r_domain_.index_from_surface_index(
+              r_domain_.index_from_surface_patch_index(
                   r_domain_.make_surface_index(value_at_p1, value_at_p2)),
-              //Index(r_domain_.make_surface_index(value_at_p1, value_at_p2)),
               2);
         }
 
@@ -345,7 +343,7 @@ public:
    * Returns the index to be stored in a vertex lying on the surface identified
    * by \c index.
    */
-  Index index_from_surface_index(const Surface_index& index) const
+  Index index_from_surface_patch_index(const Surface_patch_index& index) const
   { return Index(index); }
 
   /**
@@ -356,11 +354,11 @@ public:
   { return Index(index); }
 
   /**
-   * Returns the \c Surface_index of the surface patch
+   * Returns the \c Surface_patch_index of the surface patch
    * where lies a vertex with dimension 2 and index \c index.
    */
-  Surface_index surface_index(const Index& index) const
-  { return boost::get<Surface_index>(index); }
+  Surface_patch_index surface_patch_index(const Index& index) const
+  { return boost::get<Surface_patch_index>(index); }
 
   /**
    * Returns the index of the subdomain containing a vertex
@@ -368,18 +366,34 @@ public:
    */
   Subdomain_index subdomain_index(const Index& index) const
   { return boost::get<Subdomain_index>(index); }
+  
+  // -----------------------------------
+  // Backward Compatibility
+  // -----------------------------------
+#ifndef CGAL_MESH_3_NO_DEPRECATED_SURFACE_INDEX
+  typedef Surface_patch_index   Surface_index;
+  
+  Index index_from_surface_index(const Surface_index& index) const
+  { return index_from_surface_patch_index(index); }
+  
+  Surface_index surface_index(const Index& index) const
+  { return surface_patch_index(index); }
+#endif // CGAL_MESH_3_NO_DEPRECATED_SURFACE_INDEX
+  // -----------------------------------
+  // End backward Compatibility
+  // -----------------------------------
 
 
 private:
   typedef typename BGT::Iso_cuboid_3 Iso_cuboid_3;
 
 private:
-  /// Returns Surface_index from \c i and \c j
-  Surface_index make_surface_index(const Subdomain_index i,
+  /// Returns Surface_patch_index from \c i and \c j
+  Surface_patch_index make_surface_index(const Subdomain_index i,
                                    const Subdomain_index j) const
   {
-    if ( i < j ) return Surface_index(i,j);
-    else return Surface_index(j,i);
+    if ( i < j ) return Surface_patch_index(i,j);
+    else return Surface_patch_index(j,i);
   }
 
   /// Returns squared error bound from \c bbox and \c error
@@ -519,7 +533,7 @@ Labeled_mesh_domain_3<F,BGT>::Construct_initial_points::operator()(
       const Point_3 intersect_pt = CGAL::cpp0x::get<0>(
           r_domain_.construct_intersection_object()(random_seg));
       *pts++ = std::make_pair(intersect_pt,
-                              r_domain_.index_from_surface_index(*surface));
+                              r_domain_.index_from_surface_patch_index(*surface));
       --n;
 
 #ifdef CGAL_MESH_3_VERBOSE

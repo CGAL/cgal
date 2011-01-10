@@ -1,0 +1,77 @@
+% +------------------------------------------------------------------------+
+% | Reference manual page: MeshCriteriaWithFeatures_3.tex
+% +------------------------------------------------------------------------+
+% | 29.10.2010   Author
+% | Package: Package
+% |
+\RCSdef{\RCSMeshCriteriaWithFeaturesRev}{$Id$}
+\RCSdefDate{\RCSMeshCriteriaWithFeaturesDate}{$Date$}
+% |
+\ccRefPageBegin
+%%RefPage: end of header, begin of main body
+% +------------------------------------------------------------------------+
+
+
+\begin{ccRefConcept}{MeshCriteriaWithFeatures_3}
+
+%% \ccHtmlCrossLink{}     %% add further rules for cross referencing links
+%% \ccHtmlIndexC[concept]{} %% add further index entries
+
+\ccDefinition
+The concept \ccRefName\ refines the concept \ccc{MeshCriteria_3}.
+The concept \ccc{MeshCriteria_3} encapsulates 
+the concepts \ccc{MeshCellCriteria_3} and 
+\ccc{MeshFacetCriteria_3} describing the refinement
+criteria for, respectively,  mesh cells and surface facets.
+For domains with features, the concept \ccRefName\ 
+additionnally encapsulates the
+ concept \ccc{MeshEdgeCriteria_3},
+that describes the requirements, in terms of sizing, %and approximation error
+for the discretization of the domain $1$-dimensional features.
+
+\ccRefines
+
+\ccc{MeshDomain_3} \\
+
+
+\ccTypes
+
+\ccNestedType{Edge_criteria}{Functor that describes the criteria for
+the mesh edges that discretize the input domain 1-dimensional features.
+This type must be a model
+of the concept \ccc{MeshEdgeCriteria_3}.}
+
+
+
+
+\ccCreationVariable{criteria}
+
+\ccAccessFunctions
+
+\ccMethod{Edge_criteria edge_criteria_object();}
+{Returns the edge criteria.}
+
+
+
+
+\ccHasModels
+\ccc{Mesh_criteria_3<Tr>}
+
+\ccSeeAlso
+\ccRefConceptPage{MeshCriteria_3}
+\ccRefConceptPage{MeshEdgeCriteria_3}\\
+\ccRefConceptPage{MeshFacetCriteria_3}\\
+\ccRefConceptPage{MeshCellCriteria_3} \\
+\ccRefIdfierPage{CGAL::make_mesh_3} \\
+\ccRefIdfierPage{CGAL::refine_mesh_3} \\
+
+
+
+\end{ccRefConcept}
+
+% +------------------------------------------------------------------------+
+%%RefPage: end of main body, begin of footer
+\ccRefPageEnd
+% EOF
+% +------------------------------------------------------------------------+
+

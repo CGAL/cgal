@@ -9,13 +9,15 @@
 Here are the main concepts of this package: 
 
 \ccRefConceptPage{MeshComplex_3InTriangulation_3} \\
-%\ccRefConceptPage{MeshTriangulation_3} \\
-%\ccRefConceptPage{MeshWSEVertexBase_3} \\
+\ccRefConceptPage{MeshComplexWithFeatures_3InTriangulation_3}\\
 \ccRefConceptPage{MeshDomain_3} \\
-%\ccRefConceptPage{MeshWSETraits_3} \\
+\ccRefConceptPage{MeshDomainWithFeatures_3}\\
 \ccRefConceptPage{MeshCriteria_3} \\
+\ccRefConceptPage{MeshCriteriaWithFeatures_3} \\
 \ccRefConceptPage{MeshCellCriteria_3}\\
 \ccRefConceptPage{MeshFacetCriteria_3}\\
+\ccRefConceptPage{MeshEdgeCriteria_3}\\
+
 
 The following concepts are secondary concepts, 
 related to the template parameters of some models of the main concepts:
@@ -25,21 +27,33 @@ related to the template parameters of some models of the main concepts:
 \ccRefConceptPage{LabeledImage_3} \\
 \ccRefConceptPage{MeshCellBase_3} \\
 \ccRefConceptPage{MeshVertexBase_3} \\
+\ccRefConceptPage{MeshDomainField_3} \\
+\ccRefConceptPage{MeshPolyline_3} \\
 \ccRefConceptPage{TriangleAccessor_3}\\
 
 
 \subsection*{Classes}
-\ccRefIdfierPage{CGAL::Mesh_complex_3_in_triangulation_3<Tr>} \\
+\ccRefIdfierPage{CGAL::Mesh_complex_3_in_triangulation_3<Tr,CornerIndex,CurveSegmentIndex>} \\
 \ccRefIdfierPage{CGAL::Mesh_triangulation_3<MD,Gt>} \\
 \ccRefIdfierPage{CGAL::Mesh_vertex_base_3<MD,Gt,Vb>} \\
 \ccRefIdfierPage{CGAL::Mesh_cell_base_3<MD,Gt,Cb>} \\
-\ccRefIdfierPage{CGAL::Implicit_mesh_domain_3<Function,BGT>} \\
-\ccRefIdfierPage{CGAL::Polyhedral_mesh_domain_3<Polyhedron,IGT,TriangleAccessor>} \\
-\ccRefIdfierPage{CGAL::Labeled_image_mesh_domain_3<Image,BGT>} \\
 \ccRefIdfierPage{CGAL::Mesh_criteria_3<Tr>} \\
 \ccRefIdfierPage{CGAL::Mesh_cell_criteria_3<Tr>} \\
 \ccRefIdfierPage{CGAL::Mesh_facet_criteria_3<Tr>} \\
-\ccRefIdfierPage{CGAL::Triangle_accessor_3<Polyhedron_3<K>,K>} \\
+\ccRefIdfierPage{CGAL::Mesh_edge_criteria_3<Tr>} \\
+\ccRefIdfierPage{CGAL::Mesh_constant_domain_field_3<Gt,Index>} \\
+
+The following classes are models of domain concepts
+and their associated classes:
+
+\ccRefIdfierPage{CGAL::Implicit_mesh_domain_3<Function,BGT>} \\
+\ccRefIdfierPage{CGAL::Polyhedral_mesh_domain_3<Polyhedron,IGT,TriangleAccessor>} \\
+\ccRefIdfierPage{CGAL::Polyhedral_mesh_domain_with_features_3<IGT>} \\
+\ccRefIdfierPage{CGAL::Labeled_image_mesh_domain_3<Image,BGT>} \\
+\ccRefIdfierPage{CGAL::Mesh_domain_with_polyline_features_3<MeshDomain_3>} \\
+\ccRefIdfierPage{CGAL::Mesh_polyhedron_3<Gt>} \\
+\ccRefIdfierPage{CGAL::Triangle_accessor_3<CGAL::Polyhedron_3<K>,K>} \\
+
 
 %\subsection*{Enums}
 
@@ -53,7 +67,9 @@ related to the template parameters of some models of the main concepts:
 \ccRefIdfierPage{CGAL::odt_optimize_mesh_3} \\
 
 
-\subsection*{CGAL::parameter Functions}
+\subsection*{CGAL::parameters Functions}
+\ccRefIdfierPage{CGAL::parameters::features} \\
+\ccRefIdfierPage{CGAL::parameters::no_features} \\
 \ccRefIdfierPage{CGAL::parameters::exude} \\
 \ccRefIdfierPage{CGAL::parameters::no_exude} \\
 \ccRefIdfierPage{CGAL::parameters::perturb} \\
@@ -66,6 +82,6 @@ related to the template parameters of some models of the main concepts:
 
 \subsection*{Enumerations}
 \ccRefIdfierPage{CGAL::Mesh_optimization_return_code} \\
-
+\ccRefIdfierPage{CGAL::Mesh_facet_topology} \\
 
 %\ccRefIdfierPage{CGAL::make_mesh_3_with_sharp_edges}

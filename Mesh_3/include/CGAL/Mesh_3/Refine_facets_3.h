@@ -32,14 +32,43 @@
 
 #include <boost/format.hpp>
 #include <boost/optional.hpp>
+#include <boost/mpl/has_xxx.hpp>
 #include <CGAL/tuple.h>
 #include <sstream>
-
-#include <CGAL/Kernel/global_functions_3.h>
 
 namespace CGAL {
 
 namespace Mesh_3 {
+
+// Helper meta-programming functions, to allow backward compatibility.
+//
+//   - Has_Is_facet_bad and Had_Facet_badness are used to detect if a model
+//     of the MeshFacetCriteria_3 concept follows the specifications of
+//     CGAL-3.7 (with Facet_badness) or later (with Is_facet_bad).
+//
+//   - Then the meta-function Get_Is_facet_bad is used to get the actual
+//     type, either Facet_criteria::Facet_badness or
+//      Facet_criteria::Is_facet_bad.
+
+BOOST_MPL_HAS_XXX_TRAIT_NAMED_DEF(Has_Is_facet_bad, Is_facet_bad, true)
+BOOST_MPL_HAS_XXX_TRAIT_NAMED_DEF(Has_Facet_badness, Facet_badness, false)
+
+// template class, used when use_facet_badness = false
+template <typename Facet_criteria, 
+          bool use_facet_badness = (!Has_Is_facet_bad<Facet_criteria>::value) &&
+                                    Has_Facet_badness<Facet_criteria>::value >
+struct Get_Is_facet_bad {
+  typedef typename Facet_criteria::Is_facet_bad Type;
+  typedef Type type; // compatibility with Boost
+};
+
+// partial specialization when use_facet_badness == true
+template <typename Facet_criteria>
+struct Get_Is_facet_bad<Facet_criteria, true> {
+  typedef typename Facet_criteria::Facet_badness Type;
+  typedef Type type;
+};
+
 
 // Class Refine_facets_3
 //
@@ -150,7 +179,6 @@ public:
   /// Restore restricted Delaunay ; may be call by Cells_mesher visitor
   void restore_restricted_Delaunay(const Vertex_handle& v);
 
-#ifdef CGAL_MESH_3_VERBOSE
   /// debug info
   std::string debug_info() const
   {
@@ -164,7 +192,6 @@ public:
   {
     return "#facets to refine";
   }
-#endif
   
 #ifdef CGAL_MESH_3_MESHER_STATUS_ACTIVATED
   std::size_t queue_size() const { return this->size(); }
@@ -178,14 +205,14 @@ private:
   typedef typename Tr::Geom_traits Gt;
   typedef typename Tr::Cell_handle Cell_handle;
   typedef typename Criteria::Facet_quality Quality;
-  typedef typename Criteria::Facet_badness Badness;
-  typedef typename MeshDomain::Surface_index Surface_index;
+  typedef typename Get_Is_facet_bad<Criteria>::Type Is_facet_bad;
+  typedef typename MeshDomain::Surface_patch_index Surface_patch_index;
   typedef typename MeshDomain::Index Index;
   typedef typename Gt::Segment_3 Segment_3;
   typedef typename Gt::Ray_3 Ray_3;
   typedef typename Gt::Line_3 Line_3;
 
-  typedef typename boost::optional<CGAL::cpp0x::tuple<Surface_index, Index, Point> >
+  typedef typename boost::optional<CGAL::cpp0x::tuple<Surface_patch_index, Index, Point> >
                                                                Facet_properties;
 
 private:
@@ -245,15 +272,15 @@ private:
 
   /// Sets \c f to surface facets, with index \c index
   void set_facet_on_surface(const Facet& f,
-                            const Surface_index& index)
+                            const Surface_patch_index& index)
   {
     r_c3t3_.add_to_complex(f, index);
   }
 
   /// Returns index of facet \c f
-  Surface_index get_facet_surface_index(const Facet& f) const
+  Surface_patch_index get_facet_surface_index(const Facet& f) const
   {
-    return r_c3t3_.surface_index(f.first, f.second);
+    return r_c3t3_.surface_patch_index(f.first, f.second);
   }
 
   /// Removes \c f from surface facets
@@ -289,18 +316,20 @@ private:
   /// Returns true if point encroaches facet
   bool is_facet_encroached(const Facet& facet, const Point& point) const;
 
-  /// Insert facet into refinement queue (computes first quality)
-  void insert_encroached_facet(Facet& facet)
-  {
-    // Get quality and insert facet
-      insert_bad_facet(facet, Quality());
-  }
+  /// Returns whethere an encroached facet is refinable or not
+  bool is_encroached_facet_refinable(Facet& facet) const;
 
   /// Insert facet into refinement queue
   void insert_bad_facet(Facet& facet, const Quality& quality)
   {
     // Insert canonical facet
     this->add_bad_element(this->canonical_facet(facet), quality);
+  }
+  
+  /// Insert encroached facet into refinement queue
+  void insert_encroached_facet_in_queue(Facet& facet)
+  {
+    insert_bad_facet(facet,Quality());
   }
 
   /// Removes facet from refinement queue
@@ -425,9 +454,13 @@ test_point_conflict_from_superior_impl(const Point& point,
     // encroached
     if( is_facet_on_surface(*facet_it) )
     {
-      // Insert already existing surface facet into refinement queue
-      insert_encroached_facet(*facet_it);
-      return CONFLICT_BUT_ELEMENT_CAN_BE_RECONSIDERED;
+      if ( is_encroached_facet_refinable(*facet_it) )
+      {
+        insert_encroached_facet_in_queue(*facet_it);
+        return CONFLICT_BUT_ELEMENT_CAN_BE_RECONSIDERED;
+      }
+      else
+        return CONFLICT_AND_ELEMENT_SHOULD_BE_DROPPED;
     }
   }
 
@@ -438,8 +471,13 @@ test_point_conflict_from_superior_impl(const Point& point,
     if( is_facet_encroached(*facet_it, point) )
     {
       // Insert already existing surface facet into refinement queue
-      insert_encroached_facet(*facet_it);
-      return CONFLICT_BUT_ELEMENT_CAN_BE_RECONSIDERED;
+      if ( is_encroached_facet_refinable(*facet_it) )
+      {
+        insert_encroached_facet_in_queue(*facet_it);
+        return CONFLICT_BUT_ELEMENT_CAN_BE_RECONSIDERED;
+      }
+      else
+        return CONFLICT_AND_ELEMENT_SHOULD_BE_DROPPED;
     }
   }
 
@@ -609,7 +647,7 @@ treat_new_facet(Facet& facet)
   Facet_properties properties = compute_facet_properties(facet);
   if ( properties )
   {
-    const Surface_index& surface_index = CGAL::cpp0x::get<0>(*properties);
+    const Surface_patch_index& surface_index = CGAL::cpp0x::get<0>(*properties);
     const Index& surface_center_index = CGAL::cpp0x::get<1>(*properties);
     const Point& surface_center = CGAL::cpp0x::get<2>(*properties);
 
@@ -618,10 +656,10 @@ treat_new_facet(Facet& facet)
     set_facet_on_surface(facet, surface_index);
 
     // Insert facet into refinement queue if needed
-    const Badness badness = r_criteria_(facet);
-    if ( badness )
+    const Is_facet_bad is_facet_bad = r_criteria_(facet);
+    if ( is_facet_bad )
     {
-      insert_bad_facet(facet, *badness);
+      insert_bad_facet(facet, *is_facet_bad);
     }
   }
   else
@@ -763,20 +801,106 @@ is_facet_encroached(const Facet& facet,
   {
     return false;
   }
-
-  typename Gt::Compute_squared_distance_3 f_distance =
-                    r_tr_.geom_traits().compute_squared_distance_3_object();
-
+  
+  typename Gt::Compare_power_distance_3 compare_distance =
+    r_tr_.geom_traits().compare_power_distance_3_object();
+  
   const Cell_handle& cell = facet.first;
-  const int facet_index = facet.second;
-  const Point center = get_facet_surface_center(facet);
-
-  // facet is encroached if point is near to center than one vertex of the facet
-  return (   f_distance(center, point)
-          <= f_distance(center, cell->vertex((facet_index+1)&3)->point()) );
+  const int& facet_index = facet.second;
+  const Point& center = get_facet_surface_center(facet);
+  const Point& reference_point = cell->vertex((facet_index+1)&3)->point();
+  
+  // facet is encroached if the new point is near from center than
+  // one vertex of the facet
+  return ( compare_distance(center, reference_point, point) != CGAL::SMALLER );
 }
 
+template<class Tr, class Cr, class MD, class C3T3_, class P_, class C_>
+bool
+Refine_facets_3<Tr,Cr,MD,C3T3_,P_,C_>::
+is_encroached_facet_refinable(Facet& facet) const
+{
+  typedef typename Gt::Point_3 Point_3;
+  typedef typename Gt::FT      FT;
+  
+  typename Gt::Compute_squared_radius_smallest_orthogonal_sphere_3 sq_radius =
+    Gt().compute_squared_radius_smallest_orthogonal_sphere_3_object();
+  
+  typename Gt::Compare_weighted_squared_radius_3 compare =
+    Gt().compare_weighted_squared_radius_3_object();
+  
+  const Cell_handle& c = facet.first;
+  const int& k = facet.second;
+  
+  int k1 = (k+1)&3;
+  int k2 = (k+2)&3;
+  int k3 = (k+3)&3;
+  
+  // Get number of weighted points, and ensure that they will be accessible
+  // using k1...ki, if i is the number of weighted points.
+  int wp_nb = 0;
+  if(c->vertex(k1)->point().weight() > FT(0))
+  { 
+    ++wp_nb;
+  }
+  
+  if(c->vertex(k2)->point().weight() > FT(0))
+  { 
+    if ( 0 == wp_nb ) { std::swap(k1,k2); }
+    ++wp_nb;
+  }
+  
+  if(c->vertex(k3)->point().weight() > FT(0))
+  { 
+    if ( 0 == wp_nb ) { std::swap(k1,k3); }
+    if ( 1 == wp_nb ) { std::swap(k2,k3); }
+    ++wp_nb;
+  }
+  
+  const Point_3& p1 = c->vertex(k1)->point();
+  const Point_3& p2 = c->vertex(k2)->point();
+  const Point_3& p3 = c->vertex(k3)->point();
+  
+  const FT min_ratio (0.16); // (0.2*2)^2
+  
+  // Check ratio
+  switch ( wp_nb )
+  {
+    case 1:
+    {
+      FT r = (std::max)(sq_radius(p1,p2),sq_radius(p1,p3));
+      if ( r < min_ratio*p1.weight() ) { return false; }
+      break;
+    }
+      
+    case 2:
+    {
+      bool do_spheres_intersect = (compare(p1,p2,FT(0)) != CGAL::LARGER);
+      if ( do_spheres_intersect )
+      {
+        FT r13 = sq_radius(p1,p3) / p1.weight();
+        FT r23 = sq_radius(p2,p3) / p2.weight();
+        FT r = (std::max)(r13,r23);
+        
+        if ( r < min_ratio ) { return false; }
+      }
+      break;
+    }
+      
+    case 3:
+    {
+      bool do_spheres_intersect = (compare(p1,p2,p3,FT(0)) != CGAL::LARGER);
+      if ( do_spheres_intersect ) { return false; }
+      break;
+    }  
+      
+    default: break;
+  }
 
+  return true;
+}
+
+ 
 template<class Tr, class Cr, class MD, class C3T3_, class P_, class C_>
 bool
 Refine_facets_3<Tr,Cr,MD,C3T3_,P_,C_>::

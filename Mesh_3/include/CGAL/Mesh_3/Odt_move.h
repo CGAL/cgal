@@ -60,6 +60,13 @@ public:
                       const C3T3& c3t3,
                       const Sizing_field& sizing_field = Sizing_field()) const
   {
+    // Don't move edge or corner vertices
+    if ( c3t3.in_dimension(v) < 2 )
+    {
+      return CGAL::NULL_VECTOR;
+    }
+    
+    // Compute move
     typename Gt::Construct_vector_3 vector =
       Gt().construct_vector_3_object();
     

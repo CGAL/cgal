@@ -28,10 +28,10 @@ allows the user to pass parameters to the optimization function
 \ccInclude{CGAL/refine_mesh_3.h}
 
 \ccGlobalFunction{parameters::internal::Odt parameters::odt(
-  double time_limit = 0,
-          std::size_t max_iteration_number = 0,
-          double convergence = 0.02,
-          double freeze_bound = 0.01);}
+  double parameters::time_limit = 0,
+          std::size_t parameters::max_iteration_number = 0,
+          double parameters::convergence = 0.02,
+          double parameters::freeze_bound = 0.01);}
 
 \ccParameters
 
@@ -39,12 +39,6 @@ The parameters are named parameters. They are the same (i.e. they have the same
 name and the same default values) as the parameters of \ccc{odt_optimize_mesh_3}
 function. See its manual page for further details.
 
-\ccSeeAlso
-
-\ccc{no_odt} \\
-\ccc{odt_optimize_mesh_3} \\
-\ccc{make_mesh_3} \\
-\ccc{refine_mesh_3} 
 
 
 \ccExample
@@ -54,6 +48,13 @@ function. See its manual page for further details.
 C3t3 c3t3 = make_mesh_3<c3t3>(domain, criteria, parameters::odt());
 refine_mesh_3(c3t3, domain, criteria, parameters::odt(parameters::time_limit=10));
 \end{ccExampleCode}
+
+\ccSeeAlso
+
+\ccRefIdfierPage{CGAL::no_odt} \\
+\ccRefIdfierPage{CGAL::odt_optimize_mesh_3} \\
+\ccRefIdfierPage{CGAL::make_mesh_3} \\
+\ccRefIdfierPage{CGAL::refine_mesh_3} 
 
 
 \end{ccRefFunction}

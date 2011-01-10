@@ -1,0 +1,85 @@
+% +------------------------------------------------------------------------+
+% | Reference manual page: Polyhedral_mesh_domain_with_features_3.tex
+% +------------------------------------------------------------------------+
+% | 28.07.2009   Stephane Tayeb
+% | Package: Mesh_3
+% |
+\RCSdef{\RCSPolyhedralmeshdomainwithfeaturesRev}{$Id$}
+\RCSdefDate{\RCSPolyhedralmeshdomainwithfeaturesDate}{$Date$}
+% |
+\ccRefPageBegin
+%%RefPage: end of header, begin of main body
+% +------------------------------------------------------------------------+
+
+
+\begin{ccRefClass}{Polyhedral_mesh_domain_with_features_3<IGT>}  %% add template arg's if necessary
+
+%% \ccHtmlCrossLink{}     %% add further rules for cross referencing links
+%% \ccHtmlIndexC[class]{} %% add further index entries
+
+\ccDefinition
+
+The class \ccRefName\ implements a domain whose 
+boundary is a simplicial polyhedral surface.
+This surface must be closed and free of intersection.
+It is a model of the concept \ccc{MeshDomainWithFeatures_3}. It also
+provides a member function to automatically detect sharp features from
+the input polyhedral surface.
+
+
+\ccParameters
+
+The parameter \ccc{IGT} stands for a geometric traits class providing the types
+and functors required to implement the intersection tests and intersection computations
+for polyhedral boundary surfaces. This parameter has to be 
+instantiated with a model of the concept \ccc{IntersectionGeometricTraits_3}.
+
+\ccInclude{CGAL/Polyhedral_mesh_domain_with_features_3.h}
+
+\ccIsModel
+
+\ccc{MeshDomainWithFeatures_3}
+
+\ccInheritsFrom
+\ccc{CGAL::Mesh_domain_with_polyline_features_3<CGAL::Polyhedral_mesh_domain_3<CGAL::Mesh_polyhedron_3<IGT>::type,IGT> >}
+
+\ccTypes
+
+\ccNestedType{FT}{Numerical type.}
+
+\ccCreation
+\ccCreationVariable{md}  %% choose variable name
+
+\ccConstructor{template <typename Polyhedron>
+  Polyhedral_mesh_domain_with_features_3(const Polyhedron& p);}{
+Constructs a \ccc{Polyhedral_mesh_domain_with_features_3} from a \ccc{Polyhedron}. 
+The only requirement on type \ccc{Polyhedron} is that \ccc{CGAL::Polyhedron_3} should 
+be constructible from \ccc{Polyhedron}. 
+No feature detection is done at this level. Note that a copy of \ccc{p} will be done.}
+
+\ccConstructor{Polyhedral_mesh_domain_with_features_3(const std::string& filename);}{
+Constructs a \ccc{Polyhedral_mesh_domain_with_features_3} from an off file. No feature
+detection is done at this level.}
+
+\ccOperations
+
+\ccMethod{void detect_features(FT angle_bound=120);}{Detects sharp features of the internal polyhedron
+and inserts them in as features of the domain. \ccc{angle_bound} gives the maximum dihedral angle
+(in degrees) between two triangles of the internal polyhedron which is used to consider that the edge between
+those triangles is a feature edge.}
+
+\ccSeeAlso
+
+\ccRefConceptPage{MeshDomainWithFeatures_3} \\
+\ccRefIdfierPage{CGAL::Mesh_domain_with_polyline_features_3<MeshDomain>} \\
+\ccRefIdfierPage{CGAL::Polyhedral_mesh_domain_3<Polyhedron,IGT,TriangleAccessor>} \\
+\ccRefConceptPage{Mesh_polyhedron_3<Gt>}
+
+\end{ccRefClass}
+
+% +------------------------------------------------------------------------+
+%%RefPage: end of main body, begin of footer
+\ccRefPageEnd
+% EOF
+% +------------------------------------------------------------------------+
+

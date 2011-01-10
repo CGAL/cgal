@@ -26,7 +26,7 @@
 
 #include <CGAL/config.h>
 
-#define BOOST_PARAMETER_MAX_ARITY 8
+#define BOOST_PARAMETER_MAX_ARITY 12
 #include <boost/parameter.hpp>
 
 

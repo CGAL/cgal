@@ -124,7 +124,7 @@ private:
   // Viewer
   Viewer* viewer_;
   
-  typedef std::map<C3t3::Surface_index, QColor> Surface_map;
+  typedef std::map<C3t3::Surface_patch_index, QColor> Surface_map;
   typedef std::map<C3t3::Subdomain_index, QColor> Subdomain_map;
   
   Surface_map surface_map_;
@@ -418,14 +418,14 @@ C3t3_rib_exporter_plugin::init_maps(const C3t3& c3t3, const QColor& color)
   vertices_.clear();
   
   // Fill maps with 0 as value
-  for ( C3t3::Facet_iterator fit = c3t3.facets_begin(), fend = c3t3.facets_end();
-       fit != fend ; ++fit )
+  for ( C3t3::Facets_in_complex_iterator fit = c3t3.facets_in_complex_begin(),
+       fend = c3t3.facets_in_complex_end() ; fit != fend ; ++fit )
   {
-    surface_map_.insert(std::make_pair(c3t3.surface_index(*fit),QColor(0,0,0)));
+    surface_map_.insert(std::make_pair(c3t3.surface_patch_index(*fit),QColor(0,0,0)));
   }
   
-  for ( C3t3::Cell_iterator cit = c3t3.cells_begin(), cend = c3t3.cells_end();
-       cit != cend ; ++cit )
+  for ( C3t3::Cells_in_complex_iterator cit = c3t3.cells_in_complex_begin(),
+       cend = c3t3.cells_in_complex_end() ; cit != cend ; ++cit )
   {
     subdomain_map_.insert(std::make_pair(c3t3.subdomain_index(cit),QColor(0,0,0)));
   }
@@ -499,8 +499,8 @@ void
 C3t3_rib_exporter_plugin::
 fill_points_and_edges_map(const C3t3& c3t3)
 {
-  for ( C3t3::Cell_iterator it = c3t3.cells_begin(), end = c3t3.cells_end();
-       it != end ; ++it )
+  for ( C3t3::Cells_in_complex_iterator it = c3t3.cells_in_complex_begin(),
+       end = c3t3.cells_in_complex_end() ; it != end ; ++it )
   {
     const Point_3& p1 = it->vertex(0)->point();
     const Point_3& p2 = it->vertex(1)->point();
@@ -647,8 +647,8 @@ void
 C3t3_rib_exporter_plugin::
 write_facets(const C3t3& c3t3, std::ofstream& out)
 {
-  for ( C3t3::Facet_iterator it = c3t3.facets_begin(), end = c3t3.facets_end();
-       it != end ; ++it )
+  for ( C3t3::Facets_in_complex_iterator it = c3t3.facets_in_complex_begin(),
+       end = c3t3.facets_in_complex_end() ; it != end ; ++it )
   {
     const C3t3::Cell_handle& c = it->first;
     const int& k = it->second;
@@ -671,8 +671,8 @@ write_facets(const C3t3& c3t3, const Plane& plane, std::ofstream& out)
 {
   typedef Kernel::Oriented_side Side;
   
-  for ( C3t3::Facet_iterator it = c3t3.facets_begin(), end = c3t3.facets_end();
-       it != end ; ++it )
+  for ( C3t3::Facets_in_complex_iterator it = c3t3.facets_in_complex_begin(),
+       end = c3t3.facets_in_complex_end() ; it != end ; ++it )
   {
     const C3t3::Cell_handle& c = it->first;
     const int& k = it->second;
@@ -703,8 +703,8 @@ write_cells(const C3t3& c3t3, const Plane& plane, std::ofstream& out)
 {
   typedef Kernel::Oriented_side Side;
   
-  for ( C3t3::Cell_iterator it = c3t3.cells_begin(), end = c3t3.cells_end();
-       it != end ; ++it )
+  for ( C3t3::Cells_in_complex_iterator it = c3t3.cells_in_complex_begin(),
+       end = c3t3.cells_in_complex_end() ; it != end ; ++it )
   {
     const Point_3& p1 = it->vertex(0)->point();
     const Point_3& p2 = it->vertex(1)->point();

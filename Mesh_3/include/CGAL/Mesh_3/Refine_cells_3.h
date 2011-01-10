@@ -27,13 +27,45 @@
 #include <CGAL/Meshes/Double_map_container.h>
 
 #include <boost/format.hpp>
+#include <boost/mpl/has_xxx.hpp>
 #include <sstream>
 
 
 namespace CGAL {
   
 namespace Mesh_3 {
-  
+
+// Helper meta-programming functions, to allow backward compatibility.
+//
+//   - Has_Is_cell_bad and Had_Cell_badness are used to detect if a model
+//     of the MeshCellCriteria_3 concept follows the specifications of
+//     CGAL-3.7 (with Cell_badness) or later (with Is_cell_bad).
+//
+//   - Then the meta-function Get_Is_cell_bad is used to get the actual
+//     type, either Cell_criteria::Cell_badness or
+//      Cell_criteria::Is_cell_bad.
+
+BOOST_MPL_HAS_XXX_TRAIT_NAMED_DEF(Has_Is_cell_bad, Is_cell_bad, true)
+BOOST_MPL_HAS_XXX_TRAIT_NAMED_DEF(Has_Cell_badness, Cell_badness, false)
+
+// template class, used when use_cell_badness = false
+template <typename Cell_criteria, 
+          bool use_cell_badness = (!Has_Is_cell_bad<Cell_criteria>::value) &&
+                                    Has_Cell_badness<Cell_criteria>::value >
+struct Get_Is_cell_bad {
+  typedef typename Cell_criteria::Is_cell_bad Type;
+  typedef Type type; // compatibility with Boost
+};
+
+// partial specialization when use_cell_badness == true
+template <typename Cell_criteria>
+struct Get_Is_cell_bad<Cell_criteria, true> {
+  typedef typename Cell_criteria::Cell_badness Type;
+  typedef Type type;
+};
+
+
+
 // Class Refine_cells_3
 //
 // Template parameters should be models of
@@ -71,7 +103,7 @@ private:
   typedef typename Tr::Facet Facet;
   typedef typename MeshDomain::Subdomain_index  Subdomain_index;
   typedef typename MeshDomain::Index  Index;
-  typedef typename Criteria::Cell_badness Cell_badness;
+  typedef typename Get_Is_cell_bad<Criteria>::Type Is_cell_bad;
   
   // Self
   typedef Refine_cells_3<Tr,
@@ -144,7 +176,6 @@ public:
   /// Handle cells contained in \c zone (before their destruction by insertion)
   void before_insertion_handle_cells_in_conflict_zone(Zone& zone);
   
-#ifdef CGAL_MESH_3_VERBOSE
   std::string debug_info() const
   {
     std::stringstream s;
@@ -158,7 +189,6 @@ public:
     s << this->previous().debug_info_header() <<  "," << "#tets to refine";
     return s.str();
   }
-#endif
   
 #ifdef CGAL_MESH_3_MESHER_STATUS_ACTIVATED
   std::size_t queue_size() const { return this->size(); }
@@ -362,8 +392,8 @@ update_star_self(const Vertex_handle& vertex)
     if ( neighbor_cell->is_facet_on_surface(neighb_k) )
     {
       // Facet(*cell_it,k) is on surface
-      (*cell_it)->set_surface_index(
-        k,neighbor_cell->surface_index(neighb_k));
+      (*cell_it)->set_surface_patch_index(
+        k,neighbor_cell->surface_patch_index(neighb_k));
 
       (*cell_it)->set_facet_surface_center(
         k,neighbor_cell->get_facet_surface_center(neighb_k));
@@ -409,10 +439,10 @@ void
 Refine_cells_3<Tr,Cr,MD,C3T3_,P_,C_>::
 compute_badness(const Cell_handle& cell)
 {
-  const Cell_badness badness = r_criteria_(cell);
-  if( badness.is_initialized() )
+  const Is_cell_bad is_cell_bad = r_criteria_(cell);
+  if( is_cell_bad )
   {
-    this->add_bad_element(cell, *badness);
+    this->add_bad_element(cell, *is_cell_bad);
   }
 }
 

@@ -46,7 +46,7 @@ can be activated or not,
 and available time. 
 By default, only the perturber and the exuder are activated.
 Note that the benefits of the exuder will be lost if the mesh
-is further refined afterwards.
+is further refined afterward.
  
 The function outputs the mesh to an object which provides iterators to
 traverse the resulting mesh data structure or can be written to a file
@@ -54,14 +54,15 @@ traverse the resulting mesh data structure or can be written to a file
 
 \ccGlobalFunction{
   template <class C3T3,
-  class MeshDomain,
+  class MeshDomain_3,
   class MeshCriteria>
-  C3T3 make_mesh_3(MeshDomain domain,
+  C3T3 make_mesh_3(MeshDomain_3 domain,
     MeshCriteria criteria,
-    parameters::internal::Lloyd lloyd = parameters::no_lloyd(),
-    parameters::internal::Odt odt = parameters::no_odt(),
-    parameters::internal::Perturb perturb = parameters::perturb(),
-    parameters::internal::Exude exude = parameters::exude()); }{}
+    Features features = parameters::features(domain),
+    Lloyd lloyd = parameters::no_lloyd(),
+    Odt odt = parameters::no_odt(),
+    Perturb perturb = parameters::perturb(),
+    Exude exude = parameters::exude()); }{}
 
 
 \ccParameters
@@ -77,32 +78,51 @@ triangulation \ccc{C3T3::Triangulation} are required to be models of the
 concepts \ccc{MeshVertexBase_3} and \ccc{MeshCellBase_3}
 respectively.
 
-Template parameter \ccc{MeshDomain} is required to be a model of
-the concept  \ccc{MeshDomain_3}. The argument \ccc{domain} of type
-\ccc{MeshDomain}
- is the link through which the domain
+Template parameter \ccc{MeshDomain_3} is required to be a model of
+the concept  \ccc{MeshDomain_3}, or of the refined concept
+\ccc{MeshDomainWithFeatures_3} 
+if the domain has corners and curve segments that need to be accurately represented in the mesh.
+The argument \ccc{domain} 
+ is the sole link through which the domain
 to be discretized is known  by the mesh generation algorithm. 
 
 % The compatibility requirements between the template parameters
 % \ccc{C3T3} and \ccc{MeshDomain} are as follows:
 % the nested types \ccc{MeshDomain::Subdomain_index},
-% \ccc{MeshDomain::Surface_index} and \ccc{MeshDomain::Index} 
+% \ccc{MeshDomain::Surface_patch_index} and \ccc{MeshDomain::Index} 
 % have to be convertible respectively
 % to the nested type \ccc{C3T3::Triangulation::Cell::Subdomain_index}
 % and \ccc{C3T3::Triangulation::Vertex::Index}.
+The  parameter \ccc{features}  allows
+the user to specify if $0$ and $1$-dimensional features actually have to be
+taken into account or not
+ when the domain is a model of \ccc{MeshDomainWithFeatures_3}.
+The type \ccc{Features} of this parameter is an internal undescribed type.
+The library provides functions to construct appropriate values of that type.
+\begin{itemize}
+\item \ccc{parameters::features(domain)} sets \ccc{features} according to the domain,
+  i.e. $0$ and$1$-dimensional features are taken into account if \ccc{domain} is a
+\ccc{MeshDomainWithFeatures_3}. This is the default behavior
+if parameter \ccc{features} is not specified.
+\item \ccc{parameters::no_features()} prevents the representation 
+of $0$ and $1$-dimensional features in the mesh.
+\end{itemize}
 
-
-The argument of
-type \ccc{MeshCriteria} passed to the mesh generator specifies the
-size and shape requirements for the mesh tetrahedra
-and for the triangles in the boundary mesh facets. These criteria
+The template parameter \ccc{MeshCriteria} has to be a model of the concept
+\ccc{MeshCriteria_3}, or a model of  the refined concept \ccc{MeshCriteriaWithFeatures_3} if the domain has exposed features.
+The argument  \ccc{criteria} of 
+type \ccc{MeshCriteria}  specifies the
+size and shape requirements for  mesh tetrahedra
+and  surface facets. These criteria
 form the rules which drive the refinement process. All mesh elements
 satisfy those criteria at the end of the refinement process.
+In addition, if the domain has  features, the argument
+\ccc{criteria} provides a sizing field to guide the discretization
+of $1$-dimensional exposed features.
 % This may no longer be  true anymore if some optimization process
 % is activated  although the optimization phase
 %  is devised to improve the mesh quality.
-The template parameter \ccc{MeshCriteria} has to be a model of the concept
-\ccc{MeshCriteria_3}. 
+
 
 
 The four additional parameters are optimization parameters.
@@ -127,12 +147,12 @@ to set the  parameters of this optimizer
   trigger or not a call to \ccc{perturb_mesh_3} function and 
 to set the  parameters of this optimizer. If one parameter is not set, the default value of
   \ccc{perturb_mesh_3} is used for this parameter, except for the time bound which is set to be
-  equal to the refinement cpu time.
+  equal to the refinement CPU time.
 \item \ccc{parameters::exude()} and \ccc{parameters::no_exude()} are designed to
   trigger or not a call to \ccc{exude_mesh_3} function and  to override to set the
   parameters of this optimizer. If one parameter is not set, the default value of
   \ccc{exude_mesh_3} is used for this parameter, except for the time bound which is set to be
-  equal to the refinement cpu time.
+  equal to the refinement CPU time.
 \end{itemize}
 
 The optimization parameters can be passed in random order. If one parameter
@@ -144,23 +164,33 @@ they are always launched in the order that is a suborder
 of the following (see user manual for further details):
 \ccc{lloyd}, \ccc{odt}, \ccc{perturb}, \ccc{exude}.
 
+Also beware, that optimization of the mesh is obtained
+ by perturbing mesh vertices and modifying the mesh connectivity
+ and that this  has an impact
+on the strict compliance to the refinement criteria. 
+Though a strict compliance to mesh criteria
+is granted at the end of the Delaunay refinement, this may  no longer be true after
+some optimization processes. Also beware that the default behavior does involve some
+optimization processes.
 
 
 \ccSeeAlso
 
-\ccc{refine_mesh_3} \\
-\ccc{exude_mesh_3} \\
-\ccc{perturb_mesh_3} \\
-\ccc{lloyd_optimize_mesh_3} \\
-\ccc{odt_optimize_mesh_3} \\
-\ccc{parameters::exude} \\
-\ccc{parameters::no_exude} \\
-\ccc{parameters::perturb} \\
-\ccc{parameters::no_perturb} \\
-\ccc{parameters::lloyd} \\
-\ccc{parameters::no_lloyd} \\
-\ccc{parameters::odt} \\
-\ccc{parameters::no_odt} \\
+\ccRefIdfierPage{refine_mesh_3} \\
+\ccRefIdfierPage{parameters::features}\\
+\ccRefIdfierPage{parameters::no_features} \\
+\ccRefIdfierPage{exude_mesh_3} \\
+\ccRefIdfierPage{perturb_mesh_3} \\
+\ccRefIdfierPage{lloyd_optimize_mesh_3} \\
+\ccRefIdfierPage{odt_optimize_mesh_3} \\
+\ccRefIdfierPage{parameters::exude} \\
+\ccRefIdfierPage{parameters::no_exude} \\
+\ccRefIdfierPage{parameters::perturb} \\
+\ccRefIdfierPage{parameters::no_perturb} \\
+\ccRefIdfierPage{parameters::lloyd} \\
+\ccRefIdfierPage{parameters::no_lloyd} \\
+\ccRefIdfierPage{parameters::odt} \\
+\ccRefIdfierPage{parameters::no_odt} \\
 
 
 

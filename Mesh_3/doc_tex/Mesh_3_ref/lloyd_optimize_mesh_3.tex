@@ -40,13 +40,13 @@ representation of the domain boundaries.
 \ccInclude{CGAL/lloyd_optimize_mesh_3.h}
 
 \ccGlobalFunction{	
-	template<typename C3T3, typename MeshDomain>
+	template<typename C3T3, typename MeshDomain_3>
 	Mesh_optimization_return_code
-        lloyd_optimize_mesh_3(C3T3& c3t3, MeshDomain domain, 
-          double time_limit=0,
-          std::size_t max_iteration_number=0,
-          double convergence=0.02,
-          double freeze_bound = 0.01);}{
+        lloyd_optimize_mesh_3(C3T3& c3t3, MeshDomain_3 domain, 
+          double parameters::time_limit=0,
+          std::size_t parameters::max_iteration_number=0,
+          double parameters::convergence=0.02,
+          double parameters::freeze_bound = 0.01);}{
   \ccPrecond{\ccc{time_limit} $\geq$ 0 and 0 $\leq$ \ccc{convergence} $\leq$ 1 and 0 $\leq$ \ccc{freeze_bound} $\leq$ 1}}
 
 \ccParameters
@@ -58,7 +58,11 @@ reference, provides the initial mesh
 and is modified  by the algorithm 
 to represent the final optimized mesh.
 
-The function has four optional parameters which are named parameters (we use the Boost.Parameters library). 
+Parameter \ccc{MeshDomain_3} is required to be a model of the concept
+\ccc{MeshDomain_3}. The argument \ccc{domain} must be the \ccc{MeshDomain_3}
+object used to create the \ccc{c3t3} parameter.
+
+The function has four optional parameters which are named parameters (we use the Boost.Parameter library). 
 Therefore, when calling the function,  the parameters can be provided in any order 
 provided that the names of the parameters are used
  (see example at the bottom of this page).
@@ -101,24 +105,25 @@ is achieved.
 
 
 
-\ccSeeAlso
-
-\ccc{Mesh_optimization_return_code} \\
-\ccc{make_mesh_3} \\
-\ccc{refine_mesh_3} \\
-\ccc{exude_mesh_3} \\
-\ccc{perturb_mesh_3} \\
-\ccc{odt_optimize_mesh_3} \\
 
 
 \ccExample 
 
 \begin{ccExampleCode}
-// Lloyd-smoothing until convergence reach 0.01, freezing vertices which
+// Lloyd-smoothing until convergence reaches 0.01, freezing vertices which
 // move less than 0.001*shortest_incident_edge_length
 lloyd_optimize_mesh_3(c3t3, domain, parameters::convergence=0.01,
                       parameters::freeze_bound=0.001);
 \end{ccExampleCode}
+
+\ccSeeAlso
+
+\ccRefIdfierPage{CGAL::Mesh_optimization_return_code} \\
+\ccRefIdfierPage{CGAL::make_mesh_3} \\
+\ccRefIdfierPage{CGAL::refine_mesh_3} \\
+\ccRefIdfierPage{CGAL::exude_mesh_3} \\
+\ccRefIdfierPage{CGAL::perturb_mesh_3} \\
+\ccRefIdfierPage{CGAL::odt_optimize_mesh_3}
 
 \end{ccRefFunction}
 

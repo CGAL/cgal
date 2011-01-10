@@ -1,0 +1,91 @@
+% +------------------------------------------------------------------------+
+% | Reference manual page: Mesh_domain_with_polyline_features_3.tex
+% +------------------------------------------------------------------------+
+% | 28.07.2009   Stephane Tayeb
+% | Package: Mesh_3
+% |
+\RCSdef{\RCSMeshdomainwithpolylinefeaturesRev}{$Id$}
+\RCSdefDate{\RCSMeshdomainwithpolylinefeaturesDate}{$Date$}
+% |
+\ccRefPageBegin
+%%RefPage: end of header, begin of main body
+% +------------------------------------------------------------------------+
+
+
+\begin{ccRefClass}{Mesh_domain_with_polyline_features_3<MeshDomain_3>}  %% add template arg's if necessary
+
+%% \ccHtmlCrossLink{}     %% add further rules for cross referencing links
+%% \ccHtmlIndexC[class]{} %% add further index entries
+
+\ccDefinition
+  
+The class \ccRefName\ is designed to allow the user
+ to add some 0- and 1-dimensional
+features into any model of the \ccc{MeshDomain_3} concept.
+The  1-dimensional features are described as polylines
+whose endpoints are the added corners.
+
+
+
+\ccParameters
+
+The template parameter \ccc{MeshDomain_3} is the type
+of the domain which should be extended.
+It has to be  a model of the \ccc{MeshDomain_3} concept.
+
+
+\ccInclude{CGAL/Mesh_domain_with_polyline_features_3.h}
+
+\ccIsModel
+
+\ccc{MeshDomainWithFeatures_3}
+
+\ccInheritsFrom
+\ccc{MeshDomain_3}
+
+\ccTypes
+
+\ccTypedef{typedef int Corner_index;}{\ccc{Corner_index} type.}
+\ccTypedef{typedef int Curve_segment_index;}{\ccc{Curve_segment_index} type.}
+
+\ccCreation
+\ccCreationVariable{md}  %% choose variable name
+
+\ccConstructor{template <typename ...T>
+Mesh_domain_with_polyline_features_3(T ...t);}{Constructor. Forwards the arguments to the constructor
+of the base class.}
+
+\ccOperations
+
+\ccMethod{template <typename InputIterator>
+  void add_features(InputIterator begin, InputIterator beyond);}{
+  Add 1-dimensional features in the domain. \ccc{InputIterator} value type must
+  be a model of the concept \ccc{MeshPolyline_3}.}
+
+\ccMethod{template <typename InputIterator>
+  void add_features_and_incidences(InputIterator begin, InputIterator beyond);}{
+  Add 1-dimensional features in the domain with their incidences with 2-dimensional
+  features of the domain. The \ccc{InputIterator} value type must be 
+  \ccc{std::pair<Polyline, std::pair<InputSurfacePatchIndexIterator, InputSurfacePatchIndexIterator> >} 
+  where \ccc{Polyline} must be a model of the concept \ccc{MeshPolyline_3} 
+  and the internal pair gives a range on surface patches indices which are incident
+  to the polyline.}
+
+\ccSeeAlso
+
+\ccRefConceptPage{MeshDomain_3}\\
+\ccRefConceptPage{MeshDomainWithFeatures_3}\\
+\ccRefConceptPage{MeshPolyline_3}\\
+\ccRefIdfierPage{CGAL::Implicit_mesh_domain_3<Function,BGT>} \\
+\ccRefIdfierPage{CGAL::Polyhedral_mesh_domain_3<Polyhedron,IGT,TriangleAccessor>} \\
+\ccRefIdfierPage{CGAL::Labeled_image_mesh_domain_3<Image,BGT>} 
+
+
+\end{ccRefClass}
+
+% +------------------------------------------------------------------------+
+%%RefPage: end of main body, begin of footer
+\ccRefPageEnd
+% EOF
+% +------------------------------------------------------------------------+
+

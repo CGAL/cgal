@@ -155,7 +155,7 @@ Scene_c3t3_item::toolTip() const {
             "Number of surface facets: %2<br />"
             "Number of volume tetrahedra: %3</p>")
     .arg(c3t3().triangulation().number_of_vertices())
-    .arg(c3t3().number_of_facets())
+    .arg(c3t3().number_of_facets_in_complex())
     .arg(number_of_tets)
     .arg(this->name());
 }
@@ -193,9 +193,9 @@ Scene_c3t3_item::direct_draw(int mode) const {
   const Kernel::Plane_3& plane = this->plane();
 
   ::glBegin(GL_TRIANGLES);
-  for(C3t3::Facet_iterator
-        fit = c3t3().facets_begin(),
-        end = c3t3().facets_end();
+  for(C3t3::Facets_in_complex_iterator
+        fit = c3t3().facets_in_complex_begin(),
+        end = c3t3().facets_in_complex_end();
       fit != end; ++fit)
   {
     const Tr::Cell_handle& cell = fit->first;
@@ -382,8 +382,8 @@ create_histogram(const C3t3& c3t3, double& min_value, double& max_value)
   min_value = 180.;
   max_value = 0.;
   
-	for (typename C3t3::Cell_iterator cit = c3t3.cells_begin() ;
-       cit != c3t3.cells_end() ;
+	for (typename C3t3::Cells_in_complex_iterator cit = c3t3.cells_in_complex_begin() ;
+       cit != c3t3.cells_in_complex_end() ;
        ++cit)
 	{
 		if( !c3t3.is_in_complex(cit))
@@ -458,8 +458,8 @@ Scene_c3t3_item::c3t3_changed()
   indices_.clear();
   
   int max = 0;
-  for(C3t3::Cell_iterator cit = this->c3t3().cells_begin(), end = this->c3t3().cells_end();
-      cit != end; ++cit)
+  for(C3t3::Cells_in_complex_iterator cit = this->c3t3().cells_in_complex_begin(),
+      end = this->c3t3().cells_in_complex_end() ; cit != end; ++cit)
   {
     max = (std::max)(max, cit->subdomain_index());
     indices_.insert(cit->subdomain_index());

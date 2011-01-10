@@ -27,8 +27,8 @@ to the optimization function \ccc{perturb_mesh_3} through these mesh generation 
 \ccInclude{CGAL/refine_mesh_3.h}
 
 \ccGlobalFunction{parameters::internal::Perturb parameters::perturb(
-  double time_limit = 0,
-  double sliver_bound = 0);}
+  double parameters::time_limit = 0,
+  double parameters::sliver_bound = 0);}
 
 \ccParameters
 
@@ -37,12 +37,6 @@ name and the same default values) as the parameters of \ccc{perturb_mesh_3}
 function. See its manual page for further details.
 
 
-\ccSeeAlso
-
-\ccc{no_perturb} \\
-\ccc{perturb_mesh_3} \\
-\ccc{make_mesh_3} \\
-\ccc{refine_mesh_3} 
 
 
 \ccExample
@@ -52,6 +46,13 @@ function. See its manual page for further details.
 C3t3 c3t3 = make_mesh_3<c3t3>(domain, criteria, parameters::perturb());
 refine_mesh_3(c3t3, domain, criteria, parameters::perturb(parameters::time_limit=10));
 \end{ccExampleCode}
+
+\ccSeeAlso
+
+\ccRefIdfierPage{CGAL::no_perturb} \\
+\ccRefIdfierPage{CGAL::perturb_mesh_3} \\
+\ccRefIdfierPage{CGAL::make_mesh_3} \\
+\ccRefIdfierPage{CGAL::refine_mesh_3} 
 
 
 \end{ccRefFunction}

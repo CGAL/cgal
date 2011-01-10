@@ -19,23 +19,13 @@
 
 \ccDefinition
   
-The function \ccRefName\ allows the user to tell mesh generation global functions
+The function \ccRefName\ allows the user to tell the mesh generation functions
 \ccc{make_mesh_3} and \ccc{refine_mesh_3} that no lloyd optimization must be done.
 
 \ccInclude{CGAL/refine_mesh_3.h}
 
 \ccGlobalFunction{parameters::internal::Lloyd parameters::no_lloyd();}
 
-\ccParameters
-
-This function takes no parameter.
-
-\ccSeeAlso
-
-\ccc{parameters::lloyd} \\
-\ccc{lloyd_optimize_mesh_3} \\
-\ccc{make_mesh_3} \\
-\ccc{refine_mesh_3} 
 
 
 \ccExample
@@ -44,6 +34,13 @@ This function takes no parameter.
 // Mesh generation without lloyd optimization
 C3t3 c3t3 = make_mesh_3<c3t3>(domain, criteria, parameters::no_lloyd());
 \end{ccExampleCode}
+
+\ccSeeAlso
+
+\ccRefIdfierPage{CGAL::parameters::lloyd} \\
+\ccRefIdfierPage{CGAL::lloyd_optimize_mesh_3} \\
+\ccRefIdfierPage{CGAL::make_mesh_3} \\
+\ccRefIdfierPage{CGAL::refine_mesh_3} 
 
 
 \end{ccRefFunction}

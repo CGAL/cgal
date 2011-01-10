@@ -1,0 +1,72 @@
+% +------------------------------------------------------------------------+
+% | Reference manual page: parameters_features.tex
+% +------------------------------------------------------------------------+
+% | 18.06.2010   Author
+% | Package: Package
+% |
+\RCSdef{\RCSparametersfeaturesRev}{$Id$}
+\RCSdefDate{\RCSparametersfeaturesDate}{$Date$}
+% |
+\ccRefPageBegin
+%%RefPage: end of header, begin of main body
+% +------------------------------------------------------------------------+
+
+
+\begin{ccRefFunction}{parameters::features}  %% add template arg's if necessary
+
+%% \ccHtmlCrossLink{}     %% add further rules for cross referencing links
+%% \ccHtmlIndexC[function]{} %% add further index entries
+
+\ccDefinition
+  
+The function \ccRefName\  provides a  value of internal type \ccc{Features}
+to specify if  $0$ and $1$-dimensional features have to be taken into account.
+The provided value is a default value that triggers the representation
+of corners and  curve segments in the mesh when the domain is a model
+of  \ccc{MeshDomainWithFeatures_3}.
+
+\ccInclude{CGAL/refine_mesh_3.h}
+
+\ccGlobalFunction{template <class MeshDomain_3>
+Features parameters::features(
+            MeshDomain_3 domain);}
+Provides a \ccc{Features} value such that
+ $0$ and $1$-dimensional input features are taken into account
+ if domain is a model of  the refined concept \ccc{MeshDomainWithFeatures_3}.
+
+ \ccParameters
+The template parameter \ccc{MeshDomain_3} is required to be a model
+of \ccc{MeshDomain_3} or \ccc{MeshDomainWithFeatures_3}.
+
+
+
+\ccSeeAlso
+
+\ccRefIdfierPage{CGAL::make_mesh_3}, \\
+\ccRefIdfierPage{CGAL::refine_mesh_3}, \\
+\ccRefIdfierPage{CGAL::parameters::no_features}. \\
+
+% \ccExample
+
+% A short example program.
+% Instead of a short program fragment, a full running program can be
+% included using the 
+% \verb|\ccIncludeExampleCode{Package/parameters_features.C}| 
+% macro. The program example would be part of the source code distribution and
+% also part of the automatic test suite.
+
+% \begin{ccExampleCode}
+% void your_example_code() {
+% }
+% \end{ccExampleCode}
+
+%% \ccIncludeExampleCode{Package/parameters_features.C}
+
+\end{ccRefFunction}
+
+% +------------------------------------------------------------------------+
+%%RefPage: end of main body, begin of footer
+\ccRefPageEnd
+% EOF
+% +------------------------------------------------------------------------+
+

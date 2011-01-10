@@ -39,14 +39,14 @@ representation of the domain boundaries.
 \ccInclude{CGAL/odt_optimize_mesh_3.h}
 
 \ccGlobalFunction{
-	template<typename C3T3, typename MeshDomain>
+	template<typename C3T3, typename MeshDomain_3>
 	Mesh_optimization_return_code
         odt_optimize_mesh_3(C3T3& c3t3,
-          MeshDomain domain,
-          double time_limit=0,
-          std::size_t max_iteration_number=0,
-          double convergence=0.02,
-          double freeze_bound = 0.01);}{
+          MeshDomain_3 domain,
+          double parameters::time_limit=0,
+          std::size_t parameters::max_iteration_number=0,
+          double parameters::convergence=0.02,
+          double parameters::freeze_bound = 0.01);}{
   \ccPrecond{\ccc{time_limit} $\geq$ 0 and 0 $\leq$ \ccc{convergence} $\leq$ 1 and 0 $\leq$ \ccc{freeze_bound} $\leq$ 1}}
 
 \ccParameters
@@ -58,12 +58,12 @@ reference, provides the initial mesh
 and is modified  by the algorithm 
 to represent the final optimized mesh.
 
-Parameter \ccc{MeshDomain} is required to be a model of the concept
-\ccc{MeshDomain_3}. The argument \ccc{domain} must be the \ccc{MeshDomain}
+Parameter \ccc{MeshDomain_3} is required to be a model of the concept
+\ccc{MeshDomain_3}. The argument \ccc{domain} must be the \ccc{MeshDomain_3}
 object used to create the \ccc{c3t3} parameter.
 
 The function has four optional parameters which are named parameters
- (we use the Boost.Parameters library). 
+ (we use the Boost.Parameter library). 
 Therefore, when calling the function,  the parameters can be provided in any order 
 provided that the names of the parameters are used
  (see example at the bottom of this page).
@@ -82,7 +82,7 @@ no limit on the number of performed iterations.
  \ccc{parameters::convergence}, is a stopping  criterion based on convergence: 
 the optimization process is stopped, when at the last iteration,
 the displacement of any vertex is less than a given percentage of the length
-the shortest edge incident that vertex.
+the shortest edge incident to that vertex.
 The parameter \ccc{convergence} gives the threshold ratio.
 \item 
 Parameter \ccc{freeze_bound}, whose name is \ccc{parameters::freeze_bound},
@@ -105,14 +105,6 @@ is achieved.
 
 
 
-\ccSeeAlso
-
-\ccc{Mesh_optimization_return_code} \\
-\ccc{make_mesh_3} \\
-\ccc{refine_mesh_3} \\
-\ccc{exude_mesh_3} \\
-\ccc{perturb_mesh_3} \\
-\ccc{lloyd_optimize_mesh_3} \\
 
 \ccExample 
 
@@ -121,6 +113,15 @@ is achieved.
 odt_optimize_mesh_3(c3t3, domain, parameters::max_iteration_number=100, 
                     parameters::convergence=0);
 \end{ccExampleCode}
+
+\ccSeeAlso
+
+\ccRefIdfierPage{CGAL::Mesh_optimization_return_code} \\
+\ccRefIdfierPage{CGAL::make_mesh_3} \\
+\ccRefIdfierPage{CGAL::refine_mesh_3} \\
+\ccRefIdfierPage{CGAL::exude_mesh_3} \\
+\ccRefIdfierPage{CGAL::perturb_mesh_3} \\
+\ccRefIdfierPage{CGAL::lloyd_optimize_mesh_3}
 
 \end{ccRefFunction}
 

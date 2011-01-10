@@ -20,17 +20,18 @@
 \ccDefinition
   
 The Delaunay refinement process involved in the 
-templated functions \ccc{make_mesh_3} and \ccc{refine_mesh_3}
+template functions \ccc{make_mesh_3} and \ccc{refine_mesh_3}
 is guided by a set of elementary refinement criteria
 that concern either mesh tetrahedra or surface facets.
 The refinement criteria for tetrahedra are described
 through the concept \ccc{MeshCellCriteria_3}
-while the refinement criteria for boundary facets
+while the refinement criteria for surface facets
 are described by the concept \ccc{MeshFacetCriteria_3}.
-The concept \ccRefName\ encapsulates both concepts.
+The concept \ccRefName\ encapsulates these concepts.
 
 
 \ccTypes
+
 \ccNestedType{Facet_criteria}{Functor that describes the criteria for
 surface facets. This type must be a model
 of the concept \ccc{MeshFacetCriteria_3}.}
@@ -45,23 +46,22 @@ of the concept \ccc{MeshFacetCriteria_3}.}
 
 \ccAccessFunctions
 
-\ccMethod{Cell_criteria cell_criteria();}
-{Returns the cell criteria.}
-
-\ccMethod{Facet_criteria facet_criteria();}
+\ccMethod{Facet_criteria facet_criteria_object();}
 {Returns the facet criteria.}
 
+\ccMethod{Cell_criteria cell_criteria_object();}
+{Returns the cell criteria.}
 
 
 \ccHasModels
 \ccc{Mesh_criteria_3<Tr>}
 
 \ccSeeAlso
-\ccc{MeshFacetCriteria_3}\\
-\ccc{MeshCellCriteria_3} \\
-\ccc{make_mesh_3} \\
-
-
+\ccRefConceptPage{MeshFacetCriteria_3}\\
+\ccRefConceptPage{MeshCellCriteria_3} \\
+\ccRefIdfierPage{CGAL::make_mesh_3} \\
+\ccRefIdfierPage{CGAL::refine_mesh_3} \\
+\ccRefConceptPage{MeshCriteriaWithFeatures_3}\\
 
 \end{ccRefConcept}
 

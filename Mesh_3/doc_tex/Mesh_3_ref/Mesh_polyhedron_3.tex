@@ -1,0 +1,50 @@
+% +------------------------------------------------------------------------+
+% | Reference manual page: Mesh_polyhedron_3.tex
+% +------------------------------------------------------------------------+
+% | 28.07.2009   Stephane Tayeb
+% | Package: Mesh_3
+% |
+\RCSdef{\RCSMeshpolyhedronRev}{$Id$}
+\RCSdefDate{\RCSMeshpolyhedronDate}{$Date$}
+% |
+\ccRefPageBegin
+%%RefPage: end of header, begin of main body
+% +------------------------------------------------------------------------+
+
+
+\begin{ccRefClass}{Mesh_polyhedron_3<Gt>}  %% add template arg's if necessary
+
+%% \ccHtmlCrossLink{}     %% add further rules for cross referencing links
+%% \ccHtmlIndexC[class]{} %% add further index entries
+
+\ccDefinition
+  
+The class \ccRefName\ provides a customized \ccc{CGAL::Polyhedron_3} type. This type uses
+as \ccc{PolyhedronItems_3} a customized type which adds data to the Vertex, Face and
+Halfedge class. Those data are required to use our sharp features
+detection algorithm.
+
+\ccInclude{CGAL/Mesh_polyhedron_3.h}
+
+\ccParameters
+
+Template parameter \ccc{Gt} stands for the geometric traits associated
+to the meshing process. It should be a model of concept \ccc{PolyhedronTraits_3}.
+
+\ccTypes
+
+\ccNestedType{type}{\ccc{CGAL::Polyhedron_3<Gt>} type with customized \ccc{PolyhedronItems_3}
+designed to handle sharp feature detection.}
+
+\ccSeeAlso
+
+\ccRefIdfierPage{CGAL::Polyhedral_mesh_domain_with_features_3<IGT>}
+
+\end{ccRefClass}
+
+% +------------------------------------------------------------------------+
+%%RefPage: end of main body, begin of footer
+\ccRefPageEnd
+% EOF
+% +------------------------------------------------------------------------+
+
