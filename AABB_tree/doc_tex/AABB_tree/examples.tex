@@ -1,8 +1,6 @@
 \section{Examples}
 \label{AABB_tree_section_examples}
 
-In all following examples the file \ccc{CGAL/AABB_tree.h} must be included \emph{before} the kernel (here \ccc{Simple_cartesian.h}) so that the related intersection functions (in folder \ccc{AABB_intersections}) are properly parsed by the compiler.
-
 \subsection{Tree of Triangles, for Intersection and Distance Queries}
 In the following example a set of 3D triangles is stored in a list. The AABB primitive wraps a triangle as \ccc{datum} and an iterator in the list as \ccc{id}. We compute the number of input triangles intersected by a ray query, as well as the closest point and the squared distance from a point query.  
 \ccIncludeExampleCode{AABB_tree/AABB_triangle_3_example.cpp}
@@ -22,6 +20,13 @@ In the following example the segments are stored into a list, and the AABB primi
 \subsection{Tree of Polyhedron Edge Segments for Intersection and Distance Queries}
 In the following example the AABB primitive wraps a halfedge handle as \ccc{id} and generates a 3D segment on the fly, each time its method \ccc{datum} is called. We compute the number of intersections with a triangle query and the closest point from a point query. 
 \ccIncludeExampleCode{AABB_tree/AABB_polyhedron_edge_example.cpp}
+
+\subsection{Incremental Insertion of Primitives}
+The AABB tree is a static data structure, but it allows to insert primitives, and will internally
+rebuild triggered by the first query, or because the user calls the \ccc{build} method.
+The following example illustrates this for two polyhedral surfaces.
+
+\ccIncludeExampleCode{AABB_tree/AABB_insertion_example.cpp}
 
 \subsection{Trees of Custom Primitives}
 

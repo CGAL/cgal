@@ -19,7 +19,7 @@
 
 \ccDefinition
   
-Class \ccRefName\ is a static data structure for efficient intersection and distance computations in 3D. It builds a hierarchy of axis-aligned bounding boxes (a AABB tree) from a set of 3D geometric objects, and can receive intersection and distance queries, provided that the corresponding predicates are implemented in the traits class \ccc{AT}. The template parameter \ccc{AT} stands for a traits class which must be a model of the concept \ccc{AABBTraits}.
+Class \ccRefName\ is a static data structure for efficient intersection and distance computations in 3D. It builds a hierarchy of axis-aligned bounding boxes (an AABB tree) from a set of 3D geometric objects, and can receive intersection and distance queries, provided that the corresponding predicates are implemented in the traits class \ccc{AT}. The template parameter \ccc{AT} stands for a traits class which must be a model of the concept \ccc{AABBTraits}.
 
 \ccInclude{CGAL/AABB_tree.h}
 
@@ -53,6 +53,29 @@ Class \ccRefName\ is a static data structure for efficient intersection and dist
                     InputIterator beyond);}{Clears the current tree and rebuilds it from scratch. See constructor above for the parameters. }
 \ccGlue
 \ccMethod{void clear();}{Clears the AABB tree. }
+
+\ccGlue
+\ccMethod{template <class InputIterator>
+ void insert(InputIterator begin, InputIterator beyond);}
+   {Add a sequence of primitives to the set of primitive of the AABB
+   tree. Type \ccc{InputIterator} can be any const iterator such that \ccc{Primitive}
+   has a constructor taking an InputIterator as argument.}
+\ccGlue
+\ccMethod{void insert(const Primitive p);}
+   {Add a primitive to the set of primitives of the AABB tree.}
+ 
+\begin{ccAdvanced}
+\ccMethod{void build();}
+   {After one or more calls to \ccc{insert}, the internal data structure
+   of \ccRefName\ must be reconstructed.  This procedure has a complexity of
+   \ccc{O(n log(n))}, where n is the number of primitives of the tree.  This
+   procedure is called implicitly at the first call to a query member
+   function.  You can call \ccc{build()} explicitly to ensure that the
+   next call to query functions will not trigger the reconstruction of the
+   data structure.}
+\end{ccAdvanced>
+
+
 \ccGlue
 \ccMethod{Bounding_box bbox();}{Returns the axis-aligned bounding box of the whole tree. }
 \ccGlue

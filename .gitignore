@@ -15,6 +15,7 @@ AABB_tree/examples/AABB_tree/Makefile
 AABB_tree/examples/AABB_tree/cgal_test_with_cmake
 AABB_tree/test/AABB_tree/*.kdev*
 AABB_tree/test/AABB_tree/AABB_tests.sln
+AABB_tree/test/AABB_tree/CMakeLists.txt
 AABB_tree/test/AABB_tree/Makefile
 AABB_tree/test/AABB_tree/aabb_correctness_triangle_test
 AABB_tree/test/AABB_tree/aabb_distance_edge_test

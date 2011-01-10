@@ -1,10 +1,7 @@
-
-// Author(s) : Pierre Alliez
-
 #include <iostream>
 
 #include <CGAL/Simple_cartesian.h>
-#include <CGAL/AABB_tree.h>
+#include <CGAL/AABB_tree.h> // must be inserted before kernel
 #include <CGAL/AABB_traits.h>
 #include <CGAL/Polyhedron_3.h>
 #include <CGAL/AABB_polyhedron_triangle_primitive.h>
@@ -26,13 +23,23 @@ int main()
     Point q(0.0, 1.0, 0.0);
     Point r(0.0, 0.0, 1.0);
     Point s(0.0, 0.0, 0.0);
-    Polyhedron polyhedron;
-    polyhedron.make_tetrahedron(p, q, r, s);
+    Polyhedron polyhedron1;
+    polyhedron1.make_tetrahedron(p, q, r, s);
 
+
+    Point p2(11.0, 0.0, 0.0);
+    Point q2(10.0, 1.0, 0.0);
+    Point r2(10.0, 0.0, 1.0);
+    Point s2(10.0, 0.0, 0.0);
+    Polyhedron polyhedron2;
+    polyhedron2.make_tetrahedron(p2, q2, r2, s2);
     // constructs AABB tree and computes internal KD-tree 
     // data structure to accelerate distance queries
-    Tree tree(polyhedron.facets_begin(),polyhedron.facets_end());
+    Tree tree(polyhedron1.facets_begin(),polyhedron1.facets_end());
+
     tree.accelerate_distance_queries();
+
+    tree.insert(polyhedron2.facets_begin(),polyhedron2.facets_end());
 
     // query point
     Point query(0.0, 0.0, 3.0);
@@ -41,13 +48,5 @@ int main()
     FT sqd = tree.squared_distance(query);
     std::cout << "squared distance: " << sqd << std::endl;
 
-    // computes closest point
-    Point closest = tree.closest_point(query);
-    std::cout << "closest point: " << closest << std::endl;
-
-    // computes closest point and primitive id
-    Point_and_primitive_id pp = tree.closest_point_and_primitive(query);
-    std::cout << "closest point: " << pp.first << std::endl;
-    Polyhedron::Face_handle f = pp.second; // closest primitive id
     return EXIT_SUCCESS;
 }

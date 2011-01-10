@@ -194,6 +194,7 @@ Intersection intersection_object() {return Intersection();}
   // this is not the same do_intersect as the spherical kernel)
   class Compare_distance {
       typedef typename AT::Point Point;
+      typedef typename AT::FT FT;
       typedef typename AT::Primitive Primitive;
   public:
       template <class Solid>
@@ -203,6 +204,16 @@ Intersection intersection_object() {return Intersection();}
           (GeomTraits().construct_sphere_3_object()
           (p, GeomTraits().compute_squared_distance_3_object()(p, bound)), pr)?
           CGAL::SMALLER : CGAL::LARGER;
+      }
+
+      template <class Solid>
+      CGAL::Comparison_result operator()(const Point& p, const Solid& pr, const FT& sq_distance) const
+      {
+        return GeomTraits().do_intersect_3_object()
+          (GeomTraits().construct_sphere_3_object()(p, sq_distance),
+           pr) ?
+          CGAL::SMALLER : 
+          CGAL::LARGER;
       }
   };
 
