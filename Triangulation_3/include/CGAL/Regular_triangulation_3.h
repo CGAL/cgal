@@ -28,13 +28,14 @@
 
 #include <CGAL/Triangulation_3.h>
 #include <CGAL/Regular_triangulation_cell_base_3.h>
+#include <boost/bind.hpp>
 
+#ifndef CGAL_TRIANGULATION_3_DONT_INSERT_RANGE_OF_POINTS_WITH_INFO
 #include <CGAL/internal/spatial_sorting_traits_with_indices.h>
 
-#include <boost/bind.hpp>
 #include <boost/iterator/zip_iterator.hpp>
 #include <boost/mpl/and.hpp>
-
+#endif //CGAL_TRIANGULATION_3_DONT_INSERT_RANGE_OF_POINTS_WITH_INFO
 
 #if defined(BOOST_MSVC)
 #  pragma warning(push)
@@ -152,6 +153,7 @@ public:
       insert(first, last);
   }
 
+#ifndef CGAL_TRIANGULATION_3_DONT_INSERT_RANGE_OF_POINTS_WITH_INFO
   template < class InputIterator >
   std::ptrdiff_t
   insert( InputIterator first, InputIterator last,
@@ -168,6 +170,11 @@ public:
             >
           >::type* = NULL  
   )
+#else
+  template < class InputIterator >
+  std::ptrdiff_t
+  insert( InputIterator first, InputIterator last)  
+#endif //CGAL_TRIANGULATION_3_DONT_INSERT_RANGE_OF_POINTS_WITH_INFO
   {
     size_type n = number_of_vertices();
 
@@ -191,6 +198,7 @@ public:
   }
 
   
+#ifndef CGAL_TRIANGULATION_3_DONT_INSERT_RANGE_OF_POINTS_WITH_INFO
 private:
   template <class Info>
   const Weighted_point& top_get_first(const std::pair<Weighted_point,Info>& pair) const { return pair.first; }
@@ -242,7 +250,9 @@ private:
 
     return number_of_vertices() - n;
   }
+  
 public:
+
   template < class InputIterator >
   std::ptrdiff_t
   insert( InputIterator first,
@@ -261,7 +271,7 @@ public:
           >::type* = NULL
   )
   {return insert_with_info< std::pair<Weighted_point,typename internal::Info_check<typename Triangulation_data_structure::Vertex>::type> >(first,last);}
-
+  
   template <class  InputIterator_1,class InputIterator_2>
   std::ptrdiff_t
   insert( boost::zip_iterator< boost::tuple<InputIterator_1,InputIterator_2> > first,
@@ -277,7 +287,7 @@ public:
           >::type* =NULL
   )
   {return insert_with_info< boost::tuple<Weighted_point,typename internal::Info_check<typename Triangulation_data_structure::Vertex>::type> >(first,last);}
-  
+#endif //CGAL_TRIANGULATION_3_DONT_INSERT_RANGE_OF_POINTS_WITH_INFO
 
   
   Vertex_handle insert(const Weighted_point & p, Vertex_handle hint)

@@ -30,11 +30,14 @@
 #include <CGAL/Triangulation_3.h>
 #include <CGAL/iterator.h>
 #include <CGAL/Location_policy.h>
+
+#ifndef CGAL_TRIANGULATION_3_DONT_INSERT_RANGE_OF_POINTS_WITH_INFO
 #include <CGAL/internal/spatial_sorting_traits_with_indices.h>
 
 #include <boost/tuple/tuple.hpp>
 #include <boost/iterator/zip_iterator.hpp>
 #include <boost/mpl/and.hpp>
+#endif //CGAL_TRIANGULATION_3_DONT_INSERT_RANGE_OF_POINTS_WITH_INFO
 
 #ifdef CGAL_DELAUNAY_3_OLD_REMOVE
 #  error "The old remove() code has been removed.  Please report any issue you may have with the current one."
@@ -208,6 +211,7 @@ public:
       insert(first, last);
   }
 
+#ifndef CGAL_TRIANGULATION_3_DONT_INSERT_RANGE_OF_POINTS_WITH_INFO
   template < class InputIterator >
   std::ptrdiff_t
   insert( InputIterator first, InputIterator last,
@@ -218,6 +222,11 @@ public:
             >
           >::type* = NULL
   )
+#else
+  template < class InputIterator >
+  std::ptrdiff_t
+  insert( InputIterator first, InputIterator last)
+#endif //CGAL_TRIANGULATION_3_DONT_INSERT_RANGE_OF_POINTS_WITH_INFO
   {
     size_type n = number_of_vertices();
     std::vector<Point> points (first, last);
@@ -232,6 +241,7 @@ public:
   }
   
   
+#ifndef CGAL_TRIANGULATION_3_DONT_INSERT_RANGE_OF_POINTS_WITH_INFO
 private:  
   template <class Info>
   const Point& top_get_first(const std::pair<Point,Info>& pair) const { return pair.first; }
@@ -272,7 +282,9 @@ private:
 
     return number_of_vertices() - n;
   }
+  
 public:
+
   template < class InputIterator >
   std::ptrdiff_t
   insert( InputIterator first,
@@ -301,7 +313,7 @@ public:
   {
     return insert_with_info< boost::tuple<Point,typename internal::Info_check<typename Triangulation_data_structure::Vertex>::type> >(first,last);
   }
-  
+#endif //CGAL_TRIANGULATION_3_DONT_INSERT_RANGE_OF_POINTS_WITH_INFO
   
   Vertex_handle insert(const Point & p, Vertex_handle hint)
   {
