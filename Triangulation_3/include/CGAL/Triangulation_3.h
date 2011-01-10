@@ -5174,8 +5174,8 @@ bool
 Triangulation_3<Gt, Tds>::
 does_repeat_in_range(InputIterator first, InputIterator beyond) const {
   std::set<Vertex_handle> s;
-  s.insert(first,beyond);
-  return s.size() != (beyond - first);
+  while (first!=beyond) if (! s.insert(*first++).second ) return true;
+  return false;
 }
 
 template < class Gt, class Tds >
