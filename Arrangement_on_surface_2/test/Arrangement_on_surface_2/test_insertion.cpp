@@ -12,8 +12,37 @@ typedef Traits_2::Point_2                             Point_2;
 typedef Traits_2::X_monotone_curve_2                  Segment_2;
 typedef CGAL::Arrangement_2<Traits_2>                 Arrangement_2;
 typedef Arrangement_2::Halfedge_handle                Halfedge_handle;
+typedef Arrangement_2::Vertex_handle                  Vertex_handle;
 
 #define N_SEGMENTS 26
+
+bool test_insert_at_vertices(){
+ Arrangement_2 arr;
+  
+  Vertex_handle v_x0y3 = arr.insert_in_face_interior(Point_2(Number_type(0), Number_type(3)), arr.unbounded_face());
+  Vertex_handle v_x1y6 = arr.insert_in_face_interior(Point_2(Number_type(1), Number_type(6)), arr.unbounded_face());
+  Vertex_handle v_x1y3 = arr.insert_in_face_interior(Point_2(Number_type(1), Number_type(3)), arr.unbounded_face());
+  Vertex_handle v_x2y3 = arr.insert_in_face_interior(Point_2(Number_type(2), Number_type(3)), arr.unbounded_face());
+  Vertex_handle v_x3y6 = arr.insert_in_face_interior(Point_2(Number_type(3), Number_type(6)), arr.unbounded_face());
+  Vertex_handle v_x3y0 = arr.insert_in_face_interior(Point_2(Number_type(3), Number_type(0)), arr.unbounded_face());
+  
+  arr.insert_at_vertices(Segment_2(v_x0y3->point(), v_x1y6->point()), v_x0y3, v_x1y6);
+  arr.insert_at_vertices(Segment_2(v_x0y3->point(), v_x1y3->point()), v_x0y3, v_x1y3);
+  arr.insert_at_vertices(Segment_2(v_x1y3->point(), v_x2y3->point()), v_x1y3, v_x2y3);
+  arr.insert_at_vertices(Segment_2(v_x0y3->point(), v_x3y6->point()), v_x0y3, v_x3y6);
+  arr.insert_at_vertices(Segment_2(v_x0y3->point(), v_x3y0->point()), v_x0y3, v_x3y0);
+ 
+  Halfedge_handle he = arr.insert_at_vertices(Segment_2(v_x3y6->point(), v_x3y0->point()), v_x3y6, v_x3y0);
+  
+  
+  if (he->face() != arr.unbounded_face())
+  {
+    std::cerr << "Error: he->face() must be the unbounded face!" << std::endl;
+    return false;
+  }
+    
+  return is_valid(arr);
+}
 
 int main ()
 {
@@ -69,7 +98,10 @@ int main ()
   valid = is_valid(arr);
   std::cout << "Arrangement is "
             << (valid ? "valid." : "NOT valid!") << std::endl;
-    
+  
+  std::cout << "Test insert_at_vertices "
+            << ( test_insert_at_vertices() ? "valid." : "NOT valid!") << std::endl;
+  
   return (0);
 }
 
