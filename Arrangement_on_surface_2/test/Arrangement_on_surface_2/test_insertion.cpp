@@ -16,6 +16,7 @@ typedef Arrangement_2::Vertex_handle                  Vertex_handle;
 
 #define N_SEGMENTS 26
 
+//test from a bug report when inserting a segment closing a hole
 bool test_insert_at_vertices(){
  Arrangement_2 arr;
   
@@ -98,10 +99,12 @@ int main ()
   valid = is_valid(arr);
   std::cout << "Arrangement is "
             << (valid ? "valid." : "NOT valid!") << std::endl;
+  if (!valid) return 1;
   
-  std::cout << "Test insert_at_vertices "
-            << ( test_insert_at_vertices() ? "valid." : "NOT valid!") << std::endl;
+  std::cout << "Test insert_at_vertices ";
+  valid=test_insert_at_vertices();
+  std::cout << ( valid ? "valid." : "NOT valid!") << std::endl;
   
-  return (0);
+  return valid?0:1;
 }
 
