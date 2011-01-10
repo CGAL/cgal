@@ -17,8 +17,8 @@ typedef Arrangement_2::Vertex_handle                  Vertex_handle;
 #define N_SEGMENTS 26
 
 //test from a bug report when inserting a segment closing a hole
-bool test_insert_at_vertices(){
- Arrangement_2 arr;
+bool test_insert_at_vertices_1(){
+  Arrangement_2 arr;
   
   Vertex_handle v_x0y3 = arr.insert_in_face_interior(Point_2(Number_type(0), Number_type(3)), arr.unbounded_face());
   Vertex_handle v_x1y6 = arr.insert_in_face_interior(Point_2(Number_type(1), Number_type(6)), arr.unbounded_face());
@@ -43,6 +43,37 @@ bool test_insert_at_vertices(){
   }
     
   return is_valid(arr);
+}
+
+bool test_insert_at_vertices_2(){
+  Arrangement_2 arr;
+  
+  Vertex_handle v_x0y3 = arr.insert_in_face_interior(Kernel::Point_2(Kernel::FT(0), Kernel::FT(3)), arr.unbounded_face());
+  Vertex_handle v_x1y6 = arr.insert_in_face_interior(Kernel::Point_2(Kernel::FT(1), Kernel::FT(6)), arr.unbounded_face());
+  Vertex_handle v_x1y3 = arr.insert_in_face_interior(Kernel::Point_2(Kernel::FT(1), Kernel::FT(3)), arr.unbounded_face());
+  Vertex_handle v_x2y3 = arr.insert_in_face_interior(Kernel::Point_2(Kernel::FT(2), Kernel::FT(3)), arr.unbounded_face());
+  Vertex_handle v_x3y6 = arr.insert_in_face_interior(Kernel::Point_2(Kernel::FT(3), Kernel::FT(6)), arr.unbounded_face());
+  Vertex_handle v_x3y0 = arr.insert_in_face_interior(Kernel::Point_2(Kernel::FT(3), Kernel::FT(0)), arr.unbounded_face());
+  
+  arr.insert_at_vertices(Segment_2(v_x0y3->point(), v_x1y6->point()), v_x0y3, v_x1y6);
+  arr.insert_at_vertices(Segment_2(v_x0y3->point(), v_x1y3->point()), v_x0y3, v_x1y3);
+  arr.insert_at_vertices(Segment_2(v_x1y3->point(), v_x2y3->point()), v_x1y3, v_x2y3);
+  arr.insert_at_vertices(Segment_2(v_x0y3->point(), v_x3y6->point()), v_x0y3, v_x3y6);
+  arr.insert_at_vertices(Segment_2(v_x3y6->point(), v_x3y0->point()), v_x3y6, v_x3y0);
+  
+  Halfedge_handle he = arr.insert_at_vertices(Segment_2(v_x3y0->point(), v_x0y3->point()), v_x3y0, v_x0y3);
+  
+  if (he->face() != arr.unbounded_face())
+  {
+    std::cerr << "Error: he->face() must be the unbounded face!" << std::endl;
+    return false;
+  }
+  
+  return is_valid(arr);
+}
+
+bool test_insert_at_vertices(){
+  return test_insert_at_vertices_1() && test_insert_at_vertices_2();
 }
 
 int main ()

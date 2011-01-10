@@ -3616,10 +3616,10 @@ _find_leftmost_vertex_on_open_loop (const DHalfedge *he_before,
         bool v_min_updated = v_min!=he->vertex();
         v_min = he->vertex();
 
-        if ( he!=he_before && (v_min_updated || he_left_low ==NULL ||
+        if ( v_min_updated || he_left_low ==NULL ||
              compare_y_at_x_right_2(he_left_low->curve(),
                                     he->curve(),
-                                    v_min->point() ) == LARGER ) )
+                                    v_min->point() ) == LARGER )
         {
           // If we need to compute the lowest halfedge incident to the leftmost
           // vertex, update it now. Note that we may visit the smallest vertex
@@ -3640,7 +3640,7 @@ _find_leftmost_vertex_on_open_loop (const DHalfedge *he_before,
   is_perimetric = (x_cross_count % 2 == 1) || (y_cross_count % 2 == 1);
   
   // Return the leftmost vertex and its index (with respect to he_before).
-  return (std::make_pair (v_min, he_left_low));
+  return (std::make_pair (v_min, (he_left_low==he_before ? static_cast<DHalfedge*>(NULL):he_left_low) ));
 }
 
 //-----------------------------------------------------------------------------
