@@ -85,7 +85,7 @@ void process ()
   // call test function
   CGAL::test_Polytope_distance_d( p_points.begin(), p_points.end(),
 				  q_points.begin(), q_points.end(),
-				  Traits(), 1);
+				  Traits(), 2);
   }
 }
     
@@ -93,6 +93,7 @@ void process ()
 // ----
 int main()
 {
+  std::cerr << "Testing with " << typeid(CTraits1()).name() << std::endl;
     process<CK1, CTraits1>();
     process<HK1, HTraits1>();
 }
