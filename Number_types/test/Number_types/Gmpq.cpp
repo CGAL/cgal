@@ -229,6 +229,12 @@ int main() {
 
   Gmpq q;
   Gmpq q1(12);
+  Gmpq q1bis(12u); // test construction from unsigned int
+  // For the moment Gmpq is not interoperable with
+  // unsigned int: the following assertions would fail to compile.
+  //   assert(q1bis == 12);
+  //   assert(q1bis == 12u);
+  //   assert(q1bis >= 12u);
   Gmpq q2(3.1415);
   Gmpz z1(1), z2(2);
   Gmpq q3(z1);

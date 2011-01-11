@@ -85,6 +85,9 @@ public:
   Gmpq(int n)
   { mpq_set_si(mpq(), n, 1); }
 
+  Gmpq(unsigned int n)
+  { mpq_set_ui(mpq(), n, 1); }
+
   Gmpq(long n)
   { mpq_set_si(mpq(), n, 1); }
 
