@@ -3265,6 +3265,10 @@ Spatial_searching/include/CGAL/internal/bounded_priority_queue.h -text
 Spatial_searching/test/Spatial_searching/Compare_methods.cpp -text
 Spatial_sorting/doc_tex/Spatial_sorting/fig/hilbert.png -text
 Spatial_sorting/doc_tex/Spatial_sorting/fig/hilbertLarge.jpg -text
+Spatial_sorting/dont_submit -text
+Spatial_sorting/examples/Spatial_sorting/data/input.cin -text
+Spatial_sorting/examples/Spatial_sorting/example_delaunay_2.cmd -text
+Spatial_sorting/examples/Spatial_sorting/sort_indices.cmd -text
 Straight_skeleton_2/demo/Straight_skeleton_2/data/complex_0.poly -text svneol=unset#application/octet-stream
 Straight_skeleton_2/demo/Straight_skeleton_2/data/complex_1.poly -text svneol=unset#application/octet-stream
 Straight_skeleton_2/demo/Straight_skeleton_2/data/complex_2.poly -text svneol=unset#application/octet-stream
