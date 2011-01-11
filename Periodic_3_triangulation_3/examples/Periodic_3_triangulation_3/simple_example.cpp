@@ -31,7 +31,7 @@ int main()
 
   PDT T(L.begin(), L.end(), domain); // Put the domain with the constructor
 
-  int n = T.number_of_vertices();
+  PDT::size_type n = T.number_of_vertices();
 
   // insertion from a vector :
   std::vector<Point> V(3);
