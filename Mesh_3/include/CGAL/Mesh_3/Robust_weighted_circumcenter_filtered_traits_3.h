@@ -50,7 +50,17 @@ public:
 
 #ifndef  CGAL_CFG_MATCHING_BUG_6 
   using K::Compute_squared_radius_3::operator();
-#else 
+#else // CGAL_CFG_MATCHING_BUG_6
+  typedef typename K::Sphere_3                        Sphere_3;
+  typedef typename K::Circle_3                        Circle_3;
+
+  result_type
+  operator()( const Sphere_3& s) const
+  { return K::Compute_squared_radius_3::operator()(s); }
+
+  result_type
+  operator()( const Circle_3& c) const
+  { return K::Compute_squared_radius_3::operator()(c); }
 
   FT operator() ( const Point_3 & p,
                   const Point_3 & q,
@@ -69,7 +79,7 @@ public:
   {
     return K::Compute_squared_radius_3::operator()(p);
   }
-#endif
+#endif // CGAL_CFG_MATCHING_BUG_6
   
   FT operator() ( const Point_3 & p,
                   const Point_3 & q,
