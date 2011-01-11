@@ -17,15 +17,14 @@
 //
 // Author(s)     : Mariette Yvinec, Sebastien Loriot
 
-#ifndef CGAL_INTERNAL_TRIANGULATION_EUCLIDEAN_TRAITS_PROJECTED_3_H
-#define CGAL_INTERNAL_TRIANGULATION_EUCLIDEAN_TRAITS_PROJECTED_3_H
+#ifndef CGAL_INTERNAL_PROJECTION_TRAITS_3_H
+#define CGAL_INTERNAL_PROJECTION_TRAITS_3_H
 
 #include <CGAL/triangulation_assertions.h>
 
 #include <CGAL/Point_3.h>
 #include <CGAL/Segment_3.h>
 #include <CGAL/Triangle_3.h>
-#include <CGAL/predicates/kernel_ftC2.h>
 
 namespace CGAL { 
 
@@ -51,21 +50,22 @@ struct Projector<R,0>
   static const int x_index=1;
   static const int y_index=2;
 };
-//project onto xz
+//project onto zx
 template <class R>
 struct Projector<R,1>
 {
-  typedef typename R::Less_x_3                Less_x_2;
-  typedef typename R::Less_z_3                Less_y_2;
-  typedef typename R::Compare_x_3             Compare_x_2;
-  typedef typename R::Compare_z_3             Compare_y_2;  
-  typedef typename R::Equal_x_3               Equal_x_2;
-  typedef typename R::Equal_z_3               Equal_y_2;    
-  static typename R::FT x(const typename R::Point_3& p) {return p.x();}
-  static typename R::FT y(const typename R::Point_3& p) {return p.z();}
-  static const int x_index=0;
-  static const int y_index=2;  
+  typedef typename R::Less_z_3                Less_x_2;
+  typedef typename R::Less_x_3                Less_y_2;
+  typedef typename R::Compare_z_3             Compare_x_2;
+  typedef typename R::Compare_x_3             Compare_y_2;  
+  typedef typename R::Equal_z_3               Equal_x_2;
+  typedef typename R::Equal_x_3               Equal_y_2;    
+  static typename R::FT x(const typename R::Point_3& p) {return p.z();}
+  static typename R::FT y(const typename R::Point_3& p) {return p.x();}
+  static const int x_index=2;
+  static const int y_index=0;  
 };
+
 //project onto xy
 template <class R>
 struct Projector<R,2>
@@ -90,11 +90,16 @@ public:
   typename R::FT x(const Point &p) const { return Projector<R,dim>::x(p); }
   typename R::FT y(const Point &p) const { return Projector<R,dim>::y(p); }
 
+  typename R::Point_2 project(const Point& p) const
+  {
+    return typename R::Point_2(x(p),y(p));
+  }
+
   CGAL::Orientation operator()(const Point& p,
 			       const Point& q,
 			       const Point& r) const
     {
-      return orientationC2(x(p), y(p), x(q), y(q), x(r), y(r));
+      return CGAL::orientation(project(p), project(q), project(r));
     }
 };
 
@@ -106,15 +111,39 @@ public:
   typename R::FT x(const Point &p) const { return Projector<R,dim>::x(p); }
   typename R::FT y(const Point &p) const { return Projector<R,dim>::y(p); }
 
+
+  typename R::Point_2 project(const Point& p) const
+  {
+    return typename R::Point_2(x(p),y(p));
+  }
   CGAL::Oriented_side operator() (const Point &p, 
 				  const Point &q,
 				  const Point &r, 
 				  const Point &s) const
     {
-      return side_of_oriented_circleC2(x(p), y(p),
-				       x(q), y(q),
-				       x(r), y(r),
-				       x(s), y(s));
+      return CGAL::side_of_oriented_circle(project(p),project(q),project(r),project(s) );
+    }
+};
+
+template <class R,int dim>
+class Side_of_bounded_circle_projected_3 
+{
+public:
+  typedef typename R::Point_3     Point; 
+  typename R::FT x(const Point &p) const { return Projector<R,dim>::x(p); }
+  typename R::FT y(const Point &p) const { return Projector<R,dim>::y(p); }
+
+
+  typename R::Point_2 project(const Point& p) const
+  {
+    return typename R::Point_2(x(p),y(p));
+  }
+  CGAL::Bounded_side operator() (const Point &p, 
+				  const Point &q,
+				  const Point &r, 
+				  const Point &s) const
+    {
+      return CGAL::side_of_bounded_circle(project(p),project(q),project(r),project(s) );
     }
 };
 
@@ -205,7 +234,18 @@ public:
       const Segment_2* si=CGAL::object_cast<Segment_2>(&o);
       if (si==NULL) return Object();
       FT src[3],tgt[3];
-      tgt[dim] = src[dim] = FT(0); //the third coordinate is arbitrarily set to 0 (not used in Constrained DT)
+      tgt[dim] = src[dim] = FT(0); //the third coordinate is the midpoint between the points on s1 and s2
+
+      FT z1 = s1.source()[dim] + ( si->source().x()-s1_source.x() ) / (s1_target.x() - s1_source.x()) * ( s1.target()[dim] - s1.source()[dim] );
+      FT z2 = s2.source()[dim] + ( si->source().x()-s2_source.x() ) / (s2_target.x() - s2_source.x()) * ( s2.target()[dim] - s2.source()[dim] );
+      src[dim] = (z1+z2) / FT(2);
+
+
+      z1 = s1.source()[dim] + ( si->target().x()-s1_source.x() ) / (s1_target.x() - s1_source.x()) * ( s1.target()[dim] - s1.source()[dim] );
+      z2 = s2.source()[dim] + ( si->target().x()-s2_source.x() ) / (s2_target.x() - s2_source.x()) * ( s2.target()[dim] - s2.source()[dim] );
+      tgt[dim] = (z1+z2) / FT(2);
+
+
       src[Projector<R,dim>::x_index] = si->source().x();
       src[Projector<R,dim>::y_index] = si->source().y();
       tgt[Projector<R,dim>::x_index] = si->target().x();
@@ -216,6 +256,7 @@ public:
     //compute the third coordinate of the projected intersection point onto 3D segments
     FT z1 = s1.source()[dim] + ( pi->x()-s1_source.x() ) / (s1_target.x() - s1_source.x()) * ( s1.target()[dim] - s1.source()[dim] );
     FT z2 = s2.source()[dim] + ( pi->x()-s2_source.x() ) / (s2_target.x() - s2_source.x()) * ( s2.target()[dim] - s2.source()[dim] );
+
     coords[dim] = (z1+z2) / FT(2);
     coords[Projector<R,dim>::x_index] = pi->x();
     coords[Projector<R,dim>::y_index] = pi->y();
@@ -284,9 +325,9 @@ public:
 };
 
 template < class R, int dim >
-class Triangulation_euclidean_traits_projected_3 {
+class Projection_traits_3 {
 public:
-  typedef Triangulation_euclidean_traits_projected_3<R,dim>   Traits;
+  typedef Projection_traits_3<R,dim>   Traits;
   typedef R                                                   Rp;
   typedef typename R::FT                                      FT;
   typedef typename Rp::Point_3                                Point_2;
@@ -300,12 +341,39 @@ public:
   typedef typename Projector<R,dim>::Compare_y_2              Compare_y_2;
   typedef Orientation_projected_3<Rp,dim>                     Orientation_2;
   typedef Side_of_oriented_circle_projected_3<Rp,dim>         Side_of_oriented_circle_2;
+  typedef Side_of_bounded_circle_projected_3<Rp,dim>         Side_of_bounded_circle_2;
   typedef Compare_distance_projected_3<Rp,dim>                Compare_distance_2;
   typedef Squared_distance_projected_3<Rp,dim>                Compute_squared_distance_2;
   typedef Intersect_projected_3<Rp,dim>                       Intersect_2;
   typedef typename Rp::Construct_segment_3                    Construct_segment_2;
   typedef typename Rp::Construct_triangle_3                   Construct_triangle_2;
   typedef typename Rp::Construct_line_3                       Construct_line_2;
+  typedef typename Rp::Compute_squared_radius_3               Compute_squared_radius_2;
+
+  struct Less_xy_2 {
+    bool operator()(const Point_2& p, const Point_2& q) const
+    {
+      Compare_x_2 cx;
+      Comparison_result crx = cx(p,q);
+      if(crx == SMALLER){ return true;}
+      if(crx == LARGER){return false;}
+      Less_y_2 ly;
+      return ly(p,q);
+    }
+  };
+
+
+  struct Less_yx_2 {
+    bool operator()(const Point_2& p, const Point_2& q) const
+    {
+      Compare_y_2 cy;
+      Comparison_result cry = cy(p,q);
+      if(cry == SMALLER){ return true;}
+      if(cry == LARGER){return false;}
+      Less_x_2 lx;
+      return lx(p,q);
+    }
+  };
 
   //for natural_neighbor_coordinates_2
   typedef typename Projector<R,dim>::Equal_x_2                Equal_x_2;
@@ -320,11 +388,11 @@ public:
   typedef Segment_2    Segment;
   typedef Triangle_2   Triangle;
 
-  Triangulation_euclidean_traits_projected_3(){}
-  Triangulation_euclidean_traits_projected_3(
-		   const Triangulation_euclidean_traits_projected_3&){}
-  Triangulation_euclidean_traits_projected_3 &operator=(
-	    const Triangulation_euclidean_traits_projected_3&){return *this;}
+  Projection_traits_3(){}
+  Projection_traits_3(
+		   const Projection_traits_3&){}
+  Projection_traits_3 &operator=(
+	    const Projection_traits_3&){return *this;}
 
   typename Rp::FT x(const Point_2 &p) const { return Projector<R,dim>::x(p); }
   typename Rp::FT y(const Point_2 &p) const { return Projector<R,dim>::y(p); }
@@ -334,10 +402,13 @@ public:
   less_x_2_object() const
     { return Less_x_2();}
 
+  Less_xy_2
+  less_xy_2_object() const
+    { return Less_xy_2();}
+
   Less_y_2
   less_y_2_object() const
     { return Less_y_2();}
-
   Compare_x_2
   compare_x_2_object() const
     { return Compare_x_2();}
@@ -354,6 +425,10 @@ public:
   side_of_oriented_circle_2_object() const
     {return Side_of_oriented_circle_2();}
 
+  Side_of_bounded_circle_2
+  side_of_bounded_circle_2_object() const
+    {return Side_of_bounded_circle_2();}
+
   Compare_distance_2
   compare_distance_2_object() const
   {
@@ -364,6 +439,12 @@ public:
   compute_squared_distance_2_object () const
   {
     return Compute_squared_distance_2();
+  }
+
+  Compute_squared_radius_2
+  compute_squared_radius_2_object () const
+  {
+    return Compute_squared_radius_2();
   }
 
   Intersect_2
@@ -386,4 +467,4 @@ public:
 
 } } //namespace CGAL::internal
 
-#endif // CGAL_INTERNAL_TRIANGULATION_EUCLIDEAN_TRAITS_PROJECTED_3_H
+#endif // CGAL_INTERNAL_PROJECTION_TRAITS_3_H

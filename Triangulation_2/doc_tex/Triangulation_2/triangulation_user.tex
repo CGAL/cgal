@@ -662,6 +662,10 @@ terrain model. The points have elevation, that is they are 3D points,
 but the predicates used to build the  Delaunay triangulation
 are computed using only  the $x$ and $y$ coordinates  
 of these points. 
+
+The class \ccc{Projection_traits_xy_3<K>} is part of the 2D and 3D Linear Geometric Kernel,
+and replaces the class \ccc{Triangulation_euclidean_traits_xy_3<K>} which is deprecated.
+
 \ccIncludeExampleCode{Triangulation_2/terrain.cpp}
 
 \subsection{Example: Voronoi Diagram\label{Subsection_2D_Triangulations_Voronoi}}

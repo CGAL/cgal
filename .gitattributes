@@ -1689,6 +1689,7 @@ Kernel_23/doc_tex/Kernel_23_ref/fig/transvectwo.gif -text svneol=unset#image/gif
 Kernel_23/doc_tex/Kernel_23_ref/radical_line.tex -text
 Kernel_23/examples/Kernel_23/cartesian_converter.cpp -text
 Kernel_23/include/CGAL/functions_on_enums.h -text
+Kernel_23/include/CGAL/internal/Projection_traits_3.h -text
 Kernel_23/test/Kernel_23/CMakeLists.txt -text
 Kernel_d/doc_tex/Kernel_d/hypercube.png -text
 Kernel_d/doc_tex/Kernel_d_ref/Kernel_Compute_coordinate_d.tex -text
@@ -3914,7 +3915,6 @@ Triangulation_2/doc_tex/Triangulation_2_ref/insert3.gif -text svneol=unset#image
 Triangulation_2/doc_tex/Triangulation_2_ref/neighbors.gif -text svneol=unset#image/gif
 Triangulation_2/doc_tex/Triangulation_2_ref/remove.gif -text svneol=unset#image/gif
 Triangulation_2/doc_tex/Triangulation_2_ref/walk.gif -text svneol=unset#image/gif
-Triangulation_2/include/CGAL/internal/Triangulation_euclidean_traits_projected_3.h -text
 Triangulation_2/test/Triangulation_2/test_delaunay_triangulation_proj.cpp -text
 Triangulation_3/demo/Triangulation_3/CMakeLists.txt -text
 Triangulation_3/demo/Triangulation_3/MainWindow.cpp -text

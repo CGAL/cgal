@@ -1,12 +1,12 @@
 #include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
-#include <CGAL/Triangulation_euclidean_traits_xy_3.h>
+#include <CGAL/Projection_traits_xy_3.h>
 #include <CGAL/Delaunay_triangulation_2.h>
 
 #include <fstream>
 
 
 typedef CGAL::Exact_predicates_inexact_constructions_kernel K;
-typedef CGAL::Triangulation_euclidean_traits_xy_3<K>  Gt;
+typedef CGAL::Projection_traits_xy_3<K>  Gt;
 typedef CGAL::Delaunay_triangulation_2<Gt> Delaunay;
 
 typedef K::Point_3   Point;

@@ -12,13 +12,12 @@ points lie.  The class
 is a second traits class based on \cgal\ primitives but differs from
 \ccc{Convex_hull_traits_2} in that some of its primitives reuse
 intermediate results to speed up computation.
-In addition, there are three projective traits classes 
-(\ccc{Convex_hull_projective_xy_traits_2}, 
-\ccc{Convex_hull_projective_xz_traits_2}, and 
-\ccc{Convex_hull_projective_yz_traits_2}), %
-\ccIndexMainItem[C]{Convex_hull_projective_xy_traits_2}%
-\ccIndexMainItem[C]{Convex_hull_projective_xz_traits_2}%
-\ccIndexMainItem[C]{Convex_hull_projective_yz_traits_2}%
+
+In addition, the 2D and 3D Linear Geometric Kernel provides three projective traits classes 
+(\ccc{Projection_traits_xy_3<K>}, 
+\ccc{Projection_traits_zx_3<K}, and 
+\ccc{Projection_traits_yz_3<K}),
+
 which may be used to compute the convex hull of a set of three-dimensional
 points projected into each of the three coordinate planes.
 

@@ -1,0 +1,101 @@
+
+\begin{ccRefClass}{Projection_traits_xy_3<K>}  %% add template arg's if necessary
+
+%% \ccHtmlCrossLink{}     %% add further rules for cross referencing links
+%% \ccHtmlIndexC[class]{} %% add further index entries
+\ccCreationVariable{traits}
+\ccDefinition
+  
+The class \ccRefName\ is an adapter to apply 2D algorithms to the projections of 3D data on the \ccc{xy}-plane.
+
+
+\cgal\ provides also predefined geometric traits classes
+\ccc{Projection_traits_yz_3<K>} and
+\ccc{Projection_traits_zx_3<K>} to
+deal with projections on the
+ \ccc{zx}- and  the \ccc{yz}-plane,
+respectively.  It is the \ccc{zx}-plane and not the  \ccc{xz}-plane
+in order that the third unit vector is on the positive halfspace
+defined by the plane.
+
+\ccParameters
+The template parameter \ccc{K}  has to
+be instantiated by a model of the \ccc{Kernel} concept.
+\ccRefName\ uses types 
+and predicates defined in \ccc{K}.
+
+\ccInclude{CGAL/Projection_traits_xy_3.h}
+
+\ccIsModel
+
+The class is a model of several 2D triangulation traits class concepts,
+except that it does not provide the type and constructors
+required to build the dual Voronoi diagram. The class is also a model
+of the concepts \ccc{PolygonTraits_2} and \ccc{ConvexHullTraits_2}.
+
+\ccRefConceptPage{TriangulationTraits_2} \\
+\ccRefConceptPage{DelaunayTriangulationTraits_2} \\
+\ccRefConceptPage{ConstrainedTriangulationTraits_2} \\
+\ccRefConceptPage{PolygonTraits_2} \\
+\ccRefConceptPage{ConvexHullTraits_2}
+
+\ccTypes
+
+\ccTwo{typedef Triangle_3<K>}{}
+\ccTypedef{typedef Point_3<K>   Point_2;}{}
+\ccGlue
+\ccTypedef{typedef Segment_3<K>   Segment_2;}{}
+\ccGlue
+\ccTypedef{typedef Triangle_3<K>   Triangle_2;}{}
+\ccGlue
+\ccTypedef{typedef Line_3<K>   Line_2;}{}
+
+\ccTypedef{typedef K::Object_3   Object_2;}{}
+
+
+The functors provided by this class are those listed in the concepts,
+except that it does not provide the type and constructors
+required to build the dual Voronoi diagram.
+The functors operate on the 2D projection of their arguments. They come with preconditions that projections of the arguments are non-degenerate, eg. a line segment does not project on a single point, two points do not project on the same point, etc.
+
+In the following, we specify the choice of the \ccc{z}-coordinate
+in case a new point is constructed. 
+
+
+\ccNestedType{Intersect_2}{A construction object.
+Provides the operator~:\\
+\ccHtmlNoLinksFrom{\ccc{Object_2 operator()(Segment_2 s1, Segment_2 s2);}}
+which returns a 3D object whose projection on the xy-plane 
+                               is the intersection of the projections of \ccc{s1} and \ccc{s2}.
+If non empty, the returned object is either a segment or a point.
+                               Its embedding in 3D is computed as the interpolation 
+                               between \ccc{s1} and \ccc{s2},
+                               meaning that any point \ccc{p} of the returned object
+                               is the midpoint of  segment \ccc{p1p2} where \ccc{p1} and \ccc{p2} are the two points of \ccc{s1} and \ccc{s2} respectively, both projecting on \ccc{p}.
+\ccPrecond{The projection of \ccc{s1} and the projection of \ccc{s2} are non-degenerate 
+\ccc{2D} segments.}
+}
+
+
+\ccCreation
+\ccCreationVariable{traits}
+ 
+\ccThree{Projection_traits_xy_3()}{traits=tr  }{}
+
+\ccConstructor{Projection_traits_xy_3();}{
+default constructor.}
+\ccGlue
+\ccConstructor{Projection_traits_xy_3(
+                      Projection_traits_xy_3 tr);}
+{Copy constructor.}
+\ccMethod{Projection_traits_xy_3 operator=
+              (Projection_traits_xy_3  tr);}
+{Assignment operator.}
+
+\end{ccRefClass}
+
+% +------------------------------------------------------------------------+
+%%RefPage: end of main body, begin of footer
+% EOF
+% +------------------------------------------------------------------------+
+
