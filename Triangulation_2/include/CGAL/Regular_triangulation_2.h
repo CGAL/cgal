@@ -27,6 +27,13 @@
 
 #include <boost/bind.hpp>
 
+#ifndef CGAL_TRIANGULATION_2_DONT_INSERT_RANGE_OF_POINTS_WITH_INFO
+#include <CGAL/internal/spatial_sorting_traits_with_indices.h>
+
+#include <boost/iterator/zip_iterator.hpp>
+#include <boost/mpl/and.hpp>
+#endif //CGAL_TRIANGULATION_2_DONT_INSERT_RANGE_OF_POINTS_WITH_INFO
+
 namespace CGAL { 
 
 template < typename K_ >
@@ -337,9 +344,28 @@ private:
 
 
 public:
+#ifndef CGAL_TRIANGULATION_2_DONT_INSERT_RANGE_OF_POINTS_WITH_INFO
+  template < class InputIterator >
+  std::ptrdiff_t
+  insert( InputIterator first, InputIterator last,
+          typename boost::enable_if<
+            boost::mpl::or_<
+              boost::is_same<
+                  typename std::iterator_traits<InputIterator>::value_type,
+                  Weighted_point
+              >,
+              boost::is_same<
+                  typename std::iterator_traits<InputIterator>::value_type,
+                  Bare_point
+              >
+            >
+          >::type* = NULL  
+  )
+#else  
   template < class InputIterator >
   std::ptrdiff_t
   insert(InputIterator first, InputIterator last)
+#endif //CGAL_TRIANGULATION_2_DONT_INSERT_RANGE_OF_POINTS_WITH_INFO
   {
       size_type n = number_of_vertices();
 
@@ -355,6 +381,92 @@ public:
       return number_of_vertices() - n;
   }
 
+#ifndef CGAL_TRIANGULATION_2_DONT_INSERT_RANGE_OF_POINTS_WITH_INFO
+private:
+  template <class Info>
+  const Weighted_point& top_get_first(const std::pair<Weighted_point,Info>& pair) const { return pair.first; }
+  template <class Info>
+  const Info& top_get_second(const std::pair<Weighted_point,Info>& pair) const { return pair.second; }
+  template <class Info>
+  const Weighted_point& top_get_first(const boost::tuple<Weighted_point,Info>& tuple) const { return boost::get<0>(tuple); }
+  template <class Info>
+  const Info& top_get_second(const boost::tuple<Weighted_point,Info>& tuple) const { return boost::get<1>(tuple); }
+
+  template <class Tuple_or_pair,class InputIterator>
+  std::ptrdiff_t insert_with_info(InputIterator first,InputIterator last)
+  {
+    int n = number_of_vertices();
+    std::vector<std::size_t> indices;
+    std::vector<Weighted_point> points;
+    std::vector<typename Triangulation_data_structure::Vertex::Info> infos;
+    std::size_t index=0;
+    for (InputIterator it=first;it!=last;++it){
+      Tuple_or_pair pair = *it;
+      points.push_back( top_get_first(pair) );
+      infos.push_back ( top_get_second(pair) );
+      indices.push_back(index++);
+    }
+
+    typedef internal::Vector_property_map<Weighted_point> Point_pmap;
+    typedef internal::Spatial_sort_traits_with_property_map_2<Geom_traits,Point_pmap> Search_traits;
+    
+    spatial_sort(indices.begin(),indices.end(),Search_traits(Point_pmap(points),geom_traits()));    
+
+    Face_handle hint;
+    Vertex_handle v_hint;
+    for (typename std::vector<std::size_t>::const_iterator
+      it = indices.begin(), end = indices.end();
+      it != end; ++it)
+    {
+      v_hint = insert (points[*it], hint);
+      
+      if (v_hint!=Vertex_handle()){
+        v_hint->info()=infos[*it];
+        hint=v_hint->face();
+      }
+    }
+
+    return number_of_vertices() - n;
+  }
+  
+public:
+
+  template < class InputIterator >
+  std::ptrdiff_t
+  insert( InputIterator first,
+          InputIterator last,
+          typename boost::enable_if<
+            boost::mpl::or_<
+              boost::is_same<
+                typename std::iterator_traits<InputIterator>::value_type,
+                std::pair<Weighted_point,typename internal::Info_check<typename Triangulation_data_structure::Vertex>::type>
+              >,
+              boost::is_same<
+                typename std::iterator_traits<InputIterator>::value_type,
+                std::pair<Bare_point,typename internal::Info_check<typename Triangulation_data_structure::Vertex>::type>
+              >
+            >
+          >::type* = NULL
+  )
+  {return insert_with_info< std::pair<Weighted_point,typename internal::Info_check<typename Triangulation_data_structure::Vertex>::type> >(first,last);}
+  
+  template <class  InputIterator_1,class InputIterator_2>
+  std::ptrdiff_t
+  insert( boost::zip_iterator< boost::tuple<InputIterator_1,InputIterator_2> > first,
+          boost::zip_iterator< boost::tuple<InputIterator_1,InputIterator_2> > last,
+          typename boost::enable_if<
+            boost::mpl::and_<
+              boost::mpl::or_<
+                typename boost::is_same< typename std::iterator_traits<InputIterator_1>::value_type, Weighted_point >,
+                typename boost::is_same< typename std::iterator_traits<InputIterator_1>::value_type, Bare_point >
+              >,
+              typename boost::is_same< typename std::iterator_traits<InputIterator_2>::value_type, typename internal::Info_check<typename Triangulation_data_structure::Vertex>::type >
+            >
+          >::type* =NULL
+  )
+  {return insert_with_info< boost::tuple<Weighted_point,typename internal::Info_check<typename Triangulation_data_structure::Vertex>::type> >(first,last);}
+#endif //CGAL_TRIANGULATION_2_DONT_INSERT_RANGE_OF_POINTS_WITH_INFO  
+  
   template < class Stream>
   Stream& draw_dual(Stream & ps) const
     {
