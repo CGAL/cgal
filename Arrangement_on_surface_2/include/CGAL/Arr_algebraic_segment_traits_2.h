@@ -20,6 +20,9 @@
 //
 // ============================================================================
 
+#ifndef CGAL_ARR_ALGEBRAIC_SEGMENT_TRAITS
+#define CGAL_ARR_ALGEBRAIC_SEGMENT_TRAITS
+
 #include <CGAL/config.h>
 
 #include <CGAL/Algebraic_kernel_d/flags.h>
@@ -30,6 +33,10 @@
 
 #include <boost/optional.hpp>
 #include <boost/none.hpp>
+
+#if CGAL_ACK_CURVE_ANALYSES_USE_BISOLVE || CGAL_ACK_CURVE_PAIR_ANALYSES_USE_BISOLVE
+#include <CGAL/Bi_solve_2.h>
+#endif
 
 namespace CGAL {
 
@@ -656,3 +663,5 @@ public:
 };
 
 } //namespace CGAL
+
+#endif // CGAL_ARR_ALGEBRAIC_SEGMENT_TRAITS
