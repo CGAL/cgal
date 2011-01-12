@@ -34,6 +34,7 @@
 #include <boost/optional.hpp>
 #include <boost/none.hpp>
 
+#include <CGAL/Bbox_2.h>
 #include <CGAL/Arr_enums.h>
 
 #ifndef CGAL_CKvA_USE_CACHES
