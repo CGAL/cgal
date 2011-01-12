@@ -8,14 +8,10 @@
 //
 // ----------------------------------------------------------------------------
 //
-// release       : $CGAL_Revision: CGAL-I $
-// release_date  : $CGAL_Date$
-//
-// file          : test/Random_numbers/test_Random.C
+// file          : test/Random_numbers/test_Random.cpp
 // package       : $CGAL_Package: Random_numbers $
 // chapter       : Random Numbers Generator
 //
-// source        : web/Random.aw
 // revision      : $Id$
 // revision_date : $Date$
 //
@@ -28,6 +24,8 @@
 #include <CGAL/Random.h>
 #include <cassert>
 #include <iterator>
+#include <vector>
+#include <algorithm>
 
 int
 main()
@@ -47,16 +45,24 @@ main()
 
         {
           std::size_t l = 0, u = 10;
-          std::size_t i = CGAL::default_random.get_int(l,u);
-          assert( ( l <= i) && ( i < u));
+          std::size_t i = CGAL::default_random.uniform_int(l,u);
+          assert( ( l <= i) && ( i <= u));
         }
 
 
         {
           std::ptrdiff_t l = 0, u = 10;
-          std::ptrdiff_t i = CGAL::default_random.get_int(l,u);
-          assert( ( l <= i) && ( i < u));
+          std::ptrdiff_t i = CGAL::default_random.uniform_int(l,u);
+          assert( ( l <= i) && ( i <= u));
         }
+
+        {
+          std::ptrdiff_t l = 0, u = 10;
+          std::ptrdiff_t i = CGAL::default_random.uniform_smallint(l,u);
+          assert( ( l <= i) && ( i <= u));
+        }
+
+
     }
     
     // test get_double
@@ -71,6 +77,31 @@ main()
         double zo = CGAL::default_random.get_double();
         assert( (0 <= zo) && (zo < 1.0));
     }
+
+    // test uniform_real
+    {
+      double d = CGAL::default_random.uniform_real<double>(-10.0, 10.0);
+      assert( (d >= -10.0) && (d < 10.0) ); 
+
+      d = CGAL::default_random.uniform_real<double>(0.2);
+      assert( (d >= 0.2) && (d < 1.0) ); 
+
+      d = CGAL::default_random.uniform_real<double>();
+      assert( (d >= 0) && (d < 1) ); 
+
+      d = CGAL::default_random.uniform_01<double>();
+      assert( (d >= 0) && (d < 1) ); 
+    }
+  {
+      float d = CGAL::default_random.uniform_real<float>(-10.0f, 10.0f);
+      assert( (d >= -10.0f) && (d < 10.0f) ); 
+      d = CGAL::default_random.uniform_real<float>(0.2f);
+      assert( (d >= 0.2) && (d < 1.0) ); 
+      d = CGAL::default_random.uniform_real<float>();
+      assert( (d >= 0) && (d < 1) ); 
+      d = CGAL::default_random.uniform_01<float>();
+      assert( (d >= 0) && (d < 1) ); 
+  }
 
     // test get_bits
     {
@@ -107,7 +138,7 @@ main()
 
     // test operator()
     {
-        int  i = CGAL::default_random( 5555);
+      int  i = CGAL::default_random( 5555);
         assert( ( 0 <= i) && ( i < 5555));
     }
 
@@ -127,6 +158,9 @@ main()
       assert (r1 == r2);
     }
 
+    std::vector<int> numbers;
+    numbers.push_back(1);
+    std::random_shuffle(numbers.begin(), numbers.end(), CGAL::default_random);
     return( 0);
 }
 
