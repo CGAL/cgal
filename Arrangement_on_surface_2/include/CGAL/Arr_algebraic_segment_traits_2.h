@@ -34,10 +34,6 @@
 #include <boost/optional.hpp>
 #include <boost/none.hpp>
 
-#if CGAL_ACK_CURVE_ANALYSES_USE_BISOLVE || CGAL_ACK_CURVE_PAIR_ANALYSES_USE_BISOLVE
-#include <CGAL/Bi_solve_2.h>
-#endif
-
 namespace CGAL {
 
 template< class Coefficient_ > 
@@ -55,13 +51,7 @@ public:
     typedef Coefficient_ Coefficient;
     
     // 'derivation'
-#if CGAL_ACK_CURVE_ANALYSES_USE_BISOLVE || CGAL_ACK_CURVE_PAIR_ANALYSES_USE_BISOLVE
-    typedef CGAL::Bi_solve_2< Coefficient > Bi_solve_2;
-
-    typedef typename Bi_solve_2::Algebraic_kernel_1 Algebraic_kernel_d_1;
-#else
     typedef CGAL::Algebraic_kernel_d_1< Coefficient > Algebraic_kernel_d_1;
-#endif    
 
     typedef CGAL::Algebraic_curve_kernel_2< Algebraic_kernel_d_1 > 
         Algebraic_kernel_d_2;
