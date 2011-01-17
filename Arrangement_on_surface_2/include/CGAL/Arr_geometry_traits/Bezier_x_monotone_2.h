@@ -59,6 +59,8 @@ public:
                                Nt_traits,
                                Bounding_traits>         Self;
 
+  typedef unsigned int                                  Multiplicity;
+
   typedef _Bezier_cache<Nt_traits>                      Bezier_cache;
 
 private:

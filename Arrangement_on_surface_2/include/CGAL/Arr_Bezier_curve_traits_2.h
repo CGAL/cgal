@@ -99,6 +99,9 @@ public:
                           Nt_traits,
                           Bounding_traits>             Point_2;
 
+  typedef typename X_monotone_curve_2::Multiplicity    Multiplicity;
+
+
   // Type definition for the vertical-tangnecy and intersection point cache.
   typedef _Bezier_cache<Nt_traits>                     Bezier_cache;
 
