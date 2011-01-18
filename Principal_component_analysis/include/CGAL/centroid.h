@@ -826,16 +826,6 @@ struct Dispatch_centroid_3
   }
 };
 
-#if defined(_MSC_VER) || defined (__INTEL_COMPILER) || defined(__clang__)
-  // Workaround for VC++ and Intel compiler
-  // (avoids wrong template function instanciation)
-  template <typename K>
-  struct Dispatch_centroid_3<Point_3<K>, Point_3<K>, Dynamic_dimension_tag >
-  {
-    typedef void result_type;
-  };
-#endif
-  
 } // namespace internal
 
 template < typename InputIterator, typename K>
@@ -871,14 +861,6 @@ struct Dispatch_centroid
     typedef typename std::iterator_traits<InputIterator>::value_type Value_type;
     return CGAL::centroid(begin, end, k, typename Feature_dimension<Value_type, K>::type());
   }
-};
-
-// Avoids wrong matching with
-// CGAL::centroid(Point_3<K>, Point_3<K>, Point_3<K>)
-template < typename K >
-struct Dispatch_centroid < Point_3<K>, Point_3<K> >
-{
-  typedef void result_type;
 };
 
 // this one takes an iterator range over kernel objects, and a dimension tag,
