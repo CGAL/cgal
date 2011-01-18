@@ -4,7 +4,7 @@
 #include <CGAL/squared_distance_2.h>
 #include <cassert>
 #include "MyKernel.h"
-
+#include "MyPointC2_iostream.h"
 
 typedef MyKernel<double>                   MK;
 typedef CGAL::Filtered_kernel_adaptor<MK>  K;

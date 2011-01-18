@@ -25,58 +25,7 @@ Assume you have the following point class, where the coordinates are
 stored in an array of \ccc{doubles}, where we have another data member
 \ccc{color}, which shows up in the constructor.
 
-\ccHtmlLinksOff
-\begin{ccExampleCode}
-class MyPointC2 {
-
-private:
-  double vec[2];
-  int col;
-
-public:
-
-  MyPointC2()
-    : col(0)
-  {
-    *vec = 0;
-    *(vec+1) = 0;
-  }
-
-  
-  MyPointC2(const double x, const double y, int c)
-    : col(c)
-  {
-    *vec = x;
-    *(vec+1) = y;
-  }
-
-  const double& x() const  { return *vec; }
-
-  const double& y() const { return *(vec+1); }
-
-  double & x() { return *vec; }
-
-  double& y() { return *(vec+1); }
-
-  int color() const { return col; }
-
-  int& color() { return col; }
-  
-  
-  bool operator==(const MyPointC2 &p) const
-  {
-    return ( *vec == *(p.vec) )  && ( *(vec+1) == *(p.vec + 1) && ( col == p.col) );
-  }
-
-  bool operator!=(const MyPointC2 &p) const
-  {
-      return !(*this == p);
-  }
-
-};
-\end{ccExampleCode}
-\ccHtmlLinksOn
-
+\ccIncludeExampleCode{Kernel_23/MyPointC2.h}
 
 As said earlier the class is pretty minimalistic, for
 example it has no \ccc{bbox()} method.  One
@@ -89,44 +38,14 @@ use of the functor \ccc{Kernel::Construct_bbox_2}.
 To make the right thing happen with \ccc{MyPointC2} we
 have to provide the following functor.
 
-\ccHtmlLinksOff
-\begin{ccExampleCode}
-template <class ConstructBbox_2>
-class MyConstruct_bbox_2 : public ConstructBbox_2 {
-public:
-  using ConstructBbox_2::operator();
-
-  CGAL::Bbox_2 operator()(const typename MyPointC2& p) const {
-    return CGAL::Bbox_2(p.x(), p.y(), p.x(), p.y());
-  }
-};
-\end{ccExampleCode}
-\ccHtmlLinksOn
-
+\ccIncludeExampleCode{Kernel_23/MyConstruct_bbox_2.h}
 
 Things are similar for random access to the \ccHtmlNoLinksFrom{Cartesian}
 coordinates of a point. As the coordinates are stored
 in an array of \ccc{doubles} we can use \ccc{double*} as
 random access iterator.
 
-\ccHtmlLinksOff
-\begin{ccExampleCode}
-class MyConstruct_coord_iterator {
-public:
-  const double* operator()(const MyPointC2& p)
-  {
-    return &p.x();
-  }
-
-  const double* operator()(const MyPointC2& p, int)
-  {
-    const double* pyptr = &p.y();
-    pyptr++;
-    return pyptr;
-  }
-};
-\end{ccExampleCode}
-\ccHtmlLinksOn
+\ccIncludeExampleCode{Kernel_23/MyConstruct_coord_iterator.h}
 
 The last functor we have to provide is the one which constructs
 points. That is you are not forced to add the constructor 
@@ -135,54 +54,13 @@ homogeneous coordinates.
 The functor is a kind of glue layer between the \cgal\ algorithms
 and your class.
 
-\ccHtmlLinksOff
-\begin{ccExampleCode}
- template <typename K>
-  class MyConstruct_point_2
-  {
-    typedef typename K::RT         RT;
-    typedef typename K::Point_2    Point_2;
-  public:
-    typedef Point_2          result_type;
-
-    Point_2
-    operator()(CGAL::Origin o) const
-    { return Point_2(0,0, 0); }
-
-    Point_2
-    operator()(const RT& x, const RT& y) const
-    { return Point_2(x, y, 0); }
-
-    
-    // We need this one, as such a functor is in the Filtered_kernel
-    Point_2
-    operator()(const RT& x, const RT& y, const RT& w) const
-    { 
-      if(w != 1){
-	return Point_2(x/w, y/w, 0); 
-      } else {
-	return Point_2(x,y, 0);
-      }
-    }
-  };
-
-\end{ccExampleCode}
-\ccHtmlLinksOn
-
+\ccIncludeExampleCode{Kernel_23/MyConstruct_point_2.h}
 
 Now we are ready to put the puzzle together. We won't explain it in
 detail, but you see that there are \ccc{typedefs} to the new point
 class and the functors. All the other types are inherited.
 
-
-
-
-
 \ccIncludeExampleCode{Kernel_23/MyKernel.h}
-
-
-
-
 
 Finally, we give an example how this new kernel can be used.
 Predicates and constructions work with the new point, they

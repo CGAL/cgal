@@ -1687,6 +1687,10 @@ Kernel_23/doc_tex/Kernel_23_ref/fig/compare_x_at_y.pdf -text svneol=unset#applic
 Kernel_23/doc_tex/Kernel_23_ref/fig/transvecthree.gif -text svneol=unset#image/gif
 Kernel_23/doc_tex/Kernel_23_ref/fig/transvectwo.gif -text svneol=unset#image/gif
 Kernel_23/doc_tex/Kernel_23_ref/radical_line.tex -text
+Kernel_23/examples/Kernel_23/MyConstruct_bbox_2.h -text
+Kernel_23/examples/Kernel_23/MyConstruct_coord_iterator.h -text
+Kernel_23/examples/Kernel_23/MyConstruct_point_2.h -text
+Kernel_23/examples/Kernel_23/MyPointC2_iostream.h -text
 Kernel_23/examples/Kernel_23/cartesian_converter.cpp -text
 Kernel_23/include/CGAL/functions_on_enums.h -text
 Kernel_23/include/CGAL/internal/Projection_traits_3.h -text

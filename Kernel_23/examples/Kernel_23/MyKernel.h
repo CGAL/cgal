@@ -4,6 +4,9 @@
 #include <CGAL/Cartesian.h>
 #include "MyPointC2.h"
 #include "MySegmentC2.h"
+#include "MyConstruct_bbox_2.h"
+#include "MyConstruct_coord_iterator.h"
+#include "MyConstruct_point_2.h"
 
 // K_ is the new kernel, and K_Base is the old kernel
 template < typename K_, typename K_Base >
