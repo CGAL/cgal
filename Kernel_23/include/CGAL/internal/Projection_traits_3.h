@@ -60,7 +60,7 @@ struct Projector<R,1>
   typedef typename R::Compare_z_3             Compare_y_2;  
   typedef typename R::Equal_x_3               Equal_x_2;
   typedef typename R::Equal_z_3               Equal_y_2;    
-  static typename R::FT x(const typename R::Point_3& p) {return p.z();}
+  static typename R::FT x(const typename R::Point_3& p) {return p.x();}
   static typename R::FT y(const typename R::Point_3& p) {return p.z();}
   static const int x_index=0;
   static const int y_index=2;  
