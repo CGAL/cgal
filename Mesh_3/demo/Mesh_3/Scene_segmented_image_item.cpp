@@ -429,8 +429,7 @@ int
 Vertex_buffer_helper::
 vertex_index(unsigned int i, unsigned int j, unsigned int k) const
 {
-  if (   i < 0            || j < 0            || k < 0 
-      || i > data_.xdim() || j > data_.ydim() || k > data_.zdim() )
+  if ( i > data_.xdim() || j > data_.ydim() || k > data_.zdim() )
   {
     return vertex_not_found_;
   }
