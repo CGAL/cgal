@@ -50,20 +50,20 @@ struct Projector<R,0>
   static const int x_index=1;
   static const int y_index=2;
 };
-//project onto zx
+//project onto xz
 template <class R>
 struct Projector<R,1>
 {
-  typedef typename R::Less_z_3                Less_x_2;
-  typedef typename R::Less_x_3                Less_y_2;
-  typedef typename R::Compare_z_3             Compare_x_2;
-  typedef typename R::Compare_x_3             Compare_y_2;  
-  typedef typename R::Equal_z_3               Equal_x_2;
-  typedef typename R::Equal_x_3               Equal_y_2;    
+  typedef typename R::Less_x_3                Less_x_2;
+  typedef typename R::Less_z_3                Less_y_2;
+  typedef typename R::Compare_x_3             Compare_x_2;
+  typedef typename R::Compare_z_3             Compare_y_2;  
+  typedef typename R::Equal_x_3               Equal_x_2;
+  typedef typename R::Equal_z_3               Equal_y_2;    
   static typename R::FT x(const typename R::Point_3& p) {return p.z();}
-  static typename R::FT y(const typename R::Point_3& p) {return p.x();}
-  static const int x_index=2;
-  static const int y_index=0;  
+  static typename R::FT y(const typename R::Point_3& p) {return p.z();}
+  static const int x_index=0;
+  static const int y_index=2;  
 };
 
 //project onto xy
@@ -82,6 +82,8 @@ struct Projector<R,2>
   static const int y_index=1;  
 };
   
+
+
 template <class R,int dim>
 class Orientation_projected_3 
 {

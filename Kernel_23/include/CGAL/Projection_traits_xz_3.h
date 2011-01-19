@@ -17,18 +17,18 @@
 //
 // Author(s)     : Mariette Yvinec
 
-#ifndef CGAL_PROJECTION_TRAITS_ZX_3_H
-#define CGAL_PROJECTION_TRAITS_ZX_3_H
+#ifndef CGAL_PROJECTION_TRAITS_XZ_3_H
+#define CGAL_PROJECTION_TRAITS_XZ_3_H
 
 #include <CGAL/internal/Projection_traits_3.h>
 
 namespace CGAL {
 
 template < class R >
-class Projection_traits_zx_3
+class Projection_traits_xz_3
   : public internal::Projection_traits_3<R,1>
 {};
 
 } //namespace CGAL
 
-#endif // CGAL_PROJECTION_TRAITS_ZX_3_H
+#endif // CGAL_PROJECTION_TRAITS_XZ_3_H
