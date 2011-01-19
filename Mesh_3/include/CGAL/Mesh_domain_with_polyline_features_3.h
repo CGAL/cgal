@@ -45,7 +45,9 @@ template <typename Kernel>
 class Polyline
 {
   typedef typename Kernel::Point_3  Point_3;
+  typedef typename Kernel::Segment_3 Segment_3;
   typedef typename Kernel::FT       FT;
+
   typedef std::vector<Point_3>      Data;
   
 public:
@@ -234,7 +236,6 @@ private:
   /// if p is the starting point of a cycle.
   const_iterator locate(const Point_3& p, bool end_point_first=false) const
   {
-    typedef typename Kernel::Segment_3 Segment_3;
     CGAL_precondition(is_valid());
     
     // First look if p is one of the points of the polyline
@@ -252,51 +253,76 @@ private:
         { return result; }
       }
     }
-    
+
+    CGAL_assertion(result == points_.end());
+
     // Get result as follows:
     //  - project p on each segment
     //  - keep the point which projects inside segment and is closest from segment
     const_iterator it = points_.begin();
     const_iterator previous = it;
-    result = points_.end();
-    FT min_distance = 0;
+    Segment_3 nearest_segment;
+    bool nearest_segment_is_initialized = false;
     
     while ( ++it != points_.end() )
     {
       Segment_3 seg (*previous, *it);
-      
-      // Project p on seg
-      Point_3 projected_pt = seg.supporting_line().projection(p);
-      
-      // If projected_pt is inside segment
-      if ( squared_distance(projected_pt,seg.source()) < seg.squared_length()
-          && squared_distance(projected_pt,seg.target()) < seg.squared_length() )
+
+      // Test if the projection, on the supporting line of segment 'seg', of
+      // the point 'p' is inside 'seg' or not.
+      if( angle(p, seg.source(), seg.target()) != OBTUSE && 
+          angle(p, seg.target(), seg.source()) != OBTUSE )
       {
-        // Store result iff it is very close to the projected point
-        FT sq_dist_p_projected = squared_distance(p,projected_pt); 
-        if ( points_.end() == result || sq_dist_p_projected < min_distance )
+        if(nearest_segment_is_initialized)
         {
+          if(compare_distance(p, seg, nearest_segment) == CGAL::SMALLER)
+          {
+            nearest_segment = seg;
+            result = previous;
+          }
+        }
+        else {
+          nearest_segment_is_initialized = true;
+          nearest_segment = seg;
           result = previous;
-          min_distance = sq_dist_p_projected;
         }
       }
-      
       previous = it;
     }
-    
-    return result;
+
+    if(result == points_.end())
+    {
+      if(compare_distance(p, 
+                          points_.front(), 
+                          points_.back()) != CGAL::LARGER) 
+      {
+        return end_point_first ? last_segment_source() : points_.begin();
+      } else {
+        return last_segment_source();
+      }
+    } else {
+      return result;
+    }
   }
   
-  FT squared_distance(const Point_3& p, const Point_3& q) const
-  {
-    typename Kernel::Compute_squared_distance_3 sq_distance =
-      Kernel().compute_squared_distance_3_object();
-    return sq_distance(p,q);
-  }
+  // FT squared_distance(const Point_3& p, const Point_3& q) const
+  // {
+  //   typename Kernel::Compute_squared_distance_3 sq_distance =
+  //     Kernel().compute_squared_distance_3_object();
+  //   return sq_distance(p,q);
+  // }
   
   FT distance(const Point_3& p, const Point_3& q) const
   {
     return CGAL::sqrt(squared_distance(p, q));
+  }
+
+  Angle angle(const Point_3& p, 
+              const Point_3& angle_vertex_point,
+              const Point_3& q) const 
+  {
+    typename Kernel::Angle_3 compute_angle =  Kernel().angle_3_object();
+    return compute_angle(p,angle_vertex_point,q);
   }
   
   CGAL::Sign compare_distance(const Point_3& p,
@@ -308,8 +334,18 @@ private:
     return compare_distance(p,q,r);
   }
   
+  
+  CGAL::Sign compare_distance(const Point_3& p,
+                              const Segment_3& seg1,
+                              const Segment_3& seg2) const
+  {
+    typename Kernel::Compare_distance_3 compare_distance =
+      Kernel().compare_distance_3_object();
+    return compare_distance(p,seg1,seg2);
+  }
+
 private:
-  std::vector<Point_3> points_;
+  Data points_;
 }; // end class Polyline
   
 
