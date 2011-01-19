@@ -16,7 +16,7 @@
 #ifndef CGAL_NEF3_EXACT_TRIANGULATION_EUCLIDEAN_TRAITS_XY_3_H
 #define CGAL_NEF3_EXACT_TRIANGULATION_EUCLIDEAN_TRAITS_XY_3_H
 
-#include <CGAL/Triangulation_euclidean_traits_xy_3.h>
+#include <CGAL/Projection_traits_xy_3.h>
 #include <CGAL/intersections.h>
 
 namespace CGAL {
@@ -108,10 +108,10 @@ struct Exact_intersect_xy_2 <R,Homogeneous_tag>
 
 template <class R>
 struct Exact_triangulation_euclidean_traits_xy_3
- : public CGAL::Triangulation_euclidean_traits_xy_3<R>
+ : public CGAL::Projection_traits_xy_3<R>
 {
    typedef CGAL::Exact_triangulation_euclidean_traits_xy_3<R> Traits;
-   typedef CGAL::Triangulation_euclidean_traits_xy_3<R>       Tet;
+   typedef CGAL::Projection_traits_xy_3<R>       Tet;
    typedef R Rp;
 
    typedef typename Tet::Point_2         Point_2;

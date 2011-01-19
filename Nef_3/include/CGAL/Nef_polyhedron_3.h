@@ -69,9 +69,9 @@
 
 #include <CGAL/Constrained_triangulation_2.h>
 #include <CGAL/Triangulation_data_structure_2.h>
-#include <CGAL/Triangulation_euclidean_traits_xy_3.h>
-#include <CGAL/Triangulation_euclidean_traits_yz_3.h>
-#include <CGAL/Triangulation_euclidean_traits_xz_3.h>
+#include <CGAL/Projection_traits_xy_3.h>
+#include <CGAL/Projection_traits_yz_3.h>
+#include <CGAL/Projection_traits_xz_3.h>
 #include <CGAL/Constrained_triangulation_face_base_2.h>
 #include <list>
 
@@ -716,9 +716,9 @@ protected:
     
     class Visitor {
 
-      typedef typename CGAL::Triangulation_euclidean_traits_xy_3<Kernel>       XY;
-      typedef typename CGAL::Triangulation_euclidean_traits_yz_3<Kernel>       YZ;
-      typedef typename CGAL::Triangulation_euclidean_traits_xz_3<Kernel>       XZ;
+      typedef typename CGAL::Projection_traits_xy_3<Kernel>       XY;
+      typedef typename CGAL::Projection_traits_yz_3<Kernel>       YZ;
+      typedef typename CGAL::Projection_traits_xz_3<Kernel>       XZ;
 
       const Object_index<Vertex_const_iterator>& VI;
       Polyhedron_incremental_builder_3<HDS>& B;

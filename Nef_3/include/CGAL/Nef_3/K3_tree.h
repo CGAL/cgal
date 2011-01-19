@@ -30,9 +30,9 @@
 #ifdef CGAL_NEF3_TRIANGULATE_FACETS
 #include <CGAL/Constrained_triangulation_2.h>
 #include <CGAL/Triangulation_data_structure_2.h>
-#include <CGAL/Triangulation_euclidean_traits_xy_3.h>
-#include <CGAL/Triangulation_euclidean_traits_yz_3.h>
-#include <CGAL/Triangulation_euclidean_traits_xz_3.h>
+#include <CGAL/Projection_traits_xy_3.h>
+#include <CGAL/Projection_traits_yz_3.h>
+#include <CGAL/Projection_traits_xz_3.h>
 #include <CGAL/Constrained_triangulation_face_base_2.h>
 #endif
 
@@ -803,9 +803,9 @@ public:
       CGAL_assertion(fci.is_shalfedge());
       SHalfedge_around_facet_circulator safc(fci);
       if(circulator_size(safc) > 10) {
-      typedef typename CGAL::Triangulation_euclidean_traits_xy_3<Kernel>       XY;
-      typedef typename CGAL::Triangulation_euclidean_traits_yz_3<Kernel>       YZ;
-      typedef typename CGAL::Triangulation_euclidean_traits_xz_3<Kernel>       XZ;
+      typedef typename CGAL::Projection_traits_xy_3<Kernel>       XY;
+      typedef typename CGAL::Projection_traits_yz_3<Kernel>       YZ;
+      typedef typename CGAL::Projection_traits_xz_3<Kernel>       XZ;
 
       Triangle_3 tr;
 
