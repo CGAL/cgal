@@ -256,50 +256,51 @@ private:
 
     CGAL_assertion(result == points_.end());
 
-    // Get result as follows:
-    //  - project p on each segment
-    //  - keep the point which projects inside segment and is closest from segment
+    // Get result by projecting p on the polyline
     const_iterator it = points_.begin();
     const_iterator previous = it;
     Segment_3 nearest_segment;
-    bool nearest_segment_is_initialized = false;
+    const_iterator nearest_vertex = it;
+    result = nearest_vertex;
+    bool nearest_is_a_segment = false;
     
     while ( ++it != points_.end() )
     {
       Segment_3 seg (*previous, *it);
 
-      // Test if the projection, on the supporting line of segment 'seg', of
-      // the point 'p' is inside 'seg' or not.
-      if( angle(p, seg.source(), seg.target()) != OBTUSE && 
-          angle(p, seg.target(), seg.source()) != OBTUSE )
+      if(nearest_is_a_segment)
       {
-        if(nearest_segment_is_initialized)
+        if(compare_distance(p, seg, nearest_segment) == CGAL::SMALLER)
         {
-          if(compare_distance(p, seg, nearest_segment) == CGAL::SMALLER)
-          {
-            nearest_segment = seg;
-            result = previous;
-          }
-        }
-        else {
-          nearest_segment_is_initialized = true;
           nearest_segment = seg;
+          result = previous;
+        }
+        if(compare_distance(p, *it, nearest_segment) == CGAL::SMALLER)
+        {
+          nearest_vertex = it;
+          nearest_is_a_segment = false;
+          result = it;
+        }
+      }
+      else {
+        if(compare_distance(p, *it, *nearest_vertex) == CGAL::SMALLER)
+        {
+          nearest_vertex = it;
+          result = it;
+        }
+        if(compare_distance(p, seg, *nearest_vertex) == CGAL::SMALLER)
+        {
+          nearest_segment = seg;
+          nearest_is_a_segment = true;
           result = previous;
         }
       }
       previous = it;
-    }
+    } // end the while loop on the vertices of the polyline
 
-    if(result == points_.end())
-    {
-      if(compare_distance(p, 
-                          points_.front(), 
-                          points_.back()) != CGAL::LARGER) 
-      {
-        return end_point_first ? last_segment_source() : points_.begin();
-      } else {
-        return last_segment_source();
-      }
+
+    if(result == points_.begin()) {
+      return (end_point_first && !nearest_is_a_segment) ? last_segment_source() : points_.begin();
     } else {
       return result;
     }
@@ -325,23 +326,14 @@ private:
     return compute_angle(p,angle_vertex_point,q);
   }
   
+  template <typename T1, typename T2>
   CGAL::Sign compare_distance(const Point_3& p,
-                              const Point_3& q,
-                              const Point_3& r) const
+                              const T1& obj1,
+                              const T2& obj2) const
   {
     typename Kernel::Compare_distance_3 compare_distance =
       Kernel().compare_distance_3_object();
-    return compare_distance(p,q,r);
-  }
-  
-  
-  CGAL::Sign compare_distance(const Point_3& p,
-                              const Segment_3& seg1,
-                              const Segment_3& seg2) const
-  {
-    typename Kernel::Compare_distance_3 compare_distance =
-      Kernel().compare_distance_3_object();
-    return compare_distance(p,seg1,seg2);
+    return compare_distance(p,obj1,obj2);
   }
 
 private:
