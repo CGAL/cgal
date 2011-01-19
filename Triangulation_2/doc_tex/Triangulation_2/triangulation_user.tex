@@ -533,9 +533,9 @@ the traits class  supplies geometric predicates that ignore the
 See Section~\ref{Section_2D_Triangulations_Delaunay} for an example.
 \cgal\ provides also the geometric traits classes
 \ccc{Projection_traits_yz_3<R>} and
-\ccc{Projection_traits_zx_3<R>} to
+\ccc{Projection_traits_xz_3<R>} to
 deal with projections on the
- \ccc{yz} plane  and  \ccc{zx}-plane,
+ \ccc{yz} plane  and  \ccc{xz}-plane,
 respectively.
 
 \subsection{Example of a Basic Triangulation\label{Subsection_2D_Triangulations_Basic_Example}}
@@ -611,9 +611,9 @@ The \cgal\  kernel classes
 are models of the concept \ccc{DelaunayTriangulationTraits_2}
 for the euclidean metric.
 The traits class for terrains,
-\ccc{Triangulation_euclidean_traits_xy_3<R>},\\
-\ccc{Triangulation_euclidean_traits_yz_3<R>}, and\\
-\ccc{Triangulation_euclidean_traits_zx_3<R>} \\
+\ccc{Projection_traits_xy_3<R>},\\
+\ccc{Projection_traits_yz_3<R>}, and\\
+\ccc{Projection_traits_xz_3<R>} \\
 are also models of  \ccc{DelaunayTriangulationTraits_2}
 except that they do not fulfill
 the requirements for the duality functions and nearest vertex
