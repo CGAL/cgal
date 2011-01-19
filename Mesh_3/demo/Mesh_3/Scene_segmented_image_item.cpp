@@ -247,10 +247,10 @@ public:
   const GLfloat* vertices() const { return vertex_array_; }
   const GLuint* quads() const { return quad_array_; }
   
-  const std::size_t color_size() const { return color_size_*sizeof(GLfloat); }
-  const std::size_t normal_size() const { return normal_size_*sizeof(GLfloat); }
-  const std::size_t vertex_size() const { return vertex_size_*sizeof(GLfloat); }
-  const std::size_t quad_size() const { return quad_size_*sizeof(GLuint); }
+  std::size_t color_size() const { return color_size_*sizeof(GLfloat); }
+  std::size_t normal_size() const { return normal_size_*sizeof(GLfloat); }
+  std::size_t vertex_size() const { return vertex_size_*sizeof(GLfloat); }
+  std::size_t quad_size() const { return quad_size_*sizeof(GLuint); }
   
 private:
   void treat_vertex(unsigned int i, unsigned int j, unsigned int k);
