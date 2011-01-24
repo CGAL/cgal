@@ -229,7 +229,7 @@ public:
   class Compare_xy_2 {
   private:
     typename Base::Compare_xy_2 m_object;
-    mutable unsigned int & m_counter;
+    unsigned int & m_counter;
 
   public:
     /*! Construct */
@@ -505,9 +505,9 @@ public:
   class Parameter_space_in_x_2 {
   private:
     typename Base::Parameter_space_in_x_2 m_object;
-    mutable unsigned int & m_counter1;
-    mutable unsigned int & m_counter2;
-    mutable unsigned int & m_counter3;
+    unsigned int & m_counter1;
+    unsigned int & m_counter2;
+    unsigned int & m_counter3;
 
   public:
     /*! Construct */
@@ -589,9 +589,9 @@ public:
   class Parameter_space_in_y_2 {
   private:
     typename Base::Parameter_space_in_y_2 m_object;
-    mutable unsigned int & m_counter1;
-    mutable unsigned int & m_counter2;
-    mutable unsigned int & m_counter3;
+    unsigned int & m_counter1;
+    unsigned int & m_counter2;
+    unsigned int & m_counter3;
 
   public:
     /*! Construct */
