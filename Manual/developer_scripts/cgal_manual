@@ -152,6 +152,9 @@ MakePS=0
 MakePDF=1
 MakeHTML=1
 
+# Run Linklint
+TestLinkLint=0
+
 # Selects that only the LaTeX wrapper files for packages are created
 MakeWrapperOnly=0
 
@@ -1116,7 +1119,7 @@ run_html() {
     RetCode=0
     ${LatexToHtml} -nocolor -V # lists only the version number for the summary
     # first run
-    if [ $MakeTestSuiteResult -eq 1 ]; then
+    if [ $TestLinkLint -eq 1 -o $MakeTestSuiteResult -eq 1 ]; then
         cmdlog -noexec "${LatexToHtml} -quiet -date \"${CgalVersionDate}\" -release \"${CgalVersionHtml}\" -author \"$HtmlManualAuthor\" -o testsuite/$1 -header \"$TestSuiteCppHeader\" $1"
         ${LatexToHtml} -quiet -date "${CgalVersionDate}" -release "${CgalVersionHtml}" -author "$HtmlManualAuthor" -o testsuite/$1 -header "$TestSuiteCppHeader" $1
         if [ $? -ne 0 ]; then RetCode=1; fi
@@ -1456,14 +1459,14 @@ make_manual_prime() {
       if [[ $ExitCode -ne 0 && ${ReturnStatus} -ne 1 ]]; then
           ReturnStatus=$ExitCode ;
       fi
-      if [ $MakeTestSuiteResult -eq 1 ]; then
+      if [ $TestLinkLint -eq 1 -o $MakeTestSuiteResult -eq 1 ]; then
           mv ${WrapperRootName}.hlg testsuite/${WrapperRootName}.hlg.txt
           if which linklint >& /dev/null ; then
               mkdir testsuite/${WrapperRootName}-linklintresults
               # linklint, Local Site Checking
-              linklint -limit 5000 -doc testsuite/${WrapperRootName}-linklintresults -index contents.html -no_anchors /testsuite/${WrapperRootName}/@  >& /dev/null
+              linklint -limit 5000 -doc testsuite/${WrapperRootName}-linklintresults -index contents.html -quiet -silent /testsuite/${WrapperRootName}/@  
               # linklint, Remote URL Checking
-              linklint -limit 5000 @@ -doc testsuite/${WrapperRootName}-linklintresults >& /dev/null
+              linklint -limit 5000 @@ -doc testsuite/${WrapperRootName}-linklintresults -quiet -silent
               #REPLACEPATH="`pwd | sed -e 's/[/]/\\\//g'`"
               search_and_replace testsuite/${WrapperRootName}-linklintresults/ "*.html" "file:\/\/.\+\/doc_tex\/testsuite\/" '..\/'
 
@@ -1913,6 +1916,8 @@ while [ $# -gt 0 ] ; do
     -pdf) SetMakePDF=1
         ;;
     -html) SetMakeHTML=1
+        ;;
+    -linklint) TestLinkLint=1
         ;;
     -wrapper) MakeWrapperOnly=1
         ;;
