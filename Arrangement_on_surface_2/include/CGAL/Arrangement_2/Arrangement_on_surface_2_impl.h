@@ -3451,6 +3451,12 @@ _compare_vertices_xy_impl (const DVertex * v1, const DVertex * v2,
 // the source vertex of the second halfedge, such that the new curve will
 // connect these two vertices.
 //
+//Note that the lowest halfedge incident to the leftmost vertex (he_left_low)
+//is the lowest in the open loop. In the case one needs to have the lowest incident 
+//halfedge in the interior of the closed loop, the first curve in compare_y_at_x_right_2
+//he_left_low->curve() must be replaced by (he_left_low!=he_before?he_left_low->curve():cv).
+//Note that in both cases, the result of the (only) calling function _is_inside_new_face will be
+//the same (the turn is the same).
 template<class GeomTraits, class TopTraits>
 std::pair<const typename Arrangement_on_surface_2<GeomTraits,
                                                   TopTraits>::DVertex*,
