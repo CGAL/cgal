@@ -85,7 +85,7 @@ output_c3t3_to_vtk_unstructured_grid(const C3T3& c3t3,
     vtkIdType cell[4];
     for (int i = 0; i < 4; ++i)
       cell[i] =  V[cit->vertex(i)];
-    vtk_facets->InsertNextCell(4, cell);
+    vtk_cells->InsertNextCell(4, cell);
   }
 
   if(!grid) {
