@@ -399,7 +399,7 @@ private slots:
 
         if ( !fileName.isNull() )
         {
-          std::ofstream out(fileName);
+          std::ofstream out(fileName.ascii());
 
           CGAL::set_ascii_mode(out);
 
@@ -426,7 +426,8 @@ private slots:
     bool auto_create_offsets = true ;
     offsets.clear() ;
 
-    std::ifstream offsets_file(s + QString(".oft") );
+    QString soft = s + QString(".oft");
+    std::ifstream offsets_file(soft.ascii());
     if ( offsets_file )
     {
       CGAL::set_ascii_mode(offsets_file);
@@ -440,7 +441,7 @@ private slots:
       auto_create_offsets = false ;
     }
 
-    std::ifstream in(s);
+    std::ifstream in(s.ascii());
     if ( in )
     {
       CGAL::set_ascii_mode(in);
