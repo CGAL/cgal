@@ -595,7 +595,7 @@ bool _Bezier_cache<NtTraits>::_intersection_params
   // polynomials, whose i'th entry corresponds to the coefficient of t^i,
   // which is in turn a polynomial it s.
   const int                degX_2 = nt_traits.degree (polyX_2);
-  std::vector<Polynomial>  coeffsX_st (degX_2 + 1);
+  std::vector<Polynomial>  coeffsX_st (degX_2 < 0 ? 1 : (degX_2 + 1));
 
   for (k = degX_2; k >= 0; k--)
   {
@@ -606,7 +606,7 @@ bool _Bezier_cache<NtTraits>::_intersection_params
 
   // Consruct the bivariate polynomial that corresponds to Equation II.
   const int                degY_2 = nt_traits.degree (polyY_2);
-  std::vector<Polynomial>  coeffsY_st (degY_2 + 1);
+  std::vector<Polynomial>  coeffsY_st (degY_2 < 0 ? 1 : (degY_2 + 1));
     
   for (k = degY_2; k >= 0; k--)
   {
@@ -658,6 +658,8 @@ void _Bezier_cache<NtTraits>::_self_intersection_params
   // polynomials, whose i'th entry corresponds to the coefficient of t^i,
   // which is in turn a polynomial it s.
   const int                degX = nt_traits.degree (polyX);
+  CGAL_assertion(degX > 0);
+  if (degX <= 0) return; //no self intersection if X is constant
   std::vector<Polynomial>  coeffsX_st (degX);
 
   coeffs = new Integer [degX];
@@ -674,6 +676,8 @@ void _Bezier_cache<NtTraits>::_self_intersection_params
 
   // Consruct the bivariate polynomial that corresponds to Equation II.
   const int                degY = nt_traits.degree (polyY);
+  CGAL_assertion(degY > 0);
+  if (degY <= 0) return; //no self intersection if Y is constant  
   std::vector<Polynomial>  coeffsY_st (degY);
     
   coeffs = new Integer [degY];

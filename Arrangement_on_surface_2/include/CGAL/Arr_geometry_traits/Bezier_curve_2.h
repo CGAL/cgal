@@ -603,6 +603,7 @@ private:
     const Integer         numer = nt_traits.numerator (val);
     const Integer         denom = nt_traits.denominator (val);
     const int             deg = nt_traits.degree (poly);
+    if (deg <=0 ) return oi;
     Integer              *coeffs = new Integer [deg + 1];
     int                   k;
 
@@ -766,8 +767,8 @@ void _Bezier_curve_2_rep<RatKer, AlgKer, NtTrt,
                                   *p_polyY, *p_normY);
   delete[] coeffsY;
 
-  CGAL_assertion (nt_traits.degree (*p_polyX) >= 0);
-  CGAL_assertion (nt_traits.degree (*p_polyY) >= 0);
+//  CGAL_assertion (nt_traits.degree (*p_polyX) >= 0);
+//  CGAL_assertion (nt_traits.degree (*p_polyY) >= 0);
 
   return;
 }
