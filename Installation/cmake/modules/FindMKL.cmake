@@ -30,7 +30,7 @@ include(CGAL_Macros)
 # N.B. _prefix is the prefix applied to the names of all cached variables that
 # are generated internally and marked advanced by this macro.
 macro(check_fortran_libraries DEFINITIONS LIBRARIES _prefix _name _flags _list _path1 _path2)
-  message("DEBUG: check_fortran_libraries(${_list} in ${_path1} ${_path2} )")
+  #message("DEBUG: check_fortran_libraries(${_list} in ${_path1} ${_path2} )")
 
   # Check for the existence of the libraries given by _list
   set(_libraries_found TRUE)
