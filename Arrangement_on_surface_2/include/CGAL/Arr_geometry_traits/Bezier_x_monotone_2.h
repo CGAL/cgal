@@ -911,6 +911,28 @@ _Bezier_x_monotone_2<RatKer, AlgKer, NtTrt, BndTrt>::point_position
   if (res_bound != EQUAL)
     return (res_bound);
  
+  
+  if ( p.is_rational() ){
+    Nt_traits nt_traits;
+    Rational px = ((Rat_point_2) p).x();
+    
+    Integer denom_px=nt_traits.denominator(px);
+    Integer numer_px=nt_traits.numerator(px);
+    Polynomial poly_px = CGAL::sign(numer_px) == ZERO ? Polynomial() : nt_traits.construct_polynomial(&numer_px,0);
+    Polynomial poly_x = nt_traits.scale(_curve.x_polynomial(),denom_px) - poly_px;
+    
+    std::vector <Algebraic> roots;
+    std::pair<double,double> prange = parameter_range();
+    nt_traits.compute_polynomial_roots (poly_x,prange.first,prange.second,std::back_inserter(roots));
+    
+    CGAL_assertion(roots.size()==1); //p is in the range and the curve is x-monotone
+    
+    return CGAL::compare(
+      ((Rat_point_2) p).y(),
+      nt_traits.evaluate_at (_curve.y_polynomial(), *roots.begin())
+    );
+  }
+  
   // In this case we have to switch to exact computations and check whether
   // p lies of the given subcurve. We take one of p's originating curves and
   // compute its intersections with our x-monotone curve.
@@ -919,8 +941,6 @@ _Bezier_x_monotone_2<RatKer, AlgKer, NtTrt, BndTrt>::point_position
 
   CGAL_assertion (p.originators_begin() != p.originators_end());
     
-  // \todo If the point is a rational point (e.g., ray shooting)
-  //       use comparison between Y(root_of(X0-X(t))) and Y0.
   Originator   org = *(p.originators_begin());
   bool         do_ovlp;
   bool         swap_order = (_curve.id() > org.curve().id());
