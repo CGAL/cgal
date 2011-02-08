@@ -40,12 +40,12 @@ situations it may lie on an edge or coincide with an arrangement vertex.
 \ccQueryFunctions
 %================
 
+\ccThree{Object}{locate}{}
 \ccMethod{Object locate (const Point_2& q) const;}
   {locates the arrangement cell that contains the query point \ccc{q}
    and returns a handle for this cell.
    The function returns an \ccc{Object} instance that wraps either of the
    following types:
-   \parbox[t]{\ccwComment}{
    \begin{itemize}
    \item \ccc{Arrangement_2::Face_const_handle}, in case \ccc{q} is
          contained inside an arrangement face;
@@ -53,7 +53,7 @@ situations it may lie on an edge or coincide with an arrangement vertex.
          on an arrangement edge;
    \item \ccc{Arrangement_2::Vertex_const_handle}, in case \ccc{q} coincides
          with an arrangement vertex.
-   \end{itemize}}
+   \end{itemize}
    \ccPrecond{\ccVar{} is attached to a valid arrangement instance.}}
 
 \ccOperations
