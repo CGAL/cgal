@@ -1496,6 +1496,7 @@ operator>> (std::istream& is, Triangulation_3<GT, Tds> &tr)
     read(is, d);
     read(is, n);
   }
+  if(!is) return is;
   tr._tds.set_dimension(d);
 
   std::map< std::size_t, Vertex_handle > V;
@@ -1504,7 +1505,7 @@ operator>> (std::istream& is, Triangulation_3<GT, Tds> &tr)
 
   for (std::size_t i=1; i <= n; i++) {
     V[i] = tr._tds.create_vertex();
-    is >> *V[i];
+    if(!(is >> *V[i])) return is;
   }
 
   std::map< std::size_t, Cell_handle > C;
@@ -1513,7 +1514,7 @@ operator>> (std::istream& is, Triangulation_3<GT, Tds> &tr)
   tr._tds.read_cells(is, V, m, C);
 
   for (std::size_t j=0 ; j < m; j++)
-    is >> *(C[j]);
+    if(!(is >> *(C[j]))) return is;
 
   CGAL_triangulation_assertion( tr.is_valid(false) );
   return is;
