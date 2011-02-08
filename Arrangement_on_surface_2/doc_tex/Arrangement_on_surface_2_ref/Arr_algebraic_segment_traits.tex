@@ -263,15 +263,15 @@ Arr\_algebraic\_segment\_traits\_2$<$Coefficient$>$::Construct\_x\_monotone\_seg
 \ccMethod{template<class OutputIterator> OutputIterator 
           operator() (Curve_2 cv, Point_2 end_min, Point_2 end_max,
                       OutputIterator out);}
-        {Writes a sequence of \ccc{X_monotone_curve_2} objects into \ccc{out}.
-         These segments form an $x$-monotone (or vertical) 
-         segment of the curve \ccc{cv} 
-         that starts in \ccc{end_max}, and end in \ccc{end_max}.
-         \ccPrecond(\ccc{end_min} must have a unique $x$-monotone segment
-                    to its right, or \ccc{end_max} must have a unique
-                    $x$-monotone segment to its left. Furthermore, 
-                    \ccc{end_min} and \ccc{end_max} must be connected
-                    by a $x$-monotone segment of \ccc{cv})}
+  {Writes a sequence of \ccc{X_monotone_curve_2} objects (terminal
+  segments) into \ccc{out}. These terminal segments compose an
+  $x$-monotone (or vertical) segment of the curve \ccc{cv} that
+  starts in \ccc{end_min}, and ends in \ccc{end_max}.
+  \ccPrecond(\ccc{end_min} must have a unique $x$-monotone segment
+             to its right, or \ccc{end_max} must have a unique
+             $x$-monotone segment to its left. Furthermore, 
+             \ccc{end_min} and \ccc{end_max} must be connected
+             by an $x$-monotone segment of \ccc{cv})}
 
 \ccMethod{template<class OutputIterator> OutputIterator 
           operator() (Curve_2 cv, Point_2 p, 
