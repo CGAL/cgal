@@ -152,7 +152,7 @@ incidence relations except if mentioned otherwise.
 
 \ccThree{Halfedge_handle}{hds.split_f}{}
 
-\ccMethod{Halfedge_handle make_hole( Halfedge_handle h);}
+\ccMethod{void make_hole( Halfedge_handle h);}
    {removes the face incident to \ccc{h} from \ccc{hds} and creates a hole.
     \ccPrecond \ccc{h != Halfedge_handle()} and \ccc{!(h->is_border())}.
     \ccCommentHeading{Requirement} If faces are supported,
