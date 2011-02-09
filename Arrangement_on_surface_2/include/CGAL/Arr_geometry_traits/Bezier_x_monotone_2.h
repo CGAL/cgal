@@ -714,15 +714,39 @@ _Bezier_x_monotone_2<RatKer, AlgKer, NtTrt, BndTrt>::point_position
     (const Point_2& p,
      Bezier_cache& cache) const
 {
+  Nt_traits nt_traits;
+  
+  //First check if the bezier is a vertical segment
+  if (nt_traits.degree(_curve.x_polynomial()) <= 0)
+  {
+    // In this case both points must be exact.
+    CGAL_assertion (p.is_exact() && _ps.is_exact() && _pt.is_exact());
+    if (p.is_rational() && _ps.is_rational() && _pt.is_rational())
+    {
+      const Rat_point_2&  rat_p = (Rat_point_2) p;
+      const Rat_point_2&  rat_ps = (Rat_point_2) _ps;
+      const Rat_point_2&  rat_pt = (Rat_point_2) _pt;
+
+      Comparison_result res1 = (CGAL::compare (rat_p.y(), rat_ps.y()));
+      Comparison_result res2 = (CGAL::compare (rat_p.y(), rat_pt.y()));
+      return (res1==res2 ? res1:EQUAL);
+    }
+    
+    Comparison_result res1 = (CGAL::compare (p.y(), _ps.y()));
+    Comparison_result res2 = (CGAL::compare (p.y(), _pt.y()));
+    return (res1==res2 ? res1:EQUAL);
+  }
 
   if (p.identical(_ps)) {
     return EQUAL;
   }
   
-  // First check whether p has the same x-coordinate as one of the endpoints.
-  const Comparison_result  res1 = p.compare_x (_ps, cache);
+  // Then check whether the bezier is an horizontal segment or 
+  // if p has the same x-coordinate as one of the endpoint
+  
+  const Comparison_result  res1 =  p.compare_x (_ps, cache);
 
-  if (res1 == EQUAL)
+  if (res1 == EQUAL || nt_traits.degree(_curve.y_polynomial()) <= 0)
   {
     // In this case both points must be exact.
     CGAL_assertion (p.is_exact() && _ps.is_exact());
@@ -913,8 +937,7 @@ _Bezier_x_monotone_2<RatKer, AlgKer, NtTrt, BndTrt>::point_position
  
   
   if ( p.is_rational() ){
-    Nt_traits nt_traits;
-    Rational px = ((Rat_point_2) p).x();
+    const Rational& px = ((Rat_point_2) p).x();
     
     Integer denom_px=nt_traits.denominator(px);
     Integer numer_px=nt_traits.numerator(px);
