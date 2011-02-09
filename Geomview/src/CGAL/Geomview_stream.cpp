@@ -144,7 +144,7 @@ void Geomview_stream::setup_geomview(const char *machine, const char *login)
         *this << "(echo \"CGAL-3D\")";
 
         char inbuf[10];
-        std::size_t retread=::read(in, inbuf, 7);
+        (void)::read(in, inbuf, 7);
 
         if (std::strncmp(inbuf, "started", 7) == 0)
         {
@@ -153,7 +153,7 @@ void Geomview_stream::setup_geomview(const char *machine, const char *login)
                    // << "compulsory anymore, since CGAL 2.3" << std::endl;
 
             // Then the next one is supposed to be CGAL-3D.
-            retread=::read(in, inbuf, 7);
+            (void)::read(in, inbuf, 7);
             if (std::strncmp(inbuf, "CGAL-3D", 7) != 0)
                 std::cerr << "Unexpected string from Geomview !" << std::endl;
         }
@@ -171,7 +171,7 @@ void Geomview_stream::setup_geomview(const char *machine, const char *login)
         // Old original version
         char inbuf[10];
         // Waits for "started" from the .geomview file.
-        retread=::read(in, inbuf, 7);
+        (void)::read(in, inbuf, 7);
 #endif
 
         std::cout << "done." << std::endl;
@@ -229,7 +229,7 @@ Geomview_stream::operator<<(int i)
         // we write raw binary data to the stream.
         int num = i;
         I_swap_to_big_endian(num);
-        std::size_t retwrite=::write(out, (char*)&num, sizeof(num));
+        (void)::write(out, (char*)&num, sizeof(num));
         trace(i);
     } else {
         // transform the int in a character sequence and put whitespace around
@@ -249,7 +249,7 @@ Geomview_stream::operator<<(unsigned int i)
         // we write raw binary data to the stream.
         unsigned int num = i;
         I_swap_to_big_endian(num);
-        std::size_t retwrite=::write(out, (char*)&num, sizeof(num));
+        (void)::write(out, (char*)&num, sizeof(num));
         trace(i);
     } else {
         // transform the int in a character sequence and put whitespace around
@@ -280,7 +280,7 @@ Geomview_stream::operator<<(double d)
     if (get_binary_mode()) {
         float num = d;
         I_swap_to_big_endian(num);
-        std::size_t retwrite=::write(out, (char*)&num, sizeof(num));
+        (void)::write(out, (char*)&num, sizeof(num));
         trace(f);
     } else {
         // 'copy' the float in a string and append a blank
@@ -467,13 +467,13 @@ Geomview_stream::operator>>(char *expr)
 {
     // Skip whitespaces
     do {
-      std::size_t retread=::read(in, expr, 1);
+      (void)::read(in, expr, 1);
     } while (expr[0] != '(');
 
     int pcount = 1;
     int i = 1;
     while (1) {
-        std::size_t retread=::read(in, &expr[i], 1);
+        (void)::read(in, &expr[i], 1);
         if (expr[i] == ')'){
             pcount--;
         } else if (expr[i] == '('){
