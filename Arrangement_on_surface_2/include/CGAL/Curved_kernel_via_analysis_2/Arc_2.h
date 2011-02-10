@@ -3229,7 +3229,7 @@ private:
     // type of CurveSweepTraits model
     typedef CGAL::Sweep_curves_adapter_2< Curved_kernel_via_analysis_2 > SCA_2;
     // befriend segment for Self::_intersection_points
-    friend class SCA_2::Segment_2;
+    friend struct internal::Generic_arc_2<SCA_2>;
     
     /*
     // befriend all functors
