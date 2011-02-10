@@ -49,12 +49,12 @@ namespace CGAL {
 
 namespace internal {
 
-#ifndef CERR
+#ifndef CKvA_CERR
 //#define CKvA_DEBUG_PRINT_CERR
 #ifdef CKvA_DEBUG_PRINT_CERR
-#define CERR(x) std::cerr << x
+#define CKvA_CERR(x) std::cerr << x
 #else
-#define CERR(x) static_cast<void>(0)
+#define CKvA_CERR(x) static_cast<void>(0)
 #endif
 #endif
 
@@ -1903,15 +1903,15 @@ protected:
             CGAL::Sign perturb) const {
         
 #ifdef CKvA_DEBUG_PRINT_CERR
-        CERR("\n_compare_coprime; this: " 
+        CKvA_CERR("\n_compare_coprime; this: " 
              << *dynamic_cast< const Kernel_arc_2*>(this) 
              << "; g: " << cv2.curve().polynomial_2()
              << "; arcno_on_g: " << cv2.arcno() << "; where: " << where
         );
         if (where == CGAL::ARR_INTERIOR) {
-            CERR("; x = " << CGAL::to_double(x0));
+            CKvA_CERR("; x = " << CGAL::to_double(x0));
         }
-        CERR("\n");
+        CKvA_CERR("\n");
 #endif
         
         typename Curve_pair_analysis_2::Status_line_1 cpv_line;
@@ -1930,7 +1930,7 @@ protected:
         CGAL::Sign res = 
             CGAL::sign(cpv_line.event_of_curve(arcno(), curve()) -
                        cpv_line.event_of_curve(cv2.arcno(), cv2.curve()));
-        CERR("result: " << res << "\n");
+        CKvA_CERR("result: " << res << "\n");
         return res;
     }
     
@@ -1952,7 +1952,7 @@ protected:
             bool equal_x = false, 
             bool only_x = false) const {
 
-        CERR("\n_same_arc_compare_xy; this: " 
+        CKvA_CERR("\n_same_arc_compare_xy; this: " 
              << *dynamic_cast< const Kernel_arc_2*>(this) 
              << "; p: " << p
              << "; q: " << q
@@ -1965,7 +1965,7 @@ protected:
         
         if (p.is_identical(q)) {
             res = CGAL::EQUAL;
-            CERR("result1: " << res << "\n");
+            CKvA_CERR("result1: " << res << "\n");
             return res;
         }
         
@@ -1977,7 +1977,7 @@ protected:
                 res = Curved_kernel_via_analysis_2::instance().
                     compare_x_2_object()(p, q);
                 if (res != CGAL::EQUAL) {
-                    CERR("result2: " << res << "\n");
+                    CKvA_CERR("result2: " << res << "\n");
                     return res;
                 }
             } else if(locp != locq) {
@@ -1986,51 +1986,51 @@ protected:
                 // boundaries
                 if (locp == CGAL::ARR_LEFT_BOUNDARY) {
                     res = CGAL::SMALLER;
-                    CERR("result3: " << res << "\n");
+                    CKvA_CERR("result3: " << res << "\n");
                     return res;
                 } else if (locp == CGAL::ARR_RIGHT_BOUNDARY) {
                     res = CGAL::LARGER;
-                    CERR("result4: " << res << "\n");
+                    CKvA_CERR("result4: " << res << "\n");
                     return res;
                 } else if (locq == CGAL::ARR_LEFT_BOUNDARY) {
                     res = CGAL::LARGER;
-                    CERR("result5: " << res << "\n");
+                    CKvA_CERR("result5: " << res << "\n");
                     return res;
                 } else if (locq == CGAL::ARR_RIGHT_BOUNDARY) {
                     res = CGAL::SMALLER;
-                    CERR("result6: " << res << "\n");
+                    CKvA_CERR("result6: " << res << "\n");
                     return res;
                 }
             } // else: proceed to y-comparison
         }
         if (only_x) {
             res = CGAL::EQUAL;
-            CERR("result7: " << res << "\n");
+            CKvA_CERR("result7: " << res << "\n");
             return res;
         }
         if (locp == locq) {
             if(locp != CGAL::ARR_INTERIOR) {
                 res = CGAL::EQUAL; // both points are at the same inf in y
-                CERR("result8: " << res << "\n");
+                CKvA_CERR("result8: " << res << "\n");
                 return res;
             }
             // compare only y-values; 
             res = Curved_kernel_via_analysis_2::instance().
                 compare_xy_2_object()(p, q, true);
-            CERR("result9: " << res << "\n");
+            CKvA_CERR("result9: " << res << "\n");
             return res;
         }
         // here: locp != locq && one of them is at inf y
         if (locp == CGAL::ARR_INTERIOR) {
             res = (locq == CGAL::ARR_BOTTOM_BOUNDARY ? 
                    CGAL::LARGER : CGAL::SMALLER);
-            CERR("result10: " << res << "\n");
+            CKvA_CERR("result10: " << res << "\n");
             return res;
         }
         // here: locp != locq && locp is at infty
         res = (locp == CGAL::ARR_BOTTOM_BOUNDARY ? 
                CGAL::SMALLER : CGAL::LARGER);
-        CERR("result11: " << res << "\n");
+        CKvA_CERR("result11: " << res << "\n");
         return res;
     }
     
@@ -2145,7 +2145,7 @@ protected:
             const Point_2& p1, const Point_2& p2, 
             int arcno1 = -1, int arcno2 = -1) const {
         
-        CERR("\n_replace_endpoints\n");    
+        CKvA_CERR("\n_replace_endpoints\n");    
         
         Rep rep(*(this->ptr()));
         rep._m_min = p1;
@@ -2323,7 +2323,7 @@ protected:
     bool _trim_if_overlapped(const Kernel_arc_2& cv2, OutputIterator oi) const
     {
                
-        CERR("\n_trim_if_overlapped: this: " 
+        CKvA_CERR("\n_trim_if_overlapped: this: " 
              << *dynamic_cast< const Kernel_arc_2*>(this) << "; and " 
              << cv2 << "\n");
         // one arc is vertical and the other one is not, or x-ranges are not
@@ -2399,7 +2399,7 @@ protected:
         Curve_pair_analysis_2 cpa_2;
         Curve_arcno_container found, overlaps;
         
-        CERR("_trim_if_overlapped: non-coprime supporting curves\n");
+        CKvA_CERR("_trim_if_overlapped: non-coprime supporting curves\n");
         
         typename Curve_pair_analysis_2::Status_line_1 cpv_line;
         // iterate to find all overlapping parts
@@ -2510,7 +2510,7 @@ protected:
         // handle a special case when two arcs are supported by the same 
         // curve => only end-point intersections
         
-        CERR("\nintersection_points\n");
+        CKvA_CERR("\nintersection_points\n");
         Kernel_arc_2::simplify(cv1, cv2);
         if (cv1.curve().is_identical(cv2.curve())) {
             return _intersect_at_endpoints(cv1, cv2, oi);
@@ -2537,7 +2537,7 @@ protected:
                                                   const Kernel_arc_2& cv2, 
                                                   OutputIterator oi) {
         
-        CERR("\n_intersect_at_endpoints\n");
+        CKvA_CERR("\n_intersect_at_endpoints\n");
 
         CGAL_precondition(!cv1.do_overlap(cv2));
         /* Since *this and cv2 do not overlap and cannot contain singularities
@@ -2635,7 +2635,7 @@ protected:
     bool _joint_x_range(const Kernel_arc_2& cv2, Point_2& pt_low, 
                         Point_2& pt_high) const {
         
-        CERR("\n_joint_x_range\n");
+        CKvA_CERR("\n_joint_x_range\n");
         
         CGAL_precondition(!is_vertical());
         CGAL_precondition(!cv2.is_vertical());
@@ -2696,7 +2696,7 @@ protected:
         // or they overlap (not allowed), or they touch at the end-points 
         // (already tested)
         
-        CERR("\n_intersect_coprime_support: " << cv1 <<
+        CKvA_CERR("\n_intersect_coprime_support: " << cv1 <<
             " and " << cv2 << "\n");
         
         if (cv1.is_vertical() || cv2.is_vertical()) {
@@ -3009,7 +3009,7 @@ public:
             );
           
           int n = static_cast<int>(pts.size());
-          CERR("check candidates for y-extremal points: #" << n );
+          CKvA_CERR("check candidates for y-extremal points: #" << n );
           for (int i = 0; i < n; i++) {
             
             const Coordinate_2& curr_xy = pts[i].first; 
@@ -3019,15 +3019,15 @@ public:
             // EBEB: Disabled this test as curr_xy's curve 
             //       is not guaranteed to be wrt this->curve()
             
-            CERR("check if arcnos match: " << 
+            CKvA_CERR("check if arcnos match: " << 
                  curr_xy << "; arc = " << *this << "\n\n"); 
             // this is the simpler test, thus we evaluate it first
             if (this->arcno() == curr_xy.arcno()) {
-              CERR("check if x-coordinate lies in interior: " << 
+              CKvA_CERR("check if x-coordinate lies in interior: " << 
                    curr_xy << "; arc = " << *this << "\n\n");
               // this is the more sophisticated test, thus second
               if (this->is_in_x_range_interior(curr_xy.x())) {
-                CERR("update y coordinates");
+                CKvA_CERR("update y coordinates");
                 
                 std::pair< Bound, Bound > xy_approx = 
                   Curved_kernel_via_analysis_2::instance().
@@ -3052,7 +3052,7 @@ public:
                                            curr_xy.arcno());
               if (this->compare_y_at_x(curr_pt) == CGAL::EQUAL) {
                 
-                CERR("update y coordinates");
+                CKvA_CERR("update y coordinates");
                 
                 std::pair< Bound, Bound > xy_approx = 
                   Curved_kernel_via_analysis_2::instance().
