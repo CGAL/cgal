@@ -16,7 +16,7 @@
 #include <CGAL/Alpha_shape_vertex_base_3.h>
 
 #include "copy_tds.h"
-#include "Filtered_weighted_alpha_shape_euclidean_traits_3.h"
+//#include "Filtered_weighted_alpha_shape_euclidean_traits_3.h"
 
 typedef CGAL::Exact_predicates_inexact_constructions_kernel                                     Kernel;
 typedef CGAL::Regular_triangulation_euclidean_traits_3<Kernel>                                  WFixed_Gt;
