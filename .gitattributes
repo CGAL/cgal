@@ -3239,6 +3239,7 @@ Skin_surface_3/examples/Skin_surface_3/data/1IYE.pdb -text
 Skin_surface_3/examples/Skin_surface_3/data/1mvm.pdb -text
 Skin_surface_3/examples/Skin_surface_3/data/1t7i.pdb -text
 Skin_surface_3/examples/Skin_surface_3/data/molecule_tunnel.cin -text
+Skin_surface_3/examples/Skin_surface_3/skin_surface_retrieve_defining_weighted_points.cpp -text
 Skin_surface_3/examples/Skin_surface_3/union_of_balls_subdiv.cpp -text
 Skin_surface_3/include/CGAL/Skin_surface_base_3.h -text
 Skin_surface_3/include/CGAL/make_union_of_balls_3.h -text
