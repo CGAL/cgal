@@ -362,6 +362,10 @@ public:
 
   Triangulation_3 & operator=(Triangulation_3 tr)
     {
+      // The triangulation passed as argument has been copied, 
+      // because the parameter tr is passed by value. Then the following
+      // swap consumes the *copy*. The original triangulation is left
+      // untouched.
       swap(tr);
       return *this;
     }
