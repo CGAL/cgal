@@ -1,3 +1,0 @@
-Package Triangulation_3 :
-triangulation data structure, triangulation, Delaunay triangulation and
-regular triangulation for dimension <= 3 
