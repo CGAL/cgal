@@ -1,0 +1,61 @@
+% +------------------------------------------------------------------------+
+% | Reference manual page: Triangulation_vertex_base_with_info_3.tex
+% +------------------------------------------------------------------------+
+% | 29.3.2000   Monique Teillaud
+% | Package: Triangulation3
+% | 
+\RCSdef{\RCSTriangulationvertexbaseRev}{$Id$}
+\RCSdefDate{\RCSTriangulationvertexbaseDate}{$Date$}
+% |
+%%RefPage: end of header, begin of main body
+% +------------------------------------------------------------------------+
+
+
+\begin{ccRefClass}{Triangulation_vertex_base_with_info_3<Info, TriangulationTraits_3, TriangulationVertexBase_3>}
+
+\ccDefinition
+
+The class \ccc{Triangulation_vertex_base_with_info_3} is a model of the concept
+\ccc{TriangulationVertexBase_3}, the base vertex of a 3D-triangulation.
+It provides an easy way to add some user defined information in vertices.
+Note that input/output operators discard this additional information.
+
+\ccInclude{CGAL/Triangulation_vertex_base_with_info_3.h}
+
+\ccParameters
+
+The first template argument is the information the user would like to add
+to a vertex.  It has to be \ccc{DefaultConstructible} and \ccc{Assignable}.
+
+The second template argument is the geometric traits class
+\ccc{TriangulationTraits_3} which provides the \ccc{Point_3}.
+
+The third template argument is a vertex base class from which
+\ccc{Triangulation_vertex_base_with_info_3} derives.  It has the default
+value \ccc{Triangulation_vertex_base_3<TriangulationTraits_3>}.
+
+\ccIsModel \ccc{TriangulationVertexBase_3}
+
+\ccInheritsFrom \ccc{TriangulationVertexBase_3}
+
+\ccTypes
+\ccTypedef{typedef Info Info;}{}
+
+\ccCreationVariable{v}
+
+\ccAccessFunctions
+\ccThree{const Info&}{Facetxxxxxxxxxx}{}
+\ccTagFullDeclarations
+
+\ccMethod{const Info& info() const;}
+{Returns a const reference to the object of type \ccc{Info} stored in the
+vertex.}
+\ccGlue
+\ccMethod{Info& info();}
+{Returns a reference to the object of type \ccc{Info} stored in the vertex.}
+\ccSeeAlso
+
+\ccc{CGAL::Triangulation_cell_base_with_info_3}\\
+\ccc{CGAL::Triangulation_vertex_base_3}
+
+\end{ccRefClass}

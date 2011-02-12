@@ -1,0 +1,31 @@
+<RCC>
+  <qresource prefix="/T3_demo/icons">
+    <file>icons/flat.png</file>
+    <file>icons/stereo.png</file>
+    <file>icons/pause.jpeg</file>
+    <file>icons/show_delaunay.jpeg</file>
+    <file>icons/show_facet.jpeg</file>
+    <file>icons/show_point.jpeg</file>
+    <file>icons/show_voronoi.jpeg</file>
+    <file>icons/play.jpeg</file>
+    <file>icons/stop.jpeg</file>
+    <file>icons/empty_sphere.jpeg</file>
+    <file>icons/normal_view.jpeg</file>
+    <file>icons/nearest_nb.png</file>
+    <file>icons/quit.jpeg</file>
+    <file>icons/insert_point.jpg</file>
+    <file>icons/clear.jpeg</file>
+    <file>icons/coordinates.jpeg</file>
+    <file>icons/fileOpen.png</file>
+    <file>icons/pointRandom.png</file>
+    <file>icons/fileSave.png</file>
+    <file>icons/cgal_logo.xpm</file>
+    <file>icons/insert.jpeg</file>
+    <file>icons/move_1.jpeg</file>
+    <file>icons/select_hand.jpeg</file>
+    <file>icons/preferences.jpeg</file>
+  </qresource>
+  <qresource prefix="/T3_demo/html">
+    <file>icons/about_CGAL.html</file>
+  </qresource>
+</RCC>

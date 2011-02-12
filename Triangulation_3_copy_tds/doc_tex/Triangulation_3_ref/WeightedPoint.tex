@@ -1,0 +1,53 @@
+% +------------------------------------------------------------------------+
+% | Reference manual page: Weight_pt.tex
+% +------------------------------------------------------------------------+
+% | 27.3.2000   Monique Teillaud
+% | Package: Triangulation3
+% | 
+\RCSdef{\RCSWeightedpointRev}{$Id$}
+\RCSdefDate{\RCSWeightedpointDate}{$Date$}
+% |
+%%RefPage: end of header, begin of main body
+% +------------------------------------------------------------------------+
+
+
+\begin{ccRefConcept}{WeightedPoint}
+
+%% \ccHtmlCrossLink{}     %% add further rules for cross referencing links
+%% \ccHtmlIndexC[concept]{} %% add further index entries
+
+\ccDefinition
+  
+The concept \ccRefName\ is needed by 
+\ccc{Regular_triangulation_euclidean_traits_3}. 
+It must fulfill the following requirements:
+
+\ccTypes
+\ccThree{typedef Point::RT}{RTxxxx}{}
+\ccNestedType{Point}{The point type}
+\ccGlue
+\ccNestedType{Weight}{The weight type}
+\ccGlue
+\ccTypedef{typedef Point::RT RT;}{The ring type}
+
+\ccCreation
+\ccCreationVariable{wp}
+
+\ccConstructor{WeightedPoint(const Point &p=Point(), const Weight &w
+= Weight(0))}{}
+
+\ccAccessFunctions
+\ccFunction{Point point() const;}{}
+\ccGlue
+\ccFunction{Weight weight() const;}{}
+
+\ccHasModels
+
+\ccc{Weighted_point}.
+
+\ccSeeAlso
+
+\ccc{CGAL::Regular_triangulation_euclidean_traits_3}\\
+\ccc{CGAL::Regular_triangulation_3}.
+
+\end{ccRefConcept}

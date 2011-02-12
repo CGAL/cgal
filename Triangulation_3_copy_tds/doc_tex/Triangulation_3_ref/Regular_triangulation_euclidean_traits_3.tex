@@ -1,0 +1,273 @@
+% +------------------------------------------------------------------------+
+% | Reference manual page: Regular_triangulation_euclidean_traits_3.tex
+% +------------------------------------------------------------------------+
+% | 27.3.2000   Monique Teillaud
+% | Package: Triangulation3
+% | 
+\RCSdef{\RCSRegulartriangulationeuclideantraitsRev}{$Id$}
+\RCSdefDate{\RCSRegulartriangulationeuclideantraitsDate}{$Date$}
+% |
+%%RefPage: end of header, begin of main body
+% +------------------------------------------------------------------------+
+
+
+\begin{ccRefClass}{Regular_triangulation_euclidean_traits_3<K,Weight>}  %% add template arg's if necessary
+
+%% \ccHtmlCrossLink{}     %% add further rules for cross referencing links
+%% \ccHtmlIndexC[class]{} %% add further index entries
+
+\ccDefinition
+  
+The class \ccRefName\ is designed as a default traits class for the
+class \ccc{Regular_triangulation_3<RegularTriangulationTraits_3,TriangulationDataStructure_3>}. 
+It provides \ccc{Weighted_point_3}, a class for weighted points, which derives
+from the three dimensional point class \ccc{K::Point_3}.
+
+The first argument \ccc{K} must be a model of the \ccc{Kernel} concept. 
+
+The second argument \ccc{Weight} of the class
+\ccc{Regular_triangulation_euclidean_traits_3<K,Weight>} is in fact
+optional: if is it not provided, \ccc{K::RT} will be used.
+
+The class is a model of the concept \ccc{RegularTriangulationTraits_3}
+but it also contains predicates and constructors on weighted points
+that are not required in the
+concept \ccc{RegularTriangulationTraits_3}.
+
+Note that filtered predicates are automatically used if the 
+boolean \ccc{Has_filtered_predicates} in the kernel provided as template parameter 
+of that class is set to \ccc{true}.
+
+% Note that this template class is specialized for
+% \ccc{CGAL::Exact_predicates_inexact_constructions_kernel}, so that it is as if
+% \ccc{Regular_triangulation_filtered_traits_3} was used, i.e. you get
+% filtered predicates automatically.
+
+ 
+
+
+\ccInclude{CGAL/Regular_triangulation_euclidean_traits_3.h}
+
+\ccIsModel
+\ccc{RegularTriangulationTraits_3}
+
+\ccInheritsFrom{\ccc{K}}
+
+\ccTypes
+\ccThree{typedef Weighted_point <Bare_point, Weight>}{Weighted_point_3;}{}
+
+\ccTypedef{typedef K::Point_3 Bare_point;}
+{The type for point $p$ of a weighted point ${p}^{(w)}=(p,w_p)$.}
+\ccGlue
+\ccTypedef{typedef Weighted_point <Bare_point, Weight>
+Weighted_point_3;}
+{The type for weighted points.}
+
+\ccHeading{Types for predicate functors}
+\ccTwo{Regular}{}
+\ccNestedType{Power_test_3}
+{A predicate type for power test. Belongs to the 
+\ccc{RegularTriangulationTraits_3} concept.}
+
+\ccNestedType{Compare_power_distance_3}
+{A predicate type to compare power distance. Belongs to the
+\ccc{RegularTriangulationTraits_3} concept.}
+
+
+\ccNestedType{Compare_weighted_squared_radius_3}
+{A predicate  type.  The operator() takes weighted point(s) as arguments,
+together with one weight. It compares the weight of the smallest sphere
+orthogonal to the weighted points with the input weight.\\
+\ccc{Comparison_result operator()(  Weighted_point_3  p,
+                                    Weighted_point_3  q,
+                                    Weighted_point_3  r,
+                                    Weighted_point_3  s,
+                                    FT  w)  ;} \\
+\ccc{Comparison_result operator()(  Weighted_point_3  p,
+                                    Weighted_point_3  q,
+                                    Weighted_point_3  r,
+                                    FT  w)  ;} \\
+\ccc{Comparison_result operator()(  Weighted_point_3  p,
+                                    Weighted_point_3  q,
+                                    FT  w)  ;} \\
+\ccc{Comparison_result operator()(  Weighted_point_3  p,
+                                    FT  w)  ;} \\
+}
+
+
+\ccNestedType{In_smallest_orthogonal_sphere_3}
+{A predicate  type.  The operator() takes weighted points as arguments
+ and returns  the  sign of the power distance of the last one
+with respect to the smallest sphere orthogonal to the others. \\
+\ccc{Sign  operator()(  Weighted_point_3  p,
+		        Weighted_point_3  q,
+		        Weighted_point_3  r,
+		        Weighted_point_3  s,
+		        Weighted_point_3  t)  ;} \\
+\ccc{Sign  operator()(  Weighted_point_3  p,
+		        Weighted_point_3  q,
+		        Weighted_point_3  r,
+		        Weighted_point_3  s)  ;} \\
+\ccc{Sign  operator()(  Weighted_point_3  p,
+		        Weighted_point_3  q,
+		        Weighted_point_3  r)  ;} \\
+\ccc{Sign  operator()(  Weighted_point_3  p,
+		        Weighted_point_3  q)  ;} \\
+}
+
+
+\ccNestedType{Side_of_bounded_orthogonal_sphere_3}
+{A predicate  type.  The operator()  is  similar to the operator()  of
+\ccc{In_smallest_orthogonal_sphere_3}
+except that the  returned type  is not a \ccc{Sign}
+but belongs to the  enum \ccc{Bounded_side}
+(A \ccc{NEGATIVE}, \ccc{ZERO} and \ccc{POSITIVE})
+ corresponding respectively to 
+\ccc{ON_BOUNDED_SIDE}, \ccc{ON_BOUNDARY} and \ccc{ON_UNBOUNDED_SIDE})).
+ \\
+\ccc{Bounded_side operator() (  Weighted_point_3  p,
+			     Weighted_point_3  q,
+			     Weighted_point_3  r,
+			     Weighted_point_3  s,
+			     Weighted_point_3  t) ; } \\
+\ccc{Bounded_side operator() (  Weighted_point_3  p,
+			     Weighted_point_3  q,
+			     Weighted_point_3  r,
+			     Weighted_point_3  s) ; } \\
+\ccc{Bounded_side operator() (  Weighted_point_3  p,
+			     Weighted_point_3  q,
+			     Weighted_point_3  r) ; } 
+}
+
+
+\ccNestedType{Does_simplex_intersect_dual_support_3}
+{A predicate type. The operator() 
+takes weighted points as arguments, 
+considers the subspace of points with equal power distance 
+with respect to its arguments
+and the intersection of this subspace with the affine hull of the bare
+points associated to the arguments.
+The operator()  returns \ccc{ON_BOUNDED_SIDE},
+\ccc{ON_BOUNDARY} or  \ccc{ON_UNBOUNDED_SIDE}
+according to the position of this intersection 
+with respect to the simplex formed by the bare
+points.
+This predicate is useful for flow computations. \\
+\ccc{Bounded_side operator()( Weighted_point_3  p,
+		           Weighted_point_3  q,
+		           Weighted_point_3  r,
+		           Weighted_point_3  s) ; } \\
+\ccc{Bounded_side operator()( Weighted_point_3  p,
+		           Weighted_point_3  q,
+		           Weighted_point_3  r) ; }\\
+\ccc{Bounded_side operator()( Weighted_point_3  p,
+		           Weighted_point_3  q) ; }
+}
+
+\ccHeading{Types for constructor functors}
+
+\ccNestedType{Construct_weighted_circumcenter_3}
+{A constructor type. The operator()  constructs the bare point
+ which is the center of the smallest orthogonal sphere to the input
+weighted points. \\
+\ccc{Bare_point operator() (  Weighted_point_3  p,
+			   Weighted_point_3  q,
+			   Weighted_point_3  r,
+			   Weighted_point_3  s);} \\
+\ccc{Bare_point operator() (  Weighted_point_3  p,
+			   Weighted_point_3  q,
+			   Weighted_point_3  r);} \\
+\ccc{Bare_point operator() (  Weighted_point_3  p,
+			   Weighted_point_3  q);}
+}
+
+
+
+\ccNestedType{Compute_power_product_3}
+{A functor type. The operator() computes the power distance between its
+arguments. \\
+\ccc{FT operator() ( Weighted_point_3  p,
+		  Weighted_point_3  q) ; }
+}
+
+
+\ccNestedType{Compute_squared_radius_smallest_orthogonal_sphere_3}
+{A functor type. The operator() computes the squared radius of the
+smallest sphere orthogonal to the argument(s).
+\\
+\ccc{FT operator() (  Weighted_point_3  p,
+		   Weighted_point_3  q,
+		   Weighted_point_3  r,
+		   Weighted_point_3  s);} \\
+\ccc{FT operator() (  Weighted_point_3  p,
+		   Weighted_point_3  q,
+		   Weighted_point_3  r);} \\
+\ccc{FT operator() (  Weighted_point_3  p,
+		    Weighted_point_3  q);} \\
+\ccc{FT operator() (  Weighted_point_3  p);} \\
+}
+
+\ccNestedType{Compute_critical_squared_radius_3}
+{A functor type. The operator() takes weighted points as arguments
+and computes the squared radius 
+of the sphere centered in the last point and orthogonal
+to the other weighted points. The last argument is a weighted point 
+but its weight does not matter. 
+This construction is ad hoc for pumping slivers.
+For robustness issue, a predicate to compare critical squared radii
+for a given last point should be needed. \\
+\ccc{FT operator() ( Weighted_point_3  p,
+			   Weighted_point_3  q,
+			   Weighted_point_3  r,
+			   Weighted_point_3  s,
+			   Weighted_point_3  t);}
+}
+
+
+
+
+
+\ccOperations
+The following functions give access to the predicate and constructor
+functors.
+\ccCreationVariable{traits}
+
+\ccThree{Does_simplex_intersect_dual_support_3}
+{does_simplex_intersect_dual_support_3_object()}{}
+\ccMethod{Power_test_3 power_test_3_object();}{}
+\ccGlue
+\ccMethod{Compare_power_distance_3
+compare_power_distance_3_object();}{}
+\ccGlue
+\ccMethod{Compare_weighted_squared_radius_3
+compare_weighted_squared_radius_3_object();}{}
+\ccGlue
+\ccMethod{In_smallest_orthogonal_sphere_3 
+  in_smallest_orthogonal_sphere_3_object();}{}
+\ccGlue
+\ccMethod{Side_of_bounded_orthogonal_sphere_3
+  side_of_bounded_orthogonal_sphere_3_object();}{}
+\ccGlue
+\ccMethod{Does_simplex_intersect_dual_support_3 
+  does_simplex_intersect_dual_support_3_object();}{}
+\ccGlue
+\ccMethod{Construct_weighted_circumcenter_3 
+  construct_weighted_circumcenter_3_object();}{}
+\ccGlue
+\ccMethod{Compute_power_product_3
+  compute_power_product_3_object() ;}{}
+\ccGlue
+\ccMethod{Compute_squared_radius_smallest_orthogonal_sphere_3
+  compute_squared_radius_smallest_orthogonal_sphere_3_object() ;}{}
+\ccGlue
+\ccMethod{Compute_critical_squared_radius_3
+  compute_critical_squared_radius_3_object();}{}
+
+
+%% \ccExample
+
+%% \ccIncludeExampleCode{Triangulation3/Regular_triangulation_euclidean_traits_3_prog.cpp}
+
+
+
+\end{ccRefClass}
