@@ -43,7 +43,11 @@
 #include <CGAL/Timer.h>
 #include <CGAL/Mesh_3/Null_perturber_visitor.h>
 
+#ifdef CGAL_MESH_3_USE_RELAXED_HEAP
 #include <boost/pending/relaxed_heap.hpp>
+#else
+#include <CGAL/Modifiable_priority_queue.h>
+#endif //CGAL_MESH_3_USE_RELAXED_HEAP
 #include <boost/lambda/lambda.hpp>
 #include <boost/lambda/bind.hpp>
 #include <boost/ptr_container/ptr_vector.hpp>
@@ -190,7 +194,11 @@ private:
   };
   
   typedef std::less<PVertex> less_PVertex;
+  #ifdef CGAL_MESH_3_USE_RELAXED_HEAP
   typedef boost::relaxed_heap<PVertex, less_PVertex, PVertex_id> PQueue; 
+  #else
+  typedef ::CGAL::internal::mutable_queue_with_remove<PVertex,std::vector<PVertex>, less_PVertex, PVertex_id> PQueue; 
+  #endif //CGAL_MESH_3_USE_RELAXED_HEAP
   
 public:
   /**

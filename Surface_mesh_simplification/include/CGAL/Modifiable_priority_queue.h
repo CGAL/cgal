@@ -38,7 +38,7 @@ public:
   typedef typename Base::size_type size_type;
   typedef typename Base::Node Node;
 
-  mutable_queue_with_remove(size_type n, const Comp& x, const ID& _id) : Base(n,x,_id) {}
+  mutable_queue_with_remove(size_type n, const Comp& x=Comp(), const ID& _id=ID()) : Base(n,x,_id) {}
 
   void remove(const IndexedType& x){
     //first place element at the top
@@ -50,6 +50,10 @@ public:
       node.swap(node.parent(), this->index_array);
     //then pop it
     this->pop();
+  }
+  
+  bool contains(const IndexedType& x) const {
+    return this->index_array[ get(this->id, x) ] < this->c.size();
   }
 };
 
