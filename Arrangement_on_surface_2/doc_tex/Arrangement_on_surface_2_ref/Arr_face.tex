@@ -12,13 +12,21 @@
 \ccRefLabel{arr_ref:face}
 
 \ccDefinition
-An object $e$ of the class \ccRefName\ represents an arrangement edge,
-namely a $2$-dimensional arrangement cell. Every arrangement contains
-exactly one \emph{unbounded} face, an a number of bounded face. Each
-bounded face has a boundary comprised of a halfedge chain winding in
-a counterclockwise orientation around it. A face may also contain holes,
-which are defined by clockwise-oriented halfedge chains, and isolated
-vertices.
+An object $e$ of the class \ccRefName{} represents an arrangement edge,
+namely, a $2$-dimensional arrangement cell. An arrangement that supports
+only bounded curves contains exactly one \emph{unbounded} face, and a
+number of bounded faces. An arrangement that supports also unbounded
+curves has one or more unbounded faces. Such an arrangement has also
+exactly one fictitious face, which does not correspond to a real
+two-dimensional cell of the arrangement (and thus it is ignored in
+counting the number of faces of the arrangement.)
+Each bounded face has an outer boundary comprising a halfedge chain
+winding in counterclockwise orientation around it. Each unbounded face of
+an arrangement that has a fictitious face also has a boundary comprising
+a counterclockwise halfedge-chain. The edges on the boundary of a face
+incident to the fictitious face are fictitious, as they do not correspond
+to real curves. A face may also contain holes, which are defined by
+clockwise-oriented halfedge chains, and isolated vertices.
 
 \ccInheritsFrom
     \ccHtmlNoLinksFrom{\ccc{typename Dcel::Face}}
@@ -37,17 +45,21 @@ All non-const methods listed below also have \ccc{const} counterparts
 that return constant handles, iterators or circulators:
 
 \ccMethod{bool is_fictitious () const;}
-    {returns whether this is the fictitious face, which contain the entire
-     arrangement (and has not outer CCB).}
+  {returns a Boolean indicating whether this is the fictitious face,
+  which contain the entire arrangement (and does not have an outer CCB).
+  An arrangement that supports only bounded curves does not have a
+  fictitious face at all.}
 
 \ccMethod{bool is_unbounded() const;} 
-    {returns whether the face is unbounded.}    
+  {returns a Boolean indicating whether the face is unbounded.}    
 
 \ccMethod{Ccb_halfedge_circulator outer_ccb();}
     {returns a circulator that allows going over the outer boundary of
      \ccVar{}. The edges along the CCB are traversed in a counterclockwise
      direction.
-     \ccPrecond{\ccVar{} is not a fictitious face.}}
+     \ccPrecond{The face \ccVar{} has an outer CCB. That is, if it has a
+     fictitious face, then it is not the fictitious face. Otherwise, it
+     is not the unbounded face.}}
     
 \ccMethod{Hole_iterator holes_begin();}
     {returns an iterator for traversing all the holes (inner CCBs) of
