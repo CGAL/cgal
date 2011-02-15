@@ -19,7 +19,42 @@
 #define CGAL_MODIFIABLE_PRIORITY_QUEUE_H
 
 #include <climits> // Neeeded by the following Boost header for CHAR_BIT.
+#ifdef CGAL_SURFACE_MESH_SIMPLIFICATION_USE_RELAXED_HEAP
 #include <boost/pending/relaxed_heap.hpp>
+#else
+#include <boost/pending/mutable_queue.hpp>
+
+
+namespace CGAL {
+  namespace internal {
+template <class IndexedType, 
+          class RandomAccessContainer = std::vector<IndexedType>, 
+          class Comp = std::less<typename RandomAccessContainer::value_type>,
+          class ID = boost::identity_property_map >
+class mutable_queue_with_remove : public boost::mutable_queue<IndexedType,RandomAccessContainer,Comp,ID>
+{
+  typedef boost::mutable_queue<IndexedType,RandomAccessContainer,Comp,ID> Base;
+public:
+  typedef typename Base::size_type size_type;
+  typedef typename Base::Node Node;
+
+  mutable_queue_with_remove(size_type n, const Comp& x, const ID& _id) : Base(n,x,_id) {}
+
+  void remove(const IndexedType& x){
+    //first place element at the top
+    size_type current_pos = this->index_array[ get(this->id, x) ];
+    this->c[current_pos] = x;
+
+    Node node(this->c.begin(), this->c.end(), this->c.begin()+current_pos, this->id);
+    while (node.has_parent())
+      node.swap(node.parent(), this->index_array);
+    //then pop it
+    this->pop();
+  }
+};
+
+} } //namespace CGAL::internal
+#endif //CGAL_SURFACE_MESH_SIMPLIFICATION_USE_RELAXED_HEAP
 
 namespace CGAL {
 
@@ -37,8 +72,11 @@ public:
   typedef Compare_     Compare;
   typedef ID_          ID ;
   
-  typedef boost::relaxed_heap<IndexedType,Compare,ID> Heap ;
-  
+  #ifdef CGAL_SURFACE_MESH_SIMPLIFICATION_USE_RELAXED_HEAP
+  typedef boost::relaxed_heap<IndexedType,Compare,ID> Heap;
+  #else
+  typedef  internal::mutable_queue_with_remove<IndexedType,std::vector<IndexedType>,Compare,ID> Heap;
+  #endif //CGAL_SURFACE_MESH_SIMPLIFICATION_USE_RELAXED_HEAP
   typedef typename Heap::value_type value_type;
   typedef typename Heap::size_type  size_type;
   
