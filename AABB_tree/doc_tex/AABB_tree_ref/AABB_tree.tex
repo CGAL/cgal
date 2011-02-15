@@ -87,19 +87,19 @@ Class \ccRefName\ is a static data structure for efficient intersection and dist
 \ccHeading{Intersection Tests}
 
 \ccMethod{template <class Query>
-	        bool do_intersect(const Query& query);}{Returns \ccc{true}, iff the query intersects at least one of the input primitives. Type \ccc{Query} must be a type for which \ccc{do_intersect} predicates are defined in the \ccc{AT} class.}
+	        bool do_intersect(const Query& query);}{Returns \ccc{true}, iff the query intersects at least one of the input primitives. Type \ccc{Query} must be a type for which \ccHtmlNoLinksFrom{\ccc{do_intersect}} predicates are defined in the \ccc{AT} class.}
 \ccGlue	
 \ccMethod{template <class Query>
-	        size_type number_of_intersected_primitives(const Query& query);}{Returns the number of primitives intersected by the query. Type \ccc{Query} must be a type for which \ccc{do_intersect} predicates are defined in the \ccc{AT} class.}
+	        size_type number_of_intersected_primitives(const Query& query);}{Returns the number of primitives intersected by the query. Type \ccc{Query} must be a type for which \ccHtmlNoLinksFrom{\ccc{do_intersect}} predicates are defined in the \ccc{AT} class.}
 \ccGlue
 \ccMethod{template <class Query, class OutputIterator>
 	        OutputIterator 
           all_intersected_primitives(const Query& query,
-                                     OutputIterator out);}{Outputs to the iterator the list of all intersected primitives ids. This function does not compute the intersection points and is hence faster than the function \ccc{all_intersections} function below. Type \ccc{Query} must be a type for which \ccc{do_intersect} predicates are defined in the \ccc{AT} class.}
+                                     OutputIterator out);}{Outputs to the iterator the list of all intersected primitives ids. This function does not compute the intersection points and is hence faster than the function \ccc{all_intersections} function below. Type \ccc{Query} must be a type for which \ccHtmlNoLinksFrom{\ccc{do_intersect}} predicates are defined in the \ccc{AT} class.}
 \ccGlue
 \ccMethod{template <class Query>
 	        boost::optional<Primitive::Id>
-	        any_intersected_primitive(const Query& query);}{Returns the first encountered intersected primitive id, iff the query intersects at least one of the input primitives. No particular order is guaranteed over the tree traversal, such that, e.g, the primitive returned is not necessarily the closest from the source point of a ray query. Type \ccc{Query} must be a type for which \ccc{do_intersect} predicates are defined in the \ccc{AT} class.}
+	        any_intersected_primitive(const Query& query);}{Returns the first encountered intersected primitive id, iff the query intersects at least one of the input primitives. No particular order is guaranteed over the tree traversal, such that, e.g, the primitive returned is not necessarily the closest from the source point of a ray query. Type \ccc{Query} must be a type for which \ccHtmlNoLinksFrom{\ccc{do_intersect}} predicates are defined in the \ccc{AT} class.}
 
 
 % INTERSECTIONS
@@ -108,11 +108,11 @@ Class \ccRefName\ is a static data structure for efficient intersection and dist
 \ccMethod{template <class Query, class OutputIterator>
 	        OutputIterator 
           all_intersections(const Query& query,
-                            OutputIterator out);}{Outputs to the iterator the list of all intersections between the query and input data, as objects of type \ccc{Object_and_primitive_id}. Type \ccc{Query} must be a type for which \ccc{do_intersect} predicates and intersections are defined in the \ccc{AT} class.}
+                            OutputIterator out);}{Outputs to the iterator the list of all intersections between the query and input data, as objects of type \ccc{Object_and_primitive_id}. Type \ccc{Query} must be a type for which \ccHtmlNoLinksFrom{\ccc{do_intersect}} predicates and intersections are defined in the \ccc{AT} class.}
 \ccGlue
 \ccMethod{template <class Query>
 	        boost::optional<Object_and_primitive_id>
-	        any_intersection(const Query& query);}{Returns the first encountered intersection, iff the query intersects at least one of the input primitives. No particular order is guaranteed over the tree traversal, such that, e.g, the primitive returned is not necessarily the closest from the source point of a ray query. Type \ccc{Query} must be a type for which \ccc{do_intersect} predicates and intersections are defined in the \ccc{AT} class.}
+	        any_intersection(const Query& query);}{Returns the first encountered intersection, iff the query intersects at least one of the input primitives. No particular order is guaranteed over the tree traversal, such that, e.g, the primitive returned is not necessarily the closest from the source point of a ray query. Type \ccc{Query} must be a type for which \ccHtmlNoLinksFrom{\ccc{do_intersect}} predicates and intersections are defined in the \ccc{AT} class.}
 
 
 
