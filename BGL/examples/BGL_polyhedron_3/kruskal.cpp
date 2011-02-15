@@ -25,15 +25,17 @@ typedef boost::graph_traits<Polyhedron>::edge_descriptor   edge_descriptor;
 namespace CGAL
 {
   // we define operator < for handles as is not predefined
-  bool operator< ( vertex_descriptor x, vertex_descriptor y )
+  struct Vertex_cmp
   {
-    return &*x < &*y ;
-  }
+    bool operator() ( vertex_descriptor x, vertex_descriptor y )
+    {
+      return &*x < &*y ;
+    }
+  };
 } // namespace CGAL
 
-typedef std::map<vertex_descriptor,int> VertexIndexMap;
+typedef std::map<vertex_descriptor,int,CGAL::Vertex_cmp> VertexIndexMap;
 VertexIndexMap vertex_id_map;
-
 
 // A std::map is not a property map, because it is not lightweight
 typedef boost::associative_property_map<VertexIndexMap> VertexIdPropertyMap;
