@@ -88,6 +88,10 @@ namespace internal {
 
     bool  operator==( const Self& x) const { return node == x.node; }
     bool  operator!=( const Self& x) const { return node != x.node; }
+    bool  operator< ( const Self& x) const { return node< x.node;   }
+    bool  operator<=( const Self& x) const { return node<= x.node;  }
+    bool  operator> ( const Self& x) const { return node> x.node;   }
+    bool  operator>=( const Self& x) const { return node>= x.node;  }
     T&    operator*()  const { return *node; }
     T*    operator->() const { return  node; }
     Self& operator++() {
@@ -137,6 +141,10 @@ namespace internal {
 
     bool     operator==( const Self& x) const { return node == x.node; }
     bool     operator!=( const Self& x) const { return node != x.node; }
+    bool     operator< ( const Self& x) const { return node< x.node;   }
+    bool     operator<=( const Self& x) const { return node<= x.node;  }
+    bool     operator> ( const Self& x) const { return node> x.node;   }
+    bool     operator>=( const Self& x) const { return node>= x.node;  }
     const T& operator*()  const { return *node; }
     const T* operator->() const { return  node; }
     Self& operator++() {
