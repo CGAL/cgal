@@ -73,7 +73,7 @@ sqrt(const Restricted_double &f)
 inline
 Restricted_double
 abs(const Restricted_double &f)
-{ return std::fabs(f.dbl()); }
+{ return CGAL::abs(f.dbl()); }
 
 inline
 double
