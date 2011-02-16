@@ -102,13 +102,13 @@ namespace CGAL {
 	             pit = construct_it(p);
       if (power == FT(0)) {
 	for (unsigned int i = 0; qit != qe; ++qit, ++i)
-	  if (the_weights[i] * std::fabs((*qit) - (*pit)) > distance)
-	    distance = the_weights[i] * std::fabs((*qit)-(*pit));
+	  if (the_weights[i] * CGAL::abs((*qit) - (*pit)) > distance)
+	    distance = the_weights[i] * CGAL::abs((*qit)-(*pit));
       }
       else
 	for (unsigned int i = 0; qit != qe; ++qit, ++i)
 	  distance += 
-	    the_weights[i] * std::pow(std::fabs((*qit)-(*pit)),power);
+	    the_weights[i] * std::pow(CGAL::abs((*qit)-(*pit)),power);
       return distance;
     }
     
@@ -192,16 +192,16 @@ namespace CGAL {
       FT new_dist;
       if (power == FT(0))
 	{
-	  if (the_weights[cutting_dimension]*std::fabs(new_off) 
+	  if (the_weights[cutting_dimension]*CGAL::abs(new_off) 
 	      > dist) 
 	    new_dist= 
-	      the_weights[cutting_dimension]*std::fabs(new_off);
+	      the_weights[cutting_dimension]*CGAL::abs(new_off);
 	  else new_dist=dist;
 	}
       else
 	{
 	  new_dist = dist + the_weights[cutting_dimension] * 
-	    (std::pow(std::fabs(new_off),power)-std::pow(std::fabs(old_off),power));
+	    (std::pow(CGAL::abs(new_off),power)-std::pow(CGAL::abs(old_off),power));
 	}
       return new_dist;
     }
