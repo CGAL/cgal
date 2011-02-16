@@ -75,8 +75,6 @@ public:
   {
       CGAL_PROFILER("Periodic_3_orientation_3 calls");
 
-      using std::fabs;
-
       double px, py, pz, qx, qy, qz, rx, ry, rz, sx, sy, sz;
 
       if (fit_in_double(p.x(), px) && fit_in_double(p.y(), py) &&
@@ -101,15 +99,25 @@ public:
           double psz = sz - pz;
 
           // Then semi-static filter.
-          double maxx = fabs(pqx);
-          if (maxx < fabs(prx)) maxx = fabs(prx);
-          if (maxx < fabs(psx)) maxx = fabs(psx);
-          double maxy = fabs(pqy);
-          if (maxy < fabs(pry)) maxy = fabs(pry);
-          if (maxy < fabs(psy)) maxy = fabs(psy);
-          double maxz = fabs(pqz);
-          if (maxz < fabs(prz)) maxz = fabs(prz);
-          if (maxz < fabs(psz)) maxz = fabs(psz);
+          double maxx = CGAL::abs(pqx);
+          double maxy = CGAL::abs(pqy);
+          double maxz = CGAL::abs(pqz);
+
+          double aprx = CGAL::abs(prx);
+          double apsx = CGAL::abs(psx);
+
+          double apry = CGAL::abs(pry);
+          double apsy = CGAL::abs(psy);
+
+          double aprz = CGAL::abs(prz);
+          double apsz = CGAL::abs(psz);
+
+          if (maxx < aprx) maxx = aprx;
+          if (maxx < apsx) maxx = apsx;
+          if (maxy < apry) maxy = apry;
+          if (maxy < apsy) maxy = apsy;
+          if (maxz < aprz) maxz = aprz;
+          if (maxz < apsz) maxz = apsz;
           double eps = 5.1107127829973299e-15 * maxx * maxy * maxz;
           double det = CGAL::determinant(pqx, pqy, pqz,
                                          prx, pry, prz,
@@ -147,8 +155,6 @@ public:
       const Offset &o_r, const Offset &o_s) const {
 
       CGAL_PROFILER("Periodic_3_orientation_3 calls");
-
-      using std::fabs;
 
       double px, py, pz, qx, qy, qz, rx, ry, rz, sx, sy, sz;
       double domxmax, domxmin, domymax, domymin, domzmax, domzmin;
@@ -188,15 +194,26 @@ public:
           double psz = sz - pz + domz * ( o_s.z() - opz );
 
           // Then semi-static filter.
-          double maxx = fabs(pqx);
-          if (maxx < fabs(prx)) maxx = fabs(prx);
-          if (maxx < fabs(psx)) maxx = fabs(psx);
-          double maxy = fabs(pqy);
-          if (maxy < fabs(pry)) maxy = fabs(pry);
-          if (maxy < fabs(psy)) maxy = fabs(psy);
-          double maxz = fabs(pqz);
-          if (maxz < fabs(prz)) maxz = fabs(prz);
-          if (maxz < fabs(psz)) maxz = fabs(psz);
+          double maxx = CGAL::abs(pqx);
+          double maxy = CGAL::abs(pqy);
+          double maxz = CGAL::abs(pqz);
+
+          double aprx = CGAL::abs(prx);
+          double apry = CGAL::abs(pry);
+          double aprz = CGAL::abs(prz);
+
+          double apsx = CGAL::abs(psx);
+          double apsy = CGAL::abs(psy);
+          double apsz = CGAL::abs(psz);
+
+          if (maxx < aprx) maxx = aprx;
+          if (maxx < apsx) maxx = apsx;
+
+          if (maxy < apry) maxy = apry;
+          if (maxy < apsy) maxy = apsy;
+
+          if (maxz < aprz) maxz = aprz;
+          if (maxz < apsz) maxz = apsz;
           double eps = 4.111024169857068197e-15 * maxx * maxy * maxz;
           double det = CGAL::determinant(pqx, pqy, pqz,
                                          prx, pry, prz,
