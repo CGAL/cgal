@@ -41,7 +41,6 @@ public:
   {
       CGAL_BRANCH_PROFILER_3("semi-static failures/attempts/calls to   : Side_of_oriented_circle_2", tmp);
 
-      using std::fabs;
       Get_approx<Point_2> get_approx; // Identity functor for all points
                                       // but lazy points.
 
@@ -70,16 +69,30 @@ public:
                                          qpx*rpy - qpy*rpx, rpx*rqx + rpy*rqy);
 
           // We compute the semi-static bound.
-          double maxx = fabs(qpx);
-          if (maxx < fabs(rpx)) maxx = fabs(rpx);
-          if (maxx < fabs(tpx)) maxx = fabs(tpx);
-          if (maxx < fabs(tqx)) maxx = fabs(tqx);
-          if (maxx < fabs(rqx)) maxx = fabs(rqx);
-          double maxy = fabs(qpy);
-          if (maxy < fabs(rpy)) maxy = fabs(rpy);
-          if (maxy < fabs(tpy)) maxy = fabs(tpy);
-          if (maxy < fabs(tqy)) maxy = fabs(tqy);
-          if (maxy < fabs(rqy)) maxy = fabs(rqy);
+          double maxx = CGAL::abs(qpx);
+          double maxy = CGAL::abs(qpy);
+
+          double arpx = CGAL::abs(rpx);
+          double arpy = CGAL::abs(rpy);
+
+          double atqx = CGAL::abs(tqx);
+          double atqy = CGAL::abs(tqy);
+
+          double atpx = CGAL::abs(tpx);
+          double atpy = CGAL::abs(tpy);
+
+          double arqx = CGAL::abs(rqx);
+          double arqy = CGAL::abs(rqy);
+
+          if (maxx < arpx) maxx = arpx;
+          if (maxx < atpx) maxx = atpx;
+          if (maxx < atqx) maxx = atqx;
+          if (maxx < arqx) maxx = arqx;
+
+          if (maxy < arpy) maxy = arpy;
+          if (maxy < atpy) maxy = atpy;
+          if (maxy < atqy) maxy = atqy;
+          if (maxy < arqy) maxy = arqy;
 
           if (maxx > maxy)  std::swap(maxx, maxy);
 

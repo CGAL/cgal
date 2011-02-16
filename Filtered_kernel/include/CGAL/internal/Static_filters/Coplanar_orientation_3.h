@@ -147,12 +147,19 @@ private:
                                    prx, pry);
 
     // Then semi-static filter.
-    double maxx = fabs(px);
-    if (maxx < fabs(qx)) maxx = fabs(qx);
-    if (maxx < fabs(rx)) maxx = fabs(rx);
-    double maxy = fabs(py);
-    if (maxy < fabs(qy)) maxy = fabs(qy);
-    if (maxy < fabs(ry)) maxy = fabs(ry);
+    double maxx = CGAL::abs(px);
+    double maxy = CGAL::abs(py);
+
+    double aqx = CGAL::abs(qx);
+    double aqy = CGAL::abs(qy);
+
+    double arx = CGAL::abs(rx);
+    double ary = CGAL::abs(ry);
+
+    if (maxx < aqx) maxx = aqx;
+    if (maxx < arx) maxx = arx;
+    if (maxy < aqy) maxy = aqy;
+    if (maxy < ary) maxy = ary;
     double eps = 3.55271e-15 * maxx * maxy;
 
     if (det > eps)  return std::make_pair(true, POSITIVE);

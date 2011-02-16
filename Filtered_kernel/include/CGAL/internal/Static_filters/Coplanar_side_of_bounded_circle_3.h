@@ -105,18 +105,34 @@ public:
                                    vx,vy,vz,v2);
 
     // Compute the semi-static bound.
-    double maxx = fabs(px);
-    if (maxx < fabs(qx)) maxx = fabs(qx);
-    if (maxx < fabs(rx)) maxx = fabs(rx);
-    if (maxx < fabs(tx)) maxx = fabs(tx);
-    double maxy = fabs(py);
-    if (maxy < fabs(qy)) maxy = fabs(qy);
-    if (maxy < fabs(ry)) maxy = fabs(ry);
-    if (maxy < fabs(ty)) maxy = fabs(ty);
-    double maxz = fabs(pz);
-    if (maxz < fabs(qz)) maxz = fabs(qz);
-    if (maxz < fabs(rz)) maxz = fabs(rz);
-    if (maxz < fabs(tz)) maxz = fabs(tz);
+    double maxx = CGAL::abs(px);
+    double maxy = CGAL::abs(py);
+    double maxz = CGAL::abs(pz);
+
+    double aqx = CGAL::abs(qx);
+    double aqy = CGAL::abs(qy);
+    double aqz = CGAL::abs(qz);
+
+    double arx = CGAL::abs(rx);
+    double ary = CGAL::abs(ry);
+    double arz = CGAL::abs(rz);
+
+
+    double atx = CGAL::abs(tx);
+    double aty = CGAL::abs(ty);
+    double atz = CGAL::abs(tz);
+
+    if (maxx < aqx) maxx = aqx;
+    if (maxx < arx) maxx = arx;
+    if (maxx < atx) maxx = atx;
+
+    if (maxy < aqy) maxy = aqy;
+    if (maxy < ary) maxy = ary;
+    if (maxy < aty) maxy = aty;
+
+    if (maxz < aqz) maxz = aqz;
+    if (maxz < arz) maxz = arz;
+    if (maxz < atz) maxz = atz;
 
     double d = std::max(maxx, std::max(maxy, maxz));
     double eps = 3.27418e-11 * d * d * d * d * d * d;

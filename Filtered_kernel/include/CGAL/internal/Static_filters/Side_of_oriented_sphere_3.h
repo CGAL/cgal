@@ -42,7 +42,6 @@ public:
   {
       CGAL_BRANCH_PROFILER_3("semi-static failures/attempts/calls to   : Side_of_oriented_sphere_3", tmp);
 
-      using std::fabs;
       Get_approx<Point_3> get_approx; // Identity functor for all points
                                       // but lazy points.
 
@@ -74,7 +73,7 @@ public:
           double rtx = rx - tx;
           double rty = ry - ty;
           double rtz = rz - tz;
-          double rt2 = CGAL_NTS square(rtx) + CGAL_NTS square(rty)
+         double rt2 = CGAL_NTS square(rtx) + CGAL_NTS square(rty)
 	             + CGAL_NTS square(rtz);
           double stx = sx - tx;
           double sty = sy - ty;
@@ -83,18 +82,33 @@ public:
 	             + CGAL_NTS square(stz);
 
           // Compute the semi-static bound.
-          double maxx = fabs(ptx);
-          if (maxx < fabs(qtx)) maxx = fabs(qtx);
-          if (maxx < fabs(rtx)) maxx = fabs(rtx);
-          if (maxx < fabs(stx)) maxx = fabs(stx);
-          double maxy = fabs(pty);
-          if (maxy < fabs(qty)) maxy = fabs(qty);
-          if (maxy < fabs(rty)) maxy = fabs(rty);
-          if (maxy < fabs(sty)) maxy = fabs(sty);
-          double maxz = fabs(ptz);
-          if (maxz < fabs(qtz)) maxz = fabs(qtz);
-          if (maxz < fabs(rtz)) maxz = fabs(rtz);
-          if (maxz < fabs(stz)) maxz = fabs(stz);
+          double maxx = CGAL::abs(ptx);
+          double maxy = CGAL::abs(pty);
+          double maxz = CGAL::abs(ptz);
+
+          double aqtx = CGAL::abs(qtx);
+          double artx = CGAL::abs(rtx);
+          double astx = CGAL::abs(stx);
+
+          double aqty = CGAL::abs(qty);
+          double arty = CGAL::abs(rty);
+          double asty = CGAL::abs(sty);
+
+          double aqtz = CGAL::abs(qtz);
+          double artz = CGAL::abs(rtz);
+          double astz = CGAL::abs(stz);
+
+          if (maxx < aqtx) maxx = aqtx;
+          if (maxx < artx) maxx = artx;
+          if (maxx < astx) maxx = astx;
+
+          if (maxy < aqty) maxy = aqty;
+          if (maxy < arty) maxy = arty;
+          if (maxy < asty) maxy = asty;
+
+          if (maxz < aqtz) maxz = aqtz;
+          if (maxz < artz) maxz = artz;
+          if (maxz < astz) maxz = astz;
 
           // Sort maxx < maxy < maxz.
           if (maxx > maxz)

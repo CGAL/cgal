@@ -82,10 +82,15 @@ public:
                                          prx, pry);
 
           // Then semi-static filter.
-          double maxx = std::fabs(pqx);
-          if (maxx < std::fabs(prx)) maxx = std::fabs(prx);
-          double maxy = std::fabs(pqy);
-          if (maxy < std::fabs(pry)) maxy = std::fabs(pry);
+          double maxx = CGAL::abs(pqx);
+          double maxy = CGAL::abs(pqy);
+
+          double aprx = CGAL::abs(prx);
+          double apry = CGAL::abs(pry);
+
+          if (maxx < aprx) maxx = aprx;
+
+          if (maxy < apry) maxy = apry;
 
           // Sort them
           if (maxx > maxy)  std::swap(maxx, maxy);

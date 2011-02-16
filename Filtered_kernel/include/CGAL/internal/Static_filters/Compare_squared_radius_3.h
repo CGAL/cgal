@@ -58,7 +58,7 @@ namespace CGAL { namespace internal { namespace Static_filters_predicates {
         const FT& w
     ) const {
       CGAL_BRANCH_PROFILER_3("semi-static failures/attempts/calls to   : Compare_squared_radius_3 with 4 points", tmp);
-      using std::fabs;
+
       Get_approx<Point_3> get_approx; // Identity functor for all points
                                       // but lazy ones.
       Get_approx<FT> get_approx_ft; // Identity functor for all FT
@@ -115,41 +115,50 @@ namespace CGAL { namespace internal { namespace Static_filters_predicates {
         double eps;
         double_tmp_result = (((square( num_x ) + square( num_y )) + square( num_z )) - ((alpha * 4.00000000000000000000e+00) * square( den )));
         double max1;
-        double max2 = fabs(qpy);
-        if( (max2 < fabs(qpz)) )
+        double aqpy = CGAL::abs(qpy);
+        double aqpz = CGAL::abs(qpz);
+
+        double arpy = CGAL::abs(rpy);
+        double arpz = CGAL::abs(rpz);
+
+        double aspy = CGAL::abs(spy);
+        double aspz = CGAL::abs(spz);
+
+        double max2 = CGAL::abs(qpy);
+        if( (max2 < aqpz) )
         {
-            max2 = fabs(qpz);
+            max2 = aqpz;
         } 
-        if( (max2 < fabs(rpy)) )
+        if( (max2 < arpy) )
         {
-            max2 = fabs(rpy);
+            max2 = arpy;
         } 
-        if( (max2 < fabs(rpz)) )
+        if( (max2 < arpz) )
         {
-            max2 = fabs(rpz);
+            max2 = arpz;
         } 
-        if( (max2 < fabs(spy)) )
+        if( (max2 < aspy) )
         {
-            max2 = fabs(spy);
+            max2 = aspy;
         } 
-        if( (max2 < fabs(spz)) )
+        if( (max2 < aspz) )
         {
-            max2 = fabs(spz);
+            max2 = aspz;
         } 
         max1 = max2;
-        if( (max1 < fabs(qpx)) )
+        if( (max1 < aqpx) )
         {
-            max1 = fabs(qpx);
+            max1 = aqpx;
         } 
-        if( (max1 < fabs(rpx)) )
+        if( (max1 < arpx) )
         {
-            max1 = fabs(rpx);
+            max1 = arpx;
         } 
-        if( (max1 < fabs(spx)) )
+        if( (max1 < aspx) )
         {
-            max1 = fabs(spx);
+            max1 = aspx;
         } 
-        double max3 = fabs(alpha);
+        double max3 = aalpha;
         double lower_bound_1;
         double upper_bound_1;
         lower_bound_1 = max1;
@@ -204,8 +213,6 @@ namespace CGAL { namespace internal { namespace Static_filters_predicates {
     ) const {
       CGAL_BRANCH_PROFILER_3("semi-static failures/attempts/calls to   : Compare_squared_radius_3 with 3 points", tmp);
       
-      using std::fabs;      
-      
       double px, py, pz, qx, qy, qz, sx, sy, sz, alpha;
       if( fit_in_double(p.x(), px) && fit_in_double(p.y(), py)      &&
           fit_in_double(p.z(), pz) && 
@@ -252,29 +259,36 @@ namespace CGAL { namespace internal { namespace Static_filters_predicates {
         double eps;
         double_tmp_result = (((square( num_x ) + square( num_y )) + square( num_z )) - ((alpha * 4.00000000000000000000e+00) * square( den )));
         double max1;
-        double max2 = fabs(psx);
-        if( (max2 < fabs(psy)) )
+        double max2 = CGAL::abs(psx);
+        double apsy = CGAL::abs(psy);
+        double apsz = CGAL::abs(psz);
+
+        double aqsx = CGAL::abs(qsx);
+        double aqsy = CGAL::abs(qsy);
+        double aqsz = CGAL::abs(qsz);
+
+        if( (max2 < apsy) )
         {
-            max2 = fabs(psy);
+            max2 = apsy;
         } 
-        if( (max2 < fabs(qsx)) )
+        if( (max2 < aqsx) )
         {
-            max2 = fabs(qsx);
+            max2 = aqsx;
         } 
-        if( (max2 < fabs(qsy)) )
+        if( (max2 < aqsy) )
         {
-            max2 = fabs(qsy);
+            max2 = aqsy;
         } 
         max1 = max2;
-        if( (max1 < fabs(psz)) )
+        if( (max1 < apsz) )
         {
-            max1 = fabs(psz);
+            max1 = apsz;
         } 
-        if( (max1 < fabs(qsz)) )
+        if( (max1 < aqsz) )
         {
-            max1 = fabs(qsz);
+            max1 = aqsz;
         } 
-        double max3 = fabs(alpha);
+        double max3 = CGAL::abs(alpha);
         double lower_bound_1;
         double upper_bound_1;
         lower_bound_1 = max1;
@@ -330,8 +344,6 @@ namespace CGAL { namespace internal { namespace Static_filters_predicates {
     ) const {
       CGAL_BRANCH_PROFILER_3("semi-static failures/attempts/calls to   : Compare_squared_radius_3 with 2 points", tmp);
       
-      using std::fabs;      
-      
       double px, py, pz, qx, qy, qz, alpha;
       if( fit_in_double(p.x(), px) && fit_in_double(p.y(), py)      &&
           fit_in_double(p.z(), pz) && 
@@ -348,16 +360,18 @@ namespace CGAL { namespace internal { namespace Static_filters_predicates {
         double double_tmp_result;
         double eps;
         double_tmp_result = (((square( px_qx ) + square( py_qy )) + square( pz_qz )) - (alpha * 4.00000000000000000000e+00));
-        double max1 = fabs(px_qx);
-        if( (max1 < fabs(py_qy)) )
+        double max1 = CGAL::abs(px_qx);
+        double apy_qy = CGAL::abs(py_qy);
+        double apz_qz = CGAL::abs(pz_qz);
+        if( (max1 < apy_qy) )
         {
-            max1 = fabs(py_qy);
+            max1 = apy_qy;
         } 
-        if( (max1 < fabs(pz_qz)) )
+        if( (max1 < apz_qz) )
         {
-            max1 = fabs(pz_qz);
+            max1 = apz_qz;
         } 
-        double max2 = fabs(alpha);
+        double max2 = CGAL::abs(alpha);
         
         //handwritten workaround to handle case of alpha=0 (variable alone in its group)
         //if( ((max1 < 8.85464260923320109378e-147) || (max2 < 7.84046957372481590760e-293)) )

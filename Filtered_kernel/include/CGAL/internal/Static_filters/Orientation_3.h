@@ -69,7 +69,6 @@ public:
   {
       CGAL_BRANCH_PROFILER_3("semi-static failures/attempts/calls to   : Orientation_3", tmp);
 
-      using std::fabs;
       Get_approx<Point_3> get_approx; // Identity functor for all points
                                       // but lazy points.
 
@@ -96,16 +95,28 @@ public:
           double psy = sy - py;
           double psz = sz - pz;
 
+          // CGAL::abs uses fabs on platforms where it is faster than (a<0)?-a:a
           // Then semi-static filter.
-          double maxx = fabs(pqx);
-          if (maxx < fabs(prx)) maxx = fabs(prx);
-          if (maxx < fabs(psx)) maxx = fabs(psx);
-          double maxy = fabs(pqy);
-          if (maxy < fabs(pry)) maxy = fabs(pry);
-          if (maxy < fabs(psy)) maxy = fabs(psy);
-          double maxz = fabs(pqz);
-          if (maxz < fabs(prz)) maxz = fabs(prz);
-          if (maxz < fabs(psz)) maxz = fabs(psz);
+          double maxx = CGAL::abs(pqx);
+          double maxy = CGAL::abs(pqy);
+          double maxz = CGAL::abs(pqz);
+
+          double aprx = CGAL::abs(prx);
+          double apsx = CGAL::abs(psx);
+
+          double apry = CGAL::abs(pry);
+          double apsy = CGAL::abs(psy);
+
+          double aprz = CGAL::abs(prz);
+          double apsz = CGAL::abs(psz);
+
+          if (maxx < aprx) maxx = aprx;
+          if (maxx < apsx) maxx = apsx;
+          if (maxy < apry) maxy = apry;
+          if (maxy < apsy) maxy = apsy;
+          if (maxz < aprz) maxz = aprz;
+          if (maxz < apsz) maxz = apsz;
+
           double det = CGAL::determinant(pqx, pqy, pqz,
                                          prx, pry, prz,
                                          psx, psy, psz);
