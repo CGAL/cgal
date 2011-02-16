@@ -56,7 +56,6 @@ namespace CGAL { namespace internal { namespace Static_filters_predicates {
                              const Weighted_point_3 & t) const
     {
       CGAL_BRANCH_PROFILER_3("semi-static failures/attempts/calls to   : Power_test_3 with 4+1 wpoints", tmp);
-      using std::fabs;
       
       double px, py, pz, pwt, qx, qy, qz, qwt, rx, ry, rz, rwt, sx, sy, sz, swt, tx, ty, tz, twt;
       if( fit_in_double(p.x(), px) && fit_in_double(p.y(), py)       &&
@@ -72,7 +71,6 @@ namespace CGAL { namespace internal { namespace Static_filters_predicates {
         )
       {
         CGAL_BRANCH_PROFILER_BRANCH_1(tmp);
-        using std::fabs;
         
         double dpx = (px - tx);
         double dpy = (py - ty);
@@ -97,25 +95,43 @@ namespace CGAL { namespace internal { namespace Static_filters_predicates {
         result_type int_tmp_result;
         double eps;
         double RT_tmp_result = CGAL::determinant( dpx, dpy, dpz, dpt, dqx, dqy, dqz, dqt, drx, dry, drz, drt, dsx, dsy, dsz, dst );
-        double max2 = fabs(dpx);
-        if( (max2 < fabs(dqx)) ) max2 = fabs(dqx);
-        if( (max2 < fabs(drx)) ) max2 = fabs(drx);
-        if( (max2 < fabs(dsx)) ) max2 = fabs(dsx);
+
+        
+        double max2 = CGAL::abs(dpx);
+        double adqx = CGAL::abs(dqx);
+        double adqy = CGAL::abs(dqy);
+        double adqz = CGAL::abs(dqz);
+
+        double adrx = CGAL::abs(drx);
+        double adry = CGAL::abs(dry);
+        double adrz = CGAL::abs(drz);
+
+        double adsx = CGAL::abs(dsx);
+        double adsy = CGAL::abs(dsy);
+        double adsz = CGAL::abs(dsz);
+
+        double atwt_qwt = CGAL::abs(twt_qwt);
+        double atwt_rwt = CGAL::abs(twt_rwt);
+        double atwt_swt = CGAL::abs(twt_swt);
+
+        if( (max2 < adqx) ) max2 = adqx;
+        if( (max2 < adrx) ) max2 = adrx;
+        if( (max2 < adsx) ) max2 = adsx;
         double max1 = max2; 
-        double max3 = fabs(dpy);
-        if( (max3 < fabs(dqy)) ) max3 = fabs(dqy);
-        if( (max3 < fabs(dry)) ) max3 = fabs(dry);
-        if( (max3 < fabs(dsy)) ) max3 = fabs(dsy);
+        double max3 = CGAL::abs(dpy);
+        if( (max3 < adqy) ) max3 = adqy;
+        if( (max3 < adry) ) max3 = adry;
+        if( (max3 < adsy) ) max3 = adsy;
         if( (max1 < max3) )      max1 = max3;
-        double max4 = fabs(dpz);
-        if( (max4 < fabs(dqz)) ) max4 = fabs(dqz);
-        if( (max4 < fabs(drz)) ) max4 = fabs(drz);
-        if( (max4 < fabs(dsz)) ) max4 = fabs(dsz);
+        double max4 = CGAL::abs(dpz);
+        if( (max4 < adqz) ) max4 = adqz;
+        if( (max4 < adrz) ) max4 = adrz;
+        if( (max4 < adsz) ) max4 = adsz;
         if( (max1 < max4) )      max1 = max4;
-        double max5 = fabs(twt_pwt);
-        if( (max5 < fabs(twt_qwt)) ) max5 = fabs(twt_qwt);
-        if( (max5 < fabs(twt_rwt)) ) max5 = fabs(twt_rwt);
-        if( (max5 < fabs(twt_swt)) ) max5 = fabs(twt_swt);
+        double max5 = CGAL::abs(twt_pwt);
+        if( (max5 < atwt_qwt) ) max5 = atwt_qwt;
+        if( (max5 < atwt_rwt) ) max5 = atwt_rwt;
+        if( (max5 < atwt_swt) ) max5 = atwt_swt;
         double lower_bound_1;
         double upper_bound_1;
         lower_bound_1 = max1;
@@ -168,7 +184,6 @@ namespace CGAL { namespace internal { namespace Static_filters_predicates {
     {
 
       CGAL_BRANCH_PROFILER_3("semi-static failures/attempts/calls to   : Power_test_3 with 3+1 wpoints", tmp);
-      using std::fabs;
 
       double px, py, pz, pwt, qx, qy, qz, qwt, rx, ry, rz, rwt, tx, ty, tz, twt;
       if( fit_in_double(p.x(), px) && fit_in_double(p.y(), py)       &&
@@ -182,7 +197,6 @@ namespace CGAL { namespace internal { namespace Static_filters_predicates {
         )
       {
         CGAL_BRANCH_PROFILER_BRANCH_1(tmp);
-        using std::fabs;
         
         double dpx = (px - tx);
         double dpy = (py - ty);
@@ -203,21 +217,33 @@ namespace CGAL { namespace internal { namespace Static_filters_predicates {
         int int_tmp_result;
         double eps;
         double RT_tmp_result = CGAL::determinant( dpx, dpy, dpt, dqx, dqy, dqt, drx, dry, drt );
-        double max7 = fabs(dpz);
-        if( (max7 < fabs(dqz)) ) max7 = fabs(dqz);
-        if( (max7 < fabs(drz)) ) max7 = fabs(drz);
+
+        double max7 = CGAL::abs(dpz);
+        double adqx = CGAL::abs(dqx);
+        double adqy = CGAL::abs(dqy);
+        double adqz = CGAL::abs(dqz);
+
+        double adrx = CGAL::abs(drx);
+        double adry = CGAL::abs(dry);
+        double adrz = CGAL::abs(drz);
+
+        double atwt_qwt = CGAL::abs(twt_qwt);
+        double atwt_rwt = CGAL::abs(twt_rwt);
+
+        if( (max7 < adqz) ) max7 = adqz;
+        if( (max7 < adrz) ) max7 = adrz;
         double max1 = max7;
-        double max2 = fabs(dpx);
-        if( (max2 < fabs(dqx)) ) max2 = fabs(dqx);
-        if( (max2 < fabs(drx)) ) max2 = fabs(drx);
+        double max2 = CGAL::abs(dpx);
+        if( (max2 < adqx) ) max2 = adqx;
+        if( (max2 < adrx) ) max2 = adrx;
         if( (max1 < max2) )      max1 = max2;
-        double max3 = fabs(dpy);
-        if( (max3 < fabs(dqy)) ) max3 = fabs(dqy);
-        if( (max3 < fabs(dry)) ) max3 = fabs(dry);
+        double max3 = CGAL::abs(dpy);
+        if( (max3 < adqy) ) max3 = adqy;
+        if( (max3 < adry) ) max3 = adry;
         if( (max1 < max3) )      max1 = max3;
-        double max4 = fabs(twt_pwt);
-        if( (max4 < fabs(twt_qwt)) ) max4 = fabs(twt_qwt);
-        if( (max4 < fabs(twt_rwt)) ) max4 = fabs(twt_rwt);
+        double max4 = CGAL::abs(twt_pwt);
+        if( (max4 < atwt_qwt) ) max4 = atwt_qwt;
+        if( (max4 < atwt_rwt) ) max4 = atwt_rwt;
         double lower_bound_1;
         double upper_bound_1;
         lower_bound_1 = max1;
@@ -261,10 +287,12 @@ namespace CGAL { namespace internal { namespace Static_filters_predicates {
         double qy_ry = (qy - ry);
         double qx_rx = (qx - rx);
         double py_ry = (py - ry);
-        double max5 = fabs(px_rx);
-        if( (max5 < fabs(qx_rx)) ) max5 = fabs(qx_rx);
-        double max6 = fabs(qy_ry);
-        if( (max6 < fabs(py_ry)) ) max6 = fabs(py_ry);
+        double max5 = CGAL::abs(px_rx);
+        double aqx_rx =CGAL::abs(qx_rx);
+        double apy_ry =CGAL::abs(py_ry);
+        if( max5 < aqx_rx ) max5 = aqx_rx;
+        double max6 = CGAL::abs(qy_ry);
+        if( max6 < apy_ry ) max6 = apy_ry;
         if( (cmp != 0) )
         {
             int int_tmp_result_FFWKCAA;
@@ -347,8 +375,9 @@ namespace CGAL { namespace internal { namespace Static_filters_predicates {
         cmp = int_tmp_result_k60Ocge;
         double qz_rz = (qz - rz);
         double pz_rz = (pz - rz);
-        double max8 = fabs(qz_rz);
-        if( (max8 < fabs(pz_rz)) ) max8 = fabs(pz_rz);
+        double max8 = CGAL::abs(qz_rz);
+        double apz_rz =  CGAL::abs(pz_rz);
+        if( max8 < apz_rz ) max8 = apz_rz;
         if( (cmp != 0) )
         {
             int int_tmp_result_k3Lzf6g;
@@ -486,7 +515,6 @@ namespace CGAL { namespace internal { namespace Static_filters_predicates {
     {
 
       CGAL_BRANCH_PROFILER_3("semi-static failures/attempts/calls to   : Power_test_3 with 2+1 wpoints", tmp);
-      using std::fabs;
       
       double px, py, pz, pwt, qx, qy, qz, qwt, tx, ty, tz, twt;
       if( fit_in_double(p.x(), px) && fit_in_double(p.y(), py)       &&
@@ -512,17 +540,24 @@ namespace CGAL { namespace internal { namespace Static_filters_predicates {
         int cmp = ((px > qx) ? 1 : ((px < qx) ? -1 : 0));
         double eps;
         double max1;
-        double max4 = fabs(dpy);
-        if( (max4 < fabs(dqy)) ) max4 = fabs(dqy);
+        double max4 = CGAL::abs(dpy);
+
+        double adqx = CGAL::abs(dqx);
+        double adqy = CGAL::abs(dqy);
+        double adqz = CGAL::abs(dqz);
+
+        double atwt_qwt = CGAL::abs(twt_qwt);
+
+        if( max4 < adqy ) max4 = adqy;
         max1 = max4;
-        double max5 = fabs(dpz); 
-        if( (max5 < fabs(dqz)) ) max5 = fabs(dqz);
-        if( (max1 < max5) ) max1 = max5;
-        double max2 = fabs(dpx);
-        if( (max2 < fabs(dqx)) ) max2 = fabs(dqx);
-        if( (max1 < max2) ) max1 = max2;
-        double max3 = fabs(twt_pwt);
-        if( (max3 < fabs(twt_qwt)) ) max3 = fabs(twt_qwt);
+        double max5 = CGAL::abs(dpz); 
+        if( max5 < adqz ) max5 = adqz;
+        if( max1 < max5 ) max1 = max5;
+        double max2 = CGAL::abs(dpx);
+        if( max2 < adqx ) max2 = adqx;
+        if( max1 < max2 ) max1 = max2;
+        double max3 = CGAL::abs(twt_pwt);
+        if( max3 < atwt_qwt ) max3 = atwt_qwt;
         double lower_bound_1;
         double upper_bound_1;
         if( (cmp != 0) )
@@ -657,7 +692,7 @@ namespace CGAL { namespace internal { namespace Static_filters_predicates {
         return Base::operator()(p,q,t);
     }
   
-  };
+      };
   
 } } }//namespace CGAL::internal::Static_filters_predicates
 

@@ -59,7 +59,6 @@ namespace CGAL { namespace internal { namespace Static_filters_predicates {
     ) const {
 
       CGAL_BRANCH_PROFILER_3("semi-static failures/attempts/calls to   : Compare_weighted_squared_radius_3 with 4 wpoints", tmp);
-      using std::fabs;
       
       double px, py, pz, pw, qx, qy, qz, qw, rx, ry, rz, rw, sx, sy, sz, sw, alpha;
       if( fit_in_double(p.x(), px) && fit_in_double(p.y(), py)      &&
@@ -98,43 +97,59 @@ namespace CGAL { namespace internal { namespace Static_filters_predicates {
         CGAL::Sign int_tmp_result;
         double eps;
         double double_tmp_result = (((alpha_pw * 4.00000000000000000000e+00) * CGAL::square( den )) - ((CGAL::square( num_x ) + CGAL::square( num_y )) + CGAL::square( num_z )));
-        double max4 = fabs(qpy);
-        if( (max4 < fabs(rpy)) ) max4 = fabs(rpy);
-        if( (max4 < fabs(spy)) ) max4 = fabs(spy); 
+        double max4 = CGAL::abs(qpy);
+
+        double aqpx = CGAL::abs(qpx);
+
+        double arpx = CGAL::abs(rpx);
+        double arpy = CGAL::abs(rpy);
+        double arpz = CGAL::abs(rpz);
+
+        double aspx = CGAL::abs(spx);
+        double aspy = CGAL::abs(spy);
+        double aspz = CGAL::abs(spz);
+
+        double apw_rw = CGAL::abs(pw_rw);
+        double apw_sw = CGAL::abs(pw_sw);
+
+        double aalpha_pw = CGAL::abs(alpha_pw);
+
+        if( max4 < arpy ) max4 = arpy;
+        if( max4 < aspy ) max4 = aspy; 
         double max2 = max4;
-        if( (max2 < fabs(qpx)) ) max2 = fabs(qpx); 
-        if( (max2 < fabs(rpx)) ) max2 = fabs(rpx); 
-        if( (max2 < fabs(spx)) ) max2 = fabs(spx); 
+        if( max2 < aqpx ) max2 = aqpx; 
+        if( max2 < arpx ) max2 = arpx; 
+        if( max2 < aspx ) max2 = aspx; 
         double max1 = max2;
         double max3 = max4;
-        double max5 = fabs(qpz);
-        if( (max5 < fabs(rpz)) ) max5 = fabs(rpz);  
-        if( (max5 < fabs(spz)) ) max5 = fabs(spz);  
-        if( (max3 < max5) )      max3 = max5;       
-        if( (max1 < max3) )      max1 = max3;       
-        if( (max1 < max4) )      max1 = max4;       
-        if( (max1 < max5) )      max1 = max5;      
-        double max6 = fabs(pw_qw);
-        if( (max6 < fabs(pw_rw)) ) max6 = fabs(pw_rw);
-        if( (max6 < fabs(pw_sw)) ) max6 = fabs(pw_sw);
+        double max5 = CGAL::abs(qpz);
+        if( max5 < arpz ) max5 = arpz;  
+        if( max5 < aspz ) max5 = aspz;  
+        if( max3 < max5 )      max3 = max5;       
+        if( max1 < max3 )      max1 = max3;       
+        if( max1 < max4 )      max1 = max4;       
+        if( max1 < max5 )      max1 = max5;      
+        double max6 = CGAL::abs(pw_qw);
+        if( max6 < apw_rw ) max6 = apw_rw;
+        if( max6 < apw_sw ) max6 = apw_sw;
         double max7 = max6;
-        if( (max7 < fabs(alpha_pw)) ) max7 = fabs(alpha_pw); 
+        if( max7 < aalpha_pw ) max7 = aalpha_pw; 
         double lower_bound_1;
         double upper_bound_1;
         lower_bound_1 = max1;
         upper_bound_1 = max1;
-        if( (max2 < lower_bound_1) ) lower_bound_1 = max2;
-        if( (max3 < lower_bound_1) ) lower_bound_1 = max3;
-        if( (max4 < lower_bound_1) ) lower_bound_1 = max4;
-        if( (max5 < lower_bound_1) ) lower_bound_1 = max5;
+        if( max2 < lower_bound_1 ) lower_bound_1 = max2;
+        if( max3 < lower_bound_1 ) lower_bound_1 = max3;
+        if( max4 < lower_bound_1 ) lower_bound_1 = max4;
+        if( max5 < lower_bound_1 ) lower_bound_1 = max5;
         double lower_bound_2;
         double upper_bound_2;
         lower_bound_2 = max6;
         upper_bound_2 = max6;
-        if( (max7 < lower_bound_2) ) lower_bound_2 = max7;
+        if( max7 < lower_bound_2 ) lower_bound_2 = max7;
         else 
         {
-            if( (max7 > upper_bound_2) ) upper_bound_2 = max7;
+            if( max7 > upper_bound_2 ) upper_bound_2 = max7;
         } 
         if( ((lower_bound_1 < 8.99995159231796093217e-38) || (lower_bound_2 < 8.09991286640666077573e-75)) )
         {
@@ -181,7 +196,6 @@ namespace CGAL { namespace internal { namespace Static_filters_predicates {
     ) const {
       
       CGAL_BRANCH_PROFILER_3("semi-static failures/attempts/calls to   : Compare_weighted_squared_radius_3 with 3 wpoints", tmp);
-      using std::fabs;
       
       double px, py, pz, pw, qx, qy, qz, qw, rx, ry, rz, rw, alpha;
       if( fit_in_double(p.x(), px) && fit_in_double(p.y(), py)      &&
@@ -216,30 +230,42 @@ namespace CGAL { namespace internal { namespace Static_filters_predicates {
         CGAL::Sign int_tmp_result;
         double eps;
         double double_tmp_result = ((alpha_pw * CGAL::square( den )) - (2.50000000000000000000e-01 * ((CGAL::square( num_x ) + CGAL::square( num_y )) + CGAL::square( num_z ))));
-        double max2 = fabs(qpx);
-        if( (max2 < fabs(qpy)) )  max2 = fabs(qpy);
-        if( (max2 < fabs(rpx)) )  max2 = fabs(rpx);
-        if( (max2 < fabs(rpy)) )  max2 = fabs(rpy);
+        double max2 = CGAL::abs(qpx);
+
+        double aqpy = CGAL::abs(qpy);
+        double aqpz = CGAL::abs(qpz);
+
+        double arpx = CGAL::abs(rpx);
+        double arpy = CGAL::abs(rpy);
+        double arpz = CGAL::abs(rpz);
+
+        double apw_rw = CGAL::abs(pw_rw);
+
+        double aalpha_pw = CGAL::abs(alpha_pw);
+
+        if( max2 < aqpy )  max2 = aqpy;
+        if( max2 < arpx )  max2 = arpx;
+        if( max2 < arpy )  max2 = arpy;
         double max1 = max2;
-        if( (max1 < fabs(qpz)) )  max1 = fabs(qpz);
-        if( (max1 < fabs(rpz)) )  max1 = fabs(rpz);
-        double max3 = fabs(pw_qw);
-        if( (max3 < fabs(pw_rw)) ) max3 = fabs(pw_rw);
+        if( max1 < aqpz )  max1 = aqpz;
+        if( max1 < arpz )  max1 = arpz;
+        double max3 = CGAL::abs(pw_qw);
+        if( max3 < apw_rw ) max3 = apw_rw;
         double max4 = max3;
-        if( (max4 < fabs(alpha_pw)) ) max4 = fabs(alpha_pw);
+        if( max4 < aalpha_pw ) max4 = aalpha_pw;
         double lower_bound_1;
         double upper_bound_1;
         lower_bound_1 = max1;
         upper_bound_1 = max1;
-        if( (max2 < lower_bound_1) ) lower_bound_1 = max2;
+        if( max2 < lower_bound_1 ) lower_bound_1 = max2;
         double lower_bound_2;
         double upper_bound_2;
         lower_bound_2 = max3;
         upper_bound_2 = max3;
-        if( (max4 < lower_bound_2) )  lower_bound_2 = max4;
+        if( max4 < lower_bound_2 )  lower_bound_2 = max4;
         else 
         {
-          if( (max4 > upper_bound_2) ) upper_bound_2 = max4;
+          if( max4 > upper_bound_2 ) upper_bound_2 = max4;
         } 
         if( ((lower_bound_1 < 2.13354839219409151500e-30) || (lower_bound_2 < 4.55202874183399304187e-60)) )
         {
@@ -285,7 +311,6 @@ namespace CGAL { namespace internal { namespace Static_filters_predicates {
     ) const {
       
       CGAL_BRANCH_PROFILER_3("semi-static failures/attempts/calls to   : Compare_weighted_squared_radius_3 with 2 wpoints", tmp);
-      using std::fabs;
       
       double px, py, pz, pw, qx, qy, qz, qw, alpha;
       if( fit_in_double(p.x(), px) && fit_in_double(p.y(), py)      &&
@@ -306,13 +331,18 @@ namespace CGAL { namespace internal { namespace Static_filters_predicates {
         CGAL::Sign int_tmp_result;
         double eps;
         double double_tmp_result = (((4.00000000000000000000e+00 * qp2) * alpha_pw) - CGAL::square( (qp2 + pw_qw) ));
-        double max1 = fabs(qpx);
-        if( (max1 < fabs(qpy)) ) max1 = fabs(qpy);
-        if( (max1 < fabs(qpz)) ) max1 = fabs(qpz);
+        double max1 = CGAL::abs(qpx);
+
+        double aqpy = CGAL::abs(qpy);
+        double aqpz = CGAL::abs(qpz);
+        double aalpha_pw = CGAL::abs(alpha_pw);
+
+        if( max1 < aqpy ) max1 = aqpy;
+        if( max1 < aqpz ) max1 = aqpz;
         double max2;
-        double max3 = fabs(pw_qw);
+        double max3 = CGAL::abs(pw_qw);
         max2 = max3;
-        if( (max2 < fabs(alpha_pw)) ) max2 = fabs(alpha_pw);
+        if( max2 < aalpha_pw ) max2 = aalpha_pw;
         double lower_bound_2;
         double upper_bound_2;
         lower_bound_2 = max2;
@@ -356,7 +386,7 @@ namespace CGAL { namespace internal { namespace Static_filters_predicates {
   };
   
   
-} } }//namespace CGAL::internal::Static_filters_predicates
+    } } }//namespace CGAL::internal::Static_filters_predicates
 
 
 #endif //CGAL_INTERNAL_STATIC_FILTERS_COMPARE_WEIGHTED_SQUARED_RADIUS_3_H
