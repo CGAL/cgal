@@ -263,7 +263,7 @@ public:
   {
     Point_2 q(CGAL::to_double(p.x()), CGAL::to_double(p.y()));
 
-    FT d = distance(q, c) - fabs(distance(q, l));
+    FT d = distance(q, c) - CGAL::abs(distance(q, l));
     if ( d < 0 )  return ON_NEGATIVE_SIDE;
     if ( d > 0 )  return ON_POSITIVE_SIDE;
     return ON_ORIENTED_BOUNDARY;
