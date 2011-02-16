@@ -748,8 +748,8 @@ _Bezier_x_monotone_2<RatKer, AlgKer, NtTrt, BndTrt>::point_position
 
   if (res1 == EQUAL || nt_traits.degree(_curve.y_polynomial()) <= 0)
   {
-    // In this case both points must be exact.
-    CGAL_assertion (p.is_exact() && _ps.is_exact());
+    if (! p.is_exact()) p.make_exact (cache);
+    if (! _ps.is_exact()) _ps.make_exact (cache);
 
     // If both point are rational, compare their rational y-coordinates.
     if (p.is_rational() && _ps.is_rational())

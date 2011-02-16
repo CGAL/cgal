@@ -170,11 +170,13 @@ public:
     
     for (k = 0; pts_begin != pts_end; ++pts_begin, k++)
     {
-      // Make sure that we do not have two identical consecutive control
-      // points.
-      CGAL_precondition_msg
-          (k == 0 || ! equal (*pts_begin, _ctrl_pts[k - 1]),
-           "Two consecutive control points must not be identical.");
+//SL: Acccording to the fact that all operations are based on polynomials
+//    duplicated control points can be allowed.
+//      // Make sure that we do not have two identical consecutive control
+//      // points.
+//      CGAL_precondition_msg
+//          (k == 0 || ! equal (*pts_begin, _ctrl_pts[k - 1]),
+//           "Two consecutive control points must not be identical.");
 
       // Copy the current control point.
       _ctrl_pts[k] = *pts_begin;

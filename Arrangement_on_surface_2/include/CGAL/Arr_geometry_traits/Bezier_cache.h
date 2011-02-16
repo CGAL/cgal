@@ -626,8 +626,8 @@ bool _Bezier_cache<NtTraits>::_intersection_params
   }
 
   // Compute the roots of the resultant polynomial and mark that the curves do
-  // not overlap.
-  nt_traits.compute_polynomial_roots (res, std::back_inserter (s_vals));
+  // not overlap. The roots we are interested in must be in the interval [0,1].
+  nt_traits.compute_polynomial_roots (res,0,1,std::back_inserter (s_vals));
   return (false);
 }
 
