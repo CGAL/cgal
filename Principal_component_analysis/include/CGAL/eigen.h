@@ -166,7 +166,7 @@ void eigen_symmetric(const FT *mat,
           a[mm] =  a_ll * sinx_2 + a_mm * cosx_2 + x;
           a[lm] =  0.0;
           
-          thr = std::fabs(thr - a_lm_2);
+          thr = CGAL::abs(thr - a_lm_2);
         }
       }
     }         
