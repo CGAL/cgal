@@ -410,7 +410,7 @@ fill_matrix(InputIterator begin, InputIterator end,
   FT precond = 0.;
   typename std::vector<Point_3>::iterator itb = pts_in_fitting_basis.begin(),
     ite = pts_in_fitting_basis.end();
-  CGAL_For_all(itb,ite) precond += std::fabs(itb->x()) + std::fabs(itb->y());
+  CGAL_For_all(itb,ite) precond += CGAL::abs(itb->x()) + CGAL::abs(itb->y());
   precond /= 2*this->nb_input_pts;
   this->preconditionning = precond;
   //fill matrices M and Z
