@@ -115,12 +115,14 @@ namespace CGAL { namespace internal { namespace Static_filters_predicates {
         double eps;
         double_tmp_result = (((square( num_x ) + square( num_y )) + square( num_z )) - ((alpha * 4.00000000000000000000e+00) * square( den )));
         double max1;
-        double aqpy = CGAL::abs(qpy);
+        double aqpx = CGAL::abs(qpx);
         double aqpz = CGAL::abs(qpz);
 
+        double arpx = CGAL::abs(rpx);
         double arpy = CGAL::abs(rpy);
         double arpz = CGAL::abs(rpz);
 
+        double aspx = CGAL::abs(spx);
         double aspy = CGAL::abs(spy);
         double aspz = CGAL::abs(spz);
 
@@ -158,7 +160,7 @@ namespace CGAL { namespace internal { namespace Static_filters_predicates {
         {
             max1 = aspx;
         } 
-        double max3 = aalpha;
+        double max3 = CGAL::abs(alpha);
         double lower_bound_1;
         double upper_bound_1;
         lower_bound_1 = max1;
