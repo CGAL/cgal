@@ -413,9 +413,11 @@ _Bezier_cache<NtTraits>::get_intersections
 
   CGAL_assertion (! do_ovlp);
 
-  // We should now have the same number of s-values and t-values, and we have
-  // to pair them together. 
-  CGAL_assertion (s_vals.size() == t_vals.size());
+  // s-values and t-values reported lie in the range [0,1]. We have
+  // to pair them together. Note that the numbers of s-values and t-values
+  //can be different as a s-value in [0,1] may correspond to a t-values
+  //outside this range. To make the pairing correct, we choose the one with 
+  //less values and look amongst other values the correct one (thus the swapt below).
 
   // Compute all points on (X_1, Y_1) that match an s-value from the list.
   typename Parameter_list::iterator  s_it;
@@ -457,14 +459,21 @@ _Bezier_cache<NtTraits>::get_intersections
   const Algebraic           one (1);
   unsigned int              k;
 
-  for (pit1 = pts1.begin(); pit1 != pts1.end(); ++pit1)
+  //pointers are used to set the list pts1_ptr as the one with the less values
+  Point_list* pts1_ptr=&pts1;
+  Point_list* pts2_ptr=&pts2;
+  bool swapt=pts1.size() > pts2.size();
+  if (swapt)
+    std::swap(pts1_ptr,pts2_ptr);
+  
+  for (pit1 = pts1_ptr->begin(); pit1 != pts1_ptr->end(); ++pit1)
   {
     // Construct a vector of distances from the current point to all other
     // points in the pts2 list.
-    const int                     n_pts2 = pts2.size();
+    const int                     n_pts2 = pts2_ptr->size();
     std::vector<Distance_iter>    dist_vec (n_pts2);
 
-    for (k = 0, pit2 = pts2.begin(); pit2 != pts2.end(); k++, ++pit2)
+    for (k = 0, pit2 = pts2_ptr->begin(); pit2 != pts2_ptr->end(); k++, ++pit2)
     {
       // Compute the approximate distance between the teo current points.
       dx = pit1->app_x - pit2->app_x;
@@ -501,7 +510,7 @@ _Bezier_cache<NtTraits>::get_intersections
           pit1->y = pit2->y;
 
         // Remove this point from pts2, as we found a match for it.
-        pts2.erase (pit2);
+        pts2_ptr->erase (pit2);
         found = true;
       }
     }
@@ -521,17 +530,17 @@ _Bezier_cache<NtTraits>::get_intersections
         pit1->y = pit2->y;
 
       // Remove this point from pts2, as we found a match for it.
-      pts2.erase (pit2);
+      pts2_ptr->erase (pit2);
     }
 
-    // Check if the s- and t-values both lie in the legal range of [0,1].
-    // If so, report the the parameter pair as an intersection.
-    if (CGAL::sign (s) != NEGATIVE && CGAL::compare (s, one) != LARGER &&
-        CGAL::sign (t) != NEGATIVE && CGAL::compare (t, one) != LARGER)
-    {
-      info.first.push_back (Intersection_point_2 (s, t,
-                                                  pit1->x, pit1->y));
-    }
+    // Check that  s- and t-values both lie in the legal range of [0,1].
+    CGAL_assertion(CGAL::sign (s) != NEGATIVE && CGAL::compare (s, one) != LARGER &&
+                   CGAL::sign (t) != NEGATIVE && CGAL::compare (t, one) != LARGER);
+    
+    if (!swapt)
+      info.first.push_back (Intersection_point_2 (s, t,pit1->x, pit1->y));
+    else
+      info.first.push_back (Intersection_point_2 (t, s,pit1->x, pit1->y));
   }
 
   info.second = false;
