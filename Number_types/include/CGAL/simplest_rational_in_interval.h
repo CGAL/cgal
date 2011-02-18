@@ -68,7 +68,7 @@ simplest_rational_in_interval(double x, double y) {
   // the best rational in the interval [x,y] is 0.
   if (x < 0 && y < 0) {
     // Both arguments are negative: solve positive case and negate
-    return  - simplest_rational_in_interval<Rational>(std::fabs(x),std::fabs(y));
+    return  - simplest_rational_in_interval<Rational>(CGAL::abs(x),CGAL::abs(y));
   } else if (x <= 0 || y <= 0) {
     // One argument is 0, or arguments are on opposite sides of 0:
     // simplest rational in interval is 0 exactly.

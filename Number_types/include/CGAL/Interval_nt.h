@@ -449,7 +449,7 @@ inline
 double
 magnitude (const Interval_nt<Protected> & d)
 {
-  return (std::max)(std::fabs(d.inf()), std::fabs(d.sup()));
+  return (std::max)(CGAL::abs(d.inf()), CGAL::abs(d.sup()));
 }
 
 // Non-documented

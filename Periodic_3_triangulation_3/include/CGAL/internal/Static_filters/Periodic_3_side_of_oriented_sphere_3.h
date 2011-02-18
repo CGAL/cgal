@@ -56,7 +56,6 @@ public:
   {
       CGAL_PROFILER("Periodic_3_side_of_oriented_sphere_3 calls");
 
-      using std::fabs;
 
       double px, py, pz, qx, qy, qz, rx, ry, rz, sx, sy, sz, tx, ty, tz;
 
@@ -95,18 +94,33 @@ public:
 	             + CGAL_NTS square(stz);
 
           // Compute the semi-static bound.
-          double maxx = fabs(ptx);
-          if (maxx < fabs(qtx)) maxx = fabs(qtx);
-          if (maxx < fabs(rtx)) maxx = fabs(rtx);
-          if (maxx < fabs(stx)) maxx = fabs(stx);
-          double maxy = fabs(pty);
-          if (maxy < fabs(qty)) maxy = fabs(qty);
-          if (maxy < fabs(rty)) maxy = fabs(rty);
-          if (maxy < fabs(sty)) maxy = fabs(sty);
-          double maxz = fabs(ptz);
-          if (maxz < fabs(qtz)) maxz = fabs(qtz);
-          if (maxz < fabs(rtz)) maxz = fabs(rtz);
-          if (maxz < fabs(stz)) maxz = fabs(stz);
+          double maxx = CGAL::abs(ptx);
+          double maxy = CGAL::abs(pty);
+          double maxz = CGAL::abs(ptz);
+
+          double aqtx = CGAL::abs(aqtx);
+          double aqty = CGAL::abs(aqty);
+          double aqtz = CGAL::abs(aqtz);
+
+          double artx = CGAL::abs(artx);
+          double arty = CGAL::abs(arty);
+          double artz = CGAL::abs(artz);
+
+          double astx = CGAL::abs(astx);
+          double asty = CGAL::abs(asty);
+          double astz = CGAL::abs(astz);
+          
+          if (maxx < aqtx) maxx = aqtx;
+          if (maxx < artx) maxx = artx;
+          if (maxx < astx) maxx = astx;
+
+          if (maxy < aqty) maxy = aqty;
+          if (maxy < arty) maxy = arty;
+          if (maxy < asty) maxy = asty;
+
+          if (maxz < aqtz) maxz = aqtz;
+          if (maxz < artz) maxz = artz;
+          if (maxz < astz) maxz = astz;
 
           // Sort maxx < maxy < maxz.
           if (maxx > maxz)
@@ -148,7 +162,6 @@ public:
 
     CGAL_PROFILER("Periodic_3_side_of_oriented_sphere_3 calls");
 
-    using std::fabs;
 
     double px, py, pz, qx, qy, qz, rx, ry, rz, sx, sy, sz, tx, ty, tz;
     double domxmax, domxmin, domymax, domymin, domzmax, domzmin;
@@ -201,18 +214,33 @@ public:
             + CGAL_NTS square(stz);
 
       // Compute the semi-static bound.
-      double maxx = fabs(ptx);
-      if (maxx < fabs(qtx)) maxx = fabs(qtx);
-      if (maxx < fabs(rtx)) maxx = fabs(rtx);
-      if (maxx < fabs(stx)) maxx = fabs(stx);
-      double maxy = fabs(pty);
-      if (maxy < fabs(qty)) maxy = fabs(qty);
-      if (maxy < fabs(rty)) maxy = fabs(rty);
-      if (maxy < fabs(sty)) maxy = fabs(sty);
-      double maxz = fabs(ptz);
-      if (maxz < fabs(qtz)) maxz = fabs(qtz);
-      if (maxz < fabs(rtz)) maxz = fabs(rtz);
-      if (maxz < fabs(stz)) maxz = fabs(stz);
+      double maxx = CGAL::abs(ptx);
+      double maxy = CGAL::abs(pty);
+      double maxz = CGAL::abs(ptz);
+      
+      double aqtx = CGAL::abs(qtx);
+      double aqty = CGAL::abs(qty);
+      double aqtz = CGAL::abs(qtz);
+
+      double artx = CGAL::abs(rtx);
+      double arty = CGAL::abs(rty);
+      double artz = CGAL::abs(rtz);
+
+      double astx = CGAL::abs(stx);
+      double asty = CGAL::abs(sty);
+      double astz = CGAL::abs(stz);
+      
+      if (maxx < aqtx) maxx = aqtx;
+      if (maxx < artx) maxx = artx;
+      if (maxx < astx) maxx = astx;
+
+      if (maxy < aqty) maxy = aqty;
+      if (maxy < arty) maxy = arty;
+      if (maxy < asty) maxy = asty;
+
+      if (maxz < aqtz) maxz = aqtz;
+      if (maxz < artz) maxz = artz;
+      if (maxz < astz) maxz = astz;
 
       // Sort maxx < maxy < maxz.
       if (maxx > maxz)

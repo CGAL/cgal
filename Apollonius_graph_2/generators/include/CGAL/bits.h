@@ -15,7 +15,7 @@ unsigned int bits(double x)
 {
   CGAL_precondition( static_cast<int>(x) == x );
   if ( x == 0 ) { return 1; }
-  return static_cast<unsigned int>(log2( fabs(x) )) + 1;
+  return static_cast<unsigned int>(log2( CGAL::abs(x) )) + 1;
 }
 
 } //namespace CGAL

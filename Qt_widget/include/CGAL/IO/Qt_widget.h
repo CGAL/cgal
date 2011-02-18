@@ -598,7 +598,7 @@ Qt_widget& operator<<(Qt_widget& w, const Line_2<R>& l)
 
   if (dx==0 && dy==0) return w;
 
-  if (std::fabs(dx)>std::fabs(dy))
+  if (CGAL::abs(dx)>CGAL::abs(dy))
     {
       y1=p1d.y()+(x1-p1d.x())*dy/dx;
       y2=p1d.y()+(x2-p1d.x())*dy/dx;
@@ -640,7 +640,7 @@ Qt_widget& operator<<(Qt_widget& w, const Ray_2<R>& r)
 
   double x,y;
 
-  if (std::fabs(dx)>std::fabs(dy))
+  if (CGAL::abs(dx)>CGAL::abs(dy))
     {
       if (p1d.x()<p2d.x())
 	x = w.x_max();

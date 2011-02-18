@@ -91,7 +91,7 @@ FindCubicRoots(const FLOAT coeff[4], FLOAT x[3])
 
   /* One real root */
   else {
-    double e = std::pow(std::sqrt(-d) + std::fabs(R), 1. / 3.);
+    double e = std::pow(std::sqrt(-d) + ::CGAL::abs(R), 1. / 3.);
     if (R > 0)
       e = -e;
     x[0] = (e + Q / e) - a1 / 3.;
@@ -193,13 +193,13 @@ FindPolynomialRoots(
 
   for (j = n; j >= 0; j--)                      /* Find geometric mean of coeff's */
     if (h[2 + j] != 0.0)
-      s += std::log(std::fabs(h[2 + j]));
+      s += std::log( ::CGAL::abs(h[2 + j]));
   s = std::exp(s / (n + 1));
 
   for (j = n; j >= 0; j--)                      /* Normalize coeff's by mean */
     h[2 + j] /= s;
 
-  if (std::fabs(h[2 + 1] / h[2 + 0]) < std::fabs(h[2 + n - 1] / h[2 + n])) {
+  if ( ::CGAL::abs(h[2 + 1] / h[2 + 0]) < ::CGAL::abs(h[2 + n - 1] / h[2 + n])) {
   REVERSE:
     t = -t;
     for (j = (n - 1) / 2; j >= 0; j--) {
@@ -238,12 +238,12 @@ FindPolynomialRoots(
       c[2 + j] = b[2 + j] - p * c[2 + j - 1] - q * c[2 + j - 2];
     }
     if ((h[2 + n - 1] != 0.0) && (b[2 + n - 1] != 0.0)) {
-      if (std::fabs(h[2 + n - 1] / b[2 + n - 1]) >= K) {
+      if ( ::CGAL::abs(h[2 + n - 1] / b[2 + n - 1]) >= K) {
 	b[2 + n] = h[2 + n] - q * b[2 + n - 2];
       }
       if (b[2 + n] == 0.0)
 	goto QADRTIC;
-      if (K < std::fabs(h[2 + n] / b[2 + n]))
+      if (K < ::CGAL::abs(h[2 + n] / b[2 + n]))
 	goto QADRTIC;
     }
 
@@ -255,7 +255,7 @@ FindPolynomialRoots(
     }
     if (d[2 + n] == 0.0)
       goto LINEAR;
-    if (K < std::fabs(h[2 + n] / d[2 + n]))
+    if (K < ::CGAL::abs(h[2 + n] / d[2 + n]))
       goto LINEAR;
 
     c[2 + n - 1] = -p * c[2 + n - 2] - q * c[2 + n - 3];
@@ -291,7 +291,7 @@ FindPolynomialRoots(
   *conv++ = K;
 
   for (j = n; j >= 0; j--) {                    /* Polynomial deflation by lin-nomial */
-    if ((d[2 + j] != 0.0) && (std::fabs(h[2 + j] / d[2 + j]) < K))
+    if ((d[2 + j] != 0.0) && ( ::CGAL::abs(h[2 + j] / d[2 + j]) < K))
       h[2 + j] = d[2 + j];
     else
       h[2 + j] = 0.0;
@@ -330,7 +330,7 @@ FindPolynomialRoots(
   *conv++ = K;
 
   for (j = n; j >= 0; j--) {                    /* Polynomial deflation by quadratic */
-    if ((b[2 + j] != 0.0) && (std::fabs(h[2 + j] / b[2 + j]) < K))
+    if ((b[2 + j] != 0.0) && ( ::CGAL::abs(h[2 + j] / b[2 + j]) < K))
       h[2 + j] = b[2 + j];
     else
       h[2 + j] = 0.0;

@@ -454,10 +454,10 @@ private:
     const Point& pd = cell->vertex(3)->point();
 
     FT v = volume(pa,pb,pc,pd);
-    a = std::fabs(volume(pb,pc,pd,p) / v);
-    b = std::fabs(volume(pa,pc,pd,p) / v);
-    c = std::fabs(volume(pb,pa,pd,p) / v);
-    d = std::fabs(volume(pb,pc,pa,p) / v);
+    a = CGAL::abs(volume(pb,pc,pd,p) / v);
+    b = CGAL::abs(volume(pa,pc,pd,p) / v);
+    c = CGAL::abs(volume(pb,pa,pd,p) / v);
+    d = CGAL::abs(volume(pb,pc,pa,p) / v);
   }
 
   FT find_sink()
