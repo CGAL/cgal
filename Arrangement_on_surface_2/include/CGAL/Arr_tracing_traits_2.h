@@ -83,79 +83,79 @@ private:
   unsigned int m_flags;
   
   bool compare_x_op() const
-  { return m_flags & (0x1 << COMPARE_X_OP); }
+  { return (0 != (m_flags & (0x1 << COMPARE_X_OP))); }
 
   bool compare_xy_op() const
-  { return m_flags & (0x1 << COMPARE_XY_OP); }
+  { return (0 != (m_flags & (0x1 << COMPARE_XY_OP))); }
   
   bool construct_min_vertex_op() const
-  { return m_flags & (0x1 << CONSTRUCT_MIN_VERTEX_OP); }
+  { return (0 != (m_flags & (0x1 << CONSTRUCT_MIN_VERTEX_OP))); }
   
   bool construct_max_vertex_op() const
-  { return m_flags & (0x1 << CONSTRUCT_MAX_VERTEX_OP); }
+  { return (0 != (m_flags & (0x1 << CONSTRUCT_MAX_VERTEX_OP))); }
   
   bool is_vertical_op() const
-  { return m_flags & (0x1 << IS_VERTICAL_OP); }
+  { return (0 != (m_flags & (0x1 << IS_VERTICAL_OP))); }
   
   bool compare_y_at_x_op() const
-  { return m_flags & (0x1 << COMPARE_Y_AT_X_OP); }
+  { return (0 != (m_flags & (0x1 << COMPARE_Y_AT_X_OP))); }
   
   bool equal_points_op() const
-  { return m_flags & (0x1 << EQUAL_POINTS_OP); }
+  { return (0 != (m_flags & (0x1 << EQUAL_POINTS_OP))); }
   
   bool equal_curves_op() const
-  { return m_flags & (0x1 << EQUAL_CURVES_OP); }
+  { return (0 != (m_flags & (0x1 << EQUAL_CURVES_OP))); }
   
   bool compare_y_at_x_left_op() const
-  { return m_flags & (0x1 << COMPARE_Y_AT_X_LEFT_OP); }
+  { return (0 != (m_flags & (0x1 << COMPARE_Y_AT_X_LEFT_OP))); }
   
   bool compare_y_at_x_right_op() const
-  { return m_flags & (0x1 << COMPARE_Y_AT_X_RIGHT_OP); }
+  { return (0 != (m_flags & (0x1 << COMPARE_Y_AT_X_RIGHT_OP))); }
   
   bool make_x_monotone_op() const
-  { return m_flags & (0x1 << MAKE_X_MONOTONE_OP); }
+  { return (0 != (m_flags & (0x1 << MAKE_X_MONOTONE_OP))); }
   
   bool split_op() const
-  { return m_flags & (0x1 << SPLIT_OP); }
+  { return (0 != (m_flags & (0x1 << SPLIT_OP))); }
   
   bool intersect_op() const
-  { return m_flags & (0x1 << INTERSECT_OP); }
+  { return (0 != (m_flags & (0x1 << INTERSECT_OP))); }
   
   bool are_mergeable_op() const
-  { return m_flags & (0x1 << ARE_MERGEABLE_OP); }
+  { return (0 != (m_flags & (0x1 << ARE_MERGEABLE_OP))); }
   
   bool merge_op() const
-  { return m_flags & (0x1 << MERGE_OP); }
+  { return (0 != (m_flags & (0x1 << MERGE_OP))); }
   
   bool construct_opposite_op() const
-  { return m_flags & (0x1 << CONSTRUCT_OPPOSITE_OP); }
+  { return (0 != (m_flags & (0x1 << CONSTRUCT_OPPOSITE_OP))); }
   
   bool compare_endpoints_xy_op() const
-  { return m_flags & (0x1 << COMPARE_ENDPOINTS_XY_OP); }
+  { return (0 != (m_flags & (0x1 << COMPARE_ENDPOINTS_XY_OP))); }
 
   bool parameter_space_in_x_op() const
-  { return m_flags & (0x1 << PARAMETER_SPACE_IN_X_OP); }
+  { return (0 != (m_flags & (0x1 << PARAMETER_SPACE_IN_X_OP))); }
   
   bool compare_y_near_boundary_op() const
-  { return m_flags & (0x1 << COMPARE_Y_NEAR_BOUNDARY_OP); }
+  { return (0 != (m_flags & (0x1 << COMPARE_Y_NEAR_BOUNDARY_OP))); }
 
   bool compare_y_on_boundary_op() const
-  { return m_flags & (0x1 << COMPARE_Y_ON_BOUNDARY_OP); }  
+  { return (0 != (m_flags & (0x1 << COMPARE_Y_ON_BOUNDARY_OP))); }  
 
   bool is_on_x_identification_op() const 
-  { return m_flags & (0x1 << IS_ON_X_IDENTIFICATION_OP); }  
+  { return (0 != (m_flags & (0x1 << IS_ON_X_IDENTIFICATION_OP))); }  
   
   bool parameter_space_in_y_op() const
-  { return m_flags & (0x1 << PARAMETER_SPACE_IN_Y_OP); }
+  { return (0 != (m_flags & (0x1 << PARAMETER_SPACE_IN_Y_OP))); }
 
   bool compare_x_near_boundary_op() const
-  { return m_flags & (0x1 << COMPARE_X_NEAR_BOUNDARY_OP); }
+  { return (0 != (m_flags & (0x1 << COMPARE_X_NEAR_BOUNDARY_OP))); }
 
   bool compare_x_on_boundary_op() const
-  { return m_flags & (0x1 << COMPARE_X_ON_BOUNDARY_OP); }  
+  { return (0 != (m_flags & (0x1 << COMPARE_X_ON_BOUNDARY_OP))); }  
 
   bool is_on_y_identification_op() const 
-  { return m_flags & (0x1 << IS_ON_Y_IDENTIFICATION_OP); }  
+  { return (0 != (m_flags & (0x1 << IS_ON_Y_IDENTIFICATION_OP))); }  
   
 public:
   /*! Default constructor */
