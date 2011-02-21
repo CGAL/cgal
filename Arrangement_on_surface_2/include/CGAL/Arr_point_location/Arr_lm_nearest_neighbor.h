@@ -156,6 +156,9 @@ protected:
   Tree            *m_tree;        // The search tree.
   bool             m_is_empty;    // Is the search tree empty.
 
+public: 
+  bool is_empty() const{ return m_is_empty; }
+  
 private:
 
   /*! Copy constructor - not supported. */

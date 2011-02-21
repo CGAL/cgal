@@ -90,6 +90,8 @@ protected:
   bool                     updated;
   int                      num_small_not_updated_changes;
 
+public: 
+  bool is_empty() const { return nn.is_empty(); }
 private:
 
   /*! Copy constructor - not supported. */
