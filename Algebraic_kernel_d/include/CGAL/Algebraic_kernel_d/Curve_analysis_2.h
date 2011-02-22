@@ -202,6 +202,7 @@ private:
 
     // Internal information struct about x-coordinates
     struct Event_coordinate_1 {
+        Event_coordinate_1(){} //added to solve a compilation error of gcc-3.4 (bug?)
         Algebraic_real_1 val;
         size_type mult_of_prim_res_root;
         size_type index_of_prim_res_root;
