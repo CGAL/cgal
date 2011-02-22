@@ -2,8 +2,13 @@
 # problem intersect 0 1 1 0 0 1
 # problem intersect 1 0 1 0 0 1
 # Intersection is an end point:
-intersect 1 2 1 0 2 1
-intersect 2 1 1 0 2 1
+intersect 1 2 1 0 2 0
+intersect 2 1 1 0 2 0
+#Intersection is a tangency point
+intersect 6 7 1 0 3 0
+intersect 7 6 1 0 3 0
+#Intersection is not a control point: multiplicity is known
+intersect 2 8 1 0 4 1
 # Intersection is an x-monotone curve:
 #intersect 2 3 1 1 4
 #intersect 3 2 1 1 4

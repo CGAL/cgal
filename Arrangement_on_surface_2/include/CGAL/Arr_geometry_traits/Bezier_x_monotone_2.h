@@ -2276,11 +2276,18 @@ bool _Bezier_x_monotone_2<RatKer, AlgKer, NtTrt, BndTrt>::_intersect
 
   if (app_ok)
   {
-    // If the approximation went OK, then we know that we just have simple
-    // intersection points (with multiplicity 1). We go over the points
-    // and report the ones lying in the parameter ranges of both curves.
-    // Note that in case of self-intersections, all points we get are in
-    // the respective parameter range of the curves.
+    // Approximations are computed using de Casteljau subdivision and 
+    // filtering using skewed bounding boxes. A property of these bboxes
+    // if that it can fail in the following cases: (i) there are two intersection
+    // points lying very close together, (ii) there exists an intersection point 
+    // whose multiplicity is greater than 1, or (iii) the curves overlap.
+    // If the approximation went OK, then we know that we have a simple
+    // intersection point (with multiplicity 1) if intersection point
+    // is not rational (otherwise it is unknown: at this point, an intersection point
+    // is rational if it was found as a control point during the de Casteljau subdivision)
+    // We go over the points and report the ones lying in the parameter
+    // ranges of both curves. Note that in case of self-intersections,
+    // all points we get are in the respective parameter range of the curves.
     typename std::list<Point_2>::iterator  pit;
     
     for (pit = inter_pts.begin(); pit != inter_pts.end(); ++pit)
@@ -2352,8 +2359,8 @@ bool _Bezier_x_monotone_2<RatKer, AlgKer, NtTrt, BndTrt>::_intersect
           pit->update_originator_xid (*p_org2, cv._xid);
 
         // The point lies within the parameter range of both curves, so we
-        // report it as a valid intersection point with multiplicity 1.
-        ipts.push_back (Intersection_point_2 (*pit, 1));
+        // report it as a valid intersection point with multiplicity 1 or unknown.
+        ipts.push_back (Intersection_point_2 (*pit, pit->is_rational()?0:1));
       }
     }
 
