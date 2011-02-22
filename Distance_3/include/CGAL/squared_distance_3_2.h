@@ -167,7 +167,7 @@ squared_distance(
     case -1:
         if (sdm_se2pp >= RT(0))
             return FT(0);
-        if (sdm_ss2pp >= sdm_se2pp)
+        if (sdm_ss2pp * end_min_pp.hw() >= sdm_se2pp * start_min_pp.hw())
             return squared_distance_to_plane(normal, start_min_pp, k);
         else
             return squared_distance_to_plane(normal, end_min_pp, k);
@@ -177,7 +177,7 @@ squared_distance(
     case 1:
         if (sdm_se2pp <= RT(0))
             return FT(0);
-        if (sdm_ss2pp <= sdm_se2pp)
+        if (sdm_ss2pp  * end_min_pp.hw() <= sdm_se2pp * start_min_pp.hw())
             return squared_distance_to_plane(normal, start_min_pp, k);
         else
             return squared_distance_to_plane(normal, end_min_pp, k);
