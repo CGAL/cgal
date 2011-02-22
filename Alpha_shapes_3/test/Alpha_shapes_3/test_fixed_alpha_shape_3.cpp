@@ -6,6 +6,7 @@
 #  include <CGAL/Weighted_alpha_shape_euclidean_traits_3.h>
 #endif
 #include <CGAL/Regular_triangulation_3.h>
+#include <CGAL/Regular_triangulation_euclidean_traits_3.h>
 #include <CGAL/Delaunay_triangulation_3.h>
 #include <iostream>
 #include <fstream>
