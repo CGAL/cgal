@@ -87,7 +87,7 @@ void MainWindow::connectActions()
 	   this->viewer, SLOT(updateGL()));
 }
 
-void MainWindow::closeEvent(QCloseEvent *event)
+void MainWindow::closeEvent(QCloseEvent * /*event*/)
 {
   viewer->writeSettings();
 }

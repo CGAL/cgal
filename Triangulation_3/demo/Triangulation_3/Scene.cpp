@@ -50,7 +50,7 @@ void Scene::generatePoints(int num)
       vit!=m_dt.finite_vertices_end(); ++vit) {
     m_vhArray.push_back( vit );
   }
-  assert( m_dt.number_of_vertices() == m_vhArray.size() );
+  assert( m_dt.number_of_vertices() == (std::size_t) m_vhArray.size() );
 }
 
 void Scene::readOFFPointsandFacets(const char* filename,
@@ -78,7 +78,7 @@ void Scene::readOFFPointsandFacets(const char* filename,
   }
   // Get points data from scanner
   double x, y, z;
-  for(int i=0; i<scanner.size_of_vertices(); ++i) {
+  for(std::size_t i=0; i<scanner.size_of_vertices(); ++i) {
     scanner.scan_vertex( x, y, z );
     Point_3 pt(x, y, z);
     points.push_back(pt);
@@ -126,7 +126,7 @@ void Scene::loadPointsOFF(const char* filename)
       vit!=m_dt.finite_vertices_end(); ++vit) {
     m_vhArray.push_back( vit );
   }
-  assert( m_dt.number_of_vertices() == m_vhArray.size() );
+  assert( m_dt.number_of_vertices() == (std::size_t) m_vhArray.size() );
 }
 
 void Scene::loadPointsXYZ(const char* filename)
@@ -165,7 +165,7 @@ void Scene::loadPointsXYZ(const char* filename)
       vit!=m_dt.finite_vertices_end(); ++vit) {
     m_vhArray.push_back( vit );
   }
-  assert( m_dt.number_of_vertices() == m_vhArray.size() );
+  assert( m_dt.number_of_vertices() == (std::size_t) m_vhArray.size() );
 }
 
 void Scene::savePointsOFF(const char* filename)

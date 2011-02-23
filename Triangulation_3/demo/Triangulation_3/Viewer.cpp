@@ -464,7 +464,7 @@ void Viewer::drawEdge(const Point_3& from, const Point_3& to, const QColor& clr,
     ::glDisable( GL_LIGHTING );
 }
 
-void Viewer::drawFacet(const Triangle_3& t, const QColor& clr)
+void Viewer::drawFacet(const Triangle_3& t, const QColor& /*clr*/)
 {
   // disable lighting
   ::glDisable( GL_LIGHTING );
@@ -558,7 +558,7 @@ void Viewer::drawWithNames()
   }//end-if-newPt
 }
 
-void Viewer::endSelection(const QPoint& point)
+void Viewer::endSelection(const QPoint& /*point*/)
 {
   // flush GL buffers
   ::glFlush();
@@ -602,12 +602,12 @@ void Viewer::endSelection(const QPoint& point)
       m_vidSeled.clear();
 
       // record the new selections
-      for(int i=0; i<nSel; ++i) {
+      for(std::size_t i=0; i<nSel; ++i) {
         m_vidSeled.push_back( (selectBuffer())[4*i+3] );
         m_pScene->m_vhArray.at( m_vidSeled.back() )->setSeled();
       }
     } else {
-      for(int i=0; i<nSel; ++i) {
+      for(std::size_t i=0; i<nSel; ++i) {
         if( !m_vidSeled.contains( (selectBuffer())[4*i+3] ) ) {
           m_vidSeled.push_back( (selectBuffer())[4*i+3] );
           m_pScene->m_vhArray.at( (selectBuffer())[4*i+3] )->setSeled();

@@ -3974,7 +3974,6 @@ Triangulation_3/demo/Triangulation_3/icons/show_voronoi.jpeg -text
 Triangulation_3/demo/Triangulation_3/icons/stereo.png -text
 Triangulation_3/demo/Triangulation_3/icons/stop.jpeg -text
 Triangulation_3/demo/Triangulation_3/typedefs.h -text
-Triangulation_3/demo/Triangulation_3/ui_MainWindow.h -text
 Triangulation_3/demo/Triangulation_3_Geomview_demos/CMakeLists.txt -text
 Triangulation_3/doc_tex/TriangulationDS_3/comborient.gif -text svneol=unset#image/gif
 Triangulation_3/doc_tex/TriangulationDS_3/comborient.pdf -text svneol=unset#application/pdf
