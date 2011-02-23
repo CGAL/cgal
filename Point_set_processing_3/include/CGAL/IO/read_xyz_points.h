@@ -66,7 +66,7 @@ read_xyz_points_and_normals(
   OutputIterator output, ///< output iterator over points.
   PointPMap point_pmap, ///< property map OutputIterator -> Point_3.
   NormalPMap normal_pmap, ///< property map OutputIterator -> Vector_3.
-  const Kernel& kernel) ///< geometric traits.
+  const Kernel& /*kernel*/) ///< geometric traits.
 {
   // value_type_traits is a workaround as back_insert_iterator's value_type is void
   typedef typename value_type_traits<OutputIterator>::type Enriched_point;

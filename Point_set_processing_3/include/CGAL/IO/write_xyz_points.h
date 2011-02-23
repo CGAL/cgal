@@ -160,7 +160,7 @@ write_xyz_points(
   ForwardIterator first,  ///< iterator over the first input point.
   ForwardIterator beyond, ///< past-the-end iterator over the input points.
   PointPMap point_pmap, ///< property map ForwardIterator -> Point_3.
-  const Kernel& kernel) ///< geometric traits.
+  const Kernel& /*kernel*/) ///< geometric traits.
 {
   // basic geometric types
   typedef typename Kernel::Point_3 Point;
