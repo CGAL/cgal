@@ -110,7 +110,7 @@ OutputIterator copy_n_unique(InputIterator first, Size n,
    typedef typename Traits::Less_xy_2  Less_xy_2;
 
    std::set<Point_2, Less_xy_2>    sorted_point_set;
-   for (std::size_t i = 0; i < n; i++)
+   for (Size i = 0; i < n; i++)
    {
       if (sorted_point_set.insert(*first).second)
       {
