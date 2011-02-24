@@ -6,7 +6,7 @@
 #include <CGAL/Cartesian.h>
 #include <CGAL/Arr_circle_segment_traits_2.h>
 #include <CGAL/Arrangement_2.h>
-#include <CGAL/Env_default_diagram_1.h>
+#include <CGAL/Envelope_diagram_1.h>
 #include <CGAL/envelope_2.h>
 
 typedef CGAL::Gmpq                                    Number_type;
@@ -15,7 +15,7 @@ typedef Kernel::Point_2                               Kernel_point_2;
 typedef Kernel::Circle_2                              Circle_2;
 typedef CGAL::Arr_circle_segment_traits_2<Kernel>     Traits_2;
 typedef Traits_2::Curve_2                             Curve_2;
-typedef CGAL::Env_default_diagram_1<Traits_2>         Diagram_1;
+typedef CGAL::Envelope_diagram_1<Traits_2>            Diagram_1;
 
 /*! Print the given envelope diagram. */
 void print_diagram (const Diagram_1& diag)
@@ -62,15 +62,13 @@ int main ()
   // Compute the minimization diagram that represents their lower envelope.
   Diagram_1              min_diag;
 
-  lower_envelope_2 (&(circles[0]), &(circles[4]),
-                    min_diag);
+  lower_envelope_2 (&(circles[0]), &(circles[4]), min_diag);
   print_diagram (min_diag);
 
   // Compute the maximization diagram that represents the upper envelope.
   Diagram_1              max_diag;
 
-  upper_envelope_2 (&(circles[0]), &(circles[4]),
-                    max_diag);
+  upper_envelope_2 (&(circles[0]), &(circles[4]), max_diag);
   print_diagram (max_diag);
 
   return (0);

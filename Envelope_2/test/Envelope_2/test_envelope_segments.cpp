@@ -14,12 +14,13 @@
 #include <CGAL/Cartesian.h>
 #include <CGAL/Arr_segment_traits_2.h>
 #include <CGAL/Arr_curve_data_traits_2.h>
-#include <CGAL/Env_default_diagram_1.h>
+#include <CGAL/Envelope_diagram_1.h>
 #include <CGAL/envelope_2.h>
 
 #include <list>
 #include <iostream>
 #include <cstring>
+
 using std::strcmp;
 
 typedef CGAL::Gmpq                                      NT;
@@ -30,7 +31,7 @@ typedef CGAL::Arr_curve_data_traits_2<Segment_traits_2,
 typedef Traits_2::Point_2                               Point_2;
 typedef Segment_traits_2::Curve_2                       Segment_2;
 typedef Traits_2::Curve_2                               Curve_2;
-typedef CGAL::Env_default_diagram_1<Traits_2>           Diagram_1;
+typedef CGAL::Envelope_diagram_1<Traits_2>              Diagram_1;
 typedef std::list<Curve_2>                              Curve_list;
 
 enum Coord_input_format
@@ -47,7 +48,7 @@ enum Coord_input_format
  * \param segs Output: The segments.
  * \return Whether the segments were successfuly read.
  */
-bool read_segments (const char *filename,
+bool read_segments (const char* filename,
                     Coord_input_format format,
                     Curve_list& segs)
 {
@@ -107,8 +108,8 @@ bool read_segments (const char *filename,
  * \param c The curve, the data of which we are searching.
  * \return True if we found an $x$-monotone curve with the same data.
  */
-template<class I>
-bool find_curve(I begin, I end, const Curve_2 &c)
+template <typename I>
+bool find_curve(I begin, I end, const Curve_2& c)
 {
   while (begin != end)
   {

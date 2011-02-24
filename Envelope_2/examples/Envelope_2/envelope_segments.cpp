@@ -5,7 +5,7 @@
 #include <CGAL/Cartesian.h>
 #include <CGAL/Arr_segment_traits_2.h>
 #include <CGAL/Arr_curve_data_traits_2.h>
-#include <CGAL/Env_default_diagram_1.h>
+#include <CGAL/Envelope_diagram_1.h>
 #include <CGAL/envelope_2.h>
 
 #include <list>
@@ -19,7 +19,7 @@ typedef CGAL::Arr_curve_data_traits_2<Segment_traits_2,
                                       char>             Traits_2;
 typedef Traits_2::Point_2                               Point_2;
 typedef Traits_2::X_monotone_curve_2                    Labeled_segment_2;
-typedef CGAL::Env_default_diagram_1<Traits_2>           Diagram_1;
+typedef CGAL::Envelope_diagram_1<Traits_2>              Diagram_1;
 
 int main ()
 {
