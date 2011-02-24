@@ -1771,7 +1771,7 @@ void test_polynomial_traits_d(const PT& traits){
 }
 
 template <class  PT>
-void test_rebind(const PT& traits){
+void test_rebind(const PT& /*traits*/){
   
   typedef typename PT::Innermost_coefficient_type IC;
 
@@ -1862,15 +1862,15 @@ void test_rebind(const PT& traits){
 
 template< class PT >
 void test_multiple_dimensions(const PT& traits) {
-    test_rebind(PT());
+    test_rebind(traits);
 
     typedef typename PT::Innermost_coefficient_type IC; 
     typedef typename PT:: template Rebind<IC,1>::Other PT_IC_1; 
     typedef typename PT:: template Rebind<IC,2>::Other PT_IC_2;
     typedef typename PT:: template Rebind<IC,3>::Other PT_IC_3;
 
-    test_permute(PT());
-    test_construct_innermost_coefficient_const_iterator_range(PT()); 
+    test_permute(traits);
+    test_construct_innermost_coefficient_const_iterator_range(traits); 
 
     Test_Pol::test_polynomial_traits_d(PT_IC_1()); 
     Test_Pol::test_polynomial_traits_d(PT_IC_2());

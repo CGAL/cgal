@@ -232,8 +232,8 @@ RegularTriangulationGraphicsItem<T>::paintOneVertex(const typename T::Point& poi
 template <typename T>
 void 
 RegularTriangulationGraphicsItem<T>::paint(QPainter *painter, 
-                                    const QStyleOptionGraphicsItem *option,
-                                    QWidget * widget)
+                                    const QStyleOptionGraphicsItem */*option*/,
+                                    QWidget * /*widget*/)
 {
   painter->setPen(this->edgesPen());
   drawAll(painter);

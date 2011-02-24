@@ -88,7 +88,7 @@ TriangulationMovingPoint<T>::mouseMoveEvent(QGraphicsSceneMouseEvent *event)
   // fh will be destroyed by the removal of vh.
   // Let us take a neighbor that is not in the star of vh.
   const Face_handle fh = vh->face();
-  Vertex_handle next_hint = fh->vertex((fh->index(vh)+1&3));
+  Vertex_handle next_hint = fh->vertex((fh->index(vh)+1)&3);
   if(insertedPoint){
     dt->remove(vh);
   }

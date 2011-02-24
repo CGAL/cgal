@@ -223,7 +223,7 @@ template <typename T>
 void 
 TriangulationGraphicsItem<T>::paint(QPainter *painter, 
                                     const QStyleOptionGraphicsItem *option,
-                                    QWidget * widget)
+                                    QWidget * /*widget*/)
 {
   painter->setPen(this->edgesPen());
 //   painter->drawRect(boundingRect());

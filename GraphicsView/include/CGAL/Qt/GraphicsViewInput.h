@@ -42,7 +42,7 @@ signals:
 
 public slots:
 
-  virtual void processInput(CGAL::Object o) {}
+  virtual void processInput(CGAL::Object /*o*/) {}
 
 };
 

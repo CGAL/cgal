@@ -361,8 +361,8 @@ protected:
   }
 
   template <typename Constraint_hierarchy_tag>
-  void after_insertion_split_constraint(Vertex_handle v1, Vertex_handle v2,
-                                        Vertex_handle va,
+  void after_insertion_split_constraint(Vertex_handle /*v1*/, Vertex_handle /*v2*/,
+                                        Vertex_handle /*va*/,
       Constraint_hierarchy_tag)
   {
   }

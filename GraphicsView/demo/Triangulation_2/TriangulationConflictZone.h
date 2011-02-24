@@ -107,7 +107,7 @@ TriangulationConflictZone<T>::mouseMoveEvent(QGraphicsSceneMouseEvent *event)
 
 template <typename T>
 void 
-TriangulationConflictZone<T>::mouseReleaseEvent(QGraphicsSceneMouseEvent *event)
+TriangulationConflictZone<T>::mouseReleaseEvent(QGraphicsSceneMouseEvent */*event*/)
 {
   faces.clear();
   for(std::list<QGraphicsPolygonItem*>::iterator it = qfaces.begin();

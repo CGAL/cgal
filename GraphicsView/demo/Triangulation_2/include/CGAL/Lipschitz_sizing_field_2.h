@@ -121,7 +121,7 @@ public:
     K = k;
   }
 
-  const double get_K()
+  double get_K()
   {
     return K;
   }
