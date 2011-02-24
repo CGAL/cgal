@@ -87,7 +87,7 @@ public:
 
     struct Unit_part: public std::unary_function< mpz_class , mpz_class > {
         mpz_class operator()( const mpz_class& x) const {
-            return( x < mpz_class(0)) ?  mpz_class(-1) : mpz_class(1);
+            return (x < 0) ? -1 : 1;
         }
     };
 
