@@ -21,7 +21,8 @@ perl -ni.bak -e 'BEGIN {
                       $url =~ s/_/\\_/g;
                       $url =~ s/~/\\~/g;
                       $url =~ s/:/\\:/g;
-                      $url =~ s/{/\\{/g;
+                      $url =~ s/&/\\&/g;
+                      $url =~ s/%/\\%/g;
                       return $url;
                    }
                  }
