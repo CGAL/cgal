@@ -648,6 +648,18 @@ void _test_solve(AK ak)
       p = Polynomial_1_3(c1,c2,c3,c4);
     } while((a4 <= 0) || (b4 <= 0) || (s1 == s2) ||
             (c1 == 0 && c2 == 0 && c3 == 0));
+    
+    if(CGAL::AlgebraicSphereFunctors::intersect<AK>(s1,s2)) {
+      Polynomial_1_3 p1 = CGAL::AlgebraicSphereFunctors::plane_from_2_spheres<AK>(s1,s2);
+      if(CGAL::same_solutions<FT>(p1,p)) {
+        const FT sq_d1 = CGAL::square(p1.a()*s1.a() + p1.b()*s1.b() +p1.c()*s1.c() + p1.d()) /
+                (CGAL::square(p1.a()) + CGAL::square(p1.b()) + CGAL::square(p1.c()));
+        const FT r1_sqr = s1.r_sq() - sq_d1;
+    	if(r1_sqr != 0) { --i; continue; }
+      }
+    }
+        
+    
 		std::cout << a1 << " " << a2 << " " << a3 << " " << a4 << std::endl;
     std::cout << b1 << " " << b2 << " " << b3 << " " << b4 << std::endl;
     std::cout << c1 << " " << c2 << " " << c3 << " " << c4 << std::endl;
@@ -699,6 +711,14 @@ void _test_solve(AK ak)
     } while((a1 == 0 && a2 == 0 && a3 == 0) ||
             (b1 == 0 && b2 == 0 && b3 == 0) ||
             (c4 <= 0) || (CGAL::same_solutions<FT>(p1,p2)));
+    
+    if(CGAL::same_solutions<FT>(p1,p2)) {
+      const FT sq_d1 = CGAL::square(p1.a()*s.a() + p1.b()*s.b() +p1.c()*s.c() + p1.d()) /
+              (CGAL::square(p1.a()) + CGAL::square(p1.b()) + CGAL::square(p1.c()));
+      const FT r1_sqr = s.r_sq() - sq_d1;
+      if(r1_sqr != 0) { --i; continue; }
+    }
+    
 		std::cout << a1 << " " << a2 << " " << a3 << " " << a4 << std::endl;
 		std::cout << b1 << " " << b2 << " " << b3 << " " << b4 << std::endl;
 		std::cout << c1 << " " << c2 << " " << c3 << " " << c4 << std::endl;
