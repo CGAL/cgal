@@ -1464,7 +1464,7 @@ make_manual_prime() {
           if which linklint >& /dev/null ; then
               mkdir testsuite/${WrapperRootName}-linklintresults
               # linklint, Local Site Checking
-              linklint -limit 5000 -doc testsuite/${WrapperRootName}-linklintresults -index contents.html -quiet -silent /testsuite/${WrapperRootName}/@  
+              linklint -limit 5000 -doc testsuite/${WrapperRootName}-linklintresults -index contents.html -no_anchors -quiet -silent /testsuite/${WrapperRootName}/@  
               # linklint, Remote URL Checking
               linklint -limit 5000 @@ -doc testsuite/${WrapperRootName}-linklintresults -quiet -silent
               #REPLACEPATH="`pwd | sed -e 's/[/]/\\\//g'`"
