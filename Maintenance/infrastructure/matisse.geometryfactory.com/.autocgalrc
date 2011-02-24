@@ -9,11 +9,7 @@ LC_ALL=C
 
 BUILD_HOSTS="localhost"
 
-if [ "`date +%D`" = "05/28/10" ]; then
-PROCESSORS_localhost=4
-else
 PROCESSORS_localhost=6
-fi
 
 CGAL_ROOT=$HOME/CGAL
 LOGS_DIR="${CGAL_ROOT}/AUTOTEST_LOGS"
