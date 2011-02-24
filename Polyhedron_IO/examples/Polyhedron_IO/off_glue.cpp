@@ -45,8 +45,7 @@ int main( int argc, char **argv) {
     int n = 0; // number of filenames
     char *filename[2];
     bool help = false;
-    std::size_t i = 1;
-    for ( ; i < argc; i++) { // check commandline options
+    for (int i=1 ; i < argc; i++) { // check commandline options
         if ( strcmp( "-v", argv[i]) == 0)
             verbose = true;
         else if ( strcmp( "-b", argv[i]) == 0)
@@ -108,7 +107,7 @@ int main( int argc, char **argv) {
     sorted_vertices.reserve( scanner.size_of_vertices());
 
     float x, y, z;
-    for ( i = 0; i < scanner.size_of_vertices(); i++) {
+    for (std::size_t i = 0; i < scanner.size_of_vertices(); i++) {
         Vertex  vertex;
         scanner.scan_vertex( x, y, z);
         vertex.point = Point( x, y, z);
@@ -124,7 +123,7 @@ int main( int argc, char **argv) {
     sort( sorted_vertices.begin(), sorted_vertices.end(), VertexComp());
     int current_index = 0;
     sorted_vertices[0]->index = 0;
-    for ( i = 1; i < scanner.size_of_vertices(); i++) {
+    for (std::size_t i = 1; i < scanner.size_of_vertices(); i++) {
         if ( sorted_vertices[i]->point != sorted_vertices[i-1]->point)
             current_index++;
         sorted_vertices[i]->index = current_index;
@@ -178,11 +177,11 @@ int main( int argc, char **argv) {
 
     // Copy facets and translate vertex indices.
     writer.write_facet_header();
-    for ( i = 0; i < scanner.size_of_facets(); i++) {
+    for (std::size_t i = 0; i < scanner.size_of_facets(); i++) {
       std::size_t no;  // number of vertices of a facet.
         scanner.scan_facet( no, i);
         writer.write_facet_begin( no);
-        for ( int j = 0; j < no; j++) {
+        for ( std::size_t j = 0; j < no; j++) {
           std::size_t index;
             scanner.scan_facet_vertex_index( index, i);
             writer.write_facet_vertex_index(  vertices[index].index);

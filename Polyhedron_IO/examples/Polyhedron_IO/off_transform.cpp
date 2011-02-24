@@ -137,7 +137,7 @@ int main( int argc, char **argv) {
                          scanner.size_of_facets());
 
     Vector v( transx, transy, transz);
-    for ( int k = 0; k < scanner.size_of_vertices(); ++k) {
+    for ( std::size_t k = 0; k < scanner.size_of_vertices(); ++k) {
         double x, y, z;
         scanner.scan_vertex( x, y, z);
         Point q( x, y, z);

@@ -127,13 +127,13 @@ int main( int argc, char **argv) {
 
     // index array.
     int* indices = new int[ scanner.size_of_vertices()];
-    for ( int k = 0; k < scanner.size_of_vertices(); k++)
+    for ( std::size_t k = 0; k < scanner.size_of_vertices(); k++)
 	indices[k] = -1;
 
     if ( delaunay || ! incr) {
 	Delaunay_triangulation triang;
 	vout << "Scanning and triangulating ..." << endl;
-	for ( int j = 0; j < scanner.size_of_vertices(); j++) {
+	for ( std::size_t j = 0; j < scanner.size_of_vertices(); j++) {
 	    double x, y, z;
 	    scanner.scan_vertex( x, y, z);
 	    IPoint p( x, y, z, indices + j);
@@ -147,7 +147,7 @@ int main( int argc, char **argv) {
     } else {
         Triangulation triang;
 	vout << "Scanning and triangulating ..." << endl;
-	for ( int j = 0; j < scanner.size_of_vertices(); j++) {
+	for ( std::size_t j = 0; j < scanner.size_of_vertices(); j++) {
 	    double x, y, z;
 	    scanner.scan_vertex( x, y, z);
 	    IPoint p( x, y, z, indices + j);
