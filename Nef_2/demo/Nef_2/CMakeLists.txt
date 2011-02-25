@@ -20,6 +20,7 @@ find_package(Qt3-patched)
 
 if ( CGAL_FOUND AND CGAL_Qt3_FOUND AND QT3_FOUND )
 
+  include_directories(BEFORE ../../include)
   # use the Qt MOC preprocessor on classes that derives from QObject
   include( Qt3Macros-patched )
   qt3_generate_moc( "${CMAKE_CURRENT_SOURCE_DIR}/nef_2.cpp" nef_2.moc )

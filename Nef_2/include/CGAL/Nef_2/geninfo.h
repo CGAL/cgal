@@ -41,6 +41,7 @@ misuse memory problems occur.}*/
 
 /*{\Moperations 2 1}*/
 
+  #ifdef CGAL_USE_FORMER_GENINFO
   static void create(GenPtr& p) 
   /*{\Mstatic create a slot for an object of type |T| referenced 
     via |p|.}*/
@@ -71,6 +72,16 @@ misuse memory problems occur.}*/
     if (sizeof(T) >  sizeof(GenPtr)) delete (T*) p;
     p=0;
   }
+  #else //CGAL_USE_FORMER_GENINFO
+  static void create(GenPtr& p)  { p = (GenPtr) new T; }
+  static T& access(GenPtr& p)  { return *(T*)p;  }
+  static const T& const_access(const GenPtr& p) 
+  { return *(const T*)p;   }
+  static void clear(GenPtr& p){ 
+    delete (T*) p;
+    p=0;
+  }
+  #endif  //CGAL_USE_FORMER_GENINFO
 
 };
 

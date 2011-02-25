@@ -352,6 +352,7 @@ template <class pNT> class Polynomial :
   /*{\Mop returns the sign of the limit process for $x \rightarrow \infty$
   (the sign of the leading coefficient).}*/
   { const NT& leading_coeff = this->ptr()->coeff.back();
+    if (degree() < 0) return CGAL::ZERO;
     if (leading_coeff < NT(0)) return (CGAL::NEGATIVE);
     if (leading_coeff > NT(0)) return (CGAL::POSITIVE);
     return CGAL::ZERO;
@@ -1232,6 +1233,7 @@ Polynomial<NT> operator * (const Polynomial<NT>& p1,
                             const Polynomial<NT>& p2)
 {
   typedef typename Polynomial<NT>::size_type size_type;
+  if (p1.degree()<0 || p2.degree()<0) return p1;
   CGAL_assertion(p1.degree()>=0 && p2.degree()>=0);
   Polynomial<NT>  p( size_type(p1.degree()+p2.degree()+1) ); 
   // initialized with zeros
