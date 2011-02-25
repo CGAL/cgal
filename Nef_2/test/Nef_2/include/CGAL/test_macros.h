@@ -10,8 +10,8 @@
 #define CGAL_TEST_START int cgal_test_res=0
 
 #define CGAL_TEST(b) if (!(b)) { ++cgal_test_res; \
-std::cerr<<"ERROR: ("<<__LINE__ <<") test "<<#b<<" failed."<<std::endl; } \
-else
+std::cerr<<"ERROR: ("<<__LINE__ <<") test "<<#b<<" failed."<<std::endl; }
+
 
 #define CGAL_IO_TEST(datao,datai,iomode) {                                \
     std::stringstream S;                                                  \

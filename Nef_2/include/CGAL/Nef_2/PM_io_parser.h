@@ -234,8 +234,8 @@ bool PM_io_parser<PMDEC>::read_hedge(Halfedge_handle e)
        !(in >> m) || !check_sep("}") )
     return false;
   CGAL_assertion_msg 
-     (eo >= 0 || eo < en || epr >= 0 || epr < en || ene >= 0 || ene < en ||
-      v >= 0 || v < vn || f >= 0 || f < fn ,
+     (eo >= 0 || (std::size_t) eo < en || epr >= 0 || (std::size_t) epr < en || ene >= 0 || (std::size_t) ene < en ||
+      v >= 0 || (std::size_t) v < vn || f >= 0 || (std::size_t) f < fn ,
       "wrong index in read_hedge");
   
   // precond: objects exist!
@@ -273,12 +273,12 @@ bool PM_io_parser<PMDEC>::read_face(Face_handle f)
   if ( !(in >> ei) || !check_sep(",") ) return false;
   if (ei >= 0) f->set_halfedge(Halfedge_of[ei]);
   while (in >> ei) { 
-    CGAL_assertion_msg(ei >= 0 && ei < en, "wrong index in face cycle list.");
+    CGAL_assertion_msg(ei >= 0 && (std::size_t) ei < en, "wrong index in face cycle list.");
     f->store_fc(Halfedge_of[ei]);
   } in.clear();
   if (!check_sep(",")) { return false; }
   while (in >> vi) { 
-    CGAL_assertion_msg(vi >= 0 && vi < vn, "wrong index in iso vertex list.");
+    CGAL_assertion_msg(vi >= 0 && (std::size_t) vi < vn, "wrong index in iso vertex list.");
     f->store_iv(Vertex_of[vi]);
   } in.clear();
   if (!check_sep(",") || !(in >> m) || !check_sep("}") ) 
