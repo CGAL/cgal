@@ -29,7 +29,7 @@
 #include <CGAL/Envelope_3/Envelope_base.h>
 #include <CGAL/Envelope_3/Env_plane_traits_3_functions.h>
 
-CGAL_BEGIN_NAMESPACE
+namespace CGAL{
 
 template <class Kernel_>
 class L1_voronoi_traits_2 : public Arr_linear_traits_2<Kernel_>
@@ -337,6 +337,6 @@ public:
 
 };
 
-CGAL_END_NAMESPACE
+} //namespace CGAL
 
 #endif // CGAL_L1_VORONOI_DIAGRAM_TRAITS_2_H
