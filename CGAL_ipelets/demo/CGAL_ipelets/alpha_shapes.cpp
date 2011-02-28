@@ -97,14 +97,14 @@ void ASphapeIpelet::protected_run(int fn)
   boost::tie(nb_ret,alpha)=request_value_from_user<int>((boost::format("# Spectral critical value (0-%d)") % A.number_of_alphas()).str() );
   if (nb_ret == -1) return;  
   
-  if(alpha<0 || alpha>A.number_of_alphas()){
+  if(alpha<0 || (std::size_t) alpha>A.number_of_alphas()){
     print_error_message("Not a good value");
     return;
   }
   
   
   A.set_alpha(alpha==0?std::max(std::numeric_limits<double>::epsilon(),A.get_nth_alpha(0)/2.):
-              alpha==A.number_of_alphas()?A.get_nth_alpha(alpha-1)+1:A.get_nth_alpha(alpha-1)/2.+A.get_nth_alpha(alpha)/2.);
+              (std::size_t) alpha==A.number_of_alphas()?A.get_nth_alpha(alpha-1)+1:A.get_nth_alpha(alpha-1)/2.+A.get_nth_alpha(alpha)/2.);
   for ( Alpha_shape_2::Alpha_shape_edges_iterator it=A.alpha_shape_edges_begin();it!=A.alpha_shape_edges_end();++it)
     draw_in_ipe(A.segment(*it));
   

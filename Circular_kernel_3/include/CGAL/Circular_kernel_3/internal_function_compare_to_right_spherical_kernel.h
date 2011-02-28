@@ -40,11 +40,7 @@ struct Trait_for_cmp_tgt{
                   :Pt_(Pt.x()-sphere.center().x(),Pt.y()-sphere.center().y(),Pt.z()-sphere.center().z()){}
 
   typename SK::Algebraic_kernel::Root_of_2 
-  unsigned_tkz_coeff_normal(const typename SK::Point_3& C,
-                            const typename SK::FT& rk,
-                            const typename SK::FT& R,
-                            const typename SK::FT& gamma_k
-                          ) const
+  unsigned_tkz_coeff_normal(const typename SK::Point_3& C,const typename SK::FT& gamma_k) const
   {
     return CGAL_NTS sign(gamma_k)*(C.x()*Pt_.y()-C.y()*Pt_.x());
   }
@@ -67,11 +63,7 @@ struct Trait_for_cmp_tgt_theta_0{
                           :Pt_(Pt.x()-sphere.center().x(),Pt.y()-sphere.center().y(),Pt.z()-sphere.center().z()){}
   
   typename SK::FT 
-  unsigned_tkz_coeff_normal( const typename SK::Point_3& C,
-                             const typename SK::FT& rk,
-                             const typename SK::FT& R,
-                             const typename SK::FT& gamma_k
-                           ) const
+  unsigned_tkz_coeff_normal( const typename SK::Point_3& C,const typename SK::FT& gamma_k) const
   {
     return - CGAL_NTS sign(gamma_k)*C.y();
   }
@@ -189,10 +181,7 @@ Compare_to_right_of_arcs<SK,Traits>::fill_tzk_n(
               arc.supporting_circle().squared_radius(),
               sphere_.squared_radius());
     
-    tz=traits_.unsigned_tkz_coeff_normal(tmp_pt,
-                                         arc.supporting_circle().squared_radius(),
-                                         sphere_.squared_radius(),
-                                         gk);
+    tz=traits_.unsigned_tkz_coeff_normal(tmp_pt,gk);
     if ( is_arc_an_upper_one(arc,sphere_) )
       tz=-tz;
     //~ tz*=is_arc_an_upper_one(arc,sphere_)?(-1):(1);

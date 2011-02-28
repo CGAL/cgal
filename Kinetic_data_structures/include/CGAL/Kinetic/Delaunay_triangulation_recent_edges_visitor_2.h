@@ -42,7 +42,7 @@ struct Delaunay_triangulation_recent_edges_visitor_2: public Delaunay_triangulat
 
   void change_vertex(VH vh) {
     recent_.clear();
-    typename Triangulation::Edge_circulator ec= vh->incident_edges(), ef=ec;
+    typename Triangulation::Edge_circulator ec(vh), ef=ec;
     if (ec != NULL) {
       do {
 	recent_.insert(*ec);

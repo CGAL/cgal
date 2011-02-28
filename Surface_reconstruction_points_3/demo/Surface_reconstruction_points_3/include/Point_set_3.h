@@ -301,7 +301,7 @@ public:
 
 
   bool are_radii_uptodate() const { return m_radii_are_uptodate; }
-  void set_radii_uptodate(bool on) { m_radii_are_uptodate = false; }
+  void set_radii_uptodate(bool /*on*/) { m_radii_are_uptodate = false; }
 
 // Private methods:
 private:

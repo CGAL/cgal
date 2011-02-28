@@ -147,7 +147,7 @@ ForwardIterator grid_simplify_point_set(
   ForwardIterator beyond, ///< past-the-end iterator over the input points.
   PointPMap point_pmap, ///< property map ForwardIterator -> Point_3
   double epsilon, ///< tolerance value when merging 3D points.
-  const Kernel& kernel) ///< geometric traits.
+  const Kernel& /*kernel*/) ///< geometric traits.
 {
   // actual type of input points
   typedef typename std::iterator_traits<ForwardIterator>::value_type Enriched_point;

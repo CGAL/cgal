@@ -1339,7 +1339,7 @@ namespace HomogeneousKernelFunctors {
     { return c.rep().squared_radius(); }
 
     FT
-    operator()( const Point_2& p) const
+    operator()( const Point_2& /*p*/) const
     { return FT(0); }
 
     FT
@@ -1369,7 +1369,7 @@ namespace HomogeneousKernelFunctors {
     { return s.rep().squared_radius(); }
 
     FT
-    operator()( const Point_3& p) const
+    operator()( const Point_3& /*p*/) const
     { return FT(0); }
       
     FT

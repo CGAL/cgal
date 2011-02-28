@@ -243,7 +243,7 @@ surface_neighbors_3(const Dt& dt,
 
   //otherwise get vertices in conflict
   typename std::list< Vertex_handle >  conflict_vertices;
-  dt.vertices_in_conflict(p,c,
+  dt.vertices_on_conflict_zone_boundary(p,c,
 			 std::back_inserter(conflict_vertices));
 
   for (typename std::list< Vertex_handle >::iterator it = conflict_vertices.begin();

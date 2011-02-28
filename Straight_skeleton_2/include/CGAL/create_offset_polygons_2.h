@@ -151,7 +151,7 @@ create_offset_polygons_2 ( FT const& aOffset, Skeleton const& aSs, K const& k, T
 //
 template<class OutPolygon, class FT, class Skeleton, class K>
 std::vector< boost::shared_ptr<OutPolygon> > 
-create_offset_polygons_2 ( FT const& aOffset, Skeleton const& aSs, K const& k, Tag_true )
+create_offset_polygons_2 ( FT const& aOffset, Skeleton const& aSs, K const& /*k*/, Tag_true )
 {
   typedef boost::shared_ptr<OutPolygon> OutPolygonPtr ; 
   typedef std::vector<OutPolygonPtr>    OutPolygonPtrVector ;

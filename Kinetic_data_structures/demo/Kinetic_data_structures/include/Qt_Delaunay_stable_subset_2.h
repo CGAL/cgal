@@ -95,11 +95,11 @@ protected:
       if (fit->first->vertex((fit->second+1)%3)->point().is_valid()
 	  && fit->first->vertex((fit->second+2)%3)->point().is_valid()
 	  && fit->first->vertex(fit->second)->point().is_valid()
-	  && fit->first->neighbor(fit->second)->vertex(fit->first->mirror_index(fit->second))->point().is_valid()) {
+	  && fit->first->neighbor(fit->second)->vertex(tri.mirror_index(fit->first,fit->second))->point().is_valid()) {
 	Static_point o= tri.geom_traits().current_coordinates_object()(fit->first->vertex((fit->second+1)%3)->point());
 	Static_point d= tri.geom_traits().current_coordinates_object()(fit->first->vertex((fit->second+2)%3)->point());
 	Static_point a= tri.geom_traits().current_coordinates_object()(fit->first->vertex(fit->second)->point());
-	Static_point b= tri.geom_traits().current_coordinates_object()(fit->first->neighbor(fit->second)->vertex(fit->first->mirror_index(fit->second))->point());
+	Static_point b= tri.geom_traits().current_coordinates_object()(fit->first->neighbor(fit->second)->vertex(tri.mirror_index(fit->first,fit->second))->point());
 
 	double angle1= std::abs(angle(o,a, d));
 	double angle2= std::abs(angle(o,b, d));

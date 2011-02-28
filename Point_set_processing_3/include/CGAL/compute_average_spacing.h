@@ -117,7 +117,7 @@ compute_average_spacing(
   InputIterator beyond, ///< past-the-end iterator over the input points.
   PointPMap point_pmap, ///< property map InputIterator -> Point_3
   unsigned int k, ///< number of neighbors.
-  const Kernel& kernel) ///< geometric traits.
+  const Kernel& /*kernel*/) ///< geometric traits.
 {
   // basic geometric types
   typedef typename Kernel::Point_3 Point;

@@ -73,7 +73,7 @@ inline CORE::BigFloat to_BigFloat<MP_Float>( MP_Float const& b )
 
 
 template<class NT> 
-inline NT inexact_sqrt_implementation( NT const& n, CGAL::Null_functor no_sqrt )
+inline NT inexact_sqrt_implementation( NT const& n, CGAL::Null_functor /*no_sqrt*/ )
 {
 
 #ifdef CGAL_USE_CORE

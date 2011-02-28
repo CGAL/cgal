@@ -50,7 +50,7 @@ class Point_set_demo_point_set_simplification_dialog : public QDialog, private U
 {
   Q_OBJECT
   public:
-    Point_set_demo_point_set_simplification_dialog(QWidget *parent = 0)
+    Point_set_demo_point_set_simplification_dialog(QWidget * /*parent*/ = 0)
     {
       setupUi(this);
     }

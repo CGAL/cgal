@@ -65,7 +65,7 @@ write_off_points_and_normals(
   ForwardIterator beyond, ///< past-the-end iterator over the input points.
   PointPMap point_pmap, ///< property map ForwardIterator -> Point_3.
   NormalPMap normal_pmap, ///< property map ForwardIterator -> Vector_3.
-  const Kernel& kernel) ///< geometric traits.
+  const Kernel& /*kernel*/) ///< geometric traits.
 {
   // basic geometric types
   typedef typename Kernel::Point_3 Point;

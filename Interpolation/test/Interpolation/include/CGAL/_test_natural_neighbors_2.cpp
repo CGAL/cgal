@@ -43,7 +43,7 @@ bool test_norm(ForwardIterator first, ForwardIterator beyond,
 template < class ForwardIterator, class Point >
 bool test_barycenter(ForwardIterator first, ForwardIterator beyond,
 		     typename std::iterator_traits<ForwardIterator>
-		     ::value_type::second_type norm, const Point& p)
+		     ::value_type::second_type /*norm*/, const Point& p)
 {
   return p == CGAL::barycenter(first, beyond);
 }

@@ -8,9 +8,9 @@
 
 int main ()
 {
-  bool   UNTESTED_TRAITS_AS_CORE_IS_NOT_INSTALLED;
+//  bool   UNTESTED_TRAITS_AS_CORE_IS_NOT_INSTALLED;
   std::cout << std::endl
-            << "WARNING: Core is not installed, "
+            << "NOTE: Core is not installed, "
             << "skipping the test ..."
             << std::endl;
   return 0;
@@ -21,9 +21,9 @@ int main ()
 
 int main ()
 {
-  bool   UNTESTED_TRAITS_AS_LEDA_IS_NOT_INSTALLED;
+//  bool   UNTESTED_TRAITS_AS_LEDA_IS_NOT_INSTALLED;
   std::cout << std::endl
-	    << "LEDA is not installed, "
+	    << "NOTE: LEDA is not installed, "
             << "skipping the test ..."
             << std::endl;
   return 0;
@@ -36,9 +36,9 @@ int main ()
 int main ()
 {
 
-  bool   UNTESTED_TRAITS_AS_GMP_OR_MPFI_IS_NOT_INSTALLED;
+//  bool   UNTESTED_TRAITS_AS_GMP_OR_MPFI_IS_NOT_INSTALLED;
   std::cout << std::endl
-	    << "GMP and/or MPFI are not installed, "
+	    << "NOTE: GMP and/or MPFI are not installed, "
             << "skipping the test ..."
             << std::endl;
   return 0;
@@ -50,9 +50,9 @@ int main ()
 
 int main ()
 {
-  bool   UNTESTED_TRAITS_AS_CORE_IS_NOT_INSTALLED;
+//  bool   UNTESTED_TRAITS_AS_CORE_IS_NOT_INSTALLED;
   std::cout << std::endl
-	    << "CORE is not installed, "
+	    << "NOTE: CORE is not installed, "
             << "skipping the test ..."
             << std::endl;
   return 0;

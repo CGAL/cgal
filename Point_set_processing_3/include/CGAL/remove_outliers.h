@@ -130,7 +130,7 @@ remove_outliers(
   PointPMap point_pmap, ///< property map InputIterator -> Point_3
   unsigned int k, ///< number of neighbors.
   double threshold_percent, ///< percentage of points to remove.
-  const Kernel& kernel) ///< geometric traits.
+  const Kernel& /*kernel*/) ///< geometric traits.
 {
   // geometric types
   typedef typename Kernel::FT FT;

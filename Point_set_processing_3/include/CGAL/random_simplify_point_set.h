@@ -54,9 +54,9 @@ ForwardIterator
 random_simplify_point_set(
   ForwardIterator first,  ///< iterator over the first input point.
   ForwardIterator beyond, ///< past-the-end iterator over the input points.
-  PointPMap point_pmap, ///< property map ForwardIterator -> Point_3
+  PointPMap /*point_pmap*/, ///< property map ForwardIterator -> Point_3
   double removed_percentage, ///< percentage of points to remove.
-  const Kernel& kernel) ///< geometric traits.
+  const Kernel& /*kernel*/) ///< geometric traits.
 {
   CGAL_point_set_processing_precondition(removed_percentage >= 0 && removed_percentage <= 100);
 

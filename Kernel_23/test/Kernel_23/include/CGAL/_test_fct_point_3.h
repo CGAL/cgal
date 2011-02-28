@@ -28,9 +28,9 @@ template <class R>
 bool
 _test_fct_point_sqrt_3(const R&, CGAL::Tag_false)
 {
-  bool UNTESTED_STUFF_BECAUSE_SQRT_IS_NOT_SUPPORTED;
+//  bool UNTESTED_STUFF_BECAUSE_SQRT_IS_NOT_SUPPORTED;
   std::cout << std::endl
-            << "WARNING : FT doesn't support sqrt(),"
+            << "NOTE : FT doesn't support sqrt(),"
                " hence some functions are not tested." << std::endl;
   return true;
 }

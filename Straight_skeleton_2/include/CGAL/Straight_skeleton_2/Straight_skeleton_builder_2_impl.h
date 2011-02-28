@@ -927,7 +927,7 @@ void Straight_skeleton_builder_2<Gt,Ss,V>::HandleEdgeEvent( EventPtr aEvent )
 }
 
 template<class Gt, class Ss, class V>
-bool Straight_skeleton_builder_2<Gt,Ss,V>::IsValidSplitEvent( SplitEvent const& aEvent )
+bool Straight_skeleton_builder_2<Gt,Ss,V>::IsValidSplitEvent( SplitEvent const& /*aEvent*/ )
 {
   return true ;
 }

@@ -59,7 +59,7 @@ public:
   void protected_run(int);
 };
 
-void SkeletonIpelet::draw_straight_skeleton(const Skeleton& skeleton,double max_edge)
+void SkeletonIpelet::draw_straight_skeleton(const Skeleton& skeleton,double /*max_edge*/)
 {
   typedef Skeleton::Vertex_const_handle     Vertex_const_handle ;
   typedef Skeleton::Halfedge_const_handle   Halfedge_const_handle ;

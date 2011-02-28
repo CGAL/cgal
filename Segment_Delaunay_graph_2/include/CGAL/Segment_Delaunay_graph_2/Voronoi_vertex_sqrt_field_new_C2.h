@@ -682,7 +682,7 @@ private:
   inline
   FT
   squared_radius(const Point_2& vv,
-		 const Site_2& p, const Site_2& q, const Site_2& r,
+		 const Site_2& p, const Site_2& /*q*/, const Site_2& /*r*/,
 		 const Type&) const
   {
     CGAL_precondition( p.is_point() );

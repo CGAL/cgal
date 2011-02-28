@@ -994,7 +994,7 @@ namespace CartesianKernelFunctors {
     { return c.rep().squared_radius(); }
 
     result_type
-    operator()( const Point_2& p) const
+    operator()( const Point_2& /*p*/) const
     { return FT(0); }
 
     result_type
@@ -1041,7 +1041,7 @@ namespace CartesianKernelFunctors {
     { return c.rep().squared_radius(); }
 
     result_type
-    operator()( const Point_3& p) const
+    operator()( const Point_3& /*p*/) const
     { return FT(0); }
 
     result_type

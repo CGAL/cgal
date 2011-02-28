@@ -91,9 +91,9 @@ _test_sibson_c1_interpolation_sqrt(ForwardIterator ,
 				   ::value_type::second_type& /* exact_value */,
                                    CGAL::Integral_domain_without_division_tag)
 {
-  bool UNTESTED_STUFF_BECAUSE_SQRT_IS_NOT_SUPPORTED;
+//  bool UNTESTED_STUFF_BECAUSE_SQRT_IS_NOT_SUPPORTED;
   std::cout << std::endl
-            << "FT doesn't support sqrt(),"
+            << "NOTE: FT doesn't support sqrt(),"
     " hence sibson_c1_interpolation is not tested." << std::endl;
   return true;
 }
