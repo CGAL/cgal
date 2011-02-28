@@ -17,6 +17,8 @@
 //
 // Author(s)     : Francois Rebufat
 
+#define CGAL_NO_DEPRECATION_WARNINGS
+
 #include <CGAL/Delaunay_triangulation_3.h>
 #include <CGAL/Triangulation_cell_base_with_circumcenter_3.h>
 
