@@ -85,8 +85,13 @@ public:
   {
       // VC++ should use instead : (i<=s) || !is_valid(i) || !is_valid(s)
       // Or should I use is_valid() ? or is_valid_or_nan() ?
+  #if defined  __SUNPRO_CC || defined(BOOST_MSVC)
+    CGAL_assertion_msg((i<=s) || !is_valid(i) || !is_valid(s),
+	      " Variable used before being initialized (or CGAL bug)");
+  #else
     CGAL_assertion_msg(!(i>s),
 	      " Variable used before being initialized (or CGAL bug)");
+  #endif
 #ifndef CGAL_DISABLE_ROUNDING_MATH_CHECK
     CGAL_assertion_code((void) tester;) // Necessary to trigger a runtime test of rounding modes.
 #endif
