@@ -123,12 +123,34 @@ The following method allows one to insert several points.
           insert(InputIterator first, InputIterator last);}
 {Inserts the weighted points in the range $\left[\right.$\ccc{first},
 \ccc{last}$\left.\right)$. 
-Note that this function is not guaranteed to insert the points
-following the order of \ccc{InputIterator}.
 It returns the difference of the number of vertices between after and
 before the insertions (it may be negative due to hidden points).
+Note that this function is not guaranteed to insert the points
+following the order of \ccc{InputIterator}, as \ccc{spatial_sort}
+is used to improve efficiency.
 \ccPrecond{The \ccc{value_type} of \ccc{first} and \ccc{last} is
 \ccc{Weighted_point}.}}
+
+\ccMethod{template < class WeightedPointWithInfoInputIterator >
+          std::ptrdiff_t
+          insert(WeightedPointWithInfoInputIterator first, WeightedPointWithInfoInputIterator last);}
+{
+Inserts the weighted points in the iterator range $\left[\right.$\ccc{first},
+\ccc{last}$\left.\right)$.  
+It returns the difference of the number of vertices between after and
+before the insertions (it may be negative due to hidden points).
+Note that this function is not guaranteed to insert the weighted points
+following the order of \ccc{WeightedPointWithInfoInputIterator}, as \ccc{spatial_sort}
+is used to improve efficiency.
+Given a pair \ccc{(p,i)},  the vertex \ccc{v} storing \ccc{p} also stores \ccc{i}, that is 
+\ccc{v.point() == p} and \ccc{v.info() == i}. If several pairs have the same point, 
+only one vertex is created, one of the objects of type \ccc{Vertex::Info} will be stored in the vertex.
+\ccPrecond{\ccc{Vertex} must be model of the concept \ccc{TriangulationVertexBaseWithInfo_3}.
+The \ccc{value_type} of \ccc{first} and \ccc{last} is \ccc{std::pair<Weighted_point,Vertex::Info>}.}
+}
+
+
+
 
 The following methods, which already exist in \ccc{Triangulation_3}, are
 overloaded to ensure that hidden points are well created and maintained.

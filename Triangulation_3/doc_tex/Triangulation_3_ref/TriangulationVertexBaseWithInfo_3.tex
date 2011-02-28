@@ -1,0 +1,46 @@
+% +------------------------------------------------------------------------+
+% | Reference manual page: TriangulationVertexBaseWithInfo_3.tex
+% +------------------------------------------------------------------------+
+% | 25.11.2010  Andreas Fabri
+% | Package: Triangulation3
+% | 
+% |
+%%RefPage: end of header, begin of main body
+% +------------------------------------------------------------------------+
+
+
+\begin{ccRefConcept}{TriangulationVertexBaseWithInfo_3}
+
+%% \ccHtmlCrossLink{}     %% add further rules for cross referencing links
+%% \ccHtmlIndexC[concept]{} %% add further index entries
+
+\ccDefinition
+A type model of this concept can be used as vertex base by a triangulation
+and provides an additional information storage.
+
+
+\ccRefines{\ccc{TriangulationVertexBase_3}}
+
+\ccTypes
+\ccNestedType{Info}
+{.} 
+
+
+\ccCreationVariable{v}  %% choose variable name
+
+\ccAccessFunctions
+\ccThree{Triangulation}{Facetxxxxxxxxxxxxxxxxxxxxx}{}
+
+\ccMethod{const Info& info() const;}
+{Returns a const reference to the object of type \ccc{Info} stored in the
+vertex.} 
+
+
+\ccMethod{Info& info();}
+{Returns a reference to the object of type \ccc{Info} stored in the vertex.} 
+
+\ccHasModels
+
+\ccc{CGAL::Triangulation_vertex_base_with_info_3}
+
+\end{ccRefConcept}

@@ -503,6 +503,43 @@ as the following example shows.
 
 \ccIncludeExampleCode{Triangulation_3/adding_handles_3.cpp}
 
+\subsection{Setting Information While Inserting a Range of Points}
+The most efficient method to insert (weighted) points in a
+Delaunay (or regular) triangulation is to provide an iterator
+range over (weighted) points to the insert function. However, an iterator range of
+(weighted) points does not allow to set different information to each vertex.
+To solve this problem, in the case the vertex type  of the triangulation 
+is a model of the concept \ccc{TriangulationVertexBaseWithInfo_3}
+(such as \ccc{Triangulation_vertex_base_with_info_3}), we provide three examples 
+doing the same operation: set an unsigned integer as the information 
+of each vertex. The value of this unsigned integer is the initial order
+of the corresponding point given in the range.
+
+\subsubsection{Using an Iterator Over Pairs}
+Each point and its information are gathered into a pair. We provide
+the constructor of the triangulation (which is calling the \ccc{insert} function)
+with a range of such pairs.
+\ccIncludeExampleCode{Triangulation_3/info_insert_with_pair_iterator.cpp}
+
+
+\subsubsection{Using the Boost Zip Iterator}
+
+Information and points are in separate containers. We use
+\ccAnchor{http://www.boost.org/libs/iterator/doc/index.html#specialized-adaptors}
+{\ccc{boost::zip_iterator}} to provide an iterator gathering them.
+
+\ccIncludeExampleCode{Triangulation_3/info_insert_with_zip_iterator.cpp}
+
+\subsubsection{Using the Boost Transform Iterator}
+
+We define a functor \ccc{Auto_count} used together with
+ \ccAnchor{http://www.boost.org/libs/iterator/doc/index.html#specialized-adaptors}
+{\ccc{boost::transform_iterator}} to set the order of each point
+in the range. Note that this is correct because the iterator
+is dereferenced only once per point during the insertion.
+\ccIncludeExampleCode{Triangulation_3/info_insert_with_transform_iterator.cpp}
+
+
 \subsection{The Simplex Class\label{Triangulation3-sec-simplex}}
 The triangulation defines a \ccc{Simplex} class that represents a
 simplex (vertex, edge, facet or cell). This example demonstrates how

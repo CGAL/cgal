@@ -3921,6 +3921,7 @@ Triangulation_2/doc_tex/Triangulation_2/walk.ipe -text svneol=unset#application/
 Triangulation_2/doc_tex/Triangulation_2/walk.pdf -text svneol=unset#application/pdf
 Triangulation_2/doc_tex/Triangulation_2/walk.xml svneol=native#text/xml
 Triangulation_2/doc_tex/Triangulation_2/walls.ipe -text svneol=unset#application/postscript
+Triangulation_2/doc_tex/Triangulation_2_ref/TriangulationVertexBaseWithInfo_2.tex -text
 Triangulation_2/doc_tex/Triangulation_2_ref/constraints.gif -text svneol=unset#image/gif
 Triangulation_2/doc_tex/Triangulation_2_ref/infinite_vertex.gif -text svneol=unset#image/gif
 Triangulation_2/doc_tex/Triangulation_2_ref/infinite_vertex.ipe -text svneol=unset#application/postscript
@@ -3932,6 +3933,10 @@ Triangulation_2/doc_tex/Triangulation_2_ref/insert3.gif -text svneol=unset#image
 Triangulation_2/doc_tex/Triangulation_2_ref/neighbors.gif -text svneol=unset#image/gif
 Triangulation_2/doc_tex/Triangulation_2_ref/remove.gif -text svneol=unset#image/gif
 Triangulation_2/doc_tex/Triangulation_2_ref/walk.gif -text svneol=unset#image/gif
+Triangulation_2/examples/Triangulation_2/info_insert_with_pair_iterator_2.cpp -text
+Triangulation_2/examples/Triangulation_2/info_insert_with_pair_iterator_regular_2.cpp -text
+Triangulation_2/examples/Triangulation_2/info_insert_with_transform_iterator_2.cpp -text
+Triangulation_2/examples/Triangulation_2/info_insert_with_zip_iterator_2.cpp -text
 Triangulation_2/test/Triangulation_2/test_delaunay_triangulation_proj.cpp -text
 Triangulation_3/demo/Triangulation_3/CMakeLists.txt -text
 Triangulation_3/demo/Triangulation_3/MainWindow.cpp -text
@@ -4056,11 +4061,16 @@ Triangulation_3/doc_tex/Triangulation_3_ref/insert_outside_convex_hull.gif -text
 Triangulation_3/doc_tex/Triangulation_3_ref/insert_outside_convex_hull.pdf -text svneol=unset#application/pdf
 Triangulation_3/doc_tex/Triangulation_3_ref/sidedim2.gif -text svneol=unset#image/gif
 Triangulation_3/doc_tex/Triangulation_3_ref/sidedim2.pdf -text svneol=unset#application/pdf
+Triangulation_3/examples/Triangulation_3/info_insert_with_pair_iterator.cpp -text
+Triangulation_3/examples/Triangulation_3/info_insert_with_pair_iterator_regular.cpp -text
+Triangulation_3/examples/Triangulation_3/info_insert_with_transform_iterator.cpp -text
+Triangulation_3/examples/Triangulation_3/info_insert_with_zip_iterator.cpp -text
 Triangulation_3/include/CGAL/internal/Static_filters/Compare_weighted_squared_radius_3.h -text
 Triangulation_3/include/CGAL/internal/Static_filters/Power_test_3.h -text
 Triangulation_3/include/CGAL/internal/Static_filters/Regular_triangulation_static_filters_traits_3.h -text
 Triangulation_3/include/CGAL/internal/spatial_sorting_traits_with_indices.h -text
 Triangulation_3/test/Triangulation_3/include/CGAL/_test_remove_cluster.h -text
+Triangulation_3/test/Triangulation_3/test_regular_insert_range_with_info.cpp -text
 Triangulation_3/test/Triangulation_3/test_static_filters.cpp -text
 Voronoi_diagram_2/doc_tex/Voronoi_diagram_2/voronoi.png -text
 iostream/doc_tex/IOstream/io.png -text

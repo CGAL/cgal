@@ -121,16 +121,37 @@ The optional argument \ccc{start} is used as a starting place for the search.}
 The following method allows one to insert several points. It returns the
 number of inserted points. 
 
-\ccMethod{template < class InputIterator >
+
+\ccMethod{template < class PointInputIterator >
           std::ptrdiff_t
-          insert(InputIterator first, InputIterator last);}
+          insert(PointInputIterator first, PointInputIterator last);}
 {Inserts the points in the iterator range $\left[\right.$\ccc{first},
 \ccc{last}$\left.\right)$.  Returns the number of inserted points.
 Note that this function is not guaranteed to insert the points
-following the order of \ccc{InputIterator}, as \ccc{spatial_sort}
+following the order of \ccc{PointInputIterator}, as \ccc{spatial_sort}
 is used to improve efficiency.
 \ccPrecond{The \ccc{value_type} of \ccc{first} and \ccc{last} is
-\ccc{Point}.}}
+\ccc{Point}. }
+}
+
+
+\ccMethod{template < class PointWithInfoInputIterator >
+          std::ptrdiff_t
+          insert(PointWithInfoInputIterator first, PointWithInfoInputIterator last);}
+{
+Inserts the points in the iterator range $\left[\right.$\ccc{first},
+\ccc{last}$\left.\right)$.  Returns the number of inserted points.
+Note that this function is not guaranteed to insert the points
+following the order of \ccc{PointWithInfoInputIterator}, as \ccc{spatial_sort}
+is used to improve efficiency.
+Given a pair \ccc{(p,i)},  the vertex \ccc{v} storing \ccc{p} also stores \ccc{i}, that is 
+\ccc{v.point() == p} and \ccc{v.info() == i}. If several pairs have the same point, 
+only one vertex is created, and one of the objects of type \ccc{Vertex::Info} will be stored in the vertex.
+\ccPrecond{\ccc{Vertex} must be model of the concept \ccc{TriangulationVertexBaseWithInfo_3}.
+The \ccc{value_type} of \ccc{first} and \ccc{last} is \ccc{std::pair<Point,Vertex::Info>}.}
+}
+
+
 
 \ccHeading{Displacement}
 

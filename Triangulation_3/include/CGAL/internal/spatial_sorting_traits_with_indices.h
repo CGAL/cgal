@@ -69,7 +69,6 @@ template<class Base_traits,class PointPropertyMap>
 class Spatial_sort_traits_with_property_map_3:public Base_traits{
   PointPropertyMap accessor_;
 public:
-  Spatial_sort_traits_with_property_map_3(Base_traits base=Base_traits()):Base_traits(base){}
   Spatial_sort_traits_with_property_map_3(const PointPropertyMap& accessor,Base_traits base=Base_traits())
   :Base_traits(base),accessor_(accessor){}
 
@@ -113,7 +112,6 @@ template<class Base_traits,class PointPropertyMap>
 class Spatial_sort_traits_with_property_map_2:public Base_traits{
   PointPropertyMap accessor_;
 public:
-  Spatial_sort_traits_with_property_map_2(Base_traits base=Base_traits()):Base_traits(base){}  
   Spatial_sort_traits_with_property_map_2(const PointPropertyMap& accessor,Base_traits base=Base_traits())
   :Base_traits(base),accessor_(accessor){}
 

@@ -8,13 +8,13 @@ triangulation.  Finally points on the convex hull are written to {\tt
 cout}.
 
 colored_face
-Illustrates how the user can have some additionnal property
+Illustrates how the user can have some additional property
 like e.g. a color stored in the faces or vertices
 of the triangulation.
 
 adding_handles
 Illustrates how the user can derive and plug in his own vertex_base 
-or face_base when he would like to have  additionnal
+or face_base when he would like to have  additional
 handles to other faces and vertices stored in the faces or vertices.
 
 
@@ -49,3 +49,11 @@ constrained_hierarchy_plus
 The program shows how to use
 a triangulation hierarchy in conjunction with a Constrained 
 triangulation plus.
+
+info_insert_with_pair_iterator_2
+info_insert_with_pair_iterator_regular_2
+info_insert_with_zip_iterator_2
+info_insert_with_transform_iterator_2
+Show how to insert points and info using the insert by range function
+with different methods.
+

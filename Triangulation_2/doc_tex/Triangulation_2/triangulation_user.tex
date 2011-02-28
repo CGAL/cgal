@@ -128,7 +128,7 @@ of a two dimensional triangulation.
 
 \section{Representation\label{Section_2D_Triangulations_Representation}}
 
-\subsubsection{The set of faces}
+\subsubsection{The Set of Faces}
 
 A 2D triangulation  of \cgal\ can be viewed as a planar partition 
 whose bounded faces are triangular and cover
@@ -188,7 +188,7 @@ infinity">
 
 
 
-\subsubsection{ A representation based on faces and vertices}
+\subsubsection{A Representation Based on Faces and Vertices}
 Because a triangulation is  a set of
 triangular faces with constant-size complexity,
 triangulations are not implemented
@@ -796,7 +796,7 @@ is removed.
 Regular triangulation have member functions to construct
 the vertices and edges of the dual power diagrams.
 
-\subsubsection{The geometric traits}
+\subsubsection{The Geometric Traits}
 The geometric traits of a regular triangulation
 must provide a weighted point type
 and a power test on these weighted points.
@@ -828,7 +828,7 @@ instance of the \ccc{Filtered_kernel} template.
 
 
 
-\subsubsection{The Vertex type and Face Type of a Regular Triangulation}
+\subsubsection{The Vertex Type and Face Type of a Regular Triangulation}
 
 The base vertex type of a regular triangulation
 includes a Boolean data member to mark the hidden state of the vertex.
@@ -1081,7 +1081,7 @@ of the concept \ccc{ConstrainedTriangulationTraits_2}.
 
 
 
-\subsubsection{The face base class}
+\subsubsection{The Face Base Class}
 Information about the status (constrained or not)
 of the edges of the triangulation has to be stored
 in the face class
@@ -1222,8 +1222,9 @@ a triangulation hierarchy in conjunction with a constrained
 triangulation plus.
 \ccIncludeExampleCode{Triangulation_2/constrained_hierarchy_plus.cpp}
 
-\section{Flexibility: Using  Customized Vertices and Faces\label{Section_2D_Triangulations_Flexibility}}
+\section{Flexibility \label{Section_2D_Triangulations_Flexibility}}
 
+\subsection{Using Customized Vertices and Faces}
 
 To be able to adapt to  various needs, a highly
 flexible design has been  selected for 2D triangulations.
@@ -1241,7 +1242,7 @@ Using his own customized classes to instantiate these
 parameters, the user can easily build up  a triangulation with additional
 information or functionality in the vertices and faces.
 
-\subsection*{A cyclic dependency}
+\subsubsection*{A Cyclic Dependency}
 
 To insure flexibility, the triangulation data structure is templated by the
 vertex and face base classes. Also since incidence and adjacency
@@ -1296,7 +1297,7 @@ The two following examples show how the user
 can  put in use the flexibility offered by the
 base classes parameters.
 
-\subsection*{Adding colors} 
+\subsubsection*{Adding Colors} 
 
 The first example corresponds to a case where the user wishes to add in 
 the vertices or faces of the triangulation  an additional information
@@ -1314,7 +1315,7 @@ The following examples shows how to add a
 
 \ccIncludeExampleCode{Triangulation_2/colored_face.cpp}
 
-\subsection*{Adding handles}
+\subsubsection*{Adding Handles}
 
 The second example  shows how the user can  still
 derive and plug in his own vertex 
@@ -1324,6 +1325,41 @@ data structure.
 
 
 \ccIncludeExampleCode{Triangulation_2/adding_handles.cpp}
+
+\subsection{Setting Information While Inserting a Range of Points}
+The most efficient method to insert (weighted) points in a
+Delaunay (or regular) triangulation is to provide an iterator
+range over (weighted) points to the insert function. However, an iterator range of
+(weighted) points does not allow to set different information to each vertex.
+To solve this problem, in the case the vertex type  of the triangulation 
+is a model of the concept \ccc{TriangulationVertexBaseWithInfo_2}
+(such as \ccc{Triangulation_vertex_base_with_info_2}), we provide three examples 
+doing the same operation: set an unsigned integer as the information 
+of each vertex. The value of this unsigned integer is the initial order
+of the corresponding point given in the range.
+
+\subsubsection{Using an Iterator Over Pairs}
+Each point and its information are gathered into a pair. We provide
+the \ccc{insert} function of the triangulation with a range of such pairs.
+\ccIncludeExampleCode{Triangulation_2/info_insert_with_pair_iterator_2.cpp}
+
+
+\subsubsection{Using the Boost Zip Iterator}
+
+Information and points are in separate containers. We use
+\ccAnchor{http://www.boost.org/libs/iterator/doc/index.html#specialized-adaptors}
+{\ccc{boost::zip_iterator}} to provide an iterator gathering them.
+
+\ccIncludeExampleCode{Triangulation_2/info_insert_with_zip_iterator_2.cpp}
+
+\subsubsection{Using the Boost Transform Iterator}
+
+We define a functor \ccc{Auto_count} used together with
+ \ccAnchor{http://www.boost.org/libs/iterator/doc/index.html#specialized-adaptors}
+{\ccc{boost::transform_iterator}} to set the order of each point
+in the range. Note that this is correct because the iterator
+is dereferenced only once per point during the insertion.
+\ccIncludeExampleCode{Triangulation_2/info_insert_with_transform_iterator_2.cpp}
 
 
 \section{Design and Implementation History}
