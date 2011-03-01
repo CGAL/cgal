@@ -102,7 +102,8 @@ Polynomial<NT>::Polynomial(const VecNT & vN) {
 }
 
 template <class NT>
-Polynomial<NT>::Polynomial(const Polynomial<NT> & p) {
+Polynomial<NT>::Polynomial(const Polynomial<NT> & p):degree(-1) { 
+  //degree must be initialized to -1 otherwise delete is called on coeff in operator=
   coeff = NULL;//WHY?
   *this = p;	// reduce to assignment operator=
 }
@@ -368,8 +369,9 @@ template <class NT>
 Polynomial<NT> & Polynomial<NT>::operator=(const Polynomial<NT>& p) {
   if (this == &p)
     return *this;	// self-assignment
+  if (degree >=0)  delete[] coeff;
   degree = p.getDegree();
-  delete[] coeff;
+  if (degree < 0) return *this;
   coeff = new NT[degree +1];
   for (int i = 0; i <= degree; i++)
     coeff[i] = p.coeff[i];
@@ -430,9 +432,11 @@ int Polynomial<NT>::contract() {
   else
     degree = d;
   NT * c = coeff;
-  coeff = new NT[d+1];
-  for (int i = 0; i<= d; i++)
-    coeff[i] = c[i];
+  if (degree !=-1){
+    coeff = new NT[d+1];
+    for (int i = 0; i<= d; i++)
+      coeff[i] = c[i];
+  }
   delete[] c;
   return d;
 }
