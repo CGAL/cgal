@@ -944,6 +944,9 @@ private:
                                const Vector_2& v_min2,
                                const Vector_2& v_max2)
   {
+    if ( f_equal (v_min1, v_min2) && f_equal (v_max1, v_max2)) //spans are identical
+      return (true);    
+    
     const Direction_2     dir_l1 = f_construct_direction (v_min1);
     const Direction_2     dir_r1 = f_construct_direction (v_max1);
     const Direction_2     dir_l2 = f_construct_direction (v_min2);
