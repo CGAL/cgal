@@ -190,6 +190,10 @@
 missing the requirement for an operator that accepts a point. Is it really
 needed? Seems like it for isolated points.
   
+- _offset_polygon() defined in Approx_offset_base_2.h has a local variable
+  of type kernel. There should be an overloaded function that accepts a
+  kernel as a parameter.
+
 - Make the Arr_circle_segment_traits_2 a model of the landmark concept. Need
   to add 2 required operations, which seems possible.
   
@@ -197,3 +201,5 @@ needed? Seems like it for isolated points.
   * A polygon and a point
   * A polygon and a line
   Define precisely what type of polygons are valid as summands.
+
+- (Nick Simon) Is there a polygon validation method that will tell me if a general polygon with holes is weakly simple or not -- in particular, whether a hole intersects the boundary?
