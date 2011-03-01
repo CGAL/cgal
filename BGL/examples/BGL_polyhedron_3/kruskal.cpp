@@ -22,19 +22,7 @@ typedef boost::graph_traits<Polyhedron>::edge_descriptor   edge_descriptor;
 // The BGL makes heavy use of indices associated to the vertices
 // We use a std::map to store the index
 
-namespace CGAL
-{
-  // we define operator < for handles as is not predefined
-  struct Vertex_cmp
-  {
-    bool operator() ( vertex_descriptor x, vertex_descriptor y )
-    {
-      return &*x < &*y ;
-    }
-  };
-} // namespace CGAL
-
-typedef std::map<vertex_descriptor,int,CGAL::Vertex_cmp> VertexIndexMap;
+typedef std::map<vertex_descriptor,int> VertexIndexMap;
 VertexIndexMap vertex_id_map;
 
 // A std::map is not a property map, because it is not lightweight
