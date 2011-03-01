@@ -190,6 +190,7 @@ CGAL 3.8 offers the following improvements and new functionality :  </p>
   <li>Structural filtering is now internally used in locate function of Delaunay
       and regular triangulation. It improves average construction time of 20%.
 </ul>
+</DIV>
 
 <h2 id="release3.7">Release 3.7 </h2>
 <DIV>
@@ -381,19 +382,19 @@ since CGAL-3.6:</p>
 
 <h3> 3D Mesh Generation</h3>
 <ul>
-  <li>Fix a linking errors (duplicate symbols) when <CGAL/refine_mesh_3.h> is
+  <li>Fix a linking errors (duplicate symbols) when <code>&lt;CGAL/refine_mesh_3.h&gt;</code> is
     included in different compilation units.
 </ul>
 
 <h3> Spatial Searching</h3>
 <ul>
-  <li> Fix a bug in <CGAL/Orthogonal_k_neighbor_search.h> when several
+  <li> Fix a bug in <code>&lt;CGAL/Orthogonal_k_neighbor_search.h&gt;</code> when several
     nearest neighbors are at the same distance from the query point.
 </ul>
 
 <h3> IO Streams</h3>
 <ul>
-  <li>Fix a bug in <CGAL/IO/VRML_2_ostream.h> that generated VRML 2 files with
+  <li>Fix a bug in <code>&lt;CGAL/IO/VRML_2_ostream.h&gt;</code> that generated VRML 2 files with
     an invalid syntax for IndexedFaceSet nodes.
 </ul>
 
@@ -478,7 +479,19 @@ CGAL 3.6 offers the following improvements and new functionality : </p>
     default overlay-traits, which practically does nothing.
 </ul>
 
-
+<h3> Polyhedron</h3>
+<ul>
+  <li> Fix a compilation errors in demo/Polyhedron/:
+   <ul>
+     <li> issue with the location of qglobal.h of Qt4 on MacOS X,
+     <li> missing texture.cpp, if TAUCS is used,
+   </ul>
+  <li> Fix the location of built plugins of demo/Polyhedron/, when CGAL is
+    configured with WITH_demos=ON
+  <li> Fix a bug in test_facet function of the incremental builder:    
+    the function did not test if while a new facet makes a vertex manifold,
+    no other facet incident to that vertex breaks the manifold property.
+</ul>
 
 <h3>Triangulations and Delaunay Triangulations</h3>
 
@@ -503,21 +516,6 @@ CGAL 3.6 offers the following improvements and new functionality : </p>
 
 <li> The old version of remove() (enabled with CGAL_DELAUNAY_3_OLD_REMOVE)
     has been deleted.
-</ul>
-
-
-<h3> Polyhedron</h3>
-<ul>
-  <li> Fix a compilation errors in demo/Polyhedron/:
-   <ul>
-     <li> issue with the location of qglobal.h of Qt4 on MacOS X,
-     <li> missing texture.cpp, if TAUCS is used,
-   </ul>
-  <li> Fix the location of built plugins of demo/Polyhedron/, when CGAL is
-    configured with WITH_demos=ON
-  <li> Fix a bug in test_facet function of the incremental builder:    
-    the function did not test if while a new facet makes a vertex manifold,
-    no other facet incident to that vertex breaks the manifold property.
 </ul>
 
 <h4>3D Periodic Triangulations</h4>
@@ -777,7 +775,7 @@ This is a bug fix release.</p>
 </DIV>
 
 
-<h2id="release3.4">Release 3.4</h2>
+<h2 id="release3.4">Release 3.4</h2>
 <DIV>
 <p>Release date: January 2009</p>
 
@@ -1516,9 +1514,9 @@ originating curve of an arrangement subcurve.</p>
 
 
 <p>
-<li>   Geometric Optisation (major revision)<br>
+<li>   Geometric Optimisation (major revision)<br>
 
-The uderlying QP solver which is the foundation for several algorithms
+The underlying QP solver which is the foundation for several algorithms
 in the Geometric Optimisation chapter has been completely rewritten.
 
 <p>
@@ -1556,7 +1554,7 @@ The following platforms are no longer supported:
 <p>
 The following functionality has been added or changed:<BR><BR>
 
-<B>All</B>
+<H3>All</H3>
 <UL>
     <LI> The  CORE 1.7 library for exact
       real arithmetic.
@@ -1565,13 +1563,13 @@ The following functionality has been added or changed:<BR><BR>
     <LI>Added Boost 1.32.0 (only include files).
 </UL>
 
-<B>Installation</B>
+<H3>Installation</H3>
 <UL>
    <LI> new option --disable-shared to omit building libCGAL.so.
 </UL>
 
 
-<B>Manuals</B>
+<H3>Manuals</H3>
 <UL>
     <LI> Merged all major manuals in one multi-part manual, which provides
       now cross-links between the CGAL Kernel, the CGAL Basic Library,
@@ -1580,7 +1578,7 @@ The following functionality has been added or changed:<BR><BR>
     <LI> Improved layout.
 </UL>
 
-<B>Kernels</B>
+<H3>Kernels</H3>
 
 <UL>
    <LI> Improved efficiency of filtered kernels.
@@ -1588,7 +1586,7 @@ The following functionality has been added or changed:<BR><BR>
 </UL>
 
 
-<B>Basic Library</B>
+<H3>Basic Library</H3>
 
 
 <UL>
@@ -1654,7 +1652,7 @@ methods.
 <LI>3D Triangulations
 
 <UL>
- <LI> Triangulation_3: added operator==(),vremoved push_back() and copy_triangulation().
+ <LI> Triangulation_3: added operator==(),removed push_back() and copy_triangulation().
 <LI> Delaunay_3 : added nearest_vertex(), move_point(), vertices_in_conflict().
 <LI> Regular_3 :  added filtered traits class, and nearest_power_vertex(). 
 </UL>
@@ -1742,27 +1740,26 @@ methods.
 
  
 <h2 id="release3.0.1">Release 3.0.1</h2>
-<DIV
+<DIV>
 <p>Release date: February 2004</p>
 
 <p>This is a bug-fix release.
 No new features have been added in 3.0.1.  Here is the list of bug-fixes.<p>
 
-<B> Polyhedral Surface</B>
+<H3> Polyhedral Surface</H3>
 
 <ul>
   <li>Fixed wrong include files for output support. Added example.
 </ul>
 
-<b>
-   Planar_map</b>
+<H3>Planar_map</H3>
 
 <ul>
   <li>Fixed the so called "Walk-along-a-line" point-location strategy to
       correctly handle a degenerate case.
 </ul>
 
-<B>2D Triangulation</B> 
+<H3>2D Triangulation</H3> 
 
 <ul>
   <li> added missing figure in html doc
@@ -1771,14 +1768,14 @@ No new features have been added in 3.0.1.  Here is the list of bug-fixes.<p>
        The fix concerns operator== and !=.
 </ul>
 
-<b>Alpha_shapes_3</b>
+<H3>Alpha_shapes_3</H3>
 
 <ul>
   <li>fixed classify member function for edges.
 </ul>
 
 
-<B>  Number types</b>:
+<H3>  Number types</H3>
 
 <ul>
   <li>Lazy_exact_nt:
@@ -1793,7 +1790,7 @@ No new features have been added in 3.0.1.  Here is the list of bug-fixes.<p>
   <li><tt>to_interval(Quotient&lt;MP_Float&gt;)</tt>: avoid spurious overflows.
 </ul>
 
-<B>Kernel</B>
+<H3>Kernel</H3>
 
 <ul>
   <li>
@@ -1844,7 +1841,7 @@ The following functionality has been added or changed:<BR><BR>
 </UL>
 
 
-<B>Kernels</B>
+<H3>Kernels</H3>
 
 
 <UL>
@@ -1863,7 +1860,7 @@ The following functionality has been added or changed:<BR><BR>
     <LI> A few more miscellaneous functions. 
 </UL>
 
-<B>Basic Library</B>
+<H3>Basic Library</H3>
 
 <UL>
   <LI> 2D Apollonius Graph (new package)<BR>
@@ -2146,7 +2143,7 @@ An interval skip list is a data strucure for finding all intervals
 
 </UL>
 
-<B>Support Library</B>
+<H3>Support Library</H3>
 
 <ul>
     <li> New container class Compact_container, which (roughly) provides the
@@ -2202,7 +2199,7 @@ An interval skip list is a data strucure for finding all intervals
       </ul>
 </ul>
 
-<p id="kernelerratum-3.0"><b>Erratum in the Kernel manual</b>
+<p id="kernelerratum-3.0"><H3>Erratum in the Kernel manual</H3>
 
 <ul>
 <li> Intersection test routines
@@ -2271,14 +2268,14 @@ Additional supported platforms:
 <p>
 The following functionality has been added or changed:<BR><BR>
 
-<B>Kernels</B>
+<H3>Kernels</H3>
 
 <UL>
    <LI> Point_d has been removed from the 2D and 3D kernels.  This type is
         now available from the d-dimensional kernel only.
 </UL>
 
-<B>Basic Library</B>
+<H3>Basic Library</H3>
 
 <UL>
 
@@ -2388,7 +2385,7 @@ The following functionality has been added or changed:<BR><BR>
       added
   </UL>
 
-<B>Support Library</B>
+<H3>Support Library</H3>
 <UL>
 <LI>   Qt_widget
   <UL>
@@ -2424,7 +2421,7 @@ Also attempts have been made to assure compatability with the upcoming LEDA
 release that introduces the leda namespace.
 
 <p>
-<B>Known problems</B>
+<H3>Known problems</H3>
 <UL>
 <LI> 2D Nef Polyhedra contains a memory leak.  Memory problems are also
      the likely cause of occasional run-time errors on some platforms.
@@ -2471,7 +2468,7 @@ Additional supported platform:
 <p>
 The following functionality has been added:<BR><BR>
 
-<B>Kernels</B>
+<H3>Kernels</H3>
 <UL>
 <LI> The 2D and 3D kernels now serve as models of the new kernel concept
      described in the recent paper, "An Adaptable and Extensible Geometry
@@ -2500,7 +2497,7 @@ The following functionality has been added:<BR><BR>
      <TT>Homogeneous_d</TT>
 </UL>
 
-<B>Basic Library</B>
+<H3>Basic Library</H3>
    Almost all packages in the basic library have been adapted to the
    new kernel design to realize the flexibility this design makes possible.
    In several packages, this means that the traits class requirements have
@@ -2700,7 +2697,7 @@ The following functionality has been added:<BR><BR>
     </UL>
 </UL>
 
-<B>Support Library</B>
+<H3>Support Library</H3>
 <UL>
 <LI>  Number types:
       <UL>
