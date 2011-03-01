@@ -465,6 +465,12 @@ Polynomial<NT> & Polynomial<NT>::operator-=(const Polynomial<NT>& p) { // -=
 // This is quadratic time multiplication!
 template <class NT>
 Polynomial<NT> & Polynomial<NT>::operator*=(const Polynomial<NT>& p) { // *=
+  if (degree==-1) return *this;
+  if (p.getDegree()==-1){
+    degree=-1;
+    delete[] coeff;
+    return *this;
+  }
   int d = degree + p.getDegree();
   NT * c = new NT[d+1];
   for (int i = 0; i<=d; i++)
@@ -670,7 +676,7 @@ Polynomial<NT> Polynomial<NT>::pseudoRemainder (
   contract();         // Let A = (*this).  Contract A.
   Polynomial<NT> tmpB(B);
   tmpB.contract();    // local copy of B
-  C = *(new NT(1));  // Initialized to C=1.
+  C = NT(1);  // Initialized to C=1.
   if (B.degree == -1)  {
     std::cout << "ERROR in Polynomial<NT>::pseudoRemainder :\n" <<
     "    -- divide by zero polynomial" << std::endl;
