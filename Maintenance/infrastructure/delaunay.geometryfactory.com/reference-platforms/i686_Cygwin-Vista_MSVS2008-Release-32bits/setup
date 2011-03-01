@@ -83,3 +83,8 @@ export QGLVIEWERROOT
 COLLECT_DEMOS_BINARIES=y
 export COLLECT_DEMOS_BINARIES
 source /cygdrive/c/cgal/librs/setup-rs
+
+BOOST_ROOT='C:/cgal/boost_1_46_0'
+BOOST_LIBRARYDIR='C:/cgal/boost_1_46_0/stage/lib'
+BOOST_INCLUDEDIR='C:/cgal/boost_1_46_0'
+export BOOST_ROOT BOOST_LIBRARYDIR BOOST_INCLUDEDIR
