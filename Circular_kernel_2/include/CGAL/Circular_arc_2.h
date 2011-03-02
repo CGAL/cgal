@@ -25,6 +25,8 @@
 #ifndef CGAL_CIRCULAR_ARC_2_H
 #define CGAL_CIRCULAR_ARC_2_H
 
+#include <CGAL/config.h>
+
 namespace CGAL {
   
 template <class CircularKernel> 

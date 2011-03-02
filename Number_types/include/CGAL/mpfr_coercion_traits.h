@@ -19,6 +19,8 @@
 #ifndef CGAL_MPFR_COERCION_TRAITS_H
 #define CGAL_MPFR_COERCION_TRAITS_H
 
+#include <CGAL/config.h>
+
 #ifdef CGAL_USE_MPFR
 
 #include <CGAL/number_type_basic.h>

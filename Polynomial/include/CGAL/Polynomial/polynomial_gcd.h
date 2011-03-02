@@ -30,6 +30,8 @@
 #ifndef CGAL_POLYNOMIAL_GCD_H
 #define CGAL_POLYNOMIAL_GCD_H
 
+#include <CGAL/config.h>
+
 #ifndef CGAL_USE_INTERNAL_MODULAR_GCD
 #define CGAL_USE_INTERNAL_MODULAR_GCD 1
 #endif

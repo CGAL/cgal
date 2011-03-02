@@ -18,6 +18,8 @@
 #ifndef CGAL_STRAIGHT_SKELETON_DEBUG_H
 #define CGAL_STRAIGHT_SKELETON_DEBUG_H 1
 
+#include <CGAL/config.h>
+
 #ifdef CGAL_USE_CORE
 #  include <CGAL/CORE_BigFloat.h>
 #endif

@@ -24,6 +24,8 @@
 #ifndef CGAL_KERNEL_TO_KERNEL_H
 #define CGAL_KERNEL_TO_KERNEL_H
 
+#include <CGAL/config.h>
+
 #ifdef CGAL_USE_LEDA
 #include <CGAL/LEDA_basic.h>
 #include <CGAL/leda_integer.h>

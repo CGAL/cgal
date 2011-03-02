@@ -21,8 +21,12 @@
 //
 // Author(s)     : Matthias Baesken
 
+
+
 #ifndef CGAL_LEDA_BASIC_H
 #define CGAL_LEDA_BASIC_H
+
+#include <CGAL/config.h>
 
 #ifdef CGAL_USE_LEDA
 // The following is needed for LEDA 4.4 due to min/max problems...

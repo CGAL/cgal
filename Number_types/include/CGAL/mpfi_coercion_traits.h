@@ -16,8 +16,12 @@
 //
 // Author: Luis Peñaranda <luis.penaranda@loria.fr>
 
+
+
 #ifndef CGAL_MPFI_COERCION_TRAITS_H
 #define CGAL_MPFI_COERCION_TRAITS_H
+
+#include <CGAL/config.h>
 
 #ifdef CGAL_USE_MPFI
 

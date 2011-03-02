@@ -20,6 +20,7 @@
 #ifndef CGAL_NEF_2_GENINFO_H
 #define CGAL_NEF_2_GENINFO_H
 
+#include <CGAL/config.h>
 #include <memory>
 
 /*{\Moptions outfile=geninfo.man}*/

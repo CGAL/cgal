@@ -20,6 +20,9 @@
 #ifndef CGAL_VTK_SURFACE_MESHER_CONTOUR_FILTER_H
 #define CGAL_VTK_SURFACE_MESHER_CONTOUR_FILTER_H
 
+
+
+#include <CGAL/config.h>
 #include <vtkPolyDataAlgorithm.h>
 
 class vtkCGALSurfaceMesherContourFilter : public vtkPolyDataAlgorithm

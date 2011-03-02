@@ -17,8 +17,11 @@
 // 
 // Author(s)     : Laurent Rineau
 
+
 #ifndef CGAL_IMAGE_3_VTK_INTERFACE_H
 #define CGAL_IMAGE_3_VTK_INTERFACE_H
+
+#include <CGAL/config.h>
 
 #ifdef CGAL_USE_VTK
 #include <CGAL/Image_3.h>

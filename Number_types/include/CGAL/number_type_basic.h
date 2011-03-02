@@ -25,6 +25,8 @@
 #ifndef CGAL_NUMBER_TYPE_BASIC_H
 #define CGAL_NUMBER_TYPE_BASIC_H
 
+#include <CGAL/config.h>
+
 #define CGAL_PI 3.14159265358979323846
 
 
