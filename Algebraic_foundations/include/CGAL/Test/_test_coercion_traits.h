@@ -46,12 +46,15 @@ void test_implicit_interoperable_for_real_embeddable (CGAL::Tag_false){}
 template <typename A, typename B>
 void test_implicit_interoperable_for_real_embeddable (CGAL::Tag_true){
   // two sided test for interoperability with int  
-  volatile A a;
-  volatile B b;
-  // These variables are volatile because the MSVC optimizer (at least VC9
-  // and VC10) has problems with the following code with /O2 and /fp:strict
-  // (it does constant propagation but produces erroneous assembler code).
-  // Volatile prevents the constant propagation.
+  A a;
+  B b;
+
+  volatile int value_a = -5;
+  volatile int value_b = -5;
+  // MSVC optimizer (at least VC9 and VC10) has problems with the following
+  // code with /O2 and /fp:strict (it does constant propagation but
+  // produces erroneous assembler code). Using volatile variables prevents
+  // the constant propagation.
   /*
     int main(){
       int i = 3;
@@ -61,8 +64,8 @@ void test_implicit_interoperable_for_real_embeddable (CGAL::Tag_true){
     }
   */
 
-  a = A(-5);
-  b = B(-2);
+  a = A(value_a);
+  b = B(value_b);
   // a < b 
   assert (!(a == b));
   assert ( (a != b));
@@ -78,9 +81,11 @@ void test_implicit_interoperable_for_real_embeddable (CGAL::Tag_true){
   assert ( (b >  a));
   assert ( (b >= a)); 
 
+  value_a = 5;
+  value_b = 2;
   // a > b 
-  a = A(5);
-  b = B(2);
+  a = A(value_a);
+  b = B(value_b);
   assert (!(a == b));
   assert ( (a != b));
   assert (!(a <  b));
@@ -96,8 +101,10 @@ void test_implicit_interoperable_for_real_embeddable (CGAL::Tag_true){
   assert (!(b >= a));
 
   // a == b
-  a = A(3);
-  b = B(3);
+  value_a = 3;
+  value_b = 3;
+  a = A(value_a);
+  b = B(value_b);
   assert ( (a == b));
   assert (!(a != b));
   assert (!(a <  b));
