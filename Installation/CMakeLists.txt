@@ -72,9 +72,10 @@ message( STATUS "CGAL_BUILD_VERSION=${CGAL_BUILD_VERSION}" )
 #   CGAL-3.6.1 : 5.0.0 (should have been 5.0.1)
 #   CGAL-3.7  :  6.0.0 (certainly: some types have been turned from int to
 #                       std::size_t, which is different on some platforms)
+#   CGAL-3.8  :  7.0.0 (At least CGAL::Random has changed its member fields.)
 
-set( CGAL_SONAME_VERSION "6"     CACHE STRING "soname-version" )
-set( CGAL_SOVERSION      "6.0.0" CACHE STRING "soversion" )
+set( CGAL_SONAME_VERSION "7"     CACHE STRING "soname-version" )
+set( CGAL_SOVERSION      "7.0.0" CACHE STRING "soversion" )
 
 mark_as_advanced(CGAL_SONAME_VERSION)
 mark_as_advanced(CGAL_SOVERSION)
