@@ -23,9 +23,25 @@
 #undef NDEBUG
 #include <cassert>
 
+struct A {
+  int* p;
+
+  A(int i) : p(new int(i)) {}
+  ~A() { delete p; }
+  int value() const { return *p;}
+};
+
 int main()
 {
   int i = __extension__ ({ int j = 2; j+j; });
   assert(i == 4);
+
+  // The Intel Compiler complains with the following error:
+  // "error: destructible entities are not allowed inside of a statement
+  // expression"
+  // See http://software.intel.com/en-us/articles/cdiag1487/
+  i = __extension__ ({ A a(2); A b(3); a.value() + b.value(); });
+
+  assert(i == 5);
   return 0;
 }
