@@ -16,6 +16,9 @@ H4.suffix =
 H4.vspace.before= 1
 H4.vspace.after= 0
 
+#paragraph
+P.vspace.after=1
+
 #UL environment
 UL.indents=2
 UL.vspace.before = 1
