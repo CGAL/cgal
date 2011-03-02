@@ -156,8 +156,10 @@
   about returning a reference to a temporary variable (which seems to be
   a good warning; perhaps it is the source of some segmentation faults we
   encounter). A "kernel expert" should look into this.
+
 - In the example dual_lines.cpp we use the function rand().
   We should include <stdlib.h> to avoid a compilation error.
+
 - The example circular_line_arcs.cpp does not compile under many platforms,
   or at least issues warnings about returning a reference to temporary
   variable. Can you prompt the INRIA people to fix this?
@@ -202,4 +204,8 @@ needed? Seems like it for isolated points.
   * A polygon and a line
   Define precisely what type of polygons are valid as summands.
 
-- (Nick Simon) Is there a polygon validation method that will tell me if a general polygon with holes is weakly simple or not -- in particular, whether a hole intersects the boundary?
+- Add non_const_handle(e), where e is an edge handle.
+
+- (Nick Simon) Is there a polygon validation method that will tell me if a
+  general polygon with holes is weakly simple or not -- in particular,
+  whether a hole intersects the boundary?
