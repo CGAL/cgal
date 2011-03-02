@@ -50,7 +50,7 @@ void test_implicit_interoperable_for_real_embeddable (CGAL::Tag_true){
   B b;
 
   volatile int value_a = -5;
-  volatile int value_b = -5;
+  volatile int value_b = -2;
   // MSVC optimizer (at least VC9 and VC10) has problems with the following
   // code with /O2 and /fp:strict (it does constant propagation but
   // produces erroneous assembler code). Using volatile variables prevents
