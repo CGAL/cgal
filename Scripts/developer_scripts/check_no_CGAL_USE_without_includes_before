@@ -65,7 +65,7 @@ sub process() {
 		return;
 	    }
 	}
-	if(/CGAL_USE/) {
+	if(/CGAL_USE_/) {
 	    print STDOUT if $listmacros;
 	    print STDERR if $debug;
 	    if($errcode) {
