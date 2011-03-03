@@ -536,7 +536,7 @@ EOF
         fi
         chmod ugo+x "${CGAL_BINARY_DIR}/localbuildscript"
         if [ -n "${SHOW_PROGRESS}" ]; then
-          remote_command ${HOST} "${CGAL_BINARY_DIR}/localbuildscript" | tee "${ACTUAL_LOGFILE}.build.${PLATFORM}" 2>&1
+          remote_command ${HOST} "${CGAL_BINARY_DIR}/localbuildscript"  2>&1 | tee "${ACTUAL_LOGFILE}.build.${PLATFORM}"
         else
           remote_command ${HOST} "${CGAL_BINARY_DIR}/localbuildscript" > "${ACTUAL_LOGFILE}.build.${PLATFORM}" 2>&1
         fi
@@ -676,7 +676,7 @@ EOF
     chmod ugo+x "${CGAL_BINARY_DIR}"/localtestscript*
 
     if [ -n "${SHOW_PROGRESS}" ]; then
-      remote_command ${HOST} "${CGAL_BINARY_DIR}/localtestscript" | tee "${ACTUAL_LOGFILE}.test.${PLATFORM}" 2>&1
+      remote_command ${HOST} "${CGAL_BINARY_DIR}/localtestscript" 2>&1 | tee "${ACTUAL_LOGFILE}.test.${PLATFORM}"
     else
       remote_command ${HOST} "${CGAL_BINARY_DIR}/localtestscript" > "${ACTUAL_LOGFILE}.test.${PLATFORM}" 2>&1
     fi
