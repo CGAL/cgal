@@ -16,18 +16,27 @@ VERSION=1.1
 
 DO_RUN="y"
 
+usage()
+{
+    echo 'Usage : create_cgal_test_with_cmake [--no-run]'
+    echo
+    echo '    --help    : prints this usage help'
+    echo '    --no-run  : produces a cgal_test_with_cmake script that only does compilation, no execution'
+    exit
+}
+
 while [ $1 ]; do
     case "$1" in
         -h|-help|--h|--help)
-            echo 'Usage : create_cgal_test_with_cmake [--no-run]'
-            echo
-            echo '    --help    : prints this usage help'
-            echo '    --no-run  : produces a cgal_test_with_cmake script that only does compilation, no execution'
-            exit
+            usage;
         ;;
         --no-run)
             DO_RUN=""
             shift; continue
+        ;;
+        *) 
+            echo "Unknown option: $1"
+            usage
         ;;
     esac
 done
