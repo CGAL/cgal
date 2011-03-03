@@ -62,6 +62,11 @@ if ( CGAL_FOUND )
       create_link_to_program(CGAL_Qt4)
     endif()  
   endif()
+
+  if(WIN32) 
+    add_executable(test_gmp_mpfr_dll test_gmp_mpfr_dll.cpp)
+    target_link_libraries(test_gmp_mpfr_dll Version)
+  endif(WIN32)
   
 else()
   
