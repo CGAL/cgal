@@ -12,7 +12,7 @@ check_no_cgal_use_without_includes_before [options] [file...]
 
 =over 8
 
-=item  B<-d, -debug>
+=item  B<-d, --debug>
 
 Print to standard error output all the #include line of all CGAL headers
 until the first use of a macro with prefix "CGAL_USE_".
