@@ -3167,6 +3167,7 @@ Scripts/developer_scripts/check_no_CGAL_USE_without_includes_before -text
 Scripts/developer_scripts/check_svn_keywords -text
 Scripts/developer_scripts/common_impl.rb -text
 Scripts/developer_scripts/create_assertions.sh eol=lf
+Scripts/developer_scripts/create_cgal_test -text
 Scripts/developer_scripts/create_cgal_test_with_cmake -text
 Scripts/developer_scripts/create_demos_zip_files.sh -text
 Scripts/developer_scripts/create_macosx_installer -text
