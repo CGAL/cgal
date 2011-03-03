@@ -226,7 +226,7 @@ class Iterative_radon {
 public:
 
 Iterative_radon( RandomAccessIter begin, RandomAccessIter end,
-                 Predicate_traits traits, int dim, int num_levels )
+                 Predicate_traits traits, int dim, int /*num_levels*/ )
   : begin(begin), size(end-begin), traits(traits), dim(dim), 
     rng(), dist(0,size-1), generator(rng,dist)
   {}

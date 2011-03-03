@@ -175,7 +175,7 @@ OFF_to_nef_3 (std::istream &i_st, Nef_3 &nef_union, bool verb=false)
       Scan_index_it ind_it = f_it->begin();
       for (jdx=0; ind_it != f_it->end(); ++ind_it, ++jdx)
       {  // assertion: index out of range?
-         CGAL_assertion ( 0 <= *ind_it && *ind_it < NOV );
+         CGAL_assertion (*ind_it < NOV );
          V_f_scan.push_back (V_scan[*ind_it]);
          V_f.push_back (V[*ind_it]);
       }
