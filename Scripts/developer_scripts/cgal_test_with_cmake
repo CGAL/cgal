@@ -13,3 +13,4 @@ fi
 [ ! -x cgal_test_with_cmake ] && echo "No cgal_test_with_cmake in current directory, creating it" && create_cgal_test_with_cmake ${in_demo}
 
 ./cgal_test_with_cmake $@
+cat error.txt
