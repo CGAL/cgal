@@ -19,5 +19,5 @@ for dirname, dirnames, filenames in os.walk(argv[1]):
           fname=os.path.join(dirname, filename)
           for lines in fileinput.FileInput(fname, inplace=1):
             lines = lines.replace("CGAL_BEGIN_NAMESPACE","namespace CGAL {")
-            lines = lines.replace("CGAL_END_NAMESPACE","} //namespace CGAL")
+            lines = lines.replace("CGAL_END_NAMESPACE","} // end namespace CGAL")
             print lines,
