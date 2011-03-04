@@ -17,7 +17,6 @@
 !include "LogicLib.nsh"
 !include "Locate.nsh"
 !include "StrRep.nsh"
-!include "ReplaceInFile.nsh"
 !include "WriteEnvStr.nsh"
 !include "EnvVarUpdate.nsh"
 
@@ -272,6 +271,9 @@ Section "Uninstall"
 
   DeleteRegKey /ifempty HKCU "Software\CGAL-3.8"
   DeleteRegKey HKLM "Software\Microsoft\Windows\CurrentVersion\Uninstall\CGAL-3.8"
+
+  ${un.EnvVarUpdate} $0 "PATH" "R" $RegLoc "$INSTDIR\auxiliary\gmp\lib"
+  ${un.DeleteEnvStr} "CGAL_DIR" $RegLoc
 
 SectionEnd
 
