@@ -409,7 +409,7 @@ Function envarsPage
   SectionGetText ${GMP_LIB_Idx} $2 
   
   SectionGetFlags ${GMP_LIB_Idx} $1 
-  IntOp $2 $1 & ${SF_PSELECTED}
+  IntOp $2 $1 & ${SF_SELECTED}
   
   ${If} $2 == 0
     !insertmacro UncheckEnvStrCheckbox 9
