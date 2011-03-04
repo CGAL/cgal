@@ -127,7 +127,7 @@ Since \texttt{Boost.Thread} is required, make sure to either install the precomp
 
 Some demos depend on \texttt{Boost.Program\_options}.
 
-\subsection{Exact Arithmetic}
+\subsection{GMP and MPFR}
 
 \cgal\ combines floating point arithmetic with exact arithmetic,
 in order to be efficient and reliable.  \cgal\ offers support for
@@ -137,15 +137,12 @@ system.
 
 Having \gmp\ version 4.2 or higher and \mpfr\ version 2.2.1 or higher
 installed is highly recommended. These libraries can be obtained from
-\gmppage\ and \mpfrpage, respectively. As Visual \CC\ is not properly
-support by the \gmp\ and \mpfr\ projects, we provide precompiled versions
-of \gmp\ and \mpfr.  
+\gmppage\ and \mpfrpage, respectively. 
 
-\mpfi\ can be downloaded from \mpfipage. Version 1.4 or higher is
-recommended.
-
-\leda\ can be found at \ledapage. There is a free and a commercial
-edition for this library.
+As Visual \CC\ is not properly
+supported by the \gmp\ and \mpfr\ projects, we provide precompiled versions
+of \gmp\ and \mpfr, which can be downloaded with the installer
+\texttt{CGAL-3.8-Setup.exe}.
 
 
 \subsection{Visualization}
@@ -173,14 +170,24 @@ LAPACK for Visual~\CC.
 The Surface parametrization package can be accelerated by using the sparse matrix solver \taucs.
 This library can be downloaded from \taucspage. As Visual~\CC\ is not properly
 supported by the \taucs\ project, we provide a precompiled version of
-\taucs.
+\taucs, which can be downloaded with the installer
+\texttt{CGAL-3.8-Setup.exe}.
+
+
+\leda\ can be found at \ledapage. There is a free and a commercial
+edition for this library. \cgal\ provides the functions so that
+exact \leda\ number types become models of \cgal\ number type related
+concepts.
 
 The Algebraic Kernel package uses the library \rs\ to perform real solving
 on univariate polynomials. It can be downloaded from \rspage.
+The library \rs needs \mpfi, which can be downloaded from \mpfipage. 
+Version 1.4 or higher is recommended.
+
 
 One example from the 3D Skin Surface Meshing package uses the {\sc
 ESBTL} templates library. This library is used to import data from a PDB
-file as CGAL points or weighted points. It can be downloaded from
+file as \cgal\ points or weighted points. It can be downloaded from
 \path'http://esbtl.sourceforge.net/'.
 
 \section{Downloading \cgal\label{sec:gettingcgal}}
