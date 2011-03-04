@@ -64,8 +64,6 @@
 ; Variables
 ;--------------------------------
 
-  Var MUI_TEMP
-  Var STARTMENU_FOLDER
   Var SetCGAL_DIR
   Var RegLoc
   Var Add_GMP_LIB_DIR_to_PATH  
@@ -117,13 +115,6 @@
   ; A page where the user can check/uncheck the environment variables
   ; used to specify paths in vcproj files to be added.
   Page custom envarsPage 
-  
-  ;Start Menu Folder Page Configuration
-  !define MUI_STARTMENUPAGE_REGISTRY_ROOT "HKCU" 
-  !define MUI_STARTMENUPAGE_REGISTRY_KEY "CGAL-3.8" 
-  !define MUI_STARTMENUPAGE_REGISTRY_VALUENAME "Start Menu Folder"
-  
-  !insertmacro MUI_PAGE_STARTMENU Application $STARTMENU_FOLDER
   
   !insertmacro MUI_PAGE_INSTFILES
   
@@ -181,14 +172,31 @@ Section "!Main CGAL" MAIN_Idx
   File ".\cgal.ico"
 !endif
 
-  !insertmacro MUI_STARTMENU_WRITE_BEGIN  Application  
-    ;Create shortcuts
-    CreateDirectory "$SMPROGRAMS\$STARTMENU_FOLDER"
+  ; Write uninstall informations
+  ;   http://nsis.sourceforge.net/Add_uninstall_information_to_Add/Remove_Programs
+  WriteRegStr HKLM "Software\Microsoft\Windows\CurrentVersion\Uninstall\CGAL-3.8" \
+                   "DisplayName" "CGAL-3.8 -- Computational Geometry Algorithms Library, version 3.8"
+  WriteRegStr HKLM "Software\Microsoft\Windows\CurrentVersion\Uninstall\CGAL-3.8" \
+                   "UninstallString" "$\"$INSTDIR\Uninstall.exe$\""
+  WriteRegStr HKLM "Software\Microsoft\Windows\CurrentVersion\Uninstall\CGAL-3.8" \
+                   "QuietUninstallString" "$\"$INSTDIR\Uninstall.exe$\" /S"
 
-    CreateShortCut "$SMPROGRAMS\$STARTMENU_FOLDER\Uninstall.lnk" "$INSTDIR\Uninstall.exe"
-  
-  !insertmacro MUI_STARTMENU_WRITE_END
-    ;Create uninstaller
+  WriteRegDWORD HKLM "Software\Microsoft\Windows\CurrentVersion\Uninstall\CGAL-3.8" \
+                   "NoModify" 1
+  WriteRegDWORD HKLM "Software\Microsoft\Windows\CurrentVersion\Uninstall\CGAL-3.8" \
+                   "NoRepair" 1
+  WriteRegStr HKLM "Software\Microsoft\Windows\CurrentVersion\Uninstall\CGAL-3.8" \
+                   "InstallLocation" "$\"$INSTDIR$\""
+  WriteRegStr HKLM "Software\Microsoft\Windows\CurrentVersion\Uninstall\CGAL-3.8" \
+                   "DisplayIcon" "$\"$INSTDIR$\"\cgal.ico"
+  WriteRegStr HKLM "Software\Microsoft\Windows\CurrentVersion\Uninstall\CGAL-3.8" \
+                   "Pusblisher" "The CGAL Project and GeometryFactory"
+  WriteRegStr HKLM "Software\Microsoft\Windows\CurrentVersion\Uninstall\CGAL-3.8" \
+                   "URLInfoAbout" "http://www.cgal.org/"
+  WriteRegStr HKLM "Software\Microsoft\Windows\CurrentVersion\Uninstall\CGAL-3.8" \
+                   "DisplayedVersion" "3.8.0"
+
+  ;Create uninstaller
   WriteUninstaller "$INSTDIR\Uninstall.exe"
 SectionEnd
 ;--------------------------------
@@ -261,25 +269,9 @@ Section "Uninstall"
   Delete "$INSTDIR\Uninstall.exe"
 
   RMDir /r "$INSTDIR"
-  
-  !insertmacro MUI_STARTMENU_GETFOLDER Application $MUI_TEMP
-    
-  Delete "$SMPROGRAMS\$MUI_TEMP\Uninstall.lnk"
-  
-  ;Delete empty start menu parent diretories
-  StrCpy $MUI_TEMP "$SMPROGRAMS\$MUI_TEMP"
- 
-  startMenuDeleteLoop:
-	ClearErrors
-    RMDir $MUI_TEMP
-    GetFullPathName $MUI_TEMP "$MUI_TEMP\.."
-    
-    IfErrors startMenuDeleteLoopDone
-  
-    StrCmp $MUI_TEMP $SMPROGRAMS startMenuDeleteLoopDone startMenuDeleteLoop
-  startMenuDeleteLoopDone:
 
   DeleteRegKey /ifempty HKCU "Software\CGAL-3.8"
+  DeleteRegKey HKLM "Software\Microsoft\Windows\CurrentVersion\Uninstall\CGAL-3.8"
 
 SectionEnd
 
@@ -334,10 +326,14 @@ FunctionEnd
 Function .onInstSuccess
 
   ${If} $SetCGAL_DIR != ""
+    ; RegLoc can be either HKLM (all users) or HKCU (current user).
     ${WriteEnvStr} "CGAL_DIR"  $SetCGAL_DIR $RegLoc
   ${EndIf}
   
   ${If} $Add_GMP_LIB_DIR_to_PATH = 1
+    ; Append "$INSTDIR\auxiliary\gmp\lib" to the PATH.
+    ; RegLoc can be either HKLM (all users) or HKCU (current user).
+    ; The return value goes to $0
     ${EnvVarUpdate} $0 "PATH" "A" $RegLoc "$INSTDIR\auxiliary\gmp\lib"
   ${EndIf}
   
