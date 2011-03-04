@@ -26,15 +26,6 @@ int main()
   points.push_back( std::make_pair(Wpoint(Point(0,0,1),2),3) );
   points.push_back( std::make_pair(Wpoint(Point(2,2,2),2),4) );
   points.push_back( std::make_pair(Wpoint(Point(-1,0,1),2),5) );
-
-  //~ std::vector< Wpoint > points;
-  //~ points.push_back( Wpoint(Point(0,0,0),2) );
-  //~ points.push_back( Wpoint(Point(1,0,0),2) );
-  //~ points.push_back( Wpoint(Point(0,1,0),2) );
-  //~ points.push_back( Wpoint(Point(0,0,1),2) );
-  //~ points.push_back( Wpoint(Point(2,2,2),2) );
-  //~ points.push_back( Wpoint(Point(-1,0,1),2) );
-
   
   Regular rt( points.begin(),points.end() );
 
