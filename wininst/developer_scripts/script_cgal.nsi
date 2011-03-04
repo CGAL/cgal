@@ -187,9 +187,9 @@ Section "!Main CGAL" MAIN_Idx
   WriteRegStr HKLM "Software\Microsoft\Windows\CurrentVersion\Uninstall\CGAL-3.8" \
                    "InstallLocation" "$\"$INSTDIR$\""
   WriteRegStr HKLM "Software\Microsoft\Windows\CurrentVersion\Uninstall\CGAL-3.8" \
-                   "DisplayIcon" "$\"$INSTDIR$\"\cgal.ico"
+                   "DisplayIcon" "$\"$INSTDIR\cgal.ico$\""
   WriteRegStr HKLM "Software\Microsoft\Windows\CurrentVersion\Uninstall\CGAL-3.8" \
-                   "Pusblisher" "The CGAL Project and GeometryFactory"
+                   "Publisher" "The CGAL Project and GeometryFactory"
   WriteRegStr HKLM "Software\Microsoft\Windows\CurrentVersion\Uninstall\CGAL-3.8" \
                    "URLInfoAbout" "http://www.cgal.org/"
   WriteRegStr HKLM "Software\Microsoft\Windows\CurrentVersion\Uninstall\CGAL-3.8" \
