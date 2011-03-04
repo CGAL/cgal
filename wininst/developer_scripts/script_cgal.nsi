@@ -71,8 +71,8 @@
 ; Interface Settings
 ;--------------------------------
 
-  !define MUI_ICON  "cgal-16.ico"
-  !define MUI_UNICON  "cgal-16.ico"
+  !define MUI_ICON  "cgal.ico"
+  !define MUI_UNICON  "cgal.ico"
   !define MUI_HEADERIMAGE
   !define MUI_HEADERIMAGE_BITMAP_NOSTRETCH
 

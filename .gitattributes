@@ -4084,7 +4084,6 @@ wininst/developer_scripts/ReplaceInFile.nsh -text
 wininst/developer_scripts/StrRep.nsh -text
 wininst/developer_scripts/TextLog.nsh -text
 wininst/developer_scripts/WriteEnvStr.nsh -text
-wininst/developer_scripts/cgal-16.ico -text svneol=unset#image/x-icon
 wininst/developer_scripts/cgal.ico -text svneol=unset#image/x-icon
 wininst/developer_scripts/cgal_very_small_FFFFFF.bmp -text svneol=unset#image/bmp
 wininst/developer_scripts/locate.zip -text svneol=unset#application/zip
