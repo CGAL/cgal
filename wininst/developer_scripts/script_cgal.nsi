@@ -198,6 +198,8 @@ Section "!Main CGAL" MAIN_Idx
                    "URLInfoAbout" "http://www.cgal.org/"
   WriteRegStr HKLM "Software\Microsoft\Windows\CurrentVersion\Uninstall\CGAL-3.8" \
                    "DisplayedVersion" "3.8.0"
+  WriteRegStr HKLM "Software\Microsoft\Windows\CurrentVersion\Uninstall\CGAL-3.8" \
+                   "CGALUninstallRegLoc" "$RegLoc"
 
   ;Create uninstaller
   WriteUninstaller "$INSTDIR\Uninstall.exe"
@@ -273,11 +275,18 @@ Section "Uninstall"
 
   RMDir /r "$INSTDIR"
 
+  ReadRegStr $RegLoc HKLM "Software\Microsoft\Windows\CurrentVersion\Uninstall\CGAL-3.8" \
+    "CGALUninstallRegLoc"
+
   DeleteRegKey /ifempty HKCU "Software\CGAL-3.8"
   DeleteRegKey HKLM "Software\Microsoft\Windows\CurrentVersion\Uninstall\CGAL-3.8"
 
   ${un.EnvVarUpdate} $0 "PATH" "R" $RegLoc "$INSTDIR\auxiliary\gmp\lib"
-  ${un.DeleteEnvStr} "CGAL_DIR" $RegLoc
+  ${If} $RegLoc == HKLM
+    ${un.DeleteEnvStr} "CGAL_DIR" 1
+  ${Else}
+    ${un.DeleteEnvStr} "CGAL_DIR" 0
+  ${EndIf}
 
 SectionEnd
 
@@ -333,7 +342,11 @@ Function .onInstSuccess
 
   ${If} $SetCGAL_DIR != ""
     ; RegLoc can be either HKLM (all users) or HKCU (current user).
-    ${WriteEnvStr} "CGAL_DIR"  $SetCGAL_DIR $RegLoc
+    ${If} $RegLoc == HKLM
+      ${WriteEnvStr} "CGAL_DIR"  $SetCGAL_DIR 1
+    ${Else}
+      ${WriteEnvStr} "CGAL_DIR"  $SetCGAL_DIR 0
+    ${Endif}
   ${EndIf}
   
   ${If} $Add_GMP_LIB_DIR_to_PATH = 1
