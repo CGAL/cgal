@@ -77,6 +77,13 @@ private:
 
 template < typename RT_iterator > inline
 Cartesian_const_iterator_d<RT_iterator>
+operator+(std::ptrdiff_t i, Cartesian_const_iterator_d<RT_iterator> const& it)
+{
+	return it+i;
+}
+
+template < typename RT_iterator > inline
+Cartesian_const_iterator_d<RT_iterator>
 make_cartesian_const_iterator_begin(RT_iterator begin, RT_iterator w)
 {
   return Cartesian_const_iterator_d<RT_iterator>(begin, w);
