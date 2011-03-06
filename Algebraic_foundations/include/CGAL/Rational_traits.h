@@ -28,10 +28,22 @@
 
 #include <CGAL/number_type_basic.h>
 #include <CGAL/Fraction_traits.h>
+#include <boost/type_traits/is_convertible.hpp>
+#include <boost/utility/enable_if.hpp>
 
 namespace CGAL {
 
 namespace internal{
+
+// TODO: move this to STL_extensions
+template<class From,class To>struct is_implicit_convertible
+	: boost::is_convertible<From,To> {};
+
+#ifdef CGAL_USE_GMPXX
+// Work around a gmpxx misfeature
+template<class T>struct is_implicit_convertible<__gmp_expr<mpq_t,T>,mpz_class>
+	: boost::false_type {};
+#endif
 
 template <class Rational, bool > 
 struct Rational_traits_base
@@ -68,10 +80,13 @@ public:
         return den; 
     }
     
-    Rational make_rational(const RT & n, const RT & d) const
+    template<class N,class D>
+    Rational make_rational(const N& n, const D& d,typename boost::enable_if_c<is_implicit_convertible<N,RT>::value&&is_implicit_convertible<D,RT>::value,int>::type=0) const
     { return Compose()(n,d); } 
-    Rational make_rational(const Rational & n, const Rational & d) const
-    { return n/d; } 
+
+    template<class N,class D>
+    Rational make_rational(const N& n, const D& d,typename boost::enable_if_c<!is_implicit_convertible<N,RT>::value||!is_implicit_convertible<D,RT>::value,int>::type=0) const
+    { return n/d; } // Assume that n or d is already a fraction
 };
 }// namespace internal
 
