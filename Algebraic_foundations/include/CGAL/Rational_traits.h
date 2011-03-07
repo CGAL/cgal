@@ -30,6 +30,9 @@
 #include <CGAL/Fraction_traits.h>
 #include <boost/type_traits/is_convertible.hpp>
 #include <boost/utility/enable_if.hpp>
+#ifdef CGAL_USE_GMPXX
+#include <gmpxx.h>
+#endif
 
 namespace CGAL {
 
