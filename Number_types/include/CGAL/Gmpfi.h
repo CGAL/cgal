@@ -20,6 +20,7 @@
 #ifndef CGAL_GMPFI_H
 #define CGAL_GMPFI_H
 
+#include <CGAL/GMP/Gmpfi_type.h>
 #include <CGAL/number_type_basic.h>
 #include <CGAL/mpfi_coercion_traits.h>
 #include <CGAL/Interval_traits.h>
