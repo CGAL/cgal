@@ -1,4 +1,16 @@
-#!/bin/sh
+#!/bin/zsh
+
+# old demos, to ignore
+rm -rf Convex_hull_3_Demo
+rm -rf Convex_hull_d_Demo
+rm -rf GraphicsView_Demo
+rm -rf Geomview_Demo
+rm -rf Mesh_2_Demo
+rm -rf Polyhedron_IO_Demo
+rm -rf Interpolation_Demo
+rm -rf Triangulation_3_Geomview_demos_Demo
+
+# CGAL<=3.7
 pushd AABB_tree_Demo;                   zip ../AABB_demo.zip          *    ;      popd
 pushd Alpha_shapes_3_Demo;              zip ../alpha_shape_3.zip      *    ;      popd
 pushd Bounding_volumes_Demo;            zip ../bounding_volumes_2.zip *    ;      popd
@@ -16,7 +28,23 @@ pushd Triangulation_2_Demo;
   zip ../delaunay_triangulation_2.zip Delaunay_triangulation_2.exe
 popd
 
+# CGAL<3.8 but was forgot
+pushd Surface_reconstruction_points_3_Demo; zip ../surface_reconstruction_points_3.zip *; popd
+pushd Principal_component_analysis_Demo;    zip ../pca.zip *; popd
+
 # CGAL-3.8
-pushd Largest_empty_rect_2_Demo;        zip largest_empty_rect_2.zip *;           popd
-pushd Apollonius_graph_2_Demo;          zip apollonius_graph_2.zip *;             popd
-pushd Stream_lines_2_Demo;              zip streamlines.zip *;                    popd
+pushd Largest_empty_rect_2_Demo;        zip ../largest_empty_rect_2.zip *;           popd
+pushd Apollonius_graph_2_Demo;          zip ../apollonius_graph_2.zip *;             popd
+pushd Stream_lines_2_Demo;              zip ../streamlines.zip *;                    popd
+pushd Triangulation_3_Demo;             zip ../triangulation_3.zip *;                popd
+pushd Circular_kernel_3_Demo;           zip ../triangulation_3.zip *;                popd
+pushd Alpha_shapes_2_Demo;              zip ../alpha_shape_2.zip *;                  popd
+pushd Generator_Demo;                   zip ../generator.zip *;                      popd
+pushd L1_Voronoi_diagram_2_Demo;        zip ../l1_voronoi_diagram_2.zip *;           popd
+pushd Snap_rounding_2_Demo;             zip ../snap_rounding_2.zip *;                popd
+pushd Spatial_searching_2_Demo;         zip ../spatial_searching_2.zip *;            popd
+
+# check
+echo CHECK now
+for f in *zip; do unzip -qql $f; done | awk '{print $4}' >| done
+for f in */**/*(.); do grep -qF ${f:t} done || ls $f; done
