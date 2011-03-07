@@ -143,6 +143,7 @@ CGAL 3.8 offers the following improvements and new functionality :  </p>
       is added to regular triangulation.
   <li>Structural filtering is now internally used in locate function of Delaunay
       and regular triangulation. It improves average construction time of 20%.
+  <li>Added demo.
 </ul>
 
 
@@ -159,6 +160,8 @@ CGAL 3.8 offers the following improvements and new functionality :  </p>
       Projection_traits_yz_3,Projection_traits_yz_3) are provided to work with
       triangulations, algorithms on polygons, alpha-shapes, convex hull algorithm...
       Usage of former equivalent traits classes in different packages is now deprecated.
+  <li>Exact_predicates_exact_constructions_kernel now also use the static filters
+      which leads to performance improvements.
   <li>Add an overload for the global function angle, taking three 3D points.
   <li>In the 2D and 3D kernel concept, the constant boolean Has_filtered_predicates 
       is now deprecated. It is now required to use Has_filtered_predicates_tag
