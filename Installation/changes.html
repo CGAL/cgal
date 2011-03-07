@@ -114,29 +114,61 @@ CGAL 3.8 offers the following improvements and new functionality :  </p>
       way to provide a set of objects (vs. a couple of iterators).</li>
 </ul>
 
+<h3>3D Mesh Generation (major new feature added)</h3>
+<ul>
+  <li>Adding the possibility to handle sharp features.
+</ul>
+
+<h3>2D Triangulations (major new feature added)</h3>
+<ul>
+  <li>Add a way to efficiently insert a range of points with information 
+      into a 2D Delaunay and regular triangulation.
+  <li>Add member function mirror_edge taking an edge as parameter
+</ul>
+
+<h3>3D Triangulations (major new feature added)</h3>
+<ul>
+  <li>Add a way to efficiently insert a range of points with information into
+      a 3D Delaunay and regular triangulation.
+  <li>Add a member function to remove a cluster of points from a Delaunay or 
+      regular triangulation.
+  <li>function vertices_in_conflict is renamed vertices_on_conflict_zone_boundary
+      for Delaunay and regular triangulation. Function vertices_inside_conflict_zone
+      is added to regular triangulation.
+  <li>Structural filtering is now internally used in locate function of Delaunay
+      and regular triangulation. It improves average construction time by 20%.
+  <li>Added demo.
+</ul>
+
+<h3>3D Alpha Shapes (major new feature added)</h3>
+<ul>
+  <li> The new class Fixed_alpha_shape_3 provides a robust and
+       faster way to compute one alpha shape (with a fixed value of alpha).
+</ul>
+
+
 <h3>AABB tree</h3>
 <ul>
   <li>Adding the possibility to iteratively add primitives to an existing 
       tree and to build it only when no further insertion is needed.
 </ul>
 
-<h3>3D Alpha Shapes</h3>
+<h3>2D and 3D Kernel</h3>
 <ul>
-  <li> The new class Fixed_alpha_shape_3 provides a robust and
-       faster way to compute one alpha shape (with a fixed value of alpha).
+  <li>Better handling of 2D points with elevation (3D points projected onto 
+      trivial planes). More general traits classes (Projection_traits_xy_3,
+      Projection_traits_yz_3,Projection_traits_yz_3) are provided to work with
+      triangulations, algorithms on polygons, alpha-shapes, convex hull algorithm...
+      Usage of former equivalent traits classes in different packages is now deprecated.
+  <li>Exact_predicates_exact_constructions_kernel now also use the static filters
+      which leads to performance improvements.
+  <li>Add an overload for the global function angle, taking three 3D points.
+  <li>In the 2D and 3D kernel concept, the constant boolean Has_filtered_predicates 
+      is now deprecated. It is now required to use Has_filtered_predicates_tag
+      (being either either Tag_true or Tag_false).
+  <li>Compare_distance_2 and Compare_distance_3 provide additional operators
+      for 3 and 4 elements.
 </ul>
-
-<h3>Algebraic Foundations</h3>
-<ul>
-  <li>Algebraic_structure_traits now provides an Inverse functor for Fields.
-      There is also a new global function inverse. 
-</ul>
-
-<h3>Bounding Volumes</h3>
-<ul>
-  <li> dD Min sphere of spheres has a new traits class for the min sphere of points. 
-</ul>
-
 
 <h3>2D Envelope</h3>
 <ul>
@@ -150,57 +182,31 @@ CGAL 3.8 offers the following improvements and new functionality :  </p>
     the L1 metric are constructed using lower envelopes.
 </ul>
 
+
+<h3>dD Kernel</h3>
+<ul>
+  <li>Add functor Compute_coordinate_d to Kernel_d concept.
+</ul>
+
 <h3>Geometric Object Generators</h3>
   
 <ul>
   <li> CGAL::Random uses boost::rand48 instead of std::rand.
   <li>Adding to CGAL::Random a way to generate random integers.
+  <li>Adding generators for dD points.
 </ul>
 
-<h3>2D and 3D Kernel</h3>
+<h3>Algebraic Foundations</h3>
 <ul>
-  <li>Better handling of 2D points with elevation (3D points projected onto 
-      trivial planes). More general traits classes (Projection_traits_xy_3,
-      Projection_traits_yz_3,Projection_traits_yz_3) are provided to work with
-      triangulations, algorithms on polygons, alpha-shapes, convex hull algorithm...
-      Usage of former equivalent traits classes in different packages is now deprecated.
-  <li>Add an overload for the global function angle, taking three 3D points.
-  <li>In the 2D and 3D kernel concept, the constant boolean Has_filtered_predicates 
-      is now deprecated. It is now required to use Has_filtered_predicates_tag
-      (being either either Tag_true or Tag_false).
-  <li>Compare_distance_2 and Compare_distance_3 provide additional operators
-      for 3 and 4 elements.
+  <li>Algebraic_structure_traits now provides an Inverse functor for Fields.
+      There is also a new global function inverse. 
 </ul>
 
-<h3>Kernel_d</h3>
+<h3>Bounding Volumes</h3>
 <ul>
-  <li>Add functor Compute_coordinate_d to Kernel_d concept.
+  <li> dD Min sphere of spheres has a new traits class for the min sphere of points. 
 </ul>
 
-<h3>3D Mesh Generation</h3>
-<ul>
-  <li>Adding the possibility to handle sharp features.
-</ul>
-
-<h3>2D Triangulations</h3>
-<ul>
-  <li>Add a way to efficiently insert a range of points with information 
-      into a 2D Delaunay and regular triangulation.
-  <li>Add member function mirror_edge taking an edge as parameter
-</ul>
-
-<h3>3D Triangulations</h3>
-<ul>
-  <li>Add a member function to remove a cluster of points from a Delaunay or 
-      regular triangulation.
-  <li>function vertices_in_conflict is renamed vertices_on_conflict_zone_boundary
-      for Delaunay and regular triangulation. Function vertices_inside_conflict_zone
-      is added to regular triangulation.
-  <li>Add a way to efficiently insert a range of points with information into
-      a 3D Delaunay and regular triangulation.
-  <li>Structural filtering is now internally used in locate function of Delaunay
-      and regular triangulation. It improves average construction time of 20%.
-</ul>
 
 <h3>2D Minkowski Sums</h3>
 <ul>
