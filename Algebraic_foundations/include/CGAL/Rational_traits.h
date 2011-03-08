@@ -28,25 +28,12 @@
 
 #include <CGAL/number_type_basic.h>
 #include <CGAL/Fraction_traits.h>
-#include <boost/type_traits/is_convertible.hpp>
+#include <CGAL/is_convertible.h>
 #include <boost/utility/enable_if.hpp>
-#ifdef CGAL_USE_GMPXX
-#include <gmpxx.h>
-#endif
 
 namespace CGAL {
 
 namespace internal{
-
-// TODO: move this to STL_extensions
-template<class From,class To>struct is_implicit_convertible
-	: boost::is_convertible<From,To> {};
-
-#ifdef CGAL_USE_GMPXX
-// Work around a gmpxx misfeature
-template<class T>struct is_implicit_convertible<__gmp_expr<mpq_t,T>,mpz_class>
-	: boost::false_type {};
-#endif
 
 template <class Rational, bool > 
 struct Rational_traits_base
