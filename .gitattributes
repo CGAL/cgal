@@ -1839,6 +1839,7 @@ Maintenance/infrastructure/cgal.geometryfactory.com/.cgal_create_new_release_rc 
 Maintenance/infrastructure/cgal.geometryfactory.com/.cgalmanualrc -text
 Maintenance/infrastructure/cgal.geometryfactory.com/bin/create_release -text
 Maintenance/infrastructure/cgal.geometryfactory.com/bin/update_manual_tools -text
+Maintenance/infrastructure/cgal.geometryfactory.com/crontab -text
 Maintenance/infrastructure/cgal.geometryfactory.com/reference-platforms/boostrap -text
 Maintenance/infrastructure/cgal.geometryfactory.com/reference-platforms/common-setup -text
 Maintenance/infrastructure/cgal.geometryfactory.com/reference-platforms/i686_Linux-2.6_g++-3.4.6_CentOS-5.1-O2/CMakeCache.txt -text

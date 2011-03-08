@@ -1,0 +1,29 @@
+# Result pages
+5,15,25,35,45,55 * * * *  cd $HOME/CGAL/collect_and_public_testresults; ./treat_result_collection
+
+# Internal release
+# The script also updates the manual tools.
+#  - on trunk
+#0 21  *  *  Mon,Tue,Wed,Thu,Sun        cd $HOME/CGAL/create_internal_release; $HOME/bin/create_release $HOME/CGAL/trunk $HOME/CGAL/candidate-packages --public --do-it
+0 21  *  *  Sat                        cd $HOME/CGAL/create_internal_release; $HOME/bin/create_release $HOME/CGAL/trunk --public --do-it
+#  - from branch 3.8
+0 21  *  *  Mon,Tue,Wed,Thu,Fri,Sun    cd $HOME/CGAL/create_internal_release-3.8-branch; $HOME/bin/create_release $HOME/CGAL/CGAL-3.8-branch --public --do-it
+#  - from branch 3.7
+#0 21  *  *  Fri                       cd $HOME/CGAL/create_internal_release-3.7-branch; $HOME/bin/create_release $HOME/CGAL/CGAL-3.7-branch --public --do-it
+
+# A test that does not work
+#30 21 * * * grep 'conflicts with' $HOME/CGAL/create_internal_release/create_release.log.`date '+%Y-%m-%d'`* --no-filename
+
+# Test suite, every 10mn, from 21:00 to 22:50
+*/10 21-22 * * * $HOME/CGAL/Scripts/developer_scripts/autotest_cgal_with_cmake
+
+# Manual Test suite, at 9:40pm
+40 21 * * * cd $HOME/CGAL/releases-and-testsuites-with-cmake/CGAL-I/doc_tex; nice -19 $HOME/bin/cgal_manual -testsuite || true
+
+
+# Old stuff
+#  - from branch 3.4
+#0 21 * * Sat cd $HOME/CGAL/create_internal_release-3.4-branch; $HOME/bin/create_release $HOME/CGAL/CGAL-3.4-branch --public --do-it
+
+
+0 * * * * wget -O - -q -t 1 http://rineau.fr/drupal/cron.php
