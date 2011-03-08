@@ -176,8 +176,8 @@ CGAL 3.8 offers the following improvements and new functionality :  </p>
       for 3 and 4 elements.
   <li>Add intersection test and intersection computation capabilities
       between an object of type Ray_3 and either an object of type Line_3, Segment_3 or Ray_3.
-  <li>Improve intersection test performance between an object of type BBox_3 and an object of type 
-      Plane_3 or triangle_3 by avoiding arithmetic filter failures.
+  <li>Improve intersection test performance between an object of type Bbox_3 and an object of type 
+      Plane_3 or Triangle_3 by avoiding arithmetic filter failures.
 </ul>
 
 <h3>2D Envelope</h3>
@@ -218,7 +218,7 @@ CGAL 3.8 offers the following improvements and new functionality :  </p>
 
 <h3>Triangulated Surface Mesh Simplification</h3>
 <ul>
-  <li>The priority queue internally used to plan edge simplifications is no longer 
+  <li>The priority queue internally used to prioritize edge simplifications is no longer 
       a relaxed heap but a binomial heap. This fix guarantees that all edges satisfying 
       a simplification criteria are removed (if possible).
 </ul>
