@@ -12,3 +12,5 @@ Doxyfile
 *~
 *.o
 .gitignore
+benchmark
+Benchmark
