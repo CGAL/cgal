@@ -28,7 +28,7 @@
 
 !include "script_cgal.nsh"
 
-!define CGAL_SRC  "CGAL-3.8"
+!define CGAL_SRC  "CGAL-3.9"
 !define FTP_SRC   "https://cgal.geometryfactory.com/CGAL/precompiled_libs/"
 
 ;--------------------------------
@@ -36,28 +36,28 @@
 ;--------------------------------
 
   ;Name and file
-  Name "CGAL-3.8"
+  Name "CGAL-3.9"
   
   !ifdef FetchLocal
-  OutFile "CGAL-3.8-Full-Setup.exe"
+  OutFile "CGAL-3.9-Full-Setup.exe"
   !else
-  OutFile "CGAL-3.8-Setup.exe"
+  OutFile "CGAL-3.9-Setup.exe"
   !endif
 
   ;Default installation folder
-  InstallDir "$PROGRAMFILES\CGAL-3.8"
+  InstallDir "$PROGRAMFILES\CGAL-3.9"
 
   ;Get installation folder from registry if available
-  InstallDirRegKey HKCU "Software\CGAL-3.8" ""
+  InstallDirRegKey HKCU "Software\CGAL-3.9" ""
   
   BrandingText "The CGAL Project and GeometryFactory - Installer created with NSIS."
 
-  VIProductVersion "3.8.0.0"
+  VIProductVersion "3.9.0.0"
   VIAddVersionKey "ProductName"     "CGAL Windows Installer"
   VIAddVersionKey "CompanyName"     "The CGAL Project and GeometryFactory"
   VIAddVersionKey "LegalCopyright"  "© The CGAL Project and GeometryFactory"
   VIAddVersionKey "FileDescription" "Windows Installer for CGAL"
-  VIAddVersionKey "FileVersion"     "3.8"
+  VIAddVersionKey "FileVersion"     "3.9"
   
 ;--------------------------------
 ; Variables
@@ -91,7 +91,7 @@
 
   !define MUI_COMPONENTSPAGE_SMALLDESC
 
-  !define MUI_WELCOMEPAGE_TEXT "This downloads CGAL-3.8 to your machine."
+  !define MUI_WELCOMEPAGE_TEXT "This downloads CGAL-3.9 to your machine."
 
   !define MUI_FINISHPAGE_TITLE "Downloading finished"
 
@@ -177,28 +177,28 @@ Section "!Main CGAL" MAIN_Idx
 
   ; Write uninstall informations
   ;   http://nsis.sourceforge.net/Add_uninstall_information_to_Add/Remove_Programs
-  WriteRegStr HKLM "Software\Microsoft\Windows\CurrentVersion\Uninstall\CGAL-3.8" \
-                   "DisplayName" "CGAL-3.8 -- Computational Geometry Algorithms Library, version 3.8"
-  WriteRegStr HKLM "Software\Microsoft\Windows\CurrentVersion\Uninstall\CGAL-3.8" \
+  WriteRegStr HKLM "Software\Microsoft\Windows\CurrentVersion\Uninstall\CGAL-3.9" \
+                   "DisplayName" "CGAL-3.9 -- Computational Geometry Algorithms Library, version 3.9"
+  WriteRegStr HKLM "Software\Microsoft\Windows\CurrentVersion\Uninstall\CGAL-3.9" \
                    "UninstallString" "$\"$INSTDIR\Uninstall.exe$\""
-  WriteRegStr HKLM "Software\Microsoft\Windows\CurrentVersion\Uninstall\CGAL-3.8" \
+  WriteRegStr HKLM "Software\Microsoft\Windows\CurrentVersion\Uninstall\CGAL-3.9" \
                    "QuietUninstallString" "$\"$INSTDIR\Uninstall.exe$\" /S"
 
-  WriteRegDWORD HKLM "Software\Microsoft\Windows\CurrentVersion\Uninstall\CGAL-3.8" \
+  WriteRegDWORD HKLM "Software\Microsoft\Windows\CurrentVersion\Uninstall\CGAL-3.9" \
                    "NoModify" 1
-  WriteRegDWORD HKLM "Software\Microsoft\Windows\CurrentVersion\Uninstall\CGAL-3.8" \
+  WriteRegDWORD HKLM "Software\Microsoft\Windows\CurrentVersion\Uninstall\CGAL-3.9" \
                    "NoRepair" 1
-  WriteRegStr HKLM "Software\Microsoft\Windows\CurrentVersion\Uninstall\CGAL-3.8" \
+  WriteRegStr HKLM "Software\Microsoft\Windows\CurrentVersion\Uninstall\CGAL-3.9" \
                    "InstallLocation" "$\"$INSTDIR$\""
-  WriteRegStr HKLM "Software\Microsoft\Windows\CurrentVersion\Uninstall\CGAL-3.8" \
+  WriteRegStr HKLM "Software\Microsoft\Windows\CurrentVersion\Uninstall\CGAL-3.9" \
                    "DisplayIcon" "$\"$INSTDIR\cgal.ico$\""
-  WriteRegStr HKLM "Software\Microsoft\Windows\CurrentVersion\Uninstall\CGAL-3.8" \
+  WriteRegStr HKLM "Software\Microsoft\Windows\CurrentVersion\Uninstall\CGAL-3.9" \
                    "Publisher" "The CGAL Project and GeometryFactory"
-  WriteRegStr HKLM "Software\Microsoft\Windows\CurrentVersion\Uninstall\CGAL-3.8" \
+  WriteRegStr HKLM "Software\Microsoft\Windows\CurrentVersion\Uninstall\CGAL-3.9" \
                    "URLInfoAbout" "http://www.cgal.org/"
-  WriteRegStr HKLM "Software\Microsoft\Windows\CurrentVersion\Uninstall\CGAL-3.8" \
-                   "DisplayedVersion" "3.8.0"
-  WriteRegStr HKLM "Software\Microsoft\Windows\CurrentVersion\Uninstall\CGAL-3.8" \
+  WriteRegStr HKLM "Software\Microsoft\Windows\CurrentVersion\Uninstall\CGAL-3.9" \
+                   "DisplayedVersion" "3.9.0"
+  WriteRegStr HKLM "Software\Microsoft\Windows\CurrentVersion\Uninstall\CGAL-3.9" \
                    "CGALUninstallRegLoc" "$RegLoc"
 
   ;Create uninstaller
@@ -240,7 +240,7 @@ SectionEnd
 
 Section /o "HTML Manuals" DOC_Idx
   !ifndef FetchLocal
-    !insertmacro DownloadFileFrom "https://cgal.geometryfactory.com/" "CGAL/3.8/Manual/" "cgal_manual.zip"  "$INSTDIR\doc_html"
+    !insertmacro DownloadFileFrom "https://cgal.geometryfactory.com/" "CGAL/3.9/Manual/" "cgal_manual.zip"  "$INSTDIR\doc_html"
   !endif  
 SectionEnd
 
@@ -275,11 +275,11 @@ Section "Uninstall"
 
   RMDir /r "$INSTDIR"
 
-  ReadRegStr $RegLoc HKLM "Software\Microsoft\Windows\CurrentVersion\Uninstall\CGAL-3.8" \
+  ReadRegStr $RegLoc HKLM "Software\Microsoft\Windows\CurrentVersion\Uninstall\CGAL-3.9" \
     "CGALUninstallRegLoc"
 
-  DeleteRegKey /ifempty HKCU "Software\CGAL-3.8"
-  DeleteRegKey HKLM "Software\Microsoft\Windows\CurrentVersion\Uninstall\CGAL-3.8"
+  DeleteRegKey /ifempty HKCU "Software\CGAL-3.9"
+  DeleteRegKey HKLM "Software\Microsoft\Windows\CurrentVersion\Uninstall\CGAL-3.9"
 
   ${un.EnvVarUpdate} $0 "PATH" "R" $RegLoc "$INSTDIR\auxiliary\gmp\lib"
   ${If} $RegLoc == HKLM
@@ -321,7 +321,7 @@ SectionEnd
 Function .onInit
 
   !ifdef DebugLog
-  ${LogSetFileName} "CGAL-3.8_install_log.txt"
+  ${LogSetFileName} "CGAL-3.9_install_log.txt"
   ${LogSetOn}
   !endif	
   

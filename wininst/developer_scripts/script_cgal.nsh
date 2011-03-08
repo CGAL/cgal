@@ -81,7 +81,7 @@ Var IsTAUCSInstalled
 !macroend
 
 !macro Install_GMP_MPFR_bin PLATFORM
-  !insertmacro DownloadFile "auxiliary/${PLATFORM}/GMP/5.0.1/"  "gmp-all-CGAL-3.8.zip"  "$INSTDIR\auxiliary\gmp"
-  !insertmacro DownloadFile "auxiliary/${PLATFORM}/MPFR/3.0.0/" "mpfr-all-CGAL-3.8.zip" "$INSTDIR\auxiliary\gmp"
+  !insertmacro DownloadFile "auxiliary/${PLATFORM}/GMP/5.0.1/"  "gmp-all-CGAL-3.9.zip"  "$INSTDIR\auxiliary\gmp"
+  !insertmacro DownloadFile "auxiliary/${PLATFORM}/MPFR/3.0.0/" "mpfr-all-CGAL-3.9.zip" "$INSTDIR\auxiliary\gmp"
 !macroend
 
