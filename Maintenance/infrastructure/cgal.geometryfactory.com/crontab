@@ -1,5 +1,5 @@
 # Result pages
-5,15,25,35,45,55 * * * *  cd $HOME/CGAL/collect_and_public_testresults; ./treat_result_collection
+3,5,15,25,35,45,55 * * * *  cd $HOME/CGAL/collect_and_public_testresults; ./treat_result_collection
 
 # Internal release
 # The script also updates the manual tools.
@@ -20,10 +20,9 @@
 # Manual Test suite, at 9:40pm
 40 21 * * * cd $HOME/CGAL/releases-and-testsuites-with-cmake/CGAL-I/doc_tex; nice -19 $HOME/bin/cgal_manual -testsuite || true
 
+# Dump the crontab to SVN
+5,15,25,35,45,55 * * * * $HOME/bin/dump_crontab
 
 # Old stuff
 #  - from branch 3.4
 #0 21 * * Sat cd $HOME/CGAL/create_internal_release-3.4-branch; $HOME/bin/create_release $HOME/CGAL/CGAL-3.4-branch --public --do-it
-
-
-0 * * * * wget -O - -q -t 1 http://rineau.fr/drupal/cron.php
