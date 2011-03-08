@@ -107,23 +107,29 @@ CGAL 3.8 offers the following improvements and new functionality :  </p>
 <h3>General</h3>
 <ul>
   <li>Boost version 1.39 at least is now required.</li>
-  <li>Initial support for the LLVM Clang compiler (prereleases of version 2.9)</li>
+  <li>Initial support for the LLVM Clang compiler (prereleases of version 2.9).</li>
   <li>Full support for the options -strict-ansi of the Intel Compiler 11,
   and -ansi of the GNU g++ compiler.</li>
   <li>Adding a concept of ranges. In the following releases, it will be the 
       way to provide a set of objects (vs. a couple of iterators).</li>
+  <li>Fix a memory leak in CORE polynomials.</li>
+  <li>Various fixes in the manual.</li>
 </ul>
 
 <h3>3D Mesh Generation (major new feature added)</h3>
 <ul>
-  <li>Adding the possibility to handle sharp features.
+  <li>Adding the possibility to handle sharp features: the 3D Mesh
+ generation package now offers the possibility to get in the final mesh an
+ accurate representation of 1-dimensional sharp features present in the
+ description of the input domain.
 </ul>
 
 <h3>2D Triangulations (major new feature added)</h3>
 <ul>
   <li>Add a way to efficiently insert a range of points with information 
       into a 2D Delaunay and regular triangulation.
-  <li>Add member function mirror_edge taking an edge as parameter
+  <li>Add member function mirror_edge taking an edge as parameter.
+  <li>Fix an infinite loop in constrained triangulation.
 </ul>
 
 <h3>3D Triangulations (major new feature added)</h3>
@@ -160,14 +166,18 @@ CGAL 3.8 offers the following improvements and new functionality :  </p>
       Projection_traits_yz_3,Projection_traits_yz_3) are provided to work with
       triangulations, algorithms on polygons, alpha-shapes, convex hull algorithm...
       Usage of former equivalent traits classes in different packages is now deprecated.
-  <li>Exact_predicates_exact_constructions_kernel now also use the static filters
+  <li>Exact_predicates_exact_constructions_kernel now better use the static filters
       which leads to performance improvements.
   <li>Add an overload for the global function angle, taking three 3D points.
-  <li>In the 2D and 3D kernel concept, the constant boolean Has_filtered_predicates 
+  <li>In the 2D and 3D kernel concept, the constant Boolean Has_filtered_predicates 
       is now deprecated. It is now required to use Has_filtered_predicates_tag
-      (being either either Tag_true or Tag_false).
+      (being either Tag_true or Tag_false).
   <li>Compare_distance_2 and Compare_distance_3 provide additional operators
       for 3 and 4 elements.
+  <li>Add intersection test and intersection computation capabilities
+      between an object of type Ray_3 and either an object of type Line_3, Segment_3 or Ray_3.
+  <li>Improve intersection test performance between an object of type BBox_3 and an object of type 
+      Plane_3 or triangle_3 by avoiding arithmetic filter failures.
 </ul>
 
 <h3>2D Envelope</h3>
@@ -189,7 +199,6 @@ CGAL 3.8 offers the following improvements and new functionality :  </p>
 </ul>
 
 <h3>Geometric Object Generators</h3>
-  
 <ul>
   <li> CGAL::Random uses boost::rand48 instead of std::rand.
   <li>Adding to CGAL::Random a way to generate random integers.
@@ -207,6 +216,23 @@ CGAL 3.8 offers the following improvements and new functionality :  </p>
   <li> dD Min sphere of spheres has a new traits class for the min sphere of points. 
 </ul>
 
+<h3>Triangulated Surface Mesh Simplification</h3>
+<ul>
+  <li>The priority queue internally used to plan edge simplifications is no longer 
+      a relaxed heap but a binomial heap. This fix guarantees that all edges satisfying 
+      a simplification criteria are removed (if possible).
+</ul>
+
+<h3>3D Boolean Operations on Nef Polyhedra</h3>
+<ul>
+  <li>Allow construction of a 3D nef polyhedron from a 3D polyhedron with normals.
+</ul>
+
+<h3>2D Arrangements</h3>
+<ul>
+  <li>Fix a bug in the method insert_at_vertices of the Arrangement_2 class.
+  <li>Fix several bugs in the traits class Arr_Bezier_curve_traits_2 for arrangement of Bezier curves.
+</ul> 
 
 <h3>2D Minkowski Sums</h3>
 <ul>
