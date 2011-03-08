@@ -9,21 +9,22 @@ a solid ground to report bugs that need to be tackled before the
 release of the final version of CGAL 3.8 end of September 2010.
 
 
-Besides improvements and fixes to existing packages
+Besides fixes to existing packages major features where added
+in the following packages.
 
- o 3D Mesh Generation (major new feature added)
+ o 3D Mesh Generation
 
     This package now can handle sharp features: the 3D Mesh
     generation package now offers the possibility to get in the 
     final mesh an accurate representation of 1-dimensional 
     sharp features present in the description of the input domain.
 
- o 2D and 3D Triangulations (major new feature added)
+ o 2D and 3D Triangulations
     
     Add a way to efficiently insert a range of points with information 
     into a Delaunay and Regular triangulation.
 
- o 3D Alpha Shapes (major new feature added)
+ o 3D Alpha Shapes
 
     The new class Fixed_alpha_shape_3 provides a robust and
     faster way to compute one alpha shape (with a fixed value of alpha).
