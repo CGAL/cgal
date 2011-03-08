@@ -1,5 +1,17 @@
+# For details see man 4 crontabs
+
+# Example of job definition:
+# .---------------- minute (0 - 59)
+# |  .------------- hour (0 - 23)
+# |  |  .---------- day of month (1 - 31)
+# |  |  |  .------- month (1 - 12) OR jan,feb,mar,apr ...
+# |  |  |  |  .---- day of week (0 - 6) (Sunday=0 or 7) OR sun,mon,tue,wed,thu,fri,sat
+# |  |  |  |  |
+# *  *  *  *  *  command to be executed
+
+
 # Result pages
-3,5,15,25,35,45,55 * * * *  cd $HOME/CGAL/collect_and_public_testresults; ./treat_result_collection
+5,15,25,35,45,55 * * * *  cd $HOME/CGAL/collect_and_public_testresults; ./treat_result_collection
 
 # Internal release
 # The script also updates the manual tools.
@@ -21,7 +33,7 @@
 40 21 * * * cd $HOME/CGAL/releases-and-testsuites-with-cmake/CGAL-I/doc_tex; nice -19 $HOME/bin/cgal_manual -testsuite || true
 
 # Dump the crontab to SVN
-5,15,25,35,45,55 * * * * $HOME/bin/dump_crontab
+5,6,7,15,25,35,45,55 * * * * $HOME/bin/dump_crontab
 
 # Old stuff
 #  - from branch 3.4
