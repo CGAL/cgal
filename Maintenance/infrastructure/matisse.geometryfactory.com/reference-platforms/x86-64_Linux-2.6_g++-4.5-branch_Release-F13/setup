@@ -6,6 +6,11 @@ CC=/usr/local/packages/gcc-4.5/bin/gcc
 export CXX CC
 export LD_LIBRARY_PATH QTDIR
 
+BOOST_ROOT=/home/lrineau/CGAL/boost/1.45
+export BOOST_ROOT
+
+CXXFLAGS=-I$BOOST_ROOT/include
+
 source /home/lrineau/CGAL/MPFI-RS/setup-rs
 source /home/lrineau/CGAL/CGAL-I-REF/cmake/platforms/setup-common
 
