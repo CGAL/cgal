@@ -76,6 +76,10 @@ if( QT4_FOUND )
     target_link_libraries( CGAL_Qt4 ${CGAL_LIBRARY} ${CGAL_3RD_PARTY_LIBRARIES} ${CGAL_Qt4_3RD_PARTY_LIBRARIES} )
 
     add_definitions ( ${CGAL_3RD_PARTY_DEFINITIONS} )
+
+    if($ENV{CGAL_FAKE_PUBLIC_RELEASE})
+      add_definitions( -DCGAL_FAKE_PUBLIC_RELEASE )
+    endif()
     
     if(CGAL_SOVERSION AND CGAL_SONAME_VERSION)
       set_target_properties(CGAL_Qt4 PROPERTIES VERSION "${CGAL_SOVERSION}" SOVERSION "${CGAL_SONAME_VERSION}")
