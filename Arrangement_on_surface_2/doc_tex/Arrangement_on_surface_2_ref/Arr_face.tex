@@ -53,13 +53,16 @@ that return constant handles, iterators or circulators:
 \ccMethod{bool is_unbounded() const;} 
   {returns a Boolean indicating whether the face is unbounded.}    
 
+\ccMethod{bool has_outer_ccb() const;} 
+  {returns a Boolean indicating whether the face has an outer CCB.
+   (The fictitious face and the unbounded face of an arrangement that
+   does not have a fictitious face do not have outer CCBs.)}    
+
 \ccMethod{Ccb_halfedge_circulator outer_ccb();}
-    {returns a circulator that allows going over the outer boundary of
+    {returns a circulator that enables traversing the outer boundary of
      \ccVar{}. The edges along the CCB are traversed in a counterclockwise
      direction.
-     \ccPrecond{The face \ccVar{} has an outer CCB. That is, if it has a
-     fictitious face, then it is not the fictitious face. Otherwise, it
-     is not the unbounded face.}}
+     \ccPrecond{The face \ccVar{} has an outer CCB.}}
     
 \ccMethod{Hole_iterator holes_begin();}
     {returns an iterator for traversing all the holes (inner CCBs) of

@@ -970,8 +970,16 @@ public:
       return (DIso_vertex_const_iter (Base::isolated_vertices_end()));
     }
 
-    /// \name These functions are kept for backward compatibility:
+    /// \name These functions are kept for Arrangement_2 compatibility:
     //@{
+
+    /*!
+     * Check whether the face has an outer CCB.
+     */
+    bool has_outer_ccb () const
+    {
+      return (Base::number_of_outer_ccbs() > 0);
+    }
 
     /*!
      * Get a circulator for the outer boundary (non-const version). 
