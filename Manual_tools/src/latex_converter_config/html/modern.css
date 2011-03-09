@@ -104,6 +104,13 @@ div.NavPrev {
 /* ----------------------------------------------------------------------- */
 /* cc_manual.sty                                                           */
 /* ----------------------------------------------------------------------- */
+
+/* Used by \ccChapterSubTitle, and indirectly by \ccChapterAuthor */
+.subtitle {
+    margin: 0.5em 0;
+    font-style: italic;
+}
+
 div.AdvancedBlock      {
     border: solid thin;
     padding: 1.5em 0em 0em 5px;
