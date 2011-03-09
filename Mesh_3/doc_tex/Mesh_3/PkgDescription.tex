@@ -1,20 +1,26 @@
 \begin{ccPkgDescription}{3D Mesh Generation \label{Pkg:Mesh_3}}
 \ccPkgSummary{
-The generated meshes are   3 dimensional 
-isotropic simplicial meshes. The discretized region
-may be a monodomain, i.e. a single connected component,
- or  a multidomain subdivided
-into different subdomains.
+This package is devoted to the generation of  isotropic simplicial
+meshes discretizing 3D domains.
+The domain to be meshed is a region of 3D space that has to be bounded.
+The region may be connected or  composed of multiple components
+and/or subdivided in several subdomains. 
 The domain is input as an oracle able to answer
  queries, of a few different types, on the domain.
-In the current version, 
-the mesh generator is able to discretize
- domains described
-through implicit functions,  3D images or polyhedral boundaries.
-The output is a 3D mesh of the domain volume
-and conformal surface meshes for all the boundary and subdividing
-surfaces. }
-
+Boundary and subdivision surfaces  are either
+smooth or piecewise smooth surfaces, formed with planar or curved surface patches.
+Surfaces may exhibit 1-dimensional features (e.g. crease edges)
+and 0-dimensional features (e.g. singular points as corners
+ tips, cusps or darts), that have to be fairly
+approximated in the mesh.
+The output mesh is a 3-dimensional triangulation, 
+including subcomplexes that approximate each input domain feature: subdomain,
+boundary surface patch or input domain feature with dimension~0 or~1.
+Thus,  the output mesh includes  a 3D submesh covering each  subdomain, 
+a surface mesh approximating  each boundary or subdividing
+surface patch, a polyline approximation for  each 
+1-dimensional feature and 
+of course  a vertex on each  corner. }
 \ccPkgHowToCiteCgal{cgal:rty-m3-11}
 \ccPkgDependsOn{\ccRef[3D Triangulations]{Pkg:Triangulation3},
 \ccRef[2D Meshes]{Pkg:Mesh2},
