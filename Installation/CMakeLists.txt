@@ -11,6 +11,7 @@ CMAKE_MINIMUM_REQUIRED(VERSION 2.6.0 FATAL_ERROR)
 set(CMAKE_ALLOW_LOOSE_LOOP_CONSTRUCTS true)
 
 if ( COMMAND cmake_policy )
+  # Libraries linked via full path no longer produce linker search paths.
   cmake_policy( SET CMP0003 NEW )  
 endif( COMMAND cmake_policy )
 
