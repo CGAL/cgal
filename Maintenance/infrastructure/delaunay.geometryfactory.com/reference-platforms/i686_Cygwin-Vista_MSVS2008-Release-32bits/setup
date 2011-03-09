@@ -88,3 +88,9 @@ BOOST_ROOT='C:/cgal/boost_1_46_0'
 BOOST_LIBRARYDIR='C:/cgal/boost_1_46_0/stage/lib'
 BOOST_INCLUDEDIR='C:/cgal/boost_1_46_0'
 export BOOST_ROOT BOOST_LIBRARYDIR BOOST_INCLUDEDIR
+
+# This variable is for src/CGAL_Qt4/CMakeLists.txt, so that the
+# CGAL_Qt4.lib contains the release version string of the public release,
+# and not the one of the internal release.
+CGAL_FAKE_PUBLIC_RELEASE=1
+export CGAL_FAKE_PUBLIC_RELEASE=1
