@@ -34,6 +34,7 @@
 #include <QSettings>
 #include <QUrl>
 #include <QDesktopWidget>
+#include <QRegExp>
 
 #include <CGAL/config.h> // needed to get CGAL_VERSION_STR
 #include <CGAL/Qt/DemosMainWindow.h>
@@ -206,9 +207,19 @@ DemosMainWindow::popupAboutBox(QString title, QString html_resource_name)
   about_CGAL.open(QIODevice::ReadOnly);
   QString about_CGAL_txt = QTextStream(&about_CGAL).readAll();
 #ifdef CGAL_VERSION_STR
-  about_CGAL_txt.replace("<!--CGAL_VERSION-->",
-                         QString(" (version %1, svn r%2)")
-                         .arg(CGAL_VERSION_STR).arg(CGAL_SVN_REVISION));
+  QString cgal_version(CGAL_VERSION_STR);
+#  ifdef CGAL_FAKE_PUBLIC_RELEASE
+  cgal_version.replace(QRegExp("-Ic?.*"), "");
+#  endif
+  if(cgal_version.contains(QRegExp("-Ic?-"))) {
+    about_CGAL_txt.replace("<!--CGAL_VERSION-->",
+                           QString(" (version %1, svn r%2)")
+                           .arg(cgal_version).arg(CGAL_SVN_REVISION));
+  } else {
+    about_CGAL_txt.replace("<!--CGAL_VERSION-->",
+                           QString(" (version %1)")
+                           .arg(cgal_version));
+  }
 #endif
   QMessageBox mb(QMessageBox::NoIcon,
                  title,
