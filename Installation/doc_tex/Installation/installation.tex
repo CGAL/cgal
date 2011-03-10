@@ -75,7 +75,7 @@ Ideally, installing \cgal\ amounts to:
 In a less ideal world, you probably have to install \cmake, a makefile
 generator, and third party libraries. That's what this manual is about.
 
-\section{Compilers}
+\section{Supported Compilers}
 
 In order to build the \cgal\ libraries, you need a \CC\ compiler.  
 \cgal~3.8 is supported for the following compilers/operating systems:
@@ -85,19 +85,19 @@ In order to build the \cgal\ libraries, you need a \CC\ compiler.
   \gdef\lcTabularBorder{2}
   \begin{tabular}{|l|l|} \hline
     \textbf{compiler}        & \textbf{operating system}\\\hline\hline
-    \Gcc{3.4 or later} \footnotemark[10]
+    \Gcc{3.4 or later} \footnotemark[1]
     & Linux / MacOS X
-      \\ & \mswin\ 95/98/2000/XP/NT4\footnotemark[11]\\\hline
-    \msvc{9.0, 10.0} (\textsc{Visual Studio 2008 and 2010}) \footnotemark[12]
-    & \mswin\ 95/98/2000/XP/NT4/Vista/7\footnotemark[11]\\\hline
+      \\ & \mswin\ 95/98/2000/XP/NT4\\\hline
+    \icl{11.0 or later}\footnotemark[2] & Linux \\\hline
+    \msvc{9.0, 10.0} (\textsc{Visual Studio 2008 and 2010})\footnotemark[3]
+    & \mswin\ 95/98/2000/XP/NT4/Vista/7\\\hline
   \end{tabular}
 \end{center}
-\footnotetext[10]{\gccurl}\addtocounter{footnote}{1}
-\footnotetext[11]{\msvcurl}\addtocounter{footnote}{1}
-\footnotetext[12]{\iclurl}\addtocounter{footnote}{1}
+\footnotetext[1]{\gccurl}\addtocounter{footnote}{1}
+\footnotetext[2]{\iclurl}\addtocounter{footnote}{1}
+\footnotetext[3]{\msvcurl}\addtocounter{footnote}{1}
 
-
-\section{cmake}
+\section{CMake}
 
 In order to configure, build and install the \cgal\ libraries, examples and
 demos, you need \cmake, a cross-platform ``makefile generator''.
@@ -121,7 +121,7 @@ listed below. Only the \stl\ and  boost are required by all
 \cgal\ heavily uses the \stl, and in particular adopted
 many of its design ideas.  You can find online
 documentation for the \stl\ at various web sites, e.g., 
-\path+http://www.sgi.com/tech/stl/+, \path+http://www.cplusplus.com/reference/stl/+,
+\path+http://www.sgi.com/tech/stl/+, \path+http://www.cplusplus.com/reference/+,
 or \path+http://msdn.microsoft.com/en-us/library/1fe2x6kt(VS.100).aspx+.
 
 The \stl\ comes with the compiler, so there is nothing to install.
