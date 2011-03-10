@@ -3167,6 +3167,8 @@ Scripts/developer_scripts/autotest_cgal -text
 Scripts/developer_scripts/autotest_cgal_with_cmake -text
 Scripts/developer_scripts/cgal_build -text
 Scripts/developer_scripts/cgal_test_with_cmake eol=lf
+Scripts/developer_scripts/check_library_uses_no_qpl_files -text
+Scripts/developer_scripts/check_library_uses_no_qpl_files.exceptions -text
 Scripts/developer_scripts/check_macro_names -text
 Scripts/developer_scripts/check_no_CGAL_USE_without_includes_before -text
 Scripts/developer_scripts/check_svn_keywords -text

@@ -1,0 +1,79 @@
+#!/bin/bash
+
+# This scripts checks that the libraries in src do not use any QPL'd files
+# and mix LGPL'd and QPL'd files in one library. The script unpacks a tarball,
+# removesall  files under QPL license (*), attempts to build the libraries
+# in src/, and print any error messages about "No such file or directory".
+#
+# (*) The script simply removes all files that contain the string LICENSE.QPL,
+# with the exception of files/directories contained in an optional file with
+# exceptions. There should be file with default exceptions in the same
+# directory.
+
+set -e
+
+if [ $# -lt 1 -o $# -gt 2 ]; then
+	echo "Usage: ${0##*/} <tarball> [exceptions]"
+	exit 1
+fi
+
+DIR=`pwd`
+
+if [ "x${1:0:1}" != x/ ]; then
+	FILE="`pwd`/$1"
+else
+	FILE="$1"
+fi
+
+if [ $# = 2 ]; then
+	if [ "x${2:0:1}" != x/ ]; then
+		EXCEPTIONS="`pwd`/$2"
+	else
+		EXCEPTIONS="$2"
+	fi
+fi
+
+echo -n Extracting tarball $FILE ...
+TMP_DIR=`mktemp -dq /tmp/${0##*/}.XXXXXX`
+cd $TMP_DIR
+tar xzf $FILE
+DIR=${FILE##*/}
+DIR=${DIR%.tar.gz}
+cd $DIR
+echo " done"
+echo
+
+echo Removing QPLed files ...
+if [ "x$EXCEPTIONS" != x ]; then
+	grep -rl LICENSE.QPL * | sort
+	rm `grep -rl LICENSE.QPL * | grep -v -f "$EXCEPTIONS"`
+else
+	grep -rl LICENSE.QPL * | sort
+	rm `grep -rl LICENSE.QPL *`
+fi
+echo Removing QPLed files done
+echo
+
+echo List of exceptions:
+if [ "x$EXCEPTIONS" != x ]; then
+	cat "$EXCEPTIONS"
+else
+	echo "(none)"
+fi
+echo
+
+echo -n Building $1 ...
+rm -fr demo/[A-Z]*
+rm -fr examples/[A-Z]*
+QTDIR= cmake . -DBUILD_SHARED_LIBS=TRUE
+make | grep -C 10 "No such file" || true
+echo " done"
+echo
+
+echo -n Cleaning up ...
+cd ..
+rm -fr $DIR
+cd ..
+rmdir $TMP_DIR
+echo " done"
+echo
