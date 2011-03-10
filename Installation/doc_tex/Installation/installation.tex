@@ -60,7 +60,7 @@
 
 This document describes how to install \cgal\ on Windows, Unix-like systems and MacOS X.
 
-Ideally, installing \cgal amounts to:
+Ideally, installing \cgal\ amounts to:
 
 \begin{verbatim}
   cd  CGAL-3.8                                # go to CGAL directory
@@ -75,13 +75,7 @@ Ideally, installing \cgal amounts to:
 In a less ideal world, you probably have to install \cmake, a makefile
 generator, and third party libraries. That's what this manual is about.
 
-\section{Prerequisites\label{sec:prerequisites}}
-
-The focus of \cgal\ is at geometry, and we rely on other
-highly specialized libraries and software for non-geometric issues,
-e.g. for numeric solvers, or visualization.
-
-\subsection{Compilers}
+\section{Compilers}
 
 In order to build the \cgal\ libraries, you need a \CC\ compiler.  
 \cgal~3.8 is supported for the following compilers/operating systems:
@@ -102,7 +96,8 @@ In order to build the \cgal\ libraries, you need a \CC\ compiler.
 \footnotetext[11]{\msvcurl}\addtocounter{footnote}{1}
 \footnotetext[12]{\iclurl}\addtocounter{footnote}{1}
 
-\subsection{cmake}
+
+\section{cmake}
 
 In order to configure, build and install the \cgal\ libraries, examples and
 demos, you need \cmake, a cross-platform ``makefile generator''.
@@ -110,28 +105,54 @@ If \cmake\ is not installed already you can obtain it from \cmakepage.
 \cmake\ version~2.6.2 or higher is required.
 
 
-\subsection{boost}
-\cgal\ requires a working installation of the \boost\
-libraries. In particular the header files and the threading library
-binaries. Version 1.39 (or higher) is needed. In case
-the \boost\ libraries are not installed on your system already, you
+
+\section{Third Party Software\label{sec:prerequisites}}
+
+The focus of \cgal\ is at geometry, and we rely on other
+highly specialized libraries and software for non-geometric issues,
+e.g. for numeric solvers, or visualization.
+
+Note that there is no need to first install all the software
+listed below. Only the \stl\ and  boost are required by all 
+\cgal\ packages.
+
+\subsection{Standard Template Library \label{thirdparty:stl}}
+
+\cgal\ heavily uses the \stl, and in particular adopted
+many of its design ideas.  You can find online
+documentation for the \stl\ at various web sites, e.g., 
+\path+http://www.sgi.com/tech/stl/+, \path+http://www.cplusplus.com/reference/stl/+,
+or \path+http://msdn.microsoft.com/en-us/library/1fe2x6kt(VS.100).aspx+.
+
+The \stl\ comes with the compiler, so there is nothing to install.
+
+
+\subsection{boost \label{thirdparty:Boost}}
+
+\cgal\ requires the \boost\ libraries. In particular the header files
+and the threading library binaries. Version 1.39 (or higher) are needed.
+
+In \cgal\ some demos depend on \texttt{Boost.Program\_options}.
+
+In case the \boost\ libraries are not installed on your system already, you
 can obtain them from \boostpage. For Windows you can download an
 installer from \path'http://www.boostpro.com/download/'.
 Since \texttt{Boost.Thread} is required, make sure to either install the precompiled 
-{\em static} binaries for your compiler or to build \texttt{libboost-thread}.
+libraries for your compiler or to build \texttt{libboost-thread}.
 
-Some demos depend on \texttt{Boost.Program\_options}.
 
-\subsection{GMP and MPFR}
+\subsection{GMP and MPFR \label{thirdparty:GMP} \label{thirdparty:MPFR}}
+
+\gmp\ and \mpfr\ are libraries for multi precision integers and rational numbers,
+and for multi precision floating point numbers.
 
 \cgal\ combines floating point arithmetic with exact arithmetic,
-in order to be efficient and reliable.  \cgal\ offers support for
-\gmp+\mpfr, \mpfi\ and \leda\ number types, as well as a built-in
-exact number type used when none of the above is installed on your
-system.
+in order to be efficient and reliable.  \cgal\ has a built-in 
+number type for that, but \gmp\ and \mpfr\ provide a faster
+solution, and we recommend to use them.
 
 Having \gmp\ version 4.2 or higher and \mpfr\ version 2.2.1 or higher
-installed is highly recommended. These libraries can be obtained from
+installed is recommended. These libraries can be obtained from
 \gmppage\ and \mpfrpage, respectively. 
 
 As Visual \CC\ is not properly
@@ -139,51 +160,169 @@ supported by the \gmp\ and \mpfr\ projects, we provide precompiled versions
 of \gmp\ and \mpfr, which can be downloaded with the installer
 \texttt{CGAL-3.8-Setup.exe}.
 
+\subsection{CORE \label{thirdparty:Core}}
 
-\subsection{Visualization}
+\core\ is a library that provides a number type for computing with real
+numbers, that is it allows to represent expressions with square roots
+involved. This package is useful when dealing with curved objecs.
 
-Most demos use Nokia's cross-plaform GUI toolkits Qt3 or Qt4.
-In case Qt is not yet installed on your system, you can download 
-it from \qtpage. Qt4 is only supported for versions greater or equal to
-4.3.0.
+\core\ is needed by the \cgal\ kernel that deals with algebraic
+numbers.
 
-Some 3D demos use the libQGLViewer, which is a 3D widget for Qt4.
-It can be downloaded from \path'http://www.libqglviewer.com'
+\core\ can be downloaded from \path'http://www.cs.nyu.edu/exact/',
+but we recommend to use the version of \core\ that  is distributed
+with \cgal.
 
-\subsection{Miscellaneous}
+\subsection{Leda \label{thirdparty:Leda}}
 
-The Surface Mesh Generator demo can read compressed image files
-if {\em zlib} is installed. {\em zlib} can be downloaded from
-\path'http://www.zlib.net'.
+\leda\ is a library of efficient data structures and
+algorithms. Like \core, \leda\ offers a real number data type.  
 
-The Approximation of Ridges and Umbilics on Triangulated Surface Meshes
-package as well as the Estimation of Local Differential Properties package
-depend on the BLAS and LAPACK libraries. Implementations can be found at
-\blaspage\ and \lapackpage. We provides precompiled versions of BLAS and
-LAPACK for Visual~\CC.
-                       
-The Surface parametrization package can be accelerated by using the sparse matrix solver \taucs.
-This library can be downloaded from \taucspage. As Visual~\CC\ is not properly
+In \cgal\ this library is optional, and its number types can 
+be used as an alternative to \gmp, \mpfr, and \core .
+
+\leda\ is available commercially from \ledapage,
+and there exists a binary ``free edition''.
+
+
+
+\subsection{RS \label{thirdparty:RS}}
+
+\rs{} (Real Solutions) is devoted to the study of the real
+roots of polynomial systems with a finite number of complex roots
+(including univariate polynomials). 
+
+In \cgal\ \rs{} is used by one model of the \ccRef[Algebraic Kernel]{Pkg:AlgebraicKerneld}.
+
+\rs{} is freely distributable for non-commercial use. You can download it
+from \rspage{}. The library \rs\ needs \mpfi, which can be downloaded from \mpfipage. 
+Version 1.4 or higher is recommended.
+
+
+
+\subsection{OpenNL \label{thirdparty:OpenNL}}
+
+OpenNL (Open Numerical Library) is a library to easily construct and solve
+sparse linear systems. 
+
+In \cgal\ it is the default solver of the
+\ccRef[Surface Mesh Parameterization]{Pkg:SurfaceParameterization} package.
+
+OpenNL's main page is \path'http://www.loria.fr/~levy/software/'.
+\cgal\ includes a version of OpenNL in C++, made especially for \cgal\ by Bruno L\'evy.
+
+
+
+\subsection{Taucs \label{thirdparty:Taucs}}
+
+\taucs\ is a library of sparse linear solvers.
+
+In \cgal, \taucs\ is required by the 
+\ccRef[Surface Reconstruction from Point Sets]{Pkg:SurfaceReconstructionFromPointSets}
+package, and it can be
+used to improve the computations within the
+\ccRef[Planar Parameterization of Triangulated Surface Meshes]{Pkg:SurfaceParameterization}
+package.
+
+The \taucs\ web site is \path'http://www.tau.ac.il/~stoledo/taucs/'.\\
+The latest official version is \taucs\ version 2.2, September 4, 2003.
+Copyright (c) 2001, 2002, 2003 by Sivan Toledo, Tel-Aviv University,
+stoledo@tau.ac.il. All Rights Reserved.\\
+See \path'http://www.tau.ac.il/~stoledo/taucs/' for the license and the availability note.\\
+Used by permission of Sivan Toledo.
+
+The \cgal\ project provides a modified version of \taucs\ in the download
+section of \path'http://www.cgal.org'. This version fixes some bugs,
+supports 64-bit platforms and allows a simplified installation process.
+It also contains a complete \lapack\ implementation.
+
+As Visual~\CC\ is not properly
 supported by the \taucs\ project, we provide a precompiled version of
 \taucs, which can be downloaded with the installer
 \texttt{CGAL-3.8-Setup.exe}.
 
-
-\leda\ can be found at \ledapage. There is a free and a commercial
-edition for this library. \cgal\ provides the functions so that
-exact \leda\ number types become models of \cgal\ number type related
-concepts.
-
-The Algebraic Kernel package uses the library \rs\ to perform real solving
-on univariate polynomials. It can be downloaded from \rspage.
-The library \rs needs \mpfi, which can be downloaded from \mpfipage. 
-Version 1.4 or higher is recommended.
+{\em CAUTION:} Since version 3.3.1, \cgal\ is no longer compatible with the official
+release of \taucs\ (currently 2.2). Make sure to use the modified
+version provided in the download section.
 
 
-One example from the 3D Skin Surface Meshing package uses the {\sc
-ESBTL} templates library. This library is used to import data from a PDB
-file as \cgal\ points or weighted points. It can be downloaded from
-\path'http://esbtl.sourceforge.net/'.
+
+\subsection{Blas \label{thirdparty:Blas}}
+
+\blas\ (Basic Linear Algebra Subprograms) is a library of
+basic vector and matrix operations.
+
+In \cgal, \blas\ is required by the packages
+\ccRef[Estimation of Local Differential Properties]{Pkg:Jet_fitting_3}
+and \ccRef[Approximation of Ridges and Umbilics]{Pkg:Ridges_3} only.
+
+You can download the official release from \blaspage.
+Alternatively, installing \taucs\ customized for \cgal\ provides \blas.
+
+
+\subsection{Lapack \label{thirdparty:Lapack}}
+
+\lapack\ provides routines for solving systems of simultaneous linear equations,
+least-squares solutions of linear systems of equations, eigenvalue problems,
+and singular value problems.
+
+In \cgal, \lapack\ is required by the packages
+\ccRef[Estimation of Local Differential Properties]{Pkg:Jet_fitting_3}
+and \ccRef[Approximation of Ridges and Umbilics]{Pkg:Ridges_3} only.
+
+You can download the official release from \lapackpage.
+Alternatively, installing \taucs\ customized for \cgal\ provides \lapack.
+
+
+\subsection{Qt  \label{thirdparty:Qt}}
+
+Qt is a cross-platform application and UI framework.
+
+Most \cgal\ demos use Qt3 or Qt4.
+Having Qt4 version 4.3.0 or higher is recommended.
+
+In case Qt is not yet installed on your system, you can download 
+it from \qtpage. 
+
+\subsection{libQGLViewer \label{thirdparty:libQGLViewer}}
+
+libQGLViewer is a 3D widget based on \qt~4's \ccc{QGLWidget}.
+
+In \cgal\ some 3D demos are based on libQGLViewer. 
+
+It can be downloaded from \path'http://www.libqglviewer.com/'.
+
+
+\subsection{Coin \label{thirdparty:Coin}}
+
+Coin is an implementation of Open Inventor.  
+
+In \cgal, Coin is used in the demo
+of the \ccRef[Kinetic Data Structures]{Pkg:Kds} package. 
+
+You can download it from \path'http://www.coin3d.org/'.
+
+
+\subsection{zlib \label{thirdparty:zlib}}
+
+zlib is a data compression library.
+
+In \cgal\ this library is used in the examples of the \ccRef[Surface Mesh Generation]{Pkg:SurfaceMesher3} package.
+
+If it is not already on your system,
+e.g., on Windows, you can download it from  \path'http://www.gzip.org/zlib'.
+
+
+\subsection{ESTBL \label{thirdparty:ESTBL}}
+
+The {\sc Esbtl} (Easy Structural Biology Template Library) is a library that allows 
+the handling of {\sc Pdb} data.
+
+In \cgal\ the  {\sc Esbtl} is used in an example of the 
+\ccRef[3D Skin Surface Meshing]{Pkg:SkinSurface3} package.
+
+It can be downloaded from  \path'http://esbtl.sourceforge.net/'.
+
 
 \section{Downloading \cgal\label{sec:gettingcgal}}
 \index{CGAL@\cgal!getting}\index{getting \cgal}
