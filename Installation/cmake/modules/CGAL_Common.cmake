@@ -37,7 +37,10 @@ if( NOT CGAL_COMMON_FILE_INCLUDED )
     endif()
     if(POLICY CMP0017)
       # New policy since CMake 2.8.4
-      cmake_policy( SET CMP0017 OLD )
+      if(NOT RUNNING_CGAL_AUTO_TEST)
+        # We do not set this in the testsuite, to see the warnings.
+        cmake_policy( SET CMP0017 OLD )
+      endif()
       # CMP0017 OLD means: we want to be able to override CMake modules
       # that are shipped with CMake.
       # For the moment, we override:
