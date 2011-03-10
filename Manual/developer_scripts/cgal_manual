@@ -141,7 +141,7 @@ Sendmail=mail
 
 ResourceFile="$HOME/.cgalmanualrc"
 
-HtmlManualAuthor='<a href="http://www.cgal.org" target="_top">CGAL Open Source Project</a>'
+HtmlManualAuthor='<a href=\"http://www.cgal.org\" target=\"_top\">CGAL Open Source Project</a>'
 
 #---------------------------------------------------------------------#
 # Global variables, default initialization
