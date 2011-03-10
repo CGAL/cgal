@@ -456,10 +456,11 @@ Gmpfi Gmpfi::operator+()const{
 
 inline
 Gmpfi Gmpfi::operator-()const{
-        mpfi_t result;
-        mpfi_init2(result,get_precision());
-        mpfi_neg(result,mpfi());
-        return Gmpfi(result);
+        Gmpfi result (0, this->get_precision());
+        mpfi_neg (result.mpfi(), this->mpfi());
+        *(result._left.fr()) = result._interval.left;
+        *(result._right.fr()) = result._interval.right;
+        return result;
 }
 
 // CGAL_GMPFI_BALANCE_ENDPOINTS checks if both bounds of the interval have
@@ -492,11 +493,11 @@ Gmpfi Gmpfi::operator-()const{
                         _fun(mpfi(),mpfi(),b._member); \
                         gather_bounds(); \
                 }else{ \
-                        mpfi_t result; \
-                        mpfi_init2(result,get_precision()); \
-                        _fun(result,mpfi(),b._member); \
-                        Gmpfi r(result); \
-                        swap(r); \
+                        Gmpfi result (0, this->get_precision()); \
+                        _fun (result.mpfi(), this->mpfi(), b._member); \
+                        *(result._left.fr()) = result._interval.left; \
+                        *(result._right.fr()) = result._interval.right; \
+                        this->swap (result); \
                 } \
                 return(*this); \
         }
@@ -511,28 +512,28 @@ Gmpfi Gmpfi::operator-()const{
         Gmpfi& Gmpfi::_op(const Gmpfi &fi){ \
                 if(is_unique()){ \
                         if(get_precision()<fi.get_precision()){ \
-                                mpfi_t result; \
-                                mpfi_init2(result,fi.get_precision()); \
-                                _fun(result,mpfi(),fi.mpfi()); \
-                                Gmpfi r(result); \
-                                swap(r); \
+                                Gmpfi result (0, fi.get_precision()); \
+                                _fun(result.mpfi(), this->mpfi(), fi.mpfi()); \
+                                *(result._left.fr()) = result._interval.left; \
+                                *(result._right.fr())= result._interval.right;\
+                                this->swap (result); \
                         }else{ \
                                 CGAL_GMPFI_BALANCE_ENDPOINTS \
                                 _fun(mpfi(),mpfi(),fi.mpfi()); \
                                 gather_bounds(); \
                         } \
                 }else{ \
-                        mpfi_t result; \
-                        mpfi_init2(result, \
-                                   get_precision()<fi.get_precision()? \
-                                        fi.get_precision(): \
-                                        get_precision()); \
-                        _fun(result,mpfi(),fi.mpfi()); \
-                        Gmpfi r(result); \
-                        swap(r); \
+                        Gmpfi result(0, \
+                                     this->get_precision()<fi.get_precision()?\
+                                     fi.get_precision(): \
+                                     this->get_precision()); \
+                        _fun (result.mpfi(), this->mpfi(), fi.mpfi()); \
+                        *(result._left.fr()) = result._interval.left; \
+                        *(result._right.fr()) = result._interval.right; \
+                        this->swap (result); \
                 } \
                 return(*this); \
-        }
+  }
 
 // CGAL_GMPFI_TYPE_BINARY_OPERATOR defines an overloaded binary operator of
 // the Gmpfi class, where the operated number belongs to a c++ type.
@@ -546,11 +547,11 @@ Gmpfi Gmpfi::operator-()const{
                         _fun(mpfi(),mpfi(),x); \
                         gather_bounds(); \
                 }else{ \
-                        mpfi_t result; \
-                        mpfi_init2(result,get_precision()); \
-                        _fun(result,mpfi(),x); \
-                        Gmpfi r(result); \
-                        swap(r); \
+                        Gmpfi result (0, this->get_precision()); \
+                        _fun (result.mpfi(), this->mpfi(), x); \
+                        *(result._left.fr()) = result._interval.left; \
+                        *(result._right.fr()) = result._interval.right; \
+                        this->swap (result); \
                 } \
                 return *this; \
         }
@@ -602,10 +603,11 @@ CGAL_GMPFI_OBJECT_BINARY_OPERATOR(operator/=,Gmpq,mpq(),mpfi_div_q)
         inline \
         Gmpfi Gmpfi::_name (Gmpfi::Precision_type p)const{ \
                 CGAL_assertion(p>=MPFR_PREC_MIN&&p<=MPFR_PREC_MAX); \
-                mpfi_t result; \
-                mpfi_init2(result,p); \
-                _fun(result,mpfi()); \
-                return Gmpfi(result); \
+                Gmpfi result (0, p); \
+                _fun (result.mpfi(), this->mpfi()); \
+                *(result._left.fr()) = result._interval.left; \
+                *(result._right.fr()) = result._interval.right; \
+                return result; \
         }
 
 CGAL_GMPFI_ARITHMETIC_FUNCTION(abs,mpfi_abs)
@@ -615,22 +617,24 @@ inline
 Gmpfi Gmpfi::cbrt(Gmpfi::Precision_type p)const{
         // MPFI does not provide a cubic root function
         CGAL_assertion(p>=MPFR_PREC_MIN&&p<=MPFR_PREC_MAX);
-        mpfi_t result;
-        mpfi_init2(result,p);
-        mpfr_cbrt(&result->left,left_mpfr(),GMP_RNDD);
-        mpfr_cbrt(&result->right,right_mpfr(),GMP_RNDU);
-        return Gmpfi(result);
+        Gmpfi result (0, p);
+        mpfr_cbrt(&(result.mpfi())->left, left_mpfr(), GMP_RNDD);
+        mpfr_cbrt(&(result.mpfi())->right,right_mpfr(),GMP_RNDU);
+        *(result._left.fr()) = result._interval.left;
+        *(result._right.fr()) = result._interval.right;
+        return result;
 }
 
 inline
 Gmpfi Gmpfi::kthroot(int k,Gmpfi::Precision_type p)const{
         // MPFI does not provide k-th root functions
         CGAL_assertion(p>=MPFR_PREC_MIN&&p<=MPFR_PREC_MAX);
-        mpfi_t result;
-        mpfi_init2(result,p);
-        mpfr_root(&result->left,left_mpfr(),k,GMP_RNDD);
-        mpfr_root(&result->right,right_mpfr(),k,GMP_RNDU);
-        return Gmpfi(result);
+        Gmpfi result (0, p);
+        mpfr_root(&(result.mpfi())->left, left_mpfr(), k,GMP_RNDD);
+        mpfr_root(&(result.mpfi())->right,right_mpfr(),k,GMP_RNDU);
+        *(result._left.fr()) = result._interval.left;
+        *(result._right.fr()) = result._interval.right;
+        return result;
 }
 
 CGAL_GMPFI_ARITHMETIC_FUNCTION(square,mpfi_sqr)
