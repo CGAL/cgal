@@ -1626,6 +1626,7 @@ Installation/config/support/print_TAUCS_version.cpp -text
 Installation/config/support/print_ZLIB_version.cpp -text
 Installation/config/support/test_BOOST_THREAD.cpp -text
 Installation/config/testfiles/CGAL_CFG_NO_CPP0X_ISFINITE.cpp -text
+Installation/doc_tex/Installation/cmakelogo.png -text svneol=unset#image/png
 Installation/doc_tex/Installation/illustration.png -text
 Installation/html2textrc -text
 Installation/src/CGAL/all_files.cpp -text
