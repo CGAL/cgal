@@ -107,8 +107,38 @@ div.NavPrev {
 
 /* Used by \ccChapterSubTitle, and indirectly by \ccChapterAuthor */
 .subtitle {
-    margin: 0.5em 0;
+    margin: 0.5ex 0;
     font-style: italic;
+}
+
+/* Used by "User Manual" "Reference Manual" links, in the package
+description */
+.nowrap {
+    white-space: nowrap;
+}
+
+/* Styles for the package description table */
+
+.PkgDescAuthorsCell {
+    height: 100%;
+    /* So that the height of this cell is not higher than the height of its
+    content. */
+}
+
+.PkgDescIllustrationCell {
+    padding-right: 1em;
+}
+
+.PkgDescInfoCell {
+    padding-left: 1em;
+    width: 23%;
+    text-align: left;
+}
+
+.PkgDescInfo {
+    margin-top: 0.5ex;
+    /* So that the height of this cell is not higher than the height of its
+    content. */
 }
 
 div.AdvancedBlock      {
