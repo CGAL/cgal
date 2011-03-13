@@ -1,4 +1,3 @@
-#include <CGAL/basic.h>
 #include <cassert>
 #include <algorithm>
 #include <CGAL/In_place_list.h>
