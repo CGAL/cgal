@@ -127,11 +127,6 @@ public:
       return Self(m_pgn, m_curr_edge + n);
     }
 
-    static Self operator+(difference_type n, Self const& i)
-    {
-      return i+n;
-    }
-
     Self& operator-=(difference_type n) 
     {
       return (*this) -= n;
