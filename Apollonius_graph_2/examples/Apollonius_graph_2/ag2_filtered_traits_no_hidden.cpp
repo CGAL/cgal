@@ -1,11 +1,7 @@
-#include <CGAL/basic.h>
-
 // standard includes
 #include <iostream>
 #include <fstream>
 #include <cassert>
-
-#include <CGAL/basic.h>
 
 // example that uses the filtered traits
 
