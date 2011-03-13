@@ -2,7 +2,6 @@
 // A four dimensional Segment Tree is defined in this class.
 // Ti is the type of each dimension of the tree.
 
-#include <CGAL/basic.h>
 #include <iostream>
 #include <CGAL/Segment_tree_k.h>
 #include "include/Tree_Traits.h"

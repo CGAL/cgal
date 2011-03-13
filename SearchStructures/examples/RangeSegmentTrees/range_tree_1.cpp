@@ -2,11 +2,9 @@
 // A two dimensional Range Tree is defined in this class.
 // Ti is the type of each dimension of the tree.
 
-#include <CGAL/basic.h>
-
-#include <iostream>
 #include <CGAL/Range_tree_k.h>
 #include "include/Tree_Traits.h"
+#include <iostream>
 #include <vector>
 #include <iterator>
 #include <utility>

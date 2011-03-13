@@ -2,14 +2,11 @@
 // A three dimensional Segment Tree is defined in this class.
 // Ti is the type of each dimension of the tree.
 
-#include <CGAL/basic.h>
 #include <iostream>
-#include <CGAL/Cartesian.h>
-#include <CGAL/Point_3.h>
 #include <utility>
-#include <vector>
 #include <iterator>
 #include <list>
+#include <CGAL/Cartesian.h>
 #include <CGAL/Segment_tree_k.h>
 #include <CGAL/Range_segment_tree_traits.h>
 

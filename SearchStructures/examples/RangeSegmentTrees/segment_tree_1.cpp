@@ -2,11 +2,9 @@
 // A one dimensional Segment Tree is defined in this class.
 // Ti is the type of each dimension of the tree.
 
-#include <CGAL/basic.h>
-#include <iostream>
 #include "include/Tree_Traits.h"
 #include <CGAL/Segment_tree_k.h>
-#include <vector>
+#include <iostream>
 #include <iterator>
 #include <list>
 #include <utility>
