@@ -39,11 +39,19 @@ A f()
   return A();
 }
 
+#include <algorithm>
+
+A&& f(A&& a)
+{
+  return std::forward<A>(a);
+}
+
 int main()
 {
   A a = f();
   A b;
   b = a;
   b = f();
+  b = f(A());
   return 0;
 }
