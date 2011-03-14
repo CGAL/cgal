@@ -1,3 +1,5 @@
+#include <CGAL/basic.h>
+
 // standard includes
 #include <iostream>
 #include <fstream>
@@ -23,7 +25,7 @@ typedef CGAL::Segment_Delaunay_graph_hierarchy_2<Gt>  SDG2;
 
 int main()
 {
-  std::ifstream ifs("data/norway.cin");
+  std::ifstream ifs("data/sites.cin");
   assert( ifs );
 
   SDG2          sdg;

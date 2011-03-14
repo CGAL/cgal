@@ -1,3 +1,5 @@
+#include <CGAL/basic.h>
+
 // standard includes
 #include <iostream>
 #include <fstream>

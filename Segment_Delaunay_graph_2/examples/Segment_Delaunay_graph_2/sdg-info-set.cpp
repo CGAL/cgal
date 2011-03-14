@@ -1,3 +1,5 @@
+#include <CGAL/basic.h>
+
 // example that shows how to add info to input sites and how this is
 // propagated using the storage traits with info
 //

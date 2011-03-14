@@ -26,7 +26,6 @@
 #include <CGAL/Simple_cartesian.h>
 #include <CGAL/Timer.h>
 #ifdef CGAL_USE_LEDA
-#error
 #  include <CGAL/Leda_real.h>
 #else
 //#  include <CGAL/CORE_Expr.h>

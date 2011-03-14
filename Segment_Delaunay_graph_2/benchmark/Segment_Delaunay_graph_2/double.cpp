@@ -154,25 +154,13 @@ insert_constraints_using_spatial_sort(SDG& sdg)
     
   timer.reset();
   timer.start();
-  int N=0;
   for(typename Constraints_container::const_iterator 
         cit = constraints.begin(), end = constraints.end();
       cit != end; ++cit) {
     const typename SDG::Vertex_handle& v1 = vertices[cit->first];
     const typename SDG::Vertex_handle& v2 = vertices[cit->second];
-    if(v1 != v2){
-      std::cout << N << std::endl;
-      if((N != 4379) && (N != 6769)){
+    if(v1 != v2)
       sdg.insert(v1, v2);
-      }
-      ++N;
-      if( (N%100) == 0){
-        if(! sdg.is_valid(true, 1) ){
-          std::cerr << "invalid data structure N = " << N << std::endl;
-          return;
-        }
-      }
-    }
   }
 
   timer.stop();
