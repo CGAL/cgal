@@ -141,7 +141,7 @@ MainWindow::MainWindow()
 
   this->setupStatusBar();
   this->setupOptionsMenu();
-  this->addAboutDemo(":/cgal/help/about_Alpha_shape_2.html");
+  this->addAboutDemo(":/cgal/help/about_Alpha_shapes_2.html");
   this->addAboutCGAL();
 
   this->addRecentFiles(this->menuFile, this->actionQuit);
