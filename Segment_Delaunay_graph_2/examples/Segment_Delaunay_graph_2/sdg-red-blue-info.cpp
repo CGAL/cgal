@@ -1,4 +1,3 @@
-#include <CGAL/basic.h>
 #include <CGAL/Random.h>
 
 // example that shows how to add info to input sites and how this is
