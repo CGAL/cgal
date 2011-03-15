@@ -32,6 +32,7 @@
 #include <CGAL/Delaunay_triangulation_3.h>
 #include <CGAL/Regular_triangulation_3.h>
 #include <CGAL/Regular_triangulation_euclidean_traits_3.h>
+#include <CGAL/Random.h>
 #include <CGAL/Timer.h>
 #include <CGAL/Memory_sizer.h>
 
@@ -91,6 +92,8 @@ public:
 	~Time_accumulator() { timer.stop(); accumulator += timer.time(); }
 };
 
+#define drand48 CGAL::default_random.get_double
+
 Point rnd_point()
 {
 	return Point(drand48(), drand48(), drand48());
@@ -108,7 +111,7 @@ void generate_points()
 	else {
 		pts.reserve(max_pts);
 		pts2.reserve(max_pts);
-		for(size_t i = 0; i < std::max(std::size_t(100000), max_pts); ++i) {
+		for(size_t i = 0; i < (std::max)(std::size_t(100000), max_pts); ++i) {
 			pts.push_back(rnd_point());
 			pts2.push_back(rnd_point());
 		}
