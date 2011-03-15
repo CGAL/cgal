@@ -62,6 +62,8 @@ using namespace CGAL;
 // - or EPIC (the default)
 #ifdef SC_DOUBLE
 typedef Simple_cartesian<double>                       K;
+#elif defined(ONLY_STATIC_FILTERS)
+typedef CGAL::internal::Static_filters<CGAL::Simple_cartesian<double> > K;
 #elif defined(EPEC)
 #  ifdef CGAL_DONT_USE_LAZY_KERNEL
 typedef Epeck K;
