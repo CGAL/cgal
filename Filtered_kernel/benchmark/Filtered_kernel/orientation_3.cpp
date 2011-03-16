@@ -11,7 +11,17 @@
 
 typedef CGAL::Simple_cartesian<double> K;
 typedef K::Point_3 Point_3;
+#if 1
 typedef CGAL::internal::Static_filters_predicates::Orientation_3_benchmark<Point_3> Predicate;
+#else
+
+   struct Predicate {
+   int operator()(const Point_3& p,const Point_3& q,const Point_3& r,const Point_3& s) const
+   {
+     return (int)(p < q)  + (int)(r<s);
+   }
+ };
+#endif
 
 int main()
 {
