@@ -5,8 +5,7 @@ it computes a jet fitting to set the monge data at each vertex
    computes the ridge lines and the umbilics
 
 it outputs the results in :
-1. filename.offRIDGES-d?-m?-t?-a?-p?.4ogl.txt  which can be visualized with 
-	the demo program ridges_viewer.exe
+1. filename.offRIDGES-d?-m?-t?-a?-p?.4ogl.txt  which stores raw data to be used for a nonprovided further processing (visualization for instance, the interested user may want to build on top of the polyhedron package demo)
 2. if option -vtrue, filename.offRIDGES-d?-m?-t?-a?-p?.verb.txt contains human readable results
 
 
