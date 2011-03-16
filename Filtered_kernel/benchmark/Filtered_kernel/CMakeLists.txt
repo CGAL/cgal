@@ -22,13 +22,18 @@ if ( CGAL_FOUND )
 
   include_directories (BEFORE ../../include)
 
-  option(ONLY_TEST_COMPARISONS "Check comparisons of doubles instead of Orientation_3")
+  add_executable( bench_orientation_3 "orientation_3.cpp" )
+  target_link_libraries(bench_orientation_3 ${CGAL_LIBRARIES} ${CGAL_3RD_PARTY_LIBRARIES} )
 
-  if(ONLY_TEST_COMPARISONS)
-    add_definitions(-DONLY_TEST_COMPARISONS)
-  endif()
-  create_single_source_cgal_program( "orientation_3.cpp" )
+  add_executable( bench_comparisons "orientation_3.cpp" )
+  target_link_libraries(bench_comparisons ${CGAL_LIBRARIES} ${CGAL_3RD_PARTY_LIBRARIES} )
+  set_property(
+    TARGET bench_comparisons 
+    APPEND
+    PROPERTY COMPILE_DEFINITIONS ONLY_TEST_COMPARISONS )
 
+  get_property(DEF TARGET bench_comparisons PROPERTY COMPILE_DEFINITIONS)
+  message("DEF = ${DEF}")
 
 else()
   
