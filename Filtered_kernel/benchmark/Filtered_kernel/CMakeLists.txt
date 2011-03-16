@@ -22,7 +22,13 @@ if ( CGAL_FOUND )
 
   include_directories (BEFORE ../../include)
 
+  option(ONLY_TEST_COMPARISONS "Check comparisons of doubles instead of Orientation_3")
+
+  if(ONLY_TEST_COMPARISONS)
+    add_definitions(-DONLY_TEST_COMPARISONS)
+  endif()
   create_single_source_cgal_program( "orientation_3.cpp" )
+
 
 else()
   
