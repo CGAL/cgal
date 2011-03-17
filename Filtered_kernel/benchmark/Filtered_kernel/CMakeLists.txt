@@ -12,6 +12,8 @@ if ( COMMAND cmake_policy )
   cmake_policy( SET CMP0003 NEW )  
 endif()
  
+add_executable(bench_simple_comparisons bench_simple_comparisons.cpp)
+
 find_package(CGAL QUIET COMPONENTS Core )
 
 if ( CGAL_FOUND )
@@ -33,8 +35,6 @@ if ( CGAL_FOUND )
     PROPERTY COMPILE_DEFINITIONS ONLY_TEST_COMPARISONS )
 
   get_property(DEF TARGET bench_comparisons PROPERTY COMPILE_DEFINITIONS)
-
-  add_executable(bench_simple_comparisons bench_simple_comparisons.cpp)
 
 else()
   
