@@ -33,7 +33,8 @@ if ( CGAL_FOUND )
     PROPERTY COMPILE_DEFINITIONS ONLY_TEST_COMPARISONS )
 
   get_property(DEF TARGET bench_comparisons PROPERTY COMPILE_DEFINITIONS)
-  message("DEF = ${DEF}")
+
+  add_executable(bench_simple_comparisons bench_simple_comparisons.cpp)
 
 else()
   

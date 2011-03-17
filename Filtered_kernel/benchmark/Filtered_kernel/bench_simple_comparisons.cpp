@@ -1,23 +1,29 @@
 #include <ctime>
 #include <cstdlib>
-#include <vector>
 #include <iostream>
 
+#define N 50000
+
 int main() {
-  const int N = 50000;
-  std::vector<double> v(N);
+  double v[N];
+  std::clock_t start = std::clock();
   for(int i = 0; i < N; ++i) {
     v[i] = (0. + std::rand()) / RAND_MAX;
   }
+  std::clock_t end = std::clock();
+  std::cout << "init time = " << (0. + end - start) / CLOCKS_PER_SEC << " seconds"
+            << " (" << (end - start) << " clock ticks)" << std::endl;
   int counter = 0;
-  std::clock_t start = std::clock();
+  start = std::clock();
   for(int i = 0; i < N; ++i) {
     for(int j = i + 1; j < N; ++j) {
       counter += (v[i] < v[j]);
     }
   }
-  std::clock_t end = std::clock();
+  end = std::clock();
   std::cout << "counter = " << counter << std::endl;
-  std::cout << "% = " << 2 * (0. + counter) / N / (N-1) << std::endl;
-  std::cout << "time = " << (0. + end - start) / CLOCKS_PER_SEC << " seconds\n";
+  std::cout << "% (should be 0.5) = " << 2 * (0. + counter) / N / (N-1) << std::endl;
+  std::cout << "time = " << (0. + end - start) / CLOCKS_PER_SEC << " seconds"
+            << " (" << (end - start) << " clock ticks)" << std::endl;
+  
 }
