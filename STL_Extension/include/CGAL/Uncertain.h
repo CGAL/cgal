@@ -69,7 +69,7 @@ namespace internal {
 
 // Exception type for the automatic conversion.
 class Uncertain_conversion_exception
-  : std::range_error
+  : public std::range_error
 {
 public:
   Uncertain_conversion_exception(const std::string &s)
