@@ -786,7 +786,7 @@ _Bezier_cache<NtTraits>::_compute_resultant
       found_row = false;
       for (k = i + 1; k < dim; k++)
       {
-        if (nt_traits.degree (mat[k][i]) <= 0)
+        if (nt_traits.degree (mat[k][i]) >= 0)
         {
           found_row = true;
           break;

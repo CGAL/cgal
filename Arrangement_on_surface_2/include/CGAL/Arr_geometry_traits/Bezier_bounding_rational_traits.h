@@ -1241,7 +1241,9 @@ private:
 
       const bool           s1_t1_are_opposite = 
           ((or_2a_s1 == CGAL::opposite (or_2a_t1)) &&
-           (or_2b_s1 == CGAL:: opposite (or_2b_t1)));
+           (or_2b_s1 == CGAL:: opposite (or_2b_t1))
+          ) || 
+          ( skew2a==skew2b && or_2a_s1!=or_2a_t1 );
 
       const Oriented_side  or_1a_s2 = f_oriented_side (skew1a, s2);
       const Oriented_side  or_1a_t2 = f_oriented_side (skew1a, t2);
@@ -1251,7 +1253,8 @@ private:
 
       const bool           s2_t2_are_opposite =
           ((or_1a_s2 == CGAL::opposite (or_1a_t2)) &&
-           (or_1b_s2 == CGAL::opposite (or_1b_t2)));
+           (or_1b_s2 == CGAL::opposite (or_1b_t2)))|| 
+          ( skew1a==skew1b && or_1a_s2!=or_1a_t2 );
 
       if (s1_t1_are_opposite && s2_t2_are_opposite) 
       {

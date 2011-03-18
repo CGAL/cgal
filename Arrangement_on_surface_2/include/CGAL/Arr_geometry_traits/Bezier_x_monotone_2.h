@@ -717,7 +717,7 @@ _Bezier_x_monotone_2<RatKer, AlgKer, NtTrt, BndTrt>::point_position
   Nt_traits nt_traits;
   
   //First check if the bezier is a vertical segment
-  if (nt_traits.degree(_curve.x_polynomial()) <= 0)
+  if (is_vertical())
   {
     // In this case both points must be exact.
     CGAL_assertion (p.is_exact() && _ps.is_exact() && _pt.is_exact());
@@ -1340,7 +1340,22 @@ void _Bezier_x_monotone_2<RatKer, AlgKer, NtTrt, BndTrt>::split
         (const Point_2& p,
          Self& c1, Self& c2) const
 {
-  CGAL_precondition (p.get_originator (_curve, _xid) != p.originators_end());
+  //this was added to handle the case where p is the endpoint of another Bezier curve
+  //and the curve is vertical
+  if ( p.is_rational() && is_vertical() ){
+    Nt_traits nt_traits;
+    Rat_point_2 rp=(Rat_point_2) p;
+    std::list<Algebraic> sols;
+
+    typename std::list<Algebraic>::iterator sol=sols.begin();
+    Integer rpyn=nt_traits.numerator(rp.y());
+    Polynomial poly_y=nt_traits.scale(_curve.y_polynomial(),nt_traits.denominator(rp.y())) - nt_traits.construct_polynomial(&rpyn,0);
+    nt_traits.compute_polynomial_roots (poly_y,0,1,std::back_inserter(sols));
+    CGAL_assertion(sols.size()==1);
+    p.add_originator (Originator(_curve, _xid,*sols.begin()) );
+  }
+  
+  CGAL_precondition (p.get_originator (_curve, _xid) != p.originators_end() || p.is_rational());
 
   // Duplicate the curve.
   c1 = c2 = *this;
@@ -1594,7 +1609,7 @@ bool _Bezier_x_monotone_2<RatKer, AlgKer, NtTrt, BndTrt>::_is_in_range
   Algebraic                                y0;
 
   _curve.get_t_at_x (rat_p.x(), std::back_inserter(t_vals));
-  CGAL_assertion (! t_vals.empty());
+  CGAL_assertion (! t_vals.empty() || is_vertical());
 
   for (t_iter = t_vals.begin(); t_iter != t_vals.end(); ++t_iter)
   {
