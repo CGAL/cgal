@@ -124,7 +124,7 @@ template <> class Real_embeddable_traits< double >
   public:
 
 // GCC is faster with std::fabs().
-#ifdef __GNUG__
+#if defined(__GNUG__) || defined(CGAL_MSVC_USE_STD_FABS)
     class Abs
       : public std::unary_function< Type, Type > {
       public:
