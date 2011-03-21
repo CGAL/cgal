@@ -317,7 +317,7 @@ public:
 
 }; // end class Poisson_refine_tets
 
-}; // end namespace Mesh_3
-}; // end namespace CGAL
+} // end namespace Mesh_3
+} // end namespace CGAL
 
 #endif // CGAL_MESH_3_POISSON_REFINE_CELLS_3_H
