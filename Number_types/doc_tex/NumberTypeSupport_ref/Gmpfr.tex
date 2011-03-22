@@ -353,8 +353,15 @@ the compared numbers is \ccc{NaN}, the \ccc{erange} flag is set.
 
 
 \ccImplementation
-\ccc{Gmpfr}s are reference counted. Since the \mpfr\ library can be compiled
-to be thread-safe, this interface is designed to keep the thread-safety.
+
+Since the \mpfr\ library can be compiled to be thread-safe, this interface
+is designed to keep the thread-safety.
+
+\ccc{Gmpfr}s are reference counted. This behavior may be changed, by
+setting the flag \verb+CGAL_GMPFR_NO_REFCOUNT+. A non-reference-counted
+class is slightly more efficient in case the implementation does not need
+to copy numbers (this is not usually the case). Nevertheless, setting this
+flag may be useful for debugging purposes.
 
 \ccSeeAlso
 \ccRefIdfierPage{RealEmbeddable}\\

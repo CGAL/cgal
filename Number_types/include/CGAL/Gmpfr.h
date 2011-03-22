@@ -14,7 +14,7 @@
 // $URL$
 // $Id$
 // 
-// Author: Luis Peñaranda <luis.penaranda@loria.fr>
+// Author: Luis Peñaranda <luis.penaranda@gmx.com>
 
 #ifndef CGAL_GMPFR_H
 #define CGAL_GMPFR_H

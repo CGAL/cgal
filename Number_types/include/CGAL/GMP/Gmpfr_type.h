@@ -14,7 +14,7 @@
 // $URL$
 // $Id$
 //
-// Author: Luis Peñaranda <luis.penaranda@loria.fr>
+// Author: Luis Peñaranda <luis.penaranda@gmx.com>
 
 #ifndef CGAL_GMPFR_TYPE_H
 #define CGAL_GMPFR_TYPE_H
@@ -37,6 +37,9 @@
         #define MPFR_RNDZ GMP_RNDZ
         #define MPFR_RNDU GMP_RNDU
         #define MPFR_RNDD GMP_RNDD
+        #define CGAL_GMPFR_GET_Z_2EXP mpfr_get_z_exp
+#else
+        #define CGAL_GMPFR_GET_Z_2EXP mpfr_get_z_2exp
 #endif
 
 namespace CGAL{
@@ -92,6 +95,13 @@ namespace internal{
         };
 } // namespace internal
 
+// The class Gmpfr is reference-counted using CGAL's handle mechanism. This
+// behavior may be changed, setting the flag CGAL_GMPFR_NO_REFCOUNT. A
+// non-reference-counted class is slightly more efficient in case the
+// implementation does not need to copy numbers (this is not usually the
+// case). Nevertheless, setting the flag may be useful for debugging
+// purposes.
+
 class Gmpfr:
 #ifdef CGAL_GMPFR_NO_REFCOUNT
         Gmpfr_rep,
@@ -109,7 +119,9 @@ class Gmpfr:
 {
         private:
 
+#ifndef CGAL_GMPFR_NO_REFCOUNT
         typedef Handle_for<Gmpfr_rep>   Base;
+#endif
 
         static Uncertain<mpfr_rnd_t> _gmp_rnd(std::float_round_style r){
                 switch(r){
@@ -152,6 +164,17 @@ class Gmpfr:
                 return ptr()->floating_point_number;
 #endif
         }
+
+        // The function dont_clear_on_destruction() is used to tell the
+        // object that the mpfr_t must not be cleared at object destruction
+        // (the destructor contrasts with that of the GMP types, where the
+        // structure is always cleared). The reason to do this is that,
+        // sometimes, the object is constructed from a mpfr_t structure and
+        // we know that the structure will be cleared somewhere else. The
+        // mpfr_t will not need to be cleared in case the object A is
+        // constructed from another Gmpfr object B, specifying the
+        // precision, and it happens that this precision is the same as the
+        // precision of A. In this case, a shallow copy is constructed.
 
         void dont_clear_on_destruction(){
 #ifdef CGAL_GMPFR_NO_REFCOUNT
@@ -978,7 +1001,7 @@ std::pair<Gmpz,long> Gmpfr::to_integer_exp()const{
     return std::make_pair(Gmpz(0),long(0));
 
   Gmpz z;
-  long e=mpfr_get_z_exp(z.mpz(),this->fr());
+  long e=CGAL_GMPFR_GET_Z_2EXP(z.mpz(),this->fr());
 
   long zeros = mpz_scan1(z.mpz(),0);
   CGAL_assertion(z==(z>>zeros)<<zeros);
