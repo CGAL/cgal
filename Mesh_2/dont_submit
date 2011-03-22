@@ -1,7 +1,7 @@
 examples/Mesh_2/makefile
 GNUmakefile
 README
-bench
+benchmark
 stylesheet.css
 utils
 implementation.tex

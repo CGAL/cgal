@@ -2309,8 +2309,8 @@ Matrix_search/doc_tex/Matrix_search/matrix.png -text
 Matrix_search/test/Matrix_search/rectangular_p_center_2_random1_test.cmd eol=lf
 Matrix_search/test/Matrix_search/rectangular_p_center_2_random2_test.cmd eol=lf
 Matrix_search/test/Matrix_search/sorted_matrix_search_test.cmd eol=lf
-Mesh_2/bench/data/square-deforme.poly -text svneol=unset#application/octet-stream
-Mesh_2/bench/data/square.poly -text svneol=unset#application/octet-stream
+Mesh_2/benchmark/data/square-deforme.poly -text svneol=unset#application/octet-stream
+Mesh_2/benchmark/data/square.poly -text svneol=unset#application/octet-stream
 Mesh_2/demo/Mesh_2/data/clusters.poly -text svneol=unset#application/octet-stream
 Mesh_2/demo/Mesh_2/data/fish.poly -text svneol=unset#application/octet-stream
 Mesh_2/demo/Mesh_2/data/trivial.poly -text svneol=unset#application/octet-stream
