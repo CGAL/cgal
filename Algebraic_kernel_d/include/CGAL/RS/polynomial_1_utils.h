@@ -14,7 +14,7 @@
 // $URL$
 // $Id$
 //
-// Author: Luis Peñaranda <luis.penaranda@loria.fr>
+// Author: Luis PeÃ±aranda <luis.penaranda@gmx.com>
 
 #ifndef CGAL_RS_POLYNOMIAL_1_UTILS_H
 #define CGAL_RS_POLYNOMIAL_1_UTILS_H
@@ -401,5 +401,3 @@ public std::unary_function<RS_polynomial_1,RS_polynomial_1*>{
 } // namespace CGAL
 
 #endif  // CGAL_RS_POLYNOMIAL_1_UTILS_H
-
-// vim: tabstop=4: softtabstop=4: smarttab: shiftwidth=4: expandtab

@@ -14,7 +14,7 @@
 // $URL$
 // $Id$
 //
-// Author: Luis Peñaranda <luis.penaranda@loria.fr>
+// Author: Luis PeÃ±aranda <luis.penaranda@gmx.com>
 
 #ifndef CGAL_RS_POLYNOMIAL_1_MEMBER_H
 #define CGAL_RS_POLYNOMIAL_1_MEMBER_H
@@ -275,5 +275,3 @@ RS_polynomial_1::times_monomial(mpz_srcptr c,int p)const{
 } // namespace CGAL
 
 #endif  // CGAL_RS_POLYNOMIAL_1_MEMBER_H
-
-// vim: tabstop=8: softtabstop=8: smarttab: shiftwidth=8: expandtab

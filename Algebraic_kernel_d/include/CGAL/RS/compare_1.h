@@ -14,7 +14,7 @@
 // $URL$
 // $Id$
 //
-// Author: Luis Peñaranda <luis.penaranda@loria.fr>
+// Author: Luis PeÃ±aranda <luis.penaranda@gmx.com>
 
 #ifndef CGAL_RS_COMPARE_1_H
 #define CGAL_RS_COMPARE_1_H

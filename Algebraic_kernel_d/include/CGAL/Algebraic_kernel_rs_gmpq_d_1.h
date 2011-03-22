@@ -14,7 +14,7 @@
 // $URL$
 // $Id$
 //
-// Author: Luis Peñaranda <luis.penaranda@loria.fr>
+// Author: Luis Peñaranda <luis.penaranda@gmx.com>
 
 #ifndef CGAL_ALGEBRAIC_KERNEL_RS_GMPQ_1
 #define CGAL_ALGEBRAIC_KERNEL_RS_GMPQ_1

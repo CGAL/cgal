@@ -14,7 +14,7 @@
 // $URL$
 // $Id$
 //
-// Author: Luis Peñaranda <luis.penaranda@loria.fr>
+// Author: Luis PeÃ±aranda <luis.penaranda@gmx.com>
 
 #ifndef CGAL_RS_ALGEBRAIC_1_CONSTRUCTORS_H
 #define CGAL_RS_ALGEBRAIC_1_CONSTRUCTORS_H
@@ -233,5 +233,3 @@ Algebraic_1::Algebraic_1(mpfi_srcptr i,const RS_polynomial_1 &p,int n,int m,
 } // namespace CGAL
 
 #endif  // CGAL_RS_ALGEBRAIC_1_CONSTRUCTORS_H
-
-// vim: tabstop=8: softtabstop=8: smarttab: shiftwidth=8: expandtab

@@ -14,7 +14,7 @@
 // $URL$
 // $Id$
 //
-// Author: Luis Peñaranda <luis.penaranda@loria.fr>
+// Author: Luis PeÃ±aranda <luis.penaranda@gmx.com>
 
 #ifndef CGAL_RS_ALGEBRAIC_1_COMPARISONS_H
 #define CGAL_RS_ALGEBRAIC_1_COMPARISONS_H
@@ -50,5 +50,3 @@ Algebraic_1 max BOOST_PREVENT_MACRO_SUBSTITUTION (const Algebraic_1 &a,const Alg
 } // namespace CGAL
 
 #endif  // CGAL_RS_ALGEBRAIC_1_COMPARISONS_H
-
-// vim: tabstop=8: softtabstop=8: smarttab: shiftwidth=8: expandtab

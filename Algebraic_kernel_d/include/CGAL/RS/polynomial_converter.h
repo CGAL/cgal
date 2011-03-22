@@ -14,7 +14,7 @@
 // $URL$
 // $Id$
 //
-// Author: Luis Peñaranda <luis.penaranda@loria.fr>
+// Author: Luis PeÃ±aranda <luis.penaranda@gmx.com>
 
 #ifndef CGAL_RS_POLYNOMIAL_CONVERTER
 #define CGAL_RS_POLYNOMIAL_CONVERTER
@@ -174,5 +174,3 @@ public std::unary_function<RS_polynomial_1,Polynomial<Gmpq> >{
 } // namespace CGAL
 
 #endif  // CGAL_RS_POLYNOMIAL_CONVERTER
-
-// vim: tabstop=8: softtabstop=8: smarttab: shiftwidth=8: expandtab

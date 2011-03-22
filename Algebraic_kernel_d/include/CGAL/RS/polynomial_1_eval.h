@@ -14,7 +14,7 @@
 // $URL$
 // $Id$
 //
-// Author: Luis Peñaranda <luis.penaranda@loria.fr>
+// Author: Luis Peñaranda <luis.penaranda@gmx.com>
 
 #ifndef CGAL_RS_POLYNOMIAL_1_EVAL_H
 #define CGAL_RS_POLYNOMIAL_1_EVAL_H

@@ -14,7 +14,7 @@
 // $URL$
 // $Id$
 //
-// Author: Luis Peñaranda <luis.penaranda@loria.fr>
+// Author: Luis PeÃ±aranda <luis.penaranda@gmx.com>
 //
 // (the first version of this file was written by Elias Tsigaridas)
 
@@ -359,5 +359,3 @@ struct Convert_to_Gmpz
 #undef CGAL_BOOST_SPIRIT
 
 #endif  // CGAL_RS_PARSER_1_H
-
-// vim: tabstop=8: softtabstop=8: smarttab: shiftwidth=8: expandtab

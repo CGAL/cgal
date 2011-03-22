@@ -14,7 +14,7 @@
 // $URL$
 // $Id$
 //
-// Author: Luis Peñaranda <luis.penaranda@loria.fr>
+// Author: Luis PeÃ±aranda <luis.penaranda@gmx.com>
 
 #ifndef CGAL_RS__INVERSE_H
 #define CGAL_RS__INVERSE_H
@@ -73,5 +73,3 @@ class Inverse{
 } // namespace CGAL
 
 #endif  // CGAL_RS__INVERSE_H
-
-// vim: tabstop=4: softtabstop=4: smarttab: shiftwidth=4: expandtab

@@ -14,7 +14,7 @@
 // $URL$
 // $Id$
 //
-// Author: Luis Peñaranda <luis.penaranda@loria.fr>
+// Author: Luis PeÃ±aranda <luis.penaranda@gmx.com>
 
 #ifndef CGAL_RS__PP_H
 #define CGAL_RS__PP_H
@@ -133,5 +133,3 @@ class Prime_polynomial:public Prime,public Page_alloc{
 } // namespace CGAL
 
 #endif  // CGAL_RS__PP_H
-
-// vim: tabstop=4: softtabstop=4: smarttab: shiftwidth=4: expandtab

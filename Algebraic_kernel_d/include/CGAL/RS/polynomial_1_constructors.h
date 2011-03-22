@@ -14,7 +14,7 @@
 // $URL$
 // $Id$
 //
-// Author: Luis Peñaranda <luis.penaranda@loria.fr>
+// Author: Luis PeÃ±aranda <luis.penaranda@gmx.com>
 
 #ifndef CGAL_RS_POLYNOMIAL_1_CONSTRUCTORS_H
 #define CGAL_RS_POLYNOMIAL_1_CONSTRUCTORS_H
@@ -154,5 +154,3 @@ RS_polynomial_1::~RS_polynomial_1(){
 } // namespace CGAL
 
 #endif  // CGAL_RS_POLYNOMIAL_1_CONSTRUCTORS_H
-
-// vim: tabstop=8: softtabstop=8: smarttab: shiftwidth=8: expandtab
