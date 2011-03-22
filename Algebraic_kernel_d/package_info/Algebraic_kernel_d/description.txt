@@ -1,0 +1,4 @@
+The package introduces concepts for univariate and bivariate algebraic
+kernel, as well as models for these concepts which support various
+coefficient types. Moreover, the package provides a special univariate
+algebraic kernel based on RS.

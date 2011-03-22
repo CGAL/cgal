@@ -1,5 +1,0 @@
-Univariate algebraic kernel based on RS,
-http://www-salsa.lip6.fr/Salsa/Software.html.
-
-Experimental versions of RS can also be found at www.loria.fr/~penarand/fgbrs.
-
