@@ -1,4 +1,5 @@
 // Copyright (c) 2009 INRIA Sophia-Antipolis (France).
+// Copyright (c) 2011 GeometryFactory Sarl (France).
 // All rights reserved.
 //
 // This file is part of CGAL (www.cgal.org); you may redistribute it under
@@ -41,6 +42,7 @@
 #include <boost/mpl/contains.hpp>
 #include <CGAL/tuple.h>
 #include <boost/format.hpp>
+#include <boost/variant.hpp>
 
 namespace CGAL {
 
@@ -568,29 +570,19 @@ Construct_initial_points::operator()(OutputIterator pts,
   while ( i > 0 )
   {
     const Ray_3 ray_shot = ray(center, vector(CGAL::ORIGIN,*random_point));
-    
-    AABB_intersection intersection = r_domain_.tree_.any_intersection(ray_shot);
-    if ( intersection )
-    {
-      // Get primitive
-      AABB_primitive_id primitive_id = (*intersection).second;
-      
-      const Point_3* p_pt = object_cast<Point_3>(&(*intersection).first);
-      if ( NULL != p_pt )
-      {
-        *pts++ = std::make_pair(*p_pt,
-                                r_domain_.index_from_surface_patch_index(
-                                  r_domain_.make_surface_index(primitive_id)));
+    if(r_domain_.do_intersect_surface_object()(ray_shot)) {
+      Intersection intersection = r_domain_.construct_intersection_object()(ray_shot);
+      *pts++ = std::make_pair(CGAL::cpp0x::get<0>(intersection),
+                              CGAL::cpp0x::get<1>(intersection));
         
-        --i;
+      --i;
         
 #ifdef CGAL_MESH_3_VERBOSE
-        std::cerr << boost::format("\r             \r"
-                                   "%1%/%2% initial point(s) found...")
+      std::cerr << boost::format("\r             \r"
+                                 "%1%/%2% initial point(s) found...")
         % (n - i)
         % n;
 #endif
-      }
     }
 
     ++random_point;
