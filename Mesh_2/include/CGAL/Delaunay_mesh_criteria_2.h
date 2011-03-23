@@ -28,10 +28,17 @@ template <class Tr>
 class Delaunay_mesh_criteria_2
 {
   double B;
+
+protected:
+  typedef typename Tr::Geom_traits Geom_traits;
+  const Geom_traits& traits;
+
 public:
   typedef typename Tr::Face_handle Face_handle;
 
-  Delaunay_mesh_criteria_2(const double bound = 0.125) : B(bound) {}
+  Delaunay_mesh_criteria_2(const double bound = 0.125,
+                           const Geom_traits& traits = Geom_traits())
+    : B(bound), traits(traits) {}
 
   typedef double Quality;
 
@@ -45,10 +52,12 @@ public:
   {
   protected:
     const double B;
+    const Geom_traits& traits;
   public:
     typedef typename Tr::Point Point_2;
       
-    Is_bad(const double bound) : B(bound) {}
+    Is_bad(const double bound, const Geom_traits& traits)
+      : B(bound), traits(traits) {}
       
     Mesh_2::Face_badness operator()(const Quality q) const
     {
@@ -70,8 +79,6 @@ public:
       typedef typename Geom_traits::Construct_triangle_2
 	Construct_triangle_2;
       typedef typename Geom_traits::FT FT;
-
-      Geom_traits traits;
 
       Compute_area_2 area_2 = 
         traits.compute_area_2_object();
@@ -105,7 +112,7 @@ public:
   };
 
   Is_bad is_bad_object() const
-    { return Is_bad(B); }
+  { return Is_bad(B, traits); }
 };
 
 } // end namespace CGAL

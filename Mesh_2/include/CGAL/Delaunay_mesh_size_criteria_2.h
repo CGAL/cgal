@@ -32,14 +32,16 @@ class Delaunay_mesh_size_criteria_2 :
     public virtual Delaunay_mesh_criteria_2<CDT>
 {
 protected:
+  typedef typename CDT::Geom_traits Geom_traits;
   double sizebound;
 
 public:
   typedef Delaunay_mesh_criteria_2<CDT> Base;
 
   Delaunay_mesh_size_criteria_2(const double aspect_bound = 0.125, 
-                                const double size_bound = 0)
-    : Base(aspect_bound), sizebound(size_bound) {}
+                                const double size_bound = 0,
+                                const Geom_traits& traits = Geom_traits())
+    : Base(aspect_bound, traits), sizebound(size_bound) {}
 
   inline
   double size_bound() const { return sizebound; }
@@ -89,8 +91,10 @@ public:
     typedef typename Base::Is_bad::Point_2 Point_2;
 
     Is_bad(const double aspect_bound,
-	   const double size_bound)
-      : Base::Is_bad(aspect_bound), squared_size_bound(size_bound * size_bound) {}
+	   const double size_bound,
+           const Geom_traits& traits)
+      : Base::Is_bad(aspect_bound, traits),
+        squared_size_bound(size_bound * size_bound) {}
 
     Mesh_2::Face_badness operator()(const Quality q) const
     {
@@ -181,7 +185,8 @@ public:
   };
 
   Is_bad is_bad_object() const
-  { return Is_bad(this->bound(), size_bound()); }
+  { return Is_bad(this->bound(), size_bound(), 
+                  this->traits /* from the bad class */); }
 };
 
 } // end namespace CGAL
