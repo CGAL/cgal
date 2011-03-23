@@ -126,7 +126,7 @@ public:
 }; // end class Projected_side_of_oriented_circle_with_normal_3
 
 template <class Traits>
-class Projected_square_distance_to_line_with_normal_3
+class Projected_squared_distance_with_normal_3
 {
   // private members
   const typename Traits::Vector_3 normal;
@@ -139,17 +139,22 @@ class Projected_square_distance_to_line_with_normal_3
   typedef typename Traits::FT FT;
 
 public:
-  Projected_square_distance_to_line_with_normal_3(const Vector_3& normal_)
+  Projected_squared_distance_with_normal_3(const Vector_3& normal_)
     : normal(normal_)
   {
-    CGAL_PROFILER("Construct Projected_square_distance_to_line_with_normal_3.")
-    CGAL_TIME_PROFILER("Construct Projected_square_distance_to_line_with_normal_3")
+    CGAL_PROFILER("Construct Projected_squared_distance_with_normal_3.")
+    CGAL_TIME_PROFILER("Construct Projected_squared_distance_with_normal_3")
+  }
+
+  FT operator()(const Point& p, const Point& q)
+  {
+    return squared_distance(p, q);
   }
 
   FT operator()(const Line& line, const Point& p)
   {
-    CGAL_PROFILER("Projected_square_distance_to_line_with_normal_3::operator()")
-    CGAL_TIME_PROFILER("Projected_square_distance_to_line_with_normal_3::operator()")
+    CGAL_PROFILER("Projected_squared_distance_with_normal_3::operator()")
+    CGAL_TIME_PROFILER("Projected_squared_distance_with_normal_3::operator()")
     const Vector_3& vl = line.to_vector();
     const Point& pl = line.point();
     const Vector_3 v = cross_product(normal,
@@ -168,7 +173,7 @@ public:
       return (det * det) / ( v * v );
     }
   }
-}; // end class Projected_square_distance_to_line_with_normal_3
+}; // end class Projected_squared_distance_with_normal_3
 
 template <class Traits>
 class Projected_intersect_3
@@ -292,6 +297,7 @@ public:
   typedef typename K::FT          FT;
   typedef typename K::Point_3     Point_2;
   typedef typename K::Segment_3   Segment_2;
+  typedef typename K::Vector_3    Vector_2;
   typedef typename K::Triangle_3  Triangle_2;
   typedef typename K::Line_3      Line_2;
 
@@ -302,6 +308,8 @@ public:
   typedef typename K::Compare_xy_3                           Compare_x_2;
   typedef typename K::Compare_z_3                            Compare_y_2;
 
+  typedef typename K::Angle_3                                Angle_2;
+
   typedef TriangulationProjectionTraitsCartesianFunctors::
     Projected_orientation_with_normal_3<Self>                Orientation_2;
 
@@ -309,15 +317,23 @@ public:
     Projected_side_of_oriented_circle_with_normal_3<Self>    Side_of_oriented_circle_2;
 
   typedef TriangulationProjectionTraitsCartesianFunctors::
-  Projected_square_distance_to_line_with_normal_3<Self>      Compute_squared_distance_2;
+  Projected_squared_distance_with_normal_3<Self>             Compute_squared_distance_2;
 
   typedef TriangulationProjectionTraitsCartesianFunctors::
   Projected_intersect_3<Self>                                Intersect_2;
 
   typedef typename K::Construct_segment_3  Construct_segment_2;
+  typedef typename K::Construct_vector_3   Construct_vector_2;
   typedef typename K::Construct_line_3     Construct_line_2;
   typedef typename K::Construct_triangle_3 Construct_triangle_2;
-  
+
+  typedef typename K::Construct_scaled_vector_3     Construct_scaled_vector_2;
+  typedef typename K::Construct_translated_point_3  Construct_translated_point_2;
+  typedef typename K::Construct_midpoint_3          Construct_midpoint_2;
+  typedef typename K::Construct_circumcenter_3      Construct_circumcenter_2;
+
+  typedef typename K::Compute_area_3                Compute_area_2;
+
   Less_x_2
   less_x_2_object() const
     { return Less_x_2();}
@@ -362,14 +378,36 @@ public:
     return Intersect_2(this->normal());
   }
 
+  Angle_2  angle_2_object() const
+    {return Angle_2();}
+
   Construct_segment_2  construct_segment_2_object() const
     {return Construct_segment_2();}
   
+  Construct_vector_2  construct_vector_2_object() const
+    {return Construct_vector_2();}
+
+  Construct_scaled_vector_2  construct_scaled_vector_2_object() const
+    {return Construct_scaled_vector_2();}
+
+  Construct_midpoint_2  construct_midpoint_2_object() const
+    {return Construct_midpoint_2();}
+
+  Construct_circumcenter_2  construct_circumcenter_2_object() const
+    {return Construct_circumcenter_2();}
+
+  Construct_translated_point_2  construct_translated_point_2_object() const
+    {return Construct_translated_point_2();}
+
   Construct_line_2  construct_line_2_object() const
     {return Construct_line_2();}
   
   Construct_triangle_2  construct_triangle_2_object() const
     {return Construct_triangle_2();}
+
+  Compute_area_2 compute_area_2_object() const
+  {return Compute_area_2();}
+    
 
 
   // Special functor, not in the Kernel concept
