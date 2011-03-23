@@ -67,7 +67,6 @@ public:
       if ( side_of_bounded_sphere(p,q,r,s,point) == ON_BOUNDED_SIDE )
         return point;
     }
-    std::cerr << "switch to exact" << std::endl;
     // Switch to exact
     To_exact to_exact;
     Back_from_exact back_from_exact;
