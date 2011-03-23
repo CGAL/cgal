@@ -29,7 +29,11 @@
 namespace CGAL {
 
 template <typename Polyhedron, typename K>
-class Triangle_accessor_3 {};
+class Triangle_accessor_3 {
+  // This class template should never be instantiated, but only its
+  // specializations.
+  typedef typename Polyhedron::Error_bad_match Error_bad_match;
+};
 
 
 template < class K,class Items,
