@@ -53,7 +53,7 @@ public:
   typedef typename Geom_traits::FT                          Numb_type;  // field number type ...
                         
   
-  typedef Triangulation_2<Gt,Tds>                           Triangulation;
+  typedef Delaunay_triangulation_2<Gt,Tds>                  Triangulation;
   typedef typename Triangulation::size_type                 size_type;
   typedef typename Triangulation::Locate_type               Locate_type;
   typedef typename Triangulation::Face_handle               Face_handle;
