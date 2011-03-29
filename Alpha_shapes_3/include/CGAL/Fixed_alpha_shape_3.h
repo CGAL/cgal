@@ -1116,8 +1116,4 @@ std::ostream& operator<<(std::ostream& os,  const Fixed_alpha_shape_3<Dt>& A)
 
 } //namespace CGAL
 
-#ifdef CGAL_USE_GEOMVIEW
-#include <CGAL/IO/alpha_shape_geomview_ostream_3.h>
-#endif
-
 #endif //CGAL_FIXED_ALPHA_SHAPE_3_H

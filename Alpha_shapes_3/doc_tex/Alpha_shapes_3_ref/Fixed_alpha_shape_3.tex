@@ -171,18 +171,11 @@ is an internal format.
 \ccInclude{CGAL/IO/io.h}
 
 \ccFunction{ostream& operator<<(ostream& os,
-                  const Alpha_shape_3<Dt>& A);}
-{Inserts the alpha shape \ccVar\ for the alpha value of \ccc{A} into the stream \ccc{os}.
+                  const Fixed_alpha_shape_3<Dt>& A);}
+{Inserts the alpha shape \ccVar\ into the stream \ccc{os}.
 \ccRequire The insert operator must be defined for \ccc{GT::Point}.}
 
-\ccInclude{CGAL/IO/Geomview_stream.h}
 
-\ccInclude{CGAL/IO/alpha_shape_geomview_ostream_3.h}
-
-\ccFunction{Geomview_stream& operator<<(Geomview_stream& W,
-                         	const Alpha_shape_3<Dt>& A);}
-{Inserts the alpha shape \ccVar\ into the Geomview stream \ccc{W}.
-\ccRequire The insert operator must be defined for \ccc{GT::Point} and \ccc{GT::Triangle}.}
 
 \end{ccRefClass}
 
