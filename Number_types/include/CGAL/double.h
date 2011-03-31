@@ -31,6 +31,9 @@
 #include <math.h> // for nextafter
 #include <limits>
 
+#ifdef CGAL_USE_SSE2_FABS
+#include <emmintrin.h>
+#endif
 
 #ifdef _MSC_VER
 #include <cfloat>
@@ -119,17 +122,40 @@ template <> class Algebraic_structure_traits< double >
 
 };
 
+
+  
+#ifdef CGAL_USE_SSE2_FABS   
+inline double sse2fabs(double a)
+{
+  static _CRT_ALIGN(16) const union{
+    __int64 i[2];
+    __m128d m;
+  } absMask = {0x7fffffffffffffff, 0x7fffffffffffffff};
+	  
+  __m128d temp = _mm_set1_pd(a);
+  
+  temp = _mm_and_pd(temp, absMask.m);
+  _mm_store_sd(&a, temp);
+  return a;
+}
+#endif
+
 template <> class Real_embeddable_traits< double >
   : public INTERN_RET::Real_embeddable_traits_base< double , CGAL::Tag_true> {
   public:
 
+
 // GCC is faster with std::fabs().
-#if defined(__GNUG__) || defined(CGAL_MSVC_USE_STD_FABS)
+#if defined(__GNUG__) || defined(CGAL_MSVC_USE_STD_FABS) || defined(CGAL_USE_SSE2_FABS)
     class Abs
       : public std::unary_function< Type, Type > {
       public:
         Type operator()( const Type& x ) const {
+#ifdef CGAL_USE_SSE2_FABS
+          return sse2fabs(x);
+#else         
           return std::fabs( x );
+#endif
         }
     };
 #endif
