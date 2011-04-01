@@ -32,7 +32,7 @@
 #include <limits>
 
 #ifdef CGAL_USE_SSE2_FABS
-#include <emmintrin.h>
+#include <CGAL/sse2.h>
 #endif
 
 #ifdef _MSC_VER
@@ -127,7 +127,7 @@ template <> class Algebraic_structure_traits< double >
 #ifdef CGAL_USE_SSE2_FABS   
 inline double sse2fabs(double a)
 {
-  static _CRT_ALIGN(16) const union{
+  static CGAL_ALIGN_16 const union{
     __int64 i[2];
     __m128d m;
   } absMask = {0x7fffffffffffffff, 0x7fffffffffffffff};
@@ -138,6 +138,7 @@ inline double sse2fabs(double a)
   _mm_store_sd(&a, temp);
   return a;
 }
+
 #endif
 
 template <> class Real_embeddable_traits< double >
