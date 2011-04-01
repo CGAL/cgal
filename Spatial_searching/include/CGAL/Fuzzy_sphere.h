@@ -36,7 +36,6 @@ namespace CGAL {
     Point_d c;
     FT r;
     FT eps;
-    unsigned int dim;
 
     public:
 
@@ -47,7 +46,7 @@ namespace CGAL {
 
 	// constructor
 	Fuzzy_sphere(const Point_d& center, FT radius, FT epsilon=FT(0)) : 
-	c(center), r(radius), eps(epsilon), dim(c.dimension()) 
+          c(center), r(radius), eps(epsilon)
 	{ 	// avoid problems if eps > r
 		if (eps>r) eps=r; 
 	} 
@@ -60,10 +59,10 @@ namespace CGAL {
 		FT distance=FT(0);
 		typename SearchTraits::Construct_cartesian_const_iterator_d construct_it;
                 typename SearchTraits::Cartesian_const_iterator_d cit = construct_it(c),
-		                                                  pit = construct_it(p);
-		  
-		for (unsigned int i = 0; 
-		     (i < dim) && (distance <= squared_radius); ++i, ++cit, ++pit) {
+		                                                  pit = construct_it(p),
+                                                                  end = construct_it(c, 0);
+		for (; cit != end
+                       && (distance <= squared_radius); ++cit, ++pit) {
 		  distance += 
 			((*cit)-(*pit))*((*cit)-(*pit));
 		}
@@ -79,9 +78,9 @@ namespace CGAL {
 		FT distance = FT(0);
 		FT squared_radius = (r-eps)*(r-eps);
 		typename SearchTraits::Construct_cartesian_const_iterator_d construct_it;
-                typename SearchTraits::Cartesian_const_iterator_d cit = construct_it(c);
-
-		for (unsigned int i = 0; (i < dim) && (distance < squared_radius); ++i, ++cit) {
+                typename SearchTraits::Cartesian_const_iterator_d cit = construct_it(c),
+                                                                  end = construct_it(c, 0);
+		for (int i = 0; cit != end && (distance < squared_radius); ++cit, ++i) {
 			if ((*cit) < rectangle.min_coord(i))
 				distance += 
 				(rectangle.min_coord(i)-(*cit))*(rectangle.min_coord(i)-(*cit));
@@ -102,9 +101,9 @@ namespace CGAL {
 	FT distance=FT(0);
 	FT squared_radius = (r+eps)*(r+eps);	
 	typename SearchTraits::Construct_cartesian_const_iterator_d construct_it;
-	typename SearchTraits::Cartesian_const_iterator_d cit = construct_it(c);
-	
-	for (unsigned int i = 0; (i < dim) && (distance < squared_radius) ; ++i, ++cit) {
+	typename SearchTraits::Cartesian_const_iterator_d cit = construct_it(c),
+                                                          end = construct_it(c, 0);
+        for (int i = 0; cit != end && (distance < squared_radius) ; ++cit) {
 		if ((*cit) <= (rectangle.min_coord(i)+rectangle.max_coord(i))/FT(2))
 			distance += 
 			(rectangle.max_coord(i)-(*cit))*(rectangle.max_coord(i)-(*cit));
