@@ -98,6 +98,12 @@ public:
           double artz = CGAL::abs(rtz);
           double astz = CGAL::abs(stz);
 
+#ifdef CGAL_USE_SSE2_MAX
+          CGAL::Max<double> mmax; 
+          maxx = mmax(maxx, aqtx, artx, astx);
+          maxy = mmax(maxy, aqty, arty, asty);
+          maxz = mmax(maxz, aqtz, artz, astz);
+#else
           if (maxx < aqtx) maxx = aqtx;
           if (maxx < artx) maxx = artx;
           if (maxx < astx) maxx = astx;
@@ -109,7 +115,21 @@ public:
           if (maxz < aqtz) maxz = aqtz;
           if (maxz < artz) maxz = artz;
           if (maxz < astz) maxz = astz;
+#endif
 
+          double eps = 1.2466136531027298e-13 * maxx * maxy * maxz;
+  
+#ifdef CGAL_USE_SSE2_MAX
+          /*
+          CGAL::Min<double> mmin; 
+          double tmp = mmin(maxx, maxy, maxz);
+          maxz = mmax(maxx, maxy, maxz);
+          maxx = tmp;
+          */
+          sse2minmax(maxx,maxy,maxz);
+          // maxy can contain ANY element
+          
+#else
           // Sort maxx < maxy < maxz.
           if (maxx > maxz)
               std::swap(maxx, maxz);
@@ -117,7 +137,7 @@ public:
               std::swap(maxy, maxz);
           else if (maxy < maxx)
               std::swap(maxx, maxy);
-
+#endif
           double det = CGAL::determinant(ptx,pty,ptz,pt2,
                                          rtx,rty,rtz,rt2,
                                          qtx,qty,qtz,qt2,
@@ -130,8 +150,7 @@ public:
           }
           // Protect against overflow in the computation of det.
           else if (maxz < 1e61) /* sqrt^5(max_double/4 [hadamard]) */ {
-            double eps = 1.2466136531027298e-13 * maxx * maxy * maxz
-                       * (maxz * maxz);
+            eps *= (maxz * maxz);
             if (det > eps)  return ON_POSITIVE_SIDE;
             if (det < -eps) return ON_NEGATIVE_SIDE;
           }

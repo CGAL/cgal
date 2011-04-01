@@ -28,6 +28,10 @@
 
 namespace CGAL { namespace internal { namespace Static_filters_predicates {
 
+
+#include <iostream>
+
+
 template < typename K_base >
 class Orientation_3
   : public K_base::Orientation_3
@@ -97,6 +101,7 @@ public:
 
           // CGAL::abs uses fabs on platforms where it is faster than (a<0)?-a:a
           // Then semi-static filter.
+
           double maxx = CGAL::abs(pqx);
           double maxy = CGAL::abs(pqy);
           double maxz = CGAL::abs(pqz);
@@ -109,18 +114,37 @@ public:
 
           double aprz = CGAL::abs(prz);
           double apsz = CGAL::abs(psz);
+#ifdef CGAL_USE_SSE2_MAX
+          CGAL::Max<double> mmax; 
 
+          maxx = mmax(maxx, aprx, apsx);
+          maxy = mmax(maxy, apry, apsy);
+          maxz = mmax(maxz, aprz, apsz);
+#else
           if (maxx < aprx) maxx = aprx;
           if (maxx < apsx) maxx = apsx;
           if (maxy < apry) maxy = apry;
           if (maxy < apsy) maxy = apsy;
           if (maxz < aprz) maxz = aprz;
           if (maxz < apsz) maxz = apsz;
-
+#endif
           double det = CGAL::determinant(pqx, pqy, pqz,
                                          prx, pry, prz,
                                          psx, psy, psz);
 
+          double eps = 5.1107127829973299e-15 * maxx * maxy * maxz;
+          
+#ifdef CGAL_USE_SSE2_MAX
+#if 0
+          CGAL::Min<double> mmin; 
+          double tmp = mmin(maxx, maxy, maxz);
+          maxz = mmax(maxx, maxy, maxz);
+          maxx = tmp;
+#else 
+          sse2minmax(maxx,maxy,maxz);
+          // maxy can contain ANY element
+#endif
+#else
           // Sort maxx < maxy < maxz.
           if (maxx > maxz)
               std::swap(maxx, maxz);
@@ -128,7 +152,7 @@ public:
               std::swap(maxy, maxz);
           else if (maxy < maxx)
               std::swap(maxx, maxy);
-
+#endif
           // Protect against underflow in the computation of eps.
           if (maxx < 1e-97) /* cbrt(min_double/eps) */ {
             if (maxx == 0)
@@ -136,11 +160,10 @@ public:
           }
           // Protect against overflow in the computation of det.
           else if (maxz < 1e102) /* cbrt(max_double [hadamard]/4) */ {
-            double eps = 5.1107127829973299e-15 * maxx * maxy * maxz;
+
             if (det > eps)  return POSITIVE;
             if (det < -eps) return NEGATIVE;
           }
-
 	  CGAL_BRANCH_PROFILER_BRANCH_2(tmp);
       }
 
