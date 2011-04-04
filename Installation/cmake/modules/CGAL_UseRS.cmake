@@ -37,6 +37,23 @@ if( NOT CGAL_RS_SETUP )
       add_definitions( ${RS_DEFINITIONS} "-DCGAL_USE_RS3" )
       link_libraries( ${RS3_LIBRARIES} )
 
+      # extract RS3 version from the file rsversion.h (based on Fernando
+      # Cacciola's code for FindBoost.cmake)
+      if(EXISTS "${RS3_INCLUDE_DIR}/rsversion.h")
+        FILE(READ "${RS3_INCLUDE_DIR}/rsversion.h" _rsversion_h_CONTENTS)
+        STRING(REGEX REPLACE ".*#define[ \t]+rs_major[ \t]+([0-9]+).*"
+                             "\\1" RS3_MAJOR "${_rsversion_h_CONTENTS}")
+        STRING(REGEX REPLACE ".*#define[ \t]+rs_middle[ \t]+([0-9]+).*"
+                             "\\1" RS3_MIDDLE "${_rsversion_h_CONTENTS}")
+        STRING(REGEX REPLACE ".*#define[ \t]+rs_minor[ \t]+([0-9]+).*"
+                             "\\1" RS3_MINOR "${_rsversion_h_CONTENTS}")
+        SET(RS3_LIB_VERSION "${RS3_MAJOR}.${RS3_MIDDLE}.${RS3_MINOR}")
+      else(EXISTS "${RS3_INCLUDE_DIR}/rsversion.h")
+        SET(RS3_LIB_VERSION "unknown")
+      endif(EXISTS "${RS3_INCLUDE_DIR}/rsversion.h")
+
+      message( STATUS "RS version is ${RS3_LIB_VERSION}" )
+
     endif( RS3_FOUND )
 
   endif( RS_FOUND )

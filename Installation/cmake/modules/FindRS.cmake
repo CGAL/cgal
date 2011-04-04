@@ -36,8 +36,8 @@ if( MPFI_FOUND )
 
   if(_IS_GMP_VERSION_TO_LOW)
 
-  message( STATUS
-    "RS needs GMP>=4.2. Your GMP version is ${CGAL_GMP_VERSION}." )
+    message( STATUS
+      "RS needs GMP>=4.2. Your GMP version is ${CGAL_GMP_VERSION}." )
 
   else(_IS_GMP_VERSION_TO_LOW)
 
