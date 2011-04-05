@@ -719,8 +719,10 @@ _Bezier_x_monotone_2<RatKer, AlgKer, NtTrt, BndTrt>::point_position
   //First check if the bezier is a vertical segment
   if (is_vertical())
   {
-    // In this case both points must be exact.
-    CGAL_assertion (p.is_exact() && _ps.is_exact() && _pt.is_exact());
+    if (! p.is_exact()) p.make_exact (cache);
+    if (! _ps.is_exact()) _ps.make_exact (cache);    
+    if (! _pt.is_exact()) _ps.make_exact (cache);    
+    
     if (p.is_rational() && _ps.is_rational() && _pt.is_rational())
     {
       const Rat_point_2&  rat_p = (Rat_point_2) p;
@@ -1310,9 +1312,16 @@ bool _Bezier_x_monotone_2<RatKer, AlgKer, NtTrt, BndTrt>::equals
         (const Self& cv,
          Bezier_cache& cache) const
 {
-  // Check if the two subcurve have overlapping supporting curves.
+  // Check if the two subcurves have overlapping supporting curves.
   if (! _curve.is_same (cv._curve))
   {
+    //special case when curves are vertical
+    if (cv.is_vertical()){
+      if (is_vertical())
+        return compare(left().x(),cv.left().x())==EQUAL;
+      return false;
+    }
+    
     // Check whether the two curves have the same support:
     if (! _curve.has_same_support (cv._curve))
       return (false);
@@ -1608,8 +1617,50 @@ bool _Bezier_x_monotone_2<RatKer, AlgKer, NtTrt, BndTrt>::_is_in_range
   Comparison_result                        res1, res2;
   Algebraic                                y0;
 
+  if ( is_vertical() ){
+    if ( compare(rat_p.x(),left().x())==EQUAL ){
+      _curve.get_t_at_y (rat_p.y(), std::back_inserter(t_vals));
+      
+      for (t_iter = t_vals.begin(); t_iter != t_vals.end(); ++t_iter)
+      {
+        // Compare the current t-value with t_min.
+        res1 = CGAL::compare (t_min, *t_iter);
+
+        if (res1 == LARGER)
+          continue;
+
+
+        if (res1 == EQUAL)
+        {
+          t0 = t_min;
+          is_endpoint = true;
+          return (true);
+        }
+
+        // Compare the current t-value with t_max.
+        res2 = CGAL::compare (t_max, *t_iter);
+
+        if (res2 == EQUAL)
+        {
+          t0 = t_max;
+          is_endpoint = true;
+          return (true);
+        }
+
+        if (res2 == LARGER)
+        {
+          t0 = *t_iter;
+          is_endpoint = false;
+          return (true);
+        }
+      }
+    }
+    is_endpoint = false;
+    return (false);          
+  }
+  
   _curve.get_t_at_x (rat_p.x(), std::back_inserter(t_vals));
-  CGAL_assertion (! t_vals.empty() || is_vertical());
+  CGAL_assertion (! t_vals.empty() );
 
   for (t_iter = t_vals.begin(); t_iter != t_vals.end(); ++t_iter)
   {
@@ -2618,22 +2669,37 @@ _Bezier_x_monotone_2<RatKer, AlgKer, NtTrt, BndTrt>::_exact_vertical_position
   Rational                 my_t_min;
   Rational                 my_t_max;
 
-  if (CGAL::compare (ps_org->point_bound().t_max,
-                     pt_org->point_bound().t_min) == SMALLER)
-  {
-    // In case the parameter value of the source is smaller than the target's.
-    my_t_min = ps_org->point_bound().t_max;
-    my_t_max = pt_org->point_bound().t_min;
-  }
-  else
-  {
-    CGAL_assertion (CGAL::compare (pt_org->point_bound().t_max,
-                                   ps_org->point_bound().t_min) == SMALLER);
+  
+  bool      can_refine_s = ! _ps.is_exact();
+  bool      can_refine_t = ! _pt.is_exact();
+    
+  do {
+    if (CGAL::compare (ps_org->point_bound().t_max,
+                       pt_org->point_bound().t_min) == SMALLER)
+    {
+      // In case the parameter value of the source is smaller than the target's.
+      my_t_min = ps_org->point_bound().t_max;
+      my_t_max = pt_org->point_bound().t_min;
+      break;
+    }
+    else
+      if (CGAL::compare (pt_org->point_bound().t_max,
+                                     ps_org->point_bound().t_min) == SMALLER)
+    {
+      // In case the parameter value of the target is smaller than the source's.
+      my_t_min = pt_org->point_bound().t_max;
+      my_t_max = ps_org->point_bound().t_min;
+      break;
+    }
+    // Try to refine the points.
 
-    // In case the parameter value of the target is smaller than the source's.
-    my_t_min = pt_org->point_bound().t_max;
-    my_t_max = ps_org->point_bound().t_min;
+    if (can_refine_s)
+      can_refine_s = _ps.refine();
+    
+    if (can_refine_t)
+      can_refine_t = _pt.refine();    
   }
+  while(can_refine_s || can_refine_t);
 
   // Start the subdivision process from the entire supporting curve.
   std::list<Subcurve>      subcurves;

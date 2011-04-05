@@ -944,17 +944,21 @@ private:
                                const Vector_2& v_min2,
                                const Vector_2& v_max2)
   {
-    if ( f_equal (v_min1, v_min2) && f_equal (v_max1, v_max2)) //spans are identical
-      return (true);    
-    
     const Direction_2     dir_l1 = f_construct_direction (v_min1);
     const Direction_2     dir_r1 = f_construct_direction (v_max1);
     const Direction_2     dir_l2 = f_construct_direction (v_min2);
     const Direction_2     dir_r2 = f_construct_direction (v_max2);
+    
+    //use the directions to test equality of spans
+    if ( f_equal (dir_l1, dir_l2) && f_equal (dir_r1, dir_r2)) //spans are identical
+      return (true);   
 
+    if ( f_equal (dir_l1, dir_r1) && f_equal (dir_r2, dir_l2) && f_equal (dir_l1, -dir_l2)) //spans are identical but opposite
+      return (true);    
+    
     // Check whether any of the vectors of the second span (or their
     // opposite vectors) is between the vectors of the first span.
-    if (! f_equal (v_min1, v_max1) &&
+    if (! f_equal (dir_l1, dir_r1) &&
         (f_ccw_in_between (dir_l2, dir_l1, dir_r1) ||
          f_ccw_in_between (f_opposite_direction (dir_l2), dir_l1, dir_r1) ||
          f_ccw_in_between (dir_r2, dir_l1, dir_r1) ||
@@ -967,7 +971,7 @@ private:
     // vector) is between the vectors of the second span. Note that at this
     // point, the only possibility is that the first span is totally contained
     // within the second, so we do not need to check both vectors.
-    if (! f_equal (v_min2, v_max2) &&
+    if (! f_equal (dir_l2, dir_r2) &&
         (f_ccw_in_between (dir_l1, dir_l2, dir_r2) ||
          f_ccw_in_between (f_opposite_direction (dir_l1), dir_l2, dir_r2)))
     {
