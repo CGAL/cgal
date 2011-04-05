@@ -1411,7 +1411,7 @@ _Bezier_x_monotone_2<RatKer, AlgKer, NtTrt, BndTrt>::merge
   CGAL_precondition (_curve.is_same (cv._curve));
   CGAL_precondition (_xid == cv._xid);
 
-  Self    res = cv;
+  Self    res = *this;
 
   if (right().is_same (cv.left()))
   {
