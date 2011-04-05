@@ -96,7 +96,7 @@ CGAL packages, some are only needed for demos.
      - RS (root isolation)
        Required by the package:
        Algebraic Kernel
-       http://www.loria.fr/equipes/vegas/rs/
+       http://vegas.loria.fr/rs/
 
    * Miscellaneous
 
