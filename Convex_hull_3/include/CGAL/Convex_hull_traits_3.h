@@ -21,10 +21,9 @@
 #define CGAL_CONVEX_HULL_TRAITS_3_H
 
 #include <CGAL/Polyhedron_3.h>
-#include <CGAL/Convex_hull_projective_xy_traits_2.h>
-#include <CGAL/Convex_hull_projective_xz_traits_2.h>
-#include <CGAL/Convex_hull_projective_yz_traits_2.h>
-
+#include <CGAL/Projection_traits_xy_3.h>
+#include <CGAL/Projection_traits_xz_3.h>
+#include <CGAL/Projection_traits_yz_3.h>
 
 namespace CGAL {
 template < class R_ >
@@ -187,9 +186,9 @@ class Convex_hull_traits_3
                                                Less_signed_distance_to_plane_3;
 
   // required for degenerate case of all points coplanar
-  typedef Convex_hull_projective_xy_traits_2<Point_3>  Traits_xy;
-  typedef Convex_hull_projective_xz_traits_2<Point_3>  Traits_xz;
-  typedef Convex_hull_projective_yz_traits_2<Point_3>  Traits_yz;
+  typedef Projection_traits_xy_3<R> Traits_xy;
+  typedef Projection_traits_xz_3<R> Traits_xz;
+  typedef Projection_traits_yz_3<R> Traits_yz;
   typedef CGAL::Max_coordinate_3<Vector_3>             Max_coordinate_3;
 
   // for postcondition checking 
