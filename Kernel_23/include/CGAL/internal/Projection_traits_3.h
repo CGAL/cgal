@@ -353,6 +353,7 @@ public:
   typedef typename Rp::Compute_squared_radius_3               Compute_squared_radius_2;
 
   struct Less_xy_2 {
+    typedef bool result_type;
     bool operator()(const Point_2& p, const Point_2& q) const
     {
       Compare_x_2 cx;
@@ -366,6 +367,7 @@ public:
 
 
   struct Less_yx_2 {
+    typedef bool result_type;
     bool operator()(const Point_2& p, const Point_2& q) const
     {
       Compare_y_2 cy;
@@ -377,8 +379,30 @@ public:
     }
   };
 
+  struct Equal_2 {
+    typedef bool result_type;
+    bool operator()(const Point_2& p, const Point_2& q) const
+    {
+      
+      Equal_x_2 eqx;
+      Equal_y_2 eqy;
+      return eqx(p,q) & eqy(p,q);
+    }
+  };
+
+  struct Left_turn_2 {
+    typedef bool result_type;
+    bool operator()(const Point_2& p, const Point_2& q, const Point_2& r) const
+    {
+      
+      Orientation_2 ori;
+      return ori(p,q,r) == LEFT_TURN;
+    }
+  };
+
   //for natural_neighbor_coordinates_2
   typedef typename Projector<R,dim>::Equal_x_2                Equal_x_2;
+  typedef typename Projector<R,dim>::Equal_x_2                Equal_y_2;
   typedef Circumcenter_center_projected<Rp,dim>               Construct_circumcenter_2;
   typedef Compute_area_projected<Rp,dim>                      Compute_area_2;
   Construct_circumcenter_2 construct_circumcenter_2_object () const {return Construct_circumcenter_2();}
@@ -400,6 +424,14 @@ public:
   typename Rp::FT y(const Point_2 &p) const { return Projector<R,dim>::y(p); }
     
  
+ Equal_2
+  equal_2_object() const
+    { return Equal_2();}
+
+  Left_turn_2
+  left_turn_2_object() const
+    { return Left_turn_2();}
+
   Less_x_2
   less_x_2_object() const
     { return Less_x_2();}
@@ -407,6 +439,10 @@ public:
   Less_xy_2
   less_xy_2_object() const
     { return Less_xy_2();}
+
+  Less_yx_2
+  less_yx_2_object() const
+    { return Less_yx_2();}
 
   Less_y_2
   less_y_2_object() const
