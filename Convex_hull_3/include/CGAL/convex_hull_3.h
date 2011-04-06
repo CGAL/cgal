@@ -42,6 +42,21 @@
 
 namespace CGAL {
 
+  
+namespace internal{  namespace CH3 {
+    
+ struct Plane_equation {
+  template <class Facet>
+  typename Facet::Plane_3 operator()( Facet& f) {
+      typename Facet::Halfedge_handle h = f.halfedge();
+      typedef typename Facet::Plane_3  Plane;
+      return Plane( h->vertex()->point(),
+                    h->next()->vertex()->point(),
+                    h->next()->next()->vertex()->point());
+  }
+};
+ 
+} } //namespace internal::CH3
 
 template<class HDS, class ForwardIterator>
 class Build_coplanar_poly : public Modifier_base<HDS> {
@@ -535,6 +550,9 @@ ch_quickhull_polyhedron_3(std::list<typename Traits::Point_3>& points,
      if (!points.empty())
         non_coplanar_quickhull_3(points, P, traits);
   }
+  
+  std::transform( P.facets_begin(), P.facets_end(), P.planes_begin(),internal::CH3::Plane_equation());
+
 }
 
 template <class InputIterator, class Traits>
