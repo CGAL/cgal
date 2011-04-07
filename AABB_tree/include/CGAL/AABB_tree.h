@@ -113,7 +113,7 @@ namespace CGAL {
 		}
 
 		// bbox and size
-		Bounding_box bbox() const { return root_node()->bbox(); }
+		const Bounding_box& bbox() const { return root_node()->bbox(); }
 		size_type size() const { return m_primitives.size(); }
 		bool empty() const { return m_primitives.empty(); }
 
