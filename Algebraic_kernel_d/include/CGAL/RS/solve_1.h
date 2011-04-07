@@ -36,7 +36,12 @@ class RS_polynomial_1;
 class Algebraic_1;
 
 #define CGALRS_CSTR(S)  ((char*)(S))
+
+#ifdef CGALRS_OLD_INCLUDES
+#define CGALRS_PTR(a)   long int a
+#else
 #define CGALRS_PTR(a)   void *a
+#endif
 
 // initialize RS solver
 inline void init_solver(){
