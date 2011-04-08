@@ -37,7 +37,7 @@ class Algebraic_1;
 
 #define CGALRS_CSTR(S)  ((char*)(S))
 
-#ifdef CGALRS_OLD_INCLUDES
+#ifdef CGAL_RS_OLD_INCLUDES
 #define CGALRS_PTR(a)   long int a
 #else
 #define CGALRS_PTR(a)   void *a
