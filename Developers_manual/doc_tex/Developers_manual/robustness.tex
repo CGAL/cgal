@@ -10,7 +10,7 @@
 % =============================================================================
 
 \chapter{Robustness Issues\label{chap:robustness}}
-\ccChapterAuthor{Stefan Schirra ({\tt stschirr@mpi-sb.mpg.de})}
+\ccChapterAuthor{Stefan Schirra}
 \ccIndexMainItemBegin{robustness}
 
 Design and correctness proofs of geometric algorithms usually assume exact
@@ -36,19 +36,27 @@ a number of (third-party provided) ``exact'' number types available for use
 with \cgal, where ``exact'' means
 that all decisions (comparison operations) are correct and that the
 representation of the numbers allows for refinement to an arbitrary precision, 
-if needed. Most notably, \ccc{leda_real}s provide easy-to-use adaptive 
-``exact'' arithmetic for the basic operations and $\sqrt[k]{\ }$ operations.
-\lcTex{
-\begin{center}
-  \includegraphics[width=8cm]{Developers_manual/fig/use_real}
-\end{center}
-}
-\lcRawHtml{
-<CENTER>
-<IMG BORDER=0 SRC="fig/use_real.gif"
-   ALT="Using LEDA reals for exact computation"><BR>
-</CENTER>
-}
+if needed. 
+Depending of the needed computations, a suitable exact number type
+can be \ccc{Quotient<MP_float>} or \ccc{gmpq} if rational computations
+are involved. 
+If roots of polynomials are needed, then the solution is to use 
+ \ccc{leda_real} provided by LEDA or \ccc{CORE::Expr} provided by CORE.
+
+
+% Most notably, \ccc{leda_real}s provide easy-to-use adaptive 
+% ``exact'' arithmetic for the basic operations and $\sqrt[k]{\ }$ operations.
+% \lcTex{
+% \begin{center}
+%   \includegraphics[width=8cm]{Developers_manual/fig/use_real}
+% \end{center}
+% }
+% \lcRawHtml{
+% <CENTER>
+% <IMG BORDER=0 SRC="fig/use_real.gif"
+%    ALT="Using LEDA reals for exact computation"><BR>
+% </CENTER>
+% }
 
 
 \section{The role of predicates and constructions}
@@ -70,7 +78,8 @@ computing the lexicographically smaller point for two given points.
 \cgal\ provides generic implementations of geometric primitives. These assume
 ``exact computation''. This may or may not work, depending on the actual
 numerical input data. \cgal\ also provides\footnote{at present, for the 
-Cartesian kernel(s) only. The homogeneous counterpart still needs revision.}
+dimension 2/3 Cartesian kernel(s) only.}
+% The homogeneous counterpart still needs revision.}
 specialisation of the primitives
 that (are still fairly generic and) guarantee exact predicate results and
 much higher efficiency than exact number types like arbitrary precision
