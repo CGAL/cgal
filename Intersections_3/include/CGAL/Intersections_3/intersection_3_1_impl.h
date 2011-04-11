@@ -965,6 +965,8 @@ intersection(const typename K::Plane_3 &plane,
     pts.push_back( *pt_ptr );
   }
   
+  if (pts.empty()) return CGAL::Object();
+  
   CGAL_kernel_assertion(pts.size()==2);
   
   return make_object( k.construct_segment_3_object()(*pts.begin(),*boost::prior(pts.end())) );
