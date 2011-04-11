@@ -12,8 +12,9 @@
 \InternalOnly{
 \chapter{Submitting Packages\label{chap:submission}}
 \ccChapterRelease{Chapter Version: 1.0}
-\ccChapterAuthor{Geert-Jan Giezeman ({\tt geert@cs.uu.nl})\\
-Susan Hert ({\tt hert@mpi-sb.mpg.de})}
+\ccChapterAuthor{Geert-Jan Giezeman\\ %({\tt geert@cs.uu.nl})\\
+Susan Hert\\ %({\tt hert@mpi-sb.mpg.de})\\
+Monique Teillaud ({\tt Monique.Teillaud@inria.fr})}
 
 \section{Editorial board\label{sec:editorial_board}}
 }
@@ -38,51 +39,67 @@ in the library.  This means that they assure that new contributions
 \end{itemize}
 
 Software specifications and implementations should be submitted to the
-editorial board for approval.  This can be done by sending mail to
-the \ccAnchor{mailto:cgal-editorial-board@lists-sop.inria.fr}{board}
-\lcTex{(\texttt{cgal-editorial-board@lists-sop.inria.fr})} indicating
-where the (PDF) documentation and code can be found.  After
-some reasonable amount of time, you should receive feedback from
-the board about the specification and what, if anything, needs to
-be changed. The usual procedure is that someone from the board is
-assigned to be (or volunteers to be) the primary reviewer and sends
-comments on the submitted package to the board and to the authors of
-the package.  Discussion then proceeds among the board members and the
-authors until a consensus is reached about how the package should be
-modified before being accepted.  When the package has been modified,
-the authors should again notify the editorial board to let them
-know what has changed so a decision about acceptance of the package
-can be taken.
+editorial board for approval. The process is described in the 
+\ccAnchor{http://www.cgal.org/review_process_rules.html}{submission
+  and review rules}. 
+
+% This can be done by sending mail to
+% the \ccAnchor{mailto:cgal-editorial-board@lists-sop.inria.fr}{board}
+% \lcTex{(\texttt{cgal-editorial-board@lists-sop.inria.fr})} indicating
+% where the (PDF) documentation and code can be found.  After
+% some reasonable amount of time, you should receive feedback from
+% the board about the specification and what, if anything, needs to
+% be changed. The usual procedure is that someone from the board is
+% assigned to be (or volunteers to be) the primary reviewer and sends
+% comments on the submitted package to the board and to the authors of
+% the package.  Discussion then proceeds among the board members and the
+% authors until a consensus is reached about how the package should be
+% modified before being accepted.  When the package has been modified,
+% the authors should again notify the editorial board to let them
+% know what has changed so a decision about acceptance of the package
+% can be taken.
 
 One should write a specification for a new package
 \InternalOnly{(Chapter~\ref{chap:specification})}
-and submit it to the editorial board for
-approval before submitting the package for inclusion in the internal
-releases (and ideally before implementation of the package).  This
+and submit it to the editorial board.
+% for approval before submitting the package for inclusion in the
+% internal releases 
+Ideally, this should be done before implementation of the package: This
 ensures that time is not wasted in fixing code that may later be changed
 due to the recommendations of the board.
-However, since it can take some time for the board to process
-submissions, packages that are to become part of the library
-can be submitted
-\InternalOnly{as detailed in
-Section~\ref{sec:electronic_submission}} before approval.
-Inclusion in an internal release does not ensure inclusion in a public
-release.  Only after approval by the board will packages be included in new
+% However, since it can take some time for the board to process
+% submissions, packages that are to become part of the library
+% can be submitted
+% \InternalOnly{as detailed in
+% Section~\ref{sec:electronic_submission}} before approval.
+% Inclusion in an internal release does not ensure inclusion in a public
+% release.  
+Only after approval by the board will packages be included in new
 public releases and then only if they pass the test suite, of course.
 
-The current list of members of the editorial board can be found on the web site.
+The current list of members of the editorial board can be found on the 
+\ccAnchor{http://www.cgal.org/people.html}{web site}.
 
 \InternalOnly{
 \section{Electronic submission\label{sec:electronic_submission}}
 \ccIndexMainItemBegin{submitting}
 
 Whether you produce library code, demos, documentation or something else,
-if you want it to become part of \cgal, you'll have to submit it in the form
-of a package which has to be a folder under SVN trunk.
+if you want it to become part of \cgal, you'll have to submit it in
+the form of a wiki page on the
+\ccAnchor{https://cgal.geometryfactory.com/CGAL/Members/wiki/Features}{Feature page} 
+or on the 
+\ccAnchor{https://cgal.geometryfactory.com/CGAL/Members/wiki/Features/Small_Features}{Small Features page},
+and announce it by email to the 
+\ccAnchor{mailto:cgal-editorial-board@lists-sop.inria.fr}{board} 
+\lcTex{(\texttt{cgal-editorial-board@lists-sop.inria.fr})}. 
+
+The package itself has to be a folder under SVN experimental
+packages. 
 The directory structure required for a package is described in
 Chapter~\ref{chap:directory_structure}.
 
-Here we focus on how to submit a package.
+%Here we focus on how to submit a package.
 
 \ccIndexSubitem{naming scheme}{package}
 A package has a name, which identifies it.  This name should obey the same
@@ -107,20 +124,20 @@ up to date under the \texttt{package\_info} directory.
 \ccIndexMainItemEnd{submitting}
 
 
-\section{Requirements and recommendations\label{sec:submission_req_and_rec}}
+% Monique: I would just remove this section
+% \section{Requirements and recommendations\label{sec:submission_req_and_rec}}
 
-\noindent
-Requirements:
-\begin{itemize}
-   \item Submit specifications to the editorial board before submitting
-         packages for internal releases.
-   \item Obey the directory structure outlined in Chapter~\ref{chap:directory_structure}.
-\end{itemize}
+% \noindent
+% Requirements:
+% \begin{itemize}
+%    \item Submit specifications to the editorial board.
+%    \item Obey the directory structure outlined in Chapter~\ref{chap:directory_structure}.
+% \end{itemize}
 
-\noindent
-Recommendations:
-\begin{itemize}
-    \item Wait for approval from the editorial board before submitting packages
-          for internal releases.
-\end{itemize}
+% \noindent
+% Recommendations:
+% \begin{itemize}
+%     \item Wait for approval from the editorial board before submitting packages
+%           for internal releases.
+% \end{itemize}
 }
