@@ -249,6 +249,12 @@ The difference between \ccc{Filtered_kernel} and
 functors in the kernel only while the former also affecs the behaviour
 of predicates that are implemented as global functions.
 
+Another kind of filtering kernel that works with constructions is
+\ccc{Lazy_kernel<EK,AK,Conv>}. Objects contain a DAG that led to their
+creation and an approximate version. When the approximation is not
+sufficiently precise, an exact value is computed and the DAG is
+pruned.
+
 \section{Kernel design and conventions}
 \ccIndexSubitem{kernel}{design}%
 \ccIndexSubitem{design}{kernel}%
