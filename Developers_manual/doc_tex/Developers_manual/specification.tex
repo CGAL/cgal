@@ -72,7 +72,9 @@ is currently divided into three separate manuals:
    \item Developers Manual
 \end{itemize}
 Not surprisingly, the Installation Guide describes how to install \cgal
-\ccIndexMainItem{installation}.
+\ccIndexMainItem{installation}. It is also integrated as a chapter in the
+User and Reference Manual.
+% The developers manual may be replaced by the wiki rather soon.
 
 Documentation of new packages and features will likely be included in
 the User and Reference Manual.  It is further
@@ -121,9 +123,10 @@ both the reference manual and the users' manual%
 \ccIndexMainItem{users' manual}%
 \ccIndexMainItem{reference manual}, some might only contribute a
 section to some larger chapter. So, in principle, the documentation of
-a package starts with the \verb|\chapter| command. Note, that each
-chapter, in particular the \verb|\chapter| command, needs to be in a
-different file. A wrapper file may then include all chapters.
+a package starts with the \verb|\ccUserChapter| or \verb|\ccRefChapter|
+commands. Note, that each chapter, in particular the \verb|\ccUserchapter|
+command, needs to be in a different file. A wrapper file may then include
+all chapters.
 
 The \texttt{Polyhedron} package can serve as an example for the manual
 organization.
@@ -148,7 +151,7 @@ describe the details:
          \texttt{latex\_to\_html} will be enriched with the paths for
          example and demo programs, such that they can be referenced
          starting from their package subdirectory name, e.g.,
-         \verb|\ccIncludeExampleCode{Polyhedron/simple.cpp}|.
+         \verb|\ccIncludeExampleCode{Polyhedron/polyhedron_prog_simple.cpp}|.
    \item The {\tt .tex} files for the users' manual%
          \ccIndexSubitem{users' manual}{directory} should be placed in a
          directory \verb|doc_tex/|$<${\em Package}$>$\verb|/|%
@@ -183,7 +186,8 @@ describe the details:
          reference manual item.  The items will be input in alphabetical order,
          with a file {\tt intro.tex}\ccIndexMainItem{\tt intro.tex}, if it
          exists, included first.  The {\tt intro.tex} file should
-         start with the \verb|\chapter| command,
+         start with the \verb|\ccRefChapter| command, then the
+         \verb|\ccChapterAuthor| command. It should also
          contain a short introductory section, give an overview of the
          reference pages contained in this chapter, and mention
          optionally with a non-numbered section labeled \textbf{Assertions}
@@ -194,7 +198,7 @@ describe the details:
 This is all that is needed for a package manual and the
 \texttt{cgal\_manual} program mentioned in
 Section~\ref{subsec:cgal_manual_program} will create the necessary
-wrapper file automatically on the fly to create PostScript, PDF, or
+wrapper file automatically on the fly to create PDF, or
 HTML manuals for an individual package.
 
 For modules (collections of packages, note: maybe an outdated idea),
@@ -246,8 +250,9 @@ of the manuals are contained in two SVN packages:
         contains the style files for \CC\ manual page formatting
         and the \LaTeX\ to HTML converter program. These style files
         and the converter can be used independently from \cgal.
-        Stable snapshots are also released at
-        \path|http://www.cgal.org/Members/Manual_tools/|.
+        Stable snapshots are also supposed to be released at
+        \path|http://www.cgal.org/Members/Manual_tools/| (but it has not
+        been done for a long time).
     \item[\textbf{Manual}]
         contains the \cgal\ specific \LaTeX\ wrapper files with the
         customization for the \cgal\ manuals and a top-level driver
@@ -281,9 +286,9 @@ in the \texttt{developer\_scripts/} directory. It is called in the
 release.
 
 This script is the driver program for creating \cgal\ manuals.  It
-makes use of \LaTeX, PDF\LaTeX, Bib\TeX, \texttt{makeindex},
-\texttt{latex\_to\_html}, and other tools to create the PostScript,
-PDF, and HTML manuals for individual \emph{SVN Packages} as well as
+makes use of PDF\LaTeX, Bib\TeX, \texttt{makeindex},
+\texttt{latex\_to\_html}, and other tools to create the
+PDF and HTML manuals for individual \emph{SVN Packages} as well as
 custom \emph{Modules} and its \emph{Sub-Modules}. It encodes the conventions
 of how \cgal\ manuals are organized and how the general purpose tools need
 to be called to create the manuals. We specify these conventions here in the
@@ -315,7 +320,7 @@ script itself, these documentations need to be kept synchronized!
      chapters, i.e., do not contain \verb|\begin{document}| commands
      etc. This script provides the necessary \LaTeX\ wrapper file.
 
-   \item[Modules]~
+   \item[Modules \emph{(advanced feature)}]~
 
      Presentation unit of modularity towards the user, assembled from
      SVN Packages. For a module of name \texttt{Algo} it is assumed
@@ -325,7 +330,7 @@ script itself, these documentations need to be kept synchronized!
      \verb|\begin{document}| command and such. It includes the various
      chapters from the packages.
 
-   \item[Sub-Modules]~
+   \item[Sub-Modules \emph{(advanced feature)}]~
 
      Another presentation unit on top of modules. A sub-module only contains
      a subset of the packages in a module. The numbering of pages,
@@ -406,7 +411,7 @@ warnings and error messages.
 
 The screen output reports the progress and result status of each
 module (abbreviated as \texttt{Mod}) and package (abbreviated as
-\texttt{Pck}) for each manual type, i.e., PostScript, PDF, and HTML.
+\texttt{Pck}) for each manual type, i.e., PDF and HTML.
 
 This script also serves for the test-suite. It can be configured to
 create the test-suite result tables also at your local configuration
@@ -438,7 +443,6 @@ overwrite the old results.
 \begin{alltt}
 \textbf{Usage: cgal\_manual [<options>] [<module-files...>] [<package-dirs...>]}
 \textbf{Options:}
-    \textbf{-ps       }          PostScript manuals.
     \textbf{-pdf      }          PDF manuals.
     \textbf{-html     }          HTML manuals (incl. a LaTeX run).
     \textbf{-wrapper  }          creates the LaTeX wrapper files only.
@@ -465,26 +469,27 @@ overwrite the old results.
 % -----------------------------------
 \subsection{SVN package \texttt{Manual\_tools}}
 
-The SVN package \texttt{Manual\_tools} and the release tar ball from
-\path|http://www.cgal.org/Members/Manual_tools/| keep all files in the
+The SVN package \texttt{Manual\_tools} keeps all files in the
 subdirectory called \texttt{Manual\_tools}, which itself has
 the following subdirectories:
 
 \begin{description}
-   \item[{\bf\tt doc/}] -- directory containing the documentation for
+   \item[{\bf\tt doc\_tex/}] -- directory containing the documentation for
         the style files and the converter program
    \item[{\bf\tt example/}] -- directory containing example documentation
-   \item[{\bf\tt format/}] -- directory containing the \LaTeX\ style files
-        used for formatting the manual
    \item[{\bf\tt scripts/}] -- directory containing various support scripts
    \item[{\bf\tt src/}] -- directory containing the style files and program
-        source code for the \LaTeX\ to HTML converter.
+        source code for the \LaTeX\ to HTML converter
+   \item[{\bf\tt sty/}] -- directory containing the \LaTeX\ style files
+        used for formatting the manual.
 \end{description}
 
 There are also \texttt{README} and \texttt{CHANGES} files provided for
 information. It is mandatory to install this package properly on your
 system following the description in the \texttt{INSTALLATION} file. Linux
-and Sun Solaris are supported platforms.
+and Sun Solaris are supported platforms. Cygwin on Windows is also
+supported as soon as a proper LaTeX distribution is installed, and
+found in the PATH.
 
 \subsection{Style files in the \texttt{Manual\_tools} package}
 \label{subsec:manual_tools_style_files}
@@ -529,7 +534,7 @@ come with this package that can be of independent interest.
          -- script that does the conversion from \LaTeX\
             to HTML\ccIndexSubitem{manuals}{HTML}%
             \ccIndexSubitem{manuals}{HTML}.
-            See \ccAnchor{./latex_to_html.ps.gz}{{\tt Manual\_tools/doc/latex\_to\_html.ps.gz}}.
+            See \ccAnchor{./latex_to_html.pdf}{{\tt Manual\_tools/doc/latex\_to\_html.pdf}}.
          \lcRawHtml{<A NAME="cc_extract_images">}
    \item \verb|cc_extract_images|\lcRawHtml{</A>}%
          \index{cc_extract_images program@{\tt cc\_extract\_images} program}
@@ -553,7 +558,7 @@ come with this package that can be of independent interest.
          file in a directory, the name of which is supplied as an argument.
          This {\tt main.tex} will be the driver file for the reference manual
          chapter for the directory named in the argument. See
-         \ccAnchor{./latex_to_html.ps.gz}{{\tt Manual\_tools/doc/cc\_manual.ps.gz}}
+         \ccAnchor{./latex_to_html.pdf}{{\tt Manual\_tools/doc/cc\_manual.pdf}}
          and the script itself for further explanation.
          \lcRawHtml{<A NAME="cc_ref_wizard">}
    \item \verb|cc_ref_wizard|\lcRawHtml{</A>}%
@@ -561,7 +566,7 @@ come with this package that can be of independent interest.
          -- script that creates a reference page skeleton
          \ccIndexSubitem{reference manual}{page template script}%
          given the category of the item and the item name. See
-         \ccAnchor{./cc_manual.ps.gz}{{\tt Manual\_tools/doc/cc\_manual.ps.gz}}
+         \ccAnchor{./cc_manual.pdf}{{\tt Manual\_tools/doc/cc\_manual.pdf}}
          and the script itself for further explanation.
          \lcRawHtml{<A NAME="add_part_num">}
    \item \verb|add_part_num|\lcRawHtml{</A>}%
@@ -570,15 +575,15 @@ come with this package that can be of independent interest.
          -- script used to prepend a part number to the
          page numbers in a {\tt .idx} file produced by the indexing commands in
          a \LaTeX\ document.
-         See \ccAnchor{./cc_manual_index.ps.gz}{{\tt Manual\_tools/doc/cc\_manual\_index.ps.gz}}.
+         See \ccAnchor{./cc_manual_index.pdf}{{\tt Manual\_tools/doc/cc\_manual\_index.pdf}}.
          \lcRawHtml{<A NAME="cc_index_fix">}
    \item \verb|index_fix|\lcRawHtml{</A>}%
          \index{index_fix script@{\tt index\_fix} script}%
          \ccIndexSubitem{index}{postprocessing}
          -- script used to postprocess an {\tt .ind } file
          produced by {\tt makeindex} to make the index fit the specifications
-         detailed in \ccAnchor{./cc_manual_index.ps.gz}%
-         {{\tt Manual\_tools/doc/cc\_manual\_index.ps.gz}}.
+         detailed in \ccAnchor{./cc_manual_index.pdf}%
+         {{\tt Manual\_tools/doc/cc\_manual\_index.pdf}}.
 \end{itemize}
 \ccIndexSubitemEnd{tools}{manual}
 \ccModifierCrossRefOn
@@ -970,7 +975,7 @@ breaks for very short reference pages (\textit{e.g.},  for constants).
 Below we briefly describe what should be documented in
 each of the {\tt ccRef*} environments and list some of the most useful
 commands for each section.  See
-\ccAnchor{./cc_manual.ps.gz}{{\tt Manual\_tools/doc/cc\_manual.ps.gz}}
+\ccAnchor{./cc_manual.pdf}{{\tt Manual\_tools/doc/cc\_manual.pdf}}
 for a full description of these environments and the other commands
 available.
 
@@ -1178,9 +1183,8 @@ Another possible section heading here is \verb|\ccSeeAlso|.
 \ccIndexSubitemBegin{manuals}{figures}
 
 When including pictures in your documentation, you must provide versions
-of the pictures for the PostScript, PDF, and HTML versions of the manuals.
-This generally means providing both a {\tt .ps} or {\tt .eps} file for
-PostScript manuals, a {\tt .pdf} or {\tt .png} file for PDF manuals, and a {\tt
+of the pictures for the PDF and HTML versions of the manuals.
+This generally means providing both a  {\tt .pdf} or {\tt .png} file for PDF manuals, and a {\tt
   .gif}, {\tt .jpg}, or {\tt .png} file for HTML manuals.  You should
 take care that the figures are
 readable in both formats and that they are neither too large nor too small.
@@ -1251,7 +1255,7 @@ instead of the bottom (and thus be visible in the browser).
 
 % =============================================================================
 \section{Indexing\label{sec:indexing}}
-\ccIndexSubitemBegin{index}{PostScript}
+\ccIndexSubitemBegin{index}{PDF}
 \ccIndexSubitemBegin{manuals}{index}
 
 In order to be truly useful, a manual needs to have an index.  The
@@ -1260,7 +1264,7 @@ automatically.  %
 \ccIndexSubitem{index}{HTML}\ccIndexSubsubitem{manuals}{HTML}{index}
 The style file {\tt cc\_manual\_index.sty}%
 \ccIndexMainItem[c]{\tt cc_manual_index.sty} was developed in order to provide
-a means for producing an index for the PostScript version of the manual.
+a means for producing an index for the PDF version of the manual.
 Though there is also some automatic indexing done by the
 {\tt cc\_manual\_index.sty} file in conjunction with {\tt cc\_manual.sty},
 this indexing is not sufficient as it can index only things that are
@@ -1282,10 +1286,10 @@ order to achieve the following goals:
 You should also take care that the index entries produced by the automatic
 indexing are in keeping with these goals, and, when not, use the commands
 provided in {\tt cc\_manual\_index.sty} to turn off the automatic indexing.
-See the file \ccAnchor{./cc_manual_index.ps.gz}{{\tt Manual\_tools/doc/cc\_manual\_index.ps.gz}}
+See the file \ccAnchor{./cc_manual_index.pdf}{{\tt Manual\_tools/doc/cc\_manual\_index.pdf}}
 for a description of the commands available and a full description of what
 should and should not be indexed.
-\ccIndexSubitemEnd{index}{PostScript}
+\ccIndexSubitemEnd{index}{PDF}
 \ccIndexSubitemEnd{manuals}{index}
 
 
@@ -1412,7 +1416,7 @@ command. See also Section~\ref{sec:doc_figures}.
 \begin{description}
 \item[{\bf Cause:}] This problem is generally caused by the use of commands
 that are not supported by the HTML converter.  See
-\ccAnchor{latex_to_html.ps.gz}{{\tt latex\_to\_html.ps.gz}} for a list of
+\ccAnchor{latex_to_html.pdf}{{\tt latex\_to\_html.pdf}} for a list of
 these unsupported commands.
 
 \item[{\bf Solution:}] Either remove the offending command altogether or enclose
@@ -1450,7 +1454,7 @@ variables \texttt{TEXINPUTS} and \texttt{LATEX\_CONV\_INPUTS} are set so these
 directories are searched when the manuals are created with the
 \texttt{cgal\_manual} program from Section~\ref{subsec:cgal_manual_program}.
 (See
-\ccAnchor{./latex_to_html.ps.gz}{{\tt Manual\_tools/doc/latex\_to\_html.ps.gz}}
+\ccAnchor{./latex_to_html.pdf}{{\tt Manual\_tools/doc/latex\_to\_html.pdf}}
 for more details.)
 For example, you would use the following command
 \begin{verbatim}
