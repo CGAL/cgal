@@ -17,8 +17,16 @@
 The concept of a traits class is central to \cgal. The name ``traits
 class'' comes from a standard \CC\ design pattern
 \cite{cgal:m-tnutt-95}; you may have heard about iterator traits which
-follow this design pattern. In \cgal, traits classes are something
-different, although the philosophy is similar in a certain sense.
+follow this design pattern. 
+The traits class is used in template code to reflect properties (traits)
+of the actual template argument.
+On the lower levels, such as the number types, 
+the traits classes in \cgal\ indeed follow this pattern.  
+However, in higher level packages the term traits class is used in a slightly 
+different spirit. The most noticeable change is that the traits class becomes 
+the template argument. This allows to bundle several template 
+arguments and provides more flexibility as explained in the subsequent
+sections. 
 
 \section{What are traits classes in \cgal?\label{sec:what_is_a_traits_class}}
 \ccIndexMainItemDef{traits class}
