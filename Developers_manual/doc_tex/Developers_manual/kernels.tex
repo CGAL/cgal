@@ -10,7 +10,7 @@
 % =============================================================================
 
 \chapter{Geometry Kernels\label{chap:kernels}}
-\ccChapterAuthor{Stefan Schirra ({\tt stschirr@mpi-sb.mpg.de})}
+\ccChapterAuthor{Stefan Schirra}
 
 
 The layer of geometry kernels\ccIndexMainItem[t]{kernel} provides
@@ -158,12 +158,20 @@ $$
 {x_2} & {y_2} & 1 \\
 {x_3} & {y_3} & 1 \\
 \end{array}
-\right| =
+\right|
+=
 {\mbox{\small sign}}\left|
 \begin{array}{ccc}
 {x_1 - x_3} & {y_1 - y_3} & 0 \\
 {x_2 - x_3} & {y_2 - y_3} & 0 \\
 {x_3} & {y_3} & 1 \\
+\end{array}
+\right|
+=
+{\mbox{\small sign}}\left|
+\begin{array}{cc}
+{x_1 - x_3} & {y_1 - y_3} \\
+{x_2 - x_3} & {y_2 - y_3} \\
 \end{array}
 \right|
 $$
@@ -250,7 +258,7 @@ functors in the kernel only while the former also affecs the behaviour
 of predicates that are implemented as global functions.
 
 Another kind of filtering kernel that works with constructions is
-\ccc{Lazy_kernel<EK,AK,Conv>}. Objects contain a DAG that led to their
+\ccc{Lazy_kernel<EK,AK,Conv>} (where \ccc{EK} is an exact kernel, \ccc{AK} a fast approximate kernel, and \ccc{Conv} a converter from \ccc{EK} to \ccc{AK}). Objects contain a DAG that led to their
 creation and an approximate version. When the approximation is not
 sufficiently precise, an exact value is computed and the DAG is
 pruned.
@@ -262,7 +270,7 @@ Each kernel object is provided as both a stand-alone class, which is
 parameterized by a kernel class (\ccc{Geo_object_D<K>}), and as a type 
 in the kernel class (\ccc{K::Geo_object_D}).  While the former use may
 be more natural for users not interested in the flexibility of the kernel
-(and is compatable with the original kernel design \cite{fgkss-dccga-00}), the
+(and is compatible with the original kernel design \cite{fgkss-dccga-00}), the
 latter syntax should be used in all code distributed with the library
 as it allows types in the kernel to be easily exchanged and modified.
 Similarly, each operation and construction in the kernel is provided via 
@@ -277,7 +285,7 @@ standardized interface.%
 \ccIndexSubitem{kernel}{conventions}
 \begin{itemize}
 \item
-All classes have a \ccc{bbox()} member function computing a bounding box.
+All classes (currently only in dimensions 2 and 3) have a \ccc{bbox()} member function computing a bounding box.
 \ccIndexMainItem[C]{bbox}
 \item
 All classes have a \ccc{transform(Aff_transformation_d t)} member function
