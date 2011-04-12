@@ -10,7 +10,7 @@
 % =============================================================================
 
 \chapter{Namespaces\label{chap:namespaces}}
-\ccChapterAuthor{Stefan Schirra ({\tt stschirr@mpi-sb.mpg.de})}
+\ccChapterAuthor{Stefan Schirra}
 
 Names, in particular (member) function names and class names should 
 be descriptive and easily remembered. So it is not surprising that
@@ -28,41 +28,6 @@ makefile does this by setting \ccc{-DLEDA_PREFIX}.} Initially, \cgal\ used
 prefix \ccc{CGAL_}. 
 At the beginning of 1999, it was decided to drop prefix \ccc{CGAL_} and to 
 introduce namespace \ccc{CGAL}. 
-
-\section{What are namespaces}
-A namespace\ccIndexMainItemDef{namespace}
-is a scope with a name.\footnote{There are also unnamed namespaces.
-They are intented to replace file scope.} Inside the namespace, \ie, the
-named scope, all names defined in that scope (and made known to the compiler) 
-can be used directly. Outside a namespace, a name defined in the namespace
-has to be qualified\footnote{This is a somewhat simplified view; read further
-for more details.} by the namespace name, for example \ccc{CGAL::Object},%
-\ccIndexSubitem{qualification}{of names} 
-or they have to be made usable without qualification by a so-called 
-{\em using declaration},
-\ccIndexMainItem{using declaration}
-\begin{verbatim}
-using CGAL::Object;
-Object obj;  // name is now known
-\end{verbatim}
-There is also a statement to make all names from a namespace available in
-another scope, but this is a bad idea. Actually, in order not to set a bad
-example, we recommend not to use this in \cgal's example and demo programs.
-
-\section{Namespace std}
-\ccIndexSubitem{namespace}{\ccFont std}
-The names form the standard \CC\ library, especially those from the standard
-template library, are in namespace \ccc{std}. This subsumes the I/O-library%
-\index{IO library@I/O library!and namespace std@and namespace \texttt{std}}
-and also the C-library%
-\index{C standard library!and namespace std@and namespace
-  \ccStyle{std}} functions. You have to qualify streams and so by
-\ccc{std::}, too.  That is:
-\begin{verbatim}
-std::cout << "Hello CGAL" << std::endl;
-\end{verbatim}
-or you have to add \ccc{using} declarations for the names you want to
-use without \ccc{std::} qualification.
 
 \section{Namespace CGAL}
 \ccIndexSubitem{namespace}{\ccFont CGAL}
@@ -105,74 +70,6 @@ class Some_further_class_local_to_Package;
 \end{verbatim}
 
 
-\section{Name lookup}
-The process of searching for a definition of a name detected in
-some scope is called name lookup.\ccIndexMainItemDef{name lookup}
-Simply speaking, name lookup looks 
-up names in the scope where the name is used, 
-and if not found, the lookup proceeds in successively enclosing scope 
-until the name is found. It terminates as soon as the name is found, no
-matter whether the name found fits or not.
-If a name is qualified by a namespace name, that namespace is searched
-for the name.
-
-\subsection{Argument-dependent name lookup}
-\ccIndexSubitem{name lookup}{argument-dependent}%
-\ccIndexSubitem{name lookup}{unqualified}
-Unqualified name lookup, \ie, lookup when there is no namespace or class
-name and no scope resolution%
-\ccIndexMainItem{scope resolution} operator \verb+::+, proceeds like qualified 
-name lookup, but name lookup for a function call is supposed to search also 
-the namespaces of the argument types for a matching function name. 
-This is sometimes called Koenig-lookup.\ccIndexMainItem{Koenig lookup}
-
-\subsection{Point of instantiation of a template}
-Name lookup in a template is slightly more complicated.
-\ccIndexSubitem{name lookup}{template}
-Names that do not depend on template parameters are looked up at the point
-of definition of the template%
-\ccIndexSubitem{template}{point of definition}
-(so they must be known at the point of definition). 
-Names depending on the template parameters are looked up at
-the point of instantiation%
-\ccIndexSubitem{template}{point of instantiation} of the template. 
-The name is searched for in the
-scope of the point of instantiation and the scope of the
-point of definition. Here is a small example:
-
-\ccIncludeExampleCode{Developers_manual/poi.cpp}
-
-There is a ambiguity, because both the scope enclosing the point of 
-instantiation and the scope enclosing the point of definition contain
-a \ccc{mix} function. The mips compiler on {\sc IRIX} 
-complains about this ambiguity: 
-
-{\small
-\begin{verbatim}
-bash-2.03$ CC -64 poi.cpp 
-cc-1282 CC: ERROR File = poi.cpp, Line = 11
-  More than one instance of overloaded function "mix" matches the argument list.
-
-            Function symbol function template "B::mix(const T &, const T &)"
-                      is ambiguous by inheritance.
-            Function symbol function template "A::mix(const T &, const T &)"
-                      is ambiguous by inheritance.
-            The argument types are:  (const double, const double).
-  { return mix( a1, a2); }
-           ^
-          detected during instantiation of
-                    "const double &A::use(const double &, const double &)" 
-
-1 error detected in the compilation of "poi.cpp".
-\end{verbatim}
-}
-There wouldn't be any problems, if \verb+B::use_use()+ would be a template
-function as well, because this would move the point of instantiation
-into global scope.
-
-By the way, \verb+gcc 2.95+ uses the function defined at the 
-point of definition.
-
 \section{Namespace CGAL::NTS}
 
 {\em \textbf{Note:} This section will be revised once the forthcoming
@@ -197,17 +94,9 @@ point of definition.
   interface is not yet fixed, people should still follow the
   guidelines given below.}
 
-What are the conclusions from the previous subsection. If \ccc{A}
-plays the role of \ccc{std} and \ccc{B} the role of \cgal, we can
-conclude that \cgal\ should not define template
-functions that are already defined in namespace \ccc{std}, especially
-\ccc{min} and \ccc{max}.
-Also, letting CGAL be namespace \ccc{A}, we should not define 
+We should not define 
 templates in \cgal\ that are likely to conflict with templates in 
-other namespaces (playing the role of \ccc{B}): Assume that both \cgal\
-and some other namespace define an \ccc{is_zero()} template. 
-Then an instantiation of some \cgal\ template using \ccc{is_zero()} 
-that takes place inside the other namespace causes trouble. 
+other namespaces.
 For this reason, we have another namespace \ccc{NTS}%
 \ccIndexSubitem{namespace}{\ccFont CGAL::NTS}
 nested in \ccc{CGAL}, which contains potentially conflicting
@@ -242,7 +131,6 @@ the macro eases future changes in our policy.}: For example,
 \begin{verbatim}
 if ( CGAL_NTS is_zero(0) ) { /* ... */ } 
 \end{verbatim}
-Qualification with \ccc{CGAL} does not work.
 \item
 The following functions can be qualified by \ccc{CGAL_NTS} as well:
 \begin{itemize} 
@@ -255,7 +143,7 @@ Whenever the argument of \ccc{sqrt} is a concrete type, \ie, it does
 not depend on a template parameter, you should qualify the call of
 \ccc{sqrt}, for example \verb+std::sqrt(2.0)+
 \end{itemize}
-Here, qualification with \ccc{CGAL} works as well.
+Here, qualification with \ccc{CGAL::} works as well.
 \end{itemize}
 Summarizing, you can always qualify functions on number types
 with \ccc{CGAL_NTS} besides \ccc{min} and \ccc{max}.
