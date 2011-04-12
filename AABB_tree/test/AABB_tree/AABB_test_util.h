@@ -84,6 +84,7 @@ void test_all_intersection_query_types(Tree& tree)
     success = tree.do_intersect(ray);
     success = tree.do_intersect(line);
     success = tree.do_intersect(segment);
+    (void) success;
 
     // number_of_intersected_primitives
     tree.number_of_intersected_primitives(ray);
@@ -163,6 +164,7 @@ void test_distance_speed(Tree& tree,
             // picks a random point in the tree bbox
             Point query = random_point_in<K>(tree.bbox());
             Point closest = tree.closest_point(query);
+	    (void) closest;
             nb++;
     }
     double speed = (double)nb / timer.time();
