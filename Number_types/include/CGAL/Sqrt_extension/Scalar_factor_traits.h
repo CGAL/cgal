@@ -27,12 +27,12 @@
 namespace CGAL {
 
 // This is the specialization for Sqrt_extension
-template <class COEFF, class INTERNAL>
-class Scalar_factor_traits< Sqrt_extension<COEFF, INTERNAL> > {
+template <class COEFF, class ROOT, class ACDE_TAG,class FP_TAG>
+class Scalar_factor_traits< Sqrt_extension<COEFF, ROOT, ACDE_TAG,FP_TAG> > {
 public:
 
     //! the number type for which this instance has been instantiated
-    typedef Sqrt_extension<COEFF, INTERNAL> NT;
+    typedef Sqrt_extension<COEFF, ROOT,ACDE_TAG,FP_TAG> NT;
       //! the number type of scalars that can be extracted from NT
     typedef typename Scalar_factor_traits<COEFF>::Scalar Scalar;
 

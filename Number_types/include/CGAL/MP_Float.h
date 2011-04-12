@@ -26,7 +26,7 @@
 #include <CGAL/Real_embeddable_traits.h>
 #include <CGAL/Coercion_traits.h>
 #include <CGAL/Quotient.h>
-#include <CGAL/Root_of_2.h>
+#include <CGAL/Sqrt_extension.h>
 
 #include <CGAL/utils.h>
 
@@ -71,14 +71,54 @@ MP_Float square(const MP_Float&);
 // to_double() returns, not the closest double, but a one bit error is allowed.
 // We guarantee : to_double(MP_Float(double d)) == d.
 double to_double(const MP_Float&);
-double to_double(const Root_of_2<MP_Float> &x);
 double to_double(const Quotient<MP_Float>&);
 std::pair<double,double> to_interval(const MP_Float &);
-// std::pair<double,double> to_interval(const Root_of_2<MP_Float>&); // TODO ?
 std::pair<double,double> to_interval(const Quotient<MP_Float>&);
 MP_Float div(const MP_Float& n1, const MP_Float& n2);
 MP_Float gcd(const MP_Float& a, const MP_Float& b);
+  
+
+template <class ACDE_TAG_, class FP_TAG>  
+double
+to_double(const Sqrt_extension<MP_Float,MP_Float,ACDE_TAG_,FP_TAG> &x)
+{
+  typedef MP_Float RT;
+  typedef Quotient<RT> FT;
+  typedef CGAL::Rational_traits< FT > Rational;
+  Rational r;
+  const RT r1 = r.numerator(x.a0());
+  const RT d1 = r.denominator(x.a0());
+
+  if(x.is_rational()) {
+    std::pair<double, int> n = to_double_exp(r1);
+    std::pair<double, int> d = to_double_exp(d1);
+    double scale = std::ldexp(1.0, n.second - d.second);
+    return (n.first / d.first) * scale;
+  }
+
+  const RT r2 = r.numerator(x.a1());
+  const RT d2 = r.denominator(x.a1());
+  const RT r3 = r.numerator(x.root());
+  const RT d3 = r.denominator(x.root());
+
+  std::pair<double, int> n1 = to_double_exp(r1);
+  std::pair<double, int> v1 = to_double_exp(d1);
+  double scale1 = std::ldexp(1.0, n1.second - v1.second);
+
+  std::pair<double, int> n2 = to_double_exp(r2);
+  std::pair<double, int> v2 = to_double_exp(d2);
+  double scale2 = std::ldexp(1.0, n2.second - v2.second);
+
+  std::pair<double, int> n3 = to_double_exp(r3);
+  std::pair<double, int> v3 = to_double_exp(d3);
+  double scale3 = std::ldexp(1.0, n3.second - v3.second);
+
+  return ((n1.first / v1.first) * scale1) + 
+         ((n2.first / v2.first) * scale2) *
+         std::sqrt((n3.first / v3.first) * scale3);
 }
+
+} //namespace INTERN_MP_FLOAT
 
 std::pair<double, int>
 to_double_exp(const MP_Float &b);
@@ -816,28 +856,6 @@ inline MP_Float max BOOST_PREVENT_MACRO_SUBSTITUTION(const MP_Float& x,const MP_
   return (x>=y)?x:y; 
 }
 
-
-// TODO:
-// // specialization of to double functor
-// template<>
-// class Real_embeddable_traits< Root_of_2<MP_Float> >
-//     : public INTERN_ROOT_OF_2::Real_embeddable_traits_quotient_root_of_2_base<
-// Root_of_2<MP_Float> >{
-// public:
-//     struct To_double: public std::unary_function<Root_of_2<MP_Float>, double>{
-//          inline
-//          double operator()(const Root_of_2<MP_Float>& q) const {
-//             return INTERN_MP_FLOAT::to_double(q);
-//         }
-//     };
-//     struct To_interval
-//         : public std::unary_function<Root_of_2<MP_Float>, std::pair<double,double> > {
-//         inline
-//         std::pair<double,double> operator()(const Root_of_2<MP_Float>& q) const {
-//             return INTERN_MP_FLOAT::to_interval(q);
-//         }
-//     };
-// };
 
 // Coercion_traits
 CGAL_DEFINE_COERCION_TRAITS_FOR_SELF(MP_Float)

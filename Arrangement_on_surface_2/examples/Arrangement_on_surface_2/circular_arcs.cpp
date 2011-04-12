@@ -63,7 +63,7 @@ int main ()
   // (-1/2, sqrt(3)/2) to (1/2, sqrt(3)/2). Note that we orient the
   // supporting circle accordingly.
   Kernel::Point_2  c6 = Kernel::Point_2 (0, 0);
-  CoordNT          sqrt_3_div_2 = CoordNT (0, Number_type(1,2), 3);
+  CoordNT          sqrt_3_div_2 = CoordNT (Number_type(0), Number_type(1,2), Number_type(3));
   Point_2          s6 = Point_2 (Number_type (-1, 2), sqrt_3_div_2);
   Point_2          t6 = Point_2 (Number_type (1, 2), sqrt_3_div_2);
   

@@ -22,37 +22,55 @@
 #define CGAL_ROOT_OF_TRAITS_H
 
 #include <CGAL/number_type_basic.h>
-#include <CGAL/Root_of_2.h>
+#include <CGAL/Arithmetic_kernel.h>
+#include <CGAL/Sqrt_extension.h>
 #include <CGAL/Quotient.h>
 
 namespace CGAL {
 
 namespace internal {
 
+//Not a field
 template < typename NT, class Algebraic_category>
 struct Root_of_traits_helper{
-    typedef Quotient<NT> Root_of_1;
-    typedef CGAL::Root_of_2<NT> Root_of_2;
+//    typedef Quotient<NT> Root_of_1;
+    typedef typename Get_arithmetic_kernel<NT>::Arithmetic_kernel::Rational Root_of_1;
+    typedef CGAL::Sqrt_extension<Root_of_1,Root_of_1,::CGAL::Tag_true,::CGAL::Tag_true>             Root_of_2;
+//    typedef CGAL::Root_of_2<NT> Root_of_2;
     struct Make_root_of_2{
         typedef Root_of_2 result_type;
-        Root_of_2 operator()(const NT& a, const NT& b, const NT& c){
+        Root_of_2 operator()(const NT& a, const NT& b, const NT& c) const {
             return Root_of_2(a,b,c);
         }
-        Root_of_2 operator()(const NT& a, const NT& b, const NT& c, bool s){
+        Root_of_2 operator()(const NT& a, const NT& b, const NT& c, bool s) const {
             return Root_of_2(a,b,c,s);
         }
         Root_of_2 operator()(const Root_of_1& a,
                              const Root_of_1& b,
-                             const Root_of_1& c){
+                             const Root_of_1& c) const {
             return Root_of_2(a,b,c);
         }
         Root_of_2 operator()(const Root_of_1& a,
                              const Root_of_1& b,
                              const Root_of_1& c,
-                             bool s){
+                             bool s) const {
             return Root_of_2(a,b,c,s);
         }
     };
+  
+  
+private:
+  typedef CGAL::Algebraic_structure_traits<Root_of_2> AST;
+public:
+  typedef typename AST::Square  Square; 
+  typedef typename AST::Inverse Inverse;
+  
+  struct Make_sqrt {
+    typedef Root_of_2 result_type;
+    Root_of_2 operator()(const NT& x) const {
+      return Root_of_2(x,true);
+    }
+  };
 };
 
 template < typename FT>
@@ -71,16 +89,16 @@ private:
     typedef typename FrT::Numerator_type      RT;
     typedef typename FrT::Decompose Decompose;
 public:
-    typedef CGAL::Root_of_2< RT >  Root_of_2;
+    typedef CGAL::Sqrt_extension<Root_of_1,Root_of_1,::CGAL::Tag_true,::CGAL::Tag_true>             Root_of_2;
 
     struct Make_root_of_2{
         typedef Root_of_2 result_type;
         Root_of_2
-        operator()(const FT& a, const FT& b, const FT& c){
+        operator()(const FT& a, const FT& b, const FT& c) const {
             return Root_of_2(a,b,c);
         }
         Root_of_2
-        operator()(const FT& a, const FT& b, const FT& c, bool smaller){
+        operator()(const FT& a, const FT& b, const FT& c, bool smaller) const {
             Decompose decompose;
             RT a_num,b_num,c_num;
             RT a_den,b_den,c_den; // Denomiantor same as RT
@@ -96,6 +114,19 @@ public:
             return make_root_of_2(a_,b_,c_,smaller);
         }
     };
+
+private:
+  typedef CGAL::Algebraic_structure_traits<Root_of_2> AST;
+public:
+  typedef typename AST::Square  Square; 
+  typedef typename AST::Inverse Inverse;
+  
+  struct Make_sqrt{
+    typedef Root_of_2 result_type;
+    Root_of_2 operator()(const FT& x) const {
+      return Root_of_2( FT(0),FT(1),x);
+    }
+  };
 };
 
 template < typename NT >
@@ -107,7 +138,7 @@ struct Root_of_traits_helper < NT, Field_with_sqrt_tag >
     struct Make_root_of_2{
         typedef NT result_type;
         // just a copy, not sure about the semantic of smaller
-        NT operator()(const NT& a, const NT& b, const NT& c, bool smaller){
+        NT operator()(const NT& a, const NT& b, const NT& c, bool smaller) const {
             // former make_root_of_2_sqrt()
             CGAL_assertion( a != 0 );
             NT discriminant = CGAL_NTS square(b) - a*c*4;
@@ -118,10 +149,23 @@ struct Root_of_traits_helper < NT, Field_with_sqrt_tag >
             return (d-b)/(a*2);
         }
         // it's so easy
-        NT operator()(const NT& a, const NT& b, const NT& c){
+        NT operator()(const NT& a, const NT& b, const NT& c) const {
             return a + b * CGAL_NTS sqrt(c) ;
         }
     };
+
+private:
+  typedef CGAL::Algebraic_structure_traits<Root_of_2> AST;
+public:
+  typedef typename AST::Square  Square; 
+  typedef typename AST::Inverse Inverse;
+  
+  struct Make_sqrt{
+    typedef Root_of_2 result_type;
+    Root_of_2 operator()(const NT& x) const {
+      return CGAL::sqrt(x);
+    }
+  };
 };
 
 template < typename NT >
@@ -157,7 +201,7 @@ struct Root_of_traits<Interval_nt<B> >{
   struct Make_root_of_2{
     typedef Interval_nt<B> result_type;
     // just a copy, not sure about the semantic of smaller
-    Interval_nt<B> operator()(const Interval_nt<B>& a, const Interval_nt<B>& b, const Interval_nt<B>& c, bool smaller){
+    Interval_nt<B> operator()(const Interval_nt<B>& a, const Interval_nt<B>& b, const Interval_nt<B>& c, bool smaller) const {
         // former make_root_of_2_sqrt()
         if (CGAL::possibly(a==0))
           return Interval_nt<B>::largest();
@@ -169,7 +213,7 @@ struct Root_of_traits<Interval_nt<B> >{
         return (d-b)/(a*2);
     }
     // it's so easy
-    Interval_nt<B> operator()(const Interval_nt<B>& a, const Interval_nt<B>& b, const Interval_nt<B>& c){
+    Interval_nt<B> operator()(const Interval_nt<B>& a, const Interval_nt<B>& b, const Interval_nt<B>& c) const {
         return a + b * CGAL_NTS sqrt(c) ;
     }
   };
@@ -194,6 +238,20 @@ make_root_of_2(const NT &a, const NT &b, const NT &c,const bool smaller)
     return make_root_of_2(a,b,c,smaller);
 }
 
+template < class NT >
+inline 
+typename Root_of_traits< NT >::Root_of_2
+make_sqrt(const NT &a)
+{
+  typename Root_of_traits<NT>::Make_sqrt make_sqrt;
+  return make_sqrt(a);
+}
+
+
+
+
 } //namespace CGAL
+
+#include <CGAL/Root_of_traits_specializations.h>
 
 #endif // CGAL_ROOT_OF_TRAITS_H

@@ -262,6 +262,7 @@ Approximate_min_ellipsoid_d/documentation/boundingbox.mw -text svneol=native#app
 Arithmetic_kernel/include/CGAL/CORE_arithmetic_kernel.h -text
 Arithmetic_kernel/include/CGAL/GMP_arithmetic_kernel.h -text
 Arithmetic_kernel/include/CGAL/LEDA_arithmetic_kernel.h -text
+Arithmetic_kernel/include/CGAL/MP_Float_arithmetic_kernel.h -text
 Arithmetic_kernel/include/CGAL/OLD/GMP/Gmpfr_interval_type.h -text
 Arithmetic_kernel/include/CGAL/OLD/Gmpfr_interval.h -text
 Arithmetic_kernel/package_info/Arithmetic_kernel/description.txt -text
@@ -2643,6 +2644,7 @@ Number_types/doc_tex/NumberTypeSupport_ref/CORE_BigFloat.tex -text
 Number_types/doc_tex/NumberTypeSupport_ref/Gmpfi.tex -text
 Number_types/doc_tex/NumberTypeSupport_ref/Gmpfr.tex -text
 Number_types/doc_tex/NumberTypeSupport_ref/fundamental_types.tex -text
+Number_types/doc_tex/NumberTypeSupport_ref/make_sqrt.tex -text
 Number_types/doc_tex/NumberTypeSupport_ref/open.tex -text
 Number_types/include/CGAL/GMP/Gmpfi_type.h -text
 Number_types/include/CGAL/GMP/Gmpfi_type_static.h -text
@@ -2651,6 +2653,7 @@ Number_types/include/CGAL/GMP/Gmpfr_type_static.h -text
 Number_types/include/CGAL/Gmpfi.h -text
 Number_types/include/CGAL/Gmpfr.h -text
 Number_types/include/CGAL/Quotient_fwd.h -text
+Number_types/include/CGAL/Root_of_traits_specializations.h -text
 Number_types/include/CGAL/Sqrt_extension/Algebraic_extension_traits.h -text
 Number_types/include/CGAL/Sqrt_extension/Algebraic_structure_traits.h -text
 Number_types/include/CGAL/Sqrt_extension/Coercion_traits.h -text
@@ -2663,12 +2666,14 @@ Number_types/include/CGAL/Sqrt_extension/Sqrt_extension_type.h -text
 Number_types/include/CGAL/Sqrt_extension/Wang_traits.h -text
 Number_types/include/CGAL/Sqrt_extension/convert_to_bfi.h -text
 Number_types/include/CGAL/Sqrt_extension/io.h -text
+Number_types/include/CGAL/Test/test_root_of_traits.h -text
 Number_types/include/CGAL/mpfi_coercion_traits.h -text
 Number_types/include/CGAL/mpfr_coercion_traits.h -text
 Number_types/test/Number_types/CMakeLists.txt -text
 Number_types/test/Number_types/Gmpfi.cpp -text
 Number_types/test/Number_types/Gmpfr.cpp -text
 Number_types/test/Number_types/Gmpfr_bug.cpp -text
+Number_types/test/Number_types/include/CGAL/Test/test_root_of_2_traits.h -text
 Number_types/test/Number_types/include/CGAL/_test_io.h -text
 Optimisation_doc/doc_tex/Bounding_volumes/annulus.gif -text svneol=unset#image/gif
 Optimisation_doc/doc_tex/Bounding_volumes/annulus.pdf -text svneol=unset#application/pdf

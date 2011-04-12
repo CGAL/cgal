@@ -19,7 +19,7 @@
 #include <CGAL/Lazy_exact_nt.h>
 #include <CGAL/MP_Float.h>
 #include <CGAL/Quotient.h>
-#include <CGAL/Root_of_2.h>
+#include <CGAL/Sqrt_extension.h>
 #include <iomanip>
 
 #include <CGAL/Test/_test_real_embeddable.h>
@@ -60,12 +60,12 @@ NT my_rand()
 //----------------------
 
 template<class T>
-bool is_RO2_class(const CGAL::Root_of_2<T>& ){ return true;}
+bool is_RO2_class(const CGAL::Sqrt_extension<T,T>& ){ return true;}
 template<class T>
 bool is_RO2_class(const T& ){ return false;}
 
 template<class T>
-CGAL::Root_of_2<T> conjugate(const CGAL::Root_of_2<T>& R){
+CGAL::Sqrt_extension<T,T> conjugate(const CGAL::Sqrt_extension<T,T>& R){
   return R.conjugate();
 }
 
@@ -77,7 +77,7 @@ template<class T>
 T inverse_helper(const T& R){ return (T) 1/R; }
 
 template<class T>
-CGAL::Root_of_2<T> inverse_helper(const CGAL::Root_of_2<T>& R){
+CGAL::Sqrt_extension<T,T> inverse_helper(const CGAL::Sqrt_extension<T,T>& R){
   return inverse(R);
 }
 
@@ -85,7 +85,7 @@ template<class T>
 bool is_smaller_helper(const T& R){ return R.exact().is_smaller(); }
 
 template<class T>
-bool is_smaller_helper(const CGAL::Root_of_2<T>& R){ return R.is_smaller();}
+bool is_smaller_helper(const CGAL::Sqrt_extension<T,T>& R){ return R.is_smaller();}
 
 template < typename RT >
 struct bracket {
@@ -103,9 +103,9 @@ Root create_root_helper(RT a, RT b, Root *)
 }
 
 template < class T, class RT >
-CGAL::Root_of_2<T> create_root_helper(RT a, RT b, CGAL::Root_of_2<T> *)
+CGAL::Sqrt_extension<T,T> create_root_helper(RT a, RT b, CGAL::Sqrt_extension<T,T> *)
 {
-   return CGAL::Root_of_2<T>(a, b);
+   return CGAL::Sqrt_extension<T,T>(a, b);
 }
 
 template < class Root, class RT >
@@ -410,7 +410,7 @@ test_root_of_g()
 //    assert(CGAL_NTS compare(r1_sqr, r2_sqr) == compare(dr1*dr1, dr2*dr2));
   }
 
-  std::cout << "  Testing addition/subtraction of Root_of_2<NT> with NT"
+  std::cout << "  Testing addition/subtraction of Sqrt_extension<NT,NT> with NT"
             << std::endl;
   for (int i = 0; i < test_loops; ++i) {
     RT r    = my_rand<RT>();
@@ -439,7 +439,7 @@ test_root_of_g()
   //  assert(CGAL_NTS compare(r, r4)  == (int) CGAL_NTS sign(r1));
   }
 
-  std::cout << "  Testing multiplication of Root_of_2<NT> with NT" << std::endl;
+  std::cout << "  Testing multiplication of Sqrt_extension<NT,NT> with NT" << std::endl;
   for (int i = 0; i < test_loops; ++i) {
     RT r    = my_rand<RT>();
     Root r1 = my_rand_root<Root,RT>();
@@ -515,7 +515,7 @@ test_root_of_g()
 //    assert(CGAL_NTS compare(sqr_r1, sqr_r2) == compare(std::sqrt(dr1), std::sqrt(dr2)));
   }
 
-  std::cout << "  Testing Root_of_2<FT>" << std::endl;
+  std::cout << "  Testing Sqrt_extension<FT,FT>" << std::endl;
   for (int i = 0; i < test_loops; ++i) {
     int n = rnd.get_int(0, 63);
     typedef CGAL::Rational_traits<FT> Rat_traits;
@@ -547,17 +547,15 @@ test_root_of(){
 
 int main(int argc, char **argv) {
 
-  using CGAL::Root_of_2;
-
   test_loops = argc == 2 ? atoi(argv[1]) : 1000;
 
   bool result = true;
 
-//  std::cout << "Testing Root_of_2<double>" << std::endl;
-  //~ result = result && test_root_of<Root_of_2<double> >();
+  std::cout << "Testing Sqrt_extension<double,double>" << std::endl;
+  result = result && test_root_of<Sqrt_extension<double,double> >();
 
-  std::cout << "Testing Root_of_2<MP_Float>" << std::endl;
-  result = result && test_root_of<Root_of_2<CGAL::MP_Float> >();
+  std::cout << "Testing Sqrt_extension<MP_Float,MP_Float>" << std::endl;
+  result = result && test_root_of<Sqrt_extension<CGAL::MP_Float,CGAL::MP_Float> >();
   /*
   // Root_of_2 can only be instantiated with RT for now
   std::cout << "Testing Root_of_2<Quotient<MP_Float> >" << std::endl;
@@ -573,8 +571,8 @@ int main(int argc, char **argv) {
   
   
 #ifdef CGAL_USE_GMP
-  std::cout << "Testing Root_of_2<Gmpz>" << std::endl;
-  result = result && test_root_of<Root_of_2<CGAL::Gmpz> >();
+  std::cout << "Testing Sqrt_extension<Gmpz,Gmpz>" << std::endl;
+  result = result && test_root_of<Sqrt_extension<CGAL::Gmpz,CGAL::Gmpz> >();
   /*
   // Root_of_2 can only be instantiated with RT for now
   std::cout << "Testing Root_of_2<Gmpq>" << std::endl;
@@ -592,8 +590,8 @@ int main(int argc, char **argv) {
   //std::cout << "Testing Root_of_2<Quotient<mpz_class> >" << std::endl;
   //result = result && test_root_of<Root_of_2<CGAL::Quotient<mpz_class> > >();
 
-  std::cout << "Testing Root_of_2<mpz_class>" << std::endl;
-  result = result && test_root_of<Root_of_2<mpz_class> >();
+  std::cout << "Testing Sqrt_extension<mpz_class,mpz_class>" << std::endl;
+  result = result && test_root_of<Sqrt_extension<mpz_class,mpz_class> >();
 #endif
 
 #ifdef CGAL_USE_LEDA

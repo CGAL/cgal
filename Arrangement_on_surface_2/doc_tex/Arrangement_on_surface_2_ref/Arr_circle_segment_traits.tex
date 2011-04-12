@@ -29,80 +29,19 @@ and segments to have rational coordinates.
 
 The nested \ccc{Point_2} type defined by the traits class is therefore
 {\em different} than the \ccc{Kernel::Point_2} type. Its coordinates are
-of type \ccc{CoordNT}, and represent real numbers obtained from solving
-quadratic equations with rational coordinates. A number of type
-\ccc{CoordNT} can therefore be expressed as $\alpha + \beta\sqrt{\gamma}$,
-where $\alpha$, $\beta$ and $\gamma$ are all rational numbers.
-The definition of the curve and $x$-monotone curve types nested in the
-traits class are detailed below.
+of type \ccc{CoordNT}, which an instantiation of 
+\ccc{CGAL::Sqrt_extension<NT,ROOT>} where \ccc{NT = ROOT = Kernel::FT}.
+Moreover, the third and fourth (hidden) template parameter of 
+\ccc{CGAL::Sqrt_extension<NT,ROOT>} are set to \ccc{CGAL::Tag_true}, which 
+enables efficient comparison among different extensions. 
+
+For more details see the documentation of \ccRefIdfierPage{CGAL::Sqrt_extension<NT,ROOT>}\\
+
 
 \ccInclude{CGAL/Arr_circle_segment_traits_2.h}
  
 \ccIsModel
     \ccc{ArrangementTraits_2}
-
-\subsection*{Class 
-Arr\_circle\_segment\_traits\_2$<$Kernel$>$::CoordNT}
-%==============================================================================
-
-The \ccc{CoordNT} number-type nested within the traits class represents
-an algebraic number of degree 2; it can be represented as
-$\alpha + \beta\sqrt{\gamma}$, where $\alpha$, $\beta$ and $\gamma$ are
-all rational numbers of type \ccc{Kernel::FT}.
-
-\begin{ccClass}{Arr_circle_segment_traits_2<Kernel>::CoordNT}
-
-\ccTypes
-%-------
-
-\ccNestedType{Rational}{the \ccc{Kernel::FT} type.}
-
-\ccCreation
-\ccCreationVariable{x}
-%---------------------
-
-\ccConstructor{CoordNT ();}
-    {creates a variable whose value is $0$.}
-
-\ccConstructor{CoordNT (const Rational& alpha);}
-    {creates a variable whose value is the rational number $\alpha$.}
-
-\ccConstructor{CoordNT (const Rational& alpha,
-                        const Rational& beta,
-                        const Rational& gamma);}
-    {creates a variable whose value is the algebraic number 
-     $\alpha + \beta\sqrt{\gamma}$.}
-
-\ccAccessFunctions
-%-----------------
-
-\ccMethod{bool is_rational () const;}
-  {determines whether \ccVar\ is rational.}
-
-\ccMethod{Rational alpha () const;}
-  {returns $\alpha$.}
-\ccGlue
-\ccMethod{Rational beta () const;}
-  {returns $\beta$ (0 if \ccVar\ is rational).}
-\ccGlue
-\ccMethod{Rational gamma () const;}
-  {returns $\gamma$ (0 if \ccVar\ is rational).}
-
-\ccHeading{Operators}
-%--------------------
-
-The \ccc{CoordNT} number-type supports all arithmetic operations with
-rational numbers of type \ccc{Kernel::FT}. For example, it is possible to
-compute \ccc{x + q}, \ccc{q - x}, \ccc{x += q}, etc. where \ccc{q} is rational.
-
-The global functions \ccc{CGAL::sign(x)}, \ccc{CGAL::square(x)},
-\ccc{CGAL::to_double(x)} and \ccc{CGAL::compare(x,y)}, where \ccc{x} and
-\ccc{y} are of type \ccc{CoordNT}, are also supported.
-
-It is also possible to call \ccc{CGAL::to_double(x)} to convert \ccc{x} to
-a rational number, with the precondition that it is indeed rational.
-
-\end{ccClass}
 
 \subsection*{Class 
 Arr\_circle\_segment\_traits\_2$<$Kernel$>$::Point\_2}

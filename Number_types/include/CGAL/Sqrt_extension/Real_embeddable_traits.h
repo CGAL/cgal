@@ -26,13 +26,13 @@
 
 namespace CGAL {
 
-template< class COEFF, class ROOT >
-class Real_embeddable_traits< Sqrt_extension<COEFF, ROOT> >
+template< class COEFF, class ROOT, class ACDE_TAG, class FP_TAG >
+class Real_embeddable_traits< Sqrt_extension<COEFF, ROOT, ACDE_TAG,FP_TAG> >
   : public INTERN_RET::Real_embeddable_traits_base<
-                  Sqrt_extension<COEFF, ROOT>,
+                  Sqrt_extension<COEFF, ROOT, ACDE_TAG,FP_TAG>,
                   typename Real_embeddable_traits<COEFF>::Is_real_embeddable > {
   public:
-    typedef Sqrt_extension<COEFF, ROOT> Type;
+  typedef Sqrt_extension<COEFF, ROOT, ACDE_TAG,FP_TAG> Type;
 
     class Sgn
         : public std::unary_function< Type, ::CGAL::Sign >{
