@@ -115,10 +115,11 @@ GNU 3.2.1       & \texttt{\_\_GNUC\_MINOR\_\_}      & 2\\
 GNU 3.2.1       & \texttt{\_\_GNUC\_PATCHLEVEL\_\_} & 1\\
 Microsoft VC7.1 & \texttt{\_MSC\_VER}               & 1310\\
 Microsoft VC8.0 & \texttt{\_MSC\_VER}               & 1400\\
-Intel 7.0       & \texttt{\_\_INTEL\_COMPILER}      & ???\\
-SGI 7.3         & \texttt{\_COMPILER\_VERSION}      & 730\\
-SUN 5.0         & \texttt{\_\_SUNPRO\_CC}           & 0x500\\
+Intel 11.1      & \texttt{\_\_INTEL\_COMPILER}      & 1110\\
+Clang 2.9       & \texttt{\_\_clang\_major\_\_}     & 2\\
+Clang 2.9       & \texttt{\_\_clang\_minor\_\_}     & 9\\
 SUN 5.3         & \texttt{\_\_SUNPRO\_CC}           & 0x530\\
+SUN 5.10        & \texttt{\_\_SUNPRO\_CC}           & 0x5100\\
 \end{tabular}}\vspace{5mm}
 
 \noindent There are also flags to identify the architecture.
@@ -298,6 +299,13 @@ CGAL_DEPRECATED void foo(int i)
 \subsection{Various other problems and solutions\label{sec:various_problems}}
 
 \begin{description}
+\item[\textbf{min and max}]
+Visual \CC\ headers (and others) sometimes define \ccc{min} and \ccc{max} as macros. If you write \ccc{max} followed by an opening parenthesis, this can lead to unwanted substitutions. In order to work around it, you should use one of the following tricks:
+\begin{verbatim}
+  max BOOST_PREVENT_MACRO_SUBSTITUTION (a, b);
+  (max) (a, b);
+\end{verbatim}
+
 \item[\textbf{Templated member functions}]
 
 For SunPRO \CC\, member function templates with dependent return type
