@@ -10,7 +10,10 @@
 % =============================================================================
 
 \chapter{Geometry Kernels\label{chap:kernels}}
-\ccChapterAuthor{Stefan Schirra}
+\ccChapterAuthor{Olivier Devillers ({\tt olivier.devillers@inria.fr})\\
+Marc Glisse ({\tt marc.glisse@inria.fr})\\
+Stefan Schirra
+}
 
 
 The layer of geometry kernels\ccIndexMainItem[t]{kernel} provides
@@ -33,235 +36,42 @@ structure; see also Chapter~\ref{chap:traits_classes}. If you need
 primitives not provided by the kernel (yet), please read
 Section~\ref{sec:NewKernelTraits} below.
 
-\section{Cartesian and homogeneous representation\label{sec:cart_and_hom_representation}}
+\section{Different kernels\label{sec:different_kernels}}
 
-There are two different coordinate representations%
-\ccIndexMainItem[t]{coordinate}%
-\ccIndexMainItem[t]{representation}
-available in the
-kernel at present: Cartesian representation and homogeneous
-representation. Cartesian representation%
-\ccIndexSubitemDef{Cartesian}{representation}%
-\ccIndexSubitemDef{coordinate}{Cartesian}%
-\ccIndexSubitem{representation}{Cartesian}%
-\ccIndexSubitem{kernel traits}{Cartesian}
-is the one you are familiar with. 
-A \ccAnchor{http://www.geom.uiuc.edu/docs/reference/CRC-formulas/node4.html}{point in the plane} is given by its $x$- and its $y$-coordinates;%
-\lcTex{\footnote{%
-\path|http://www.geom.uiuc.edu/docs/reference/CRC-formulas/node4.html|}} 
-a \ccAnchor{http://www.geom.uiuc.edu/docs/reference/CRC-formulas/node39.html}{point in space} by its $x$-, $y$- and $z$-coordinates.\lcTex{\footnote{%
-\path|http://www.geom.uiuc.edu/docs/reference/CRC-formulas/node39.html|}}
-Homogeneous representation
-\ccIndexSubitemDef{homogeneous}{representation}%
-\ccIndexSubitemDef{coordinate}{homogeneous}%
-\ccIndexSubitem{representation}{homogeneous}%
-\ccIndexSubitem{kernel traits}{homogeneous}
-can be seen as a divison-free representation
-of Cartesian coordinates. There is an additional coordinate, sometimes called
-the {\em homogenizing} coordinate.%
-\ccIndexMainItemDef{homogenizing coordinate}
-So with homogeneous representation in
-2-space\lcTex{\footnote{%
-\path|http://www.geom.uiuc.edu/docs/reference/CRC-formulas/node6.html|}}, 
-we have \ccAnchor{http://www.geom.uiuc.edu/docs/reference/CRC-formulas/node6.html}{coordinates $(x,y,w)$}, where $w$ is the homogenizing coordinate,
-and in 3-space\lcTex{\footnote{%
-\path|http://www.geom.uiuc.edu/docs/reference/CRC-formulas/node43.html|}}, 
-we have homogeneous \ccAnchor{http://www.geom.uiuc.edu/docs/reference/CRC-formulas/node43.html}{coordinates $(x,y,z,w)$}.
-Since \cgal\ uses homogeneous representation for affine geometry (not for
-projective geometry), we assume $w \neq 0$.
-The Cartesian representation corresponding to $(x_0, x_1, \ldots, x_d, w)$
-is $(x_0/w, x_1/w, \ldots, x_d/w)$. Hence, homogeneous representation
-is not unique; $(\alpha x,\alpha y,\alpha z,\alpha w)$ is an alternative
-representation to $(x,y,z,w)$ for any $\alpha \neq 0$.
+\cgal\ provides different kernels, thay can differ by internal
+representation of objects (e.g.  cartesian versus  homogeneous) 
+or provide different functionalities (e.g. circular kernel).
+When creating a new package, the authors have to specify clearly
+the requirements needed by the kernel used.
+For example they can specify the needs with respect to the arithmetic.
+
+The authors may specify a targeted kernel in the list of predefined
+kernels
+(e.g.  \ccc{Exact_predicates_inexact_constructions_kernel}).
+
+\subsection{Cartesian versus homogeneous
+  computation\label{sec:CartesianHomogeneousComputation}}
+
+Point coordinates can be represented in a homogeneous or cartesian
+way.
+The developer of a package can keep in mind that cartesian will be
+usually more space consuming, while homogeneous can be interesting if
+exact rational computations are needed.
+In any way, a package has to work with both representations.
+
+
+Since \cgal\ uses homogeneous representation for affine geometry  and not
+for projective geometry, the homogenizing coordinate  is non zero.
+The cartesian 
+representation corresponding to an homogeneous point
+$(x_0,x_1,...,x_d,w)$ is
+$(x_0/w,x_1/w,...,x_d/w)$. Hence, homogeneous representation is not unique;
+$(\alpha x,\alpha y,\alpha z,\alpha w)$ is an alternative
+representation to $(x,y,z,w)$  for any $\alpha\neq 0$. 
 Internally, \cgal\ always maintains a non-negative homogenizing coordinate.
 
-With the homogeneous representation, division operations%
-\ccIndexMainItem{division} can be avoided.
-Homogeneous representation is advantageous over Cartesian representation
-whenever systems of linear equations with integral coefficients
-are to be solved. By Cramer's rule,
-the rational solutions%
-\ccIndexMainItem{rational computation} all have the same denominator $D$.
-The Cartesian representation would be
-$$(N_0/D, N_1/D, \ldots, N_{d-1}/D)$$
-while a corresponding less space-consuming homogeneous representation is 
-$$(N_0, N_1, \ldots, N_{d-1}, D)$$
-For example, computing the Cartesian coordinates $(x,y)$ of the
-intersection point  of lines with equations
-$a_1 X + b_1 Y + c_1 = 0$ and $a_2 X + b_2 Y + c_2 = 0$ gives
-\lcTex{
-$$ (x,y) = 
-\Bigg(
-\frac{\left|\begin{array}{cc}b_1& c_1 \\ b_2 & c_2\end{array}\right|}
-     {\left|\begin{array}{cc}a_1& b_1 \\ a_2 & b_2\end{array}\right|},
-\frac{-\left|\begin{array}{cc}a_1& c_1 \\ a_2 & c_2\end{array}\right|}
-     {\phantom{-}\left|\begin{array}{cc}a_1& b_1 \\ a_2 & b_2\end{array}\right|}
-\Bigg)
-$$ 
-}
-\lcRawHtml{
-<CENTER>
-<IMG BORDER=0 SRC="fig/Cartesian_ipoint.gif" 
-  ALIGN=CENTER ALT="Intersection point with Cartesian coordinates"><BR>
-</CENTER>
-}
-while with homogeneous representation we have
-\lcTex{
-$$ (x,y,w) = 
-\Bigg(
-{\left|\begin{array}{cc}b_1& c_1 \\ b_2 & c_2\end{array}\right|},
-{-\left|\begin{array}{cc}a_1& c_1 \\ a_2 & c_2\end{array}\right|},
-{\left|\begin{array}{cc}a_1& b_1 \\ a_2 & b_2\end{array}\right|}\Bigg)
-$$
-}
-\lcRawHtml{
-<CENTER>
-<IMG BORDER=0 SRC="fig/homogeneous_ipoint.gif"
-   ALIGN=CENTER ALT="Intersection point with homogeneous coordinates"><BR>
-</CENTER>
-}
-In general, however, homogeneous representation is not more space-efficient.
-Naive conversion from a rational Cartesian represenatation 
-$$(N_0/D_0, N_1/D_1, \ldots, N_{d-1}/D_{d-1})$$ to a homogeneous
-representation will lead to much bigger numbers, namely,
-$$\textstyle
-(N_0 \prod D_i /D_0, N_1\prod D_i /D_1, \ldots, N_{d-1}\prod D_i /D_{d-1},
-\prod D_i )$$. 
 
-\section{Cartesian versus homogeneous computation\label{sec:CartesianHomogeneousComputation}}
-Homogeneous representation has the disadvantage that predicates become
-more complicated. Testing equality of points is more complicated because
-the homogeneous representation is not unique. In the orientation predicate,
-the sign of a 3x3 determinant must be computed:
-\lcTex{
-$${\mbox{\small sign}}\left|
-\begin{array}{ccc}
-{x_1} & {y_1} & w_1 \\
-{x_2} & {y_2} & w_2 \\
-{x_3} & {y_3} & w_3 \\
-\end{array}
-\right|
-$$
-}
-\lcRawHtml{
-<CENTER>
-<IMG BORDER=0 SRC="fig/homogeneous_orientation.gif"
-   ALIGN=CENTER ALT="Orientation test with homogeneous coordinates"><BR>
-</CENTER>
-}
-With Cartesian representation, it is essentially a 2x2 determinant only:
-\lcTex{
-$$
-{\mbox{\small sign}}\left|
-\begin{array}{ccc}
-{x_1} & {y_1} & 1 \\
-{x_2} & {y_2} & 1 \\
-{x_3} & {y_3} & 1 \\
-\end{array}
-\right|
-=
-{\mbox{\small sign}}\left|
-\begin{array}{ccc}
-{x_1 - x_3} & {y_1 - y_3} & 0 \\
-{x_2 - x_3} & {y_2 - y_3} & 0 \\
-{x_3} & {y_3} & 1 \\
-\end{array}
-\right|
-=
-{\mbox{\small sign}}\left|
-\begin{array}{cc}
-{x_1 - x_3} & {y_1 - y_3} \\
-{x_2 - x_3} & {y_2 - y_3} \\
-\end{array}
-\right|
-$$
-}
-\lcRawHtml{
-<CENTER>
-<IMG BORDER=0 SRC="fig/Cartesian_orientation.png"
-   ALIGN=CENTER ALT="Orientation test with Cartesian coordinates"><BR>
-</CENTER>
-}
-With homogeneous coordinates all formulas are homogeneous polynomials
-\ccIndexSubitem{homogeneous}{polynomial} 
-in the coordinates, \ie, all monomials of homogeneous coordinates
-have the same total degree.%
-\footnote{the sum of the degrees of each variable in the monomial} 
-\ccIndexMainItem{total degree}%
-For a sign test for some polynomial expression over Cartesian coordinates 
-you get a corresponding sign test with an expression over homogeneous 
-coordinates by replacing 
-each Cartesian coordinate $x_{ij}$ by $hx_{ij}/hw_j$ and then multiplying by
-the least common multiple of the denominators, \ie, some multiple of
-the $hw_j$. 
-Here, $x_{ij}$ denotes the $i$-th Cartesian coordinate,
-$hx_{ij}$ denotes the $i$-th homogeneous coordinate, and
-$hw_j$ denotes the homogenizing coordinate of point $j$.
-Since all $hw_j$ are positive in \cgal, sign is not affected
-by this multiplication. 
 
-\section{Available kernels}
-At present, there are two homogeneous and two Cartesian kernels,
-one with reference counting\ccIndexMainItem{reference counting} 
-(Chapter~\ref{chap:reference_counting}) and one without.
-The corresponding kernel classes are
-\begin{verbatim}
-CGAL::Cartesian< FieldNumberType >
-CGAL::Homogeneous< RingNumberType >
-CGAL::Simple_cartesian< FieldNumberType >
-CGAL::Simple_homogeneous< RingNumberType >
-\end{verbatim}
-\ccIndexMainItem{kernel traits}
-\ccIndexSubitem{kernel}{\ccFont Cartesian}%
-\ccIndexSubitem{kernel}{\ccFont Homogeneous}%
-\ccIndexSubitem{kernel}{\ccFont Simple_cartesian}%
-\ccIndexSubitem{kernel}{\ccFont Simple_homogeneous}%
-These are all parameterized by a number type, which is used for storing
-the coordinates and the arithmetic in the corresponding primitives and
-predicates. Actually, parameterization of \ccc{Homogeneous<>} 
-involves two number types. While in the internal homogeneous representation,
-an integral number type is sufficient, rational numbers must sometimes be
-used outside the internal representation, for example, when the squared length 
-of a vector is computed. To represent such rational values, there is a second
-number type whose default value is {\tt CGAL::Quotient< RingNumberType >}. 
-The type of this number type can be accessed as \ccc{Homogeneous<>::FT}.% 
-\ccIndexMainItem{\ccFont FT}
-\ccIndexSubitem{kernel}{\ccFont FT}
-The internally used number type can be accessed as \ccc{Homogeneous<>::RT}.%
-\ccIndexMainItem{\ccFont RT}
-\ccIndexSubitem{kernel}{\ccFont RT}
-For the sake of a uniform interface for both representations, the
-Cartesian kernels provide such types as well. For Cartesian representation,
-both \ccc{FT} and \ccc{RT} map to same number type used everywhere in the
-implementation of the Cartesian kernel.  
-
-Whenever one wants to ensure that predicates are evaluated correctly,
-an exact number type is usually necessary. As exact computations are
-time consuming, filtering techniques have been developed. The
-predicate is first evaluated using efficient but inexact floating
-point arithmetic. At the same time an error bound is computed that is
-used to judge the quality of the computed solution. If the solution is
-not guaranteed to be correct, the predicate is re-evaluated using
-exact arithmetic. The classes
-\begin{verbatim}
-CGAL::Filtered_kernel< CK >
-CGAL::Filtered_kernel_adaptor< CK >
-\end{verbatim}
-are adaptors that add such a filtering mechanism to the predicates of
-a given Kernel \ccc{CK}. Note that only predicates are affected by
-these adaptors, the constructions are still the same as in the
-original kernel \ccc{CK}. 
-
-The difference between \ccc{Filtered_kernel} and
-\ccc{Filtered_kernel_adaptor} is that the latter affects the predicate
-functors in the kernel only while the former also affecs the behaviour
-of predicates that are implemented as global functions.
-
-Another kind of filtering kernel that works with constructions is
-\ccc{Lazy_kernel<EK,AK,Conv>} (where \ccc{EK} is an exact kernel, \ccc{AK} a fast approximate kernel, and \ccc{Conv} a converter from \ccc{EK} to \ccc{AK}). Objects contain a DAG that led to their
-creation and an approximate version. When the approximation is not
-sufficiently precise, an exact value is computed and the DAG is
-pruned.
 
 \section{Kernel design and conventions}
 \ccIndexSubitem{kernel}{design}%
@@ -285,8 +95,8 @@ standardized interface.%
 \ccIndexSubitem{kernel}{conventions}
 \begin{itemize}
 \item
-All classes (currently only in dimensions 2 and 3) have a \ccc{bbox()} member function computing a bounding box.
-\ccIndexMainItem[C]{bbox}
+All classes (currently only in dimensions 2 and 3) have a \ccc{bbox()} member function computing a bounding box.%
+\ccIndexMainItem[C]{ bbox}
 \item
 All classes have a \ccc{transform(Aff_transformation_d t)} member function
 to compute the object transformed by \ccc{t}.%
@@ -327,11 +137,18 @@ the coordinates directly, not on the geometric objects. These
 number-type based predicates ease re-use with non-\cgal\ types.
 
 \section{Missing functionality\label{sec:NewKernelTraits}}
-\ccIndexSubitem{predicate}{missing} Kernel traits do not provide
-redundant functionality. In particular, they do not provide a right
-turn predicate, since a left turn predicate exists. A right turn
-functor can be created from the left turn functor using the function
-\ccc{boost::bind}.
+\ccIndexSubitem{predicate}{missing} 
+Kernel traits should avoid 
+redundant functionality, or if similar functionality is implemented
+with a different API, then one should really implement the
+functionality and the others call that one.
+
+%%%  Sentence below is not true, there is right_turn and left_turn in
+%%%  the global functions of the kernel
+%In particular, they do not provide a right
+%turn predicate, since a left turn predicate exists. A right turn
+%functor can be created from the left turn functor using the function
+%\ccc{boost::bind}.
 
 Whenever you need a predicate that is not present in the current kernel
 traits, you should first try to re-use the available predicates (you
