@@ -54,7 +54,8 @@ should be used in your code.
 The concepts of iterators is relatively well described in textbooks such as 
 Stroustrup's book ({\em The C++ Programming Langage} \cite{cgal:s-cpl-97})
 and Austern's book ({\em Generic Programming and the \stl} \cite{cgal:a-gps-98})
-and in chapter {\em Handles and Circulator} \ccAnchor{http://www.cgal.org/Manual/latest/doc_html/cgal_manual/Circulator/Chapter_main.html} of the \cgal\ manual.
+and in chapter {\em Handles and Circulator} \ccAnchor{http://www.cgal.org/Manual/latest/doc_html/cgal_manual/Circulator/Chapter_main.html} of the 
+{\em Support Library} part of the \cgal\ manual.
 which also presents the concepts of handles and circulators.
 Thus we will not give a full description of these concept here
 but only a few hints about how to use and write handle, iterators and circulators in \cgal.  Developers should consult the above-mentioned references to become
@@ -215,7 +216,7 @@ iterator adaptor for the stream class \ccc{Stream} and value type \ccc{T}.
 These adaptors are particularly useful for stream classes that are similar to
 but not derived from \ccc{std::istream} and \ccc{std::ostream}. The only 
 requirements of the stream classes are that they define \ccc{operator>>}  
-(for \ccc{Istream_iterator::value_type}) and \ccc{operator<< } 
+(for \ccc{Istream_iterator::value_type}) and \ccc{operator$<<$} 
 (for \ccc{Ostream_iterator::value_type}).
 \ccIndexSubitemEnd{iterators}{stream}
 
@@ -253,7 +254,8 @@ functions (or adaptors)
 \ccc{back_inserter}
 \ccIndexMainItem{\ccFont back_inserter}
 \ccIndexSubitem{adaptor}{for insert iterators}
-and \ccc{inserter} to get inserters from containers.
+and \ccc{inserter} to get insert iterators, also called inserters,
+ from containers.
 \ccIndexMainItem{\ccFont inserter}
 \ccIndexSubitem{containers}{insertion adaptors}
 
@@ -403,8 +405,9 @@ over either a linear or circular sequence:
 \ccStyle{CGAL_For_all_backwards( ic1, ic2)}
 \ccIndexMainItem[C]{CGAL_For_all_backwards}
 
-See the \ccAnchor{http://www.cgal.org/Manual/doc_html/support_lib/Circulator/Chapter_circulator.html}{Circulator documentation} in the
-Support Library Reference Manual for more information and examples.
+See the chapter {\em Handles and Circulators} \ccAnchor{http://www.cgal.org/Manual/latest/doc_html/cgal_manual/Circulator/Chapter_main.html}
+ in the {\em Support Library} part of \cgal\ manual 
+for more information and examples.
 
 \subsection{Writing an iterator for your container\label{sec:class_iterator}}
 \ccIndexSubitemBegin{iterators}{writing}
