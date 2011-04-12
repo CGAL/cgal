@@ -17,7 +17,8 @@
 \ccChapterAuthor{Mariette Yvinec ({\tt yvinec@sophia.inria.fr})}
 
 
-\ccAnchor{http://www.cgal.org/Manual/doc_html/use_of_stl/Chapter_Iterator.html}{Iterators}
+
+{Iterators}
 \ccIndexMainItemDef{iterators}
 are a generalization of pointers that allow a programmer to work 
 with different data structures (containers) in a uniform manner. 
@@ -34,19 +35,20 @@ Iterators are widely used in \cgal\ too.
 \cgal\ extends the idea of the iterator, which works for linear data
 structures, to circular data structures by defining the concept of
 a circulator.  
-\ccAnchor{http://www.cgal.org/Manual/doc_html/use_of_stl/Chapter_Circulator_stl.html}{Circulators}
+\ccAnchor{http://www.cgal.org/Manual/latest/doc_html/cgal_manual/Circulator/Chapter_main.html}{Circulators}
 \ccIndexMainItemDef{circulators}
 are quite similar to iterators, with the
 major difference being the absence of a past-the-end position in a sequence.
 Note that circulators are NOT part of the \stl, but of \cgal.
 
 \ccIndexMainItemBegin{handles}
-In \cgal, we also define the concept of a handle, 
+In \cgal, we also define the concept of 
+\ccAnchor{http://www.cgal.org/Manual/latest/doc_html/cgal_manual/Circulator/Chapter_main.html}{handle}, 
 \ccIndexMainItemDef{handles}
 which behaves roughly
 like a pointer to an object without an increment or decrement operation.
 More details about handles and their requirements can be found in 
-the \ccAnchor{http://www.cgal.org/Manual/doc_html/frameset/fsSupport.html}{\cgal\ Support Library Reference Manual}. 
+the \ccAnchor{http://www.cgal.org/Manual/latest/doc_html/cgal_manual/Circulator/Chapter_main.html}{chapter Circuators and Handles} of the Support Library part of \cgal\ manual. 
 Section~\ref{sec:handle_vs_it_vs_circ} below discusses when handles
 should be used in your code.
 \ccIndexMainItemEnd{handles}
