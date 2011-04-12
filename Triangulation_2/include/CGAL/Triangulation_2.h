@@ -593,7 +593,6 @@ std::ptrdiff_t insert(InputIterator first, InputIterator last)
 bool well_oriented(Vertex_handle v) const
 {
   typedef typename Geom_traits::Orientation_2   Orientation_2; 
-  Orientation_2 orientation_2 = geom_traits().orientation_2_object();
   Face_circulator fc = incident_faces(v), done(fc);
   do {
     if(!is_infinite(fc)) {

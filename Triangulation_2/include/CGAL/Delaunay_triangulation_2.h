@@ -2174,7 +2174,6 @@ is_delaunay_after_displacement(Vertex_handle v, const Point &p) const
     int i = e.second;
     edges.pop_front();
     if(this->is_infinite(f->vertex(i))) continue;
-    Face_handle fi = f->neighbor(i);
     Vertex_handle vm = this->_tds.mirror_vertex(f, i);
     if(this->is_infinite(vm)) continue;
     if(this->side_of_oriented_circle(f, vm->point()) == ON_POSITIVE_SIDE) {

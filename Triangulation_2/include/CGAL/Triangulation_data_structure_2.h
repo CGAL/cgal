@@ -994,8 +994,8 @@ dim_down(Face_handle f, int i)
   }
   set_dimension(dimension() -1);
   Face_handle n0 = f->neighbor(0);
-  Face_handle n1 = f->neighbor(1);
-  Vertex_handle v0 = f->vertex(0);
+  //Face_handle n1 = f->neighbor(1);
+  //Vertex_handle v0 = f->vertex(0);
   Vertex_handle v1 = f->vertex(1);
   f->set_vertex(1, v);
   Face_handle fl = create_face(v, v1, Vertex_handle(),

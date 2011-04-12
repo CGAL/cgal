@@ -189,6 +189,7 @@ _test_cls_tds_2( const Tds &)
   Vertex_handle v5_1 = td5.insert_second();
   Vertex_handle v5_2 = td5.insert_dim_up(v5_1, false);
   Vertex_handle v5_3 = td5.insert_dim_up();
+  (void)v5_0; (void)v5_2; // Hush unused warnings
   Face_handle f5_0 = v5_3->face();
   int i = f5_0->index(v5_3);
   td5.dim_down(f5_0, i);
