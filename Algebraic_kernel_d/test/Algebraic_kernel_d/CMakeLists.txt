@@ -48,6 +48,7 @@ if ( CGAL_FOUND )
   create_single_source_cgal_program( "Curve_pair_analysis_2.cpp" )
   create_single_source_cgal_program( "Descartes.cpp" )
   create_single_source_cgal_program( "Real_embeddable_traits_extension.cpp" )
+  create_single_source_cgal_program( "rs_isolator.cpp" )
 
 else()
 
