@@ -316,6 +316,30 @@ wrapper for all these types.  The searching itself works exactly as for \cgal\ k
 \ccIncludeExampleCode{Spatial_searching/user_defined_point_and_distance.cpp}
 
 \newpage
+\subsection{Example for Associating an Information to a Point}
+The following three example programs illustrate how to use the classes \ccc{Search_traits_with_info<Point_with_info,Point_accessor,Base_traits>} and
+\ccc{Distance_for_point_with_info<Point_with_info,Point_accessor,Base_distance>} to store in the kd-tree points and additional information.
+
+\subsubsection{Using a Point and an Integer}
+In this example program, the search tree stores tuples of point and integer.
+The value type of the iterator of the neighbor searching algorithm is this tuple type.
+
+\ccIncludeExampleCode{Spatial_searching/searching_with_point_with_info.cpp}
+
+\subsubsection{Using an Integer as Point Type}
+In this example program, the search tree stores only integers that refer to points stored within a user vector.
+The point type of the search traits is \ccc{std::size_t}.
+
+\ccIncludeExampleCode{Spatial_searching/searching_with_point_with_info_inplace.cpp}
+
+\subsubsection{Using a Model of Readable Property Map Concept}
+This example programs shows how to use a \ccAnchor{http://www.boost.org/doc/libs/release/libs/property_map/index.html}{boost::ReadablePropertyMap}
+as point accessor. Points are read from a map. The search tree stores integers of type \ccc{std::size_t}. The value type of the iterator of the neighbor searching algorithm is \ccc{std::size_t}.
+
+\ccIncludeExampleCode{Spatial_searching/searching_with_point_with_info_pmap.cpp}
+
+
+\newpage
 \subsection{Example for Selecting a Splitting Rule and Setting the Bucket Size}
 
 This example program illustrates selecting a splitting rule and

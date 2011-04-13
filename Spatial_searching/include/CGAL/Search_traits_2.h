@@ -42,6 +42,10 @@ namespace CGAL {
 
     typedef typename K::Construct_iso_rectangle_2 Construct_iso_box_d;
     typedef typename K::FT FT;
+  
+    Construct_cartesian_const_iterator_d construct_cartesian_const_iterator_d_object() const {
+       return Construct_cartesian_const_iterator_d();
+    }  
   };
 
   

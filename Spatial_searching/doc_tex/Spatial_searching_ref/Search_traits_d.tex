@@ -1,17 +1,17 @@
 % +------------------------------------------------------------------------+
-% | Reference manual page: Kd_tree_traits_point.tex
+% | Reference manual page: Search_traits_d.tex
 % +------------------------------------------------------------------------+
 % | 1.07.2001   Johan W.H. Tangelder
 % | Package: ASPAS
 % | 
-\RCSdef{\RCSKdtreetraitspointRev}{$Id$}
-\RCSdefDate{\RCSKdtreetraitspointDate}{$Date$}
+\RCSdef{\RCSKdtreetraitspoint2Rev}{$Id$}
+\RCSdefDate{\RCSKdtreetraitspoint2Date}{$Date$}
 % |
 %%RefPage: end of header, begin of main body
 % +------------------------------------------------------------------------+
 
 
-\begin{ccRefClass}{Search_traits<NT,Point,CartesianIterator,ConstructCartesianIterator,ConstructMinVertex,ConstructMaxVertex>}
+\begin{ccRefClass}{Search_traits_d<Kernel>}
 
 %% \ccHtmlCrossLink{}     %% add further rules for cross referencing links
 %% \ccHtmlIndexC[class]{} %% add further index entries
@@ -19,37 +19,51 @@
 \ccDefinition
   
 The class \ccRefName\ can be used as a template parameter of the kd tree
-and the search classes. It is a mere wrapper for the geometric types needed
-by these classes.
+and the search classes.  \ccc{Kernel} must be a \cgal\ kernel.
 
 
-\ccInclude{CGAL/Search_traits.h}
+\ccc{Kernel} must be a d-dimensional \cgal\ kernel.
+
+
+\ccInclude{CGAL/Search_traits_d.h}
+
+\ccParameters
+Expects for the template argument a model of the concept \ccc{Kernel_d},
+for example \ccc{CGAL::Cartesian_d<double>} or \ccc{CGAL::Homogeneous_d<CGAL::Gmp_z>}.
+
 
 \ccIsModel
 
-\ccc{SearchTraits}.
-
+\ccc{SearchTraits} and \ccc{RangeSearchTraits}.
 
 \ccTypes
-\ccTypedef{NT FT;}{The number type of the coordinates.}
-\ccTypedef{Point Point_d;}{Point type.}
-\ccTypedef{CartesianIterator Cartesian_const_iterator_d;}{An iterator over the coordinates.}
-\ccTypedef{ConstructCartesianIterator Construct_Cartesian_const_iterator_d;}{A functor with
+
+\ccTypedef{Kernel::FT NT;}{Number type.}
+
+\ccTypedef {Kernel::Point_d Point_d;}{Point type.}
+\ccTypedef {Kernel::Iso_box_d Iso_box_d;}{Iso box type.}
+\ccTypedef {Kernel::Sphere_d Sphere_d;}{Sphere type.}
+
+\ccTypedef {Kernel::Cartesian_const_iterator_d Cartesian_const_iterator;}{An iterator over the Cartesian 
+	coordinates.}
+
+\ccTypedef {Kernel::Construct_cartesian_const_iterator_d Construct_cartesian_const_iterator;}{A functor with
 two function operators, which return the begin and past the end iterator for the Cartesian coordinates. 
 The functor for begin has as argument a \ccc{Point_d}. The functor for the past the end iterator, 
 has as argument a \ccc{Point_d} and an \ccc{int}.}
 
-\ccTypedef {ConstructMinVertex Construct_min_vertex_d;}{Functor with operator to construct 
+
+\ccTypedef {Kernel::Construct_min_vertex_d Construct_min_vertex_d;}{Functor with operator to construct 
 the vertex with lexicographically smallest coordinates of an object of type \ccc{Iso_box_d}.}
 
-\ccTypedef {Kernel::ConstructMaxVertex Construct_max_vertex_d;}{Functor with operator to construct 
+\ccTypedef {Kernel::Construct_max_vertex_d Construct_max_vertex_d;}{Functor with operator to construct 
 the vertex with lexicographically largest coordinates of an object of type \ccc{Iso_box_d}.}
 
 \ccSeeAlso
 
 \ccc{Search_traits_2<Kernel>}\\
 \ccc{Search_traits_3<Kernel>}\\
-\ccc{Search_traits_d<Kernel>}
+\ccc{Search_traits<Point,CartesianConstIterator,ConstructCartesianConstIterator>}
 
 \end{ccRefClass}
 

@@ -47,18 +47,18 @@ for example \ccc{CGAL::Cartesian_d<double>}.
 \ccCreationVariable{ed}  %% choose variable name
 
 
-\ccConstructor{Euclidean_distance_sphere_point();}
+\ccConstructor{Euclidean_distance_sphere_point(Traits t=Traits());}
 {Default constructor.}
 
 \ccOperations
 
 \ccMethod{NT transformed_distance(Query_item s, Point_d p);}{Returns the distance between \ccc{s} and \ccc{p}.}
 
-\ccMethod{NT min_distance_to_rectangle(Query_item s, Kd_tree_rectangle<Traits> r);}
+\ccMethod{NT min_distance_to_rectangle(Query_item s, Kd_tree_rectangle<FT> r);}
 {Returns the minimal distance between a point from the sphere \ccc{s} and a point from
 \ccc{r}.}
 
-\ccMethod{NT max_distance_to_rectangle(Query_item s, Kd_tree_rectangle<Traits> r);}
+\ccMethod{NT max_distance_to_rectangle(Query_item s, Kd_tree_rectangle<FT> r);}
 {Returns the maximal distance between the sphere \ccc{s} and
 a point from \ccc{r} furthest to \ccc{s}. }
 

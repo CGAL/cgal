@@ -30,7 +30,13 @@ Expects for the first template argument an implementation of the concept \ccc{Se
 for example \ccc{CGAL::Search_traits_2<CGAL::Cartesian<double> >}.
 
 Expects for the second template argument a model of the
-concept \ccc{GeneralDistance}. The default type is 
+concept \ccc{GeneralDistance}. If \ccc{Traits} is 
+\ccc{CGAL::Search_traits_with_info<Point_with_info,Point_accessor,Base_traits>}
+the default type is \ccc{CGAL::Distance_for_point_with_info<Point_with_info,Point_accessor,CGAL::Euclidean_distance<Traits> >},
+and \ccc{CGAL::Euclidean_distance<Traits>} otherwise.
+
+
+The default type is 
 \ccc{CGAL::Euclidean_distance<Traits>}.
 
 Expects for third template argument a model of the concept \ccc{Splitter}.
@@ -45,6 +51,7 @@ kd tree nodes.
 
 \ccTypedef{Traits::Point_d Point_d;}{Point type.}
 \ccTypedef{Traits::FT FT;}{Number type.}
+\ccTypedef{OrthogonalDistance Distance;}{Distance type.}
 \ccTypedef{GeneralDistance::Query_item Query_item;}{Query item.}
 \ccTypedef{std::pair<Point_d,FT> Point_with_transformed_distance;}{Pair of point and transformed distance.}
 

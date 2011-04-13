@@ -51,13 +51,13 @@ public:
   typedef typename std::vector<Point_d>::const_iterator iterator;
 
 private:
-
+  SearchTraits traits_;
   mutable Splitter split;
   mutable Compact_container<Node> nodes;
 
   mutable Node_handle tree_root;
 
-  mutable Kd_tree_rectangle<SearchTraits>* bbox;
+  mutable Kd_tree_rectangle<FT>* bbox;
   mutable std::vector<Point_d> pts;
 
   // Instead of storing the points in arrays in the Kd_tree_node
@@ -65,14 +65,13 @@ private:
   // and we only store an iterator range in the Kd_tree_node.
   // 
   mutable std::vector<Point_d*> data;
-  SearchTraits tr;
 
 
   mutable bool built_;
 
   // protected copy constructor
   Kd_tree(const Tree& tree)
-    : built_(tree.built_)
+    : traits_(tree.traits_),built_(tree.built_)
   {};
 
 
@@ -116,7 +115,7 @@ private:
   {
     Node_handle nh = nodes.emplace(Node::EXTENDED_INTERNAL);
     
-    Point_container c_low(c.dimension());
+    Point_container c_low(c.dimension(),traits_);
     split(nh->separator(), c, c_low);
 	        
     int cd  = nh->separator().cutting_dimension();
@@ -149,7 +148,7 @@ private:
   {
     Node_handle nh = nodes.emplace(Node::INTERNAL);
     
-    Point_container c_low(c.dimension());
+    Point_container c_low(c.dimension(),traits_);
     split(nh->separator(), c, c_low);
 	        
     if (c_low.size() > split.bucket_size()){
@@ -169,14 +168,14 @@ private:
 
 public:
 
-  Kd_tree(Splitter s = Splitter())
-    : split(s), built_(false)
+  Kd_tree(Splitter s = Splitter(),const SearchTraits traits=SearchTraits())
+    : traits_(traits),split(s), built_(false)
   {}
   
   template <class InputIterator>
   Kd_tree(InputIterator first, InputIterator beyond,
-	  Splitter s = Splitter()) 
-    : split(s), built_(false) 
+	  Splitter s = Splitter(),const SearchTraits traits=SearchTraits()) 
+    : traits_(traits),split(s), built_(false) 
   {
     pts.insert(pts.end(), first, beyond);
   }
@@ -189,15 +188,15 @@ public:
   build() const
   {
     const Point_d& p = *pts.begin();
-    typename SearchTraits::Construct_cartesian_const_iterator_d ccci;
+    typename SearchTraits::Construct_cartesian_const_iterator_d ccci=traits_.construct_cartesian_const_iterator_d_object();
     int dim = static_cast<int>(std::distance(ccci(p), ccci(p,0))); 
 
     data.reserve(pts.size());
     for(unsigned int i = 0; i < pts.size(); i++){
       data.push_back(&pts[i]);
     }
-    Point_container c(dim, data.begin(), data.end());
-    bbox = new Kd_tree_rectangle<SearchTraits>(c.bounding_box());
+    Point_container c(dim, data.begin(), data.end(),traits_);
+    bbox = new Kd_tree_rectangle<FT>(c.bounding_box());
     if (c.size() <= split.bucket_size()){
       tree_root = create_leaf_node(c);
     }else {
@@ -252,7 +251,7 @@ public:
       if(! is_built()){
 	build();
       }
-      Kd_tree_rectangle<SearchTraits> b(*bbox);
+      Kd_tree_rectangle<FT> b(*bbox);
       tree_root->search(it,q,b);
     }
     return it;
@@ -268,7 +267,7 @@ public:
   SearchTraits 
   traits() const 
   {
-    return tr;
+    return traits_;
   }
 
   Node_handle 
@@ -289,7 +288,7 @@ public:
     root()->print();
   }
 
-  const Kd_tree_rectangle<SearchTraits>&
+  const Kd_tree_rectangle<FT>&
   bounding_box() const 
   {
     if(! is_built()){

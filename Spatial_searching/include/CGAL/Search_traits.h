@@ -23,7 +23,6 @@
 
 
 namespace CGAL {
-
   template <class FT_, class Point, class CartesianCoordinateIterator, class ConstructCartesianCoordinateIterator>
   class Search_traits {
     
@@ -33,6 +32,10 @@ namespace CGAL {
     typedef Point Point_d;
     typedef FT_ FT;
     
+    Construct_cartesian_const_iterator_d construct_cartesian_const_iterator_d_object() const {
+       return Construct_cartesian_const_iterator_d();
+    }
+  
   };
 
   

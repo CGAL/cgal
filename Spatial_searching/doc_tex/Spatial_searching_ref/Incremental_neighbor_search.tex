@@ -29,8 +29,10 @@ Expects for the first template argument a model of the concept \ccc{SearchTraits
 for example \ccc{CGAL::Search_traits_2<CGAL::Cartesian<double> >}.
 
 Expects for the second template argument a model of the
-concept \ccc{GeneralDistance}. The default type is 
-\ccc{CGAL::Euclidean_distance<Traits>}.
+concept \ccc{GeneralDistance}. If \ccc{Traits} is 
+\ccc{CGAL::Search_traits_with_info<Point_with_info,Point_accessor,Base_traits>}
+the default type is \ccc{CGAL::Distance_for_point_with_info<Point_with_info,Point_accessor,CGAL::Euclidean_distance<Traits> >},
+and \ccc{CGAL::Euclidean_distance<Traits>} otherwise.
 
 Expects for third template argument a model of the concept \ccc{Splitter}.
 The default type is \ccc{CGAL::Sliding_midpoint<Traits>}.
@@ -43,6 +45,7 @@ template argument \ccc{CGAL::Tag_false} makes that the tree is built with unexte
 
 \ccTypedef{Traits::Point_d Point_d;}{Point type.}
 \ccTypedef{Traits::NT NT;}{Number type.}
+\ccTypedef{GeneralDistance Distance;}{Distance type.}
 \ccTypedef{std::pair<Point_d,NT> Point_with_transformed_distance;}{Pair of point and transformed distance. }
 \ccNestedType{iterator}{Input iterator with value type \ccc{Point_with_transformed_distance}
                         for enumerating approximate neighbors.}

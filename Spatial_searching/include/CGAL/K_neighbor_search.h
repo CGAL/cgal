@@ -25,7 +25,7 @@
 namespace CGAL {
 
 template <class SearchTraits, 
-          class Distance= Euclidean_distance<SearchTraits>,
+          class Distance= typename internal::Spatial_searching_default_distance<SearchTraits>::type,
           class Splitter= Sliding_midpoint<SearchTraits> ,
           class Tree= Kd_tree<SearchTraits, Splitter, Tag_true> >
 class K_neighbor_search: public internal::K_neighbor_search<SearchTraits,Distance,Splitter,Tree> {
@@ -48,17 +48,17 @@ private:
   using Base::branch;
 
   void 
-  compute_neighbors_general(typename Base::Node_handle N, const Kd_tree_rectangle<SearchTraits>& r) 
+  compute_neighbors_general(typename Base::Node_handle N, const Kd_tree_rectangle<FT>& r) 
   {
     if (!(N->is_leaf())) {
       this->number_of_internal_nodes_visited++;
       int new_cut_dim=N->cutting_dimension();
       FT  new_cut_val=N->cutting_value();
 
-      Kd_tree_rectangle<SearchTraits> r_lower(r);
+      Kd_tree_rectangle<FT> r_lower(r);
 
       // modifies also r_lower to lower half
-      Kd_tree_rectangle<SearchTraits> r_upper(r_lower);
+      Kd_tree_rectangle<FT> r_upper(r_lower);
       r_lower.split(r_upper, new_cut_dim, new_cut_val);
 
       FT distance_to_lower_half;
