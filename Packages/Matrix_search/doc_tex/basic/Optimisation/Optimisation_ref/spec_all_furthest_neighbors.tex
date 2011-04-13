@@ -1,0 +1,123 @@
+%% ==============================================================
+%% Specification: All Furthest Neighbors
+%% --------------------------------------------------------------
+%% file  : spec_all_furthest_neighbors.awi
+%% author: Michael Hoffmann
+%% $Id$
+%% ==============================================================
+
+\clearpage
+\section{All Furthest Neighbors}
+\label{secAllFurthestNeighbors}
+\cgalColumnLayout
+
+This section describes a function to compute all furthest neighbors
+for the vertices of a convex polygon. 
+
+\ccHtmlNoClassToc
+\begin{ccHtmlClassFile}{all_furthest_neighbors.html}
+  {Definition of function \ccc{CGAL_all_furthest_neighbors}}
+  \ccTexHtml{}{
+    <H3>All Furthest Neighbors</H3>
+    
+    This section describes a function to compute all furthest
+    neighbors for the vertices of a convex polygon $P$, i.e. for each
+    vertex $v$ of $P$ a vertex $f_v$ of $P$ such that the distance
+    between $v$ and $f_v$ is maximized.}
+  
+  \ccInclude{CGAL/all_furthest_neighbors_2.h}
+
+  \def\ccLongParamLayout{\ccTrue} 
+
+  \ccGlobalFunction{
+    template < class RandomAccessIC, class OutputIterator, class Traits >
+    OutputIterator
+    CGAL_all_furthest_neighbors(
+    RandomAccessIC points_begin,
+    RandomAccessIC points_end,
+    OutputIterator o,
+    Traits t = Default_traits);}
+  
+  computes all furthest neighbors for the vertices of the convex
+  polygon described by the range [\ccc{points_begin},
+  \ccc{points_end}), writes their indices (relative to
+  \ccc{points_begin}) to \ccc{o}\footnote{i.e. the furthest neighbor
+    of \ccc{points_begin[}i\ccc{]} is \ccc{points_begin[}$i$-th number
+    written to \ccc{o}\ccc{]}} and returns the past-the-end iterator
+  of this sequence.
+
+  \ccHeading{Precondition}
+  \begin{enumerate}
+  \item If \ccc{t} is specified explicitly, \ccc{Traits} satisfies the
+    requirements stated in section \ref{req_AllFurthestNeighborsTraits},
+  \item Value type of \ccc{RandomAccessIC} is \ccc{Traits::Point_2} or
+    -- if \ccc{t} is not specified explicitly -- \ccc{CGAL_Point_2<R>}
+    for some representation class \ccc{R},
+  \item \ccc{OutputIterator} accepts \ccc{int} as value type
+    \textit{and}
+  \item the points denoted by the non-empty range [\ccc{points_begin},
+    \ccc{points_end}) form the boundary of a convex polygon $P$
+    (oriented clock-- or counterclockwise).
+  \end{enumerate}
+  
+  \ccImplementation The implementation uses monotone matrix
+  search\cite{akmsw-gamsa-87} (see also section
+  \ref{secMonotoneMatrixSearch}). Its runtime complexity is linear in
+  the number of vertices of $P$.
+
+  \ccExample The following code generates a random convex polygon
+  \ccc{p} with ten vertices, computes all furthest neighbors and writes
+  the sequence of their indices (relative to \ccc{points_begin}) to
+  \ccc{cout} (e.g. a sequence of \ccc{4788911224} means the furthest
+  neighbor of \ccc{points_begin[0]} is \ccc{points_begin[4]}, the
+  furthest neighbor of \ccc{points_begin[1]} is \ccc{points_begin[7]}
+  etc.).
+
+  \ccIncludeVerbatim{all_furthest_neighbors_2_example_noheader.C}
+
+\end{ccHtmlClassFile}
+
+\begin{ccAdvanced}
+  \ccHtmlNoClassToc\ccHtmlNoClassIndex\begin{ccClass}{Afn_traits}
+    \ccCreationVariable{t}\ccTagFullDeclarations
+    
+    \subsection{Requirements for All Furthest Neighbors Traits
+      Classes}\label{req_AllFurthestNeighborsTraits}
+    
+    \ccDefinition A class \ccClassName\ has to provide the following
+    types and operations in order to qualify as a traits class for
+    \ccc{CGAL_all_furthest_neighbors}.
+    
+    \ccTypes 
+    
+    \ccNestedType{Point_2}{class used for representing the input
+      points.}
+    
+    \ccNestedType{FT}{class used for doing computations on point
+      coordinates (has to fulfill field-type requirements).}
+    
+    \ccNestedType{Distance}{AdaptableBinaryFunction class: \ccc{Point_2}
+      $\times$ \ccc{Point_2} $\rightarrow$ \ccc{FT} computing the
+      squared Euclidean distance between two points.}
+
+    \ccOperations
+    
+    \ccMemberFunction{template < class RandomAccessIC > bool is_convex(
+      RandomAccessIC points_begin, RandomAccessIC points_end)
+      const;}{returns true, iff the points [\ccc{points_begin},
+      \ccc{points_end}) form a convex chain.}
+    
+    \ccHeading{Notes}
+    \begin{itemize}
+    \item \ccClassName\ccc{::is_convex} is only used for precondition
+      checking.
+    \item On compilers not supporting member function templates,
+      \ccc{RandomAccessIC} is fixed to
+      \ccc{vector<Point_2>::iterator}.
+    \end{itemize}
+  \end{ccClass}
+\end{ccAdvanced}
+
+%% --------------------------------------------------------------
+%% EOF spec_all_furthest_neighbors.awi
+%% --------------------------------------------------------------

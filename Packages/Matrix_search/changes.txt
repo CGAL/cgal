@@ -1,0 +1,26 @@
+//=====================================================================
+//	Revision History for package Matrix_search
+//=====================================================================
+
+//---------------------------------------------------------------------
+//	actual revision
+//---------------------------------------------------------------------
+ALL : some minor changes to prevent warnings for gcc -Wall.
+
+//---------------------------------------------------------------------
+//	revision 1.6
+//---------------------------------------------------------------------
+
+	- added package and chapter to file headers.
+	- removed htmlfiles (now in Optimisation_basic).
+	- changed pkg-name acc. to naming conventions.
+	- minor fix in the docs.
+
+//---------------------------------------------------------------------
+//	revision 1.5
+//---------------------------------------------------------------------
+
+	- Now rectangular 3- and 4-centers. 
+	- Uses Iso_square_static_2 instead of Iso_rectangle_2
+	  (improved performance and robustness).
+	- some fixes in the docs.

@@ -1,0 +1,198 @@
+%% ==============================================================
+%% Specification: Sorted Matrix Search
+%% --------------------------------------------------------------
+%% file  : spec_sorted_matrix_search.awi
+%% author: Michael Hoffmann
+%% $Id$
+%% ==============================================================
+
+\clearpage\begin{ccAdvanced}
+  \section{Sorted Matrix Search}
+  \label{secSortedMatrixSearch}
+  \cgalColumnLayout
+  
+  This section describes a general function to select the smallest
+  entry in a set of sorted matrices that fulfills a certain criterion.
+
+  \ccHtmlNoClassToc\begin{ccHtmlClassFile}{sorted_matrix_search.html}
+    {Function Declaration of \ccc{CGAL_sorted_matrix_search}}
+    \ccTexHtml{}{
+      <H3>Sorted Matrix Search</H3>
+      
+      This section describes a function
+      <i>CGAL_sorted_matrix_search</I> to select the smallest entry in
+      a set of sorted matrices that fulfills a certain criterion.}
+    
+    \ccTexHtml{More exactly, a matrix $M = (m_{i j}) \in S^{r \times
+        l}$ (over a totally ordered set $S$) is sorted, iff
+      \begin{eqnarray*}
+        \forall \, 1 \le i \le r,\; 1 \le j < l\; :\; m_{i j} \le m_{i (j+1)} 
+        \;\; {\it and}\\ 
+        \forall \, 1 \le i < r,\; 1 \le j \le l\; :\; m_{i j} \le m_{(i+1) j} 
+        \;\;.
+      \end{eqnarray*}
+      
+      Now let $\mathcal{M}$ be a set of $n$ sorted matrices over $S$
+      and $f$ be a monotone predicate on $S$, i.e.
+      $$
+      f\: :\: S \longrightarrow\, \textit{bool} \quad{\rm with}\quad f(r)
+      \;\Longrightarrow\; \forall\, t \in S\,,\: t > r \; :\; f(t)\;.
+      $$}{More exactly, a matrix <IMG WIDTH=124 HEIGHT=30 ALIGN=MIDDLE
+      ALT="tex2html_wrap_inline18" SRC="./MatrixSearch_sorted1.gif" >
+      (over a totally ordered set <I>S</I>) is sorted, iff <P> <IMG
+      WIDTH=500 HEIGHT=41 ALIGN=BOTTOM ALT="eqnarray5"
+      SRC="./MatrixSearch_sorted2.gif" > <P> <P> Now let <IMG WIDTH=18
+      HEIGHT=13 ALIGN=BOTTOM ALT="tex2html_wrap_inline22"
+      SRC="./MatrixSearch_sorted3.gif" > be a set of <I>n</I> sorted
+      matrices over <I>S</I> and <I>f</I> be a monotone predicate on
+      <I>S</I>, i.e.  <P> <IMG WIDTH=445 HEIGHT=16 ALIGN=BOTTOM
+      ALT="displaymath32" SRC="./MatrixSearch_sorted4.gif" > <P><BR>}
+    
+    If we assume there is any feasible element in one of the matrices
+    in \ccTexHtml{$\mathcal{M}$}{<IMG WIDTH=18 HEIGHT=13 ALIGN=BOTTOM
+      ALT="tex2html_wrap_inline21" SRC="./MatrixSearch_sorted3.gif"
+      >}, there certainly is a smallest such element. This is the one
+    we are searching for.
+
+    The feasibility test as well as some other parameters can (and have
+    to) be customized through a traits class. The requirements for this
+    class are described in section \ref{req_SortedMatrixSearchTraits}.
+
+    \ccInclude{CGAL/sorted_matrix_search.h}
+
+    \def\ccLongParamLayout{\ccTrue} 
+    
+    \ccGlobalFunction{template < class RandomAccessIC, class Traits >
+      Traits::Value CGAL_sorted_matrix_search( RandomAccessIC f,
+      RandomAccessIC l, const Traits& t);}
+
+    returns the element \ccc{x} in one of the sorted matrices from the
+    range $\left[ f,\, l \right)$, for which \ccc{t.is_feasible( x)}
+    is true and \ccc{t.compare( x, y)} is true for all other
+    \ccc{y} values from any matrix for which \ccc{t.is_feasible(
+      y)} is true.
+    
+    \ccHeading{Precondition}
+    \begin{enumerate}
+    \item \ccc{Traits} satisfies the requirements for sorted matrix search
+      traits classes stated in section \ref{req_SortedMatrixSearchTraits},
+    \item Value type of \ccc{RandomAccessIC} is \ccc{Traits::Matrix},
+    \item All matrices in $\left[ f,\, l \right)$ are sorted according to
+      \ccc{Traits::compare_non_strictly} \textit{and}
+    \item there is at least one entry $x$ in a matrix $M \in \left[ f,\, l
+      \right)$ for which \ccc{Traits::is_feasible( x)} is true.
+    \end{enumerate}
+    
+    \ccImplementation The implementation uses an algorithm by
+    Frederickson and Johnson\cite{fj-fkppc-83},\cite{fj-gsrsm-84} and
+    runs in $\mathcal{O}(n \cdot k + f \cdot \log (n \cdot k))$, where
+    $n$ is the number of input matrices, $k$ denotes the maximal
+    dimension of any input matrix and $f$ the time needed for one
+    feasibility test.
+    
+    \ccExample In the following program we build a random vector $a =
+    (a_i)_{i = 1,\,\ldots,\,5}$ (elements drawn uniformly from $\{
+    0,\,\ldots,\,99 \}$) and construct a Cartesian matrix $M$ containing
+    as elements all sums $a_i + a_j,\: i,\,j \in \{1,\,\ldots,\,5\}$. If
+    $a$ is sorted, $M$ is sorted as well. So we can apply
+    \ccc{CGAL_sorted_matrix_search} to compute the upper bound for the
+    maximal entry of $a$ in $M$.
+    
+    \ccIncludeVerbatim{sorted_matrix_search_example_noheader.C}
+    
+  \end{ccHtmlClassFile}
+
+  \ccHtmlNoClassToc\ccHtmlNoClassIndex\begin{ccClass}{Sms_traits}
+    \ccCreationVariable{t}\ccTagFullDeclarations
+
+    \subsection{Requirements for Sorted Matrix Search Traits
+      Classes}\label{req_SortedMatrixSearchTraits}
+    
+    \ccDefinition A class \ccClassName\ that satisfies the
+    requirements of a traits class for the sorted matrix search
+    algorithm has to provide the following types and operations.
+    
+    \ccTypes 
+    
+    \ccNestedType{Matrix}{The class used for representing matrices.
+      It has to fulfill the requirements listed in section
+      \ref{req_GlobalMatrix}.}
+
+    \ccTypedef{typedef Matrix::Value Value;}{The class used for
+      representing the matrix elements.}
+    
+    \ccNestedType{Compare_strictly}{An adaptable binary function
+      class: \ccc{Value} $\times$ \ccc{Value} $\rightarrow$ \ccc{bool}
+      defining a non-reflexive total order on \ccc{Value}. This
+      determines the direction of the search.}
+    
+    \ccNestedType{Compare_non_strictly}{An adaptable binary function
+      class: \ccc{Value} $\times$ \ccc{Value} $\rightarrow$ \ccc{bool}
+      defining the reflexive total order on \ccc{Value} corresponding
+      to \ccc{Compare_strictly}.}
+
+    \ccOperations
+    
+    \ccMemberFunction{Compare_strictly compare_strictly()
+      const;}{returns the \ccc{Compare_strictly} object to be used for
+      the search.}
+    
+    \ccMemberFunction{Compare_non_strictly compare_non_strictly()
+      const;}{returns the \ccc{Compare_non_strictly} object to be used
+      for the search.}
+    
+    \ccMemberFunction{bool is_feasible( const Value& a);}{The
+      predicate to determine whether an element \ccc{a} is feasible.
+      It has to be monotone in the sense that \ccc{compare( a, b)} and
+      \ccc{is_feasible( a)} imply \ccc{is_feasible( b)}.}
+
+    \ccSeeAlso
+    
+    In section \ref{sec_SortedMatrixSearchTraitsAdaptor} we define an
+    adaptor \ccc{CGAL_Sorted_matrix_search_traits_adaptor} to create
+    sorted matrix search traits classes for arbitrary feasibility test
+    and matrix classes.
+    
+    \ccTagDefaults
+  \end{ccClass}
+  
+  \ccHtmlNoClassToc
+  \begin{ccClassTemplate}{CGAL_Sorted_matrix_search_traits_adaptor<F,M>}
+    \ccCreationVariable{t}\ccTagFullDeclarations
+    \subsection{A Traits Class Adaptor for Sorted Matrix Search}
+    \label{sec_SortedMatrixSearchTraitsAdaptor}
+    
+    \ccInclude{CGAL/Sorted_matrix_search_traits_adaptor.h}
+    
+    \ccDefinition The class \ccClassTemplateName\ can be used as an
+    adaptor to create sorted matrix search traits classes for
+    arbitrary feasibility test and matrix classes \ccc{F} resp.
+    \ccc{M}. Any proper instantiation fulfills the requirements stated
+    in section \ref{req_SortedMatrixSearchTraits}.
+    
+    The compare operation \ccc{Compare_strictly} is set to
+    \ccc{less<M::Value>} and \ccc{Compare_non_strictly} accordingly to
+    \ccc{less_equal<M::Value>}.
+    
+    \ccHeading{Requirements}
+
+    \begin{enumerate}
+    \item \ccc{M} has to fulfill the requirements listed in section
+      \ref{req_GlobalMatrix} \textit{and}
+    \item \ccc{F} has to define a copy constructor and a monotone
+      \ccc{bool operator()( const Value&)}.
+    \end{enumerate}
+
+    \ccCreation
+    
+    \ccConstructor{CGAL_Sorted_matrix_search_traits_adaptor<F,M>(
+      const F& m);}{initializes \ccVar\ to use \ccc{m} for feasibility
+      testing.}
+    
+    \ccTagDefaults
+  \end{ccClassTemplate}
+\end{ccAdvanced}
+
+%% --------------------------------------------------------------
+%% EOF spec_sorted_matrix_search.awi
+%% --------------------------------------------------------------

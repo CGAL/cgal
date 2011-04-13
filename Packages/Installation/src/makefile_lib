@@ -1,0 +1,62 @@
+# This is the makefile for compiling the CGAL object library libCGAL.a.
+#
+# N.B. There are different makefiles for creating the object library
+# and the shared object library, because the suffix rules (in particular:
+# the compiler flags) for these libraries are different.
+
+#---------------------------------------------------------------------#
+#                    include platform specific settings
+#---------------------------------------------------------------------#
+# Choose the right include file from the <cgalroot>/make directory.
+
+CGAL_MAKEFILE = ENTER_YOUR_INCLUDE_MAKEFILE_HERE
+include $(CGAL_MAKEFILE)
+
+#---------------------------------------------------------------------#
+#                    compiler flags
+#---------------------------------------------------------------------#
+
+CXXFLAGS = $(CGAL_LIB_CXXFLAGS) \
+           -g
+
+#---------------------------------------------------------------------#
+# Object files
+#---------------------------------------------------------------------#
+
+CGAL_OBJECTS = \
+Bbox_2.o \
+Bbox_2_intersections.o \
+Double.o \
+Double_eps.o \
+File_header_OFF.o \
+File_header_extended_OFF.o \
+File_scanner_OFF.o \
+File_writer_OFF.o \
+File_writer_VRML_2.o \
+File_writer_inventor.o \
+File_writer_wavefront.o \
+Float.o \
+Geomview_stream.o \
+Origin.o \
+Random.o \
+aff_transformation_tags.o \
+assertions.o \
+io.o \
+optimisation_basic.o
+
+#---------------------------------------------------------------------#
+#                    target entries
+#---------------------------------------------------------------------#
+
+lib: $(CGAL_OBJECTS)
+	$(CGAL_LIB_CREATE) $(CGAL_LIB) $(CGAL_OBJECTS) $(CGAL_LIB_LDFLAGS)
+	mv $(CGAL_LIB) $(CGAL_LIB_DIR)/$(CGAL_OS_COMPILER)
+	rm $(CGAL_OBJECTS)
+
+#---------------------------------------------------------------------#
+#                    suffix rules
+#---------------------------------------------------------------------#
+
+.C.o:
+	$(CGAL_CXX)  $(CXXFLAGS)  -c $<
+

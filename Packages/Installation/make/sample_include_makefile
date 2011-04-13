@@ -1,0 +1,91 @@
+# This file contains CGAL makefile settings for the following platform:
+# OS:		mips_IRIX-5.3
+# COMPILER:	MIPSPRO 4.0
+# STL:		CGAL_STL_HP
+# LEDA:		not supported
+# GMP:		supported
+
+#---------------------------------------------------------------------#
+#                    include directory settings
+#---------------------------------------------------------------------#
+
+CGAL_DIRECTORIES = \
+	/users/jannes/CGAL-0.9-I-05/make/CGAL_directories
+include $(CGAL_DIRECTORIES)
+
+#---------------------------------------------------------------------#
+#                    os/compiler description
+#---------------------------------------------------------------------#
+
+CGAL_OS_COMPILER = mips_IRIX-5.3_CC-4.0
+
+#---------------------------------------------------------------------#
+#                    compiler
+#---------------------------------------------------------------------#
+
+CGAL_CXX = /bin/CC
+
+#---------------------------------------------------------------------#
+#                    compiler flags
+#---------------------------------------------------------------------#
+
+# For more information about the compiler flags see the installation guide.
+
+# compiler specific configuration dir
+CGAL_INCL_CONF_DIR = \
+	$(CGAL_INCL_DIR)/CGAL/config/mips_IRIX-5.3_CC-4.0
+
+# *** Fill in your STL include directory ***
+# (including the -I directive)
+# (e.g. -I/usr/local/STL)
+CGAL_STL_INCLUDE_DIRECTIVE = -I/users/jannes/cpp/hpstl 
+
+# *** Fill in any additional compiler flags you need ***
+CUSTOM_CXXFLAGS = 
+
+CGAL_CXXFLAGS = \
+	$(CUSTOM_CXXFLAGS) \
+	$(CGAL_STL_INCLUDE_DIRECTIVE) \
+	-DCGAL_USE_GMP \
+	-I$(CGAL_INCL_CONF_DIR) \
+	-I$(CGAL_INCL_DIR)
+
+
+#---------------------------------------------------------------------#
+#                    linker flags
+
+#---------------------------------------------------------------------#
+
+# *** Fill in any additional linker flags you need ***
+CUSTOM_LDFLAGS = 
+
+CGAL_LDFLAGS = \
+	$(CUSTOM_LDFLAGS) \
+	-L$(CGAL_LIB_DIR)/$(CGAL_OS_COMPILER) \
+	-rpath $(CGAL_LIB_DIR)/$(CGAL_OS_COMPILER) \
+	-lCGAL -lgmp -lm
+
+
+#---------------------------------------------------------------------#
+#                    commands and flags for creating libraries
+#---------------------------------------------------------------------#
+
+CGAL_LIB = libCGAL.a
+CGAL_LIB_CXXFLAGS = \
+	$(CGAL_CXXFLAGS)
+CGAL_LIB_LDFLAGS = \
+	$(CUSTOM_LDFLAGS)
+CGAL_LIB_CREATE = ar cr
+
+CGAL_SHARED_LIB = libCGAL.so
+CGAL_SHARED_LIB_CXXFLAGS = \
+	$(CGAL_CXXFLAGS)
+CGAL_SHARED_LIB_LDFLAGS = \
+	-lm \
+	$(CUSTOM_LDFLAGS)
+CGAL_SHARED_LIB_CREATE = $(CGAL_CXX) -shared -o
+
+#---------------------------------------------------------------------#
+#                    EOF
+#---------------------------------------------------------------------#
+

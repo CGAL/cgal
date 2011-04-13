@@ -1,0 +1,15 @@
+//=====================================================================
+//	Revision History for package Installation
+//=====================================================================
+
+
+//---------------------------------------------------------------------
+//	actual revision
+//---------------------------------------------------------------------
+
+GLOB: removed geomview support (now in geomview package).
+GLOB: added geomview support,
+GLOB: included fixes from CGAL-1-1-patch.
+DOCS: adopted to new html-converter.
+SRC : added File_header_extended_OFF.o to CGAL_OBJECTS.
+SRC : added Geomview_stream.o to CGAL_OBJECTS in makefiles.
