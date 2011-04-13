@@ -159,6 +159,7 @@ Algebraic_kernel_d/include/CGAL/RS/compare_1.h -text
 Algebraic_kernel_d/include/CGAL/RS/crt.h -text
 Algebraic_kernel_d/include/CGAL/RS/dyadic.h -text
 Algebraic_kernel_d/include/CGAL/RS/inverse.h -text
+Algebraic_kernel_d/include/CGAL/RS/isolator_1.h -text
 Algebraic_kernel_d/include/CGAL/RS/memory.h -text
 Algebraic_kernel_d/include/CGAL/RS/p.h -text
 Algebraic_kernel_d/include/CGAL/RS/pagealloc.h -text
@@ -202,6 +203,7 @@ Algebraic_kernel_d/test/Algebraic_kernel_d/include/CGAL/_test_algebraic_kernel_2
 Algebraic_kernel_d/test/Algebraic_kernel_d/include/CGAL/_test_bitstream_descartes.h -text
 Algebraic_kernel_d/test/Algebraic_kernel_d/include/CGAL/_test_real_comparable.h -text
 Algebraic_kernel_d/test/Algebraic_kernel_d/include/CGAL/_test_real_root_isolator.h -text
+Algebraic_kernel_d/test/Algebraic_kernel_d/rs_isolator.cpp -text
 Alpha_shapes_2/demo/Alpha_shapes_2/data/m30f.jpg -text svneol=unset#image/jpeg
 Alpha_shapes_2/demo/Alpha_shapes_2/qt3/help/index.html svneol=native#text/html
 Alpha_shapes_2/doc_tex/Alpha_shapes_2/alpha-detail.png -text

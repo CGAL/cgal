@@ -23,12 +23,12 @@
 #include <CGAL/RS/basic.h>
 #include <gmp.h>
 #include <mpfr.h>
-#include <mpfi.h>
+#include <CGAL/Gmpfi.h>
 #include <CGAL/RS/dyadic.h>
-#include <CGAL/RS/solve_1.h>
 #include <CGAL/RS/polynomial_1.h>
 #include <CGAL/RS/algebraic_1.h>
 #include <rs_exports.h>
+#include <vector>
 
 namespace CGAL{
 
@@ -50,6 +50,7 @@ inline void init_solver(){
                 first=false;
                 //rs_version(stderr);
                 rs_init_rs();
+        }else{
                 rs_reset_all();
         }
 }
@@ -212,6 +213,38 @@ inline Sign sign_1_rs(
         //std::cout<<"sign of "<<p1<<" in the root of "<<a.pol()<<" = "<<s<<std::endl;
         //return s;
         return affiche_signs_constr (a);
+}
+
+// solves and returns a vector of Gmpfi's containing the solutions
+inline std::vector<Gmpfi> isolator_solve_1(const Polynomial<Gmpz> &p,
+                                           unsigned int prec=CGAL_RS_DEF_PREC){
+        int numsols;
+        unsigned int degree=p.degree();
+        mpz_t *coeffs=(mpz_t*)malloc((degree+1)*sizeof(mpz_t));
+        mpfi_ptr *intervals_mpfi=(mpfi_ptr*)malloc(degree*sizeof(mpfi_ptr));
+        std::vector<Gmpfi> intervals;
+        //std::cout<<"p = "<<std::flush;
+        for(int i=0;i<=degree;++i){
+                coeffs[i][0]=*(p[i].mpz());
+                //std::cout<<" + "<<std::flush;
+                //mpz_out_str(stdout,0,coeffs[i]);
+                //std::cout<<" x^"<<i<<std::flush;
+        }
+        //std::cout<<std::endl;
+        init_solver();
+        create_rs_upoly(coeffs,degree,rs_get_default_up());
+        free(coeffs);
+        set_rs_precisol(prec);
+        set_rs_verbose(CGAL_RS_VERB);
+        rs_run_algo(CGALRS_CSTR("UISOLE"));
+        numsols=affiche_sols_eqs(intervals_mpfi);
+        for(int j=0;j<numsols;++j)
+                intervals.push_back(Gmpfi(intervals_mpfi[j]));
+        free(intervals_mpfi);
+        //std::cout<<"solutions are:\n";
+        //for(int j=0;j<numsols;++j)
+        //        std::cout<<intervals[j]<<std::endl;
+        return intervals;
 }
 
 } // namespace CGAL
