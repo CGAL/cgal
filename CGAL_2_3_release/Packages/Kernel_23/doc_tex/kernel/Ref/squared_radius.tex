@@ -1,0 +1,29 @@
+\begin{ccRefFunction}{squared_radius}
+
+\ccFunction{FT
+squared_radius( const Point_2<R>& p,
+                const Point_2<R>& q,
+                const Point_2<R>& r);}
+ {compute the squared radius of the circle passing through the points
+ $p$, $q$, and $r$.  \ccPrecond $p$, $q$, and $r$ are not collinear.}
+
+\ccFunction{FT
+squared_radius( const Point_3<R>& p,
+                const Point_3<R>& q,
+                const Point_3<R>& r);}
+ {compute the squared radius of the sphere passing through the points $p$,
+ $q$, and $r$ and whose center is in the same plane as those three points.}
+
+\ccFunction{FT
+squared_radius( const Point_3<R>& p,
+                const Point_3<R>& q,
+                const Point_3<R>& r,
+                const Point_3<R>& s);}
+ {compute the squared radius of the sphere passing through the points $p$,
+ $q$, $r$ and $s$.  \ccPrecond $p$, $q$, $r$ and $s$ are not coplanar.}
+
+\ccSeeAlso
+\ccRefIdfierPage{CGAL::Circle_2<R>} \\
+\ccRefIdfierPage{CGAL::Sphere_3<R>} \\
+
+\end{ccRefFunction}

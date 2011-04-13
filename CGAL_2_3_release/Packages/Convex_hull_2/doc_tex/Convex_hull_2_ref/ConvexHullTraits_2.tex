@@ -1,0 +1,127 @@
+% +------------------------------------------------------------------------+
+% | Reference manual page: ConvexHullTraits_2.tex
+% +------------------------------------------------------------------------+
+% | 14.05.2001   Susan Hert and Stefan Schirra
+% | Package: Convex_hull_2
+% | 
+% +------------------------------------------------------------------------+
+
+
+\begin{ccRefConcept}{ConvexHullTraits_2}
+\ccIndexTraitsClassRequirements[p]{convex hull, 2D}
+\ccIndexTraitsClassRequirements[p]{extreme points, 2D}
+
+\ccDefinition
+  
+All convex hull and extreme point algorithms provided in \cgal\ are
+parameterized with a traits class \ccStyle{Traits}, which defines the
+primitives (objects and predicates) that the convex hull algorithms use.
+\ccRefName\ defines the complete set of primitives required in these
+functions.  The specific subset of these primitives required by each function
+is specified with each function.
+
+\ccTypes
+\ccAutoIndexingOff
+\ccSetTwoColumns{ConvexHullTraits_2::Left_of_line_2}{}
+
+\ccNestedType{Point_2}%
+       {The point type on which the convex hull functions operate.}
+
+\ccNestedType{Less_xy_2}%
+       {Binary predicate object type comparing \ccc{Point_2}s
+        lexicographically.  Must provide 
+        \ccc{bool operator()(Point_2 p, Point_2 q)} where \ccc{true}
+        is returned iff $p <_{xy} q$.
+        We have $p<_{xy}q$, iff $p_x < q_x$ or $p_x = q_x$ and $p_y < q_y$,
+        where $p_x$ and $p_y$ denote $x$ and $y$ coordinate of point $p$,
+        respectively.
+       }
+
+\ccNestedType{Less_yx_2}%
+       {Same as \ccc{Less_xy_2} with the roles of $x$ and $y$ interchanged.}
+
+\ccNestedType{Leftturn_2}%
+       {Predicate object type that must provide
+        \ccc{bool operator()(Point_2 p,Point_2 q,Point_2 r)}, which
+        returns \ccc{true} iff \ccc{r} lies to the left of the
+        oriented line through \ccc{p} and \ccc{q}.}
+
+%\ccNestedType{Left_of_line_2}%
+%       {Unary predicate object type that
+%        must provide a constructor taking two \ccc{Point_2}s, $p$ and
+%        $q$, and \ccc{bool operator()(Point_2 r)}, which returns \ccc{true} iff
+%        $r$ lies to the left of the directed line through $p$ and $q$.}
+
+\ccNestedType{Less_signed_distance_to_line_2}%
+       {Predicate object type that must provide 
+        \ccc{bool operator()(Point_2 p, Point_2 q, 
+                             Point_2 r,Point_2 s)}, which returns \ccc{true} iff
+        the signed distance from $r$ to the line $l_{pq}$ through $p$ and $q$
+        is smaller than the distance from $s$ to $l_{pq}$. It is used to
+        compute the point right of a line with maximum unsigned distance to
+        the line. The predicate must provide a total order compatible
+        with convexity, {\it i.e.}, for any line segment $s$ one of the 
+        endpoints 
+        of $s$ is the smallest point among the points on $s$, with respect to
+        the order given by \ccc{Less_signed_distance_to_line_2}.}
+
+\ccNestedType{Less_rotate_ccw_2}%
+       {Predicate object type that must provide 
+        \ccc{bool operator()(Point_2 e, Point_2 p,Point_2 q)},
+        where \ccc{true} is returned iff a tangent at $e$ to the point set
+        $\{e,p,q\}$ hits $p$ before $q$ when rotated counterclockwise around 
+        $e$.
+        Ties are broken such that the point with larger distance to $e$
+        is smaller!}
+
+
+\ccCreation
+\ccCreationVariable{traits}  %% choose variable name
+
+Only a copy constructor is required.
+
+\ccConstructor{ConvexHullTraits_2(ConvexHullTraits_2& t);}{}
+
+\ccOperations
+
+The following member functions to create instances of the above predicate
+object types must exist. 
+
+\setlength\parskip{0mm}
+\ccMemberFunction{Less_xy_2 less_xy_2_object(); }{}
+\ccGlue
+\ccMemberFunction{Less_yx_2 less_yx_2_object(); }{}
+\ccGlue
+\ccMemberFunction{Left_of_line_2 left_of_line_2_object();}{}
+\ccGlue
+\ccMemberFunction{Less_signed_distance_to_line_2 less_signed_distance_to_line_2_object(); }{}
+\ccGlue
+\ccMemberFunction{Less_rotate_ccw_2 less_rotate_ccw_2_object( ); }{}
+\ccGlue
+\ccMemberFunction{Leftturn_2 leftturn_2_object(); }{}
+
+
+\ccParDims
+\ccHasModels
+
+\ccRefIdfierPage{CGAL::Convex_hull_constructive_traits_2<R>} \\
+\ccRefIdfierPage{CGAL::Convex_hull_leda_traits_2} \\
+\ccRefIdfierPage{CGAL::Convex_hull_projective_xy_traits_2<Point_3>} \\
+\ccRefIdfierPage{CGAL::Convex_hull_projective_xz_traits_2<Point_3>} \\
+\ccRefIdfierPage{CGAL::Convex_hull_projective_yz_traits_2<Point_3>} \\
+\ccRefIdfierPage{CGAL::Convex_hull_rat_leda_traits_2} \\
+\ccRefIdfierPage{CGAL::Convex_hull_traits_2<R>} \\
+\ccAutoIndexingOn
+
+\ccSeeAlso
+
+\ccRefConceptPage{IsStronglyConvexTraits_3}
+
+\ccParDims
+\end{ccRefConcept}
+
+% +------------------------------------------------------------------------+
+%%RefPage: end of main body, begin of footer
+% EOF
+% +------------------------------------------------------------------------+
+

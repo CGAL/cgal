@@ -1,0 +1,13 @@
+#!/bin/sh
+
+tmpfil=".rld$$"
+
+for file in $*
+do
+    if sed -e '/^#line / d' ${file} > ${tmpfil}
+    then
+	mv ${tmpfil} ${file}
+    else
+	rm -f ${tmpfil}
+    fi
+done

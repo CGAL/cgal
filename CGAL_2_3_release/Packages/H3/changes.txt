@@ -1,0 +1,256 @@
+2.34   (23 July 2001)
+- renamed cmp_* to compare_* and *_dist_* to *_distance_* and
+  leftturn, Leftturn, LEFTTURN to left_turn, Left_turn, LEFT_TURN and
+  rightturn, Rightturn, RIGHTTURN to right_turn, Right_turn, RIGHT_TURN
+  and compare_lexicographically* to compare_*
+  (deprecated the old names but didn't remove them).
+
+
+2.33   (10 July 2001)
+- deprecated has_on_boundary for Plane_3
+- New predicate : coplanar_orientation(3 points).
+
+2.32   (21 June 2001)
+- New constructors for DirectionH3.
+
+2.31   (20 June 2001)
+- Remove #include <misc.h>
+
+2.30   (19 June 2001)
+- fixed bug in centroid
+
+2.29   (19 June 2001)
+- added centroid
+
+2.28   (2  May 2001)
+- angle()
+- Fix operator<<(Iso_cuboid_3).
+
+2.27   (26 Apr 2001)
+- Change coplanar_side_of_oriented_circle
+  to     coplanar_side_of_bounded_circle.
+
+2.26   (13 Apr 2001)
+- Added coplanar_side_of_oriented_circle(p,q,r,t).
+
+2.25   (12 Apr 2001)
+- Fix off by one error in Triangle::vertex().
+
+2.24   (20 Mar 2001)
+- Added squared_radius().
+
+2.23   (16 Mar 2001)
+- Added constructor Vector(Point, Point).
+- side_of_bounded_sphere(3 or 4 points).
+
+2.22   (6 Mar 2001)
+- Remove useless friends in PVDH3.h.
+- Make operator*(VectorH3, VectorH3) a member function.
+
+2.21   (28 Feb 2001)
+- Even more VC++ fixes.
+
+2.20   (21 Feb 2001)
+- VC++ fixes.
+
+2.19   (19 Feb 2001)
+- Use the function object Less_xyz_3 instead of CGAL::Less_xyz<>.
+- Modified return types "typename R::RT" for VC++.
+
+2.18   (15 Feb 2001)
+- Add some "#define typename" to please VC++. 
+
+2.17   (14 Feb 2001)
+- added min_coord(), max_coord() in Iso_cuboid_3 and new constructor
+
+2.16   (13 Feb 2001)
+- Macro cleanups.
+- squared_area() and volume() functions added
+- Simple_homogeneous.
+- Remove old style casts.
+
+2.15   (22 Jan 2001)
+- CGAL::compare -> CGAL_NTS compare in SphereH3 to fix a warning.
+
+2.14   (15 Oct 2000)
+
+- SphereH3.h: Default argument value redeclaration fixed
+
+2.13   (11 Oct 2000)
+
+- use of keyword 'or' removed in SphereH3
+
+%%%%%%%%%%%%%%%%%%%%%%   R e l e a s e  2 . 2   %%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+2.12   (16 Aug 2000)
+
+- cross_product is not a friend anymore, neither of VectorH3 nor
+  of DirectionH3 (is currently not necessary, since all functions
+  used are public)
+- call of cross_product in PlaneH3 replaced by code from cross_product.
+  There have been strange problems with bcc5.5. Hope they are solved
+  by this fix.
+
+2.11   (26 Jul 2000)
+
+- in-place-new replaced by Handle_for( RefCounted ) constructor calls
+  and calls of Handle_for::initialize_with( RefCounted )
+- identical(.) and id() member functions removed (base class Handle_for<> 
+  has a member functions identical(.) and id() since version 3.9)
+
+2.10    (20 Jul 2000)
+
+- CGAL_ prefix added in 
+  o orientation_predicatesH3.h:#define ORIENTATION_PREDICATESH3_H
+  o predicates_on_pointsH3.h:#define PREDICATES_ON_POINTSH3_H
+
+2.9     (28 Jun 2000)
+
+- SphereH3 added
+- some constructions added
+    plane bisector( point, point)
+    point gp_linear_intersection( plane, plane, plane)
+    point circumcenter( point, point, point)
+  
+2.8     (08 Jun 2000)
+
+- CGAL_NTS used
+
+2.7     (19 Apr 2000)
+
+- LineH3 now uses Handle_for<>
+- PlaneH3 now uses Handle_for<>
+- RayH3 now uses Handle_for<>
+- SegmentH3 now uses Handle_for<>
+- TetrahedronH3 now uses Handle_for<>
+- TriangleH3 now uses Handle_for<>
+- leading _ with FT,RT removed in Aff_transformationH3
+
+2.6     (03 Apr 2000)
+
+- h?_ref() access added to PointH3
+
+2.5     (30 Mar 2000)
+
+- Handle_for<RepH3<RT>> used for PointH3, VectorH3, and DirectionH3
+
+2.4     (16 Feb 2000)
+
+- Iso_cuboidH3 revised
+  Handle_for<> used in Iso_cuboidH3 
+
+%%%%%%%%%%%%%%%%%%%%%%   R e l e a s e  2 . 1   %%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+2.3.6 -> 2.3.7  (03 Dec 99)
+- typename added before std::vector< PointH3<FT,RT> >::iterator
+  (detected by -pedantic with gcc-2.95)
+
+2.3.5 -> 2.3.6  (07 Nov 99)
+- Identity + rep in Aff_transformationH3
+
+2.3.4 -> 2.3.5  (08 Oct 99)
+- DirectionH3::vector() replaced by DirectionH3::to_vector()
+
+2.3.3 -> 2.3.4  (17 Sep 99)
+- distance_predicatesH3.h added
+
+2.3.2 -> 2.3.3  (14 Sep 99)
+- --
+
+2.3.1 -> 2.3.2  (01 Sep 99)
+- qualified sign by CGAL::
+
+2.3   -> 2.3.1  (09 Aug 99)
+- coplanar_orientation(p,q,r,s) added 
+
+2.2.1 -> 2.3    (04 Aug 99)
+- updates/workarounds for gcc-2.95:
+  s/friend inline/friend CGAL_FRIEND_INLINE
+  s/friend CGAL_KERNEL_INLINE/friend CGAL_KERNEL_FRIEND_INLINE
+  made all operator-() friends non-friends in <PVDH3.h>
+ 
+%%%%%%%%%%%%%%%%%%%%%%   R e l e a s e  2 . 0   %%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+2.2   -> 2.2.1  (26 May 99)
+- CGAL_KERNEL_INLINE added for declaration of cross_product on 
+  DirectionH3
+
+2.1.3 -> 2.2    (20 May 99)
+- equality test for TetrahedronH3 fixed
+
+2.1.2 -> 2.1.3  (06 May 99)
+- inline and CGAL_KERNEL_INLINE added to forward declarations in PVDH3.h
+  (external/internal linkage conflict warning by mips)
+
+2.1.1 -> 2.1.2  (28 Apr 99)
+- sign() qualified by CGAL::    (PlaneH3)
+
+2.1   -> 2.1.1  (28 Apr 99)
+- prefixed compare() by CGAL::
+
+2.0.5 -> 2.1    (16 Apr 99)
+- iostream parts prefixed by std::
+
+2.0.4 -> 2.0.5  (30 Mar 99)
+- to_double() prefixed by CGAL::
+
+2.0.3 -> 2.0.4  (22 Mar 99)
+- call of sign() DirectionH3<FT,RT>::operator==( const DirectionH3<FT,RT>& d)
+  'prefixed' by CGAL::
+
+2.0.2 -> 2.0.3  (20 Mar 99)
+- flag CGAL_NO_NAMESPACE corrected
+
+2.0.1 -> 2.0.2  (14 Mar 99)
+- std::swap used in code for bbox()
+
+2.0   -> 2.0.1  (24 Feb 99)
+- CGAL_[BEGIN|END]_NAMESPACE used
+
+1.5   -> 2.0
+- namespace CGAL { } introduced
+
+%%%%%%%%%%%%%%%%%%%%%%   R e l e a s e  1 . 2   %%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+1.4   -> 1.5
+- Use of CGAL...INLINE made consistent between declarations and
+  definitions (otherwise SunPro CC 4.2 does not like it).
+
+1.3.1 -> 1.4
+- bug in CGAL_collinear_are_ordered_along_line(p,q,r) fixed; case p == r 
+- CGAL_PointH3< > operator-(const CGAL_Origin&, const CGAL_VectorH3< >&)
+  added
+- warning in VectorH3<FT,RT>::cartesian(int i) fixed
+
+%%%%%%%%%%%%%%%%%%%%%%   R e l e a s e  1 . 1   %%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+1.3   -> 1.3.1
+- bugs in PlaneH3::to_2d() and PlaneH3::to_3d() fixed
+
+1.2   -> 1.3
+- basic_constructionsH3.h extended (circumcenter)
+- (strict_)order_along_line added/updated 
+- midpoint(p,q) added
+
+1.1.1 -> 1.2
+- side_of...sphere predicates added
+- assert replaced by CGAL_kernel_assertion in TetrahedronH3.h
+
+%%%%%%%%%%%%%%%%%%%%%%   R e l e a s e  1 . 0   %%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+1.1.  -> 1.1.1
+- basic_constructionsH3.h added
+- PlaneH3::projection(...) added
+
+1.0.1 -> 1.1
+- made fit for egcs
+
+1.0   -> 1.0.1
+- predicates_on_pointsH3.h is now also included in LineH3.h
+
+0.9   -> 1.0
+- New access functions have been added to Aff_transformation. 
+- New inline policy is now used: There are several levels of 
+  inlining to be defined in kernel_basic.h. 
+- typename keyword has been added
+- warnings for `unreachable statements' should disappear

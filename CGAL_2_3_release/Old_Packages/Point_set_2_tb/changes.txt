@@ -1,0 +1,7 @@
+0.9  documentation and test suite added
+
+0.3  VC porting ; examples changed
+
+0.2  LEDA dependencies were removed
+
+0.1  BETA version of the new CGAL - Delaunay triangulation based point set

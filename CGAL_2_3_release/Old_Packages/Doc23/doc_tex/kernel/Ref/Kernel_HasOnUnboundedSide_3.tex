@@ -1,0 +1,27 @@
+\begin{ccRefFunctionObjectConcept}{Kernel::HasOnUnboundedSide_3}
+A model for this must provide:
+
+\ccCreationVariable{fo}
+
+\ccMemberFunction{bool operator()(const Kernel::Sphere_3&s,
+                                  const Kernel::Point_3&p);}
+{returns true iff $p$ lies on the unbounded side of $s$.}
+
+\ccMemberFunction{bool operator()(const Kernel::Tetrahedron_3&t,
+                                  const Kernel::Point_3&p);}
+{returns true iff $p$ lies on the unbounded side of $t$.}
+
+\ccMemberFunction{bool operator()(const Kernel::Iso_cuboid_3&c,
+                                  const Kernel::Point_3&p);}
+{returns true iff $p$ lies on the unbounded side of $c$.}
+
+\ccRefines
+AdaptableFunctor
+
+\ccSeeAlso
+\ccRefIdfierPage{CGAL::Iso_cuboid_3<R>} \\
+\ccRefIdfierPage{CGAL::Sphere_3<R>} \\
+\ccRefIdfierPage{CGAL::Tetrahedron_3<R>} \\
+
+
+\end{ccRefFunctionObjectConcept}

@@ -1,0 +1,2 @@
+CGAL window package - the LEDA window ported to CGAL
+

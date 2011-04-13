@@ -1,0 +1,142 @@
+\begin{ccRefClass} {Point_2<R>}
+
+\ccDefinition
+An object of the class \ccRefName\ is a point in the two-dimensional
+Euclidean plane $\E^2$. 
+
+Remember that \ccStyle{R::RT} and \ccStyle{R::FT} denote a ring type
+and a field type. For the representation class
+\ccStyle{Cartesian<T>} the two types are the same. For the
+representation class \ccStyle{Homogeneous<T>} the ring type
+\ccStyle{R::RT} is equal to \ccStyle{T}, and the field type \ccStyle{R::FT} is 
+equal to \ccStyle{Quotient<T>}.
+
+\ccCreation
+\ccCreationVariable{p}
+
+
+\ccHidden \ccConstructor{Point_2();}
+             {introduces an uninitialized variable \ccVar.}
+
+\ccHidden \ccConstructor{Point_2(const Point_2<R> &q);}
+ 	    {copy constructor.}
+
+\ccConstructor{Point_2(const Origin &ORIGIN);}
+            {introduces a variable \ccVar\ with \ccHtmlNoLinksFrom{Cartesian} coordinates
+	      $(0,0)$.}
+
+\ccConstructor{Point_2(const R::RT &hx, const R::RT &hy, const R::RT &hw = R::RT(1));}
+            {introduces a point \ccVar\ initialized to $(hx/hw,hy/hw)$.
+             If the third argument is not explicitly given, it defaults
+             to \ccStyle{R::RT(1)}.
+	     \ccPrecond \ccc{hw} $\neq$ \ccc{R::RT(0)} }
+
+
+\ccOperations
+%\ccSetTwoOfThreeColumns{5cm}{4cm}
+
+\ccHidden \ccMethod{Point_2<R> & operator=(const Point_2<R> &q);}
+        {Assignment.}
+
+\ccMethod{bool operator==(const Point_2<R> &q) const;}
+       {Test for equality. Two points are equal, iff their $x$ and $y$ 
+        coordinates are equal. The point can be compared with
+		\ccc{ORIGIN}.}
+
+\ccMethod{bool operator!=(const Point_2<R> &q) const;}
+       {Test for inequality. The point can be compared with \ccc{ORIGIN}.}
+
+There are two sets of coordinate access functions, namely to the
+homogeneous and to the \ccHtmlNoLinksFrom{Cartesian} coordinates. They can be used
+independently from the chosen representation type \ccStyle{R}.
+
+\ccMethod{R::RT hx() const;}
+       {returns the homogeneous $x$ coordinate.}
+\ccGlue
+\ccMethod{R::RT hy() const;}
+       {returns the homogeneous $y$ coordinate.}
+\ccGlue
+\ccMethod{R::RT hw() const;}
+       {returns the homogenizing  coordinate.}
+
+Here come the \ccHtmlNoLinksFrom{Cartesian} access functions. Note that you do not loose
+information with the homogeneous representation, because then the field
+type is a quotient.
+
+\ccMethod{R::FT x() const;}
+       {returns the \ccHtmlNoLinksFrom{Cartesian} $x$ coordinate, that is $hx/hw$.}
+\ccGlue
+\ccMethod{R::FT y() const;}
+       {returns the \ccHtmlNoLinksFrom{Cartesian} $y$ coordinate, that is $hy/hw$.}
+
+
+The following operations are for convenience and for making this
+point class compatible with code for higher dimensional points.
+Again they come in a \ccHtmlNoLinksFrom{Cartesian} and homogeneous flavor.
+
+\ccMethod{R::RT homogeneous(int i) const;}
+       {returns the i'th homogeneous coordinate of \ccVar, starting with 0.
+        \ccPrecond $0\leq i \leq 2$.}
+
+\ccMethod{R::FT cartesian(int i) const;}
+       {returns the i'th \ccHtmlNoLinksFrom{Cartesian} coordinate of \ccVar, starting with 0.
+        \ccPrecond $0\leq i \leq 1$.}
+
+\ccMethod{R::FT operator[](int i) const;}
+       {returns \ccStyle{cartesian(i)}.
+        \ccPrecond $0\leq i \leq 1$.}
+
+\ccMethod{int dimension() const;}
+       {returns the dimension (the constant 2).}
+
+\ccMethod{Bbox_2 bbox() const;}
+       {returns a bounding box containing \ccVar. Note that bounding boxes
+        are not parameterized with whatsoever. }
+
+\ccMethod{Point_2<R>  transform(const Aff_transformation_2<R> &t) const;}
+       {returns the point obtained by applying $t$ on \ccVar.}
+
+
+\ccHeading{Operators}
+
+The following operations can be applied on points:
+
+\ccFunction{Vector_2<R> operator-(const Point_2<R> &p,
+                                  const Point_2<R> &q);}
+       {returns the difference vector between \ccStyle{q} and \ccStyle{p}. 
+        You can substitute \ccc{ORIGIN} for either \ccc{p} or \ccc{q},
+        but not for both.}
+
+\ccFunction{Point_2<R> operator+(const Point_2<R> &p,
+                                 const Vector_2<R> &v);}
+       {returns the point obtained by translating \ccStyle{p} by the 
+        vector \ccStyle{v}.}
+
+\ccFunction{Point_2<R> operator-(const Point_2<R> &p,
+                                 const Vector_2<R> &v);}
+       {returns the point obtained by translating \ccStyle{p} by the 
+        vector -\ccStyle{v}.}
+
+\ccExample
+
+The following declaration creates two points with \ccHtmlNoLinksFrom{Cartesian} double coordinates.
+
+\begin{cprog}
+
+  Point_2< Cartesian<double> > p, q(1.0, 2.0);
+\end{cprog} 
+
+The variable {\tt p} is uninitialized and should first be used on 
+the left hand side of an assignment. 
+\begin{cprog}
+
+  p = q;
+
+  std::cout << p.x() << "  " << p.y() << std::endl; 
+\end{cprog} 
+
+
+\ccSeeAlso
+\ccRefConceptPage{Kernel::Point_2}
+
+\end{ccRefClass} 

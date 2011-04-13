@@ -1,0 +1,43 @@
+% +------------------------------------------------------------------------+
+% | Reference manual page: Arrangement_base_node.tex (Arrangement)
+% +------------------------------------------------------------------------+
+% | 
+% | Package: arr (Arrangement_2)
+% | 
+% +------------------------------------------------------------------------+
+
+\ccRefPageBegin
+
+%%RefPage: end of header, begin of main body
+% +------------------------------------------------------------------------+
+% +========================================================================+
+%  Arrangement_base_node Concept
+% +========================================================================+
+\begin{ccRefConcept}{ArrangementBaseNode_2}
+\label{sec:base_node}
+
+\ccDefinition
+    A model for the \ccRefName\ concept must provide the following
+    types and operations. It defines the base class for the nodes of
+    the hierarchy tree of the arrangement data structure
+    \ccc{CGAL::Arrangement_2<Dcel,Traits,Base_node>}.
+
+\ccTypes
+    \ccNestedType{Curve}{curve type, corresponding to the traits
+    \ccc{Curve} type.}
+
+\ccCreationVariable{bn}
+\ccOperations
+    \ccMethod{const Curve& curve() const;}{returns the curve in \ccVar.}
+    \ccMethod{void set_curve(const Curve& c);}{sets the curve in \ccVar{} 
+    to $c$.}
+
+\ccHasModels
+    \ccc{Arrangement_base_node<Curve>}
+
+\end{ccRefConcept}
+% +------------------------------------------------------------------------+
+%%RefPage: end of main body, begin of footer
+\ccRefPageEnd
+% EOF
+% +------------------------------------------------------------------------+

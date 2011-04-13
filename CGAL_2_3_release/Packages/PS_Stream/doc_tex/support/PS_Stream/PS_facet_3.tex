@@ -1,0 +1,298 @@
+\chapter{The PS\_facet\_3 class}
+
+\begin{ccClass} {PS_facet_3}
+
+\section{Introduction}
+
+The class \ccc{PS\_facet\_3} is used to represent facets in 3D.
+
+\section{The PS\_facet\_3 Class}
+
+\ccDefinition 
+
+An object of type \ccClassName\ is a facet in the space.\\
+Indeed, this class is used to represent the facet in 3D.
+A  \ccClassName\ object is composed of \ccc{PS\_edge\_3} objects. \\
+The number of edges of a facet can be unlimited. So if the user creates a
+facet by giving a vector of Point\_3, the constructor will create the edge of the facet by taking
+the first and the second point and making an edge, next the second and 
+the third point etc...\\
+But it is also possible to create a facet by giving a vector of \ccc{PS\_edge\_3}
+objects. \\
+However, in all the case the user must give the edges that are
+consecutives. It is the same for the points.\\ 
+Moreover, it is possible to specify the type of filling of a facet.
+The different types are \ccc{NO\_FILL} the facet is wired-filled,
+\ccc{WIRED\_CULLBACK\_FACING} the same as wired but with the hidden
+parts, \ccc{UNIFORM\_FILL} the facet is filled with his color and at last
+\ccc{NORMAL_FILL} : the facet is filled according the angle done with the light.
+
+By default, if the color and the filling are not specified, they are
+set to \ccc{CGAL::BLACK} and \ccc{NO\_FILL}.
+Moreover the  \ccClassName\ class contain an arrangement and a
+map. Indeed, the arrangement is use to cut facet when they intersect.
+As a consequence, we test if two facets intersect, if it is the case
+the two facets must be split according the line intersection.
+The map is used to remember the relation between a  \ccc{Point3} in the space 
+and the  \ccc{Point2} corresponding in the Arrangement.
+
+\ccInclude{CGAL/IO/PS_facet_3.h}
+
+\ccTypes
+\ccTypedef{typedef double coord_type;}{}
+\ccTypedef{typedef CGAL::Cartesian< coord_type > CT;}{}
+\ccTypedef{typedef CGAL::Cartesian < leda_real > R;}{}
+\ccTypedef{typedef Point_2< CT > Point2;}{}
+\ccTypedef{typedef Point_3< CT > Point3;}{}
+\ccTypedef{typedef Plane_3< CT > Plane3;}{}
+\ccTypedef{typedef Line_3 < CT > Line3;}{}
+\ccTypedef{typedef Vector_3< CT > Vector3;}{}
+\ccTypedef{typedef Vector_2< CT > Vector2;}{}
+\ccTypedef{typedef Aff_transformation_3< CT > Transformation;}{}
+\par
+\ccTypedef{typedef Point_2< R > Point2_Leda;}{}
+\ccTypedef{typedef Polygon_traits_2< R > Traits_poly;}{}
+\ccTypedef{typedef Traits_poly::Segment_2 Segment2;}{}
+\ccTypedef{typedef Traits_poly::Vector_2 Vector2_Leda;}{}
+\ccTypedef{typedef vector<Point2_Leda> Container_poly;}{}
+\ccTypedef{typedef Polygon_2<Traits_poly,Container_poly> Poly;}{}
+\par
+\ccTypedef{typedef CGAL::Cartesian< leda_real > Arr_CT;}{}
+\ccTypedef{typedef Arr_CT   Arr_Rep;}{}
+\ccTypedef{typedef CGAL::Arr_segment_exact_traits<Arr_Rep>           Traits_arr;}{}
+\ccTypedef{typedef Traits_arr::Point                                 Arr_Point2;}{}
+\ccTypedef{typedef Traits_arr::X_curve                               X_curve;}{}
+\ccTypedef{typedef Traits_arr::Curve                                 Curve;}{}
+\ccTypedef{typedef CGAL::Arr_base_node<Curve>                     Base_node;}{}
+\ccTypedef{typedef CGAL::Arr_2_default_dcel<Traits_arr>               Dcel;}{}
+\ccTypedef{typedef CGAL::Arrangement_2<Dcel,Traits_arr,Base_node >    Arr_2;}{}
+\ccTypedef{typedef Arr_2::Curve_node   Curve_node;}{}
+
+\ccEnum{enum FILLING{NO_FILL,WIRED_CULLBACK_FACING,UNIFORM_FILL,NORMAL_FILL};}{}
+\ccEnum{enum PROJECTION{XY,YZ,ZX};}{}
+
+\ccCreation
+\ccCreationVariable{ps_facet_3}
+
+\ccConstructor{  PS_facet_3(vector<Point3> &V,Color edge_color = RED
+,Color filling_color = BLACK, FILLING f=NO_FILL,int number=0,bool
+m=false)} {Creates a facet by giving a vector of consecutives \ccc{Point\_3}
+points. 
+A precondition is required for the facet : the vector of points  must contain the points in the
+trigonometric positive way. The second parameter represent 
+the colors of the border of the facets(the edges), if this color is
+not specified the color by default is \ccc{CGAL::RED}. The third
+parameter represent the color of the facet, if the color is not
+specified, the facet is by default set as \ccc{CGAL::BLACK}. Moreover, 
+if the type of filling is not specified, the filling of the facet is
+set to \ccc{NO\_FILL}.
+The parameter number is the number of the facet(Two facets obtained
+with the method cut got the same number). The last parameter indicates 
+if the facet is marked or not. This parameter allows to detect cycles.
+}
+
+\ccConstructor{  PS_facet_3(vector<PS_edge_3> &V,Color color=
+BLACK,FILLING f=NO_FILL,int number=0,bool m=false);} {Creates a facet by giving a 
+vector of consecutives \ccc{PS\_edge\_3} edge. The second parameter represent 
+the color of the facet, if the color is not specified, the facet is by
+default set as \ccc{CGAL::BLACK}. 
+Moreover, if the type of filling is not specified, the filling of the facet is
+set to \ccc{NO\_FILL}.
+The parameter number is the number of the facet(Two facets obtained
+with the method cut got the same number). The last parameter indicates 
+if the facet is marked or not. This parameter allows to detect cycles.}
+
+\ccConstructor{PS_facet_3(const PS_facet_3 &facet);} {This is the copy
+constructor which is use to duplicate an existing facet.}
+
+
+\ccAccessFunctions
+
+\ccMethod{inline FILLING filling() const;} {Return the type of filling of the 
+facet. The differents type are : \ccc{NO\_FILL} the facet is wired filled,
+\ccc{WIRED\_CULLBACK\_FACING} same as \ccc{NO\_FILL} but with the
+hidden parts, \ccc{UNIFORM\_FILL} the facet is filled uniformely with
+the filling color specified at the constuction or \ccc{NORMAL\_FILL}
+the facet is filled in gray level according the angle between the
+plane of the facet and the light.}
+
+\ccMethod{inline Color color() const;} {Return the facet color.}
+
+\ccMethod{inline double gray_level() const;} {Return the gray level of 
+the facet.}
+
+\ccMethod{inline int number_of_edge() const;} {Return the number of edge
+of the facet.}
+
+\ccMethod{inline vector<PS_edge_3> get_Vect_Arete() const;} {Return the 
+vector of \ccc{PS\_edge\_3}.}
+
+\ccMethod{inline PROJECTION projection() const;} {Return the type of
+projection of the facet. The differents types are  \ccc{XY}, \ccc{YZ}
+or  \ccc{XZ}. It gives the plan use to project the points of the facet 
+in 2D for the arrangement.}
+
+\ccMethod{ inline bool mark() const;} {Return if the facet is marked
+or not.}
+
+\ccMethod{inline map<Curve_node *,PS_edge_3 *> map() const;} { Return
+the map containing the relation between the \ccc{PS\_edge\_3} and the curve
+node of the arrangement.}
+
+\ccMethod{ inline int number_of_the_facet() const;}{Return the number
+of the facet.}
+
+
+\ccHeading{Setting functions}
+\par
+
+\ccMethod{inline void set_filling(FILLING f);}{Allows to
+change the filling( \ccc{NO\_FILL} , \ccc{WIRED\_CULLBACK\_FACING} ,
+ \ccc{UNIFORM\_FILL} or \ccc{NORMAL\_FILL} ) of the facet.}
+
+\ccMethod{inline void set_color(Color c);}{Allows to change the facet 
+color by the new color \ccc{c}.}
+
+\ccMethod{inline void set_gray_level(double c);}{Allows to change the facet 
+gray level which is done with the scalar product of the normal vactor
+of the facet and the light vector to \ccc{c}.}
+
+\ccMethod{inline void set_projection(PROJECTION p);}{Allows to change
+the type of projection of the face to \ccc{XY}, \ccc{YZ} or \ccc{XZ}
+which is the plan use to project the points of the facet.}
+
+\ccMethod{inline void set_mark(bool m);}{Allows to mark or unmark the facet;}
+
+\ccMethod{inline void set_number_of_the_facet(int i);}{Allows to give 
+a number for the facet;}
+
+\ccHeading{Operators}
+
+\ccMethod{const PS_edge_3 operator[](int i) const throw(BadIndex);} {This is an
+access operator for the edge \ccc{i} of the facet.\\
+It returns a \ccc{BadIndex} exception if the \ccc{i} variable doesn't match a
+possible indice of the vector.}
+
+\ccMethod{PS_edge_3 operator[](int i) throw (BadIndex);} {This is an
+access/setting operator for the edge \ccc{i} of the facet.\\ 
+It returns a \ccc{BadIndex} exception if the \ccc{i} variable doesn't match a
+possible indice of the vector.}
+
+\ccMethod{PS_facet_3 operator= (const PS_facet_3 face);} {This is an
+assignment operator.}
+
+\ccMethod{PS_facet_3 operator= (const PS_edge_3 ar);} {This is an
+assignement operator but this time the parameter is a \ccc{PS\_edge\_3}. As a
+consequence, it is possible to set a facet thanks to an \ccc{PS\_edge\_3}. The
+facet is composed of only one edge.}
+
+\ccFunction{friend ostream& operator<< (ostream& os, const PS_facet_3&
+face);} {This operator allows to display the settings of the facet on a
+terminal.\\
+The display is the next : [Setting of each edge of the facet], Color:255 0
+0, Number of edge:25.\\ 
+It displays all the edge of the facet, the color in RGB and the number
+of edges of the facet.}
+
+
+\ccHeading{Operations}
+
+\ccMethod{coord_type xmin();}{Return the minimum of a facet according to the x
+coordinate of all the edges of the facet.}
+
+\ccMethod{coord_type ymin();}{Return the minimum of a facet according to the y
+coordinate of all the edges of the facet.}
+
+\ccMethod{coord_type zmin();}{Return the minimum of a facet according to the z
+coordinate of all the edges of the facet.}
+
+\ccMethod{coord_type xmax();}{Return the maximum of a facet according to the x
+coordinate of all the edges of the facet.}
+
+\ccMethod{coord_type ymax();}{Return the maximum of a facet according to the y
+coordinate of all the edges of the facet.}
+
+\ccMethod{coord_type zmin();}{Return the maximum of a facet according to the z
+coordinate of all the edges of the facet.}
+
+\ccMethod{coord_type max();}{Return the maximum of the x,y,z maximum.}
+
+\ccMethod{coord_type min();}{Return the minimum of the x,y,z minimum.}
+
+\ccMethod{void add(PS_edge_3 &edge);} {Allows to add an edge to the facet.}
+
+%\ccMethod{void add(Point3 &point);} {Allows to add a point to the
+%facet.}
+
+\ccMethod{bool is_x_overlap(PS_facet_3& Q);}{Check if the two facets P(this) and Q overlap in x.}
+
+\ccMethod{bool is_y_overlap(PS_facet_3& Q);}{Check if the two facets P(this) and Q overlap in y.}
+
+\ccMethod{bool is_z_overlap(PS_facet_3& Q);}{Check if the two facets P(this) and Q overlap in z.}
+
+\ccMethod{bool is_back_side(PS_facet_3& Q);}{Check if the facet
+P(this) is behind the facet Q.}
+
+\ccMethod{bool is_front_side(PS_facet_3& Q);}{Check if the facet
+P(this) is in front of the facet Q.}
+
+\ccMethod{bool is_xy_plan_overlap(PS_facet_3 &Q);}{Check if the
+projection of the two  \ccClassName\ overlap in the plan \ccc{XY}.}
+
+\ccMethod{bool five_test(PS_facet_3& Q);}{Compute the first five test
+of the Depth Sort Algorithm which are in order \ccc{is_z_overlap},
+\ccc{is_x_overlap}, \ccc{is_y_overlap}, \ccc{is_back_side}, \ccc{is_front_side} and \ccc{is_xy_plan_overlap} .}
+
+\ccMethod{bool two_test(PS_facet_3& Q);}{Compute the second two test
+of the Depth Sort Algorithm when the facet is swap. The test are in
+order  \ccc{is_back_side} and  \ccc{is_front_side}.}
+
+\ccMethod{bool has_a_cycle(PS_facet_3& Q);} {Return if the two checked 
+facets can provide a cycle.}
+
+\ccMethod{void check_projection();}{Find the type of projection for
+the facet. This method allows to know if it is possible to project on
+the \ccc{XY},\ccc{YZ} or \ccc{ZX} plan.}
+
+\ccMethod{Arr_Point2 projection(Point3 q);}{Make the projection of a
+ \ccc{Point3} according the \ccc{PROJECTION} variable.}
+
+\ccMethod{Point3 lift(Arr_Point2 p);}{Give the \ccc{point3} which correspond to
+the point2 projected. It use the \ccc{PROJECTION} variable to know what kind 
+of projection was applied to the point p.}
+
+\ccMethod{void make_arrangement(PS_edge_3 &l);}{ Make the arrangement
+of the face with the \ccc{PS\_edge\_3} \ccc{l} which cut the face. This
+arrangement is use to facilitate the operations of cutting for the
+facets. But we have to project in a 2D plan because arrangement are
+done in the plan. Moreover we have to keep a link between the curve
+node of the arrangement and the \ccc{PS\_edge\_3} corresponding. As a
+consequence a Map is used to keep in memory the addresses of the curve 
+and the adresses of the \ccc{PS\_edge\_3} corresponding.}
+
+\ccMethod{vector<PS_facet_3> create_facets(PS_edge_3 &l);}{To recover
+the facet of the arrangement. This method allows to create the facets
+according the \ccc{PS\_edge\_3} \ccc{l} which cut the facet in many facets. After
+working on the arrangement, we use the lift method to come back to the 
+ \ccc{Point\_3} and after that to the \ccc{PS\_edge\_3} corresponding. All the
+facets of the vector returned got the same number because they all
+comes from the same mother facet. This allows to avoid cutting facets
+from the same plan(this error is due to round).}
+
+\ccMethod{void transformation(Transformation &t);} {Make the
+transformation to pass from the point of view to the z-axis view.}
+
+\ccMethod{leda_real cp(Vector2_Leda p,Vector2_Leda q);} {Return the
+cross product of the two vectors.}
+
+\ccMethod{leda_real det(Point2_Leda p,Point2_Leda q,Point2_Leda
+r);}{Return the determinant of the 3 points p,q and r.} 
+
+\ccMethod{int sign(double x);}{Return the sign of x : +1 positive, -1
+negative and 0 for null.} 
+
+\end{ccClass}
+
+
+
+

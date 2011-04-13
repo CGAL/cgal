@@ -1,0 +1,47 @@
+% +------------------------------------------------------------------------+
+% | Reference manual page: Filtered_extended_homogeneous.tex
+% +------------------------------------------------------------------------+
+% | 26.06.2001 Michael Seel
+% | Package:   Nef_2
+% | 
+% +------------------------------------------------------------------------+
+
+\ccAutoIndexingOff
+\begin{ccRefClass}{Filtered_extended_homogeneous<RT>}
+\ccAutoIndexingOn
+\ccIndexTraitsClassBegin{Filtered_extended_homogeneous}{}{Nef polyhedron, 2D}
+
+\ccDefinition
+  
+The class \ccRefName\ serves as a traits class for the class
+\ccc{CGAL::Nef_polyhedron_2<T>}.  It uses a polynomial component
+representation based on a ring number type \ccc{RT}.
+
+\ccInclude{CGAL/Filtered_extended_homogeneous.h}
+
+\ccIsModel
+
+\ccRefConceptPage{ExtendedKernelTraits_2}%
+\ccIndexSubitem[c]{ExtendedKernelTraits_2}{model} \\
+
+\ccCreation
+\ccCreationVariable{traits}  %% choose variable name
+
+\ccConstructor{Filtered_extended_homogeneous();}{default constructor.}
+
+\ccOperations
+
+Fits all operation requirements of the concept.
+
+\ccSeeAlso
+
+\ccRefIdfierPage{CGAL::Extended_cartesian<FT>} \\
+\ccRefIdfierPage{CGAL::Extended_homogeneous<RT>} 
+
+
+\ccIndexTraitsClassEnd
+\ccAutoIndexingOff
+\end{ccRefClass}
+\ccAutoIndexingOn
+
+% EOF

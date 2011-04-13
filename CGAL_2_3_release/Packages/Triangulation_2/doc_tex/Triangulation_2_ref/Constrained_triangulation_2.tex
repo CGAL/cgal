@@ -1,0 +1,220 @@
+% +------------------------------------------------------------------------+
+% | Reference manual page: Constrained_triangulation_2.tex
+% +------------------------------------------------------------------------+
+% | 12.04.2000   Author
+% | Package: Package
+% | 
+\RCSdef{\RCSConstrainedtriangulationRev}{$Revision$}
+\RCSdefDate{\RCSConstrainedtriangulationDate}{$Date$}
+% |
+%%RefPage: end of header, begin of main body
+% +------------------------------------------------------------------------+
+
+
+\begin{ccRefClass}{Constrained_triangulation_2<Traits,Tds>}  %% add template arg's if necessary
+
+%% \ccHtmlCrossLink{}     %% add further rules for cross referencing links
+%% \ccHtmlIndexC[class]{} %% add further index entries
+
+\ccDefinition
+  
+A constrained triangulation is a triangulation of a set of points
+which has to include among its edges 
+a given set of segments joining the points. The corresponding 
+edges are called {\em constrained edges}. 
+
+The set of points defining the vertices of the triangulation
+includes the set of constrained edges endpoints. It may include other points
+(considered as null length constrained edges) as well.  The set of
+constrained edges forms a set of segments which do not intersect
+except possibly at their endpoints.  Any number of constrained edges
+are allowed to share the same endpoint.  Vertical constrained edges or
+constrained edges with null length are allowed.
+
+\begin{ccTexOnly}
+\begin{center} \IpeScale{50} \Ipe{constraints.ipe} \end{center}
+\end{ccTexOnly}
+
+\begin{ccHtmlOnly}
+<CENTER>
+<img border=0 src=constraints.gif align=center alt="A set of
+constraints and its constrained triangulation">
+</CENTER>
+\end{ccHtmlOnly}
+
+The class \ccRefName\ of the CGAL library
+implements constrained triangulations.
+The template parameters \ccc{Traits} and \ccc{Tds}
+are to be instantiated with models of respectively
+\ccc{TriangulationTraits_2}  and
+\ccc{TriangulationDdataStructure_2}.
+ The information about constrained edges is store in the 
+faces of the triangulation. Thus the nested \ccc{Face}
+type of a constrained triangulation offers
+additonnal functionalities to deal with this information.
+Within the design of a triangulation data structure
+models templated by the base face class and the base vertex class,
+these additional functionalities related to the constraints
+are requirements which have to be fulfilled
+by the base face.
+The base face of a constrained triangulation
+has to be a model of the concept
+\ccc{ConstrainedTriangulationFaceBase_2}.
+\cgal provides a defaults. If \ccc{Gt} is the geometric traits
+parameter,
+the default  for
+\ccc{ConstrainedTriangulationFaceBase_2}  is the class
+\ccc{CGAL::Constrained_triangulation_face_base_2<Gt>}
+and the default for the
+triangulation data structure parameter is the class
+\ccc{CGAL::Triangulation_data_structure_using_list_2 <
+                       CGAL::Triangulation_vertex_base_2<Gt>,
+		       CGAL::Constrained_triangulation_face_base_2<Gt> >}.
+
+\ccInclude{CGAL/Constrained_triangulation_2.h} 
+ 
+\ccInheritsFrom
+
+\ccc{Triangulation_2<Traits,Tds>}
+
+\ccTypes
+The only new type defined by
+\ccRefName\ is a constraint type: a
+constraint is represented as a pair of points.
+
+\ccTypedef{typedef pair<Point,Point> Constraint;}{}
+
+
+
+\ccCreation
+\ccCreationVariable{ct}  %% choose variable name
+The creators of the class build the constrained triangulation from a
+list of constrained edges. Constrained edges are assumed to have no
+intersection other than endpoints. Any number of constrained edges are
+allowed to share the same endpoint.  Vertical constrained edges or
+constrained edges with null length are allowed.
+
+\ccConstructor{Constrained_triangulation_2();}{default constructor.}
+\ccConstructor{Constrained_triangulation_2(const
+Constrained_triangulation_2& ct1)}
+ {Copy constructor, all faces and vertices
+are duplicated and  the constrained status of edges
+is copied. This last feature is not yet implemented.}
+
+\ccConstructor{Constrained_triangulation_2(list<Constrained>& lc,
+const Traits& t = Traits());}
+{Introduces a constrained triangulation, the constrained edges of which
+are the edges of the list \ccc{lc}.}
+
+\ccConstructor{ template<class InputIterator> Constrained_triangulation_2(
+        InputIterator first,
+                               InputIterator last,
+                               const Traits& t=Traits());}
+{A templated constructor which introduces and builds
+ a constrained triangulation with constrained edges in the range 
+$\left[\right.$\ccc{first}, \ccc{last}$\left.\right)$.
+\ccPrecond The \ccc{value_type} of \ccc{first} and \ccc{last}
+ is \ccc{Constraint}.}
+
+\ccHeading{Queries}
+\ccMethod{ bool is_constrained(Edge e);}
+{Returns true if edge \ccc{e} is a constrained edge.}
+\ccMethod{bool are_there_incident_constraints(Vertex_handle v);}
+{Returns true if at least one of the edges incident to vertex \ccc{v}
+is constrained.}
+\ccMethod{template<class OutputIterator>
+  bool are_there_incident_constraints(Vertex_handle v, 
+ OutputIterator out) const;}
+{Same as above. In addition the constrained edges incident to \ccc{v}
+are inserted in the sequence pointed to by the output iterator \ccc{out}.}
+
+
+\ccHeading{Insertion and removal}
+
+\ccMethod{Vertex_handle insert(Point a);}
+{ Inserts point a and restore the status (constrained or not) of all
+the
+touched edges.}
+
+\ccMethod{void insert(Point a, Point b);}
+{ Inserts points a and b, and inserts segment ab as a
+constraint. Removes the faces crossed by segment ab and creates new
+faces instead. If a vertex c lies on segment ab, constraint ab is
+replaced by the two constraints ac and cb. Apart from the insertion of
+a and b, the algorithm runs in time proportionnal to the number of
+removed triangles. 
+\ccPrecond The relative interior of segment \ccc{ab} does not
+intersect the relative interior of another constrained edge.}
+
+\ccMethod{ void insert(const Vertex_handle & va, const Vertex_handle & vb);}
+{ Inserts the line segment \ccc{s} whose endpoints are the vertices 
+\ccc{va} and
+\ccc{vb}  as a constrained edge \ccc{e}. The triangles intersected by s
+are removed and new ones are created. 
+\ccPrecond The relative interior of \ccc{s} does not
+intersect the relative interior of another constrained edge.  
+\ccPrecond  va and vb are distinct vertices of t.  }
+
+\ccMethod{ void insert(const Vertex_handle & va, const Vertex_handle & vb,
+	    Face_handle & fr, int & i);}
+{Same as above. In addition,  sets the face \ccc{fr} incident to the
+egde \ccc{e} 
+and on the right of \ccc{e} oriented from  \ccc{va} to \ccc{vb}
+and the index \ccc{i}  of the vertex of \ccc{fr} opposite to
+\ccc{e}, i.e.  \ccc{e}=\ccc{(fr,i)}.}	    
+
+\ccMethod{void insert(const Vertex_handle & va, const Vertex_handle & vb,
+	    Face_handle & fr, int & i, List_edges & new_edges );}
+{Same as above. In addition,  the edges that are created are put in
+the list \ccc{new\_edges}.} 
+
+\ccMethod{void remove(const Vertex_handle & v);}
+{ Removes a vertex v. 
+\ccPrecond Vertex \ccc{v}  is not incident to a constrained edge.}
+
+\ccMethod{ void remove_incident_constraints(Vertex_handle  v);}
+{Make the edges incident to vertex \ccc{v} unconstrained edges.}
+
+\ccMethod{void remove_constraint(const Face_handle & f, int i);}
+{ Edge \ccc{e}=\ccc{(f,i)}=\ccc{(g,j)} is no longer constrained.}
+
+\ccHeading{I/O}
+
+\ccFunction{ostream & operator<<(ostream& os, const CGAL_Constrained_triangulation_2<Traits,Tds> &Ct);}
+{Writes the triangulation and, for each face f, and integers i=0,1,2,
+write ``C'' or ``N'' depending whether edge 
+\ccc{(f,i)} is constrained or not.}
+
+\ccSeeAlso
+\ccc{CGAL::Triangulation_2<Traits,Tds>}, \\
+\ccc{TriangulationDataStructure_2}, \\
+\ccc{TriangulationTraits_2} \\
+\ccc{ConstrainedTriangulationFaceBase_2}
+
+
+
+\ccHeading{Implementation}
+
+%The constructors build the triangulation using a sweeping line
+%algorithm. The complexity of this algorithm is $O(n\log n)$ if $n$
+%endpoints are present. The sweep structure is an \stl\ map.
+ The insertion of a constrained edge runs in time
+proportionnal to the number of triangles intersected by this edge.
+
+There is no need for a special implementation
+of the method \ccVar\ccc{.is_valid()}
+because the base class function
+\ccc{ Triangulation_2<Traits>::is_valid()}
+call the face class method
+\ccc{Tds::Face::is_valid()} 
+which, in the case of a constrained triangulation,
+includes a test of the consistency of the
+information about constrained edges.
+
+\end{ccRefClass}
+
+% +------------------------------------------------------------------------+
+%%RefPage: end of main body, begin of footer
+% EOF
+% +------------------------------------------------------------------------+
+

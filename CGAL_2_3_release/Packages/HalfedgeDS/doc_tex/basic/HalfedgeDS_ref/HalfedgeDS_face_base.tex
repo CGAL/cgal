@@ -1,0 +1,113 @@
+% +------------------------------------------------------------------------+
+% | Reference manual page: HalfedgeDS_face_base.tex
+% +------------------------------------------------------------------------+
+% | 22.03.1999   Lutz Kettner
+% | Package: HalfedgeDS
+% | 
+\RCSdef{\RCSHalfedgeDSfacebaseRev}{$Revision$}
+\RCSdefDate{\RCSHalfedgeDSfacebaseDate}{$Date$}
+% +------------------------------------------------------------------------+
+
+\ccRefPageBegin
+
+%%RefPage: end of header, begin of main body
+% +------------------------------------------------------------------------+
+
+
+\begin{ccRefClass}{HalfedgeDS_face_base<Refs>}
+  
+\ccDefinition
+  
+The class \ccRefName\ is a model of the \ccc{HalfedgeDSFace}
+concept. \ccc{Refs} is an instantiation of a \ccc{HalfedgeDS}.  The
+template declaration of \ccRefName\ has three parameters with some
+defaults that allow to select various flavors of faces. The
+declaration is best explained with the two following declarations,
+essentially hiding an implementation dependent default setting:
+
+~~~~~~\ccc{template <class Refs, class T = CGAL::Tag_true>}\\
+\mbox{}~~~~~~\ccc{class HalfedgeDS_face_base;}
+
+~~~~~~\ccc{template <class Refs, class T, class Plane>}\\
+\mbox{}~~~~~~\ccc{class HalfedgeDS_face_base;}
+
+\ccRefName\ defines a face including a reference to an incident halfedge.
+
+\ccc{CGAL::HalfedgeDS_face_base<Refs,CGAL::Tag_false>} is a face
+without a reference to an incident halfedge. It is empty besides the
+required type definitions. It can be used for deriving own faces.
+See also \ccc{CGAL::HalfedgeDS_face_min_base<Refs>}.
+
+\ccc{CGAL::HalfedgeDS_face_base<Refs,CGAL::Tag_true,Plane>} is a face with
+a reference to an incident halfedge and it stores a plane equation of
+type \ccc{Plane}.  It can be used as a face for a model of the
+\ccc{PolyhedronItems_3} concept.
+
+\ccc{CGAL::HalfedgeDS_face_base<Refs,CGAL::Tag_false,Plane>} is a face
+without a reference to an incident halfedge and it stores a plane
+equation of type \ccc{Plane}.  It can be used as a face for a
+model of the \ccc{PolyhedronItems_3} concept.
+
+\ccInclude{CGAL/HalfedgeDS_face_base.h}
+
+\ccIsModel
+
+\ccRefConceptPage{HalfedgeDSFace}
+
+\ccTypes
+\ccThree{const Plane&;;}{plane() const;MMMMMMMMMMMM}{}
+\ccThreeToTwo
+
+\ccNestedType{Plane}{plane type for three argument version.}
+
+
+% No longer required.
+%\ccTypedef{typedef Traits::Plane_3 Plane_3;}
+%    {plane equation type for three argument version.}
+%\ccGlue
+%\ccTypedef{typedef Traits::Vector_3 Vector_3;}
+%    {normal vector of plane equation.}
+
+\ccCreation
+\ccCreationVariable{f}
+
+\ccConstructor{HalfedgeDS_face_base();}{default constructor.}
+\ccGlue
+\ccConstructor{HalfedgeDS_face_base( const Plane& pln);}
+    {initialized with plane \ccc{pln}.}
+
+\ccOperations
+
+\ccTagFullDeclarations
+\ccMethod{Plane&                plane();}{}
+\ccGlue
+\ccMethod{const Plane&          plane() const;}{}
+\ccTagDefaults
+
+% No longer required.
+%\ccTagFullDeclarations
+%\ccMethod{Plane&                plane();}{}
+%\ccGlue
+%\ccMethod{const Plane&          plane() const;}{}
+%\ccGlue
+%\ccMethod{Normal                normal() const;}{}
+%\ccTagDefaults
+
+\ccSeeAlso
+
+\ccRefConceptPage{HalfedgeDS<Traits,Items,Alloc>}\\
+\ccRefConceptPage{HalfedgeDSItems}\\
+\ccRefConceptPage{PolyhedronItems_3}\\
+\ccRefIdfierPage{CGAL::HalfedgeDS_items_2}\\
+\ccRefIdfierPage{CGAL::HalfedgeDS_vertex_base<Refs>}\\
+\ccRefIdfierPage{CGAL::HalfedgeDS_halfedge_base<Refs>}\\
+\ccRefIdfierPage{CGAL::HalfedgeDS_face_min_base<Refs>}
+
+\end{ccRefClass}
+
+% +------------------------------------------------------------------------+
+%%RefPage: end of main body, begin of footer
+\ccRefPageEnd
+% EOF
+% +------------------------------------------------------------------------+
+

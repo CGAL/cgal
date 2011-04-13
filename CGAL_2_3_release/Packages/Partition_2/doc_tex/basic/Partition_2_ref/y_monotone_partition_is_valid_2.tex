@@ -1,0 +1,75 @@
+\renewcommand\ccRefPageBegin{\ccParDims\cgalColumnLayout\begin{ccAdvanced}}
+\renewcommand\ccRefPageEnd{\ccParDims\cgalColumnLayout\end{ccAdvanced}}
+\begin{ccRefFunction}{y_monotone_partition_is_valid_2}
+
+\ccDefinition
+Function that determines if a given set of polygons represents
+a valid $y$-monotone partitioning for a given sequence of points that 
+define a simple, counterclockwise-oriented polygon.  
+A valid partition is one in
+which the polygons are nonoverlapping and the union of the polygons is the 
+same as the original polygon and each polygon is $y$-monotone
+\ccIndexSubsubitem{polygon partitioning}{y-monotone}{valid}
+
+\ccInclude{CGAL/partition_is_valid_2.h}
+
+\ccFunction{
+template<class InputIterator, class ForwardIterator, class Traits>
+bool
+y_monotone_partition_is_valid_2 (InputIterator point_first, 
+                                 InputIterator point_beyond,
+                                 ForwardIterator poly_first, 
+                                 ForwardIterator poly_beyond,
+                                 const Traits& traits = Default_traits);
+}
+{
+determines if the polygons in the range [\ccc{poly_first}, \ccc{poly_beyond})
+define a valid $y$-monotone partition of the polygon represented by the points 
+in the range [\ccc{point_first}, \ccc{point_beyond}). 
+The function returns \ccc{true} iff the partition is valid and otherwise
+returns false.
+\ccPrecond  Points in the range [\ccc{point_first}, \ccc{point_beyond}) define
+a simple, counterclockwise-oriented polygon.
+%\ccIndexSubitem[C]{y_monotone_partition_is_valid_2}{preconditions}
+}
+
+\ccHeading{Requirements}
+\begin{enumerate}
+    \item \ccc{Traits} is a model of the concept 
+          \ccc{YMonotonePartitionIsValidTraits_2}%
+          \ccIndexMainItem[c]{YMonotonePartitionIsValidTraits_2}.
+    \item \ccc{InputIterator::value_type} should be \ccc{Traits::Point_2},
+          which should also be the type of the points stored in an object
+          of type \ccc{Traits::Polygon_2}.
+    \item \ccc{ForwardIterator::value_type} should be 
+          \ccc{Traits::Polygon_2}.
+\end{enumerate}
+
+The default traits class \ccc{Default_traits} is \ccc{Partition_traits_2},%
+\ccIndexTraitsClassDefault{y_monotone_partition_is_valid_2}
+with the representation type determined by \ccc{InputIterator::value_type}.
+
+\ccSeeAlso
+
+\ccRefIdfierPage{CGAL::y_monotone_partition_2} \\
+\ccRefIdfierPage{CGAL::is_y_monotone_2} \\
+\ccRefIdfierPage{CGAL::partition_is_valid_2} \\
+\ccRefIdfierPage{CGAL::Partition_is_valid_traits_2<Traits, PolygonIsValid>}
+
+\ccImplementation
+
+This function uses the function \ccc{partition_is_valid_2} together with
+the function object \ccc{Is_y_monotone_2} to determine if each polygon
+is $y$-monotone or not. Thus the time required is $O(n \log n + e \log e)$ 
+where $n$ is the total number of vertices of the partition polygons and
+$e$ is the total number of edges.
+
+\ccExample
+
+See the example presented with the function \ccc{y_monotone_partition_2}
+for an illustration of the use of this function.
+
+
+\end{ccRefFunction}
+\renewcommand\ccRefPageBegin{\ccParDims\cgalColumnLayout}
+\renewcommand\ccRefPageEnd{\ccParDims\cgalColumnLayout}

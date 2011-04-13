@@ -1,0 +1,57 @@
+CGAL 2d geometry demo
+
+A GeoWin maintains one or more inputs scene and one or more output scenes. 
+The output scenes depend on the input scenes and are recomputed whenever 
+the input scenes change. Most GeoWin applications have only one input
+scene, but this demo has 2 input scenes:
+
+- one contains the points for computing a (Delaunay) triangulation, 
+  Voronoi diagram, ... \\
+  
+- the other input scene contains points for location computing on the Delaunay
+  triangulation \\
+
+You can activate an input scene using the activate submenu in the SCENES-menu. \\
+
+The input scene is manipulated with the mouse. 
+A click on the left mouse button adds a point, a drag with the left
+mouse button moves a point, and a click with the right mouse button 
+on a point opens a menu which allows you to (among other things) delete
+the point.
+
+As you edit the input scene the visible output scenes are recomputed.
+We next explain the most important buttons of the GeoWin menu.
+
+The most important menu is the SCENES-menu:
+
+Visibility allows you to select the output scenes which are to be displayed.
+
+Options allows you to modify the display of a scene, e.g., you may 
+want to choose a different line style or line width. 
+
+Contents shows the ASCII-representation of a scene. This is helpful 
+for understanding the internal representation of data structures.
+
+The FILE-MENU allows you to save a  scene to a file or to load
+a scene from a file, to write a scene to a ps-file, or to produce a screen-shot.
+
+The EDIT-MENU is also important. You may select a subset of the input scene 
+and then apply a geometric operation to this subset. Try ``Selection:Select'' 
+to select a subset of the points, and then use ``Edit Selection:Rotate'' 
+to rotate this set of points. It is beautiful to see how the Voronoi diagram
+changes. Selection is alternatively possible with the middle mouse button.
+The generate-submenu allows to generate input scenes by running 
+generators. 
+
+
+We leave it to you to explore the other menus.
+
+
+
+
+
+
+
+
+
+

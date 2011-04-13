@@ -1,0 +1,24 @@
+\begin{ccRefFunctionObjectConcept}{Kernel::ConstructRay_3}
+A model for this must provide:
+
+\ccCreationVariable{fo}
+
+
+\ccHidden \ccMemberFunction{Kernel::Ray_3 operator()();}
+             {introduces an uninitialized variable .}
+
+\ccHidden \ccMemberFunction{Kernel::Ray_3 operator()(const Kernel::Ray_3 &s);}
+ 	    {copy constructor.}
+
+\ccMemberFunction{Kernel::Ray_3 operator()(const Kernel::Point_3 &p, const Kernel::Point_3 &q);}
+            {introduces a ray  
+             with source $p$ and passing through point $q$.}
+
+\ccMemberFunction{Kernel::Ray_3 operator()(const Kernel::Point_3 &p, const Kernel::Direction_3 &d);}
+            {introduces a ray  with source $p$ and with 
+             direction $d$.}
+
+\ccSeeAlso
+\ccRefIdfierPage{CGAL::Ray_3<R>}\\
+
+\end{ccRefFunctionObjectConcept}

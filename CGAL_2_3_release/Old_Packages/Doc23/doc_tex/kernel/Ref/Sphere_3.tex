@@ -1,0 +1,178 @@
+\begin{ccRefClass}{Sphere_3<R>}
+
+\ccDefinition
+
+An object of type \ccRefName\ is a sphere in the
+three-dimensional Euclidean space $\E^3$. The sphere is oriented, i.e.\ 
+its boundary has clockwise or counterclockwise orientation. The
+boundary splits $\E^3$ into a positive and a negative side, where the
+positive side is to the left of the boundary. The boundary further
+splits $\E^3$ into a bounded and an unbounded side. Note that the
+sphere can be degenerated, i.e.\ the squared radius may be zero.
+
+
+% -----------------------------------------------------------------------------
+\ccCreation
+\ccCreationVariable{c}
+
+\ccHidden
+\ccConstructor{ Sphere_3( );}{
+        introduces an uninitialized variable \ccVar\ of type
+        \ccRefName.}
+
+\ccConstructor{ Sphere_3( Point_3<R>  const& center, 
+                          R::FT  const& squared_radius,
+                          Orientation const& orientation = COUNTERCLOCKWISE);}{
+        introduces a variable \ccVar\ of type \ccRefName.
+        It is initialized to the sphere with center \ccc{center},
+        squared radius \ccc{squared_radius} and orientation
+        \ccc{orientation}.
+        \ccPrecond \ccc{orientation} $\neq$ \ccc{COPLANAR}, and furthermore,
+                   \ccc{squared_radius} $\geq$ 0.}
+
+\ccConstructor{ Sphere_3( Point_3<R> const& p,
+                          Point_3<R> const& q,
+                          Point_3<R> const& r,
+                          Point_3<R> const& s);}{
+        introduces a variable \ccVar\ of type \ccRefName.
+        It is initialized to the unique sphere which passes through
+        the points \ccc{p}, \ccc{q}, \ccc{r} and \ccc{s}. The orientation of
+        the sphere is the orientation of the point quadruple \ccc{p},
+        \ccc{q}, \ccc{r}, \ccc{s}.
+        \ccPrecond \ccc{p}, \ccc{q}, \ccc{r}, and \ccc{s} are not collinear.}
+
+
+\ccConstructor{ Sphere_3( Point_3<R> const& p,
+                          Point_3<R> const& q,
+                          Point_3<R> const& r,
+                          const Orientation& o = COUNTERCLOCKWISE);}{
+        introduces a variable \ccVar\ of type \ccRefName.
+        It is initialized to the smallest sphere which passes through
+        the points \ccc{p}, \ccc{q}, and \ccc{r}. The orientation of
+        the sphere is \ccc{o}. \ccPrecond \ccc{o} is not
+        \ccc{COPLANAR}.}
+
+\ccConstructor{ Sphere_3( Point_3<R> const& p,
+                          Point_3<R> const& q,
+                          const Orientation& o = COUNTERCLOCKWISE);}{
+        introduces a variable \ccVar\ of type \ccRefName.
+        It is initialized to the smallest sphere which passes through
+        the points \ccc{p} and \ccc{q}. The orientation of
+        the sphere is \ccc{o}. \ccPrecond \ccc{o} is not
+        \ccc{COPLANAR}.}
+
+
+\ccConstructor{ Sphere_3( Point_3<R>  const& center,
+                          Orientation const& orientation = COUNTERCLOCKWISE);}{
+        introduces a variable \ccVar\ of type \ccRefName.
+        It is initialized to the sphere with center \ccc{center}, squared
+        radius zero and orientation \ccc{orientation}.
+        \ccPrecond \ccc{orientation} $\neq$ \ccc{COPLANAR}.
+        \ccPostcond \ccVar.\ccc{is_degenerate()} = \ccc{true}.}
+
+\ccHidden
+\ccConstructor{ Sphere_3( Sphere_3<R> const&);}{
+        copy constructor.}
+
+\ccHidden
+\ccMemberFunction{ Sphere_3<R>& operator = ( Sphere_3<R> const&);}{
+        assignment.}
+
+% -----------------------------------------------------------------------------
+\ccAccessFunctions
+
+\ccMemberFunction{Point_3<R> const& center( ) const;}{
+        returns the center of \ccVar.}
+\ccGlue
+\ccMemberFunction{ R::FT const& squared_radius( ) const;}{
+        returns the squared radius of \ccVar.}
+\ccGlue
+\ccMemberFunction{ orientation const& orientation( ) const;}{
+        returns the orientation of \ccVar.}
+
+% -----------------------------------------------------------------------------
+
+\ccHidden\ccMemberFunction{ bool operator == ( Sphere_3<R> const& sphere) const;}{
+        returns \ccc{true}, iff \ccVar\ and \ccc{sphere} are equal,
+        i.e.\ if they have the same center, same squared radius and
+        same orientation.}
+
+\ccHidden\ccMemberFunction{ bool operator != ( Sphere_3<R> const& sphere) const;}{
+        returns \ccc{true}, iff \ccVar\ and \ccc{sphere} are not equal.}
+
+% -----------------------------------------------------------------------------
+\ccPredicates
+
+\ccMemberFunction{ bool is_degenerate( ) const;}{
+        returns \ccc{true}, iff \ccVar\ is degenerate, i.e.\
+        if \ccVar\ has squared radius zero.}
+
+\ccMemberFunction{ Oriented_side
+                   oriented_side( Point_3<R> const& p) const;}{
+        returns either the constant \ccc{ON_ORIENTED_BOUNDARY}, 
+        \ccc{ON_POSITIVE_SIDE}, or \ccc{ON_NEGATIVE_SIDE},
+        iff \ccc{p} lies on the boundary, properly on the
+        positive side, or properly on the negative side
+        of \ccVar, resp.}
+
+\ccMemberFunction{ Bounded_side
+                   bounded_side( Point_3<R> const& p) const;}{
+        returns \ccc{ON_BOUNDED_SIDE},
+        \ccc{ON_BOUNDARY}, or \ccc{ON_UNBOUNDED_SIDE}
+        iff \ccc{p} lies properly inside, on the boundary, or properly
+        outside of \ccVar, resp.}
+
+%\ccMemberFunction{ bool has_on_positive_side( Point const& p) const;}{
+%        returns \ccc{true}, iff \ccc{p} lies properly on the
+%        positive side of \ccVar.}
+%
+%\ccMemberFunction{ bool has_on_negative_side( Point const& p) const;}{
+%        returns \ccc{true}, iff \ccc{p} lies properly on the
+%        negative side of \ccVar.}
+%
+%\ccMemberFunction{ bool has_on_boundary( Point const& p) const;}{
+%        returns \ccc{true}, iff \ccc{p} lies on the boundary
+%        of \ccVar.}
+%
+%\ccMemberFunction{ bool has_on_bounded_side( Point const& p) const;}{
+%        returns \ccc{true}, iff \ccc{p} lies properly inside \ccVar.}
+%
+%\ccMemberFunction{ bool
+%                   has_on_unbounded_side( Point const& p) const;}{
+%        returns \ccc{true}, iff \ccc{p} lies properly outside of \ccVar.}
+\ccMethod{bool has_on_positive_side(const Point_3<R> &p) const;}
+       {}
+\ccGlue
+\ccMethod{bool has_on_negative_side(const Point_3<R> &p) const;}
+       {}
+\ccGlue
+\ccMethod{bool has_on_boundary(const Point_3<R> &p) const;}
+       {}
+\ccGlue
+\ccMethod{bool has_on_bounded_side(const Point_3<R> &p) const;}
+       {} 
+\ccGlue
+\ccMethod{bool has_on_unbounded_side(const Point_3<R> &p) const;}
+       {}
+
+% -----------------------------------------------------------------------------
+\ccHeading{Miscellaneous}
+
+\ccMemberFunction{ Sphere_3<R> opposite() const;}{
+        returns the sphere with the same center and squared radius as
+        \ccVar\, but with opposite orientation.}
+
+
+\ccMemberFunction{ Sphere_3<R> orthogonal_transform(
+                       Aff_transformation_3<R> const& at) const;}{
+        returns the sphere obtained by applying $at$ on \ccVar.
+        \ccPrecond \ccc{at} is an orthogonal transformation.}
+
+\ccMemberFunction{ Bbox_3 bbox() const;}{
+        returns a bounding box containing \ccVar.}
+
+\ccSeeAlso
+
+\ccRefConceptPage{Kernel::Sphere_3} \\
+
+\end{ccRefClass}

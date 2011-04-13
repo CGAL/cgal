@@ -1,0 +1,52 @@
+% +------------------------------------------------------------------------+
+% | Reference manual page: Arr_segment_circle_traits.tex (Arrangement)
+% +------------------------------------------------------------------------+
+% | 
+% | Package: arr (Arrangement_2)
+% | 
+% +------------------------------------------------------------------------+
+
+\ccRefPageBegin
+
+%%RefPage: end of header, begin of main body
+% +------------------------------------------------------------------------+
+% +========================================================================+
+%  Arr_segment_circle_traits<NT>
+% +========================================================================+
+\begin{ccRefClass}{Arr_segment_circle_traits<NT>}
+
+\ccDefinition
+    The class \ccc{Arr_segment_circle_traits<NT>} is a traits class
+    for line segments and circular arcs. The template parameter \ccc{NT}
+    corresponds to the number type used in the inner representation.
+    An additional requirement for this number type, beyond the regular
+    requirements of a CGAL number type, is that it has a \ccc{sqrt(NT r)}
+    function defined for it. In order for the traits to work robustly
+    an exact number type such as \ccc{leda_real} should be used.
+
+    The \ccc{Point} type is \ccc{Point_2<Cartesian<NT> >}. The  
+    \ccc{Curve} and \ccc{X_curve}
+    representation is a \ccc{Segment_circle_2<Cartesian<NT> >}, a class
+    based on the \ccc{Conic_2<Cartesian<NT> >}
+    with two additional points corresponding to the source and target points:
+    in this manner it is possible to conveniently represent line segments,
+    full circles and circular arc.
+    The copy and default constructor as well as the
+    assignment and equality operators are provided for the curves. 
+    An \ccc{operator<<} for the curves is defined for
+    standard output streams and \ccc{Window_stream}.
+
+\ccInclude{CGAL/Arr_segment_circle_traits.h}
+
+\ccInclude{CGAL/IO/Segment_circle_Window_stream.h}
+
+\ccIsModel
+    \ccc{ArrangementTraits_2} \lcTex{(\ccRefPage{ArrangementTraits_2}).}
+
+\end{ccRefClass} % Arr_segment_circle_traits
+
+% +------------------------------------------------------------------------+
+%%RefPage: end of main body, begin of footer
+\ccRefPageEnd
+% EOF
+% +------------------------------------------------------------------------+

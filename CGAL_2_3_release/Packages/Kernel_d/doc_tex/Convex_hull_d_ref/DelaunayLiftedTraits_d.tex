@@ -1,0 +1,122 @@
+\begin{ccRefConcept}{DelaunayLiftedTraits_d}
+
+\ccDefinition Requirements of the second traits class to be used with the
+class \ccc{Delaunay_d}.
+
+\ccTypes
+\ccAutoIndexingOff
+\ccNestedType{Point_d}{the dD point type on which the Delaunay algorithm 
+operates}
+\ccGlue
+\ccNestedType{Hyperplane_d}{a dD plane}
+\ccGlue
+\ccNestedType{Vector_d}{a dD vector}
+\ccGlue
+\ccNestedType{Ray_d}{a dD ray}
+\ccGlue
+\ccNestedType{RT}{a arithmetic ring type}
+
+\ccNestedType{Construct_vector_d}{Function object type that provides
+\ccc{Vector_d operator()(int d, CGAL::Null_vector)}, which constructs
+and returns the null vector.}
+
+\ccNestedType{Construct_hyperplane_d}{Function object type that
+provides \ccc{Hyperplane_d operator()(ForwardIterator first,
+ForwardIterator last, Point_d p, CGAL::Oriented_side side)}, which
+constructs and returns a hyperplane passing through the points in
+\ccc{tuple[first,last)} and oriented such that \ccc{p} is on the side
+\ccc{side} of the returned hyperplane. When
+\ccc{side==ON_ORIENTED_BOUNDARY} then any hyperplane containing the
+tuple is returned.}
+
+\ccNestedType{Vector_to_point_d}{Function object type that provides
+\ccc{Point_d operator()(Vector_d v)}, which constructs and
+returns the point defined by $0+v$.}
+
+\ccNestedType{Point_to_vector_d}{Function object type that provides
+\ccc{Vector_d operator()(Point_d v)}, which constructs and returns the
+vector defined by $p-0$.}
+
+\ccNestedType{Orientation_d}{Function object type that provides
+\ccc{Orientation operator()(ForwardIterator first,
+ForwardIterator last)}, which determines the orientation of the
+points \ccc{tuple[first,last)}.}
+
+\ccNestedType{Orthogonal_vector_d}{Function object type that provides
+\ccc{Vector_d operator()(Hyperplane_d h)}, which constructs and
+returns a vector orthogonal to \ccc{h} and pointing from the boundary
+into its positive halfspace.}
+
+\ccNestedType{Oriented_side_d}{Predicate object type that provides
+\ccc{Oriented_side operator()(Hyperplane_d h, Point_d p)}, which
+determines the oriented side of \ccc{p} with respect to \ccc{h}.}
+
+\ccNestedType{Has_on_positive_side_d}{Predicate object type that
+provides \ccc{bool operator()(Hyperplane_d h, Point_d p)}, which
+return true iff \ccc{p} lies in the positive halfspace determined by
+\ccc{h}.}
+
+\ccNestedType{Affinely_independent_d}{Predicate object type that provides
+\ccc{bool operator()(ForwardIterator first, ForwardIterator last)}, which 
+determines if the points \ccc{tuple[first,last)} are affinely independent.}
+
+\ccNestedType{Contained_in_simplex_d}{Predicate object type that
+provides \ccc{bool operator()(ForwardIterator first, ForwardIterator
+last, Point_d p)}, which determines if \ccc{p} is contained in 
+the closed simplex defined by the points in \ccc{tuple[first,last)}.}
+
+\ccNestedType{Contained_in_affined_hull_d}{Predicate object type that
+provides \ccc{bool operator()(ForwardIterator first, ForwardIterator
+last, Point_d p)}, which determines if \ccc{p} is contained in 
+the affine hull of the points in \ccc{tuple[first,last)}.}
+
+\ccNestedType{Intersect_d}{Predicate object type that provides
+\ccc{Object operator()(Ray_d r, Hyperplane_d h)}, which determines if
+\ccc{r} and \ccc{h} intersect and returns the corresponding
+polymorphic object.}
+
+The previous requirements are all identical to the concept
+\ccc{ConvexHullTraits_d}. The Delaunay class adds the following
+requirements.
+
+\ccNestedType{Project_along_d_axis_d}{Predicate object type that
+provides \ccc{DelaunayTraits_d::Point_d operator()(Point_d p)}, which
+determines the $d-1$-dimensional point from the $d$-dimensional point
+$p$ while discarding the last coordinate.}
+
+\ccNestedType{Lift_to_paraboloid_d}{Predicate object type that
+provides \ccc{Point_d operator()(DelaunayTraits_d::Point_d p)}, which
+determines the $d$-dimensional point from the $d-1$-dimensional point
+$p$ while lifting it to the paraboloid of revolution.}
+
+\ccNestedType{Component_accessor_d}{Predicate object type that
+provides \ccc{RT homogeneous(Vector_d v,int i)} and \ccc{int
+dimension(Vector_d v)}, where the former determines the $i$th
+coordinate of $v$ and the latter the dimension of $v$.}
+
+\ccCreation
+\ccCreationVariable{traits}
+
+A default constructor and copy constructor is required.
+
+\ccOperations
+
+For each of the above function and predicate object types,
+\ccc{Func_obj_type}, a function must exist with the name
+\ccc{func_obj_type_object} that creates an instance of the function or
+predicate object type.  For example:
+
+\ccMethod{Construct_vector_d construct_vector_d_object();}{}
+
+\ccAutoIndexingOn
+
+\ccHasModels
+% cross reference between manuals not currently possible
+%\ccRefIdfierPage{CGAL::Cartesian_d<FT,LA>}\\
+%\ccRefIdfierPage{CGAL::Homogeneous_d<RT,LA>} \\
+\ccc{CGAL::Cartesian_d<FT,LA>}\\
+\ccc{CGAL::Homogeneous_d<RT,LA>}
+
+%\ccSeeAlso
+
+\end{ccRefConcept}

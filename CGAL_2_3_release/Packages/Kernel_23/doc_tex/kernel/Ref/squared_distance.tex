@@ -1,0 +1,47 @@
+\begin{ccRefFunction}{squared_distance}
+\ccInclude{CGAL/squared_distance_2.h}\\
+\ccInclude{CGAL/squared_distance_3.h}
+
+\ccFunctionTemplate{R}
+{R::FT squared_distance(Type1<R> obj1, Type2<R> obj2);}
+{computes the square of the Euclidean distance between two geometric objects. 
+For arbitrary geometric objects \ccStyle{obj1} and
+\ccStyle{obj2} the squared distance is defined as the minimal
+\ccStyle{squared_distance(p1, p2)}, where \ccStyle{p1} is a point of
+\ccStyle{obj1} and \ccStyle{p2} is a point of \ccStyle{obj2}.
+Note that for objects that have an inside (a bounded region), this inside 
+is part of the object. So, the squared distance from a point inside is 
+zero, not the squared distance to the closest point on the boundary.}
+
+In 2D, the types \ccStyle{Type1} and \ccStyle{Type2} can be any of the
+following:
+\begin{itemize}\ccTexHtml{\itemsep0pt\topsep0pt\partopsep0pt\parskip0pt\parsep0pt}{}
+\item \ccStyle{Point_2}
+\item \ccStyle{Line_2}
+\item \ccStyle{Ray_2}
+\item \ccStyle{Segment_2}
+\item \ccStyle{Triangle_2}
+\end{itemize}
+
+In 3D, the types \ccStyle{Type1} and \ccStyle{Type2} can be any of the
+following:
+\begin{itemize}\ccTexHtml{\itemsep0pt\topsep0pt\partopsep0pt\parskip0pt\parsep0pt}{}
+\item \ccStyle{Point_3}
+\item \ccStyle{Line_3}
+\item \ccStyle{Ray_3}
+\item \ccStyle{Segment_3}
+\item \ccStyle{Plane_3}
+\end{itemize}
+
+\ccSeeAlso
+\ccRefIdfierPage{CGAL::compare_distance_to_point} \\
+\ccRefIdfierPage{CGAL::compare_signed_distance_to_line} \\
+\ccRefIdfierPage{CGAL::compare_signed_distance_to_plane} \\
+\ccRefIdfierPage{CGAL::has_larger_distance_to_point} \\
+\ccRefIdfierPage{CGAL::has_larger_signed_distance_to_line} \\
+\ccRefIdfierPage{CGAL::has_larger_signed_distance_to_plane} \\
+\ccRefIdfierPage{CGAL::has_smaller_distance_to_point} \\
+\ccRefIdfierPage{CGAL::has_smaller_signed_distance_to_line}\\
+\ccRefIdfierPage{CGAL::has_smaller_signed_distance_to_plane} \\
+
+\end{ccRefFunction}

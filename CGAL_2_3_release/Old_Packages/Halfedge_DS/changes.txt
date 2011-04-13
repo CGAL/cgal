@@ -1,0 +1,148 @@
+Halfedge_DS Package: Release changes:
+---------------------------------------------------------------------
+
+2.17 (10 Jul 2001)
+
+     - Changed Halfedge_data_structure_using_list to use allocators
+       as the underlying In_place_list does now. Seems to fix 
+       segmentation faults on gcc-3.
+
+2.16 (06 Jul 2001)
+
+     - Formatted the deprecated manual part.
+
+2.15 (05 Jul 2001)
+
+     - New kernel traits introduced in old design.
+
+2.14 (02 Jul 2001)
+
+     - Added release note about old/new design to documentation.
+     - Documentation ispelled.
+
+2.13 (29 Jun 2001)
+
+     - Added pathname to example program header line.
+
+2.12 (18 Jun 2001)
+
+     - Moved manual to deprecated_basic.
+
+2.11 (18 Jun 2001)
+
+     - Fixed example code inclusion in the doc.
+
+2.10 (15 Jun 2001)
+
+     - Halfedge_data_structure_using_vector.h: Fixed bug in updating
+       face pointers in the border case. Bug reported by Steve M. Robbins.
+     - Fixed warnings in the test suite about unused variables.
+     - Removed *.C files from the doc_tex directory. Changed inclusion
+       such that they are now found the in the examples directory.
+     - Added hds_prog_edge_iterator.C to the examples directory.
+     - Added README in examples and remark in the manuals that this
+       package is depricated.
+
+2.9 (01 Jun 2001)
+
+     - Halfedge_data_structure_using_vector.h: Fixed missing & in 
+       update_prev(). Bug reported by Xiangmin Jiao.
+     - Halfedge_data_structure_using_list.h: Fixed bug in copy  
+       constructor and assignment operator to copy pairs instead of 
+       single halfedges. Bug reported by Xiangmin Jiao.
+
+2.8 (13 Sep 2000)
+
+     Vertex, Halfedge, and Facet class prefixed with HDS in the doc.
+
+2.7 (25 Nov 1999)
+
+     More changes in Halfedge_data_structure_using_vector to reflect that
+     the std::vector::iterator is not necessarily a pointer.
+
+2.6 (19 Nov 1999)
+
+     More changes in Halfedge_data_structure_using_vector to reflect that
+     the std::vector::iterator is not necessarily a pointer.
+
+2.5 (18 Nov 1999)
+
+     CGAL_DEFINE_ITERATOR_TRAITS_POINTER_SPEC added to the test files
+     where necessary. hds_test split into five tests to see MSVC failures
+     better. Class Halfedge_data_structure_using_vector changed to cope
+     better with std::vector::iterator that are not plain pointers. But
+     they are still be assumed to be constructable from a pointer.
+
+2.4 (22 May 1999)
+
+     Typos before CGAL R2.0 fixed.
+
+2.3 (29 Apr 1999)
+
+     Long name flags added in makefiles.
+
+2.2 (07 Apr 1999)
+
+     std:: namespace added for vector in Halfedge_data_structure_decorator.h
+     and Halfedge_data_structure_using_vector.h. Warning removed from
+     hds_prog_compact2.C.
+
+2.1 (09 Mar 1999)
+
+     Standard headers, std namespace and CGAL namespace. Bug fix in
+     erase_facet. Minor cleanups. join_loop and join_facet accept holes.
+
+1.10 (19 Jan 1999)
+
+     Documentation fixes.
+
+1.9 (02 Dec 1998)
+
+     Corrected and changed implementation for erase_connected_component
+     in Halfedge_data_structure_decorator.h.
+
+1.8 (08 Oct 1998)
+
+     Two warnings in the "*_compact*" examples fixed.
+
+1.7 (10 Jul 1998)
+
+     New methods: erase_facet, and erase_connected_component.
+     Bug in join_vertex with respect to boundary edges fixed.
+
+1.6 (03 Jun 1998)
+
+     A few changes in the doc. Chapter entry in header.
+
+1.5 (09 Apr 1998)
+
+     Spell checker.
+
+1.4 (19 Mar 1998)
+
+     Memory allocation bug fixed.
+
+1.3 (05 Mar 1998)
+
+     Shorter names for internal classes, programs and idraw files
+     included for TeX manual. Small change in doc.
+
+1.2 (25 Feb 1998)
+
+     Small changes in the documentation. Two more examples.
+
+1.1 (23 Feb 1998)
+
+     The first release of this package is based on the Polyhedron traits
+     classes from the Polyhedron package 1.4 (10 Feb 1998).
+
+     There is still this relocation und linking error with Gnu
+     (g++ 2.8.0 as well as egcs g++ 2.90). I have located the error
+     in test_hds.C in line 90 as the operator== of the
+     CGAL_N_step_adaptor class, which is defined in 94 of
+     CGAL/N_step_adaptor.h. I have still no idea what this error
+     means and how to avoid it. In line 136 of test_hds.C the same
+     operator (on a slightly different data structure) causes
+     no error.
+
+None of this package was available in CGAL 0.9.

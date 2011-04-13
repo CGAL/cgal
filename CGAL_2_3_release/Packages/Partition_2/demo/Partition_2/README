@@ -1,0 +1,55 @@
+#-----------------------------------------------------------------------------
+#  demo/Partition_2/README
+#
+#  $Revision$
+#  $Date$
+#-----------------------------------------------------------------------------
+
+These programs illustrate the functions available in CGAL that perform 
+partitioning  of polygons in 2 dimenions.  The results are displayed in
+a LEDA window.
+
+The contents of this directory are:
+
+   approx_convex_demo.C        
+   greene_approx_convex_demo.C  
+   optimal_convex_demo.C   
+   y_monotone_2_demo.C      
+      programs that display various partitionings of a single, given polygon 
+ 
+
+   partition_2_demo.C
+      interactive program that allows the user to input a polygon with the
+      mouse, generate a random polygon, or read a polygon from a file
+      and computes patitionings of a polygon using each of the four
+      partitioning functions.  The user can then choose which partitions
+      to see along with the original polygon.  
+
+   makefile -- makefile for the programs in this directory
+
+   data/
+      a directory containing input files for partition_2_demo. The file
+      _last contains the polygon that was last partitioned.  If it exists,
+      it is read when the program is started.  The format of an input file
+      is:
+         #pieces  (== 1)
+         #vertices <list of vertices>
+
+      NOTE: The input files provided are for use with the Cartesian kernel.
+
+   include/
+      typedefs.h   -- file of typedefs for the CGAL types used
+      polygon_io.h 
+      polygon_io.C -- utility functions for input and output of polygons 
+                      through a LEDA window
+
+   output/
+      a directory to which partition_2_demo writes files that contain the
+      partition polygons produced.  The file names are of the following form:
+      <input file>.<suffix> where <suffix> is one of
+          "approx_cvx"     -- approximately optimal convex partition using 
+                              triangulation, 
+          "greene_approx"  -- approximately optimal convex partition using
+                              y-monotone partition (Greene's algorithm)
+          "opt_cvx"        -- optimal convex partition using dynamic programming
+          "y_mono"         -- y-monotone partition 

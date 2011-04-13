@@ -1,0 +1,84 @@
+% +------------------------------------------------------------------------+
+% | Reference manual page: Convex_hull_rat_leda_traits_2.tex
+% +------------------------------------------------------------------------+
+% | 14.05.2001   Susan Hert and Stefan Schirra
+% | Package: Convex_hull_2
+% | 
+% +------------------------------------------------------------------------+
+
+\ccAutoIndexingOff
+\begin{ccRefClass}{Convex_hull_rat_leda_traits_2}
+\ccAutoIndexingOn
+\ccIndexTraitsClassBegin{Convex_hull_rat_leda_traits_2}{}{convex hull, 2D}
+
+\ccDefinition
+  
+The class \ccRefName\ serves as a traits class for all the two-dimensional
+convex hull and extreme point calculation function.  It uses the 
+two-dimensional exact rational geometry kernel of \leda.  The usage of this 
+traits class is not recommended with \ccc{ch_eddy()} for \leda\ versions prior 
+to 3.6.  Older versions of \leda\ do
+not provide appropriate efficient predicates for this function.
+
+\ccInclude{CGAL/convex_hull_rat_leda_traits_2.h}
+
+\ccIsModel
+
+\ccRefConceptPage{ConvexHullTraits_2}%
+\ccIndexSubitem[c]{ConvexHullTraits_2}{model} \\
+
+\ccTypes
+\ccAutoIndexingOff
+\ccSetThreeColumns{typedef CGAL::p_Less_signed_distance_to_line_2 }{Less_signed_distance_to_line_2}{}
+\ccThreeToTwo
+
+\ccTypedef{typedef leda_rat_point             Point_2;}{}
+\ccGlue
+\ccTypedef{typedef CGAL::p_Less_xy<Point_2>               Less_xy_2;}{}
+\ccGlue
+\ccTypedef{typedef CGAL::p_Less_yx<Point_2>               Less_yx_2;}{}
+\ccGlue
+\ccTypedef{typedef CGAL::p_Less_dist_to_line_2p<Point_2>
+                                      Less_signed_distance_to_line_2;}{}
+\ccGlue
+\ccTypedef{typedef CGAL::p_Less_rotate_ccw<Point_2>       Less_rotate_ccw_2;}{}
+\ccGlue
+\ccTypedef{typedef CGAL::p_Leftturn<Point_2>              Leftturn_2;}{}
+
+
+\ccCreation
+\ccCreationVariable{traits}  %% choose variable name
+
+\ccConstructor{Convex_hull_rat_leda_traits_2(Convex_hull_rat_leda_traits_2& t);}{copy constructor.}
+
+\ccOperations
+
+\ccAutoIndexingOff
+\ccMemberFunction{Less_xy_2 less_xy_2_object(); }{}
+\ccGlue
+\ccMemberFunction{Less_yx_2 less_yx_2_object(); }{}
+\ccGlue
+\ccMemberFunction{Less_signed_distance_to_line_2 
+                  less_signed_distance_to_line_2_object(); }{}
+\ccGlue
+\ccMemberFunction{Less_rotate_ccw_2 less_rotate_ccw_2_object(); }{}
+\ccGlue
+\ccMemberFunction{Leftturn_2 leftturn_2_object(); }{}
+\ccAutoIndexingOn
+
+
+\ccSeeAlso
+
+\ccRefIdfierPage{CGAL::Convex_hull_constructive_traits_2<R>}  \\
+\ccRefIdfierPage{CGAL::Convex_hull_leda_traits_2}  \\
+\ccRefIdfierPage{CGAL::Convex_hull_projective_xy_traits_2<Point_3>} \\
+\ccRefIdfierPage{CGAL::Convex_hull_projective_xz_traits_2<Point_3>} \\
+\ccRefIdfierPage{CGAL::Convex_hull_projective_yz_traits_2<Point_3>}  \\
+\ccRefIdfierPage{CGAL::Convex_hull_traits_2<R>}  
+
+\ccIndexTraitsClassEnd
+\ccAutoIndexingOff
+\end{ccRefClass}
+\ccAutoIndexingOn
+
+% EOF

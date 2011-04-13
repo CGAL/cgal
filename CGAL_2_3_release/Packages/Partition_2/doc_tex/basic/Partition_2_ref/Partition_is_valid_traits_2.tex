@@ -1,0 +1,81 @@
+% +------------------------------------------------------------------------+
+% | Reference manual page: Partition_is_valid_traits_2.tex
+% +------------------------------------------------------------------------+
+% | 27.07.2000   Susan Hert
+% | Package: Partition_2
+% | 
+% +------------------------------------------------------------------------+
+
+\def\ccRefPageBegin{\ccParDims\cgalColumnLayout\begin{ccAdvanced}}
+\def\ccRefPageEnd{\ccParDims\cgalColumnLayout\end{ccAdvanced}}
+\begin{ccRefClass}{Partition_is_valid_traits_2<Traits, PolygonIsValid>}  
+\ccIndexSubitemBegin[C]{partition_is_valid_2}{traits class}
+
+\ccDefinition
+  
+Class that derives a traits class for \ccc{partition_is_valid_2} from
+a given traits class by defining the validity testing function object
+in terms of a supplied template parameter.
+
+\ccInclude{CGAL/Partition_is_valid_traits_2.h}
+
+\ccInheritsFrom
+
+\ccc{Traits}
+
+\ccIsModel
+
+PartitionIsValidTraits\_2\ccIndexSubitem[c]{PartitionIsValidTraits_2}{model}
+
+\ccTypes
+\ccSetThreeColumns{typedef Traits::Orientation_2xxxx}{Orientation_2xxxx}{}
+\ccAutoIndexingOff
+\ccTypedef{typedef PolygonIsValid          Is_valid;}{}
+\ccGlue
+\ccTypedef{typedef Traits::Point_2         Point_2;}{}
+\ccGlue
+\ccTypedef{typedef Traits::Polygon_2       Polygon_2;}{}
+\ccGlue
+\ccTypedef{typedef Traits::Less_xy_2       Less_xy_2;}{}
+\ccGlue
+\ccTypedef{typedef Traits::Leftturn_2      Leftturn_2;}{}
+\ccGlue
+\ccTypedef{typedef Traits::Orientation_2   Orientation_2;}{}
+
+\ccAutoIndexingOn
+
+\ccCreationVariable{traits}
+\ccOperations
+
+The constructors and member functions for creating instances of the above
+types are inherited from \ccc{Traits}.  In addition, the following 
+member function is defined:
+
+\ccMethod{
+   Is_valid
+   is_valid_object(const Traits& traits) const;
+}{function returning an instance of \ccc{Is_valid}}
+
+\ccSeeAlso
+
+\ccRefIdfierPage{CGAL::Is_convex_2<Traits>} \\
+\ccRefIdfierPage{CGAL::Is_vacuously_valid<Traits>} \\
+\ccRefIdfierPage{CGAL::Is_y_monotone_2<Traits>} \\
+\ccRefIdfierPage{CGAL::Partition_traits_2<R>}
+
+\ccExample
+
+See the example presented with the function \ccc{optimal_convex_partition_2}
+for an illustration of the use of this traits class.
+
+
+\ccIndexSubitemEnd[C]{partition_is_valid_2}{traits class}
+\end{ccRefClass}
+\def\ccRefPageBegin{\ccParDims\cgalColumnLayout}
+\def\ccRefPageEnd{\ccParDims\cgalColumnLayout}
+
+% +------------------------------------------------------------------------+
+%%RefPage: end of main body, begin of footer
+% EOF
+% +------------------------------------------------------------------------+
+

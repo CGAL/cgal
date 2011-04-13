@@ -1,0 +1,170 @@
+% +------------------------------------------------------------------------+
+% | Reference manual page: Triangulation_2::Face.tex
+% +------------------------------------------------------------------------+
+% | 29.03.2000   Mariette Yvinec
+% | Package: Triangulation
+% | 
+\RCSdef{\RCSTriangulation::FaceRev}{$Revision$}
+\RCSdefDate{\RCSTriangulation::FaceDate}{$Date$}
+% |
+%%RefPage: end of header, begin of main body
+% +------------------------------------------------------------------------+
+
+
+\begin{ccRefClass}[Triangulation_2<Traits,Tds>::]{Face}  %% add template arg's if necessary
+
+%% \ccHtmlCrossLink{}     %% add further rules for cross referencing links
+%% \ccHtmlIndexC[class]{} %% add further index entries
+
+\ccDefinition
+  
+A face of a triangulation gives access to its three
+vertices indexed 0,1, and 2 in counterclockwise order
+and to its three adjacent faces, also called neighbors.
+The neighbors are indexed in such a way that neighbor $i$ lies
+opposite to vertex i. 
+
+\ccInclude{CGAL/Triangulation_2.h}
+
+\ccInheritsFrom{\ccc{Tds::Face}}
+
+
+\ccTypes
+The class  \ccRefName\  defines the same types 
+as the class \ccc{Triangulation_2<Traits,Tds>} except the iterators and circulators
+which are not needed.
+
+\ccCreationVariable{f}  %% choose variable name
+\begin{ccAdvanced}
+\ccCreation
+
+For user defined triangulation algorithms, faces need to
+be explicitly constructed and linked to their neighbors.
+
+\ccConstructor{Triangulation_2::Face()}
+{Introduces a variable \ccVar\ and initializes all vertices and neighbors 
+ with \ccc{NULL}.}
+
+\ccConstructor{Triangulation_2::Face(Vertex_handle v0,
+                                       Vertex_handle v1,
+                                           Vertex_handle v2);}
+{Introduces a variable \ccVar, and initializes the vertices. The 
+neighbors are initialized with \ccc{NULL}.}
+
+\ccConstructor{Triangulation_2::Face(Vertex_handle v0,
+                    Vertex_handle v1,
+                    Vertex_handle v2,
+                     {Face_handle} n0,
+                     {Face_handle} n1,
+                     {Face_handle} n2);}
+{Introduces a variable \ccVar, and initializes the vertices and the neighbors.}
+
+
+
+\ccHeading{Setting}
+
+
+\ccThree{Vertex_handle}{f.has_vertex( Vertex_handle v, int& i)x}{}
+\ccMethod{void set_vertex(int i, Vertex_handle v);}
+{Sets vertex \ccc{i} to be \ccc{v}.
+\ccPrecond $0\leq i \leq 2$.
+}
+\ccGlue
+\ccMethod{void set_neighbor(int i,  {Face_handle} n);}
+{Sets neighbor \ccc{i} to be \ccc{n}.
+\ccPrecond $0\leq i \leq 2$.
+}
+\ccGlue
+\ccMethod{void set_vertices();}{Sets vertices to \ccc{NULL}}
+\ccGlue
+\ccMethod{void set_neighbors();}{Sets neighbors to \ccc{NULL}}
+\ccGlue
+\ccMethod{void set_vertices(
+Vertex_handle v0, Vertex_handle v1, Vertex_handle v2);}{}
+\ccGlue
+\ccMethod{void set_neighbors(
+ {Face_handle} n0,  {Face_handle} n1,  {Face_handle} n2);}{}
+\end{ccAdvanced} 
+
+
+\ccHeading{Vertex Access Functions}
+
+\ccMethod{Vertex_handle vertex(int i) const;}
+{Returns  the vertex \ccc{i} of \ccVar.
+\ccPrecond $0\leq i \leq 2$.}
+\ccGlue
+\ccMethod{int index(Vertex_handle v) const;}
+{Returns the index of vertex \ccc{v} in \ccVar. \ccPrecond \ccc{v} is
+a vertex of \ccVar}
+\ccGlue
+\ccMethod{bool has_vertex(Vertex_handle v) const;}
+{Returns \ccc{true} if  \ccc{v} is a vertex of \ccVar.}
+\ccGlue
+\ccMethod{bool has_vertex(Vertex_handle v, int& i) const;}
+{Returns \ccc{true} if  \ccc{v} is a vertex of \ccVar, and
+ computes the index \ccc{i} of the vertex.}
+
+
+
+\ccHeading{Neighbor Access Functions}
+
+The neighbor with index \ccc{i} is the neighbor which is opposite
+to the vertex with index \ccc{i}.
+
+
+\ccMethod{{Face_handle} neighbor(int i) const;}
+{Returns  the neighbor \ccc{i} of \ccVar.
+\ccPrecond $0\leq i \leq 2$.
+}
+\ccGlue
+\ccMethod{int index( {Face_handle} n) const;}
+{Returns the index of face \ccc{n}.
+\ccPrecond \ccc{n} is a neighbor of \ccVar.}
+\ccGlue
+\ccMethod{bool has_neighbor({Face_handle} n) const;}
+{Returns \ccc{true} if \ccc{n} is a neighbor of \ccVar.}
+\ccGlue
+\ccMethod{bool has_neighbor({Face_handle} n, int& i) const;}
+{Returns \ccc{true} if \ccc{n} is a neighbor of \ccVar,  and
+compute the index \ccc{i} of the neighbor.}
+
+\ccHeading{Other Access Functions}
+\ccMethod{int mirror_index(int i) const;}
+{Returns the index of the face \ccc{f} as a neighbor
+of its neighbor \ccc{f.neighbor(i)}, or equivalently the index
+of the vertex opposite to \ccc{f} in \ccc{f.neighbor(i)}.}
+\ccGlue
+\ccMethod{Vertex_handle mirror_vertex(int i) const;}
+{Returns the vertex of \ccc{f.neighbor(i)}
+which is opposite to \ccc{f}.}
+
+
+
+\ccHeading{Miscellaneous} 
+ 
+\ccMethod{{Face_handle} handle() const;}
+{Returns a handle to the face.}
+\ccGlue
+\ccMethod{bool is_valid();} 
+{Check the validity of an individual face:
+i.e. the pointers to the incident vertices
+and neighboring faces
+ and call the \ccc{is_valid()}
+function of the base class to perform any geometric test provided by the user
+therein.}
+
+
+\ccSeeAlso
+\ccc{CGAL::Triangulation_cw_ccw_2} \\
+\ccc{CGAL::Triangulation_2<Traits,Tds>} \\
+\ccc{CGAL::Triangulation_2<Traits,Tds>::Vertex} \\
+\ccc{TriangulationDataStructure_2} \\
+\ccc{TriangulationDataStructure_2::Face} \\
+\ccc{TriangulationFaceBase_2} \\
+\end{ccRefClass}
+
+% +------------------------------------------------------------------------+
+%%RefPage: end of main body, begin of footer
+% EOF
+% +------------------------------------------------------------------------+
+

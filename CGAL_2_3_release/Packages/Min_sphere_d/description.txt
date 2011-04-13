@@ -1,0 +1,2 @@
+Algorithms for computing the smallest enclosing sphere of points
+in arbitrary dimension

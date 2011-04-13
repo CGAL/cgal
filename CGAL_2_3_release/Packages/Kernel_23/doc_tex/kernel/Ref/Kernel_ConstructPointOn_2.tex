@@ -1,0 +1,31 @@
+\begin{ccRefFunctionObjectConcept}{Kernel::ConstructPointOn_2}
+A model for this must provide:
+
+\ccCreationVariable{fo}
+
+\ccMemberFunction{Kernel::Point_2 operator()(const Kernel::Line_2& l,
+                                             int i);}
+       {returns an arbitrary point on \ccc{l}. It holds 
+        \ccStyle{point(i) == point(j)}, iff \ccStyle{i==j}.
+        Furthermore,  is directed from \ccStyle{point(i)}
+        to \ccStyle{point(j)}, for all \ccStyle{i} $<$ \ccStyle{j}.}
+
+\ccMemberFunction{Kernel::Point_2 operator()(const Kernel::Ray_2& r,
+                                             int i);}
+       {returns a point on \ccc{r}. \ccStyle{point(0)} is the source,
+        \ccStyle{point(i)}, with $i>0$, is different from the 
+        source. \ccPrecond $i \geq 0$.}
+
+\ccMemberFunction{Kernel::Point_2 operator()(const Kernel::Segment_2& s,
+                                             int i);}
+       {returns source or target   of \ccc{s}:   \ccStyle{point(0)} returns
+        the source of \ccc{s}, \ccStyle{point(1)} returns the target of \ccc{s}.
+        The parameter \ccStyle{i} is taken modulo 2, which gives 
+        easy access to the other end point. }
+
+\ccSeeAlso
+\ccRefIdfierPage{CGAL::Line_2<R>} \\
+\ccRefIdfierPage{CGAL::Ray_2<R>} \\
+\ccRefIdfierPage{CGAL::Segment_2<R>} \\
+
+\end{ccRefFunctionObjectConcept}

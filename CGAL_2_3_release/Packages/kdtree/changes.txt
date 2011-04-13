@@ -1,0 +1,71 @@
+2.2.20 moved _ref directory up one level and removed some undefined commands
+
+2.2.19 put reference pages in SearchStructures_ref directory
+
+2.2.18 Added example and name of classes and concepts in section Kd-Trees.
+
+2.2.17 Example code cleanups.
+
+2.2.15 Small corrections in documentation
+
+2.2.13 Hans Tangelder adapted style of documentation by
+using reference pages for KD-tree and included modifications
+in documentation as suggested by Susan Hert.
+
+2.2.5
+changed example3: operator<< moved outside the scope, and
+friend decl removed. Changed test makefile: $(EXE_OPT), $(LIBPATH), etc
+to support Borland
+
+2.2.4
+added #include <CGAL/config.h>
+in the beginning of each example to set the flags for msvc propely.
+
+2.2.3 
+Few more changes in examples/*.C
+
+2.2.1
+Fixed examples/*/makefile
+
+Changes in 2.2-package version: 4/8/99 by dima@cs.uu.nl
+
+-inclide using std::list to kdtree.h to avoid a nasty compiler bug
+ with example3
+-more std:: prefixes to cout and endl in *.h ane examples
+-updated makefile to use OBJ_EXT
+
+
+Changes from 1.12.3 -> 2.0:
+-change to namespace CGAL and new header files
+-some changes in documentation
+
+** added 29/4/99 by dima@cs.uu.nl ** :
+
+-added std:: - prefixes to iterators; to make it compile on
+ on mips-64; 
+-fixed memory leak in search_recursive;
+ this required adding a destructor to the class Box; which is
+ instantiated as a local variable in this function.
+
+** end of addition  **
+
+CGAL-1.2
+========
+
+Changes from 1.12a -> 1.12.3: 
+-changes in documentation (for html)
+
+Changes from 1.12 -> 1.12a:
+-minor fixes for CC-7.2 (redundant typename removal in some places)
+
+Changes from 1.11 -> 1.12:
+-adjustments to egcs compiler ( addition of typename keyword)
+-setting of doc_tex directory according to standard
+
+Changes from 1.10 -> 1.11:
+-adjusting files to CGAL conventions
+-addition of interface points which enable use of kernel points
+
+** documentation revised 14/4/00 by hanst@cs.uu.nl ** 
+
+

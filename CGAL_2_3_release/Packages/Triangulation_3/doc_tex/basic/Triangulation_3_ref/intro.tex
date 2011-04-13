@@ -1,0 +1,96 @@
+% +------------------------------------------------------------------------+
+% | Reference manual page: Triangulation/intro.tex
+% +------------------------------------------------------------------------+
+% | 27.3.2000   Monique Teillaud
+% | Package: Triangulation3
+% | 
+\RCSdef{\RCSTriangulationcellRev}{$Revision$}
+\RCSdefDate{\RCSTriangulationcellDate}{$Date$}
+% |
+%%RefPage: end of header, begin of main body
+% +------------------------------------------------------------------------+
+
+%\clearpage
+%\section{Reference pages for 3D-Triangulations}
+
+\chapter{3D Triangulations}
+
+A three-dimensional triangulation is a three-dimensional simplicial
+complex, pure connected and without singularities \cite{by-ag-98}. Its
+cells ($3$-faces) are such that two cells either do not intersect or
+share a common facet ($2$-face), edge ($1$-face) or vertex ($0$-face).
+
+The basic 3D-triangulation class of \cgal\ is primarily designed to
+represent the triangulations of a set of points $A$ in $\R^3$.  It can
+be viewed as a partition of the convex hull of {$A$} into tetrahedra
+whose vertices are the points of {$A$}.  Together with the unbounded
+cell having the convex hull boundary as its frontier, the triangulation
+forms a partition of $\R^3$.
+
+In order to deal
+only with tetrahedra, which is convenient for many applications, the
+unbounded cell can be subdivided into tetrahedra by considering that
+each convex hull facet is incident to an \ccc{infinite cell} having as
+fourth vertex an auxiliary vertex called the \ccc{infinite vertex}.  In
+that way, each facet is incident to exactly two cells and special cases
+at the boundary of the convex hull are simple to deal with.
+
+
+A triangulation is a collection of vertices and cells that are linked
+together through incidence and adjacency relations. Each cell gives
+access to its four incident vertices and to its four adjacent
+cells. Each vertex gives access to one of its incident cells.
+
+The four vertices of a cell are indexed with 0, 1, 2 and 3 in positive
+orientation, the positive orientation being defined by the orientation
+of the underlying Euclidean space $\R^3$. The neighbors of a cell are also
+indexed with 0, 1, 2, 3 in such a way that the neighbor indexed by $i$
+is opposite to the vertex with the same index. See
+Figure~\ref{Triangulation3-fig-orient}.
+
+\subsection*{Concepts}
+
+\ccRefConceptPage{TriangulationTraits_3}\\
+\ccRefConceptPage{DelaunayTriangulationTraits_3}\\
+\ccRefConceptPage{TriangulationHierarchyTraits_3}\\
+\ccRefConceptPage{RegularTriangulationTraits_3}
+
+\ccRefConceptPage{TriangulationDataStructure_3}\\
+\ccRefConceptPage{WeightedPoint}
+
+\subsection*{Classes}
+
+\subsubsection*{Main classes}
+
+\ccRefIdfierPage{CGAL::Triangulation_3<TriangulationTraits_3,TriangulationDataStructure_3>}
+
+\ccRefIdfierPage{CGAL::Delaunay_triangulation_3<DelaunayTriangulationTraits_3,TriangulationDataStructure_3>}\\
+\ccRefIdfierPage{CGAL::Triangulation_hierarchy_3<Tr>}\\
+\ccRefIdfierPage{CGAL::Regular_triangulation_3<RegularTriangulationTraits_3,TriangulationDataStructure_3>}
+
+The vertex stores a point and gives access to an incident face of
+maximal dimension. A cell of a triangulation gives access to its four
+vertices indexed 0, 1, 2, and 3 in positive orientation and to its
+four adjacent cells, also called neighbors. The neighbors are indexed
+in such a way that neighbor $i$ lies opposite to vertex $i$.
+
+\ccRefIdfierPage{CGAL::Triangulation_3<TriangulationTraits_3,TriangulationDataStructure_3>::Vertex}\\
+\ccRefIdfierPage{CGAL::Triangulation_3<TriangulationTraits_3,TriangulationDataStructure_3>::Cell}\\
+\ccRefIdfierPage{CGAL::Triangulation_hierarchy_vertex_base_3<TriangulationVertexBase_3>}
+
+\subsubsection*{Traits classes}
+
+\ccRefIdfierPage{CGAL::Regular_triangulation_euclidean_traits_3<R,Weight>}
+
+\subsubsection*{A class of tools}
+
+\ccRefIdfierPage{CGAL::Triangulation_utils_3}
+
+It defines operations on the indices of vertices and neighbors within
+a cell of a triangulation.
+
+\subsection*{Enums}
+
+\ccRefIdfierPage{CGAL::Triangulation_3<TriangulationTraits_3,Tds_3>::Locate_type}
+
+%% EOF %%

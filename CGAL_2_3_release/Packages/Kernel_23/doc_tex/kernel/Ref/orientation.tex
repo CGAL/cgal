@@ -1,0 +1,29 @@
+%\ccHtmlNoRefLinks
+\begin{ccRefFunction}{orientation}
+
+\ccHtmlNoLinks
+\ccFunction{Orientation orientation(const Point_2<R>& p,
+                                    const Point_2<R>& q,
+                                    const Point_2<R>& r);}
+{returns \ccStyle{LEFTTURN}, if $r$ lies to the left of the oriented 
+line $l$ defined by $p$ and $q$, returns \ccStyle{RIGHTTURN} if $r$ 
+lies to the right of $l$, and returns \ccStyle{COLLINEAR} if $r$ lies
+on $l$.}
+
+\ccHtmlNoLinks
+\ccFunction{Orientation orientation(const Point_3<R> &p,
+                                   const Point_3<R>&q,
+                                   const Point_3<R>&r,
+                                   const Point_3<R>&s);}
+{returns \ccStyle{POSITIVE}, if $s$ lies on the positive side of the oriented 
+plane $h$ defined by $p$, $q$, and $r$, returns \ccStyle{NEGATIVE} if $s$ 
+lies on the negative side of $h$, and returns \ccStyle{COPLANAR} if $s$ lies
+on $h$.}
+
+\ccSeeAlso
+\ccRefIdfierPage{CGAL::collinear}
+\ccRefIdfierPage{CGAL::leftturn}
+\ccRefIdfierPage{CGAL::rightturn}
+
+\end{ccRefFunction}
+

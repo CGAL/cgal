@@ -1,0 +1,29 @@
+# ------------------------------------- Printing Planar map
+# --------------------------------------------------------
+# Printing number of vertices halfedges and faces in Planar map
+2 2 1
+# 2 vertices
+# ------------------------------------------
+0/1 1/1
+0/1 -1/1
+# 2 halfedges
+# ------------------------------------------
+0 0/1 -1/1 0/1 1/1
+1 0/1 -1/1 0/1 1/1
+# 1 faces
+# ------------------------------------------
+# writing face
+# ------------------------------------------
+# UNBOUNDED
+# number halfedges on outer boundary
+0
+# number of holes
+1
+# inner ccb
+# number halfedges on inner boundary
+2
+0 1 
+# finish writing face
+# ------------------------------------------
+# ------------------------------------- End of Planar map
+# --------------------------------------------------------

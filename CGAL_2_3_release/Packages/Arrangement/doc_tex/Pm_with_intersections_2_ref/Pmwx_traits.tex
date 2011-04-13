@@ -1,0 +1,132 @@
+% +------------------------------------------------------------------------+
+% | Reference manual page: Pmwx_2_traits.tex (Arrangement)
+% +------------------------------------------------------------------------+
+% |
+% | Package: arr (Planar_map_with_intersections_2)
+% |
+% +------------------------------------------------------------------------+
+
+\ccRefPageBegin
+
+%%RefPage: end of header, begin of main body
+% +------------------------------------------------------------------------+
+% +========================================================================+
+%   Arrangement_2_traits
+% +========================================================================+
+\begin{ccRefConcept}{PlanarMapWithIntersectionsTraits_2}
+
+\ccDefinition
+   A model for the \ccRefName\ defines the geometric types and
+   primitive operations used in the planar map with intersections data
+   structure \ccc{Planar_map_with_intersections_2<Planar_map>}.
+
+\ccRefines
+\ccc{PlanarMapTraits_2} \lcTex{(\ccRefPage{PlanarMapTraits_2})}.
+
+   %The \ccRefName\ concept is a refinement of the \ccc{PlanarMapTraits_2}
+   %concept \lcTex{(\ccRefPage{PlanarMapTraits_2})}.
+   %The requirements of the latter
+   %are requirements for the former.
+   %The additional requirements are the following types and methods.
+   %The \ccStyle{Point} can be implemented for non-linear curves as the
+   %intersection of 2 curves.
+
+\ccTypes
+  \ccNestedType{Point}{same as \ccc{PlanarMapTraits_2::Point}.}
+  \ccNestedType{X_curve}{same as \ccc{PlanarMapTraits_2::X_curve}.}
+  \ccNestedType{Curve}{
+   curve type, this type should be {\it syntactically} identical to
+   the \ccc{X_curve} type (i.e., it should {\em be} the same type).
+   However, {\it semantically} it differs from the \ccc{X_curve} in
+   that it is not necessarily $x$-monotone. In the following methods
+   when we require an \ccc{X_curve} as a parameter, we assume that the
+   curve is $x$-monotone.}
+
+\ccOperations
+
+\ccCreationVariable{pmwx_traits}
+
+\ccMethod{bool is_x_monotone(const Curve& c);}{returns true if $c$ is
+an $x$-monotone curve.}
+
+\ccMethod{void make_x_monotone(const Curve& cv, list<X_curve>& l);}{
+   cuts \ccc{cv} into $x$-monotone subcurves and stores them in $l$.
+   The order in which they are inserted into $l$ defines their order
+   in the hierarchy tree.}
+
+\ccMethod{Point point_reflect_in_x_and_y(const Point& pt);}{returns the
+\ccc{Point}
+that is the reflection of \ccc{pt} about the origin (both the $x$ and $y$ 
+axes). E.g., the point $(2,2)$ will be reflected as $(-2,-2)$. }
+
+\ccMethod{X_curve curve_reflect_in_x_and_y(const X_curve& cv);}{returns the \ccc{X_curve}
+that is the reflection of \ccc{cv} about the origin 
+(both the $x$ and $y$ axes). E.g., the line segment $((2,2),(3,3))$ will be reflected as $((-2,-2),(-3,-3))$. }
+
+\ccMethod{void curve_split(const X_curve& cv, X_curve& c1, X_curve& c2,
+                   const Point& split_pt);}{splits $cv$ at \ccc{split_pt}
+and assigns the resulting two curves to \ccc{c1} and \ccc{c2}.
+\ccPrecond{\ccc{split_pt} is on \ccc{cv} but is not an endpoint.}
+}
+
+\ccMethod{bool do_intersect_to_right(const X_curve& c1, const X_curve& c2,
+                             const Point& pt);}{returns $true$ if \ccc{c1}
+and \ccc{c2} intersect at a point that is lexicographically larger than 
+\ccc{pt}
+% to the right of the point \ccc{pt}.
+% Intersection to the right of \ccc{pt} is defined as
+% an intersection which is lexicographically strictly to the right of \ccc{pt}
+(i.e., an intersection above or to the right of
+\ccc{pt} but {\em not} on \ccc{pt}).}
+
+\ccMethod{bool nearest_intersection_to_right(const X_curve& c1,
+                                      const X_curve& c2,
+                                      const Point& pt,
+                                      Point& p1, Point& p2);}
+{finds the
+nearest intersection point to the right of \ccc{pt}. Nearest is defined as the
+one lexicographically closest to \ccc{pt} not including \ccc{pt} itself.
+If the intersection of \ccc{c1} and \ccc{c2} to the
+right of \ccc{pt} is an \ccc{X_curve} (i.e., there is an overlapping subcurve
+to the right of \ccc{pt}),
+then \ccc{p1} will hold the source point of the intersection and
+\ccc{p2} will hold its target point. Otherwise \ccc{p1} and \ccc{p2} are
+identical. In the case of an overlap we regard the intersection
+to the right as the open curve between \ccc{p1} and \ccc{p2}. This means that
+if the overlapping subcurve contains \ccc{pt} either \ccc{p1} or \ccc{p2} will
+be equal to \ccc{pt}, this is the only case in which this can happen.
+If \ccc{c1} and \ccc{c2} do not intersect to the right of \ccc{pt}
+the function returns \ccc{false}, otherwise it returns true.
+%\ccPrecond{\ccc{do_intersect_to_right(c1,c2,pt) == true}}
+}
+
+%The intersection function is defined in such a way to enable dealing with
+%degenerate cases when two curves inserted into the arrangement overlap.
+
+\ccMethod{bool curves_overlap(const X_curve& cv1, const X_curve& cv2);}
+{returns \ccc{true} if \ccc{cv1} and \ccc{cv2} overlap
+in a one-dimensional subcurve (i.e., not in a finite number
+of points), otherwise returns
+\ccc{false}.}
+
+\ccHasModels
+%  The package does not supply specific implementations of the planar
+%  map with intersections traits concept. However, since the
+%  \ccc{Arrangement Traits} concept is a refinment of the \ccRefName\
+%  concept, all of the models of the former are models of the latter.
+The following classes are models of the 
+\ccc{ArrangementTraits_2} concept that is a refinment of the \ccRefName\
+concept. 
+
+  \ccc{Arr_segment_exact_traits<R>}\\
+  \ccc{Arr_leda_segment_exact_traits}\\
+  \ccc{Arr_circles_real_traits<NT>}\\
+  \ccc{Arr_polyline_traits<R, Container>}
+
+\end{ccRefConcept}
+
+% +------------------------------------------------------------------------+
+%%RefPage: end of main body, begin of footer
+\ccRefPageEnd
+% EOF
+% +------------------------------------------------------------------------+

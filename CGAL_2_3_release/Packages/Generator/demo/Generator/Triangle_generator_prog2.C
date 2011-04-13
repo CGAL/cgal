@@ -1,0 +1,42 @@
+//  demo/Generator/Triangle_generator_prog2.C
+//  -----------------------------------------
+//  CGAL example program generating a regular triangle pattern.
+
+#include <CGAL/Cartesian.h>
+#include <CGAL/point_generators_2.h>
+#include <CGAL/function_objects.h>
+#include <CGAL/Join_input_iterator.h>
+#include <CGAL/Counting_iterator.h>
+#include <CGAL/IO/Ostream_iterator.h>
+#include <CGAL/IO/Window_stream.h>  
+#include <algorithm>
+
+typedef CGAL::Cartesian<double>                            K;
+typedef K::Point_2                                         Point;
+typedef K::Triangle_2                                      Triangle;
+typedef CGAL::Points_on_segment_2<Point>                   PG;
+typedef CGAL::Creator_uniform_3< Point, Triangle>          Creator;
+typedef CGAL::Join_input_iterator_3< PG, PG, PG, Creator>  Triang_iterator;
+typedef CGAL::Counting_iterator<Triang_iterator,Triangle>  Count_iterator;
+
+int main() {
+    // Prepare point generator for three segments.
+    PG p1( Point(  0.50,  0.90), Point( -0.50,  0.90), 50);
+    PG p2( Point( -0.95,  0.00), Point( -0.50, -0.90), 50);
+    PG p3( Point(  0.50, -0.90), Point(  0.95,  0.00), 50);
+
+    // Create triangle generating iterator.
+    Triang_iterator ti( p1, p2, p3);
+    Count_iterator  t_begin( ti);
+    Count_iterator  t_end( 50);
+
+    // Open window and copy 50 triangles into window.
+    CGAL::Window_stream* window = CGAL::create_and_display_demo_window();
+    std::copy( t_begin, t_end,
+               CGAL::Ostream_iterator<Triangle,CGAL::Window_stream>(*window));
+
+    // Wait for mouse click in window.
+    (*window).read_mouse();
+    delete window;
+    return 0;
+}

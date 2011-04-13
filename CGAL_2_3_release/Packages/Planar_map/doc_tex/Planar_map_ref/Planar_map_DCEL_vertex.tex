@@ -1,0 +1,42 @@
+% +------------------------------------------------------------------------+
+% | Reference manual page: Planar_map_DCEL_vertex.tex (Planar_map)
+% +------------------------------------------------------------------------+
+% | 
+% | Package: pm (Planar_map_2)
+% | 
+% +------------------------------------------------------------------------+
+
+\ccRefPageBegin
+
+%%RefPage: end of header, begin of main body
+% +------------------------------------------------------------------------+
+
+\begin{ccRefConcept}{PlanarMapDcelVertex_2}
+\ccRefLabel{Pm_Dcel_Vertex}
+%\ccDefinition{A vertex $v$ 
+%stores %a point and 
+%   a reference to an incident 
+%   halfedge that has $v$ as its %source.}
+%   target.}
+
+  \ccCreationVariable{v}
+
+The \ccRefName\ concpet is a refinement of the \ccc{TopologicalMapDcelVertex} concept. 
+The requirements of the latter are the requirements of the former.
+In addition the \ccRefName\ should contain the  following geometric types and methods.
+
+  \ccTypes
+\ccNestedType{Point}{a point associated with the vertex.}
+
+  \ccOperations
+  \ccMethod{const Point& point();}{the point.}
+  
+  \ccMethod{void set_point(const Point& p);}{set the point in \ccVar{} to $p$.}
+
+\end{ccRefConcept} % PlanarMapDcelVertex_2
+
+% +------------------------------------------------------------------------+
+%%RefPage: end of main body, begin of footer
+\ccRefPageEnd
+% EOF
+% +------------------------------------------------------------------------+

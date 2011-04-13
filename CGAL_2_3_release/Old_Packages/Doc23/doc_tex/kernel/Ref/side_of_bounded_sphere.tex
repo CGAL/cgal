@@ -1,0 +1,35 @@
+\begin{ccRefFunction}{side_of_bounded_sphere}
+
+\ccFunction{Bounded_side side_of_bounded_sphere(
+                                   const Point_3<R> &p, 
+                                   const Point_3<R> &q,
+                                   const Point_3<R> &r, 
+                                   const Point_3<R> &s, 
+                                   const Point_3<R> &t);}
+         {returns the relative position of point \ccStyle{t}
+          to the sphere defined by $p$, $q$, $r$, and $s$. The order
+          of the points $p$, $q$, $r$, and $s$ does not matter.
+          \ccPrecond \ccStyle{p, q, r} and \ccStyle{s} are not coplanar.}
+
+\ccFunction{Bounded_side side_of_bounded_sphere(
+                                   const Point_3<R> &p, 
+                                   const Point_3<R> &q,
+                                   const Point_3<R> &r, 
+                                   const Point_3<R> &t);}
+   {returns the position of the point \ccStyle{t} relative to the sphere
+    passing through $p$, $q$, and $r$ and whose center is in the plane defined
+    by these three points.}
+
+\ccFunction{Bounded_side side_of_bounded_sphere(
+                                   const Point_3<R> &p, 
+                                   const Point_3<R> &q,
+                                   const Point_3<R> &t);}
+ {returns the position of the point \ccStyle{t} relative to the sphere
+  that has $pq$ as its diameter.}
+
+\ccSeeAlso
+
+\ccRefIdfierPage{CGAL::side_of_oriented_sphere} \\
+
+
+\end{ccRefFunction}

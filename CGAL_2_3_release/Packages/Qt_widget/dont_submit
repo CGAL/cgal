@@ -1,0 +1,8 @@
+Makefile
+Makefile.local
+makefile.qt
+makefile.patch
+install_cgal_qt
+install_cgal.patch
+installation.tex
+installation.tex.patch

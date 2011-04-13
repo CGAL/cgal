@@ -1,0 +1,148 @@
+% +------------------------------------------------------------------------+
+% | Reference manual page: Polyhedron_incremental_builder_3.tex
+% +------------------------------------------------------------------------+
+% | 17.03.1999   Lutz Kettner
+% | Package: Polyhedron
+% | 
+\RCSdef{\RCSPolyhedronincrementalbuilderRev}{$Revision$}
+\RCSdefDate{\RCSPolyhedronincrementalbuilderDate}{$Date$}
+% +------------------------------------------------------------------------+
+
+\ccRefPageBegin
+
+%%RefPage: end of header, begin of main body
+% +------------------------------------------------------------------------+
+
+
+\begin{ccRefClass}{Polyhedron_incremental_builder_3<HDS>}
+\label{pagePolyIncrBuilder}
+
+\ccDefinition
+\ccCreationVariable{B}
+  
+The auxiliary class \ccClassTemplateName\ supports the incremental
+construction of polyhedral surfaces, which is for example convenient
+when constructing polyhedral surfaces from file formats, such as the
+Object File Format (OFF)~\cite{p-gmgv15-94},
+OpenInventor~\cite{w-impoo-94} or VRML~\cite{bpp-vrml-95,vrmls-96}.
+\ccClassTemplateName\ needs access to the internal halfedge data
+structure of type \ccc{HDS} of the polyhedral surface. It is intended
+to be used within a modifier, see \ccc{CGAL::Modifier_base} in the 
+Support Library Reference Manual.
+
+The incremental builder might be of broader interest for other uses of
+the halfedge data structures, but it is specifically bound to the
+definition of polyhedral surfaces given here. During construction all
+conditions of polyhedral surfaces are checked and in case of violation
+an error status is set. A diagnostic message will be issued to
+\ccc{cerr} if the \ccc{verbose} flag has been set at construction
+time.
+
+The incremental construction starts with a list of all point
+coordinates and concludes with a list of all facet polygons. Edges are
+not explicitly specified. They are derived from the vertex incidence
+information provided from the facet polygons. The polygons are given as a
+sequence of vertex indices.  The halfedge data structure \ccc{HDS} must
+support vertices (i.e., \ccc{Supports_halfedge_vertex} $\equiv$
+\ccc{CGAL::Tag_true}). The correct order of allowed method calls to build a
+polyhedral surface is given as a regular expression below. Vertices and
+facets can be added in arbitrary order as long as
+\ccc{add_vertex_to_facet()} refers only to vertex indices that are
+already known.
+
+{\it
+    \hspace*{6mm} begin\_surface $($add\_vertex $|$ 
+                  $($begin\_facet add\_vertex\_to\_facet$\:*$
+                            end\_facet\/$))\:*$ end\_surface
+}
+
+
+\ccInclude{CGAL/Polyhedron_incremental_builder_3.h}
+
+\ccTypes
+
+\ccTwo{CGAL::Polyhedron_incremental_builder_3<HDS>:: HalfedgeDS}{}
+
+\ccNestedType{HalfedgeDS}{halfedge data structure \ccc{HDS}.}
+\ccGlue
+\ccNestedType{Point_3}{point type of the vertex.}
+\ccGlue
+\ccNestedType{size_type}{size type.}
+
+\ccCreation
+\ccThree{void}{B.remove_unconnected_vertices();;;}{}
+\ccThreeToTwo
+
+\ccConstructor{Polyhedron_incremental_builder_3(HDS& hds, 
+               bool verbose = false);}
+ {stores a reference to the halfedge data structure \ccc{hds} of a
+   polyhedral surface in its internal state. An existing polyhedral
+   surface in \ccc{hds} remains unchanged. The incremental builder
+   appends the new polyhedral surface. If \ccc{verbose} is \ccc{true},
+   diagnostic messages will be printed to \ccc{cerr} in case of
+   malformed input data.}
+
+\newpage
+\ccOperations
+
+\ccMethod{void begin_surface( size_type v, size_type f, size_type h = 0);}
+{starts the construction. $v$ is the number of vertices
+    to expect, $f$ the number of facets, and $h$ the number of
+    halfedges. If $h$ is unspecified (\ccc{== 0}) it is estimated using
+    Euler's equation (plus 5\% for the so far unknown holes and genus of
+    the object). These values are used to reserve space in the
+    halfedge data structure \ccc{hds}. If the representation supports
+    insertion these values do not restrict the class of constructible
+    polyhedra. If the representation does not support insertion the
+    object must fit into the reserved sizes.}  
+
+\ccMethod{void add_vertex( const Point_3& p);}{
+    adds $p$ to the vertex list.}  
+\ccGlue
+\ccMethod{void begin_facet();}{starts a facet.}
+\ccGlue
+\ccMethod{void add_vertex_to_facet( size_type i);}{adds a vertex with
+  index $i$ to the current facet. The first point added with
+  \ccc{add_vertex()} has the index 0.}
+\ccGlue
+\ccMethod{void end_facet();}{ends a facet.}
+\ccGlue
+\ccMethod{void end_surface();}{ends the construction.}
+
+\ccMethod{bool error() const;}{returns error status of the builder.}
+\ccGlue
+\ccMethod{void rollback();}{undoes all changes made to the halfedge
+  data structure since the last \ccc{begin_surface()}.}
+
+\ccMethod{bool check_unconnected_vertices();}{returns
+  \ccc{true} if unconnected vertices are detected. If \ccc{verbose} was set to
+  \ccc{true} (see the constructor above) debug information about the
+  unconnected vertices is printed.}
+
+\ccMethod{bool remove_unconnected_vertices();}{returns
+  \ccc{true} if all unconnected vertices could be removed successfully.
+  This happens either if no unconnected vertices had appeared or if the
+  halfedge data structure supports the removal of individual elements.}
+
+
+\ccSeeAlso
+
+\ccRefIdfierPage{CGAL::Polyhedron_3<Traits>}\\
+\ccRefIdfierPage{HalfedgeDS}\\
+\ccc{CGAL::Modifier_base} in the Support Library Reference Manual.
+
+\ccExample
+
+A modifier class creates a new triangle in the halfedge data structure
+using the incremental builder.
+
+\ccIncludeExampleCode{Polyhedron/polyhedron_prog_incr_builder.C}
+
+\end{ccRefClass}
+
+% +------------------------------------------------------------------------+
+%%RefPage: end of main body, begin of footer
+\ccRefPageEnd
+% EOF
+% +------------------------------------------------------------------------+
+

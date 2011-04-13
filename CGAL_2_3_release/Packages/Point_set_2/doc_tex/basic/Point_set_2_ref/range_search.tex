@@ -1,0 +1,99 @@
+\begin{ccRefFunction}{range_search}
+
+\ccDefinition  
+
+There are three versions of the function template \ccRefName\ that
+perform range searches on Delaunay triangulations. The frst performs
+circular range searches, the second triangular range searches and the
+third performs iso-rectangular range searches.
+
+\ccInclude{CGAL/range_search_delaunay_2.h}
+
+\ccFunction{template<class Dt, class Circle, class OutputIterator>
+            OutputIterator range_search(Dt& delau, const Circle& C, OutputIterator res);}
+{ computes handles to all vertices contained in the closure of disk $C$.
+The computed vertex handles will be placed as a sequence of objects in a container of value type
+of $res$
+which points to the first object in the sequence. The function
+returns an output iterator pointing to the position beyond the end
+of the sequence.
+$delau$ is the \cgal\ Delaunay triangulation on which we perform the range search operation.}
+
+\ccHeading{Requirements}
+\begin{itemize}
+\item \ccc{Dt} is a \cgal\ Delaunay triangulation and contains the following subset of types from the concept PointSetTraits and from
+the Delaunay triangulation data type:
+ \begin{itemize}
+  \item \ccc{Dt::Geom_traits} 
+  \item \ccc{Dt::Vertex_handle}
+  \item \ccc{Dt::Vertex} 
+  \item \ccc{Dt::Vertex_circulator}   
+  \item \ccc{Dt::Vertex_iterator} 
+  \item \ccc{Dt::Point}  
+  \item \ccc{Dt::Geom_traits::Bounded_side_2} 
+  \item \ccc{Dt::Geom_traits::Construct_center_2} 
+ \end{itemize}
+\item the template parameter \ccc{Circle} corresponds to \ccc{Dt::Geom_traits::Cricle_2}
+\end{itemize}
+
+\ccFunction{template<class Dt, class OutputIterator>
+            OutputIterator range_search(Dt& delau, const Dt::Point& a, const Dt::Point& b, 
+            const Dt::Point& c,OutputIterator res);}
+{computes handles to all vertices contained in the closure of the triangle $(a,b,c)$.\\
+\ccPrecond $a$, $b$, and $c$ must not be collinear. 
+The computed vertex handles will be placed as a sequence of objects in a container of value type
+of $res$
+which points to the first object in the sequence. The function
+returns an output iterator pointing to the position beyond the end
+of the sequence. 
+$delau$ is the \cgal\ Delaunay triangulation on which we perform the range search operation.}
+
+\ccHeading{Requirements}
+\ccc{Dt} is a \cgal\ Delaunay triangulation and contains the following subset of types from the concept PointSetTraits and from
+the Delaunay triangulation data type:
+\begin{itemize}
+  \item \ccc{Dt::Geom_traits} 
+  \item \ccc{Dt::Vertex_handle}
+  \item \ccc{Dt::Vertex} 
+  \item \ccc{Dt::Vertex_circulator}   
+  \item \ccc{Dt::Vertex_iterator} 
+  \item \ccc{Dt::Point}  
+  \item \ccc{Dt::Geom_traits::Circle_2}  
+  \item \ccc{Dt::Geom_traits::Bounded_side_2} 
+  \item \ccc{Dt::Geom_traits::Construct_center_2} 
+  \item \ccc{Dt::Geom_traits::Orientation_2} 
+  \item \ccc{Dt::Geom_traits::Construct_circle_2}  
+\end{itemize}
+
+
+\ccFunction{template<class Dt, class OutputIterator>
+            OutputIterator range_search(Dt& delau, const Dt::Point& a, const Dt::Point& b, const Dt::Point& c,const Dt::Point& d,OutputIterator res) ;}
+{computes handles to all vertices contained in the closure of the iso-rectangle $(a,b,c,d)$.\\
+\ccPrecond $a$ is the upper left point, $b$ the lower left, $c$ the lower
+right and $d$ the upper right point of the iso rectangle.
+The computed vertex handles will be placed as a sequence of objects in a container of value type
+of $res$
+which points to the first object in the sequence. The function
+returns an output iterator pointing to the position beyond the end
+of the sequence. $delau$ is the \cgal\ Delaunay triangulation on which we perform the range search operation.} 
+
+\ccHeading{Requirements}
+\ccc{Dt} is a \cgal\ Delaunay triangulation and contains the following subset of types from the concept PointSetTraits and from
+the Delaunay triangulation data type:
+\begin{itemize}
+  \item \ccc{Dt::Geom_traits} 
+  \item \ccc{Dt::Vertex_handle}
+  \item \ccc{Dt::Vertex} 
+  \item \ccc{Dt::Vertex_circulator}   
+  \item \ccc{Dt::Vertex_iterator} 
+  \item \ccc{Dt::Point}  
+  \item \ccc{Dt::Geom_traits::Circle_2}  
+  \item \ccc{Dt::Geom_traits::Bounded_side_2} 
+  \item \ccc{Dt::Geom_traits::Construct_center_2} 
+  \item \ccc{Dt::Geom_traits::Orientation_2} 
+  \item \ccc{Dt::Geom_traits::Construct_circle_2}  
+\end{itemize}
+
+\end{ccRefFunction}
+
+

@@ -1,0 +1,59 @@
+% +------------------------------------------------------------------------+
+% | Reference manual page: Planar_map_DCEL.tex (Planar_map)
+% +------------------------------------------------------------------------+
+% | 
+% | Package: pm (Planar_map_2)
+% | 
+% +------------------------------------------------------------------------+
+
+\ccRefPageBegin
+
+%%RefPage: end of header, begin of main body
+% +------------------------------------------------------------------------+
+
+\begin{ccRefConcept}{PlanarMapDcel_2}
+
+   A model for the \ccRefName\ concept defines the underlying
+   combinatorial data structure (halfedge data structure) used in the
+   planar map data structure \ccc{Planar_map_2<Dcel,Traits>}.
+
+%A planar map class is parameterized with the interface classes 
+%\ccStyle{Dcel} and \ccStyle{Traits} . The \ccStyle{Dcel} class is
+%a container class that defines the 
+%underlying combinatorial data structure (halfedge data structure) 
+%used by the planar map. 
+%The \ccStyle{Traits} class defines the abstract interface
+%between planar maps and the {\em geometric} primitives they use. 
+
+The
+% \ccc{\ccRefName} does no convert to html. The converter add \ccc by 
+% default to \ccRefName
+%{\ccFont \ccRefName}
+\lcTex{\ccc{\ccRefName}}\lcHtml{\ccRefName}
+% \ccTexHtml{\ccc{\ccRefName}}{\ccRefName} <== Does not work.
+concept is a refinement of the \ccc{TopologicalMapDcel}. Hence, the requirements for the latter are requirements for the former. 
+The difference in requirements is that the  
+\ccHtmlNoLinksFrom{\ccStyle{Vertex} and \ccStyle{Halfedge}}
+types should be models of the more refined concepts 
+\ccc{PlanarMapDcelVertex_2} and \ccc{PlanarMapDcelHalfedge_2}.
+
+\ccTypes
+    \ccNestedType{Vertex}{
+       The vertex type. Should be a model of the
+       \ccc{PlanarMapDcelVertex_2} concept.}
+
+    \ccNestedType{Halfedge}{
+       The halfedge type. Should be a model of the
+       \ccc{PlanarMapDcelHalfedge_2} concept.}
+
+   The concept \ccc{ArrangementDcel_2} is \ccc{not} (!) a refinement
+   of \ccRefName. Using a model of the \ccc{ArrangementDcel_2} such as
+   \ccc{CGAL::Arr_2_default_dcel<Traits>} will result in an error.
+
+
+\end{ccRefConcept} % PlanarMapDcel_2
+% +------------------------------------------------------------------------+
+%%RefPage: end of main body, begin of footer
+\ccRefPageEnd
+% EOF
+% +------------------------------------------------------------------------+

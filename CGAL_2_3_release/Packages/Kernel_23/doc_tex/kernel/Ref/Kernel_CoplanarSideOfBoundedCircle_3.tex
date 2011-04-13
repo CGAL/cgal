@@ -1,0 +1,22 @@
+\begin{ccRefFunctionObjectConcept}{Kernel::CoplanarSideOfBoundedCircle_3}
+A model for this must provide:
+
+\ccCreationVariable{fo}
+
+\ccMemberFunction{Bounded_side operator()(const Kernel::Point_3&p,
+                                          const Kernel::Point_3&q,
+                                          const Kernel::Point_3&r,
+                                          const Kernel::Point_3&s);}
+         {returns the bounded side of the circle defined
+          by \ccc{p}, \ccc{q}, and \ccc{r} on which \ccc{s} lies.
+          \ccPrecond \ccc{p}, \ccc{q}, \ccc{r}, and \ccc{s} are coplanar and
+          \ccc{p}, \ccc{q}, and \ccc{r} are not collinear.}
+
+\ccRefines
+AdaptableFunctor
+
+\ccSeeAlso
+\ccRefIdfierPage{CGAL::coplanar_side_of_bounded_circle}\\
+
+\end{ccRefFunctionObjectConcept}
+

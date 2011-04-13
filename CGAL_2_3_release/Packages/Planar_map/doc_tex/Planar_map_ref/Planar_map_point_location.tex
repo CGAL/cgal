@@ -1,0 +1,124 @@
+% +------------------------------------------------------------------------+
+% | Reference manual page: Planar_map_point_location.tex (Planar_map)
+% +------------------------------------------------------------------------+
+% | 
+% | Package: pm (Planar_map_2)
+% | 
+% +------------------------------------------------------------------------+
+
+\ccRefPageBegin
+
+%%RefPage: end of header, begin of main body
+% +------------------------------------------------------------------------+
+
+% enabling the advanced brackets before reference name
+% simply putting \begin{ccAdvanced} will not do, since there will be
+% a page break because of the ccRef...
+\renewcommand{\ccRefPageBegin}{\begin{ccAdvanced}}
+\renewcommand{\ccRefPageEnd}{\end{ccAdvanced}}
+
+\begin{ccRefConcept}{PlanarMapPointLocation_2}
+%{Pm_point_location_base<Planar_map>}
+\label{PL_sec:base}
+%\begin{ccAdvanced}
+\ccDefinition
+\ccRefName\ is the point location strategy used by \ccc{Planar_map_2<Dcel, Traits>}.
+
+In order for the advanced user to write a model of a~\ccRefName\ the user's class should inherit the \cgal\/ supplied class 
+\ccc{Pm_point_location_base<Planar_map>}.
+This class is an abstract base class for the different point location strategies including the supplied ones.
+
+\ccc{Planar_map_2<Dcel, Traits>} is the
+type that aggregates the strategy. The return values of the queries
+are given in terms that the \ccc{Planar_map_2<Dcel, Traits>} handles.
+
+\ccInclude{CGAL/Pm_point_location_base.h}
+
+\ccThree{typedef typename Planar_map::Halfedge_handle }{}{\hspace*{6cm}}
+
+\ccTypes
+\ccTypedef{typedef typename Planar_map::Traits Traits;}{}
+\ccTypedef{typedef typename Planar_map::Locate_type Locate_type;}{}
+\ccTypedef{typedef typename Planar_map::Halfedge_handle Halfedge_handle;}{}
+
+\ccTypedef{typedef typename Traits::X_curve X_curve;}{}
+\ccTypedef{typedef typename Traits::Point Point;}{}
+
+\ccThree{virtual Halfedge_handle}{}{\hspace*{10cm}}
+
+\ccOperations
+\ccCreationVariable{pl}
+
+\ccMethod{virtual void init(Planar_map& pmp, Traits& tr);}{initializes
+the strategy; will be called by the planar map directly after its 
+construction, with \ccc{*this} and the traits instantiation inside the 
+planar map, as its parameters.}
+
+%\ccHeading{Query Functions}
+\ccQueryFunctions
+
+%\ccMethod{virtual Halfedge_handle locate(const Point& p,
+%   Locate_type& lt) const;}{}
+\ccMethod{virtual Halfedge_handle locate(const Point& p, Locate_type& lt);}
+{point location query. A \ccc{const} version is also required.}
+
+%\ccMethod{virtual Halfedge_handle vertical_ray_shoot(
+%const Point& p, Locate_type& lt, bool up) const;}{}
+\ccMethod{virtual Halfedge_handle vertical_ray_shoot(
+const Point& p, Locate_type& lt, bool up);}
+{vertical ray shooting query. A \ccc{const} version is also required.}
+
+The non const versions may update the internal structure of the Point location.
+%maybe add is vertex in??
+
+%\ccHeading{Updating Functions}
+\ccModifiers
+
+\ccMethod{virtual void insert(Halfedge_handle h,const X_curve& cv);}
+{updates the internal structure of the strategy after an insertion in the 
+planar map. The planar
+map will call this function after the insertion has taken place. \ccc{h} is
+the handle which is returned by the map after insertion, \ccc{cv} is
+the curve inserted into the map.}
+
+\ccMethod{virtual void split_edge(const X_curve &cv, Halfedge_handle e1,
+   Halfedge_handle e2,const X_curve& cv1, const X_curve& cv2);}{updates the 
+internal structure of the strategy 
+after a \ccc{split_edge} operation in the planar map. The planar
+map will call this function after the splitting has taken place. \ccc{e1}
+and \ccc{e2} are the two edges created after the split. \ccc{cv} is 
+the original curve that was in the map before the splitting,
+\ccc{cv1} and \ccc{cv2} are the curves in \ccc{e1} and \ccc{e2} (respectively.)
+after the splitting has taken place.}
+
+\ccMethod{virtual void merge_edge(const X_curve &cv1, const X_curve &cv2,
+                        Halfedge_handle e,const X_curve& cv );}{updates 
+the internal structure of the strategy 
+after a \ccc{merge_edge} operation in the planar map. The planar
+map will call this function after the merging has taken place. \ccc{e}
+is the merged edge. \ccc{cv1} and \ccc{cv2} are 
+the original curves that were in the map before the merging and
+\ccc{cv} is the curve in \ccc{e} after the merging.}
+
+\ccMethod{virtual void remove_edge(Halfedge_handle e);}{updates the internal
+structure of the strategy during a \ccc{remove_edge} operation in the 
+planar map.The planar map will call this function {\em before} the removal 
+has taken place (so the internal structure can be updated before the
+\ccHtmlNoLinksFrom{\ccc{Halfedge}} has been removed from the planar map itself.)} 
+
+\ccHasModels
+   \ccc{Pm_default_point_location<Planar_map>}\\
+   \ccc{Pm_naive_point_location<Planar_map>}\\
+   \ccc{Pm_walk_along_a_line_point_location<Planar_map>}
+
+%%\ccHasModels
+%\end{ccAdvanced} % point location strategies
+\end{ccRefConcept}
+\renewcommand{\ccRefPageBegin}{}
+\renewcommand{\ccRefPageEnd}{}
+
+% +------------------------------------------------------------------------+
+%%RefPage: end of main body, begin of footer
+\ccRefPageEnd
+% EOF
+% +------------------------------------------------------------------------+

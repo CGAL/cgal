@@ -1,0 +1,333 @@
+%\chapter{CGAL Postscript Output}
+
+\chapter{The PS\_stream\_3 class}
+
+\begin{ccClass} {PS_stream_3}
+
+\section{Introduction}
+
+The class \ccc{PS\_stream\_3} is an extension of the Postscript Stream
+class which allows to represent object in 3D in a Postscript stream.
+So this class is used to generate the postscript output of a complex
+scene in the space.
+
+\section{The PS\_stream\_3 Class}
+
+\ccDefinition 
+
+An object of type \ccClassName\ is a stream used to generate a
+Postscript description of a view of a 3 dimension scene.
+The \ccClassName\ class included a
+point of view which represent the position of the viewer, a direction
+of light and an axis box size to determines the cube of visibility for the
+clipping.
+Moreover, this stream has an output file name which is the postscript file
+created.
+A \ccClassName\ object is a stream where it is possible to enter
+differents kind of kernel objects like \ccc{Point\_3},
+\ccc{Segment\_3}, \ccc{Line\_3}... but also more higher level objects like \ccc{ tetrahedron}, \ccc{triangulation\_2}, \ccc{triangle\_3}...
+The main difficulty to represent a scene in space is to sort all the
+facets according the point of view.
+The algorithm used is an improved paint algorithm called depth-sort
+algorithm.
+
+
+
+So to begin, the first step is to transform the point of view and the
+objects of the scene in an 
+z-axis view. This transformation is also applied to all of the objects of 
+the scene.
+After that the normal sort allows to reject ``bad faces `` whose
+normal make an angle greater than 90 degrees.
+After that all the facets are sort according the z.
+And at last, the depth sort algorithm is apply.
+
+The \ccClassName\ class owns the differents algorithms to sort the faces
+according their geometry.
+
+\ccInclude{CGAL/IO/PS_stream_3.h}
+The  \ccClassName\ class inherits from the \ccc{PS_stream} class.
+
+\ccTypes
+
+\ccTypedef{typedef double coord_type;}{}
+
+\ccTypedef{typedef CGAL::Cartesian< coord_type > CT;}{}
+
+\ccTypedef{typedef Bbox_3 PS_BBox3;}{}
+
+\ccTypedef{typedef Cartesian<double> D;}{}
+
+\ccTypedef{typedef Direction_3< D > Direction;}{}
+%\ccTypedef{typedef Aff_transformation_3< CT > Transformation;}{}
+\ccTypedef{typedef Vector_3< CT > Vector3;}{}
+\ccTypedef{typedef Point_3< CT > Point3;}{}
+\ccTypedef{typedef Point_2< CT > Point2;}{}
+\ccTypedef{typedef Plane_3< CT > Plane3;}{}
+
+%\ccTypedef{typedef CGAL::Polygon_traits_2< CT > Poly_Traits;}{}
+%\ccTypedef{typedef Poly_Traits::Point_2 Point;}{}
+%\ccTypedef{typedef std::list<Point> Container;}{}
+\ccTypedef{typedef CGAL::Polygon_2<Poly_Traits, Container> Polygon;}{}
+\ccTypedef{typedef CGAL::Triangle_3< D > Triangle3;}{}
+\ccTypedef{typedef CGAL::Segment_3< D > Segment3;}{}
+\ccTypedef{typedef CGAL::Tetrahedron_3< D > Tetrahedron;}{}
+
+%\ccTypedef{typedef Halfedge_data_structure_polyhedron_default_3<D> HDS;}{}
+%\ccTypedef{typedef Polyhedron_default_traits_3<D> Traits;}{}
+\ccTypedef{typedef Polyhedron_3<Traits,HDS> Polyhedron;}{}
+%\ccTypedef{typedef Polyhedron::Facet Facet;}{}
+%\ccTypedef{typedef Polyhedron::Plane Plane;}{}
+%\ccTypedef{typedef Polyhedron::Halfedge_const_handle Halfedge_handle;}{}
+%\ccTypedef{typedef Polyhedron::Facet_const_iterator             FCI;}{}
+%\ccTypedef{typedef Polyhedron::Halfedge_around_facet_const_circulator HFCC;}{}
+
+%//ADD FOR THE TRIANGULATION
+%\ccTypedef{typedef double Nt;}{}
+%\ccTypedef{typedef CGAL::Cartesian<Nt> Rp;}{}
+%\ccTypedef{typedef CGAL::Triangulation_euclidean_traits_xy_3<Rp>  Gt;}{}
+%\ccTypedef{typedef Gt::Point    Point_tr ;}{}
+%\ccTypedef{typedef Gt::Segment  Segment_tr;}{}
+%\ccTypedef{typedef Gt::Triangle Triangle_tr;}{}
+
+%\ccTypedef{typedef CGAL::Triangulation_vertex_base_2<Gt> Vb; }{}
+%\ccTypedef{typedef CGAL::Constrained_triangulation_face_base_2<Gt>   Fb; }{}
+%\ccTypedef{typedef CGAL::Triangulation_default_data_structure_2<Gt,Vb,Fb> Tds;}{}
+\ccTypedef{typedef CGAL::Constrained_Delaunay_triangulation_2<Gt,Tds> Triangulation;}{}
+
+%\ccTypedef{typedef Triangulation::Face_handle Face_handle;}{}
+%\ccTypedef{typedef Triangulation::Vertex_handle Vertex_handle;}{}
+%\ccTypedef{typedef Triangulation::Line_face_circulator  Line_face_circulator;}{}
+%\ccTypedef{typedef Triangulation::Face_iterator  Face_iterator;}{}
+%\ccTypedef{typedef Triangulation::Vertex_iterator  Vertex_iterator;}{}
+
+
+
+
+\ccCreation
+\ccCreationVariable{ps}
+
+
+\ccConstructor{PS_Stream_3(const PS_BBox3& bb3,const Direction&
+d,const Direction &l, float H, const char* fname, OutputMode =
+QUIET);}{This constructor creates a postscript stream with a BBox
+\ccc{bb3}, an  \ccc{Output Mode} by default set to \ccc{QUIET}, an height \ccc{H} and the
+name of the output files is given by \ccc{fname} (for more detail
+for these parameters see the Postscript Stream documentation).
+The first direction d represent the point of view which is the
+position of the eye of the viewer. The second is the direction of the light.
+}
+
+
+
+
+\ccAccessFunctions
+
+\ccMethod{PS_BBox3 bbox3() const;} {Return the BBox 3 of the  \ccc{PS\_Stream\_3}.}
+
+\ccMethod{inline int number_of_face() const;} {Return the number of
+facets in the scene.}
+
+\ccMethod{inline Direction light() const;}{Return the light vector.}
+
+\ccMethod{inline Direction point_of_view() const;}{Return the
+point of view vector.}
+
+%\ccMethod{ Transformation transformation() const;} {Return the
+%transformation which is used to pass the point of view to an z-axis view;}
+
+%\ccMethod{coord_type search_xmin(Point3 v[]);}{Return the minimum in x of the array v.}
+
+%\ccMethod{coord_type search_xmax(Point3 v[]);}{Return the maximum in
+%x of the array v.}
+
+%\ccMethod{coord_type search_ymin(Point3 v[]);}{Return the minimum in y
+%of the array v.}
+
+%\ccMethod{coord_type search_ymax(Point3 v[]);}{Return the maximum in
+%y of the array v.}
+
+
+
+\ccHeading{Setting functions}
+
+\ccMethod{void set_light(Direction l);}{Allows to change the
+\ccc{light} direction.}
+
+\ccMethod{void set_point_of_view(Direction p);}{Allows to change the
+\ccc{point of view} direction.}
+
+\ccMethod{void set_current_filling(const CGAL::FILLING& f);}{Allows to 
+modify the current type of filling of the facets entered in the stream;}
+
+
+\ccHeading{Operators}
+
+%\ccMethod{inline double norme(double x,double y,double z);} {Return
+%the norm.}
+
+%\ccMethod{inline double den(double x);} {Return
+%the result of $\sqrt(1-x^2)$.}
+
+%\ccMethod{Point2 transform( const Point3& p);}{Project a \ccc{point3} and
+%return the \ccc{point2} corresponding. It gives the projection on the \ccc{XY} plane.}
+
+%\ccMethod{Point2 transform( Transformation t, const Point3&
+%p);}{Transform a \ccc{point3} according the transformation and return the
+%\ccc{point2} corresponding.}
+  
+%\ccMethod{Point_2<D> PS_Stream_3::convert_to_double(Point2& p);}{This
+%method allows to convert a point in \ccc{Leda\_Real} in a \ccc{point2} in double.}
+
+%\ccMethod{vector<PS_facet_3> PS_Stream_3::zmin_sort();}{Sort all the
+%faces of the stream according the zmin value of each facet. After this
+%algorithm, the facets of the stream are sort by increasing order of z coordinates.}
+
+%\ccMethod{PS_scene_3 normal_sort();}{Sort all the faces of the stream 
+%with the scalar product between the \ccc{point of view} and the normal 
+%vector of each facet to know if the facet is visible or no. All
+%invisible facets of the stream are take off the scene.}
+
+\ccMethod{void display();}{When inserted in the stream the postscript
+file is created.}
+
+%\ccMethod{void PS_Stream_3::transformation();}{Transform all the
+%facets before the display of the scene. These transformations allows to 
+%transform the point of view to become along the z-axis.}
+
+%\ccMethod{int PS_Stream_3::cutting(vector<PS_facet_3>& liste_face,int i,int j);}
+% {Allows to split the face number i according the intersection between the
+%face i and j. The int which is returned is used to know if it a
+%problem case.}
+
+\ccMethod{PS_scene_3 depth_sort();}{Apply the Depth Sort Algorithm to
+order the facets according their visibility and split facets which intersects.}
+
+%\ccMethod{int PS_Stream_3::dessous(PS_facet_3& facei,PS_facet_3& facej
+%);}{Check if the \ccc{face i} is under the \ccc{face j}.}
+
+
+%\ccHeading{Functions to add objects in the stream.}
+
+\ccMethod{void add_vfacet(vector<PS_facet_3> &vfacet);}{
+Allows to add a new vector of \ccc{PS\_facet\_3} in the \ccc{PS\_Stream\_3} .}
+\ccMethod{void add_facet(PS_facet_3 &face);}{
+Allows to add a new \ccc{PS\_facet\_3} in the  \ccc{PS\_Stream\_3} .}
+\ccMethod{void add_point(Point3 &point);}{Allows to add a
+\ccc{point 3D} in the  \ccc{PS\_Stream\_3}.}
+\ccMethod{void add_segment(Segment3 &segment);}{Allows to
+add a \ccc{segment 3D} in the  \ccc{PS\_Stream\_3}.}
+\ccMethod{void add_line(Line3 &line);}{Allows to add a
+\ccc{Line 3D} in the \ccc{PS\_Stream\_3} .}
+\ccMethod{template <class triangulation_2>;void add_triangulation(triangulation_2&
+tr);}{Allows to add a \ccc{Triangulation 2D} in the  \ccc{PS\_Stream\_3}.}
+\ccMethod{void add_triangle(Triangle3&
+triangle);}{Allows to add a \ccc{Triangle 3D} in the
+\ccc{PS\_Stream\_3}.}
+\ccMethod{void add_tetrahedron(Tetrahedron&
+t);}{Allows to add a \ccc{Tetrahedron} in the  \ccc{PS\_Stream\_3}.}
+
+\ccMethod{template <class Traits, class HDS>
+  void add_polyhedron(Polyhedron_3<Traits,HDS>&
+p);}{Allows to add a polyhedron in the \ccc{PS\_Stream\_3}.}
+
+
+
+%\ccMethod{vector<PS_facet_3> point_to_facet(Point3& point);}{This
+%method transform a \ccc{point 3D} in a vector of PS\_facet\_3. It is necessary
+%to apply the algorithm to a point. So the point is assimilated to a
+%little cube.}
+%\ccMethod{vector<PS_facet_3> segment_to_facet(Segment3&
+%segment);}{This method transform a \ccc{segment 3D} in a vector of
+%\ccc{PS\_facet\_3}. It is necessary to apply the algorithm to a segment. 
+%So the segment is assimilated to a parrallepipede.}
+%\ccMethod{vector<PS_facet_3> line_to_facet(Line3& line);}{This method
+%transform a \ccc{line 3D} in a vector of \ccc{PS\_facet\_3}.
+%It is necessary to apply the algorithm to a line. So the segment is assimilated
+%to a parrallepipede which is bigger than the BBox.}
+%\ccMethod{vector<PS_facet_3> tetrahedron_to_facet(Tetrahedron&
+%T1);}{This method transform a \ccc{tetrahedron} in a vector of \ccc{PS\_facet\_3}.}
+%\ccMethod{PS_facet_3 triangle_to_facet(Triangle3& T);}{This method
+%transform a \ccc{triangle 3D} in \ccc{PS\_facet\_3}.}
+%\ccMethod{ vector<PS_facet_3> triangulation_2_to_facet(Triangulation&
+%tr);}{This method transform a \ccc{triangulation 2} in a vector of
+%\ccc{PS\_facet\_3}.}
+
+
+
+
+
+
+\ccFunction{friend PS_Stream_3& operator << (PS_Stream_3& ps,
+Tetrahedron& t);}{Allows to add a \ccc{tetrahedron} in the
+\ccc{PS\_Stream\_3} with the \ccc{<<} operator.}
+\ccFunction{friend PS_Stream_3& operator << (PS_Stream_3& ps, const
+Point3& p);}{Allows to add a  \ccc{point 3D} in the
+\ccc{PS\_Stream\_3} with the \ccc{<<} operator.}
+\ccFunction{friend PS_Stream_3& operator << (PS_Stream_3& ps, const
+PS_edge_3& ar);}{Allows to add a  \ccc{PS\_edge\_3} in the
+\ccc{PS\_Stream\_3} with the \ccc{<<} operator.}
+\ccFunction{ friend PS_Stream_3& operator << (PS_Stream_3& ps, const
+PS_facet_3& face);}{Allows to add a  \ccc{PS\_facet\_3} in the
+\ccc{PS\_Stream\_3} with the \ccc{<<} operator.}
+
+\ccFunction{ friend PS_Stream_3& operator << (PS_Stream_3& ps, const
+Segment3& segment);}{Allows to add a  \ccc{Segment\_3} in the
+\ccc{PS\_Stream\_3} with the \ccc{<<} operator.}
+
+\ccFunction{ friend PS_Stream_3& operator << (PS_Stream_3& ps, const
+Line3& line);}{Allows to add a  \ccc{Line\_3} in the
+\ccc{PS\_Stream\_3} with the \ccc{<<} operator.}
+
+\ccFunction{ friend PS_Stream_3& operator << (PS_Stream_3& ps, const
+Triangle3& triangle);}{Allows to add a  \ccc{Triangle\_3} in the
+\ccc{PS\_Stream\_3} with the \ccc{<<} operator.}
+
+
+\ccFunction{friend PS_Stream_3& operator << (PS_Stream_3& ps,
+CGAL::FILLING& filling);}{Allows to modify the filling type of the
+\ccc{PS\_Stream\_3} with the \ccc{<<} operator.}
+
+
+\ccFunction{template <class Traits, class HDS>
+  friend PS_Stream_3& operator <<(PS_Stream_3&
+ps,Polyhedron_3<Traits,HDS>& p);}{Allows to add a  \ccc{Polyhedron\_3} in the
+\ccc{PS\_Stream\_3} with the \ccc{<<} operator.}
+
+
+\ccFunction{ template <class Gt,class Tds>
+  friend PS_Stream_3& operator << (PS_Stream_3& ps,
+Triangulation_2<Gt,Tds> &t);}
+{Allows to add a  \ccc{Triangulation\_2<Gt,Tds>} templated with the
+data structure and the traits class in the
+\ccc{PS\_Stream\_3} with the \ccc{<<} operator.}
+
+\ccFunction{ template < class Gt, class Tds >
+  friend PS_Stream_3& operator << (PS_Stream_3& ps,
+Delaunay_triangulation_2<Gt,Tds> &t);}{
+Allows to add a \ccc{Delaunay\_triangulation\_2} templated with the data structure and the traits class in the
+\ccc{PS\_Stream\_3} with the \ccc{<<} operator.}
+
+\ccFunction{template < class Gt, class Tds>
+  friend PS_Stream_3& operator<<(PS_Stream_3& ps,
+Constrained_triangulation_2<Gt,Tds> &t);}
+{Allows to add a \ccc{Constrained\_triangulation\_2} templated with the
+data structure and the traits class in the
+\ccc{PS\_Stream\_3} with the \ccc{<<} operator.}
+
+\ccFunction{template < class Gt, class Tds >
+  friend PS_Stream_3& operator << (PS_Stream_3& ps, Regular_triangulation_2<Gt,Tds> &t); }{Allows to add a \ccc{Regular\_triangulation\_2} templated with the
+data structure and the traits class in the
+\ccc{PS\_Stream\_3} with the \ccc{<<} operator.}
+
+\ccFunction{template <class Gt,class Tds>
+  friend PS_Stream_3& operator << (PS_Stream_3& ps,
+Triangulation_2<Gt,Tds> &t);}{Allows to add a \ccc{Constrained\_Delaunay\_triangulation\_2} templated with the
+data structure and the traits class in the
+\ccc{PS\_Stream\_3} with the \ccc{<<} operator.}
+
+
+\end{ccClass}
+
+
+

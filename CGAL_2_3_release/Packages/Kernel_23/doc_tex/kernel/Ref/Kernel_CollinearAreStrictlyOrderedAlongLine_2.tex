@@ -1,0 +1,19 @@
+\begin{ccRefFunctionObjectConcept}{Kernel::CollinearAreStrictlyOrderedAlongLine_2}
+A model for this must provide:
+
+\ccCreationVariable{fo}
+
+\ccMemberFunction{bool operator()(const Kernel::Point_2&p, 
+                                  const Kernel::Point_2&q, 
+                                  const Kernel::Point_2&r);}
+         {returns \ccStyle{true}, iff \ccStyle{q} lies strictly between 
+         \ccStyle{p} and \ccStyle{r}. \ccPrecond \ccStyle{p, q} and 
+         \ccStyle{r} are collinear.}
+
+\ccRefines
+AdaptableFunctor
+
+\ccSeeAlso
+\ccRefIdfierPage{CGAL::collinear_are_strictly_ordered_along_line}  \\
+
+\end{ccRefFunctionObjectConcept}

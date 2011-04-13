@@ -1,0 +1,298 @@
+% +------------------------------------------------------------------------+
+% | Reference manual chapter: intro.tex (Arrangement)
+% +------------------------------------------------------------------------+
+% | 
+% | Package: arr (Arrangement_2)
+% | 
+% +------------------------------------------------------------------------+
+
+%+---------------------------------------------------------------------------80
+%| update log
+%|
+%| 21 Jun 2000 - Shai Hirsch
+%|    Separated from arr.tex (See previous changes in change log there).
+%|     
+%+---------------------------------------------------------------------------80
+
+
+% +========================================================================+
+%   Introduction
+% +========================================================================+
+%\clearpage
+%\section{Reference Pages for 2D Arrangements}
+
+\chapter{2D Arrangements}
+
+\subsection*{Introduction}
+\ccRefLabel{arr_ref_intro}
+
+The arrangement class holds a planar map and a hierarchy tree.
+Vertices, halfedges and faces of the arrangement derive from
+those of the planar map (with the additional functionality of
+the arrangement),
+in the same way that the vertices, halfedges and faces of the topological map
+class derive from those of the Dcel class
+%in a way similar to what is done between the
+%topological map and the Dcel class
+(see Chapter\ref{I1_ChapterTopologicalMap}).
+
+
+The hierarchy tree is implemented using the \ccc{In_place_list}
+class (see the chapter on STL Extensions in the Support Library Manual). Every level of a curve
+hierarchy is a list of tree nodes.The \ccc{Curve_node} and 
+\ccc{Edge_node} of 
+the hierarchy derive from \ccc{Subcurve_node}. This enables the
+polymorphic structure of the tree. The \ccc{Subcurve_node} is
+derived from the \ccc{Base_node} which is a template parameter
+of the arrangement. This enables the addition of attributes to the nodes
+of the hierarchy tree by adding them inside the \ccc{Base_node}.
+%Since the arrangement holds a planar map its traits requirements
+%are a superset of the requirements from the planar map traits.
+
+
+\subsection*{Arrangement Dcel}
+The arrangement is parametrized with the interface class \ccc{Dcel}.
+The \ccc{Dcel} is a container class that defines the underlying
+combinatorial data structure used by the planar map. We define the
+concept \ccc{ArrangementDcel_2} \lcTex{(\ccRefPage{ArrangementDcel_2})}
+where the requirements for a \ccc{Dcel} class are defined.
+
+As part of the \ccc{Dcel} we define requirements for its vertex, halfedge and 
+face constituents. If we consider these constituents as (informally) 
+subconcepts of the \ccc{Dcel} concept then we have the following models for
+its constituents. 
+%-----------------------------------------------------
+
+The \ccStyle{Arr_2_vertex_base<Point>} is a model for the 
+Dcel vertex subconcept,
+the \mbox{\ccc{Arr_2_halfedge_base<Base_node>}} is a
+model for the Dcel halfedge subconcept
+and the \mbox{\ccc{Arr_2_face_base}} is a
+model for the Dcel face subconcept. 
+
+\ccInclude{CGAL/Arr_2_bases.h}
+
+
+The \ccStyle{Arr_2_default_dcel<Traits>} is a model of the Dcel concept
+described above. Its template parameter is the traits class.
+It is a wrapper for \ccStyle{Pm_dcel} instantiated 
+with \mbox{\ccc{Arr_2_vertex_base<Traits::Point>}},\\
+\mbox{\ccc{Arr_2_halfedge_base<Arr_base_node<Traits::X_curve> >}} and 
+\mbox{\ccStyle{Arr_2_face_base}}.
+
+\ccInclude{CGAL/Arr_2_default_dcel.h}
+
+\subsection*{Models for an Arrangement Traits Class} 
+%-----------------------------------------------
+We supply a traits class for segments that use the types
+and predicates of the CGAL kernel, a traits class for
+circle arcs as well as a traits class for polyline curves.
+Since the requirements of the arrangement traits
+are a superset of the requirements of the planar map traits,
+any traits class that works with arrangements can work with
+planar maps as well.
+
+The different traits classes are described at the end of this chapter.
+
+\begin{ccAdvanced}
+\subsection*{I/O functions}
+The \ccc{Arrangement} package supports I/O functions, which include reading 
+an arrangement representation from 
+the standard input or writing it to the standard output, 
+and also sending an arrangement to a graphic stream.
+
+As already mentioned at chapter \ccRefPage{Pm_Ref_intro}, the motivation for using 
+I/O functions is not only to be able to draw the arrangement 
+to a window for instance, but also to be capable to save an arrangement 
+in a text file by writing it and reloading it from a text file by reading it. 
+ 
+Reading an arrangement from the standard input or printing it to the
+standard output may be done simply with the \ccc{Extractor} (\ccc{ >>
+}) and \ccc{Insertor} (\ccc{ << }) operators defined for
+\ccc{Arrangement_2}, respectively. 
+
+\ccInclude{CGAL/IO/Arr_iostream.h}
+
+The ability of sending the \ccc{Arrangement} 
+into a graphic stream as \ccStyle{leda_window}, Postscript file or
+Geomview is also provided, users simply have to apply the Insertor
+operator on the graphic stream and their arrangement instance.
+
+Users of I/O functions for the arrangement package are required to define I/O 
+operators for the curves defined in their \ccc{Traits} classes. 
+When using \ccc{Traits} classes in which this operators are already defined 
+(as \ccc{Segment Traits} or \ccc{Circle Traits} ) the operator definition is not obligated, 
+however using \ccc{Traits} classes as the \ccc{Polyline Traits} will force the user to define 
+I/O operators on his polyline curve.
+
+
+The \ccc{Arrangement} class data consists of the induced planar map and the 
+obtained hierarchy tree. Hence, the data sent to the output stream or 
+read from an input stream should contain both parts. 
+
+The format of the planar map part is as specified in the Planar Map 
+refernce pages (\ccRefPage{Pm_Ref_intro}). 
+The format of the hierarchy tree is specified below.
+
+The format of the output file is defined in a way the reading function 
+will construct the arrangement efficiently. 
+The induced planar map is constructed efficiently as specified in the Planar Map refernce pages (\ccRefPage{Pm_Ref_intro}), and the hierarchy tree is also 
+constructed efficiently by directly accessing its parts and updating them. 
+When constructing an arrangement from an input stream, no use of its 
+insertion functions is performed.
+ 
+Consequently, the reading function constructs the arrangement very 
+efficiently, and hence users who would like to save their arrangement and reload it have to construct their 
+arrangement by the insertion functions only once.
+After saving the arrangement to a text file it can be reloaded very efficiently when needed.
+
+When users would like to read their arrangement from the standard input or print it into 
+the standard output, they may simply use the \ccc{Extractor} (\ccc{ >> }) and \ccc{Insertor} (\ccc{ << }) 
+operators defined for \ccc{Arrangement} respectively. 
+If users add attributes to their arrangement components, reading (resp. writing) arrangement would 
+be done by inheriting the class \ccStyle{Arr_file_scanner}  (resp. \ccStyle{Arr_file_writer} ) 
+and overriding all the relevant function for scanning (resp. writing) the arrangement components. 
+After the definition of the inherited class users have to call the function 
+\ccStyle{read} of \ccc{Arrangement} (resp. the global function \ccStyle{write_arr} ) with 
+the inherited class as a parameter.
+The ability of sending the \ccc{Arrangement} into a graphic stream as \ccStyle{leda_window}, 
+Postscript file or Geomview is also provided, 
+users simply have to use the Insertor operator operated on the graphic stream and their arrangement. 
+When users would like to add attributes to their arrangement components 
+and send their arrangement to a graphic stream, 
+they have to inherit the class \ccStyle{Pm_drawer} and then call the global function \ccStyle{draw_pm} 
+with this class and their arrangement as parameters.
+The function  \ccStyle{Pm_drawer} is used both for \ccc{Planar map} and \ccc{Arrangement}, since drawing 
+an arrangement is defined as drawing only its planar map part.
+
+\paragraph{Format}
+\ccRefLabel{Arr_IO_format}
+As mentioned above, the format of the planar map part is as specified 
+in the Planar Map refernce pages (\ccRefPage{Pm_Ref_intro}). 
+Here, we are representing the format of the hierarchy tree.
+
+Generally, the format represents the curve nodes list of the \ccc{arrangement}. 
+Each component of one curve node is compound from all the subcurves and edge nodes 
+this curve node contains. This data is associative with geometric information and some 
+topological information in order to be able to update the hierarchy tree efficiently. 
+
+The format is detailed below:
+
+\begin{enumerate}
+    \item The data begins with a line of one integer specifying the number 
+    of curve nodes the hierarchy tree has.
+    \item The list of curve nodes: 
+    each curve node has the following format:
+    \begin{enumerate}
+        \item Its associative curve.
+        \item An integer specifying the number of levels the curve node has.
+        \item The list of all subcurves levels. Each described level goes as follows:
+        \begin{enumerate}
+            \item An integer specifying the number of subcurve nodes in the current level.
+            \item List of subcurve nodes belong to the current level. 
+            Each subcurve consist of the following:
+            \begin{enumerate}
+                \item Pointers to subcurves (edge nodes, if the next level is the last) 
+                of lower level which are given as the begin and past end indices 
+                of children subcurve nodes (edge nodes).
+                \item The curve associative with the subcurve node.
+            \end{enumerate}
+        \end{enumerate}
+        \item An integer specifying the number of edge nodes.
+        \item List of edge nodes. Each described edge node goes as follows:
+        \begin{enumerate}
+            \item A pointer to an overlapping edge node.
+            This pointer is represented by two indices, the first is an index to a curve node 
+            and the second is an index to an edge node defined in that curve node.
+            \item An index to the associated halfedge.
+            \item The associated curve.
+        \end{enumerate}    
+    \end{enumerate}
+\end{enumerate}
+
+Other rules concerning the format are detailed in the Planar Map 
+refernce pages (\ccRefPage{Pm_Ref_intro}).
+
+
+\ccExample {of usage in I/O functions}
+\label{ARR_sec:example11}
+
+The input of the program is a text file presenting the \ccc{Arrangement}:
+\ccIncludeExampleCode{Arrangement_2/example11.cin}
+
+The example above presents an arrangement containing two segments intersect in their interior.
+The segments coordinates are {\em (0,0)}, {\em (1,1)}  and {\em (0,1)}, {\em (1,0)}. 
+The \ccc{Arrangement} instance that was used to produce this example was templated 
+with the \ccStyle{Arr_segment_exact_traits} class, which was templated with the representation 
+class \ccStyle{Cartesian<Quotient<int> >}.
+
+The first part of the input represents the planar map our arrangement contains, and hence its format 
+is identically the same as \ccRefPage{Pm_IO_format}. It can be seen that the planar map described here 
+represents all the vertcies and halfedges obtained by the disjoint subcurves of the arrangement.
+The next part of the input file presents the hierarchy tree of our arrangement. 
+This presentation begins with the number 2, indicating there are two 
+curve nodes in our arrangement. The list of curve nodes follows.
+The first curve node begins withh its associated curve {\em (0,0)}, {\em (1,1)}, it has 0 levels since 
+it does not contain any subcurve nodes (only curve nodes and edge nodes). 
+The number of edge nodes the curve {\em (0,0)}, {\em (1,1)} induces is two, 
+and the curves these two edge nodes are associated with are 
+{\em (0,0)}, {\em (1/2,1/2)} and \em{(1/2,1/2)}, \em{(1,1)} correspondingly. 
+The indices of each edge node to an overlapping edge node are pointing to the edge node 
+itself since there are no overlapping in the input file. 
+Finally, the indices of the halfedge indicates the halfedge our edge node is associated with. 
+For example the first edge node induced by the curve {\em (0,0)}, {\em (1,1)} is associated 
+with the first halfedge presented in the halfedges list. The reader may verify that this halfedge 
+holds the same curve the edge node holds.
+
+The current format may not be comfortable for a user to read, because the usage of indices. 
+There is a possibility to define a verbose format which contains instead of 
+indices, the components themselves, and hence the user has the option to have a format 
+which is easy for human to read.
+This format cannot be scanned by the reading functions of \ccc {Arrangement}.
+
+\ccIncludeExampleCode{Arrangement_2/example11.C}
+
+The output is the \ccc{Arrangement} written in both formats, non verbose and verbose. 
+\ccIncludeExampleCode{Arrangement_2/example11.cout}
+
+For more examples see chapter \ccRefPage{Pm_Ref_intro}.
+
+More details are given in sections
+\ccc{Arr_file_scanner<Arrangement>}\lcTex{
+   (\ccRefPage{CGAL::Arr_file_scanner<Arrangement>})}, 
+\ccc{Arr_file_writer<Arrangement>}\lcTex{ 
+   (\ccRefPage{CGAL::Arr_file_writer<Arrangement>})} 
+\end{ccAdvanced}
+
+
+\begin{ccTexOnly}
+
+\subsection*{Concepts}
+\ccRefConceptPage{ArrangementBaseNode_2}\\
+\ccRefConceptPage{ArrangementDcel_2}\\
+\ccRefConceptPage{ArrangementDcelHalfedge_2}\\
+\ccRefConceptPage{ArrangementTraits_2}\\
+
+\subsection*{Classes}
+\ccRefIdfierPage{CGAL::Arrangement_2<Dcel,Traits,Base_node>}\\
+\ccRefIdfierPage{CGAL::Arr_base_node<Curve>}\\
+\ccRefIdfierPage{CGAL::Arrangement_2<Dcel,Traits,Base_node>::Subcurve_node}\\
+\ccRefIdfierPage{CGAL::Arrangement_2<Dcel,Traits,Base_node>::Curve_node}\\
+\ccRefIdfierPage{CGAL::Arrangement_2<Dcel,Traits,Base_node>::Edge_node}\\
+\ccRefIdfierPage{CGAL::Arrangement_2<Dcel,Traits,Base_node>::Halfedge}\\
+
+\ccRefIdfierPage{CGAL::Arr_segment_exact_traits<R>}\\
+\ccRefIdfierPage{CGAL::Arr_leda_segment_exact_traits}\\
+\ccRefIdfierPage{CGAL::Arr_circles_real_traits<NT>}\\
+\ccRefIdfierPage{CGAL::Arr_segment_circle_traits<NT>}\\
+\ccRefIdfierPage{CGAL::Segment_circle_2<NT>} \\
+\ccRefIdfierPage{CGAL::Arr_polyline_traits<R, Container>}\\
+\ccRefIdfierPage{CGAL::Arr_leda_polyline_traits<Container>}\\
+
+\ccRefIdfierPage{CGAL::Arr_file_scanner<Arrangement>}\\
+\ccRefIdfierPage{CGAL::Arr_file_writer<Arrangement>}\\
+
+\subsection*{Functions}
+\ccRefIdfierPage{CGAL::write_arr}\\
+
+\end{ccTexOnly}    

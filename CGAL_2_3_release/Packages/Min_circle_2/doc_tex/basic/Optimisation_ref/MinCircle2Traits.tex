@@ -1,0 +1,211 @@
+% -*- latex -*-
+% =============================================================================
+% The CGAL Reference Manual
+% Chapter: Geometric Optimisation
+% Concept: MinCircle2Traits
+% -----------------------------------------------------------------------------
+% file   : doc_tex/basic/Optimisation/Optimisation_ref/MinCircle2Traits.tex
+% package: Min_circle_2
+% author : Sven Schönherr <sven@inf.ethz.ch>
+% -----------------------------------------------------------------------------
+% $Revision$
+% $Date$
+% =============================================================================
+
+\begin{ccRefConcept}{MinCircle2Traits}
+
+% -----------------------------------------------------------------------------
+\ccDefinition
+
+This concept defines the requirements for traits classes of
+\ccGlobalScope\ccc{Min_circle_2<Traits>}.
+
+% -----------------------------------------------------------------------------
+\ccTypes
+
+\ccNestedType{Point}{
+        The point type must provide default and copy constructor,
+        assignment and equality test.}
+
+\ccNestedType{Circle}{
+        The circle type must fulfill the requirements listed below
+        in the next section.}
+
+% -----------------------------------------------------------------------------
+\ccHeading{Variables}
+
+\ccVariable{ Circle  circle;}{
+        The current circle. This variable is maintained by the algorithm,
+        the user should neither access nor modify it directly.}
+
+% -----------------------------------------------------------------------------
+\ccCreation
+\ccCreationVariable{traits}
+
+Only default and copy constructor are required.
+
+\ccConstructor{ MinCircle2Traits( );}{}
+\ccConstructor{ MinCircle2Traits( const MinCircle2Traits&);}{}
+
+% -----------------------------------------------------------------------------
+\ccOperations
+
+The following predicate is only needed, if the member function
+\ccc{is_valid} of \ccc{Min_circle_2} is used.
+
+\ccMemberFunction{ CGAL::Orientation
+                   orientation( const Point& p,
+                                const Point& q,
+                                const Point& r) const;}{
+        returns constants \ccGlobalScope\ccc{LEFTTURN},
+        \ccGlobalScope\ccc{COLLINEAR}, or
+        \ccGlobalScope\ccc{RIGHTTURN} iff \ccc{r} lies properly to the
+        left of, on, or properly to the right of the oriented line
+        through \ccc{p} and \ccc{q}, resp.}
+
+% -----------------------------------------------------------------------------
+\ccHasModels
+
+\ccRefIdfierPage{CGAL::Min_circle_2_traits_2<K>}
+
+% -----------------------------------------------------------------------------
+\ccSeeAlso
+
+\ccIndexTraitsClassRequirements[C]{Min_circle_2}
+\ccRefIdfierPage{CGAL::Min_circle_2<Traits>}
+
+% -----------------------------------------------------------------------------
+
+\end{ccRefConcept}
+
+% =============================================================================
+
+\ccAutoIndexingOff
+\ccHtmlNoClassToc
+\ccHtmlNoClassLinks
+\ccHtmlNoClassIndex
+\begin{ccClass}{Circle}
+\subsection*{Circle Type (\ccClassTemplateName)}
+
+\ccSaveThreeColumns
+\ccSetThreeColumns{Distance}{}{returns
+  \ccGlobalScope\ccc{ON_BOUNDED_SIDE}, \ccGlobalScope\ccc{ON_BOUNDARY},}
+\ccPropagateThreeToTwoColumns
+
+% -----------------------------------------------------------------------------
+\ccDefinition
+ 
+An object of the class \ccClassName\ is a circle in two-dimensional
+Euclidean plane $\E_2$. Its boundary splits the plane into a bounded
+and an unbounded side. By definition, an empty \ccClassName\ has no
+boundary and no bounded side, i.e.\ its unbounded side equals the
+whole plane $\E_2$. A \ccClassName\ containing exactly one point~$p$
+has no bounded side, its boundary is $\{p\}$, and its unbounded side
+equals $\E_2\mbox{\ccTexHtml{$\setminus$}{-}}\{p\}$.
+
+% -----------------------------------------------------------------------------
+\ccTypes
+ 
+\ccNestedType{Point}{Point type.}
+
+The following type is only needed, if the member function \ccc{is_valid}
+of \ccc{Min_circle_2} is used.
+
+\ccNestedType{Distance}{
+        Distance type. The function \ccc{squared_radius} (see below)
+        returns an object of this type.}
+ 
+% -----------------------------------------------------------------------------
+\ccCreation
+\ccCreationVariable{circle}
+ 
+\ccMemberFunction{ void  set( );}{
+        sets \ccVar\ to the empty circle.}
+
+\ccMemberFunction{ void  set( const Point& p);}{
+        sets \ccVar\ to the circle containing exactly $\{\mbox{\ccc{p}}\}$.}
+
+\ccMemberFunction{ void  set( const Point& p,
+                              const Point& q);}{
+        sets \ccVar\ to the circle with diameter equal to the segment
+        connecting \ccc{p} and \ccc{q}. The algorithm guarantees that
+        \ccc{set} is never called with two equal points.}
+
+\ccMemberFunction{ void  set( const Point& p,
+                              const Point& q,
+                              const Point& r);}{
+        sets \ccVar\ to the circle through \ccc{p},\ccc{q},\ccc{r}.
+        The algorithm guarantees that \ccc{set} is never called with
+        three collinear points.}
+
+% -----------------------------------------------------------------------------
+\ccPredicates
+
+\ccMemberFunction{ bool  has_on_unbounded_side( const Point& p) const;}{
+        returns \ccc{true}, iff \ccc{p} lies properly outside of \ccVar.}
+
+Each of the following predicates is only needed, if the corresponding
+predicate of \ccc{Min_circle_2} is used.
+
+\ccMemberFunction{ CGAL::Bounded_side
+                   bounded_side( const Point& p) const;}{
+        returns \ccGlobalScope\ccc{ON_BOUNDED_SIDE},
+        \ccGlobalScope\ccc{ON_BOUNDARY}, or
+        \ccGlobalScope\ccc{ON_UNBOUNDED_SIDE} iff \ccc{p} lies properly inside,
+        on the boundary, or properly outside of \ccVar, resp.}
+
+\ccMemberFunction{ bool  has_on_bounded_side( const Point& p) const;}{
+        returns \ccc{true}, iff \ccc{p} lies properly inside \ccVar.}
+
+\ccMemberFunction{ bool  has_on_boundary( const Point& p) const;}{
+        returns \ccc{true}, iff \ccc{p} lies on the boundary
+        of \ccVar.}
+
+\ccMemberFunction{ bool  is_empty( ) const;}{
+        returns \ccc{true}, iff \ccVar\ is empty (this implies
+        degeneracy).}
+
+\ccMemberFunction{ bool  is_degenerate( ) const;}{
+        returns \ccc{true}, iff \ccVar\ is degenerate, i.e.\ if
+        \ccVar\ is empty or equal to a single point.}
+
+% -----------------------------------------------------------------------------
+\ccHeading{Additional Operations for Checking}
+
+The following operations are only needed, if the member function
+\ccc{is_valid} of \ccc{Min_circle_2} is used.
+
+\ccMemberFunction{ bool  operator == ( const Circle& circle2) const;}{
+        returns \ccc{true}, iff \ccVar\ and \ccc{circle2} are equal.}
+
+\ccMemberFunction{ Point  center( ) const;}{
+        returns the center of \ccVar.}
+ 
+\ccMemberFunction{ Distance  squared_radius( ) const;}{
+        returns the squared radius of \ccVar.}
+ 
+% -----------------------------------------------------------------------------
+\ccHeading{I/O}
+
+The following I/O operators are only needed, if the corresponding I/O
+operators of \ccc{Min_circle_2} are used.
+
+\ccHtmlNoIndex
+\ccFunction{ std::ostream&
+             operator << ( std::ostream& os, const Circle& circle);}{
+        writes \ccVar\ to output stream \ccc{os}.}
+
+\ccHtmlNoIndex
+\ccFunction{ CGAL::Window_stream&
+             operator << ( CGAL::Window_stream& ws,
+                           const Circle& circle);}{
+        writes \ccVar\ to window stream \ccc{ws}.}
+
+% -----------------------------------------------------------------------------
+
+\ccRestoreThreeColumns
+
+\end{ccClass}
+\ccAutoIndexingOn
+
+% ===== EOF ===================================================================

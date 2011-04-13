@@ -1,0 +1,75 @@
+% +------------------------------------------------------------------------+
+% | Reference manual page: Pm_bounding_box_traits.tex (Planar_map)
+% +------------------------------------------------------------------------+
+% | 
+% | Package: pm (Planar_map_2)
+% | 
+% +------------------------------------------------------------------------+
+
+\ccRefPageBegin
+
+%%RefPage: end of header, begin of main body
+% +------------------------------------------------------------------------+
+
+%Pm_bounding_box_traits
+\begin{ccRefConcept}{PlanarMapBoundingBoxTraits_2}
+
+\ccCreationVariable{pm_traits}
+
+\ccDefinition
+The \ccRefName\ concept is a refinement of the \ccc{PlanarMapTraits} concept.
+The requirements of the latter are the requirements of the former with the following additional types and functions.
+
+\ccTypes
+
+    The geometric types defined below must have a copy constructor, 
+    assignment operator.
+
+\ccNestedType{X_bounded_curve}{Representation of a bounded curve.}
+\ccNestedType{X_target_unbounded_curve}{Representation of a target unbounded curve.}
+\ccNestedType{X_source_unbounded_curve}{Representation of a source unbounded curve.}
+\ccNestedType{X_unbounded_curve}{Representation of a unbounded curve.}
+
+\ccNestedType{Bounding_box}{Representation of a bounding box.}
+
+\ccCreation
+    
+\ccConstructor{Traits();} {A default constructor.}
+\ccConstructor{Traits(RT numer, RT denum);} {A constructor for a given boundary approximation.}
+\ccConstructor{Traits(Traits tr);} {A copy constructor.}
+
+\ccOperations
+\ccMethod{const Bounding_box& get_bounding_box();}{returns the inner bounding box.}
+\ccMethod{const Bounding_box get_bounding_box(const Point& p);}{returns a bounding box that encloses the point.}
+\ccMethod{const Bounding_box get_bounding_box(const X_curve& cv);}{returns a bounding box that encloses the curve.}
+\ccMethod{const Bounding_box get_bounding_box(const Point& p,const Bounding_box& b);}{returns a bounding box that encloses both the point and the box.}
+\ccMethod{const Bounding_box get_bounding_box(const X_Curve& cv,const Bounding_box& b);}{returns a bounding box that encloses both the curve and the box.}
+\ccMethod{const Bounding_box get_bounding_box(const X_Curve& cv,const Ray& ray);}{returns a bounding box that encloses all the intersection of the curve with the ray, if any.}
+\ccMethod{const Bounding_box get_bounding_box(const X_Curve& cv,const Ray& ray,const Bounding_box& b);}{returns a bounding box that encloses all the intersection of the curve with the ray and the box.}
+
+\ccMethod{const Bounding_box increase_bounding_box(const Point& p);}{Sets the inner bounding box to encloses both the point.}
+\ccMethod{const Bounding_box increase_bounding_box(const X_curve& cv);}{Sets the inner bounding box to encloses both the curve.}
+\ccMethod{const Bounding_box increase_bounding_box(const Point& p,const Bounding_box& b);}{Sets the inner bounding box to encloses both the box and the point.}
+\ccMethod{const Bounding_box increase_bounding_box(const X_curve& cv,const Bounding_box& b);}{Sets the inner bounding box to encloses both the box and the curve.}
+\ccMethod{const Bounding_box increase_bounding_box(const X_curve& cv,const Ray& r,const Bounding_box& b);}{Sets the inner bounding box to encloses both the intersection of the curve with the ray and the box.}
+
+\ccMethod{void set_bounding_box(const Bounding_box& b);}{sets the inner bounding box.}
+
+\ccMethod{bool curve_is_source_unbounded(const X_curve& cv);}{returns whether the curve has unbounded source.}
+\ccMethod{bool curve_is_target_unbounded(const X_curve& cv);}{returns whether the curve has unbounded target.}
+\ccMethod{bool is_point_bounded(const Point& p);}{returns true if the input point is bounded inside the inner box.}
+\ccMethod{bool is_point_bounded(const Point& p, const Bounding_box& b);}{returns true if the input point is bounded inside the interior of the input bounding box.}
+\ccMethod{bool is_curve_bounded(const X_curve& p, const Bounding_box& b);}{returns true if the input curve is bounded inside the interior of the input bounding box.}
+\ccMethod{bool is_curve_bounded(const X_curve& p);}{returns true if the input curve is bounded inside the inner box.}
+\ccMethod{bool is_bounding_box_bounded(const Bounding_box& s,const Bounding_box& l);}{returns whether the first bounding box is inside the second bounding box.}
+
+\ccHasModels
+  \ccc{Pm_straight_exact_traits<R>}
+
+\end{ccRefConcept} % Pm_traits
+
+% +------------------------------------------------------------------------+
+%%RefPage: end of main body, begin of footer
+\ccRefPageEnd
+% EOF
+% +------------------------------------------------------------------------+

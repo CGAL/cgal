@@ -1,0 +1,57 @@
+% +------------------------------------------------------------------------+
+% | Reference manual page: Triangulation_hierarchy_vertex_base_3.tex
+% +------------------------------------------------------------------------+
+% |
+% | Package: Triangulation3
+% | 
+\RCSdef{\RCSTriangulationhierarchyvertexbaseRev}{$Revision$}
+\RCSdefDate{\RCSTriangulationhierarchyvertexbaseDate}{$Date$}
+% |
+%%RefPage: end of header, begin of main body
+% +------------------------------------------------------------------------+
+
+
+\begin{ccRefClass}{Triangulation_hierarchy_vertex_base_3<TriangulationVertexBase_3>}
+%% add template arg's if necessary
+
+%% \ccHtmlCrossLink{}     %% add further rules for cross referencing links
+%% \ccHtmlIndexC[class]{} %% add further index entries
+
+\ccDefinition
+  
+This class is designed to be used as the vertex base class for the
+hierarchic triangulation \ccc{Triangulation_hierarchy_3<Tr>}.
+
+It is templated
+by a parameter that must be instantiated by a model of  the concept
+\ccc{TriangulationVertexBase_3}. The class
+\ccc{Triangulation_hierarchy_vertex_base_3<TriangulationVertexBase_3>}
+inherits from \ccc{TriangulationVertexBase_3}.  
+This design allows to use either the default vertex base class or a
+user customized vertex base with additionnal functionalities.
+
+\ccInclude{CGAL/Triangulation_hierarchy_3.h}
+
+%\ccIsModel
+%\ccc{Triangulation_hierarchy_vertex_base_3_concept}
+
+\ccInheritsFrom
+\ccc{TriangulationVertexBase_3}
+
+\ccTypes
+\ccThree{typedef TriangulationVertexBase_3Traits_3::Pointxx}{Pointxx}{}
+\ccThreeToTwo
+\ccTypedef{TriangulationVertexBase_3::Point Point;}{The point type.}
+
+\ccSeeAlso
+\ccc{CGAL::Triangulation_hierarchy_3<Tr>}\\
+\ccc{TriangulationVertexBase_3}\\
+\ccc{CGAL::Triangulation_vertex_base_3<TriangulationTraits_3>}\\
+\ccc{CGAL::Triangulation_vertex_base_pointer_3<TriangulationTraits_3>}
+
+\end{ccRefClass}
+
+% +------------------------------------------------------------------------+
+%%RefPage: end of main body, begin of footer
+% EOF
+% +------------------------------------------------------------------------+

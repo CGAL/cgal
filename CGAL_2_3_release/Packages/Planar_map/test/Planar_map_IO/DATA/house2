@@ -1,0 +1,23 @@
+# Planar map Test Data File
+# Segment traits
+# house2
+
+# No. of test points:
+4
+# Test points (coordinates followed by expected type):
+#             (1 VERTEX, 2 EDGE, 3 FACE, 4 UNBOUNDED_FACE)
+10 10 1
+0 5 2
+5 11 3
+11 11 6
+
+# No. of expected vertices :
+5
+# No. of expected edges:
+6
+# No. of expected faces    :
+3
+
+
+
+

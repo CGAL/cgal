@@ -1,0 +1,195 @@
+\ccSetThreeColumns{Window_stream}{}{\hspace*{8.5cm}}
+\ccSetTwoColumns{}{\hspace*{8.5cm}}
+
+%\cleardoublepage
+%\chapter{Window Stream} \label{window}
+
+\medskip
+\begin{ccClass} {Window_stream}
+\ccSection{Window Stream}
+
+The functionality described in this section is provided through \leda\ or
+the \cgal\ port of the \leda window lib. The \cgal\ port has an interface
+close to the \leda window, but operations using \leda geometry classes
+were removed and the names of the used types and enums were changed from
+\ccStyle{leda_name} to \ccStyle{CGAL::name}, \ccStyle{leda_string}
+was replaced by \ccStyle{std::string} and \ccStyle{leda_list} was replaced
+by \ccStyle{std::list}.
+If the window port is used, the macro \ccStyle{CGAL_USE_CGAL_WINDOW} is 
+defined. The header file \ccStyle{<CGAL/IO/cgal_window_redefine.h>} offers
+redefinitions of the \leda\ names.
+The \cgal\ port of the \leda window lib can be downloaded for various platforms
+from the \cgal\ web page. Note that Algorithmic Solutions Software GmbH 
+has offered us the possibility to provide the ported version of the \leda\ 
+window.
+
+\ccDefinition 
+
+An object of type \ccClassName\ is a two-dimensional window for
+graphical IO. The input and output operations performs a mapping from
+object coordinates to window coordinates.
+Actually, \ccClassName\ is identical to the \leda\ class \ccStyle{leda_window},
+if \leda\ is used and to the ported version of the \leda\ window class, if
+\leda\ is not used.
+Therefore, the rich functionality of \ccStyle{leda_window} is available on
+\ccClassName\ as well, for example panels.
+In addition, the class \ccClassName\ provides input and output 
+operators for the classes which are defined in the \cgal\ kernel.
+\ccClassName s should be initialized with a coordinate frame (by calling member function
+\ccc{init}) and must be displayed (by calling member function \ccc{display}) before
+drawing.
+ 
+\begin{ccTexOnly}
+For further information on \ccStyle{leda_window}, we refer to \cite{mnsu-lum}.
+\end{ccTexOnly}
+\begin{ccHtmlOnly}
+For further information on <i>leda_window</i>, we refer to the 
+<A HREF="http://www.mpi-sb.mpg.de/LEDA/MANUAL/MANUAL.html">LEDA manual</A>.
+\end{ccHtmlOnly}
+
+\ccInclude{CGAL/IO/Window_stream.h}
+
+\ccCreation
+\ccCreationVariable{W}
+\ccConstructor{Window_stream();}
+{creates a squared window with maximal possible edge length
+(minimum of width and height of the display).}
+
+\ccConstructor{Window_stream(const char* label);}
+{creates a maximal squared window with frame label $label$.}
+
+\ccConstructor{Window_stream(float width, float height);}
+{creates a window \ccVar\ of physical size \ccStyle{width} $\times$ \ccStyle{height} pixels.}
+
+
+\ccConstructor{Window_stream(float width, float height, const char* label);}
+{creates a window \ccVar\ of physical size \ccStyle{width} $\times$ \ccStyle{height} pixels 
+and frame label \ccc{label}.}
+
+In addition, \ccClassName s can be created by the functions
+
+\ccFunction{Window_stream* create_demo_window();}
+{creates a window of 512 $\times$ 512 pixels, sets the window label to
+CGAL, and  initializes the object space that is mapped to the physical window to
+[-1.0, 1.0] $\times$ [-1.0, 1.0]. 
+Returns a pointer to the window created.}
+
+\ccFunction{Window_stream* create_and_display_demo_window();}
+{creates a window of 512 $\times$ 512 pixels, sets the window label to
+CGAL, initializes the object space that is mapped to the physical window to 
+[-1.0, 1.0] $\times$ [-1.0, 1.0] and 
+displays it at default position on the display. Returns a pointer to the window created.}
+
+\ccFunction{Window_stream* create_demo_window( float width, float height, const char* str, double x_extension);}
+{creates a window of \ccStyle{width} $\times$ \ccStyle{height} pixels, sets the window label to
+\ccc{str}, and  initializes the $x$-range in object space that is mapped to the physical window by
+[-\ccc{x_extension}, \ccc{x_extension}]. The $y$-range is initialized such that the origin is at
+the center of the window. 
+Returns a pointer to the window created.}
+
+\ccFunction{Window_stream* create_and_display_demo_window( float width, float height, const char* str, double x_extension);}
+{creates a window of \ccStyle{width} $\times$ \ccStyle{height} pixels, sets the window label to
+\ccc{str}, and initializes the $x$-range in object space that is mapped to the physical window by
+[-\ccc{x_extension}, \ccc{x_extension}]. The $y$-range is initialized such that the origin is at
+the center of the window. The window is displayed at default position on the display. 
+Returns a pointer to the window created.}
+
+\ccOperations
+A window is initialized by a part of the object space by
+
+\ccMethod{void init(double x0, double x1, double y0); }
+%{sets $xmin$ to $x_0$, $xmax$ to $x_1$, and $ymin$ to $y_0$, 
+%             the scaling factor $scaling$ to $w / (xmax-xmin)$, and 
+%             $ymax$ to $ymin + h \cdot scaling$. Here $w$ and $h$ are the
+%             width and height of the drawing section in pixels. }
+{initializes the  part of the object space that is mapped to the physical
+window to [\ccc{x0},\ccc{x1}] $\times$ 
+[\ccc{y0},\ccc{y0} + \ccc{height}$*$(\ccc{x1}-\ccc{x0})/\ccc{width}],
+where \ccc{width} and \ccc{height} are the width and the height of the window in pixels.}
+
+To display a window, the following functions can be used. Note that \ccc{W.display()} 
+has to be called before all drawing operations on \ccc{W} and that all operations adding 
+panel items to \ccc{W} have to be called before the first call of \ccc{W.display()}.
+
+\ccMethod{void display();}
+{opens \ccc{W} and displays it at the default position, i.e. 
+with its right upper corner in the upper right corner of the screen.}
+
+\ccMethod{void display(int x, int y);}
+{opens \ccc{W} and displays it with its left upper corner at position
+(\ccc{x},\ccc{y}).}
+
+\ccMethod{void display(Window_stream& W0, int x, int y);}{}
+\ccMethod{void display(int x, int y, Window_stream& W0);}
+{opens \ccc{W} and displays it with its left upper corner at position 
+(\ccc{x},\ccc{y}) relative to the upper left corner of  window \ccc{W0}.}
+
+See the \ccAnchor{http://www.mpi-sb.mpg.de/LEDA/MANUAL/MANUAL.html}{LEDA Manual}
+\cite{mnsu-lum} for further operations on \ccc{leda_window}.
+
+\def\ccTagRmEigenClassName{\ccFalse}
+\ccHeading{Output Operators}
+
+\ccSetThreeColumns{Window_stream& }{}{\hspace*{8.5cm}}
+
+The output operator is defined for all geometric classes in the \cgal\ kernel.
+
+\ccFunction{Window_stream& operator<<(Window_stream &W, const Class &c);}
+       {inserts object \ccStyle{c} into the stream \ccVar.}
+
+\ccFunction{Window_stream& operator<<(Window_stream &W, const Color &c);}
+       {changes the foreground color for the next objects that
+        will be inserted into \ccVar.}
+
+Note that CGAL points are drawn using \leda\ functions for drawing nodes of a graph.
+Before drawing points, the size for drawing nodes should be adjusted, either by calling
+member function \ccc{set_node_width(int)} or by 
+
+\ccFunction{void cgalize(Window_stream& w);}
+{sets a few default values for drawing in window \ccc{w}. In particular, node width is
+set to 3 and line width to 2.}
+
+
+\ccHeading{Input Operators}
+
+The input operator is defined for all geometric classes in the \cgal\ kernel.
+The coordinates of the geometric objects are in object space. Data are
+entered with the left mouse button.
+
+\ccFunction{Window_stream& 
+        operator>>(Window_stream &W, Class &c);}
+       {extracts object \ccStyle{c} from the stream \ccVar.}
+
+\ccExample
+
+It is important that the window stream header file gets included
+{\em after} the inclusion of the header files of geometric classes
+that get inserted to or extracted from the window stream.
+
+\begin{cprog}
+
+#include <CGAL/basic.h>
+#include <CGAL/Cartesian.h>
+#include <CGAL/Segment_2.h>
+#include <CGAL/IO/Window_stream.h>
+
+typedef CGAL::Point_2< CGAL::Cartesian<double> >     Point;
+typedef CGAL::Segment_2< CGAL::Cartesian<double> >   Segment;
+
+int main()
+{
+    Point p(0,1), q(2,2);
+    Segment s(p,q);
+
+    CGAL::Window_stream W(100,100);
+    W.init(0,10,10);
+    CGAL::cgalize( W);
+    W.display();
+
+    W << CGAL::RED << s << CGAL::BLACK << p << q ;
+    W >> s >> p;
+    return 0;
+}
+\end{cprog} 
+
+\end{ccClass} 

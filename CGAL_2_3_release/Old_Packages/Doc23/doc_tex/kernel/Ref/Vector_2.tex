@@ -1,0 +1,141 @@
+\begin{ccRefClass} {Vector_2<R>}
+
+\ccDefinition
+
+An object of the class \ccRefName\ is a vector in the two-dimensional 
+vector space $\R^2$. Geometrically spoken, a vector is the difference
+of two points $p_2$, $p_1$ and denotes the direction and the distance
+from   $p_1$ to $p_2$. 
+
+\cgal\ defines a symbolic constant \ccStyle{NULL_VECTOR}. We 
+will explicitly state where you can pass this constant as an argument
+instead of a vector initialized with zeros.
+
+
+\ccCreation
+\ccCreationVariable{v}
+
+
+\ccHidden\ccConstructor{Vector_2();}
+             {introduces an uninitialized variable \ccVar.}
+
+\ccHidden \ccConstructor{Vector_2(const Vector_2<R> &w);}
+ 	    {copy constructor.}
+
+\ccConstructor{Vector_2(const Point_2<R> &a, const Point_2<R> &b);}
+ 	    {introduces the vector $b-a$.}
+
+\ccConstructor{Vector_2(const Null_vector &NULL_VECTOR);}
+ 	    {introduces a null vector \ccVar.}
+
+\ccConstructor{Vector_2(const R::RT &hx, const R::RT &hy, const R::RT &hw = R::RT(1));}
+            {introduces a vector \ccVar\ initialized to $(hx/hw,hy/hw)$.
+             If the third argument is not explicitly given, it defaults
+             to \ccStyle{R::RT(1)}.
+             \ccPrecond \ccTexHtml{$hw\neq 0$}{hw not equal to 0} }
+
+
+\ccOperations
+
+\ccHidden \ccMethod{Vector_2<R> & operator=(const Vector_2<R> &w);}
+        {Assignment.}
+
+\ccMethod{bool operator==(const Vector_2<R> &w) const;}
+       {Test for equality: two vectors are equal, iff their $x$ and $y$ 
+        coordinates are equal. You can compare a vector with the
+        \ccStyle{NULL_VECTOR}.}
+
+\ccMethod{bool operator!=(const Vector_2<R> &w) const;}
+       {Test for inequality. You can compare a vector with the
+        \ccStyle{NULL_VECTOR}.}
+
+
+There are two sets of coordinate access functions, namely to the
+homogeneous and to the \ccHtmlNoLinksFrom{Cartesian} coordinates. They can be used
+independently from the chosen representation type \ccStyle{R}.
+
+\ccMethod{R::RT hx() const;}
+       {returns the homogeneous $x$ coordinate.}
+\ccGlue
+\ccMethod{R::RT hy() const;}
+       {returns the homogeneous $y$ coordinate.}
+\ccGlue
+\ccMethod{R::RT hw() const;}
+       {returns the homogenizing  coordinate.}
+
+Here come the \ccHtmlNoLinksFrom{Cartesian} access functions.  Note that you do not loose
+information with the homogeneous representation, because then the field
+type is a quotient.
+
+\ccMethod{R::FT x() const;}
+       {returns the \ccStyle{x}-coordinate of \ccVar, that is $hx/hw$.}
+\ccGlue
+\ccMethod{R::FT y() const;}
+       {returns the \ccStyle{y}-coordinate of \ccVar, that is $hy/hw$.}
+
+The following operations are for convenience and for making the
+class \ccRefName\ compatible with code for higher dimensional vectors.
+Again they come in a \ccHtmlNoLinksFrom{Cartesian} and homogeneous flavor.
+
+\ccMethod{R::RT homogeneous(int i) const;}
+       {returns the i'th homogeneous coordinate of \ccVar, starting with 0.
+        \ccPrecond $0\leq i \leq 2$.}
+\ccGlue
+\ccMethod{R::FT cartesian(int i) const;}
+       {returns the i'th \ccHtmlNoLinksFrom{Cartesian} coordinate of \ccVar, starting at 0.
+        \ccPrecond $0\leq i \leq 1$.}
+\ccGlue
+\ccMethod{R::FT operator[](int i) const;}
+       {returns  \ccStyle{cartesian(i)}.
+        \ccPrecond $0\leq i \leq 1$.}
+
+\ccMethod{int dimension() const;}
+       {returns the dimension (the constant 2).}
+
+\ccMethod{Direction_2<R> direction() const;}
+       {returns the direction which passes through \ccVar.}
+
+\ccMethod{Vector_2<R>  transform(const Aff_transformation_2<R> &t) const;}
+       {returns the vector obtained by applying $t$ on \ccVar.}
+
+\ccMethod{Vector_2<R>  perpendicular(const Orientation &o) const;}
+       {returns the vector perpendicular to \ccVar\ in clockwise or
+        counterclockwise orientation.}
+
+\ccHeading{Operators}
+
+The following operations can be applied on vectors:
+
+\ccMethod{Vector_2<R>        operator+(const Vector_2<R> &w) const;}
+       {Addition.}
+
+\ccMethod{Vector_2<R>        operator-(const Vector_2<R> &w) const;}
+       {Subtraction.}
+
+\ccMethod{Vector_2<R>        operator-() const;}
+       {returns the opposite vector.}
+
+\ccMethod{R::FT                  operator*(const Vector_2<R> &w) const;}
+       {returns the scalar product (= inner product) of the two vectors.}
+
+
+\ccMethod{Vector_2<R> operator*(const R::RT &s) const;}
+       {Multiplication with a scalar from the right. Although it would
+        be more natural, \cgal\ does not offer a multiplication with a 
+        scalar from the left. (This is due to problems of some compilers.)}
+
+\ccMethod{Vector_2<R> operator*(const Quotient<RT> &s) const;}
+       {Multiplication with a scalar from the right.}
+
+
+%\ccFunction{Vector_2<R> operator*(const R::RT &s, 
+%	                           const Vector_2<R> &w);}
+%       {Multiplication with a scalar from the left.}
+
+\ccMethod{Vector_2<R>        operator/(const R::RT &s) const;}
+       {Division by a scalar.}
+
+\ccSeeAlso
+\ccRefConceptPage{Kernel::Vector_2}
+
+\end{ccRefClass} 

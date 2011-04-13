@@ -1,0 +1,1 @@
+basic kernel stuff (config and relatives excluded)

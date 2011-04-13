@@ -1,0 +1,74 @@
+% +------------------------------------------------------------------------+
+% | Reference manual page: HalfedgeDS_min_items.tex
+% +------------------------------------------------------------------------+
+% | 22.03.1999   Lutz Kettner
+% | Package: HalfedgeDS
+% | 
+\RCSdef{\RCSHalfedgeDSminitemsRev}{$Revision$}
+\RCSdefDate{\RCSHalfedgeDSminitemsDate}{$Date$}
+% +------------------------------------------------------------------------+
+
+\ccRefPageBegin
+
+%%RefPage: end of header, begin of main body
+% +------------------------------------------------------------------------+
+
+
+\begin{ccRefClass}{HalfedgeDS_min_items}
+\label{pageHalfedgeDSminitemsRef}
+
+\ccDefinition
+  
+The class \ccRefName\ is a model of the \ccc{HalfedgeDSItems}
+concept.  It defines types for vertices, halfedges, and faces that
+declare the minimal required incidences for a \ccc{HalfedgeDS}, which
+are the \ccc{next()} and the \ccc{opposite()} member function for
+halfedges.
+
+\ccInclude{CGAL/HalfedgeDS_min_items.h}
+
+\ccIsModel
+
+\ccRefConceptPage{HalfedgeDSItems}
+
+\ccSeeAlso
+
+\ccRefIdfierPage{CGAL::HalfedgeDS_items_2}\\
+\ccRefIdfierPage{CGAL::Polyhedron_items_3}\\
+\ccRefConceptPage{HalfedgeDS<Traits,Items,Alloc>}\\
+\ccRefConceptPage{PolyhedronItems_3}\\
+\ccRefIdfierPage{CGAL::HalfedgeDS_vertex_min_base<Refs>}\\
+\ccRefIdfierPage{CGAL::HalfedgeDS_halfedge_min_base<Refs>}\\
+\ccRefIdfierPage{CGAL::HalfedgeDS_face_min_base<Refs>}
+
+\ccExample
+
+The following example shows the canonical implementation of the
+\ccc{CGAL::HalfedgeDS_min_items} class. It uses the base classes for the
+item types that are provided in the library.
+
+\begin{ccExampleCode}
+struct HalfedgeDS_min_items {
+    template < class Refs, class Traits>
+    struct Vertex_wrapper {
+        typedef CGAL::HalfedgeDS_vertex_min_base< Refs>   Vertex;
+    };
+    template < class Refs, class Traits>
+    struct Halfedge_wrapper {
+        typedef CGAL::HalfedgeDS_halfedge_min_base< Refs> Halfedge;
+    };
+    template < class Refs, class Traits>
+    struct Face_wrapper {
+        typedef CGAL::HalfedgeDS_face_min_base< Refs>     Face;
+    };
+};
+\end{ccExampleCode}
+
+\end{ccRefClass}
+
+% +------------------------------------------------------------------------+
+%%RefPage: end of main body, begin of footer
+\ccRefPageEnd
+% EOF
+% +------------------------------------------------------------------------+
+

@@ -1,0 +1,105 @@
+2.8 (17 July 2001)
+Added do_intersect for two circles.
+
+2.7.1 (19 June 2001)
+Added a  #endif
+
+2.7 (22 May 2001)
+Implemented segment segment intersection without making use of collinear_has_on.
+
+2.6.5 (1 May 2001)
+Small change to suppress a warning.
+
+2.6.4 (2 March 2001)
+Adapted testfiles slightly (unsetf instead of setf)
+
+2.6.3 (6 July 2000)
++ Added operator== and operator!= to Straight_2_
+
+----
+2.6.2 (19 June 2000)
++ Qualified calls of 'abs' and 'sign' by CGAL_NTS.
+
+----
+2.6.1 (18 May 2000)
++ Qualified calls of sign with CGAL::
+
+----
+2.6 (17 Apr 2000)
++ Made a few chnges to Straight_2.
+
+-----
+2.5.3 (12 April 2000)
++ Changed leading underscores in trailing underscores.
+
+-----
+* 2.5.2 *
++ Added CGAL:: prefix before do_intersect in test program; MSVC does not
+  have Koenig lookup and needs it.
+
+-----
+* 2.5.1 *
++ Removed a number of unneccessary break statements in
+  Segment_2_Segment_2_intersection.h
+
+-----
+* 2.5 *
++ Altered implementation of do_intersect for segment segment case.
+  This version is much faster (factor 20 to 30 with Cartesian<double>)
+  and is accurate when the segment is degenerated to a point.
+
+-----
+* 2.4 *
++ Replaced const casting by mutable keyword.
+
+-----
+* 2.3 *
++ Intersections involving bounding boxes now include Cartesian.h.
+  They are not included by <CGAL/intersections_2.h> anymore.
+  Instead, there is a file <CGAL/Bbox_2_intersections.h>
++ The guards around include directives are removed (for modern compilers
+  there is no increase in compilation speed, so readability prevails).
+
+-----
+* 2.2.2 *
++ cgal_test now reports diff of program output and expected output.
+
+-----
+* 2.2.1 *
++ Qualified is_finite calls with ::CGAL::.
+
+-----
+* 2.2 *
++ Replaced dir.vector() by dir.to_vector() in several places to avoid a bug in
+  egcs 2.91.66 compiler.
+
+-----
+* 2.1.8 *
++ Replaced using declarations by explicit qualification in test files.
+  So, instead of using std::cout; , use std::cout everywhere.
+
+-----
+* 2.1.7 *
++ cgal_test now writes to ProgramOutput* file
+
+-----
+* 2.1.6 *
++ Small change to test/cgal_test
+
+-----
+* 2.1.5 *
++ Updated all testfiles
+  added int as return type for main whre necessary to avoid warnings
+  added using declarations for cout, cin and ios.
+
+-----
+* 2.1.4 *
++ Added some CGAL_ prefixes to inclusion guards
+
+-----
+* 2.1.3 *
++ Adapted cgal_test and makefile in test directory to new install_cgal.
+
+-----
+* 2.1.2 *
++ Fixed a bug in template specialisation syntax.

@@ -1,0 +1,49 @@
+\begin{ccRefFunction}{do_intersect}
+\ccInclude{CGAL/intersections.h}\footnote{%
+The drawback of \ccc{<CGAL/intersections.h>} is that a lot is included, 
+which results in long compilation times.
+It is also possible to include only the intersections that are of interest.
+The naming scheme of the header files is as follows.
+Intersections of types \ccStyle{Type1<R>} and \ccStyle{Type2<R>}
+are declared in header file \ccc{CGAL/Type1_Type2_intersection.h}.
+So, \ccHtmlNoLinksFrom{intersection} routines of segments and lines in 2D are declared in
+\ccc{<CGAL/Segment_2_Line_2_intersection.h>}. The order of the type names does not 
+matter. It is also possible to include \ccc{<CGAL/Line_2_Segment_2_intersection.h>}.
+For intersections of two objects of the same type, the type name should be
+mentioned twice: \ccc{<CGAL/Segment_2_Segment_2_intersection.h>} 
+}
+
+\ccUnchecked{
+\ccFunction{bool do_intersect(Type1<R> obj1, Type2<R> obj2);}
+{checks whether \ccc{obj1} and \ccc{obj2} intersect.
+Two objects \ccStyle{obj1} and \ccStyle{obj2} intersect if there is a point
+\ccStyle{p} that is part of both \ccStyle{obj1} and \ccStyle{obj2}.
+The \ccHtmlNoLinksFrom{intersection} region of those two objects is defined as the set of all
+points \ccStyle{p} that are part of both \ccStyle{obj1} and \ccStyle{obj2}.
+Note that for objects like triangles and polygons that enclose a
+bounded region, this region is part of the object.
+}}
+
+The types \ccStyle{Type1} and \ccStyle{Type2} can be any of the following:
+\begin{itemize}\ccTexHtml{\itemsep0pt\topsep0pt\partopsep0pt\parskip0pt\parsep0pt}{}
+\item \ccStyle{Point_2<R>}
+\item \ccStyle{Line_2<R>}
+\item \ccStyle{Ray_2<R>}
+\item \ccStyle{Segment_2<R>}
+\item \ccStyle{Triangle_2<R>}
+\item \ccStyle{Iso_rectangle_2<R>}
+\end{itemize}
+
+Also, in three-dimensional space \ccc{Type1} can be \ccc{Plane_3<R>} and 
+\ccc{Type2} any of 
+\begin{itemize}\ccTexHtml{\itemsep0pt\topsep0pt\partopsep0pt\parskip0pt\parsep0pt}{}
+\item \ccStyle{Plane_3<R>}
+\item \ccStyle{Line_3<R>}
+\item \ccStyle{Ray_3<R>}
+\item \ccStyle{Segment_3<R>}
+\end{itemize}
+
+\ccSeeAlso
+\ccRefIdfierPage{CGAL::intersection}
+
+\end{ccRefFunction}

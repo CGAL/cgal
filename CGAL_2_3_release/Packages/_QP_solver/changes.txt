@@ -1,0 +1,38 @@
+Changes done to the `_QP_solver' package
+
+Version 0.9.3 on 16-Jul-2001
+- fixed warning of unused parameter in 'Basis_inverse::init(...)'
+
+Version 0.9.2 on 21-Mar-2001
+- removed 'maintainer' line from file header
+
+Version 0.9.1 on 21-Mar-2001
+- no changes (moved to cvs-server)
+
+Version 0.9 on 11-Sep-2000
+- bug in constructor of `Join_random_access_iterator' fixed.
+
+Version 0.8 on 06-Sep-2000
+- enhanced pivot step (fixes bug in polytope distance computation)
+
+Version 0.7 on 05-Sep-2000
+- function `solution_denominator' added.
+- more `workaround's for Borland
+
+Version 0.6 on 29-Aug-2000
+- `workaround' for Borland (Const_value_iterator<T>)
+
+Version 0.5 on 21-Aug-2000
+- `#include <CGAL/leda_integer.h>' removed from test program.
+
+Version 0.4 on 17-Aug-2000
+- ported to M$-VC++.
+
+Version 0.3 on 14-Aug-2000
+- bugs on Borland fixed.
+
+Version 0.2 on 10-Aug-2000
+- bug in `Access_by_index.h' fixed
+
+Version 0.1 on 09-Aug-2000
+- initial version

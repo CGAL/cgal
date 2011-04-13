@@ -1,0 +1,252 @@
+\chapter{2D Triangulation Data Structure} 
+\label{Chapter_2D_Triangulation_Data_structure}
+
+\minitoc
+
+The second template parameter of a 2D triangulation class
+has to be instanciated with a model
+of \ccc{TriangulationDataStructure_2}.
+This model is decribed in section~\ref{2D_TDS_Concept}.
+\cgal\ provides two classes which are models for this concept.
+These models are described in section~\ref{2D_TDS_Models}.
+Section~\ref{2D_TDS_Base_Classes} described the base
+vertex and face classes of a triangulation.
+At last, section~\ref{2D_TDS_Example} shows 
+how the user can plug in the triangulation
+data structure his own vertex or face base class.
+
+
+\section{The Concept}
+\label{2D_TDS_Concept}
+A model of \ccc{TriangulationDataStructure_2}
+can be seen has a container for the 
+faces and vertices of the triangulation.
+This class is also responsible for the combinatorial
+integrity of the triangulation. This means that
+the triangulation data strucure 
+maintains  proper incidence and adjacency relations among the vertices
+and faces of a triangulation while
+combinatorial modifications
+of the triangulation are performed.
+The term  combinatorial modification 
+refers to  operations which do not 
+involve any knowledge about the geometric embedding of the triangulation.
+For example, the  
+insertion of a new vertex in a given face, or in a given edge,
+the suppression
+of a vertex of degree three,  the flip of two edge are 
+examples of combinatorial operation performed at the data structure level.
+
+
+The triangulation data structure 
+is required to provide :
+\begin{itemize}
+\item
+iterators to visit all the vertices, edges and faces
+of the triangulation,
+\item
+circulators to visit all the vertices, edges and faces
+incident to a given vertex
+\end{itemize}
+
+
+The triangulation data structure is responsible 
+for the creation and removal of faces and vertices 
+(memory management).
+It provides function that gives the number of faces, edges and
+vertices
+of the triangulation.
+
+The triangulation data structure provides member functions
+to perform the following  combinatorial transformation of the triangulation:\\
+flip of two adjacent faces, \\
+addition  of a new vertex splitting a given face,\\
+addition  of a new vertex splitting a given edge,\\
+addition of a new vertex raising by one the dimension of a degenerate
+lower dimensional triangulation, \\
+removal of a vertex incident to three faces, \\
+removal of a vertex lowering the dimension of the triangulation.\\
+
+
+%\begin{figure}
+%\begin{ccTexOnly}
+%\begin{center} %\IpeScale{70} \Ipe{Flip.ipe} \end{center}
+%\input{flip.ltex}
+%\end{center}
+%\end{ccTexOnly} 
+%\caption{Flip. \label{I1_fig_flip_bis}}
+
+%\begin{ccHtmlOnly}
+%<CENTER>
+%<img border=0 src=Flip.gif align=center alt="Flip">
+%</CENTER>
+%\end{ccHtmlOnly} 
+%\end{figure}
+
+
+
+\begin{figure}
+\begin{ccTexOnly}
+%\begin{center} \IpeScale{70} \Ipe{Three.ipe} \end{center}
+\begin{center} \input{insert.ltex} \end{center}
+\caption{Insertion}
+\end{ccTexOnly} 
+
+\begin{ccHtmlOnly}
+<CENTER>
+<img border=0 src=Three.gif align=center alt="Insertion">
+</CENTER>
+\end{ccHtmlOnly} 
+\end{figure}
+
+
+
+\section{Models of Triangulation Data Structure}
+\label{2D_TDS_Models}
+
+\cgal\ currently offers  two models of triangulation data structures.
+The first one, called \ccc{Triangulation_default_data_structure_2<Tds_gt,Vb,Fb
+>}
+is very economic with respect to memory space but its use is
+restricted
+to planar embedded triangulations. The second one, called
+\ccc{Triangulation_data_structure_using_list_2<Vb,Fb>} can be used for 
+the representation of any  orientable triangulations.
+
+
+\subsection{Software design}
+According to the software design described in 
+section~\ref{Section_2D_Triangulations_Software_Design},
+the models of triangulation data structure
+offered by \cgal\ 
+ are themselves template classes,
+parametrized by the base classes for vertices and faces.
+The concepts of \ccc{TriangulationVertexBase_2} and 
+\ccc{TriangulationFaceBase_2} are described 
+in next section~\ref{2D_TDS_Base_Classes}.
+The triangulation data structure 
+derives from thoses base classes its own 
+vertex and face classes. 
+This design  allows the user to plug in the
+triangulation data structure
+his own base classes tuned for  his application.
+
+
+
+
+
+
+\subsection{The Default Triangulation Data Structure}
+\cgal\ proposes the class 
+\ccc{Triangulation_default_data_structure_2<TdsGt,Vb,Fb >}
+as a model  for the triangulation data structure class of a triangulation.
+This class has three  template parameters.
+In addition to the template parameters 
+\ccc{Vb} and \ccc{Fb} for the base classes, 
+ this model of triangulation data structure has a template parameter
+\ccc{TdsGt}
+which is a geometric traits class. This may be surprising because
+the triangulation data structure is supposed to deal only 
+with the combinatorial
+aspect of the triangulation and not with its geometric embedding.
+The reason for that is the following.
+The class \ccc{Triangulation_default_data_structure_2<TdsGt,Vb,Fb >}
+does not use any additional data structure
+such as a list or a vector to act as a container for faces and vertices.
+The iterators which allows to visit all faces and vertices of the
+triangulation
+data structure
+is implemented using  an implicit tree structure over the faces
+as described by
+ de Berg et al. in  \cite{bkoo-stses-97}.
+ This tree structure is  based on the planar
+geometric embedding
+the triangulation. Each face 
+ can find its parent 
+and its children using only simple comparisons on the
+coordinates of the points embedding its vertices.
+This  tree structure remain implicit 
+and does not require any additional memory. 
+
+The requirements concerning the geometric traits \ccc{TdsGt} of
+\ccc{Triangulation_default_data_structure_2}
+ are very light and form a subset of the requirements needed
+for the geometric traits of the triangulations. 
+This class is required  to provide a type \ccc{Point_2}
+and coordinate comparison predicates.
+The point type
+defined by the geometric traits class of the triangulation data
+structure
+and the point type defined by the geometric traits of the triangulation
+have to be the same.
+This is automatically achieved if the same model is used for both
+traits classes which is recommended but not compulsory.
+
+
+
+\subsection{A triangulation data structure using list}
+The class \ccc{Triangulation_data_structure_using_list_2<Vb,Fb>}
+can be used as a triangulation data structure for any
+orientable triangulation. It uses a \stl\ list to store the
+full dimensional faces of the triangulation.
+
+
+
+\section{The Base Vertex and Face Classes }
+\label{2D_TDS_Base_Classes}
+
+\subsection*{The concepts}
+The concepts \ccc{TriangulationVertexBase_2} and 
+\ccc{TriangulationFaceBase_2}  described the requirements
+for the base vertex and face classes of a two-dimensional
+triangulation.
+
+At the bottom layer,  
+a vertex is required to provide access to the embedding point
+and to one of its incident face
+through a \ccc{void *} pointer.
+
+At the bottom layer, a 
+face provides access to its three vertices and to its three
+neighboring faces through \ccc{void *} pointers.
+The vertices and neighbors are indexed 0,1 and 2 in counterclockwise
+order around the face. The neighbor indexed \ccc{i}
+ lies opposite to vertex with the same index.
+
+
+
+\subsection*{The Default Models}
+\cgal\ provides the models
+\ccc{Triangulation_face_base_2<Traits>} and
+\ccc{Triangulation_vertex_base_2<Traits>} for 
+respectively 
+the \ccc{TriangulationVertexBase_2} and the 
+\ccc{TriangulationFaceBase_2} concepts.
+Both of them are templated by a geometric traits class.
+Using for this traits class, the geometric traits class used for the triangulation class
+is strongly recommended. 
+It ensures that the point type defined by \ccc{Triangulation_vertex_base_2<Traits>}
+is the same as the point type defined the  geometric traits class of
+the triangulation.
+
+These default base classes can be used directly or can serve as a base to derive
+other base classes with some additional attribute (a color for example)
+tuned for a specific application.
+
+
+\section{Example : Using one's own Base Face}
+\label {2D_TDS_Example}
+
+The following example derives a new base face class from the default
+one and adds a color to the faces of the triangulation. 
+The face of the triangulation data structure
+and the face of the triangulation will inherit the new data member 
+and its functionality.
+Any kind of additional functionality can thus be added to faces or vertices of a triangulation 
+as long as this functionality  does not involve additional pointers to vertices or faces
+(because the base classes use only void* pointer and have no knowledge
+of the vertex or face types.).
+
+\ccExample
+\ccIncludeExampleCode{Triangulation_2/colored_face.C}
+

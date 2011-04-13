@@ -1,0 +1,21 @@
+\begin{ccRefFunctionObjectConcept}{Kernel::LessSignedDistanceToLine_2}
+A model for this must provide:
+
+\ccCreationVariable{fo}
+
+\ccMemberFunction{bool operator()(const Kernel::Point_2& p,
+                                  const Kernel::Point_2& q,
+                                  const Kernel::Point_2&r,
+                                  const Kernel::Point_2&s);}
+{returns true iff the distance of $r$ to the oriented line 
+through $p$ and $q$, where $p$ and $q$ are the points passed
+to the object at construction, is smaller than the distance of
+$s$ to this line. If both have the same distance, true is
+returned iff the distance of $q$ to $p$ is
+smaller than the distance of $r$ to $p$, where $p$ is the point
+passed to the object at construction.}
+
+\ccSeeAlso
+\ccRefIdfierPage{CGAL::has_smaller_signed_distance_to_line}\\
+
+\end{ccRefFunctionObjectConcept}

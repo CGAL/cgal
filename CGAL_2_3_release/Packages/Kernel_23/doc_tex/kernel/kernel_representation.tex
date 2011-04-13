@@ -1,0 +1,226 @@
+\chapter{Kernel Representations}
+Our object of study is the $d$-dimensional affine Euclidean space. 
+Here we are mainly concerned with cases $d=2$ and $d=3$.
+Objects in that space are sets of points. A common way to represent 
+the points is the use of \ccHtmlNoLinksFrom{Cartesian} coordinates,
+which assumes a reference frame (an origin and $d$ orthogonal axes).
+In that framework, a point is represented by a $d$-tuple
+\ccTexHtml{$(c_0,c_1,\ldots,c_{d-1})$}{<MATH>(c<SUB>0</SUB>,c<SUB>1</SUB>,...,c<SUB>d-1</SUB>)</MATH>},
+and so are vectors in the underlying linear space. Each point is 
+represented uniquely by such \ccHtmlNoLinksFrom{Cartesian} coordinates.
+%An object can then be represented by an equation, that is, it is the 
+%set of
+%points whose coordinates satisfy the equation. For example, the 
+%equation of a
+%line is usually given as $ax + by +c = 0$.
+%The line can then be represented by three numbers $a$, $b$, $c$.
+Another way to represent points is by homogeneous coordinates. In that
+framework, a point is represented by a $(d+1)$-tuple
+\ccTexHtml{$(h_0,h_1,\ldots,h_d)$}{<MATH>(h<SUB>0</SUB>,h<SUB>1</SUB>,...,h<SUB>d</SUB>)</MATH>}.
+Via the formulae
+\ccTexHtml{$c_i = h_i/h_d$}{<MATH>c<SUB>i</SUB>=h<SUB>i</SUB>/h<SUB>d</SUB></MATH>},
+the corresponding point with \ccHtmlNoLinksFrom{Cartesian} coordinates
+\ccTexHtml{$(c_0,c_1,\ldots,c_{d-1})$}{<MATH>(c<SUB>0</SUB>,c<SUB>1</SUB>,...,c<SUB>d-1</SUB>)</MATH>}
+can be computed.  Note that homogeneous coordinates are not unique. 
+For \ccTexHtml{$\lambda\ne 0$}{<MATH>lambda != 0</MATH>},
+the tuples 
+\ccTexHtml{$(h_0,h_1,\ldots,h_d)$}{<MATH>(h<SUB>0</SUB>,h<SUB>1</SUB>
+,...,h<SUB>d</SUB>)</MATH>}
+ and 
+\ccTexHtml{$(\lambda\cdot h_0,\lambda\cdot h_1,\ldots,\lambda\cdot 
+h_d)$}{<MATH>(lambda  h<SUB>0</SUB>,lambda  h<SUB>1</SUB>,...,lambda  
+h<SUB>d</SUB>)</MATH>} represent the
+same point.
+For a point with \ccHtmlNoLinksFrom{Cartesian} coordinates \ccTexHtml{$(c_0,c_1,\ldots,c_{
+d-1})$}{<MATH>(c<SUB>0</SUB>,c<SUB>1</SUB>,...,c<SUB>d-1</SUB>)</MATH>} a
+possible homogeneous representation is
+\ccTexHtml{$(c_0,c_1,\ldots,c_{d-1},1)$}{<MATH>(c<SUB>0</SUB>,c<SUB>1</SUB>,...,c<SUB>d-1</SUB>,1)</MATH>}.
+\ccHtmlNoLinksFrom{Homogeneous} coordinates in fact allow to represent 
+objects in a more general space, the projective space
+\ccTexHtml{$\P_d$}{<MATH>P<SUB>d</SUB></MATH>}.
+In \cgal, we do not compute in projective geometry. Rather, we use 
+homogeneous coordinates to avoid division operations,
+since the additional coordinate can serve as a common denominator.
+
+\section{Genericity through Parameterization}
+Almost all the kernel objects (and the corresponding functions) are
+templates with a parameter that allows the user to choose the
+representation of the kernel objects. A type that is used as an
+argument for this parameter must fulfill certain requirements on 
+syntax and semantics. The list of requirements defines an abstract
+kernel concept. In \cgal\ such a kernel concept is often also called 
+a \emph{representation class} and denoted by \ccc{R}. A representation 
+class provides the actual implementations of the kernel objects.
+For all kernel objects \ccc{Kernel_object}, the types 
+\ccc{CGAL::Kernel_object<R>} and \ccc{R::Kernel_object} are identical.
+
+CGAL offers four families of concrete models for the concept
+representation class, two based on the \ccHtmlNoLinksFrom{Cartesian} representation of points
+and two based on the homogeneous representation of points. 
+The interface of the kernel objects is designed such that it works well
+with both \ccHtmlNoLinksFrom{Cartesian} and homogeneous representation, for example, points
+in 2D have a constructor with three arguments as well
+(the three homogeneous coordinates of the point).
+The common interfaces parameterized with a representation class allow
+one to develop code independent of the chosen representation. 
+We said ``families'' of models, because both families are parameterized too.
+A user can choose the number type used to represent the coordinates.
+
+For reasons that will become evident later,
+a representation class provides two typenames for number types, 
+namely \ccc{R::FT} and \ccc{R::RT}.%
+\ccTexHtml{\footnote{The double colon :: is the \CC\ scope operator.}}{}
+The type \ccStyle{R::FT} must fulfill the requirements on what is 
+called a {\em field type} in \cgal. This roughly means that \ccStyle{R::FT} 
+is a type for which  operations $+$, $-$, $*$ and $/$ are defined
+with semantics (approximately) corresponding to those of a field in 
+a mathematical sense. Note that, strictly speaking, the built-in type 
+\ccc{int} does not fullfil the requirements on a field type, since \ccc{int}s
+correspond to elements of a ring rather than a field, especially 
+operation $/$ is not the inverse of $*$.
+The requirements on the type \ccStyle{R::RT} are weaker.
+This type must fulfill the requirements on what is called a {\em ring type}
+in \cgal. This roughly means that \ccStyle{R::RT} 
+is a type for which  operations $+$, $-$, $*$ are defined with semantics
+(approximately) corresponding to those of a ring in a mathematical sense. 
+A very limited division operation $/$ must be available as well.
+It must work for exact (i.e., no remainder) integer divisions only.
+Furthermore, both number types should fulfill \cgal's requirements on a
+number type. %see  
+Note that a ring type is always a field type but not the other way 
+round.
+
+\section{Cartesian Kernels}
+With \ccc{Cartesian<FieldNumberType>} you can choose \ccHtmlNoLinksFrom{Cartesian} representation 
+of coordinates. When you choose \ccHtmlNoLinksFrom{Cartesian} representation you 
+have to declare at the same time the type of the coordinates.
+A number type used with the \ccc{Cartesian} representation class
+should be a {\em field type} as described above.
+As mentioned above, the built-in type \ccc{int} is not a field type.
+However, for some computations with  \ccHtmlNoLinksFrom{Cartesian} representation, no 
+division operation is needed, i.e., 
+a {\em ring type} is sufficient in this case.
+With \ccc{Cartesian<FieldNumberType>}, both \ccc{Cartesian<FieldNumberType>::FT}
+and \ccc{Cartesian<FieldNumberType>::RT} are mapped to number type \ccc{FieldNumberType}.
+
+\ccc{Cartesian<FieldNumberType>} uses reference counting internally to save copying
+costs. CGAL also provides \ccc{Simple_cartesian<FieldNumberType>}, a kernel
+that uses \ccHtmlNoLinksFrom{Cartesian} representation but no reference counting. 
+Debugging is easier with \ccc{Simple_cartesian<FieldNumberType>}, since the coordinates
+are stored within the class and hence direct access to the coordinates is
+possible.  Depending on the algorithm, it can also be slightly more or less
+efficient than \ccc{Cartesian<FieldNumberType>}.
+With \ccc{Simple_cartesian<FieldNumberType>}, both \ccc{Simple_cartesian<FieldNumberType>::FT}
+and \ccc{Simple_cartesian<FieldNumberType>::RT} are mapped to number type \ccc{FieldNumberType}.
+
+\section{Homogeneous Kernels}
+As we mentioned before, homogeneous coordinates permit to avoid 
+division operations in numerical computations, since the additional 
+coordinate can serve as a common denominator. 
+Avoiding divisions can be useful for exact geometric computation. 
+With \ccc{Homogeneous<RingNumberType>} you can choose homogeneous representation 
+of coordinates with the kernel objects. As for \ccHtmlNoLinksFrom{Cartesian} representation you 
+have to declare at the same time the type used to store the homogeneous
+coordinates. Since the homogeneous representation allows one to avoid the
+divisions, the number type associated with a homogeneous representation class
+must be a model for the weaker concept ring type only. However,
+some operations provided by this kernel involve division operations, for
+example computing squared distances or returning a \ccHtmlNoLinksFrom{Cartesian} coordinate.
+To keep the requirements on the number type parameter of \ccc{Homogeneous}
+low, the number type \ccStyle{Quotient<RingNumberType>} is used instead.
+This number type turns a ring type into a field type. It maintains
+numbers as quotients, i.e. a numerator and a denominator. 
+Thereby, divisions are circumvented.
+With \ccc{Homogeneous<RingNumberType>}, \ccc{Homogeneous<RingNumberType>::FT} is
+equal to \ccStyle{Quotient<RingNumberType>} while 
+\ccc{Homogeneous<RingNumberType>::RT} is equal to \ccc{RingNumberType}.
+
+\ccc{Homogeneous<RingNumberType>} uses reference counting internally to save
+copying costs. CGAL also provides \ccc{Simple_homogeneous<RingNumberType>}, a
+kernel that uses \ccHtmlNoLinksFrom{homogeneous} representation but no reference
+counting.  Debugging is easier with \ccc{Simple_homogeneous<RingNumberType>},
+since the coordinates are stored within the class and hence direct access to
+the coordinates is possible.  Depending on the algorithm, it can also be
+slightly more or less efficient than \ccc{Homogeneous<RingNumberType>}.
+With \ccc{Simple_homogeneous<RingNumberType>},
+\ccc{Simple_homogeneous<RingNumberType>::FT} is equal to
+\ccStyle{Quotient<RingNumberType>} while
+\ccc{Simple_homogeneous<RingNumberType>::RT} is equal to \ccc{RingNumberType}.
+
+\section{Naming conventions}
+
+The use of representation classes not only avoids problems, it
+also makes all \cgal\ classes very uniform. They {\bf always} consist of:
+\begin{enumerate}
+\begin{ccTexOnly}
+\itemsep0pt\topsep0pt\partopsep0pt\parskip0pt\parsep0pt
+\end{ccTexOnly}
+
+%\item The {\em name space prefix} \ccStyle{}. This avoids name 
+%      clashes. It will be dropped as soon as \CC\ compilers support the 
+%      concept of name spaces as a feature of the programming language.
+
+\item The {\em capitalized base name} of the geometric object, such as 
+      \ccStyle{Point}, \ccStyle{Segment}, \ccStyle{Triangle}.
+
+\item An {\em underscore} followed by the {\em dimension} of the object, 
+      for example $\_2$, $\_3$ or $\_d$.
+
+\item A {\em representation class} as parameter, which itself is
+      parameterized with a number type, such as \ccStyle{Cartesian<double>} 
+      or \ccStyle{Homogeneous<leda_integer>}.
+\end{enumerate}
+
+\section{Kernel as a Traits Class}
+Algorithms and data structures in the basic library of CGAL are parameterized 
+by a traits class that subsumes the objects on which the algorithm or data
+structure operates as well as the operations to do so. For most of the 
+algorithms and data structures in the basic library you can use a kernel
+as a traits class. For some algorithms you even do not have to specify
+the kernel; it is detected automatically using the types of the geometric
+objects passed to the algorithm. In some other cases, the algorithms 
+or data structures needs more than is provided by a kernel. In these
+cases, a kernel can not be used as a traits class.
+
+\section{Choosing a Kernel}
+If you start with integral \ccHtmlNoLinksFrom{Cartesian} coordinates, many geometric computations
+will involve integral numerical values only. Especially, this is true for
+geometric computations that evaluate only predicates, which are tantamount to
+determinant computations. Examples are triangulation of point sets and 
+convex hull computation.
+In this case, the \ccHtmlNoLinksFrom{Cartesian} representation is probably the first choice, even
+with a ring type. You might use limited precision integer types like
+\ccc{int} or \ccc{long}, use \ccc{double} to present your integers (they
+have more bits in their mantissa than an \ccc{int} and overflow nicely), or an 
+arbitrary precision integer type like the wrapper \ccc{Gmpz} for the
+GMP integers, \ccc{leda_integer} or \ccc{MP_Float}. Note, that unless you use
+an arbitrary precision ring type, incorrect results might arise due to
+overflow. 
+
+If new points are to be constructed, for example
+the \ccHtmlNoLinksFrom{intersection} point of two lines, computation of 
+\ccHtmlNoLinksFrom{Cartesian} coordinates usually involves divisions, so
+you need to use a field type with \ccHtmlNoLinksFrom{Cartesian} representation
+or have to switch to homogeneous representation. 
+\ccc{double} is a possible, but imprecise field type.
+You can also put any ring type into \ccc{Quotient} to get a
+field type and put it into \ccc{Cartesian}, but you better put
+the ring type into \ccc{Homogeneous}.
+\ccc{leda_rational} and \ccc{leda_real} are valid field types, too.
+
+If it is crucial for you that the computation is reliable, 
+the right choice are probably number types that guarantee
+exact computation. The number type \ccc{leda_real} guarantees
+that all decisions and hence all branchings in a computation
+are correct. They also allow you to compute approximations to whatever
+precision you need. Furthermore computation with 
+\ccc{leda_real} is faster than computation with arbitrary precision
+arithmetic. So if you would like to avoid surprises caused by imprecise
+computation, this is a good choice. In fact, it is a good choice with
+both representations, since divisions slow down the computation of
+the reals and hence it might pay-off to avoid them.
+
+Still other people will prefer the built-in
+type {\tt double}, because they need speed and can live with
+approximate results, or even algorithms that, from time to time,
+crash or compute incorrect results due to accumulated rounding errors.

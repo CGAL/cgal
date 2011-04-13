@@ -1,0 +1,56 @@
+% +------------------------------------------------------------------------+
+% | Reference manual page: Constrained_triangulation_demo_2.tex
+% +------------------------------------------------------------------------+
+% | 13.04.2000   Author
+% | Package: Package
+% | 
+\RCSdef{\RCSConstrainedtriangulationdemoRev}{$Revision$}
+\RCSdefDate{\RCSConstrainedtriangulationdemoDate}{$Date$}
+% |
+%%RefPage: end of header, begin of main body
+% +------------------------------------------------------------------------+
+
+
+\begin{ccRefClass}{Constrained_triangulation_demo_2<Traits,Tds>}  %% add template arg's if necessary
+
+%% \ccHtmlCrossLink{}     %% add further rules for cross referencing links
+%% \ccHtmlIndexC[class]{} %% add further index entries
+
+\ccDefinition
+  
+The class \ccRefName\ is intended to provide
+an animation of the sweep algorithm that builds a 
+constrained triangulation.
+
+\ccInclude{Constrained_triangulation_demo_2.h}
+
+\ccInheritsFrom
+\ccc{Constrained_triangulation_2<Traits,Tds>}
+
+
+\ccTypes
+\ccTypedef{ typedef Window_stream Window_stream;}{}
+
+
+\ccCreation
+\ccCreationVariable{ctd}  %% choose variable name
+
+\ccConstructor{Constrained_triangulation_demo_2(Window_stream& W,
+                                     list<Constrained>& lc, Traits gt=Traits());}
+{Outputs the created faces at each step of
+the sweeping line algorithm, providing thus an animation
+of the sweeping line algorithm.}
+
+
+\ccSeeAlso
+\ccc{CGAL::Constrained_triangulation_2<Traits,Tds>}
+
+
+
+\end{ccRefClass}
+
+% +------------------------------------------------------------------------+
+%%RefPage: end of main body, begin of footer
+% EOF
+% +------------------------------------------------------------------------+
+

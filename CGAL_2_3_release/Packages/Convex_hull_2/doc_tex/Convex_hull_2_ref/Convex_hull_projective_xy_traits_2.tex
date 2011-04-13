@@ -1,0 +1,82 @@
+% +------------------------------------------------------------------------+
+% | Reference manual page: Convex_hull_projective_xy_traits_2.tex
+% +------------------------------------------------------------------------+
+% | 14.05.2001   Susan Hert
+% | Package: Convex_hull_2
+% | 
+% +------------------------------------------------------------------------+
+
+\ccAutoIndexingOff
+\begin{ccRefClass}{Convex_hull_projective_xy_traits_2<Point_3>}
+\ccAutoIndexingOn
+\ccIndexTraitsClassBegin{Convex_hull_projective_xy_traits_2}{}{convex hull, 2D}
+
+\ccDefinition
+  
+The class \ccRefName\ serves as a traits class for all the two-dimensional
+convex hull and extreme point calculation function.   This class can be
+used to compute the convex hull of a set of 3D points projected onto the
+$xy$ plane (\textit{i.e.}, by ignoring the $z$ coordinate).
+
+\ccInclude{CGAL/Convex_hull_projective_xy_traits_2.h}
+
+\ccIsModel
+
+\ccRefConceptPage{ConvexHullTraits_2}%
+\ccIndexSubitem[c]{ConvexHullTraits_2}{model} \\
+
+\ccTypes
+
+\ccAutoIndexingOff
+\ccSetThreeColumns{typedef R::Less_dist_to_line_plane_xy_2<Point_3>}{Less_signed_distance_to_line_2}{}
+\ccThreeToTwo
+
+\ccTypedef{typedef Point_3                        Point_2;}{}
+\ccGlue
+\ccTypedef{typedef Less_xy_plane_xy_2<Point_3>    Less_xy_2;}{}
+\ccGlue
+\ccTypedef{typedef Less_yx_plane_xy_2<Point_3>    Less_yx_2;}{}
+\ccGlue
+\ccTypedef{typedef Less_dist_to_line_plane_xy_2<Point_3> 
+                                      Less_signed_distance_to_line_2;}{}
+\ccGlue
+\ccTypedef{typedef Less_rotate_ccw_plane_xy_2<Point_3> Less_rotate_ccw_2;}{}
+\ccGlue
+\ccTypedef{typedef Left_turn_plane_xy_2<Point_3>        Leftturn_2;}{}
+
+
+\ccCreation
+\ccCreationVariable{traits}  %% choose variable name
+
+\ccConstructor{Convex_hull_projective_xy_traits_2();}{default constructor.}
+
+\ccOperations
+
+\ccMemberFunction{Less_xy_2 less_xy_2_object(); }{}
+\ccGlue
+\ccMemberFunction{Less_yx_2 less_yx_2_object(); }{}
+\ccGlue
+\ccMemberFunction{Less_signed_distance_to_line_2 
+                  less_signed_distance_to_line_2_object();}{}
+\ccGlue
+\ccMemberFunction{Less_rotate_ccw_2 
+                  less_rotate_ccw_2_object(); }{}
+\ccGlue
+\ccMemberFunction{Leftturn_2 leftturn_2_object(); }{}
+
+
+\ccSeeAlso
+
+\ccRefIdfierPage{CGAL::Convex_hull_constructive_traits_2<R>}  \\
+\ccRefIdfierPage{CGAL::Convex_hull_leda_traits_2}  \\
+\ccRefIdfierPage{CGAL::Convex_hull_projective_xz_traits_2<Point_3>}  \\
+\ccRefIdfierPage{CGAL::Convex_hull_projective_yz_traits_2<Point_3>}  \\
+\ccRefIdfierPage{CGAL::Convex_hull_rat_leda_traits_2}   \\
+\ccRefIdfierPage{CGAL::Convex_hull_traits_2<R>}  
+
+\ccIndexTraitsClassEnd
+\ccAutoIndexingOff
+\end{ccRefClass}
+\ccAutoIndexingOn
+
+% EOF

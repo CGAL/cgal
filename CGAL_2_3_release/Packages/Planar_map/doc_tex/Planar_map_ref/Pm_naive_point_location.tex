@@ -1,0 +1,50 @@
+% +------------------------------------------------------------------------+
+% | Reference manual page: Pm_naive_point_location.tex (Planar_map)
+% +------------------------------------------------------------------------+
+% | 
+% | Package: pm (Planar_map_2)
+% | 
+% +------------------------------------------------------------------------+
+
+\ccRefPageBegin
+
+%%RefPage: end of header, begin of main body
+% +------------------------------------------------------------------------+
+
+%**************************************************************************
+\renewcommand{\ccRefPageBegin}{\begin{ccAdvanced}}
+\renewcommand{\ccRefPageEnd}{\end{ccAdvanced}}
+
+\begin{ccRefClass}{Pm_naive_point_location<Planar_map>}
+\label{PL_sec:naive}
+
+The \ccRefName\ class 
+implements the naive algorithm which goes over all the vertices and halfedges
+of the planar map. Therefore, the time complexity of a query is linear in
+the complexity of the planar map. Since it does not use an additional
+structure, the updating operations are empty and therefore 
+modifying operations such as 
+\ccc{split_edge} and \ccc{merge_edge} take constant time.
+
+\ccInclude{CGAL/Pm_naive_point_location.h}
+
+\ccIsModel
+  \ccc{PlanarMapPointLocation_2}
+
+\ccInheritsFrom
+  \ccc{Pm_point_location_base<Planar_map>}
+
+\ccSeeAlso
+   Discussion of the different point location strategies in the introduction
+of \ccc{Planar_map} reference pages\lcTex{ (\ccRefPage{Pm_Ref_intro})}.
+
+\end{ccRefClass}
+\renewcommand{\ccRefPageBegin}{}
+\renewcommand{\ccRefPageEnd}{}
+
+
+% +------------------------------------------------------------------------+
+%%RefPage: end of main body, begin of footer
+\ccRefPageEnd
+% EOF
+% +------------------------------------------------------------------------+

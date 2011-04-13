@@ -1,0 +1,20 @@
+\section{Number Types Provided by {\sc Cln}}
+\label{CLN}
+
+% \ccChapterAuthor{Sylvain Pion}
+
+\cgal\ defines the functions needed to use the number types \ccc{cl_integer}
+and \ccc{cl_rational} provided by {\sc Cln}, the Class Library for
+Numbers~\cite{cln}.  To use {\sc Cln} with \cgal, just install \cgal\ with
+{\sc Cln} support, and include the corresponding {\sc Cln} file but with the
+prefix \ccc{CGAL/CLN/}.  These wrappers work for versions 1.0.x of \ccc{CLN}.
+
+\ccInclude{CGAL/CLN/cl_integer.h}
+
+The class \ccc{cl_I}~: exact multiprecision integers.
+
+\ccInclude{CGAL/CLN/cl_rational.h}
+
+The class \ccc{cl_RA}~: exact multiprecision rationals.
+
+See the {\sc Cln} documentation for additionnal details.

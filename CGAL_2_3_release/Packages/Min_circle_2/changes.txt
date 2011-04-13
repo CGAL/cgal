@@ -1,0 +1,271 @@
+Changes done to the `Min_circle_2' package
+
+Version 3.12 on 31-Jul-2001
+- Susan moved Optimisation_ref directory up one level
+
+Version 3.11 on 17-Jul-2001
+- replaced template parameter 'R' by 'K'
+- renamed concept names
+
+Version 3.10.7 on 21-Mar-2001
+- removed 'maintainer' line from file header in example and demo program
+
+Version 3.10.6 on 21-Mar-2001
+- removed 'maintainer' line from file header
+
+Version 3.10.5 on 19-Mar-2001
+- no changes (still adapting cvs-server handling)
+
+Version 3.10.4 on 19-Mar-2001
+- no changes (still adapting cvs-server handling)
+
+Version 3.10.3 on 19-Mar-2001
+- no changes (bug in submission script)
+
+Version 3.10.2 on 19-Mar-2001
+- moved to cvs-server
+
+Version 3.10.1 on 18-Sep-2000
+- updated/fixed usage of namespace `std'.
+
+Version 3.10 on 15-Sep-2000
+- added indexing command.
+
+Version 3.9.2 on 13-Sep-2000
+- re-added example and demo program.
+
+Version 3.9.1 on 13-Sep-2000
+- replaced '\ccPureGlobalScope' by 'CGAL::' in C++ arguments of '\cc...' macros
+
+Version 3.9 on 12-Sep-2000
+- documentation split up into user and reference manual parts.
+
+Version 3.8.3 on 10-Aug-2000
+- no changes (problem with download script)
+
+Version 3.8.2 on 07-Aug-2000
+- field 'maintainer' added to file header (where missing).
+
+Version 3.8.1 on 27-Jul-2000
+- demo program compiles if LEDA is not available (and does nothing)
+
+Version 3.8 on 20-Jul-2000
+- obsolete usage of `number utils' fixed (CGAL:: --> CGAL_NTS)
+
+Version 3.7.1 on 06-Jul-2000
+- added default constructor to `Optimisation_circle_2' (fix for Borland)
+
+Version 3.7 on 23-Feb-2000
+- ported to Borland C++ compiler.
+- field 'maintainer' added to file header.
+
+Version 3.6 on 02-Feb-2000
+- removed `CGAL_..._cast' macros.
+- added `cc_manual_index.sty' to documentation.
+
+
+CGAL-2.1
+--------
+
+Version 3.5.3 on 20-Dec-1999
+- missing 'typename's added.
+
+Version 3.5.2 on 07-Dec-1999
+- demos fixed.
+
+Version 3.5.1 on 07-Dec-1999
+- scope macro `CGAL_CLIB_STD::' added to `strcmp'.
+
+Version 3.5 on 17-Nov-1999
+- subdirectory `include/CGAL/Optimisation' introduced.
+- scope `CGAL::' added to `sqrt'.
+
+Version 3.4.1 on 09-Nov-1999
+- bug with `typename' removed (introduced in version 3.4).
+
+Version 3.4 on 05-Nov-1999
+- 'using namespace CGAL;' removed from test program.
+
+Version 3.3.1 on 28-Oct-1999
+- declarations of IO operators for 'MyPoint[CH]2' added.
+
+Version 3.3 on 12-Oct-1999
+- default argument for 'randomize' removed on M$-VC++.
+- removed 'CGAL_DEFINE_ITERATOR_TRAITS_POINTER_SPEC(...)' from examples.
+- clean-up (g++-2.7.2 workaround removed).
+
+Version 3.2.10 on 07-Oct-1999
+- inequality operator added to '...adapterH2__Circle'.
+
+Version 3.2.9 on 07-Oct-1999
+- removed 'CGAL_DEFINE_ITERATOR_TRAITS_POINTER_SPEC(...)' for kernel types.
+- inequality operator added to '...adapterC2__Circle'.
+
+Version 3.2.8 on 01-Oct-1999
+- inequality operator added to 'MyPoint[CH]2'.
+
+Version 3.2.7 on 29-Sep-1999
+- removed accidentally added ';'.
+
+Version 3.2.6 on 29-Sep-1999
+- added 'CGAL_DEFINE_ITERATOR_TRAITS_POINTER_SPEC(...)'.
+- changed order of constructors (moved member template to the end).
+
+Version 3.2.5 on 22-Sep-1999
+- missing 'typename' added.
+- copy construction "syntactically" replaced by assignment operator.
+- 'CGAL_DEFINE_ITERATOR_TRAITS_POINTER_SPEC(...)' added.
+
+Version 3.2.4 on 18-Aug-1999
+- some missing `std::' added.
+
+
+CGAL-2.0
+--------
+
+Version 3.2.3 on 20-May-1999
+- manual: `Guidelines and Hints' added.
+
+Version 3.2.2 on 19-Apr-1999
+- fixes for namespace bug of g++ 2.8.1.
+
+Version 3.2.1 on 05-Mar-1999
+- some bugs concerning `namespace' and `::' fixed.
+- some superfluous `typename's removed.
+
+Version 3.2 on 25-Feb-1999
+- usage of new-style headers and namespace `std'.
+- namespace `CGAL' introduced.
+- global variable `random' changed to `default_random'.
+
+
+CGAL-1.2
+--------
+
+Version 3.1.1 on 16-Nov-1998
+- bug with static_cast of enums fixed.
+
+Version 3.1 on 11-Nov-1998
+- adapted to `g++-egcs-2.91.57'.
+- changes.txt added.
+
+
+CGAL-1.1
+--------
+
+Version 3.0.2 on 23-Jul-1998
+- conversion to HTML fixed.
+
+Version 3.0.1 on 03-Jul-1998
+
+Version 3.0 on 02-Jul-1998
+- optimisation packages restructured (new package `Min_circle_2').
+
+Version 2.5 on 01-Jul-1998
+- graphical output to `CGAL_Window_stream' added.
+- new product file `include/CGAL/IO/Min_circle_2_Window_stream.h'.
+- use of local `cgal.bib' (in `doc_tex/...')
+
+Version 2.4 on 26-Jun-1998
+- `(e-mail)' changed to `<e-mail>'.
+
+Version 2.3 on 18-Jun-1998
+- move-to-front now uses `list::splice'.
+
+Version 2.2 on 16-Jun-1998
+- multiple inclusion protection with 'CGAL_PROTECT_..._H' fixed.
+
+Version 2.1 on 15-May-1998
+- some typos fixed.
+
+
+CGAL-1.0
+--------
+
+Version 2.0 on 30-Mar-1998
+- chapter line added in file header.
+- `Optimisation_traits_2[.h]' changed to `Min_{circle|ellipse}_2_traits_2[.h]'.
+- bug with inlining of member templates fixed.
+
+Version 1.13 on 24-Feb-1998
+- member templates added.
+
+Version 1.12 on 06-Feb-1998
+- `T const&' changed to `const T&'.
+- customized layout by individual `\ccSet...Columns' commands.
+
+Version 1.11 on 05-Feb-1998
+- test flag `CGAL_USE_LEDA' changed to `CGAL_USE_LEDA_FOR_OPTIMISAITON_TEST'.
+- `return( 0);' added to test programs.
+
+Version 1.10 on 01-Feb-1998
+- adapted to `g++-2.8.0' and `g++-egcs-2.90.23'.
+
+Version 1.9 on 17-Dec-1997
+- `#include <CGAL/Integer.h>' changed to `#include <CGAL/leda_integer.h>'.
+- conversion to HTML fixed.
+
+Version 1.8 on 16-Dec-1997
+- `#include <string.h>' added to test programs.
+- lines to at most 80 characters adjusted.
+
+Version 1.7 on 15-Dec-1997
+- subdirectory structure in 'include/CGAL' removed.
+
+Version 1.6 on 05-Dec-1997
+- new structure of specification directory.
+- new protection against multiple header-file inclusion.
+
+Version 1.5 on 02-Dec-1997
+- new file-header format.
+- new directory structure.
+- adapted to CGAL-0.9-I-02.
+
+Version 1.4 on 15-Oct-1997
+- include directory changed to 'include/Optimisation/CGAL'.
+
+
+CGAL-0.9
+--------
+
+Version 1.3 on 24-Jun-1997
+- bad TeX formatting fixed.
+
+Version 1.2 on 24-Jun-1997
+- include 'CGAL/optimisation_assertions.h' added to ...adapter?2.h
+
+Version 1.1 on 23-Jun-1997
+- redesigned version of first public release.
+
+Version 1.0 on 27-May-1997
+- first public release (should be...).
+
+Version 0.9 on 26-May-1997
+- internal circle representation changed to center and squared radius.
+- changes according to test report by M. Hoffmann (97/05/23).
+
+Version 0.8 on 20-May-1997
+- I/O added.
+
+Version 0.7 on 19-May-1997
+- adapted to `g++-2.7.*'
+
+Version 0.6 on 18-May-1997
+- default parameter `CGAL_Random()' replaced by global variable `CGAL_random'.
+- changes according to test report by M. Hoffmann (97/05/16).
+
+Version 0.5 on 07-May-1997
+- new version with interface classes.
+
+Version 0.4 on 23-Apr-1997
+- specialization for `CGAL_Homogeneous<integer>' with floating-point filters.
+
+Version 0.3 on 20-Feb-1997
+- adapted to `CC-4.2'.
+- support points stored directly, 'real' random shuffling.
+
+Version 0.2 on 17-Feb-1997
+- changes according to test report by M. Hoffmann (97/02/13).
+
+Version 0.1 on 06-Feb-1997
+- initial beta-version.

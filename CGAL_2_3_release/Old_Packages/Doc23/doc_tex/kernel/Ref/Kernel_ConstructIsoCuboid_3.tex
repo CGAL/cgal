@@ -1,0 +1,22 @@
+\begin{ccRefFunctionObjectConcept}{Kernel::ConstructIsoCuboid_3}
+A model for this must provide:
+
+\ccCreationVariable{fo}
+
+
+\ccHidden \ccMemberFunction{Kernel::Iso_cuboid_3 operator()();}
+             {introduces an uninitialized variable .}
+
+\ccHidden \ccMemberFunction{Kernel::Iso_cuboid_3 operator()(const Kernel::Iso_cuboid_3 &u);}
+            {copy constructor.}
+
+\ccMemberFunction{Kernel::Iso_cuboid_3 operator()(const Kernel::Point_3 &p, 
+                                                  const Kernel::Point_3 &q);}
+            {introduces an iso-oriented cuboid  with diagonal
+             opposite vertices $p$ and $q$ such that $p$ is the
+             lexicographically smallest point in the cuboid.}
+
+\ccSeeAlso
+\ccRefIdfierPage{CGAL::Iso_cuboid_3<R>}  \\
+
+\end{ccRefFunctionObjectConcept}

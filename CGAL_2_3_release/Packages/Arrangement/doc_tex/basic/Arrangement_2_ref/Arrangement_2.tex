@@ -1,0 +1,347 @@
+% +------------------------------------------------------------------------+
+% | Reference manual page: Arrangement_2.tex (Arrangement)
+% +------------------------------------------------------------------------+
+% | 
+% | Package: arr (Arrangement_2)
+% | 
+% +------------------------------------------------------------------------+
+
+\ccRefPageBegin
+
+%%RefPage: end of header, begin of main body
+% +------------------------------------------------------------------------+
+% +========================================================================+
+%   Arrangement_2
+% +========================================================================+
+\begin{ccRefClass}{Arrangement_2<Dcel,Traits,Base_node>} 
+    
+\ccDefinition An object \ccStyle{arr} of the class
+    \ccClassTemplateName\ represents the planar
+    subdivision induced by a set of curves that are not necessarily 
+    $x$-monotone and possibly intersecting. 
+    This class extends
+    the class \ccStyle{Planar_map_2<Dcel,Traits>}
+    which handles $x$-monotone pairwise interior disjoint
+    curves.  %The class have the following internal typedefs:  
+
+    This class also provides additional methods to traverse the
+    resulting planar-map along curves inserted into the arrangement
+    (note that a single curve in the arrangement might correspond to
+    several edges of the planar map).
+
+    \ccInclude{CGAL/Arrangement_2.h}
+
+    %\ccInheritsFrom 
+    %\ccStyle{Planar_map_2<Dcel,Traits>}
+    The base class of \ccStyle{Halfedge} has additional
+    properties apart from the ones defined for planar maps. 
+
+    %The modifying functions \ccStyle{insert} 
+    %overwrite the inherited functions 
+%\comment{iddo: need to be virtual in planar map}.
+    
+\ccTypes
+
+    \ccNestedType{Curve_node}{represents a curve inserted into the 
+       arrangement, which possibly intersects other curves in the arrangement,
+       and is not necessarily $x$-monotone.}
+
+    \ccNestedType{Subcurve_node}{represents a subcurve of the curve inserted 
+       into the arrangement. It is created by invoking a user defined 
+       \ccc{split_function} on the original curve, or on another curve. By
+       default a subcurve is created from the original curve by invoking
+       the function \ccc{Traits::make_x_monotone()}.}
+
+    \ccNestedType{Edge_node}{represents a subcurve of the curve inserted 
+       into the arrangement which is created by an intersection with
+       another curve. It holds a curve which is disjoint in its interior
+       from the other curves in the arrangement, and holds a cross reference
+       to the \ccc{Halfedge} in the planar map representing it.}
+
+
+
+    \ccNestedType{Vertex}{represents a vertex of the planar map induced by the
+       arrangement.}
+    \ccNestedType{Halfedge}{represents a halfedge of the planar map induced by
+       the arrangement. It has additional methods, see class definition
+       of \ccc{Arrangement_2<Dcel,Traits,Base_node>::Halfedge}
+       \lcTex{(\ccRefPage{Arr_Halfedge})}.}
+    \ccNestedType{Face}{represents a face of the planar map induced by
+       the arrangement.}
+
+
+
+    The following handles, iterators and circulators have appropriate
+    constant
+%\footnote{This means that for every \ccc{iterator} or
+%       \ccc{circulator} there is a \ccc{const_iterator} and 
+%       \ccc{const_circulator}
+%       counterpart. See ~\cite{ms-strg-96} for a discussion of constant versus
+%       mutable iterator types.} 
+    counterparts.
+    The mutable types are assignable to their
+    constant counterparts. All circulators are assignable to the 
+    \ccStyle{Halfedge_iterator}. The iterators are assignable to the
+    respective handle types. Wherever the handles appear in function parameter
+    lists, the appropriate iterator can be used as well.
+
+
+    \ccNestedType{Curve_iterator}{A bidirectional iterator over 
+       all Curve nodes of the arrangement. Its value-type is 
+       \ccStyle{Curve_node}.}
+
+    \ccNestedType{Subcurve_iterator} {a bidirectional iterator over all
+       the subcurves which were created from the same original curve.
+       Its value-type is 
+       \ccStyle{Subcurve_node}.}
+    
+    \ccNestedType{Edge_iterator} {a bidirectional iterator over all
+       the \ccc{Edge_nodes} which were created from the same original curve.
+       Its value-type is 
+       \ccStyle{Edge_node}.}
+
+
+
+
+    \ccNestedType{Vertex_handle}{handle to vertex.}
+     
+    \ccNestedType{Halfedge_handle}{handle to halfedge.}
+    
+    \ccNestedType{Face_iterator}{handle to face}
+
+    \ccNestedType{Vertex_iterator}{a bidirectional iterator over the
+       vertices of the arrangement. Its value-type is
+       \ccStyle{Vertex}.}
+     
+    \ccNestedType{Halfedge_iterator}{a bidirectional iterator over the
+       halfedges of the arrangement.  Its value-type is \ccStyle{Halfedge}.}
+    
+    \ccNestedType{Face_iterator}{a bidirectional iterator over the
+       faces of the arrangement.  Its value-type is \ccStyle{Face}.}
+    
+    \ccNestedType{Ccb_halfedge_circulator}{a forward circulator over the
+       edges of a CCB (connected components of the boundary).  Its
+       value-type is \ccStyle{Halfedge}.}
+    
+    \ccNestedType{Halfedge_around_vertex_circulator}{a forward circulator over
+       the half-edges which have  the vertex as their source.  
+       The half-edges are traversed in
+       their clockwise order around the vertex. Its value-type is
+       \ccStyle{Halfedge}.}
+    
+    \ccNestedType{Holes_iterator}{a bidirectional iterator to
+       traverse all the holes (i.e., inner CCBs) of a face 
+       (\ccStyle{Holes_iterator++} is the next hole in the face).
+       Its value type is
+       \ccStyle{Ccb_halfedge_circulator}.}
+
+    \ccNestedType{Overlap_circulator}{a bidirectional circulator over
+       the overlapping edge nodes that correspond to a single pair of
+       halfedges. Its value-type is \ccStyle{Edge_node} and it can be
+       cast to an \ccc{Edge_iterator}.}
+  
+    \ccTypedef{typedef Planar_map_2<Dcel,Traits> Planar_map;}{the planar map
+       type of the arrangement.}
+
+    \ccNestedType{Locate_type}{same as the planar map locate type.}
+
+    \ccTypedef{typedef typename Traits::Point Point;}{the point type
+       of the arrangement}
+    \ccTypedef{typedef typename Traits::X_curve X_curve;}{
+       the x-monotone curve type of the arrangmenet}
+    \ccTypedef{typedef typename Traits::Curve Curve;}{the curve type
+      of the arrangement}
+    
+\ccCreation
+    \ccCreationVariable{arr}
+
+    \ccConstructor{Arrangement_2<Dcel,Traits,Base_node>();}{create an empty arrangement with the default point location strategy.}
+
+    \ccConstructor{Arrangement_2<Dcel,Traits,Base_node>(Pm_point_location_base<Planar_map> *pl);}{create an empty arrangement with \ccc{*pl} as the point location strategy.}
+
+    \ccConstructor{Arrangement_2<Dcel,Traits,Base_node>(const Traits& tr, Pm_point_location_base<Planar_map> *pl);}{create an empty arrangement with \ccc{tr} as the traits class and \ccc{*pl} as the point location strategy.}
+
+    %\ccConstructor{Arrangement_2<Dcel,Traits,Base_node>( list<Traits::X_curve> &l );}
+    %{create the arrangement of the curves of \ccStyle{l}}
+
+    %\ccStyle{tempalte <class InputIterator>} \\
+    %\ccConstructor{Arrangement_2<Dcel,Traits,Base_node>( InputIterator begin, 
+     %                              InputIterator end );} 
+     %           {create the arrangement of the curves from a container iterated by
+     %           \ccStyle{InputIterator} from  \ccStyle{begin} to \ccStyle{end}
+     %           \ccPrecond{the container contains \ccStyle{Traits::X_curve} objects.}       
+     %           }
+    
+\ccOperations
+
+    \ccMethod{void clear();}
+     {clears the arrangement.}
+
+     \ccMethod{Curve_iterator insert(const Curve& cv);}{inserts the curve
+       \ccStyle{cv} into the arrangement. It uses the
+       \ccc{Traits::make_x_monotone}
+       function to cut the curve into $x$-monotone curves and inserts
+       them in the hierarchy tree. If the arrangement is in {\em update}
+       mode (the default mode) then the curves are inserted into the
+       planar map.
+       \ccPrecond{\ccc{cv} is not equivalent to a point. }
+       }
+    
+
+    \ccMethod{Curve_iterator insert_from_vertex( const X_curve & cv,
+       Vertex_handle src);}{inserts  the curve
+       \ccStyle{cv}, for 
+       which the source point, \ccStyle{src}, is already in the
+       arrangement. 
+       The curve is cut into $x$-monotone curves, as explained for 
+       the \ccc{insert} function.
+       This function is more efficient than the \ccc{insert} function, 
+       since it does not invoke a point location query for the 
+       endpoint \ccc{src}. Therefore, 
+       whenever possible, it is recommended to use this one rather
+       than \ccc{insert}. 
+       \ccPrecond{\ccc{src} holds a point which is the same as \ccc{cv's} 
+       source.}
+       \ccPrecond{\ccc{cv} is not equivalent to a point. }
+       }
+
+\begin{ccAdvanced}
+
+        %\ccTypedef{typedef typename Traits::SPLIT_FUNC SPLIT_FUNC;}{the
+        %   splitting function to be defined by the user.}
+        %\comment{This is not implemented yet in this way, currently we
+        %   just use a pointer to function.}
+        
+        \ccMethod{template <class F_iterator>
+           Curve_iterator insert(const Curve &cv, 
+           F_iterator F_begin, F_iterator F_end);}{insert the curve \ccc{cv}
+           into the arrangement. \ccc{F_begin} and \ccc{F_end} are iterators
+           that refer to {\it split-function} pointers
+           (or pointers to split-function objects).
+           The insert function uses the split-functions
+           to cut the curve into subcurves and inserts
+           them in the hierarchy tree (every split-function 
+           creates one level of the hierarchy tree).
+           If the arrangement is in \ccc{update}
+           mode (the default mode) then the curves are inserted into the
+           planar map.}
+
+        The split-function should get as input a curve and a reference to
+        a list of curves (where the subcurves will be stored), its return
+        value is \ccc{void}. See Section~\ref{ssec:example4}
+        and Section~\ref{ssec:example5} for examples
+        of user-defined functions.
+        The functions are called with the following
+        syntax:
+
+        \ccc{(*(*F_begin))(const Curve& c, list<Curve>& l);}
+
+\end{ccAdvanced}
+
+\begin{ccAdvanced}
+\ccHeading{Reading Arrangement}
+
+\ccMethod{bool read (istream &in);}
+{reading \ccRefName\ from a given input stream.
+ The input stream should support the extractor operator (\ccc{>>}) for the \ccStyle{Point} 
+ and \ccStyle{Curve} types of \ccc{Arrangement}. } 
+
+\ccStyle{template <class Scanner>}
+\ccMethod{bool read (istream &in, Scanner& scanner);}
+{reading \ccRefName\ from a given input stream when taking the scanner class as a parameter.
+ The input stream should support the extractor operator (\ccc{>>}) for the \ccStyle{Point}
+ and \ccStyle{Curve} types of \ccc{Arrangement}. }
+
+\end{ccAdvanced}    
+
+    %\ccMethod{void insert( list<Traits::X_curve> &l );} {insert the
+    %   curves of \ccStyle{l} into the arrangement \comment{iddo: use plane sweep?}}
+
+    %\ccStyle{tempalte <class InputIterator>} \\
+    %\ccMethod{void insert( InputIterator begin, InputIterator end );} 
+    %            {insert the curves from a container iterated by
+    %            \ccStyle{InputIterator} from  \ccStyle{begin} to \ccStyle{end}
+    %            into the arrangement.
+    %            \ccPrecond{the container contains \\ 
+    %               \ccStyle{Traits::X_curve} objects.}}
+
+%\comment{iddo: maybe add the function:} 
+%\ccMethod{insert_super_curve(list<Traits::X_curve> &l );}{}
+%\comment{iddo: which will insert the X_curves with prev/next to the super-curve from which they originated.}
+
+    \ccMethod{void set_update(bool u);}{sets update mode to \ccc{u}. If
+       update mode is true then every curve inserted into the
+       arrangement is also inserted into the planar map induced by it (i.e.,
+       it is intersected with the rest of the curves in the arrangement).
+       If update mode is false then the curve is only split into $x$-monotone
+       curves and inserted into the hierarchy tree (without the edge level
+       which is not constructed). If update mode is changed from false to true
+       then the planar map is updated with all the curves inserted into
+       the arrangement since the last time update was true.}
+
+
+
+%    \ccMethod{Arrangement_2<Dcel,Traits,Base_node>::Curve_iterator 
+%curve_node_begin();}
+    \ccMethod{Curve_iterator curve_node_begin();}
+    { returns the begin iterator of the curves (i.e., the
+       curves that were inserted to \ccVar).}
+
+%    \ccMethod{Arrangement_2 <Dcel,Traits,Base_node>::Curve_iterator 
+%curve_node_end();}
+    \ccMethod{Curve_iterator curve_node_end();}
+    { returns the past-the-end iterator of the curves.}
+
+    \ccMethod{void remove_curve(Curve_iterator cit);}
+    {removes the curve and all it's subcurves from the arrangement.}
+
+
+    The following operations have the same functionality as their
+    counterparts in the planar map.
+
+    \ccMethod{Vertex_iterator vertices_begin();}{}
+    \ccMethod{Vertex_iterator vertices_end();}{}
+    \ccMethod{Size number_of_vertices();}{}
+    \ccMethod{Halfedge_iterator halfedges_begin();}{}
+    \ccMethod{Halfedge_iterator halfedges_end();}{}
+    \ccMethod{Size number_of_halfedges();}{}
+    \ccMethod{Face_iterator faces_begin();}{}
+    \ccMethod{Face_iterator faces_end();}{}
+    \ccMethod{Size number_of_faces();}{}
+
+    \ccMethod{Halfedge_handle split_edge(Halfedge_handle e, const X_curve& c1, 
+   const X_curve& c2);}{}
+    \ccMethod{Halfedge_handle locate(const Point& p, Locate_type& lt);}{}
+    \ccMethod{Halfedge_handle vertical_ray_shoot(const Point& p, Locate_type& lt, bool up);}{}
+
+    \ccMethod{Face_handle unbounded_face();}{}
+
+    \ccMethod{bool is_valid(bool verbose=false);}{
+      checks the validity of many features of the arrangements. First,
+      checks the validity of the arrangement's planar map. Then, checks
+      for the correctness of the hierarchy tree. Finally, some geometric
+      properties are verified, e.g., each edge's end point is the start
+      point of its next edge. if the \ccc{verbose}parameter
+      is \ccc{true} then a verbose description of the vallidity check
+      is sent to the output.}
+    
+    The planar map operations: \ccc{merge_edge} and \ccc{remove_edge} are
+    not implemented in the arrangement level,
+    since they can cause inconsistencies
+    between the hierarchy tree and the planar map.
+    If it is necessary for the users to perform these operations
+    they can still achieve this. For example, if the users need to remove an
+    edge they can remove the curve and insert the two subcurves that are
+    created after the edge is removed,
+    instead of the original curve.
+
+\end{ccRefClass}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%types: Subcurve_node, Curve_node, Edge_node
+
+% +------------------------------------------------------------------------+
+%%RefPage: end of main body, begin of footer
+\ccRefPageEnd
+% EOF
+% +------------------------------------------------------------------------+

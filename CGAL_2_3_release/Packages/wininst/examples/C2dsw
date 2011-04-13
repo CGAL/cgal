@@ -1,0 +1,36 @@
+#!/bin/sh
+
+echo "Microsoft Developer Studio Workspace File, Format Version 6.00"
+echo "# WARNING: DO NOT EDIT OR DELETE THIS WORKSPACE FILE!"
+echo ""
+
+for i in *.C ; do 
+  k=`echo $i|sed -e "s/\.C//"`; 
+
+  echo "###############################################################################";
+  echo "";
+  echo 'Project: "'$k'"=".\visual\'$k'.dsp" - Package Owner=<4>';
+  echo "";
+  echo "Package=<5>";
+  echo "{{{";
+  echo "}}}";
+  echo "";
+  echo "Package=<4>";
+  echo "{{{";
+  echo "}}}";
+done
+
+echo "###############################################################################";
+echo "";
+echo "Global:";
+echo "";
+echo "Package=<5>";
+echo "{{{";
+echo "}}}";
+echo "";
+echo "Package=<3>";
+echo "{{{";
+echo "}}}";
+echo "";
+echo "###############################################################################";
+

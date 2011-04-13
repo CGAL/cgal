@@ -1,0 +1,54 @@
+2.1.3 (10/8/2001)  resubmit
+
+1.5.4 (23/7/2001)  removed more obsolete dirs
+
+1.5.3 (18/7/2001)  Remove some obsolete directories.
+
+1.5.2 (25/6/2001)  Changed directory names Triangulation -> Triangulation_2
+                   and Triangulation3 -> Triangulation_3.
+
+1.5.1 (9/10/2000)  Added CGALmin_sphere to the demos list in 
+		   the demo/GeoWin/makefile.mak
+		   
+1.5 (4/10/2000)    Updates for release 2.2. Editing install.txt to 
+                   reflect changes that happened since 2.1:
+                   Removing CLN from src/makefile_lib.mak.
+		   Upgraded demo makefiles.
+		   Put Leda includes after the Cgal includes in global
+		   makefiles.
+		   Upgraded platform-specific include file for MSVC.
+		   Upgraded platform-specific include file for BCC.
+		   Made cgal_config.bat to recognize minor version of
+		   BCC and treat include/CGAL/config/bcc/
+		   cctype accordingly 
+		   (the latter is not needed for verions > 5.4).
+		   Removed -nologo option for BCC (5.5 doesn't have it).
+		   Updated demo.bat and ex.bat in wininst/make that are used to
+		   batch compile demos and examples.
+
+1.4.2 (12/1/2000)  added existence check for tmpt0.cpp at the end of
+		   cgal_config.bat. Updated install.txt.
+
+1.4.1 (8/1/2000)   removed explicit list of object files to remove in
+		   src/makefile_lib.mak, due to a Win95 refusal to
+		   accept such a long line.
+
+1.4 (7/1/2000)	   removed Win95-incompatibilies, namely options of del
+		   and rmdir/mkdir
+		   added compiler check and LEDA_STD_HEADERS check
+
+1.3 (6/1/2000)	   shortened labels in cgal_config.bat to be at most 8
+		   characters long
+
+1.2.1,2		   fighting strange behaviour of the submission scripts
+
+1.2 (5/1/2000)	   changing examples/Fixedprecision_nt/makefile.mak to
+		   work without LEDA; 
+		   updated headers in include/CGAL/config/[msvc,bcc]
+  
+1.1 (5/1/2000)	   adding include/CGAL/config/[msvc,bcc]
+		   changed cgal_config.bat to clean winutils/bin before tools
+		   building
+
+1.0 (4/1/2000)	   initial release 4/1/2000
+

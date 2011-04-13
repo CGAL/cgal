@@ -1,0 +1,130 @@
+# ------------------------------------- Printing Arrangement
+# --------------------------------------------------------
+# ------------------------------------- Printing Planar map
+# --------------------------------------------------------
+# Printing number of vertices halfedges and faces in Planar map
+5 10 2
+# 5 vertices
+# ------------------------------------------
+1/1 0/1
+0/1 1/1
+0/1 0/1
+1/2 1/2
+1/1 1/1
+# 10 halfedges
+# ------------------------------------------
+3 2
+ 0/1 1/1 1/2 1/2
+1 2
+ 0/1 1/1 1/2 1/2
+0 2
+ 1/1 0/1 0/1 0/1
+2 2
+ 1/1 0/1 0/1 0/1
+0 2
+ 1/2 1/2 1/1 0/1
+3 2
+ 1/2 1/2 1/1 0/1
+3 2
+ 0/1 0/1 1/2 1/2
+2 2
+ 0/1 0/1 1/2 1/2
+3 2
+ 1/2 1/2 1/1 1/1
+4 2
+ 1/2 1/2 1/1 1/1
+# 2 faces
+# ------------------------------------------
+# writing face
+# ------------------------------------------
+# UNBOUNDED
+# number halfedges on outer boundary
+0
+# number of holes
+1
+# inner ccb
+# number halfedges on inner boundary
+7
+6 1 0 9 8 4 3 
+# finish writing face
+# ------------------------------------------
+# writing face
+# ------------------------------------------
+# outer ccb
+# number halfedges on outer boundary
+3
+7 2 5 
+# number of holes
+0
+# finish writing face
+# ------------------------------------------
+# ------------------------------------- End of Planar map
+# --------------------------------------------------------
+# Printing curve hierachy
+# number of curves
+1
+# 1 'th curve
+# ------------------------------------------
+4
+ 0/1 1/1 1/1 0/1 0/1 0/1 1/1 1/1
+# number of levels
+1
+# 1 'th level
+# ------------------------------------------
+3
+# begin and past end indices of children edge nodes
+0 2
+# subcurve of current level
+2
+ 0/1 1/1 1/1 0/1
+# begin and past end indices of children edge nodes
+2 3
+# subcurve of current level
+2
+ 1/1 0/1 0/1 0/1
+# begin and past end indices of children edge nodes
+3 5
+# subcurve of current level
+2
+ 0/1 0/1 1/1 1/1
+# number of edge nodes
+5
+# ----------------------- Edge nodes childrens:
+# pair indices (curve node and its edge node) for next overlapping edge node :
+0 0
+# Halfedge indices associated with edge nodes
+0
+# Edge node curve
+2
+ 0/1 1/1 1/2 1/2
+# pair indices (curve node and its edge node) for next overlapping edge node :
+0 1
+# Halfedge indices associated with edge nodes
+4
+# Edge node curve
+2
+ 1/2 1/2 1/1 0/1
+# pair indices (curve node and its edge node) for next overlapping edge node :
+0 2
+# Halfedge indices associated with edge nodes
+3
+# Edge node curve
+2
+ 1/1 0/1 0/1 0/1
+# pair indices (curve node and its edge node) for next overlapping edge node :
+0 3
+# Halfedge indices associated with edge nodes
+6
+# Edge node curve
+2
+ 0/1 0/1 1/2 1/2
+# pair indices (curve node and its edge node) for next overlapping edge node :
+0 4
+# Halfedge indices associated with edge nodes
+9
+# Edge node curve
+2
+ 1/2 1/2 1/1 1/1
+# finished current level
+# ------------------------------------- End of Arrangement
+# --------------------------------------------------------

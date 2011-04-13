@@ -1,0 +1,127 @@
+#!/bin/sh
+#
+# This script creates a CGAL makefile with entries for all .C files in the
+# current directory.
+#
+# Usage: create_makefile [-options]
+#
+# -d   create a default CGAL makefile
+# -t   create a makefile for the test suite
+# -w   create a makefile with flags for LEDA windows
+# -g   create a makefile with flags for GEOWIN
+
+#VERSION=2.0
+
+header()
+{
+  echo "#---------------------------------------------------------------------#"
+  echo "#                    $1"
+  echo "#---------------------------------------------------------------------#"
+}
+
+create_makefile_entry()
+{
+  echo "$1\$(EXE_EXT): $1\$(OBJ_EXT)"
+  echo "	\$(CGAL_CXX) \$(LIBPATH) \$(EXE_OPT)$1 $1\$(OBJ_EXT) \$(LDFLAGS)"
+  echo
+}
+
+create_makefile()
+{
+  echo "# Created by the script create_makefile"
+  echo "# This is the makefile for compiling a CGAL application."
+  echo
+  header "include platform specific settings"
+  echo    "# Choose the right include file from the <cgalroot>/make directory."
+  echo
+  echo    "# CGAL_MAKEFILE = ENTER_YOUR_INCLUDE_MAKEFILE_HERE"
+  echo    "include \$(CGAL_MAKEFILE)"
+  echo
+  header "compiler flags"
+  echo
+  echo    "CXXFLAGS = \\"
+  if [ ! -z "$TESTSUITE" ] ; then
+    echo    "           \$(TESTSUITE_CXXFLAGS) \\"
+    echo    "           \$(EXTRA_FLAGS) \\"
+  fi
+  if [ -d include ] ; then
+    echo  "           -Iinclude \\"
+  fi
+  echo    "           \$(CGAL_CXXFLAGS) \\"
+  echo    "           \$(LONG_NAME_PROBLEM_CXXFLAGS) \\"
+  echo    "           \$(DEBUG_OPT)"
+  echo
+  header "linker flags"
+  echo
+  echo    "LIBPATH = \\"
+  if [ ! -z "$TESTSUITE" ] ; then
+    echo    "          \$(TESTSUITE_LIBPATH) \\"
+  fi
+  if [ -z "$LEDAWINDOWS" ] ; then
+    echo    "          \$(CGAL_LIBPATH)"
+  else
+    echo    "          \$(CGAL_WINDOW_LIBPATH)"
+  fi
+  echo
+  echo    "LDFLAGS = \\"
+  if [ ! -z "$TESTSUITE" ] ; then
+    echo    "          \$(TESTSUITE_LDFLAGS) \\"
+  fi
+  echo    "          \$(LONG_NAME_PROBLEM_LDFLAGS) \\"
+  if [ -n "$GEOWIN" ] ; then
+    echo    "          \$(CGAL_GEOWIN_LDFLAGS)"
+  elif [ -z "$LEDAWINDOWS" ] ; then
+    echo    "          \$(CGAL_LDFLAGS)"
+  else
+    echo    "          \$(CGAL_WINDOW_LDFLAGS)"
+  fi
+  echo
+  header "target entries"
+  echo
+  printf "all:            "
+  for file in `ls *.C` ; do
+      printf "\\\\\n                `basename $file .C`\$(EXE_EXT) "
+  done
+  echo
+  echo
+  for file in `ls *.C` ; do
+    base=`basename $file .C`
+    create_makefile_entry $base
+  done
+  printf "clean: "
+  for file in `ls *.C` ; do
+      printf "\\\\\n                   `basename $file .C`.clean "
+  done
+  printf    "\n\n"
+  header "suffix rules"
+  echo
+  echo    ".C\$(OBJ_EXT):"
+  echo    "	\$(CGAL_CXX) \$(CXXFLAGS) \$(OBJ_OPT) \$<"
+  echo
+}
+
+case $# in
+  0) echo "Usage: create_makefile [-options]"
+     echo
+     echo "-d   create a default CGAL makefile"
+     echo "-t   create a makefile for the test suite"
+     echo "-w   create a makefile with flags for LEDA windows"
+     echo "-g   create a makefile with flags for GEOWIN"
+     exit
+esac
+
+for i do
+  case $i in
+    -t) TESTSUITE='y';;
+    -w) LEDAWINDOWS='y';;
+    -g) GEOWIN='y';;
+  esac
+done
+
+if [ -f makefile ] ; then
+  echo "moving makefile to makefile.bak ..."
+  mv -f makefile makefile.bak
+fi
+create_makefile > makefile
+echo "created makefile ..." 
+

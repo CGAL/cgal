@@ -1,0 +1,2 @@
+Filtered_exact as a generic filtering scheme for fast and robust predicates.
+Other low level "helper" number types.

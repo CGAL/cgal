@@ -1,0 +1,67 @@
+Ver 1.14 (26 June 2001)
+- Remove references to obsolete Equal_xy_2 Equal_xyz_3,
+  Less_distance_to_point_[23].
+
+Ver 1.13 (20 June 2001)
+- Fixed a few buggy #includes
+- Use the macro CGAL_ADVANCED_KERNEL_PARTIAL_SPEC.
+- remove warning CGAL::sign -> CGAL_NTS.
+
+Ver 1.12 (18 June 2001)
+- Remove references to VECTOR_WRAPPER.
+
+Ver 1.11 (17 May 2001)
+- Fix BCC warning.
+
+Ver 1.10 (20 April 2001)
+- Remove references to CGAL_STRICT_09.
+
+Ver 1.9 (27 April 2001)
+- Rename construct_tetrahedron_object to construct_tetrahedron_3_object.
+
+Ver 1.8 (12 April 2001)
+- Fix off by one error in Triangle::vertex().
+
+Ver 1.7 (12 February 2001)
+- Fix thinko.
+
+Ver 1.6 (12 February 2001)
+- Removed long_description.txt. [syl]
+- Changed a few CGAL_assertion() to CGAL_kernel_assertion(). [syl]
+- Added "if (is)" tests in operator>>().
+- Fix old style casts.
+
+Ver 1.5 (27 July 2000)
+- one more CGAL_NTS fix in PointCd.h [MY]
+- Minor cleanups. [syl]
+
+Ver 1.4 (27 June  2000)
+- CGAL_NTS fixes [syl].
+- Re-added headers [syl].
+
+Ver 1.3 (21 April 2000)
+- removed leading underscores from template parameters names
+
+Ver 1.2 (22 March 2000)
+- added maintainer files
+- changed Makefile of the package
+
+Ver 1.1.1 (Dec 14 1999)
+- Added test suite to the package
+
+Ver 1.1 (Dec 7 1999)
+- Added all kernel classes, constructions/predicates and operators
+  in include/CGAL/Cartesian
+- Rudimentary test suite, copied from 3D kernel, mostly to see
+  if it compiles, and to check basic functionality
+- wrapper and kernel classes to be found in test/KernelCd/include
+- should not change anything to current release,  as long as
+  wrapper classes are not moved from test/KernelCd/include to include
+
+Ver 1.0 (Oct 1 1999)
+- extracted for (int i=...) declarations into "int i; for (i=...)"
+  due to problems with VC++
+- added "os << d" in ASCII case of "os << Point_d" 
+
+New package (code from Bernd and Sven, via Stefan)
+- contains only PointCd.h

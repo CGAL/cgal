@@ -1,0 +1,348 @@
+% +------------------------------------------------------------------------+
+% | Reference manual page: Polygon_2.tex
+% +------------------------------------------------------------------------+
+% | 21.06.2001   Author
+% | Package: Polygon
+% | 
+\RCSdef{\RCSPolygonRev}{$Revision$}
+\RCSdefDate{\RCSPolygonDate}{$Date$}
+% |
+%%RefPage: end of header, begin of main body
+% +------------------------------------------------------------------------+
+
+
+\begin{ccRefClass}{Polygon_2<PolygonTraits_2, Container>}
+
+%% \ccHtmlCrossLink{}     %% add further rules for cross referencing links
+%% \ccHtmlIndexC[class]{} %% add further index entries
+
+\ccDefinition
+  
+The class \ccRefName\ implements polygons.
+The \ccRefName\ is parameterised by a traits class and a container class.
+The latter can be any class that fulfills the requirements for an STL container.
+It defaults to the vector class.
+
+\ccHeading{Caching}
+By default, \ccRefName\ does not use caching. That means that every time that
+a member function like \ccc{is_simple} is called, the result is computed from
+scratch.  This behaviour can be changed by defining a macro.
+\begin{ccExampleCode}
+#define CGAL_POLYGON_2_CACHED
+\end{ccExampleCode}
+
+In the future, this caching behavior will be the default. The only reason that
+it is not at the moment is that some compilers have problems when the
+\ccc{CGAL_POLYGON_2_CACHED} flag is set. This can be fixed by setting a second
+preprocessor flag as well:
+\begin{ccExampleCode}
+CGAL_POLYGON_2_MOD_ITER
+\end{ccExampleCode}
+The drawback of setting this flag is that some illegal operations will be
+allowed which can lead to wrong results.
+The iterators of the polygon are mutable in this case, but modifying the polygon
+through them will not invalidate the cache.
+
+\ccInclude{Polygon_2.h}
+
+%\ccIsModel
+
+%Concept
+
+\ccTypes
+\ccNestedType{Traits}{The traits type.}
+\ccGlue
+\ccNestedType{Container}{The container type.}
+
+\ccTypedef{typedef Traits::FT FT;}
+{The number type, which is the {\em field type} of the points of the polygon.} 
+\ccGlue
+\ccTypedef{typedef Traits::Point_2 Point_2;}{The point type of the polygon.}
+\ccGlue
+\ccTypedef{typedef Traits::Segment_2 Segment_2;}{The type of a segment between two
+ points 
+of the polygon.}
+
+The following types denote iterators that allow to traverse the vertices and
+edges of a polygon. 
+Since it is questionable whether a polygon should be viewed as a circular or 
+as a linear data structure both circulators and iterators are defined.
+The circulators and iterators are non-mutable.\footnote{At least conceptually.
+The enforcement depends on preprocessor flags.}
+The iterator category is in all cases bidirectional, except for
+\ccStyle{Vertex_iterator}, which has the
+same iterator category as \ccStyle{Container::iterator}.
+{\bf N.B.} In fact all of them should have the same iterator category as
+\ccStyle{Container::iterator}. However, due to compiler problems this is currently
+not possible.
+
+For vertices we define
+
+\ccNestedType{Vertex_iterator}{}
+\ccGlue
+\ccNestedType{Vertex_circulator}{}
+
+Their value type is \ccStyle{Point_2}.
+
+For edges we define
+
+\ccNestedType{Edge_const_circulator}{}
+\ccGlue
+\ccNestedType{Edge_const_iterator}{}
+
+Their value type is \ccStyle{Segment_2}.
+
+
+\ccCreation
+\ccCreationVariable{pgn}  %% choose variable name
+
+  \ccConstructor{Polygon_2(Traits p_traits = Traits());}{Creates an empty polygon \ccVar.}
+  \ccConstructor{template <class InputIterator>
+      Polygon_2( InputIterator first, InputIterator last,
+                 Traits p_traits = Traits()); }
+    { Introduces a polygon \ccVar\ with vertices from the sequence defined by
+      the range \ccStyle{[first,last)}.
+      The value type of \ccStyle{InputIterator} must be \ccc{Point_2}.
+    }
+
+
+\ccModifiers
+
+  \ccMethod{void set(Vertex_iterator pos, const Point_2& x);}
+    { Acts as \ccc{*pos = x}, except that that would be illegal because the
+      iterator is not mutable.}
+
+  \ccMethod{ Vertex_iterator insert(Vertex_iterator i, const Point_2& q);}
+    { Inserts the vertex \ccStyle{q} before \ccStyle{i}.
+      The return value points to the inserted vertex. }
+  \clearpage
+  \ccMethod{template <class InputIterator>
+      void insert(Vertex_iterator i, InputIterator first, InputIterator last);}
+    { Inserts the vertices in the range \ccStyle{[first, last)} before
+      \ccStyle{i}.
+      The value type of points in the range \ccStyle{[first,last)} must be
+                 \ccStyle{Point_2}.
+    }
+
+  \ccMethod{ void push_back(const Point_2& q);}
+    { Has the same semantics as \ccStyle{p.insert(p.vertices_end(), q)}.}
+
+  \ccMethod{ void erase(Vertex_iterator i);}
+    { Erases the vertex pointed to by \ccStyle{i}.}
+
+  \ccMethod{ void erase(Vertex_iterator first, Vertex_iterator last);}
+    { Erases the vertices in the range \ccStyle{[first, last)}.}
+
+  \ccMethod{ void reverse_orientation(); }
+    { Reverses the orientation of the polygon. The vertex pointed to by
+      \ccStyle{p.vertices_begin()} remains the same. }
+
+\ccAccessFunctions
+The following methods of the class \ccClassName\ return
+circulators and iterators that allow to traverse the vertices and edges.
+
+  \ccMethod{ Vertex_iterator vertices_begin() const; }
+    { Returns a constant iterator that allows to traverse the vertices of
+      the polygon \ccStyle{p}.}
+
+  \ccMethod{ Vertex_iterator vertices_end() const; }
+    { Returns the corresponding past-the-end iterator. }
+
+  \ccMethod{ Vertex_circulator vertices_circulator() const; }
+    { Returns a mutable circulator that allows to traverse the vertices of
+      the polygon \ccStyle{p}.}
+
+  \ccMethod{ Edge_const_iterator edges_begin() const;}
+    { Returns a non-mutable iterator that allows to traverse the edges of
+      the polygon \ccStyle{p}.}
+
+  \ccMethod{ Edge_const_iterator edges_end() const;}
+    { Returns the corresponding past-the-end iterator. }
+
+  \ccMethod{ Edge_const_circulator edges_circulator() const;}
+    { Returns a non-mutable circulator that allows to traverse the edges of
+      the polygon \ccStyle{p}.}
+
+\ccPredicates
+
+  \ccMethod{bool is_simple() const;}
+    { Returns whether \ccStyle{p} is a simple polygon.}
+
+  \ccMethod{bool is_convex() const;}
+    { Returns whether \ccStyle{p} is convex. }
+
+  \ccMethod{Orientation orientation() const;}
+    { Returns the orientation of \ccVar. If the number of vertices 
+      $\ccStyle{p.size()} < 3$ then \ccStyle{COLLINEAR} is returned.
+      \ccPrecond \ccStyle{p.is_simple()}.
+    }
+
+  \ccMethod{Oriented_side oriented_side(const Point_2& q) const;}
+    { Returns \ccStyle{POSITIVE_SIDE}, or \ccStyle{NEGATIVE_SIDE},
+       or \ccStyle{ON_ORIENTED_BOUNDARY}, 
+       depending on where point \ccStyle{q} is.
+      \ccPrecond \ccStyle{p.is_simple()}.
+    }
+
+  \ccMethod{Bounded_side bounded_side(const Point_2& q) const;}
+    { Returns the symbolic constant \ccStyle{ON_BOUNDED_SIDE}, 
+      \ccStyle{ON_BOUNDARY}
+      or \ccStyle{ON_UNBOUNDED_SIDE}, depending on where point
+      \ccStyle{q} is.
+      \ccPrecond \ccStyle{p.is_simple()}.
+    }
+
+  \ccMethod{Bbox_2 bbox() const;}
+    { Returns the smallest bounding box containing \ccVar.}
+    
+  \ccMethod{Traits::FT area() const;}
+    { Returns the signed area of the polygon \ccVar. This means that the area is
+      positive for counter clockwise polygons and negative for clockwise polygons.
+    }
+      
+  \ccMethod{Vertex_iterator left_vertex();}
+    { Returns the leftmost vertex of the polygon \ccStyle{p} with the smallest
+     \ccStyle{y}-coordinate. }
+    
+  \ccMethod{Vertex_iterator right_vertex();}
+    { Returns the rightmost vertex of the polygon \ccStyle{p} with the largest
+     \ccStyle{y}-coordinate. }
+    
+  \ccMethod{Vertex_iterator top_vertex();}
+    { Returns topmost vertex of the polygon \ccStyle{p} with the largest
+     \ccStyle{x}-coordinate. }
+    
+  \ccMethod{Vertex_iterator bottom_vertex();}
+    { Returns the bottommost vertex of the polygon \ccStyle{p} with the smallest
+     \ccStyle{x}-coordinate. }
+    
+For convenience we provide the following boolean functions:    
+\ccThree{Segment_2}{}{\hspace*{10cm}}
+
+\ccMethod{bool is_counterclockwise_oriented() const;}
+    {}
+
+\ccGlue
+\ccMethod{bool is_clockwise_oriented() const;}
+    {}
+
+\ccMethod{bool is_collinear_oriented() const;}
+    {}
+
+\ccGlue
+\ccMethod{bool has_on_positive_side(const Point_2& q) const;}
+    {}
+
+\ccGlue
+\ccMethod{bool has_on_negative_side(const Point_2& q) const;}
+    {}
+
+\ccGlue
+\ccMethod{bool has_on_boundary(const Point_2& q) const;}
+    {}
+  
+\ccGlue
+\ccMethod{bool has_on_bounded_side(const Point_2& q) const;}
+    {}
+
+\ccGlue
+\ccMethod{bool has_on_unbounded_side(const Point_2& q) const;}
+    {}
+
+\ccHeading{Random access methods}
+These methods are only available for random access containers.
+
+  \ccMethod{const Point_2& vertex(int i) const;}
+    { Returns a (const) reference to the $i$-th vertex. }
+
+  \ccMethod{const Point_2& operator[](int i) const;}
+    { Returns a (const) reference to the $i$-th vertex. }
+
+  \ccMethod{Segment_2 edge(int i) const;}
+    { Returns a const reference to the $i$-th edge. }
+
+\ccHeading{Miscellaneous}
+
+  \ccMethod{int size() const;}
+    { Returns the number of vertices of the polygon \ccVar.}
+
+  \ccMethod{bool is_empty() const;}
+    { Returns $\ccStyle{p.size()} == 0$.}
+
+  \ccMethod{const Container& container() const;}
+    { Returns a const reference to the sequence of vertices of the polygon 
+      \ccVar. }
+
+  \ccHidden\ccMethod{bool identical(const Polygon_2<Traits,Container> &) const;}
+    {}
+\ccHeading{Globally defined operators}
+
+\ccStyle{template <class Traits, class Container1, class Container2>}
+  \ccFunction{
+     bool operator==(const Polygon_2<Traits,Container1>& p1, 
+                     const Polygon_2<Traits,Container2>& p2);}
+     { Test for equality: two polygons are equal iff there exists a cyclic
+       permutation of the vertices of \ccStyle{p2} such that they are equal to the
+       vertices of \ccStyle{p1}. Note that the template argument
+       \ccStyle{Container} of \ccStyle{p1} and \ccStyle{p2} may be different. }
+
+\ccStyle{template <class Traits, class Container1, class Container2>}
+  \ccFunction{
+     bool operator!=(const Polygon_2<Traits,Container1>& p1, 
+                     const Polygon_2<Traits,Container2>& p2);}
+     { Test for inequality. }
+
+\ccStyle{template <class Transformation, class Traits, class Container>}
+
+  \ccFunction{
+     Polygon_2<Traits,Container>
+     transform(const Transformation& t, const Polygon_2<Traits,Container>& p);}
+  { Returns the image of the polygon \ccc{p} under the transformation \ccc{t}. }
+
+
+
+%\ccSeeAlso
+
+\ccImplementation
+
+The methods
+\ccStyle{is_simple},
+\ccStyle{is_convex},
+\ccStyle{orientation},
+\ccStyle{oriented_side},
+\ccStyle{bounded_side},
+\ccStyle{bbox},
+\ccStyle{area},
+\ccStyle{left_vertex},
+\ccStyle{right_vertex},
+\ccStyle{top_vertex} and
+\ccStyle{bottom_vertex}
+are all implemented using the algorithms on sequences of 2D points.
+See the corresponding global functions for information about which algorithms
+were used and what complexity they have.
+% described
+%in section \ref{sec:poly_algo}. There you can find information about which
+%algorithms were used and what complexity they have.
+
+If caching is turned on, all functions are cached except those that compute on
+which side of the polygon a point is situated.
+The cache is invalidated after any operation that modifies the polygon.
+
+
+
+\ccExample
+
+The following code fragment creates a polygon and checks if it is convex.
+
+\ccIncludeVerbatim{Polygon/Polygon.C}
+
+
+%% \ccIncludeExampleCode{Polygon/Polygon_2_prog.C}
+
+\end{ccRefClass}
+
+% +------------------------------------------------------------------------+
+%%RefPage: end of main body, begin of footer
+% EOF
+% +------------------------------------------------------------------------+
+

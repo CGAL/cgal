@@ -1,0 +1,45 @@
+% +------------------------------------------------------------------------+
+% | Reference manual page: Pm_leda_segment_exact_traits.tex (Planar_map)
+% +------------------------------------------------------------------------+
+% | 
+% | Package: pm (Planar_map_2)
+% | 
+% +------------------------------------------------------------------------+
+
+\ccRefPageBegin
+
+%%RefPage: end of header, begin of main body
+% +------------------------------------------------------------------------+
+
+\renewcommand{\ccRefPageBegin}{\begin{ccAdvanced}}
+\renewcommand{\ccRefPageEnd}{\end{ccAdvanced}}
+
+\begin{ccRefClass}{Pm_leda_segment_exact_traits}
+%\begin{ccAdvanced}
+
+We supply a traits class that uses LEDA's rational kernel ---
+\ccStyle{Pm_leda_segment_exact_traits}.
+The class handles
+finite line segments in the plane
+and uses the LEDA rational kernel (\ccStyle{Point} is of type 
+\ccStyle{leda_rat_point} and \ccStyle{X_curve} is of type
+\ccStyle{leda_rat_segment}). The predicates make use of LEDA's primitive
+predicates (e.g., orientation) that are implemented using floating point
+``filters'' \cite{fv-sayee-96} which speed up the use of exact computations.
+
+\ccInclude{ CGAL/Pm_segment_exact_traits.h}
+
+\ccIsModel
+    \ccc{PlanarMapTraits_2}
+
+%\end{ccAdvanced}
+\end{ccRefClass} % pm_leda_segment_exact_traits
+
+\renewcommand{\ccRefPageBegin}{}
+\renewcommand{\ccRefPageEnd}{}
+
+% +------------------------------------------------------------------------+
+%%RefPage: end of main body, begin of footer
+\ccRefPageEnd
+% EOF
+% +------------------------------------------------------------------------+

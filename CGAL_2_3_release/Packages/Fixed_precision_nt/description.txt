@@ -1,0 +1,4 @@
+Package Fixed:
+Provides arithmetic on numbers with 24 bits fixed precision.
+Upper bound on numbers has to be specified.
+

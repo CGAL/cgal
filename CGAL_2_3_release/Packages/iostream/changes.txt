@@ -1,0 +1,81 @@
+Version 2.11 (30 july 2001)
+- Susan removed \input{Color} from iostream main.tex
+
+Version 2.10 (26 july 2001)
+- moved doc files
+- make doc of colors no longer a separate chapter
+
+Version 2.9 (12 February 2001)
+- use static_cast<>.
+
+Version 2.8 (?? ??????? 200?)
+- fixed banner and long lines (31 January 2000)
+
+Version 2.7 (31 January 2000)
+cleaned up  CGAL_static_cast(A,B) to static_cast<A>(B)
+in io.C
+
+Version 2.6 (21 January 2000)
+added a new data member _alpha to Color class
+changed int data members to unsigned char in Color class
+added a few new beautiful predefined color :
+PURPLE, ORANGE, DEEPBLUE, GREY
+
+Version 2.5 (6 July 1999)
+added a missing const in Color operator !=
+
+Version 2.4 (2 July 1999)
+added still missing std:: to cerr and endl
+
+Version 2.3 (29 June 1999)
+added still missing std:: pointed out by Geert Jan
+
+Version 2.2 (22 Juin 1999)
+added a few missing std::
+
+Version 2.1 (27 Mai 1999)
+- introduced std:: namespaces
+
+Version 2.0 (11 Mar 1999)
+- Converted to namespace CGAL.
+
+Version 1.9 (28 Feb 1999)
+- Made some constants extern. Added Color.C for that. (?)
+
+Version 1.8 (23 Jul 1998)
+- incorporated doc changes which were made in CGAL 1.0
+
+Version 1.7 (22 Jul 1998)
+- Added documentation for Color and iostream
+- Changed chapter title to "Operators for iostreams"
+- Added "const CGAL_Color CGAL_{WHITE,...}" declarations in the
+  Color chapter.
+- istream& operator>>( istream& is, const CGAL_Color& col)
+  in include/CGAL/IO/io.h and in documentation
+- ostream& operator<<( ostream& out, const CGAL_Color& col)
+  in documentation
+- made CGAL_Color::operator==() and !=() const operators
+- added a copy constructor to CGAL_Color
+
+Version 1.6 (29 Jun 1998)
+- Readded CGAL_get_mode(ios &i) in io.CC (grrrr...)
+- Updated funnelweb
+
+Version 1.5 (23 Jun 1998)
+- Added CGAL_Color (moved from Window package)
+- ostream& operator<<( ostream& out, const CGAL_Color& col)
+  in include/CGAL/IO/io.h
+
+Version 1.4:
+- added CGAL_get_mode(ios &i) in io.C, and therefore moved the cast to one
+  single function
+
+Version 1.3:
+- added CGAL_static_cast in io.C
+
+Version 1.2:
+- added src subdir to the distribution
+
+Version 1.0:
+- Window_stream now include package_Window_stream.h
+(package=triangulation,planar_map,polygon,etc.)

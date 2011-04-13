@@ -1,0 +1,37 @@
+Timer Package: Release changes:
+---------------------------------------------------------------------
+2.0 (20 June 2001)
+    manual split
+
+1.9 (4  April 2001)
+    changes in Real_timer.h to avoid warnings
+
+1.8 (11 August 2000)
+    change to ccRefName in the manual
+
+1.7 (14 April 2000)
+    changed the manual a bit
+
+1.6 (1 Feb 2000)
+    some changes for Borland C++
+    Real_timer.h reorganized a bit
+
+1.5 CGAL_CLIB_STD added at a few places
+
+1.4 (20 Sept 1999)
+     endl 's removed
+
+1.3 (17 Sept 1999)
+     added std:: to cerr
+
+1.2 (13 Sept 1999)
+     Changes for Visual C++; uses _ftime on this platform for Real_timer
+
+1.1 (05 Mar 1999)
+
+     Standard headers, std namespace and CGAL namespace.
+     This new package is spawned from the old Support_LK package
+     1.18 (07 Oct 1998). Timer.h and Real_timer.h are here separated 
+     in their own package to reflect that they have their own chapter
+     in the manual.
+

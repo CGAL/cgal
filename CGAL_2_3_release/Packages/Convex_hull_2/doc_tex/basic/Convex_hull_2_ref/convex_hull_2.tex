@@ -1,0 +1,94 @@
+% +------------------------------------------------------------------------+
+% | Reference manual page: convex_hull_2.tex
+% +------------------------------------------------------------------------+
+% | 09.05.2001   Susan Hert and Stefan Schirra
+% | Package: Convex_hull_2
+% | 
+% +------------------------------------------------------------------------+
+
+
+\begin{ccRefFunction}{convex_hull_2}  %% add template arg's if necessary
+\ccIndexMainItemBegin{convex hull, 2D}
+
+\ccDefinition
+  
+The function \ccRefName\ generates the counterclockwise sequence of extreme
+points from a given set of input points.  
+
+\ccInclude{CGAL/convex_hull_2.h}
+
+\ccFunction{template <class InputIterator, class OutputIterator>
+            OutputIterator
+            convex_hull_2(InputIterator first, InputIterator beyond,
+                          OutputIterator  result,
+                          const Traits & ch_traits = Default_traits );}
+            {generates the counterclockwise sequence of extreme points
+            of the points in the range [\ccc{first},\ccc{beyond}).
+            The resulting sequence is placed starting at position
+            \ccc{result}, and the past-the-end iterator for the resulting
+            sequence is returned. It is not specified at which point the
+            cyclic sequence of extreme points is cut into a linear sequence.
+            \ccPrecond %\ccIndexSubitem[C]{convex_hull_2}{preconditions}
+            The source range [\ccc{first},\ccc{beyond}) does not contain
+            \ccc{result}.}
+
+The default traits class \ccc{Default_traits} is the kernel in which
+the type \ccc{InputIterator::value_type} is defined. 
+
+\ccHeading{Requirements}
+\begin{enumerate}
+   \item    \ccc{InputIterator::value_type} and \ccc{OutputIterator::value_type}
+            are equivalent to \ccc{Traits::Point_2}.
+   \item    \ccc{Traits} contains the following subset of types from
+            the concept ConvexHullTraits\_2 and their corresponding member
+            %\ccIndexMainItem[c]{ConvexHullTraits_2}
+            functions that return instances of these types:
+            \begin{itemize}
+                \item \ccc{Traits::Point_2},
+                \item \ccc{Traits::Less_xy_2}, 
+                \item \ccc{Traits::Less_yx_2},
+                \item \ccc{Traits::Left_of_line_2}, 
+                \item \ccc{Traits::Leftturn_2}.
+            \end{itemize}
+\end{enumerate}
+
+
+\ccSeeAlso
+
+\ccRefIdfierPage{CGAL::ch_akl_toussaint} \\
+\ccRefIdfierPage{CGAL::ch_bykat} \\
+\ccRefIdfierPage{CGAL::ch_eddy} \\
+\ccRefIdfierPage{CGAL::ch_graham_andrew} \\
+\ccRefIdfierPage{CGAL::ch_jarvis} \\
+\ccRefIdfierPage{CGAL::ch_melkman} 
+
+\ccImplementation
+
+One of two algorithms is used,
+depending on the type of iterator used to specify the input points.  For
+input iterators, the algorithm used is that of Bykat \cite{b-chfsp-78}, which 
+has a worst-case running time of $O(n h)$, where $n$ is the number of input 
+points and $h$ is the number of extreme points.  For all other types of 
+iterators, the $O(n \log n)$ algorithm of of Akl and Toussaint 
+\cite{at-fcha-78} is used.
+
+
+\ccExample
+In the following example we use the \stl-compliant interface of
+\ccc{CGAL::Polygon_2} to construct the convex hull polygon from the
+sequence of extreme points. Point data are read from standard input, the
+convex hull polygon is shown in a \cgal\ window.
+Remember, that when no traits class is specified for the function
+\ccc{convex_hull_2}, the kernel from which the input points come is
+used as the default traits class.
+
+\ccIncludeExampleCode{Convex_hull_2/convex_hull_2_demo.C}
+
+\ccIndexMainItemEnd{convex hull, 2D}
+\end{ccRefFunction}
+
+% +------------------------------------------------------------------------+
+%%RefPage: end of main body, begin of footer
+% EOF
+% +------------------------------------------------------------------------+
+

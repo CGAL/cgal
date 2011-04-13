@@ -1,0 +1,116 @@
+\providecommand{\ccRequire}{\ccCommentHeading{Requirement}}
+
+\begin{ccRefClass}{Direction_d<R>}\ccCreationVariable{dir}
+
+\ccDefinition
+
+
+A \ccc{Direction_d} is a vector in the $d$-dimensional vector space
+where we forget about its length. We represent directions in
+$d$-dimensional space as a tuple $(h_0,\ldots,h_d)$ of variables of
+type \ccc{RT} which we call the homogeneous coordinates of the
+direction. The coordinate $h_d$ must be positive.  The Cartesian
+coordinates of a direction are $c_i = h_i/h_d$ for $0 \le i < d$,
+which are of type \ccc{FT}.  Two directions are equal if their
+Cartesian coordinates are positive multiples of each other. Directions
+are in one-to-one correspondence to points on the unit sphere.
+
+
+
+\ccSetOneOfTwoColumns{4cm}
+
+\ccTypes
+
+\ccNestedType{RT}{the ring type.}
+
+\ccNestedType{FT}{the field type.}
+
+\ccNestedType{LA}{the linear algebra layer.}
+
+\ccNestedType{Delta_const_iterator}{
+  a read-only iterator for the deltas of \ccc{dir}.}
+
+\ccNestedType{Base_direction}{construction tag.}
+
+\ccSetOneOfTwoColumns{4cm}
+
+\ccCreation
+
+\ccConstructor{Direction_d<R>()}{ introduces a variable \ccc{dir} of
+  type \ccc{Direction_d<R>}. }
+
+\ccConstructor{Direction_d<R>(Vector_d<R> v)}{
+  introduces a variable \ccc{dir} of type \ccc{Direction_d<R>}
+  initialized to the direction of \ccc{v}. }
+
+\ccConstructor{template <class InputIterator>
+Direction_d<R>(int d, InputIterator first, InputIterator last)}{
+  introduces a variable \ccc{dir} of type \ccc{Direction_d<R>} in
+  dimension \ccc{d} with representation tuple \ccc{set [first,last)}.
+  \ccPrecond \ccc{d} is nonnegative, \ccc{[first,last)} has \ccc{d}
+  elements. \ccRequire The value type of \ccc{InputIterator} is \ccc{RT}.}
+
+\ccConstructor{Direction_d<R>(int d, Base_direction, int i)}{ returns
+  a variable \ccc{dir} of type \ccc{Direction_d<R>} initialized to the
+  direction of the $i$-th base vector of dimension $d$.  \ccPrecond $0
+  \leq i < d$.}
+
+\ccConstructor{Direction_d<R>(RT x, RT y)}{
+  introduces a variable \ccc{dir} of type \ccc{Direction_d<R>} in 
+  $2$-dimensional space.}
+
+\ccConstructor{Direction_d<R>(RT x, RT y, RT z)}{
+  introduces a variable \ccc{dir} of type \ccc{Direction_d<R>} in 
+  $3$-dimensional space.}
+
+\ccSetTwoOfThreeColumns{5cm}{3cm}
+
+\ccOperations
+
+\ccMethod{int dimension() ;}{
+  returns the dimension of \ccc{dir}.}
+
+\ccMethod{RT delta(int i) ;}{
+  returns the $i$-th component of \ccc{dir}. 
+   \ccPrecond $0 \leq i < d$.}
+
+\ccMethod{RT operator[](int i) ;}{
+  returns the $i$-th delta of \ccc{dir}. 
+  \ccPrecond $0 \leq i < d$.}
+
+\ccMethod{Delta_const_iterator deltas_begin() ;}{
+  returns an iterator pointing to the first delta of \ccc{dir}.}
+
+\ccMethod{Delta_const_iterator deltas_end() ;}{
+  returns an iterator pointing beyond the last delta of \ccc{dir}.}
+
+\ccMethod{Vector_d<R> vector() ;}{
+  returns a vector pointing in direction \ccc{dir}.}
+
+\ccMethod{bool is_degenerate() ;}{
+  returns true iff \ccc{dir.delta(i)==0} for all $0\leq i < d$.}
+
+\ccMethod{Direction_d<R> transform(const Aff_transformation_d<R>& t) ;}{
+  returns $t(p)$.}
+
+\ccMethod{Direction_d<R>  opposite() ;}{
+  returns the direction opposite to \ccc{dir}.}
+
+\ccMethod{Direction_d<R> operator- () ;}{
+  returns the direction opposite to \ccc{dir}.}
+
+\ccHeading{Downward compatibility}
+We provide the operations of the lower dimensional interface \ccc{dx()},
+\ccc{dy()}, \ccc{dz()}. 
+
+\ccImplementation
+
+Directions are implemented by arrays of integers as an item type.  All
+operations like creation, initialization, tests, inversion, input and
+output on a direction $d$ take time $O(d.\mathit{dimension}())$.
+\ccc{dimension()}, coordinate access and conversion take constant
+time.  The space requirement is $O(d.\mathit{dimension}())$.
+
+\end{ccRefClass}
+
+

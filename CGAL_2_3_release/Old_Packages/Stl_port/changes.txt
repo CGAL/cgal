@@ -1,0 +1,63 @@
+1.33 (19/7/01)
+Made the conversion operator to vector_const_iterator in the vector_iterator
+class const. (GJG)
+
+1.1 (12/2/01)
+moved vc7/ to include/compilers/
+
+1.0 (7/2/01)
+added support for VC7.0 beta1 native STL
+removed stlport/sc5, stlport/bc50, stlport/old_hp.
+
+0.6.1 (08/12/00)
+a bit more cleanup in cgal_vector.h
+
+0.6   (08/12/00)
+changed cgal_vector.h to use __STLPORT_STD:: prefix instead of std::
+prefix. This is mostly for consistensy with the rest of stlport/
+contents. (pointed out by S.Pashkov on the cgal-discuss mailing list)
+
+0.5   (05/07/00)
+fixed reverse_iterator oddity repoted by M.Seel
+
+0.4.1 (03/01/00)
+added
+ #define CGAL_LIMITED_ITERATOR_TRAITS_SUPPORT 1
+to config/stl_msvc.h
+(thus eliminating the need for this setting elsewhere)
+
+0.4 (11/10/99)
+introduced new vector class by Geert-Jan;
+affected original files:
+stl_hashtable.h
+stl_uninitialized.h
+stl_vector.[ch]
+
+0.3.1 (15/9/99)
+set __STL_NO_EXCEPTIONS on in stl_user_config.h
+
+0.3 (11/9/99)
+added _STL_DEBUG handling in stl_numeric.h;
+fixed stl_bitset to handle partial specialization
+properly.
+Fixed the stlport testsuite for our purposes
+(new style headers) and run the tests on the package.
+All of them now pass.
+TODO: get rid of the headers that we don't need
+      (old_hp/, etc)
+
+0.2.1 (8/9/99)
+changed the mode to use new style I/O headers
+in stl_user_config.h
+
+0.2 (3/9/99)
+patched 
+	stl_hash_map.h
+	stl_hash_set.h
+	stl_slist.h
+	stl_rope.h
+added support for pointers and pointers to pointers
+for many built-in types.
+*done (11/9/99) TODO: make stl_bitset* pass the test in stlport tests
+
+	

@@ -1,0 +1,18 @@
+\begin{ccRefFunctionObjectConcept}{Kernel::ConstructPerpendicularLine_3}
+A model for this must provide:
+
+\ccCreationVariable{fo}
+
+\ccMemberFunction{Kernel::Line_3 operator()(const Kernel::Plane_3& pl,
+                                            const Kernel::Point_3& p);}
+       {returns the line that is perpendicular to \ccc{pl} and that
+        passes through point \ccStyle{p}. The line is oriented from
+        the negative to the positive side of \ccc{pl}}
+
+\ccRefines
+AdaptableFunctor
+
+\ccSeeAlso
+\ccRefIdfierPage{CGAL::Plane_3<R>} \\
+
+\end{ccRefFunctionObjectConcept}

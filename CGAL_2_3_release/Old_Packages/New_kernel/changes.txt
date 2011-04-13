@@ -1,0 +1,39 @@
+3.3   (27 Apr 2001)
+- Rename construct_tetrahedron_object to construct_tetrahedron_3_object and
+  construct_iso_cuboid_object to construct_iso_cuboid_3_object.
+
+%%%%%%%%%%%%%%%%%%%%%%   R e l e a s e  2 . 2   %%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+ 3.2   (07 Apr 2000)
+
+- version numbering coupled to kernel test package
+- test/NewKernel prepared for testing advanced kernel stuff 
+  using include_advanced include directory
+
+%%%%%%%%%%%%%%%%%%%%%%   R e l e a s e  2 . 1   %%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+- Construct_iso_rectangle_2  added
+- Construct_iso_cuboid_3  added
+
+1.0.1 -> 1.0.2 (16 Nov 99)
+- use(CGAL::Sign) added
+- header added to function_objects.h and homogeneous_rep.h
+
+1.0   -> 1.0.1 (12 Nov 99)
+- warning in testsuite removed by calling unused variables
+  with a use()-function :)
+
+0.99  -> 1.0   (14 Oct 99)
+- bisector test deactivated (not impl. in C2 yet)
+- test suite revised: Gmpz used, if LEDA not available.
+ 
+0.99           (19 Sep 99)
+- testsuite update
+
+0.98           (01 Sep 99)
+- Chateau Dagstuhl modifications
+
+0.95           (19 Aug 99)
+- files for Homogeneous in _2 and just one simple test
+
+

@@ -1,0 +1,68 @@
+% +------------------------------------------------------------------------+
+% | Reference manual page: Pm_bounding_box_traits.tex (Planar_map)
+% +------------------------------------------------------------------------+
+% | 
+% | Package: pm (Planar_map_2)
+% | 
+% +------------------------------------------------------------------------+
+
+\ccRefPageBegin
+
+%%RefPage: end of header, begin of main body
+% +------------------------------------------------------------------------+
+
+%draw_pm
+\begin{ccRefFunction}{draw_pm}
+
+\ccCreationVariable{draw_pm}
+
+\ccDefinition
+The function \ccRefName\ sends an object of the template parameter
+type \ccc{Planar_map} to a graphic stream. The function is intended
+for cases in which the drawing object is not the default one, i.e. for
+user defined drawing classes. User defined drawers aim at drawing
+planar maps with additional information or aim at a different way to
+draw components. For a default use simply use the insertor operator
+(\ccc{<<}) of the graphic stream as in \ccc{my_window << pm}.
+
+\ccInclude{CGAL/IO/draw_pm.h}
+
+\ccFunction{template <Planar_map, Drawer, Window> 
+            void 
+            draw_pm(Planar_map pm, 
+                    Drawer&    dr, 
+                    Window&    w);}
+           {The function sends a planar map object to a graphic stream
+           \ccc{w}. The function uses the functions defined in
+           \ccStyle{dr}, the drawing object.}
+
+\ccHeading{Requirements}
+\begin{enumerate}
+   \item    \ccc{Planar_map}  
+            should be of type \ccc{Planar_map_2<Dcel,Traits>}.
+   \item    \ccc{Drawer}  
+            should be of type \ccc{Pm_file_drawer<Planar_map>}.
+   \item    \ccc{Window} should support the insertor operator (\ccc{<<}) 
+            for the following types
+            \begin{itemize}
+                \item \ccc{Planar_map::Point},
+                \item \ccc{Planar_map::X_curve}, 
+            \end{itemize}
+\end{enumerate}
+
+\ccSeeAlso
+     \ccc{write_pm}\lcTex{ 
+     (\ccRefPage{CGAL::write_pm})}\\
+
+\end{ccRefFunction} % draw_pm
+
+% +------------------------------------------------------------------------+
+%%RefPage: end of main body, begin of footer
+\ccRefPageEnd
+% EOF
+% +------------------------------------------------------------------------+
+
+
+
+
+

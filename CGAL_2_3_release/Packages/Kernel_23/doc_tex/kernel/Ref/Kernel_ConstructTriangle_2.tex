@@ -1,0 +1,21 @@
+\begin{ccRefFunctionObjectConcept}{Kernel::ConstructTriangle_2}
+A model for this must provide:
+
+\ccCreationVariable{fo}
+
+\ccHidden \ccMemberFunction{Kernel::Triangle_2 operator()();}
+             {introduces an uninitialized variable .}
+
+\ccHidden \ccMemberFunction{Kernel::Triangle_2 operator()(const Kernel::Triangle_2 &u);}
+            {copy constructor.}
+
+
+\ccMemberFunction{Kernel::Triangle_2 operator()(const Kernel::Point_2 &p, 
+                             const Kernel::Point_2 &q, 
+                             const Kernel::Point_2 &r);}
+            {introduces a triangle  with vertices $p$,  $q$ and $r$.}
+
+\ccSeeAlso
+\ccRefIdfierPage{CGAL::Triangle_2<R>}\\
+
+\end{ccRefFunctionObjectConcept}

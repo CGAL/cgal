@@ -1,0 +1,140 @@
+% begin cgal manual page
+
+\begin{ccRefClass}{Unique_hash_map<Key,Data,UniqueHashFunction>}
+\ccCreationVariable{map}
+
+\ccDefinition
+
+An instance \ccVar\ of the parameterized data type \ccRefName\ is an
+injective mapping from the set of keys of type \ccc{Key} to the set of
+variables of type \ccc{Data}. New keys can be inserted at any time,
+however keys cannot be individually deleted.
+
+An object \ccc{hash} of the type \ccc{UniqueHashFunction} returns a
+unique integer index \ccc{hash(key)} of type \ccc{std::size_t} for all
+objects $key$ stored in \ccVar. The template parameter has as default
+the \ccc{Handle_hash_function} that hashes all types of pointers, handles,
+iterators, and circulators.
+
+All variables are initialized to \ccc{default_data}, a value
+of type \ccc{Data} specified in the definition of \ccVar.
+
+\ccInclude{CGAL/Unique_hash_map.h}
+
+\ccTypes
+\ccTwo{Unique_hash_map<Key,Data,UniqueHashFunction>:: Hash_function}{}
+
+\ccNestedType{Key}{the \ccc{Key} type.}
+\ccGlue
+\ccNestedType{Data}{the \ccc{Data} type.}
+\ccGlue
+\ccNestedType{Hash_function}{the unique hash function type.}
+
+In compliance with \stl, the types \ccc{key_type}, \ccc{data_type}, and
+\ccc{hasher} are defined as well.
+
+\ccCreation
+\ccThree{Hash_functi}{mained;}{}
+\ccThreeToTwo
+
+\ccConstructor{Unique_hash_map<Key,Data,UniqueHashFunction>( 
+               const Data& default = Data(), 
+               std::size_t table_size   = 1,
+               const Hash_function& fct = Hash_function());}{
+    creates an injective function \ccVar\ from \ccc{Key} to the set of unused
+    variables of type \ccc{Data}, sets \ccc{default_data} to \ccc{default},
+    passes the \ccc{table_size} as argument to the internal implementation,
+    and initializes the hash function with \ccc{fct}.}
+
+\ccConstructor{Unique_hash_map<Key,Data,UniqueHashFunction>( 
+               Key first1, Key beyond1, Data first2,
+               const Data& default = Data(), 
+               std::size_t table_size   = 1,
+               const Hash_function& fct = Hash_function());}{
+    creates an injective function \ccVar\ from \ccc{Key} to the set of unused
+    variables of type \ccc{Data}, sets \ccc{default_data} to \ccc{default},
+    passes the \ccc{table_size} as argument to the internal implementation,
+    initializes the hash function with \ccc{fct}, and inserts all keys 
+    from the range \ccc{[first1,beyond1)}. The data variable for each
+    inserted \ccc{key} is initialized with the corresponding value from
+    the range \ccc{[first2, first2 + (beyond1-first1))}.
+    \ccPrecond\ The increment operator must be defined for values
+        of type \ccc{Key} and for values of type \ccc{Data}. \ccc{beyond1}
+        must be reachable from \ccc{first1} using increments.}
+
+
+\ccOperations
+\ccThree{Hash_function}{map.is_defined( Key key);}{}
+
+\ccMethod{Data default_value() const;}{the current \ccc{default_value}.}
+\ccGlue
+\ccMethod{Hash_function hash_function() const;}{the current hash function.}
+
+\ccMethod{bool is_defined( const Key& key);}{returns true if $key$ is
+    defined in \ccVar. Note that there can be keys defined that have not
+    been inserted explicitly. Their variables are initialized to
+    \ccc{default_value}.}
+
+%%\ccMethod{element_iterator begin();}{
+%%    returns the element iterator pointing to the first element stored.}
+%%
+%%\ccMethod{element_iterator end();}{
+%%    returns the element iterator pointing beyond the last element stored.}
+
+\ccMethod{void clear();}{
+    resets \ccVar\ to the injective function \ccVar\ from \ccc{Key} to the
+    set of unused variables of type \ccc{Data}. The \ccc{default_data}
+    remains unchanged.}
+
+\ccMethod{void clear(const Data& default);}{
+    resets \ccVar\ to the injective function \ccVar\ from \ccc{Key} to the
+    set of unused variables of type \ccc{Data} and sets \ccc{default_data} 
+    to \ccc{default}.}
+
+\ccTagFullDeclarations
+
+\ccMethod{Data& operator[](const Key& key);}{
+    returns a reference to the variable \ccVar\ccc{(key)}. If \ccc{key}
+    has not been inserted into \ccVar\ before, \ccc{key} is inserted and
+    initialized with \ccc{default_value}.}
+
+\ccMethod{const Data& operator[](const Key& key) const;}{
+    returns a const reference to the variable \ccVar\ccc{(key)}. If \ccc{key}
+    has not been inserted into \ccVar\ before, a const reference to the
+    \ccc{default_value} is returned. However, \ccc{key} is not inserted 
+    into \ccVar.}
+
+\ccTagDefaults
+
+\ccMethod{Data insert( Key first1, Key beyond1, Data first2);}{
+    inserts all keys from the range \ccc{[first1,beyond1)}. 
+    The data variable for each inserted \ccc{key} is initilized with the
+    corresponding value from the range \ccc{[first2, first2 +
+    (beyond1-first1))}. Returns \ccc{first2 + (beyond1-first1)}.
+    \ccPrecond\ The increment operator must be defined for values
+        of type \ccc{Key} and for values of type \ccc{Data}. \ccc{beyond1}
+        must be reachable from \ccc{first1} using increments.}
+
+\vspace*{-5mm}
+\ccSeeAlso
+
+\ccRefConceptPage{UniqueHashFunction}\\
+\ccRefIdfierPage{CGAL::Handle_hash_function}
+
+\ccImplementation
+
+\ccc{Unique_hash_map} is implemented via a chained hashing scheme. Access
+operations \ccVar\ccc{[i]} take expected time $O(1)$. The \ccc{table_size}
+parameter passed to chained hashing can be used to avoid unnecessary 
+rehashing when set to the number of expected elements in the map.
+The design is derived from the \stl\ \ccc{hash_map} and the \leda\ type
+\ccc{map}. Its specialization on insertion only and unique hash values 
+allow for a more time- and space-efficient implementation, see also
+\cite[Chapter 5]{mn-l-99}. This implementation makes also use
+of sentinels that lead to defined keys that have not been inserted.
+
+\end{ccRefClass}
+
+
+
+

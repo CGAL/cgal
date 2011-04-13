@@ -1,0 +1,668 @@
+Changes done to the Interval Arithmetic package.
+
+Version 4.114 on 1 August 2001
+- Add missing operators in Lazy_exact_nt.
+
+Version 4.113 on 25 July 2001
+- Use Filtered_kernel instead of Filtered_exact in test/Kernel_checker.C .
+
+Version 4.112 on 23 July 2001
+- Remove macro test that prevented libCGAL building on VC++.
+
+Version 4.111 on 19 July 2001
+- Rename Filter_predicate to Filtered_predicate.
+
+Version 4.110 on 19 July 2001
+- Filetered_kernel now has Simple_cartesian<MP_Float> as default value for the
+  exact kernel parameter.
+
+Version 4.109 on 17 July 2001
+- Test Lazy_exact_nt more throughly using Delaunay_3.
+
+Version 4.108 on 17 July 2001
+- Remove debug messages from Lazy_exact_nt.
+
+Version 4.107 on 16 July 2001
+- Don't test exact square roots without LEDA...
+- VC++ Fix for Kernel_checker test program.
+- Add a check that CGAL_IA_CT is defined for VC++.
+- Document the risks with VC++, and advertise Filtered_kernel.
+- Don't test abs(Filtered_exact) for VC++.
+
+Version 4.106 on 12 July 2001
+- Test-suite tweeks.
+
+Version 4.105 on 9 July 2001
+- __FUNCTION__ was not portable at all.
+
+Version 4.104 on 4 July 2001
+- Kernel_checker : prints __FUNCTION__ or __PRETTY_FUNCTION__ to get more
+  information about which predicate it is.
+
+Version 4.103 on 4 July 2001
+- VC++ 7 warning.
+
+Version 4.102 on 26 June 2001
+- Doc update.
+
+Version 4.101 on 22 June 2001
+- Remove warnings in the test-suite.
+- Regenerate filters for the new equal_planeC3.
+- Use the new macros in include/CGAL/Kernel/interface_macros.h for
+  Filtered_kernel and Kernel_checker.
+- Update test/Kernel_checker.C for VC++ and new Delaunay.
+
+Version 4.100 on 20 June 2001
+- Arithmetic_filter.h => Filtered_exact.h.
+
+Version 4.99 on 12 June 2001
+- Add missing #include <CGAL/misc.h> since it's not done in basic.h anymore.
+- Workaround for GCC 3 only activated for 3.0.0 as it's probably going to be
+  fixed in 3.0.1, so that we'll get the full speed back with 3.0.1.
+
+Version 4.98 on 7 June 2001
+- Move MP_Float to the Number_types package.
+
+Version 4.97 on 6 June 2001
+- Workaround bugs and misfeatures of GCC 3 in FPU.h.
+  Unfortunately at a performance cost :((
+
+Version 4.96 on 6 June 2001
+- First version of Kernel_checker, which works only for predicates.
+
+Version 4.95 on 5 June 2001
+- Add a workaround on OSF/Alpha for GCC's too agressive fixincludes in FPU.h.
+- Fix MP_Float::operator-() which died in an endless loop...
+
+Version 4.94 on 30 May 2001
+- Remove Compare_distance_to_point_[23].
+
+Version 4.93 on 29 May 2001
+- Add Compare_distance_[23].
+
+Version 4.92 on 28 May 2001
+- Fix bug spotted by BCC.
+- Don't submit tst_static_adaptatif.
+- Add inline to compare(MP_Float).
+
+Version 4.91 on 23 May 2001
+- Add a simple test for Quotient<MP_Float>.
+
+Version 4.90 on 23 May 2001
+- Rename Filtered_predicate to Filter_predicate.
+- Put Filter_predicate'operators() non-inline, except for VC++.
+- Fix for Borland.
+
+Version 4.89 on 23 May 2001
+- Workaround what seems to be a bug in KCC with non-inline overloading of
+  inline templates.
+
+Version 4.88 on 16 May 2001
+- Added operator> and operator!= to Interval_base.
+- Handle Angles.
+
+Version 4.87 on 27 April 2001
+- Rename coplanar_side_of_oriented_circle to bounded.
+
+Version 4.86 on 27 April 2001
+- Rename construct_tetrahedron_object to construct_tetrahedron_3_object.
+
+Version 4.85 on 18 April 2001
+- Add new predicate/constructions to Filtered_kernel :
+  Construct_center_2, Construct_center_3, Coplanar_side_of_oriented_circle_3
+- Make some operator() non-inline in Filter_predicate.
+
+Version 4.84 on 17 April 2001
+- New filtered predicate : coplanar_side_of_oriented_circleC3.
+
+Version 4.83 on 10 April 2001
+- FPU.h is changed to reflect the realtity on Alpha/Linux 2.2.18 with
+  libc 2.1 to support FPE handling by the Linux kernel.
+  Functions declared in /usr/include/bits/fenv.h are used (via <fenv.h>,
+  that is not yet ready to be used with C++ in normal way)
+
+Version 4.82 on  6 April 2001
+- limbs_per_double is now vector<limb>::size_type instead of unsigned to
+  please Alpha.
+
+Version 4.81 on 21 March 2001
+- Remove static data members of MP_Float, use consts in src/MP_Float.C
+  instead.  
+
+Version 4.80 on 20 March 2001
+- Really fix bug in side_of_sphere.
+- Add ctors for Filter_predicate<> in order to deal (not optimally) with
+  constructive predicates.
+
+Version 4.79 on 20 March 2001
+- Last minute reverse.
+
+Version 4.78 on 20 March 2001
+- VC++ work around
+- Undo last predicate.
+
+Version 4.77 on 20 March 2001
+- Add tst_static_adaptatif.C again.
+
+Version 4.76 on 20 March 2001
+- Update new predicates side_of_bounded_sphere.
+- Enable new static filters for GCC.
+
+Version 4.75 on 10 March 2001
+- Various test-suite fixes.
+
+Version 4.74 on 9 March 2001
+- Remove MP_Integer.
+- VC++ fixes.
+
+Version 4.73 on 1 March 2001
+- Alternative to ::rint() as it doesn't exist on...  yes yes, Windblows.
+- std::ldexp() -> ::ldexp().
+- Cleanup static const data members, and make it work on VC++ 6.
+
+Version 4.72 on 25 February 2001
+- Declare force_ieee_double_precision in FPU.h.
+
+Version 4.71 on 25 February 2001
+- Split MP_Float.h into src/MP_Float.C.
+- Test-suite fixes.
+
+Version 4.70 on 21 February 2001
+- Fixes for Homogeneous filtering.
+
+Version 4.69 on 21 February 2001
+- Test-suite fixes.
+- Don't use STL's Rel Ops in MP_*.
+
+Version 4.68 on 20 February 2001
+- Don't submit tst_static_adaptatic.C, it's not ready yet.
+- Couple of fixes in the test-suite.
+
+Version 4.67 on 15 February 2001
+- test
+
+Version 4.66 on 12 February 2001
+- Undefine CGAL_IA_NEW_FILTERS, it breaks VC++.
+
+Version 4.65 on 7 February 2001
+- Kernel_checker
+- Filtered_kernel and Filtered_predicate.
+- Define CGAL_IA_NEW_FILTERS by default in Interval_base.h.
+
+Version 4.64 on 1 February 2001
+- MP_Float.
+
+Version 4.63 on 24 January 2001
+- to_interval() for the built-in types are now defined here because of a
+  circular dependency of the #include otherwise.
+
+Version 4.62 on 23 January 2001
+- New predicate side_of_bounded_circle.
+- First submission by tag.
+
+Version 4.61 on 4 January 2001
+- New class MP_Integer that implements multiprecision exact integers.
+- Fixes to Lazy_exact_nt<>.
+- Filter_predicate.h prototype.
+
+Version 4.60 on 13 December 2000
+- Fix additional files.
+
+Version 4.59 on 13 December 2000
+- Moved CGAL/Interval_arithmetic/_FPU.h to CGAL/FPU.h.
+- Dispatched all to_interval() functions, and removed
+  CGAL/Interval_arithmetic/IA_*.
+- Made Lazy_exact_nt<> work again.
+
+------  CGAL 2.2 is out ---------
+
+Version 4.58 on 13 September 2000
+- Last fix was not correct.  Try this one...
+
+Version 4.57 on 10 September 2000
+- Workaround for M$VC++, min/max.
+
+Version 4.56 on 6 September 2000
+- Renamed data member _inf and _sup to inf_ and sup_ for standard compliance.
+
+Version 4.55 on 6 September 2000
+- Moved extern "C" declaration outside namespace CGAL for M$ VC++.
+
+Version 4.54 on 1 September 2000
+- Renamed Interval_base::overlap() to do_overlap().
+- Fixed min/max issue for VC++ in the test-suite.
+- G++ on x86 now uses an asm() instead of a statement-expression + volatile
+  for stopping compiler optimization.  It's faster, doesn't warn, and works
+  with 2.96.
+- Removed the default copy ctor and assignment ctor for the intervals.  This
+  did not show any difference on orientation() with G++ 2.9[56].
+- Removed warning in include/bench_generic.h with G++ 2.96.
+- Moved the constant propagation stoppers just where needed instead of in the
+  constructors : faster (but not pretty...).
+- src/Interval_arithmetic.C:FPU_empiric_test() doesn't use "volatile" anymore,
+  this should please KCC (and Stefan :).
+- CygWin now uses an inline assembly for the buggy sqrt().
+- Filtered predicates are now "static" for compilers not supporting partial
+  specialization (CGAL_CFG_MATCHING_BUG_2), i.e. M$VC++.
+
+Version 4.53 on 20 August 2000
+- Make the adaptative static filters kind of work again.
+- CGAL:: qualified min() and max() in the test-suite for VC++ and MipsPro.
+
+Version 4.52 on 26 July 2000
+- Removed Lazy_exact_nt.C from the test-suite for the release.
+- Fixed name space issues in _FPU.h.
+
+Version 4.51 on 5 July 2000
+- Test-suite fixes for M$.
+
+Version 4.50 on 28 June 2000
+- Replaced template by complete overloaded functions for true/false for sign,
+  compare, abs and square, for M$ VC++.
+- Qualified min and max by std:: for doubles.
+- Moved Interval_base to its own file Interval_base.h.
+- Moved Protect_FPU_rounding<> to _FPU.h.
+
+Version 4.49 on 21 June 2000
+- Fixed a bunch of namespace issues.
+- Interval_nt is now a template class.
+- Template parameter "Protection" of Filtered_exact is now a bool.
+- The filtered predicates now use Protect_FPU_rounding, and the 2 dynamic
+  versions are merged.  They could become nice function-try-blocks if GCC
+  produced working code for them !!!
+
+Version 4.48 on 15 June 2000
+- Removed obsolete (and buggy) references to
+  CGAL_CFG_NO_EXPLICIT_TEMPLATE_FUNCTION_ARGUMENT_SPECIFICATION.
+- Interval_nt operations boosted with Protect_FPU_rounding().
+
+Version 4.47 on 13 June 2000
+- Removed useless "template <>" before full specializations of function
+  templates.
+- Fixed Copyright dates and coordinator fields re-added.
+
+Version 4.46 on 12 June 2000
+- Debuggued Lazy_exact_nt<>.
+
+Version 4.45 on 11 June 2000
+- Use CGAL_NTS, and remove qualification of min and max.
+- Lazy_exact_nt<> complete rewrite.
+
+Version 4.44 on 8 June 2000
+- Removed "coordinator" field.
+- Use the relational operators from <utility> in Interval_nt*.
+- Removed is_integral() since it's now moved to double.h.
+
+Version 4.43 on 4 May 2000
+- Don't forget to submit it...
+
+Version 4.42 on 4 May 2000
+- Added maintainer file.
+
+Version 4.41 on 4 May 2000
+- Added the assembly files for the IRIX workaround, and removed them from the
+  clean target in src/Interval_arithmetic/makefile.
+- Updated predicates for release 2.2-I-15.
+
+Version 4.40 on 13 March 2000
+- Added KCC/Sun support.
+- Updated predicates for release 2.2-I-8.
+
+Version 4.39 on 22 November 1999
+- Fix test-suite bug detected by CHECK_EXACTNESS (global intervals initilized
+  with incorrect rounding mode).
+
+Version 4.38 on 15 November 1999
+- Fix the test-suite for VC++ without LEDA.
+
+Version 4.37 on 11 November 1999
+- Removed stupid Borland warning.
+
+Version 4.36 on  7 November 1999
+- Added C9X standard compliant rounding mode functions.
+- Changed the enums FPU_cw_near... to macros CGAL_FE_TONEAREST...
+
+Version 4.35 on  7 November 1999
+- Replaced the macros CGAL_IA_SMALLEST (resp LARGEST) by static data members
+  Interval_nt_advanced::Smallest (resp Largest).
+
+Version 4.34 on  3 November 1999
+- The script now recognizes the per predicate marker /*CGAL_NO_FILTER*/.
+- Added an exact converter from double to Quotient<Gmpz>, so that
+  Filtered_exact<double, Quotient<Gmpz> > works.
+- Added missing includes in tst0.C.
+
+Version 4.33 on 28 October 1999
+- New filters:
+  - Comment out the re-adjustment stuff.  The bound only grows now.
+  - Add counters per predicate: "number_of_failures" and "number_of_updates".
+  - Restricted_double is now a typedef for double, unless
+    CGAL_IA_CHECK_RESTRICT is defined.
+- Workarounds for Borland:
+  - initialize the FPU mask correctly so that we don't get useless FPE.
+  - it doesn't have correct IEEE comparisons -> is_valid() workaround.
+
+Version 4.32 on 22 October 1999
+- Enable the sqrt workaround for Cygwin/GCC too.
+- New flag CGAL_IA_NO_INLINE which makes static instead of inline the
+  operator* and operator/ over intervals.  It reduces code size and can speed
+  up algorithms which use large predicates (but slow down the others).
+
+Version 4.31 on 20 October 1999
+- Removed Lazy_exact_nt.C from the test-suite (it's experimental stuff).
+- New experimental filter stuff is now protected with
+  "#ifdef CGAL_IA_NEW_FILTERS" in the code, to protect against VC++ failures.
+- Hopefully it's ready for release 2.1 now ! :)
+
+Version 4.30 on 19 October 1999
+- Added one more missing header.
+- Documentation updates: new flags CGAL_IA_NO_X86_OVER_UNDER_FLOW_PROTECT and
+  CGAL_IA_DONT_STOP_CONSTANT_PROPAGATION.
+- Constant propagation stopping is on by default, and has a new implementation
+  for GCC which should be zero-cost thanks to __builtin_constant_p() :-).
+- Put all operators on Interval_nt* friend instead of member, and got rid of
+  the particular version for doubles.
+- Finally got rid of Interval_nt::bound_t, as well as Double_IEEE.h.
+- New file src/Interval_arithmetic/workaround_4_ms.c that defines a C function
+  to compute sqrt(double).  The problem is that it must be compiled _with_
+  optimization.  I ship the .obj too.
+- force_ieee_double_precision() does the same things on VC++ and Borland, as
+  on Linux/x86.
+- Don't submit test files for the experimental stuff [yet].
+- Lazy_exact_nt<> is now supposed to work ;)
+
+Version 4.29 on 13 October 1999
+- Added headers to the automaticaly generated static_infos files.
+
+Version 4.28 on 13 October 1999
+- Formatting changes.
+- Removed "inline call before definition" warning detected by MipsPro.
+- Added #include<float.h> for Borland.
+- Added parenthesis around double computation to prevent MipsPro from changing 
+  expression computation order...
+- Removed convert_to<Interval_nt>().  This was useless and broke MipsPro.
+- is_valid() workaround for MipsPro.
+- Removed qualifier "throw(...)" of overlap_action(), it speeds things up on
+  GCC.
+
+Version 4.27 on 12 October 1999
+- Fixes for Visual C++.  Most tests pass correctly now.
+- New file "KNOWN_PROBLEMS" (in CVS, not submitted) that describes all
+  IEEE related problems found in this package, as well as the workarounds.
+
+Version 4.26 on 11 October 1999
+- New class Double_IEEE (in Double_IEEE.h), which is a wrapper for a double,
+  but with corrected operators so that it's IEEE 754 compliant (enough).
+- Replaced lot's of .inf() and .sup() by ._inf and ._sup, using friend
+  functions.  Hopefully it works... faster.
+- Remove special version of operator*(IA, double) and operator/(IA, double).
+  They were faster than the normal one, but not that used, and potentially
+  risky.
+- Put overlap_action() private. 
+
+Version 4.25 on 11 October 1999
+- Borland version of the rounding mode changes.
+
+Version 4.24 on 10 October 1999   [ not submitted ]
+- New class Lazy_exact_nt<> (in a preliminary state).
+- Replaced CGAL_CFG_NO_EXPLICIT_TEMPLATE_FUNCTION_ARGUMENT_SPECIFICATION by
+           CGAL_CFG_NO_PARTIAL_TEMPLATE_FUNCTION_ARGUMENT_SPECIFICATION or
+	   CGAL_CFG_MATCHING_BUG_2 where appropriate.
+- More Visual C++ fixes.
+
+Version 4.23 on 7 October 1999
+- New file include/CGAL/Arithmetic_filter/dispatch.h which contains the list
+  of #include<> for the overloaded predicates, so that they are automatically
+  included.
+- Added <sign_of_determinant.h>, <Regular_triangulation_ftC3.h> and
+  <Regular_triangulation_rtH3.h> to the list of filtered files.
+- Removed references to CGAL_IA_NO_WARNING and CGAL_IA_NO_EXCEPTION, I think
+  it's not useful.  Documentation updated.
+- Removed Static_adaptative* and fused it in Filtered_exact<CT, ET, Static>.
+- Full template is now:
+  template < CT, ET, Type = Dynamic, Protection = Protected,
+             Cache = No_Filter_Cache >
+- New subdirectory and files Arithmetic_filter/static_infos/* that contains
+  the definition of the static variables.  It is sourced by
+  src/Interval_arithmetic.C.
+- The 4 types of filter are now mostly ready.
+- Simplified #if/#else/#elif stuff in _FPU.h, it should not break anything...
+- Changed ccClass to ccClassTemplate in the doc, at Susan's request.
+- predicates_ftC[23].h -> predicates/kernel_ftC[23].h.
+- Removed examples/ directory.  Put the script in scripts/.
+- Optimize is_valid(Interval_nt).
+
+Version 4.22 on 2 August 1999
+- New class Static_filter_error (in Static_filter_error.h) that helps
+  computing static errors for static filters.
+- New class Restricted_double, which is a double with restricted
+  functionnality.
+- New filtering scheme Static_adaptatif_filter [not 100% ready yet].
+- Added predicates/sign_of_determinant.h to the list of parsed files.
+- Added missing "template <>" to keep MipsPro 7.3 happy.
+- New function "FPU_CW_t FPU_empiric_test()" used by expensive checks.
+- Replaced CGAL_IA_DEBUG by expensive checks.
+
+Version 4.21 on 20 July 1999
+- Removed the buggy [1;-1] interval, users just have to write good code.
+- New flag (disabled by default) -DCGAL_IA_STOP_CONSTANT_PROPAGATION, that
+  stops the constant propagation done by the compiler.
+- New FPU_get_and_set_cw() function.
+- Big rewrite of the Perl script.
+- CGAL_DONT_NEED_FILTER replaced by C++ comments //CGAL_NO_FILTER_BEGIN {END}.
+
+Version 4.20 on 8 July 1999
+- Changed back __asm__ to asm.
+- Removed tstlink in the test-suite (which was not submitted anyway).
+- Test CGAL_USE_GMP before using Gmpz.h.
+- Documented the caching feature Cache_t of Filtered_Exact<>.
+- Documented Interval_nt_advanced::number_of_failures.
+- Documented .exact(), .interval() and .value().
+
+Version 4.19 on 6 July 1999
+- The script now locally (in the produced file) defines
+  "CGAL_DONT_NEED_FILTER", so the user can conditionnaly exclude some code
+  in the produced file with "#ifndef CGAL_DONT_NEED_FILTER".  For example,
+  some predicates that don't need to be filtered because they are already
+  exact (e.g. lexico*).
+- Fix for MipsPro.
+- New function force_ieee_double_precision(), that sets the correct IEEE
+  double precision on Intel only.
+- CygWin compiles.
+
+Version 4.18 on 30 June 1999
+- Cleaned up _FPU.h, no more CGAL_*ASSEMBLY* macros, using GNU libc macros
+  on Linux/PPC (x86 keeps the old asm() for compatibility with libc5).
+- _FPU.h ported to M$ VC++, though it needs testing.
+- Removed obsolete lower_bound() and upper_bound().
+- CGAL_IA_FORCE_TO_DOUBLE() revised on __i386__, it should be slightly faster.
+- Removed the template ctor for Filtered_exact<>.
+- Added "std::" where missing.
+
+Version 4.17 on 24 June 1999
+- Removed the ".pure" and src/*.o files.
+- Removed include/CGAL/Arithmetic_filter/predicates_on_rtH2.h.
+- Updates the other specialization files.
+
+Version 4.16 on 24 June 1999
+- Added specializations for the regular triangulation predicates.
+- The script now adds "CGAL::", so that it works for the predicates
+  outside namespace CGAL.
+- IO operators are now in libCGAL, not inlined anymore.
+- Preliminary not-working-yet Linux/PowerPC support contributed
+  by Pierre Angelier.
+- Removed the old FPU_set_rounding_to_{zero|nearest|...} functions.
+
+Version 4.15 on 25 May 1999 [CGAL release 2.0]
+- fixed the test-suite for MipsPro.
+
+Version 4.14 on 25 May 1999
+- src/workaround_4_irix.s.IRIX renamed to workaround_4_irix6.s.
+
+Version 4.13 on 11 May 1999
+- New test file, that should emit a warning with a smart compiler.
+- Moved some documentation files.
+- Removed calls to convert_to from the test-suite (MipsPro...).
+- Minor doc updates for 2.0.
+
+Version 4.12 on 7 May 1999
+- Fixed a bug in std::istream & operator>>().
+- Fixed the definition of CGAL_IA_CACHE for the MipsPro workaround.
+- Removed a useless assertion(false) in the predicates.
+- ship workaround_4_irix as assembly file instead of object.
+
+Version 4.11 on 4 May 1999
+- Introduced macro CGAL_IA_FORCE_TO_DOUBLE to workaround an Intel processors
+  "feature", breaking the intervals that underflow or overflow.
+- The test-suite should not say "n" when LEDA is not there.
+- Fixed a bug in the division !
+- Some operator?(Interval_nt) didn't change the rounding mode: fixed.
+- Fixed MipsPro.
+
+Version 4.1 on 30 April 1999
+- Fixed typo breaking MipsPro.
+
+Version 4.0 on 22 April 1999
+- Fixed typo preventing use of assembly versions...
+
+Version 3.9 on 20 April 1999
+- Big clean up of the caching stuff.  Seems to be done the Right Way [tm] now.
+
+Version 3.8 on 20 April 1999
+- Fixed small bugs.
+- Updated documentation.
+
+Version 3.7 on 15 April 1999
+- Partial workaround for lack of partial specialization of the predicates.
+- New template parameter "Filter_Cache" to Filtered_exact<CT,ET> to allow
+  caching of the conversion to intervals (default is off).
+
+Version 3.6 on 15 April 1999
+- Final (hopefully) workaround for the rounding modes on IRIX.
+- Workaround for lack of convert_to<target>(source), replaced by
+  convert_from_to(target(), source).
+
+Version 3.5 on 1 April 1999
+- Header include files order fixes.
+- Use CGAL::to_double.
+- Introduced .inf() and .sup().
+- Removed friend functions for SunPro 5.0.
+
+Version 3.4 on 26 March 1999
+- Fix for IRIX.
+- More std compliance.
+
+Version 3.3 on 19 March 1999
+- Forgot the src/ directory in the package :(
+
+Version 3.2 on 19 March 1999
+- Changed max<double> to std::max, idem for min().
+
+Version 3.1 on 12 March 1999
+- New functions FPU_get_cw() and FPU_set_cw() replace the old ones.
+- Major cleanup of _FPU.h.
+- Updated documentation.
+- Added a counter of failures "Interval_nt_advanced::number_of_failures".
+
+Version 3.0 on 11 March 1999
+- Namespace CGAL.
+- Introduced .exact() and .interval() member functions to the filtered type.
+- Removed SunPro comments in the doc.
+- Support standard headers.
+- More operators (intervals with doubles) supported.
+- Union and intersection on intervals (operators || and &&).
+- Quotient<RT> supported by the filtering stuff.
+- function "convert_to<>()" replaced by "struct converter::do_it()".
+
+Version 2.7 on 22 December 1998
+- Hopefully the last fixes for the 1.2 release.
+- Added CGAL_square(), and benchmark for it.
+- Added lots of checks enabled with CGAL_IA_DEBUG.
+- Updated rtH2 predicates.
+- Fixed CGAL_convert_to<>() functions with respect to rounding mode, and
+  template<>.
+- Assembly for Mips disabled.
+- Added CGAL_FPU_get_rounding_mode() and CGAL_FPU_set_rounding_mode().  Not
+  documented for the moment.  And test program tst0.C for that.
+
+Version 2.6 on 10 December 1998
+- Big renaming that does:
+  - /Filter/            -> /Arithmetic_filter/
+  - Filter.h            -> Arithmetic_filter.h
+  - CGAL_FILTER_H       -> CGAL_ARITHMETIC_FILTER_H
+  - CGAL_Filtering      -> CGAL_Filtered_exact
+  - CGAL_to_exact_type  -> CGAL_convert_to
+  - CGAL_to_IA[advanced]-> CGAL_convert_to<IA[advanced]> ()
+- SunPro and MipsPro are definitely not supported anymore.
+- Support for ftC3 and rtH2 (partially) is included.
+- Massive doc update.
+- The whole thing is supposed to be really "frozen for 1.2" now.
+- Mips assembly enabled back, hopefully Geert-Jan has upgraded to 1.1.1,
+  and the problem will be fixed.
+
+Version 2.5 on 26 November 1998
+- Mips assembly commented out, it fails for the test-suite...
+- Filtering stuff in place, doc updated.
+
+Version 2.4 on 12 November 1998
+- Mips + GNU uses assembly versions (thanks to Christoph Burnikel).
+- CGAL_{sign,compare,abs,min,max,is_valid,is_finite} specialized for speed and
+  correctness.
+- <CGAL/Filter.h>: new file containing the wrapper for filtered predicates.
+- include/CGAL/Filter/predicates_on_ft_C2.h: new file containing the
+  specializations for the filtering scheme.
+
+Version 2.3 on 23 October 1998
+- the test-suite now includes some benchmark.
+- the code is optimized, even uses the GNU extension "named return value".
+
+Version 2.2 on 16 October 1998
+- removed more spurious constructors.
+- removed bugs in _FPU.h
+- much improved test suite, 100% coverage (except casts).
+
+Version 2.1 on 11 September 1998
+- "lines too long" problem fixed.
+- removed temporary objects => faster.
+
+Version 2.0 on 17 August 1998.
+- Added CGAL_to_interval_nt() cast functions for Gmpz and
+  leda_{real,rational,integer,bigfloat}.
+- Added operators +=, -=, *=, /=, as required for all CGAL NTs.
+- Moved private files to the directory CGAL/Interval_arithmetic
+- Doc update: cgal.bib removed, geombib is updated.
+- Using CVS.
+- [sent Stefan the necessary updates to other NTs].
+
+Version 1.6 on 10 May 1998.
+- "package" line added in the headers.
+- Added a CGAL_warning_msg() when you compare 2 overlapping intervals,
+  disabled by the compilation flag CGAL_IA_NO_WARNINGS (or CGAL_NO_WARNINGS).
+- New private member function: overlap() (same semantic as operator==()).
+- Doc updates:
+  - better introduction.
+  - fixed bugs shown by the HTML version.
+  - update the support status for the Alpha.
+  - modifications from Remco for 1.0.
+  - reference to our (BBP) ACM SoCG'98 paper added.
+- ChangeLog file created.
+
+Version 1.5 on 26 February 1998.
+- Added "#include <assert.h>" forgotten in 1.4.
+
+Version 1.4 on 6 February 1998.
+- Changed _FPU_* to CGAL_FPU_*.
+- Doc updates.
+
+Version 1.3 on 16 December 1997.
+- Added an assertion when defining an interval with the lower bound greater
+  than the upper.  Disabled when CGAL_NO_PRECONDITIONS is defined.
+
+Version 1.2 on 16 December 1997.
+- Added support for old Irix 5.3 include files.
+
+Version 1.1 on 16 December 1997.
+- lines too long problem fixed.
+
+Version 1.0 on 3 December 1997.
+- initial version based on some C code, and 2 C++ wrapper classes for CGAL.

@@ -1,0 +1,82 @@
+#! /bin/sh
+
+# This is a script for the CGAL test suite. Such a script must obey
+# the following rules:
+#
+# - the name of the script is cgal_test
+# - for every target two one line messages are written to the file 'error.txt'
+#     the first one indicates if the compilation was successful
+#     the second one indicates if the execution was successful
+#   if one of the two was not successful, the line should start with 'ERROR:'
+# - running the script should not require any user interaction
+# - the script should clean up object files and executables
+
+ERRORFILE=error.txt
+
+#---------------------------------------------------------------------#
+#                    compile_and_run <target>
+#---------------------------------------------------------------------#
+
+compile_and_run()
+{
+  echo "Compiling $1 ... "
+  if eval 'make CGAL_MAKEFILE=$CGAL_MAKEFILE \
+           TESTSUITE_CXXFLAGS="$TESTSUITE_CXXFLAGS" \
+           TESTSUITE_LDFLAGS="$TESTSUITE_LDFLAGS" $1' ; then
+    echo "   compilation of $1 succeeded" >> $ERRORFILE
+  else
+    echo "   ERROR: compilation of $1 failed" >> $ERRORFILE
+  fi
+
+  if [ -f $1 ] ; then
+     OUTPUTFILE=ProgramOutput.$1.$PLATFORM
+    rm -f $OUTPUTFILE
+    COMMAND="./$1"
+    if [ -f $1.cmd ] ; then
+      COMMAND="$COMMAND `cat $1.cmd`"
+    fi
+    if [ -f $1.cin ] ; then
+      COMMAND="cat $1.cin | $COMMAND"
+    fi
+    echo "Executing $1 ... "
+    echo
+    if eval 2>&1 $COMMAND > $OUTPUTFILE ; then
+      echo "   execution of $1 succeeded" >> $ERRORFILE
+    else
+      echo "   ERROR: execution of $1 failed" >> $ERRORFILE
+    fi
+  else
+    echo "   ERROR: could not execute $1" >> $ERRORFILE
+  fi
+
+  eval "2>&1 make CGAL_MAKEFILE=$CGAL_MAKEFILE clean > /dev/null "
+}
+
+#---------------------------------------------------------------------#
+#                    remove the previous error file
+#---------------------------------------------------------------------#
+
+rm -f $ERRORFILE
+touch $ERRORFILE
+
+#---------------------------------------------------------------------#
+#                    compile and run the tests
+#---------------------------------------------------------------------#
+
+if [ $# -ne 0 ] ; then
+  for file in $* ; do
+    compile_and_run $file
+  done
+else
+  compile_and_run iv2off
+  compile_and_run off2iv
+  compile_and_run off2off
+  compile_and_run off2vrml
+  compile_and_run off2wav
+  compile_and_run off_bbox
+  compile_and_run off_glue
+  compile_and_run off_transform
+  compile_and_run polyhedron_copy
+  compile_and_run terr_trian
+fi
+

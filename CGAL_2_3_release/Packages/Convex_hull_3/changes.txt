@@ -1,0 +1,173 @@
+2.28    (6 Aug 2001)
+- added a shortened name in one of the examples for MSVC++
+
+2.27    (31 July 2001)
+- moved _ref directories up one level 
+
+2.26    (26 July 2001)
+- minor formatting changes
+
+2.25    (26 July 2001)
+- made changes necessary for manual split
+
+2.24    (25 July 2001)
+- added dummy main program to demos requiring geomview
+
+2.23    (23 July 2001)
+- fixed problem with Convex_hull_3_ref directory not in the right place on CVS
+
+2.22    (19 July 2001)
+- added some missing std:: and CGAL::
+- added some cout statemetns in degeneracy test
+
+2.21    (18 July 2001)
+- converted to non-constructive predicates
+- made Polyhedron a template of the traits class for Borland since
+  otherwise it produces an internal compiler error
+- updated kernels and NT's used in examples and demos for better robustness
+
+2.20    (17 July 2001)
+- changed doc to reflect split of convex hull into three chapters: 2D, 3D, dD
+
+2.19    (17 July 2001)
+- fixed number type problems in quickhull_test_3
+- removed some expensive assertions
+
+2.18    (12 July 2001)
+- fixed type name in compute_plane_equations
+- fixed bug in convex_hull_3 that didn't handle properly the case when
+  all points lie on the negative side of the initial plane.
+
+2.17    (11 July 2001)
+- really fixed	demo makefile for Windoze
+
+2.16    (11 July 2001)
+- fixed degenerate quickhull test so it generates precise numbers instead
+  of doubles
+- added some missing typenames
+- modified quickhull to get rid of use of normalize_border (faster and less
+  obscure set of requirements for the polyhedron) 
+- fixed demo makefile for Windoze
+
+2.15    (27 June 2001)
+- removed use of hash_map and replaced with CGAL::Hash_map in quickhull
+- updated some typenames that were changed in Polyhedron
+- added concepts for polyhedron vertex, facet, halfedge
+- added examples of incremental and dynamic construction in test and in doc.
+- changed name of convex_hull_3_from_d to convex_hull_incremental_3
+
+2.14    (23 June 2001)
+- fixed doc. problem
+
+2.13    (21 June 2001)
+- fixed bugs with facet circulator 
+- removed predicates that are now in kernel traits
+
+2.12    (19 June 2001)
+- incorporated changes to work for new polyhedron design
+
+2.11    (19 June 2001)
+- removed dd_geo directory
+
+2.10    (1 June 2001)
+- fixed number type conversion in centroid predicate
+- added some missing typenames
+- fixed doc. problems
+
+2.9     (24 May 2001)
+- added test programs for new quickhull 3D
+
+2.8     (24 May 2001)
+- fixed paths to example code in doc.
+- changed name of subdirectories from ConvexHull3D to Convex_hull_3
+
+
+2.7     (22 May 2001)
+
+- added doc_tex directory with new documentation style.
+- changed convex_hull_3 to use the new quickhull implementation.
+- replaced use of dd_geo extension package with Michael Seel's 
+  d-dim. convex hull code with d = 3; implemented as function
+  convex_hull_3_from_d.
+
+2.6     (21 Aug 2000)
+
+- typenames in chull.C's d3_surface_map used for CHTRAITS::IPOINT
+  and CHTRAITS::PLANE; this makes the CGAL_TYPENAME_MSVC_NULL obsolete
+  (see 2.5) and fixes a Borland problem
+
+2.5     (09 Aug 2000)
+
+- typename in chull.C replaced by CGAL_TYPENAME_MSVC_NULL
+  (as suggested by Dima)
+- unused variable edge elast "removed"
+
+2.4     (14 Jul 2000)
+
+- fixed a bug in chull::d3_surface_map() (for a set of coplanar points)
+  which caused a bug in convex_hull_3() (reported by Matthias) 
+
+2.3     (01 Feb 2000)
+
+- CGAL_const_cast replaced by const_cast<>
+
+%%%%%%%%%%%%%%%%%%%%%%   R e l e a s e  2 . 1   %%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+2.2.2 -> 2.2.3  (10 Dec 99)
+- typename removed in _test_cls_chull_traits.C with std::vector<Point>
+
+2.2.1 -> 2.2.2  (03 Dec 99)
+- typename added in chull_traits (detected by  -pedantic)
+
+2.2   -> 2.2.1  (12 Nov 99)
+- return 0; added to int main() in manual_example.C
+
+2.1   -> 2.2    (05 Oct 99)
+- _test_cls_chull_traits_3.C: using std::vector removed; std::vector used;
+- CGAL_TYPENAME_MSVC_NULL in chull.h with default template arguments
+
+2.0.6 -> 2.1    (01 Oct 99)
+- missing file convex_hull_3.h added to package again
+
+2.0.5 -> 2.0.6  (29 Sep 99)
+- modified makefile to use CGAL_WINDOW_FLAGS
+
+2.0.4 -> 2.0.5  (01 Sep 99)
+- removed test/makefile
+
+%%%%%%%%%%%%%%%%%%%%%%   R e l e a s e  2 . 0   %%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+2.0.3 -> 2.0.4  (28 Apr 99)
+- added workaround for LEDA::before to dd_geo, LEDA_PREFIXLI
+
+2.0.2 -> 2.0.3  (28 Apr 99)
+- fixed a bug in submission scripts
+
+2.0.1 -> 2.0.2  (30 Mar 99)
+- to_double() prefixed by CGAL::
+
+2.0   -> 2.0.1  (22 Mar 99)
+- name conflict for orientation in chull_traits_[23] resolved by 'prefixing'
+  calls of orientation() with CGAL::   (egcs didn't complain, but produced 
+  a segmentation fault - egcs should be less fault-tolerant! )
+
+1.1.3 -> 2.0    (22 Mar 99)
+- namespace CGAL introduced
+
+%%%%%%%%%%%%%%%%%%%%%%   R e l e a s e  1 . 2   %%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+1.1.2 -> 1.1.3
+- WINDOW_LDFLAGS added in test/ConvexHull3D/makefile
+
+1.1.1 -> 1.1.2
+- DDGEO_STL_ITERATORS always undefined (since it works for g++/egcs,
+  but not with SunPro 4.2 nor with mips 7.2.
+
+1.1 -> 1.1.1
+- LONG_NAME_PROBLEM_[CXX|LD]FLAGS added to makefile in testsuite
+
+1.0 -> 1.1
+- added workaround for a problem with forall_nodes - loops and prefixing 
+  in LEDA prior to 3.6.2 (= current beta-version of LEDA at MPI).
+  examples/manual_example.C now compiles with 3.6.1 as well.
+

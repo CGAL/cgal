@@ -1,0 +1,89 @@
+% +------------------------------------------------------------------------+
+% | CGAL Reference Manual: Forward_circulator_from_container.tex
+% +------------------------------------------------------------------------+
+% | Requirements for circulators in analogy to STL iterators.
+% | Adaptors between circulators and iterators.
+% | Proposal for CGAL.
+% |
+% | 11.10.1996   Lutz Kettner
+% | 
+% | \RCSdef{\circRev}{$Revision$}
+% | \RCSdefDate{\circDate}{$Date$}
+% +------------------------------------------------------------------------+
+
+% +-----------------------------------------------------+
+\begin{ccRefClass}{Circulator_from_container<C>}
+\label{pageCircFromContainerRef}
+
+\ccHtmlCrossLink{Const_circulator_from_container}
+\ccHtmlCrossLink{Const_circulator_from_container<C>}
+\ccHtmlIndexC[class]{Const_circulator_from_container<C>}
+
+\ccDefinition
+  
+The adaptor \ccClassTemplateName\ provides a circulator for an \stl\
+container $C$ of equal category as the iterator provided by the container. 
+The iterator must be at least of the forward iterator
+category. The corresponding non-mutable circulator is called
+\ccc{Const_circulator_from_container<C>}.
+
+The container type \ccc{C} is supposed to conform to the \stl\ 
+requirements for container (i.e.~to have a \ccStyle{begin()} and an
+\ccStyle{end()} iterator as well as the local types
+\ccStyle{reference}, \ccStyle{const_reference}, \ccStyle{value_type},
+\ccStyle{size_type}, and \ccStyle{difference_type}).
+
+\ccInclude{CGAL/circulator.h}
+
+\ccTypes
+\ccSetThreeColumns{typedef container::const_reference}{const_reference;}{}
+
+All types required for circulators are provided.
+
+\ccCreation
+\ccCreationVariable{c}
+
+\ccConstructor{Circulator_from_container();}{%
+  a circulator \ccVar\ on an empty sequence.}
+
+\ccConstructor{Circulator_from_container(C* container);}{%
+  a circulator \ccVar\ initialized to refer to the first element in
+  \ccStyle{container}, i.e.~\ccStyle{container.begin()}.
+  The circulator \ccVar\ refers to an empty sequence if the
+  \ccStyle{container} is empty.
+}
+
+\ccConstructor{Circulator_from_container(C* container, C::iterator i);}{%
+  a circulator \ccVar\ initialized to refer to the element \ccStyle{*i} in
+  \ccStyle{container}. \ccPrecond \ccStyle{*i} is dereferenceable and refers
+  to \ccStyle{container}.
+}
+
+\ccOperations
+
+The adaptor conforms to the requirements of the corresponding
+circulator category. An additional member function
+\ccc{current_iterator()} returns the current iterator pointing to
+the same position as the circulator does.
+
+\ccSeeAlso
+
+\ccc{Container_from_circulator},
+\ccc{Circulator_from_iterator},
+\ccc{Circulator}.
+
+\ccExample
+
+The following program composes two adaptors -- from a container to a
+circulator and back to an iterator. It applies an \stl\ sort algorithm
+on a \stl\ vector with three elements. The resulting vector will be
+{\tt [2 5 9]} as it is checked by the assertions. The program is
+part of the \cgal\ distribution.
+
+%\ccIncludeExampleCode{examples/Circulator/circulator_prog2.C}
+\ccIncludeExampleCode{Circulator/circulator_prog2.C}
+
+\end{ccRefClass}
+
+% +-----------------------------------------------------+
+% EOF

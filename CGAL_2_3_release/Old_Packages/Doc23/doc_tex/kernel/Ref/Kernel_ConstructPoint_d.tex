@@ -1,0 +1,20 @@
+\begin{ccRefFunctionObjectConcept}{Kernel::ConstructPoint_d}
+A model for this must provide:
+
+\ccCreationVariable{fo}
+
+\ccMemberFunction{template <class InputIterator>
+Kernel::Point_d operator()(int dim, InputIterator first, 
+                                              InputIterator last);}
+	{if the range \ccc{[first,last)} contains \ccc{dim} elements,
+	 this creates a point with Cartesian coordinates as specified by 
+	 the range. If \ccc{[first,last)} contains \ccc{dim+1} elements,
+	 the range specifies the homogeneous coordinates of the point. 
+	 \ccPrecond \ccc{dim} is nonnegative, \ccc{[first,last)} has 
+	 \ccc{dim} or \ccc{dim+1} elements, and the value types of first
+	 and last are \ccc{Kernel::RT}.}
+
+\ccSeeAlso
+\ccRefIdfierPage{CGAL::Point_d<R>}\\
+
+\end{ccRefFunctionObjectConcept}

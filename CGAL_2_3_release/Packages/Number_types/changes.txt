@@ -1,0 +1,509 @@
+4.30	 (25 July 01)
+- Fix MP_Float.tex.
+
+4.29	 (23 July 01)
+- operator<<(MP_Float) now prints a double approximation.
+
+4.28	 (18 July 01)
+- Add Lazy_exact_nt documentation.
+
+4.27	 (06 July 01)
+- added Arity typedef to functors
+- add Compare argument to Min/Max
+
+4.26     (27 June 01)
+- Workaround for VC++ in src/MP_Float.C.
+
+4.25     (25 June 01)
+- operator<<(MP_Float) was missing the approximation when zero.
+
+4.24     (25 June 01)
+- to_interval(Gmpz) is exact when < 2^53.
+
+4.23     (21 June 01)
+- Remove the specialization Quotient<int>
+- Remove obsolete test program _test_Double.C.
+- Update test-suite makefile.
+
+4.22     (18 June 01)
+- Update the Quotient documentation.
+
+4.21     (14 June 01)
+- Include IEEE_754_unions.h only for VC++ and BCC.
+
+4.20     (7 June 01)
+- Add MP_Float code, test and doc.
+
+4.19     (6 June 01)
+- Replace Quotient<>(double) by a template ctor.
+
+4.18     (5 June 01)
+- Remove src/Double.C and src/Float.C.
+- Delete references to CGAL_NO_NTS_NAMESPACE.
+
+4.17     (5 June 01)
+- Add constructor from a double to Quotient<>.
+
+4.16     (29 May 01)
+- Fix to_interval(leda_integer).
+
+4.15     (28 May 01)
+- to_interval(leda_integer) improvement, by Michael Seel.
+
+4.14     (1 Mar 01)
+- Added operator% to Gmpz.
+
+4.13     (25 Feb 01)
+- Fix warning.
+
+4.12     (21 Feb 01)
+- Add NT_converter.h which contains NT_converter<A,B> and
+  Interval_converter<A>.
+
+4.11     (21 Feb 01)
+- Removed <utility> in Quotient.h.
+- Fix test program typo for CLN.
+
+4.10     (20 Feb 01)
+- Add removed code again...
+
+4.9      (20 Feb 01)
+- Remove references to __GNUC__ and CGAL_NO_STL_PROVIDED_REL_OPS.
+
+4.8      (13 Feb 01)
+- Remove old style casts.
+
+4.7      (25 Jan 01)
+- Merge the CLN package.
+
+4.6      (25 Jan 01)
+- included the documentation source in the doc_tex directory
+
+4.5      (24 Jan 01)
+- to_interval() for built-in types moved to Interval*.h in order to avoid
+  a circular dependency with the #include files.
+
+4.4      (18 Jan 01)
+- known_bit_size_integers.h now defines CGAL_HAS_INTEGER64 when it defines
+  Integer64 (see long_long.h too).
+
+4.3      (15 Jan 01)
+- Removed gnu_integer and Double_eps.
+
+4.2      (13 Dec 00)
+
+- #inlcude <CGAL/double.h> replaced by #include <CGAL/basic.h> in src/Double.C
+  in order to fix a bug with building libCGAL
+
+4.1      (10 Dec 00)
+
+- test_to_interval corrected as suggested by Sylvain
+- #include <CGAL/interval_arithmetic.h> added to CGAL/number_type_basics.h
+- #include <CGAL/interval_arithmetic.h> removed from CGAL/leda_bigfloat.h
+- #include <CGAL/interval_arithmetic.h> removed from CGAL/leda_integer.h
+- #include <CGAL/interval_arithmetic.h> removed from CGAL/leda_rational.h
+- #include <CGAL/interval_arithmetic.h> removed from CGAL/leda_real.h
+- #include <CGAL/interval_arithmetic.h> removed from CGAL/Gmpz.h
+- #include <CGAL/interval_arithmetic.h> removed from CGAL/Quotient.h
+- to_interval() added in Int.h for short, int, long and long long
+  the code for long and long long is problematic
+- In Quotient.h: 
+  #include <CGAL/basic.h> moved outside #ifndef ... #define ...QUOTIENT...
+
+4.0      (26 Nov 00)
+
+- to_interval() added for Gmpz
+- to_interval() added for Quotient
+- to_interval() added for leda_bigfloat
+- to_interval() added for leda_integer
+- to_interval() added for leda_rational
+- to_interval() added for leda_real
+- to_interval() added for double
+- to_interval() added for float
+- test for to_interval added to test suite
+
+3.4      (13 Jul 00)
+
+- todouble() replaced by to_double() for leda_integer and
+  leda_rational
+
+3.3      (27 Jun 00)
+
+- CGAL:: replaced by CGAL_NTS with sign in number_utils.h
+
+3.2      (08 Jun 00)
+
+- CGAL_NTS used
+- is_integral(double) added to double.h
+
+3.1      (30 May 00)
+
+- min and max are now handled in <basic.h>
+  (by using std::min; ... )
+
+3.0      (25 May 00)
+
+- namespace CGAL::NTS introduced
+  templates from <number_utils.h> moved there
+  smooth transition phase with warning about unused variable
+  e.g. inline bool is_zero(const NT& x)
+  {  
+  #ifndef CGAL_NO_NTS_NAMESPACE
+    bool is_zero_is_obsolete__qualify_call_by_CGAL_NTS;
+  #endif // CGAL_NO_NTS_NAMESPACE
+    return x == NT(0); 
+  }
+
+
+2.7.2    (18 Apr 00)
+
+- sized_integer.h revised leading _s removed
+
+%%%%%%%%%%%%%%%%%%%%%%   R e l e a s e  2. 1   %%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+2.7   -> 2.7.1  (04 Dec 99)
+- CGAL_CLIB_STD used in <Gmpz.h> and <Quotient.C>
+- dito in <double.h>
+
+2.6.6 -> 2.7    (04 Dec 99)
+- long long removed from <int.h>
+  definitions are now in <long_long.h>
+
+2.6.5 -> 2.6.6  (22 Nov 99)
+- added !=0 to mask tests in double.h and float.h as suggested 
+  by Oren. Gives a performance warning on M$VC++ otherwise. Although 
+  I think performance is now worse than before
+
+2.6.4 -> 2.6.5  (20 Nov 99)
+- Quotient<int>::normalize() removed (as suggested by Dima to
+  please Borland)
+
+2.6.3 -> 2.6.4  (16 Nov 99)
+- typedef modified in Quotient.C
+
+2.6.2 -> 2.6.3  (14 Nov 99)
+- some NumberType() replaced by NT() and a typedef
+  NumberType NT to please Borland
+
+2.6.1 -> 2.6.2  (02 Nov 99)
+- typedef in Quotient class used for NumberType
+  to workaround Borland problem
+
+2.6   -> 2.6.1  (28 Oct 99)
+- test for __BORLANDC__ added to double.h and float.h
+
+2.5.6 -> 2.6    (28 Oct 99)
+- CGAL::max and CGAL::min revived
+
+2.5.5 -> 2.5.6  (25 Oct 99)
+- substitution bugs fixed :) QUOTIENumberType_H
+
+2.5.4 -> 2.5.5  (18 Oct 99)
+- NT template parameter renamed to NumberType in Quotient
+  to please Borland :)
+- to_double() qualified in leda_bigfloat.h
+
+2.5.3 -> 2.5.4  (13 Oct 99)
+- show(p) removed in double.h (left over from testing phase)
+- #include <fp_class.h> moved out of namespace CGAL
+
+2.5.2 -> 2.5.3  (12 Oct 99)
+- #include <CGAL/basic.h> added to double.h and float.h
+
+2.5.1 -> 2.5.2  (12 Oct 99)
+- #include <iomanip> added to IEEE_754_unions.h
+
+2.5   -> 2.5.1  (11 Oct 99)
+- modified is_[valid|finite](); version using bitoperations
+  implemented and activated for _MSC_VER
+  can be activated also by -DCGAL_MASK_FINITE_VALID
+- IEEE_754_unions.h added
+
+2.4.3 -> 2.5    (08 Oct 99)
+- modified _test_valid_finite.C: added std:: to sqrt(double)
+- modified IEEE_double::show() to use C++ iostream stuff
+  #include <iomanip> added
+- removed / from /rm in cgal_test  :)
+- new makefile created
+- _test_valid_finite split into two tests, one for double
+  one for float
+- is_[valid|finite]() on SGI revised
+- test quotient_io.C revised
+
+2.4.2 -> 2.4.3  (08 Oct 99)
+- locale problem (isdigit) in Gmpz.h fixed (missing flag) 
+
+2.4.1 -> 2.4.2  (08 Oct 99)
+- std::classic -> std::locale::classic in Quotient, Gmpz
+
+2.4   -> 2.4.1  (05 Oct 99)
+- include iterator_traits_pointer_specs_for_cartesian_quotient.h
+  added to Quotient.h
+- test/NumberTypeSupport/include/CGAL/Ieee_double.h modified
+- in cgal_test, '/bin' removed
+
+2.3.5 -> 2.4    (17 Sep 99)
+- inline double sqrt(double d) { return std::sqrt(d); }
+  added to double.h
+- inline leda_real sqrt(const leda_real & r) { return ::sqrt(r); }
+  added to leda_real.h
+
+2.3.4 -> 2.3.5  (02 Sep 99)
+- added std::classic() as second argument to isspace(), isdigit()
+  cf. locale -- flagged by CGAL_CFG_NO_LOCALE
+
+2.3.3 -> 2.3.4  (01 Sep 99)
+- added std:: to isspace and isdigit in Gmpz and Quotient
+
+2.3.2 -> 2.3.3  (31 Aug 99)
+- test _test_valid_finite() modified such that it shows me the bits
+  if certain tests fail
+
+2.3.1 -> 2.3.2  (19 Aug 99)
+- test file quotient_io.C updated for std:: ...
+
+2.3   -> 2.3.1  (06 Aug 99)
+- makefile updated: $(OBJ_EXT)
+
+2.2.1 -> 2.3    (04 Aug 99)
+- Quotient.h revised for gcc-2.95:
+  num and den made public in order to make all friends non-friends 
+
+2.2   -> 2.2.1  (09 Jul 99)
+- CGAL::compare(leda_real, ...) made inline
+
+2.1.5 -> 2.2    (26 Jun 99)
+- #include <CGAL/basic.h> added to 
+  <CGAL/leda_[bigfloat|integer|rational|real].h>
+- delete replaced by delete[] in Gmpz.h in ostream operator
+  (detected by Sylvain using purify)
+- CGAL_ added to CHECK_... in Gmpz.h
+
+%%%%%%%%%%%%%%%%%%%%%%   R e l e a s e  2. 0   %%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+2.1.4 -> 2.1.5  (09 May 99)
+- placement of CGAL_KERNEL_INLINE corrected in Quotient.h (caused a warning)
+
+2.1.3 -> 2.1.4  (02 May 99)
+- flag CGAL_NO_NAMESPACE corrected in <leda_integer.h>
+
+2.1.2 -> 2.1.3  (28 Apr 99)
+- fix for change in 2.1.1
+
+2.1.1 -> 2.1.2  (28 Apr 99)
+- version number updated
+
+2.1   -> 2.1.1  (28 Apr 99)
+- used special code for __sgi for is_[finite|valid]()
+- define abs specialisation only if namespaces are supported
+
+2.0.13-> 2.1    (16 Apr 99)
+- iostream parts prefixed by std::
+- CGAL::compare(leda_real, leda_real) added
+
+2.0.12-> 2.0.13 (06 Apr 99)
+- flag CGAL_NO_QUOTIENT_INT_FRIENDS added to ease removing friend declarations
+  from specialisation Quotient<int>. These friend declarations cause problems
+  with latest egcs snapshots as reported by Sylvain.
+
+2.0.11-> 2.0.12 (30 Mar 99)
+- to_double encapsualted in #ifndef CGAL_NO_NAMESPACE for
+  bigfloat, integer, real, rational from LEDA
+
+2.0.10-> 2.0.11 (30 Mar 99)
+- sign() prefixed in lexicographical_sign() defined in <number_utils.h>
+- CGAL_NO_STL_PROVIDED_REL_OPS defined in <Quotient.h> for g++-2.8.
+
+2.0.9 -> 2.0.10 (28 Mar 99)
+- inclusion of std files <cctype>, ... moved out of namespace CGAL
+
+2.0.8 -> 2.0.9 (25 Mar 99)
+- to_double() calls in Quotient::to_double 'prefixed' by CGAL::
+
+2.0.7 -> 2.0.8 (23 Mar 99)
+- flag CGAL_NO_NAMESPACE corrected :)
+
+2.0.6 -> 2.0.7 (20 Mar 99)
+- flag CGAL_NO_NAMESPACE corrected
+
+2.0.5 -> 2.0.6 (15 Mar 99)
+- fabs prefixed with std:: in Double.C
+
+2.0.4 -> 2.0.5 (14 Mar 99)
+- min()/max() removed from <number_utils.h>;
+  use std::min/max instead; defined in <algorithm>
+  <algorithm> included in <number_utils.h>.
+- std::min, std::max used in <number_utils_classes.h>
+- 'public std::' replaced by 'public CGAL_STD::' in <number_utils_classes.h>
+- #ifdef CGAL_INTERVAL_ARITHMETIC_H
+  #include <CGAL/Interval_arithmetic/IA_Quotient.h>
+  #endif // CGAL_INTERVAL_ARITHMETIC_H
+  added to <CGAL/Quotient.h>
+- #include <CGAL/config> moved to front in <CGAL/double.h> and <CGAL/float.h>
+
+2.0.3 -> 2.0.4 (02 Mar 99)
+- sign encapsulated in #ifndef CGAL_NO_NAMESPACES for 
+  leda_[integer|rational|real]   and global scope operator
+  added to call of sign in function definition.
+
+2.0.2 -> 2.0.3 (25 Feb 99)
+- CGAL_[BEGIN|END]_NAMESPACE used
+- CGAL:: added to sign()-calls in 
+  quotient_cmp(const Quotient<NT>& x, const Quotient<NT>& y)
+
+2.0.1 -> 2.0.2 (16 Feb 99)
+- std:: added to unary/binary_function in <number_utils_classes.h> 
+
+2.0   -> 2.0.1 (11 Feb 99)
+- #ifdef CGAL_PROVIDE_STL_PROVIDED_REL_OPS changed to
+  #ifndef CGAL_NO_STL_PROVIDED_REL_OPS in <Quotient.h>,
+  thereby defining >, >=, <=, and != by default now.
+- sign() defintion for leda_integer removed from <CGAL/leda_integer.h>
+
+1.6   -> 2.0
+- namespace CGAL { } introduced
+- inclusion of <Quotient.h> removed from <number_type_basic.h>
+- inclusion of <cctype> added to <Gmpz.h>
+
+%%%%%%%%%%%%%%%%%%%%%%   R e l e a s e  1 . 2   %%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+1.5.4 -> 1.6
+- bug (memory leak) in CGAL_Gmpz corrected:
+  e.g.:       CGAL_Gmpz_rep* Res = new CGAL_Gmpz_rep();
+              mpz_add(Res->mpZ, ptr()->mpZ, z.ptr()->mpZ);
+              return CGAL_Gmpz(Res);
+  now replaces
+              mpz_t res;   // <- limb not cleared !!!
+              mpz_init(res);
+              mpz_add(res, ptr()->mpZ, z.ptr()->mpZ);
+              return CGAL_Gmpz(res);
+
+
+1.5.3 -> 1.5.4
+- test order modified in _test_valid_finite.C
+
+1.5.2 -> 1.5.3
+- include <CGAL/enum.h> added to <CGAL/number_type_tags.h>
+  such that CGAL_Sign is known in files including the latter, e.g
+  <CGAL/leda_rational.h>
+
+1.5.1 -> 1.5.2
+- CGAL_sign() specialized for leda_[integer|rational|real]
+  _test_sign.C added
+
+1.5   -> 1.5.1
+- CGAL_square() and struct CGAL_Square added
+
+1.4.5 -> 1.5
+- Use of CGAL...INLINE made consistent between declarations and
+  definitions (otherwise SunPro CC 4.2 does not like it).
+
+1.4.4 -> 1.4.5
+- return type of Gmpz::sign() and CGAL_Sign(Gmpz) changed to CGAL_Sign
+
+1.4.3 -> 1.4.4
+- return true; added in <_test_valid_finite.C>
+
+1.4.2 -> 1.4.3
+- CGAL_KERNEL_INLINE replaced by inline for CGAL_abs(double)
+
+1.4.1 -> 1.4.2
+- CGAL_sign now returns a CGAL_Sign instead of an int
+  affects <number_utils.h> and <number_utils_classes.h>
+- specialisation for CGAL_abs(double) (uses fabs()) added to <double.h>
+
+1.4   -> 1.4.1
+- added <test/NumberTypeSupport/_test_valid_finite.C> to package
+
+1.3   -> 1.4
+- valid(d) and finite(d) defined inline in double.h as
+  { return (d == d); } and { return (d == d) && (CGAL_is_valid(d-d)); }
+  respectively, unless flag CGAL_OLD_FINITE_VALID is defined, which restores
+  the old situation 
+- same for float in float.h
+- Double.C and Float.C in CGAL/src modified accordingly.
+- comments with definitions of CGAL_abs(), CGAL_numerator(), CGAL_denominator()
+  removed from double.h and float.h
+- DOUBLECOMP_H replaced by CGAL_DOUBLE_H in double.h
+
+1.2.8 -> 1.3
+- include statements for <CGAL/Interval_arithmetic/IA_*.h> added
+  for Gmpz, leda_integer, leda_real, leda_bigfloat, and leda_rational 
+
+%%%%%%%%%%%%%%%%%%%%%%   R e l e a s e  1 . 1   %%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+1.2.7 -> 1.2.8
+- correction for CGAL_PROVIDE_STL_PROVIDED_REL_OPS in Quotient.h
+
+1.2.6 -> 1.2.7
+- operator?( Quotient<NT>, NT ) and  operator?( NT, Quotient<NT>) 
+  for ? in { !=, >, >=, <= } put in 
+  #ifdef CGAL_PROVIDE_STL_PROVIDED_REL_OPS
+- buglet in doc fixed: operators +=, -=, *=, /= are now required
+  to return NT ( not bool as before)
+
+1.2.5 -> 1.2.6
+- bug in CGAL_is_one() fixed
+- missing leda_-prefix in operator/= added
+
+1.2.4 -> 1.2.5
+- workaround for missing operator/= for leda_real added
+- io_tags() for unsigned types added
+
+1.2.3 -> 1.2.4
+- rearranged order of definitions in Quotient.h to please 
+  Borland C++ (specialization for int is now at the end of 
+  Quotient.h)
+- made input operator for Quotient more flexible: accepts now 
+  also format ` num ' besides ` num/den '.
+
+1.2.2 -> 1.2.3
+- +=, -=, /= added for Gmpz
+
+1.2.1 -> 1.2.2
+- CGAL_CFG_NO_STL_PROVIDED_COMPARISONS renamed to 
+  (!) CGAL_PROVIDE_STL_PROVIDED_REL_OPS in Quotient.
+  As a consequence of this, the rel ops defined as templates
+  in <utility> in namespace rel_ops nested in namespace std
+  are no longer defined (nor declared) by default for Quotient.
+
+1.2   -> 1.2.1
+- inline and CGAL_KERNEL_INLINE added to declaration of function
+  templates
+
+1.1.4 -> 1.2
+- made fit for egcs 
+  uses CGAL_TEMPLATE_NULL macro with explicit specialization
+
+1.1.3 -> 1.1.4
+- inclusion of number_utils_classes.h postponed
+
+1.1.2 -> 1.1.3
+- CGAL_CFG_NO_STL_PROVIDED_COMPARISONS added in Quotient.h to reduce
+  problems with g++2.7.2.3 with early inclusion of function.h
+
+1.1.1 -> 1.1.2
+- inconsistencies between file names removed (double.h - float.h) in
+  Double.C, Float.C, Double_eps.C
+
+1.1   -> 1.1.1
+- number_utils_classes.h (written by Michael Hoffmann) added to the
+  package
+
+1.0   -> 1.1
+- Geert-Jan's new version of Double.C and Float.C added (including
+  testsuite)
+- Quotient has now a specialisation for int and hence no more
+  problems with ambigous ctors 
+- operator<<(ostream, Quotient<NT>) is no longer a friend of the
+  class -> egcs compiles the kernel test if called with -fguided-decls
+
+0.9   -> 1.0
+- files not defining a new class start with lower case letters now
+  e.g. Int.h  -> int.h
+       gnu_Integer.h -> gnu_integer.h
+- furthermore leda number types got a prefix,
+  e.g. Integer.h -> leda_integer.h
+- leda_bigloat support added
+- new inline policy
+

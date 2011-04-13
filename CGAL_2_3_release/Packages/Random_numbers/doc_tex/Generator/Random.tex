@@ -1,0 +1,77 @@
+% =============================================================================
+% The CGAL Reference Manual
+% Chapter: Geometric Object Generators
+% Section: Random Numbers Generator
+% -----------------------------------------------------------------------------
+% file  : doc_tex/support/Generator/Random.tex
+% author: Sven Schönherr <sven@inf.ethz.ch>
+% -----------------------------------------------------------------------------
+% $CGAL_Chapter: Geometric Object Generators $
+% $CGAL_Package: Random_numbers WIP $
+% $Revision$
+% $Date$
+% =============================================================================
+
+\begin{ccClass}{Random}
+\ccSection{Random Numbers Generator}
+\label{sec:random_numbers_generator}
+
+% -----------------------------------------------------------------------------
+\ccDefinition
+
+An instance of type \ccClassName\ is a random numbers generator. It
+allows to generate uniformly distributed random \ccc{bool}s,
+\ccc{int}s and \ccc{double}s. It can be used as the random number
+generating function object in the STL algorithm \ccc{random_shuffle}.
+
+It can be very useful, e.g.\ for debugging, to reproduce a sequence of
+random numbers.  This can be done by initialising deterministically.
+
+\ccInclude{CGAL/Random.h}
+
+% -----------------------------------------------------------------------------
+\ccHeading{Global Variables}
+
+\ccVariable{ Random default_random;}{
+          This global variable is used as the
+          default random numbers generator.}
+
+% -----------------------------------------------------------------------------
+\ccCreation
+\ccCreationVariable{random}
+
+\ccConstructor{ Random( );}{
+        introduces a variable \ccVar\ of type \ccClassTemplateName.}
+
+\ccConstructor{ Random( unsigned int  seed);}{
+        introduces a variable \ccVar\ of type \ccClassTemplateName\
+        and initializes the seed using \ccc{seed}.}
+
+% -----------------------------------------------------------------------------
+\ccOperations
+
+\ccMemberFunction{ bool get_bool( );}{
+        returns a random \ccc{bool}.}
+
+\ccMemberFunction{ int get_int( int lower, int upper);}{
+        returns a random \ccc{int} from the interval
+        $[\mbox{\ccc{lower},\ccc{upper}})$.}
+
+\ccMemberFunction{ double get_double( double lower = 0.0,
+                                      double upper = 1.0);}{
+        returns a random \ccc{double} from the interval
+        $[\mbox{\ccc{lower},\ccc{upper}})$.}
+
+\ccMemberFunction{ int operator() ( int upper);}{
+        returns \ccVar\ccc{.get_int( 0, upper)}.}
+
+% -----------------------------------------------------------------------------
+\ccImplementation
+
+We use the function \ccc{rand} from the standard C library to generate
+the random numbers, i.e.\ the sequence of numbers depends on the
+implementation of \ccc{rand} on your specific platform.
+
+\end{ccClass}
+
+% ===== EOF ===================================================================

@@ -1,0 +1,114 @@
+/****************************************************************************
+** CGAL::Qt_widget_tool meta object code from reading C++ file 'Qt_Window_tool.h'
+**
+** Created: Mon Jun 25 15:15:09 2001
+**      by: The Qt MOC ($Id$)
+**
+** WARNING! All changes made in this file will be lost!
+*****************************************************************************/
+
+#if !defined(Q_MOC_OUTPUT_REVISION)
+#define Q_MOC_OUTPUT_REVISION 9
+#elif Q_MOC_OUTPUT_REVISION != 9
+#error "Moc format conflict - please regenerate all moc files"
+#endif
+
+#include "../include/CGAL/IO/Qt_Window_tool.h"
+#include <qmetaobject.h>
+#include <qapplication.h>
+
+
+
+const char *CGAL::Qt_widget_tool::className() const
+{
+    return "CGAL::Qt_widget_tool";
+}
+
+QMetaObject *CGAL::Qt_widget_tool::metaObj = 0;
+
+void CGAL::Qt_widget_tool::initMetaObject()
+{
+    if ( metaObj )
+	return;
+    if ( qstrcmp(QObject::className(), "QObject") != 0 )
+	badSuperclassWarning("CGAL::Qt_widget_tool","QObject");
+    (void) staticMetaObject();
+}
+
+#ifndef QT_NO_TRANSLATION
+
+QString CGAL::Qt_widget_tool::tr(const char* s)
+{
+    return qApp->translate( "CGAL::Qt_widget_tool", s, 0 );
+}
+
+QString CGAL::Qt_widget_tool::tr(const char* s, const char * c)
+{
+    return qApp->translate( "CGAL::Qt_widget_tool", s, c );
+}
+
+#endif // QT_NO_TRANSLATION
+
+QMetaObject* CGAL::Qt_widget_tool::staticMetaObject()
+{
+    if ( metaObj )
+	return metaObj;
+    (void) QObject::staticMetaObject();
+#ifndef QT_NO_PROPERTIES
+#endif // QT_NO_PROPERTIES
+    QMetaData::Access *slot_tbl_access = 0;
+    typedef void (CGAL::Qt_widget_tool::*m2_t0)(Object);
+    typedef void (QObject::*om2_t0)(Object);
+    m2_t0 v2_0 = &CGAL::Qt_widget_tool::new_object;
+    om2_t0 ov2_0 = (om2_t0)v2_0;
+    QMetaData *signal_tbl = QMetaObject::new_metadata(1);
+    signal_tbl[0].name = "new_object(Object)";
+    signal_tbl[0].ptr = (QMember)ov2_0;
+    metaObj = QMetaObject::new_metaobject(
+	"CGAL::Qt_widget_tool", "QObject",
+	0, 0,
+	signal_tbl, 1,
+#ifndef QT_NO_PROPERTIES
+	0, 0,
+	0, 0,
+#endif // QT_NO_PROPERTIES
+	0, 0 );
+    metaObj->set_slot_access( slot_tbl_access );
+#ifndef QT_NO_PROPERTIES
+#endif // QT_NO_PROPERTIES
+    return metaObj;
+}
+
+#include <qobjectdefs.h>
+#include <qsignalslotimp.h>
+
+// SIGNAL new_object
+void CGAL::Qt_widget_tool::new_object( Object t0 )
+{
+    // No builtin function for signal parameter type Object
+    QConnectionList *clist = receivers("new_object(Object)");
+    if ( !clist || signalsBlocked() )
+	return;
+    typedef void (QObject::*RT0)();
+    typedef void (QObject::*RT1)(Object);
+    RT0 r0;
+    RT1 r1;
+    QConnectionListIt it(*clist);
+    QConnection   *c;
+    QSenderObject *object;
+    while ( (c=it.current()) ) {
+	++it;
+	object = (QSenderObject*)c->object();
+	object->setSender( this );
+	switch ( c->numArgs() ) {
+	    case 0:
+		r0 = (RT0)*(c->member());
+		(object->*r0)();
+		break;
+	    case 1:
+		r1 = (RT1)*(c->member());
+		(object->*r1)(t0);
+		break;
+	}
+    }
+}

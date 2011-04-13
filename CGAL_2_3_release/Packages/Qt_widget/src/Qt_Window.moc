@@ -1,0 +1,295 @@
+/****************************************************************************
+** CGAL::Qt_widget meta object code from reading C++ file 'Qt_Window.h'
+**
+** Created: Thu Jun 21 16:33:07 2001
+**      by: The Qt MOC ($Id$)
+**
+** WARNING! All changes made in this file will be lost!
+*****************************************************************************/
+
+#if !defined(Q_MOC_OUTPUT_REVISION)
+#define Q_MOC_OUTPUT_REVISION 9
+#elif Q_MOC_OUTPUT_REVISION != 9
+#error "Moc format conflict - please regenerate all moc files"
+#endif
+
+#include "../include/CGAL/IO/Qt_Window.h"
+#include <qmetaobject.h>
+#include <qapplication.h>
+
+
+
+const char *CGAL::Qt_widget::className() const
+{
+    return "CGAL::Qt_widget";
+}
+
+QMetaObject *CGAL::Qt_widget::metaObj = 0;
+
+void CGAL::Qt_widget::initMetaObject()
+{
+    if ( metaObj )
+	return;
+    if ( qstrcmp(QWidget::className(), "QWidget") != 0 )
+	badSuperclassWarning("CGAL::Qt_widget","QWidget");
+    (void) staticMetaObject();
+}
+
+#ifndef QT_NO_TRANSLATION
+
+QString CGAL::Qt_widget::tr(const char* s)
+{
+    return qApp->translate( "CGAL::Qt_widget", s, 0 );
+}
+
+QString CGAL::Qt_widget::tr(const char* s, const char * c)
+{
+    return qApp->translate( "CGAL::Qt_widget", s, c );
+}
+
+#endif // QT_NO_TRANSLATION
+
+QMetaObject* CGAL::Qt_widget::staticMetaObject()
+{
+    if ( metaObj )
+	return metaObj;
+    (void) QWidget::staticMetaObject();
+#ifndef QT_NO_PROPERTIES
+    typedef QColor (Qt_widget::*m3_t0)()const;
+    typedef QColor (QObject::*om3_t0)()const;
+    typedef void (Qt_widget::*m3_t1)(QColor);
+    typedef void (QObject::*om3_t1)(QColor);
+    typedef QColor (Qt_widget::*m3_t3)()const;
+    typedef QColor (QObject::*om3_t3)()const;
+    typedef void (Qt_widget::*m3_t4)(QColor);
+    typedef void (QObject::*om3_t4)(QColor);
+    typedef QColor (Qt_widget::*m3_t6)()const;
+    typedef QColor (QObject::*om3_t6)()const;
+    typedef void (Qt_widget::*m3_t7)(QColor);
+    typedef void (QObject::*om3_t7)(QColor);
+    typedef bool (Qt_widget::*m3_t9)()const;
+    typedef bool (QObject::*om3_t9)()const;
+    typedef void (Qt_widget::*m3_t10)(bool);
+    typedef void (QObject::*om3_t10)(bool);
+    typedef uint (Qt_widget::*m3_t12)()const;
+    typedef uint (QObject::*om3_t12)()const;
+    typedef void (Qt_widget::*m3_t13)(uint);
+    typedef void (QObject::*om3_t13)(uint);
+    typedef uint (Qt_widget::*m3_t15)()const;
+    typedef uint (QObject::*om3_t15)()const;
+    typedef void (Qt_widget::*m3_t16)(uint);
+    typedef void (QObject::*om3_t16)(uint);
+    m3_t0 v3_0 = &Qt_widget::color;
+    om3_t0 ov3_0 = (om3_t0)v3_0;
+    m3_t1 v3_1 = &Qt_widget::setColor;
+    om3_t1 ov3_1 = (om3_t1)v3_1;
+    m3_t3 v3_3 = &Qt_widget::backgroundColor;
+    om3_t3 ov3_3 = (om3_t3)v3_3;
+    m3_t4 v3_4 = &Qt_widget::setBackgroundColor;
+    om3_t4 ov3_4 = (om3_t4)v3_4;
+    m3_t6 v3_6 = &Qt_widget::fillColor;
+    om3_t6 ov3_6 = (om3_t6)v3_6;
+    m3_t7 v3_7 = &Qt_widget::setFillColor;
+    om3_t7 ov3_7 = (om3_t7)v3_7;
+    m3_t9 v3_9 = &Qt_widget::isFilled;
+    om3_t9 ov3_9 = (om3_t9)v3_9;
+    m3_t10 v3_10 = &Qt_widget::setFilled;
+    om3_t10 ov3_10 = (om3_t10)v3_10;
+    m3_t12 v3_12 = &Qt_widget::lineWidth;
+    om3_t12 ov3_12 = (om3_t12)v3_12;
+    m3_t13 v3_13 = &Qt_widget::setLineWidth;
+    om3_t13 ov3_13 = (om3_t13)v3_13;
+    m3_t15 v3_15 = &Qt_widget::pointSize;
+    om3_t15 ov3_15 = (om3_t15)v3_15;
+    m3_t16 v3_16 = &Qt_widget::setPointSize;
+    om3_t16 ov3_16 = (om3_t16)v3_16;
+    QMetaProperty *props_tbl = QMetaObject::new_metaproperty( 6 );
+    props_tbl[0].t = "QColor";
+    props_tbl[0].n = "color";
+    props_tbl[0].get = (QMember)ov3_0;
+    props_tbl[0].set = (QMember)ov3_1;
+    props_tbl[0].reset = 0;
+    props_tbl[0].gspec = QMetaProperty::Class;
+    props_tbl[0].sspec = QMetaProperty::Class;
+    props_tbl[0].setFlags(QMetaProperty::StdSet);
+    props_tbl[1].t = "QColor";
+    props_tbl[1].n = "backGroundColor";
+    props_tbl[1].get = (QMember)ov3_3;
+    props_tbl[1].set = (QMember)ov3_4;
+    props_tbl[1].reset = 0;
+    props_tbl[1].gspec = QMetaProperty::Class;
+    props_tbl[1].sspec = QMetaProperty::Class;
+    props_tbl[2].t = "QColor";
+    props_tbl[2].n = "fillColor";
+    props_tbl[2].get = (QMember)ov3_6;
+    props_tbl[2].set = (QMember)ov3_7;
+    props_tbl[2].reset = 0;
+    props_tbl[2].gspec = QMetaProperty::Class;
+    props_tbl[2].sspec = QMetaProperty::Class;
+    props_tbl[2].setFlags(QMetaProperty::StdSet);
+    props_tbl[3].t = "bool";
+    props_tbl[3].n = "isFilled";
+    props_tbl[3].get = (QMember)ov3_9;
+    props_tbl[3].set = (QMember)ov3_10;
+    props_tbl[3].reset = 0;
+    props_tbl[3].gspec = QMetaProperty::Class;
+    props_tbl[3].sspec = QMetaProperty::Class;
+    props_tbl[4].t = "uint";
+    props_tbl[4].n = "lineWidth";
+    props_tbl[4].get = (QMember)ov3_12;
+    props_tbl[4].set = (QMember)ov3_13;
+    props_tbl[4].reset = 0;
+    props_tbl[4].gspec = QMetaProperty::Class;
+    props_tbl[4].sspec = QMetaProperty::Class;
+    props_tbl[4].setFlags(QMetaProperty::StdSet);
+    props_tbl[5].t = "uint";
+    props_tbl[5].n = "pointSize";
+    props_tbl[5].get = (QMember)ov3_15;
+    props_tbl[5].set = (QMember)ov3_16;
+    props_tbl[5].reset = 0;
+    props_tbl[5].gspec = QMetaProperty::Class;
+    props_tbl[5].sspec = QMetaProperty::Class;
+    props_tbl[5].setFlags(QMetaProperty::StdSet);
+#endif // QT_NO_PROPERTIES
+    QMetaData::Access *slot_tbl_access = 0;
+    typedef void (CGAL::Qt_widget::*m2_t0)(QMouseEvent*);
+    typedef void (QObject::*om2_t0)(QMouseEvent*);
+    typedef void (CGAL::Qt_widget::*m2_t1)(QMouseEvent*);
+    typedef void (QObject::*om2_t1)(QMouseEvent*);
+    typedef void (CGAL::Qt_widget::*m2_t2)(QMouseEvent*);
+    typedef void (QObject::*om2_t2)(QMouseEvent*);
+    typedef void (CGAL::Qt_widget::*m2_t3)();
+    typedef void (QObject::*om2_t3)();
+    m2_t0 v2_0 = &CGAL::Qt_widget::mousePressed;
+    om2_t0 ov2_0 = (om2_t0)v2_0;
+    m2_t1 v2_1 = &CGAL::Qt_widget::mouseReleased;
+    om2_t1 ov2_1 = (om2_t1)v2_1;
+    m2_t2 v2_2 = &CGAL::Qt_widget::mouseMoved;
+    om2_t2 ov2_2 = (om2_t2)v2_2;
+    m2_t3 v2_3 = &CGAL::Qt_widget::resized;
+    om2_t3 ov2_3 = (om2_t3)v2_3;
+    QMetaData *signal_tbl = QMetaObject::new_metadata(4);
+    signal_tbl[0].name = "mousePressed(QMouseEvent*)";
+    signal_tbl[0].ptr = (QMember)ov2_0;
+    signal_tbl[1].name = "mouseReleased(QMouseEvent*)";
+    signal_tbl[1].ptr = (QMember)ov2_1;
+    signal_tbl[2].name = "mouseMoved(QMouseEvent*)";
+    signal_tbl[2].ptr = (QMember)ov2_2;
+    signal_tbl[3].name = "resized()";
+    signal_tbl[3].ptr = (QMember)ov2_3;
+    metaObj = QMetaObject::new_metaobject(
+	"CGAL::Qt_widget", "QWidget",
+	0, 0,
+	signal_tbl, 4,
+#ifndef QT_NO_PROPERTIES
+	props_tbl, 6,
+	0, 0,
+#endif // QT_NO_PROPERTIES
+	0, 0 );
+    metaObj->set_slot_access( slot_tbl_access );
+#ifndef QT_NO_PROPERTIES
+#endif // QT_NO_PROPERTIES
+    return metaObj;
+}
+
+#include <qobjectdefs.h>
+#include <qsignalslotimp.h>
+
+// SIGNAL mousePressed
+void CGAL::Qt_widget::mousePressed( QMouseEvent* t0 )
+{
+    // No builtin function for signal parameter type QMouseEvent*
+    QConnectionList *clist = receivers("mousePressed(QMouseEvent*)");
+    if ( !clist || signalsBlocked() )
+	return;
+    typedef void (QObject::*RT0)();
+    typedef void (QObject::*RT1)(QMouseEvent*);
+    RT0 r0;
+    RT1 r1;
+    QConnectionListIt it(*clist);
+    QConnection   *c;
+    QSenderObject *object;
+    while ( (c=it.current()) ) {
+	++it;
+	object = (QSenderObject*)c->object();
+	object->setSender( this );
+	switch ( c->numArgs() ) {
+	    case 0:
+		r0 = (RT0)*(c->member());
+		(object->*r0)();
+		break;
+	    case 1:
+		r1 = (RT1)*(c->member());
+		(object->*r1)(t0);
+		break;
+	}
+    }
+}
+
+// SIGNAL mouseReleased
+void CGAL::Qt_widget::mouseReleased( QMouseEvent* t0 )
+{
+    // No builtin function for signal parameter type QMouseEvent*
+    QConnectionList *clist = receivers("mouseReleased(QMouseEvent*)");
+    if ( !clist || signalsBlocked() )
+	return;
+    typedef void (QObject::*RT0)();
+    typedef void (QObject::*RT1)(QMouseEvent*);
+    RT0 r0;
+    RT1 r1;
+    QConnectionListIt it(*clist);
+    QConnection   *c;
+    QSenderObject *object;
+    while ( (c=it.current()) ) {
+	++it;
+	object = (QSenderObject*)c->object();
+	object->setSender( this );
+	switch ( c->numArgs() ) {
+	    case 0:
+		r0 = (RT0)*(c->member());
+		(object->*r0)();
+		break;
+	    case 1:
+		r1 = (RT1)*(c->member());
+		(object->*r1)(t0);
+		break;
+	}
+    }
+}
+
+// SIGNAL mouseMoved
+void CGAL::Qt_widget::mouseMoved( QMouseEvent* t0 )
+{
+    // No builtin function for signal parameter type QMouseEvent*
+    QConnectionList *clist = receivers("mouseMoved(QMouseEvent*)");
+    if ( !clist || signalsBlocked() )
+	return;
+    typedef void (QObject::*RT0)();
+    typedef void (QObject::*RT1)(QMouseEvent*);
+    RT0 r0;
+    RT1 r1;
+    QConnectionListIt it(*clist);
+    QConnection   *c;
+    QSenderObject *object;
+    while ( (c=it.current()) ) {
+	++it;
+	object = (QSenderObject*)c->object();
+	object->setSender( this );
+	switch ( c->numArgs() ) {
+	    case 0:
+		r0 = (RT0)*(c->member());
+		(object->*r0)();
+		break;
+	    case 1:
+		r1 = (RT1)*(c->member());
+		(object->*r1)(t0);
+		break;
+	}
+    }
+}
+
+// SIGNAL resized
+void CGAL::Qt_widget::resized()
+{
+    activate_signal( "resized()" );
+}

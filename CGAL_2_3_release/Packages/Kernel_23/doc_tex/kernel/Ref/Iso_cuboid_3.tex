@@ -1,0 +1,151 @@
+\begin{ccRefClass} {Iso_cuboid_3<R>}
+
+\ccDefinition  An object $s$ of the data type \ccRefName\ is a
+cuboid in the Euclidean plane $\E^3$ with sides parallel to the $x$ and
+$y$ axis of the coordinate system.
+ 
+Although they are represented in a canonical form by only two
+vertices, namely the lexicographically smallest and largest vertex
+with respect to Cartesian $xyz$ coordinates, we provide
+functions for ``accessing'' the other vertices as well.
+
+Iso-oriented cuboids and bounding boxes are quite similar. The
+difference however is that bounding boxes have always double coordinates, 
+whereas the coordinate type of an iso-oriented cuboid is chosen by
+the user.
+
+
+\ccCreation
+\ccCreationVariable{c}
+
+
+\ccHidden \ccConstructor{Iso_cuboid_3();}
+             {introduces an uninitialized variable \ccVar.}
+
+\ccHidden \ccConstructor{Iso_cuboid_3(const Iso_cuboid_3<R> &u);}
+ 	    {copy constructor.}
+
+\ccConstructor{Iso_cuboid_3(const Point_3<R> &p, 
+	                    const Point_3<R> &q);}
+            {introduces an iso-oriented cuboid \ccVar\ with diagonal
+             opposite vertices $p$ and $q$. Note that the object is 
+             brought in the canonical form.}
+
+\ccConstructor{Iso_cuboid_3(
+                const RT& min_hx, const RT& min_hy, const RT& min_hz,
+                const RT& max_hx, const RT& max_hy, const RT& max_hz,
+                const RT& hw = R::RT(1));}
+            {introduces an iso-oriented cuboid \ccVar\ with diagonal
+             opposite vertices 
+             (\ccc{min_hx/hw}, \ccc{min_hy/hw}, \ccc{min_hz/hw}) and
+             (\ccc{max_hx/hw}, \ccc{max_hy/hw}, \ccc{max_hz/hw}).  
+             If the last argument 
+             is not explicitly given, it defaults to \ccStyle{R::RT(1)}.
+             \ccPrecond \ccc{hw} $\neq$ \ccc{R::RT(0)} }
+
+
+\ccOperations
+\ccHidden \ccMethod{Iso_cuboid_3<R> & operator=(const Iso_cuboid_3<R> &q);}
+        {Assignment.}
+
+\ccMethod{bool operator==(const Iso_cuboid_3<R> &c2) const;}
+       {Test for equality: two iso-oriented cuboid are equal, iff their
+        lower left and their upper right vertices are equal.}
+
+\ccMethod{bool operator!=(const Iso_cuboid_3<R> &c2) const;}
+       {Test for inequality.}
+
+\ccMethod{Point_3<R> vertex(int i) const;}
+       {returns the i'th vertex modulo 8  of \ccVar.
+        starting with the lower left vertex.}
+
+\ccMethod{Point_3<R> operator[](int i) const;}
+       {returns  \ccStyle{vertex(i)}, as indicated in the figure below:
+       \lcTex{\epsfxsize=6cm\epsffile{IsoCuboid.eps}}}
+
+\begin{ccHtmlOnly}
+<center>
+<img border=0 src=./IsoCuboid.gif align=center alt="vertex order of an iso-cuboid">
+</center>
+\end{ccHtmlOnly} 
+
+
+\ccMethod{Point_3<R> min() const;}
+       {returns the smallest vertex of \ccVar\ (= \ccStyle{vertex(0)}).}
+
+
+\ccMethod{Point_3<R> max() const;}
+       {returns the largest vertex of \ccVar\ (= \ccStyle{vertex(7)}).}
+\ccMethod{ FT  xmin() const;}{returns smallest \ccHtmlNoLinksFrom{Cartesian}
+                              $x$-coordinate in \ccVar.}
+\ccGlue
+\ccMethod{ FT  ymin() const;}{returns smallest \ccHtmlNoLinksFrom{Cartesian} 
+                              $y$-coordinate in \ccVar.}
+\ccGlue
+\ccMethod{ FT  zmin() const;}{returns smallest \ccHtmlNoLinksFrom{Cartesian} 
+                              $z$-coordinate in \ccVar.}
+\ccGlue
+\ccMethod{ FT  xmax() const;}{returns largest \ccHtmlNoLinksFrom{Cartesian} 
+                              $x$-coordinate in \ccVar.}
+\ccGlue
+\ccMethod{ FT  ymax() const;}{returns largest \ccHtmlNoLinksFrom{Cartesian} 
+                              $y$-coordinate in \ccVar.}
+\ccGlue
+\ccMethod{ FT  zmax() const;}{returns largest \ccHtmlNoLinksFrom{Cartesian} 
+                              $z$-coordinate in \ccVar.}
+
+\ccMethod{ FT  min_coord(int i) const;}
+         {returns $i$-th \ccHtmlNoLinksFrom{Cartesian} coordinate of
+          the smallest vertex of \ccVar. 
+%          (\ccc{min_coord(0) == xmin()}; \ccc{min_coord{2} == zmin()})
+          \ccPrecond $0 \leq i \leq 2$.}
+
+\ccMethod{ FT  max_coord(int i) const;}
+         {returns $i$-th \ccHtmlNoLinksFrom{Cartesian} coordinate of
+          the largest vertex of \ccVar. 
+%          (\ccc{max_coord(0) == xmax()}; \ccc{max_coord{2} == zmax()})
+          \ccPrecond $0 \leq i \leq 2$.}
+
+\ccPredicates
+
+\ccMethod{bool is_degenerate() const;}
+       {%the iso-oriented cuboid 
+        \ccVar\ is degenerate, if all vertices
+        are collinear.}
+
+\ccMethod{Bounded_side bounded_side(const Point_3<R> &p) const;}
+       {returns either \ccStyle{ON_UNBOUNDED_SIDE},
+        \ccStyle{ON_BOUNDED_SIDE}, or the constant
+        \ccStyle{ON_BOUNDARY}, 
+        depending on where point $p$ is.}
+
+\ccMethod{bool has_on_boundary(const Point_3<R> &p) const;}
+       {}
+\ccGlue
+\ccMethod{bool has_on_bounded_side(const Point_3<R> &p) const;}
+       {}
+\ccGlue
+\ccMethod{bool has_on_unbounded_side(const Point_3<R> &p) const;}
+       {}
+
+\ccHeading{Miscellaneous}
+
+\ccMethod{FT volume() const;}
+       {returns the volume of \ccVar. }
+
+\ccMethod{Bbox bbox() const;}
+       {returns a bounding box containing \ccVar. }
+
+\ccMethod{Iso_cuboid_3<R>  transform(const Aff_transformation_3<R> &t) const;}
+       {returns the iso-oriented cuboid obtained by applying $t$ on 
+        the smallest and the largest of \ccVar.
+        \ccPrecond The angle at a rotation must be a multiple of $\pi/2$,
+        otherwise the resulting cuboid does not have the same size.
+        Note that rotating about an arbitrary angle can even result in
+        a degenerate iso-oriented cuboid.}
+
+
+\ccSeeAlso
+\ccRefConceptPage{Kernel::IsoCuboid_3} \\
+
+\end{ccRefClass} 

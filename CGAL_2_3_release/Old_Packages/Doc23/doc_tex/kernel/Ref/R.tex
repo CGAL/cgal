@@ -1,0 +1,52 @@
+\begin{ccRefConcept}{R}
+
+The representation class parameter of the kernel types is denoted by \ccc{R}.
+In terms of concepts, whenever \ccc{R} is used with a class 
+\ccc{Kernel_object_d<R>}, a model for \ccc{R} must provide a nested type 
+\ccc{R::Kernel_object_d} that conicides with \ccc{Kernel_object_d<R>}. 
+The \cgal\ classes \ccc{Cartesian}, \ccc{Homogeneous},
+\ccc{Simple_cartesian} and \ccc{Simple_homogeneous} fulfill this requirement.
+The requirement is slightly 
+stronger than the requirements for \ccc{Kernel}, since a type identity between 
+\ccc{Kernel::Kernel_object_d} and \ccc{Kernel_object_d<Kernel>} is not 
+required for a \ccc{Kernel}. The class \ccc{Kernel_object_d<Kernel>} need 
+not even be instantiable.
+
+\ccTypes
+
+\ccNestedType{FT}{a number type that is a model for \ccc{FieldNumberType}}
+\ccGlue
+\ccNestedType{RT}{a number type that is a model for \ccc{RingNumberType}}
+
+\ccHasModels
+\ccRefIdfierPage{CGAL::Cartesian<FieldNumberType>}  \\
+\ccRefIdfierPage{CGAL::Homogeneous<RingNumberType>} \\
+\ccRefIdfierPage{CGAL::Simple_cartesian<FieldNumberType>} \\
+\ccRefIdfierPage{CGAL::Simple_homogeneous<RingNumberType>} \\
+
+\ccSeeAlso
+\ccRefIdfierPage{CGAL::Point_2<R>} \\
+\ccRefIdfierPage{CGAL::Vector_2<R>} \\
+\ccRefIdfierPage{CGAL::Direction_2<R>} \\
+\ccRefIdfierPage{CGAL::Line_2<R>} \\
+\ccRefIdfierPage{CGAL::Ray_2<R>} \\
+\ccRefIdfierPage{CGAL::Segment_2<R>} \\
+\ccRefIdfierPage{CGAL::Triangle_2<R>} \\
+\ccRefIdfierPage{CGAL::Iso_rectangle_2<R>} \\
+\ccRefIdfierPage{CGAL::Aff_transformation_2<R>} \\
+\ccRefIdfierPage{CGAL::Circle_2<R>} \\
+\ccRefIdfierPage{CGAL::Point_3<R>} \\
+\ccRefIdfierPage{CGAL::Vector_3<R>} \\
+\ccRefIdfierPage{CGAL::Direction_3<R>} \\
+\ccRefIdfierPage{CGAL::Iso_cuboid_3<R>} \\
+\ccRefIdfierPage{CGAL::Line_3<R>} \\
+\ccRefIdfierPage{CGAL::Ray_3<R>} \\
+\ccRefIdfierPage{CGAL::Sphere_3<R>} \\
+\ccRefIdfierPage{CGAL::Segment_3<R>} \\
+\ccRefIdfierPage{CGAL::Plane_3<R>} \\
+\ccRefIdfierPage{CGAL::Triangle_3<R>} \\
+\ccRefIdfierPage{CGAL::Tetrahedron_3<R>} \\
+\ccRefIdfierPage{CGAL::Aff_transformation_3<R>} \\
+\ccRefIdfierPage{CGAL::Point_d<R>} \\
+\end{ccRefConcept}
+

@@ -1,0 +1,74 @@
+% begin cgal manual page
+
+\begin{ccRefClass}{Partition<T,A>}\ccCreationVariable{P}
+
+\ccDefinition
+
+An instance \ccc{P} of the data type \ccc{Partition<T,A>}
+consists of a finite set of items (\ccc{partition_item}) and a partition
+of this set into blocks. Each item has an associated information of
+type \ccc{T}.  The type \ccc{A} has to be a model of the allocator concept 
+as defined in the C++ standard. 
+
+
+
+\ccSetOneOfTwoColumns{5cm}
+
+\ccTypes
+
+\ccNestedType{item}{the item type. 
+}
+
+\ccNestedType{allocator}{the allocator. 
+}
+
+\ccSetOneOfTwoColumns{4cm}
+
+\ccCreation
+
+\ccConstructor{Partition<T,A>()}{creates an instance \ccc{P} of type \ccc{Partition<T,A>} and initializes 
+     it to the empty partition. 
+}
+
+\ccSetTwoOfThreeColumns{3cm}{2cm}
+
+\ccOperations
+
+\ccMethod{  void clear();}{makes \ccc{P} the empty partition. 
+}
+
+\ccMethod{  partition_item make_block(const T& x);}{returns a new \ccc{partition_item} \ccc{it}, adds
+     the block \ccc{{it}} to partition \ccc{P}, and associates \ccc{x} with \ccc{it}. 
+}
+
+\ccMethod{  partition_item find(partition_item p) ;}{returns a canonical item of the block that
+     contains item $p$, i.e., iff \ccc{P.same_block(p,q)} 
+     then \ccc{P.find(p)} and \ccc{P.find(q)} return the same item.\\
+     \ccPrecond $p$ is an item in \ccc{P}.  
+}
+
+\ccMethod{  size_t size(partition_item p) ;}{returns the size of the block containing $p$. 
+}
+
+\ccMethod{  size_t number_of_blocks() ;}{returns the number of blocks of \ccc{P}. 
+}
+
+\ccMethod{  bool same_block(partition_item p, partition_item q) ;}{returns true if $p$ and $q$ belong to the same
+     block of partition \ccc{P}.\\
+     \ccPrecond $p$ and $q$ are items in \ccc{P}. 
+}
+
+\ccMethod{  void union_blocks(partition_item p, partition_item q);}{unites the blocks of partition \ccc{P} containing
+  items $p$ and $q$.\\
+  \ccPrecond $p$ and $q$ are items in \ccc{P}. 
+}
+
+\ccMethod{  const T& inf(partition_item p) ;}{returns the information associated with \ccc{it}. 
+}
+
+\ccMethod{  void change_inf(partition_item p, const T& x)   ;}{changes the information associates with \ccc{it} to \ccc{x}. 
+}
+
+\end{ccRefClass}
+
+

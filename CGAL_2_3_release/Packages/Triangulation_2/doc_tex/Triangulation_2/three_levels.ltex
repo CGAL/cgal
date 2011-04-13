@@ -1,0 +1,259 @@
+% dessin effectue par JpDraw (un programme de JP. MERLET)
+% INRIA Sophia-Antipolis,France le: Thu Jul  9 13:50:21 1998
+% Directory de creation:/u/alioth/0/prisme/yvinec/Cgal/Triangulation/doc/Fig
+% Createur:yvinec
+\ifx\cs\tempdima \newdimen \tempdima\fi
+\ifx\cs\tempdimb \newdimen \tempdimb\fi
+\ifx\cs\jpdrawx \newcount \jpdrawx\fi
+\ifx\cs\jpspace \def\jpspace{ } \fi
+\jpdrawx=100 \tempdima=   1.00cm \tempdimb= 1.0cm
+\ifdim \unitlength = 1pt
+\unitlength=  1.00cm
+\fi
+\ifdim \unitlength < 0cm
+\multiply \unitlength by -10 \divide \unitlength by 101 \fi
+\ifdim \unitlength > \tempdima \tempdima=\unitlength \fi
+\ifdim \unitlength < \tempdima \tempdima=\unitlength \fi
+\multiply \jpdrawx by \tempdima \divide \jpdrawx by \tempdimb
+\setlength{\unitlength}{\tempdima}
+\begin{picture}(  10.1,   6.1)( 0.275, 6.728)
+\thinlines
+\large
+\put( 0.275, 6.728){\special{"
+\the\jpdrawx \space 100 div
+\the\jpdrawx \space 100 div scale
+%%BoundingBox: 0 0 287 174
+% initial value of unitlength : 1.000000
+/Ellipse { gsave moveto setgray /savematrix matrix
+currentmatrix def currentpoint translate rotate newpath
+scale arc closepath savematrix setmatrix stroke grestore 0 setgray} def
+/EllipseColor { gsave moveto setgray /savematrix matrix
+currentmatrix def currentpoint translate rotate newpath
+scale arc closepath savematrix setmatrix fill grestore 0 setgray} def
+/EllipseRVB { gsave moveto setrgbcolor /savematrix matrix
+currentmatrix def currentpoint translate rotate newpath
+scale arc closepath savematrix setmatrix fill grestore 0 setgray} def
+/EllipseBRVB { gsave moveto setrgbcolor /savematrix matrix
+currentmatrix def currentpoint translate rotate newpath
+scale arc closepath savematrix setmatrix stroke grestore 0 setgray} def
+/Ligne { gsave moveto currentpoint translate 0 0 moveto
+lineto currentpoint stroke moveto closepath grestore} def
+/LigneRVB { gsave setrgbcolor moveto currentpoint translate 0 0 moveto
+lineto currentpoint stroke moveto closepath grestore 0 setgray} def
+/ArrowNoire {gsave 0 setgray moveto currentpoint
+translate 0 0 moveto lineto lineto lineto lineto 
+currentpoint fill moveto closepath grestore 0 setgray} def
+/ArrowRVB {gsave setrgbcolor moveto currentpoint
+translate 0 0 moveto lineto lineto lineto lineto 
+currentpoint fill moveto closepath grestore 0 setgray} def
+/RectangleNoir {gsave setgray moveto currentpoint
+translate 0 0 moveto lineto lineto lineto lineto 
+currentpoint fill moveto closepath grestore 0 setgray} def
+/RectangleRVB {gsave setrgbcolor moveto currentpoint
+translate 0 0 moveto lineto lineto lineto lineto 
+currentpoint fill moveto closepath grestore 0 setgray} def
+/Rectangle {gsave moveto currentpoint
+translate 0 0 moveto lineto lineto lineto lineto 
+currentpoint stroke moveto closepath grestore} def
+/OpenPoly {gsave moveto currentpoint translate 0 0 moveto} def
+/Li {lineto} def
+/ClosePnoir {currentpoint fill moveto closepath grestore 0 setgray} def
+/ClosePoly {currentpoint stroke moveto closepath grestore 0 setgray} def
+gsave
+ /ulx where{pop ulx uly scale} if
+ %currentpoint translate
+0.3 setlinewidth
+[] 0  setdash
+  0.000 -39.458 243.737  66.997 Ligne
+  0.411 -40.691 147.146  68.230 Ligne
+  0.000 -49.323 243.737 132.350 Ligne
+  0.000 -49.734 147.557 132.761 Ligne
+  0.000   0.000   0.822   0.000   0.822  -1.233   0.000  -1.233 106.866 116.731 Rectangle
+  0.000   0.000 264.288   0.000 264.288 -41.924   0.000 -41.924   9.454 154.956 Rectangle
+  0.000   0.000 287.306   0.000 287.306 -171.397   0.000 -171.397   0.000 171.397 Rectangle
+  0.000   0.000   0.822   0.000   0.822  -0.822   0.000  -0.822 166.054  71.518 Rectangle
+152.983  44.123 OpenPoly
+  1.000 setgray
+-11.834   0.000 Li
+ -5.416  -8.224 Li
+  0.000   0.000 Li
+ClosePnoir
+152.983  44.123 OpenPoly
+-11.834   0.000 Li
+ -5.416  -8.224 Li
+  0.000   0.000 Li
+ClosePoly
+152.983 107.420 OpenPoly
+  1.000 setgray
+-11.834   0.000 Li
+ -5.416  -8.224 Li
+  0.000   0.000 Li
+ClosePnoir
+152.983 107.420 OpenPoly
+-11.834   0.000 Li
+ -5.416  -8.224 Li
+  0.000   0.000 Li
+ClosePoly
+249.163  43.712 OpenPoly
+  1.000 setgray
+-11.834   0.000 Li
+ -5.416  -8.224 Li
+  0.000   0.000 Li
+ClosePnoir
+249.163  43.712 OpenPoly
+-11.834   0.000 Li
+ -5.416  -8.224 Li
+  0.000   0.000 Li
+ClosePoly
+249.574 107.831 OpenPoly
+  1.000 setgray
+-11.834   0.000 Li
+ -5.416  -8.224 Li
+  0.000   0.000 Li
+ClosePnoir
+249.574 107.831 OpenPoly
+-11.834   0.000 Li
+ -5.416  -8.224 Li
+  0.000   0.000 Li
+ClosePoly
+  0.000   0.000  44.280   0.000  44.280 -14.649   0.000 -14.649 222.808  27.091 Rectangle
+  0.000   0.000  44.280   0.000  44.280 -14.649   0.000 -14.649 126.591  27.423 Rectangle
+gsave
+ newpath 
+196.469 27.128 moveto 
+currentpoint translate
+0 0 moveto
+-8.494  0.000 -16.989 -1.644 -25.483 -4.932 curveto
+stroke
+closepath
+ grestore
+gsave
+ newpath 
+196.469 27.128 moveto 
+currentpoint translate
+0 0 moveto
+ 8.768  0.000 17.537 -1.644 26.305 -4.932 curveto
+stroke
+closepath
+ grestore
+gsave
+ newpath 
+196.469 13.564 moveto 
+currentpoint translate
+0 0 moveto
+ 8.768  0.000 17.537  1.507 26.305  4.521 curveto
+stroke
+closepath
+ grestore
+gsave
+ newpath 
+196.469 13.564 moveto 
+currentpoint translate
+0 0 moveto
+-8.494  0.000 -16.989  1.507 -25.483  4.521 curveto
+stroke
+closepath
+ grestore
+  0.000   0.000  -6.111   5.914  -5.020   2.635  -8.338   1.672 223.004  21.328 ArrowNoire
+  5.764  -3.134 216.791  24.706 Ligne
+  0.000   0.000   6.111  -5.914   5.020  -2.635   8.338  -1.672 171.990  18.541 ArrowNoire
+ -5.764   3.134 178.202  15.163 Ligne
+  0.000   0.000  44.280   0.000  44.280 -14.649   0.000 -14.649 222.397 147.109 Rectangle
+  0.000   0.000  44.280   0.000  44.280 -14.649   0.000 -14.649 126.180 147.442 Rectangle
+gsave
+ newpath 
+196.058 147.146 moveto 
+currentpoint translate
+0 0 moveto
+-8.494  0.000 -16.989 -1.644 -25.483 -4.932 curveto
+stroke
+closepath
+ grestore
+gsave
+ newpath 
+196.058 147.146 moveto 
+currentpoint translate
+0 0 moveto
+ 8.768  0.000 17.537 -1.644 26.306 -4.932 curveto
+stroke
+closepath
+ grestore
+gsave
+ newpath 
+196.058 133.583 moveto 
+currentpoint translate
+0 0 moveto
+ 8.768  0.000 17.537  1.507 26.306  4.521 curveto
+stroke
+closepath
+ grestore
+gsave
+ newpath 
+196.058 133.583 moveto 
+currentpoint translate
+0 0 moveto
+-8.494  0.000 -16.989  1.507 -25.483  4.521 curveto
+stroke
+closepath
+ grestore
+  0.000   0.000  -6.111   5.914  -5.020   2.635  -8.338   1.672 222.593 141.347 ArrowNoire
+  5.764  -3.134 216.380 144.725 Ligne
+  0.000   0.000   6.111  -5.914   5.020  -2.635   8.338  -1.672 171.579 138.560 ArrowNoire
+ -5.764   3.134 177.791 135.182 Ligne
+  0.000   0.000  44.280   0.000  44.280 -14.649   0.000 -14.649 222.397  82.579 Rectangle
+  0.000   0.000  44.280   0.000  44.280 -14.649   0.000 -14.649 126.180  82.912 Rectangle
+gsave
+ newpath 
+196.058 82.616 moveto 
+currentpoint translate
+0 0 moveto
+-8.494  0.000 -16.989 -1.781 -25.483 -5.343 curveto
+stroke
+closepath
+ grestore
+gsave
+ newpath 
+196.058 82.616 moveto 
+currentpoint translate
+0 0 moveto
+ 8.768  0.000 17.537 -1.781 26.306 -5.343 curveto
+stroke
+closepath
+ grestore
+gsave
+ newpath 
+196.058 69.052 moveto 
+currentpoint translate
+0 0 moveto
+ 8.768  0.000 17.537  1.644 26.306  4.932 curveto
+stroke
+closepath
+ grestore
+gsave
+ newpath 
+196.058 69.052 moveto 
+currentpoint translate
+0 0 moveto
+-8.494  0.000 -16.989  1.644 -25.483  4.932 curveto
+stroke
+closepath
+ grestore
+  0.000   0.000  -6.111   5.914  -5.020   2.635  -8.338   1.672 222.593  76.816 ArrowNoire
+  5.764  -3.134 216.380  80.195 Ligne
+  0.000   0.000   6.111  -5.914   5.020  -2.635   8.338  -1.672 171.579  74.029 ArrowNoire
+ -5.764   3.134 177.791  70.651 Ligne
+  0.000   0.000 264.699   0.000 264.699 -43.157   0.000 -43.157   9.043  90.836 Rectangle
+grestore
+}}
+\scriptsize
+\put(  4.73,  7.19){\makebox(  1.57,  0.51){Vertex-base}}
+\put(  8.13,  7.18){\makebox(  1.55,  0.51){Face-base}}
+\put(  4.71,  9.15){\makebox(  1.57,  0.51){Vertex}}
+\put(0.72,6.92){\shortstack[l]{Geometric information\\Additionnal information\\Void* Pointers}}
+\put(0.71,8.66){\shortstack[l]{{Triangulation data structure}\\Storage\\Type safe pointers\\Combinatorial operations}}
+\put(0.71,10.90){\shortstack[l]{{Triangulation}\\High level functions\\Geometric integrity\\Handles, Iterators, Circulators}}
+\put(  4.71, 11.43){\makebox(  1.57,  0.51){Vertex}}
+\put(  8.12,  9.14){\makebox(  1.55,  0.51){Face}}
+\put(  8.12, 11.41){\makebox(  1.55,  0.51){Face}}
+\end{picture}
+\setlength{\unitlength}{1cm}

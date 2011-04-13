@@ -1,0 +1,98 @@
+% +------------------------------------------------------------------------+
+% | Reference manual page: HalfedgeDSItems.tex
+% +------------------------------------------------------------------------+
+% | 22.03.1999   Lutz Kettner
+% | Package: HalfedgeDS
+% | 
+\RCSdef{\RCSHalfedgeDSItemsRev}{$Revision$}
+\RCSdefDate{\RCSHalfedgeDSItemsDate}{$Date$}
+% +------------------------------------------------------------------------+
+
+\ccRefPageBegin
+
+%%RefPage: end of header, begin of main body
+% +------------------------------------------------------------------------+
+
+
+\begin{ccRefConcept}{HalfedgeDSItems}
+
+\ccDefinition
+  
+The concept \ccRefName\ wraps the three item types -- vertex,
+halfedge, and face -- for a halfedge data structure. A \ccRefName\ 
+contains three member class templates named \ccc{Vertex_wrapper},
+\ccc{Halfedge_wrapper}, and \ccc{Face_wrapper}, each with two template
+parameters, \ccc{Refs} and \ccc{Traits}. \ccc{Refs} requires an
+instantiated halfedge data structure \ccc{HalfedgeDS} as argument,
+\ccc{Traits} is a geometric traits class supplied by the class that
+uses the halfedge data structure as internal representation. \ccc{Traits}
+is not used by the halfedge data structure itself. These three member 
+class templates provide a local type named \ccc{Vertex}, \ccc{Halfedge},
+and \ccc{Face} respectively. The requirements on these
+types are described on page~\pageref{pageHalfedgeDSItemsVertexRef},
+page~\pageref{pageHalfedgeDSItemsHalfedgeRef}, and
+page~\pageref{pageHalfedgeDSItemsFaceRef} respectively.
+
+\ccTypes
+\ccTwo{HalfedgeDSItems:: Halfedge_wrapper<Refs,Traits>::HalfedgeM}{}
+
+\ccNestedType{Vertex_wrapper<Refs,Traits>::Vertex}
+    {model of \ccc{HalfedgeDSVertex}.}
+\ccGlue
+\ccNestedType{Halfedge_wrapper<Refs,Traits>::Halfedge}
+    {model of \ccc{HalfedgeDSHalfedge}.}
+\ccGlue
+\ccNestedType{Face_wrapper<Refs,Traits>::Face}
+    {model of \ccc{HalfedgeDSFace}.}
+
+\ccHasModels
+
+\ccRefIdfierPage{CGAL::HalfedgeDS_min_items}\\
+\ccRefIdfierPage{CGAL::HalfedgeDS_items_2}\\
+\ccRefIdfierPage{CGAL::Polyhedron_items_3}
+
+\ccSeeAlso
+
+\ccRefConceptPage{HalfedgeDS<Traits,Items,Alloc>}\\
+\ccRefConceptPage{HalfedgeDSVertex}\\
+\ccRefConceptPage{HalfedgeDSHalfedge}\\
+\ccRefConceptPage{HalfedgeDSFace}\\
+\ccRefConceptPage{PolyhedronItems_3}\\
+\ccRefIdfierPage{CGAL::HalfedgeDS_vertex_base<Refs>}\\
+\ccRefIdfierPage{CGAL::HalfedgeDS_halfedge_base<Refs>}\\
+\ccRefIdfierPage{CGAL::HalfedgeDS_face_base<Refs>}
+
+\ccExample
+
+The following example shows the canonical implementation of the
+\ccc{CGAL::HalfedgeDS_min_items} class. It uses the base classes for the
+item types that are provided in the library.
+
+\begin{ccExampleCode}
+struct HalfedgeDS_min_items {
+    template < class Refs, class Traits>
+    struct Vertex_wrapper {
+        typedef CGAL::HalfedgeDS_vertex_min_base< Refs>   Vertex;
+    };
+    template < class Refs, class Traits>
+    struct Halfedge_wrapper {
+        typedef CGAL::HalfedgeDS_halfedge_min_base< Refs> Halfedge;
+    };
+    template < class Refs, class Traits>
+    struct Face_wrapper {
+        typedef CGAL::HalfedgeDS_face_min_base< Refs>     Face;
+    };
+};
+\end{ccExampleCode}
+
+See page~\pageref{pageHalfedgeDSitemsRef} for an example implementation 
+of the \ccc{CGAL::HalfedgeDS_items_2} class.
+
+\end{ccRefConcept}
+
+% +------------------------------------------------------------------------+
+%%RefPage: end of main body, begin of footer
+\ccRefPageEnd
+% EOF
+% +------------------------------------------------------------------------+
+

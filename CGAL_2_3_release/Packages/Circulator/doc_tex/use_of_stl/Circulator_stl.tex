@@ -1,0 +1,512 @@
+% +------------------------------------------------------------------------+
+% | STL User Manual:  Circulator_stl.tex
+% +------------------------------------------------------------------------+
+% | Requirements for circulators in analogy to STL iterators.
+% | Adaptors between circulators and iterators.
+% | Proposal for CGAL.
+% |
+% | 27.01.1997   Lutz Kettner
+% |              Adapted from the iterator chapter and the circulator
+% |              chapter of the CGAL Reference Manual circulator.tex R1.3.
+% | 
+% | $Revision$
+% | $Date$
+% +------------------------------------------------------------------------+
+
+\cleardoublepage
+\chapter{Circulators}
+\label{sectionCirculatorWarning}
+
+Circulators are quite similar to iterators that are described in
+Chapter~\ref{chapterIterators}. Circulators are a generalization of
+pointers that allow a programmer to work with different circular data
+structures like a ring list in a uniform manner. Please note that
+circulators are not part of the \stl, but of \cgal. A summary of the
+requirements for circulators is presented here. Thereafter, a couple
+of adaptors are described that convert between iterators and
+circulators. For the complete description of the requirements, support
+to develop own circulators, and the adaptors please refer to the \cgal\ 
+Reference Manual: Part 3: Support Library.
+
+The specialization on circular data structures gives the reason for
+the slightly different requirements for circulators than for
+iterators. A circular data structure has no natural past-the-end
+value. In consequence, a container supporting circulators will not
+have an {\tt end()}-member function, only a {\tt begin()}-member
+function.  The semantic of a range is different for a circulator $c$:
+The range $\left[c, c\right)$ denotes the sequence of all elements in
+the data structure. For iterators, this range would be empty. A
+separate test for an empty sequence has been added to the
+requirements. A comparison $c ==$ {\tt NULL} for a circulator $c$
+tests whether the data structure is empty or not. As for
+\CC, we recommend the use of 0 instead of {\tt NULL}. An example
+function demonstrates a typical use of circulators. It counts the
+number of elements in the range $\left[c, d\right)$:
+
+\begin{verbatim}
+template <class Circulator, class Size>
+void count( Circulator c, Circulator d, Size& n) {
+    n = 0;
+    if ( c != 0) {
+        do {
+            ++n;
+        } while (++c != d);
+    }
+}
+\end{verbatim}
+
+Given a circular data structure $S$, the expression {\tt
+  count(}$S${\tt.begin(),} $S${\tt.begin(), counter)} returns the
+number of elements of $S$ in the {\tt counter} parameter.
+
+As for iterators, circulators come in different flavors. There are
+{\em forward, bidirectional\/} and {\em random access circulators}.
+They are either {\em mutable} or {\em constant}. The past-the-end
+value is not applicable for circulators.
+
+{\bf Reachability:} 
+A circulator $d$ is called {\em reachable} from a circulator $c$ if
+and only if there is a finite sequence of applications of
+\ccStyle{operator++} to $c$ that makes $c == d$. If $c$ and $d$ refer
+to the same non-empty data structure, then $d$ is reachable from $c$,
+and $c$ is reachable from $d$. In particular, any circulator $c$
+referring to a non-empty data structure will return to itself after a
+finite sequence of applications of \ccStyle{operator++} to $c$.
+
+{\bf Range:} 
+Most of the library's algorithmic templates that operate on data
+structures have interfaces that use {\em ranges}. A range is a pair of
+circulators that designate the beginning and end of the computation. A
+range $\left[c, c\right)$ is a {\em full range}; in general, a range
+$\left[c, d\right)$ refers to the elements in the data structure
+starting with the one pointed to by $c$ and up to but not including
+the one pointed to by $d$. Range $\left[c, d\right)$ is valid if and
+only if both refer to the same data structure.  The result of the
+application of the algorithms in the library to invalid ranges is
+undefined.
+
+{\bf Warning:} Please note that the definition of a range is different
+to that of iterators. An interface of a data structure must declare
+whether it works with iterators, circulators, or both. \stl\ algorithms
+always specify only iterators in their interfaces. A range $\left[c,
+  d\right)$ of circulators used in an interface for iterators will
+work as expected as long as $c\; !\!= d$. A range $\left[c, c\right)$ will
+be interpreted as the empty range like for iterators, which is
+different than the full range that it should denote for circulators.
+
+Algorithms could be written to support both, iterators and
+circulators, in a single interface. Here, the range $\left[c,
+  c\right)$ would be interpreted correctly. For more information how
+to program functions with this behavior, please refer to the \cgal\ 
+Reference Manual.
+
+\medskip
+
+As we said in the introduction, we are a little bit sloppy in the
+presentation, in order to make it easier to understand.  A class is
+said to be a circulator if it fulfills a set of requirements.  In the
+following sections we do not present the requirements, but we state
+properties that are true, if the requirements are fulfilled.  The
+difference is best seen by an example: We write that the return value
+of the test for equality returns a \ccStyle{bool}. The requirement is
+only that the return value is convertible to \ccStyle{bool}.
+
+
+\begin{ccHtmlClassFile}{Circulator.html}{Requirements for Circulators}
+\begin{ccClass}{Circulator}
+
+\ccSection{Forward Circulator}
+
+\ccDefinition
+
+A class \ccClassName\ that satisfies the requirements of a forward circulator
+for the value type \ccStyle{T}, supports the following operations.
+
+\ccCreation
+\ccCreationVariable{c}
+%\ccSetThreeColumns{Circulator&}{int n + Circulator d}{}
+%\ccSetThreeColumns{difference_type}{difference_type n += d}{}
+\ccPropagateThreeToTwoColumns
+
+\ccConstructor{Circulator();}
+{}
+
+\ccConstructor{Circulator(const Circulator& d);}
+{}
+
+\ccOperations
+
+\ccMethod{bool operator=(const Circulator &d);}
+{Assignment.}
+
+\ccMethod{bool operator==(NULL) const;}
+{Test for emptiness.}
+
+\ccMethod{bool operator!=(NULL) const;}
+{Test for non-emptiness. The result is the same as \ccStyle{!(c == NULL)}.}
+
+\ccMethod{bool operator==(const Circulator &d) const;}
+{Test for equality: Two circulators are equal if they refer to the same item.}
+
+\ccMethod{bool operator!=(const Circulator &d) const;}
+{Test for inequality. The result is the same as \ccStyle{!(c == d)}.}
+
+\ccMethod{T& operator*();}
+{Returns the value of the circulator.
+ If \ccClassName\ is mutable \ccStyle{*c = t} is valid.
+ \ccPrecond \ccVar\ is dereferenceable.}
+
+\ccMethod{Circulator& operator++();}
+{Prefix increment operation.
+\ccPrecond \ccVar\ is dereferenceable. \ccPostcond \ccVar\ is dereferenceable.}
+
+\ccMethod{const Circulator& operator++(int);}
+{Postfix increment operation. The result is the same as that of 
+ \ccStyle{Circulator tmp = c; ++c; return tmp;}~.}
+
+\end{ccClass} 
+
+
+\ccHtmlNoClassLinks
+\ccHtmlNoClassIndex
+\begin{ccClass}{Circulator}
+
+\ccSection{Bidirectional Circulator}
+
+\ccDefinition
+
+A class \ccClassName\ that satisfies the requirements of a bidirectional
+circulator for the value type \ccStyle{T}, supports the following operations
+in addition to the operations supported by a forward circulator.
+
+\ccCreationVariable{c}
+\ccOperations
+
+\ccMethod{Circulator& operator--();}
+{Prefix decrement operation.
+ \ccPrecond \ccVar\ is dereferenceable. \ccPostcond \ccVar\ 
+  is dereferenceable.}
+
+\ccMethod{const Circulator& operator--(int);}
+{Postfix decrement operation. The result is the same as that of 
+ \ccStyle{Circulator tmp = c; --c; return tmp;}~.}
+
+\end{ccClass} 
+
+
+\ccHtmlNoClassLinks
+\ccHtmlNoClassIndex
+\begin{ccClass}{Circulator}
+
+\ccSection{Random Access Circulator}
+\label{sectionRandomAccessCirculatorRequ}
+
+\ccDefinition
+
+A class \ccClassName\ that satisfies the requirements of a random access
+Circulator for the value type \ccStyle{T}, supports  the following operations
+in addition to the operations supported by a bidirectional Circulator.
+
+\ccCreationVariable{c}
+
+\ccOperations
+
+\ccMethod{Circulator& operator+=(int n);}
+{The result is the same as if the prefix increment operation 
+ was applied $n$ times, but it is computed in constant time.}
+
+\ccMethod{Circulator operator+(int n);}
+{Same as above, but returns a new circulator.}
+
+\renewcommand{\ccTagRmEigenClassName}{\ccTrue}
+\ccFunction{Circulator operator+(int n, Circulator c);}
+{Same as above.}
+\renewcommand{\ccTagRmEigenClassName}{\ccFalse}
+
+\ccMethod{Circulator& operator-=(int n);}
+{The result is the same as if the prefix decrement operation 
+ was applied $n$ times, but it is computed in constant time.}
+
+\ccMethod{Circulator operator-(int n);}
+{Same as above, but returns a new circulator.}
+
+
+\ccMethod{T& operator[](int n);}
+{Returns \ccStyle{*(c + n)}.}
+
+\ccMethod{int operator-(const Circulator& d) const;}
+{returns the difference between the two circulators within the
+  interval $\left[ 1-s , s-1 \right]$ for a sequence size $s$. The
+  difference for a fixed circulator \ccVar\ (or $d$) with all other
+  circulators $d$ (or \ccVar) is a consistent ordering of the elements
+  in the data structure. There has to be a minimal circulator
+  $d_{\mbox{\footnotesize min}}$ for which the difference \ccVar $-
+  d_{\mbox{\footnotesize min}}$ to all other circulators \ccVar\ is
+  non negative.}
+
+\ccMethod{Circulator min_circulator() const;}
+{Returns the minimal circulator $c_{\mbox{\footnotesize min}}$ in
+  constant time.} 
+
+There are no comparison operators required.
+\end{ccClass} 
+\end{ccHtmlClassFile} 
+
+% +-----------------------------------------------------+
+\newpage
+\section{Adaptor: Container with Iterators from Circulator}
+\label{sectionContainerFromCirc}
+
+Algorithms working on iterators cannot be applied to circulators in
+full generality, only to subranges (see the warning in
+Section~\ref{sectionCirculatorWarning}). The following adaptors
+convert circulators to iterators (with the unavoidable space and time
+drawback) to reestablish this generality.
+
+\begin{ccClassTemplate}{Container_from_circulator<C>}
+
+\ccDefinition
+
+The adaptor \ccClassTemplateName\ is a class that converts any
+circulator type \ccStyle{C} to a kind of container class, i.e.~a class
+that provides an \ccStyle{iterator} and a \ccStyle{const_iterator}
+type and two member functions -- \ccStyle{begin()} and \ccStyle{end()}
+-- that return the appropriate iterators. In analogy to \stl\ 
+container classes these member functions return a \ccc{const_iterator}
+in the case that the container itself is constant and a mutable
+\ccc{iterator} otherwise.
+
+\ccInclude{CGAL/circulator.h}
+
+\ccTypes
+
+\ccNestedType{Circulator}{the template argument \ccc{C}.}
+
+\ccNestedType{iterator}{}
+\ccGlue
+\ccNestedType{const_iterator}{}
+
+\ccCreation
+
+\ccCreationVariable{container}
+%\ccSetTwoColumns{Circulator}{}
+
+\ccConstructor{Container_from_circulator();}{%
+    the resulting iterators will have a singular value. }
+
+\ccConstructor{Container_from_circulator(const C& c);}{%
+    the resulting iterators will have a singular value if the circulator
+    \ccStyle{c} correspond to an empty sequence.
+   }
+
+\ccOperations
+%\ccSetThreeColumns{const_iterator}{container.begin() const;}{}
+
+\def\ccTagRmTrailingConst{\ccFalse}
+
+\ccMethod{iterator begin();}{the start iterator.}
+\ccGlue
+\ccMethod{const_iterator begin() const;}{the start const iterator.}
+\ccGlue
+\ccMethod{iterator end();}{the past-the-end iterator.}
+\ccGlue
+\ccMethod{const_iterator end() const;}{the past-the-end const iterator.}
+\def\ccTagRmTrailingConst{\ccTrue}
+
+The \ccc{iterator} and \ccc{const_iterator} types are of the
+appropriate iterator category. In addition to the operations required
+for their category, they have a member function
+\ccc{current_circulator()} that returns a circulator pointing to the
+same position as the iterator does.
+
+\ccExample
+
+The generic {\tt reverse()} algorithm from the \stl\ can be used with an
+adaptor if at least a bidirectional circulator {\tt c} is given.
+
+\begin{ccExampleCode}
+Circulator c;  // c is assumed to be a bidirectional circulator.
+CGAL::Container_from_circulator<Circulator> container(c);
+reverse( container.begin(), container.end());
+\end{ccExampleCode}
+
+\ccImplementation
+
+The forward and bidirectional iterator adaptors keep track of the
+number of rounds a circulator has done around the ring-like data
+structure. This is a kind of winding number. It is used to distinguish
+between the start position and the end position which will be denoted
+by the same circulator. This winding number is zero for the
+\ccStyle{begin()}-iterator and one for the \ccStyle{end()}-iterator.
+It is incremented whenever a circulator passes the \ccStyle{begin()}
+position. Two iterators are equal if their internally used circulators
+and winding numbers are equal. This is more general than necessary
+since the \ccStyle{end()}-iterator is not supposed to move any more.
+
+The random access iterator has to be able to compute the size of the
+data structure. It is needed for the difference of a past-the-end
+iterator and the begin iterator.  Therefore, the constructor for the
+random access iterator choose the minimal circulator for the internal
+anchor position. The minimal circulator is part of the random access
+circulator requirements, see
+Section~\ref{sectionRandomAccessCirculatorRequ}.
+
+\end{ccClassTemplate}
+
+
+% +-----------------------------------------------------+
+\newpage
+
+\section{Adaptor: Circulator from Iterator}
+\label{sectionCircFromIter}
+ 
+To obtain circulators, one could use a container class like those in
+the Standard Template Library (\stl) or a pair of \ccStyle{begin()}-,
+\ccStyle{end()}-iterators and one of the following adaptors. The adaptor
+for iterator pairs is described here, the adaptor for container classes
+is described in the next section.
+
+%\begin{ccClassTemplate}{Circulator_from_iterator<I>}
+\begin{ccRefClass}{Circulator_from_iterator<I>}
+\ccDefinition
+  
+The adaptor \ccClassTemplateName\ converts two iterators of type
+\ccc{I}, a begin and a past-the-end value, to a circulator of equal
+category. The iterator must be at least of the forward iterator
+category. The circulator will be mutable or non-mutable according to
+the iterator. Iterators provide no \ccc{size_type}. This adapter
+assumes \ccc{std::size_t} instead.
+
+\ccInclude{CGAL/circulator.h}
+
+\ccTypes
+%\ccSetThreeColumns{typedef const T&}{const_reference;}{}
+
+\ccUnchecked\ccTypedef{typedef I         iterator;}{}
+
+In addition all types required for circulators are provided. 
+
+\ccCreation
+\ccCreationVariable{c}
+
+\ccConstructor{Circulator_from_iterator();}{%
+  a circulator \ccVar\ on an empty sequence.}
+
+\ccConstructor{Circulator_from_iterator(const I& begin, const I& end);}{%
+  a circulator \ccVar\ initialized to refer to the element
+  \ccStyle{*begin} in  a range {\tt [}\ccStyle{begin}{\tt
+    ,}\ccStyle{end}{\tt )}.
+  %The circulator \ccVar\ contains a singular value if \ccStyle{begin==end}.
+   Returns a circulator on an empty sequence if \ccStyle{begin==end}.
+}
+
+\ccOperations
+
+The adaptors conform to the requirements of the different circulator
+categories. An additional member function \ccc{current_iterator()} is
+provided that returns the current iterator that points to the same
+position as the circulator does.
+
+\ccExample
+
+This program uses two adaptors, iterators to circulators and back to
+iterators. It applies an \stl\ sort algorithm on a \stl\ vector with three
+elements. The resulting vector will be {\tt [2 5 9]} as it will be
+checked by the assertions. The program is part of the \cgal\ 
+distribution.
+
+%\ccIncludeVerbatim{circulator_prog1.C}
+\ccIncludeExampleCode{Circulator/circulator_prog1.C}
+
+Another example usage for this adaptor are random access circulators
+over the built-in C arrays. Given an array of type {\tt T*}  with a
+begin pointer {\tt b} and a past-the-end pointer {\tt e} the adaptor
+\ccStyle{Circulator_from_iterator< T*> c( b,e)} is a random circulator
+\ccStyle{c} over this array.
+
+%\end{ccClassTemplate} 
+\end{ccRefClass}
+
+% +-----------------------------------------------------+
+\newpage
+\section{Adaptor: Circulator from Container}
+\label{sectionCircFromContainer}
+
+To obtain circulators, one could use a container class like those in the
+Standard Template Library (\stl) or a pair of \ccStyle{begin()}-,
+\ccStyle{end()}-iterators and one of the provided adaptors here.
+The adaptor for iterator pairs is described in the previous section,
+the adaptor for container classes is described here.
+
+\begin{ccClassTemplate}{Circulator_from_container<C>}
+
+\ccHtmlCrossLink{Const_circulator_from_container}
+\ccHtmlCrossLink{Const_circulator_from_container<C>}
+\ccHtmlIndexC[class]{Const_circulator_from_container<C>}
+
+\ccDefinition
+  
+The adaptor \ccClassTemplateName\ provides a circulator for an \stl\
+container $C$ of equal category as the iterator provided by the container. 
+The iterator must be at least of the forward iterator
+category. The corresponding non-mutable circulator is called
+\ccc{Const_circulator_from_container<C>}.
+
+The container type \ccc{C} is supposed to conform to the \stl\ 
+requirements for container (i.e.~to have a \ccStyle{begin()} and an
+\ccStyle{end()} iterator as well as the local types
+\ccStyle{reference}, \ccStyle{const_reference}, \ccStyle{value_type},
+\ccStyle{size_type}, and \ccStyle{difference_type}).
+
+\ccInclude{CGAL/circulator.h}
+
+\ccTypes
+%\ccSetThreeColumns{typedef container::const_reference}{const_reference;}{}
+
+All types required for circulators are provided. 
+
+\ccCreation
+\ccCreationVariable{c}
+
+\ccConstructor{Circulator_from_container();}{%
+  a circulator \ccVar\ on an empty sequence.}
+
+\ccConstructor{Circulator_from_container(C* container);}{%
+  a circulator \ccVar\ initialized to refer to the first element in
+  \ccStyle{container}, i.e. \ccStyle{container.begin()}.
+  The circulator \ccVar\ corresponds to an empty sequence if
+  \ccStyle{container} is empty.
+}
+
+\ccConstructor{Circulator_from_container(C* container, C::iterator i);}{%
+  a circulator \ccVar\ initialized to refer to the element \ccStyle{*i} in
+  \ccStyle{container}. \ccPrecond \ccStyle{*i} is dereferenceable and refers
+  to \ccStyle{container}.
+}
+
+\ccOperations
+
+The adaptors conform to the requirements of the different circulator
+categories. An additional member function \ccc{current_iterator()} is
+provided that returns the current iterator that points to the same
+position as the circulator does.
+
+\ccExample
+
+This program uses two adaptors, container to circulators and back to
+iterators. It applies an \stl\ sort algorithm on a \stl\ vector with three
+elements. The resulting vector will be {\tt [2 5 9]} as it will be
+checked by the assertions. The program is part of the \cgal\ 
+distribution.
+
+%\ccIncludeVerbatim{circulator_prog2.C}
+\ccIncludeExampleCode{Circulator/circulator_prog2.C}
+
+\end{ccClassTemplate} 
+
+% EOF
+
+
+
+
+

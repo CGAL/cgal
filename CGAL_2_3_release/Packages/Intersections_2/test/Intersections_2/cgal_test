@@ -1,0 +1,105 @@
+#!/bin/sh
+OUTPUTFILE=error.txt
+
+use_purify=0
+
+one_run()
+{
+    goodresult=RESULT/${base}/`basename ${datafile}`
+    if "./${base}" < ${datafile} >output
+    then
+	if [ -r ${goodresult} ]
+	then
+	    if diff -b output ${goodresult} > diffoutput
+	    then
+		succes=ja
+	    else
+		succes=nee
+        	cat diffoutput >> ProgramOutput.${base}.$PLATFORM
+	    fi
+	else
+	    succes=ja
+	fi
+    else
+	succes=nee
+    fi
+    if [ ${succes} = ja ]
+    then
+	echo "succes: ${base} < ${datafile}" >> $OUTPUTFILE
+    else
+	echo "ERROR:  ${base} < ${datafile}" >> $OUTPUTFILE
+    fi
+}
+
+make_and_execute()
+{
+    if [ -r ii_files/${base}.ii.$1 ]
+    then
+	mv ii_files/${base}.ii.$1 ii_files/${base}.ii
+    fi
+#    EXTRA_FLAGS="-DTESTR=$1"
+#    export EXTRA_FLAGS
+#    if make -e  ${base} # 2>/dev/null
+    if make EXTRA_FLAGS="-DTESTR=$1" ${base} # 2>/dev/null
+    then
+	echo "succes: compiling ${file} with TESTR=$1" >> $OUTPUTFILE
+	if [ -r ii_files/${base}.ii ]
+	then
+	    mv ii_files/${base}.ii ii_files/${base}.ii.$1
+	fi
+	if [ ${use_purify} -eq 1 ]
+	then
+	    purify -log-file="%v.$1.%p.plog" ${base}
+	    mv ${base}.pure ${base}
+	fi
+	for datafile in ${datafiles}
+	do
+	    if [ -r ${datafile} ]
+	    then
+		one_run $1
+	    fi
+	done
+    else
+	echo "ERROR:  compiling ${file} with TESTR=$1" >> $OUTPUTFILE
+    fi
+    make ${base}.clean
+}
+
+#----------------------------------------------------------------#
+#                clear the output file                           #
+#----------------------------------------------------------------#
+rm -f $OUTPUTFILE
+touch $OUTPUTFILE
+
+rm -f diffs
+touch diffs
+
+if [ $# -ne 0 ]
+then
+    sourcefiles="$*"
+else
+    sourcefiles="tst*.C"
+fi
+
+
+for file in ${sourcefiles}
+do
+    base=`basename ${file} .C`
+    rm -f ProgramOutput.${base}.$PLATFORM
+    touch -f ProgramOutput.${base}.$PLATFORM
+    datafiles=`ls DATA/${base}/* 2>/dev/null`
+    if [  "${datafiles}" ]
+    then
+        echo "TESTR=1" >> ProgramOutput.${base}.$PLATFORM
+	make_and_execute 1;
+    fi
+#    datafiles=`ls DATA/${base}.i.* DATA/${base}.ix.*`
+    if [  "${datafiles}" ]
+    then
+        echo "TESTR=2" >> ProgramOutput.${base}.$PLATFORM
+	make_and_execute 2;
+    fi
+done
+
+
+

@@ -1,0 +1,61 @@
+% +------------------------------------------------------------------------+
+% | CGAL Reference Manual:  partition_2.tex
+% +------------------------------------------------------------------------+
+% | Planar polygon partitioning
+% |
+% | 28.07.2000   Susan Hert
+% |
+\RCSdef{\partitionRev}{$Revision$}
+\RCSdefDate{\partitionDate}{$Date$}
+% +------------------------------------------------------------------------+
+\chapter{Planar Polygon Partitioning}
+\label{chap:polygon_partition}
+\ccChapterRelease{\partitionRev. \ \partitionDate}\\
+\ccChapterAuthor{Susan Hert}
+
+\minitoc
+
+\input{index_see}
+
+\section{Introduction}
+\label{sec:partition_2_intro}
+\input{partition_2_intro}
+
+\section{Monotone Partitioning}
+\label{sec:partition_2_monotone}
+\input{partition_2_y_monotone}
+
+\begin{figure}
+\begin{ccHtmlOnly}
+<CENTER>
+<TABLE CELLSPACING=40>
+</TR>
+<TD>
+<IMG BORDER=0 SRC=Trier.opt_cvx.gif ALIGN=CENTER ALT="Optimal Convex Partition o
+f Trier">
+</TD>
+<TD>
+<IMG BORDER=0 SRC=Idar-Oberstein.appx_cvx.gif ALIGN=CENTER ALT="Approx. Optimal
+Convex Partition of Idar-Oberstein">
+</TD>
+</TR>
+</TABLE>
+</CENTER>
+\end{ccHtmlOnly}
+
+\begin{ccTexOnly}
+\begin{center}
+\includegraphics[width=6.5cm]{Trier.opt_cvx.ps}
+\includegraphics[width=6.5cm]{Idar-Oberstein.appx_cvx.ps}
+%\leavevmode\epsfxsize8cm\epsffile{saarhull.eps}
+\end{center}
+\end{ccTexOnly}
+\caption{Examples of an optimal convex partition (left) and an approximately
+optimal convex partition (right).}
+\end{figure}
+
+
+\section{Convex Partitioning}
+\label{sec:partition_2_convex}
+\input{partition_2_convex}
+

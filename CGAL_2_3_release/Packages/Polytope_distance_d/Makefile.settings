@@ -1,0 +1,8 @@
+MAKE_WEB_DIR := web
+MAKE_DOC_DIR := doc_ps
+MAKE_INC_DIR := include/CGAL
+
+MAKE_INC_PATH := ../Optimisation_basic/include:../_QP_solver/include:${MAKE_INC_PATH}
+
+MAKE_FIL_MOD := u=rw,g=r,o=
+MAKE_DIR_MOD := u=rwx,g=rx+s,o=

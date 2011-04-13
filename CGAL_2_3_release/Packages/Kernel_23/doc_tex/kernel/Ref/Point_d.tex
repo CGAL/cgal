@@ -1,0 +1,63 @@
+\begin{ccRefClass}{Point_d<R>}
+\ccInclude{CGAL/Point_d.h}
+
+\ccDefinition
+
+An object of the class \ccClassTemplateName\ is a point in $d$-dimensional
+Euclidean space $E_d$, where $d$ is arbitrary. 
+
+
+% -----------------------------------------------------------------------------
+\ccCreation
+\ccCreationVariable{p}
+
+A \ccClassTemplateName\ object can be created from an iterator range. 
+
+\ccConstructor{ template <class InputIterator>
+		Point_d (int dim, 
+			      InputIterator first,
+			      InputIterator last);}
+	{if the range \ccc{[first,last)} contains \ccc{dim} elements,
+	 this creates a point with Cartesian coordinates as specified by 
+	 the range. If \ccc{[first,last)} contains \ccc{dim+1} elements,
+	 the range specifies the homogeneous coordinates of \ccVar. 
+	 \ccPrecond \ccc{dim} is nonnegative, \ccc{[first,last)} has 
+	 \ccc{dim} or \ccc{dim+1} elements, and the value types of first
+	 and last are \ccc{R::RT}.}
+
+\emph{Note}: in case your compiler does not support member templates, \cgal\
+provides the following specialized constructor.
+
+\ccConstructor {Point_d (int dim, const R::RT* first, 
+				       const R::RT* last);}{}
+
+% -----------------------------------------------------------------------------
+\ccOperations
+
+\ccMemberFunction{ bool operator == (const Point_d<R>& q) const;}
+	{Equality test. Two points are equal if they have the same
+	 dimension and agree in all coordinates.}
+
+\ccMemberFunction{ bool operator != (const Point_d<R>& q) const;}
+	{Test for inequality.}
+
+\ccMemberFunction{ R::RT homogeneous( int i) const;}
+	{returns the i'th homogeneous coordinate of \ccVar, starting
+	 with 0. \ccPrecond $0\leq i\leq \ccc{d}$.}
+
+\ccMemberFunction{ R::FT cartesian( int i) const;}
+	{returns the i'th Cartesian coordinate of \ccVar, starting
+	 with 0. \ccPrecond $0\leq i < \ccc{d}$.}
+
+\ccMemberFunction{ R::FT operator [] (int i) const;}
+	{returns the i'th Cartesian coordinate of \ccVar, starting
+	with 0. \ccPrecond $0\leq i < \ccc{d}$.}
+
+\ccMemberFunction{ int dimension () const;}
+	{returns the dimension \ccc{d} of \ccVar.}
+
+\ccSeeAlso
+\ccRefConceptPage{Kernel::Point_d}
+
+% -----------------------------------------------------------------------------
+\end{ccRefClass}% 

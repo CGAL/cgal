@@ -1,0 +1,139 @@
+% +------------------------------------------------------------------------+
+% | CGAL Reference Manual:  stream_support.tex
+% +------------------------------------------------------------------------+
+% | Stream Support for CGAL
+% |
+% | 09.06.1997   Lutz Kettner
+% | 
+\RCSdef{\streamSupportRev}{$Revision$}
+\RCSdefDate{\streamSupportDate}{$Date$}
+% +------------------------------------------------------------------------+
+
+\beforecprogskip\medskipamount
+\aftercprogskip\medskipamount
+\ccParDims
+
+\chapter{Stream Support}
+\label{chapterStreamSupport}
+\ccChapterRelease{\streamSupportRev. \ \streamSupportDate}\\
+\ccChapterAuthor{Lutz Kettner}
+
+% +------------------------------------------------------------------------+
+\begin{ccClassTemplate}{Ostream_iterator<T,Stream>}
+\ccSection{Stream Iterator}
+\ccThree{OutputIterator}{rand}{}
+
+\ccDefinition
+
+The class \ccClassTemplateName\ is an output iterator adaptor for the
+output stream class \ccc{Stream} and value type $T$.
+
+\ccInclude{CGAL/IO/Ostream_iterator.h}
+
+\ccCreation
+\ccCreationVariable{o}
+
+\ccConstructor{Ostream_iterator( Stream& s);}{creates an output
+  iterator \ccVar\ writing to $s$.}
+
+\ccOperations
+
+\ccVar\ fulfills the requirements for an output iterator.
+
+\ccImplementation
+
+The \ccc{operator*()} in class \ccClassTemplateName\ uses a proxy class. 
+
+\end{ccClassTemplate}
+
+% +------------------------------------------------------------------------+
+\newpage
+ 
+\begin{ccClassTemplate}{Istream_iterator<T,Stream>}
+\ccSection{Stream Iterator}
+
+\ccDefinition
+
+The class \ccClassTemplateName\ is an input iterator adaptor for the
+input stream class \ccc{Stream} and value type $T$. It is particularly
+useful for classes that are similar but not compatible to \ccc{std::istream}.
+
+\ccInclude{CGAL/IO/Istream_iterator.h}
+
+\ccCreation
+\ccCreationVariable{i}
+
+\ccConstructor{Istream_iterator();}{creates an end-of-stream
+  iterator \ccVar. This is a past-the-end iterator, and it is useful
+  when constructing a range.}
+
+\ccConstructor{Istream_iterator( Stream& s);}{creates an input
+  iterator \ccVar\ reading from $s$. When $s$ reaches end of stream,
+  this iterator will compare equal to an end-of-stream iterator
+  created using the default constructor.}
+
+\ccOperations
+
+\ccVar\ fulfills the requirements for an input iterator.
+
+\ccExample
+
+The following program reads points from a \ccc{Window_stream} until
+the right mouse button gets clicked.
+
+\ccIncludeExampleCode{Stream_support_LEDA/Istream_iterator.C}
+
+\end{ccClassTemplate}
+
+% +------------------------------------------------------------------------+
+\begin{ccClass}{Verbose_ostream}
+\ccSection{Verbose ostream}
+\ccThree{Verbose_ostreammm&}{rand}{}
+
+\ccDefinition
+
+The class \ccClassTemplateName\ can be used as an output stream. The
+stream output operator \ccc{<<} is defined for any type. The
+class \ccClassTemplateName\ stores in an internal state a stream and
+whether the output is active or not. If the state is active, the
+stream output operator \ccc{<<} uses the internal stream to output
+its argument. If the state is inactive, nothing happens.
+
+\ccInclude{CGAL/IO/Verbose_ostream.h}
+
+\ccCreation
+\ccCreationVariable{verr}
+
+\ccConstructor{Verbose_ostream( bool active = false, 
+  std::ostream& out = std::cerr);}{creates an output stream with state set to
+  \ccc{active} that writes to the stream \ccc{out}.}
+
+\ccOperations
+
+\ccMethod{template < class T >
+          Verbose_ostream&  operator<<( const T& t);}{}
+
+\ccExample
+
+The class \ccClassTemplateName\ can be conveniently used to implement
+for example the \ccc{is_valid()} member function for triangulations or
+other complex data structures.
+
+\begin{verbatim}
+    bool is_valid( bool verbose = false, int level = 0) {
+        Verbose_ostream verr( verbose);
+        verr << "Triangulation::is_valid( level = " << level << ')' << endl;
+        verr << "    Number of vertices = " << size_of_vertices() << endl;
+        // ...
+    }
+\end{verbatim}
+
+\end{ccClass}
+
+% +--------------------------------------------------------+
+% restore default column and paragraph layout
+\ccParDims
+\beforecprogskip\parskip
+\aftercprogskip0pt
+
+% EOF

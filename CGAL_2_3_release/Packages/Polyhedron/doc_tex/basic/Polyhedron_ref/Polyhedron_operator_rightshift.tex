@@ -1,0 +1,64 @@
+% +------------------------------------------------------------------------+
+% | Reference manual page: Polyhedron_operator_rightshift.tex
+% +------------------------------------------------------------------------+
+% | 09.09.2000   Lutz Kettner
+% | Package: Polyhedron
+% | 
+\RCSdef{\RCSPolyhedronoperatorostreamRev}{$Revision$}
+\RCSdefDate{\RCSPolyhedronoperatorostreamDate}{$Date$}
+% |
+%%RefPage: end of header, begin of main body
+% +------------------------------------------------------------------------+
+
+
+\ccHtmlNoClassLinks
+\begin{ccRefFunction}{operator>>}
+\label{refPolyhedron_operator_rightshift}
+
+\ccDefinition
+
+This operator reads a polyhedral surface in Object File Format, OFF,
+with file extension {\tt .off}, which is also understood by
+GeomView~\cite{p-gmgv15-94}, from the input stream \ccc{in} and
+appends it to the polyhedral surface $P$.  Only the point coordinates
+and facets from the input stream are used to build the polyhedral
+surface. Neither normal vectors nor color attributes are evaluated. If
+the stream \ccc{in} does not contain a permissible polyhedral surface
+the \ccc{ios::badbit} of the input stream \ccc{in} is set and $P$ remains 
+unchanged.
+
+For OFF an ASCII and a binary format exist. The stream detects the
+format automatically and can read both.
+
+\ccInclude{CGAL/IO/Polyhedron_iostream.h}
+
+\ccGlobalFunction{template <class PolyhedronTraits_3>
+    istream& operator>>( istream& in,
+                         CGAL::Polyhedron_3<PolyhedronTraits_3>& P);}
+  
+\ccSeeAlso
+
+\ccRefIdfierPage{CGAL::Polyhedron_3<Traits>}\\ 
+\ccRefIdfierPage{CGAL::Polyhedron_incremental_builder_3<HDS>}\\
+\lcTex{\ccc{operator<<} \dotfill\ 
+    page~\pageref{refPolyhedron_operator_leftshift}}%
+\lcRawHtml{
+    <I><A HREF="Function_operator.html">operator&lt;&lt;</A></I>.
+}
+
+\ccImplementation
+
+This operator is implemented using the modifier mechanism for
+polyhedral surfaces and the \ccc{CGAL::Polyhedron_incremental_builder_3}
+class, which allows the construction in a single, efficient scan pass
+of the input and handles also all the possible flexibility of the
+polyhedral surface.
+
+
+\end{ccRefFunction}
+
+% +------------------------------------------------------------------------+
+%%RefPage: end of main body, begin of footer
+% EOF
+% +------------------------------------------------------------------------+
+

@@ -1,0 +1,22 @@
+\begin{ccRefFunctionObjectConcept}{Kernel::Assign_3}
+A model for this must provide:
+
+\ccCreationVariable{fo}
+
+\ccMemberFunction{
+template <class T>
+bool operator()(T& t, const Kernel::Object_3&o);}
+{assigns \ccStyle{o} to \ccStyle{c} if \ccStyle{o}
+was constructed from an object of type \ccStyle{T}.
+Returns \ccc{true}, if the assignment was possible.}
+
+\ccRefines
+AdaptableFunctor
+
+\ccSeeAlso
+\ccRefIdfierPage{CGAL::assign} \\
+\ccRefIdfierPage{CGAL::Object} \\
+\ccRefConceptPage{Kernel::Object_3} \\
+\ccRefConceptPage{Kernel::Intersect_3}  \\
+
+\end{ccRefFunctionObjectConcept}

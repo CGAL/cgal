@@ -1,0 +1,213 @@
+2.8.10  (19 July 2001)
+- removed include of CGAL/LEDA/window.h in forward_decl_window_stream.h
+
+2.8.9   (11 July 2001)
+- removed unused parameter names in Postscript_file_stream
+- got rid of node_width here too
+
+2.8.8   (11 July 2001)
+- LEDA check changed in manual_example_ps
+
+2.8.7   (04 July 2001)
+- small change in documentation
+
+2.8.6       (27 Jun 2001)
+- header file CGAL/IO/cgal_window_redefine.h added
+- small change in the documentation
+
+2.8.5       (22 Jun 2001)
+- added 2 casts to cgal_window.h to avoid warnings on some
+  compilers
+- added short comment about CGAL::window in the manual
+
+2.8.4       (21 Jun 2001)
+- changed point output (no nodes are used any more)
+- input and output operators in IO/leda_window.h and IO/cgal_window.h
+  now support filled object
+
+2.8.3       (20 Jun 2001)
+- changed window_input demo for usage with CGAL::window
+
+2.8.2       (18 June 2001)
+- Update version string in leda_window to 2.3.
+- Minor fixes.
+
+2.8.1       (23 May 2001)
+- changed __USE_CGAL_WINDOW__ to the better name
+  CGAL_USE_CGAL_WINDOW (suggested by Sylvain)
+
+2.8.0       (17 May 2001)
+- file cgal_window added to make the package work with
+  the CGAL::window - class (port of the LEDA window,
+  that works without LEDA)
+- small changes in Window_stream.h and forward_decl_window_stream.h
+- use -D__USE_CGAL_WINDOW__ when compiling programs using Window_stream 
+  with the new CGAL::window
+
+
+2.7.1       (22 Aug 2000)
+
+- bug in documentation of Window_stream fixed, reported by H. Tangelder
+  h*(x1-x0)/w  instead of  h*w/(x1-x0)
+
+2.7         (21 Aug 2000)
+
+- example code in 
+  doc_tex/support/Colors_and_windows/Postscript_file.tex fixed
+- test file for the example above added
+  test/WindowStream/manual_example_ps.C
+
+2.6         (05 Aug 2000)
+
+- added send_to_stream_as_polygon( Stream& W, Circulator C,
+  const Forward_circulator_tag&, const Traits& )
+
+
+%%%%%%%%%%%%%%%%%%%%%%   R e l e a s e  2 . 0   %%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+2.5.7 -> 2.5.8  ( 13 Jan 00)
+- added const to xpm for esprit logo: static const char*
+  for __LEDA__ > 400
+
+2.5.6 -> 2.5.7  ( 16 Dec 99)
+- demo/Window_stream/cgal_test removed
+- LEDA versions tested with includes in Postscript_file_stream.h
+  revised. Now all tests for >= 400. (There have been problems
+  with compiling LEDA/rectangle.h and 380 in the test suite)
+
+2.5.5 -> 2.5.6  ( 16 Dec 99)
+- demo/Window_stream/cgal_test added
+- demo/Window_stream made test-safe: checks for USE_LEDA now
+
+2.5.4 -> 2.5.5  ( 30 Nov 99)
+- undefined W replaced by std::cout in test/.../polygonal.C
+  for use without LEDA
+
+2.5.3 -> 2.5.4  ( 29 Nov 99)
+- type of node's width changed to double in Postscript_file_stream.h
+- ifstream qualified in test/WindowStream/polygonal.C
+- CGAL_USE_LEDA checked before inclusion of leda_window.h
+- CGAL_USE_LEDA checked in test_window_stream_xy_3.C
+
+2.5.2 -> 2.5.3  ( 22 Nov 99)
+- LEDA versions tested with includes in Postscript_file_stream.h
+
+2.5.1 -> 2.5.2  ( 16 Nov 99)
+- added input file for test/WindowStream/polygonal.C
+- updated frame label in window to 2.1
+
+2.5   -> 2.5.1  ( 12 Nov 99)
+- <CGAL/IO/Postscript_file_stream.h> added to package
+- documentation revised: bugs in new Postscript_file.tex file, 
+  Window.tex
+
+2.4.5 -> 2.5    ( 11 Nov 99)
+- ps_file renamed to Postscript_file_stream;
+  in <CGAL/IO/Postscript_file_stream.h>
+  <CGAL/IO/leda_ps_file.h> now includes the file above
+- documentation updated
+- hack to work around leda_color and display problem with 
+  Postscript_file_stream added;
+  
+2.4.3 -> 2.4.4  ( 15 Oct 99)
+- cgal_test updated '/bin/' removed
+
+2.4.2 -> 2.4.3  ( 29 Sep 99)
+- prefixed line_style in leda_ps_file.h for __LEDA__ >= 400
+
+2.4.1 -> 2.4.2  ( 17 Sep 99)
+- qualified calls of sqrt(double) by std:: in leda_window.h
+- value_type() -> ch_value_type() in polygonal.h
+- max() qualified by std:: in polygonal.h
+- makefile updated
+
+2.4   -> 2.4.1  ( 14 Sep 99)
+- prefixed line_style in leda_window for __LEDA__ >= 400
+
+2.3.1 -> 2.4    ( 19 Aug 99)
+- <CGAL/IO/leda_ps_file.h> added
+
+2.3   -> 2.3.1  ( 06 Aug 99)
+- packaging script updated
+
+2.2.7 -> 2.3    ( 06 Aug 99)
+- send_to_stream_as_poly[gon|line]() functions provided in
+  <CGAL/IO/polygonal_2.h>
+- makefile updated: $(OBJ_EXT)
+- test files in test/WindowStream (return true if started with any argument
+- corresponding non-empty .cmd files added in test/WindowStream
+
+%%%%%%%%%%%%%%%%%%%%%%   R e l e a s e  2 . 0   %%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+2.2.6 -> 2.2.7  ( 27 May 99)
+- demo for WindowStream updated
+
+2.2.5 -> 2.2.6  ( 19 May 99)
+- frame label for demo windows set to CGAL-2.0
+
+2.2.4 -> 2.2.5  ( 03 May 99)
+- changed access rights for *.cmd in testsuite
+
+2.2.3 -> 2.2.4  ( 28 Apr 99)
+- return true in testsuite if LEDA is not used
+
+2.2.2 -> 2.2.3  ( 28 Apr 99)
+- fix for testing WindowStream added
+
+2.2   -> 2.2.2  ( 30 Mar 99)
+- packaging cleaned ( [long_]description.txt )
+
+2.2   -> 2.2.1  ( 30 Mar 99)
+- to_double() prefixed by CGAL::
+
+2.1.3 -> 2.2    ( 25 Mar 99)
+- <CGAL/IO/polygonal_from_points.h> for drawing polygons and polylines given
+  as iterator ranges of points
+
+2.1.2 -> 2.1.3  ( 24 Mar 99)
+- name conflicts for _3 objects fixed in test_window_stream_xy_3
+
+2.1.1 -> 2.1.2  ( 15 Mar 99)
+- makefile fixed (WINDOW_LDFLAGS used)
+
+2.1   -> 2.1.1  ( 15 Mar 99)
+- typedefs used for R::RT in window_stream_xy_3.h
+- Point_3<R> p( R::RT(x1), R::RT(y1), 0); replaced by
+  Point_3<R> p = Point_3<R>( RT(x1), RT(y1), RT(0)); in window_stream_xy_3.h
+
+2.0.1 -> 2.1    ( 13 Mar 99)
+- Window_stream_3 package from Lutz included.
+  long_description.txt of that package:
+      -  CGAL/IO/window_stream_xy_3.h
+         Stream operators for the 3D objects in the CGAL kernel.
+         They project onto the xy-plane. 
+
+2.0   -> 2.0.1  ( 25 Feb 99)
+- typedef leda_window    Window_stream;  put in namespace CGAL
+- #include <CGAL/IO/esprit_logo.xpm> moved out of namespace CGAL
+
+1.2   -> 2.0
+- namespace CGAL { } introduced
+
+%%%%%%%%%%%%%%%%%%%%%%   R e l e a s e  1 . 2   %%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+1.1.1 -> 1.2    ( 03 Sep 98)
+- bug fix: CGAL_create... functions made inline 
+
+%%%%%%%%%%%%%%%%%%%%%%   R e l e a s e  1 . 1   %%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+1.1.  -> 1.1.1
+- headers added in include/CGAL/IO/forward_decl_window_stream.h
+  and include/CGAL/IO/esprit_logo.xpm
+
+1.0   -> 1.1
+- functions
+  leda_window*
+  CGAL_create_demo_window( float w = 512.0, float h = 512.0, 
+                           const char* str = "CGAL",
+                           double x_extension = 1.0)      and
+  leda_window*
+  CGAL_create_and_display_demo_window(float w = 512.0, float h = 512.0, 
+                                      const char* str = "CGAL",
+                                      double x_extension = 1.0) 
+  added to ease writing demo-programs

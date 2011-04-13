@@ -1,0 +1,62 @@
+Contents:
+1) VC6 support
+2) VC70 support
+
+1) STLport is a multiplatform implementation of C++ STL; see
+http://www.stlport.org
+---------------------------------------------------------
+
+Our hack in a nutshell.
+
+By undefining __STL_NO_CLASS_PARTIAL_SPECIALIZATION in
+stlport/config/stl_msvc.h
+the iterator_traits are enabled.
+
+the flag
+CGAL_LIMITED_ITERATOR_TRAITS_SUPPORT
+is used to disable the parts of code that rely on partial
+specialization.
+
+This does not resolve the problem of defining iterator_traits
+for pointer types.
+For this, the macro
+CGAL_DEFINE_ITERATOR_TRAITS_POINTER_SPEC(T)
+should be used to provide this for pointers to T.
+For many builtin types, this is done in
+stlport/stl_iterator_base.h
+
+Presentltly, the flag __STL_DEBUG is turned on
+for all this to work. 
+__STL_DEBUG is switched on for the iterators of std::vector.
+Without, these iterators are plain C pointers. With this
+flag, they are implemented as class and iterator_traits works fine.
+
+**** added 15/9/99:
+__STL_DEBUG is now off. It does not help dealing with
+std::vector iterators, as it turned out.
+
+**** added 11/10/99;
+introduced vector class by Geert-Jan. Its vector
+iterators are not pointers; this removes the necessity to
+use CGAL_DEFINE_ITERATOR_TRAITS_POINTER_SPEC(T) for
+all T's for which vector<T> is present.
+(Naturally, T* could be used somewhere else in the code, and
+hence CGAL_DEFINE_ITERATOR_TRAITS_POINTER_SPEC(T) would be still
+needed in this case).
+
+-------------------------------------------------------------------
+
+2) VC7.0 native STL needs the same treatment of iterator_traits
+for pointer types as VC6. The type  iterator_traits is by itself
+defined OK.
+ 
+So CGAL_DEFINE_ITERATOR_TRAITS_POINTER_SPEC(T) is still there,
+(file vc7/stl_iterator_base.h)
+but instead of STLport the native STL is used (it's considerably updated
+w.r.t. VC6 STL).
+
+File vc7/iterator contains also some fixes for <algorithm> header.
+(extra overloads for functions _Iter_cat, _Dist_type, _Val_type).
+
+
+

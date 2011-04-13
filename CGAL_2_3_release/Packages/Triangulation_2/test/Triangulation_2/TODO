@@ -1,0 +1,54 @@
+// Triangulation test_suite: Herve.Bronnimann@sophia.inria.fr
+// Maintained by: ...
+
+TODO pour la test suite de triangulation:
+
+* entree/sortie ne marche pas (assert nb_of_vertices == failed)
+* suggestion: relire la doc et la nettoyer (typos, orthographe, etc.)
+
+
+RESTE A TESTER:
+
+Done : dans _test_cls_geom_traits()
+* manque _test_cls_distance() ## Erreur compile avec la distance "vide"(cf. _test_cls_distance.C
+
+dans _test_cls_triangulation_2()
+* les fonctions advanced insert_on_edge, insert_collinear_outside,
+  insert_in_face, remove_degree_3
+* traversal of the convex hull: quand plusieurs points sont
+  alignes sur la frontiere, on n'a pas les sommets du convex en
+  faisant comme c'est dit dans la doc! On recupere en plus ces
+  sommets sur les aretes
+* le leda_window << Triangulation doit etre teste dans la demo
+
+dans _test_cls_triangulation_vertex()
+* je ne sais pas comment tester les typedefs CGAL_Point_2<R> dans
+  euclidean_traits (pour verifier que c'est bien ce qui est dit).
+  A priori il faudrait utiliser une fonction "bidon"
+      template < class T >
+      bool equal_type( const T&, const T& ) { return true; }
+  et utiliser dans _test_cls_geom_traits()
+      equal_type( CGAL_Point_2<R>(), Gt::Point() );
+  Ca ne marchera que si les types sont egaux, autrement il fera
+  une erreur a la compil ("no match for equal_type(T1,T2)...")
+  Ca reste a faire...
+
+dans test_cls_tds_2()
+* je ne sais pas comment tester tds.dimension() sans avoir une
+  tds valide. Mais le concept de dimension combinatoire (sans la
+  geometrie) est un peu bizarre aussi...
+* je ne sais pas comment tester tds.is_infinite(Edge...) et ses
+  variantes sans avoir une tds valide avec des aretes.
+* pareil pour toutes les fonctions insert...() et remove...()
+  ainsi que tous les iterateurs et autres circulateurs et flip()
+  sans avoir une tds valide.
+* tds.number_of_faces()
+* clear() pour une tds non vide
+* degree() pour une tds non vide
+
+dans test_cls_delaunay_triangulation()
+* nearest_vertex()
+
+et bien sur...
+* Regular triangulation
+

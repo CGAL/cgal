@@ -1,0 +1,48 @@
+% +------------------------------------------------------------------------+
+% | Reference manual page: Triangulation_Traits_3.tex
+% +------------------------------------------------------------------------+
+% | 27.3.2000   Monique Teillaud
+% | Package: Triangulation3
+% | 
+\RCSdef{\RCSTriangulationTraitsRev}{$Revision$}
+\RCSdefDate{\RCSTriangulationTraitsDate}{$Date$}
+% |
+%%RefPage: end of header, begin of main body
+% +------------------------------------------------------------------------+
+
+
+\begin{ccRefConcept}{TriangulationHierarchyTraits_3}
+
+%% \ccHtmlCrossLink{}     %% add further rules for cross referencing links
+%% \ccHtmlIndexC[concept]{} %% add further index entries
+
+To be used by \protect \ccc{Triangulation_hierarchy_3<Tr>}
+
+\ccDefinition
+
+The triangulation hierarchy uses the traits class
+\ccc{Tr::Geom_traits} provided by \ccc{Tr}, which must define the
+following additional predicate: 
+
+\ccTwo{TriangulationHierarchyTraits_3}{}
+\ccNestedType{Compare_distance_3}{Predicate object.
+Must provide the operator\\
+\ccc{Comparison_result operator()(Point p, Point q, Point r)}
+which compares the distance between \ccc{p} and \ccc{q} to the distance
+between \ccc{p} and \ccc{r}.}
+
+\ccOperations
+
+The following function gives access to the predicate object:
+
+\ccThree{coplanar_side_of_bounded_circle_3xxx}{gt.compare_x(Point p0, Point p1)x}{}
+\ccCreationVariable{traits}  %% choose variable name
+
+\ccMethod{Compare_distance_3 compare_distance_3_object();}{}
+
+\ccHasModels
+
+The cartesian and homegenous kernels provided by \cgal.
+
+\end{ccRefConcept}
+

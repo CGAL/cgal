@@ -1,0 +1,107 @@
+\lcTex{\chapter*{Preface}}
+\lcHtml{\chapter{Preface}}
+
+\cgal\ is a {\em Computational Geometry Algorithms Library} written in \CC, 
+developed by a consortium consisting of
+\ccAnchor{http://www.inf.ethz.ch/}{ETH Z\"urich} (Switzerland), 
+\ccAnchor{http://www.inf.fu-berlin.de/}{Freie Universit{\"a}t Berlin} (Germany), 
+\ccAnchor{http://www-sop.inria.fr/prisme/}{{\sc Inria} Sophia-Antipolis}
+(France),
+\ccAnchor{http://www.informatik.uni-halle.de/}{Martin-Luther-Universit{\"a}t 
+Halle-Wittenberg} (Germany),
+\ccAnchor{http://www.mpi-sb.mpg.de/}{Max-Planck Institut f{\"u}r Informatik},
+Saarbr\"ucken (Germany),
+\ccAnchor{http://info.risc.uni-linz.ac.at/}{{\sc Risc}} Linz (Austria)
+\ccAnchor{http://www.math.tau.ac.il/}{Tel-Aviv University} (Israel), and
+\ccAnchor{http://www.cs.uu.nl/}{Utrecht University} (The Netherlands). 
+You can find more information on the project on the 
+\ccAnchor{http://www.cgal.org/}{\cgal\ home page}
+\ccTexHtml{at URL {\tt http://www.cgal.org}}{}.
+
+Should you have any questions, comments, remarks or criticism concerning 
+\cgal, please send a message to 
+\ccTexHtml{{\tt contact@cgal.org}}{<A HREF="mailto:contact@cgal.org">&#60;contact@cgal.org&#62;</A>}.
+
+
+\section*{Editorial Committee}
+
+Andreas Fabri ({\sc Inria} Sophia-Antipolis) \\
+Bernd G\"artner (ETH Z\"urich) \\
+Susan Hert (Max-Planck Institut f\"ur Informatik)\\
+Shai Hirsch (Tel-Aviv University) \\
+Michael Hoffmann (ETH Z\"urich) \\
+Lutz Kettner (University of North Carolina at Chapel Hill) \\
+Dmitrii Pasechnik (Delft University) \\
+Sylvain Pion ({\sc Inria} Sophia-Antipolis)\\
+Remco Veltkamp (Utrecht University)\\
+Mariette Yvinec ({\sc Inria} Sophia-Antipolis)\\
+
+
+\section*{Authors}
+
+Herv\'e Br\"onnimann ({\sc Inria} Sophia-Antipolis). \\
+Andreas Fabri ({\sc Inria} Sophia-Antipolis).\\
+Geert-Jan Giezeman (Utrecht University).\\
+Susan Hert (Max-Planck Institut f\"ur Informatik).\\
+Michael Hoffmann (ETH Z\"urich).\\
+Lutz Kettner (ETH Z\"urich).\\
+Sylvain Pion ({\sc Inria} Sophia-Antipolis). \\
+Stefan Schirra (Max-Planck Institut f\"ur Informatik).\\
+Sven Sch\"onherr (Freie Universit{\"a}t Berlin).
+
+\section*{Design and Implementation History}
+
+At a meeting at Utrecht University in January 1995,
+Olivier Devillers, Andreas Fabri, Wolfgang Freiseisen,
+Geert-Jan Giezeman, Mark Overmars, Stefan Schirra, Otfried Schwarzkopf
+(now Otfried Cheong), and Sven Sch\"onherr
+discussed the foundations of the \cgal\ kernel.
+Many design and software engineering issues were addressed, 
+e.g.\ naming conventions, coupling of classes 
+(flat versus deep class hierarchy), 
+memory allocation, programming conventions, modifiability of 
+atomic objects, points and vectors, storing additional information, 
+orthogonality of operations on the kernel objects,
+viewing non-constant-size objects like polygons as 
+dynamic data structures (and hence not as part of the (innermost) kernel).
+
+The people attending the meeting delegated the compilation of 
+a draft specification to Stefan Schirra.
+The resulting draft specification was intentionally modeled on \cgal's 
+precursors \protocgal\ and \plageo\ as well as on the geometric part of \leda.
+The specification already featured coexistence of 
+\ccHtmlNoLinksFrom{Cartesian} and 
+homogeneous representation of point/vector data and parameterization 
+by number type(s).
+During the discussion of the draft a kernel design group was formed. 
+The members of this group were Andreas Fabri, Geert-Jan Giezeman,
+Lutz Kettner, Stefan Schirra, and Sven Sch\"onherr.
+The work of the kernel design group led to significant changes and
+improvements of the original design, e.g.\ the strong separation between
+points and vectors. Probably the most important enhancement was the design 
+of a common superstructure for the previously uncoupled 
+\ccHtmlNoLinksFrom{Cartesian} and
+homogeneous representations. One can say, that the kernel was designed
+by this group.
+The kernel was later revised based on suggestions by Herv\'e Br\"onnimann,
+Bernd G\"artner, Michael Hoffmann, and Lutz Kettner.
+
+A first version of the kernel was internally made available at the beginning
+of the \cgal-project ({\sc esprit ltr iv} project number 21957).
+Since then many more people contributed to the evolution of the kernel
+through discussions on the \cgal\ mailing lists.
+The implementation based on 
+\ccHtmlNoLinksFrom{Cartesian} representation was (initially) provided 
+by Andreas Fabri, the homogeneous representation (initially) by Stefan Schirra.
+Intersection and distance computations were implemented by Geert-Jan Giezeman.
+The kernel is now maintained by Susan Hert, Geert-Jan Giezeman, and
+Sylvain Pion.
+
+\section*{Acknowledgement}
+
+This work was supported
+by the Graduiertenkolleg `Algorithmische Diskrete Mathematik',
+under grant DFG We 1265/2-1,
+and by ESPRIT IV Long Term Research Projects No.~21957 (CGAL)
+and No.~28155 (GALIA).
+

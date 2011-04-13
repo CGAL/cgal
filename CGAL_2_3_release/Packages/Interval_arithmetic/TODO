@@ -1,0 +1,118 @@
+[See also the file TODO_static_filters]
+
+- DOCUMENT enough for the new to_interval() requirement.
+- Filtered_kernel<> should be a proper kernel.  It should be possible to use
+  the Kernel_base stuff (see Kernel_traits paper)...
+- mv test/include/*.C *.def ; Or use template functions ?
+- Use Self instead of IA as the internal typedef ?
+
+Concerning the main code:
+-------------------------
+- Lazy_exact_nt<Traits>, where :
+  class Traits {
+    typedef leda_real  ET;
+    typedef Tag_true   Protection; // due, this won't work nicely... const ?
+  }
+  In any case worth it for my multi-type kernel ?
+- DAG : voir include/CGAL/Td_dag.h
+- Have a scheme for counting each try{} and each catch{} of each predicate ?
+  (request by Michael Seel).  Maybe not worth it : gcov or any profiling tool
+  should be fine for that.
+- Remove the "return false" after overlap_action(), if possible, and see
+  produced code.  Or re-arrange the code in order to remove it ?
+- Specializations for is_zero() and co, and make use of them in the kernel.
+  [Filtered_exact<> doesn't define them either, it's a bug...]
+- Implement CGAL_ms_sqrt() with asms so that no special install procedure is
+  needed ?  Should not be too hard, and should be faster (no function call).
+  If M$ has a flag like __OPTIMIZE__, then we can use in the non-optimize case,
+  something like (test again) :
+   
+  inline double my_sqrt (double d)
+  {
+    _asm
+    {
+      fld d
+      fsqrt
+      fstp d
+    }
+    return d;
+  }
+  
+Sous optimal, mais si on peut lui dire de l'utiliser quand il n'optimise pas
+(genre #ifndef __OPTIMIZE__), ca peut faire l'affaire.
+De toute facon, c'est le fsqrt qui prend un max de temps, donc l'enrobage...
+
+- SunPro 5.1 ?  Mike says it supports interval arithmetic...
+  http://docs.sun.com/htmlcoll/coll.693.1/iso-8859-1/CPPARITHPROG/iapg_bookTOC.html
+  http://www.sun.com/forte/cplusplus/interval/index.html;$sessionid$GSXJDFYAABWVTAMTA1FU45Q
+- Does KCC 4.0 still fails when optimizing ?  Ask Stefan.
+- Try to see if KCC can use the GCC asm() on x86 ?
+- Try to get rid of the libc5 compatible version (make benchmarks first).
+- Avec des predicats function_objects, on pourrait se passer du script
+  autogenerateur pour les filtres dynamiques (voir comment marchent les trucs
+  de la STL dans ce domaine) ?  Le convertisseur prenant comme parametre
+  template un entier qui serait le nombre d'arguments du predicat :) ?
+  A revoir en tout cas dans l'optique d'un noyau filtre.
+- Have determinant_by_formula() overloading for Lazy_exact_nt<> ?
+  And what about for Interval_nt<> too ?
+- Turn CGAL_IA_CHECK_RESTRICT into an [expensive] assertion ?
+- Get rid of convert_to() ?  This is a mess for nothing (benchmark first).
+  Target convert_from_to (const Target, const Source) is fine ?
+  It could maybe be made better this way:
+    void convert_from_to(Target &, const Source &) ?
+  Suggest that to Stefan for misc.h ?
+- Handle in_smallest_orthogonalcircle_ftC2.h correctly (needs an include)
+  Note : this is already in the kernel, this file should disappear !
+- Bench -fbranch-probabilities ?  Use __builtin_expect() for GCC 3 ?
+- Mark the cache as "mutable" (see Stroustrup, page 232) ?
+- Filter_Cache: Faire des benchs, et une test-suite qui soit raisonnable.
+  Hum, rajouter un booléen pour calculer le cache seulement sur demande ?
+  (ça évite de le faire inutilement pour les variables intermédiaires,
+  mais ça prend un chouia plus de place... mais en comparaison du reste...)
+- Replace CGAL_IA_MAX_DOUBLE by standard DBL_MAX in <cfloat>, if portable
+  (add a test).  Not possible for CGAL_IA_MIN_DOUBLE, since DBL_MIN is the
+  _normalized_ minimum.
+? See the C++ Standard numeric_limits<>, section 18.2.
+? See ISO C99 and http://http.cs.berkeley.edu/~fateman/fp98/korenF/node3.html.
+- "C9x FP unordered compares":
+  +  /* ISO C99 IEEE Unordered compares.  */
+  +  builtin_function ("__builtin_isgreater", default_function_type,
+  +                   BUILT_IN_ISGREATER, BUILT_IN_NORMAL, NULL_PTR);
+  +  builtin_function ("__builtin_isgreaterequal", default_function_type,
+  +                   BUILT_IN_ISGREATEREQUAL, BUILT_IN_NORMAL, NULL_PTR);
+  +  builtin_function ("__builtin_isless", default_function_type,
+  +                   BUILT_IN_ISLESS, BUILT_IN_NORMAL, NULL_PTR);
+  +  builtin_function ("__builtin_islessequal", default_function_type,
+  +                   BUILT_IN_ISLESSEQUAL, BUILT_IN_NORMAL, NULL_PTR);
+  +  builtin_function ("__builtin_islessgreater", default_function_type,
+  +                   BUILT_IN_ISLESSGREATER, BUILT_IN_NORMAL, NULL_PTR);
+  +  builtin_function ("__builtin_isunordered", default_function_type,
+  +                   BUILT_IN_ISUNORDERED, BUILT_IN_NORMAL, NULL_PTR);
+  [voir le draft C99 ce que c'est]
+? SUN: Add "-Wa,-xarch=v8plus" to fix the following "error":
+  /usr/ccs/bin/as: "/var/tmp/ccBHnU0T.s", line 861: warning: 3 instructions
+  required between ldfsr and next FBfcc; nops inserted
+
+Concerning the script:
+----------------------
+- Produce separate files for declarations and definitions (=> libCGAL).
+- Make it output a test file for each predicate ?
+
+Concerning the doc:
+-------------------
+- Documentation seriously needs to be updated before the next public release !
+- Use the new doc format.
+- In the 2.0 HTML doc, my enums are indexed twice.
+  probably a cc_manual compliance bug from me.
+  Idem, my fct to_double(Ia) is not the same as the others...
+- add a pointer to my MISC'99 paper.
+- DOCUMENT the new boolean template parameter, the script, the static filters,
+  Lazy_exact_nt<> ...
+
+Concerning the test-suite:
+--------------------------
+- Check it with GCOV again before the next public release.
+- Make a more extensive test-suite for the filtered predicates.
+  The script could output information to test them generically somehow.
+- Test NaN propagation.  Comparisons with these should throw the exception...
+  Check that they are correctly propagated (by min(), max(), even operator*...)

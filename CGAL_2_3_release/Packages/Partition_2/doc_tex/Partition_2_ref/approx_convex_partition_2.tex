@@ -1,0 +1,76 @@
+\begin{ccRefFunction}{approx_convex_partition_2}
+
+\ccDefinition
+Function that produces a set of 
+convex polygons that represent a partitioning of a polygon defined
+on a sequence of points.  The number of convex polygons produced is 
+no more than four times the minimal number.%
+\ccIndexSubsubitem{polygon partitioning}{convex}{approximately optimal}
+
+
+\ccInclude{CGAL/partition_2.h}
+
+\ccFunction{
+template <class InputIterator, class OutputIterator, class Traits>
+OutputIterator approx_convex_partition_2(InputIterator first,
+                                         InputIterator beyond,
+                                         OutputIterator result,
+                                         const Traits& traits = Default_traits);
+}
+{
+computes a partition of the polygon defined 
+by the points in the range [\ccc{first}, \ccc{beyond}) into convex 
+polygons. The counterclockwise-oriented partition polygons are written to
+the sequence starting at position \ccc{result}.  The past-the-end iterator for 
+the resulting sequence of polygons is returned.
+\ccPrecond The points in the range [\ccc{first}, \ccc{beyond}) define a simple 
+counterclockwise-oriented polygon.
+%\ccIndexSubitem[C]{approx_convex_partition_2}{preconditions}
+}
+
+\ccHeading{Requirements}
+\begin{enumerate}
+    \item \ccc{Traits} is a model of the concept 
+          PartitionTraits\_2\ccIndexMainItem[c]{PartitionTraits_2}
+          and, for the purposes of checking the postcondition that the partition
+          produced is valid, it should also be a model of
+          the concept ConvexPartitionIsValidTraits\_2%
+          \ccIndexMainItem[c]{ConvexPartitionIsValidTraits_2}.
+    \item \ccc{OutputIterator::value_type} should be \ccc{Traits::Polygon_2}.
+    \item \ccc{InputIterator::value_type} should be \ccc{Traits::Point_2},
+          which should also be the type of the points stored in an object
+          of type \ccc{Traits::Polygon_2}.
+    \item Points in the range $[first, beyond)$ must define a simple polygon
+          whose vertices are oriented counterclockwise.
+\end{enumerate}
+
+The default traits class \ccc{Default_traits} is \ccc{Partition_traits_2},
+%\ccIndexTraitsClassDefault{approx_convex_partition_2} 
+with the representation type determined by \ccc{InputIterator1::value_type}.
+
+\ccSeeAlso
+
+\ccRefIdfierPage{CGAL::convex_partition_is_valid_2} \\
+\ccRefIdfierPage{CGAL::greene_approx_convex_partition_2} \\
+\ccRefIdfierPage{CGAL::optimal_convex_partition_2} \\
+\ccRefIdfierPage{CGAL::partition_is_valid_2} \\
+\ccRefIdfierPage{CGAL::Partition_is_valid_traits_2<Traits, PolygonIsValid>} \\
+\ccRefIdfierPage{CGAL::y_monotone_partition_2}
+
+\ccImplementation
+This function implements the algorithm of Hertel and Mehlhorn
+\cite{hm-ftsp-83} and is based on the class 
+\ccc{CGAL::Constrained_triangulation_2}.  Given a triangulation of
+the polygon, the function requires $O(n)$ time and
+space for a polygon with $n$ vertices.
+
+\ccExample
+
+The following program computes an approximately optimal
+convex partitioning of a polygon using the default
+traits class and stores the partition polygons in the list 
+\ccc{partition_polys}.
+
+\ccIncludeExampleCode{Partition_2/approx_convex_ex.C}
+
+\end{ccRefFunction}

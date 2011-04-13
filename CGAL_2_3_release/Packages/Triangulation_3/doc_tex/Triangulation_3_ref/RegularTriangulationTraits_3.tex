@@ -1,0 +1,109 @@
+% +------------------------------------------------------------------------+
+% | Reference manual page: Triangulation_Traits_3.tex
+% +------------------------------------------------------------------------+
+% | 27.3.2000   Monique Teillaud
+% | Package: Triangulation3
+% | 
+\RCSdef{\RCSTriangulationTraitsRev}{$Revision$}
+\RCSdefDate{\RCSTriangulationTraitsDate}{$Date$}
+% |
+%%RefPage: end of header, begin of main body
+% +------------------------------------------------------------------------+
+
+
+\begin{ccRefConcept}{RegularTriangulationTraits_3}
+
+To be used by \protect 
+\ccc{Regular_triangulation_3<RegularTriangulationTraits_3, Tds_3>}
+
+\ccDefinition
+
+To be used as the traits class for the regular triangulation provided
+by \cgal, a class must provide definitions for the \textit{power
+tests},
+in addition to the requirements described for the traits class of a 3D 
+Delaunay triangulation \ccc{DelaunayTriangulationTraits_3}.
+
+We use here the same notation as in
+Section~\ref{Triangulation3-sec-class-Regulartriangulation}. 
+To simplify notation, $p$ will often denote in the sequel either the
+point $p\in\R^3$ or the weighted point ${p}^{(w)}=(p,w_p)$.
+
+\ccTwo{RegularTriangulationTraits}{}
+\ccNestedType{Power_test_3}{Predicate object.
+Must provide the following operators:
+%
+\\
+\\
+\ccc{Oriented_side operator()( Weighted_point p,
+			    Weighted_point q,
+			    Weighted_point r,
+			    Weighted_point s,
+			    Weighted_point t)}
+which performs the following:\\
+Let ${z(p,q,r,s)}^{(w)}$ be the power sphere of the weighted points 
+$(p,q,r,s)$. Returns \\
+\ccc{ON_ORIENTED_BOUNDARY} if \ccc{t} is orthogonal to
+${z(p,q,r,s)}^{(w)}$,\\ 
+\ccc{ON_NEGATIVE_SIDE} if \ccc{t} lies outside the oriented sphere of
+center $z(p,q,r,s)$ and radius $\sqrt{ w_{z(p,q,r,s)}^2 + w_t^2 }$
+(which is equivalent to $\Pi({t}^{(w)},{z(p,q,r,s)}^{(w)} >0$)),\\
+\ccc{ON_POSITIVE_SIDE} if \ccc{t} lies inside this oriented sphere.
+\ccPrecond{\ccc{p, q, r, s} are not coplanar.}
+%
+Note that with this definition, if all the points have a weight equal
+to 0, then
+\ccc{power_test(p,q,r,s,t)} = \ccc{side_of_oriented_sphere(p,q,r,s,t)}.
+%
+%
+\\
+\\
+\ccc{Oriented_side operator()( Weighted_point p,
+			    Weighted_point q,
+			    Weighted_point r,
+			    Weighted_point t) }
+which has an
+ definition analogous to the previous method, for coplanar points,
+with the power circle ${z(p,q,r)}^{(w)}$.
+\ccPrecond{\ccc{p, q, r} are not collinear and \ccc{p, q, r, t} are
+coplanar.}
+%
+If all the points have a weight equal to 0, then
+\ccc{power_test(p,q,r,s,t)} = \ccc{side_of_oriented_circle(p,q,r,s,t)}.
+%
+\\
+\\
+\ccc{Oriented_side operator()( Weighted_point p,
+			    Weighted_point q,
+			    Weighted_point t)}
+which is the same for collinear points, where ${z(p,q)}^{(w)}$ is the
+power segment of \ccc{p} and \ccc{q}.
+\ccPrecond{\ccc{p} and \ccc{q} have different Bare\_points, and
+\ccc{p, q, t} are collinear.}
+%
+If all the points have a weight equal to 0, then
+\ccc{power_test(p,q,t)} gives the same answer as the kernel predicate
+\ccc{s(p,q).has_on(t)} would give, where  \ccc{s(p,q)} denotes the
+segment with endpoints \ccc{p} and \ccc{q}.
+}
+
+\ccOperations
+
+The following function gives access to the predicate object:
+\ccThree{coplanar_side_of_bounded_circle_3xxx}{gt.compare_x(Point p0, Point p1)x}{}
+\ccCreationVariable{traits}  %% choose variable name
+
+\ccMethod{Power_test_3 power_test_3_object();}{}
+
+
+\ccHasModels
+
+\ccc{CGAL::Regular_triangulation_euclidean_traits_3<R,Weight>}.
+
+\end{ccRefConcept}
+
+% +------------------------------------------------------------------------+
+%%RefPage: end of main body, begin of footer
+% EOF
+% +------------------------------------------------------------------------+
+

@@ -1,0 +1,45 @@
+\begin{ccRefClass}{Kdtree_d<Traits>}
+
+\ccThree{KdtreexdxTraitsx}{}{\hspace*{7.6cm}}
+\ccTwo{}{\hspace*{7.6cm}}
+
+%\begin{ccClassTemplate}{Kdtree_d<Traits>} 
+    \ccDefinition An object $T$ of the class
+    \ccStyle{Kdtree_d<Traits>} is the kd-tree induced by a set of points
+    in $d$-dimensions.
+
+    \ccInclude{ CGAL/kdtree_d.h}
+
+    \ccTypes
+    
+    \ccNestedType{Box}{represents an axis-parallel box in
+       $d$-dimensions. The box might be unbounded.}
+    
+    \ccTypedef{typedef Traits::Point Point;}{}
+    \ccTypedef{typedef list<Point>  List_points;}{}
+
+    \ccCreation
+    \ccCreationVariable{kd_tree}
+    
+    \ccConstructor{Kdtree_d<Traits>( int dim = 2 );}{construct an
+       empty  kd-tree  of dimension \ccStyle{dim}.}
+
+    \ccOperations
+    
+\ccThree{bool}{}{\hspace*{7.6cm}}
+
+    \ccMethod{bool is_valid(bool verbose = false, int level = 0)
+       const;} {perform internal consistency checks to verify the
+       correctness of the kd-tree}
+    
+    \ccMethod{void build( list<Point> &l );}{construct the 
+       kd-tree  from the points stored in \ccStyle{l}.  
+       \ccPrecond{all the points in \ccStyle{l} are of dimension no
+          smaller than the dimension of {{\ccVar} } itself.} }
+    
+    \ccMethod{void search( back_insert_iterator<List_points>
+       result, Box & query_box );}{return into \ccStyle{result} all
+       the points of the kd-tree that lie inside \ccStyle{query_box}}
+%\end{ccClassTemplate}
+
+\end{ccRefClass}

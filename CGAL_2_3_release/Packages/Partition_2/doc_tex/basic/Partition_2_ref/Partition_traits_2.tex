@@ -1,0 +1,143 @@
+% +------------------------------------------------------------------------+
+% | Reference manual page: Partition_traits_2.tex
+% +------------------------------------------------------------------------+
+% | 10.05.2000   Susan Hert
+% | Package: Partition_2
+% | 
+% |
+% +------------------------------------------------------------------------+
+
+
+\begin{ccRefClass}{Partition_traits_2<R>}  %% add template arg's if necessary
+\ccIndexTraitsClassDefault{approx_convex_partition_2}
+\ccIndexTraitsClassDefault{greene_approx_convex_partition_2}
+\ccIndexTraitsClassDefault{optimal_convex_partition_2}
+\ccIndexTraitsClassDefault{y_monotone_partition_2}
+
+\ccDefinition
+  
+Traits class that can be used with all the
+2-dimensional polygon partitioning algorithms.  It is parameterized by
+a representation class \ccc{R}.
+
+\ccInclude{CGAL/Partition_traits_2.h}
+
+\ccIsModel
+
+\ccRefConceptPage{ConvexPartitionIsValidTraits_2}%
+\ccIndexSubitem[c]{ConvexPartitionIsValidTraits_2}{model} \\
+\ccRefConceptPage{IsYMonotoneTraits_2}%
+\ccIndexSubitem[c]{ConvexPartitionIsValidTraits_2}{model} \\
+\ccRefConceptPage{OptimalConvexPartitionTraits_2}%
+\ccIndexSubitem[c]{OptimalConvexPartitionTraits_2}{model} \\
+\ccRefConceptPage{PartitionTraits_2}%
+\ccIndexSubitem[c]{PartitionTraits_2}{model} \\
+\ccRefConceptPage{YMonotonePartitionIsValidTraits_2}%
+\ccIndexSubitem[c]{YMonotonePartitionIsValidTraits_2}{model} \\
+\ccRefConceptPage{YMonotonePartitionTraits_2}% 
+\ccIndexSubitem[c]{YMonotonePartitionTraits_2}{model} 
+
+\ccTypes
+
+\ccSetThreeColumns{typedef CGAL::Polygon_2<Poly_Traits, Container>}{Polygon_2;}{}
+\ccAutoIndexingOff
+\ccTypedef{typedef R::Line_2                      Line_2;}{}
+\ccGlue
+\ccTypedef{typedef R::Segment_2                   Segment_2;}{}
+\ccGlue
+\ccTypedef{typedef R::Ray_2                       Ray_2;}{}
+\ccGlue
+\ccTypedef{typedef R::Less_yx_2                   Less_yx_2;}{}
+\ccGlue
+\ccTypedef{typedef R::Less_xy_2                   Less_xy_2;}{}
+\ccGlue
+\ccTypedef{typedef R::Leftturn_2                  Leftturn_2;}{}
+\ccGlue
+\ccTypedef{typedef R::Orientation_2               Orientation_2;}{}
+\ccGlue
+\ccTypedef{typedef R::Compare_y_2                 Compare_y_2;}{}
+\ccGlue
+\ccTypedef{typedef R::Compare_x_2                 Compare_x_2;}{}
+\ccGlue
+\ccTypedef{typedef R::Construct_line_2            Construct_line_2;}{}
+\ccGlue
+\ccTypedef{typedef R::Construct_ray_2             Construct_ray_2;}{}
+\ccGlue
+\ccTypedef{typedef R::Construct_segment_2         Construct_segment_2;}{}
+\ccGlue
+\ccTypedef{typedef R::Collinear_are_ordered_along_line_2  Collinear_are_ordered_along_line_2;}{}
+\ccGlue
+\ccTypedef{typedef R::Are_strictly_ordered_along_line_2  Are_strictly_ordered_along_line_2;}{}
+\ccGlue
+\ccTypedef{typedef CGAL::Polygon_traits_2<R>      Poly_Traits;}{}
+\ccGlue
+\ccTypedef{typedef Poly_Traits::Point_2           Point_2;}{}
+\ccGlue
+\ccTypedef{typedef std::list<Point_2>                      Container;}{}
+\ccGlue
+\ccTypedef{typedef CGAL::Polygon_2<Poly_Traits, Container> Polygon_2;}{}
+\ccGlue
+\ccTypedef{typedef R::Less_xy_2                Less_xy;}{}
+\ccGlue
+\ccTypedef{typedef Poly_Traits::Vector_2    Vector_2;}{}
+\ccGlue
+\ccTypedef{typedef R::FT                    FT;}{}
+\ccGlue
+\ccTypedef{typedef Partition_traits_2<R>  Self;}{}
+\ccGlue
+\ccTypedef{typedef CGAL::Is_convex_2<Self>          Is_convex_2;}{}
+\ccGlue
+\ccTypedef{typedef CGAL::Is_y_monotone_2<Self>      Is_y_monotone_2;}{}
+\ccAutoIndexingOn
+
+
+\ccCreation
+\ccCreationVariable{traits}  %% choose variable name
+
+A default constructor and copy constructor are defined.
+
+\ccConstructor{Partition_traits_2();}{}
+\ccConstructor{Partition_traits_2(Partition_traits_2& tr);}{}
+
+\ccOperations
+
+For each predicate object type \ccc{Pred_object_type} listed above
+({\em i.e.}, \ccc{Less_yx_2}, \ccc{Less_xy_2}, \ccc{Leftturn_2},
+\ccc{Orientation_2}, \ccc{Compare_y_2}, \ccc{Compare_x_2},
+\ccc{Construct_line_2}, \ccc{Construct_ray_2}, \ccc{Construct_segment_2},
+\ccc{Collinear_are_ordered_along_line_2},
+\ccc{Are_strictly_ordered_along_line_2}, \ccc{Is_convex_2},
+\ccc{Is_y_monotone_2}) there is a
+corresponding function of the following form defined:
+
+\ccSetThreeColumns{Comarison_resultxx}{traits.compare_x( Point_2 p, Point_2 q)}{
+}
+\ccAutoIndexingOff
+\ccMemberFunction{
+Pred_object_type pred_object_type_object();
+}
+{
+Returns an instance of \ccc{Pred_object_type}.
+}
+\ccAutoIndexingOn
+
+
+\ccSeeAlso
+
+\ccRefIdfierPage{CGAL::approx_convex_partition_2} \\
+\ccRefIdfierPage{CGAL::convex_partition_is_valid_2} \\
+\ccRefIdfierPage{CGAL::greene_approx_convex_partition_2} \\
+\ccRefIdfierPage{CGAL::optimal_convex_partition_2} \\
+\ccRefIdfierPage{CGAL::partition_is_valid_2} \\
+\ccRefIdfierPage{CGAL::Partition_is_valid_traits_2<Traits, PolygonIsValid>} \\
+\ccRefIdfierPage{CGAL::y_monotone_partition_2} \\
+\ccRefIdfierPage{CGAL::y_monotone_partition_is_valid_2} 
+
+
+\end{ccRefClass}
+
+% +------------------------------------------------------------------------+
+%%RefPage: end of main body, begin of footer
+% EOF
+% +------------------------------------------------------------------------+
+

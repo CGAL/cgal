@@ -1,0 +1,60 @@
+% +------------------------------------------------------------------------+
+% | Reference manual page: Extended_cartesian.tex
+% +------------------------------------------------------------------------+
+% | 26.06.2001 Michael Seel
+% | Package:   Nef_2
+% | 
+% +------------------------------------------------------------------------+
+
+\ccAutoIndexingOff
+\begin{ccRefClass}{Extended_cartesian<FT>}
+\ccAutoIndexingOn
+\ccIndexTraitsClassBegin{Extended_cartesian}{}{Nef polyhedron, 2D}
+
+\ccDefinition
+  
+The class \ccRefName\ serves as a traits class for the class
+\ccc{CGAL::Nef_polyhedron_2<T>}.  It uses a polynomial component
+representation based on a field number type \ccc{FT}.
+
+\ccInclude{CGAL/Extended_cartesian.h}
+
+\ccIsModel
+
+\ccRefConceptPage{ExtendedKernelTraits_2}%
+\ccIndexSubitem[c]{ExtendedKernelTraits_2}{model} \\
+
+\ccCreation
+\ccCreationVariable{traits}  %% choose variable name
+
+\ccConstructor{Extended_cartesian();}{default constructor.}
+
+\ccHeading{Requirements} 
+
+To make a field number type \ccc{FT_model} work with this class you
+have to provide the following number type traits class in global
+namespace.
+
+\begin{ccExampleCode}
+template <>
+struct ring_or_field<FT_model> {
+  typedef field_with_div kind;
+};    
+\end{ccExampleCode}
+
+\ccOperations
+
+Fits all operation requirements of the concept.
+
+\ccSeeAlso
+
+\ccRefIdfierPage{CGAL::Extended_homogeneous<RT>} \\
+\ccRefIdfierPage{CGAL::Filtered_extended_homogeneous<RT>} 
+
+
+\ccIndexTraitsClassEnd
+\ccAutoIndexingOff
+\end{ccRefClass}
+\ccAutoIndexingOn
+
+% EOF

@@ -1,0 +1,173 @@
+\begin{ccRefClass} {Line_2<R>}
+
+\ccDefinition
+An object \ccStyle{l} of the data type \ccRefName\ is a directed
+straight line in the two-dimensional Euclidean plane $\E^2$. It is
+defined by the set of points with Cartesian coordinates $(x,y)$ 
+that satisfy the equation 
+\begin{ccTexOnly}
+\[ l:\; a\, x +b\, y +c = 0. \]
+\end{ccTexOnly}
+\begin{ccHtmlOnly}
+ l : ax + by + c = 0 
+\end{ccHtmlOnly}
+ 
+The line splits $\E^2$ in a {\em positive} and a {\em negative}
+side. A point $p$ with Cartesian coordinates 
+$(px, py)$ is on the positive side of \ccStyle{l}, iff
+\ccTexHtml{$a\, px + b\, py +c > 0$}{a px + b py + c > 0}, it is
+on the negative side of \ccStyle{l}, iff 
+\ccTexHtml{$a\, px + b\, py +c < 0$}{a px + b py + c < 0}.
+The positive side is to the left of \ccc{l}.
+
+\ccCreation
+\ccCreationVariable{l}
+
+\ccHidden \ccConstructor{Line_2();}
+             {introduces an uninitialized variable \ccVar.}
+
+\ccHidden \ccConstructor{Line_2(const Line_2<R> &h);}
+            {copy constructor.}
+
+\ccConstructor{Line_2(const R::RT &a, const R::RT &b, const R::RT &c)}
+            {introduces a line \ccVar\ with the line equation in Cartesian
+              coordinates $ax +by +c = 0$.}
+
+\ccConstructor{Line_2(const Point_2<R> &p, const Point_2<R> &q);}
+            {introduces a line \ccVar\ passing through the points $p$ and $q$. 
+             Line \ccVar\ is directed from $p$ to $q$.}
+
+\ccConstructor{Line_2(const Point_2<R> &p, const Direction_2<R>&d)}
+            {introduces a line \ccVar\ passing through point $p$ with 
+             direction $d$.}
+
+\ccConstructor{Line_2(const Segment_2<R> &s);}
+            {introduces a line \ccVar\ supporting the segment $s$,
+            oriented from source to target.}
+
+\ccConstructor{Line_2(const Ray_2<R> &r)}
+            {introduces a line \ccVar\ supporting the ray $r$,
+            with same orientation.}
+
+\ccOperations
+
+\ccSetThreeColumns{Direction_2<R> & }{}{\hspace*{7.4cm}}
+
+\ccHidden \ccMethod{Line_2<R> & operator=(const Line_2<R> &h);}
+        {Assignment.}
+
+\ccMethod{bool operator==(const Line_2<R> &h) const;}
+       {Test for equality: two lines are equal, iff they have a non 
+        empty \ccHtmlNoLinksFrom{intersection} and the same direction.}
+
+\ccMethod{bool operator!=(const Line_2<R> &h) const;}
+       {Test for inequality.}
+
+
+\ccMethod{R::RT a() const;}
+       {returns the first coefficient of $l$.}
+\ccGlue
+\ccMethod{R::RT b() const;}
+       {returns the second coefficient of $l$.}
+\ccGlue
+\ccMethod{R::RT c() const;}
+       {returns the third coefficient of $l$.}
+
+\ccMethod{Point_2<R> point(int i) const;}
+       {returns an arbitrary point on \ccVar. It holds 
+        \ccStyle{point(i) == point(j)}, iff \ccStyle{i==j}.
+        Furthermore, \ccVar\ is directed from \ccStyle{point(i)}
+        to \ccStyle{point(j)}, for all \ccStyle{i} $<$ \ccStyle{j}.}
+
+\ccMethod{Point_2<R>    projection(const Point_2<R> &p) const;}
+       {returns the orthogonal projection of $p$ onto \ccVar.}
+
+\ccMethod{R::FT               x_at_y(const R::FT &y) const;}
+       {returns the $x$-coordinate of the point at \ccVar\ with
+        given $y$-coordinate.
+        \ccPrecond \ccVar\ is not horizontal.}
+
+\ccMethod{R::FT               y_at_x(const R::FT &x) const;}
+       {returns the $y$-coordinate of the point at \ccVar\ with
+        given $x$-coordinate.
+        \ccPrecond \ccVar\ is not vertical.}
+
+\ccHeading{Predicates}
+
+\ccMethod{bool is_degenerate() const;}
+       {line \ccVar\ is degenerate, if the coefficients \ccStyle{a} and 
+        \ccStyle{b} of the line equation are zero.}
+
+\ccMethod{bool is_horizontal() const;}
+       {}
+\ccGlue
+\ccMethod{bool is_vertical() const;}
+       {}
+
+\ccMethod{Oriented_side oriented_side(const Point_2<R> &p) const;}
+       {returns \ccStyle{ON_ORIENTED_BOUNDARY},
+        \ccStyle{ON_NEGATIVE_SIDE}, or the constant
+        \ccStyle{ON_POSITIVE_SIDE},
+        depending on the position of $p$  relative to the oriented line \ccVar.
+        }
+
+
+For convenience we provide the following boolean functions:
+
+\ccMethod{bool has_on(const Point_2<R> &p) const;}
+       {}
+%%\ccGlue
+%%\ccMethod{bool has_on_boundary(const Point_2<R> &p) const;}
+%%       {returns \ccStyle{has_on()}.}
+\ccGlue
+\ccMethod{bool has_on_positive_side(const Point_2<R> &p) const;}
+       {}
+\ccGlue
+\ccMethod{bool has_on_negative_side(const Point_2<R> &p) const;}
+       {}
+
+\ccHeading{Miscellaneous}
+
+\ccMethod{Direction_2<R> direction() const;}
+       {returns the direction of \ccVar.}
+
+\ccMethod{Line_2<R>      opposite() const;}
+       {returns the line with opposite direction.}
+
+\ccMethod{Line_2<R>      perpendicular(const Point_2<R> &p) const;}
+        {returns the line perpendicular to \ccVar\ and passing through $p$,
+         where the direction is the direction of \ccVar\ rotated 
+         counterclockwise by 90 degrees.}
+
+\ccMethod{Line_2<R>  transform(const Aff_transformation_2<R> &t) const;}
+       {returns the line obtained by applying $t$ on a point on \ccVar\ 
+        and the direction of \ccVar.}
+
+
+%\ccImplementation
+%Lines are implemented as a line equation. 
+%Construction from points or a point and a direction, might lead to 
+%loss of precision if the number type is not exact.
+
+\ccExample
+Let us first define two Cartesian two-dimensional points in the Euclidean 
+plane $\E^2$. Their
+dimension and the fact that they are Cartesian is expressed by
+the suffix \ccStyle{_2} and the representation type \ccStyle{Cartesian}.
+
+\begin{cprog}
+
+  Point_2< Cartesian<double> >  p(1.0,1.0), q(4.0,7.0);
+\end{cprog} 
+
+To define a line $l$ we write:
+
+\begin{cprog}
+
+  Line_2< Cartesian<double> > l(p,q);
+\end{cprog} 
+
+\ccSeeAlso
+\ccRefConceptPage{Kernel::Line_2} \\
+
+\end{ccRefClass} 

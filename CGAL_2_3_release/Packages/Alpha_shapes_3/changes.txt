@@ -1,0 +1,12 @@
+version 3.0:
+doc revision for release.
+
+version 2.0:
+using multimaps
+small design changes for 2D/3D compatibility.
+ex . new iterators added to describe the alpha shape for a certain value alpha.
+facets are now described as a pair of interior cell and the corresponding 
+index. predicates and constructions are now function objects. 
+
+version 1.0:
+First submission.

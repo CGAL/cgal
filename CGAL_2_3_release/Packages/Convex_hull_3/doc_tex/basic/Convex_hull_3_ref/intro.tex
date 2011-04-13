@@ -1,0 +1,68 @@
+% +------------------------------------------------------------------------+
+% | Reference manual page: Convex_hull_3_ref/intro.tex
+% +------------------------------------------------------------------------+
+% | 10.5.2001   Susan Hert 
+% | Package: Convex_hull_3
+% | 
+% |
+% +------------------------------------------------------------------------+
+
+%\clearpage
+%\section{Reference Pages for 3D Convex Hulls}
+\chapter{3D Convex Hulls}
+\label{chap:convex_hull_3_ref}
+
+A subset $S \subseteq \R^3$ is convex if for any two points $p$ and $q$
+in the set the line segment with endpoints $p$ and $q$ is contained
+in $S$. The convex hull\ccIndexMainItemDef{convex hull} of a set $S$ is 
+the smallest convex set containing
+$S$. The convex hull of a set of points $P$ is a convex 
+polytope with vertices in $P$.  A point in $P$ is an extreme point 
+(with respect to $P$)\ccIndexMainItemDef{extreme point} if it is a vertex 
+of the convex hull of $P$.
+
+\cgal\ provides functions for computing convex hulls in two, three 
+and arbitrary dimensions as well as functions for testing if a given set of 
+points in is strongly convex or not.  This chapter describes the functions
+available for three dimensions. 
+
+
+\ccHeading{Assertions}
+\ccIndexSubitem{convex hull, 3D}{assertion flags}
+\ccIndexSubitem{assertion flags}{convex hull, 3D}
+The assertion flags for the convex hull and extreme point algorithms
+use \ccc{CH} in their names (\textit{e.g.}, \ccc{CGAL_CH_NO_POSTCONDITIONS}).
+For the convex hull algorithms, the postcondition
+check tests only convexity (if not disabled), but not containment of the
+input points in the polygon or polyhedron defined by the output points.
+The latter is considered an expensive checking and can be enabled by
+defining \ccc{CGAL_CH_CHECK_EXPENSIVE}%
+\ccIndexAssertionFlagName{CGAL_CH_CHECK_EXPENSIVE}.
+
+
+\ccHeading{Concepts}
+
+%\ccRefConceptPage{ConvexHull3fromD_Rep}\\
+\ccRefConceptPage{ConvexHullPolyhedron_3}\\
+\ccRefConceptPage{ConvexHullPolyhedronFacet_3}\\
+\ccRefConceptPage{ConvexHullPolyhedronHalfedge_3}\\
+\ccRefConceptPage{ConvexHullPolyhedronVertex_3}\\
+\ccRefConceptPage{ConvexHullTraits_3} \\
+\ccRefConceptPage{IsStronglyConvexTraits_3}
+
+\ccHeading{Traits Classes}
+
+\ccRefIdfierPage{CGAL::Convex_hull_traits_3<R>}
+
+\ccHeading{Convex Hull Functions}
+
+\ccRefIdfierPage{CGAL::convex_hull_3} \\
+\ccRefIdfierPage{CGAL::convex_hull_incremental_3} 
+
+\ccHeading{Convexity Checking Function}
+
+\ccRefIdfierPage{CGAL::is_strongly_convex_3} 
+
+\clearpage
+
+\lcHtml{\ccHeading{Alphabetical Listing of Reference Pages}}

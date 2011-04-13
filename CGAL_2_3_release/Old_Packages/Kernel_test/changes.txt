@@ -1,0 +1,328 @@
+3.34   (25 July 2001)
+- fixed use of constructive predicate and deprecated cmp_ and _dist_ functions
+- fixed LEDA kernel test by adding predicates with new names
+
+3.33   (23 July 2001)
+- renamed cmp_* to compare_* and *_dist_* to *_distance_* and
+  leftturn, Leftturn, LEFTTURN to left_turn, Left_turn, LEFT_TURN and
+  rightturn, Rightturn, RIGHTTURN to right_turn, Right_turn, RIGHT_TURN
+  and compare_lexicographically* to compare_*
+
+3.32   (23 July 2001)
+- Remove -pedantic from makefiles.  Don't submit cgal_test.
+
+3.31   (20 July 2001)
+- restored Less_distance_to_point_[23] with default constructors
+- removed remaining constructive predicates in Kernel traits
+
+3.30   (10 July 2001)
+- additions of function objects following discussion of kernel traits
+- New predicate : coplanar_orientation(3 points).
+
+3.29   (26 June 2001)
+- Remove references to obsolete Equal_xy_2, Equal_xyz_3,
+  Less_distance_to_point_2 and Less_distance_to_point_3.
+
+3.28   (21 June 2001)
+- Really test circumcenter(3 Point_3).
+- Other updates.
+
+3.27   (20 June 2001)
+- added Construct_orthogonal_vector_3 and Construct_opposite_vector_[23]
+
+3.26   (19 June 2001)
+- added Construct_centroid_[23] and centroid
+
+3.25   (19 June 2001)
+- Add Bounded_side_2 and Bounded_side_3
+
+3.24   (13 June 2001)
+- Add std::endl to test_cls_quotient so that it's more readable.
+
+3.23   (30 May 2001)
+- Remove Compare_distance_to_point_[23].
+
+3.22   (29 May 2001)
+- Add Compare_distance_[23].
+
+3.21   (16 May 2001)
+- Commonize the definition of Precise_[integer|rational].
+- Use MP_Float when neither LEDA or GMP are supported.
+
+3.20   (1 May 2001)
+- angle.
+- Removed obsolete uses of CGAL_STRICT21 and CGAL_STRICT_09.
+- compare_x_at_y 
+- Less_signed_distance_to_plane_3
+- Has_on_3(Plane, Point)
+
+3.19   (27 Apr 2001)
+- Rename construct_tetrahedron_object to construct_tetrahedron_3_object.
+
+3.18   (26 Apr 2001)
+- Change coplanar_side_of_oriented_circle
+  to     coplanar_side_of_bounded_circle.
+
+3.17   (13 Apr 2001)
+- coplanar_side_of_oriented_circle(p,q,r,t).
+
+3.16   (23 Mar 2001)
+- Add Construct_center_[23].
+
+3.15   (20 Mar 2001)
+- Add squared_radius() and Compute_squared_radius_2 and 3.
+
+3.14   (16 Mar 2001)
+- Added constructor Vector(Point, Point).
+- Add side_of_bounded_circle() and side_of_bounded_sphere().
+
+3.13   (6 Mar 2001)
+- Added Compute_squared_distance_2 and 3.
+
+3.12   (21 Feb 2001)
+- Added test for Construct_cross_product_vector_3.
+
+ 3.11   (19 Feb 2001)
+
+- resubmit with test/KernelSimpleHomogeneous.
+
+ 3.10   (14 Feb 2001)
+
+- added test for new function in Iso_* classes
+
+ 3.9   (13 Feb 2001)
+
+- added tests for several function objects in _test_new_2.h and _test_new_3.h
+- added tests for area(), squared_area(), volume()
+- added a test directory for Simple_homogeneous<>.
+
+ 3.8   (08 Oct 2000)
+
+- #ifdef TEST_SPHERE removed in _test_3(.)
+  i.e., sphere test activated by default
+
+ 3.7   (20 Sep 2000)
+
+- test/LedaKernel/include/CGAL/predicates_on_points_rat_leda_2.h
+  modified to please Borland bcc 5.5
+
+ 3.6   (07 Sep 2000)
+
+- test for Line_2::projection() added  :)
+
+ 3.5   (11 Aug 2000)
+
+- bug in test/Kernel/include/CGAL/_test_new_2.h fixed
+  missing _2 with Compute_y_at_x
+
+ 3.4   (27 Jun 2000)
+
+- test for determinant functions added
+- check for flag NEW_KERNEL_TRAITS removed
+- flag TEST_SPHERE added
+
+ 3.3   (19 Jun 2000)
+
+- test for Sphere_3 added
+
+ 3.2   (07 Apr 2000)
+
+- tests for new additional kernel traits added:
+  * * * * * * * * * * * *
+   Object_2
+   Assign_2
+   Construct_perpendicular_direction_2
+   Construct_bisector_2
+   Compare_xy_2
+   Equal_xy_2
+   Less_x_2
+   Less_y_2
+   Counterclockwise_in_between_2
+  * * * * * * * * * * * *
+   Object_3
+   Assign_3
+   Equal_xyz_3
+   Compare_xy_3
+   Equal_xy_3
+   Less_x_3
+   Less_y_3
+   Less_z_3
+   Less_xy_3
+   Less_distance_to_point_3
+  * * * * * * * * * * * *
+  currently active only if flag NEW_KERNEL_TRAITS is defined
+
+ 3.1   (17 Feb 2000)
+
+- test for Direction_2::counterclockwise_in_between added
+
+ 3.0   (02 Feb 2000)
+
+- directory structure reorganized
+  Kernel                : basic tests and include/CGAL/_test*
+  KernelCartesian       : tests for Cartesian Kernel
+  KernelHomogeneous     : tests for homogeneous Kernel
+  KernelSimpleCartesian : tests for simple Cartesian
+  The tests include tests for NewKernel, i.e. NewKernel is obsolete now
+
+%%%%%%%%%%%%%%%%%%%%%%   R e l e a s e  2 . 1   %%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+2.3.3 -> 2.3.4 (18 Nov 99)
+- missing CFG added in flag for Koenig lookup in 
+  <predicates_on_points_rat_leda_2.h>
+- forward declarations added in <rat_leda.h>
+
+2.3.2 -> 2.3.3 (12 Nov 99)
+- workaround for M$VC++ and LedaKernel (no Koenig lookup) added to 
+  <predicates_on_points_rat_leda_2.h>
+- test for Iso_cuboid_3 added, flagged with CGAL_STRICT21
+- gnuR template parameter renamed to R (Borland problem)
+  (was a workaround for problems with obsolete g++-2.7.2)
+
+2.3.1 -> 2.3.2  (07 Nov 99)
+- IDENTITY transformation used for transformation ident in
+  test_cls_aff_transformation_2()
+- IDENTITY transformation used for transformation ident in
+  test_cls_aff_transformation_3()
+
+2.3   -> 2.3.1  (04 Nov 99)
+- test for LEDA kernel fixed: specialisation for orientation<R>() function
+  template defined
+
+2.2.2 -> 2.3    (14 Oct 99)
+- typedef Precise_integer introduced
+  set to CGAL::Gmpz, if CGAL_USE_GMP is defined
+  else to leda_integer, if CGAL_USE_LEDA is defined
+- #if (__GNUG__ == 2) && (__GNUC_MINOR__==91)
+  CGAL::Vector_3<R> vv = d2.to_vector();
+  #else ...                 ^^^
+  used in _test_cls_direction_3.C instead of call of vector(), which causes
+  i.c.e., idem in _test_cls_plane_3.C
+
+2.2.1 -> 2.2.2  (28 Sep 99)
+- updated use_rat_leda class in test/LedaKernel
+
+2.2   -> 2.2.1  (17 Sep 99)
+- added tiny (=needs extension) test for 3D distance predicates
+
+2.1.2 -> 2.2    (14 Sep 99)
+- revised test for _d part:
+  split into homogeneous and Cartesian test
+- made sure that Homogeneous is included first :)
+
+2.1.1 -> 2.1.2  (05 Sep 99)
+- /bin/rm replaced by rm in cgal_test in test/Kernel
+- new makefile in test/Kernel
+
+2.1   -> 2.1.1  (09 Aug 99)
+- test for coplanar_orientation() added
+
+2.0.6 -> 2.1    (05 Aug 99)
+- cout and endl qualified by std::  (for mips 7.3)
+- $(OBJ_EXT) used in makefile       (for M$ VC++ )
+
+%%%%%%%%%%%%%%%%%%%%%%   R e l e a s e  2 . 0   %%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+2.0.5 -> 2.0.6  (20 May 99)
+- test for equality of Tetrahedra extended 
+
+2.0.4 -> 2.0.5  (24 Mar 99)
+- packaging script updated
+
+2.0.3 -> 2.0.4  (24 Mar 99)
+- test dir split into Kernel and LedaKernel (test_with_leda_kernel_2.C)
+
+2.0.2 -> 2.0.3  (24 Mar 99)
+- _test-functions moved from namespace CGAL into global scope
+
+2.0.1 -> 2.0.2  (25 Feb 99)
+- CGAL_[BEGIN|END]_NAMESPACE used
+
+2.0   -> 2.0.1  (11 Feb 99)
+- test/Kernel/cgal_test corrected
+- various bugs in testfiles fixed (especially missing includes of
+  <Quotient.h> added)
+
+1.4.2 -> 2.0
+- namespace CGAL { } introduced
+
+%%%%%%%%%%%%%%%%%%%%%%   R e l e a s e  1 . 2   %%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+1.4.1 -> 1.4.2
+- fixed bug in CGAL_Point_2<CGAL_use_rat_leda_kernel> in rat_leda.h
+
+1.4   -> 1.4.1
+- make clean in <test/Kernel/makefile> updated
+
+1.3   -> 1.4
+- test for using 2D leda_rat-kernel added
+- test for 2D predicate objects added
+
+1.2.4 -> 1.3
+- test cases (p==r) for CGAL_collinear_are_ordered_along_line(p,q,r) added
+- tests ORIGIN [!=]= Point_[23] encapsulated in #ifdef ENHANCED ,
+  since the current kernel doesn't pass this test
+- Plane_3::to_2d more thoroughly tested
+- Point_[23] [!=]= ORIGIN tests added
+
+%%%%%%%%%%%%%%%%%%%%%%   R e l e a s e  1 . 1   %%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+1.2.3 -> 1.2.4
+- copy-and-past mess in point_d_test.C cleaned up
+
+1.2.2 -> 1.2.3
+- in point_d_test.C:  `int 100'  replaced by `const int 100'.
+
+1.2.1 -> 1.2.2
+- point_d_test.C replaced; buffer allocation now static.
+
+1.2   -> 1.2.1
+- point_d_test.C made part of this package
+
+1.1.3 -> 1.2
+- test for basic_constructions_3 added
+- test for basic_constructions_2 added
+- tests test_new_partsC_.C / test_new_partsH_.C added
+  and test_basic_constructionsH3 removed
+- test for order along line 3D revised
+  test for strict order along line 3D added
+- tests for in_sphere tests (side_of...sphere) added
+- tests for consistency between definition of orientation and 
+  bounded side of implicitly defined sphere added
+- test for cross_product checked
+ 
+%%%%%%%%%%%%%%%%%%%%%%   R e l e a s e  1 . 0   %%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+1.1.2 -> 1.1.3
+- test for basic_constructionsH3 added
+- test for Plane_3::projection(Point_3) added
+
+1.1.1 -> 1.1.2
+- test for point conversion functions added
+  called in test_kernel__.C
+- test for Vector/Quotient added
+
+1.1   -> 1.1.1
+- cgal_test corrected
+
+1.0.1 -> 1.1
+- Fixed some enum problems (CGAL_ON_BOUNDARY where
+  CGAL_ON_ORIENTED_BOUNDARY was expected)
+- flagged test for further new features with CGAL_STRICT09
+- added small `test' for CGAL_Object and CGAL_Quotient.
+  Called in test_kernel__.C
+
+1.0  -> 1.0.1
+- Fixed another scope-reolution problem of g++
+  in testing Line_2 with Cartesian representation
+- added tests for CGAL_are_strictly_ordered_along_line(p,q,r)
+
+0.9  -> 1.0
+Revised version of kernel test 
+- typename keyword has been added
+- additional access mfcts of aff_transformation are checked:
+  define CGAL_STRICT_09 to test release 0.9 or versions 
+  without new additional functionality
+- `bug' caused by g++-bug removed
+- Cartesian and homogeneous version are tested by separate
+  programs now

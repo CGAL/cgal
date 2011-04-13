@@ -1,0 +1,38 @@
+\begin{ccRefFunctionObjectConcept}{Kernel::HasOn_3}
+A model for this must provide:
+
+\ccCreationVariable{fo}
+
+\ccMemberFunction{bool operator()(const Kernel::Line_3&l,
+                                  const Kernel::Point_3&p);}
+{returns true iff $p$ lies on $l$.}
+
+\ccMemberFunction{bool operator()(const Kernel::Ray_3&r,
+                                  const Kernel::Point_3&p);}
+{returns true iff $p$ lies on $r$.}
+
+\ccMemberFunction{bool operator()(const Kernel::Segment_3&s,
+                                  const Kernel::Point_3&p);}
+{returns true iff $p$ lies on $s$.}
+
+\ccMemberFunction{bool operator()(const Kernel::Plane_3&pl,
+                                  const Kernel::Point_3&p);}
+{returns true iff $p$ lies on $pl$.}
+
+\ccMemberFunction{bool operator()(const Kernel::Triangle_3&t,
+                                  const Kernel::Point_3&p);}
+{returns true iff $p$ lies on $t$.}
+
+\ccRefines
+AdaptableFunctor
+
+\ccSeeAlso
+\ccRefIdfierPage{CGAL::Line_3<R>} \\
+\ccRefIdfierPage{CGAL::Plane_3<R>} \\
+\ccRefIdfierPage{CGAL::Ray_3<R>} \\
+\ccRefIdfierPage{CGAL::Segment_3<R>} \\
+\ccRefIdfierPage{CGAL::Sphere_3<R>} \\
+\ccRefIdfierPage{CGAL::Triangle_3<R>} \\
+
+
+\end{ccRefFunctionObjectConcept}

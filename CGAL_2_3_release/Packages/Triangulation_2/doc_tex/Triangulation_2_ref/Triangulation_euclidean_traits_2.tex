@@ -1,0 +1,127 @@
+% +------------------------------------------------------------------------+
+% | Reference manual page: Triangulation_euclidean_traits_2.tex
+% +------------------------------------------------------------------------+
+% | 06.04.2000   Author
+% | Package: Package
+% | 
+\RCSdef{\RCSTriangulationeuclideantraitsRev}{$Revision$}
+\RCSdefDate{\RCSTriangulationeuclideantraitsDate}{$Date$}
+% |
+%%RefPage: end of header, begin of main body
+% +------------------------------------------------------------------------+
+
+
+\begin{ccRefClass}{Triangulation_euclidean_traits_2<R>}  %% add template arg's if necessary
+
+%% \ccHtmlCrossLink{}     %% add further rules for cross referencing links
+%% \ccHtmlIndexC[class]{} %% add further index entries
+\ccCreationVariable{traits}
+\ccDefinition
+  
+The class \ccRefName\ is a model for the \ccc{Triangulation_traits_2}
+and \ccc{Delaunay_triangulation_traits_2} 
+concepts. It uses types defined in \cgal\ kernel
+as geometric primitives types.
+
+\ccInclude{Triangulation_euclidean_traits_2.h}
+
+\ccIsModel 
+
+\ccc{TriangulationTraits_2} \\
+\ccc{DelaunayTriangulationTraits_2}
+
+\ccTypes
+\ccThree{typedef Triangle_2<R>}{Triangle_2}{}
+\ccTypedef{typedef CGAL::Point_2<R>  Point_2;}{}
+\ccGlue
+\ccTypedef{typedef CGAL::Segment_2<R>   Segment_2;}{}
+\ccGlue
+\ccTypedef{typedef CGAL::Triangle_2<R>   Triangle_2;}{}
+\ccGlue
+\ccTypedef{typedef CGAL::Line_2<R> Line_2;}{}
+\ccGlue
+\ccTypedef{typedef CGAL::Direction_2<R> Direction_2;}{}
+\ccGlue
+\ccTypedef{typedef CGAL::Ray_2<R>  Ray_2;}{}
+
+The following predicates and constructor types are provided
+
+\ccNestedType{Construct_segment_2}
+\ccGlue
+\ccNestedType{Construct_triangle_2}
+\ccGlue
+\ccNestedType{Compare_x_2}{}
+\ccGlue
+\ccNestedType{Compare_y_2}{}
+\ccGlue
+\ccNestedType{Orientation_2}{}
+\ccGlue
+\ccNestedType{Side_of_oriented_circle_2}{}
+\ccGlue
+\ccNestedType{Compare_distance_2}
+\ccGlue
+\ccNestedType{Construct_circumcenter_2}{}
+\ccGlue
+\ccNestedType{Construct_bisector_2}{}
+\ccGlue
+\ccNestedType{Construct_ray_2}{}
+\ccGlue
+\ccNestedType{Construct_direction_of_line_2}{}
+
+\ccHeading{Access to predicate objects}
+The following access functions are provided
+
+\ccMethod{Construct_segment_2 construct_segment_2_object();}
+\ccGlue
+\ccMethod{Construct_triangle_2 construct_triangle_2_object();}
+\ccGlue
+\ccMethod{Comparison_x_2 compare_x_2_object();}{}                               \ccGlue
+\ccMethod{Comparison_y_2 compare_y_2_object();}{}
+\ccGlue
+\ccMethod{Orientation_2  orientation_2_object();}{}
+\ccGlue
+\ccMethod{Side_of_oriented_circle_2
+          side_of_oriented_circle_2_object();}{}
+\ccGlue
+\ccMethod{Compare_distance_2 compare_distance_2_object();}{}
+\ccGlue
+\ccMethod{Construct_circumcenter_2 construct_circumcenter_2_object();}{}
+\ccGlue
+\ccMethod{Construct_bisector_2 construct_bisector_2_object();}{}
+\ccGlue
+\ccMethod{Construct_ray_2 construct_ray_2_object();}{}
+\ccGlue
+\ccMethod{Construct_direction_of_line_2 
+          construct_direction_of_line_2_object();}{} 
+
+\ccSeeAlso
+\ccc{TriangulationTraits_2} \\
+\ccc{DelaunayTriangulationTraits_2} \\
+\ccc{CGAL::Triangulation_2<Traits,Tds>}\\
+\ccc{CGAL::Delaunay_triangulation_2<Traits,Tds>} \\
+\ccc{CGAL::Triangulation_euclidean_traits_xy_3<R>} \\
+
+\ccExample
+The following code creates a  valid triangulation traits class 
+for a triangulation of 2D points in usual Euclidean space
+and use it to define a triangulation class.
+
+\begin{cprog}
+
+typedef Cartesian<double> Rp;
+typedef Triangulation_euclidean_traits_2<Rp> Traits;
+typedef Triangulation_vertex_base_2<Traits> Vb;
+typedef Triangulation_face_base_2<Traits> Fb;
+typedef Triangulation_data_structure_using_list_2<Vb,Fb > Tds;
+typedef Triangulation_2<Traits,Tds> Triangulation;
+
+\end{cprog}
+
+
+\end{ccRefClass}
+
+% +------------------------------------------------------------------------+
+%%RefPage: end of main body, begin of footer
+% EOF
+% +------------------------------------------------------------------------+
+

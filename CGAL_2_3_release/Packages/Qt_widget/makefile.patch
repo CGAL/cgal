@@ -1,0 +1,20 @@
+62c62
+< # Remove the gmp entries from the install command if you don't use CLN.
+---
+> # Remove the cln entries from the install command if you don't use CLN.
+67a68,76
+> #                         Qt                                            #
+> #-----------------------------------------------------------------------#
+> # Remove the qt entries from the install command if you don't use Qt.
+> QT_DIR=/packages/qt
+> QT_INCL_DIR=$(QT_DIR)/include
+> QT_LIB_DIR=$(QT_DIR)/lib
+> QT_MOC=$(QT_DIR)/bin/moc
+> 
+> #-----------------------------------------------------------------------#
+81a91,95
+>              -qt   --QT_DIR $(QT_DIR) \
+> # uncomment this for Qt installation advanced mode
+> #	           --QT_INCL_DIR $(QT_INCL_DIR) \
+> #	           --QT_LIB_DIR $(QT_LIB_DIR) \
+> #	           --QT_MOC $(QT_MOC) \

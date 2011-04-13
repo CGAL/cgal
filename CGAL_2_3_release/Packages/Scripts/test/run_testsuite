@@ -1,0 +1,183 @@
+#! /bin/sh
+#
+# This is the test script for the CGAL-library.
+#
+# Usage:
+#   run_testsuite                  for running the test suite in all subdirectories
+#   run_testsuite <directory-list> for running the test suite in the listed
+#                                  subdirectories
+#
+# To use this script you have to do two things:
+#
+# 1) enter the makefiles of the platforms that you want to test with (below)
+# 2) set some additional compiler and or linker flags
+
+TESTSUITE_CXXFLAGS=""
+TESTSUITE_LDFLAGS=""
+
+CURRENTDIR=`pwd`
+ERRORFILE=${CURRENTDIR}/error.txt
+
+#clear the error file
+rm -f $ERRORFILE
+touch $ERRORFILE
+
+# Wait for process with pid $1.
+# Wait for $2 periods of $3 seconds, checking after every period
+# if the watched process has finished.
+wait_for_process()
+{
+    pid=$1;
+    cycles=$2
+    period=$3
+    while [ $cycles -ne 0 ]
+    do
+        cycles=`expr $cycles - 1`  
+# send SIGCONT to the process and check the exit value of kill.
+# If the process still exists, the call to kill succeeds (and the signal is
+# ignored).
+        
+        kill -CONT $pid 2>kill_output 1>/dev/null;   terminated=$?
+# But under CYGWIN the exit status is not to be trusted.
+	if [ $terminated -eq 0 ]; then
+	    if grep -i 'no such process' kill_output; then
+		terminated=1;
+	    fi
+	fi
+	rm -f kill_output
+	if [ $terminated -eq 0 ]
+        then
+            sleep $period
+        else
+            cycles=0
+            running=0
+        fi
+    done
+    if [ $terminated -eq 0 ]
+    then
+    	if false; then
+# Send signal Terminate (SIGTERM) to the whole process group.
+# First disable the default action (quit) for the current process.
+	    trap true TERM
+	    kill -TERM 0
+	    trap TERM
+	else
+# But for the moment only send SIGTERM to the process itself.
+	    kill -TERM $pid
+	fi
+        return 1  
+    fi
+    return 0
+}
+
+run_local_cgal_test()
+{
+    eval ./cgal_test >current_compiler_output 2>&1
+    exit_value=$?
+    if [ $exit_value -ne 0 ]
+    then
+         echo $exit_value > test_failure
+    fi
+}
+
+#test_directory <directory>
+test_directory()
+{
+  cd $CURRENTDIR
+  if [ -d $1 ] ; then
+    echo "DIRECTORY $1:"                
+    echo                                
+
+    echo "DIRECTORY $1:"                 >> $ERRORFILE
+    echo                                 >> $ERRORFILE
+    cd $1
+
+    COMPILER_OUTPUT=CompilerOutput_$PLATFORM
+    rm -f $COMPILER_OUTPUT
+    ERROR_OUTPUT=ErrorOutput_$PLATFORM
+    rm -f $ERROR_OUTPUT
+
+    echo "------------------------------------------------------------------" >> $COMPILER_OUTPUT
+    echo "- Compiler output from platform $PLATFORM"                          >> $COMPILER_OUTPUT
+    echo "------------------------------------------------------------------" >> $COMPILER_OUTPUT
+    echo                                                                      >> $COMPILER_OUTPUT
+
+    echo "------------------------------------------------------------------" >> $ERROR_OUTPUT
+    echo "- Error output from platform $PLATFORM"                             >> $ERROR_OUTPUT
+    echo "------------------------------------------------------------------" >> $ERROR_OUTPUT
+    echo                                                                      >> $ERROR_OUTPUT
+
+    if [ -f cgal_test -a -x cgal_test ] ; then
+      export PLATFORM CGAL_MAKEFILE TESTSUITE_CXXFLAGS TESTSUITE_LDFLAGS
+      rm -f error.txt
+      run_local_cgal_test &
+
+      if wait_for_process "$!" "1200" "5"
+      then
+	if [ -f test_failure  ] ; then
+            exit_failure=`cat test_failure`
+	    rm -f test_failure
+	    echo "ERROR: cgal_test exited with error condition $exit_value" >> $ERRORFILE
+	    echo "ERROR: cgal_test exited with error condition $exit_value" >> $ERROR_OUTPUT
+	fi
+      else
+	echo "ERROR: cgal_test did not finish within the time bound set" >> $ERRORFILE
+	echo "ERROR: cgal_test did not finish within the time bound set" >> $ERROR_OUTPUT
+      fi
+      cat current_compiler_output >> $COMPILER_OUTPUT
+      cat current_compiler_output
+      rm -f current_compiler_output 
+
+      if [ -f error.txt ] ; then
+        cat error.txt >> $ERRORFILE
+        cat error.txt >> $ERROR_OUTPUT
+      else
+        echo "ERROR: the script cgal_test failed to generate output" >> $ERRORFILE
+      fi
+    else
+      echo "      Could not execute the script cgal_test in directory $1"
+      echo "ERROR: could not execute the script $1/cgal_test" >> $ERRORFILE
+    fi
+    echo >> $ERRORFILE
+    echo >> $ERROR_OUTPUT
+  fi
+  echo
+}
+
+#run_testsuite <makefile>
+run_testsuite()
+{
+  CGAL_MAKEFILE=$1
+  PLATFORM=`basename $1 | sed -e "s/makefile_//g"`
+
+  echo "---------------------------------------------------------------"
+  echo "- Testing platform $PLATFORM"                         
+  echo "---------------------------------------------------------------"
+  echo                                                                  
+
+  echo "---------------------------------------------------------------" >> $ERRORFILE
+  echo "- TEST RESULTS FROM PLATFORM $PLATFORM"                          >> $ERRORFILE
+  echo "---------------------------------------------------------------" >> $ERRORFILE
+  echo                                                                   >> $ERRORFILE
+
+  for DIR in $TEST_DIRECTORIES ; do
+    test_directory $DIR
+  done
+}
+
+if [ -z "$1" ] ; then
+  TEST_DIRECTORIES=`ls`
+else
+  TEST_DIRECTORIES="$*"
+fi
+
+#-------------------------------------------------------------------$
+# Add a line
+#
+# run_testsuite <include makefile>
+#
+# for all platforms that you want to test with.
+#-------------------------------------------------------------------$
+
+run_testsuite $CGAL_MAKEFILE
+

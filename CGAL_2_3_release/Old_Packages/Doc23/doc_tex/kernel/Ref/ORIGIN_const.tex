@@ -1,0 +1,23 @@
+\begin{ccRefConstant}{ORIGIN}
+
+\ccGlobalVariable{const Origin ORIGIN;}
+
+\ccDefinition
+A symbolic constant which denotes the point at the origin.
+This constant is used in the conversion between points and vectors.
+
+\ccExample
+
+\begin{cprog}
+  Point_2< Cartesian<Exact_NT> >  p(1.0, 1.0), q;
+  Vector2< Cartesian<Exact_NT> >  v;
+  v = p - ORIGIN;
+  q = ORIGIN + v;  
+  assert( p == q );
+\end{cprog} 
+
+\ccSeeAlso
+\ccRefIdfierPage{CGAL::Point_2<R>} \\
+\ccRefIdfierPage{CGAL::Point_3<R>} \\
+
+\end{ccRefConstant}

@@ -1,0 +1,123 @@
+% +------------------------------------------------------------------------+
+% | Reference manual page: Triangulation_vertex_3.tex
+% +------------------------------------------------------------------------+
+% | 27.3.2000   Monique Teillaud
+% | Package: Triangulation3
+% | 
+\RCSdef{\RCSTriangulationvertexRev}{$Revision$}
+\RCSdefDate{\RCSTriangulationvertexDate}{$Date$}
+% |
+%%RefPage: end of header, begin of main body
+% +------------------------------------------------------------------------+
+
+
+\begin{ccRefClass}[Triangulation_3<TriangulationTraits_3,TriangulationDataStructure_3>::]{Vertex}  %% add template arg's if necessary
+
+%% \ccHtmlCrossLink{}     %% add further rules for cross referencing links
+%% \ccHtmlIndexC[class]{} %% add further index entries
+
+\ccDefinition
+  
+The class \ccRefName\ represents a vertex of a 3D triangulation. 
+It stores a point and gives access to an incident face of 
+maximal dimension.
+
+\ccInclude{CGAL/Triangulation_vertex_3.h}
+
+\ccInheritsFrom
+\ccc{TriangulationDataStructure_3::Vertex}
+
+\ccTypes
+\ccThree{typedef TriangulationTraits_3::Pointxx}{Pointxx}{}
+\ccThreeToTwo
+The class \ccClassTemplateName\ defines the following types, also
+defined in the class \ccc{Triangulation_3<TriangulationTraits_3,TriangulationDataStructure_3>}:
+
+\ccTypedef{typedef TriangulationTraits_3::Point Point;}{point type}
+\ccGlue
+\ccNestedType{Vertex_handle}{handle to a vertex}
+\ccGlue
+\ccNestedType{Cell_handle}{handle to a cell}
+
+\ccCreationVariable{v}  %% choose variable name
+
+\begin{ccAdvanced}
+\ccCreation
+
+The user is not allowed to allocate and destruct vertices outside of the
+triangulation data structure. The latter provides methods to deal with these
+issues. 
+
+%The user needs to construct vertices explicitly only when implementing his
+%own triangulation algorithms. If he uses the standard ways proposed by 
+%\cgal\ to construct a triangulation, he does not need the following
+%constructors. 
+%\ccThree{Vertex_handle}{v(Point & p, Cell_handle c)()}{}
+
+%\ccConstructor{{Triangulation_vertex_3<TriangulationTraits_3,TriangulationDataStructure_3>}();}
+%{Introduces a new vertex. The geometric information is initialized by
+%the default constructor of the class \ccc{Point}. A test on the handle
+%to the incident cell of \ccVar\ for equality with \ccc{NULL} will
+%answer \ccc{true}.} 
+
+%\ccConstructor{{Triangulation_vertex_3<TriangulationTraits_3,TriangulationDataStructure_3>}
+%(const Point & p);}
+%{Introduces vertex \ccVar, and initializes its geometric information.
+%A test on the handle
+%to the incident cell of \ccVar\ for equality with \ccc{NULL} will
+%answer \ccc{true}.}
+
+%\ccConstructor{{Triangulation_vertex_3<TriangulationTraits_3,TriangulationDataStructure_3>}
+%(const Point & p, Cell_handle c);}
+%{Introduces vertex \ccVar, and initializes the geometric information and 
+%the handle to the incident cell.}
+
+%\ccConstructor{{Triangulation_vertex_3<TriangulationTraits_3,TriangulationDataStructure_3>}
+%(Cell_handle c);}
+%{Introduces vertex \ccVar, and initializes the handle to the incident cell.}
+
+%\ccConstructor{Triangulation_vertex_3();}{default constructor.}
+
+\ccOperations
+
+\ccHeading{Setting}
+\ccMethod{void set_cell(Cell_handle c);}
+{Sets \ccVar's cell to \ccc{c}}
+\ccMethod{void set_point(const Point & p);}
+{Sets \ccVar's point to \ccc{p}}
+
+\end{ccAdvanced}
+
+\ccAccessFunctions
+
+\ccMethod{Point point() const;}
+{Returns the geometric information of \ccVar.}
+
+\ccMethod{Cell_handle cell() const;}
+{Finds a cell of the triangulation having \ccVar\ as
+vertex. Remember that in degenerate dimensions, a cell stores a face
+of maximal dimension (Section~\ref{Triangulation3-sec-intro}).}
+
+\ccMethod{Vertex_handle handle() const;}
+{Returns a handle to the vertex.}
+
+%\begin{ccAdvanced}
+%\ccHeading{Checking}
+
+%\ccMethod{bool is_valid(bool verbose = false) const;} 
+%{Calls the \ccc{is_valid()} method of the \ccc{Tds_3} vertex class.\\
+%When \ccc{verbose} is set to \ccc{true}, messages are printed to give
+%a precise indication on the kind of invalidity encountered.} 
+%\end{ccAdvanced} 
+
+\ccSeeAlso
+
+\ccc{CGAL::Triangulation_3<TriangulationTraits_3,TriangulationDataStructure_3>::Cell}.
+
+\end{ccRefClass}
+
+% +------------------------------------------------------------------------+
+%%RefPage: end of main body, begin of footer
+% EOF
+% +------------------------------------------------------------------------+
+

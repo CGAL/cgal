@@ -1,0 +1,136 @@
+% +------------------------------------------------------------------------+
+% | CGAL Reference Manual: Forward_container_from_circulator.tex
+% +------------------------------------------------------------------------+
+% | Requirements for circulators in analogy to STL iterators.
+% | Adaptors between circulators and iterators.
+% | Proposal for CGAL.
+% |
+% | 11.10.1996   Lutz Kettner
+% | 
+% | \RCSdef{\circRev}{$Revision$}
+% | \RCSdefDate{\circDate}{$Date$}
+% +------------------------------------------------------------------------+
+
+% +-----------------------------------------------------+
+\begin{ccRefClass}{Container_from_circulator<C>}
+
+\ccDefinition
+
+The adaptor \ccClassTemplateName\ is a class that converts any
+circulator type \ccStyle{C} to a kind of container class, i.e.~a class
+that provides an \ccStyle{iterator} and a \ccStyle{const_iterator}
+type and two member functions -- \ccStyle{begin()} and \ccStyle{end()}
+-- that return the appropriate iterators. By analogy to \stl\
+container classes these member functions return a const iterator in
+the case that the container itself is constant and a mutable iterator
+otherwise.
+
+\ccInclude{CGAL/circulator.h}
+
+\ccTypes
+
+\ccTypedef{typedef C Circulator;}{}
+\ccGlue
+\ccNestedType{iterator}{}
+\ccGlue
+\ccNestedType{const_iterator}{}
+\ccGlue
+\ccNestedType{value_type}{}
+\ccGlue
+\ccNestedType{reference}{}
+\ccGlue
+\ccNestedType{const_reference}{}
+\ccGlue
+\ccNestedType{pointer}{}
+\ccGlue
+\ccNestedType{const_pointer}{}
+\ccGlue
+\ccNestedType{size_type}{}
+\ccGlue
+\ccNestedType{difference_type}{}
+
+\ccCreation
+
+\ccCreationVariable{container}
+\ccSetTwoColumns{Circulator}{}
+
+\ccConstructor{Container_from_circulator();}{%
+    any iterator of \ccc{container} will have a singular value.}
+
+\ccConstructor{Container_from_circulator(const C& c);}{%
+    any iterator of \ccc{container} will have a singular value if the 
+    circulator \ccStyle{c} corresponds to an empty sequence.}
+
+\ccOperations
+\ccSetThreeColumns{const_iterator}{container.begin() const;}{}
+
+\def\ccTagRmTrailingConst{\ccFalse}
+
+\ccMethod{iterator begin();}{the start iterator.}
+\ccGlue
+\ccMethod{const_iterator begin() const;}{the start const iterator.}
+\ccGlue
+\ccMethod{iterator end();}{the past-the-end iterator.}
+\ccGlue
+\ccMethod{const_iterator end() const;}{the past-the-end const iterator.}
+\def\ccTagRmTrailingConst{\ccTrue}
+
+The \ccc{iterator} and \ccc{const_iterator} types are of the
+appropriate iterator category. In addition to the operations required
+for their category, they have a member function
+\ccc{current_circulator()} that returns a circulator pointing to the
+same position as the iterator does.
+
+\ccSeeAlso
+
+\ccc{Circulator_from_iterator}, 
+\ccc{Circulator_from_container},
+\ccc{Circulator}.
+
+\ccExample
+
+The generic {\tt reverse()} algorithm from the \stl\ can be used with an
+adaptor if at least a bidirectional circulator {\tt c} is given.
+
+\begin{ccExampleCode}
+Circulator c;  // c is assumed to be a bidirectional circulator.
+CGAL::Container_from_circulator<Circulator> container(c);
+reverse( container.begin(), container.end());
+\end{ccExampleCode}
+
+\ccImplementation
+
+The iterator adaptor keeps track of the number of rounds a circulator
+has done around the ring-like data structure (a kind of winding
+number). It is used to distinguish between the start position and the
+end position which will be denoted by the same circulator internally.
+This winding number is zero for the \ccStyle{begin()}-iterator and one
+for the \ccStyle{end()}-iterator.  It is incremented whenever the
+internal circulator passes the \ccStyle{begin()} position. Two
+iterators are equal if their internally used circulators and winding
+numbers are equal. 
+%This is more general than necessary since 
+%the \ccStyle{end()}-iterator is not supposed to move any more, which is
+%here still possible in a defined manner. However, for random access
+%iterators it is not supported.
+This is more general than necessary since an iterator equal to
+\ccStyle{end()}-iterator is not supposed to be incremented 
+ any more, which is here still possible in a defined manner. 
+
+The implementation is different for random access iterators.
+The random access iterator has to be able to compute the size of the
+data structure in constant time. This is for example needed if the
+difference of the past-the-end iterator and the begin iterator is
+taken, which is exactly the  size of the data structure.
+Therefore, if the circulator is of the random-access category, the
+adapter chooses the minimal circulator for the internal anchor
+position. The minimal circulator is part of the random access
+circulator requirements, see
+Page~\pageref{sectionMinCircleRequ}.  For the random
+access iterator the adaptor implements a total ordering relation that
+is currently not required for random access circulators.
+
+\end{ccRefClass}
+
+% +-----------------------------------------------------+
+% EOF

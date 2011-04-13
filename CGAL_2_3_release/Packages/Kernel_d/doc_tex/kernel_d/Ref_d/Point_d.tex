@@ -1,0 +1,147 @@
+\begin{ccRefClass}{Point_d<R>}\ccCreationVariable{p}
+
+\ccDefinition
+
+
+An instance of data type \ccc{Point_d<R>} is a point of Euclidean
+space in dimension $d$. A point $p = (p_0,\ldots,p_{ d - 1 })$ in
+$d$-dimensional space can be represented by homogeneous coordinates
+$(h_0,h_1,\ldots,h_d)$ of number type \ccc{RT} such that $p_i =
+h_i/h_d$, which is of type \ccc{FT}. The homogenizing coordinate $h_d$
+is positive.
+
+We call $p_i$, $0 \leq i < d$ the $i$-th Cartesian coordinate and
+$h_i$, $0 \le i \le d$, the $i$-th homogeneous coordinate. We call $d$
+the dimension of the point.
+
+\ccSetOneOfTwoColumns{4cm}
+
+\ccTypes
+
+\ccNestedType{RT}{the ring type.  }
+
+\ccNestedType{FT}{the field type.  }
+
+\ccNestedType{LA}{the linear algebra layer.  }
+
+\ccNestedType{Cartesian_const_iterator}{a read-only iterator for the
+  Cartesian coordinates.  }
+
+\ccNestedType{Homogeneous_const_iterator}{a read-only iterator for the
+  homogeneous coordinates.  }
+
+\ccSetOneOfTwoColumns{4cm}
+
+\ccCreation
+
+\ccConstructor{Point_d<R>()}{introduces a variable \ccc{p} of
+  type \ccc{Point_d<R>}.}
+
+\ccConstructor{Point_d<R>(int d, Origin)}{introduces a variable
+  \ccc{p} of type \ccc{Point_d<R>} in $d$-dimensional space,
+  initialized to the origin.}
+
+\ccConstructor{template <class InputIterator> Point_d<R>(int d,
+  InputIterator first, InputIterator last)}{introduces a variable
+  \ccc{p} of type \ccc{Point_d<R>} in dimension \ccc{d}.  If \ccc{size
+    [first,last) == d} this creates a point with Cartesian coordinates
+  \ccc{set [first,last)}. If \ccc{size [first,last) == p+1} the range
+  specifies the homogeneous coordinates $\ccc{H = set [first,last)} =
+  (\pm h_0, \pm h_1, \ldots, \pm h_d)$ where the sign chosen is the
+  sign of $h_d$.  \ccPrecond \ccc{d} is nonnegative,
+  \ccc{[first,last)} has \ccc{d} or \ccc{d+1} elements where the last
+  has to be non-zero. \ccRequire The value type of \ccc{InputIterator}
+  is \ccc{RT}. }
+
+\ccConstructor{template <class InputIterator> Point_d<R>(int d,
+  InputIterator first, InputIterator last, RT D)}{introduces a
+  variable \ccc{p} of type \ccc{Point_d<R>} in dimension \ccc{d}
+  initialized to the point with homogeneous coordinates as defined by
+  \ccc{H = set [first,last)} and \ccc{D}: $(\pm \ccc{H[0]},
+  \pm\ccc{H[1]}, \ldots, \pm\ccc{H[d-1]}, \pm\ccc{D})$. The sign
+  chosen is the sign of $D$. \ccPrecond \ccc{D} is non-zero, the
+  iterator range defines a $d$-tuple of \ccc{RT}.  \ccRequire The
+  value type of \ccc{InputIterator} is \ccc{RT}.}
+
+\ccConstructor{Point_d<R>(RT x, RT y, RT w = 1)}{introduces a variable
+  \ccc{p} of type \ccc{Point_d<R>} in $2$-dimensional space.
+  \ccPrecond $w \neq 0$.}
+
+\ccConstructor{Point_d<R>(RT x, RT y, RT z, RT w)}{introduces a
+variable \ccc{p} of type \ccc{Point_d<R>} in $3$-dimensional
+space. \ccPrecond $w \neq 0$.  }
+
+\ccSetTwoOfThreeColumns{4cm}{3cm}
+
+\ccOperations
+
+\ccMethod{int dimension() ;}{returns the dimension of \ccc{p}.  
+}
+
+\ccMethod{FT cartesian(int i) ;}{returns the $i$-th Cartesian
+  coordinate of \ccc{p}.  \ccPrecond $0 \leq i < d$.  }
+
+\ccMethod{FT operator[](int i) ;}{returns the $i$-th Cartesian
+   coordinate of \ccc{p}.  \ccPrecond $0 \leq i < d$.  }
+ 
+\ccMethod{RT homogeneous(int i) ;}{returns the $i$-th homogeneous
+   coordinate of \ccc{p}.  \ccPrecond $0 \leq i \leq d$.  }
+ 
+\ccMethod{Cartesian_const_iterator cartesian_begin() ;}{returns an
+   iterator pointing to the zeroth Cartesian coordinate $p_0$ of
+   \ccc{p}.  }
+ 
+\ccMethod{Cartesian_const_iterator cartesian_end() ;}{returns an
+   iterator pointing beyond the last Cartesian coordinate of \ccc{p}.
+   }
+ 
+\ccMethod{Homogeneous_const_iterator homogeneous_begin() ;}{returns
+   an iterator pointing to the zeroth homogeneous coordinate $h_0$ of
+   \ccc{p}.  }
+ 
+\ccMethod{Homogeneous_const_iterator homogeneous_end() ;}{returns an
+   iterator pointing beyond the last homogeneous coordinate of
+   \ccc{p}.  }
+ 
+\ccMethod{Point_d<R> transform(const Aff_transformation_d<R>& t)
+   ;}{returns $t(p)$.  }
+
+\ccHeading{Arithmetic Operators, Tests and IO}
+
+\ccMethod{ Vector_d<R> operator-(const Origin& o) ;}{returns the
+vector $p-O$.  }
+
+\ccMethod{Vector_d<R> operator-(const Point_d<R>& q) ;}{returns $p -
+q$. \ccPrecond \ccc{p.dimension() == q.dimension()}.  }
+
+\ccMethod{Point_d<R> operator+(const Vector_d<R>& v) ;}{returns $p +
+v$. \ccPrecond \ccc{p.dimension() == v.dimension()}.  }
+
+\ccMethod{Point_d<R> operator-(const Vector_d<R>& v) ;}{returns $p -
+v$. \ccPrecond \ccc{p.dimension() == v.dimension()}.  }
+
+\ccMethod{Point_d<R>& operator+=(const Vector_d<R>& v);}{adds \ccc{v}
+to \ccc{p}.\\ \ccPrecond \ccc{p.dimension() == v.dimension()}.  }
+
+\ccMethod{Point_d<R>& operator-=(const Vector_d<R>& v);}{subtracts
+\ccc{v} from \ccc{p}.\\ \ccPrecond \ccc{p.dimension() ==
+v.dimension()}.  }
+
+\ccMethod{bool operator==(const Origin&) ;}{returns true if \ccc{p} is
+the origin.  }
+
+\ccHeading{Downward compatibility} We provide operations of the lower
+dimensional interface \ccc{x()}, \ccc{y()}, \ccc{z()}, \ccc{hx()},
+\ccc{hy()}, \ccc{hz()}, \ccc{hw()}.
+
+\ccImplementation
+
+Points are implemented by arrays of \ccc{RT} items.  All operations
+like creation, initialization, tests, point - vector arithmetic, input
+and output on a point $p$ take time $O(\ccc{p.dimension()})$.
+\ccc{dimension()}, coordinate access and conversions take constant
+time.  The space requirement for points is $O(\ccc{p.dimension()})$.
+
+\end{ccRefClass}
+
+

@@ -1,0 +1,79 @@
+\renewcommand\ccRefPageBegin{\ccParDims\cgalColumnLayout\begin{ccAdvanced}}
+\renewcommand\ccRefPageEnd{\ccParDims\cgalColumnLayout\end{ccAdvanced}}
+\begin{ccRefFunction}{partition_is_valid_2}
+
+\ccDefinition
+
+Function that determines if a given set of polygons represents
+a valid partition for a given sequence of points that 
+define a simple, counterclockwise-oriented polygon.  A valid partition is one in
+which the polygons are nonoverlapping and the union of the polygons is the 
+same as the original polygon.
+\ccIndexSubitem{polygon partitioning}{valid}
+\ccIndexSubsubitem{polygon partitioning}{convex}{valid}
+\ccIndexSubsubitem{polygon partitioning}{y-monotone}{valid}
+
+\ccInclude{CGAL/partition_is_valid_2.h}
+
+\ccFunction{
+template<class InputIterator, class ForwardIterator, class Traits>
+bool
+partition_is_valid_2 (InputIterator point_first, InputIterator point_beyond,
+                      ForwardIterator poly_first, ForwardIterator poly_beyond,
+                      const Traits& traits = Default_traits);
+}
+{
+returns \ccc{true} iff the polygons in the range [\ccc{poly_first}, 
+\ccc{poly_beyond}) define a valid partition of the polygon defined by the 
+points in the range [\ccc{point_first}, \ccc{point_beyond}) and 
+\ccc{false} otherwise.  
+Each polygon must also satisfy the property 
+tested by \ccc{Traits::Is_valid()}. 
+\ccPrecond Points in the range [\ccc{point_first}, \ccc{point_beyond}) define
+a simple, counterclockwise-oriented polygon.
+%\ccIndexSubitem[C]{partition_is_valid_2}{preconditions}
+}
+
+\ccHeading{Requirements}
+\begin{enumerate}
+    \item \ccc{Traits} is a model of the concept 
+          \ccc{PartitionIsValidTraits_2}%
+          \ccIndexMainItem[c]{PartitionIsValidTraits_2} and the
+          concept defining the requirements for the validity test 
+          implemented by \ccc{Traits::Is_valid()}.
+    \item \ccc{InputIterator::value_type} should be \ccc{Traits::Point_2},
+          which should also be the type of the points stored in an object
+          of type \ccc{Traits::Polygon_2}.
+    \item \ccc{ForwardIterator::value_type} should be 
+          \ccc{Traits::Polygon_2}.
+\end{enumerate}
+
+The default traits class \ccc{Default_traits} is \ccc{Partition_traits_2},%
+\ccIndexTraitsClassDefault{partition_is_valid_2}
+with the representation type determined by \ccc{InputIterator::value_type}.
+
+\ccSeeAlso
+
+\ccRefIdfierPage{CGAL::approx_convex_partition_2} \\
+\ccRefIdfierPage{CGAL::greene_approx_convex_partition_2} \\
+\ccRefIdfierPage{CGAL::is_y_monotone_2} \\
+\ccRefIdfierPage{CGAL::optimal_convex_partition_2} \\
+\ccRefIdfierPage{CGAL::Partition_is_valid_traits_2<Traits, PolygonIsValid>} \\
+\ccRefIdfierPage{CGAL::y_monotone_partition_2} \\
+\ccc{CGAL::is_convex_2} 
+
+\ccImplementation
+
+This function requires $O(n \log n + e \log e + \Sigma_{i=1}^p m_i)$ where $n$ 
+is the total number of vertices of the $p$ partition polygons, $e$ is the 
+total number of edges of the partition polygons and $m_i$ is the time required 
+by \ccc{Traits::Is_valid()} to test if partition polygon $p_i$ is valid.
+
+\ccExample
+
+See the example presented with the function \ccc{optimal_convex_partition_2}
+for an illustration of the use of this function.
+
+\end{ccRefFunction}
+\renewcommand\ccRefPageBegin{\ccParDims\cgalColumnLayout}
+\renewcommand\ccRefPageEnd{\ccParDims\cgalColumnLayout}

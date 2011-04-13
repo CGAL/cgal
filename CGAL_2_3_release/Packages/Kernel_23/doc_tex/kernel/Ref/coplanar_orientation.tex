@@ -1,0 +1,33 @@
+\begin{ccRefFunction}{coplanar_orientation}
+
+\ccFunction{Orientation coplanar_orientation(const Point_3<R>& p,
+                                 const Point_3<R>& q,
+                                 const Point_3<R>& r,
+                                 const Point_3<R>& s);}
+         {Let $P$ be the plane defined by the points \ccc{p}, \ccc{q},
+          and \ccc{r}. Note that the order defines the orientation of
+          $P$. The function computes the orientation of points \ccc{p}, 
+          \ccc{q}, and \ccc{s} in $P$: Iff \ccc{p}, \ccc{q}, \ccc{s} are
+          collinear, \ccc{COLLINEAR} is returned. Iff $P$ and the plane 
+          defined by \ccc{p}, \ccc{q}, and \ccc{s} have the same orientation, 
+          \ccc{POSITIVE} is returned; otherwise \ccc{NEGATIVE} is returned.  
+          \ccPrecond \ccc{p}, \ccc{q}, \ccc{r}, and \ccc{s} are coplanar and
+          \ccc{p}, \ccc{q}, and \ccc{r} are not collinear.}
+
+\ccFunction{Orientation coplanar_orientation(const Point_3<R>& p,
+                                 const Point_3<R>& q,
+                                 const Point_3<R>& r);}
+{If \ccc{p,q,r} are collinear, then \ccc{COLLINEAR} is returned.
+If not, then \ccc{p,q,r} define a plane $P$.  The return value in this case is
+either \ccc{POSITIVE} or \ccc{NEGATIVE}, but we don't specify it explicitely.
+However, we guarantee that all calls to this predicate over 3 points in $P$
+will return a coherent orientation if considered a 2D orientation in $P$.}
+
+\ccSeeAlso
+
+\ccRefIdfierPage{CGAL::coplanar} \\
+\ccRefIdfierPage{CGAL::coplanar_side_of_bounded_circle} \\
+\ccRefIdfierPage{CGAL::orientation} \\
+
+\end{ccRefFunction}
+

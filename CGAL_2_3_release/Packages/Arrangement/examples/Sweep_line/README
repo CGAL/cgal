@@ -1,0 +1,9 @@
+In this directory there are 4 example program for the Sweep line package.
+
+example1: demonstate the use of the sweep line in order to construct a planar map of segments.
+ 
+example2: demonstate the use of the sweep line in order to construct a planar map of polyline  segment.
+ 
+example3: demonstate the use of the sweep line in order to construct a container of disjoint interior subsegments.
+ 
+example4: demonstate the use of the sweep line in order to construct a container of disjoint interior polyline subsegments.

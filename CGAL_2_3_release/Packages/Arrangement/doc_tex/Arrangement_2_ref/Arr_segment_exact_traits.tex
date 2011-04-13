@@ -1,0 +1,59 @@
+% +------------------------------------------------------------------------+
+% | Reference manual page: Arr_segment_exact_traits.tex (Arrangement)
+% +------------------------------------------------------------------------+
+% | 
+% | Package: arr (Arrangement_2)
+% | 
+% +------------------------------------------------------------------------+
+
+\ccRefPageBegin
+
+%%RefPage: end of header, begin of main body
+% +------------------------------------------------------------------------+
+% +========================================================================+
+%  Arr_segment_exact_traits<R>
+% +========================================================================+
+
+\begin{ccRefClass}{Arr_segment_exact_traits<R>}
+
+\ccDefinition
+   The class \ccRefName\ is
+   a traits class that uses the CGAL Kernel, that is, types and predicates.
+   The representation type \ccc{R} is recommended to be an
+   exact type such as \ccc{Cartesian<leda_rational>} or
+   \ccc{Homogeneous<Gmpz>} or any other
+   exact type, although other inexact representations can be used at
+   the user's own risk.
+
+\ccInclude{CGAL/Arr_segment_exact_traits.h}
+
+\ccIsModel
+    \ccc{ArrangementTraits_2} \lcTex{(\ccRefPage{ArrangementTraits_2}).}
+
+
+\end{ccRefClass} % Arr_segment_exact_traits<R>
+
+%\subsection{Segment Traits with Cached Information} 
+%The class \ccc{Arr_segment_exact_cached_traits<R>} is
+%a traits class that derives from \ccc{Arr_segment_exact_traits<R>}.
+%The \ccc{Point} type is \ccc{Point_2<R>}. However, the \ccc{X_curve}
+%and \ccc{Curve} type are a new class that is derived from CGAL's
+%\ccc{Segment_2<R>} class, and stores another segment inside.
+%The other segment will correspond to the original segment the
+%current segment came from. This guarantees that the intersection points'
+%bit-length will not grow too much (even for cascaded intersections),
+%since all intersections are done with the
+%original data.
+%The \ccc{get_o_seg()} member function returns the
+%original CGAL segment.
+%Using this traits class results in faster running time. Note,
+%that there is some additional storage requirement.
+
+%\ccInclude{CGAL/Arr_segment_exact_cached_traits.h}
+
+
+% +------------------------------------------------------------------------+
+%%RefPage: end of main body, begin of footer
+\ccRefPageEnd
+% EOF
+% +------------------------------------------------------------------------+

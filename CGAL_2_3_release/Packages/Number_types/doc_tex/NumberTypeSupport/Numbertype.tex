@@ -1,0 +1,331 @@
+\cleardoublepage
+\chapter{Number Type Support}\label{Numbertype}
+
+\cgal\ representation classes are parameterized by number types.  
+Depending on the problem and the input data that have to be handled,
+one has to make a trade-off between efficiency and accuracy in 
+order to select an appropriate number type and representation class.
+
+In homogeneous representation, two number types are involved,
+although only one of them appears as a template parameter in
+the homogeneous representation class.
+This type, for sake of simplicity and readability called ring type is
+used for the representation of homogeneous coordinates and all 
+internal computations. 
+If it is assured that the second operand divides the first one, these 
+internal computations are basically division-free.
+The ring type is a placeholder for an integer type (or an integral 
+domain type) rather than for elements of arbitrary rings. 
+The name should remind you that the division operation is not
+really needed (with the exception mentioned above) for this number type.
+Of course, also more general number types can be used as a ring type 
+in a homogeneous representation class. In some computations, e.g.\ accessing 
+Cartesian coordinates, divisions cannot be avoided. In these computations a 
+second number type, the field type, is used. \cgal\ automatically generates 
+this number type as a \ccStyle{Quotient}\ccTexHtml{, 
+cf.\ Subsection~\ref{Quotient}}{}. For the Cartesian representation 
+there is only one number type that is used for all calculations.
+
+The representation classes provide access to the number types 
+involved in the representation, although it is not expected that
+such access is needed at this level, since low-level geometric 
+operations are wrapped in geometric primitives provided by \cgal.
+This access can be useful if appropriate primitives are missing.
+In a homogeneous representation class \ccStyle{R} ring type and field
+type can be accessed as \ccStyle{R::RT} and \ccStyle{R::FT}, respectively.
+The number type used in Cartesian representation is considered as 
+ring type and as field type depending on the context.
+If can be accessed as \ccStyle{R::RT} and \ccStyle{R::FT}, according
+to the use of number types used in the homogeneous counterpart.
+
+\section{Required Functionality of Number Types\label{nt-requirements}}
+Number types must fulfill certain requirements, such that they can
+be successfully used in \cgal\ code.
+This section describes those requirements.
+We focus on the syntactical requirements. Of course, number types also
+have evident semantic constraints. They should be meaningful in the
+sense that they approximate the integers or the rationals 
+or some other subfield of the real numbers.
+
+The requirements are described as a class interface of a class \ccStyle{NT}, 
+with constructors, methods and the like. 
+This is only a matter of presentation.  
+In fact \ccc{double} and \ccc{float} also fulfill the requirements.
+
+\begin{ccClass} {NT}
+\ccSetTwoColumns{}{\hspace*{8.5cm}}
+\ccCreation
+\ccCreationVariable{ntvar}
+
+\ccConstructor{NT();}
+            {Declaration of a variable.}
+
+
+\ccConstructor{NT(const NT &ntval);}
+            {Declaration and initialization.}
+
+
+\ccConstructor{NT(i)}
+            {Declaration and initialization with a small integer
+constant $i$, $0 \leq i \leq 127$. The neutral elements for addition
+(zero) and multiplication (one) are needed quite often, but sometimes
+other small constants are useful too. The value 127 was chosen such
+that even signed 8 bit number types can fulfill this condition.  }
+
+\ccSetThreeColumns{XXXXXX}{}{\hspace*{8.5cm}}
+\ccOperations
+\ccMethod{NT & operator=(const NT &ntval);}
+        {Assignment.  }
+
+
+\ccFunction{bool is_valid(const NT &ntval);}
+{Not all values of a number type need be valid. The routine
+\ccStyle{is_valid} checks this. For example, an expression like
+\ccStyle{NT(0)/NT(0)} can result in an invalid number. Routines often
+have as a precondition that all numerical values are valid.}
+
+\ccFunction{bool is_finite(const NT &ntval);}
+{ When two large values are multiplied, the result may not fit in a
+  \ccStyle{NT}. 
+  Some number types (the standard \ccc{float} and \ccc{double} type
+  when they conform to standards) have a way to represent a too big
+  value as infinity.  \ccStyle{is_finite} implies \ccStyle{is_valid}.}
+
+\ccMethod{bool operator==(const NT &n) const;}
+       {}
+\ccGlue
+\ccMethod{bool operator!=(const NT &n) const;}
+       {}
+\ccGlue
+\ccMethod{bool operator<(const NT &n) const;}
+       {}
+\ccGlue
+\ccMethod{bool operator>(const NT &n) const;}
+       {}
+\ccGlue
+\ccMethod{bool operator<=(const NT &n) const;}
+       {}
+\ccGlue
+\ccMethod{bool operator>=(const NT &n) const;}
+       {}
+\ccGlue
+\ccFunction{NT operator+(const NT &ntval1, const NT &ntval2);}
+       {}
+\ccGlue
+\ccMethod{NT operator+=(const NT &n) const;}
+       {}
+\ccGlue
+\ccFunction{NT operator-(const NT &ntval1, const NT &ntval2);}
+       {}
+\ccGlue
+\ccMethod{NT operator-=(const NT &n) const;}
+       {}
+\ccGlue
+\ccFunction{NT operator*(const NT &ntval1, const NT &ntval2);}
+       {}
+\ccGlue
+\ccMethod{NT operator*=(const NT &n) const;}
+       {}
+\ccGlue
+\ccFunction{NT operator-(const NT &ntval);}
+       {}
+
+\ccFunction{double to_double(const NT &ntval);}
+         {gives the double value for a number type.
+          This is usually an approximation for the real (stored) value.
+          It can be used to send numbers to a renderer or to store them 
+          in a file.}
+
+
+\ccFunction{NT operator/(const NT &ntval1, const NT &ntval2);}
+       {}
+\ccGlue
+\ccMethod{NT operator/=(const NT &n) const;}
+       {%Division is not required for a ring type.
+   Division by zero need not be defined. It may result in a runtime error, an
+   invalid value, a valid value or anything else. This basically means that the
+   library tests for zero whenever it does a division.}
+
+%If I/O-stream operators are defined for number type \ccc{NT}, 
+%the following function should be defined as well:
+%
+%\ccFunction{io_Operator io_tag(const NT &);}
+%        {}
+
+
+\section{Utility Routines}
+
+The previous section listed all the required functionality.
+For the user of a number type it is handy to have a larger set of
+operations available.
+
+\subsection{Utility Functions}
+\ccSetThreeColumns{Comparison_result}{}{\hspace*{6cm}}
+
+\ccInclude{CGAL/number_utils.h}
+
+\ccFunction{NT min(const NT& ntval1, const NT& ntval2);}
+{returns the smaller of the two values.}
+\ccGlue
+\ccFunction{NT max(const NT& ntval1, const NT& ntval2);}
+{returns the larger of the two values.}
+\ccGlue
+\ccFunction{NT abs(const NT& ntval);}
+{returns the absolute value.}
+\ccGlue
+\ccFunction{NT square(const NT& ntval);}
+{returns the square of \ccc{ntval}.}
+\ccGlue
+\ccFunction{Sign sign(const NT& ntval);}
+{returns the sign: \ccc{POSITIVE}, \ccc{ZERO}, or \ccc{NEGATIVE}.}
+\ccGlue
+\ccFunction{bool is_negative(const NT& ntval);}
+{}
+\ccGlue
+\ccFunction{bool is_positive(const NT& ntval);}
+{}
+\ccGlue
+\ccFunction{bool is_zero(const NT& ntval);}
+{}
+\ccGlue
+\ccFunction{bool is_one(const NT& ntval);}
+{}
+\ccGlue
+\ccFunction{Comparison_result compare(const NT &n1, const NT &n2);}
+{returns \ccc{GREATER} iff $n1>n2$, \ccc{EQUAL} iff $n1=n2$, and \ccc{SMALLER} iff $n1<n2$.}
+
+Those routines are implemented using the required operations from the
+previous section. They are defined by means of templates, so you do not
+have to supply all those operations when you write  a new number type.
+But if you have a better implementation for any of them, you can provide a 
+corresponding overloading function with the same name for your number types,
+which will get preference over the template functions listed above.
+
+For the number types \ccc{int}, and \ccc{double} there is
+the random numbers generator \ccc{Random}.
+
+%\ccInclude{CGAL/basic.h}
+
+%\ccFunction{template <class NT> bool is_even( NT x);}
+%    {returns $(i \;\&\; 1) == 0$.}
+
+%\ccFunction{template <class NT> bool is_odd( NT x);}
+%    {returns $(i \;\&\; 1) == 1$.}
+
+\end{ccClass} 
+
+\subsection{Utility Function Classes}
+In addition to the utility routines listed above, 
+there are function object class templates corresponding to these functions.
+Note that the function object class corresponding to \ccc{sign} is
+named \ccc{Sgn} in order to avoid a conflict with the type 
+\ccc{Sign}.
+
+\cgal\ provides the following function object classes:
+
+\ccInclude{CGAL/number_utils_classes.h}
+
+\ccc{class Min<NT,Compare=std::less>;}\\
+\ccc{class Max<NT,Compare=std::less>;}\\
+\ccc{class Abs<NT>;}\\
+\ccc{class Sgn<NT>;}\\
+\ccc{class Is_negative<NT>;}\\
+\ccc{class Is_positive<NT>;}\\
+\ccc{class Is_zero<NT>;}\\
+\ccc{class Is_one<NT>;}\\
+\ccc{class Compare<NT>;}
+
+\section{Built-in Number Types}
+
+The built-in number types \ccc{float} and \ccc{double} have the
+required arithmetic and comparison operators. They lack some required
+routines though which are automatically included by \cgal.
+\ccTexHtml{\footnote{ The functions can be found in the header files 
+\ccc{<CGAL/double.h>} and \ccc{<CGAL/float.h>}.}}{}
+
+All built-in number types of \CC\ can represent a discrete (bounded)
+subset of the rational numbers only.  We assume that the
+floating-point arithmetic of your machine follows {\sc Ieee}
+floating-point standard.  Since the floating-point culture has much
+more infrastructural support (hardware, language definition and
+compiler) than exact computation, it is very efficient.
+Like with all number types with finite precision representation
+which are used as approximations to the infinite ranges of 
+integers or real numbers, the built-in number types are inherently
+potentially inexact.
+Be aware of this if you decide to use the efficient built-in 
+number types: you have to cope with numerical problems.  
+For example, you can compute the intersection point of two lines and 
+then check whether this point lies on the two lines. 
+%With exact arithmetic, the check will always return \ccc{true}. 
+With floating point arithmetic,
+roundoff errors may cause the answer of the check to be \ccc{false}. 
+With the built-in integer types overflow might occur.
+
+%\newpage
+\section{Number Types Provided by \cgal}
+
+\input{Quotient}
+
+\input{MP_Float}
+
+\input{Lazy_exact_nt}
+
+\input{Fixedprecision}
+
+\input{Interval}
+
+\input{CLN}
+
+\section{Number Types Provided by \leda}
+\label{leda-nt}
+
+\leda\ provides number types that can be used for exact computation 
+with both Cartesian and homogeneous representations.  If you are using
+homogeneous representation with the built-in integer types
+\ccc{short}, \ccc{int}, and \ccc{long} as ring type, exactness of
+computations can be guaranteed only if your input data come from a
+sufficiently small integral range and the depth of the computations is
+sufficiently small.  \leda\ provides the number type \ccc{leda_integer} for
+integers of arbitrary length. (Of course the length is
+somehow bounded by the resources of your computer.)  It can be used as
+ring type in homogeneous representation and leads to exact
+computation as long as all intermediate results are rational.  For the
+same kind of problems Cartesian representation with number type
+\ccc{leda_rational} leads to exact computation as well.
+The number type \ccc{leda_bigfloat} in \leda\ is a variable precision
+floating-point type. Rounding mode and precision (i.e.\ mantissa length) of
+\ccc{leda_bigfloat} can be set. 
+
+The most sophisticated number type in \leda\ is the number type called
+\ccc{leda_real}. Like in Pascal, where the name \ccc{real} is used for
+floating-point numbers, the name \ccc{leda_real} does not describe the
+number type precisely, but intentionally.  
+\ccc{leda_reals} are a subset of real algebraic
+numbers.  Any integer is \ccc{leda_real} and \ccc{leda_real}s are closed under
+the operations $+,-,*,/$ and $k$-th root computation. 
+%\ccTexHtml{$\sqrt[k]{\ }$}{k-th root computation}. 
+\ccc{leda_real}s guarantee that
+all comparisons between expressions involving \ccc{leda_real}s produce the
+exact result.
+
+In the include files \ccc{<CGAL/leda_integer.h>}, \ccc{<CGAL/leda_rational.h>}, 
+\ccc{<CGAL/leda_bigfloat.h>}, and \ccc{<CGAL/leda_real.h>}, 
+the \leda\ types \ccc{leda_integer}, \ccc{leda_rational},
+\ccc{leda_bigfloat}, 
+and \ccc{leda_real} are made conform to the requirements presented in
+Section \ref{nt-requirements}. 
+Also, in these files the \leda\ number types are included.
+For more details on the number types of \leda\ we refer to the \leda\ 
+manual~\cite{mnsu-lum}.
+
+\input{Gmpz}
+
+
+\section{User-supplied Number Types}
+
+You can also use your own number type with the \cgal\ representation
+classes, e.g.\  the {\sc BigNum} package \cite{svh-bpepa-89}.
+Depending on the arithmetic operations carried out by the algorithms
+that you are going to use the number types must fulfill the
+requirements from Section \ref{nt-requirements}. 

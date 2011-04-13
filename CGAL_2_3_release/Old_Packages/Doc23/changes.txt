@@ -1,0 +1,152 @@
+2.36    (25 July 2001)
+- fixed title page in html and LaTeX
+
+2.35    (24 July 2001)
+- fixed undefined reference problems
+- revised introduction a bit
+
+2.34    (24 July 2001)
+- Remove merge bug.
+
+2.33    (24 July 2001)
+- renamed kernel concepts to follow new capitalization sheme (words
+  separated by capital letters instead of underscores)
+- added many cross references between the pages
+- added a table of contents for the reference pages
+- created a file Ref/ref_manual.tex that does the inclusion of the reference
+  pages (previously done in main.tex) and a file Ref/main.tex that includes
+  this and ordered the pages into sections
+- Update Cartesian_converter and Homogeneous_converter.
+- Update introduction wrt Simple_homogeneous.
+- Add Filtered_predicate<> and Filtered_kernel<>.
+
+2.32    (20 July 2001)
+- restored Less_distance_to_point_[23] with default constructors
+- changed other predicates in kernel traits to use default constructors
+
+2.31    (12 July 2001)
+- Kernel_traits<>
+- Kernel::FT, Kernel::RT
+- Cartesian_converter<>, Homogeneous_converter<>.
+
+2.30    (12 July 2001)
+- Documented which functors are model for AdaptableFunctor.
+
+2.29    (10 July 2001)
+- More additions of function objects as a result of kernel traits discussion
+- New predicate : coplanar_orientation(3 points).
+
+2.28    (26 June 2001)
+- Remove references to obsolete Equal_xy_2, Equal_xyz_3,
+  Less_distance_to_point_2 and Less_distance_to_point_3.
+
+2.27    (21 June 2001)
+- Update Construct_circumcenter_3.
+- Remove \ccInclude of obsolete header files.
+- Big update following the kernel traits discussion.
+
+2.26    (19 June 2001)
+- added centroid and Construct_centroid_[23]
+
+2.25    (19 June 2001)
+- Added Bounded_side_2, Bounded_side_3
+
+2.24    (18 June 2001)
+- Remove obsolete documentation about the order of inclusion of headers.
+
+2.23    (30 May 2001)
+- Remove Compare_distance_to_point_[23].
+
+2.22    (29 May 2001)
+- Fix typo "Cricle".
+- Add Compare_distance_[23].
+
+2.21    (22 May 2001)
+- fixed typo in Kernel_Object_3
+- removed Construct_point_xy_2, Construct_point_xz_2 and Construct_point_yz_2
+
+2.20    (4 May 2001)
+- fixed typo in compare_x_at_y()
+- added Construct_point_xy_2, Construct_point_xz_2 and Construct_point_yz_2
+
+2.19    (1 May 2001)
+- Fix return type of Kernel::Orientation_?.
+- angle()
+- compare_x_at_y()
+- Less_signed_distance_to_plane_3()
+- Has_on_3(Plane_3, Point_3)
+
+2.18    (27 Apr 2001)
+- Rename construct_tetrahedron_object to construct_tetrahedron_3_object.
+
+2.17    (26 Apr 2001)
+- Change coplanar_side_of_oriented_circle
+  to     coplanar_side_of_bounded_circle.
+
+2.16    (18 Apr 2001)
+- removed obsolete command in Ref/Kernel.tex
+
+2.15    (13 Apr 2001)
+- coplanar_side_of_oriented_circle().
+
+2.14    (23 Mar 2001)
+- Add Construct_center_[23].
+
+2.13    (23 Mar 2001)
+- Fix Construct_sphere_3.
+
+2.12    (23 Mar 2001)
+- Fix return type of Construct_circumcenter_[23].
+
+2.11    (20 Mar 2001)
+- Added squared_radius() and Compute_squared_radius_[23].
+
+2.10    (16 Mar 2001)
+- Added constructor Vector(Point, Point).
+- Fix copy-paste bug in Compute_squared_distance that prevented compilation.
+- Rename Kernel::* to Kernel_*.
+- Replace operator*.tex by operatorStar.tex.
+- Add documentation for Side_of_bounded_circle(p,q,t) and
+  Side_of_bounded_sphere(p,q,t) and Side_of_bounded_sphere(p,q,r,t).
+
+2.9     (6 Mar 2001)
+- Add Construct_cross_product_vector_3.
+- Add Simple_homogeneous.
+- Add Compute_squared_distance_2 and 3.
+
+2.8     (14 Feb 2001)
+
+- Added some missing function object classes
+- Added doc for area and volume functions and function objects
+- Added doc for new min_coord, max_coord in Iso_rectangle and Iso_cuboid
+- Added doc for new constructor in Iso_rectangle and Iso_cuboid
+- Added missing xmin, ymin, xmax, ymax documentation in Iso_rectangle
+
+2.7     (26 Sep 2000)
+
+- links for Cartesian and intersection suppressed in many places (certainly 
+  not all where necessary)
+- orientation and opposite are not linked anymore
+- spacing for Kernel fixed (uses \ccAdditionalRefSkip length - thanks to Susan)
+- operators now show up in the postscript version again with Vector/Point (don't 
+  know the exact reason for this problem related to operator Layout
+
+2.6     (07 Sep 2000)
+
+- circumcenter page fixed
+- ray (Ray_2<R>, Ray_3<R>) .... A segment (Segment_2<R>, Segment_3<R>)
+  in kernel_geometry.tex
+
+2.5     (17 Aug 2000)
+
+- ccCreationVariable set to fo for Kernel::FunctionObjects
+- ccSeeAlso added in a number of places
+- rational_rotation_approximation documented
+- dimension fixes in 3D functionality: _2 replaced by _3 
+  (copy and paste errors)
+- html does not work for operator*  !!!??? no fix yet!
+
+2.4     (10 Aug 2000)
+
+- converted to RefManual
+

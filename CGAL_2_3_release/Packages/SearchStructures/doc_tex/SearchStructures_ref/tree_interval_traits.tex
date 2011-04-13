@@ -1,0 +1,88 @@
+\begin{ccRefClass}{tree_interval_traits}
+
+\ccDefinition
+\ccStyle{tree_interval_traits} is a template class
+that provides an interface to data items. It is similar to
+\ccStyle{tree_point_traits}, except that it provides
+access to two data slots of the same type of each container class
+(\ccStyle{Data, Window}) instead of providing access to one
+data slot of container class \ccStyle{Data} and two data slots
+of class  \ccStyle{Window}.
+
+\ccInclude{CGAL/Tree_traits.h}\\
+
+\ccTypes
+\ccStyle{typedef}\\
+\ccc{tree_interval_traits<Data, Window, Key,
+         Data_left_func, Data_right_func, Window_left_func,
+         Window_right_func, Compare> Interval_traits;}
+\gdef\ccPureClassName{Interval_traits}
+\gdef\ccPureTemplateClassName{Interval_traits}
+
+\ccNestedType{Data}{the container \ccStyle{Data} ---
+  the data type. It may consist of
+         several data slots. Two of these data slots have to be of
+         type \ccStyle{Key}.}
+\ccNestedType{Window}{the container
+  \ccStyle{Window} --- the query window type. It may consist of
+         several data slots. Two of these data slots have to be of
+         type \ccStyle{Key}.}
+\ccNestedType{Key}{the type
+  \ccStyle{Key} of the data
+  slot this traits class provides access to.}
+\ccNestedType{Data_left_func}{
+  \ccStyle{Data_left_func} is a
+         function object  providing an
+  \ccc{operator()} that takes an argument of type \ccc{Data}
+  and returns
+  a (the left) component of type \ccc{Key}.}
+\ccNestedType{Data_right_func}{
+  \ccStyle{Data_right_func} is a
+         function object  providing an
+  \ccc{operator()} that takes an argument of type \ccc{Data}
+  and returns
+  a (the right) component of type \ccc{Key}.}
+\ccNestedType{Window_left_func}{
+  \ccStyle{Window_left_func}  is a function objects that
+         allow to access the
+         left data slot of container
+         \ccStyle{Window} which has type \ccStyle{Key}}
+\ccNestedType{Window_right_func}{
+  \ccStyle{Window_right_func}  is a function objects that
+         allow to access the
+         right data slot of container
+         \ccStyle{Window} which has type \ccStyle{Key}}
+\ccNestedType{Compare}{ defines a comparison relation which must
+         define a strict ordering of the objects of type
+         \ccStyle{Key}. If defined, \ccStyle{less<Key>}
+         is sufficient.}
+
+\ccCreation
+\ccCreationVariable{d}
+
+\ccStyle{tree_interval_traits<Data, Window, Key,
+         Data_left_func, Data_right_func,
+         Window_left_func,
+         Window_right_func, Compare> d();}\\
+\hspace*{0.2\linewidth}\parbox{0.8\linewidth}{Generation of a \ccStyle{tree\_point\_traits} instance. It is a template class
+that provides an interface to data items.}
+
+\ccOperations
+\ccMethod{Key get_left(Data d);}{The data slot of
+  the data item of \ccStyle{d} of type \ccStyle{Key} is
+  accessed by function object
+  \ccStyle{Data_left_func}.}
+\ccMethod{Key get_right(Data d);}{The data slot of
+  the data item of \ccStyle{d} of type \ccStyle{Key} is
+  accessed by function object
+  \ccStyle{Data_right_func}.}
+\ccMethod{Key get_left_win(Window w);}{The data slot of
+  the data item of \ccStyle{w} of type \ccStyle{Key} is
+  accessed by function object
+  \ccStyle{Window_left_func}.}
+\ccMethod{Key get_right_win(Window w);}{The data slot of
+  the data item of \ccStyle{w} of type \ccStyle{Key} is
+  accessed by function object \ccStyle{Window_right_func}.}
+\ccMethod{bool comp(Key& key1, Key& key2);}{returns Compare(key1, key2).}
+
+\end{ccRefClass}

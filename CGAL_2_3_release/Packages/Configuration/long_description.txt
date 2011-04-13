@@ -1,0 +1,5 @@
+This file contains short testfiles for compiler bugs or missing
+compiler features. Also the file <CGAL/config.h> and some workaround
+files are included.
+
+

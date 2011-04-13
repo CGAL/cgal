@@ -1,0 +1,56 @@
+% +------------------------------------------------------------------------+
+% | Reference manual page: Polyhedron_operator_leftshift.tex
+% +------------------------------------------------------------------------+
+% | 09.09.2000   Lutz Kettner
+% | Package: Polyhedron
+% | 
+\RCSdef{\RCSPolyhedronoperatoristreamRev}{$Revision$}
+\RCSdefDate{\RCSPolyhedronoperatoristreamDate}{$Date$}
+% |
+%%RefPage: end of header, begin of main body
+% +------------------------------------------------------------------------+
+
+
+\ccHtmlNoClassLinks
+\begin{ccRefFunction}{operator<<}
+\label{refPolyhedron_operator_leftshift}
+
+\ccDefinition
+
+This operator writes the polyhedral surface $P$ to the output stream
+\ccc{out} using the Object File Format, OFF, with file extension 
+{\tt .off}, which is also understood by
+GeomView~\cite{p-gmgv15-94}. The output is in ASCII format. From the
+polyhedral surface, only the point coordinates and facets are
+written. Neither normal vectors nor color attributes are used.
+
+For OFF an ASCII and a binary format exist. The format can be selected with
+the \cgal\ modifiers for streams, \ccc{set_ascii_mode} and
+\ccc{set_binary_mode} respectively. The modifier \ccc{set_pretty_mode}
+can be used to allow for (a few) structuring comments in the
+output. Otherwise, the output would be free of comments.  The default
+for writing is ASCII without comments.
+
+\ccInclude{CGAL/IO/Polyhedron_iostream.h}
+
+\ccGlobalFunction{template <class PolyhedronTraits_3>
+    ostream& operator<<( ostream& out, 
+                         const CGAL::Polyhedron_3<PolyhedronTraits_3>& P);}
+  
+\ccSeeAlso
+
+\ccRefIdfierPage{CGAL::Polyhedron_3<Traits>}\\ 
+\lcTex{\ccc{operator>>} \dotfill\ 
+    page~\pageref{refPolyhedron_operator_rightshift}}%
+\lcRawHtml{
+    <I><A HREF="Function_operator--.html">operator&gt;&gt;</A></I>.
+}
+
+
+\end{ccRefFunction}
+
+% +------------------------------------------------------------------------+
+%%RefPage: end of main body, begin of footer
+% EOF
+% +------------------------------------------------------------------------+
+

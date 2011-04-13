@@ -1,0 +1,324 @@
+
+% =============================================================================
+% The CGAL Reference Manual
+% Chapter: Geometric Optimisation
+% Section: Smallest Enclosing Sphere
+% -----------------------------------------------------------------------------
+% file  : doc_tex/basic/Optimisation/Optimisation_ref/Min_sphere_d.tex
+% author: Bernd Gärtner (gaertner@inf.ethz.ch)
+% -----------------------------------------------------------------------------
+% $Revision$
+% $Date$
+% $CGAL_Package: Min_sphere_d WIP $
+% =============================================================================
+
+    \begin{ccRefClass}{Min_sphere_d<Traits>}
+    \ccIndexSubitem[t]{sphere}{smallest enclosing}
+    \ccIndexSubitem[t]{smallest enclosing}{sphere}
+    \ccIndexSubitem[t]{bounding volumes}{smallest enclosing sphere}
+    \ccIndexSubitemSeeAlso[t]{annulus}{smallest enclosing sphere}
+    \ccIndexSubitemSeeAlso[t]{circle}{smallest enclosing sphere}
+\cgalSetMinSphereLayout
+
+% -----------------------------------------------------------------------------
+\ccDefinition
+
+An object of the class \ccRefName\ is the unique sphere of
+smallest volume enclosing a finite (multi)set of points in $d$-dimensional
+Euclidean space $\E_d$. For a set $P$ we denote by $ms(P)$ the
+smallest sphere that contains all points of $P$. $ms(P)$ can
+be degenerate, i.e.\ $ms(P)=\mbox{\ccTexHtml{$\;\emptyset$}{&Oslash;}}$
+if $P=\mbox{\ccTexHtml{$\;\emptyset$}{&Oslash;}}$ and $ms(P)=\{p\}$ if
+$P=\{p\}$.
+
+An inclusion-minimal subset $S$ of $P$ with $ms(S)=ms(P)$ is called a
+\emph{support set}, the points in $S$ are the \emph{support points}.
+A support set has size at most $d+1$, and all its points lie on the
+boundary of $ms(P)$. In general, neither the support set nor its size
+are unique.
+
+The algorithm
+computes a support set $S$ which remains fixed until the next insert
+or clear operation.
+
+    \ccInclude{CGAL/Min_sphere_d.h}
+
+    \ccRequirements
+    \ccIndexRequirements
+
+    The class \ccRefName\ expects a model of the concept
+    \ccc{OptimisationDTraits} as its template argument.
+      We provide the models \ccc{Optimisation_d_traits_2},
+      \ccc{Optimisation_d_traits_3} and \ccc{Optimisation_d_traits_d}
+    for two-, three-, and $d$-dimensional points respectively.
+
+\ccTypes
+\ccIndexClassTypes
+
+\ccSetThreeColumns{typedef Traits::Point}{Sphere;}{}
+
+\ccNestedType{Traits}{}
+\ccNestedType{FT}{typedef to \ccc{Traits::FT}.}
+\ccNestedType{Point}{typedef to \ccc{Traits::Point}.}
+
+
+\ccSetTwoColumns{Min_sphere_d<Traits>:: Support_point_iterator}{}
+
+\ccGlueBegin
+\ccUnchecked
+    \ccNestedType{Point_iterator}{non-mutable model of the STL
+    concept \ccc{BidirectionalIterator} with value type \ccc{Point}. Used
+    to access the points used to build the smallest enclosing sphere.}
+    \ccNestedType{Support_point_iterator}{non-mutable model of the STL
+    concept \ccc{BidirectionalIterator} with value type \ccc{Point}. Used
+    to access the support points defining the smallest enclosing sphere.}
+\ccGlueEnd
+
+\cgalSetMinSphereLayout
+
+% -----------------------------------------------------------------------------
+\ccCreation
+\ccIndexClassCreation
+\ccCreationVariable{min_sphere}
+
+\ccUnchecked
+\ccConstructor{ Min_sphere_d (const Traits& traits = Traits());}{
+        creates a variable of type \ccRefName\ and
+        initializes it to $ms(\mbox{\ccTexHtml{$\;\emptyset$}{&Oslash;}})$.
+          If the traits parameter is not supplied, the class \ccc{Traits}
+          must provide a default constructor.}
+
+\ccUnchecked
+\ccConstructor{ template < class InputIterator >
+                Min_sphere_d( InputIterator  first,
+                                   InputIterator  last,
+                                   const Traits&  traits = Traits());}{
+        creates a variable \ccVar\ of type \ccRefName.
+        It is initialized to $ms(P)$ with $P$ being the set of points
+        in the range [\ccc{first},\ccc{last}).
+        \ccRequire The value type of \ccc{first} and \ccc{last}
+        is \ccc{Point}. If the traits parameter is not supplied,
+        the class \ccc{Traits} must provide a default constructor.
+        \ccPrecond All points have the same dimension.}
+
+\ccUnchecked
+\ccHidden
+\ccConstructor{ Min_sphere_d( const Min_sphere_d<Traits>&);}{
+        copy constructor.}
+
+\ccHidden
+\ccConstructor{ ~Min_sphere_d( );}{
+        destructor.}
+
+\ccUnchecked
+\ccHidden
+\ccMemberFunction{ Min_sphere_d<Traits>&
+                   operator = ( const Min_sphere_d<Traits>&);}{
+        assignment operator.}
+
+% -----------------------------------------------------------------------------\ccAccessFunctions
+\begin{ccIndexMemberFunctions}
+\ccIndexMemberFunctionGroup{access}
+
+\ccIndexSubitem[t]{support set}{\ccFont Min_sphere_d}
+\ccMemberFunction{ int  number_of_points( ) const;}{
+        returns the number of points of \ccVar, i.e.\ $|P|$.}
+
+\ccMemberFunction{ int  number_of_support_points( ) const;}{
+        returns the number of support points of \ccVar, i.e.\ $|S|$.}
+
+\ccGlueBegin
+\ccMemberFunction{ Point_iterator  points_begin() const;}{
+        returns an iterator referring to the first point of \ccVar.}
+%
+\ccMemberFunction{ Point_iterator  points_end() const;}{
+        returns the corresponding past-the-end iterator.}
+\ccGlueEnd
+
+\ccGlueBegin
+\ccMemberFunction{ Support_point_iterator  support_points_begin() const;}{
+        returns an iterator referring to the first support point of \ccVar.}
+%
+\ccMemberFunction{ Support_point_iterator  support_points_end() const;}{
+        returns the corresponding past-the-end iterator.}
+\ccGlueEnd
+
+\ccMemberFunction{ int ambient_dimension() const;}{
+        returns the dimension of the points in $P$. If \ccVar\
+        is empty, the ambient dimension is $-1$.}
+
+\ccMemberFunction{ const Point&  center( ) const;}{
+        returns the center of \ccVar.
+        \ccPrecond \ccVar\ is not empty.}
+
+        \ccMemberFunction{FT squared_radius( ) const;}{
+        returns the squared radius of \ccVar.
+        \ccPrecond \ccVar\ is not empty.}
+
+% -----------------------------------------------------------------------------
+\ccPredicates
+\ccIndexMemberFunctionGroup{predicates}
+
+By definition, an empty \ccRefName\ has no boundary and no
+bounded side, i.e.\ its unbounded side equals the whole space $\E_d$.
+
+\ccMemberFunction{ Bounded_side
+                   bounded_side( const Point& p) const;}{
+        returns \ccc{CGAL::ON_BOUNDED_SIDE}, \ccc{CGAL::ON_BOUNDARY}, or
+        \ccc{CGAL::ON_UNBOUNDED_SIDE} iff \ccc{p} lies properly inside,
+        on the boundary, or properly outside of \ccVar, resp.
+        \ccPrecond if \ccVar\ is not empty, the dimension of $p$
+        equals \ccc{ambient_dimension()}.}
+
+\ccMemberFunction{ bool  has_on_bounded_side( const Point& p) const;}{
+        returns \ccc{true}, iff \ccc{p} lies properly inside \ccVar.
+        \ccPrecond if \ccVar\ is not empty, the dimension of $p$
+        equals \ccc{ambient_dimension()}.}
+
+\ccMemberFunction{ bool  has_on_boundary( const Point& p) const;}{
+        returns \ccc{true}, iff \ccc{p} lies on the boundary
+        of \ccVar.
+        \ccPrecond if \ccVar\ is not empty, the dimension of $p$
+        equals \ccc{ambient_dimension()}.}
+
+\ccMemberFunction{ bool  has_on_unbounded_side( const Point& p) const;}{
+        returns \ccc{true}, iff \ccc{p} lies properly outside of \ccVar.
+        \ccPrecond if \ccVar\ is not empty, the dimension of $p$
+        equals \ccc{ambient_dimension()}.}
+
+\ccMemberFunction{ bool  is_empty( ) const;}{
+        returns \ccc{true}, iff \ccVar\ is empty (this implies
+        degeneracy).}
+
+\ccIndexSubitem[t]{degeneracies}{\ccFont Min_sphere_d}
+\ccMemberFunction{ bool  is_degenerate( ) const;}{
+        returns \ccc{true}, iff \ccVar\ is degenerate, i.e.\ if
+        \ccVar\ is empty or equal to a single point, equivalently if
+        the number of support points is less than 2.}
+
+% -----------------------------------------------------------------------------
+\ccModifiers
+\ccIndexMemberFunctionGroup{modifiers}
+
+\ccMemberFunction{ void clear ();}{
+        resets \ccVar\ to $ms(\mbox{\ccTexHtml{$\;\emptyset$}{&Oslash;}})$.}
+
+\ccUnchecked
+\ccMemberFunction{ template < class InputIterator >
+                   void set( InputIterator first,
+                             InputIterator last );}{
+        sets \ccVar\ to the $ms(P)$, where $P$ is the set of points
+        in the range [\ccc{first},\ccc{last}).
+        \ccRequire The value type of \ccc{first} and \ccc{last} is
+        \ccc{Point}.
+        \ccPrecond All points have the same dimension.}
+
+\ccMemberFunction{ void  insert( const Point& p);}{
+        inserts \ccc{p} into \ccVar. If \ccc{p} lies inside the
+        current sphere, this is a constant-time operation, otherwise
+        it might take longer, but usually substantially less than
+        recomputing the smallest enclosing sphere from scratch.
+        \ccPrecond The dimension of \ccc{p} equals \ccc{ambient_dimension()}
+        if \ccVar\ is not empty.}
+
+\ccUnchecked
+\ccMemberFunction{ template < class InputIterator >
+                   void  insert( InputIterator  first,
+                                 InputIterator  last );}{
+        inserts the points in the range [\ccc{first},\ccc{last})
+        into \ccVar\ and recomputes the smallest enclosing sphere, by
+        calling \ccc{insert} for all points in the range.
+        \ccRequire  The value type of \ccc{first} and \ccc{last} is
+      \ccc{Point}.
+        \ccPrecond All points have the same dimension. If
+        \ccVar\ is not empty, this dimension must be equal to
+        \ccc{ambient_dimension()}.}
+
+% -----------------------------------------------------------------------------
+    \ccHeading{Validity Check}
+    \ccIndexMemberFunctionGroup{validity check}
+  \ccIndexSubitem[t]{validity check}{\ccFont Min_sphere_d}
+  An object \ccVar\ is valid, iff
+  \begin{itemize}
+    \item \ccVar\ contains all points of its defining set $P$,
+    \item \ccVar\ is the smallest sphere containing its support set $S$, and
+    \item $S$ is minimal, i.e.\ no support point is redundant.
+  \end{itemize}
+
+  \emph{Note:} Under inexact arithmetic, the result of the
+  validation is not realiable, because the checker itself can suffer
+  from numerical problems.
+
+  \ccMemberFunction{ bool is_valid( bool verbose = false,
+                                    int  level   = 0    ) const;}{
+        returns \ccc{true}, iff \ccVar\ is valid. If \ccc{verbose}
+        is \ccc{true}, some messages concerning the performed checks
+        are written to standard error stream. The second parameter
+        \ccc{level} is not used, we provide it only for consistency
+        with interfaces of other classes.}
+
+% -----------------------------------------------------------------------------
+\ccHeading{Miscellaneous}
+\ccIndexMemberFunctionGroup{miscellaneous}
+
+\def\ccTagRmConstRefPair{\ccFalse}
+\ccMemberFunction{ const Traits&  traits( ) const;}{
+        returns a const reference to the traits class object.}
+        \def\ccTagRmConstRefPair{\ccTrue}
+
+ \end{ccIndexMemberFunctions}
+
+% -----------------------------------------------------------------------------
+\ccHeading{I/O}
+\begin{ccIndexGlobalFunctions}
+
+\ccIndexGlobalFunctionGroup{output}
+\ccFunction{ std::ostream& operator << ( std::ostream& os,
+                                    const Min_sphere_d<Traits>&
+                                        min_sphere);}{
+        writes \ccVar\ to output stream \ccc{os}.
+        \ccRequire The output operator is defined for \ccc{Point}.}
+
+\ccIndexGlobalFunctionGroup{input}
+
+\ccFunction{ std::istream& operator >> ( std::istream& is,
+                                    Min_sphere_d<Traits> min_sphere&);}{
+        reads \ccVar\ from input stream \ccc{is}.
+          \ccRequire The input operator is defined for \ccc{Point}.}
+
+\end{ccIndexGlobalFunctions}
+
+% -----------------------------------------------------------------------------
+\ccSeeAlso
+
+    \ccRefIdfierPage{CGAL::Optimisation_d_traits_2<K,ET,NT>}\\
+    \ccRefIdfierPage{CGAL::Optimisation_d_traits_3<K,ET,NT>}\\
+    \ccRefIdfierPage{CGAL::Optimisation_d_traits_d<K,ET,NT>}\\
+    \ccRefConceptPage{OptimisationDTraits}\\
+    \ccRefIdfierPage{CGAL::Min_circle_2<Traits>}\\
+    \ccRefIdfierPage{CGAL::Min_annulus_d<Traits>}
+
+% -----------------------------------------------------------------------------
+\ccImplementation
+\ccIndexImplementation
+
+    \ccIndexSubitem[t]{incremental algorithm}{\ccFont Min_sphere_d}
+    \ccIndexSubitem[t]{move-to-front heuristic}{\ccFont Min_sphere_d}
+We implement the algorithm of Welzl with move-to-front
+heuristic~\cite{w-sedbe-91a} for small point sets, combined with a new
+efficient method for large sets, which is particularly tuned for
+moderately large dimension ($d \leq 20$) \cite{g-frseb-99}.
+The creation time is almost
+always linear in the number of points. Access functions and predicates
+take constant time, inserting a point might take up to linear time,
+but substantially less than computing the new smallest enclosing
+sphere from scratch. The clear operation and the check for validity
+    each take linear time.
+
+    \ccExample
+    \ccIncludeVerbatim{Optimisation_ref/min_sphere_d_example.C}
+
+\end{ccRefClass}
+
+% ===== EOF ===================================================================
+

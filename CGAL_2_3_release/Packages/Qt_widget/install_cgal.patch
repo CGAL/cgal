@@ -1,0 +1,978 @@
+199a200,241
+> # ---------------------------------------------
+> # QT specific:
+> #
+> 
+> # toggles use of QT ('' - no, '_QT' - use it)
+> QT_SUPPORT=''
+> 
+> # directories for QT
+> QT_DIR=''
+> QT_INCL_DIR=''
+> QT_LIB_DIR=''
+> 
+> # Qt Meta Object Compiler
+> QT_MOC=''
+> 
+> # Qt advanced mode ('' - basic mode, 'y' - advanced mode)
+> QT_ADVANCED_MODE=''
+> 
+> # do we have to provide extra incl/lib flags for Qt('y') 
+> # is it installed in standard system dirs(''),
+> # or do we want to provide extra incl/lib flags, although it is
+> # installed in sysdirs ('x')?
+> # set to 'n', if this has not been tested yet
+> NEED_EXTRA_QT_IDIR='y'
+> NEED_EXTRA_QT_LDIR='y'
+> # do we have to provide a path for moc
+> # or is it in $PATH (''),
+> # or do we want to provide a path for moc, although it is in
+> # the path ('x')
+> # set to 'n', if this has not been tested yet
+> NEED_EXTRA_QTMOC='y'
+> # do we have to provide an extra QTDIR ('y') 
+> # or is it in environment (''),
+> # or do we want to provide extra QTDIR, although it is defined
+> # in the environment
+> # set to 'n', if this has not been tested yet
+> NEED_EXTRA_QTDIR='y'
+> 
+> # did QT tests succeed ('' - no, 'y' - yep)
+> QT_MOC_TEST_PASSED=''
+> QT_TEST_PASSED=''
+> 
+273c315
+<       [-leda] [-gmp] [-cln] [--verbose]
+---
+>       [-leda] [-gmp] [-cln] [-qt] [--verbose]
+277a320,321
+>       [--QT_DIR <dir] [--QT_INCL_DIR <dir>] 
+>       [--QT_LIB_DIR <dir>] [--QT_MOC <exe>]
+282a327
+>   -qt          enables support for Qt
+1578a1624,1684
+> # flags for QT
+> 
+> qt_cxxflags()
+> {
+>     if [ -n "${QT_SUPPORT}" ]; then
+> 	if [ -z "${QT_ADVANCED_MODE}" ]; then
+> 	    include_dir_option "`_where_is 'QT_DIR'`/include"
+> 	else
+> 	    if [ -n "${NEED_EXTRA_QT_IDIR}" ]; then
+> 		include_dir_option "`_where_is 'QT_INCL_DIR'`"
+> 	    fi
+> 	fi
+>     fi
+> }
+> 
+> qt_libpathflags()
+> {
+>     if [ -n "${SEPARATE_LIBPATH}" -a -n "${QT_SUPPORT}" ]; then
+> 	if [ -z "${QT_ADVANCED_MODE}" ]; then
+> 	    libpath_option "`_where_is 'QT_DIR'`/lib "
+> 	    ${_printf} "%s" "`rpath_directive 'QT_LIB_DIR'` "
+> 	else
+> 	    if [ -n "${NEED_EXTRA_QT_LDIR}" ]; then
+> 		libpath_option "`_where_is 'QT_LIB_DIR'` "
+> 		${_printf} "%s" "`rpath_directive 'QT_LIB_DIR'` "
+> 	    fi
+> 	fi
+>     fi
+> }
+> 
+> qt_ldflags()
+> {
+>     if [ -n "${QT_SUPPORT}" ]; then
+> 	if [ -z "${SEPARATE_LIBPATH}" ]; then
+> 	    if [ -z "${QT_ADVANCED_MODE}" ]; then
+> 		libpath_option "`_where_is 'QT_DIR'`/lib "
+> 		${_printf} "%s" "`rpath_directive 'QT_LIB_DIR'` "
+> 	    else
+> 		if [ -n "${NEED_EXTRA_QT_LDIR}" ]; then
+> 		    libpath_option "`_where_is 'QT_LIB_DIR'` "
+> 		    ${_printf} "%s" "`rpath_directive 'QT_LIB_DIR'` "
+> 		fi
+> 	    fi
+> 	fi
+> 	lib_option "qt"
+>     fi
+> }
+> 
+> qt_test_cxxflags()
+> {
+>     ${_printf} "%s" "`compiler_test_cxxflags` "
+>     qt_cxxflags
+> }
+> 
+> qt_test_ldflags()
+> {
+>     ${_printf} "%s" "`compiler_test_ldflags` "
+>     qt_ldflags
+> }
+> 
+> #---------------------------------------------------------
+1633c1739
+<     ${_printf} "%s" "${CUSTOM_CXXFLAGS} `cgal_cxxflags``leda_cxxflags``gmp_cxxflags``cln_cxxflags`"
+---
+>     ${_printf} "%s" "${CUSTOM_CXXFLAGS} `cgal_cxxflags``leda_cxxflags``gmp_cxxflags``cln_cxxflags``qt_cxxflags`"
+1640c1746
+<     ${_printf} "%s" "${CUSTOM_LDFLAGS} `cgal_ldflags``leda_ldflags``gmp_ldflags``cln_ldflags``math_ldflags`"
+---
+>     ${_printf} "%s" "${CUSTOM_LDFLAGS} `cgal_ldflags``leda_ldflags``gmp_ldflags``cln_ldflags``qt_ldflags``math_ldflags`"
+2350a2457,2576
+> check_QT_SUPPORT()
+> {
+>     if [ "${QT_SUPPORT}" != "" -a "${QT_SUPPORT}" != "_QT" ]; then
+> 	$1 "WARNING: Qt_SUPPORT is not set correctly." 
+> 	return 0
+>     fi
+>     return 1
+> }
+> 
+> check_NEED_EXTRA_QT_IDIR()
+> {
+>     if [ -n "${NEED_EXTRA_QT_IDIR}" -a \
+> 	"${NEED_EXTRA_QT_IDIR}" != 'n' -a \
+> 	"${NEED_EXTRA_QT_IDIR}" != 'y' -a \
+> 	"${NEED_EXTRA_QT_IDIR}" != 'x' ]; then
+> 	$1  "WARNING: NEED_EXTRA_QT_IDIR should be \"n\", \"x\", \"y\" or empty."
+> 	return 0
+>     fi
+>     return 1
+> }
+> 
+> check_NEED_EXTRA_QT_LDIR()
+> {
+>     if [ -n "${NEED_EXTRA_QT_LDIR}" -a \
+> 	"${NEED_EXTRA_QT_LDIR}" != 'n' -a \
+> 	"${NEED_EXTRA_QT_LDIR}" != 'y' -a \
+> 	"${NEED_EXTRA_QT_LDIR}" != 'x' ]; then
+> 	$1  "WARNING: NEED_EXTRA_QT_LDIR should be \"n\", \"x\", \"y\" or empty."
+> 	return 0
+>     fi
+>     return 1
+> }
+> 
+> check_NEED_EXTRA_QTMOC()
+> {
+>     if [ -n "${NEED_EXTRA_QTMOC}" -a \
+> 	"${NEED_EXTRA_QTMOC}" != 'n' -a \
+> 	"${NEED_EXTRA_QTMOC}" != 'y' -a \
+> 	"${NEED_EXTRA_QTMOC}" != 'x' ]; then
+> 	$1  "WARNING: NEED_EXTRA_QTMOC should be \"n\", \"x\", \"y\" or empty."
+> 	return 0
+>     fi
+>     return 1
+> }
+> 
+> check_NEED_EXTRA_QTDIR()
+> {
+>     if [ -n "${NEED_EXTRA_QTDIR}" -a \
+> 	"${NEED_EXTRA_QTDIR}" != 'n' -a \
+> 	"${NEED_EXTRA_QTDIR}" != 'y' -a \
+> 	"${NEED_EXTRA_QTDIR}" != 'x' ]; then
+> 	$1  "WARNING: NEED_EXTRA_QTDIR should be \"n\", \"x\", \"y\" or empty."
+> 	return 0
+>     fi
+>     return 1
+> }
+> 
+> check_QT_DIR()
+> {
+>     if [ -n "${QT_DIR}" ]; then
+> 	if [ -d "${QT_DIR}" -a -d "${QT_DIR}/bin" -a \
+> 	     -d "${QT_DIR}/include" -a \
+> 	     -d "${QT_DIR}/lib" -a -x "${QT_DIR}/bin/moc${EXE_EXT}" -a \
+> 	     -r ${QT_DIR}/include/qaction.h ]; then
+> 	     return 1
+> 	else
+> 	    $1 "WARNING: QT_DIR should contain"
+> 	    $1 "         bin/moc${EXE_EXT}, include/qaction.h lib/."
+> 	fi
+>     fi
+>     return 0
+> }
+> 
+> check_QT_INCL_DIR()
+> {
+>     if [ -n "${QT_INCL_DIR}" ]; then
+> 	if [ -r ${QT_INCL_DIR}/qaction.h ]; then
+> 	    return 1
+> 	else
+> 	    $1 "WARNING: QT_INCL_DIR should contain qaction.h."
+> 	fi
+>     fi
+>     return 0
+> }
+> 
+> check_QT_LIB_DIR()
+> {
+>     if [ -n "${QT_LIB_DIR}" ]; then
+> 	if [ ! -r ${QT_LIB_DIR}/libqt.${LIB_SUFFIX} -a \
+> 	     ! -r ${QT_LIB_DIR}/libqt.so ]; then
+> 	     $1 "WARNING: QT_LIB_DIR should contain libqt.${LIB_SUFFIX} or libqt.so."
+> 	else
+> 	    return 1
+> 	fi
+>     fi
+>     return 0
+> }
+> 
+> check_QT_MOC()
+> {
+>     if [ -n "${QT_MOC}" ]; then
+> 	if [ -x "${QT_MOC}" ]; then
+> 	    return 1
+> 	else
+> 	    $1 "WARNING: QT_MOC sould be executable."
+> 	fi
+>     fi
+>     return 0
+> }
+> 
+> check_QT_ADVANCED_MODE()
+> {
+>     if [ -n "${QT_ADVANCED_MODE}" -a \
+> 	"${QT_ADVANCED_MODE}" != 'y' ]; then
+> 	$1 "WARNING: QT_ADVANCED_MODE sould be \"y\" or empty."
+> 	return 0
+>     fi
+>     return 1
+> }
+> 
+2511a2738,2739
+>     # remove moc file
+>     ${_rm} -f ${TMP_CXX_FILE}.moc
+2891a3120,3396
+> # ---------------------------------------------------------------------
+> # QT TEST:
+> 
+> qt_dir_has_changed()
+> {
+>     if [ -n "${WINDOWS_COMPILER}" ]; then
+> 	QT_INCL_DIR="${QT_DIR}\\include"
+> 	QT_LIB_DIR="${QT_DIR}\\lib"
+> 	QT_MOC="${QT_DIR}\\bin\\moc${EXE_EXT}"
+>     else
+> 	QT_INCL_DIR="${QT_DIR}/include"
+> 	QT_LIB_DIR="${QT_DIR}/lib"
+> 	QT_MOC="${QT_DIR}/bin/moc${EXE_EXT}"
+>     fi
+> #    if [ -z "${NEED_EXTRA_QTDIR}" ]; then
+> #	NEED_EXTRA_QTDIR='x'
+> #    fi
+>     if [ -z "${NEED_EXTRA_QT_IDIR}" ]; then
+> 	NEED_EXTRA_QT_IDIR='x'
+>     fi
+>     if [ -z "${NEED_EXTRA_QT_LDIR}" ]; then
+> 	NEED_EXTRA_QT_LDIR='x'
+>     fi
+>     if [ -z "${NEED_EXTRA_QTMOC}" ]; then
+> 	NEED_EXTRA_QTMOC='x'
+>     fi
+> }
+> 
+> # test if $QTDIR is a valid Qt directory
+> # and sets NEED_EXTRA_QTDIR correspondingly
+> # ($1 nonzero indicates verbosity)
+> # [ tests if $QTDIR/{include,lib,bin} are directories and checks if
+> #   $QTDIR/bin/moc exists and is executable ]
+> test_for_qt_dir()
+> {
+>     ${_printf} "%s" "${_LEFTSPACE}Testing for \$QTDIR ..."
+>     if [ -d "${QTDIR}" -a -d "${QTDIR}/bin" -a -d "${QTDIR}/include" -a \
+>          -d "${QTDIR}/lib" -a -x "${QTDIR}/bin/moc${EXE_EXT}" -a \
+> 	 -r "${QTDIR}/include/qaction.h" ]; then
+> 	log_print 'remark: $QTDIR is a valid Qt directory.'
+> 	QT_DIR="$QTDIR"
+> 	NEED_EXTRA_QTDIR=''
+> 	qt_dir_has_changed
+> 	${_printf} "%s\n" " ok."
+> 	return 0
+>     else
+> 	if [ -n "$1" ];then
+> 	    if [ -n "${INSTALL_INTERACTIVE}" ]; then
+> 		log_print 'ERROR: $QTDIR is not a valid Qt directory.'
+> 	    else
+> 		${_printf} "%s\n\n" 'ERROR: $QTDIR is not a valid Qt directory.'
+> 	    fi
+> 	else
+> 	    log_print 'remark: $QTDIR is not a valid Qt directory.'
+> 	fi
+> 	${_printf} "%s\n" " no."
+> 	NEED_EXTRA_QTDIR='y'
+> 	return 1
+>     fi
+> }
+> 
+> # test if Qt header files are in some sys include dir
+> # and sets NEED_EXTRA_QT_IDIR correspondingly
+> # ($1 nonzero indicates verbosity)
+> # [ checks for the existence of <qaction.h>, since this
+> #   is a new file of Qt 2.2 ]
+> test_for_qt_incl_in_sys_incl()
+> {
+>     ${_printf} "%s\n" "
+>     #include <qaction.h>
+>     int main() {
+> 	return 0;
+>     }" > ${TMP_CXX_FILE}.C
+>     if _compile_test "Qt sysincl" "${CUSTOM_CXXFLAGS} " "$1"; then
+> 	cleanup_after_compile
+> 	${_printf} "%s\n" " ok."
+> 	NEED_EXTRA_QT_IDIR=''
+> 	return 0
+>     fi
+>     cleanup_after_compile
+>     NEED_EXTRA_QT_IDIR='y'
+>     return 1
+> }
+> 
+> # test if Qt libs are in some sys lib dir
+> # and sets NEED_EXTRA_QT_LDIR correspondingly
+> # ($1 nonzero indicates verbosity)
+> test_for_qt_lib_in_sys_lib()
+> {
+>     ${_printf} "%s\n" "
+>     int main() {
+> 	return 0;
+>     }" > ${TMP_CXX_FILE}.C
+>     if _compile_test "Qt syslibs" "${CUSTOM_CXXFLAGS} " "$1";
+>     then
+> 	if _link_run_test "Qt syslibs" "" \
+> 	    "${CUSTOM_LDFLAGS} `lib_option qt`" "$1"; then
+> 	    NEED_EXTRA_QT_LDIR=''
+> 	    return 0
+> 	fi
+>     fi
+>     NEED_EXTRA_QT_LDIR='y'
+>     return 1
+> }
+> 
+> # test if Qt moc is in path 
+> # and set NEED_EXTRA_QTMOC correspondingly
+> # ($1 nonzero indicates verbosity)
+> test_for_qt_moc_in_path()
+> {
+>     ${_printf} "%s" "${_LEFTSPACE}Testing for moc${EXE_EXT}..."
+>     _tmp="`${_which} moc${EXE_EXT}`"
+>     if [ -x "${_tmp}" ]; then
+> 	log_print "remark: moc${EXE_EXT} is in path directories."
+> 	NEED_EXTRA_QTMOC=''
+> 	QT_MOC="moc"
+> 	${_printf} "%s\n" " ok."
+> 	return 0
+>     else
+> 	if [ -n "$1" ];then
+> 	    if [ -n "${INSTALL_INTERACTIVE}" ]; then
+> 		log_print "ERROR: moc${EXE_EXT} is not in path directories."
+> 		write_buffer "\n"
+> 		wait_for_enter
+> 	    else
+> 		${_printf} "%s\n\n" \
+> 		    "ERROR: moc${EXE_EXT} is in path directories."
+> 	    fi
+> 	else
+> 	    log_print "remark: moc${EXE_EXT} is in path directories."
+> 	fi
+> 	${_printf} "%s\n" " no."
+> 	NEED_EXTRA_QTMOC='y'
+> 	return 1
+>     fi
+> }
+> 
+> # test if Qt Meta Object Compiler setting works (return 0, iff ok)
+> # ($1 nonzero indicates verbosity)
+> test_qt_moc()
+> {
+>     if [ -n "${QT_SUPPORT}" ]; then
+> 	${_printf} "%s\n" '
+> #include <qobject.h>
+> 
+>  class Foo : public QObject
+>     {
+>         Q_OBJECT
+>     public:
+>         Foo() {};
+>         int  value() const { return val; }
+>     public slots:
+>         void setValue( int );
+>     signals:
+>         void valueChanged( int );
+>     private:
+>         int  val;
+>     };
+> 
+> 
+>  void Foo::setValue( int v )
+>     {
+>         if ( v != val ) {
+>             val = v;
+>             emit valueChanged(v);
+>         }
+>     }
+> 
+> int main( int argc, char **argv )
+> {
+>     Foo a, b;
+>     a.connect(&a, SIGNAL(valueChanged(int)), &b, SLOT(setValue(int)));
+>     b.setValue( 11 );
+>     a.setValue( 79 );
+>     if (b.value()==79)
+>       return 0;
+>     return 1;
+> }' > ${TMP_CXX_FILE}.C
+> 	${_printf} "%s\n" "
+> #include \"${TMP_CXX_FILE}.moc\"
+> " >> ${TMP_CXX_FILE}.C 
+> 	${_printf} "%s\n%s\n" \
+> 	    "MOC call:" "--------------" >${TMP_LOGFILE}
+> 	${_printf} "%s" \
+> 	    "${QT_MOC} -o ${TMP_CXX_FILE}.moc ${TMP_CXX_FILE}.C" >>${TMP_LOGFILE}
+> 	${_printf} "\n\n%s\n" \
+> 	    "Got the following error messages:" >>${TMP_LOGFILE}
+> 	${_printf} "%s\n" \
+> 	"---------------------------------" >>${TMP_LOGFILE} 	
+> 	${QT_MOC} -o ${TMP_CXX_FILE}.moc ${TMP_CXX_FILE}.C >>${TMP_LOGFILE} 2>&1 
+> 	if [ $? = 0 ]; then
+> 	    log_print "Qt MOC test has passed \$QT_MOC execution."
+> 	    if _compile_test "Qt MOC" "`qt_test_cxxflags`" $1 && \
+> 	       _link_run_test "Qt MOC" \
+> 		    "`qt_libpathflags`" "`qt_test_ldflags`" $1
+> 	    then
+> 		QT_MOC_TEST_PASSED='y'
+> 		return 0
+> 	    else
+> 		QT_MOC_TEST_PASSED=''
+> 		return 1
+> 	    fi
+> 	else
+> 	    if [ -n "$1" ]; then
+> 		if [ -n "${INSTALL_INTERACTIVE}" ]; then
+> 		    log_print "ERROR: Qt MOC test did not passed \$QT_MOC execution."
+> 		    write_buffer "\n"
+> 		    print_filled_line
+> 		    print_empty_line
+> 		    print_headline "Compilation failed because of \$QT_MOC."
+> 		    print_center_line "You will be shown a log now ..."
+> 		    wait_for_enter
+> 		    ${_cat} ${TMP_LOGFILE} | ${PAGER:-${_cat}}
+> 		    write_buffer "\n"
+> 		    print_filled_line
+> 		    wait_for_enter
+> 		else
+> 		    ${_printf} "%s\n\n" " compilation failed."
+> 		    ${_cat} ${TMP_LOGFILE} 
+> 		    ${_printf} "%s\n\n" \
+> 			"--------------------------------------------------------"
+> 		fi
+> 	    else
+> 		log_print "remark: Qt MOC test did not passed \$QT_MOC execution."
+> 		${_printf} "%s" "${_LEFTSPACE}Testing for Qt MOC ... no."
+> 	    fi		
+> 	    QT_MOC_TEST_PASSED=''
+> 	    return 1
+> 	fi
+>     else
+> 	return 0
+>     fi
+> }
+> 
+> # test if Qt setting works (return 0, iff ok)
+> # ($1 nonzero indicates verbosity)
+> test_qt()
+> {
+>     if [ -n "${QT_SUPPORT}" ]; then
+> 	${_printf} "%s\n" '
+> #include <qarray.h>
+> 
+> QArray<int> fib( int num )                  // returns fibonacci array
+> {
+>     ASSERT( num > 2 );
+>     QArray<int> f( num );                   // array of ints
+> 
+>     f[0] = f[1] = 1;                        // initialize first two numbers
+>     for ( int i=2; i<num; i++ )
+>         f[i] = f[i-1] + f[i-2];     
+> 
+>     return f;
+> }
+> 
+> int main()
+> {
+>     QArray<int> a = fib( 6 );               // get 6 first fibonaccis
+> 
+>     if(4==a.find(5))
+> 	return 0;
+>     return 1;
+> }' > ${TMP_CXX_FILE}.C
+> 	if _compile_test Qt "`qt_test_cxxflags`" $1 && \
+>            _link_run_test Qt \
+> 		"`qt_libpathflags`" "`qt_test_ldflags`" $1
+> 	then
+> 	    QT_TEST_PASSED='y'
+> 	    return 0
+> 	else    
+> 	    QT_TEST_PASSED=''
+> 	    return 1
+> 	fi
+>     else
+> 	return 0
+>     fi
+> }
+> 
+2921a3427,3428
+>     _set_tmp_to_not_or_not "${QT_SUPPORT}"
+>     ${1} "Qt:\t\t${_tmp}supported" 
+3104a3612,3670
+> 
+>     # Qt specific stuff:
+>     if try_to_get_var_from_file QT_SUPPORT "${_file}"; then
+> 	QT_SUPPORT=''
+>     fi
+>     if try_to_get_var_from_file QT_ADVANCED_MODE "${_file}"; then
+>         QT_ADVANCED_MODE=''
+>     fi
+>     if try_to_get_var_from_file NEED_EXTRA_QT_IDIR "${_file}" || \
+> 	try_to_get_var_from_file NEED_EXTRA_QT_LDIR "${_file}" || \
+> 	 try_to_get_var_from_file NEED_EXTRA_QTMOC "${_file}"; then
+> 	if [ -n "${QT_SUPPORT}" -a -n "${QT_ADVANCED_MODE}" ]; then
+> 	    QT_SUPPORT=''
+> 	    SETUP_COMPLETE=''
+> 	fi
+> 	NEED_EXTRA_QT_IDIR='n'
+> 	NEED_EXTRA_QT_LDIR='n'
+> 	NEED_EXTRA_QTMOC='n'
+>     fi
+>     if try_to_get_var_from_file NEED_EXTRA_QTDIR "${_file}"; then
+> 	if [ -n "${QT_SUPPORT}" -a -z "${QT_ADVANCED_MODE}" ]; then
+> 	    QT_SUPPORT=''
+> 	    SETUP_COMPLETE=''
+> 	fi
+> 	NEED_EXTRA_QTDIR='n'
+>     fi
+>     if try_to_get_var_from_file QT_DIR "${_file}"; then
+> 	if [ -n "${QT_SUPPORT}" -a -z "${QT_ADVANCED_MODE}" -a \
+> 	     -n "${NEED_EXTRA_QTDIR}" ]; then
+> 	    SETUP_COMPLETE=''
+> 	fi
+>     fi
+>     if try_to_get_var_from_file QT_INCL_DIR "${_file}"; then
+> 	if [ -n "${QT_SUPPORT}" -a -n "${QT_ADVANCED_MODE}" -a \
+>              -n "${NEED_EXTRA_QT_IDIR}" ]; then
+> 	    SETUP_COMPLETE=''
+> 	fi
+>     fi
+>     if try_to_get_var_from_file QT_LIB_DIR "${_file}"; then
+> 	if [ -n "${QT_SUPPORT}" -a -n "${QT_ADVANCED_MODE}" -a \
+>              -n "${NEED_EXTRA_QT_LDIR}" ]; then
+> 	    SETUP_COMPLETE=''
+> 	fi
+>     fi
+>     if try_to_get_var_from_file QT_MOC "${_file}"; then
+> 	if [ -n "${QT_SUPPORT}" -a -n "${QT_ADVANCED_MODE}" -a \
+>              -n "${NEED_EXTRA_QTMOC}" ]; then
+> 	    SETUP_COMPLETE=''
+> 	fi
+>     fi
+> 
+> 
+>     if try_to_get_var_from_file CUSTOM_CXXFLAGS "${_file}"; then
+> 	CUSTOM_CXXFLAGS=''
+>     fi
+>     if try_to_get_var_from_file CUSTOM_LDFLAGS "${_file}"; then
+> 	CUSTOM_LDFLAGS=''
+>     fi
+> 
+3154a3721,3730
+>     _store_install_config_variable QT_SUPPORT >>${_file}
+>     _store_install_config_variable QT_ADVANCED_MODE >>${_file}
+>     _store_install_config_variable NEED_EXTRA_QTDIR >>${_file}
+>     _store_install_config_variable QT_DIR >>${_file}
+>     _store_install_config_variable NEED_EXTRA_QT_IDIR >>${_file}
+>     _store_install_config_variable QT_INCL_DIR >>${_file}
+>     _store_install_config_variable NEED_EXTRA_QT_LDIR >>${_file}
+>     _store_install_config_variable QT_LIB_DIR >>${_file}
+>     _store_install_config_variable NEED_EXTRA_QTMOC >>${_file}
+>     _store_install_config_variable QT_MOC >>${_file}
+3221a3798,3817
+>     # QT MOC
+>     if [ -z "${QT_MOC_TEST_PASSED}" ]; then
+> 	test_qt_moc 'v'
+> 	if [ $? = 1 ]; then
+> 	    return 1
+> 	fi
+>     else
+> 	_passed_message 'Qt MOC'
+>     fi
+> 
+>     # QT
+>     if [ -z "${QT_TEST_PASSED}" ]; then
+> 	test_qt 'v'
+> 	if [ $? = 1 ]; then
+> 	    return 1
+> 	fi
+>     else
+> 	_passed_message 'Qt'
+>     fi
+> 
+3236a3833,3834
+>     QT_TEST_PASSED=''
+>     QT_MOC_TEST_PASSED=''
+3268a3867,3873
+> 	if [ -n "${QT_SUPPORT}" ]; then
+> 	    QT_TEST_PASSED='y'
+> 	    QT_MOC_TEST_PASSED='y'
+> 	else
+> 	    QT_TEST_PASSED=''
+> 	    QT_MOC_TEST_PASSED=''
+> 	fi
+3345a3951,3952
+>     _set_tmp_to_not_or_not "${QT_SUPPORT}"
+>     print_line     "Qt:                  ${_tmp}supported." 
+3826a4434,4649
+> # qt_menu to setup Qt
+> #
+> 
+> qt_menu()
+> {
+>     while [ 0 ]; do
+> 	menu_header 'Qt'
+> 	print_line     "${_bold_on}<K>${_bold_off}  Toggle Qt support"
+> 	if [ -n "${QT_SUPPORT}" ]; then
+> 	    if [ -z "${QT_ADVANCED_MODE}" ]; then
+> 		print_line     "${_bold_on}<A>${_bold_off}  Advanced mode" 
+> 		print_line \
+> 		"${_bold_on}<D>${_bold_off}  Qt directory" 
+> 		if [ -n "${NEED_EXTRA_QTDIR}" ]; then
+> 		    print_line  "     ${QT_DIR:-<undefined>}" 
+> 		    if [ "${NEED_EXTRA_QTDIR}" = "x" ]; then
+> 			print_line \
+> 	    "${_bold_on}<E>${_bold_off}  Use \$QTDIR as Qt directory."
+> 		    fi
+> 		else
+> 		    print_line     "     ${QT_DIR} <defined in \$QTDIR>"
+> 		fi
+> 	    else
+> 		print_line     "${_bold_on}<B>${_bold_off}  Basic mode"
+> 		print_line \
+> 		    "${_bold_on}<I>${_bold_off}  Qt include directory" 
+> 		if [ -n "${NEED_EXTRA_QT_IDIR}" ]; then
+> 		    print_line  "     ${QT_INCL_DIR:-<undefined>}" 
+> 		    if [ "${NEED_EXTRA_QT_IDIR}" = "x" ]; then
+> 			print_line \
+> 	    "${_bold_on}<J>${_bold_off}  Use Qt headers from system include."
+> 		    fi
+> 		else
+> 		    print_line     "     <system include directory>"
+> 		fi
+> 		print_line     "${_bold_on}<L>${_bold_off}  Qt lib directory" 
+> 		if [ -n "${NEED_EXTRA_QT_LDIR}" ]; then
+> 		    print_line     "     ${QT_LIB_DIR:-<undefined>}" 
+> 		    if [ "${NEED_EXTRA_QT_LDIR}" = "x" ]; then
+> 			print_line \
+> 	    "${_bold_on}<M>${_bold_off}  Use Qt libs from system libdir."
+> 		    fi
+> 		else
+> 		    print_line     "     <system lib directory>"
+> 		fi
+> 		print_line     "${_bold_on}<O>${_bold_off}  Qt moc executable"
+> 		if [ -n "${NEED_EXTRA_QTMOC}" ]; then
+> 		    print_line     "     ${QT_MOC:-<undefined>}" 
+> 		    if [ "${NEED_EXTRA_QTMOC}" = "x" ]; then
+> 			print_line \
+> 			    "${_bold_on}<P>${_bold_off}  Use Qt moc from path."
+> 		    fi
+> 		else
+> 		    print_line     "     <in path>"
+> 		fi
+> 	    fi
+> 
+> 	fi
+> 	print_line     "${_bold_on}<T>${_bold_off}  Test (and save) setup" 
+> 	menu_tailer 'Main Menu'
+> 	case ${KEY} in
+> 	    k|K)
+> 		if [ -z "${QT_SUPPORT}" ]; then 
+> 		    SETUP_COMPLETE=''
+> 		    QT_SUPPORT='_QT'
+> 		    go_down_lines 3
+> 		    flush_buffer
+> 		    # test for QT sysincl/-lib and moc, if this was not
+> 		    # done before
+> 		    if [ "${NEED_EXTRA_QT_IDIR}" = 'n' -o \
+> 			 "${NEED_EXTRA_QT_LDIR}" = 'n' -o \
+> 			 "${NEED_EXTRA_QTMOC}" = 'n' ]; then
+> 			test_for_qt_moc_in_path "${INSTALL_VERBOSE}"
+> 			test_for_qt_incl_in_sys_incl "${INSTALL_VERBOSE}"
+> 			test_for_qt_lib_in_sys_lib "${INSTALL_VERBOSE}"
+> 		    fi
+> 		    if [ "${NEED_EXTRA_QT_IDIR}" = 'x' -a \
+> 			 "${NEED_EXTRA_QT_LDIR}" = 'x' -a \
+> 			 "${NEED_EXTRA_QTMOC}" = 'x' ]; then
+> 			 QT_ADVANCED_MODE='y'
+> 		    else
+> 			QT_ADVANCED_MODE=''
+> 			# test QTDIR if this was not done before
+> 			if [ "${NEED_EXTRA_QTDIR}" = 'n' ]; then
+> 			    test_for_qt_dir "${INSTALL_VERBOSE}"
+> 			fi
+> 		    fi
+> 		else
+> 		    QT_SUPPORT=''
+> 		    QT_ADVANCED_MODE=''
+> 		fi
+> 		;;
+> 	    a|A)
+> 	        if [ -n "${QT_SUPPORT}" -a -z "${QT_ADVANCED_MODE}" ]; then 
+> 		    QT_ADVANCED_MODE='y'
+> 		    QT_TEST_PASSED=''
+> 		    QT_MOC_TEST_PASSED=''
+> 		    SETUP_COMPLETE=''
+> 		fi
+> 		;;  
+> 	    b|B)
+> 	        if [ -n "${QT_SUPPORT}" -a -n "${QT_ADVANCED_MODE}" ]; then 
+> 		    QT_ADVANCED_MODE=''
+> 		    QT_TEST_PASSED=''
+> 		    QT_MOC_TEST_PASSED=''
+> 		    SETUP_COMPLETE=''
+> 		    # test QTDIR if this was not done before
+> 		    if [ "${NEED_EXTRA_QTDIR}" = 'n' ]; then
+> 			go_down_lines 3
+> 			flush_buffer
+> 			test_for_qt_dir "${INSTALL_VERBOSE}"
+> 		    fi
+> 		    if [ -n "${QT_DIR}" ]; then
+> 			qt_dir_has_changed
+> 		    fi
+> 		fi
+> 		;; 
+> 	    d|D)
+> 		if [ -n "${QT_SUPPORT}" -a -z "${QT_ADVANCED_MODE}" ]; then
+> 		    if [ -z "${NEED_EXTRA_QTDIR}" ]; then
+> 			NEED_EXTRA_QTDIR='x'
+> 		    fi
+> 		    if change_dir QT_DIR dir; then
+> 			if [ -z "${NEED_EXTRA_QTDIR}" ]; then
+> 			    NEED_EXTRA_QTDIR='x'
+> 			fi
+> 			QT_TEST_PASSED=''
+> 			QT_MOC_TEST_PASSED=''
+> 			SETUP_COMPLETE=''
+> 			qt_dir_has_changed
+>  		    fi
+> 		fi
+> 		;;
+> 	    e|E)
+> 		if [ "${NEED_EXTRA_QTDIR}" = "x" ]; then
+> 		    NEED_EXTRA_QTDIR=''
+> 		    QT_TEST_PASSED=''
+> 		    QT_MOC_TEST_PASSED=''
+> 		    SETUP_COMPLETE=''
+> 		fi
+> 		;;
+> 	    i|I)
+> 		if [ -n "${QT_SUPPORT}" ]; then 
+> 			if [ -z "${NEED_EXTRA_QT_IDIR}" ]; then
+> 			    NEED_EXTRA_QT_IDIR='x'
+> 			fi
+> 		    if change_dir QT_INCL_DIR dir; then
+> 			if [ -z "${NEED_EXTRA_QT_IDIR}" ]; then
+> 			    NEED_EXTRA_QT_IDIR='x'
+> 			fi
+> 			QT_TEST_PASSED=''
+> 			QT_MOC_TEST_PASSED=''
+> 			SETUP_COMPLETE=''
+>  		    fi
+> 		fi
+> 		;;
+> 	    j|J)
+> 		if [ "${NEED_EXTRA_QT_IDIR}" = "x" ]; then
+> 		    NEED_EXTRA_QT_IDIR=''
+> 		    QT_TEST_PASSED=''
+> 		    QT_MOC_TEST_PASSED=''
+> 		    SETUP_COMPLETE=''
+> 		fi
+> 		;;
+> 	    l|L)
+> 		if [ -n "${QT_SUPPORT}" ]; then 
+> 		    if change_dir QT_LIB_DIR dir; then
+> 			if [ -z "${NEED_EXTRA_QT_LDIR}" ]; then
+> 			    NEED_EXTRA_QT_LDIR='x'
+> 			fi
+> 			QT_TEST_PASSED=''
+> 			QT_MOC_TEST_PASSED=''
+> 			SETUP_COMPLETE=''
+> 		    fi
+> 		fi
+> 		;;
+> 	    m|M)
+> 		if [ "${NEED_EXTRA_QT_LDIR}" = "x" ]; then
+> 		    NEED_EXTRA_QT_LDIR=''
+> 		    QT_TEST_PASSED=''
+> 		    QT_MOC_TEST_PASSED=''
+> 		    SETUP_COMPLETE=''
+> 		fi
+> 		;;
+> 	    o|O)
+> 		if [ -n "${QT_SUPPORT}" ]; then 
+> 		    if change_dir QT_MOC exe; then
+> 			if [ -z "${NEED_EXTRA_QTMOC}" ]; then
+> 			    NEED_EXTRA_QTMOC='x'
+> 			fi
+> 			QT_TEST_PASSED=''
+> 			QT_MOC_TEST_PASSED=''
+> 			SETUP_COMPLETE=''
+> 		    fi
+> 		fi
+> 		;;
+> 	    p|P)
+> 		if [ "${NEED_EXTRA_QTMOC}" = "x" ]; then
+> 		    NEED_EXTRA_QTMOC=''
+> 		    QT_TEST_PASSED=''
+> 		    QT_MOC_TEST_PASSED=''
+> 		    SETUP_COMPLETE=''
+> 		fi
+> 		;;
+> 	    t|T)
+> 		go_down_lines 3
+> 		flush_buffer
+> 		test_setup;;
+> 	    q|Q|b|B)
+> 		return;;
+> 	    *);;
+> 	esac    done
+> }
+> 
+> 
+> # ---------------------------------------------------------------------
+4127a4951,4982
+>   # QT_MOC
+>   #
+>   if [ -n "${QT_SUPPORT}" -a -n "${NEED_EXTRA_QTMOC}" ]; then
+>     print_as_shell_comment \
+>       "*** Fill in your Qt moc executable ***" \
+>       >> ${FILE}
+>     print_as_shell_comment \
+>       "(e.g. /usr/local/lib/qt/bin/moc)" \
+>       >> ${FILE}
+>     ${_printf} "%s\\\\\n" "QT_MOC = " >> ${FILE}
+>     ${_printf} "\t%s\n\n" \
+>       "`_where_is 'QT_MOC'`" \
+>       >> ${FILE}
+>   fi
+> 
+>   #
+>   # QT_INCL_DIR
+>   #
+>   if [ -n "${QT_SUPPORT}" -a -n "${NEED_EXTRA_QT_IDIR}" ]; then
+>     print_as_shell_comment \
+>       "*** Fill in your Qt include directory ***" \
+>       >> ${FILE}
+>     print_as_shell_comment \
+>       "(e.g. /usr/local/lib/qt/include)" \
+>       >> ${FILE}
+>     ${_printf} "%s\\\\\n" "QT_INCL_DIR = " >> ${FILE}
+>     ${_printf} "\t%s\n\n" \
+>       "`_where_is 'QT_INCL_DIR'`" \
+>       >> ${FILE}
+>   fi
+> 
+>   #
+4158a5014,5019
+>   if [ -n "${QT_SUPPORT}" ]; then
+>     makefile_print_line "-DCGAL_USE_QT" >> ${FILE}
+>     if [ -n "${NEED_EXTRA_QT_IDIR}" ]; then
+> 	makefile_print_line "'-I\$(QT_INCL_DIR)'" >> ${FILE}
+>     fi
+>   fi
+4242a5104,5119
+>   # QT_LIB_DIR
+>   #
+>   if [ -n "${QT_SUPPORT}" -a -n "${NEED_EXTRA_QT_LDIR}" ]; then
+>     print_as_shell_comment \
+>       "*** Fill in your Qt lib directory ***" \
+>       >> ${FILE}
+>     print_as_shell_comment \
+>       "(e.g. /usr/local/lib/qt/lib)" \
+>       >> ${FILE}
+>     ${_printf} "%s\\\\\n" "QT_LIB_DIR = " >> ${FILE}
+>     ${_printf} "\t%s\n\n" \
+>       "`_where_is 'QT_LIB_DIR'`" \
+>       >> ${FILE}
+>   fi
+> 
+>   #
+4303a5181,5194
+>   if [ -n "${QT_SUPPORT}" ] ; then
+>     if [ -n "${NEED_EXTRA_QT_LDIR}" ]; then
+> 	if [ -n "${WINDOWS_COMPILER}" ]; then
+> 	    LIB_PATH="${LIB_PATH} '${LIBPATH_OPT}\$(QT_LIB_DIR)'"
+> 	else
+> 	    LIB_PATH="${LIB_PATH} ${LIBPATH_OPT}\$(QT_LIB_DIR)"
+> 	fi
+> 	RUNTIME_LIB_PATH="${RUNTIME_LIB_PATH}:\$(QT_LIB_DIR)"
+>     fi
+>     LIBS="${LIBS} `lib_option qt`"
+>     GEOWLIBS="${GEOWLIBS} `lib_option qt`"
+>     WLIBS="${WLIBS} `lib_option qt`"
+>   fi
+> 
+4953a5845
+> 	print_line     "${_bold_on}<K>${_bold_off}  Qt Menu" 
+4970a5863
+> 	    k|K) qt_menu;;
+4995a5889,5894
+> 		if [ -n "${QT_SUPPORT}" ]; then
+> 		    test_for_qt_moc_in_path "${INSTALL_VERBOSE}"
+> 		    test_for_qt_incl_in_sys_incl "${INSTALL_VERBOSE}"
+> 		    test_for_qt_lib_in_sys_lib "${INSTALL_VERBOSE}"
+> 		    test_for_qt_dir "${INSTALL_VERBOSE}"
+> 		fi
+5194a6094,6121
+> 	--qt_incl_dir*|--QT_INCL_DIR*|-qt_incl_dir*|-QT_INCL_DIR*)
+> 	    _ANY_OPT='y'
+> 	    if set_variable_from_command_line 'QT_INCL_DIR' "$1" "$2"; then
+> 		QT_ADVANCED_MODE='y'
+> 		shift
+> 	    fi
+> 	    ;;
+> 	--qt_dir*|--QT_DIR*|-qt_dir*|-QT_DIR*)
+> 	    _ANY_OPT='y'
+> 	    if set_variable_from_command_line 'QT_DIR' "$1" "$2"; then
+> 		qt_dir_has_changed
+> 		shift
+> 	    fi
+> 	    ;;
+> 	--qt_lib_dir*|--QT_LIB_DIR*|-qt_lib_dir*|-QT_LIB_DIR*)
+> 	    _ANY_OPT='y'
+> 	    if set_variable_from_command_line 'QT_LIB_DIR' "$1" "$2"; then
+> 		QT_ADVANCED_MODE='y'
+> 		shift
+> 	    fi
+> 	    ;;
+> 	--qt_moc*|--QT_MOC*|-qt_moc*|-QT_MOC*)
+> 	    _ANY_OPT='y'
+> 	    if set_variable_from_command_line 'QT_MOC' "$1" "$2"; then
+> 		QT_ADVANCED_MODE='y'
+> 		shift
+> 	    fi
+> 	    ;;
+5221a6149,6153
+> 	-qt*|-QT*|--qt*|--QT*)
+> 	    _ANY_OPT='y'
+> 	    QT_SUPPORT='_QT'
+> 	    write_buffer "${_LEFTSPACE}Enable Qt support.\n"
+> 	    ;;
+5278a6211,6219
+> 
+> if [ -n "${QT_SUPPORT}" -a -z "${QT_ADVANCED_MODE}" -a -z "${QT_DIR}" ]; then
+>     if [ -n "${QTDIR}" ]; then
+> 	QT_DIR=${QTDIR}
+> 	write_buffer "remark: QT_DIR has been set to \$QTDIR (${QTDIR})"
+>     else
+> 	write_buffer "WARNING: --QT_DIR not set unless Qt support enable.\n"
+>     fi
+> fi

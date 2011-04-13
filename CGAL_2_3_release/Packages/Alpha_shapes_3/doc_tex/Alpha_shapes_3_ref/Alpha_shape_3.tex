@@ -1,0 +1,336 @@
+% ======================================================================
+%
+% Copyright (c) 1999 The GALIA Consortium
+%
+% This software and related documentation is part of the
+% Computational Geometry Algorithms Library (CGAL).
+%
+% Every use of CGAL requires a license. Licenses come in three kinds:
+%
+% - For academic research and teaching purposes, permission to use and
+%   copy the software and its documentation is hereby granted free of  
+%   charge, provided that
+%   (1) it is not a component of a commercial product, and
+%   (2) this notice appears in all copies of the software and
+%       related documentation.
+% - Development licenses grant access to the source code of the library 
+%   to develop programs. These programs may be sold to other parties as 
+%   executable code. To obtain a development license, please contact
+%   the GALIA Consortium (at cgal@cs.uu.nl).
+% - Commercialization licenses grant access to the source code and the
+%   right to sell development licenses. To obtain a commercialization 
+%   license, please contact the GALIA Consortium (at cgal@cs.uu.nl).
+%
+% This software and documentation is provided "as-is" and without
+% warranty of any kind. In no event shall the CGAL Consortium be
+% liable for any damage of any kind.
+%
+% The GALIA Consortium consists of Utrecht University (The Netherlands),
+% ETH Zurich (Switzerland), Free University of Berlin (Germany),
+% INRIA Sophia-Antipolis (France), Martin-Luther-University Halle-Wittenberg
+% (Germany), Max-Planck-Institute Saarbrucken (Germany),
+% and Tel-Aviv University (Israel).
+%
+% ----------------------------------------------------------------------
+%
+% package       : Alpha_shapes_3
+% author(s)     : Tran Kai Frank DA <Frank.Da@sophia.inria.fr>
+%
+% coordinator   : INRIA Sophia-Antipolis (<Mariette.Yvinec@sophia.inria.fr>)
+%
+% ======================================================================
+
+\RCSdef{\alphashapeRevision}{$Revision$}
+\RCSdefDate{\alphashapeDate}{$Date$}
+
+%----------------------------------------------------------------------
+
+\begin{ccRefClass} {Alpha_shape_3<Dt>}
+
+\ccDefinition
+
+The class \ccClassTemplateName\ represents the family of
+$\alpha$-shapes of points in the 3D space for {\em all} positive
+$\alpha$. It maintains the underlying triangulation \ccc{Dt} which
+represents connectivity and order among its faces. Each
+$k$-dimensional face of the \ccc{Dt} is associated with
+an interval that specifies for which values of $\alpha$ the face
+belongs to the $\alpha$-shape. There are links between the intervals
+and the $k$-dimensional faces of the triangulation.
+
+Note that this class is at the same time used for {\em basic} and
+for {\em weighted} Alpha Shapes\ccIndexMainItem[C]{Weighted_alpha_shapes_3}.
+
+\ccInheritsFrom
+
+\ccc{Dt}
+
+This class is the underlying triangulation class.
+
+The modifying functions \ccc{insert} and \ccc{remove} will overwrite
+the inherited functions. At the moment, only the static version is implemented.
+
+\ccTypes
+\ccSetThreeColumns{Oriented_side}{}{\hspace*{10cm}}
+\ccThreeToTwo
+
+\ccNestedType{Gt}{the alpha shape traits type.}
+it has to derive from a triangulation traits class.  
+For example \ccc{Dt::Point} is a Point class. 
+
+\ccTypedef{typedef Gt::Coord_type Coord_type;}{the number type for computation.}
+
+\ccNestedType{Alpha_iterator}{A bidirectional and non-mutable iterator that allow to traverse 
+the increasing sequence of different $\alpha$-values.
+\ccPrecond Its \ccc{value_type} is \ccc{Coord_type}}
+
+\ccNestedType{Alpha_shape_vertices_iterator}{A bidirectional and non-mutable iterator that allow to traverse 
+the vertices which belongs to the $\alpha$-shape for a fixed $\alpha$. 
+\ccPrecond Its \ccc{value_type} is \ccc{Dt::Vertex_handle}}
+
+\ccNestedType{Alpha_shape_facets_iterator}{A bidirectional and non-mutable iterator that allow to traverse 
+the facets which belongs to the $\alpha$-shape for a fixed $\alpha$. 
+\ccPrecond Its \ccc{value_type} is \ccc{Dt::Facet}}
+
+\ccEnum{enum Classification_type {EXTERIOR, SINGULAR, REGULAR, INTERIOR};}
+{Distinguishes the different cases for classifying a $k$-dimensional face
+ of the underlying triangulation of the $\alpha$-shape. \\
+\ccc{EXTERIOR} if the face does not belong to the $\alpha$-complex.\\
+\ccc{SINGULAR} if the face belongs to the boundary of the $\alpha$-shape,
+ but is not incident to any 3-dimensional face of the $\alpha$-complex\\
+\ccc{REGULAR} if the face belongs to the boundary of the $\alpha$-shape
+ and is incident to a 3-dimensional face of the $\alpha$-complex\\
+\ccc{INTERIOR} if the face belongs to the $\alpha$-complex, but does
+not belong to the boundary of the $\alpha$-shape\\}
+
+\ccEnum{enum Mode {GENERAL, REGULARIZED};}
+{ In general, an alpha shape can be disconnected and contain many singular facets 
+or vertices. Its regularized version is formed by the set of regular facets
+and their vertices}
+
+\ccCreation
+\ccCreationVariable{A}
+
+\ccConstructor{Alpha_shape_3(Coord_type alpha = 0,
+				  Mode m = GENERAL);}
+{Introduces an empty $\alpha$-shape \ccVar\ for a positive $\alpha$-value
+ \ccc{alpha}.
+\ccPrecond \ccc{alpha}~$\geq~0$.}
+
+
+\ccConstructor{template < class InputIterator >
+		Alpha_shape_3(
+			InputIterator first,
+			InputIterator last,
+                const Coord_type& alpha = 0,
+	        Mode m = GENERAL);}
+{Initializes the family of alpha-shapes with the points in the range
+$\left[\right.$\ccc{first}, \ccc{last}$\left.\right)$ and 
+introduces an $\alpha$-shape \ccVar\ for a positive $\alpha$-value
+\ccc{alpha}.  
+\ccPrecond The \ccc{value_type} of \ccc{first} and
+\ccc{last} is \ccc{Point}.\\
+\ccc{alpha} $\geq 0$.}
+
+\ccOperations
+
+\ccMethod{template < class InputIterator >
+		int make_alpha_shape(
+			InputIterator first,
+			InputIterator last,
+                        const Coord_type& alpha = 0,
+	                Mode m = GENERAL);}
+{Initialize the family of alpha-shapes with the points in the range
+$\left[\right.$\ccc{first}, \ccc{last}$\left.\right)$ and 
+introduces an $\alpha$-shape \ccVar\ for a positive $\alpha$-value
+\ccc{alpha}. Returns the number of inserted points. \\
+If the function is applied to an non-empty family of alpha-shape, it is cleared
+before initialization.
+\ccPrecond The \ccc{value_type} of \ccc{first} and
+\ccc{last} is \ccc{Point}.\\
+\ccc{alpha} $\geq 0$.}
+
+\ccMethod{void
+	clear();}
+{Clears the structure.}
+
+\ccMethod{Coord_type
+	set_alpha(const Coord_type& alpha);}
+{Sets the $\alpha$-value to \ccc{alpha}.
+ Returns the previous $\alpha$-value.
+\ccPrecond \ccc{alpha} $\geq 0$.}
+
+\ccMethod{const Coord_type&
+	get_alpha(void) const;}
+{Returns the current $\alpha$-value.}
+
+\ccMethod{const Coord_type&  get_nth_alpha(int n) const;}
+{Returns the $n$-th alpha-value, sorted in an increasing order.
+ \ccPrecond \ccc{n} < number of alphas.}
+
+\ccMethod{int number_of_alphas() const;}
+{Returns the number of different alpha-values.}
+
+% dynamic version	
+% 
+% \ccMethod{Vertex_handle insert(const Point& p);}
+% {Inserts point \ccc{p} in the alpha shape and returns the
+% corresponding vertex of the underlying Delaunay triangulation.\\ If
+% point \ccc{p} coincides with an already existing vertex, this
+% vertex is returned and the alpha shape remains unchanged.\\ Otherwise,
+% the vertex is inserted in the underlying Delaunay triangulation and
+% the associated intervals are updated. }
+% 
+% \ccMethod{void remove(Vertex *v);}
+% {Removes the vertex from the underlying Delaunay triangulation. The
+% created hole is retriangulated and the associated intervals are
+% updated.}
+% 
+
+\ccMethod{Mode
+	set_mode(Mode m = GENERAL );}
+{Sets \ccVar\ to its general or regularized version. 
+Returns the previous mode.}
+
+\ccMethod{Mode
+	get_mode(void) const;}
+{Returns whether \ccVar\ is general or regularized.}
+
+\ccMethod{Alpha_shape_vertices_iterator alpha_shape_vertices_begin();}{Starts at
+an arbitrary finite vertex which belongs to the $\alpha$-shape for a fixed $\alpha$.}
+\ccMethod{Alpha_shape_vertices_iterator alpha_shape_vertices_end();}{Past-the-end iterator.}
+\ccMethod{Alpha_shape_facets_iterator alpha_shape_facets_begin();}{Starts at
+an arbitrary finite facet which belongs to the $\alpha$-shape for a fixed
+$\alpha$. In regularised mode, facets are represented as a pair (f,i), where f is 
+an interior cell of the $\alpha$-shape.}
+\ccMethod{Alpha_shape_facets_iterator alpha_shape_facets_end();}{Past-the-end iterator.}
+
+%\ccMethod{template  < class OutputIterator >
+%	  OutputIterator get_alpha_shape_vertices(
+%					 OutputIterator result);}
+%{Writes the vertices of the alpha shape \ccVar\ for the current $\alpha$-value
+%to the container where \ccc{result} refers to. 
+%The \ccc{value_type} of \ccc{result} is \ccc{Vertex_handle}. 
+%Returns an output iterator which is the end of the constructed range.}
+%
+%\ccMethod{template  < class OutputIterator >
+%	  OutputIterator get_alpha_shape_facets(
+%					 OutputIterator result);}
+%{Writes the facets 
+%of the alpha shape \ccVar\ for the current $\alpha$-value
+%to the container where \ccc{result} refers to. 
+%The \ccc{value_type} of \ccc{result} is \ccc{pair<Face_handle, int>}.
+%Returns an output iterator which is the end of the constructed range.}
+
+\ccHeading{Predicates}
+
+
+\ccMethod{Classification_type
+           classify(const Point& p, 
+	const Coord_type& alpha = get_alpha()) const;}
+{Locates a point  \ccc{p} in the underlying triangulation and Classifies the 
+associated k-face with respect to \ccVar.}
+
+\ccMethod{Classification_type
+           classify(Cell_handle f, const Coord_type& alpha = get_alpha()) const;}
+{Classifies the cell \ccc{f} of the underlying triangulation with respect to \ccVar.}
+
+\ccMethod{Classification_type
+           classify(Facet f, const Coord_type& alpha = get_alpha()) const;}
+{Classifies the facet \ccc{e} of the underlying triangulation with respect to \ccVar.}
+
+\ccMethod{Classification_type
+           classify(Cell_handle f, int i, const Coord_type& alpha = get_alpha()) const;}
+{Classifies the facet of the cell \ccc{f} opposite to the vertex with index
+\ccc{i} 
+of the underlying triangulation with respect to \ccVar.}	
+
+\ccMethod{Classification_type
+           classify(Vertex_handle v, const Coord_type& alpha = get_alpha()) const;}
+{Classifies the vertex \ccc{v} of the underlying triangulation with respect to \ccVar.}
+
+
+\ccHeading{Traversal of the $\alpha$-Values}
+
+\ccMethod{Alpha_iterator alpha_begin() const;}
+{Returns an iterator that allows to traverse the
+sorted sequence of $\alpha$-values of the family of alpha shapes.}
+
+\ccMethod{Alpha_iterator alpha_end() const;}
+{Returns the corresponding past-the-end iterator.}
+
+\ccMethod{Alpha_iterator alpha_find(const Coord_type& alpha) const;}
+{Returns an iterator pointing to an element with $\alpha$-value
+\ccc{alpha}, or the corresponding past-the-end iterator if such 
+an element is not found.}
+
+\ccMethod{Alpha_iterator alpha_lower_bound(const Coord_type& alpha) const;}
+{Returns an iterator pointing to the first element with
+$\alpha$-value not less than \ccc{alpha}.}
+
+\ccMethod{Alpha_iterator alpha_upper_bound(const Coord_type& alpha) const;}
+{Returns an iterator pointing to the first element with $\alpha$-value
+greater than \ccc{alpha}.}
+
+\ccHeading{Operations}
+
+\ccMethod{int number_of_solid_components(const Coord_type& alpha = get_alpha()) const;}
+{Returns the number of solid components of \ccVar, that is, the number of
+components of its 
+regularized version.}
+
+\ccMethod{Alpha_iterator find_optimal_alpha(int nb_components) const;}
+{Returns an iterator pointing to the first element with $\alpha$-value
+such that \ccVar\ satisfies the following two properties:\\
+\ccc{nb_components} equals the number of solid components and \\
+all data points are either on the boundary or in the interior of the regularized version of \ccVar.\\
+If no such value is found, the iterator points to the first element with 
+$\alpha$-value such that \ccVar\ satisfies the second property.}
+
+\ccHeading{I/O}
+
+The I/O operators are defined for \ccc{iostream}, and for
+the window stream provided by \cgal. The format for the iostream
+is an internal format. 
+
+\ccInclude{CGAL/IO/io.h}
+
+\ccFunction{ostream& operator<<(ostream& os,
+                  const Alpha_shape_3<Dt>& A);}
+{Inserts the alpha shape \ccVar\ for the current $\alpha$-value into the stream \ccc{os}.
+\ccPrecond The insert operator must be defined for \ccc{Point}.}
+
+\ccInclude{CGAL/IO/Geomview_stream.h}
+
+\ccInclude{CGAL/IO/alpha_shape_geomview_ostream_3.h}
+
+\ccFunction{Geomview_stream& operator<<(Geomview_stream& W,
+                         	const Alpha_shape_3<Dt>& A);}
+{Inserts the alpha shape \ccVar\ for the current $\alpha$-value into the Geomview stream \ccc{W}.
+\ccPrecond The insert operator must be defined for \ccc{Point} and \ccc{Triangle}.}
+
+\ccImplementation
+
+Note that this implementation do not provide functions to deal with edges, first
+because of single edges are not in any reconstruction, second because dealing
+with edges would slow down the wall initialization process.
+
+The set of intervals associated with the
+$k$-dimensional faces of the underlying triangulation are
+stored in \ccc{multimaps}. 
+
+The cross links between the intervals and the $k$-dimensional faces of the
+triangulation are actually realized using methods in the $k$-dimensional faces
+themselves.
+
+
+\ccc{A.alpha find} uses linear search, while 
+\ccc{A.alpha lower bound} and \ccc{A.alpha upper bound} 
+use binary search.
+\ccc{A.number of solid components} performs a graph traversal and takes time
+linear in the number of cells of the underlying triangulation.
+\ccc{A.find of optimal alpha} uses binary search and takes time
+$O(\mbox{ \em n } \log{\mbox{ \em n } })$, where  $n$ is the number of points.
+
+\end{ccRefClass}
+

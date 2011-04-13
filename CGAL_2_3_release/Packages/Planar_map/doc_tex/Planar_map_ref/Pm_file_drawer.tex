@@ -1,0 +1,84 @@
+% +------------------------------------------------------------------------+
+% | Reference manual page: Pm_bounding_box_traits.tex (Planar_map)
+% +------------------------------------------------------------------------+
+% | 
+% | Package: pm (Planar_map_2)
+% | 
+% +------------------------------------------------------------------------+
+
+\ccRefPageBegin
+
+%%RefPage: end of header, begin of main body
+% +------------------------------------------------------------------------+
+
+%Pm_file_writer
+\begin{ccRefConcept}{Pm_drawer}
+
+\ccCreationVariable{pm_drawer}
+
+\ccDefinition
+The class \ccRefName\ contains functions for writing (or drawing) the \ccc{Planar map} componenets to a given graphic stream. 
+The user has to make sure that methods for writing Point and X_curve types of \ccc{Planar_map} are defined in the graphic stream he chooses to work with.
+This class is templated with \ccc{Planar map}, and hence the user can work with \ccRefName\ with its own \ccc{Planar map}. 
+ 
+%The following requirement catalog lists the primitives, i.e., types, member functions
+%etc., that must be defined for any \ccc{Planar map} file writer class that can be used to parameterize the reading function of \ccc{Planar map}. 
+
+\ccTypes
+
+The following handles and iterators have appropriate constant counterparts. The mutable types are assignable to their
+constant counterparts. The iterators are assignable to the respective handle types. 
+Wherever the handles appear in function parameter lists, the appropriate iterator can be used as well. 
+
+\ccNestedType{Vertex_handle}{handle to the \ccc{Planar map} vertex.}
+\ccNestedType{Halfedgee_handle}{handle to the \ccc{Planar map} halfedge.}
+\ccNestedType{Face_handle}{handle to the \ccc{Planar map} face.}
+\ccNestedType{Vertex_iterator}{a bidirectional iterator over the vertices of the \ccc{Planar map.}
+\ccNestedType{Halfedge_iterator}{a bidirectional iterator over the halfedges of the \ccc{Planar map} .}
+\ccNestedType{Face_iterator}{a bidirectional iterator over the faces of the \ccc{Planar map} .}
+
+\ccCreation
+
+\ccConstructor{Pm_drawer(Window& w);} 
+{constructs \ccRefName\ for a given graphic stream.}
+
+\ccOperations
+
+\ccMethod{Window&  window();}
+{returns the graphic stream the \ccc{Planar map} is written to.} 
+
+\ccMethod{void draw_vertex(Vertex_handle v);}
+{writes a vertex of the \ccc{Planar map} to the graphic stream.}
+
+\ccMethod{void draw_halfedge(Halfedge_handle h);}
+{writes an halfedge of the \ccc{Planar map} to the graphic stream.}
+
+\ccMethod{void draw_face(Face_handle f);}
+{writes a face of the \ccc{Planar map} to the graphic stream.}
+
+\ccMethod{void draw_vertices(Vertex_iterator Vertices_begin, Vertex_iterator Vertices_end);}
+{writes all the vertices in the range [Vertices_begin, Vertices_end) to the graphic stream.}
+
+\ccMethod{draw_halfedges(Halfedge_const_iterator Halfedges_begin, Halfedge_const_iterator Halfedges_end);}
+{writes all the halfedges in the range [Halfedges_begin, Halfedges_end) to the graphic stream.}
+
+\ccMethod{draw_faces(Face_iterator Faces_begin, Face_iterator Faces_end);}
+{writes all the faces in the range [Faces_begin, Faces_end) to the graphic stream.}
+
+\end{ccRefConcept} % Pm_file_writer
+
+% +------------------------------------------------------------------------+
+%%RefPage: end of main body, begin of footer
+\ccRefPageEnd
+% EOF
+% +------------------------------------------------------------------------+
+
+
+
+
+
+
+
+
+
+

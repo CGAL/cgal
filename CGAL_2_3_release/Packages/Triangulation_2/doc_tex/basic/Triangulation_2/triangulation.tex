@@ -1,0 +1,3733 @@
+\newcommand{\triangulationcomment}[1]{}
+
+\chapter{Triangulations} \label{I1_Chapter_Triangulations}
+
+\section{Introduction}
+
+A simplicial complex is a set ${C}$ of simplices which satisfy
+two conditions:
+\begin{enumerate}
+\item Any face of a simplex in ${  C}$ is also a simplex in ${  C}$
+\item Two simplices in ${  C}$ either do not intersect
+or their intersection is  a simplex of smaller dimension
+which is their common face of maximal dimension.
+\end{enumerate}
+The dimension of a complex ${  C}$ is the maximal dimension 
+of the simplices
+of ${  C}$. A complex of dimension $d$ is said to be pure
+if any simplex in ${  C}$ is a face of a $d$-dimensional
+simplex of ${  C}$.
+The domain of a complex ${  C}$ is the union of the simplices
+in ${  C}$. A complex is said to be connected if its domain is connected.
+
+A 
+triangulation is a 2-dimensional simplicial complex which is pure
+connected and without singularities. Thus a triangulation
+can be viewed as a collection of triangular faces,
+such that two faces either have an empty intersection or share an edge or a vertex.
+The absence of singularities means that each edge belongs to 
+at most two triangles and that each vertex belongs  to a set  of faces
+whose union forms a topological disk.
+
+Each face of a triangulation can be given an orientation
+(clockwise or counterclockwise) which in turn induces an orientation
+on the edges incident to that face. The orientation of two adjacent
+faces are said to be consistent if they induce
+opposite orientations on their common incident edge.
+A triangulation is said to be orientable if 
+the orientation of each face can be chosen in such a way
+that all pairs of incident faces have consistent orientations. 
+
+
+In this chapter we present a framework to represent
+orientable triangulations which  may  be embedded 
+in a plane or in a higher dimensional space.
+Examples of such triangulations 
+are triangulations of a simple polygons in the plane, the
+Delaunay triangulations of points in the plane, or triangulated
+irregular networks ({\sc Tin}s) which are used as terrain model in
+{\sc Gis}.  
+Any such  triangulation can be described as a set of  vertices and
+triangular faces,  with incidence and adjacence relations:
+two facets or two vertices are said to be {\em adjacent}
+ (or neighboring) if they are incident to the same edge,
+a facet and a vertex are said to be incident if they are incident to the same
+edge.
+
+ On top of this  abstract  view of a triangulation come different
+geometric layers which define  the geometric information
+associated to a vertex (e.g.,  two-dimensional points for triangulations
+in the plane, or three-dimensional points for {\sc Tin}s) or to a face
+and which define the functionality of the triangulation. 
+For example, the insertion of a point into a Delaunay
+triangulation or into  {\sc Tin} requires different update steps.
+
+
+\subsection*{Design Rationale}
+Because a triangulation is merely a set of
+triangular faces with constant size complexity,
+triangulations are not implemented
+as a layer on top of a planar map.
+\cgal\ uses a proper internal
+representation of triangulations based on faces and vertices
+rather than on edges. Such a representation
+allows to save storage space and results in faster
+algorithms.
+
+Thus the basic elements of the representation are vertices and faces.
+Each triangular face gives access to its three incident vertices 
+and to its three adjacent faces. 
+Each vertex gives access to one of its incident faces
+and through that face to the circular list of its incident faces.
+The edges are not explicitely represented, they are only represented 
+through the adjacencies relations of two faces.
+
+
+\begin{figure}
+\begin{ccTexOnly}
+\begin{center}
+\input{three_levels.ltex}
+\end{center}
+\end{ccTexOnly}
+\caption{The three layer design of triangulations.
+\label{I1_Fig_three_levels}}
+\begin{ccHtmlOnly}
+<CENTER>
+<img border=0 src=three_levels.gif align=center alt="Three_levels">
+</CENTER>
+\end{ccHtmlOnly}
+\end{figure}
+
+
+
+The triangulations in \cgal\ are represented
+by a three layer structure  analog to the design used for polyhedral
+surfaces, see Figure~\ref{I1_Fig_three_levels}.
+In the bottom layer, the base classes for vertices and faces
+store some 
+geometric informations such as the coordinate of vertices 
+and any other attribute (such as color, constraint edges etc.)
+needed by the application.
+The base classes handle
+incidence and adjacency relations in term of \ccc{void*} pointers.
+The use of \ccc{void*} pointers in the bottom layer allows 
+to easily change one of the base
+class, to deal with an extra attribute like a color for example,
+without having to change the rest of the structure. 
+The advantages of strong type 
+checking is reestablished in the next layer 
+where the \ccc{triangulation data structure} can be thought 
+of as a container for faces and vertices which can take care
+of all the combinatorial aspects of the triangulation.
+The {triangulation data structure}
+implements
+adjacency and incidence relations with type safe pointer operations
+and maintains the combinatorial integrity of the triangulation.
+For that purpose, the {triangulation data structure} defines its own face and vertex
+classes which are derived
+ from the corresponding 
+base classes
+so that geometric and additional information on vertices and faces 
+are simply inherited.
+  At last, at the top layer, the \ccc{triangulation class}
+implements the user interface with the triangulation. 
+This classes offer to the user
+the high level functionalities that can be expected from a triangulation:
+insertion  or removal of a vertex, traversal of the faces,
+enumeration of the vertices,
+traversal of the   faces incident to a given vertex, location of a given point etc.
+The {triangulation class} defines its own 
+vertex and face classes
+derived from the corresponding class of the {triangulation data structure}.
+The vertices and faces of the {triangulation class}
+are only accessed through high levels concepts such as 
+handles, iterators, or circulators,
+according to the required functionalities of the access.
+The top layer {triangulation class}
+is responsible for the geometric embedding of the triangulation
+and comes in different flavors according to the kind of triangulation represented:
+planar triangulation of a set of points, Delaunay or regular or constrained
+ triangulations etc.
+
+The triangulation classes of \cgal\ depends on two template parameters.
+The first template parameter stands for
+ a geometric traits class which is assumed to provide
+the geometric objects (points, segments and triangles) 
+forming  the triangulation and the geometric predicates on those objects.
+The second template parameter stands for a model
+of  triangulation data
+structure acting as a container for faces and vertices
+while  taking care of the combinatorial aspects of the triangulation. 
+The triangulation data structure class is itself a template
+class parametrized by the base classes for faces and vertices.
+
+
+\subsection*{Organization of this chapter}
+Section~\ref{I1_Sect_Triangulation_2} introduces the basic triangulation class of \cgal ,
+ \ccc{Triangulation_2<Traits, Tds>}, its local \ccc{Vertex} and \ccc{Face}
+classes and gives some examples for a simple use of this class.
+ The \ccc{Triangulation_2<Traits, Tds>} class  is merely designed to represent 
+a triangulation for a set of points in the plane.
+The next section~\ref{I1_Sect_Geom_traits}
+describes the requirements for the geometric
+traits class and presents some default implementations
+for this traits class offered in \cgal. 
+Section~\ref{I1_Sect_Tds}  presents the requirements for the 
+{triangulation data structure} class,
+ its local \ccc{Vertex} and \ccc{Face}
+classes and the default {triangulation data structure} class
+provided by \cgal. 
+Section~\ref{I1_Sect_Base_classes} describes the requirements
+for the base classes \ccc{Vertex_base} and \ccc{Face_base}  
+together with the defaults provided for these classes.
+The remaining sections of this chapter introduce
+several classes derived from the basic triangulation class
+and designed to handle more specific triangulations.
+Section~\ref{I1_Sect_Delaunay} present a class to 
+maintain the Delaunay triangulation of a set of points in the plane.
+ Section~\ref{I1_Sect_Regular}
+describe a class to maintain regular triangulations.
+While the Delaunay triangulation of a set of points
+is the dual of the Voronoi
+diagram of these points,
+ regular triangulations are dual to weighted points power diagrams
+and  appear as a generalization of
+Delaunay triangulations. Section~\ref{I1_Sect_Constrained} 
+describes a class to handle a constrained triangulation,
+that is a triangulation in which certain edges are enforced.
+Constrained triangulations allow in particular to deal with the 
+triangulations of a planar polygons.
+
+ 
+
+\section{Triangulation of points in the plane }
+\label{I1_Sect_Triangulation_2}
+
+The basic triangulation class 
+ of \cgal\ is primarily designed to represent the  triangulations
+ of a set of points ${  A}$ in the plane.
+Such a triangulation has as its vertices the points of ${  A}$
+and its domain covers the convex hull of ${  A}$.
+It can be viewed as a planar partition of the plane
+whoses bounded faces are triangular. and cover
+the convex hull of ${  A}$. The single unbounded face of this partition
+is the complementary of the convex hull of ${  A}$. 
+In many applications, such as Kirkpatrick's hierarchy
+or incremental Delaunay construction, it is convenient to
+deal only with triangular faces. Therefore, we add to the
+triangulation
+a fictitious vertex, called the \ccc{infinite vertex}
+and we make each  convex hull edge incident 
+to an \ccc{infinite} 
+face having as third vertex  the \ccc{infinite vertex}.
+ In that way, each edge is incident to exactly two faces
+and special cases at the
+boundary of the convex hull are simpler to deal with.
+
+
+
+\begin{figure}
+\begin{ccTexOnly}
+\begin{center} \IpeScale{50} \Ipe{infinite_vertex.ipe} \end{center}
+\end{ccTexOnly}
+\caption{The infinite vertex.
+\label{I1_Fig_infinite_vertex}}
+\begin{ccHtmlOnly}
+<CENTER>
+<img border=0 src=infinite_vertex.gif align=center alt="Vertices at
+infinity">
+</CENTER>
+\end{ccHtmlOnly}
+\end{figure}
+
+
+The class \ccc{Triangulation_2<Traits,Tds>}
+implements this point of view
+and therefore considers  the triangulation of the set of points 
+as a set of  triangular,  finite and
+infinite faces. 
+Although it is convenient to draw a triangulation as in
+figure~\ref{I1_Fig_infinite_vertex}, note that
+the \ccc{infinite vertex} has no significant
+coordinates and that no geometric predicate can be applied on it
+or on an infinite face.
+
+A triangulation is a collection of vertices and faces that
+are linked together through incidence and adjacency relations.
+Each face give access to its three incident vertices and to
+its 
+three adjacent faces. Each vertex give access to one of its  incident
+faces. 
+
+The three vertices of a face are indexed with 0, 1 and 2
+in counterclockwise order. The neighbor of a face are also 
+indexed with 0,1,2 in such a way that the neighbor indexed by $i$
+is opposite to the vertex with the same index.
+
+Many of the classes in the triangulation package
+offer  two functions \ccStyle{int cw(int i)} and 
+\ccStyle{int ccw(int i)} 
+which given the index of a vertex in a face
+compute the index of the next vertex  of the same face
+in clockwise
+or counterclockwise order.
+ Thus, for example the neighbor 
+\ccc{neighbor(cw(i))} is
+ the
+neighbor of \ccc{f}  which is next to \ccc{neighbor(i)} turning clockwise
+around \ccc{f}. The face \ccc{neighbor(cw(i))}
+is also the first face encountered after \ccc{f} when
+turning clockwise around vertex \ccc{i}
+of~\ccc{f}.
+
+
+
+ \begin{figure}
+\begin{ccTexOnly}
+    \begin{center}
+     \input{neighbors.ltex}
+    \end{center}
+\end{ccTexOnly} 
+    \caption{Vertices and neighbors.
+    \label{I1_Fig_neighbors}}
+  \begin{ccHtmlOnly}
+<CENTER>
+<img border=0 src=neighbors.gif align=center alt="Neighbors">
+</CENTER>
+\end{ccHtmlOnly} 
+\end{figure}
+
+
+
+\smallskip
+A triangulation is valid from the combinatorial point of view if the
+following is true.
+\\
+{\bf (a)} Two adjacent faces have neighbor pointers to each 
+other and they have two vertices in common. 
+The faces have a
+coherent orientation, that is, they index their common  vertices 
+in opposite order.
+\\
+{\bf (b)} All faces that are incident to a vertex \ccc{v} 
+must be linked with neighbor pointers. Vertex \ccc{v} points to an 
+arbitrary incident face. 
+
+Furthermore, it is said to be geometrically valid iff
+\\
+{\bf (c)} Any face has its vertices indexed according to
+counterclockwise order.
+
+\smallskip
+\begin{figure}
+\begin{ccTexOnly}
+\begin{center} \IpeScale{70}\Ipe{valid1.ipe} \end{center}
+\end{ccTexOnly} 
+\caption{Validity test.
+\label{I1_Fig_valid}}
+
+\begin{ccHtmlOnly}
+<CENTER>
+<img border=0 src=valid1.gif align=center alt="Validity">
+</CENTER>
+\end{ccHtmlOnly} 
+\end{figure}
+
+
+\begin{ccClassTemplate}{Triangulation_2<Traits,Tds>}
+\subsection{The Triangulation Class \protect \ccClassTemplateName} 
+
+The \ccClassTemplateName\  expects a model of  {geometric traits} class
+as first template argument and a model of {triangulation data structure}
+as second argument. The requirements  and defaults for these classes 
+are described in the next sections \ref{I1_Sect_Geom_traits}
+and \ref{I1_Sect_Tds}.
+
+\ccInclude{CGAL/Triangulation_2.h}
+
+\ccInheritsFrom{\ccc{Triangulation_cw_ccw_2}}
+This class provides the function \ccc{cw(i)} et \ccc{ccw(i)}.
+
+\ccTypes
+\ccThree{typedef Traits::Triangle}{}{the triangulation data structure type.}
+\ccThreeToTwo
+
+\ccTypedef{typedef Traits Geom_traits;}{the geometric traits type.}
+\ccGlue
+\ccTypedef{typedef Tds Triangulation_data_structure;}{the triangulation data structure type.}
+
+\ccTypedef{typedef Traits::Point Point;}{the point type}
+\ccGlue
+\ccTypedef{typedef Traits::Segment Segment;}{the segment type}
+\ccGlue
+\ccTypedef{typedef Traits::Triangle Triangle;}{the triangle type}
+
+The following types gives the classes representing the vertices and faces
+ of the triangulation and the type corresponding to the edges.
+Recall that the edges are not explicitly represented and thus there is no corresponding class.
+The functionalities of the vertex and face classes
+ are described in sections~\ref{I1_Sect_Triangulation_Vertex}
+and~\ref{I1_Sect_Triangulation_Face}.
+
+\ccNestedType{Vertex}{the vertex type.}
+\ccGlue
+\ccNestedType{Face}{the face type.}
+\ccGlue
+\ccThree{typedef pair<Face_handle, int>}{}{the triangulation data structure type}
+\ccTypedef{typedef pair<Face_handle, int> Edge;} {the edge type.
+The \ccc{Edge(f,i)} is edge common to faces \ccc{f} and 
+\ccc{f.neighbor(i)}. It is also the edge joining the vertices
+\ccc{vertex(cw(i))} and \ccc{vertex(ccw(i))} of \ccc{f}.}
+
+\ccThree{typedef Traits::Triangle}{}{the triangulation data structure type}
+\ccThreeToTwo
+The vertices and faces of the triangulations are accessed through 
+\ccc{handles}\footnote{ A handle is a type which supports the two
+dereference operators \ccc{operator*} and \ccc{operator->}.}, 
+\ccc{iterators} and \ccc{circulators}. 
+The iterators and circulators
+are all bidirectional and non mutable.
+The circulators and iterators are assignable to the 
+corresponding handle types. Whenever a handle appear in the parameter 
+list of a function, an appropriate iterator or circulator can be used as well.
+The edges of the triangulation can also be visited through iterators
+and circulators,
+the edge circulators and iterators
+are also bidirectional and non mutable.
+In the following, we called {\it infinite} any face or edge 
+incident  to the infinite vertex and the infinite vertex itself.
+ Any other feature (face, edge or vertex) of the triangulation is said 
+to be {\it finite}.
+Some iterators (the \ccc{All} iterators ) allows to visit finite or 
+infinite feature while others (the \ccc{Finite} iterators) visit only
+finite features. Circulators visit infinite features as well as finite 
+ones.
+
+\ccNestedType{Vertex_handle}{handle to a vertex}
+\ccGlue
+\ccNestedType{Face_handle}{handle to a facet}
+
+
+\ccNestedType{All_faces_iterator}{iterator over all faces.}
+\ccGlue
+\ccNestedType{All_edges_iterator
+}{iterator over all edges.}
+\ccGlue
+\ccNestedType{All_vertices_iterator}{iterator over all vertices.}
+
+\ccNestedType{Finite_faces_iterator}{iterator over finite faces.}
+\ccGlue
+\ccNestedType{Finite_edges_iterator
+}{iterator over finite edges.}
+\ccGlue
+\ccNestedType{Finite_vertices_iterator}{iterator over finite vertices.}
+
+
+\ccNestedType{Line_face_circulator}{circulator over faces intersected by a line.}
+
+
+\ccNestedType{Face_circulator} 
+{circulator over faces incident to a given vertex.}
+\ccGlue
+\ccNestedType{Edge_circulator}
+{circulator over edges incident to a given vertex.}
+\ccGlue
+\ccNestedType{Vertex_circulator}
+{circulator over vertices incident to a given vertex.}
+
+The triangulation class also defines the following enum type to specify
+which case occurs when locating a point in the triangulation.
+
+\ccEnum{enum Locate_type {VERTEX=0, EDGE, FACE, OUTSIDE_CONVEX_HULL,
+OUTSIDE_AFFINE_HULL};}{The locate type is \ccc{OUTSIDE_CONVEX_HULL} when the point
+is  outside the convex hull but in the affine hull of the current triangulation. \\
+The locate type is \ccc{OUTSIDE_AFFINE_HULL} 
+when the point is outside the affine hull
+of the current triangulation.}
+
+\ccCreation
+\ccCreationVariable{t}
+\ccThree{Triangulation_2<Traits,Tds>}{t = tr}{}
+\ccThreeToTwo
+
+\ccConstructor{Triangulation_2<Traits,Tds>(
+                   const Geom_traits& gt = Geom_traits() );}
+{Introduces an empty triangulation \ccVar.}
+
+
+\ccConstructor{Triangulation_2<Traits,Tds>(
+                   const Triangulation_2<Traits,Tds>& tr);}
+{Copy constructor. All the vertices and faces are duplicated.
+ After the copy, \ccVar\ and \ccc{tr}
+refer to different triangulations~: 
+ if \ccc{tr} is modified, \ccVar\ is not. }
+
+\ccMethod{Triangulation_2<Traits,Tds> operator=(const Triangulation_2<Traits,Tds>& tr);}
+{Assignement. All the vertices and faces are duplicated.
+ After the assignement, \ccVar\ and \ccc{tr}
+refer to different triangulations~: 
+ if \ccc{tr} is modified, \ccVar\ is not.}
+
+\ccThree{Vertex_handle}{t.number_of_vertices()x}{}
+\ccMethod{void swap(Triangulation_2<Traits,Tds>& tr);}
+{The triangulations \ccc{tr} and \ccVar\ are swapped.
+\ccVar. \ccc{swap(tr)} should be preferred to \ccc{t} = \ccc{tr} or to
+\ccc{t(tr)} if \ccc{tr} is deleted after that.}
+
+\ccMethod{void clear();}{Deletes all faces and finite vertices
+resulting
+ in an
+empty triangulation.}
+
+\ccFunction{void ~Triangulation_2<Traits,Tds> ();}
+{Destructor. All vertices and faces are deleted.}
+
+
+\ccAccessFunctions
+\ccMethod{const Geom_traits& geom_traits() const;}
+{Returns a const reference to the triangulation traits object.}
+\ccGlue
+\ccMethod{int dimension() const;}
+{Returns the dimension of the convex hull.}
+\ccGlue
+\ccMethod{int number_of_vertices() const;}
+{Returns the number of finite vertices.}
+\ccGlue
+\ccMethod{int number_of_faces() const;}
+{Returns the number of finite faces.}
+
+\ccMethod{Face_handle infinite_face() const;}
+{a  face incident to the \ccc{infinite_vertex}.}
+\ccGlue
+\ccMethod{Vertex_handle
+          infinite_vertex();}
+{the \ccc{infinite_vertex}.}
+\ccGlue
+\ccMethod{Vertex_handle finite_vertex() const;}
+{a vertex distinct from  the \ccc{infinite_vertex}.}
+
+\ccHeading{Test triangulation features}
+
+The class \ccClassTemplateName\ provides method to test
+the finite or infinite caracter of any feature,
+and also methods to test the presence in the triangulation
+of a particular feature (edge or face).
+
+\ccThree{bool }{t.is_infinite( Face_handle f, int i)x}{}
+\ccMethod{bool
+          is_infinite(Vertex_handle v) const;}
+{\ccc{true}, iff \ccc{v} is the \ccc{infinite_vertex}.}
+\ccGlue
+\ccMethod{bool
+          is_infinite(Face_handle f) const;}
+{\ccc{true}, iff face \ccc{f} is infinite.}
+\ccGlue
+\ccMethod{bool is_infinite(Face_handle f, int i) const;}
+{\ccc{true}, iff edge \ccc{(f,i)} is infinite.}
+\ccGlue
+\ccMethod{bool
+          is_infinite(Edge e) const;}
+{\ccc{true} iff edge \ccc{e} is infinite.}
+\ccGlue
+\ccMethod{bool
+          is_infinite(Edge_circulator ec) const;}
+{\ccc{true} iff edge \ccc{*ec} is infinite.}
+\ccGlue
+\ccMethod{bool
+          is_infinite(Edge_iterator ei) const;}
+{\ccc{true} iff edge \ccc{*ei} is infinite.}
+
+
+\ccMethod{bool is_edge(Vertex_handle va, Vertex_handle vb);}
+{\ccc{true} if there is an edge having \ccc{va} and \ccc{vb} as
+vertices.}
+\ccGlue
+\ccMethod{bool is_edge(Vertex_handle va, Vertex_handle vb, Face_handle& fr,
+	       int & i);}
+{ as above. In addition, if \ccc{true} is returned,  the edge with
+vertices \ccc{va} and \ccc{vb} is the edge \ccc{e=(fr,i)} where
+\ccc{fr} is a handle to the face incident to \ccc{e} and 
+on the right side of  \ccc{e} oriented from \ccc{va} to \ccc{vb}.}
+\ccGlue
+\ccMethod{bool includes_edge(Vertex_handle va, Vertex_handle & vb,
+		     Face_handle& fr, int & i);}
+{\ccc{true} if the line segment from \ccc{va} to \ccc{vb} includes
+an edge \ccc{e} incident to \ccc{va}. If \ccc{true}, \ccc{vb} becomes
+the other vertex of \ccc{e}, \ccc{e} is the edge \ccc{(fr,i)} where
+\ccc{fr} is a handle to the face incident to \ccc{e} and 
+on the right side \ccc{e} oriented from \ccc{va} to \ccc{vb}.}
+\ccGlue
+\ccMethod{bool is_face(Vertex_handle v1, Vertex_handle v2, Vertex_handle v3);}
+{\ccc{true} if there is a face having \ccc{v1}, \ccc{v2} and a\ccc{v3} 
+as vertices. This function is NOT YET implemented.}
+\ccGlue
+\ccMethod{bool is_face(Vertex_handle v1, Vertex_handle v2, Vertex_handle v3,
+      Face_handle &fr);}
+{as above. In addition, if \ccc{true} is returned, fr is a handle
+to the face with  \ccc{v1}, \ccc{v2} and \ccc{v3} 
+as vertices. This function is NOT YET implemented.} 
+
+
+\ccHeading{Queries}
+
+The class \ccClassTemplateName\  provides methods to locate
+a given point with respect to a triangulation. It also provides
+methods to locate a point with respect to
+a given  finite face of the triangulation.
+
+
+\ccMethod{Face_handle
+          locate(const Point& query,
+                 Face_handle f = Face_handle()) const;}
+{If the point \ccc{query} lies inside the convex hull of the points, a face 
+that contains the query in its interior or on its
+ boundary is returned.\\
+If the point \ccc{query} lies outside the convex hull of the
+triangulation but in the affine hull,
+the returned face is an infinite face which is a proof of the point's
+location :
+for a two dimensional triangulation, it is a face $(\infty, p, q)$ 
+such that
+\ccc{query} lies to the left  of the oriented line $pq$ 
+(the rest of the triangulation lying to the right of this line),
+for a degenerate one dimensional triangulation it is the (degenarate
+one dimensional) face $(\infty, p, NULL)$ such that \ccc{query}
+and the triangulation lie on either side of \ccc{p}. \\
+If the point \ccc{query} lies outside the affine hull,
+the returned \ccc{Face_handle} is \ccc{NULL}. \\
+The optional \ccc{Face_handle} argument, if provided, is used as a hint
+of where the locate process has to start its search.}
+
+\ccMethod{Face_handle
+          locate(const Point& query,
+                 Locate_type& lt,
+                 int& li,
+                 Face_handle h =Face_handle() ) const;}
+{Same as above. Additionally, the parameters \ccc{lt}
+ and \ccc{li}
+describe where the query point is located. 
+The variable \ccc{lt} is set to the locate type of the query.
+If \ccc{lt==VERTEX} 
+the variable \ccc{li}
+is set to the index of the vertex, and if \ccc{lt==EDGE}
+\ccc{li}
+is set to the index 
+of the vertex opposite to the
+edge. 
+Be carefull that \ccc{li}
+has no meaning when the query type is \ccc{FACE}, \ccc{OUTSIDE_CONVEX_HULL}, 
+or \ccc{OUTSIDE_AFFINE_HULL} or when the
+triangulation is $0$-dimensional.}
+
+\ccMethod{Oriented_side
+           oriented_side(Face_handle f,
+                         const Point& p) const;}
+{Returns on which side of the oriented boundary of \ccc{f} lies 
+the point \ccc{p}. \ccPrecond \ccc{f} is finite.}
+
+\ccMethod{Oriented_side
+ side_of_oriented_circle(Face_handle f, const Point & p);}
+{Returns on which side of the circumcircle  of face \ccc{f} lies 
+the point \ccc{p}. The circle is assumed to be counterclokwisely
+oriented, so its positive
+side correspond to its bounded side.
+This predicate is available only if the corresponding predicates on
+points is provided in the geometric traits class.}
+
+\ccHeading{Insertion, Removal and other Modifiers}
+
+The following operations are guaranteed to lead to a valid triangulation 
+when they are applied on a valid triangulation.
+
+\ccMethod{void flip(Face_handle f, int i);}{Exchanges the edge incident to
+\ccc{f} and \ccc{f->neighbor(i)} with the other
+diagonal of the quadrilateral formed by \ccc{f} and  \ccc{f->neighbor(i)}.
+\ccPrecond {The faces \ccc{f} and \ccc{f->neighbor(i)} are finite faces
+and their union form a convex quadrilateral.}}
+
+
+
+\ccMethod{Vertex_handle insert(const Point& p,
+                         Face_handle f = Face_handle());}
+{Inserts point \ccc{p} in the triangulation and returns the corresponding
+ vertex.\\
+If point \ccc{p} coincides with an already existing vertex, this 
+vertex is returned and the triangulation remains unchanged.\\
+If point \ccc{p} is on an edge, the two incident faces are split 
+in two.\\
+If point \ccc{p} is strictly inside a face of the triangulation,
+the face is split in three.\\
+If point \ccc{p} is strictly outside the  convex hull, \ccc{p} is linked
+to all visible points on the convex hull to form the new
+triangulation.\\
+At last, if \ccc{p} is outside the affine hull (in case of degenerate
+1-dimensional or 0-dimensional triangulations), \ccc{p}
+is linked all the  other vertices to form a triangulation whose
+dimension is increased by one.
+The last argument \ccc{f} is an indication to the underlying locate
+algorithm of where to start.
+}
+
+
+\ccMethod{Vertex_handle 
+          insert(const Point& p,
+                 Locate_type& lt,
+                 Face_handle loc, int li );}
+{Same as above except that the location of the point
+ \ccc{p} to be inserted is assumed to be given by
+\ccc{(lt,loc,i)} (see the description of the \ccc{locate} method above.)}
+
+\ccMethod{Vertex_handle push_back(const Point& p);}
+{Equivalent to \ccc{insert(p)}.}
+
+\ccMethod{template < class InputIterator >
+          int
+          insert(InputIterator first, InputIterator last);}
+{Inserts the points in the range
+ $\left[\right.$\ccc{first}, \ccc{last}$\left.\right)$.
+ Returns the number of inserted points.
+ \ccPrecond The \ccc{value_type} of \ccc{first} and \ccc{last}
+ is \ccc{Point}.}
+
+\ccMethod{void    remove(Vertex_handle v);}
+{Removes the vertex from the triangulation. The created hole is 
+ retriangulated.
+ \ccPrecond Vertex \ccc{v} must be finite.}
+
+
+\begin{figure}
+\begin{ccTexOnly}
+\begin{center}
+\input{insert1.ltex}
+\end{center}
+\end{ccTexOnly}
+\caption{Insertion of a point on an edge.
+\label{I1_Fig_inser1t}}
+
+\begin{ccHtmlOnly}
+<CENTER>
+<img border=0 src=insert1.gif align=center alt="Insertion in an edge">
+</CENTER>
+\end{ccHtmlOnly}
+\end{figure}
+
+
+
+
+\begin{figure}
+\begin{ccTexOnly}
+\begin{center}
+\input{insert2.ltex}
+\end{center}
+\end{ccTexOnly}
+\caption{Insertion in a face.
+\label{I1_Fig_insert2}}
+
+\begin{ccHtmlOnly}
+<CENTER>
+<img border=0 src=insert2.gif align=center alt="Insertion in a Face">
+</CENTER>
+\end{ccHtmlOnly}
+\end{figure}
+
+
+\begin{figure}
+\begin{ccTexOnly}
+\begin{center}
+\input{insert3.ltex}
+\end{center}
+\end{ccTexOnly}
+\caption{Insertion outside the convex hull.
+\label{I1_Fig_insert3}}
+
+\begin{ccHtmlOnly}
+<CENTER>
+<img border=0 src=insert3.gif align=center alt="Insertion outside the
+convex hull">
+</CENTER>
+\end{ccHtmlOnly}
+\end{figure}
+
+\begin{figure}
+\begin{ccTexOnly}
+\begin{center}
+\input{remove.ltex}
+\end{center}
+\end{ccTexOnly}
+\caption{Removal
+\label{I1_Fig_remove}}
+
+\begin{ccHtmlOnly}
+<CENTER>
+<img border=0 src=remove.gif align=center alt="Remove">
+</CENTER>
+\end{ccHtmlOnly}
+\end{figure}
+
+
+The following member functions offer more specialized versions of the
+insertion or removal operation to be used when one knows to be in the
+corresponding case.
+
+\ccMethod{Vertex_handle insert_first(const Point& p);} 
+{Inserts the first finite  vertex .}
+\ccMethod{Vertex_handle insert_second(const Point& p);} 
+{Inserts the second finite  vertex .}
+\ccMethod{Vertex_handle insert_in_face(const Point& p,Face_handle f);} {Inserts vertex \ccc{v} in face
+\ccc{f}. Face \ccc{f} is modified,
+two new faces are created.
+\ccPrecond{The point in vertex \ccc{v} lies inside face \ccc{f}.}}
+\ccMethod{Vertex_handle insert_in_edge(const Point& p, Face_handle f, int i);} 
+{Inserts vertex v in edge \ccc{i} of \ccc{f}.
+\ccPrecond{The point in vertex \ccc{v} lies on the edge opposite to 
+the vertex \ccc{i} of face \ccc{f}.}}
+\ccMethod{Vertex_handle insert_outside_convex_hull(const Point& p, Face_handle f);}
+{Inserts 
+ a point which is outside the convex hull  but in the affine hull.
+Face handle \ccc{f} is assumed to point to a an infinite face
+which is a prove of the point's location (see the description of the
+\ccc{locate} method above.)
+\ccPrecond{
+ \ccc{f} point to a face which is a proof  of the location
+of\ccc{f}.}}
+\ccMethod{Vertex_handle insert_outside_affine_hull(const Point& p);}
+{Inserts 
+ a point which is outside the affine hull.}
+
+\ccMethod{void remove_degree_3(Vertex_handle v);}
+{Removes a vertex of degree three. Two of the incident faces are destroyed,
+the third one is modified.
+\ccPrecond{Vertex
+\ccc{v} is a finite vertex with degree three.}}
+\ccMethod{void remove_second(Vertex_handle v);}{Removes the before last finite vertex.}
+\ccMethod{void remove_first(Vertex_handle v);}{Removes the last finite vertex.}
+
+
+
+
+
+
+
+\ccHeading{Traversal of the Triangulation}
+
+
+A triangulation can be seen as a container of faces and vertices.
+Therefore the triangulation provides several iterators and circulators
+that allow to traverse it (completely or partially).
+
+
+
+\ccHeading{Face, Edge and Vertex Iterators}
+
+The following iterators allow respectively to visit 
+finite faces,  finite edges and  finite vertices
+of the triangulation. These iterators are non mutable, bidirectional
+and their value types are respectively
+\ccc{Face}, \ccc{Edge} and \ccc{Vertex}. 
+They are all invalidated by any change in the triangulation.
+
+\ccThree{Finite_vertices_iterator}{t.finite_vertices_begin()x}{}
+\ccMethod{Finite_vertices_iterator finite_vertices_begin() const;}{Starts at an arbitrary finite vertex}
+\ccGlue
+\ccMethod{Finite_vertices_iterator finite_vertices_end() const;}{Past-the-end iterator}
+
+\ccMethod{Finite_edges_iterator finite_edges_begin() const;}{Starts at an arbitrary finite edge}
+\ccGlue
+\ccMethod{Finite_edges_iterator finite_edges_end() const;}{Past-the-end iterator}
+
+\ccMethod{Finite_faces_iterator finite_faces_begin() const;}{Starts at an arbitrary finite face}
+\ccGlue
+\ccMethod{Finite_faces_iterator finite_faces_end() const;}{Past-the-end iterator}
+
+
+The following iterators allow respectively to visit all
+(finite or infinite) faces, edges and vertices
+of the triangulation. These iterators are non mutable, bidirectional
+and their value types are respectively
+\ccc{Face}, \ccc{Edge} and \ccc{Vertex}. 
+They are all invalidated by any change in the triangulation.
+
+
+\ccMethod{All_vertices_iterator all_vertices_begin() const;}{Starts at an arbitrary  vertex}
+\ccGlue
+\ccMethod{All_vertices_iterator all_vertices_end() const;}{Past-the-end iterator}
+
+\ccMethod{All_edges_iterator all_edges_begin() const;}{Starts at an arbitrary edge}
+\ccGlue
+\ccMethod{All_edges_iterator all_edges_end() const;}{Past-the-end iterator}
+
+\ccMethod{All_faces_iterator all_faces_begin() const;}{Starts at an arbitrary face}
+\ccGlue
+\ccMethod{All_faces_iterator all_faces_end() const;}{Past-the-end iterator}
+
+\ccThree{Line_face_circulator}{T.line_walk(Point p, }{}
+\ccHeading{Line Face Circulator}
+
+The triangulation defines a circulator that allows
+to visit all faces that are intersected by a line. 
+More precisely a face  \ccc{f} is enumerated by the circulator 
+associated to the oriented line \ccc{l} if either:
+\begin{itemize}\ccTexHtml{\itemsep0pt}{}
+\item 
+\ccc{f} is a finite face whose interior intersects \ccc{l}, or
+\item
+ \ccc{f} is a finite face with  an edge collinear with \ccc{l} and lies
+to the left of \ccc{l}, or
+\item
+\ccc{f} is an infinite face incident to a  convex hull edge 
+whose interior is intersected
+by \ccc{l}, or
+\item
+\ccc{f} is an infinite face incident to a  convex hull vertex
+lying on  \ccc{l} and the finite edge of \ccc{f}
+lies to the left of \ccc{l}. 
+\end{itemize}
+This circulator is
+non-mutable and bidirectional. Its value type is \ccc{Face}.
+
+\ccMethod{Line_face_circulator
+          line_walk(const Point& p,
+                    const Point& q,
+                    Face_handle f = Face_handle()) const;}
+{ This function returns a circulator that allows to visit the 
+ faces intersected by the line \ccc{pq}. 
+If there is no such face the circulator has a singular value.\\
+ The starting point of the circulator is the face \ccc{f}, or, if
+ \ccc{f} is omitted,  the first finite face traversed by \ccc{l}. \\
+  The circulator wraps around the \ccc{infinite_vertex} :
+after the last traversed finite face, it steps through the infinite face adjacent
+to this face then through the infinite face adjacent to the first
+traversed finite face then through the first finite traversed face again.
+\ccPrecond If \ccc{f != NULL}, the point \ccc{p} must be
+inside or on the boundary of \ccc{f}.}
+
+Figure~\ref{I1_fig_Line_face_circulator} illustrates which finite faces are enumerated. Lines
+$l_1$ and $l_2$ have no face to their left. Lines $l_3$ and $l_4$
+have faces to their left. Note that the finite faces that are only vertex
+incident to lines $l_3$ and  $l_4$ are not enumerated.
+
+\begin{figure}
+\begin{ccTexOnly}
+\begin{center}  \Ipe{walk.ipe} \end{center}
+\end{ccTexOnly} 
+\caption{The line face circulator.
+\label{I1_fig_Line_face_circulator}}
+
+\begin{ccHtmlOnly}
+<CENTER>
+<img border=0 src=walk.gif align=center alt="The Infinite Vertex">
+</CENTER>
+\end{ccHtmlOnly} 
+\end{figure}
+
+A line face circulator is invalidated if the face the circulator refers
+to is changed.
+
+\ccThree{Vertex_circulator}{t.number_of_vertices()x}{}
+\ccThreeToTwo
+
+
+
+\ccHeading{Face, Edge and Vertex Circulators}
+
+The triangulation also provides circulators that allows to visit 
+respectively all faces or edges incident to a given vertex
+or all vertices adjacent to a given vertex.
+These circulator are
+non-mutable
+and bidirectional.
+ The operator \ccc{operator++} moves the circulator
+counterclockwise around the vertex while
+the \ccc{operator--} moves clockwise.
+A face circulator is invalidated by any modification of the face pointed to.
+An edge or a vertex circulator are invalidated by any modification
+of one of the two faces incident to the edge pointed to.
+
+\ccMethod{Face_circulator incident_faces(Vertex_handle v) const;}
+{Starts at an arbitrary face incident
+to \ccc{v}.}
+\ccGlue
+\ccMethod{Face_circulator incident_faces(Vertex_handle v, Face_handle f) const;}
+{Starts at face \ccc{f}.
+\ccPrecond Face \ccc{f} is incident to vertex \ccc{v}.}
+\ccGlue
+\ccMethod{Edge_circulator incident_edges(Vertex_handle v) const;}
+{Starts at an arbitrary edge incident
+to \ccc{v}.}
+\ccGlue
+\ccMethod{Edge_circulator incident_edges(Vertex_handle v, Face_handle f) const;}
+{Starts at the the first edge of \ccc{f} incident to 
+\ccc{v}, in counterclockwise order around \ccc{v}.
+\ccPrecond Face \ccc{f} is incident to vertex \ccc{v}.}
+\ccGlue
+\ccMethod{Vertex_circulator incident_vertices(Vertex_handle v) const;}
+{Starts at an arbitrary  vertex incident
+to \ccc{v}.}
+\ccGlue
+\ccMethod{Vertex_circulator incident_vertices(Vertex_handle v, Face_handle f) ;}
+{Starts at the first vertex of \ccc{f} adjacent  to \ccc{v}
+in  counterclockwise order around \ccc{v}.
+\ccPrecond Face \ccc{f} is incident to vertex \ccc{v}.}
+
+
+
+
+\ccHeading{Traversal of the Convex Hull}
+
+Applied on the \ccc{infinite_vertex}
+the above  functions  allow to visit the vertices on the convex hull and
+the infinite edges and faces. Note that a counterclockwise
+traversal of the vertices adjacent to the \ccc{infinite_vertex} is
+a clockwise traversal of the convex hull.
+
+\ccMethod{Face_circulator incident_faces(t.infinite_vertex()) const;}{}
+\ccGlue
+\ccMethod{Face_circulator incident_faces(t.infinite_vertex(), Face_handle f) const;}{}
+\ccGlue
+\ccMethod{Edge_circulator incident_edges(t.infinite_vertex()) const;}{}
+\ccGlue
+\ccMethod{Edge_circulator incident_edges(t.infinite_vertex(), Face_handle f);}{}
+\ccGlue
+\ccMethod{Vertex_circulator incident_vertices(t.infinite_vertex() v) ;} {}
+\ccGlue
+\ccMethod{Vertex_circulator incident_vertices(t.infinite_vertex(), Face_handle f) ;}{}
+
+
+
+\ccHeading{Miscellaneous}
+
+\ccThree{Segment}{t.segment(Face_handle f, int i)}{}
+\ccMethod{int ccw(int i) const;}
+{Returns $i+1$ modulo 3.\ccPrecond $0\leq i \leq 2$.}
+\ccGlue
+\ccMethod{int cw(int i) const;}
+{Returns $i+2$ modulo 3.\ccPrecond $0\leq i \leq 2$.}
+\ccGlue
+%\ccMethod{int number_of_faces() const;}
+%{Returns the number of finite and infinite faces.
+%\ccc{TBC_TO} Returns the number of finite faces. This access number functions
+%%requires to count the degree 
+%of the \ccc{infinite_vertex} and thus is not a constant time access function.}
+%\ccGlue
+\ccMethod{Triangle
+          triangle(Face_handle f) const;}
+{Returns the triangle formed by the three vertices of \ccc{f}.
+ \ccPrecond The face is finite.}
+\ccGlue
+\ccMethod{Segment
+          segment(Face_handle f, int i) const;}
+{Returns the line segment formed by the vertices \ccc{ccw(i)}
+ and \ccc{cw(i)} of face \ccc{f}.
+\ccPrecond $0\leq i \leq 2$. The vertices \ccc{ccw(i)}
+ and \ccc{cw(i)} of  \ccc{f}
+ are finite.}
+\ccGlue
+\ccMethod{Segment
+          segment(const Edge& e) const;}
+{Returns the line segment corresponding to edge \ccc{e}.
+\ccPrecond \ccc{e} is a finite edge}
+\ccGlue
+\ccMethod{Segment
+          segment(const Edge_circulator& ec) const;}
+{Returns the line segment corresponding to edge \ccc{*ec}.
+\ccPrecond \ccc{*ec} is a finite edge.}
+\ccGlue
+\ccMethod{Segment
+          segment(const Edge_iterator& ei) const;}
+{Returns the line segment corresponding to edge \ccc{*ei}.
+\ccPrecond \ccc{*ei} is a finite edge.}
+\ccGlue
+\ccMethod{Point circumcenter(Face_handle  f) const;}
+{Compute the circumcenter of the face pointed to by f. This function
+is available only if the correspoding function is provided in the
+geometric traits.}
+
+\begin{ccAdvanced}
+
+\ccHeading{Setting}
+\ccMethod{void set_infinite_vertex(const Vertex_handle&  v);}{}
+\ccGlue
+\ccMethod{void set_dimension(int n);}{}
+\ccGlue
+\ccMethod{void set_number_of_vertices(int n);}{}
+
+\ccHeading{Checking}
+The responsibility of keeping a valid triangulation
+belongs to the users if advanced operations are used.
+Obviously the advanced user, who implements higher levels operations
+may have to make a triangulation invalid at some times. The following
+method is provided to help the debugging.
+
+\ccMethod{bool
+          is_valid(bool verbose = false, int level = 0) const;}
+{Checks the combinatorial validity of the triangulation and
+also the validity of its geometric embedding.
+ This method is  mainly a debugging help
+for the users of advanced features.
+}
+\end{ccAdvanced}
+
+
+
+\ccHeading{I/O}
+
+
+The I/O operators are defined for \ccc{iostream}, and for
+the window stream provided by \cgal. The format for the iostream
+is an internal format. 
+
+%\ccInclude{CGAL/IO/ostream_2.h}
+
+\ccThree{ostream&x}{ostream& os << T}{}
+\ccFunction{ostream& operator<<(ostream& os,
+                  const Triangulation_2<Traits,Tds>& T);}
+{Inserts the triangulation \ccVar\ into the stream \ccc{os}.
+\ccPrecond The insert operator must be defined for \ccc{Point}.}
+
+\ccFunction{istream& operator>>(istream& is,
+                  const Triangulation_2<Traits,Tds>& T);}
+{Reads a triangulation from stream \ccc{is} and assigns it
+to \ccVar. \ccPrecond The extract operator must be defined for \ccc{Point}.}
+
+\ccInclude{CGAL/IO/Window_stream.h}
+
+\ccFunction{Window_stream& operator<<(Window_stream& W,
+                         const Triangulation_2<Traits,Tds>& T);}
+{Inserts the triangulation \ccVar\ into the window stream \ccc{W}.
+The insert operator must be defined for \ccc{Point}
+and \ccc{Segment}.}
+
+\ccExample
+
+The following code fragment creates a  triangulation of 2D points
+for the  usual Euclidean metric. The points are read from {\tt cin},
+inserted in the triangulation 
+and finally points on the convex hull are written to {\tt cout}. 
+%The
+%{\tt while} loop can be replaced by the code in the comment,
+%as the triangulation class has an \ccc{insert} member
+%function that takes an \stl\ range of points as argument.
+
+
+\begin{cprog}
+/* triangulation_prog1.C */
+/* --------------------- */
+#include <CGAL/basic.h>
+#include <iostream>
+#include <CGAL/Cartesian.h>
+#include <CGAL/Point_2.h>
+#include <CGAL/Triangulation_2.h>
+#include <CGAL/Triangulation_euclidean_traits_2.h>
+
+using namespace CGAL;
+
+typedef Cartesian<double> Rp;
+typedef Triangulation_euclidean_traits_2<Rp> Traits;
+typedef Triangulation_vertex_base_2<Traits> Vb;
+typedef Triangulation_face_base_2<Traits>  Fb;
+typedef Triangulation_default_data_structure_2<Traits,Vb,Fb> Tds;
+typedef Triangulation_2<Traits, Tds> Triangulation;
+typedef Triangulation::Vertex_circulator Vertex_circulator;
+typedef Traits::Point   Point;
+
+int main() {
+  Triangulation t;
+    
+  Point p;
+  while (std::cin >> p){
+    t.insert(p);
+  }
+  
+  Vertex_circulator vc = t.incident_vertices(t.infinite_vertex()),
+    done(vc);
+  if (vc != 0) {
+    do{
+      std::cout << vc->point() << std::endl;
+    }while(++vc != done);
+  }
+}
+\end{cprog} 
+
+\ccHeading{Implementation}
+
+Locate is implemented by a line walk from a vertex of the face given
+as optional parameter (or from a finite vertex of
+\ccStyle{infinite_face()} if no optional parameter is given). It takes
+time \ccTexHtml{$O(n)$}{O(n)} in the worst case, but only \ccTexHtml{$O(\sqrt{n})$}{O(sqrt(n))}
+on average if the vertices are distributed uniformly at random.
+
+Insertion of a point is done by locating a face that contains the
+point, and then splitting this face.
+If the point falls outside the convex hull, the triangulation
+ is restored by flips.  Apart from the location, insertion takes a time 
+time \ccTexHtml{$O(1)$}{O(1)}. This bound is only an amortized bound
+for points located outside the convex hull.
+
+Removal of a vertex is done by removing all adjacent triangles, and
+retriangulating the hole. Removal takes time \ccTexHtml{$O(d^2)$}{O(d^2)} in the worst
+case, if \ccTexHtml{$d$}{d} is the degree of the removed vertex,
+which is \ccTexHtml{$O(1)$}{O(1)} for a random vertex.
+
+The face, edge, and vertex iterators on finite features
+are derived from their counterparts visiting all (finite and infinite)
+features which are themselves derived from the corresponding iterators
+of the triangulation data structure.
+
+\end{ccClassTemplate}
+
+
+\begin{ccClass}{Vertex}
+\subsection{The Vertex Class of a Triangulation}
+\label{I1_Sect_Triangulation_Vertex}
+
+\ccThree{Vertex_circulator}{t.number_of_vertices()x}{}
+\ccThreeToTwo
+
+
+\ccCreationVariable{v}
+
+\ccDefinition
+
+The vertex stores a point, gives access to an incident face
+and provides circulators to visit all incident faces and edges
+and all adjacent vertices.
+
+\ccInheritsFrom{Tds::Vertex}
+
+\ccTypes
+The class  {Vertex} defines the same types 
+as the class \ccc{Triangulation_2<Traits, Tds>} except for the iterators and the 
+\ccc{Line_face_circulator} which are not needed.
+
+\begin{ccAdvanced}
+\ccCreation
+For triangulation algorithms designed by the user, vertices need to be
+explicitly constructed.  If the modification of the triangulation is
+done through a member of the triangulation class, there is no need for these
+functions.
+
+\ccConstructor{Vertex()}{Introduces a new vertex. The geometric information  is initialized by the default constructor of the class \ccc{Point}. The pointer to the incident face is initialized to \ccc{NULL}.}
+
+\ccConstructor{Vertex(const Point& p);}
+{Introduces a variable \ccVar, and initializes the geometric information.
+The pointer to the incident face is initialized with \ccc{NULL}.}
+
+\ccConstructor{Vertex(const Point& p,
+                      Face_handle f);}
+{Introduces a variable \ccVar, and initializes the geometric information and 
+the pointer to the incident face.}
+\end{ccAdvanced}
+
+
+
+\ccHeading{Access Functions}
+
+\ccMethod{Point point() const;}
+{Returns  the geometric information of \ccVar.}
+
+\ccMethod{Face_handle face() const;}
+{Returns a face of the triangulation having  \ccVar\ as vertex.}
+
+
+\begin{ccAdvanced}
+\ccHeading{Setting}
+\ccMethod{void set_face(Face_handle f); }{Sets the incident face to \ccc{f}.}
+\end{ccAdvanced}
+
+
+
+\ccHeading{Miscellaneous}
+
+\ccMethod{int ccw(int i) const;}
+{Returns $i+1$ modulo 3.\ccPrecond $0\leq i \leq 2$.}
+\ccGlue
+\ccMethod{int cw(int i) const;}
+{Returns $i+2$ modulo 3.\ccPrecond $0\leq i \leq 2$.}
+\ccGlue
+\ccMethod{int degree() const;}
+{Returns the degree of \ccVar\ in the triangulation.}
+\ccGlue
+\ccMethod{Vertex_handle handle() const;}
+{Returns an handle to the vertex.}
+\ccGlue
+\ccMethod{bool is_valid();} 
+{Check the validity of a vertex:
+i.e. the pointer to the incident face  and call the \ccc{is_valid()}
+function of the base class to perform any geometric test provided by the user
+therein.}
+
+
+\ccHeading{Traversal of the Adjacent Vertices, Incident Edges and Faces.}
+
+Three circulator classes allow to traverse the edges, and faces
+incident to a given vertex or  the adjacent vertices.
+ These circulators are bidirectional
+and their value types are respectively \ccc{Vertex}, \ccc{Edge}
+and \ccc{Face}.
+The  \ccc{operator++} moves the circulator
+counterclockwise around the vertex 
+and  the \ccc{operator--} moves the circulator
+clockwise. 
+
+A face circulator is invalidated by any modification of the face it
+points to. An edge circulator is invalidated
+by any modification of one of the two faces that are incident to the edge
+pointed to.  A vertex circulator that turns around vertex \ccc{v}
+and and points  to a vertex \ccc{w}, is invalidated
+by any modification of the faces incident to the edge \ccc{vw}.
+
+
+
+
+\ccMethod{Face_circulator
+          incident_faces(Face_handle f=Face_handle()) const;}
+{A circulator for the  incident faces 
+that refers to face \ccc{f} or to an arbitrary face
+incident to \ccc{v}  if \ccc{f} is omitted.
+\ccPrecond Face \ccc{f} is incident to vertex \ccc{v}.}
+
+\ccMethod{Edge_circulator
+          incident_edges(Face_handle f=Face_handle()) const;}
+{A circulator for the incident edges that refers to an abitrary edge incident
+to \ccc{v} if \ccc{f} is omitted. Otherwise the circulator refers
+to the first edge of \ccc{f}
+incident
+to \ccc{v} in counterclockwise order around \ccc{v}.
+\ccPrecond Face \ccc{f} is incident to vertex \ccc{v}. }
+
+\ccMethod{Vertex_circulator
+          incident_vertices(Face_handle f=Face_handle()) const;}
+{A circulator for the adjacent vertices.
+If \ccc{f} is omitted, the circulator begins with
+ an abitrary vertex incident
+to \ccc{v}, otherwise it begins with the
+vertex of face \ccc{f} that, 
+in counterclockwise order around \ccc{v},
+is the first vertex of \ccc{f} incident to \ccc{v}.
+\ccPrecond Face \ccc{f} is incident to vertex \ccc{v}.}
+
+
+\end{ccClass} 
+
+\begin{ccClass} {Face}
+\subsection{The Face  Class of a triangulation}
+\label{I1_Sect_Triangulation_Face}
+\ccCreationVariable{f}
+\def\ccTagRmEigenClassName{\ccFalse}
+
+\ccDefinition
+A face of a triangulation gives access to its three
+vertices indexed 0,1, and 2 in counterclockwise order
+and to its three adjacent faces, also called neighbors.
+The neighbors are indexed in such a way that neighbor $i$ lies
+opposite to vertex i. 
+
+\ccInheritsFrom{Tds::Face}
+
+\ccTypes
+The class  {Face} defines the same types 
+as the class \ccc{Triangulation_2<Traits,Tds>} except the iterators and circulators
+which are not needed.
+
+
+\begin{ccAdvanced}
+\ccHeading{Creation}
+
+For user defined triangulation algorithms, faces need to
+be explicitly constructed and linked to their neighbors.
+
+\ccConstructor{Face();}
+{Introduces a variable \ccVar\ and initializes all vertices and neighbors 
+ with \ccc{NULL}.}
+
+\ccConstructor{Face(Vertex_handle v0,
+                                           Vertex_handle v1,
+                                           Vertex_handle v2);}
+{Introduces a variable \ccVar, and initializes the vertices. The 
+neighbors are initialized with \ccc{NULL}.}
+
+\ccConstructor{Face(Vertex_handle v0,
+                    Vertex_handle v1,
+                    Vertex_handle v2,
+                     {Face_handle} n0,
+                     {Face_handle} n1,
+                     {Face_handle} n2);}
+{Introduces a variable \ccVar, and initializes the vertices and the neighbors.}
+
+
+
+\ccHeading{Setting}
+
+
+\ccThree{Vertex_handle}{f.has_vertex( Vertex_handle v, int& i)x}{}
+\ccMethod{void set_vertex(int i, Vertex_handle v);}
+{Sets vertex \ccc{i} to be \ccc{v}.
+\ccPrecond $0\leq i \leq 2$.
+}
+\ccGlue
+\ccMethod{void set_neighbor(int i,  {Face_handle} n);}
+{Sets neighbor \ccc{i} to be \ccc{n}.
+\ccPrecond $0\leq i \leq 2$.
+}
+\ccGlue
+\ccMethod{void set_vertices();}{Sets vertices to \ccc{NULL}}
+\ccGlue
+\ccMethod{void set_neighbors();}{Sets neighbors to \ccc{NULL}}
+\ccGlue
+\ccMethod{void set_vertices(
+Vertex_handle v0, Vertex_handle v1, Vertex_handle v2);}{}
+\ccGlue
+\ccMethod{void set_neighbors(
+ {Face_handle} n0,  {Face_handle} n1,  {Face_handle} n2);}{}
+\end{ccAdvanced} 
+
+
+\ccHeading{Vertex Access Functions}
+
+\ccMethod{Vertex_handle vertex(int i) const;}
+{Returns  the vertex \ccc{i} of \ccVar.
+\ccPrecond $0\leq i \leq 2$.}
+\ccGlue
+\ccMethod{int index(Vertex_handle v) const;}
+{Returns the index of vertex \ccc{v} in \ccVar. \ccPrecond \ccc{v} is
+a vertex of \ccVar}
+\ccGlue
+\ccMethod{bool has_vertex(Vertex_handle v) const;}
+{Returns \ccc{true} if  \ccc{v} is a vertex of \ccVar.}
+\ccGlue
+\ccMethod{bool has_vertex(Vertex_handle v, int& i) const;}
+{Returns \ccc{true} if  \ccc{v} is a vertex of \ccVar, and
+ computes the index \ccc{i} of the vertex.}
+
+
+
+\ccHeading{Neighbor Access Functions}
+
+The neighbor with index \ccc{i} is the neighbor which is opposite
+to the vertex with index \ccc{i}.
+
+
+\ccMethod{{Face_handle} neighbor(int i) const;}
+{Returns  the neighbor \ccc{i} of \ccVar.
+\ccPrecond $0\leq i \leq 2$.
+}
+\ccGlue
+\ccMethod{int index( {Face_handle} n) const;}
+{Returns the index of face \ccc{n}.
+\ccPrecond \ccc{n} is a neighbor of \ccVar.}
+\ccGlue
+\ccMethod{bool has_neighbor({Face_handle} n) const;}
+{Returns \ccc{true} if \ccc{n} is a neighbor of \ccVar.}
+\ccGlue
+\ccMethod{bool has_neighbor({Face_handle} n, int& i) const;}
+{Returns \ccc{true} if \ccc{n} is a neighbor of \ccVar,  and
+compute the index \ccc{i} of the neighbor.}
+
+\ccHeading{Other Access Functions}
+\ccMethod{int mirror_index(int i) const;}
+{Returns the index of the face \ccc{f} as a neighbor
+of its neighbor \ccc{f.neighbor(i)}, or equivalently the index
+of the vertex opposite to \ccc{f} in \ccc{f.neighbor(i)}.}
+\ccGlue
+\ccMethod{Vertex_handle mirror_vertex(int i) const;}
+{Returns the vertex of \ccc{f.neighbor(i)}
+which is opposite to \ccc{f}.}
+
+
+
+\ccHeading{Miscellaneous} 
+ 
+\ccMethod{int ccw(int i) const;}
+{Returns $i+1$ modulo 3.\ccPrecond $0\leq i \leq 2$.}
+\ccGlue
+\ccMethod{int cw(int i) const;}
+{Returns $i+2$ modulo 3.\ccPrecond $0\leq i \leq 2$.}
+\ccGlue
+\ccMethod{{Face_handle} handle() const;}
+{Returns a handle to the face.}
+\ccGlue
+\ccMethod{bool is_valid();} 
+{Check the validity of an individual face:
+i.e. the pointers to the incident vertices
+and neighboring faces
+ and call the \ccc{is_valid()}
+function of the base class to perform any geometric test provided by the user
+therein.}
+
+\end{ccClass}
+
+
+\section{ The Geometric Traits Class}
+\label{I1_Sect_Geom_traits}
+
+The first template parameter of the triangulation classes of \cgal\ 
+is the geometric traits class
+which provides the geometric objects (points, segments and triangles) building up the triangulation
+together with the geometric predicates on those objects.
+The first subsection of this section describes the requirements
+that the geometric traits class of the basic triangulation class
+\ccc{Triangulation_2<Traits, Tds>} has to fulfill. The second subsection
+presents some predefined geometric traits classes available in \cgal .
+
+
+\subsection{Requirements for the Geometric Traits Class}
+\begin{ccClass}{Geom_traits}
+
+\ccCreationVariable{gt}
+
+The requirements for the geometric traits class of the basic triangulation class
+\ccc{Triangulation_2<Traits, Tds>} are  kept rather light.
+Essentially, a geometric traits class \ccClassName\ has to provide some  type
+for points, segments and triangles, and a few geometric predicates:
+coordinate comparison and  orientation tests.
+
+
+\ccTypes
+\ccThree{Comparison_result}{gt.compare_x()}{}
+\ccThreeToTwo
+
+\ccNestedType{Point}{The  type must provide
+a copy constructor and assignment operator.}
+\ccGlue
+\ccNestedType{Segment}{The  type must provide a constructor that takes
+two points as argument.}
+\ccGlue
+\ccNestedType{Triangle}{The type must provide a constructor that takes
+three points as argument.}
+
+\ccCreation
+
+Only a default constructor and an assignement operator are required. 
+Note that further constructors
+can be provided. 
+
+\ccConstructor{Geom_traits();} {A default constructor.}
+\ccGlue
+\ccMethod{Geom_traits operator=(Geom_traits gtr);}{Assignment operator.}
+
+\ccHeading{Predicates}
+
+\ccThree{Comparison_result}{gt.compare_x(Point p0, Point p1)x}{}
+\ccMethod{Comparison_result compare_x(Point p0,
+                                           Point p1);}
+{Compares the \ccc{x}-coordinates.}
+\ccGlue
+\ccMethod{Comparison_result compare_y(Point p0,
+                                           Point p1);}
+{Compares the \ccc{y}-coordinates.}
+\ccGlue
+\ccMethod{bool compare(const Point& p0,
+                       const Point& p1);}
+{True if \ccc{compare_x(p0,p1)} and \ccc{compare_y(p0,p1)}
+return \ccc{EQUAL}.}
+\ccGlue
+\ccMethod{Orientation orientation(const Point& p0,
+                                       const Point& p1,
+                                       const Point& p2);}
+{Orientation test. }
+\ccGlue
+\ccMethod{Oriented_side side_of_oriented_circle(const Point &p,
+					const Point &q,
+					const Point &r,
+					const Point &s) const;}
+{Returns the oriented side of the query point \ccc{s}
+with respect to the oriented circle going through \ccc{p,q,r}
+in that order. This predicates is required
+only if the function 
+\ccc{ oriented_side(const Face_handle& f, const Point &p)}
+is explicitely called by the user.}
+
+\ccHeading{Construction}
+\ccMethod{Point circumcenter(const Point &p, const Point &q, const Point &r) const; }
+{Returns the center of the circle through \ccc{(p,q,r)}
+This method is required only if the function
+\ccc{circumcenter(Face_handle  f)} is called by the user.}
+\end{ccClass}
+
+
+\subsection{Predefined Geometric Traits Classes}
+
+The \cgal\  library provides some predefined geometric traits classes
+for the triangulations using the kernel geometric objects and predicates.
+These classes are themselves templated with a representation class.
+
+
+
+\begin{ccClassTemplate} {Triangulation_euclidean_traits_2<R>}
+\subsubsection{A Geometric Traits Class for 2D Points}
+The traits class \ccc{Triangulation_euclidean_traits_2<R>}
+is designed to deal with ordinary  two dimensional points.
+
+\ccInclude{CGAL/Triangulation_euclidean_traits_2.h}
+
+\ccTypes
+\ccThree{typedef Triangle_2<R>}{Triangle}{}
+
+\ccTypedef{typedef Point_2<R>  Point;}{}
+\ccGlue
+\ccTypedef{typedef Segment_2<R>   Segment;}{}
+\ccGlue
+\ccTypedef{typedef Triangle_2<R>   Triangle;}{}
+\ccGlue
+\end{ccClassTemplate}
+
+
+\begin{ccClassTemplate} {Triangulation_euclidean_traits_xy_3<R>}
+\subsubsection{Geometric Traits Classes for Projections}
+The classes \ccc{Triangulation_euclidean_traits_xy_3<R>} 
+is a geometric traits class allowing to
+build a two dimensional triangulation of the projections
+on the $xy$ plane  of three dimensional points.
+This is the usual case when dealing with GIS terrains.
+Instead of really projecting the 3D points and
+maintaining a mapping between each point and its projection
+ (which costs space and is error prone)
+this class supplies geometric predicates that ignore the
+\ccc{z}-coordinate of the points.
+
+\ccInclude{CGAL/Triangulation_euclidean_traits_xy_3.h}
+
+\ccTypes
+
+\ccTypedef{typedef Point_3<R>   Point;}{}
+\ccGlue
+\ccTypedef{typedef Segment_3<R>   Segment;}{}
+\ccGlue
+\ccTypedef{typedef Triangle_3<R>   Triangle;}{}
+\end{ccClassTemplate}
+
+\cgal\ provides also predefined geometric traits class
+\ccc{Triangulation_euclidean_traits_yz_3<R>} and
+\ccc{Triangulation_euclidean_traits_zx_3<R>} to
+deal with projections on the
+ \ccc{xz}- or  the \ccc{yz}-plane,
+respectively.
+
+\ccInclude{CGAL/Triangulation_euclidean_traits_xz_3.h}\\
+\ccInclude{CGAL/Triangulation_euclidean_traits_yz_3.h}
+
+\section{The Triangulation Data Structure}
+\label{I1_Sect_Tds}
+
+The second template parameter of the basic triangulation class
+\ccc{Triangulation_2<Traits,Tds>} is a triangulation data structure class.
+This class can be seen has a container for the 
+faces and vertices maintaining incidence and adjacency relations.
+The triangulation data structure class 
+ is responsible for  the combinatorial integrity of the triangulation
+(i. e. proper incidence and adjacency relations among vertices
+and faces) while 
+allowing  to perform combinatorial modifications
+such has 
+insertion of a new vertex in a face, or in an edge,
+suppression of a vertex of degree three,  flip of two edges.
+The term combinatorial means that those operation are purely topological
+and do not depend on the geometric embedding.
+
+
+
+The triangulation data structure is itself a template class
+parametrized by the base classes \ccc{Vertex_base} and \ccc{Face_base},
+and derives from thoses base classes its own 
+vertex and face classes. This design  allows to restore at the 
+triangulation data structure
+level 
+the strong type checking which does not exists at the base classes levels.
+
+The following subsections list the requirements for a triangulation data structure
+and for its nested vertex and face classes.
+The default triangulation data structure provided by \cgal\ is describe next.
+
+
+\subsection{Requirements for a Triangulation Data Structure Class}
+
+
+
+\begin{ccClassTemplate}{Tds<Vb,Fb>}
+\ccCreationVariable{tds}
+
+To be a model of  triangulation data structure 
+the class \ccClassTemplateName\
+is required to  provide the
+following types and operations.
+
+\ccThree{typedef   Tds<Vb,Fb>}{Tdsxxxx}{}
+\ccTypedef{typedef   Tds<Vb,Fb> Tds;}{self}
+\ccGlue
+\ccThree{Tds<Vb,Fb>}{tds.swap(Tds tds1)x}{}
+\ccThreeToTwo
+\ccTypedef{typedef  Vb Vertex_base;}{the \ccc{Vertex_base}}
+\ccGlue
+\ccTypedef{typedef  Fb Face_base;}{the \ccc{Face_base}}
+\ccGlue
+\ccNestedType{Vertex} { requirement for this type are described in  section~\ref{I1_Sect_Tds_Vertex}.}
+\ccGlue
+\ccNestedType{Face}{requirements for this type are described in
+described~\ref{I1_Sect_Tds_Face}.}
+
+The following iterators allow to visit all the vertices, edges and faces
+of the triangulation data structure. They are all bidirectional and non mutable.
+
+\ccNestedType{Face_iterator}{}
+\ccGlue
+\ccNestedType{Edge_iterator}{}
+\ccGlue
+\ccNestedType{Vertex_iterator}{}
+
+The following circulators allow to visit all the vertices, edges and faces
+incident to a given vertex. They are all bidirectional and non mutable.
+
+\ccNestedType{Face_circulator}{}
+\ccGlue
+\ccNestedType{Edge_circulator}{}
+\ccGlue
+\ccNestedType{Vertex_circulator}{}
+  
+\ccCreation
+\ccConstructor{Tds()}
+{A default constructor.}
+
+\ccConstructor{Tds( const Tds& tds1)}
+{Copy constructor. All the vertices and faces are duplicated.}
+
+\ccMethod{Tds<Vb,Fb> operator=(const Tds<Vb,Fb>& tds1);}
+{Assignation. All the vertices and faces are duplicated.}
+
+\ccMethod{void swap(const Tds& tds1);}
+{Swaps \ccVar\ and \ccc{tds1}. Should be preferred to \ccVar=\ccc{tds1} or \ccVar(\ccc{tds1})
+when tds1 is deleted after that.}
+\ccMethod{void clear();}{Deletes all faces and all finite vertices.}
+
+\ccFunction{void ~Tds<Vb,Fb> ();}
+{Destructor. All vertices and faces are deleted.}
+
+\ccAccessFunctions
+\ccThree{void}{tds.set_number_of_vertices(int n)}{}
+\ccMethod{int dimension() const;}
+{The dimension of the triangulation.}
+\ccGlue
+\ccMethod{int number_of_vertices() const;}
+{The number of vertices in the data structure.}
+\ccGlue
+\ccMethod{int number_of_faces() const ;}
+{The number of two dimensional faces in the data structure.}
+\ccGlue
+\ccMethod{int number_of_edges() const;}
+{The number of edges  in the triangulation data structure.}
+\ccGlue
+\ccMethod{int number_of_full_dim_faces() const;}
+{The number of full dimensional faces, 
+i.e. faces of dimension equal to the dimension
+of the triangulation. This is the actual
+number of faces stored in the triangulation data structure.}
+
+\ccHeading{Setting}
+\ccMethod{void set_number_of_vertices(int n);}{}
+\ccGlue
+\ccMethod{void set_dimension (int n);}{}
+
+
+\ccHeading{Modifiers}
+The following modifier member functions  guarantee
+the combinatorial validity of the resulting triangulation.
+
+\ccThree{void}{tds.remove_second(Vertex* v)x}{}
+\ccMethod{void flip(Face* f, int i);}{exchanges the edge incident to
+\ccc{f} and \ccc{f->neighbor(i)} with the other
+diagonal of the quadrilateral formed by \ccc{f} and  \ccc{f->neighbor(i)}.}
+
+
+\begin{figure}
+\begin{ccTexOnly}
+\begin{center} %\IpeScale{70} \Ipe{Flip.ipe} \end{center}
+\input{flip.ltex}
+\end{center}
+\end{ccTexOnly} 
+\caption{Flip.
+\label{I1_fig_flip}}
+
+\begin{ccHtmlOnly}
+<CENTER>
+<img border=0 src=Flip.gif align=center alt="Flip">
+</CENTER>
+\end{ccHtmlOnly} 
+\end{figure}
+
+
+\ccMethod{Vertex* insert_first();} {creates the first 
+vertex and returns a pointer to it.}
+\ccGlue
+\ccMethod{Vertex* insert_second();} {creates the second finite
+vertex and returns a pointer to it.}
+\ccMethod{Vertex* insert_in_edge(Face* f, int i);} {adds a
+vertex \ccc{v} splitting 
+edge \ccc{i} of face \ccc{f}. Return a  pointer to \ccc{v}.}
+\ccGlue
+\ccMethod{Vertex* insert_in_face(Face* f);} {adds a vertex
+\ccc{v} splitting  face
+\ccc{f} in three. Face \ccc{f} is modified,
+two new faces are created. Return a  pointer to \ccc{v} }
+\ccGlue
+\ccMethod{Vertex* insert_dim_up(Vertex* w, bool orient=true);} {adds
+a vertex \ccc{v}, increasing by one the dimension of the triangulation.
+Vertex \ccc{v} and the existing vertex \ccc{w} are linked to all 
+the vertices of the triangulation. 
+The boolean orient decides the final orientation of all 
+faces. A pointer to vertex \ccc{v} is returned.
+}
+
+\begin{figure}
+\begin{ccTexOnly}
+%\begin{center} \IpeScale{70} \Ipe{Three.ipe} \end{center}
+\begin{center} \input{insert.ltex} \end{center}
+\caption{Insertion}
+\end{ccTexOnly} 
+
+\begin{ccHtmlOnly}
+<CENTER>
+<img border=0 src=Three.gif align=center alt="Insertion">
+</CENTER>
+\end{ccHtmlOnly} 
+\end{figure}
+
+
+
+\ccMethod{void remove_degree_3(Vertex* v, Face *f=NULL);}
+{removes a vertex of degree 3. Two of the incident faces are destroyed,
+the third one is modified.
+If parameter \ccc{f}  is specified, it has to be a face incident to \ccc{v}
+and will be the modified face.
+\ccPrecond{Vertex
+\ccc{v} is a finite vertex with degree 3
+and, if specified, face \ccc{f} is incident to \ccc{v}.}}
+
+
+
+\ccMethod{void remove_second(Vertex* v);}{removes the before last
+vertex.}
+\ccGlue
+\ccMethod{void remove_first(Vertex* v);}{removes the last vertex.}
+\ccGlue
+\ccMethod{void remove_dim_down(Vertex* v);}
+{removes vertex \ccc{v} incident to all other vertices
+and  decreases by one the dimension of the triangulation.
+\ccPrecond{if the dimension is 2, the number of vertices is more than
+3,
+if the dimension is 1, the number of vertices is 2.} }
+
+\begin{ccAdvanced}
+The following modifiers are required for convenience of the advanced
+user.
+They do not guarantee the combinatorial validity 
+of the resulting triangulation.
+\ccMethod{Face* create_face(Face* f1, int i1, Face* f2, int i2, Face*
+f3, int i3);}{adds a face which is the neighbor \ccc{i1} of \ccc{f1}, 
+\ccc{i2} of ccc{f2} and \ccc{i3} of \ccc{f3}.}
+\ccGlue
+\ccMethod{Face* create_face(Face* f1, int i1, Face* f2, int i2);}
+{adds a face which is the neighbor \ccc{i1} of \ccc{f1}, 
+and the neighbor \ccc{i2} of ccc{f2}.}
+\ccGlue
+\ccMethod{Face* create_face(Face* f1, int i1, Vertex* v);}
+{adds a face which is the neighbor \ccc{i1} of \ccc{f1},
+and has \ccc{v} as vertex.}
+\ccGlue
+\ccMethod{ Face* create_face(Vertex* v1, Vertex* v2, Vertex* v3);}
+{adds a face with vertices \ccc{v1}, \ccc{v2} and \ccc{v3}.}
+\ccGlue
+\ccMethod{Face* create_face(Vertex* v1, Vertex* v2, Vertex* v3,
+		    Face* f1, Face* f2, Face* f3);}
+{adds a face with vertices \ccc{v1}, \ccc{v2} and \ccc{v3},
+and neighbors \ccc{f1}, \ccc{f2}, \ccc{f3}.}
+\ccGlue
+\ccMethod{Face* create_face();}
+{adds a face whose vertices and neighbors are set to NULL.}
+ \ccGlue
+\ccMethod{void  delete_face(Face*);}{deletes a face.}
+\end{ccAdvanced}
+
+
+\ccHeading{Traversing the triangulation}
+\ccThree{Vertex_iterator}{tds.number_of_faces()x}{}
+\ccMethod{Face_iterator faces_begin() const;}{visits all faces}
+\ccGlue
+\ccMethod{Face_iterator faces_end() const;}{}
+\ccGlue
+\ccMethod{Vertex_iterator vertices_begin() const;}{visits all vertices}
+\ccGlue
+\ccMethod{Vertex_iterator vertices_end() const;}{}
+\ccGlue
+\ccMethod{Edge_iterator edges_begin() const;}{visits all edges}
+\ccGlue
+\ccMethod{ Edge_iterator edges_end() const;}{}
+
+
+
+\ccHeading{Miscelleanous}
+
+\ccMethod{int ccw(int i) const;}{returns $i+1$ modulo 3.\ccPrecond $0\leq i \leq 2$.}
+\ccGlue
+\ccMethod{int cw(int i) const;}
+{returns $i+2$ modulo 3.\ccPrecond $0\leq i \leq 2$.}
+\ccGlue
+\ccMethod{bool is_valid();}{checks the combinatorial validity of the
+triangulation: call the \ccc{is_valid()} member function for each vertex and 
+each face, checks the number of vertices and the Euler relation
+between numbers of vertices, faces and edges.}
+\end{ccClassTemplate}
+
+\subsection{Requirements for the Vertex Class of a Triangulation Data Strucure}
+\label{I1_Sect_Tds_Vertex}
+\begin{ccClass}{Tds::Vertex}
+\ccCreationVariable{v}
+
+\ccThree{Vertex_circulator}{tds.infinite_vertex()cc}{}
+\ccThreeToTwo
+
+The vertex stores a point and a pointer to an incident face.
+
+\ccInheritsFrom \ccc{Tds::Vertex_base}
+
+\ccTypes
+The class \ccClassName\
+defines the same types as the triangulation data structure class \ccc{Tds}
+except the iterators.
+\begin{ccAdvanced}
+
+\ccCreation
+
+\ccConstructor{Vertex();}
+{introduces a vertex \ccVar. The geometric information is
+ initialized by the default constructor of class \ccc{Point}.
+The pointer to the incident face is initialized with \ccc{NULL}.}
+
+\ccConstructor{Vertex(const Point& p);}
+{introduces a vertex \ccVar, and initializes the geometric information.
+The pointer to the incident face is initialized with \ccc{NULL}.}
+
+\ccConstructor{Vertex(const Point& p,
+                      Face* f);}
+{introduces a vertex \ccVar, and initializes the geometric information and 
+the pointer to the incident face.}
+
+
+\ccHeading{Setting}
+
+\ccMethod{void set_point(const Point& p);}
+{sets the geometric information to \ccc{p}.}
+\ccGlue
+\ccMethod{void set_face(Face* f);}
+{sets the incident face to \ccc{f}.}
+
+
+\end{ccAdvanced}
+
+
+\ccHeading{Access Functions}
+
+\ccMethod{Point point() const;}
+{returns  the geometric information of \ccVar.}
+\ccGlue
+\ccMethod{Face* face() const;}
+{returns a face of the triangulation having  \ccVar\ as vertex.}
+
+\ccHeading{Traversal of the Adjacent Vertices, Incident Edges and Faces.}
+Three circulator classes allow to traverse the edges, and faces
+incident to a given vertex and the adjacent vertices.
+Note that infinite as well as finite incident edges and faces are visited.
+ These circulators are bidirectional
+and their value types are respectively \ccc{Vertex}, \ccc{Edge}
+and \ccc{Face}.
+The  \ccc{operator++} moves the circulator
+counterclockwise around the vertex 
+and  the \ccc{operator--} moves the circulator
+clockwise. 
+
+A face circulator is invalidated by any modification of the face it
+points to. An edge circulator is invalidated
+by any modification of anyone of the two faces incident to the edge
+pointed to.  A vertex circulator that turns around vertex \ccc{v}
+and that has as value a pointer to vertex \ccc{w}, is invalidated
+by any modification of anyone of the two faces incident to \ccc{v}
+and \ccc{w}.
+
+\ccMethod{Vertex_circulator
+          incident_vertices(Face* f=NULL) const;}{} 
+\ccGlue
+\ccMethod{Edge_circulator
+          incident_edges(Face* f=NULL) const;}{}
+\ccGlue
+\ccMethod{Face_circulator
+          incident_faces(Face* f=NULL) const;}{}
+
+\ccHeading{Miscellaneous}
+
+\ccMethod{int ccw(int i) const;}
+{Returns $i+1$ modulo 3.\ccPrecond $0\leq i \leq 2$.}
+\ccGlue
+\ccMethod{int cw(int i) const;}
+{Returns $i+2$ modulo 3.\ccPrecond $0\leq i \leq 2$.}
+\ccGlue
+\ccMethod{int degree() const;}
+{Returns the degree of \ccVar\ in the triangulation.}
+
+\end{ccClass}
+
+
+
+\subsection{Requirements for the Face  Class of a Triangulation Data Structure}
+\label{I1_Sect_Tds_Face}
+\begin{ccClass}{Tds::Face}
+\ccCreationVariable{f}
+
+\ccThree{Vertex*}{t.number_of_vertices(xxxxx)x}{}
+\ccThreeToTwo
+
+The face class \ccClassName\ of a triangulation data structure
+stores three pointers to its three vertices
+and three pointers to its three neighbors.
+The vertices are indexed 0,1, and 2 in counterclockwise order.
+The  neighbor indexed $i$ lies
+opposite to vertex i. 
+
+\ccInheritsFrom \ccc{Tds::Face_base}
+
+\ccTypes
+The class \ccClassName\ defines the same types as 
+the triangulation data structure 
+except the iterators and circulators
+
+
+\begin{ccAdvanced}
+\ccHeading{Creation}
+For user defined triangulation algorithms, faces need to
+be explicitly constructed and linked to their neighbors.
+
+\ccConstructor{Face();}
+{introduces a face \ccVar\ and initializes all vertices and neighbors 
+ with \ccc{NULL}.}
+
+\ccConstructor{Face(Vertex* v0,
+                                           Vertex* v1,
+                                           Vertex* v2);}
+{introduces a face \ccVar, and initializes the vertices. The 
+neighbors are initialized with \ccc{NULL}.}
+
+\ccConstructor{Face(Vertex* v0,
+                    Vertex* v1,
+                    Vertex* v2,
+                    Face* n0,
+                    Face* n1,
+                    Face* n2);}
+{introduces a face \ccVar, and initializes the vertices and the neighbors.}
+
+
+\ccHeading{Setting}
+
+\ccThree{Vertex*}{f.has_vertex( Vertex* v, int& i)x}{}
+\ccMethod{void set_vertex(int i, Vertex* v);}
+{sets vertex \ccc{i} to be \ccc{v}.
+\ccPrecond $0\leq i \leq 2$.
+}
+\ccGlue
+\ccMethod{void set_neighbor(int i, Face* n);}
+{sets neighbor \ccc{i} to be \ccc{n}.
+\ccPrecond $0\leq i \leq 2$.
+}
+\ccGlue
+\ccMethod{ void set_vertices();}{sets the vertices pointers to \ccc{NULL}.}
+\ccGlue
+\ccMethod{void set_vertices(Vertex* v0,
+		    Vertex* v1,
+		    Vertex* v2);}{sets the vertices pointers.}
+\ccGlue
+\ccMethod{void set_neighbors();} {sets the neighbors pointers to \ccc{NULL}.}
+\ccGlue
+\ccMethod{void set_neighbors(Face* n0,
+		     Face* n1,
+		     Face* n2);}{sets the neighbors pointers.}
+
+\end{ccAdvanced}
+
+\ccHeading{Vertex Access Functions}
+
+\ccMethod{Vertex* vertex(int i) const;}
+{returns  the vertex \ccc{i} of \ccVar.
+\ccPrecond $0\leq i \leq 2$.}
+\ccGlue
+\ccMethod{int index(Vertex* v) const;}
+{returns the index of vertex \ccc{v} in \ccVar. \ccPrecond \ccc{v} is
+a vertex of \ccVar}
+\ccGlue
+\ccMethod{bool has_vertex(Vertex* v) const;}
+{returns \ccc{true} if  \ccc{v} is a vertex of \ccVar.}
+\ccGlue
+\ccMethod{bool has_vertex(Vertex* v, int& i) const;}
+{returns \ccc{true} if  \ccc{v} is a vertex of \ccVar, and
+ computes the index \ccc{i} of \ccc{v} in \ccc{f}.}
+
+
+
+\ccHeading{Neighbor Access Functions}
+
+The neighbor with index \ccc{i} is the neighbor which is opposite
+to the vertex with index \ccc{i}.
+
+
+\ccMethod{Face* neighbor(int i) const;}
+{returns  the neighbor \ccc{i} of \ccVar. 
+\ccPrecond $0\leq i \leq 2$.
+}
+\ccGlue
+\ccMethod{int index(Face* n) const;}
+{returns the index of face \ccc{n}.
+\ccPrecond \ccc{n} is a neighbor of \ccVar.}
+\ccGlue
+\ccMethod{bool has_neighbor(Face* n) const;}
+{returns \ccc{true} if \ccc{n} is a neighbor of \ccVar.}
+\ccGlue
+\ccMethod{bool has_neighbor(Face* n, int& i) const;}
+{returns \ccc{true} if \ccc{n} is a neighbor of \ccVar,  and
+compute the index \ccc{i} of \ccc{n}.}
+
+\ccHeading{Other Access Functions}
+\ccMethod{int  mirror_index(int i) const;}
+{index of \ccVar\ as a neighbor of \ccVar.\ccc{neighbor(i)}}
+\ccGlue
+\ccMethod{Vertex* mirror_vertex(int i) const;}
+{vertex of \ccVar.\ccc{neighbor(i)}} opposite to  \ccVar.
+
+
+\begin{ccAdvanced}
+\ccHeading{Checking}
+
+
+\ccMethod{bool is_valid() const;}
+{returns \ccc{true} if  the function 
+\ccc{is_valid()} of the base class
+returns \ccc{true} and if, for each index $i$, $0 \le i < 3$,
+face $f$ is a neighbor of its neighboring face \ccc{neighbor(i)}
+and shares with this neighbor the  vertices \ccc{cw(i)} and \ccc{ccw(i)}
+in correct reverse order.}
+
+
+
+
+
+
+\end{ccAdvanced}
+
+
+\ccHeading{Miscellaneous} 
+
+\ccMethod{int ccw(int i) const;}
+{Returns $i+1$ modulo 3.\ccPrecond $0\leq i \leq 2$.}
+
+\ccMethod{int cw(int i) const;}
+{Returns $i+2$ modulo 3.\ccPrecond $0\leq i \leq 2$.}
+
+\end{ccClass}
+
+\subsection{Models of Triangulation Data Structure}
+\cgal offers currently two models of triangulation data structures.
+The first one \ccc{Triangulation_default_data_structure_2<Tds_gt,Vb,Fb
+>}
+is highly economic with respect to memory space but its use is
+restricted
+to planar embedded triangulation. The second one
+\ccc{Triangulation_data_structure_using_list_2<Vb,Fb>} can be used for 
+the representation of any  orientable triangulations.
+
+\subsubsection{The Default Triangulation Data Structure}
+\begin{ccClassTemplate}{Triangulation_default_data_structure_2<Tds_gt,Vb,Fb>}
+\cgal\ proposes the class \ccc{Triangulation_default_data_structure_2<Tds_gt,Vb,Fb >}
+as a default for the triangulation data structure class of a triangulation.
+As required this class has two template parameters \ccc{Vb} anf \ccc{Fb}
+which have 
+to be models for respectively the
+\ccc{Vertex_base} and \ccc{Face_base} concepts whose requirements are described in next 
+section~\ref{I1_Sect_Base_classes}. 
+
+In addition, the class \ccClassTemplateName\ has a first template parameter
+which is a geometric traits class. This may be surprising because
+the triangulation data structure is supposed to deal only with the combinatorial
+aspect of the triangulation and not with any geometric embedding
+The reason for that is the following.
+The class \ccClassTemplateName\ does not use any additional data structure
+such as a list or a vector to act as a container for faces and vertices.
+The iterators which allows to visit all faces and vertices of the
+triangulation
+data structure
+is implemented using  an implicit tree structure over the faces
+as described by
+ de Berg, van Oostrum, and Overmars, 
+in Proc.\ 12th Annual Symp.\ on Comput.\ Geom.,
+1996, pages C5--C6. This tree structure is  based on the planar
+geometric embedding
+the triangulation. Each face 
+ can find its parent 
+and its children using only simple comparisons on the
+coordinates of the points embedding its vertices.
+Thus the tree structure may remain implicit 
+and does not require any additional memory. 
+
+The requirements concerning the geometric traits \ccc{Tds_gt} of
+\ccc{Triangulation_default_data_structure_2}
+ are very light and form a subset of the requirements needed
+for the geometric traits of the triangulations. 
+This class is required  to provide a type \ccc{Point}
+and the coordinate comparison functions \ccc{compare_x(Point p0, Point p1)} and
+\ccc{compare_y(Point p0, Point p1)}
+described in section~\ref{I1_Sect_Geom_traits}. The point type
+defined by the geometric traits class of the triangulation data structure
+has to be the same 
+as the point type defined by the geometric traits of the triangulation.
+This is achieved if the same model is used for both traits classes
+which is recommended but not compulsory.
+
+
+\ccInclude{CGAL/Triangulation_default_data_structure_2.h}
+\end{ccClassTemplate}
+
+\subsubsection{A triangulation data structure using list}
+The class \ccc{Triangulation_data_structure_using_list_2<Vb,Fb>}
+can be used as a triangulation data structure for any
+orientable triangulation. It uses aa \stl list to store the
+full dimensional faces of the triangulation.
+\ccInclude{CGAL/Triangulation_data_structure_using_list_2.h}
+
+
+\section{The Base Classes \protect \ccc{Vertex_base} and  \protect \ccc{Face_base} }
+\label{I1_Sect_Base_classes}
+
+\subsection{Requirements for the \protect \ccc{Vertex_base} Class}
+\begin{ccClass} {Vertex_base}
+\ccCreationVariable{v}
+
+\ccThree{Point}{f.has_neighbor(const void* v. int& i)xx}{}
+\ccThreeToTwo
+
+
+At the bottom layer,  
+a vertex stores a point and a  provides access to one of its incident
+face through a
+\ccc{void *} pointer.
+
+\ccTypes
+\ccNestedType{Point}{must be the same as the point type \ccc{Traits::Point}
+defined by the geometric traits class of the triangulation.}
+
+\ccCreation
+\ccConstructor{Vertex_base();}{default constructor.}
+\ccGlue
+\ccConstructor{Vertex_base(Point p);}{constructs a vertex embedded in point \ccc{p}.}
+\ccGlue
+\ccConstructor{Vertex_base(Point p,
+                     void* f);}{constructs a vertex embedded in point \ccc{p}
+and pointing on face \ccc{f}.}
+
+
+\ccAccessFunctions
+\ccMethod{Point point() const;}
+{returns  the point.}
+\ccGlue
+\ccMethod{void* face() const;}{ a pointer to an incident face.}
+
+\ccHeading{Setting}
+\ccMethod{void set_point(Point p);}
+{sets the point.}
+\ccGlue
+\ccMethod{void set_face(void* f);}
+{sets the incident face.}
+
+\ccHeading{Checking}
+\ccMethod{bool is_valid() const;}{ performs any required geometrical test on a vertex.}
+\end{ccClass}
+
+
+\subsection{Requirements for the \protect \ccc{Face_base} Class}
+\begin{ccClass} {Face_base}
+
+\ccCreationVariable{f}
+
+\ccDefinition
+At the bottom layer, a 
+face stores \ccc{void *} pointers
+ to its three vertices  and to its three neighboring faces.
+The vertices and neighbors are indexed 0,1 and 2 in counterclockwise
+order around the face. Neighbor $i$ lies opposite to vertex $i$.
+
+
+\ccCreation
+\ccConstructor{F();}{default constructor}
+\ccGlue
+\ccConstructor{F( void* v0, void* v1, void* v2);}{neighbors are initialized to
+\ccc{NULL}.}
+\ccGlue
+\ccConstructor{Face(void* v0, void* v1, void*  v2, void* n0, void* n1, void* n2);} {initializes the vertices with \ccc{ v0,v1, v2} and the neighbors with
+\ccc{n0, n1, n2}.}
+                    
+
+                                           
+\ccAccessFunctions
+\ccMethod{ int dimension();}{returns the dimension.}
+\ccMethod{void* vertex(int i) const;}
+{ \ccPrecond $0\leq i \leq 2$.}
+\ccGlue
+\ccMethod{bool has_vertex(const void* v);}{true if \ccc{v} is a vertex
+of \ccc{f}.}
+\ccGlue
+\ccMethod{bool has_vertex(const void* v, int& i) const;}
+{as above and sets \ccc{i} to the index of \ccc{v}}
+\ccGlue
+\ccMethod{int vertex_index(const void* v) const;}{the index of \ccc{v} 
+in \ccc{f}.}
+\ccGlue
+\ccMethod{void* neighbor(int i) const;}{\ccPrecond $0\leq i \leq 2$.}
+\ccGlue
+\ccMethod{bool has_neighbor(void* n);}{true if \ccc{n} is a neighbor
+of \ccc{f}.}
+\ccGlue
+\ccMethod{bool has_neigbor(const void* n, int& i) const;}
+{as above and sets i to the index of \ccc{n}.}
+\ccGlue
+\ccMethod{int face_index(const void* n) const;}
+{returns the index of neighbor \ccc{n}.}
+
+\ccHeading{Setting}
+\ccMethod{void set_vertex(int i, void* v);}{\ccPrecond $0\leq i \leq 2$.}
+\ccGlue
+\ccMethod{ void set_vertices();}{sets the vertices pointers to \ccc{NULL}.}
+\ccGlue
+\ccMethod{void set_vertices(void* v0,
+		    void* v1,
+		    void* v2);}{sets the vertices pointers.}
+\ccGlue
+\ccMethod{void set_neighbor(int i, void* n);}{\ccPrecond $0\leq i \leq 2$.} 
+\ccGlue
+\ccMethod{void set_neighbors();} {sets the neighbors pointers to \ccc{NULL}.}
+\ccGlue
+\ccMethod{void set_neighbors(void* n0,
+		     void* n1,
+		     void* n2);}{sets the neighbors pointers.}
+\ccMethod{void reorient();}
+{Changes the orientation of \ccVar by exchanging \ccc{vertex(0)}
+with \ccc{vertex(1)} and \ccc{neighbor(0)} with \ccc{neighbor(1)}.}
+\ccMethod{void ccw_permute();}
+{preforms a counterclockwise permutation of the
+ vertices and neighbors of \ccVar.}
+\ccMethod{ void cw_permute();}
+{preforms a clockwise permutation of the
+ vertices and neighbors of \ccVar.}
+
+\ccHeading{Checking}
+\ccMethod{bool is_valid() const;}{ To perform any required geometrical test on a face.}
+\end{ccClass}
+
+\subsection{The Default Base Classes}
+\cgal\ provides two default base classes 
+\ccc{Triangulation_face_base_2<Traits>} and \ccc{Triangulation_vertex_base_2<Traits>}
+which model respectively 
+the \ccc{Vertex_base} and the \ccc{Face_base} concept.
+Both of them are templated by a geometric traits class.
+Using for this traits class, the geometric traits class used for the triangulation class
+is strongly recommended. 
+It ensures that the point type defined by \ccc{Triangulation_vertex_base_2<Traits>}
+is the same as the point type defined the  geometric traits class of
+the triangulation.
+
+These default base classes can be used directly or can serve as a base to derive
+other base classes with some additional attribute (a color for example)
+tuned for a specific application.
+
+\ccInclude{CGAL/Triangulation_face_base_2.h} \\
+\ccInclude{CGAL/Triangulation_vertex_base_2.h}
+
+\subsection{Examples}
+\ccExample
+The following code creates a  valid triangulation traits class 
+for a triangulation of 2D points in usual Euclidean space
+and use it to define a triangulation class.
+
+\begin{cprog}
+
+typedef Cartesian<double> Rp;
+typedef Triangulation_euclidean_traits_2<Rp> Traits;
+typedef Triangulation_vertex_base_2<Traits> Vb;
+typedef Triangulation_face_base_2<Traits> Fb;
+typedef Triangulation_default_data_structure_2<Traits,Vb,Fb > Tds;
+typedef Triangulation_2<Traits,Tds> Triangulation;
+
+\end{cprog}
+
+\ccExample
+The following example derives a new \ccc{Face_base} class from the default
+one and add a color to the faces of the triangulation. 
+The face of the triangulation data structure
+and the face of the triangulation will inherit the new data member 
+and its functionality.
+Any kind of additional fonctionality can thus be added to faces or vertices of a triangulation 
+as long as this functionality  does not involve additional pointers to vertices or faces
+(because the base classes use only void* pointer and have no knowledge
+of the vertex or face types.).
+
+
+%\begin{cprog}
+\begin{ccExampleCode}
+/*  colored_face.C   */     
+/*  ---------------- */
+#include <CGAL/basic.h>
+#include <CGAL/Cartesian.h>
+#include <CGAL/IO/Color.h>
+#include <CGAL/Triangulation_euclidean_traits_2.h>
+#include <CGAL/Triangulation_default_data_structure_2.h>
+#include <CGAL/Triangulation_2.h>
+
+using namespace CGAL;
+using namespace std;
+
+/* A facet with a color member variable. */
+template < class Traits >
+class My_face_base : public Triangulation_face_base_2<Traits>
+{
+public:
+  Color color;
+  My_face_base() :
+    Triangulation_face_base_2<Traits>() {}
+  My_face_base(void* v0, void* v1, void* v2) : 
+    Triangulation_face_base_2<Traits>(v0,v1,v2) {}
+  My_face_base(void* v0, void* v1, void* v2, void* n0, void* n1, void* n2) : 
+    Triangulation_face_base_2<Traits>(v0,v1,v2,n0,n1,n2) {}
+};
+
+typedef Cartesian<double> Rp;
+typedef Triangulation_euclidean_traits_2<Rp> Traits;
+typedef Triangulation_vertex_base_2<Traits> Vb;
+typedef My_face_base<Traits> Fb;
+typedef Triangulation_default_data_structure_2<Traits,Vb,Fb > Tds;
+typedef Triangulation_2<Traits,Tds> Triangulation;
+typedef Triangulation::Face_handle Face_handle;
+typedef Triangulation::Face_iterator Face_iterator;
+typedef Triangulation::Vertex_handle Vertex_handle;
+typedef Point_2<Rp>  Point;
+
+int main() {
+  Triangulation t;
+  Point p;
+
+  while (std::cin >> p){
+    t.insert(p);
+  }
+  Face_iterator fc = t.faces_begin();
+  while (fc != t.faces_end()) {
+    fc->color = BLUE;
+    ++fc;
+  }
+  return 1;
+}
+\end{ccExampleCode}
+%\end{cprog}
+
+
+\section{Delaunay Triangulations}
+\label{I1_Sect_Delaunay}
+
+\subsection{The Class \protect \ccc{Delaunay_triangulation_2<Traits,Tds>}}
+\begin{ccClassTemplate} {Delaunay_triangulation_2<Traits,Tds>}
+\ccDefinition
+
+The class \ccClassTemplateName\ is designed to represent
+the Delaunay triangulation of a set of points in a plane.
+A  Delaunay triangulation of a set of points
+is a triangulation of the sets of points that fulfills
+the following {\em empty circle property} 
+(also called {\em Delaunay property}): the circumscribing
+circle of each
+ face does not contain any vertex.
+For a point set with no case of cocircularity 
+of more than three points,
+the Delaunay triangulation is unique, it is  the dual
+of the Voronoi diagram of the points.
+
+
+A Delaunay triangulation is a special triangulation of a set of points.
+So it is natural to derive  the class \ccClassTemplateName\
+from the basic class \ccc{Triangulation_2<Traits,Tds>}.
+The template parameters \ccc{Traits} and \ccc{Tds} stand 
+respectively
+for a model of geometric traits and for a model of triangulation data structure.
+The requirements for the triangulation data structure
+are those described previously in section~\ref{I1_Sect_Tds}
+and the same models can be used to instantiate the
+triangulation data structure of either a \ccc{Triangulation_2<Traits,Tds>}
+or a \ccClassTemplateName. On the contrary, because the
+concept of Delaunay triangulation relies on the notions of 
+empty circles and of distance, 
+the geometric traits has to provide
+the \ccc{side_of_oriented_circle} predicate
+(which was only optional in the traits of plain triangulation),
+and also
+a Distance class. The additional requirements
+to be fulfilled by the geometric traits class
+of a \ccClassTemplateName\ are described in 
+subsection~\ref{I1_Sect_Delaunay_geom_traits}. 
+Changing the Distance class and the \ccc{side_of_oriented_circle} predicate 
+allows to build Delaunay triangulations for different metrics
+such that $L_1$ or $L_{\infty}$ or any metric defined by a
+convex object. However, the user of an exotic metric
+must be carefull that the constructed triangulation 
+has to be a triangulation of the convex hull
+which means that convex hull edges have to be Delaunay edges.
+This is granted for any smooth convex metric (like $L_2$)
+and can be ensured for other metrics (like  $L_{\infty}$)
+by the addition to the point set of well chosen sentinel points.
+
+
+
+\ccInheritsFrom
+
+\ccc{Triangulation_2<Traits,Tds>}
+
+\ccTypes
+\ccThree{typedef Traits::Direction}{Direction}{}
+\ccThreeToTwo
+
+Inherits all the types of the \ccc{Triangulation_2<Traits>}.
+In addition to the types inherited from \ccc{Triangulation_2<Traits,Tds>}
+the class \ccClassTemplateName\
+defines a type for the distance object function, and 
+some types to
+represent the dual Voronoi diagram.
+
+\ccTypedef{typedef Traits::Distance Distance;}{}
+
+\ccTypedef{typedef Traits::Line Line;}{}
+\ccGlue
+\ccTypedef{typedef Traits::Direction Direction;}{}
+\ccGlue
+\ccTypedef{typedef Traits::Ray Ray;}{}
+
+\ccCreation
+\ccCreationVariable{dt}
+\ccThree{Vertex_handle}{T.push_back(const Point &p);}{}
+\ccThreeToTwo
+
+\ccConstructor{Delaunay_triangulation_2(const Traits& gt = Traits());}
+{introduces an empty Delaunay triangulation \ccVar.}
+
+\ccConstructor{Delaunay_triangulation_2(
+	       const Delaunay_triangulation_2<Traits,Tds> &tr);}
+{Copy constructor. All the vertices and faces are duplicated.}
+
+
+\ccHeading{Insertion and Removal}
+
+The following insertion and removal  functions overwrite
+the functions inherited from the class
+\ccc{Triangulation_2<Traits,Tds>} to maintain the Delaunay property.
+
+
+
+
+\ccMethod{Vertex_handle insert(const Point& p, Face_handle f=Face_handle());}
+{Inserts  point \ccc{p}.
+If point \ccc{p} coincides with an already existing vertex, this 
+vertex is returned and the triangulation is not updated.
+Optional parameter \ccc{f} is used to initialize the location of \ccc{p}.
+}
+
+\ccMethod{Vertex_handle insert(const Point& p, Locate_type& lt,
+Face_handle loc, int li );}
+{ inerts a point \ccc{p}, the location of which is supposed to be
+given by \ccc{(lt,loc,li)}, see the description of member function
+\ccc{locate} in class \ccc{Triangulation_2<Traits,Tds>}.}
+
+\ccMethod{Vertex_handle push_back(const Point& p);}
+{Equivalent to \ccc{insert(p)}.}
+
+\ccMethod{template < class InputIterator >
+          int
+          insert(InputIterator first, InputIterator last);}
+{inserts the points in the range
+ $\left[\right.$\ccc{first}, \ccc{last}$\left.\right)$.
+ Returns the number of inserted points.
+ \ccPrecond The \ccc{value_type} of \ccc{first} and \ccc{last}
+ is \ccc{Point}.}
+
+
+
+\ccMethod{void    remove(Vertex_handle v);}
+{removes the vertex from the triangulation.}
+
+Note that the other modifier functions  of
+\ccc{Triangulation_2<Traits,Tds>} are not overwritten.
+Thus a  call to \ccc{insert_in_face}
+\ccc{insert_in_edge}, \ccc{insert_outside_convex_hull},
+\ccc{insert_outside_affine_hull}  or \ccc{flip}
+on a valid Delaunay triangulation might lead to a triangulation
+which is no longer a Delaunay triangulation.
+
+\ccHeading{Queries}
+
+\ccMethod{Vertex_handle
+        nearest_vertex(const Point& p, Face_handle f=Face_handle());}
+{returns any nearest vertex of \ccc{p}. The implemented function
+begins with a location step and
+\ccc{f} may be used to initialize the location.}
+
+
+
+
+\ccHeading{Duality}
+
+\ccMethod{Point dual(const Face_handle &f) const;}
+{Returns the center of the circle circumscribed to face \ccc{f}.
+\ccPrecond \ccc{f} is not infinite}
+
+\ccMethod{Object dual(const Edge &e) const;}
+{returns a segment, a ray or a line supported by the bisector of the
+endpoints of \ccc{e}.
+If faces incident to \ccc{e} are both finite, a segment whose endpoints are the
+duals of each incident face is returned. If only one incident face is
+finite, a
+ray whose endpoint is the dual of the finite incident face is returned.
+Otherwise both incident faces
+are infinite and the bisector line is returned.}
+
+\ccMethod{Object dual(const Edge_circulator& ec) const;}
+{Idem}
+
+\ccMethod{Object dual(const Edge_iterator& ei) const;}
+{Idem}
+
+
+
+\ccHeading{Geometric Predicates}
+\ccThree{Oriented_side}{side_of_}{}
+\ccThreeToTwo
+
+\ccMethod{Oriented_side
+  side_of_oriented_circle(Face_handle f,
+                          const Point& p) const;}
+{Returns the side of \ccc{p} with respect to the circle circumscribing
+ the triangle associated with \ccc{f}}
+
+
+\begin{ccAdvanced}
+\ccHeading{Miscellaneous}
+\ccThree{Vertex_handle}{T.push_back(const Point &p);}{}
+
+The checking function \ccc{is_valid()} is also overwritten
+to additionally test the empty circle property.
+
+\ccMethod{bool is_valid(bool verbose = false, int level = 0) const;}
+{ Tests the validity of the triangulation as a \ccc{Triangulation_2}
+and additionally test the Delaunay property. This method is
+ mainly  useful for debugging Delaunay triangulation algorithms designed by
+ the user.}
+\end{ccAdvanced}
+
+\ccHeading{I/O}
+The I/O operators for \ccc{iostream} and for
+the window stream are simply those defined for the base class
+\ccc{Triangulation_2<Traits, Tds>}.
+In addition, there is a template member function to ouput
+the dual Voronoi diagram on a stream
+
+\ccMethod{
+template < class Stream>
+  Stream& draw_dual(Stream & ps);}
+{output the dual voronoi diagram to stream ps.}
+
+\ccExample
+
+The following code fragment creates a Delaunay triangulation with 
+the usual Euclidean metric for the vertical projection of a 
+terrain model. The points have elevation, that is they are 3D points
+and the predicates which are defined in the Delaunay triangulation 
+traits class forget about the $z$-coordinate of these points. 
+
+\begin{cprog}
+/*  terrain.C      */
+/*  -------------- */
+#include <CGAL/Homogeneous.h>
+#include <CGAL/leda_integer.h>
+#include <CGAL/Triangulation_euclidean_traits_xy_3.h>
+#include <CGAL/Delaunay_triangulation_2.h>
+
+using namespace CGAL;
+
+typedef Homogeneous<leda_integer>  Rp;
+typedef Triangulation_euclidean_traits_xy_3<Rp>  Terrain;
+typedef Triangulation_vertex_base_2<Traits> Vb;
+typedef Triangulation_face_base_2<Traits> Fb;
+typedef Triangulation_default_data_structure_2<Traits,Vb,Fb > Tds;
+typedef Delaunay_triangulation_2<Terrain, Tds> Delaunay;
+
+int main()
+{
+    Delaunay dt(Terrain());
+
+    Point_3<Rp> p;
+    while(std::cin >> p){
+        dt.insert(p);
+    }
+    return 1;    
+}
+\end{cprog} 
+
+
+\ccHeading{Implementation}
+
+Insertion is implemented by inserting in the triangulation, then
+performing a sequence of Delaunay flips. The number of flips is \ccTexHtml{$O(d)$}{O(d)}
+if the new vertex is of degree \ccTexHtml{$d$}{d} in the new triangulation. For
+points distributed uniformly at random, insertion takes time \ccTexHtml{$O(1)$}{O(1)} on
+average.
+
+Removal calls the removal in the triangulation and then retriangulates
+the hole in such a way that  the Delaunay criterion is satisfied. Removal of a
+vertex of degree \ccTexHtml{$d$}{d} takes time \ccTexHtml{$O(d^2)$}{O(d^2)},
+which is \ccTexHtml{$O(1)$}{O(1)} for a random
+vertex in the triangulation.
+
+Nearest neighbor is found in time \ccTexHtml{$O(n)$}{O(n)} in the
+worst case, but in time \ccTexHtml{$O(1)$}{O(1)}
+for vertices distributed uniformly at random  and any query point. 
+
+\end{ccClassTemplate} 
+
+\subsection{Requirements for the Geometric Traits of a Delaunay Triangulation}
+\label{I1_Sect_Delaunay_geom_traits}
+
+In addition to the requirements described in section~\ref{I1_Sect_Geom_traits}
+for the geometrics traits of any triangulation,
+the geometrics traits of a Delaunay triangulation
+has to  provide a \ccc{side_of_oriented_circle} test
+and some additional types.
+The \ccc{in_circle} test is the test used to maintain the
+empty circle property and actually defines the triangulation.
+The additional types \ccc{Line}, \ccc{Direction}
+and \ccc{Ray} are used to describe the dual Voronoi diagram.
+The additional \ccc{Distance} type is only used by the
+\ccc{nearest_vertex(..)} query and the requirements for this type
+are given below.
+\begin{ccClass}{Delaunay_geom_traits}
+\ccCreationVariable{gt}
+
+\ccTypes
+\ccThree{Oriented_side}{xxxxxx}{}
+\ccThreeToTwo
+\ccNestedType{Line}{}
+\ccGlue
+\ccNestedType{Ray}{}
+\ccGlue
+\ccNestedType{Direction}{}
+\ccNestedType{Distance}{Needed only if the \ccc{nearest_neighbor()} 
+function is called.}
+
+\ccOperations
+\ccMethod{Oriented_side side_of_oriented_circle(const Point& p0,
+                                                     const Point& p1,
+                                                     const Point& p2,
+                                                     const Point& test);}
+{Gives the \ccc{Oriented_side} of point \ccc{test} with respect to
+the oriented circumscribing circle of  points \ccc{p0, p1} and \ccc{p2}.
+This answers the \ccc{in_circle}  test if the \ccc{Orientation}
+of  Points \ccc{p0, p1} and \ccc{p2} is known,
+which is the case for the points associated with the three
+vertices of a triangulation face.} 
+
+\ccMethod{Point circumcenter(const Point &p, const Point &q, const
+Point &r) const;} { Returns the center point equidistant from \ccc{p}, \ccc{q} and
+\ccc{r}. This method is required only if the duality functions are called.}
+
+\ccMethod{Line bisector(const Segment &s);}
+{Returns the bisector line of segment s. This method is required only if duality functions
+are called.}
+
+\end{ccClass}
+
+\subsubsection{Requirements for the Line, Direction and Ray Classes}
+
+Each of the three classes \ccc{Line}, \ccc{Direction} and 
+\ccc{Ray}  must know the two others.
+In addition, the \ccc{Line} class is required to have the two
+following member functions:
+\begin{ccClass}{Line}
+
+\ccCreationVariable{l}
+\ccThree{Direction }{l.direction()x}{}
+\ccMethod{Line opposite();}{the same line with opposite orientation.}
+\ccGlue
+\ccMethod{Direction direction();}{the direction of the line.}
+\end{ccClass}
+The \ccc{Ray} class must define a \ccc{Point} class which is the same
+as \ccc{Traits::Point} 
+is required to have the following constructor:
+
+\begin{ccClass}{Ray}
+\ccCreationVariable{r}
+\ccConstructor{Ray(Traits::Point p, Direction d);}{}
+\end{ccClass}
+
+
+
+\begin{ccClassTemplate} {Distance<Traits>}
+\subsubsection{Requirements for a Distance Class}
+
+A distance  class is a class designed to store three points
+\ccc{p0}, \ccc{p1} and \ccc{p2} and to decide which of \ccc{p1}
+and \ccc{p2} is closer to \ccc{p0}. 
+The class is templated by a geometric traits class \ccc{Traits}
+which is required to provide the \ccc{Point} type
+and provide a compare() member function 
+defining what closer means.
+
+\ccTypes
+\ccTypedef{Traits::Point Point;}{the point.}
+
+\ccCreationVariable{dt}
+\ccCreation
+
+The following constructor creates a distance object. Missing points are not initialized.
+
+\ccConstructor{Distance(const Point& p0=Point(),
+                        const Point& p1=Point(),
+                        const Point& p2=Point(),
+                        Traits* gt = NULL);}{}
+\ccOperations
+\ccThree{Comparison}{result_point(int ii, Point ppp);}{}
+
+\ccMethod{void set_point(int i, const Point& pi);}
+{Replaces point $i$. \ccPrecond $0\leq i \leq 2$.}
+\ccGlue
+\ccMethod{Point get_point(int i) const;}
+{Returns point $i$. \ccPrecond $0\leq i \leq 2$.}
+\ccThree{Comparison_result}{d.point(int ii, Point ppp);}{}
+\ccMethod{Comparison_result compare() const;}
+{Compares the distance between \ccc{p0} and \ccc{p1}
+ with the distance between \ccc{p0} and and \ccc{p2}.
+ \ccPrecond \ccc{p1} and \ccc{p2} are initialized.}
+
+\end{ccClassTemplate}
+
+
+
+\subsubsection{Predefined Geometric Traits Class}
+The class \ccc{Triangulation_euclidean_traits_2<R>}
+introduced in section~\ref{I1_Sect_Geom_traits} is 
+ designed to be 
+the geometric traits class of a Delaunay triangulation.
+It implements the usual Euclidean metric
+for the  two dimensional points \ccc{Points_2<R>}.
+Three traits classes are provided to deal with
+the Delaunay triangulation of two dimensional points which are
+the \ccc{xy}, \ccc{yz} or \ccc{zx} projections of three dimensional points:\\
+\ccc{Triangulation_euclidean_traits_xy_3<R>},\\
+\ccc{Triangulation_euclidean_traits_yz_3<R>}, and\\
+\ccc{Triangulation_euclidean_traits_zx_3<R>} \\
+The requirements for the duality functions are not yet satisfied by
+these last three classes.
+% but this going to be achieved very soon.
+
+%\cgal\ also provides a geometric traits class to build 
+%the Delaunay triangulation of a set of points
+%for the $L_{\infty}$ metric. In that case,
+%some sentinel points may have to be added to the given set of points
+%to obtain a triangulation of the convex hull.
+ %
+
+
+\section{Regular triangulations}
+\label{I1_Sect_Regular}
+\ccIndexMainItem{power diagram} 
+Let ${  PW} = \{(p_i, w_i), i = 1, \ldots , n \}$ be a set of 
+weighted points where each $p_i$ is a point and each $w_i$
+is a scalar called the weight of point $p_i$.
+Alternatively, each weighted point $(p_i, w_i)$ can be regarded
+as a two dimensional sphere with center $p_i$ and radius $r_i=\sqrt{w_i}$.
+
+The power diagram of the set ${  PW}$ is a planar partition 
+such that each cell corresponds to sphere $(p_i, w_i)$ of ${  PW}$
+and is the locus of points  $p$ whose power with respect to $(p_i, w_i)$
+is less than its power with respect to any other sphere $(p_j, w_j)$
+in ${  PW}$. 
+The dual of this diagram is a triangulation 
+whose domain covers the convex hull of the set 
+${  P}= \{ p_i, i = 1, \ldots , n \}$ of center points
+and whose vertices are a subset of ${  P}$.
+Such a triangulation is called a regular triangulation.
+The  three points $p_i, p_j$ and $p_k$ of ${  P}$
+form a triangle in the regular triangulation of ${  PW}$
+iff there is a point $p$ of the plane whose
+powers with respect to $(p_i, w_i)$, $(p_j, w_j)$
+and $(p_k, w_k)$ are equal and less than the power of $p$
+with respect to any other sphere in  ${  PW}$.
+
+Let us defined the power product of two weighted points
+$(p_i, w_i)$ and $(p_j, w_j)$ as:
+\[\Pi(p_i, w_i,p_j, w_j) = p_ip_j ^2 - w_i  - w_j  .\]
+$\Pi(p_i, w_i,p_j, 0)$ is simply the power of point $p_j$
+with respect to the sphere $(p_i, w_i)$, and two weighted points 
+are said to be orthogonal if their power product is null.
+The power circle of three weighted points
+ $(p_i, w_i)$, $(p_j, w_j)$
+and $(p_k, w_k)$ is defined as the unique circle
+$(\pi, \omega)$  orthogonal to
+ $(p_i, w_i)$, $(p_j, w_j)$
+and $(p_k, w_k)$.
+
+The regular triangulation of the sets ${  PW}$
+satisfies the following {\em regular property} (which just reduces to the 
+Delaunay property when all the weights are null):
+a triangle $p_ip_jp_k$ of the regular triangulation
+of ${  PW}$ is such that the power product of any weighted point
+ $(p_l, w_l)$ of ${  PW}$ with the power circle of
+ $(p_i, w_i)$, $(p_j, w_j)$ is $(p_k, w_k)$ is positive or null.
+We call  power test of the weighted point $(p_l, w_l)$ with respect
+to the face  $p_ip_jp_k$, the predicates which amount to compute
+the sign of 
+the power product of $(p_l, w_l)$ with respect to
+the power circle of
+ $(p_i, w_i)$, $(p_j, w_j)$ is $(p_k, w_k)$,
+which is given by the following
+determinant
+\[\left| \begin{array}{cccc}
+1  &  x_i  &  y_i  &  x_i ^2 + y_i ^2 - w_i  \\
+1  &  x_j  &  y_j  &  x_j ^2 + y_j ^2 - w_j  \\
+1  &  x_k  &  y_k  &  x_k ^2 + y_k ^2 - w_k  \\
+1  &  x_l  &  y_l  &  x_l ^2 + y_l ^2 - w_l
+\end{array}
+\right|
+\]
+
+A pair of neighboring faces $p_ip_jp_k$
+and $p_ip_jp_l$ is said to be locally regular
+(with respect to  the weights in ${  PW}$)
+if the power test of $(p_l,w_l)$ with respect to
+$p_ip_jp_k$ is positive.
+A classical  result of computational geometry
+establishes that a triangulation of the convex hull of ${  P}$
+such that any pair of neighboring faces is regular with respect
+to ${  PW}$, is a
+ regular triangulation of ${  PW}$.
+
+Alternatively, the regular triangulation
+of the weighted points set ${  PW}$
+can be obtained as the projection
+on the two dimensional plane of the convex hull of the set of three
+dimensional points 
+${  P'}= \{ (p_i,p_i ^2 - w_i ), i = 1, \ldots , n \}$.
+
+\subsection{ The Regular Triangulation  Class}
+
+
+\begin{ccClassTemplate}{Regular_triangulation_2<Traits, Tds>}
+The \cgal\  class \ccClassTemplateName\ is designed to maintain the
+regular triangulation of a set of weighted points.
+The template parameters \ccc{Traits}  and \ccc{Tds} stand respectively
+ for a geometric traits class and a triangulation data structure class.
+Any triangulation data structure that fulfills the requirements of 
+section~\ref{I1_Sect_Tds} can be used for a regular triangulation.
+The geometric traits class must provide a weighted point type
+and a power test on these weighted points. The requirements and defaults
+for the geometric traits and the power point type are list below.
+
+\ccInclude{CGAL/Regular_triangulation_2.h}
+
+ \ccInheritsFrom
+
+\ccc{Triangulation_2<Traits,Tds>}
+
+The functions \ccc{insert} and 
+\ccc{remove} are overwritten to maintain the regular
+property
+and the checking function \ccc{is_valid()} is also overwritten
+to additionally test the local regular property of 
+any pair of neighboring faces.
+
+\ccTypes
+\ccThree{typedef Traits::Weighted_point}{Weighted_point;}{}
+\ccThreeToTwo
+\ccTypedef{typedef Traits::Distance Distance;}{}
+
+\ccTypedef{typedef Traits::Line Line;}{}
+\ccGlue
+\ccTypedef{typedef Traits::Direction Direction;}{}
+\ccGlue
+\ccTypedef{typedef Traits::Ray Ray;}{}
+\ccGlue
+\ccTypedef{typedef Traits::Bare_point  Bare_point;}{}
+\ccGlue
+\ccTypedef{typedef Traits::Weighted_point  Weighted_point;}{}
+
+\ccCreation
+\ccCreationVariable{rt}
+
+\ccConstructor{Regular_triangulation_2(const Traits& gt = Traits());}
+{Introduces an empty regular triangulation \ccVar.}
+
+\ccConstructor{Regular_triangulation_2(const Regular_triangulation_2 &rt);}
+{Copy constructor.}
+
+\ccHeading{Insertion and Removal}
+
+
+The vertices of the regular triangulation
+of a set of weighted points ${  PW}$ form only a subset
+of the set of center points of ${   PW}$.
+Therefore the  insertion of a weighted point  in a regular triangulation
+does not necessarily imply the creation of a new vertex.
+If the new inserted point does not appear as a vertex in the
+regular triangulation, it is said to be hidden 
+by the face in which the corresponding center point is located.
+Such a weighted point is stored in a list attached to the hiding face,
+to be used for later tentative of insertions when future removal
+of some points implies the destruction of the hiding face.
+
+
+\ccThree{Vertex_handle}{T.push_back(const Point &p);}{}
+
+\ccMethod{bool insert(const Weighted_point& p, Face_handle f=Face_handle());}
+{inserts  weighted point \ccc{p}.
+returns true if a new vertex is created. 
+If a weighted point with the same center point but a 
+different weight already exists in the triangulation, 
+it is removed and replaced by the new point.
+}
+
+\ccMethod{bool insert(const Weighted_point &p,
+	 	       Locate_type  lt,
+		       Face_handle loc, int li );}
+{insert a weighted point \ccc{p} whose bare-point is assumed to be
+located in  \ccc{lt,loc,li}.}
+
+\ccMethod{Vertex_handle push_back(const Point& p);}
+{Equivalent to \ccc{insert(p)}.}
+
+\ccMethod{template < class InputIterator >
+          int
+          insert(InputIterator first, InputIterator last);}
+{inserts the weighted points in the range
+ $\left[\right.$\ccc{first}, \ccc{last}$\left.\right)$.
+ Returns the number of created vertices.
+ \ccPrecond The \ccc{value_type} of \ccc{first} and \ccc{last}
+ is \ccc{Weighted_point}.}
+
+\ccMethod{int   remove(Vertex_handle v);}
+{removes the vertex from the triangulation and
+returns the number of new vertices created by the insertion of previously
+hidden points.}
+
+
+%\ccHeading{Duality}
+
+%\ccMethod{Point dual(const Face_handle &f) const;}
+%{Returns the center of the power circle corresponding to face \ccc{f}.
+%\ccPrecond \ccc{f} is not infinite}
+
+%\ccMethod{Object dual(const Edge &e) const;}
+%{If both incident faces are finite, returns a segment whose endpoints are the
+%duals of each incident face. If only one incident face is finite, returns a
+%ray whose endpoint is the dual of the finite incident face and supported by
+%the line which is the bisector of the edge's endpoints. If both incident faces
+%are infinite, returns the line which is the bisector of the edge's endpoints
+%otherwise.  }
+
+%\ccMethod{Object dual(const Edge_circulator& ec) const;}
+%{Idem}
+
+%\ccMethod{Object dual(const Edge_iterator& ei) const;}
+%{Idem}
+
+%*************************
+
+\ccHeading{Geometric Predicates}
+\ccThree{Oriented_side}{side_of_}{}
+\ccThreeToTwo
+
+\ccMethod{Oriented_side
+  power_test(Face_handle f,
+                          const Weighted_point& p) const;}
+{Returns the power test of  \ccc{p} with respect to the 
+power circle  associated with \ccc{f}}
+
+
+
+\begin{ccAdvanced}
+\ccHeading{Miscellaneous}
+\ccThree{Vertex_handle}{T.push_back(const Point &p);}{}
+
+\ccMethod{bool is_valid(bool verbose = false, int level = 0) const;}
+{ Tests the validity of the triangulation as a \ccc{Triangulation_2}
+and additionally test the regularity of the triangulation. This method is
+ mainly  useful for debugging Delaunay triangulation algorithms designed by
+ the user.}
+\end{ccAdvanced}
+\end{ccClassTemplate}
+
+\ccExample
+
+The following code fragment creates a regular triangulation 
+of a set of weighted points.
+
+
+\begin{cprog}
+/*     regular.C */
+/*-------------- */
+#include <CGAL/basic.h>
+#include <iostream>
+#include <CGAL/Cartesian.h>
+#include <CGAL/Regular_triangulation_euclidean_traits_2.h>
+#include <CGAL/Regular_triangulation_2.h>
+
+using namespace CGAL;
+
+typedef Cartesian<double> Rp;
+typedef double W;
+typedef Regular_triangulation_euclidean_traits_2<Rp,W>  Traits;
+typedef Triangulation_vertex_base_2<Traits> Vb;
+typedef Regular_triangulation_face_base_2<Traits> Fb;
+typedef Triangulation_default_data_structure_2<Traits,Vb,Fb > Tds;
+typedef Regular_triangulation_2<Traits, Tds> Regular_triangulation;
+
+int main()
+{
+   Regular_triangulation rt;
+
+   Traits::Weighted_point wp;
+   while(std::cin >> wp){
+     std::cout << wp << std::endl;
+     rt.insert(wp);
+   }
+   rt.is_valid();
+   return 1;	
+}
+
+\end{cprog} 
+
+\subsection{The Base Face Type of a Regular Triangulation}
+The regular triangulation of a set of weighted point does not
+necessarily
+have one vertex for each of the input points. Some of the input
+weigthed points have no cell in the dual power diagrams
+and therefore do not correspond to a vertex of the regular
+triangulation.
+Those weighted point are said to be {\it hidden} points.
+A  point which is hidden at a given time may appear later as a vertex of
+the regular triangulation upon removal on some other weighted point.
+Therefore, hidden points have to be stored somewhere.
+A hidden point can appear as vertex of the triangulation
+only when the
+two dimensional face where its point component is located
+(the face which hides it)
+is removed. Therefore we decided to store each hidden point
+in the face which  hides it and the nested face type of a 
+regular triangulation is assumed to include a list of hidden 
+weighted points. This list of weighted point is in fact included
+in the base face of a regular triangulation.
+
+
+
+\subsubsection{Requirements for the Base Face Class of a Regular Triangulation}
+The base face type of a regular triangulation 
+has to fulfiils the following requirements
+in addition to those of section~\ref{I1_Sect_Base_classes}
+
+\begin{ccClass}{Regular_face_base}
+\ccCreationVariable{f}
+\ccThree{bool}{f.is_constrained(int i)xxx}{}
+\ccThreeToTwo
+
+\ccTypes
+\ccNestedType{ Weighted_point}
+{This type must be the same
+as the weighted point type 
+\ccc{Traits::Weigthed_point}
+defined by the geometric traits class of the regular triangulation.}
+\ccGlue
+\ccTypedef{typedef std::list<Weighted_point> Point_list;}
+{An std list of hidden points.}
+
+\ccCreation
+\ccConstructor{Regular_face_base()}{Default constructor}
+\ccGlue
+\ccConstructor{Regular_face_base(void* v0, void* v1, void* v2)}{Constructor setting the incident vertices.}
+\ccGlue
+\ccConstructor{Regular_face_base(void* v0, void* v1, void*  v2, void*
+n0, void* n1, void* n2)} {Constructor setting the incident vertices and 
+the neighboring faces.}
+
+\ccHeading{Access Functions}
+\ccMethod{Point_list& point_list();}
+{Returns a reference to the list of weighted points
+hidden by the face.}
+\end{ccClass}
+
+\subsubsection{A Default Base Face Class for Regular Triangulations.}
+\cgal\ provides the templated class 
+\ccc{Regular_triangulation_face_base_2<Traits>}
+which derives from \ccc{Triangulation_face_base_2<Traits>}
+and can be used as a default base class for faces of regular triangulations.
+
+\ccInclude{CGAL/Regular_triangulation_face_base_2.h} 
+
+\subsection{The Geometric Traits class of a Regular Triangulation}
+
+\subsubsection{Requirements}
+\begin{ccClass} {Regular_geom_traits}
+
+\ccCreationVariable{gt}
+
+The geometrics traits class of a regular triangulation
+must fulfill the requirements of section~\ref{I1_Sect_Geom_traits}
+and additionally provide  a type
+\ccc{Weitghed_point}  (which derives from the type \ccc{Point} 
+and add a weight data member )
+and the power tests for weighted points.
+The traits must also provide the types 
+\ccc{Ray} and \ccc{Line} to output the dual power diagram,
+and also eventually a \ccc{Distance} type 
+(analogue to the distance type defined in ~\ref{I1_Sect_Delaunay_geom_traits})
+to answer to lowest power query (localisation in the power diagram).
+
+
+\ccThree{Comparison_result}{t.compare_x();}{}
+\ccThreeToTwo
+
+\ccTypes
+\ccNestedType{Bare_point}
+\ccGlue    
+\ccNestedType{Weighted_point}
+\ccGlue
+\ccNestedType{Line}{}
+\ccGlue
+\ccNestedType{Ray}{}
+\ccGlue
+\ccNestedType{Direction}{}
+\ccGlue
+\ccNestedType{Distance} {NOT YET required.}
+
+
+\ccHeading{Predicates}
+\ccMethod
+{Oriented_side  power_test(const Weighted_point &p,
+                           const Weighted_point &q,
+                           const Weighted_point &r,
+                           const Weighted_point &s);} 
+{The two dimensional  power test.}
+\ccMethod
+{Oriented_side  power_test(const Weighted_point &p,
+                           const Weighted_point &q,
+                           const Weighted_point &r);}
+{The degenerate one dimensional power test  for collinear
+Weighted points.
+\ccPrecond The points included in \ccc{p}, \ccc{q} 
+and \ccc{r} are collinear.}
+
+
+\ccHeading{Operations}
+\ccMethod{Rt power(Weighted_point wp, Weighted_point wq) const;}{Returns the power product
+of \ccc{wp} \ and \ccc{wq}. This function is NOT YET required nor used.}
+
+
+
+  
+\end{ccClass}
+
+\subsubsection{A Predefined Geometric Traits Class}
+\cgal\ provides the predefined geometric traits class \\
+\ccc{Regular_triangulation_euclidean_traits_2<Rep,Weight>}.
+This traits class is templated by a representation class \ccc{Rep}
+and a weight type \ccc{Weight}.
+This class inherits from
+\ccc{Triangulation_euclidean_traits_2 <Rep >}
+and uses a \ccc{Weighted_point} type
+derived from the type \ccc{Point} of
+\ccc{Triangulation_euclidean_traits_2 < R >}.
+
+\begin{ccClassTemplate}{Regular_triangulation_euclidean_traits_2<Rep,Weight>}
+\ccInclude{CGAL/Regular_triangulation_euclidean_traits_2.h}
+
+ \ccInheritsFrom
+
+\ccc{Triangulation_euclidean_traits_2<Rep>}
+
+\ccTypes
+\ccThree{typedef Triangulation_euclidean_traits_2<Rep>::Point}{Bare_point}{}
+\ccTypedef{typedef Triangulation_euclidean_traits_2<Rep>::Point
+Point;}{}
+\ccGlue
+\ccTypedef{typedef Weighted_point<Point,Weight> Weighted_point;}{}
+
+\end{ccClassTemplate}
+
+\subsection{Weighted Points}
+
+\subsubsection{requirements for a weighted-point}
+\begin{ccClass}{Weighted_point}
+The weighted point type  provided by the geometric traits class
+of a regular triangulation has to fulfill
+the following requirements
+
+
+\ccThree{typedef Point::Rt }{wp.power(wq)xx}{}
+\ccThreeToTwo
+\ccTypes
+\ccNestedType{Point}{The point type}
+\ccGlue
+\ccNestedType{Weight}{The weight type.}
+\ccGlue
+\ccTypedef{typedef Point::Rt Rt;}{The ring type}
+
+\ccInheritsFrom \ccc{Point}
+
+\ccCreation
+\ccCreationVariable{wp}
+\ccConstructor{Weighted_point(Point p, Weight w= Weight(0))}{}
+\ccGlue
+\ccConstructor{Weighted_point(Weighted_point wq)}{copy constructor.}
+
+\ccAccessFunctions
+\ccMethod{Point point() const;}{}
+\ccGlue
+\ccMethod{ Weight weight() const;}{}
+
+\end{ccClass}
+
+
+\subsubsection{Default Class for a Weighted Point}
+\cgal\ provides the class \ccc{Weighted_point<Point,Weight>}
+as a default type for a  weighted two dimensional point.
+This default type has two template parameters \ccc{Point}
+and  \ccc{Weight} which have to be instantiated respectively 
+with a point type and a weight type.
+The class \ccc{Weighted_point<Point,Weight>}
+ inherits from \ccc{Point}.
+
+
+
+
+\section{Constrained Triangulations}
+\label{I1_Sect_Constrained}
+
+
+
+A constrained triangulation is a triangulation of a set of points
+which has to include among its edges 
+a given set of segments joining the points. The corresponding 
+edges are called {\em constrained edges}. 
+
+The set of points defining the vertices of the triangulation
+includes the set of constrained edges endpoints. It may include other points
+(considered as null length constrained edges) as well.  The set of
+constrained edges forms a set of segments which do not intersect
+except possibly at their endpoints.  Any number of constrained edges
+are allowed to share the same endpoint.  Vertical constrained edges or
+constrained edges with null length are allowed.
+
+
+\begin{ccTexOnly}
+\begin{center} \IpeScale{50} \Ipe{constraints.ipe} \end{center}
+\end{ccTexOnly}
+
+\begin{ccHtmlOnly}
+<CENTER>
+<img border=0 src=constraints.gif align=center alt="A set of
+constraints and its constrained triangulation">
+</CENTER>
+\end{ccHtmlOnly}
+
+\begin{ccClassTemplate} {Constrained_triangulation_2<Traits,Tds>}
+\subsection{ The Constrained Triangulation  Class}
+A constrained triangulation is represented in the CGAL library as an
+object of the class \ccClassTemplateName .
+As usual the template parameters \ccc{Traits} and \ccc{Tds}
+stand respectively for a geometric traits class and
+a triangulation data structure class. There is no additional
+requirements for the geometric traits and the triangulation data
+structure of a constrained triangulation.
+Models used to instantiate these classes are simply required
+to fulfill repectively the requirements 
+of section~\ref{I1_Sect_Geom_traits} and ~\ref{I1_Sect_Tds}.
+
+\ccInclude{CGAL/Constrained_triangulation_2.h} 
+ 
+\ccInheritsFrom
+
+\ccc{Triangulation_2<Traits,Tds>}
+
+\ccTypes
+\ccThree{typedef pair<Point,Point>}{Constraint;}{}
+\ccThreeToTwo
+The only new type defined by
+\ccClassTemplateName\ is a constraint type: a
+constraint is represented as a pair of points.
+
+\ccTypedef{typedef pair<Point,Point> Constraint;}{}
+
+\ccCreation
+\ccCreationVariable{ct}
+
+The creators of the class build the constrained triangulation from a
+list of constrained edges. Constrained edges are assumed to have no
+intersection other than endpoints. Any number of constrained edges are
+allowed to share the same endpoint.  Vertical constrained edges or
+constrained edges with null length are allowed.
+
+\ccConstructor{Constrained_triangulation_2(const Traits &t = Traits())}
+{Introduces an empty constrained triangulation \ccVar.}
+
+\ccConstructor{Constrained_triangulation_2(const
+Constrained_triangulation_2& ctbis)}
+ {Copy constructor, all faces and vertices
+are duplicated and  the constrained status of edges
+is copied. This last feature is not yet implemented.}
+
+\ccConstructor{Constrained_triangulation_2(list<Constrained>& lc, Traits& t = Traits());}
+{Introduces a constrained triangulation, the constrained edges of which
+are the edges of the list \ccc{lc}.}
+
+
+\ccConstructor{ template<class InputIterator> Constrained_triangulation_2(
+        InputIterator first,
+                               InputIterator last,
+                               const Traits& t=Traits());}
+{A templated constructor which introduces and builds
+ a constrained triangulation with constrained edges in the range 
+$\left[\right.$\ccc{first}, \ccc{last}$\left.\right)$.
+\ccPrecond The \ccc{value_type} of \ccc{first} and \ccc{last}
+ is \ccc{Constraint}.}
+
+
+\ccHeading{Insertion and removal}
+
+\ccMethod{Vertex_handle insert(Point a);}
+{ Inserts point a and restore the status (constrained or not) of all
+the
+touched edges.}
+
+\ccMethod{void insert(Point a, Point b);}
+{ Inserts points a and b, and inserts segment ab as a
+constraint. Removes the faces crossed by segment ab and creates new
+faces instead. If a vertex c lies on segment ab, constraint ab is
+replaced by the two constraints ac and cb. Apart from the insertion of
+a and b, the algorithm runs in time proportionnal to the number of
+removed triangles. 
+\ccPrecond The relative interior of segment \ccc{ab} does not
+intersect the relative interior of another constrained edge}
+
+\ccMethod{ void insert(const Vertex_handle & va, const Vertex_handle & vb);}
+{ Inserts the line segment \ccc{s} whose endpoints are the vertices 
+\ccc{va} and
+\ccc{vb}  as a constraintedge \ccc{e}. The triangles intersected by s
+are removed and new ones are created. 
+\ccPrecond The relative interior of \ccc{s} does not
+intersect the relative interior of another constrained edge.  
+\ccPrecond  va and vb are distinct vertices of t.  }
+
+\ccMethod{ void insert(const Vertex_handle & va, const Vertex_handle & vb,
+	    Face_handle & fr, int & i);}
+{Same as above. In addition,  sets the face \ccc{fr} incident to the
+egde \ccc{e} 
+and on the right of \ccc{e} oriented from  \ccc{va} to \ccc{vb}
+and the index \ccc{i}  of the vertex of \ccc{fr} opposite to
+\ccc{e}, i.e.  \ccc{e}=\ccc{(fr,i)}.}	    
+
+\ccMethod{void insert(const Vertex_handle & va, const Vertex_handle & vb,
+	    Face_handle & fr, int & i, List_edges & new_edges,
+	List_vertices & new_vertices);}
+{Same as above. In addition,  the edges that are created are put in
+the list \ccc{new\_edges} and the new vertices
+\(resulting from the intersection of two constraints\) are put in the
+list
+\ccc{new\_vertices}.}
+
+\ccMethod{void remove(const Vertex_handle & v);}
+{ Removes a vertex v. All constraints incident to the removed vertex are removed. }
+
+\ccMethod{void remove_constraint(const Face_handle & f, int i);}
+{ Edge \ccc{e}=\ccc{(f,i)}=\ccc{(g,j)} is no longer constrained.}
+
+\ccHeading{I/O}
+
+\ccFunction{ostream & operator<<(ostream& os, const CGAL_Constrained_triangulation_2<Traits,Tds> &Ct);}
+{Writes the triangulation and, for each face f, and integers i=0,1,2,
+write ``C'' or ``N'' depending whether edge 
+\ccc{(f,i)} is constrained or not.}
+
+
+\ccHeading{Implementation}
+
+The constructors build the triangulation using a sweeping line
+algorithm. The complexity of this algorithm is $O(n\log n)$ if $n$
+endpoints are present. The sweep structure is an \stl\ map.
+ The insertion of a constrained edge runs in time
+proportionnal to the number of triangles intersected by this edge.
+
+There is no need for a special implementation
+of the method \ccVar\ccc{.is_valid()}
+because the base class function
+\ccc{ Triangulation_2<Traits>::is_valid()}
+call the face class method
+\ccc{Tds::Face::is_valid()} 
+which, in the case of a constrained triangulation,
+includes a test of the consistency of the
+information about constrained edges.
+\end{ccClassTemplate}
+
+\subsection{The Face Type of a Constrained Triangulation}
+\label{I1_Sect_Constrained_face}
+ The information about constrained edges is store in the 
+faces of the triangulation. Thus the nested \ccc{Face}
+type of a constrained triangulation offers
+additonnal functionalities to deal with this information.
+This additional functionalities related to the constraints
+are requirements which have to be fulfilled
+by the base face  a constrained triangulation
+in addition to the functionalities required in section~\ref{I1_Sect_Base_classes}
+They are listed below as such.
+
+\begin{ccClass}{Constrained_face_base}
+\ccCreationVariable{f}
+
+\ccThree{bool}{f.is_constrained(int i)xxx}{}
+\ccThreeToTwo
+
+\ccCreation
+\ccConstructor{Constrained_face_base()}{default constructor.}
+\ccGlue
+\ccConstructor{Constrained_face_base(void* v0, void* v1, void* v2)}{constructor setting the incident vertices.}
+\ccGlue
+\ccConstructor{Constrained_face_base(void* v0, void* v1, void*  v2, void* n0, void* n1, void* n2)} 
+{constructor setting the incident vertices and the neighboring faces.}
+\ccGlue
+\ccConstructor{Constrained_face_base(void* v0, void* v1, void*  v2,
+void* n0, void* n1, void* n2, bool c0, bool c1, bool c2)}
+ {constructor setting the incident vertices, the neighboring faces and 
+the constrained or constrained status of the edges of the face}
+                   
+\ccThree{bool}{f.is_constrained(int i)}{}
+\ccHeading{Access Functions}
+\ccMethod{bool is_constrained(int i);}
+{returns true if the edge between \ccVar\ and its neighbor 
+\ccVar .\ccc{neighbor(i)} is constrained.
+\ccPrecond $0\leq i \leq 2$.}
+
+
+\ccModifiers
+\ccMethod{void  set_constraint(int i, bool b);}
+{sets the edge between \ccVar\ and its neighbor \ccVar .\ccc{neighbor(i)}
+ as a constrained or unconstrained edge according to \ccc{b}.}
+
+\ccMethod{void set_constraints(bool c0, bool c1, bool c2);}
+{sets the status (constrained or unconstrained) of the three
+edges of \ccVar.}
+
+\ccMethod{void reorient();}
+{Changes the orientation of \ccVar by exchanging \ccc{vertex(0)}
+with \ccc{vertex(1)} and \ccc{neighbor(0)} with \ccc{neighbor(1)}
+and the corresponding constrained status.}
+\ccMethod{void ccw_permute();}
+{preforms a counterclockwise permutation of the
+ vertices, neighbors and constrained status of  \ccVar.}
+\ccMethod{ void cw_permute();}
+{preforms a clockwise permutation of the
+ vertices and neighbors and constrained status of \ccVar.}
+
+
+\begin{ccAdvanced}
+\ccHeading{Miscelleanous}
+\ccMethod{bool is_valid();}
+{tests the validity of face  \ccVar\ 
+as a face of a plain triangulation
+and additionally checks
+if the edges of \ccVar\ are consistently marked
+as constrained or unconstrained edges
+in face \ccVar and its neighbors.}
+\end{ccAdvanced}
+\end{ccClass}
+
+
+Of course  \cgal\ provides a default \ccc{Face_base} class
+for the constrained triangulation. The class
+\ccc{Constrained_triangulation_face_base_2<Traits>}
+simply derived from 
+\ccc{Triangulation_face_base_2<Traits>} and override the
+functions \ccc{reorient()}, \ccc{ccw_permute()} and 
+\ccc{cw_permute()}.
+
+\ccInclude{CGAL/Constrained_triangulation_face_base_2.h}
+
+\subsection{A Constrained Triangulation Class for Animation Purposes
+\label{I1_Subsec_Constrained_Demo_2}}
+
+\begin{ccClassTemplate}{Constrained_triangulation_demo_2<Traits,Tds>}
+
+\ccDefinition
+The class  \ccClassTemplateName\ is intended to provide
+an animation of the sweep algorithm that builds a 
+constrained triangulation.
+
+\ccInclude{CGAL/Constrained_triangulation_demo_2.h}\\
+
+
+\ccInheritsFrom
+\ccc{Constrained_triangulation_2<Traits,Tds>}
+
+\ccTypes
+\ccThree{typedef Window_stream}{Window_stream;}{}
+\ccThreeToTwo
+\ccTypedef{ typedef Window_stream Window_stream;}{}
+
+\ccCreation
+\ccCreationVariable{ctd}
+
+\ccConstructor{Constrained_triangulation_demo_2(Window_stream& W,
+                                     list<Constrained>& lc, Traits gt=Traits());}
+{Outputs the created faces at each step of
+the sweeping line algorithm, providing thus an animation
+of the sweeping line algorithm.}
+\end{ccClassTemplate}
+
+
+\section{Constrained Delaunay Triangulations}
+\label{I1_Sect_Constrained_Delaunay_Triangulations}
+
+A constrained Delaunay triangulation is a triangulation with
+constrained edges which tries to be as much Delaunay as possible.
+As constrained edges are not necessarily Delaunay edges,
+the triangles of a constrained Delaunay triangulation do not
+necessarily fulfill the empty circle property
+but they fulfill a weaker constrained empty circle property.
+ To state this property,
+it is convenient to think of  constrained
+edges as blocking the view. Then, a triangulation is 
+constrained Delaunay if
+ the circumscribing circle
+of any of its triangular faces includes in its interior 
+no vertex  that is visible
+from the interior of the triangle.
+
+\subsection{The Class 
+\protect \ccc{Constrained_Delaunay_triangulation_2<Traits,Tds>}}
+\begin{ccClassTemplate}{Constrained_Delaunay_triangulation_2<Traits,Tds>}
+The \cgal\ class \ccClassTemplateName\ is designed to represent
+constrained Delaunay triangulations.
+
+The class is templated by a geometric traits class \ccc{Traits}
+and a triangulation data structure \ccc{Tds}.
+There are no special requirements for the triangulation data
+structure
+of a constrained Delaunay triangulations and the requirements
+for this class are those described
+in section~\ref{I1_Sect_Tds}. The geometric traits 
+of a constrained Delaunay triangulation is required
+to provide the \ccc{side_of_oriented_circle} test as the geometric traits
+of a Delaunay triangulation and the requirements for this traits
+are described in section~\ref{I1_Sect_Delaunay_geom_traits}. 
+
+A constrained Delaunay triangulation is not a Delaunay
+triangulation but it is a constrained triangulation.
+Therefore the class \ccClassTemplateName\ derives from
+the class \ccc{Constrained_triangulation_2<Traits,Tds>}.
+Also, information about the status (constrained or not)
+of the edges of the triangulation has to be stored
+in the face class
+ and the requirements for the base face class
+of a constrained Delaunay triangulation are 
+identical to those described in 
+section~\ref{I1_Sect_Constrained_face} for the face base class
+of a constrained  triangulation.
+
+\ccInclude{CGAL/Constrained_triangulation_2.h} 
+ 
+\ccInheritsFrom \ccc{Constrained_triangulation_2<Traits,Tds>}
+
+\ccTypes
+All types used in this class are inherited from the base class
+\ccc{Constrained_triangulation_2<Traits,Tds>}.
+
+\ccCreation
+\ccCreationVariable{cdt}
+
+\ccConstructor{Constrained_Delaunay_triangulation_2(const Traits &t = Traits())}
+{Introduces an empty constrained Delaunay triangulation \ccVar.}
+
+\ccConstructor{Constrained_Delaunay_triangulation_2(const
+Constrained_Delaunay_triangulation_2& cdtbis)}
+ {Copy constructor, all faces and vertices
+are duplicated and  the constrained status of edges
+is copied. This last feature is not yet implemented.}
+
+\ccConstructor{Constrained_Delaunay_triangulation_2(list<Constrained>& lc, Traits& t = Traits());}
+{Introduces a constrained triangulation, the constrained edges of which
+are the edges of the list \ccc{lc}.}
+
+
+\ccConstructor{ template<class InputIterator> Constrained_triangulation_2(
+        InputIterator first,
+                               InputIterator last,
+                               const Traits& t=Traits());}
+{A templated constructor which introduces and builds
+ a constrained triangulation with constrained edges in the range 
+$\left[\right.$\ccc{first}, \ccc{last}$\left.\right)$.
+\ccPrecond The \ccc{value_type} of \ccc{first} and \ccc{last}
+ is \ccc{Constraint}.}
+
+\begin{ccAdvanced}
+\ccHeading{Flips}
+
+\ccMethod{bool is_flipable(Face_handle f, int i);}
+{ Determines if edge (f,i) can be flipped. Returns true if
+1. edge(f,i) is not constrained and 2. the circle circumscribing f
+does not contain the vertex of f->neighbor(i) not on edge(f,i). }
+
+\ccMethod{void flip(Face_handle& f, int i);}
+{ Flip f and f->neighbor(i).
+\ccPrecond f->is\_constrained(i) == FALSE.}
+
+
+\ccMethod{void propagating_flip(List_edges & edges);}
+{ Makes the triangulation constrained Delaunay by flipping edges. 
+List edges contains an
+initial list of edges to be flipped. The returned
+triangulation is constrained Delaunay 
+if the list edges contains all edges of the
+input triangulation that need to be flipped (plus possibly others). }
+\end{ccAdvanced}
+
+\ccHeading{Insertion and Removal}
+The following member functions override the corresponding
+member of the base class to include a step restoring
+ the Delaunay constrained
+property after modification of the triangulation.
+
+\ccMethod{ Vertex_handle insert(Point a);}
+{ Inserts point a in the triangulation. }
+
+\ccMethod{ void insert(Point a, Point b);}
+{ Inserts segment ab as a constrained edge in the triangulation. }
+
+\ccMethod{ void insert(Vertex_handle va, Vertex_handle vb);}
+{ Inserts the line segment whose endpoints are the vertices va and vb
+as an edge e in the triangulation. }
+
+\ccMethod{void insert(Vertex_handle va, Vertex_handle vb,
+		   Face_handle & fr, int & i);}
+{Same as the previous procedure. In addition, returns f and i such that
+e=(f,i) and f is the face lying to the right of the oriented edge (va,vb). }
+
+
+\ccMethod{void remove(Vertex_handle & v);}
+{ Removes vertex v. }
+
+
+\ccHeading{Checking}
+
+\ccMethod{bool is_valid();}
+{ Checks if the triangulation is valid and if each constrained edge is
+a constraint for its two incident faces.}
+
+\end{ccClassTemplate}

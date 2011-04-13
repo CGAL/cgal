@@ -1,0 +1,74 @@
+% +------------------------------------------------------------------------+
+% | Reference manual page: Segment_circle_2.tex (Arrangement)
+% +------------------------------------------------------------------------+
+% | 
+% | Package: arr (Segment_circle_2)
+% | 
+% +------------------------------------------------------------------------+
+
+\ccRefPageBegin
+
+%%RefPage: end of header, begin of main body
+% +------------------------------------------------------------------------+
+% +========================================================================+
+%   Segment_circle_2
+% +========================================================================+
+\begin{ccRefClass}{Segment_circle_2<NT>} 
+    
+\ccDefinition A curve \ccStyle{c} of the class
+    \ccClassTemplateName\ may be any one of the following: a line segment,
+    a full circle or a circular arc.
+
+    This class is designed to be used along with the
+    \ccc{Arr_segment_circle_traits<NT>} traits class, and thus mainly
+    offers the functionality needed for the traits.  
+
+    \ccInclude{CGAL/Segment_circle_2.h}
+    
+\ccCreation
+    \ccCreationVariable{arc}
+
+    \ccConstructor{Segment_circle_2<NT> ();}
+	{creates a default degenerate curve.}
+
+    \ccConstructor{Segment_circle_2<NT> (Segment_2<NT> s);}
+	{creates a line segment curve.}
+
+    \ccConstructor{Segment_circle_2<NT> (Circle_2<NT> c);}
+	{creates a full circle curve.}
+
+    \ccConstructor{Segment_circle_2<NT> (Circle_2<NT> c, Point_2<NT> source, Point_2<NT> target);}
+	{creates a circular arcs based on the given circle and going in a clockwise direction from the source to the taget. Both the source and the target must be on the circle.}
+
+
+\ccOperations
+    
+    \ccMethod{Point_2<NT> source();}
+	{returns the curve source.}
+
+    \ccMethod{Point_2<NT> target();}
+	{returns the curve source.}
+
+    \ccMethod{bool is_segment();}
+	{check whether the curve is a segment.}
+
+    \ccMethod{Segment_2<NT> segment();}
+	{convers the curve to a segment.
+       	\ccPrecond{\ccc{arc} is a segment.}}
+
+    \ccMethod{bool is_circle();}
+	{check whether the curve is a circle or a circular arc.}
+    
+    \ccMethod{Segment_2<NT> segment();}
+	{returns the base circle.
+       	\ccPrecond{\ccc{arc} is a full circle or a circular arc.}}
+
+\end{ccRefClass}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+% +------------------------------------------------------------------------+
+%%RefPage: end of main body, begin of footer
+\ccRefPageEnd
+% EOF
+% +------------------------------------------------------------------------+

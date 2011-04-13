@@ -1,0 +1,286 @@
+% +------------------------------------------------------------------------+
+% | Reference manual page: Regular_triangulation_2.tex
+% +------------------------------------------------------------------------+
+% | 12.04.2000   Author
+% | Package: Package
+% | 
+\RCSdef{\RCSRegulartriangulationRev}{$Revision$}
+\RCSdefDate{\RCSRegulartriangulationDate}{$Date$}
+% |
+%%RefPage: end of header, begin of main body
+% +------------------------------------------------------------------------+
+
+
+\begin{ccRefClass}{Regular_triangulation_2<Traits,Tds>}  %% add template arg's if necessary
+
+%% \ccHtmlCrossLink{}     %% add further rules for cross referencing links
+%% \ccHtmlIndexC[class]{} %% add further index entries
+
+\ccDefinition
+  
+The class \ccRefName\ 
+is designed to maintain the
+regular triangulation of a set of weighted points.
+
+
+Let ${  PW} = \{(p_i, w_i), i = 1, \ldots , n \}$ be a set of 
+weighted points where each $p_i$ is a point and each $w_i$
+is a scalar called the weight of point $p_i$.
+Alternatively, each weighted point $(p_i, w_i)$ can be regarded
+as a two dimensional sphere with center $p_i$ and radius $r_i=\sqrt{w_i}$.
+
+The power diagram of the set ${  PW}$ is a planar partition 
+such that each cell corresponds to sphere $(p_i, w_i)$ of ${  PW}$
+and is the locus of points  $p$ whose power with respect to $(p_i, w_i)$
+is less than its power with respect to any other sphere $(p_j, w_j)$
+in ${  PW}$. 
+The dual of this diagram is a triangulation 
+whose domain covers the convex hull of the set 
+${  P}= \{ p_i, i = 1, \ldots , n \}$ of center points
+and whose vertices are a subset of ${  P}$.
+Such a triangulation is called a regular triangulation.
+The  three points $p_i, p_j$ and $p_k$ of ${  P}$
+form a triangle in the regular triangulation of ${  PW}$
+iff there is a point $p$ of the plane whose
+powers with respect to $(p_i, w_i)$, $(p_j, w_j)$
+and $(p_k, w_k)$ are equal and less than the power of $p$
+with respect to any other sphere in  ${  PW}$.
+
+Let us defined the power product of two weighted points
+$(p_i, w_i)$ and $(p_j, w_j)$ as:
+\[\Pi(p_i, w_i,p_j, w_j) = p_ip_j ^2 - w_i  - w_j  .\]
+$\Pi(p_i, w_i,p_j, 0)$ is simply the power of point $p_j$
+with respect to the sphere $(p_i, w_i)$, and two weighted points 
+are said to be orthogonal if their power product is null.
+The power circle of three weighted points
+ $(p_i, w_i)$, $(p_j, w_j)$
+and $(p_k, w_k)$ is defined as the unique circle
+$(\pi, \omega)$  orthogonal to
+ $(p_i, w_i)$, $(p_j, w_j)$
+and $(p_k, w_k)$.
+
+The regular triangulation of the sets ${  PW}$
+satisfies the following {\em regular property} (which just reduces to the 
+Delaunay property when all the weights are null):
+a triangle $p_ip_jp_k$ of the regular triangulation
+of ${  PW}$ is such that the power product of any weighted point
+ $(p_l, w_l)$ of ${  PW}$ with the power circle of
+ $(p_i, w_i)$, $(p_j, w_j)$ is $(p_k, w_k)$ is positive or null.
+We call  power test of the weighted point $(p_l, w_l)$ with respect
+to the face  $p_ip_jp_k$, the predicates which amount to compute
+the sign of 
+the power product of $(p_l, w_l)$ with respect to
+the power circle of
+ $(p_i, w_i)$, $(p_j, w_j)$ is $(p_k, w_k)$,
+which is given by the following
+determinant
+\[\left| \begin{array}{cccc}
+1  &  x_i  &  y_i  &  x_i ^2 + y_i ^2 - w_i  \\
+1  &  x_j  &  y_j  &  x_j ^2 + y_j ^2 - w_j  \\
+1  &  x_k  &  y_k  &  x_k ^2 + y_k ^2 - w_k  \\
+1  &  x_l  &  y_l  &  x_l ^2 + y_l ^2 - w_l
+\end{array}
+\right|
+\]
+
+A pair of neighboring faces $p_ip_jp_k$
+and $p_ip_jp_l$ is said to be locally regular
+(with respect to  the weights in ${  PW}$)
+if the power test of $(p_l,w_l)$ with respect to
+$p_ip_jp_k$ is positive.
+A classical  result of computational geometry
+establishes that a triangulation of the convex hull of ${  P}$
+such that any pair of neighboring faces is regular with respect
+to ${  PW}$, is a
+ regular triangulation of ${  PW}$.
+
+Alternatively, the regular triangulation
+of the weighted points set ${  PW}$
+can be obtained as the projection
+on the two dimensional plane of the convex hull of the set of three
+dimensional points 
+${  P'}= \{ (p_i,p_i ^2 - w_i ), i = 1, \ldots , n \}$.
+
+
+
+ 
+A Regular triangulation is a special triangulation of a set of points,
+so it is natural to derive  the class \ccRefName\
+from the basic class \ccc{Triangulation_2<Traits,Tds>}.
+The template parameters \ccc{Traits} and \ccc{Tds} 
+are to be instantiated with models of respectively
+\ccc{RegularTriangulationTraits_2}  and
+\ccc{TriangulationDataStructure_2}.
+
+
+The concept of triangulation data structure
+is described in \ccRefPage{TriangulationDataStructure_2}
+and the same models can be used to instantiate the
+triangulation data structure of either a \ccc{Triangulation_2<Traits,Tds>}
+or a \ccRefName.
+The  concept of \ccc{RegularTriangulationTraits_2},
+described page~\ccRefPage{RegularTriangulationTraits_2}, 
+must provide a weighted point type
+and a power test on these weighted points. 
+
+\ccInclude{Regular_triangulation_2.h}
+
+\ccInheritsFrom
+\ccc{Triangulation_2<Traits,Tds>}
+
+\ccTypes
+\ccThree{typedef Traits::Weighted_point}{Weighted_point;}{}
+\ccThreeToTwo
+\ccTypedef{typedef Traits::Distance Distance;}{}
+
+\ccTypedef{typedef Traits::Line Line;}{}
+\ccGlue
+\ccTypedef{typedef Traits::Direction Direction;}{}
+\ccGlue
+\ccTypedef{typedef Traits::Ray Ray;}{}
+\ccGlue
+\ccTypedef{typedef Traits::Bare_point  Bare_point;}{}
+\ccGlue
+\ccTypedef{typedef Traits::Weighted_point  Weighted_point;}{}
+
+
+\ccCreation
+\ccCreationVariable{rt}  %% choose variable name
+
+\ccConstructor{Regular_triangulation_2(const Traits& gt = Traits());}
+{Introduces an empty regular triangulation \ccVar.}
+
+\ccConstructor{Regular_triangulation_2(const Regular_triangulation_2 &rt);}
+{Copy constructor.}
+
+
+\ccHeading{Insertion and Removal}
+
+The vertices of the regular triangulation
+of a set of weighted points ${  PW}$ form only a subset
+of the set of center points of ${   PW}$.
+Therefore the  insertion of a weighted point  in a regular triangulation
+does not necessarily imply the creation of a new vertex.
+If the new inserted point does not appear as a vertex in the
+regular triangulation, it is said to be hidden 
+by the face in which the corresponding center point is located.
+Such a weighted point is stored in a list attached to the hiding face,
+to be used for later tentative of insertions when future removal
+of some points implies the destruction of the hiding face.
+
+
+\ccThree{Vertex_handle}{T.push_back(const Point &p);}{}
+
+\ccMethod{bool insert(const Weighted_point& p, Face_handle f=Face_handle());}
+{inserts  weighted point \ccc{p} and 
+returns true if a new vertex is created. 
+If a weighted point with the same center point but a 
+different weight already exists in the triangulation, 
+it is removed and replaced by the new point.
+If given the parameter \ccc{f} is used as an hint
+for the place to start the location process of point \ccc{p}.}
+
+
+\ccMethod{bool insert(const Weighted_point &p,
+	 	       Locate_type  lt,
+		       Face_handle loc, int li );}
+{insert a weighted point \ccc{p} whose bare-point is assumed to be
+located in  \ccc{lt,loc,li}.}
+
+\ccMethod{Vertex_handle push_back(const Point& p);}
+{Equivalent to \ccc{insert(p)}.}
+
+\ccMethod{template < class InputIterator >
+          int
+          insert(InputIterator first, InputIterator last);}
+{inserts the weighted points in the range
+ $\left[\right.$\ccc{first}, \ccc{last}$\left.\right)$.
+ Returns the number of created vertices.
+ \ccPrecond The \ccc{value_type} of \ccc{first} and \ccc{last}
+ is \ccc{Weighted_point}.}
+
+\ccMethod{int   remove(Vertex_handle v);}
+{removes the vertex from the triangulation and
+returns the number of new vertices created by the insertion of previously
+hidden points.}
+
+\ccHeading{Dual power diagram}
+\ccIndexMainItem{power diagram}
+The following member functions provide the elements of the
+dual power diagram.
+
+\ccMethod{Point weighted_circumcenter(const Face_handle &f) const;}
+{returns the center of the circle orthogonal to the three weighted
+points corresponding to the vertices of face \ccc{f}.
+\ccPrecond \ccc{f} is not infinite}
+
+\ccMethod{Point dual(const Face_handle &f) const;}
+{same as weighted\_circumcenter}
+
+\ccMethod{Object dual(const Edge &e) const;}
+{If both incident faces are finite, returns a segment whose endpoints are the
+duals of each incident face. If only one incident face is finite, returns a
+ray whose endpoint is the dual of the finite incident face and supported by
+the line which is the bisector of the edge's endpoints. If both incident faces
+are infinite, returns the line which is the bisector of the edge's endpoints
+otherwise.  }
+
+\ccMethod{Object dual(const Edge_circulator& ec) const;}
+{Idem}
+
+\ccMethod{Object dual(const Edge_iterator& ei) const;}
+{Idem}
+
+\ccMethod{
+template < class Stream>
+  Stream& draw_dual(Stream & ps);}
+{output the dual power diagram to stream ps.}
+
+\ccPredicates
+\ccThree{Oriented_side}{side_of_}{}
+\ccThreeToTwo
+
+\ccMethod{Oriented_side
+  power_test(Face_handle f,
+                          const Weighted_point& p) const;}
+{Returns the power test of  \ccc{p} with respect to the 
+power circle  associated with \ccc{f}}
+
+
+
+\begin{ccAdvanced}
+\ccHeading{Miscellaneous}
+\ccThree{Vertex_handle}{T.push_back(const Point &p);}{}
+
+\ccMethod{bool is_valid(bool verbose = false, int level = 0) const;}
+{ Tests the validity of the triangulation as a \ccc{Triangulation_2}
+and additionally test the regularity of the triangulation. This method is
+ mainly  useful for debugging Delaunay triangulation algorithms designed by
+ the user.}
+\end{ccAdvanced}
+
+
+
+\ccSeeAlso
+\ccc{CGAL::Triangulation_2<Traits,Tds>}, \\
+\ccc{TriangulationDataStructure_2}, \\
+\ccc{RegularTriangulationTraits_2} \\
+\ccc{RegularTriangulationFaceBase_2} \\
+\ccc{CGAL::Regular_triangulation_face_base_2<Traits>}
+
+
+%\ccExample
+%The following code fragment creates a regular triangulation 
+%of a set of weighted points.
+
+
+%\ccIncludeExampleCode{Triangulation_2/regular.C}
+
+
+\end{ccRefClass}
+
+% +------------------------------------------------------------------------+
+%%RefPage: end of main body, begin of footer
+% EOF
+% +------------------------------------------------------------------------+
+

@@ -1,0 +1,78 @@
+% +------------------------------------------------------------------------+
+% | Reference manual page: ch_melkman.tex
+% +------------------------------------------------------------------------+
+% | 09.05.2001   Susan Hert and Stefan Schirra
+% | Package: Convex_hull_2
+% | 
+% +------------------------------------------------------------------------+
+
+
+\begin{ccRefFunction}{ch_melkman}  %% add template arg's if necessary
+\ccIndexSubitemBegin{convex hull, 2D}{of polyline or polygon}
+\ccIndexSubitemBegin{convex hull, 2D}{Melkman algorithm}
+
+\ccDefinition
+  
+The function \ccRefName\ computes the counterclockwise sequence of
+extreme points of a sequence of points that forms a simple polyline or polygon.
+
+\ccInclude{CGAL/ch_melkman.C}
+
+\ccFunction{template <class InputIterator, class OutputIterator>
+            OutputIterator
+            ch_melkman( InputIterator first, InputIterator last,  
+                        OutputIterator result, 
+                        const Traits& ch_traits = Default_traits);}
+            {generates the counterclockwise sequence of extreme points
+            of the points in the range [\ccc{first}, \ccc{beyond}). 
+            The resulting sequence is placed starting at
+            position \ccc{result}, and the past-the-end iterator for
+            the resulting sequence is returned.
+            \ccPrecond %\ccIndexSubitem[C]{ch_melkman}{preconditions}
+            The source range [\ccc{first},\ccc{beyond}) corresponds 
+            to a simple polyline. 
+            [\ccc{first},\ccc{beyond}) does not contain \ccc{result}}.
+
+The default traits class \ccc{Default_traits} is the kernel in which the
+type \ccc{InputIterator::value_type} is defined.
+
+
+\ccHeading{Requirements}
+\begin{enumerate}
+   \item    \ccc{InputIterator::value_type} and \ccc{OutputIterator::value_type}
+            are equivalent to \ccc{Traits::Point_2}.
+   \item    \ccc{Traits} contains the following subset of types from
+            the concept ConvexHullTraits\_2 and their corresponding member
+            %\ccIndexMainItem[c]{ConvexHullTraits_2}
+            functions that return instances of these types:
+            \begin{itemize}
+                \item \ccc{Traits::Point_2},
+                \item \ccc{Traits::Less_xy_2}, 
+                \item \ccc{Traits::Leftturn_2}.
+            \end{itemize}
+\end{enumerate}
+
+\ccSeeAlso
+
+\ccRefIdfierPage{CGAL::ch_akl_toussaint} \\
+\ccRefIdfierPage{CGAL::ch_bykat} \\
+\ccRefIdfierPage{CGAL::ch_eddy} \\
+\ccRefIdfierPage{CGAL::ch_graham_andrew} \\
+\ccRefIdfierPage{CGAL::ch_jarvis} \\
+\ccRefIdfierPage{CGAL::ch_melkman} \\
+\ccRefIdfierPage{CGAL::convex_hull_2} 
+
+\ccImplementation
+
+It uses an implementation of Melkman's algorithm \cite{m-olcch-87}. Running
+time of this is linear.
+
+\ccIndexSubitemEnd{convex hull, 2D}{of polyline or polygon}
+\ccIndexSubitemEnd{convex hull, 2D}{Melkman algorithm}
+\end{ccRefFunction}
+
+% +------------------------------------------------------------------------+
+%%RefPage: end of main body, begin of footer
+% EOF
+% +------------------------------------------------------------------------+
+

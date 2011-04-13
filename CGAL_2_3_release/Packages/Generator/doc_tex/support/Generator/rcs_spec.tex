@@ -1,0 +1,165 @@
+%% ==============================================================
+%% Specification: Random Convex Sets
+%% --------------------------------------------------------------
+%% file  : rcs_spec.awi
+%% author: Michael Hoffmann
+%% maintainer: Susan Hert 
+%% $Id$
+%% ==============================================================
+
+\RCSdef{\RandomConvexSetRev}{$Revision$}
+\RCSdefDate{\RandomConvexSetDate}{$Date$}
+
+\newpage
+
+\ccParDims
+
+\section{Building Random Convex Sets}
+\label{sec:building_random_convex_sets}
+\ccIndexMainItemBegin[c]{random convex set}
+\ccIndexSubitemBegin[c]{generator}{convex set}
+
+This section describes a function to compute a random convex planar
+point set of given size where the points are drawn from a specific
+domain.
+
+\ccInclude{CGAL/random_convex_set_2.h}
+
+\def\ccLongParamLayout{\ccTrue} 
+
+\ccFunction{template < class OutputIterator, class Point_generator,
+  class Traits > OutputIterator random_convex_set_2( int n,
+  OutputIterator o, const Point_generator& pg, Traits t =
+  Default_traits);}
+{
+computes a random convex \ccc{n}-gon by writing its vertices (oriented
+counterclockwise) to \ccc{o}. The resulting polygon is scaled such
+that it fits into the bounding box as specified by \ccc{pg}. Therefore
+we cannot easily describe the resulting distribution.
+}
+
+\ccHeading{Precondition}
+\ccIndexSubitem[C]{random_convex_set}{preconditions}
+\begin{enumerate}
+\item \ccc{Point_generator} satisfies the requirements stated in
+  section \ref{point_generator_req},
+\item If \ccc{Traits} is specified, it has to satisfy the
+  requirements stated in section \ref{req_random_convex_sets_traits}
+  and \ccc{Traits::Point_2} must be the same as
+  \ccc{Point_generator::value_type},
+\item if \ccc{Traits} is not specified,
+  \ccc{Point_generator::value_type} must be \ccc{Point_2<
+    R >} for some representation class \ccc{R},
+\item \ccc{OutputIterator} accepts
+  \ccc{Point_generator::value_type} as value type {\it and}
+\item $n \ge 3$.
+\end{enumerate}
+
+%The default traits class \ccc{Default_traits} is 
+%\ccc{Random_convex_set_traits}.
+%\ccIndexTraitsClassDefault{random_convex_set}.
+
+\ccSeeAlso \ccc{Random_points_in_square_2} and
+\ccc{Random_points_in_disc_2}.
+
+\ccImplementation The implementation uses the centroid method
+described in \cite{s-zkm-96} and has a worst case running time of $O(r
+\cdot n + n \cdot \log n)$, where $r$ is the time needed by \ccc{pg}
+to generate a random point.
+\ccIndexMainItemEnd[c]{random convex set}
+\ccIndexSubitemEnd[c]{generator}{convex set}
+
+\ccExample
+
+The following program displays a random convex 500-gon where the
+points are drawn uniformly from the unit square centered at the
+origin.
+
+\ccIncludeExampleCode{Generator/rcs_manual_demo.C}
+
+\ccTagDefaults
+
+\begin{ccClass}{Point_generator}
+    \ccCreationVariable{pg} \ccTagFullDeclarations
+    
+    \ccSubsection{Requirements for Point Generator
+      Classes}\label{point_generator_req}
+    \ccModifierCrossRefOff
+    \ccIndexMainItem{generator classes, requirements}
+    \ccModifierCrossRefOn
+    
+    \ccDefinition A class \ccClassName\ satisfying input iterator
+    requirements has to provide the following additional types and
+    operations in order to qualify as a point generator class. The
+    point generators described in section \ref{sec:point_generators_2}
+    fulfill these requirements.
+
+    \ccTypes\ccIndexClassTypes
+    
+    \ccNestedType{value_type}{point class.}  
+    
+    \ccNestedType{FT}{class used for doing computations on point
+      coordinates (has to fulfill field type requirements).}
+
+    \ccOperations
+    \begin{ccIndexMemberFunctions}
+    
+    \ccMemberFunction{FT range() const;}{return an absolute bound for
+      the coordinates of all generated points.}
+    \end{ccIndexMemberFunctions}
+    
+\end{ccClass}
+
+\newpage
+\begin{ccAdvanced}
+  \ccAutoIndexingOff
+  \ccHtmlNoIndex\ccHtmlNoClassLinks\begin{ccClass}{Random_Convex_Set_Traits}
+    \ccCreationVariable{t}
+    \ccTagFullDeclarations
+    
+    \subsection{Requirements for Random Convex Sets Traits
+      Classes}\label{req_random_convex_sets_traits}%
+      \ccIndexSubitem[C]{random_convex_set}{traits requirements}
+    
+    \ccDefinition A class \ccClassName\ has to provide the following
+    types and operations in order to qualify as a traits class for
+    \ccc{random_convex_set_2}.
+    
+    \ccTypes 
+    
+    \ccNestedType{Point_2}{point class.}
+    \ccNestedType{FT}{class used for doing computations on point and
+      vector coordinates (has to fulfill field type requirements).}
+    
+    \ccNestedType{Sum}{AdaptableBinaryFunction class:
+      \ccc{Point_2} $\times$ \ccc{Point_2} $\rightarrow$
+      \ccc{Point_2}. It returns the point that results from adding
+      the vectors corresponding to both arguments.}
+    
+    \ccNestedType{Scale}{AdaptableBinaryFunction class:
+      \ccc{Point_2} $\times$ \ccc{FT} $\rightarrow$
+      \ccc{Point_2}. \ccc{Scale(p,k)} returns the point that
+      results from scaling the vector corresponding to \ccc{p} by a
+      factor of \ccc{k}.}
+    
+    \ccNestedType{Max_coordinate}{AdaptableUnaryFunction class:
+      \ccc{Point_2} $\rightarrow$ \ccc{FT}. \ccc{Max_coordinate(p)}
+      returns the coordinate of \ccc{p} with largest absolute value.}
+
+    \ccNestedType{Angle_less}{AdaptableBinaryFunction class:
+      \ccc{Point_2} $\times$ \ccc{Point_2} $\rightarrow$
+      \ccc{bool}. It returns \ccc{true}, iff the angle of the
+      direction corresponding to the first argument with respect to
+      the positive $x$-axis is less than the angle of the direction
+      corresponding to the second argument.}
+
+    \ccOperations
+    
+    \ccMemberFunction{Point_2 origin() const;}{return origin (neutral
+      element for the \ccc{Sum} operation).}
+      
+  \end{ccClass}
+  \ccAutoIndexingOn
+\end{ccAdvanced}
+
+%% EOF %%

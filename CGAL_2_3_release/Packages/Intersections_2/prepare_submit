@@ -1,0 +1,24 @@
+#!/bin/sh
+
+if [ ! -d include ]
+then
+    mkdir include
+    mkdir include/CGAL
+fi
+
+if [ ! -d src ]
+then
+    mkdir src
+fi
+
+cd web
+if [ ! -d lis ]
+then
+    mkdir lis
+fi
+
+make xsrcs
+
+cd ..
+cvs -q commit -m "" src include
+

@@ -1,0 +1,169 @@
+%+-------------------------------------------------------
+%| CGAL Manual : pmwx.tex
+%|
+%| Soon to be split into User and Reference Manuals
+%+--------------------------------------------------------
+%| update log
+%|
+%| 04 May 2001  - Eyal Flato
+%|    Created from arr documentation
+%|
+%--------------------------------------------------------
+
+%\documentclass[12pt]{book}
+%\usepackage{graphics, amssymb,epsfig}
+%\usepackage{cprog,cc_manual}
+%
+%\def\Ipe#1{\def\IPEfile{#1}\input{#1}}
+%
+%\setlength{\evensidemargin}{.0in}
+%\setlength{\oddsidemargin}{-0.3in}
+%\setlength{\textwidth}{6.8in}
+%\setlength{\textheight}{8in}
+%
+%\renewcommand{\Re}{{\rm I\!\hspace{-0.025em} R}}
+%\newcommand{\normal}[1]{\eta_{#1}}
+%\newtheorem{theorem}{Theorem}[section] % section
+%\newtheorem{remark}[theorem]{Remark}
+%\newtheorem{lemma}[theorem]{Lemma}
+%\newenvironment{dfn}{{\vspace*{1ex} \noindent \bf Definition }}{\vspace*{1ex}}
+%\newcommand{\bigdef}[2]{\index{#1}\begin{dfn} {\rm #2} \end{dfn}}
+%\newenvironment{proof}{{\em Proof:}}{\hfill{\hfill\rule{2mm}{2mm}}}
+%
+%\newcommand{\comment}[1]{{\sf * #1 *}}
+%\newcommand{\ncomment}[1]{\noindent {\sf * #1 * }}
+%
+%\newtheorem{defn}[theorem]{Definition}
+%\newcommand{\intsupplanes}{P}
+%\def\C{{\cal C}}
+%\def\G{{\cal G}}
+%\def\F{{\cal F}}
+%\def\I{{\cal I}}
+%\def\U{{\cal U}}
+%\def\M{{\cal M}}
+%\def\eps{{\varepsilon}}
+%\def\bd{{\partial}}
+%\def\dm{{\cal D}}
+%
+% Title
+%\title{CGAL Arrangement Specifications}
+%
+%\date{ \today }
+%
+%\begin{document}
+%
+%\tableofcontents
+%
+%\maketitle
+\chapter{2D Planar Maps of Intersecting Curves} \label{I1_ChapterPmwx}
+\minitoc
+
+\section{Introduction}
+
+\paragraph{2D Planar Map with Intersections:} 
+  Given a collection $C$ of (possibly intersecting and not necessarily
+  $x$-monotone curves in the plane, we construct a collection $C''$ in
+  two steps, as follows: First, we decompose each curve in C into
+  maximal x-monotone curves, thus obtaining the collection
+  $C'$. Second, We decompose each curve in $C'$ into maximal connected
+  pieces not intersecting any other curve in $C'$.  This way we obtain
+  the collection $C''$ of $x$-monotone, pairwise interior disjoint
+  curves.  Constructing the {\it planar map with intersection} of the
+  curves in $C$ gives the {\it planar map}(see
+  Chapter~\ref{I1_ChapterPlanarMap}) induced by the curves in $C''$.
+
+  The \ccc{Planar Map with Intersections} package extends the
+  functionality of the \ccc{Planar Map} package by enabling simple
+  insertion of intersecting not necessarily $x$-monotone curves. The
+  \ccc{Planar_map_with_intersections_2} class has different insertion
+  functions but it uses the same data structures as the planar
+  map. Therefore, almost any functionality of the planar map is also
+  supported here (e.g., traversal of planar map features, point
+  location queries and I/O operations are supported but infinite
+  objects are not supported). However, the planar map with
+  intersections needs additional intersection functions in the
+  geometric traits class. Note that if one needs to build a planar map
+  of $x$-monotone, pairwise interior disjoint curves, then it would be
+  more efficient (in running time) and less demanding (in traits class
+  functionality) to use the planar map class.
+
+\paragraph{Degeneracies} 
+  Like the \ccc{Planar Map} package (see
+  Chapter~\ref{I1_ChapterPlanarMap}), the \ccc{Planar Map with
+  Intersections} package can deal with $x$-degenerate input (including
+  vertical segments). However, while in the planar map the input
+  curves were assumed to be non intersecting in their interiors, there
+  is no such assumption when using planar map with
+  intersections. Furthermore, overlapping curves are supported. If two
+  curves overlap the traits intersection function returns the two
+  endpoints of the common part.
+
+% \paragraph{Sweep line}
+%   A \ccc{Planar Map with Intersections} can be built incrementally by
+%   inserting one curve after the other into the map. For a big number
+%   of curves it is much faster to perform the sweep line algorithm on
+%   the collection of input curves. A sweep line utility is supported as
+%   part of the package. The utility can either build the induced planar
+%   map or rather collect the pairwise interior disjoint subcurves
+%   computed in a container. 
+
+%   If no additional insertions of intersecting curves are planned
+%   following the building of the map it is possible to perform a sweep
+%   line operation that will build the simpler class \ccc{Planar_map_2}.
+%   This is possible since the output of the sweep line operation is a
+%   collection of $x$-monotone pairwise interior disjoint, which are
+%   supported by the \ccc{Planar Map} package. The result of applying
+%   the sweep line algorithm to a collection of curves and a non-empty
+%   map is equal to that of applying the algorithm to the union of the
+%   planar map curves and the collection of input curves. Simply put,
+%   the intersections of input curves and planar map curves are also
+%   calculated.
+
+%******************************************************************************
+
+%---------------------------------------------------
+%\subsection{Simple Example of a Segment Planar Map with Intersections}
+\section{Simple Example of a Segment Planar Map with Intersections}
+\label{ssec:example1}
+The following example demonstrates the construction of an
+$X$-shaped planar subdivision out of two intersecting segments.
+We output the coordinates of the halfedges of the constructed
+subdivision.
+
+\ccIncludeExampleCode{Pm_with_intersections/example1.C}
+
+The output of the program looks like this:
+\begin{verbatim}
+Inserting the segments:
+0 0 1 1
+0 1 1 0
+
+Edges of the planar map:
+0 0 --- 0.5 0.5
+0.5 0.5 --- 1 1
+0 1 --- 0.5 0.5
+1 0 --- 0.5 0.5
+\end{verbatim}
+
+
+% \subsection{Example of Sweep Line}
+% \label{ssec:example1_sweep}
+%   The following example demonstrates the usage of the \ccc {Sweep
+%   line} algorithm.  It constructs a planar map out of four segments
+%   --- $(0,0)-(1,1)$ , $(0,1)-(1,0)$ , $(0,0)-(1,0)$ and $(0,1)-(1,1)$
+%   (an hourglass shape), two of them are intersecting in their
+%   interior.  The resulting planar map will contain all the disjoint
+%   interior sub-segments obtained by the calculation of the sweep
+%   line algorithm. For clarity, we printed all the halfedges of the
+%   resulting planar map to the standard output using the I/O functions
+%   for the \ccc{Planar map} package.
+
+% \ccIncludeExampleCode{Sweep_line/example1.C}
+
+% The output of the program looks like this:
+
+% \ccIncludeExampleCode{Sweep_line/example1.cout}
+
+
+% EOF ------------------------------------------------------------------------80
+

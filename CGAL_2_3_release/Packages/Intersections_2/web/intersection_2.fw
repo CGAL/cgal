@@ -1,0 +1,38 @@
+@i cgal_util.fwi
+
+
+@O@<../include/CGAL/intersection_2.h@>==@{@-
+@<cgal_heading@>@(@-
+include/CGAL/intersection_2.h@,@-
+intersection_2.fw@,@-
+Geert-Jan Giezeman@,@-
+MPI, Saarbruecken@)
+
+
+#ifndef CGAL_INTERSECTION_2_H
+#define CGAL_INTERSECTION_2_H
+
+#include <CGAL/intersection_2_1.h>
+#include <CGAL/intersection_2_2.h>
+#include <CGAL/intersection_2_3.h>
+
+#endif // CGAL_INTERSECTION_2_H
+@}
+
+
+@O@<../include/CGAL/intersections.h@>==@{@-
+@<cgal_heading@>@(@-
+include/CGAL/intersections.h@,@-
+intersection_2.fw@,@-
+Geert-Jan Giezeman@,@-
+MPI, Saarbruecken@)
+
+
+#ifndef CGAL_INTERSECTIONS_H
+#define CGAL_INTERSECTIONS_H
+
+#include <CGAL/intersection_2.h>
+#include <CGAL/intersection_3.h>
+
+#endif // CGAL_INTERSECTIONS_H
+@}

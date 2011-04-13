@@ -1,0 +1,21 @@
+A {\em partition}\ccIndexMainItemDef{partition} of a polygon $P$ is a set of 
+polygons % $P_1, \ldots, P_p$ 
+such that the 
+interiors of the polygons do not intersect and the union of the polygons 
+is equal to the interior of the original polygon $P$.  
+This chapter describes functions for partitioning
+planar polygons into two types of subpolygons --- $y$-monotone polygons and
+convex polygons.  The partitions are produced without introducing new
+(Steiner) vertices. 
+
+All the partitioning functions present the same interface to
+the user.  That is, the user provides a pair of input iterators, \ccc{first}
+and \ccc{beyond}, an output iterator \ccc{result},  and a traits class 
+\ccc{traits}. The points in the range [\ccc{first}, \ccc{beyond}) are assumed
+to define a simple polygon whose vertices are in counterclockwise order.
+The computed partition polygons, whose vertices are also oriented 
+counterclockwise, are written to the sequence starting at position
+\ccc{result} and the past-the-end interator for the resulting sequence of
+polygons is returned.  The traits classes for the functions specify the types
+of the input points and output polygons as well as a few other types and
+function objects that are required by the various algorithms.

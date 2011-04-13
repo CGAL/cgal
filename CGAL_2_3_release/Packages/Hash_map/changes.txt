@@ -1,0 +1,28 @@
+Hash_map Package: Release changes
+----------------------------------------------------------------------
+0.9.5 (16 Jul 2001)
+
+     - Fixed variable names in for loop of tests to please MSVC.
+
+0.9.4 (16 Jul 2001)
+
+     - Added std:: to statistics output of Tools/chained_map.h.
+     - Incorporated corrections in doc from Susan.
+     - Added #include <cstddef> whereever std::size_t is used.
+
+0.9.3 (11 Jul 2001)
+
+     - Fixed problems in test suite with g++-3.
+     - Updated doc for Handle_hash_function.
+
+0.9.2 (09 Jul 2001)
+
+     - Changed Hash_map to Unique_hash_map. Kept old file.
+     - Separated Handle_hash_function into own file.
+     - Improved performance of default Handle_hash_function.
+     - Rewrote manual pages including the UniqueHandleFunction concept.
+     - Made protected methods in chained_map.h public such that
+       Unique_hash_map can be implemented using a private member
+       instead of private inheritance.
+     
+0.9	initial release        

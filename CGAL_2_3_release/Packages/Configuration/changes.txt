@@ -1,0 +1,370 @@
+2.11
++ Removed workaround_stl.h workaround_return_type.h and workaround_casts.h.
++ removed obsolete config testfiles:
+  CGAL_CFG_DYNAMIC_CAST_BUG.C and CGAL_CFG_NO_DYNAMIC_CAST.C 
+
+2.10
++ Added CGAL_CFG_NO_TMPL_IN_TMPL_DEPENDING_FUNCTION_PARAM.C
++ Added CGAL_CFG_ENUM_BUG.C
+
+2.9
++ Added CGAL_CFG_NO_NESTED_TEMPLATE_KEYWORD.C
+
+2.8
++ CGAL_CFG_CCTYPE_MACRO_BUG.C run time test was buggy.
++ remove some "unused variable" warnings.
+
+2.7
++ Small fix to CGAL_CFG_NO_ITERATOR_TRAITS.C for MSVX 7
+
+2.6 (8 January 2001)
++ Adapted CGAL_CFG_NO_LONGNAME_PROBLEM.C to remove warning
+
+2.5 (1 December 2000)
++ Adapted CGAL_CFG_STDC_NAMESPACE.C
+
+2.4 (8 June 2000)
++ added CGAL_CFG_USING_USING_BUG.C
+
+2.3
++ added CGAL_CFG_NO_ITERATOR_TRAITS.C again. install_cgal depended on this.
+
+2.2
++ made the long name in CGAL_CFG_NO_LONGNAME_PROBLEM.C longer.
++ removed  several tests that pass on all supported platforms
+	CGAL_CFG_MATCHING_BUG_1.C
+	CGAL_CFG_NO_EXPLICIT_TEMPLATE_FUNCTION_ARGUMENT_SPECIFICATION.C
+	CGAL_CFG_NO_ITERATOR_TRAITS.C
+	CGAL_CFG_NO_NAMESPACE.C
+	CGAL_CFG_NO_PARTIAL_TEMPLATE_FUNCTION_ARGUMENT_SPECIFICATION.C
+	CGAL_CFG_NO_STDIO_NAMESPACE.C
+	CGAL_CFG_NO_STD_NAMESPACE.C
+
+2.1
++ removed macros
+   CGAL_static_cast, CGAL_const_cast, CGAL_reinterpret_cast
+   R_FT_return, R_RT_return
+
+
+1.54
++ Added copy_n to Borland_fixes.h
+
+1.53
++ Changed CGAL_CFG_NO_STD_NAMESPACE.C, so that it returns the correct
+  answer for Borland (Borland requires std::, but lacks cwctype).
++ Added macro CGAL_CLIB_STD to config.h.
++ Removed lots of using declarations in MSVC_header_fixes.h
+  Importing in namespace std does not always work correctly and is now
+  superseded by the use of the CGAL_CLIB_STD macro.
+
+1.52
++ Removed assertions from testfiles. Replaced them by booleans.
+
+1.51
++ MSVC_standard_header_fixes.h: added strcmp, sscanf and sprintf to std::
+
+1.50
++ Added using std::time_t and std::size_t for Borland.
+
+1.49
++ Added pragma for MSVC to report truncation of names only once.
+
+1.48
++ Added file Borland_fixes.h that gets included by config.h
+
+1.47
++ Added strlen to namespace std under MSVC
+
+1.46
++ Added a fix for Borland (including time.h) in config.h.
+
+//-----------------------------------------------------------------------//
+// 1.45
++ Added CGAL_CFG_NO_KOENIG_LOOKUP.C
+
+//-----------------------------------------------------------------------//
+// 1.44
++Added CGAL_SCOPE macro (empty on MSVC, CGAL:: on other platforms)
+
+//-----------------------------------------------------------------------//
+// 1.43
++Removed setting of STL_DEBUG flag in config.h
++Added macro CGAL_TYPENAME_MSVC_NULL
++Removed setting 'typename' and 'explicit' macros.
+
+//-----------------------------------------------------------------------//
+// 1.42
++Added CGAL_CFG_TYPENAME_BUG.C
+
+//-----------------------------------------------------------------------//
+// 1.41
++Adapted some workarounds for MSVC for dealing with outdated use
+ of isspace, isalnum and isdigit in CGAL.
+
+//-----------------------------------------------------------------------//
+// 1.40
++Adapted CGAL_CFG_NO_LOCALE.C to avoid strange runtime error under MSVC
++Adapted CGAL_CFG_NO_TEMPLATE_FRIEND_DISTINCTION.C to avoid linking error
+ under mips compiler. It tests for a bit different thing now.
++Reformatted CGAL_CFG_NO_ITERATOR_TRAITS.C
+
+//-----------------------------------------------------------------------//
+// 1.39
++Small fixes in config.h and CGAL_CFG_NO_ITERATOR_TRAITS.C for MSVC
+
+//-----------------------------------------------------------------------//
+// 1.38
++Added testfile CGAL_CFG_NO_LOCALE.C
+
+//-----------------------------------------------------------------------//
+// 1.37
++Corrected typo in testfile.
+
+//-----------------------------------------------------------------------//
+// 1.35
++Changed MSVC_header_fixes.h to reflect use of STLport
+
+//-----------------------------------------------------------------------//
+// 1.34
++Added STLport support for MSVC in include/CGAL/config.h
++Added testfile NO_LONGNAME_PROBLEM
+
+//-----------------------------------------------------------------------//
+// 1.33
++Updated include/CGAL/MSVC_standard_header_fixes.h
+ (Added header and added abort, clock and clock_t to namespace std)
+
+//-----------------------------------------------------------------------//
+// 1.32
++Removed configuration files/flags, as decided in ETHZ-99 meeting
+ CGAL_CFG_INCOMPLETE_TYPE_BUG_1.C
+ CGAL_CFG_INCOMPLETE_TYPE_BUG_3.C
+ CGAL_CFG_INCOMPLETE_TYPE_BUG_4.C
+ CGAL_CFG_INCOMPLETE_TYPE_BUG_5.C
+ CGAL_CFG_NO_ARROW_OPERATOR.C
+ CGAL_CFG_NO_BUILTIN_BOOL.C
+ CGAL_CFG_NO_CONSTANTS_IN_FUNCTION_TEMPLATES.C
+ CGAL_CFG_NO_CONST_CAST.C
+ CGAL_CFG_NO_CONST_REFERENCE_OVERLOADING.C
+ CGAL_CFG_NO_DEFAULT_PREVIOUS_TEMPLATE_ARGUMENTS.C
+ CGAL_CFG_NO_DEFAULT_TEMPLATE_ARGUMENTS.C
+ CGAL_CFG_NO_EXPLICIT.C
+ CGAL_CFG_NO_EXPLICIT_CLASS_TEMPLATE_SPECIALISATION.C
+ CGAL_CFG_NO_LAZY_INSTANTIATION.C
+ CGAL_CFG_NO_MEMBER_TEMPLATES.C
+ CGAL_CFG_NO_MUTABLE.C
+ CGAL_CFG_NO_REINTERPRET_CAST.C
+ CGAL_CFG_NO_STATIC_CAST.C
+ CGAL_CFG_NO_STATIC_MEMBERS_IN_CLASS_TEMPLATES.C
+ CGAL_CFG_NO_TEMPLATE_FUNCTION_MATCHING.C
+ CGAL_CFG_NO_TYPENAME.C
+ CGAL_CFG_RETURN_TYPE_BUG_1.C
+ CGAL_CFG_RETURN_TYPE_BUG_2.C
++Updated: 
+ CGAL_CFG_NO_ITERATOR_TRAITS.C and
+ CGAL_CFG_NO_TEMPLATE_FRIEND_DISTINCTION.C
+//-----------------------------------------------------------------------//
+// 1.31
+
++Added file MSVC_standard_header_fixes.h, which puts things that are lacking
+ in namespace std in there on the MS VC++ platform.
+ The file config.h was changed to include this header file.
+//-----------------------------------------------------------------------//
+// 1.30
++Adapted CGAL_CFG_CCTYPE_MACRO_BUG.C (added assertion).
+
+//-----------------------------------------------------------------------//
+// 1.29
++Added CGAL_CFG_CCTYPE_MACRO_BUG.C
+
+//-----------------------------------------------------------------------//
+// 1.28
++Added CGAL_CFG_NO_STDC_NAMESPACE.C and CGAL_CFG_NO_STDIO_NAMESPACE.C.
++Defined CGAL as std in config.h.
+
+//-----------------------------------------------------------------------//
+// 1.26
++Added a std:: prefix in CGAL_CFG_NO_ITERATOR_TRAITS
+
+//-----------------------------------------------------------------------//
+// 1.26
++Removed some unneccessary testfiles and the corresponding postprocessing in
+ config.h.
+
+//-----------------------------------------------------------------------//
+// 1.25
++Removed the code in config.h that disables namespaces under MIPSPRO
+
+//-----------------------------------------------------------------------//
+// 1.24
++Now using the standard header names in the testfiles.
+ E.g. <vector> instead of <vector.h>.
+
+//-----------------------------------------------------------------------//
+// 1.23
++Bug fix in include/CGAL/config.h
+ Renamed CGAL_NAMESPACE_BEGIN to CGAL_BEGIN_NAMESPACE.
+
+
+//-----------------------------------------------------------------------//
+// 1.22
++Added support for namespace CGAL.
+- Moved CGAL_CFG_NO_NAMESPACE.C to
+- Added new CGAL_CFG_NO_NAMESPACE.C
+- removed inclusion of workaround_stl.h from config.h
+- Added flags CGAL_BEGIN_NAMESPACE and CGAL_END_NAMESPACE to config.h
+
+//-----------------------------------------------------------------------//
+// 1.20
++Added CGAL_CFG_NO_TMPL_IN_TMPL_PARAM.C
+
+//-----------------------------------------------------------------------//
+// 1.16
++Corrected headers and shortened lines that were longer than 80 characters.
+
+
+//-----------------------------------------------------------------------//
+// 1.15
++Disabled use of namespaces in SGI Mips 7.2.1 compiler.
+
+//-----------------------------------------------------------------------//
+//           Changes from 1.13 to 1.14:
+
+Updated include/CGAL/config.h to define away the mutable keyword
+when appropriate.
+
+//-----------------------------------------------------------------------//
+//           Changes from 1.12 to 1.13:
+
+Added
+-> CGAL_CFG_INCOMPLETE_TYPE_BUG_5.C
+-> CGAL_CFG_NO_MUTABLE.C
+-> CGAL_CFG_NO_PARTIAL_CLASS_TEMPLATE_SPECIALISATION.C
+
+//-----------------------------------------------------------------------//
+//           Changes from 1.11 to 1.12:
+
+Updated header for files
+-> include/CGAL/workaround_casts.h
+-> include/CGAL/workaround_stl.h
+
+Corrected some file headers.
+-> CGAL_CFG_NO_EXPLICIT_TMPL_FCT_ARGUMENT_SPECIFICATION.C          (removed)
+-> CGAL_CFG_NO_PARTIAL_TEMPLATE_FUNCTION_ARGUMENT_SPECIFICATION.C  (added)
+
+//-----------------------------------------------------------------------//
+//           Changes from 1.10 to 1.11:
+//-----------------------------------------------------------------------//
+
+-> CGAL_CFG_NO_BIG_ENDIAN.C                                        (added)
+-> CGAL_CFG_NO_EXPLICIT_TEMPLATE_FUNCTION_ARGUMENT_SPECIFICATION.C (added)
+-> CGAL_CFG_NO_EXPLICIT_TMPL_FCT_ARGUMENT_SPECIFICATION.C          (added)
+
+//-----------------------------------------------------------------------//
+//           Changes from 1.9 to 1.10:
+//-----------------------------------------------------------------------//
+
+-> CGAL_CFG_MATCHING_BUG_2.C                            (added)
+
+//-----------------------------------------------------------------------//
+//           Changes from 1.8 to 1.9:
+//-----------------------------------------------------------------------//
+
+-> CGAL_CFG_RETURN_TYPE_BUG_4                           (modified)
+
+//-----------------------------------------------------------------------//
+//           Changes from 1.7 to 1.8:
+//-----------------------------------------------------------------------//
+
+-> CGAL_CFG_MATCHING_BUG_1.C                            (added)
+
+//-----------------------------------------------------------------------//
+//           Changes from 1.6 to 1.7:
+//-----------------------------------------------------------------------//
+
+Some flags for namespace support have been added.
+
+-> config.h                                             (updated)
+-> CGAL_CFG_NO_NAMESPACE.C                              (new)
+-> CGAL_CFG_NO_TYPENAME.C                               (updated)
+
+//-----------------------------------------------------------------------//
+//           Changes from 1.5 to 1.6:
+//-----------------------------------------------------------------------//
+
+A number of changes have been made for egcs and a new flag (CGAL_NULL_TMPL_ARGS)
+has been introduced.
+
+changes:
+-> config.h                                             (updated)
+-> workaround_return_type.h                             (updated)
+-> CGAL_CFG_DYNAMIC_CAST_BUG.C                          (new)
+-> CGAL_CFG_NO_EXPLICIT_CLASS_TEMPLATE_SPECIALISATION.C (new)
+-> CGAL_CFG_NO_TEMPLATE_FRIEND_DISTINCTION.C            (updated)
+-> CGAL_CFG_INCOMPLETE_TYPE_BUG_2.C                     (removed)
+-> CGAL_CFG_INCOMPLETE_TYPE_BUG_4.C                     (removed)
+
+The file config.h now contains a version number CGAL_VERSION_NR that can be
+used to do comparisons on prepocessor level (like #if CGAL_VERSION >= something)
+
+   1vvvvrmmmm
+
+where vvvv is the major release number (currently 0009),
+r indicates internal (== 0) or released (==1) and
+mmmm is the minor release number (currently 0005)
+
+The '1' in front of CGAL_VERSION_NR is to prevent errors from compilers
+complain about starting '0's.
+
+//-----------------------------------------------------------------------//
+//           Changes from 1.4 to 1.5:
+//-----------------------------------------------------------------------//
+
+-> The file workaround_return_type.h was corrected for the keyword typename.
+-> A bug in CGAL_CFG_NO_REINTERPRET_CAST.C was repaired.
+
+//-----------------------------------------------------------------------//
+//           Changes from 1.3 to 1.4:
+//-----------------------------------------------------------------------//
+
+The flags NO_RTTI and NO_CAST have been replaced by
+
+   NO_STATIC_CAST
+   NO_CONST_CAST
+   NO_DYNAMIC_CAST
+   NO_REINTERPRET_CAST
+
+//-----------------------------------------------------------------------//
+//           Changes from 1.2 to 1.3:
+//-----------------------------------------------------------------------//
+
+Some changes have been made to properly support the keyword typename.
+Some new workarounds have been added:
+
+   CGAL_CFG_NO_TEMPLATE_FUNCTION_MATCHING.C
+   CGAL_CFG_NO_TEMPLATE_FRIEND_DISTINCTION.C
+
+The flag CGAL_NULL_TMPL_ARGS has been added to check whether the compiler
+understands this <> syntax to indicate that the friend is a template.
+
+//-----------------------------------------------------------------------//
+//           Changes from 1.1 to 1.2:
+//-----------------------------------------------------------------------//
+
+The file <CGAL/bool.h> is removed. To keep the packages that include
+the file bool.h directly working an empty file <CGAL/bool.h> is still
+present. When all bool.h includes are removed the file <CGAL/bool.h>
+will be removed too.
+
+The workaround_??? files have been added to this package.
+
+//-----------------------------------------------------------------------//
+//           Changes from 1.0 to 1.1:
+//-----------------------------------------------------------------------//
+
+The file CGAL_CFG_NO_RTTI.C was added to test for runtime type information.
+
+The file bool.h now includes config.h. This allows you to either include
+<CGAL/config.h>, <CGAL/basic.h> or <CGAL/bool.h> at the beginning of a CGAL
+program.
+

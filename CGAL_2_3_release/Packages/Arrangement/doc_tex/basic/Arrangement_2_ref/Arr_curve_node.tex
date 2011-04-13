@@ -1,0 +1,58 @@
+% +------------------------------------------------------------------------+
+% | Reference manual page: Arr_curve_node.tex (Arrangement)
+% +------------------------------------------------------------------------+
+% | 
+% | Package: arr (Arrangement_2)
+% | 
+% +------------------------------------------------------------------------+
+
+\ccRefPageBegin
+
+%%RefPage: end of header, begin of main body
+% +------------------------------------------------------------------------+
+% +========================================================================+
+%   Arrangement_2::Curve_node
+% +========================================================================+
+\begin{ccRefClass}[Arrangement_2<Dcel,Traits,Base_node>::]{Curve_node}
+
+\ccDefinition An object $cn$ of the class
+    \ccStyle{Curve_node} is a node holding the curve in the
+    hierarchy tree, corresponding to a root of a hierarchy. It
+    holds the original curve inserted into the arrangement.
+
+\ccInheritsFrom
+    \ccc{Subcurve_node}
+
+    \ccCreationVariable{cn}
+    
+    In addition to the operations of \ccc{Subcurve_node} the following
+    operations are implemented.
+
+\ccOperations
+
+    \ccMethod{bool is_edge_node();}{returns false;}
+
+    \ccMethod{Subcurve_iterator level_begin(unsigned int i);}{returns the begin iterator
+       to the $i$'th level of subcurves (for the first subcurve level $i=0$).
+       \ccPrecond{ \ccc{i < cn.number_of_sc_levels()} }}
+
+    \ccMethod{Subcurve_iterator level_end(unsigned int i);}{returns the
+       past-the-end iterator
+       to the $i$'th level of subcurves (for the first subcurve level $i=0$).
+       \ccPrecond{ \ccc{i < cn.number_of_sc_levels()}} }
+       
+    \ccMethod{unsigned int number_of_sc_levels();}{returns the number of subcurve levels
+       (not including the edge level and the curve level).}
+
+    \ccMethod{Edge_iterator edges_begin();}{overrides the same function in
+       the \ccc{Subcurve_node}, to gain efficiency.}
+    \ccMethod{Edge_iterator edges_end();}{overrides the same function in
+       the \ccc{Subcurve_node}, to gain efficiency.}
+
+
+\end{ccRefClass}
+% +------------------------------------------------------------------------+
+%%RefPage: end of main body, begin of footer
+\ccRefPageEnd
+% EOF
+% +------------------------------------------------------------------------+

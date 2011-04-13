@@ -1,0 +1,63 @@
+% +------------------------------------------------------------------------+
+% | Reference manual page: top_vertex_2.tex
+% +------------------------------------------------------------------------+
+% | 21.06.2001   Author
+% | Package: Polygon
+% | 
+\RCSdef{\RCStopvertexRev}{$Revision$}
+\RCSdefDate{\RCStopvertexDate}{$Date$}
+% |
+%%RefPage: end of header, begin of main body
+% +------------------------------------------------------------------------+
+
+
+\begin{ccRefFunction}{top_vertex_2}  %% add template arg's if necessary
+
+%% \ccHtmlCrossLink{}     %% add further rules for cross referencing links
+%% \ccHtmlIndexC[function]{} %% add further index entries
+
+\ccDefinition
+  
+%The function \ccRefName\ does this and that.
+
+\ccInclude{CGAL/Polygon_2_algorithms.h}
+
+\ccFunction{template <class ForwardIterator, class Traits>
+ForwardIterator top_vertex_2(ForwardIterator first,
+                                   ForwardIterator last,
+                                   const Traits& traits);}
+{
+Returns an iterator to the topmost point from the range
+\ccStyle{[first,last)}. In case of a tie, the point
+with the largest \ccStyle{x}-coordinate is taken.
+}
+
+\ccHeading{Requirements}
+\ccIndexSubitem[C]{top_vertex_2}{requirements}
+\begin{enumerate}
+    \item \ccc{Traits} is a model of the concept 
+	  PolygonTraits\_2\ccIndexMainItem[c]{PolygonTraits_2}.
+	  In fact, only the the members \ccc{Less_yx_2} and
+	  \ccc{less_yx_2_object} are used.
+    \item \ccc{ForwardIterator::value_type} should be \ccc{Traits::Point_2},
+\end{enumerate}
+
+
+\ccSeeAlso
+
+\ccRefIdfierPage{CGAL::left_vertex_2} \\
+\ccRefIdfierPage{CGAL::right_vertex_2} \\
+\ccRefIdfierPage{CGAL::bottom_vertex_2} \\
+\ccRefIdfierPage{CGAL::Polygon_2<PolygonTraits_2, Container>}
+
+%\ccExample
+%
+%% \ccIncludeExampleCode{examples/Polygon/top_vertex_2_prog.C}
+
+\end{ccRefFunction}
+
+% +------------------------------------------------------------------------+
+%%RefPage: end of main body, begin of footer
+% EOF
+% +------------------------------------------------------------------------+
+

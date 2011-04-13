@@ -1,0 +1,112 @@
+% +------------------------------------------------------------------------+
+% | Reference manual page: Pm_bounding_box_base.tex (Planar_map)
+% +------------------------------------------------------------------------+
+% | 
+% | Package: pm (Planar_map_2)
+% | 
+% +------------------------------------------------------------------------+
+
+\ccRefPageBegin
+
+%%RefPage: end of header, begin of main body
+% +------------------------------------------------------------------------+
+
+%**************************************************************************
+\renewcommand{\ccRefPageBegin}{\begin{ccAdvanced}}
+\renewcommand{\ccRefPageEnd}{\end{ccAdvanced}}
+
+\begin{ccRefConcept}{PlanarMapBoundingBox_2}
+% \begin{ccRefClass}{Pm_bounding_box_base<Planar_map>}
+\label{Pm_ref:bounding_box_base}
+%\begin{ccAdvanced}
+\ccDefinition
+    \ccRefName\ is the bounding box strategy used by \ccc{Planar_map_2<Dcel, Traits>}.
+
+    In order for the advanced user to write a model of a~\ccRefName\ the user's class 
+    should inherit the \cgal\/ supplied class 
+    \ccc{Pm_bounding_box_base<Planar_map>}.
+    This class is an abstract base class for the 
+    different bounding box strategies and it provides the interface for any bounding box
+    strategy. 
+
+    A bounding box strategy is a class derived
+    from \ccc{Pm_bounding_box_base<Planar_map>} that implements the (\ccc{pure virtual})
+    member functions which are the requirements of the \ccRefName\ concept.
+   
+    \ccc{Planar_map_2<Dcel, Traits>} is the
+    type that aggregates the strategy. The return values of the queries
+    are given in terms of the  \ccc{Planar_map_2<Dcel, Traits>} handles.
+
+\ccInclude{CGAL/Pm_bounding_box_base.h}
+
+\ccThree{typedef typename Planar_map::Halfedge_handle }{}{\hspace*{6cm}}
+
+\ccTypes
+\ccTypedef{typedef typename Planar_map::Traits Traits;}{}
+\ccTypedef{typedef typename Planar_map::Locate_type Locate_type;}{}
+\ccTypedef{typedef typename Planar_map::Halfedge_handle Halfedge_handle;}{}
+
+\ccTypedef{typedef typename Traits::X_curve X_curve;}{}
+\ccTypedef{typedef typename Traits::Point Point;}{}
+
+\ccThree{virtual Halfedge_handle}{}{\hspace*{10cm}}
+
+\ccOperations
+\ccCreationVariable{pl}
+\ccMethod{virtual void init(Planar_map& pmp, Traits& tr);}{initializes
+the strategy; will be called by the planar map directly after its 
+construction, with \ccc{*this} and the traits instantiation inside the 
+planar map, as its parameters.}
+
+%\ccHeading{Query Functions}
+\ccQueryFunctions
+
+\ccMethod{virtual bool locate(const Point& p, Locate_type& lt,Halfedge_handle& h);}{}
+\ccMethod{virtual bool vertical_ray_shoot(const Point& p, Locate_type& lt, bool up,Halfedge_handle& h);}{}
+Reevaluates the resulting \ccc{Point} and \ccc{Locate_type}, while considering the bounding box.
+
+%\ccHeading{Updating Functions}
+\ccModifiers
+\ccMethod{virtual bool insert(const X_curve& cv);}
+{enlarge the bounding box (if possible, e.g., not static) to bound the curve.}
+
+\ccMethod{virtual bool insert(const Point& p);}
+{enlarge the bounding box (if possible, e.g., not static) to contain the point.}
+
+%\ccMethod{virtual void split_edge(const X_curve &cv,Halfedge_handle e1,
+%               Halfedge_handle e2,const X_curve& cv1, const X_curve& cv2;}
+%{}
+\ccMethod{virtual void split_boundary_edge(const Halfedge_handle &h,
+                Halfedge_handle h1,
+                Halfedge_handle h2,
+                const Point& p);}
+{Split the edge on the boundary.}
+
+%\ccMethod{virtual void merge_edge(const X_curve &cv1,
+%               const X_curve &cv2,
+%               Halfedge_handle e 
+%               ,const X_curve& cv
+%               );}
+%{Merges the curves }
+
+\ccMethod{virtual void remove_edge(Halfedge_handle e);}
+{Removes the curve from the bounding box.}
+
+\ccMethod{virtual void clear();}
+{Clears the bounding box.}
+
+\ccHasModels
+    \ccc{Pm_unbounding_box<Planar_map>}\\
+    \ccc{Pm_dynamic_open_bounding_box<Planar_map>}
+
+%\end{ccAdvanced} % bounding box
+\end{ccRefConcept}
+
+\renewcommand{\ccRefPageBegin}{}
+\renewcommand{\ccRefPageEnd}{}
+
+% +------------------------------------------------------------------------+
+%%RefPage: end of main body, begin of footer
+\ccRefPageEnd
+% EOF
+% +------------------------------------------------------------------------+

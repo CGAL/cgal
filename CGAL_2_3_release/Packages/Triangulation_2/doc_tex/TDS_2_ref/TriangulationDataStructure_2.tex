@@ -1,0 +1,352 @@
+% +------------------------------------------------------------------------+
+% | Reference manual page: Triangulation_data_structure_2.tex
+% +------------------------------------------------------------------------+
+% | 07.04.2000   Author
+% | Package: Package
+% | 
+\RCSdef{\RCSTriangulationdatastructureRev}{$Revision$}
+\RCSdefDate{\RCSTriangulationdatastructureDate}{$Date$}
+% |
+%%RefPage: end of header, begin of main body
+% +------------------------------------------------------------------------+
+
+\begin{ccRefConcept}{TriangulationDataStructure_2}
+
+%% \ccHtmlCrossLink{}     %% add further rules for cross referencing links
+%% \ccHtmlIndexC[concept]{} %% add further index entries
+\ccCreationVariable{tds}
+\ccDefinition
+  
+The concept \ccRefName\ describes the requirements  for
+the second template parameter of the basic triangulation class
+\ccc{Triangulation_2<Traits,Tds>}.
+The concept can be seen as a container for the 
+faces and vertices maintaining incidence and adjacency relations.
+The triangulation data structure
+ is responsible for  the combinatorial integrity of the triangulation
+(i. e. proper incidence and adjacency relations among vertices
+and faces) while 
+allowing  to perform combinatorial modifications
+such has 
+insertion of a new vertex in a face, or in an edge,
+suppression of a vertex of degree three,  flip of two edges.
+The term combinatorial means that those operation are purely topological
+and do not depend on the geometric embedding.
+
+
+\ccTypes
+%\ccTypedef{typedef  Vb Vertex_base;}{the \ccc{Vertex_base}}
+%\ccGlue
+%\ccTypedef{typedef  Fb Face_base;}{the \ccc{Face_base}}
+%\ccGlue
+\ccNestedType{Vertex} {}
+\ccGlue
+\ccNestedType{Face}{}
+\ccGlue
+\ccTypedef{typedef std::pair<Face*,int> Edge;}{ Edge type.}
+\ccGlue
+\ccTypedef{typedef std::list<Edge> List_edges;}{ Lists of edges.}
+
+To ensure all the \textbf{flexibility} of class \ccc{Triangulation_2}
+described in \ccRefPage{CGAL::Triangulation_2<Traits,Tds>}
+and in Chapter~\ref{Chapter_2D_Triangulations}, a model of 
+\ccRefName derives its \ccc{Vertex} and \ccc{Face} types
+from two template parameters \ccc{Vb} and \ccc{Fb}.
+The parameters \ccc{Vb} and \ccc{Fb}
+have to be instantiated respectively
+by models of \ccc{TriangulationVertexBase_2} and 
+\ccc{TriangulationFaceBase_2}.
+
+
+
+
+The following circulators allow to visit all the vertices, edges and faces
+incident to a given vertex. They are all bidirectional and non mutable.
+
+\ccNestedType{Face_circulator}{}
+\ccGlue
+\ccNestedType{Edge_circulator}{}
+\ccGlue
+\ccNestedType{Vertex_circulator}{}
+ 
+
+
+
+
+\ccCreation
+\ccCreationVariable{tds}  %% choose variable name
+
+\ccConstructor{TriangulationDataStructure_2();}{default constructor.}
+
+\ccConstructor{TriangulationDataStructure_2( const Tds& tds1)}
+{Copy constructor. All the vertices and faces are duplicated.}
+
+\ccMethod{TriangulationDataStructure_2<Vb,Fb> operator=(TriangulationDataStructure_2<Vb,Fb> tds1);}
+{Assignation. All the vertices and faces are duplicated.}
+
+\ccMethod{void swap(TriangulationDataStructure_2<Vb,Fb> tds1);}
+{Swaps \ccVar\ and \ccc{tds1}. Should be preferred to \ccVar=\ccc{tds1} or \ccVar(\ccc{tds1})
+when tds1 is deleted after that.}
+\ccMethod{void clear();}{Deletes all faces and all finite vertices.}
+
+\ccModifierCrossRefOff
+\ccFunction{void ~TriangulationDataStructure_2<Vb,Fb> ();}
+{Destructor. All vertices and faces are deleted.}
+\ccModifierCrossRefOff
+
+\ccAccessFunctions
+\ccThree{void}{tds.set_number_of_vertices(int n)}{}
+\ccMethod{int dimension() const;}
+{The dimension of the triangulation.}
+\ccGlue
+\ccMethod{int number_of_vertices() const;}
+{The number of vertices in the data structure.}
+\ccGlue
+\ccMethod{int number_of_faces() const ;}
+{The number of two dimensional faces in the data structure.}
+\ccGlue
+\ccMethod{int number_of_edges() const;}
+{The number of edges  in the triangulation data structure.}
+\ccGlue
+\ccMethod{int number_of_full_dim_faces() const;}
+{The number of full dimensional faces, 
+i.e. faces of dimension equal to the dimension
+of the triangulation. This is the actual
+number of faces stored in the triangulation data structure.}
+
+\ccHeading{Setting}
+\ccMethod{void set_number_of_vertices(int n);}{}
+\ccGlue
+\ccMethod{void set_dimension (int n);}{}
+
+\ccHeading{Queries}
+\ccMethod{bool is_vertex(const Vertex* v) const;}{returns true if
+\ccc{v} is a vertex of \ccVar.}
+\ccGlue
+\ccMethod{bool is_edge(const Vertex* va, const Vertex* vb) const;}{returns true if
+\ccc{va vb} is an edge of \ccVar.}
+\ccGlue
+\ccMethod{bool is_edge(const Vertex* va, const Vertex* vb, Face* &fr,
+int &i) const;}{as previous. In addition, if true is returned
+\ccc{fr} and \ccc{i} are set such that the pair \ccc{(fr,i)}
+is the descrition 
+of  the ordered edge \ccc{va vb}.}
+\ccGlue
+\ccMethod{bool is_face(const Vertex* v1, const Vertex* v2, const
+Vertex* v3) const;}{\ccc{true} if there is a face having \ccc{v1}, \ccc{v2} and\ccc{v3} 
+as vertices.}
+\ccGlue
+\ccMethod{bool is_face(const Vertex* v1, const Vertex* v2, const Vertex* v3,
+      Face* &fr) const;}{as above. In addition, if \ccc{true} is returned, fr is a pointer
+to the face with  \ccc{v1}, \ccc{v2} and \ccc{v3} 
+as vertices.}
+
+\ccHeading{Modifiers}
+The following modifier member functions  guarantee
+the combinatorial validity of the resulting triangulation.
+
+\ccThree{void}{tds.remove_second(Vertex* v)x}{}
+\ccMethod{void flip(Face* f, int i);}{exchanges the edge incident to
+\ccc{f} and \ccc{f->neighbor(i)} with the other
+diagonal of the quadrilateral formed by \ccc{f} and  \ccc{f->neighbor(i)}.}
+
+
+\begin{figure}
+\begin{ccTexOnly}
+\begin{center} %\IpeScale{70} \Ipe{Flip.ipe} \end{center}
+\input{flip.ltex}
+\end{center}
+\end{ccTexOnly} 
+\caption{Flip.
+\label{I1_fig_flip}}
+
+\begin{ccHtmlOnly}
+<CENTER>
+<img border=0 src=Flip.gif align=center alt="Flip">
+</CENTER>
+\end{ccHtmlOnly} 
+\end{figure}
+
+
+\ccMethod{Vertex* insert_first();} {creates the first 
+vertex and returns a pointer to it.}
+\ccGlue
+\ccMethod{Vertex* insert_second();} {creates the second 
+vertex and returns a pointer to it.}
+\ccMethod{Vertex* insert_in_edge(Face* f, int i);} {adds a
+vertex \ccc{v} splitting 
+edge \ccc{i} of face \ccc{f}. Return a  pointer to \ccc{v}.}
+\ccGlue
+\ccMethod{Vertex* insert_in_face(Face* f);} {adds a vertex
+\ccc{v} splitting  face
+\ccc{f} in three. Face \ccc{f} is modified,
+two new faces are created. Return a  pointer to \ccc{v} }
+\ccGlue
+\ccMethod{Vertex* insert_dim_up(Vertex* w, bool orient=true);} {adds
+a vertex \ccc{v}, increasing by one the dimension of the triangulation.
+Vertex \ccc{v} and the existing vertex \ccc{w} are linked to all 
+the vertices of the triangulation. 
+The boolean \ccc{orient} decides the final orientation of all 
+faces. A pointer to vertex \ccc{v} is returned.
+}
+
+\begin{figure}
+\begin{ccTexOnly}
+%\begin{center} \IpeScale{70} \Ipe{Three.ipe} \end{center}
+\begin{center} \input{insert.ltex} \end{center}
+\caption{Insertion}
+\end{ccTexOnly} 
+
+\begin{ccHtmlOnly}
+<CENTER>
+<img border=0 src=Three.gif align=center alt="Insertion">
+</CENTER>
+\end{ccHtmlOnly} 
+\end{figure}
+
+
+
+\ccMethod{void remove_degree_3(Vertex* v, Face *f=NULL);}
+{removes a vertex of degree 3. Two of the incident faces are destroyed,
+the third one is modified.
+If parameter \ccc{f}  is specified, it has to be a face incident to \ccc{v}
+and will be the modified face.
+\ccPrecond{Vertex
+\ccc{v} is a finite vertex with degree 3
+and, if specified, face \ccc{f} is incident to \ccc{v}.}}
+
+
+
+\ccMethod{void remove_second(Vertex* v);}{removes the before last
+vertex.}
+\ccGlue
+\ccMethod{void remove_first(Vertex* v);}{removes the last vertex.}
+\ccGlue
+\ccMethod{void remove_dim_down(Vertex* v);}
+{removes vertex \ccc{v} incident to all other vertices
+and  decreases by one the dimension of the triangulation.
+\ccPrecond{if the dimension is 2, the number of vertices is more than
+3,
+if the dimension is 1, the number of vertices is 2.} }
+
+
+\begin{ccAdvanced}
+The following modifiers are required for convenience of the advanced
+user.
+They do not guarantee the combinatorial validity 
+of the resulting triangulation.
+
+\ccMethod{ template< class EdgeIt>
+   Vertex* star_hole(EdgeIt edge_begin,EdgeIt edge_end);}
+{creates a new vertex \ccc{v} and use it to star the hole 
+whose boundary is described  by the sequence of edges \ccc{[edge_begin, 
+edge_end[}. Returns a pointer to the  vertex.}
+\ccGlue 
+\ccMethod{   template< class EdgeIt, class FaceIt>
+   Vertex* star_hole(EdgeIt edge_begin, 
+		    EdgeIt edge_end,
+ 		    FaceIt face_begin,
+		    FaceIt face_end);}
+{ same as above, except that, to build the new faces, the  algorithm 
+first recycles faces in the sequence \ccc{[face_begin, 
+face_end[} and create new ones when the sequence is exhausted.}
+\ccGlue
+\ccMethod{   template< class EdgeIt>
+ void  star_hole(Vertex* v, EdgeIt edge_begin,  EdgeIt edge_end);}
+{uses vertex v to  star the hole 
+whose boundary is described  by the sequence of edges\ccc{[edge_begin, 
+edge_end[}.
+}
+\ccGlue
+\ccMethod{   template< class EdgeIt, class FaceIt>
+   void  star_hole(Vertex* v,
+ 		  EdgeIt edge_begin, 
+ 		  EdgeIt edge_end,
+ 		  FaceIt face_begin,
+ 		  FaceIt face_end);}
+{same as above, recycling faces in the sequence  \ccc{[face_begin, 
+face_end[ . } }
+
+%\ccMethod{Vertex* star_hole(List_edges& hole);}
+%{create a new vertex \ccc{v} and use it to star the hole \ccc{hole}.}
+%\ccGlue
+%\ccMethod{void star_hole(Vertex* v, List_edges& hole);}
+%{stars the hole \ccc{hole} using vertex \ccc{v}.}
+\ccGlue
+\ccMethod{void make_hole(Vertex* v, List_edges& hole);}
+{removes the vertex v, and store in \ccc{hole} the list of edges
+on the boundary of the hole.}
+
+\ccMethod{Vertex* create_vertex();}{adds a new vertex.}
+\ccGlue
+\ccMethod{Face* create_face(Face* f1, int i1, Face* f2, int i2, Face*
+f3, int i3);}{adds a face which is the neighbor \ccc{i1} of \ccc{f1}, 
+\ccc{i2} of \ccc{f2} and \ccc{i3} of \ccc{f3}.}
+\ccGlue
+\ccMethod{Face* create_face(Face* f1, int i1, Face* f2, int i2);}
+{adds a face which is the neighbor \ccc{i1} of \ccc{f1}, 
+and the neighbor \ccc{i2} of \ccc{f2}.}
+\ccGlue
+\ccMethod{Face* create_face(Face* f1, int i1, Vertex* v);}
+{adds a face which is the neighbor \ccc{i1} of \ccc{f1},
+and has \ccc{v} as vertex.}
+\ccGlue
+\ccMethod{ Face* create_face(Vertex* v1, Vertex* v2, Vertex* v3);}
+{adds a face with vertices \ccc{v1}, \ccc{v2} and \ccc{v3}.}
+\ccGlue
+\ccMethod{Face* create_face(Vertex* v1, Vertex* v2, Vertex* v3,
+		    Face* f1, Face* f2, Face* f3);}
+{adds a face with vertices \ccc{v1}, \ccc{v2} and \ccc{v3},
+and neighbors \ccc{f1}, \ccc{f2}, \ccc{f3}.}
+\ccGlue
+\ccMethod{Face* create_face();}
+{adds a face whose vertices and neighbors are set to NULL.}
+ \ccGlue
+\ccMethod{void  delete_face(Face*);}{deletes a face.}
+\ccGlue
+\ccMethod{void  delete_vertex(Vertex*);}{deletes a vertex.}
+\end{ccAdvanced}
+
+\ccHeading{Traversing the triangulation}
+\ccThree{Vertex_iterator}{tds.number_of_faces()x}{}
+\ccMethod{Face_iterator faces_begin() const;}{visits all faces}
+\ccGlue
+\ccMethod{Face_iterator faces_end() const;}{}
+\ccGlue
+\ccMethod{Vertex_iterator vertices_begin() const;}{visits all vertices}
+\ccGlue
+\ccMethod{Vertex_iterator vertices_end() const;}{}
+\ccGlue
+\ccMethod{Edge_iterator edges_begin() const;}{visits all edges}
+\ccGlue
+\ccMethod{ Edge_iterator edges_end() const;}{}
+
+\ccHeading{Miscelleanous}
+
+\ccMethod{int ccw(int i) const;}{returns $i+1$ modulo 3.\ccPrecond $0\leq i \leq 2$.}
+\ccGlue
+\ccMethod{int cw(int i) const;}
+{returns $i+2$ modulo 3.\ccPrecond $0\leq i \leq 2$.}
+\ccGlue
+\ccMethod{bool is_valid();}{checks the combinatorial validity of the
+triangulation: call the \ccc{is_valid()} member function for each vertex and 
+each face, checks the number of vertices and the Euler relation
+between numbers of vertices, faces and edges.}
+
+
+\ccHasModels
+\ccc{CGAL::Triangulation_default_data_structure_2<Tds_traits,Vb,Fb>}, \\
+\ccc{CGAL::Triangulation_data_structure_using_list_2<Vb,Fb>}.
+
+\ccSeeAlso
+\ccc{TriangulationDataStructure_2::Face} \\
+\ccc{TriangulationDataStructure_2::Vertex} \\
+\ccc{CGAL::Triangulation_2<Traits,Tds>}
+
+\end{ccRefConcept}
+
+% +------------------------------------------------------------------------+
+%%RefPage: end of main body, begin of footer
+% EOF
+% +------------------------------------------------------------------------+
+

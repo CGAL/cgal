@@ -1,0 +1,90 @@
+\begin{ccRefClass}{Range_tree_d<Data, Window, Traits>}
+
+\ccTypes
+\ccNestedType{Data}{container \ccStyle{Data}.}
+\ccNestedType{Window}{container \ccStyle{Window}.}
+\ccNestedType{Traits}{container \ccStyle{Traits}.}
+
+\newpage
+
+\ccCreation
+\ccCreationVariable{r}
+
+\ccInclude{CGAL/Range_tree_d.h}\\
+\ccConstructor{Range_tree_d<Data, Window, Traits>
+  r(Tree_base<Data, Window> sublayer_tree)}{
+A range tree is
+  constructed, such that the subtree of each vertex is of the
+  same type prototype
+\ccStyle{sublayer\_tree} is. \\
+We assume that the dimension of the tree is $d$. This means, that
+\ccStyle{ sublayer_tree} is a  prototype of a $d-1$-dimensional
+tree. All data items of the $d$-dimensional range tree
+  have container type \ccStyle{Data}. The query window of the
+  tree has container type
+  \ccStyle{Window}. \ccStyle{Traits}
+ provides access to the corresponding data slots of container
+ \ccStyle{Data} and  \ccStyle{Window} for the $d$-th
+ dimension. The traits  class \ccStyle{Traits}
+ must at least provide all functions and type definitions
+ as described in, for example, the reference page for
+ \ccc{tree_point_traits}.
+The template class
+ described there is fully generic and should fulfill the most
+ requirements one can have.
+In order
+  to generate a one-dimensional range tree instantiate %
+  \ccStyle{Tree\_anchor<Data, Window> sublayer\_tree} %
+  with the same template parameters (\ccStyle{Data} and
+  \ccStyle{Window}) \ccStyle{Range\_tree\_d} is defined. In
+  order to construct a two-dimensional range tree, create
+  \ccStyle{Range\_tree\_d} with
+   a one-dimensional \ccStyle{Range\_tree\_d} with the
+  corresponding \ccStyle{Traits} class of the first dimension.\\
+  \ccStyle{Precondition: Traits::Data==Data and
+    Traits::Window==Window.}}
+
+\ccOperations
+\ccMethod{template<class ForwardIterator>
+        bool make_tree(ForwardIterator first, ForwardIterator last);}
+{  The tree is constructed according to the data items in the
+  sequence between the element pointed by iterator \ccStyle{first} and
+  iterator \ccStyle{last}. The data items of the iterator must
+  have type \ccStyle{Data}.}
+\ccPrecond{This function can only be called once. If it is the
+first call the tree is build and \ccStyle{true} is
+returned. Otherwise, nothing is done but a \ccStyle{CGAL warning}
+is given and \ccStyle{false} returned.}
+
+
+\ccMethod{template<class OutputIterator>
+        OutputIterator window_query(Window win, OutputIterator result);}{
+   All elements that
+  lay inside the  $d$-dimensional interval defined through
+\ccStyle{win} are placed in the sequence container of
+ \ccStyle{OutputIterator}; the output iterator that points
+to the last location the function wrote to is returned.}
+
+\ccMethod{bool is_valid();}{The tree structure is checked. For each
+  vertex the subtree is checked on being valid and it is checked
+  weather the value of the \ccStyle{Key_type} of a vertex
+  corresponds to the highest \ccStyle{Key_type}
+  value of the left subtree.}
+
+{\bf Protected Operations}
+
+\ccMethod{bool is_inside(Window win,
+  Data object);}{returns true, if the
+  data of \ccStyle{object} lies between the start and endpoint of
+  interval \ccStyle{win}. False otherwise.}
+
+\ccMethod{bool is_anchor();}{returns false.}
+
+\ccImplementation
+The construction of a $d$-dimensional range tree takes ${O}(n\log n^{d-1})$
+time.  The points in
+the query window are reported in time ${O}(k+{\log}^d n )$, where $k$
+is the number of reported points.
+The tree uses ${O}(n\log n^{d-1})$ storage.
+
+\end{ccRefClass}

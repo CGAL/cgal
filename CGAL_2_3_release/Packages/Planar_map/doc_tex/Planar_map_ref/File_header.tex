@@ -1,0 +1,127 @@
+% +------------------------------------------------------------------------+
+% | Reference manual page: Pm_bounding_box_traits.tex (Planar_map)
+% +------------------------------------------------------------------------+
+% | 
+% | Package: pm (Planar_map_2)
+% | 
+% +------------------------------------------------------------------------+
+
+\ccRefPageBegin
+
+%%RefPage: end of header, begin of main body
+% +------------------------------------------------------------------------+
+
+\renewcommand{\ccRefPageBegin}{\begin{ccAdvanced}}
+\renewcommand{\ccRefPageEnd}{\end{ccAdvanced}}
+
+%File_header
+\begin{ccRefClass}{File_header}
+
+\ccCreationVariable{file_header}
+
+\ccDefinition
+Generally, the \ccRefName \/ class defines and sets parameters that
+should be defined while using the I/O functions.  This configuration
+includes the verbose flag, a flag that controls writing a file with or
+without comments, etc.  The class is the base class of the classes
+\ccc{Pm_file_scanner} and \ccc{Pm_file_writer}.  The list of
+parameters for \ccRefName\/ is as follows:
+
+\begin{itemize}
+\item {\bf verbose } define a verbose format for printing the \ccc{Planar map}. This flag is set by default to false.
+\item {\bf ascii} ascii format. This flag is set by default to true.
+\item {\bf no\_comments} - no comments in output. This flag is set by default to false.
+\item {\bf index\_offset} - offset for the indices. This flag is set by default to 0.
+\item {\bf has\_colors} - The format specifies the colors of the \ccc{Planer map} components. This flag is set by default to false.
+\item {\bf dimension} - specifies the dimension of \ccc{Planer map}. This flag is set by default to 2.
+\end{itemize}
+
+In addition the \ccRefName \/ class includes the information regarding the 
+number of vertices, halfedges and faces the \ccc{Planar map} has.
+
+%The following requirement catalog lists the primitives, i.e., types, member functions
+%etc., that must be defined for any \ccc{Planar map} file writer class that can be used to parameterize the reading function of \ccc{Planar map}. 
+
+
+\ccCreation
+When creating a \ccRefName \/ object, the user sets the parameters as needed.
+ 
+%the default configurations are provided as above and hence the user has to define only those configurations which are different from the default.
+
+\ccConstructor{File_header ();} 
+{constructs a default \ccRefName\ which contains the default configuration.}
+
+\ccConstructor{File_header (int v, int h, int f, bool verbose = false, bool no_comments = false, 
+   bool ascii = true, int offset = 0, bool colors = false, int dim = 2);} 
+{constructs \ccRefName\ with \ccc{v} vertices \ccc{h} halfedges and \ccc{f} faces, the other parameters can also be set by the user, otherwise they are set to their default values.}
+
+\ccConstructor{File_header(const File_header& file_header);}
+{copy construction.}
+
+\ccModifiers
+
+\ccThree{size_t}{file_header.set_number_of_verticesaaa(size_t n);}{}
+
+\ccMethod{void set_verbose(bool b);}{sets the verbose flag to b.}
+\ccGlue
+\ccMethod{void set_ascii(bool b);} {sets the ascii flag to b.}
+\ccGlue
+\ccMethod{void set_no_comments(bool b);}{sets the no\_comments flag to b.}
+\ccGlue
+\ccMethod{void set_index_offset(int i);}{sets index\_offset to i.}
+\ccGlue
+\ccMethod{void set_colors(bool b);}{sets the colors flag to b.}
+\ccGlue
+\ccMethod{void set_dimension(int i);}{sets the dimension to i.}
+\ccGlue
+\ccMethod{void set_number_of_vertices(size_t n);}{sets the number of vertices to n.}
+\ccGlue
+\ccMethod{void set_number_of_halfedges(size_t n);}{sets the number of halfedges to n.}
+\ccGlue
+\ccMethod{void set_number_of_faces(size_t n);}{sets the number of faces to n.}
+
+\ccAccessFunctions
+%\ccGlueBegin
+\ccMethod{bool verbose();}{returns true if the format is verbose.}
+\ccGlue
+\ccMethod{bool ascii();}{returns true if the format is given by ascii.}
+\ccGlue
+\ccMethod{bool no_comments();}{returns true if the format is defined without comments.}
+\ccGlue
+\ccMethod{bool comments();}{returns true if the format is defined with comments.}
+\ccGlue
+\ccMethod{int index_offset();}{returns the offset defined for the indices in the format.}
+\ccGlue
+\ccMethod{bool has_colors();}{returns true if the format presents the \ccc{Planar map} by colors.}
+\ccGlue
+\ccMethod{int dimension();}{returns the dimension defined by the format.}
+\ccGlue
+\ccMethod{size_t number_of_vertices();}{returns the number of vertices defined by the format.}
+\ccGlue
+\ccMethod{size_t number_of_halfedges();}{returns the number of halfedges defined by the format.}
+\ccGlue
+\ccMethod{size_t number_of_faces();}{returns the number of faces defined by the format.}
+%\ccGlueEnd
+
+\end{ccRefClass} % File_header
+
+\renewcommand{\ccRefPageBegin}{}
+\renewcommand{\ccRefPageEnd}{}
+
+% +------------------------------------------------------------------------+
+%%RefPage: end of main body, begin of footer
+\ccRefPageEnd
+% EOF
+% +------------------------------------------------------------------------+
+
+
+
+
+
+
+
+
+
+
+
+

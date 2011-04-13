@@ -1,0 +1,22 @@
+Stream_support Package
+---------------------------------------------------------------------
+
+    -  CGAL/IO/Istream_iterator.h
+    -  CGAL/IO/Ostream_iterator.h
+
+	 The classes CGAL_Istream_iterator and CGAL_Ostream_iterator
+	 provide iterators for arbitrary streams, for example the
+	 CGAL_Window_stream and others. They have been renamed to
+         follow CGAL naming conventions.
+
+    -  CGAL/IO/Verbose_ostream.h     
+
+	 The class CGAL_Verbose_ostream is useful for debugging and
+	 diagnostic output, for example in inplementing the member 
+	 function `bool is_valid( bool verbose = false, ...)' of
+	 complex data structures.
+
+Mariette Yvinec (INRIA) takes over the maintenance of this package
+with release 2.4 (28 Jul 1999).
+
+Lutz Kettner

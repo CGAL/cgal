@@ -1,0 +1,162 @@
+Polyhedron_IO Package: Release changes:
+---------------------------------------------------------------------
+
+3.9 (12 Jul 2001)
+
+     - Qualified CGAL::to_double() function explicitly to avoid conflict
+       when using with leda_real.
+
+3.8 (02 Jul 2001)
+
+     - Try changed order of scan_OFF declarations for Borland.
+
+3.7 (02 Jul 2001)
+
+     - Added allocators to HalfedgeDS and Polyhedron.
+     - Stop testing new design with disabled compilers (MSVC6).
+
+3.6 (29 Jun 2001)
+
+     - Added pathname to example program header line.
+     - Updated demos to new kernel traits.
+     - Added std:: scope to less functor in triangulation_print_OFF.h.
+     - Added CGAL::to_double calls to point coordinates output.
+
+3.5 (25 Jun 2001)
+
+     - Adapted to new kernel traits from Polyhedron.
+     - Revised example files.
+
+3.4 (19 Jun 2001)
+
+     - Cleanup in binary_file_io.h.
+     - Fixed warnings about unused variables in File_writer_*.h.
+
+3.3 (18 Jun 2001)
+
+     - Converted files in the demo and example directory to the new design.
+     - Fixed geomview problem with polyhedron names.
+     - Fixed binary file IO problem with OFF file format.
+
+3.2 (18 Jun 2001)
+
+     - Merged old design files and new design files into one package.
+       First internal release of new design. Old design disabled by 
+       default. Can be enabled using #define CGAL_USE_POLYHEDRON_DESIGN_ONE
+     - Files in the demo and example directory are not yet converted
+       to the new design.
+
+3.1 (21 Sep 2000)
+
+     Complete redesign of the HalfedgeDS. Incompatible to previous 
+     versions. The design provides much more flexibility and can 
+     support planar maps and other data structures more easily. 
+     The class interface for CGAL::Polyhedron_3 is pretty much the 
+     same, basically only the template parameters have changed. Thus,
+     only minor changes in this package. Tested with g++ and MipsPro 7.3.
+
+2.11 (04 Feb 2000)
+
+     Changing CGAL_static_cast to static_cast<> in File_header_OFF.C.
+
+2.10 (20 Dec 1999)
+
+     Replaced std::abort() with CGAL_CLIB_STD::abort in off_bbox.C,
+     off_glue.C and off_transform.C.
+
+2.9 (13 Dec 1999)
+
+     Updated to the new namespace macro for clib functions -- 
+     CGAL_CLIB_STD.
+
+2.8 (06 Dec 1999)
+
+     Updated demo directory (README, makefile, cgal_test removed).
+
+2.7 (25 Nov 1999)
+
+     std:: added to abort() functions in examples.
+
+2.6 (22 Jun 1999)
+     
+     'void inline' order changed in IO/binary_file_io.h.
+
+2.5 (29 Apr 1999)
+
+     std::ostream fixed in IO/binary_file_io.h.
+
+2.6 (22 Jun 1999)
+
+     terr_triang fixed. geomview.C renamed to geomview_demo.C.
+
+2.4 (12 Apr 1999)
+
+     Include "cstring" for test.
+
+2.3 (24 Mar 1999)
+
+     Fixes name space for std::isalnum(), std::isdigit(), std::atoi().
+
+2.2 (16 Mar 1999)
+
+     Fixes name space for std::min() and std::max().
+
+2.1 (09 Mar 1999)
+
+     Standard headers, std namespace and CGAL namespace.
+
+1.11 (17 Dec 1998)
+
+     Three examples fixed to work with new header file names and the
+     new Triangulation package.
+
+1.10 (08 Oct 1998)
+
+     File_info has been completely integrated into File_header
+     and the new File_header_extended. The writer and scanner classes
+     are changed to work with this new File_header.
+        All examples and demos have been adapted and shortened to
+     be more readable.
+
+1.9 (10 Jul 1998)
+
+     Makefile equipped with LONG_NAME workaround.
+
+1.8 (03 Jun 1998)
+
+     A few changes in the doc. Chapter entry in header. Adapted to
+     new header file known_bit_size_integers.h and removal of the
+     is_odd function.
+
+1.7 (09 Apr 1998)
+
+     Spell checker.
+
+1.6 (02 Apr 1998)
+
+     Bugs fixed in the examples terr_trian.C and triangulation_print_OFF.h.
+
+1.5 (24 Mar 1998)
+
+     Adapted for new CGAL_BIG_ENDIAN flags.
+
+1.4 (19 Mar 1998)
+
+     Include iostream.h in binary_file_io.h.
+
+1.3 (05 Mar 1998)
+
+     Examples fixed.
+
+1.2 (03 Mar 1998)
+
+     example terr_trian fixed. Geomview_stream support added.
+     New demo for Geomview_stream added.
+
+1.1 (01 Mar 1998)
+
+     First release. Relates to the Polyhedron package 1.5 (25 Feb 1998).
+
+None of this package was available in CGAL 0.9.
+
+

@@ -1,0 +1,175 @@
+CHANGES to the Geomview package.
+
+Ver 3.20 (10 July 2001)
+- Submission bug.
+
+Ver 3.19 (10 July 2001)
+- Remove warning with GCC 3.0.
+- Update demo code to match new include rules.
+
+Ver 3.18 (19 June 2001)
+- Add and document a new pickplane() member function.
+
+Ver 3.17 (19 June 2001)
+- Move set/get_wired() in non-advanced section.
+
+Ver 3.16 (19 June 2001)
+- Doc bug fix.
+
+Ver 3.15 (19 June 2001)
+- Added missing #includes for Triangulation and Polyhedrons.
+- Clarify the documentation for terrains.
+
+Ver 3.14 (18 June 2001)
+- Change _swap_to_big_endian to I_swap_to_big_endian.
+
+Ver 3.13 (5  June 2001)
+- Use CGAL_CLIB_STD for MipsPro.
+
+Ver 3.12 (5  June 2001)
+- read() and write() are not in std::.
+
+Ver 3.11 (30 May 2001)
+- Use std:: for C library functions for GCC 3.
+
+Ver 3.10 (23 May 2001)
+- Don't compile the demos at all on Windows.
+
+Ver 3.9 (17 April 2001)
+- Add documentation for the previous change.
+- Draw intersection of the BBox for Ray_2 and Line_2.
+- Update for Geomview 1.8.1 (endianness bug on Linux).
+- Remove buggy references in the doc.
+
+Ver 3.8 (23 January 2001)
+- Added (simple) operator<<() for Ray_[23] and Line_[23].
+
+Ver 3.7 (7 December 2000)
+- Added a member function get_new_id(string) to replace and generalize the
+  per type counters used to get unique identifiers for geomview.
+  It fixes the bug that you couldn't see several polyhedrons or triangulations
+  at the same time.
+
+Ver 3.6 (5 December 2000)
+- Factorized code between Point_[23], Segment_[23] and Triangle_[23].
+- Added some color to the kernel demo program.
+- Added a wired flag, with the get/set functions.
+- Use this flag in operator<<(Triangulations), and add a pointer in the doc.
+- Demo program for triangulations/terrains.
+
+Ver 3.5 (1 December 2000)
+- New echo_flag boolean, that decides when a point Geomview gives us needs to
+  be echoed to Geomview.
+- Proper save and restore of the ascii/binary mode.
+- in_binary_mode() -> get_binary_mode(), idem for ascii.
+- set_binary_mode() now takes a parameter (default=true), and returns the old
+  value.
+- (echo "started") in your .geomview file is no longer necessary.
+
+Ver 3.4 (29 November 2000)
+- Removed the cruft about "ascii" and "binary" function pointers (beurk !).
+- Added a raw mode, and use it internally : get_raw() and set_raw().
+- More cleanup.
+
+Ver 3.3 (29 November 2000)
+- to_double -> CGAL::to_double.
+- char * -> string.
+- Got rid of some useless and deprecated strstreams.
+- Fixed a bug in frame().
+- Removed obsolete code concerning the very old (born dead) 3D triangulation.
+- Do not submit test/Geomview/Makefile.
+- New directory demo/Geomview.
+
+Ver 3.2 (24 November 2000)
+- Forgot to submit the test/ directory.
+
+Ver 3.1 (24 November 2000)
+- Removed obsolete constructor.
+- Added a sleep(1) at initialization, to wait for Geomview to be ready
+  (internally), because otherwise this prevents operator>>(Point) from working
+  later (even if display is fine).
+- Fix non-std compliant names beginning with underscore.
+- Replaced close()+dup() by dup2() at initialization.
+- Added code to draw a Sphere_3.
+- Added a test program !
+
+Ver 3.0 (16 October 00)
+- Added "\newpage" from Susan's changes for CGAL 2.2.
+- Put myself as maintainer. [syl]
+
+---- CGAL 2.2 is out. ----
+
+Ver 2.9 (8 August 00)
+- find back the tex files which had disappear
+
+Ver 2.8 (27 June 00)
+- Rewrote is_prefix() and nth() [syl].
+
+Ver 2.7 (13 janvier 00)
+undo the previous, 
+and replace "ends" by "std::ends"
+
+Ver 2.6 (13 janvier 00)
+added std:: in front of "flush" ans "ends"
+
+Ver 2.5 (27 July 1999)
+added std:: in front of "flush" ans "ends"
+
+Ver 2.4 (23 July 1999)
+included #if !defined in src/Geomview_stream.C
+because Geomview is not supported by M$C and BORLANDC
+
+Ver 2.3 (2 July 1999)
+added std::
+
+Ver 2.2 18 Mai 99
+ Corrected doc files 
+
+Ver 2.1 16 April 99
+ Changed read and write in Geomview_stream.C
+ to ::read and ::write to avoid clashes with CGAL::read and CGAL::write
+
+Ver 2.0 13 April 99
+-Intoduced namespaces. Still certain std:: are missing in src files
+ because I am not quite sure where to put them.
+
+Ver 1.4 (to appear)
+- Added include <stdlib.h> for prototypes: exit(), ...
+- Removed warning in Geomview_stream.C (unused variable length in CGAL_nth)
+
+Ver 1.3 (29 Sept 1998)
+- Removed variables CGAL_RSH and CGAL_GEOMVIEW. Use default values instead.
+- Removed makefile_geomview, and compile always with libCGAL.
++ for this, one must add Geomview_stream.o to CGAL_Objects in makefile_lib
+- Typo CCAL --> CGAL
+- Added operator<<(Polyhedron<T,HDS> &P) in the documentation
+
+Ver 1.2 (23 Jun 1998)
+Changes suggested by  Aalim Fevens <fevens@qucis.queensu.ca>
+- In Chapter 8 on Geomview in Reference Manual Part 3 on page 81,
+  the Input Operators for CGAL Kernel Classes should be for the
+  CGAL_Point_3(R> point class, not the CGAL_Point_2<R> point
+  class. The latter class is not yet in the include file for
+  Geomview as far as I can see.
+- bug in include/CGAL/IO/Geomview_stream.h at line 243
+
+Ver 1.1 (22 Jun 1998)
+- Changed the defaults of CGAL_RSH to "rsh" and CGAL_GEOMVIEW to
+  "geomview" (assuming the user has them in his path, otherwise
+  he wouldn't be able to install them)
+- Probably the best is to patch the script "install_cgal", its
+  manual, so that it is all done automagically. Unfortunately,
+  I ran into problems when writing this patch. For one thing, sed
+  couln't update makefile_geomview. Ask me
+  (Herve.Bronnimann@#sophia.inria.fr) if you want this patch.
+
+Ver 1.0 (31 Mar 1998)
+- added makefile_geomview in src, with two environment variable CGAL_RSH and
+  CGAL_GEOMVIEW which have to be redefined for other installations than the
+  default. The default is:
+            CGAL_RSH=\"/usr/ucb/rsh\"
+            CGAL_GEOMVIEW=\"/usr/local/bin/geomview\"
+- added #include <CGAL/IO/Polyhedron_geomview_ostream.h>
+
+Ver 0.9 (25 Feb 1998)
+- preliminary version (not tested)

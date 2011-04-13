@@ -1,0 +1,137 @@
+\begin{ccRefClass} {Point_3<R>}
+
+\ccDefinition
+An object of the class \ccRefName\ is a point in the three-dimensional
+Euclidean space $\E^3$. 
+%% 
+%% \cgal\ defines a symbolic constant
+%% \ccStyle{ORIGIN}  which denotes the point at the origin. It can be used
+%% wherever a point can be used, with the only exception that you can not
+%% access its dimension as it is dimensionless.
+%% 
+
+Remember that \ccStyle{R::RT} and \ccStyle{R::FT} denote a ring type 
+and a field type.
+For the representation class \ccStyle{Cartesian<T>}, the two types are 
+equivalent.
+However, for the representation class \ccStyle{Homogeneous<T>} the ring 
+type is \ccStyle{R::RT} is equal to \ccStyle{T} and the field type is 
+\ccStyle{R::FT} is equal to \ccStyle{Quotient<T>}.
+
+
+\ccCreation
+\ccCreationVariable{p}
+
+
+\ccHidden \ccConstructor{Point_3();}
+             {introduces an uninitialized variable \ccVar.}
+
+\ccHidden \ccConstructor{Point_3(const Point_3<R> &q);}
+ 	    {copy constructor.}
+
+\ccConstructor{Point_3(const Origin &ORIGIN);}
+ 	    {introduces a point with \ccHtmlNoLinks{Cartesian} coordinates$(0,0,0)$.}
+
+\ccConstructor{Point_3(const R::RT &hx, const R::RT &hy, const R::RT &hz, const R::RT &hw = R::RT(1));}
+            {introduces a point \ccVar\ initialized to $(hx/hw,hy/hw, hz/hw)$.
+             If the third argument is not explicitly given it defaults
+             to \ccStyle{R::RT(1)}.
+	     \ccPrecond \ccc{hw} $\neq$ \ccc{Kernel::RT(0)}.}
+
+
+\ccOperations
+%\ccSetTwoOfThreeColumns{5cm}{4cm}
+
+\ccHidden \ccMethod{Point_3<R> & operator=(const Point_3<R> &q);}
+        {Assignment.}
+
+\ccMethod{bool operator==(const Point_3<R> &q) const;}
+       {Test for equality: Two points are equal, iff their $x$, $y$ and $z$
+        coordinates are equal.}
+
+\ccMethod{bool operator!=(const Point_3<R> &q) const;}
+       {Test for inequality.}
+
+
+
+There are two sets of coordinate access functions, namely to the
+homogeneous and to the \ccHtmlNoLinks{Cartesian} coordinates. They can be used
+independently from the chosen representation type \ccStyle{R}.
+
+\ccMethod{R::RT hx() const;}
+       {returns the homogeneous $x$ coordinate.}
+\ccGlue
+\ccMethod{R::RT hy() const;}
+       {returns the homogeneous $y$ coordinate.}
+\ccGlue
+\ccMethod{R::RT hz() const;}
+       {returns the homogeneous $z$ coordinate.}
+\ccGlue
+\ccMethod{R::RT hw() const;}
+       {returns the homogenizing  coordinate.}
+
+Here come the \ccHtmlNoLinks{Cartesian} access functions. Note that you do not loose
+information with the homogeneous representation, because then the field
+type is a quotient.
+
+\ccMethod{R::FT x() const;}
+       {returns the \ccHtmlNoLinks{Cartesian} $x$ coordinate, that is $hx/hw$.}
+\ccGlue
+\ccMethod{R::FT y() const;}
+       {returns the \ccHtmlNoLinks{Cartesian} $y$ coordinate, that is $hy/hw$.}
+\ccGlue
+\ccMethod{R::FT z() const;}
+       {returns the \ccHtmlNoLinks{Cartesian} $z$ coordinate, that is $hz/hw$.}
+
+
+The following operations are for convenience and for making this
+point class compatible with code for higher dimensional points.
+Again they come in a \ccHtmlNoLinks{Cartesian} and homogeneous flavor.
+
+\ccMethod{R::RT homogeneous(int i) const;}
+       {returns the i'th homogeneous coordinate of \ccVar, starting with 0.
+        \ccPrecond $0\leq i \leq 3$.}
+
+\ccMethod{R::FT cartesian(int i) const;}
+       {returns the i'th \ccHtmlNoLinks{Cartesian} coordinate of \ccVar, starting with 0.
+        \ccPrecond $0\leq i \leq 2$.}
+
+\ccMethod{R::FT operator[](int i) const;}
+       {returns \ccStyle{cartesian(i)}.
+        \ccPrecond $0\leq i \leq 2$.}
+
+\ccMethod{int dimension() const;}
+       {returns the dimension (the constant 3).}
+
+\ccMethod{Bbox_3 bbox() const;}
+       {returns a bounding box containing \ccVar.}
+
+\ccMethod{Point_3<R>  transform(const Aff_transformation_3<R> &t) const;}
+       {returns the point obtained by applying $t$ on \ccVar.}
+
+\ccHeading{Operators}
+
+The following operations can be applied on points:
+
+\ccFunction{Vector_3<R> operator-(const Point_3<R> &p,
+                                  const Point_3<R> &q);}
+       {returns the difference vector between \ccStyle{q} and \ccStyle{p}. 
+        You can substitute \ccc{ORIGIN} for either \ccc{p} or \ccc{q}
+        ,but not for both.}
+
+\ccFunction{Point_3<R> operator+(const Point_3<R> &p,
+                                 const Vector_3<R> &v);}
+       {returns the point obtained by translating \ccStyle{p} by the 
+        vector \ccStyle{v}.}
+
+\ccFunction{Point_3<R> operator-(const Point_3<R> &p,
+                                 const Vector_3<R> &v);}
+       {returns the point obtained by translating \ccStyle{p} by the 
+        vector -\ccStyle{v}.}
+
+\ccSeeAlso
+
+\ccRefConceptPage{Kernel::Point_3}
+
+\end{ccRefClass} 
+

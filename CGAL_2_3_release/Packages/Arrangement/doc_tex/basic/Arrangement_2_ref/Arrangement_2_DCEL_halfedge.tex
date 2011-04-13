@@ -1,0 +1,65 @@
+% +------------------------------------------------------------------------+
+% | Reference manual page: Arrangement_2_DCEL.tex (Arrangement)
+% +------------------------------------------------------------------------+
+% | 
+% | Package: arr (Arrangement_2)
+% | 
+% +------------------------------------------------------------------------+
+
+\ccRefPageBegin
+
+%%RefPage: end of header, begin of main body
+% +------------------------------------------------------------------------+
+% +========================================================================+
+%   Arrangement_2_DCEL
+% +========================================================================+
+
+\begin{ccRefConcept}{ArrangementDcelHalfedge_2}
+
+\ccDefinition
+
+    A model of the \ccRefName\ concept is a halfedge of the Dcel of
+    the arrangement data structure. 
+
+    An \ccRefName\ is $not$ (!) a refinement of the
+    \ccc{PlanarMapDcelHalfedge_2} concept \lcTex{(see
+    \ccRefPage{PlanarMapDcelHalfedge_2})}. However, it is very
+    similar.
+
+    The concept has an additional type \ccc{Base_node} which should be
+    the same as the template parameter \ccc{Base_node} of the
+    arrangement (see section~\ref{sec:base_node}).  It has the
+    additional methods \ccc{edge_node()} and
+    \ccc{set_edge_node(Base_node*)}.
+
+    The method \ccc{set_curve} should do nothing, i.e. be empty.
+    The function is needed to satisfy a syntactical requirement.
+
+\ccDefinition
+
+\ccCreationVariable{e}
+
+\ccOperations
+    \ccMethod{Base_node* edge_node();}
+    {returns a pointer to the edge node in the hierarchy tree which
+       holds the curve from 
+       which the halfedge was generated.}
+
+    \ccMethod{void set_edge_node(Base_node* b);}
+    {sets \ccc{b} to be the edge node in the hierarchy tree which
+       holds the curve of the halfedge.}
+
+    \ccMethod{void set_curve(const Curve& cv);}{
+       should do nothing.}
+
+\ccHasModels
+  \ccc{CGAL::Arr_2_halfedge_base<Base_node>} (for example, used by
+  \ccc{Arr_2_default_dcel<Traits>} )
+
+\end{ccRefConcept}
+
+% +------------------------------------------------------------------------+
+%%RefPage: end of main body, begin of footer
+\ccRefPageEnd
+% EOF
+% +------------------------------------------------------------------------+

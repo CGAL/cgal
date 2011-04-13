@@ -1,0 +1,97 @@
+                   -----------------------------------
+                   Life is not perfect, unfortunately.
+                   -----------------------------------
+
+Here is a list of problems I found wrt correct handling of IEEE 754 doubles,
+with the rounding modes used in this package.
+
+1/ On Intel platforms (Linux and Windows, any compiler):
+--------------------------------------------------------
+
+  The processor has wider registers than it should, namely wider exponent, as
+  well as wider mantissa.
+  This is bad because there is a rounding (truncation) that is done when a
+  variable is flushed back to memory from a register, and you cannot control
+  _when_ this is performed, so it could be done with a wrong rounding mode,
+  or after the value changed its sign (which reverses rounding), so it's not
+  correctly rounded !
+
+  Solution:
+  - you can force the processor to have exactly 53 bits of mantissa,
+    like IEEE doubles.  This is done automatically by the rounding mode
+    changing macros.  This way, everything is ok as long as you don't play
+    with underflow/overflow (exponent gets out of range).
+    However, there's no way to set the exponent width, and it's always buggy !
+    The solution is to force manually the value back to memory, when needed,
+    that is after each potentially inexact operation that needs to be rounded
+    (+, -, *, /, sqrt).
+    This is the approach implemented, but it slows the code, and is not
+    always useful.
+  - Another approach would be to use "long doubles".  But I fear it's slower
+    and takes more memory.  Moreover, I think you have to use assembly to use
+    them with Visual C++.
+
+2/ Constant propagation:
+------------------------
+
+  Compilers usually propagate the value at compile time, for the variables for
+  which he knows the values.  The is rarely the case for predicates, as well
+  as any real stuff.  But it can happen, just like in the test-suite.
+
+  Solution:
+  - stopping propagation by disabling optimization (=> slow).
+  - put the constant in a global variable.
+  - using a macro with "volatile" in the Interval_nt constructor, which stops
+    any propagation at the entry.  The drawback is that it also stops many
+    other optimizations.  We now use this macro only just before it is needed.
+
+3/ std::sqrt() on Windows (GCC/CygWin and VC++):
+------------------------------------------------
+
+  When you don't optimize, std::sqrt() calls a library routine instead of the
+  assembly instruction "fsqrt".
+  This is plain stupid, and moreover this library routine appears to be buggy !
+  The fix would be to provide our own cgal_sqrt_ms_workaround() in extern C
+  precompiled module.
+  GCC/CygWin now uses inline assembly to simplify the installation.
+  Hopefully VC++ will follow the same path.
+  
+4/ is_valid() bug with VC++:
+----------------------------
+
+  This nice compiler returns "true" for the comparison "NaN == NaN".
+  This is plain buggy, and breaks is_valid().
+
+  It also breaks all other places where we could rely on this property,
+  which could be a lot of places in operator*() or operator/() for example.
+  This code review (NaN propagation) has not been done yet, so it's not
+  more a problem on VC++ as on the other platforms.
+
+  These kind of problem could be handled by the wrapper class Double_IEEE,
+  but with a speed penalty.
+
+5/ Problems with IRIX / MipsPro:
+--------------------------------
+
+  The C functions to acces rounding modes provided by the system appear
+  not to work correctly !  So we had to provide C functions compiled by GCC,
+  and link them into libCGAL.
+
+  Another "problem" is that when you don't parenthesize an expression with
+  doubles, MipsPro believes it can optimize more than it should (reordering
+  computations).  So I had to add additionnal parenthesis...
+  For example, MipsPro compiles "a*-b" to "-(a*b)" instead of "a*(-b)".
+  
+  Solution: adding parenthesis.
+
+  Also, it seems it optimizes "d<=d" to true, even if d is NaN...
+
+6/ ISO C99:
+-----------
+
+  The new (May'00) C standard specifies compiler and library requirements
+  to implement portable interval arithmetic !!!
+  Problem: it's not fully implemented anywhere that I know of, yet...
+
+--
+Sylvain

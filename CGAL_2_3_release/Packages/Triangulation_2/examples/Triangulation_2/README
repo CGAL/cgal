@@ -1,0 +1,38 @@
+To compule and run all these examples type :
+./cgal_test
+To compute and run only some of them type
+./cgal_test name-of_wanted_example
+
+triangulation_prog1:
+The following program creates a triangulation of 2D points using the
+kernel model class CGAL::Cartesian<double> as geometric traits and the
+default instanciation of the triangulation data structure template
+parameter.
+ The input points are read from a file and inserted in the
+triangulation.  Finally points on the convex hull are written to {\tt
+cout}.
+
+
+colored_face
+Illustrates how the user can derive its own base face from the default
+one to add e. g. a color.
+
+voronoi:
+Builds a Delaunay triangulation from input points in a file
+and takes the dual Voronoi diagram
+
+terrain
+Build a terrain using a Delaunay triangulation with the traits class for 
+terrains.
+
+regular
+Build a regular triangulation
+
+constrained
+input constraining edges from a file and build the Delaunay
+constrained triangulation that conforms to these constraining edges.
+
+points:
+Illustrates how to input user defined points and a user provided traits
+class in a Triangulation 
+

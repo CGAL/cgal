@@ -1,0 +1,27 @@
+//=====================================================================
+//	Revision History for package Min_quadrilateral_2
+//=====================================================================
+
+
+//---------------------------------------------------------------------
+//	actual revision
+//---------------------------------------------------------------------
+
+DOCS: Susan moved Optimisation_ref directory up one level
+ALL : Added #include <CGAL/intersections.h>.
+ALL : Fixed warning in test program.
+ALL : Fixed a warning on Borland.
+ALL : Changed concept names, added README for demo.
+DEMO: Do not compute min_strip for < 2 and min_quad for < 3 points.
+
+//---------------------------------------------------------------------
+//	 CGAL 2.2
+//---------------------------------------------------------------------
+
+ALL : Fixed file headers.
+ALL : minimum_enclosing_* -> min_*
+DOCS: Changed to new manual style.
+DOCS: Added some indexing commands for terms.
+DOCS: Some minor fixes in documentation.
+DOCS: Fixed \ccPureGlobalScope.
+ALL : Removed superfluous window include.

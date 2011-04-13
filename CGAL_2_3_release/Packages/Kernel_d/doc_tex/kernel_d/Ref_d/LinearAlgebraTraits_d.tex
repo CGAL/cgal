@@ -1,0 +1,113 @@
+\begin{ccRefConcept}{LinearAlgebraTraits_d}\ccCreationVariable{LA}
+
+\ccDefinition
+
+
+The data type \ccc{LinearAlgebraTraits_d} encapsulates two classes
+\ccc{Matrix}, \ccc{Vector} and many functions of basic linear algebra.
+An instance of data type \ccc{Matrix} is a matrix of variables of type
+\ccc{NT}. Accordingly, \ccc{Vector} implements vectors of variables of
+type \ccc{NT}.  Most functions of linear algebra are \emph{checkable},
+i.e., the programs can be asked for a proof that their output is
+correct. For example, if the linear system solver declares a linear
+system $A x = b$ unsolvable it also returns a vector $c$ such that
+$c^T A = 0$ and $c^T b \neq 0$.
+
+\ccSetOneOfTwoColumns{5.5cm}
+\ccTypes
+
+\ccNestedType{NT}{the number type of the components.}
+\ccNestedType{Vector}{the vector type.}
+\ccNestedType{Matrix}{the matrix type.}
+
+\ccSetTwoOfThreeColumns{2cm}{1cm}
+
+\ccOperations
+
+\ccMethod{static Matrix transpose(const Matrix& M);}{returns $M^T$
+(a \ccc{M.column_dimension()} $\times$ \ccc{M.column_dimension()} -
+matrix).  }
+
+\ccMethod{static bool inverse(const Matrix& M, Matrix& I, NT& D,
+  Vector& c);}{determines whether \ccc{M} has an inverse. It also
+  computes either the inverse as $(1/D) \cdot \ccc{I}$ or when no
+  inverse exists, a vector $c$ such that $c^T \cdot M = 0 $.
+  \ccPrecond $M$ is square. }
+
+\ccMethod{static Matrix inverse(const Matrix& M, NT& D) ;}{returns the
+  inverse matrix of \ccc{M}. More precisely, $1/D$ times the matrix
+  returned is the inverse of \ccc{M}.\\ \ccPrecond \ccc{determinant(M)
+    != 0}. \ccPrecond $M$ is square. }
+
+\ccMethod{static NT determinant (const Matrix& M, Matrix& L, Matrix&
+  U, std::vector<int>& q, Vector& c);} {returns the determinant $D$ of
+  \ccc{M} and sufficient information to verify that the value of the
+  determinant is correct. If the determinant is zero then $c$ is a
+  vector such that $c^T \cdot M = 0$. If the determinant is non-zero
+  then $L$ and $U$ are lower and upper diagonal matrices respectively
+  and $q$ encodes a permutation matrix $Q$ with $Q(i,j) = 1$ iff $i =
+  q(j)$ such that $L \cdot M \cdot Q = U$, $L(0,0) = 1$, $L(i,i) = U(i
+  - 1,i - 1)$ for all $i$, $1 \le i < n$, and $D = s \cdot U(n - 1,n -
+  1)$ where $s$ is the determinant of $Q$. \ccPrecond \ccc{M} is
+  square.}
+
+\ccMethod{static bool verify_determinant (const Matrix& M, NT D,
+  Matrix& L, Matrix& U, const std::vector<int>& q, Vector&
+  c);}{verifies the conditions stated above.}
+
+\ccMethod{static NT determinant (const Matrix& M);}{returns the
+  determinant of \ccc{M}.  \ccPrecond \ccc{M} is square.}
+
+\ccMethod{static int sign_of_determinant (const Matrix& M);}{returns
+  the sign of the determinant of \ccc{M}.  \ccPrecond \ccc{M} is
+  square.}
+
+\ccMethod{static bool linear_solver(const Matrix& M, const Vector& b,
+  Vector& x, NT& D, Matrix& spanning_vectors, Vector& c);}{ determines
+  the complete solution space of the linear system $M\cdot x = b$. If
+  the system is unsolvable then $c^T \cdot M = 0$ and $c^T \cdot b
+  \not= 0$.  If the system is solvable then $(1/D) x$ is a solution,
+  and the columns of \ccc{spanning_vectors} are a maximal set of
+  linearly independent solutions to the corresponding homogeneous
+  system.  \ccPrecond \ccc{M.row_dimension() = b.dimension()}.  }
+
+\ccMethod{static bool linear_solver(const Matrix& M, const Vector& b,
+  Vector& x, NT& D, Vector& c) ;}{ determines whether the linear
+  system $M\cdot x = b$ is solvable. If yes, then $(1/D) x$ is a
+  solution, if not then $c^T \cdot M = 0$ and $c^T \cdot b \not= 0$.
+  \ccPrecond \ccc{M.row_dimension() = b.dimension()}.  }
+
+\ccMethod{static bool linear_solver(const Matrix& M, const Vector& b,
+  Vector& x, NT& D) ;}{ as above, but without the witness $c$
+  \ccPrecond \ccc{M.row_dimension() = b.dimension()}.  }
+
+\ccMethod{static bool is_solvable(const Matrix& M, const Vector& b)
+  ;}{ determines whether the system $M \cdot x = b$ is solvable \\
+  \ccPrecond \ccc{M.row_dimension() = b.dimension()}.  }
+
+\ccMethod{static bool homogeneous_linear_solver (const Matrix& M,
+  Vector& x);}{determines whether the homogeneous linear system
+  $M\cdot x = 0$ has a non - trivial solution. If yes, then $x$ is
+  such a solution.  }
+
+\ccMethod{static int homogeneous_linear_solver (const Matrix& M,
+  Matrix& spanning_vecs);}{determines the solution space of the
+  homogeneous linear system $M\cdot x = 0$. It returns the dimension
+  of the solution space.  Moreover the columns of \ccc{spanning_vecs}
+  span the solution space.  }
+
+\ccMethod{static int independent_columns (const Matrix& M,
+  std::vector<int>& columns);}{returns the indices of a maximal subset
+  of independent columns of \ccc{M}.  }
+
+\ccMethod{static int rank (const Matrix & M);}{returns the rank of
+  matrix \ccc{M} }
+
+\ccHasModels
+
+\ccRefIdfierPage{CGAL::Linear_algebraHd<RT>} \\
+\ccRefIdfierPage{CGAL::Linear_algebraCd<FT>} 
+
+\end{ccRefConcept}
+
+

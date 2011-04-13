@@ -1,0 +1,78 @@
+\documentclass{book}
+
+\usepackage{cprog}
+\usepackage{cc_manual}
+\usepackage{cc_manual_index}
+\usepackage{makeidx}
+\usepackage{latex_converter}
+\usepackage{amssymb}
+\usepackage{graphicx}
+\usepackage{path}
+\usepackage{ipe}
+\usepackage{alltt}
+\usepackage{pslatex}
+\usepackage{minitoc}
+\usepackage{minitoc}
+
+% page dimensions
+% ---------------
+\textwidth 15.6cm 
+\textheight 23 cm
+\topmargin -14mm       
+\evensidemargin 3mm 
+\oddsidemargin 3mm
+
+% default column layout
+% ---------------------
+\newcommand{\cgalColumnLayout}{\ccTexHtml{%
+    \ccSetThreeColumns{CGAL_Oriented_side}{}{\hspace*{8.5cm}}
+    \ccPropagateThreeToTwoColumns}{}}
+
+\newcommand{\cgalrelease}{2.2-I-2}
+
+\renewcommand{\ccRefPageBegin}{\ccParDims\cgalColumnLayout}
+\ccDefGlobalScope{CGAL::}
+
+% New manual style including tab markers on the side margins
+% ----------------------------------------------------------
+\marginparsep10mm
+\marginparwidth15mm
+\gdef\ccNewRefManualStyle{\ccTrue}  % undef this for old style manual
+
+% The tab marker are aligned with the top of the main text. To align
+% them with the page header, the following definition of the amount
+% by which the tab is shifted can be used
+\setlength{\ccRefTabLift}{12.5mm}
+
+% Optionally, package authors and a package release can be shown
+% right below the chapter title. Comment out the following lines
+% to get back to the default behavior.
+% -----------------------------------------------------------------
+\def\ccTagChapterAuthor{\ccTrue}
+\def\ccTagChapterRelease{\ccTrue}
+
+\def\ccRefPageBegin{\ccParDims\cgalColumnLayout}
+\def\ccRefPageEnd{\ccParDims\cgalColumnLayout}
+
+
+
+\makeindex
+
+\sloppy
+
+%\ccTexHtml{\batchmode}{}
+
+\begin{document}
+
+\pagenumbering{arabic}
+ 
+\input{main}
+\input{Partition_2_ref/main}
+
+\bibliographystyle{alpha}
+\bibliography{geom}
+
+
+\printindex
+
+\end{document}

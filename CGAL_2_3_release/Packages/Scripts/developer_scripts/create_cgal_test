@@ -1,0 +1,111 @@
+#! /bin/sh
+#
+# =============================================================================
+# file          : scripts/create_cgal_test
+# source        :
+# revision      : 1.1
+# revision_date : 02 Mar 1998
+# author(s)     : Wieger Wesselink, Geert-Jan Giezeman
+#
+# coordinator   : Utrecht University
+# =============================================================================
+#
+# This script creates a cgal_test script with entries for all .C files in the
+# current test directory.
+
+VERSION=1.1
+
+header()
+{
+  echo "#---------------------------------------------------------------------#"
+  echo "#                    $1"
+  echo "#---------------------------------------------------------------------#"
+}
+
+create_script()
+{
+  echo "#! /bin/sh"
+  echo
+  echo "# This is a script for the CGAL test suite. Such a script must obey"
+  echo "# the following rules:"
+  echo "#"
+  echo "# - the name of the script is cgal_test"
+  echo "# - for every target two one line messages are written to the file 'error.txt'"
+  echo "#     the first one indicates if the compilation was successful"
+  echo "#     the second one indicates if the execution was successful"
+  echo "#   if one of the two was not successful, the line should start with 'ERROR:'"
+  echo "# - running the script should not require any user interaction"
+  echo "# - the script should clean up object files and executables"
+  echo
+  echo "ERRORFILE=error.txt"
+  echo
+  header "compile_and_run <target>"
+  echo
+cat << EOF
+compile_and_run()
+{
+  echo "Compiling \$1 ... "
+  SUCCES="y"
+  if eval 'make CGAL_MAKEFILE=\$CGAL_MAKEFILE \\
+           TESTSUITE_CXXFLAGS="\$TESTSUITE_CXXFLAGS" \\
+           TESTSUITE_LDFLAGS="\$TESTSUITE_LDFLAGS" \$1' ; then
+    echo "   succesful compilation of \$1" >> \$ERRORFILE
+  else
+    echo "   ERROR:    compilation of \$1" >> \$ERRORFILE
+    SUCCES=""
+  fi
+
+  if [ -n "\${SUCCES}" ] ; then
+     OUTPUTFILE=ProgramOutput.\$1.\$PLATFORM
+    rm -f \$OUTPUTFILE
+    COMMAND="./\$1"
+    if [ -f \$1.cmd ] ; then
+      COMMAND="\$COMMAND \`cat \$1.cmd\`"
+    fi
+    if [ -f \$1.cin ] ; then
+      COMMAND="cat \$1.cin | \$COMMAND"
+    fi
+    echo "Executing \$1 ... "
+    echo
+    if eval \$COMMAND > \$OUTPUTFILE 2>&1 ; then
+      echo "   succesful execution   of \$1" >> \$ERRORFILE
+    else
+      echo "   ERROR:    execution   of \$1" >> \$ERRORFILE
+    fi
+  else
+    echo   "   ERROR:    not executed   \$1" >> \$ERRORFILE
+  fi
+
+  eval "make CGAL_MAKEFILE=\$CGAL_MAKEFILE clean > /dev/null 2>&1 "
+}
+
+EOF
+  header "remove the previous error file"
+  echo
+  echo "rm -f \$ERRORFILE"
+  echo "touch \$ERRORFILE"
+  echo
+  header "compile and run the tests"
+  echo
+cat << EOF
+if [ \$# -ne 0 ] ; then
+  for file in \$* ; do
+    compile_and_run \$file
+  done
+else
+EOF
+  for file in `ls *.C` ; do
+    echo "  compile_and_run `basename $file .C`"
+  done
+  echo "fi"
+  echo
+}
+
+echo "create_cgal_test version $VERSION"
+if [ -f cgal_test ] ; then
+  echo "moving cgal_test to cgal_test.bak ..."
+  mv -f cgal_test cgal_test.bak
+fi
+create_script > cgal_test
+chmod 744 cgal_test
+echo "created cgal_test ..."

@@ -1,0 +1,13 @@
+
+nef_construction.C
+
+  a simple example showing construction syntax
+
+HowTo build these demos:
+
+  1) Set the environment variable CGAL_MAKEFILE to the makefile 
+     of choice after the configuration of CGAL. Makefiles 
+     (configurations) can be found in ../../make
+
+  2) Engage (type "make <return>")
+     

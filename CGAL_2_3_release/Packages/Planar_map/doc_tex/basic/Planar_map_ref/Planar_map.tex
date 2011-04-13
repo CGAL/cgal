@@ -1,0 +1,402 @@
+% +------------------------------------------------------------------------+
+% | Reference manual page: Planar_map.tex (Planar_map)
+% +------------------------------------------------------------------------+
+% | 
+% | Package: pm (Planar_map_2)
+% | 
+% +------------------------------------------------------------------------+
+
+\ccRefPageBegin
+
+%%RefPage: end of header, begin of main body
+% +------------------------------------------------------------------------+
+
+
+% +========================================================================+
+%   Planar Map
+% +========================================================================+
+\begin{ccRefClass}{Planar_map_2<Dcel,Traits>}
+\label{PM_sec:pm}
+    
+\ccDefinition
+    An object $pm$ of the class
+    \ccClassTemplateName\ is the planar subdivision
+    induced by a set of $x$-monotone curves %that do not intersect in
+    %their interiors.
+    such that no curve intersects the interior of any other curve.
+    The available traits and dcel classes will be described
+    later.
+
+\ccInclude{CGAL/Planar_map_2.h}
+
+\ccInheritsFrom
+    \ccc{CGAL::Topological_map<Dcel>} 
+
+    The modifying functions \ccc{insert_in_face_interior},
+    \ccc{insert_from_vertex}, \ccc{insert_at_vertices}, \ccc{split_edge},
+    \ccc{merge_edge} and \ccc{remove_edge}
+    overwrite the inherited functions and make use
+    of the geometric information of the planar map.
+
+\ccThree{Planar_map_2<Dcel,Traits> :: Traits}{}{\hspace*{6cm}}
+\ccThreeToTwo
+
+\ccTypes
+
+%  \ccTypedef{typedef Planar_map_2<Dcel,Traits> Self;}{planar map class}
+%
+  \ccNestedType{Traits}{traits class.}
+  \ccGlue
+  \ccNestedType{Dcel}{DCEL class.}
+
+  \ccHtmlNoLinksFrom{
+  The \ccc{Vertex}, \ccc{Halfedge} and \ccc{Face}
+  types of the planar map are defined as part of the planar map DCEL
+  While the face of planar map is a face of the topological map, the Vertex and Halfedge have additional
+  functionality. A Vertex has the additional \ccc{point} and \ccc{set_point} operations. A Halfedge has
+  the additional \ccc{curve} and \ccc{set_curve} operations. 
+  } % ccHtmlNoLinksFrom
+  See concepts \ccc{PlanarMapDcel_2}\lcTex{ (\ccRefPage{PlanarMapDcel_2})},
+  \ccc{PlanarMapDcelVertex_2} \lcTex{(\ccRefPage{PlanarMapDcelVertex_2})}
+  and \ccc{PlanarMapDcelHalfedge_2} \lcTex{(\ccRefPage{PlanarMapDcelHalfedge_2})}.
+%\ccc{Dcel::Vertex}\\
+%\ccc{Dcel::Halfedge}\\
+
+  \ccHtmlNoLinksFrom{
+  \ccNestedType{Vertex}{represents a vertex of the planar map.}}
+  \ccGlue
+  \ccHtmlNoLinksFrom{
+  \ccNestedType{Halfedge}{represents a halfedge of the topological map.}}
+  \ccGlue
+  \ccHtmlNoLinksFrom{
+  \ccNestedType{Face}{represents a face of the topological map.}}
+
+
+  \ccTypedef{typedef typename Traits::X_curve X_curve;}{a curve of the planar map.}
+  \ccGlue
+  \ccTypedef{typedef typename Traits::Point Point;}{a point of the planar map.}
+
+
+%    \ccNestedType{Vertex}{Represents a vertex of the planar-map.}
+%    \ccNestedType{Halfedge}{Represents an half-edge of the planar-map.}
+%    \ccNestedType{Face}{Represents a face of the planar-map.}
+    
+%    \ccNestedType{Vertex_iterator}{A bidirectional iterator over the
+%       vertices of the planar-map. Its value-type is
+%       \ccStyle{Vertex}.}
+%     
+%    \ccNestedType{Halfedge_iterator}{A bidirectional iterator over the
+%       halfedges of the planar-map.  Its value-type is \ccStyle{Halfedge}.}
+%    
+%    \ccNestedType{Face_iterator}{A bidirectional iterator over the
+%       faces of the planar-map.  Its value-type is \ccStyle{Face}.}
+%    
+%    \ccNestedType{Ccb_halfedge_circulator}{A forward circulator over the
+%       edges of a CCB (connected components of the boundary).  Its
+%       value-type is \ccStyle{Halfedge}.}
+%    
+%    \ccNestedType{Halfedge_around_vertex_circulator}{A forward circulator over
+%       the half-edges which have  the vertex as their source .  
+%       The half-edges are traversed in
+%       their clockwise order around the vertex. Its value-type is
+%       \ccStyle{Halfedge}.}
+%    
+%    \ccNestedType{Holes_iterator}{A bidirectional iterator to
+%       traverse all the holes ( i.e., inner CCBs ) of a face 
+%       (\ccStyle{Holes_iterator++}{} is the next hole in the face).
+%       Its value type is
+%       \ccStyle{Ccb_halfedge_circulator}.}
+    
+%\def\ccLongParamLayout{\ccTrue}
+\ccConstants
+    \ccEnum{enum Locate_type {VERTEX = 1, EDGE, FACE, UNBOUNDED_VERTEX, UNBOUNDED_EDGE, UNBOUNDED_FACE};}    
+    {an enumeration that specifies the result of \ccc{point location} 
+       and \ccc{ray shooting} operations.}
+%\def\ccLongParamLayout{\ccFalse}
+
+\ccCreation
+    \ccCreationVariable{pm}
+    
+    \ccConstructor{Planar_map<Dcel,Traits>();} {constructs an
+       ``empty map'' containing one unbounded face, which corresponds to the
+       whole plane.}
+    
+    \ccConstructor{Planar_map<Dcel,Traits>(const Self& pm);}{copy constructor;}
+    
+    \ccc{Self} here is an abbreviation for the \ccRefName\ type.
+
+    %\ccConstructor{Planar_map<I>( list<X_curve> &l
+%       );} {construct the planar-map of the curves  of \ccStyle{l}
+%       \ccPrecond{The curves are $x$-monotone} 
+%       \ccPrecond{No pair of curves of $l$ intersect in their interiors} 
+%       }
+        
+%    \ccStyle{template <class InputIterator>} \\
+%    \ccConstructor{ Planar_map<I>( InputIterator begin, 
+%                           InputIterator end );} 
+%                {construct the planar-map of the curves from a 
+%                container iterated by
+%                \ccStyle{InputIterator} from  \ccStyle{begin} to \ccStyle{end}
+%                \ccPrecond{The value type of \ccStyle{InputIterator}
+%                   is \ccStyle{X_curve_2} objects}
+%                \ccPrecond{The curves are $x$-monotone} 
+%                \ccPrecond{No pair of curves intersect in their interiors} 
+%      }
+
+%    \ccConstructor{Planar_map<I>( Planar_map<I>
+%       &map, I::Info_face &i);} {construct the planar-map of all the faces of
+%       \ccStyle{map} with attached information equal to \ccStyle{i}.}
+
+%\newpage
+
+\begin{ccAdvanced}
+
+\ccHeading{Point Location and Bounding Box}
+
+As described in the introduction, the planar map users can define
+which algorithm to use in the point location queries.  This is done
+by passing an instance of some point location class instance to the map in
+this constructor. The point location class should be a model of the
+\ccc{PlanarMapPointLocation_2} concept. The randomized trapezoidal
+decomposition algorithm is the one used by default in our
+implementation.  However, the users can choose to use the naive or
+``walk'' algorithms (trading time for memory efficiency) or can
+implement their own point location algorithm. This can be done with a
+class derived from the \ccc{Point_location_base<Planar_map>}. The concept \ccc{PlanarMapPointLocation_2} lists the set of requirements 
+(\ccRefPage{PlanarMapPointLocation_2}).
+
+\ccConstructor{Planar_map<Dcel,Traits>(Pm_point_location_base<Self> *pl_ptr);}{}
+  
+%A more advanced strategies 
+%\ccc{Pm_dynamic_closed_bounding_box},
+%\ccc{Pm_dynamic_open_bounding_box},
+%\ccc{Pm_static_closed_bounding_box} and 
+%\ccc{Pm_static_open_bounding_box} 
+%maintain the planar map along with a bounding box.
+%This bounding box is supposed to be large enough (in the dynamic case) 
+%to bound all the finite curves inserted into the map, and to intersect 
+%all the unbounded curves.
+%In the static case, the bounding box is as indicated by its name, static.
+%In any case, each curve is represented as its intersection with the bounding box, 
+%allowing the planar map to deal only with bounded curves. 
+
+
+The planar map user can also determine the bounding box strategy
+This is done with a {\em bounding box class} passed to the map in the following constructors. 
+The \ccc{Pm_dynamic_open_bounding_box} strategy is the one used by default by the library. If only the default strategy is to be used, the user can ignore the following constructors.
+
+\ccConstructor{Planar_map<Dcel,Traits>(Pm_bounding_box_base<Self> *bb_ptr);}{}
+\ccConstructor{Planar_map<Dcel,Traits>(Pm_point_location_base<Self> * pl_ptr,
+        Pm_bounding_box_base<Self> *bb_ptr);}{}
+  
+
+\ccc{Self} here is an abbreviation for the \ccRefName\ type.
+
+\end{ccAdvanced}
+
+\begin{ccAdvanced}
+\ccHeading{Reading Planar map}
+
+\ccMethod{bool read (istream &in);}
+{reading ccRefName\ from a given input stream.
+   The input stream should support the extractor operator (\ccc{>>}) for the \ccStyle{Point} 
+   and \ccStyle{X_curve} types of \ccc{Planar_map}. } 
+
+\ccStyle{template <class Scanner>}
+\ccMethod{bool read (istream &in, Scanner& scanner);}
+{reading \ccRefName\ from a given input stream when taking the scanner class as a parameter.
+   The input stream should support the extractor operator (\ccc{>>}) for the \ccStyle{Point} 
+   and \ccStyle{X_curve} types of \ccc{Planar_map} }
+
+\end{ccAdvanced}
+
+\ccThree{Halfedge_handle}{}{\hspace*{11cm}}
+
+%\ccPredicates
+%\ccHeading{Query Functions}
+\ccQueryFunctions
+
+The following two functions are query functions. Their time complexity
+depends on the point location strategy used.
+
+\ccMethod{Halfedge_handle locate(const Point& p , 
+   Locate_type& lt );}{
+   \ccHtmlNoLinksFrom{computes the location in \ccStyle{pm}
+   where  \ccStyle{p} lies;  
+   If \ccStyle{lt} returns VERTEX then \ccStyle{p} lies on the vertex which 
+   is the target of the returned \ccStyle{Halfedge}. If \ccStyle{lt} returns 
+   EDGE then \ccStyle{p} lies on the returned \ccStyle{Halfedge}. If 
+   \ccStyle{lt} returns FACE then \ccStyle{p} lies on the face which is on 
+   the left of the returned \ccStyle{Halfedge} . If \ccStyle{lt} returns 
+   UNBOUNDED\_FACE then \ccStyle{p} lies on the unbounded face, and 
+   the returned \ccStyle{Halfedge} is on the boundary of 
+   a hole in the unbounded face.}
+   }
+    
+%\ccMethod{ Halfedge_handle vertical_ray_shoot(const typename Traits::Point& p, 
+\ccMethod{ Halfedge_handle vertical_ray_shoot(const Point& p, 
+   Locate_type& lt, bool up_direction );} {if
+   \ccStyle{up_direction} is \ccStyle{true} (respectively,
+   \ccStyle{false}) returns the first edge of \ccStyle{pm} that
+   intersects the upward (respectively, downward) vertical ray emanating
+   from \ccStyle{p}. If several edges intersect the vertical ray
+   in the same (end)point $q$, the function returns the
+   first halfedge pointing at $q$, that is encountered when moving clockwise 
+   from \ccTexHtml{$\vec{pq}$}{$pq$} around $q$ . 
+   In that case the value of \ccStyle {lt} will
+   be VERTEX . If the ray does not intersect any edge, the value 
+   of \ccStyle {lt} 
+   will be UNBOUNDED\_FACE and the 
+  \ccHtmlNoLinksFrom{\ccStyle{Halfedge}} returned will be null
+   valued. Otherwise the value of \ccStyle {lt} will be EDGE.
+   \ccPrecond{\ccStyle{p} lies in the interior of a face of
+      \ccStyle{pm}, i.e., not on an edge or on a vertex.}
+   \ccPostcond{the returned edge belongs to one of the CCB's of the face
+      in which \ccStyle{p} is found, null valued if none is 
+      found. } } 
+
+\begin{ccAdvanced}
+    For some applications the users may want to have direct access to
+    the point location strategy (e.g., query the default strategy about
+    the state of its internal search structure). For this we have implemented 
+    the following function, note that the returned pointer is \ccc{const} so
+    the users cannot change the internal state.
+
+    \ccMethod{const Pm_point_location_base<Self>* point_location();}{returns a
+       const pointer to the point location strategy of the map.}
+
+\ccc{Self} here is an abbreviation for the \ccRefName\ type.
+\end{ccAdvanced}
+
+\ccModifiers
+
+\ccMethod{Halfedge_handle insert( const X_curve &cv );} {inserts the curve
+   cv into the map.
+   \ccPrecond{No curve \ccStyle{cv1} of \ccStyle{pm}
+      intersects \ccStyle{cv} in the interiors of
+      \ccStyle{cv} and \ccStyle{cv1}. }
+   \ccPrecond{\ccc{cv} is not equivalent to a point. } 
+   }                
+
+\begin{ccAdvanced}
+
+\ccHeading{Specialized Insertion Functions}
+
+The following functions enable the usage of information about the map which 
+was acquired beforehand, to save time in insertions. It is recommended to use
+these functions with the naive point location strategy.
+% (using
+%them with the default point location strategy is not helpful since
+%the time is spent in any case on the updating of the internal point location
+%structure). 
+           
+    \ccMethod{Halfedge_handle insert_at_vertices( const X_curve & cv,
+       Vertex_handle v1, Vertex_handle v2 );}{inserts \ccStyle{cv} as a new edge
+       between \ccStyle{v1} and \ccStyle{v2}, where \ccStyle{v1} and
+       \ccStyle{v2} are vertices of the map. \ccStyle{v1}
+          and \ccStyle{v2} represent the source and target of
+          the returned halfedge. 
+       \ccPrecond{\ccc{v1->point()} and \ccc{v2->point()} are the two endpoints of
+          \ccc{cv}.} 
+       \ccPrecond{\ccc{cv} is not equivalent to a point. }}
+    
+    \ccMethod{Halfedge_handle insert_from_vertex( const X_curve & cv,
+       Vertex_handle v1, bool source);}{inserts a new edge for
+       which one endpoint, \ccStyle{v1}, is already in the
+       map. The returned halfedge is the one that has \ccc{v1} as it's source.
+       If \ccStyle{source} is \ccStyle{true} (respectively,
+       \ccStyle{false}) 
+       %then the source (respectively, target) of
+       %the returned halfedge is \ccStyle{v1} and its target (respectively, source)
+       %holds the point which is \ccc{cv's} target (respectively, source). 
+       then the \ccc{target} of the returned halfedge holds the point which is
+       \ccc{cv's} target (respectively, source).
+       \ccPrecond{the second endpoint of \ccStyle{cv} is not 
+          in the map.} 
+       \ccPrecond{\ccc{cv} is not equivalent to a point. }}
+    
+    \ccMethod{Halfedge_handle insert_in_face_interior( const X_curve &
+       cv, Face_handle f);}
+       {inserts \ccStyle{cv} as a new inner component of \ccc{f}. The
+       returned halfedge shares the same direction as the curve
+       \ccc{cv}. \ccPrecond{ \ccStyle{cv} is contained completely in
+       the interior of \ccStyle{f} (no vertex of \ccStyle{cv} meets
+       any vertex on the map).}  \ccPrecond{\ccc{cv} is not equivalent
+       to a point. }}
+
+\end{ccAdvanced}              
+
+\ccMethod{Halfedge_handle split_edge (
+   Halfedge_handle e, const X_curve& c1, 
+   const X_curve& c2);}
+{splits the edge \ccStyle{e} into \ccStyle{e1} and  \ccStyle{e2} , and
+   add a vertex in the splitting point. If the source point of \ccStyle{e}
+   is identical to the source of the curve \ccStyle{c1} then \ccStyle{c1}
+   will be assigned to \ccStyle{e1} and \ccStyle{c2} to \ccStyle{e2}. 
+   Otherwise, the opposite will take place. The returned halfedge will
+   be \ccStyle{e1} where \ccc{e2} is \ccc{e1->next_halfedge()}.
+   \ccPrecond{the preconditions of 
+      \ccStyle{Topological_map<Dcel>::split_edge}.}
+   \ccPrecond{the target of the curve $c1$  is identical to the source of 
+      the curve $c2$.}
+   \ccPrecond{the source of the curve $c1$  is identical to the source point 
+      of \ccStyle{e} and the target of the curve $c2$ is identical to the
+      target point of \ccStyle{e}, or 
+      the source of the curve $c1$  is identical to the target point 
+      of \ccStyle{e} and the target of the curve $c2$ is identical to the
+      source point of \ccStyle{e}.}
+   }
+
+\ccMethod{Halfedge_handle merge_edge(Halfedge_handle e1, Halfedge_handle e2, 
+   const X_curve& cv);}
+{merges the edges \ccStyle{e1} and \ccStyle{e2} into one edge which will hold 
+   the curve \ccStyle{cv}. The return value is the halfedge with the same 
+   source vertex that \ccc{e1} had and the same target \ccc{e2} had.
+   \ccPrecond{the preconditions of 
+      \ccStyle{Topological_map<Dcel>::merge_edge}.}
+   \ccPrecond{the source of the curve $cv$  is identical to the source point 
+      of \ccStyle{e1} and the target of the curve $cv$ is identical to the
+      target point of \ccStyle{e2}, or 
+      the target of the curve $cv$  is identical to the source point 
+      of \ccStyle{e1} and the source of the curve $cv$ is identical to the
+      target point of \ccStyle{e2}.}
+}
+
+\ccMethod{Face_handle remove_edge(Halfedge_handle e);}
+{removes the edge \ccStyle{e} from \ccVar.
+   If the operation causes two faces to merge, the merged face is returned.
+   Otherwise, the face to which the edge was incident is returned.}
+
+%already in the topological map
+%    \ccMethod
+%    {Face  unbounded_face() const;}
+%    {return the unbounded face of the planar-map}
+
+
+
+%        \ccMethod { bool is_valid(); } { check the validity of all the
+%           features of \ccVar . Check for each vertex \ccStyle{v}
+%           whether all incident half-edges (by performing
+%           \ccStyle{get_twin().get_next()})have \ccStyle{v} as their
+%           origin. Check that each half-edge \ccStyle{e} hold the right
+%           curve -- \ccStyle{Traits.curve_source(e.curve())==e.source().point()}
+%           and \ccStyle{Traits.curve_target(e.curve())== e.target().point()}. 
+%           Check that all the edges on the boundary
+%           of each face \ccStyle{f} point to \ccStyle{f} as their
+%           face} 
+
+% @@@ \end{ccClas3s}
+\ccSeeAlso
+     \ccc{Topological_map<Dcel>}\lcTex{ 
+     (\ccRefPage{CGAL::Topological_map<Dcel>})}\\
+     \ccc{PlanarMapDcel_2}\lcTex{ 
+     (\ccRefPage{PlanarMapDcel_2})}
+
+\end{ccRefClass}
+
+% FILL IN THE REST OF THE FILES
+% +------------------------------------------------------------------------+
+%%RefPage: end of main body, begin of footer
+\ccRefPageEnd
+% EOF
+% +------------------------------------------------------------------------+

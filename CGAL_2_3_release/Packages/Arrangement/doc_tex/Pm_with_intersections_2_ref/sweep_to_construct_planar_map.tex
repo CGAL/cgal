@@ -1,0 +1,77 @@
+% +------------------------------------------------------------------------+
+% | Reference manual page: Pm_bounding_box_traits.tex (Planar_map)
+% +------------------------------------------------------------------------+
+% | 
+% | Package: pm (Planar_map_2)
+% | 
+% +------------------------------------------------------------------------+
+
+\ccRefPageBegin
+
+%%RefPage: end of header, begin of main body
+% +------------------------------------------------------------------------+
+
+%sweep_to_construct_planar_map
+\begin{ccRefFunction}{sweep_to_construct_planar_map}
+
+\ccCreationVariable{sweep_to_construct_planar_map}
+
+\ccDefinition
+\ccc{sweep_to_construct_planar_map} is a global function defined for constructing the \ccc{Planar map} 
+induced by the input curves by the sweep line technique.
+
+
+\ccInclude{CGAL/Sweep_curves_to_planar_map.h}
+
+\def\ccLongParamLayout{\ccTrue} 
+
+\ccGlobalFunction{
+   template <class Curve_iterator, class Planar_map>
+   void 
+   sweep_to_construct_planar_map(
+   Curve_iterator curves_begin, 
+   Curve_iterator curves_end, 
+   Planar_map &result);
+}
+
+constructs a \ccc{Planar map} from the curves given in the range 
+\ccStyle{[curves_begin, curves_end)}. The parameter \ccStyle{result} holding the resulting \ccc{Planar map}, if \ccStyle{result} holds a non empty \ccc {Planar map} before calling to \ccc{sweep_to_construct_planar_map} - then \ccStyle{result} will be cleared and the curves \ccStyle{result} was holding would be sweeped together with the curves in \ccStyle{[curves_begin, curves_end)}.
+
+\ccc{sweep_to_construct_planar_map} supports curves which are interior intersect, overlap or non x-monotone, and hence the user may provide his curves as input without any resriction of the kind mentioned above. 
+This function is also updating the \ccc{Planar map} efficiently, since it makes no point location operations when inserting curves to the \ccc{Planar map}. Hence, inserting curves to a \ccc{Planar map}, even when there are no interior intersectrions between those curves and only iteratively inseting them to a \ccc{Planar map} is legal, will be more efficient when using \ccc{sweep_to_construct_planar_map}.
+
+\ccSeeAlso
+\ccRefPage{CGAL::sweep_to_produce_planar_map_subcurves}
+
+\ccImplementation 
+The implementation uses the container $map$ defined in STL for implementing 
+the event queue and the status line.
+The implementation also keeps per each input curve an associated container of all 
+its intersection points ordered from left to right, and also keeps per each event point all 
+its outcoming curves.   
+Due to these structures, when constructing a subdivision no point location operation has to be done. 
+The complexity of this algorithm is $O(nlogn + k)$ where $n$ is the number of the input curves 
+and $k$ is the number of intersection points induced by these curves.
+
+\end{ccRefFunction} % sweep_to_construct_planar_map
+
+% +------------------------------------------------------------------------+
+%%RefPage: end of main body, begin of footer
+\ccRefPageEnd
+% EOF
+% +------------------------------------------------------------------------+
+
+
+
+
+
+
+
+
+
+
+
+%%% Local Variables: 
+%%% mode: latex
+%%% TeX-master: "Pm_file_scanner"
+%%% End: 

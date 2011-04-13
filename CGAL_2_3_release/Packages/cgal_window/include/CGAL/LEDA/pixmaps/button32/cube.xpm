@@ -1,0 +1,42 @@
+/* XPM */
+static const char *cube_xpm[] = {
+/* width height ncolors chars_per_pixel */
+"32 32 3 1",
+/* colors */
+"` c #000099",
+"a c #FFFFFF",
+"b c None",
+/* pixels */
+"bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+"bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+"bbbbbbbbbb````````````````````bb",
+"bbbbbbbbb``aaaaaaaaaaaaaaaaa``bb",
+"bbbbbbbb`a``aaaaaaaaaaaaaaa`a`bb",
+"bbbbbbb`aa``aaaaaaaaaaaaaa`aa`bb",
+"bbbbbb`aaa`a`aaaaaaaaaaaa`aaa`bb",
+"bbbbb`aaaa`a`aaaaaaaaaaa`aaaa`bb",
+"bbbb`aaaaa`aa`aaaaaaaaa`aaaaa`bb",
+"bbb`aaaaaa`aa`aaaaaaaa`aaaaaa`bb",
+"bb````````````````````aaaaaaa`bb",
+"bb```aaaaa`aaa````````aaaaaaa`bb",
+"bb`aa``aaa`aa``aaaa```aaaaaaa`bb",
+"bb`aaaa`aa`a`a`aaa`a``aaaaaaa`bb",
+"bb`aaaaa````aa`aa`aa``aaaaaaa`bb",
+"bb`aaaaaaa```````aaa``aaaaaaa`bb",
+"bb`aaaaaaa`aaa`a`aaa``aaaaaaa`bb",
+"bb`aaaaaaa`aaa````````aaaaaaa`bb",
+"bb`aaaaaaa`aa`aa`aa`a```aaaaa`bb",
+"bb`aaaaaaa`a`aaa`a`aa`aa``aaa`bb",
+"bb`aaaaaaa``aaaa``aaa`aaaa``a`bb",
+"bb`aaaaaaa````````````````````bb",
+"bb`aaaaaa`aaaaaaa`aaa`aaaaaa`bbb",
+"bb`aaaaa`aaaaaaaa`aaa`aaaaa`bbbb",
+"bb`aaaa`aaaaaaaaaa`aa`aaaa`bbbbb",
+"bb`aaa`aaaaaaaaaaa`aa`aaa`bbbbbb",
+"bb`aa`aaaaaaaaaaaaa`a`aa`bbbbbbb",
+"bb`a`aaaaaaaaaaaaaaa``a`bbbbbbbb",
+"bb``aaaaaaaaaaaaaaaa```bbbbbbbbb",
+"bb````````````````````bbbbbbbbbb",
+"bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+"bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb"
+};

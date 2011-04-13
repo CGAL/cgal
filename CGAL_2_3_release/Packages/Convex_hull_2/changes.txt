@@ -1,0 +1,295 @@
+3.21    (31 Jul 2001)
+- moved _ref directories up one level and fixed some broken references to
+  Polyhedron ref pages
+
+3.20    (26 Jul 2001)
+- minor formatting changes
+
+3.19    (26 Jul 2001)
+- made changes in doc necessary for split manual
+
+3.18    (23 Jul 2001)
+- no changes; attempt to fix CVS problem
+
+3.17    (23 Jul 2001)
+- no changes; attempt to fix CVS problem
+
+3.16    (23 Jul 2001)
+- added missing ; in projective_traits_xy
+
+3.15    (20 Jul 2001)
+- removed constructive predicates
+
+3.14    (17 Jul 2001)
+- changed doc to split 2D, 3D, and dD into 3 chapters
+
+3.13    (11 Jul 2001)
+- really fixed the makefiles for windows
+
+3.12    (11 Jul 2001)
+- made reference page table of contents better for HTML doc.
+- fixed makefile so it works on M$
+
+3.11    (27 Jun 2001)
+- added hooks for d-dim convex hull stuff
+
+3.10    (27 Jun 2001)
+- fixed typo in traits class
+- added missing CGAL:: in example file
+- removed obsolete traits include in tests
+
+3.9    (25 Jun 2001)
+- renamed convex_hull_points_2 to convex_hull_2 (keeping convex_hull_points_2
+  for backward compatability, but it's undocumented)
+- in traits classes switched from use of CGAL::Point_2<R> to K::Point_2, etc.
+- introduced traits classes with capitalized names and made the uncapitalized
+  ones simply typedefs for the new ones, but couldn't introduce the right file
+  names for these since the uncapitalized ones need to be there for backward
+  compatability and Windows can't handle fine names that differ in 
+  capitalization only.
+- added example to doc
+- changed wording for default traits class in doc
+- added implementation sections in function ref. pages
+
+3.8    (21 Jun 2001)
+- some cleanups of header files in examples and demos
+
+3.7    (28 May 2001)
+- moved a demo program from the examples directory
+- added README for demo programs
+
+3.6    (24 May 2001)
+- shortened lines over 80 characters
+- fixed paths to example code in doc.
+- change names of example, demo and test subdirectories to Convex_hull_2
+
+3.5    (22 May 2001)
+- converted to new documentation style
+
+3.4    (15 Feb 2001)
+- moved predicate_objects_on_point_2 to Kernel_basic package
+
+3.3    (03 Aug 2000)
+
+- calls of collinear(rat_point, ...) qualified by ::
+  in rat_leda_in_CGAL_2.h, since Koenig-lookup is not implemented
+  by all supported compilers (bug reported by Shai)
+- CH_VISUAL_TIMING_2_* prefixed by CGAL_
+
+3.2.1  (19 Apr 2000)
+
+- leading _ s removed
+- std:: s added in ch_demo.C
+
+3.2    (30 Mar 2000)
+
+- ch_demo.C revised: std:: prefix added in a few places
+
+3.1    (18 Mar 2000)
+
+- ch_test_L.C, ch_test_rL.C revised: std:: prefix added in a few places
+
+3.0.1  (28 Feb 2000)
+
+- <test/ConvexHull/ch_test_SS.C> added to package
+
+3.0    (22 Feb 2000)
+
+- kernel traits used:
+  o Less_xy -> Less_xy_2
+  o Less_yx -> Less_yx_2 (must be added to kernel traits)
+  o Leftturn -> Leftturn_2
+  o Less_rotate_ccw -> Less_rotate_ccw_2 (access function in traits must
+    be fixed)
+  o Right_of_line -> Left_of_line_2 + reversed arguments
+  o Less_dist_to_line -> Less_signed_distance_to_line_2 + max_element
+    replace by min_element; 'negative' removed in ch traits classes
+  o Rightturn not used anymore; 
+    replaced by Rightturn_by_leftturn<Leftturn_2>
+    defined in <CGAL/Kernel/traits_aids.h>
+  o get_ removed from function object access functions and _2 added before
+    _object suffix
+- documentation updated
+- ch_demo.C added
+- tests for convex_hull_leda_traits and convex_hull_rat_leda_traits added:
+  ch_test_L.C, ch_test_rL.C
+- test with SimpleCartesian added: ch_test_SS.C
+
+
+%%%%%%%%%%%%%%%%%%%%%%   R e l e a s e  2 . 1   %%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+2.2.18-> 2.2.19 (03 Dec 99)
+- typename added in a few places (as suggested by -pedantic)
+
+2.2.17-> 2.2.18 (29 Nov 99)
+- forward declaration of ch_timing revised (Borland complain)
+- CGAL::Timer used in place of clock();
+
+2.2.16-> 2.2.17 (11 Nov 99)
+- ch__batch_test qualified in one of the test files 
+  was relevant only for use with LEDA
+- using namespace CGAL; removed in examples/../ch_example_timing.C
+- ch_melkman now uses ch_value_type() as well
+- CGAL_DEFINE_ITERATOR_TRAITS_POINTER_SPEC(Point_2*) added to 
+  examples/../ch_of_poline.C
+
+2.2.15-> 2.2.16 (05 Nov 99)
+- ptrdiff_t removed from istream_iterators
+
+2.2.14-> 2.2.15 (05 Nov 99)
+- flags revised in makefile for examples
+- examples/ch_polyline.C fixed for non-LEDA-use
+- iterator_traits qualified in melkman.C
+
+2.2.13-> 2.2.14 (05 Nov 99)
+- documentation split from code package (as done before)
+
+2.2.12-> 2.2.13 (04 Nov 99)
+- USE_LEDA -> CGAL_USE_LEDA in some test files
+- file name corrected in ch_melkman.C
+- modified example ch_of_polyline. Writes a .ps file now instead
+  of displaying a LEDA window
+- updated documentation
+
+2.2.11-> 2.2.12 (28 Oct 99)
+- max qualified by CGAL:: in examples/ConvexHull/ch_of_polyline.C
+
+2.2.10-> 2.2.11 (05 Oct 99)
+- '/bin' removed in cgal_test
+
+2.2.9 -> 2.2.10 (29 Sep 99)
+- makefile in examples/ConvexHull updated (CGAL_WINDOW_LDFLAGS)
+
+2.2.8 -> 2.2.9  (24 Sep 99)
+- ch_melkman.C added to package again (got lost in between)
+
+2.2.7 -> 2.2.8  (11 Sep 99)
+- removed typename before iterator_traits in __convex_hull_points_2()
+  as suggested by Dima to please M$ VC++.
+
+2.2.6 -> 2.2.7  (06 Sep 99)
+- added 'typename' in Tee_for...
+- moved Tee... to IO/Tee...
+- added std:: to iterator_traits in __convex_hull_points_2()
+ 
+2.2.5 -> 2.2.6  (01 Sep 99)
+- replaced <R> by R:: in r_ predicates
+
+2.2.4 -> 2.2.5  (01 Sep 99)
+- p_Less_dist_to_point changed 
+
+2.2.3 -> 2.2.4  (01 Sep 99)
+- p_Less_dist_to_point added to predicate_object...
+- std:: added to iterator_traits
+- traits added to Tee_for_output_iterator
+
+2.2.2 -> 2.2.3  (01 Sep 99)
+- tried to fix problem with iterator_category()
+- added std to cin, cout in example_from_cin_ro_cout.C
+- makefile in ExamplesConvexHull updated
+
+2.2.1 -> 2.2.2  (31 Aug 99)
+- tried to fix iterator traits probelm with ch_value_type()
+
+2.2   -> 2.2.1  (19 Aug 99)
+- examples/ConvexHull/ch_polyline.C adjusted
+
+2.1.1 -> 2.2    (06 Aug 99)
+- makefile updated: $(OBJ_EXT) 
+- ch_melkman() added
+
+2.1   -> 2.1.1  (05 Aug 99)
+- std::endl and using std::endl added where requested 
+
+2.0.8 -> 2.1    (30 Jul 99)
+- CGAL::value_type() defined in <CGAL/stl_extensions.h>
+  and used in convex hull code
+
+%%%%%%%%%%%%%%%%%%%%%%   R e l e a s e  2 . 0   %%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+2.0.7 -> 2.0.8  (06 May 99)
+- all using statements put in #ifndef CGAL_CFG_NO_NAMESPACE
+
+2.0.6 -> 2.0.7  (06 May 99)
+- makefile for testsuite corrected
+
+2.0.5 -> 2.0.6  (28 Apr 99)
+- std:: problem with Tee_for_output_iterator fixed
+- CGAL_ re-added for flags for checking
+
+2.0.4 -> 2.0.5  (28 Apr 99)
+- re-added orientation with rat_leda
+
+2.0.3 -> 2.0.4  (28 Apr 99)
+- added include for <cstddef> in example file
+
+2.0.2 -> 2.0.3  (07 Apr 99)
+- value_type() prefixed by std:: , as requested by Michael Hoffmann. 
+  Actually, value_type() is not in (namespace std according to) the standard, 
+  but with the mips-compiler it is in namespace std. 
+
+2.0.1 -> 2.0.2  (28 Mar 99)
+- iterator_category, partition, find_if, min_element, max_element
+  prefixed by std::
+
+2.0   -> 2.0.1  (24 Mar 99)
+- <[rat_]leda_in_CGAL.h> corrected 
+  (nameconflicts after removing CGAL_-prefix resolved)
+- examples corrected (missing namespace qual. and name clash for Point_2)
+
+1.3.2 -> 2.0    (22 Mar 99)
+- namespace CGAL introduced (using CGAL_[BEGIN|END]_NAMESPACE)
+
+%%%%%%%%%%%%%%%%%%%%%%   R e l e a s e  1 . 2   %%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+1.3.1 -> 1.3.2
+- documentation updated (get_...)
+- added  const  to some operator()-member functions in function objects
+  in predicate_objects_on_points_2.h
+
+1.3   -> 1.3.1
+- warning (unreachable statement) in ch_graham_andrew.C fixed
+
+1.2.3 -> 1.3
+- Traits classes now provide member functions that generate instances
+  of function objects. The name of these generating member functions
+  is according to the following rule: It starts with get_ followed 
+  by the name of the function object class (starting with small letter), 
+  followed by _object. For example, there are 
+  Traits::Leftturn Traits::get_leftturn_object()  and
+  Traits::Right_of_line 
+  Traits::get_right_of_line_object(const Traits::Point_2&, const Traits::Point_2&). 
+  The algorithms now create the function objects they use by these 
+  generating functions. The generating member functions allow the function 
+  objects to depend on data in a traits class object.
+
+1.2.2 -> 1.2.3
+- bug in CGAL_ch__ref_graham_andrew_scan() fixed
+
+1.2.1 -> 1.2.2
+- lines made shorter
+- CGAL_set_ascii_mode(...) added in example code
+- CGAL__test() renamed to CGAL_ch__batch_test()
+
+1.2   -> 1.2.1
+- missing files ch_timing_2.[hC] added
+
+1.1   -> 1.2
+- Greater_?? predicates eliminated
+- CGAL_ch_lower_hull_points_2(), CGAL_ch_upper_hull_points_2()
+
+1.0.2 -> 1.1
+- checking revised (now a copy of the output is checked -
+  so far the output for a copy of the input was checked)
+- non-recursive version of quickhull 
+
+1.0.1 -> 1.0.2
+- missing test files added
+- too long lines made shorter ;-)
+
+1.0   -> 1.0.1
+- missing files added
+
+0.9   -> 1.0
+- typename added
+- test files modified

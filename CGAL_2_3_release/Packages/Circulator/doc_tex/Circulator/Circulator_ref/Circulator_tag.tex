@@ -1,0 +1,162 @@
+% +------------------------------------------------------------------------+
+% | CGAL Reference Manual: Circulator_tag
+% +------------------------------------------------------------------------+
+% | Requirements for circulators in analogy to STL iterators.
+% | Adaptors between circulators and iterators.
+% | Proposal for CGAL.
+% |
+% | 11.10.1996   Lutz Kettner
+% | 
+% | \RCSdef{\circRev}{$Revision$}
+% | \RCSdefDate{\circDate}{$Date$}
+% +------------------------------------------------------------------------+
+
+% +-----------------------------------------------------+
+\begin{ccRefClass}{Circulator_tag}
+
+\ccHtmlCrossLink{Iterator_tag}
+\ccHtmlIndexC[class]{Iterator_tag}
+
+\ccHtmlCrossLink{Forward_circulator_tag}
+\ccHtmlIndexC[class]{Forward_circulator_tag}
+\ccHtmlCrossLink{Bidirectional_circulator_tag}
+\ccHtmlIndexC[class]{Bidirectional_circulator_tag}
+\ccHtmlCrossLink{Random_access_circulator_tag}
+\ccHtmlIndexC[class]{Random_access_circulator_tag}
+
+\ccHtmlCrossLink{Circulator_base}
+\ccHtmlCrossLink{Circulator_base<Category, T>}
+\ccHtmlIndexC[class]{Circulator_base<Category, T>}
+
+\ccHtmlCrossLink{Forward_circulator_base}
+\ccHtmlCrossLink{Forward_circulator_base<T,Dist,Size>}
+\ccHtmlIndexC[class]{Forward_circulator_base<T,Dist,Size>}
+\ccHtmlCrossLink{Bidirectional_circulator_base}
+\ccHtmlCrossLink{Bidirectional_circulator_base<T,Dist,Size>}
+\ccHtmlIndexC[class]{Bidirectional_circulator_base<T,Dist,Size>}
+\ccHtmlCrossLink{Random_access_circulator_base}
+\ccHtmlCrossLink{Random_access_circulator_base<T,Dist,Size>}
+\ccHtmlIndexC[class]{Random_access_circulator_base<T,Dist,Size>}
+
+\ccHtmlCrossLink{Forward_circulator_ptrbase}
+\ccHtmlCrossLink{Forward_circulator_ptrbase<T,Dist,Size>}
+\ccHtmlIndexC[class]{Forward_circulator_ptrbase<T,Dist,Size>}
+\ccHtmlCrossLink{Bidirectional_circulator_ptrbase}
+\ccHtmlCrossLink{Bidirectional_circulator_ptrbase<T,Dist,Size>}
+\ccHtmlIndexC[class]{Bidirectional_circulator_ptrbase<T,Dist,Size>}
+\ccHtmlCrossLink{Random_access_circulator_ptrbase}
+\ccHtmlCrossLink{Random_access_circulator_ptrbase<T,Dist,Size>}
+\ccHtmlIndexC[class]{Random_access_circulator_ptrbase<T,Dist,Size>}
+
+\ccDefinition
+
+Iterators and circulators as well as different categories of
+circulators can be distinguished with the use of discriminating
+functions and the following circulator tags.  A couple of base classes
+simplify the task of writing own circulators. They declare the
+appropriate tags and the local types needed for circulators.
+To use the tags or base classes only it is sufficient to include:
+
+\ccInclude{CGAL/circulator_bases.h}\\
+\ccInclude{CGAL/circulator.h}
+
+
+\ccSetOneOfTwoColumns{8cm}
+\ccSetTwoOfThreeColumns{3.4cm}{4cm}
+
+\ccHeading{Compile Time Tags}
+
+\ccStruct{struct Circulator_tag {};}{any circulator.}
+\ccGlue
+\ccStruct{struct Iterator_tag {};}{any iterator.}
+
+\ccStruct{struct Forward_circulator_tag {};}{
+ derived from \ccc{forward_iterator_tag}.}
+\ccGlue
+\ccStruct{struct Bidirectional_circulator_tag {};}{
+ derived from \ccc{bidirectional_iterator_tag}.}
+\ccGlue
+\ccStruct{struct Random_access_circulator_tag {};}{
+ derived from \ccc{random_access_iterator_tag}.}
+
+\ccHeading{Base Classes}
+
+\begin{ccTexOnly}
+\def\dummySkipASD{\\\hspace*{18mm}}
+\ccStruct{template < class Category,
+                     class T,
+                     class Dist  = std::ptrdiff_t,
+                     class Size  = std::size_t,\dummySkipASD
+                     class Ptr   = T*,
+                     class Ref   = T&>
+    struct Circulator_base {};}{}
+\end{ccTexOnly}
+%\begin{ccHtmlOnly}
+\lcHtml{ 
+\ccStruct{template < class Category,
+                     class T,
+                     class Dist  = std::ptrdiff_t,
+                     class Size  = std::size_t,
+                     class Ptr   = T*,
+                     class Ref   = T&>
+    struct Circulator_base {};}{}
+}
+%\end{ccHtmlOnly}
+\ccRefLabel{CGAL::Circulator_base}
+
+\ccSetTwoColumns{}{random access.}
+\def\ccTagTemplateInline{\ccTrue}
+\ccStruct{template <class T, class Dist, class Size> 
+          struct Forward_circulator_base {};}{}
+\ccGlue
+\ccStruct{template <class T, class Dist, class Size> 
+          struct Bidirectional_circulator_base {};}{} 
+\ccGlue
+\ccStruct{template <class T, class Dist, class Size> 
+          struct Random_access_circulator_base {};}{} 
+\def\ccTagTemplateInline{\ccFalse}
+
+\ccSeeAlso
+
+\ccc{query_circulator_or_iterator},
+\ccc{Circulator_traits},
+\ccc{Assert_circulator},\\
+\ccc{CGAL_For_all},
+\ccc{is_empty_range},
+\ccc{Circulator}.
+
+\ccExample
+
+The above declarations can be used to distinguish between iterators
+and circulators and between different circulator categories. The
+assertions can be used to protect a templatized algorithm against
+instantiations that do not fulfill the requirements. The following
+example program illustrates both.
+
+%\ccIncludeExampleCode{examples/Circulator/circulator_prog3.C}
+\ccIncludeExampleCode{Circulator/circulator_prog3.C}
+
+\ccImplementation
+
+Since not all current compilers can eliminate the space needed for the
+compile time tags even when deriving from them, we implement a variant
+for each base class that contains a protected \ccc{void*} data member
+called \ccc{_ptr}. Here, the allocated space in the derived
+classes can be reused.
+
+\ccSetOneOfTwoColumns{8.4cm}
+\ccStruct{template <class T, class Dist, class Size> 
+          class Forward_circulator_ptrbase {};}{%
+          forward circulator.}
+\ccGlue
+\ccStruct{template <class T, class Dist, class Size>
+          class Bidirectional_circulator_ptrbase {};}{%
+          bidirectional circulator.} 
+\ccGlue
+\ccStruct{template <class T, class Dist, class Size>
+          class Random_access_circulator_ptrbase {};}{%
+          random access circulator.}
+
+\end{ccRefClass}
+% +-----------------------------------------------------+
+% EOF

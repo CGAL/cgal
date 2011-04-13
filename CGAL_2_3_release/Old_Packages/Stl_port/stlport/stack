@@ -1,0 +1,58 @@
+/*
+ *
+ * Copyright (c) 1994
+ * Hewlett-Packard Company
+ *
+ * Copyright (c) 1996,1997
+ * Silicon Graphics Computer Systems, Inc.
+ *
+ * Copyright (c) 1997
+ * Moscow Center for SPARC Technology
+ *
+ * Copyright (c) 1999 
+ * Boris Fomitchev
+ *
+ * This material is provided "as is", with absolutely no warranty expressed
+ * or implied. Any use is at your own risk.
+ *
+ * Permission to use or copy this software for any purpose is hereby granted 
+ * without fee, provided the above notices are retained on all copies.
+ * Permission to modify the code and to distribute modified code is granted,
+ * provided the above notices are retained, and a notice that the code was
+ * modified is included with the above copyright notice.
+ *
+ */
+
+#ifndef __SGI_STL_STACK
+#define __SGI_STL_STACK
+
+#ifndef __SGI_STL_INTERNAL_DEQUE_H
+#include <stl_deque.h>
+#endif
+
+#ifndef __SGI_STL_INTERNAL_STACK_H
+#include <stl_stack.h>
+#endif
+
+#if defined (__STL_WHOLE_NATIVE_STD)
+#  if defined ( __STL_REDEFINE_STD ) && defined (std) 
+#    undef std
+#    define __STL_RESUME_STD_FOR_STACK
+#    define __STLPORT_NATIVE_PASS
+#  endif
+
+# include __STL_NATIVE_HEADER(stack)
+
+# if defined ( __STL_RESUME_STD_FOR_STACK )
+#    undef __STL_RESUME_STD_FOR_STACK
+#    define std __STLPORT_NAMESPACE
+#    undef __STLPORT_NATIVE_PASS
+# endif
+
+#endif
+
+#endif /* __SGI_STL_STACK */
+
+// Local Variables:
+// mode:C++
+// End:

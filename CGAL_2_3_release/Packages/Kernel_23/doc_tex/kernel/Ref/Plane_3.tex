@@ -1,0 +1,186 @@
+\begin{ccRefClass} {Plane_3<R>}
+
+\ccDefinition
+An object \ccStyle{h} of the data type \ccRefName\ is an oriented
+plane in the three-dimensional Euclidean space $\E^3$. It is defined
+by the set of points with coordinates Cartesian $(x,y,z)$ that satisfy 
+the plane equation 
+
+\begin{ccTexOnly}
+\[h :\;  a\, x +b\, y +c\, z + d = 0.\]
+\end{ccTexOnly}
+\begin{ccHtmlOnly}
+h : a x + b y + c z + d = 0
+\end{ccHtmlOnly}
+
+The plane splits $\E^3$ in a {\em positive} and a {\em negative
+side}. 
+A point $p$ with Cartesian coordinates $(px, py, pz)$ is on the positive side of
+\ccStyle{h}, iff \ccTexHtml{$a\, px +b\, py +c\, pz + d > 0$}{a px + b py +c pz + d > 0}, it is on the
+negative side, iff \ccTexHtml{$a\, px +b\, py\, +c\, pz + d < 0$}{a px + b py +c pz + d < 0}.
+
+
+
+\ccCreation
+\ccCreationVariable{h}
+
+
+\ccHidden \ccConstructor{Plane_3();}
+             {introduces an uninitialized variable \ccVar.}
+
+\ccHidden \ccConstructor{Plane_3(const Plane_3<R> &h);}
+            {copy constructor.}
+
+\ccConstructor{Plane_3(const R::RT &a, 
+                       const R::RT &b,
+                       const R::RT &c,
+                       const R::RT &d)}
+{creates a plane \ccVar\ defined by the equation
+ \ccTexHtml{$a\, px +b\, py +c\, pz + d = 0$}{a px + b py + c pz + d = 0}.
+Notice that \ccVar\ is degenerate if \ccTexHtml{$a = b = c$}{a = b = c}.}
+
+\ccConstructor{Plane_3(const Point_3<R> &p,
+                       const Point_3<R> &q,
+                       const Point_3<R> &r);}
+{creates a plane \ccVar\ passing through the points \ccStyle{p},
+ \ccStyle{q} and \ccStyle{r}. The plane is oriented such that \ccStyle{p}, 
+ \ccStyle{q} and \ccStyle{r} are oriented in a positive sense 
+ (that is counterclockwise) when seen from the positive side of \ccVar.
+Notice that \ccVar\ is degenerate if the points are collinear.}
+
+
+\ccConstructor{Plane_3(const Point_3<R> &p,
+                          const Direction_3<R>&d)}
+{introduces a plane \ccVar\ that passes through point \ccStyle{p} and
+ that has as an orthogonal direction equal to \ccStyle{d}.}
+
+\ccConstructor{Plane_3(const Line_3<R> &l,
+                          const Point_3<R> &p)}
+{introduces a plane \ccVar\ that is defined through the  three points 
+ \ccStyle{l.point(0)}, \ccStyle{l.point(1)} and \ccStyle{p}.}
+
+\ccConstructor{Plane_3(const Ray_3<R> &r,
+                          const Point_3<R> &p)}
+{introduces a plane \ccVar\ that is defined through the  three points 
+ \ccStyle{r.point(0)}, \ccStyle{r.point(1)} and \ccStyle{p}.}
+
+\ccConstructor{Plane_3(const Segment_3<R> &s,
+                          const Point_3<R> &p)}
+{introduces a plane \ccVar\ that is defined through the  three points 
+ \ccStyle{s.source()}, \ccStyle{s.target()} and \ccStyle{p}.}
+
+\ccOperations
+\ccHidden \ccMethod{Plane_3<R> & operator=(const Plane_3<R> &h);}
+        {Assignment.}
+
+\ccMethod{bool operator==(const Plane_3<R> &h2) const;}
+       {Test for equality: two planes are equal, iff they have a non 
+        empty intersection and the same orientation.}
+
+\ccMethod{bool operator!=(const Plane_3<R> &h2) const;}
+       {Test for inequality.}
+
+\ccMethod{R::RT a() const;}
+       {returns the first coefficient of \ccVar.}
+\ccGlue
+\ccMethod{R::RT b() const;}
+       {returns the second coefficient of \ccVar.}
+\ccGlue
+\ccMethod{R::RT c() const;}
+       {returns the third coefficient of \ccVar.}
+\ccGlue
+\ccMethod{R::RT d() const;}
+       {returns the fourth coefficient of \ccVar.}
+
+\ccMethod{Line_3<R> perpendicular_line(const Point_3<R> &p) const;}
+       {returns the line that is perpendicular to \ccVar\ and that
+        passes through point \ccStyle{p}. The line is oriented from
+        the negative to the positive side of \ccVar.}
+
+\ccMethod{Point_3<R>    projection(const Point_3<R> &p) const;}
+       {returns the orthogonal projection of $p$ on \ccVar.}
+
+\ccMethod{Plane_3<R>      opposite() const;}
+       {returns the plane with opposite orientation.}
+
+\ccMethod{Point_3<R> point() const;}
+       {returns an arbitrary point on \ccVar.}
+
+\ccMethod{Vector_3<R> orthogonal_vector() const;}
+       {returns a vector that is orthogonal to \ccVar\ and that
+        is directed to the positive side of \ccVar.}
+
+\ccMethod{Direction_3<R> orthogonal_direction() const;}
+       {returns the direction that is orthogonal to \ccVar\ and that
+        is directed to the positive side of \ccVar.}
+
+\ccMethod{Vector_3<R>      base1() const;}
+       {returns a vector orthogonal to 
+        \ccStyle{orthogonal_vector()}.}
+
+\ccMethod{Vector_3<R>      base2() const;}
+       {returns a vector that is both orthogonal to \ccStyle{base1()},
+        and to \ccStyle{orthogonal_vector()}, and such that the result of 
+        \ccStyle{orientation( point(), point() + base1(), 
+        point()+base2(), point() + orthogonal_vector() )} is positive.}
+
+\ccHeading{2D Conversion}
+
+The following functions provide conversion between a plane and 
+\cgal's two-dimensional space. The transformation is affine, but
+not necessarily an isometry. This means, the transformation preserves
+combinatorics, but not distances.
+
+\ccMethod{Point_2<R>       to_2d(const Point_3<R> &p) const;}
+       {returns the image point of the projection of \ccStyle{p} 
+       under an affine transformation, which maps \ccVar\ onto the 
+       $xy$-plane, with the $z$-coordinate removed.}
+
+\ccMethod{Point_3<R>       to_3d(const Point_2<R> &p) const;}
+       {returns a point $q$, such that \ccStyle{to_2d( to_3d( p ))}
+        is equal to \ccStyle{p}.}
+
+
+\ccMethod{Oriented_side oriented_side(const Point_3<R> &p) const;}
+       {returns either \ccStyle{ON_ORIENTED_BOUNDARY}, or
+        the constant \ccStyle{ON_POSITIVE_SIDE}, or the con\-stant
+        \ccStyle{ON_NEGATIVE_SIDE}, 
+        determined by the position of $p$ relative to the oriented plane \ccVar.
+        }
+
+\ccPredicates
+
+For convenience we provide the following boolean functions:
+
+\ccMethod{bool has_on(const  Point_3<R> &p) const;}
+       {}
+%%\ccGlue
+%%\ccMethod{bool has_on_boundary(const  Point_3<R> &p) const;}
+%%       {}
+\ccGlue
+\ccMethod{bool has_on_positive_side(const  Point_3<R> &p) const;}
+       {}
+\ccGlue
+\ccMethod{bool has_on_negative_side(const  Point_3<R> &p) const;}
+       {}
+
+\ccMethod{bool has_on(const  Line_3<R> &l) const;}
+       {}
+%%\ccGlue
+%%\ccMethod{bool has_on_boundary(const  Line_3<R> &l) const;}
+%%       {}
+
+\ccMethod{bool is_degenerate() const;}
+       {Plane \ccVar\ is degenerate, if the coefficients \ccStyle{a},  
+        \ccStyle{b}, and \ccc{c} of the plane equation are zero.}
+
+\ccHeading{Miscellaneous}
+
+\ccMethod{Plane_3<R>  transform(const Aff_transformation_3<R> &t) const;}
+       {returns the plane obtained by applying $t$ on a point of \ccVar\ 
+        and the orthogonal direction of \ccVar.}
+
+\ccSeeAlso
+\ccRefConceptPage{Kernel::Plane_3}
+
+\end{ccRefClass} 

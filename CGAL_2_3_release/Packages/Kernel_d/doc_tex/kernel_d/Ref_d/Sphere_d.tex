@@ -1,0 +1,140 @@
+\providecommand{\ccRequire}{\ccCommentHeading{Requirement}}
+
+\begin{ccRefClass}{Sphere_d<R>}\ccCreationVariable{S}
+
+\ccDefinition
+
+An instance $S$ of the data type \ccc{Sphere_d} is an oriented sphere
+in some $d$-dimensional space. A sphere is defined by $d+1$ points
+(class \ccc{Point_d<R>}). We use $A$ to denote the array of the
+defining points.  A set $A$ of defining points is \emph{legal} if
+either the points are affinely independent or if the points are all
+equal. Only a legal set of points defines a sphere in the geometric
+sense and hence many operations on spheres require the set of defining
+points to be legal.  The orientation of $S$ is equal to the
+orientation of the defining points, i.e., \ccc{orientation(A)}.
+
+\ccSetOneOfTwoColumns{4cm}
+
+\ccTypes
+
+\ccNestedType{R}{the representation type.  }
+
+\ccNestedType{RT}{the ring type.  }
+
+\ccNestedType{FT}{the field type.  }
+
+\ccNestedType{LA}{the linear algebra layer.  }
+
+\ccNestedType{point_iterator}{a read-only iterator for points defining
+the sphere.  }
+
+\ccSetOneOfTwoColumns{4cm}
+
+\ccCreation
+
+\ccConstructor{Sphere_d<R>()}{introduces a variable \ccc{S}
+of type \ccc{Sphere_d<R>}.}
+
+\ccConstructor{template <class ForwardIterator> Sphere_d<R>(int d,
+ForwardIterator first, ForwardIterator last)}{introduces a variable
+\ccc{S} of type \ccc{Sphere_d<R>}. \ccc{S} is initialized to the
+sphere through the points in \ccc{A = tuple [first,last)}.  \ccPrecond
+$A$ consists of $d+1$ $d$-dimensional points. 
+\ccRequire The value type of ForwardIterator is \ccc{Point_d<R>}. }
+
+\ccSetTwoOfThreeColumns{2.5cm}{2cm}
+
+\ccOperations
+
+\ccMethod{int dimension();}{returns the dimension of the ambient space.}
+
+\ccMethod{Point_d<R> point(int i) ;}{returns the $i$th defining
+point. \ccPrecond $0 \le i \le \ccc{dim}$.  }
+
+\ccMethod{point_iterator points_begin() ;}{returns an iterator
+  pointing to the first defining point.  }
+
+\ccMethod{point_iterator points_end() ;}{returns an iterator pointing
+  beyond the last defining point. }
+
+\ccMethod{bool is_degenerate();}{returns true iff the defining points
+  are not full dimensional. }
+
+\ccMethod{bool is_legal() ;}{returns true iff the set of defining
+  points is legal.  A set of defining points is legal iff their
+  orientation is non-zero or if they are all equal.}
+
+\ccMethod{Point_d<R> center() ;}{returns the center of \ccc{S}.
+  \ccPrecond \ccc{S} is legal.  }
+
+\ccMethod{FT squared_radius() ;}{returns the squared radius of the
+  sphere. \ccPrecond \ccc{S} is legal.}
+
+\ccMethod{Orientation orientation() ;}{returns the orientation of
+  \ccc{S}.}
+
+\ccMethod{Oriented_side oriented_side(const Point_d<R>& p) ;}{returns
+  either the constant \ccc{ON_ORIENTED_BOUNDARY},
+  \ccc{ON_POSITIVE_SIDE}, or \ccc{ON_NEGATIVE_SIDE}, iff p lies on the
+  boundary, properly on the positive side, or properly on the negative
+  side of sphere, resp. \ccPrecond \ccc{S.dimension()==p.dimension()}.
+  }
+
+\ccMethod{Bounded_side bounded_side(const Point_d<R>& p) ;}{returns
+  \ccc{ON_BOUNDED_SIDE}, \ccc{ON_BOUNDARY}, or \ccc{ON_UNBOUNDED_SIDE}
+  iff p lies properly inside, on the boundary, or properly outside of
+  sphere, resp. \ccPrecond \ccc{S.dimension()==p.dimension()}. }
+
+\ccMethod{bool has_on_positive_side (const Point_d<R>& p) ;}{returns
+  \ccc{S.oriented_side(p)==ON_POSITIVE_SIDE}. \ccPrecond
+  \ccc{S.dimension()==p.dimension()}. }
+
+\ccMethod{bool has_on_negative_side (const Point_d<R>& p) ;}{returns
+  \ccc{S.oriented_side(p)==ON_NEGATIVE_SIDE}. \ccPrecond
+  \ccc{S.dimension()==p.dimension()}. }
+
+\ccMethod{bool has_on_boundary (const Point_d<R>& p) ;}{returns
+  \ccc{S.oriented_side(p)==ON_ORIENTED_BOUNDARY}, which is the same as
+  \ccc{S.bounded_side(p)==ON_BOUNDARY}. \ccPrecond
+  \ccc{S.dimension()==p.dimension()}. }
+
+\ccMethod{bool has_on_bounded_side (const Point_d<R>& p) ;}{returns
+  \ccc{S.bounded_side(p)==ON_BOUNDED_SIDE}. \ccPrecond
+  \ccc{S.dimension()==p.dimension()}. }
+
+\ccMethod{bool has_on_unbounded_side (const Point_d<R>& p) ;}{returns
+  \ccc{S.bounded_side(p)==ON_UNBOUNDED_SIDE}.  \ccPrecond
+  \ccc{S.dimension()==p.dimension()}. }
+
+\ccMethod{Sphere_d<R> opposite() ;}{returns the sphere with the same
+  center and squared radius as \ccc{S} but with opposite orientation.
+  }
+
+%\ccMethod{Sphere_d<R> transform(const Aff_transformation_d<R>& t)
+%;}{returns $t(s)$. \ccPrecond \ccc{S.dimension()==t.dimension()}. }
+
+\ccMethod{Sphere_d<R> operator+(const Vector_d<R>& v) ;}{returns the
+  sphere translated by \ccc{v}. \ccPrecond
+  \ccc{S.dimension()==v.dimension()}. }
+
+\ccHeading{Non-Member Functions}  
+
+\ccFunction{bool weak_equality(const Sphere_d<R>& S1, const
+  Sphere_d<R>& S2) ;}{Test for equality as unoriented spheres.
+  \ccPrecond \ccc{S1.dimension()==S2.dimension()}. }
+
+\ccImplementation
+
+Spheres are implemented by a vector of points as a handle type.  All
+operations like creation, initialization, tests, input and output of a
+sphere $s$ take time $O(\ccc{s.dimension()})$. \ccc{dimension()},
+point access take constant time.  The \ccc{center()}-operation takes
+time $O(d^3)$ on its first call and constant time thereafter. The
+sideness and orientation tests take time $O(d^3)$.  The space
+requirement for spheres is $O(\ccc{s.dimension()})$ neglecting the
+storage room of the points.
+
+\end{ccRefClass}
+
+

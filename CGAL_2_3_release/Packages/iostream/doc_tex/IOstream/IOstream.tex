@@ -1,0 +1,151 @@
+
+\cleardoublepage
+\chapter{Operators for IO streams}\label{ChapterIO}
+
+All classes in the \cgal\ kernel provide input and output operators for
+IOStreams.  The basic task of such an operator is to produce a
+representation of an object that can be written as a sequence of
+characters on devices as a console, a file, or a pipe. In \cgal\ 
+we distinguish between  a raw {\sc Ascii}, a raw binary and a 
+pretty printing format. 
+
+\ccEnum{IO::Mode = {ASCII = 0, BINARY, PRETTY};}{}
+
+
+The first one just writes number, e.g.\ the coordinates of a point or
+the coefficients of a line in a machine independent format. The second
+one writes the data in a binary format, e.g.\ a double is represented
+as a sequence of four byte. The format depends on the machine. The
+last one serves mainly for debugging as the type of the geometric
+object is written, as well as the data defining the object. For example
+for a point at the origin with Cartesian double coordinates, the output
+would be \ccc{PointC2(0.0, 0.0)}.  At the moment \cgal\ does not
+provide input operations for pretty printed data. By default a stream
+is in {\sc Ascii} mode.
+
+\ccThree{IO::Mode}{set_mode(std::ios& s, IO::Mode m);}{}
+
+\cgal\ provides the following functions to modify the mode of an IO stream.
+
+\ccFunction{IO::Mode  set_mode(std::ios& s, IO::Mode m);}{}
+
+\ccFunction{IO::Mode  set_ascii_mode(std::ios& s);}{}
+\ccGlue
+\ccFunction{IO::Mode  set_binary_mode(std::ios& s);}{}
+\ccGlue
+\ccFunction{IO::Mode  set_pretty_mode(std::ios& s);}{}
+
+The following functions allow to test whether a stream is in a certain mode.
+
+\ccFunction{IO::Mode  get_mode(std::ios& s);}{}
+
+\ccFunction{bool is_ascii(std::ios& s);}{}
+\ccGlue
+\ccFunction{bool is_binary(std::ios& s);}{}
+\ccGlue
+\ccFunction{bool is_pretty(std::ios& s);}{}
+
+
+\newpage
+
+\ccThree{ostream&}{operator<<( const Class &c);}{}
+
+\begin{ccClass} {ostream}
+\ccSection{Output Streams}
+\ccCreationVariable{os}
+
+\ccDefinition
+\cgal\  defines output operators for classes that are derived
+from the class \ccStyle{ostream}. This allows to write to ostreams
+as \ccStyle{cout} or \ccStyle{cerr}, as well as to strstreams
+and fstreams. Let \ccVar\  be an output stream.
+
+\ccOperations
+The output operator is defined for all classes in the \cgal\ kernel and for the class \ccc{Color} as well.
+
+\ccMethod{ostream& operator<<( const Class &c);}
+{Inserts object \ccStyle{c} in the stream. }
+
+
+\ccExample
+
+\begin{cprog}
+
+#include <CGAL/config.h>
+#include <iostream>
+#include <fstream>
+
+#include <CGAL/Cartesian.h>
+#include <CGAL/Segment_2.h>
+
+typedef CGAL::Point_2< CGAL::Cartesian<double> >     Point;
+typedef CGAL::Segment_2< CGAL::Cartesian<double> >   Segment;
+
+int main()
+{
+    Point p(0,1), q(2,2);
+    Segment s(p,q);
+
+    CGAL::set_pretty_mode(std::cout);
+    std::cout << p << std::endl << q  << std::endl;
+
+    std::ofstream f("data.txt");
+    CGAL::set_binary_mode(f);
+    f << s << p ;
+
+    return 1;
+}
+\end{cprog} 
+\end{ccClass} 
+
+
+\newpage
+\begin{ccClass} {istream}
+\ccSection{Input Streams}
+\ccCreationVariable{is}
+
+\ccDefinition
+\cgal\  defines input operators for classes that are derived
+from the class \ccStyle{istream}. This allows to read from istreams
+as \ccStyle{cin}, as well as from strstreams and fstreams.
+Let \ccVar\ be an input stream.
+
+\ccOperations
+
+The input operator is defined for all classes in the \cgal\ kernel.
+
+\ccMethod{istream& operator>>(Class c);}
+{Extracts object \ccStyle{c} from the stream.}
+
+
+\ccExample
+
+\begin{cprog}
+
+#include <CGAL/config.h>
+#include <iostream>
+#include <fstream>
+
+#include <CGAL/Cartesian.h>
+#include <CGAL/Segment_2.h>
+
+typedef CGAL::Point_2< CGAL::Cartesian<double> >     Point;
+typedef CGAL::Segment_2< CGAL::Cartesian<double> >   Segment;
+
+int
+main()
+{
+    Point p, q;
+    Segment s;
+
+    CGAL::set_ascii_mode(std::cin);
+    std::cin >> p >> q;
+
+    std::ifstream f("data.txt");
+    CGAL::set_binary_mode(f);
+    f >> s >> p;
+
+    return 1;
+}
+\end{cprog} 
+\end{ccClass} 

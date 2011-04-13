@@ -1,0 +1,50 @@
+Changes done to the `Polytope_distance_d' package
+
+Version 1.1.2 on 31-Jul-2001
+- Susan moved Optimisation_ref directory up one level
+
+Version 1.1.1 on 16-Jul-2001
+- renamed concept 'Optimisation_d_traits' to 'OptimisationDTraits'
+
+Version 1.1 on 09-Jul-2001
+- replaced template parameter 'R' by 'K'
+- fixed warning message of test program when no number type is available
+
+Version 1.0.3 on 21-Mar-2001
+- removed 'maintainer' line from file header
+
+Version 1.0.2 on 20-Mar-2001
+- no changes (moved to cvs-server)
+
+Version 1.0.1 on 04-Oct-2000
+- fixed a bug in `is_zero'
+
+Version 1.0 on 28-Sep-2000
+- first full release
+
+Version 0.6 on 26-Sep-2000
+- unified traits class models for dD optimisation algorithms
+
+Version 0.5 on 15-Sep-2000
+- added indexing command.
+
+Version 0.4.1 on 13-Sep-2000
+- replaced '\ccPureGlobalScope' by 'CGAL::' in C++ arguments of '\cc...' macros
+- changed semantic and implementation of 'is_degenerate'.
+
+Version 0.4 on 12-Sep-2000
+- documentation split up into user and reference manual parts.
+
+Version 0.3 on 06-Sep-2000
+- adapted to "enhanced" QP solver
+- enabled partial exact/filtered pricing
+
+Version 0.2.1 on 05-Sep-2000
+- no changes (problem with submission script)
+
+Version 0.2 on 05-Sep-2000
+- data accessors moved to separate header files in package Optimisation_basic
+- changed leading `_' to trailing `_' in template parameters
+
+Version 0.1 on 05-Sep-2000
+- initial version

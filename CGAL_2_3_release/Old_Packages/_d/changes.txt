@@ -1,0 +1,60 @@
+2.6     (17 May 2001)
+- Remove PointSd.h
+- Fix BCC warning in PointHd.h
+
+2.5     (13 Feb 2001)
+- Take care of Simple_homogeneous<>.
+
+2.4     (20 Jul 2000)
+
+- is_zero qualified by CGAL_NTS
+
+2.3.1   (19 Apr 2000)
+
+- _R -> R_
+
+2.3     (02 Feb 2000)
+
+- automatic inclusion for Simple_cartesian added
+
+%%%%%%%%%%%%%%%%%%%%%%   R e l e a s e  2 . 1   %%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+2.2.6 -> 2.2.7   (08 Oct 99)
+- Point_d.h updated (inclusion of PointCd.h)
+
+2.2.5 -> 2.2.6   (29 Sep 99)
+- PointCd.h removed from package :) 
+
+2.2.4 -> 2.2.5   (29 Sep 99)
+- added write(os,d) to PointHd
+- some cosmetic changes like FT *i, *j;  FT* i; FT* j;
+
+2.2.3 -> 2.2.4   (28 Sep 99)
+- for (int i = ...) fixed for Point_d and M$
+
+2.2.2 -> 2.2.3   (14 Sep 99)
+- Point_d_base fixed in stream operator
+         ^^^^^
+
+2.2.1 -> 2.2.2   (14 Sep 99)
+- some cosmetics :) e.g. maintainer added to header lines
+
+2.2   -> 2.2.1   (13 Sep 99)
+- class Point_d : public _R::Point_d_base
+  (also in a typedef)               ^^^^^
+
+2.1   -> 2.2     (13 Sep 99)
+- moved definition of constructor with iterator range to the class body
+  to please MS VC++, as requested by Dima
+- removed 'ifndef CGAL_CFG_NO_MEMBER_TEMPLATES'
+
+%%%%%%%%%%%%%%%%%%%%%%   R e l e a s e  2 . 0   %%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+2.0   -> 2.1
+- undocumented begin() and end() iterators added to d-dim points
+
+1.0   -> 2.0
+- namespace CGAL { } introduced
+
+%%%%%%%%%%%%%%%%%%%%%%   R e l e a s e  1 . 2   %%%%%%%%%%%%%%%%%%%%%%%%%%%%
+

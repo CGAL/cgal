@@ -1,0 +1,109 @@
+2.27 (8 August 2001)
+- Move .round() before its calls so that it can be inlined.
+
+2.26 (8 August 2001)
+- main() properly returns an int and not a bool in the test programs.
+
+2.25 (1 August 2001)
+- Test with MP_Float when GMP is not there.
+
+2.24 (12 July 2001)
+- Undo last change as it produces run time failures (I don't know why).
+- Put the offending functions inline.
+
+2.23 (9 July 2001)
+- Move some stuff back to src/Fixed_precision_nt.C, because non-static
+  non-inline non-template functions cannot be multiply linked !
+
+2.22 (28 June 2001)
+- Update doc/demo/example to use CGAL::force_ieee_double_precision().
+
+2.21 (20 June 2001)
+- Use CGAL window in the demo when LEDA is not present.
+- Update to new style for headers and Point_2<R> => R::Point_2.
+
+2.20 (18 June 2001)
+- Simplify the example and demo program.
+- Test for LEDA in the demo program.
+
+2.18 (25 February 2001)
+- Fix for Intel platforms.
+- Cleanup the demo program.
+
+2.17 (25 January 2001)
+  Added to_interval().
+  Move the doc to the appropriate directory.
+
+2.16 (1 Aug 2000)
+  qualifying with CGAL_NTS
+
+2.15 (23 Jun 2000)
+  adding operators <= > >= for Micro$oft and kcc 
+
+2.14 (17 May 2000)
+  improved version, no longer .C file, + pb borland std:: in example
+
+2.13 ( 6 Jan 2000)
+  makefiles demo and example
+
+2.12 (16 Dec 1999)
+  target all in demo makefile
+
+2.11 (15 Dec 1999)
+  Problem in makefiles demo and example
+
+2.10 (13 Dec 1999)
+  Borland M$ VC++  demo
+
+2.7 (19 Oct 1999)
+  M$ VC++ (cerr)    and adding cmp_dist_to_pointC[23]
+
+2.6 (18 Oct 1999)
+  M$ VC++
+
+2.5 (18 May 1999)
+  doc
+
+2.4 (17 May 1999)
+
+2.3 (10 May 1999)
+  small bug in test suite
+
+2.2 ( 7 May 1999)
+  remove warnings in test suite
+
+2.1 (30 Apr 99)
+  few compiler problems, few minors corrections in documentation.
+
+2.0 (20 Apr 99)
+  namespace CGAL
+
+1.7 (16 Dec 98)
+  warnings removal. CGAL_warning, cast of CGAL_Sign for printing
+
+1.6 (9 Dec 98)
+  warnings removal. CGAL_warning, cast of CGAL_Sign for printing
+
+1.5 (3 Dec 98)
+  errors in headers
+
+1.4 (3 Dec 98)
+  bugs in makefiles
+
+1.3 (27 Nov 98)
+  change the name from Fixed to Fixed_precision_nt
+
+1.2 (26 Nov 98)
+  correct minor bugs
+
+1.0 (Nov 98)
+  Predicates :
+    CGAL_orientationC2
+    CGAL_side_of_oriented_circleC2
+
+    Thus everything necessary for 2D Delaunay triangulation.
+
+  Predicates :
+    CGAL_orientationC3
+    CGAL_side_of_oriented_sphereC3
+  are waiting for predicates_on_ftC3.h

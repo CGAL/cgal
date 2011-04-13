@@ -1,0 +1,264 @@
+\begin{ccRefClass}{Aff_transformation_2<R>}
+
+\ccDefinition
+The class \ccRefName\ represents two-dimensioanl affine transformations. 
+The general form of an affine transformation is based on homogeneous
+representation of points. Thereby all transformations can be realized by
+matrix multiplication. 
+
+Since the general form is based on the homogeneous representation, a
+transformation matrix multiplication by a scalar does not change
+the represented transformation. Therefore, any transformation represented
+by a matrix with rational entries can be represented by a 
+transformation matrix with integer entries as well by multiplying
+the matrix with the common denominator of the rational entries. 
+Hence it is sufficient to have number type \ccStyle{R::RT} for the entries 
+of an affine transformation.
+
+{\cgal} offers several specialized affine transformations. 
+Different constructors are provided to create them. 
+They are parameterized with a symbolic name to
+denote the transformation type, followed by additional parameters.
+The symbolic name tags solve ambiguities in the function
+overloading and they make the code more readable, i.e.\ what type
+of transformation is created.
+
+Since two-dimensional points have three 
+homogeneous coordinates we have a $3\times 3$ matrix ($m_{ij}$).
+Following C-style, the indices start at zero.
+
+If the homogeneous representations are normalized such that the 
+homogenizing coordinate is 1, then the upper left $2\times 2$ matrix realizes
+linear transformations and in the matrix form of a translation,  the
+translation vector $(v_0,$ $v_1,$ $1)$ appears in the last column of the 
+matrix. In the normalized case, entry $hw$ is always 1.
+Entries $m_{20}$ and $m_{21}$ are always zero and therefore do not appear in
+the constructors.
+
+
+\ccCreation
+\ccCreationVariable{t}
+
+\ccConstructor{Aff_transformation_2(const Identity_transformation& );}
+            {introduces an identity transformation.}
+
+\ccConstructor{Aff_transformation_2(const Translation,
+                                    const Vector_2<R> &v);}
+            {introduces a translation by a vector $v$.}
+
+\ccConstructor{Aff_transformation_2(const Rotation,
+                             const Direction_2<R> &d,
+                             const R::RT &num,
+                             const R::RT &den = RT(1));}
+            {approximates the rotation over the angle indicated by direction 
+             $d$, such that the differences between the sines and cosines
+             of the rotation given by d and the approximating rotation
+             are at most $num/den$ each.
+             \ccPrecond $num/den>0$. }
+
+\ccConstructor{Aff_transformation_2(const Rotation,
+                                       const R::RT &sine_rho, 
+                                       const R::RT &cosine_rho, 
+                                       const R::RT &hw = RT(1));}
+            {introduces a rotation by the angle \ccStyle{rho}.
+             \ccPrecond 
+             \ccTexHtml{$\mbox{\it sine\_rho}^2 +  \mbox{\it cosine\_rho}^2 == hw^2$}{<MATH><i>sine_rho</i><SUP>2</SUP> + <i>cosine_rho</i><SUP>2</SUP> == 
+<i>hw</i><SUP>2</SUP></MATH>}.}
+
+\ccConstructor{Aff_transformation_2(const Scaling,
+                                       const R::RT &s,
+                                       const R::RT &hw = RT(1));}
+            {introduces a scaling by a scale factor $s/hw$.}
+
+\newsavebox{\arrtwo}
+\newsavebox{\arrlintwo}
+\newsavebox{\transvectwo}
+
+\savebox{\arrtwo}{\small $\left(\begin{array}{ccc}
+                 m_{00} & m_{01} & m_{02}\\
+                 m_{10} & m_{11} & m_{12}\\
+                  0     &  0     & hw
+              \end{array}\right)$}
+
+\savebox{\arrlintwo}{\small $\left(\begin{array}{cc}
+                 m_{00} & m_{01}\\
+                 m_{10} & m_{11}
+              \end{array}\right)$}
+
+\savebox{\transvectwo}{\small $\left(\begin{array}{c}
+                 m_{02}\\
+                 m_{12}
+              \end{array}\right)$}
+
+\ccConstructor{Aff_transformation_2(
+                const R::RT &m00, const R::RT &m01, const R::RT &m02,
+                const R::RT &m10, const R::RT &m11, const R::RT &m12,
+                const R::RT &hw = RT(1));}
+            {introduces a general affine transformation in the
+             \ccTexHtml{$3 \times 3$ matrix form \usebox{\arrtwo}.}%
+             {3x3 matrix <IMG ALIGN=CENTER SRC=arrtwo.gif> .}
+             The sub-matrix \ccTexHtml{$1\over hw$\usebox{\arrlintwo}}%
+             {<MATH><i>hw</i><SUP>-1</SUP></MATH> <IMG ALIGN=CENTER 
+             SRC=arrlintwo.gif>} contains the scaling and rotation 
+             information, the vector \ccTexHtml{$1\over hw$
+             \usebox{\transvectwo}}{<MATH><i>hw</i><SUP>-1</SUP></MATH>
+             <IMG ALIGN=CENTER SRC=transvectwo.gif>}
+             contains the translational part of the transformation.}
+
+\savebox{\arrtwo}{\small $\left(\begin{array}{ccc}
+                 m_{00} & m_{01} & 0\\
+                 m_{10} & m_{11} & 0\\
+                  0     &  0     & hw
+              \end{array}\right)$}
+                  
+\ccConstructor{Aff_transformation_2(
+                                       const R::RT &m00, const R::RT &m01,
+                                       const R::RT &m10, const R::RT &m11,
+                                       const R::RT &hw = RT(1));}
+            {introduces a general linear transformation 
+             \ccTexHtml{\usebox{\arrtwo},}{<IMG ALIGN=CENTER SRC=arrtwo2.gif> ,}
+             i.e.\ there is no translational part.}
+
+
+\ccOperations
+
+The main thing to do with transformations is to apply them on
+geometric objects. Each class \ccStyle{Class_2<R>} representing
+a geometric object has a member function:
+
+\ccStyle{Class_2<R>  transform(Aff_transformation_2<R> t)}.
+
+
+The transformation classes provide a member function \ccStyle{transform()}
+for points, vectors, directions, and lines:
+
+\ccMethod{Point_2<R>  transform(const Point_2<R> &p) const;}
+       {}
+\ccGlue
+\ccMethod{Vector_2<R>  transform(const Vector_2<R> &p) const;}
+       {}
+\ccGlue
+\ccMethod{Direction_2<R>  transform(const Direction_2<R> &p) const;}
+       {}
+\ccGlue
+\ccMethod{Line_2<R>  transform(const Line_2<R> &p) const;}
+       {}
+
+\cgal\ provides function operators for these member functions:
+
+\ccMethod{Point_2<R>  operator()(const Point_2<R> &p) const;}
+       {}
+\ccGlue
+\ccMethod{Vector_2<R>  operator()(const Vector_2<R> &p) const;}
+       {}
+\ccGlue
+\ccMethod{Direction_2<R>  operator()(const Direction_2<R> &p) const;}
+       {}
+\ccGlue
+\ccMethod{Line_2<R>  operator()(const Line_2<R> &p) const;}
+       {}
+
+\ccHeading{Miscellaneous}
+
+\ccMethod{Aff_transformation_2<R> operator*(const Aff_transformation_2<R> &s) const;}{composes two affine transformations.}
+
+\ccMethod{Aff_transformation_2<R>  inverse() const;}
+       {gives the inverse transformation.}
+
+%\ccMethod{Aff_transformation_2<R>  transpose() const;}
+%       {returns the affine transformation defined by transposing
+%       the linear transformation in \ccVar\ and setting the
+%       translational part to zero.}
+
+\ccMethod{bool                 is_even() const;}
+       {returns \ccStyle{true}, if the transformation is not reflecting,
+        i.e.\ the determinant of the involved linear transformation is
+        non-negative.}
+
+\ccMethod{bool                 is_odd() const;}
+       {returns \ccStyle{true}, if the transformation is reflecting.}
+
+
+%\ccMethod{Aff_transformation_2<R>  general_form() const;}
+%       {returns the affine transformation in matrix form.}
+
+The matrix entries of a matrix representation of a 
+\ccStyle{Aff_transformation_2<R>}
+can be accessed trough the following member functions:
+
+\ccMethod{FT          cartesian(int i, int j) const;}
+                      {}
+\ccGlue
+\ccMethod{FT          m(int i, int j) const;}
+       {returns entry $m_{ij}$ in a matrix representation in which $m_{22}$ is 1.}
+
+\ccMethod{RT          homogeneous(int i, int j) const;}
+                      {}
+\ccGlue
+\ccMethod{RT          hm(int i, int j) const;}
+       {returns entry $m_{ij}$ in some fixed matrix representation.} 
+
+
+For affine transformations  no I/O operators are defined.
+
+%\ccImplementation
+%Depending on the constructor we have different internal representations.
+%This approach uses less memory and the transformation can be applied
+%faster.
+%
+%Affine transformations offer no \ccStyle{transform()} member function
+%for complex objects because they are defined in terms of  points vectors and 
+%directions.  As the internal representation of a complex object
+%is private the transformation code should go there.
+
+\ccSeeAlso
+\ccc{Identity_transformation}, 
+\ccc{Rotation}, 
+\ccc{Scaling},
+\ccc{Translation} \\
+\ccc{rational_rotation_approximation}
+
+\ccExample
+
+\begin{cprog}
+  typedef Cartesian<double> RepClass;
+  typedef Aff_transformation_2<RepClass> Transformation;
+  typedef Point_2<RepClass> Point;
+  typedef Vector_2<RepClass> Vector;
+  typedef Direction_2<RepClass> Direction;
+
+  Transformation rotate(ROTATION, sin(pi), cos(pi));
+  Transformation rational_rotate(ROTATION,Direction(1,1), 1, 100);
+  Transformation translate(TRANSLATION, Vector(-2, 0));
+  Transformation scale(SCALING, 3);
+
+  Point q(0, 1);
+  q = rational_rotate(q); 
+
+  Point p(1, 1);
+
+  p = rotate(p); 
+
+  p = translate(p); 
+
+  p = scale(p);
+\end{cprog} 
+
+The same would have been achieved with
+
+\begin{cprog}
+
+  Transformation transform = scale * (translate * rotate);
+  p = transform(Point(1.0, 1.0));
+\end{cprog} 
+
+\ccSeeAlso
+\ccRefIdfierPage{CGAL::Aff_transformation_3<R>} \\
+\ccRefIdfierPage{CGAL::Identity_transformation} \\
+\ccRefIdfierPage{CGAL::Reflection} \\
+\ccRefIdfierPage{CGAL::Rotation} \\
+\ccRefIdfierPage{CGAL::Scaling} \\
+\ccRefIdfierPage{CGAL::Translation} \\
+
+\end{ccRefClass} 
+

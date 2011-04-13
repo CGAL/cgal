@@ -1,0 +1,25 @@
+\begin{ccRefClass}{Simple_cartesian<FieldNumberType>}
+\ccInclude{CGAL/Simple_cartesian.h}
+
+\ccDefinition
+A model for a \ccc{Kernel} using Cartesian coordinates to represent the
+geometric objects. 
+
+\ccIsModel
+\ccRefConceptPage{Kernel}
+
+\ccTypes
+\ccTypedef{typedef FieldNumberType FT;}{}
+\ccGlue
+\ccTypedef{typedef FieldNumberType RT;}{}
+
+\ccImplementation In contrast to \ccc{Cartesian}, no reference counting
+is used internally. This eases debugging, but may slow down algorithms
+that copy objects intensively.
+
+\ccSeeAlso
+\ccRefIdfierPage{CGAL::Cartesian<FieldNumberType>} \\
+\ccRefIdfierPage{CGAL::Homogeneous<RingNumberType>} \\
+\ccRefIdfierPage{CGAL::Simple_homogeneous<RingNumberType>} \\
+
+\end{ccRefClass}

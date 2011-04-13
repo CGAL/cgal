@@ -1,0 +1,102 @@
+% +------------------------------------------------------------------------+
+% | Reference manual page: PartitionIsValidTraits_2.tex
+% +------------------------------------------------------------------------+
+% | 10.05.2000   Susan Hert
+% | Package: Partition_2
+% | 
+% |
+% +------------------------------------------------------------------------+
+
+\renewcommand\ccRefPageBegin{\ccParDims\cgalColumnLayout\begin{ccAdvanced}}
+\renewcommand\ccRefPageEnd{\ccParDims\cgalColumnLayout\end{ccAdvanced}}
+\begin{ccRefConcept}{PartitionIsValidTraits_2}
+
+\ccDefinition
+  
+Requirements of a traits class that is used 
+by \ccc{partition_is_valid_2}, \ccc{convex_partition_is_valid_2},
+and \ccc{y_monotone_partition_is_valid_2} for testing if a given set of 
+polygons are nonoverlapping and if their union is a polygon that is the 
+same as a polygon represented by a given sequence of points.  Note that the 
+traits class for \ccc{partition_is_valid_2} may have to satisfy additional
+requirements if each partition polygon is to be tested for having a
+particular property; see, for example, the descriptions of the 
+function \ccc{is_convex_2}
+and the concept YMonotonePartitionTraits\_2 for the additional requirements
+for testing for convexity and $y$-monotonicity, respectively.
+
+\ccTypes
+
+\ccNestedType{Point_2}{The point type on which the partitioning algorithm operates.}
+
+\ccNestedType{Polygon_2}{The polygon type created by the partitioning 
+function. This type should provide a nested type \ccc{Vertex_const_iterator} 
+that is the type of the non-mutable iterator over the polygon vertices.}%
+
+\ccNestedType{Is_valid}{A model of the concept PolygonIsValid}
+
+\ccNestedType{Less_xy_2}{
+Predicate object type that compares \ccc{Point_2}s lexicographically.
+Must provide \ccc{bool operator()(Point_2 p, Point_2 q)} where \ccc{true}
+is returned iff $p <_{xy} q$.
+We have $p<_{xy}q$, iff $p_x < q_x$ or $p_x = q_x$ and $p_y < q_y$,
+where $p_x$ and $p_y$ denote the $x$ and $y$ coordinates of point $p$, 
+respectively.
+}
+
+\ccNestedType{Leftturn_2}{
+Predicate object type that provides 
+\ccc{bool operator()(Point_2 p,Point_2 q,Point_2 r)}, which
+returns \ccc{true} iff \ccc{r} lies to the left of the 
+oriented line through \ccc{p} and \ccc{q}.}
+
+\ccNestedType{Orientation_2}{Predicate object type that provides
+\ccc{CGAL::Orientation operator()(Point_2 p, Point_2 q, Point_2 r)} that
+returns \ccStyle{CGAL::LEFTTURN}, if $r$ lies to the left of the oriented 
+line $l$ defined by $p$ and $q$, returns \ccStyle{CGAL::RIGHTTURN} if $r$ 
+lies to the right of $l$, and returns \ccStyle{CGAL::COLLINEAR} if $r$ lies
+on $l$.}
+
+
+
+\ccCreation
+\ccCreationVariable{traits}  %% choose variable name
+
+Only a copy constructor is required.
+
+\ccConstructor{PartitionIsValidTraits_2(PartitionIsValidTraits_2& tr)}{}
+
+\ccOperations
+
+The following functions that create instances of the above predicate object
+types must exist.
+
+\ccMethod{Orientation_2 is_valid_object();}{}
+
+\ccMethod{Less_xy_2 less_xy_2_object();}{}
+
+\ccMethod{Leftturn_2 leftturn_2_object();}{}
+
+\ccMethod{Orientation_2 orientation_2_object();}{}
+
+
+\ccHasModels
+
+\ccRefIdfierPage{CGAL::Partition_is_valid_traits_2<Traits, PolygonIsValid>}
+
+\ccSeeAlso
+
+\ccRefIdfierPage{CGAL::approx_convex_partition_2} \\
+\ccRefIdfierPage{CGAL::greene_approx_convex_partition_2} \\
+\ccRefIdfierPage{CGAL::optimal_convex_partition_2} \\
+\ccRefIdfierPage{CGAL::y_monotone_partition_2}
+
+\end{ccRefConcept}
+\renewcommand\ccRefPageBegin{\ccParDims\cgalColumnLayout}
+\renewcommand\ccRefPageEnd{\ccParDims\cgalColumnLayout}
+
+% +------------------------------------------------------------------------+
+%%RefPage: end of main body, begin of footer
+% EOF
+% +------------------------------------------------------------------------+
+

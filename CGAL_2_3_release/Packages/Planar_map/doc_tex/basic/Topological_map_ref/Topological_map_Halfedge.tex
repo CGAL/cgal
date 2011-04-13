@@ -1,0 +1,60 @@
+% +------------------------------------------------------------------------+
+% | Reference manual page: Topological_map_Halfedge.tex
+% +------------------------------------------------------------------------+
+% | 
+% | Package: pm (Planar Map)
+% | 
+% +------------------------------------------------------------------------+
+
+
+\ccRefPageBegin
+
+%%RefPage: end of header, begin of main body
+% +------------------------------------------------------------------------+
+\ccThree{Ccb_halfedge_circulator}{}{\hspace*{8cm}}
+
+\begin{ccRefClass}[Topological_map<Dcel>::]{Halfedge}
+\ccRefLabel{tpm_halfedge} % label added to avoid ambiguity of the name Vertex
+    
+\ccDefinition An object $e$ of the class
+    \ccRefName\ is a directed edge in a topological
+    map, which represents a halfedge of the DCEL.     
+
+\ccInheritsFrom
+    \ccHtmlNoLinksFrom{\ccc{Dcel::Halfedge}}
+
+\ccCreation
+\ccCreationVariable{e}
+     
+    \ccConstructor{Halfedge();}{default constructor.}    	    
+    
+\ccAccessFunctions
+    
+    \ccMethod{Vertex_handle source() const;}{
+      returns the source vertex of \ccVar{}.}
+    \ccGlue
+    \ccMethod{Vertex_handle target() const; }{returns
+       the destination vertex of \ccVar{}.}
+    \ccGlue    
+    \ccMethod{Face_handle face() const; }{returns the
+       face that \ccVar{} is incident to.}
+    \ccGlue    
+    \ccMethod{Halfedge_handle twin() const;}{returns the
+       twin halfedge.}
+    \ccGlue    
+    \ccMethod{Halfedge_handle next_halfedge() const;
+       }{returns the next halfedge on the CCB containing
+       \ccVar{}.}
+
+    \ccMethod{Ccb_halfedge_circulator ccb() const;}{returns a circulator to
+       traverse the halfedges of the CCB containing \ccVar{}. The circulator
+       is initialized to \ccVar{}.}
+
+
+\end{ccRefClass}
+
+% +------------------------------------------------------------------------+
+%%RefPage: end of main body, begin of footer
+\ccRefPageEnd
+% EOF
+% +------------------------------------------------------------------------+

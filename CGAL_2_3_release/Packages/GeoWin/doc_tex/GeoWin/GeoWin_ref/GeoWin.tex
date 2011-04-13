@@ -1,0 +1,862 @@
+% +------------------------------------------------------------------------+
+% | CGAL Reference Manual:  geowin.tex
+% +------------------------------------------------------------------------+
+
+
+% +----------------------------------------------------------+
+%---------------------------------------------
+% GeoWin data type
+%---------------------------------------------
+
+\ccDefGlobalScope{}
+\begin{ccRefClass}{GeoWin}
+
+\ccDefinition
+
+\ccInclude{CGAL/geowin_support.h}
+
+
+\ccCreationVariable{gw}
+
+    An instance of data type \ccRefName\ is an editor 
+    for sets of geometric objects. It can be used for the visualization of result
+    and progression of geometric algorithms.
+    
+    \ccRefName\ manages the geometric objects in so called scenes.
+    A scene contains a container storing geometric objects (the contents of the
+    scene) and provides all operations that \ccRefName\ needs to edit it. 
+    Every scene maintains a set of parameters:
+    
+    \begin{itemize}
+    \item $name$ is the name of the scene 
+          (type $leda\_string$)
+    \item $color$ is the color for drawing the boundaries of the objects
+          (type $leda\_color$)
+    \item $color2$ (or $selection\_color$) is the color for drawing the selected boundaries of the objects
+          (type $leda\_color$)
+    \item $fill\_color$ is the color for drawing the interior of the objects
+          (type $leda\_color$)
+    \item $line\_width$ is the line width used for drawing the objects
+          (type $int$)
+    \item $active\_line\_width$ is the line width used for drawing the objects if the
+          scene is active (type $int$)
+    \item $line\_style$ is the line style used for drawing the objects
+          (type $leda\_line\_style$)
+    \item $visible$ is $true$ if the scene is visible in his $GeoWin$, $false$ otherwise
+          (type $bool$)
+    \item $active$ is $true$ if the scene has input focus (is currently edited) in
+          his $GeoWin$, $false$ otherwise (type $bool$)
+    \end{itemize}
+    
+    There are three kinds of scenes:
+    \begin{enumerate}
+    
+    \item {\em Basic scene}
+    
+    The basic scene  type $GeoBaseScene<T>$ works on  every 
+    container type  that provides an interface as the list of the \stl\ library. 
+    More precisely, $T$ has to support the following type definitions and operations:
+    \begin{itemize}
+    \item $value\_type$ - the type of the values the container holds
+    \item $iterator$ 
+    \item operations $begin()$ and $end()$ returning an iterator that can be used
+          for begining (ending) the traversal of the container
+    \item $void \ push\_back(const \ T\&)$ for inserting an element at the end of the container
+    \item $iterator \ insert(iterator, const \ T\&)$ for inserting an element
+    \item $void \ erase(iterator \ it)$ for erasing an element at position $it$
+    \item operation $bool \ empty()$ returning $true$ if the container is empty, $false$
+          otherwise    
+    \end{itemize}
+    
+    That means, that \leda\ lists can be used as well as containers.
+
+    \item {\em Edit scene}
+    
+    A scene of type $GeoEditScene<T>$ is a user editable scene.
+    \ccRefName\ is an editor for this kind of containers.
+    
+    \item {\em Result scene}
+    
+    A scene of type $GeoResultScene<I,R>$ is not independently 
+    editable. Instead its contents (a container of type $R$) is computed by a user
+    defined update
+    function or update object with an update function. The update function computes
+    the contents of the result scene every time when another scene (the input scene for
+    the result scene) changes. The update function
+    
+      $void (*f\_update)(const \ I\& \ input, R\& \ result)$
+      
+    gets the contents of this input scene (a container $input$ of type $I$) and computes
+    the contents $result$ of the result scene.
+    We say that the result scene depends on its input scene.
+    
+    \end{enumerate}
+
+Both Edit and Result scenes are derived from Basic scenes.
+The geometric objects stored in the containers of the scenes have to support input and
+output operators for IO-streams and the \leda\ window and the output operator to the \leda\ class 
+$ps\_file$ for Postscript output.    
+Please note that the type $geo\_scene$ is the scene item type used in $GeoWin$.
+It is a pointer to the base class of all scene types.
+    
+ 
+\ccCreation
+
+\ccConstructor{GeoWin(const char* label = "GEOWIN");}
+{creates a $GeoWin$ \ccVar\ with  frame label $label$.}
+
+\ccConstructor{GeoWin(int w, int h,const char* label = "GEOWIN");} 
+{creates a $GeoWin$ \ccVar.  \ccVar\ is constructed with 
+frame label $label$ and physical size $w\times h$. }
+
+\ccOperations
+
+
+\medskip
+{\bf a) Main Operations} 
+
+The $new\_scene$ and $get\_objects$ operations use member templates. If your 
+compiler does not support member templates, you should use 
+the function templates $geowin\_new\_scene$ and $geowin\_get\_objects$ with
+\ccVar\ as an additional first parameter.
+All $new\_scene$ operations can get an optional additional last parameter.
+This parameter is a pointer to a function that will be used to compute the
+three-dimensional output of the scene.
+The type of such a function pointer $f$ is \\
+\\
+\ccc{void (*f)(const T&, leda_d3_window&, GRAPH<leda_d3_point,int>&))},\\
+\\
+where $T$ is the type of the container used in the scene.
+The function gets a reference to the container of it's scene, a reference to the
+output \ccc{leda_d3_window} and to the parametrized graph describing the three-dimensional
+output. The function usually adds new nodes and edges to this graph. Note that
+every edge in the graph must have a reversal edge ( and the reversal information
+has to be set).
+    
+The following $new\_scene$ operation can be used to create edit scenes.
+The $CONTAINER$ has to be a $list<T>$ (where T is the type of your geometric
+objects) and must be registered in $GeoWin$ (see Registration of types).
+
+\ccMethod{template<class CONTAINER> geo_scene new_scene(CONTAINER& c);} 
+{creates a new edit scene for $c$. $c$ will be edited by \ccVar\ . }
+
+\medskip
+The following $new\_scene$ operations can be used to create result scenes.
+Result scenes use the contents of another scene (the input scene) 
+as the input for a function (the update function). 
+This function computes the contents of the result scene. The update function 
+is called every time when the contents of the input scene changes.
+Instead of using an update function you can use an update object that encapsulates
+an update function.
+The type of this update object has to be $geowin\_update<I,R>$ 
+($I$ - type of the container in the input scene,
+$R$ - type of the container in the result scene) or a class derived from it.
+A derived class should overwrite the virtual update function
+
+     $void \ update(const \ I\& \ in,R\& \ out)$ 
+     
+of the base class to provide a user defined update function. 
+The class $geowin\_update<I,R>$ has 3 constructors getting function pointers
+as arguments:
+    \begin{itemize}    
+     \item \ccc{geowin\_update(void \ (*f)(const \ I\& in, R\&  \ res)}
+     
+     \item \ccc{geowin\_update(void \ (*f)(const \ I\& in, R::value\_type\& \ obj)}
+     
+     \item \ccc{geowin\_update(R::value\_type \ (*f)(const \ I\& \ in)}
+    \end{itemize}
+    
+If you provide such a function in the constructor, this function will
+be called in the update function of the update object.
+The first is the normal update function that gets the contents $in$ of the input 
+scene and computes the contents $res$ of the output scene. 
+In the second variant the contents of the result scene will first be cleared, then the
+update function will be called and $obj$ will be inserted in the result scene.
+In the third variant the contents of the result scene will be cleared, and then
+the object returned by the update function will be inserted in the result scene.
+
+The class \ccc{geowin_update} has also the following virtual functions:
+\begin{itemize}    
+     \item \ccc{bool insert(const InpObject& new)}
+ 
+     \item \ccc{bool del(const InpObject& new)}
+ 
+     \item \ccc{bool change(const InpObject& old_obj, const InpObject& new_obj)}
+\end{itemize}
+where $new$ is a new inserted or deleted object and $old\_obj$ and $new\_obj$ are 
+objects before and after a change.
+$InpObject$ is the value type of the container of the input scene.
+With these functions it is possible to support incremental algorithms. The functions will
+be called, when in the input scene new objects are added ($insert$), deleted ($del$) or 
+changed while performing a move or rotate operation ($change$).
+In the base class these functions return $false$. That means, that the standard update function
+of the update object should be used, and usually the whole output will be recomputed using
+the whole input. 
+But in derived classes it is possible to overwrite
+these functions and provide user-defined update operations for these three incremental
+operations. Then the function has to return $true$.
+That means, that the standard update function of the update object should not be used.    
+ 
+It is also possible to provide user defined redraw for a scene.
+For this purpose we use redraw objects derived from the class $geowin\_redraw$ .
+The derived class has to overwrite the virtual redraw function
+
+     $void \ draw(leda\_window\& \ W,leda\_color \ c1,leda\_color \ c2,double \ x1,double \ y1,double \ x2,double \ y2)$
+     
+of the base class to provide a user defined redraw function. The first three parameters
+of this function are the redraw window and the first and second drawing color ($color$ 
+and $color2$) of the scene. \\
+In update and redraw functions and objects the following static member functions 
+of the \ccc{GeoWin} class can be used:
+\begin{itemize}
+    \item \ccc{GeoWin*    GeoWin::get_call_geowin()}
+    
+    \item \ccc{geo_scene  GeoWin::get_call_scene()}
+    
+    \item \ccc{geo_scene  GeoWin::get_call_input_scene()}
+\end{itemize}   
+The first function returns a pointer to the \ccc{GeoWin} of the calling scene,
+the second returns the calling scene and the third (only usable in update functions/
+objects) returns the input scene of the calling scene.
+
+If you want user defined postscript output, the derived class has to overwrite the
+virtual function
+
+     $bool \ write\_postscript(ps\_file\& \ PS,leda\_color \ c1,leda\_color \ c2)$
+     
+of the base class. The first parameter of this function is the output Postscript file 
+(see Manual/contrib in your \leda\ distribution for a documentation of the ps\_file class),
+the other parameters are the first and second drawing color ($color$ and $color2$) of
+the scene. The function has to return false, if the contents of the scene should be
+drawn to the Postscript output file too, true otherwise.
+
+In the following member-templates    
+$I$ and $R$ have to be a $list<T>$, where $T$ is the type of your geometric
+objects. ($list$ can be a \stl\ or \leda\ list, see Registration of types.)
+$I$ is the type of the contents of the input scene, $R$ the type of the contents
+of the created result scene.
+
+\ccMethod{template<class I, class R> 
+geo_scene new_scene(F f_update, geo_scene sc, leda_string str);}
+{where $F$ is the type 
+$void \ (*)(const \ I\&, R\&)$,
+creates a new result scene with name $str$.
+The input scene for this new result scene will be $sc$.
+The update function will be $f\_update$ . 
+Note that this member-template does not compile on Visual C++. 
+You have to use one of the other member templates for creating 
+result scenes on this platform.
+}
+	     
+\ccMethod{template<class I,class R>
+geo_scene new_scene(geowin_update<I,R>& up, geo_scene sc_input, leda_string str);}
+{creates a new result scene with name $str$.
+The input scene for this new result scene will be $sc\_input$.
+The update object will be $up$. }
+
+\ccMethod{template<class I,class R>
+geo_scene new_scene(geowin_update<I,R>& up, geowin_redraw& rd, geo_scene sc_input, leda_string str);}
+{creates a new result scene with name $str$.
+The input scene for this new result scene will be $sc\_input$.    
+The update object will be $up$.  
+The redraw object will be $rd$. }
+
+\ccMethod{template<class I,class R>
+void set_update(geo_scene res, geowin_update<I,R>& up);}
+{makes $up$ the update object of $res$.}
+  
+\ccMethod{template<class S,class R>
+void set_update(geo_scene res, void (*f_update)(const S&, R&));}
+{makes $f\_update$ the update function of $res$.}
+
+\ccMethod{template<class CONTAINER> bool get_objects(geo_scene sc,CONTAINER& c);}
+{If the contents of scene $sc$ matches type $CONTAINER$, 
+then the contents of scene $sc$ is copied to $c$.}
+
+\ccMethod{template <class T> void get_selected_objects(GeoEditScene<T>* sc, T& cnt);}
+{returns the selected objects of editable scene $sc$ in the container $cnt$.} 
+ 
+\ccMethod{void edit();}
+{starts the interactive mode of \ccVar\ . The operation returns if either the $Done$ or
+$Quit$ button was pressed. }
+
+\ccMethod{bool edit(geo_scene sc);}
+{edits scene $sc$. Returns $false$ when the Quit Button was pressed,
+$true$ otherwise. \ccPrecond $sc$ must be an edit scene. }
+
+\medskip
+{\bf b) Window Operations}
+
+\ccMethod{void close();}
+{closes \ccVar\ .}
+
+\ccMethod{double get_xmin();}
+{returns the minimum x-coordinate of the drawing area.}
+  
+\ccMethod{double get_ymin();}
+{returns the minimum y-coordinate of the drawing area.}
+  
+\ccMethod{double get_xmax();}
+{returns the maximum x-coordinate of the drawing area.}
+    
+\ccMethod{double get_ymax();} 
+{returns the maximum y-coordinate of the drawing area.} 
+
+\ccMethod{void display(int x,int y);}
+{opens \ccVar\ at $(x,y)$. }
+
+\ccMethod{leda_window& get_window();}
+{returns a reference to the drawing window.}
+  
+\ccMethod{void init(double xmin, double xmax, double ymin);}
+{same as $leda\_window$::init($xmin$, $xmax$, $ymin$).}
+  
+\ccMethod{void init(double x1, double x2, double y1, double y2, int r);}
+{initializes the window so that the rectangle with lower 
+left corner $(x1-r,y1-r)$ and upper right corner $(x2+r,y2+r)$
+is visible at whole. The window must be open.}
+
+\ccMethod{void redraw();}
+{redraws the contents of \ccVar\ (all visible scenes).}
+
+\ccMethod{int set_cursor(int cursor_id = -1); }
+{sets the mouse cursor to $cursor\_id$. }
+
+
+{\bf c) Scene Operations} 
+
+\ccMethod{geo_scene get_scene_with_name(leda_string nm);}
+{returns the scene named $nm$ or $NULL$ if there is no scene
+named $nm$.}
+
+\ccMethod{void activate(geo_scene sc);}
+{makes scene $sc$ the active scene of \ccVar. }
+
+\ccMethod{geo_scene get_active_scene();}
+{returns the active scene of \ccVar. }
+
+\ccMethod {bool is_active(geo_scene sc); }
+{returns true if $sc$ is an active scene in a \ccRefName. }
+
+\medskip
+The following $get$ and $set$ operations can be used for retrieving and
+changing scene parameters. All $set$ operations return the previous 
+value. 
+    
+\ccMethod{leda_string get_name(geo_scene sc);}
+{returns the name of scene $sc$. } 
+
+\ccMethod{leda_string set_name(geo_scene sc, leda_string nm);}
+{gives scene $sc$ the name $nm$. If there is already
+a scene with name $nm$, another name is constructed
+based on $nm$ and is given to $sc$. The operation
+will return the given name.
+}
+  
+\ccMethod{leda_color get_color(geo_scene sc);}
+{returns the boundary drawing color of scene $sc$. }
+
+\ccMethod{leda_color set_color(geo_scene sc, leda_color c);}
+{sets the boundary drawing color of scene $sc$ to $c$. }
+
+\ccMethod{leda_color get_selection_color(geo_scene sc);}
+{returns the second drawing color (used for selected
+boundaries) of scene $sc$. }
+
+\ccMethod{leda_color set_selection_color(geo_scene sc, leda_color c);}
+{sets the second drawing color of scene $sc$ (used for selected 
+boundaries) to $c$. }
+
+\ccMethod{leda_color get_fill_color(geo_scene sc);}
+{returns the fill color of $sc$.}
+
+\ccMethod{leda_color set_fill_color(geo_scene sc,leda_color c);}
+{sets the fill color of $sc$ to $c$. Use color $leda\_invisible$ for
+disable filling.}
+
+\ccMethod{leda_color get_text_color(geo_scene sc);}
+{returns the text color of $sc$.}
+
+\ccMethod{leda_color set_text_color(geo_scene sc,leda_color c);}
+{sets the text color of $sc$ to $c$. The text color is used for labels.}
+
+\ccMethod{int get_line_width(geo_scene sc);}
+{returns the line width of $sc$. }
+
+\ccMethod{int get_active_line_width(geo_scene sc);}
+{returns the active line width of $sc$. }
+
+\ccMethod{int set_line_width(geo_scene sc,int w);}
+{sets the line width for scene $sc$ to $w$.}
+ 
+\ccMethod{int set_active_line_width(geo_scene sc,int w);}
+{sets the active line width for scene $sc$ to $w$.}
+
+\ccMethod{leda_line_style get_line_style(geo_scene sc);} 
+{returns the line style of $sc$ .}
+  
+\ccMethod{leda_line_style set_line_style(geo_scene sc, leda_line_style l);} 
+{sets the line style of scene $sc$ to $l$.}
+
+\ccMethod{bool get_visible(geo_scene sc);}
+{returns the visible flag of scene $sc$. }
+  
+\ccMethod{bool set_visible(geo_scene sc, bool v);}
+{sets the visible flag of scene $sc$ to $v$. }
+
+\ccMethod{void set_all_visible(bool v);}
+{sets the visible flag of all scenes that are currently in \ccVar\ to $v$.}
+  
+\ccMethod{leda_point_style get_point_style(geo_scene sc);}
+{returns the point style of $sc$.}
+  
+\ccMethod{leda_point_style set_point_style(geo_scene sc, leda_point_style p);}
+{sets the point style of $sc$ to $p$.}
+
+\begin{ccAdvanced}
+
+\medskip
+{The following operations can be used to set/get 
+individual attributes of objects in scenes.
+All set operations return the previous value.
+The first parameter is the scene, where the object belongs to.
+The second parameter is a generic pointer to the object.
+\ccPrecond the object belongs to the scene (is in the container
+of the scene).
+Note that the following operations are member templates. 
+}
+
+\ccMethod{template<class T> leda_color get_obj_color(GeoBaseScene<T>* sc, void* adr);}
+{returns the boundary color of the object at $(*adr)$.}
+
+\ccMethod{template<class T> leda_color set_obj_color(GeoBaseScene<T>* sc, void* adr, leda_color c);}
+{sets the boundary color of the object at $(*adr)$ to $c$.}  
+
+\ccMethod{template<class T> leda_color get_obj_fill_color(GeoBaseScene<T>* sc, void* adr);}
+{returns the interior color of the object at $(*adr)$.}
+
+\ccMethod{template<class T> leda_color set_obj_fill_color(GeoBaseScene<T>* sc, void* adr, leda_color c);}
+{sets the interior color of the object at $(*adr)$ to $c$.}   
+
+\ccMethod{template<class T> int get_obj_line_width(GeoBaseScene<T>* sc, void* adr);}
+{returns the line width of the object at $(*adr)$.} 
+
+\ccMethod{template<class T> int set_obj_line_width(GeoBaseScene<T>* sc, void* adr, int w);}
+{sets the line width of the object at $(*adr)$ to $w$.}
+
+\medskip
+{The following operations can be used as well to set/get individual attributes of objects in scenes.
+But these operations search for an object $o$ in the (container of the) scene $(*sc)$ with $o==obj$. If such an object was found,
+$true$ is returned, otherwise $false$. Then the object attribute will be assigned to the last parameter ($get$
+operations) or will be set ($set$ operations) for the object.}
+
+\ccMethod{template<class T> bool get_obj_color(GeoBaseScene<T>* sc, const T::value_type& obj, leda_color& c);}
+{}
+
+\ccMethod{template<class T> bool set_obj_color(GeoBaseScene<T>* sc, const T::value_type& obj, leda_color c);}
+{}
+
+\ccMethod{template<class T> bool get_obj_fill_color(GeoBaseScene<T>* sc, const T::value_type& obj, leda_color& c);}
+{}
+  
+\ccMethod{template<class T> bool set_obj_fill_color(GeoBaseScene<T>* sc, const T::value_type& obj, leda_color c);}
+{}
+
+\ccMethod{template<class T> bool get_obj_line_style(GeoBaseScene<T>* sc, const T::value_type& obj, leda_line_style& l);}
+{}
+
+\ccMethod{template<class T> bool set_obj_line_style(GeoBaseScene<T>* sc, const T::value_type& obj, leda_line_style l);}
+{}
+
+\ccMethod{template<class T> bool get_obj_line_width(GeoBaseScene<T>* sc, const T::value_type& obj, int& l);}
+{}
+  
+\ccMethod{template<class T> bool set_obj_line_width(GeoBaseScene<T>* sc, const T::value_type& obj, int l);}     
+{}
+
+\ccMethod{template<class T> void reset_obj_attributes(GeoBaseScene<T>* sc);}
+{deletes all individual attributes of objects in scene $(*sc)$.}
+  
+\end{ccAdvanced}
+
+
+{\bf d) Input and Output Operations}  
+
+\ccMethod{void read(geo_scene sc,istream& is);}
+{reads the contents of $sc$ from input stream $is$. The contents of
+$sc$ is cleared before. }
+
+\ccMethod{void write(geo_scene sc,ostream& os); }
+{writes the contents of $sc$ to output stream $os$. }
+
+\ccMethod{void write_active_scene(ostream& os);}
+{writes the contents of the active scene of \ccVar
+to output stream $os$ . }
+
+\medskip
+{\bf e) View Operations}
+
+\ccMethod{void zoom_up();}
+{The visible range is reduced to the half. }
+
+\ccMethod{void zoom_down();}
+{The visible range is doubled. }
+
+\ccMethod{void fill_window();}
+{changes window coordinate system, so that the objects of the 
+currently active scene fill the window. }
+
+\begin{ccAdvanced}
+\ccMethod{leda_string get_bg_pixmap();}
+{returns the name of the current background pixmap.}
+  	    
+\ccMethod{leda_string set_bg_pixmap(leda_string pix_name);} 	  
+{changes the window background pixmap to pixmap with name $pix\_name$.
+For the names of supported pixmaps see /pixmaps in your \leda\ include
+directory.
+The function returns the name of the previous background pixmap.}
+\end{ccAdvanced}
+
+
+\ccMethod{leda_color get_bg_color();}
+{returns the current background color.}
+  	    
+\ccMethod{leda_color set_bg_color(leda_color c);} 
+{sets the current background color to $c$ and returns its previous value.}	 
+
+\ccMethod{bool get_show_grid();}
+{returns true, if the grid will be shown, false otherwise.}
+  
+\ccMethod{bool set_show_grid(bool sh);}
+{sets the show grid flag to $sh$ and returns the previous value.}
+  
+\ccMethod{double get_grid_dist();}
+{returns the grid distance parameter.}
+  
+\ccMethod{double set_grid_dist(double g);}
+{sets the grid distance parameter to $g$ and returns the previous value.}
+  
+\ccMethod{bool get_show_position();}
+{returns true, if the mouse position will be shown, false otherwise.}
+  
+\ccMethod{bool set_show_position(bool sp);}
+{sets the show mouse position flag to $sp$ and returns the previous value.} 
+
+\begin{ccAdvanced}
+\medskip
+{\bf f) Event Handling} 
+
+\ccVar\ provides operations for changing its default handling
+of events. 
+As in the \leda\ class $GraphWin$ the user can define what 
+action should follow a mouse or key event. Constants are defined as in the
+\leda\ class $GraphWin$ : 
+   \begin{itemize}
+   \item  A\_LEFT  (left mouse-button)
+   \item  A\_MIDDLE (middle mouse-button)
+   \item  A\_RIGHT (right mouse-button)
+   \item  A\_SHIFT (shift-key)
+   \item  A\_CTRL (control-key)
+   \item  A\_ALT (alt-key)
+   \item  A\_DOUBLE (double click)
+   \item  A\_DRAG (button not released)
+   \item  A\_IMMEDIATE (do it immediatly without dragging or double click 
+   check)
+   \item  A\_OBJECT (editable object at mouse position).
+   \end{itemize}
+and can be combined with OR ( \vline\ ).
+  
+
+\ccMethod{void set_action(long mask, geo_action f=0);}
+{Set action on condition $mask$ to $f$. $geo\_action$ is a
+function of type $void (*)(GeoWin\&, const \ leda\_point\&)$ . 
+For $f$ == $0$ the corresponding action is deleted. 
+$mask$ is a combination of some event constants (see the default values for examples).
+}
+  
+\ccMethod{geo_action get_action(long mask);}
+{Get action defined for condition $mask$.  }
+  
+\ccMethod{void reset_actions();}
+{Set all actions to their default values. }
+
+    \medskip
+    Default values are defined as follows :
+    \begin{itemize}
+    \item A\_LEFT   or   A\_LEFT \vline\ A\_OBJECT \newline
+    read a new object at mouse position.
+    \item A\_LEFT \vline\ A\_DRAG    \newline       scrolling the window.
+    \item A\_LEFT \vline\ A\_DRAG \vline\ A\_OBJECT \newline move the object.
+    \item A\_LEFT \vline\ A\_CTRL 
+    \newline pin current scene at mouse position or delete the pin point if 
+    it is currently there. 
+    \item A\_MIDDLE \vline\  A\_OBJECT \newline
+    toggle the selection state of the object at mouse position.
+    \item A\_MIDDLE \vline\ A\_DRAG  
+    \newline  toggle the selection state of the objects in the dragging area.
+    \item A\_RIGHT \vline\  A\_IMMEDIATE \newline
+    set the options of the currently active scene.
+    \item A\_RIGHT \vline\  A\_IMMEDIATE \vline\  A\_OBJECT \newline
+    opens a menu for the object at mouse position.
+    \end{itemize}
+
+\ccMethod{void clear_actions();}
+{clears all actions. }
+
+{ \medskip
+ {\bf Scene events}
+     
+The following event handling functions can be set for
+edit scenes:
+\begin{itemize}
+\item Pre add handler
+\item Post add handler
+\item Pre delete handler
+\item Post delete handler
+\item Start and End change handler
+\item Pre and Post move handler
+\item Pre and post rotate handler
+\end{itemize}
+     
+The add handlers will be called when a user tries to add an object
+to an edit scene in $GeoWin$, the delete handlers will be called when
+the user tries to delete an object and the change handlers will be
+called when the user tries to change an object (for instance by moving 
+or rotating it).
+The templated set operations for setting handlers use member templates. 
+If your compiler does not support member templates, you should use instead
+the templated functions $geowin\_set\_HANDLER$, where $HANDLER$ is one the
+following handlers. 
+All handling functions get as the first parameter a reference to the 
+$GeoWin$, where the scene belongs to.         
+}
+
+\ccMethod{template<class T,class F> bool set_pre_add_handler(GeoEditScene<T>* sc, F handler);}
+{sets the handler that is called before an object is added to $(*sc)$.
+$handler$ must have type $bool\ (*handler)(GeoWin\&, const\ T::value\_type \&)$.
+$handler$ gets a reference to the added object. If $handler$ returns false, 
+the object will not be added to the scene.}
+  
+\ccMethod{template<class T,class F> bool set_post_add_handler(GeoEditScene<T>* sc, F handler);}
+{sets the handler that is called after an object is added to $(*sc)$. 
+$handler$ must have type $void\ (*handler)(GeoWin\&, const\ T::value\_type \&)$.
+$handler$ gets a reference to the added object.
+}
+
+\ccMethod{template<class T,class F> bool set_pre_del_handler(GeoEditScene<T>* sc, F handler);}
+{sets the handler that is called before an object is  deleted from $(*sc)$.
+$handler$ must have type $bool\ (*handler)(GeoWin\&, const\ T::value\_type \&)$.
+$handler$ gets a reference to the added object. If $handler$ returns true, the object
+will be deleted, if $handler$ returns false, the object will not be deleted.}
+  
+\ccMethod{template<class T,class F> bool set_post_del_handler(GeoEditScene<T>* sc, F handler);}
+{sets the handler that is called after an object is deleted from $(*sc)$.
+$handler$ must have type $void\ (*handler)(GeoWin\&, const\ T::value\_type \&)$.
+}
+
+\ccMethod{template<class T,class F> bool set_start_change_handler(GeoEditScene<T>* sc, F handler);}
+{sets the handler that is called when a geometric object from $(*sc)$ starts changing 
+(for instance when you move it or rotate it).
+$handler$ must have type $bool\ (*handler)(GeoWin\&, const\ T::value\_type \&)$.
+The handler function gets a reference to the object.
+}
+
+\ccMethod{template<class T,class F> bool set_pre_move_handler(GeoEditScene<T>* sc, F handler);}
+{sets the handler that is called before every move operation.
+$handler$ must have type $bool\ (*handler)(GeoWin\&, const\ T::value\_type \&, double\ x, double\ y)$. 
+The handler gets as the second parameter a reference to the object, as the third parameter
+and fourth parameter the move vector.
+If the handler returns true, the change operation will be executed, if the handler
+returns false, it will not be executed. 
+}
+  
+\ccMethod{template<class T,class F> bool set_post_move_handler(GeoEditScene<T>* sc, F handler);}
+{sets the handler that is called after every move operation.
+$handler$ must have type $void\ (*handler)(GeoWin\&, const\ T::value\_type \&, double\ x, double\ y)$. 
+The handler gets as the second parameter a reference to the object, as the third parameter
+and fourth parameter the move vector.  
+}
+ 
+\ccMethod{template<class T,class F> bool set_pre_rotate_handler(GeoEditScene<T>* sc, F handler);}
+{sets the handler that is called before every rotate operation.
+$handler$ must have type $bool\ (*handler)(GeoWin\&, const\ T::value\_type \&, double\ x, double\ y, double\ a)$.
+The handler gets as the second parameter a reference to the object, as the 3., 4. and 5. parameter
+the rotation parameters. 
+If the handler returns true, the rotate operation will be executed, if the handler returns false,
+it will not be executed. 
+}
+  
+\ccMethod{template<class T,class F> bool set_post_rotate_handler(GeoEditScene<T>* sc, F handler);}
+{sets the handler that is called after every rotate operation.
+$handler$ must have type $void\ (*handler)(GeoWin\&, const\ T::value\_type \&, double\ x, double\ y, double\ a)$. 
+}
+ 
+\ccMethod{template<class T,class F> bool set_end_change_handler(GeoEditScene<T>* sc, F handler);}
+{sets the handler that is called when a geometric object from $(*sc)$ ends changing. 
+$handler$ gets the object as the second parameter.
+$handler$ must have type $void\ (*handler)(GeoWin\&, const\ T::value\_type \&)$.}
+
+\end{ccAdvanced}
+
+{
+\medskip
+{\bf Generator functions:}
+The following operation can be used to set a generator function for an edit scene.
+A generator function is used for generating objects of a scene. You can access these
+generators in the $Edit$-menu. Some scenes have default generators (for instance
+point scenes), but it is always possible to set your own generator functions for
+edit scenes. \\
+The operation uses member templates. 
+If your compiler does not support member templates, you should use instead
+the templated function $geowin\_set\_generate\_fcn$ instead. 
+}
+     
+\ccMethod{template<class T> bool set_generate_fcn(GeoEditScene<T>* sc, F f);}
+{ (where $F$ is the type
+$void \ (*)(GeoWin\& \ gw,T\& \ L)$ ),
+sets the generator function for edit scene $(*sc)$. 
+The function $f$ gets the $GeoWin$ where $(*sc)$ belongs to and
+a reference to the container $L$ of $(*sc)$. The function
+should write the generated objects to $L$.
+}
+
+\medskip
+{\bf Input objects:}
+The default user input is handled by the window input operator.
+But there is another possibility for a more flexible input provided by $GeoWin$ -
+input objects.
+The following operations can be used to set input objects for an editable scene.
+The operation uses member templates. 
+If your compiler does not support member templates, you should use instead
+the templated functions prefixed with  $geowin$.
+A \ccc{GeoInputObject<GeoObj>} has the following virtual functions:
+\begin{itemize}     
+        \item \ccc{void operator()(GeoWin& gw, leda_list<GeoObj>& L);} \\
+     This virtual function is called for the input of objects. The new objects have to be
+     returned in $L$.
+    
+        \item \ccc{void options(GeoWin& gw);} \\  
+     This function is called for setting options for the input object.
+\end{itemize}
+     
+\ccMethod{template<class T>
+bool set_input_object(GeoEditScene<T>* sc, const GeoInputObject<T::value_type>& obj, leda_string name);}
+{sets the input object $obj$ for edit scene $(*sc)$. 
+The (member) function for the input of the objects gets the $GeoWin$ where $(*sc)$ belongs to and
+a reference to a \leda\ list $L$. The function must write the new objects to $L$. The name $name$ will
+be associated with the input object (this name will be shown in the user interface).}
+
+  
+\ccMethod{template<class T>
+bool add_input_object(GeoEditScene<T>* sc, const GeoInputObject<T::value_type>& obj, leda_string name);}
+{adds the input object $obj$ to the list of available input objects of edit scene $(*sc)$ without making 
+$obj$ the current input object. The user switch to this input object in the user interface. The name $name$ will
+be associated with the input object (this name will be shown in the user interface).}
+
+\ccMethod{template<class T>
+void set_draw_object_fcn(GeoBaseScene<T>* sc, leda_window& (*fcn)(leda_window&, const T::value_type &, int w));}
+{sets a function $fcn$ for scene $(*sc)$ that will be called for drawing the objects of scene $(*sc)$. 
+If no such function is set (the default), the output operator is used.}
+
+
+\ccMethod{void set_quit_handler(F f);}
+{
+(where $F$ is the type 
+$bool \ (*)(const \ GeoWin\& \ gw)$ ),
+sets a handler function $f$ that is called when the user 
+clicks the quit menu button. $f$ should return true for allowing quiting, false otherwise. }
+  
+\ccMethod{void set_done_handler(F f);}
+{
+(where $F$ is the type 
+$bool \ (*)(const \ GeoWin\& \ gw)$ ),
+sets a handler function $f$ that is called when the user clicks the
+done menu button. $f$ should return true for allowing quiting, false otherwise. }
+
+\medskip
+{\bf g) Further Operations} 
+
+\ccMethod{leda_list<geo_scene> get_scenes();}
+{returns the scenes of \ccVar\ .}
+  
+\ccMethod{leda_list<geo_scene> get_visible_scenes();}
+{returns the visible scenes of \ccVar\ .}
+
+\ccMethod{void add_dependence(geo_scene sc1, geo_scene sc2); }
+{makes scene $sc2$ dependent from $sc1$. That means that $sc2$
+will be updated when the contents of $sc1$ changes. }
+
+\ccMethod{void del_dependence(geo_scene sc1, geo_scene sc2); }
+{deletes the dependence of scene $sc2$ from $sc1$. }
+
+\ccMethod{void set_frame_label(const char* label);}
+{makes $label$ the frame label of \ccVar. }
+	
+\ccMethod{double version();}
+{returns the $GeoWin$ version number.}
+  	   
+\ccMethod{void message(leda_string msg);}
+{displays message $msg$ on top of the drawing area.
+If $msg$ is the empty string, a previously written message is deleted.}
+
+\ccMethod{void msg_open(leda_string msg);}
+{displays message $msg$ in the message window of \ccVar.
+If the message window is not open, it will be opened.}
+  
+\ccMethod{void msg_close();} 
+{closes the message window.}
+ 
+\ccMethod{void msg_clear(); } 
+{clears the message window.}
+
+\begin{ccAdvanced}
+
+\ccMethod{void set_d3_fcn(geo_scene sc, void (*f)(geo_scene gs, leda_d3_window& W, GRAPH<leda_d3_point,int>& H));}
+{sets a function for computing 3d output. The parameters of the function are
+the $geo\_scene$ for that it will be set and a function pointer. The function $f$ will get the scene
+for that it was set, a reference to a \leda\ $d3\_window$ that will be the output window and a 
+parametrized \leda\ GRAPH that will be used for visualization.}
+
+\ccMethod{D3_FCN  get_d3_fcn(geo_scene sc);}
+{returns the function for computing 3d output that is set for scene $sc$.
+The returned function pointer has the type \ccc{void (*)(geo_scene, d3_window&, GRAPH<d3_point,int>&)}.}
+
+\end{ccAdvanced}
+
+\medskip
+\ccVar\ can be pined at a point in the plane. As standard behavior it is
+defined that moves of geometric objects will be rotations around the
+pin point. 
+
+\ccMethod{bool get_pin_point( leda_point& p );}
+{returns the pin point in $p$ if it is set.}
+
+\ccMethod{void set_pin_point( leda_point  p );}
+{sets the pin point to $p$.}
+
+\ccMethod{void del_pin_point();}
+{deletes the pin point.}
+
+\ccMethod{void add_help_text(leda_string name);}
+{adds the help text contained in $name.hlp$ with label $name$
+to the help menu of the main window. The file $name.hlp$ must
+exist either in the current working directory or in
+$\$LEDAROOT/incl/Help$. Note that this operation must be called
+before $gw.display()$. }
+
+\medskip
+The templated $add\_user\_call$ operation uses member templates. If your 
+compiler does not support member templates, you should use
+the templated function $geowin\_add\_user\_call$ with
+\ccVar\ as an additional first parameter.
+
+\ccMethod{template<class F> void add_user_call(leda_string label, F f);}
+{adds a menu item $label$ to the "User" menu of \ccVar . \\
+The user defined function \\
+$geo\_call(GeoWin\& \ gw, F \ f, leda\_string \ label)$
+is called whenever this menu button was pressed. This menu 
+definition has to be finished before \ccVar\ is opened. }
+
+\end{ccRefClass}
+
+

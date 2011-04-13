@@ -1,0 +1,39 @@
+\begin{ccRefFunctionObjectConcept}{Kernel::ConstructVertex_3}
+A model for this must provide:
+
+\ccCreationVariable{fo}
+
+\ccMemberFunction{Kernel::Point_3 operator()(const Kernel::Segment_3
+  &s, int i);} {returns source or target of \ccc{s}: \ccVar\ccc{(s,0)}
+  returns the source of \ccc{s}, \ccVar\ccc{(s,1)} returns the target
+  of \ccc{s}. The parameter \ccc{i} is taken modulo 2. }
+
+\ccMemberFunction{Kernel::Point_3 operator()(const
+  Kernel::Iso_cuboid_3 &c, int i);} {returns the i'th vertex of
+  \ccc{c}, as indicated in the figure below. The parameter \ccc{i} is
+  taken modulo 8. \lcTex{\epsfxsize=6cm\epsffile{IsoCuboid.eps}}}
+
+\begin{ccHtmlOnly}
+<center>
+<img border=0 src=./IsoCuboid.gif align=center alt="vertex order of an iso-cuboid">
+</center>
+\end{ccHtmlOnly} 
+
+\ccMemberFunction{Kernel::Point_3 operator()(const Kernel::Triangle_3
+  &t, int i);} {returns the i'th vertex of \ccc{t}. The parameter
+  \ccc{i} is taken modulo 3.}
+
+\ccMemberFunction{Kernel::Point_3 operator()(const
+  Kernel::Tetrahedron_3 &t, int i);} {returns the i'th vertex of
+  \ccc{t}. The parameter \ccc{i} is taken modulo 4.}
+
+\ccRefines
+AdaptableFunctor
+
+\ccSeeAlso
+\ccRefIdfierPage{CGAL::Iso_cuboid_3<R>} \\
+\ccRefIdfierPage{CGAL::Segment_3<R>} \\
+\ccRefIdfierPage{CGAL::Tetrahedron_3<R>}  \\
+\ccRefIdfierPage{CGAL::Triangle_3<R>} \\
+
+\end{ccRefFunctionObjectConcept}

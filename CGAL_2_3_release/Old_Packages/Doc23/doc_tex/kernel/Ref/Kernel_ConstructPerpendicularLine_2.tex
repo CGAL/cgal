@@ -1,0 +1,18 @@
+\begin{ccRefFunctionObjectConcept}{Kernel::ConstructPerpendicularLine_2}
+A model for this must provide:
+
+\ccCreationVariable{fo}
+
+\ccMemberFunction{Kernel::Line_2 operator()(const Kernel::Line_2& l,
+                                            const Kernel::Point_2& p);}
+        {returns the line perpendicular to $l$ and passing through $p$,
+         where the direction is the direction of $l$ rotated 
+         counterclockwise by 90 degrees.}
+
+\ccRefines
+AdaptableFunctor
+
+\ccSeeAlso
+\ccRefIdfierPage{CGAL::Line_2<R>} \\
+
+\end{ccRefFunctionObjectConcept}

@@ -1,0 +1,75 @@
+In this directory there are 8 example programs for the Planar Map package.
+
+Note: All the examples work with the double number type so that the examples
+      will run on machines where LEDA was not installed. The specific data
+      was chosen so that no robustness problems will occour. The user should
+      be cautious when changing such data without first chaning to an exact
+      number type.
+
+example1:
+  The example demonstrates an insertion of curves into the planar
+  map, checking its validity and performing vertical ray shooting.
+  By: Eyal Flato and Iddo Hanniel
+
+example2:
+  This example  is identical to example1 but uses the exact traits (with    
+  Homogeneous coordinates. It also tests the remove function      
+  By:   Eyal Flato and Iddo Hanniel
+
+example3:
+  The example tests the point location in various possibilities 
+  It also demonstrates the usage of const iterators and const     
+  circulators when passing a const referance to a planar map   
+  By: Doron Jacoby and Iddo Hanniel 
+
+example4:
+  The example tests the split_edge function with the exact traits.        
+  Also operator<< is shown - note the output format of the       
+  planar map will probably go through changes in the future (this
+  is why it does not appear in the documentation).                
+  By: Iddo Hanniel
+
+example5:
+  This example tests the direct insertion functions (insert_from_vertex etc.)
+  and uses the naive point location strategy instead of the        
+  default strategy provided.                                       
+  By: Iddo Hanniel
+
+example6:
+  This example also demonstrates the direct insertion functions
+  (insert_from_vertex etc.).  
+  This is an example of using the specialized insertion functions and the
+  exact traits.                          
+  (the naive point location is more suitable for these functions  
+  and is therefore the one used.                                  
+  By: Iddo Hanniel
+
+example7:
+  This example tests the use of straight exact traits with 
+  Cartesian coordinates over doubles and default point location.
+  insertions and vertical ray shooting.
+  By: Eyal Flato, Iddo Hanniel and Oren Nechushtan
+
+example8:  
+  This example tests the use of straight exact traits with 
+  flexible representation type (cartesian versus homogeneous
+  coordinates), flexible point location (naive versus default),
+  and the direct insertion functions (insert_from_vertex etc.)
+  By: Oren Nechushtan
+
+example9:
+  This example tests the use of IO functions provided for Planar map.
+  This example demonsrates a trivial usage of reading Planar map from 
+  input stream and writing it to output stream. Writing the Planar map 
+  to a Postscript file is also demonstated in this example.
+  example9.cin is the example input file of this program (example9 < example9.cin).
+  By: Eti ezra.
+ 
+example10:
+ This example is also a demonstration of the IO functions for Planar map.
+ It presents an advance udage of the IO utilities.
+ When users would like to add attribures to their planar map components and then 
+ using the IO functions on the resulting planar maps.
+ example10.cin is the example input file of this program (example10 < example10.cin).
+ By: Eti ezra.
+

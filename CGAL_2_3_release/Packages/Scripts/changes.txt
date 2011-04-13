@@ -1,0 +1,78 @@
+1.19 (?? ??? 2001)
++ Added cgal_submit.
+
+1.18 (13 Feb 2001)
++ Converted create_assertions.sh to use new style casts.
+
+----------------------
+1.17 (15 November 2000)
++ Adapted collect_cgal_testresults to new naming of config/install files.
+  The _LEDA prefix of a platform is now retained.
++ Adapted sleep time between tests.
+
+----------------------
+1.16 (7 August 2000)
++ repaired redirection error in create_cgal_test script.
++ Augmented time bound for test scripts in run_testsuite
+
+----------------------
+# 1.15 (30 May 2000)
++ added script rename_clib_calls to developer_scripts
+
+----------------------
+# 1.14 (25 Apr 2000)
++ Altered implementation for wait_for_process.
+
+----------------------
+# 1.13 (17 Apr 2000)
++ Added a time limit for cgal_test in run_testsuite
+
+----------------------
+# 1.12
++ Added support for geowin in create_makefile script.
+
+----------------------
+# 1.11
++Altered cgal_conditional_include_remove to work with headers not ending in .h
++Adapted output of cgreate_cgal_test to error.txt (formatted differently)
+
+----------------------
+# 1.10
++Added script cgal_conditional_include_remove which undoes the effects of
+ cgal_conditional_inlude.
+
+----------------------
+# 1.9
++Adapted run_testsuite. It now checks if cgal_test returns succesfully.
+
+----------------------
+# 1.8
++Changed the script test/collect_cgal_testresults
+ The tester name becomes part of the result file name.
+ More info is collected (The version of CGAL and LEDA, and whether
+ GMP and CLN are supported.
+
+----------------------
+#           Changes from 1.4 to 1.5:
+The flag -ftemplate-depth-25 has been removed from the TESTSUITE_CXXFLAGS
+for the egcs and g++ 2.8 compilers in the run_testsuite script.
+It is added in the configuration now.
+
+----------------------
+#           Changes from 1.3 to 1.4:
+-> test/create_cgal_test                                     (updated)
+-> test/collect_cgal_testresults                             (updated)
+-> test/run_testsuite                                        (updated)
+
+The flag -ftemplate-depth-25 has been added to the TESTSUITE_CXXFLAGS
+for the egcs and g++ 2.8 compilers in the run_testsuite script.
+
+----------------------
+#           Changes from 1.2 to 1.3:
+- put correct version of run_testsuite in test directory
+
+----------------------
+#           Changes from 1.1 to 1.2:
+- added collect_cgal_testresults
+- changed create_cgal_test according to a suggestion of Herve
+

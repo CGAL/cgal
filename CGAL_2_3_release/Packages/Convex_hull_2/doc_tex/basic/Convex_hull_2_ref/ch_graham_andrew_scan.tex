@@ -1,0 +1,123 @@
+% +------------------------------------------------------------------------+
+% | Reference manual page: ch_graham_andrew.tex
+% +------------------------------------------------------------------------+
+% | 09.05.2001   Susan Hert and Stefan Schirra
+% | Package: Convex_hull_2
+% |
+% +------------------------------------------------------------------------+
+
+
+\begin{ccRefFunction}{ch_graham_andrew_scan}  %% add template arg's if necessary
+\ccIndexSubitemBegin{convex hull, 2D}{Graham-Andrew scan}
+\ccIndexSubitemBegin{extreme points, 2D}{right of line}
+
+\ccDefinition
+  
+The function \ccRefName\ generates the counterclockwise sequence of extreme
+points from a given set of input points that are not left of the line defined
+by the first and last points in this sequence.  
+
+
+\ccInclude{CGAL/ch_graham_andrew.h}
+
+\ccFunction{template <class BidirectionalIterator, class OutputIterator, 
+                      class Traits>
+            OutputIterator
+            ch_graham_andrew_scan( BidirectionalIterator first,
+                                   BidirectionalIterator beyond,
+                                   OutputIterator        result,
+                                   const Traits& ch_traits = Default_traits);}
+           {generates the counterclockwise sequence of extreme points that are
+            not left of $pq$, where $p$ is the value of \ccc{first} and $q$ is
+            the value of \ccc{beyond} $-1$. The resulting sequence is placed
+            starting at \ccc{result} with $p$; point $q$ is omitted.  The
+            past-the-end iterator for the sequence is returned.
+            \ccPrecond %\ccIndexSubitem[C]{ch_graham_andrew_scan}{preconditions}
+            The range [\ccc{first},\ccc{beyond}) contains at least
+            two different points.
+            The points in [\ccc{first},\ccc{beyond}) are ``sorted'' with respect
+            to $pq$, {\it i.e.}, the sequence of points in 
+            [\ccc{first},\ccc{beyond}) define a counterclockwise polygon, 
+            for which the Graham-Sklansky-procedure \cite{s-mcrm-72} works.}
+
+The default traits class \ccc{Default_traits} is the kernel in which the
+type \ccc{BidirectionalIterator::value_type} is defined.
+
+
+\ccHeading{Requirements}
+\begin{enumerate}
+   \item    \ccc{BidirectionalIterator::value_type} and 
+            \ccc{OutputIterator::value_type}
+            are equivalent to \ccc{Traits::Point_2}.
+   \item    \ccc{Traits} defines the following two types from
+            the concept ConvexHullTraits\_2 and their corresponding member
+            %\ccIndexMainItem[c]{ConvexHullTraits_2}
+            functions that return instances of these types:
+            \begin{itemize}
+                \item \ccc{Traits::Point_2},
+                \item \ccc{Traits::Leftturn_2}.
+            \end{itemize}
+\end{enumerate}
+
+
+\ccSeeAlso
+
+\ccRefIdfierPage{CGAL::ch_graham_andrew} \\
+\ccRefIdfierPage{CGAL::lower_hull_points_2} \\
+\ccRefIdfierPage{CGAL::upper_hull_points_2} 
+
+\ccImplementation
+
+The function uses Andrew's 
+variant of the Graham scan algorithm \cite{a-aeach-79} . This algorithm 
+requires $O(n \log n)$ time in the worst case for $n$ input points.  
+
+\ccExample
+
+In the following example \ccc{ch_graham_andrew_scan()} is used to
+realize Anderson's variant \cite{a-readc-78} of the Graham Scan 
+\cite{g-eadch-72}.  The points are sorted counterclockwise around the leftmost 
+point using the \ccc{Less_rotate_ccw_2} predicate, as defined in
+the concept ConvexHullTraits\_2. According to the definition 
+of \ccc{Less_rotate_ccw_2}, the leftmost point is the last point in the sorted 
+sequence and its predecessor on the convex hull is the first point in the 
+sorted sequence.  It is not hard to see that the preconditions of
+\ccc{ch_graham_andrew_scan()} are satisfied.  Anderson's variant of the 
+Graham scan is usually inferior to Andrew's variant because of its higher 
+arithmetic demand.
+
+\begin{verbatim}
+template <class InputIterator, class OutputIterator, class Traits>
+OutputIterator
+ch_graham_anderson( InputIterator  first, InputIterator  beyond,
+                    OutputIterator result, const Traits&  ch_traits)
+{
+  typedef typename Traits::Less_xy_2          Less_xy_2;
+  typedef typename Traits::Point_2            Point_2;
+  typedef typename Traits::Less_rotate_ccw_2  Less_rotate_ccw_2;
+
+  if (first == beyond) return result;
+  std::vector< Point_2 >  V;
+  copy( first, beyond, back_inserter(V) );
+  typename std::vector< Point_2 >::iterator it = 
+               std::min_element(V.begin(), V.end(), Less_xy_2());
+  std::sort( V.begin(), V.end(), Less_rotate_ccw_2(*it) );
+  if ( *(V.begin()) == *(V.rbegin()) )
+  {
+      *result = *(V.begin());  ++result;
+      return result;
+  }
+  return ch_graham_andrew_scan( V.begin(), V.end(), result, ch_traits);
+}
+\end{verbatim}
+
+
+\ccIndexSubitemEnd{convex hull, 2D}{Graham-Andrew scan}
+\ccIndexSubitemEnd{extreme points, 2D}{right of line}
+\end{ccRefFunction}
+
+% +------------------------------------------------------------------------+
+%%RefPage: end of main body, begin of footer
+% EOF
+% +------------------------------------------------------------------------+
+

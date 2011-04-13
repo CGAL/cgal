@@ -1,0 +1,171 @@
+% =============================================================================
+% The CGAL Reference Manual
+% Chapter: Geometric Optimisation
+% -----------------------------------------------------------------------------
+% file   : doc_tex/basic/Optimisation/Optimisation_ref/reference_part.tex
+% package: Optimisation_doc
+% author : Sven Schönherr <sven@inf.ethz.ch>
+% -----------------------------------------------------------------------------
+% $Revision$
+% $Date$
+% =============================================================================
+
+\newcommand{\inputOpt}[1]{\input{Optimisation_ref/#1.tex}}
+
+\newcommand{\linebreakByHand}{\ccTexHtml{\linebreak[4]}{}}
+\newcommand{  \newlineByHand}{\ccTexHtml{\\}{}}
+
+% cross references
+\index{minimum enclosing|see{{smallest enclosing}}}
+\index{minimum spanning|see{{smallest enclosing}}}
+\index{concentric spheres|see{{annulus}}}
+
+% -----------------------------------------------------------------------------
+\section*{Introduction}
+
+This chapter describes concepts, classes, and functions for solving
+geometric optimisation problems. They are divided into four categories.
+
+\paragraph{Bounding Areas and Volumes.}
+Smallest enclosing circle and ellipse (2D), smallest enclosing rectangle,
+parallelogram, and strip (2D), rectangular $p$-center (2D), smallest
+enclosing sphere and annulus (dD).
+
+\paragraph{Inscribed Areas.}
+Maximum area and perimeter inscribed $k$-gon (2D), extremal inscribed
+$k$-gon (2D).
+
+\paragraph{Optimal Distances.}
+All furthest neigbors (2D), width of point set (3D), polytope distance (dD).
+
+\paragraph{Advanced Techniques.}
+Monotone and sorted matrix search.
+
+\section*{Assertions}
+The optimisation code uses infix \ccc{OPTIMISATION} in the assertions,
+e.g.\ defining the compiler flag
+\ccc{CGAL_OPTIMISATION_NO_PRECONDITIONS} switches precondition
+checking off, cf.~\cgalReferToAssertions
+
+
+% -----------------------------------------------------------------------------
+\subsection*{Bounding Areas and Volumes}
+
+\ccRefIdfierPage{CGAL::Min_circle_2<Traits>}\\[1ex]
+\ccRefIdfierPage{CGAL::Min_circle_2_traits_2<K>}\\[1ex]
+\ccRefConceptPage{MinCircle2Traits}
+
+\smallskip
+
+\ccRefIdfierPage{CGAL::Min_ellipse_2<Traits>}\\[1ex]
+\ccRefIdfierPage{CGAL::Min_ellipse_2_traits_2<K>}\\[1ex]
+\ccRefConceptPage{MinEllipse2Traits}
+
+\smallskip
+
+\ccRefIdfierPage{CGAL::min_rectangle_2}\\
+\ccRefIdfierPage{CGAL::min_parallelogram_2}\\
+\ccRefIdfierPage{CGAL::min_strip_2}\\[1ex]
+\ccRefIdfierPage{CGAL::Min_quadrilateral_default_traits_2<R>}\\[1ex]
+\ccRefConceptPage{MinQuadrilateralTraits_2}
+
+\smallskip
+
+\ccRefIdfierPage{CGAL::rectangular_p_center_2}\\[1ex]
+\ccRefIdfierPage{CGAL::Rectangular_p_center_default_traits_2<R>}\\[1ex]
+\ccRefConceptPage{RectangularPCenterTraits_2}
+
+\bigskip
+
+\ccRefIdfierPage{CGAL::Min_sphere_d<Traits>}\\
+\ccRefIdfierPage{CGAL::Min_annulus_d<Traits>}\\[1ex]
+\ccRefIdfierPage{CGAL::Optimisation_d_traits_2<K,ET,NT>}\\
+\ccRefIdfierPage{CGAL::Optimisation_d_traits_3<K,ET,NT>}\\
+\ccRefIdfierPage{CGAL::Optimisation_d_traits_d<K,ET,NT>}\\[1ex]
+\ccRefConceptPage{OptimisationDTraits}
+
+% -----------------------------------------------------------------------------
+\subsection*{Inscribed Areas}
+
+\ccRefIdfierPage{CGAL::maximum_area_inscribed_k_gon_2}\\
+\ccRefIdfierPage{CGAL::maximum_perimeter_inscribed_k_gon_2}\\
+\ccRefIdfierPage{CGAL::extremal_polygon_2}\\[1ex]
+\ccRefIdfierPage{CGAL::Extremal_polygon_area_traits_2<K>}\\
+\ccRefIdfierPage{CGAL::Extremal_polygon_perimeter_traits_2<K>}\\[1ex]
+\ccRefConceptPage{ExtremalPolygonTraits_2}
+
+% -----------------------------------------------------------------------------
+\subsection*{Optimal Distances}
+
+%\ccRefIdfierPage{CGAL::width_2}%\\[1ex]
+%\ccRefIdfierPage{CGAL::Min_quadrilateral_default_traits_2<K>}\\[1ex]
+%\ccRefConceptPage{MinQuadrilateralTraits_2}
+
+%\smallskip
+
+\ccRefIdfierPage{CGAL::all_furthest_neighbors_2}\\[1ex]
+%\ccRefIdfierPage{CGAL::All_furthest_neighbors_default_traits_2<R>}\\[1ex]
+\ccRefConceptPage{AllFurthestNeighborsTraits_2}
+
+\smallskip
+
+\ccRefIdfierPage{CGAL::Width_3<Traits>}\\[1ex]
+\ccRefIdfierPage{CGAL::Width_default_traits_3<K>}\\[1ex]
+\ccRefConceptPage{WidthTraits_3}
+
+\smallskip
+
+\ccRefIdfierPage{CGAL::Polytope_distance_d<Traits>}\\[1ex]
+\ccRefIdfierPage{CGAL::Optimisation_d_traits_2<K,ET,NT>}\\
+\ccRefIdfierPage{CGAL::Optimisation_d_traits_3<K,ET,NT>}\\
+\ccRefIdfierPage{CGAL::Optimisation_d_traits_d<K,ET,NT>}\\[1ex]
+\ccRefConceptPage{OptimisationDTraits}
+
+% -----------------------------------------------------------------------------
+\subsection*{Advanced Techniques}
+
+\ccRefIdfierPage{CGAL::monotone_matrix_search}\\[1ex]
+\ccRefIdfierPage{CGAL::Dynamic_matrix<M>}\\[1ex]
+\ccRefConceptPage{MonotoneMatrixSearchTraits}\\
+\ccRefConceptPage{BasicMatrix}
+
+\smallskip
+
+\ccRefIdfierPage{CGAL::sorted_matrix_search}\\[1ex]
+\ccRefIdfierPage{CGAL::Sorted_matrix_search_traits_adaptor<F,M>}\\[1ex]
+\ccRefConceptPage{SortedMatrixSearchTraits}
+
+\smallskip
+
+% =============================================================================
+
+% Bounding Areas and Volumes
+
+\inputOpt{main_Min_circle_2}
+\inputOpt{main_Min_ellipse_2}
+\inputOpt{main_Min_quadrilateral_2}
+\inputOpt{main_Rectangular_p_centers}
+
+\inputOpt{main_Min_sphere_d}
+\inputOpt{main_Min_annulus_d}
+\inputOpt{main_Optimisation_d_traits}
+
+% Inscribed Areas
+
+\inputOpt{main_Extremal_polygons}
+
+% Optimal Distances
+
+\inputOpt{main_All_furthest_neighbors}
+
+\inputOpt{main_Width_3}
+
+\inputOpt{main_Polytope_distance_d}
+
+
+% Advanced Techniques
+
+\inputOpt{main_Matrix_search}
+
+
+% ===== EOF ===================================================================

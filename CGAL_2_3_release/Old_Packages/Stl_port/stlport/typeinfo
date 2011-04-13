@@ -1,0 +1,59 @@
+/*
+ * Copyright (c) 1999 
+ * Boris Fomitchev
+ *
+ * This material is provided "as is", with absolutely no warranty expressed
+ * or implied. Any use is at your own risk.
+ *
+ * Permission to use or copy this software for any purpose is hereby granted 
+ * without fee, provided the above notices are retained on all copies.
+ * Permission to modify the code and to distribute modified code is granted,
+ * provided the above notices are retained, and a notice that the code was
+ * modified is included with the above copyright notice.
+ *
+ */
+
+#ifndef __STLPORT_TYPEINFO
+# define __STLPORT_TYPEINFO
+
+#include <stl_config.h>
+#if defined  (__STL_DEBUG) || defined (__STL_ASSERTIONS)
+# include <stldebug.h>
+#endif
+
+#  if defined ( __STL_REDEFINE_STD ) && defined (std) 
+#    undef std
+#    define __STL_RESUME_STD_FOR_TYPEINFO
+#    define __STLPORT_NATIVE_PASS
+#  endif
+
+# ifdef __GNUC__
+#  include <../include/typeinfo>
+# elif defined (__SUNPRO_CC) && (__SUNPRO_CC < 0x500)
+#  include __STL_NATIVE_HEADER(typeinfo.h)
+# else
+#  include __STL_NATIVE_HEADER(typeinfo)
+# endif
+
+# if defined ( __STL_RESUME_STD_FOR_TYPEINFO )
+#    undef __STL_RESUME_STD_FOR_TYPEINFO
+#    define std __STLPORT_NAMESPACE
+#    undef __STLPORT_NATIVE_PASS
+# endif
+
+# if defined  (__STL_USE_NAMESPACES) && ! defined (__STL_BROKEN_USING_DIRECTIVE)
+__STL_BEGIN_NAMESPACE
+
+using __STL_VENDOR_EXCEPT_STD::type_info;
+using __STL_VENDOR_EXCEPT_STD::bad_typeid;
+using __STL_VENDOR_EXCEPT_STD::bad_cast;
+
+__STL_END_NAMESPACE
+
+#endif /* __STL_OWN_NAMESPACE */
+
+#endif /* __STLPORT_TYPEINFO */
+
+// Local Variables:
+// mode:C++
+// End:

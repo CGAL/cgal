@@ -1,0 +1,113 @@
+\subsection{Non-Member Functions}
+
+\ccFunction{GeoWin* get_geowin(geo_scene sc);}
+{
+  returns a pointer to the $GeoWin$ of scene $sc$.
+}
+
+\subsection{Registration of types}
+
+The following two function templates can be used to register types for usage
+in edit scenes of $GeoWin$. Note that you have to perform this registration before the creation
+of the first $GeoWin$.
+To use $GeoWin$ with your
+own types, the container class storing the geometric objects and your geometric
+objects must meet some requirements:
+\begin{enumerate}
+\item The container must provide the functionality of the \stl\ list (especially 
+$CONTAINER\_TYPE::iterator$ and $CONTAINER\_TYPE::value\_type$).
+You can use \leda\ lists too.
+\item You have to provide a generator function
+\begin{verbatim}
+void geowin_generate_objects(GeoWin& gw,CONTAINER_TYPE& L);
+\end{verbatim}
+This generator function can be used to generate input and return it in L.
+\item If you don't want to use \leda\ lists, you should provide an info function
+\begin{verbatim}
+leda_string geowin_info_fcn(const CONTAINER_TYPE& L);
+\end{verbatim}
+This info function should return a string desribing the container.
+\end{enumerate}
+For the geometric objects the following requirements must be fulfilled:
+\begin{enumerate}
+\item default and copy constructor
+\begin{verbatim}
+TYPE();
+TYPE(const TYPE&);
+\end{verbatim}
+\item operators for writing to an ostream and reading from an istream
+\begin{verbatim}
+std::ostream& operator<<(std::ostream&, const TYPE&);
+std::istream operator>>(std::istream&, TYPE&);
+\end{verbatim}
+\item operators for writing to/ reading from a \leda\ window
+\begin{verbatim}
+leda_window& operator<<(leda_window&, const TYPE&);
+leda_window& operator>>(leda_window&, TYPE&);
+\end{verbatim}
+\item an operator for writing to a ps\_file for postscript output
+\begin{verbatim}
+ps_file& operator<<(ps_file&, const TYPE&);
+\end{verbatim}
+\item a function for translating the object by a vector (dx,dy):
+\begin{verbatim}
+void geowin_Translate(TYPE& obj, double dx, double dy);
+\end{verbatim}
+\item a function for rotating the object  about point(dx,dy) by angle a:
+\begin{verbatim}
+void geowin_Rotate(TYPE& obj,double dx,double dy,double a);
+\end{verbatim}
+\item a function for calculating the bounding box of the object:
+\begin{verbatim}
+void geowin_BoundingBox(const TYPE& obj, double& x1, 
+         double& x2, double& y1, double& y2);
+\end{verbatim}
+The function has to return the minimum and maximum x and y coordinates of the object $obj$.
+\item a function for deciding whether the object intersects a box:
+\begin{verbatim}
+bool geowin_IntersectsBox(const TYPE& obj, double x1,
+        double y1, double x2, double y2,bool f)
+\end{verbatim}
+This function gets the object obj, the coordinates of the box $x1,y1,x2,y2$ and a parameter $f$
+(true, if the object is filled, false otherwise). The function should return true if
+the object intersects the box $(x1, y1, x2, y2)$, false otherwise.
+
+To register an additional type (that means a container class) for usage in 
+edit scenes of $GeoWin$, you
+have to call one of the two following functions:
+\begin{verbatim}
+template<class T> void geowin_init_default_type( T* t, string str);
+template<class T> void geowin_init_basic_type(T* t,string str);
+\end{verbatim}
+str is a name desribing the container and its storage; it must be unique and is used for instance
+for saving objects.
+The first function will register the container class, build a scene prototype and set functions.
+The second function will do the same, but it will not set an info-, translate-, rotate- and generate
+function. That means that you have to provide in this case only the remaning functions and operators.
+Register your additional types before creating a $GeoWin$.
+
+\end{enumerate}
+
+\ccFunction{void geowin_init_default_type( T* t, leda_string str);}
+{ registers a type (container including geometric objects) for usage
+  in scenes of $GeoWin$
+  and links a scene typename $str$ with the real type. The container can be a \leda\ list 
+  or an \stl\ list. Some functions and operators are required (see above).
+}
+
+\ccFunction{void geowin_init_basic_type(T* t,leda_string str);}
+{ registers a type (container including geometric objects) for usage
+  in scenes of $GeoWin$
+  and links a scene typename $str$ with the real type. The container can be a \leda\ list
+  or an \stl\ list. Some functions and operators are required (see above).
+}
+
+For the \cgal\ kernel types (using \stl\ lists as containers)  
+2d Point, Line, Ray, Segment, Triangle, Iso Rectangle, Circle,
+for the non kernel type Polygon and for the \cgal\ 3d kernel types Point,
+Segment, Line, Ray, Triangle and Tetrahedron the required functions and operators
+are already provided in $geowin\_support.h$ . For a better understanding of the explained
+registration functions see also the demo programs in $demo/GeoWin$ .
+
+
+

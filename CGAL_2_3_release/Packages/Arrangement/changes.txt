@@ -1,0 +1,418 @@
+1.92 (Susan)
+- moved doc_tex/*_ref directories up one level
+
+1.91 (Susan)
+- made changes in doc necessary to do the manual split
+
+1.90 (Shai)
+====
+- Introducing handling of non x-monotone curves in Pm_with_intersection.
+- Introducing non-intersecting_insert_at_vertices() there.  
+
+1.89 (Eti)
+====
+- Introducing line sweep algorithm.
+
+1.86 (Shai)
+====
+- Added documentation for Pm_with_intersections.
+
+1.85 (Shai)
+====
+- Added the test for Pm_with_intersections.
+ 
+1.81 (Eti)
+====
+- Add clear function to the Arrangement.
+- Add IO utilities to Arrangement.
+
+1.79 (Shai)
+====
+- Made typedefs public in Arr_traits_test.
+
+1.78 (Shai)
+====
+- Added std:: and typename where necessary.
+
+1.77 (Shai)
+====
+- Chaged Arr_circles_real_traits_test to support clean exit when leda 
+is not installed.
+
+1.76 (Shai)
+====
+- Added a new partial test for Arr_circles_real_traits in a new test 
+directory called Arrangement_2_Traits.
+
+1.75 (Shai)
+====
+- Fix bugs in Segment_arr_from_mouse and Polyline_arr_from_mouse demos.
+
+1.74 (Shai)
+====
+- Change variable 'or' in Arr_polyline_traits to 'orient'.
+
+1.73 (Shai)
+====
+- Documentation fixes and updates.
+
+1.72 (Sigal)
+====
+- Make Eyal the maintainer.
+
+1.71 (Sigal)
+====
+- Get rid of a warning.
+
+1.70 (Shai)
+====
+- Removed redundant html directory.
+
+1.69 (Shai)
+====
+- Split reference pages into separate files. Renamed reference
+  pages subdirectory.
+
+1.68 (Oren)
+====
+- Fixes for MSVC
+
+1.67 (Sigal)
+====
+- Fixes for MSVC
+- Fix "fw" to "fv" in doc.
+
+1.66 (Sigal)
+====
+- Fixes for KCC.
+
+1.65 (Shai)
+====
+- Tests with LEDA traits won't fail it there is LEDA is not installed.
+- Corrected the use of LONGNAMES flag in tests and demos.
+- Small changes in cgal_test.
+- Porting fixes, mainly for MSVC (Sigal and Shai)
+
+1.64 (Sigal)
+====
+- Fix a bug in Pm_with_intersections.h
+- Stop using curve_flip and undocument the requirement.
+- Change some test Data files in order to avoid robustness problems.
+
+1.63 (Shai)
+====
+- Inserted short names in test.C and in all demos to please linker used by g++
+  on mips with IRIX-6.5. Polyline traits still won't get linked.
+
+1.62 (Sigal)
+====
+- Improve preformence of Pm_with_itersetions.h .
+- assert is changed to CGAL_assertion in  Pm_with_itersetions.h .
+
+1.61 (Sigal)
+====
+- Fix a bug in Arr_pmwx.h .
+- Make running times of Pm_with_intersection.h better (less ON_CURVE checks).
+
+1.60 (Shai)
+====
+- Small documentation fixes.
+
+1.59 (Oren)
+====
+- Fixes for MSVC.
+
+1.58 (Shai)
+====
+- Removed unreachable code in circle traits.
+
+1.57 (Sigal)
+====
+- Make do_intersect and nearest_itersection of Circle_traits return the same valuse.
+- Fix compilation related stuff.
+
+1.56 (Sigal)
+====
+- Cut all lines that exceed 80 characters.
+
+1.55 (Sigal)
+====
+- Create a makefile for the demos directory. (Needed according to the 
+  developers' guide.
+
+1.54 (Shai)
+====
+- Fixed cgal_test: On execution command, erroneous >& caused errors.
+  In addition 2>&1 was moved to the end of that line.
+ 
+1.53 (Sigal)
+====
+- Disable the insertion of one point curves.
+
+1.52 (Sigal)
+====
+- Fix a bug in arr::insert_from_vertex.
+- Call insert_from_vertex after "insert" to non x-monotone curves.
+- Cancel the "source" parameter in insert_from_vertex.
+
+1.51 (Shai)
+====
+- Fixed typename errors in Arrangement_2.h and Arr_circle_real_traits.h.
+- Added shorter names to please linker in examples 9 and 10.
+- Documented insert_from_vertex, point_reflect_in_x_and_y,
+  curve_reflect_in_x_and_y.(Sigal)
+- Put a precondition in insert_from_curve: 
+    The vertex must be an end point of the inserted curve. (Sigal)
+
+1.50 (Sigal)
+====
+- Improve performence of Eyal's fix.
+
+1.49 (Sigal)
+====
+- Eyal's fix for intersection in orig_curve out of real curve.
+
+1.48 (Oren)
+====
+- additional fixes for warnings.
+- redraw file for Segment_arr_from_mouse and Circle_arr_from_file (Shai)
+
+1.47 (Shai)
+====
+- Add Point/Curve_reflect_in_x_and_y to Arr_leda_segment_exact_traits.h
+
+1.46 (Oren)
+====
+- Fixes for warnings (UNBOUNDED_VERTEX,UNBOUNDED_EDGE)
+
+1.45 (Shai)
+====
+- Planar_map_with_intersections is now used by Arrangemet_2 (by default).
+- Enhance arrangement test (verbose output, default test parameters,
+  smooth exit if LEDA is requested but not installed).
+- Removing inclusion of Window_stream.h in Arr_leda_segement_exact_traits.h.
+
+1.44 (Sigal)
+====
+- Embed Eyal's fixes: 
+  a. reflection should be in x AND y axes.
+  b. intersection is in original curve.
+- redraw function for Segment_from_file demo.
+- add precondition in Arr_polyline traits for split_point to be on split_curve
+
+1.43 (Sigal)
+====
+- Fix a bug in Pm_with_intersections.h that caused the Circles demo failure.
+
+1.42 (Sigal)
+====
+- Improve documentation (Shai)
+- Use curve_reflect_in_y and point_reflect_in_y for the new 
+  Pm_with_intersection.h
+
+1.41 (Shai)
+====
+- Extended arrangment tests to test segment and leda segment traits.
+- removed leda window operations from Arr_leda_segment_exact_traits.h
+  and moved them into the demo Segment_arr_from_mouse.C.
+
+1.40 (Sigal)
+====
+- Bug fixes in Pm_with_intersections.h. (No use of one point curves anymore).
+- Return the precondition of endpoint to curve_split in traits.
+- MAXINT -> INT_MAX
+
+1.39 (Sigal)
+====
+- Bug fixes in Pm_with_intersections.h.
+- Change some test data files in order to overcome robustness problems
+
+1.38 (Shai)
+====
+- Bug fixes in Pm_with_intersections.h.
+
+1.37 (Sigal)
+====
+- Embed Stefan Schirra's comments for BCC compilation.
+
+1.36 (Shai)
+====
+- Update cgal_test.
+- Update Arr_polyline_traits.h to comply with Pm_with_intersections.h.
+
+1.35 (Oren)
+====
+- Enable compilation of polyline traits on NT.
+
+1.34 (Shai)
+====
+- Planar map documentation massively updated (now have reference pages).
+
+1.33 (Sigal)
+====
+- Change CGAL::NTS:: to CGAL_NTS.
+
+1.32 (Sigal)
+====
+- Change macro names to start with CGAL_ .
+- Use Support NTS sub namespace.
+
+1.31
+====
+- Fix Pm_with_intersections problems
+- Comply Arr_segment_exact_traits.h to Pm_with_intersections.h
+- Fix problems related to the mess of Arr_pmwx.h after version 1.25
+
+1.30
+====
+- Fix problems related to Bounding box changes 
+
+1.29
+====
+- example files were textually adapted to be directly included in the
+  documentation (comments and trailing newlines removed).
+
+1.28
+====
+- Minor fixes for Pm_with_intersections_misc.h
+- make Arr_pmwx.h compile after Eyal's changes
+
+1.27
+====
+- bug fix in Arr_pmwx (another bug considering twin edge)
+
+1.26
+====
+- Fix compilation problems for the test
+- change cgal_test into an executable
+
+1.25
+====
+- Added Pm_with_intersection.h that subtitutes Arr_pmwx.
+  for now, both classes are available because the only traits for the 
+  new PMWX is leda-segment-exact.
+  to use the new PMWX one must define ARR_USE_PMWX_NEW
+- constructors changed (in ARR and PMWX)
+- add "add_hole" in the PMWX notifier class
+- bug fix in Arr_pmwx (twin edge)
+1.24
+====
+- README was updated in both example/Arrangement_2 and in demo/Arrangement
+- a new demo Polyline_arr_from_file was added
+- Arrangement_2 test2.C was renamed test.C, converted to use Quotient<int>
+  and some platform bugs were fixed
+- all Arrangement_2 demo files will #error if LEDA does not exist
+
+1.23
+====
+- Fix a bug of partial overlap (as in test file partial_overlap2)
+
+1.22
+====
+- Change cgal_test to be an executable
+
+1.21
+====
+- Change arr.tex in the documentation
+
+1.20
+====
+- Add Arr_pmwx.h that handles all geometric operations of the arrangement
+- Change Arrangment_2.h for using Planar Map With Intersections
+
+1.19
+====
+- Fix bugs in Arrangement_2.h in insert_x_curve for non x-monotone curves
+- Add is_valid() to Arrangement_2.h
+- Fix bugs in Arr_polyline_traits.h
+- Add demo, examples, tests and doc to Arr_polyline_traits.h
+
+1.18
+====
+- Fix bugs in Arrangement_2.h and circle traits.
+
+1.17
+====
+- Put the demo makefile back
+- Fix arr.tex to enable figures references. In addition define Circ_curve and not just "Curve" to prevent erronimous referencing.
+
+1.16
+====
+- Define shorter names to classes in order to please the
+  SGI g++ linker (demo/Arrangemet_2/Segment_arr_from_file.C)
+
+1.15
+====
+- removed demo/Arrangement_2/makefile
+
+1.14
+====
+- Add #include <fstream> in Circle_arr_from_file.C to improve compilation 
+- Define shorter names to classes in order to please the 
+  SGI g++ linker (example6,example8)
+
+1.13
+====
+- Fixes for MSVC (Arrangement.h)
+
+1.12
+====
+- Enlarge text in documentation figures.
+- Fix some problems in documentation.
+
+1.11
+====
+- Fix in Arr_leda_polyline_traits.h ( p0.cmp_x -> Point::cmp_x, same for y)
+- Added missing 'std::' in demo/Arrangement_2/Circle_arr_from_file.C
+
+1.10
+====
+- add "typename" to one of the traits in order to compile on SGI64 (CC7.30)
+- "\begin{ccClass}{Traits}" is changed into "\begin{ccClass}{Arr_traits}" and 
+  in the same section "traits" is changed into "arr_traits", in order to 
+  prevent confusing linking in the CGAL documentation (according to Susan's 
+  request).
+- change gender terms to gender-less terms: father->parent, son->child, etc.
+- comment out the cached traits.
+
+1.09
+====
+- mips_IRIX64-6.5_CC-n32-7.30_LEDA related bug fixes
+
+1.08
+====
+- another bug-fix in find_nearest_intersection (see 1.06)
+
+1.07
+====
+- return 0 status for example6 and example7 in order to past the tests. 
+- shrink the *.gif files in the documentations and make the background transparent.
+
+1.06
+====
+- bug fix in the function find_nearest_intersection inside
+Arrangement_2.h, the bug was due to the changes made in 1.04 .
+
+
+1.05
+====
+- changes for compilation and running on MSVC++
+
+1.04
+====
+- changed the default point location to be the walk.
+- intersections are now done with the curve in the father of the edge_node
+instead of in the edge_node to reduce the complexity of the intersection
+point.
+
+1.03
+====
+- changes in the circles traits for visualization, and in the demo
+
+1.02
+====
+- changes in the makefile
+
+1.01
+====
+- changes for g++-2.95

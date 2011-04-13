@@ -1,0 +1,153 @@
+% +------------------------------------------------------------------------+
+% | Reference manual page: Triangulation_hierarchy_3.tex
+% +------------------------------------------------------------------------+
+% | 
+% | Package: Triangulation3
+% | 
+\RCSdef{\RCSTriangulationhierarchyRev}{$Revision$}
+\RCSdefDate{\RCSTriangulationhierarchyDate}{$Date$}
+% |
+%%RefPage: end of header, begin of main body
+% +------------------------------------------------------------------------+
+
+
+\begin{ccRefClass}{Triangulation_hierarchy_3<Tr>}
+%% add template arg's if necessary
+
+\ccDefinition
+The class \ccRefName\ implements a triangulation augmented with
+a data structure which allows fast point location queries.
+As proved in~\cite{d-iirdt-98}, this structure has an optimal behaviour
+when it is built for Delaunay triangulations.
+However it can be used as well for other triangulations
+and the \ccRefName\ class is templated by a parameter
+which must be instantiated by one of the \cgal\ triangulation
+classes.
+
+\textit{In the current implementation, \ccc{Triangulation_hierarchy_3} 
+supports only Delaunay triangulations:}\\
+\ccc{Tr} must be defined as\\
+\ccc{Delaunay_triangulation_3<TriangulationHierarchyTraits_3,TriangulationDataStructure_3>}\\
+and, in addition to the requirements given by the concept
+\ccc{TriangulationDataStructure_3}, the triangulation data structure
+class must be parametrized by 
+\ccc{Triangulation_hierarchy_vertex_base_3<TriangulationVertexBase_3>}
+and \ccc{TriangulationCellBase_3}.
+
+\ccInclude{CGAL/Triangulation_hierarchy_3.h}
+
+\ccInheritsFrom
+
+\ccc{Tr}
+
+\ccRefName\ offers exactly the same functionalities as \ccc{Tr}.
+Most of them (point location, insertion, removal\ldots) are overloaded to
+improve their efficiency by using the hierarchic structure. 
+
+Note that, since the algorithms that are provided are randomized, the
+running time of constructing a triangulation with a hierarchy may be
+improved when shuffling the data points.
+
+However, the I/0 operations are not overloaded. So, writing a
+hierarchy into a file will lose the hierarchic structure and reading
+it from the file will result in an ordinary triangulation whose
+efficiency will be the same as \ccc{Tr}.
+
+%\ccTypes
+%The class \ccRefName\ inherits the types from its base triangulation
+%class \ccc{Tr}.
+
+%\ccCreation
+%\ccCreationVariable{trh}  %% choose variable name
+
+%\ccConstructor{Triangulation_hierarchy_3(const Traits& gt =
+%Traits());}{default constructor.}
+%\ccGlue
+%\ccConstructor{Triangulation_hierarchy_3(const
+%Triangulation_hierarchy_3& trh1);}{Each triangulation in the hierarchy 
+%is duplicated.}
+%\ccGlue
+%\ccMethod{Triangulation_hierarchy_3<Tr> operator=(const Triangulation_hierarchy_3<Tr>& tr);}
+%{Assignment. Each triangulation in the hierarchy is duplicated.}
+
+%\ccHeading{Helper functions}
+%\ccMethod{void swap(Triangulation_hierarchy_3<Tr>& trh1);}
+%{The triangulations \ccc{trh1} and \ccVar\ are swapped.
+%\ccVar. \ccc{swap(tr)} should be preferred to \ccc{trh} = \ccc{trh1} or to
+%\ccc{trh(trh1)} if \ccc{trh} is deleted after that.}
+%\ccGlue
+%\ccMethod{void clear();}{Delete all triangulations in the hierarchy.}
+
+%\ccHeading{Insertion and Removal}
+%The class \ccRefName\ overwrites the following insertion and removal
+%member functions to update the whole data structure at each operation.
+
+%\ccMethod{Vertex_handle insert(const Point& p);}{Inserts  point \ccc{p}.
+%If point \ccc{p} coincides with an already existing vertex, this 
+%vertex is returned and the triangulation hierarchy is not updated.}
+%\ccGlue
+%\ccMethod{Vertex_handle push_back(const Point& p);}
+%{Equivalent to \ccc{insert(p)}.}
+%\ccGlue
+%\ccMethod{template < class InputIterator >
+%          int
+%          insert(InputIterator first, InputIterator last);}
+%{inserts the points in the range
+% $\left[\right.$\ccc{first}, \ccc{last}$\left.\right)$.
+% Returns the number of inserted points.
+% \ccPrecond The \ccc{value_type} of \ccc{first} and \ccc{last}
+% is \ccc{Point}.}
+
+%\ccMethod{void    remove(Vertex_handle v);}
+%{removes the vertex from the triangulation hierarchy.}
+
+%\ccHeading{Point location}
+%The following point location member functions are overwritten.
+%They take advantage of the hierarchy to achieve an efficient point location.
+
+
+%\ccMethod{Cell_handle locate(const Point& p) const;}
+%{Locates the point \ccc{p} in the triangulation. See the description of the
+%\ccc{locate} member functions in the class \ccc{Triangulation_3<Traits,Tds>}. }
+
+%\ccMethod{Cell_handle  locate(const Point& p, Locate_type& lt, int& li, int &lj) const;}
+%{Same as above. Additionally, the locate type \ccc{lt} and the indices
+%\ccc{li} and \ccc{lj} describing precisely the location are set.}
+
+%\begin{ccAdvanced}
+%\ccHeading{Checking}
+%\ccMethod{bool is_valid() const;}{The \ccc{is_valid()} member function is
+%overwritten to check the validity of the hierarchy, as well as the validity of
+%the bottom triangulation.}
+%\end{ccAdvanced}
+
+\ccImplementation
+The data structure is a hierarchy 
+of triangulations. The triangulation at the lowest level is
+the original triangulation where operations and point location are to 
+be performed.
+Then at each succedding level, the data structure
+stores a triangulation of a small random sample of the vertices
+of the triangulation at the preceeding level. Point location
+is done through a top-down nearest neighbor query.
+The nearest neighbor query is first
+performed naively in the top level triangulation.
+Then, at each following level, the nearest neighbor at that level
+is found through a linear walk performed from
+the nearest neighbor found at the preceeding level.
+Because the number of vertices in each triangulation is only a small
+fraction of the number of vertices of the preceeding triangulation 
+the data structure remains small and achieves fast point location 
+queries on real
+data. 
+
+\ccSeeAlso
+\ccc{CGAL::Triangulation_hierarchy_vertex_base_3<TriangulationVertexBase_3>}\\
+\ccc{TriangulationHierarchyTraits_3}
+
+\end{ccRefClass}
+
+% +------------------------------------------------------------------------+
+%%RefPage: end of main body, begin of footer
+% EOF
+% +------------------------------------------------------------------------+

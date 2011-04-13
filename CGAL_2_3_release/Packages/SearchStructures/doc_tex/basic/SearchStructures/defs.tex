@@ -1,0 +1,83 @@
+\section{Definitions}
+This section presents $d$-dimensional range and segment trees.
+A one-dimensional range tree is a binary search tree on 
+{\bf{one-dimensional point data}}. 
+Here we call all one-dimensional data types having a strict ordering
+(like integer and double) {\em point data}. 
+{\bf{$d$-dimensional point data}} are $d$-tuples of one-dimensional 
+point data.
+
+A one-dimensional segment tree is a binary search tree as well, but with
+{\bf{one-dimensional interval data}} as input data.
+One-dimensional interval data is a pair (i.e., 2-tuple) $(a,b)$, where $a$ 
+and $b$ are one-dimensional point data of the same type and $a< b$. 
+The pair $(a,b)$ represents a half open interval $[a,b)$.
+Analogously, a $d$-dimensional interval  is represented by a $d$-tuple of
+one-dimensional intervals.
+
+The {\bf{input data type}} for a $d$-dimensional tree is a container 
+class consisting of a $d$-dimensional point data type, interval data type 
+or a mixture of both, and optionally a {\bf{value type}}, which 
+can be used to store arbitrary data. 
+E.g., the $d$--dimensional bounding box of a $d$--dimensional polygon 
+may define the interval data of a $d$--dimensional segment tree and
+the polygon itself can be stored as its value.   
+An {\bf{input data item}} is an instance of an input data type.
+
+The range and segment tree classes are fully generic in the sense that they 
+can be used to define {\bf{multilayer trees}}. 
+A multilayer tree of dimension (number of layers) $d$ is a simple tree in 
+the $d$-th layer, whereas the $k$-th layer, $1\leq k\leq d-1$, of the tree 
+defines a tree where each (inner) vertex contains a multilayer tree of 
+dimension $d-k+1$.
+The $k-1$-dimensional tree which is nested in the $k$-dimensional tree 
+($T$) is called the {\em sublayer tree} (of $T$).
+For example, a $d$-dim tree can be a range tree on the first layer, 
+constructed with respect to the first dimension of $d$-dimensional data 
+items.
+On all the data items in each subtree, a $(d-1)$-dimensional tree is built,
+either a range or a segment tree, with respect to the second dimension of 
+the data items.
+And so on.
+%E.g., for each inner vertex of a range tree, a sublayer tree is created 
+%according to all data items of the subtree of that vertex. 
+%For each vertex of a segment tree an instance (tree)  is created according 
+%to all data items of that vertex.
+%E.g., one can define a segment tree for which each vertex contains a 
+%range tree.
+\lcTex{
+Figures~\ref{User:fig:range.eps}, \ref{User:fig:d-range.eps} and
+\ref{User:fig:d-segment.eps} illustrate the meaning of a sublayer tree
+graphically.
+}
+\lcHtml{
+The figures in Sections~\ref{sec:range_trees} and~\ref{sec:segment_trees}
+illustrate the means of a sublayer tree graphically.
+}
+
+After creation of the tree, further insertions or deletions of data items 
+are disallowed.  
+The tree class does neither depend on the type of data nor on the concrete
+physical representation of the data items.
+E.g., let a multilayer tree be a segment tree for which each vertex
+defines a range tree. 
+We can choose the data items to consist of intervals of type \ccStyle{double} 
+and the point data of type \ccStyle{integer}. 
+As value type we can choose  \ccStyle{string}.
+
+For this generality we have to
+define what the tree of each dimension looks like and how the
+input data is organized.
+For dimension $k$, $1\le k\le 4$, \cgal\/ provides ready-to-use
+range and segment trees that can store k-dimensional keys
+(intervals resp.). 
+Examples illustrating the use of these classes are given in
+Sections~\ref{sec:range_tree_ex}
+and~\ref{sec:segment_tree_ex}.
+The description of the functionality of these classes as well as
+the definition of higher dimensional trees and mixed multilayer
+trees is given in the reference manual.
+
+In the following two sections we give short definitions of the version of
+the range tree and segment tree implemented here together with some
+examples. The presentation closely follows~\cite{bkos-cgaa-97}.

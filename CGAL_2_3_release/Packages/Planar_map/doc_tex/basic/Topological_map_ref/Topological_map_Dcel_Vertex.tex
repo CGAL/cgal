@@ -1,0 +1,57 @@
+% +------------------------------------------------------------------------+
+% | Reference manual page: Topological_map_Dcel_Vertex.tex
+% +------------------------------------------------------------------------+
+% | 
+% | Package: pm (Planar Map)
+% | 
+% +------------------------------------------------------------------------+
+
+\ccRefPageBegin
+
+%%RefPage: end of header, begin of main body
+% +------------------------------------------------------------------------+
+
+\begin{ccRefConcept}{TopologicalMapDcelVertex}
+
+\ccDefinition{A vertex $v$ stores %a point and 
+     a reference to an incident 
+     halfedge that has $v$ as its %source.}
+     target.}
+
+  \ccCreationVariable{v}
+
+  \ccTypes
+  
+  %\ccNestedType{Vertex}{self.} % No need to show users of self
+  %\ccGlue
+  \ccNestedType{Halfedge}{corresponding halfedge type.}
+  \ccGlue
+  \ccNestedType{Face}{corresponding face type.}
+  
+%  \ccNestedType{Point}{a point associated with the vertex.} 
+  
+  \ccOperations
+
+  \ccHtmlNoLinksFrom{   % to avoid linkage of Vertex, etc to HDS::Vertex
+  \ccMethod{Halfedge* halfedge();}{an incident halfedge that has \ccVar{} as 
+     its target.}
+  \ccGlue
+  \ccMethod{const Halfedge* halfedge() const;}{}
+
+  \ccMethod{void set_halfedge(Halfedge* h);}{sets incident halfedge.}
+  } % ccHtmlNoLinksFrom
+
+\ccSeeAlso
+     \ccc{TopologicalMapDcel}\lcTex{ 
+     (\ccRefPage{TopologicalMapDcel})}\\
+     \ccc{TopologicalMapDcelHalfedge}\lcTex{
+     (\ccRefPage{TopologicalMapDcelHalfedge})}\\
+     \ccc{TopologicalMapDcelFace}\lcTex{
+     (\ccRefPage{TopologicalMapDcelFace})}
+
+\end{ccRefConcept}  
+% +------------------------------------------------------------------------+
+%%RefPage: end of main body, begin of footer
+\ccRefPageEnd
+% EOF
+% +------------------------------------------------------------------------+

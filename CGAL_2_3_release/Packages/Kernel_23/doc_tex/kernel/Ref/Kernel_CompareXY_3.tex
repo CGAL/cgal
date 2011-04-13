@@ -1,0 +1,16 @@
+\begin{ccRefFunctionObjectConcept}{Kernel::CompareXY_3}
+A model for this must provide:
+
+\ccCreationVariable{fo}
+
+\ccMemberFunction{Comparison_result operator()(const Kernel::Point_3&p, 
+                                               const Kernel::Point_3&q);}
+      {Compares the Cartesian coordinates of points \ccStyle{p} and
+       \ccStyle{q} lexicographically in $xy$ order: first 
+       $x$-coordinates are compared, if they are equal, $y$-coordinates
+       are compared.}
+
+\ccSeeAlso
+\ccRefIdfierPage{CGAL::compare_xy}  \\
+
+\end{ccRefFunctionObjectConcept}

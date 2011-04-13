@@ -1,0 +1,152 @@
+% +------------------------------------------------------------------------+
+% | Reference manual page: Triangulation_cell_3.tex
+% +------------------------------------------------------------------------+
+% | 27.3.2000   Monique Teillaud
+% | Package: Triangulation3
+% | 
+\RCSdef{\RCSTriangulationcellRev}{$Revision$}
+\RCSdefDate{\RCSTriangulationcellDate}{$Date$}
+% |
+%%RefPage: end of header, begin of main body
+% +------------------------------------------------------------------------+
+
+
+\begin{ccRefClass}[Triangulation_3<TriangulationTraits_3,TriangulationDataStructure_3>::]{Cell}  %% add template arg's if necessary
+
+%% \ccHtmlCrossLink{}     %% add further rules for cross referencing links
+%% \ccHtmlIndexC[class]{} %% add further index entries
+
+\ccDefinition
+  
+The class \ccRefName\ represents cells of a 3D triangulation. 
+A cell gives access to its four vertices indexed 0,
+1, 2, and 3 in positive orientation and to its four adjacent cells, also
+called neighbors. The neighbors are indexed in such a way that neighbor
+$i$ lies opposite to vertex $i$.
+In degenerate dimensions, cells are used to store faces of maximal
+dimension: (Section~\ref{Triangulation3-sec-intro}).
+
+\ccInclude{CGAL/Triangulation_cell_3.h}
+
+\ccInheritsFrom
+\ccc{TriangulationDataStructure_3::Cell}
+
+\ccTypes
+
+The class \ccRefName\ defines the same types as the
+\ccc{Triangulation_3<TriangulationTraits_3,TriangulationDataStructure_3>::Vertex} class.
+
+\ccCreationVariable{c}  %% choose variable name
+\begin{ccAdvanced}
+\ccCreation
+
+The user is not allowed to allocate and destruct cells outside of the
+triangulation data structure.  The latter provides methods to deal with these
+issues.
+
+%\ccConstructor{Triangulation_cell_3<TriangulationTraits_3,TriangulationDataStructure_3>();}
+%{Introduces a cell \ccVar\ and initializes all its vertices and
+%neighbors in such a way that tests on the handles for equality with
+%\ccc{NULL} will answer \ccc{true}.} 
+
+%\ccConstructor{Triangulation_cell_3<TriangulationTraits_3,TriangulationDataStructure_3>(
+%                            Vertex_handle v0,	Vertex_handle v1,
+%                            Vertex_handle v2, Vertex_handle v3);}
+%{Introduces a cell \ccVar, and initializes its vertices. The 
+%neighbors are initialized so that tests on the handles for equality with
+%\ccc{NULL} will answer \ccc{true}.} 
+
+%\ccConstructor{Triangulation_cell_3<TriangulationTraits_3,TriangulationDataStructure_3>(
+%                        Vertex_handle v0, Vertex_handle v1,
+%                    	Vertex_handle v2, Vertex_handle v3,
+%                    	Cell_handle n0, Cell_handle n1,
+%                    	Cell_handle n2, Cell_handle n3);}
+%{Introduces a variable \ccVar, and initializes its vertices and neighbors.}
+
+\ccOperations
+
+\ccHeading{Setting}
+\ccThree{Cell_handle}{tds.set_number_of_vertices()}{}
+
+\ccMethod{void set_vertices();}
+{Sets all vertices so that tests on the handles for equality with
+\ccc{NULL} will answer \ccc{true}.}
+\ccGlue
+\ccMethod{void set_vertex(int i, Vertex_handle v);}
+{Sets vertex \ccc{i} of \ccVar\ to be \ccc{v}.
+\ccPrecond{$i \in \{0,1,2,3\}$}}
+\ccGlue
+\ccMethod{void set_vertices(
+	          Vertex_handle v0, 
+                  Vertex_handle v1, 
+                  Vertex_handle v2, 
+                  Vertex_handle v3);}
+{Sets vertices to the given vertices.}
+
+\ccMethod{void set_neighbors();}
+{Sets all neighbors so that tests on the handles for equality with
+\ccc{NULL} will answer \ccc{true}.}
+\ccGlue
+\ccMethod{void set_neighbor(int i, Cell_handle n);}
+{Sets neighbor \ccc{i} to be \ccc{n}.
+\ccPrecond{$i \in \{0,1,2,3\}$.}}
+\ccGlue
+\ccMethod{void set_neighbors(
+                  Cell_handle n0,
+                  Cell_handle n1,  
+                  Cell_handle n2,  
+                  Cell_handle n3);}
+{Sets neighbors to the given cells.}
+\end{ccAdvanced} 
+
+\ccAccessFunctions
+\ccThree{Vertex_handle}{c.has_vertex( Vertex_handle) v)}{}
+
+\ccMethod{Vertex_handle vertex(int i) const;}
+{Returns vertex \ccc{i} of \ccVar.
+\ccPrecond{$i \in \{0,1,2,3\}$.}}
+\ccGlue
+\ccMethod{int index(Vertex_handle v) const;}
+{Returns the index of vertex \ccc{v} in \ccVar.
+\ccPrecond{\ccc{v} is a vertex of \ccVar.}}
+\ccGlue
+\ccMethod{bool has_vertex(Vertex_handle v) const;}
+{Returns \ccc{true} if  \ccc{v} is a vertex of \ccVar.}
+\ccGlue
+\ccMethod{bool has_vertex(Vertex_handle v, int & i) const;}
+{Returns \ccc{true} if \ccc{v} is a vertex of \ccVar, and
+computes the index \ccc{i} of the vertex.}
+
+\ccMethod{Cell_handle neighbor(int i) const;}
+{Returns neighbor \ccc{i} of \ccVar.
+\ccPrecond{$i \in \{0,1,2,3\}$.}}
+\ccGlue
+\ccMethod{int index(Cell_handle n) const;}
+{Returns the index corresponding to neighboring cell \ccc{n}.
+\ccPrecond{\ccc{n} is a neighbor of \ccVar.}}
+\ccGlue
+\ccMethod{bool has_neighbor(Cell_handle n) const;}
+{Returns \ccc{true} if \ccc{n} is a neighbor of \ccVar.}
+\ccGlue
+\ccMethod{bool has_neighbor(Cell_handle n, int & i) const;}
+{Returns \ccc{true} if \ccc{n} is a neighbor of \ccVar, and
+computes the index \ccc{i} of the neighbor.}
+
+\ccMethod{Cell_handle handle() const;}
+{Returns a handle to the cell.}
+
+\ccSeeAlso
+
+\ccc{CGAL::Triangulation_3<TriangulationTraits_3,TriangulationDataStructure_3>::Vertex}.
+
+%% \ccExample
+
+%% \ccIncludeExampleCode{examples/Triangulation3/Triangulation_cell_3_prog.C}
+
+\end{ccRefClass}
+
+% +------------------------------------------------------------------------+
+%%RefPage: end of main body, begin of footer
+% EOF
+% +------------------------------------------------------------------------+
+

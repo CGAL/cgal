@@ -1,0 +1,275 @@
+% begin cgal manual page
+
+\begin{ccRefClass}{Nef_polyhedron_2<T>}\ccCreationVariable{N}
+
+\ccDefinition
+
+An instance of data type \ccc{Nef_polyhedron_2<T>} is a subset of the
+plane that is the result of forming complements and intersections
+starting from a finite set \ccc{H} of
+halfspaces. \ccc{Nef_polyhedron_2} is closed under all binary set
+operations \ccc{intersection}, \ccc{union}, \ccc{difference},
+\ccc{complement} and under the topological operations \ccc{boundary},
+\ccc{closure}, and \ccc{interior}.
+
+The template parameter \ccc{T} is specified via an extended kernel
+concept. \ccc{T} must be a model of the concept
+\ccc{ExtendedKernelTraits_2}.
+
+\ccInclude{CGAL/Nef_polyhedron_2.h}
+
+\ccSetOneOfTwoColumns{7cm}
+
+\ccTypes
+
+\ccNestedType{Line}{the oriented lines modeling halfplanes}
+
+\ccNestedType{Point}{the affine points of the plane.}
+
+\ccNestedType{Direction}{directions in our plane.}
+
+%\ccNestedType{Aff_transformation}{affine transformations of the plane.}
+
+\ccEnum{enum Boundary { EXCLUDED,  INCLUDED }}{construction selection.}
+
+\ccEnum{enum Content { EMPTY,  COMPLETE }}{construction selection}
+
+\ccSetOneOfTwoColumns{3cm}
+
+\ccCreation
+
+\ccConstructor{Nef_polyhedron_2<T>(Content plane = EMPTY)}{
+creates an instance \ccc{N} of type \ccc{Nef_polyhedron_2<T>}
+and initializes it to the empty set if \ccc{plane == EMPTY}
+and to the whole plane if \ccc{plane == COMPLETE}. 
+}
+
+\ccConstructor{Nef_polyhedron_2<T>(Line l, Boundary line = INCLUDED)}{
+creates a Nef polyhedron \ccc{N} containing the halfplane left of
+\ccc{l} including \ccc{l} if \ccc{line==INCLUDED}, excluding \ccc{l}
+if \ccc{line==EXCLUDED}.}
+
+\ccConstructor{template <class Forward_iterator>
+Nef_polyhedron_2<T>(Forward_iterator it, Forward_iterator end, 
+Boundary b = INCLUDED)}{
+creates a Nef polyhedron \ccc{N} from the simple polygon \ccc{P}
+spanned by the list of points in the iterator range \ccc{[it,end)} and
+including its boundary if \ccc{b = INCLUDED} excluding the boundary
+otherwise. \ccc{Forward_iterator} has to be an iterator with
+value type \ccc{Point}. This construction expects that \ccc{P} is
+simple. The degenerate cases where \ccc{P} contains no point, one
+point or spans just one segment (two points) are correctly handled. In
+all degenerate cases there's only one unbounded face adjacent to the
+degenerate polygon. If \ccc{b == INCLUDED} then \ccc{N} is just the
+boundary. If \ccc{b == EXCLUDED} then \ccc{N} is the whole plane
+without the boundary.  }
+
+\ccSetTwoOfThreeColumns{4cm}{3cm}
+
+\ccOperations
+
+\ccMethod{void clear(Content plane = EMPTY) ;}{
+makes \ccc{N} the empty set if \ccc{plane == EMPTY} and the
+full plane if \ccc{plane == COMPLETE}. 
+}
+
+\ccMethod{bool is_empty() ;}{
+returns true if \ccc{N} is empty, false otherwise.}
+
+\ccMethod{bool is_plane() ;}{
+returns true if \ccc{N} is the whole plane, false otherwise.}
+
+\ccHeading{Constructive Operations} 
+
+\ccMethod{Nef_polyhedron_2<T> complement() ;}{
+returns the complement of \ccc{N} in the plane.}
+
+\ccMethod{Nef_polyhedron_2<T> interior() ;}{
+returns the interior of \ccc{N}.}
+
+\ccMethod{Nef_polyhedron_2<T> closure() ;}{
+returns the closure of \ccc{N}.}
+
+\ccMethod{Nef_polyhedron_2<T> boundary() ;}{
+returns the boundary of \ccc{N}.}
+
+\ccMethod{Nef_polyhedron_2<T> regularization() ;}{
+returns the regularized polyhedron (closure of interior).}
+
+\ccMethod{Nef_polyhedron_2<T> intersection(const Nef_polyhedron_2<T>& N1) ;}{
+returns \ccc{N} $\cap$ \ccc{N1}. }
+
+\ccMethod{Nef_polyhedron_2<T> join(const Nef_polyhedron_2<T>& N1) ;}{
+returns \ccc{N} $\cup$ \ccc{N1}. Note that ``union'' is a keyword of C++
+and cannot be used for this operation.}
+
+\ccMethod{Nef_polyhedron_2<T> difference(const Nef_polyhedron_2<T>& N1) ;}{
+returns \ccc{N} $-$ \ccc{N1}.}
+
+\ccMethod{Nef_polyhedron_2<T> symmetric_difference(const 
+Nef_polyhedron_2<T>& N1) ;}{
+returns the symmectric difference \ccc{N - T} $\cup$ \ccc{T - N}.}
+
+%\ccMethod{ Nef_polyhedron_2<T> transform(const Aff_transformation& t) ;}{returns $t(\ccc{N})$.}
+
+Additionally there are operators \ccc{*,+,-,^,!} which implement the
+binary operations \emph{intersection}, \emph{join}, \emph{difference},
+\emph{symmetric difference}, and the unary operation
+\emph{complement}, respectively. There are also the corresponding
+modification operations \ccc{*=,+=,-=,^=}.
+
+There are also comparison operations like \ccc{<,<=,>,>=,==,!=} which
+implement the relations subset, subset or equal, superset, superset or
+equal, equality, inequality, respectively.
+
+\ccHeading{Exploration - Point location - Ray shooting}
+As Nef polyhedra are the result of forming complements 
+and intersections starting from a set \ccc{H} of halfspaces that are
+defined by oriented lines in the plane, they can be represented by
+an attributed plane map $M = (V,E,F)$. For topological queries
+within \ccc{M} the following types and operations allow exploration
+access to this structure. 
+
+\ccSetOneOfTwoColumns{3cm}
+
+\ccTypes
+
+\ccNestedType{Explorer}{a decorator to examine the underlying plane map. 
+See the manual page of \ccc{Explorer}. 
+}
+
+\ccNestedType{Object_handle}{a generic handle to an object of the underlying
+plane map. The kind of object \ccc{(vertex, halfedge, face)} can 
+be determined and the object can be assigned to a corresponding
+handle by the three functions:\\
+\ccc{bool assign(Vertex_const_handle& h, Object_handle)}\\
+\ccc{bool assign(Halfedge_const_handle& h, Object_handle)}\\
+\ccc{bool assign(Face_const_handle& h, Object_handle)}\\
+where each function returns \ccc{true} iff the assignment to
+\ccc{h} was done. 
+}
+
+\ccEnum{enum Location_mode { DEFAULT, NAIVE, LMWT}}{ selection
+flag\footnote {LMWT = Locally Minimum Weight Triangulation, a locally
+optimized constrained triangulation where the weight corresponds to
+the lenght of the edges of the triangulation.} for the point location
+mode.}
+
+\ccSetTwoOfThreeColumns{3cm}{1cm}
+
+\ccOperations
+
+\ccMethod{bool contains(Object_handle h) ;}{
+returns true iff the object \ccc{h} is contained in the set
+represented by \ccc{N}. }
+
+\ccMethod{bool contained_in_boundary(Object_handle h) ;}{
+returns true iff the object \ccc{h} is contained in the $1$-skeleton
+of \ccc{N}. }
+
+\ccMethod{Object_handle locate(const Point& p, Location_mode m =
+DEFAULT) ;}{ returns a generic handle \ccc{h} to an object (face,
+halfedge, vertex) of the underlying plane map that contains the point
+\ccc{p} in its relative interior. The point \ccc{p} is contained in
+the set represented by \ccc{N} if \ccc{N.contains(h)} is true. The
+location mode flag \ccc{m} allows one to choose between different
+point location strategies.  }
+
+\ccMethod{Object_handle ray_shoot(const Point& p, const Direction& d,
+Location_mode m = DEFAULT) ;}{ returns a handle \ccc{h} with
+\ccc{N.contains(h)}, that can be converted to a
+\ccc{Vertex_/Halfedge_/Face_const_handle} as described above. The
+object returned is intersected by the ray starting in \ccc{p} with
+direction \ccc{d} and has minimal distance to \ccc{p}.  The operation
+returns the null handle \ccc{NULL} if the ray shoot along \ccc{d} does
+not hit any object \ccc{h} of \ccc{N} with \ccc{N.contains(h)}. The
+location mode flag \ccc{m} allows one to choose between different
+point location strategies.  }
+
+\ccMethod{Object_handle ray_shoot_to_boundary(const Point& p, const
+Direction& d, Location_mode m = DEFAULT) ;}{ returns a handle \ccc{h},
+that can be converted to a \ccc{Vertex_/Halfedge_const_handle} as
+described above. The object returned is part of the $1$-skeleton of
+\ccc{N}, intersected by the ray starting in \ccc{p} with direction
+\ccc{d} and has minimal distance to \ccc{p}.  The operation returns
+the null handle \ccc{NULL} if the ray shoot along \ccc{d} does not hit
+any $1$-skeleton object \ccc{h} of \ccc{N}. The location mode flag
+\ccc{m} allows one to choose between different point location
+strategies.  }
+
+\ccMethod{Explorer explorer() ;}{
+returns a decorator object that allows read-only access of
+the underlying plane map. See the manual page \ccc{Explorer} for its 
+usage.}
+
+\ccHeading{Input and Output}
+A Nef polyhedron \ccc{N} can be visualized in a \ccc{Window_stream W}. 
+The output operator is defined in the file 
+\ccc{CGAL/IO/Nef_\-poly\-hedron_2_\-Win\-dow_\-stream.h}.
+ 
+\ccImplementation
+
+Nef polyhedra are implemented on top of a halfedge data structure and
+use linear space in the number of vertices, edges and facets.
+Operations like \ccc{empty} take constant time. The operations
+\ccc{clear}, \ccc{complement}, \ccc{interior}, \ccc{closure},
+\ccc{boundary}, \ccc{regularization}, input and output take linear
+time. All binary set operations and comparison operations take time
+$O(n \log n)$ where $n$ is the size of the output plus the size of the
+input.
+
+The point location and ray shooting operations are implemented in two
+flavors. The \ccc{NAIVE} operations run in linear query time without
+any preprocessing, the \ccc{DEFAULT} operations (equals \ccc{LMWT})
+run in sub-linear query time, but preprocessing is triggered with the
+first operation. Preprocessing takes time $O(N^2)$, the sub-linear
+point location time is either logarithmic when LEDA's persistent
+dictionaries are present or if not then the point location time is
+worst-case linear, but experiments show often sublinear runtimes.  Ray
+shooting equals point location plus a walk in the constrained
+triangulation overlayed on the plane map representation. The cost of
+the walk is proportional to the number of triangles passed in
+direction \ccc{d} until an obstacle is met. In a minimum weight
+triangulation of the obstacles (the plane map representing the
+polyhedron) the theory provides a $O(\sqrt{n})$ bound for the number
+of steps. Our locally minimum weight triangulation approximates the
+minimum weight triangulation only heuristically (the calculation of
+the minimum weight triangulation is conjectured to be NP hard). Thus
+we have no runtime guarantee but a strong experimental motivation for
+its approximation.
+
+\ccExample
+
+Nef polyhedra are parameterized by a so-called extended geometric
+kernel. There are three kernels, one based on a homogeneous
+representation of extended points called
+\ccc{Extended_homogeneous<RT>} where \ccc{RT} is a ring type providing
+additionally a \ccc{gcd} operation, one based on a Cartesian
+representation of extended points called \ccc{Extended_cartesian<NT>}
+where \ccc{NT} is a field type, and finally
+\ccc{Filtered_extended_homogeneous<RT>} (an optimized version of the
+first). The following example uses the filtered homogeneous kernel to
+construct the intersection of two halfspaces.
+
+\ccIncludeExampleCode{Nef_2/simple_intersection.C}
+
+After line (*) \ccc{N3} is the intersection of \ccc{N1} and \ccc{N2}. 
+The member types of \ccc{Nef_polyhedron_2< Extended_homogeneous<NT> >}
+map to corresponding types of the standard CGAL geometry kernel
+(type equality in pseudo-code notation):
+\begin{ccExampleCode}
+CGAL::Nef_polyhedron_2< CGAL::Extended_cartesian<FT> >::Point
+  == CGAL::Cartesian<FT>::Point_2
+
+CGAL::Nef_polyhedron_2< CGAL::Extended_homogeneous<RT> >::Point
+   == CGAL::Homogeneous<RT>::Point_2
+
+CGAL::Nef_polyhedron_2< CGAL::Filtered_extended_homogeneous<RT> >::Point
+   == CGAL::Homogeneous<RT>::Point_2
+\end{ccExampleCode}
+The same holds for the types \ccc{Line} and \ccc{Direction} in the
+local scope of \ccc{Nef_polyhedron_2<...>}.
+
+\end{ccRefClass}
+
+

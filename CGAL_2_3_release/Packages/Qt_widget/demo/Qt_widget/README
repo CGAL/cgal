@@ -1,0 +1,24 @@
+Obviously, these demos need Qt to be installed.
+
+To compile this under linux/unix. Set QTDIR to your Qt install directory 
+in Makefile or in your environnement. Then type 
+  make
+It will create two programs: test and contrained
+
+test is a silly single test program. At first, it draws two segments 
+before the window is shown (and it does that to show that drawing can be 
+done before the window is shown). After a click, it draws several CGAL 
+geometrical object (see test.C). Try to resize it to see what happens. 
+Quit by clicking with the right button.
+
+contrained is an adaptation of a demo from Mariette Yvinnec courses, using 
+Qt and QCGALWidget. It has been especially complicated to show how easy 
+that is to build an application with a CGAL Widget, a menu and a toolbar. 
+Enter points with the left button. You can close the window by clicking 
+with the right button or by selecting Quit in the file menu. The option 
+Open is to open another contrained triangulation file (fish is the 
+default file ).
+Again, try to resize the window to see what happened. The difference with 
+essai is that init(xmin, xmax, ymin, ymax) has been called to defined 
+fixed ranges and that an redraw method has been defined (to redraw after a 
+resize event).

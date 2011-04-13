@@ -1,0 +1,53 @@
+% +------------------------------------------------------------------------+
+% | Reference manual page: Pm_unbounding_box (Planar_map)
+% +------------------------------------------------------------------------+
+% | 
+% | Package: pm (Planar_map_2)
+% | 
+% +------------------------------------------------------------------------+
+
+\ccRefPageBegin
+
+%%RefPage: end of header, begin of main body
+% +------------------------------------------------------------------------+
+
+\begin{ccRefClass}{Pm_unbounding_box<Planar_map>}
+\label{Pm_ref:unbounding_box}
+
+\ccDefinition 
+    The \ccRefName\ class
+    implements the naive approach that deals only with bounded curves.
+    The curves are inserted into the map as is. 
+    This approach is highly efficient though limited to only some of the 
+    traits.
+
+    This is the default strategy used by \ccc{Planar_map_2<Dcel, Traits>}.
+
+\ccThree{Curve}{}{\hspace*{10cm}}
+\ccThreeToTwo
+
+\ccInclude{CGAL/Pm_unbounding_box.h}
+
+\ccIsModel
+  \ccc{PlanarMapBoundingBox_2}
+
+\ccInheritsFrom
+  \ccc{Pm_bounding_box_base<Planar_map>}
+
+%\ccCreationVariable{pl}
+
+%\ccConstructor{Pm_unbounding_box_location<Planar_map>();}
+%{}
+  
+\ccSeeAlso
+   Discussion of the different bounding box strategies in the introduction
+of \ccc{Planar_map} reference pages\lcTex{ (\ccRefPage{Pm_Ref_intro})}.
+
+\end{ccRefClass} % Pm_unbounding_box
+
+% +------------------------------------------------------------------------+
+%%RefPage: end of main body, begin of footer
+\ccRefPageEnd
+% EOF
+% +------------------------------------------------------------------------+
+

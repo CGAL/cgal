@@ -1,0 +1,147 @@
+% +------------------------------------------------------------------------+
+% | Reference manual page: Triangulation_Traits_3.tex
+% +------------------------------------------------------------------------+
+% | 27.3.2000   Monique Teillaud
+% | Package: Triangulation3
+% | 
+\RCSdef{\RCSTriangulationTraitsRev}{$Revision$}
+\RCSdefDate{\RCSTriangulationTraitsDate}{$Date$}
+% |
+%%RefPage: end of header, begin of main body
+% +------------------------------------------------------------------------+
+
+
+\begin{ccRefConcept}{TriangulationTraits_3}
+
+%% \ccHtmlCrossLink{}     %% add further rules for cross referencing links
+%% \ccHtmlIndexC[concept]{} %% add further index entries
+
+To be used by \protect \ccc{Triangulation_3<TriangulationTraits_3, Tds_3>}
+
+\ccDefinition
+The concept \ccRefName\ is the first template parameter of the
+triangulation class \ccc{Triangulation_3<TriangulationTraits_3,Tds_3>} of \cgal. It
+defines the geometric
+objects (points, segments, triangles and tetrahedra) forming the
+triangulation together with a few geometric predicates on these objects:
+equality, coordinate comparison, orientation in space and orientation
+in case of coplanar points.
+
+\ccTypes
+\ccTwo{TriangulationTraits_3::Tetrahedron_3xx}{}
+
+\ccNestedType{Point_3}
+{The point type. It must provide assignment and copy constructor.}
+\ccGlue
+\ccNestedType{Segment_3}
+{The  segment type.}
+\ccGlue
+\ccNestedType{Triangle_3}
+{The triangle type.}
+\ccGlue
+\ccNestedType{Tetrahedron_3}
+{The tetrahedron type.}
+
+\ccTwo{TriangulationTraits_3}{}
+
+\ccNestedType{Construct_segment_3} {A constructor object for
+\ccc{Segment_3}.  Must provide the operator\\
+\ccc{Segment_3 operator()(Point_3 p, Point_3 q)},
+which constructs a  segment from two points.}
+\ccGlue
+\ccNestedType{Construct_triangle_3} {A constructor object for
+\ccc{Triangle_3}.  Must provide the operator\\
+\ccc{Triangle_3 operator()(Point_3 p, Point_3 q, Point_3 r )},
+which constructs a triangle from three points.}
+\ccGlue
+\ccNestedType{Construct_tetrahedron_3} {A constructor object for
+\ccc{Tetrahedron_3}.  Must provide the operator\\
+\ccc{Tetrahedron_3 operator()(Point_3 p, Point_3 q, Point_3 r, Point_3 s)},
+which constructs a tetrahedron from four points.}
+
+\ccNestedType{Equal_3}{Predicate object. Must provide the operator\\ 
+\ccc{bool operator()(Point p, Point q)}
+which tests whether points \ccc{p} and \ccc{q} are equal.}
+%
+\ccGlue
+%
+\ccNestedType{Compare_x_3}{Predicate object. Must provide the operator\\
+\ccc{Comparison_result operator()(Point p, Point q)}
+which returns \ccc{SMALLER, EQUAL} or \ccc{LARGER}
+according to the $x$-ordering of the points \ccc{p} and \ccc{q}.}
+%
+\ccGlue
+%
+\ccNestedType{Compare_y_3}{Predicate object. Must provide the operator\\
+\ccc{Comparison_result operator()(Point p, Point q)}
+which returns \ccc{SMALLER, EQUAL} or \ccc{LARGER}
+according to the $y$-ordering of the points \ccc{p} and \ccc{q}.}
+%
+\ccGlue
+%
+\ccNestedType{Compare_z_3}{Predicate object. Must provide the operator\\
+\ccc{Comparison_result operator()(Point p, Point q)}
+which returns \ccc{SMALLER, EQUAL} or \ccc{LARGER}
+according to the $z$-ordering of the points \ccc{p} and \ccc{q}.}
+%
+\ccGlue
+%
+\ccNestedType{Orientation_3}{Predicate object. Must provide the operator\\
+\ccc{Orientation operator()(Point p, Point q, Point r, Point s)}
+which returns POSITIVE, if s lies on the positive side of the oriented plane h
+defined by p, q, and r, returns NEGATIVE if s lies on the negative side of h,
+and returns COPLANAR if s lies on h.}
+%
+\ccGlue
+%
+\ccNestedType{Coplanar_orientation_3}{Predicate object. Must provide
+the operator \ccc{Orientation operator()(Point p, Point q, Point r)}
+which returns \ccc{COLLINEAR} if the points are collinear.  Otherwise it must
+return a consistent orientation for any three points chosen in a same plane.
+}
+
+\ccCreation
+\ccCreationVariable{traits}  %% choose variable name
+\ccThree{Triangulation_traits_3();}{Triangulation_traits_3 & tr}{}
+
+\ccConstructor{Triangulation_traits_3();}{Default constructor.}
+\ccGlue
+\ccConstructor{Triangulation_traits_3(const Triangulation_traits_3 & tr);}
+{Copy constructor.}
+
+\ccOperations
+
+The following functions give access to the predicate and construction objects:
+
+\ccThree{coplanar_side_of_bounded_circle_3xxx}{gt.compare_x(Point p0, Point p1)x}{}
+
+\ccMethod{Construct_segment_3 construct_segment_3_object();}{}
+\ccGlue
+\ccMethod{Construct_triangle_3 construct_triangle_3_object();}{}
+\ccGlue
+\ccMethod{Construct_tetrahedron_3 construct_tetrahedron_3_object();}{}
+
+\ccMethod{Equal_3 equal_3_object();}{}
+\ccGlue
+\ccMethod{Compare_x_3 compare_x_3_object();}{}
+\ccGlue
+\ccMethod{Compare_y_3 compare_y_3_object();}{}
+\ccGlue
+\ccMethod{Compare_z_3 compare_z_3_object();}{}
+
+\ccMethod{Orientation_3 orientation_3_object();}{}
+\ccGlue
+\ccMethod{Coplanar_orientation_3 coplanar_orientation_3_object();}{}
+
+
+\ccHasModels
+
+The cartesian and homegenous kernels provided by \cgal.
+
+\end{ccRefConcept}
+
+% +------------------------------------------------------------------------+
+%%RefPage: end of main body, begin of footer
+% EOF
+% +------------------------------------------------------------------------+
+

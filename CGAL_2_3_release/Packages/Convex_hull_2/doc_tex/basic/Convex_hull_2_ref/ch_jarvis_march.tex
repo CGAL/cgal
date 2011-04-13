@@ -1,0 +1,81 @@
+% +------------------------------------------------------------------------+
+% | Reference manual page: ch_jarvis_march.tex
+% +------------------------------------------------------------------------+
+% | 09.05.2001   Susan Hert and Stefan Schirra
+% | Package: Convex_hull_2
+% |
+% +------------------------------------------------------------------------+
+
+\begin{ccRefFunction}{ch_jarvis_march}  %% add template arg's if necessary
+\ccIndexSubitemBegin{convex hull, 2D}{Jarvis march}
+\ccIndexSubitemBegin{convex hull, 2D}{gift-wrapping}
+\ccIndexSubitemBegin{extreme points, 2D}{between two points}
+
+\ccDefinition
+  
+The function \ccRefName\ generates the counterclockwise sequence of extreme
+points from a given set of input points that line between two input points.
+
+
+\ccInclude{CGAL/ch_jarvis.h}
+
+\ccFunction{template <class ForwardIterator, class OutputIterator, class Traits>
+            OutputIterator
+            ch_jarvis_march(ForwardIterator first, ForwardIterator beyond,
+                            const Traits::Point_2& start_p,
+                            const Traits::Point_2& stop_p,
+                            OutputIterator  result,
+                            const Traits& ch_traits = Default_traits);}
+            {generates the counterclockwise subsequence of
+             extreme points between \ccc{start_p} and \ccc{stop_p} of the 
+             points in the range [\ccc{first},\ccc{beyond}), starting at 
+             position \ccc{result} with point \ccc{start_p}.  The last point 
+             generated is the point preceding \ccc{stop_p} in the 
+             counterclockwise order of extreme points.\\
+            \ccPrecond%\ccIndexSubitem[C]{ch_jarvis_march}{preconditions}
+            \ccc{start_p} and \ccc{stop_p} are extreme points with respect to
+            the points in the range [\ccc{first},\ccc{beyond}) and \ccc{stop_p}
+            is an element of range [\ccc{first},\ccc{beyond}).}
+
+
+The default traits class \ccc{Default_traits} is the kernel in which the
+type \ccc{ForwardIterator::value_type} is defined.
+
+
+\ccHeading{Requirements}
+\begin{enumerate}
+   \item    \ccc{ForwardIterator::value_type} and 
+            \ccc{OutputIterator::value_type}
+            are equivalent to \ccc{Traits::Point_2}.
+   \item    \ccc{Traits} defines the following subset of types from
+            the concept ConvexHullTraits\_2 and their corresponding member
+            %\ccIndexMainItem[c]{ConvexHullTraits_2}
+            functions that return instances of these types:
+            \begin{itemize}
+                \item \ccc{Traits::Point_2},
+                \item \ccc{Traits::Less_rotate_ccw_2}.
+            \end{itemize}
+\end{enumerate}
+
+\ccSeeAlso
+
+\ccRefIdfierPage{CGAL::ch_jarvis} \\
+\ccRefIdfierPage{CGAL::lower_hull_points_2} \\
+\ccRefIdfierPage{CGAL::upper_hull_points_2} \\
+
+\ccIndexSubitemEnd{convex hull, 2D}{Jarvis march}
+\ccIndexSubitemEnd{convex hull, 2D}{gift-wrapping}
+\ccIndexSubitemEnd{extreme points, 2D}{between two points}
+
+\ccImplementation
+
+The function uses the Jarvis march (gift-wrapping)
+algorithm \cite{j-ichfs-73}. This algorithm requires $O(n h)$ time 
+in the worst case for $n$ input points with $h$ extreme points.  
+\end{ccRefFunction}
+
+% +------------------------------------------------------------------------+
+%%RefPage: end of main body, begin of footer
+% EOF
+% +------------------------------------------------------------------------+
+

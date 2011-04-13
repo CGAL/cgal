@@ -1,0 +1,111 @@
+Changes from 1.2:
+
+    - added copy constructor and assignment operator in CGAL_Min_sphere_d
+    - documentation has additonal `Guidelines and Hints' section now
+    - default traits class files get included in Min_sphere_d.h now
+    - testfiles changed accordingly (removed explicit traits class inclusion)
+    - the d-dim Points are no longer maintained in the MinSphere package,
+      they have been taken over by Stefan
+    - testfiles include hack to suppress MIPS-linkage conflict warnings
+
+Changes from 1.4:
+
+    - added missing doc-file smallest_enclosing_spheres.tex
+    - Problems with test programs on 64 Bit not addressed, because
+      they are apparently due to a bug in leda_integer that got
+      fixed for LEDA 3.7. 
+
+Changes from 1.5:
+    - renamed long_description.txt into changes.txt
+
+Changes from 1.6:
+    - bug in CGAL_DACd and CGAL_DAHd fixed (there was an undefined
+      d, and the code was only working because in all test programs
+      there was a d at global scope)
+    - test programs changed: d renamed to D to find possible other hidden
+      undefined d's (there were none)
+
+Changes from 1.7:
+    - static cast replaced by standard-conform enum conversion
+    - package name changed from MinSphere to Min_sphere_d to be consistent
+      with the other optimization packages
+
+Changes from 1.8:
+    - added some explicit assignment operators in order to deal with an
+      egcs internal compiler error. 
+    - changed inclusion order in testfiles: now leda_rational is included
+      last, so basic is included before (seems to be important for some
+      reason)
+
+Changes from 1.9:
+    - namespace CGAL introduced
+    - Rep_distinguisher removed (old SunPro hack) 
+    - Distinguishing between representation dependent optimisation spheres
+      goes via specialization over the Rep_tag now, and no longer via the
+      Rep_distinguisher 
+    - CGAL_CFG_NO_MEMBER_TEMPLATES flag removed (assume that all compilers
+      support it now). 
+    - d-dim default data accessor is now representation indepenedent, but
+      needs the begin- and end-iterators of the d-dim points (which have
+      also newly been introduced)
+    - added a class NT_rep_traits<Rep_tag, NT> to extract FT and RT from
+      a number type, depending on the representation (needed by the Min_sphere) 
+
+Changes from 1.10:
+    - g++2.8.1 supporting directive CGAL_STD inserted in derived classes
+    - testfiles: checking routines are in verbose mode now
+    - documentation: CGAL-prefix removed
+
+Changes from 1.11:
+    - corrected main manual page: traits type R (old design) replaced by
+      Rep_tag and NT.
+
+Changes from 1.12:
+    - output of random seed in testfiles added, in order to be able to
+      reconstruct possible problems
+    - documentation fixed (removed inconsistencies related to new traits
+      class design). 
+
+Changes from 1.13:
+    - bug in pivoting routine fixed
+    - files changed for Visual C++: partial specialization removed
+
+Changes from 2.1:
+    - minor fixes (std:: added in istream, ostream, syntax errors for
+      M$ fixed
+
+Changes from 2.3:
+    - minor fixes; further std:: added, drand48 removed from example, 
+      CGAL_BLABLA_SPEC added (according to Dima's remarks), endl added
+      to sphere output test (to avoid messing up the buffer).  
+
+Changes from 2.4:
+    - CGAL_BLABLA_SPEC added also to 2- and 3-d test programs (forgot this
+      before). 
+
+Changes from 2.5:
+    - Third parameter in Min_circle constructor call added
+    - Lines over 80 chars fixed
+    - testfiles now only do something if LEDA is used (to avoid 'n' in
+      the test suite)
+
+Changes from 2.8:
+    - MSC warning for xclocnum problem added
+    - empty demo dir removed.
+
+Changes from 2.9:
+    - unterminated string constant fixed
+
+Changes from 2.10:
+    - msvc message pragma replaced for nonexistent #warning
+
+Changes from 2.15:
+   - manual rewritten to new style;
+   - a couple of std:: added
+   - exmple program improved (using-directives removed).
+
+Changes from 2.25:
+   - concept names fixed in documentation
+
+Changes from 2.26:
+   - Susan moved Optimisation_ref directory up one level

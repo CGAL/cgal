@@ -1,0 +1,65 @@
+% +------------------------------------------------------------------------+
+% | Reference manual page: orientation_2.tex
+% +------------------------------------------------------------------------+
+% | 21.06.2001   Author
+% | Package: Polygon
+% | 
+\RCSdef{\RCSorientationRev}{$Revision$}
+\RCSdefDate{\RCSorientationDate}{$Date$}
+% |
+%%RefPage: end of header, begin of main body
+% +------------------------------------------------------------------------+
+
+
+\begin{ccRefFunction}{orientation_2}  %% add template arg's if necessary
+
+%% \ccHtmlCrossLink{}     %% add further rules for cross referencing links
+%% \ccHtmlIndexC[function]{} %% add further index entries
+
+\ccDefinition
+  
+The function \ccRefName\ computes if a polygon is clockwise or counterclockwise
+oriented.
+
+\ccInclude{orientation_2.h}
+
+\ccGlobalFunction{
+template <class ForwardIterator, class Traits>
+Orientation orientation_2(ForwardIterator first, ForwardIterator last,
+                                    const Traits& traits);}
+{
+\ccPrecond \ccc{is_simple_2(first, last, traits);}
+}
+
+
+\ccHeading{Requirements}
+\ccIndexSubitem[C]{bottom_vertex_2}{requirements}
+\begin{enumerate}
+    \item \ccc{Traits} is a model of the concept 
+	  PolygonTraits\_2\ccIndexMainItem[c]{PolygonTraits_2}.
+	  Only the following members of this traits class are used:
+          \begin{itemize}
+            \item \ccc{Less_xy_2}
+            \item \ccc{less_xy_2_object}
+            \item \ccc{orientation_2_object}
+          \end{itemize}
+    \item \ccc{ForwardIterator::value_type} should be \ccc{Traits::Point_2},
+\end{enumerate}
+
+
+\ccSeeAlso
+
+\ccRefIdfierPage{PolygonTraits_2} \\
+\ccRefIdfierPage{CGAL::is_simple_2} \\
+\ccRefIdfierPage{CGAL::Polygon_2<PolygonTraits_2, Container>} \\
+\ccc{CGAL::Orientation}
+
+%% \ccIncludeExampleCode{examples/Polygon/orientation_2_prog.C}
+
+\end{ccRefFunction}
+
+% +------------------------------------------------------------------------+
+%%RefPage: end of main body, begin of footer
+% EOF
+% +------------------------------------------------------------------------+
+

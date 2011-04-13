@@ -1,0 +1,27 @@
+\begin{ccRefFunctionObjectConcept}{Kernel::HasOn_2}
+A model for this must provide:
+
+\ccCreationVariable{fo}
+
+\ccMemberFunction{bool operator()(const Kernel::Line_2&l,
+                                  const Kernel::Point_2&p);}
+{returns true iff $p$ lies on $l$.}
+
+\ccMemberFunction{bool operator()(const Kernel::Ray_2&r,
+                                  const Kernel::Point_2&p);}
+{returns true iff $p$ lies on $r$.}
+
+\ccMemberFunction{bool operator()(const Kernel::Segment_2&s,
+                                  const Kernel::Point_2&p);}
+{returns true iff $p$ lies on $s$.}
+
+\ccRefines
+AdaptableFunctor
+
+\ccSeeAlso
+\ccRefIdfierPage{CGAL::Line_2<R>} \\
+\ccRefIdfierPage{CGAL::Ray_2<R>} \\
+\ccRefIdfierPage{CGAL::Segment_2<R>} \\
+
+
+\end{ccRefFunctionObjectConcept}

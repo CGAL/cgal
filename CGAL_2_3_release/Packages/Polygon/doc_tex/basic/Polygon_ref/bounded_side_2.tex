@@ -1,0 +1,80 @@
+% +------------------------------------------------------------------------+
+% | Reference manual page: bounded_side_2.tex
+% +------------------------------------------------------------------------+
+% | 21.06.2001   Author
+% | Package: Polygon
+% | 
+\RCSdef{\RCSboundedsideRev}{$Revision$}
+\RCSdefDate{\RCSboundedsideDate}{$Date$}
+% |
+%%RefPage: end of header, begin of main body
+% +------------------------------------------------------------------------+
+
+
+\begin{ccRefFunction}{bounded_side_2}  %% add template arg's if necessary
+
+%% \ccHtmlCrossLink{}     %% add further rules for cross referencing links
+%% \ccHtmlIndexC[function]{} %% add further index entries
+
+\ccDefinition
+
+The function \ccRefName\ computes if a point lies inside a polygon.
+
+\ccInclude{CGAL/Polygon_2_algorithms.h}
+
+\ccGlobalFunction{template <class ForwardIterator, class Traits>
+Bounded_side bounded_side_2(ForwardIterator first,
+                                      ForwardIterator last,
+                                      const Traits::Point_2& point,
+                                      Traits traits);}
+{
+The function \ccRefName\ computes if a point lies inside a polygon. 
+The polygon is defined by the sequence of points \ccc{first}\ldots \ccc{last}.
+Being inside is defined by the odd-even rule. If we take a ray starting at the
+point and extending to infinity (in any direction), we count the number of
+intersections. If this number is odd, the point is inside, otherwise it is
+outside. If the point is on a polygon edge, a special value is returned.  A
+simple polygon divides the plane in an unbounded and a bounded region.
+According to the definition points in the bounded region are inside the polygon.
+}
+
+\ccHeading{Requirements}
+\ccIndexSubitem[C]{bottom_vertex_2}{requirements}
+\begin{enumerate}
+    \item \ccc{Traits} is a model of the concept 
+	  PolygonTraits\_2\ccIndexMainItem[c]{PolygonTraits_2}.
+	  Only the following members of this traits class are used:
+          \begin{itemize}
+            \item \ccc{Compare_x_2}
+            \item \ccc{Compare_y_2}
+            \item \ccc{Orientation_2}
+            \item \ccc{compare_x_2_object}
+            \item \ccc{compare_y_2_object}
+            \item \ccc{orientation_2_object}
+          \end{itemize}
+    \item \ccc{ForwardIterator::value_type} should be \ccc{Traits::Point_2},
+\end{enumerate}
+
+\ccImplementation
+
+The running time is linear in the number of vertices of the polygon.
+A horizontal ray is taken to count the number of intersections.
+Special care is taken that the result is correct even if there are degeneracies
+(if the ray passes through a vertex).
+
+\ccSeeAlso
+
+\ccRefIdfierPage{PolygonTraits_2} \\
+\ccRefIdfierPage{CGAL::oriented_side_2} \\
+\ccRefIdfierPage{CGAL::Polygon_2<PolygonTraits_2, Container>} \\
+\ccc{CGAL::Bounded_side}
+
+%% \ccIncludeExampleCode{examples/Polygon/bounded_side_2_prog.C}
+
+\end{ccRefFunction}
+
+% +------------------------------------------------------------------------+
+%%RefPage: end of main body, begin of footer
+% EOF
+% +------------------------------------------------------------------------+
+

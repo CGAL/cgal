@@ -1,0 +1,188 @@
+\providecommand{\ccRequire}{\ccCommentHeading{Requirement}}
+
+\begin{ccRefClass}{Vector_d<R>}\ccCreationVariable{v}
+
+\ccDefinition
+
+An instance of data type \ccc{Vector_d<R>} is a vector of Euclidean
+space in dimension $d$. A vector $r = (r_0,\ldots,r_{ d - 1})$ can be
+represented in homogeneous coordinates $(h_0,\ldots,h_d)$ of number
+type \ccc{RT}, such that $r_i = h_i/h_d$ which is of type \ccc{FT}. We
+call the $r_i$'s the Cartesian coordinates of the vector. The
+homogenizing coordinate $h_d$ is positive.
+
+This data type is meant for use in computational geometry. It realizes
+free vectors as opposed to position vectors (type \ccc{Point_d}). The
+main difference between position vectors and free vectors is their
+behavior under affine transformations, e.g., free vectors are
+invariant under translations.
+
+
+\ccSetOneOfTwoColumns{4cm}
+
+\ccTypes
+
+\ccNestedType{RT}{the ring type.  }
+
+\ccNestedType{FT}{the field type.  }
+
+\ccNestedType{LA}{the linear algebra layer.  }
+
+\ccNestedType{Cartesian_const_iterator}{a read-only iterator for the
+  Cartesian coordinates.  }
+
+\ccNestedType{Homogeneous_const_iterator}{a read-only iterator for the
+  homogeneous coordinates.  }
+
+\ccNestedType{Base_vector}{construction tag.  }
+
+\ccSetOneOfTwoColumns{4cm}
+
+\ccCreation
+
+\ccConstructor{Vector_d<R>()}{introduces a variable \ccc{v}
+  of type \ccc{Vector_d<R>}.}
+
+\ccConstructor{Vector_d<R>(int d, Null_vector)}{ introduces the zero
+  vector \ccc{v} of type \ccc{Vector_d<R>} in $d$-dimensional space.
+  For the creation flag \ccc{CGAL::NULL_VECTOR} can be used.}
+
+\ccConstructor{template <class InputIterator> Vector_d<R>(int d,
+  InputIterator first, InputIterator last)}{ introduces a variable
+  \ccc{v} of type \ccc{Vector_d<R>} in dimension \ccc{d}.  If
+  \ccc{size [first,last) == d} this creates a vector with Cartesian
+  coordinates \ccc{set [first,last)}. If \ccc{size [first,last) ==
+    p+1} the range specifies the homogeneous coordinates $\ccc{H = set
+    [first,last)} = (\pm h_0, \pm h_1, \ldots, \pm h_d)$ where the
+  sign chosen is the sign of $h_d$.  \ccPrecond \ccc{d} is
+  nonnegative, \ccc{[first,last)} has \ccc{d} or \ccc{d+1} elements
+  where the last has to be non-zero. \ccRequire The value type of
+  \ccc{InputIterator} is \ccc{RT}.  }
+
+\ccConstructor{template <class InputIterator> Vector_d<R>(int d,
+  InputIterator first, InputIterator last, RT D)}{ introduces a
+  variable \ccc{v} of type \ccc{Vector_d<R>} in dimension \ccc{d}
+  initialized to the vector with homogeneous coordinates as defined by
+  \ccc{H = set [first,last)} and \ccc{D}: $(\pm \ccc{H[0]},
+  \pm\ccc{H[1]}, \ldots, \pm\ccc{H[d-1]}, \pm\ccc{D})$. The sign
+  chosen is the sign of $D$. \ccPrecond \ccc{D} is non-zero, the
+  iterator range defines a $d$-tuple of \ccc{RT}. \ccRequire The value
+  type of \ccc{InputIterator} is \ccc{RT}.  }
+
+\ccConstructor{Vector_d<R>(int d, Base_vector, int i)}{ returns a
+  variable \ccc{v} of type \ccc{Vector_d<R>} initialized to the $i$-th
+  base vector of dimension $d$.  \ccPrecond $0 \leq i < d$.}
+
+\ccConstructor{Vector_d<R>(RT x, RT y, RT w = 1)}{introduces a
+  variable \ccc{v} of type \ccc{Vector_d<R>} in $2$-dimensional space.
+  \ccPrecond $w \neq 0$.}
+
+\ccConstructor{Vector_d<R>(RT x, RT y, RT z, RT w)}{introduces a
+  variable \ccc{v} of type \ccc{Vector_d<R>} in $3$-dimensional space.
+  \ccPrecond $w \neq 0$.}
+
+\ccSetTwoOfThreeColumns{5cm}{3cm}
+
+\ccOperations
+
+\ccMethod{int dimension() ;}{returns the dimension of \ccc{v}.  }
+
+\ccMethod{FT cartesian(int i) ;}{returns the $i$-th Cartesian
+  coordinate of \ccc{v}.  \ccPrecond $0 \leq i < d$.  }
+
+\ccMethod{FT operator[](int i) ;}{returns the $i$-th Cartesian
+  coordinate of \ccc{v}.  \ccPrecond $0 \leq i < d$.  }
+
+\ccMethod{RT homogeneous(int i) ;}{returns the $i$-th homogeneous
+  coordinate of \ccc{v}.  \ccPrecond $0 \leq i \leq d$.  }
+
+\ccMethod{FT squared_length() ;}{returns the square of the length of
+  \ccc{v}.  }
+
+\ccMethod{Cartesian_const_iterator cartesian_begin() ;}{returns an
+  iterator pointing to the zeroth Cartesian coordinate of \ccc{v}.  }
+
+\ccMethod{Cartesian_const_iterator cartesian_end() ;}{returns an
+  iterator pointing beyond the last Cartesian coordinate of \ccc{v}.
+  }
+
+\ccMethod{Homogeneous_const_iterator homogeneous_begin() ;}{returns an
+  iterator pointing to the zeroth homogeneous coordinate of \ccc{v}.
+  }
+
+\ccMethod{Homogeneous_const_iterator homogeneous_end() ;}{returns an
+  iterator pointing beyond the last homogeneous coordinate of \ccc{v}.
+  }
+
+\ccMethod{ Direction_d<R> direction() ;}{returns the direction of
+  \ccc{v}.  }
+
+\ccMethod{Vector_d<R> transform(const Aff_transformation_d<R>& t)
+  ;}{returns $t(v)$.  }
+
+\ccHeading{Arithmetic Operators, Tests and IO} 
+
+
+\ccMethod{Vector_d<R>& operator*=(const RT& n) ;}{multiplies all
+  Cartesian coordinates by \ccc{n}.  }
+
+\ccMethod{Vector_d<R>& operator*=(const FT& r) ;}{multiplies all
+  Cartesian coordinates by \ccc{r}.  }
+
+\ccMethod{Vector_d<R> operator/(const RT& n) ;}{returns the vector
+  with Cartesian coordinates $v_i/n, 0 \leq i < d$.  }
+
+\ccMethod{Vector_d<R> operator/(const FT& r) ;}{returns the vector
+  with Cartesian coordinates $v_i/r, 0 \leq i < d$.  }
+
+\ccMethod{Vector_d<R>& operator/=(const RT& n) ;}{divides all
+  Cartesian coordinates by \ccc{n}.  }
+
+\ccMethod{Vector_d<R>& operator/=(const FT& r) ;}{divides all
+  Cartesian coordinates by \ccc{r}.  }
+
+\ccMethod{FT operator* (const Vector_d<R>& w) ;}{inner product, i.e.,
+  $\sum_{ 0 \le i < d } v_i w_i$, where $v_i$ and $w_i$ are the
+  Cartesian coordinates of $v$ and $w$ respectively.  }
+
+\ccMethod{Vector_d<R> operator+(const Vector_d<R>& w) ;}{returns the
+  vector with Cartesian coordinates $v_i+w_i, 0 \leq i < d$.  }
+
+\ccMethod{Vector_d<R>& operator+=(const Vector_d<R>& w) ;}{addition
+  plus assignment.  }
+
+\ccMethod{Vector_d<R> operator-(const Vector_d<R>& w) ;}{returns the
+  vector with Cartesian coordinates $v_i-w_i, 0 \leq i < d$.  }
+
+\ccMethod{Vector_d<R>& operator-=(const Vector_d<R>& w) ;}{subtraction
+  plus assignment.  }
+
+\ccMethod{Vector_d<R> operator-() ;}{returns the vector in opposite
+  direction.  }
+
+\ccMethod{bool is_zero() ;}{returns true if \ccc{v} is the zero
+  vector.  }
+
+\ccHeading{Downward compatibility} We provide all operations of the
+lower dimensional interface \ccc{x()}, \ccc{y()}, \ccc{z()},
+\ccc{hx()}, \ccc{hy()}, \ccc{hz()}, \ccc{hw()}.
+
+\ccFunction{Vector_d<R> operator*(const RT& n, const Vector_d<R>& v)
+  ;}{returns the vector with Cartesian coordinates $n v_i$.  }
+
+\ccFunction{Vector_d<R> operator*(const FT& r, const Vector_d<R>& v)
+  ;}{returns the vector with Cartesian coordinates $r v_i, 0 \leq i <
+  d$.  }
+
+\ccImplementation
+
+Vectors are implemented by arrays of variables of type \ccc{RT}.  All
+operations like creation, initialization, tests, vector arithmetic,
+input and output on a vector $v$ take time $O(\ccc{v.dimension()})$.
+coordinate access, \ccc{dimension()} and conversions take constant
+time.  The space requirement of a vector is $O(\ccc{v.dimension()})$.
+
+
+\end{ccRefClass}
+
+

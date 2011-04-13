@@ -1,0 +1,361 @@
+% -*- latex -*-
+% =============================================================================
+% The CGAL Reference Manual
+% Chapter: Geometric Optimisation
+% Class  : CGAL::Min_ellipse_2<Traits>
+% -----------------------------------------------------------------------------
+% file   : doc_tex/basic/Optimisation/Optimisation_ref/Min_ellipse_2.tex
+% package: Min_ellipse_2
+% author : Bernd Gärtner, Sven Schönherr <sven@inf.ethz.ch>
+% -----------------------------------------------------------------------------
+% $Revision$
+% $Date$
+% =============================================================================
+
+\begin{ccRefClass}{Min_ellipse_2<Traits>}
+
+\ccIndexSubitem       [t]{ellipse}{smallest enclosing}
+\ccIndexSubitemSeeAlso[t]{circle}{smallest enclosing ellipse}
+\ccIndexSubitem       [t]{smallest enclosing}{ellipse}
+\ccIndexSubitem       [t]{bounding volumes}{smallest enclosing ellipse}
+
+\ccSaveThreeColumns
+\cgalMinEllipseLayout
+
+% -----------------------------------------------------------------------------
+\ccDefinition
+
+An object of the class \ccRefName\ is the unique ellipse of smallest area
+enclosing a finite (multi)set of points in two-dimensional euclidean
+space~$\E_2$.  For a point set $P$ we denote by $me(P)$ the smallest
+ellipse that contains all points of $P$. Note that $me(P)$ can be
+degenerate\ccIndexSubitem[t]{degeneracies}{\ccFont Min_ellipse_2},
+i.e.~$me(P)=\mbox{\ccTexHtml{$\;\emptyset$}{&Oslash;}}$ if
+$P=\mbox{\ccTexHtml{$\;\emptyset$}{&Oslash;}}$, $me(P)=\{p\}$ if $P=\{p\}$,
+and $me(P) = \{ \mbox{\ccTexHtml{$(1-\lambda)p + \lambda q \mid 0 \leq
+    \lambda \leq 1$}{(1-l)p + l q | 0 <= l <= 1}} \}$ if $P=\{p,q\}$.
+
+An inclusion-minimal subset $S$ of $P$ with $me(S)=me(P)$ is called a
+\emph{support set}\ccIndexSubitem[t]{support set}{\ccFont Min_ellipse_2},
+the points in $S$ are the \emph{support points}.  A support set has size at
+most five, and all its points lie on the boundary of $me(P)$. In general,
+neither the support set nor its size are necessarily unique.
+
+The underlying algorithm can cope with all kinds of input, e.g.~$P$ may be
+empty or points may occur more than once. The algorithm computes a support
+set $S$ which remains fixed until the next insert or clear operation.
+
+\ccInclude{CGAL/Min_ellipse_2.h}
+
+% -----------------------------------------------------------------------------
+\ccRequirements
+\ccIndexRequirements
+
+The template parameter \ccc{Traits} is a model for \ccc{MinEllipse2Traits}.
+
+We provide the model \ccc{Min_ellipse_2_traits_2} using the two-dimensional
+\cgal~kernel.
+
+% -----------------------------------------------------------------------------
+\ccTypes
+\ccIndexClassTypes
+
+\ccSetTwoColumns{\ccRefName:: Ellipse}{}
+
+\ccNestedType{ Point  }{ Typedef to \ccc{Traits::Point  }.}
+
+\ccNestedType{ Ellipse}{ Typedef to \ccc{Traits::Ellipse}.}
+
+\ccNestedType{ Point_iterator}{
+        Non-mutable model of the \stl\ concept \emph{BidirectionalIterator}
+        with value type \ccc{Point}. Used to access the points
+        of the smallest enclosing ellipse.}
+
+\ccNestedType{ Support_point_iterator}{
+        Non-mutable model of the \stl\ concept \emph{RandomAccessIterator}
+        with value type \ccc{Point}. Used to access the support points
+        of the smallest enclosing ellipse.}
+
+\ccPropagateThreeToTwoColumns
+
+% -----------------------------------------------------------------------------
+\ccCreation
+\ccIndexClassCreation
+\ccCreationVariable{min_ellipse}
+
+A \ccRefName\ object can be created from an arbitrary point set $P$ and by
+specialized construction methods expecting no, one, two, three, four or
+five points as arguments. The latter methods can be useful for
+reconstructing $me(P)$ from a given support set\ccIndexSubitem[t]{support
+  set}{\ccFont Min_ellipse_2} $S$ of $P$.
+
+\ccConstructor{ template < class InputIterator >
+                Min_Ellipse_2( InputIterator  first,
+                               InputIterator  last,
+                               bool           randomize,
+                               Random&        random    = default_random,
+                               const Traits&  traits    = Traits()   );}{
+        initializes \ccVar\ to $me(P)$ with $P$ being the set of points
+        in the range [\ccc{first},\ccc{last}). If \ccc{randomize} is
+        \ccc{true}, a random permutation of $P$ is computed in
+        advance, using the random numbers generator \ccc{random}.
+        Usually, this will not be necessary, however, the algorithm's
+        efficiency depends on the order in which the points are
+        processed, and a bad order might lead to extremely poor
+        performance (see example below).
+        \ccRequire  The value type of \ccc{first} and \ccc{last}
+        is \ccc{Point}.}
+
+\ccConstructor{ Min_ellipse_2( const Traits& traits = Traits());}{
+        creates a variable \ccVar\ of type \ccClassTemplateName.
+        It is initialized to
+        $me(\mbox{\ccTexHtml{$\emptyset$}{&Oslash;}})$, the empty set.
+        \ccPostcond \ccVar\ccc{.is_empty()} = \ccc{true}.}
+
+\ccConstructor{ Min_ellipse_2( const Point&   p,
+                                    const Traits&  traits = Traits());}{
+        initializes \ccVar\ to $me(\{p\})$, the set $\{p\}$.
+        \ccPostcond \ccVar\ccc{.is_degenerate()} = \ccc{true}.}
+
+\ccConstructor{ Min_ellipse_2( const Point&   p,
+                               const Point&   q,
+                               const Traits&  traits = Traits());}{
+        initializes \ccVar\ to $me(\{p,q\})$,
+\newlineByHand
+                                              the set
+        $\{ \mbox{\ccTexHtml{$(1-\lambda)p + \lambda q \mid
+          0 \leq \lambda \leq 1$}{(1-l)p + l q | 0 <= l <= 1}} \}$.
+        \ccPostcond \ccVar\ccc{.is_degenerate()} = \ccc{true}.}
+
+\ccConstructor{ Min_ellipse_2( const Point&   p1,
+                               const Point&   p2,
+                               const Point&   p3,
+                               const Traits&  traits = Traits());}{
+        initializes \ccVar\ to $me(\{p1,p2,p3\})$.}
+
+\ccConstructor{ Min_ellipse_2( const Point&   p1,
+                               const Point&   p2,
+                               const Point&   p3,
+                               const Point&   p4,
+                               const Traits&  traits = Traits());}{
+        initializes \ccVar\ to $me(\{p1,p2,p3,p4\})$.}
+
+\ccConstructor{ Min_ellipse_2( const Point&   p1,
+                               const Point&   p2,
+                               const Point&   p3,
+                               const Point&   p4,
+                               const Point&   p5,
+                               const Traits&  traits = Traits());}{
+        initializes \ccVar\ to $me(\{p1,p2,p3,p4,p5\})$.}
+
+% -----------------------------------------------------------------------------
+\ccAccessFunctions
+\begin{ccIndexMemberFunctions}
+\ccIndexMemberFunctionGroup{access}
+
+\ccMemberFunction{ int  number_of_points( ) const;}{
+        returns the number of points of \ccVar, i.e.\ $|P|$.}
+
+\ccMemberFunction{ int  number_of_support_points( ) const;}{
+        returns the number of support points of \ccVar, i.e.\ $|S|$.}
+\ccIndexSubitem[t]{support set}{\ccFont Min_ellipse_2}
+
+\ccGlueBegin
+\ccMemberFunction{ Point_iterator  points_begin() const;}{
+        returns an iterator referring to the first point of \ccVar.}
+%
+\ccMemberFunction{ Point_iterator  points_end() const;}{
+        returns the corresponding past-the-end iterator.}
+\ccGlueEnd
+
+\ccGlueBegin
+\ccMemberFunction{ Support_point_iterator  support_points_begin() const;}{
+        returns an iterator referring to the first support point of \ccVar.}
+\ccIndexSubitem[t]{support set}{\ccFont Min_ellipse_2}
+%
+\ccMemberFunction{ Support_point_iterator  support_points_end() const;}{
+        returns the corresponding past-the-end iterator.}
+\ccIndexSubitem[t]{support set}{\ccFont Min_ellipse_2}
+\ccGlueEnd
+
+\ccMemberFunction{ const Point&  support_point( int i) const;}{
+        returns the \ccc{i}-th support point of \ccVar. Between two
+        modifying operations (see below) any call to
+        \ccVar\ccc{.support_point(i)} with the same \ccc{i} returns
+        the same point.
+        \ccPrecond $0 \leq i< \mbox{\ccVar\ccc{.number_of_support_points()}}$.}
+\ccIndexSubitem[t]{support set}{\ccFont Min_ellipse_2}
+
+\ccMemberFunction{ const Ellipse&  ellipse( ) const;}{
+        returns the current ellipse of \ccVar.}
+
+% -----------------------------------------------------------------------------
+\ccPredicates
+\ccIndexMemberFunctionGroup{predicates}
+
+By definition, an empty \ccRefName\ has no boundary and no bounded side,
+i.e.\ its unbounded side equals the whole space $\E_2$.
+
+\ccMemberFunction{ CGAL::Bounded_side
+                   bounded_side( const Point& p) const;}{
+        returns \ccGlobalScope\ccc{ON_BOUNDED_SIDE},
+        \ccGlobalScope\ccc{ON_BOUNDARY}, or
+        \ccGlobalScope\ccc{ON_UNBOUNDED_SIDE} iff \ccc{p} lies properly
+        inside, on the boundary of, or properly outside of \ccVar, resp.}
+
+\ccMemberFunction{ bool  has_on_bounded_side( const Point& p) const;}{
+        returns \ccc{true}, iff \ccc{p} lies properly inside \ccVar.}
+
+\ccMemberFunction{ bool  has_on_boundary( const Point& p) const;}{
+        returns \ccc{true}, iff \ccc{p} lies on the boundary
+        of \ccVar.}
+
+\ccMemberFunction{ bool  has_on_unbounded_side( const Point& p) const;}{
+        returns \ccc{true}, iff \ccc{p} lies properly outside of \ccVar.}
+
+\ccMemberFunction{ bool  is_empty( ) const;}{
+        returns \ccc{true}, iff \ccVar\ is empty (this implies
+        degeneracy).}
+
+\ccMemberFunction{ bool  is_degenerate( ) const;}{
+        returns \ccc{true}, iff \ccVar\ is degenerate,
+        i.e.~if \ccVar\ is empty, equal to a single point or equal to a
+        segment, equivalently if the number of support points is less
+        than~3.}
+\ccIndexSubitem[t]{degeneracies}{\ccFont Min_ellipse_2}
+
+% -----------------------------------------------------------------------------
+\ccModifiers
+\ccIndexMemberFunctionGroup{modifiers}
+
+New points can be added to an existing \ccVar, allowing to build $me(P)$
+incrementally, e.g.~if $P$ is not known in advance. Compared to the direct
+creation of $me(P)$, this is not much slower, because the construction
+method is incremental itself.
+
+\ccMemberFunction{ void  insert( const Point& p);}{
+        inserts \ccc{p} into \ccVar\ and recomputes the smallest
+        enclosing ellipse.}
+
+\ccMemberFunction{ template < class InputIterator >
+                   void  insert( InputIterator  first,
+                                 InputIterator  last );}{
+        inserts the points in the range [\ccc{first},\ccc{last})
+        into \ccVar\ and recomputes the smallest enclosing ellipse by
+        calling \ccc{insert(p)} for each point \ccc{p} in
+        [\ccc{first},\ccc{last}).
+        \ccRequire  The value type of \ccc{first} and \ccc{last} is
+        \ccc{Point}.}
+
+\ccMemberFunction{ void clear( );}{
+        deletes all points in \ccVar\ and sets \ccVar\ to the empty set.
+        \ccPostcond  \ccVar\ccc{.is_empty()} = \ccc{true}.}
+
+% -----------------------------------------------------------------------------
+\ccHeading{Validity Check}
+\ccIndexMemberFunctionGroup{validity check}
+\ccIndexSubitem[t]{validity check}{\ccFont Min_ellipse_2}
+
+An object \ccVar\ is valid, iff
+\begin{itemize}
+  \item \ccVar\ contains all points of its defining set $P$,
+  \item \ccVar\ is the smallest ellipse spanned by its support set $S$, and
+  \item $S$ is minimal, i.e.\ no support point is redundant.
+\end{itemize}
+\emph{Note:} In this release only the first item is considered by the
+validity check.
+
+\ccMemberFunction{ bool is_valid( bool verbose = false,
+                                int  level   = 0    ) const;}{
+      returns \ccc{true}, iff \ccVar\ contains all points of its
+      defining set $P$. If \ccc{verbose} is \ccc{true}, some
+      messages concerning the performed checks are written to
+      standard error stream. The second parameter \ccc{level} is not
+      used, we provide it only for consistency with interfaces of
+      other classes.}
+
+% -----------------------------------------------------------------------------
+\ccHeading{Miscellaneous}
+\ccIndexMemberFunctionGroup{miscellaneous}
+
+\def\ccTagRmConstRefPair{\ccFalse}
+
+\ccMemberFunction{ const Traits&  traits( ) const;}{
+        returns a const reference to the traits class object.}
+
+\def\ccTagRmConstRefPair{\ccTrue}
+
+\end{ccIndexMemberFunctions}
+
+% -----------------------------------------------------------------------------
+\ccHeading{I/O}
+\begin{ccIndexGlobalFunctions}
+
+\ccIndexGlobalFunctionGroup{output}
+\ccFunction{ std::ostream&
+             operator << ( std::ostream& os,
+                           const Min_ellipse_2<Traits>& min_ellipse);}{
+        writes \ccVar\ to output stream \ccc{os}.
+        \ccRequire  The output operator is defined for \ccc{Point}
+        (and for \ccc{Ellipse}, if pretty printing is used).}
+
+\ccIndexGlobalFunctionGroup{input}
+\ccFunction{ std::istream&
+             operator >> ( std::istream& is,
+                           Min_ellipse_2<Traits> min_ellipse&);}{
+        reads \ccVar\ from input stream \ccc{is}.
+        \ccRequire  The input operator is defined for \ccc{Point}.}
+
+\ccInclude{CGAL/IO/Window_stream.h}
+
+\ccIndexGlobalFunctionGroup{window output}
+\ccFunction{ CGAL::Window_stream&
+             operator << ( CGAL::Window_stream& ws,
+                           const Min_ellipse_2<Traits>& min_ellipse);}{
+        writes \ccVar\ to window stream \ccc{ws}.
+        \ccRequire  The window stream output operator is defined for
+        \ccc{Point} and \ccc{Ellipse}.}
+
+\end{ccIndexGlobalFunctions}
+
+% -----------------------------------------------------------------------------
+\ccSeeAlso
+
+\ccRefIdfierPage{CGAL::Min_circle_2<Traits>}\\[1ex]
+\ccRefIdfierPage{CGAL::Min_ellipse_2_traits_2<K>}\\[1ex]
+\ccRefConceptPage{MinEllipse2Traits}
+
+% -----------------------------------------------------------------------------
+\ccImplementation
+\ccIndexImplementation
+
+We implement the incremental algorithm\ccIndexSubitem[t]{incremental
+  algorithm}{\ccFont Min_ellipse_2} of Welzl, with move-to-front
+heuristic~\cite{w-sedbe-91a}\ccIndexSubitem[t]{move-to-front
+  heuristic}{\ccFont Min_ellipse_2}, using the primitives as described
+in~\cite{gs-epsee-97,gs-seefe-97a}. The whole implementation is described
+in~\cite{gs-seeeg-98}.
+
+If randomization\ccIndexSubitem[t]{randomization}{\ccFont Min_ellipse_2} is
+chosen, the creation time is almost always linear in the number of points.
+Access functions and predicates take constant time, inserting a point might
+take up to linear time, but substantially less than computing the new
+smallest enclosing ellipse from scratch. The clear operation and the check
+for validity each takes linear time.
+
+% -----------------------------------------------------------------------------
+\ccExample
+\ccIndexSubitem[C]{Min_ellipse_2}{example}
+
+To illustrate the creation of \ccRefName\ and to show that randomization
+can be useful in certain cases, we give an example.
+
+\ccIncludeExampleCode{Optimisation_ref/example_Min_ellipse_2_noheader.C}
+
+% -----------------------------------------------------------------------------
+
+\ccRestoreThreeColumns
+
+\end{ccRefClass}
+
+% ===== EOF ===================================================================

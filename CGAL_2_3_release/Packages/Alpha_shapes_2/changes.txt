@@ -1,0 +1,63 @@
+version 11.6:
+- test/example programs use MP_Float instead of double when nor LEDA nor GMP
+  are there.
+- french comments translated in example programs.
+- fix bug in test/examle program for weighted reading weighted points from a
+  file containing normal points.
+
+version 11.0:
+doc revision for release.
+
+version 10.0:
+using multimaps.
+small design changes for 2D/3D compatibility.
+
+version 9.0:
+new iterators added to describe the alpha shape for a certain value alpha.
+edges are now described as a pair of interior face and the corresponding index.
+predicates and constructions are now function objects.
+
+version 8.0:
+-> compatibility with CGAL-2.2-I
+
+version 7.0:
+-> New doc style.
+
+version 6.0:
+And now CGAL-2.2-I...
+
+version 5.5:
+This one for CGAL-2.1
+
+version 5.0:
+Ready now...
+
+version 4.0:
+Mips_IRIX_CC and Borland_CC supported.
+
+version 3.0 :
+stabilised version waiting for public release.
+
+version 2.0 :
+new design more appropriated for weighted alpha shapes.
+
+Version 1.6 :
+MSVC supported. 
+
+Version 1.5 :
+added a doc (to be reviewed). added examples.
+
+Version 1.4 :
+g++-2.95.1 supported.
+
+Version 1.3 :
+-> New Kernel.
+
+Version 1.2 :
+C++ "standardisation".
+
+Version 1.1 :
+-> basic library.
+
+Version 1.0 :
+Import source from the Reconstruction package.

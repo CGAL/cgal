@@ -1,0 +1,59 @@
+Changes done to the `Min_sphere_d_new' package
+
+Version 0.12.1 on 16-Jul-2001
+- renamed concept 'Optimisation_d_traits' to 'OptimisationDTraits'
+
+Version 0.12 on 09-Jul-2001
+- replaced template parameter 'R' by 'K'
+- fixed warning message of test program when no number type is available
+
+Version 0.11.2 on 21-Mar-2001
+- removed 'maintainer' line from file header
+
+Version 0.11.1 on 20-Mar-2001
+- no changes (moved to cvs-server)
+
+Version 0.11 on 01-Nov-2000
+- removed `Min_sphere_d.tex' from submission to avoid conflicts with old Min.
+
+Version 0.10 on 28-Sep-2000
+- unified traits class models for dD optimisation algorithms
+- added indexing commands
+- fixed `unused variable' warnings
+
+Version 0.9 on 13-Sep-2000
+- additional test added: comparing with other implementations in CGAL
+- documentation split up into user and reference manual parts
+
+Version 0.8 on 06-Sep-2000
+- adapted to "enhanced" QP solver
+- enabled partial exact/filtered pricing (except M$-VC++)
+
+Version 0.7.1 on 05-Sep-2000
+- no changes (problem with submission script)
+
+Version 0.7 on 05-Sep-2000
+- data accessors moved to separate header files in package Optimisation_basic
+- changed leading `_' to trailing `_' in template parameters
+
+Version 0.6 on 28-Aug-2000
+- `workarounds' for M$-VC++
+
+Version 0.5 on 17-Aug-2000
+- fixed some bugs on Borland and M$-VC++
+- added '#include <cassert>' to 'test_Min_sphere_d.h'
+
+Version 0.4 on 13-Aug-2000
+- three test programs: 2D, 3D, dD (5,10)
+- each traits class model is tested twice, i.e. `default' and `advanced' use
+
+Version 0.3 on 10-Aug-2000
+- `is_valid' completed
+- test program does code coverage
+
+Version 0.2 on 09-Aug-2000
+- fixed some bugs on IRIX
+- preliminary QP solver moved to package `_QP_solver'
+
+Version 0.1 on 06-Aug-2000
+- initial version

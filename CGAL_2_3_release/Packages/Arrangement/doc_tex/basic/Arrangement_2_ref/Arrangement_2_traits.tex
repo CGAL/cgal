@@ -1,0 +1,40 @@
+% +------------------------------------------------------------------------+
+% | Reference manual page: Arrangement_2_traits.tex (Arrangement)
+% +------------------------------------------------------------------------+
+% |
+% | Package: arr (Arrangement_2)
+% |
+% +------------------------------------------------------------------------+
+
+\ccRefPageBegin
+
+%%RefPage: end of header, begin of main body
+% +------------------------------------------------------------------------+
+% +========================================================================+
+%   Arrangement_2_traits
+% +========================================================================+
+\begin{ccRefConcept}{ArrangementTraits_2}
+
+\ccDefinition
+   A model for the\ccRefName\ defines the geometric types and
+   primitive operations used in the arrangement data structure
+   \ccc{Arrangement_2<Dcel,Traits,Base_node>}.
+
+  The\ccRefName\ is a synonym of the
+  \ccc{PlanarMapWithIntersectionsTraits_2} concept. It has the same
+  set of requirements. (In previous versions this concept was known as
+  \ccc{Arrangement_2_traits}.)
+
+\ccHasModels
+  \ccc{Arr_segment_exact_traits<R>}\\
+  \ccc{Arr_leda_segment_exact_traits}\\
+  \ccc{Arr_circles_real_traits<NT>}\\
+  \ccc{Arr_polyline_traits<R, Container>}
+
+\end{ccRefConcept}
+
+% +------------------------------------------------------------------------+
+%%RefPage: end of main body, begin of footer
+\ccRefPageEnd
+% EOF
+% +------------------------------------------------------------------------+

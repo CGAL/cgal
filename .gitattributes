@@ -1,4 +1,775 @@
 * text=auto !eol
+CGAL_2_3_release/Old_Packages/Doc23/doc_tex/kernel/IsoCuboid.gif svneol=native#unset
+CGAL_2_3_release/Old_Packages/Doc23/doc_tex/kernel/arrlinthree.gif svneol=native#unset
+CGAL_2_3_release/Old_Packages/Doc23/doc_tex/kernel/arrlintwo.gif svneol=native#unset
+CGAL_2_3_release/Old_Packages/Doc23/doc_tex/kernel/arrthree.gif svneol=native#unset
+CGAL_2_3_release/Old_Packages/Doc23/doc_tex/kernel/arrthree2.gif svneol=native#unset
+CGAL_2_3_release/Old_Packages/Doc23/doc_tex/kernel/arrtwo.gif svneol=native#unset
+CGAL_2_3_release/Old_Packages/Doc23/doc_tex/kernel/arrtwo2.gif svneol=native#unset
+CGAL_2_3_release/Old_Packages/Doc23/doc_tex/kernel/compare1.gif svneol=native#unset
+CGAL_2_3_release/Old_Packages/Doc23/doc_tex/kernel/compare2.gif svneol=native#unset
+CGAL_2_3_release/Old_Packages/Doc23/doc_tex/kernel/compare_x_at_y.gif svneol=native#unset
+CGAL_2_3_release/Old_Packages/Doc23/doc_tex/kernel/transvecthree.gif svneol=native#unset
+CGAL_2_3_release/Old_Packages/Doc23/doc_tex/kernel/transvectwo.gif svneol=native#unset
+CGAL_2_3_release/Old_Packages/Halfedge_DS/doc_tex/deprecated_basic/Halfedge_DS/euler_facet.gif -text svneol=unset#unset
+CGAL_2_3_release/Old_Packages/Halfedge_DS/doc_tex/deprecated_basic/Halfedge_DS/euler_loop.gif -text svneol=unset#unset
+CGAL_2_3_release/Old_Packages/Halfedge_DS/doc_tex/deprecated_basic/Halfedge_DS/euler_vertex.gif -text svneol=unset#unset
+CGAL_2_3_release/Old_Packages/Halfedge_DS/doc_tex/deprecated_basic/Halfedge_DS/halfedge.gif -text svneol=unset#unset
+CGAL_2_3_release/Old_Packages/Halfedge_DS/doc_tex/deprecated_basic/Halfedge_DS/halfedge_small.gif -text svneol=unset#unset
+CGAL_2_3_release/Old_Packages/Halfedge_DS/doc_tex/deprecated_basic/Halfedge_DS/hds_bases_optional.gif -text svneol=unset#unset
+CGAL_2_3_release/Old_Packages/Halfedge_DS/doc_tex/deprecated_basic/Halfedge_DS/hds_bases_optional_small.gif -text svneol=unset#unset
+CGAL_2_3_release/Old_Packages/Halfedge_DS/doc_tex/deprecated_basic/Halfedge_DS/hds_optional.gif -text svneol=unset#unset
+CGAL_2_3_release/Old_Packages/Halfedge_DS/doc_tex/deprecated_basic/Halfedge_DS/hds_optional_small.gif -text svneol=unset#unset
+CGAL_2_3_release/Old_Packages/Halfedge_DS/doc_tex/deprecated_basic/Halfedge_DS/poly_design_color.gif -text svneol=unset#unset
+CGAL_2_3_release/Old_Packages/Stl_port/stlport/bug/algorithm svneol=native#unset
+CGAL_2_3_release/Old_Packages/Stl_port/stlport/bug/bitset svneol=native#unset
+CGAL_2_3_release/Old_Packages/Stl_port/stlport/bug/cassert svneol=native#unset
+CGAL_2_3_release/Old_Packages/Stl_port/stlport/bug/cctype svneol=native#unset
+CGAL_2_3_release/Old_Packages/Stl_port/stlport/bug/cerrno svneol=native#unset
+CGAL_2_3_release/Old_Packages/Stl_port/stlport/bug/cfloat svneol=native#unset
+CGAL_2_3_release/Old_Packages/Stl_port/stlport/bug/climits svneol=native#unset
+CGAL_2_3_release/Old_Packages/Stl_port/stlport/bug/clocale svneol=native#unset
+CGAL_2_3_release/Old_Packages/Stl_port/stlport/bug/cmath svneol=native#unset
+CGAL_2_3_release/Old_Packages/Stl_port/stlport/bug/complex svneol=native#unset
+CGAL_2_3_release/Old_Packages/Stl_port/stlport/bug/csetjmp svneol=native#unset
+CGAL_2_3_release/Old_Packages/Stl_port/stlport/bug/csignal svneol=native#unset
+CGAL_2_3_release/Old_Packages/Stl_port/stlport/bug/cstdarg svneol=native#unset
+CGAL_2_3_release/Old_Packages/Stl_port/stlport/bug/cstddef svneol=native#unset
+CGAL_2_3_release/Old_Packages/Stl_port/stlport/bug/cstdio svneol=native#unset
+CGAL_2_3_release/Old_Packages/Stl_port/stlport/bug/cstdlib svneol=native#unset
+CGAL_2_3_release/Old_Packages/Stl_port/stlport/bug/cstring svneol=native#unset
+CGAL_2_3_release/Old_Packages/Stl_port/stlport/bug/ctime svneol=native#unset
+CGAL_2_3_release/Old_Packages/Stl_port/stlport/bug/cwchar svneol=native#unset
+CGAL_2_3_release/Old_Packages/Stl_port/stlport/bug/cwctype svneol=native#unset
+CGAL_2_3_release/Old_Packages/Stl_port/stlport/bug/deque svneol=native#unset
+CGAL_2_3_release/Old_Packages/Stl_port/stlport/bug/fstream svneol=native#unset
+CGAL_2_3_release/Old_Packages/Stl_port/stlport/bug/functional svneol=native#unset
+CGAL_2_3_release/Old_Packages/Stl_port/stlport/bug/iomanip svneol=native#unset
+CGAL_2_3_release/Old_Packages/Stl_port/stlport/bug/ios svneol=native#unset
+CGAL_2_3_release/Old_Packages/Stl_port/stlport/bug/iosfwd svneol=native#unset
+CGAL_2_3_release/Old_Packages/Stl_port/stlport/bug/iostream svneol=native#unset
+CGAL_2_3_release/Old_Packages/Stl_port/stlport/bug/istream svneol=native#unset
+CGAL_2_3_release/Old_Packages/Stl_port/stlport/bug/iterator svneol=native#unset
+CGAL_2_3_release/Old_Packages/Stl_port/stlport/bug/limits svneol=native#unset
+CGAL_2_3_release/Old_Packages/Stl_port/stlport/bug/list svneol=native#unset
+CGAL_2_3_release/Old_Packages/Stl_port/stlport/bug/locale svneol=native#unset
+CGAL_2_3_release/Old_Packages/Stl_port/stlport/bug/map svneol=native#unset
+CGAL_2_3_release/Old_Packages/Stl_port/stlport/bug/memory svneol=native#unset
+CGAL_2_3_release/Old_Packages/Stl_port/stlport/bug/new svneol=native#unset
+CGAL_2_3_release/Old_Packages/Stl_port/stlport/bug/numeric svneol=native#unset
+CGAL_2_3_release/Old_Packages/Stl_port/stlport/bug/ostream svneol=native#unset
+CGAL_2_3_release/Old_Packages/Stl_port/stlport/bug/queue svneol=native#unset
+CGAL_2_3_release/Old_Packages/Stl_port/stlport/bug/set svneol=native#unset
+CGAL_2_3_release/Old_Packages/Stl_port/stlport/bug/sstream svneol=native#unset
+CGAL_2_3_release/Old_Packages/Stl_port/stlport/bug/stack svneol=native#unset
+CGAL_2_3_release/Old_Packages/Stl_port/stlport/bug/stdexcept svneol=native#unset
+CGAL_2_3_release/Old_Packages/Stl_port/stlport/bug/streambuf svneol=native#unset
+CGAL_2_3_release/Old_Packages/Stl_port/stlport/bug/string svneol=native#unset
+CGAL_2_3_release/Old_Packages/Stl_port/stlport/bug/strstream svneol=native#unset
+CGAL_2_3_release/Old_Packages/Stl_port/stlport/bug/typeinfo svneol=native#unset
+CGAL_2_3_release/Old_Packages/Stl_port/stlport/bug/utility svneol=native#unset
+CGAL_2_3_release/Old_Packages/Stl_port/stlport/bug/valarray svneol=native#unset
+CGAL_2_3_release/Old_Packages/Stl_port/stlport/bug/vector svneol=native#unset
+CGAL_2_3_release/Packages/Alpha_shapes_2/doc_tex/Alpha_shapes_2/alphashape.eps -text
+CGAL_2_3_release/Packages/Alpha_shapes_2/doc_tex/Alpha_shapes_2/alphashape.gif -text svneol=unset#unset
+CGAL_2_3_release/Packages/Alpha_shapes_2/doc_tex/basic/Alpha_shapes_2/alphashape.eps -text
+CGAL_2_3_release/Packages/Alpha_shapes_2/doc_tex/basic/Alpha_shapes_2/alphashape.gif -text svneol=unset#unset
+CGAL_2_3_release/Packages/Alpha_shapes_3/doc_tex/Alpha_shapes_3/alphashape.eps -text
+CGAL_2_3_release/Packages/Alpha_shapes_3/doc_tex/Alpha_shapes_3/alphashape.gif -text svneol=unset#unset
+CGAL_2_3_release/Packages/Alpha_shapes_3/doc_tex/basic/Alpha_shapes_3/alphashape.eps -text
+CGAL_2_3_release/Packages/Alpha_shapes_3/doc_tex/basic/Alpha_shapes_3/alphashape.gif -text svneol=unset#unset
+CGAL_2_3_release/Packages/Arrangement/doc_tex/Arrangement_2/arr3.gif svneol=native#unset
+CGAL_2_3_release/Packages/Arrangement/doc_tex/Arrangement_2/circles.gif svneol=native#unset
+CGAL_2_3_release/Packages/Arrangement/doc_tex/basic/Arrangement_2/arr3.gif svneol=native#unset
+CGAL_2_3_release/Packages/Arrangement/doc_tex/basic/Arrangement_2/circles.gif svneol=native#unset
+CGAL_2_3_release/Packages/Convex_hull_2/doc_tex/Convex_hull_2/saarhull.eps -text
+CGAL_2_3_release/Packages/Convex_hull_2/doc_tex/Convex_hull_2/saarhull.gif -text svneol=unset#unset
+CGAL_2_3_release/Packages/Convex_hull_2/doc_tex/basic/Convex_hull_2/saarhull.eps -text
+CGAL_2_3_release/Packages/Convex_hull_2/doc_tex/basic/Convex_hull_2/saarhull.gif -text svneol=unset#unset
+CGAL_2_3_release/Packages/Generator/doc_ps/Generator.ps.gz svneol=native#unset
+CGAL_2_3_release/Packages/Generator/doc_tex/Generator/Segment_generator_prog1.gif -text svneol=unset#unset
+CGAL_2_3_release/Packages/Generator/doc_tex/Generator/Segment_generator_prog1.ps -text
+CGAL_2_3_release/Packages/Generator/doc_tex/Generator/Segment_generator_prog1_small.gif -text svneol=unset#unset
+CGAL_2_3_release/Packages/Generator/doc_tex/Generator/Segment_generator_prog2.gif -text svneol=unset#unset
+CGAL_2_3_release/Packages/Generator/doc_tex/Generator/Segment_generator_prog2.ps -text
+CGAL_2_3_release/Packages/Generator/doc_tex/Generator/Segment_generator_prog2_small.gif -text svneol=unset#unset
+CGAL_2_3_release/Packages/Generator/doc_tex/Generator/generators_prog1.gif -text svneol=unset#unset
+CGAL_2_3_release/Packages/Generator/doc_tex/Generator/generators_prog1.ps -text
+CGAL_2_3_release/Packages/Generator/doc_tex/Generator/generators_prog1_small.gif -text svneol=unset#unset
+CGAL_2_3_release/Packages/Generator/doc_tex/Generator/generators_prog2.gif -text svneol=unset#unset
+CGAL_2_3_release/Packages/Generator/doc_tex/Generator/generators_prog2.ps -text
+CGAL_2_3_release/Packages/Generator/doc_tex/Generator/generators_prog2_small.gif -text svneol=unset#unset
+CGAL_2_3_release/Packages/Generator/doc_tex/support/Generator/Segment_generator_prog1.gif -text svneol=unset#unset
+CGAL_2_3_release/Packages/Generator/doc_tex/support/Generator/Segment_generator_prog1.ps -text
+CGAL_2_3_release/Packages/Generator/doc_tex/support/Generator/Segment_generator_prog1_small.gif -text svneol=unset#unset
+CGAL_2_3_release/Packages/Generator/doc_tex/support/Generator/Segment_generator_prog2.gif -text svneol=unset#unset
+CGAL_2_3_release/Packages/Generator/doc_tex/support/Generator/Segment_generator_prog2.ps -text
+CGAL_2_3_release/Packages/Generator/doc_tex/support/Generator/Segment_generator_prog2_small.gif -text svneol=unset#unset
+CGAL_2_3_release/Packages/Generator/doc_tex/support/Generator/generators_prog1.gif -text svneol=unset#unset
+CGAL_2_3_release/Packages/Generator/doc_tex/support/Generator/generators_prog1.ps -text
+CGAL_2_3_release/Packages/Generator/doc_tex/support/Generator/generators_prog1_small.gif -text svneol=unset#unset
+CGAL_2_3_release/Packages/Generator/doc_tex/support/Generator/generators_prog2.gif -text svneol=unset#unset
+CGAL_2_3_release/Packages/Generator/doc_tex/support/Generator/generators_prog2.ps -text
+CGAL_2_3_release/Packages/Generator/doc_tex/support/Generator/generators_prog2_small.gif -text svneol=unset#unset
+CGAL_2_3_release/Packages/HalfedgeDS/doc_tex/HalfedgeDS/fig/halfedge.ips -text
+CGAL_2_3_release/Packages/HalfedgeDS/doc_tex/HalfedgeDS/fig/hds_design.ips -text
+CGAL_2_3_release/Packages/HalfedgeDS/doc_tex/HalfedgeDS/fig/loop.ips -text
+CGAL_2_3_release/Packages/HalfedgeDS/doc_tex/HalfedgeDS/halfedge.gif -text svneol=unset#unset
+CGAL_2_3_release/Packages/HalfedgeDS/doc_tex/HalfedgeDS/halfedge_small.gif -text svneol=unset#unset
+CGAL_2_3_release/Packages/HalfedgeDS/doc_tex/HalfedgeDS/hds_design_col.gif -text svneol=unset#unset
+CGAL_2_3_release/Packages/HalfedgeDS/doc_tex/HalfedgeDS/loop.gif -text svneol=unset#unset
+CGAL_2_3_release/Packages/HalfedgeDS/doc_tex/HalfedgeDS_ref/euler_center.gif -text svneol=unset#unset
+CGAL_2_3_release/Packages/HalfedgeDS/doc_tex/HalfedgeDS_ref/euler_face.gif -text svneol=unset#unset
+CGAL_2_3_release/Packages/HalfedgeDS/doc_tex/HalfedgeDS_ref/euler_loop.gif -text svneol=unset#unset
+CGAL_2_3_release/Packages/HalfedgeDS/doc_tex/HalfedgeDS_ref/euler_vertex.gif -text svneol=unset#unset
+CGAL_2_3_release/Packages/HalfedgeDS/doc_tex/HalfedgeDS_ref/fig/euler_center.ips -text
+CGAL_2_3_release/Packages/HalfedgeDS/doc_tex/HalfedgeDS_ref/fig/euler_hds.ips -text
+CGAL_2_3_release/Packages/HalfedgeDS/doc_tex/HalfedgeDS_ref/fig/euler_loop.ips -text
+CGAL_2_3_release/Packages/HalfedgeDS/doc_tex/HalfedgeDS_ref/fig/hds_optional.ips -text
+CGAL_2_3_release/Packages/HalfedgeDS/doc_tex/HalfedgeDS_ref/hds_optional.gif -text svneol=unset#unset
+CGAL_2_3_release/Packages/HalfedgeDS/doc_tex/HalfedgeDS_ref/hds_optional_small.gif -text svneol=unset#unset
+CGAL_2_3_release/Packages/HalfedgeDS/doc_tex/basic/HalfedgeDS/fig/halfedge.ips -text
+CGAL_2_3_release/Packages/HalfedgeDS/doc_tex/basic/HalfedgeDS/fig/hds_design.ips -text
+CGAL_2_3_release/Packages/HalfedgeDS/doc_tex/basic/HalfedgeDS/fig/loop.ips -text
+CGAL_2_3_release/Packages/HalfedgeDS/doc_tex/basic/HalfedgeDS/halfedge.gif -text svneol=unset#unset
+CGAL_2_3_release/Packages/HalfedgeDS/doc_tex/basic/HalfedgeDS/halfedge_small.gif -text svneol=unset#unset
+CGAL_2_3_release/Packages/HalfedgeDS/doc_tex/basic/HalfedgeDS/hds_design_col.gif -text svneol=unset#unset
+CGAL_2_3_release/Packages/HalfedgeDS/doc_tex/basic/HalfedgeDS/loop.gif -text svneol=unset#unset
+CGAL_2_3_release/Packages/HalfedgeDS/doc_tex/basic/HalfedgeDS_ref/euler_center.gif -text svneol=unset#unset
+CGAL_2_3_release/Packages/HalfedgeDS/doc_tex/basic/HalfedgeDS_ref/euler_face.gif -text svneol=unset#unset
+CGAL_2_3_release/Packages/HalfedgeDS/doc_tex/basic/HalfedgeDS_ref/euler_loop.gif -text svneol=unset#unset
+CGAL_2_3_release/Packages/HalfedgeDS/doc_tex/basic/HalfedgeDS_ref/euler_vertex.gif -text svneol=unset#unset
+CGAL_2_3_release/Packages/HalfedgeDS/doc_tex/basic/HalfedgeDS_ref/fig/euler_center.ips -text
+CGAL_2_3_release/Packages/HalfedgeDS/doc_tex/basic/HalfedgeDS_ref/fig/euler_hds.ips -text
+CGAL_2_3_release/Packages/HalfedgeDS/doc_tex/basic/HalfedgeDS_ref/fig/euler_loop.ips -text
+CGAL_2_3_release/Packages/HalfedgeDS/doc_tex/basic/HalfedgeDS_ref/fig/hds_optional.ips -text
+CGAL_2_3_release/Packages/HalfedgeDS/doc_tex/basic/HalfedgeDS_ref/hds_optional.gif -text svneol=unset#unset
+CGAL_2_3_release/Packages/HalfedgeDS/doc_tex/basic/HalfedgeDS_ref/hds_optional_small.gif -text svneol=unset#unset
+CGAL_2_3_release/Packages/Installation/doc_tex/installation/Fig/a-simp.ipe -text
+CGAL_2_3_release/Packages/Installation/doc_tex/installation/Fig/c-simp.ipe -text
+CGAL_2_3_release/Packages/Installation/doc_tex/installation/Fig/g-simp.ipe -text
+CGAL_2_3_release/Packages/Installation/doc_tex/installation/Fig/l-simp.ipe -text
+CGAL_2_3_release/Packages/Interval_arithmetic/src/Interval_arithmetic/workaround_4_ms.obj -text svneol=unset#unset
+CGAL_2_3_release/Packages/Kernel_23/doc_tex/kernel/IsoCuboid.eps -text
+CGAL_2_3_release/Packages/Kernel_23/doc_tex/kernel/IsoCuboid.gif -text svneol=unset#unset
+CGAL_2_3_release/Packages/Kernel_23/doc_tex/kernel/arrlinthree.gif -text svneol=unset#unset
+CGAL_2_3_release/Packages/Kernel_23/doc_tex/kernel/arrlintwo.gif -text svneol=unset#unset
+CGAL_2_3_release/Packages/Kernel_23/doc_tex/kernel/arrthree.gif -text svneol=unset#unset
+CGAL_2_3_release/Packages/Kernel_23/doc_tex/kernel/arrthree2.gif -text svneol=unset#unset
+CGAL_2_3_release/Packages/Kernel_23/doc_tex/kernel/arrtwo.gif -text svneol=unset#unset
+CGAL_2_3_release/Packages/Kernel_23/doc_tex/kernel/arrtwo2.gif -text svneol=unset#unset
+CGAL_2_3_release/Packages/Kernel_23/doc_tex/kernel/compare1.gif -text svneol=unset#unset
+CGAL_2_3_release/Packages/Kernel_23/doc_tex/kernel/compare1.ipe -text
+CGAL_2_3_release/Packages/Kernel_23/doc_tex/kernel/compare2.gif -text svneol=unset#unset
+CGAL_2_3_release/Packages/Kernel_23/doc_tex/kernel/compare2.ipe -text
+CGAL_2_3_release/Packages/Kernel_23/doc_tex/kernel/compare_x_at_y.eps -text
+CGAL_2_3_release/Packages/Kernel_23/doc_tex/kernel/compare_x_at_y.fig -text
+CGAL_2_3_release/Packages/Kernel_23/doc_tex/kernel/compare_x_at_y.gif -text svneol=unset#unset
+CGAL_2_3_release/Packages/Kernel_23/doc_tex/kernel/transvecthree.gif -text svneol=unset#unset
+CGAL_2_3_release/Packages/Kernel_23/doc_tex/kernel/transvectwo.gif -text svneol=unset#unset
+CGAL_2_3_release/Packages/Matrix_search/doc_tex/Optimisation_ref/MatrixSearch_pcenter1.gif -text svneol=unset#unset
+CGAL_2_3_release/Packages/Matrix_search/doc_tex/Optimisation_ref/MatrixSearch_pcenter2.gif -text svneol=unset#unset
+CGAL_2_3_release/Packages/Matrix_search/doc_tex/Optimisation_ref/MatrixSearch_pcenter3.gif -text svneol=unset#unset
+CGAL_2_3_release/Packages/Matrix_search/doc_tex/Optimisation_ref/MatrixSearch_pcenter4.gif -text svneol=unset#unset
+CGAL_2_3_release/Packages/Matrix_search/doc_tex/Optimisation_ref/MatrixSearch_sorted1.gif -text svneol=unset#unset
+CGAL_2_3_release/Packages/Matrix_search/doc_tex/Optimisation_ref/MatrixSearch_sorted2.gif -text svneol=unset#unset
+CGAL_2_3_release/Packages/Matrix_search/doc_tex/Optimisation_ref/MatrixSearch_sorted3.gif -text svneol=unset#unset
+CGAL_2_3_release/Packages/Matrix_search/doc_tex/Optimisation_ref/MatrixSearch_sorted4.gif -text svneol=unset#unset
+CGAL_2_3_release/Packages/Matrix_search/doc_tex/Optimisation_ref/MatrixSearch_totmon1.gif -text svneol=unset#unset
+CGAL_2_3_release/Packages/Matrix_search/doc_tex/Optimisation_ref/MatrixSearch_totmon2.gif -text svneol=unset#unset
+CGAL_2_3_release/Packages/Matrix_search/doc_tex/Optimisation_ref/MatrixSearch_totmon3.gif -text svneol=unset#unset
+CGAL_2_3_release/Packages/Matrix_search/doc_tex/Optimisation_ref/MatrixSearch_totmon4.gif -text svneol=unset#unset
+CGAL_2_3_release/Packages/Matrix_search/doc_tex/Optimisation_ref/MatrixSearch_totmon5.gif -text svneol=unset#unset
+CGAL_2_3_release/Packages/Matrix_search/doc_tex/basic/Optimisation_ref/MatrixSearch_pcenter1.gif -text svneol=unset#unset
+CGAL_2_3_release/Packages/Matrix_search/doc_tex/basic/Optimisation_ref/MatrixSearch_pcenter2.gif -text svneol=unset#unset
+CGAL_2_3_release/Packages/Matrix_search/doc_tex/basic/Optimisation_ref/MatrixSearch_pcenter3.gif -text svneol=unset#unset
+CGAL_2_3_release/Packages/Matrix_search/doc_tex/basic/Optimisation_ref/MatrixSearch_pcenter4.gif -text svneol=unset#unset
+CGAL_2_3_release/Packages/Matrix_search/doc_tex/basic/Optimisation_ref/MatrixSearch_sorted1.gif -text svneol=unset#unset
+CGAL_2_3_release/Packages/Matrix_search/doc_tex/basic/Optimisation_ref/MatrixSearch_sorted2.gif -text svneol=unset#unset
+CGAL_2_3_release/Packages/Matrix_search/doc_tex/basic/Optimisation_ref/MatrixSearch_sorted3.gif -text svneol=unset#unset
+CGAL_2_3_release/Packages/Matrix_search/doc_tex/basic/Optimisation_ref/MatrixSearch_sorted4.gif -text svneol=unset#unset
+CGAL_2_3_release/Packages/Matrix_search/doc_tex/basic/Optimisation_ref/MatrixSearch_totmon1.gif -text svneol=unset#unset
+CGAL_2_3_release/Packages/Matrix_search/doc_tex/basic/Optimisation_ref/MatrixSearch_totmon2.gif -text svneol=unset#unset
+CGAL_2_3_release/Packages/Matrix_search/doc_tex/basic/Optimisation_ref/MatrixSearch_totmon3.gif -text svneol=unset#unset
+CGAL_2_3_release/Packages/Matrix_search/doc_tex/basic/Optimisation_ref/MatrixSearch_totmon4.gif -text svneol=unset#unset
+CGAL_2_3_release/Packages/Matrix_search/doc_tex/basic/Optimisation_ref/MatrixSearch_totmon5.gif -text svneol=unset#unset
+CGAL_2_3_release/Packages/Modifier/doc_tex/Modifier/idraw/modifier.ips -text
+CGAL_2_3_release/Packages/Modifier/doc_tex/Modifier/modifier.gif -text svneol=unset#unset
+CGAL_2_3_release/Packages/Modifier/doc_tex/Modifier/modifier_small.gif -text svneol=unset#unset
+CGAL_2_3_release/Packages/Modifier/doc_tex/support/Modifier/idraw/modifier.ips -text
+CGAL_2_3_release/Packages/Modifier/doc_tex/support/Modifier/modifier.gif -text svneol=unset#unset
+CGAL_2_3_release/Packages/Modifier/doc_tex/support/Modifier/modifier_small.gif -text svneol=unset#unset
+CGAL_2_3_release/Packages/Nef_2/demo/Nef_2/xpms/basic.gif -text svneol=unset#unset
+CGAL_2_3_release/Packages/Nef_2/demo/Nef_2/xpms/basic.pcx -text svneol=unset#unset
+CGAL_2_3_release/Packages/Nef_2/demo/Nef_2/xpms/basic2.pcx -text svneol=unset#unset
+CGAL_2_3_release/Packages/Nef_2/demo/Nef_2/xpms/boundary.pcx -text svneol=unset#unset
+CGAL_2_3_release/Packages/Nef_2/demo/Nef_2/xpms/boundary.xpm -text svneol=unset#unset
+CGAL_2_3_release/Packages/Nef_2/demo/Nef_2/xpms/closure.pcx -text svneol=unset#unset
+CGAL_2_3_release/Packages/Nef_2/demo/Nef_2/xpms/closure.xpm -text svneol=unset#unset
+CGAL_2_3_release/Packages/Nef_2/demo/Nef_2/xpms/complement.pcx -text svneol=unset#unset
+CGAL_2_3_release/Packages/Nef_2/demo/Nef_2/xpms/complement.xpm -text svneol=unset#unset
+CGAL_2_3_release/Packages/Nef_2/demo/Nef_2/xpms/diff.pcx -text svneol=unset#unset
+CGAL_2_3_release/Packages/Nef_2/demo/Nef_2/xpms/diff.xpm -text svneol=unset#unset
+CGAL_2_3_release/Packages/Nef_2/demo/Nef_2/xpms/exor.pcx -text svneol=unset#unset
+CGAL_2_3_release/Packages/Nef_2/demo/Nef_2/xpms/exor.xpm -text svneol=unset#unset
+CGAL_2_3_release/Packages/Nef_2/demo/Nef_2/xpms/interior.pcx -text svneol=unset#unset
+CGAL_2_3_release/Packages/Nef_2/demo/Nef_2/xpms/interior.xpm -text svneol=unset#unset
+CGAL_2_3_release/Packages/Nef_2/demo/Nef_2/xpms/intersection.pcx -text svneol=unset#unset
+CGAL_2_3_release/Packages/Nef_2/demo/Nef_2/xpms/intersection.xpm -text
+CGAL_2_3_release/Packages/Nef_2/demo/Nef_2/xpms/nef.xpm -text
+CGAL_2_3_release/Packages/Nef_2/demo/Nef_2/xpms/newclosed.pcx -text svneol=unset#unset
+CGAL_2_3_release/Packages/Nef_2/demo/Nef_2/xpms/newopen.pcx -text svneol=unset#unset
+CGAL_2_3_release/Packages/Nef_2/demo/Nef_2/xpms/newpoly.pcx -text svneol=unset#unset
+CGAL_2_3_release/Packages/Nef_2/demo/Nef_2/xpms/union.pcx -text svneol=unset#unset
+CGAL_2_3_release/Packages/Nef_2/demo/Nef_2/xpms/union.xpm -text svneol=unset#unset
+CGAL_2_3_release/Packages/Nef_2/doc_tex/Nef_2/complex.gif -text svneol=unset#unset
+CGAL_2_3_release/Packages/Nef_2/doc_tex/Nef_2/complex.ps -text
+CGAL_2_3_release/Packages/Nef_2/doc_tex/Nef_2/halfplane.gif -text svneol=unset#unset
+CGAL_2_3_release/Packages/Nef_2/doc_tex/Nef_2/halfplane.ps -text
+CGAL_2_3_release/Packages/Nef_2/doc_tex/Nef_2_ref/extsegs.eps -text
+CGAL_2_3_release/Packages/Nef_2/doc_tex/Nef_2_ref/extsegs.gif -text svneol=unset#unset
+CGAL_2_3_release/Packages/Nef_2/doc_tex/basic/Nef_2/complex.gif -text svneol=unset#unset
+CGAL_2_3_release/Packages/Nef_2/doc_tex/basic/Nef_2/complex.ps -text
+CGAL_2_3_release/Packages/Nef_2/doc_tex/basic/Nef_2/halfplane.gif -text svneol=unset#unset
+CGAL_2_3_release/Packages/Nef_2/doc_tex/basic/Nef_2/halfplane.ps -text
+CGAL_2_3_release/Packages/Nef_2/doc_tex/basic/Nef_2_ref/extsegs.eps -text
+CGAL_2_3_release/Packages/Nef_2/doc_tex/basic/Nef_2_ref/extsegs.gif -text svneol=unset#unset
+CGAL_2_3_release/Packages/PS_Stream/doc_tex/PS_Stream/exemple.ps -text
+CGAL_2_3_release/Packages/PS_Stream/doc_tex/PS_Stream/style.ps -text
+CGAL_2_3_release/Packages/PS_Stream/doc_tex/support/PS_Stream/exemple.ps -text
+CGAL_2_3_release/Packages/PS_Stream/doc_tex/support/PS_Stream/style.ps -text
+CGAL_2_3_release/Packages/Partition_2/doc_ps/Partition_2.ps.gz svneol=native#unset
+CGAL_2_3_release/Packages/Partition_2/doc_tex/Partition_2/Idar-Oberstein.appx_cvx.gif -text svneol=unset#unset
+CGAL_2_3_release/Packages/Partition_2/doc_tex/Partition_2/Idar-Oberstein.appx_cvx.ps -text
+CGAL_2_3_release/Packages/Partition_2/doc_tex/Partition_2/Trier.opt_cvx.gif -text svneol=unset#unset
+CGAL_2_3_release/Packages/Partition_2/doc_tex/Partition_2/Trier.opt_cvx.ps -text
+CGAL_2_3_release/Packages/Partition_2/doc_tex/basic/Partition_2/Idar-Oberstein.appx_cvx.gif -text svneol=unset#unset
+CGAL_2_3_release/Packages/Partition_2/doc_tex/basic/Partition_2/Idar-Oberstein.appx_cvx.ps -text
+CGAL_2_3_release/Packages/Partition_2/doc_tex/basic/Partition_2/Trier.opt_cvx.gif -text svneol=unset#unset
+CGAL_2_3_release/Packages/Partition_2/doc_tex/basic/Partition_2/Trier.opt_cvx.ps -text
+CGAL_2_3_release/Packages/Planar_map/doc_tex/Planar_map/example_p.gif -text svneol=unset#unset
+CGAL_2_3_release/Packages/Planar_map/doc_tex/Planar_map/example_p.ps -text
+CGAL_2_3_release/Packages/Planar_map/doc_tex/Planar_map/face.gif -text svneol=unset#unset
+CGAL_2_3_release/Packages/Planar_map/doc_tex/Planar_map/face.ipe -text
+CGAL_2_3_release/Packages/Planar_map/doc_tex/Topological_map/dcel.gif -text svneol=unset#unset
+CGAL_2_3_release/Packages/Planar_map/doc_tex/Topological_map/dcel.ipe -text
+CGAL_2_3_release/Packages/Planar_map/doc_tex/Topological_map/my_face.gif -text svneol=unset#unset
+CGAL_2_3_release/Packages/Planar_map/doc_tex/Topological_map/my_face.ipe -text
+CGAL_2_3_release/Packages/Planar_map/doc_tex/Topological_map_ref/dcel.gif -text svneol=unset#unset
+CGAL_2_3_release/Packages/Planar_map/doc_tex/Topological_map_ref/dcel.ipe -text
+CGAL_2_3_release/Packages/Planar_map/doc_tex/basic/Planar_map/example_p.gif -text svneol=unset#unset
+CGAL_2_3_release/Packages/Planar_map/doc_tex/basic/Planar_map/example_p.ps -text
+CGAL_2_3_release/Packages/Planar_map/doc_tex/basic/Planar_map/face.gif -text svneol=unset#unset
+CGAL_2_3_release/Packages/Planar_map/doc_tex/basic/Planar_map/face.ipe -text
+CGAL_2_3_release/Packages/Planar_map/doc_tex/basic/Topological_map/dcel.gif -text svneol=unset#unset
+CGAL_2_3_release/Packages/Planar_map/doc_tex/basic/Topological_map/dcel.ipe -text
+CGAL_2_3_release/Packages/Planar_map/doc_tex/basic/Topological_map/my_face.gif -text svneol=unset#unset
+CGAL_2_3_release/Packages/Planar_map/doc_tex/basic/Topological_map/my_face.ipe -text
+CGAL_2_3_release/Packages/Planar_map/doc_tex/basic/Topological_map_ref/dcel.gif -text svneol=unset#unset
+CGAL_2_3_release/Packages/Planar_map/doc_tex/basic/Topological_map_ref/dcel.ipe -text
+CGAL_2_3_release/Packages/Polygon/doc_tex/Polygon/pgn_algos.gif -text svneol=unset#unset
+CGAL_2_3_release/Packages/Polygon/doc_tex/Polygon/pgn_algos.ipe -text
+CGAL_2_3_release/Packages/Polygon/doc_tex/basic/Polygon/pgn_algos.gif -text svneol=unset#unset
+CGAL_2_3_release/Packages/Polygon/doc_tex/basic/Polygon/pgn_algos.ipe -text
+CGAL_2_3_release/Packages/Polyhedron/doc_tex/Polyhedron/fig/add_facet.ips -text
+CGAL_2_3_release/Packages/Polyhedron/doc_tex/Polyhedron/fig/euler.ips -text
+CGAL_2_3_release/Packages/Polyhedron/doc_tex/Polyhedron/fig/euler_center.ips -text
+CGAL_2_3_release/Packages/Polyhedron/doc_tex/Polyhedron/fig/euler_loop.ips -text
+CGAL_2_3_release/Packages/Polyhedron/doc_tex/Polyhedron/fig/halfedge.ips -text
+CGAL_2_3_release/Packages/Polyhedron/doc_tex/Polyhedron/fig/make_cube.ips -text
+CGAL_2_3_release/Packages/Polyhedron/doc_tex/Polyhedron/fig/poly_optional.ips -text
+CGAL_2_3_release/Packages/Polyhedron/doc_tex/Polyhedron/fig/shark.ps -text
+CGAL_2_3_release/Packages/Polyhedron/doc_tex/Polyhedron/fig/subdiv.ppm -text
+CGAL_2_3_release/Packages/Polyhedron/doc_tex/Polyhedron/fig/subdiv.ps -text
+CGAL_2_3_release/Packages/Polyhedron/doc_tex/Polyhedron/halfedge.gif -text svneol=unset#unset
+CGAL_2_3_release/Packages/Polyhedron/doc_tex/Polyhedron/halfedge_small.gif -text svneol=unset#unset
+CGAL_2_3_release/Packages/Polyhedron/doc_tex/Polyhedron/idraw/add_facet.ips -text
+CGAL_2_3_release/Packages/Polyhedron/doc_tex/Polyhedron/idraw/euler.ips -text
+CGAL_2_3_release/Packages/Polyhedron/doc_tex/Polyhedron/idraw/euler_loop.ips -text
+CGAL_2_3_release/Packages/Polyhedron/doc_tex/Polyhedron/idraw/halfedge.ips -text
+CGAL_2_3_release/Packages/Polyhedron/doc_tex/Polyhedron/idraw/halfedge_methods.ips -text
+CGAL_2_3_release/Packages/Polyhedron/doc_tex/Polyhedron/idraw/poly_optional.ips -text
+CGAL_2_3_release/Packages/Polyhedron/doc_tex/Polyhedron/idraw/polyhedron.ips -text
+CGAL_2_3_release/Packages/Polyhedron/doc_tex/Polyhedron/idraw/shark.ps -text
+CGAL_2_3_release/Packages/Polyhedron/doc_tex/Polyhedron/make_cube.gif -text svneol=unset#unset
+CGAL_2_3_release/Packages/Polyhedron/doc_tex/Polyhedron/shark.gif -text svneol=unset#unset
+CGAL_2_3_release/Packages/Polyhedron/doc_tex/Polyhedron/subdiv.gif -text svneol=unset#unset
+CGAL_2_3_release/Packages/Polyhedron/doc_tex/Polyhedron/subdiv_small.gif -text svneol=unset#unset
+CGAL_2_3_release/Packages/Polyhedron/doc_tex/Polyhedron_ref/add_facet1.gif -text svneol=unset#unset
+CGAL_2_3_release/Packages/Polyhedron/doc_tex/Polyhedron_ref/add_facet2.gif -text svneol=unset#unset
+CGAL_2_3_release/Packages/Polyhedron/doc_tex/Polyhedron_ref/euler_center.gif -text svneol=unset#unset
+CGAL_2_3_release/Packages/Polyhedron/doc_tex/Polyhedron_ref/euler_facet.gif -text svneol=unset#unset
+CGAL_2_3_release/Packages/Polyhedron/doc_tex/Polyhedron_ref/euler_loop.gif -text svneol=unset#unset
+CGAL_2_3_release/Packages/Polyhedron/doc_tex/Polyhedron_ref/euler_vertex.gif -text svneol=unset#unset
+CGAL_2_3_release/Packages/Polyhedron/doc_tex/Polyhedron_ref/fig/add_facet.ips -text
+CGAL_2_3_release/Packages/Polyhedron/doc_tex/Polyhedron_ref/fig/euler.ips -text
+CGAL_2_3_release/Packages/Polyhedron/doc_tex/Polyhedron_ref/fig/euler_center.ips -text
+CGAL_2_3_release/Packages/Polyhedron/doc_tex/Polyhedron_ref/fig/euler_loop.ips -text
+CGAL_2_3_release/Packages/Polyhedron/doc_tex/Polyhedron_ref/fig/halfedge.ips -text
+CGAL_2_3_release/Packages/Polyhedron/doc_tex/Polyhedron_ref/fig/poly_optional.ips -text
+CGAL_2_3_release/Packages/Polyhedron/doc_tex/Polyhedron_ref/halfedge.gif -text svneol=unset#unset
+CGAL_2_3_release/Packages/Polyhedron/doc_tex/Polyhedron_ref/halfedge_small.gif -text svneol=unset#unset
+CGAL_2_3_release/Packages/Polyhedron/doc_tex/Polyhedron_ref/poly_optional.gif -text svneol=unset#unset
+CGAL_2_3_release/Packages/Polyhedron/doc_tex/Polyhedron_ref/poly_optional_small.gif -text svneol=unset#unset
+CGAL_2_3_release/Packages/Polyhedron/doc_tex/basic/Polyhedron/fig/add_facet.ips -text
+CGAL_2_3_release/Packages/Polyhedron/doc_tex/basic/Polyhedron/fig/euler.ips -text
+CGAL_2_3_release/Packages/Polyhedron/doc_tex/basic/Polyhedron/fig/euler_center.ips -text
+CGAL_2_3_release/Packages/Polyhedron/doc_tex/basic/Polyhedron/fig/euler_loop.ips -text
+CGAL_2_3_release/Packages/Polyhedron/doc_tex/basic/Polyhedron/fig/halfedge.ips -text
+CGAL_2_3_release/Packages/Polyhedron/doc_tex/basic/Polyhedron/fig/make_cube.ips -text
+CGAL_2_3_release/Packages/Polyhedron/doc_tex/basic/Polyhedron/fig/poly_optional.ips -text
+CGAL_2_3_release/Packages/Polyhedron/doc_tex/basic/Polyhedron/fig/shark.ps -text
+CGAL_2_3_release/Packages/Polyhedron/doc_tex/basic/Polyhedron/fig/subdiv.ppm -text
+CGAL_2_3_release/Packages/Polyhedron/doc_tex/basic/Polyhedron/fig/subdiv.ps -text
+CGAL_2_3_release/Packages/Polyhedron/doc_tex/basic/Polyhedron/halfedge.gif -text svneol=unset#unset
+CGAL_2_3_release/Packages/Polyhedron/doc_tex/basic/Polyhedron/halfedge_small.gif -text svneol=unset#unset
+CGAL_2_3_release/Packages/Polyhedron/doc_tex/basic/Polyhedron/idraw/add_facet.ips -text
+CGAL_2_3_release/Packages/Polyhedron/doc_tex/basic/Polyhedron/idraw/euler.ips -text
+CGAL_2_3_release/Packages/Polyhedron/doc_tex/basic/Polyhedron/idraw/euler_loop.ips -text
+CGAL_2_3_release/Packages/Polyhedron/doc_tex/basic/Polyhedron/idraw/halfedge.ips -text
+CGAL_2_3_release/Packages/Polyhedron/doc_tex/basic/Polyhedron/idraw/halfedge_methods.ips -text
+CGAL_2_3_release/Packages/Polyhedron/doc_tex/basic/Polyhedron/idraw/poly_optional.ips -text
+CGAL_2_3_release/Packages/Polyhedron/doc_tex/basic/Polyhedron/idraw/polyhedron.ips -text
+CGAL_2_3_release/Packages/Polyhedron/doc_tex/basic/Polyhedron/idraw/shark.ps -text
+CGAL_2_3_release/Packages/Polyhedron/doc_tex/basic/Polyhedron/make_cube.gif -text svneol=unset#unset
+CGAL_2_3_release/Packages/Polyhedron/doc_tex/basic/Polyhedron/shark.gif -text svneol=unset#unset
+CGAL_2_3_release/Packages/Polyhedron/doc_tex/basic/Polyhedron/subdiv.gif -text svneol=unset#unset
+CGAL_2_3_release/Packages/Polyhedron/doc_tex/basic/Polyhedron/subdiv_small.gif -text svneol=unset#unset
+CGAL_2_3_release/Packages/Polyhedron/doc_tex/basic/Polyhedron_ref/add_facet1.gif -text svneol=unset#unset
+CGAL_2_3_release/Packages/Polyhedron/doc_tex/basic/Polyhedron_ref/add_facet2.gif -text svneol=unset#unset
+CGAL_2_3_release/Packages/Polyhedron/doc_tex/basic/Polyhedron_ref/euler_center.gif -text svneol=unset#unset
+CGAL_2_3_release/Packages/Polyhedron/doc_tex/basic/Polyhedron_ref/euler_facet.gif -text svneol=unset#unset
+CGAL_2_3_release/Packages/Polyhedron/doc_tex/basic/Polyhedron_ref/euler_loop.gif -text svneol=unset#unset
+CGAL_2_3_release/Packages/Polyhedron/doc_tex/basic/Polyhedron_ref/euler_vertex.gif -text svneol=unset#unset
+CGAL_2_3_release/Packages/Polyhedron/doc_tex/basic/Polyhedron_ref/fig/add_facet.ips -text
+CGAL_2_3_release/Packages/Polyhedron/doc_tex/basic/Polyhedron_ref/fig/euler.ips -text
+CGAL_2_3_release/Packages/Polyhedron/doc_tex/basic/Polyhedron_ref/fig/euler_center.ips -text
+CGAL_2_3_release/Packages/Polyhedron/doc_tex/basic/Polyhedron_ref/fig/euler_loop.ips -text
+CGAL_2_3_release/Packages/Polyhedron/doc_tex/basic/Polyhedron_ref/fig/halfedge.ips -text
+CGAL_2_3_release/Packages/Polyhedron/doc_tex/basic/Polyhedron_ref/fig/poly_optional.ips -text
+CGAL_2_3_release/Packages/Polyhedron/doc_tex/basic/Polyhedron_ref/halfedge.gif -text svneol=unset#unset
+CGAL_2_3_release/Packages/Polyhedron/doc_tex/basic/Polyhedron_ref/halfedge_small.gif -text svneol=unset#unset
+CGAL_2_3_release/Packages/Polyhedron/doc_tex/basic/Polyhedron_ref/poly_optional.gif -text svneol=unset#unset
+CGAL_2_3_release/Packages/Polyhedron/doc_tex/basic/Polyhedron_ref/poly_optional_small.gif -text svneol=unset#unset
+CGAL_2_3_release/Packages/Polyhedron/doc_tex/deprecated_basic/Polyhedron/add_facet1.gif -text svneol=unset#unset
+CGAL_2_3_release/Packages/Polyhedron/doc_tex/deprecated_basic/Polyhedron/add_facet2.gif -text svneol=unset#unset
+CGAL_2_3_release/Packages/Polyhedron/doc_tex/deprecated_basic/Polyhedron/euler_facet.gif -text svneol=unset#unset
+CGAL_2_3_release/Packages/Polyhedron/doc_tex/deprecated_basic/Polyhedron/euler_loop.gif -text svneol=unset#unset
+CGAL_2_3_release/Packages/Polyhedron/doc_tex/deprecated_basic/Polyhedron/euler_vertex.gif -text svneol=unset#unset
+CGAL_2_3_release/Packages/Polyhedron/doc_tex/deprecated_basic/Polyhedron/halfedge.gif -text svneol=unset#unset
+CGAL_2_3_release/Packages/Polyhedron/doc_tex/deprecated_basic/Polyhedron/halfedge_small.gif -text svneol=unset#unset
+CGAL_2_3_release/Packages/Polyhedron/doc_tex/deprecated_basic/Polyhedron/poly_optional.gif -text svneol=unset#unset
+CGAL_2_3_release/Packages/Polyhedron/doc_tex/deprecated_basic/Polyhedron/poly_optional_small.gif -text svneol=unset#unset
+CGAL_2_3_release/Packages/Polyhedron/doc_tex/deprecated_basic/Polyhedron/shark.gif -text svneol=unset#unset
+CGAL_2_3_release/Packages/Polyhedron/examples/Polyhedron/corner.off -text
+CGAL_2_3_release/Packages/Polyhedron/examples/Polyhedron/corner_with_hole.off -text
+CGAL_2_3_release/Packages/Polyhedron/examples/Polyhedron/corner_with_sharp_edge.off -text
+CGAL_2_3_release/Packages/Polyhedron/examples/Polyhedron/cross.off -text
+CGAL_2_3_release/Packages/SearchStructures/doc_tex/SearchStructures/d-range.eps -text
+CGAL_2_3_release/Packages/SearchStructures/doc_tex/SearchStructures/d-range.gif -text svneol=unset#unset
+CGAL_2_3_release/Packages/SearchStructures/doc_tex/SearchStructures/d-segment.eps -text
+CGAL_2_3_release/Packages/SearchStructures/doc_tex/SearchStructures/d-segment.gif -text svneol=unset#unset
+CGAL_2_3_release/Packages/SearchStructures/doc_tex/SearchStructures/range2.eps -text
+CGAL_2_3_release/Packages/SearchStructures/doc_tex/SearchStructures/range2.gif -text svneol=unset#unset
+CGAL_2_3_release/Packages/SearchStructures/doc_tex/SearchStructures/rangesegmentdesign.eps -text
+CGAL_2_3_release/Packages/SearchStructures/doc_tex/SearchStructures/rsd.eps -text
+CGAL_2_3_release/Packages/SearchStructures/doc_tex/SearchStructures/rsd.gif -text svneol=unset#unset
+CGAL_2_3_release/Packages/SearchStructures/doc_tex/SearchStructures/segment2.eps -text
+CGAL_2_3_release/Packages/SearchStructures/doc_tex/SearchStructures/segment2.gif -text svneol=unset#unset
+CGAL_2_3_release/Packages/SearchStructures/doc_tex/SearchStructures/segment_ex2.eps -text
+CGAL_2_3_release/Packages/SearchStructures/doc_tex/SearchStructures/segment_ex2.gif -text svneol=unset#unset
+CGAL_2_3_release/Packages/SearchStructures/doc_tex/SearchStructures/segment_ex4.eps -text
+CGAL_2_3_release/Packages/SearchStructures/doc_tex/SearchStructures/segment_ex4.gif -text svneol=unset#unset
+CGAL_2_3_release/Packages/SearchStructures/doc_tex/SearchStructures_ref/segment_ex2.eps -text
+CGAL_2_3_release/Packages/SearchStructures/doc_tex/SearchStructures_ref/segment_ex2.gif -text svneol=unset#unset
+CGAL_2_3_release/Packages/SearchStructures/doc_tex/SearchStructures_ref/segment_ex4.eps -text
+CGAL_2_3_release/Packages/SearchStructures/doc_tex/SearchStructures_ref/segment_ex4.gif -text svneol=unset#unset
+CGAL_2_3_release/Packages/SearchStructures/doc_tex/basic/SearchStructures/d-range.eps -text
+CGAL_2_3_release/Packages/SearchStructures/doc_tex/basic/SearchStructures/d-range.gif -text svneol=unset#unset
+CGAL_2_3_release/Packages/SearchStructures/doc_tex/basic/SearchStructures/d-segment.eps -text
+CGAL_2_3_release/Packages/SearchStructures/doc_tex/basic/SearchStructures/d-segment.gif -text svneol=unset#unset
+CGAL_2_3_release/Packages/SearchStructures/doc_tex/basic/SearchStructures/range2.eps -text
+CGAL_2_3_release/Packages/SearchStructures/doc_tex/basic/SearchStructures/range2.gif -text svneol=unset#unset
+CGAL_2_3_release/Packages/SearchStructures/doc_tex/basic/SearchStructures/rangesegmentdesign.eps -text
+CGAL_2_3_release/Packages/SearchStructures/doc_tex/basic/SearchStructures/rsd.eps -text
+CGAL_2_3_release/Packages/SearchStructures/doc_tex/basic/SearchStructures/rsd.gif -text svneol=unset#unset
+CGAL_2_3_release/Packages/SearchStructures/doc_tex/basic/SearchStructures/segment2.eps -text
+CGAL_2_3_release/Packages/SearchStructures/doc_tex/basic/SearchStructures/segment2.gif -text svneol=unset#unset
+CGAL_2_3_release/Packages/SearchStructures/doc_tex/basic/SearchStructures/segment_ex2.eps -text
+CGAL_2_3_release/Packages/SearchStructures/doc_tex/basic/SearchStructures/segment_ex2.gif -text svneol=unset#unset
+CGAL_2_3_release/Packages/SearchStructures/doc_tex/basic/SearchStructures/segment_ex4.eps -text
+CGAL_2_3_release/Packages/SearchStructures/doc_tex/basic/SearchStructures/segment_ex4.gif -text svneol=unset#unset
+CGAL_2_3_release/Packages/SearchStructures/doc_tex/basic/SearchStructures_ref/segment_ex2.eps -text
+CGAL_2_3_release/Packages/SearchStructures/doc_tex/basic/SearchStructures_ref/segment_ex2.gif -text svneol=unset#unset
+CGAL_2_3_release/Packages/SearchStructures/doc_tex/basic/SearchStructures_ref/segment_ex4.eps -text
+CGAL_2_3_release/Packages/SearchStructures/doc_tex/basic/SearchStructures_ref/segment_ex4.gif -text svneol=unset#unset
+CGAL_2_3_release/Packages/Triangulation_2/doc_tex/TDS_2/Flip.gif -text svneol=unset#unset
+CGAL_2_3_release/Packages/Triangulation_2/doc_tex/TDS_2/Three.gif -text svneol=unset#unset
+CGAL_2_3_release/Packages/Triangulation_2/doc_tex/TDS_2/flip.ltex -text
+CGAL_2_3_release/Packages/Triangulation_2/doc_tex/TDS_2/insert.ltex -text
+CGAL_2_3_release/Packages/Triangulation_2/doc_tex/TDS_2_ref/Flip.gif -text svneol=unset#unset
+CGAL_2_3_release/Packages/Triangulation_2/doc_tex/TDS_2_ref/Three.gif -text svneol=unset#unset
+CGAL_2_3_release/Packages/Triangulation_2/doc_tex/Triangulation_2/Embedding.ipe -text
+CGAL_2_3_release/Packages/Triangulation_2/doc_tex/Triangulation_2/Flip.gif -text svneol=unset#unset
+CGAL_2_3_release/Packages/Triangulation_2/doc_tex/Triangulation_2/Flip.ipe -text
+CGAL_2_3_release/Packages/Triangulation_2/doc_tex/Triangulation_2/Infinite_circles.ipe -text
+CGAL_2_3_release/Packages/Triangulation_2/doc_tex/Triangulation_2/Infinite_triangles.ipe -text
+CGAL_2_3_release/Packages/Triangulation_2/doc_tex/Triangulation_2/Infinite_vertices.ipe -text
+CGAL_2_3_release/Packages/Triangulation_2/doc_tex/Triangulation_2/Linfinity.ipe -text
+CGAL_2_3_release/Packages/Triangulation_2/doc_tex/Triangulation_2/Neighbor_number.ipe -text
+CGAL_2_3_release/Packages/Triangulation_2/doc_tex/Triangulation_2/Three.ipe -text
+CGAL_2_3_release/Packages/Triangulation_2/doc_tex/Triangulation_2/Two.ipe -text
+CGAL_2_3_release/Packages/Triangulation_2/doc_tex/Triangulation_2/cc_advanced_begin.gif -text svneol=unset#unset
+CGAL_2_3_release/Packages/Triangulation_2/doc_tex/Triangulation_2/cc_advanced_end.gif -text svneol=unset#unset
+CGAL_2_3_release/Packages/Triangulation_2/doc_tex/Triangulation_2/cc_ref_up_arrow.gif -text svneol=unset#unset
+CGAL_2_3_release/Packages/Triangulation_2/doc_tex/Triangulation_2/constraints.gif -text svneol=unset#unset
+CGAL_2_3_release/Packages/Triangulation_2/doc_tex/Triangulation_2/constraints.ipe -text
+CGAL_2_3_release/Packages/Triangulation_2/doc_tex/Triangulation_2/degenerate.ipe -text
+CGAL_2_3_release/Packages/Triangulation_2/doc_tex/Triangulation_2/del_poisson.gif -text svneol=unset#unset
+CGAL_2_3_release/Packages/Triangulation_2/doc_tex/Triangulation_2/del_poisson.ps -text
+CGAL_2_3_release/Packages/Triangulation_2/doc_tex/Triangulation_2/empty.ipe -text
+CGAL_2_3_release/Packages/Triangulation_2/doc_tex/Triangulation_2/flip.ltex -text
+CGAL_2_3_release/Packages/Triangulation_2/doc_tex/Triangulation_2/infinite_vertex.gif svneol=native#unset
+CGAL_2_3_release/Packages/Triangulation_2/doc_tex/Triangulation_2/insert.ltex -text
+CGAL_2_3_release/Packages/Triangulation_2/doc_tex/Triangulation_2/insert1.gif -text svneol=unset#unset
+CGAL_2_3_release/Packages/Triangulation_2/doc_tex/Triangulation_2/insert1.ltex -text
+CGAL_2_3_release/Packages/Triangulation_2/doc_tex/Triangulation_2/insert2.gif -text svneol=unset#unset
+CGAL_2_3_release/Packages/Triangulation_2/doc_tex/Triangulation_2/insert2.ltex -text
+CGAL_2_3_release/Packages/Triangulation_2/doc_tex/Triangulation_2/insert3.gif -text svneol=unset#unset
+CGAL_2_3_release/Packages/Triangulation_2/doc_tex/Triangulation_2/insert3.ltex -text
+CGAL_2_3_release/Packages/Triangulation_2/doc_tex/Triangulation_2/map.ipe -text
+CGAL_2_3_release/Packages/Triangulation_2/doc_tex/Triangulation_2/neighbor.ipe -text
+CGAL_2_3_release/Packages/Triangulation_2/doc_tex/Triangulation_2/neighbor2.ipe -text
+CGAL_2_3_release/Packages/Triangulation_2/doc_tex/Triangulation_2/neighbors.gif -text svneol=unset#unset
+CGAL_2_3_release/Packages/Triangulation_2/doc_tex/Triangulation_2/neighbors.ltex -text
+CGAL_2_3_release/Packages/Triangulation_2/doc_tex/Triangulation_2/point.ipe -text
+CGAL_2_3_release/Packages/Triangulation_2/doc_tex/Triangulation_2/poisson.gif -text svneol=unset#unset
+CGAL_2_3_release/Packages/Triangulation_2/doc_tex/Triangulation_2/poisson.ps -text
+CGAL_2_3_release/Packages/Triangulation_2/doc_tex/Triangulation_2/polygon.ipe -text
+CGAL_2_3_release/Packages/Triangulation_2/doc_tex/Triangulation_2/remove.gif -text svneol=unset#unset
+CGAL_2_3_release/Packages/Triangulation_2/doc_tex/Triangulation_2/remove.ltex -text
+CGAL_2_3_release/Packages/Triangulation_2/doc_tex/Triangulation_2/three_levels.gif svneol=native#unset
+CGAL_2_3_release/Packages/Triangulation_2/doc_tex/Triangulation_2/trapezoid.ipe -text
+CGAL_2_3_release/Packages/Triangulation_2/doc_tex/Triangulation_2/valid1.gif -text svneol=unset#unset
+CGAL_2_3_release/Packages/Triangulation_2/doc_tex/Triangulation_2/valid1.ipe -text
+CGAL_2_3_release/Packages/Triangulation_2/doc_tex/Triangulation_2/valid2.ipe -text
+CGAL_2_3_release/Packages/Triangulation_2/doc_tex/Triangulation_2/valid3.ipe -text
+CGAL_2_3_release/Packages/Triangulation_2/doc_tex/Triangulation_2/vertical.ipe -text
+CGAL_2_3_release/Packages/Triangulation_2/doc_tex/Triangulation_2/walk.gif -text svneol=unset#unset
+CGAL_2_3_release/Packages/Triangulation_2/doc_tex/Triangulation_2/walk.ipe -text
+CGAL_2_3_release/Packages/Triangulation_2/doc_tex/Triangulation_2/walls.ipe -text
+CGAL_2_3_release/Packages/Triangulation_2/doc_tex/Triangulation_2_ref/constraints.gif -text svneol=unset#unset
+CGAL_2_3_release/Packages/Triangulation_2/doc_tex/Triangulation_2_ref/infinite_vertex.gif -text svneol=unset#unset
+CGAL_2_3_release/Packages/Triangulation_2/doc_tex/Triangulation_2_ref/insert1.gif -text svneol=unset#unset
+CGAL_2_3_release/Packages/Triangulation_2/doc_tex/Triangulation_2_ref/insert2.gif -text svneol=unset#unset
+CGAL_2_3_release/Packages/Triangulation_2/doc_tex/Triangulation_2_ref/insert3.gif -text svneol=unset#unset
+CGAL_2_3_release/Packages/Triangulation_2/doc_tex/Triangulation_2_ref/neighbors.gif -text svneol=unset#unset
+CGAL_2_3_release/Packages/Triangulation_2/doc_tex/Triangulation_2_ref/remove.gif -text svneol=unset#unset
+CGAL_2_3_release/Packages/Triangulation_2/doc_tex/Triangulation_2_ref/walk.gif -text svneol=unset#unset
+CGAL_2_3_release/Packages/Triangulation_2/doc_tex/basic/TDS_2/Flip.gif -text svneol=unset#unset
+CGAL_2_3_release/Packages/Triangulation_2/doc_tex/basic/TDS_2/Three.gif -text svneol=unset#unset
+CGAL_2_3_release/Packages/Triangulation_2/doc_tex/basic/TDS_2/flip.ltex -text
+CGAL_2_3_release/Packages/Triangulation_2/doc_tex/basic/TDS_2/insert.ltex -text
+CGAL_2_3_release/Packages/Triangulation_2/doc_tex/basic/TDS_2_ref/Flip.gif -text svneol=unset#unset
+CGAL_2_3_release/Packages/Triangulation_2/doc_tex/basic/TDS_2_ref/Three.gif -text svneol=unset#unset
+CGAL_2_3_release/Packages/Triangulation_2/doc_tex/basic/Triangulation_2/Embedding.ipe -text
+CGAL_2_3_release/Packages/Triangulation_2/doc_tex/basic/Triangulation_2/Flip.gif -text svneol=unset#unset
+CGAL_2_3_release/Packages/Triangulation_2/doc_tex/basic/Triangulation_2/Flip.ipe -text
+CGAL_2_3_release/Packages/Triangulation_2/doc_tex/basic/Triangulation_2/Infinite_circles.ipe -text
+CGAL_2_3_release/Packages/Triangulation_2/doc_tex/basic/Triangulation_2/Infinite_triangles.ipe -text
+CGAL_2_3_release/Packages/Triangulation_2/doc_tex/basic/Triangulation_2/Infinite_vertices.ipe -text
+CGAL_2_3_release/Packages/Triangulation_2/doc_tex/basic/Triangulation_2/Linfinity.ipe -text
+CGAL_2_3_release/Packages/Triangulation_2/doc_tex/basic/Triangulation_2/Neighbor_number.ipe -text
+CGAL_2_3_release/Packages/Triangulation_2/doc_tex/basic/Triangulation_2/Three.ipe -text
+CGAL_2_3_release/Packages/Triangulation_2/doc_tex/basic/Triangulation_2/Two.ipe -text
+CGAL_2_3_release/Packages/Triangulation_2/doc_tex/basic/Triangulation_2/cc_advanced_begin.gif -text svneol=unset#unset
+CGAL_2_3_release/Packages/Triangulation_2/doc_tex/basic/Triangulation_2/cc_advanced_end.gif -text svneol=unset#unset
+CGAL_2_3_release/Packages/Triangulation_2/doc_tex/basic/Triangulation_2/cc_ref_up_arrow.gif -text svneol=unset#unset
+CGAL_2_3_release/Packages/Triangulation_2/doc_tex/basic/Triangulation_2/constraints.gif -text svneol=unset#unset
+CGAL_2_3_release/Packages/Triangulation_2/doc_tex/basic/Triangulation_2/constraints.ipe -text
+CGAL_2_3_release/Packages/Triangulation_2/doc_tex/basic/Triangulation_2/degenerate.ipe -text
+CGAL_2_3_release/Packages/Triangulation_2/doc_tex/basic/Triangulation_2/del_poisson.gif -text svneol=unset#unset
+CGAL_2_3_release/Packages/Triangulation_2/doc_tex/basic/Triangulation_2/del_poisson.ps -text
+CGAL_2_3_release/Packages/Triangulation_2/doc_tex/basic/Triangulation_2/empty.ipe -text
+CGAL_2_3_release/Packages/Triangulation_2/doc_tex/basic/Triangulation_2/flip.ltex -text
+CGAL_2_3_release/Packages/Triangulation_2/doc_tex/basic/Triangulation_2/infinite_vertex.gif svneol=native#unset
+CGAL_2_3_release/Packages/Triangulation_2/doc_tex/basic/Triangulation_2/insert.ltex -text
+CGAL_2_3_release/Packages/Triangulation_2/doc_tex/basic/Triangulation_2/insert1.gif -text svneol=unset#unset
+CGAL_2_3_release/Packages/Triangulation_2/doc_tex/basic/Triangulation_2/insert1.ltex -text
+CGAL_2_3_release/Packages/Triangulation_2/doc_tex/basic/Triangulation_2/insert2.gif -text svneol=unset#unset
+CGAL_2_3_release/Packages/Triangulation_2/doc_tex/basic/Triangulation_2/insert2.ltex -text
+CGAL_2_3_release/Packages/Triangulation_2/doc_tex/basic/Triangulation_2/insert3.gif -text svneol=unset#unset
+CGAL_2_3_release/Packages/Triangulation_2/doc_tex/basic/Triangulation_2/insert3.ltex -text
+CGAL_2_3_release/Packages/Triangulation_2/doc_tex/basic/Triangulation_2/map.ipe -text
+CGAL_2_3_release/Packages/Triangulation_2/doc_tex/basic/Triangulation_2/neighbor.ipe -text
+CGAL_2_3_release/Packages/Triangulation_2/doc_tex/basic/Triangulation_2/neighbor2.ipe -text
+CGAL_2_3_release/Packages/Triangulation_2/doc_tex/basic/Triangulation_2/neighbors.gif -text svneol=unset#unset
+CGAL_2_3_release/Packages/Triangulation_2/doc_tex/basic/Triangulation_2/neighbors.ltex -text
+CGAL_2_3_release/Packages/Triangulation_2/doc_tex/basic/Triangulation_2/point.ipe -text
+CGAL_2_3_release/Packages/Triangulation_2/doc_tex/basic/Triangulation_2/poisson.gif -text svneol=unset#unset
+CGAL_2_3_release/Packages/Triangulation_2/doc_tex/basic/Triangulation_2/poisson.ps -text
+CGAL_2_3_release/Packages/Triangulation_2/doc_tex/basic/Triangulation_2/polygon.ipe -text
+CGAL_2_3_release/Packages/Triangulation_2/doc_tex/basic/Triangulation_2/remove.gif -text svneol=unset#unset
+CGAL_2_3_release/Packages/Triangulation_2/doc_tex/basic/Triangulation_2/remove.ltex -text
+CGAL_2_3_release/Packages/Triangulation_2/doc_tex/basic/Triangulation_2/three_levels.gif svneol=native#unset
+CGAL_2_3_release/Packages/Triangulation_2/doc_tex/basic/Triangulation_2/trapezoid.ipe -text
+CGAL_2_3_release/Packages/Triangulation_2/doc_tex/basic/Triangulation_2/valid1.gif -text svneol=unset#unset
+CGAL_2_3_release/Packages/Triangulation_2/doc_tex/basic/Triangulation_2/valid1.ipe -text
+CGAL_2_3_release/Packages/Triangulation_2/doc_tex/basic/Triangulation_2/valid2.ipe -text
+CGAL_2_3_release/Packages/Triangulation_2/doc_tex/basic/Triangulation_2/valid3.ipe -text
+CGAL_2_3_release/Packages/Triangulation_2/doc_tex/basic/Triangulation_2/vertical.ipe -text
+CGAL_2_3_release/Packages/Triangulation_2/doc_tex/basic/Triangulation_2/walk.gif -text svneol=unset#unset
+CGAL_2_3_release/Packages/Triangulation_2/doc_tex/basic/Triangulation_2/walk.ipe -text
+CGAL_2_3_release/Packages/Triangulation_2/doc_tex/basic/Triangulation_2/walls.ipe -text
+CGAL_2_3_release/Packages/Triangulation_2/doc_tex/basic/Triangulation_2_ref/constraints.gif -text svneol=unset#unset
+CGAL_2_3_release/Packages/Triangulation_2/doc_tex/basic/Triangulation_2_ref/infinite_vertex.gif -text svneol=unset#unset
+CGAL_2_3_release/Packages/Triangulation_2/doc_tex/basic/Triangulation_2_ref/insert1.gif -text svneol=unset#unset
+CGAL_2_3_release/Packages/Triangulation_2/doc_tex/basic/Triangulation_2_ref/insert2.gif -text svneol=unset#unset
+CGAL_2_3_release/Packages/Triangulation_2/doc_tex/basic/Triangulation_2_ref/insert3.gif -text svneol=unset#unset
+CGAL_2_3_release/Packages/Triangulation_2/doc_tex/basic/Triangulation_2_ref/neighbors.gif -text svneol=unset#unset
+CGAL_2_3_release/Packages/Triangulation_2/doc_tex/basic/Triangulation_2_ref/remove.gif -text svneol=unset#unset
+CGAL_2_3_release/Packages/Triangulation_2/doc_tex/basic/Triangulation_2_ref/walk.gif -text svneol=unset#unset
+CGAL_2_3_release/Packages/Triangulation_3/doc_tex/TriangulationDS_3/comborient.eps -text
+CGAL_2_3_release/Packages/Triangulation_3/doc_tex/TriangulationDS_3/comborient.gif -text svneol=unset#unset
+CGAL_2_3_release/Packages/Triangulation_3/doc_tex/TriangulationDS_3/design.gif svneol=native#unset
+CGAL_2_3_release/Packages/Triangulation_3/doc_tex/TriangulationDS_3/flips.eps -text
+CGAL_2_3_release/Packages/Triangulation_3/doc_tex/TriangulationDS_3/flips.gif -text svneol=unset#unset
+CGAL_2_3_release/Packages/Triangulation_3/doc_tex/TriangulationDS_3/repres.eps -text
+CGAL_2_3_release/Packages/Triangulation_3/doc_tex/TriangulationDS_3/repres.gif -text svneol=unset#unset
+CGAL_2_3_release/Packages/Triangulation_3/doc_tex/TriangulationDS_3/topo-simplex2.eps -text
+CGAL_2_3_release/Packages/Triangulation_3/doc_tex/TriangulationDS_3/topo-simplex2.gif -text svneol=unset#unset
+CGAL_2_3_release/Packages/Triangulation_3/doc_tex/TriangulationDS_3/topo-simplex3.eps -text
+CGAL_2_3_release/Packages/Triangulation_3/doc_tex/TriangulationDS_3/topo-simplex3.gif -text svneol=unset#unset
+CGAL_2_3_release/Packages/Triangulation_3/doc_tex/TriangulationDS_3/topo-simplex4.eps -text
+CGAL_2_3_release/Packages/Triangulation_3/doc_tex/TriangulationDS_3/topo-simplex4.gif -text svneol=unset#unset
+CGAL_2_3_release/Packages/Triangulation_3/doc_tex/TriangulationDS_3_ref/flips.eps -text
+CGAL_2_3_release/Packages/Triangulation_3/doc_tex/TriangulationDS_3_ref/flips.gif -text svneol=unset#unset
+CGAL_2_3_release/Packages/Triangulation_3/doc_tex/TriangulationDS_3_ref/topo-insert_outside_affine_hull.eps -text
+CGAL_2_3_release/Packages/Triangulation_3/doc_tex/TriangulationDS_3_ref/topo-insert_outside_affine_hull.gif -text svneol=unset#unset
+CGAL_2_3_release/Packages/Triangulation_3/doc_tex/Triangulation_3/grille.gif svneol=native#unset
+CGAL_2_3_release/Packages/Triangulation_3/doc_tex/Triangulation_3/insert_outside_affine_hull.eps -text
+CGAL_2_3_release/Packages/Triangulation_3/doc_tex/Triangulation_3/insert_outside_affine_hull.gif -text svneol=unset#unset
+CGAL_2_3_release/Packages/Triangulation_3/doc_tex/Triangulation_3/insert_outside_convex_hull.eps -text
+CGAL_2_3_release/Packages/Triangulation_3/doc_tex/Triangulation_3/insert_outside_convex_hull.gif -text svneol=unset#unset
+CGAL_2_3_release/Packages/Triangulation_3/doc_tex/Triangulation_3/orient.eps -text
+CGAL_2_3_release/Packages/Triangulation_3/doc_tex/Triangulation_3/orient.gif -text svneol=unset#unset
+CGAL_2_3_release/Packages/Triangulation_3/doc_tex/Triangulation_3/ortho.eps -text
+CGAL_2_3_release/Packages/Triangulation_3/doc_tex/Triangulation_3/ortho.gif -text svneol=unset#unset
+CGAL_2_3_release/Packages/Triangulation_3/doc_tex/Triangulation_3/remimpos.eps -text
+CGAL_2_3_release/Packages/Triangulation_3/doc_tex/Triangulation_3/remimpos.gif -text svneol=unset#unset
+CGAL_2_3_release/Packages/Triangulation_3/doc_tex/Triangulation_3/sidedim2.eps -text
+CGAL_2_3_release/Packages/Triangulation_3/doc_tex/Triangulation_3/sidedim2.gif -text svneol=unset#unset
+CGAL_2_3_release/Packages/Triangulation_3/doc_tex/Triangulation_3/sphere.eps -text
+CGAL_2_3_release/Packages/Triangulation_3/doc_tex/Triangulation_3/sphere.gif -text svneol=unset#unset
+CGAL_2_3_release/Packages/Triangulation_3/doc_tex/Triangulation_3/topo-insert_outside_affine_hull.eps -text
+CGAL_2_3_release/Packages/Triangulation_3/doc_tex/Triangulation_3/topo-insert_outside_affine_hull.gif -text svneol=unset#unset
+CGAL_2_3_release/Packages/Triangulation_3/doc_tex/Triangulation_3/utils.gif svneol=native#unset
+CGAL_2_3_release/Packages/Triangulation_3/doc_tex/Triangulation_3_ref/flips.eps -text
+CGAL_2_3_release/Packages/Triangulation_3/doc_tex/Triangulation_3_ref/flips.gif -text svneol=unset#unset
+CGAL_2_3_release/Packages/Triangulation_3/doc_tex/Triangulation_3_ref/insert_outside_affine_hull.eps -text
+CGAL_2_3_release/Packages/Triangulation_3/doc_tex/Triangulation_3_ref/insert_outside_affine_hull.gif -text svneol=unset#unset
+CGAL_2_3_release/Packages/Triangulation_3/doc_tex/Triangulation_3_ref/insert_outside_convex_hull.eps -text
+CGAL_2_3_release/Packages/Triangulation_3/doc_tex/Triangulation_3_ref/insert_outside_convex_hull.gif -text svneol=unset#unset
+CGAL_2_3_release/Packages/Triangulation_3/doc_tex/Triangulation_3_ref/sidedim2.eps -text
+CGAL_2_3_release/Packages/Triangulation_3/doc_tex/Triangulation_3_ref/sidedim2.gif -text svneol=unset#unset
+CGAL_2_3_release/Packages/Triangulation_3/doc_tex/Triangulation_3_ref/utils.gif svneol=native#unset
+CGAL_2_3_release/Packages/Triangulation_3/doc_tex/basic/TriangulationDS_3/comborient.eps -text
+CGAL_2_3_release/Packages/Triangulation_3/doc_tex/basic/TriangulationDS_3/comborient.gif -text svneol=unset#unset
+CGAL_2_3_release/Packages/Triangulation_3/doc_tex/basic/TriangulationDS_3/design.gif svneol=native#unset
+CGAL_2_3_release/Packages/Triangulation_3/doc_tex/basic/TriangulationDS_3/flips.eps -text
+CGAL_2_3_release/Packages/Triangulation_3/doc_tex/basic/TriangulationDS_3/flips.gif -text svneol=unset#unset
+CGAL_2_3_release/Packages/Triangulation_3/doc_tex/basic/TriangulationDS_3/repres.eps -text
+CGAL_2_3_release/Packages/Triangulation_3/doc_tex/basic/TriangulationDS_3/repres.gif -text svneol=unset#unset
+CGAL_2_3_release/Packages/Triangulation_3/doc_tex/basic/TriangulationDS_3/topo-simplex2.eps -text
+CGAL_2_3_release/Packages/Triangulation_3/doc_tex/basic/TriangulationDS_3/topo-simplex2.gif -text svneol=unset#unset
+CGAL_2_3_release/Packages/Triangulation_3/doc_tex/basic/TriangulationDS_3/topo-simplex3.eps -text
+CGAL_2_3_release/Packages/Triangulation_3/doc_tex/basic/TriangulationDS_3/topo-simplex3.gif -text svneol=unset#unset
+CGAL_2_3_release/Packages/Triangulation_3/doc_tex/basic/TriangulationDS_3/topo-simplex4.eps -text
+CGAL_2_3_release/Packages/Triangulation_3/doc_tex/basic/TriangulationDS_3/topo-simplex4.gif -text svneol=unset#unset
+CGAL_2_3_release/Packages/Triangulation_3/doc_tex/basic/TriangulationDS_3_ref/flips.eps -text
+CGAL_2_3_release/Packages/Triangulation_3/doc_tex/basic/TriangulationDS_3_ref/flips.gif -text svneol=unset#unset
+CGAL_2_3_release/Packages/Triangulation_3/doc_tex/basic/TriangulationDS_3_ref/topo-insert_outside_affine_hull.eps -text
+CGAL_2_3_release/Packages/Triangulation_3/doc_tex/basic/TriangulationDS_3_ref/topo-insert_outside_affine_hull.gif -text svneol=unset#unset
+CGAL_2_3_release/Packages/Triangulation_3/doc_tex/basic/Triangulation_3/grille.gif svneol=native#unset
+CGAL_2_3_release/Packages/Triangulation_3/doc_tex/basic/Triangulation_3/insert_outside_affine_hull.eps -text
+CGAL_2_3_release/Packages/Triangulation_3/doc_tex/basic/Triangulation_3/insert_outside_affine_hull.gif -text svneol=unset#unset
+CGAL_2_3_release/Packages/Triangulation_3/doc_tex/basic/Triangulation_3/insert_outside_convex_hull.eps -text
+CGAL_2_3_release/Packages/Triangulation_3/doc_tex/basic/Triangulation_3/insert_outside_convex_hull.gif -text svneol=unset#unset
+CGAL_2_3_release/Packages/Triangulation_3/doc_tex/basic/Triangulation_3/orient.eps -text
+CGAL_2_3_release/Packages/Triangulation_3/doc_tex/basic/Triangulation_3/orient.gif -text svneol=unset#unset
+CGAL_2_3_release/Packages/Triangulation_3/doc_tex/basic/Triangulation_3/ortho.eps -text
+CGAL_2_3_release/Packages/Triangulation_3/doc_tex/basic/Triangulation_3/ortho.gif -text svneol=unset#unset
+CGAL_2_3_release/Packages/Triangulation_3/doc_tex/basic/Triangulation_3/remimpos.eps -text
+CGAL_2_3_release/Packages/Triangulation_3/doc_tex/basic/Triangulation_3/remimpos.gif -text svneol=unset#unset
+CGAL_2_3_release/Packages/Triangulation_3/doc_tex/basic/Triangulation_3/sidedim2.eps -text
+CGAL_2_3_release/Packages/Triangulation_3/doc_tex/basic/Triangulation_3/sidedim2.gif -text svneol=unset#unset
+CGAL_2_3_release/Packages/Triangulation_3/doc_tex/basic/Triangulation_3/sphere.eps -text
+CGAL_2_3_release/Packages/Triangulation_3/doc_tex/basic/Triangulation_3/sphere.gif -text svneol=unset#unset
+CGAL_2_3_release/Packages/Triangulation_3/doc_tex/basic/Triangulation_3/topo-insert_outside_affine_hull.eps -text
+CGAL_2_3_release/Packages/Triangulation_3/doc_tex/basic/Triangulation_3/topo-insert_outside_affine_hull.gif -text svneol=unset#unset
+CGAL_2_3_release/Packages/Triangulation_3/doc_tex/basic/Triangulation_3/utils.gif svneol=native#unset
+CGAL_2_3_release/Packages/Triangulation_3/doc_tex/basic/Triangulation_3_ref/flips.eps -text
+CGAL_2_3_release/Packages/Triangulation_3/doc_tex/basic/Triangulation_3_ref/flips.gif -text svneol=unset#unset
+CGAL_2_3_release/Packages/Triangulation_3/doc_tex/basic/Triangulation_3_ref/insert_outside_affine_hull.eps -text
+CGAL_2_3_release/Packages/Triangulation_3/doc_tex/basic/Triangulation_3_ref/insert_outside_affine_hull.gif -text svneol=unset#unset
+CGAL_2_3_release/Packages/Triangulation_3/doc_tex/basic/Triangulation_3_ref/insert_outside_convex_hull.eps -text
+CGAL_2_3_release/Packages/Triangulation_3/doc_tex/basic/Triangulation_3_ref/insert_outside_convex_hull.gif -text svneol=unset#unset
+CGAL_2_3_release/Packages/Triangulation_3/doc_tex/basic/Triangulation_3_ref/sidedim2.eps -text
+CGAL_2_3_release/Packages/Triangulation_3/doc_tex/basic/Triangulation_3_ref/sidedim2.gif -text svneol=unset#unset
+CGAL_2_3_release/Packages/Triangulation_3/doc_tex/basic/Triangulation_3_ref/utils.gif svneol=native#unset
+CGAL_2_3_release/Packages/cgal_window/include/CGAL/LEDA/bitmaps/button21/a_annulus_21.xbm -text
+CGAL_2_3_release/Packages/cgal_window/include/CGAL/LEDA/bitmaps/button21/circle_21.xbm -text
+CGAL_2_3_release/Packages/cgal_window/include/CGAL/LEDA/bitmaps/button21/dice_21.xbm -text
+CGAL_2_3_release/Packages/cgal_window/include/CGAL/LEDA/bitmaps/button21/down_21.xbm -text
+CGAL_2_3_release/Packages/cgal_window/include/CGAL/LEDA/bitmaps/button21/empty_circle_21.xbm -text
+CGAL_2_3_release/Packages/cgal_window/include/CGAL/LEDA/bitmaps/button21/encl_circle_21.xbm -text
+CGAL_2_3_release/Packages/cgal_window/include/CGAL/LEDA/bitmaps/button21/exit_21.xbm -text
+CGAL_2_3_release/Packages/cgal_window/include/CGAL/LEDA/bitmaps/button21/f_triang_21.xbm -text
+CGAL_2_3_release/Packages/cgal_window/include/CGAL/LEDA/bitmaps/button21/f_voro_21.xbm -text
+CGAL_2_3_release/Packages/cgal_window/include/CGAL/LEDA/bitmaps/button21/gen_poly_21.xbm -text
+CGAL_2_3_release/Packages/cgal_window/include/CGAL/LEDA/bitmaps/button21/grid_21.xbm -text
+CGAL_2_3_release/Packages/cgal_window/include/CGAL/LEDA/bitmaps/button21/help_21.xbm -text
+CGAL_2_3_release/Packages/cgal_window/include/CGAL/LEDA/bitmaps/button21/hull_21.xbm -text
+CGAL_2_3_release/Packages/cgal_window/include/CGAL/LEDA/bitmaps/button21/inside_21.xbm -text
+CGAL_2_3_release/Packages/cgal_window/include/CGAL/LEDA/bitmaps/button21/intersect_21.xbm -text
+CGAL_2_3_release/Packages/cgal_window/include/CGAL/LEDA/bitmaps/button21/left_21.xbm -text
+CGAL_2_3_release/Packages/cgal_window/include/CGAL/LEDA/bitmaps/button21/line_21.xbm -text
+CGAL_2_3_release/Packages/cgal_window/include/CGAL/LEDA/bitmaps/button21/point_21.xbm -text
+CGAL_2_3_release/Packages/cgal_window/include/CGAL/LEDA/bitmaps/button21/poly_21.xbm -text
+CGAL_2_3_release/Packages/cgal_window/include/CGAL/LEDA/bitmaps/button21/ps_21.xbm -text
+CGAL_2_3_release/Packages/cgal_window/include/CGAL/LEDA/bitmaps/button21/rect_21.xbm -text
+CGAL_2_3_release/Packages/cgal_window/include/CGAL/LEDA/bitmaps/button21/right_21.xbm -text
+CGAL_2_3_release/Packages/cgal_window/include/CGAL/LEDA/bitmaps/button21/stop_21.xbm -text
+CGAL_2_3_release/Packages/cgal_window/include/CGAL/LEDA/bitmaps/button21/tree_21.xbm -text
+CGAL_2_3_release/Packages/cgal_window/include/CGAL/LEDA/bitmaps/button21/triang_21.xbm -text
+CGAL_2_3_release/Packages/cgal_window/include/CGAL/LEDA/bitmaps/button21/triangle_21.xbm -text
+CGAL_2_3_release/Packages/cgal_window/include/CGAL/LEDA/bitmaps/button21/union_21.xbm -text
+CGAL_2_3_release/Packages/cgal_window/include/CGAL/LEDA/bitmaps/button21/up_21.xbm -text
+CGAL_2_3_release/Packages/cgal_window/include/CGAL/LEDA/bitmaps/button21/voro_21.xbm -text
+CGAL_2_3_release/Packages/cgal_window/include/CGAL/LEDA/bitmaps/button21/w_annulus_21.xbm -text
+CGAL_2_3_release/Packages/cgal_window/include/CGAL/LEDA/bitmaps/button32/a_annulus.xbm -text
+CGAL_2_3_release/Packages/cgal_window/include/CGAL/LEDA/bitmaps/button32/circle.xbm -text
+CGAL_2_3_release/Packages/cgal_window/include/CGAL/LEDA/bitmaps/button32/dice.xbm -text
+CGAL_2_3_release/Packages/cgal_window/include/CGAL/LEDA/bitmaps/button32/empty_circle.xbm -text
+CGAL_2_3_release/Packages/cgal_window/include/CGAL/LEDA/bitmaps/button32/encl_circle.xbm -text
+CGAL_2_3_release/Packages/cgal_window/include/CGAL/LEDA/bitmaps/button32/exit.xbm -text
+CGAL_2_3_release/Packages/cgal_window/include/CGAL/LEDA/bitmaps/button32/f_triang.xbm -text
+CGAL_2_3_release/Packages/cgal_window/include/CGAL/LEDA/bitmaps/button32/f_voro.xbm -text
+CGAL_2_3_release/Packages/cgal_window/include/CGAL/LEDA/bitmaps/button32/grid.xbm -text
+CGAL_2_3_release/Packages/cgal_window/include/CGAL/LEDA/bitmaps/button32/help.xbm -text
+CGAL_2_3_release/Packages/cgal_window/include/CGAL/LEDA/bitmaps/button32/hull.xbm -text
+CGAL_2_3_release/Packages/cgal_window/include/CGAL/LEDA/bitmaps/button32/inside.xbm -text
+CGAL_2_3_release/Packages/cgal_window/include/CGAL/LEDA/bitmaps/button32/intersect.xbm -text
+CGAL_2_3_release/Packages/cgal_window/include/CGAL/LEDA/bitmaps/button32/line.xbm -text
+CGAL_2_3_release/Packages/cgal_window/include/CGAL/LEDA/bitmaps/button32/point.xbm -text
+CGAL_2_3_release/Packages/cgal_window/include/CGAL/LEDA/bitmaps/button32/poly.xbm -text
+CGAL_2_3_release/Packages/cgal_window/include/CGAL/LEDA/bitmaps/button32/rect.xbm -text
+CGAL_2_3_release/Packages/cgal_window/include/CGAL/LEDA/bitmaps/button32/tree.xbm -text
+CGAL_2_3_release/Packages/cgal_window/include/CGAL/LEDA/bitmaps/button32/triang.xbm -text
+CGAL_2_3_release/Packages/cgal_window/include/CGAL/LEDA/bitmaps/button32/triangle.xbm -text
+CGAL_2_3_release/Packages/cgal_window/include/CGAL/LEDA/bitmaps/button32/union.xbm -text
+CGAL_2_3_release/Packages/cgal_window/include/CGAL/LEDA/bitmaps/button32/voro.xbm -text
+CGAL_2_3_release/Packages/cgal_window/include/CGAL/LEDA/bitmaps/button32/w_annulus.xbm -text
+CGAL_2_3_release/Packages/cgal_window/include/CGAL/LEDA/bitmaps/leda_icon.xbm -text
+CGAL_2_3_release/Packages/cgal_window/include/CGAL/LEDA/pixmaps/algosol.xpm -text
+CGAL_2_3_release/Packages/cgal_window/include/CGAL/LEDA/pixmaps/algosol/algosol_comp.xpm -text
+CGAL_2_3_release/Packages/cgal_window/include/CGAL/LEDA/pixmaps/algosol/algosol_news.xpm -text
+CGAL_2_3_release/Packages/cgal_window/include/CGAL/LEDA/pixmaps/algosol/algosol_prod.xpm -text
+CGAL_2_3_release/Packages/cgal_window/include/CGAL/LEDA/pixmaps/algosol/algosol_res.xpm -text
+CGAL_2_3_release/Packages/cgal_window/include/CGAL/LEDA/pixmaps/algosol/algosol_serv.xpm -text
+CGAL_2_3_release/Packages/cgal_window/include/CGAL/LEDA/pixmaps/balls/ball_blue.xpm -text
+CGAL_2_3_release/Packages/cgal_window/include/CGAL/LEDA/pixmaps/balls/ball_green.xpm -text
+CGAL_2_3_release/Packages/cgal_window/include/CGAL/LEDA/pixmaps/balls/ball_pink.xpm -text
+CGAL_2_3_release/Packages/cgal_window/include/CGAL/LEDA/pixmaps/balls/ball_red.xpm -text
+CGAL_2_3_release/Packages/cgal_window/include/CGAL/LEDA/pixmaps/balls/ball_red1.xpm -text
+CGAL_2_3_release/Packages/cgal_window/include/CGAL/LEDA/pixmaps/balls/ball_yellow.xpm -text
+CGAL_2_3_release/Packages/cgal_window/include/CGAL/LEDA/pixmaps/button32/balls.xpm -text
+CGAL_2_3_release/Packages/cgal_window/include/CGAL/LEDA/pixmaps/button32/beer.xpm -text
+CGAL_2_3_release/Packages/cgal_window/include/CGAL/LEDA/pixmaps/button32/blocks.xpm -text
+CGAL_2_3_release/Packages/cgal_window/include/CGAL/LEDA/pixmaps/button32/books.xpm -text
+CGAL_2_3_release/Packages/cgal_window/include/CGAL/LEDA/pixmaps/button32/bulb.xpm -text
+CGAL_2_3_release/Packages/cgal_window/include/CGAL/LEDA/pixmaps/button32/c_file.xpm -text
+CGAL_2_3_release/Packages/cgal_window/include/CGAL/LEDA/pixmaps/button32/c_file0.xpm -text
+CGAL_2_3_release/Packages/cgal_window/include/CGAL/LEDA/pixmaps/button32/clock.xpm -text
+CGAL_2_3_release/Packages/cgal_window/include/CGAL/LEDA/pixmaps/button32/complement.xpm -text
+CGAL_2_3_release/Packages/cgal_window/include/CGAL/LEDA/pixmaps/button32/computer.xpm -text
+CGAL_2_3_release/Packages/cgal_window/include/CGAL/LEDA/pixmaps/button32/continue.xpm -text
+CGAL_2_3_release/Packages/cgal_window/include/CGAL/LEDA/pixmaps/button32/crush.xpm -text
+CGAL_2_3_release/Packages/cgal_window/include/CGAL/LEDA/pixmaps/button32/cube.xpm -text
+CGAL_2_3_release/Packages/cgal_window/include/CGAL/LEDA/pixmaps/button32/door_exit.xpm -text
+CGAL_2_3_release/Packages/cgal_window/include/CGAL/LEDA/pixmaps/button32/draw.xpm -text
+CGAL_2_3_release/Packages/cgal_window/include/CGAL/LEDA/pixmaps/button32/exit.xpm -text
+CGAL_2_3_release/Packages/cgal_window/include/CGAL/LEDA/pixmaps/button32/eye.xpm -text
+CGAL_2_3_release/Packages/cgal_window/include/CGAL/LEDA/pixmaps/button32/flag.xpm -text
+CGAL_2_3_release/Packages/cgal_window/include/CGAL/LEDA/pixmaps/button32/gift.xpm -text
+CGAL_2_3_release/Packages/cgal_window/include/CGAL/LEDA/pixmaps/button32/graph.xpm -text
+CGAL_2_3_release/Packages/cgal_window/include/CGAL/LEDA/pixmaps/button32/grid.xpm -text
+CGAL_2_3_release/Packages/cgal_window/include/CGAL/LEDA/pixmaps/button32/hammer.xpm -text
+CGAL_2_3_release/Packages/cgal_window/include/CGAL/LEDA/pixmaps/button32/hand.xpm -text
+CGAL_2_3_release/Packages/cgal_window/include/CGAL/LEDA/pixmaps/button32/help.xpm -text
+CGAL_2_3_release/Packages/cgal_window/include/CGAL/LEDA/pixmaps/button32/home.xpm -text
+CGAL_2_3_release/Packages/cgal_window/include/CGAL/LEDA/pixmaps/button32/index.xpm -text
+CGAL_2_3_release/Packages/cgal_window/include/CGAL/LEDA/pixmaps/button32/info.xpm -text
+CGAL_2_3_release/Packages/cgal_window/include/CGAL/LEDA/pixmaps/button32/intersect.xpm -text
+CGAL_2_3_release/Packages/cgal_window/include/CGAL/LEDA/pixmaps/button32/intersect2.xpm -text
+CGAL_2_3_release/Packages/cgal_window/include/CGAL/LEDA/pixmaps/button32/key.xpm -text
+CGAL_2_3_release/Packages/cgal_window/include/CGAL/LEDA/pixmaps/button32/keyboard.xpm -text
+CGAL_2_3_release/Packages/cgal_window/include/CGAL/LEDA/pixmaps/button32/light_off.xpm -text
+CGAL_2_3_release/Packages/cgal_window/include/CGAL/LEDA/pixmaps/button32/light_on.xpm -text
+CGAL_2_3_release/Packages/cgal_window/include/CGAL/LEDA/pixmaps/button32/lightning.xpm -text
+CGAL_2_3_release/Packages/cgal_window/include/CGAL/LEDA/pixmaps/button32/make_file.xpm -text
+CGAL_2_3_release/Packages/cgal_window/include/CGAL/LEDA/pixmaps/button32/maze.xpm -text
+CGAL_2_3_release/Packages/cgal_window/include/CGAL/LEDA/pixmaps/button32/mouse.xpm -text
+CGAL_2_3_release/Packages/cgal_window/include/CGAL/LEDA/pixmaps/button32/news.xpm -text
+CGAL_2_3_release/Packages/cgal_window/include/CGAL/LEDA/pixmaps/button32/notebook.xpm -text
+CGAL_2_3_release/Packages/cgal_window/include/CGAL/LEDA/pixmaps/button32/paper.xpm -text
+CGAL_2_3_release/Packages/cgal_window/include/CGAL/LEDA/pixmaps/button32/pen.xpm -text
+CGAL_2_3_release/Packages/cgal_window/include/CGAL/LEDA/pixmaps/button32/pencil.xpm -text
+CGAL_2_3_release/Packages/cgal_window/include/CGAL/LEDA/pixmaps/button32/pencils.xpm -text
+CGAL_2_3_release/Packages/cgal_window/include/CGAL/LEDA/pixmaps/button32/people.xpm -text
+CGAL_2_3_release/Packages/cgal_window/include/CGAL/LEDA/pixmaps/button32/person.xpm -text
+CGAL_2_3_release/Packages/cgal_window/include/CGAL/LEDA/pixmaps/button32/polyhedron.xpm -text
+CGAL_2_3_release/Packages/cgal_window/include/CGAL/LEDA/pixmaps/button32/printer.xpm -text
+CGAL_2_3_release/Packages/cgal_window/include/CGAL/LEDA/pixmaps/button32/ps_file.xpm -text
+CGAL_2_3_release/Packages/cgal_window/include/CGAL/LEDA/pixmaps/button32/puzzle.xpm -text
+CGAL_2_3_release/Packages/cgal_window/include/CGAL/LEDA/pixmaps/button32/raster.xpm -text
+CGAL_2_3_release/Packages/cgal_window/include/CGAL/LEDA/pixmaps/button32/ruler.xpm -text
+CGAL_2_3_release/Packages/cgal_window/include/CGAL/LEDA/pixmaps/button32/run.xpm -text
+CGAL_2_3_release/Packages/cgal_window/include/CGAL/LEDA/pixmaps/button32/run1.xpm -text
+CGAL_2_3_release/Packages/cgal_window/include/CGAL/LEDA/pixmaps/button32/scissors.xpm -text
+CGAL_2_3_release/Packages/cgal_window/include/CGAL/LEDA/pixmaps/button32/sleep.xpm -text
+CGAL_2_3_release/Packages/cgal_window/include/CGAL/LEDA/pixmaps/button32/small_earth.xpm -text
+CGAL_2_3_release/Packages/cgal_window/include/CGAL/LEDA/pixmaps/button32/snowman.xpm -text
+CGAL_2_3_release/Packages/cgal_window/include/CGAL/LEDA/pixmaps/button32/solids.xpm -text
+CGAL_2_3_release/Packages/cgal_window/include/CGAL/LEDA/pixmaps/button32/stop.xpm -text
+CGAL_2_3_release/Packages/cgal_window/include/CGAL/LEDA/pixmaps/button32/tex_file.xpm -text
+CGAL_2_3_release/Packages/cgal_window/include/CGAL/LEDA/pixmaps/button32/text_file.xpm -text
+CGAL_2_3_release/Packages/cgal_window/include/CGAL/LEDA/pixmaps/button32/watch.xpm -text
+CGAL_2_3_release/Packages/cgal_window/include/CGAL/LEDA/pixmaps/button32/win95.xpm -text
+CGAL_2_3_release/Packages/cgal_window/include/CGAL/LEDA/pixmaps/earth.xpm -text
+CGAL_2_3_release/Packages/cgal_window/include/CGAL/LEDA/pixmaps/leda.xpm -text
+CGAL_2_3_release/Packages/cgal_window/include/CGAL/LEDA/pixmaps/leda_book.xpm -text
+CGAL_2_3_release/Packages/cgal_window/include/CGAL/LEDA/pixmaps/leda_icon.xpm -text
+CGAL_2_3_release/Packages/cgal_window/include/CGAL/LEDA/pixmaps/texture/blue.xpm -text
+CGAL_2_3_release/Packages/cgal_window/include/CGAL/LEDA/pixmaps/texture/clouds.xpm -text
+CGAL_2_3_release/Packages/cgal_window/include/CGAL/LEDA/pixmaps/texture/dirt.xpm -text
+CGAL_2_3_release/Packages/cgal_window/include/CGAL/LEDA/pixmaps/texture/pool.xpm -text
+CGAL_2_3_release/Packages/cgal_window/include/CGAL/LEDA/pixmaps/texture/sharks.xpm -text
+CGAL_2_3_release/Packages/cgal_window/include/CGAL/LEDA/pixmaps/texture/slate.xpm -text
+CGAL_2_3_release/Packages/cgal_window/include/CGAL/LEDA/pixmaps/texture/space.xpm -text
+CGAL_2_3_release/Packages/cgal_window/include/CGAL/LEDA/pixmaps/texture/wall.xpm -text
+CGAL_2_3_release/Packages/cgal_window/include/CGAL/LEDA/pixmaps/texture/waves.xpm -text
+CGAL_2_3_release/Packages/cgal_window/include/CGAL/LEDA/pixmaps/texture/wood.xpm -text
+CGAL_2_3_release/Packages/cgal_window/include/CGAL/LEDA/pixmaps/tintin.xpm -text
+CGAL_2_3_release/Packages/cgal_window/include/CGAL/LEDA/pixmaps/win_icon.xpm -text
+CGAL_2_3_release/Packages/cgal_window/include/CGAL/LEDA/pixmaps/win_icon1.xpm -text
+CGAL_2_3_release/Packages/cgal_window/include/CGAL/LEDA/pixmaps/win_small_icon.xpm -text
+CGAL_2_3_release/Packages/cgal_window/include/CGAL/LEDA/pixmaps/win_small_icon1.xpm -text
+CGAL_2_3_release/Packages/cgal_window/src/CGALWin/mswin/leda1.ico -text svneol=unset#unset
+CGAL_2_3_release/Packages/cgal_window/src/CGALWin/mswin/leda1_sm.ico -text svneol=unset#unset
+CGAL_2_3_release/Packages/cgal_window/src/CGALWin/mswin/leda2.ico -text svneol=unset#unset
+CGAL_2_3_release/Packages/kdtree/doc_tex/SearchStructures/kdtree.gif svneol=native#unset
+CGAL_2_3_release/Packages/kdtree/doc_tex/basic/SearchStructures/kdtree.gif svneol=native#unset
 Packages/Installation/doc_tex/installation/Fig/a-simp.ipe -text
 Packages/Installation/doc_tex/installation/Fig/c-simp.ipe -text
 Packages/Installation/doc_tex/installation/Fig/g-simp.ipe -text

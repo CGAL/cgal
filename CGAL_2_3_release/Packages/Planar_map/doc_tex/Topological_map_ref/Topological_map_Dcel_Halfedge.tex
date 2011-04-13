@@ -1,0 +1,79 @@
+% +------------------------------------------------------------------------+
+% | Reference manual page: Topological_map_Dcel_Halfedge.tex
+% +------------------------------------------------------------------------+
+% | 
+% | Package: pm (Planar Map)
+% | 
+% +------------------------------------------------------------------------+
+
+\ccRefPageBegin
+
+%%RefPage: end of header, begin of main body
+% +------------------------------------------------------------------------+
+
+\begin{ccRefConcept}{TopologicalMapDcelHalfedge}  
+\label{DCEL:Halfedge}
+\ccDefinition A halfedge stores pointers to the next halfedge along the
+     same face and to its
+     twin halfedge. %It also stores a curve type associated with it.
+     It also stores pointers to an incident face and to an incident vertex.
+     A halfedge is an oriented edge between two vertices. It is always paired
+     with its counterpart that has the opposite direction. They are mutually 
+     linked with the \ccStyle{opposite()} function.
+    
+     \ccCreationVariable{h}
+
+  \ccTypes
+  
+  \ccNestedType{Vertex}{corresponding vertex type.}
+  \ccGlue
+  % \ccNestedType{Halfedge}{self.}
+  % \ccGlue
+  \ccNestedType{Face}{corresponding face type.}
+  
+%  \ccNestedType{Curve}{a curve associated with the edge.}
+  
+  \ccThree{const Halfedge*}{set_next(Halfedge* next)_bla;}{}
+
+\ccAccessFunctions
+
+  \ccMethod{Halfedge* opposite();}{the twin halfedge.}
+  \ccGlue
+  \ccMethod{const Halfedge* opposite() const;}{}
+
+  \ccMethod{Halfedge* next();}{the next halfedge around the face.}
+  \ccGlue
+  \ccMethod{const Halfedge* next() const;}{}
+
+  \ccMethod{Vertex* vertex();}{an incident vertex.}
+  \ccGlue
+  \ccMethod{const Vertex* vertex() const;}{}
+
+  \ccMethod{Face* face();}{the incident face.}
+  \ccGlue
+  \ccMethod{const Face* face() const;}{}
+
+  \ccModifiers
+
+  \ccMethod{void set_next(Halfedge* next);}{set next halfedge}
+  \ccGlue
+  \ccMethod{void set_vertex(Vertex* v);}{set incident vertex}
+  \ccGlue
+  \ccMethod{void set_face(Face* f);}{set incident face}
+
+\ccSeeAlso
+     \ccc{TopologicalMapDcel}\lcTex{ 
+     (\ccRefPage{TopologicalMapDcel})}\\
+     \ccc{TopologicalMapDcelVertex}\lcTex{
+     (\ccRefPage{TopologicalMapDcelVertex})}\\
+     \ccc{TopologicalMapDcelFace}\lcTex{
+     (\ccRefPage{TopologicalMapDcelFace})}
+
+
+\end{ccRefConcept}
+
+% +------------------------------------------------------------------------+
+%%RefPage: end of main body, begin of footer
+\ccRefPageEnd
+% EOF
+% +------------------------------------------------------------------------+

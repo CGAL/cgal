@@ -1,0 +1,48 @@
+% +------------------------------------------------------------------------+
+% | Reference manual page: Arrangement_2_DCEL.tex (Arrangement)
+% +------------------------------------------------------------------------+
+% | 
+% | Package: arr (Arrangement_2)
+% | 
+% +------------------------------------------------------------------------+
+
+\ccRefPageBegin
+
+%%RefPage: end of header, begin of main body
+% +------------------------------------------------------------------------+
+% +========================================================================+
+%   Arrangement_2_DCEL
+% +========================================================================+
+
+\begin{ccRefConcept}{ArrangementDcel_2}
+
+\ccDefinition
+   A model for the \ccRefName\ concept defines the underlying
+   combinatorial data structure (halfedge data structure) used in the
+   arrangement data structure \ccc{Arrangement_2<Dcel,Traits,Base_node>}.
+
+    An \ccRefName\ is $not$ (!) a refinement of the
+    \ccc{PlanarMapDcel_2} concept \lcTex{(see
+    \ccRefPage{PlanarMapDcel_2})}. However, it is very similiar.  The
+    difference in requirements is that the
+    \ccHtmlNoLinksFrom{\ccStyle{Halfedge}} type
+    should a model of the more refined concept
+    \ccc{ArrangementDcelHalfedge_2}.
+
+\ccTypes
+    \ccNestedType{Halfedge}{
+       The halfedge type. Should be a model of the
+       \ccc{ArrangementDcelHalfedge_2} concept.}
+
+\ccHasModels
+   \ccc{Arr_2_default_dcel<Traits>} 
+   \lcTex{(see introduction, \ccRefPage{arr_ref_intro})}
+
+
+\end{ccRefConcept}
+
+% +------------------------------------------------------------------------+
+%%RefPage: end of main body, begin of footer
+\ccRefPageEnd
+% EOF
+% +------------------------------------------------------------------------+

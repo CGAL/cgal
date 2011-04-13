@@ -1,0 +1,113 @@
+
+\begin{ccRefClass}{Object}
+
+\ccInclude{CGAL/Object.h}
+%\ccInclude{CGAL/basic.h}
+
+
+\ccDefinition  
+Some functions can return different types of objects. A typical
+\CC\ solution to this problem is to derive all possible return
+types from a common base class, to return a pointer to this 
+class and to perform a dynamic cast on this pointer. The class
+\ccRefName\ provides an abstraction.
+An object \ccStyle{obj} of the class \ccRefName\ can
+represent an arbitrary class. The only operations it provides is
+to make copies and assignments, so that you can put them in lists
+or arrays. Note that \ccRefName\ is NOT a common base class for the
+elementary classes. Therefore, there is no 
+automatic conversion from these classes to \ccRefName. Rather 
+this is done with the global function \ccc{make_object}. This 
+encapsulation mechanism requires the use of \ccc{assign} to use 
+the functionality of the encapsulated class.
+
+\ccCreation
+\ccCreationVariable{obj}
+
+\ccConstructor{Object();}
+            {introduces an uninitialized variable.}
+
+\ccConstructor{Object(const Object &o);}
+            {Copy constructor.}
+
+Objects of type \ccRefName\ are normally created via the global function
+\ccc{make_object}.
+
+\ccOperations
+
+\ccMethod{Object &operator=(const Object &o);}
+            {Assignment.}
+
+Assignment of an object of type \ccRefName\ to an object of type \ccc{T} 
+is done using \ccc{assign}. 
+
+There is also a member function to check whether an object of type \ccRefName\
+contains an object.
+
+\ccMethod{bool is_empty();}{returns true, if \ccc{object} does not 
+        contain an object.}
+
+\ccExample
+In the following example, the object class is used as return value for the 
+\ccHtmlNoLinksFrom{intersection} computation, as there are possibly different return values.
+
+\begin{cprog}
+{
+    Point_2< Cartesian<double> > point;
+    Segment_2< Cartesian<double> > segment,  segment_1, segment_2;
+
+    std::cin >> segment_1 >> segment_2;
+
+    Object obj = intersection(segment_1, segment_2);
+
+    if (assign(point, obj)) {
+        /* do something with point */
+    } else if ((assign(segment, obj)) {
+        /* do something with segment*/
+    }
+\end{cprog}
+\ccHtmlLinksOff%
+\begin{cprog}
+    /*  there was no intersection */
+}
+\end{cprog}
+\ccHtmlLinksOn%
+
+\medskip
+The \ccHtmlNoLinksFrom{intersection} routine itself looks roughly as follows:
+
+\begin{cprog}
+
+template < class R >
+Object  intersection(Segment_2<R> s1, Segment_2<R> s2)
+{
+\end{cprog} 
+\ccHtmlLinksOff%
+\begin{cprog}
+    if (/* intersection in a point */ ) {
+\end{cprog} 
+\ccHtmlLinksOn%
+\begin{cprog}
+       Point_2<R> p = ... ;
+       return make_object(p);
+\end{cprog} 
+\ccHtmlLinksOff%
+\begin{cprog}
+    } else if (/* intersection in a segment */ ) {
+\end{cprog} 
+\ccHtmlLinksOn%
+\begin{cprog}
+       Segment_2<R> s = ... ;
+       return make_object(s);
+    }
+    return Object();
+}
+\end{cprog} 
+
+\ccSeeAlso
+\ccRefIdfierPage{CGAL::assign} \\
+\ccRefIdfierPage{CGAL::make_object}\\
+\ccRefConceptPage{Kernel::Object_2}\\
+\ccRefConceptPage{Kernel::Object_3}\\
+
+\end{ccRefClass} 

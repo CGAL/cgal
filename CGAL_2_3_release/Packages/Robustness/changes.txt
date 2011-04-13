@@ -1,0 +1,91 @@
+1.10    (1 August 2001)
+- Use MP_Float when GMP is not there.
+- Use Filtered_kernel instead of Filtered_exact for VC++.
+- Remove warnings.
+
+1.9     (31 July 2001)
+- Last port to CGALWin.
+
+1.8     (18 July 2001)
+- Don't use <sstream> as it doesn't exist in GCC < 2.95.3.
+
+1.7     (26 June 2001)
+- Get rid of #include <LEDA/rat_point.h>, and use Cartesian_converter<>.
+- Remove demo/Robustness/include/CGAL/kernel_to_kernel.h, as it's in CGAL.
+- Port to CGAL window.
+- Don't use obsolete Kernel::Less_distance_to_point_2.
+
+1.6     (20 June 2001)
+- Update to new header style, and simplify code.
+- Try to use Quotient<MP_Float> in place of leda_real.
+
+1.5     (20 Sep 2000)
+
+- workaround for VC++ added in triangulation_of_intersection_points_2:
+  #ifdef CGAL_CFG_MATCHING_BUG_2
+  #define CGAL_IA_CT double
+  #define CGAL_IA_PROTECTED true
+  #define CGAL_IA_ET leda_real
+  #define CGAL_IA_CACHE No_Filter_Cache
+  #endif 
+  #include <CGAL/Arithmetic_filter.h>
+  as suggested by Sylvain Pion
+
+1.4     (01 Aug 2000)
+
+- C-array with non-constant size in orientation.C moved to dynamic 
+  heap, i.e. allocated using new
+
+1.3     (17 Jul 2000)
+
+- std::atoi replaced by CGAL_CLIB_STD::atoi
+- missing std:: added to some back_inserter calls
+- adjustments to changes in interval arithmetic
+  o Interval_nt<true> used instead of Interval_nt
+  o Interval_base::unsafe_comparison used
+
+1.2     (18 May 2000)
+
+- README file added
+- orientation_2.C and orientation_IA_2.C added to demo/Robustness
+  they count how often orientation test computation is successful
+  with double and with interval arithmetic, respectively.
+
+1.1.2   (08 May 2000)
+
+- std:: added to cin
+
+1.1.1   (19 Apr 2000)
+
+- std:: added to back_inserter
+- CGAL_CLIB_STD:: added to atoi
+- decls moved out of for scope to please VC++
+- CGAL_USE_LEDA checked
+
+1.1     (18 Apr 2000)
+
+- hull_of_intersection_points_2.C  in demo/Robustness
+  computes the convex hull of intersection points of random
+  line segments using doubles and leda_reals. Shows points
+  incorrectly classified as extreme points by the double-based 
+  computation
+
+- triangulation_of_intersection_points_2.C  in demo/Robustness
+  computes the Delaunay triangulation of intersection points of 
+  random line segments using leda_reals, Filtered_exact< double,
+  leda_real> and double. With doubles you often get assertion
+  violations. By altering the failure behaviour of CGAL, the 
+  assertion violation is shown in the window. (Also, sometimes
+  the Delaunay code run into an infinite loop.)
+
+1.0.1   (21 Mar 2000)
+
+- packaging script fixed
+- file header fixed
+
+1.0     (21 Mar 2000)
+
+- intersection_points_on_segment_2.C  in  demo/Robustness
+  creates segments with integral endpoints and checks whether
+  intersection point lies on segments using different kernels
+

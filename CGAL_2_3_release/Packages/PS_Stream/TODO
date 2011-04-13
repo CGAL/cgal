@@ -1,0 +1,289 @@
+Review comments from Lutz.
+Someone working on the package can probably take care of them.
+
+Date: Fri, 29 Jun 2001 05:47:53 +0200 (MET DST)
+From: Lutz Kettner <kettner@inf.ethz.ch>
+To: "CGAL editorial board" <cgal-editor-l@postino.mpi-sb.mpg.de>
+Subject: PS_stream
+
+Hi fellow editors,
+
+I read PS_stream. What is actually the procedure we want to follow?
+Do we discuss and collect reports before sending them to the authors
+or do we CC authors all the time? (Sylvain is listed for this and he
+is editor as well, so no question in this case ;-)
+
+First, I think that this package provides nice and important functionality.
+I would like to see in the release. However, I wonder if all issues
+we are raising here can be addressed in time.
+
+Classes and functionality seem to be mature and ready for release 
+(judging from the spec only, I have not looked at the sources),
+see some details below.
+
+The organization of the manual is in the old format. It looks
+like the reference pages can be easily taken from it, but the
+user manual part is missing. Especially the current order of 
+classes made it hard to read, PS_stream was already using all
+these classes before they were defined.
+
+Is something as exchangebility with window streams desirable? I have not
+compared method names here with those of our other streams, but we
+should look at that.
+
+There are a couple of new things that would benefit from more 
+explanation, maybe examples in the user manual, or also small examples at 
+the end of reference pages would help. These new things are dash
+styles (what format does that string accept "[1 5] 0" ???), font 
+names in PostScript? A short table with names and their look (similar to 
+the picture with dot styles) would be nice. In general I would prefer
+several shorter exampels instead of one big example. For example the
+LaTeX label plus the explanation of the LaTeX code could be one 
+example and one section in the user manual.
+
+Why is there a distinction between normal PS output and EPS? 
+The stream creates a single picture and not multiple pages anyway,
+right? I wrote PostScript output 3 years ago for another project
+and did not see the need to ditinguish that.
+
+I think the PostScript stream should clip the drawing at the 
+bounding box by default, but it should be optional to switch clipping
+off.
+
+The transformation from CGAL object coordinates into PostScript
+paper coordinates is not clear and seems also not general. You
+talk first about "size", then about "width" (=L?) and "height"
+in the constructor section. Their units and the position on the 
+paper is not clear. Rotation could be useful, especially 90 degree,
+but others too. 
+
+If I remember correctly PostScript does support a transformation stack.
+Maybe we could expose that and use CGAL's affine transformations
+at the PS_stream interface. 
+
+When I deal with transformations I find it useful to have a standard
+world coordinate system (or viewing volume) of say [-1,+1]x[-1,+1], 
+a fixed mapping to the paper, say to the 1x1 postscript points 
+(or should we use inches? , maybe millimeter would be nice, ;),
+large square in the lower-left paper corner (PostScript origin
+is bottom left), and a second independant transformation in paper
+space.
+
+The user needs control over both transformations, preferably at
+construction time but also later (member functions, output of
+CGAL::Aff_trans..., etc.).
+
+Sensible defaults would be nice. For example, the window created by
+create_demo_window() is reasonably big (512x512 pixels) and shows the
+object coordinate range of [-1,+1]x[-1,+1] in that window. I found
+that -1,+1 range particular useful and it works nice with our point
+generators (much nicer than a [0,1] range, because distributions are
+centered around the origin).
+
+So, I would propose a viewing area of [-1,+1]x[-1,+1] in object
+coordinates, and a printing area of 6inch x 6inch, 1 inch distance
+from the left boundary and 4 inch above the bottom boundary , or
+whatever nice settings are already coded up.  That could look quite
+o.k. on A4 and letter paper when printed.
+
+An intuitive way of defining both mappings could be via bounding 
+boxes, (maybe plus a bit for the 90 degree rotation to go from
+portrait to landscape), here a contructor including the default
+setting from above:
+
+  PS_stream( ...,
+             Bbox_2 object_space = Bbox_2( -1, -1, 1, 1),
+             Bbox_2 paper_space  = Bbox_2( 1 * INCH,  4 * INCH, 
+	                                   7 * INCH, 10 * INCH),
+	     bool landscape = false);
+
+A second constructor could offer Aff_transformation_2's as parameters.
+The clipping and the EPS bounding box are set using the 
+paper_space bbox. Using an affine transform, the 1x1 unit
+square is transformed to find the bbox. Can the clipping set to
+non-axis-aligned boxes? I think not, so lets just pick the enclosing
+box then.
+
+It is important to say that measures such as line width or node size
+etc. are in paper space. Or maybe in object space. A scale conversion
+would be helpful to get one from the other. 
+
+How about copying the handling of color from the windows? We
+should have a background color and a foreground color. Sending
+a CGAL::Color object to the stream changes the foreground color.
+
+Btw: the support manual has the Color manual pages before the 
+window manual pages. So maybe Axis and such could come before
+PS_stream too.
+
+I think there is a macro \ccConstant that would allow to list 
+the constants CM, INCH, POINT including there type, maybe also
+their value. I would actually prefer MM (millimeter) over CM.
+Of course we could have both.
+
+Page 1: additionnal --> additional
+(there are a couple of types that a spell checker could catch. I'll
+list those I caught bu I am certainly not complete.)
+
+Page 2: Inconsistent naming conventions:
+  PS_Stream, Bbox_2, PS_BBox
+
+Why a local type PS_BBox anyway? You expose Bbox_2 so that
+a user actually knows how to create one.
+
+Page 3: Constructors: The geometry should have reasonable defaults
+for simple demo applications. So bbox needs to be after ostream
+in the parameter list to allow defaults. 
+
+The constructors with the filenames are redundant and pose the 
+problem of error reporting. How do your report errors with the
+file opening and writing? With the stream the stream has an
+error state. I would remove the redundant constructors with the
+filename. The same functionality (without error checking)
+costs a user just one more line.
+
+    std::ofstream out( "filename");
+
+Parameter H is described as "size" without any explanation.
+
+Parameter L and H is better, but does not position it on the
+paper. Btw, I assume that users won't care most of the time
+where it ends up on the paper since programs that include
+these files reposition the picture anyway.
+
+~PS_Streams()  LaTeX labels have not been introduced yet, and 
+LaTeX instructions (if these are not the labels) are nowhere else 
+mentioned at all (or I overlooked that, but I read that labels
+might have LaTeX macros in it, but I was considering that part
+of the labels here.). 
+
+I don't like the member function nanem "os", which I read as 
+operating system. What speaks against "stream" or "ostream"?
+
+Type List_Label not defined. The method would better be names
+list_label() too, not just list. The whole LaTeX label handling
+is not well explained. Is a user supposed to edit this list?
+
+Is that desirable? Wouldn't it be enough to write labels to
+the stream and that's it?
+
+The width(), and height() methods need to say what units the use
+and if they work in paper space. Their return type is 'int', which
+seems to be in conflict with H and L that were 'float' in the 
+constructor section.
+
+xratio() and yratio() need better explanation.
+
+Page 4: is_readable(). How about the existing stream modifiers that
+we have already in cgal (pretty, binary, ASCII)?
+
+"Converts user's coordinates", say x-coord.. or y-coord.. respectively.
+
+Type DotStyle not defined.
+
+"To fill or not ..." --> "To fill or not to fill ..." --> 
+
+"set_default_context( void)" --> "set_default_context()"  just empty, no void
+
+The concept of an anchor point has not been introduced. This might
+be worth an isolated example and section in the user manual together
+with text output and fonts.
+
+Would it be feasible to either have functions that compute width and
+height of a text (preferrably in user space), or have the text get aligned 
+with the anchor point in different ways, such as left aligned, right
+aligned, centered, top and bottom, such that map labeling output
+could be written using this stream?
+
+(If not for this release a quick thought could be spend on this such
+that the interface with the anchor point does not need to change
+for such a future extension.)
+
+Naming convention: These are the first put_ functions I see in
+CGAL (maybe I have not seen enough of CGAL yet or I'm going
+Alzheimer ;-). How about set_, add_, insert_....
+
+put_border, set_font, and set_font_size need to explain what values
+their argument accept.
+
+Page 5: The auxiliary classes that are members of PS_Stream
+can be nicely documented in the reference page style format
+such that PS_Stream shows up as a scope in the page title:
+
+    CGAL::PS_Stream::Axis
+
+See my Polyhedron package for an example (note that CGAL::
+is a global setting), file 
+
+    doc_tex/basic/Polyhedron/Polyhedron_ref/Polyhedron_3_Vertex.tex
+
+Page 5: "colors ...." maybe something nicer than ... ;-)
+
+Default values: I liked the default we have for the window
+after cgalize'ing it. This would be EDOT for DotStyle. Furthermore
+seems the line thickness too thin. Thickness 0 should actually
+be invisible, shouldn't it? Anyway, something as 0.3 or 0.5 millimeter
+paper space could look nice.
+
+Figure 1.1.: Similar tables for line thickness, fonts, font sizes would
+make for nice reference material. However, I wonder about out HTML
+manual, how sizes should appear there.
+
+set_current_pos(), why does the "anchor" not appear in the name anymore?
+
+Page 7: Reference to where LaTeX labels get explained would be helpful.
+
+Why is only one Axis per figure allowed? Even if it doesnt seem immediately 
+useful, if someone likes the effect, why not? By the way, how about
+setting a new clipping path? Ambitious programmer could create
+several plots within one output figure.
+
+Oh, and I remember, clipping path. Of course we could clip a rotated
+bbox.
+
+Page 8: Wording of Label Definition: "An object of the Label class
+is a label, that is to say text that can be inserted ..." ;-)
+
+Page 9: line 1: "in drawing" --> "in a drawing"
+
+later: "labels won't be display" --> "labels won't be displayed"
+
+Page 10: line 2: "exemple" --> "example"
+
+later; "being given after" ...????
+
+"fill_color( color c)" --> "fill_color( Color c)"
+
+"move_to" again, why not anchor in the name?
+
+The whole listing seems to suffer from a formatting problem. 
+You should be in a \begin{ccClass}{PS_Stream} or similar environment,
+such that the PS_Stream& ps gets simplified to ps only which would
+simplify formatting of that list here.
+(probably easier to order once converted to reference pages with
+the local types as extras pages but manipulators as part of PS_Stream
+page.
+
+Page 11: PS_Manipulator, Definition heading missing. Definition
+uncomprehensible. Are you talking about member function pointers
+here? Needs an example of how to write a manipulator. Is it
+intended for users to create new manipulators? Or would it
+be o.k. to hide this implementation?
+
+PS_Manipulator_creator: "object function" --> "function object" ?
+
+"produces the creation" ????
+
+Page 13: same formatting problem in section "I/O". PS_Stream& should
+not be there. Or is it intentional so that there wouldn't be a 
+spurios &? Maybe o.k.
+
+Parabola? Is that new? Maybe Parabola_2?
+
+Example: converion to new Kernel and simpler header inclusion.
+
+Indentation seems to get lost. Are there TAB's? cprog?
+
+Best regards,
+
+Lutz

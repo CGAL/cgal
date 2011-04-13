@@ -1,0 +1,59 @@
+% +------------------------------------------------------------------------+
+% | Reference manual page: Topological_map_Vertex.tex
+% +------------------------------------------------------------------------+
+% | 
+% | Package: pm (Planar Map)
+% | 
+% +------------------------------------------------------------------------+
+
+\ccRefPageBegin
+
+%%RefPage: end of header, begin of main body
+% +------------------------------------------------------------------------+
+\begin{ccRefClass}[Topological_map<Dcel>::]{Vertex}
+\ccRefLabel{tpm_vertex} % label added to avoid ambiguity of the name Vertex
+
+\ccThree{unsigned int}{}{\hspace*{5.5cm}}
+
+\ccDefinition An object $v$ of the class
+    \ccRefName\ is a vertex of a topological map. 
+
+    %\ccInclude{CGAL/Topological_map.h}
+
+\ccInheritsFrom
+    \ccHtmlNoLinksFrom{\ccc{Dcel::Vertex}}
+
+\ccCreation
+\ccCreationVariable{v}
+
+\ccConstructor{Vertex();}{default constructor.}    
+
+\ccAccessFunctions
+    \ccMethod{Halfedge_around_vertex_circulator incident_halfedges() const;} {returns a
+       circulator that allows to traverse the halfedges that have \ccVar{}
+       as their target. The edges are traversed around \ccVar{} in an
+       order opposite that of the \ccStyle{Ccb_halfedge_circulator}. 
+       This circulator can also be used to access
+       incident faces and vertices.}
+
+\ccPredicates
+         
+    \ccMethod{ bool is_incident_edge(Halfedge_const_handle e) const;}
+    {returns \ccStyle{true} if \ccStyle{e} is incident to \ccVar{}
+       (i.e., if \ccVar{} is the source or the target of \ccStyle{e}).}
+    \ccGlue
+    \ccMethod{ bool is_incident_face( Face_const_handle f ) const;
+       }{returns \ccStyle{true} if \ccStyle{f} is incident to \ccVar{}.}
+
+\ccHeading{Query Functions}
+    \ccMethod{unsigned int degree() const;}{returns the degree of \ccVar{}
+       i.e., the number of outgoing halfedges.}
+
+
+\end{ccRefClass}
+
+% +------------------------------------------------------------------------+
+%%RefPage: end of main body, begin of footer
+\ccRefPageEnd
+% EOF
+% +------------------------------------------------------------------------+

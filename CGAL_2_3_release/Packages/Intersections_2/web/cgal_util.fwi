@@ -1,0 +1,45 @@
+@$@<do_intersect macro@>@(@2@)@Z@M==@{@-
+template <class R>
+inline bool do_intersect(
+    const @1<R> &p1,
+    const @2<R> &p2)
+{
+    typedef @1_@2_pair<R> pair_t;
+    pair_t pair(&p1, &p2);
+    return pair.intersection_type() != pair_t::NO;
+}@-
+@}
+
+@$@<cgal_heading@>@(@4@)@Z@M==@{@-
+@!  parameter description with an example value
+@! file : include/CGAL/Optimisation/Min_circle_2.h
+@! source  : web/Optimisation/Min_circle_2.aw
+@! author(s) : Sven Schoenherr <sven@inf.fu-berlin.de>, Bernd Gaertner
+@! coordinator : ETH Zurich
+// ============================================================================
+//
+// Copyright (c) 2000 The CGAL Consortium
+//
+// This software and related documentation is part of an INTERNAL release
+// of the Computational Geometry Algorithms Library (CGAL). It is not
+// intended for general use.
+//
+// ----------------------------------------------------------------------------
+//
+// release       : $CGAL_Revision:  $
+// release_date  : $CGAL_Date:  $
+//
+// file          : @1
+// source        : @2
+// author(s)     : @3
+//
+// coordinator   : @4
+//
+// ============================================================================
+@}
+
+@$@<include@>@(@2@)@Z@M==@{@-
+#ifndef CGAL_@2_H
+#include <CGAL/@1.h>
+#endif
+@}

@@ -1,0 +1,69 @@
+% +------------------------------------------------------------------------+
+% | CGAL Reference Manual: is_empty_range.tex
+% +------------------------------------------------------------------------+
+% | Requirements for circulators in analogy to STL iterators.
+% | Adaptors between circulators and iterators.
+% | Proposal for CGAL.
+% |
+% | 11.10.1996   Lutz Kettner
+% | 
+% | \RCSdef{\circRev}{$Revision$}
+% | \RCSdefDate{\circDate}{$Date$}
+% +------------------------------------------------------------------------+
+
+% +-----------------------------------------------------+
+\begin{ccRefFunction}{is_empty_range}
+
+\ccDefinition
+
+In order to write algorithms that work with iterator ranges as well as
+with circulator ranges we have to consider the difference of
+representing an empty range. For iterators this is the range $[i,i)$,
+while for circulators it would be \ccc{c == NULL},  the empty sequence test.
+The function \ccc{is_empty_range} provides the necessary generic test
+which accepts an iterator range or a circulator range and says whether
+the range is empty or not.
+
+\ccInclude{CGAL/circulator.h}
+
+\ccSetThreeColumns{bool}{is_empty_range( IC i, IC j);}{}
+\ccFunction{template< class IC> 
+    bool is_empty_range( const IC& i, const IC& j);}{%
+    is \ccc{true} if the range [\ccc{i, j}) is empty,
+    \ccc{false} otherwise.
+    \ccPrecond \ccc{IC} is either a circulator or an iterator
+    type. The range [\ccc{i, j}) is valid.
+}
+
+\ccExample
+
+The following function \ccc{process_all} accepts a range $\left[i,
+  j\right)$ of an iterator or circulator \ccc{IC} and processes each
+element in this range:
+
+\begin{verbatim}
+template <class IC>
+void process_all( IC i, IC j) {
+    if (! CGAL::is_empty_range( i, j)) { 
+        do {
+            process(*i);
+        } while (++i != j);
+    }
+}
+\end{verbatim}
+
+
+\ccSeeAlso
+
+\ccc{iterator_distance},
+\ccc{CGAL_For_all},
+\ccc{Circulator_tag},
+\ccc{Circulator_traits},\\
+\ccc{Assert_circulator_or_iterator},
+\ccc{Circulator}.
+
+
+\end{ccRefFunction}
+
+% +-----------------------------------------------------+
+% EOF

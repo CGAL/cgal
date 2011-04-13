@@ -1,0 +1,203 @@
+% +------------------------------------------------------------------------+
+% | Reference manual page: Planar_map_traits.tex (Planar_map)
+% +------------------------------------------------------------------------+
+% | 
+% | Package: pm (Planar_map_2)
+% | 
+% +------------------------------------------------------------------------+
+
+\ccRefPageBegin
+
+%%RefPage: end of header, begin of main body
+% +------------------------------------------------------------------------+
+
+\begin{ccRefConcept}{PlanarMapTraits_2}
+\label{PM_sec:req:interface} 
+ 
+%\label{I1_S}} 
+   
+   A model for the \ccRefName\ concept must provide the
+   following types and operations. It defines the geometric types and
+   primitive operations used in the planar map data structure
+   \ccc{Planar_map_2<Dcel,Traits>}.
+
+%The planar map class is parameterized with the
+%interface class \ccStyle{PlanarMapTraits_2} which defines the abstract interface
+%between planar maps and the primitives they use. 
+%The following
+%requirement catalog lists the primitives, i.e., types, member functions
+%etc., that must be defined for a Traits class that can be used to
+%parameterize planar maps. %Ready-made implementation is available
+%and described in Section~\ref{PM_sec:def:interface}. They can be used as a
+%starting point for customizing own interface classes, for example
+%through derivation and specialization.
+
+\ccCreationVariable{pm_traits}
+
+
+\ccDefinition
+    A class \ccClassTemplateName\ that satisfies the requirements of an
+    interface class for a planar map class must provide the
+    following types and operations. 
+
+\ccTypes
+
+    The geometric types defined below must have a default constructor,
+    copy constructor, assignment operator and \ccStyle{operator==}.
+    
+    \ccNestedType{Point}{A type to hold the location of a vertex in the plane.}
+    \ccNestedType{X_curve}{A type to hold an $x$-monotone curve in the plane.}
+  
+    \ccEnum{enum Curve_point_status {UNDER_CURVE = -1,
+          CURVE_NOT_IN_RANGE ,
+          ABOVE_CURVE ,
+          ON_CURVE };} {a constant describing the relative position between
+       a curve and a point.}
+
+
+    %\ccNestedType{Curve}{A type to hold a curve in the plane. Not
+    %   necessarily monotone. This type is used by the
+    %   \ccStyle{Arrangement_2} class.}
+    
+%    \ccNestedType{Point_handle}{A handle of a \ccStyle{Point}.}
+    
+%    \ccNestedType{X_curve_handle}{A handle of an \ccStyle{X_curve}.}
+    
+    %\ccNestedType{Curve_handle}{A handle of \ccStyle{Curve}.}
+
+    %\ccNestedType{FT}{- Field type associated with the geometric data. }
+    
+
+\ccCreation
+    
+%    Only a default constructor is required. Note that further
+%    constructors can be provided.
+
+    \ccConstructor{Traits();}
+    {A default constructor.}
+
+    \ccOperations
+%    \ccSetTwoOfThreeColumns{4cm}{4cm}
+
+%predicates
+%----------
+    \ccMethod{Comparison_result compare_x(const Point& p0,
+       const Point& p1);} {compares the \ccStyle{x}-coordinates
+       of $p0$ and $p1$.  Return \ccStyle{LARGER} if $x(p0) >
+       x(p1)$, \ccStyle{SMALLER} if $x(p0) < x(p1)$, or else
+       \ccStyle{EQUAL}.  }
+    
+    \ccMethod{Comparison_result compare_y(const Point& p0,
+       const Point& p1);} {compares the
+       \ccStyle{y}-coordinates of $p0$ and $p1$.}
+
+
+    \ccMethod{bool curve_is_vertical(const X_curve& cv);} 
+   {returns \ccStyle{true} if \ccStyle{cv} is a vertical segment.}
+        
+%redundant - we have curve point status ?
+    \ccMethod{bool curve_is_in_x_range( const X_curve& cv,
+       const Point& pnt );}{returns \ccStyle{true} if \ccStyle{pnt} is
+       in the $x$ range of \ccStyle{cv}.}
+    
+    \ccMethod{Comparison_result curve_compare_at_x(
+       const X_curve& cv1, const X_curve& cv2, const Point& pnt );}
+    {compares the $y$-coordinate of $cv1$ and $cv2$ at the $x$-coordinate 
+     of $pnt$. Return \ccStyle{EQUAL} if at least one of $cv1$ and $cv2$  
+     is not defined at $pnt$'s $x$-coordinate.}
+   
+  \ccMethod{Comparison_result curve_compare_at_x_left(
+     const X_curve& cv1, const X_curve& cv2, const Point& pnt);}
+  {compares the $y$-coordinate of $cv1$ and $cv2$ immediately to the
+     left of the $x$-coordinate of $pnt$. Return \ccStyle{EQUAL}
+     if at least one of $cv1$ and $cv2$ is not defined to the left of $pnt$'s
+     $x$-coordinate.}
+    
+  \ccMethod{Comparison_result
+     curve_compare_at_x_right(const X_curve& cv1, const X_curve& cv2,
+     const Point& pnt);} {compares the $y$-coordinate of $cv1$ and
+     $cv2$ immediately to the right of the $x$-coordinate of $pnt$.
+     Return \ccStyle{EQUAL} if at least one of $cv1$ and $cv2$ is
+     not defined to the right of $pnt$'s $x$-coordinate.}
+
+    
+    \ccMethod{Curve_point_status curve_get_point_status(const X_curve& cv,
+       const Point& pnt);} {returns a constant describing the
+       relative position between $cv$ and $pnt$:
+       \begin{itemize}
+       \item[]\ccStyle{CURVE_NOT_IN_RANGE} - $pnt$ is not in the $x$-range of
+       $cv$, 
+%       \item[]\ccStyle{CURVE_VERTICAL} - $cv$ is a vertical segment,
+       \item[]\ccStyle{UNDER_CURVE} - $pnt$ is below $cv$,
+       \item[]\ccStyle{ABOVE_CURVE} - $pnt$ is above $cv$, and
+       \item[]\ccStyle{ON_CURVE} - $pnt$ is on $cv$.
+       \end{itemize}}
+       
+       \ccMethod{bool curve_is_between_cw(const X_curve& cv,
+          const X_curve& first, const X_curve& second, const Point&
+          pnt);} {given three curves that share an endpoint $pnt$,
+          returns $true$ if $cv$ is between $first$ and $second$, when
+          going in the clockwise direction around $pnt$ from $first$
+          to $second$. }
+
+
+       \ccMethod{bool curve_is_same(const X_curve &cv1, const X_cur
+          ve &cv2);}{returns \ccc{true} if \ccc{cv1} is the same as \ccc{cv2}.}
+
+%construction function
+%---------------------   
+
+    \ccMethod{Point curve_source(const X_curve& cv);}{returns the source of 
+       \ccc{cv}.}
+    \ccMethod{Point curve_target(const X_curve& cv);}{returns the target of 
+       \ccc{cv}.}
+
+%additions needed for the default point location strategy
+\ccMethod{Point point_to_left(const Point& p);}{returns a point to 
+   the left of \ccc{p}.}
+\ccMethod{Point point_to_right(const Point& p);}{returns a point to the right
+   of \ccc{p}.} %}
+
+
+%      \smallskip {\noindent \bf \large Requirements for
+%         \ccStyle{Info_face}, \ccStyle{Info_edge}, \ccStyle{Info_vertex}}
+      
+%      All info types should have a constructor and a copy
+%      constructor.
+
+\ccHasModels
+  \ccc{Pm_segment_exact_traits<R>}\\
+  \ccc{Pm_segment_epsilon_traits<R>}\\
+  \ccc{Pm_leda_segment_exact_traits}
+
+  The \ccc{PlanarMapWithIntersectionsTraits_2} and
+  \ccc{ArrangementTraits_2} concepts are refinements of the
+  \ccc{PlanarMapTraits_2} concept, in other words, a model of the
+  formers is a model of the latter.  The meaning of that is that all
+  supplied (or user written ) arrangement traits classes can be used
+  ass the \ccc{Traits} template parameter for
+  \ccc{Planar_map_2<Dcel,Traits>}.  See the list of the arrangement
+  traits classes as part of the \ccc{Arrangement_2 Reference Pages}.
+  
+\end{ccRefConcept} % Pm_traits
+
+% +------------------------------------------------------------------------+
+%%RefPage: end of main body, begin of footer
+\ccRefPageEnd
+% EOF
+% +------------------------------------------------------------------------+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

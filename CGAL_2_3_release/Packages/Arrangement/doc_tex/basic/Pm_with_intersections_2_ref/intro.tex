@@ -1,0 +1,141 @@
+% +------------------------------------------------------------------------+
+% | Reference manual chapter: intro.tex (Pmwx)
+% +------------------------------------------------------------------------+
+% |
+% | Package: arr (Arrangement_2)
+% |
+% +------------------------------------------------------------------------+
+
+%+---------------------------------------------------------------------------80
+%| update log
+%|
+%| 04 May 2001  - Eyal Flato
+%|    Created from arr documentation
+%|
+%+---------------------------------------------------------------------------80
+
+
+% +========================================================================+
+%   Introduction
+% +========================================================================+
+%\clearpage
+%\section{Reference Pages for 2D Planar Maps of Intersecting Curves}
+
+\chapter{2D Planar Maps of Intersecting Curves}
+
+\subsection*{Introduction}
+\ccRefLabel{pmwx_ref_intro}
+
+  The \ccc{Planar Map with Intersections} package extends the
+  functionality of the \ccc{Planar Map} package. Moreover, the class
+  \ccc{Planar_map_with_intersections_2} extends the class
+  \ccc{Planar_map_2}. The \ccc{Planar Map with Intersections} package
+  supports insertion functions that handle non-$x$-monotone,
+  intersecting and overlapping curves among the curves of
+  the planar map.
+
+%\subsection*{Planar Map with Intersections Traits Class}
+%-----------------------------------------------
+  Since the planar map with intersections has an additional
+  functionality of handling non $x$-monotone and intersecting curves
+  it needs additional functionality of the traits class. We describe
+  the \ccc{PlanarMapwithIntersectionsTraits_2} concept following in
+  this chapter. 
+
+  %Nevertheless, we do not have specific implementation
+  %of this concept, and we use models of the \ccc{ArrangementTraits_2}
+  %concept, which is a refinement thereof instead (see
+  %Chapter~\ref{I1_ChapterArrangement}).
+
+% \subsection*{Sweep line:}
+%   The construction of a planar map can be done using a sweep line
+%   technique rather than iteratively, inserting one curve after another.
+%   The sweep line algorithm performs better, but is done statically and
+%   therefore requires the list of curves in advance.  Due to the sweep
+%   line technique, inserting curves which are interior intersect,
+%   overlap or non $x$-monotone is supported. The interface is given in
+%   chapter ~\ref{I1_ChapterPlanarMap}.
+
+
+\begin{ccAdvanced}
+\subsection*{Change Notification}
+%-----------------------------------------------
+  An insertion of an intersecting curve into a planar map may add
+  several halfedges and modify several features of the map (i.e.,
+  split halfedges, split faces). The so-called \ccc{Change
+  Notification} provides this flexibility. The modification methods
+  accept an additional parameter, a class which is a model of the
+  \ccc{PlanarMapWithIntersectionsChangeNotification_2} concept. The
+  change notification includes an associative function for each
+  modification method.  This function is called after each such
+  modification.
+
+  The change notification class is useful in many cases. For example,
+  one may add a color (or other extra data) to any halfedge of a
+  planar map. An insertion of a new curve can split halfedges that
+  were previously in the map. After such a split the color of the
+  newly created halfedges should be updated according to the original
+  color of the split halfedge. One can do this by implementing the
+  \ccc{split_edge} function of the change notification class. This
+  function will be called after each split of an halfedge in the map.
+
+\subsubsection{Example of Change Notification}
+\label{ssecn:example2}
+The following example demonstrates the usage of the change
+notification concept during the construction of a
+planar map out of three segments --- $(0,1)-(1,0)$, $(0,0)-(1,1)$
+and $(0,1)-(1,1)$.
+During the insertion we use \ccc{My_notification} instance to
+output the internal process of the construction of the planar map.
+We also count how many edges are in the map by incrementing a
+counter each time an edge is added (\ccc{add_edge})or
+split (\ccc{split_edge}).
+
+\ccIncludeExampleCode{Pm_with_intersections/example2.C}
+
+The output of the program looks like this:
+\begin{verbatim}
+inserting 0 1 1 0
+add_edge
+add_hole
+inserting 0 0 1 1
+split_edge
+add_edge
+add_edge
+inserting 0 1 1 1
+add_edge
+split_face
+Total number of edges 5
+\end{verbatim}
+
+\end{ccAdvanced}
+
+
+
+\begin{ccTexOnly}
+
+\subsection*{Concepts}
+\ccRefConceptPage{PlanarMapWithIntersectionsTraits_2}\\
+\ccRefConceptPage{PlanarMapWithIntersectionsChangeNotification_2}\\
+
+\subsection*{Classes}
+\ccRefIdfierPage{CGAL::Planar_map_with_intersections_2<Planar_map>}%\\
+
+
+% \subsection*{Functions}
+% \ccRefIdfierPage{CGAL::sweep_to_construct_planar_map}\\
+% \ccRefIdfierPage{CGAL::sweep_to_produce_planar_map_subcurves}\\
+
+\end{ccTexOnly}
+
+
+
+
+
+
+
+
+
+
+
+

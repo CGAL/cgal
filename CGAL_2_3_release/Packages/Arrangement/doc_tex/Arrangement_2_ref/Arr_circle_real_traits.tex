@@ -1,0 +1,87 @@
+% +------------------------------------------------------------------------+
+% | Reference manual page: Arr_circle_real_traits.tex (Arrangement)
+% +------------------------------------------------------------------------+
+% | 
+% | Package: arr (Arrangement_2)
+% | 
+% +------------------------------------------------------------------------+
+
+\ccRefPageBegin
+
+%%RefPage: end of header, begin of main body
+% +------------------------------------------------------------------------+
+% +========================================================================+
+%  Arr_circles_real_traits<NT>
+% +========================================================================+
+\begin{ccRefClass}{Arr_circles_real_traits<NT>}
+
+\ccDefinition
+    The class \ccc{Arr_circles_real_traits<NT>} is a traits class
+    for circle arcs. The template parameter \ccc{NT} corresponds to
+    the number type used in the inner representation. An additional requirement
+    for this number type, beyond the regular requirements of
+    a CGAL number type, is that it has
+    a \ccc{sqrt(NT r)} function defined for it. In order for the traits
+    to work robustly an exact number type such as \ccc{leda_real} should
+    be used.
+
+    The \ccc{Point} type is \ccc{Point_2<Cartesian<NT> >}. The  
+    \ccc{Curve} and \ccc{X_curve}
+    representation is a \ccc{Circle_2<Cartesian<NT> >}
+    with two additional points corresponding to the source and target points.
+    The copy and default constructor as well as the
+    assignment and equality operators are provided for the curves. 
+    An \ccc{operator<<} for the curves is defined for
+    %standard output streams and 
+    \ccc{Window_stream}.
+    We define the nested class \ccc{Circ_curve} which implements these 
+    circular curves, which is listed below with additional method and 
+    constructors for its purpose.
+
+\ccInclude{CGAL/Arr_circles_real_traits.h}
+
+\ccInclude{CGAL/IO/Arr_circle_traits_Window_stream.h}
+
+\ccIsModel
+    \ccc{ArrangementTraits_2} \lcTex{(\ccRefPage{ArrangementTraits_2}).}
+
+\subsection*{Class \ccc{Arr_circles_real_traits<NT>::Circ_curve}}
+
+\begin{ccClass}{Circ_curve}
+    \ccCreation
+    \ccCreationVariable{cv}
+
+\ccConstructor{Curve(const Circle_2<Cartesian<NT> >& c);}{constructs
+   a curve with a CGAL circle (source and target are identical and
+   initialized to the leftmost point on the circle).}
+\ccConstructor{Curve(const NT& x, const NT& y, const NT& r2);}{constructs a
+   curve corresponding to a full circle, oriented counterclockwise, with
+   its center at \ccc{Point(x,y)} and \ccc{r2} as its squared radius.}
+\ccConstructor{Curve(const NT& x, const NT& y, const NT& r2, const Point& src,
+   const Point& trgt);}{constructs a
+   curve corresponding to an arc segment of the circle that has
+   its center at \ccc{Point(x,y)} and has \ccc{r2} as its squared radius.
+   The arc is oriented counterclockwise and
+   \ccc{src} and \ccc{trgt} correspond to its source and target
+   points.}
+
+\ccOperations
+
+\ccMethod{const Circle_2<Cartesian<NT> >& circle() const;}{returns the circle the arc is on.} 
+\ccMethod{const Point& source() const;}{returns the source point of the arc.}
+\ccMethod{const Point& target() const;}{returns the target point of the arc.}
+\ccMethod{bool is_x_monotone() const;}{returns \ccc{true} if the arc is
+   $x$-monotone, \ccc{false} otherwise.}
+
+
+%\comment{currently implemented for leda\_real only, and there are things to do
+%in the window output operator and the make\_x\_monotone function.}
+\end{ccClass}
+
+\end{ccRefClass} % Arr_circles_real_traits
+
+% +------------------------------------------------------------------------+
+%%RefPage: end of main body, begin of footer
+\ccRefPageEnd
+% EOF
+% +------------------------------------------------------------------------+

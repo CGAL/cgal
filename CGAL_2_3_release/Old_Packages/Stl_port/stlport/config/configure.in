@@ -1,0 +1,1424 @@
+dnl Disable any caching here 
+define([AC_CACHE_LOAD], )dnl
+define([AC_CACHE_SAVE], )dnl
+dnl Process this file with autoconf to produce a configure script.
+AC_INIT(stlconf.h.in)
+AC_CONFIG_HEADER(stlconf.h)
+
+AC_MSG_RESULT(*** $0: STLport configuration utility ***)
+if test "${CXXFLAGS}" = ""; then 
+AC_MSG_RESULT(* Note: for best reliability - try \"CXXFLAGS=-treat_warnings_as_errors\" $0 )
+AC_MSG_RESULT(* Please don't forget specifying typical CXXFLAGS you'll be using - ) 
+AC_MSG_RESULT(* such as that enabling exceptions handling, etc. )
+dnl AC_MSG_RESULT(* Add option forcing instantiation of all templates to CXXFLAGS if possible. )
+fi
+AC_MSG_RESULT(Please stand by while exploring compiler capabilities...)
+AC_MSG_RESULT(Be patient - that may take a while...)
+AC_MSG_RESULT(***)
+
+# utility function
+check_warning () {
+    warn_str=`tail -1 config.log | egrep -i "arning|\(W\)"`
+    if test "$warn_str" = ""; then
+      return 0
+    else
+     return 1
+    fi
+}
+
+dnl Checks for systems
+dnl AC_AIX
+dnl Checks for programs.
+dnl sets CXX
+
+AC_ARG_ENABLE(extension,[--enable-extension=<ext>],
+[
+case "$enableval" in
+	no) AC_MSG_RESULT(Info :.cpp used as extension for tests) 
+	    ac_ext=cpp 
+      	;;
+	 *) AC_MSG_RESULT(Argument : .$enableval used as extension) 
+	ac_ext=$enableval
+esac
+],
+[AC_MSG_RESULT(Info : .cpp used as extension for tests) 
+	ac_ext=cpp
+]
+)
+
+# Save that, as it is being redefined several times 
+use_ac_ext=$ac_ext
+
+AC_PROG_CXX
+ac_ext=$use_ac_ext
+
+AC_LANG_CPLUSPLUS
+ac_ext=$use_ac_ext
+
+AC_CHECK_SIZEOF(int,4)
+ac_ext=$use_ac_ext
+
+if test "$ac_cv_sizeof_int" = "4"; then
+  AC_DEFINE_UNQUOTED(__STL_UINT32_T,unsigned int)
+else
+  AC_CHECK_SIZEOF(long,4)
+  ac_ext=$use_ac_ext
+  if test "$ac_cv_sizeof_long" = "4"; then
+    AC_DEFINE_UNQUOTED(__STL_UINT32_T,unsigned long)
+  else
+  dnl ELBRUS ??? ;)
+    AC_CHECK_SIZEOF(short,4)
+    if test "$ac_cv_sizeof_short" = "4"; then
+      AC_DEFINE_UNQUOTED(__STL_UINT32_T,unsigned short)
+    else
+      AC_MSG_ERROR(Cannot find any 32-bit integer type for your compiler)
+    fi
+  ac_ext=$use_ac_ext
+  fi
+fi
+ac_ext=$use_ac_ext
+
+
+dnl Exclude link stage for cross-compilation
+if test "$ac_cv_c_cross" = "yes"; then
+  CXXFLAGS="${CXXFLAGS} -c"
+fi
+
+ac_ext=$use_ac_ext
+
+dnl checking for compiler capabilities
+AC_MSG_CHECKING(for basic STL compatibility)
+AC_TRY_LINK( [
+template <class Arg1, class Arg2, class Result>
+struct binary_function {
+    typedef Arg1 first_argument_type;
+    typedef Arg2 second_argument_type;
+    typedef Result result_type;
+};      
+template <class T>
+struct plus : public binary_function<T, T, T> {
+    T operator()(const T& x, const T& y) const;
+};
+
+template <class T>
+T plus<T>::operator()(const T& x, const T& y) const { return x + y; }
+plus<int> p;
+],
+[], 
+[ac_cv_compat="yes"],
+[AC_MSG_ERROR(Your compiler won't be able to compile this implementation. Sorry.) 
+ ac_cv_compat="no"]
+)
+AC_MSG_RESULT($ac_cv_compat)
+
+AC_MSG_CHECKING(for partial specialization syntax)
+AC_TRY_LINK(
+    [
+     template <class T> class fs_foo {};
+     template <> class fs_foo<int> {};],
+    [ fs_foo<int> i;],
+    [  _FULL_SPEC="template <>" ac_cv_spec_syntax="yes"],
+    [  AC_DEFINE(__STL_NO_PARTIAL_SPECIALIZATION_SYNTAX) ac_cv_spec_syntax="no" _FULL_SPEC=""])
+AC_MSG_RESULT($ac_cv_spec_syntax)
+
+AC_MSG_CHECKING(for bool keyword)
+AC_TRY_COMPILE(
+    [bool b_foo() { return true; }],
+    [(void)b_foo();],
+    [ac_cv_bool="yes"],
+    [AC_DEFINE(__STL_NO_BOOL) ac_cv_bool="no"])
+AC_MSG_RESULT($ac_cv_bool)
+if test "$ac_cv_bool" = "no"; then
+  AC_MSG_CHECKING(for yvals.h header)
+  AC_TRY_COMPILE([#include <yvals.h> 
+    extern bool aaa=true;
+   ], [], 
+  [AC_DEFINE(__STL_YVALS_H) AC_MSG_RESULT(yes) ], 
+  [
+  AC_MSG_RESULT(no)
+  AC_MSG_CHECKING(whether bool is reserved word)
+  AC_TRY_COMPILE(
+    [typedef int bool;],
+    [],
+    [ac_cv_bool_reserved="no"],
+    [AC_DEFINE(__STL_DONT_USE_BOOL_TYPEDEF) ac_cv_bool_reserved="yes"])
+  AC_MSG_RESULT($ac_cv_bool_reserved)
+  ])
+fi
+
+AC_MSG_CHECKING(for wchar_t type)
+AC_TRY_COMPILE(
+    [ #include <wchar.h>
+      wchar_t wc_foo() { return 'a'; }],
+    [(void)wc_foo();],
+    [ac_cv_wchar="yes"],
+    [AC_DEFINE(__STL_NO_WCHAR_T) ac_cv_wchar="no"])
+AC_MSG_RESULT($ac_cv_wchar)
+
+AC_MSG_CHECKING(if wchar_t is unsigned short)
+AC_TRY_COMPILE(
+    [
+     # include <wchar.h>
+     template <class T> struct foo {};
+     $_FULL_SPEC struct foo <wchar_t> {};
+     typedef unsigned short u__short;
+     $_FULL_SPEC struct foo <u__short> {};
+     foo<wchar_t> f1;
+     foo<u__short> f2;
+	],
+    [],
+    [ac_cv_wchar_short="no"],
+    [AC_DEFINE(__STL_WCHAR_T_IS_USHORT) ac_cv_wchar_short="yes"])
+AC_MSG_RESULT($ac_cv_wchar_short)
+
+AC_MSG_CHECKING(for long long type)
+AC_TRY_COMPILE(
+    [long long ll_foo() { return 0; }],
+    [(void)ll_foo();],
+    [AC_DEFINE(__STL_LONG_LONG) ac_cv_long_long="yes"],
+    [ac_cv_long_long="no"])
+AC_MSG_RESULT($ac_cv_long_long)
+
+AC_MSG_CHECKING(for long double type)
+AC_TRY_COMPILE(
+    [long double ld_foo() { return 0; }],
+    [(void)ld_foo();],
+    [ac_cv_long_double="yes"],
+    [AC_DEFINE(__STL_NO_LONG_DOUBLE) ac_cv_long_double="no"])
+AC_MSG_RESULT($ac_cv_long_double)
+
+AC_MSG_CHECKING(for typename keyword)
+AC_TRY_LINK(
+    [
+template <class T1, class T2>
+struct pair {
+    typedef T1 first_type;
+    typedef T2 second_type;
+};
+
+template <class Arg, class Result>
+struct unary_function {
+    typedef Arg argument_type;
+    typedef Result result_type;
+};
+
+template <class Pair>
+struct select2nd : public unary_function<Pair, typename Pair::second_type> {
+  typedef typename Pair::first_type ignored_type;
+  const typename Pair::second_type& operator()(const typename Pair::second_type& x,
+						const ignored_type& ) const
+  {
+    return x;
+  }
+  
+};
+    ],
+    [ 
+	typedef pair<int,int> tn_p;
+	select2nd< tn_p > tn_s;
+	(void)tn_s(1,5);
+    ],
+    [__TYPENAME="typename" 
+     ac_cv_typename="yes"],
+    [__TYPENAME="" 
+     AC_DEFINE(__STL_NEED_TYPENAME)
+     ac_cv_typename="no"])
+AC_MSG_RESULT($ac_cv_typename)
+
+AC_MSG_CHECKING(for explicit keyword)
+AC_TRY_COMPILE(    
+    [struct expl_Class { int a; explicit expl_Class(int t): a(t) {} };
+    expl_Class c(1);
+    ],
+    [],
+    [ac_cv_explicit="yes"],
+    [AC_DEFINE(__STL_NO_EXPLICIT) ac_cv_explicit="no"])
+AC_MSG_RESULT($ac_cv_explicit)
+
+AC_MSG_CHECKING(for mutable keyword)
+AC_TRY_COMPILE(    
+    [struct mut_Class { mutable int a; void update() const { a=0; }  };
+    mut_Class c;
+    ],
+    [c.update()],
+    [ac_cv_mutable="yes"],
+    [AC_DEFINE(__STL_NEED_MUTABLE) ac_cv_mutable="no"])
+AC_MSG_RESULT($ac_cv_mutable)
+
+AC_MSG_CHECKING(for new style casts)
+AC_TRY_COMPILE(    
+    [struct ncast_Class { 
+	int a; void update(int* i) { *i=a; }  };
+    ncast_Class c;
+    ],
+    [
+  const int a(5);
+  c.update(const_cast<int*>(&a))
+    ],
+    [ac_cv_new_cast="yes"],
+    [AC_DEFINE(__STL_NO_NEW_STYLE_CASTS) ac_cv_new_cast="no"])
+AC_MSG_RESULT($ac_cv_new_cast)
+
+AC_MSG_CHECKING(for new-style C library headers)
+AC_TRY_COMPILE(
+    [
+     #include <cctype>
+     #include <cstddef>
+     #include <cstdio>
+     #include <cstdlib>
+     #include <cstring>
+     #include <cassert>
+     #include <climits>
+     #ifndef __STL_NO_WCHAR_T
+     #include <cwchar>
+     #endif
+       ],
+    [],
+    [ac_cv_newheaders="yes"],
+    [AC_DEFINE(__STL_HAS_NO_NEW_C_HEADERS) ac_cv_newheaders="no"])
+AC_MSG_RESULT($ac_cv_newheaders)
+
+AC_MSG_CHECKING(for new-style <new> header)
+AC_TRY_COMPILE(
+    [
+     #include <new>
+       ],
+    [],
+    [ac_cv_new_new="yes"],
+    [AC_DEFINE(__STL_NO_NEW_NEW_HEADER) ac_cv_new_new="no"])
+AC_MSG_RESULT($ac_cv_new_new)
+
+
+AC_MSG_CHECKING(for member template methods)
+AC_TRY_LINK( [
+template <class Result>
+struct mt_foo {
+    typedef Result result_type;
+    template <class Arg> result_type operate(const Arg&) { return Result(); }
+};      
+mt_foo<int> p;
+],
+[
+(void)p.operate((char*)"aaa");
+], 
+[ac_cv_member_templates="yes"],
+[AC_DEFINE(__STL_NO_MEMBER_TEMPLATES) ac_cv_member_templates="no"]
+)
+AC_MSG_RESULT($ac_cv_member_templates)
+
+AC_MSG_CHECKING(for friend templates)
+AC_TRY_LINK( [
+
+template <class Result2> class foo;
+
+template <class Result>
+struct ft_foo {
+    typedef Result result_type;
+    template <class Result2> friend class foo;
+};      
+ft_foo<int> p;
+],
+[], 
+[ac_cv_friend_templates="yes"],
+[AC_DEFINE(__STL_NO_FRIEND_TEMPLATES) ac_cv_friend_templates="no"]
+)
+AC_MSG_RESULT($ac_cv_friend_templates)
+
+AC_MSG_CHECKING(for qualified friend templates)
+AC_TRY_LINK( [
+
+${_TEST_STD_BEGIN}
+
+template <class Result2> class foo;
+
+template <class Result>
+struct ft_foo {
+    typedef Result result_type;
+    template <class Result2> friend class $_TEST_STD::foo;
+};      
+ft_foo<int> p;
+${_TEST_STD_END}
+
+],
+[], 
+[ac_cv_qual_friend_templates="yes"],
+[AC_DEFINE(__STL_NO_QUALIFIED_FRIENDS) ac_cv_qual_friend_templates="no"]
+)
+AC_MSG_RESULT($ac_cv_qual_friend_templates)
+
+AC_MSG_CHECKING(for member template keyword)
+AC_TRY_LINK( [
+template <class Result>
+struct nt_foo {
+    typedef Result result_type;
+    template <class Arg> struct rebind {  typedef nt_foo<Arg> other; };
+};
+
+template <class _Tp, class _Allocator>
+struct _Traits
+{
+  typedef typename _Allocator:: template rebind<_Tp> my_rebind; 
+  typedef typename my_rebind::other allocator_type;
+};
+
+nt_foo<char> p;
+_Traits< int, nt_foo<short> > pp;
+],
+[], 
+[ac_cv_member_template_keyword="yes"],
+[AC_DEFINE(__STL_NO_MEMBER_TEMPLATE_KEYWORD) ac_cv_member_template_keyword="no"]
+)
+AC_MSG_RESULT($ac_cv_member_template_keyword)
+
+if test "$ac_cv_member_template_keyword" = "no"; then
+AC_MSG_CHECKING(for member template classes)
+AC_TRY_LINK( [
+template <class Result>
+struct nt_foo {
+    typedef Result result_type;
+    template <class Arg> struct rebind {  typedef nt_foo<Arg> other; };
+};
+
+template <class _Tp, class _Allocator>
+struct _Traits
+{
+  typedef typename _Allocator::rebind<_Tp> my_rebind; 
+  typedef typename my_rebind::other allocator_type;
+};
+
+nt_foo<char> p;
+_Traits< int, nt_foo<short> > pp;
+],
+[], 
+[ac_cv_member_template_classes="yes"],
+[AC_DEFINE(__STL_NO_MEMBER_TEMPLATE_CLASSES) ac_cv_member_template_classes="no"]
+)
+AC_MSG_RESULT($ac_cv_member_template_classes)
+fi
+
+AC_MSG_CHECKING(for partial class specialization)
+AC_TRY_LINK( [
+template <class Arg,class Result>
+struct ps_foo {
+    typedef Arg argument_type;
+    typedef Result result_type;
+};   
+
+template<class Result>
+struct ps_foo<Result*,Result*> {
+	void bar() {}
+};
+
+template<class Result>
+struct ps_foo<int*,Result> {
+	void foo() {}
+};
+
+ps_foo<char*, char*> p;
+ps_foo<int*, int> p1;
+],
+[p.bar();
+ p1.foo();], 
+[ac_cv_partial_spec="yes"],
+[AC_DEFINE(__STL_NO_CLASS_PARTIAL_SPECIALIZATION) ac_cv_partial_spec="no"]
+)
+AC_MSG_RESULT($ac_cv_partial_spec)
+
+if test "$ac_cv_partial_spec" = yes; then
+
+AC_MSG_CHECKING(if explicit args accepted on constructors of partial specialized classes)
+AC_TRY_LINK( [
+template <class Arg,class Result>
+struct ps_foo {
+    typedef Arg argument_type;
+    typedef Result result_type;
+};   
+
+template<class Result>
+struct ps_foo<Result*,Result*> {
+	ps_foo<Result*,Result*>() {}
+	void bar() {}
+};
+
+template<class Result>
+struct ps_foo<int*,Result> {
+	ps_foo<int*,Result*>() {}
+	void bar() {}
+
+};
+
+ps_foo<char*, char*> p;
+ps_foo<int*, int> p1;
+],
+[p.bar();
+ p1.foo();], 
+[AC_DEFINE(__STL_PARTIAL_SPEC_NEEDS_TEMPLATE_ARGS) ac_cv_partial_spec_needs_args="yes"],
+[ac_cv_partial_spec_needs_args="no"]
+)
+AC_MSG_RESULT($ac_cv_partial_spec_needs_args)
+
+fi
+
+if test ac_cv_partial_spec_needs_args=="no"; then
+
+AC_MSG_CHECKING(if explicit args accepted on constructors of explicitly specialized classes)
+AC_TRY_LINK( [
+template <class Arg,class Result>
+struct ps_foo {
+    typedef Arg argument_type;
+    typedef Result result_type;
+    void bar() {}	
+};   
+
+template<class Result>
+struct ps_foo<int*,int> {
+	ps_foo<Result*,Result*>() {}
+	void foo() {}
+};
+
+ps_foo<char*, char*> p;
+ps_foo<int*, int> p1;
+],
+[p.bar();
+ p1.foo();], 
+[AC_DEFINE(__STL_PARTIAL_SPEC_NEEDS_TEMPLATE_ARGS) ac_cv_partial_spec_needs_args="yes"],
+[ac_cv_partial_spec_needs_args="no"]
+)
+AC_MSG_RESULT($ac_cv_partial_spec_needs_args)
+
+fi
+
+AC_MSG_CHECKING(for partial template function ordering)
+AC_TRY_LINK( [
+
+template <class Arg,class Result>
+Result po_foo (const Arg& a,const Result&){ return (Result)a.nothing; }  
+
+template <class T>
+struct A {
+	T a;
+	A(int _a) : a(_a) {}
+};
+
+template<class T>
+T po_foo (const A<T>& a, const A<T>& b){ return a.a; }   
+],
+[
+  A<int> po_a(0); A<int> po_b(1); (void)po_foo(po_b, po_a)
+],
+[ac_cv_partial_ord="yes"],
+[AC_DEFINE(__STL_NO_FUNCTION_TMPL_PARTIAL_ORDER) ac_cv_partial_ord="no"]
+)
+AC_MSG_RESULT($ac_cv_partial_ord)
+
+AC_MSG_CHECKING(for method specialization)
+AC_TRY_LINK( [
+template <class Arg,class Result>
+struct ms_foo {
+    typedef Arg argument_type;
+    typedef Result result_type;
+    inline void bar();
+};   
+
+template <class Arg,class Result>
+inline void ms_foo<Arg,Result>::bar() {}
+
+inline void ms_foo<int*,int>::bar() {}
+
+ms_foo<char*, char*> p;
+ms_foo<int*, int> p1;
+],
+[p.bar();
+ p1.bar();], 
+[ac_cv_method_spec="yes"],
+[AC_DEFINE(__STL_NO_METHOD_SPECIALIZATION) ac_cv_method_spec="no"]
+)
+AC_MSG_RESULT($ac_cv_method_spec)
+
+AC_MSG_CHECKING(for lrand48 function)
+AC_TRY_LINK(
+    [#include <stdlib.h>],
+    [long i = lrand48();],
+    [AC_DEFINE(__STL_RAND48) ac_cv_func_lrand48="yes"],
+    [ac_cv_func_lrand48="no"])
+AC_MSG_RESULT($ac_cv_func_lrand48)
+
+
+AC_MSG_CHECKING(for default template parameters)
+AC_TRY_LINK(
+    [template <class T> struct less {}; 
+     template <class T, class T1=less<T> > struct Class { T1 t1; };
+     Class<int> cl;
+     Class<int,less<short> > cl2;
+    ],
+    [],
+    [ac_cv_default_template_param="yes"],
+    [AC_DEFINE(__STL_LIMITED_DEFAULT_TEMPLATES) ac_cv_default_template_param="no"])
+AC_MSG_RESULT($ac_cv_default_template_param)
+if test "$ac_cv_default_template_param" = "no"; then
+  AC_MSG_CHECKING(for default type parameters)
+  AC_TRY_LINK(
+    [
+template <class T> struct less {
+	typedef int int_t;
+  }; 
+
+template <class T, class T1=less<int> > 
+struct Class { 
+private:
+       int a;
+public:
+       typedef Class<T,T1> self; 
+       typedef $__TYPENAME T1::int_t int_t;
+       self foo (const Class<T,T1>& t) { 
+         if ( t.a==a ) return *this;
+         else return t;
+         } 
+};
+
+Class<int> cl;
+Class<int,less<short> > cl2;
+    ],
+    [],
+    [AC_DEFINE(__STL_DEFAULT_TYPE_PARAM) ac_cv_default_type_param="yes"],
+    [ac_cv_default_type_param="no"])
+  AC_MSG_RESULT($ac_cv_default_type_param)
+
+fi
+
+dnl let's check if non-type cannot be default
+
+AC_MSG_CHECKING(for default non-type parameters)
+AC_TRY_LINK(
+    [
+template <class T, int N=0 > 
+struct Class { 
+private:
+       T* t;
+       enum { t1=N };
+public:
+       int get_n() { return N; }
+};
+
+Class<int> cl;
+Class<int, 2> cl2;
+    ],
+    [],
+    [ac_cv_default_nontype_param="yes"],
+    [AC_DEFINE(__STL_NO_DEFAULT_NON_TYPE_PARAM) ac_cv_default_nontype_param="no"]
+	)
+AC_MSG_RESULT($ac_cv_default_nontype_param)
+
+AC_MSG_CHECKING(for non-type parameter bug)
+AC_TRY_LINK(
+    [
+template <class T, int N> 
+struct Class { 
+private:
+       T* t;
+       enum { t1=N };
+public:
+       int get_n() { return N; }
+};
+
+template <class T, int N>
+int operator==(const Class<T,N>& , const Class<T,N>& ) { return 0; }
+
+Class<int, 1> cl;
+Class<int, 1> cl2;
+int i(cl==cl2);
+    ],
+    [],
+    [ac_cv_nontype_param_bug="no"],
+    [AC_DEFINE(__STL_NON_TYPE_TMPL_PARAM_BUG) ac_cv_nontype_param_bug="yes"]
+	)
+AC_MSG_RESULT($ac_cv_nontype_param_bug)
+
+AC_MSG_CHECKING(for static data member templates)
+AC_TRY_LINK(
+    [template <class T> struct Class { static int a; };
+     template <class T> int Class<T>::a;],
+    [],
+    [ac_cv_static_templates="yes"],
+    [AC_DEFINE(__STL_NO_STATIC_TEMPLATE_DATA) ac_cv_static_templates="no"])
+AC_MSG_RESULT($ac_cv_static_templates)
+
+if test "$ac_cv_static_templates" = no; then
+ AC_MSG_CHECKING(for weak attribute)
+ AC_TRY_COMPILE(
+    [int a_w __attribute__((weak));],
+    [],
+    [AC_DEFINE(__STL_WEAK_ATTRIBUTE) ac_cv_weak_attribute="yes"],
+    [ac_cv_weak_attribute="no"])
+ AC_MSG_RESULT($ac_cv_weak_attribute)
+fi
+
+if test "$ac_cv_static_templates" = yes; then
+AC_MSG_CHECKING(for static array member size bug)
+AC_TRY_LINK(
+    [template <class T> struct Class { enum { sz=5 }; static int a[sz]; };
+     template <class T> int Class<T>::a[Class<T>::sz];],
+    [],
+    [ac_cv_static_array_bug="no"],
+    [AC_DEFINE(__STL_STATIC_ARRAY_BUG) ac_cv_static_array_bug="yes"])
+AC_MSG_RESULT($ac_cv_static_array_bug)
+fi
+
+AC_MSG_CHECKING(for static data member const initializer bug)
+AC_TRY_LINK(
+    [template <class T> struct Class { static const int a = 1; };
+     template <class T> const int Class<T>::a;],
+    [],
+    [ac_cv_static_init_bug="no"],
+    [AC_DEFINE(__STL_STATIC_CONST_INIT_BUG) ac_cv_static_init_bug="yes"])
+AC_MSG_RESULT($ac_cv_static_init_bug)
+
+AC_MSG_CHECKING(for namespaces support)
+AC_TRY_COMPILE(
+    [class test_class {};
+     namespace std { 
+      using ::test_class;
+      template <class T> struct Class { typedef T my_type; };
+      typedef Class<int>::my_type int_type;
+	}; 
+    inline int ns_foo (std::int_type t) { 
+      using namespace std; 
+      int_type i =2;
+      return i+t; 
+    } 
+     ],
+    [(void)ns_foo(1);],
+    [_TEST_STD="std"  _TEST_STD_BEGIN="namespace $_TEST_STD" _TEST_STD_END="namespace $_TEST_STD" ac_cv_namespaces="yes"],
+    [AC_DEFINE(__STL_HAS_NO_NAMESPACES) _TEST_STD="" _TEST_STD_BEGIN="" _TEST_STD_END="" ac_cv_namespaces="no"])
+AC_MSG_RESULT($ac_cv_namespaces)
+
+AC_MSG_CHECKING(for broken "using" directive)
+AC_TRY_COMPILE(
+    [namespace std { 
+      template <class T> struct Class { typedef T my_type; };
+      typedef Class<int>::my_type int_type;
+      template <class T> void foo(T,int) {}
+      template <class T> void foo(T,int,int) {}
+	}; 
+     using std::Class;
+     using std::foo;
+     ],
+    [(void)foo(1,1);],
+    [ac_cv_broken_using="no"],
+    [ac_cv_broken_using="yes"])
+if test "$ac_cv_broken_using" = no; then
+# check if no warnings have been issued
+  if `check_warning` ; then
+    ac_cv_broken_using=no
+  else
+   AC_DEFINE(__STL_BROKEN_USING_DIRECTIVE)
+  fi
+else
+   AC_DEFINE(__STL_BROKEN_USING_DIRECTIVE)
+fi
+AC_MSG_RESULT($ac_cv_broken_using)
+
+
+if test "$ac_cv_namespaces" = yes; then
+AC_ARG_ENABLE(namespaces,[--enable-namespaces Use namespaces (default if posssible)
+--disable-namespaces Don't use namespaces support],
+[
+case "$enableval" in
+	no) AC_DEFINE(__STL_NO_NAMESPACES) 
+            _TEST_STD="" 
+            _TEST_STD_BEGIN=""
+            _TEST_STD_END=""
+            AC_MSG_RESULT(Config arg --disable-namespaces : code not put into namespace by user request);;
+	 *) AC_MSG_RESULT(Config default: code put into namespace)
+esac
+],
+[AC_MSG_RESULT(Config default: code put into namespace)]
+)
+else
+ AC_MSG_RESULT(Compiler restriction : no namespaces support used)
+fi
+
+
+AC_MSG_CHECKING(for exceptions support)
+AC_TRY_COMPILE(
+    [int ex_foo() { 
+       try { 
+         try { throw(1); } 
+         catch (int a) { throw; } 
+       } catch (...) {;} 
+      return 0;
+    }],
+    [(void)ex_foo();],
+    [ac_cv_exceptions="yes"],
+    [AC_DEFINE(__STL_HAS_NO_EXCEPTIONS) ac_cv_exceptions="no"])
+AC_MSG_RESULT($ac_cv_exceptions)
+
+if test "$ac_cv_exceptions" = yes; then
+
+AC_MSG_CHECKING(if exceptions specification works)
+AC_TRY_COMPILE(
+    [template <class T> inline int ex_spec_foo(const T&) throw () { return 0;} ], 
+    [(void)ex_spec_foo(5);],
+    [ac_cv_exception_spec="yes"],
+    [AC_DEFINE(__STL_NO_EXCEPTION_SPEC) ac_cv_exception_spec="no"])
+dnl    if test "$ac_cv_exception_spec" = yes; then
+dnl    # check if no warnings have been issued
+dnl     if `check_warning` ; then
+dnl       AC_DEFINE(__STL_EXCEPTION_SPEC)
+dnl     else
+dnl      ac_cv_exception_spec=no
+dnl      fi
+dnl    fi
+AC_MSG_RESULT($ac_cv_exception_spec)
+
+AC_MSG_CHECKING(if return is required after throw)
+AC_TRY_COMPILE(
+    [int ex_foo() { 
+       try { 
+         try { throw(1); } 
+         catch (int a) { throw; } 
+       } catch (...) {;} 
+      return 0;
+    }],
+    [(void)ex_foo();],
+    [ac_cv_throw_return_bug="no"],
+    [AC_DEFINE(__STL_THROW_RETURN_BUG) ac_cv_throw_return_bug="yes"])
+
+    if test "$ac_cv_throw_return_bug" = no; then
+    # check if no warnings have been issued
+     if `check_warning` ; then
+       ac_cv_throw_return_bug="no"
+     else
+       AC_DEFINE(__STL_THROW_RETURN_BUG)
+       ac_cv_throw_return_bug="yes"
+     fi
+    fi
+AC_MSG_RESULT($ac_cv_throw_return_bug)
+
+fi
+
+AC_MSG_CHECKING(for native <string> header with basic_string defined )
+AC_TRY_COMPILE(
+    [
+     #include <string>
+     # if !defined (__STL_HAS_NO_NAMESPACES)
+       using namespace $_TEST_STD;
+     # endif
+     basic_string<char, char_traits<char>, allocator<char> > bs;
+     string bd = bs;
+    ],
+    [],
+    [ ac_cv_string_header="yes"],
+    [ AC_DEFINE(__STL_NO_STRING_HEADER) ac_cv_string_header="no"]
+)
+AC_MSG_RESULT($ac_cv_string_header)
+
+dnl there could be no correct stdexcept/iostream  without string
+if test "$ac_cv_string_header" = yes; then
+AC_MSG_CHECKING(for native <stdexcept> header)
+AC_TRY_COMPILE(
+    [
+     #include <stdexcept>
+     # if !defined (__STL_HAS_NO_NAMESPACES)
+       using namespace $_TEST_STD;
+     # endif
+     string s;
+     logic_error le(s);
+     runtime_error re(s);
+     domain_error de(s);
+     invalid_argument ia(s);
+     length_error lne(s);
+     out_of_range or(s);
+     range_error rne(s);
+     overflow_error ove(s);
+     underflow_error ue(s);
+    ],
+    [],
+    [ac_cv_stdexcept_header="yes"],
+    [AC_DEFINE(__STL_NO_STDEXCEPT_HEADER) ac_cv_stdexcept_header="no"]
+)
+AC_MSG_RESULT($ac_cv_stdexcept_header)
+
+AC_MSG_CHECKING(for new iostreams)
+AC_TRY_COMPILE(
+    [
+     #include <iosfwd>
+     #include <iostream>
+     # if !defined (__STL_HAS_NO_NAMESPACES)
+       using namespace $_TEST_STD;
+     # endif
+
+     template <class _Tp, class _Traits>
+     void outp(basic_ostream<_Tp,_Traits>& o, char* str) {
+         o<<str; 
+        }
+       ],
+    [
+	outp(cout, "Hello World\n")
+    ],
+    [ac_cv_newstreams="yes"],
+    [AC_DEFINE(__STL_HAS_NO_NEW_IOSTREAMS) ac_cv_newstreams="no"])
+AC_MSG_RESULT($ac_cv_newstreams)
+
+dnl end namespace-related tests
+
+fi
+
+AC_MSG_CHECKING(for <exception> header with class "exception" defined)
+AC_TRY_COMPILE(
+    [
+     #include <exception>
+     # if !defined (__STL_HAS_NO_NAMESPACES)
+       using namespace $_TEST_STD;
+     # endif
+     class my_exception: public $_TEST_STD::exception {};
+     my_exception mm;
+    ],
+    [],
+    [ac_cv_exception_header="yes"],
+    [AC_DEFINE(__STL_NO_EXCEPTION_HEADER) ac_cv_exception_header="no"]
+)
+AC_MSG_RESULT($ac_cv_exception_header)
+
+AC_MSG_CHECKING(builtin constructor bug)
+AC_TRY_RUN( [
+# ifdef __STL_USE_NEW_STYLE_HEADERS
+#  include <cassert>
+#  include <cstdio>
+#  include <cstring>
+#  include <new>
+# else
+#  include <assert.h>
+#  include <stdio.h>
+#  include <string.h>
+#  include <new.h>
+# endif
+int main(int, char**) {
+	int i;
+	double buf[1000];
+	char* pc = (char*)buf;
+	short* ps = (short*)buf;
+	int* pi = (int*)buf;
+	long* pl = (long*)buf;
+	double* pd = (double*)buf;
+	float* pf = (float*)buf;
+	for (i=0; i<100; i++) {
+	   	new(pc) char();
+        	assert(char()==0 && *pc==0);
+		sprintf(pc,"lalala\n");
+	        new (ps) short();	
+		assert(short()==0 && *ps ==0);
+		sprintf(pc,"lalala\n");
+	        new (pi) int();
+		assert(int()==0 && *pi == 0);
+		sprintf(pc,"lalala\n");
+	        new (pl) long();	
+		assert(long()==0 && *pl == 0);
+		sprintf(pc,"lalala\n");
+	        new (pf) float();	
+		assert(float()==0.0 && *pf == 0.0);
+		sprintf(pc,"lalala\n");
+	        new (pd) double();	
+		assert(double()==0.0 && *pd == 0.0);
+		sprintf(pc,"lalala\n");
+	}
+  return 0;
+}
+], 
+[ ac_cv_builtin_c_bug="no"],
+[ AC_DEFINE(__STL_DEFAULT_CONSTRUCTOR_BUG) ac_cv_builtin_c_bug="yes"],
+[ AC_DEFINE(__STL_DEFAULT_CONSTRUCTOR_BUG) ac_cv_builtin_c_bug="yes"]
+)
+AC_MSG_RESULT($ac_cv_builtin_c_bug)
+
+AC_MSG_CHECKING(for trivial constructor bug)
+AC_TRY_LINK(
+    [struct output_iterator_tag {};
+     void tc_bug_foo(output_iterator_tag) {}
+     inline void tc_test_foo()  { tc_bug_foo(output_iterator_tag()); }],
+    [tc_test_foo();],
+    [ac_cv_tc_bug="no"],
+    [AC_DEFINE(__STL_TRIVIAL_CONSTRUCTOR_BUG) ac_cv_tc_bug="yes"])
+AC_MSG_RESULT($ac_cv_tc_bug)
+
+AC_MSG_CHECKING(for trivial destructor bug)
+AC_TRY_LINK(
+    [struct output_iterator_tag {output_iterator_tag() {} };
+	output_iterator_tag* td_bug_bar ;
+	],
+    [ td_bug_bar->~output_iterator_tag();
+     ],
+    [ac_cv_td_bug="no"],
+    [AC_DEFINE(__STL_TRIVIAL_DESTRUCTOR_BUG) ac_cv_td_bug="yes"])
+AC_MSG_RESULT($ac_cv_td_bug)
+
+AC_MSG_CHECKING(for explicit function template arguments)
+AC_TRY_LINK(
+    [  template <class T> class foo;
+       template<class T> bool operator==(const foo<T>& lhs,const foo<T>& rhs);
+      template <class T> class foo {
+	private:
+	  T bar;
+	friend bool operator== <> (const foo<T>&,const foo<T>&);
+     };
+     template<class T> bool operator==(const foo<T>& lhs,const foo<T>& rhs) {
+	return  lhs.bar==rhs.bar;
+     }],
+    [ foo<int> f1, f2;
+      int ret= (f1==f2) ],
+    [ _NULLARGS="<>" ac_cv_expl_fun_args="yes"],
+    [ AC_DEFINE(__STL_NO_EXPLICIT_FUNCTION_TMPL_ARGS) ac_cv_expl_fun_args="no" _NULLARGS=""])
+AC_MSG_RESULT($ac_cv_expl_fun_args)
+
+AC_MSG_CHECKING(for template parameter baseclass matching)
+AC_TRY_LINK(
+    [struct output_iterator_tag {};
+     struct derived1_tag : public output_iterator_tag {};
+     struct derived2_tag : public derived1_tag {};
+     template<class T> struct output_iterator { 
+	public:
+	output_iterator() {} 
+	~output_iterator() {} 
+	friend inline int operator== $_NULLARGS (const output_iterator<T>&, 
+                                      const output_iterator<T>&);
+	};
+     template<class T> inline int operator==(const output_iterator<T>&, 
+                              	        const output_iterator<T>&) {
+       return 0;
+     }
+     template<class T> inline output_iterator_tag
+     iterator_category(const output_iterator<T>&) {return output_iterator_tag();}
+     template <class T>
+     struct derived_iterator : public output_iterator<T> {
+	public:
+	derived_iterator() {} 
+	~derived_iterator() {}
+	};
+     template<class T> inline T select_foo(T t, output_iterator_tag) { return t;}     
+     template<class T> inline int select_foo_2(T, T,
+                                             output_iterator_tag) { return 0;}     
+     template<class T> inline T tbase_foo(T pm )  { 
+	derived_iterator<T> di1, di2; int i( di1==di2 && pm);
+	return select_foo((int)1,iterator_category(derived_iterator<T>())); 
+    }
+    ],
+    [ (void)tbase_foo((int)1); ],
+    [ac_cv_base_match="yes"],
+    [AC_DEFINE(__STL_BASE_MATCH_BUG) ac_cv_base_match="no"])
+AC_MSG_RESULT($ac_cv_base_match)
+
+AC_MSG_CHECKING(for non-template parameter baseclass matching )
+AC_TRY_LINK(
+    [struct output_iterator_tag {};
+     struct derived1_tag : public output_iterator_tag {};
+     struct derived2_tag : public derived1_tag {};
+     struct derived3_tag : public derived2_tag {};
+     template<class T> struct output_iterator { 
+	public:
+	output_iterator() {} 
+	~output_iterator() {} 
+	};
+     template<class T> inline output_iterator_tag
+     iterator_category(const output_iterator<T>&) {return output_iterator_tag();}
+     template <class T>
+     struct derived_iterator : public output_iterator<T> {
+	public:
+	derived_iterator() {} 
+	~derived_iterator() {}
+	};
+     template<class T> inline int select_foo_2(T, T,
+                                             output_iterator_tag) { return 0;}     
+     template<class T> inline int select_foo_2(T, T,
+                                             derived1_tag) { return 0;}     
+     template<class T> inline void nont_base_foo(T pm )  { 
+	derived_iterator<T> di1, di2; 
+	(void)select_foo_2(di1, (const derived_iterator<T>&)di2, derived3_tag());
+    }
+    ],
+    [ nont_base_foo((int)1); ],
+    [ac_cv_nont_base_match="yes"],
+    [AC_DEFINE(__STL_NONTEMPL_BASE_MATCH_BUG) ac_cv_nont_base_match="no"])
+AC_MSG_RESULT($ac_cv_nont_base_match)
+
+AC_MSG_CHECKING(for nested type parameters bug)
+AC_TRY_LINK(
+    [template<class T> struct nt_o { typedef int ii; inline ii foo(ii);};
+     template <class T> inline nt_o<T>::ii nt_o<T>::foo(ii) { return 0; }],
+    [],
+    [ac_cv_nested_type_param_bug="no"],
+    [AC_DEFINE(__STL_NESTED_TYPE_PARAM_BUG) ac_cv_nested_type_param_bug="yes"])
+AC_MSG_RESULT($ac_cv_nested_type_param_bug)
+
+
+AC_MSG_CHECKING(if inherited template typedefs broken completely)
+AC_TRY_LINK(
+    [
+template <class Arg1, class Arg2, class Result>
+struct binary_function {
+    typedef Arg1 first_argument_type;
+    typedef Arg2 second_argument_type;
+    typedef Result result_type;
+};     
+
+template <class T>
+struct equal_to : public binary_function<T, T, int> {
+    int operator()(const T& x, const T& y) const { return x == y; }
+};
+
+template <class Predicate> 
+class binary_negate 
+    : public binary_function<$__TYPENAME Predicate::first_argument_type,
+			     $__TYPENAME Predicate::second_argument_type, 
+                             int> {
+protected:
+    Predicate pred;
+public:
+    binary_negate(const Predicate& x = Predicate()) : pred(x) {}
+    int operator() (const $__TYPENAME Predicate::first_argument_type& x, 
+		    const $__TYPENAME Predicate::second_argument_type& y) const {
+	return !pred(x, y); 
+    }
+};
+      typedef equal_to<int> eq_int;
+      typedef binary_negate<equal_to<int> > int_negate;
+      int_negate n;
+ ],
+    [
+      (void)n(1,2);
+    ],
+    [ac_cv_typebug="no"],
+    [AC_DEFINE(__STL_BASE_TYPEDEF_BUG) 
+     AC_DEFINE(__STL_BASE_TYPEDEF_OUTSIDE_BUG) ac_cv_typebug="yes"])
+AC_MSG_RESULT($ac_cv_typebug)
+
+AC_MSG_CHECKING(if inherited typedefs visible from outside)
+AC_TRY_COMPILE(
+    [
+template <class Arg1, class Arg2, class Result>
+struct binary_function {
+    typedef Arg1 first_argument_type;
+    typedef Arg1 second_argument_type;
+    typedef Result result_type;
+};     
+
+
+template <class T>
+class plus : public binary_function<T, T, T> {
+public:
+    plus() {}
+    plus(const T&) {}
+    T operator()(const T& x, const T& y) const { return x + y; };
+};
+
+plus<int> p;
+plus<int>::first_argument_type a;
+],
+    [],
+    [ac_cv_outside_typedef="yes"],
+    [AC_DEFINE(__STL_BASE_TYPEDEF_OUTSIDE_BUG) ac_cv_outside_typedef="no"])
+AC_MSG_RESULT($ac_cv_outside_typedef)
+
+# fi
+
+AC_MSG_CHECKING(if private type static members initializable)
+AC_TRY_COMPILE(
+    [struct p_Class { private: struct str_ { 
+	int a; str_(int i) : a(i) {}}; static str_ my_int; 
+     };
+     p_Class::str_ p_Class::my_int(0); 
+     ],
+    [],
+    [ac_cv_private="yes"],
+    [AC_DEFINE(__STL_UNINITIALIZABLE_PRIVATE) ac_cv_private="no"])
+AC_MSG_RESULT($ac_cv_private)
+
+
+AC_MSG_CHECKING(for const member constructor bug)
+AC_TRY_LINK([
+template <class T1, class T2>
+struct pair {
+    T1 first;
+    T2 second;
+    pair(): first(T1()), second(T2()) {}
+    pair(const pair<T1,T2>& o) : first(o.first), second(o.second) {}
+};
+pair< const int, const int > p;  
+     ],
+    [],
+    [ac_cv_const_constructor_bug="no"],
+    [AC_DEFINE(__STL_CONST_CONSTRUCTOR_BUG) ac_cv_const_constructor_bug="yes"])
+AC_MSG_RESULT($ac_cv_const_constructor_bug)
+
+AC_MSG_CHECKING(for loop inline problems)
+AC_TRY_COMPILE(
+    [inline int il_foo (int a) { 
+      int i; for (i=0; i<a; i++) a+=a;  while (i>0) a-=3; return a; }],
+    [(void)il_foo(2);],
+    [ac_cv_inline_problems="no"],
+    [AC_DEFINE(__STL_LOOP_INLINE_PROBLEMS) ac_cv_inline_problems="yes"])
+if test "$ac_cv_inline_problems" = no; then
+# check if no warnings have been issued
+  if `check_warning` ; then
+     ac_cv_inline_problems="no"
+  else
+   AC_DEFINE(__STL_LOOP_INLINE_PROBLEMS)
+   ac_cv_inline_problems="yes"
+  fi
+fi
+AC_MSG_RESULT($ac_cv_inline_problems)
+
+
+AC_MSG_CHECKING(if arrow operator always get instantiated)
+AC_TRY_LINK(
+    [
+     template <class T> struct um_foo { T* ptr; 
+	T* operator ->() { return &(operator*());}
+	T  operator *()  { return *ptr; }
+     };
+     template <class T>
+	int operator == ( const um_foo<T>& x, const um_foo<T>& y)
+	{
+    		return *x == *y;
+	}
+     struct um_tag { int a ; };
+     um_foo<um_tag> f;
+     um_foo<int> a;
+     ],
+    [ 
+     int b(5); a.ptr=&b;],
+    [ac_cv_unused_required="no"],
+    [AC_DEFINE(__SGI_STL_NO_ARROW_OPERATOR) ac_cv_unused_required="yes"]
+    )
+AC_MSG_RESULT($ac_cv_unused_required)
+
+AC_MSG_CHECKING(for pointer-to-member parameter bug)
+AC_TRY_COMPILE(
+    [
+struct pmf_foo {
+	int bar() { return 0; };
+};
+
+template <class Class, class Result> 
+class mem_fun_t {
+protected:
+    typedef Result (Class::*fun_type)(void);
+    fun_type ptr;
+public:
+    mem_fun_t() {}
+    mem_fun_t(fun_type p) : ptr(p) {}
+    Result operator()(Class* x) const { return (x->*ptr)();}
+};
+
+template <class Class, class Result>
+inline mem_fun_t <Class, Result> 
+mem_fun(Result (Class::*ptr)(void)) {
+    return mem_fun_t<Class, Result>(ptr);
+}
+],
+    [pmf_foo pmf; (void)mem_fun(&pmf_foo::bar)(&pmf)],
+    [ac_cv_pmf_bug="no"],
+    [AC_DEFINE( __STL_MEMBER_POINTER_PARAM_BUG) ac_cv_pmf_bug="yes"])
+AC_MSG_RESULT($ac_cv_pmf_bug)
+
+AC_MSG_CHECKING(if bad_alloc defined in <new>)
+AC_TRY_COMPILE(
+    [
+     #if !defined (__STL_NO_NEW_STYLE_HEADERS)
+     #include <new>
+     #else
+     #include <new.h>
+     #endif
+
+     # if !defined (__STL_HAS_NO_NAMESPACES)
+       using namespace $_TEST_STD;
+     # endif
+
+     bad_alloc badalloc_foo() { bad_alloc err; return err;}],
+    [(void)badalloc_foo()],
+    [ac_cv_bad_alloc="yes"],
+    [AC_DEFINE(__STL_NO_BAD_ALLOC) ac_cv_bad_alloc="no"])
+AC_MSG_RESULT($ac_cv_bad_alloc)
+
+AC_MSG_CHECKING(for __type_traits automatic specialization)
+AC_TRY_LINK(
+    [template <class T> int tt_foo(const T&) {
+	typedef __type_traits<T> traits;
+	return 0;
+     }],
+    [(void)tt_foo(5)],
+    [AC_DEFINE(__STL_AUTOMATIC_TYPE_TRAITS) ac_cv_type_traits="yes"],
+    [ac_cv_type_traits="no"])
+AC_MSG_RESULT($ac_cv_type_traits)
+
+
+# package options - exceptions
+AC_MSG_RESULT(***)
+AC_MSG_RESULT($0: Setting implementation options...)
+AC_MSG_RESULT(***)
+
+if test "$ac_cv_exceptions" = yes; then
+AC_ARG_ENABLE(exceptions,[--enable-exceptions Use exceptions support (default if posssible)
+ --disable-exceptions Don't use exceptions support],
+[
+case "$enableval" in
+           no) AC_DEFINE(__STL_NO_EXCEPTIONS)
+               AC_MSG_RESULT(Config arg --disable-exceptions : disabling exceptions by user request);;
+           *)  AC_MSG_RESULT(Config default: exceptions enabled)
+esac
+],
+[AC_MSG_RESULT(Config default: exceptions enabled) ]
+)
+else
+ AC_MSG_RESULT(Compiler restriction : no exceptions support used)
+fi
+
+if test "$ac_cv_namespaces" = yes; then
+AC_ARG_ENABLE(relops,[--enable-relops Separate rel_ops namespace for relational operators (default if posssible)
+--disable-relops No separate rel_ops namespace for relational operators],
+[
+case "$enableval" in
+	no) AC_DEFINE(__STL_NO_RELOPS_NAMESPACE) 
+            AC_MSG_RESULT(Config arg --disable-relops : no std::rel_ops namespace by user request);;
+	 *) AC_MSG_RESULT(Config default: Separate std::rel_ops namespace for relational operators)
+esac
+],
+[AC_MSG_RESULT(Config default: Separate std::rel_ops namespace for relational operators)]
+)
+else
+ AC_DEFINE(__STL_NO_RELOPS_NAMESPACE) 
+fi
+
+if test "$ac_cv_newheaders" = yes; then
+AC_ARG_ENABLE(new-style-headers,[--enable-new-style-headers Use new-style headers (default)
+--disable-new-style-headers Don't use new-style headers],
+[
+case "$enableval" in
+	no) AC_DEFINE(__STL_NO_NEW_STYLE_HEADERS) 
+            AC_MSG_RESULT(Config arg --disable-new-style-headers : not using new-style headers);;
+	 *) AC_MSG_RESULT(Config default: using new-style headers)
+esac
+],
+[AC_MSG_RESULT(Config default: using new-style headers)]
+)
+else
+ AC_DEFINE(__STL_NO_NEW_STYLE_HEADERS)
+fi
+
+if test "$ac_cv_newstreams" = yes; then
+AC_ARG_ENABLE(new-iostreams,[--enable-new-iostreams Use new iostreams (default)
+--disable-new-iostreams Don't use new iostreams],
+[
+case "$enableval" in
+	no) AC_DEFINE(__STL_NO_NEW_IOSTREAMS) 
+            AC_MSG_RESULT(Config arg --disable-new-iostreams : not using new iostreams);;
+	 *) AC_MSG_RESULT(Config default: using new iostreams)
+esac
+],
+[AC_MSG_RESULT(Config default: using new iostreams)]
+)
+else
+  AC_DEFINE(__STL_NO_NEW_IOSTREAMS)
+fi
+
+AC_ARG_ENABLE(sgi-allocators,[--enable-sgi-allocators : set default parameter to SGI-style default alloc, not allocator<T>
+ --disable-sgi-allocators : use allocator<T> if possible],
+[
+case "$enableval" in
+	  yes ) AC_MSG_RESULT(Config arg  --enable-sgi-allocators : SGI-style alloc as default allocator) 
+                AC_DEFINE(__STL_USE_SGI_ALLOCATORS);;
+	    * ) AC_MSG_RESULT(Config default: using allocator<T> as default allocator if possible )
+esac
+],
+[
+ AC_MSG_RESULT(Config default: using allocator<T> as default allocator if possible)
+]
+)
+
+AC_ARG_ENABLE(malloc,[--enable-malloc : set default alloc to malloc-based allocator ( malloc_alloc_template<instance_no>, alloc.h )
+--disable-malloc : choose (default) sgi node allocator (__alloc<threads,no>  alloc.h )],
+[
+case "$enableval" in
+	  yes ) AC_MSG_RESULT(Config arg  --enable-malloc : setting malloc_alloc as default alloc) 
+                AC_DEFINE(__STL_USE_MALLOC);;
+	    * ) AC_MSG_RESULT(Config default: not using malloc_alloc as default alloc)
+esac
+],
+[
+ AC_MSG_RESULT(Config default: not using malloc_alloc as default alloc)
+]
+)
+
+AC_ARG_ENABLE(newalloc,[--enable-newalloc : set default alloc to new-based allocator ( new_alloc, alloc.h )
+--disable-newalloc : choose (default) sgi allocator (__alloc<threads,no>  alloc.h )],
+[
+case "$enableval" in
+	  yes ) AC_MSG_RESULT(Config arg  --enable-newalloc : setting new_alloc as default alloc) 
+                AC_DEFINE(__STL_USE_NEWALLOC);;
+	    * )
+                AC_MSG_RESULT(Config default: not using new_alloc as default alloc)
+esac
+],
+[
+ AC_MSG_RESULT(Config default: not using new_alloc as default alloc)
+]
+)
+
+AC_ARG_ENABLE(defalloc,[--enable-defalloc : make HP-style defalloc.h included in alloc.h )
+--disable-defalloc : leave defalloc.h alone],
+[
+case "$enableval" in
+	  no ) AC_MSG_RESULT(Config arg --disable-defalloc : not including HP-style defalloc.h into alloc.h);;
+
+	  * ) AC_MSG_RESULT(Config default : including HP-style defalloc.h into alloc.h) 
+                AC_DEFINE(__STL_USE_DEFALLOC)
+esac
+],
+[
+          AC_MSG_RESULT(Config default : not including HP-style defalloc.h into alloc.h)
+]
+)
+
+
+AC_ARG_ENABLE(debugalloc,[--enable-debugalloc : use debug versions of allocators
+--disable-debugalloc : not using debug allocators],
+[
+case "$enableval" in
+	  yes ) AC_MSG_RESULT(Config arg --enable-debugalloc : use debug versions of allocators ) 
+                AC_DEFINE(__STL_DEBUG_ALLOC);;
+	  * )
+          AC_MSG_RESULT(Config default : not using debug allocators)
+esac
+],
+[
+          AC_MSG_RESULT(Config default : not using debug allocators)
+]
+)
+
+
+AC_ARG_ENABLE(abbrevs,[--enable-abbrevs : use abbreviated class names internally for linker benefit (don't affect interface)
+--disable-abbrevs : don't use abbreviated names],
+[
+case "$enableval" in
+	  yes ) AC_MSG_RESULT(Config arg --enable-abbrevs : using abbreviated class names internally) 
+                AC_DEFINE(__STL_USE_ABBREVS);;
+	  * )
+          AC_MSG_RESULT(Config default : not using abbreviated class names internally)
+esac
+],
+[
+          AC_MSG_RESULT(Config default : not using abbreviated class names internally)
+]
+)
+
+
+AC_DEFINE(__AUTO_CONFIGURED)
+
+AC_MSG_RESULT(***)
+AC_MSG_RESULT($0: setting up headers...)
+AC_MSG_RESULT(***)
+AC_OUTPUT(stlconf.h)
+AC_MSG_RESULT(***)
+AC_MSG_RESULT($0: STLport configured for use with \"${CXX}\" compiler, CXXFLAGS used: \"${CXXFLAGS}\".)
+AC_MSG_RESULT($0: To restore original settings - run \"./unconfigure\" or copy stlconf.h.in to stlconf.h.)
+AC_MSG_RESULT(***)
+

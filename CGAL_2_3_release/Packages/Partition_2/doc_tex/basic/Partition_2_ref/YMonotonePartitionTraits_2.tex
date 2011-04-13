@@ -1,0 +1,86 @@
+% +------------------------------------------------------------------------+
+% | Reference manual page: YMonotonePartitionTraits_2.tex
+% +------------------------------------------------------------------------+
+% | 10.05.2000   Susan Hert
+% | Package: Partition_2
+% | 
+% |
+%%RefPage: end of header, begin of main body
+% +------------------------------------------------------------------------+
+
+
+\begin{ccRefConcept}{YMonotonePartitionTraits_2}
+\ccIndexSubitemBegin[C]{y_monotone_partition_2}{traits class}
+
+\ccDefinition
+  
+Requirements of a traits class to be
+used with the function \ccc{y_monotone_partition_2}.  
+
+\ccGeneralizes
+
+\ccRefConceptPage{PartitionTraits_2}
+
+\ccTypes
+
+\ccIndexMainItem[c]{PartitionTraits_2}
+In addition to the types defined for the concept PartitionTraits\_2, the
+following types are also required:
+
+
+\ccNestedType{Line_2}{}
+%                      that has a function \ccc{FT x_at_y(FT x)} that returns
+%                      the $y$-coordinate of the point on non-vertical line 
+%                      $l$ with the given $x$-coordinate.}
+
+\ccNestedType{Compare_x_at_y_2}{Predicate object type that provides
+\ccc{CGAL::Comparision_result operator()(Point_2 p, Line_2 h)} to compare
+the $x$ coordinate of \ccc{p} and the horizontal projection of \ccc{p}
+on \ccc{h}.}
+
+\ccNestedType{Construct_line_2}{Function object type that provides
+\ccc{Line_2 operator()(Point_2 p, Point_2 q)}, which constructs and
+returns the line defined by the points $p$ and $q$.}
+
+\ccNestedType{Is_horizontal_2}{Function object type that provides
+\ccc{bool operator()(Line_2 l)}, which returns \ccc{true} iff the
+line \ccc{l} is horizontal.}
+
+\ccCreation
+\ccCreationVariable{traits}  %% choose variable name
+
+A copy constructor and default constructor are required.
+
+\ccConstructor{YMonotonePartitionTraits();}{}
+
+\ccConstructor{YMonotonePartitionTraits(const YMonotonePartitionTraits& tr);}{}
+
+\ccOperations
+
+In addition to the functions required for the concept PartitionTraits\_2,
+\ccIndexMainItem[c]{PartitionTraits_2}
+the following functions that create instances of the above function 
+object types must exist.
+
+\ccMethod{Construct_line_2 construct_line_2_object();}{}
+
+\ccMethod{Compare_x_at_y_2 compare_x_at_y_2_object();}{}
+
+\ccMethod{Is_horizontal_2 is_horizontal_2_object();}{}
+
+\ccHasModels
+
+\ccRefIdfierPage{CGAL::Partition_traits_2<R>}
+
+%\ccSeeAlso
+%
+%\ccc{y_monotone_partition_2}
+
+\ccIndexSubitemEnd[C]{y_monotone_partition_2}{traits class}
+\end{ccRefConcept}
+
+% +------------------------------------------------------------------------+
+%%RefPage: end of main body, begin of footer
+% EOF
+% +------------------------------------------------------------------------+
+

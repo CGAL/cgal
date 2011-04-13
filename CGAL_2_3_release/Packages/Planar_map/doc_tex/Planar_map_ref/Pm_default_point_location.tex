@@ -1,0 +1,68 @@
+% +------------------------------------------------------------------------+
+% | Reference manual page: Pm_default_point_location.tex (Planar_map)
+% +------------------------------------------------------------------------+
+% | 
+% | Package: pm (Planar_map_2)
+% | 
+% +------------------------------------------------------------------------+
+
+\ccRefPageBegin
+
+%%RefPage: end of header, begin of main body
+% +------------------------------------------------------------------------+
+
+%**************************************************************************
+
+\renewcommand{\ccRefPageBegin}{\begin{ccAdvanced}}
+\renewcommand{\ccRefPageEnd}{\end{ccAdvanced}}
+
+\begin{ccRefClass}{Pm_default_point_location<Planar_map>}
+\label{PL_sec:default}
+
+\ccDefinition
+The \ccRefName\ class
+implements the incremental randomized algorithm introduced by
+Mulmuley ~\cite{m-fppa-90} as presented by Seidel ~\cite{s-sfira-91},~\cite{bkos-cgaa-97}.
+It uses a trapezoidal map and a search structure to 
+achieve an expected query time of $O(\log n)$.
+Updating of these structures takes expected $O(\log n)$ time. 
+%Therefore,
+%this is also a lower bound for every member function in the class.
+There is also a possibility to assure a {\em deterministic} worst-case query 
+time  of $O(\log n)$, with a preprocessing step. The trade-off is in a longer
+building time.
+
+\ccThree{Curve}{}{\hspace*{10cm}}
+\ccThreeToTwo
+
+\ccInclude{CGAL/Pm_default_point_location.h}
+
+\ccCreationVariable{pl}
+
+\ccIsModel
+  \ccc{PlanarMapPointLocation_2}
+
+\ccInheritsFrom
+  \ccc{Pm_point_location_base<Planar_map>}
+
+\ccCreation
+
+\ccConstructor{Pm_default_point_location<Planar_map>(bool preprocess = false);}
+{ constructs the point location object. If \ccc{preprocess} is \ccc{true} then
+preprocessing is done to guarantee a deterministic worst case query time of
+$O(\log n)$. However, the preprocessing step can slow down considerably
+the building time of the structure.}
+
+\ccSeeAlso
+   Discussion of the different point location strategies in the introduction
+of \ccc{Planar_map} reference pages\lcTex{ (\ccRefPage{Pm_Ref_intro})}.
+
+\end{ccRefClass}
+\renewcommand{\ccRefPageBegin}{}
+\renewcommand{\ccRefPageEnd}{}
+
+% +------------------------------------------------------------------------+
+%%RefPage: end of main body, begin of footer
+\ccRefPageEnd
+% EOF
+% +------------------------------------------------------------------------+

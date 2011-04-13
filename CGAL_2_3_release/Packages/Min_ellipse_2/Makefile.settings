@@ -1,0 +1,8 @@
+MAKE_WEB_DIR := web
+MAKE_DOC_DIR := doc_ps
+MAKE_INC_DIR := include/CGAL
+
+MAKE_IMP_PATH := examples demo
+
+MAKE_FIL_MOD := u=rw,g=r,o=
+MAKE_DIR_MOD := u=rwx,g=rx+s,o=

@@ -1,0 +1,252 @@
+2.37   (25 July 2001)
+- Remove Aff_transformation_[23] from Homogeneous_converter.
+
+2.36   (?? July 2001)
+- renamed cmp_* to compare_* and *_dist_* to *_distance_* and
+  leftturn, Leftturn, LEFTTURN to left_turn, Left_turn, LEFT_TURN and
+  rightturn, Rightturn, RIGHTTURN to right_turn, Right_turn, RIGHT_TURN
+  and compare_lexicographically* to compare_*
+  (deprecated the old names but didn't remove them).
+
+2.35   (9 July 2001)
+- added missing Object_2 and Object_3 types in Homogeneous classes
+
+2.34   (21 June 2001)
+- New constructors for DirectionH2.
+
+2.33   (21 June 2001)
+- Rename compare_angles_with_x_axis to compare_angle_with_x_axis to match
+  Cartesian.
+
+2.32   (20 June 2001)
+- fixed bug in centroid
+- change #include order.
+- Add lexicographically_yx_larger_or_equal() and
+  lexicographically_xy_larger_or_equal().
+- Don't #include <CGAL/misc.h>.
+- Add missing compare_x and compare_y.
+
+2.30   (19 June 2001)
+- added centroid
+
+2.29   (18 June 2001)
+- Move definition of CGAL_REP_CLASS_DEFINED.
+
+2.28   (7 June 2001)
+- refixed compare_x_at_y()
+- Move homogeneous-only files from Kernel_basic to H2.
+
+2.27   (1  May 2001)
+- angle()
+- fixed compare_x_at_y() 
+
+2.26   (12  Apr 2001)
+- Fix off by one error in Triangle::vertex().
+
+2.25   (9  Apr 2001)
+- #include<CGAL/Homogeneous.h> and #include<CGAL/Arithmetic_filter.h> were not
+  compatible together.
+
+2.24   (20 Mar 2001)
+- Added squared_radius().
+
+2.23   (16 Mar 2001)
+- Added constructor Vector(Point, Point).
+- side_of_bounded_circle(3 points).
+
+2.22   (6 Mar 2001)
+- Remove useless friends in PVDH2.h and delete point_vector_declarationsH2.h.
+- Make operator*(VectorH2, VectorH2) a member function.
+
+2.21   (28 Feb 2001)
+- More VC++ fixes.
+
+2.20   (21 Feb 2001)
+- Homogeneous_converter<>.
+
+2.19   (21 Feb 2001)
+- VC++ fixes.
+
+2.18   (19 Feb 2001)
+- Modified return types "typename R::RT" for VC++.
+
+2.17   (15 Feb 2001)
+- Add some "#define typename" to please VC++.
+
+2.16   (14 Feb 2001)
+- Add forgotten typedefs in IdentityH2.
+- added min_coord(), max_coord() in Iso_rectangle_2 and new constructor
+- Remove useless destructors in PointH2, VectorH2, DirectionH2.
+
+2.15   (13 Feb 2001)
+- Macro cleanups.
+- area() functions added
+- Simple_homogeneous.
+- Remove old style casts.
+- Put the class Data_accessorH2 in its own file.
+
+2.14   (18 Jan 2001)
+- Remove Triangle_repH2 copy ctor, since it caused a warning.
+
+2.13   (11 Oct 2000)
+
+- use of keyword 'or' removed in CircleH2
+
+2.12   (03 Aug 2000)
+
+- bug in input operator of CircleH2 fixed (reported by Matthias)
+
+2.11   (26 Jul 2000)
+
+- in-place-new replaced by Handle_for( RefCounted ) constructor calls
+  and calls of Handle_for::initialize_with( RefCounted )
+- identical(.) and id() member functions removed (base class Handle_for<> 
+  has a member function identical(.) since version 3.9)
+
+2.10   (08 Jun 2000)
+
+- CGAL_NTS used
+
+2.9    (05 Jun 2000)
+
+- Handle_for( RefCounted ) constructor used as well as
+  Handle_for::initialize_with( RefCounted ) for P,V,D.
+
+2.8    (30 May 2000)
+
+- Reflection (on a line) added to Aff_transformationH2
+- Aff_transformationH2 now use Handle_for<..., No_op_allocator<...>>
+- compare_x_at_y() functions added
+- a_ref(), ... added to LineH2
+
+2.7    (18 Apr 2000)
+
+- -Rot... -> Rot... in Aff_transformationH2.h
+- Iso_rectangleH2 now uses Handle_for<>
+- LineH2 now uses Handle_for<>
+- RayH2 now uses Handle_for<>
+- SegmentH2 now uses Handle_for<>
+
+2.6    (07 Apr 2000)
+
+- Handle_for used for P,V,D, & TriangleH2
+- opposite() mf added to TriangleH2
+- calls of global opposite qualified by CGAL::
+
+2.5    (18 Feb 2000)
+
+- DirectionH2::counterclockwise_in_between(d1,d2) fixed
+
+%%%%%%%%%%%%%%%%%%%%%%   R e l e a s e  2 . 1   %%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+2.4.7 -> 2.4.8 (10 Dec 99)
+- CGAL_SCOPE added to friend declarations origin_plus|minus... and
+  ...plus|minus_origin for VectorH2 and PointH2
+
+2.4.6 -> 2.4.7 (04 Dec 99)
+- submission script revised
+
+2.4.5 -> 2.4.6 (29 Nov 99)
+- revised forward declaration of origin_plus_vector and origin_minus_vector
+
+2.4.4 -> 2.4.5 (25 Nov 99)
+- removed friend declaration of operator+(Origin, VectorH2) 
+
+2.4.3 -> 2.4.4 (07 Nov 99)
+- Identity + rep in Aff_transformationH2
+
+2.4.2 -> 2.4.3 (05 Nov 99)
+- 'initialisation of const RT& by temporary' fixed in
+  <predicates_on_pointsH2.h>
+
+2.4.1 -> 2.4.2 (08 Oct 99)   
+- DirectionH2::vector() replaced by DirectionH2::to_vector()
+
+2.4   -> 2.4.1 (14 Sep 99) 
+- ?
+
+2.3   -> 2.4   (14 Sep 99)   
+- equal_xy defined for PointH2
+
+2.2   -> 2.3   (04 Aug 99)
+- updates/workarounds for gcc-2.95:
+  s/friend inline/friend CGAL_FRIEND_INLINE
+  s/friend CGAL_KERNEL_INLINE/friend CGAL_KERNEL_FRIEND_INLINE
+  made all operator-() friends non-friends
+
+2.1.3 -> 2.2   (22 Jun 99)
+- 'inline' placement fixed in PVDH2.h
+
+%%%%%%%%%%%%%%%%%%%%%%   R e l e a s e  2 . 0   %%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+2.1.2 -> 2.1.3 (21 May 99)
+- code chunk in <include/CGAL/predicates_on_directionsH2.h> rewritten
+  as suggested by G.-J. in order to get rid of problems in internal
+  compiler error in BooleanOperations
+
+2.1.1 -> 2.1.2 (28 Apr 99)
+- sign() prefixed by CGAL::
+
+2.1   -> 2.1.1 (28 Apr 99)
+- added CGAL:: to calls of compare()
+
+2.0.5 -> 2.1   (16 Apr 99) 
+- iostream parts prefixed by std::
+
+2.0.4 -> 2.0.5 (30 Mar 99)
+- to_double() prefixed by CGAL::
+
+2.0.3 -> 2.0.4 (24 Mar 99)
+- flag CGAL_NO_NAMESPACE corrected :)
+
+2.0.2 -> 2.0.3 (20 Mar 99)
+- flag CGAL_NO_NAMESPACE corrected
+
+2.0.1 -> 2.0.2 (14 Mar 99)
+- std::swap used in CircleH2 and bbox() for points
+
+2.0   -> 2.0.1 (24 Feb 99)
+- CGAL_[BEGIN|END]_NAMESPACE used
+
+1.3.1 -> 2.0   (04 Feb 99)
+- namespace CGAL { } introduced
+
+%%%%%%%%%%%%%%%%%%%%%%   R e l e a s e  1 . 2   %%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+1.3   -> 1.3.1
+- minor correction in <CGAL/predicates_on_rtH2.h>
+
+1.2.3 -> 1.3   (15 Dec 98)
+- Use of CGAL...INLINE made consistent between declarations and
+  definitions (otherwise SunPro CC 4.2 does not like it).
+- #include <CGAL/Arithmetic_filter/predicates_on_rtH2.h> added in 
+  predicates_on_rtH2.h
+
+1.2.2 -> 1.2.3 (23 Nov 98)
+- modifications in predicates_on_pointsH2.h due to changing return 
+  type of CGAL_sign() from int to CGAL_Sign
+- predicates_on_rtH2.h with limited functionality added
+- <CGAL/basic_constructionsH2> included in <CGAL/predicates_on_linesH2.h>
+
+1.2.1 -> 1.2.2 (07 Sep 98)
+- are_ordered_along_line( )  modified
+ 
+%%%%%%%%%%%%%%%%%%%%%%   R e l e a s e  1 . 1   %%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+%%%%%%%%%%%%%%%%%%%%%%   R e l e a s e  1 . 0   %%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+1.2   -> 1.2.1
+- bug in IO for Iso_rectangleH2 fixed
+
+1.1   -> 1.2
+- made fit for egcs
+- number type `bug' in LineH2::point() corrected
+
+1.0   -> 1.1
+- are_ordered_along_line and are_strictly_ordered_along_line
+  and the corresponding collinear version are fixed now
+
+0.9   -> 1.0
+- added functionality as described in _2 description
+- new inline policy, cf. kernel_basic.h
+

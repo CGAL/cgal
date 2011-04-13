@@ -1,0 +1,209 @@
+Circulator Package: Release changes:
+---------------------------------------------------------------------
+3.17 (26 july 01)
+- remove from the doc duplicated included example files
+- fixed the \ccIncludeExampleCode commands accordinggly
+- move the file doc_tex/support/Circulator/Circulator_stl.tex 
+             to doc_tex/use_of_stl
+
+3.16 (25 February 01)
+- Remove warnings.
+
+3.15 (8 August 00)
+     fixed the doc
+
+3.14 (3 May 00)
+     rename makefile to Makefile in test/Circulator 
+     to exclude it from submission
+
+3.13 (20 April 00)
+     fixed a typing bug of the previous modification in 
+     void Assert_forward_category( const IC &ic)
+
+3.12 (14 April 00)
+     changes all std::iterator_category(c)
+     to          std::iterator_traits<C>::iterator_category()
+     in circulator.h
+
+3.11 (4 janvier 00)
+     few correction in doc
+
+3.10 (4 november 99)
+     suppresses the references to singular valeus of circulators in the docXS
+
+3.9 (18 october 99)
+     one more small correction to the doc
+
+3.8 (14 october 99)
+    made some corections suggested by Susan to the doc
+
+3.7 (07 october 99)
+    fixed a bug in Circulator_stl.tex
+
+3.6 (24 septembre 99)
+    add the doc file Circulator_stl.tex in submission
+
+3.5 (06 septembre 99)
+    fixed #endif _MSC_VER
+     to #endif // _MSC_VER
+
+3.4 (02 Sep 1999)
+     Unnecessary typenames removed from iterator_test.any. Mariette
+     Yvinec (INRIA) takes over the maintenance of this package with
+     this release.
+
+3.3 (02 Sep 1999)
+
+     One more patch for MSC_VCC.
+
+3.2 (01 Sep 1999)
+
+     Changed to work with MSC_VCC.
+
+3.1 (12 Aug 1999)
+
+     Fully reworked version. The package relies now on template parameter
+     defaults and std::iterator_traits. For compilers yet not supporting
+     std::iterator_traits, the old circulator.h file of CGAL R2.0 is
+     distributed for compatibility reasons under the name 
+     circulator_compat.h
+
+     The use of std::iterator_traits allowed me to simplify many parts of
+     this package. An adapter class was provided for each iterator/circulator
+     category. This is now unified to one adapter for all categories,
+     deriving its actual category with the std::iterator_traits.
+     Furthermore, many internal implementations have been simplified.
+     Important, the package is nevertheless backwards compatible.
+
+     The documentation is new. It is separated into a user manual part and
+     and a reference part, but for the transition period both parts stay
+     in one chapter. The manual needs the cc_manual tools R3.2 (not yet
+     released) for formatting.
+
+2.6 (22 May 1999)
+
+     Typos before CGAL R2.0 fixed.
+
+2.5 (29 Apr 1999)
+
+     circulator_bases.h include cstddef now.
+
+2.4 (07 Apr 1999)
+
+     Fixes std:: prefix for base classes to CGAL_STD:: in 
+     circulator_base.h. std:: namespace added for sort().
+
+2.3 (26 Mar 1999)
+
+    A single missing std:: for a vector fixed.
+
+2.2 (25 Mar 1999)
+
+    A few std:: fixed, derivation from std::forward_iterator etc. 
+    removed and some CGAL_TEMPLATE_NULL introduced for the traits
+    classes.
+
+2.1 (06 Mar 1999)
+
+     Standard headers, std namespace and CGAL namespace.
+
+1.15 (07 Oct 1998)
+
+     Bug with respect to value_type friend function and value_type type
+     fixed. Warnings about CGAL_NULL_TYPE with egcs fixed.
+
+1.14 (03 Jun 1998)
+
+     A few changes in the doc. Chapter entry in header.
+
+1.13 (09 Apr 1998)
+
+     Spell checker.
+
+1.12 (18 Mar 1998)
+
+     A few typename's in the examples removed. Run's with SGI CC-n32.
+     Problems with operator+ and SGI CC-64 fixed.
+
+1.11 (18 Feb 1998)
+
+     A few typename's in inappropriate places removed. Run's with SGI CC-n32.
+
+1.10 (05 Feb 1998)
+
+     Reorganized TeX files for the manual and minor changes in the manual.
+
+1.9 (30 Jan 1998)
+
+     New cgal_test script. CGAL_circulator_distance has now difference_type
+     as return type. New function CGAL_iterator_distance working on both,
+     iterators and circulators. New header file CGAL/circulator_bases.h
+     that includes only circulator tags and base classes.
+
+1.8 (06 Jan 1998)
+
+     A missing typename inserted for egcs.
+
+1.7 (19 Dec 1997)
+
+     Tested with egcs. New subsections with \ccSeeAlso.
+
+
+1.6 (12 Dec 1997)
+
+     The container-from-circulator adaptor classes cannot be used for
+     non-mutable circulators if the C++ compiler has the
+     CGAL_CFG_NO_LAZY_INSTANTIATION bug. However, the g++ works fine,
+     only some warnings about const to non-const conversions.
+     The related tests for the container-from-circulator adaptors are
+     now guarded with the CGAL_CFG_NO_LAZY_INSTANTIATION flag.
+
+     All scope expressions with the typename keyword where necessary
+     (not tested yet). Include file protection as provided with the script.
+
+     Circulators work now with iterator traits! Tested with SGI CC 7.2.
+
+
+1.5 (11 Dec 1997)
+
+     Circulator functions matches now appropriately to the circulator tags
+     instead of the iterator tags as previously. Bug reported by Wieger
+     while testing with Borland. The problem with the non-const iterator
+     adaptor in the container_from_circulator adaptor classes cannot
+     be fixed. The g++ is known to warn about conversion from const    
+     to non-const references even though the class is actually not used.
+     SunPro and SGI C++ works fine. The Borland now reports error messages.
+
+
+1.4 (09 Dec 1997)
+
+     Includes now the TeX documentation for the support library and the
+     stl_extension manual. Includes new package field in the header.
+
+     The dependency on Gnu and SunPro C++ has been reduced.
+
+     The adaptors for circulators for a struct, class or array which
+     uses the member function pointer as a template argument (could be
+     recognized as those classes with an _mptr suffix) have been removed.
+     They were even no longer documented in R1.3.
+
+
+1.3 (25 Nov 1997)
+
+     Compliant to recent organisational conventions that the examples
+     directory gets tested and that there is a new demo directory.
+
+
+Changes compared to CGAL 0.9:
+
+     New features are: strong support of size_type for circulators.
+     Base classes have additional template argument for that.
+     Support of local types for pointer and const_pointer.      
+     All circulators and iterators provide operator->() if supported
+     by the compiler. The handling of the iterator category has been
+     changed such that the tags for circulators (which are derived
+     from the iterator tags) are been used. A new function
+     CBP_circulator_size computes the size of the range of two
+     circulators (i.e. the positive distance between both).
+
+

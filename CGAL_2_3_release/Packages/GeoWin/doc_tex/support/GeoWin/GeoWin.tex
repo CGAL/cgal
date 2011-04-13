@@ -1,0 +1,288 @@
+% +------------------------------------------------------------------------+
+% | CGAL Reference Manual:  geowin.tex
+% +------------------------------------------------------------------------+
+
+\ccParDims
+
+\chapter{GeoWin}
+\label{chapterGeoWin}
+\ccChapterAuthor{Matthias B\"asken}
+
+
+%---------------------------------------------
+% Introduction
+%---------------------------------------------
+\section{Introduction}
+
+The $GeoWin$ data type provides a geometry-oriented environment for the visualization
+of algorithms. \\
+An instance of the data type $GeoWin$ is an editor that maintains 
+a collection of so-called {\em scenes}. 
+The scenes are instances of generic data types and maintain an associated {\em container} (a \stl\ or \leda\ list)
+of geometric {\em objects}, whose members are displayed according to a set of visual attributes 
+(color, line width,line style, etc.). \\
+These (visual) attributes are associated with the scenes; but it is for course possible to
+assign individual attributes to the geometric objects.
+A scene maintained by $GeoWin$ can be {\em visible} or {\em invisible}. 
+One of the scenes in the collection can be {\em active}. 
+The active scene receives all editing input and can be manipulated
+through the interactive interface of $GeoWin$. \\
+The interface for the visualization 
+of the result and progression of geometric algorithms uses the window data type of \leda. That means that you
+must have \leda\ installed if you want to use $GeoWin$.
+There are different kinds of scene types available in $GeoWin$ (see the reference manual pages of the
+$GeoWin$ class for the details). Some scenes can be edited using the interactive interface of $GeoWin$.
+The $GeoWin$ data type can be used for:
+
+\begin{itemize}
+
+\item the construction and display of geometric objects and data structures
+\item the visualization of geometric algorithms
+\item writing interactive demos for geometric algorithms
+\item debugging geometric algorithms.
+
+\end{itemize}
+
+\section{The user interface}
+
+Let us first have a look at the interactive use of $GeoWin$. You should open a $GeoWin$ by starting
+one of the demonstration programs. A window with menus File, Edit, Scenes, Window, Options,
+Algorithms and Help will pop up with an empty display region and a status line showing 
+the coordinates of the position of the mouse and additional information about the edited scene.
+In the Help menu you will find, among others, these three menu buttons :
+
+\begin{itemize}
+\item {\em About}    - a simple about dialog
+\item {\em News}     - tells you what's new in the current release
+\item {\em geowin\_buttons}  - teaches you how to use the mouse buttons in $GeoWin$.
+\end{itemize}
+
+If you edit a scene of geometric objects, you can 
+input a geometric object with the left mouse button or scroll the scene by holding the
+left button while moving the mouse. 
+By using the middle mouse button you can select an object by
+clicking on it or a group of objects by holding the button and moving the mouse (that draws a
+box, and all objects intersecting this box will be selected). The right mouse button opens a
+menu by clicking on an object. This menu contains the options setup (setup the properties of the
+object), select (selection of the object), delete (delete the object), 
+object (change the value of the object) and raise (raise the object in its scene). By clicking on
+the background with the right mouse button you can access the setup dialog of the whole scene,
+where you can setup some parameters of the scene (for instance colors and line parameters). \\
+Next we give a short description of the menus in $GeoWin$. Explanations of these menus can also be
+found in the other submenus of the help menu.
+\\
+\\
+{\em File} menu:
+Here you will find buttons for I/O operations. You can save, load and export (save without header) scenes,
+and you can also output the contents of scenes in postscipt format and make screenshots.
+In the File menu you will also find the Quit button.
+\\
+\\
+{\em Edit} menu:
+A menu, where you find buttons for generating, reading, marking, unmarking, copying, deleting, moving
+and rotating objects.
+\\
+\\
+{\em Scenes} menu:
+A menu with buttons and submenus for opening, closing, clearing and activating (making a scene the current or
+active scene) scenes. This menu also contains a panel for setting the visibility and other options of a scene.
+There are also submenus for looking at the textual representation of the contents of the scene.
+\\
+\\
+{\em Window} menu:
+A menu providing redraw and zoom (adjusting the window coordinates) operations. Here you can also find a button for
+showing 3d output (that is only interesting for scenes supporting this output mode).
+\\
+\\
+{\em Options} menu:
+A menu with sub-panels for editing various parameters of $GeoWin$ and for setting the default parameter values for scenes.
+\\
+\\
+{\em Algorithms} menu:
+For some scenes (for instance \leda\ point scenes) you can access various built-in algorithms. But for most scenes
+the submenus of this menu will be empty.
+\\
+\\
+{\em Help} menu:
+In this menu you will find online help for the user interface of $GeoWin$.
+\\
+\\
+{\em Done} :
+The Done-button (see the following description of the $GeoWin$ data type).
+
+\section{Global parameters and scene parameters}
+
+After this short discussion of the menus of $GeoWin$ let us have a look at the various parameters and attributes controlling
+the behavior of $GeoWin$.
+Every scene defines default attributes for its geometric objects. In editable scenes you can change the
+attributes for every single object.
+First, let's have a look at the default attributes of the scene. Open a scene in $GeoWin$, and then click on the 
+background (or use the options submenu in the Scenes menu) to open a panel, where you can set them. You will find the following
+options:
+
+\begin{itemize}
+
+\item {\em highlight focus}: If this option is enabled, the object under the mousepointer will be highlighted.
+                 (for highlighting $GeoWin$ will use the color of selected boundaries)
+		 
+\item {\em show/handle def. points?} Some scenes support the movement of a point that helps defining
+                 an object (for instance a vertex of a polygon). Using this choice item you can change
+		 the behavior of this feature. If you choose $Show$, all the 'defining points' will be
+		 shown and movement of these points will be supported. If you choose $Hide$, the
+		 'defining points' will not be shown and the movement of these points will not be
+		 supported. If you choose $Highlight$, only the 'defining points' of the object under
+		 the mousepointer will be shown and movement of these points will be supported.
+		 Note again that not all scenes support handling of these 'defining points'.
+		 
+\item {\em Input objects}: If the scene supports additional input objects, this item will be shown.
+                 You can choose one of the input objects or the default input mode (using the 
+		 window input operator).
+             
+\item {\em interior color}: An object that has to be filled will be filled with this color.
+             
+\item {\em boundary color}: The default color of the boundary of a non selected object in this scene.
+                 
+\item {\em selected color}: The default color of the boundary of a selected object in this scene.
+
+\item {\em point style}: The point style used in the scene.
+                 
+\item {\em active/non active line width}: The default line width in active and non active scenes. 
+                            Used for painting the boundary of objects.
+                
+\item {\em line style}: The default line style used in the scene (for painting the boundary). Can be solid, dashed or dotted.
+            
+\item {\em Debug}: If the scene is a result scene, you can choose here, that before every update
+                of this scene the contents of its input scene will be written to a file.
+      
+\end{itemize}
+
+Using this panel you can set some default attributes for the whole scene. But in editable scenes it is also
+possible to change attributes of a single object.
+Open a scene and input some objects. Now click with the right mouse button on an object. A little menu appears.
+Using the setup button in this menu you get a panel on the screen.
+There you can set the following attributes:
+
+\begin{itemize}
+
+\item {\em color of interior}: This color is used to paint the interior of the object.
+
+\item {\em color of boundary}: Boundary color of the object, if it is not selected 
+
+\item {\em line width}: The line width that is used to paint the boundary of the object.
+
+\item {\em line style}: The line style that is used to paint the boundary of the object. 
+
+\item {\em object label}: An attribute defining the label of an object 
+
+\end{itemize}
+
+{\bf Global parameters}
+
+A $GeoWin$ has the window parameters background color, background pixmap and the grid parameters
+(grid style, grid dist and show grid).
+There are also some additional parameters, that can be set in the panels of the {\em Options} menu.
+
+\begin{itemize}
+
+\item {\em Grid Settings}: Here you can control whether or not a grid should be shown in the
+              background of the drawing area of your $GeoWin$ and change grid parameters like grid dist
+	      and style.
+
+\item {\em bg texture/bg color}: These parameters control color and texture of the background of 
+              your $GeoWin$.
+
+\item {\em Show position}: This parameter controls whether the mouse coordinates should be shown in the status line.
+                 
+\item {\em Time Outs for Double Click and Dragging, Capture width}: Influences the behavior of the mouse input. 
+
+\item {\em Rational kernel options}: If you are using rational \leda\ types in your $GeoWin$, these options
+               are helpful. They let you set the precision (type: int) that is used when converting floating
+               point types to rational \leda\ types and let you switch on (1) and off (0) the floating point filter
+               used by many functions working with rational \leda\ types. 
+
+\item {\em Measure Time}:  If this flag is true, $GeoWin$ outputs the used time after running a geometric algorithm. 
+       
+\item {\em 3d Output parameters}: They are only important for scenes supporting 3d output. 
+
+\item {\em Eliminate}: This flag controls whether hidden lines should be eliminated or not. 
+
+\item {\em Solid}: This flag controls whether the 3d output should be painted solid.
+
+\item {\em Speed}: A Parameter that defines the speed of the animation when the three-dimensional output is painted.
+
+\item {\em Scaling parameters}:
+Here you can set the {\em x} and {\em y} coordinates of the window display area.
+
+\end{itemize}
+After this short discussion of the user interface of $GeoWin$ we'll have a look at a few example programs.
+
+\section{Examples using the $GeoWin$ data type}
+
+In this section two examples will show you how to use $GeoWin$ for writing interactive 
+demos for geometric algorithms. You will find these (and a lot of other) demo programs in the
+$demo/GeoWin$ directory of your \cgal\ installation. Note again that you must have \leda\ installed
+to use $GeoWin$.
+
+In the following examples a few typedefs from $geowin\_support.h$ are used.
+They are all in the form
+
+\begin{verbatim}
+typedef CGAL::Cartesian<double>  REP;
+typedef CGAL::Point_2< REP >     CGALPoint;
+typedef std::list<CGALPoint>     CGALPointlist;
+
+typedef CGAL::Circle_2< REP >    CGALCircle;
+typedef std::list<CGALCircle>    CGALCirclelist;
+
+typedef CGAL::Line_2< REP >      CGALLine;
+typedef std::list<CGALLine>      CGALLinelist;
+
+...
+
+\end{verbatim}
+
+\subsection{Simple demo demonstrating the minimum enclosing circle algorithm}
+
+The following demonstration program first registers lists with \cgal\ 2d points, because such a container
+will be used in the editable scene created shortly afterwards.
+Then a $GeoWin$ and two geo\_scenes are created.
+The first created scene is an editable scene storing \cgal\ 2d Points in a list. The second created scene
+is a result scene. The input for this scene is the contents of scene $my\_scene$. For computing the contents
+of the result scene $result$ the update object $min\_circ$ is used. $GeoWin$ calls the update function 
+of the update object every time the input scene $my\_scene$ changes to update the result scene.
+The update function gets the current contents of the input scene (a list of
+\cgal\ 2d Points) and
+computes the minimum enclosing circle.
+After creating the two scenes the visibility flag of the result scene is set and the interactive mode
+of $GeoWin$ is started.
+
+\ccHtmlLinksOff
+
+\ccIncludeExampleCode{GeoWin/CGAL_min_circle_2.C}
+
+\ccHtmlLinksOn
+
+
+\subsection{A Delaunay triangulation demo using redraw and update objects}
+
+The second example is a bit more complex. It uses four user editable input scenes:\\
+$my\_scene$ contains points that are the input for an algorithm computing the
+Delaunay triangulation.
+$line\_scene$ contains lines; they are used for finding triangles of the Delaunay
+triangulation intersected by these lines.
+$pointloc\_scene$ contains points; they are used for locating triangles of the Delaunay
+triangulation.
+$p\_scene$ contains points as well; they are used for nearest neighbor searches on the
+the Delaunay triangulation.
+After the creation of the edit scenes four result scenes are created. The result scene
+$sc1$, $res3$ and $res4$ use classes derived from $geowin\_redraw$ and $geowin\_update$ for
+updating and redrawing.
+After creating the result scenes we tell $GeoWin$ using the $add\_dependence$ method,
+that three result scenes should be updated not only when their input scenes change, but also
+when other scenes change.
+
+\ccHtmlLinksOff
+
+\ccIncludeExampleCode{GeoWin/CGAL_delaunay_triang_2.C}
+
+\ccHtmlLinksOn

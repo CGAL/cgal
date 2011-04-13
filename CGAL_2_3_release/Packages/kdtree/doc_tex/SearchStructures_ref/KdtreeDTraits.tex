@@ -1,0 +1,44 @@
+\begin{ccRefConcept}{KdtreeDTraits}
+
+The \ccStyle{Kdtree_d}  class is  parameterized with the
+interface class \ccStyle{Traits} which defines the abstract interface
+between the \ccStyle{Kdtree_d} class and the data (i.e., points). The following
+requirement catalog lists the primitives, i.e.,~types, member functions
+etc., that must be defined for a class that can be used to
+parameterize kd-trees. Ready-made implementation are available
+by the \ccStyle{Kdtree_d} default traits classes.
+
+\ccThree{static void}{}{\hspace*{7.1cm}}
+\ccTwo{}{\hspace*{7.1cm}}
+
+
+
+    \ccCreationVariable{t}
+
+    \ccDefinition
+    A class \ccClassName\ that satisfies the requirements of an
+    interface class for a \ccStyle{Kdtree_d} class must provide the
+    following types and operations. 
+  
+    \ccTypes
+    
+    \ccNestedType{Point}{A type to hold a input item.}
+
+    \ccOperations
+%    \ccSetTwoOfThreeColumns{4cm}{4cm}
+
+    \ccMethod{static Comparison_result compare(
+       int k,
+       const Point & p0,
+       const Point & p1);} {compare the \ccStyle{k}-th coordinate
+       of $p0$ and $p1$.  Return \ccStyle{LARGER} if $p0_k >
+       p1_k$, \ccStyle{SMALLER} if $p0_k < p1_k$, or else
+       \ccStyle{EQUAL}.  }
+
+    \ccMethod{static void  copy_coord( int  k, Point   & dest, 
+       const Point & src );}{Copy the $k$-th coordinate of $src$ to
+       the $k$-th coordinate of $dest$.}
+
+    \ccMethod{static int  dimension( const Point  & pnt );}
+    {return the dimension of \ccStyle{pnt}}
+\end{ccRefConcept}

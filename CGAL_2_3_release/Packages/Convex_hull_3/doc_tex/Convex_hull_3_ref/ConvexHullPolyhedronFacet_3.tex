@@ -1,0 +1,69 @@
+% +------------------------------------------------------------------------+
+% | Reference manual page: ConvexHullPolyhedronFacet_3.tex
+% +------------------------------------------------------------------------+
+% | 17.03.1999   Lutz Kettner
+% | Package: Polyhedron
+% | 
+\RCSdef{\RCSFacetRev}{$Revision$}
+\RCSdefDate{\RCSFacetDate}{$Date$}
+% +------------------------------------------------------------------------+
+
+\ccRefPageBegin
+
+%%RefPage: end of header, begin of main body
+% +------------------------------------------------------------------------+
+
+
+\begin{ccRefConcept}{ConvexHullPolyhedronFacet_3}
+
+\ccDefinition
+  
+The requirements of the facet type of a polyhedron to be built by the
+function \ccc{convex_hull_3}.
+
+\ccHasModels
+\ccRefIdfierPage{CGAL::Polyhedron_3<Traits>::Facet}
+
+\ccTypes
+\ccNestedType{Plane}{plane equation type stored in facets.}
+
+\ccNestedType{Halfedge_handle}{handle to halfedge.}
+
+\ccNestedType{Halfedge_around_facet_circulator}{circulator of
+  halfedges around a facet.}
+
+\ccCreation
+\ccCreationVariable{f}
+
+\ccConstructor{Facet();}{default constructor.}
+
+\ccOperations
+\ccTagFullDeclarations
+         
+\ccMethod{Plane&       plane();}{}
+\ccGlue
+\ccMethod{const Plane& plane() const;}{plane equation.}
+
+%\ccHeading{Operations available if \ccc{Supports_facet_halfedge} $\equiv$ 
+%           \ccc{CGAL::Tag_true}}
+
+\ccMethod{Halfedge_handle       halfedge();}%
+{ an incident halfedge that points to \ccVar.}
+\ccGlue
+
+\ccMethod{Halfedge_around_facet_circulator       facet_begin();}
+{circulator of halfedges around the facet (counterclockwise).}
+
+\ccSeeAlso
+\ccRefIdfierPage{CGAL::Polyhedron_3<Traits>} \\
+\ccRefConceptPage{ConvexHullPolyhedronVertex_3} \\
+\ccRefConceptPage{ConvexHullPolyhedronHalfedge_3} 
+
+\ccTagDefaults
+\end{ccRefConcept}
+
+% +------------------------------------------------------------------------+
+%%RefPage: end of main body, begin of footer
+\ccRefPageEnd
+% EOF
+% +------------------------------------------------------------------------+

@@ -1,0 +1,14 @@
+#!/bin/ksh
+
+for f in config/testfiles/*
+do
+base=`basename $f`
+copy=test/Configuration/$base
+if [ $copy -ot $f ]
+then
+    echo cp $f $copy
+    cp $f $copy
+fi
+done
+cd test/Configuration
+cvs commit -m ""

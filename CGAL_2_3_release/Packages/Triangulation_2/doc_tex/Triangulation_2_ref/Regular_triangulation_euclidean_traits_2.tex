@@ -1,0 +1,107 @@
+% +------------------------------------------------------------------------+
+% | Reference manual page: Regular_triangulation_traits_2.tex
+% +------------------------------------------------------------------------+
+% | 12.04.2000   Author
+% | Package: Package
+% | 
+\RCSdef{\RCSRegulartriangulationtraitsRev}{$Revision$}
+\RCSdefDate{\RCSRegulartriangulationtraitsDate}{$Date$}
+% |
+%%RefPage: end of header, begin of main body
+% +------------------------------------------------------------------------+
+
+
+\begin{ccRefClass}{Regular_triangulation_euclidean_traits_2<Rep,Weight>}  %% add template arg's if necessary
+
+%% \ccHtmlCrossLink{}     %% add further rules for cross referencing links
+%% \ccHtmlIndexC[class]{} %% add further index entries
+\ccCreationVariable{traits}
+\ccDefinition
+  
+\cgal\ provides the predefined geometric traits
+ \ccRefName\ 
+This traits class is templated by a representation class \ccc{Rep}
+and a weight type \ccc{Weight}.
+This class inherits from
+\ccc{Triangulation_euclidean_traits_2 <Rep >}
+and uses a \ccc{Weighted_point} type
+derived from the type \ccc{Point} of
+\ccc{Triangulation_euclidean_traits_2 < Rep >}.
+
+\ccInclude{Regular_triangulation_euclidean_traits_2.h}
+
+\ccIsModel
+\ccc{RegularTriangulationTraits_2}
+
+\ccTypes
+\ccTypedef{typedef Triangulation_euclidean_traits_2<Rep>::Point_2
+Point_2;}{}
+\ccGlue
+\ccTypedef{typedef Point_2  Bare_point;}{}
+\ccGlue
+\ccTypedef{typedef Weighted_point<Point_2,Weight> Weighted_point;}{}
+
+\ccNestedType{Power_test_2}{}
+\ccGlue
+\ccNestedType{Power_test_degenerated_2}{}
+
+The following types are required if member functions  relative to the
+dual power diagram are called 
+\ccNestedType{Line_2}{The line type.}
+\ccGlue
+\ccNestedType{Direction_2}{The direction of a line.}
+\ccGlue
+\ccNestedType{Ray_2}{The type for ray.}
+\ccGlue
+\ccNestedType{Construct_weighted_circumcenter_2}{Constructor object. Provides
+the operator 
+\ccc{ Point_2 operator()(Weigthed_point_2 p, Weigthed_point_2 q, Weigthed_point_2 r)} which returns
+the center of the circle orthogonal to the three weighted points  \ccc{p, q} anf \ccc{r}.}
+\ccGlue
+\ccNestedType{Construct_radical_axis_2}{Constructor object. Provides
+the operator 
+\ccc{ Line_2 operator()(Weigthed_point_2 p, Weigthed_point_2 q)} which 
+construct the radical axis of the two weighted points  \ccc{p} and
+\ccc{q}}
+\ccGlue
+\ccNestedType{Construct_direction_of_line_2}{Constructor object  to build
+the direction of a line. Must provide 
+\ccc{Direction_2 operator()(Line_2 l);}.}
+\ccGlue
+\ccNestedType{Construct_ray_2}{A constructor object  to build
+a ray from a point and a direction. Must provide
+\ccc{Ray_2 operator() ( Point_2 p, Direction_2 d);}}
+
+\ccHeading{Access to predicate objects}
+\ccMethod{Power_test_2 power_test_2_object();}{}
+\ccGlue
+\ccMethod{Power_test_degenerated_2
+  power_test_degenerated_2_object();}{}
+
+
+
+\ccHeading{Access to constructor objects}
+These member functions are required if functions  relative to the
+dual power diagram are called 
+\ccMethod{Construct_weighted_circumcenter_2
+  construct_weighted_circumcenter_2_object();}{}
+\ccGlue
+\ccMethod{Construct_radical_axis_2
+  construct_radical_axis_2_object();}
+\ccGlue
+\ccMethod{Construct_direction_of_line_2 construct_direction_of_line_2_object();} {}
+\ccGlue
+\ccMethod{Construct_ray_2 construct_ray_2_object();} {}
+
+\ccSeeAlso
+\ccc{RegularTriangulationTraits_2} \\
+\ccc{CGAL::Regular_triangulation_2}
+
+
+\end{ccRefClass}
+
+% +------------------------------------------------------------------------+
+%%RefPage: end of main body, begin of footer
+% EOF
+% +------------------------------------------------------------------------+
+

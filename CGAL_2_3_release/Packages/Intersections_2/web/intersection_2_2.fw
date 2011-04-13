@@ -1,0 +1,2210 @@
+@i cgal_util.fwi
+@B@<Intersection of two triangles@>
+
+The intersection of two triangles can lead to a (convex) polygon of (at
+most) six sides.
+
+@O@<../include/CGAL/Triangle_2_Triangle_2_intersection.h@>==@{
+@<cgal_heading@>@(@-
+include/CGAL/Triangle_2_Triangle_2_intersection.h@,@-
+intersection_2_2.fw@,@-
+Geert-Jan Giezeman@,@-
+MPI, Saarbruecken@)
+
+#ifndef CGAL_TRIANGLE_2_TRIANGLE_2_INTERSECTION_H
+#define CGAL_TRIANGLE_2_TRIANGLE_2_INTERSECTION_H
+
+#include <CGAL/Object.h>
+
+CGAL_BEGIN_NAMESPACE
+
+template <class R>
+Object
+intersection(const Triangle_2<R> &tr1, const Triangle_2<R>&tr2);
+
+template <class R>
+bool
+do_intersect(const Triangle_2<R> &tr1, const Triangle_2<R>&tr2);
+
+CGAL_END_NAMESPACE
+
+#ifdef CGAL_CFG_NO_AUTOMATIC_TEMPLATE_INCLUSION
+#include <CGAL/Triangle_2_Triangle_2_intersection.C>
+#endif
+#endif
+@}
+
+@O@<../include/CGAL/Triangle_2_Triangle_2_intersection.C@>==@{
+@<cgal_heading@>@(@-
+include/CGAL/Triangle_2_Triangle_2_intersection.C@,@-
+intersection_2_2.fw@,@-
+Geert-Jan Giezeman@,@-
+Saarbruecken@)
+
+
+#include <CGAL/Segment_2.h>
+#include <CGAL/Triangle_2.h>
+
+CGAL_BEGIN_NAMESPACE
+
+template <class R>
+struct Pointlist_2_rec_ {
+    Pointlist_2_rec_ *next;
+    Point_2<R> point;
+    Oriented_side side;
+};
+
+template <class R>
+struct Pointlist_2_ {
+    int size;
+    Pointlist_2_rec_<R> *first;
+    Pointlist_2_() ;
+    ~Pointlist_2_() ;
+};
+
+template <class R>
+class Triangle_2_Triangle_2_pair {
+public:
+    enum Intersection_results {NO, POINT, SEGMENT, TRIANGLE, POLYGON};
+                        Triangle_2_Triangle_2_pair() ;
+                        Triangle_2_Triangle_2_pair(
+                                Triangle_2<R> const *trian1,
+                                Triangle_2<R> const *trian2) ;
+    ~Triangle_2_Triangle_2_pair() {}
+#ifdef CGAL_CFG_RETURN_TYPE_BUG_2
+    Intersection_results intersection_type() const
+    @<Triangle_2_Triangle_2_pair intersection_type body@>
+#else
+    Intersection_results intersection_type() const;
+#endif // CGAL_CFG_RETURN_TYPE_BUG_2
+    bool                intersection(Point_2<R> &result) const;
+    bool                intersection(Segment_2<R> &result) const;
+    bool                intersection(Triangle_2<R> &result) const;
+    bool                intersection(/*Polygon_2<R> &result*/) const;
+    int                 vertex_count() const;
+    Point_2<R>     vertex(int i) const;
+protected:
+    Triangle_2<R> const*   _trian1;
+    Triangle_2<R> const *  _trian2;
+    mutable bool                    _known;
+    mutable Intersection_results    _result;
+    mutable Pointlist_2_<R>    _pointlist;
+};
+
+@<do_intersect macro@>@(Triangle_2@,Triangle_2@)
+
+CGAL_END_NAMESPACE
+
+@<Triangle_2_Triangle_2_pair implementation@>
+
+CGAL_BEGIN_NAMESPACE
+
+template <class R>
+Object
+intersection(const Triangle_2<R> &tr1, const Triangle_2<R>&tr2)
+{
+    typedef Triangle_2_Triangle_2_pair<R> is_t;
+    is_t ispair(&tr1, &tr2);
+    switch (ispair.intersection_type()) {
+    case is_t::NO:
+    default:
+        return Object();
+    case is_t::POINT: {
+        Point_2<R> pt;
+        ispair.intersection(pt);
+        return Object(new Wrapper< Point_2<R> >(pt));
+    }
+    case is_t::SEGMENT: {
+        Segment_2<R> iseg;
+        ispair.intersection(iseg);
+        return Object(new Wrapper< Segment_2<R> >(iseg));
+    }
+    case is_t::TRIANGLE: {
+        Triangle_2<R> itr;
+        ispair.intersection(itr);
+        return Object(new Wrapper< Triangle_2<R> >(itr));
+    }
+    case is_t::POLYGON: {
+        typedef CGAL_STD::vector<Point_2<R> > Container;
+        Container points(ispair.vertex_count());
+        for (int i =0; i < ispair.vertex_count(); i++) {
+            points[i] = ispair.vertex(i);
+        }
+        return Object(new Wrapper< Container >(points));
+    }
+    }
+}
+
+CGAL_END_NAMESPACE
+
+@}
+
+A triangle is a convex polygon. We maintain this convex polygon.
+Every edge of the other triangle can be extended to a line.
+We cut the maintained polygon consecutively with those three supporting lines.
+
+We direct the lines in such a way that the (second) triangle lies to the left
+of them. So, when we look at the maintained polygon, the vertices to the right
+should be discarded.
+
+The implementation does not make use of LEDA singly linked lists,
+which it should do, probably.
+
+@$@<Triangle_2_Triangle_2_pair implementation@>+=@{
+
+#include <CGAL/Line_2.h>
+#include <CGAL/utils.h>
+#include <CGAL/number_utils.h>
+#include <vector>
+
+CGAL_BEGIN_NAMESPACE
+
+template <class R>
+Pointlist_2_<R>::Pointlist_2_()
+{
+    size = 0;
+    first = 0;
+}
+
+template <class R>
+Pointlist_2_<R>::~Pointlist_2_()
+{
+    Pointlist_2_rec_<R> *cur;
+    for (int i=0; i<size; i++) {
+        cur = first;
+        first = cur->next;
+        delete cur;
+    }
+}
+
+
+@}
+
+@$@<Triangle_2_Triangle_2_pair implementation@>+=@{
+
+template <class R>
+void _init_list(Pointlist_2_<R> &list,
+                const Triangle_2<R> &trian)
+{
+    // check on degeneracies of trian.
+    if (!trian.is_degenerate()) {
+        list.size = 3;
+        list.first = 0;
+        for (int i=0; i<3; i++) {
+            Pointlist_2_rec_<R> *newrec =
+                        new Pointlist_2_rec_<R>;
+            newrec->next = list.first;
+            list.first = newrec;
+            newrec->point = trian[i];
+        }
+    } else {
+        // _not_implemented();
+        CGAL_kernel_assertion(false);
+    }
+}
+
+CGAL_END_NAMESPACE
+@}
+
+@$@<Triangle_2_Triangle_2_pair implementation@>+=@{
+#include <CGAL/Line_2_Line_2_intersection.h>
+
+CGAL_BEGIN_NAMESPACE
+
+template <class R>
+void _cut_off(Pointlist_2_<R> &list,
+                const Line_2<R> &cutter)
+{
+    int i;
+    int add = 0;
+    Pointlist_2_rec_<R> *cur, *last=0, *newrec;
+    for (i=0, cur = list.first; i<list.size; i++, cur = cur->next) {
+        cur->side = cutter.oriented_side(cur->point);
+        last = cur;
+    }
+@}
+Add vertices on the cutter.
+@$@<Triangle_2_Triangle_2_pair implementation@>+=@{@-
+    for (cur = list.first, i=0; i<list.size; i++, cur = cur->next) {
+        if ((cur->side == ON_POSITIVE_SIDE
+             && last->side == ON_NEGATIVE_SIDE)
+           || (cur->side == ON_NEGATIVE_SIDE
+               && last->side == ON_POSITIVE_SIDE)) {
+            // add a vertex after cur
+            add++;
+            Line_2<R> l(cur->point, last->point);
+            newrec = new Pointlist_2_rec_<R>;
+            newrec->next = last->next;
+            last->next = newrec;
+            newrec->side = ON_ORIENTED_BOUNDARY;
+            Line_2_Line_2_pair<R> linepair(&cutter,  &l);
+            Line_2_Line_2_pair<R>::Intersection_results isr;
+            isr = linepair.intersection_type();
+            CGAL_kernel_assertion(isr == Line_2_Line_2_pair<R>::POINT);
+            linepair.intersection(newrec->point);
+        }
+        last = cur;
+    }
+    CGAL_kernel_assertion(add <= 2);
+@}
+remove the vertices on the right side of the line.
+@$@<Triangle_2_Triangle_2_pair implementation@>+=@{@-
+    Pointlist_2_rec_<R> **curpt;
+    curpt = &list.first;
+    while (*curpt != 0) {
+        cur = *curpt;
+        if (cur->side == ON_NEGATIVE_SIDE) {
+            add--;
+            *curpt = cur->next;
+            delete cur;
+        } else {
+            curpt = &cur->next;
+        }
+    }
+@}
+We added two identical points if the original pointlist had two points
+and was cut by the cutter. Here we repair this.
+@$@<Triangle_2_Triangle_2_pair implementation@>+=@{@-
+    if (list.size == 2 && add == 1) {
+        add = 0;
+        cur = list.first;
+        if (cur->side == ON_ORIENTED_BOUNDARY) {
+            list.first = cur->next;
+            delete cur;
+        } else {
+            last = cur;
+            cur = cur->next;
+            last->next = cur->next;
+            delete cur;
+        }
+    }
+    list.size += add;
+}
+
+template <class R>
+Triangle_2_Triangle_2_pair<R>::
+Triangle_2_Triangle_2_pair()
+{
+    _trian1 = 0;
+    _trian2 = 0;
+    _known = false;
+}
+
+template <class R>
+Triangle_2_Triangle_2_pair<R>::
+Triangle_2_Triangle_2_pair(Triangle_2<R> const *trian1,
+         Triangle_2<R> const *trian2)
+{
+    _trian1 = trian1;
+    _trian2 = trian2;
+    _known = false;
+}
+
+#ifndef CGAL_CFG_RETURN_TYPE_BUG_2
+template <class R>
+Triangle_2_Triangle_2_pair<R>::Intersection_results
+Triangle_2_Triangle_2_pair<R>::intersection_type() const
+@<Triangle_2_Triangle_2_pair intersection_type body@>
+#endif
+
+
+template <class R>
+bool
+Triangle_2_Triangle_2_pair<R>::intersection(
+        /* Polygon_2<R> &result */) const
+{
+    if (!_known)
+        intersection_type();
+    if (_result != TRIANGLE  &&  _result != POLYGON)
+        return false;
+    Pointlist_2_rec_<R> *cur;
+    int i;
+    for (i=0, cur = _pointlist.first;
+         i<_pointlist.size;
+         i++, cur = cur->next) {
+      cout << to_double(cur->point.x()) << ' ';
+      cout << to_double(cur->point.y()) << ' ';
+    }
+    cout << endl;
+    return true;
+}
+
+template <class R>
+int
+Triangle_2_Triangle_2_pair<R>::vertex_count() const
+{
+    CGAL_kernel_assertion(_known);
+    return _pointlist.size;
+}
+
+template <class R>
+Point_2<R>
+Triangle_2_Triangle_2_pair<R>::vertex(int n) const
+{
+    CGAL_kernel_assertion(_known);
+    CGAL_kernel_assertion(n >= 0 && n < _pointlist.size);
+    Pointlist_2_rec_<R> *cur;
+    int k;
+    for (k=0, cur = _pointlist.first;
+         k < n;
+         k++, cur = cur->next) {
+    }
+    return cur->point;
+}
+
+template <class R>
+bool
+Triangle_2_Triangle_2_pair<R>::intersection(
+        Triangle_2<R> &result) const
+{
+    if (!_known)
+        intersection_type();
+    if (_result != TRIANGLE)
+        return false;
+    result = Triangle_2<R>(_pointlist.first->point,
+                    _pointlist.first->next->point,
+                    _pointlist.first->next->next->point);
+    return true;
+}
+
+template <class R>
+bool
+Triangle_2_Triangle_2_pair<R>::intersection(
+        Segment_2<R> &seg) const
+{
+    if (!_known)
+        intersection_type();
+    if (_result != SEGMENT)
+        return false;
+    seg = Segment_2<R>(_pointlist.first->point,
+                    _pointlist.first->next->point);
+    return true;
+}
+
+template <class R>
+bool
+Triangle_2_Triangle_2_pair<R>::intersection(
+        Point_2<R> &pt) const
+{
+    if (!_known)
+        intersection_type();
+    if (_result != POINT)
+        return false;
+    pt = _pointlist.first->point;
+    return true;
+}
+
+CGAL_END_NAMESPACE
+
+@}
+
+@$@<Triangle_2_Triangle_2_pair intersection_type body@>@M==@{@-
+{
+    if (_known)
+        return _result;
+// The non const this pointer is used to cast away const.
+    _known = true;
+    if (!do_overlap(_trian1->bbox(), _trian2->bbox())) {
+        _result = NO;
+        return _result;
+    }
+    _init_list(_pointlist, *_trian1);
+    if (_trian2->is_degenerate()) {
+        // _not_implemented();
+        CGAL_kernel_assertion(false);
+    } else {
+        Line_2<R> l(_trian2->vertex(0), _trian2->vertex(1));
+        if (l.oriented_side(_trian2->vertex(2)) == ON_POSITIVE_SIDE) {
+            // counterclockwise triangle
+            _cut_off(_pointlist, l);
+            l = Line_2<R>(_trian2->vertex(1), _trian2->vertex(2));
+            _cut_off(_pointlist, l);
+            l = Line_2<R>(_trian2->vertex(2), _trian2->vertex(0));
+            _cut_off(_pointlist, l);
+        } else {
+            l = l.opposite();
+            _cut_off(_pointlist, l);
+            l = Line_2<R>(_trian2->vertex(0), _trian2->vertex(2));
+            _cut_off(_pointlist, l);
+            l = Line_2<R>(_trian2->vertex(2), _trian2->vertex(1));
+            _cut_off(_pointlist, l);
+        }
+    }
+    switch (_pointlist.size) {
+    case 0:
+        _result = NO;
+        break;
+    case 1:
+        _result = POINT;
+        break;
+    case 2:
+        _result = SEGMENT;
+        break;
+    case 3:
+        _result = TRIANGLE;
+        break;
+    default:
+        _result = POLYGON;
+    }
+    return _result;
+}
+@}
+
+
+
+@B@<Intersection of triangle with a line, ray, segment or point@>
+
+@O@<../include/CGAL/Triangle_2_Line_2_intersection.h@>==@{
+@<cgal_heading@>@(@-
+include/CGAL/Triangle_2_Line_2_intersection.h@,@-
+intersection_2_2.fw@,@-
+Geert-Jan Giezeman@,@-
+MPI, Saarbruecken@)
+#include <CGAL/Line_2_Triangle_2_intersection.h>
+@}
+
+@O@<../include/CGAL/Line_2_Triangle_2_intersection.h@>==@{
+@<cgal_heading@>@(@-
+include/CGAL/Line_2_Triangle_2_intersection.h@,@-
+intersection_2_2.fw@,@-
+Geert-Jan Giezeman@,@-
+Saarbruecken@)
+
+#ifndef CGAL_LINE_2_TRIANGLE_2_INTERSECTION_H
+#define CGAL_LINE_2_TRIANGLE_2_INTERSECTION_H
+
+#include <CGAL/Line_2.h>
+#include <CGAL/Segment_2.h>
+#include <CGAL/Triangle_2.h>
+#include <CGAL/Point_2.h>
+
+CGAL_BEGIN_NAMESPACE
+
+template <class R>
+class Line_2_Triangle_2_pair {
+public:
+    enum Intersection_results {NO, POINT, SEGMENT};
+    Line_2_Triangle_2_pair() ;
+    Line_2_Triangle_2_pair(Line_2<R> const *line,
+                            Triangle_2<R> const *trian);
+    ~Line_2_Triangle_2_pair() {}
+#ifdef CGAL_CFG_RETURN_TYPE_BUG_2
+    Intersection_results intersection_type() const
+    @<Line_2_Triangle_2_pair intersection_type body@>
+#else
+    Intersection_results intersection_type() const;
+#endif // CGAL_CFG_RETURN_TYPE_BUG_2
+    bool                intersection(Point_2<R> &result) const;
+    bool                intersection(Segment_2<R> &result) const;
+protected:
+    Line_2<R> const*_line;
+    Triangle_2<R> const *  _trian;
+    mutable bool                    _known;
+    mutable Intersection_results     _result;
+    mutable Point_2<R>         _intersection_point;
+    mutable Point_2<R>         _other_point;
+};
+
+@<do_intersect macro@>@(Line_2@,Triangle_2@)
+
+CGAL_END_NAMESPACE
+
+@<Line_2_Triangle_2_pair implementation@>
+
+#include <CGAL/Object.h>
+
+CGAL_BEGIN_NAMESPACE
+
+template <class R>
+Object
+intersection(const Line_2<R> &line, const Triangle_2<R>&tr)
+{
+    typedef Line_2_Triangle_2_pair<R> is_t;
+    is_t ispair(&line, &tr);
+    switch (ispair.intersection_type()) {
+    case is_t::NO:
+    default:
+        return Object();
+    case is_t::POINT: {
+        Point_2<R> pt;
+        ispair.intersection(pt);
+        return Object(new Wrapper< Point_2<R> >(pt));
+    }
+    case is_t::SEGMENT: {
+        Segment_2<R> iseg;
+        ispair.intersection(iseg);
+        return Object(new Wrapper< Segment_2<R> >(iseg));
+    }
+    }
+}
+
+template <class R>
+class Triangle_2_Line_2_pair
+: public Line_2_Triangle_2_pair<R> {
+public:
+    Triangle_2_Line_2_pair(
+            Triangle_2<R> const *trian,
+            Line_2<R> const *line) :
+                        Line_2_Triangle_2_pair<R>(line, trian) {}
+};
+
+@<do_intersect macro@>@(Triangle_2@,Line_2@)
+
+template <class R>
+inline Object
+intersection(const Triangle_2<R> &tr, const Line_2<R> &line)
+{
+    return intersection(line, tr);
+}
+
+CGAL_END_NAMESPACE
+
+#endif
+@}
+
+@$@<Line_2_Triangle_2_pair implementation@>==@{
+#include <CGAL/Straight_2.h>
+#include <CGAL/utils.h>
+#include <CGAL/number_utils.h>
+
+CGAL_BEGIN_NAMESPACE
+
+template <class R>
+Line_2_Triangle_2_pair<R>::
+Line_2_Triangle_2_pair()
+{
+    _known = false;
+    _line = 0;
+    _trian = 0;
+}
+
+template <class R>
+Line_2_Triangle_2_pair<R>::
+Line_2_Triangle_2_pair(Line_2<R> const *line,
+                            Triangle_2<R> const *trian)
+{
+    _known = false;
+    _line = line;
+    _trian = trian;
+}
+
+#ifndef CGAL_CFG_RETURN_TYPE_BUG_2
+template <class R>
+Line_2_Triangle_2_pair<R>::Intersection_results
+Line_2_Triangle_2_pair<R>::intersection_type() const
+@<Line_2_Triangle_2_pair intersection_type body@>
+#endif // CGAL_CFG_RETURN_TYPE_BUG_2
+
+template <class R>
+bool
+Line_2_Triangle_2_pair<R>::
+intersection(Point_2<R> &result) const
+{
+    if (!_known)
+        intersection_type();
+    if (_result != POINT)
+        return false;
+    result = _intersection_point;
+    return true;
+}
+
+template <class R>
+bool
+Line_2_Triangle_2_pair<R>::
+intersection(Segment_2<R> &result) const
+{
+    if (!_known)
+        intersection_type();
+    if (_result != SEGMENT)
+        return false;
+    result = Segment_2<R>(_intersection_point, _other_point);
+    return true;
+}
+
+CGAL_END_NAMESPACE
+
+@}
+
+@$@<Line_2_Triangle_2_pair intersection_type body@>@M==@{@-
+{
+    if (_known)
+        return _result;
+// The non const this pointer is used to cast away const.
+    _known = true;
+    Straight_2_<R> straight(*_line);
+Line_2<R> l(_trian->vertex(0), _trian->vertex(1));
+if (l.oriented_side(_trian->vertex(2)) == ON_POSITIVE_SIDE) {
+//    if (_trian->is_counterclockwise()) {
+        straight.cut_right_off(
+            Line_2<R>(_trian->vertex(0), _trian->vertex(1)));
+        straight.cut_right_off(
+            Line_2<R>(_trian->vertex(1), _trian->vertex(2)));
+        straight.cut_right_off(
+            Line_2<R>(_trian->vertex(2), _trian->vertex(0)));
+    } else {
+        straight.cut_right_off(
+            Line_2<R>(_trian->vertex(2), _trian->vertex(1)));
+        straight.cut_right_off(
+            Line_2<R>(_trian->vertex(1), _trian->vertex(0)));
+        straight.cut_right_off(
+            Line_2<R>(_trian->vertex(0), _trian->vertex(2)));
+    }
+    switch (straight.current_state()) {
+    case Straight_2_<R>::EMPTY:
+        _result = NO;
+        return _result;
+    case Straight_2_<R>::POINT: {
+        straight.current(_intersection_point);
+        _result = POINT;
+        return _result;
+        }
+    case Straight_2_<R>::SEGMENT: {
+        Segment_2<R> seg;
+        straight.current(seg);
+        _intersection_point = seg.start();
+        _other_point = seg.end();
+        _result = SEGMENT;
+        return _result;
+        }
+    default:  // should not happen.
+        CGAL_kernel_assertion_msg(false, "Internal CGAL error.");
+        _result = NO;
+        return _result;
+    }
+}
+@}
+
+@O@<../include/CGAL/Triangle_2_Ray_2_intersection.h@>==@{
+@<cgal_heading@>@(@-
+include/CGAL/Triangle_2_Ray_2_intersection.h@,@-
+intersection_2_2.fw@,@-
+Geert-Jan Giezeman@,@-
+MPI, Saarbruecken@)
+#include <CGAL/Ray_2_Triangle_2_intersection.h>
+@}
+
+@O@<../include/CGAL/Ray_2_Triangle_2_intersection.h@>==@{
+@<cgal_heading@>@(@-
+include/CGAL/Ray_2_Triangle_2_intersection.h@,@-
+intersection_2_2.fw@,@-
+Geert-Jan Giezeman@,@-
+Saarbruecken@)
+
+#ifndef CGAL_RAY_2_TRIANGLE_2_INTERSECTION_H
+#define CGAL_RAY_2_TRIANGLE_2_INTERSECTION_H
+
+#include <CGAL/Segment_2.h>
+#include <CGAL/Ray_2.h>
+#include <CGAL/Triangle_2.h>
+#include <CGAL/Point_2.h>
+
+CGAL_BEGIN_NAMESPACE
+
+template <class R>
+class Ray_2_Triangle_2_pair {
+public:
+    enum Intersection_results {NO, POINT, SEGMENT};
+    Ray_2_Triangle_2_pair() ;
+    Ray_2_Triangle_2_pair(Ray_2<R> const *ray,
+                            Triangle_2<R> const *trian);
+    ~Ray_2_Triangle_2_pair() {}
+#ifdef CGAL_CFG_RETURN_TYPE_BUG_2
+    Intersection_results intersection_type() const
+    @<Ray_2_Triangle_2_pair intersection_type body@>
+#else
+    Intersection_results intersection_type() const;
+#endif // CGAL_CFG_RETURN_TYPE_BUG_2
+    bool                intersection(Point_2<R> &result) const;
+    bool                intersection(Segment_2<R> &result) const;
+protected:
+    Ray_2<R> const* _ray;
+    Triangle_2<R> const *  _trian;
+    mutable bool                    _known;
+    mutable Intersection_results     _result;
+    mutable Point_2<R>         _intersection_point;
+    mutable Point_2<R>         _other_point;
+};
+
+@<do_intersect macro@>@(Ray_2@,Triangle_2@)
+
+CGAL_END_NAMESPACE
+
+@<2D Ray Triangle intersection implementation@>
+
+#include <CGAL/Object.h>
+
+CGAL_BEGIN_NAMESPACE
+
+template <class R>
+Object
+intersection(const Ray_2<R> &ray, const Triangle_2<R>&tr)
+{
+    typedef Ray_2_Triangle_2_pair<R> is_t;
+    is_t ispair(&ray, &tr);
+    switch (ispair.intersection_type()) {
+    case is_t::NO:
+    default:
+        return Object();
+    case is_t::POINT: {
+        Point_2<R> pt;
+        ispair.intersection(pt);
+        return Object(new Wrapper< Point_2<R> >(pt));
+    }
+    case is_t::SEGMENT: {
+        Segment_2<R> iseg;
+        ispair.intersection(iseg);
+        return Object(new Wrapper< Segment_2<R> >(iseg));
+    }
+    }
+}
+
+template <class R>
+class Triangle_2_Ray_2_pair
+: public Ray_2_Triangle_2_pair<R> {
+public:
+    Triangle_2_Ray_2_pair(
+            Triangle_2<R> const *trian,
+            Ray_2<R> const *ray) :
+                        Ray_2_Triangle_2_pair<R>(ray, trian) {}
+};
+
+@<do_intersect macro@>@(Triangle_2@,Ray_2@)
+
+template <class R>
+inline Object
+intersection(const Triangle_2<R> &tr, const Ray_2<R> &ray)
+{
+    return intersection(ray, tr);
+}
+
+CGAL_END_NAMESPACE
+
+#endif
+@}
+
+@$@<2D Ray Triangle intersection implementation@>==@{
+
+#include <CGAL/Line_2.h>
+#include <CGAL/utils.h>
+#include <CGAL/number_utils.h>
+#include <CGAL/Straight_2.h>
+
+CGAL_BEGIN_NAMESPACE
+
+template <class R>
+Ray_2_Triangle_2_pair<R>::
+Ray_2_Triangle_2_pair()
+{
+    _known = false;
+    _ray = 0;
+    _trian = 0;
+}
+
+template <class R>
+Ray_2_Triangle_2_pair<R>::
+Ray_2_Triangle_2_pair(Ray_2<R> const *ray,
+                            Triangle_2<R> const *trian)
+{
+    _known = false;
+    _ray = ray;
+    _trian = trian;
+}
+
+#ifndef CGAL_CFG_RETURN_TYPE_BUG_2
+template <class R>
+Ray_2_Triangle_2_pair<R>::Intersection_results
+Ray_2_Triangle_2_pair<R>::intersection_type() const
+@<Ray_2_Triangle_2_pair intersection_type body@>
+#endif // CGAL_CFG_RETURN_TYPE_BUG_2
+
+template <class R>
+bool
+Ray_2_Triangle_2_pair<R>::
+intersection(Point_2<R> &result) const
+{
+    if (!_known)
+        intersection_type();
+    if (_result != POINT)
+        return false;
+    result = _intersection_point;
+    return true;
+}
+
+template <class R>
+bool
+Ray_2_Triangle_2_pair<R>::
+intersection(Segment_2<R> &result) const
+{
+    if (!_known)
+        intersection_type();
+    if (_result != SEGMENT)
+        return false;
+    result = Segment_2<R>(_intersection_point, _other_point);
+    return true;
+}
+
+CGAL_END_NAMESPACE
+
+@}
+
+@$@<Ray_2_Triangle_2_pair intersection_type body@>@M==@{@-
+{
+    if (_known)
+        return _result;
+// The non const this pointer is used to cast away const.
+    _known = true;
+    Straight_2_<R> straight(*_ray);
+Line_2<R> l(_trian->vertex(0), _trian->vertex(1));
+if (l.oriented_side(_trian->vertex(2)) == ON_POSITIVE_SIDE) {
+//    if (_trian->is_counterclockwise()) {
+        straight.cut_right_off(
+            Line_2<R>(_trian->vertex(0), _trian->vertex(1)));
+        straight.cut_right_off(
+            Line_2<R>(_trian->vertex(1), _trian->vertex(2)));
+        straight.cut_right_off(
+            Line_2<R>(_trian->vertex(2), _trian->vertex(0)));
+    } else {
+        straight.cut_right_off(
+            Line_2<R>(_trian->vertex(2), _trian->vertex(1)));
+        straight.cut_right_off(
+            Line_2<R>(_trian->vertex(1), _trian->vertex(0)));
+        straight.cut_right_off(
+            Line_2<R>(_trian->vertex(0), _trian->vertex(2)));
+    }
+    switch (straight.current_state()) {
+    case Straight_2_<R>::EMPTY:
+        _result = NO;
+        return _result;
+    case Straight_2_<R>::POINT: {
+        straight.current(_intersection_point);
+        _result = POINT;
+        return _result;
+        }
+    case Straight_2_<R>::SEGMENT: {
+        Segment_2<R> seg;
+        straight.current(seg);
+        _intersection_point = seg.start();
+        _other_point = seg.end();
+        _result = SEGMENT;
+        return _result;
+        }
+    default:  // should not happen.
+        CGAL_kernel_assertion_msg(false, "Internal CGAL error.");
+        _result = NO;
+        return _result;
+    }
+}
+@}
+
+@O@<../include/CGAL/Triangle_2_Segment_2_intersection.h@>==@{
+@<cgal_heading@>@(@-
+include/CGAL/Triangle_2_Segment_2_intersection.h@,@-
+intersection_2_2.fw@,@-
+Geert-Jan Giezeman@,@-
+MPI, Saarbruecken@)
+#include <CGAL/Segment_2_Triangle_2_intersection.h>
+@}
+
+@O@<../include/CGAL/Segment_2_Triangle_2_intersection.h@>==@{
+@<cgal_heading@>@(@-
+include/CGAL/Segment_2_Triangle_2_intersection.h@,@-
+intersection_2_2.fw@,@-
+Geert-Jan Giezeman@,@-
+Saarbruecken@)
+
+#ifndef CGAL_SEGMENT_2_TRIANGLE_2_INTERSECTION_H
+#define CGAL_SEGMENT_2_TRIANGLE_2_INTERSECTION_H
+
+#include <CGAL/Segment_2.h>
+#include <CGAL/Triangle_2.h>
+#include <CGAL/Point_2.h>
+
+CGAL_BEGIN_NAMESPACE
+
+template <class R>
+class Segment_2_Triangle_2_pair {
+public:
+    enum Intersection_results {NO, POINT, SEGMENT};
+    Segment_2_Triangle_2_pair() ;
+    Segment_2_Triangle_2_pair(Segment_2<R> const *seg,
+                            Triangle_2<R> const *trian);
+    ~Segment_2_Triangle_2_pair() {}
+#ifdef CGAL_CFG_RETURN_TYPE_BUG_2
+    Intersection_results intersection_type() const
+    @<Segment_2_Triangle_2_pair intersection_type body@>
+#else
+    Intersection_results intersection_type() const;
+#endif // CGAL_CFG_RETURN_TYPE_BUG_2
+    bool                intersection(Point_2<R> &result) const;
+    bool                intersection(Segment_2<R> &result) const;
+protected:
+    Segment_2<R> const *  _seg;
+    Triangle_2<R> const * _trian;
+    mutable bool                       _known;
+    mutable Intersection_results       _result;
+    mutable Point_2<R>            _intersection_point;
+    mutable Point_2<R>            _other_point;
+};
+
+@<do_intersect macro@>@(Segment_2@,Triangle_2@)
+
+CGAL_END_NAMESPACE
+
+@<Segment_2_Triangle_2_pair implementation@>
+
+
+#include <CGAL/Object.h>
+
+CGAL_BEGIN_NAMESPACE
+
+template <class R>
+Object
+intersection(const Segment_2<R> &seg, const Triangle_2<R>&tr)
+{
+    typedef Segment_2_Triangle_2_pair<R> is_t;
+    is_t ispair(&seg, &tr);
+    switch (ispair.intersection_type()) {
+    case is_t::NO:
+    default:
+        return Object();
+    case is_t::POINT: {
+        Point_2<R> pt;
+        ispair.intersection(pt);
+        return Object(new Wrapper< Point_2<R> >(pt));
+    }
+    case is_t::SEGMENT: {
+        Segment_2<R> iseg;
+        ispair.intersection(iseg);
+        return Object(new Wrapper< Segment_2<R> >(iseg));
+    }
+    }
+}
+
+template <class R>
+class Triangle_2_Segment_2_pair
+: public Segment_2_Triangle_2_pair<R> {
+public:
+    Triangle_2_Segment_2_pair(
+            Triangle_2<R> const *trian,
+            Segment_2<R> const *seg) :
+                        Segment_2_Triangle_2_pair<R>(seg, trian) {}
+};
+
+@<do_intersect macro@>@(Triangle_2@,Segment_2@)
+
+template <class R>
+inline Object
+intersection(const Triangle_2<R> &tr, const Segment_2<R> &seg)
+{
+    return intersection(seg, tr);
+}
+
+CGAL_END_NAMESPACE
+
+#endif
+@}
+
+@$@<Segment_2_Triangle_2_pair implementation@>==@{
+
+#include <CGAL/Line_2.h>
+#include <CGAL/utils.h>
+#include <CGAL/number_utils.h>
+#include <CGAL/Straight_2.h>
+
+CGAL_BEGIN_NAMESPACE
+
+template <class R>
+Segment_2_Triangle_2_pair<R>::
+Segment_2_Triangle_2_pair()
+{
+    _known = false;
+    _seg = 0;
+    _trian = 0;
+}
+
+template <class R>
+Segment_2_Triangle_2_pair<R>::
+Segment_2_Triangle_2_pair(Segment_2<R> const *seg,
+                            Triangle_2<R> const *trian)
+{
+    _known = false;
+    _seg = seg;
+    _trian = trian;
+}
+
+#ifndef CGAL_CFG_RETURN_TYPE_BUG_2
+template <class R>
+Segment_2_Triangle_2_pair<R>::Intersection_results
+Segment_2_Triangle_2_pair<R>::intersection_type() const
+@<Segment_2_Triangle_2_pair intersection_type body@>
+#endif // CGAL_CFG_RETURN_TYPE_BUG_2
+
+template <class R>
+bool
+Segment_2_Triangle_2_pair<R>::
+intersection(Point_2<R> &result) const
+{
+    if (!_known)
+        intersection_type();
+    if (_result != POINT)
+        return false;
+    result = _intersection_point;
+    return true;
+}
+
+template <class R>
+bool
+Segment_2_Triangle_2_pair<R>::
+intersection(Segment_2<R> &result) const
+{
+    if (!_known)
+        intersection_type();
+    if (_result != SEGMENT)
+        return false;
+    result = Segment_2<R>(_intersection_point, _other_point);
+    return true;
+}
+
+CGAL_END_NAMESPACE
+
+@}
+
+@$@<Segment_2_Triangle_2_pair intersection_type body@>@M==@{@-
+{
+    if (_known)
+        return _result;
+// The non const this pointer is used to cast away const.
+    _known = true;
+    Straight_2_<R> straight(*_seg);
+Line_2<R> l(_trian->vertex(0), _trian->vertex(1));
+if (l.oriented_side(_trian->vertex(2)) == ON_POSITIVE_SIDE) {
+        straight.cut_right_off(
+            Line_2<R>(_trian->vertex(0), _trian->vertex(1)));
+        straight.cut_right_off(
+            Line_2<R>(_trian->vertex(1), _trian->vertex(2)));
+        straight.cut_right_off(
+            Line_2<R>(_trian->vertex(2), _trian->vertex(0)));
+    } else {
+        straight.cut_right_off(
+            Line_2<R>(_trian->vertex(2), _trian->vertex(1)));
+        straight.cut_right_off(
+            Line_2<R>(_trian->vertex(1), _trian->vertex(0)));
+        straight.cut_right_off(
+            Line_2<R>(_trian->vertex(0), _trian->vertex(2)));
+    }
+    switch (straight.current_state()) {
+    case Straight_2_<R>::EMPTY:
+        _result = NO;
+        return _result;
+    case Straight_2_<R>::POINT: {
+        straight.current(_intersection_point);
+        _result = POINT;
+        return _result;
+        }
+    case Straight_2_<R>::SEGMENT: {
+        Segment_2<R> seg;
+        straight.current(seg);
+        _intersection_point = seg.start();
+        _other_point = seg.end();
+        _result = SEGMENT;
+        return _result;
+        }
+    default:  // should not happen.
+        CGAL_kernel_assertion_msg(false, "Internal CGAL error.");
+        _result = NO;
+        return _result;
+    }
+}
+@}
+
+
+@O@<../include/CGAL/Triangle_2_Point_2_intersection.h@>==@{
+@<cgal_heading@>@(@-
+include/CGAL/Triangle_2_Point_2_intersection.h@,@-
+intersection_2_2.fw@,@-
+Geert-Jan Giezeman@,@-
+MPI, Saarbruecken@)
+#include <CGAL/Point_2_Triangle_2_intersection.h>
+@}
+
+@O@<../include/CGAL/Point_2_Triangle_2_intersection.h@>==@{
+@<cgal_heading@>@(@-
+include/CGAL/Point_2_Triangle_2_intersection.h@,@-
+intersection_2_2.fw@,@-
+Geert-Jan Giezeman@,@-
+Saarbruecken@)
+
+#ifndef CGAL_POINT_2_TRIANGLE_2_INTERSECTION_H
+#define CGAL_POINT_2_TRIANGLE_2_INTERSECTION_H
+
+#include <CGAL/Point_2.h>
+#include <CGAL/Triangle_2.h>
+#include <CGAL/Point_2.h>
+
+CGAL_BEGIN_NAMESPACE
+
+template <class R>
+class Point_2_Triangle_2_pair {
+public:
+    enum Intersection_results {NO, POINT};
+    Point_2_Triangle_2_pair() ;
+    Point_2_Triangle_2_pair(Point_2<R> const *pt,
+                            Triangle_2<R> const *trian);
+    ~Point_2_Triangle_2_pair() {}
+#ifdef CGAL_CFG_RETURN_TYPE_BUG_2
+    Intersection_results intersection_type() const
+    @<Point_2_Triangle_2_pair intersection_type body@>
+#else
+    Intersection_results intersection_type() const;
+#endif // CGAL_CFG_RETURN_TYPE_BUG_2
+    bool                intersection(Point_2<R> &result) const;
+protected:
+    Point_2<R> const *    _pt;
+    Triangle_2<R> const * _trian;
+    mutable bool                       _known;
+    mutable Intersection_results       _result;
+    mutable Point_2<R>            _intersection_point;
+    mutable Point_2<R>            _other_point;
+};
+
+@<do_intersect macro@>@(Point_2@,Triangle_2@)
+
+CGAL_END_NAMESPACE
+
+@<Point_2_Triangle_2_pair implementation@>
+
+#include <CGAL/Object.h>
+
+CGAL_BEGIN_NAMESPACE
+
+template <class R>
+Object
+intersection(const Point_2<R> &pt, const Triangle_2<R>&tr)
+{
+    typedef Point_2_Triangle_2_pair<R> is_t;
+    is_t ispair(&pt, &tr);
+    switch (ispair.intersection_type()) {
+    case is_t::NO:
+    default:
+        return Object();
+    case is_t::POINT: {
+        return Object(new Wrapper< Point_2<R> >(pt));
+    }
+    }
+}
+
+template <class R>
+class Triangle_2_Point_2_pair
+: public Point_2_Triangle_2_pair<R> {
+public:
+    Triangle_2_Point_2_pair(
+            Triangle_2<R> const *trian,
+            Point_2<R> const *pt) :
+                        Point_2_Triangle_2_pair<R>(pt, trian) {}
+};
+
+@<do_intersect macro@>@(Triangle_2@,Point_2@)
+
+template <class R>
+inline Object
+intersection(const Triangle_2<R> &tr, const Point_2<R> &pt)
+{
+    return intersection(pt, tr);
+}
+
+CGAL_END_NAMESPACE
+
+#endif
+@}
+
+@$@<Point_2_Triangle_2_pair implementation@>==@{
+
+#include <CGAL/Line_2.h>
+#include <CGAL/utils.h>
+#include <CGAL/number_utils.h>
+#include <CGAL/Straight_2.h>
+
+CGAL_BEGIN_NAMESPACE
+
+template <class R>
+Point_2_Triangle_2_pair<R>::
+Point_2_Triangle_2_pair()
+{
+    _known = false;
+    _pt = 0;
+    _trian = 0;
+}
+
+template <class R>
+Point_2_Triangle_2_pair<R>::
+Point_2_Triangle_2_pair(Point_2<R> const *pt,
+                            Triangle_2<R> const *trian)
+{
+    _known = false;
+    _pt = pt;
+    _trian = trian;
+}
+
+#ifndef CGAL_CFG_RETURN_TYPE_BUG_2
+template <class R>
+Point_2_Triangle_2_pair<R>::Intersection_results
+Point_2_Triangle_2_pair<R>::intersection_type() const
+@<Point_2_Triangle_2_pair intersection_type body@>
+#endif // CGAL_CFG_RETURN_TYPE_BUG_2
+
+
+
+template <class R>
+bool
+Point_2_Triangle_2_pair<R>::
+intersection(Point_2<R> &result) const
+{
+    if (!_known)
+        intersection_type();
+    if (_result != POINT)
+        return false;
+    result = *_pt;
+    return true;
+}
+
+CGAL_END_NAMESPACE
+
+@}
+
+@$@<Point_2_Triangle_2_pair intersection_type body@>@M==@{@-
+{
+    typedef Line_2<R> line_t;
+    if (_known)
+        return _result;
+// The non const this pointer is used to cast away const.
+    _known = true;
+    if (_trian->has_on_unbounded_side(*_pt)) {
+        _result = NO;
+    } else {
+        _result = POINT;
+    }
+    return _result;
+/*
+    line_t l(_trian->vertex(0), _trian->vertex(1));
+    if (l.has_on_positive_side(_trian->vertex(2))) {
+        for (int i=0; i<3; i++) {
+            if (line_t(_trian->vertex(i), _trian->vertex(i+1)).
+                                has_on_negative_side(*_pt)) {
+                _result = NO;
+                return _result;
+            }
+        }
+    } else {
+        for (int i=0; i<3; i++)
+            if(line_t(_trian->vertex(i), _trian->vertex(i-1)).
+                                has_on_negative_side(*_pt)){
+                _result = NO;
+                return _result;
+            }
+    }
+*/
+}
+@}
+
+@B@<Iso_rectangle Line intersection@>
+
+@O@<../include/CGAL/Iso_rectangle_2_Line_2_intersection.h@>==@{
+@<cgal_heading@>@(@-
+include/CGAL/Iso_rectangle_2_Line_2_intersection.h@,@-
+intersection_2_2.fw@,@-
+Geert-Jan Giezeman@,@-
+MPI, Saarbruecken@)
+#include <CGAL/Line_2_Iso_rectangle_2_intersection.h>
+@}
+
+@O@<../include/CGAL/Line_2_Iso_rectangle_2_intersection.h@>==@{
+@<cgal_heading@>@(@-
+include/CGAL/Line_2_Iso_rectangle_2_intersection.h@,@-
+intersection_2_2.fw@,@-
+Geert-Jan Giezeman@,@-
+Saarbruecken@)
+
+#ifndef CGAL_LINE_2_ISO_RECTANGLE_2_INTERSECTION_H
+#define CGAL_LINE_2_ISO_RECTANGLE_2_INTERSECTION_H
+
+#include <CGAL/Line_2.h>
+#include <CGAL/Iso_rectangle_2.h>
+
+CGAL_BEGIN_NAMESPACE
+
+template <class R>
+class Line_2_Iso_rectangle_2_pair {
+public:
+    enum Intersection_results {NO, POINT, SEGMENT};
+    Line_2_Iso_rectangle_2_pair() ;
+    Line_2_Iso_rectangle_2_pair(Line_2<R> const *pt,
+                            Iso_rectangle_2<R> const *iso);
+    ~Line_2_Iso_rectangle_2_pair() {}
+#ifndef CGAL_CFG_RETURN_TYPE_BUG_2
+  Intersection_results intersection_type() const;
+#else
+  Intersection_results intersection_type() const
+@<Iso_rectangle_2_Line_2_pair intersection_type body@>
+#endif // CGAL_CFG_RETURN_TYPE_BUG_2
+    bool                intersection(Point_2<R> &result) const;
+    bool                intersection(Segment_2<R> &result) const;
+protected:
+    Point_2<R>             _ref_point;
+    Vector_2<R>            _dir;
+    Point_2<R>             _isomin;
+    Point_2<R>             _isomax;
+    mutable bool                        _known;
+    mutable Intersection_results        _result;
+    mutable typename R::FT              _min, _max;
+};
+
+@<do_intersect macro@>@(Line_2@,Iso_rectangle_2@)
+
+CGAL_END_NAMESPACE
+
+@<Line_2_Iso_rectangle_2_pair implementation@>
+
+#include <CGAL/Object.h>
+
+CGAL_BEGIN_NAMESPACE
+
+template <class R>
+Object
+intersection(const Line_2<R> &line, const Iso_rectangle_2<R>&iso)
+{
+    typedef Line_2_Iso_rectangle_2_pair<R> is_t;
+    is_t ispair(&line, &iso);
+    switch (ispair.intersection_type()) {
+    case is_t::NO:
+    default:
+        return Object();
+    case is_t::POINT: {
+        Point_2<R> ipt;
+        ispair.intersection(ipt);
+        return Object(new Wrapper< Point_2<R> >(ipt));
+    }
+    case is_t::SEGMENT: {
+        Segment_2<R> iseg;
+        ispair.intersection(iseg);
+        return Object(new Wrapper< Segment_2<R> >(iseg));
+    }
+    }
+}
+
+template <class R>
+class Iso_rectangle_2_Line_2_pair
+: public Line_2_Iso_rectangle_2_pair<R> {
+public:
+    Iso_rectangle_2_Line_2_pair(
+            Iso_rectangle_2<R> const *iso,
+            Line_2<R> const *line) :
+                        Line_2_Iso_rectangle_2_pair<R>(line, iso) {}
+};
+
+@<do_intersect macro@>@(Iso_rectangle_2@,Line_2@)
+
+template <class R>
+inline Object
+intersection(const Iso_rectangle_2<R>&iso, const Line_2<R>&line)
+{
+    return intersection(line, iso);
+}
+
+CGAL_END_NAMESPACE
+
+#endif
+@}
+
+@$@<Line_2_Iso_rectangle_2_pair implementation@>==@{
+
+#include <CGAL/Line_2.h>
+#include <CGAL/utils.h>
+#include <CGAL/number_utils.h>
+
+CGAL_BEGIN_NAMESPACE
+
+template <class R>
+Line_2_Iso_rectangle_2_pair<R>::
+Line_2_Iso_rectangle_2_pair()
+{
+    _known = false;
+}
+
+template <class R>
+Line_2_Iso_rectangle_2_pair<R>::
+Line_2_Iso_rectangle_2_pair(Line_2<R> const *line,
+                            Iso_rectangle_2<R> const *iso)
+{
+    _known = false;
+    _ref_point = line->point();
+    _dir = line->direction().to_vector();
+    _isomin = iso->min();
+    _isomax = iso->max();
+}
+
+#ifndef CGAL_CFG_RETURN_TYPE_BUG_2
+template <class R>
+Line_2_Iso_rectangle_2_pair<R>::Intersection_results
+Line_2_Iso_rectangle_2_pair<R>::intersection_type() const
+@<Iso_rectangle_2_Line_2_pair intersection_type body@>
+#endif
+
+
+template <class R>
+bool
+Line_2_Iso_rectangle_2_pair<R>::
+intersection(Point_2<R> &result) const
+{
+    if (!_known)
+        intersection_type();
+    if (_result != POINT)
+        return false;
+    result = _ref_point + _dir * _min;
+    return true;
+}
+
+template <class R>
+bool
+Line_2_Iso_rectangle_2_pair<R>::
+intersection(Segment_2<R> &result) const
+{
+    if (!_known)
+        intersection_type();
+    if (_result != SEGMENT)
+        return false;
+    result = Segment_2<R>(_ref_point + _dir*_min, _ref_point + _dir*_max);
+    return true;
+}
+
+CGAL_END_NAMESPACE
+
+@}
+
+The following body of the intersection type member function is used twice.
+Once inline (which the g++ compiler wants because of a bug) and once outline.
+
+@$@<Iso_rectangle_2_Line_2_pair intersection_type body@>@M==@{@-
+{
+    typedef Line_2<R> line_t;
+    if (_known)
+        return _result;
+// The non const this pointer is used to cast away const.
+    _known = true;
+    typedef typename R::FT FT;
+    typedef typename R::RT RT;
+    bool all_values = true;
+    int i;
+    for (i=0; i< _ref_point.dimension(); i++) {
+        if (_dir.homogeneous(i) == RT(0)) {
+            if (_ref_point.cartesian(i) < _isomin.cartesian(i)) {
+                _result = NO;
+                return NO;
+            }
+            if (_ref_point.cartesian(i) > _isomax.cartesian(i)) {
+                _result = NO;
+                return NO;
+            }
+        } else {
+            FT newmin, newmax;
+            if (_dir.homogeneous(i) > RT(0)) {
+                newmin = (_isomin.cartesian(i) - _ref_point.cartesian(i)) /
+                    _dir.cartesian(i);
+                newmax = (_isomax.cartesian(i) - _ref_point.cartesian(i)) /
+                    _dir.cartesian(i);
+            } else {
+                newmin = (_isomax.cartesian(i) - _ref_point.cartesian(i)) /
+                    _dir.cartesian(i);
+                newmax = (_isomin.cartesian(i) - _ref_point.cartesian(i)) /
+                    _dir.cartesian(i);
+            }
+            if (all_values) {
+                _min = newmin;
+                _max = newmax;
+            } else {
+                if (newmin > _min)
+                    _min = newmin;
+                if (newmax < _max)
+                    _max = newmax;
+                if (_max < _min) {
+                    _result = NO;
+                    return NO;
+                }
+            }
+            all_values = false;
+        }
+    }
+    CGAL_kernel_assertion(!all_values);
+    if (_max == _min) {
+        _result = POINT;
+        return POINT;
+    }
+    _result = SEGMENT;
+    return SEGMENT;
+}
+@}
+
+@B@<2D Ray Iso_rectangle intersection@>
+
+
+@O@<../include/CGAL/Iso_rectangle_2_Ray_2_intersection.h@>==@{
+@<cgal_heading@>@(@-
+include/CGAL/Iso_rectangle_2_Ray_2_intersection.h@,@-
+intersection_2_2.fw@,@-
+Geert-Jan Giezeman@,@-
+MPI, Saarbruecken@)
+#include <CGAL/Ray_2_Iso_rectangle_2_intersection.h>
+@}
+
+
+@O@<../include/CGAL/Ray_2_Iso_rectangle_2_intersection.h@>==@{
+@<cgal_heading@>@(@-
+include/CGAL/Ray_2_Iso_rectangle_2_intersection.h@,@-
+intersection_2_2.fw@,@-
+Geert-Jan Giezeman@,@-
+Saarbruecken@)
+
+#ifndef CGAL_RAY_2_ISO_RECTANGLE_2_INTERSECTION_H
+#define CGAL_RAY_2_ISO_RECTANGLE_2_INTERSECTION_H
+
+#include <CGAL/Iso_rectangle_2.h>
+#include <CGAL/Ray_2.h>
+#include <CGAL/Segment_2.h>
+#include <CGAL/Point_2.h>
+#include <CGAL/utils.h>
+#include <CGAL/number_utils.h>
+
+CGAL_BEGIN_NAMESPACE
+
+template <class R>
+class Ray_2_Iso_rectangle_2_pair {
+public:
+    enum Intersection_results {NO, POINT, SEGMENT};
+    Ray_2_Iso_rectangle_2_pair() ;
+    Ray_2_Iso_rectangle_2_pair(Ray_2<R> const *ray,
+                          Iso_rectangle_2<R> const *rect) ;
+
+#ifndef CGAL_CFG_RETURN_TYPE_BUG_2
+  Intersection_results intersection_type() const;
+
+#else
+  Intersection_results intersection_type() const
+@<Ray_2_Iso_rectangle_2_pair intersection_type body@>
+#endif // CGAL_CFG_RETURN_TYPE_BUG_2
+
+    bool                       intersection(
+                                    Point_2<R> &result) const;
+    bool                       intersection(
+                                    Segment_2<R> &result) const;
+protected:
+    mutable bool                       _known;
+    mutable Intersection_results       _result;
+    mutable Point_2<R>            _ref_point;
+    mutable Vector_2<R>           _dir;
+    mutable Point_2<R>            _isomin;
+    mutable Point_2<R>            _isomax;
+    mutable typename R::FT                     _min,
+                               _max;
+};
+
+@<do_intersect macro@>@(Ray_2@,Iso_rectangle_2@)
+
+CGAL_END_NAMESPACE
+
+#include <CGAL/Object.h>
+
+CGAL_BEGIN_NAMESPACE
+
+template <class R>
+Object
+intersection(
+    const Ray_2<R> &ray,
+    const Iso_rectangle_2<R> &iso)
+{
+    typedef Ray_2_Iso_rectangle_2_pair<R> is_t;
+    is_t ispair(&ray, &iso);
+    switch (ispair.intersection_type()) {
+    case is_t::NO:
+    default:
+        return Object();
+    case is_t::POINT: {
+        Point_2<R> ipt;
+        ispair.intersection(ipt);
+        return Object(new Wrapper< Point_2<R> >(ipt));
+    }
+    case is_t::SEGMENT: {
+        Segment_2<R> iseg;
+        ispair.intersection(iseg);
+        return Object(new Wrapper< Segment_2<R> >(iseg));
+    }
+    }
+}
+
+
+CGAL_END_NAMESPACE
+
+@<Ray_2_Iso_rectangle_2_pair implementation@>
+
+CGAL_BEGIN_NAMESPACE
+
+template <class R>
+class Iso_rectangle_2_Ray_2_pair:
+          public Ray_2_Iso_rectangle_2_pair<R> {
+public:
+    Iso_rectangle_2_Ray_2_pair() {}
+    Iso_rectangle_2_Ray_2_pair(Iso_rectangle_2<R> const *rect,
+                               Ray_2<R> const *ray)
+                :Ray_2_Iso_rectangle_2_pair<R> (ray, rect){}
+};
+
+@<do_intersect macro@>@(Iso_rectangle_2@,Ray_2@)
+
+template <class R>
+inline Object
+intersection(const Iso_rectangle_2<R>&iso, const Ray_2<R>&ray)
+{
+    return intersection(ray, iso);
+}
+
+CGAL_END_NAMESPACE
+
+#endif // CGAL_RAY_2_iSO_RECTANGLE_2_INTERSECTION_H
+@}
+
+
+@$@<Ray_2_Iso_rectangle_2_pair implementation@>==@{
+
+CGAL_BEGIN_NAMESPACE
+
+template <class R>
+Ray_2_Iso_rectangle_2_pair<R>::Ray_2_Iso_rectangle_2_pair()
+{
+    _known = false;
+}
+
+template <class R>
+Ray_2_Iso_rectangle_2_pair<R>::
+Ray_2_Iso_rectangle_2_pair(
+        Ray_2<R> const *ray,
+        Iso_rectangle_2<R> const *iso)
+{
+    _known = false;
+    _isomin = iso->min();
+    _isomax = iso->max();
+    _ref_point = ray->start();
+    _dir = ray->direction().to_vector();
+    _min = (typename R::FT)(0);
+}
+
+#ifndef CGAL_CFG_RETURN_TYPE_BUG_2
+template <class R>
+Ray_2_Iso_rectangle_2_pair<R>::Intersection_results
+Ray_2_Iso_rectangle_2_pair<R>::intersection_type() const
+@<Ray_2_Iso_rectangle_2_pair intersection_type body@>
+#endif // CGAL_CFG_RETURN_TYPE_BUG_2
+
+template <class R>
+bool Ray_2_Iso_rectangle_2_pair<R>::
+intersection(Segment_2<R> &seg) const
+{
+    if (!_known)
+        intersection_type();
+    if (_result != SEGMENT)
+        return false;
+    Point_2<R> p1(_ref_point + _dir*_min);
+    Point_2<R> p2(_ref_point + _dir*_max);
+    seg = Segment_2<R>(p1, p2);
+    return true;
+}
+
+template <class R> bool Ray_2_Iso_rectangle_2_pair<R>::
+intersection(Point_2<R> &pt) const
+{
+    if (!_known)
+        intersection_type();
+    if (_result != POINT)
+        return false;
+    pt = Point_2<R>(_ref_point + _dir*_min);
+    return true;
+}
+
+CGAL_END_NAMESPACE
+
+@}
+
+@$@<Ray_2_Iso_rectangle_2_pair intersection_type body@>@M==@{@-
+{
+    typedef typename R::RT RT;
+    typedef typename R::FT FT;
+    if (_known)
+        return _result;
+    _known = true;
+    bool to_infinity = true;
+    for (int i=0; i<_ref_point.dimension(); i++) {
+        if (_dir.homogeneous(i) == RT(0)) {
+            if (_ref_point.cartesian(i) < _isomin.cartesian(i)) {
+                _result = NO;
+                return _result;
+            }
+            if (_ref_point.cartesian(i) > _isomax.cartesian(i)) {
+                _result = NO;
+                return _result;
+            }
+        } else {
+            FT newmin, newmax;
+            if (_dir.homogeneous(i) > RT(0)) {
+                newmin = (_isomin.cartesian(i)-_ref_point.cartesian(i)) /
+                    _dir.cartesian(i);
+                newmax = (_isomax.cartesian(i)-_ref_point.cartesian(i)) /
+                    _dir.cartesian(i);
+            } else {
+                newmin = (_isomax.cartesian(i)-_ref_point.cartesian(i)) /
+                    _dir.cartesian(i);
+                newmax = (_isomin.cartesian(i)-_ref_point.cartesian(i)) /
+                    _dir.cartesian(i);
+            }
+            if (newmin > _min)
+                _min = newmin;
+            if (to_infinity) {
+                _max = newmax;
+            } else {
+                if (newmax < _max)
+                    _max = newmax;
+            }
+            if (_max < _min) {
+                _result = NO;
+                return _result;
+            }
+            to_infinity = false;
+        }
+    }
+    CGAL_kernel_assertion(!to_infinity);
+    if (_max == _min) {
+        _result = POINT;
+        return _result;
+    }
+    _result = SEGMENT;
+    return _result;
+}
+@}
+
+
+@B@<2D Segment Iso_rectangle intersection@>
+
+
+@O@<../include/CGAL/Iso_rectangle_2_Segment_2_intersection.h@>==@{
+@<cgal_heading@>@(@-
+include/CGAL/Iso_rectangle_2_Segment_2_intersection.h@,@-
+intersection_2_2.fw@,@-
+Geert-Jan Giezeman@,@-
+MPI, Saarbruecken@)
+#include <CGAL/Segment_2_Iso_rectangle_2_intersection.h>
+@}
+
+
+@O@<../include/CGAL/Segment_2_Iso_rectangle_2_intersection.h@>==@{
+@<cgal_heading@>@(@-
+include/CGAL/Segment_2_Iso_rectangle_2_intersection.h@,@-
+intersection_2_2.fw@,@-
+Geert-Jan Giezeman@,@-
+Saarbruecken@)
+
+#ifndef CGAL_SEGMENT_2_ISO_RECTANGLE_2_INTERSECTION_H
+#define CGAL_SEGMENT_2_ISO_RECTANGLE_2_INTERSECTION_H
+
+#include <CGAL/Iso_rectangle_2.h>
+#include <CGAL/Segment_2.h>
+#include <CGAL/Point_2.h>
+#include <CGAL/utils.h>
+#include <CGAL/number_utils.h>
+
+CGAL_BEGIN_NAMESPACE
+
+template <class R>
+class Segment_2_Iso_rectangle_2_pair {
+public:
+    enum Intersection_results {NO, POINT, SEGMENT};
+    Segment_2_Iso_rectangle_2_pair() ;
+    Segment_2_Iso_rectangle_2_pair(Segment_2<R> const *seg,
+                          Iso_rectangle_2<R> const *rect) ;
+
+#ifndef CGAL_CFG_RETURN_TYPE_BUG_2
+  Intersection_results intersection_type() const;
+
+#else
+  Intersection_results intersection_type() const
+ @<Segment_2_Iso_rectangle_2_pair intersection_type body@>
+#endif // CGAL_CFG_RETURN_TYPE_BUG_2
+
+    bool                       intersection(
+                                    Point_2<R> &result) const;
+    bool                       intersection(
+                                    Segment_2<R> &result) const;
+protected:
+    mutable bool                       _known;
+    mutable Intersection_results       _result;
+    mutable Point_2<R>            _ref_point;
+    mutable Vector_2<R>           _dir;
+    mutable Point_2<R>            _isomin;
+    mutable Point_2<R>            _isomax;
+    mutable typename R::FT              _min,
+                               _max;
+};
+
+@<do_intersect macro@>@(Segment_2@,Iso_rectangle_2@)
+
+CGAL_END_NAMESPACE
+
+#include <CGAL/Object.h>
+
+CGAL_BEGIN_NAMESPACE
+
+template <class R>
+Object
+intersection(
+    const Segment_2<R> &seg,
+    const Iso_rectangle_2<R> &iso)
+{
+    typedef Segment_2_Iso_rectangle_2_pair<R> is_t;
+    is_t ispair(&seg, &iso);
+    switch (ispair.intersection_type()) {
+    case is_t::NO:
+    default:
+        return Object();
+    case is_t::POINT: {
+        Point_2<R> ipt;
+        ispair.intersection(ipt);
+        return Object(new Wrapper< Point_2<R> >(ipt));
+    }
+    case is_t::SEGMENT: {
+        Segment_2<R> iseg;
+        ispair.intersection(iseg);
+        return Object(new Wrapper< Segment_2<R> >(iseg));
+    }
+    }
+}
+
+CGAL_END_NAMESPACE
+
+
+@<Segment_2_Iso_rectangle_2_pair implementation@>
+
+CGAL_BEGIN_NAMESPACE
+
+template <class R>
+class Iso_rectangle_2_Segment_2_pair:
+          public Segment_2_Iso_rectangle_2_pair<R> {
+public:
+    Iso_rectangle_2_Segment_2_pair() {}
+    Iso_rectangle_2_Segment_2_pair(Iso_rectangle_2<R> const *rect,
+                               Segment_2<R> const *seg)
+                :Segment_2_Iso_rectangle_2_pair<R> (seg, rect){}
+};
+
+@<do_intersect macro@>@(Iso_rectangle_2@,Segment_2@)
+
+template <class R>
+inline Object
+intersection(
+    const Iso_rectangle_2<R>&iso,
+    const Segment_2<R>&seg)
+{
+    return intersection(seg, iso);
+}
+
+CGAL_END_NAMESPACE
+
+#endif // CGAL_SEGMENT_2_ISO_RECTANGLE_2_INTERSECTION_H
+@}
+
+
+@$@<Segment_2_Iso_rectangle_2_pair implementation@>==@{
+
+CGAL_BEGIN_NAMESPACE
+
+template <class R>
+Segment_2_Iso_rectangle_2_pair<R>::Segment_2_Iso_rectangle_2_pair()
+{
+    _known = false;
+}
+
+template <class R>
+Segment_2_Iso_rectangle_2_pair<R>::
+Segment_2_Iso_rectangle_2_pair(
+        Segment_2<R> const *seg,
+        Iso_rectangle_2<R> const *iso)
+{
+    _known = false;
+    _isomin = iso->min();
+    _isomax = iso->max();
+    _ref_point = seg->source();
+    _dir = seg->direction().to_vector();
+    _min = (typename R::FT)(0);
+    int main_dir = (CGAL_NTS abs(_dir.x()) > CGAL_NTS abs(_dir.y()) ) ? 0 : 1;
+    _max = (seg->target().cartesian(main_dir)-_ref_point.cartesian(main_dir)) /
+            _dir.cartesian(main_dir);
+}
+
+#ifndef CGAL_CFG_RETURN_TYPE_BUG_2
+template <class R>
+Segment_2_Iso_rectangle_2_pair<R>::Intersection_results
+Segment_2_Iso_rectangle_2_pair<R>::intersection_type() const
+@<Segment_2_Iso_rectangle_2_pair intersection_type body@>
+#endif // CGAL_CFG_RETURN_TYPE_BUG_2
+
+template <class R>
+bool Segment_2_Iso_rectangle_2_pair<R>::
+intersection(Segment_2<R> &seg) const
+{
+    if (!_known)
+        intersection_type();
+    if (_result != SEGMENT)
+        return false;
+    Point_2<R> p1(_ref_point + _dir*_min);
+    Point_2<R> p2(_ref_point + _dir*_max);
+    seg = Segment_2<R>(p1, p2);
+    return true;
+}
+
+template <class R> bool Segment_2_Iso_rectangle_2_pair<R>::
+intersection(Point_2<R> &pt) const
+{
+    if (!_known)
+        intersection_type();
+    if (_result != POINT)
+        return false;
+    pt = Point_2<R>(_ref_point + _dir*_min);
+    return true;
+}
+
+CGAL_END_NAMESPACE
+
+@}
+
+@$@<Segment_2_Iso_rectangle_2_pair intersection_type body@>@M==@{@-
+{
+    typedef typename R::RT RT;
+    typedef typename R::FT FT;
+    if (_known)
+        return _result;
+    _known = true;
+    for (int i=0; i<_ref_point.dimension(); i++) {
+        if (_dir.homogeneous(i) == RT(0)) {
+            if (_ref_point.cartesian(i) < _isomin.cartesian(i)) {
+                _result = NO;
+                return _result;
+            }
+            if (_ref_point.cartesian(i) > _isomax.cartesian(i)) {
+                _result = NO;
+                return _result;
+            }
+        } else {
+            FT newmin, newmax;
+            if (_dir.homogeneous(i) > RT(0)) {
+                newmin = (_isomin.cartesian(i)-_ref_point.cartesian(i)) /
+                    _dir.cartesian(i);
+                newmax = (_isomax.cartesian(i)-_ref_point.cartesian(i)) /
+                    _dir.cartesian(i);
+            } else {
+                newmin = (_isomax.cartesian(i)-_ref_point.cartesian(i)) /
+                    _dir.cartesian(i);
+                newmax = (_isomin.cartesian(i)-_ref_point.cartesian(i)) /
+                    _dir.cartesian(i);
+            }
+            if (newmin > _min)
+                _min = newmin;
+            if (newmax < _max)
+                _max = newmax;
+            if (_max < _min) {
+                _result = NO;
+                return _result;
+            }
+        }
+    }
+    if (_max == _min) {
+        _result = POINT;
+        return _result;
+    }
+    _result = SEGMENT;
+    return _result;
+}
+@}
+
+@B@<2D Point Iso_rectangle intersection@>
+
+@O@<../include/CGAL/Iso_rectangle_2_Point_2_intersection.h@>==@{
+@<cgal_heading@>@(@-
+include/CGAL/Iso_rectangle_2_Point_2_intersection.h@,@-
+intersection_2_2.fw@,@-
+Geert-Jan Giezeman@,@-
+MPI, Saarbruecken@)
+#include <CGAL/Point_2_Iso_rectangle_2_intersection.h>
+@}
+
+@O@<../include/CGAL/Point_2_Iso_rectangle_2_intersection.h@>==@{
+@<cgal_heading@>@(@-
+include/CGAL/Point_2_Iso_rectangle_2_intersection.h@,@-
+intersection_2_2.fw@,@-
+Geert-Jan Giezeman@,@-
+Saarbruecken@)
+
+#ifndef CGAL_POINT_2_ISO_RECTANGLE_2_INTERSECTION_H
+#define CGAL_POINT_2_ISO_RECTANGLE_2_INTERSECTION_H
+
+#include <CGAL/Iso_rectangle_2.h>
+#include <CGAL/Point_2.h>
+
+CGAL_BEGIN_NAMESPACE
+
+template <class R>
+inline bool
+do_intersect(
+    const Point_2<R> &pt,
+    const Iso_rectangle_2<R> &iso)
+{
+    return !iso.has_on_unbounded_side(pt);
+}
+
+CGAL_END_NAMESPACE
+
+#include <CGAL/Object.h>
+
+CGAL_BEGIN_NAMESPACE
+
+template <class R>
+Object
+intersection(
+    const Point_2<R> &pt,
+    const Iso_rectangle_2<R> &iso)
+{
+    if (do_intersect(pt,iso)) {
+        return Object(new Wrapper< Point_2<R> >(pt));
+    }
+    return Object();
+}
+
+template <class R>
+inline bool
+do_intersect(
+    const Iso_rectangle_2<R> &iso,
+    const Point_2<R> &pt)
+{
+    return !iso.has_on_unbounded_side(pt);
+}
+
+
+template <class R>
+inline Object
+intersection(
+    const Iso_rectangle_2<R> &iso,
+    const Point_2<R> &pt)
+{
+    if (do_intersect(pt, iso)) {
+        return Object(new Wrapper< Point_2<R> >(pt));
+    }
+    return Object();
+}
+
+CGAL_END_NAMESPACE
+
+#endif
+@}
+
+@O@<../include/CGAL/Iso_rectangle_2_Iso_rectangle_2_intersection.h@>==@{
+@<cgal_heading@>@(@-
+include/CGAL/Iso_rectangle_2_Iso_rectangle_2_intersection.h@,@-
+intersection_2_2.fw@,@-
+Geert-Jan Giezeman@,@-
+Saarbruecken@)
+
+#ifndef CGAL_ISO_RECTANGLE_2_ISO_RECTANGLE_2_INTERSECTION_H
+#define CGAL_ISO_RECTANGLE_2_ISO_RECTANGLE_2_INTERSECTION_H
+
+#include <CGAL/Iso_rectangle_2.h>
+#include <CGAL/Object.h>
+
+CGAL_BEGIN_NAMESPACE
+
+template <class R>
+Object
+intersection(
+    const Iso_rectangle_2<R> &irect1,
+    const Iso_rectangle_2<R> &irect2)
+{
+    const Point_2<R> &min1 = irect1.min();
+    const Point_2<R> &min2 = irect2.min();
+    const Point_2<R> &max1 = irect1.max();
+    const Point_2<R> &max2 = irect2.max();
+    typename R::FT minx, miny, maxx, maxy;
+    Point_2<R> newmin;
+    Point_2<R> newmax;
+    minx = (min1.x() >= min2.x()) ? min1.x() : min2.x();
+    maxx = (max1.x() <= max2.x()) ? max1.x() : max2.x();
+    if (maxx < minx)
+        return Object();
+    miny = (min1.y() >= min2.y()) ? min1.y() : min2.y();
+    maxy = (max1.y() <= max2.y()) ? max1.y() : max2.y();
+    if (maxy < miny)
+        return Object();
+    if (R::FT_denominator(minx) == R::FT_denominator(miny)) {
+        newmin = Point_2<R>(R::FT_numerator(minx), R::FT_numerator(miny),
+                    R::FT_denominator(minx));
+    } else {
+        newmin = Point_2<R>(R::FT_numerator(minx)*R::FT_denominator(miny),
+                    R::FT_numerator(miny)*R::FT_denominator(minx),
+                    R::FT_denominator(minx) * R::FT_denominator(miny));
+    }
+    if (R::FT_denominator(maxx) == R::FT_denominator(maxy)) {
+        newmax = Point_2<R>(R::FT_numerator(maxx), R::FT_numerator(maxy),
+                    R::FT_denominator(maxx));
+    } else {
+        newmax = Point_2<R>(R::FT_numerator(maxx)*R::FT_denominator(maxy),
+                    R::FT_numerator(maxy)*R::FT_denominator(maxx),
+                    R::FT_denominator(maxx) * R::FT_denominator(maxy));
+    }
+    return make_object(Iso_rectangle_2<R>(newmin, newmax));
+}
+
+template <class R>
+inline bool
+do_intersect(
+    const Iso_rectangle_2<R> &irect1,
+    const Iso_rectangle_2<R> &irect2)
+{
+    Object obj(intersection(irect1, irect2));
+    Iso_rectangle_2<R> irect;
+    return (assign(irect, obj));
+}
+
+CGAL_END_NAMESPACE
+
+#endif
+@}
+
+
+@B@<Packing intersections together@>
+
+@O@<../include/CGAL/intersection_2_2.h@>==@{@-
+@<cgal_heading@>@(@-
+include/CGAL/intersection_2_2.h@,@-
+intersection_2_2.fw@,@-
+Geert-Jan Giezeman@,@-
+Saarbruecken@)
+
+
+#ifndef CGAL_INTERSECTION_2_2_H
+#define CGAL_INTERSECTION_2_2_H
+
+#include <CGAL/Triangle_2_Triangle_2_intersection.h>
+#include <CGAL/Triangle_2_Line_2_intersection.h>
+#include <CGAL/Triangle_2_Ray_2_intersection.h>
+#include <CGAL/Triangle_2_Segment_2_intersection.h>
+#include <CGAL/Line_2_Iso_rectangle_2_intersection.h>
+#include <CGAL/Ray_2_Iso_rectangle_2_intersection.h>
+#include <CGAL/Segment_2_Iso_rectangle_2_intersection.h>
+#include <CGAL/Point_2_Iso_rectangle_2_intersection.h>
+#include <CGAL/Iso_rectangle_2_Iso_rectangle_2_intersection.h>
+
+#endif
+@}
+
+

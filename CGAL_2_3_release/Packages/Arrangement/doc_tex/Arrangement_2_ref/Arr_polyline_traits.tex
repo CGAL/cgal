@@ -1,0 +1,47 @@
+% +------------------------------------------------------------------------+
+% | Reference manual page: Arr_polyline_traits.tex (Arrangement)
+% +------------------------------------------------------------------------+
+% | 
+% | Package: arr (Arrangement_2)
+% | 
+% +------------------------------------------------------------------------+
+
+\ccRefPageBegin
+
+%%RefPage: end of header, begin of main body
+% +------------------------------------------------------------------------+
+% +========================================================================+
+%  Arr_polyline_traits<NT>
+% +========================================================================+
+\begin{ccRefClass}{Arr_polyline_traits<R, Container>}
+
+\ccDefinition
+    The class \ccRefName\ is a traits class for polyline curves.  The
+    representation type \ccc{R} is recommended to be an exact type
+    such as \ccc{Cartesian<leda_rational>} or \ccc{Homogeneous<Gmpz>}
+    or any other exact type, although other inexact representations
+    can be used at the user's own risk.  The template parameter
+    \ccc{Container} corresponds to the container type for holding the
+    polyline curve points. It must be a model of the \ccc{Reversible
+    Container} concept and it must be templated with
+    \ccc{Point_2<R>}. \ccc{Container} has a default value which is
+    \ccc{std::vector<Point_2<R> >}. The first point in the container
+    is considered as the source point of the polyline while the last
+    point is considered the target one.
+
+%See example ***SHOW WHERE.
+\ccInclude{CGAL/Arr_polyline_traits.h}
+
+\ccIsModel
+    \ccc{ArrangementTraits_2} \lcTex{(\ccRefPage{ArrangementTraits_2}).}
+
+\end{ccRefClass}
+
+
+% EOF -----------------------------------------------------------------------80
+
+% +------------------------------------------------------------------------+
+%%RefPage: end of main body, begin of footer
+\ccRefPageEnd
+% EOF
+% +------------------------------------------------------------------------+

@@ -1,0 +1,43 @@
+/* XPM */
+static const char *news_xpm[] = {
+/* width height ncolors chars_per_pixel */
+"32 32 4 1",
+/* colors */
+"` c #000000",
+"a c #FFFFFF",
+"b c #718292",
+"c c None",
+/* pixels */
+"cccccccccccccccccccccccccccccccc",
+"cccccccccccccccccccccccccccccccc",
+"cccccccccccccccccccccccccccccccc",
+"cccccccccccc```ccccccccccccccccc",
+"ccccccccccc`aaa``ccccccccccccccc",
+"cccccccccc`aa`aaa``ccccccccccccc",
+"ccccccccc`aa``a`aaa``ccccccccccc",
+"cccccccc`aa`a``aa`baa``ccccccccc",
+"ccccccc`aa`aa`aa`ab`aaa``ccccccc",
+"cccccc`acaaa`aa`c`aa`aaaa``ccccc",
+"ccccc`aab`baaa`baaa`ababaaa``ccc",
+"cccc`acaaab`caac`a`abba`a`baa``c",
+"ccc`aab`baaac`baaa```a`a`ab`aaa`",
+"cc`acaaab`caaab`baaa``aaa`aaaa`c",
+"c`aab`baaac`baaaca`aaa`ba`aaa`c`",
+"`bcaaab`caaab`baa`a``aab`aaa`c`c",
+"`ab`baaac`baaaca`caaa``aaaa`c`c`",
+"`aaab`caaab`baa`ccccaaa`aa`c`c`c",
+"`c`baac`baaaca`bbbcccc`aa`c`c`c`",
+"`bcc`baab`baaa``bbbbc`aa`c`c`c`c",
+"c``bcccbaabccaaa``bb`aa`c`c`c`cc",
+"ccc``bcc`baac`baaa``aa`c`c`c`ccc",
+"ccccc``bcc`baab`baaaa`c`c`c`cccc",
+"ccccccc``bcacbaab`aa`c`c`c`ccccc",
+"ccccccccc``bcb`baaa`c`c`c`cccccc",
+"ccccccccccc``bcc`a`c`c`c`ccccccc",
+"ccccccccccccc``bcc`c``c`cccccccc",
+"ccccccccccccccc``b`bcc`ccccccccc",
+"ccccccccccccccccc`````cccccccccc",
+"cccccccccccccccccccccccccccccccc",
+"cccccccccccccccccccccccccccccccc",
+"cccccccccccccccccccccccccccccccc"
+};

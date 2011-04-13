@@ -1,0 +1,67 @@
+% +------------------------------------------------------------------------+
+% | Reference manual page: IsYMonotoneTraits_2.tex
+% +------------------------------------------------------------------------+
+% | 10.05.2000   Susan Hert
+% | Package: Partition_2
+% | 
+% |
+% +------------------------------------------------------------------------+
+
+
+\begin{ccRefConcept}{IsYMonotoneTraits_2}
+\ccIndexSubitemBegin[C]{is_y_monotone_2}{traits class}
+
+\ccDefinition
+  
+Requirements of a traits class to be
+used with the function \ccc{is_y_monotone_2} that tests whether a sequence of
+2D points defines a $y$-monotone polygon or not.  
+
+\ccTypes
+
+The following two types are required:
+
+\ccNestedType{Point_2}{The point type of the polygon vertices.}
+
+\ccNestedType{Less_yx_2}{
+Predicate object type that compares \ccc{Point_2}s lexicographically.
+Must provide \ccc{bool operator()(Point_2 p, Point_2 q)} where \ccc{true}
+is returned iff $p <_{xy} q$.
+We have $p<_{xy}q$, iff $p_x < q_x$ or $p_x = q_x$ and $p_y < q_y$,
+where $p_x$ and $p_y$ denote $x$ and $y$ coordinate of point $p$ resp.
+}
+
+
+\ccCreation
+\ccCreationVariable{traits}  %% choose variable name
+
+Only a copy constructor is required.
+
+\ccConstructor{IsYMonotoneTraits_2(IsYMonotoneTraits_2& tr)}{}
+
+\ccOperations
+
+The following function that creates an instance of the above predicate
+object type must exist: 
+
+\ccMethod{Less_yx_2 less_yx_2_object();}{}
+
+\ccHasModels
+
+\ccRefIdfierPage{CGAL::Partition_traits_2<R>} \\
+\ccc{CGAL::Kernel_traits_2}
+
+\ccSeeAlso
+
+\ccRefIdfierPage{CGAL::Is_y_monotone_2<Traits>} \\
+\ccRefIdfierPage{CGAL::y_monotone_partition_2} \\
+\ccRefIdfierPage{CGAL::y_monotone_partition_is_valid_2}
+
+\ccIndexSubitemEnd[C]{is_y_monotone_2}{traits class}
+\end{ccRefConcept}
+
+% +------------------------------------------------------------------------+
+%%RefPage: end of main body, begin of footer
+% EOF
+% +------------------------------------------------------------------------+
+

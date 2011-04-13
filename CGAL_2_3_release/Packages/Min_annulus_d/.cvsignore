@@ -1,0 +1,16 @@
+*.log
+*.aux
+*.dvi
+*.mxp
+*.bbl
+*.blg
+*.toc
+*.idx
+*.ilg
+*.ind
+.dep
+.tmp
+.obj
+bin
+doc_ps
+Makefile

@@ -1,0 +1,40 @@
+demo/Generator/README
+--------------------------
+
+Demo programs illustrating the use of the geometric object 
+generators in CGAL. 
+
+Segment_generator_prog1.C
+   illustrates the generic segment generator
+
+Segemnt_generator_prog2.C
+   generates a regular segment pattern
+
+Triangle_generator_prog1.C
+   generates random triangles
+
+Triangle_generator_prog2.C
+   generates a regular triangle pattern
+
+generators_prog1.C
+   generates 1000 points: 60% are drawn at random from a disc, 20% are drawn 
+   from a square grid, 10% ae duplicate points and 10% are collinear points.
+
+generators_prog2.C
+   generates 500 points with integer coordinates
+
+random_poly_manual_demo.C
+   program presented in reference manual that generates a random 
+   polygon from 50 points drawn at random from a square
+
+random_polygons_demo.C
+   more involved program that allows user input to supply the points
+   from which random polygons are generated
+
+rcs_demo.C
+   generates a random convex set from n points, where n is specified by the
+   user on the command line.
+   
+rcs_manual_demo.C
+   program presetned in the manual that generates a random convex 500-gon
+   from points drawn randomly from a square.

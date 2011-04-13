@@ -1,0 +1,53 @@
+% +------------------------------------------------------------------------+
+% | Reference manual page: Arr_leda_segment_exact_traits.tex (Arrangement)
+% +------------------------------------------------------------------------+
+% | 
+% | Package: arr (Arrangement_2)
+% | 
+% +------------------------------------------------------------------------+
+
+\ccRefPageBegin
+
+%%RefPage: end of header, begin of main body
+% +------------------------------------------------------------------------+
+% +========================================================================+
+%  Arr_leda_segment_exact_traits
+% +========================================================================+
+
+%\renewcommand{\ccRefPageBegin}{\begin{ccAdvanced}}
+%\renewcommand{\ccRefPageEnd}{\end{ccAdvanced}}
+
+\begin{ccRefClass}{Arr_leda_segment_exact_traits}
+
+%\begin{ccAdvanced} %--------------------\
+
+\ccDefinition
+    We supply a traits class that uses \leda\/'s rational kernel ---
+    \ccRefName.\/ The class handles
+    finite line segments in the plane
+    and uses the \leda\/ rational kernel (\ccStyle{Point} is of type 
+    \ccStyle{leda_rat_point}, \ccc{Curve} and \ccc{X_curve} are of type
+    \ccStyle{leda_rat_segment}). The predicates make use of \leda\/'s primitive
+    predicates (e.g., orientation) that are implemented using floating point
+    ``filters'' \cite{fv-sayee-96} which speed up the use of exact 
+    computations.
+    Normalization of the intersection points is performed which speeds up
+    computations since the bit-length of the points stays relatively small.
+
+\ccInclude{ CGAL/Arr_leda_segment_exact_traits.h}
+
+\ccIsModel
+    \ccc{ArrangementTraits_2} \lcTex{(\ccRefPage{ArrangementTraits_2}).}
+
+%\end{ccAdvanced} %----------------------/
+
+\end{ccRefClass} 
+
+%\renewcommand{\ccRefPageBegin}{}
+%\renewcommand{\ccRefPageEnd}{}
+
+% +------------------------------------------------------------------------+
+%%RefPage: end of main body, begin of footer
+\ccRefPageEnd
+% EOF
+% +------------------------------------------------------------------------+

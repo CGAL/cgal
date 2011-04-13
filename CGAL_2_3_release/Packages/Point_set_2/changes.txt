@@ -1,0 +1,30 @@
+2.2.5  Susan moved Point_set_2_ref directory up one level
+
+2.2.4  Susan made changes necessary for manual split
+
+2.2.3  chapter name changed
+
+2.2.2  some deprecated functions removed from Point_set_2.h 
+       and from manual
+       small changes to examples and demos
+
+2.2.1  manual changes
+       some member functions removed from Point_set_2 class
+
+2.2    function template versions for nearest neighbor queries and
+       range searches added 
+
+2.1.1  a shorter example program was added and is includet in the manual
+
+2.1    manual changed
+       kernel traits support improved
+
+2.0.2  point_set_traits_2 removed (we need now only one geometric
+       traits class)
+
+2.0.1 range search example program changed
+      some 'typenames' and a typedef added to Point_set_2.h  
+      to please g++ with -pedantic compilation
+
+2.0  The Point_set_2 class is now based on the CGAL Delaunay triangulation
+     and needs no longer LEDA

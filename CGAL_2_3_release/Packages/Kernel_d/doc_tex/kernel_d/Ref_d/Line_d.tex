@@ -1,0 +1,110 @@
+% begin cgal manual page
+
+\begin{ccRefClass}{Line_d<R>}\ccCreationVariable{l}
+
+\ccDefinition
+
+
+An instance of data type \ccc{Line_d} is an oriented line in
+$d$-dimensional Euclidean space. 
+
+\ccSetOneOfTwoColumns{5cm}
+
+\ccTypes
+
+\ccNestedType{R}{the representation type. 
+}
+
+\ccNestedType{RT}{the ring type. 
+}
+
+\ccNestedType{FT}{the field type. 
+}
+
+\ccNestedType{LA}{the linear algebra layer. 
+}
+
+\ccSetOneOfTwoColumns{3cm}
+
+\ccCreation
+
+\ccConstructor{Line_d<R>()}{introduces a variable \ccc{l} of
+type \ccc{Line_d<R>}.}
+
+\ccConstructor{Line_d<R>(Point_d<R> p, Point_d<R> q)}{introduces a
+line through \ccc{p} and \ccc{q} and oriented from \ccc{p} to
+\ccc{q}. \ccPrecond $p$ and $q$ are distinct and have the same
+dimension.}
+
+\ccConstructor{Line_d<R>(Point_d<R> p, Direction_d<R> dir)}{introduces
+a line through \ccc{p} with direction \ccc{dir}.  \ccPrecond
+\ccc{p.dimension()==dir.dimension()}, \ccc{dir} is not degenerate.}
+
+\ccConstructor{Line_d<R>(Segment_d<R> s)}{introduces a variable
+\ccc{l} of type \ccc{Line_d<R>} and initializes it to the line through
+\ccc{s.source()} and \ccc{s.target()} with direction from
+\ccc{s.source()} to \ccc{s.target()}. \ccPrecond $s$ is not
+degenerate.  }
+
+\ccConstructor{Line_d<R>(Ray_d<R> r)}{introduces a variable \ccc{l} of
+type \ccc{Line_d<R>} and initializes it to the line through
+\ccc{r.point(1)} and \ccc{r.point(2)}.  }
+
+\ccSetTwoOfThreeColumns{3cm}{3cm}
+
+\ccOperations
+
+\ccMethod{int dimension();}{returns the dimension of the ambient
+space.}
+
+\ccMethod{Point_d<R> point(int i) ;}{returns an arbitrary point on
+\ccc{l}.  It holds that \ccc{point(i) == point(j)}, iff
+\ccc{i==j}. Furthermore, \ccc{l} is directed from \ccc{point(i)} to
+\ccc{point(j)}, for all \ccc{i < j}.  }
+
+\ccMethod{Line_d<R> opposite() ;}{returns the line
+\ccc{(point(2),point(1))} of opposite direction.}
+
+\ccMethod{Direction_d<R> direction();}{returns the direction of
+\ccc{l}.  }
+
+\ccMethod{Line_d<R> transform(const Aff_transformation_d<R> &
+t);}{returns $t(l)$. \ccPrecond \ccc{l.dimension()==t.dimension()}. }
+
+\ccMethod{Line_d<R> operator+(const Vector_d<R>& v);}{returns
+\ccc{l+v}, i.e., \ccc{l} translated by vector $v$. 
+\ccPrecond \ccc{l.dimension()==v.dimension()}. }
+
+\ccMethod{Point_d<R> projection(const Point_d<R>& p) ;}{returns the
+point of intersection of \ccc{l} with the hyperplane that is
+orthogonal to \ccc{l} and that contains \ccc{p}. \ccPrecond
+\ccc{l.dimension()==p.dimension()}. }
+
+\ccMethod{bool has_on(const Point_d<R>& p) ;}{returns true if $p$ lies
+on \ccc{l} and false otherwise. \ccPrecond
+\ccc{l.dimension()==p.dimension()}. }
+
+\ccHeading{Non-Member Functions}  
+
+\ccFunction{bool weak_equality(const Line_d<R>& l1, const Line_d<R>&
+l2) ;}{Test for equality as unoriented lines.\ccPrecond
+\ccc{l1.dimension()==l2.dimension()}.  }
+
+\ccFunction{bool parallel(const Line_d<R>& l1, const Line_d<R>& l2)
+;}{returns true if \ccc{l1} and \ccc{l2} are parallel as unoriented
+lines and false otherwise. \ccPrecond
+\ccc{l1.dimension()==l2.dimension()}.}
+
+\ccImplementation
+
+Lines are implemented by a pair of points as an item type.  All
+operations like creation, initialization, tests, direction
+calculation, input and output on a line $l$ take time
+$O(\ccc{l.dimension()})$. \ccc{dimension()}, coordinate and point
+access, and identity test take constant time.  The operations for
+intersection calculation also take time $O(\ccc{l.dimension()})$. The
+space requirement is $O(\ccc{l.dimension()})$.
+
+\end{ccRefClass}
+
+

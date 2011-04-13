@@ -1,0 +1,92 @@
+% +------------------------------------------------------------------------+
+% | Reference manual page: PolyhedronTraits_3.tex
+% +------------------------------------------------------------------------+
+% | 17.03.1999   Lutz Kettner
+% | Package: Polyhedron
+% | 
+\RCSdef{\RCSPolyhedronTraitsRev}{$Revision$}
+\RCSdefDate{\RCSPolyhedronTraitsDate}{$Date$}
+% +------------------------------------------------------------------------+
+
+\ccRefPageBegin
+
+%%RefPage: end of header, begin of main body
+% +------------------------------------------------------------------------+
+
+\begin{ccRefConcept}{PolyhedronTraits_3}
+\label{pagePolyTraitsRef}  
+
+Required types and member functions for the \ccRefName\ concept. This
+geometric traits concept is used in the polyhedral surface data
+structure \ccc{CGAL::Polyhedron_3<Traits>}. This concept is a subset of
+the 3d kernel traits and any \cgal\ kernel model can be used directly
+as template argument.
+
+\ccRefines
+
+\ccc{CopyConstructable}, \ccc{Assignable}.
+
+\ccTypes
+
+\ccNestedType{Point_3}{point type.}
+
+\ccNestedType{Plane_3}{plane equation. Even if plane equations 
+              are not supported with a particular polyhedral surface this
+              type has to be defined (some dummy type).}
+
+\ccNestedType{Construct_opposite_plane_3}{is an unary function object
+    that reverses the plane orientation. Must provide \ccc{Plane_3
+    operator()(Plane_3 plane)} that returns the reversed plane. Required
+    only if plane equations are supported and the \ccc{inside_out()} 
+    method is used to reverse the polyhedral surface orientation.}
+
+% No longer required
+%\ccNestedType{Vector_3}{normal vector. Required only if normals are 
+%             supported in the polyhedral surface. Must be assignment 
+%             compatible to the orthogonal vector type of \ccc{Plane} 
+%             if plane equations are supported as well.}
+%
+%\ccNestedType{Construct_opposite_vector_3}{is an unary function object type
+%    that reverses the vector orientation. Must provide \ccc{Vector_3
+%    operator()(Vector_3 vector)} that returns the reversed vector. Required
+%    only if normal vectors are supported, plane equations are not supported,
+%    and the \ccc{inside_out()} method is used to reverse the polyhedral  
+%    surface orientation.}
+
+\ccCreation
+\ccCreationVariable{traits}
+
+\ccConstructor{PolyhedronTraits_3( const PolyhedronTraits_3& traits2);}{
+    copy constructor.}
+
+\ccMethod{PolyhedronTraits_3& operator= ( const PolyhedronTraits_3& traits2);}{
+    assignment.}
+
+\ccOperations
+\ccSetThreeColumns{Construct_opposite_plane_3}{}{\hspace*{8.5cm}}
+
+\ccMethod{Construct_opposite_plane_3 construct_opposite_plane_3_object();}{
+    returns an instance of this function object.}
+
+%\ccMethod{Construct_opposite_vector_3 construct_opposite_vector_3_object();}{
+%    returns an instance of this functions object.}
+
+\ccHasModels
+
+\ccRefIdfierPage{CGAL::Polyhedron_traits_3<Kernel>}\\
+\ccRefIdfierPage{CGAL::Polyhedron_traits_with_normals_3<Kernel>}\\
+All models of the \ccc{CGAL::Kernel} concept, e.g., 
+\ccc{Simple_cartesian<FieldNumberType>}.
+
+\ccSeeAlso
+
+\ccRefIdfierPage{CGAL::Polyhedron_3<Traits>}
+
+\end{ccRefConcept}
+
+% +------------------------------------------------------------------------+
+%%RefPage: end of main body, begin of footer
+\ccRefPageEnd
+% EOF
+% +------------------------------------------------------------------------+
+

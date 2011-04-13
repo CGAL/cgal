@@ -1,0 +1,346 @@
+\begin{ccRefFunction}{intersection}
+\ccInclude{CGAL/intersections.h}\footnote{%
+The drawback of \ccc{<CGAL/intersections.h>} is that a lot is included, 
+which results in long compilation times.
+It is also possible to include only the intersections that are of interest.
+The naming scheme of the header files is as follows.
+Intersections of types \ccStyle{Type1<R>} and \ccStyle{Type2<R>}
+are declared in header file \ccc{CGAL/Type1_Type2_intersection.h}.
+So, intersection routines of segments and lines in 2D are declared in
+\ccc{<CGAL/Segment_2_Line_2_intersection.h>}. The order of the type names does not 
+matter. It is also possible to include \ccc{<CGAL/Line_2_Segment_2_intersection.h>}.
+For intersections of two objects of the same type, the type name should be
+mentioned twice: \ccc{<CGAL/Segment_2_Segment_2_intersection.h>} 
+}
+
+\ccUnchecked{
+\ccFunction{Object intersection(Type1<R> obj1, Type2<R> obj2);}
+{Two objects \ccStyle{obj1} and \ccStyle{obj2} intersect if there is a point
+\ccStyle{p} that is part of both \ccStyle{obj1} and \ccStyle{obj2}.
+The \ccHtmlNoLinksFrom{intersection} region of those two objects is defined as the set of all
+points \ccStyle{p} that are part of both \ccStyle{obj1} and \ccStyle{obj2}.
+Note that for objects like triangles and polygons that enclose a
+bounded region, this region is considered part of the object.
+If a segment lies completely inside a triangle, then those two objects
+intersect and the \ccHtmlNoLinksFrom{intersection} region is the complete segment.
+}}
+
+The possible value for types \ccStyle{Type1} and \ccStyle{Type2} and the
+possible return values wrapped in \ccc{Object} are the
+following:
+
+
+\begin{ccTexOnly}
+\begin{longtable}[c]{|l|l|l|}
+%\caption{All available intersection computations}\\
+\multicolumn{3}{l}{\sl \ \ }
+\endfirsthead
+\multicolumn{3}{l}{\sl continued}
+\endhead
+\hline
+type A & type B & \parbox{4 cm}{\vspace{1 mm}{return type}} \\
+\hline
+\ccStyle{Line_2} & \ccStyle{Line_2} & \parbox{4 cm}{\vspace{1 mm}
+    \ccStyle{Point_2}
+    \\ \ccStyle{Line_2}
+  \vspace{1 mm}} \\
+\hline
+\ccStyle{Segment_2} & \ccStyle{Line_2} & \parbox{4 cm}{\vspace{1 mm}
+    \ccStyle{Point_2}
+    \\ \ccStyle{Segment_2}
+  \vspace{1 mm}} \\
+\hline
+\ccStyle{Segment_2} & \ccStyle{Segment_2} & \parbox{4 cm}{\vspace{1 mm}
+    \ccStyle{Point_2}
+    \\ \ccStyle{Segment_2}
+  \vspace{1 mm}} \\
+\hline
+\ccStyle{Ray_2} & \ccStyle{Line_2} & \parbox{4 cm}{\vspace{1 mm}
+    \ccStyle{Point_2}
+    \\ \ccStyle{Ray_2}
+  \vspace{1 mm}} \\
+\hline
+\ccStyle{Ray_2} & \ccStyle{Segment_2} & \parbox{4 cm}{\vspace{1 mm}
+    \ccStyle{Point_2}
+    \\ \ccStyle{Segment_2}
+  \vspace{1 mm}} \\
+\hline
+\ccStyle{Ray_2} & \ccStyle{Ray_2} & \parbox{4 cm}{\vspace{1 mm}
+    \ccStyle{Point_2}
+    \\ \ccStyle{Segment_2}
+    \\ \ccStyle{Ray_2}
+  \vspace{1 mm}} \\
+\hline
+\ccStyle{Triangle_2} & \ccStyle{Line_2} & \parbox{4 cm}{\vspace{1 mm}
+    \ccStyle{Point_2}
+    \\ \ccStyle{Segment_2}
+  \vspace{1 mm}} \\
+\hline
+\ccStyle{Triangle_2} & \ccStyle{Segment_2} & \parbox{4 cm}{\vspace{1 mm}
+    \ccStyle{Point_2}
+    \\ \ccStyle{Segment_2}
+  \vspace{1 mm}} \\
+\hline
+\ccStyle{Triangle_2} & \ccStyle{Ray_2} & \parbox{4 cm}{\vspace{1 mm}
+    \ccStyle{Point_2}
+    \\ \ccStyle{Segment_2}
+  \vspace{1 mm}} \\
+\hline
+\ccStyle{Triangle_2} & \ccStyle{Triangle_2} & \parbox{4 cm}{\vspace{1 mm}
+    \ccStyle{Point_2}
+    \\ \ccStyle{Segment_2}
+    \\ \ccStyle{Triangle_2}
+    \\ \ccStyle{std::vector<Point_2>}
+  \vspace{1 mm}} \\
+\hline
+\ccStyle{Iso_rectangle_2} & \ccStyle{Line_2} & \parbox{4 cm}{\vspace{1 mm}
+    \ccStyle{Point_2}
+    \\ \ccStyle{Segment_2}
+  \vspace{1 mm}} \\
+\hline
+\ccStyle{Iso_rectangle_2} & \ccStyle{Segment_2} & \parbox{4 cm}{\vspace{1 mm}
+    \ccStyle{Point_2}
+    \\ \ccStyle{Segment_2}
+  \vspace{1 mm}} \\
+\hline
+\ccStyle{Iso_rectangle_2} & \ccStyle{Ray_2} & \parbox{4 cm}{\vspace{1 mm}
+    \ccStyle{Point_2}
+    \\ \ccStyle{Segment_2}
+  \vspace{1 mm}} \\
+\hline
+\ccStyle{Iso_rectangle_2} & \ccStyle{Iso_rectangle_2} & \parbox{4 cm}{\vspace{1 mm}
+    \ccStyle{Iso_rectangle_2}
+  \vspace{1 mm}} \\
+\hline
+{\ccStyle{Plane_3}} & {\ccStyle{Line_3}} & \parbox{4 cm}{\vspace{1 mm}
+\ccStyle{Point_3} \\
+ \ccStyle{Line_3} 
+\vspace{1 mm}} \\
+\hline
+{\ccStyle{Plane_3}} & {\ccStyle{Ray_3}} & \parbox{4 cm}{\vspace{1 mm}
+\ccStyle{Point_3} \\
+ \ccStyle{Ray_3}
+\vspace{1 mm}}  \\
+\hline
+{\ccStyle{Plane_3}} & {\ccStyle{Segment_3}} & \parbox{4 cm}{\vspace{1 mm}
+\ccStyle{Point_3} \\
+ \ccStyle{Segment_3}
+\vspace{1 mm}}  \\
+\hline
+{\ccStyle{Plane_3}} & {\ccStyle{Plane_3}} & \parbox{4 cm}{\vspace{1 mm}
+\ccStyle{Line_3} \\
+ \ccStyle{Plane_3}
+\vspace{1 mm}}  \\
+\hline
+\end{longtable}
+\end{ccTexOnly}
+
+\begin{ccHtmlOnly}
+<DIV ALIGN="CENTER">
+<TABLE CELLPADDING=3 BORDER="1">
+<TR> <TH> type A </TH>
+ <TH> type B </TH>
+ <TH> return type </TH>
+</TR>
+<TR>
+    <TD VALIGN="CENTER" > Line_2 </TD>
+    <TD VALIGN="CENTER" > Line_2 </TD>
+    <TD><TABLE>
+	<TR><TD>Point_2</TD></TR>
+	<TR><TD>Line_2</TD></TR>
+        </TABLE></TD>
+</TR>
+<TR>
+    <TD VALIGN="CENTER" > Segment_2 </TD>
+    <TD VALIGN="CENTER" > Line_2 </TD>
+    <TD><TABLE>
+	<TR><TD>Point_2</TD></TR>
+	<TR><TD>Segment_2</TD></TR>
+      </TABLE></TD>
+</TR>
+<TR>
+    <TD VALIGN="CENTER" > Segment_2 </TD>
+    <TD VALIGN="CENTER" > Segment_2 </TD>
+    <TD><TABLE>
+	<TR><TD>Point_2</TD></TR>
+	<TR><TD>Segment_2</TD></TR>
+      </TABLE></TD>
+</TR>
+<TR>
+    <TD VALIGN="CENTER" > Ray_2 </TD>
+    <TD VALIGN="CENTER" > Line_2 </TD>
+    <TD><TABLE>
+	<TR><TD>Point_2</TD></TR>
+	<TR><TD>Ray_2</TD></TR>
+      </TABLE></TD>
+</TR>
+<TR>
+    <TD VALIGN="CENTER" > Ray_2 </TD>
+    <TD VALIGN="CENTER" > Segment_2 </TD>
+    <TD><TABLE>
+	<TR><TD>Point_2</TD></TR>
+	<TR><TD>Segment_2</TD></TR>
+      </TABLE></TD>
+</TR>
+<TR>
+    <TD VALIGN="CENTER" > Ray_2 </TD>
+    <TD VALIGN="CENTER" > Ray_2 </TD>
+    <TD><TABLE>
+	<TR><TD>Point_2</TD></TR>
+	<TR><TD>Segment_2</TD></TR>
+	<TR><TD>Ray_2</TD></TR>
+      </TABLE></TD>
+</TR>
+<TR>
+    <TD VALIGN="CENTER" > Triangle_2 </TD>
+    <TD VALIGN="CENTER" > Line_2 </TD>
+    <TD><TABLE>
+	<TR><TD>Point_2</TD></TR>
+	<TR><TD>Segment_2</TD></TR>
+      </TABLE></TD>
+</TR>
+<TR>
+    <TD VALIGN="CENTER" > Triangle_2 </TD>
+    <TD VALIGN="CENTER" > Segment_2 </TD>
+    <TD><TABLE>
+	<TR><TD>Point_2</TD></TR>
+	<TR><TD>Segment_2</TD></TR>
+      </TABLE></TD>
+</TR>
+<TR>
+    <TD VALIGN="CENTER" > Triangle_2 </TD>
+    <TD VALIGN="CENTER" > Ray_2 </TD>
+    <TD><TABLE>
+	<TR><TD>Point_2</TD></TR>
+	<TR><TD>Segment_2</TD></TR>
+      </TABLE></TD>
+</TR>
+<TR>
+    <TD VALIGN="CENTER" > Triangle_2 </TD>
+    <TD VALIGN="CENTER" > Triangle_2 </TD>
+    <TD><TABLE>
+	<TR><TD>Point_2</TD></TR>
+	<TR><TD>Segment_2</TD></TR>
+	<TR><TD>Triangle_2</TD></TR>
+	<TR><TD>std::vector&lt;Point_2&gt;</TD></TR>
+      </TABLE></TD>
+</TR>
+<TR>
+    <TD VALIGN="CENTER" > Iso_rectangle_2 </TD>
+    <TD VALIGN="CENTER" > Line_2 </TD>
+    <TD><TABLE>
+	<TR><TD>Point_2</TD></TR>
+	<TR><TD>Segment_2</TD></TR>
+      </TABLE></TD>
+</TR>
+<TR>
+    <TD VALIGN="CENTER" > Iso_rectangle_2 </TD>
+    <TD VALIGN="CENTER" > Segment_2 </TD>
+    <TD><TABLE>
+	<TR><TD>Point_2</TD></TR>
+	<TR><TD>Segment_2</TD></TR>
+      </TABLE></TD>
+</TR>
+<TR>
+    <TD VALIGN="CENTER" > Iso_rectangle_2 </TD>
+    <TD VALIGN="CENTER" > Ray_2 </TD>
+    <TD><TABLE>
+	<TR><TD>Point_2</TD></TR>
+	<TR><TD>Segment_2</TD></TR>
+      </TABLE></TD>
+</TR>
+<TR>
+    <TD VALIGN="CENTER" > Iso_rectangle_2 </TD>
+    <TD VALIGN="CENTER" > Iso_rectangle_2 </TD>
+    <TD><TABLE>
+	<TR><TD>Iso_rectangle_2</TD></TR>
+      </TABLE></TD>
+</TR>
+<TR>
+    <TD VALIGN="CENTER" > Plane_3 </TD>
+    <TD VALIGN="CENTER" > Line_3 </TD>
+    <TD><TABLE>
+	<TR><TD>Point_3</TD></TR>
+	<TR><TD>Line_3</TD></TR>
+        </TABLE></TD>
+</TR>
+<TR>
+    <TD VALIGN="CENTER" > Plane_3 </TD>
+    <TD VALIGN="CENTER" > Ray_3 </TD>
+    <TD><TABLE>
+	<TR><TD>Point_3</TD></TR>
+	<TR><TD>Ray_3</TD></TR>
+        </TABLE></TD>
+</TR>
+<TR>
+    <TD VALIGN="CENTER" > Plane_3 </TD>
+    <TD VALIGN="CENTER" > Segment_3 </TD>
+    <TD><TABLE>
+	<TR><TD>Point_3</TD></TR>
+	<TR><TD>Segment_3</TD></TR>
+        </TABLE></TD>
+</TR>
+<TR>
+    <TD VALIGN="CENTER" > Plane_3 </TD>
+    <TD VALIGN="CENTER" > Plane_3 </TD>
+    <TD><TABLE>
+	<TR><TD>Line_3</TD></TR>
+	<TR><TD>Plane_3</TD></TR>
+        </TABLE></TD>
+</TR>
+</TABLE>
+</DIV>
+\end{ccHtmlOnly}
+
+\ccExample
+
+The following example demonstrates the most common use of 
+\ccc{intersection} routines.
+\begin{verbatim}
+#include <CGAL/Segment_2_Line_2_intersection.h>
+/* or #include <CGAL/intersections.h> */
+
+template <class R>
+void foo(Segment_2<R> seg, Line_2<R> line)
+{
+    Object result;
+    Point_2<R> ipoint;
+    Segment_2<R> iseg;
+
+    result = intersection(seg, line);
+    if (assign(ipoint, result)) {
+\end{verbatim}%
+\ccHtmlLinksOff%
+\begin{verbatim}
+        // handle the point intersection case.
+\end{verbatim}%
+\ccHtmlLinksOn%
+\begin{verbatim}
+    } else
+        if (assign(iseg, result)) {
+\end{verbatim}%
+\ccHtmlLinksOff%
+\begin{verbatim}
+            // handle the segment intersection case.
+\end{verbatim}%
+\ccHtmlLinksOn%
+\begin{verbatim}
+        } else {
+\end{verbatim}%
+\ccHtmlLinksOff%
+\begin{verbatim}
+            // handle the no intersection case.
+        }
+}
+\end{verbatim}%
+\ccHtmlLinksOn%
+
+\ccSeeAlso
+\ccRefIdfierPage{CGAL::assign} \\
+\ccRefIdfierPage{CGAL::do_intersect} \\ 
+\ccRefIdfierPage{CGAL::Object} \\
+
+\end{ccRefFunction}
+
+  
+

@@ -1,0 +1,73 @@
+% +------------------------------------------------------------------------+
+% | Reference manual page: write_pm.tex (Planar_map)
+% +------------------------------------------------------------------------+
+% | 
+% | Package: pm (Planar_map_2)
+% | 
+% +------------------------------------------------------------------------+
+
+\ccRefPageBegin
+
+%%RefPage: end of header, begin of main body
+% +------------------------------------------------------------------------+
+
+%write_pm
+\begin{ccRefFunction}{write_pm}
+
+\ccCreationVariable{write_pm}
+
+\ccDefinition
+
+The function \ccRefName\ sends an object of the template parameter
+type \ccc{Planar_map} to an output stream. The function is intended
+for cases where the writer object is not the default one, i.e. for
+user defined writer classes which aim at writing planar maps with
+additional information or aim at special format. For a default use
+simply use the insertor operator (\ccc{<<}) of the output stream as in
+\ccc{cout << pm}.
+
+Reading is done using the \ccc{read} method of
+\ccc{Planar_map_2<Dcel,Traits>}.
+
+\ccInclude{CGAL/IO/write_pm.h}
+
+\ccFunction{template <Planar_map, Writer>
+            void
+            write_pm(Planar_map pm, 
+                     Writer&    writer, 
+                     ostream&   o);}
+           {The function sends a planar map object to an output
+           stream. The function uses the methods defined within the
+           \ccStyle{Writer} class, and prints \ccStyle{pm} which is instance of
+           \ccc{Planar_map} in the format discussed in
+           \ccRefPage{Pm_IO_format}. The printing is done by sending
+           the planar map object to the output stream \ccc{o}.}
+
+\ccHeading{Requirements}
+\begin{enumerate}
+   \item    \ccc{Planar_map}  
+            should be of type \ccc{Planar_map_2<Dcel,Traits>}.
+   \item    \ccc{Writer}  
+            should be of type \ccc{Pm_file_writer<Planar_map>}.
+    
+   \item    The output stream should support the insertor operator (\ccc{<<}) 
+            for the following types
+            \begin{itemize}
+                \item \ccc{Planar_map::Point},
+                \item \ccc{Planar_map::X_curve}, 
+            \end{itemize}
+\end{enumerate}
+
+\ccSeeAlso
+     \ccc{draw_pm}\lcTex{ 
+     (\ccRefPage{CGAL::draw_pm})}\\
+
+
+
+\end{ccRefFunction} % writer_pm
+
+% +------------------------------------------------------------------------+
+%%RefPage: end of main body, begin of footer
+\ccRefPageEnd
+% EOF
+% +------------------------------------------------------------------------+

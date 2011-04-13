@@ -1,0 +1,252 @@
+Generator Package: Release changes:
+---------------------------------------------------------------------
+2.40 (25 July 2001)
+   - fixed section reference in doc.
+
+2.39 (19 July 2001)
+   - fixed? a number type problem in random polygon example and added more
+     output statements
+
+2.38 (16 July 2001)
+   - added missing std's in some programs
+   - made doc. include programs in examples directory
+   - converted examples and demos to new kernel
+
+2.37 (12 July 2001)
+   added example program for random polygon
+
+   changed name of demo directory from Generator_LEDA to Generator
+
+   fixed value_type problem in random_polygon_2 
+
+   added versions of duplicate_points and copy_n_unique that use default traits
+   
+2.36 (15 February 2001)
+
+   removed parameters from main() in rcs_test.C to get rid of warning
+
+2.35 (30 January 2001)
+
+   removed the parameter name "traits" in duplicate_points and copy_n_unique 
+   functions to avoid warnings about unused parameter.
+
+   added \input{Random.tex} command in generator.tex file to include the
+   documentation for the class Random
+
+2.34 (31 August 2000)
+   
+   modified Simplicity_sweep_2.h to include the new Simplicity_test.h
+   instead of Polygon_algorithms_2.C (in accordance with changes made
+   in Polygon package)
+
+2.33 (10 August 2000)
+   
+   fixed some formatting problems in documentation
+
+2.32 (10 August 2000)
+   
+   changed fstream.h to fstream in demo program 
+
+2.31 (17 July 2000)
+   
+   added forward declaration of Simplicity_test_2 and a few typenames
+   here and there.
+
+2.30 (10 July 2000)
+   
+   added std:: prefix to sprintf call
+
+2.29 (6 July 2000)
+   
+   added random_polygon_2 function to generate "random" simple polygons
+
+2.28 (29 June 2000)
+
+   added CGAL_NTS qualification to calls to abs.
+
+2.27 (22 June 2000)
+
+   Modified Random_convex_set_traits_2.h to use kernel traits.  Removed
+   std:: prefix from some max and min calls in accordance with new namespace
+   rules. 
+
+2.26 (18 April 2000)
+
+    removed leading underscores from Generator_base and Random_generator_base
+    fixed example programs in documentation 
+
+2.25 (23 March 2000)
+
+    replaced a std::copy_n with CGAL::copy_n in one of the demo programs
+    since std::copy_n is not actually in the standard.
+
+2.24 (3 February 2000)
+
+    replaced outdated CGAL_reinterpret_cast macro with reinterpret_cast
+    in Random_convex_set_traits_2.h and replaced std::value_type with 
+    ch_value_type in point_generators_2.h (after complaints from the KAI
+    compiler)
+
+%%%%%%%%%%%%%%%%%%% Release 2.1 %%%%%%%%%%%%%%%%%%%%%%%%
+
+2.23 (11 January 2000)
+
+    makefiles in test and examples fixed
+
+2.22 (20 December 1999)  
+
+    (by Stefan S.)
+    renamed makefile to Makefile in Generator source directory
+    and renamed makefile to Makefile in exclude_from_tar there
+    version 2.21 had no makefile included, should be fixed now
+
+2.21 (18 December 1999)  
+
+    (by Stefan S.)
+    removed CGAL_DEFINE_ITERATOR_TRAITS_POINTER_SPECs in demo/Generator_LEDA
+    created and adjusted (_WINDOW_) new makefile in demo/Generator_LEDA
+    added using std::cout; using std::cerr; using std::endl; using 
+    std::flush; in rcs_demo.C
+
+2.20 (10 December 1999)
+
+    fixed the demo makefile by substituting $OBJ_EXT for .o and such things
+    fixed the documentation to prevent the word "Traits" from being linked
+
+2.19 (8 December 1999)
+
+    added CGAL_CLIB_STD before cos, sin, and ceil calls
+
+2.18 (5 December 1999)
+
+    included makefile with demo program
+
+2.17 (19 October 1999)
+
+    Fixed typos in indexing commands.
+
+2.16 (15 October 1999)
+
+    Added indexing commands to documentation.
+
+2.15 (5 October 1999)
+
+    Removed CGAL_DEFINE_ITERATOR_TRAITS_POINTER_SPEC macros (since they are
+    specialized elsewhere for "standard" kernel objects). 
+
+2.14 (29 September 1999)
+
+    Fixed bug in point_generators_2.h for IRIX platform where size_t 
+    variable used as argument to std::sqrt caused an ambiguity between 
+    double and float sqrt.  Added some CGAL_DEFINE_ITERATOR_TRAITS_POINT_SPEC
+    macros to example and test programs to get them to work on MSVC++.
+
+2.13 (1 September 1999)
+
+    Added missing std:: prefixes and ifdef macros for Microsoft
+    Visual C++ support
+
+2.12 (28 Jul 1999)
+
+     Susan Hert (MPI) takes over the maintenance of this package
+     with this release.
+
+2.11 (03 Jun 1999)
+
+     Bug in the test-suite with a too small reserve size of a vector fixed.
+
+2.10 (26 May 1999)
+
+     demo/Generator_LEDA/rcs_demo.C wrong check for argc fixed.
+
+2.9 (26 May 1999)
+
+     Long names flag added to Makefile of the demos directory.
+
+2.8 (22 May 1999)
+
+     Typos before CGAL R2.0 fixed.
+
+2.7 (14 May 1999)
+
+     CGAL_random_selection: CGAL prefix removed in the documentation.
+
+2.6 (20 Apr 1999)
+
+     Two missing std:: namespaces added for input_iterator_tag and ptrdiff_t.
+
+2.5 (12 Apr 1999)
+
+     Release 2.4 contained outdated files. Fixed.
+
+2.4 (07 Apr 1999)
+
+     Fixes std:: prefix for base classes to CGAL_STD:: in 
+     random_convex_set_2.h. std:: namespace added for max().
+     Base class input_iterator removed from _Generator_base.
+
+2.3 (23 Mar 1999)
+
+     Missing #endif for #include <numeric> in random_convex_set_2.h
+     fixed.
+
+2.2 (17 Mar 1999)
+
+     Include <numeric> in random_convex_set_2.h.
+
+2.1 (07 Mar 1999)
+
+     Standard headers, std namespace and CGAL namespace.
+     Renamed from Random to Generator package, since 
+     Random.h, Random.C and Random.tex are removed from this package.
+     They are now in a separate package.
+
+1.12 (23 Jul 1998)
+
+     Demos adapted to new style of LEDA window support. The images
+     in the manual will be updated lateron. Only the drawing mode
+     has changed for them.
+
+1.11 (03 Jun 1998)
+
+     A few changes in the doc. Chapter entry in header.
+
+1.10 (09 Apr 1998)
+
+     Spell checker.
+
+1.9 (06 Mar 1998)
+
+     Small fixes in random convex sets.
+
+1.8 (05 Mar 1998)
+
+     Return-value added for test_Random.C.
+
+1.7 (18 Feb 1998)
+
+     A few typename's in inappropriate places removed. Run's with SGI CC-n32.
+
+1.6 (16 Feb 1998)
+
+     Bug fixed in test/Random/rcs_test.C .
+
+1.5 (13 Feb 1998)
+
+     Random convex sets added.
+
+1.4 (11 Feb 1998)
+
+     New cgal_test script. Tested with g++ 2.8 and egcs 2.90.
+     New subsections with \ccSeeAlso. Include file protection as 
+     provided with the script. Includes now the TeX documentation for 
+     the support library. Includes new package field in the header. 
+     Compliant to recent organisational conventions that the examples 
+     directory gets tested and that there is a new demo directory.
+
+Changes compared to CGAL 0.9:
+
+     Full redesign of the initialization of a point with double 
+     coordinates. The generation of more complex geometries like 
+     segments and triangles has been solved using Join_iterator
+     instead of specialized functions. 3D Point generators added.

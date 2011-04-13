@@ -1,0 +1,65 @@
+% +------------------------------------------------------------------------+
+% | Reference manual page: YMonotonePartitionIsValidTraits_2.tex
+% +------------------------------------------------------------------------+
+% | 10.05.2000   Susan Hert
+% | Package: Partition_2
+% | 
+% +------------------------------------------------------------------------+
+
+\renewcommand\ccRefPageBegin{\ccParDims\cgalColumnLayout\begin{ccAdvanced}}
+\renewcommand\ccRefPageEnd{\ccParDims\cgalColumnLayout\end{ccAdvanced}}
+\begin{ccRefConcept}{YMonotonePartitionIsValidTraits_2}
+\ccIndexSubitemBegin[C]{y_monotone_partition_2}{traits class}
+\ccIndexSubitemBegin[C]{y_monotone_partition_is_valid}{traits class}
+
+
+\ccDefinition
+  
+Requirements of a traits class that is used 
+by \ccc{y_monotone_partition_is_valid_2} for testing the validity of a
+$y$-monotone partition of a polygon.
+
+\ccTypes
+
+All types required by the concept PartitionIsValidTraits\_2 are required
+except the function object type \ccc{Is_valid}. The following type is
+required instead:
+
+\ccNestedType{Is_y_monotone_2}{Model of the concept PolygonIsValid that tests if
+                               a sequence of points is $y$-monotone or not.}
+
+\ccCreationVariable{traits}
+\ccCreation
+
+Only a copy constructor is required.
+
+\ccConstructor{YMonotonePartitionIsValidTraits_2(YMonotonePartitionIsValidTraits_2& tr
+)}{}
+\ccOperations
+
+The following function that creates an instance of the above predicate object
+type must exist instead of the function \ccc{is_valid_object} required by
+PartitionIsValidTraits\_2.
+
+\ccMethod{Is_y_monotone_2 is_y_monotone_2_object(YMonotonePartitionIsValidTraits_2 t);}{}
+
+\ccHasModels
+
+\ccRefIdfierPage{CGAL::Partition_traits_2<R>}
+
+\ccSeeAlso
+
+\ccRefIdfierPage{CGAL::partition_is_valid_2} \\
+\ccRefIdfierPage{CGAL::y_monotone_partition_2}
+
+\ccIndexSubitemEnd[C]{y_monotone_partition_2}{traits class}
+\ccIndexSubitemEnd[C]{y_monotone_partition_is_valid}{traits class}
+\end{ccRefConcept}
+\renewcommand\ccRefPageBegin{\ccParDims\cgalColumnLayout}
+\renewcommand\ccRefPageEnd{\ccParDims\cgalColumnLayout}
+
+% +------------------------------------------------------------------------+
+%%RefPage: end of main body, begin of footer
+% EOF
+% +------------------------------------------------------------------------+
+

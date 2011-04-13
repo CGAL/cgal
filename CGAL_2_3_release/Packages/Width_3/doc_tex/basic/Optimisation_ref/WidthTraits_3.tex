@@ -1,0 +1,132 @@
+% =============================================================================
+% The CGAL Reference Manual
+% Chapter: Geometric Optimisation
+% Concept: WidthTraits_3
+% -----------------------------------------------------------------------------
+% file  : doc_tex/basic/Optimisation/Optimisation_ref/WidthTraits_3.tex
+% author: Thomas Herrmann, Sven Schönherr <herrmann@ifor.math.ethz.ch>
+% -----------------------------------------------------------------------------
+% $CGAL_Chapter: Geometric Optimisation $
+% $CGAL_Package: Optimisation_basic WIP $
+% $Revision$
+% $Date$
+% =============================================================================
+
+\begin{ccRefConcept}{WidthTraits_3}
+
+% -----------------------------------------------------------------------------
+\ccDefinition
+
+This concept defines the requirements for traits classes of
+\ccc{Width_3<Traits>}.
+
+% -----------------------------------------------------------------------------
+\ccTypes
+
+\ccSaveThreeColumns
+\ccSetTwoColumns{WidthTraits_3:: ChullTraits;}{}
+
+\ccGlueBegin
+\ccNestedType{Point_3}{The point type. The (in)equality tests must be
+  available. Access to the point coordinates is done via the \ccc{get_.()}
+  functions. Constructing a point is done with the \ccc{make_point( )}
+  operation.}
+\ccNestedType{Plane_3}{The plane type. Access to the coefficients of the
+  plane is made via the \ccc{get_.()} functions. Constructing a plane is
+  done with the \ccc{make_plane()} operation.}
+\ccNestedType{Vector_3}{The vector type. There is no need to access the
+  coefficients of a vector; only constructing is required and is done with
+  the \ccc{make_vector} operation.}
+\ccNestedType{ChullTraits}{The traits class for using the convex hull
+  algorithm. It must be a model of the concept ConvexHullTraits\_3.
+  This class is used only if the width is computed from a set
+  of points.}
+\ccNestedType{RT}{Ring type numbers. Internally all numbers are treated as
+  ring type numbers, i.e., neither $/$-operator nor $\sqrt{.}$ nor other
+  inexact operations are used. But because the algorithm does not use any
+  divisions, but multiplication instead, the numbers can get really big.
+  Therefore it is recommended to use a ring type number, that provides
+  values of arbitrary length. Furthermore it is assumed that the underlying
+  number type of \ccc{Point_3}, \ccc{Plane_3} and \ccc{Vector_3} equals
+  \ccc{RT}.}
+\ccGlueEnd
+
+\emph{Notes:} If you want to compute the width of a \emph{polyhedron}
+then you have to make sure that the point type in the traits class and
+the point type in the polyhedron class are the same! The same holds
+for \ccc{Traits::Plane_3} and \ccc{Polyhedron::Plane_3}.
+
+
+% -----------------------------------------------------------------------------
+\ccCreation
+\ccCreationVariable{traits}
+
+Only a default constructor is required.
+
+\ccConstructor{ WidthTraits_3( );}{}
+
+% -----------------------------------------------------------------------------
+\ccOperations
+Whatever the coordinates of the points are, it is required for the
+width-algorithm to have access to the homogeneous representation of
+points. 
+
+\ccSetThreeColumns{Vector_3}{get_plane_coordinates( );}{}
+\ccGlueBegin
+\ccFunction{ RT get_hx(const Point_3& p) const;}{returns the
+  homogeneous $x$-coordinate of point $p$.}  
+\ccFunction{ RT get_hy(const Point_3& p) const;}{returns the
+  homogeneous $y$-coordinate of point $p$.}  
+\ccFunction{ RT get_hz(const Point_3& p) const;}{returns the
+  homogeneous $z$-coordinate of point $p$.}  
+\ccFunction{ RT get_hw(const Point_3& p) const;}{returns the
+  homogenizing coordinate of point $p$.}  
+\ccFunction{ void get_point_coordinates(const Point_3& p, RT& px,
+  RT& py, RT& pz, RT& ph) const;}{returns all homogeneous coordinates
+  of point $p$ at once.}
+\ccGlueEnd
+
+\ccGlueBegin
+\ccFunction{ RT get_a(const Plane_3& f) const;}{returns the first
+  coefficient of plane $f$.}
+\ccFunction{ RT get_b(const Plane_3& f) const;}{returns the second
+  coefficient of plane $f$.}
+\ccFunction{ RT get_c(const Plane_3& f) const;}{returns the third
+  coefficient of plane $f$.}
+\ccFunction{ RT get_d(const Plane_3& f) const;}{returns the fourth
+  coefficient of plane $f$.}
+\ccFunction{ void get_plane_coefficients(const Plane_3& f, 
+  RT& a, RT& b, RT& c, RT& d)
+  const;}{returns all four plane coefficients of $f$ at once.}
+\ccGlueEnd
+
+\ccGlueBegin
+\ccFunction{ Point_3 make_point(const RT& hx, const RT& hy, const RT& hz, 
+  const RT& hw) const;}{returns a point of type
+  \ccc{Point_3} with homogeneous coordinates $hx$, $hy$, $hz$ and $hw$.}
+\ccFunction{ Plane_3 make_plane(const RT& a, const RT& b, const
+  RT& c, const RT& d) const;}{returns a plane of type \ccc{Plane_3}
+  with coefficients $a$, $b$, $c$ and $d$.}
+\ccFunction{ Vector_3 make_vector(const RT& a, const RT& b, const
+  RT& c) const;}{returns a vector of type \ccc{Vector_3} with the four
+  homogeneous coefficients $a$, $b$, $c$ and 1.}
+\ccGlueEnd
+
+\ccRestoreThreeColumns
+
+% -----------------------------------------------------------------------------
+\ccHasModels
+
+\ccRefIdfierPage{CGAL::Width_default_traits_3<K>}
+
+% -----------------------------------------------------------------------------
+\ccSeeAlso
+
+\ccIndexTraitsClassRequirements[C]{Width_3}
+\ccRefIdfierPage{CGAL::Width_3<Traits>}
+
+% -----------------------------------------------------------------------------
+
+\end{ccRefConcept}
+
+% ===== EOF ===================================================================

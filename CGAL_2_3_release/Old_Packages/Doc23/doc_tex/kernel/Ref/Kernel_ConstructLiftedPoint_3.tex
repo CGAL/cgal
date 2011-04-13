@@ -1,0 +1,17 @@
+\begin{ccRefFunctionObjectConcept}{Kernel::ConstructLiftedPoint_3}
+A model for this must provide:
+
+\ccCreationVariable{fo}
+
+\ccMemberFunction{Kernel::Point_3 operator()(const Kernel::Plane_3& h,
+                                             const Kernel::Point_2& p);}
+       {returns a point \ccc{q} on plane \ccc{h}, such that the projection of
+        this point onto the $xy$-plane is \ccc{p}.}
+
+\ccRefines
+AdaptableFunctor
+
+\ccSeeAlso
+\ccRefIdfierPage{CGAL::Plane_3<R>} \\
+
+\end{ccRefFunctionObjectConcept}

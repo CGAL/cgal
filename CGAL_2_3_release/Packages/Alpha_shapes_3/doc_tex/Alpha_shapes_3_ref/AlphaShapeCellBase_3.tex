@@ -1,0 +1,119 @@
+% ======================================================================
+%
+% Copyright (c) 1999 The GALIA Consortium
+%
+% This software and related documentation is part of the
+% Computational Geometry Algorithms Library (CGAL).
+%
+% Every use of CGAL requires a license. Licenses come in three kinds:
+%
+% - For academic research and teaching purposes, permission to use and
+%   copy the software and its documentation is hereby granted free of  
+%   charge, provided that
+%   (1) it is not a component of a commercial product, and
+%   (2) this notice appears in all copies of the software and
+%       related documentation.
+% - Development licenses grant access to the source code of the library 
+%   to develop programs. These programs may be sold to other parties as 
+%   executable code. To obtain a development license, please contact
+%   the GALIA Consortium (at cgal@cs.uu.nl).
+% - Commercialization licenses grant access to the source code and the
+%   right to sell development licenses. To obtain a commercialization 
+%   license, please contact the GALIA Consortium (at cgal@cs.uu.nl).
+%
+% This software and documentation is provided "as-is" and without
+% warranty of any kind. In no event shall the CGAL Consortium be
+% liable for any damage of any kind.
+%
+% The GALIA Consortium consists of Utrecht University (The Netherlands),
+% ETH Zurich (Switzerland), Free University of Berlin (Germany),
+% INRIA Sophia-Antipolis (France), Martin-Luther-University Halle-Wittenberg
+% (Germany), Max-Planck-Institute Saarbrucken (Germany),
+% and Tel-Aviv University (Israel).
+%
+% ----------------------------------------------------------------------
+%
+% package       : Alpha_shapes_3
+% author(s)     : Tran Kai Frank DA <Frank.Da@sophia.inria.fr>
+%
+% coordinator   : INRIA Sophia-Antipolis (<Mariette.Yvinec@sophia.inria.fr>)
+%
+% ======================================================================
+
+\RCSdef{\alphashapeRevision}{$Revision$}
+\RCSdefDate{\alphashapeDate}{$Date$}
+
+%----------------------------------------------------------------------
+
+\begin{ccRefConcept}{AlphaShapeCell_3}
+
+\ccDefinition
+
+
+\ccRefines
+\ccc{TriangulationCellBase_3}.
+
+
+\ccCreationVariable{f}
+\ccTypes
+
+
+\ccNestedType{Interval_3}{A container type to get (and put) the three special values 
+($\alpha_1, \alpha_2, \alpha_3$) associated with an alpha shape facet.}
+
+\ccNestedType{Coord_type}{A type to hold a coordinate type class. 
+The type must provide a copy constructor, assignment, comparison
+operators, negation, multiplication, division and allow the
+declaration and initialization with a small integer constant
+(cf. requirements for number types). An obvious choice would be
+coordinate type of the point class.
+\ccPrecond Let's us precise that \ccc{Coord_type} has to be the same as the one used by
+\ccc{Gt}, already used by the underlying triangulation \ccc{Dt}, and by
+her cell base \ccc{Df}.} 
+
+\ccCreation
+
+\begin{ccAdvanced}
+
+\ccConstructor{Alpha_shape_cell_base_3();}{default constructor.}
+\ccGlue
+\ccConstructor{Alpha_shape_cell_base_3(void* v0, void* v1, void* v2, void* v3);}{constructor setting the incident vertices.}
+\ccGlue
+\ccConstructor{Alpha_shape_cell_base_3(void* v0, void* v1, void*  v2, void* v3,
+void* n0, void* n1, void* n2, void* n3);} 
+{constructor setting the incident vertices and the neighboring cells.}
+
+\end{ccAdvanced}
+
+\ccHeading{Access Functions}
+\ccMethod{Interval_3 get_ranges(const int& i);}
+{returns the interval associated with the facet indexed with $i$, which contains
+three alpha values
+ $\alpha_1 \leq \alpha_2 \leq \alpha_3$, such as for
+$\alpha$  between $\alpha_1$ and $\alpha_2$, the facet indexed with $i$ is
+attached but singular, 
+for $\alpha$ between $\alpha_2$ and $\alpha_3$, the facet is regular, and for $\alpha$
+greater than $\alpha_3$, the facet is interior.}
+\ccMethod{Coord_type get_alpha();}
+{return the alpha value, under which the alpha shape contains the
+cell.}
+
+\ccModifiers
+
+\begin{ccAdvanced}
+
+\ccMethod{void set_ranges(const int& i, const Interval_3& V);}
+{sets the interval associated with the facet indexed with $i$, which contains three
+alpha values
+ $\alpha_1 \leq \alpha_2 \leq \alpha_3$, such as for
+$\alpha$  between $\alpha_1$ and $\alpha_2$, the facet indexed with $i$ is
+attached but singular, 
+for $\alpha$ between $\alpha_2$ and $\alpha_3$, the facet is regular, and for $\alpha$
+greater than $\alpha_3$, the facet is interior.}
+\ccMethod{void set_alpha(Coord_type A);}
+{sets the alpha value, under which the alpha shape contains the
+cell.}
+
+\end{ccAdvanced}
+
+\end{ccRefConcept}

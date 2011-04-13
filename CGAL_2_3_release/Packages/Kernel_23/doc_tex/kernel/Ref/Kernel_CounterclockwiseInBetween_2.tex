@@ -1,0 +1,21 @@
+\begin{ccRefFunctionObjectConcept}{Kernel::CounterclockwiseInBetween_2}
+A model for this must provide:
+
+\ccCreationVariable{fo}
+
+\ccMemberFunction{bool operator()(const Kernel::Direction_2&d, 
+                                  const Kernel::Direction_2&d1,
+                                  const Kernel::Direction_2&d2);}
+{returns \ccc{true} iff \ccc{d} is not equal to \ccc{d1}, and 
+        while rotating counterclockwise starting at \ccc{d1}, 
+        \ccc{d} is reached strictly before \ccc{d2} is reached.
+        Note that true is returned if \ccc{d1} == \ccc{d2}, unless
+        also \ccc{d} == \ccc{d1}.}
+
+\ccRefines
+AdaptableFunctor
+
+\ccSeeAlso
+\ccRefIdfierPage{CGAL::Direction_2<R>}\\
+
+\end{ccRefFunctionObjectConcept}

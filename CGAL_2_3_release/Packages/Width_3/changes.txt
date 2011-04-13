@@ -1,0 +1,48 @@
+1.13 (31 Jul 2001)
+- Susan moved doc_tex/*_ref directory up one level
+
+1.12 (16 Jul 2001)
+- Removed unused argc and argv parameter from main().
+
+1.11 (13 Jul 2001)
+- fixed Width_3 to remove erroneous assertion
+- added missing function call to simple_test
+
+1.10 (12 Jul 2001)
+
+- Revised tests to work for both designs of polyhedral surfaces.
+
+1.9 (12 Jul 2001)
+- Adapted to new polyhedral surface design (release 3).
+- Ported from dd_geo/chull to convex_hull_3.
+- Changed to new concept naming convention, i.e., WidthTraits_3.
+- Changed traits class to new kernel design naming. However, the unchanged
+  member functions make this traits not compliant with kernel traits.
+- Edited Width_3.tex quite a bit. Removed redundant descriptions of type
+  requirements that are actually described in the WidthTraits_3.
+
+1.8
+- Moving to CVS Server and completed truncated text in description.txt
+
+1.7
+- To fix the problem with Microsoft Visual C: Replaced all function 
+  calls by resolving explicitly all typename's within the signature
+  and adding the corresponding class to the list of template
+  parameters. There are some functions that have now a dummy data
+  access object.
+- Some typename's have been replaced by a macro to please Microsoft VC
+  compiler.  
+- Added 2 typename's within debug regions
+- Now test_width_simplex.C is the same in the text directory and the
+  test directory
+
+1.6
+- Renamed class DA to Data_access to please Windows compilers bcc32
+  and CL
+
+1.5
+- Lines have been wrapped after 80 chars
+- At Line 1402: inserted CGAL:: before DA<...>
+
+1.4.1
+- Removed test/basic subdir

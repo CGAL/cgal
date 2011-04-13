@@ -1,0 +1,184 @@
+% +------------------------------------------------------------------------+
+% | Reference manual page: Triangulation_data_structure_2::Face.tex
+% +------------------------------------------------------------------------+
+% | 07.04.2000   Author
+% | Package: Package
+% | 
+\RCSdef{\RCSTriangulationdatastructure::FaceRev}{$Revision$}
+\RCSdefDate{\RCSTriangulationdatastructure::FaceDate}{$Date$}
+% |
+%%RefPage: end of header, begin of main body
+% +------------------------------------------------------------------------+
+
+
+\begin{ccRefConcept}{TriangulationDataStructure_2::Face}
+
+%% \ccHtmlCrossLink{}     %% add further rules for cross referencing links
+%% \ccHtmlIndexC[concept]{} %% add further index entries
+
+\ccDefinition
+  
+The concept \ccRefName\  describes the Face class of a 
+\ccc{Triangulation_data_structure_2} 
+\ccRefPage{TriangulationDataStructure_2}.
+A \ccRefName\ stores three pointers to its three vertices
+and three pointers to its three neighbors.
+The vertices are indexed 0,1, and 2 in counterclockwise order.
+The  neighbor indexed $i$ lies
+opposite to vertex i.
+
+To ensure all the \textbf{flexibility} of class \ccc{Triangulation_2}
+described in \ccRefPage{CGAL::Triangulation_2<Traits,Tds>}
+and in Chapter~\ref{Chapter_2D_Triangulations}, a model of 
+\ccRefName\ derives from a template parameter
+\ccc{Fb} to be instantiated with a model of 
+\ccc{Triangulation_face_base_2}.
+
+\ccTypes
+The class \ccRefName\ defines the same types as 
+the triangulation data structure 
+except the iterators and the circulators.
+
+\ccCreationVariable{f}  %% choose variable name
+\begin{ccAdvanced}
+\ccCreation
+
+For user defined triangulation algorithms, faces need to
+be explicitly constructed and linked to their neighbors.
+
+\ccConstructor{TriangulationDataStructure_2::Face();}{default
+constructor,
+initializes all vertices and neighbors 
+ with \ccc{NULL}.}
+
+\ccConstructor{TriangulationDataStructure_2::Face(Vertex* v0,
+                                           Vertex* v1,
+                                           Vertex* v2);}
+{introduces a face \ccVar, and initializes the vertices. The 
+neighbors are initialized with \ccc{NULL}.}
+
+\ccConstructor{TriangulationDataStructure_2::Face(Vertex* v0,
+                    Vertex* v1,
+                    Vertex* v2,
+                    Face* n0,
+                    Face* n1,
+                    Face* n2);}
+{introduces a face \ccVar, and initializes the vertices and the neighbors.}
+
+
+\ccHeading{Setting}
+
+\ccThree{Vertex*}{f.has_vertex( Vertex* v, int& i)x}{}
+\ccMethod{void set_vertex(int i, Vertex* v);}
+{sets vertex \ccc{i} to be \ccc{v}.
+\ccPrecond $0\leq i \leq 2$.
+}
+\ccGlue
+\ccMethod{void set_neighbor(int i, Face* n);}
+{sets neighbor \ccc{i} to be \ccc{n}.
+\ccPrecond $0\leq i \leq 2$.
+}
+\ccGlue
+\ccMethod{ void set_vertices();}{sets the vertices pointers to \ccc{NULL}.}
+\ccGlue
+\ccMethod{void set_vertices(Vertex* v0,
+		    Vertex* v1,
+		    Vertex* v2);}{sets the vertices pointers.}
+\ccGlue
+\ccMethod{void set_neighbors();} {sets the neighbors pointers to \ccc{NULL}.}
+\ccGlue
+\ccMethod{void set_neighbors(Face* n0,
+		     Face* n1,
+		     Face* n2);}{sets the neighbors pointers.}
+
+\end{ccAdvanced}
+
+
+\ccHeading{Vertex Access Functions}
+
+\ccMethod{Vertex* vertex(int i) const;}
+{returns  the vertex \ccc{i} of \ccVar.
+\ccPrecond $0\leq i \leq 2$.}
+\ccGlue
+\ccMethod{int index(Vertex* v) const;}
+{returns the index of vertex \ccc{v} in \ccVar. \ccPrecond \ccc{v} is
+a vertex of \ccVar}
+\ccGlue
+\ccMethod{bool has_vertex(Vertex* v) const;}
+{returns \ccc{true} if  \ccc{v} is a vertex of \ccVar.}
+\ccGlue
+\ccMethod{bool has_vertex(Vertex* v, int& i) const;}
+{returns \ccc{true} if  \ccc{v} is a vertex of \ccVar, and
+ computes the index \ccc{i} of \ccc{v} in \ccc{f}.}
+
+
+\ccHeading{Neighbor Access Functions}
+
+The neighbor with index \ccc{i} is the neighbor which is opposite
+to the vertex with index \ccc{i}.
+
+
+\ccMethod{Face* neighbor(int i) const;}
+{returns  the neighbor \ccc{i} of \ccVar. 
+\ccPrecond $0\leq i \leq 2$.
+}
+\ccGlue
+\ccMethod{int index(Face* n) const;}
+{returns the index of face \ccc{n}.
+\ccPrecond \ccc{n} is a neighbor of \ccVar.}
+\ccGlue
+\ccMethod{bool has_neighbor(Face* n) const;}
+{returns \ccc{true} if \ccc{n} is a neighbor of \ccVar.}
+\ccGlue
+\ccMethod{bool has_neighbor(Face* n, int& i) const;}
+{returns \ccc{true} if \ccc{n} is a neighbor of \ccVar,  and
+compute the index \ccc{i} of \ccc{n}.}
+
+\ccHeading{Other Access Functions}
+\ccMethod{int  mirror_index(int i) const;}
+{index of \ccVar\ as a neighbor of \ccVar.\ccc{neighbor(i)}}
+\ccGlue
+\ccMethod{Vertex* mirror_vertex(int i) const;}
+{vertex of \ccVar.\ccc{neighbor(i)}} opposite to  \ccVar.
+
+
+\begin{ccAdvanced}
+\ccHeading{Checking}
+
+\ccMethod{bool is_valid() const;}
+{returns \ccc{true} if  the function 
+\ccc{is_valid()} of the base class
+returns \ccc{true} and if, for each index $i$, $0 \le i < 3$,
+face $f$ is a neighbor of its neighboring face \ccc{neighbor(i)}
+and shares with this neighbor the  vertices \ccc{cw(i)} and \ccc{ccw(i)}
+in correct reverse order.}
+
+\end{ccAdvanced}
+
+\ccHeading{Miscellaneous} 
+
+\ccMethod{int ccw(int i) const;}
+{Returns $i+1$ modulo 3.\ccPrecond $0\leq i \leq 2$.}
+
+\ccMethod{int cw(int i) const;}
+{Returns $i+2$ modulo 3.\ccPrecond $0\leq i \leq 2$.}
+
+
+
+\ccHasModels
+\ccc{CGAL::Triangulation_ds_Face_2<Vb,Fb>}
+
+
+\ccSeeAlso
+\ccc{TriangulationDataStructure_2}, \\
+\ccc{TriangulationDataStructure_2::Vertex}, \\
+\ccc{TriangulationFaceBase_2}.
+
+
+\end{ccRefConcept}
+
+% +------------------------------------------------------------------------+
+%%RefPage: end of main body, begin of footer
+% EOF
+% +------------------------------------------------------------------------+
+

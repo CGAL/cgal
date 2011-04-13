@@ -1,0 +1,94 @@
+% +------------------------------------------------------------------------+
+% | Reference manual page: Pm_bounding_box_traits.tex (Planar_map)
+% +------------------------------------------------------------------------+
+% | 
+% | Package: pm (Planar_map_2)
+% | 
+% +------------------------------------------------------------------------+
+
+\ccRefPageBegin
+
+%%RefPage: end of header, begin of main body
+% +------------------------------------------------------------------------+
+\renewcommand{\ccRefPageBegin}{\begin{ccAdvanced}}
+\renewcommand{\ccRefPageEnd}{\end{ccAdvanced}}
+
+%Pm_file_scanner
+\begin{ccRefClass}{Pm_file_scanner<Planar_map>}
+
+\ccCreationVariable{pm_file_scanner}
+
+\ccDefinition
+The \ccRefName\ class is inherited from the \ccc{File_header} class. 
+This class contains functions for reading the \ccc{Planar map} components from a given input stream. 
+Users have to make sure that methods for reading \ccStyle{Point} and \ccStyle{X\_curve} defined in  
+the \ccc{Planar map traits} class are provided when using the input stream they choose to work with.
+This class is templated with \ccc{Planar map}, and hence the user can work with \ccRefName\ with its own \ccc{Planar map}. 
+ 
+%The following requirement catalog lists the primitives, i.e., types, member functions
+%etc., that must be defined for any \ccc{Planar map} file scanner class that can be used to parameterize the reading function of \ccc{Planar map}. 
+
+\ccTypes
+
+\ccTwo{Pm_file_scanner<Planar_map>::D_halfedge__bla}{}
+
+\ccNestedType{Traits}{Representation of a bounded curve.}
+\ccGlue
+\ccNestedType{Point}{A type to hold the location of a vertex in the plane.}
+\ccGlue
+\ccNestedType{X_curve}{A type to hold an $x$-monotone curve in the plane.}
+\ccGlue
+\ccNestedType{D_vertex}{The \ccc{Dcel} vertex type.}
+\ccGlue
+\ccNestedType{D_halfedge}{The \ccc{Dcel} halfedge type.}
+\ccGlue
+\ccNestedType{D_face}{The \ccc{Dcel} face type.}
+
+\ccCreation
+    
+\ccConstructor{Pm_file_scanner (istream& in)} 
+{A constructor for a given input stream.}
+\ccConstructor{Pm_file_scanner (istream& in, const File_header& header)} 
+{A constructor for a given input stream and File header.}
+
+\ccOperations
+\ccMethod{void scan_pm_vhf_sizes ();}{scans the number of vertices, 
+halfedges and faces of the \ccc{Planar map} from the input stream.}
+\ccMethod{void scan_index (size_t& index);}{scans one index from the input stream.}
+\ccMethod{istream& in ();}{returns the input stream the \ccc{Planar map} is scanned from.} 
+
+\ccMethod{void scan_vertex (D_vertex* v);}{scans a vertex of the \ccc{Dcel} from the input stream.}
+
+\ccMethod{X_curve scan_halfedge (D_halfedge* h);}
+{scans an halfedge of the \ccc{Dcel} from the input stream. 
+This function also returns the scanned curve. 
+The reason for returning that value is because the \ccc{Arrangement} class  
+does not update its halfedge with the curve.}
+
+\ccMethod{void scan_face (D_face* f);}{scans a face of the \ccc{Dcel} from the input stream.}
+
+\end{ccRefClass} % Pm_file_scanner
+
+\renewcommand{\ccRefPageBegin}{}
+\renewcommand{\ccRefPageEnd}{}
+
+% +------------------------------------------------------------------------+
+%%RefPage: end of main body, begin of footer
+\ccRefPageEnd
+% EOF
+% +------------------------------------------------------------------------+
+
+
+
+
+
+
+
+
+
+
+
+%%% Local Variables: 
+%%% mode: latex
+%%% TeX-master: "draw_pm"
+%%% End: 

@@ -1,0 +1,8 @@
+Sweep_line
+Sweep_curves_base.h
+Sweep_curves_to_planar_map.h
+Sweep_curves_to_subcurves.h
+sweep_to_construct_planar_map.h
+sweep_to_produce_planar_map_subcurves.h
+sweep_to_construct_planar_map.tex
+sweep_to_produce_planar_map_subcurves.tex

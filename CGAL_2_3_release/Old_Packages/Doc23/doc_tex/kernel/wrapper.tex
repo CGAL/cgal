@@ -1,0 +1,72 @@
+\documentclass{book}
+
+\usepackage{cprog}
+\usepackage{cc_manual}
+\usepackage{pslatex}
+\usepackage{epsfig}
+\usepackage{cc_manual_index}
+\usepackage{latex_converter}
+\usepackage{makeidx}
+\usepackage{amssymb}
+\usepackage{graphicx}
+\usepackage{path}
+\usepackage{ipe}
+\usepackage{longtable}
+%\usepackage{hyperref}
+
+% page dimensions
+% ---------------
+\textwidth 15.6cm 
+\textheight 23 cm
+\topmargin -14mm       
+\evensidemargin 3mm 
+\oddsidemargin 3mm
+
+% default column layout
+% ---------------------
+% This is the recommended layout. It may be changed inside main.tex.
+
+\newcommand{\cgalColumnLayout}{\ccTexHtml{%
+    \ccSetThreeColumns{Oriented_side}{}{\hspace*{10cm}}
+    \ccPropagateThreeToTwoColumns}{}}
+
+\gdef\ccNewRefManualStyle{\ccTrue}
+\ccDefGlobalScope{CGAL::}
+\marginparsep10mm
+\marginparwidth15mm
+
+\newcommand{\cgalrelease}{2.3-I-..}
+%\lcTex{\batchmode}
+
+%% let HTML converter know it is dealing with a manual in multiple parts
+%\ccMultiplePartsToc
+%% make chapters start over at 1 for each part
+%\ccNumberChaptersByPart
+
+\makeindex
+
+\sloppy
+
+\begin{document}
+
+\include{title}
+\pagestyle{plain}
+\pagenumbering{roman}
+\setcounter{page}{0}
+\include{preface}
+\cleardoublepage
+\tableofcontents
+\pagenumbering{arabic}
+
+\cgalColumnLayout
+
+\include{main}
+
+\lcTex{\listofrefpages}
+
+\bibliographystyle{alpha}
+\bibliography{../cgal-manual,geom}
+
+\lcTex{\printindex}
+\end{document}
+

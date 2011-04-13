@@ -1,0 +1,64 @@
+% =============================================================================
+% The CGAL User Manual
+% Chapter: Geometric Optimisation
+% -----------------------------------------------------------------------------
+% file   : doc_tex/basic/Optimisation/user_part.tex
+% package: Optimisation_doc
+% author : Sven Schönherr <sven@inf.ethz.ch>
+% -----------------------------------------------------------------------------
+% $Revision$
+% $Date$
+% =============================================================================
+
+%\section{Introduction}
+
+This chapter describes routines for solving geometric optimisation
+problems.
+
+There are algorithms for computing and updating the
+\begin{itemize}
+  \item smallest enclosing circle (\ccc{Min_circle_2<Traits>}), the
+  \item smallest enclosing ellipse (\ccc{Min_ellipse_2<Traits>}), the
+  \item smallest enclosing sphere (\ccc{Min_sphere_d<Traits>}), and the
+  \item smallest enclosing annulus (\ccc{Min_annulus_d<Traits>}),
+    respectively,
+\end{itemize}
+of a finite point set.
+
+We provide several functions to compute the smallest enclosing region
+$r$ of a planar convex polygon $P$ where $r$ is to be chosen from a
+set $\mathcal{R}$ of candidate regions (\ccc{min_rectangle_2},
+\ccc{min_parallelogram_2}, \ccc{min_strip_2}).
+
+An algorithm for computing and updating the (squared) distance of two
+convex polytopes is described (\ccc{Polytope_distance_d}).
+
+The remaining algorithms can be used for searching in matrices with
+specific properties and some applications.  In particular, there are
+general implementations of
+\begin{itemize}
+  \item monotone matrix search (\ccc{monotone_matrix_search}),
+    which can be applied to compute
+    \begin{itemize}
+      \item extremal polygons of a convex polygon
+        (\ccc{maximum_area_inscribed_k_gon_2},
+         \ccc{maximum_perimeter_inscribed_k_gon_2},
+         \ccc{extremal_polygon_2}) or
+      \item all furthest neighbors for the vertices of a convex polygon
+        (\ccc{all_furthest_neighbors_2}), and
+    \end{itemize}
+  \item sorted matrix search (\ccc{sorted_matrix_search}),
+    which can be used to compute the $p$-centers of a planar point set
+    (\ccc{rectangular_p_center_2}).
+\end{itemize}
+
+%\subsubsection*{Assertions}
+%The optimisation code uses infix \ccc{OPTIMISATION} in the assertions,
+%e.g.\ defining the compiler flag
+%\ccc{CGAL_OPTIMISATION_NO_PRECONDITIONS} switches precondition
+%checking off, cf.~\cgalReferToAssertions
+
+% ===== EOF ===================================================================
+
+
+

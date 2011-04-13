@@ -1,0 +1,157 @@
+% +------------------------------------------------------------------------+
+% | CGAL Reference Manual:  modifier.tex
+% +------------------------------------------------------------------------+
+% | Modifier Base Class for CGAL.
+% |
+% | 11.10.1996   Lutz Kettner
+% |
+% |
+\RCSdef{\modifierRev}{$Revision$}
+\RCSdefDate{\modifierDate}{$Date$}
+% +------------------------------------------------------------------------+
+
+\beforecprogskip\medskipamount
+\aftercprogskip\medskipamount
+\ccParDims
+
+\chapter{Protected Access to Internal Representations}
+\label{chapterModifier}
+\ccChapterRelease{\modifierRev. \ \modifierDate}\\
+\ccChapterAuthor{Lutz Kettner}
+
+% +=========================================================================+
+\section{Introduction}
+% +=========================================================================+
+
+High level data structures typically maintain integrity of an internal
+data representation, which they protect from the user. A minimal while
+complete interface of the data structure allows manipulations in the
+domain of valid representations. Additional operations might benefit
+from being allowed to access the internal data representation
+directly. An example are intermediate steps within an algorithm where
+the internal representation would be invalid. We present a general
+method to accomplish access in a safe manner, such that the high level
+data structures can guarantee validity after the possibly compromising
+algorithm has finished its work. An example are polyhedral surfaces in
+the Basic Library, where a construction process like for
+a file scanner could be performed more efficiently on the internal
+halfedge data structure than by using the high-level Euler operators
+of the polyhedron.
+
+\begin{figure}
+\begin{ccTexOnly}
+    \begin{center}
+      \parbox{\textwidth}{%
+          \includegraphics[width=\textwidth]{idraw/modifier.ips}%
+      }
+    \end{center}
+\end{ccTexOnly}
+
+    \caption{Class diagram for the modifier. It illustrates the
+             safe access to an internal representation through an
+             high-level interface.
+    \label{figureModifierDesign}}
+
+\begin{ccHtmlOnly}
+    <CENTER>
+    <A HREF="./modifier.gif">
+        <img src="./modifier_small.gif" alt="Modifier Class Diagram"></A><BR>
+    </CENTER>
+\end{ccHtmlOnly}
+\end{figure}
+
+The solution provided here is inspired by the strategy
+pattern~\cite{ghjv-dpero-95}, though it serves a different intent, see
+Figure~\ref{figureModifierDesign}.  The abstract base class
+\ccc{Modifier_base<R>} declares a pure virtual member function
+\ccc{operator()} that accepts a single reference parameter of the
+internal representation type. The member function \ccc{delegate()} of
+the high-level interface calls this \ccc{operator()} with its internal
+representation.  An actual modifier implements this virtual function,
+thus gaining access to the internal representation. Once, the modifier
+has finished its work, the member function \ccc{delegate()} is back in
+control and can check the validity of the internal representation.
+Summarizing, a user can implement and apply arbitrary functions based
+on the internal representation and keeps the benefit if a protected
+high-level interface. User provided modifiers must in any case return
+a valid internal representation or the checker in the high-level
+interface is allowed (and supposed) to abort the program. The
+indirection via the virtual function invocation is negligible for
+operations that consists of more than a pointer update or integer
+addition.
+
+
+% +=========================================================================+
+\begin{ccClassTemplate}{Modifier_base<R>}
+\ccSection{Abstract Basis for Modifiers}
+% +=========================================================================+
+\label{sectionModifierBase}
+
+\ccDefinition
+
+\ccClassTemplateName\ is an abstract base class providing the
+interface for any modifier. A modifier is a function object derived
+from \ccClassTemplateName\ that implements the pure virtual member
+function \ccc{operator()}, which accepts a single reference parameter
+\ccc{R&} on which the modifier is allowed to work.  \ccc{R} is the
+type of the internal representation that is to be modified.
+
+\ccInclude{CGAL/Modifier_base.h}
+
+\ccTypes
+\ccThree{virtual void}{modifier.operator()( R& poly) ;}{}
+\ccThreeToTwo
+
+\ccTypedef{typedef R Representation;}{the internal representation type.}
+
+\ccOperations
+\ccCreationVariable{modifier}
+
+\ccTagFullDeclarations
+\ccMethod{virtual void operator()( R& rep);}
+    {\ccPostcond \ccc{rep} is a valid representation.}
+\ccTagDefaults
+
+\ccExample
+
+The following fragment defines a class {\tt A} with an internal
+representation {\tt i} of type {\tt int}. It provides a member
+function {\tt delegate()}, which gives a modifier access to the
+internal variable and checks validity thereafter.  The
+example modifier sets the internal variable to 42. The example
+function applies the modifier to an instance of class {\tt A}.
+
+\begin{verbatim}
+class A {
+    int i;  // protected internal representation
+public:
+    void delegate( CGAL::Modifier_base<int>& modifier) {
+        modifier(i);
+        CGAL_postcondition( i > 0);  // check validity
+    }
+};
+
+struct Modifier : public CGAL::Modifier_base<int> {
+    void operator()( int& rep) { rep = 42;}
+};
+
+void use_it() {
+    A a;
+    Modifier m;
+    a.delegate(m);  // a.i == 42 and A has checked that A::i > 0.
+}
+\end{verbatim}
+
+\end{ccClassTemplate}
+
+
+
+
+% +--------------------------------------------------------+
+\ccParDims
+\beforecprogskip\parskip
+\aftercprogskip0pt
+
+% EOF
+
+

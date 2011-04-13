@@ -1,0 +1,344 @@
+
+\cleardoublepage
+\chapter{Intersections}
+
+An important relation between geometrical objects is the intersection
+relation.
+Two objects \ccStyle{obj1} and \ccStyle{obj2} intersect if there is a point
+\ccStyle{p} that is part of both \ccStyle{obj1} and \ccStyle{obj2}.
+The intersection region of those two objects is defined as the set of all
+points \ccStyle{p} that are part of both \ccStyle{obj1} and \ccStyle{obj2}.
+
+Note that for objects like triangles and polygons that enclose a
+bounded region, this region is part of the object.
+If a segment lies completely inside a triangle, then those two objects
+intersect and the intersection region is the complete segment.
+
+In the following sections we describe two families of functions.
+One that checks whether two objects intersect; one that computes the
+intersection region.
+
+There are two ways to use those functions.
+The simplest way is to include the header file
+\ccStyle{CGAL/intersections.h}. Here all intersection routines are declared.
+
+The drawback of this approach is that a lot is included, which results
+in long compilation times.
+It is also possible to include only the intersections that are of interest.
+The naming scheme of the header files is as follows.
+Intersections of types \ccStyle{CGAL_Type1<R>} and \ccStyle{CGAL_Type2<R>}
+are declared in header file
+\ccStyle{CGAL/Type1_Type2_intersection.h}.
+So, intersection routines of segments and lines in 2D are declared in
+\ccStyle{CGAL/Segment_2_Line_2_intersection.h}
+The order of the type names does not matter.
+It is also possible to include
+\ccStyle{CGAL/Line_2_Segment_2_intersection.h}
+
+For intersections of two objects of the same type, the type name should be
+mentioned twice:\\
+\ccStyle{#include <CGAL/Segment_2_Segment_2_intersection.h>}
+
+Every intersection header file declares both the checking routines and the
+routines to compute the intersection region.
+
+
+\section{Checking}
+
+In order to check if two objects of type \ccStyle{Type1} and \ccStyle{Type2}
+intersect, there are routines of the following form:
+
+\ccUnchecked{
+\ccGlobalFunctionTemplate{R}
+{bool CGAL_do_intersect(Type1<R> obj1, Type2<R> obj2);}
+}
+
+
+The types \ccStyle{Type1} and \ccStyle{Type2} can be any of the
+following:
+\begin{itemize}
+\item \ccStyle{CGAL_Point_2}
+\item \ccStyle{CGAL_Line_2}
+\item \ccStyle{CGAL_Ray_2}
+\item \ccStyle{CGAL_Segment_2}
+\item \ccStyle{CGAL_Triangle_2}
+\item \ccStyle{CGAL_Iso_rectangle_2}
+%\item \ccStyle{CGAL_Polygon_2}
+\end{itemize}
+
+
+
+\section{Computing the intersection region}
+
+
+The intersection region of two geometrical objects of type \ccStyle{Type1}
+and \ccStyle{Type2} can be computed with the following family of routines:
+
+\ccUnchecked{
+\ccGlobalFunctionTemplate{R}
+{CGAL_Object CGAL_intersection(Type1<R> obj1, Type2<R> obj2);}
+}
+
+The return value is \ccStyle{CGAL_Object}. This is a special kind of object
+that can contain an object of any type.
+A previous section
+%Section \ref{CGAL-Object}
+describes the use of this class.
+
+The types \ccStyle{Type1} and \ccStyle{Type2} can be any of the
+following:
+\begin{itemize}
+\item \ccStyle{CGAL_Point_2}
+\item \ccStyle{CGAL_Line_2}
+\item \ccStyle{CGAL_Ray_2}
+\item \ccStyle{CGAL_Segment_2}
+\item \ccStyle{CGAL_Triangle_2}
+\item \ccStyle{CGAL_Iso_rectangle_2}
+\end{itemize}
+
+The family of routines that compute the intersection region is not as complete
+as the family of intersection checking routines.
+Not all combinations of types are possible.
+For instance, for more complicated types like polygons and discs those
+routines are not available.
+The result must be representable by a single geometric object.
+The intersection of a line segment with a polygon can result in
+several line segments. The intersection of a triangle and a disc can
+result in an object bounded by curved and straight edges.  The
+implementation of boolean operations in the basic library provides more
+functionality for computing intersections of this kind.
+
+
+\ccExample
+
+The first example demonstrates the most common use of intersection routines.
+\begin{verbatim}
+#include <CGAL/Segment_2_Line_2_intersection.h>
+
+template <class R>
+void foo(CGAL_Segment_2<R> seg, CGAL_Line_2<R> line)
+{
+    CGAL_Object result;
+    CGAL_Point_2<R> ipoint;
+    CGAL_Segment_2<R> iseg;
+
+    result = CGAL_intersection(seg, line);
+    if (CGAL_assign(ipoint, result)) {
+        // handle the point intersection case.
+    } else
+        if (CGAL_assign(iseg, result)) {
+            // handle the segment intersection case.
+        } else {
+            // handle the no intersection case.
+        }
+}
+\end{verbatim}
+
+
+
+
+\subsection{Possible Result Values}
+\label{all_intersection_results}
+
+Here we describe the types that can be contained in the \ccStyle{CGAL_Object}
+return value for every possible pair of geometric objects.
+
+\begin{ccTexOnly}
+\begin{center}
+\begin{tabular}{|l|l|l|}
+\hline
+type A      & type B                       &    return type \\
+\hline
+\raisebox{-2.5mm}[0ex][0ex]{\ccStyle{CGAL_Line_2}} &
+\raisebox{-2.5mm}[0ex][0ex]{\ccStyle{CGAL_Line_2}} &
+\ccStyle{CGAL_Point_2} \\
+ &  & \ccStyle{CGAL_Line_2} \\
+\hline
+\raisebox{-2.5mm}[0ex][0ex]{\ccStyle{CGAL_Segment_2}} &
+\raisebox{-2.5mm}[0ex][0ex]{\ccStyle{CGAL_Line_2}} &
+\ccStyle{CGAL_Point_2} \\
+ &  & \ccStyle{CGAL_Segment_2} \\
+\hline
+\raisebox{-2.5mm}[0ex][0ex]{\ccStyle{CGAL_Segment_2}} &
+\raisebox{-2.5mm}[0ex][0ex]{\ccStyle{CGAL_Segment_2}} &
+\ccStyle{CGAL_Point_2} \\
+ &  & \ccStyle{CGAL_Segment_2} \\
+\hline
+\raisebox{-2.5mm}[0ex][0ex]{\ccStyle{CGAL_Ray_2}} &
+\raisebox{-2.5mm}[0ex][0ex]{\ccStyle{CGAL_Line_2}} &
+\ccStyle{CGAL_Point_2} \\
+ & & \ccStyle{CGAL_Ray_2} \\
+\hline
+\raisebox{-2.5mm}[0ex][0ex]{\ccStyle{CGAL_Ray_2}} &
+\raisebox{-2.5mm}[0ex][0ex]{\ccStyle{CGAL_Segment_2}} &
+\ccStyle{CGAL_Point_2} \\
+ &  & \ccStyle{CGAL_Segment_2} \\
+\hline
+ &  & \ccStyle{CGAL_Point_2} \\
+\ccStyle{CGAL_Ray_2} & \ccStyle{CGAL_Ray_2} &
+\ccStyle{CGAL_Segment_2} \\
+ &  & \ccStyle{CGAL_Ray_2} \\
+\hline
+\raisebox{-2.5mm}[0ex][0ex]{\ccStyle{CGAL_Triangle_2}} &
+\raisebox{-2.5mm}[0ex][0ex]{\ccStyle{CGAL_Line_2}} & \ccStyle{CGAL_Point_2} \\
+ & & \ccStyle{CGAL_Segment_2} \\
+\hline
+\raisebox{-2.5mm}[0ex][0ex]{\ccStyle{CGAL_Triangle_2}} &
+\raisebox{-2.5mm}[0ex][0ex]{\ccStyle{CGAL_Segment_2}} & \ccStyle{CGAL_Point_2} \\
+ & & \ccStyle{CGAL_Segment_2} \\
+\hline
+\raisebox{-2.5mm}[0ex][0ex]{\ccStyle{CGAL_Triangle_2}} &
+\raisebox{-2.5mm}[0ex][0ex]{\ccStyle{CGAL_Ray_2}} & \ccStyle{CGAL_Point_2} \\
+ & & \ccStyle{CGAL_Segment_2} \\
+\hline
+ & & \ccStyle{CGAL_Point_2} \\
+\raisebox{-2.5mm}[0ex][0ex]{\ccStyle{CGAL_Triangle_2}} &
+\raisebox{-2.5mm}[0ex][0ex]{\ccStyle{CGAL_Triangle_2}} & \ccStyle{CGAL_Segment_2} \\
+ & & \ccStyle{CGAL_Triangle_2} \\
+ & & \ccStyle{vector<CGAL_Point_2>} \\
+\hline
+ & & \ccStyle{CGAL_Point_2} \\
+\raisebox{2.5mm}[0ex][0ex]{\ccStyle{CGAL_Iso_rectangle_2}} &
+\raisebox{2.5mm}[0ex][0ex]{\ccStyle{CGAL_Line_2}} & \ccStyle{CGAL_Segment_2} \\
+\hline
+ & & \ccStyle{CGAL_Point_2} \\
+\raisebox{2.5mm}[0ex][0ex]{\ccStyle{CGAL_Iso_rectangle_2}} &
+\raisebox{2.5mm}[0ex][0ex]{\ccStyle{CGAL_Segment_2}} & \ccStyle{CGAL_Segment_2} \\
+\hline
+ & & \ccStyle{CGAL_Point_2} \\
+\raisebox{2.5mm}[0ex][0ex]{\ccStyle{CGAL_Iso_rectangle_2}} &
+\raisebox{2.5mm}[0ex][0ex]{\ccStyle{CGAL_Ray_2}} & \ccStyle{CGAL_Segment_2} \\
+\hline
+\ccStyle{CGAL_Iso_rectangle_2} &
+\ccStyle{CGAL_Iso_rectangle_2} & \ccStyle{CGAL_Iso_rectangle_2} \\
+\hline
+\end{tabular}
+\end{center}
+\end{ccTexOnly}
+
+\begin{ccHtmlOnly}
+<DIV ALIGN="CENTER">
+<TABLE CELLPADDING=3 BORDER="1">
+<TR> <TH> type A </TH>
+ <TH> type B </TH>
+ <TH> return type </TH>
+</TR>
+<TR>
+    <TD VALIGN="CENTER" > CGAL_Line_2 </TD>
+    <TD VALIGN="CENTER" > CGAL_Line_2 </TD>
+    <TD><TABLE>
+	<TR><TD>CGAL_Point_2</TD></TR>
+	<TR><TD>CGAL_Line_2</TD></TR>
+        </TABLE></TD>
+</TR>
+<TR>
+    <TD VALIGN="CENTER" > CGAL_Segment_2 </TD>
+    <TD VALIGN="CENTER" > CGAL_Line_2 </TD>
+    <TD><TABLE>
+	<TR><TD>CGAL_Point_2</TD></TR>
+	<TR><TD>CGAL_Segment_2</TD></TR>
+      </TABLE></TD>
+</TR>
+<TR>
+    <TD VALIGN="CENTER" > CGAL_Segment_2 </TD>
+    <TD VALIGN="CENTER" > CGAL_Segment_2 </TD>
+    <TD><TABLE>
+	<TR><TD>CGAL_Point_2</TD></TR>
+	<TR><TD>CGAL_Segment_2</TD></TR>
+      </TABLE></TD>
+</TR>
+<TR>
+    <TD VALIGN="CENTER" > CGAL_Ray_2 </TD>
+    <TD VALIGN="CENTER" > CGAL_Line_2 </TD>
+    <TD><TABLE>
+	<TR><TD>CGAL_Point_2</TD></TR>
+	<TR><TD>CGAL_Ray_2</TD></TR>
+      </TABLE></TD>
+</TR>
+<TR>
+    <TD VALIGN="CENTER" > CGAL_Ray_2 </TD>
+    <TD VALIGN="CENTER" > CGAL_Segment_2 </TD>
+    <TD><TABLE>
+	<TR><TD>CGAL_Point_2</TD></TR>
+	<TR><TD>CGAL_Segment_2</TD></TR>
+      </TABLE></TD>
+</TR>
+<TR>
+    <TD VALIGN="CENTER" > CGAL_Ray_2 </TD>
+    <TD VALIGN="CENTER" > CGAL_Ray_2 </TD>
+    <TD><TABLE>
+	<TR><TD>CGAL_Point_2</TD></TR>
+	<TR><TD>CGAL_Segment_2</TD></TR>
+	<TR><TD>CGAL_Ray_2</TD></TR>
+      </TABLE></TD>
+</TR>
+<TR>
+    <TD VALIGN="CENTER" > CGAL_Triangle_2 </TD>
+    <TD VALIGN="CENTER" > CGAL_Line_2 </TD>
+    <TD><TABLE>
+	<TR><TD>CGAL_Point_2</TD></TR>
+	<TR><TD>CGAL_Segment_2</TD></TR>
+      </TABLE></TD>
+</TR>
+<TR>
+    <TD VALIGN="CENTER" > CGAL_Triangle_2 </TD>
+    <TD VALIGN="CENTER" > CGAL_Segment_2 </TD>
+    <TD><TABLE>
+	<TR><TD>CGAL_Point_2</TD></TR>
+	<TR><TD>CGAL_Segment_2</TD></TR>
+      </TABLE></TD>
+</TR>
+<TR>
+    <TD VALIGN="CENTER" > CGAL_Triangle_2 </TD>
+    <TD VALIGN="CENTER" > CGAL_Ray_2 </TD>
+    <TD><TABLE>
+	<TR><TD>CGAL_Point_2</TD></TR>
+	<TR><TD>CGAL_Segment_2</TD></TR>
+      </TABLE></TD>
+</TR>
+<TR>
+    <TD VALIGN="CENTER" > CGAL_Triangle_2 </TD>
+    <TD VALIGN="CENTER" > CGAL_Triangle_2 </TD>
+    <TD><TABLE>
+	<TR><TD>CGAL_Point_2</TD></TR>
+	<TR><TD>CGAL_Segment_2</TD></TR>
+	<TR><TD>CGAL_Triangle_2</TD></TR>
+	<TR><TD>vector&lt;CGAL_Point_2&gt;</TD></TR>
+      </TABLE></TD>
+</TR>
+<TR>
+    <TD VALIGN="CENTER" > CGAL_Iso_rectangle_2 </TD>
+    <TD VALIGN="CENTER" > CGAL_Line_2 </TD>
+    <TD><TABLE>
+	<TR><TD>CGAL_Point_2</TD></TR>
+	<TR><TD>CGAL_Segment_2</TD></TR>
+      </TABLE></TD>
+</TR>
+<TR>
+    <TD VALIGN="CENTER" > CGAL_Iso_rectangle_2 </TD>
+    <TD VALIGN="CENTER" > CGAL_Segment_2 </TD>
+    <TD><TABLE>
+	<TR><TD>CGAL_Point_2</TD></TR>
+	<TR><TD>CGAL_Segment_2</TD></TR>
+      </TABLE></TD>
+</TR>
+<TR>
+    <TD VALIGN="CENTER" > CGAL_Iso_rectangle_2 </TD>
+    <TD VALIGN="CENTER" > CGAL_Ray_2 </TD>
+    <TD><TABLE>
+	<TR><TD>CGAL_Point_2</TD></TR>
+	<TR><TD>CGAL_Segment_2</TD></TR>
+      </TABLE></TD>
+</TR>
+<TR>
+    <TD VALIGN="CENTER" > CGAL_Iso_rectangle_2 </TD>
+    <TD VALIGN="CENTER" > CGAL_Iso_rectangle_2 </TD>
+    <TD><TABLE>
+	<TR><TD>CGAL_Iso_rectangle_2</TD></TR>
+      </TABLE></TD>
+</TR>
+</TABLE>
+</DIV>
+\end{ccHtmlOnly}
+
+

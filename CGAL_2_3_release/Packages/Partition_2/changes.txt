@@ -1,0 +1,123 @@
+1.18 (31 July 2001)
+  - moved Partition_2_ref directory up one level
+  - renamed intro.tex file to avoid conflicts with other packages
+
+1.17 (26 July 2001)
+    minor formatting changes
+
+1.16 (26 July 2001)
+    made changes necessary to do manual split
+
+1.15 (16 July 2001)
+    fixed initialization bug in Partition_vertex_map
+    changed asserts to CGAL_assertions 
+
+1.14 (12 July 2001)
+    minor fix in doc.
+
+1.13 (12 July 2001)
+    Simplified Partition_vertex_map so it does not have any circular type
+    references;  this makes the Borland compiler happy
+  
+    Converted Partition_vertex_map to be based on a vector instead of a list
+    to make the Borland compiler happy.
+
+    Shorted names of some predicate classes
+
+    introduced exact number types in some examples
+
+    changed test programs so they can use the default cgal_test now.
+
+1.12 (6 July 2001)
+    Fixed many things in documentation (requirements vs. preconditions;
+    added Implementation sections; included example programs instead of
+    using verbatim)
+
+    changed example programs to use a random polygon instead of a static one
+
+    added README for example programs
+
+    added file name in example programs
+
+1.11 (2 May 2001)
+    Fixed bugs in Indirect_edge_compare.
+
+1.10 (1 May 2001)
+    Changed traits requirements for y-monotone partition to incorporate
+    the Compare_x_at_y function now available in the kernel.
+    
+1.9 (22 March 2001)
+    Changed basis for std::stack in Vertex_visibility_graph_2 to std::list
+    instead of std::deque (the default) since the latter under MSVC++ assumes
+    pointers where it shouldn't (i.e., iterator_traits doesn't work).
+
+    Changed name of template parameter from Point_2 to Point_2_ in set_valid
+    for Partition_opt_cvx_edge so VC++ won't get confused.
+
+    Made some cosmetic changes to the demos.
+
+1.8 (12 March 2001)
+
+    Changed Vertex_const_iterator to Vertex_iterator for Partition_vertex_map
+    build() function and partition_is_valid_2() in the hopes that this will 
+    fix the problem the Windows compilers have with the call to insert in
+    build().
+
+    Removed the .C files that cannot be used with VC++ because of template
+    member functions.
+
+    Fixed some warnings related to unused variables and parameters.
+
+1.7 (8 March 2001)
+
+    Added typedefs for Traits parameters in Partitioned_polygon_2.
+
+    rearranged class declarations in Partitioned_polygon_2.h to please VC++
+    and fixed other small bugs with const vs. non-const interators, typedefs
+    for class not public.
+
+    Changed name of Polygon_2 template parameter to Polygon in some functions
+    so VC++ won't get confused with the Polygon_2 class defined elsewhere.
+    
+
+1.6 (19 January 2001)
+
+    Fixed more problems with types and typedefs in Partitioned_polygon_2.
+
+    Fixed small problem with introduction to reference pages in doc.
+   
+1.5 (8 January 2001)
+   
+    Moved definitions of template functions inside classes to see if 
+    Borland and VC++ can deal with this better and fixed some typedefs
+    causing problems with these two compilers.
+
+    Modified documentation in accordance with suggestions from editors.
+
+1.4 (20 November 2000)
+   
+    fixed bug in the cgal_test script
+
+    Moved definitions of template functions in Indirect_edge_compare class 
+    inside the class to see if Borland and VC++ can deal with this better.
+
+1.3 (7 November 2000)
+    
+    changed test suite by dividing it into more programs that will take
+    less time to compile and adding a compile-time flag so the same program 
+    can be used for testing the homogeneous and Cartesian kernels.
+
+    fixed(?) some bugs with template parameters for Borland
+
+1.2 (20 September 2000)
+    
+    added a few missing .C files
+
+1.1 (2 August 2000)
+    
+    Fixed bugs with misplaced includes for .C files, a few missing CGAL::
+    for MIPS, and wrong function names in example files. 
+
+1.0 (28 July 2000)
+   
+    Initial release

@@ -1,0 +1,75 @@
+/*
+ * Copyright (c) 1999 
+ * Boris Fomitchev
+ *
+ * This material is provided "as is", with absolutely no warranty expressed
+ * or implied. Any use is at your own risk.
+ *
+ * Permission to use or copy this software for any purpose is hereby granted 
+ * without fee, provided the above notices are retained on all copies.
+ * Permission to modify the code and to distribute modified code is granted,
+ * provided the above notices are retained, and a notice that the code was
+ * modified is included with the above copyright notice.
+ *
+ */
+
+#ifndef __STLPORT_CMATH
+# define __STLPORT_CMATH
+
+# ifndef __STL_CONFIG_H
+#  include <stl_config.h>
+# endif
+
+#  if defined ( __STL_REDEFINE_STD ) && defined (std) 
+#    undef std
+#    define __STL_RESUME_STD_FOR_CMATH
+#    define __STLPORT_NATIVE_PASS
+#  endif
+
+# if defined (__STL_USE_NEW_C_HEADERS)
+#  include __STL_NATIVE_CPP_C_HEADER(cmath)
+# else
+#  include <math.h>
+# endif
+
+# if defined ( __STL_RESUME_STD_FOR_CMATH )
+#    undef __STL_RESUME_STD_FOR_CMATH
+#    define std __STLPORT_NAMESPACE
+#    undef __STLPORT_NATIVE_PASS
+# endif
+
+# ifdef __STL_IMPORT_VENDOR_CSTD
+__STL_BEGIN_NAMESPACE
+
+using __STL_VENDOR_CSTD::acos;
+using __STL_VENDOR_CSTD::asin;
+using __STL_VENDOR_CSTD::atan2;
+using __STL_VENDOR_CSTD::atan;
+using __STL_VENDOR_CSTD::ceil;
+using __STL_VENDOR_CSTD::cos;
+using __STL_VENDOR_CSTD::cosh;
+using __STL_VENDOR_CSTD::exp;
+using __STL_VENDOR_CSTD::fabs;
+using __STL_VENDOR_CSTD::floor;
+using __STL_VENDOR_CSTD::fmod;
+using __STL_VENDOR_CSTD::frexp;
+using __STL_VENDOR_CSTD::ldexp;
+using __STL_VENDOR_CSTD::log10;
+using __STL_VENDOR_CSTD::log;
+using __STL_VENDOR_CSTD::modf;
+using __STL_VENDOR_CSTD::pow;
+using __STL_VENDOR_CSTD::sin;
+using __STL_VENDOR_CSTD::sinh;
+using __STL_VENDOR_CSTD::sqrt;
+using __STL_VENDOR_CSTD::tan;
+using __STL_VENDOR_CSTD::tanh;
+
+__STL_END_NAMESPACE
+
+#endif /* __STL_IMPORT_VENDOR_CSTD */
+
+#endif /* __STLPORT_CMATH */
+
+// Local Variables:
+// mode:C++
+// End:

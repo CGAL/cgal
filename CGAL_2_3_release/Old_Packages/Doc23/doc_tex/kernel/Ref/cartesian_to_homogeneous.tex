@@ -1,0 +1,32 @@
+\begin{ccRefFunction}{cartesian_to_homogeneous}
+\ccTexHtml{\ccSetThreeColumns{Point_2< Homogeneous<RT> > }{}{\hspace*{8.5cm}}}{}
+
+\ccInclude{CGAL/cartesian_homogeneous_conversion.h}
+
+\ccFunction{Point_2< Homogeneous<RT> >
+cartesian_to_homogeneous(const Point_2< Cartesian<RT> >& cp);}
+        {converts 2d point \ccStyle{cp} with Cartesian representation  
+         into a 2d point with homogeneous representation with the same
+         number type.}
+
+\ccFunction{Point_3< Homogeneous<RT> >
+cartesian_to_homogeneous(const Point_3< Cartesian<RT> >& cp);}
+        {converts 3d point \ccStyle{cp} with Cartesian representation  
+         into a 3d point with homogeneous representation with the same
+         number type.}
+
+\ccTexHtml{\KernelRefLayout}{}
+
+\ccSeeAlso
+\ccRefIdfierPage{CGAL::Cartesian<FieldNumberType>} \\
+\ccRefIdfierPage{CGAL::Cartesian_converter<K1, K2, NTConverter>} \\
+\ccRefIdfierPage{CGAL::Homogeneous<RingNumberType>} \\
+\ccRefIdfierPage{CGAL::Homogeneous_converter<K1, K2, RTConverter, FTConverter>} \\
+\ccRefIdfierPage{CGAL::homogeneous_to_cartesian} \\
+\ccRefIdfierPage{CGAL::homogeneous_to_quotient_cartesian} \\
+\ccRefIdfierPage{CGAL::quotient_cartesian_to_homogeneous} \\
+\ccRefIdfierPage{CGAL::Simple_cartesian<FieldNumberType>} \\
+\ccRefIdfierPage{CGAL::Simple_homogeneous<RingNumberType>} \\
+
+\end{ccRefFunction}
+

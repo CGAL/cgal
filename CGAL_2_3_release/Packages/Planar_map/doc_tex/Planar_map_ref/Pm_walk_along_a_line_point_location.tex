@@ -1,0 +1,57 @@
+% +------------------------------------------------------------------------+
+% | Reference manual page: Pm_walk_along_a_line_point_location.tex (Planar_map)
+% +------------------------------------------------------------------------+
+% | 
+% | Package: pm (Planar_map_2)
+% | 
+% +------------------------------------------------------------------------+
+
+\ccRefPageBegin
+
+%%RefPage: end of header, begin of main body
+% +------------------------------------------------------------------------+
+
+%**************************************************************************
+\renewcommand{\ccRefPageBegin}{\begin{ccAdvanced}}
+\renewcommand{\ccRefPageEnd}{\end{ccAdvanced}}
+
+\begin{ccRefClass}{Pm_walk_along_a_line_point_location<Planar_map>}
+\label{PL_sec:walk}
+
+The \ccRefName\ class 
+implements a walk-along-a-line algorithm which improves the naive one.
+Unlike the naive algorithm which goes over all the edges
+of the planar map, the walk algorithm starts with the unbounded face
+and ``walks'' along the zone of the vertical ray emanating from the
+query point. This reduces the number of halfedges that are traversed
+in a query.
+Like the naive strategy, the walk strategy does not use an additional
+structure. The updating operations are empty and therefore 
+modifying operations such as 
+\ccc{split_edge} and \ccc{merge_edge} take constant time.
+
+%% add \ccInheritsFrom{Pm_point_location_base<Planar_map>} to each
+%% of these classes
+
+\ccInclude{CGAL/Pm_walk_along_line_point_location.h}
+
+\ccIsModel
+  \ccc{PlanarMapPointLocation_2}
+
+\ccInheritsFrom
+  \ccc{Pm_point_location_base<Planar_map>}
+
+\ccSeeAlso
+   Discussion of the different point location strategies in the introduction
+of \ccc{Planar_map} reference pages\lcTex{ (\ccRefPage{Pm_Ref_intro})}.
+
+\end{ccRefClass}
+\renewcommand{\ccRefPageBegin}{}
+\renewcommand{\ccRefPageEnd}{}
+
+
+% +------------------------------------------------------------------------+
+%%RefPage: end of main body, begin of footer
+\ccRefPageEnd
+% EOF
+% +------------------------------------------------------------------------+

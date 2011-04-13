@@ -1,0 +1,98 @@
+\begin{ccRefConcept}{ConvexHullTraits_3}
+
+\ccDefinition
+Requirements of the traits class to be used with the function
+\ccc{convex_hull_3}. 
+
+\ccTypes
+\ccAutoIndexingOff
+\ccNestedType{Point_3}{The point type on which the convex hull algorithm operates}
+\ccGlue
+\ccNestedType{Plane_3}{a 3D plane}
+\ccGlue
+\ccNestedType{Segment_3}{a 3D segment}
+\ccGlue
+\ccNestedType{Triangle_3}{a 3D triangle}
+\ccGlue
+\ccNestedType{Vector_3}{a 3D vector}
+
+\ccNestedType{Construct_plane_3}{Function object type that provides
+\ccc{Plane_3 operator()(Point_3 p, Point_3 q, Point_2 r)}, which constructs
+and returns a plane passing through \ccc{p}, \ccc{q}, and \ccc{r} and oriented
+in a positive sense when seen from the positive side of the plane.}
+
+\ccNestedType{Construct_segment_3}{Function object type that provides
+\ccc{Segment_3 operator()(Point_3 p, Point_3 q)}, which constructs and
+returns the segment with source \ccc{p} and target \ccc{q}.}
+
+\ccNestedType{Construct_triangle_3}{Function object type that provides
+\ccc{Triangle_3 operator()(Point_3 p, Point_3 q, Point_3 r)}, which 
+constructs and returns the triangle with vertices \ccc{p}, \ccc{q}, and
+\ccc{r}}
+
+\ccNestedType{Construct_vector_3}{Function object type that provides
+\ccc{Vector_3 operator()(Point_3 p, Point_3 q)}, which constructs and
+returns the vector \ccc{q}-\ccc{p}}
+
+\ccNestedType{Collinear_3}{Predicate object type that provides
+\ccc{bool operator()(Point_3 p, Point_3 q, Point_3 r)}, which determines
+if points \ccc{p}, \ccc{q} and \ccc{r} are collinear or not}
+
+\ccNestedType{Coplanar_3}{Predicate object type that provides
+\ccc{bool operator()(Point_3 p, Point_3 q, Point_3 r, Point_3 s)}, which 
+determines if points \ccc{p}, \ccc{q}, \ccc{r}, and \ccc{s} are coplanar
+or not}
+
+\ccNestedType{Has_on_positive_side_3}{Predicate object type that provides
+\ccc{bool operator()(Plane_3 h, Point_3 q)}, which determines of the point
+\ccc{q} is on the positive side of the halfspace \ccc{h}}
+
+\ccNestedType{Less_distance_to_point_3}{Predicate object type that provides
+a constructor taking a single \ccc{Point_3} object and
+\ccc{bool operator()(Point_3 q, Point_3 r)}, which returns true iff the
+distance from \ccc{q} to \ccc{p} is smaller than the distance from
+\ccc{r} to \ccc{p}, where \ccc{p} is the point passed to the object
+at construction.}
+
+\ccNestedType{Less_signed_distance_to_plane_3}{Predicate object type that
+provides \ccc{bool operator()(Plane_3 p, Point_3 q, Point_3 r)}, which 
+returns true iff the signed distance from \ccc{q} to \ccc{p} is smaller
+than the signed distance from \ccc{r} to \ccc{p}}
+
+To handle the degenerate case when all points are coplanar, the following
+three types that are default-constructable are necessary:
+
+\ccNestedType{Traits_xy}{A model of ConvexHullTraits\_2 for points projected
+                         into the $xy$-plane}
+\ccNestedType{Traits_xz}{A model of ConvexHullTraits\_2 for points projected
+                         into the $xz$-plane}
+\ccNestedType{Traits_yz}{A model of ConvexHullTraits\_2 for points projected
+                         into the $yz$-plane}
+
+These types need not be provided when it is known that the points are
+not all coplanar.
+
+\ccCreation
+\ccCreationVariable{traits}
+
+Only a copy constructor is required.
+
+\ccConstructor{ConvexHullTraits_3(ConvexHullTraits_3& ch);}{}
+
+\ccOperations
+
+For each of the above function and predicate object types,
+\ccc{Func_obj_type}, a function must exist with the name 
+\ccc{func_obj_type_object} that creates an instance of the function or 
+predicate object type.  For example:
+
+\ccMethod{Construct_plane_3 construct_plane_3_object();}{}
+
+\ccAutoIndexingOn
+
+\ccHasModels
+\ccRefIdfierPage{CGAL::Convex_hull_traits_3<R>}
+
+%\ccSeeAlso
+
+\end{ccRefConcept}

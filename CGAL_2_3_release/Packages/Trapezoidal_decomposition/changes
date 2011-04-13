@@ -1,0 +1,50 @@
+1.16 (Shai)
+====
+- make Shai the maintainer
+
+1.15 (Oren) 
+====
+- fix in Trapezoidal_decomposition_2.h for Leda_integers 
+  ( static related problem ).
+
+1.14 (Oren)
+==== 
+- fix in static function for mips,sun and TD
+
+1.13 (Oren)
+==== 
+- Added static functions to get infinite points and curve in
+  Td_traits.[hC] and added calls in Td_X_trapezoid.h
+- Removed Trapzeoidal_decomposition_2.C
+
+1.12 (Oren)
+==== 
+- Fixes for bounding box.
+
+1.11
+==== (Oren)
+- Bug fix in remove()
+
+1.10 (Oren)
+====
+- Fixes for bounding box.
+- clear(), remove(it,it) added.
+
+1.09 (Shai)
+====
+- typename fixes (for mips CC or -pedantic on Linux g++2.95)
+
+1.08
+====
+- Fixes for mips CC.
+
+1.06
+====
+- Fixes for bounding box.
+
+1.05
+====
+- includes header fixes.
+
+1.04
+

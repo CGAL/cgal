@@ -1,0 +1,55 @@
+% +------------------------------------------------------------------------+
+% | Reference manual page: Is_vacuously_valid.tex
+% +------------------------------------------------------------------------+
+% | 26.07.2000   Susan Hert
+% | Package: Partition_2
+% | 
+% +------------------------------------------------------------------------+
+
+
+\begin{ccRefFunctionObjectClass}{Is_vacuously_valid<Traits>}  
+
+
+\ccDefinition
+  
+Function object class that indicates all sequences of points are valid.
+\ccIndexSubitem{polygon partitioning}{valid}
+\ccIndexSubitem{polygon}{valid}
+
+\ccInclude{CGAL/polygon_function_objects.h}
+
+\ccIsModel
+
+\ccRefConceptPage{PolygonIsValid}%
+\ccIndexSubitem[c]{PolygonIsValid}{model}
+
+\ccCreation
+\ccCreationVariable{f}  %% choose variable name
+
+\ccConstructor{Is_vacuously_valid(const Traits& t);}{}
+\ccThree{boolxxx}{operator()(InputIterator first, InputIterator beyond)xxx}{}
+\ccOperations
+
+\ccMethod{
+template<class InputIterator>
+bool operator()(InputIterator first, InputIterator beyond);}
+{
+  returns \ccc{true}.
+}
+
+\ccSeeAlso
+
+\ccRefIdfierPage{CGAL::partition_is_valid_2} \\
+\ccRefIdfierPage{CGAL::Partition_is_valid_traits_2<Traits, PolygonIsValid>}
+
+\ccImplementation
+
+This test requires $O(1)$ time.
+
+\end{ccRefFunctionObjectClass}
+
+% +------------------------------------------------------------------------+
+%%RefPage: end of main body, begin of footer
+% EOF
+% +------------------------------------------------------------------------+
+

@@ -1,0 +1,21 @@
+\begin{ccRefFunctionObjectConcept}{Kernel::Angle_2}
+
+
+A model for this must provide:
+
+\ccCreationVariable{fo}
+
+\ccMemberFunction{Angle operator()(const Kernel::Point_2&p, 
+                                   const Kernel::Point_2&q, 
+                                   const Kernel::Point_2&r);}
+{returns \ccStyle{OBTUSE}, \ccStyle{RIGHT} or \ccStyle{ACUTE} depending
+on the angle formed by the three points $p$, $q$, $r$ ($q$ being the vertex of
+the angle).}
+
+\ccRefines
+AdaptableFunctor
+
+\ccSeeAlso
+\ccRefIdfierPage{CGAL::angle}  \\
+
+\end{ccRefFunctionObjectConcept}

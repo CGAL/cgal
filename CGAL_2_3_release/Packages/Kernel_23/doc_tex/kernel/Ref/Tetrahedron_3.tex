@@ -1,0 +1,104 @@
+\begin{ccRefClass} {Tetrahedron_3<R>}
+
+\ccDefinition  An object $t$ of the class \ccRefName\ is an oriented
+tetrahedron in the three-dimensional Euclidean space $\E^3$. 
+
+It is defined by four vertices $p_0$, $p_1$, $p_2$ and $p_3$.
+The orientation of a tetrahedron is the orientation of its four 
+vertices. That means it is positive when $p_3$ is on the positive
+side of the plane defined by $p_0$, $p_1$ and $p_2$.
+
+The tetrahedron itself splits the space $\E_3$ in a {\em positive} and
+a {\em negative} side.
+ 
+The boundary of a tetrahedron splits the space in two open regions, a
+bounded one and an unbounded one.
+
+\ccCreation
+\ccCreationVariable{t}
+
+
+\ccHidden \ccConstructor{Tetrahedron_3();}
+             {introduces an uninitialized variable \ccVar.}
+
+\ccHidden \ccConstructor{Tetrahedron_3(const Tetrahedron_3<R> &u);}
+ 	    {copy constructor.}
+
+
+\ccConstructor{Tetrahedron_3(const Point_3<R> &p0, 
+	                     const Point_3<R> &p1, 
+	                     const Point_3<R> &p2, 
+	                     const Point_3<R> &p3);}
+            {introduces a tetrahedron \ccVar\ with vertices $p_0$, $p_1$, $p_2$ and $p_3$.}
+
+
+\ccOperations
+
+\ccHidden \ccMethod{Tetrahedron_3<R> & operator=(const Tetrahedron_3<R> &t2);}
+        {Assignment.}
+
+\ccMethod{bool operator==(const Tetrahedron_3<R> &t2) const;}
+%       {Test for equality: two tetrahedra are equal, iff there exists a 
+%        cyclic permutation of the vertices of $t2$, such that they are 
+%        equal to the vertices of~\ccVar.}
+       {Test for equality: two tetrahedra \ccVar\ and \ccc{t2} are equal, 
+        iff \ccVar\ and \ccc{t2} have the same orientation and 
+        their sets (not sequences) of vertices are equal.}
+
+\ccMethod{bool operator!=(const Tetrahedron_3<R> &t2) const;}
+       {Test for inequality.}
+
+\ccMethod{Point_3<R> vertex(int i) const;}
+       {returns the i'th vertex modulo 4  of~\ccVar.}
+
+\ccMethod{Point_3<R> operator[](int i) const;}
+       {returns \ccStyle{vertex(int i)}.}
+
+\ccPredicates
+
+\ccMethod{bool is_degenerate() const;}
+       {Tetrahedron \ccVar\ is degenerate, if the vertices are coplanar.}
+
+
+\ccMethod{Orientation    orientation() const;}
+       { }
+
+\ccMethod{Oriented_side  oriented_side(const Point_3<R> &p) const;}
+       {\ccPrecond: \ccVar\ is not degenerate.}
+
+\ccMethod{Bounded_side  bounded_side(const Point_3<R> &p) const;}
+       {\ccPrecond: \ccVar\ is not degenerate.}
+
+For convenience we provide the following boolean functions:
+
+\ccMethod{bool has_on_positive_side(const Point_3<R> &p) const;}
+       {}
+\ccGlue
+\ccMethod{bool has_on_negative_side(const Point_3<R> &p) const;}
+       {}
+\ccGlue
+\ccMethod{bool has_on_boundary(const Point_3<R> &p) const;}
+       {}
+\ccGlue
+\ccMethod{bool has_on_bounded_side(const Point_3<R> &p) const;}
+       {}
+\ccGlue
+\ccMethod{bool has_on_unbounded_side(const Point_3<R> &p) const;}
+       {}
+
+\ccHeading{Miscellaneous}
+
+\ccMethod{FT volume() const;}
+       {returns the signed volume of \ccVar.}
+
+\ccMethod{Bbox_3 bbox() const;}
+       {returns a bounding box containing \ccVar.}
+
+\ccMethod{Tetrahedron_3<R>  transform(const Aff_transformation_3<R> &at) const;}
+       {returns the tetrahedron obtained by applying $at$ on the three
+        vertices of~\ccVar.}
+
+\ccSeeAlso
+\ccRefConceptPage{Kernel::Tetrahedron_3} \\
+
+\end{ccRefClass} 

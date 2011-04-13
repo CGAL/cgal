@@ -1,0 +1,61 @@
+\chapter{Introduction}
+\input{common_intro.tex}
+
+{This} part of the reference manual covers the kernel.
+The kernel contains objects of constant size, such as point, vector, 
+direction, line, ray, segment, triangle, iso-oriented rectangle and 
+tetrahedron. 
+With each type comes a set of functions which can be applied to an object 
+of this type.  
+You will typically find access functions (e.g.\ to the coordinates of a point), 
+tests of the position of a point relative to the object, a function returning 
+the bounding box, the length, or the area of an object, and so on.
+The \cgal\ kernel further contains basic operations such as affine
+transformations, detection and computation of intersections, and distance 
+computations.
+
+\section{Robustness}
+The correctness proof of nearly all geometric algorithms presented
+in theory papers assumes exact computation with real numbers.
+This leads to a fundamental problem with the implementation of geometric
+algorithms.
+Naively, often the exact real arithmetic is replaced by inexact floating-point 
+arithmetic in the implementation.
+This often leads to acceptable results for many input data.
+However, even for the implementation of the simplest geometric 
+algorithms this simplification occasionally does not work.
+Rounding errors introduced by an inaccurate arithmetic may lead to 
+inconsistent decisions, causing unexpected failures for some correct 
+input data.
+There are many approaches to this problem, one of them is to compute
+exactly (compute so accurate that all decisions made by the algorithm
+are exact) which is possible in many cases but more expensive
+than standard floating-point arithmetic.
+C.~M.~Hoffmann~\cite{h-gsm-89,h-pargc-89} illustrates some 
+of the problems arising in the implementation of geometric algorithms
+and discusses some approaches to solve them. 
+A more recent overview is given in \cite{s-rpgc-99}.
+The exact computation paradigm is discussed by Yap and Dub\'e 
+\cite{yd-ecp-95} and Yap \cite{y-tegc-97}.
+
+In \cgal\ you can choose the underlying number types and arithmetic.  
+You can use different types of arithmetic simultaneously and the choice can 
+be easily changed, e.g.\ for testing.  
+So you can choose between implementations with fast but occasionally inexact 
+arithmetic and implementations guaranteeing exact computation and exact 
+results.  
+Of course you have to pay for the exactness in terms of execution time 
+and storage space.  
+See the section on number types in the Support Library
+for more details on number types and their capabilities and performance.
+
+\section{CGAL and LEDA}
+
+\ccAnchor{http://www.algorithmic-solutions.com/}{\leda}
+\ccTexHtml{\footnote{\tt http://www.algorithmic-solutions.com/}}{}
+is a {\em Library of Efficient Data types and Algorithms} partially developed 
+at the {\em Max-Planck Institut f\"ur Informatik}, Saarbr\"ucken,
+and the {\em University of Trier}, Germany.
+\cgal\ is independent of \leda, but the two work well together.  In particular
+the exact number types provided by \leda\ are a way to deal with the robustness
+issues of the geometric algorithms of \cgal.

@@ -1,0 +1,117 @@
+$(CGAL_HOME)/INSTALL.win32
+-------------------------------------------------------------------------------
+This file describes how to install CGAL on MS Windows using native tools
+(that is, without Cygwin). 
+For installation on Unix and on Cygwin, please see INSTALL.
+
+The documentation of CGAL is available in various formats (HTML, PostScript,
+PDF). It is not bundled with the software but can be downloaded separately.
+
+For more information about CGAL, see the URL http://www.cgal.org/.
+To install CGAL, you should:
+
+  - download the compressed archive file from the CGAL web site www.cgal.org
+
+  - unpack the file in the place in which you wish to install it
+    (we refer to it as CGALROOT here)
+
+  - install the CGAL libraries: 
+    If you are not going to use LEDA for visualization,
+    download,  if you use MSVC 6.0,  
+       http://www.cgal.org/download/CGALWin/MS_windows/Visual_C++/CGALWin_msvc_native.zip
+
+    (respectively,
+
+       http://www.cgal.org/download/CGALWin/MS_windows/Borland/CGALWin_bcc_native.zip
+
+    if using Borland) and unpack it into CGALROOT.
+     
+    We recommend that you first have a look at the Installation notes. 
+    These are available in several formats. A PostScript file named
+    installation.ps.gz can be found in the directory doc_ps.
+    The HTML version is in doc_html/installation/main.html and 
+    the PDF documentation is in the directory doc_pdf.
+
+---------------------------------------------------------------------------
+For the impatient, or already familiar with the setup, 
+here is a short instruction.
+It is assumed that MSVC 6.0 is used. Borland is very similar
+(replace msvc with bcc, and disregard the mentioning of
+MSVC options)
+Open a Command Prompt (on Win9* it is called MS-DOS Prompt) window.
+Change to CGALROOT and run the batch file cgal_config.bat at the
+prompt.  This script will set the appropriate makefiles for
+subsequent compilation.
+
+cgal_config.bat accepts 4 parameters.
+
+ 1.		the compiler type (msc (or msvc))
+
+ 2. (optional)	compiler options (to enable debugging and/or threads
+		support)
+
+ 3. (optional)	LEDAROOT (the location where LEDA lib files are installed)
+
+ 4. (optional)	the location where LEDA header files are installed.
+		If omitted, it is assumed to be LEDAROOT\incl.
+
+
+Without LEDA, one would run a command like
+
+K:\cgal\CGAL-2.3> cgal_config msc mld
+
+to configure CGAL for MSVC in single thread debug mode.
+
+Assuming that LEDA is installed in 
+k:\LEDA-4.3, they would look as follows:
+
+one would run at the command prompt:
+
+K:\cgal\CGAL-2.3> cgal_config msc k:\LEDA-4.3
+
+Otherwise, if LEDA header files are not in LEDAROOT\incl, one would run, say,
+
+K:\cgal\CGAL-2.3> cgal_config msc k:\LEDA-4.3\msvc k:\LEDA-4.3\incl
+
+It is assumed that 3. (LEDAROOT) and 4. above do not have names with spaces.
+
+Running cgal_config.bat without parameters prints out the detailed
+options list (in particular, for 2. above).
+
+----------------------------------------------------------------------------
+Building the library, examples and demos
+
+Change to CGALROOT and run make_lib.bat at the command prompt. Namely,
+
+K:\cgal\CGAL-2.3> make_lib
+
+builds the library with the compiler/options specified in 2.
+For other settings, one would have to reconfigure (see 2.) and recompile
+(same as for LEDA).
+
+K:\cgal\CGAL-2.3> make_examples
+
+compiles and links the examples and
+
+K:\cgal\CGAL-2.3> make_demos
+
+compiles and links the demos. 
+
+Note that the amount of disk usage for the executables and temporary
+files can be considerable, up to several hundereds megabytes for all 
+the executable, object and debug files.
+
+Examples and demos can also be built on per directory, or even on per
+executable basis.  Each examples\ and demo\ subdirectory contains a
+file makefile.mak that is an MSVC nmake makefile.  For instance,
+change to CGALROOT\demo\Point_set_2 and type "nmake -f makefile.mak
+all" to build all the examples.  Typing "nmake -f makefile.mak
+ps_test1" will build the particular demo ps_test1.
+
+--------------------------------------------------------------------------
+Running the examples and demos.
+
+The corresponding executable(s) then can be run as usual, from the
+command prompt, or via Explorer.
+---------------------------------------------------
+EOF

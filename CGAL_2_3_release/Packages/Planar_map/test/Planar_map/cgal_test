@@ -1,0 +1,261 @@
+#!/bin/sh
+ERRORFILE=error.txt
+#CMP=diff
+CMP='diff -w'
+#fix for i686_CYGWINNT-5.0-1.1.4-0.26-3-2_CL.EXE-12.00.8804
+CAR_TEST=true
+HOM_TEST=true
+GMP_TEST=false
+LEDA_RATIONAL_CAR_TEST=true
+LEDA_RATIONAL_HOM_TEST=true
+ABSTRACT_TEST=false
+
+one_run()
+{
+    goodresult=RESULT/`basename ${datafile}.$1.$2`
+    # This following filename is in the format ProgramOutput.*.${PLATFORM}
+    # so it should get collected as part of the test results.
+    OUTPUTFILE=ProgramOutput.${base}.`basename ${datafile}`.$1.$2.$3.${PLATFORM}
+    echo "Executing ${base} `basename ${datafile}` ..."
+    rm -f aresult
+    if ./${base} < ${datafile} > ${OUTPUTFILE} 2>&1
+    then
+        cp ${OUTPUTFILE} aresult
+	if [ -r ${goodresult} ]
+	then
+	    if grep -c "LEDA installation missing." aresult > /dev/null ||
+               grep -c "GMPZ installation missing." aresult > /dev/null ||
+               ${CMP} aresult ${goodresult}
+	    then
+			succes=oui
+	    else
+			succes=non
+	    fi
+	else
+            if grep -c "LEDA installation missing." aresult > /dev/null
+            then
+               echo "LEDA installation missing."
+            elif grep -c "GMPZ installation missing." aresult > /dev/null
+            then
+               echo "GMPZ installation missing."
+            else
+                cp aresult ${goodresult}
+            fi               
+            succes=unknown            
+	fi
+    else
+	succes=non
+    fi
+    if [ ${succes} = oui ]
+    then
+	echo  "${base} < ${datafile} succesful">> ${ERRORFILE}
+    else
+        if [ ${succes} = non ]
+        then
+            echo "ERROR: ${base} < ${datafile} did not run well" >> ${ERRORFILE}
+            if [ -f aresult ] 
+            then 
+                echo ${CMP} aresult ${goodresult} >> ${ERRORFILE}
+                ${CMP} aresult ${goodresult} >> ${ERRORFILE}
+                cp aresult result.$1.$2
+            fi
+        else
+            echo  "${base} < ${datafile} not tested">> ${ERRORFILE}
+        fi
+    fi
+}
+
+make_and_execute()
+{    
+    if [ -r ii_files/${base}.ii.$1 ]
+    then
+		mv ii_files/${base}.ii.$1 ii_files/${base}.ii
+    fi
+    
+    EXTRA_FLAGS="${EXTRA_FLAGS} -DTESTR=$1 -DBBOX=$2 -DSTRATEGY=$3"
+    export EXTRA_FLAGS
+    if eval 'make CGAL_MAKEFILE=${CGAL_MAKEFILE} \
+                  TESTSUITE_CXXFLAGS="${TESTSUITE_CXXFLAGS}" \
+                  TESTSUITE_LDFLAGS="${TESTSUITE_LDFLAGS}" \
+                  ${base} # 2>/dev/null"'
+    then
+	echo "compilation of ${file} with TESTR=$1 -DBBOX=$2 -DSTRATEGY=$3 succeeded" >> ${ERRORFILE}
+	if [ -r ii_files/${base}.ii ]
+	then
+	    mv ii_files/${base}.ii ii_files/${base}.ii.$1
+	fi
+	for datafile in ${datafiles}
+	do
+	    if [ -r ${datafile} ]
+	    then
+			one_run $1 $2 $3
+	    fi
+	done
+    else
+	echo "ERROR: compilation of ${file}  with TESTR=$1 BBOX=$2 and STRATEGY=$3 failed" >> ${ERRORFILE}
+    fi
+    rm -f ${base}.exe ${base} ${base}.obj ${base}.o
+}
+
+
+#----------------------------------------------------------------#
+#                clear the output file                           #
+#----------------------------------------------------------------#
+#/bin/rm -f ${ERRORFILE}
+rm -f ${ERRORFILE} 
+touch ${ERRORFILE}
+
+if [ $# -ne 0 ]
+then
+    input="$*"
+else
+    input="test*.C"
+fi
+
+if [ ! -d RESULT ]
+then
+    mkdir RESULT 
+fi
+
+for base in ${input}
+do
+    file=${base}'.C'
+    if [ ! -f ${file} ]
+    then 
+      file=${base}
+      base=`basename ${file} .C`
+      if [ ! -f ${file} ] 
+        then 
+           echo "ERROR: ${file} not found" >> ${ERRORFILE} 
+        continue
+      fi 
+    fi
+    xdatafiles="DATA/${base}.x.*[0-9]"
+    idatafiles="DATA/${base}.i.*[0-9]"
+    ixdatafiles="DATA/${base}.ix.*[0-9]"
+    datafiles="${ixdatafiles}"
+    if grep -c Pm_straight ${file} > /dev/null
+    then 
+# New style segment traits.
+        if ${CAR_TEST}
+        then
+            datafiles="${ixdatafiles}"
+            if [  "${datafiles}" ]
+            then
+                ##TESTR BBOX STRATEGY
+                (make_and_execute 1 2 2);
+                (make_and_execute 1 2 1);
+                (make_and_execute 1 2 3);
+            fi
+	fi
+        if ${HOM_TEST}
+        then
+            datafiles="${ixdatafiles}"
+            if [  "${datafiles}" ]
+            then
+                #TESTR BBOX STRATEGY
+                (make_and_execute 2 2 2);
+                (make_and_execute 2 2 1);
+                (make_and_execute 2 2 3);
+            fi
+        fi        
+        if ${GMP_TEST} 
+        then 
+            datafiles="${ixdatafiles}"
+            if [  "${datafiles}" ]
+            then
+                ##TESTR BBOX STRATEGY
+                (make_and_execute 3 2 2);
+                (make_and_execute 3 2 1);
+                (make_and_execute 3 2 3);
+            fi
+        
+            datafiles="${ixdatafiles}"
+            if [  "${datafiles}" ]
+            then
+                #TESTR BBOX STRATEGY
+                (make_and_execute 4 2 2);
+                (make_and_execute 4 2 1);
+                (make_and_execute 4 2 3);
+            fi
+        fi
+        
+        if ${LEDA_RATIONAL_CAR_TEST}
+        then
+            datafiles="${ixdatafiles}"
+            if [  "${datafiles}" ]
+            then
+                ##TESTR BBOX STRATEGY
+                (make_and_execute 5 2 2);
+                (make_and_execute 5 2 1);
+                (make_and_execute 5 2 3);
+            fi
+	fi
+            
+        if ${LEDA_RATIONAL_HOM_TEST}
+	then
+            datafiles="${ixdatafiles}"
+            if [  "${datafiles}" ]
+            then
+                #TESTR BBOX STRATEGY
+                (make_and_execute 6 2 2);
+                (make_and_execute 6 2 1);
+                (make_and_execute 6 2 3);
+            fi
+        fi
+
+        if ${ABSTRACT_TEST}
+        then
+            datafiles="${ixdatafiles}"
+            if [  "${datafiles}" ]
+            then
+                #TESTR BBOX STRATEGY
+                (make_and_execute 7 2 2);
+                (make_and_execute 7 2 1);
+                (make_and_execute 7 2 3);
+            fi
+            
+            datafiles="${ixdatafiles}"
+            if [  "${datafiles}" ]
+            then
+                #TESTR BBOX STRATEGY
+                (make_and_execute 8 2 2);
+                (make_and_execute 8 2 1);
+                (make_and_execute 8 2 3);
+            fi
+        fi
+    else 
+# Old style segment traits.
+        if ${CAR_TEST}
+        then
+            if [  "${datafiles}" ]
+            then
+                #TESTR BBOX STRATEGY
+                (make_and_execute 1 1 2);
+                (make_and_execute 1 1 1);
+                (make_and_execute 1 1 3);
+            fi
+	fi
+        if ${HOM_TEST}
+        then
+            datafiles="${ixdatafiles}"
+            if [  "${datafiles}" ]
+            then
+                #TESTR BBOX STRATEGY
+                (make_and_execute 2 1 2);
+                (make_and_execute 2 1 1);
+                (make_and_execute 2 1 3);
+            fi
+	fi
+    fi
+done
+
+
+
+
+
+
+
+
+
+

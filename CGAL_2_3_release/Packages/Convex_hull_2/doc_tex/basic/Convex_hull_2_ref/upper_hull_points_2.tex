@@ -1,0 +1,82 @@
+% +------------------------------------------------------------------------+
+% | Reference manual page: upper_hull_points_2.tex
+% +------------------------------------------------------------------------+
+% | 09.05.2001   Susan Hert and Stefan Schirra
+% | Package: Convex_hull_2
+% | 
+% +------------------------------------------------------------------------+
+
+
+\begin{ccRefFunction}{upper_hull_points_2}  %% add template arg's if necessary
+\ccIndexMainItemBegin{upper hull, 2D}
+
+\ccDefinition
+  
+The function \ccRefName\ generates the counterclockwise sequence of extreme
+points on the upper hull of a given set of input points.
+
+\ccInclude{CGAL/convex_hull_2.h}
+
+\ccFunction{template <class InputIterator, class OutputIterator>
+            OutputIterator
+            upper_hull_points_2(InputIterator first, InputIterator beyond,
+                                OutputIterator  result,
+                                const Traits & ch_traits = Default_traits );}
+           {generates the counterclockwise sequence of extreme points
+            on the upper hull of the points in the range [\ccc{first},
+            \ccc{beyond}). The resulting sequence is placed starting at
+            position \ccc{result}, and the past-the-end iterator for
+            the resulting sequence is returned.
+            The sequence starts with the rightmost point,
+            the leftmost point is not included.
+            If there is only one extreme point ({\it i.e.}, the leftmost and
+            rightmost point are equal), the extreme point is not reported.
+            \ccPrecond% \ccIndexSubitem[C]{upper_hull_points_2}{preconditions}
+            The source range [\ccc{first},\ccc{beyond}) does not contain
+            \ccc{result}.}
+
+
+The default traits class \ccc{Default_traits} is the kernel in which the
+type \ccc{InputIterator::value_type} is defined.
+
+The different treatment by \ccc{CGAL::lower_hull_points_2} of the case that 
+all points are equal ensures that concatenation of lower and upper hull 
+points gives the sequence of extreme points.
+
+\ccHeading{Requirements}
+\begin{enumerate}
+   \item    \ccc{InputIterator::value_type} and \ccc{OutputIterator::value_type}
+            are equilvalent to \ccc{Traits::Point_2}.
+   \item    \ccc{Traits} contains the following subset of types from
+            the concept ConvexHullTraits\_2 and their corresponding member
+            %\ccIndexMainItem[c]{ConvexHullTraits_2}
+            functions that return instances of these types:
+            \begin{itemize}
+                \item \ccc{Traits::Point_2},
+                \item \ccc{Traits::Less_xy_2}, 
+                \item \ccc{Traits::Less_yx_2},
+                \item \ccc{Traits::Left_of_line_2}, 
+                \item \ccc{Traits::Leftturn_2}.
+            \end{itemize}
+\end{enumerate}
+
+\ccSeeAlso
+
+\ccRefIdfierPage{CGAL::ch_graham_andrew} \\
+\ccRefIdfierPage{CGAL::ch_graham_andrew_scan} \\
+\ccRefIdfierPage{CGAL::lower_hull_points_2} 
+
+\ccImplementation
+
+This function uses Andrew's
+variant of Graham's scan algorithm \cite{a-aeach-79,m-mdscg-84}.  The algorithm
+has worst-case running time of  $O(n \log n)$ for $n$ input points.
+
+\ccIndexMainItemEnd{upper hull, 2D}
+\end{ccRefFunction}
+
+% +------------------------------------------------------------------------+
+%%RefPage: end of main body, begin of footer
+% EOF
+% +------------------------------------------------------------------------+
+

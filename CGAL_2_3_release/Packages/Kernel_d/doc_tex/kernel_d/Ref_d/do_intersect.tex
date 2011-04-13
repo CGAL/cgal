@@ -1,0 +1,25 @@
+\begin{ccRefFunction}{do_intersect}
+\ccInclude{CGAL/intersections_d.h}
+
+\ccFunction{bool do_intersect(Type1<R> obj1, Type2<R> obj2);} {checks
+  whether \ccc{obj1} and \ccc{obj2} intersect.  Two objects
+  \ccStyle{obj1} and \ccStyle{obj2} intersect if there is a point
+  \ccStyle{p} that is part of both \ccStyle{obj1} and \ccStyle{obj2}.
+  The \ccHtmlNoLinksFrom{intersection} region of those two objects is
+  defined as the set of all points \ccStyle{p} that are part of both
+  \ccStyle{obj1} and \ccStyle{obj2}.  \ccPrecond the objects are of
+  the same dimension.}
+
+The types \ccStyle{Type1} and \ccStyle{Type2} can be any of the following:
+\begin{itemize}\ccTexHtml{%
+\itemsep0pt\topsep0pt\partopsep0pt\parskip0pt\parsep0pt}{}
+\item \ccStyle{Point_d<R>}
+\item \ccStyle{Line_d<R>}
+\item \ccStyle{Ray_d<R>}
+\item \ccStyle{Segment_d<R>}
+\item \ccStyle{Hyperplane_d<R>}
+\end{itemize}
+
+\ccSeeAlso \ccc{intersection}
+
+\end{ccRefFunction}

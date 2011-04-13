@@ -1,0 +1,71 @@
+% +------------------------------------------------------------------------+
+% | Reference manual page: ConvexHullPolyhedronHalfedge_3.tex
+% +------------------------------------------------------------------------+
+% | 17.03.1999   Lutz Kettner
+% | Package: Polyhedron
+% | 
+\RCSdef{\RCSHalfedgeRev}{$Revision$}
+\RCSdefDate{\RCSHalfedgeDate}{$Date$}
+% +------------------------------------------------------------------------+
+
+\ccRefPageBegin
+
+%%RefPage: end of header, begin of main body
+% +------------------------------------------------------------------------+
+
+
+\begin{ccRefConcept}{ConvexHullPolyhedronHalfedge_3}
+
+\ccDefinition
+
+The requirements of the halfedge type required for the polyhedron built
+by the function \ccc{convex_hull_3}.
+  
+\ccHasModels
+\ccRefIdfierPage{CGAL::Polyhedron_3<Traits>::Halfedge}
+
+\ccCreation
+\ccCreationVariable{h}
+
+\ccConstructor{Halfedge();}{default constructor.}
+
+\ccTagFullDeclarations
+\ccOperations
+
+\ccMethod{Halfedge_handle opposite();}{the opposite halfedge.}
+
+\ccMethod{Halfedge_handle next();}
+    {the next halfedge around the facet.}
+
+\ccMethod{Halfedge_handle prev();}
+    {the previous halfedge around the facet.}
+
+\ccMethod{bool             is_border() const;}
+    {is true if \ccVar\ is a border halfedge.}
+
+
+\ccMethod{Halfedge_around_facet_circulator       facet_begin();}
+    {circulator of halfedges around the facet (counterclockwise).}
+
+
+\ccMethod{Vertex_handle       vertex();}{the incident vertex of \ccVar.}
+
+\ccMethod{Facet_handle       facet();}
+    {the incident facet of \ccVar.  If \ccVar\ is a border halfedge 
+      the result is default construction of the handle.}
+
+
+\ccSeeAlso
+
+\ccRefIdfierPage{CGAL::Polyhedron_3<Traits>} \\
+\ccRefConceptPage{ConvexHullPolyhedronVertex_3} \\
+\ccRefConceptPage{ConvexHullPolyhedronFacet_3} 
+
+\ccTagDefaults
+\end{ccRefConcept}
+
+% +------------------------------------------------------------------------+
+%%RefPage: end of main body, begin of footer
+\ccRefPageEnd
+% EOF
+% +------------------------------------------------------------------------+

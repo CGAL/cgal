@@ -1,0 +1,138 @@
+HalfedgeDS Package: Release changes:
+---------------------------------------------------------------------
+
+3.21 (6 Aug 2001)
+     - Susan moved the missing *.gif and fig/*.ips from doc_tex/basic/HalfedgeDS
+       to doc_tex/basic/HalfedgeDS_ref directory
+
+3.20 (31 Jul 2001)
+     - Susan moved doc_tex/*_ref directories up one level
+
+3.19 (27 Jul 2001)
+     - Susan made changes necessary to do the manual split including
+       minor formatting changes
+
+3.18 (16 Jul 2001)
+
+     - Changed template parameter name in HalfedgeDS_in_place_list_vertex,
+       etc., to make SGI CC happy.
+
+3.17 (16 Jul 2001)
+
+     - Added #include <cstddef> whereever std::size_t is used.
+
+3.16 (11 Jul 2001)
+
+     - Fixed references to Polyhedron_3<Traits> in doc.
+     - Removed call to hash maps statistics in HalfedgeDS_list.
+
+3.15 (10 Jul 2001)
+
+     - Documented the allocator template parameter.
+     - Improved the pointer update when copying HalfedgeDS_vector.
+     - Changed pointer update in HalfedgeDS_list from std::map to
+       CGAL::Unique_hash_map improving speed.
+     - Proof read and formatted the documentation. 
+     - Changes static allocators to local member variables.
+
+3.14 (05 Jul 2001)
+
+     - Fixed bug with 'typename A::template B<..>' syntax.
+
+3.13 (02 Jul 2001)
+
+     - Added release note about old/new design to documentation.
+     - Documentation ispelled.
+     - Added allocators to HalfedgeDS.
+
+3.12 (29 Jun 2001)
+
+     - Changed \ccIdfierPage back to \ccRefIdfierPage.
+
+3.11 (29 Jun 2001)
+
+     - Smaller corrections in the doc.
+     - Added pathname to example program header line.
+     - Replaced __GNUC__ excpetions with new workaround flag
+       CGAL_CFG_NO_NESTED_TEMPLATE_KEYWORD.
+     - Static method halfedge_handle() in HalfedgeDS_vector changed.
+     - Fixed missing halfedge_handle() call in hds_prog_compact.C to
+       make it work with g++ 3.0.
+
+3.10 (25 Jun 2001)
+
+     - Fixed missing Plane dummy types in face_base classes.
+     - Remove the HalfedgeDS_using_list
+     - Rename HalfedgeDS_using_in_place_list to HalfedgeDS_list
+     - Rename HalfedgeDS_using_vector to HalfedgeDS_vector.
+     - Fixed 'emplate' typo that shows with MSVC only.
+
+3.9 (21 Jun 2001)
+
+     - Attempt to fix bug in hds_prog_compact.C. 
+     - New naming scheme for concepts.
+     - New kernel traits introduced.
+     - Changed name of HalfedgeDS_items.h to HalfedgeDS_items_2.h.
+     - Revised example files and doc.
+
+3.8 (19 Jun 2001)
+
+     - Changes in the doc.
+
+3.7 (18 Jun 2001)
+
+     - Fixed example code inclusion in the doc.
+     - Fixed compilation bugs with Base_base types in halfedge bases.
+
+3.6 (17 Jun 2001)
+
+     - changed erase_all() to clear() for HalfedgeDS concept.
+
+3.5 (15 Jun 2001)
+
+     - hanged filename to avoid upper/lower-case conflict of 
+       HalfedgeDS_[Ii]tems.tex.
+
+3.4 (15 Jun 2001)
+
+     - Added missing reference pages in 
+       doc_tex/basic/HalfedgeDS/HalfedgeDS_ref/.
+     - Added missing *.gif files for the reference pages.
+     - HalfedgeDS_using_in_place_list.h: Fixed bug in copy  
+       constructor and assignment operator to copy pairs instead of 
+       single halfedges. Bug reported by Xiangmin Jiao.
+     - Made assignment of empty vertex or face handles while copying
+       explicit. Was relying previously on proper default initialization.
+     - Fixed warnings in the test suite about unused variables.
+
+3.3 (27 Sep 2000)
+
+     - Fixed warning for ill-formed main() declaration. 
+     - Fixed problems with Base_base:: in halfedge_base classes that
+       were reported with g++ -pedantic. 
+     - Fixed problems with point() and normal() access in the workaround
+       for missing partial specializations of the vertex_base and 
+       face_base classes.
+     - Changed the handling of iterators in HalfedgeDS_using_list.
+       The HalfedgeDS_iterator_adaptor relies now on a local static 
+       variable to create a unique std::list::iterator. The previous
+       solution was using an initializer with 0, which isn't standard
+       compliant, and it failed now with the std::list::iterator and KCC.
+       The new solution uses zero-initialization of static variables,
+       Section 3.6.2, 6.7, and 8.5 of the C++ Standard.
+
+3.2 (21 Sep 2000)
+
+     Converted to std:: and CGAL:: namespaces and using new std 
+     header file name convention. The manual pages are separated into 
+     user manual pages and reference manual pages, but still in one 
+     chapter. Tested with g++ and MipsPro 7.3.
+
+3.1 (26 Mar 1999)
+
+     Complete redesign. Incompatible to previous versions. The design
+     provides much more flexibility and can support planar maps and
+     other data structures more easily. The class interface has been
+     changed to be more in line with STL container classes and the 
+     few dependencies on the geometry (point type) are removed.
+

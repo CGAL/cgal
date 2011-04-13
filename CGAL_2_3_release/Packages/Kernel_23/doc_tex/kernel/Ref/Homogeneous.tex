@@ -1,0 +1,25 @@
+\begin{ccRefClass}{Homogeneous<RingNumberType>}
+\ccInclude{CGAL/Homogeneous.h}
+
+\ccDefinition
+A model for a \ccc{Kernel} using homogeneous coordinates to represent the
+geometric objects.
+
+\ccIsModel
+\ccRefConceptPage{Kernel}
+
+\ccTexHtml{\ccSetThreeColumns{typedef Quotient<RingNumberType>}{}{\hspace*{8.5cm}}}{}
+\ccTypes
+\ccTypedef{typedef Quotient<RingNumberType> FT;}{}
+\ccGlue
+\ccTypedef{typedef RingNumberType RT;}{}
+
+\ccImplementation
+This model of a kernel uses reference counting.
+
+\ccSeeAlso
+\ccRefIdfierPage{CGAL::Cartesian<FieldNumberType>} \\
+\ccRefIdfierPage{CGAL::Simple_cartesian<FieldNumberType>} \\
+\ccRefIdfierPage{CGAL::Simple_homogeneous<RingNumberType>} \\
+
+\end{ccRefClass}

@@ -1,0 +1,217 @@
+3.23 (27 Jun 2001)
+- Put the IO operators back in, they are needed by Borland.
+
+3.22 (21 Jun 2001)
+- New constructors for Direction_3.
+
+3.21 (21 Jun 2001)
+- Merge point_vector_definitions_3.C into point_vector_declarations_3.h.
+- Remove number_type_tag(const Vector_3<R> &).
+
+3.20 (20 Jun 2001)
+- nothing, just to resubmit in time...
+
+3.19 (20 Jun 2001)
+- remove global function predicates.
+
+3.18 (20 Jun 2001)
+- remove conditionnal #includes from cartesian/homogeneous.
+- remove member functions for predicates since they are inherited.
+
+3.17 (19 Jun 2001)
+- added centroid
+
+3.16 (?? Mar 2001)
+- Fix too long lines.
+
+3.15 (17 Mar 2001)
+- Added constructor Vector(Point, Point). 
+
+3.14 (19 Feb 2001)
+- Comment out CGAL::Less_xyz<>.
+
+3.13 (14 Feb 2001)
+
+- added min_coord(), max_coord() for Iso_cuboid_3 and new constructor
+
+3.12 (13 Feb 2001)
+
+- added squared_area() function for Triangle_3 and volume() function
+  for Tetrahedron_3 and Iso_cuboid_3
+- Remove old style casts.
+- Simple_homogeneous.
+
+3.11 (24 Jan 2001)
+
+- rearranged some include directives to put them at the top of the file
+  removed others that were unnecessary and added some that were missing
+
+3.10  (22 Jan 2001)
+- Adapts to new simple cartesian kernel.
+- Remove redundant protect macros tests.
+- Added a few missing CGAL_ to the NO_?STREAM* macros.
+
+3.9   (15 Oct 2000)
+
+- Point_3<R> qualified by CGAL:: in Sphere_3.h
+  (Cartesian kernel needs this - homogeneous aparently does not)
+
+%%%%%%%%%%%%%%%%%%%%%%   R e l e a s e  2 . 2   %%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+3.8   (08 Oct 2000)
+
+- packaging script fixed
+  Sphere_3.h now added
+
+3.7   (16 Aug 2000)
+
+- cross_product added again (see 3.6); package H3 modified instead 
+
+3.6   (11 Aug 2000)
+
+- cross_product removed (hoping that this will solve a Borland
+  problem with H3); The base class function should match instead.
+
+3.5   (30 Jul 2000)
+
+- copy assigment (operator=) removed
+
+3.4   (26 Jul 2000)
+
+- id() functions removed
+
+3.3.1 (27 Jun 2000)
+
+- Sphere_3<R> fixed  ( <FT,RT> left over)
+
+3.3   (19 Jun 2000)
+
+- Sphere_3<R> added
+
+3.2   (18 Apr 2000)
+
+- _R -> R_
+- Bbox_3 uses Handle_for<> now
+
+3.1   (06 Apr 2000)
+
+- include_advanced/CGAL/Old_style_kernel/U_3.h files created
+  which define class U_3<R, Old_style_tag> : public R::U_3_base
+
+3.0   (02 Feb 2000)
+
+- automatic inclusion for Simple_cartesian added
+
+2.9   (01 Feb 2000)
+
+- CGAL_static_cast  replaced by static_cast<>
+
+%%%%%%%%%%%%%%%%%%%%%%   R e l e a s e  2 . 1   %%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+2.8  -> 2.8.1 (07 Nov 99)
+- constructor for Identity added to Aff_transformation_3
+
+2.7.3-> 2.8   (28 Oct 99)
+- removed CGAL:: in non member functions in CGAL scope
+- put friend CGAL::Vector_3<R> CGAL::Direction_3<R>::vector() const;
+  in comment; is apparently not necessary anymore
+
+2.7.2-> 2.7.3 (14 Oct 99)
+- added to_vector() to Direction_3<R>
+
+2.7.1-> 2.7.2 (08 Oct 99)
+- Direction_3<R>::vector() now calls to_vector() on implementation
+  classes
+
+2.7  -> 2.7.1 (17 Sep 99)
+- distance_predicates_3.h added 
+
+2.6  -> 2.7   (02 Sep 99)
+- qualified ..._3<_R> by CGAL::
+
+2.5  -> 2.6   (02 Sep 99)
+- qualified ..._3<R> by CGAL::
+
+2.4  -> 2.5   (01 Sep 99)
+- #include <..C3.h> replaced #include <../Cartesian/.._3.h>
+- Triangle_3.h fixed: R::Triangle_3 
+
+2.3  -> 2.4   (24 Aug 99)
+- _3<R> is now derived from R::_3_base instead of R::_3
+  typedef typename R::_3            R_3;      replaced by
+  typedef typename R::_3_base  R_3;
+
+2.2  -> 2.3   (04 Aug 99)
+- updates/workarounds for gcc-2.95:
+  s/friend inline/friend CGAL_FRIEND_INLINE
+  s/friend CGAL_KERNEL_INLINE/friend CGAL_KERNEL_FRIEND_INLINE
+  made all operator-() friends non-friends
+  reorganized Point_3 and Vector_3
+  added files point_vector_declarations_3.h
+              point_vector_definitions_3.C
+  added conversion fucntions between points and vectors
+  those are friends and used by operator-() - functions that are no friends
+    any longer
+
+2.1.2-> 2.2   (22 Jun 99)
+- 'inline' placement fixed in Point_3.h and Vector_3.h
+
+%%%%%%%%%%%%%%%%%%%%%%   R e l e a s e  2 . 0   %%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+2.1.1-> 2.1.2 (21 May 99)
+- packaging script extended ;)
+
+2.1  -> 2.1.1 (21 May 99)
+- Less_xyz defined in a new file <predicate_classes_3.h>
+  used for fixing a bug in TetrahedraH3==
+
+2.0.3-> 2.1   (16 Apr 99)
+- (user reported) bug in operator<<(ostream &os, const Bbox_3& b) fixed:
+  return os << b.xmin() << ' ' << b.ymin() << ' ' << b.zmin();
+  -->                                      ^^^^^^
+- iostream parts prefixed by std::
+ 
+2.0.2-> 2.0.3 (14 Mar 99)
+- std::min/max used in <Bbox_3.h>
+
+2.0.1-> 2.0.2 (24 Feb 99)
+- CGAL_[BEGIN|END]_NAMESPACE used
+
+2.0  -> 2.0.1 (11 Feb 99)
+- Quotient declared in <Vector_3.h>
+
+1.4  -> 2.0
+- namespace CGAL { } introduced
+
+%%%%%%%%%%%%%%%%%%%%%%   R e l e a s e  1 . 2   %%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+1.3.1-> 1.4
+- Use of CGAL...INLINE made consistent between declarations and
+  definitions (otherwise SunPro CC 4.2 does not like it).
+
+1.3  -> 1.3.1 (03 Sep 98)
+- ORIGIN [!=]= Point_3 added
+
+%%%%%%%%%%%%%%%%%%%%%%   R e l e a s e  1 . 1   %%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+1.2.2-> 1.3
+- basic_constructions_3.h added
+- side_of...sphere revised
+
+%%%%%%%%%%%%%%%%%%%%%%   R e l e a s e  1 . 0   %%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+1.2.1-> 1.2.2
+- Plane_3::projection(Point_3) added
+
+1.2  -> 1.2.1
+- Vector_3 / Quotient added
+
+1.1  -> 1.2
+- made fit for egcs
+
+1.0  -> 1.1
+- added typename keyword
+
+0.9  -> 1.0
+- New access functions have been added to Aff_transformation. 
+- typename keyword has been added in most places

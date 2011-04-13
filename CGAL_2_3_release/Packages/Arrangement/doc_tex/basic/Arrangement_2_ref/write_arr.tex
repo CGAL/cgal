@@ -1,0 +1,83 @@
+% +------------------------------------------------------------------------+
+% | Reference manual page: write_arr.tex (Arrangement)
+% +------------------------------------------------------------------------+
+% | 
+% | Package: arr (Arrangement)
+% | 
+% +------------------------------------------------------------------------+
+
+\ccRefPageBegin
+
+%%RefPage: end of header, begin of main body
+% +------------------------------------------------------------------------+
+
+%write_arr
+
+\begin{ccRefFunction}{write_arr}
+
+\ccCreationVariable{write_arr}
+
+\ccDefinition
+
+The function \ccRefName\ sends an object of the template parameter
+type \ccc{Arrangement} to an output stream. The function is intended
+for cases where the writer object is not the default one, i.e. for
+user defined writer classes which aim at writing arrangements with
+additional information or aim at special format. For a default use
+simply use the insertor operator (\ccc{<<}) of the output stream as in
+\ccc{cout << arr}.
+
+Reading is done using the \ccc{read} method of
+\ccc{Arrangement_2<Dcel,Traits,Base_node>}.
+
+\ccInclude{CGAL/IO/write_arr.h}
+
+\ccFunction{template <Arrangement, Writer> 
+            void 
+            write_arr(Arrangement arr, 
+            Writer& writer, 
+            ostream& o); }
+         {The function sends an arrangement object to an output
+            stream. The function uses the methods defined within the
+            \ccStyle{Writer} class, and prints \ccStyle{arr} which is instance of
+            \ccc{Arrangement} in the format discussed in
+            \ccRefPage{Arr_IO_format}. The printing is done by sending
+            the arrangement object to the output stream \ccc{o}. }
+
+\ccHeading{Requirements}
+\begin{enumerate}
+    \item    \ccc{Arrangement}  
+             should be of type \ccc{Arrangement_2<Dcel,Traits,Base_node>}.
+    \item    \ccc{Writer}  
+             should be of type \ccc{Arr_file_writer<Arrangement>}.
+    
+   \item    The output stream should support the insertor operator (\ccc{<<}) 
+            for the following types
+            \begin{itemize}
+                \item \ccc{Arrangement::Point},
+                \item \ccc{Arrangement::Curve}, 
+            \end{itemize}
+\end{enumerate}
+
+\end{ccRefFunction} % writer_arr
+
+% +------------------------------------------------------------------------+
+%%RefPage: end of main body, begin of footer
+\ccRefPageEnd
+% EOF
+% +------------------------------------------------------------------------+
+
+
+
+
+
+
+
+
+
+
+
+%%% Local Variables: 
+%%% mode: latex
+%%% TeX-master: "Pm_file_scanner"
+%%% End: 

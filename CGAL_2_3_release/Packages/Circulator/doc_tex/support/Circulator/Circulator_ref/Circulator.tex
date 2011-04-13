@@ -1,0 +1,246 @@
+% +------------------------------------------------------------------------+
+% | CGAL Reference Manual: Circulator.tex
+% +------------------------------------------------------------------------+
+% | Requirements for circulators in analogy to STL iterators.
+% | Adaptors between circulators and iterators.
+% | Proposal for CGAL.
+% |
+% | 11.10.1996   Lutz Kettner
+% | 
+% | \RCSdef{\circRev}{$Revision$}
+% | \RCSdefDate{\circDate}{$Date$}
+% +------------------------------------------------------------------------+
+
+% +-----------------------------------------------------+
+\begin{ccRefConcept}{Circulator}
+
+\ccDefinition
+
+\ccHtmlCrossLink{Forward_circulator}
+\ccHtmlCrossLink{Bidirectional_circulator}
+\ccHtmlCrossLink{Random_access_circulator}
+\ccHtmlIndexC[concept]{Forward_circulator}
+\ccHtmlIndexC[concept]{Bidirectional_circulator}
+\ccHtmlIndexC[concept]{Random_access_circulator}
+
+Note: This specification is a revised version based on the \CC\ 
+Standard~\cite{c-isplc-98}, which is available now. In particular,
+iterator traits are now assumed and required.
+
+Iterators in the \stl\ were tailored for linear sequences. The
+specialization for circular data structures leads to slightly
+different requirements which we will summarize in the {\em
+  circulators\/} concept. The main difference is that a circular data
+structure has no natural past-the-end value. As a consequence, a
+container supporting circulators will not have an {\tt end()}-member
+function. The semantic of a circulator range differs from the semantic
+of an iterator range. For a circulator $c$ the range $\left[c,
+  c\right)$ denotes the sequence of all elements in the data
+structure. For iterators, this range defines the empty sequence. A
+separate test for an empty sequence has been added to the circulator
+requirements: A comparison $c ==$ {\tt NULL} for a circulator $c$ is
+true for an empty sequence. As for \CC, we recommend the use of 0
+instead of {\tt NULL}.
+
+Similar to \stl\ iterators, we distinguish between forward,
+bidirectional, and random access circulators\footnote{Input
+  circulators are a contradiction, since any circulator is supposed to
+  return once to itself.  Output circulators are not supported since
+  they would be indistinguishable from output iterators.}. Most
+requirements for circulators are equal to those for iterators. We
+present the changes, please refer to \cite[chapter 18]{ms-strg-96} or
+\cite{c-isplc-98} for the iterator requirements.
+
+{\bf Past-the-end value:} There is no past-the-end value for circulators.
+
+{\bf Singular values:} There are no singular values for
+ circulators\footnote{Since circulators must be implemented as classes
+  anyway, there is no need to allow singular values for them. An
+  un-initalized circulator does not have a singular value, but is
+  supposed to refer to an empty sequence.}
+
+
+{\bf Empty sequence:} The comparison $c ==$ {\tt NULL} (or $c == 0$)
+for a circulator $c$ is {\tt true} if $c$ denotes an empty sequence,
+and {\tt false} otherwise.
+
+{\bf Dereferenceable values:} A circulator that does not denote an
+empty sequence is dereferenceable.
+
+{\bf Reachability:} Each dereferenceable circulator can reach itself
+with a finite and non-empty sequence of applications of \ccc{operator++}.
+
+{\bf Ranges:} For any circulator $c$ the range $\left[c, c\right)$ is
+a valid range. If the circulator refers to an empty sequence, the range
+$\left[c, c\right)$ denotes the empty range. Otherwise the circulator
+is dereferenceable and the range $\left[c, c\right)$ denotes the
+sequence of all elements in the data structure. {\em Remark:} When a
+circulator is used in a place of an iterator, as, for example, with an \stl\ 
+algorithm, it will work as expected with the only exception that,
+in STL algorithms,
+the range $\left[c, c\right)$ denotes always the empty range.
+This is
+not a requirement, but a consequence of the requirements
+stated here and the fact that the \stl\ requirements for iterator
+ranges are based on the {\tt operator++} and the {\tt operator==},
+which we use for circulators as well. In principle, we face here the 
+difference between a {\tt while} loop and a {\tt do-while} loop.
+
+{\bf Types:} For a circulator of type $C$ the following local types
+are required: 
+
+\begin{tabbing}
+    \ccTexHtml{{\tt C::iterator\_category}\ \ \ \ \ \= \kill}{}
+    {\tt C::value\_type}        \>  value type the circulator refers to.\\
+    {\tt C::reference}          \>  reference type used for the return type
+                                    of {\tt C::operator*()}.\\
+    {\tt C::pointer}            \>  pointer type used for the return type of 
+                                    {\tt  C::operator->()}.\\
+    {\tt C::size\_type}         \>  unsigned integral type that can hold 
+                                    the size of a sequence\\
+    {\tt C::difference\_type}   \>  signed integral type that can hold 
+                                    the distance between two circulators.\\
+    {\tt C::iterator\_category} \>  circulator category.
+\end{tabbing}
+
+\subsection*{Forward Circulators}
+
+In the following, we assume that {\tt a} and {\tt b} are circulators
+of type {\tt C}, {\tt r} is of type {\tt C\&} (is assignable), and
+{\tt T} denotes the value type of {\tt C}.  Let {\tt D} be the
+distance type of {\tt C}.  As for \CC, we recommend the use of 0
+instead of {\tt NULL}.
+
+\begin{tabbing}
+    \ccTexHtml{{\tt C::iterator\_category}\ \ \ \ \ \= \kill}{}
+    {\tt C()}         \> a circulator equal to \ccc{NULL} denoting an 
+                         empty sequence.\\
+    {\tt a == NULL}   \> Returns {\tt true} if {\tt a} denotes an empty
+                         sequence, {\tt false} otherwise. \\
+		      \> For simplicity, {\tt NULL == a} is not required. The\\
+                      \> behavior for comparisons with pointer-like 
+                         values different than {\tt NULL} \\
+                      \> is undefined. A runtime assertion is 
+                         recommended.\\
+    {\tt a != NULL}   \> Returns {\tt !(a == NULL)}. \\
+    {\tt ++r}         \> Like for forward iterators, but a dereferenceable
+                         circulator {\tt r} will always\\
+                      \> be dereferenceable after {\tt ++r} (no
+                         past-the-end value). {\em Precondition:} {\tt
+                           r} \\
+                      \> does not denote an empty sequence.\\
+    {\tt r++}         \> Same as for {\tt ++r}.\\
+    {\tt C::iterator\_category} \>  circulator category {\tt 
+                                      CBP\_Forward\_circulator\_tag}.
+\end{tabbing}
+
+\subsection*{Bidirectional Circulators}
+
+The same requirements as for the forward circulators hold for
+bidirectional iterators with the following change of the iterator
+category:
+
+\begin{tabbing}
+    \ccTexHtml{{\tt C::iterator\_category}\ \ \ \ \ \= \kill}{}
+    {\tt C::iterator\_category} \>  circulator category {\tt 
+                                CBP\_Bidirectional\_circulator\_tag}.
+\end{tabbing}
+
+
+\subsection*{Random Access Circulators}
+\label{sectionMinCircleRequ}
+
+The same requirements as for the bidirectional circulators hold for
+random access iterators with the following changes and extensions. 
+
+The idea of random access extends naturally to circulators using
+equivalence classes modulus the length of the sequence. With this in
+mind, the additional requirements for random access iterators hold
+also for random access circulators. The only exception is that the
+random access iterator is required to provide a total order on the
+sequence, which a circulator cannot provide\footnote{One might define
+  an order by splitting the circle at a fixed point, e.g.~the start
+  circulator provided from the data structure. This is what the
+  adaptor to iterators will do. Nonetheless, we do not require this
+  for circulators.}.
+
+The difference of two circulators is not unique as for iterators. A
+reasonable requirement demands that the result is in a certain range
+$[1-\mbox{{\it size, size}}-1]$, where {\it size} is the size of the
+sequence, and that whenever a circulator {\tt a} is fixed that
+the differences with all other circulators of the sequence form a
+consistent ordering.
+
+For the adaptor to iterators a minimal circulator
+$d_{\mbox{\footnotesize min}}$ is required for which the difference $c
+- d_{\mbox{\footnotesize min}}$ to all other circulators $c$ is non
+negative.
+
+\begin{tabbing}
+    \ccTexHtml{{\tt C::iterator\_category}\ \ \ \ \ \= \kill}{}
+    {\tt b - a}   \> limited range and consistent ordering 
+                       as explained above.\\
+    {\tt a.min\_circulator()}   \>  returns the minimal circulator from the 
+                       range $[a,a)$.\\
+    {\tt C::iterator\_category} \>  circulator category {\tt 
+                                CBP\_Random\_access\_circulator\_tag}.
+\end{tabbing}
+
+\subsection*{Const Circulators}
+
+As with iterators, we distinguish between circulators and const
+circulators. The expression {\tt *a = t} with {\tt t} of type {\tt T}
+is valid for mutable circulators. It is invalid for const circulators.
+
+\subsection*{Circulators in Container Classes}
+
+For a container {\tt x} of type {\tt X} that supports circulators
+{\tt c} the following naming convention is recommended:
+
+\begin{tabbing}
+    \ccTexHtml{{\tt X::Const\_circulator}\ \ \ \ \= \kill}{}
+    {\tt X::Circulator}  \> the type of the mutable circulator.\\
+    {\tt X::Const\_circulator}  \> the type of the const circulator.\\
+    {\tt c = x.begin()}         \> the start circulator of the sequence.
+        It is of type {\tt X::Circulator} for a \\
+      \> mutable container or {\tt X::Const\_circulator} for
+         a const container. There \\ 
+      \> must not be an {\tt end()} member function.
+\end{tabbing}
+
+If a container will support iterators and circulators, the member
+function {\tt circulator\_begin()} is proposed. However, the support
+of iterators and circulators simultaneously is not recommended, since
+it would lead to fat interfaces. The natural choice should be
+supported, the other concept will be available through adaptors.
+
+
+\subsection*{Example}
+
+
+A generic {\tt contains} function accepts a range of circulators and a
+value. It returns \ccc{true} if the value is contained in the sequence
+of items denoted by the range of circulators.  As usual for circular
+structures, a {\tt do}-{\tt while} loop is preferable, such that for
+the specific input, {\tt c == d}, all elements in the sequence are
+reached. Note that the example simplifies if the sequence is known to
+be non-empty, which is for example the common case in polyhedral
+surfaces where vertices and facets have at least one incident edge.
+
+\begin{ccExampleCode}
+template <class Circulator, class T>
+bool contains( Circulator c, Circulator d, const T& value) {
+    if (c != 0) {
+        do {
+            if (*c == value)
+                return true;
+        } while (++c != d);
+    }
+    return false;
+}
+\end{ccExampleCode}
+
+\end{ccRefConcept}
+
+% +-----------------------------------------------------+
+% EOF

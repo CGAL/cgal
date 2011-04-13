@@ -1,0 +1,23 @@
+- TODO revoir Triangulation_2_traits_3.h
+- change the order of the test the precondition on insert_in_edge
+  or turn it into a CGAL_triangulation_exactness_precondition()?
+- rendre les iterator vraiment const
+  creer les classe const_handle
+- ajouter des acces a la hierarchie dans
+  Constrained_triangulation_plus
+- documenter Constrained_triangulation_plus_2
+- fix the sweep line construction of 2d constrained triangulation
+- factorize the code duplicated in
+  Triangulation_default_data_structure_2
+  Triangulation_data_structure_using_list_2
+- test removal and meshing functions in constrained and Delaunay constrained triangulation
+
+- change the return type of insert a constrained
+- file input for constrained triagulation
+
+- completer triangulation contrainte
+- mesh
+- add set_weight(Weight w) to weighted point
+- iterator de faces intersectees par un segment
+
+

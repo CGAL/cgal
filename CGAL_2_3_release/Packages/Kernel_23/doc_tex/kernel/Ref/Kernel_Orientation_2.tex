@@ -1,0 +1,17 @@
+\begin{ccRefFunctionObjectConcept}{Kernel::Orientation_2}
+A model for this must provide:
+
+\ccCreationVariable{fo}
+
+\ccMemberFunction{Orientation operator()(const Kernel::Point_2&p, 
+                                         const Kernel::Point_2&q, 
+                                         const Kernel::Point_2&r);}
+{returns \ccStyle{LEFTTURN}, if $r$ lies to the left of the oriented 
+line $l$ defined by $p$ and $q$, returns \ccStyle{RIGHTTURN} if $r$ 
+lies to the right of $l$, and returns \ccStyle{COLLINEAR} if $r$ lies
+on $l$.}
+
+\ccSeeAlso
+\ccRefIdfierPage{CGAL::orientation}\\
+
+\end{ccRefFunctionObjectConcept}

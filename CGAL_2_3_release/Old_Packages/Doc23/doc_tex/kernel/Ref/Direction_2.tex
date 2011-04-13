@@ -1,0 +1,109 @@
+\begin{ccRefClass} {Direction_2<R>}
+
+\ccDefinition
+An object of the class \ccRefName\ is a vector in the two-dimensional 
+vector space $\R^2$  where we forget about its length. They can be
+viewed as unit vectors, although there is no normalization internally,
+since this is error prone.  Directions are used whenever the length of
+a vector does not matter. 
+They also characterize a set of parallel oriented lines that have the same
+orientations.  
+For example, you can ask for the direction
+orthogonal to an oriented plane, or the direction of an oriented line.
+Further, they can be used to indicate angles. The slope of a direction
+is \ccStyle{dy()/dx()}.
+
+
+\ccCreation
+\ccCreationVariable{d}
+
+
+\ccHidden \ccConstructor{Direction_2();}
+             {introduces an uninitialized direction \ccVar.}
+
+\ccHidden \ccConstructor{Direction_2(const Direction_2<R> &d);}
+            {copy constructor.}
+
+\ccConstructor{Direction_2(const Vector_2<R> &v);}
+            {introduces the direction \ccVar\ of vector $v$.}
+
+\ccConstructor{Direction_2(const Line_2<R> &l);}
+            {introduces the direction \ccVar\ of line $l$.}
+
+\ccConstructor{Direction_2(const Ray_2<R> &r);}
+            {introduces the direction \ccVar\ of ray $r$.}
+
+\ccConstructor{Direction_2(const Segment_2<R> &s);}
+            {introduces the direction \ccVar\ of segment $s$.}
+
+\ccConstructor{Direction_2(const R::RT &x, const R::RT &y);}
+            {introduces a direction \ccVar\ passing through the origin
+             and the point with Cartesian coordinates $(x, y)$.}
+
+
+\ccOperations
+%\ccSetTwoOfThreeColumns{5cm}{4cm}
+\ccSetThreeColumns{Direction_2<R> & }{}{\hspace*{7.8cm}}
+
+\ccHidden \ccMethod{Direction_2<R> & operator=(const Direction_2<R> &e);}
+        {Assignment.}
+
+\ccMethod{R::RT delta(int i) const;}
+       {returns values, such that \ccVar \ccc{== Direction_2<R>(delta(0),delta(1))}.
+        \ccPrecond: $0 \leq i \leq 1$.}
+
+\ccMethod{R::RT dx() const;}
+       {returns \ccc{delta(0)}.}
+
+\ccMethod{R::RT dy() const;}
+       {returns \ccc{delta(1)}.}
+
+There is a total order on directions. We compare the angles between the
+positive $x$-axis and the directions in counterclockwise order.
+
+\ccMethod{bool operator==(const Direction_2<R> &e) const;}
+       {}
+\ccGlue
+\ccMethod{bool operator!=(const Direction_2<R> &e) const;}
+       {}
+\ccGlue
+\ccMethod{bool operator<(const Direction_2<R> &e) const;}
+       {}
+\ccGlue
+\ccMethod{bool operator>(const Direction_2<R> &e) const;}
+       {}
+\ccGlue
+\ccMethod{bool operator<=(const Direction_2<R> &e) const;}
+       {}
+\ccGlue
+\ccMethod{bool operator>=(const Direction_2<R> &e) const;}
+       {}
+
+Furthermore, we have
+
+\ccMethod{bool counterclockwise_in_between(const Direction_2<R> &d1,
+                                   const Direction_2<R> &d2) const;}
+       {returns true, iff \ccVar\ is not equal to \ccc{d1}, and 
+        while rotating counterclockwise starting at \ccc{d1}, 
+        \ccVar\ is reached strictly before \ccc{d2} is reached.
+        Note that true is returned if \ccc{d1} == \ccc{d2}, unless
+        also \ccVar\ == \ccc{d1}.
+       }
+
+
+\ccMethod{Direction_2<R>  operator-() const;}
+       {The direction opposite to \ccVar.}
+
+\ccHeading{Miscellaneous}
+
+\ccMethod{Vector_2<R> vector() const;}
+       {returns a vector that has the same direction as \ccVar.}
+
+\ccMethod{Direction_2<R>  transform(const Aff_transformation_2<R> &t) const;}
+       {returns the direction obtained by applying $t$ on \ccVar.}
+
+\ccSeeAlso
+\ccRefConceptPage{Kernel::Direction_2} \\
+
+\end{ccRefClass} 
+

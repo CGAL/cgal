@@ -1,0 +1,86 @@
+\begin{ccRefClass}{Ray_2<R>}
+
+\ccDefinition
+An object \ccStyle{r} of the data type \ccRefName\ is a directed
+straight ray in the two-dimensional Euclidean plane $\E^2$. It starts
+in a  point called the {\em source} of  \ccStyle{r} and goes to infinity.
+
+\ccCreation
+\ccCreationVariable{r}
+
+
+\ccHidden \ccConstructor{Ray_2();}
+             {introduces an uninitialized variable \ccVar.}
+
+\ccHidden \ccConstructor{Ray_2(const Ray_2<R> &s);}
+ 	    {copy constructor.}
+
+\ccConstructor{Ray_2(const Point_2<R> &p, const  Point_2<R>&q);}
+            {introduces a ray \ccVar\ 
+             with source $p$ and passing through point $q$.}
+
+\ccConstructor{Ray_2(const Point_2<R> &p, const Direction_2<R> &d)}
+            {introduces a ray \ccVar\ starting at source $p$ with 
+             direction $d$.}
+
+\ccOperations
+
+\ccHidden \ccMethod{Ray_2<R> &operator=(const Ray_2<R> &s);}
+        {Assignment.}
+
+\ccMethod{bool operator==(const Ray_2<R> &h) const;}
+       {Test for equality: two rays are equal, iff they have the same 
+        source and the same direction.}
+
+\ccMethod{bool operator!=(const Ray_2<R> &h) const;}
+       {Test for inequality.}
+
+\ccMethod{Point_2<R> source() const;}
+       {returns the source of \ccVar.}
+
+\ccMethod{Point_2<R> point(int i) const;}
+       {returns a point on \ccVar. \ccStyle{point(0)} is the source,
+        \ccStyle{point(i)}, with $i>0$, is different from the 
+        source. \ccPrecond $i \geq 0$.}
+
+\ccMethod{Direction_2<R> direction() const;}
+       {returns the direction of \ccVar.}
+
+\ccMethod{Line_2<R>      supporting_line() const;}
+       {returns the line supporting \ccVar\ which has the same direction.}
+
+\ccMethod{Ray_2<R>       opposite() const;}
+       {returns the ray with the same source and the opposite direction.}
+
+\ccPredicates
+
+\ccMethod{bool is_degenerate() const;}
+       {ray \ccVar\ is degenerate, if the source and the second defining
+        point fall together (that is if the direction is degenerate).}
+
+\ccMethod{bool is_horizontal() const;}
+       {}
+\ccGlue
+\ccMethod{bool is_vertical() const;}
+       {}
+
+\ccMethod{bool has_on(const Point_2<R> &p) const;}
+       {A point is on \ccVar, iff it is equal to the source
+        of \ccVar, or if it is in the interior of \ccVar.}
+
+\ccMethod{bool collinear_has_on(const Point_2<R> &p) const;}
+       {checks if point $p$ is on \ccVar. This function is faster
+        than function \ccStyle{has_on()} if the precondition 
+	checking is disabled.
+        \ccPrecond{$p$ is on the supporting line of \ccVar.}}
+
+\ccHeading{Miscellaneous}
+
+\ccMethod{Ray_2<R> transform(const Aff_transformation_2<R> &t) const;}
+       {returns the ray obtained by applying $t$ on the source
+        and on the direction of \ccVar.}
+
+\ccSeeAlso
+\ccRefConceptPage{Kernel::Ray_2}
+
+\end{ccRefClass} 

@@ -1,0 +1,7 @@
+MAKE_WEB_DIR :=
+
+MAKE_INC_PATH := include:include/CGAL/_QP_solver:$(MAKE_INC_PATH)
+MAKE_IMP_PATH := test
+
+MAKE_FIL_MOD := u=rw,g=r,o=
+MAKE_DIR_MOD := u=rwx,g=rx+s,o=

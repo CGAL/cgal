@@ -1,0 +1,454 @@
+5.48 (Susan)
+===
+- copied dcel.gif and dcel.ipe to Topological_map_ref directory; added 
+  htmlfiles there
+
+5.48 (Susan)
+===
+- moved doc_tex/*_ref directory up one level
+
+5.47 (Susan)
+===
+- made changes necessary to do the manual split
+
+5.46 (Shai and Eti)
+===
+- As of this internal release, only big changes will be written
+  in changes.txt due to the use of CVS.
+- Introducing new I/O utilities.
+- New copy constructor for Planar_map.
+- Updated assignment operator for Planar_map. 
+
+5.45 (Shai)
+====
+- Change variable 'or' in Pm_leda_segment_exact_traits to 'orient'.
+
+5.44 (Oren)
+====
+- Fix for newer version of CYGWIN, for Planar map testing.
+
+5.43 (Shai)
+====
+- Changed test -e conditional to test -f in cgal_test.
+
+5.42 (Shai)
+====
+- Fixes and updates in documentation of both tpm and pm.
+
+5.41 (Oren)
+====
+- Fixes in test/numrep[12].h for robustness, namely we use 
+  Leda_integer Homogenous coord type as TESTR 2 instead of double Homogenous.
+  Changes in the DATA files accordingly
+- cgal_test and tests updated to support LEDA and GMPZ missing installations
+  situation.
+- Pm_straight_exact_traits.h doesn't assume == for bounding boxes.
+
+5.40 (Shai)
+====
+- Fixes for documentation of Planar_map (Spelling check included).
+
+5.39 (Oren)
+====
+- Fix in cgal_test
+
+5.38 (Oren)
+====
+- Fix in cgal_test for mips g++
+- General fix in Pm_straight_exact_traits.C
+  (static variable initialization)
+
+5.37 (Shai)
+====
+- Updates and fixes of Planar_map documentation. Special notice was given
+  by Oren and Shai to the bounding box paragraphs and sections.
+
+5.36 (Shai)
+====
+- Separated Planar_map documentation reference pages into separate files.
+
+5.35 (Sigal)
+====
+- Get rid of a warning
+
+5.34 (Oren)
+====
+- Fix in Pm_straight_exact_traits.C for sgi 
+  (static variable initialization)
+
+5.33 (Shai)
+- Some minor fixed is Planar_map examples directory README file and
+  beautification of some example files.
+
+5.32 (Shai)
+====
+- Added demo smooth behaviour when LEDA is not installed in both
+  Planar_map and Planar_map_Bbox demos. Some fixes in messages and
+  README of demos.
+
+5.31 (Shai)
+====
+- Changed [ ! -e $file ] to [ ! -f $file ] in cgal_test so that there 
+  will be no "test: argument expected" error on Sparc machines.
+
+5.30 (Sigal)
+====
+- MSVC changes to cgal_test
+- "fwi"->"fv" in documentation
+
+5.29 (Shai)
+====
+- Changes in documentation: Added functionality paragraph in Tpm and made
+  Techincal changes.
+
+5.28 (Oren)
+====
+- Fixes in examples7,8
+
+5.27 (Shai)
+====
+- Made examples that use LEDA, test and demos not fail when there is no LEDA.
+- Changed cgal_test so it will keep output in ProgramOutput.* files.
+
+5.26 (Sigal)
+====
+- Change MIPS related definitions
+- get rid of warnings
+
+5.25 (Shai & Oren)
+====
+- merged test/Planar_map for quicker testing
+- Changes in Pm_default_point_location for CC
+
+5.24 (Oren)
+====
+- Fixes for MSVC.
+
+5.23 (Shai & Oren)
+====
+- Documentation of point location was enhanced.
+- Fixes in the bounding box.
+
+
+5.22 (Oren)
+====
+- Fixes in bounding box. Fixes for leda_window. Porting for MSVC.
+
+5.21 (Sigal)
+====
+- Fix a porting problem on CC: In Topological_map.h, holes_begin() 
+  (and others) should return a Topological_map::Holes_iterator. 
+  It should be explicitely written because otherwise the CC compiler 
+  thinks it is DCEL::FACE::Holes_iterator.
+
+5.20 (Shai)
+====
+- Documentation fixes (Pm_bounding_box stuff by Oren and Proofreading
+  of topological map by Danny).
+
+5.19 (Shai)
+====
+- New Preconditions in Planar_map_2.h and in documentation (Sigal).
+- typename added for porting.
+- Fixed some files to conform to 80 characters a line.
+  
+5.18 (Shai)
+====
+- Small fix in documentation of Planar Map.
+- typename fixes in Pm_unbounding_box.h.
+
+5.17 (Oren) 
+====
+- additional porting and bbox fixes.
+
+5.16 (Oren)
+==== 
+- Porting fixes.
+- Bounding box fixes.
+
+5.15 (Shai)
+====
+- Porting fixes in code.
+
+5.14 (Shai)
+====
+- Updates in Planar Map and Topological Map documentation.
+
+5.13 (Shai)
+====
+- Update PM test's makefile;
+  Now, one can compile a test outside cgal_test (i.e. `make tst20.C`).
+
+5.12 (Oren)
+====
+- Remove the redundant file include/CGAL/Ray_2_Iso_rectangle_2_intersection.h
+
+5.11
+====
+- Planar map documentation massively updated (now has reference pages).
+
+5.10
+====
+- Fixes in bounding box files.
+- Planar_map: fixes in constructors for genericity.
+- Topological map documentation massively updated.
+
+5.09
+====
+- example files were textually adapted to be directly included in the 
+  documentation (comments and trailing newlines removed).
+- README file was created for the examples of the Planar Map
+
+5.08
+====
+- Fix compilation related problems
+
+5.07
+====
+- enable execute permission to cgal_test and cgal_quick_test
+
+5.06
+====
+- constructors changed
+- added internal DCEL "assign" function - for now it should not be used
+  because it does not support copying PL and BB for Planar Maps
+5.05
+====
+- Include header fixes.
+- fix in cgal_test
+
+5.04
+====
+- Bounding box strategies added.
+
+4.25
+====
+- Fix bug in Topological_map.h : get find_and_erase_hole out of an assertion operation
+
+4.24
+====
+- Change cgal_test to be executable
+
+4.23
+====
+- Change tpm.tex and planar.tex in the documentation
+
+3.22
+====
+- Fix Trapezoidal_decomposition_2.h for internal compiler error in MSVC
+- Traits is now a pointer in Planar_map_2.h
+
+4.21
+====															   
+- insert doc-tex fixes done by Susan
+- Fix in Pm_DAG.h for LEDA 4.1
+
+4.20
+====
+- fixes in makefiles
+- clean up
+
+4.19
+====
+- Added typenames
+- Fix for MSVC
+
+4.18
+====
+- Fixes in documentation.
+
+4.17
+====
+- fixes in Pm_[leda_]segment...traits.h ( typedef Point_2 added, for draw_map.C )
+
+4.16
+====
+- fixes in Pm_walk..
+
+4.15
+====
+- fix in include/CGAL/Pm_walk..
+- fix in demo/Planar_map/read_inp.h
+
+4.14
+====
+- fixes in header files for CC7.3
+
+4.13
+====
+- fix in makefile for i686_CYGWINNT-4.0-20.1_g++-egcs-2.91.57_LEDA
+- fixes in header files for CC7.3 due to:
+   typedefs are not passed by inheritance, 
+   ambiguity in function calls(floor(long),etc.)
+
+4.12
+====
+- fix in makefile for i686_CYGWINNT-4.0-20.1_g++-egcs-2.91.57_LEDA
+
+4.11
+====
+- fix in Pm_DAG.h
+
+4.10
+====
+- fix in walk strategy
+- added makefile.ms files
+
+4.0.9
+=====
+- removed point() calls.
+- fix in walk strategy
+
+4.0.8
+=====
+- MSVC6 fix for walk strategy
+
+4.0.7
+=====
+- bug fixes for egcs-112
+- seperating Trapezoidal decomposition 2 IO
+
+4.0.6
+=====
+- bug fixes for g++-2.95
+
+4.0.5
+=====
+- bug fixes for g++-2.95
+
+4.0.4
+=====
+- bug fixes for MSVC6
+
+4.0.3
+=====
+- bug fixes for MSVC6
+
+
+4.0.2
+=====
+- addition of a walk-along-line point location strategy.
+- addition of a traits class with the leda_rat kernel
+- changes and bug fixes to enable arrangements
+- addition of a Pm_traits_checker for debugging of traits.
+
+3.0.9
+=====
+- changes in Trapezoidal_map.h for CC -n64
+
+3.0.8
+=====
+- changes in Trapezoidal_map.h for egcs 1.12 + LEDA 
+
+3.0.7:
+===
+- Changes to the documentation.
+
+3.0.6:
+===
+- Bugs corrections in Trapezoidal_map_2.h, Pm_segment_epsilon_traits.h
+
+3.0.5:
+===
+- Namespace changes
+- correcting Topological example2
+- correcting testtypes.h
+
+3.0.4:
+===
+- Namespace bug fix in Pm_segment_epsilon_traits.h
+- improving workarounds for egcs-1.12
+
+3.0.3:
+===
+- Workarounds for egcs-1.12
+
+3.0.2:
+===
+- Bug fixes in Pm_DAG.h
+
+3.0.1:
+===
+- Changes in Trapezoidal_map_2_misc.h
+
+3.0:
+===
+- Changes to CGAL and std namespace, and new header files.
+
+CGAL_1.2:
+#########
+
+2.05:
+====
+- Bug fixes and warning elimination in the examples and tests
+- Bug fix in the Traits classes so they fully conform with the spec.
+
+2.04:
+====
+- Minor changes in specification of Traits.
+- Minor changes in Pm_default_point_location to workaround
+  g++-2.8.1 internal compiler bug.
+- Changes in Trapezoidal_map_2.C to reduce statics.
+- Bug fixes in Planar_map_misc .
+
+2.03:
+====
+- Changes in Pm_default_point_location.h - for compilation on egcs-1.1
+- Changes in docs and definition of some functions in point_location
+  classes for future use inside the arrangement package.
+
+2.02:
+====
+-changes in Pm_default_dcel.h and Topological_map - for compilation
+on Sun
+
+2.0:
+=====================================================
+- A totally new design based on the polyhedron design - 
+  three levels - Dcel,Topological map, Planar map, with
+  a handle based interface (iterators as models of handles).
+- Fast point location based on a trapezoidal map search
+  structure.
+- A strategy pattern enabling the user to choose between
+  the fast point location algorithm or the naive one, or design her
+  own point location algorithm.
+- Addition of the remove_edge and merge_edge functions.
+- Change in the IO (now in the file <CGAL/IO/Pm_iostream.h> -
+  not final yet (therefore not documented)
+- Changes and additions supporting the above in the test,example
+  and demo.
+
+CGAL-1.1:
+#########
+
+1.12:
+========================================================
+-changed specification and implementation so that halfedge_around_vertex
+circulators return the halfedges pointing _at_ (not from) the vertex.
+This conforms with the convention in the Halfedge_data_structure chapter.
+-changes in the epsilon traits enable to define the epsilon by using 
+template parameters (by default it is 1/10000). 
+
+CGAL-1.0:
+#########
+
+1.11c:
+=========================================================
+-changes to make egcs-1.0.2 happy
+
+1.11b:
+==========================================================
+-changes to the documentation (to enable implementation changes in the
+future)
+
+1.11a:
+==========================================================
+-adjustments of typename for CC-7.2
+-fix in example3
+
+1.11:
+===========================================================
+- adjustments to egcs/g++2.80 (adding typename etc.)
+- name changes made in cgal (double.h instead of Double.h etc.)
+- the demo program was changed so it is now without
+  dependenceon the triangulation package 

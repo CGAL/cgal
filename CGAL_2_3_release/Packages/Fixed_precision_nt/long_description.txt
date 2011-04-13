@@ -1,0 +1,32 @@
+Package Fixed_precision_nt:
+Provides arithmetic on numbers with 24 bits fixed precision.
+Upper bound on numbers has to be specified.
+
+Package contains basic arithmetic operations
+and optimized specialized versions of some geometric
+predicates.
+
+
+CONTENTS:
+
+description.txt
+long_description.txt
+
+doc_tex : contains  the documentation
+             doc_tex/basic/Fixed_precision_nt/fixed.tex
+
+include/CGAL: contains the following file
+             Fixed_precision_nt.h
+
+demo/Fixed_precision_nt contains the following examples:
+	     makefile
+             delaunay.C      2D Delaunay triangulation (with leda window)
+
+examples/Fixed_precision_nt contains the following examples:
+	     makefile
+             delaunay.C      2D Delaunay triangulation
+
+test/Fixed_precision_nt/ contains the test suite for fixed package
+             cgal_test
+	     makefile
+             test_fixed.C

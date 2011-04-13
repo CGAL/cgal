@@ -1,0 +1,85 @@
+-------------- POUR LA RELEASE
+
+- bien tester le output_stream de T_3 et le copy_tds (ordre de creation des sommets). 
+- Verifier qu'il n'y a pas d'autres operations du meme style a modifier. 
+
+-------------- POUR DES QU'ON PEUT
+
+General
+- constructeurs pour avoir Triangulation T(points.begin(), points.end()); 
+- mettre des locate_2D, locate_3D, insert idem, pour eviter les tests 
+  redondants sur la dimension a chaque insertion.
+- trouver une interface avec T_2 qui permette d'eviter de reprogrammer 
+  tout le 2d dans le 3d
+- insure
+
+TEST SUITE
+
+Doc
+- (optional) sphere et grille en couleur version eps
+- (revoir les anciennes corrections de JF Dufourd)
+
+Exemples - demo
+- en rajouter si bonnes idees...
+
+TDS
+- Unification de Triangulation::Vertex et TDS::Vertex.
+- Facet_circulator : Est-ce qu'il y a besoin de stocker un TDS * ?  Stocker
+  deux Vertex * plutot que deux ints, ca permet de gagner une Cell *, et
+  d'etre plus rapide, non ? 
+- comprendre bug dans ancienne version de is_edge de tds, dim 2 
+	(pb edge_iterator...? etonnant)
+- Why are the iterators friend in the ds_cell ?
+- set_number_of_vertices(number_of_vertices()+1);  devrait etre dans la TDS ?
+- insert_conflicts :
+  y'a des utilisateurs (David, mesh...) qui ont besoin de connaitre l'ensemble
+  des cellules en conflit avant de decider s'il veulent inserer un point...
+  Solution :
+  - documenter le flag dans la cell_base
+  - avoir dans la TDS un insert_conflict qui ne prend qui des cellules
+    marquees.
+  - avoir un autre qui prend un iterateur en argument.  Celui-la marque
+    simplement les cellules, puis appelle l'autre.
+    (et remplacer le std::vector<Cell*> temp_cells par ca.
+  - remettre le find_conflicts dans la Triangulation, et en avoir une version
+    qui rend un iterateur et reset le flag avant de renvoyer a
+    l'utilisateur...
+
+T3
+- nettoyer flips/is_flippable (code duplique)
+- incident_facets, incident_cells (vieille demande de Frank a
+  rediscuter) 
+- is_valid devrait verifier l'enveloppe convexe
+- prevoir differentes sorties : geomview (ameliorer le rendu pour
+  donner un effet de perspective), vrml, viewer_3...
+- point iterator
+
+Delaunay
+- optimiser remove
+- For Delaunay, we can use the visibility (non stochastic) walk.  How to
+  choose ?  Is it worth the complexity (benchmark first) ?
+- nearest neighbor
+
+Gestion memoire
+- Alignement des cellules en memoire : effets de cache + pointeurs a
+  l'interieur des cellules pour le voisinage (Fred a deja fait => ask).
+- La gestion memoire (interne a l'allocateur new/delete) prend pas mal de
+  place (30%...).  Ca serait bien de ranger les cellules dans des tableaux,
+  et ca permettrait de surcroi[tsx] aussi de se passer des listes doublements
+  chainees.
+  Le flag temporaire pourrait aller dans un des bits -> sizeof(cell) == 32 :)
+  NB: Ca serait bien de factoriser ce probleme avec T2D !!!
+- De plus, un vrai allocateur (a la STL) serait mieux, pour preserver les
+  constructions/destructions (encore que je doute de l'utilite, je ne vois pas
+  comment ca peut etre vraiment fiable).
+
+Regular :
+- faire marcher la hierarchie avec.  Le probleme est qu'on delete des
+  vertex, et donc la hierarchie est perdue avec ses pointeurs up/down qui
+  pointent dans l'espace, du coup...
+  La solution que je vois est de commencer l'implantation des sommets caches
+  par une liste (in place) de vertex dans chaque cellule, qui sera
+  necessaire pour le remove de toute facon.
+- quelques cas de dimension < 3 ne sont pas programmes. --> ca me
+  parait etre une affirmation un tantinet rapide, je dirais plutot, a
+  la limite : verifier que tous les cas sont programmes (M). 

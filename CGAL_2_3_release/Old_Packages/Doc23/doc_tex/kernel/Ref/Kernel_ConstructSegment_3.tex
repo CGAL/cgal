@@ -1,0 +1,22 @@
+\begin{ccRefFunctionObjectConcept}{Kernel::ConstructSegment_3}
+A model for this must provide:
+
+\ccCreationVariable{fo}
+
+
+\ccHidden \ccMemberFunction{Kernel::Segment_3 operator()();}
+             {introduces an uninitialized variable .}
+
+\ccHidden \ccMemberFunction{Kernel::Segment_3 operator()(const Kernel::Segment_3 &q);}
+ 	    {copy constructor.}
+
+\ccMemberFunction{Kernel::Segment_3 operator()(const Kernel::Point_3 &p, const Kernel::Point_3 &q);}
+            {introduces a segment  with source $p$
+             and target $q$. It is directed from the source towards
+             the target.}
+
+
+\ccSeeAlso
+\ccRefIdfierPage{CGAL::Segment_3<R>}\\
+
+\end{ccRefFunctionObjectConcept}

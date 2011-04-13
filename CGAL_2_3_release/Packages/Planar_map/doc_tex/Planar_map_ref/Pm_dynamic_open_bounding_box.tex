@@ -1,0 +1,51 @@
+% +------------------------------------------------------------------------+
+% | Reference manual page: Pm_dynamic_open_bounding_box.tex (Planar_map)
+% +------------------------------------------------------------------------+
+% | 
+% | Package: pm (Planar_map_2)
+% | 
+% +------------------------------------------------------------------------+
+
+\ccRefPageBegin
+
+%%RefPage: end of header, begin of main body
+% +------------------------------------------------------------------------+
+
+
+\begin{ccRefClass}{Pm_dynamic_open_bounding_box<Planar_map>}
+\label{Pm_ref:dynamic_open}
+
+\ccDefinition
+    The \ccRefName\ class 
+    implements a dynamic bounding box, namely the bounding box increases 
+    keeping all curves
+    bound inside it. We name this strategy \ccc{open} because the curves on
+    the bounding box boundary are not considered as part of the map.
+    The \ccc{Pm_dynamic_open_bounding_box} strategy maintains the planar map
+    along with a bounding box, large enough to bound all the finite curves
+    inserted into 
+    the map, and to intersect all the unbounded curves. In such a case we 
+    say that the 
+    bounding box {\it bound inside} the curve.
+    Each curve is represented as its intersection with the bounding box, 
+    allowing the planar map to simulate insertion of bounded curves. 
+
+\ccInclude{CGAL/Pm_dynamic_open_bounding_box.h}
+
+\ccIsModel
+  \ccc{PlanarMapBoundingBox_2}
+
+\ccInheritsFrom
+  \ccc{Pm_bounding_box_base<Planar_map>}
+
+\ccSeeAlso
+   Discussion of the different bounding box strategies in the introduction
+of \ccc{Planar_map} reference pages\lcTex{ (\ccRefPage{Pm_Ref_intro})}.
+
+\end{ccRefClass} % Pm_dynamic_open_bounding_box<Planar_map>}
+
+% +------------------------------------------------------------------------+
+%%RefPage: end of main body, begin of footer
+\ccRefPageEnd
+% EOF
+% +------------------------------------------------------------------------+

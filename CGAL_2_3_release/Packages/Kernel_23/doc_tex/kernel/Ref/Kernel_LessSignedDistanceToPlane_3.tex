@@ -1,0 +1,15 @@
+\begin{ccRefFunctionObjectConcept}{Kernel::LessSignedDistanceToPlane_3}
+A model for this must provide:
+
+\ccCreationVariable{fo}
+
+\ccMemberFunction{bool operator()(const Kernel::Plane_3& p,
+                                  const Kernel::Point_3& q,
+                                  const Kernel::Point_3& r);}
+{returns true iff the signed distance from point $q$ to plane $p$ is
+smaller than the signed distance from point $r$ to $p$.}
+
+\ccSeeAlso
+\ccRefIdfierPage{CGAL::has_smaller_signed_distance_to_plane}\\
+
+\end{ccRefFunctionObjectConcept}

@@ -1,0 +1,17 @@
+\begin{ccRefFunctionObjectConcept}{Kernel::LessRotateCCW_2}
+A model for this must provide:
+
+\ccCreationVariable{fo}
+
+\ccMemberFunction{bool operator()(const Kernel::Point_2&p,
+                                  const Kernel::Point_2&q,
+                                  const Kernel::Point_2&r);}
+{returns true iff the three points \ccStyle{p}, \ccStyle{q} 
+and \ccStyle{r} form a left turn or if they are collinear and
+the distance of $q$ to $p$ is
+larger than the distance of $r$ to $p$, where $p$ is the point
+passed to the object at construction.
+\ccPrecond $p$ does not lie in the interior of the segment $rq$,
+i.e.~$p$ is an extreme point with respect to $\{p,q,r\}$.}
+
+\end{ccRefFunctionObjectConcept}

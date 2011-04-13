@@ -1,0 +1,17 @@
+Delaunay triangulation demo
+
+This demo program lets you input points for
+the construction of a Delaunay triangulation.
+
+There are 3 other input scenes as well:
+
+- Input for line walk: demonstrates the line walk function
+
+- Input for point location: demonstrates point location on 
+  the Delaunay triangulation (locates a face)
+
+- Input for nearest vertex search: input for nearest vertex search on the
+Delaunay triangulation
+
+Activate these scenes using the activate submenu in the
+Scenes menu.

@@ -1,0 +1,248 @@
+% +------------------------------------------------------------------------+
+% | Reference manual page: tpm_ref.tex (Topological Map)
+% +------------------------------------------------------------------------+
+% | 
+% | Package: pm (Planar Map)
+% | 
+% +------------------------------------------------------------------------+
+
+\ccRefPageBegin
+
+%%RefPage: end of header, begin of main body
+% +------------------------------------------------------------------------+
+
+%%% \section{Topological Map Reference Pages}
+
+% @@@ Should we have this label?
+\label{TPM_sec:tpm}
+
+\ccThree{Topological_map<Dcel>::Halfedge}{}{\hspace*{7cm}}
+\ccThreeToTwo
+
+\begin{ccRefClass}{Topological_map<Dcel>} 
+    
+\ccDefinition An object $tpm$ of the class
+    \ccClassTemplateName\ is a graph that
+    consists of vertices V, edges E, faces F and an incidence relation on them.
+    Each edge is represented by two halfedges with opposite orientations.
+    A {\em face} of the topological map is defined by the circular 
+    sequence of halfedges along its boundary. The representation used 
+    for the topological map is a DCEL.
+    The available default DCEL class will be described
+    later.
+
+\ccInclude{CGAL/Topological_map.h}
+
+\ccTypes
+
+    \ccNestedType{Vertex}{represents a vertex of the topological map.}
+    \ccGlue
+    \ccNestedType{Halfedge}{represents a halfedge of the topological map.}
+    \ccGlue
+    \ccNestedType{Face}{represents a face of the topological map.}
+
+%    \ccNestedType{Point}{a type associated with vertex.}
+%    \ccNestedType{Curve}{a type associated with halfedge.}
+
+    The following handles, iterators and circulators have appropriate
+    constant\footnote{This means that for every \ccc{iterator} or
+       \ccc{circulator} there is a \ccc{const_iterator} and 
+       \ccc{const_circulator}
+       counterpart. See ~\cite{ms-strg-96} for a discussion of constant versus
+       mutable iterator types.} counterparts.
+    The mutable types are assignable to their
+    constant counterparts. Both circulators are assignable to the 
+    \ccStyle{Halfedge_iterator}. The iterators are assignable to the
+    respective handle types. Wherever the handles appear in function parameter
+    lists, the appropriate iterator can be used as well.
+
+    
+    \ccNestedType{Vertex_handle}{handle to vertex.}
+    \ccGlue
+    \ccNestedType{Halfedge_handle}{handle to halfedge.}
+    \ccGlue
+    \ccNestedType{Face_handle}{handle to face.}
+    \ccGlue
+    \ccNestedType{Vertex_iterator}{a bidirectional iterator over the
+       vertices of the topological map. Its value-type is
+       \ccStyle{Topological_map<Dcel>::Vertex}.}
+    \ccGlue
+    \ccNestedType{Halfedge_iterator}{a bidirectional iterator over the
+       halfedges of the topological map.  Its value-type is 
+       \ccStyle{Topological_map<Dcel>::Halfedge}.}
+    \ccGlue    
+    \ccNestedType{Face_iterator}{a bidirectional iterator over the
+       faces of the topological map.  Its value-type is 
+       \ccStyle{Topological_map<Dcel>::Face}.}
+    
+    \ccGlue
+    \ccNestedType{Ccb_halfedge_circulator}{a forward circulator over the
+       halfedges of a CCB (connected component of the boundary).  Its
+       value-type is \ccStyle{Topological_map<Dcel>::Halfedge}.}
+    \ccGlue    
+    \ccNestedType{Halfedge_around_vertex_circulator}{a forward circulator over
+       the halfedges that have the vertex as their target.  
+       %The halfedges are traversed in their clockwise order around the vertex. 
+       Its value-type is \ccStyle{Topological_map<Dcel>::Halfedge}.}
+    \ccGlue    
+    \ccNestedType{Holes_iterator}{a bidirectional iterator to
+       traverse all the holes ( i.e., inner CCBs) of a face 
+       (\ccStyle{Holes_iterator++}{} is the next hole in the face).
+       Its value type is
+       \ccStyle{Ccb_halfedge_circulator}.}
+    
+\ccCreation
+    \ccCreationVariable{tpm}
+    
+    \ccConstructor{Topological_map<Dcel>();} {constructs an
+       empty map - containing one unbounded face.}
+
+\ccThree{Halfedge_iterator}{}{\hspace*{11cm}}
+    
+\ccAccessFunctions
+
+    \ccMethod
+    {Face_handle  unbounded_face() const;}
+    {returns the unbounded face of \ccVar .}
+  
+    \ccMethod
+    { Face_iterator faces_begin(); }
+    { returns the begin-iterator of the faces in \ccVar .}
+    
+    \ccMethod
+    { Face_iterator faces_end(); }
+    { returns the past-the-end iterator of the faces in \ccVar .}
+    
+    \ccMethod
+    { Halfedge_iterator halfedges_begin(); }
+    { returns the begin-iterator of the halfedges in \ccVar .}
+ 
+    \ccMethod
+    { Halfedge_iterator halfedges_end(); }
+    { returns the past-the-end iterator of the halfedges in \ccVar .}
+    
+    \ccMethod
+    { Vertex_iterator vertices_begin(); }
+    { returns the begin-iterator of the vertices in \ccVar .}
+    
+    \ccMethod
+    { Vertex_iterator vertices_end(); }
+    { returns the past-the-end iterator of the vertices in \ccVar .}
+
+\ccPredicates
+    
+    \ccMethod { bool is_valid(); } { checks the validity of all the
+       features of \ccVar . Check for each vertex \ccStyle{v}
+       whether all incident halfedges (by performing
+       \ccStyle{next()->twin()}) have \ccStyle{v} as their
+       target. 
+       Check that all the edges on the boundary
+       of each face \ccStyle{f} point to \ccStyle{f} as their
+       face.} 
+
+\ccQueryFunctions
+
+    The following methods return the number of map components, faces,
+    halfedges or vertives, respectively.
+
+    \ccMethod {Size number_of_faces();} {}
+    \ccGlue
+    \ccMethod {Size number_of_halfedges();} {}
+    \ccGlue
+    \ccMethod {Size number_of_vertices();} {}
+
+\ccModifiers
+
+\ccMethod{Halfedge_handle insert_at_vertices(Halfedge_handle previous1, Halfedge_handle previous2);}
+     {inserts a new edge
+        between the vertices \ccStyle{v1} and \ccStyle{v2} which are the target
+        of \ccStyle{previous1} and \ccStyle{previous2} respectively. The return value
+        is the new halfedge that has \ccStyle{v1} as its source.
+        If a new face is created it will be, by definition, the face incident
+        to the halfedge returned --- this means that the order of the vertices
+        on the new face will be $v_0...,v1,v2,...v_0$.
+        This sets a requirement on the users (e.g,
+        \ccStyle{Planar_map_2}) to call the function with the arguments
+        in the right order (i.e., the order that will give the desired face).
+        Insertion at vertices may require updating of the holes  
+        (since a 
+        new face can be created that contains some of the holes of the old 
+        face). To update the holes the function 
+        \ccStyle{move_hole()} should be called by the user.
+        \ccPrecond{ \ccc{previous1} and \ccc{previous2} have the same incident
+           face.}
+        \ccPrecond{ \ccc{previous1} and \ccc{previous2} do not have the same
+           target vertex (i.e., no loop).}}
+
+    \ccMethod{Halfedge_handle insert_from_vertex(Halfedge_handle previous);}
+    {inserts a new edge for
+             which one endpoint, \ccStyle{v1} that is the target of
+             \ccStyle{previous}, is already in the map.
+             %\ccStyle{cv} will be the curve in the new edge and
+             %\ccStyle{pt} will be the point in the new vertex. 
+             %If \ccStyle{source} is \ccStyle{true} (respectively.
+             %\ccStyle{false}) then the source (respectively. target) of
+             %\ccStyle{cv} is \ccStyle{v1}. 
+             The return value is the new halfedge
+             that has \ccStyle{v1} as its source.
+%        \ccPrecond{\ccStyle{Dcel::Halfedge::Curve} has member functions 
+%           \ccStyle{source()} and  \ccStyle{target()} which are used to define
+%           the point on the new vertex.} 
+             }
+
+     \ccMethod{Halfedge_handle insert_in_face_interior(Face_handle f);}
+     {inserts an edge as a new inner component of
+       \ccStyle{f}. The return value is the new halfedge.
+%       which has  \ccStyle{ps} in its source vertex and \ccStyle{pt} in its target vertex.
+%        \ccPrecond{\ccStyle{Dcel::Halfedge::Curve} has member functions 
+%           \ccStyle{source()} and  \ccStyle{target()} which are used to define
+%           the points on the new vertices. }
+       }
+
+%maybe add a function move_holes(first,last,first?) or something
+     \ccMethod{bool move_hole(Halfedge_handle e, Face_handle f1, Face_handle f2);}
+     {moves the hole represented by the halfedge \ccStyle{e} from
+        the face \ccStyle{f1} to \ccStyle{f2}. Returns false if
+        \ccStyle{e} does not represent a hole in \ccStyle{f1},
+        and true otherwise.}
+
+
+    \ccMethod{Halfedge_handle split_edge (Halfedge_handle e);}
+    {splits the edge \ccStyle{e} into \ccStyle{e1} and  \ccStyle{e2} , and
+     adds a new vertex incident both \ccc{e1} and \ccc{e2}. 
+     The return value
+     is the halfedge (\ccc{e1} or \ccc{e2}) with the same source vertex 
+     that \ccStyle{e} had.
+     }
+
+  \ccMethod{Halfedge_handle merge_edge (Halfedge_handle e1, Halfedge_handle e2);}
+  {merges the two consecutive edges \ccStyle{e1} and \ccStyle{e2} into one 
+     edge. The return value is the halfedge with the same source vertex
+     that \ccc{e1} had and the same target \ccc{e2} had.
+     This operation is the inverse of the \ccStyle{split_edge}
+     operation.
+     \ccPrecond{ \ccStyle{e1} and \ccStyle{e2} are consecutive halfedges 
+        (i.e., \ccStyle{e1.target()==e2.source()}).}
+     \ccPrecond{There is no other edge attached to the vertex between 
+        \ccStyle{e1} and \ccStyle{e2} (i.e., its degree is exactly 2).}}
+  
+  \ccMethod{Face_handle remove_edge (Halfedge_handle e);}
+  {removes the edge referenced by \ccStyle{e} from \ccVar . 
+   If the operation causes two faces to merge, the merged face is returned.
+   Otherwise, the face in which the edge was incident is returned.
+   The removal of an edge might create a new hole inside the face (e.g.,
+   when removing an edge in the interior of an ``antenna''). In this
+   case by definition \ccc{e} points at the new hole created (i.e., the path
+   from \ccc{e} to its twin goes over the new hole) and its twin points
+   at the outer CCB (i.e., the path from \ccc{e->twin()} to \ccc{e}
+   passes over the outer CCB). This sets a requirement on the users to
+   define which halfedge (\ccc{e} or \ccc{e->twin()}) should be
+   given as the parameter.} 
+
+\end{ccRefClass}
+
+% +------------------------------------------------------------------------+
+%%RefPage: end of main body, begin of footer
+\ccRefPageEnd
+% EOF
+% +------------------------------------------------------------------------+

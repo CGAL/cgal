@@ -1,0 +1,120 @@
+% +------------------------------------------------------------------------+
+% | Reference manual page: Pm_file_writer.tex (Planar_map)
+% +------------------------------------------------------------------------+
+% | 
+% | Package: pm (Planar_map_2)
+% | 
+% +------------------------------------------------------------------------+
+
+\ccRefPageBegin
+
+%%RefPage: end of header, begin of main body
+% +------------------------------------------------------------------------+
+
+\renewcommand{\ccRefPageBegin}{\begin{ccAdvanced}}
+\renewcommand{\ccRefPageEnd}{\end{ccAdvanced}}
+
+%Pm_file_writer
+\begin{ccRefClass}{Pm_file_writer<Planar_map>}
+
+\ccCreationVariable{pm_file_writer}
+
+\ccDefinition
+The \ccRefName\ class is inherited from the \ccc{File_header} class. 
+This class contains functions for writing the \ccc{Planar map} components to a given output stream.
+Users have to make sure that methods for writing \ccStyle{Point} 
+and \ccStyle{X\_curve} objects defined in the \ccc{Planar map traits} 
+class are provided when using the output stream they choose to work with..
+This class is templated with \ccc{Planar map}, and hence the user can work with \ccRefName\ 
+with its own \ccc{Planar map}. 
+ 
+%The following requirement catalog lists the primitives, i.e., types, member functions
+%etc., that must be defined for any \ccc{Planar map} file writer class that can be used to parameterize the reading function of \ccc{Planar map}. 
+
+\ccTypes
+
+The following handles and iterators have appropriate constant counterparts. 
+The mutable types are assignable to their
+constant counterparts. The iterators are assignable to the respective handle types. 
+Wherever the handles appear in function parameter lists, the appropriate iterator can be used as well. 
+
+\ccNestedType{Vertex_handle}{handle to the \ccc{Planar map} vertex.}
+\ccNestedType{Halfedge_handle}{handle to the \ccc{Planar map} halfedge.}
+\ccNestedType{Face_handle}{handle to the \ccc{Planar map} face.}
+\ccNestedType{Vertex_iterator}{a bidirectional iterator over the vertices of the \ccc{Planar map}.}
+\ccNestedType{Halfedge_iterator}{a bidirectional iterator over the halfedges of the \ccc{Planar map}.}
+\ccNestedType{Face_iterator}{a bidirectional iterator over the faces of the \ccc{Planar map}.}
+
+\ccCreation
+As described in the introduction, the \ccc{Planar map} users can choose a verbose format for 
+printing their planar map, this is done by putting this option in the constructor.
+
+\ccConstructor{Pm_file_writer(std::ostream& o, const PM& pm, bool verbose = false);} 
+{constructs \ccRefName\ for a given output stream, the specified \ccc{Planar map} and a verbose choice.}
+
+\ccConstructor{Pm_file_writer(std::ostream& o, const PM& pm, const File_header& h)} 
+{constructs \ccRefName\ for a given output stream, the specified \ccc{Planar map} and {File header}.}
+
+\ccOperations
+
+In the following operations the methods for writing lines in 
+comments are defined only if the comments flag is set to true:
+
+\ccMethod{void write_title (const char *feature_name); }
+{writes a title in comments to the output stream.}
+
+\ccMethod{void write_pm_vhf_sizes ();}
+{writes the number of vertices, halfedges and faces in the \ccc{Planar map} to the output stream.}
+
+\ccMethod{void write_vertices_header ();}
+{writes a title in comments that begins the vertices list to the output stream.}
+
+\ccMethod{void write_halfedges_header ();}
+{writes a title in comments that begins the halfedges list to the output stream.}
+
+\ccMethod{void write_faces_header ();}
+{writes a title in comments that begins the faces list to the output stream.}
+
+\ccMethod{void write_comment (const char *str);}
+{writes a line by comments with the information noted in {\em str} to the output stream.}
+
+\ccMethod{void write_comment (const char *str, int i);}
+{writes a line by comments with the information noted in {\em str} and {\em i} to the output stream.}
+
+\ccMethod{void write_value (unsigned int val, 
+                            char delimiter = newline);}
+{writing an integer value followed by a delimiter to the output stream.
+ The delimiter has a default value set to the \ccc{newline} character
+ (\ccTexHtml{$\backslash$n}{\n}).}
+
+\ccMethod{ostream& out();}
+{returns the output stream the \ccc{Planar map} is written to.} 
+
+\ccMethod{void write_vertex (Vertex_handle v);}
+{writes a vertex of the \ccc{Planar map} to the output stream.}
+
+\ccMethod{void write_halfedge (Halfedge_handle h);}
+{writes an halfedge of the \ccc{Planar map} to the output stream.}
+
+\ccMethod{void write_face (Face_handle f);}
+{writes a face of the \ccc{Planar map} to the output stream.}
+
+\ccMethod{void write_vertices (Vertex_iterator Vertices_begin, Vertex_iterator Vertices_end);}
+{writes all the vertices in the range [Vertices\_begin, Vertices\_end) to the output stream.}
+
+\ccMethod{void write_halfedges (Halfedge_const_iterator Halfedges_begin, Halfedge_const_iterator Halfedges_end);}
+{writes all the halfedges in the range [Halfedges\_begin, Halfedges\_end) to the output stream.}
+
+\ccMethod{void write_faces (Face_iterator Faces_begin, Face_iterator Faces_end);}
+{writes all the faces in the range [Faces\_begin, Faces\_end) to the output stream.}
+
+\end{ccRefClass} % Pm_file_writer
+
+\renewcommand{\ccRefPageBegin}{}
+\renewcommand{\ccRefPageEnd}{}
+
+% +------------------------------------------------------------------------+
+%%RefPage: end of main body, begin of footer
+\ccRefPageEnd
+% EOF
+% +------------------------------------------------------------------------+

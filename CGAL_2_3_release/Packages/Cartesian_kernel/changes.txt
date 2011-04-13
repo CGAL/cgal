@@ -1,0 +1,926 @@
+Version 6.24 (25 July 2001)
+- Remove Aff_transformation_[23] from Cartesian_converter.
+
+Version 6.23 (23 July 2001)
+- renamed cmp_* to compare_* and *_dist_* to *_distance_* and
+  leftturn, Leftturn, LEFTTURN to left_turn, Left_turn, LEFT_TURN and
+  rightturn, Rightturn, RIGHTTURN to right_turn, Right_turn, RIGHT_TURN
+  and compare_lexicographically* to compare_*
+  (deprecated the old names but didn't remove them).
+
+Version 6.22 (10 July 2001)
+- Deprecated has_on_boundary for Plane_3
+- New predicate : coplanar_orientation(3 points).
+
+Version 6.21 (21 June 2001)
+- Add constructors for Direction.
+
+Version 6.20 (21 June 2001)
+- Improve robustness and speed of Plane_3::operator==(Plane_3).
+
+Version 6.19 (19 June 2001)
+- added centroid
+
+Version 6.18 (18 June 2001)
+- Move definition of CGAL_REP_CLASS_DEFINED.
+
+Version 6.17 (2 May 2001)
+- Fix operator<<(Iso_cuboid_3).
+
+Version 6.16 (1 May 2001)
+- angle()
+- compare_x_at_y()
+
+Version 6.15 (26 April 2001)
+- Change coplanar_side_of_oriented_circle
+  to     coplanar_side_of_bounded_circle.
+
+Version 6.14 (13 April 2001)
+- Remove coplanar_orientation(3 points, 1 vector) and
+  coplanar_side_of_oriented_circle(3 points, 1 vector).
+
+Version 6.13 (13 April 2001)
+- Added coplanar_side_of_oriented_circle(p,q,r,t).
+
+Version 6.12 (12 April 2001)
+- Fix off by one error in Triangle::vertex().
+
+Version 6.11 (20 March 2001)
+- Remove Cartesian/circle_constructions_2.h.
+- Add squared_radius().
+
+Version 6.10 (16 March 2001)
+- Change the origin point in some predicate and related constructions, in
+  order to be more consistent.
+
+Version 6.9 (16 March 2001)
+- Added constructor Vector(Point, Point).
+- Optimize circumcenterC3(3 points).
+- Added side_of_bounded_sphere() for 2 and 3 points.
+
+Version 6.8 (21 February 2001)
+- Use CGAL_TYPENAME_MSVC_NULL in Cartesian_converter<>.
+- Added converters for Aff_transformation_[23] in Cartesian_converter<>.
+- Move NT_converter<> in the Number_types package.
+
+Version 6.7 (19 February 2001)
+- Use the function object Less_xyz_3 instead of Less_xyzC3<>.
+
+Version 6.6 (14 February 2001)
+- moved Kernel_traits_common.h file to Kernel_basic package
+- added .min_coord(), .max_coord() in Iso_cuboid and Iso_rectangle and
+  new constructor in both classes
+
+Version 6.5 (13 February 2001)
+- Kernel_traits_common.h shorted with the use of a macro
+- Several missing function object classes added
+- New class Cartesian_converter.
+- .area() .squared_area() and .volume().
+- Remove old style casts.
+
+Version 6.4 (25 January 2001)
+- Use the new file iterator_traits_pointer_specs_for_simple_cartesian_kernel.h
+
+Version 6.3 (22 January 2001)
+- Stefan's original Simple_cartesian replaced by this one.
+
+Version 6.2 (18 January 2001)
+- Borland fix for SegmentC2.
+- Removed #include<CGAL/predicate_classes_3.h> in Tetrahedron_3.h that broke
+  the inclusion order rules...
+
+Version 6.1 (16 January 2001)
+- Borland fixes.
+- MipsPro fixes : forward the handle typedefs in derived class *Cartesian<>.
+- VC++ fixes : rename the handle types inside object classes. [dima]
+
+Version 6.0 (12 January 2001)
+- Merged C2, C3 and Cartesian_basic in Cartesian_kernel.
+- Merged all .C files into their corresponding .h.
+- Changed constructions_on_*.h to *_constructions_[23].h, gathering
+  constructions which _return_ type is the same.
+- Moved distance_computations_[23].h to the more general
+  ft_constructions_[23].h.
+- Replaced `x == FT(0)' by `CGAL_NTS is_zero(x)'.
+- Use identical() instead of comparing "ptr".
+- Call identical() in all operator==() in order to be consistent.
+- Sphere_3 is back to life.
+- Ctors don't use "new (static_cast<void *> (ptr)) ...", but proper
+  construction via the Handle_for.  Got rid of the various new_rep().
+- There's now a Line_repC3<R>, instead of the dirty Twotuple<Point>.
+  We now do the same reasonnable thing as in the homogeneous kernel.
+- Got rid of empty useless destructors.
+- Changed ptr-> access to Ptr()-> .
+- Removed Cartesian_2 and Cartesian_3.
+- Removed scripts create_symlinks_[23] and remove_symlinks_[23].
+- Removed files in include/CGAL/Kernel :
+  Construction_objects.h Construction_objects_2.h Construction_objects_3.h
+  Predicate_objects.h Predicate_objects_2.h Predicate_objects_3.h
+- Handle (and representation via element_type) specification come now from
+  Cartesian<>, so that we can customize them easily.
+- Alternative cartesian kernel without ref-counting : Simple_Cartesian_v2.
+- A few fixes for the advanced kernel.
+- Removed the copy ctors, as they are provided by the handles.
+- Added "if (is)" tests in all operator>>() (as per Pierre's request).
+- Various cleanups.
+- Added missing function object : Coplanar_orientation_3
+- New predicates :
+  - coplanar_orientation(p, q, r, v) (3d)
+  - side_of_bounded_circle(p, q, t)  (2d)
+  - coplanar_side_of_oriented_circle(p, q, r, t, v) (3d)
+
+--- CGAL 2.2 is out ---
+
+---------------------------------------- Old changes for Cartesian_basic ----
+
+Version 4.2 (24 August 00)
+- Removed long_description.txt. [syl]
+
+Version 4.1 (11 August 00)
+- Changed Compute_y_at_x to Compute_y_at_x_2 in Cartesian.h Cartesian_2.h [my]
+
+Version 4.0 (1 August 00)
+- Added construction circumcenter_3(3 points). [syl]
+
+Version 3.9 (29 Juin 00)
+- Re-added headers, got rid of check_headers.pl [syl].
+
+Version 3.8 (15 Juin 00)
+- Fixed typo in Cartesian.h : Transform_2 -> Transform_3 [syl].
+
+Version 3.7 (19 May 00)
+fixed construct_iso_rectangle_2_object() 
+
+Version 3.6 (16 May 2000)
+added missing construct_iso_rectangle_2_object() 
+
+Version 3.5 (20 April 2000)
+- removed leading underscores in variables names
+- added newly tested functionalities :
+   Object_2
+   Assign_2
+   Construct_perpendicular_direction_2
+   Construct_bisector_2
+   Compare_xy_2
+   Equal_xy_2
+   Less_x_2
+   Less_y_2
+   Counterclockwise_in_between_2
+   Object_3
+   Assign_3
+   Equal_xyz_3
+   Compare_xy_3
+   Equal_xy_3
+   Less_x_3
+   Less_y_3
+   Less_z_3
+   Less_xy_3
+   Less_distance_to_point_3
+
+
+Version 3.4 (22 March 2000)
+- fixed iso_cuboid_3 bugs
+- added maintainer files
+- changed Makefile of the package
+
+Version 3.3.11 (6 mars 2000)
+-commented lines related to Iso_cuboid_3 in  Cartesian_3.h
+ and Cartesian.h. TO BE FIXED LATER [my]
+
+Version 3.3.10 (6 mars 2000)
+-added forgotten include for Iso_cuboid_3.h and .C in Cartesian_3.h [my]
+
+Version 3.3.9 (28 February 2000)
+- fixed Iso_cuboid_3 stuff [my]
+
+Version 3.3.8 (22 February 2000)
+- add _object to the less_rotate_ccw_2 function in Cartesian.h [my]
+- add a Less_yx_2 type
+
+Version 3.3.7 (November 22 1999)
+- Added missing headers [syl].
+- Remove protect macros [syl].
+- Cleaned up some useless include <Kernel/...> [Hervé]
+- Shorter headers in CVS repository, but complete for release
+  thanks to script for submission
+
+Version 3.3.6 (October 7 1999)
+- Removed  CVS conflict in Cartesian (was submitted in 3.3.5)
+
+Version 3.3.5 (October 7 1999)
+- Added include iterator_traits_pointer_specs_for_cartesian_kernel.h
+  in Cartesian.h
+
+Version 3.3.4 (September 17 1999)
+- Corrected template paramter of PointCd
+
+Version 3.3.3 (September 17 1999)
+- Added Point_d_base in Cartesian
+
+Version 3.3.2 (September 16 1999)
+- Added missing typename in Cartesian_dynamic_d
+- Added missing typedefs for RT and FT in Cartesian_dynamic_d
+- Added predicate and construction objects in Cartesian_3 (synchronized
+  with Homogeneous)
+
+Version 3.3.1 (September 9 1999)
+- Removed <CGAL/Kernel/function_objects.h> which bazooked H2 and H3
+
+Version 3.3 (September 3 1999)
+- Added Point_d to Cartesian
+
+Version 3.2.4 (September 2 1999)
+- Removed references to <CGAL/Kernel/function_objects_?.h>
+  and copy pasted directly into Cartesian_? classes,
+  because M$VC++ doesn't accept this (legal?) design
+- This means <CGAL/Kernel/...> are now not used, but they are kept
+  for the future if M$VC++ starts accepting them.
+- Added definitions of Cartesian_3::*_2, even though I do not include the
+  corresponding <CGAL/Cartesian/*_2.?> (except for Point_2)
+  This only works if the compiler does lazy instantiation
+
+Version 3.2.3 (September 2 1999)
+- Release for M$VC++ which doesn't understand Base::
+  I renamed it to Kernel_base in all the Cartesian* classes
+
+Version 3.2.2 (September 2 1999)
+- fixed include files that still included <CGAL/...C2.h>
+  [worked with symlinks, but not in releases newer than 2.1-I-13]
+
+Version 3.2.1 (Sept 1 1999)
+- Release again for I-15 made in Dagstuhl
+
+Version 3.2 (Sept 1 1999)
+- Includes new predicates and construction files in C2 and C3
+
+Version 3.1 (August 31 1999)
+- Changes decided in Dagstuhl: addition of Function_objects in the kernel
+- Creation of <CGAL/Kernel/{Construction,Predicate}_objects_{2,3}.h>
+  these files will be integrated by Stefan into his packages _2 and _3
+- Addition of Point_2 in Cartesian_3 (for functionality in Plane_3)
+
+Ver 3.0 (13 July 1999)
+****EXTENSIVE CHANGES -- enough to warrant a new 3.0 release*****
+- REWROTE FROM SCRATCH (Hervé)
+- new <CGAL/Cartesian/...> subdirectory
+  predicates_on_ftC2.h put into <CGAL/predicates/kernel_ftC2.h>
+  basic_construction_ftC2.h put into <CGAL/constructions/kernel_ftC2.h>
+- new scheme by Michael Hoffmann, which assumes partial specialization
+- temporary scheme by Stefan Schirra, which does not assume it
+- new config flag: CGAL_CFG_NO_ADVANCED_KERNEL to check for Michael's design
+  availability vs Stefan's
+- Michael' scheme by default, use -DCGAL_CFG_NO_ADVANCED_KERNEL for Stefan's design
+  (requires $CGAL/test/NewKernel, which can be found in CGAL-2.1-I-x , x>=12)
+  until the flag is added in the release
+- Different files for Cartesian_2.h and Cartesian_3.h
+  and different kernel traits Cartesian_2 and Cartesian_3
+
+Ver 2.1 (24 May 1999)
+- Resubmitted for CGAL 2.0
+- Minor additions to the package, no changes in the code.
+
+Ver 2.0 (29 Feb 1999)
+- Changed to namespace CGAL
+
+Ver 1.4 (30 Jun 1998)
+- CGAL_rft_wrapper<ft> (lines 111/112 of cartesian_rep): FT instead of ft
+  (Thanks to Michael Hoffmann)
+
+Ver 1.3 (22 Jun 1998)
+- Added Point_d and Conic_2 types in CGAL_Cartesian
+
+Ver 1.2 ( 16 June 1998)
+- Inverted FT and Data_accessor declaration in cartesian_rep
+
+NO VERSION 1.1
+- Was an old symbolic version, I didn't want to reuse the same
+  number.
+
+Ver 1.0 (16 June 1998)
+- From Andreas Fabri and Stefan Schirra's original implementation.
+- Separated from package C2  (because there was no reason that it
+  belongs more to C2 than to C3, and then confusion ensues).
+- Changes by Stefan Schirra:
+* Compile-time-tags for representation classes added in new
+    file representation_tags.h (included in ..._rep.h files)
+* classes CGAL_PointCd<FT> and CGAL_PointHd<FT,RT> declared
+  in homogeneous_classes.h and cartesian_classes.h .
+  Corresponding typedefs added to the rep classes.
+
+------------------------------------------------------ Old changes for C2 ----
+
+Version 4.4 (8 September 2000)
+- Use Vector::squared_length(). [syl]
+- Fixed line_project_pointC2(). [syl, from Stefan]
+
+Version 4.3 (24 August 2000)
+- Change to line_from_pointsC2() for better numeric stability. [syl]
+- Moved side_of_oriented_line and side_of_oriented_lineC2 from the
+  constructions to the predicates. [syl]
+- Use square() in bisector_of_pointsC2. [syl]
+- Made LineC2.perpendicular(P) an FT-based construction :
+  perpendicular_through_point(L,P). [syl]
+- Finished the FT-based implementation of Line.projection(). [syl]
+- Use x_equal() and y_equal() instead of comparing .x() and .y() for Segment
+  and Ray is_horizontal/is_vertical. [syl]
+- Made leftturn(Origin,,) and righturn(Origin,,) a little bit faster. [syl]
+- Various other small cleanups. [syl]
+- Removed long_description.txt. [syl]
+- Use CGAL_ADVANCED_KERNEL_PARTIAL_SPEC for all partial specialization of
+  kernel objects, instead of the 4 line for each class. [syl]
+- Added Vector_2.squared_length(). [syl]
+
+Version 4.2 (27 July 2000)
+- Suppress id() in Cartesian Ray_2.h [my]
+- Fixed an assertion message. [syl]
+- Minor cleanups. [syl]
+
+Version 4.1 (29 June 2000)
+- Header fixes [syl].  Got rid of Herve's check_header script.
+- Fixed a few buggy protect macro names [syl].
+
+Version 4.0 (22 June 2000)
+- Fixed namespace issues for number type utilities [syl].
+
+Version 3.9 (6 Juin 2000)
+fixed a bug in bisector_of_pointsC2 in the file
+include/CGAL/constructions/kernel_ftC2.h
+
+Version 3.8 (2 Mai 2000)
+- make the following classes derive from Handle_for instead of Handle
+CircleC2
+DirectionC2
+Iso_rectangleC2
+LineC2.
+PointC2
+RayC2.
+SegmentC2
+TriangleC2
+VectorC2
+Remain to be done Aff_transformationC2
+
+Version 3.7 (21 April 2000)
+- fixed a bug related to previous
+  removing of  leading underscores in variables names
+
+Version 3.6 (20 April 2000)
+- fixed a bug in compare_xC2
+- removed leading underscores in variables names
+- added newly tested functionalities :
+   Object_2
+   Assign_2
+   Construct_perpendicular_direction_2
+   Construct_bisector_2
+   Compare_xy_2
+   Equal_xy_2
+   Less_x_2
+   Less_y_2
+   Counterclockwise_in_between_2
+
+Version 3.5  (6 april 2000)
+- changed the code of constructor
+	Iso_rectangleC2(const Point_2 &p,   const Point_2 &q)
+	
+Version 3.4  (23 march 2000)
+- changes makefile to submit [my]
+
+Version 3.3.14
+- problem with the headers. resubmit
+
+Version 3.3.13
+- fixed the code of counterclockwise_in_between in Direction_2.C
+  upon request of Stafan Schirra [my]
+- fixed lines over 80 characters. Some remain in Cartesian/Line_2.C
+
+Version 3.3.12 (8 february 2000)
+- fixed a multiplication by a scalar on the wrong side in Ray_2.C
+
+Version 3.3.11 (December 10 1999)
+- Proper implementation of compare_x(Line_2,Line_2,Line_2), to have
+  correct degree (was using compare_x(l,h1,l,h2) before, now special
+  implementation in predicates/kernel_ftC2.h).
+- Cleaned up Segment_2.C to use *are_ordered_along_line predicates
+- Prefix CGAL:: for sqrt in Circle_2.C
+
+Version 3.3.10 (November 22 1999)
+- skip release, tagged the wrong version (before committed).
+
+Version 3.3.9 (November 22 1999)
+- Mega cleanup [Syl & Hervé].
+- Shorter headers in CVS repository, but complete in release
+  thanks to script for submission [Hervé]
+- Ray_2.C removed typename in has_on for Borland C++
+
+Version 3.3.8 (October 28 1999)
+- Don't filter compare_lexicographically_xyC2() [Sylvain].
+- Changed //CGAL_NO_FILTER_BEGIN&END to per predicate /*CGAL_NO_FILTER*/ [Syl].
+- Corrected protect macro clash in predicates_on_directions
+- removed some protect macros for file normally not included twice
+
+Version 3.3.7 (October 7 1999)
+- Various predicates and constructions cleanups and speedups [Sylvain].
+- Changed vector to to_vector in Direction
+
+Version 3.3.6 (September 30 1999)
+- Forgot std:: qualifier for endl in Circle_2.C
+- removed all virtuals in the derived transformation classes
+
+Version 3.3.5 (September 20 1999)
+- Fixed class Identity (clash with Kernel_objects)
+- Fixed type mistake in second argument of line_get_point (Line_2.C)
+
+Version 3.3.4 (September 16 1999)
+- Use the new CGAL_CFG_TYPENAME_BUG
+- Fixed some missing std:: for cerr
+
+Version 3.3.3 (September 9 1999)
+- renamed the scripts to spare the work for Geert-Jan
+- to satisfy nice arithmetic: I skip 3.3.2 (because 3.3.3 on 9/9/99 is too nice)
+
+Version 3.3.1 (September 3 1999)
+- Added headers to .C files
+
+Version 3.3 (September 3 1999)
+- The typename added in 3.2.3 crashes VC++, hence the #define typename for VC++
+- Minor bug for line_2.point(int i) (int not converted to FT) works with
+  builtin types but not Gmpz for instance...
+
+Version 3.2.7 (September 2 1999)
+- removed #warning which is not standard-compliant and crashes on M$VC++
+
+Version 3.2.6 (September 2 1999)
+- Changed all the typename R::FT into typename ClassC2<>::FT
+  for M$VC++
+
+Version 3.2.5 (September 2 1999)
+- corrected a few buggy FT in Aff_transformation_2<R>::member(FT)
+  should have been typenamed R::FT
+
+Version 3.2.4 (September 2 1999)
+- corrected buggy typename R::LineC2<R..>::Point_2 in Line_2.C
+  (should have been typename LineC2<R..>::Point_2)
+
+Version 3.2.3 (September 2 1999)
+- added needed typename in all <CGAL/Cartesian/*.C>
+  indeed, Class_2<R>::Subclass needs a typename qualifier for MIPSPRO 7.3
+  although it worked with the other compilers
+
+Version 3.2.2 (September 2 1999)
+- fixed include files that still included <CGAL/...C2.h>
+  [worked with symlinks, but not in releases newer than 2.1-I-13]
+
+Version 3.2.1 (September 1 1999)
+- f*ck CVS!
+
+Version 3.2 (September 1 1999)
+- moved some constructions and predicates from classes to kernel_ftC2.h
+  TODO: finish it so that C2 is robust with filtered
+        constructions and predicates
+- fixed includes in Cartesian/*_2.h and Cartesian/*_2.C
+  TODO: extensive fix of includes, so that it works
+        even if you only include one single file (e.g. Point_2.h)
+
+Version 3.1 (August 31, 1999)
+- Added Identity into Aff_transformation
+
+Version 3.0 (August 26 1999)
+****EXTENSIVE CHANGES -- enough to warrant a new 3.0 release***** 
+- new <CGAL/Cartesian/...> subdirectory
+  predicates_on_ftC2.h put into <CGAL/predicates/kernel_ftC2.h>
+  basic_construction_ftC2.h put into <CGAL/constructions/kernel_ftC2.h>
+- new scheme by Michael Hoffmann, which assumes partial specialization
+- temporary scheme by Stefan Schirra, which does not assume it
+- Michael' scheme by default, use -DCGAL_CFG_NO_ADVANCED_KERNEL for Stefan's design
+  (requires $CGAL/test/NewKernel, which can be found in CGAL-2.1-I-x , x>=12)
+- each file Class_2.h is not separated into Class_2.h (interface declaration)
+  and Class_2.C (method definitions) for easier inclusion of all *.h before *.C
+- each file Class_2.h can now be included independently of the others and of the
+  representation class (as long as the template parameter R defines the other
+  classes in the kernel)
+****IMPORTANT: please note
+- for now, while we still have two versions, two scripts (create_symlinks and
+  remove_symlinks) are included which have to be run before the test suite.
+  when using Michael's design. (Nothing to be done for Stefan's design!)
+  This is to prevent inclusion of the wrong files *C2.h and *_2.h
+  (now we want to include <CGAL/Cartesian/*_2.h> instead of *C2.h)
+****BUGS FIXES: in addition, since 2.1.6
+- gcc 2.95 compliant (hopefully conform to the standard)
+- added std:: for endl (suggestion by Stefan Schirra)
+- CGAL::sign corrected everywhere
+
+Version 2.1.7 (June 22 1999)
+- Optimized compare_xC2() and side_of_oriented_circleC2().  (syl)
+- New intermediate function circumcenter_translateC2() used by
+  circumcenterC2() and squared_circumradiusC2().  (syl)
+- Renamed the targets of the main Makefile.
+
+Version 2.1.6 (June 22 1999)
+- Added missing std:: (sylvain)
+
+Version 2.1.5 (June 11 1999)
+- read statement in CircleC2 was wrong (fixed)
+
+Ver 2.1.4 (May 24 1999)
+- Added CGAL::sign in DirectionC2
+- Minor fixes in inline policy
+- Added CGAL:: prefix to to_double() in all files
+
+Ver 2.1.3 (Apr 27 1999)
+- Forgot to make the code from the funnelweb!
+
+Ver 2.1.2 (Apr 27 1999)
+- added CGAL::compare (Sylvain Pion)
+- one typo in predicates la1 instead of l1a (Sylvain Pion)
+
+Ver 2.1.1 (Mar 30 1999)
+- Moved #includes out of namespace CGAL
+
+Ver 2.1 (Mar 12 1999)
+- Optimized a lot of the expressions in Aff_transformationC2, TriangleC2, etc.
+- Added #include <CGAL/Twotuple.h> in some files [Thanks Geert-Jan]
+
+Ver 2.0 (Feb 29 1999)
+- Use CGAL_square() where possible.
+- Optimized a little bit more CGAL_circumcenterC2(), CGAL_mid_point() and
+  CGAL_side_of_oriented_circleC2().
+- Changed to namespace CGAL
+
+Ver 1.7 (4 Jan 1999)
+- Revised inline policy in basic constructions and predicates
+- Added const qualifier to all local variables that qualify for it
+  (greatly enhances optimization)
+- Optimized the 2D predicates' arithmetic expressions
+
+Ver 1.6 (3 Dec 1998)
+- Removed CGAL_square_distance from CircleC2.h
+- Relooked the predicates and constructions
+
+Ver 1.5 (30 Nov 1998)
+- Added CGAL_compare_deltax_deltay into predicates_on_ftC2.h
+- removed warnings for CGAL_Sign( a*b ) (was automatic conversion from
+  enum to int)
+
+Ver 1.4 (12 Nov 1998)
+- Better separation between C2 and FT, for predicates and constructions
+  also.
+- Addition of filtered predicates (Include statement, actual predicates in
+  another package).
+- Local optimizations of predicates (Sylvain Pion)
+
+Ver 1.3 (16 June 1998)
+- Made changes suggested by Stefan Schirra:
+  * classes CGAL_PointCd<FT> and CGAL_PointHd<FT,RT> declared in
+  homogeneous_classes.h and cartesian_classes.h .
+  Corresponding typedefs added to the rep classes.
+  * Compile-time-tags for representation classes added in new
+  file representation_tags.h (included in ..._rep.h files)
+  * Rep_tags added to CGAL_Homogeneous and CGAL_Cartesian
+- Cartesian part separated into a package Cartesian_basic
+  (for ease of maintenance)
+- Major face lift to predicates file, with separation between
+  predicate_on_ftC2 and other predicate files, that simply call
+  the predicate on ft.
+
+Ver 1.2 
+- corrected bug in output of Iso_rectangleC2
+- CGAL_NULL_TMPL_ARGS added in friend operator declarations
+
+Ver 1.1
+- New access functions have been added to Aff_transformation. (Thanks to
+  Stefan.)
+- New inline policy is now used: There are several levels of
+  inlining to be defined in kernel_basic.h.
+
+Ver 1.0
+- From the kernel design group
+
+---------------------------------------------------- Old changes for C3 ----
+
+Version 5.3 (?? ?????? 2000)
+- Use Vector::squared_length(). [syl]
+
+Version 5.2 (31 August 2000)
+- fixed circumcenterC3 for 3 3D points in kernel_ftC3.h (once more)
+
+Version 5.1 (24 August 2000)
+- Fixed circumcenterC3 for 3 3D points in kernel_ftC3.h
+- Removed Sphere_3::id(). [syl]
+- Various other cleanups. [syl]
+- Removed long_description.txt. [syl]
+- Use CGAL_ADVANCED_KERNEL_PARTIAL_SPEC for all partial specialization of
+  kernel objects, instead of the 4 line for each class. [syl]
+- Added Vector_3.squared_length(). [syl]
+
+Version 5.0 (1 August 2000)
+- Added a new construction circumcenterC3(3 points). [syl]
+- Minor cleanups. [syl]
+
+Version 4.9 (29 June 2000)
+- Header fixes [syl].  Got rid of Herve's check_header script.
+- Fixed a few buggy protect macro names [syl].
+
+Version 4.8 (22 June 2000)
+- Fixed namespace issues for number type utilities [syl].
+
+Version 4.7 (2 May 2000)
+- make the following classes derive from HandleCfor instead of Handle
+DirectionC3make commit
+IsoCcuboidC3
+LineC3
+PlaneC3
+PointC3
+RayC3
+SegmentC3
+TetrahedronC3
+TriangleC3
+VectorC3
+remain to be done : Aff_transformationC3, SphereC3
+
+Version 4.6 (21 April 2000)
+- fixed a bug related to previous
+  removing of  leading underscores in variables names
+
+Version 4.5 (20 April 2000)
+- removed leading underscores in variables names
+- added newly tested functionalities :
+   Object_3
+   Assign_3
+   Equal_xyz_3
+   Compare_xy_3
+   Equal_xy_3
+   Less_x_3
+   Less_y_3
+   Less_z_3
+   Less_xy_3
+   Less_distance_to_point_3
+
+Version 4.4  (6 April 2000) [my]
+- added a typename in Cartesian/Iso_cuboid_3.C
+
+Version 4.3  (29 March 2000) [my]
+- fixed bugs in Iso_cuboid_3.C :
+ #include <CGAL/Cartesian/predicates_on_points_3.h> 
+instead of
+#include <CGAL/predicates_on_points_3.h> 
+-fixed  has_on_unbounded_side
+
+Version 4.2 (28 March 2000) [my]
+- fixed bugs in Iso_cuboid_3.C concerning
+  min(), max() and bounded_side()
+- suppress compare_dominance and compare_submittance in
+  predicates_on_points_3.h and predicates/kernel_ftC3.h
+- add dominance() and strict_dominance instead in
+  predicates_on_points_3.h and predicates/kernel_ftC3.h
+
+Version 4.1 (22 March 2000)
+- fixed Iso_cuboid_3 again [my]
+- added maintainer file
+- changed Makefile to include maintainer file in package
+
+Version 4.0.5 (28 February 2000)
+- fixed Iso_cuboid_3 stuff [my]
+
+Version 4.0.4 (Janvier 27 2000)
+- make the changed required by Dima in Point_3.C Vector_3.C and Direction_3.C
+  that is changed the 
+	return (cond) ? foo : bar;
+  into
+	if (cond) return foo;
+	return bar;
+
+Version 4.0.3 (December 14 1999)
+- Forgot a typename in Tetrahedron_3
+- Use lexicographical comparison in Tetrahedron (instead of
+  reimplementing it)
+
+Version 4.0.2 (November 23 1999)
+- Various cleanups [syl & herve].
+- Shorter headers in CVS repository, but complete for release
+  thanks to script for submission
+- Added compare_dominance and compare_is_dominated in predicates_on_points
+- Added Iso_cuboid_3
+- Rewrote the body of PlaneC3<R>::transform() for Borland C++
+- Added id()-filters for comparaisons of kernel objects, only when there is
+  substantial computation before first exit point. For instance, when comparing
+  plane, has_on (expensive is called), therefore I compare id()s first;
+  on the other hand, comparing spheres compares center.x() first, which is
+  likely to exit, so comparing id()s not a good investment.
+
+Version 4.0.1 (October 28 1999)
+- Filter related typo in kernel_ftC3.h [Sylvain]
+- Changed cmp_signed_dist_to_planeC3() to cmp_signed_dist_to_directionC3()
+  and related has_...(). [Syl]
+- Optimized cmp_signed_dist_to_planeC3(5 points) [Syl].
+- Cartesian/distance_predicates_3.h cleanup [Syl].
+- Changed //CGAL_NO_FILTER_BEGIN&END to per predicate /*CGAL_NO_FILTER*/ [Syl].
+
+Version 4.0 (October 21 1999)
+- Cosmetic changes (indentation) for cgal-submit scripts
+- Other than that, seems ready for CGAL 2.1
+
+Version 3.6.4 (October 21 1999)
+- Update for CGAL/Arithmetic_filter/predicates/kernel_ftC3.h [Sylvain]
+
+Version 3.6.3 (October 12 1999)
+- Reverted the typename R::FT in *.C to typename Classname<R>::FT [Geert-Jan]
+  Should now work on M$VC++ as well because of that change
+- Will work on egcs 1.1.2 once direction.vector() is changed to
+  to_vector() everywhere in CGAL (pending decision).
+
+Version 3.6.2 (October 11 1999)
+- Fixed projection_lineC3 that led to bug of version 3.6.1
+
+Version 3.6.1 (October 7 1999)
+- Various predicates and constructions cleanups and speedups [Sylvain].
+- Added projection_lineC3 and point_on_line as constructions on lines
+- Changed name of Direction::vector to Direction::to_vector
+- Changed targets in the makefile (using .PHONY)
+- Cosmetic changes (notably some typename R::FT)
+BUG: Assertion fails in _test_cls_line:102, but I have to submit it
+TODO: Correct it (emergency!)
+
+Version 3.6 (September 28 1999)
+- Changed printing of Aff_transformations to look like C2
+- Changed composition of Aff_transformations to better scheme, at
+  representation level : before, each transformation was converted to its
+  general_form and composed; now two translations composed yield a
+  translation.
+
+Version 3.3.5 (September 22 1999)
+- Corrected class Identity to class Identity_transformation
+
+Version 3.3.4 (September 16 1999)
+- Use the new CGAL_CFG_TYPENAME_BUG
+- Added Monique's predicate coplanar_orientation
+- Fixed some missing std:: for cerr
+- Avoid using <CGAL/predicate_classes_3.h> in Tetrahedron_3.C
+
+Version 3.3.3 (September 9 1999)
+- Renamed the script to spare the work for Geert-Jan
+  (otherwise clash with C2)
+- nice arithmetic: 3.3.3.3 on 9/9/99
+
+Version 3.3.2 (September 9 1999)
+- Michael Hoffmann: The declarations of friend functions like
+  _general_transformation_composition have to precede their friend declaration
+  (at least on mips).  
+- corrected TetrahedronC3::operator==() with the correct definition
+
+Version 3.3.1 (September 2 1999)
+- Added headers to *.C so that Utrecht cant complain
+
+Version 3.3 (September 3 1999)
+- The typename added in 3.2.3 crashes VC++, hence the #define typename for VC++
+
+Version 3.3 (September 2 1999)
+- The typename added in 3.2.3 crashes VC++, hence the #define typename for VC++
+
+Version 3.2.6 (September 2 1999)
+- removed #warning which is not standard-compliant and crashes on M$VC++
+
+Version 3.2.5 ((September 2 1999)
+- Forgot include/CGAL/Cartesian/Aff_transformation_3.h
+
+Version 3.2.4 ((September 2 1999)
+- Changed all the typename R::FT into typename ClassC2<>::FT
+  for M$VC++
+
+Version 3.2.3 (September 2 1999)
+- added needed typename in all <CGAL/Cartesian/*.C>
+  indeed, Class_3<R>::Subclass needs a typename qualifier for MIPSPRO 7.3
+  although it worked with the other compilers
+
+Version 3.2.2 (September 2 1999)
+- fixed include files that still included <CGAL/...C2.h>
+  [worked with symlinks, but not in releases newer than 2.1-I-13]
+
+Version 3.0 (August 26 1999)
+****EXTENSIVE CHANGES -- enough to warrant a new 3.0 release*****
+- new <CGAL/Cartesian/...> subdirectory
+  predicates_on_ftC3.h put into <CGAL/predicates/kernel_ftC3.h>
+  basic_construction_ftC3.h put into <CGAL/constructions/kernel_ftC3.h>
+- new scheme by Michael Hoffmann, which assumes partial specialization
+- temporary scheme by Stefan Schirra, which does not assume it
+- Michael' scheme by default, use -DCGAL_CFG_NO_ADVANCED_KERNEL for Stefan's
+  design
+  (requires $CGAL/test/NewKernel, which can be found in CGAL-3.1-I-x , x>=12)
+- each file Class_3.h is not separated into Class_3.h (interface declaration)
+  and Class_3.C (method definitions) for easier inclusion of all *.h before *.C
+- each file Class_3.h can now be included independently of the others and of the
+  representation class (as long as the template parameter R defines the other
+  classes in the kernel)
+****IMPORTANT: please note
+- for now, while we still have two versions, two scripts (create_symlinks and
+  remove_symlinks) are included which have to be run before the test suite.
+  when using Michael's design. (Nothing to be done for Stefan's design!)
+  This is to prevent inclusion of the wrong files *C3.h and *_3.h
+  (now we want to include <CGAL/Cartesian/*_3.h> instead of *C3.h)
+- in order to test Stefan's design, one needs the test/NewKernel directory
+  when this is added to the internal release, this directory will disappear
+****BUGS FIXES: in addition, since 2.1.6
+- gcc 2.95 compliant (hopefully conform to the standard)
+- added std:: for endl (suggestion by Stefan Schirra)
+
+
+Version 2.1.6 (June 22 1999)
+- Added missing std:: (sylvain)
+
+Version 2.1.5 (May 23 1999)
+- Fixed TetrahedronC3::operator==(), which was incorrect even in the
+  generic case (it still remains undefined in the degenerate case)
+- Fixed vertex() in Triangle and Tetrahedron (for the modulus operation)
+- Added CGAL:: prefix to to_double() in PointC3
+
+Version 2.1.4 (April 27 1999)
+- Bug fixes by Sylvain, CGAL::compare()
+
+Version 2.1.3 (March 30 1999)
+- made the funnelweb->code
+
+Version 2.1.2 (March 30 1999)
+- Moved #includes out of namespace CGAL
+
+Version 2.1.1 (23 March 1999)
+- Added more CGAL::sign() into PlaneC3 and DirectionC3
+
+Version 2.1 (12 March 1999)
+- Changed a lot of the formatting
+- Optimized some arithmetic expressions and case/switch/test statements in
+  Aff_transformationC3 and PlaneC3  [Sylvain Pion]
+- Finally removed OrderTypesC3, IntersectionC3 and ostreamC3 
+  from the directory web/ (obsolete)
+- Changed sign() to CGAL::sign() in PlaneC3.h, in predicates_on_ftC3.h,
+  to avoid potential conflicts with leda
+- Changed long id() for all classes  [Sylvain Pion]
+  [was (int) PTR, which is unsafe on some machines] 
+- Used CGAL::square whenever appropriate
+- In SegmentC3, collinear_has_on() now uses predicate
+- Removed const qualifier from local variables (turns out not needed)
+- Used sign_of_determinant() instead of sign(determinant())
+- Added distance_predicatesC3
+- Include <CGAL/Threetuple.h> in RayC3.h
+- Include <CGAL/Twotuple.h> in SegmentC3.h
+TODO
+? In TriangleC3, has_on() now uses predicate
+? move cross_product() from VectorC3 to basic_constructionsC3
+
+Version 2.0 (29 Feb 1999)
+- Changed to namespace CGAL
+- Added scaled_distance_to_directionC3 for *_signed_distance_to_plane
+
+Ver 1.6 (4 January 1999)
+- Revised inline policy in basic constructions and predicates
+- Added const qualifier to all local variables that qualify for it
+  (greatly enhances optimization)
+- Optimized the 3D predicates' arithmetic expressions
+
+
+Ver 1.5 (3 December 1998)
+- Changes go along two directions: constructions and predicates.
+
+BASIC CONSTRUCTIONS:
+- Added basic_constructions_ftC3
+- Moved all the computation basic_constructions from basic_constructions_ftC3
+- Added basic constructions:
+   CGAL_scaled_distance_to_plane(Plane, Point)
+   CGAL_scaled_distance_to_plane(Point, Point, Point, Point)
+   CGAL_squared_distance(Point, Point)
+   CGAL_projection(Point,Plane)
+
+PREDICATES
+- Added predicates_on_ftC3
+- Moved all the computation from predicates_on_pointsC3 to predicates_on_ftC3
+- Added the predicates on squared distances (similar to C2)
+   CGAL_cmp_dist_to_point(Point, Point, Point)
+   CGAL_has_larger_dist_to_poin(Point, Point, Point)t
+   CGAL_has_smaller_dist_to_poin(Point, Point, Point)t
+   CGAL_cmp_signed_dist_to_plane(Plane, Point, Point)
+   CGAL_has_larger_signed_dist_to_plane(Plane, Point, Point)
+   CGAL_has_smaller_signed_dist_to_plane(Plane, Point, Point)
+   [Plane can also be given implicitly by three points]
+   CGAL_cmp_signed_dist_to_plane(Point, Point, Point, Point, Point)
+   CGAL_has_larger_signed_dist_to_plane(Point, Point, Point, Point, Point)
+   CGAL_has_smaller_signed_dist_to_plane(Point, Point, Point, Point, Point)
+- Simplified expressions for collinear_are_ordered_along_line
+
+Ver 1.4 (16 June 1998)
+- Added missing declaration for FT0 in some predicates
+- Added are_strictly_ordered_along_line predicate
+- Changed the in-sphere predicates (corrected oriented version
+  and added bounded version)
+- Added the are_positive_oriented and are_negative_oriented
+  predicates
+
+Ver 1.3
+- Added basic_constructionsC3 (midpoint, circumcenter, projection)
+
+Ver 1.2
+- Added CGAL_NULL_TMPL_ARGS in friend operator declaration
+- New inline policy is now used: There are several levels of 
+  inlining to be defined in kernel_basic.h
+
+Ver 1.1
+- New access functions have been added to Aff_transformation. (Thanks to Stefan.)
+
+Ver 1.0
+- From the Kernel design group

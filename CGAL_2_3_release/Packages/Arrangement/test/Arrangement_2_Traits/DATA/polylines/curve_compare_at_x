@@ -1,0 +1,44 @@
+#-----------------------------------------------------------
+# Data block
+#-----------------------------------------------------------
+# Number of curves
+2
+#-----------------------------------------------------------
+# The 1st curve
+# Number of vertices
+3
+# The vertices:
+-10/1 0/1
+10/1 0/1
+11/1 20/1
+#-----------------------------------------------------------
+# The 2nd curve
+4
+0/1   0/1
+10/1 -1/1
+11/1 23/1
+15/1  0/1
+#-----------------------------------------------------------
+# Number of "stand alone" points
+4
+-11/1  0/1
+ 10/1  0/1
+ 11/1  0/1
+ 15/1  0/1
+#-----------------------------------------------------------
+# Execution block
+#-----------------------------------------------------------
+curve_compare_at_x        0 1 0 EQUAL.
+curve_compare_at_x        0 1 1 LARGER.
+curve_compare_at_x        0 1 2 SMALLER.
+curve_compare_at_x        0 1 3 EQUAL.
+
+curve_compare_at_x_left   0 1 0 EQUAL.
+curve_compare_at_x_left   0 1 1 LARGER.
+curve_compare_at_x_left   0 1 2 SMALLER.
+curve_compare_at_x_left   0 1 3 EQUAL.
+
+curve_compare_at_x_right  0 1 0 EQUAL.
+curve_compare_at_x_right  0 1 1 LARGER.
+curve_compare_at_x_right  0 1 2 EQUAL.
+curve_compare_at_x_right  0 1 3 EQUAL.

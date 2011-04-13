@@ -1,0 +1,403 @@
+% Interval Arithmetic documentation.
+%   $Revision$
+%   $Date$
+
+\begin{ccClass} {Interval_nt}
+\ccSubsection{Interval Arithmetic}
+\label{interval}
+% \ccChapterAuthor{Sylvain Pion}
+
+This section describes briefly what interval arithmetic is, its implementation
+in {\cgal}, and its possible use by geometric programs.
+The main reason for having interval arithmetic in {\cgal} is its integration
+into the filtered robust and fast predicates scheme, but we also provide a
+number type so that you can use it separately if you find any use for it
+(such as interval analysis, or to represent data with tolerance).
+
+% This control is
+% provided via the comparison operators.  When there is an unsafe comparison
+% between intervals, either a warning or an exception (see below) is raised.
+% Otherwise, it means that if you do the same computation with doubles, your
+% program will have the correct output (with the exact same input data).
+
+The purpose of interval arithmetic is to provide an efficient way to bound
+the roundoff errors made by floating point computations.
+You can choose the behaviour of your program depending on these errors; that
+is what is done for the filtered robust predicates (see Section~\ref{filter}).
+You can find more theoretical information on this topic in
+\cite{bbp-iayea-98}.
+% \cite{bbp-iayed-98scg}. % worked here, but changed by Remco.
+
+\ccDefinition
+Interval arithmetic is a large concept and we will only consider here a 
+simple arithmetic based on intervals whose bounds are {\it double}s.
+So each variable is an interval representing any value inside the interval.
+All arithmetic operations (+, -, $*$, $/$, $\sqrt{}$, \ccc{square()},
+\ccc{min()}, \ccc{max()} and \ccc{abs()}) on intervals preserve the inclusion.
+This property can be expressed by the following formula ($x$ and $y$ are
+reals, $X$ and $Y$ are intervals, $\mathcal{OP}$ is an arithmetic operation):
+
+$$
+\forall\ x \in X, \forall\ y \in Y, (x\ \mathcal{OP}\ y)
+\in (X\ \mathcal{OP}\ Y)
+$$
+
+For example, if the final result of a sequence of arithmetic operations is
+an interval that does not contain zero, then you can safely determine its sign.
+
+\ccInclude{CGAL/Interval_arithmetic.h}
+
+\ccCreation
+
+\ccConstructor{Interval_nt(double d);}
+{introduces the interval [\ccc{d};\ccc{d}].}
+
+\ccConstructor{Interval_nt(double i, double s);}
+{introduces the interval [\ccc{i};\ccc{s}].}
+
+
+\ccOperations
+\ccSetThreeColumns{Interval_nt}{}{\hspace*{8cm}}
+
+All functions required by a class to be considered as a {\cgal} number type
+(see~\ref{Numbertype}) are present, as well as the utility functions,
+sometimes with a particular semantic which is described below.  There are also
+a few additional functions.
+
+\ccCreationVariable{I}
+
+\ccMethod{Interval_nt operator/(Interval_nt J);} {returns
+[$-\infty$;$+\infty$] when the denominator contains 0.}
+
+\ccFunction{Interval_nt sqrt(Interval_nt I);} {returns
+[0;$\sqrt{upper\_bound(I)}$] when only the lower bound is negative (expectable
+case with roundoff errors), and is unspecified when the upper bound also is
+negative (unexpected case).}
+
+\ccFunction{double to_double(Interval_nt I);} {returns the
+middle of the interval, as a double approximation of the interval.}
+
+\ccMethod{double inf();} {returns the lower bound of the interval.}
+\ccMethod{double sup();} {returns the upper bound of the interval.}
+\ccMethod{bool is_point();} {returns whether both bounds are equal.}
+\ccMethod{bool is_same(Interval_nt J);} {returns whether both intervals have
+the same bounds.}
+\ccMethod{bool do_overlap(Interval_nt J);} {returns whether both intervals
+have a non empty intersection.}
+
+The two following operators can be used for interval analysis, they are not
+directly useful for \ccc{Interval_nt} as a number type.
+
+\ccMethod{Interval_nt operator||(Interval_nt J);} {returns the smallest
+interval containing the two intervals.}
+\ccMethod{Interval_nt operator&&(Interval_nt J);} {returns the biggest
+interval contained in the two intervals.  The result is unspecified if
+the two intervals don't intersect.}
+
+
+The comparison operators ($<$, $>$, $<=$, $>=$, $==$, $!=$, \ccc{sign()}
+and \ccc{compare()}) have the following semantic: it is the intuitive
+one when for all couples of values in both intervals, the comparison
+is identical (case of non-overlapping intervals).  This can be expressed
+by the following formula ($x$ and $y$ are reals, $X$ and $Y$ are
+intervals, $\mathcal{OP}$ is a comparison operator):
+
+$$
+\left(\forall x \in X, \forall y \in Y, (x\ \mathcal{OP}\ y) = true\right)
+\Rightarrow (X\ \mathcal{OP}\ Y) = true
+$$
+and
+$$
+\left(\forall x \in X, \forall y \in Y, (x\ \mathcal{OP}\ y) = false\right)
+\Rightarrow (X\ \mathcal{OP}\ Y) =false
+$$
+
+Otherwise, the comparison is not safe, and we first increment the counter
+\ccc{Interval_nt_advanced::number_of_failures}, and then throw the exception
+\ccc{Interval_nt_advanced::unsafe_comparison}.
+
+\ccImplementation
+
+\ccc{Interval_nt} derives from \ccc{Interval_nt_advanced}.
+The operations on \ccc{Interval_nt} are automatically protected against
+rounding modes, and are thus slower than those on \ccc{Interval_nt_advanced},
+but easier to use.
+
+Users that need performance are encouraged to use \ccc{Interval_nt_advanced}
+instead (see Section~\ref{interval-adv}).
+
+\end{ccClass}
+
+\begin{ccAdvanced}
+\samepage
+\begin{ccClass} {Interval_nt_advanced}
+\ccSubsection {Advanced Interval Arithmetic}
+\label{interval-adv}
+
+The advanced class allows you to make faster computations, but you need to set
+the rounding mode of the FPU to 'round to infinity' (see below for how to do
+that) before doing any computation with this number type, and each function
+(arithmetic operators and conversion functions)
+leaves the rounding mode in this state if it needs to modify it internally.
+
+Changing the rounding mode affects all floating point computations, and might
+cause problems with parts of your code, or external libraries (even \cgal),
+that expect the rounding mode to be the default (round to the nearest).
+
+\ccInclude{CGAL/Interval_arithmetic.h}
+
+\ccSetThreeColumns{Interval_nt_advanced}{}{\hspace*{8.5cm}}
+\ccFunction{Interval_nt_advanced convert_to<Interval_nt_advanced>(NT);}
+{Several such functions provide a cast from the following numerical types
+to an \ccc{Interval_nt_advanced} containing the value.  The following types are
+supported: \ccc{leda_real}, \ccc{leda_rational}, \ccc{leda_integer},
+\ccc{leda_bigfloat}, \ccc{Gmpz}, \ccc{Fixed_precision_nt}, all built-in
+types that fit exactly in a \ccc{double} (which excludes \ccc{long double}
+and 64 bits integers, which must be treated separately), and all
+\ccc{Quotient<RT>} where RT is a type listed above.
+The user can add such functions for his own number types, see the files
+\ccc{CGAL/Interval_arithmetic/IA_*.h} for examples.}
+
+% FPU rounding modes~:
+
+We provide the following interface to change the rounding mode:
+
+\ccTypedef{typedef int FPU_CW_t;}
+       {The type used by the following functions to deal with rounding modes.
+       This is usually an \ccc{int}.}
+\ccFunction{void FPU_set_cw (FPU_CW_t R);}
+       {sets the rounding mode to \ccc{R}.}
+\ccFunction{FPU_CW_t FPU_get_cw (void);}
+       {returns the current rounding mode.}
+\ccFunction{FPU_CW_t FPU_get_and_set_cw (FPU_CW_t R);}
+       {sets the rounding mode to \ccc{R} and returns the old one. }
+
+The macros \ccc{CGAL_FE_TONEAREST}, \ccc{CGAL_FE_TOWARDZERO},
+\ccc{CGAL_FE_UPWARD} and \ccc{CGAL_FE_DOWNWARD} are the values corresponding
+to the rounding modes.
+
+\ccExample
+
+The correct way to protect an area of code that uses operations on the class
+\ccc{Interval_nt_advanced} is the following:
+
+\begin{verbatim}
+  FPU_CW_t backup = FPU_get_and_set_cw(CGAL_FE_UPWARD);
+  ... // The code to be protected.
+  FPU_set_cw(backup);
+\end{verbatim}
+
+\ccImplementation
+
+The basic idea is to use the directed rounding modes specified by the 
+{\it IEEE 754} standard, which are implemented by almost all processors 
+nowadays.
+It states that you have the possibility, concerning the basic floating point
+operations ($+,-,*,/,\sqrt{}$) to specify the rounding mode of each operation
+instead of using the default, which is set to 'round to the nearest'.
+This feature allows us to compute easily on intervals.  For example, to
+add the two intervals [a.i;a.s] and [b.i;b.s], compute $c.i=a.i+b.i$ rounded
+towards minus infinity, and $c.s=a.s+b.s$ rounded towards plus infinity, and
+the result is the interval [c.i;c.s].  This method can be extended easily to
+the other operations.
+
+The problem is that we have to change the rounding mode very often, and the
+functions of the C library doing this operation are slow and not portable.
+That's why assembly versions are used as often as possible.
+Another trick is to store the opposite of the lower bound, instead of the
+lower bound itself, which allows us to never change the rounding mode inside
+simple operations.  Therefore, all basic operations, which are in the class 
+\ccc{Interval_nt_advanced} assume that the rounding mode is set to 
+'round to infinity', and everything works with this correctly set.  
+The class \ccc{Interval_nt} takes care of this, but is a bit slower.
+
+So, if the user needs the speed of \ccc{Interval_nt_advanced}, he must
+take care of setting the rounding mode to 'round to infinity' before each
+block of operations on this number type.  And if other operations might be
+affected by this, he must take care to reset it to 'round to the nearest'
+before they are executed.
+
+% Note also that NaNs are not handled, so be careful with that
+% (especially if you `divide by zero').
+
+Notes:\\
+\begin{itemize}
+\item On Intel platforms (with any operating system and compiler), due to a
+      misfeature of the floating point unit, which does not handle exactly
+      IEEE compliant operations on doubles, we are forced to use a workaround
+      which slows down the code, but is only useful when the intervals can
+      overflow or underflow.  If you know that the intervals will never
+      overflow nor underflow for your code, then you can disable this
+      workaround with the flag \ccc{CGAL_IA_NO_X86_OVER_UNDER_FLOW_PROTECT}.
+      Other platforms are not affected by this flag.
+\item When optimizing, compilers usually propagate the value of variables when
+      they know it's a constant.  This can break the interval routines because
+      the compiler then does some floating point operations on these constants
+      with the default rounding mode, which is wrong.  This kind of problem
+      is avoided by stopping constant propagation in the interval routines.
+      However, this solution slows down the code and is rarely useful, so you
+      can disable it by setting the flag
+      \ccc{CGAL_IA_DONT_STOP_CONSTANT_PROPAGATION}.
+\item By default, all arithmetic operations over intervals are inline.  This
+      can slow down some large predicates, because the code of the
+      multiplication is large.  You can turn off inlining of the
+      multiplication and division with the flag \ccc{CGAL_IA_NO_INLINE}.
+      On the other hand, this slows down the small predicates, which is why
+      it is not enabled for all cases.
+      You might want to tune this for your particular application.
+\end{itemize}
+
+\end{ccClass}
+
+\end{ccAdvanced}
+
+
+\begin{ccClassTemplate}{Filtered_exact<CT, ET>} %, Cache_t = No_Filter_Cache>}
+\ccSubsection{Robust filtered predicates}
+\label{filter}
+
+\ccInclude{CGAL/Filtered_exact.h}
+
+The class \ccc{Filtered_exact<CT,ET>} is a wrapper type for the number
+type \ccc{CT}, with the difference
+that all predicates are specialized such that they are guaranteed to be exact.
+Speed is achieved via a filtering scheme using interval arithmetic (see
+Section~\ref{interval-adv}).  Here are the necessary requirements:
+
+\begin{itemize}
+\item \ccc{CT} is the construction and storage type.  The only data member of
+      the class \ccc{Filtered_exact<CT,ET>} is the \ccc{value} of type
+      \ccc{CT}.  All arithmetic operations performed {\em outside} of the
+      predicates will be executed with this number type.  You can disallow
+      these operations compiling with the flag
+      \ccc{CGAL_DENY_INEXACT_OPERATIONS_ON_FILTER} (it allows you
+      to spot the inexact operations that should be incorporated in the
+      predicates).
+      The arithmetic operations called from inside the predicates are always
+      computed exactly.
+\item The \ccc{ET} type must be able to compute exactly the operations involved
+      in the predicates called.
+\item A \ccc{to_interval(CT)} function must
+      be provided, that returns an interval containing the value of the
+      argument of type \ccc{CT}, see Section~\ref{interval}.
+\item A \ccc{convert_to<ET>(CT)} function must also be provided, that
+      returns a number of type \ccc{ET} representing exactly the argument of
+      type \ccc{CT}.  It's a conversion function that is used for the exact
+      computation, when the filter fails.
+      This conversion has to be done exactly to ensure robustness.
+\end{itemize}
+
+The following member functions are used to access the numerical value for the
+different number types:
+
+\ccMethod{CT value();} {returns the wrapped value.}
+\ccMethod{ET exact();} {returns the converted value to \ccc{ET}.}
+\ccMethod{Interval_nt_advanced interval();} {returns the converted value
+                                             to \ccc{Interval_nt_advanced}.}
+
+% For efficiency reasons, the conversion of the \ccc{value} to an
+% \ccc{Interval_nt_advanced} may be cached using \ccc{Filter_Cache} as
+% optionnal third template parameter of the class.  This is only wishful if
+% \ccc{CT} is a complicated type for which the conversion to an interval takes
+% a somewhat long time, and is asked for the same variable several times.  You
+% might want to experiment with this feature, depending on your needs.
+
+This type actually has additional parameters for experimental features.  They
+will be documented when they will be considered stable, in a next release.
+
+\ccExample
+
+You might use at the beginning of your program a \ccc{typedef} as follows:
+
+\begin{verbatim}
+    #include<CGAL/Filtered_exact.h>
+    #include<CGAL/leda_real.h>
+    #include<CGAL/double.h>
+    typedef Filtered_exact<double, leda_real> NT;
+\end{verbatim}
+
+Or if you are sure that the predicates involved do not use divisions nor
+square roots:
+
+\begin{verbatim}
+    #include<CGAL/Filtered_exact.h>
+    #include<CGAL/Gmpz.h>
+    #include<CGAL/int.h>
+    typedef Filtered_exact<int, Gmpz> NT;
+\end{verbatim}
+
+And if you know that the double variables contain integer values, you can
+use:
+
+\begin{verbatim}
+    #include<CGAL/Filtered_exact.h>
+    #include<CGAL/Gmpz.h>
+    #include<CGAL/double.h>
+    typedef Filtered_exact<double, Gmpz> NT;
+\end{verbatim}
+
+As a general rule, we advise the use of
+\ccc{Filtered_exact<double, leda_real>}.
+
+% If you need exact computations also outside the predicates, you can use the
+% following:
+% 
+% \begin{verbatim}
+    % #include<CGAL/Filtered_exact.h>
+    % #include<CGAL/lera_real.h>
+    % typedef Filtered_exact<leda_real, leda_real, Filter_Cache> NT;
+% \end{verbatim}
+
+
+\ccImplementation
+
+The template definition of the low level predicates of {\cgal} are overloaded
+for the type \ccc{Filtered_exact<CT,ET>}.  It is a partial specialisation,
+which implies that this is not supported by the compilers that do not support
+correctly this C++ feature (for which we set \ccc{CGAL_CFG_MATCHING_BUG_2}).
+A workaround is in place that allows you to use
+one such filtered number type at once, by explicitely fully specializing the
+predicates for it.  To do so, just define the macros \ccc{CGAL_IA_CT} and
+\ccc{CGAL_IA_ET} to the corresponding number types before any inclusion of
+{\cgal} files, as well as \ccc{CGAL_IA_CACHE}.  For example~:
+
+\begin{verbatim} 
+#define CGAL_IA_CT double
+#define CGAL_IA_ET leda_real
+#define CGAL_IA_CACHE No_Filter_Cache
+#define CGAL_IA_PROTECTED true
+\end{verbatim}
+
+Note that you may run into other problems if you use Visual C++.  We recommend
+that you use \ccc{Filtered_kernel} if you run into compilation problems with
+Visual C++.
+
+For each predicate file, the overloaded code is generated automatically by a
+\ccc{PERL} script (\ccc{scripts/filtered_predicates_generator.pl}) that you can
+use for your own predicates.
+This script parses the template functions and generates the
+overloaded code the following way:
+\begin{itemize}
+\item convert the entries to intervals using
+    \ccc{to_interval(CT)}, via the \ccc{interval()} member function,
+\item call the original template function with the type
+    \ccc{Interval_nt_advanced},
+\item if no exception is thrown, return the value,
+\item if an exception is thrown (the filter failed), convert the original
+    entries using \ccc{convert_to<ET>(CT)}, using the \ccc{exact()} member
+    function,
+\item and call the original template function with the type \ccc{ET}.
+\end{itemize}
+
+\ccExample
+
+The low level template predicates of {\cgal} are in files named
+\ccc{CGAL/predicates/kernel_ftC2.h} (resp. ftC3), the script is used
+to produce the files \ccc{CGAL/Arithmetic_filter/predicates/kernel_ftC2.h}
+(resp. ftC3).
+
+At the moment, only the predicates of the Cartesian and Simple\_cartesian
+kernels are supported, as well as the power tests used by the regular
+triangulations.
+
+\end{ccClassTemplate}

@@ -1,0 +1,276 @@
+3.19 (23 July 2001)
+- renamed cmp_* to compare_* and *_dist_* to *_distance_* and
+  leftturn, Leftturn, LEFTTURN to left_turn, Left_turn, LEFT_TURN and
+  rightturn, Rightturn, RIGHTTURN to right_turn, Right_turn, RIGHT_TURN
+  and compare_lexicographically* to compare_*
+  (deprecated the old names but didn't remove them).
+
+3.18 (20 July 2001)
+- changed Less_distsance_to_point_2 to use default construction
+
+3.17 (27 June 2001)
+- Put the IO operators back in, they are needed by Borland.
+
+3.16 (21 June 2001)
+- New constructors for Direction_2.
+
+3.15 (21 June 2001)
+- Merge point_vector_definitions_2.C into point_vector_declarations_2.h.
+- Remove number_type_tag(const Vector_2<R> &).
+
+3.14 (20 June 2001)
+- remove conditionnal #includes from cartesian/homogeneous.
+- remove member functions for predicates since they are inherited.
+- remove global function predicates.
+
+3.13 (19 June 2001)
+- added centroid
+
+3.12 (1 May 2001)
+- added compare_x_at_y
+
+3.12 (?? Mar 2001)
+- Fix too long lines.
+
+3.11 (17 Mar 2001)
+- Added constructor Vector(Point, Point). 
+
+3.10 (14 Feb 2001)
+- added min_coord() and max_coord() funcions in Iso_rectangle_2 and new
+  constructor
+
+
+3.9  (13 Feb 2001)
+
+- added area() functions for Triangle_2 and Iso_rectangle_2
+- Remove old style casts.
+- Simple_homogeneous<>.
+
+3.8  (24 Jan 2001)
+
+- rearranged some include directives to put them at the top of the file
+  removed others that were unnecessary and added some that were missing
+
+3.7  (22 Jan 2001)
+- Adapts to new simple cartesian kernel.
+- Remove redundant protect macros tests.
+- Added a few missing CGAL_ to the NO_?STREAM* macros.
+
+3.6   (30 Jul 2000)
+
+- id() removed
+- copy assigment (operator=) removed (the compiler will do it the right way)
+
+3.5   (26 Jul 2000)
+
+- identical() removed
+
+3.4   (31 May 2000)
+
+- Reflection added to Aff_transformation_2
+
+3.3   (18 Apr 2000)
+
+- _R -> R_
+- Bbox_2 uses Handle_for<> now
+
+3.2   (06 Apr 2000)
+
+- include_advanced/CGAL/Old_style_kernel/U_2.h files created
+  which define class U_2<R, Old_style_tag> : public R::U_2_base
+
+3.1   (30 Mar 2000)
+
+- Point_2<R>::operator= removed
+  problems with Simple_cartesian, where no copy assignment is defined
+  base class function should match instead
+
+3.0   (02 Feb 2000)
+
+- automatic inclusion for Simple_cartesian added
+
+2.8.1 (01 Feb 2000)
+
+- CGAL_static_cast  replaced by static_cast<>
+
+%%%%%%%%%%%%%%%%%%%%%%   R e l e a s e  2 . 1   %%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+2.8   -> 2.8.1 (07 Nov 99)
+- constructor for Identity added to Aff_transformation_2
+
+2.7.5 -> 2.8   (28 Oct 99)
+- removed CGAL:: in non member functions in CGAL scope
+
+2.7.4 -> 2.7.5 (14 Oct 99)
+- added to_vector() to Direction_2<R>
+
+2.7.3 -> 2.7.4 (08 Oct 99)
+- Direction_2<R>::vector() now calls to_vector() on implementation
+  classes
+
+2.7.2 -> 2.7.3 (07 Oct 99)
+- used CGAL_SCOPE in Point_2.h and Vector_2.h to resolve 
+  qualification competition between mips and M$ VC++
+
+2.7.1 -> 2.7.2 (24 Sep 99)
+- undo of qualification: problems with M$ VC++
+
+2.7   -> 2.7.1 (21 Sep 99)
+- qualified friends in Point_2 and Vector_2 by CGAL::
+  (as requested by Matthias)
+
+2.6   -> 2.7   (02 Sep 99)   
+- qualified ..._2<_R> by CGAL::
+
+2.5   -> 2.6   (02 Sep 99)   
+- qualified ..._2<R> by CGAL::
+
+2.4   -> 2.5   (01 Sep 99)   
+- #include <..C2.h> replaced #include <../Cartesian/.._2.h>
+
+2.3   -> 2.4   (01 Sep 99)   
+- class p_Equal_xy added to predicate classes
+
+2.2   -> 2.3   (19 Aug 99)
+- _2<R> is now derived from R::_2_base instead of R::_2
+  typedef typename R::_2            R_2;      replaced by
+  typedef typename R::_2_base  R_2;
+
+2.1.2 -> 2.2   (04 Aug 99)
+- updates/workarounds for gcc-2.95:
+  s/friend inline/friend CGAL_FRIEND_INLINE
+  s/friend CGAL_KERNEL_INLINE/friend CGAL_KERNEL_FRIEND_INLINE
+  made all operator-() friends non-friends
+
+  reorganized Point_2 and Vector_2
+  added files point_vector_declarations_2.h
+              point_vector_definitions_2.C
+2.5   -> 2.6   (02 Sep 99)   
+- qualified ..._2<R> by CGAL::
+
+2.4   -> 2.5   (01 Sep 99)   
+- #include <..C2.h> replaced #include <../Cartesian/.._2.h>
+
+2.3   -> 2.4   (01 Sep 99)   
+- class p_Equal_xy added to predicate classes
+
+2.2   -> 2.3   (19 Aug 99)
+- _2<R> is now derived from R::_2_base instead of R::_2
+  typedef typename R::_2            R_2;      replaced by
+  typedef typename R::_2_base  R_2;
+
+2.1.2 -> 2.2   (04 Aug 99)
+- updates/workarounds for gcc-2.95:
+  s/friend inline/friend CGAL_FRIEND_INLINE
+  s/friend CGAL_KERNEL_INLINE/friend CGAL_KERNEL_FRIEND_INLINE
+  made all operator-() friends non-friends
+
+  reorganized Point_2 and Vector_2
+  added files point_vector_declarations_2.h
+              point_vector_definitions_2.C
+2.5   -> 2.6   (02 Sep 99)   
+- qualified ..._2<R> by CGAL::
+
+2.4   -> 2.5   (01 Sep 99)   
+- #include <..C2.h> replaced #include <../Cartesian/.._2.h>
+
+2.3   -> 2.4   (01 Sep 99)   
+- class p_Equal_xy added to predicate classes
+
+2.2   -> 2.3   (19 Aug 99)
+- _2<R> is now derived from R::_2_base instead of R::_2
+  typedef typename R::_2            R_2;      replaced by
+  typedef typename R::_2_base  R_2;
+
+2.1.2 -> 2.2   (04 Aug 99)
+- updates/workarounds for gcc-2.95:
+  s/friend inline/friend CGAL_FRIEND_INLINE
+  s/friend CGAL_KERNEL_INLINE/friend CGAL_KERNEL_FRIEND_INLINE
+  made all operator-() friends non-friends
+
+  reorganized Point_2 and Vector_2
+  added files point_vector_declarations_2.h
+              point_vector_definitions_2.C
+  added conversion fucntions between points and vectors
+  those are friends and used by operator-() - functions that are no friends
+    any longer
+
+%%%%%%%%%%%%%%%%%%%%%%   R e l e a s e  2 . 0   %%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+2.1.1 -> 2.1.2 (09 May 99)
+- corrected placement of 'inline' in Vector_2.h (caused a warning)
+
+2.1   -> 2.1.1 (06 May 99)
+- call of orientation in predicates_on_points_2.h qualified by CGAL::
+
+2.0.5 -> 2.1   (16 Apr 99)
+- iostream parts prefixed by std::
+
+2.0.4 -> 2.0.5 (19 Mar 99)
+- binary function prefixed by CGAL_STD:: in derivations	in 
+  <predicate_classes_2.h>
+
+2.0.3 -> 2.0.4 (16 Mar 99)
+- SunPro 5.0 doesn't like extra semicolons :)
+  "predicate_classes_2.h", 
+  line 33: Error: Empty declaration (probably an extra semicolon).
+  extra semicolons removed in <predicate_classes_2.h>
+
+2.0.2 -> 2.0.3 (14 Mar 99)
+- CGAL::min/max replaced by std::min/max in Bbox_2.h
+
+2.0.1 -> 2.0.2
+- CGAL_[BEGIN|END]_NAMESPACE used
+
+2.0   -> 2.0.1
+- Quotient declared in <Vector_2.h>
+
+1.3   -> 2.0   (04 Feb 98)
+- namespace CGAL { } introduced
+
+%%%%%%%%%%%%%%%%%%%%%%   R e l e a s e  1 . 2   %%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+1.2.5 -> 1.3   (15 Dec 98)
+- file names in header corrected in Bbox_2.h, predicate_classes_2.h
+- Use of CGAL...INLINE made consistent between declarations and
+  definitions (otherwise SunPro CC 4.2 does not like it).
+
+1.2.4 -> 1.2.5 (23 Nov 98)
+- predicate_classes_2.h added (first version)
+
+1.2.3 -> 1.2.4 (03 Sep 98)
+- ORIGIN [!=]= Point_2 added
+
+%%%%%%%%%%%%%%%%%%%%%%   R e l e a s e  1 . 1   %%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+1.2.3
+- Ray_2::collinear_has_on(.) added
+- Segment_2::point( int i) added
+
+%%%%%%%%%%%%%%%%%%%%%%   R e l e a s e  1 . 0   %%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+1.2.1 -> 1.2.2
+- added typename keyword in basic_constructions_2.h
+
+1.2   -> 1.2.1
+- Vector_2 / Quotient added
+
+1.1.1 -> 1.2
+- made fit for egcs
+
+1.1   -> 1.1.1
+- missing file (basic_constructions_2.h) added
+
+1.0   -> 1.1
+- added typename keyword
+
+0.9   -> 1.0
+- Now CGAL_are_ordered_along_line(p,q,r) have strict
+  versions as well. The strict versions return false,
+  if the test point is equal to one of the end points
+  (the previous H-version behavior) while the fcts 
+  without the strictly in the name allow for equality
+  (the old C-version behavior).
+- Aff_transformations got access mfcts.
+- CGAL_compare_delta... added
+- added typedefs and typename keyword in _2 classes

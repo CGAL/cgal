@@ -1,0 +1,137 @@
+% +------------------------------------------------------------------------+
+% | Reference manual page: Pmwx.tex (Planar map with intersections)
+% +------------------------------------------------------------------------+
+% |
+% | Package: arr (Planar_map_with_intersections_2)
+% |
+% +------------------------------------------------------------------------+
+
+\ccRefPageBegin
+
+%%RefPage: end of header, begin of main body
+% +------------------------------------------------------------------------+
+% +========================================================================+
+%   Planar_map_with_intersections_2
+% +========================================================================+
+\begin{ccRefClass}{Planar_map_with_intersections_2<Planar_map>}
+
+\ccDefinition An object \ccStyle{pmwx} of the class
+    \ccClassTemplateName\ represents the planar
+    subdivision induced by a set of curves that are possibly intersecting.
+    This class extends the class \ccStyle{Planar_map_2<Dcel,Traits>}
+    which handles $x$-monotone pairwise interior disjoint
+    curves.  %The class have the following internal typedefs:
+    An object of the class \ccClassTemplateName\ is also a planar map and
+    therefore the types, constants, and traversal iterators and operations remain
+    the same.
+
+    \ccInclude{CGAL/Pm_with_intersections.h}
+
+\ccInheritsFrom
+    \ccStyle{CGAL::Planar_map_2<Dcel,Traits>}
+
+    The fact that the modifying insert functions override the
+    inherited functions (the expected behaviour) should be noted. The
+    insert functions of \ccRefName\ are designed to handle possibly
+    intersecting, non-$x$-monotone or overlapping curves and are
+    slower.  For non-intersecting, $x$-monotone curves are intserted
+    one can use the set of insertion functions that begin with the
+    prefix \ccc{non_intersecting}.
+%\comment{iddo: need to be virtual in planar map}.
+
+\ccTypes
+
+    \ccNestedType{Pmwx_change_notification}{}
+
+\ccCreation
+    \ccCreationVariable{pmwx}
+
+    \ccConstructor{Planar_map_with_intersections_2<Planar_map>();}
+     {creates an empty planar map with the default point location strategy.}
+
+    \ccConstructor{Planar_map_with_intersections_2<Planar_map>(Pm_point_location_base<Planar_map> *pl);}
+    {creates an empty planar map with \ccc{*pl} as the point location strategy.}
+
+    \ccConstructor{Planar_map_with_intersections_2<Planar_map>(const Traits& tr, Pm_point_location_base<Planar_map> *pl);}
+    {creates an empty planar map with \ccc{tr} as the traits class and \ccc{*pl} as the point location strategy.}
+
+\ccOperations
+
+
+    \ccMethod{Halfedge_handle insert(const X_curve& cv, Pmwx_change_notification *en = NULL);}
+      {inserts the $x$-monotone curve \ccStyle{cv} into the planar map.
+      Returns the last inserted halfedge whose target points to the
+      target point of \ccStyle{cv}.
+       \ccPrecond{\ccc{cv} is not equivalent to a point. }
+       }
+
+    \ccMethod{Halfedge_handle insert_from_vertex(const X_curve& cv, Vertex_handle src,
+      Pmwx_change_notification *en = NULL);}
+      {inserts  the $x$-monotone curve \ccStyle{cv}, for
+       which the source vertex, \ccStyle{src}, is already in the
+       arrangement.
+       Returns the last inserted halfedge whose target points to the
+       target point of \ccStyle{cv}.
+       This function is more efficient than the \ccc{insert} function,
+       since it does not invoke a point location query for the
+       endpoint \ccc{src}. Therefore,
+       whenever possible, it is recommended to use this one rather
+       than \ccc{insert}.
+       \ccPrecond{\ccc{src} holds a point which is the same as \ccc{cv's}
+       source.}
+       \ccPrecond{\ccc{cv} is not equivalent to a point. }
+       }
+
+\begin{ccAdvanced}
+
+  \ccMethod{Halfedge_handle non_intersecting_insert(const X_curve&
+  cv);}
+  {invokes the planar map implementation of \ccc{insert}
+  function. Since this function does not check for intersections it is
+  more efficient than \ccc{insert}.
+  \ccPrecond{\ccc{cv} has no proper
+  intersection with any curve of the map. } }
+
+  \ccMethod{Halfedge_handle non_intersecting_insert_from_vertex(const X_curve& cv, Vertex_handle src, bool
+  source);}
+  {invokes the planar map implementation of
+  \ccc{insert_from_vertex} function. Since this function does not
+  check for intersections it is more efficient than \ccc{insert_from_vertex}.
+       \ccPrecond{\ccc{cv} has no intersection in the interior with any curve of the map. }
+       \ccPrecond{\ccc{src} holds a point thatmn                      is the same as \ccc{cv}'s source.}
+       }
+
+\end{ccAdvanced}
+
+
+%    The following operations have the same functionality as their
+%    counterparts in the planar map.
+%
+%    \ccMethod{Vertex_iterator vertices_begin();}{}
+%    \ccMethod{Vertex_iterator vertices_end();}{}
+%    \ccMethod{Size number_of_vertices();}{}
+%    \ccMethod{Halfedge_iterator halfedges_begin();}{}
+%    \ccMethod{Halfedge_iterator halfedges_end();}{}
+%    \ccMethod{Size number_of_halfedges();}{}
+%    \ccMethod{Face_iterator faces_begin();}{}
+%    \ccMethod{Face_iterator faces_end();}{}
+%    \ccMethod{Size number_of_faces();}{}
+%
+%    \ccMethod{Halfedge_handle split_edge(Halfedge_handle e, const X_curve& c1,
+%   const X_curve& c2);}{}
+%    \ccMethod{Halfedge_handle locate(const Point& p, Locate_type& lt);}{}
+%    \ccMethod{Halfedge_handle vertical_ray_shoot(const Point& p, Locate_type& lt, bool up);}{}
+%
+%    \ccMethod{Face_handle unbounded_face();}{}
+%
+%    \ccMethod{bool is_valid(bool verbose=false);}{}
+
+
+\end{ccRefClass}
+
+
+% +------------------------------------------------------------------------+
+%%RefPage: end of main body, begin of footer
+\ccRefPageEnd
+% EOF
+% +------------------------------------------------------------------------+

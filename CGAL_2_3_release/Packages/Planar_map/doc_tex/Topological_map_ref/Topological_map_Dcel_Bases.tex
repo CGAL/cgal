@@ -1,0 +1,140 @@
+%%%%%%%%%%%%%%%%%%%%%%%re-implement the base classes without curves and points
+% hopefully this part will be shorter and include only reference to the HDS
+%and base classes for tpm
+
+\ccRefPageBegin
+
+%%RefPage: end of header, begin of main body
+% +------------------------------------------------------------------------+
+
+
+%%%%%vertex
+\begin{ccRefClass}{Tpm_vertex_base}
+\label{DCEL_sec:vertex_base}
+\ccDefinition The class \ccStyle{Tpm_vertex_base} is a
+base class for the vertex of the DCEL.
+%is parameterized 
+%with a \ccStyle{Point} class ,which is stored in it. 
+The methods it defines 
+return \ccStyle{void*} since the \ccStyle{Halfedge} and \ccStyle{Face} classes 
+are not known to it. A casting will be done inside the DCEL. 
+
+\ccInclude{CGAL/Topological_map_bases.h}
+%\ccTypes 
+
+%\ccNestedType{Point}{a point stored in the vertices.}
+
+\ccCreationVariable{v}
+%\ccConstructor{Vertex(const Point& p);}{creates a vertex with point \ccStyle{p}.}
+%\ccConstructor{Vertex(const Vertex&);}{copy constructor.}
+
+%\ccOperations 
+\ccAccessFunctions
+\ccMethod{void* halfedge();}{an incident halfedge that has \ccVar{} as its target.}
+\ccGlue
+\ccMethod{const void* halfedge();}{}
+
+\ccThree{void}{v.set_halfedge( void* h);}{}
+
+\ccModifiers
+\ccMethod{void set_halfedge(void* h); }{sets incident halfedge.}
+
+\end{ccRefClass}
+
+
+%%%%%halfedge
+\begin{ccRefClass}{Tpm_halfedge_base}
+\label{DCEL_sec:halfedge_base}
+\ccDefinition The class \ccStyle{Tpm_halfedge_base} is 
+a base class for the halfedge of the DCEL.
+%parameterized 
+%with a \ccStyle{Curve} class ,which is stored in it. 
+The methods it defines
+return \ccStyle{void*} since the \ccStyle{Vertex} and \ccStyle{Face} classes 
+are not known to it. A casting will be done inside the DCEL. 
+
+\ccInclude{CGAL/Topological_map_bases.h}
+
+%\ccTypes
+
+%\ccNestedType{Curve}{the curve of the halfedge.}
+
+\ccCreationVariable{h}
+%\ccConstructor{Halfedge(const Curve& cv);}{create a halfedge with curve \ccStyle{cv}.}
+%\ccConstructor{Vertex(const Vertex&);}{copy constructor.}
+
+%\ccOperations 
+\ccAccessFunctions
+
+\ccMethod{void* opposite();}{the twin halfedge.}
+\ccGlue
+\ccMethod{const void* opposite();}{}
+
+\ccMethod{void*       next();}{the next halfedge around the face.}
+\ccGlue
+\ccMethod{const void* next() const; }{}
+
+\ccMethod{void*       vertex();}{the target vertex.}
+\ccGlue
+\ccMethod{const void* vertex() const;}{}
+
+\ccMethod{void*       face();}{the incident face.}
+\ccGlue
+\ccMethod{const void* face() const; }{}
+
+\ccMethod{void set_vertex(void* v); }{sets target vertex.}
+\ccGlue
+\ccMethod{void set_face(void* f); }{sets incident face.}
+
+\end{ccRefClass}
+
+%%%%%face
+\begin{ccRefClass}{Tpm_face_base}
+\label{DCEL_sec:face_base}
+\ccDefinition The class \ccStyle{Tpm_face_base} is a face in the DCEL. 
+The methods it defines 
+return \ccStyle{void*} since the \ccStyle{Vertex} and \ccStyle{Halfedge} classes 
+are not known to it. A casting will be done inside the DCEL. 
+
+\ccImplementation It uses an STL list as a holes container. The list stores
+\ccStyle{void*} objects that point to a representative halfedge for every 
+hole in the face. 
+
+\ccInclude{CGAL/Topological_map_bases.h}
+
+\ccTypes
+%\ccNestedType{Holes_container}{a container of \ccStyle{void*}.}
+\ccNestedType{Holes_iterator}{a bidirectional iterator for traversing the
+holes container, its value type is \ccStyle{void*}.}
+\ccGlue
+\ccNestedType{Holes_const_iterator}{}
+
+\ccCreationVariable{f}
+\ccConstructor{Face();}{default constructor.}
+
+%\ccOperations 
+\ccAccessFunctions
+
+\ccMethod{void* halfedge();}{an incident halfedge on the outer CCB of \ccVar{}.}
+\ccGlue
+\ccMethod{const void* halfedge() const;}{}
+
+\ccMethod{Holes_iterator  holes_begin();}{a begin iterator of the holes container.}
+\ccGlue
+\ccMethod{Holes_iterator  holes_end();}{a past-the-end iterator of the holes container.}
+\ccMethod{Holes_const_iterator  holes_begin();}{}
+\ccGlue
+\ccMethod{Holes_const_iterator  holes_end();}{}
+
+\ccModifiers
+
+\ccMethod{void set_halfedge(void* h); }{sets incident halfedge.}
+
+\ccMethod{void add_hole(void* h);}{adds \ccStyle{h} to the holes container.}
+\ccMethod{void erase_hole(Holes_iterator hit);}{removes the halfedge referenced by \ccStyle{hit} from the holes container (the halfedge itself is not erased
+from the DCEL).}
+\ccMethod{void erase_holes(Holes_iterator first, Holes_iterator last);}{removes
+   the halfedges in the range [\ccStyle{first},\ccStyle{last}) from the holes 
+   container.}
+
+\end{ccRefClass}

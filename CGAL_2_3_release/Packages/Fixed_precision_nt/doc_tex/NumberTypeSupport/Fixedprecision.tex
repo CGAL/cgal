@@ -1,0 +1,188 @@
+% author : Olivier Devillers <Olivier.Devillers@sophia.inria.fr>
+
+%\marginparwidth 1.5cm
+%\def\ccTagChapterRelease{\ccTrue}
+%\def\ccTagChapterAuthor{\ccTrue}
+%
+%\chapter{Fixed precision numbers} \label{I1_Chapter_Fixed_precision_nt}
+%
+%\ccChapterRelease{Revision: , Date: }
+%
+%\ccChapterAuthor{Olivier Devillers}
+%
+%\section{Introduction} 
+
+\begin{ccClass}{Fixed_precision_nt}
+
+\ccSubsection{Fixed precision numbers}
+\label{I1_Chapter_Fixed_precision_nt}
+
+The class \ccStyle{Fixed_precision_nt} provides 24 bits numbers in 
+fixed point representation.
+Basically these numbers are integers in the range
+$[-2^{24},2^{24}]$ with a multiplying factor $2^b$.
+The multiplying factor $2^b$ has to be initialized by the user
+before the construction of the first \ccStyle{Fixed_precision_nt}
+and is common to all variables.
+
+The interest of such a number type is that geometric predicates
+can be overloaded to get exact and very efficient predicates.
+The drawback is that any \ccStyle{Fixed_precision_nt} is rounded to 
+the nearest multiple of $2^b$, which yields to a very poor arithmetic.
+The idea is to not use the arithmetic on \ccStyle{Fixed_precision_nt}
+but only the specialized predicates.
+
+Note: you must call \ccc{CGAL::force_ieee_double_precision()} in order for the
+\ccStyle{Fixed_precision_nt} to work properly on Intel platforms.  This
+initializes the FPU to an IEEE compliant rounding mode which is not the
+default.
+
+\ccSetTwoColumns{}{\hspace*{8.5cm}}
+
+\ccCreation
+\ccCreationVariable{fvar}
+
+\ccInclude{CGAL/Fixed_precision_nt.h}
+
+\ccConstructor{Fixed_precision_nt();}
+            {Declaration.}
+
+\ccConstructor{Fixed_precision_nt(double d);}
+            {Initialization of a variable. The variable is rounded to the
+                nearest legal fixed number (i.e. a multiple of $2^b=$
+                \ccStyle{Fixed_precision_nt::unit_value()}}
+
+
+\ccConstructor{Fixed_precision_nt(const Fixed_precision_nt &fval);}
+            {Declaration and initialization.}
+
+
+\ccConstructor{Fixed_precision_nt(int i)}
+            {Declaration and initialization with an integer.}
+
+\ccSetThreeColumns{XXXXXX}{}{\hspace*{8.5cm}}
+\ccOperations
+
+
+\ccMethod{Fixed_precision_nt & operator=(const Fixed_precision_nt &fval);}
+        {Assignment. 
+}
+
+\ccFunction{bool is_valid(const Fixed_precision_nt &fval);}
+{In case of overflow or division by 0, numbers becomes invalid.
+If the precision is changed by usage of 
+\ccStyle{Fixed_precision_nt::init()}, already existing numbers may become invalid
+if they are no longer multiple of $2^b$.}
+
+\ccFunction{bool is_finite(const Fixed_precision_nt &fval);}
+{ \ccClassName\ do not implement infinite numbers. 
+  \ccStyle{is_finite} is identical to \ccStyle{is_valid}.}
+
+The comparison operations $==$, $!=$, $<$, $>$, $<=$, and $>=$ are all
+available.
+
+The arithmetic operators $+$, $-$, $*$, $/$, $+=$, $-=$, $*=$ and $/=$
+are all available. The result of the computation is rounded to the
+nearest legal \ccClassName. Overflow is possible, and even probable in case
+of multiplication or division. \ccClassName\ are designed to use
+specialized predicates, not to use arithmetic.
+
+
+\ccFunction{double to_double(const Fixed_precision_nt &fval);}
+         {casts to \ccStyle{double}.}
+
+
+%\section{Parametrization routines}
+%\ccHeading{Parameterization routines}
+
+\ccHeading{Precision initialization}
+As mentioned before, the \ccClassName\ numbers takes their values in an
+interval $[-2^{24+b},2^{24+b}]$ of multiples of $2^b$,
+this number $b$ as to be defined before any
+ use of \ccStyle{Fixed_precision_nt}.
+
+\ccSetThreeColumns{Comparison_result}{}{\hspace*{6cm}}
+
+\ccFunction{static bool init(float B);}
+{$B$ is an upper bound on the data, $b$ is the smallest integer such that 
+$|B|\leq 2^b$. The result of the function is false if initialization was
+already done, in that case already existing \ccClassName\ may become invalid.}
+
+\ccFunction{static float unit_value();}
+{returns $2^b$.}
+
+\ccFunction{static float upper_bound();}
+{returns $2^{24+b}$.}
+
+%\subsection{Perturbation scheme}
+\ccHeading{Perturbation scheme}
+
+\ccClassName\ implements perturbation scheme as described by
+Alliez, Devillers and Snoeyink \cite{ads-rdppw-98}.
+The perturbation mode can be activated or deactivated for different kinds
+of perturbations. The default mode is no perturbation.
+
+\ccFunction{static void perturb_incircle();}
+{Activate. \ccStyle{side_of_oriented_circle} predicate
+ of 4 cocircular points answers degenerate only if
+the 4 points are colinear.}
+
+\ccFunction{static void unperturb_incircle();}
+{Deactivate}
+
+\ccFunction{static bool is_perturbed_incircle();}
+{returns current mode}
+
+\ccFunction{static void perturb_insphere();}
+{Activate. \ccStyle{side_of_oriented_sphere} predicate
+ of 5 cospherical points answers degenerate only if
+the 5 points are coplanar.}
+
+\ccFunction{static void unperturb_insphere();}
+{Deactivate}
+
+\ccFunction{static bool is_perturbed_insphere();}
+{returns current mode}
+
+%\section{Geometric predicates}
+\ccHeading{Geometric predicates}
+
+Through overloading mechanisms, functions such that
+\ccStyle{orientation} for 
+\ccStyle{Point_2<Cartesian< Fixed_precision_nt> >}
+will correctly call the function below.
+
+\ccSetThreeColumns{Oriented_side}{}{\hspace*{6cm}}
+
+%\subsection{Two dimensional}
+
+\ccFunction{Orientation orientationC2(
+  Fixed_precision_nt x0, Fixed_precision_nt y0,
+  Fixed_precision_nt x1, Fixed_precision_nt y1,
+  Fixed_precision_nt x2, Fixed_precision_nt y2);}{}
+\ccGlue
+\ccFunction{Oriented_side side_of_oriented_circleC2 (
+  Fixed_precision_nt x0, Fixed_precision_nt y0,
+  Fixed_precision_nt x1, Fixed_precision_nt y1,
+  Fixed_precision_nt x2, Fixed_precision_nt y2,
+  Fixed_precision_nt x3, Fixed_precision_nt y3);}{Perturbation mode can be activated.}
+
+%\subsection{Three dimensional}
+
+\ccFunction{Orientation orientationC3(  
+  Fixed_precision_nt x0, Fixed_precision_nt y0, Fixed_precision_nt z0,
+  Fixed_precision_nt x1, Fixed_precision_nt y1, Fixed_precision_nt z1,
+  Fixed_precision_nt x2, Fixed_precision_nt y2, Fixed_precision_nt z2,
+  Fixed_precision_nt x3, Fixed_precision_nt y3, Fixed_precision_nt z3);}{}
+%
+%\ccSetThreeColumns{x}{}{\hspace*{3.5cm}}
+\ccGlue
+\ccFunction{Oriented_side side_of_oriented_sphereC3 (
+  Fixed_precision_nt x0, Fixed_precision_nt y0, Fixed_precision_nt z0,
+  Fixed_precision_nt x1, Fixed_precision_nt y1, Fixed_precision_nt z1,
+  Fixed_precision_nt x2, Fixed_precision_nt y2, Fixed_precision_nt z2,
+  Fixed_precision_nt x3, Fixed_precision_nt y3, Fixed_precision_nt z3,
+  Fixed_precision_nt x4, Fixed_precision_nt y4, Fixed_precision_nt z4);}
+{Perturbation mode can be activated.}
+
+\end{ccClass} 

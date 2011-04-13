@@ -1,0 +1,85 @@
+#! /bin/sh
+
+# This is a script for the CGAL test suite. Such a script must obey
+# the following rules:
+#
+# - the name of the script is cgal_test
+# - for every target two one line messages are written to the file 'error.txt'
+#     the first one indicates if the compilation was successful
+#     the second one indicates if the execution was successful
+#   if one of the two was not successful, the line should start with 'ERROR:'
+# - running the script should not require any user interaction
+# - the script should clean up object files and executables
+
+ERRORFILE=error.txt
+
+#---------------------------------------------------------------------#
+#                    compile_and_run <target>
+#---------------------------------------------------------------------#
+
+compile_and_run()
+{
+  echo "Compiling $1 ... "
+  SUCCES="y"
+  if eval 'make CGAL_MAKEFILE=$CGAL_MAKEFILE \
+           TESTSUITE_CXXFLAGS="$TESTSUITE_CXXFLAGS" \
+           TESTSUITE_LDFLAGS="$TESTSUITE_LDFLAGS" $1' ; then
+    echo "   succesful compilation of $1" >> $ERRORFILE
+  else
+    echo "   ERROR:    compilation of $1" >> $ERRORFILE
+    SUCCES=""
+  fi
+
+  if [ -n "${SUCCES}" ] ; then
+     OUTPUTFILE=ProgramOutput.$1.$PLATFORM
+     rm -f $OUTPUTFILE
+     touch $OUTPUTFILE
+     datafiles="DATA/$2/*"
+  
+    for DATAFILE in ${datafiles}
+    do
+        COMMAND="./$1 ${DATAFILE}"
+        EXEC_AND_DATAFILE="$1 `basename ${DATAFILE}`"
+	echo "Executing $1 `basename ${DATAFILE}` ... "
+        echo "__________________________________________" >> $OUTPUTFILE 
+	echo "Executing $1 `basename ${DATAFILE}` ... " >> $OUTPUTFILE 
+	echo
+	if eval $COMMAND >> $OUTPUTFILE 2>&1 ; then
+	echo "   succesful execution   ${EXEC_AND_DATAFILE}" >> $ERRORFILE
+	else
+	echo "   ERROR:    execution   of ${EXEC_AND_DATAFILE}" >> $ERRORFILE
+	fi
+    done
+  else
+    echo   "   ERROR:    not executed   $1" >> $ERRORFILE
+  fi
+
+  eval "make CGAL_MAKEFILE=$CGAL_MAKEFILE clean > /dev/null 2>&1 "
+}
+
+#---------------------------------------------------------------------#
+#                    remove the previous error file
+#---------------------------------------------------------------------#
+
+rm -f $ERRORFILE
+touch $ERRORFILE
+
+#---------------------------------------------------------------------#
+#                    compile and run the tests
+#---------------------------------------------------------------------#
+
+if [ $# -ne 0 ] ; then
+  for file in $* ; do
+    compile_and_run $file
+  done
+else
+  #               NAME OF EXECUTABLE                   DATA DIRECTORY
+  compile_and_run Arr_segment_exact_traits_test        segments
+  compile_and_run Arr_leda_segment_exact_traits_test   segments
+  compile_and_run Arr_polyline_traits_test             polylines
+  compile_and_run Arr_leda_polyline_traits_test        polylines
+  compile_and_run Arr_segment_circle_traits_test       segment_circles
+  compile_and_run Arr_circles_real_traits_test         circular_arcs
+
+fi
+

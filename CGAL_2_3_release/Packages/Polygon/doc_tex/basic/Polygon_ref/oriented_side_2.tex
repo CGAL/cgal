@@ -1,0 +1,70 @@
+% +------------------------------------------------------------------------+
+% | Reference manual page: oriented_side_2.tex
+% +------------------------------------------------------------------------+
+% | 21.06.2001   Author
+% | Package: Polygon
+% | 
+\RCSdef{\RCSorientedsideRev}{$Revision$}
+\RCSdefDate{\RCSorientedsideDate}{$Date$}
+% |
+%%RefPage: end of header, begin of main body
+% +------------------------------------------------------------------------+
+
+
+\begin{ccRefFunction}{oriented_side_2} 
+
+%% \ccHtmlCrossLink{}     %% add further rules for cross referencing links
+%% \ccHtmlIndexC[function]{} %% add further index entries
+
+\ccDefinition
+  
+The function \ccRefName\ computes on which side of a polygon a point lies.
+
+\ccInclude{CGAL/Polygon_2_algorithms.h}
+
+\ccGlobalFunction{
+template <class ForwardIterator, class Traits>
+Oriented_side oriented_side_2(ForwardIterator first, ForwardIterator last,
+                              const Traits::Point_2& point, Traits traits);
+}
+{
+}
+
+
+\ccHeading{Requirements}
+\ccIndexSubitem[C]{bottom_vertex_2}{requirements}
+\begin{enumerate}
+    \item \ccc{Traits} is a model of the concept 
+	  PolygonTraits\_2\ccIndexMainItem[c]{PolygonTraits_2}.
+	  Only the following members of this traits class are used:
+          \begin{itemize}
+            \item \ccc{Less_xy_2}
+            \item \ccc{Compare_x_2}
+            \item \ccc{Compare_y_2}
+            \item \ccc{Orientation_2}
+            \item \ccc{less_xy_2_object}
+            \item \ccc{compare_x_2_object}
+            \item \ccc{compare_y_2_object}
+            \item \ccc{orientation_2_object}
+          \end{itemize}
+    \item \ccc{ForwardIterator::value_type} should be \ccc{Traits::Point_2},
+\end{enumerate}
+
+\ccSeeAlso
+
+\ccRefIdfierPage{PolygonTraits_2} \\
+\ccRefIdfierPage{CGAL::bounded_side_2} \\
+\ccRefIdfierPage{CGAL::is_simple_2} \\
+\ccRefIdfierPage{CGAL::Polygon_2<PolygonTraits_2, Container>} \\
+\ccc{CGAL::Oriented_side}
+
+
+%% \ccIncludeExampleCode{examples/Polygon/oriented_side_2_prog.C}
+
+\end{ccRefFunction}
+
+% +------------------------------------------------------------------------+
+%%RefPage: end of main body, begin of footer
+% EOF
+% +------------------------------------------------------------------------+
+

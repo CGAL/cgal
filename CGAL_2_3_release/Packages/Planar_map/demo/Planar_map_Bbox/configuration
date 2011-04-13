@@ -1,0 +1,18 @@
+/**************************** 
+Configuration flags 
+*****************************/
+
+//#define USE_NAIVE_POINT_LOCATION	//use naive strategy
+//#define USE_WALK_POINT_LOCATION	//use walk strategy
+//#define USE_DEFAULT_WITHOUT_REBUILD
+//#define CGAL_NO_PM_DEFAULT_POINT_LOCATION
+
+//#define USE_DYNAMIC_CLOSED_BOUNDING_BOX
+#define USE_DYNAMIC_OPEN_BOUNDING_BOX
+//#define USE_STATIC_CLOSED_BOUNDING_BOX
+//#define USE_STATIC_OPEN_BOUNDING_BOX 
+#define USE_RATIONAL                   //for leda_rational coordinates
+//#define CGAL_PM_DEBUG                // internal debug flag
+//#define CGAL_PM_TIMER                // internal timing flag
+
+

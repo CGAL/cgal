@@ -1,0 +1,163 @@
+74a75,77
+> \newcommand{\trolltechpage}{\path'http://www.trolltech.com'}
+> \newcommand{\qtpage}{\path'http://doc.trolltech.com/'}
+> \newcommand{\qtmocpage}{\path'http://doc.trolltech.com/moc.html'}
+92,93c95,98
+< Multiple Precision library GMP\footnote{\gmppage} and/or the Class
+< Library for Numbers (CLN)\footnote{\clnpage}.
+---
+> Multiple Precision library GMP\footnote{\gmppage}, the Class
+> Library for Numbers (CLN)\footnote{\clnpage}, and
+> Trolltech\footnote{\trolltechpage} Qt toolkit.
+> 
+337a343
+>   **   Qt:                  not supported                       **
+347a354
+>   **   <K>  Qt Menu                                             **
+401a409
+>   Qt:           not supported
+415,416c423,424
+< supported compilers detected on your system) or with \leda, GMP or
+< CLN support (go to the \leda, GMP, CLN menu resp.) or simply quit
+---
+> supported compilers detected on your system) or with \leda, GMP, CLN
+> or Qt support (go to the \leda, GMP, CLN, Qt menu resp.) or simply quit
+446,447c454,456
+< If you want to use \leda, GMP or CLN with \cgal, you will have to go
+< to the \textit{leda menu}, \textit{gmp menu} or \textit{cln menu}.
+---
+> If you want to use \leda, GMP, CLN or Qt with \cgal, you will have to go
+> to the \textit{leda menu}, \textit{gmp menu}, \textit{cln menu} or
+> \textit{qt menu}.
+454c463,464
+< includes an \stl\ test, a \leda\ test, a GMP test and a CLN test. But
+---
+> includes an \stl\ test, a \leda\ test, a GMP test, a CLN test and a Qt
+> test. But
+460,461c470,471
+< This also retests for \leda/GMP/CLN installation in system directories
+< which otherwise is only done the first time you enable \leda/GMP/CLN
+---
+> This also retests for \leda/GMP/CLN/Qt installation in system directories
+> which otherwise is only done the first time you enable \leda/GMP/CLN/Qt
+653a664,761
+> \subsection{The Qt Menu}\label{sec:qt-menu}
+> \index{Qt!menu}\index{menus!Qt}
+> 
+> This menu is to set Qt specific options, if you plan to use Qt
+> together with \cgal . Note that for use with \cgal, Qt version 2.2 (or
+> later) if required. In order to enable Qt support in \cgal, Qt has to
+> be installed on your system first.
+> Unlike for GMP, there is no option to install Qt from the \cgal\ 
+> installation script.  For information on Qt, please refer to
+> \begin{quote}
+>   \qtpage
+> \end{quote}
+> 
+> \begin{ccAdvanced}
+> The Qt menu has a basic mode and an advanced one. If your Qt
+> installation is standard, you shouldn't have to go into the advanced
+> mode.
+> 
+> The Qt menu starts in basic mode, unless Qt is installed in standard
+> system directories (because in that case, the advanced mode is quicker).
+> \end{ccAdvanced}
+> 
+> \subsubsection{Basic mode (to use with a standard Qt installation)}
+> 
+> If Qt support is enabled the first time, the script tests whether the
+> \texttt{\$QTDIR} environment variable points to a valid Qt directory.
+> is installed in standard system directories. If that is not the case,
+> you have to supply the Qt directory containing your Qt
+> installation. Even if the test passed, you still have the option to
+> set this directory differently.
+> If your Qt installation is not standard, you would have to go into the
+> advanced mode.\bigskip
+> 
+> \fbox{
+> \begin{minipage}{.95\linewidth}
+> \vspace{2pt}
+> \centerline{{\large{\bf Qt basic Menu}}}
+> \vspace{2pt}
+> \begin{description}
+> \item[$<$K$>$] Enable/Disable Qt support in \cgal.\index{Qt!enable
+>     support}
+> \item[$<$A$>$] (\textit{present if Qt support is enabled)} Go to the
+>   advanced mode
+> \item[$<$D$>$] (\textit{present if Qt support is enabled}) Set the
+>   Qt directory.
+> \item[$<$E$>$] (\textit{present if Qt support is enabled,
+>     \texttt{\$QTDIR} points to a valid Qt directory and {\tt QT\_DIR}
+>     has been set}) Use \texttt{\$QTDIR} as Qt directory.
+> \end{description}
+> \vspace{2pt}
+> \end{minipage}
+> \hfill}
+> 
+> 
+> 
+> \begin{ccAdvanced}
+> \subsubsection{Advanced mode (to use with a non-standard Qt
+>   installation) }
+> 
+> In that mode, you have to specify separately directories containing the Qt
+> header files (\texttt{QT\_INCL\_DIR})\TTindex{QT\_INCL\_DIR} and the
+> Qt library (\texttt{QT\_LIB\_DIR})\TTindex{QT\_LIB\_DIR}, and the
+> path to the MOC\footnote{\qtmocpage} executable
+> (\texttt{QT\_MOC})\TTindex{QT\_MOC} unless they are in system
+> directories. Even in that case, you still have the option to set them
+> differently.
+> 
+> \fbox{
+> \begin{minipage}{.95\linewidth}
+> \vspace{2pt}
+> \centerline{{\large{\bf Qt advanced Menu}}}
+> \vspace{2pt}
+> \begin{description}
+> \item[$<$K$>$] Enable/Disable Qt support in \cgal.\index{Qt!enable
+>     support}
+> \item[$<$B$>$] (\textit{present if Qt support is enabled)} Go to the
+>   basic mode
+> \item[$<$I$>$] (\textit{present if Qt support is enabled}) Set the
+>   directory containing Qt headers.
+> \item[$<$J$>$] (\textit{present if Qt support is enabled, Qt headers
+>     are in system directories and {\tt QT\_INCL\_DIR} has been set})
+>   Use Qt headers from system include directories.
+> \item[$<$L$>$] (\textit{present if Qt support is enabled}) Set the
+>   directory containing Qt library.
+> \item[$<$M$>$] (\textit{present if Qt support is enabled, Qt library
+>     is in system directories and {\tt QT\_LIB\_DIR} has been set})
+>   Use Qt library from system library directories.
+> \item[$<$O$>$] (\textit{present if Qt support is enabled}) Set the
+>   path to MOC executable.
+> \item[$<$P$>$] (\textit{present if Qt support is enabled, MOC is in path and {\tt QT\_MOC} has been set})
+>   Use Qt MOC executable in path.
+> \end{description}
+> \vspace{2pt}
+> \end{minipage}
+> \hfill}
+> 
+> \end{ccAdvanced}
+> 
+686a795,796
+> \item you want to use Qt together with \cgal\ (section
+>   \ref{sec:qt-setup}).
+755a866,883
+> 
+> \subsection{Setting up support for Qt}\label{sec:qt-setup}
+> \index{Qt!enable support}
+> 
+> By default there is no support for Qt, but you can change this easily
+> by use of the command line option ``\texttt{-qt}''. If Qt is installed
+> in system directories on your system or the \texttt{\$QTDIR}
+> environment variable points to the Qt directory , you are already done
+> now. If this is not the case, you have to supply either the Qt
+> directory (``\texttt{--QT\_DIR}~\textit{$<$dir$>$}'')\TTindex{QT\_DIR}
+> if your Qt installation is standard, either directories containing
+> the Qt header files
+> (``\texttt{--QT\_INCL\_DIR}~\textit{$<$dir$>$}'')\TTindex{QT\_INCL\_DIR}
+> and the Qt library
+> (``\texttt{--QT\_LIB\_DIR}~\textit{$<$dir$>$}'')\TTindex{QT\_LIB\_DIR},
+> and the path to the MOC\footnote{\qtmocpage} executable
+> (``\texttt{--QT\_MOC} \textit{$<$exe$>$}'')\TTindex{QT\_MOC} if your
+> Qt installation is not standard.

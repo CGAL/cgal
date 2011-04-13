@@ -1,0 +1,22 @@
+#!/bin/sh
+
+for h in $1 ; do
+if [ -d $h ]; then
+  cd $h;
+  echo "In " $h;
+  ../C2dsw > /text/$h.dsw; mv /text/$h.dsw .
+  if [ -e visual ]; then
+    rm -r visual;
+  fi
+  mkdir visual;
+ 
+  for i in *.C ; do
+    j=`echo $i|sed -e "s/\.C/\.dsp/"`; 
+    k=`echo $i|sed -e "s/\.C//"`; 
+    sed -e"s/master/$k/g" ../master.dsp > /text/$j; 
+    mv /text/$j visual/; 
+  done
+
+  cd ..;
+fi
+done

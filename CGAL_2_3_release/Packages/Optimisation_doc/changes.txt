@@ -1,0 +1,42 @@
+Changes done to the `Optimisation_doc' package
+
+Version 1.0.7 on 31-Jul-2001
+- Susan moved Optimisation_ref directory up one level
+
+Version 1.0.6 on 27-Jul-2001
+- Susan made changes necessary for manual split
+
+Version 1.0.5 on 19-Jul-2001
+- removed definitons of '\ccRequirements' and '\ccRequire' (moved to cc_manual)
+
+Version 1.0.4 on 17-Jul-2001
+- renamed template parameter 'R' to 'K'
+
+Version 1.0.3 on 11-Jul-2001
+- changed all concept names. 
+
+Version 1.0.2 on 19-Jun-2001
+- changed concept names of Michael's pkgs. 
+
+Version 1.0.1 on 20-Mar-2001
+- no changes (moved to cvs-server)
+
+Version 1.0 on 29-Sep-2000
+- added package `Width_3'
+
+Version 0.7.1 on 25-Sep-2000
+- added prefix 'Optimisation_ref/' to file names
+
+Version 0.7 on 18-Sep-2000
+- added indexing commands.
+
+Version 0.6 on 15-Sep-2000
+- `bad' introduction added in user manual
+- changed referencing of concepts
+
+Version 0.5.1 on 12-Sep-2000
+- added `cgal.bib'
+
+Version 0.5 on 12-Sep-2000
+- moved documentation from `Optimisation_basic'
+- documentation split up into user and reference manual parts

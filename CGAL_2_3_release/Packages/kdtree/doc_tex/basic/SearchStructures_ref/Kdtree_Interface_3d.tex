@@ -1,0 +1,19 @@
+\begin{ccRefClass}{Kdtree_Interface_3d<Point>}
+
+The default traits class \ccStyle{Kdtree_Interface_3d<Point>} 
+should be used when using 3D points from the {\cgal} kernel.
+It is
+templated with a parameter \ccStyle{Point}, which is required to
+supply the following methods:
+
+\begin{itemize}
+    \item Constructor, and copy constructor.
+
+    \item \ccStyle{int dimension();} - return the dimension of the point.
+    
+    \item \ccStyle{operator[](int dim);} - an operator for accessing
+    the various coordinates of the given point. Used also to copy
+    coordinates between points.
+\end{itemize}
+
+\end{ccRefClass}

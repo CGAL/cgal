@@ -1,0 +1,68 @@
+% +------------------------------------------------------------------------+
+% | Reference manual page: ch_nswe_point.tex
+% +------------------------------------------------------------------------+
+% | 09.05.2001   Susan Hert and Stefan Schirra
+% | Package: Convex_hull_2
+% | 
+% +------------------------------------------------------------------------+
+
+
+\begin{ccRefFunction}{ch_nswe_point}  %% add template arg's if necessary
+\ccIndexSubitemBegin{extreme points, 2D}{in coordinate directions}
+
+\ccDefinition
+  
+The function \ccRefName\ finds the four extreme points of a given set  
+of input points using a linear scan of the input points.  
+That is, it determines the points with maximal $y$, minimal $y$,
+minimal $x$, and maximal $x$ coordinates.
+
+\ccInclude{CGAL/ch_selected_extreme_points_2.h}
+
+\ccFunction{template <class ForwardIterator>
+            void
+            ch_nswe_point( ForwardIterator first, ForwardIterator beyond,
+                           ForwardIterator& n,
+                           ForwardIterator& s,
+                           ForwardIterator& w,
+                           ForwardIterator& e,
+                           const Traits & ch_traits = Default_traits);}
+           {traverses the range [\ccc{first},\ccc{beyond}).
+            After execution, the value of
+            \ccc{n} is an iterator in the range such that \ccc{*n} $\ge_{yx}$
+            \ccc{*it} for all iterators \ccc{it} in the range. Similarly, for
+            \ccc{s}, \ccc{w}, and \ccc{e} the inequalities \ccc{*s} $\le_{yx}$
+            \ccc{*it}, \ccc{*w} $\le_{xy}$ \ccc{*it}, and \ccc{*e}
+            $\ge_{xy}$ \ccc{*it} hold for all iterators
+            \ccc{it} in the range.}
+
+
+\ccHeading{Requirements}
+\ccc{Traits} contains the following subset of types from
+the concept ConvexHullTraits\_2 and their corresponding member
+functions that return instances of these types:
+            \begin{itemize}
+                \item \ccc{Traits::Less_xy_2}, 
+                \item \ccc{Traits::Less_yx_2}.
+            \end{itemize}
+
+The default traits class \ccc{Default_traits} is the kernel in which the
+type \ccc{ForwardIteartor::value_type} is defined.
+
+\ccSeeAlso
+
+\ccRefIdfierPage{CGAL::ch_e_point} \\
+\ccRefIdfierPage{CGAL::ch_n_point} \\
+\ccRefIdfierPage{CGAL::ch_ns_point} \\
+\ccRefIdfierPage{CGAL::ch_s_point} \\
+\ccRefIdfierPage{CGAL::ch_w_point} \\
+\ccRefIdfierPage{CGAL::ch_we_point} 
+
+\ccIndexSubitemEnd{extreme points, 2D}{in coordinate directions}
+\end{ccRefFunction}
+
+% +------------------------------------------------------------------------+
+%%RefPage: end of main body, begin of footer
+% EOF
+% +------------------------------------------------------------------------+
+

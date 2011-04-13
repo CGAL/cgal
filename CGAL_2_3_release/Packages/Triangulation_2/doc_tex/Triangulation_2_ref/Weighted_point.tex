@@ -1,0 +1,61 @@
+% +------------------------------------------------------------------------+
+% | Reference manual page: Weighted_point.tex
+% +------------------------------------------------------------------------+
+% | 13.04.2000   Author
+% | Package: Package
+% | 
+\RCSdef{\RCSWeightedpointRev}{$Revision$}
+\RCSdefDate{\RCSWeightedpointDate}{$Date$}
+% |
+%%RefPage: end of header, begin of main body
+% +------------------------------------------------------------------------+
+
+
+\begin{ccRefClass}{Weighted_point<Pt,Wt>}  %% add template arg's if necessary
+
+%% \ccHtmlCrossLink{}     %% add further rules for cross referencing links
+%% \ccHtmlIndexC[class]{} %% add further index entries
+
+\ccDefinition
+  
+The class \ccRefName\ provides a type associating
+a point type \ccc{Pt} with a weight type \ccc{Wt}.
+It is used in the traits class \ccc{Regular_triangulation_euclidean_traits_2}.
+
+\ccInclude{Weighted_point.h}
+
+\ccInheritsFrom \ccc{Pt}
+
+\ccTypes
+\ccTypedef{Pt Point;}{The point type}
+\ccGlue
+\ccTypedef{Wt Weight;}{The weight type.}
+\ccGlue
+\ccTypedef{typedef Point::Rt Rt;}{The ring type}
+
+
+
+\ccCreation
+\ccCreationVariable{wp}  %% choose variable name
+\ccConstructor{Weighted_point(Point p=Point(), Weight w= Weight(0))}{}
+\ccGlue
+\ccConstructor{Weighted_point(Weighted_point wq)}{copy constructor.}
+
+\ccAccessFunctions
+\ccMethod{Point point() const;}{}
+\ccGlue
+\ccMethod{ Weight weight() const;}{}
+
+
+
+\ccSeeAlso
+\ccc{CGAL::Regular_triangulation_euclidean_traits_2<Rep,Weight>}.
+
+
+\end{ccRefClass}
+
+% +------------------------------------------------------------------------+
+%%RefPage: end of main body, begin of footer
+% EOF
+% +------------------------------------------------------------------------+
+

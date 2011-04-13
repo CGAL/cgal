@@ -1,0 +1,31 @@
+% +------------------------------------------------------------------------+
+% | CGAL User Manual:  Timer.tex
+% +------------------------------------------------------------------------+
+
+\ccParDims
+
+\chapter{Timer}
+\label{chapterTimer}
+\ccChapterAuthor{Lutz Kettner, Matthias B\"asken}
+
+\section{Introduction}
+
+CGAL provides classes for measuring the user process time and the real time.
+The class \ccc{CGAL::Timer} is the version for the user process time and
+the class \ccc{CGAL::Real\_timer} is the version for the real time.
+
+Instantiations of both classes are objects with a state. The state is
+either {\em running\/} or it is {\em stopped}. The state of an object
+\ccc{t} is controlled
+with \ccStyle{t.start()} and \ccStyle{t.stop()} . The timer counts the
+time elapsed since its creation or last reset. It counts only the time
+where it is in the running state. The time information is given in seconds.
+The timer counts also the number of intervals it was running, i.e. it 
+counts the number of calls of the \ccc{start()} member function since the 
+last reset. If the reset occures while the timer is running it counts as the
+first interval.
+
+
+\ccParDims
+
+% EOF

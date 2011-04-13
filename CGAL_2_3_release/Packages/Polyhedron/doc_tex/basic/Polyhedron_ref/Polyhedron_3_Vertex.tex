@@ -1,0 +1,121 @@
+% +------------------------------------------------------------------------+
+% | Reference manual page: Vertex.tex
+% +------------------------------------------------------------------------+
+% | 17.03.1999   Lutz Kettner
+% | Package: Polyhedron
+% | 
+\RCSdef{\RCSVertexRev}{$Revision$}
+\RCSdefDate{\RCSVertexDate}{$Date$}
+% +------------------------------------------------------------------------+
+
+\ccRefPageBegin
+
+%%RefPage: end of header, begin of main body
+% +------------------------------------------------------------------------+
+
+
+\begin{ccRefClass}[Polyhedron_3<Traits>::]{Vertex}
+
+\ccDefinition
+  
+A vertex optionally stores a point and a reference to an incident
+halfedge that points to the vertex.  Type tags indicate whether these
+member functions are supported.  
+Figure~\ccTexHtml{\ref{figurePolyOptionalMethods} on page 
+\pageref{figurePolyOptionalMethods}}{}\begin{ccHtmlOnly}
+  <A HREF="Halfedge.html#figurePolyOptionalMethods"><IMG 
+  SRC="cc_ref_up_arrow.gif" ALT="reference arrow" WIDTH="10" HEIGHT="10"></A>
+\end{ccHtmlOnly}
+depicts the relationship between a halfedge and its incident
+halfedges, vertices, and facets. The circulator is assignable to the
+\ccc{Halfedge_handle}. The circulator is bidirectional if the
+halfedge provided to the polyhedron with the \ccc{Items} template
+argument provides a member function \ccc{prev()}, otherwise it is
+of the forward category.
+
+
+\ccInclude{CGAL/Polyhedron_3.h}
+
+\ccTypes
+\ccThree{Halfedge_const_handle}{h.halfedge() const;;}{}
+\ccThreeToTwo
+
+\ccNestedType{Halfedge}{type of incident halfedges.}
+\ccGlue
+\ccNestedType{Facet}{type of incident facets.}
+\ccGlue
+\ccNestedType{Point_3}{point type stored in vertices.}
+
+\ccNestedType{Vertex_handle}{handle to vertex.}
+\ccGlue
+\ccNestedType{Halfedge_handle}{handle to halfedge.}
+\ccGlue
+\ccNestedType{Facet_handle}{handle to facet.}
+\ccGlue
+\ccNestedType{Halfedge_around_vertex_circulator}{circulator of
+  halfedges around a vertex.}
+
+\ccNestedType{Vertex_const_handle}{}
+\ccGlue
+\ccNestedType{Halfedge_const_handle}{}
+\ccGlue
+\ccNestedType{Facet_const_handle}{}
+\ccGlue
+\ccNestedType{Halfedge_around_vertex_const_circulator}{}
+
+\ccNestedType{Supports_vertex_halfedge}{$\equiv$ \ccc{CGAL::Tag_true} or 
+  \ccc{CGAL::Tag_false}.}
+\ccGlue
+\ccNestedType{Supports_vertex_point}{$\equiv$ \ccc{CGAL::Tag_true} or 
+  \ccc{CGAL::Tag_false}.}
+
+
+\ccCreation
+\ccCreationVariable{v}
+
+\ccConstructor{Vertex();}{default constructor.}
+\ccGlue
+\ccConstructor{Vertex( const Point& p);}{vertex initialized with a point.}
+
+\ccTagFullDeclarations
+\ccHeading{Operations available if \ccc{Supports_vertex_point} $\equiv$ 
+           \ccc{CGAL::Tag_true}}
+
+\ccMethod{Point_3&       point();}{}
+\ccGlue
+\ccMethod{const Point_3& point() const;}{the point.}
+
+\newpage
+\ccHeading{Operations available if \ccc{Supports_vertex_halfedge} $\equiv$ 
+           \ccc{CGAL::Tag_true}}
+
+\ccMethod{Halfedge_handle       halfedge();}{}
+\ccGlue
+\ccMethod{Halfedge_const_handle halfedge() const;}{
+    an incident halfedge that points to \ccVar.}
+
+%%\ccThree{Halfedge_const_handleh.halfedge() const;}{;}{}
+\ccMethod{Halfedge_around_vertex_circulator       vertex_begin();}{}
+
+\ccMethod{Halfedge_around_vertex_const_circulator vertex_begin() const;}
+    {circulator of halfedges around the vertex (clockwise).}
+
+\ccMethod{void set_halfedge( Halfedge_handle h);}
+    {sets incident halfedge to \ccc{h}.
+     \ccPrecond \ccc{h} is incident, i.e., \ccc{h->vertex() ==} \ccVar.}
+
+\ccSeeAlso
+
+\ccRefIdfierPage{CGAL::Polyhedron_3<Traits>::Halfedge}\\
+\ccRefIdfierPage{CGAL::Polyhedron_3<Traits>::Facet}\\
+\ccRefIdfierPage{CGAL::Polyhedron_3<Traits>}
+
+\ccTagDefaults
+\end{ccRefClass}
+
+% +------------------------------------------------------------------------+
+%%RefPage: end of main body, begin of footer
+\ccRefPageEnd
+% EOF
+% +------------------------------------------------------------------------+
+

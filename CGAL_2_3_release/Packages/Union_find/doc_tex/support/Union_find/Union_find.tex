@@ -1,0 +1,93 @@
+\begin{ccRefClass}{Union_find<T,A>}\ccCreationVariable{P}
+
+\ccDefinition
+
+An instance \ccc{P} of the data type \ccc{Union_find<T,A>} is a
+partition of values of type \ccc{T} into disjoint sets.  The type
+\ccc{A} has to be a model of the allocator concept as defined in the
+C++ standard.
+
+
+\ccSetOneOfTwoColumns{6cm}
+
+\ccTypes
+
+\ccNestedType{value_type}{values stored in items (equals \ccc{T}).  }
+
+\ccNestedType{handle}{handle to values.  }
+
+\ccNestedType{iterator}{iterator over values.  }
+
+There are also constant versions \ccc{const_handle} and
+\ccc{const_iterator}.
+
+
+\ccNestedType{allocator}{allocator. 
+}
+
+\ccSetOneOfTwoColumns{5cm}
+
+\ccCreation
+
+\ccConstructor{Union_find<T,A>()}{creates an instance \ccc{P} of type
+  \ccc{Union_find<T,A>} and initializes it to the empty partition.  }
+
+\ccSetTwoOfThreeColumns{2cm}{3cm}
+
+\ccOperations
+
+\ccMethod{allocator get_allocator() ;}{the allocator of \ccc{P}.  }
+
+\ccMethod{size_t number_of_sets() ;}{returns the number of disjoint
+  sets of \ccc{P}.  }
+
+\ccMethod{size_t size() ;}{returns the number of values of \ccc{P}.  }
+
+\ccMethod{size_t bytes() ;}{returns the memory consumed by \ccc{P}.  }
+
+\ccMethod{size_t size(handle p) ;}{returns the size of the set
+  containing $p$.  }
+
+\ccMethod{void clear();}{reinitializes \ccc{P} to an empty partition.
+  }
+
+\ccMethod{handle make_set(const T& x);}{creates a new singleton set
+  containing \ccc{x} and returns a handle to it.  }
+
+\ccMethod{handle push_back(const T& x) ;}{same as \ccc{make_set(x)}.
+  }
+
+\ccMethod{template <class Forward_iterator> void
+  insert(Forward_iterator first, Forward_iterator beyond) ;}{insert
+  the range of values referenced by \ccc{[first,beyond)}.  \ccRequire
+  value type of \ccc{Forward_iterator} is \ccc{T}.  }
+
+\ccMethod{handle find(handle p) ;}{returns a canonical handle of the
+  set that contains \ccc{p}, i.e., \ccc{P.same_set(p,q)} iff
+  \ccc{P.find(p)} and \ccc{P.find(q)} return the same handle.
+  \ccPrecond \ccc{p} is a handle in \ccc{P}.  }
+
+\ccMethod{void unify_sets(handle p, handle q);}{unites the sets of
+  partition \ccc{P} containing $p$ and $q$. \ccPrecond $p$ and $q$ are
+  in \ccc{P}.  }
+
+\ccMethod{bool same_set(handle p, handle q) ;}{returns true iff $p$
+  and $q$ belong to the same set of \ccc{P}. \ccPrecond $p$ and $q$
+  are in \ccc{P}.  }
+
+\ccMethod{iterator begin() ;}{returns an iterator pointing to the
+  first value of \ccc{P}.  }
+
+\ccMethod{iterator end() ;}{returns an iterator pointing beyond the
+  last value of \ccc{P}.  }
+
+\ccImplementation
+
+\ccc{Union_find<T,A>} is implemented with union by rank and path
+compression.  The running time for $m$ set operations on $n$ elements
+is $O(n \alpha(m,n))$ where $\alpha(m,n)$ is the extremly slow growing
+inverse of Ackermann's function.
+
+\end{ccRefClass}
+
+

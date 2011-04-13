@@ -1,0 +1,109 @@
+#! /bin/sh
+#
+# This is the test script for the CGAL-library.
+#
+# Usage:
+#   run_testsuite                  for running the test suite in all subdirectories
+#   run_testsuite <directory-list> for running the test suite in the listed
+#                                  subdirectories
+#
+# To use this script you have to do two things:
+#
+# 1) enter the makefiles of the platforms that you want to test with (below)
+# 2) set some additional compiler and or linker flags
+
+#TESTSUITE_CXXFLAGS="-Wall"
+TESTSUITE_CXXFLAGS=""
+TESTSUITE_LDFLAGS=""
+
+CURRENTDIR=`pwd`
+ERRORFILE=${CURRENTDIR}/error.txt
+
+#clear the error file
+/bin/rm -f $ERRORFILE
+/bin/touch $ERRORFILE
+
+#test_directory <directory>
+test_directory()
+{
+  cd $CURRENTDIR
+  if [ -d $1 ] ; then
+    echo "DIRECTORY $1:"                
+    echo                                
+
+    echo "DIRECTORY $1:"                 >> $ERRORFILE
+    echo                                 >> $ERRORFILE
+    cd $1
+
+    COMPILER_OUTPUT=CompilerOutput_$PLATFORM
+    /bin/rm -f $COMPILER_OUTPUT
+    ERROR_OUTPUT=ErrorOutput_$PLATFORM
+    /bin/rm -f $ERROR_OUTPUT
+
+    echo "------------------------------------------------------------------" >> $COMPILER_OUTPUT
+    echo "- Compiler output from platform $PLATFORM"                          >> $COMPILER_OUTPUT
+    echo "------------------------------------------------------------------" >> $COMPILER_OUTPUT
+    echo                                                                      >> $COMPILER_OUTPUT
+
+    echo "------------------------------------------------------------------" >> $ERROR_OUTPUT
+    echo "- Error output from platform $PLATFORM"                             >> $ERROR_OUTPUT
+    echo "------------------------------------------------------------------" >> $ERROR_OUTPUT
+    echo                                                                      >> $ERROR_OUTPUT
+
+    if [ -f cgal_test -a -x cgal_test ] ; then
+      export PLATFORM CGAL_MAKEFILE TESTSUITE_CXXFLAGS TESTSUITE_LDFLAGS
+      /bin/rm -f error.txt
+      ./cgal_test 2>&1 | tee -a $COMPILER_OUTPUT
+
+      if [ -f error.txt ] ; then
+        /bin/cat error.txt >> $ERRORFILE
+        /bin/cat error.txt >> $ERROR_OUTPUT
+      else
+        echo "ERROR: the script cgal_test failed to generate output" >> $ERRORFILE
+      fi
+    else
+      echo "      Could not execute the script cgal_test in directory $1"
+      echo "ERROR: could not execute the script $1/cgal_test" >> $ERRORFILE
+    fi
+    echo >> $ERRORFILE
+    echo >> $ERROR_OUTPUT
+  fi
+  echo
+}
+
+#run_testsuite <makefile>
+run_testsuite()
+{
+  CGAL_MAKEFILE=$1
+  PLATFORM=`/bin/basename $1 | /bin/sed -e "s/makefile_//g"`
+
+  echo "---------------------------------------------------------------"
+  echo "- Testing platform $PLATFORM"                         
+  echo "---------------------------------------------------------------"
+  echo                                                                  
+
+  echo "---------------------------------------------------------------" >> $ERRORFILE
+  echo "- TEST RESULTS FROM PLATFORM $PLATFORM"                          >> $ERRORFILE
+  echo "---------------------------------------------------------------" >> $ERRORFILE
+  echo                                                                   >> $ERRORFILE
+
+  for DIR in $TEST_DIRECTORIES ; do
+    test_directory $DIR
+  done
+}
+
+if [ -z "$1" ] ; then
+  TEST_DIRECTORIES=`/bin/ls`
+else
+  TEST_DIRECTORIES="$*"
+fi
+
+#-------------------------------------------------------------------$
+# Add a line
+#
+# run_testsuite <include makefile>
+#
+# for all platforms that you want to test with.
+#-------------------------------------------------------------------$
+
+run_testsuite $CGAL_MAKEFILE

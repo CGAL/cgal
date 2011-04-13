@@ -1,0 +1,6 @@
+1) stlport/
+A "hacked" STLport for use with MSVC-6.
+Based on STLport V3.2.1.
+
+2) vc7/
+fixes for the native STL of VC7.0

@@ -1,0 +1,147 @@
+% +------------------------------------------------------------------------+
+% | Reference manual page: Triangulation_traits_2.tex
+% +------------------------------------------------------------------------+
+% | 06.04.2000   Author
+% | Package: Package
+% | 
+\RCSdef{\RCSTriangulationtraitsRev}{$Revision$}
+\RCSdefDate{\RCSTriangulationtraitsDate}{$Date$}
+% |
+%%RefPage: end of header, begin of main body
+% +------------------------------------------------------------------------+
+
+
+\begin{ccRefConcept}{TriangulationTraits_2}
+
+%% \ccHtmlCrossLink{}     %% add further rules for cross referencing links
+%% \ccHtmlIndexC[concept]{} %% add further index entries
+
+\ccDefinition
+  
+The concept \ccRefName\ describes 
+ the set of requirements to be
+fulfilled
+by any class used to instantiate the first template parameter of the class 
+\ccc{Triangulation_2<Traits,Tds>}.
+This concept provides the types of the geometric primitives used in the
+triangulation and some function object types
+for the required predicates on those primitives.
+
+\ccTypes
+\ccNestedType{Point_2}{The  point type.}
+\ccGlue
+\ccNestedType{Segment_2}{The segment  type.}
+\ccGlue
+\ccNestedType{Triangle_2}{The triangle type.}
+
+\ccNestedType{Construct_segment_2} {A constructor object for
+\ccc{Segment_2}.Must provide \ccc{Segment_2 operator()(Point_2 p,Point_2
+                       q)}, which constructs a  segment from two points.}
+\ccGlue
+\ccNestedType{Construct_triangle_2} {A constructor object for
+\ccc{Triangle_2}.Must provide \ccc{Triangle_2 operator()(Point_2 p,Point_2
+                       q,Point_2 r )}, which constructs a triangle from three points.}
+
+\ccNestedType{Compare_x_2}{Predicate object. Must provide
+the operator 
+\ccc{Comparison_result operator()(Point p, Point q)}
+which returns 
+\ccc{SMALLER, EQUAL} or \ccc{ LARGER}
+ according ding to the
+$x$-ordering of points \ccc{p} and \ccc{q}.}
+\ccGlue
+\ccNestedType{Compare_y_2}{Predicate object. Must proveide
+the operator 
+\ccc{Comparison_result operator()(Point p, Point q)}
+which returns the
+(\ccc{SMALLER, EQUAL} or \ccc{ LARGER})
+according to the
+$y$-ordering of points \ccc{p} and \ccc{q}.}
+\ccGlue
+\ccNestedType{Orientation_2}{Predicate object. Must provide
+the  operator
+\ccc{Orientation operator()(Point p, Point q, Point r)}
+which returns
+\ccc{LEFTTURN} (resp. \ccc{RIGHTTURN}) is $r$ is on the left 
+(resp. on the right) of the oriented line \ccc{pq}
+and \ccc{COLLINEAR} is the three points are colinear.}
+\ccGlue
+\ccNestedType{Side_of_oriented_circle_2}{Predicate object. Must
+provide the operator
+\ccc{Oriented_side operator()(Point p, Point q, Point r, Point s)}
+which takes four points $p, q, r, s$ as arguments and returns
+\ccc{ON_POSITIVE_SIDE}, \ccc{ON_NEGATIVE_SIDE} or, 
+\ccc{ON_ORIENTED_BOUNDARY} according to the position of points \ccc{s}
+with respect to the oriented circle through  through $p,q$
+and $r$.
+ This type is required only if the function 
+\ccc{side_of_oriented_circle(Face_handle f, const Point & p)} is
+called.}
+
+
+\ccNestedType{Construct_circumcenter_2}{Constructor object. Provides
+the operator 
+\ccc{ Point operator()(Point p, Point q, Point r)} which returns
+the  circumcenter of the three points  \ccc{p, q} anf \ccc{r}.
+This type is required only if  the function 
+\ccc{Point circumcenter(Face_handle  f)}is called.}
+
+\ccCreation
+\ccCreationVariable{traits}  %% choose variable name
+Only a default constructor, copy constructor
+ and an assignement operator are required. 
+Note that further constructors
+can be provided. 
+
+\ccConstructor{TriangulationTraits_2();}{default constructor.}
+\ccGlue
+\ccConstructor{TriangulationTraits_2(TriangulationTraits_2);}
+{Copy constructor}
+\ccMethod{TriangulationTraits_2 operator=(TriangulationTraits_2 gtr);}
+{Assignment operator.}
+
+\ccHeading{Predicate functions}
+The following functions give access to the  predicate 
+and constructor objects.
+\ccThree{Construct_segment_2}{gt.compare_x(Point p0, Point p1)x}{}
+\ccMethod{Construct_segment_2 construct_segment_2_object();}{}
+\ccGlue
+\ccMethod{Construct_triangle_2 construct_triangle_2_object();}{}
+\ccGlue
+\ccMethod{Comparison_x_2 compare_x_2_object();}{}                               \ccGlue
+\ccMethod{Comparison_y_2 compare_y_2_object();}{}
+\ccGlue
+\ccMethod{Orientation_2  orientation_2_object();}{}
+\ccGlue
+\ccMethod{Side_of_oriented_circle_2
+side_of_oriented_circle_2_object();}
+{Required only
+if \ccc{side_of_oriented_circle(Face_handle f, const Point & p)} is
+called.}
+\ccGlue
+\ccMethod{Construct_circumcenter_2 construct_circumcenter_2_object();}
+{Required only
+if \ccc{Point circumcenter(Face_handle  f)}is called.}
+
+
+
+\ccHasModels
+\ccc{CGAL::Cartesian<R>} \\
+\ccc{CGAL::Homogeneous<R>} \\
+\ccc{CGAL::Triangulation_euclidean_traits_2<R>} \\
+\ccc{CGAL::Triangulation_euclidean_traits_xy_3<R>} \\
+\ccc{CGAL::Triangulation_euclidean_traits_yz_3<R>} \\
+\ccc{CGAL::Triangulation_euclidean_traits_zx_3<R>} \\
+
+\ccSeeAlso
+\ccc{CGAL::Triangulation_2<Traits,Tds>}
+
+
+
+\end{ccRefConcept}
+
+% +------------------------------------------------------------------------+
+%%RefPage: end of main body, begin of footer
+% EOF
+% +------------------------------------------------------------------------+
+

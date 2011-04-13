@@ -1,0 +1,23 @@
+There following programs are availalbe here to illustrate some of the 2D
+convex hull functions available in CGAL:
+
+convex_hull_of_ipoints
+    Generates 30 random segments with coordinates in the range
+    (-256, 256) and computes the intersections of these segments
+    The segments and their intersections are displayed in the window
+    after the user clicks the mouse in the window. It then computes 
+    the convex hull of the intersection points and displays this
+    in the window.  The program exits after the user clicks once more
+    in the window.
+
+ch_of_polyline
+    Computes the convex hull of a polyline whose vertices are read from
+    standard input (cin) and displays the result in a window.  One example
+    set of input is in the file ch_of_polyline.cin.  This program uses
+    Melkman's algorithm.  If the program is compiled with the option
+    NO_DISPLAY, the output is written to a PostScript file instead of a 
+    window.
+   
+convex_hull_2_demo
+    Computes the convex hull of a set of points whose vertices are read
+    from standard input and displays the result in a window.

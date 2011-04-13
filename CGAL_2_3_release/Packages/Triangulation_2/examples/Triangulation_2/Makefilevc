@@ -1,0 +1,72 @@
+# This is the makefile for compiling a CGAL application.  
+#---------------------------------------------------------------------#
+#                    include platform specific settings
+#---------------------------------------------------------------------#
+# Choose the right include file from the <cgalroot>/make directory.
+
+
+
+#CGAL_MAKEFILE = /prisme/CGAL/CGAL-2.1-I-27/make/makefile_i686_CYGWINNT-4.0-20.1_CL.EXE-12.00.8168/
+CGAL_MAKEFILE = /prisme/CGAL/CGAL-2.1-I-30/make/makefile_i686_CYGWINNT-4.0-20.1_CL.EXE-12.00.8168
+include $(CGAL_MAKEFILE)
+
+#---------------------------------------------------------------------#
+#                    compiler flags
+#---------------------------------------------------------------------#
+
+CXXFLAGS = \
+	-I../../include \
+	-I./include \
+	$(TESTSUITE_CXXFLAGS) \
+	$(CGAL_CXXFLAGS)
+
+
+
+#---------------------------------------------------------------------#
+#                    linker flags
+#---------------------------------------------------------------------#
+
+LDFLAGS = $(TESTSUITE_LDFLAGS) \
+          $(CGAL_LDFLAGS)
+#	  $(LONG_NAME_PROBLEM_LDFLAGS) \
+
+#---------------------------------------------------------------------#
+#                    target entries
+#---------------------------------------------------------------------#
+
+points: points.obj
+	$(CGAL_CXX) -o points points.obj $(LDFLAGS)
+
+example: example.obj
+	$(CGAL_CXX) -o example example.obj $(LDFLAGS)
+
+voronoi: voronoi.obj
+	$(CGAL_CXX) -o voronoi voronoi.obj $(LDFLAGS)
+
+colored_face : colored_face.obj
+	$(CGAL_CXX) -o colored_face colored_face.obj $(LDFLAGS)
+
+triangulation_prog1 : triangulation_prog1.obj
+	$(CGAL_CXX) -o triangulation_prog1 triangulation_prog1.obj $(LDFLAGS)
+
+terrain : terrain.obj
+	$(CGAL_CXX) -o terrain terrain.obj $(LDFLAGS)
+
+regular : regular.obj
+	$(CGAL_CXX) -o regular regular.obj $(LDFLAGS)
+
+clean:
+	rm -rf *~ *.o *.obj core tr
+
+realclean: clean
+	rm -rf points example voronoi colored_face triangulation_prog1 \
+	terrain  regular *.exe \
+	Program* Compiler* Error* error.txt
+
+
+#---------------------------------------------------------------------#
+#                    suffix rules
+#---------------------------------------------------------------------#
+
+.C.obj:
+	$(CGAL_CXX)  $(CXXFLAGS) -c $<

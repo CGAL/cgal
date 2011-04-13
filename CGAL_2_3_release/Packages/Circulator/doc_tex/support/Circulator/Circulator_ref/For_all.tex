@@ -1,0 +1,68 @@
+% +------------------------------------------------------------------------+
+% | CGAL Reference Manual: For_all.tex
+% +------------------------------------------------------------------------+
+% | Requirements for circulators in analogy to STL iterators.
+% | Adaptors between circulators and iterators.
+% | Proposal for CGAL.
+% |
+% | 11.10.1996   Lutz Kettner
+% | 
+% | \RCSdef{\circRev}{$Revision$}
+% | \RCSdefDate{\circDate}{$Date$}
+% +------------------------------------------------------------------------+
+
+% +-----------------------------------------------------+
+\begin{ccRefMacro}{CGAL_For_all}
+
+\ccHtmlCrossLink{CGAL_For_all_backwards}
+\ccHtmlIndexC[macro]{CGAL_For_all_backwards}
+
+\ccDefinition
+
+In order to write algorithms that work with iterator ranges as well as
+with circulator ranges we have to consider the difference of
+representing an empty range. For iterators this is the range $[i,i)$,
+while for circulators it would be \ccc{c == NULL}, the empty sequence test.
+The function \ccc{is_empty_range} provides the necessary generic test
+which accepts an iterator range or a circulator range and says whether
+the range is empty or not.
+
+\ccInclude{CGAL/circulator.h}
+
+A macro \ccc{CGAL_For_all( i, j)} simplifies the writing of such simple
+loops as the one in the example of the function \ccc{is_empty_range}.
+\ccc{i} and \ccc{j} can be either iterators or circulators. The macro
+loops through the range [\ccc{i, j}). It increments \ccc{i} until it
+reaches \ccc{j}. The implementation looks like:
+
+\ccc{CGAL_For_all(i,j)}  \ \ \ccTexHtml{$\equiv$}{:=} \ \
+\begin{minipage}[t]{0.74\textwidth}
+\begin{verbatim}
+for ( bool _circ_loop_flag = ! ::CGAL::is_empty_range(i,j);
+      _circ_loop_flag;
+      _circ_loop_flag = ((++i) != (j)) 
+)
+\end{verbatim}
+\end{minipage}%
+
+Note that the macro behaves like a \ccc{for}-loop. It can be used with
+a single statement or with a statement block.  For bidirectional
+iterators or circulators,  a backwards loop macro
+\ccc{CGAL_For_all_backwards( i, j)} exists that decrements \ccc{j} until
+it reaches \ccc{i}.
+
+
+\ccSeeAlso
+
+\ccc{iterator_distance},
+\ccc{is_empty_range},
+\ccc{Circulator_tag},
+\ccc{Circulator_traits},\\
+\ccc{Assert_circulator_or_iterator},
+\ccc{Circulator}.
+
+
+\end{ccRefMacro}
+
+% +-----------------------------------------------------+
+% EOF

@@ -1,0 +1,59 @@
+% +------------------------------------------------------------------------+
+% | CGAL Reference Manual:  wrapper.tex
+% +------------------------------------------------------------------------+
+% | Main TeX file for testing CGAL packages.
+% +------------------------------------------------------------------------+
+
+\documentclass{book}
+
+\usepackage{alltt}
+\usepackage{cprog}
+\usepackage{cc_manual}
+\usepackage{cc_manual_index}
+\usepackage{makeidx}
+\usepackage{latex_converter}
+\usepackage{amssymb}
+\usepackage{graphicx}
+\usepackage{path}
+
+% page dimensions
+% ---------------
+\textwidth 15.6cm 
+\textheight 23 cm
+\topmargin -14mm       
+\evensidemargin 3mm 
+\oddsidemargin 3mm
+
+\marginparsep12mm
+\marginparwidth13mm
+
+\sloppy
+
+\makeindex
+
+\begin{document}
+
+\def\ccTagChapterAuthor{\ccTrue}
+\def\ccTagChapterRelease{\ccTrue}
+
+% default column layout
+% ---------------------
+\newcommand{\cgalColumnLayout}{%
+    \ccSetThreeColumns{CGAL_Oriented_side}{}{\hspace*{8.5cm}}%
+    \ccPropagateThreeToTwoColumns
+}
+\cgalColumnLayout
+
+\renewcommand{\ccRefPageBegin}{\ccParDims\cgalColumnLayout}
+\ccDefGlobalScope{CGAL::}
+
+\input{kd-tree}
+\input{SearchStructures_ref/kd_main}
+
+\bibliographystyle{alpha}
+\bibliography{geom,cgal}
+\printindex
+
+\end{document}
+
+%% EOF %%

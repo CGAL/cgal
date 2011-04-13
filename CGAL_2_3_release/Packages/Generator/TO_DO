@@ -1,0 +1,12 @@
+Add generator for d-dimensional points.
+
+When the Polygon_2 class is converted to use kernel traits,
+change the traits requirements for random_polygon_2
+
+Convert the doc to the new style.
+
+>1. Adding a demo that demonstrate a pertubation of points.
+>   Here, an application that collects points by mouse and
+>   reads the rectangles sizes from the user can be implemented.
+
+add example for random convex set

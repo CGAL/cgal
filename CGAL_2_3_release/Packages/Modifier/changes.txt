@@ -1,0 +1,26 @@
+Modifier Package: Release changes:
+---------------------------------------------------------------------
+1.3.3 (25 July 2001)
+     fixed unresolved figure reference in html manual
+
+1.3.2 removed wrapper.tex 
+1.3.1 removed test makefile
+
+1.3 (22 Nov 1999)
+
+     Integrated in the CVS server [sylvain]
+
+1.2 (07 Apr 1999)
+
+     Fixes testprogram for g++ 2.8.1 (derivation from namespace std::
+     classes problem).
+
+1.1 (07 Mar 1999)
+
+     Standard headers, std namespace and CGAL namespace.
+     This new package is spawned from the STL_Extension package
+     1.18 (19 Jan 1999). The Modifier_base class is here separated 
+     in its own package to reflect that it has its own chapter in 
+     the manual.
+
+

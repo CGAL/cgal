@@ -1,0 +1,81 @@
+% +------------------------------------------------------------------------+
+% | Reference manual page: convex_hull_incremental_3.tex
+% +------------------------------------------------------------------------+
+% | 09.05.2001   Susan Hert, Stefan Schirra, Michael Seel
+% | Package: Convex_hull_3
+% | 
+% +------------------------------------------------------------------------+
+
+
+\begin{ccRefFunction}{convex_hull_incremental_3}  
+\ccIndexMainItemBegin{convex hull, 3D}
+\ccIndexSubitemBegin{convex hull, 3D}{incremental}
+
+\ccDefinition
+  
+The function \ccRefName\ computes the convex hull polyhedron from a set
+of given three-dimensional points.  
+
+
+\ccInclude{CGAL/convex_hull_incremental_3.h}
+
+\ccFunction{template <class InputIterator, class Polyhedron>
+            void
+            convex_hull_incremental_3(InputIterator first, 
+                                                 InputIterator beyond, 
+                                                 Polyhedron& P, 
+                                                 bool test_correctness = false);
+            }
+            {computes the convex hull polyhedron 
+            of the points in the range [\ccc{first},\ccc{beyond})
+            and assigns it to \ccc{P}.  If \ccc{test_correctness} is set to
+            \ccc{true}, the tests described in \cite{mnssssu-cgpvg-96} are
+            used to determine the correctness of the resulting polyhedron.
+            }
+
+\ccHeading{Requirements}
+\begin{enumerate}
+   \item    \ccc{Polyhedron} must provide a type \ccc{Polyhedron::Traits}
+            that defines the following types
+             \begin{itemize}
+               \item \ccc{Polyhedron::Traits::R}, which is a model of 
+                     the representation class \ccc{R} required by
+                     \ccc{CGAL::Convex_hull_d_traits_3<R>}
+               \item \ccc{Polyhedron::Traits::Point}
+             \end{itemize}
+   \item    \ccc{InputIterator::value_type} must be the same as
+            \ccc{Polyhedron::Traits::Point}
+\end{enumerate}
+
+\ccSeeAlso
+
+\ccRefIdfierPage{CGAL::convex_hull_3} \\
+\ccRefIdfierPage{CGAL::convex_hull_2} 
+
+\ccImplementation
+
+This function uses the $d$-dimensional convex hull incremental construction 
+algorithm \cite{cms:fourresults-93}
+with $d$ fixed to 3.  The algorithm requires $O(n^2)$ time in the
+worst case and $O(n \log n)$ expected time.
+
+\ccSeeAlso
+
+\ccRefIdfierPage{CGAL::Convex_hull_d<R>}
+
+\ccExample
+
+The following example computes the convex hull of a set of 250 random 
+points chosen uniformly in a sphere of radius 100.
+
+\ccIncludeExampleCode{Convex_hull_3/incremental_hull_3_ex.C}
+
+\ccIndexSubitemEnd{convex hull, 3D}{incremental}
+\ccIndexMainItemEnd{convex hull, 3D}
+\end{ccRefFunction}
+
+% +------------------------------------------------------------------------+
+%%RefPage: end of main body, begin of footer
+% EOF
+% +------------------------------------------------------------------------+
+

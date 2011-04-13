@@ -1,0 +1,61 @@
+% +------------------------------------------------------------------------+
+% | Reference manual page: Pm_segment_epsilon_traits.tex (Planar_map)
+% +------------------------------------------------------------------------+
+% | 
+% | Package: pm (Planar_map_2)
+% | 
+% +------------------------------------------------------------------------+
+
+\ccRefPageBegin
+
+%%RefPage: end of header, begin of main body
+% +------------------------------------------------------------------------+
+
+\begin {ccRefClass} {Pm_segment_epsilon_traits<R>}
+    %\ccDefinition 
+    The class
+    \ccStyle{Pm_segment_epsilon_traits<R>} is used for finite
+    precision (floating-point) arithmetic. 
+    This is a temporary Traits
+    Class.  (We plan to implement more sophisticated methods to handle
+    floating point arithmetic at a later stage.) 
+    The class uses a
+    predefined $\varepsilon$ (of type \ccStyle{double}) to decide
+    whether two values should be considered the same.  Two real values
+    $a$ and $b$ are considered equal if $|a - b| < \varepsilon$. Thus
+    when $L_{\infty}$ norm is used, two points $p_1$, $p_2$ are
+    treated as the same point if $\| p_1 - p_2\|_{\infty} =
+    \max(|p_1.x() - p_2.x()|, |p_1.y() - p_2.y()|) < \varepsilon $.
+    The value of $\varepsilon$ can be determined through the class's
+    constructor. 
+
+\ccInclude{ CGAL/Pm_segment_epsilon_traits.h }
+
+\ccIsModel
+    \ccc{PlanarMapTraits_2}
+ 
+%    \ccTypes
+    
+%    \ccNestedType{Point}{of type \ccStyle{Point_2<R>}}
+
+%    \ccNestedType{X_curve}{of type \ccStyle{Segment_2<R>}}
+
+%    \ccNestedType{Info_face}{of type \ccStyle{int}}
+    
+%    \ccNestedType{Info_edge}{of type \ccStyle{int}}
+    
+%    \ccNestedType{Info_vertex}{of type \ccStyle{int}}
+
+%    \ccCreation
+%    \ccCreationVariable{T_fp}
+     
+%    \ccConstructor{Pm_segment_epsilon_traits(double eps = 0.0001 );} 
+%    {}
+ 
+\end{ccRefClass} % Pm_segment_epsilon_traits
+
+% +------------------------------------------------------------------------+
+%%RefPage: end of main body, begin of footer
+\ccRefPageEnd
+% EOF
+% +------------------------------------------------------------------------+

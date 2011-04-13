@@ -1,0 +1,52 @@
+% +------------------------------------------------------------------------+
+% | Reference manual page: Pm_dcel.tex (Planar_map)
+% +------------------------------------------------------------------------+
+% | 
+% | Package: pm (Planar_map_2)
+% | 
+% +------------------------------------------------------------------------+
+
+\ccRefPageBegin
+
+%%RefPage: end of header, begin of main body
+% +------------------------------------------------------------------------+
+
+\begin{ccRefClass}{Pm_dcel<V,H,F>}
+
+\ccDefinition
+
+    The \ccClassTemplateName\ is a model of the Dcel concept
+    defined above. Its template parameters are the vertex, halfedge and face
+    classes which conform to the requirements given above.
+
+\ccInclude{CGAL/Pm_default_dcel.h}
+
+\ccIsModel
+    \ccc{PlanarMapDcel_2}
+
+\ccHeading{Models for Dcel Vertex, Halfedge and Face}
+The \ccStyle{Pm_vertex_base<Point>} is a model for the 
+Dcel vertex concept defined above. 
+The \ccStyle{Pm_halfedge_base<Curve>} is a
+model for the Dcel halfedge concept defined above.
+The \ccStyle{Pm_face_base} is a
+model for the Dcel face concept defined above. 
+
+\ccInclude{CGAL/Pm_default_dcel.h}
+
+\ccHeading{The Default Dcel Structure}
+The \ccStyle{Pm_default_dcel<Traits>} is a model of the Dcel concept
+defined above. Its template parameter is the traits class defined below.
+It is a wrapper for \ccStyle{Pm_dcel} instantiated 
+with \ccStyle{Pm_vertex_base<Traits::Point>},
+\ccStyle{Pm_halfedge_base<Traits::X_curve>} and 
+\ccStyle{Pm_face_base}.
+
+\ccInclude{CGAL/Pm_default_dcel.h}
+
+\end{ccRefClass}
+% +------------------------------------------------------------------------+
+%%RefPage: end of main body, begin of footer
+\ccRefPageEnd
+% EOF
+% +------------------------------------------------------------------------+

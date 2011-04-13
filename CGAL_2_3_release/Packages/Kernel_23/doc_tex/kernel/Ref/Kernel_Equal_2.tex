@@ -1,0 +1,57 @@
+\begin{ccRefFunctionObjectConcept}{Kernel::Equal_2}
+\ccCreationVariable{fo}
+
+A model for this must provide the following operations. For all of
+them \ccVar\ccc{(x,y)} returns true iff $x$ and $y$ are equal.
+
+\ccMemberFunction{bool operator()(const Kernel::Point_2& x, 
+                                  const Kernel::Point_2& y);}
+{}
+
+\ccMemberFunction{bool operator()(const Kernel::Vector_2& x, 
+                                  const Kernel::Vector_2& y);}
+{}
+
+\ccMemberFunction{bool operator()(const Kernel::Direction_2& x, 
+                                  const Kernel::Direction_2& y);}
+{}
+
+\ccMemberFunction{bool operator()(const Kernel::Line_2& x, 
+                                  const Kernel::Line_2& y);}
+{}
+
+\ccMemberFunction{bool operator()(const Kernel::Ray_2& x, 
+                                  const Kernel::Ray_2& y);}
+{}
+
+\ccMemberFunction{bool operator()(const Kernel::Segment_2& x, 
+                                  const Kernel::Segment_2& y);}
+{}
+
+\ccMemberFunction{bool operator()(const Kernel::Circle_2& x, 
+                                  const Kernel::Circle_2& y);}
+{}
+
+\ccMemberFunction{bool operator()(const Kernel::Triangle_2& x, 
+                                  const Kernel::Triangle_2& y);}
+{}
+
+\ccMemberFunction{bool operator()(const Kernel::Iso_rectangle_2& x, 
+                                  const Kernel::Iso_rectangle_2& y);}
+{}
+
+\ccRefines
+AdaptableFunctor
+
+\ccSeeAlso
+\ccRefIdfierPage{CGAL::Circle_2<R>} \\
+\ccRefIdfierPage{CGAL::Direction_2<R>} \\
+\ccRefIdfierPage{CGAL::Iso_rectangle_2<R>} \\
+\ccRefIdfierPage{CGAL::Line_2<R>} \\
+\ccRefIdfierPage{CGAL::Point_2<R>} \\
+\ccRefIdfierPage{CGAL::Ray_2<R>} \\
+\ccRefIdfierPage{CGAL::Segment_2<R>} \\
+\ccRefIdfierPage{CGAL::Triangle_2<R>} \\
+\ccRefIdfierPage{CGAL::Vector_2<R>}\\
+
+\end{ccRefFunctionObjectConcept}

@@ -1,0 +1,138 @@
+% +------------------------------------------------------------------------+
+% | Reference manual page: Triangulation_Traits_3.tex
+% +------------------------------------------------------------------------+
+% | 27.3.2000   Monique Teillaud
+% | Package: Triangulation3
+% | 
+\RCSdef{\RCSTriangulationTraitsRev}{$Revision$}
+\RCSdefDate{\RCSTriangulationTraitsDate}{$Date$}
+% |
+%%RefPage: end of header, begin of main body
+% +------------------------------------------------------------------------+
+
+
+\begin{ccRefConcept}{DelaunayTriangulationTraits_3}
+
+%% \ccHtmlCrossLink{}     %% add further rules for cross referencing links
+%% \ccHtmlIndexC[concept]{} %% add further index entries
+
+To be used by \protect 
+\ccc{Delaunay_triangulation_3<DelaunayTriangulationTraits_3, Tds_3>}
+
+\ccDefinition
+In addition to the requirements described for the traits class of a 3D 
+triangulation \ccc{TriangulationTraits_3}, 
+the geometric traits
+class of a Delaunay triangulation must fulfill the following
+requirements:
+
+\ccTwo{DelaunayTriangulationTraits_3}{}
+
+\ccNestedType{Side_of_oriented_sphere_3}{Predicate object. Must provide
+the operator\\
+\ccc{Oriented_side operator()(Point p, Point q, Point r, Point s, Point test)}
+which determines on which side of the oriented sphere circumscribing 
+\ccc{p, q, r, s} the point \ccc{test} lies.}
+%
+\ccGlue
+%
+\ccNestedType{Coplanar_side_of_bounded_circle_3}{Predicate object. Must provide
+the operator\\
+\ccc{Bounded_side operator()(Point p, Point q, Point r, Point s)}
+which determines the bounded side of the circle defined
+by \ccc{p}, \ccc{q}, and \ccc{r} on which \ccc{s} lies.
+\ccPrecond \ccc{p}, \ccc{q}, \ccc{r}, and \ccc{s} are coplanar and
+\ccc{p}, \ccc{q}, and \ccc{r} are not collinear.}
+
+\ccTwo{DelaunayTriangulationTraits_3::Direction_3xxx}{}
+
+\ccNestedType{Line_3}{The line type.}
+\ccGlue
+\ccNestedType{Plane_3}{The plane type.}
+\ccGlue
+\ccNestedType{Ray_3}{The ray type.}
+\ccGlue
+\ccNestedType{Direction_3}{The direction type.}
+\ccGlue
+\ccNestedType{Object_3}{The object type.}
+
+In addition, in order to display a Voronoi diagram, the traits class
+must provide the following:
+
+\ccTwo{DelaunayTriangulationTraits_3}{}
+\ccNestedType{Construct_circumcenter_3}{A constructor object that
+must provide the operator\\
+\ccc{Point_3 operator()(Point_3 p, Point_3 q, 
+                                         Point_3 r, Point_3 s)}
+that contructs the circumcenter of four non coplanar points and the operator\\
+\ccc{Point_3 operator()(Point_3 p, Point_3 q, Point_3 r)}
+that contructs the circumcenter of three non collinear points.}
+\ccGlue
+\ccNestedType{Construct_plane_3}{A constructor object
+that must provide the operator\\
+\ccc{Plane_3 operator()(Point_3 p, Point_3 q, Point_3 r)}
+that constructs the plane passing through the non collinear points
+\ccc{p}, \ccc{q} and \ccc{r}.}
+\ccGlue
+\ccNestedType{Construct_perpendicular_line_3}{A constructor object
+that must provide the operator\\
+\ccc{Line_3 operator()(Plane_3 pl, Point_3 p)}
+that constructs the line perpendicular to \ccc{pl} and passing through
+\ccc{p}.}
+\ccGlue
+\ccNestedType{Construct_direction_of_line_3}{A constructor object
+that must provide the operator\\
+\ccc{Direction_3 operator()(Line_3 l)} that constructs the oriented
+direction of \ccc{l}.} 
+\ccGlue
+\ccNestedType{Construct_ray_3}{A constructor object
+that must provide the operator\\
+\ccc{Ray_3 operator()(Point_3 p, Direction_3 d)} that constructs the
+ray starting at \ccc{p} and with direction \ccc{d}.}
+\ccGlue
+\ccNestedType{Construct_object_3}{A constructor object
+that must provide the operators\\
+\ccc{Object_3 operator()(Point_3 p)},\\
+\ccc{Object_3 operator()(Segment_3 s)} and\\
+\ccc{Object_3 operator()(Ray_3 r)}\\
+that construct an object respectively from a point, a segment and a ray.}
+
+
+\ccOperations
+
+The following functions give access to the predicate and construction objects:
+
+\ccThree{coplanar_side_of_bounded_circle_3xxx}{gt.compare_x(Point p0, Point p1)x}{}
+\ccCreationVariable{traits}  %% choose variable name
+
+\ccMethod{Side_of_oriented_sphere_3 side_of_oriented_sphere_3_object();}{}
+\ccGlue
+\ccMethod{Coplanar_side_of_bounded_circle_3 coplanar_side_of_bounded_circle_3_object();}{}
+
+The following functions must be provided only if the methods of 
+\ccc{Delaunay_triangulation_3} returning elements of the Voronoi diagram 
+are instantiated:
+
+\ccMethod{Point_3 construct_circumcenter_3_object();}{}
+\ccGlue
+\ccMethod{Line_3 construct_perpendicular_line_object();}{}
+\ccGlue
+\ccMethod{Plane_3 construct_plane_3_object();}{}
+\ccGlue
+\ccMethod{Direction_3 construct_direction_of_line_3_object();}{}
+\ccGlue
+\ccMethod{Ray_3 construct_ray_3_object();}{}
+\ccGlue
+\ccMethod{Object_3 construct_object_3_object();}{}
+
+\ccHasModels
+
+The cartesian and homegenous kernels provided by \cgal.
+
+\end{ccRefConcept}
+
+% +------------------------------------------------------------------------+
+%%RefPage: end of main body, begin of footer
+% EOF
+% +------------------------------------------------------------------------+
+

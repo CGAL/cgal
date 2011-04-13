@@ -1,0 +1,15 @@
+Title: Test suite for planar maps
+Author: Herve Bronnimann (Herve.Bronnimann@sophia.inria.fr)
+Data: from the examples supplied by the package
+
+tst20:   tests the insert function
+tst21:   tests the clear function (NOT PRESENT)
+tst22:   tests the locate function (after a bunch of insertions)
+tst23:   tests the vertical rayshooting function (same as tst23)
+tst24:   tests the various face iterators / circulators with output routines
+tst25:   tests the various edge iterators
+tst26:   tests the various vertex iterators / circulators
+tst27:   tests the various ccb circulators
+tst28:   tests the various hole iterators
+tst29:   tests the various friend printing functions (in conjunction with locate)
+

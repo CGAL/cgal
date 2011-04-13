@@ -1,0 +1,26 @@
+\begin{ccRefFunctionObjectConcept}{Kernel::ConstructScaledVector_2}
+A model for this must provide:
+
+\ccCreationVariable{fo}
+
+
+\ccMemberFunction{
+template <class Kernel::RT>
+Kernel::Vector_2 operator()(const Kernel::Vector_2 &v,
+                            const Kernel::RT& scale);}
+            {produces the vector \ccc{v} scaled by a factor \ccc{scale}.}
+
+\ccMemberFunction{
+template <class Kernel::RT>
+Kernel::Vector_2 operator()(const Kernel::Vector_2 &v,
+                            const Quotient<Kernel::RT>& scale);}
+            {produces the vector \ccc{v} scaled by a factor \ccc{scale}.}
+
+
+\ccRefines
+AdaptableFunctor
+
+\ccSeeAlso
+\ccRefIdfierPage{CGAL::Vector_2<R>}\\
+
+\end{ccRefFunctionObjectConcept}

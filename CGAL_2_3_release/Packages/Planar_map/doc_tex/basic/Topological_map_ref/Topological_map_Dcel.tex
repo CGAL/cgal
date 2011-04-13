@@ -1,0 +1,138 @@
+% +------------------------------------------------------------------------+
+% | Reference manual page: Topological_map_Dcel.tex
+% +------------------------------------------------------------------------+
+% | 
+% | Package: pm (Planar Map)
+% | 
+% +------------------------------------------------------------------------+
+
+\ccRefPageBegin
+
+%%RefPage: end of header, begin of main body
+% +------------------------------------------------------------------------+
+
+\begin{ccRefConcept}{TopologicalMapDcel}
+
+A \ccc{DCEL} (Doubly Connected Edge List) consists of vertices V, edges E, facets F and an incidence relation on them. Each edge is
+represented by two halfedges with opposite orientations. 
+A \ccc{DCEL} serves as an interface for the \ccStyle{Topological_map<Dcel>} so a model of it must be provided as a template parameter.
+The predefined DCEL class
+implementation described in the next section can be used 
+as a starting point for
+building one's own DCEL class. (The naming conventions were chosen to comply 
+with those of the \ccStyle{Halfedge_data_structure}.)
+
+A model for the \ccRefName\ concept must provide the following types and operations. 
+(In addition to the requirements here, the local types 
+\ccHtmlNoLinksFrom{\ccStyle{Vertex},\ccStyle{Halfedge} and \ccStyle{Face}}
+must be models of the concepts 
+\ccc{TopologicalMapDcelVertex}\lcTex{ 
+(\ccRefPage{TopologicalMapDcelVertex})},
+\ccc{TopologicalMapDcelHalfedge}\lcTex{
+(\ccRefPage{TopologicalMapDcelHalfedge})} and
+\ccc{TopologicalMapDcelFace}\lcTex{
+(\ccRefPage{TopologicalMapDcelFace})} respectively.)
+
+%\ccRefIdfierPage{Triangulation_traits_2} \\
+\ccThree{Topological_map_Decl::Halfedge_iterator}{}{\hspace*{11cm}}
+%\ccThreeToTwo
+
+\ccTypes
+
+	\ccNestedType{Vertex}{vertex type.}
+	\ccGlue
+	\ccNestedType{Halfedge}{halfedge type.}
+	\ccGlue
+	\ccNestedType{Face}{face type.}
+	\ccGlue
+	\ccNestedType{Size}{type for size values.}
+
+	%\ccNestedType{Point}{a point associated with a vertex.}
+	%\ccNestedType{Curve}{a curve associated with an edge.}
+
+	\ccNestedType{Vertex_iterator}{a bidirectional iterator over the
+	       vertices. Its value-type is 
+               \ccStyle{Topological_map<Dcel>::Vertex}.}
+	\ccGlue
+	\ccNestedType{Halfedge_iterator}{a bidirectional iterator over the
+	       halfedges. Its value-type is 
+               \ccStyle{Topological_map<Dcel>::Halfedge}.}
+	\ccGlue
+	\ccNestedType{Face_iterator}{a bidirectional iterator over the
+	       faces. Its value-type is 
+               \ccStyle{Topological_map<Dcel>::Face}.}
+
+
+\ccCreation
+\ccCreationVariable{d}
+    
+    \ccConstructor{Pm_dcel();} {constructs an
+       empty DCEL with one outer face.}
+
+\ccThree{Halfedge_iterator}{}{\hspace*{7.5cm}}
+    
+%\ccOperations
+\ccAccessFunctions
+    
+     \ccMethod{Size  size_of_vertices() const;}{number of vertices.}
+     \ccGlue
+     \ccMethod{Size  size_of_halfedges() const;}{number of halfedges (always even).}
+     \ccGlue
+     \ccMethod{Size  size_of_faces() const;}{number of faces.}
+
+     The following operations have an equivalent \ccc{const} operations
+     such as \ccc{Vertex_const_iterator  vertices_begin();} etc.
+
+     \ccMethod{Vertex_iterator vertices_begin();}{ returns the begin-iterator of the vertices in \ccVar{}. }
+     \ccGlue
+     \ccMethod{Vertex_iterator vertices_end();}{ returns the past-the-end iterator of the vertices in \ccVar{}. }
+
+     \ccMethod{Halfedge_iterator halfedges_begin();}{ returns the begin-iterator of the halfedges in \ccVar{}. }
+     \ccGlue
+     \ccMethod{Halfedge_iterator halfedges_end();}{ returns the past-the-end iterator of the halfedges in \ccVar{}. }
+
+     \ccMethod{Vertex_iterator faces_begin();}{ returns the begin-iterator of the faces in \ccVar{}. }
+     \ccGlue
+     \ccMethod{Vertex_iterator faces_end();}{ returns the past-the-end iterator of the faces in \ccVar{}. }
+
+\ccModifiers
+
+     The following operations allocate a new element of the respective type. Halfedges 
+are always allocated in pairs of opposite halfedges. The twin pointers are 
+automatically set.
+
+     \ccHtmlNoLinksFrom{ % to avoid linkage of Vertex, etc to HDS::Vertex
+     \ccMethod{Vertex* new_vertex();}{creates a default vertex.}
+     \ccGlue
+     \ccMethod{Halfedge* new_edge();}{creates a new pair of 
+     opposite halfedges.}
+     \ccGlue
+     \ccMethod{Face* new_face();}{creates a new face.}
+
+     \ccMethod{void delete_vertex(Vertex* v);}{deletes the vertex $v$.}
+     \ccGlue
+     \ccMethod{void delete_edge(Halfedge* h);}{deletes the pair of opposite 
+     halfedges $h$.}
+     \ccGlue
+     \ccMethod{void delete_face(Face* f);}{deletes the face $f$.}
+     } % ccHtmlNoLinksFrom
+\ccHasModels
+
+     \ccc{Pm_dcel<V,H,F>}\lcTex{ (\ccRefPage{CGAL::Pm_dcel<V,H,F>})}\\
+
+\ccSeeAlso
+     \ccc{TopologicalMapDcelVertex}\lcTex{ 
+     (\ccRefPage{TopologicalMapDcelVertex})}\\
+     \ccc{TopologicalMapDcelHalfedge}\lcTex{
+     (\ccRefPage{TopologicalMapDcelHalfedge})}\\
+     \ccc{TopologicalMapDcelFace}\lcTex{
+     (\ccRefPage{TopologicalMapDcelFace})}
+
+\end{ccRefConcept}
+
+\ccRefPageBegin
+% +------------------------------------------------------------------------+
+%%RefPage: end of main body, begin of footer
+\ccRefPageEnd
+% EOF
+% +------------------------------------------------------------------------+

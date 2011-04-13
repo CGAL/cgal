@@ -1,0 +1,115 @@
+/*
+ * Copyright (c) 1999 
+ * Boris Fomitchev
+ *
+ * This material is provided "as is", with absolutely no warranty expressed
+ * or implied. Any use is at your own risk.
+ *
+ * Permission to use or copy this software for any purpose is hereby granted 
+ * without fee, provided the above notices are retained on all copies.
+ * Permission to modify the code and to distribute modified code is granted,
+ * provided the above notices are retained, and a notice that the code was
+ * modified is included with the above copyright notice.
+ *
+ */
+
+#ifndef __STLPORT_LOCALE
+# define __STLPORT_LOCALE
+
+# ifndef __STL_CONFIG_H
+#  include <stl_config.h>
+# endif
+
+# ifndef __STLPORT_CSTDLIB
+#  include <cstdlib>
+# endif
+
+#  if defined ( __STL_REDEFINE_STD ) && defined (std) 
+#    undef std
+#    define __STL_RESUME_STD_FOR_LOCALE
+#    define __STLPORT_NATIVE_PASS
+#  endif
+
+# include __STL_NATIVE_HEADER(locale)
+
+# if defined ( __STL_RESUME_STD_FOR_LOCALE )
+#    undef __STL_RESUME_STD_FOR_LOCALE
+#    define std __STLPORT_NAMESPACE
+#    undef __STLPORT_NATIVE_PASS
+# endif
+
+# ifdef __STL_USE_OWN_NAMESPACE
+__STL_BEGIN_NAMESPACE
+
+// from <cwchar>
+#if !defined (__STL_NO_MBSTATE_T)
+using __STL_VENDOR_MB_NAMESPACE::mbstate_t;
+#endif
+
+// _lib.locale_, locale:
+using __STL_VENDOR_STD::locale;
+using __STL_VENDOR_STD::use_facet;
+using __STL_VENDOR_STD::has_facet;
+
+// _lib.locale.convenience_, convenience interfaces:
+using __STL_VENDOR_STD::isspace;
+using __STL_VENDOR_STD::isprint;
+using __STL_VENDOR_STD::iscntrl;
+using __STL_VENDOR_STD::isupper;
+using __STL_VENDOR_STD::islower;
+using __STL_VENDOR_STD::isalpha;
+using __STL_VENDOR_STD::isdigit;
+using __STL_VENDOR_STD::ispunct;
+using __STL_VENDOR_STD::isxdigit;
+using __STL_VENDOR_STD::isalnum;
+using __STL_VENDOR_STD::isgraph;
+using __STL_VENDOR_STD::toupper;
+using __STL_VENDOR_STD::tolower;
+
+// _lib.category.ctype_ and _lib.facet.ctype.special_, ctype:
+using __STL_VENDOR_STD::ctype_base;
+using __STL_VENDOR_STD::ctype;
+using __STL_VENDOR_STD::ctype_byname;
+using __STL_VENDOR_STD::codecvt_base;
+using __STL_VENDOR_STD::codecvt;
+using __STL_VENDOR_STD::codecvt_byname;
+
+// _lib.category.numeric_ and _lib.facet.numpunct_, numeric:
+using __STL_VENDOR_STD::num_get;
+using __STL_VENDOR_STD::num_put;
+using __STL_VENDOR_STD::numpunct;
+using __STL_VENDOR_STD::numpunct_byname;
+
+// _lib.category.collate_, collation:
+using __STL_VENDOR_STD::collate;
+using __STL_VENDOR_STD::collate_byname;
+
+// _lib.category.time_, date and time:
+using __STL_VENDOR_STD::time_base;
+using __STL_VENDOR_STD::time_get;
+using __STL_VENDOR_STD::time_get_byname;
+using __STL_VENDOR_STD::time_put;
+using __STL_VENDOR_STD::time_put_byname;
+
+// _lib.category.monetary_, money:
+using __STL_VENDOR_STD::money_base;
+using __STL_VENDOR_STD::money_get;
+using __STL_VENDOR_STD::money_put;
+using __STL_VENDOR_STD::moneypunct;
+using __STL_VENDOR_STD::moneypunct_byname;
+
+#if !defined (__STL_NO_NATIVE_MESSAGE_FACET)
+using __STL_VENDOR_STD::messages_base;
+using __STL_VENDOR_STD::messages;
+using __STL_VENDOR_STD::messages_byname;
+#endif // _MSL_NO_MESSAGE_FACET
+
+__STL_END_NAMESPACE
+
+#endif /* __STL_OWN_NAMESPACE */
+
+#endif /* __STLPORT_LOCALE */
+
+// Local Variables:
+// mode:C++
+// End:

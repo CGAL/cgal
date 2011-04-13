@@ -1,0 +1,44 @@
+1.1.0
+=====
+NEW: tool system for inputs
+Moved Qt_Window.h from include/CGAL to include/CGAL/IO
+
+1.0.9 (7 June 2001)
+=====
+Removed main's parameters when unused to avoid warnings
+
+1.0.8 (6 June 2001)
+=====
+New version of demo makefiles that works with Qt enable install_cgal
+
+1.0.7 (5 June 2001)
+=====
+We now provide contrained.moc
+redraw signal is know resized.
+Several code cleaning.
+
+1.0.6 (22 May 2001)
+=====
+Added a #ifdef CGAL_USE_QT also in demos.
+
+1.0.5 (22 May 2001)
+=====
+Added few missing fields in headers
+
+1.0.4 (22 May 2001)
+=====
+Added a #ifdef CGAL_USE_QT to avoid crashing CGAL installation when QT is 
+not installed
+
+1.0.3 (21 May 2001)
+=====
+Great modifications in other to follow CGAL packages requirements
+
+1.0.2 (15 May 2001)
+=====
+Fixes several port bugs. Thanks to Dima Pasechnik
+Attempt to fix bug with Borland C++
+
+1.0.0 (14 May 2001)
+=====
+Initial release

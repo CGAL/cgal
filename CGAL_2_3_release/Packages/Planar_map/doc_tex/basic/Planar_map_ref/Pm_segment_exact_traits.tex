@@ -1,0 +1,48 @@
+% +------------------------------------------------------------------------+
+% | Reference manual page: Pm_segment_exact_traits.tex (Planar_map)
+% +------------------------------------------------------------------------+
+% | 
+% | Package: pm (Planar_map_2)
+% | 
+% +------------------------------------------------------------------------+
+
+\ccRefPageBegin
+
+%%RefPage: end of header, begin of main body
+% +------------------------------------------------------------------------+
+
+\begin{ccRefClass}{Pm_segment_exact_traits<R>}
+%%    \ccSubsection{Exact (Rationals) Traits}
+    
+\ccDefinition 
+    The class \ccStyle{Pm_segment_exact_traits<R>}
+    is used as the recommended class. To avoid robustness problems, 
+    the representation type \ccStyle{R} must be an exact type such as
+    \ccStyle{Cartesian<leda_rational>},
+    \ccStyle{Homogeneous<leda_integer>} or any other exact type,
+    although other representation types could be used at the user's own risk.
+
+\ccInclude{ CGAL/Pm_segment_exact_traits.h}
+ 
+\ccIsModel
+    \ccc{PlanarMapTraits_2}
+
+%    \ccTypes
+    
+%    \ccNestedType{Point}{of type \ccStyle{Point_2<R>}}
+
+%    \ccNestedType{X_curve}{of type \ccStyle{Segment_2<R>}}
+
+%    \ccCreation
+%    \ccCreationVariable{T_exact}
+     
+%    \ccConstructor{Pm_segment_exact_traits();} 
+%    {}
+ 
+\end{ccRefClass} % Pm_segment_exact_traits
+
+% +------------------------------------------------------------------------+
+%%RefPage: end of main body, begin of footer
+\ccRefPageEnd
+% EOF
+% +------------------------------------------------------------------------+

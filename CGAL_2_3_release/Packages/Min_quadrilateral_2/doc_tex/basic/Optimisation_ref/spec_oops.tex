@@ -1,0 +1,579 @@
+%% ==============================================================
+%% Specification: Minimum enclosing quadrilaterals
+%% --------------------------------------------------------------
+%% file  : spec_oops.awi
+%% author: Michael Hoffmann
+%% $Id$
+%% ==============================================================
+
+\cgalColumnLayout
+
+\begin{ccRefFunction}{min_rectangle_2}
+  \ccIndexSubitem[t]{smallest enclosing}{rectangle}
+  \ccIndexSubitem[t]{rectangle}{smallest enclosing}
+  
+  \ccDefinition The function computes a minimum area enclosing
+  rectangle $R(P)$ (not necessarily axis-parallel) of a given convex
+  point set $P$.  Note that $R(P)$ is not unique in general. The
+  restriction to convex sets is not really a restriction, since any
+  enclosing rectangle -- as a convex set -- contains the convex hull
+  of $P$.
+
+  \ccInclude{CGAL/min_quadrilateral_2.h}
+
+  \def\ccLongParamLayout{\ccTrue} 
+  
+  \ccGlobalFunction{
+    template < class ForwardIterator, class OutputIterator, class Traits >
+    OutputIterator
+    min_rectangle_2(
+    ForwardIterator points_begin,
+    ForwardIterator points_end,
+    OutputIterator o,
+    Traits& t = Default_traits);}
+  
+  computes a minimum area enclosing rectangle of the point set
+  described by [\ccc{points_begin}, \ccc{points_end}), writes its
+  vertices (counterclockwise) to \ccc{o} and returns the past-the-end
+  iterator
+  of this sequence.\\
+  If the input range is empty, \ccc{o} remains unchanged.\\
+  If the input range consists of one element only,
+  exactly this point is written to \ccc{o}.
+  
+  \ccPrecond The points denoted by the range [\ccc{points_begin},
+  \ccc{points_end}) form the boundary of a convex polygon $P$ in
+  counterclockwise orientation.
+  
+  The geometric types and operations to be used for the computation
+  are specified by the traits class parameter \ccc{t}. The parameter
+  can be omitted if \ccc{ForwardIterator} refers to a point type from
+  the 2D-Kernel. In this case, a default traits class
+  (\ccc{Min_quadrilateral_default_traits_2<R>}) is used.
+  
+  \ccRequire
+  \begin{enumerate}
+  \item If \ccc{Traits} is specified, it is a model for
+    \ccc{MinQuadrilateralTraits_2} and the value type \ccc{VT} of
+    \ccc{ForwardIterator} is \ccc{Traits::Point_2}.  Otherwise
+    \ccc{VT} is \ccc{CGAL::Point_2<R>} for some representation class
+    \ccc{R}.
+  \item \ccc{OutputIterator} accepts \ccc{VT} as value type.
+  \end{enumerate}
+  
+  \ccSeeAlso
+  \ccRefIdfierPage{CGAL::min_parallelogram_2}\\
+  \ccRefIdfierPage{CGAL::min_strip_2}\\
+  \ccRefConceptPage{MinQuadrilateralTraits_2}\\
+  \ccRefIdfierPage{CGAL::Min_quadrilateral_default_traits_2<R>}
+  
+  \ccImplementation We use a rotating caliper
+  \ccIndexMainItem[t]{rotating caliper} algorithm \cite{t-sgprc-83}
+  with worst case running time linear in the number of input points.
+  
+  \ccExample The following code generates a random convex polygon
+  \ccc{P} with 20 vertices and computes the minimum enclosing
+  rectangle of \ccc{P}.
+
+  \ccIncludeVerbatim{Optimisation_ref/minimum_enclosing_rectangle_2_example_noheader.C}
+
+\end{ccRefFunction}
+    
+\begin{ccRefFunction}{min_parallelogram_2}
+  \ccIndexSubitem[t]{smallest enclosing}{parallelogram}
+  \ccIndexSubitem[t]{parallelogram}{smallest enclosing}
+  
+  \ccDefinition The function computes a minimum area enclosing
+  parallelogram $A(P)$ of a given convex point set $P$.  Note that
+  $A(P)$ is not unique in general.  The restriction to convex sets is
+  not really a restriction, since any enclosing parallelogram -- as a
+  convex set -- contains the convex hull of $P$.
+
+  \ccInclude{CGAL/min_quadrilateral_2.h}
+
+  \def\ccLongParamLayout{\ccTrue} 
+  
+  \ccGlobalFunction{
+    template < class ForwardIterator, class OutputIterator, class Traits >
+    OutputIterator
+    min_parallelogram_2(
+    ForwardIterator points_begin,
+    ForwardIterator points_end,
+    OutputIterator o,
+    Traits& t = Default_traits);}
+  
+  computes a minimum area enclosing parallelogram of the point set
+  described by [\ccc{points_begin}, \ccc{points_end}), writes its
+  vertices (counterclockwise) to \ccc{o} and returns the past-the-end
+  iterator of this sequence.
+  If the input range is empty, \ccc{o} remains unchanged.\\
+  If the input range consists of one element only,
+  exactly this point is written to \ccc{o}.
+  
+  \ccPrecond The points denoted by the range [\ccc{points_begin},
+  \ccc{points_end}) form the boundary of a convex polygon $P$ in
+  counterclockwise orientation.
+
+  The geometric types and operations to be used for the computation
+  are specified by the traits class parameter \ccc{t}. The parameter
+  can be omitted if \ccc{ForwardIterator} refers to a point type from
+  the 2D-Kernel. In this case, a default traits class
+  (\ccc{Min_quadrilateral_default_traits_2<R>}) is used.
+  
+  \ccRequire
+  \begin{enumerate}
+  \item If \ccc{Traits} is specified, it is a model for
+    \ccc{MinQuadrilateralTraits_2} and the value type \ccc{VT} of
+    \ccc{ForwardIterator} is \ccc{Traits::Point_2}.  Otherwise
+    \ccc{VT} is \ccc{CGAL::Point_2<R>} for some representation class
+    \ccc{R}.
+  \item \ccc{OutputIterator} accepts \ccc{VT} as value type.
+  \end{enumerate}
+  
+  \ccSeeAlso
+  \ccRefIdfierPage{CGAL::min_rectangle_2}\\
+  \ccRefIdfierPage{CGAL::min_strip_2}\\
+  \ccRefConceptPage{MinQuadrilateralTraits_2}\\
+  \ccRefIdfierPage{CGAL::Min_quadrilateral_default_traits_2<R>}
+  
+  \ccImplementation We use a rotating caliper
+  \ccIndexMainItem[t]{rotating caliper} algorithm
+  \cite{stvwe-mepa-95,v-fmep-90} with worst case running time linear
+  in the number of input points.
+  
+  \ccExample The following code generates a random convex polygon
+  \ccc{P} with 20 vertices and computes the minimum enclosing
+  parallelogram of \ccc{P}.
+
+  \ccIncludeVerbatim{Optimisation_ref/minimum_enclosing_parallelogram_2_example_noheader.C}
+
+\end{ccRefFunction}
+
+\begin{ccRefFunction}{min_strip_2}
+  \ccIndexSubitem[t]{smallest enclosing}{strip}
+  \ccIndexSubitem[t]{strip}{smallest enclosing}
+  
+  \ccDefinition The function computes a minimum width enclosing strip
+  $S(P)$ of a given convex point set $P$. A strip is the closed region
+  bounded by two parallel lines in the plane. Note that $S(P)$ is not
+  unique in general.  The restriction to convex sets is not really a
+  restriction, since any enclosing strip -- as a convex set --
+  contains the convex hull of $P$.
+
+  \ccInclude{CGAL/min_quadrilateral_2.h}
+
+  \def\ccLongParamLayout{\ccTrue} 
+  
+  \ccGlobalFunction{
+    template < class ForwardIterator, class OutputIterator, class Traits >
+    OutputIterator
+    min_strip_2(
+    ForwardIterator points_begin,
+    ForwardIterator points_end,
+    OutputIterator o,
+    Traits& t = Default_traits);}
+  
+  computes a minimum enclosing strip of the point set described by
+  [\ccc{points_begin}, \ccc{points_end}), writes its bounding lines to
+  \ccc{o} and returns the past-the-end iterator of this sequence.\\
+  If the input range is empty or consists of one element only, \ccc{o}
+  remains unchanged.
+  
+  \ccPrecond The points denoted by the range [\ccc{points_begin},
+  \ccc{points_end}) form the boundary of a convex polygon $P$ in
+  counterclockwise orientation.
+
+  The geometric types and operations to be used for the computation
+  are specified by the traits class parameter \ccc{t}. The parameter
+  can be omitted if \ccc{ForwardIterator} refers to a point type from
+  the 2D-Kernel. In this case, a default traits class
+  (\ccc{Min_quadrilateral_default_traits_2<R>}) is used.
+  
+  \ccRequire
+  \begin{enumerate}
+  \item If \ccc{Traits} is specified, it is a model for
+    \ccc{MinQuadrilateralTraits_2} and the value type \ccc{VT} of
+    \ccc{ForwardIterator} is \ccc{Traits::Point_2}.  Otherwise
+    \ccc{VT} is \ccc{CGAL::Point_2<R>} for some representation class
+    \ccc{R}.
+  \item \ccc{OutputIterator} accepts \ccc{VT} as value type.
+  \end{enumerate}
+  
+  \ccSeeAlso
+  \ccRefIdfierPage{CGAL::min_rectangle_2}\\
+  \ccRefIdfierPage{CGAL::min_parallelogram_2}\\
+  \ccRefConceptPage{MinQuadrilateralTraits_2}\\
+  \ccRefIdfierPage{CGAL::Min_quadrilateral_default_traits_2<R>}
+  
+  \ccImplementation We use a rotating caliper
+  \ccIndexMainItem[t]{rotating caliper} algorithm \cite{t-sgprc-83}
+  with worst case running time linear in the number of input points.
+    
+  \ccExample The following code generates a random convex polygon
+  \ccc{P} with 20 vertices and computes the minimum enclosing
+  strip of \ccc{P}.
+
+  \ccIncludeVerbatim{Optimisation_ref/minimum_enclosing_strip_2_example_noheader.C}
+
+\end{ccRefFunction}
+    
+\begin{ccRefClass}{Min_quadrilateral_default_traits_2<R>}
+  \ccCreationVariable{t}\ccTagFullDeclarations
+  
+  \ccDefinition The class \ccRefName\ is a traits class for the
+  functions \ccc{min_rectangle_2}, \ccc{min_parallelogram_2} and
+  \ccc{min_strip_2} using the two-dimensional \cgal\ kernel.
+  
+  \ccRequirements The template parameter \ccc{R} is a model for
+  \ccc{Kernel}.
+  
+  \ccInclude{CGAL/Min_quadrilateral_traits_2.h}
+  
+  \ccIsModel
+  \ccRefConceptPage{MinQuadrilateralTraits_2}
+  
+  \ccTypes 
+  
+  \ccTwo{Minq_traits::Rotate_direction_by_multiple_of_pi_22}{}
+  
+  \ccNestedType{Point_2}{typedef to \ccc{R::Point_2}}
+  
+  \ccNestedType{Direction_2}{typedef to \ccc{R::Direction_2}}
+  
+  \ccNestedType{Line_2}{typedef to \ccc{R::Line_2}}
+  
+  \ccNestedType{Rectangle_2}{internal type.}
+  
+  \ccNestedType{Parallelogram_2}{internal type.}
+  
+  \ccNestedType{Strip_2}{internal type.}
+  
+  \ccNestedType{Equal_2}{AdaptableBinaryFunction class\\\ccc{op}:
+    \ccc{Point_2} $\times$ \ccc{Point_2} $\rightarrow$ \ccc{bool}.\\
+    Returns true, iff the two points are equal.}
+  
+  \ccNestedType{Less_x_2}{AdaptableBinaryFunction class \\\ccc{op}:
+    \ccc{Point_2} $\times$ \ccc{Point_2} $\rightarrow$ \ccc{bool}.\\
+    \ccc{op(p,q)} returns true, iff the $x$-coordinate of \ccc{p} is
+    smaller than the $x$-coordinate of \ccc{q}.}
+  
+  \ccNestedType{Less_y_2}{AdaptableBinaryFunction class \\\ccc{op}:
+    \ccc{Point_2} $\times$ \ccc{Point_2} $\rightarrow$ \ccc{bool}.\\
+    \ccc{op(p,q)} returns true, iff the $y$-coordinate of \ccc{p} is
+    smaller than the $y$-coordinate of \ccc{q}.}
+  
+  \ccNestedType{Greater_x_2}{AdaptableBinaryFunction class
+    \\\ccc{op}:
+    \ccc{Point_2} $\times$ \ccc{Point_2} $\rightarrow$ \ccc{bool}.\\
+    \ccc{op(p,q)} returns true, iff the $x$-coordinate of \ccc{p} is
+    greater than the $x$-coordinate of \ccc{q}.}
+  
+  \ccNestedType{Greater_y_2}{AdaptableBinaryFunction class
+    \\\ccc{op}:
+    \ccc{Point_2} $\times$ \ccc{Point_2} $\rightarrow$ \ccc{bool}.\\
+    \ccc{op(p,q)} returns true, iff the $y$-coordinate of \ccc{p} is
+    greater than the $y$-coordinate of \ccc{q}.}
+  
+  \ccNestedType{Right_of_implicit_line_2}{Function class \\\ccc{op}:
+    \ccc{Point_2} $\times$ \ccc{Point_2} $\times$ \ccc{Direction_2}
+    $\rightarrow$ \ccc{bool}.\\ \ccc{op(p1,p2,d)} returns true, iff
+    the \ccc{p1} is strictly to the right of the oriented line
+    through \ccc{p2} with direction \ccc{d}.}
+  
+  \ccNestedType{Less_rotate_ccw_2}{AdaptableBinaryFunction class
+    \\\ccc{op}: \ccc{Direction_2} $\times$ \ccc{Direction_2}
+    $\rightarrow$ \ccc{bool}.\\ \ccc{op(d1,d2)} returns true, iff
+    the slope of \ccc{d1} is less than the slope of \ccc{d2}.}
+  
+  \ccNestedType{Area_less_rectangle_2}{AdaptableBinaryFunction class
+    \\\ccc{op}: \ccc{Rectangle_2} $\times$ \ccc{Rectangle_2}
+    $\rightarrow$ \ccc{bool}.\\ \ccc{op(r1,r2)} returns true, iff
+    the area of $r1$ is strictly less than the area of $r2$.}
+  
+  \ccNestedType{Area_less_parallelogram_2}{AdaptableBinaryFunction
+    class \\\ccc{op}: \ccc{Parallelogram_2} $\times$
+    \ccc{Parallelogram_2} $\rightarrow$ \ccc{bool}.\\ 
+    \ccc{op(p1,p2)} returns true, iff the area of $p1$ is strictly
+    less than the area of $p2$.}
+  
+  \ccNestedType{Width_less_strip_2}{AdaptableBinaryFunction class
+    \\\ccc{op}: \ccc{Strip_2} $\times$ \ccc{Strip_2} $\rightarrow$
+    \ccc{bool}.\\ \ccc{op(s1,s2)} returns true, iff the width of
+    $s1$ is strictly less than the width of $s2$.}
+  
+  \ccNestedType{Rotate_direction_by_multiple_of_pi_2}{
+    AdaptableBinaryFunction class \\\ccc{op}: \ccc{Direction_2}
+    $\times$ \ccc{int} $\rightarrow$ \ccc{Direction_2}.\\ For a
+    direction $d$ and $i,\, 0 \le i < 4$ \ccc{op(d,i)} returns the
+    direction that results from clockwise rotating $d$ by $i \cdot
+    \pi$.}
+  
+  \ccNestedType{Construct_direction_2}{AdaptableBinaryFunction class
+    \\\ccc{op}: \ccc{Point_2} $\times$ \ccc{Point_2} $\rightarrow$
+    \ccc{Direction_2}.\\ \ccc{op(p,q)} returns the direction of the
+    vector from $p$ to $q$.}
+  
+  \ccNestedType{Construct_rectangle_2}{Function class \\\ccc{op}:
+    \ccc{Point_2} $\times$ \ccc{Direction_2} $\times$ \ccc{Point_2}
+    $\times$ \ccc{Point_2} $\times$ \ccc{Point_2} $\rightarrow$
+    \ccc{Rectangle_2}.\\ If the points
+    \ccc{p1},\,\ccc{p2},\,\ccc{p3},\,\ccc{p4} form the boundary of a
+    convex polygon (oriented counterclockwise),
+    \ccc{op(p1,d,p2,p3,p4)} returns the rectangle with one of the
+    points on each side and one sides parallel to \ccc{d}.}
+  
+  \ccNestedType{Construct_parallelogram_2}{Function class
+    \\\ccc{op}: \ccc{Point_2} $\times$ \ccc{Direction_2} $\times$
+    \ccc{Point_2} $\times$ \ccc{Direction_2} $\times$ \ccc{Point_2}
+    $\times$ \ccc{Point_2} $\rightarrow$ \ccc{Rectangle_2}.\\ If the
+    points \ccc{p1},\,\ccc{p2},\,\ccc{p3},\,\ccc{p4} form the
+    boundary of a convex polygon (oriented counterclockwise),
+    \ccc{op(p1,d1,p2,d2,p3,p4)} returns the parallelogram with one
+    of the points on each side and one side parallel to each of
+    \ccc{d1} and \ccc{d2}.}
+  
+  \ccNestedType{Construct_strip_2}{Function class \\\ccc{op}:
+    \ccc{Point_2} $\times$ \ccc{Direction_2} $\times$ \ccc{Point_2}
+    $\rightarrow$ \ccc{Strip_2}.\\ \ccc{op(p1,d,p2)} returns the
+    strip bounded by the lines through \ccc{p1} resp. \ccc{p2} with
+    direction \ccc{d}.}
+  
+  \ccOperations
+  
+  \ccThree{OutputIterator}{OutputIterator}{}
+  
+  \ccMemberFunction{template < class OutputIterator > OutputIterator
+    copy_rectangle_vertices_2(const Rectangle_2& r, OutputIterator
+    o) const;}{copies the four vertices of \ccc{r} in
+    counterclockwise order to \ccc{o}.}
+  
+  \ccMemberFunction{template < class OutputIterator > OutputIterator
+    copy_parallelogram_vertices_2(const Parallelogram_2& p,
+    OutputIterator o) const;}{copies the four vertices of \ccc{p} in
+    counterclockwise order to \ccc{o}.}
+  
+  \ccMemberFunction{template < class OutputIterator > OutputIterator
+    copy_strip_lines_2(const Strip_2& s, OutputIterator o)
+    const;}{copies the two lines bounding \ccc{s} to \ccc{o}.}
+
+  The following functions just return the corresponding function
+  object.
+  
+  \ccThree{Rotate_direction_by_multiple_of_pi_2}{
+    rotate_direction_by_multiple_of_pi_2_object();}{}
+  
+  \ccMemberFunction{Equal_2 equal_2_object() const;}{}
+  \ccGlue\ccMemberFunction{Less_x_2 less_x_2_object() const;}{}
+  \ccGlue\ccMemberFunction{Less_y_2 less_y_2_object() const;}{}
+  \ccGlue\ccMemberFunction{Greater_x_2 greater_x_2_object() const;}{}
+  \ccGlue\ccMemberFunction{Greater_y_2 greater_y_2_object() const;}{}
+  
+  \ccGlue\ccMemberFunction{Right_of_implicit_line_2
+    right_of_implicit_line_2_object() const;}{}
+  \ccGlue\ccMemberFunction{Less_rotate_ccw_2
+    less_rotate_ccw_2_object() const;}{}
+  \ccGlue\ccMemberFunction{Area_less_rectangle_2
+    area_less_rectangle_2_object() const;}{}
+  \ccGlue\ccMemberFunction{Area_less_parallelogram_2
+    area_less_parallelogram_2_object() const;}{}
+  \ccGlue\ccMemberFunction{Width_less_strip_2
+    width_less_strip_2_object() const;}{}
+  \ccGlue\ccMemberFunction{Construct_direction_2
+    construct_direction_2_object() const;}{}
+  \ccGlue\ccMemberFunction{Construct_rectangle_2
+    construct_rectangle_2_object() const;}{}
+  \ccGlue\ccMemberFunction{Construct_parallelogram_2
+    construct_parallelogram_2_object() const;}{}
+  \ccGlue\ccMemberFunction{Construct_strip_2
+    construct_strip_2_object() const;}{}
+  \ccGlue\ccMemberFunction{Rotate_direction_by_multiple_of_pi_2
+    rotate_direction_by_multiple_of_pi_2_object() const;}{}
+  
+  \ccSeeAlso
+  \ccRefIdfierPage{CGAL::min_rectangle_2}\\
+  \ccRefIdfierPage{CGAL::min_parallelogram_2}\\
+  \ccRefIdfierPage{CGAL::min_strip_2}
+  
+\end{ccRefClass}
+
+\begin{ccRefConcept}{MinQuadrilateralTraits_2}
+  \ccCreationVariable{t}\ccTagFullDeclarations
+  
+  \ccDefinition The concept \ccRefName\ defines types and operations
+  needed to compute minimum enclosing quadrilaterals of a planar point
+  set using the functions \ccc{min_rectangle_2},
+  \ccc{min_parallelogram_2} and \ccc{min_strip_2}.
+  
+  \ccTypes 
+  
+  \ccTwo{Minq_traits::Rotate_direction_by_multiple_of_pi_22}{}
+
+  \ccNestedType{Point_2}{type for representing points.}
+  
+  \ccNestedType{Direction_2}{type for representing directions.}
+  
+  \ccNestedType{Line_2}{type for representing lines.}
+  
+  \ccNestedType{Rectangle_2}{type for representing (not necessarily
+    axis-parallel) rectangles.}
+  
+  \ccNestedType{Parallelogram_2}{type for representing
+    parallelograms.}
+  
+  \ccNestedType{Strip_2}{type for representing strips, that is the
+    closed region bounded by two parallel lines.}
+  
+  \ccNestedType{Equal_2}{AdaptableBinaryFunction class\\\ccc{op}:
+    \ccc{Point_2} $\times$ \ccc{Point_2} $\rightarrow$ \ccc{bool}.\\
+    Returns true, iff the two points are equal.}
+  
+  \ccNestedType{Less_x_2}{AdaptableBinaryFunction class \\\ccc{op}:
+    \ccc{Point_2} $\times$ \ccc{Point_2} $\rightarrow$ \ccc{bool}.\\
+    \ccc{op(p,q)} returns true, iff the $x$-coordinate of \ccc{p} is
+    smaller than the $x$-coordinate of \ccc{q}.}
+  
+  \ccNestedType{Less_y_2}{AdaptableBinaryFunction class \\\ccc{op}:
+    \ccc{Point_2} $\times$ \ccc{Point_2} $\rightarrow$ \ccc{bool}.\\
+    \ccc{op(p,q)} returns true, iff the $y$-coordinate of \ccc{p} is
+    smaller than the $y$-coordinate of \ccc{q}.}
+  
+  \ccNestedType{Greater_x_2}{AdaptableBinaryFunction class
+    \\\ccc{op}:
+    \ccc{Point_2} $\times$ \ccc{Point_2} $\rightarrow$ \ccc{bool}.\\
+    \ccc{op(p,q)} returns true, iff the $x$-coordinate of \ccc{p} is
+    greater than the $x$-coordinate of \ccc{q}.}
+  
+  \ccNestedType{Greater_y_2}{AdaptableBinaryFunction class
+    \\\ccc{op}:
+    \ccc{Point_2} $\times$ \ccc{Point_2} $\rightarrow$ \ccc{bool}.\\
+    \ccc{op(p,q)} returns true, iff the $y$-coordinate of \ccc{p} is
+    greater than the $y$-coordinate of \ccc{q}.}
+  
+  \ccNestedType{Right_of_implicit_line_2}{Function class \\\ccc{op}:
+    \ccc{Point_2} $\times$ \ccc{Point_2} $\times$ \ccc{Direction_2}
+    $\rightarrow$ \ccc{bool}.\\ \ccc{op(p1,p2,d)} returns true, iff
+    the \ccc{p1} is strictly to the right of the oriented line
+    through \ccc{p2} with direction \ccc{d}.}
+  
+  \ccNestedType{Less_rotate_ccw_2}{AdaptableBinaryFunction class
+    \\\ccc{op}: \ccc{Direction_2} $\times$ \ccc{Direction_2}
+    $\rightarrow$ \ccc{bool}.\\ \ccc{op(d1,d2)} returns true, iff
+    the slope of \ccc{d1} is less than the slope of \ccc{d2}.}
+  
+  \ccNestedType{Area_less_rectangle_2}{AdaptableBinaryFunction class
+    \\\ccc{op}: \ccc{Rectangle_2} $\times$ \ccc{Rectangle_2}
+    $\rightarrow$ \ccc{bool}.\\ \ccc{op(r1,r2)} returns true, iff
+    the area of $r1$ is strictly less than the area of $r2$.}
+  
+  \ccNestedType{Area_less_parallelogram_2}{AdaptableBinaryFunction
+    class \\\ccc{op}: \ccc{Parallelogram_2} $\times$
+    \ccc{Parallelogram_2} $\rightarrow$ \ccc{bool}.\\ 
+    \ccc{op(p1,p2)} returns true, iff the area of $p1$ is strictly
+    less than the area of $p2$.}
+  
+  \ccNestedType{Width_less_strip_2}{AdaptableBinaryFunction class
+    \\\ccc{op}: \ccc{Strip_2} $\times$ \ccc{Strip_2} $\rightarrow$
+    \ccc{bool}.\\ \ccc{op(s1,s2)} returns true, iff the width of
+    $s1$ is strictly less than the width of $s2$.}
+  
+  \ccNestedType{Rotate_direction_by_multiple_of_pi_2}{
+    AdaptableBinaryFunction class \\\ccc{op}: \ccc{Direction_2}
+    $\times$ \ccc{int} $\rightarrow$ \ccc{Direction_2}.\\ For a
+    direction $d$ and $i,\, 0 \le i < 4$ \ccc{op(d,i)} returns the
+    direction that results from clockwise rotating $d$ by $i \cdot
+    \pi$.}
+  
+  \ccNestedType{Construct_direction_2}{AdaptableBinaryFunction class
+    \\\ccc{op}: \ccc{Point_2} $\times$ \ccc{Point_2} $\rightarrow$
+    \ccc{Direction_2}.\\ \ccc{op(p,q)} returns the direction of the
+    vector from $p$ to $q$.}
+  
+  \ccNestedType{Construct_rectangle_2}{Function class \\\ccc{op}:
+    \ccc{Point_2} $\times$ \ccc{Direction_2} $\times$ \ccc{Point_2}
+    $\times$ \ccc{Point_2} $\times$ \ccc{Point_2} $\rightarrow$
+    \ccc{Rectangle_2}.\\ If the points
+    \ccc{p1},\,\ccc{p2},\,\ccc{p3},\,\ccc{p4} form the boundary of a
+    convex polygon (oriented counterclockwise),
+    \ccc{op(p1,d,p2,p3,p4)} returns the rectangle with one of the
+    points on each side and one sides parallel to \ccc{d}.}
+  
+  \ccNestedType{Construct_parallelogram_2}{Function class
+    \\\ccc{op}: \ccc{Point_2} $\times$ \ccc{Direction_2} $\times$
+    \ccc{Point_2} $\times$ \ccc{Direction_2} $\times$ \ccc{Point_2}
+    $\times$ \ccc{Point_2} $\rightarrow$ \ccc{Rectangle_2}.\\ If the
+    points \ccc{p1},\,\ccc{p2},\,\ccc{p3},\,\ccc{p4} form the
+    boundary of a convex polygon (oriented counterclockwise),
+    \ccc{op(p1,d1,p2,d2,p3,p4)} returns the parallelogram with one
+    of the points on each side and one side parallel to each of
+    \ccc{d1} and \ccc{d2}.}
+  
+  \ccNestedType{Construct_strip_2}{Function class \\\ccc{op}:
+    \ccc{Point_2} $\times$ \ccc{Direction_2} $\times$ \ccc{Point_2}
+    $\rightarrow$ \ccc{Strip_2}.\\ \ccc{op(p1,d,p2)} returns the
+    strip bounded by the lines through \ccc{p1} resp. \ccc{p2} with
+    direction \ccc{d}.}
+  
+  \ccOperations
+  
+  \ccThree{OutputIterator}{OutputIterator}{}
+  
+  \ccMemberFunction{template < class OutputIterator > OutputIterator
+    copy_rectangle_vertices_2(const Rectangle_2& r, OutputIterator
+    o) const;}{copies the four vertices of \ccc{r} in
+    counterclockwise order to \ccc{o}.}
+  
+  \ccMemberFunction{template < class OutputIterator > OutputIterator
+    copy_parallelogram_vertices_2(const Parallelogram_2& p,
+    OutputIterator o) const;}{copies the four vertices of \ccc{p} in
+    counterclockwise order to \ccc{o}.}
+  
+  \ccMemberFunction{template < class OutputIterator > OutputIterator
+    copy_strip_lines_2(const Strip_2& s, OutputIterator o)
+    const;}{copies the two lines bounding \ccc{s} to \ccc{o}.}
+
+  The following functions just return the corresponding function
+  object.
+  
+  \ccThree{Rotate_direction_by_multiple_of_pi_2}{
+    rotate_direction_by_multiple_of_pi_2_object();}{}
+  
+  \ccMemberFunction{Equal_2 equal_2_object() const;}{}
+  \ccGlue\ccMemberFunction{Less_x_2 less_x_2_object() const;}{}
+  \ccGlue\ccMemberFunction{Less_y_2 less_y_2_object() const;}{}
+  \ccGlue\ccMemberFunction{Greater_x_2 greater_x_2_object() const;}{}
+  \ccGlue\ccMemberFunction{Greater_y_2 greater_y_2_object() const;}{}
+  
+  \ccGlue\ccMemberFunction{Right_of_implicit_line_2
+    right_of_implicit_line_2_object() const;}{}
+  \ccGlue\ccMemberFunction{Less_rotate_ccw_2
+    less_rotate_ccw_2_object() const;}{}
+  \ccGlue\ccMemberFunction{Area_less_rectangle_2
+    area_less_rectangle_2_object() const;}{}
+  \ccGlue\ccMemberFunction{Area_less_parallelogram_2
+    area_less_parallelogram_2_object() const;}{}
+  \ccGlue\ccMemberFunction{Width_less_strip_2
+    width_less_strip_2_object() const;}{}
+  \ccGlue\ccMemberFunction{Construct_direction_2
+    construct_direction_2_object() const;}{}
+  \ccGlue\ccMemberFunction{Construct_rectangle_2
+    construct_rectangle_2_object() const;}{}
+  \ccGlue\ccMemberFunction{Construct_parallelogram_2
+    construct_parallelogram_2_object() const;}{}
+  \ccGlue\ccMemberFunction{Construct_strip_2
+    construct_strip_2_object() const;}{}
+  \ccGlue\ccMemberFunction{Rotate_direction_by_multiple_of_pi_2
+    rotate_direction_by_multiple_of_pi_2_object() const;}{}
+  
+  \ccHasModels
+  \ccRefIdfierPage{CGAL::Min_quadrilateral_default_traits_2<R>}
+
+  \ccSeeAlso
+  \ccRefIdfierPage{CGAL::min_rectangle_2}\\
+  \ccRefIdfierPage{CGAL::min_parallelogram_2}\\
+  \ccRefIdfierPage{CGAL::min_strip_2}
+
+\end{ccRefConcept}
+
+%% --------------------------------------------------------------
+%% EOF spec_oops.awi
+%% --------------------------------------------------------------

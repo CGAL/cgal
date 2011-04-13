@@ -1,0 +1,86 @@
+% +------------------------------------------------------------------------+
+% | Reference manual page: Topological_map_Dcel_Face.tex
+% +------------------------------------------------------------------------+
+% | 
+% | Package: pm (Planar Map)
+% | 
+% +------------------------------------------------------------------------+
+
+\ccRefPageBegin
+%%RefPage: end of header, begin of main body
+% +------------------------------------------------------------------------+
+
+\begin{ccRefConcept}{TopologicalMapDcelFace}
+\label{DCEL_sec:face}
+  \ccDefinition A face stores a reference to an incident halfedge, and an
+     iterator for holes (which refers to objects of type \ccStyle{Halfedge*}).
+    
+     \ccCreationVariable{f}
+  
+\ccThree{TopologicalMapDcel :: Face :: holes_iterator}{}{\hspace*{9cm}}
+\ccThreeToTwo
+
+     \ccTypes
+  
+  \ccNestedType{Vertex}{corresponding vertex type.}
+  \ccGlue
+  \ccNestedType{Halfedge}{corresponding halfedge type.}
+  \ccGlue
+  \ccNestedType{Face}{self.}
+
+%  \ccNestedType{Holes_container}{a container of objects of type 
+%     \ccStyle{Halfedge*} which stores a representative halfedge of the holes
+%     in the face.}
+  \ccNestedType{Holes_iterator}{a bidirectional iterator over the holes in 
+in \ccVar{}. Its value-type is \ccStyle{Halfedge*}.}
+  \ccGlue
+  \ccNestedType{Holes_const_iterator}{the \ccc{const} version}
+
+\ccThree{Holes_const_iterator}{}{\hspace*{6.5cm}}
+
+%\ccOperations
+\ccAccessFunctions
+  
+  \ccMethod{Halfedge* halfedge();}{an incident halfedge on the outer CCB
+     of the face.}
+  \ccGlue
+  \ccMethod{const Halfedge* halfedge() const;}{}  
+
+  \ccMethod{Holes_iterator holes_begin();}{a begin iterator of the holes 
+in \ccVar{}.}
+
+  \ccMethod{Holes_iterator holes_end();}{a past-the-end iterator of the holes 
+in \ccVar{}.}
+
+  \ccMethod{Holes_const_iterator holes_begin();}{the \ccc{const} version}
+  \ccGlue
+  \ccMethod{Holes_const_iterator holes_end();}{the \ccc{const} version}
+
+\ccModifiers
+  \ccMethod{void set_halfedge(Halfedge* h);}{}
+  \ccGlue
+  \ccMethod{void add_hole(Halfedge* h);}{adds a hole represented by \ccStyle{h}
+     to the face.}
+
+  \ccMethod{void erase_hole(Holes_iterator h);}{removes the hole referenced 
+     by \ccStyle{h} from the face.}
+
+  \ccMethod{void erase_holes(Holes_iterator first,Holes_iterator last);}{removes
+     the holes referenced by the range [\ccStyle{first},\ccStyle{last}) from 
+     \ccVar{}.} 
+  
+\ccSeeAlso
+  \ccc{TopologicalMapDcel}\lcTex{ 
+  (\ccRefPage{TopologicalMapDcel})}\\
+  \ccc{TopologicalMapDcelVertex}\lcTex{
+  (\ccRefPage{TopologicalMapDcelVertex})}\\
+  \ccc{TopologicalMapDcelHalfedge}\lcTex{
+  (\ccRefPage{TopologicalMapDcelHalfedge})}
+
+\end{ccRefConcept}
+
+% +------------------------------------------------------------------------+
+%%RefPage: end of main body, begin of footer
+\ccRefPageEnd
+% EOF
+% +------------------------------------------------------------------------+

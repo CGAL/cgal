@@ -1,0 +1,83 @@
+% +------------------------------------------------------------------------+
+% | Reference manual page: Polyhedron_traits_with_normals_3.tex
+% +------------------------------------------------------------------------+
+% | 17.03.1999   Lutz Kettner
+% | Package: Polyhedron
+% | 
+\RCSdef{\RCSPolyhedrontraitswithnormalsRev}{$Revision$}
+\RCSdefDate{\RCSPolyhedrontraitswithnormalsDate}{$Date$}
+% +------------------------------------------------------------------------+
+
+\ccRefPageBegin
+
+%%RefPage: end of header, begin of main body
+% +------------------------------------------------------------------------+
+
+
+\begin{ccRefClass}{Polyhedron_traits_with_normals_3<Kernel>}
+
+\ccDefinition
+  
+The class \ccRefName\ is a model of the \ccc{PolyhedronTraits_3}
+concept. It defines the geometric types and primitive operations used
+in the polyhedral surface data structure
+\ccc{CGAL::Polyhedron_3<PolyhedronTraits_3>}. \ccRefName\ uses the
+normal vector from \ccc{Kernel} for the plane equation in facets. It
+keeps a local copy of the kernel which makes it suitable for kernels
+with local state.
+
+\ccInclude{CGAL/Polyhedron_traits_with_normals_3.h}
+
+\ccIsModel
+
+\ccRefConceptPage{PolyhedronTraits_3}
+
+\ccTypes
+\ccThree{typedef Kernel::Construct_opposite_vector_3;}
+    {Construct_opposite_plane_3;;}{}
+\ccTwo{Polyhedron_traits_with_normals_3<Kernel> traits ( Kernel kernel);;;;}{}
+
+\ccNestedType{Kernel}{the \ccc{Kernel} model.}
+\ccGlue
+\ccTypedef{typedef Kernel::Point_3 Point_3;}{}
+\ccGlue
+\ccTypedef{typedef Kernel::Vector_3 Plane_3;}{}
+
+\ccTypedef{typedef Kernel::Construct_opposite_vector_3 
+    Construct_opposite_plane_3;}{}
+
+\ccCreation
+\ccCreationVariable{traits}  %% choose variable name
+
+\ccConstructor{Polyhedron_traits_with_normals_3();}{default constructor, uses 
+    \ccc{Kernel()} as local reference to the kernel.}
+
+\ccConstructor{Polyhedron_traits_with_normals_3( const Kernel& kernel);}
+    {stores \ccc{kernel} as local reference.}
+
+\ccOperations
+
+\ccMethod{Construct_opposite_plane_3 construct_opposite_plane_3_object();}{
+    forwarded to \ccc{kernel}.}
+
+\ccSeeAlso
+
+\ccRefIdfierPage{CGAL::Polyhedron_traits_3<Kernel>}
+
+\ccExample
+
+We use this traits class to instantiate a polyhedral surface with a
+normal vector and no plane equation for each facet. We compute the
+normal vector assuming exact arithmetic (integers in this example)
+and convex planar facets.
+
+\ccIncludeExampleCode{Polyhedron/polyhedron_prog_normals.C}
+
+\end{ccRefClass}
+
+% +------------------------------------------------------------------------+
+%%RefPage: end of main body, begin of footer
+\ccRefPageEnd
+% EOF
+% +------------------------------------------------------------------------+
+

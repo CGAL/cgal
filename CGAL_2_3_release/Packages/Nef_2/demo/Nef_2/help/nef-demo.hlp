@@ -1,0 +1,49 @@
+\bf\blue Planar Nef Polyhedra \rm\black
+
+This demo consists of two units. The large \blue drawing window\black
+and the small \blue control panel\black. The drawing window shows the
+results of your actions, it draws created Nef polyhedra.  The control
+panel allows you to manipulate Nef polyhedra.
+
+You can use this demo to incrementally build a hierarchy of Nef
+polyhedra which are stored in a \blue history list\black in the center
+of the control panel. You can work on the currently selected
+polyhedron of this list.
+
+The buttons in the control panel from left to right allow you to
+
+(1) \blue draw\black the currently selected polyhedron
+
+(2) \blue create new polyhedra\black in the history list.  You can
+create Nef polyhedra from halfspaces (open/closed) and from simple
+polygons (open/closed).  The halfspaces are entered into the display
+window by lines the polygons by a sequence of the polygons vertices.
+Finally you can load and store polyhedra from the file system.
+
+(3)-(6) execute \blue binary set operations\black (intersection,
+union, difference, symmetric difference). The first argument of the
+binary operation is the currently selected one. The second can be
+selected from the history list after a click to the operation button.
+
+(7)-(11) execute \blue unary topological operations\black (interior,
+complement, closure, boundary). The argument is the current selected
+polyhedron.
+
+Within the drawing window you can do \blue point location\black
+queries by a click into the scenery with the left mouse button. You
+can also do \blue vertical ray shooting queries downwards\black by a
+click with the middle mouse button.  And finally you can visualize the
+\blue constrained triangulation\black structure of the polyhedron by a
+click with the right mouse button. Note that this triangulation can
+look strange as the window shows only a zoomed view of the infinity
+scenery. You can zoom in and out of the scenery by hitting the up and
+down arrows of the keyboard.
+
+Finally the demo has a one time action log. If you hit one of the
+binary set operation or one of the topological operations and you
+encounter something weird you should save immediately the nef-demo.log
+file storing the argument(s) of the operation which can then be
+used for analysing the problem.
+
+
+

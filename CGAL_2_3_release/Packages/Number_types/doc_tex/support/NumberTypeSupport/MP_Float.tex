@@ -1,0 +1,51 @@
+% $Revision$
+% $Date$
+% author : Sylvain Pion
+
+\begin{ccClass} {MP_Float}
+\ccSubsection{Multi Precision Floats}
+\label{mpfloat}
+
+\ccDefinition
+An object of the class \ccc{MP_Float} is able to represent a floating point
+value with arbitrary precision.  This number type has the property that
+additions, subtractions and multiplications are computed exactly, as well as
+the construction from a double.  Division and square root are computed
+approximately, so we suggest that you use rationals using Quotient<MP\_Float>
+when you need exact divisions.
+
+\ccInclude{CGAL/MP_Float.h}
+
+\ccCreation
+\ccCreationVariable{m}
+
+\ccConstructor{MP_Float();}
+{introduces an uninitialized variable \ccVar.}
+\ccGlue
+\ccConstructor{MP_Float(const MP_Float &);}
+{copy constructor.}
+\ccGlue
+\ccConstructor{MP_Float(int i)}
+{introduces the integral value i.}
+\ccGlue
+\ccConstructor{MP_Float(double d)}
+{introduces the floating point value d.}
+
+\ccOperations
+All functions are provided so that it can be used as a number type in
+\cgal.
+
+\ccFunction{std::ostream& operator<<(std::ostream& out, const MP_Float& m);}
+{writes a double approximation of \ccc{m} to the ostream \ccc{out}.}
+
+\ccFunction{std::istream& operator>>(std::istream& in, MP_Float& m);}
+{reads a \ccc{double} from \ccc{in}, then converts it to an \ccc{MP_Float}.}
+
+\ccImplementation 
+The implementation of \ccc{MP_Float} is simple but provides a quadratic
+complexity for multiplications.  This can be a problem for large operands.
+For faster implementations of the same functionality with large integral
+values, you may want to consider using \ccc{GMP}, \ccc{CLN} or \ccc{LEDA}
+instead.
+
+\end{ccClass} 

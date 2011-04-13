@@ -1,0 +1,40 @@
+% +------------------------------------------------------------------------+
+% | Reference manual page: Convex_hull_d_ref/intro.tex
+% +------------------------------------------------------------------------+
+
+%\clearpage
+%\section{Reference Pages for dD Convex Hulls and Delaunay Triangulations}
+\chapter{dD Convex Hulls and Delaunay Triangulations}
+\label{chap:convex_hull_d_ref}
+
+A subset $S \subseteq \R^3$ is convex if for any two points $p$ and $q$
+in the set the line segment with endpoints $p$ and $q$ is contained
+in $S$. The convex hull\ccIndexMainItemDef{convex hull} of a set $S$ is 
+the smallest convex set containing
+$S$. The convex hull of a set of points $P$ is a convex 
+polytope with vertices in $P$.  A point in $P$ is an extreme point 
+(with respect to $P$)\ccIndexMainItemDef{extreme point} if it is a vertex 
+of the convex hull of $P$.
+
+\cgal\ provides functions for computing convex hulls in two, three 
+and arbitrary dimensions as well as functions for testing if a given set of 
+points in is strongly convex or not.  This chapter describes the class
+available for arbitrary dimensions and its companion class for 
+computing the nearest and furthest side Delaunay triangulation. 
+
+
+\ccHeading{Concepts}
+
+\ccRefConceptPage{ConvexHullTraits_d} \\
+\ccRefConceptPage{DelaunayLiftedTraits_d} \\
+\ccRefConceptPage{DelaunayTraits_d} \\
+
+\ccHeading{Classes}
+
+\ccRefIdfierPage{CGAL::Convex_hull_d_traits_3<R>} \\
+\ccRefIdfierPage{CGAL::Convex_hull_d<R>}  \\
+\ccRefIdfierPage{CGAL::Delaunay_d< R, Lifted_R >} 
+
+\clearpage
+
+\lcHtml{\ccHeading{Alphabetical Listing of Reference Pages}}

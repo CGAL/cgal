@@ -1,0 +1,67 @@
+% +------------------------------------------------------------------------+
+% | Reference manual page: HalfedgeDS_list.tex
+% +------------------------------------------------------------------------+
+% | 22.03.1999   Lutz Kettner
+% | Package: HalfedgeDS
+% | 
+\RCSdef{\RCSHalfedgeDSlistRev}{$Revision$}
+\RCSdefDate{\RCSHalfedgeDSlistDate}{$Date$}
+% +------------------------------------------------------------------------+
+
+\ccRefPageBegin
+
+%%RefPage: end of header, begin of main body
+% +------------------------------------------------------------------------+
+
+
+\begin{ccRefClass}{HalfedgeDS_list<Traits,HalfedgeDSItems,Alloc>}
+\ccRefLabel{CGAL::HalfedgeDS_list}
+
+\ccDefinition
+  
+The class \ccRefName\ is a model for the \ccc{HalfedgeDS} concept.
+\ccRefName\ is a list-based representation with bidirectional
+iterators that supports removal.
+
+\ccInclude{CGAL/HalfedgeDS_list.h}
+
+\ccIsModel
+
+\ccRefConceptPage{HalfedgeDS<Traits,Items,Alloc>}
+
+\ccTypes
+\ccThree{typedef bidirectional_iterator_tag;}{Supports_removal;;}{}
+
+\ccTypedef{typedef bidirectional_iterator_tag iterator_category;}{}
+\ccGlue
+\ccTypedef{typedef CGAL::Tag_true Supports_removal;}{}
+
+\ccSeeAlso
+
+\ccRefIdfierPage{CGAL::HalfedgeDS_default}\\
+\ccRefIdfierPage{CGAL::HalfedgeDS_vector}\\
+\ccRefConceptPage{HalfedgeDSItems}\\
+\ccRefIdfierPage{CGAL::Polyhedron_3<Traits>}\\
+\ccRefIdfierPage{CGAL::HalfedgeDS_items_decorator<HDS>}\\
+\ccRefIdfierPage{CGAL::HalfedgeDS_decorator<HDS>}\\
+\ccRefIdfierPage{CGAL::HalfedgeDS_const_decorator<HDS>}
+
+
+\ccImplementation
+
+\ccRefName\ uses internally the \ccc{CGAL::In_place_list} container class.
+The copy constructor and the assignment operator need $O(n)$ time with
+$n$ the total number of vertices, halfedges, and faces. The former 
+suboptimal implementation with an $O(n \log n)$ runtime has been replaced
+with a faster implementation based on hashing for the pointer lookup.
+
+\ccc{CGAL_ALLOCATOR(int)} is used as default argument for the
+\ccc{Alloc} template parameter.  
+
+\end{ccRefClass} %
+
+% +------------------------------------------------------------------------+
+%%RefPage: end of main body, begin of footer
+\ccRefPageEnd
+% EOF
+% +------------------------------------------------------------------------+

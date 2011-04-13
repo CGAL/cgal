@@ -1,0 +1,42 @@
+% +------------------------------------------------------------------------+
+% | Reference manual page: Arr_base_node.tex (Arrangement)
+% +------------------------------------------------------------------------+
+% | 
+% | Package: arr (Arrangement_2)
+% | 
+% +------------------------------------------------------------------------+
+
+\ccRefPageBegin
+
+%%RefPage: end of header, begin of main body
+% +------------------------------------------------------------------------+
+% +========================================================================+
+%  Arr_base_node<Curve> Class
+% +========================================================================+
+\begin{ccRefClass}{Arr_base_node<Curve>}
+
+\ccDefinition
+    The \ccRefName\ is a model of the \ccc{ArrangemetBaseNode_2} concept.
+
+    The class is intended to be used as a template parameter for the
+    \ccc{CGAL::Arrangement_2<Dcel,Traits,Base_node>} class. Users who
+    which to add attributes to nodes of the hierarchy tree may which
+    to make their node classes a sub-class of the \ccRefName\ .
+
+\ccInclude{CGAL/Arr_2_bases.h}
+
+\ccHeading{Requirements}
+    When the class is used a a template parameter for the
+    \ccc{CGAL::Arrangement_2<Dcel,Traits,Base_node>} class. The
+    template parameter \ccc{Curve} should be of type
+    \ccc{Traits::Curve}.
+
+\ccIsModel
+    \ccc{ArrangementBaseNode_2}
+
+\end{ccRefClass}
+% +------------------------------------------------------------------------+
+%%RefPage: end of main body, begin of footer
+\ccRefPageEnd
+% EOF
+% +------------------------------------------------------------------------+

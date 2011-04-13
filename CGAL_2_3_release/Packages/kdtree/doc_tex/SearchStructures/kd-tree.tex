@@ -1,0 +1,229 @@
+%--------------------------------------------------------
+% kd-tree.tex
+%    Specification of kd-tree,
+%
+%  by Eyal Flato, Dan Halperin, Sariel Har-Peled
+%--------------------------------------------------------
+% History
+% Version  1.0, 26/4/97  
+%    All about kd-trees.
+% Adapted by Hans Tangelder using reference pages
+%--------------------------------------------------------
+
+%\documentclass[12pt]{book}
+%\usepackage{epsfig,epsf}
+%\usepackage{cprog}
+
+%\pagestyle{empty}
+%\textwidth 15.6cm 
+%\textheight 23 cm
+%\topmargin -14mm       
+%\evensidemargin 3mm 
+%\oddsidemargin 3mm
+%\headsep 1cm
+%\def\keyword#1{{\em #1\/}}
+
+\renewcommand{\Re}{{\rm I\!\hspace{-0.025em} R}}
+%\newcommand{\Section}[1]{Section~{\ref{#1}}}
+%\newcommand{\Chapter}[1]{Chapter~{\ref{#1}}}
+\newcommand{\new}[1]{\marginpar{\sf #1}}
+\newcommand{\kdt}{kd-tree}
+\newcommand{\kdts}{kd-trees}
+\newcommand{\brc}[1]{\left\{ {#1} \right\}}
+\def\Ipe#1{\def\IPEfile{#1}\input{#1}}
+
+\parindent0em
+\setlength{\parskip}{1ex minus 0.9ex}
+\sloppy
+
+%\begin{document}
+%\tableofcontents
+
+
+\clearpage
+
+\section{Kd-Trees} 
+\label{KDT_section}
+
+%This is a simple, but nevertheless efficient, data structure for orthogonal
+%range searching.  In particular, {\cgal}  {\kdt}  seems to perform better
+%than the theoreticly superior range trees, as implemented in \cgal.
+%See Section \ref{KDT_sec:appendix}, for comparative results. Of
+%course, the {\cgal}  range-tree implementation is more flexible than the
+%{\kdt}  implementation by enabling to layer together range-trees and
+%segment-trees in the same data structure, see \Chapter{Range:Trees} for the 
+%details.
+
+%The implementation of the {\kdt}  is independent of the implementation of
+%the rest of {\cgal}  and can be used separately from \cgal. 
+
+%In \Section{KDT_sec:intro}, we present the {\kdt}  structure and its
+%performance. \Section{KDT_sec:class:main} presents the class
+%\ccStyle{Kdtree_d<I>}.
+
+Kd-trees are implemented by
+the class \ccc{Kdtree_d}, that is parameterized with a traits class defining
+the interface between the class and the geometric primitives used.
+For the description of the traits classes \ccc{Kd_Interface}, \ccc{Kd_Interface_2d} 
+and \ccc{Kd_Interface_3d} provided by {\cgal} please refer to the reference pages.
+Also refer to the reference pages, for the description of the formal requirements for a class to be 
+a kd-tree traits class by the concept \ccc{Kdtree_d_traits}.
+% {\cgal}  provides ready-made interface classes that are presented in
+% Section~\ref{KDT_sec:def:interface}.
+% The formal requirements for a class to be a {\kdt} traits class is
+% described in Section~\ref{KDT_sec:def:interface}. 
+
+
+% \section{Introduction}
+% \label{KDT_sec:intro}
+
+For a given set $S = \brc{ p_1, \ldots, p_n }$ on $n$ points in
+$\Re^d$, it is sometimes useful to be able to answer {\em orthogonal
+   range-searching} on $S$; namely, given an axis parallel query box
+$B$ in $\Re^d$, one would like to ``quickly'' determine the subset of
+points of $S$ lying inside $B$.
+
+
+
+
+%Orthogonal range-searching is being widely used in databases,
+%computational-geometry, and vision {\large \bf (references?)}. 
+
+Several data structures were suggested for that problem. 
+Foremost among those, at least theoreticly, is the range-tree data structure
+with $O(n \log^{d-1} n)$ preprocessing time, $O(n\log^{d-1} n)$ space,
+and $O(\log^{d} n + k)$ query time, where $k$ is the output size of
+the query.
+%See \Chapter{Range:Trees} for the the {\cgal}implementation of range-trees.
+A theoreticaly inferior data structure is the \kdt, which offers $O(n
+\log{n})$ preprocessing time, $O(n)$ space, and $O(n^{1-1/d})$ query
+time. The {\kdt}  is a binary tree constructed as follows: we compute
+the point $p_i$ of $S$ such that its first coordinate is the median
+value among $p_1^1, \ldots, p_n^1$, where $p_i^k$ denote the $k$-th
+coordinate of the $i$-th point of $S$. Let $S_1$ denote all the points
+of $S$ with first coordinate smaller than $p_i$'s first coordinate, and
+let $S_2 = S \setminus S_1$.  Let $T_1,T_2$ be the {\kdts}  constructed
+recursively for $S_1, S_2$, respectively.  The {\kdt}  of $S$ is simply
+the binary tree having $T_1$ as its left subtree and $T_2$ as its
+right subtree. We apply this algorithm recursively, splitting the sets
+in the $i$-level of the {\kdt}  using the median point in the $k$-th
+coordinate, where $k=(i \;\;mod \;\;n) + 1$. See Figure
+\ref{KDT_fig:kdtree} for an illustration.
+
+The resulting data structure has linear size, $O(n\log{n})$
+preprocessing time, and can answer a query in $O(n^{1-1/d} +k)$ time,
+where $k$ is the size of the query output. See \cite{bkos-cgaa-97}.
+
+\begin{ccTexOnly}
+
+\begin{figure}[hb]
+    \begin{center}
+        \Ipe{kdtree.ipe}
+    \end{center}
+
+    \caption{The partition of a set of  points induced by a  
+       {\kdt}  of the points}
+
+    \label{KDT_fig:kdtree}
+\end{figure}
+
+\end{ccTexOnly}
+
+\subsection{Example illustrating orthogonal range-searching}
+
+\ccExample
+
+This example illustrates orthogonal range-searching. 
+The {\kdt} is built using 2D points from the CGAL kernel. 
+
+\begin{verbatim}
+
+#include <CGAL/Cartesian.h>
+
+#include <iostream>
+#include <ctime>
+#include <cassert>
+#include <list>
+
+#include <CGAL/kdtree_d.h>
+
+typedef CGAL::Cartesian<double>           K;
+typedef K::Point_2                        point;
+typedef CGAL::Kdtree_interface_2d<point>  kd_interface;
+typedef CGAL::Kdtree_d<kd_interface>      kd_tree;
+typedef kd_tree::Box                      box;
+typedef std::list<point>                  points_list;
+
+int main()
+{
+    CGAL::Kdtree_d<kd_interface> tree(2);
+    points_list l, res;
+
+    std::cout << "Insering evenly 81 points  in the square (0,0)-(10,10) ...\n\n";
+    for (int i=1; i<10; i++)
+      for (int j=1; j<10; j++)
+        {
+          point p(i,j);
+          l.push_front(p);
+        }
+
+    // building the tree 
+    tree.build( l );
+       
+    // checking validity
+    if  ( ! tree.is_valid() )
+        tree.dump();
+    assert( tree.is_valid() );
+
+    // Defining and searching the box r
+    double lx,ly,rx,ry;
+    std::cout << "Define your query square.\nEnter left x coordinate: " ;
+    std::cin >> lx ;
+    std::cout << "Enter left y coordinate: ";
+    std::cin >> ly;
+    std::cout << "Enter right x coordinate: " ;
+    std::cin >> rx ;
+    std::cout << "Enter right y coordinate: ";
+    std::cin >> ry;
+    std::cout << std::endl; 
+
+    box r(point(lx,ly), point(rx,ry) ,2);
+
+    tree.search( std::back_inserter( res ), r );
+    
+    std::cout << "Listing of the points in the square: \n" ;
+    std::copy (res.begin(),res.end(),std::ostream_iterator<point>(std::cout," \n") );
+    std::cout << std::endl;
+
+    tree.delete_all();
+
+    return  0;
+}
+
+\end{verbatim}
+
+
+%for html
+\lcHtml{\label{KDT_fig:kdtree}}
+\begin{ccHtmlOnly}
+<P>
+<center><img border=0 src="./kdtree.gif" alt=" "><br>
+The partition of a set of  points induced by a kd-tree of the points</center>
+\end{ccHtmlOnly}
+
+%-------------------------------------------------------------------------
+% Bibiliography 
+%-------------------------------------------------------------------------
+
+%\bibliographystyle{alpha}
+%\bibliography{geometry}
+
+
+%\end{document}
+
+%%% Local Variables: 
+%%% mode: latex
+%%% TeX-master: t
+%%% End: 
+
+

@@ -1,0 +1,88 @@
+% +------------------------------------------------------------------------+
+% | Reference manual page: Arr_file_writer.tex (Arrangement)
+% +------------------------------------------------------------------------+
+% | 
+% | Package: arr (Arrangement)
+% | 
+% +------------------------------------------------------------------------+
+
+\ccRefPageBegin
+
+%%RefPage: end of header, begin of main body
+% +------------------------------------------------------------------------+
+
+%Arr_file_writer
+\begin{ccRefClass}{Arr_file_writer<Arrangement>}
+
+\ccCreationVariable{arr_file_writer}
+
+\ccDefinition
+This class contains functions for writing the \ccc{Arrangement} components to a given output stream.
+Users have to make sure that methods for writing \ccStyle{Point} 
+and \ccStyle{X\_curve} objects defined in the \ccc{Arrangement traits} 
+class are provided when using the output stream they choose to work with..
+This class is templated with \ccc{Arrangement}, and hence the user can work with \ccRefName\ 
+with its own \ccc{Arrangement}. 
+ 
+\ccInheritsFrom
+\ccc{Pm_file_writer}
+
+%The following requirement catalog lists the primitives, i.e., types, member functions
+%etc., that must be defined for any \ccc{Planar map} file writer class that can be used to parameterize the reading function of \ccc{Planar map}. 
+
+\ccTypes
+
+The following handles and iterators have appropriate constant counterparts. 
+The mutable types are assignable to their constant counterparts. 
+The iterators are assignable to the respective handle types. 
+Wherever the handles appear in function parameter lists, the appropriate iterator can be used as well. 
+
+\ccNestedType{Curve_iterator}{A bidirectional iterator over all curve nodes of the \ccc{arrangement}.}
+\ccNestedType{Subcurve_iterator}{A bidirectional iterator over all subcurve nodes of the \ccc{arrangement}.}
+\ccNestedType{Edge_iterator}{A bidirectional iterator over all edge nodes of the \ccc{arrangement}.}
+
+\ccCreation
+As described in the introduction, the \ccc{Arrangement} users can choose a verbose format for 
+printing their arrangement, this is done by putting this option in the constructor.
+
+\ccConstructor{Arr_file_writer(std::ostream& o, const Arrangement& arr, bool verbose = false);} 
+{constructs \ccRefName\ for a given output stream, the specified \ccc{Arrangement} and a verbose choice.}
+
+\ccConstructor{Arr_file_writer(std::ostream& o, const Arrangement& arr, const File_header& h)} 
+{constructs \ccRefName\ for a given output stream, the specified \ccc{Arrangement} and \ccc{File header}.}
+
+\ccOperations
+
+The operation \ccRefName \/ supports are all the operations \ccc{Pm_file_writer} supported plus the following:
+
+\ccMethod{void write_curve (Curve_iterator cv);}
+{writes a curve node to the output stream.}
+
+\ccMethod{void write_subcurve (Subcurve_iterator scv);}
+{writes a subcurve node to the output stream.}
+
+\ccMethod{void write_edge (Edge_iterator edge);}
+{writes an edge node to the output stream.}
+
+\end{ccRefClass} % Arr_file_writer
+
+% +------------------------------------------------------------------------+
+%%RefPage: end of main body, begin of footer
+\ccRefPageEnd
+% EOF
+% +------------------------------------------------------------------------+
+
+
+
+
+
+
+
+
+
+
+
+%%% Local Variables: 
+%%% mode: latex
+%%% TeX-master: "Pm_drawer"
+%%% End: 

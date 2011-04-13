@@ -1,0 +1,17 @@
+%\ccHtmlNoRefLinks
+\begin{ccRefFunction}{opposite}
+\ccInclude{CGAL/functions_on_enums.h}
+
+\ccHtmlNoLinks
+\ccFunction{Oriented_side opposite(const Oriented_side &o);}
+{returns the opposite side (for example \ccc{ON_POSITIVE_SIDE} if
+   \ccc{o==ON_NEGATIVE_SIDE}), or \ccc{ON_ORIENTED_BOUNDARY} if
+   \ccc{o==ON_ORIENTED_BOUNDARY}.}
+
+\ccHtmlNoLinks
+\ccFunction{Bounded_side opposite(const Bounded_side &o);}
+{returns the opposite side (for example \ccc{BOUNDED_SIDE} if
+   \ccc{o==UNBOUNDED_SIDE}), or returns \ccc{ON_BOUNDARY} if
+   \ccc{o==ON_BOUNDARY}.}
+\end{ccRefFunction}
+

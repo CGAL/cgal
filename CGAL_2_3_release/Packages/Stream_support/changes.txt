@@ -1,0 +1,120 @@
+Stream_support Package: Release changes:
+---------------------------------------------------------------------
+2.15 (20 June 01)
+- Patches from Matthias to use the CGAL window in the demo.
+- Update header inclusion orders.
+
+2.14 (18 June 01)
+- Test for LEDA in the demo that requires it, so that there's no "N" to look at
+  in the test-suite.
+- New demo program included in the documentation.
+
+2.13 (5 June 01)
+- Recreate the makefile for BCC support.
+
+2.12 (30 Jan 01)
+- Readded some of the old code.
+
+2.11 (23 Jan 01)
+- All compilers support member templates.
+- Don't specialize for efficiency when it's not useful.
+
+2.10 (18 Jan 01)
+- Fix long long support "bug" caught by VC++ 7.
+
+2.9 (30 May 00)
+added to Istream_iterator
+operator!=( const Self& i)
+
+2.8 (10 Dec 99)
+fixes some bugs in Stream_support/demo/Stream_support_LEDA
+now, it works at least  on Linux 
+
+2.7 (2 Dec 99)
+change the makefile in Stream_support/demo
+
+2.6 (29 nov 99)
+resubmit to include makefile in demo
+
+2.5 (12 November 99)
+     Resubmit to make sure the makefile in test is not part of the submission
+
+2.4 (28 Jul 1999)
+     Superfluous Istream_proxy removed. Mariette Yvinec (INRIA) takes
+     over the maintenance of this package with this release.
+
+2.3 (06 Mar 1999)
+
+     Bug-fixes, now successfully and tested with egcs g++.
+
+2.2 (05 Mar 1999)
+
+     Bug-fixes.
+
+2.1 (05 Mar 1999)
+
+     This package has been renamed from Support_LK to Stream_support.
+     Timer.h and Real_timer.h are separated in their own package to 
+     reflect that they have its own chapter in the manual.
+     CGAL/IO/window_stream_xy_3.h has migrated to the Window_stream
+     package maintained by Stefan Schirra.
+
+1.18 (07 Oct 1998)
+
+     Minor internal changes in Verbose_ostream (w.r.t. copy semantic).
+
+1.17 (23 Jul 1998)
+
+     The iterator helper functions for the stream support are only
+     defined if CGAL_CFG_NO_ITERATOR_TRAITS is set. Otherwise we rely
+     on iterator traits.
+
+1.16 (25 Jun 1998)
+
+     Bug fix in the test program. The buffer was not terminated properly
+     after writing the point into it. Demo adapted to new leda_window.
+
+1.15 (03 Jun 1998)
+
+     Basic support with include/CGAL/basic_lk.h removed.
+
+1.14 (23 May 1998)
+
+     Istream_iterator changed to conform to the C++ standard of input
+     iterators, i.e. it stores the current value internally. In addition,
+     it supports now an end-of-stream condition.
+
+1.13 (24 Mar 1998)
+
+     iterator_category fixed for Ostream_ and Istream_iterator.
+     Symbolic constants for CGAL_BIG_ENDIAN and CGAL_LITTLE_ENDIAN
+     changed in their semantics. Functions for even and odd renamed
+     to CGAL_is_even and CGAL_is_odd.
+
+1.12 (05 Mar 1998)
+
+     CGAL_assert_equal_types( const T&, const T&) added.
+
+1.11 (01 Mar 1998)
+
+     Constants for little endian and big endian machines introduced.
+
+1.10 (05 Feb 1998)
+
+     Reorganized TeX files for the manual and minor changes in the manual.
+
+1.9 (30 Jan 1998)
+
+     New cgal_test script.
+
+1.8 (05 Jan 1998)
+
+     Tested with egcs. New subsections with \ccSeeAlso. Include file 
+     protection as provided with the script. Includes now the TeX 
+     documentation for the support library. Includes new package field
+     in the header. Compliant to recent organisational conventions that 
+     the examples directory gets tested and that there is a new demo
+     directory.
+
+None of this package was available in CGAL 0.9.
+

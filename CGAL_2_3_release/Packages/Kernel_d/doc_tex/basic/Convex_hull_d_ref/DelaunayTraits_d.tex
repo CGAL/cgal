@@ -1,0 +1,63 @@
+\begin{ccRefConcept}{DelaunayTraits_d}
+
+\ccDefinition Requirements of the first traits class to be used with the
+class \ccc{Delaunay_d}.
+
+\ccTypes
+\ccAutoIndexingOff
+\ccNestedType{Point_d}{the dD point type on which the delaunay 
+algorithm operates}
+\ccGlue
+\ccNestedType{Sphere_d}{a dD sphere}
+\ccGlue
+\ccNestedType{FT}{an arithmetic field type}
+
+\ccNestedType{Point_of_sphere_d}{Predicate object type that provides
+\ccc{Point_d operator()(Sphere_d s, int i)}, which returns the $i$th
+point defining sphere \ccc{s}.}
+
+\ccNestedType{Construct_sphere_d}{Predicate object type that provides
+\ccc{Sphere_d operator()(int d, ForwardIterator first, ForwardIterator
+last)}, which returns a dD sphere through the points in
+\ccc{tuple[first,last)}.}
+
+\ccNestedType{Contained_in_simplex_d}{Predicate object type that
+provides \ccc{bool operator()(ForwardIterator first, ForwardIterator
+last, Point_d p)}, which determines if \ccc{p} is contained in 
+the closed simplex defined by the points in \ccc{tuple[first,last)}.}
+
+\ccNestedType{Squared_distance_d}{Predicate object type that provides
+\ccc{FT operator()(Point_d p,Point_d q)}, which determines the
+squared distance from \ccc{p} to \ccc{q}.}
+
+\ccNestedType{Affinely_independent_d}{Predicate object type that
+provides \ccc{bool operator()(ForwardIterator first, ForwardIterator
+last)}, which determines if the points in \ccc{tuple[first,last)} are
+affinely independent.}
+
+\ccCreation
+\ccCreationVariable{traits}
+
+A default constructor and copy constructor is required.
+
+\ccOperations
+
+For each of the above function and predicate object types,
+\ccc{Func_obj_type}, a function must exist with the name
+\ccc{func_obj_type_object} that creates an instance of the function or
+predicate object type.  For example:
+
+\ccMethod{Construct_sphere_d construct_sphere_d_object();}{}
+
+\ccAutoIndexingOn
+
+\ccHasModels
+% cross references between manuals not currently possible
+%\ccRefIdfierPage{CGAL::Cartesian_d<FT,LA>}\\
+%\ccRefIdfierPage{CGAL::Homogeneous_d<RT,LA>}\\
+\ccc{CGAL::Cartesian_d<FT,LA>}\\
+\ccc{CGAL::Homogeneous_d<RT,LA>}\\
+
+%\ccSeeAlso
+
+\end{ccRefConcept}

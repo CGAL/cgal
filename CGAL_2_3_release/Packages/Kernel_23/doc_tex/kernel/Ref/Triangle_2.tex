@@ -1,0 +1,112 @@
+\begin{ccRefClass} {Triangle_2<R>}
+
+\ccDefinition  An object $t$ of the class \ccRefName\ is a triangle 
+in the two-dimensional Euclidean plane~$\E^2$. 
+Triangle  $t$  is oriented, i.e., its boundary has
+clockwise or counterclockwise orientation. We call the side to the left
+of the boundary the positive side and the side to the right of the
+boundary the negative side.
+
+As any Jordan curve the boundary of a triangle splits the plane in
+two open regions, a bounded one and an unbounded one. 
+
+\ccCreation
+\ccCreationVariable{t}
+
+
+\ccHidden \ccConstructor{Triangle_2();}
+             {introduces an uninitialized variable \ccVar.}
+
+\ccHidden \ccConstructor{Triangle_2(const Triangle_2<R> &u);}
+ 	    {copy constructor.}
+
+
+\ccConstructor{Triangle_2(const Point_2<R> &p, 
+	                     const Point_2<R> &q, 
+	                     const Point_2<R> &r);}
+            {introduces a triangle \ccVar\ with vertices $p$,  $q$ and $r$.}
+
+
+\ccOperations
+
+\ccHidden \ccMethod{Triangle_2<R> & operator=(const Triangle_2<R> &t2);}
+        {Assignment.}
+
+\ccMethod{bool operator==(const Triangle_2<R> &t2) const;}
+       {Test for equality: two triangles are equal, iff there exists a 
+        cyclic permutation of the vertices of $t2$, such that they are 
+        equal to the vertices of \ccVar.}
+
+\ccMethod{bool operator!=(const Triangle_2<R> &t2) const;}
+       {Test for inequality.}
+
+\ccMethod{Point_2<R> vertex(int i) const;}
+       {returns the i'th vertex modulo 3  of~\ccVar.}
+
+\ccMethod{Point_2<R> operator[](int i) const;}
+       {returns \ccStyle{vertex(i)}.}
+
+\ccPredicates
+
+\ccMethod{bool is_degenerate() const;}
+       {triangle \ccVar\ is degenerate, if the vertices are collinear.}
+
+\ccMethod{Orientation orientation() const;}
+       {returns the orientation of~\ccVar.}
+
+\ccMethod{Oriented_side oriented_side(const Point_2<R> &p) const;}
+       {returns 
+        \ccStyle{ON_ORIENTED_BOUNDARY}, or
+        \ccStyle{POSITIVE_SIDE}, 
+        or the constant
+        \ccStyle{ON_NEGATIVE_SIDE},
+        determined by the position of point $p$.
+        \ccPrecond \ccVar\ is not degenerate.}
+
+\ccMethod{Bounded_side bounded_side(const Point_2<R> &p) const;}
+       {returns the constant \ccStyle{ON_BOUNDARY},
+        \ccStyle{ON_BOUNDED_SIDE}, or else
+        \ccStyle{ON_UNBOUNDED_SIDE},
+        depending on where point $p$ is.
+        \ccPrecond \ccVar\ is not degenerate.}
+
+For convenience we provide the following boolean functions:
+
+\ccMethod{bool has_on_positive_side(const Point_2<R> &p) const;}
+       {}
+\ccGlue
+\ccMethod{bool has_on_negative_side(const Point_2<R> &p) const;}
+       {}
+\ccGlue
+\ccMethod{bool has_on_boundary(const Point_2<R> &p) const;}
+       {}
+\ccGlue
+\ccMethod{bool has_on_bounded_side(const Point_2<R> &p) const;}
+       {} 
+\ccGlue
+\ccMethod{bool has_on_unbounded_side(const Point_2<R> &p) const;}
+       {\ccPrecond \ccVar\ is not degenerate.}
+
+\ccHeading{Miscellaneous}
+
+\ccMethod{Triangle_2<R> opposite();}
+       {returns a triangle where the boundary is oriented the other
+        way round (this flips the positive and the negative side, but
+        not the bounded and unbounded side).}
+
+\ccMethod{FT area() const;}
+       {returns the signed area of \ccVar.}
+
+\ccMethod{Bbox_2 bbox() const;}
+       {returns a bounding box containing \ccVar.}
+
+
+\ccMethod{Triangle_2<R>  transform(const Aff_transformation_2<R> &at) const;}
+       {returns the triangle obtained by applying $at$ on the three
+        vertices of \ccVar.}
+
+\ccSeeAlso
+
+\ccRefConceptPage{Kernel::Triangle_2} \\
+
+\end{ccRefClass} 

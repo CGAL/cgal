@@ -1,0 +1,55 @@
+% +------------------------------------------------------------------------+
+% | Reference manual page: Arr_halfedge.tex (Arrangement)
+% +------------------------------------------------------------------------+
+% | 
+% | Package: arr (Arrangement_2)
+% | 
+% +------------------------------------------------------------------------+
+
+\ccRefPageBegin
+
+%%RefPage: end of header, begin of main body
+% +------------------------------------------------------------------------+
+% +========================================================================+
+%   Arrangement_2::Halfedge
+% +========================================================================+
+
+\begin{ccRefClass}[Arrangement_2<Dcel,Traits,Base_node>::]{Halfedge}
+\ccRefLabel{Arr_Halfedge} % I added this label to avoid ambiguity.
+
+\ccCreationVariable{e}
+  
+\ccDefinition An object $e$ of the class
+    \ccStyle{Halfedge} inherits the halfedge of the planar map induced by the 
+    arrangement. % It has additional additional methods over the
+    %planar map halfedge which are listed below.
+    It has the additional method \ccc{edge_node()} which returns
+    an iterator to the edge node in the hierarchy tree, and
+    \ccc{overlap_edges()} which returns a circulator over the overlapping edge
+    nodes that correspond to \ccVar.
+
+\ccOperations
+    \ccMethod{Edge_iterator edge_node();}
+    {returns an iterator to the edge node in the hierarchy tree which
+       holds the curve from 
+       which the halfedge was generated. This enables
+       traversal over the hierarchy tree that \ccVar{} belongs to.
+       %over the edges that come from the same curve.
+       For example, if \ccc{eit} is the returned iterator, 
+       \ccc{eit->curve_node()} will return the root of the hierarchy tree and
+       \ccc{++eit}
+       will return the following edge in the hierarchy tree (unless \ccc{eit}
+       is the rightmost edge in the hierarchy tree, in which case \ccc{++eit}
+       will return the past-the-end value.)}
+
+    \ccMethod{Overlap_circulator overlap_edges();}{returns
+       a bidirectional circulator to traverse all edge nodes that correspond
+       to \ccVar.}
+
+\end{ccRefClass}
+
+% +------------------------------------------------------------------------+
+%%RefPage: end of main body, begin of footer
+\ccRefPageEnd
+% EOF
+% +------------------------------------------------------------------------+

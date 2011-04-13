@@ -1,0 +1,385 @@
+Version 1.83 (3 August 01)
+- Susan added missing .gif and .eps files in the doc_tex/*_ref directories
+
+Version 1.82 (1 August 01)
+- Susan moved the doc_tex/*_ref directories up one level and changed htmlfiles
+  accordingly
+
+Version 1.81 (31 July 01)
+- ds_cell doesn't derive from Triangulation_util_3 anymore, as this wasted
+  memory for nothing with GCC 2.95.
+
+Version 1.80 (27 July 01)
+- Susan moved the TDS documentation to its own directory, eliminating one
+  level of subdirectories
+- also made changes necessary for manual split
+
+Version 1.79 (25 July 01)
+- Short names in the examples for VC++.
+
+Version 1.78 (23 July 01)
+- traits concepts doc modified according to the corresponding modifications
+  in the code
+- fix: CGAL::make_object no longer used, it is taken from the traits instead
+
+Version 1.77 (20 July 01)
+- Don't put the traits' function objects as data members of the
+  triangulations.
+
+Version 1.76 (19 July 01)
+- Make demos and examples use Filtered_kernel.
+
+Version 1.75 (18 July 01)
+- Fix return type of Compare_distance_3 in the HierarchyTraits_3 doc.
+- Remove constructors for vertices in the doc.
+- Fix mirror_vertex() and mirror_index().
+- Replace Coplanar_orientation_3 taking 4 points, by the one taking 3 points.
+- Remove Collinear_3 from the traits.
+
+Version 1.74 (13 July 01)
+- copy_tds() cleanups.
+- replace delete Cell by delete_cell() in Regular.
+
+Version 1.73 (13 July 01)
+- print_cells and read_cells small cleanup.
+- With VC++, MP_Float.h must be included before Filtered_exact.h.
+- Small cleanups for order_of_creation.
+
+Version 1.72 (10 July 01)
+- New functions : TDS.create_vertex() and TDS.delete_vertex().
+
+Version 1.71 (6 July 01)
+- minor corrections in the user manual, as suggested by Susan and Andreas
+in Dagtuhl
+- VC++ needs some macros for Filtered_exact<>, added in examples and demos
+- std::ostream & operator<< of T3 and copy_tds of TDS_3
+modified to respect the order in which vertices were created
+
+Version 1.70 (3  July 01)
+- Use Filtered_exact<MP_Float> in the demo/examples.
+
+Version 1.69 (3  July 01)
+- fix in read_cells
+- cell constructions and deletions done by the TDS only + doc update.
+- Add a init() method to the cell base.
+
+Version 1.68 (29 June 01)
+- read_cells and print_cells member functions of tds for gcc-2.96 
+- include updated for Filtered_exact
+
+Version 1.67 (25 June 01)
+- bug in demo and example _color fixed
+- dual functions cleaned
+- useless blind_demo removed
+- cleanup
+
+Version 1.66 (21 June 01)
+- dual function for cells and facets
+- demo.voronoi
+- example and demo with modified vertex base
+- new remove documented
+
+Version 1.65 (20 June 01)
+- Simplify TDS test program to use an empty traits.
+
+Version 1.64 (20 June 01)
+- new demo for vertex removal
+- new example for hierarchy
+- doc fixes for tds (new signature for insert methods)
+
+Version 1.63 (20 June 01)
+- doc for hierarchy fixed
+- cleanup in examples, demo
+
+Version 1.62 (19 June 01)
+- Nothing changed.  Package renamed to Triangulation_3.
+
+Version 1.61 (19 June 01)
+- all concepts renamed in the doc according to the decision made in Dagtuhl
+- default template parameters for all triangulation classes except hierarchy
+  default used in the example and test-suite
+- kernel traits used in the example(s) and test-suite
+- example files included directly in the doc
+- Remove one "new Cell" in Triangulation_3.
+- Privatize some member functions of TDS.
+
+Version 1.60 (14 June 01)
+- Short names for the hierarchy.
+- More test-suite cleanups.
+
+Version 1.59 (14 June 01)
+- Test-suite cleanups.
+- Change prototype of tds::clear_cells_only() to avoid unnecessary vector copy.
+
+Version 1.58 (7  June 01)
+- Cleanup vertex_3 and cell_3.
+
+Version 1.57 (5  June 01)
+- Add missing typename for MipsPro.
+
+Version 1.56 (1  June 01)
+- Document the hierarchy.
+- Use MP_Float.
+- Hierarchy traits now uses Compare_distance_3.
+- One more VC++ for()-scope workaround.
+- Change function order to try to fix BCC.
+- Remove traces of geometry in Delaunay_remove_tds.
+- preconditions(is_vertex()) changed to expensive.
+
+Version 1.55 (29 May 01)
+- warning bcc fixed (unused variable)
+
+Version 1.54 (28 May 01)
+- VC++ fix.
+- Add public: in example_tds.C.
+
+Version 1.53 (23 May 01)
+- Put Triangulation_hierarchy_vertex_base_3 in its own file.
+- VC++ for()-scope workaround.
+- example_tds.C update to the new TDS::insert() interface.
+
+Version 1.52 (22 May 01)
+- Regular works again.
+- Fix memleak in TDS.
+
+Version 1.51 (18 May 01)
+- remove
+- bug fix in is_edge of tds
+- all interfaces of tds.insertxxx() changed
+- tds.clear modified
+- even more for() scope VC++ bug workarounds.
+- fix BCC/KCC warning.
+
+Version 1.50 (4  May 01)
+- Fix recently introduced bug in the hierarchy when dimension() < 3.
+- more for() scope VC++ bug workaround.
+- Don't try to compile demo.C on Windows as it required Geomview.
+- Apply the full Delaunay test-suite to the hierarchy, this showed some bugs.
+- Merge the two insert() functions in one, using a default argument for the
+  starting cell.
+- Finally update the traits to the last kernel, and documentation.
+- Regular triangulation speed up.
+- Added push_back() member functions.
+
+Version 1.49 (13 Apr 01)
+- locate() interface changes to match the 2D case wrt the default start.
+- minor hierarchy speed up.
+
+Version 1.48 (13 Apr 01)
+- for() scope VC++ bug workaround.
+- facet circulator around an edge fix.
+
+Version 1.47 (9 Apr 01)
+- member template definition in class body for VC++.
+
+Version 1.46 (3 Mar 01)
+- violates() optimization (remove() speed up). [syl]
+- new insert_conflict() in the TDS. [syl]
+- rand4() can now be inline (locate() speed up). [syl]
+- New internal typedef Conflict_set to allow later testing of hash_set<>. [syl]
+- "int in_conflict_flag" in ds_cell to speed up insert(). [syl]
+- Point_2 include and typedef removed from Triangulation_geom_traits_3.h [af]
+- add dummy variable to cheat MSVC++
+- added Delaunay__traingulation_3::fill_hole_3d_ear, an alternative
+  implementation for fill_hole_3d [af]
+- Use std::distance(). [syl]
+- Triangulation_hierarchy<>.
+- Remove some old style casts.
+- Add a free cell list to speed up allocation.
+- Various cleanups.
+
+Version 1.45 (22 dec 00)
+- point() of vertex_base returns a const ref instead of a Point. [syl]
+- locate() improvements (remembering). [syl]
+- new typdefs Geom_traits and Triangulation_data_structure.
+- various cleanups.
+- the kernel can almost be used as geometric traits class [andreas]
+- function objects are created and applied directly. This means one less redirection [andreas]
+- reintroduced the type Point in the traits class for backward compatibility [andreas]
+- undo added so that the remove fails gracefully, instead of invalidating the triangulation [andreas]
+
+
+Version 1.44 (11 dec 00)
+- typdefs _3 fixed in demo and example
+- locate() small optimization. [syl]
+
+Version 1.43 (6 dec 00)
+- Regular 3D compile for simple cartesian kernels too. [syl]
+- Geomview output. [syl]
+- typedefs _3 in traits [andreas]
+- minor optimization in side_of_tetrahedron(). [syl]
+- gcc 2.97 stuff. [syl]
+
+Version 1.42 (26 sept 00)
+Minor modifications :
+- One more sentence in the doc
+- #include <CGAL/Cartesian.h> added in Triangulation_geom_traits_3.h (useful
+for degenerate dimensions)
+
+Version 1.41 (7 aug 00)
+- parameter dummy_for_windows added in the old versions of 
+Triangulation_3:: incident_vertices et al (kept for compatibility
+with previous versions).
+
+Version 1.40 (2 aug 00)
+- * replaced by _handle in Triangulation_3:: incident_vertices and
+incindet_cells for a given vertex
+- is_edge and analogous methods implemented
+- doc updated
+
+Version 1.39 (1 aug 00)
+added missing CGAL_NTS in the test_suite
+
+Version 1.38 (31 jul 00)
+has_vertex and are_equal for Facet documented
+fixes in scopes of classes in the doc
+
+Version 1.37 (28 jul 00)
+new fixes in typenames
+remove in Delaunay documented
+
+Version 1.36 (17 jul 00)
+fixes in typenames in Delaunay::remove
+call to Filtered_exact commented in examples to test on all platforms
+
+Version 1.35 (14 jul 00)
+first version of vertex_removal in Delaunay_3
+small functionalities (are_equal, has_vertex) on facets
+(nothing documented yet)
+CGAL_NTS added in predicates/Regular*3.h
+
+Version 1.34 (3 apr 00)
+fix in the doc :
+cheating with concept Tds_3 and its template parameters
+to remove problem with indexing...
+To be arranged later
+
+Version 1.33 (29 march 00)
+very bad version of the new doc
+
+Version 1.32 (21 fev 00)
+bug fix (undefined variable in assertion...)
+
+Version 1.31 (11 fev 00)
+small bug fixes (only appearing when disabling preconditions)
+
+Version 1.30 (4 fev 00)
+changes for -pedantic (thank you Geert-Jan)
+
+Version 1.29 (12 janv 99)
+changes in the figures of the doc only
+
+Version 1.28 (21 dec 99)
+newline removed in cout<<" " in demos
+
+Version 1.27 (17 dec 99)
+useful #include added in the demos
+a few small details changed in the doc
+
+Version 1.26 (16 dec 99)
+removed : useless #include in the "demos"
+added : pictures in the doc
+
+Version 1.25 (10 dec 99)
+change in the doc:
+\begin{ccClass}{Traits} --> \begin{ccClass}{Triangulation_3_traits}
+
+Version 1.24 (2 dec 99)
+changes for Borland
+makefile in demo changed for M$
+
+Version 1.23 (16 nov 99)
+Function is_valid(cell) added in Delaunay (had been forgotten...)
+
+Version 1.22 (3 nov 99)
+Fixes in the documentation (section titles)
+
+Version 1.21 (2 nov 99)
+- another vertex base in Triangulation_vertex_base_3.h, that does not 
+copy points
+- first submission of src/Triangulation3.C : contains the definition of
+the static table used by Triangulation_utils_3.h
+
+Version 1.20 (28 oct 99)
+cleaning and purify-ing
+
+Version 1.19 (22 oct 99)
+Remove reference to Quotient, replaced by Homogeneous::FT.
+Triangulation_utils_3 cleaned
+
+Version 1.18 (22 oct 99)
+(problem with submission - 1.19 submitted instead)
+display changes in the doc
+
+Version 1.17 (18 oct 99)
+same contents, but lots of fixes in the doc following Susan's remarks.
+
+Version 1.16 (14 oct 99)
+flips added
+short_names (needed by MSVC)
+
+Version 1.15 (5 oct 99)
+removing "unsigned int"
+
+Version 1.14 (4 oct 99)
+problem in conversion from ds_cell to Cell_handle solved in
+Triangulation_circulator_3 (in Facet_circulator)
+
+Version 1.13 (28 sept 99)
+cleaning typedefs, friend declarations
+test suite modified for regular triangulation
+
+Version 1.12 (23 sept 99)
+Facet_circulator added
+changes in the internal representation of Cell_circulator
+
+Version 1.11 (17 sept 99)
+trying new special macro for MSVC typename bug
+
+Version 1.10 (15 sept 99)
+a few more typenames in Regular triangulation
+a few more std:: in the test suite
+
+Version 1.9 (13 sept 99)
+minor changes (names, etc)
+minor changes in the doc (macros, not change in the contents)
+
+Version 1.8 (8 sept 99)
+minor fixes (std::, typenames, etc)
+
+Version 1.7 (1st sept 99)
+changes in Dagstuhl for MSVC++
+
+Version 1.6 (25 august 99)
+minor changes to run with g++ 2.95
+
+Version 1.5 (2 august 99)
+bug fix in  _test_cls_tds_cell.C (which made the test suite fail
+on Linux)
+
+Version 1.4 (27 july 99)
+regular triangulations added
++ cleaning
+
+Version 1.3 (13 July 99)
+include files :
+	Some cleaning +
+	The constructors of the cells do not insert the cell in the
+	triangulation any more. Instead the triangulation has functions
+	to add cells. (for data structure and geometric triangulation as well)
+doc :
+	Several small corrections + updates due to the changes in include files.	
+test-suite :
+	updates due to the changes in include files +
+	does not always call gmp
+
+Version 1.2 (30 June 99)
+small bug fixes in the test-suite after results of 2.1-I-1
+methods defined outside classes to compile with -O2
+
+Version 1.1 (24 June 99)
+Bug fixes in memory management (too much cleaning...)
+testsuite was failing on Linux
+
+Version 1.0 (23 June 99)
+- Initial release !!!

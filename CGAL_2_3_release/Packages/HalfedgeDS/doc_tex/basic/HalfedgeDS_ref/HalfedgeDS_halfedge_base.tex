@@ -1,0 +1,73 @@
+% +------------------------------------------------------------------------+
+% | Reference manual page: HalfedgeDS_halfedge_base.tex
+% +------------------------------------------------------------------------+
+% | 22.03.1999   Lutz Kettner
+% | Package: HalfedgeDS
+% | 
+\RCSdef{\RCSHalfedgeDShalfedgebaseRev}{$Revision$}
+\RCSdefDate{\RCSHalfedgeDShalfedgebaseDate}{$Date$}
+% +------------------------------------------------------------------------+
+
+\ccRefPageBegin
+
+%%RefPage: end of header, begin of main body
+% +------------------------------------------------------------------------+
+
+
+\begin{ccRefClass}{HalfedgeDS_halfedge_base<Refs>}
+
+\ccDefinition
+  
+The class \ccRefName\ is a model of the \ccc{HalfedgeDSHalfedge}
+concept. \ccc{Refs} is an instantiation of a \ccc{HalfedgeDS}. 
+The full declaration states four template parameters:
+
+\begin{tabbing}
+\mbox{}~~~~~~ \= \ccc{template <} \=\ccc{class Refs,}\\
+              \> \>\ccc{class Tag_prev   } \=\ccc{= CGAL::Tag_true,}\\
+              \> \>\ccc{class Tag_vertex } \>\ccc{= CGAL::Tag_true,}\\
+              \> \>\ccc{class Tag_face   } \>\ccc{= CGAL::Tag_true>}\\
+     \> \ccc{class HalfedgeDS_halfedge_base;}
+\end{tabbing}
+
+If \ccc{Tag_prev} $\equiv$ \ccc{CGAL::Tag_true} a reference to the previous
+halfedge is supported.
+
+If \ccc{Tag_vertex} $\equiv$ \ccc{CGAL::Tag_true} an incident vertex is
+supported.
+
+If \ccc{Tag_face} $\equiv$ \ccc{CGAL::Tag_true} an incident face is
+supported.
+
+In all cases, a reference to the next halfedge and to the opposite
+halfedge is supported.
+
+\ccInclude{CGAL/HalfedgeDS_halfedge_base.h}
+
+\ccIsModel
+
+\ccRefConceptPage{HalfedgeDSHalfedge}
+
+\ccCreation
+\ccCreationVariable{h}
+
+\ccConstructor{HalfedgeDS_halfedge_base();}{default constructor.}
+
+\ccSeeAlso
+
+\ccRefConceptPage{HalfedgeDS<Traits,Items,Alloc>}\\
+\ccRefConceptPage{HalfedgeDSItems}\\
+\ccRefConceptPage{PolyhedronItems_3}\\
+\ccRefIdfierPage{CGAL::HalfedgeDS_items_2}\\
+\ccRefIdfierPage{CGAL::HalfedgeDS_vertex_base<Refs>}\\
+\ccRefIdfierPage{CGAL::HalfedgeDS_face_base<Refs>}\\
+\ccRefIdfierPage{CGAL::HalfedgeDS_halfedge_min_base<Refs>}
+
+\end{ccRefClass}
+
+% +------------------------------------------------------------------------+
+%%RefPage: end of main body, begin of footer
+\ccRefPageEnd
+% EOF
+% +------------------------------------------------------------------------+
+

@@ -1,0 +1,87 @@
+% +------------------------------------------------------------------------+
+% | Reference manual page: Regular_face_base.tex
+% +------------------------------------------------------------------------+
+% | 12.04.2000   Author
+% | Package: Package
+% | 
+\RCSdef{\RCSRegularfacebaseRev}{$Revision$}
+\RCSdefDate{\RCSRegularfacebaseDate}{$Date$}
+% |
+%%RefPage: end of header, begin of main body
+% +------------------------------------------------------------------------+
+
+
+\begin{ccRefConcept}{RegularTriangulationFaceBase_2}
+
+%% \ccHtmlCrossLink{}     %% add further rules for cross referencing links
+%% \ccHtmlIndexC[concept]{} %% add further index entries
+
+\ccDefinition
+  
+The regular triangulation of a set of weighted point does not
+necessarily
+have one vertex for each of the input points. Some of the input
+weigthed points have no cell in the dual power diagrams
+and therefore do not correspond to a vertex of the regular
+triangulation.
+Those weighted point are said to be {\it hidden} points.
+A  point which is hidden at a given time may appear later as a vertex of
+the regular triangulation upon removal on some other weighted point.
+Therefore, hidden points have to be stored somewhere.
+A hidden point can appear as vertex of the triangulation
+only when the
+two dimensional face where its point component is located
+(the face which hides it)
+is removed. Therefore we decided to store each hidden point
+in the face which  hides it and the nested face type of a 
+regular triangulation is assumed to include a list of hidden 
+weighted points. This list of weighted point is in fact included
+in the base face of a regular triangulation.
+
+The concept \ccRefName\ 
+has to fulfills the following requirements
+in addition to the requirements of \ccc{TriangulationFaceBase_2},
+described \ccRefPage{TriangulationFaceBase_2}
+
+\ccTypes
+\ccNestedType{ Weighted_point}
+{This type must be the same
+as the weighted point type 
+\ccc{Traits::Weigthed_point}
+defined by the geometric traits class of the regular triangulation.}
+\ccGlue
+\ccTypedef{typedef std::list<Weighted_point> Point_list;}
+{An std list of hidden points.}
+
+
+\ccCreation
+\ccCreationVariable{rfb}  %% choose variable name
+
+\ccConstructor{RegularTriangulationFaceBase_2();}{default constructor.}
+\ccGlue
+\ccConstructor{RegularTriangulationFaceBase_2(void* v0, void* v1, void* v2)}{Constructor setting the incident vertices.}
+\ccGlue
+\ccConstructor{RegularTriangulationFaceBase_2(void* v0, void* v1, void*  v2, void*
+n0, void* n1, void* n2)} {Constructor setting the incident vertices and 
+the neighboring faces.}
+
+\ccHeading{Access Functions}
+\ccMethod{Point_list& point_list();}
+{Returns a reference to the list of weighted points
+hidden by the face.}
+
+
+\ccHasModels
+\ccc{CGAL::Regular_triangulation_face_base_2}
+
+\ccSeeAlso
+\ccc{TriangulationFaceBase_2}
+\ccc{CGAL::Regular_triangulation_face_base_2}
+
+\end{ccRefConcept}
+
+% +------------------------------------------------------------------------+
+%%RefPage: end of main body, begin of footer
+% EOF
+% +------------------------------------------------------------------------+
+
