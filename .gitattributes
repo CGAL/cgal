@@ -1,0 +1,5 @@
+* text=auto !eol
+Packages/Installation/doc_tex/installation/Fig/a-simp.ipe -text
+Packages/Installation/doc_tex/installation/Fig/c-simp.ipe -text
+Packages/Installation/doc_tex/installation/Fig/g-simp.ipe -text
+Packages/Installation/doc_tex/installation/Fig/l-simp.ipe -text

@@ -1,0 +1,113 @@
+STL_Extension Package: Release changes:
+---------------------------------------------------------------------
+2.7 (28 Jul 1999)
+
+     Some missing std:: fixed. Michael Hoffmann (ETH) takes over
+     the maintenance of this package with this release.
+
+2.6 (22 May 1999)
+
+     Typos before CGAL R2.0 fixed.
+
+2.5 (29 Apr 1999)
+
+     in_place_list_prog.C fixed.
+
+2.4 (12 Apr 1999)
+
+     std:: namespace added for iterator_category().
+
+2.3 (07 Apr 1999)
+
+     Fixes std:: prefix for base classes to CGAL_STD:: in 
+     function_objects.h. std:: namespace added for value_type()
+     etc. in iterator_test.any.
+
+2.2 (15 Mar 1999)
+
+     Modifier_base.h removed from this package.
+
+2.1 (06 Mar 1999)
+
+     Standard headers, std namespace and CGAL namespace.
+     Example file renamed to in_place_list_prog.C.
+     The Modifier_base class is separated in its own package to 
+     reflect that it has its own chapter in the manual.
+     copy_n is located in the CGAL namespace. In order to avoid
+     name clashes, it excluded from compilation if namespaces are
+     not supported, e.g. Gnu g++ 2.8.1.
+
+1.18 (19 Jan 1999)
+
+     Documentation fixes: False constructor removed for Counting_iterator
+     and impl. description fixed for Inverse_index.
+
+1.17 (15 Dec 1998)
+
+     Change in In_place_list: Make mutable iterator assignable to 
+     const iterator. Fix incorrect documented template parameter
+     lists for Random_access_adaptor and Random_access_value_adaptor.
+     Some internal changes to make it compile on egcs 1.1 (to work 
+     around a compiler bug).
+
+1.16 (12 Nov 1998)
+
+     Changes in In_place_list: The iterators have been rewritten with
+     fewer template parameters, which results in shorter template names.
+
+1.15 (07 Oct 1998)
+
+     Bug with respect to value_type friend function and value_type type
+     fixed.
+
+1.14 (03 Jun 1998)
+
+     A few changes in the doc. Chapter entry in header.
+
+1.13 (09 Apr 1998)
+
+     Spell checker.
+
+1.12 (24 Mar 1998)
+
+     Changes in operator+ of N_step_iterator to fix problems with
+     Silicon Graphics CC 7.1.
+
+1.11 (04 Mar 1998)
+
+     Shorter name for internal class. Priority queue removed.
+
+1.10 (01 Mar 1998)
+
+     False doc' for Inverse_index corrected (only one template arg').
+
+1.9 (18 Feb 1998)
+
+     A few typename's in inappropriate places removed. Run's with SGI CC-n32.
+
+1.8 (16 Feb 1998)
+
+     Bug in Join_input_iterator_1 fixed.
+
+1.7 (13 Feb 1998)
+
+     Modifier_base class added.
+
+1.6 (05 Feb 1998)
+
+     Reorganized TeX files for the manual and minor changes in the manual.
+
+1.5 (03 Feb 1998)
+
+     New cgal_test script. Tested with g++ 2.8 and egcs 2.90.
+
+1.4 (06 Jan 1998)
+
+     New subsections with \ccSeeAlso. Include file protection as 
+     provided with the script. Includes now the TeX documentation for 
+     the support library. Includes new package field in the header. 
+     Compliant to recent organisational conventions that the examples 
+     directory gets tested and that there is a new demo directory.
+
+None of this package was available in CGAL 0.9.
+

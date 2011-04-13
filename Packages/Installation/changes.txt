@@ -1,0 +1,65 @@
+//=====================================================================
+//	Revision History for package Installation
+//=====================================================================
+
+
+//---------------------------------------------------------------------
+//	actual revision
+//---------------------------------------------------------------------
+
+GLOB: fixed EXTRA_OBJECTS bug (workaround_4_irix was addded ALWAYS).
+GLOB: changed EXTRA_OBJECTS for Intervall_arithmetic workaround on irix6.
+GLOB: define CGAL_CC in include makefiles.
+GLOB: write CGAL_EXTRA_OBJECTS without path-prefix.
+GLOB: generate cctype replacement header, if CCTYPE_MACRO_BUG is encountered.
+GLOB: add -DLEDA_NO_DEFAULT_COMPARE to cxxflags on gcc-2.8.
+GLOB: use "make -k" when building the libs.
+GLOB: added CGAL_EXTRA_OBJECTS to include makefile (Intervall_arithmetic fix
+ALL : for irix)
+GLOB: added -DLEDA_STD_HEADERS if compiling with LEDA support
+GLOB: undefine evt. existing cctype macros (see CGAL_CFG_CCTYPE_MACRO_BUG)
+GLOB: in cctype, use the functions instead
+GLOB: added strstream to the redirection headers
+GLOB: do not add the cctype symbols to namespace std (they are macros)
+GLOB: added using directives to replacement headers to put symbols into
+GLOB: namespace std that should be there.
+GLOB: changed order in compiler tests: first check standard headers
+GLOB: STL test is now just one among many other compiler tests
+GLOB: changed to support Cygwin
+GLOB: corrected OS description on Linux
+GLOB: removed explicit support for "external" STL.
+GLOB: internal tests now use standard headers and namespace.
+ALL : Update for CGAL-2.0.
+GLOB: Show whether compiler is supported.
+GLOB: Create redirection header files in correct dir.
+GLOB: New Upgrade option.
+DOCS: updated documentation acc.to Stefan's suggestions.
+DOCS: added documentation of scripts (use_cgal_namespace,
+DOCS: create_cgal_makefile and replace_headers).
+DOCS: some minor corrections/clarifications.
+DOCS: sample installation now with egcs
+DOCS: removed support for "external" STL
+DOCS: removed obsolete paragraph about LEDA/STL problems
+DOCS: updated upgrade section.
+DOCS: updated list of supported compilers.
+DOCS: added section "Compiler Optimisations"
+DOCS: added long-name-problem remarks to Troubleshooting
+DOCS: moved leda-stl-conflict subsection to Troubleshooting
+SRC : fixed IA workaround_irix naming.
+SRC : added rule for compiling the intervall-arithmetic workaround_4_irix.
+SRC : added CGAL_EXTRA_OBJECTS to lib makefiles (Intervall_arithmetic fix
+SRC : added Fixed_precision_nt.o.
+
+//---------------------------------------------------------------------
+//	 CGAL-1.2
+//---------------------------------------------------------------------
+
+GLOB: added -Wall flag for gcc2.8/egcs.
+GLOB: added standard header redirection by Geert-Jan.
+GLOB: added namespace disabling for SGI-7.2.1 in tests.
+GLOB: removed geomview support (now in geomview package).
+GLOB: added geomview support,
+GLOB: included fixes from CGAL-1-1-patch.
+DOCS: adopted to new html-converter.
+SRC : added File_header_extended_OFF.o to CGAL_OBJECTS.
+SRC : added Geomview_stream.o to CGAL_OBJECTS in makefiles.

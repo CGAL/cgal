@@ -1,0 +1,2 @@
+cc_manual_to_html -title "CGAL Installation Guide" -date "`date +%b` `date +%e`,  `date +%Y`" -aux wrapper.aux -bbl wrapper.bbl -o html wrapper.tex
+# cp `cat htmlfiles` html
