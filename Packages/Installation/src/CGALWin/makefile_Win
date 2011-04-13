@@ -1,0 +1,58 @@
+# This is the makefile for compiling the CGAL window library libCGALWin.a.
+
+#---------------------------------------------------------------------#
+#                    include platform specific settings
+#---------------------------------------------------------------------#
+# Choose the right include file from the <cgalroot>/make directory.
+
+CGAL_MAKEFILE = SET_YOUR_CGAL_MAKEFILE_HERE
+include $(CGAL_MAKEFILE)
+
+#---------------------------------------------------------------------#
+#                    compiler flags
+#---------------------------------------------------------------------#
+
+CXXFLAGS = $(CGAL_WINLIB_CXXFLAGS) -DCGAL_USE_CGAL_HEADERS
+
+#---------------------------------------------------------------------#
+# Object files
+#---------------------------------------------------------------------#
+
+CGAL_OBJECTS = \
+_basic$(OBJ_EXT) \
+_base_window$(OBJ_EXT) \
+_base_panel$(OBJ_EXT) \
+_color$(OBJ_EXT) \
+_file$(OBJ_EXT) \
+_file_panel$(OBJ_EXT) \
+_string_manip$(OBJ_EXT) \
+_window$(OBJ_EXT) \
+_x_basic$(OBJ_EXT)
+
+#---------------------------------------------------------------------#
+#                    target entries
+#---------------------------------------------------------------------#
+
+lib: lib_no_install
+	mv $(CGAL_WIN_LIB) $(CGAL_LIB_DESTINATION)
+
+lib_no_install: $(CGAL_OBJECTS) 
+	$(CGAL_LIB_CREATE)$(CGAL_WIN_LIB) \
+	`ls *$(OBJ_EXT) | awk '{for (i=1; i<=NF;++i){printf "$(CGAL_OBJ_PREFIX)";print $$i}}'`\
+		$(CGAL_LIB_LDFLAGS)
+	rm $(CGAL_OBJECTS) 
+
+clean:
+	rm -f $(CGAL_WIN_LIB) $(CGAL_OBJECTS) 
+
+#---------------------------------------------------------------------#
+#                    suffix rules
+#---------------------------------------------------------------------#
+
+_x_basic$(OBJ_EXT):
+	cp $(CGAL_WIN_EXTRA_DIR)/_x_basic.C .
+	$(CGAL_CXX) $(CXXFLAGS) -c _x_basic.C
+
+.C$(OBJ_EXT):
+	$(CGAL_CXX)  $(CXXFLAGS) -c $<
+

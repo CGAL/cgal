@@ -1,0 +1,31 @@
+* text=auto !eol
+Packages/Installation/doc_tex/installation/Fig/a-simp.ipe -text
+Packages/Installation/doc_tex/installation/Fig/c-simp.ipe -text
+Packages/Installation/doc_tex/installation/Fig/g-simp.ipe -text
+Packages/Installation/doc_tex/installation/Fig/l-simp.ipe -text
+Packages/Matrix_search/doc_tex/Optimisation_ref/MatrixSearch_pcenter1.gif -text svneol=unset#unset
+Packages/Matrix_search/doc_tex/Optimisation_ref/MatrixSearch_pcenter2.gif -text svneol=unset#unset
+Packages/Matrix_search/doc_tex/Optimisation_ref/MatrixSearch_pcenter3.gif -text svneol=unset#unset
+Packages/Matrix_search/doc_tex/Optimisation_ref/MatrixSearch_pcenter4.gif -text svneol=unset#unset
+Packages/Matrix_search/doc_tex/Optimisation_ref/MatrixSearch_sorted1.gif -text svneol=unset#unset
+Packages/Matrix_search/doc_tex/Optimisation_ref/MatrixSearch_sorted2.gif -text svneol=unset#unset
+Packages/Matrix_search/doc_tex/Optimisation_ref/MatrixSearch_sorted3.gif -text svneol=unset#unset
+Packages/Matrix_search/doc_tex/Optimisation_ref/MatrixSearch_sorted4.gif -text svneol=unset#unset
+Packages/Matrix_search/doc_tex/Optimisation_ref/MatrixSearch_totmon1.gif -text svneol=unset#unset
+Packages/Matrix_search/doc_tex/Optimisation_ref/MatrixSearch_totmon2.gif -text svneol=unset#unset
+Packages/Matrix_search/doc_tex/Optimisation_ref/MatrixSearch_totmon3.gif -text svneol=unset#unset
+Packages/Matrix_search/doc_tex/Optimisation_ref/MatrixSearch_totmon4.gif -text svneol=unset#unset
+Packages/Matrix_search/doc_tex/Optimisation_ref/MatrixSearch_totmon5.gif -text svneol=unset#unset
+Packages/Matrix_search/doc_tex/basic/Optimisation_ref/MatrixSearch_pcenter1.gif -text svneol=unset#unset
+Packages/Matrix_search/doc_tex/basic/Optimisation_ref/MatrixSearch_pcenter2.gif -text svneol=unset#unset
+Packages/Matrix_search/doc_tex/basic/Optimisation_ref/MatrixSearch_pcenter3.gif -text svneol=unset#unset
+Packages/Matrix_search/doc_tex/basic/Optimisation_ref/MatrixSearch_pcenter4.gif -text svneol=unset#unset
+Packages/Matrix_search/doc_tex/basic/Optimisation_ref/MatrixSearch_sorted1.gif -text svneol=unset#unset
+Packages/Matrix_search/doc_tex/basic/Optimisation_ref/MatrixSearch_sorted2.gif -text svneol=unset#unset
+Packages/Matrix_search/doc_tex/basic/Optimisation_ref/MatrixSearch_sorted3.gif -text svneol=unset#unset
+Packages/Matrix_search/doc_tex/basic/Optimisation_ref/MatrixSearch_sorted4.gif -text svneol=unset#unset
+Packages/Matrix_search/doc_tex/basic/Optimisation_ref/MatrixSearch_totmon1.gif -text svneol=unset#unset
+Packages/Matrix_search/doc_tex/basic/Optimisation_ref/MatrixSearch_totmon2.gif -text svneol=unset#unset
+Packages/Matrix_search/doc_tex/basic/Optimisation_ref/MatrixSearch_totmon3.gif -text svneol=unset#unset
+Packages/Matrix_search/doc_tex/basic/Optimisation_ref/MatrixSearch_totmon4.gif -text svneol=unset#unset
+Packages/Matrix_search/doc_tex/basic/Optimisation_ref/MatrixSearch_totmon5.gif -text svneol=unset#unset

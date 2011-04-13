@@ -1,0 +1,61 @@
+//=====================================================================
+//	Revision History for package STL_Extension
+//=====================================================================
+
+
+//---------------------------------------------------------------------
+//	actual revision
+//---------------------------------------------------------------------
+MSVC: a workaround in Inverse_index to avoid "duplicate comdat" linker
+	error.
+ALL : New functor adaptors (bind/compose).
+ALL : Removed Compose for Projection objects.
+ALL : Fixed dumb compiler macro.
+ALL : Fixed stlport stuff for msvc.
+ALL : Added functional_base to stlport.
+ALL : Made In_place_list::allocator non-static for MSVC.
+ALL : Added swap adaptor for functors.
+ALL : Added Allocators to In_place_list acc. to Lutz.
+ALL : Added compose_shared.
+ALL : Fixed Arity_traits problem.
+ALL : Fixed Inverse_index for buggy gcc-3 map acc. to Eti.
+ALL : Changed Iterator_project as Lutz suggested.
+ALL : Added merge and sort parameterized with a StrictWeakOrdering to in-place
+ALL :  list.
+
+//---------------------------------------------------------------------
+//	 CGAL 2.2
+//---------------------------------------------------------------------
+
+DOCS: Changed to new manual structure.
+DOCS: Changed compose function/class.
+TEST: Fixed warnings with NDEBUG.
+ALL : Fixed leading underscore names.
+SRC : Replace reverse_bidirectional_iterator by reverse_iterator.
+SRC : Fixed composition class/functions.
+TEST: Added compose_shared.
+TEST: Fixed Arity_traits problem.
+TEST: Initial revision
+TEST: Fixed std::distance(...) calls.
+
+//---------------------------------------------------------------------
+//	 CGAL 2.1
+//---------------------------------------------------------------------
+
+DOCS: now joind into stl_extension.tex.
+ALL : Added file algorithm.h.
+ALL : New functions min_max_element and min/max_element_if.
+DOCS: Joined with compose.tex.
+TEST: Removed conditional include checks.
+SRC : Removed superfluous template parameter D in operator+(D,*).
+SRC : Introduced CGAL_LIMITED_ITERATOR_TRAITS_SUPPORT for MSVC.
+SRC : Don't use iterator_category(...), if iterator traits are there.
+SRC : Added N_step_adaptor_derived.
+SRC : Fixed _Circulator_size_traits to I_Circulator_size_traits.
+SRC : Removed obsolete workaround flags.
+ALL : Removed line directives.
+SRC : Added typedefs for types from base class that are not visible
+SRC : since the base class depends on the template parameter.
+SRC : (in composition classes and Random_access_value_adaptor)
+TEST: Added compose_shared.
+TEST: Fixed Arity_traits problem.

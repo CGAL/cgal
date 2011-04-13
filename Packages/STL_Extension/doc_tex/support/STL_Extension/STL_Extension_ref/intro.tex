@@ -1,0 +1,159 @@
+%% =============================================================================
+%% The CGAL Reference Manual
+%% Chapter: STL Extensions - Introduction
+%% -----------------------------------------------------------------------------
+%% file  : doc_tex/support/STL_Extension/STL_Extension_ref/intro.tex
+%% author: Michael Hoffmann, Lutz Kettner 
+%% -----------------------------------------------------------------------------
+%% $CGAL_Chapter: STL_Extension $
+%% $Revision$
+%% $Date$
+%% =============================================================================
+
+\chapter{\stl\ Extensions for \cgal}
+\label{chapterDataStructures}\label{chapterStlExtensions}
+
+\RCSdef{\stlExtensionRev}{$Revision$}
+\RCSdefDate{\stlExtensionDate}{$Date$}
+\ccChapterRelease{\stlExtensionRev. \ \stlExtensionDate}\ccTexHtml{\\}{<BR>}
+\ccChapterAuthor{Michael Hoffmann}\ccTexHtml{\\}{<BR>}
+\ccChapterAuthor{Lutz Kettner}
+
+%% +=========================================================================+
+
+\section*{Introduction}
+
+\cgal\ is designed in the spirit of the generic programming paradigm
+to work together with the Standard Template Library (\stl)
+\cite{ansi-is14882,a-gps-98}. This chapter documents non-geometric
+\stl-like components that are not provided in the \stl\ standard but
+in \cgal: a doubly-connected list managing items in place (where
+inserted items are not copied), generic functions, function objects
+for projection and creation, classes for composing function objects
+and adaptor classes around iterators and circulators. See also
+circulators in Chapter~\ref{chapterCirculators}.
+
+\subsection*{Doubly-Connected List Managing Items in Place.}
+
+The class \ccStyle{In_place_list<T,&T::next,&T::prev>} manages a
+sequence of items in place in a doubly-connected list. Its goals are
+the flexible handling of memory management and performance
+optimization. The item type is supposed to provide the two necessary
+pointers \ccc{&T::next_link} and \ccc{&T::prev_link}. One possibility
+to obtain these pointers is to inherit them from the base class
+\ccStyle{In_place_list_base<T>}.
+
+The class \ccStyle{In_place_list<T>} is a container and quite similar
+to \stl\ containers, with the advantage that it is able to handle the
+stored elements by reference instead of copying them. It is possible
+to delete an element only knowing its address and no iterator to it.
+This simplifies mutually pointered data structures like a halfedge
+data structure for planar maps or polyhedral surfaces. The usual
+iterators are also available.  Another container with this property of
+working with pointers to objects is the \stl\ vector (at least in the
+current \stl\ implementations).
+
+\ccRefIdfierPage{CGAL::In_place_list<T,bool>}\\
+\ccRefIdfierPage{CGAL::In_place_list_base<T>}
+
+\subsection*{Generic Algorithms.}
+
+\ccRefIdfierPage{CGAL::copy_n}\\
+\ccRefIdfierPage{CGAL::min_max_element}\\
+\ccRefIdfierPage{CGAL::min_element_if}\\
+\ccRefIdfierPage{CGAL::max_element_if}
+
+\subsection*{Function Object Adaptors.}
+
+\ccRefIdfierPage{CGAL::swap_1}\\
+\ccRefIdfierPage{CGAL::swap_2}\\
+\ccRefIdfierPage{CGAL::swap_3}\\
+\ccRefIdfierPage{CGAL::swap_4}\\
+\ccRefIdfierPage{CGAL::bind_1}\\
+\ccRefIdfierPage{CGAL::bind_2}\\
+\ccRefIdfierPage{CGAL::bind_3}\\
+\ccRefIdfierPage{CGAL::bind_4}\\
+\ccRefIdfierPage{CGAL::bind_5}\\
+\ccRefIdfierPage{CGAL::compose}\\
+\ccRefIdfierPage{CGAL::compose_shared}\\
+\ccRefIdfierPage{CGAL::Swap<F,i>}\\
+\ccRefIdfierPage{CGAL::Bind<F,A,i>}\\
+\ccRefIdfierPage{CGAL::Compose<F0,F1,F2,F3>}\\
+\ccRefIdfierPage{CGAL::Compose_shared<F0,F1,F2,F3>}\\
+\ccRefConceptPage{AdaptableFunctor}\\
+\ccRefIdfierPage{CGAL::Arity_tag<int>}\\
+\ccRefIdfierPage{CGAL::Arity_traits<F>}
+
+\subsection*{Projection Function Objects.}
+
+\ccRefIdfierPage{CGAL::Identity<Value>}\\
+%%\ccRefIdfierPage{CGAL::Compose<Fct1, Fct2>}\\
+\ccRefIdfierPage{CGAL::Dereference<Value>}\\
+\ccRefIdfierPage{CGAL::Get_address<Value>}\\
+\ccRefIdfierPage{CGAL::Cast_function_object<Arg, Result>}\\
+\ccRefIdfierPage{CGAL::Project_vertex<Node>}\\
+\ccRefIdfierPage{CGAL::Project_facet<Node>}\\
+\ccRefIdfierPage{CGAL::Project_point<Node>}\\
+\ccRefIdfierPage{CGAL::Project_normal<Node>}\\
+\ccRefIdfierPage{CGAL::Project_plane<Node>}\\
+\ccRefIdfierPage{CGAL::Project_next<Node>}\\
+\ccRefIdfierPage{CGAL::Project_prev<Node>}\\
+\ccRefIdfierPage{CGAL::Project_next_opposite<Node>}\\
+\ccRefIdfierPage{CGAL::Project_opposite_prev<Node>}
+
+\subsection*{Creator Function Objects.}
+
+\ccRefIdfierPage{CGAL::Creator_1<Arg, Result>}\\
+\ccRefIdfierPage{CGAL::Creator_2<Arg1, Arg2, Result>}\\
+\ccRefIdfierPage{CGAL::Creator_3<Arg1, Arg2, Arg3, Result>}\\
+\ccRefIdfierPage{CGAL::Creator_4<Arg1, Arg2, Arg3, Arg4, Result>}\\
+\ccRefIdfierPage{CGAL::Creator_5<Arg1, Arg2, Arg3, Arg4, Arg5, Result>}\\
+\ccRefIdfierPage{CGAL::Creator_uniform_2<Arg, Result>}\\
+\ccRefIdfierPage{CGAL::Creator_uniform_3<Arg, Result>}\\
+\ccRefIdfierPage{CGAL::Creator_uniform_4<Arg, Result>}\\
+\ccRefIdfierPage{CGAL::Creator_uniform_5<Arg, Result>}\\
+\ccRefIdfierPage{CGAL::Creator_uniform_6<Arg, Result>}\\
+\ccRefIdfierPage{CGAL::Creator_uniform_7<Arg, Result>}\\
+\ccRefIdfierPage{CGAL::Creator_uniform_8<Arg, Result>}\\
+\ccRefIdfierPage{CGAL::Creator_uniform_9<Arg, Result>}
+
+\subsection*{Function Object Composition.}
+
+Although they are not in the standard, some STL implementations (such
+as SGI) provide two global functions for composing function objects,
+\ccStyle{compose1} and \ccStyle{compose2}. Since for both the
+resulting function is unary, one can only construct unary function
+objects in this way. This seems to be quite a limitation, since many
+algorithms are to be parameterized with binary (e.g. comparison)
+functions.
+
+%%We overcome these problems by defining our own composition functions
+%%in \cgal. Also the naming is slightly different to easily distinguish
+%%our implementation from eventually existing others:
+%%\ccStyle{composei_j} where \ccStyle{i}, \ccStyle{j} are either \ccc{1}
+%%or \ccc{2}.  \ccStyle{j} denotes the arity of the resulting function,
+%%\ccStyle{i} the arity of the outermost function in the composition.
+%%E.g. \ccStyle{compose2_1} takes three functions \ccc{f}, \ccc{g} and
+%%\ccc{h} and computes \ccc{x}~$\rightarrow$~\ccc{f(g(x),h(x))}.
+%%
+%%\ccRefIdfierPage{CGAL::compose1_1}\\
+%%\ccRefIdfierPage{CGAL::compose1_2}\\
+%%\ccRefIdfierPage{CGAL::compose2_1}\\
+%%\ccRefIdfierPage{CGAL::compose2_2}\\
+%%\ccRefIdfierPage{CGAL::Unary_compose_1<Op1, Op2>}\\
+%%\ccRefIdfierPage{CGAL::Unary_compose_2<Op1, Op2>}\\
+%%\ccRefIdfierPage{CGAL::Binary_compose_1<Op1, Op2, Op3>}\\
+%%\ccRefIdfierPage{CGAL::Binary_compose_2<Op1, Op2, Op3>}\\
+%%\ccRefConceptPage{AdaptableUnaryFunction}\\
+%%\ccRefConceptPage{AdaptableBinaryFunction}
+
+\subsection*{Adaptor Classes around Iterators and Circulators.}
+
+\ccRefIdfierPage{CGAL::Counting_iterator<Iterator, Value>}\\
+\ccRefIdfierPage{CGAL::N_step_adaptor<I,int N,Ref,Ptr,Val,Dst,Ctg>}\\
+\ccRefIdfierPage{CGAL::Join_input_iterator_1<Iterator, Creator>}\\
+\ccRefIdfierPage{CGAL::Inverse_index<IC>}\\
+\ccRefIdfierPage{CGAL::Random_access_adaptor<IC>}\\
+\ccRefIdfierPage{CGAL::Random_access_value_adaptor<IC,T>}
+
+%% EOF
