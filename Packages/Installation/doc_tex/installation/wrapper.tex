@@ -1,0 +1,48 @@
+%\documentclass[]{book}
+\documentclass[]{article}
+
+\usepackage{alltt}
+\usepackage{cc_manual}
+\usepackage{makeidx}
+\usepackage{latex_converter}
+\usepackage{amssymb}
+\usepackage{pslatex}
+\usepackage{epsf}
+\usepackage{ipe}
+\usepackage{nonlinkedpath}
+\textwidth 15.6cm 
+\textheight 23cm
+\topmargin -14mm       
+\evensidemargin 3mm 
+\oddsidemargin 3mm
+\headsep 1cm
+\parindent 0em
+\setlength{\parskip}{1ex minus 0.9ex}
+
+\newcommand{\cgalrelease}{2.2}
+
+\makeindex
+
+\begin{document}
+
+\include{title}
+\include{preface}
+
+\tableofcontents
+
+\newpage
+\mbox{}
+\newpage
+
+\pagenumbering{arabic}
+
+\input{installation}
+
+\printindex
+
+%\bibliographystyle{alpha}
+%\bibliography{../cgal-manual}
+
+\end{document}
+
+

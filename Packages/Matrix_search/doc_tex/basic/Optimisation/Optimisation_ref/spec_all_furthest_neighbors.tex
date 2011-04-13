@@ -1,0 +1,166 @@
+%% ==============================================================
+%% Specification: All Furthest Neighbors
+%% --------------------------------------------------------------
+%% file  : spec_all_furthest_neighbors.awi
+%% author: Michael Hoffmann
+%% $Id$
+%% ==============================================================
+
+\cgalColumnLayout
+
+\begin{ccRefFunction}{all_furthest_neighbors_2}
+  \ccIndexSubitem[t]{neighbor}{all furthest}
+  \ccIndexMainItem[t]{all furthest neighbors}
+  \ccIndexSubitem[t]{furthest}{all neighbors}
+  
+  \ccDefinition The function \ccRefName\ computes all furthest
+  neighbors for the vertices of a convex polygon $P$, i.e. for each
+  vertex $v$ of $P$ a vertex $f_v$ of $P$ such that the distance
+  between $v$ and $f_v$ is maximized.
+
+  \ccInclude{CGAL/all_furthest_neighbors_2.h}
+
+  \def\ccLongParamLayout{\ccTrue} 
+  
+  \ccGlobalFunction{ template < class RandomAccessIC, class
+    OutputIterator, class Traits > OutputIterator
+    all_furthest_neighbors_2( RandomAccessIC points_begin,
+    RandomAccessIC points_end, OutputIterator o, Traits t =
+    Default_traits);}
+  
+  computes all furthest neighbors for the vertices of the convex
+  polygon described by the range [\ccc{points_begin},
+  \ccc{points_end}), writes their indices (relative to
+  \ccc{points_begin}) to \ccc{o}\footnote{i.e. the furthest neighbor
+    of \ccc{points_begin[}i\ccc{]} is \ccc{points_begin[}$i$-th number
+    written to \ccc{o}\ccc{]}} and returns the past-the-end iterator
+  of this sequence.
+  
+  \ccPrecond The points denoted by the non-empty range
+  [\ccc{points_begin}, \ccc{points_end}) form the boundary of a convex
+  polygon $P$ (oriented clock-- or counterclockwise).
+  
+  The geometric types and operations to be used for the computation
+  are specified by the traits class parameter \ccc{t}. This parameter
+  can be omitted if \ccc{RandomAccessIC} refers to a point type from
+  the 2D-Kernel. In this case, a default traits class
+  (\ccc{All_furthest_neighbors_default_traits_2<R>}) is used.
+  
+  \ccRequire
+  \begin{enumerate}
+  \item If \ccc{t} is specified explicitly, \ccc{Traits} is a model
+    for \ccc{All_furthest_neighbors_traits_2}.
+  \item Value type of \ccc{RandomAccessIC} is \ccc{Traits::Point_2} or
+    -- if \ccc{t} is not specified explicitly -- \ccc{Point_2<R>} for
+    some representation class \ccc{R}.
+  \item \ccc{OutputIterator} accepts \ccc{int} as value type.
+  \end{enumerate}
+  
+  \ccSeeAlso
+  \ccRefConceptPage{All_furthest_neighbors_traits_2}\\
+  \ccRefIdfierPage{CGAL::All_furthest_neighbors_default_traits_2<R>}\\
+  \ccRefIdfierPage{CGAL::monotone_matrix_search}
+ 
+  \ccImplementation The implementation uses monotone matrix
+  search\cite{akmsw-gamsa-87}. Its runtime complexity is linear in the
+  number of vertices of $P$.
+  
+  \ccExample The following code generates a random convex polygon
+  \ccc{p} with ten vertices, computes all furthest neighbors and
+  writes the sequence of their indices (relative to
+  \ccc{points_begin}) to \ccc{cout} (e.g. a sequence of
+  \ccc{4788911224} means the furthest neighbor of
+  \ccc{points_begin[0]} is \ccc{points_begin[4]}, the furthest
+  neighbor of \ccc{points_begin[1]} is \ccc{points_begin[7]} etc.).
+  
+  \ccIncludeVerbatim{Optimisation_ref/all_furthest_neighbors_2_example_noheader.C}
+\end{ccRefFunction}
+
+\begin{ccRefClass}{All_furthest_neighbors_default_traits_2<R>}
+  \ccCreationVariable{t}\ccTagFullDeclarations
+  
+  \ccDefinition The class \ccClassName\ provides the types and
+  operations needed to compute all furthest neighbors for the vertices
+  of a convex polygon.
+  
+  \ccRequirements
+  The template parameter \ccc{R} is a model for \ccc{Kernel}.
+
+  \ccIsModel 
+  \ccRefConceptPage{All_furthest_neighbors_traits_2}
+
+  \ccTypes
+  
+  \ccNestedType{Point_2}{typedef to \ccc{R::Point_2}.}
+  
+  \ccNestedType{FT}{typedef to \ccc{R::FT}.}
+  
+  \ccNestedType{Distance}{AdaptableBinaryFunction class: \ccc{Point_2}
+    $\times$ \ccc{Point_2} $\rightarrow$ \ccc{FT} computing the
+    squared Euclidean distance between two points.}
+
+  \ccOperations
+  
+  \ccMemberFunction{Distance distance_object();}{returns the
+    function object for computing distances.}
+  
+  \ccMemberFunction{template < class RandomAccessIC > bool is_convex(
+    RandomAccessIC points_begin, RandomAccessIC points_end)
+    const;}{returns true, iff the points [\ccc{points_begin},
+    \ccc{points_end}) form a convex chain.}
+  
+  \ccSeeAlso
+  \ccRefIdfierPage{CGAL::all_furthest_neighbors_2}
+
+  \ccHeading{Notes}
+  \begin{itemize}
+  \item \ccClassName\ccc{::is_convex} is used for precondition
+    checking only.
+  \end{itemize}
+\end{ccRefClass}
+
+\begin{ccRefConcept}{All_furthest_neighbors_traits_2}
+  \ccCreationVariable{t}\ccTagFullDeclarations
+  
+  \ccDefinition The concept \ccRefName\ defines types and operations
+  needed to compute all furthest neighbors for the vertices of a
+  convex polygon using the function \ccc{all_furthest_neighbors_2}.
+  
+  \ccTypes
+  
+  \ccNestedType{Point_2}{class used for representing the input
+    points.}
+  
+  \ccNestedType{FT}{class used for doing computations on point
+    coordinates; it has to be a model for \ccc{FieldNumberType}.}
+  
+  \ccNestedType{Distance}{AdaptableBinaryFunction class: \ccc{Point_2}
+    $\times$ \ccc{Point_2} $\rightarrow$ \ccc{FT} computing the
+    squared Euclidean distance between two points.}
+
+  \ccOperations
+  
+  \ccMemberFunction{Distance distance_object();}{returns the
+    function object for computing distances.}
+  
+  \ccMemberFunction{template < class RandomAccessIC > bool is_convex(
+    RandomAccessIC points_begin, RandomAccessIC points_end)
+    const;}{returns true, iff the points [\ccc{points_begin},
+    \ccc{points_end}) form a convex chain.}
+  
+  \ccHasModels 
+  \ccRefIdfierPage{CGAL::All_furthest_neighbors_default_traits_2<R>}
+
+  \ccSeeAlso
+  \ccRefIdfierPage{CGAL::all_furthest_neighbors_2}
+
+  \ccHeading{Notes}
+  \begin{itemize}
+  \item \ccClassName\ccc{::is_convex} is used for precondition
+    checking only.
+  \end{itemize}
+\end{ccRefConcept}
+
+%% --------------------------------------------------------------
+%% EOF spec_all_furthest_neighbors.awi
+%% --------------------------------------------------------------

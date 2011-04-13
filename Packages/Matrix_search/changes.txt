@@ -1,0 +1,87 @@
+//=====================================================================
+//	Revision History for package Matrix_search
+//=====================================================================
+
+
+//---------------------------------------------------------------------
+//	actual revision
+//---------------------------------------------------------------------
+
+ALL : Minimum_enclosing_* -> Min_*
+ALL : maximum_*_inscribed_k_gon -> maximum_*_inscribed_k_gon_2
+ALL : extremal_polygon -> extremal_polygon_2
+ALL : all_furthest_neighbors -> all_furthest_neighbors_2
+DEMO: Fixed sprintf problem on msvc.
+DEMO: Fixed kcc warning.
+ALL : Use CGAL_NTS for number type utilities.
+ALL : Fixed _Random_generator stuff (now without leading underscore).
+DEMO: Added check for CGAL_USE_LEDA.
+DOCS: Changed everything acc. to the new manual structure.
+DOCS: Added some indexing for terms.
+DOCS: Few minor fixes in documentation.
+DOCS: Fixed \ccPureGlobalScope.
+DOCS: Added distance_object() to afn-spec.
+SRC : Removed side-effect from expensive assertion in 3center.
+SRC : Use Construct_iso_rectangle_2 from Kernel Traits.
+SRC : Fixed more ledaing underscores.
+SRC : Fixed leading underscore names.
+SRC : Fixed bug in maximum_perimeter k-gon::min_k_gon.
+SRC : Use CGAL compose functions.
+SRC : Do not use non-std iterators (std::output_iterator etc.).
+ALL : Several fixes for Borland.
+
+//---------------------------------------------------------------------
+//	 CGAL-2.1
+//---------------------------------------------------------------------
+
+DEMO: New User-Interface with different Generators.
+DEMO: Fixed MSVC problems.
+DEMO: Fixed a few things for VC++.
+ALL : Replaced selfmade timer by CGAL::Timer.
+DEMO: Prefixed leda_drawing_mode.
+DEMO: fixed for LEDA-3.8 (the point_set<I> data structure vanished)
+DEMO: Now nearest neighbor queries are done brute-force.
+ALL : added std:: in a number of places where it was missing
+ALL : use namespace std and CGAL
+ALL : use standard header files
+ALL : Initial revision
+DOCS: Minimum_enclosing_* -> Min_*
+DOCS: maximum_*_inscribed_k_gon -> maximum_*_inscribed_k_gon_2
+DOCS: extremal_polygon -> extremal_polygon_2
+DOCS: all_furthest_neighbors -> all_furthest_neighbors_2
+DOCS: Changed everything acc. to the new manual structure.
+DOCS: Uniform traits classes documented.
+ALL : added some return 0;
+ALL : MSVBC workaround for TYPENAME_BUGs.
+DOCS: fixed "cal" problem with html converter
+DOCS: fixed preconditions in replace_column (reported by Mariette).
+SRC : Fixed bug in four-center computation.
+SRC : Fixed range bug in expensive_assertion in extremal_polygon.
+SRC : Workaround for peculiar egcs-1.* bug with pcenter_random tests.
+SRC : Fixed two little bugs in 3cover (greater_equal ==> greater).
+SRC : Fixed expensive checks.
+SRC : Fixed internal compiler error on egcs-1.
+SRC : Completely new four-center implementation.
+SRC : Completely new four-cover implementation.
+SRC : Unified traits classes.
+SRC : Worked around some MSVC using-bugs.
+SRC : Added std:: to vector in several places in extremal_polygon_2.h.
+SRC : Removed CGAL::sqrt (now in double.h/leda_real.h).
+SRC : New linear 2- and 3-center algorithm.
+SRC : some minor changes to prevent warnings for gcc -Wall.
+SRC : fixed a bug in Rectangle_partition::first_left_of.
+SRC : Matrix_search
+SRC : Removed, --> Rectangular_p_center_traits_2.h.
+TEST: Fixed some MSVC #ifdefs.
+TEST: Removed "warning" from program output.
+TEST: Use Intervall_arithmetic number type.
+TEST: Added LONG_NAME_PROBLEM flags to makefile
+
+//---------------------------------------------------------------------
+//	 CGAL-1.2
+//---------------------------------------------------------------------
+
+DEMO: New User-Interface with different Generators.
+ALL : some minor changes to prevent warnings for gcc -Wall.
+DEMO: Initial revision
+SRC : fix signed <-> unsigned comparison warning on gcc.

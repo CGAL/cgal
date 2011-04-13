@@ -1,0 +1,240 @@
+//=====================================================================
+//	Revision History for package Installation
+//=====================================================================
+
+
+//---------------------------------------------------------------------
+//	actual revision
+//---------------------------------------------------------------------
+
+GLOB: Show KCC support (fixed).
+GLOB: Show KCC and Borland 5.5 as supported.
+GLOB: Search for kcc automatically.
+GLOB: Added KCC description.
+GLOB: Added kcc version detection as by Stefan.
+GLOB: Corrected SAVE_THE_BLANK fix for KCC.
+GLOB: Fixed guess_os as suggested by Dima,
+GLOB: to remove '()/', needed for cygwin-1.1.
+GLOB: Save the blank after -o in EXE_OPT for KCC.
+GLOB: Fixed IFS bug reported by Jacques Beigbeder.
+GLOB: Added ws2_32.lib to XLIBS for msvc.
+ALL : Added/Corrected LONG_NAME_PROBLEM_LDFLAGS for Irix.
+GLOB: Added flags for Solaris / KCC.
+GLOB: Fixed problem in _real_options.
+ALL : Updated CGAL_VERSION to 2.2.
+DOCS: updated.
+DOCS: Fixed footnotes for HTML acc. to Susan's remarks.
+DOCS: Updated list of supported compilers: add borland and kcc.
+DOCS: Added http references to compiler vendors.
+DOCS: Added section about long-name problem on Irix.
+DOCS: Added indexing commands. (finally ... :-)
+DOCS: Changed LEDA version to 4.1.
+DOCS: Removed description of the replace_header script.
+DOCS: Added remark, that CLN R1.0.3+ is required.
+DOCS: Changed CGAL_NO_LEDA_HANDLE passus.
+
+//---------------------------------------------------------------------
+//	 CGAL-2.1
+//---------------------------------------------------------------------
+
+GLOB: Updated makefile.
+GLOB: Fixed some problems for "spaces in pathnames".
+GLOB: Updated help message for --upgrade.
+GLOB: Removed #include <cassert> from test_leda.
+GLOB: Search only in OLD_CGAL_DIR/lib for gmp libs in --upgrade.
+GLOB: Introduced variable GMP_LIBNAME (-> libgmp.a || gmp.lib).
+GLOB: Check for LEDA_STD_HEADERS on windows compilers.
+GLOB: Now also binary distribution of libgmp for cygwin/g++.
+GLOB: Cleanup in gmp_menu and cln_menu.
+GLOB: Another try to fix libpath for test_gmp on Borland.
+GLOB: Changed order of ldflags for gmp test.
+GLOB: Changed test_gmp for Borland.
+GLOB: Changed link_gmp to copy (no ln -s) libgmp on cygwin.
+GLOB: Changed real_which to work with spaces in directory names.
+GLOB: Added gmp installation in CGAL tree for cygwin.
+GLOB: Removed -DCGAL_LIMITED_ITERATOR_TRAITS_SUPPORT for MSVC.
+GLOB: Introduced CGAL_WINDOW_LD_LIBPATH in analogy to CGAL_LD_LIBPATH.
+ALL : Updated ps-docs.
+GLOB: Remove ii_files in .C.clean target for mips-CC.
+GLOB: No gmp installation on cygwin.
+GLOB: Changed order of retrieve_compiler_settings and set_compiler_flags.
+GLOB: Another try to fix WINDOW_LDFLAGS for cygwin/gcc.
+GLOB: Fixed WINDOW_LDFLAGS for cygwin/gcc.
+GLOB: Make sharedlib with make -k.
+GLOB: Added -D__STL_NO_DRAND48 ADDITIONAL_CXXFLAGS for cygwin-g++.
+GLOB: Set -vi- (inlining off) flag for Borland.
+GLOB: Set CGAL_WINDOW/GEOWIN_LDFLAGS also without LEDA (-> CGAL_LDFLAGS).
+GLOB: Changed .C/.o rule in include makefile for cygwin-g++.
+GLOB: Added advapi32.lib to XLIBS for MSVC.
+GLOB: EXTRA_OBJECTS with .o suffix for cygwin/gcc.
+GLOB: EXE_OPT=.exe for cygwin/gcc.
+GLOB: Changed order ob libpath and link directives to please Borland.
+GLOB: Added LIB_SUFFIX, START_LD_OPT, LIBPATH_OPT and LIB_OPT to include
+GLOB:  makefile.
+GLOB: Added CGAL_GEOWIN_LDFLAGS.
+GLOB: No workaround_4_ms.obj in EXTRA_OBJECTS for Borland.
+GLOB: Add workaround_4_ms.obj to CGAL_EXTRA_OBJECTS on CYGWIN.
+GLOB: Fixed newline problem in include makefile.
+GLOB: Fixed VC++ pattern problem (match for CL|cl without .exe).
+GLOB: Added setting of CGAL_OBJ_PREFIX (for Borland support).
+GLOB: Changed CGAL_LIB_CREATE for Borland to "tlib /C /P512".
+GLOB: Do "make -i" for the libs in internal releases.
+GLOB: Set LONG_NAME_PROBLEM flags only when really needed.
+GLOB: Changed -Zm400 to -Zm900 for msvc. // DVP
+GLOB: Remove __STL_DEBUG from the list of options for msvc // DVP
+GLOB: Corrected CGAL_WINDOW_LDFLAGS for MSVC.
+GLOB: Changed EXE_OPT back to '-Fp" for MSVC.
+GLOB: Fixed leda_lib_options for UNIX-compilers.
+GLOB: Added leda_lib_option flag.
+GLOB: Added -Zm400 to ADDITIONAL_CXXFLAGS for msvc.
+GLOB: Added flags for patched STLport to ADDIOTIONAL_CXXFLAGS for MSVC.
+GLOB: Standard header tests give now feedback (ok/no).
+GLOB: Stripped quotes from unix file/pathnames.
+GLOB: Added cygpath use for non-iteractive modes also.
+GLOB: No object file specification in compiler call.
+GLOB: fixed EXE_OPT setting.
+GLOB: Added GMP support for MSVC.
+GLOB: Fixed "nospace" bug in LIB_CREATE commands introduced by VC support.
+GLOB: Fixed LIBPATHs for VC (GJ).
+GLOB: Fixed test ldflags for VC.
+GLOB: Fixed test_gmp to work on M$ as well.
+GLOB: Corrected CGAL_WINDOW_LDFLAGS setting.
+GLOB: Get INSTALL_CONF_VERSION from CGAL_CFG_NO_ITERATOR_TRAITS.C.
+GLOB: joined CGAL_LIB_NAME and CGAL_LIBNAME.
+GLOB: Fixed leda/gmp libdir checks for M$VC/Borland.
+GLOB: Fixed CGAL_LIB_DESTINATION for M$VC/Borland (no backslash).
+GLOB: Fixed CGAL_LIB_CREATE.
+GLOB: Added ADDITIONAL_LDFLAGS variable.
+GLOB: Set -LANG:std as ADDITIONAL_*FLAGS for mips-7.3.
+GLOB: Do not build sharedlibs on cygwin.
+GLOB: Fixed M$VC version detection to work on german W95-edition.
+GLOB: commented lib_platform_dependent.
+GLOB: Some changes for MS-Borland support due to GJ.
+GLOB: Added CLN support due to Sylvain.
+GLOB: Fixed verbose mode.
+GLOB: changed to support M$ compilers acc. to GJ's suggestions.
+ALL : updated CGAL-version to 2.1.
+GLOB: removed CGAL_directories (contained only two variables).
+GLOB: no support for gcc prior to 2.8 anymore.
+GLOB: fixed little problem with install-script name - now $CGAL_INSTALL_CGAL.
+ALL : Initial revision
+DOCS: Updated.
+DOCS: Some additions/corrections due to Dima.
+DOCS: updated documentation acc.to Stefan's suggestions.
+DOCS: added documentation of scripts (use_cgal_namespace,
+DOCS: create_cgal_makefile and replace_headers).
+DOCS: some minor corrections/clarifications.
+DOCS: sample installation now with egcs
+DOCS: removed support for "external" STL
+DOCS: removed obsolete paragraph about LEDA/STL problems
+DOCS: updated upgrade section.
+DOCS: updated list of supported compilers.
+DOCS: updated titlepage to 1.1.
+DOCS: Updated to Rev 1.28.
+DOCS: moved from former package Installation_doc.
+DOCS: Added description of CLN support.
+DOCS: Some minor corrections.
+DOCS: Some fixes by Stefan and Susan.
+DOCS: Removed overfull boxes.
+DOCS: Updated CGAL version in --upgrade.
+DOCS: Some minor changes due to Dima.
+DOCS: Two changes due to Dima/Stefan.
+DOCS: Some updates due to Dima.
+DOCS: Replaced LEDA-4.1-beta by LEDA-4.0. :-)
+DOCS: Major additions about MS-stuff by Dima.
+DOCS: Reorganized section order moving some stuff into the appendix.
+DOCS: A number of minor changes/additions.
+DOCS: Updated LEDA version number.
+DOCS: Added docs for cygwin installation.
+DOCS: Added Dima to the list of authors.
+DOCS: Fixed Y2K-problem in mydate.
+TEST: Updated makefile and removed superfluous include in example.C.
+TEST: Added return 0;
+TEST: Converted to namespace CGAL.
+GLOB: Updated sample include makefiles + README.
+SRC : Generated by the release script now.
+SRC : added rule for compiling the intervall-arithmetic workaround_4_irix.
+SRC : added CGAL_EXTRA_OBJECTS to lib makefiles (Intervall_arithmetic fix
+SRC : for irix)
+SRC : added Fixed_precision_nt.o.
+SRC : added File_header_extended_OFF.o to CGAL_OBJECTS.
+SRC : added Geomview_stream.o to CGAL_OBJECTS in makefiles.
+SRC : Installation
+
+//---------------------------------------------------------------------
+//	 CGAL-2.0
+//---------------------------------------------------------------------
+
+GLOB: fixed EXTRA_OBJECTS bug (workaround_4_irix was addded ALWAYS).
+GLOB: changed EXTRA_OBJECTS for Intervall_arithmetic workaround on irix6.
+GLOB: define CGAL_CC in include makefiles.
+GLOB: write CGAL_EXTRA_OBJECTS without path-prefix.
+GLOB: generate cctype replacement header, if CCTYPE_MACRO_BUG is encountered.
+GLOB: add -DLEDA_NO_DEFAULT_COMPARE to cxxflags on gcc-2.8.
+GLOB: use "make -k" when building the libs.
+GLOB: added CGAL_EXTRA_OBJECTS to include makefile (Intervall_arithmetic fix
+ALL : for irix)
+GLOB: added -DLEDA_STD_HEADERS if compiling with LEDA support
+GLOB: undefine evt. existing cctype macros (see CGAL_CFG_CCTYPE_MACRO_BUG)
+GLOB: in cctype, use the functions instead
+GLOB: added strstream to the redirection headers
+GLOB: do not add the cctype symbols to namespace std (they are macros)
+GLOB: added using directives to replacement headers to put symbols into
+GLOB: namespace std that should be there.
+GLOB: changed order in compiler tests: first check standard headers
+GLOB: STL test is now just one among many other compiler tests
+GLOB: changed to support Cygwin
+GLOB: corrected OS description on Linux
+GLOB: removed explicit support for "external" STL.
+GLOB: internal tests now use standard headers and namespace.
+ALL : Update for CGAL-2.0.
+GLOB: Show whether compiler is supported.
+GLOB: Create redirection header files in correct dir.
+GLOB: New Upgrade option.
+DOCS: updated documentation acc.to Stefan's suggestions.
+DOCS: added documentation of scripts (use_cgal_namespace,
+DOCS: create_cgal_makefile and replace_headers).
+DOCS: some minor corrections/clarifications.
+DOCS: sample installation now with egcs
+DOCS: removed support for "external" STL
+DOCS: removed obsolete paragraph about LEDA/STL problems
+DOCS: updated upgrade section.
+DOCS: updated list of supported compilers.
+DOCS: added section "Compiler Optimisations"
+DOCS: added long-name-problem remarks to Troubleshooting
+DOCS: moved leda-stl-conflict subsection to Troubleshooting
+SRC : fixed IA workaround_irix naming.
+SRC : added rule for compiling the intervall-arithmetic workaround_4_irix.
+SRC : added CGAL_EXTRA_OBJECTS to lib makefiles (Intervall_arithmetic fix
+SRC : added Fixed_precision_nt.o.
+
+//---------------------------------------------------------------------
+//	 CGAL-1.2
+//---------------------------------------------------------------------
+
+GLOB: added -Wall flag for gcc2.8/egcs.
+GLOB: added standard header redirection by Geert-Jan.
+GLOB: added namespace disabling for SGI-7.2.1 in tests.
+GLOB: removed geomview support (now in geomview package).
+GLOB: added geomview support,
+GLOB: included fixes from CGAL-1-1-patch.
+DOCS: adopted to new html-converter.
+GLOB: Updated sample include makefiles + README.
+SRC : added File_header_extended_OFF.o to CGAL_OBJECTS.
+SRC : added Geomview_stream.o to CGAL_OBJECTS in makefiles.
+
+//---------------------------------------------------------------------
+//	 CGAL-1.1
+//---------------------------------------------------------------------
+
+GLOB: Added variable PRINT_STACKTRACE_PROGRAM to include makefiles. It can
+GLOB: be used to get a stacktrace, in case a program crashes during the
+GLOB: testsuite.
+GLOB: yet another printf "-" fix for Linux.
+GLOB: removed some superfluous '\n's.
+GLOB: also fixed CGAL_SHARED_LIB_LDFLAGS for IRIX5 make. :)
+GLOB: write CGAL_LIB_LDFLAGS on one line in order to not confuse IRIX5 make.
+GLOB: changed various printf statements to make them (hopefully)
+GLOB: work better on Linux [printf "---" doesn't work there :(],
+GLOB: removed CUSTOM_CXX(LD)FLAGS from SHARED_LIB_...FLAGS,
+GLOB: added LONG_NAME_PROBLEM_...FLAGS.

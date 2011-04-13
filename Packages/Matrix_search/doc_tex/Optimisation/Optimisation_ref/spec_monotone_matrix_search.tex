@@ -1,0 +1,262 @@
+%% ==============================================================
+%% Specification: Monotone Matrix Search
+%% --------------------------------------------------------------
+%% file  : spec_monotone_matrix_search.awi
+%% author: Michael Hoffmann
+%% $Id$
+%% ==============================================================
+
+\cgalColumnLayout
+
+\begin{ccRefFunction}{monotone_matrix_search}
+  \ccIndexMainItem[t]{monotone matrix search}
+  \ccIndexSubitem[t]{searching}{in monotone matrices}
+  \ccIndexSubitem[t]{matrix}{monotone}
+  \ccIndexSubitem[t]{matrix}{searching}
+
+  \begin{ccAdvanced}
+    \ccDefinition The function \ccRefName\ computes the maxima for all
+    rows of a totally monotone matrix.
+    
+    More precisely, monotony for matrices is defined as follows.
+    
+    \ccTexHtml{Let $K$ be a totally ordered set, $M \in K^{(n,\, m)}$
+      a matrix over $K$ and for $0 \le i < n$:
+      $$
+      rmax_M(i) :\in \left\{ \min_{0 \le j < m} j \: \left|\:
+          M[i,\, j] = \max_{0 \le k < m} M[i,\, k] \right.\right\}
+      $$
+      the (leftmost) column containing the maximum entry in row
+      $i$.  $M$ is called monotone, iff
+      $$
+      \forall\, 0 \le i_1 < i_2 < n\: :\: rmax_M(i_1) \le
+      rmax_M(i_2)\; .
+      $$
+      $M$ is totally monotone, iff all of its submatrices are
+      monotone (or equivalently: iff all $2 \times 2$ submatrices are
+      monotone).}{Let <I>K</I> be a totally ordered set, <IMG WIDTH=84
+      HEIGHT=31 ALIGN=MIDDLE ALT="tex2html_wrap_inline11"
+      SRC="./MatrixSearch_totmon1.gif" > a matrix over <I>K</I> and
+      for <IMG WIDTH=64 HEIGHT=24 ALIGN=MIDDLE
+      ALT="tex2html_wrap_inline13" SRC="./MatrixSearch_totmon2.gif" >
+      : <P> <IMG WIDTH=427 HEIGHT=39 ALIGN=BOTTOM ALT="displaymath15"
+      SRC="./MatrixSearch_totmon3.gif" > <P> the (leftmost) column
+      containing the maximum entry in row <I>i</I>.  <I>M</I> is
+      called monotone, iff <P> <IMG WIDTH=411 HEIGHT=16 ALIGN=BOTTOM
+      ALT="displaymath19" SRC="./MatrixSearch_totmon4.gif" > <P>
+      <I>M</I> is totally monotone, iff all of its submatrices are
+      monotone (or equivalently: iff all <IMG WIDTH=33 HEIGHT=20
+      ALIGN=MIDDLE ALT="tex2html_wrap_inline21"
+      SRC="./MatrixSearch_totmon5.gif" > submatrices are monotone).}
+    
+    \ccInclude{CGAL/monotone_matrix_search.h}
+
+    \def\ccLongParamLayout{\ccTrue} 
+    \ccTexHtml{%
+      \ccSetThreeColumns{void}{}{\hspace*{8.5cm}}
+      \ccPropagateThreeToTwoColumns}{}
+    
+    \ccGlobalFunction{template < class Matrix, class RandomAccessIC,
+      class Compare_strictly > void monotone_matrix_search( const
+      Matrix& m, RandomAccessIC t, const Compare_strictly&
+      compare_strictly = less< Matrix::Value >());}
+    
+    computes the maximum (as specified by \ccc{compare_strictly})
+    entry for each row of \ccc{m} and writes the corresponding column
+    to \ccc{t}, i.e. \ccc{t[i]} is set to the index of the column
+    containing the maximum element in row \ccc{i}. The maximum $m_r$
+    of a row $r$ is the leftmost element for which
+    \ccc{compare_strictly}$(m_r,\,x)$ is false for all elements $x$ in
+    $r$.
+    
+    \cgalColumnLayout
+    \ccPrecond \ccc{t} points to a structure of size at least
+    \ccc{m.number_of_rows()}
+
+    \ccRequire
+    \begin{enumerate}
+    \item \ccc{Matrix} is a model for
+      \ccc{Monotone_matrix_search_traits}.
+    \item Value type of \ccc{RandomAccessIC} is \ccc{int}.
+    \item If \ccc{compare_strictly} is defined, it is an adaptable
+      binary function: \ccc{Matrix::Value} $\times$
+      \ccc{Matrix::Value} $\rightarrow$ \ccc{bool} describing a strict
+      (non-reflexive) total ordering on \ccc{Matrix::Value}.
+    \end{enumerate}
+    
+    \ccSeeAlso
+    \ccRefConceptPage{Monotone_matrix_search_traits}\\
+    \ccRefIdfierPage{CGAL::all_furthest_neighbors_2}\\
+    \ccRefIdfierPage{CGAL::maximum_area_inscribed_k_gon_2}\\
+    \ccRefIdfierPage{CGAL::maximum_perimeter_inscribed_k_gon_2}\\
+    \ccRefIdfierPage{CGAL::extremal_polygon_2}
+
+    \ccImplementation The implementation uses an algorithm by Aggarwal
+    et al.\cite{akmsw-gamsa-87}. The runtime is linear in the number
+    of rows and columns of the matrix.
+
+  \end{ccAdvanced}  
+\end{ccRefFunction}
+
+\begin{ccRefClass}{Dynamic_matrix<M>}
+  \begin{ccAdvanced}
+    \ccCreationVariable{d}\ccTagDefaults
+    
+    \ccDefinition The class \ccClassTemplateName\ is an adaptor for an
+    arbitrary matrix class \ccc{M} to provide the dynamic operations
+    needed for monotone matrix search.
+    
+    \ccRequirements \ccc{M} is a model for \ccc{Basic_matrix}.
+    
+    \ccInclude{CGAL/Dynamic_matrix.h}
+    
+    \ccIsModel
+    \ccRefConceptPage{Monotone_matrix_search_traits}\\
+    \ccRefConceptPage{Basic_matrix}
+
+    \ccCreation
+    
+    \ccConstructor{Dynamic_matrix( const M& m);}{initializes
+      \ccVar\ to \ccc{m}. \ccc{m} is \textit{not} copied, we only
+      store a reference.}
+
+    \ccOperations
+    
+    \ccMemberFunction{int number_of_columns() const;}{returns the
+      number of columns.}
+    
+    \ccMemberFunction{int number_of_rows() const;}{returns the number
+      of rows.}
+    
+    \ccMemberFunction{Entry operator()( int row, int column) const;}
+    {returns the entry at position (\ccc{row}, \ccc{column}).
+      \ccPrecond\\ $0 \le$ \ccc{row} $<$ \ccc{number_of_rows()} and\\ 
+      $0 \le$ \ccc{column} $<$ \ccc{number_of_columns()}.}
+    
+    \ccMemberFunction{void replace_column( int old, int new);}{replace
+      column \ccc{old} with column number \ccc{new}.  \ccPrecond\\ $0
+      \le$ \ccc{old}, \ccc{new} $<$ \ccc{number_of_columns()}.}
+    
+    \ccMemberFunction{Matrix* extract_all_even_rows() const;}{returns
+      a new Matrix consisting of all rows of \ccVar\ with even index,
+      (i.e. first row is row $0$ of \ccVar, second row is row $2$ of
+      \ccVar\ etc.). \ccPrecond \ccc{number_of_rows()} $> 0$.}
+    
+    \ccMemberFunction{void shrink_to_quadratic_size();}{deletes the
+      rightmost columns, such that \ccVar\ becomes quadratic.
+      \ccPrecond\\ \ccc{number_of_columns()} $\ge$
+      \ccc{number_of_rows()}. \ccPostcond\\ \ccc{number_of_rows()}
+      $==$ \ccc{number_of_columns()}.}
+    
+    \ccSeeAlso
+    \ccRefIdfierPage{CGAL::monotone_matrix_search}\\
+    \ccRefConceptPage{Monotone_matrix_search_traits}\\
+    \ccRefConceptPage{Basic_matrix}
+
+    \ccImplementation All operations take constant time except for
+    \ccc{extract_all_even_rows} which needs time linear in the number
+    of rows.
+    
+  \end{ccAdvanced}
+\end{ccRefClass}
+
+\begin{ccRefConcept}{Monotone_matrix_search_traits}
+  \begin{ccAdvanced}
+    \ccCreationVariable{m}\ccTagFullDeclarations
+    
+    \ccDefinition The concept \ccRefName\ is a refinement of
+    \ccc{Basic_matrix} and defines types and operations needed to
+    compute the maxima for all rows of a totally monotone matrix using
+    the function \ccc{monotone_matrix_search}.
+    
+    \ccTypes
+    
+    \ccNestedType{Value}{The type of a matrix entry.}
+
+    \ccOperations
+    
+    \ccMemberFunction{int number_of_columns() const;}{returns the
+      number of columns.}
+    
+    \ccMemberFunction{int number_of_rows() const;}{returns the number
+      of rows.}
+    
+    \ccMemberFunction{Entry operator()( int row, int column) const;}
+    {returns the entry at position (\ccc{row}, \ccc{column}).
+      \ccPrecond\\ $0 \le$ \ccc{row} $<$ \ccc{number_of_rows()} and\\
+      $0 \le$ \ccc{column} $<$ \ccc{number_of_columns()}.}
+    
+    \ccMemberFunction{void replace_column( int old, int new);}{replace
+      column \ccc{old} with column number \ccc{new}.  \ccPrecond\\ $0
+      \le$ \ccc{old}, \ccc{new} $<$ \ccc{number_of_columns()}.}
+    
+    \ccMemberFunction{Matrix* extract_all_even_rows() const;}{returns
+      a new Matrix consisting of all rows of \ccVar\ with even index,
+      (i.e. first row is row $0$ of \ccVar, second row is row $2$ of
+      \ccVar\ etc.). \ccPrecond \ccc{number_of_rows()} $> 0$.}
+    
+    \ccMemberFunction{void shrink_to_quadratic_size();}{deletes the
+      rightmost columns, such that \ccVar\ becomes quadratic.
+      \ccPrecond\\ \ccc{number_of_columns()} $\ge$
+      \ccc{number_of_rows()}. \ccPostcond\\ \ccc{number_of_rows()} $==$
+      \ccc{number_of_columns()}.}
+    
+    \ccHeading{Notes}
+    \begin{itemize}
+    \item For the sake of efficiency (and in order to achieve the time
+      bounds claimed for \ccc{monotone_matrix_search}), all these
+      operations have to be realized in constant time -- except for
+      \ccc{extract_all_even_rows} which may take linear time.
+    \item There is an adaptor \ccc{Dynamic_matrix} that can be used to
+      add most of the functionality described above to arbitrary
+      matrix classes.
+    \end{itemize}
+    
+    \ccHasModels
+    \ccRefIdfierPage{CGAL::Dynamic_matrix<M>}
+
+    \ccSeeAlso
+    \ccRefIdfierPage{CGAL::monotone_matrix_search}
+
+  \end{ccAdvanced}
+\end{ccRefConcept}
+
+\begin{ccRefConcept}{Basic_matrix}
+  \begin{ccAdvanced}
+    \ccCreationVariable{m}\ccTagFullDeclarations
+    
+    \ccDefinition A class \ccClassName\ has to provide the following
+    types and operations in order to be a model for
+    \ccc{Basic_matrix}.
+    
+    \ccTypes
+    
+    \ccNestedType{Value}{The type of a matrix entry. It has to define
+      a copy constructor.}
+    
+    \ccOperations
+    
+    \ccMemberFunction{int number_of_columns() const;}{returns the
+      number of columns.}
+    
+    \ccMemberFunction{int number_of_rows() const;}{returns the
+      number of rows.}
+    
+    \ccMemberFunction{Entry operator()( int row, int column) const;}
+    {returns the entry at position (\ccc{row}, \ccc{column}).
+      \ccPrecond\\ $0 \le$ \ccc{row} $<$ \ccc{number_of_rows()} and\\
+      $0 \le$ \ccc{column} $<$ \ccc{number_of_columns()}.}
+
+    \ccHasModels
+    \ccRefIdfierPage{CGAL::Dynamic_matrix<M>}
+
+    \ccSeeAlso
+    \ccRefConceptPage{Monotone_matrix_search_traits}\\
+    \ccRefConceptPage{Sorted_matrix_search_traits}
+    
+  \end{ccAdvanced}
+\end{ccRefConcept}
+
+%% --------------------------------------------------------------
+%% EOF spec_monotone_matrix_search.awi
+%% --------------------------------------------------------------

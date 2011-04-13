@@ -1,0 +1,16 @@
+//=====================================================================
+//	Revision History for package Min_quadrilateral_2
+//=====================================================================
+
+
+//---------------------------------------------------------------------
+//	actual revision
+//---------------------------------------------------------------------
+
+ALL : Fixed file headers.
+ALL : minimum_enclosing_* -> min_*
+DOCS: Changed to new manual style.
+DOCS: Added some indexing commands for terms.
+DOCS: Some minor fixes in documentation.
+DOCS: Fixed \ccPureGlobalScope.
+ALL : Removed superfluous window include.
