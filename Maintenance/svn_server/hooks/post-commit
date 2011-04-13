@@ -36,5 +36,6 @@ REV="$2"
 #/usr/lib/subversion/hook-scripts/commit-email.pl "$REPOS" "$REV" -h users.gforge.inria.fr cgal-commits@lists.gforge.inria.fr
 
 # Mail notification customized for CGAL
-/home/groups/cgal/hooks/cgal-commit-email.pl "$REPOS" "$REV" -h users.gforge.inria.fr cgal-commits@lists.gforge.inria.fr
+#/home/groups/cgal/hooks/cgal-commit-email.pl "$REPOS" "$REV" -h users.gforge.inria.fr cgal-commits@lists.gforge.inria.fr
+/home/groups/cgal/hooks/cgal-commit-email.pl "$REPOS" "$REV" -h users.gforge.inria.fr Laurent.Rineau@geometryfactory.com
 
