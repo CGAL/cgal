@@ -64,8 +64,8 @@ in the GNU on-line documentation at
 If you want to use the code coverage tool {\tt gcov}, you have to compile 
 your programs with the options \texttt{-fprofile-arcs} and 
 \texttt{-ftest-coverage}. This generates a file called
-\texttt{your_program.gcda}. Then you run the program, which generates a file
-\texttt{your_program.gcno}. Finally, you can run \texttt{gcov your_program.cpp}.
+\texttt{your\_program.gcda}. Then you run the program, which generates a file
+\texttt{your\_program.gcno}. Finally, you can run \texttt{gcov your\_program.cpp}.
 This will generate a number of files with the ending \texttt{.gcov} wich contain
 human readable information. View it in a text editor.
 Here is a simple example:\\
@@ -135,10 +135,10 @@ The lines that were not executed will be marked with \verb|######|,
 so you will see what should be added in the (\cgal) test suite programs.
 
 There are a few pitfalls when using CMake and \texttt{gcov} together.
-First note, that with CMake you can add compiler flags using the \texttt{CGAL_CXX_FLAGS} variable. See the
-\ccAnchor{http://www.cgal.org/Manual/latest/doc_html/installation_manual/Chapter_installation_manual.html#Subsection_8.2}{\cgal Installation Manual} to get more information on that. Typing \texttt{make your_program} to compile your program is straightforward, as is running it. But then, the \texttt{.gcda}
-and \texttt{.gcno} are created within the directory \texttt{CMakeFiles/your_program.dir/} relative to your project path. You first have to copy them to the same folder where \texttt{your_program.cpp} resides.
-If you don't do that, running \texttt{gcov your_program.cpp} will give an error
+First note, that with CMake you can add compiler flags using the \texttt{CGAL\_CXX\_FLAGS} variable. See the
+\ccAnchor{http://www.cgal.org/Manual/latest/doc_html/installation_manual/Chapter_installation_manual.html#Subsection_8.2}{\cgal Installation Manual} to get more information on that. Typing \texttt{make your\_program} to compile your program is straightforward, as is running it. But then, the \texttt{.gcda}
+and \texttt{.gcno} are created within the directory \texttt{CMakeFiles/your\_program.dir/} relative to your project path. You first have to copy them to the same folder where \texttt{your\_program.cpp} resides.
+If you don't do that, running \texttt{gcov your\_program.cpp} will give an error
 message.
 
 
