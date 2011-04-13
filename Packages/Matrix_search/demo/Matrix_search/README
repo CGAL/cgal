@@ -1,0 +1,29 @@
+demo/Matrix_search/README
+---------------------------
+
+Interactive demo programs of some optimisation algorithms in CGAL.
+Input (mouse clicks) and output are visualized in a LEDA window.
+
+The provided makefile is prepared to link with LEDA.
+
+
+all_furthest_neighbors_2_demo: 
+
+generates a random convex polygon (with 30 vertices) and computes for
+all vertices the furthest neighbor. If the left mouse button is
+clicked near a vertex, the corresponding furthest neighbor is marked
+with a little circle. Quit by clicking the middle or right mouse
+button.
+
+
+extremal_polygon_2_demo:
+
+compute the largest are or perimeter k-gon that can be inscribed into
+a convex polygon. vertices can be added with the left, moved with the
+middle and deleted with the right mouse button. There is a button to
+generate random convex polygons and a slider to change k and n (the
+number of vertices to generate).
+
+
+Michael Hoffmann
+

@@ -1,0 +1,16 @@
+CHANGES:
+1.7:
+	- fixed a bug in Rectangle_partition::first_left_of.
+	- made demos conforming to the new Window_stream.
+
+1.6:
+	- added package and chapter to file headers.
+	- removed htmlfiles (now in Optimisation_basic).
+	- changed pkg-name acc. to naming conventions.
+	- minor fix in the docs.
+
+1.5: 
+	- Now rectangular 3- and 4-centers. 
+	- Uses Iso_square_static_2 instead of Iso_rectangle_2
+	  (improved performance and robustness).
+	- some fixes in the docs.

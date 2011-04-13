@@ -1,0 +1,237 @@
+
+//-----------------------------------------------------------------------
+//	revision 1.28
+//-----------------------------------------------------------------------
+
+* Added variable PRINT_STACKTRACE_PROGRAM to include makefiles.  It can
+* be used to get a stacktrace, in case a program crashes during the
+* testsuite.  CVS:
+
+//-----------------------------------------------------------------------
+//	revision 1.27
+//-----------------------------------------------------------------------
+
+* yet another printf "-" fix for Linux.
+
+//-----------------------------------------------------------------------
+//	revision 1.26
+//-----------------------------------------------------------------------
+
+* removed some superfluous '\n's.
+
+//-----------------------------------------------------------------------
+//	revision 1.25
+//-----------------------------------------------------------------------
+
+* also fixed CGAL_SHARED_LIB_LDFLAGS for IRIX5 make. :)
+
+//-----------------------------------------------------------------------
+//	revision 1.24
+//-----------------------------------------------------------------------
+
+* write CGAL_LIB_LDFLAGS on one line in order to not confuse IRIX5 make.
+
+//-----------------------------------------------------------------------
+//	revision 1.23
+//-----------------------------------------------------------------------
+
+* changed various printf statements to make them (hopefully)
+* work better on Linux [printf "---" doesn't work there :(],
+* removed CUSTOM_CXX(LD)FLAGS from SHARED_LIB_...FLAGS,
+* added LONG_NAME_PROBLEM_...FLAGS.
+
+//-----------------------------------------------------------------------
+//	revision 1.22
+//-----------------------------------------------------------------------
+
+* set -ftemplate-depth-25 for egcs-gcc2.8,
+* CGAL_RELEASE : 0.9 --> 1.0
+* changed makefile replace_line for example dirs (acc. to Wieger).
+
+//-----------------------------------------------------------------------
+//	revision 1.21
+//-----------------------------------------------------------------------
+
+* fixed NO COMPILER DETECTED bug reported by Sven.
+
+//-----------------------------------------------------------------------
+//	revision 1.20
+//-----------------------------------------------------------------------
+
+* On GCC 2.7, stl version is only set to CGAL_STL_GCC,
+* if builtin STL is used,
+* settings are saved also for non-interactive installs,
+* with correct COMPILER string,
+* compiler are also read from INSTALL_CONF_DIR.
+
+//-----------------------------------------------------------------------
+//	revision 1.19
+//-----------------------------------------------------------------------
+
+* enabled SGI MIPS64 compiler support (+GMP),
+* new flag: --(re)build,
+* divided usage and general information.
+* ,
+
+//-----------------------------------------------------------------------
+//	revision 1.18
+//-----------------------------------------------------------------------
+
+* added cmdline options --CGAL_DIR,
+* added runtime linker flag for linux,
+* if libgmp is found, set GMP_INSTALLATION to 'c' (but reset GMP_TEST_PASSED).
+
+//-----------------------------------------------------------------------
+//	revision 1.17
+//-----------------------------------------------------------------------
+
+* added setting for irix/gcc2.8 (is more like egcs than like gcc2.7),
+* corrected sgi_version generation (did not work in Linz/6.2 CC 7.1).
+
+//-----------------------------------------------------------------------
+//	revision 1.16
+//-----------------------------------------------------------------------
+
+* added entry for egcs on irix,
+* made n32 default on irix6,
+* and fixed version grep on config.
+
+//-----------------------------------------------------------------------
+//	revision 1.15
+//-----------------------------------------------------------------------
+
+* fixed yet another GMP bug (ni-mode) reported by Stefan.
+* added CGAL_USE_LEDA and CGAL_USE_GMP flags.
+
+//-----------------------------------------------------------------------
+//	revision 1.14
+//-----------------------------------------------------------------------
+
+* fixed some makefile \\\\ bugs reported by Sven and Herve,
+* fixed a compiler-path bug reported by Stefan and
+* sets CGAL_STL_GCC only for GCC 2.7.2 (not egcs).
+
+//-----------------------------------------------------------------------
+//	revision 1.13
+//-----------------------------------------------------------------------
+
+* support MIPSPRO CC 7.2
+* some fixes for systems without RUNTIME_LINKER_FLAG
+* handle new example dir structure correctly
+* one more link_gmp fix :)
+
+//-----------------------------------------------------------------------
+//	revision 1.12
+//-----------------------------------------------------------------------
+
+* added support for SGI STL 3.0
+
+//-----------------------------------------------------------------------
+//	revision 1.11
+//-----------------------------------------------------------------------
+
+* added support for n32 and 64 compilers on irix6,
+* fixed bug in gmp linking,
+* fixed two bugs reported by Sven,
+* changed internal handling of compilers (..@..@..@..)
+* and some minor improvements and corrections.
+
+//-----------------------------------------------------------------------
+//	revision 1.10
+//-----------------------------------------------------------------------
+
+* corrected help message (2 x LEDA_INCL_DIR)
+* added -frtti flag for all g++'s in any case :)
+* changed CONFIG_PREFIX to CGAL_CFG instead of CGAL_CFG_NO
+* check for GMP syslib/cgal-inst only the first time GMP_SUPPORT is toggled on
+* (until now it checked right away after compiler was chosen)
+
+//-----------------------------------------------------------------------
+//	revision 1.9
+//-----------------------------------------------------------------------
+
+* replaced echo by printf in some cases
+* changed to generate compiler specific include file (compiler_config.h)
+
+//-----------------------------------------------------------------------
+//	revision 1.8
+//-----------------------------------------------------------------------
+
+* changed order of syslib/cgal detection for gmp
+
+//-----------------------------------------------------------------------
+//	revision 1.7
+//-----------------------------------------------------------------------
+
+* moved LEDA sysincl/-lib tests to leda_menu
+* added CUSTOM flags to sysincl/-lib and bultin stl tests
+* changed shared lib flags on Solaris/g++ to -G
+
+//-----------------------------------------------------------------------
+//	revision 1.6
+//-----------------------------------------------------------------------
+
+* numerous number of bugfixes
+* added support for GMP installation
+* more command-line flags for non-interactive mode
+* testing is now more transparent and configurable
+* custom compiler and linker flags can be defined
+
+//-----------------------------------------------------------------------
+//	revision 1.5
+//-----------------------------------------------------------------------
+
+* added support for automated gmp installation. Since there is no difference between rtti/LEDA and whatsoever version (this is C), the script will look do symbolic links and just opt for ONE installation per os/compiler.
+
+* changed command line option '-os' to return the os/compiler setting without any additional output, so this can be used for setting an environment variable which triggers makefile inclusion (asked for by Lutz).
+
+* corrected the order of libs in the various ldflags.
+
+* -frtti for gnu is now only set in rtti-support settings.
+
+* some minor fixes.
+
+//-----------------------------------------------------------------------
+//	revision 1.4
+//-----------------------------------------------------------------------
+
+* Two minor changes suggested by Wieger.
+* One COMPILER='' line added(to prevent from wrong auto-choosing).
+* replaced '_rtti' extension by '-rtti' as suggested by Sven.
+
+//-----------------------------------------------------------------------
+//	revision 1.3
+//-----------------------------------------------------------------------
+
+* STL test works for Moskow STL.
+* non interactive setting hopefully works now.
+* check_LEDA_LIB_DIR accepts also, if there only is a libL.so.
+* Added --help reference when something went wrong.
+* changed include makefile generation due to Wieger.
+* changed cgal_test replacement due to Wieger.
+
+//-----------------------------------------------------------------------
+//	revision 1.2
+//-----------------------------------------------------------------------
+
+* fixed /bin/which bug (looks for non-existent aliases in ~/.cshrc) by providing an own version of which.
+* fixed /bin/wc option "-m" to "-c" which seems to be more portable.
+* changed appearance --> fewer stars :)
+* logging successful compile runs into a vis_logfile that is displayed when exiting from the script.
+* added a remark about the install logfile.
+* fixed version number parsing (now only the number is stored in CGAL_INSTALL_VERSION).
+* removing old logfiles now works.
+* not checking for ${CGAL_DIR}/include anymore, instead check existence of $CGAL_DIR, $CGAL_LIB_DIR, $CGAL_INCL_DIR , $CGAL_MAKE_DIR and that we have read and execute permission for these (write to LIB and MAKE).
+* changed g++ version number parsing to work with snapshots.
+* added a print_center_line for pretty-printing.
+* fixed #error directives in compiler testprogs to @error, since sunpro does not treat them as errors (bug/feature?).
+* fixed leda-testprog to end with return 0.
+* added a print_os_setting to give the configuration in a readable fashion.
+* added test-suite option.
+
+//-----------------------------------------------------------------------
+//	revision 1.1
+//-----------------------------------------------------------------------
+
+* Initial revision
+=============================================================================

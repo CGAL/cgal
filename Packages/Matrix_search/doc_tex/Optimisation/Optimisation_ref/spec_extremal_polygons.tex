@@ -1,0 +1,292 @@
+%% ==============================================================
+%% Specification: Computing Extremal Polygons
+%% --------------------------------------------------------------
+%% file  : spec_extremal_polygons.awi
+%% author: Michael Hoffmann
+%% $Id$
+%% ==============================================================
+
+\clearpage
+\section{Computing Extremal Polygons}
+\label{secComputingExtremalPolygons}
+\cgalColumnLayout
+
+This section describes several functions to compute a maximal $k$-gon
+$P_k$ that can be inscribed into a given convex polygon $P$. The
+criterion for maximality can be chosen freely by defining an
+appropriate traits class as specified in section
+\ref{req_ExtremalPolygonTraits}. For \cgal\ point classes there are
+two predefined traits classes to compute a maximum area (see section
+\ref{secMaximumAreaInscribedKgon}) resp.  perimeter (see section
+\ref{secMaximumPerimeterInscribedKgon}) inscribed $k$-gon.
+
+\ccHtmlNoClassToc
+\begin{ccHtmlClassFile}{computing_maximum_area_inscribed_k_gon.html}
+  {Function Declaration of CGAL_maximum_area_inscribed_k_gon}
+  \ccHtmlNoClassIndex\ccHtmlNoClassLinks
+  %% class wrapper to keep the font at a uniform size:
+  \begin{ccClass}{dummy}
+    \ccHtmlNoIndex\subsection{Computing a Maximum Area Inscribed $k$-gon}
+  \label{secMaximumAreaInscribedKgon}
+  \end{ccClass}
+  
+  This section describes a function to compute a maximal area $k$-gon
+  $P_k$ that can be inscribed into a given convex polygon $P$. Note
+  that $P_k$ is not unique in general, but it can be chosen in such a
+  way that its vertices form a subset of the vertex set of $P$.
+
+  \ccInclude{CGAL/extremal_polygon_2.h}
+
+  \def\ccLongParamLayout{\ccTrue} 
+  
+  \ccGlobalFunction{
+    template < class RandomAccessIC, class OutputIterator >
+    OutputIterator
+    CGAL_maximum_area_inscribed_k_gon(
+    RandomAccessIC points_begin,
+    RandomAccessIC points_end,
+    int k,
+    OutputIterator o);}
+  
+  computes a maximum area inscribed $k$-gon of the convex polygon
+  described by [\ccc{points_begin}, \ccc{points_end}), writes its
+  vertices to \ccc{o} and returns the past-the-end iterator of this
+  sequence.
+  
+  \ccHeading{Precondition}
+  \begin{enumerate}
+  \item Value type of \ccc{RandomAccessIC} has to be
+    \ccc{CGAL_Point_2<R>} for some representation class \ccc{R}.
+  \item \ccc{OutputIterator} accepts the value type of
+    \ccc{RandomAccessIC} as value type,
+  \item the -- at least three -- points denoted by the range
+    [\ccc{points_begin}, \ccc{points_end}) form the boundary of a convex
+    polygon (oriented clock-- or counterclockwise) \textit{and}
+  \item $k \ge 3$.
+  \end{enumerate}
+
+  \ccHeading{Note}
+  
+  On compilers not supporting member function templates, the parameter
+  \ccc{RandomAccessIC} is fixed to \ccc{vector<Point_2>::iterator}
+  where \ccc{Point_2} is the value type of \ccc{RandomAccessIC}.
+  
+  \ccImplementation The implementation uses monotone matrix
+  search\cite{akmsw-gamsa-87} and has a worst case running time of $O(k
+  \cdot n + n \cdot \log n)$, where $n$ is the number of vertices in
+  $P$.
+
+  \ccExample The following code generates a random convex polygon
+  \ccc{p} with ten vertices and computes the maximum area inscribed
+  five-gon of \ccc{p}.
+
+  \ccIncludeVerbatim{extremal_polygon_2_example_area.C}
+
+\end{ccHtmlClassFile}
+    
+\ccHtmlNoClassToc
+\begin{ccHtmlClassFile}{computing_maximum_perimeter_inscribed_k_gon.html}
+  {Function Declaration of CGAL_maximum_perimeter_inscribed_k_gon}
+  \ccHtmlNoClassIndex\ccHtmlNoClassLinks
+  %% class wrapper to keep the font at a uniform size:
+  \begin{ccClass}{dummy}
+    \ccHtmlNoIndex\subsection{Computing a Maximum Perimeter Inscribed
+      $k$-gon}
+    \label{secMaximumPerimeterInscribedKgon}
+  \end{ccClass}
+  
+  This section describes a function to compute a largest perimeter
+  $k$-gon $P_k$ that can be inscribed in a given convex polygon $P$.
+  Note that $P_k$ is not unique in general, but we know that its
+  vertices form a subset of the vertex set of $P$.
+
+  \ccInclude{CGAL/extremal_polygon_2.h}
+
+  \def\ccLongParamLayout{\ccTrue}
+  \ccGlobalFunction{
+    template < class RandomAccessIC, class OutputIterator >
+    OutputIterator
+    CGAL_maximum_perimeter_inscribed_k_gon(
+    RandomAccessIC points_begin,
+    RandomAccessIC points_end,
+    int k,
+    OutputIterator o);}
+  
+  computes a maximum perimeter inscribed $k$-gon of the convex polygon
+  described by [\ccc{points_begin}, \ccc{points_end}), writes its
+  vertices to \ccc{o} and returns the past-the-end iterator of this
+  sequence.
+
+  \ccHeading{Precondition}
+  \begin{enumerate}
+  \item Value type of \ccc{RandomAccessIC} has to be
+    \ccc{CGAL_Point_2<R>} for some representation class \ccc{R},
+  \item there is a global function \ccc{R::FT CGAL_sqrt( R::FT)}
+    defined that computes the squareroot of a number,
+  \item \ccc{OutputIterator} accepts the value type of
+    \ccc{RandomAccessIC} as value type,
+  \item the -- at least three -- points denoted by the range
+    [\ccc{points_begin}, \ccc{points_end}) form the boundary of a
+    convex polygon (oriented clock-- or counterclockwise) \textit{and}
+  \item $k \ge 2$.
+  \end{enumerate}
+
+  \ccTagDefaults
+
+  \ccHeading{Note}
+  
+  On compilers not supporting member function templates, the parameter
+  \ccc{RandomAccessIC} is fixed to \ccc{vector<Point_2>::iterator}
+  where \ccc{Point_2} is the value type of \ccc{RandomAccessIC}.
+  
+  \ccImplementation The implementation uses monotone matrix
+  search\cite{akmsw-gamsa-87} and has a worst case running time of $O(k
+  \cdot n + n \cdot \log n)$, where $n$ is the number of vertices in
+  $P$.
+
+  \ccExample The following code generates a random convex polygon
+  \ccc{p} with ten vertices and computes the maximum perimeter inscribed
+  five-gon of \ccc{p}.
+
+  \ccIncludeVerbatim{extremal_polygon_2_example_perimeter.C}
+
+\end{ccHtmlClassFile}
+
+\begin{ccAdvanced}
+  \ccHtmlNoClassToc
+  \begin{ccHtmlClassFile}{computing_general_extremal_polygons.html}
+    {Function Declaration of CGAL_extremal_polygon}
+    \ccHtmlNoClassIndex\ccHtmlNoClassLinks
+    %% class wrapper to keep the font at a uniform size:
+    \begin{ccClass}{dummy}
+      \ccHtmlNoIndex\subsection{Computing General Extremal
+        Polygons}\label{secGeneralExtremalPolygons}
+    \end{ccClass}
+    
+    This section describes a general function to compute a maximal
+    $k$-gon $P_k$ that can be inscribed in a given convex polygon $P$.
+    The criterion for maximality and some basic operations have to
+    specified in an appropriate traits class as specified in section
+    \ref{req_ExtremalPolygonTraits}.
+    
+    \ccInclude{CGAL/extremal_polygons_2.h}
+
+    \def\ccLongParamLayout{\ccTrue} 
+    
+    \ccGlobalFunction{
+      template < class RandomAccessIC, class OutputIterator, class Traits >
+      OutputIterator
+      CGAL_extremal_polygon(
+      RandomAccessIC points_begin,
+      RandomAccessIC points_end,
+      int k,
+      OutputIterator o,
+      const Traits& t);}
+    
+    computes a maximal (as specified by \ccc{t}) inscribed $k$-gon of
+    the convex polygon described by [\ccc{points_begin},
+    \ccc{points_end}), writes its vertices to \ccc{o} and returns the
+    past-the-end iterator of this sequence.
+    
+    \ccHeading{Precondition}
+    \begin{enumerate}
+    \item \ccc{Traits} has to satisfy the requirements stated in section
+      \ref{req_ExtremalPolygonTraits},
+    \item Value type of \ccc{RandomAccessIC} must be
+      \ccc{Traits::Point_2},
+    \item \ccc{OutputIterator} accepts \ccc{Traits::Point_2} as value
+      type,
+    \item the -- at least three -- points denoted by the range
+      [\ccc{points_begin}, \ccc{points_end}) form the boundary of a
+      convex polygon (oriented clock-- or counterclockwise) \textit{and}
+    \item $k \ge \ccc{t.min_k()}$.
+    \end{enumerate}
+    
+    \ccImplementation The implementation uses monotone matrix
+    search\cite{akmsw-gamsa-87} and has a worst case running time of
+    $O(k \cdot n + n \cdot \log n)$, where $n$ is the number of vertices
+    in $P$.
+  \end{ccHtmlClassFile}
+  
+  \ccHtmlNoClassToc\ccHtmlNoClassIndex\begin{ccClass}{Exp_traits}
+    \ccCreationVariable{t}\ccTagFullDeclarations
+    
+    \subsection{Requirements for Extremal Polygon Traits
+      Classes}\label{req_ExtremalPolygonTraits}
+    
+    \ccDefinition A class \ccClassName\ has to provide the following
+    types and operations in order to qualify as a traits class for
+    \ccc{CGAL_extremal_polygon}.
+    
+    \ccTypes 
+    
+    \ccNestedType{Point_2}{class used for representing the input
+      points.}
+    
+    \ccNestedType{FT}{class used for doing computations on point
+      coordinates (has to fulfill field-type requirements).}
+    
+    \ccNestedType{Operation}{AdaptableBinaryFunction class \ccc{op}:
+      \ccc{Point_2} $\times$ \ccc{Point_2} $\rightarrow$ \ccc{FT}.
+      Together with \ccc{init} this operation recursively defines the
+      objective function to maximize.  Let $p$ and $q$ be two vertices
+      of a polygon $P$ such that $q$ precedes $p$ in the oriented
+      vertex chain of $P$ starting with vertex $root$.  Then
+      \ccc{op(p,q)} returns the value by which an arbitrary
+      sub-polygon of $P$ with vertices from $[root,\, q]$ increases
+      when $p$ is added to it. E.g. in the maximum area case this is
+      the area of the triangle $(root,\, q,\, p)$.}
+
+    \ccOperations
+    
+    \ccMemberFunction{int min_k() const;}{returns the minimal $k$ for
+      which a maximal $k$-gon can be computed. (e.g. in the maximum
+      area case this is three.)}
+    
+    \ccMemberFunction{FT init( const Point_2& p, const Point_2& q)
+      const;}{returns the value of the objective function for a
+      polygon consisting of the two points \ccc{p} and \ccc{q}. (e.g.
+      in the maximum area case this is \ccc{FT( 0)}.)}
+    
+    \ccMemberFunction{Operation operation( const Point_2& p)
+      const;}{return \ccc{Operation} where \ccc{p} is the fixed $root$
+      point.}
+    
+    \ccMemberFunction{template < class RandomAccessIC, class
+      OutputIterator > OutputIterator compute_min_k_gon(
+      RandomAccessIC points_begin, RandomAccessIC points_end, FT&
+      max_area, OutputIterator o) const;}{writes the points of
+      [\ccc{points_begin}, \ccc{points_end}) forming a
+      \ccc{min_k()}-gon rooted at \ccc{points_begin[0]} of maximal
+      value to o and returns the past-the-end iterator for that
+      sequence (== \ccc{o + min_k()}).}
+    
+    \ccMemberFunction{template < class RandomAccessIC > bool
+      is_convex( RandomAccessIC points_begin, RandomAccessIC
+      points_end) const;}{returns true, iff the points
+      [\ccc{points_begin}, \ccc{points_end}) form a convex chain.}
+    
+    \ccHeading{Notes}
+    \begin{itemize}
+    \item \ccClassName\ccc{::is_convex} is only used for precondition
+      checking. Therefore it needs not to be specified, in case that
+      precondition checking is disabled.
+    \item On compilers not supporting member function templates,
+      \ccc{RandomAccessIC} is fixed to \ccc{vector<Point_2>::iterator}
+      and \ccc{OutputIterator} is fixed to
+      \ccc{vector<int>::reverse_iterator}.
+      
+    \end{itemize}
+    
+    \ccSeeAlso \ccInclude{CGAL/Extremal_polygon_traits_2.h}
+    
+    The classes \ccc{CGAL_Kgon_area_traits<R>} and
+    \ccc{CGAL_Kgon_perimeter_traits<R>} (templatized with a \cgal\ 
+    representation class) both fulfill these requirements.
+    
+  \end{ccClass}
+\end{ccAdvanced}
+
+%% --------------------------------------------------------------
+%% EOF spec_extremal_polygons.awi
+%% --------------------------------------------------------------

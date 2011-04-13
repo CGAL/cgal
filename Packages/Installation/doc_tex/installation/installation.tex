@@ -1,0 +1,1062 @@
+%%
+%%  *** CGAL Installation Guide ***
+%%
+%% file:     installation.tex
+%%
+%% authors:  Michael Hoffmann and Wieger Wesselink
+%%
+%% $Revision$ $Date$
+%%
+
+%% macro for GNU
+\newcommand{\gnu}{\textsc{Gnu}}
+
+%% macro for g++
+\newcommand{\Gcc}[1]{\gnu~\texttt{g++}~{\rm #1}}
+
+%% macro for egcs
+\newcommand{\egcs}[1]{\textsc{Cygnus}~\texttt{egcs}~{\rm #1}}
+
+%% macro for SUNPRO CC
+\newcommand{\sunprocc}[1]{\textsc{Sunpro}~\texttt{CC}~{\rm #1}}
+
+%% macro for SGI CC
+\newcommand{\mipsprocc}{\textsc{SGI}~Mips(Pro)~\texttt{CC}}
+
+%% macro for Borland C++
+\newcommand{\bcc}[1]{\textsc{Borland}~\texttt{C++}~{\rm #1}}
+
+%% macro for Microsoft Visual C++
+\newcommand{\msvc}[1]{\textsc{Microsoft}~Visual~\texttt{C++}~{\rm #1}}
+
+%% macro for CGAL release number
+\newcommand{\cgalrelease}{1.1}
+
+%% macro for CGAL directory
+\newcommand{\cgaldir}{\texttt{CGAL-\cgalrelease}}
+
+%% macro for YOUR CGAL directory :)
+\newcommand{\yourcgaldir}{$<$\textit{insert your \cgaldir\ dir}$>$}
+
+%% macro for CGAL install config directory
+\newcommand{\cgalinstconfdir}{\cgaldir\texttt{/config/install}}
+
+%% macros for WWW pages
+\newcommand{\cgalhomepage}{\path'http://www.cs.uu.nl/CGAL'}
+\newcommand{\compilerpage}{\path'http://www.cs.uu.nl/CGAL/Compilers/'}
+\newcommand{\faqpage}{\path'http://www.cs.uu.nl/CGAL/FAQ/'}
+%%\newcommand{\hpstlpage}{\path'http://www.cs.rpi.edu/~musser/stl.html'}
+\newcommand{\sgistlpage}{\path'http://www.sgi.com/Technology/STL/'}
+\newcommand{\stlportpage}{\path'http://www.metabyte.com/~fbp/stl/'}
+
+%%
+%% titlepage
+%%
+\input{title}
+
+%%
+%% table of contents 
+%%
+\pagenumbering{arabic}
+
+\tableofcontents
+
+%%
+%% main body 
+%%
+
+\section{Introduction}
+
+\cgal\ is a \textit{Computational Geometry Algorithms Library\/} written
+in \CC, which is developed in an {\sc Esprit Ltr} project. The goal is
+to make the large body of geometric algorithms developed in the field
+of computational geometry available for industrial application.
+
+This document describes how to install \cgal\ on your system.  Besides
+that, you will find some information about the makefile structure of
+\cgal\ and the support for simultaneously using \cgal\ and \leda, the
+Library of Efficient Datatypes and Algorithms\footnote{see
+  \path~http://www.mpi-sb.mpg.de/LEDA/index.html~ for information.},
+and/or the \gnu\ Multiple Precision library GMP.
+
+\section{Prerequisites}\label{sec:prerequisites}
+
+In order to build the \cgal\ libraries you need a \CC\ compiler.
+Currently only a small number of recent compilers on unix platforms
+are supported. The reason is that most compilers do not conform to the
+upcoming ANSI/ISO standard\footnote{see e.g.
+  \path~http://reality.sgi.com/austern/std-c++/faq.html\#PartB~ for
+  information} and some of them have so many limitations/bugs that we
+could not work around all of them.
+
+More precisely, \cgaldir\ supports the following Unix
+compilers/operating systems:
+
+\begin{center}
+  \renewcommand{\arraystretch}{1.3}
+  \gdef\lcTabularBorder{2}
+  \begin{tabular}{|l|l|} \hline
+    \textbf{compiler}     & \textbf{operating system}\\\hline\hline
+    \mipsprocc\ 7.2 (n32) & IRIX 6.2\\\hline
+    \sunprocc{4.2}        & Solaris 2.5\\\hline
+    \Gcc{2.8.*}           & IRIX 6.2 / SUN Solaris 2.5 / Linux 2.0\\\hline
+    \egcs{1.0.*}          & IRIX 5.3 / IRIX 6.2 / Solaris 2.5 / Linux 2.0\\\hline
+  \end{tabular}
+\end{center}
+
+There are plans to support PC compilers (\msvc{}) in the future, but
+there is no such support at the moment.
+
+%%If your compiler/operating system is not on this list, this not
+%%necessarily implies that \cgal\ does not work on your
+%%system\footnote{e.g. we would expect \egcs{1.0.*} to work on IRIX 6.4
+%%  as well}, it just means we did not test it so far. For some
+%%compilers we did the tests, but not all parts of \cgal\ work with
+%%them. This includes \mipsprocc\ 4.0, \sunprocc{4.1} and \Gcc{2.7.2}.
+%%An overview of known problems is given at the following URL:
+%%\begin{quote}
+%%      \compilerpage
+%%\end{quote}
+
+%%N.B. It is highly recommended to read this information, since some of
+%%these older compilers may cause a lot of problems! Especially the
+%%support for templates is sometimes very poor. 
+
+%%At the same location you can find some hints about \cgal\ support for
+%%PC compilers (\bcc{5.02}\ and \msvc{5.0}), but this in a very
+%%premature state at the moment.
+
+%%In case you want to use \leda\ together with \cgal\ (needed e.g. for
+%%the graphical demo programs), you should have a look at section
+%%\ref{sec:leda} now.
+
+\section{Getting \cgal}
+
+The \cgal\ library can be downloaded in two different ways: using ftp
+or using WWW.  If you have a WWW connection, the easiest way to
+download \cgal\ is via the \cgal\ homepage:
+\begin{quote}
+      \cgalhomepage
+\end{quote}
+and go to the `Software' section.
+
+Just follow the instructions on this page to obtain your copy of the
+library. The \cgal\ library can also be downloaded using FTP. The
+library can be found at the following location:
+
+\begin{verbatim}
+      ftp.cs.uu.nl
+\end{verbatim}
+
+in the directory \texttt{/pub/CGAL}. This directory contains release
+\cgalrelease\ of the \cgal\ library. There is also a \texttt{README}
+file that contains descriptions of the files in this directory. An
+example of an FTP-session is given below.
+
+\begin{alltt}
+      $ ftp ftp.cs.uu.nl 
+      Name (ftp.cs.uu.nl:<your username>): anonymous
+      Password: <type your email address here>
+      ftp> cd pub/CGAL
+      ftp> get README
+      ftp> binary
+      ftp> get \cgaldir.tar.gz
+      ftp> quit
+\end{alltt}
+
+After you have downloaded the file containing the \cgal\ library, you
+have to decompress it. For the zipfile use the command
+
+\begin{verbatim}
+      unzip <filename>.zip
+\end{verbatim}
+
+and for the gzipped file use the commands
+
+\begin{verbatim}
+      gunzip <filename>.tar.gz
+      tar xvf <filename>.tar
+\end{verbatim}
+
+%% N.B. On a PC you should use an unzip utility that can deal with long
+%% filenames (like WinZip or InfoZip)!
+
+In both cases the directory \cgaldir\ will be created. This directory
+contains the following subdirectories:
+
+\begin{center}
+  \renewcommand{\arraystretch}{1.3}
+  \gdef\lcTabularBorder{2}
+  \begin{tabular}{|l|l|} \hline
+    \textbf{directory} & \textbf{contents}\\\hline\hline
+    \texttt{auxiliary} & packages that can optionally be used with \cgal\\\hline
+    \texttt{config}    & configuration files for install script\\\hline
+    \texttt{demo}      & demo programs (some of them  need \leda)\\\hline
+    \texttt{doc\_html} & documentation (HTML)\\\hline
+    \texttt{doc\_pdf}  & documentation (PDF)\\\hline
+    \texttt{doc\_ps}   & documentation (Postscript)\\\hline
+    \texttt{examples}  & example programs\\\hline
+    \texttt{include}   & header files\\\hline
+    \texttt{lib}       & (shared) object libraries\\\hline
+    \texttt{make}      & files with platform dependent makefile settings\\\hline
+    \texttt{src}       & source files\\\hline
+  \end{tabular}
+\end{center}
+
+\section{Installing \cgal}
+
+The directory \cgaldir\ contains a Bourne shell script called
+\texttt{install\_cgal}. The script can be run in two modes: a
+menu-driven interactive mode and a non-interactive mode.  Normally you
+should use the interactive mode, but in case you run into problems
+with it or do not like it for some reason, you can still use the
+non-interactive mode.
+
+We first describe a sample installation in section
+\ref{sec:sample-inst}. This provides you with an overview on how the
+interactive installation works. If you want more detailed information
+about specific menus and their options, take a look at section
+\ref{sec:interactive-mode}. Finally, for the non-interactive mode
+refer to section \ref{sec:non-interactive}.
+
+If you want to use \leda\ in combination with \cgal, there might be
+some compatibility issues that need to be addressed first. See
+section~\ref{sec:leda} and \compilerpage\ for more information about
+this.
+
+\section{A Sample Installation}\label{sec:sample-inst}
+
+In this section we sketch an example installation on a \textsc{Sun}
+running Solaris 2.5 with the \sunprocc{4.2} compiler. For a complete
+description of the different menus and their options refer to section
+\ref{sec:interactive-mode}.
+
+\subsection{Starting the script}
+
+Go to the \cgaldir\ directory and enter the command
+\begin{verbatim}
+      ./install_cgal -i
+\end{verbatim}
+
+You get a message indicating the \cgal\ version you are going to
+install and that you are running the interactive mode. Then it takes
+some time while the script locates a number of utility programs. You
+will not get informed about this\footnote{If you are that curious what
+  happens exactly, have a look at the file
+  \texttt{\cgaldir/install.log}.}, but see some dots written to the
+screen indicating progress.
+
+{\scriptsize
+\begin{alltt}
+--------------------------------------------------------
+  This is the install script for CGAL \cgalrelease
+--------------------------------------------------------
+
+starting interactive mode - one moment, please
+......
+
+  Choosing compiler SUNPRO 4.2.
+  Testing for builtin STL ... no.
+.
+\end{alltt}}
+  
+If there is any compiler installed on your system and accessible
+through your \texttt{PATH} environment variable that is supported by
+\cgal, one of these compilers is chosen and it is checked whether it
+has a ``builtin'' \stl, i.e. if \stl\ works without adding any
+specific compiler flags.  Here the chosen compiler is \sunprocc{4.2}
+that has no builtin \stl.  \footnote{If your compiler has a builtin
+  \stl, you will have to wait for a moment while the script tests for
+  a number of language features, which cannot be done without \stl.}
+If there is more than one compiler installed on your system (and
+supported by \cgal), you may later choose to use a different compiler
+from the compiler menu.
+
+A menu similar to the following will appear on your screen.
+
+{\scriptsize \label{pic:main-menu}
+\begin{alltt}
+  ****************************************************************
+  **              CGAL 1.1 Installation Main Menu               **
+  **              -------------------------------               **
+  **                                                            **
+  **   OS:                  sparc_SunOS-5.5                     **
+  **   Compiler:            SUNPRO CC 4.2                       **
+  **   STL_DIR:             please configure!!!                 **
+  **   LEDA:                not supported.                      **
+  **   GMP:                 not supported.                      **
+  **                                                            **
+  **   The setup has not been tested.                           **
+  **                                                            **
+  **   There are no libs for this os/compiler.                  **
+  **                                                            **
+  **   <C>  Compiler Menu                                       **
+  **   <L>  LEDA Menu                                           **
+  **   <G>  GMP Menu                                            **
+  **   <T>  Test (and save) setup                               **
+  **   <A>  Run all setup tests (no cache)                      **
+  **                                                            **
+  **   <B>  Build CGAL Libraries                                **
+  **                                                            **
+  **   <Q>  Back to OS                                          **
+  **                                                            **
+  **   Your Choice:                                             **
+  **                                                            **
+  ****************************************************************
+\end{alltt}}
+
+The first lines below the headline contain some kind of status report:
+current OS and compiler, are \leda\ and GMP supported etc., in this
+case it also tells you that \stl\ still has to be configured.
+
+Moreover you can see that the current setup has not been tested yet
+and that there do not exist \cgal\ libraries for this OS/compiler
+combination in the \cgal\ lib directory by now. It is always a good
+idea to test your configuration before you start building the \cgal\ 
+libraries, but before that we first have to setup \stl.\footnote{This
+  is not necessary for compilers with builtin \stl. So you might want
+  to skip the next section and go directly to section
+  \ref{sec:build-the-libs}.}
+
+\subsection{Setting up \stl}\label{sec:set-up-stl}
+
+Please type ``\texttt{c}'' to go to the compiler menu where all
+compiler specific options can be configured. Then type ``\texttt{i}''
+and you will be prompted to enter the include directory where \stl\ 
+header files reside on your system. The script only accepts
+directories that exist and pass a confidence test.\footnote{In this
+  case it checks for a file \texttt{iterator.h} in the directory.
+  This file should be present in all \stl\ implementations.} Let's
+assume, you have a \textsc{HP} \stl\ on your system in {\tt
+  /pub/local/STL/HP}.
+
+After you set up the \stl\ directory, the script tries to compile some
+small example programs to check whether \stl\ works principally and if
+it does, which language features are supported by your compiler and
+your \stl\ version. This is necessary, since there are many different
+\stl\ implementations and \cgal\ (partly) depends on which
+implementation is used. A message \texttt{ok} always indicates that
+your compiler works as it should i.e. a feature is supported resp. a
+bug is \textit{not} present. On the other hand \texttt{no} resp.
+\texttt{unfortunately} indicate a lack of support resp. bug.
+
+{\scriptsize
+\begin{verbatim}
+  ****************************************************************
+  **            CGAL 1.1 Installation Compiler Menu             **
+  **            -----------------------------------             **
+  **                                                            **
+  **   OS:                  sparc_SunOS-5.5                     **
+  **   Compiler:            SUNPRO CC 4.2                       **
+  **   STL_DIR:             please configure!!!                 **
+  **   LEDA:                not supported.                      **
+  **   GMP:                 not supported.                      **
+  **                                                            **
+  **   The setup has not been tested.                           **
+  **                                                            **
+  **   <C>  Choose compiler                                     **
+  **   <I>  STL  include directory                              **
+  **        <undefined>                                         **
+  **   <F>  Set custom compiler flags                           **
+  **       <none>                                               **
+  **   <L>  Set custom linker flags                             **
+  **       <none>                                               **
+  **   <T>  Test (and save) setup                               **
+  **                                                            **
+  **   <Q>  Back to Main Menu                                   **
+  **                                                            **
+  **   New STL_DIR: /pub/local/STL/HP                           **
+  **                                                            **
+  ****************************************************************
+
+  Testing for STL ... ok.
+  Testing for SGI STL 3.0 ... no.
+  Testing for SGI 6/97 STL ... no.
+  Testing for SGI 1996 STL ... no.
+  Testing for SGI CC STL ... no.
+  Testing for HP STL ... ok.
+  ...
+  <tests for several compiler features>
+  ...
+  Saving current setup ... done.
+\end{verbatim}}
+
+If the \stl\ test succeeds, the current setup is marked as tested and
+the settings are saved to a file in the directory \cgalinstconfdir.
+Thus, if you run the install script a second time for this
+OS/compiler, you will not have to enter the \stl\ directory again, but
+it is retrieved from the corresponding config file instead.
+
+\subsection{Building the \cgal\ libraries}\label{sec:build-the-libs}
+
+Now we are ready to build the \cgal\ libraries.  First go back to the
+main menu with ``\texttt{q}`` and then type ``{\tt b}'' to start
+compilation. Building consists of three steps:
+\begin{enumerate}
+\item writing the include makefile,
+\item compiling the static libraries \textit{and}
+\item compiling the shared libraries.
+\end{enumerate}
+The include makefile encapsulates the OS-- and compiler-specific
+settings and should be included (hence the name) in all makefiles that
+compile \cgal\ applications. If everything went ok, the output should
+look as follows (if not, you should have a look at the error messages
+from compiler or linker).
+
+{\scriptsize
+\begin{verbatim}
+  ****************************************************************
+  **                                                            **
+  **                     Compiling CGAL 1.1                     **
+  **                     ------------------                     **
+  **                                                            **
+  ****************************************************************
+
+  OS:           sparc_SunOS-5.5
+  COMPILER:     SUNPRO CC 4.2
+  STL:          CGAL_STL_HP
+  LEDA:         not supported
+  GMP:          not supported
+
+  Generating Makefiles ... done.
+  Building CGAL_lib ... done.
+  Building CGAL_sharedlib ... done.
+
+  ****************************************************************
+  **             Please press <ENTER> to continue.              **
+  ****************************************************************
+\end{verbatim}}
+
+That's all, it's done. Press ``\texttt{<ENTER>}'' to return to the main
+menu and proceed by installing for a different compiler (go to the
+compiler menu and choose ``\texttt{c}'' to get a list of supported
+compilers detected on your system) or with \leda\ or GMP support (go
+to the \leda\ resp.  GMP menu) or simply quit the install script by
+typing ``\texttt{q}''. When leaving the script, you get a list of
+successful builds during the session.
+
+Now it would be a good idea to print and read the document
+\texttt{getting\_started.ps} that can be found in the \texttt{doc\_ps}
+directory.
+
+\section{The interactive mode}\label{sec:interactive-mode}
+
+To run the install script in the interactive mode, go to the \cgaldir\ 
+directory and enter the command
+\begin{verbatim}
+      ./install_cgal -i
+\end{verbatim}
+
+After initialization during which certain utility programs are located
+and your system is searched for compilers supported by \cgal, you get
+into the \cgal\ installation \textit{main menu} (see page
+\pageref{pic:main-menu} for a picture).
+
+From the main menu you can reach a number of different sub-menus, of
+which the most important maybe is the \textit{compiler menu}. This is
+where you can choose the compiler you want to work with and setup
+\stl.  The compiler menu is described in section
+\ref{sec:compiler-menu}.
+
+If you want to use \leda\ or \gnu\ GMP with \cgal, you will have to go
+to the \textit{leda menu} described in section \ref{sec:leda-menu} resp.
+to the \textit{gmp menu} described in section \ref{sec:gmp-menu}.
+
+Finally you can build the \cgal\ libraries by typing \texttt{b}.
+However, it is recommended to run the \textit{setup test} which is
+available in all menus as option \texttt{t} before. The setup test
+includes an \stl\ test, a \leda\ test and a GMP test, but not all
+tests are performed always; e.g. the \leda\ test is only done, if you
+enabled \leda\ support. The install script keeps track of the tests
+passed and only tests again, if you change the setup in a way that
+might affect the test result. If you want to redo \textit{all} tests,
+you have to choose option ``\texttt{a}'' from the main menu. This also
+retests for \leda\ or GMP installation in system directories which
+otherwise is only done the first time you enable \leda/GMP support for
+an OS/compiler combination.
+
+\subsection{Files created during installation}
+
+The install script stores all relevant settings for an OS/compiler
+combination in the directory 
+\begin{center}
+  \texttt{\cgalinstconfdir/$<$\textit{CGAL-OS-description}$>$}
+\end{center}
+where $<$\textit{CGAL-OS-description}$>$ identifies your OS/compiler
+combination in a way specified in section \ref{sec:os-compiler-id}.
+\footnote{Note that these files are only OS/compiler specific, i.e.
+  there are no different files for with and without \leda\ support.}
+This saves you typing everything again, if you upgrade \cgal\ or
+another package that makes recompiling the \cgal\ libraries necessary.
+
+Besides the config files, \texttt{install\_cgal} uses several
+temporary files during interactive installation. Most of them are
+removed after use, but some are not, since it might be helpful to keep
+some information about the last run.  You can keep or delete them as
+you like, as they are not needed anymore once the script terminated.
+It follows a list of these files (all are plain ASCII and reside in
+\cgaldir).
+\begin{center}
+  \renewcommand{\arraystretch}{1.3}
+  \gdef\lcTabularBorder{2}
+  \begin{tabular}{|l|l|} \hline
+    \textbf{filename} & \textbf{content}\\\hline\hline
+    \texttt{install.log} & detailed overall protocol\\\hline
+    \texttt{install.completed} & list of systems for which \cgal\ libraries 
+    have been built\\\hline
+    \texttt{compile.log} & output of the last compiler call\\\hline
+  \end{tabular}
+\end{center}
+
+\subsection{The Compiler Menu}\label{sec:compiler-menu}
+
+Here is the place to setup the compiler specific options, such as the
+compiler to use (if more than one has been detected) and the location of the
+\stl\ files.
+
+Some compilers come with their own \stl\ adaption to which we refer as
+\textit{builtin} and some compilers are not shipped with \stl. In the
+latter case you have to supply an \texttt{STL\_DIR}, i.e. the path to
+a directory where the \stl\ header files are stored.\footnote{See
+  section \ref{sec:stl} on where you can obtain an \stl\ 
+  implementation and what problems you might have to consider.}  In
+this case we speak of an external \stl. Even if your compiler has
+builtin \stl, you can still choose to use an external \stl\ by setting
+\texttt{STL\_DIR} appropriately.\bigskip
+
+\fbox{
+\begin{minipage}{.95\linewidth}
+\vspace{2pt}
+\centerline{{\large{\bf Compiler Menu}}}
+\vspace{2pt}
+\begin{description}
+\item[$<$C$>$] Choose the compiler to be used from the list of
+  detected compilers.
+\item[$<$S$>$] (\textit{present if a builtin \stl\ was detected for the
+    current compiler)} Determine, if compiler builtin or an external
+  \stl\ is used.
+\item[$<$I$>$] (\textit{present if an external \stl\ is used)} Set the
+  include directory for an external \stl.
+\item[$<$F$>$] Set custom compiler flags. These are the first flags
+  given to the compiler in every call. Under normal circumstances
+  there should be no need to set any such flag.
+\item[$<$L$>$] Set custom linker flags. These are the first flags
+  given to the linker in every call. Under normal circumstances
+  there should be no need to set any such flag.
+\end{description}
+\vspace{2pt}
+\end{minipage}
+\hfill}
+
+\subsection{The \leda\ Menu}\label{sec:leda-menu}
+
+This is the place to setup \leda\ specific options, if you plan to use
+\leda\ together with \cgal\ (see also section \ref{sec:leda}). In
+order to enable \leda\ support in \cgal, \leda\ has to be installed on
+your system.
+
+If \leda\ support is enabled the first time, the script tests whether
+\leda\ is installed in standard system directories. If this test does
+not succeed, you have to supply directories containing the \leda\ header
+files (\texttt{LEDA\_INCL\_DIR}) and \leda\ libraries ({\tt
+  LEDA\_LIB\_DIR}).  Even if the tests are passed, you still have the
+option to set these directories differently.\bigskip
+
+\fbox{
+\begin{minipage}{.95\linewidth}
+\vspace{2pt}
+\centerline{{\large{\bf \leda\ Menu}}}
+\vspace{2pt}
+\begin{description}
+\item[$<$E$>$] Enable/Disable \leda\ support in \cgal.
+\item[$<$I$>$] (\textit{present if \leda\ support is enabled)} Set the
+  include directory for \leda .
+\item[$<$J$>$] (\textit{present if \leda\ support is enabled, \leda\ headers
+    have been found in a system include directory and {\tt
+      LEDA\_INCL\_DIR} has been set)} Use \leda\ header from system
+  include directory.
+\item[$<$L$>$] (\textit{present if \leda\ support is enabled)} Set the
+  directory containing the \leda\ libraries.
+\item[$<$M$>$] (\textit{present if \leda\ support is enabled, \leda\ libs
+    have been found in a system lib directory and \texttt{LEDA\_LIB\_DIR}
+    has been set)} Use \leda\ libraries from system lib directory.
+\end{description}
+\vspace{2pt}
+\end{minipage}
+\hfill}
+
+\subsection{The GMP Menu}\label{sec:gmp-menu}
+
+This menu is to setup GMP (\gnu\ Muptiple Precision Library) specific
+options, if you plan to use GMP together with \cgal . In the {\tt
+  auxiliary} directory you can find a GMP distribution, if you do not
+already have it installed on your system. This menu contains an option
+to install GMP in you \cgal\ directory tree, but of course you can
+also install it independently from \cgal .
+
+If GMP support is enabled the first time, the script tests whether GMP
+is installed in standard system directories or in the \cgal\ tree. If
+this test does not succeed, you have to supply directories containing
+the GMP header files (\texttt{GMP\_INCL\_DIR}) and GMP libraries ({\tt
+  GMP\_LIB\_DIR}).  Even if the tests are passed, you still have the
+option to set these directories differently.\bigskip
+
+\fbox{
+\begin{minipage}{.95\linewidth}
+\vspace{2pt}
+\centerline{{\large{\bf GMP Menu}}}
+\vspace{2pt}
+\begin{description}
+\item[$<$C$>$] Install the GMP distribution shipped with \cgal\ in the
+  \cgal\ directory tree. 
+\item[$<$G$>$] Enable/Disable GMP support in \cgal.
+\item[$<$I$>$] (\textit{present if GMP support is enabled)} Set the
+  include directory for GMP.
+\item[$<$L$>$] (\textit{present if GMP support is enabled)} Set the
+  directory containing the GMP libraries.
+\item[$<$M$>$] (\textit{present if GMP support is enabled, there is a GMP
+    installation in system directories or in the \cgal\ tree and {\tt
+      GMP\_INCL\_DIR} or \texttt{GMP\_LIB\_DIR} have been set)} Use GMP
+  installation from system directories / \cgal\ tree.
+\end{description}
+\vspace{2pt}
+\end{minipage}
+\hfill}
+
+\section{The non-interactive mode}\label{sec:non-interactive}
+
+To run the install script in the non-interactive mode, go to the
+\cgaldir\ directory and enter the command
+\begin{verbatim}
+      ./install_cgal -ni <compiler>
+\end{verbatim}
+where \texttt{<compiler>} is the C++ compiler executable.\\
+You can either specify a full path, e.g. \texttt{/usr/local/bin/g++},
+or just the basename, e.g. \texttt{g++}, which means the script
+searches your \texttt{PATH} for the compiler location. If your
+compiler call contains whitespaces it has to be quoted, e.g.
+\texttt{./install\_cgal -ni "CC -n32"}.  The options given this way
+become part of your \cgal-OS description (see section
+\ref{sec:os-compiler-id}) which is useful e.g. to distinguish between
+different compilers using the same frontend (\mipsprocc\ on
+\texttt{IRIX6}).
+
+There are a number of additional command line options to customize
+your \cgal\ setup which are discussed below. You should read the
+corresponding paragraphs before you continue, especially if one or
+more of the following conditions apply to you:
+\begin{itemize}
+\item your compiler does not have a ``builtin'' \stl\ (section
+  \ref{sec:stl-setup}),
+\item you want to use \leda\ together with \cgal\ (section
+  \ref{sec:leda-setup}) \textit{or}
+\item you want to use \gnu\ GMP together with \cgal\ (section
+  \ref{sec:gmp-setup}).
+\end{itemize}
+
+Once you started the script, it should give you a message indicating
+the \cgal\ version you are going to install and that you are running
+the non-interactive mode. Then it proceeds by locating some utility
+programs, determining your OS and compiler version, displaying the
+settings you gave via command line and classifying (see also section
+\ref{sec:stl}) the \stl\ version used (which -- of course -- will not
+work, if you did not set up \stl\ correctly, see section
+\ref{sec:stl-setup} below). Your compiler is also checked for a number
+of bugs resp. support of certain language features; a message
+\texttt{ok} always indicates that your compiler works as it should
+i.e. a feature is supported resp. a bug is \textit{not} present. On
+the other hand \texttt{no} resp.  \texttt{unfortunately} indicate a
+lack of support resp. presence of a bug.
+
+Finally the current setup is summarized, system specific directories
+for makefiles and libraries are created (if they did not exist before)
+and a new include makefile is written into the makefile directory. If
+there already exists a makefile for the current OS/compiler
+combination, it is backuped and you should get a corresponding
+message.
+
+To compile the \cgal\ libraries go now to the \texttt{src} directory.
+Then type \texttt{make -f makefile\_lib} to compile the \cgal\ object
+library and \texttt{make -f makefile\_sharedlib} to compile the \cgal\ 
+shared object library. If you want to make changes to the makefiles
+first, see section \ref{sec:makefiles} for an explanation of the
+makefile structure of \cgal.
+
+When this is finished it would be a good idea to print and read the
+`Getting Started with \cgal' document \texttt{getting\_started.ps}
+that can be found in the \texttt{doc\_ps} directory.
+
+\subsection{Setting up \stl}\label{sec:stl-setup}
+
+The install script and the makefiles use the variable
+\texttt{STL\_DIR} to indicate the STL that shall be used with \cgal.
+This variable should point to the directory where STL header files are
+stored. It can be set from command line with option
+``\texttt{--STL\_DIR \textit{$<$dir$>$}}''. If you do not set
+\texttt{STL\_DIR} this way, it is assumed that the compiler has
+``builtin'' \stl\ and this is used. If your compiler does not have
+builtin \stl, you \textit{have to} supply an \texttt{STL\_DIR} to get
+things running.
+
+\subsection{Setting up \leda\ support}\label{sec:leda-setup}
+
+See also section \ref{sec:leda}. By default there is no support for
+\leda, but you can change this easily by use of the command line
+option ``\texttt{-leda}''. If \leda\ is installed in system
+directories on your system, you should indicate this by setting the
+flags ``{\tt --leda-sys-incl}'' resp.  ``\texttt{--leda-sys-lib}''. If
+this is not the case, you have to supply the directories containing
+the \leda\ header files (``\texttt{--LEDA\_INCL\_DIR}
+\textit{$<$dir$>$}'') resp. the \leda\ libraries for your compiler
+(``\texttt{--LEDA\_LIB\_DIR} {\it $<$dir$>$}'').
+
+\subsection{Setting up support for GMP}\label{sec:gmp-setup}
+
+By default there is no support for GMP, but you can change this easily
+by use of the command line option ``\texttt{-gmp}''. If GMP is installed
+in system directories on your system, you are already done now. If
+this is not the case, you have to supply the directories containing
+the GMP header files (``\texttt{--GMP\_INCL\_DIR} \textit{$<$dir$>$}'') and
+the GMP library (``\texttt{--GMP\_LIB\_DIR} \textit{$<$dir$>$}'').
+
+\subsection{Other Options}\label{sec:other-options}
+
+There are some more less important features of the install script
+we will summarize here. 
+
+First of all you can get the version number of \texttt{cgal\_install}
+with option ``\texttt{--version}''. Note that all other options are
+ignored in this case.
+
+Second there is an option ``\texttt{-os \textit{$<$compiler$>$}}''
+where \textit{$<$compiler$>$} is your \CC\ compiler. This allows you
+to determine your \cgal-OS description (see section
+\ref{sec:os-compiler-id}). The compiler can either be given by an
+absolute path like
+\begin{verbatim}
+./install_cgal -os /usr/local/gcc-2.8.1/sun/bin/g++
+\end{verbatim}
+or just by denoting its basename, as long as it is on your path:
+\begin{verbatim}
+./install_cgal -os CC
+\end{verbatim}
+The option is intended for testing purposes and automatic detection of
+the correct include makefile (see also section \ref{sec:makefiles}).
+
+Finally there exists an option ``\texttt{--verbose}'' that can be set
+in interactive mode as well as in non-interactive mode. When set you
+get a detailed summary of error messages occurring during \textit{any}
+compiler test (determining \stl\ version etc.). Normally you only get
+these messages, if a required test (such as the general \stl\ test)
+fails, otherwise you are just informed, \textit{if} it succeeded or
+not.  This option is not recommended for general use, but it can be
+useful to check why a certain test fails that was expected to be
+passed.
+
+\section{Troubleshooting}\label{sec:troubleshooting}
+
+In case you run into problems with \cgal, you should first have a look
+at the \cgal\ homepage:
+\begin{alltt}
+\cgalhomepage
+\end{alltt}
+If you cannot find a solution to your problem there, please send email
+to \texttt{cgal@cs.uu.nl}.
+
+\section{Identifying OS and Compiler}\label{sec:os-compiler-id}
+
+Since \cgal\ supports several different operating systems and
+compilers, this is also reflected in the structure of the \cgal\ 
+directory tree. Each OS/compiler combination has its own lib directory
+under \texttt{\cgaldir/lib}) (and analogously its own include makefile
+in \texttt{\cgaldir/make}) named as determined by the following
+scheme.
+\begin{center}
+  \textit{$<$arch$>$\texttt{\_}$<$os$>$\texttt{-}$<$os-version$>$\texttt{\_}$<$comp$>${\tt
+    -}$<$comp-version$>$}[\texttt{\_}LEDA]
+\end{center}
+
+\begin{description}
+\item[$<$arch$>$] is the system architecture as defined by ``{\tt
+    uname -p}'' or ``\texttt{uname -m}'',
+\item[$<$os$>$] is the operating system as defined by ``\texttt{uname
+    -s}'',
+\item[$<$os-version$>$] is the operating system version as defined by
+  ``\texttt{uname -r}'',
+\item[$<$comp$>$] is the basename of the compiler executable (if it
+  contains spaces, these are replaced by "-") \textit{and}
+\item[$<$comp-version$>$] is the compiler's version number (which
+  unfortunately can not be derived in a uniform manner, since it is
+  quite compiler specific).
+\end{description}
+
+The suffix \texttt{\_}LEDA is appended to indicate \leda\ support. This
+distinction is necessary, because the object libraries look (at least
+possibly) different.
+
+We call the resulting string \cgal-OS description. 
+
+Examples are \texttt{mips\_IRIX-6.2\_CC-7.2} or {\tt
+  sparc\_SunOS-5.5\_g++-2.8.1\_LEDA}. You can use the install
+script to get your \cgal-OS description, see section
+\ref{sec:other-options}.
+
+\section{The \cgal\ makefile structure}\label{sec:makefiles}
+
+The \cgal\ distribution contains the following makefiles:
+\begin{itemize}
+\item \texttt{\cgaldir/src/makefile\_lib} for compiling the \cgal\ 
+  object library \texttt{libCGAL.a},
+  
+\item \texttt{\cgaldir/src/makefile\_sharedlib} for compiling the
+  \cgal\ shared object library \texttt{libCGAL.so},
+  
+\item \texttt{\cgaldir/src/makefile\_geomview} for compiling a library
+  for geomview support,
+  
+\item \texttt{\cgaldir/examples/makefile} as sample makefile
+  \textit{and}
+  
+\item \texttt{\cgaldir/examples/*/makefile} for compiling the \cgal\ 
+  example programs.
+\end{itemize}
+
+All these makefiles are generic: they can be used for more than one
+compiler.  To achieve this, the first section of each makefile
+contains an include statement that looks as follows:
+
+\begin{verbatim}
+      CGAL_MAKEFILE = /users/jannes/CGAL-1.1/make/makefile_<CGAL-OS description>
+      include $(CGAL_MAKEFILE)
+\end{verbatim}
+
+The file \texttt{CGAL\_MAKEFILE} is an include file with platform
+dependent makefile settings. The abbreviation \texttt{<CGAL-OS
+  description>} (see section \ref{sec:os-compiler-id} for details) is
+used to identify the operating system and compiler for which the
+settings hold. For example, the file
+\texttt{makefile\_mips\_IRIX64-6.2\_CC-n32-7.20} contains makefile
+settings for the IRIX 6.2 operating system and the \mipsprocc\ 7.2
+compiler.  These include files are automatically generated by the
+\texttt{install\_cgal} script and they are all located in the
+\texttt{\cgaldir/make} directory.  For convenience, the
+\texttt{install\_cgal} script will substitute the include makefile
+that was generated most recently.
+
+If you want to compile an application or an object library with a
+different compiler, the only thing you need to do is to substitute
+another include makefile for the \texttt{CGAL\_MAKEFILE} variable. An
+alternative way to do this is to create an environment variable
+\texttt{CGAL\_MAKEFILE}. To pass the value of the environment variable
+to the makefile you can either comment out the \texttt{CGAL\_MAKEFILE}
+line in the makefile or use an appropriate command line option for
+the make utility.
+A comfortable way to set \texttt{CGAL\_MAKEFILE} is by using
+\texttt{install\_cgal~-os} (see section \ref{sec:other-options}).
+E.g. if your compiler is \texttt{g++}, you would type
+\begin{alltt}
+CGAL_MAKEFILE=`\yourcgaldir/install_cgal -os g++`
+\end{alltt}
+in bourne shell resp.
+\begin{alltt}
+setenv CGAL_MAKEFILE `\yourcgaldir/install_cgal -os g++`
+\end{alltt}
+in csh derivatives.
+
+All makefiles contain sections with compiler and linker
+flags.  You can add your own flags here. For example, you might want
+to add the flag \texttt{-DCGAL\_NO\_PRECONDITIONS} to turn off
+precondition checking. The flags \texttt{\$(CGAL\_CXXFLAGS)} and
+\texttt{\$(CGAL\_LDFLAGS)} should never be removed.
+
+The default extension for \cgal\ source files is \texttt{.C}.  The
+last section of the makefiles contains a suffix rule that tells the
+compiler how to create a \texttt{.o}-file from a \texttt{.C}-file.  If
+you want to use the default rule that is defined by the make utility,
+you may want to remove this suffix rule.  However, note that this may
+have consequences for the makefile variables \texttt{CGAL\_CXX} and
+\texttt{CXXFLAGS}.
+
+\section{Compiling a \cgal\ application}
+The directory \texttt{CGAL-1.1/examples} contains a small program
+(example.C) and a sample makefile with some comments. The
+\texttt{CGAL\_MAKEFILE} variable in this makefile (see section
+\ref{sec:makefiles}) is automatically substituted by the
+\texttt{install\_cgal} script and equals the most recently generated
+include makefile in the \texttt{\cgaldir/make} directory. After the
+installation of \cgal\ this sample makefile is ready for use. Just
+type '\texttt{make example}' to compile the program
+\texttt{example.C}.  You may use this makefile as a blueprint for your
+own makefiles.
+
+Furthermore the directories \texttt{\cgaldir/examples} and
+\texttt{\cgaldir/demo} contain many subdirectories with non-graphical
+and graphical example programs.  In all these directories you will
+find a makefile that is ready for use.
+
+\section{Using \cgal\ and \leda}\label{sec:leda}
+This section describes how to use \cgal\ and \leda\ simultaneously.
+
+\subsection{Support for \leda}
+\cgal\ supports \leda\ in the following ways:
+
+\begin{enumerate}
+\item There are support functions defined for the \leda\ number types
+  \texttt{big\_float}, \texttt{integer}, \texttt{rational} and
+  \texttt{real} (see the files \texttt{<CGAL/leda\_*>}).
+
+\item
+\cgal\ defines the following \leda-related compiler flags:
+\begin{itemize}
+\item When \leda\ is used, the flags \texttt{CGAL\_USE\_LEDA} and
+  \texttt{LEDA\_PREFIX} will be set.
+\item When \leda\ is used, the \leda\ memory management (\leda\ handles) will be
+used for geometric primitives in \cgal. This can be turned of by setting the flag
+\texttt{CGAL\_NO\_LEDA\_HANDLE}. In that case \cgal\ memory management will
+be used (see \texttt{<CGAL/Handle.h>}).
+\end{itemize}
+\end{enumerate}
+
+The include makefiles in the \texttt{\cgaldir/make} directory
+corresponding to \leda\ can be recognized by the suffix
+``\texttt{\_LEDA}''.
+
+\subsection{\leda\ and \stl\ conflicts}
+
+If you are using an old compiler or an old version of \stl, the
+combination of \leda\ and \stl\ may give some problems. In order to
+avoid them, it is highly recommended to use the latest \leda\ 
+release\footnote{At the moment this is \leda\ 3.7.}, since this is
+what we test \cgal\ with.
+
+\subsubsection{Definition of type bool}
+
+If a compiler does not support the keyword bool, libraries like \leda\ 
+and \stl\ provide their own definition of bool. Unfortunately the
+\leda\ definition of bool is incompatible with the definition in most
+\stl\ implementations. One of them needs to be changed. The easiest
+solution is to modify \stl\ as follows:
+
+\begin{enumerate}
+\item locate the definition of bool; most of the time it is defined as
+
+\begin{verbatim}
+   typedef int bool;
+\end{verbatim}
+
+in a file called bool.h or stl\_config.h
+
+\item replace this definition by the following:
+
+\begin{verbatim}
+#ifdef CGAL_USE_LEDA
+#include <LEDA/bool.h>
+#else
+   typedef int bool;
+#endif
+\end{verbatim}
+\end{enumerate}
+
+The flag \texttt{CGAL\_USE\_LEDA} ensures that you can continue to use \stl\ wwithout
+depending on \leda.
+
+REMARK: If you do not like to modify centrally managed \stl\ files, it
+is possible to fake it. This can be done by making changes to a copy
+of the \stl\ file bool.h or stl\_config.h. After this you have to make
+sure that this copy is found earlier on the include path than the
+original file.  It is also possible to modify \leda\ instead of \stl.
+However, then you have to modify and recompile (if you have the source
+code) \leda.
+
+\subsubsection{'red' and 'black' conflict}
+
+When compiling the graphical demo programs that use \leda\ windows
+with \leda\ versions prior to 3.6.1, you may encounter a name clash.
+This is because \leda\ defines the colors 'red' and 'black' in the
+file \texttt{<LEDA/impl/x\_window.h>}, whereas some \stl\ 
+implementations use 'red' and 'black' in the implementation of trees.
+One of the libraries needs to be modified. In this case the easiest
+solution seems to prefix the \leda\ color constants with something
+like \texttt{leda\_}.
+
+\section{The Standard Template Library}\label{sec:stl}
+
+For using the \cgal\ library, the Standard Template Library is
+required. Recent compilers provide their own implementation of \stl.
+There are also free implementations. Most notable are the
+implementation from Silicon Graphics (\sgistlpage, also contains
+documentation and links to other \stl\ resources) and a port of this
+SGI version to a lot of other compilers (\stlportpage).
+
+The \texttt{install\_cgal} script tries to figure out which \stl\ is
+used.  This is necessary for the circulator package, and also to work
+around some bugs. In case the right version is not recognized, you
+could try to use the non-interactive mode of the
+\texttt{install\_cgal} script (see section \ref{sec:non-interactive}).
+The compiler flag \verb~CGAL_STL_VERSION~ can take the following
+values:
+
+\begin{center}
+  \renewcommand{\arraystretch}{1.3}
+  \gdef\lcTabularBorder{2}
+  \begin{tabular}{|l|l|} \hline
+    CGAL\_STL\_GCC                & \stl\ version that comes with gcc-2.7.2 \\ \hline
+    CGAL\_STL\_HP                 & Free HP version \\ \hline
+    CGAL\_STL\_SGI\_3\_0          & SGI STL 3.0 or newer \\ \hline
+    CGAL\_STL\_SGI\_WWW           & SGI STL prior to 3.0 \\ \hline
+    CGAL\_STL\_SGI\_WWW\_OLD      & SGI STL for older compilers \\ \hline
+    CGAL\_STL\_SGI\_CC            & SGI STL that comes with their 7.0/7.1 compilers \\ \hline
+    CGAL\_STL\_UNKNOWN            & unknown \stl\ version (this will probably not work) \\ \hline
+  \end{tabular}
+\end{center}
+
+Most \stl\ libraries consist of only header files. An exception is
+HP's \stl, which also has source files \verb~random.cpp~ and
+\verb~tempbuf.cpp~.  The \cgal\ makefiles do \textit{not} take care of
+this. You have to compile these files yourself and add them to the
+custom linker flags during the installation of CGAL, or enter them
+manually in the makefiles.
+
+\section{Upgrading a \cgal\ 1.0 installation}
+In case you have \cgal\ 1.0 installed on your system, you might like
+to reuse your configuration files. Simply use the following commands
+to put them into the right place:
+\begin{verbatim}
+cp -r <OLD_CGAL_DIR>/config/install <NEW_CGAL_DIR>/config
+\end{verbatim}
+where \texttt{<OLD\_CGAL\_DIR>} is your \cgal\ 1.0 root directory
+(e.g.  \texttt{/pub/local/CGAL-1.0}) and\\
+\texttt{<NEW\_CGAL\_DIR>} is the root directory of your new \cgal\ 
+installation (e.g. {\tt /pub/local/CGAL-1.1}).
+
+It is \textbf{strongly} recommended to rerun all tests using the
+option \texttt{A} from the main menu.
+
+\section{Compiler workarounds}
+In \cgal\ a number of compiler flags is defined, all of them start
+with the prefix \texttt{CGAL\_CFG}. These flags are used to work
+around compiler bugs and limitations.  For example, the flag
+\texttt{CGAL\_CFG\_NO\_BUILTIN\_BOOL} denotes that the compiler does
+not know the keyword bool. If this flag is defined, the type bool will
+be borrowed from the \stl\ library (currently by including the file
+\texttt{<pair.h>}).
+
+For each compiler a file \texttt{<CGAL/compiler\_config.h>} is
+defined, with the correct settings of all flags. This file is
+generated automatically by the \texttt{install\_cgal} script. For this
+the test programs in the directory \texttt{\cgaldir/config/testfiles}
+are used. The file \texttt{<CGAL/compiler\_config.h>} and the test
+programs contain a description of the problem, so in case of trouble
+with a \texttt{CGAL\_CFG} flag it is a good idea to take a look at it.
+
+The file \texttt{<CGAL/config.h>} manages all configuration problems
+of the compiler.  This file includes the file
+\texttt{CGAL/compiler\_config.h}.  It is therefore important that the
+file \texttt{<CGAL/config.h>} is always included before any other
+\cgal\ source file that depends on workaround flags. In most cases you
+do not have to do anything special for this, because many CGAL files
+already take care of including \texttt{<CGAL/config.h>}. Nevertheless
+it would be a good idea to always start your \cgal\ programs with
+including \texttt{<CGAL/config.h>} (or \texttt{<CGAL/basic.h>}, which
+contains some more basic \cgal\ definitions).
+

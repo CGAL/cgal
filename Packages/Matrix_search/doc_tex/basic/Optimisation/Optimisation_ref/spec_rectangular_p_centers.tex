@@ -1,0 +1,166 @@
+%% ==============================================================
+%% Specification: Rectangular p-Centers
+%% --------------------------------------------------------------
+%% file  : spec_rectangular_p_centers.awi
+%% author: Michael Hoffmann
+%% $Id$
+%% ==============================================================
+
+\clearpage
+\section{Rectangular $p$-Centers}
+\label{sec_RectangularPCenters}
+\cgalColumnLayout
+
+This section describes a function to compute rectilinear $p$-centers
+of a planar point set, i.e. a set of $p$ points such that the maximum
+minimal distance between both sets is minimized.
+
+\ccHtmlNoClassToc
+\begin{ccHtmlClassFile}{rectangular_p_centers.html}
+  {Definition of function CGAL_rectangular_p_center_2}
+  \ccTexHtml{}{
+    <H3>Rectangular <I>p</I>-Centers</H3>
+    
+    This section describes a function to compute rectilinear
+    <I>p</I>-centers of a planar point set, i.e. a set of <I>p</I>
+    points such that the maximum minimal distance between both sets is
+    minimized.}
+  
+  More formally the problem can be defined as follows.
+  
+  \ccTexHtml{Given a finite set ${\cal P}$ of points, compute a point
+    set ${\cal C}$ with $|{\cal C}| \le p$ such that the $p$-radius of
+    ${\cal P}$,
+    $$
+    rad_p({\cal P}) := \max_{P \in {\cal P}} \min_{Q \in {\cal C}} || P
+    - Q ||_\infty
+    $$
+    is minimized. We can interpret ${\cal C}$ as the best
+    approximation (with respect to the given metric) for ${\cal P}$
+    with at most $p$ points.}{Given a finite set <IMG WIDTH=12
+    HEIGHT=12 ALIGN=BOTTOM ALT="tex2html_wrap_inline17"
+    SRC="./MatrixSearch_pcenter1.gif" > of points, compute a point set
+    <IMG WIDTH=9 HEIGHT=13 ALIGN=BOTTOM ALT="tex2html_wrap_inline19"
+    SRC="./MatrixSearch_pcenter2.gif" > with <IMG WIDTH=46 HEIGHT=24
+    ALIGN=MIDDLE ALT="tex2html_wrap_inline21"
+    SRC="./MatrixSearch_pcenter3.gif" > such that the <I>p</I>-radius of
+    <IMG WIDTH=12 HEIGHT=12 ALIGN=BOTTOM ALT="tex2html_wrap_inline17"
+    SRC="./MatrixSearch_pcenter1.gif" > , <P> <IMG WIDTH=358 HEIGHT=24
+    ALIGN=BOTTOM ALT="displaymath27" SRC="./MatrixSearch_pcenter4.gif" >
+    <P> is minimized. We can interpret <IMG WIDTH=9 HEIGHT=13
+    ALIGN=BOTTOM ALT="tex2html_wrap_inline19"
+    SRC="./MatrixSearch_pcenter2.gif" > as the best approximation (with
+    respect to the given metric) for <IMG WIDTH=12 HEIGHT=12
+    ALIGN=BOTTOM ALT="tex2html_wrap_inline17"
+    SRC="./MatrixSearch_pcenter1.gif" > with at most <I>p</I> points.}
+
+\ccInclude{CGAL/rectangular_p_center_2.h}
+
+  \def\ccLongParamLayout{\ccTrue} 
+
+  \ccGlobalFunction{template < class ForwardIterator, class
+    OutputIterator, class Traits > OutputIterator
+    CGAL_rectangular_p_center_2( ForwardIterator f, ForwardIterator l,
+    OutputIterator o, Traits::FT& r, int p, const Traits& t =
+    Default_traits);}
+  
+  computes rectilinear \ccc{p}-centers for the point set described by
+  the range [\ccc{f}, \ccc{l}), sets \ccc{r} to the corresponding
+  $p$-radius, writes the at most \ccc{p} center points to \ccc{o} and
+  returns the past-the-end iterator of this sequence.
+
+  \ccHeading{Precondition}
+  \begin{enumerate}
+  \item If \ccc{t} is specified explicitly, \ccc{Traits} satisfies the
+    requirements stated in section
+    \ref{req_RectangularP-centerTraitsClasses},
+  \item Value type of \ccc{ForwardIterator} is \ccc{Traits::Point_2}
+    or -- if \ccc{t} is not specified explicitly --
+    \ccc{CGAL_Point_2<R>} for some representation class \ccc{R},
+  \item \ccc{OutputIterator} accepts the value type of
+    \ccc{ForwardIterator} as value type,
+  \item the range [\ccc{f}, \ccc{l}) is not empty \textit{and}
+  \item 2 $\le$ \ccc{p} $\le$ 4.
+  \end{enumerate}
+
+  \ccHeading{Note}
+  
+  On compilers not supporting member function templates, the parameter
+  \ccc{ForwardIterator} is fixed to \ccc{vector<Point_2>::iterator}
+  and \ccc{OutputIterator} is fixed to
+  \ccc{back_insert_iterator<vector<Point_2>>} where \ccc{Point_2} is
+  \ccc{Traits::Point_2}.
+  
+  \ccImplementation The implementation uses sorted matrix search (see
+  section \ref{secSortedMatrixSearch}) and fast algorithms for
+  piercing rectangles\cite{sw-rpppp-96} which leads to a runtime
+  complexity of ${\cal O}(n \cdot \log n)$ where $n$ is the number of
+  input points.
+  
+  \ccExample The following code generates a random set of ten points
+  and computes its two-centers.
+
+  \ccIncludeVerbatim{rectangular_p_center_2_example_noheader.C}
+
+\end{ccHtmlClassFile}
+
+\begin{ccAdvanced}
+  \ccHtmlNoClassToc\ccHtmlNoClassIndex\begin{ccClass}{Rpc_traits}
+    \ccCreationVariable{t}\ccTagFullDeclarations
+    
+    \subsection{Requirements for Rectangular $p$-center Traits Classes}
+    \label{req_RectangularP-centerTraitsClasses}
+    
+    \ccDefinition A class \ccClassName\ has to provide the following
+    types in order to qualify as a traits class for
+    \ccc{CGAL_rectangular_p_center_2}.
+    
+    \ccTypes 
+    
+    \ccNestedType{Iso_rectangle_2}{class used for representing
+      axis-parallel rectangles.}
+    
+    \ccNestedType{Point_2}{class used for representing the input
+      points.}
+    
+    \ccNestedType{FT}{class used for doing computations on point
+      coordinates (has to fulfill field-type requirements).}
+    
+    \ccNestedType{X}{adaptable unary function class: \ccc{Point_2}
+      $\rightarrow$ \ccc{FT} computing the $x$-coordinate of a given
+      point.}
+    
+    \ccNestedType{Y}{adaptable unary function class: \ccc{Point_2}
+      $\rightarrow$ \ccc{FT} computing the $y$-coordinate of a given
+      point.}
+    
+    \ccNestedType{Xmin}{adaptable unary function class:
+      \ccc{Iso_rectangle_2} $\rightarrow$ \ccc{FT} computing the
+      minimal $x$-coordinate of a given rectangle.}
+    
+    \ccNestedType{Xmax}{adaptable unary function class:
+      \ccc{Iso_rectangle_2} $\rightarrow$ \ccc{FT} computing the
+      maximal $x$-coordinate of a given rectangle.}
+    
+    \ccNestedType{Ymin}{adaptable unary function class:
+      \ccc{Iso_rectangle_2} $\rightarrow$ \ccc{FT} computing the
+      minimal $y$-coordinate of a given rectangle.}
+    
+    \ccNestedType{Ymax}{adaptable unary function class:
+      \ccc{Iso_rectangle_2} $\rightarrow$ \ccc{FT} computing the
+      maximal $y$-coordinate of a given rectangle.}
+    
+    \ccNestedType{Build_point}{adaptable binary function class:
+      \ccc{FT} $\times$ \ccc{FT} $\rightarrow$ \ccc{Point_2} creating
+      a point with the given coordinates.}
+    
+    \ccNestedType{Build_rectangle}{adaptable unary function class:
+      \ccc{Point_2} $\rightarrow$ \ccc{Iso_rectangle_2} creating a
+      rectangle containing exactly the given point.}
+
+  \end{ccClass}
+\end{ccAdvanced}
+
+%% --------------------------------------------------------------
+%% EOF spec_rectangular_p_centers.awi
+%% --------------------------------------------------------------
