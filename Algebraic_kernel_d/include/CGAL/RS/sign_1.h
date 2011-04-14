@@ -33,18 +33,15 @@ namespace CGAL{
 
 struct RSSign{
 
-        // note: the following function is commented since it is not used
-        // and causes a problem when compiling the isolator
-
         // This function calculates the sign of the evaluation of a polynomial
         // at a given algebraic number. If it is impossible to know the sign
         // evaluating the interval, it calls sign_1_rs, which uses RS to do it.
-        //static CGAL::Sign sign_1(const RS_polynomial_1 &p,const Algebraic_1 &x){
-        //        RS::rs_sign s=p.sign_mpfi(x.mpfi());
-        //        if(s!=RS::RS_UNKNOWN)
-        //                return RS::convert_rs_sign(s);
-        //        return sign_1_rs(p,x);
-        //}
+        static CGAL::Sign sign_1(const RS_polynomial_1 &p,const Algebraic_1 &x){
+                RS::rs_sign s=p.sign_mpfi(x.mpfi());
+                if(s!=RS::RS_UNKNOWN)
+                        return RS::convert_rs_sign(s);
+                return sign_1_rs(p,x);
+        }
 
         // compute the sign of the polynomial at a given dyadic
         static inline CGAL::Sign

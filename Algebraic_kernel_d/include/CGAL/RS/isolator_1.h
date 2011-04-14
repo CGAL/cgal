@@ -39,7 +39,7 @@
 #include <CGAL/config.h>
 #include <CGAL/Gmpfr.h>
 #include <CGAL/Gmpfi.h>
-#include <CGAL/RS/solve_1.h>
+#include <CGAL/RS/isole_1.h>
 
 namespace CGAL {
 
@@ -77,7 +77,7 @@ public:
       _m_polynomial(p)
       //, _m_interval_given(false)
     {
-      _m_real_roots=isolator_solve_1(p);
+      _m_real_roots=RS::isolator<Polynomial>()(p);
     }
 
     // @LUIS: add constructor from interval (maybe some time in the future)
