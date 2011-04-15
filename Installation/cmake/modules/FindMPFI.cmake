@@ -1,7 +1,7 @@
 find_package( GMP QUIET )
 
 if( GMP_FOUND )
-
+  
   if( MPFI_INCLUDE_DIR AND MPFI_LIBRARIES )
     set( MPFI_FOUND TRUE )
   endif( MPFI_INCLUDE_DIR AND MPFI_LIBRARIES )

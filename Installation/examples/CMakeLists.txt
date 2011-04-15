@@ -4,7 +4,11 @@ cmake_minimum_required(VERSION 2.4.5)
 
 set(CMAKE_ALLOW_LOOSE_LOOP_CONSTRUCTS true)
 
-file( GLOB list "*" )
+foreach (package ${CGAL_CONFIGURED_PACKAGES})
+  #message (STATUS "Current package: ${package}")
+  file( GLOB listtmp "${package}/examples/*")
+  list(APPEND list ${listtmp})
+endforeach()
 
 list( SORT list )
 

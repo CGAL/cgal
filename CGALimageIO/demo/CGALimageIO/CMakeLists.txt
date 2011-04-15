@@ -19,7 +19,7 @@ foreach(INC_DIR ${PACKAGE_ROOT}/include
     include_directories (BEFORE ${INC_DIR})
   endif()
 endforeach()
-foreach(LIB_DIR ${PACKAGE_ROOT}/../CGALimageIO/src/CGALimageIO)
+foreach(LIB_DIR ${PACKAGE_ROOT}/../CGALimageIO/src/CGALImageIO)
   if (EXISTS ${LIB_DIR})
     link_directories (${LIB_DIR})
   endif()

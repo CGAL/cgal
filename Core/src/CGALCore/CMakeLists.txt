@@ -10,16 +10,17 @@ endif()
 
 if ( NOT CGAL_FOUND )
   find_package(CGAL REQUIRED)
-  include(${CGAL_USE_FILE})
 endif()
+
+include(${CGAL_USE_FILE})
 
 include_directories( ${CGAL_3RD_PARTY_INCLUDE_DIRS} )
 
-add_library(CGAL_Core "all_files.cpp")
-
-add_definitions ( ${CGAL_3RD_PARTY_DEFINITIONS} )
+build_cgal_library(CGAL_Core CGALCore "")
 
 add_dependencies( CGAL_Core CGAL )
+
+add_definitions ( ${CGAL_3RD_PARTY_DEFINITIONS} )
   
 target_link_libraries( CGAL_Core ${CGAL_LIBRARY} ${CGAL_3RD_PARTY_LIBRARIES} )
 

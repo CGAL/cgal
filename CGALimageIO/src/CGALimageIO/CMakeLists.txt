@@ -10,8 +10,9 @@ endif()
 
 if ( NOT CGAL_FOUND )   
   find_package(CGAL REQUIRED)
-  include(${CGAL_USE_FILE})
 endif()
+
+include(${CGAL_USE_FILE})
 
 find_package(ZLIB)
 find_package(OpenGL)
@@ -41,7 +42,7 @@ if(OPENGL_FOUND)
     cache_set(CGAL_ImageIO_USE_ZLIB "ON")
   endif(ZLIB_FOUND)
 
-  set( CGAL_ImageIO_BASENAME CGAL_ImageIO )
+  set( CGAL_ImageIO_BASENAME CGAL_ImageIO)
   
   if(WITH_VTK)
     if( VTK_FOUND )
@@ -60,7 +61,7 @@ if(OPENGL_FOUND)
   
   include_directories( ${CGAL_3RD_PARTY_INCLUDE_DIRS} ${CGAL_ImageIO_3RD_PARTY_INCLUDE_DIRS} )
   
-  add_library(CGAL_ImageIO all_files.cpp)
+  build_cgal_library( CGAL_ImageIO CGALImageIO "")
   
   add_dependencies( CGAL_ImageIO CGAL )
   

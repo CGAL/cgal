@@ -10,8 +10,9 @@ endif()
 
 if ( NOT CGAL_FOUND )
   find_package(CGAL REQUIRED)
-  include(${CGAL_USE_FILE})
 endif()
+
+include(${CGAL_USE_FILE})
 
 find_package(OpenGL QUIET )
 
@@ -49,60 +50,42 @@ if( QT3_FOUND )
     include(Qt3Macros-patched)
        
     include_directories( ${CGAL_3RD_PARTY_INCLUDE_DIRS} ${CGAL_Qt3_3RD_PARTY_INCLUDE_DIRS} )
+
+    # Make sure QT3_AUTOMOC compiler can find CGALQt3 include files
+    include_directories( BEFORE ${CGAL_INCLUDE_DIRS} )
        
     # Make sure the compiler can find generated .moc files
     include_directories (BEFORE ${CMAKE_CURRENT_BINARY_DIR})
 
-    # Make sure QT3_AUTOMOC compiler can find CGALQt include files
-    include_directories (BEFORE ${CMAKE_SOURCE_DIR}/include/CGAL/IO)
+    # needed for dependency (collected in package-specific CMakeLists.${packagename}.qtmoc)
+    set(CGAL_Qt3_MOC_FILES "")  
 
-    QT3_AUTOMOC( Qt_widget.cpp
-                 Qt_widget_layer.cpp
-                 Qt_widget_standard_toolbar.cpp
-                 Qt_help_window.cpp
-                 Qt_widget_history.cpp
-                 Qt_widget_xpm_icons.cpp
-                 Qt_widget_OpenGL.cpp
-               )  
+    foreach (package ${CGAL_CONFIGURED_PACKAGES} )
+      file(GLOB PACKAGE_QTMOC_FILES "${package}/src/CGALQt3/*.qtmoc.cmake")
+      foreach(package_qtmoc_file ${PACKAGE_QTMOC_FILES})
+         # includes 'moccing' for sources/headers in package + collects lists of moc-files for dependency (to properly build the lib)
+        include(${package_qtmoc_file}) 
+#        message(STATUS QTMOC------------FILE: ${package_qtmoc_file})      
+      endforeach()
+    endforeach()
+  
+#    message(STATUS QT3-mocfiles: ${CGAL_Qt3_MOC_FILES})
 
-    QT3_GENERATE_MOC(${CMAKE_SOURCE_DIR}/include/CGAL/Kinetic/IO/internal/Qt_core.h
-                     ${CMAKE_CURRENT_BINARY_DIR}/Kinetic_Qt_core.moc
-                     )
-                          
-    QT3_GENERATE_MOC(${CMAKE_SOURCE_DIR}/include/CGAL/Kinetic/IO/internal/Qt_timer.h
-                     ${CMAKE_CURRENT_BINARY_DIR}/Kinetic_Qt_timer.moc
-                    )
-                        
-    QT3_GENERATE_MOC(${CMAKE_SOURCE_DIR}/include/CGAL/Kinetic/IO/internal/Qt_widget_2_core.h
-                     ${CMAKE_CURRENT_BINARY_DIR}/Kinetic_Qt_widget_2_core.moc
-                    )
-                        
-    QT3_GENERATE_MOC(${CMAKE_SOURCE_DIR}/include/CGAL/Kinetic/IO/internal/Qt_window_2.h
-                     ${CMAKE_CURRENT_BINARY_DIR}/Kinetic_Qt_window_2.moc
-                     )
-                    
-    add_file_dependencies(all_files.cpp ${CMAKE_CURRENT_BINARY_DIR}/Kinetic_Qt_core.moc )
-    add_file_dependencies(all_files.cpp ${CMAKE_CURRENT_BINARY_DIR}/Kinetic_Qt_timer.moc )
-    add_file_dependencies(all_files.cpp ${CMAKE_CURRENT_BINARY_DIR}/Kinetic_Qt_widget_2_core.moc )
-    add_file_dependencies(all_files.cpp ${CMAKE_CURRENT_BINARY_DIR}/Kinetic_Qt_window_2.moc )
-    add_file_dependencies(all_files.cpp ${CMAKE_CURRENT_BINARY_DIR}/Qt_widget.moc ) 
-    add_file_dependencies(all_files.cpp ${CMAKE_CURRENT_BINARY_DIR}/Qt_widget_layer.moc )
-    add_file_dependencies(all_files.cpp ${CMAKE_CURRENT_BINARY_DIR}/Qt_widget_standard_toolbar.moc )
-    add_file_dependencies(all_files.cpp ${CMAKE_CURRENT_BINARY_DIR}/Qt_help_window.moc )
-    add_file_dependencies(all_files.cpp ${CMAKE_CURRENT_BINARY_DIR}/Qt_widget_history.moc )
-    add_file_dependencies(all_files.cpp ${CMAKE_CURRENT_BINARY_DIR}/Qt_widget_OpenGL.moc )
+    build_cgal_library( CGAL_Qt3 CGALQt3 "${CGAL_Qt3_MOC_FILES}")
 
-    add_library (CGAL_Qt3 "all_files.cpp")
-    
+    foreach(mocfile ${CGAL_Qt3_MOC_FILES})
+      add_file_dependencies(${CMAKE_CURRENT_BINARY_DIR}/all_files.cpp ${CMAKE_CURRENT_BINARY_DIR}/${mocfile})
+    endforeach()
+
     add_dependencies( CGAL_Qt3 CGAL )
-    
-    if(CGAL_SOVERSION AND CGAL_SONAME_VERSION)
+
+    if (CGAL_SOVERSION AND CGAL_SONAME_VERSION)
       set_target_properties(CGAL_Qt3 PROPERTIES VERSION "${CGAL_SOVERSION}" SOVERSION "${CGAL_SONAME_VERSION}")
     endif()
     
     target_link_libraries( CGAL_Qt3 ${CGAL_LIBRARY} ${CGAL_3RD_PARTY_LIBRARIES} ${CGAL_Qt3_3RD_PARTY_LIBRARIES} )
         
-    add_definitions ( ${CGAL_3RD_PARTY_DEFINITIONS} ${CGAL_Qt3_3RD_PARTY_DEFINITIONS} )
+    add_definitions( ${CGAL_3RD_PARTY_DEFINITIONS} ${CGAL_Qt3_3RD_PARTY_DEFINITIONS} )
     
     set( CGAL_Qt3_BASENAME CGAL_Qt3 )
     
@@ -148,6 +131,4 @@ if( QT3_FOUND )
 else()
   message( STATUS "CGAL_Qt3 needs Qt3, cannot be configured.")
 endif()
-
-   
 
