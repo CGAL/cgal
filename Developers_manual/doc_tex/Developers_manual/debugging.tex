@@ -27,7 +27,7 @@ to do in order to evaluate handles and iterators during the debugging phase
 \section{Graphical debugging\label{sec:graphical_debugging}}
 \ccIndexSubitemBegin{debugging}{graphical}
 
-\cgal\ packages usually provide a graphical demo that demostrates the 
+\cgal\ packages usually provide a graphical demo that demonstrates the 
 functionality in the package.  Many times this demo is simply a fancier
 version of a program that was used in the early stages of development as a
 (graphical) debugging tool.  In many cases, the output of a geometric
@@ -51,7 +51,7 @@ to develop
 \ccIndexMainItemBegin{cross-checker}
 
 A cross-checker is a powerful means to allow for efficient
-maintainence of your code.  A cross-checker for a given concept is a
+maintenance of your code.  A cross-checker for a given concept is a
 model of that concept \ccIndexMainItemDef{cross-checker} that is
 constructed from another model or models (one of which is the one you
 wish to check).  In order to implement the functionality required by
@@ -111,7 +111,7 @@ bool curve_is_vertical(const X_curve & cv) const
 }
 \end{verbatim}
 
-Notice that the class \ccc{Binary_triats_checker} has template parameters 
+Notice that the class \ccc{Binary_traits_checker} has template parameters 
 named \ccc{Traits1} and \ccc{Traits2}, and a third parameter named 
 \ccc{Adapter}. One of the traits classes is the one to be tested and the
 other is (presumably) a traits class that always gives the right answer.
@@ -185,7 +185,7 @@ and similar problems:
          instead.
 \end{itemize}
 
-Note: You can also use watches to continously examine such values during 
+Note: You can also use watches to continuously examine such values during 
 execution.
 \ccIndexSubitemEnd{debugging}{interactive}
 \ccIndexSubitemEnd{handles}{and debugging}
