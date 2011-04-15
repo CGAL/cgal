@@ -74,7 +74,7 @@ CGALimageIO/examples/CGALimageIO/Makefile
 CGALimageIO/examples/CGALimageIO/convert_raw_image_to_inr
 CGALimageIO/examples/CGALimageIO/makefile
 CGALimageIO/examples/CGALimageIO/test_imageio
-CGALimageIO/src/CGALimageIO/Makefile
+CGALimageIO/src/CGALImageIO/Makefile
 CGALimageIO/test/CGALimageIO/*.exe
 CGALimageIO/test/CGALimageIO/*.sln
 CGALimageIO/test/CGALimageIO/*.vcproj

@@ -1229,7 +1229,7 @@ CGAL_ipelets/include/CGAL/CGAL_Ipelet_base_v6.h -text
 CGAL_ipelets/include/CGAL/CGAL_Ipelet_base_v7.h -text
 CGAL_ipelets/include/CGAL/grabbers.h -text
 CGAL_ipelets/package_info/CGAL_ipelets/maintainer -text
-CGALimageIO/src/CGALimageIO/CMakeLists.txt -text
+CGALimageIO/src/CGALImageIO/CMakeLists.txt -text
 Circular_kernel_2/benchmark/parser/Report.pdf -text svneol=unset#application/pdf
 Circular_kernel_2/benchmark/readme.doc -text svneol=unset#application/msword
 Circular_kernel_2/benchmark/readme.pdf -text svneol=unset#application/pdf
@@ -1639,7 +1639,6 @@ Installation/config/version.h.in -text
 Installation/doc_tex/Installation/cmakelogo.png -text svneol=unset#image/png
 Installation/doc_tex/Installation/illustration.png -text
 Installation/html2textrc -text
-Installation/src/CGAL/all_files.cpp -text
 Installation/src/CMakeLists.txt -text
 Installation/test/Installation/CMakeLists.txt -text
 Installation/test/Installation/link_to_CGAL.cpp -text
