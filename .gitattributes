@@ -1768,7 +1768,7 @@ Kinetic_data_structures/include/CGAL/Kinetic/Inexact_simulation_traits.h -text
 Kinetic_data_structures/include/CGAL/Kinetic/Regular_triangulation_CORE_exact_simulation_traits.h -text
 Kinetic_data_structures/include/CGAL/Kinetic/listeners.h -text
 Kinetic_data_structures/include/CGAL/Tools/utility_macros.h -text
-Kinetic_data_structures/src/CGALQt/Kinetic_print.xpm -text
+Kinetic_data_structures/src/CGALQt3/Kinetic_print.xpm -text
 Kinetic_data_structures/test/Kinetic_data_structures/data/points_3.n=10,d=1,n -text
 Kinetic_data_structures/test/Kinetic_data_structures/data/points_3.n=10,d=3 -text
 Kinetic_data_structures/test/Kinetic_data_structures/data/points_3.n=10,d=3,n -text
@@ -3147,7 +3147,7 @@ Qt_widget/doc_tex/Qt_widget/standard_toolbar.pdf -text svneol=unset#application/
 Qt_widget/doc_tex/Qt_widget/standard_toolbar.png -text svneol=unset#image/png
 Qt_widget/doc_tex/Qt_widget/triangulation.gif -text svneol=unset#image/gif
 Qt_widget/doc_tex/Qt_widget/triangulation.pdf -text svneol=unset#application/pdf
-Qt_widget/src/CGALQt/CMakeLists.txt -text
+Qt_widget/src/CGALQt3/CMakeLists.txt -text
 Ridges_3/doc_tex/Ridges_3/RidgesMechPartDetail.png -text
 Ridges_3/doc_tex/Ridges_3/david_crest.jpg -text
 Ridges_3/doc_tex/Ridges_3/david_crest_small.png -text svneol=unset#image/png

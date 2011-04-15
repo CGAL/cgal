@@ -895,7 +895,7 @@ QP_solver/documentation/UpdateZ.log
 QP_solver/documentation/UpdateZ.pdf
 QP_solver/documentation/UpdateZ.synctex.gz
 Qt_widget/.env
-Qt_widget/src/CGALQt/*.moc
+Qt_widget/src/CGALQt3/*.moc
 Qt_widget/test/Qt_widget/test_qt_version
 Random_numbers/*.aux
 Random_numbers/*.bbl
