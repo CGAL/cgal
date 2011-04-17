@@ -1,3 +1,7 @@
+include(CGAL_Macros)
+
+# TODO sorted list of external libs
+
 option( WITH_GMP "Use the GMP number types if available." ON )
 if ( WITH_GMP )
   include(CGAL_SetupGMPXX)
@@ -14,24 +18,25 @@ if ( WITH_LEDA )
   include(CGAL_SetupLEDA)
 endif( WITH_LEDA )
 
-option ( WITH_MPFI "Use MPFI if available." OFF )
 if ( WITH_MPFI )
-  include(CGAL_SetupMPFI)
+  preconfigure_lib( MPFI )
 endif( WITH_MPFI )
 
-option ( WITH_RS "Use RS if available." OFF )
 if ( WITH_RS )
-  include(CGAL_SetupRS)
+  preconfigure_lib( RS )
 endif( WITH_RS )
 
-option ( WITH_NTL "Use NTL if available." OFF )
 if ( WITH_NTL )
-  include(CGAL_SetupNTL)
+  preconfigure_lib( NTL )
 endif( WITH_NTL )
+
+message( STATUS "Preconfigured libraries: ${CGAL_3RD_PARTY_PRECONFIGURED}")
 
 include(CGAL_SetupBoost)
 
 if ( MSVC )
   add_to_cached_list(CGAL_3RD_PARTY_LIBRARIES "psapi.lib" )
 endif( MSVC )
+
+
 

@@ -1,8 +1,6 @@
 # This module setups the compiler for the RS library.
 # It assumes that find_package(RS) was already called.
 
-if( NOT CGAL_RS_SETUP )
-
   if( RS_FOUND )
 
     message( STATUS "RS include:        ${RS_INCLUDE_DIR}" )
@@ -65,7 +63,3 @@ if( NOT CGAL_RS_SETUP )
     endif( RS3_FOUND )
 
   endif( RS_FOUND )
-
-  set( CGAL_RS_SETUP TRUE )
-
-endif( NOT CGAL_RS_SETUP )

@@ -1,8 +1,6 @@
 # This module setups the compiler for the MPFI library.
 # It assumes that find_package(MPFI) was already called.
 
-if( NOT CGAL_MPFI_SETUP )
-
   if( MPFI_FOUND )
 
     message( STATUS "MPFI include:      ${MPFI_INCLUDE_DIR}" )
@@ -37,6 +35,3 @@ if( NOT CGAL_MPFI_SETUP )
 
   endif( MPFI_FOUND )
 
-  set( CGAL_MPFI_SETUP TRUE )
-
-endif( NOT CGAL_MPFI_SETUP )

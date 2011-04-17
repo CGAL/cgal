@@ -410,6 +410,8 @@ include(CGAL_SetupFlags)
 # But they are not intended to persist from run to run as normal cache variables.
 # Similar variables are created when a library is detected.
 #
+cache_set(CGAL_3RD_PARTY_PRECONFIGURED  "" )
+
 cache_set(CGAL_3RD_PARTY_DEFINITIONS    "" )
 cache_set(CGAL_3RD_PARTY_INCLUDE_DIRS   "" )
 cache_set(CGAL_3RD_PARTY_LIBRARIES      "" )
@@ -532,6 +534,9 @@ include_directories (${CGAL_INCLUDE_DIRS})
 add_subdirectory(src)
 
 cache_get(CGAL_LIBRARY)
+cache_get(CGAL_3RD_PARTY_PRECONFIGURED )
+
+
 cache_get(CGAL_3RD_PARTY_DEFINITIONS   )
 cache_get(CGAL_3RD_PARTY_INCLUDE_DIRS  )
 cache_get(CGAL_3RD_PARTY_LIBRARIES     )

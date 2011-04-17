@@ -1,6 +1,6 @@
 #!/bin/bash
 
-# Copyright (c) 1999,2000,2002-2007,2009
+# Copyright (c) 1999,2000,2002-2007,2009,2011
 # Utrecht University (The Netherlands),
 # ETH Zurich (Switzerland), Freie Universitaet Berlin (Germany),
 # INRIA Sophia-Antipolis (France), Martin-Luther-University Halle-Wittenberg
@@ -26,10 +26,32 @@
 # This script creates a CGAL cmake script with entries for .C and .cpp
 # files in the current directory - some options can be given or specified in a file
 
+
+#LEDA
+#GMP
+#GMPXX
+#MPFR
+#MPFI
+#RS
+#TAUCS
+#BLAS
+#LAPACK
+#OPENNL
+#QGLViewer (or implied by Qt4?)
+#ESTBL
+#NTL
+
+#Core (implies GMP+GMPXX)
+#Qt3 (implies QT3)
+#Qt4 (implies QT4)
+#ImageIO
+
+#F2C
+#IPE
+#MKL
+
 create_cmake_script_with_options()
 {
-  mpfi='n'
-  rs='n'
   qt3='n'
   qt4='n'
 
@@ -66,65 +88,10 @@ create_cmake_script_with_options()
         fi
       fi
 
-      # package
-      if [ -z "$PACKAGES_GIVEN" ]; then # read file only if not given!
-        next_package=`echo $LINE | grep -v "#" | grep PACKAGE`
-        next_package=${next_package/PACKAGE /}
-        if [ -d "$next_package/include/CGAL" ]; then
-          if [ -z "$PACKAGES" ]; then 
-            PACKAGES=$next_package
-          else
-            PACKAGES=$PACKAGES":"$next_package
-          fi
-        fi
-      fi
-
-      # directory
-      if [ -z "$DIRECTORIES_GIVEN" ]; then # read file only if not given!
-        next_dir=`echo $LINE | grep -v "#" | grep DIRECTORY`
-        next_dir=${next_dir/DIRECTORY /}
-        IFS="$OLDIFS"
-        for package in `ls $next_dir`; do
-          next_package="$next_dir/$package"
-          #echo $next_package
-          if [ -d "$next_package/include/CGAL" ]; then
-            if [ -z "$PACKAGES" ]; then 
-              PACKAGES=$next_package
-            else
-              PACKAGES=$PACKAGES":"$next_package
-            fi
-          fi
-        done
-        IFS=$'\n'
-      fi
-
     done
     IFS="$OLDIFS"
   fi
 
-  # TODO given packages always preceed given directories!
-
-  # directory
-  if [ ! -z "$DIRECTORIES_GIVEN" ]; then # read file only if not given!
-    OLDIFS="$IFS"
-    IFS=":"
-    for next_dir in $DIRECTORIES; do
-      OLDIFS2="$IFS"
-      IFS="$OLDIFS"
-      for package in `ls $next_dir`; do
-        next_package="$next_dir/$package"
-        if [ -d "$next_package/include/CGAL" ]; then
-          if [ -z "$PACKAGES" ]; then 
-            PACKAGES=$next_package
-          else
-            PACKAGES=$PACKAGES":"$next_package
-          fi
-        fi
-      done
-      IFS="$OLDIFS2"
-    done
-    IFS="$OLDIFS"
-  fi
 
   # print makefile header
   #vvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvv
@@ -159,38 +126,53 @@ if [ -n "$ENABLE_CTEST" ]; then
   echo "enable_testing()"
 fi
   #---------------------------------------------------------------------------
+  # echo "CGAL_COMPONENTS: $CGAL_COMPONENTS"
+  # echo "CGAL_PRECONFIGURED_LIBS: $CGAL_PRECONFIGURED_LIBS"
+  if [ "$CGAL_PRECONFIGURED_LIBS" = "n" -a ! -z "$CGAL_COMPONENTS" ]; then
 
+    # ensure capitalization
 
-  # CGAL and its components
-  if [ ! -z "$CGAL_COMPONENTS" ]; then
-
-    # Ensure: Core, Qt3, Qt4, PDB, ImageIO
+    # CGAL: Core, Qt3, Qt4, PDB, ImageIO
     CGAL_COMPONENTS=${CGAL_COMPONENTS//[c|C][o|O][r|R][e|E]/Core}
     CGAL_COMPONENTS=${CGAL_COMPONENTS//[q|Q][t|T]3/Qt3}
     CGAL_COMPONENTS=${CGAL_COMPONENTS//[q|Q][t|T]4/Qt4}
-    CGAL_COMPONENTS=${CGAL_COMPONENTS//[p|P][d|D][b|B]/PDB}
     CGAL_COMPONENTS=${CGAL_COMPONENTS//[i|I][m|M][a|A][g|G][e|E][i|I][o|O]/ImageIO}
   
-    CGAL_COMPONENTS=${CGAL_COMPONENTS//[r|R][s|S]/RS}
+    # external libs
+    CGAL_COMPONENTS=${CGAL_COMPONENTS//[l|L][e|E][d|D][a|A]/LEDA}
+    CGAL_COMPONENTS=${CGAL_COMPONENTS//[g|G][m|M][p|P]/GMP}
+    CGAL_COMPONENTS=${CGAL_COMPONENTS//[g|G][m|M][p|P][x|X][x|X]/GMPXX}
+
+    CGAL_COMPONENTS=${CGAL_COMPONENTS//[m|M][p|P][f|F][r|R]/MPFR}
     CGAL_COMPONENTS=${CGAL_COMPONENTS//[m|M][p|P][f|F][i|I]/MPFI}
+    CGAL_COMPONENTS=${CGAL_COMPONENTS//[r|R][s|S]/RS}
+
+    CGAL_COMPONENTS=${CGAL_COMPONENTS//[t|T][a|A][u|U][c|C][s|S]/TAUCS}
+    CGAL_COMPONENTS=${CGAL_COMPONENTS//[b|B][l|L][a|A][s|S]/BLAS}
+
+    CGAL_COMPONENTS=${CGAL_COMPONENTS//[l|L][a|A][p|P][a|A][c|C][k|K]/LAPACK}
+    CGAL_COMPONENTS=${CGAL_COMPONENTS//[o|O][p|P][e|E][n|N][n|N][l|L]/OPENNL}
+    CGAL_COMPONENTS=${CGAL_COMPONENTS//[q|Q][g|G][l|L][v|V][i|I][e|E][w|W][e|E][r|R]/QGLViewer}
+    CGAL_COMPONENTS=${CGAL_COMPONENTS//[e|E][s|S][t|T][b|B][l|L]/ESTBL}
+    CGAL_COMPONENTS=${CGAL_COMPONENTS//[n|N][t|T][l|L]/NTL}
+
+#F2C?
+#IPE?
+#MKL?
 
     OLDIFS="$IFS"
     IFS=':'
     for cgal_component in $CGAL_COMPONENTS; do
       COMPONENT=`echo $cgal_component | tr '[:upper:]' '[:lower:]'`
-      if [ "$COMPONENT" = "mpfi" ]; then
-        mpfi='y'
-      fi
-      if [ "$COMPONENT" = "rs" ]; then
-        rs='y'
-      fi
 
+      # for qtmoc
       if [ "$COMPONENT" = "qt3" ]; then
         qt3='y'
       fi
       if [ "$COMPONENT" = "qt4" ]; then
         qt4='y'
       fi
+
     done
     IFS=$OLDIFS
 
@@ -198,7 +180,11 @@ fi
 
   else
 
-    echo "find_package( CGAL QUIET )"
+    if [ "$CGAL_PRECONFIGURED_LIBS" = "y" ]; then
+      echo "find_package( CGAL QUIET COMPONENTS ALL_PRECONFIGURED_LIBS )"
+    else
+      echo "find_package( CGAL QUIET )"
+    fi
 
   fi # CGAL and its components
 
@@ -217,7 +203,6 @@ include( ${CGAL_USE_FILE} )
 
 EOF
   #---------------------------------------------------------------------------
-
 
   #vvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvv
   cat << 'EOF'
@@ -285,69 +270,6 @@ EOF
     #-------------------------------------------------------------------------
   fi
 
-  OLDIFS="$IFS"
-  IFS=":"
-  for package in $PACKAGES; do
-    echo "include_directories( $package/include/ )";
-  done
-  IFS=$OLDIFS
-
-  # mpfi
-  if [ "$mpfi" = "y" ]; then
-
-    #vvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvv
-    cat << 'EOF'
-
-find_package( MPFI )
-if ( MPFI_FOUND )
- include( ${MPFI_USE_FILE} )
-else()
-  message(STATUS "This project requires the MPFI library, and will not be compiled.")
-  return()  
-endif( MPFI_FOUND ) 
-
-EOF
-  #---------------------------------------------------------------------------
-  fi
-
-  # mpfi
-  if [ "$mpfi" = "y" ]; then
-
-    #vvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvv
-    cat << 'EOF'
-
-find_package( MPFI )
-if ( MPFI_FOUND )
- include( ${MPFI_USE_FILE} )
-else()
-  message(STATUS "This project requires the MPFI library, and will not be compiled.")
-  return()  
-endif( MPFI_FOUND ) 
-
-EOF
-  #---------------------------------------------------------------------------
-  fi
-
-
-  # rs
-  if [ "$rs" = "y" ]; then
-
-    #vvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvv
-    cat << 'EOF'
-
-find_package( RS )
-if ( RS_FOUND )
- include( ${RS_USE_FILE} )
-else()
-  message(STATUS "This project requires the RS library, and will not be compiled.")
-  return()  
-endif( RS_FOUND ) 
-
-EOF
-  #---------------------------------------------------------------------------
-  fi
-
-
   # Qt3 or Qt4
   if [ "$qt3" = "y" ]; then
 
@@ -399,7 +321,6 @@ EOF
     #-------------------------------------------------------------------------
 
   fi #qt4
-
 
   if [ ! -z "$BOOST_COMPONENTS" ]; then
     #vvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvv
@@ -674,12 +595,13 @@ echo
 
 usage()
 {
-  echo "Usage: `basename $0` [-s source] [-c cgal-component1:cgal-component2:...] [-b boost-component1:boost-component2:...] [-p /path/to/package1:/path/to/package2:...] [-d /path/to/directory1:/path/to/directory2:...] [-o options_file='`pwd`/cgal_cmake_options:$HOME/.cgal_cmake_options_rc'] [-v] [-h]" >&2
+  echo "Usage: `basename $0` [-s source] [-c cgal-component1:cgal-component2:...] [-b boost-component1:boost-component2:...] [-p] [-o options_file='`pwd`/cgal_cmake_options:$HOME/.cgal_cmake_options_rc'] [-v] [-h]" >&2
   echo >&2
   echo "  -s source If this parameter is given the script will create one single executable for 'source' with all source files; otherwise it creates one executable for each main'ed source." >&2
   echo "  cgal_componentX - must be a valid cgal component, examples are 'Core','imageIO','Qt3','Qt4' ('benchmark')." >&2
   echo "  boost_componentX - must be a valid boost component, like 'filesystem', 'program_options'." >&2
-  echo "  options_file - file with PACKAGE, DIRECTORY, CGAL_COMPONENT, and BOOST_COMPONENT directives" >&2
+  echo "  -p use all of CGAL's preconfigured libraries" >&2
+  echo "  -o options_file - file with PACKAGE, DIRECTORY, CGAL_COMPONENT, and BOOST_COMPONENT directives" >&2
   echo "  -v the version" >&2
   echo "  -h this info screen" >&2
   echo  >&2
@@ -692,14 +614,10 @@ SOURCE=""
 CGAL_COMPONENTS_GIVEN=""
 CGAL_COMPONENTS=""
 
+CGAL_PRECONFIGURED_LIBS='n'
+
 BOOST_COMPONENTS_GIVEN=""
 BOOST_COMPONENTS=""
-
-PACKAGES_GIVEN=""
-PACKAGES=""
-
-DIRECTORIES_GIVEN=""
-DIRECTORIES=""
 
 OPTIONS_FILE=`pwd`"/cgal_cmake_options"
 
@@ -708,7 +626,7 @@ if [ ! -e "$OPTIONS_FILE" ]; then
 fi
 
 # parse command line arguments
-while getopts s:c:b:p:d:o:hvt OPT; do
+while getopts s:c:b:o:phvt OPT; do
   case "$OPT" in
     s)  SINGLE_SOURCE='y'
         SOURCE=$OPTARG
@@ -733,18 +651,14 @@ while getopts s:c:b:p:d:o:hvt OPT; do
     b)  BOOST_COMPONENTS_GIVEN='y'
         BOOST_COMPONENTS=$OPTARG
         ;;
-    p)  PACKAGES_GIVEN='y'
-        PACKAGES=$OPTARG
-        ;;
-    d)  DIRECTORIES_GIVEN='y'
-        DIRECTORIES=$OPTARG
-        ;;
 
     o)  OPTIONS_FILE=$OPTARG
         if [ ! -e "$OPTIONS_FILE" ]; then
           echo "Options-file '$OPTIONS_FILE' does not exist." >&2
           exit 1
         fi
+        ;;
+    p)  CGAL_PRECONFIGURED_LIBS='y'
         ;;
     t)  ENABLE_CTEST='y'
         ;;
@@ -765,7 +679,7 @@ shift `expr $OPTIND - 1`
 
 #echo "FILE: $OPTIONS_FILE"
 #echo "BOOST_COMPONENTS: $BOOST_COMPONENTS"
-#echo "CGAL_COMPONENTS: $CGAL_COMPONENTS"
+echo "CGAL_COMPONENTS: $CGAL_COMPONENTS"
 #echo "SINGLE_SOURCE: $SINGLE_SOURCE"
 #echo "SOURCE: $SOURCE"
 

@@ -21,6 +21,8 @@ if(NOT USE_CGAL_FILE_INCLUDED)
   set( CGAL_LIBRARIES )
 
   foreach ( CGAL_COMPONENT ${CGAL_REQUESTED_COMPONENTS} )
+    message (STATUS "CGAL requested component: ${CGAL_COMPONENT}")
+
     if(WITH_CGAL_${CGAL_COMPONENT})
       add_to_list( CGAL_LIBRARIES            ${CGAL_${CGAL_COMPONENT}_LIBRARY}              )
       add_to_list( CGAL_3RD_PARTY_LIBRARIES  ${CGAL_${CGAL_COMPONENT}_3RD_PARTY_LIBRARIES}  )
@@ -28,6 +30,33 @@ if(NOT USE_CGAL_FILE_INCLUDED)
       add_to_list( CGAL_3RD_PARTY_INCLUDE_DIRS   ${CGAL_${CGAL_COMPONENT}_3RD_PARTY_INCLUDE_DIRS}   )
       add_to_list( CGAL_3RD_PARTY_DEFINITIONS    ${CGAL_${CGAL_COMPONENT}_3RD_PARTY_DEFINITIONS}    )
       add_to_list( CGAL_3RD_PARTY_LIBRARIES_DIRS ${CGAL_${CGAL_COMPONENT}_3RD_PARTY_LIBRARIES_DIRS} )
+    endif()
+
+    # TODO enable while building (i.e., not given by testsuite)
+    if ( ${CGAL_COMPONENT} STREQUAL "ALL_PRECONFIGURED_LIBS" )
+
+      message( STATUS "Use all preconfigured libraries: ${CGAL_3RD_PARTY_PRECONFIGURED}")
+      foreach ( CGAL_3RD_PARTY_LIB ${CGAL_3RD_PARTY_PRECONFIGURED})
+        include(${${CGAL_3RD_PARTY_LIB}_USE_FILE})
+        message (STATUS "Configured ${CGAL_3RD_PARTY_LIB} from use-file: ${${CGAL_3RD_PARTY_LIB}_USE_FILE}")
+      endforeach()
+    
+    else() 
+
+      if ( ${CGAL_COMPONENT}_FOUND) 
+
+        message( STATUS "Use preconfigured library: ${CGAL_COMPONENT}")
+        include(${${CGAL_COMPONENT}_USE_FILE})
+
+      else()
+
+        message( STATUS "Library not preconfigured: ${CGAL_COMPONENT}")
+        find_package( ${CGAL_COMPONENT} )
+        if (${CGAL_COMPONENT}_FOUND) 
+          include(${${CGAL_COMPONENT}_USE_FILE})
+        endif()
+     
+      endif()
     endif()
   endforeach()
     

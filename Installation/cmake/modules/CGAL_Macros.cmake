@@ -192,6 +192,27 @@ if( NOT CGAL_MACROS_FILE_INCLUDED )
     
   endmacro()
 
+  macro( preconfigure_lib lib )
+
+      find_package( ${lib} )
+  
+      if ( ${lib}_FOUND )
+  
+        message( STATUS "${lib} include:     ${${lib}_INCLUDE_DIR}" )
+        message( STATUS "${lib} libraries:   ${${lib}_LIBRARIES}" )
+        message( STATUS "${lib} definitions: ${${lib}_DEFINITIONS}" )
+    
+        set ( CGAL_USE_${lib} TRUE )
+    
+        add_to_cached_list(CGAL_3RD_PARTY_PRECONFIGURED ${lib})
+        message( STATUS "${lib} is preconfigured with use-file: ${${lib}_USE_FILE}") 
+  
+      endif()
+    
+      set ( CGAL_${lib}_PRECONFIGRUED TRUE )
+
+  endmacro()
+
   function( cgal_setup_module_path )
     # Avoid to modify the modules path twice
     if(NOT CGAL_MODULE_PATH_IS_SET)

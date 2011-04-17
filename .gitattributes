@@ -1588,9 +1588,6 @@ Installation/cmake/modules/CGAL_SetupFlags.cmake -text
 Installation/cmake/modules/CGAL_SetupGMP.cmake -text
 Installation/cmake/modules/CGAL_SetupGMPXX.cmake -text
 Installation/cmake/modules/CGAL_SetupLEDA.cmake -text
-Installation/cmake/modules/CGAL_SetupMPFI.cmake -text
-Installation/cmake/modules/CGAL_SetupNTL.cmake -text
-Installation/cmake/modules/CGAL_SetupRS.cmake -text
 Installation/cmake/modules/CGAL_UseBLAS.cmake -text
 Installation/cmake/modules/CGAL_UseLAPACK.cmake -text
 Installation/cmake/modules/CGAL_UseMKL.cmake -text

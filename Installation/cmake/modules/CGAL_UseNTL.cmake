@@ -1,8 +1,6 @@
 # This module setups the compiler for the NTL library.
 # It assumes that find_package(NTL) was already called.
 
-if( NOT CGAL_NTL_SETUP )
-
   if( NTL_FOUND )
 
     message( STATUS "NTL include:        ${NTL_INCLUDE_DIR}" )
@@ -16,6 +14,3 @@ if( NOT CGAL_NTL_SETUP )
     set( CGAL_NTL_SETUP TRUE )
 
   endif( NTL_FOUND )
-
-
-endif( NOT CGAL_NTL_SETUP )
