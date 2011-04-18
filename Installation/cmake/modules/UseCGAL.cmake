@@ -32,7 +32,7 @@ if(NOT USE_CGAL_FILE_INCLUDED)
       add_to_list( CGAL_3RD_PARTY_LIBRARIES_DIRS ${CGAL_${CGAL_COMPONENT}_3RD_PARTY_LIBRARIES_DIRS} )
     endif()
 
-    # TODO enable while building (i.e., not given by testsuite)
+    # TODO-EBEB enable ALL_PRECONFIGURED_LIBS with cmake-option (which is, e.g., not given by testsuite)
     if ( ${CGAL_COMPONENT} STREQUAL "ALL_PRECONFIGURED_LIBS" )
 
       message( STATUS "External libraries ${CGAL_3RD_PARTY_PRECONFIGURED} are preconfigured")

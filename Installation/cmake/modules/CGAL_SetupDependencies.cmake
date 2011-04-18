@@ -1,8 +1,6 @@
 include(CGAL_Macros)
 
-# TODO sorted list of external libs
-
-message ( STATUS "LIBS: ${CGAL_SUPPORTING_3RD_PARTY_LIRARIES}")
+message ( STATUS "External libraries supported: ${CGAL_SUPPORTING_3RD_PARTY_LIRARIES}")
 
 foreach (lib ${CGAL_SUPPORTING_3RD_PARTY_LIRARIES}) 
   if (NOT ${lib}_FOUND OR WITH_${lib})

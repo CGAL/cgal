@@ -282,7 +282,7 @@ if( NOT CGAL_MACROS_FILE_INCLUDED )
        file( APPEND ${CMAKE_BINARY_DIR}/CGALConfig.cmake "set( ${lib}_LIBRARIES       \"${${lib}_LIBRARIES}\" )\n")
        file( APPEND ${CMAKE_BINARY_DIR}/CGALConfig.cmake "set( ${lib}_USE_DEFINITIONS \"${${lib}_DEFINITIONS}\" )\n\n")
 
-# TODO CXX_FLAGS?
+# TODO-EBEB add CXX_FLAGS to CGALConfig.cmake
 
        file( APPEND ${CMAKE_BINARY_DIR}/config/CGALConfig.cmake "set( ${lib}_FOUND           \"${${lib}_FOUND}\")\n")
        file( APPEND ${CMAKE_BINARY_DIR}/config/CGALConfig.cmake "set( ${lib}_USE_FILE        \"${${lib}_USE_FILE}\" )\n")
