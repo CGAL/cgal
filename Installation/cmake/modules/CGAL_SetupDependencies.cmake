@@ -2,10 +2,17 @@ include(CGAL_Macros)
 
 message ( STATUS "External libraries supported: ${CGAL_SUPPORTING_3RD_PARTY_LIRARIES}")
 
-foreach (lib ${CGAL_SUPPORTING_3RD_PARTY_LIRARIES}) 
+foreach (lib ${CGAL_SUPPORTING_3RD_PARTY_LIRARIES})
+
+  # 1) preconfiguration for non-lib CMakeLists.txt
+ 
+  # TODO move "NOT LIB_FOUND" to second part of this loop 
   if (NOT ${lib}_FOUND OR WITH_${lib})
     preconfigure_lib( ${lib} )
   endif()
+
+
+  # 2) handling for libraries required to build CGAL's libraries
 
   if ( ${lib} STREQUAL "GMPXX" )
   
@@ -25,11 +32,6 @@ foreach (lib ${CGAL_SUPPORTING_3RD_PARTY_LIRARIES})
       preconfigure_lib(MPFR)
     endif()
 
-    if( NOT GMP_FOUND )
-      set(CGAL_NO_CORE ON)
-      message( STATUS "CGAL_Core needs GMP, cannot be configured.")
-    endif( NOT GMP_FOUND )
-
   endif()
 
   if ( ${lib} STREQUAL "LEDA" AND WITH_LEDA )
@@ -38,6 +40,11 @@ foreach (lib ${CGAL_SUPPORTING_3RD_PARTY_LIRARIES})
   endif()
 
 endforeach()
+
+if( NOT GMP_FOUND )
+  set(CGAL_NO_CORE ON)
+  message( STATUS "CGAL_Core needs GMP, cannot be configured.")
+endif( NOT GMP_FOUND )
 
 message( STATUS "Preconfigured libraries: ${CGAL_3RD_PARTY_PRECONFIGURED}")
 
