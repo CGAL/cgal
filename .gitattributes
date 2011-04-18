@@ -1592,7 +1592,6 @@ Installation/cmake/modules/CGAL_UseBLAS.cmake -text
 Installation/cmake/modules/CGAL_UseLAPACK.cmake -text
 Installation/cmake/modules/CGAL_UseMKL.cmake -text
 Installation/cmake/modules/CGAL_UseMPFI.cmake -text
-Installation/cmake/modules/CGAL_UseNTL.cmake -text
 Installation/cmake/modules/CGAL_UseRS.cmake -text
 Installation/cmake/modules/CGAL_UseTAUCS.cmake -text
 Installation/cmake/modules/CGAL_VersionUtils.cmake -text

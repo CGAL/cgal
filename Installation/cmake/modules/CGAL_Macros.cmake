@@ -213,6 +213,28 @@ if( NOT CGAL_MACROS_FILE_INCLUDED )
 
   endmacro()
 
+  macro( use_lib lib usefile)
+
+    string( REGEX REPLACE "###" "" filename ${usefile})
+
+    string( LENGTH "${filename}" length )
+  
+    if ( "${length}" GREATER "0" ) 
+
+      include( ${filename} )
+      message (STATUS "Configured ${lib} from use-file: ${filename}")
+
+    else()
+
+      include_directories ( ${${lib}_INCLUDE_DIR} )
+      add_definitions( ${${lib}_DEFINITIONS} "-DCGAL_USE_${lib}" )
+      link_libraries( ${${lib}_LIBRARIES} )
+      message (STATUS "Configured ${lib} in standard way")
+  
+    endif()
+
+  endmacro()
+
   function( cgal_setup_module_path )
     # Avoid to modify the modules path twice
     if(NOT CGAL_MODULE_PATH_IS_SET)
@@ -246,11 +268,30 @@ if( NOT CGAL_MACROS_FILE_INCLUDED )
   endfunction()
 
   macro( create_CGALconfig_files )
+  
     # CGALConfig.cmake is platform specific so it is generated and stored in the binary folder.
     configure_file("${CGAL_MODULES_DIR}/CGALConfig_binary.cmake.in"  "${CMAKE_BINARY_DIR}/CGALConfig.cmake"        @ONLY)
     
     # There is also a version of CGALConfig.cmake that is prepared in case CGAL in installed in CMAKE_INSTALL_PREFIX.
     configure_file("${CGAL_MODULES_DIR}/CGALConfig_install.cmake.in" "${CMAKE_BINARY_DIR}/config/CGALConfig.cmake" @ONLY)
+
+    foreach( lib ${CGAL_SUPPORTING_3RD_PARTY_LIRARIES} )
+       file( APPEND ${CMAKE_BINARY_DIR}/CGALConfig.cmake "set( ${lib}_FOUND           \"${${lib}_FOUND}\" )\n")
+       file( APPEND ${CMAKE_BINARY_DIR}/CGALConfig.cmake "set( ${lib}_USE_FILE        \"${${lib}_USE_FILE}\" )\n")
+       file( APPEND ${CMAKE_BINARY_DIR}/CGALConfig.cmake "set( ${lib}_INCLUDE_DIR     \"${${lib}_INCLUDE_DIR}\" )\n")
+       file( APPEND ${CMAKE_BINARY_DIR}/CGALConfig.cmake "set( ${lib}_LIBRARIES       \"${${lib}_LIBRARIES}\" )\n")
+       file( APPEND ${CMAKE_BINARY_DIR}/CGALConfig.cmake "set( ${lib}_USE_DEFINITIONS \"${${lib}_DEFINITIONS}\" )\n\n")
+
+# TODO CXX_FLAGS?
+
+       file( APPEND ${CMAKE_BINARY_DIR}/config/CGALConfig.cmake "set( ${lib}_FOUND           \"${${lib}_FOUND}\")\n")
+       file( APPEND ${CMAKE_BINARY_DIR}/config/CGALConfig.cmake "set( ${lib}_USE_FILE        \"${${lib}_USE_FILE}\" )\n")
+       file( APPEND ${CMAKE_BINARY_DIR}/config/CGALConfig.cmake "set( ${lib}_INCLUDE_DIR     \"${${lib}_INCLUDE_DIR}\" )\n")
+       file( APPEND ${CMAKE_BINARY_DIR}/config/CGALConfig.cmake "set( ${lib}_LIBRARIES       \"${${lib}_LIBRARIES}\" )\n")
+       file( APPEND ${CMAKE_BINARY_DIR}/config/CGALConfig.cmake "set( ${lib}_DEFINITIONS     \"${${lib}_DEFINITIONS}\" )\n\n")
+
+    endforeach()
+
   endmacro()
   
   macro ( fetch_env_var VAR )

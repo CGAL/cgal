@@ -77,30 +77,6 @@ set(CGAL_AUTO_LINK_GMP "@CGAL_AUTO_LINK_GMP@")
 set(CGAL_AUTO_LINK_MPFR "@CGAL_AUTO_LINK_MPFR@")
 
 set(CGAL_USE_FILE   "${CGAL_MODULES_DIR}/UseCGAL.cmake" )
-# for preconfigured libs
-set(MPFI_USE_FILE      "@MPFI_USE_FILE@" )
-set(MPFI_FOUND         "@MPFI_FOUND" )
-set(MPFI_INCLUDE_DIR   "@MPFI_INCLUDE_DIR@" )
-set(MPFI_LIBRARIES     "@MPFI_LIBRARIES@" )
-set(MPFI_DEFINITIONS   "@MPFI_DEFINITIONS@" )
-
-set(RS_USE_FILE      "@RS_USE_FILE@" )
-set(RS_FOUND         "@RS_FOUND" )
-set(RS_INCLUDE_DIR   "@RS_INCLUDE_DIR@" )
-set(RS_LIBRARIES     "@RS_LIBRARIES@" )
-set(RS_DEFINITIONS   "@RS_DEFINITIONS@" )
-set(RS3_USE_FILE     "@RS3_USE_FILE@" )
-set(RS3_FOUND        "@RS3_FOUND" )
-set(RS3_INCLUDE_DIR  "@RS3_INCLUDE_DIR@" )
-set(RS3_LIBRARIES    "@RS3_LIBRARIES@" )
-set(RS3_DEFINITIONS  "@RS3_DEFINITIONS@" )
-
-set(NTL_USE_FILE      "@NTL_USE_FILE@" )
-set(NTL_FOUND         "@NTL_FOUND" )
-set(NTL_INCLUDE_DIR   "@NTL_INCLUDE_DIR@" )
-set(NTL_LIBRARIES     "@NTL_LIBRARIES@" )
-set(NTL_DEFINITIONS   "@NTL_DEFINITIONS@" )
-
 if ( CGAL_FIND_REQUIRED )
   set( CHECK_CGAL_COMPONENT_MSG_ON_ERROR TRUE        )
   set( CHECK_CGAL_COMPONENT_ERROR_TYPE   FATAL_ERROR )
@@ -146,3 +122,11 @@ endforeach()
 # Starting with cmake 2.6.3, CGAL_FIND_COMPONENTS is cleared out when find_package returns.
 # But we need it within UseCGAL.cmake, so we save it aside into another variable
 set( CGAL_REQUESTED_COMPONENTS ${CGAL_FIND_COMPONENTS} )
+
+# for preconfigured libs
+set(RS3_USE_FILE     "@RS3_USE_FILE@" )
+set(RS3_FOUND        "@RS3_FOUND" )
+set(RS3_INCLUDE_DIR  "@RS3_INCLUDE_DIR@" )
+set(RS3_LIBRARIES    "@RS3_LIBRARIES@" )
+set(RS3_DEFINITIONS  "@RS3_DEFINITIONS@" )
+

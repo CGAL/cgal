@@ -35,25 +35,24 @@ if(NOT USE_CGAL_FILE_INCLUDED)
     # TODO enable while building (i.e., not given by testsuite)
     if ( ${CGAL_COMPONENT} STREQUAL "ALL_PRECONFIGURED_LIBS" )
 
-      message( STATUS "Use all preconfigured libraries: ${CGAL_3RD_PARTY_PRECONFIGURED}")
+      message( STATUS "External libraries ${CGAL_3RD_PARTY_PRECONFIGURED} are preconfigured")
       foreach ( CGAL_3RD_PARTY_LIB ${CGAL_3RD_PARTY_PRECONFIGURED})
-        include(${${CGAL_3RD_PARTY_LIB}_USE_FILE})
-        message (STATUS "Configured ${CGAL_3RD_PARTY_LIB} from use-file: ${${CGAL_3RD_PARTY_LIB}_USE_FILE}")
+        use_lib( ${CGAL_3RD_PARTY_LIB} "###${${CGAL_3RD_PARTY_LIB}_USE_FILE}")
       endforeach()
     
     else() 
 
       if ( ${CGAL_COMPONENT}_FOUND) 
 
-        message( STATUS "Use preconfigured library: ${CGAL_COMPONENT}")
-        include(${${CGAL_COMPONENT}_USE_FILE})
+        message( STATUS "External library ${CGAL_COMPONENT} is preconfigured")
+        use_lib( ${CGAL_COMPONENT} "###${${CGAL_COMPONENT}_USE_FILE}")
 
       else()
 
-        message( STATUS "Library not preconfigured: ${CGAL_COMPONENT}")
+        message( STATUS "External library ${CGAL_COMPONENT} is not preconfigured")
         find_package( ${CGAL_COMPONENT} )
         if (${CGAL_COMPONENT}_FOUND) 
-          include(${${CGAL_COMPONENT}_USE_FILE})
+          use_lib( ${CGAL_COMPONENT} "###${${CGAL_COMPONENT}_USE_FILE}")
         endif()
      
       endif()

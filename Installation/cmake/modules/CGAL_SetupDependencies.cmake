@@ -2,33 +2,44 @@ include(CGAL_Macros)
 
 # TODO sorted list of external libs
 
-option( WITH_GMP "Use the GMP number types if available." ON )
-if ( WITH_GMP )
-  include(CGAL_SetupGMPXX)
-  include(CGAL_SetupGMP)
-endif( WITH_GMP )
+message ( STATUS "LIBS: ${CGAL_SUPPORTING_3RD_PARTY_LIRARIES}")
 
-if( NOT GMP_FOUND )
-  set(CGAL_NO_CORE ON)
-  message( STATUS "CGAL_Core needs GMP, cannot be configured.")
-endif( NOT GMP_FOUND )
+foreach (lib ${CGAL_SUPPORTING_3RD_PARTY_LIRARIES}) 
+  if (NOT ${lib}_FOUND OR WITH_${lib})
+    preconfigure_lib( ${lib} )
+  endif()
 
-option ( WITH_LEDA "Use the LEDA number types if available." OFF )
-if ( WITH_LEDA )
-  include(CGAL_SetupLEDA)
-endif( WITH_LEDA )
+  if ( ${lib} STREQUAL "GMPXX" )
+  
+    if ( MSVC AND NOT CGAL_AUTO_LINK_MPFR )
+      add_to_cached_list(CGAL_3RD_PARTY_DEFINITIONS    -DCGAL_NO_AUTOLINK_MPFR   )
+    endif()
+    if ( MSVC AND NOT CGAL_AUTO_LINK_GMP )
+      add_to_cached_list(CGAL_3RD_PARTY_DEFINITIONS    -DCGAL_NO_AUTOLINK_GMP   )
+    endif()
 
-if ( WITH_MPFI )
-  preconfigure_lib( MPFI )
-endif( WITH_MPFI )
+    get_dependency_version(GMP)
+    set( MPFR_DEPENDENCY_LIBRARIES   ${GMP_LIBRARIES} )
+    set( MPFR_DEPENDENCY_INCLUDE_DIR ${GMP_INCLUDE_DIR} )
+    get_dependency_version(MPFR)
 
-if ( WITH_RS )
-  preconfigure_lib( RS )
-endif( WITH_RS )
+    if ( NOT MPFR_FOUND )
+      preconfigure_lib(MPFR)
+    endif()
 
-if ( WITH_NTL )
-  preconfigure_lib( NTL )
-endif( WITH_NTL )
+    if( NOT GMP_FOUND )
+      set(CGAL_NO_CORE ON)
+      message( STATUS "CGAL_Core needs GMP, cannot be configured.")
+    endif( NOT GMP_FOUND )
+
+  endif()
+
+  if ( ${lib} STREQUAL "LEDA" AND WITH_LEDA )
+    include(CGAL_UseLEDA)
+    uniquely_add_flags( CMAKE_CXX_FLAGS ${LEDA_CXX_FLAGS} )
+  endif()
+
+endforeach()
 
 message( STATUS "Preconfigured libraries: ${CGAL_3RD_PARTY_PRECONFIGURED}")
 
