@@ -22,7 +22,7 @@
 #include <CGAL/Polynomial.h>
 #include <CGAL/Polynomial_traits_d.h>
 #include <CGAL/Polynomial_type_generator.h>
-#include <CGAL/RS/functors.h>
+#include <CGAL/RS/functors_1.h>
 
 template <class _C,class _G=CGAL::Rsgcd_1>
 struct Algebraic_kernel_rs_1{
