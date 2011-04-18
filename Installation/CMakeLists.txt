@@ -163,7 +163,7 @@ if( "${CMAKE_CXX_COMPILER}" MATCHES "icl" OR "${CMAKE_CXX_COMPILER}" MATCHES "ic
   get_dependency_version(IntelCompiler)
 
   if( "${IntelCompiler_VERSION}" LESS "1100" )
-    message("Intel Compiler version ${IntelCompiler_VERSION} is not supported by CGAL-${CGAL_MAJOR_VERSION}.${CGAL_MINOR_VERSION}! (too old)")
+    message("Intel Compiler version ${IntelCompiler_VERSION} is not supported by CGAL-${CGAL_MAJOR_VERSION}.${CGAL_MINOR_VERSION}! (too old, must be 11.0 or after)")
   else()
     message( STATUS "Using Intel Compiler version 11 or later. Adding -fp-model strict" )
     uniquely_add_flags( CGAL_CXX_FLAGS "-fp-model strict" )

@@ -22,6 +22,7 @@
 #define CGAL_INTERNAL_STATIC_FILTERS_TOOLS_H
 
 #include <CGAL/basic.h>
+#include <CGAL/function_objects.h>
 #include <boost/mpl/has_xxx.hpp>
 
 namespace CGAL {
@@ -77,12 +78,13 @@ BOOST_MPL_HAS_XXX_TRAIT_NAMED_DEF(Kernel_object_has_approx, \
                                   false)
 
 template <typename T, bool has_approx = Kernel_object_has_approx<T>::value>
-struct Get_approx {
-  T operator()(T x) const { return x; }
+struct Get_approx : public CGAL::Identity<T> {
+  // If has_approx==false, this functor is the identity.
 };
 
 template <typename T>
 struct Get_approx<T, true> {
+  // If has_approx==false, this functor get .approx() on its argument.
   const typename T::Approximate_type& operator()(const T& x) const { return x.approx(); }
   typename T::Approximate_type& operator()(T& x) const { return x.approx(); }
 };
