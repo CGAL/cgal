@@ -33,16 +33,12 @@ if( MPFI_FOUND )
                DOC "Path to the RS3 library"
               )
 
-  if ( NOT CGAL_GMP_VERSION ) 
-    set ( CGAL_GMP_VERSION ${GMP_VERSION} )
-  endif()
-
-  IS_VERSION_LESS("${CGAL_GMP_VERSION}" "4.2.0" _IS_GMP_VERSION_TO_LOW)
+  IS_VERSION_LESS("$GMP_VERSION}" "4.2.0" _IS_GMP_VERSION_TO_LOW)
 
   if(_IS_GMP_VERSION_TO_LOW)
 
     message( STATUS
-      "RS needs GMP>=4.2. Your GMP version is ${CGAL_GMP_VERSION}." )
+      "RS needs GMP>=4.2. Your GMP version is ${GMP_VERSION}." )
 
   else(_IS_GMP_VERSION_TO_LOW)
 

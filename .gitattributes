@@ -1585,7 +1585,6 @@ Installation/cmake/modules/CGAL_Macros.cmake -text
 Installation/cmake/modules/CGAL_SetupBoost.cmake -text
 Installation/cmake/modules/CGAL_SetupDependencies.cmake -text
 Installation/cmake/modules/CGAL_SetupFlags.cmake -text
-Installation/cmake/modules/CGAL_SetupGMP.cmake -text
 Installation/cmake/modules/CGAL_SetupGMPXX.cmake -text
 Installation/cmake/modules/CGAL_UseBLAS.cmake -text
 Installation/cmake/modules/CGAL_UseLAPACK.cmake -text
@@ -1618,7 +1617,6 @@ Installation/cmake/modules/FindRS.cmake -text
 Installation/cmake/modules/FindTAUCS.cmake -text
 Installation/cmake/modules/Qt3Macros-patched.cmake -text
 Installation/cmake/modules/UseCGAL.cmake -text
-Installation/cmake/modules/UseESBTL.cmake -text
 Installation/cmake/modules/test_MPFI.cpp -text
 Installation/config/support/print_BOOST_version.cpp -text
 Installation/config/support/print_GMP_version.cpp -text

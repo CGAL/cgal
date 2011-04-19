@@ -192,27 +192,6 @@ if( NOT CGAL_MACROS_FILE_INCLUDED )
     
   endmacro()
 
-  macro( preconfigure_lib lib )
-
-      find_package( ${lib} )
-  
-      if ( ${lib}_FOUND )
-  
-        message( STATUS "${lib} include:     ${${lib}_INCLUDE_DIR}" )
-        message( STATUS "${lib} libraries:   ${${lib}_LIBRARIES}" )
-        message( STATUS "${lib} definitions: ${${lib}_DEFINITIONS}" )
-    
-        set ( CGAL_USE_${lib} TRUE )
-    
-        add_to_cached_list(CGAL_3RD_PARTY_PRECONFIGURED ${lib})
-        message( STATUS "${lib} is preconfigured with use-file: ${${lib}_USE_FILE}") 
-  
-      endif()
-    
-      set ( CGAL_${lib}_PRECONFIGRUED TRUE )
-
-  endmacro()
-
   macro( use_lib lib usefile)
 
     string( REGEX REPLACE "###" "" filename ${usefile})
@@ -281,14 +260,16 @@ if( NOT CGAL_MACROS_FILE_INCLUDED )
        file( APPEND ${CMAKE_BINARY_DIR}/CGALConfig.cmake "set( ${lib}_INCLUDE_DIR     \"${${lib}_INCLUDE_DIR}\" )\n")
        file( APPEND ${CMAKE_BINARY_DIR}/CGALConfig.cmake "set( ${lib}_LIBRARIES       \"${${lib}_LIBRARIES}\" )\n")
        file( APPEND ${CMAKE_BINARY_DIR}/CGALConfig.cmake "set( ${lib}_USE_DEFINITIONS \"${${lib}_DEFINITIONS}\" )\n\n")
-
-# TODO-EBEB add CXX_FLAGS to CGALConfig.cmake
+       file( APPEND ${CMAKE_BINARY_DIR}/CGALConfig.cmake "set( ${lib}_CXX_FLAGS       \"${${lib}_CXX_FLAGS}\" )\n")
+       file( APPEND ${CMAKE_BINARY_DIR}/CGALConfig.cmake "set( ${lib}_VERSION         \"${${lib}_VERSION}\" )\n")
 
        file( APPEND ${CMAKE_BINARY_DIR}/config/CGALConfig.cmake "set( ${lib}_FOUND           \"${${lib}_FOUND}\")\n")
        file( APPEND ${CMAKE_BINARY_DIR}/config/CGALConfig.cmake "set( ${lib}_USE_FILE        \"${${lib}_USE_FILE}\" )\n")
        file( APPEND ${CMAKE_BINARY_DIR}/config/CGALConfig.cmake "set( ${lib}_INCLUDE_DIR     \"${${lib}_INCLUDE_DIR}\" )\n")
        file( APPEND ${CMAKE_BINARY_DIR}/config/CGALConfig.cmake "set( ${lib}_LIBRARIES       \"${${lib}_LIBRARIES}\" )\n")
        file( APPEND ${CMAKE_BINARY_DIR}/config/CGALConfig.cmake "set( ${lib}_DEFINITIONS     \"${${lib}_DEFINITIONS}\" )\n\n")
+       file( APPEND ${CMAKE_BINARY_DIR}/config/CGALConfig.cmake "set( ${lib}_CXX_FLAGS       \"${${lib}_CXX_FLAGS}\" )\n\n")
+       file( APPEND ${CMAKE_BINARY_DIR}/config/CGALConfig.cmake "set( ${lib}_VERSION         \"${${lib}_VERSION}\" )\n\n")
 
     endforeach()
 

@@ -12,11 +12,11 @@ else( NOT GMP_FOUND )
 
   include( CGAL_VersionUtils )
 
-  IS_VERSION_LESS("${CGAL_GMP_VERSION}" "3.1.1" _IS_GMP_VERSION_TOO_LOW)
+  IS_VERSION_LESS("${GMP_VERSION}" "3.1.1" _IS_GMP_VERSION_TOO_LOW)
 
   if( _IS_GMP_VERSION_TOO_LOW )
 
-    message( ERROR, "NTL needs GMP>=3.1.1. Your GMP version is ${CGAL_GMP_VERSION}." )
+    message( ERROR, "NTL needs GMP>=3.1.1. Your GMP version is ${GMP_VERSION}." )
 
   else( _IS_GMP_VERSION_TOO_LOW )
 
@@ -99,7 +99,6 @@ else( NOT GMP_FOUND )
 endif( NOT GMP_FOUND )
 
 if ( NTL_FOUND )
-  set( NTL_USE_FILE "CGAL_UseNTL" )
 #  if ( NOT NTL_FIND_QUIETLY )
 #    message(STATUS "Found NTL: ${NTL_LIBRARY}")
 #  endif (NOT NTL_FIND_QUIETLY )

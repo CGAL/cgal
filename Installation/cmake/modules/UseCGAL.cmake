@@ -20,6 +20,11 @@ if(NOT USE_CGAL_FILE_INCLUDED)
   
   set( CGAL_LIBRARIES )
 
+  # special role of leda
+  if (LEDA_FOUND) 
+    use_lib( LEDA "###${LEDA_USE_FILE}")
+  endif()
+
   foreach ( CGAL_COMPONENT ${CGAL_REQUESTED_COMPONENTS} )
     message (STATUS "CGAL requested component: ${CGAL_COMPONENT}")
 
@@ -32,12 +37,14 @@ if(NOT USE_CGAL_FILE_INCLUDED)
       add_to_list( CGAL_3RD_PARTY_LIBRARIES_DIRS ${CGAL_${CGAL_COMPONENT}_3RD_PARTY_LIBRARIES_DIRS} )
     endif()
 
-    # TODO-EBEB enable ALL_PRECONFIGURED_LIBS with cmake-option (which is, e.g., not given by testsuite)
+    # TODO-EBEB enable ALL_PRECONFIGURED_LIBS with cmake-option (which is, e.g., not given by testsuite
     if ( ${CGAL_COMPONENT} STREQUAL "ALL_PRECONFIGURED_LIBS" )
 
-      message( STATUS "External libraries ${CGAL_3RD_PARTY_PRECONFIGURED} are preconfigured")
-      foreach ( CGAL_3RD_PARTY_LIB ${CGAL_3RD_PARTY_PRECONFIGURED})
-        use_lib( ${CGAL_3RD_PARTY_LIB} "###${${CGAL_3RD_PARTY_LIB}_USE_FILE}")
+      message( STATUS "External libraries are all used")
+      foreach ( CGAL_3RD_PARTY_LIB ${CGAL_SUPPORTING_3RD_PARTY_LIRARIES})
+        if (${CGAL_3RD_PARTY_LIB}_FOUND) 
+          use_lib( ${CGAL_3RD_PARTY_LIB} "###${${CGAL_3RD_PARTY_LIB}_USE_FILE}")
+        endif()
       endforeach()
     
     else() 

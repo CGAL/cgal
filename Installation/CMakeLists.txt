@@ -412,7 +412,13 @@ endmacro()
 # this is the place to tell which external libs are supporting
 list (INSERT CGAL_SUPPORTING_3RD_PARTY_LIRARIES 0 GMP GMPXX MPFR LEDA
 MPFI RS NTL)
+list (INSERT CGAL_MANDATORY_3RD_PARTY_LIBRARIES 0 GMP GMPXX MPFR)
+
+hide_variable(CGAL_SUPPORTING_3RD_PARTY_LIRARIES)
+hide_variable(CGAL_MANDATORY_3RD_PARTY_LIBRARIES)
+
 foreach (lib ${CGAL_SUPPORTING_3RD_PARTY_LIRARIES}) 
+# TODO EBEB?
   add_config_flag( CGAL_USE_${lib} )
 endforeach()
 
