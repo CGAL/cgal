@@ -20,11 +20,6 @@ if(NOT USE_CGAL_FILE_INCLUDED)
   
   set( CGAL_LIBRARIES )
 
-  # special role of leda
-  if (LEDA_FOUND) 
-    use_lib( LEDA "###${LEDA_USE_FILE}")
-  endif()
-
   foreach ( CGAL_COMPONENT ${CGAL_REQUESTED_COMPONENTS} )
     message (STATUS "CGAL requested component: ${CGAL_COMPONENT}")
 

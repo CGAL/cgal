@@ -1,7 +1,7 @@
 # This module setups the compiler for the RS library.
 # It assumes that find_package(RS) was already called.
 
-  if( RS_FOUND )
+if( RS_FOUND AND NOT RS_SETUP )
 
     message( STATUS "RS include:        ${RS_INCLUDE_DIR}" )
     message( STATUS "RS definitions:    ${RS_DEFINITIONS}" )
@@ -62,4 +62,4 @@
 
     endif( RS3_FOUND )
 
-  endif( RS_FOUND )
+  endif( RS_FOUND AND NOT RS_SETUP )

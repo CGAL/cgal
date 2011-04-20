@@ -1,7 +1,7 @@
 # This module setups the compiler for the LAPACK libraries.
 # It assumes that find_package(LAPACK) was already called.
 
-if ( LAPACK_FOUND AND NOT CGAL_LAPACK_SETUP )
+if ( LAPACK_FOUND AND NOT LAPACK_SETUP )
 
   message( STATUS "LAPACK include:     ${LAPACK_INCLUDE_DIR}" )
   include_directories ( ${LAPACK_INCLUDE_DIR} )
@@ -32,7 +32,7 @@ if ( LAPACK_FOUND AND NOT CGAL_LAPACK_SETUP )
   include( ${BLAS_USE_FILE} )
 
   # Setup is done
-  set ( CGAL_LAPACK_SETUP TRUE )
+  set ( LAPACK_SETUP TRUE )
 
 endif()
 

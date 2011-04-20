@@ -1,7 +1,7 @@
 # This module setups the compiler for the BLAS libraries.
 # It assumes that find_package(BLAS) was already called.
 
-if ( BLAS_FOUND AND NOT CGAL_BLAS_SETUP )
+if ( BLAS_FOUND AND NOT BLAS_SETUP )
 
   message( STATUS "BLAS include:     ${BLAS_INCLUDE_DIR}" )
   include_directories ( ${BLAS_INCLUDE_DIR} )
@@ -29,7 +29,7 @@ if ( BLAS_FOUND AND NOT CGAL_BLAS_SETUP )
   endif()
 
   # Setup is done
-  set ( CGAL_BLAS_SETUP TRUE )
+  set ( BLAS_SETUP TRUE )
 
 endif()
 
