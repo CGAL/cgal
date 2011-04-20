@@ -8,7 +8,7 @@ foreach (lib ${CGAL_SUPPORTING_3RD_PARTY_LIRARIES})
 
   # Part 1: Try to find lib
 
-  # TODO-EBEB do all libs have a WITH_ by default?
+  set (vlib "${CGAL_EXT_LIB_${lib}_PREFIX}")
 
   list(FIND CGAL_MANDATORY_3RD_PARTY_LIBRARIES "${lib}" POSITION)
   if ("${POSITION}" STRGREATER "-1" OR WITH_${lib})
@@ -17,14 +17,13 @@ foreach (lib ${CGAL_SUPPORTING_3RD_PARTY_LIRARIES})
     
     find_package( ${lib} )
    
-    if (${lib}_FOUND) 
-      message( STATUS "${lib} is preconfigured with use-file: ${${lib}_USE_FILE}") 
-      message( STATUS "${lib} include:     ${${lib}_INCLUDE_DIR}" )
-      message( STATUS "${lib} libraries:   ${${lib}_LIBRARIES}" )
-      message( STATUS "${lib} definitions: ${${lib}_DEFINITIONS}" )
-      message( STATUS "${lib} cxx flags:   ${${lib}_CXX_FLAGS}" )
+    if (${vlib}_FOUND) 
+      message( STATUS "${lib} is preconfigured with use-file: ${${vlib}_USE_FILE}") 
+      message( STATUS "${lib} include:     ${${vlib}_INCLUDE_DIR}" )
+      message( STATUS "${lib} libraries:   ${${vlib}_LIBRARIES}" )
+      message( STATUS "${lib} definitions: ${${vlib}_DEFINITIONS}" )
    
-      set ( CGAL_USE_${lib} 1 )
+      set ( CGAL_USE_${vlib} 1 )
 
       # Part 2: Add some lib-specific definitions or obtain version
    
@@ -46,6 +45,7 @@ foreach (lib ${CGAL_SUPPORTING_3RD_PARTY_LIRARIES})
 
       if (${lib} STREQUAL "LEDA") 
         # special case for LEDA - add a flag
+        message( STATUS "$LEDA cxx flags:   ${LEDA_CXX_FLAGS}" )
         uniquely_add_flags( CMAKE_CXX_FLAGS ${LEDA_CXX_FLAGS} )
       endif()
 

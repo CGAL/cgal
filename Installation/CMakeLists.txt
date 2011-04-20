@@ -397,7 +397,7 @@ if ( CMAKE_COMPILER_IS_GNUCXX )
   
 endif()
 
-message (STATUS "\n")
+message (STATUS "Done\n")
 message( STATUS "Detect external libraries")
 
 include(CGAL_SetupFlags)
@@ -424,7 +424,11 @@ hide_variable(CGAL_SUPPORTING_3RD_PARTY_LIRARIES)
 # set some to have special prefix
 #set(CGAL_EXT_LIB_Qt4_PREFIX "QT")
 set(CGAL_EXT_LIB_zlib_PREFIX "ZLIB")
- 
+
+# some libraries are mandatory (stl and Boost.Thread are treated in another way) 
+list (INSERT CGAL_MANDATORY_3RD_PARTY_LIBRARIES 0 GMP MPFR)
+hide_variable(CGAL_MANDATORY_3RD_PARTY_LIBRARIES)
+
 foreach (lib ${CGAL_SUPPORTING_3RD_PARTY_LIRARIES}) 
 
   # set standard prefix
@@ -434,20 +438,16 @@ foreach (lib ${CGAL_SUPPORTING_3RD_PARTY_LIRARIES})
   hide_variable(CGAL_EXT_LIB_${lib}_PREFIX)
 
   # add option
-  option(WITH_${lib} "Select external library ${lib}" OFF)
+ list( FIND CGAL_MANDATORY_3RD_PARTY_LIBRARIES "${lib}" POSITION )
+  if ( "${POSITION}" STRGREATER "-1" )
+    option(WITH_${lib} "Select external library ${lib}" ON)
+  else()
+    option(WITH_${lib} "Select external library ${lib}" OFF)
+  endif()
 
   # TODO EBEB add config flag
   add_config_flag( CGAL_USE_${lib} )
 endforeach()
-
-# some libraries are mandatory (stl and Boost.Thread are treated in another way) 
-list (INSERT CGAL_MANDATORY_3RD_PARTY_LIBRARIES 0 GMP MPFR)
-hide_variable(CGAL_MANDATORY_3RD_PARTY_LIBRARIES)
-
-set( WITH_GMP TRUE )
-set( WITH_MPFR TRUE )
-
-
 
 #--------------------------------------------------------------------------------------------------
 #
@@ -555,7 +555,7 @@ set ( CGAL_INSTALL_MAN_DIR "share/man/man1"
 #
 #--------------------------------------------------------------------------------------------------
 
-message (STATUS "\n")
+message (STATUS "Done\n")
 message( STATUS "Generating build files")
 
 
@@ -591,7 +591,7 @@ hide_variable(LIBRARY_OUTPUT_PATH)
 
 if (CGAL_BRANCH_BUILD AND CGAL_REPORT_DUPLICATE_FILES )
 
-  message (STATUS "\n")
+  message (STATUS "Done\n")
   message( STATUS "Problems: ")
 
   if (CGAL_DUPLICATE_HEADER_FILES)
