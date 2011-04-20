@@ -196,9 +196,9 @@ if( NOT CGAL_MACROS_FILE_INCLUDED )
 
     set (vlib ${CGAL_EXT_LIB_${lib}_PREFIX} )
 
-    if ( ${lib}_FOUND )
+    if ( ${vlib}_FOUND )
 
-      if ( NOT ${lib}_SETUP ) # avoid double usage
+      if ( NOT ${vlib}_SETUP ) # avoid double usage
   
         string( REGEX REPLACE "###" "" filename ${usefile})
 
@@ -209,7 +209,7 @@ if( NOT CGAL_MACROS_FILE_INCLUDED )
           include( ${filename} )
           message (STATUS "Configured ${lib} from use-file: ${filename}")
 
-          # use-file has to set ${lib}_SETUP to TRUE
+          # use-file has to set ${vlib}_SETUP to TRUE
 
         else()
 
@@ -227,13 +227,13 @@ if( NOT CGAL_MACROS_FILE_INCLUDED )
 
           message (STATUS "Configured ${lib} in standard way")
  
-          set( ${lib}_SETUP TRUE )
+          set( ${vlib}_SETUP TRUE )
   
         endif()
 
       endif()
 
-      if (NOT ${lib}_SETUP )
+      if (NOT ${vlib}_SETUP )
 
          message( WARNING "${lib} has not been shown to be set up" )
 
@@ -291,12 +291,14 @@ if( NOT CGAL_MACROS_FILE_INCLUDED )
 
        set (vlib ${CGAL_EXT_LIB_${lib}_PREFIX} )
 
+       file( APPEND ${CMAKE_BINARY_DIR}/CGALConfig.cmake "set( CGAL_EXT_LIB_${lib}_PREFIX           \"${CGAL_EXT_LIB_${lib}_PREFIX}\" )\n")
        file( APPEND ${CMAKE_BINARY_DIR}/CGALConfig.cmake "set( ${vlib}_FOUND           \"${${vlib}_FOUND}\" )\n")
        file( APPEND ${CMAKE_BINARY_DIR}/CGALConfig.cmake "set( ${vlib}_USE_FILE        \"${${vlib}_USE_FILE}\" )\n")
        file( APPEND ${CMAKE_BINARY_DIR}/CGALConfig.cmake "set( ${vlib}_INCLUDE_DIR     \"${${vlib}_INCLUDE_DIR}\" )\n")
        file( APPEND ${CMAKE_BINARY_DIR}/CGALConfig.cmake "set( ${vlib}_LIBRARIES       \"${${vlib}_LIBRARIES}\" )\n")
        file( APPEND ${CMAKE_BINARY_DIR}/CGALConfig.cmake "set( ${vlib}_DEFINITIONS     \"${${vlib}_DEFINITIONS}\" )\n\n")
 
+       file( APPEND ${CMAKE_BINARY_DIR}/config/CGALConfig.cmake "set( CGAL_EXT_LIB_${lib}_PREFIX           \"${CGAL_EXT_LIB_${lib}_PREFIX}\" )\n")
        file( APPEND ${CMAKE_BINARY_DIR}/config/CGALConfig.cmake "set( ${vlib}_FOUND           \"${${vlib}_FOUND}\")\n")
        file( APPEND ${CMAKE_BINARY_DIR}/config/CGALConfig.cmake "set( ${vlib}_USE_FILE        \"${${vlib}_USE_FILE}\" )\n")
        file( APPEND ${CMAKE_BINARY_DIR}/config/CGALConfig.cmake "set( ${vlib}_INCLUDE_DIR     \"${${vlib}_INCLUDE_DIR}\" )\n")

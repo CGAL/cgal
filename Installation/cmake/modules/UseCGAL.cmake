@@ -44,17 +44,20 @@ if(NOT USE_CGAL_FILE_INCLUDED)
     
     else() 
 
-      if ( ${CGAL_COMPONENT}_FOUND) 
+      set( vlib "${CGAL_EXT_LIB_${CGAL_COMPONENT}_PREFIX}" )
 
-        message( STATUS "External library ${CGAL_COMPONENT} is preconfigured")
-        use_lib( ${CGAL_COMPONENT} "###${${CGAL_COMPONENT}_USE_FILE}")
+      if ( ${vlib}_FOUND) 
+
+        message( STATUS "External library ${CGAL_COMPONENT} has been preconfigured")
+        use_lib( ${CGAL_COMPONENT} "###${${vlib}_USE_FILE}")
 
       else()
 
-        message( STATUS "External library ${CGAL_COMPONENT} is not preconfigured")
+        message( STATUS "External library ${CGAL_COMPONENT} has not been preconfigured")
         find_package( ${CGAL_COMPONENT} )
-        if (${CGAL_COMPONENT}_FOUND) 
-          use_lib( ${CGAL_COMPONENT} "###${${CGAL_COMPONENT}_USE_FILE}")
+        message( STATUS "External library ${vlib} after find")
+        if (${vlib}_FOUND) 
+          use_lib( ${CGAL_COMPONENT} "###${${vlib}_USE_FILE}")
         endif()
      
       endif()

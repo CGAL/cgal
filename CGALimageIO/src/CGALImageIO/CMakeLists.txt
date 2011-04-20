@@ -9,13 +9,10 @@ if ( COMMAND cmake_policy )
 endif()
 
 if ( NOT CGAL_FOUND )   
-  find_package(CGAL REQUIRED)
+  find_package(CGAL REQUIRED zlib OpenGL)
 endif()
 
 include(${CGAL_USE_FILE})
-
-find_package(ZLIB)
-find_package(OpenGL)
 
 #option(WITH_VTK "Add VTK support to the CGAL ImageIO library." OFF)
 
@@ -34,8 +31,6 @@ if(OPENGL_FOUND)
 
   if(ZLIB_FOUND)
     get_dependency_version(ZLIB)
-    message( STATUS "ZLib   include:     ${ZLIB_INCLUDE_DIR}" )
-    message( STATUS "ZLib   libraries:   ${ZLIB_LIBRARY}" )
     cache_set(CGAL_ImageIO_3RD_PARTY_INCLUDE_DIRS ${CGAL_ImageIO_3RD_PARTY_INCLUDE_DIRS} ${ZLIB_INCLUDE_DIR} )
     cache_set(CGAL_ImageIO_3RD_PARTY_LIBRARIES    ${CGAL_ImageIO_3RD_PARTY_LIBRARIES} ${ZLIB_LIBRARY} )
     cache_set(CGAL_ImageIO_3RD_PARTY_DEFINITIONS  "-DCGAL_USE_ZLIB")
