@@ -109,10 +109,16 @@ macro(check_cgal_component COMPONENT)
   
 endmacro()
 
-check_cgal_component("")
+check_cgal_component("") # for CGAL itself
 
 foreach( CGAL_COMPONENT ${CGAL_FIND_COMPONENTS} )
-  check_cgal_component("_${CGAL_COMPONENT}")
+
+  list (FIND CGAL_CONFIGURED_LIBRARIES "${CGAL_COMPONENT}" POSITION)
+  if ("${POSITION}" STRGREATER "-1")
+    check_cgal_component("_${CGAL_COMPONENT}")
+# TODO EBEB do something for supporting lib in check_component?
+  endif()
+
 endforeach()
 
 # Starting with cmake 2.6.3, CGAL_FIND_COMPONENTS is cleared out when find_package returns.

@@ -102,7 +102,7 @@ if ( CGAL_BRANCH_BUILD )
     set(CGAL_CREATED_VERSION_NUM "${CGAL_MAJOR_VERSION}.${CGAL_MINOR_VERSION}")
   endif()
   
-  # TODO set number of internal release (replace "000")
+  # TODO EBEB set number of internal release (replace "000")
   set(CGAL_CREATED_VERSION "${CGAL_CREATED_VERSION_NUM}-I-000")
 
   file(WRITE "${CMAKE_BINARY_DIR}/VERSION" "${CGAL_CREATED_VERSION_NUM}")
@@ -143,7 +143,7 @@ if ( CGAL_BRANCH_BUILD )
 
   if ( ${CGAL_SCM_NAME} STREQUAL "git" )
 
-    ### TODO GIT_NR?
+    ### TODO EBEB GIT_NR?
     set(CGAL_GIT_HASH "n/a")
 
     message(STATUS "CGAL_GIT_HASH is ${CGAL_GIT_HASH}")
@@ -397,6 +397,9 @@ if ( CMAKE_COMPILER_IS_GNUCXX )
   
 endif()
 
+message (STATUS "\n")
+message( STATUS "Detect external libraries")
+
 include(CGAL_SetupFlags)
 
 macro( add_config_flag flag )
@@ -410,17 +413,40 @@ macro( add_config_flag flag )
 endmacro()
  
 # this is the place to tell which external libs are supporting
-list (INSERT CGAL_SUPPORTING_3RD_PARTY_LIRARIES 0 GMP GMPXX MPFR LEDA
-MPFI RS OpenNL TAUCS BLAS LAPACK libQGLViewer COIN NTL)
-list (INSERT CGAL_MANDATORY_3RD_PARTY_LIBRARIES 0 GMP GMPXX MPFR)
-
+# Remarks: 
+#  External libs Qt3 and Qt34are configured when Qt3 or Qt4 as lib of cgal are required
+#  Coin is used in KDS, but no FindCoin or FindCOIN exists
+#  There exists FindF2C, FindIPE, FindMKL, but they are only used to support supporting libs
+#  For some weird reason zlib does not work in spelling ZLIB
+list (INSERT CGAL_SUPPORTING_3RD_PARTY_LIRARIES 0 GMP GMPXX MPFR LEDA MPFI RS OpenNL TAUCS BLAS LAPACK QGLViewer zlib ESTBL NTL OpenGL)
 hide_variable(CGAL_SUPPORTING_3RD_PARTY_LIRARIES)
-hide_variable(CGAL_MANDATORY_3RD_PARTY_LIBRARIES)
 
+# set some to have special prefix
+#set(CGAL_EXT_LIB_Qt4_PREFIX "QT")
+set(CGAL_EXT_LIB_zlib_PREFIX "ZLIB")
+ 
 foreach (lib ${CGAL_SUPPORTING_3RD_PARTY_LIRARIES}) 
-# TODO EBEB?
+
+  # set standard prefix
+  if(NOT DEFINED CGAL_EXT_LIB_${lib}_PREFIX)
+   set(CGAL_EXT_LIB_${lib}_PREFIX ${lib})
+  endif()
+  hide_variable(CGAL_EXT_LIB_${lib}_PREFIX)
+
+  # add option
+  option(WITH_${lib} "Select external library ${lib}" OFF)
+
+  # TODO EBEB add config flag
   add_config_flag( CGAL_USE_${lib} )
 endforeach()
+
+# some libraries are mandatory (stl and Boost.Thread are treated in another way) 
+list (INSERT CGAL_MANDATORY_3RD_PARTY_LIBRARIES 0 GMP MPFR)
+hide_variable(CGAL_MANDATORY_3RD_PARTY_LIBRARIES)
+
+set( WITH_GMP TRUE )
+set( WITH_MPFR TRUE )
+
 
 
 #--------------------------------------------------------------------------------------------------
@@ -443,6 +469,8 @@ cache_set(CGAL_3RD_PARTY_LIBRARIES_DIRS "" )
 
 include(CGAL_SetupDependencies)
 
+message (STATUS "Determined all external dependencies\n")
+
 #--------------------------------------------------------------------------------------------------
 #
 #                                    -= Generation of compiler_config.h =-
@@ -452,6 +480,8 @@ include(CGAL_SetupDependencies)
 # The variables set are the #defines expected by compiler_config.h
 # Note: CMake will not notice when files are added or removed
 # but this is probably OK for the installation procedure.
+
+message( STATUS "Write compiler_config.h")
 
 file(GLOB all_config_tests "${CGAL_INSTALLATION_PACKAGE_DIR}/config/testfiles/*.cpp")
 
@@ -525,6 +555,10 @@ set ( CGAL_INSTALL_MAN_DIR "share/man/man1"
 #
 #--------------------------------------------------------------------------------------------------
 
+message (STATUS "\n")
+message( STATUS "Generating build files")
+
+
 set(CGAL_LIBRARIES_DIR ${CMAKE_BINARY_DIR}/lib)
 
 set(LIBRARY_OUTPUT_PATH ${CGAL_LIBRARIES_DIR})
@@ -551,14 +585,16 @@ cache_get(CGAL_3RD_PARTY_LIBRARIES_DIRS)
 hide_variable(EXECUTABLE_OUTPUT_PATH)
 hide_variable(LIBRARY_OUTPUT_PATH)
 
-
 #
 # Repeat some problems
 #
 
 if (CGAL_BRANCH_BUILD AND CGAL_REPORT_DUPLICATE_FILES )
 
- if (CGAL_DUPLICATE_HEADER_FILES)
+  message (STATUS "\n")
+  message( STATUS "Problems: ")
+
+  if (CGAL_DUPLICATE_HEADER_FILES)
     message(WARNING "WARNING: Duplicate header files")
     foreach(hfile ${CGAL_DUPLICATE_HEADER_FILES})
       message(STATUS "  File '${hfile}' multiply found in ")
