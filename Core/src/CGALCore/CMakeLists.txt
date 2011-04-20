@@ -9,7 +9,8 @@ if ( COMMAND cmake_policy )
 endif()
 
 if ( NOT CGAL_FOUND )
-  find_package(CGAL REQUIRED)
+  # need CGAL with GMP
+  find_package(CGAL REQUIRED COMPONENTS GMP)
 endif()
 
 include(${CGAL_USE_FILE})
