@@ -1,0 +1,1692 @@
+Size of dart:40
+***************************** TEST BASIC CREATION 2D:
+Map valid.
+Nombre de brins : 2
+***************************** TEST BASIC CREATION 2D DONE.
+***************************** TEST CREATION WITH EMBEDDING 2D:
+Parcours all : #Darts=2, #0-cells=2, #1-cells=2, #2-cells=2, #ccs=2Parcours all : #Darts=2, #0-cells=2, #1-cells=1, #2-cells=2, #ccs=1
+
+Nombre de brins : 16
+Parcours de CC : 
+New facet : 
+New facet : 
+New facet : 
+New facet : 
+Parcours all : #Darts=16, #0-cells=8, #1-cells=8, #2-cells=8, #ccs=3Map valid.
+***************************** TEST CREATION WITH EMBEDDING 2D DONE.
+***************************** TEST SEW 2D:
+Parcours all : #Darts=8, #0-cells=8, #1-cells=7, #2-cells=4, #ccs=3Parcours all : #Darts=8, #0-cells=6, #1-cells=6, #2-cells=4, #ccs=2Map valid.
+***************************** TEST SEW 2D DONE.
+***************************** TEST TRIANGULATION_2 2D:
+Parcours all avant la triangulation: #Darts=12, #0-cells=4, #1-cells=6, #2-cells=4, #ccs=1Parcours all après la triangulation: #Darts=18, #0-cells=5, #1-cells=9, #2-cells=6, #ccs=1Map valid.
+***************************** TEST TRIANGULATION_2 2D DONE.
+***************************** TEST ITERATORS 2D:
+Nombre de brins : 9000, Nombre de CC : 1000
+Toute la carte marquée ? 1
+Parcours à la stl : #cellules=6000., #brins=9000.
+Toute la carte marquée ? 1
+***************************** TEST ITERATORS 2D DONE.
+***************************** TEST INCIDENCE ITERATORS 2D:
+Map valid : 1
+Nombre de sommet de la premiere cc : 6
+***************************** TEST INCIDENCE ITERATORS 2D DONE.
+***************************** TEST VERTEX REMOVAL 2D:
+#Darts=1, #0-cells=1, #1-cells=1, #2-cells=1, #ccs=1, valid=1
+remove vertex1: #Darts=0, #0-cells=0, #1-cells=0, #2-cells=0, #ccs=0, valid=1
+#Darts=1, #0-cells=1, #1-cells=1, #2-cells=1, #ccs=1, valid=1
+remove vertex2: #Darts=0, #0-cells=0, #1-cells=0, #2-cells=0, #ccs=0, valid=1
+#Darts=2, #0-cells=2, #1-cells=1, #2-cells=2, #ccs=1, valid=1
+remove vertex3: #Darts=1, #0-cells=1, #1-cells=1, #2-cells=1, #ccs=1, valid=1
+remove vertex4: #Darts=0, #0-cells=0, #1-cells=0, #2-cells=0, #ccs=0, valid=1
+#Darts=2, #0-cells=1, #1-cells=1, #2-cells=2, #ccs=1, valid=1
+remove vertex5: #Darts=0, #0-cells=0, #1-cells=0, #2-cells=0, #ccs=0, valid=1
+#Darts=3, #0-cells=3, #1-cells=3, #2-cells=1, #ccs=1, valid=1
+remove vertex6: #Darts=2, #0-cells=2, #1-cells=2, #2-cells=1, #ccs=1, valid=1
+remove vertex7: #Darts=1, #0-cells=1, #1-cells=1, #2-cells=1, #ccs=1, valid=1
+remove vertex8: #Darts=0, #0-cells=0, #1-cells=0, #2-cells=0, #ccs=0, valid=1
+#Darts=6, #0-cells=3, #1-cells=4, #2-cells=2, #ccs=1, valid=1
+remove vertex9: #Darts=4, #0-cells=2, #1-cells=3, #2-cells=2, #ccs=1, valid=1
+***************************** TEST VERTEX REMOVAL 2D DONE.
+***************************** TEST EDGE REMOVAL 2D:
+#Darts=1, #0-cells=1, #1-cells=1, #2-cells=1, #ccs=1, valid=1
+remove edge1: #Darts=0, #0-cells=0, #1-cells=0, #2-cells=0, #ccs=0, valid=1
+#Darts=1, #0-cells=1, #1-cells=1, #2-cells=1, #ccs=1, valid=1
+remove edge2: #Darts=0, #0-cells=0, #1-cells=0, #2-cells=0, #ccs=0, valid=1
+#Darts=2, #0-cells=2, #1-cells=1, #2-cells=2, #ccs=1, valid=1
+remove edge3: #Darts=0, #0-cells=0, #1-cells=0, #2-cells=0, #ccs=0, valid=1
+#Darts=2, #0-cells=1, #1-cells=1, #2-cells=2, #ccs=1, valid=1
+remove edge4: #Darts=0, #0-cells=0, #1-cells=0, #2-cells=0, #ccs=0, valid=1
+#Darts=2, #0-cells=1, #1-cells=1, #2-cells=2, #ccs=1, valid=1
+remove edge5: #Darts=0, #0-cells=0, #1-cells=0, #2-cells=0, #ccs=0, valid=1
+#Darts=3, #0-cells=3, #1-cells=3, #2-cells=1, #ccs=1, valid=1
+remove edge6: #Darts=2, #0-cells=2, #1-cells=2, #2-cells=1, #ccs=1, valid=1
+remove edge7: #Darts=1, #0-cells=1, #1-cells=1, #2-cells=1, #ccs=1, valid=1
+remove edge8: #Darts=0, #0-cells=0, #1-cells=0, #2-cells=0, #ccs=0, valid=1
+#Darts=6, #0-cells=4, #1-cells=5, #2-cells=2, #ccs=1, valid=1
+remove edge9: #Darts=4, #0-cells=4, #1-cells=4, #2-cells=1, #ccs=1, valid=1
+remove edge10: #Darts=3, #0-cells=3, #1-cells=3, #2-cells=1, #ccs=1, valid=1
+remove edge11: #Darts=2, #0-cells=2, #1-cells=2, #2-cells=1, #ccs=1, valid=1
+#Darts=8, #0-cells=6, #1-cells=7, #2-cells=3, #ccs=2, valid=1
+remove edge12: #Darts=6, #0-cells=6, #1-cells=6, #2-cells=2, #ccs=2, valid=1
+#Darts=12, #0-cells=10, #1-cells=11, #2-cells=4, #ccs=3, valid=1
+remove edge13: #Darts=11, #0-cells=10, #1-cells=10, #2-cells=4, #ccs=3, valid=1
+remove edge14: #Darts=9, #0-cells=9, #1-cells=9, #2-cells=3, #ccs=3, valid=1
+#Darts=33, #0-cells=17, #1-cells=21, #2-cells=9, #ccs=4, valid=1
+#Darts=41, #0-cells=18, #1-cells=25, #2-cells=12, #ccs=4, valid=1
+remove edge15: #Darts=39, #0-cells=18, #1-cells=24, #2-cells=11, #ccs=4, valid=1
+remove edge15: #Darts=37, #0-cells=18, #1-cells=23, #2-cells=10, #ccs=4, valid=1
+remove edge15: #Darts=35, #0-cells=18, #1-cells=22, #2-cells=9, #ccs=4, valid=1
+remove edge15: #Darts=33, #0-cells=17, #1-cells=21, #2-cells=9, #ccs=4, valid=1
+***************************** TEST EDGE REMOVAL 2D DONE.
+***************************** TEST INSERT EDGE 2D:
+#Darts=4, #0-cells=4, #1-cells=4, #2-cells=1, #ccs=1, valid=1
+insert edge3: #Darts=6, #0-cells=4, #1-cells=5, #2-cells=2, #ccs=1, valid=1
+#Darts=8, #0-cells=6, #1-cells=7, #2-cells=2, #ccs=1, valid=1
+insert edge4: #Darts=10, #0-cells=6, #1-cells=8, #2-cells=3, #ccs=1, valid=1
+***************************** TEST INSERT EDGE 2D DONE.
+Size of dart:56
+***************************** TEST BASIC CREATION 2D:
+Map valid.
+Nombre de brins : 2
+***************************** TEST BASIC CREATION 2D DONE.
+***************************** TEST CREATION WITH EMBEDDING 2D:
+Parcours all : #Darts=2, #0-cells=2, #1-cells=2, #2-cells=2, #ccs=2Parcours all : #Darts=2, #0-cells=2, #1-cells=1, #2-cells=2, #ccs=1
+
+Nombre de brins : 16
+Parcours de CC : 
+New facet : 
+New facet : 
+New facet : 
+New facet : 
+Parcours all : #Darts=16, #0-cells=8, #1-cells=8, #2-cells=8, #ccs=3Map valid.
+***************************** TEST CREATION WITH EMBEDDING 2D DONE.
+***************************** TEST SEW 2D:
+Parcours all : #Darts=8, #0-cells=8, #1-cells=7, #2-cells=4, #ccs=3Parcours all : #Darts=8, #0-cells=6, #1-cells=6, #2-cells=4, #ccs=2Map valid.
+***************************** TEST SEW 2D DONE.
+***************************** TEST TRIANGULATION_2 2D:
+Parcours all avant la triangulation: #Darts=12, #0-cells=4, #1-cells=6, #2-cells=4, #ccs=1Parcours all après la triangulation: #Darts=18, #0-cells=5, #1-cells=9, #2-cells=6, #ccs=1Map valid.
+***************************** TEST TRIANGULATION_2 2D DONE.
+***************************** TEST ITERATORS 2D:
+Nombre de brins : 9000, Nombre de CC : 1000
+Toute la carte marquée ? 1
+Parcours à la stl : #cellules=6000., #brins=9000.
+Toute la carte marquée ? 1
+***************************** TEST ITERATORS 2D DONE.
+***************************** TEST INCIDENCE ITERATORS 2D:
+Map valid : 1
+Nombre de sommet de la premiere cc : 6
+***************************** TEST INCIDENCE ITERATORS 2D DONE.
+***************************** TEST VERTEX REMOVAL 2D:
+#Darts=1, #0-cells=1, #1-cells=1, #2-cells=1, #ccs=1, valid=1
+remove vertex1: #Darts=0, #0-cells=0, #1-cells=0, #2-cells=0, #ccs=0, valid=1
+#Darts=1, #0-cells=1, #1-cells=1, #2-cells=1, #ccs=1, valid=1
+remove vertex2: #Darts=0, #0-cells=0, #1-cells=0, #2-cells=0, #ccs=0, valid=1
+#Darts=2, #0-cells=2, #1-cells=1, #2-cells=2, #ccs=1, valid=1
+remove vertex3: #Darts=1, #0-cells=1, #1-cells=1, #2-cells=1, #ccs=1, valid=1
+remove vertex4: #Darts=0, #0-cells=0, #1-cells=0, #2-cells=0, #ccs=0, valid=1
+#Darts=2, #0-cells=1, #1-cells=1, #2-cells=2, #ccs=1, valid=1
+remove vertex5: #Darts=0, #0-cells=0, #1-cells=0, #2-cells=0, #ccs=0, valid=1
+#Darts=3, #0-cells=3, #1-cells=3, #2-cells=1, #ccs=1, valid=1
+remove vertex6: #Darts=2, #0-cells=2, #1-cells=2, #2-cells=1, #ccs=1, valid=1
+remove vertex7: #Darts=1, #0-cells=1, #1-cells=1, #2-cells=1, #ccs=1, valid=1
+remove vertex8: #Darts=0, #0-cells=0, #1-cells=0, #2-cells=0, #ccs=0, valid=1
+#Darts=6, #0-cells=3, #1-cells=4, #2-cells=2, #ccs=1, valid=1
+remove vertex9: #Darts=4, #0-cells=2, #1-cells=3, #2-cells=2, #ccs=1, valid=1
+***************************** TEST VERTEX REMOVAL 2D DONE.
+***************************** TEST EDGE REMOVAL 2D:
+#Darts=1, #0-cells=1, #1-cells=1, #2-cells=1, #ccs=1, valid=1
+remove edge1: #Darts=0, #0-cells=0, #1-cells=0, #2-cells=0, #ccs=0, valid=1
+#Darts=1, #0-cells=1, #1-cells=1, #2-cells=1, #ccs=1, valid=1
+remove edge2: #Darts=0, #0-cells=0, #1-cells=0, #2-cells=0, #ccs=0, valid=1
+#Darts=2, #0-cells=2, #1-cells=1, #2-cells=2, #ccs=1, valid=1
+remove edge3: #Darts=0, #0-cells=0, #1-cells=0, #2-cells=0, #ccs=0, valid=1
+#Darts=2, #0-cells=1, #1-cells=1, #2-cells=2, #ccs=1, valid=1
+remove edge4: #Darts=0, #0-cells=0, #1-cells=0, #2-cells=0, #ccs=0, valid=1
+#Darts=2, #0-cells=1, #1-cells=1, #2-cells=2, #ccs=1, valid=1
+remove edge5: #Darts=0, #0-cells=0, #1-cells=0, #2-cells=0, #ccs=0, valid=1
+#Darts=3, #0-cells=3, #1-cells=3, #2-cells=1, #ccs=1, valid=1
+remove edge6: #Darts=2, #0-cells=2, #1-cells=2, #2-cells=1, #ccs=1, valid=1
+remove edge7: #Darts=1, #0-cells=1, #1-cells=1, #2-cells=1, #ccs=1, valid=1
+remove edge8: #Darts=0, #0-cells=0, #1-cells=0, #2-cells=0, #ccs=0, valid=1
+#Darts=6, #0-cells=4, #1-cells=5, #2-cells=2, #ccs=1, valid=1
+remove edge9: #Darts=4, #0-cells=4, #1-cells=4, #2-cells=1, #ccs=1, valid=1
+remove edge10: #Darts=3, #0-cells=3, #1-cells=3, #2-cells=1, #ccs=1, valid=1
+remove edge11: #Darts=2, #0-cells=2, #1-cells=2, #2-cells=1, #ccs=1, valid=1
+#Darts=8, #0-cells=6, #1-cells=7, #2-cells=3, #ccs=2, valid=1
+remove edge12: #Darts=6, #0-cells=6, #1-cells=6, #2-cells=2, #ccs=2, valid=1
+#Darts=12, #0-cells=10, #1-cells=11, #2-cells=4, #ccs=3, valid=1
+remove edge13: #Darts=11, #0-cells=10, #1-cells=10, #2-cells=4, #ccs=3, valid=1
+remove edge14: #Darts=9, #0-cells=9, #1-cells=9, #2-cells=3, #ccs=3, valid=1
+#Darts=33, #0-cells=17, #1-cells=21, #2-cells=9, #ccs=4, valid=1
+#Darts=41, #0-cells=18, #1-cells=25, #2-cells=12, #ccs=4, valid=1
+remove edge15: #Darts=39, #0-cells=18, #1-cells=24, #2-cells=11, #ccs=4, valid=1
+remove edge15: #Darts=37, #0-cells=18, #1-cells=23, #2-cells=10, #ccs=4, valid=1
+remove edge15: #Darts=35, #0-cells=18, #1-cells=22, #2-cells=9, #ccs=4, valid=1
+remove edge15: #Darts=33, #0-cells=17, #1-cells=21, #2-cells=9, #ccs=4, valid=1
+***************************** TEST EDGE REMOVAL 2D DONE.
+***************************** TEST INSERT EDGE 2D:
+#Darts=4, #0-cells=4, #1-cells=4, #2-cells=1, #ccs=1, valid=1
+insert edge3: #Darts=6, #0-cells=4, #1-cells=5, #2-cells=2, #ccs=1, valid=1
+#Darts=8, #0-cells=6, #1-cells=7, #2-cells=2, #ccs=1, valid=1
+insert edge4: #Darts=10, #0-cells=6, #1-cells=8, #2-cells=3, #ccs=1, valid=1
+***************************** TEST INSERT EDGE 2D DONE.
+Size of dart:56
+***************************** TEST BASIC CREATION 2D:
+Map valid.
+Nombre de brins : 2
+***************************** TEST BASIC CREATION 2D DONE.
+***************************** TEST CREATION WITH EMBEDDING 2D:
+Parcours all : #Darts=2, #0-cells=2, #1-cells=2, #2-cells=2, #ccs=2Parcours all : #Darts=2, #0-cells=2, #1-cells=1, #2-cells=2, #ccs=1
+
+Nombre de brins : 16
+Parcours de CC : 
+New facet : 
+New facet : 
+New facet : 
+New facet : 
+Parcours all : #Darts=16, #0-cells=8, #1-cells=8, #2-cells=8, #ccs=3Map valid.
+***************************** TEST CREATION WITH EMBEDDING 2D DONE.
+***************************** TEST SEW 2D:
+Parcours all : #Darts=8, #0-cells=8, #1-cells=7, #2-cells=4, #ccs=3Parcours all : #Darts=8, #0-cells=6, #1-cells=6, #2-cells=4, #ccs=2Map valid.
+***************************** TEST SEW 2D DONE.
+***************************** TEST TRIANGULATION_2 2D:
+Parcours all avant la triangulation: #Darts=12, #0-cells=4, #1-cells=6, #2-cells=4, #ccs=1Parcours all après la triangulation: #Darts=18, #0-cells=5, #1-cells=9, #2-cells=6, #ccs=1Map valid.
+***************************** TEST TRIANGULATION_2 2D DONE.
+***************************** TEST ITERATORS 2D:
+Nombre de brins : 9000, Nombre de CC : 1000
+Toute la carte marquée ? 1
+Parcours à la stl : #cellules=6000., #brins=9000.
+Toute la carte marquée ? 1
+***************************** TEST ITERATORS 2D DONE.
+***************************** TEST INCIDENCE ITERATORS 2D:
+Map valid : 1
+Nombre de sommet de la premiere cc : 6
+***************************** TEST INCIDENCE ITERATORS 2D DONE.
+***************************** TEST VERTEX REMOVAL 2D:
+#Darts=1, #0-cells=1, #1-cells=1, #2-cells=1, #ccs=1, valid=1
+remove vertex1: #Darts=0, #0-cells=0, #1-cells=0, #2-cells=0, #ccs=0, valid=1
+#Darts=1, #0-cells=1, #1-cells=1, #2-cells=1, #ccs=1, valid=1
+remove vertex2: #Darts=0, #0-cells=0, #1-cells=0, #2-cells=0, #ccs=0, valid=1
+#Darts=2, #0-cells=2, #1-cells=1, #2-cells=2, #ccs=1, valid=1
+remove vertex3: #Darts=1, #0-cells=1, #1-cells=1, #2-cells=1, #ccs=1, valid=1
+remove vertex4: #Darts=0, #0-cells=0, #1-cells=0, #2-cells=0, #ccs=0, valid=1
+#Darts=2, #0-cells=1, #1-cells=1, #2-cells=2, #ccs=1, valid=1
+remove vertex5: #Darts=0, #0-cells=0, #1-cells=0, #2-cells=0, #ccs=0, valid=1
+#Darts=3, #0-cells=3, #1-cells=3, #2-cells=1, #ccs=1, valid=1
+remove vertex6: #Darts=2, #0-cells=2, #1-cells=2, #2-cells=1, #ccs=1, valid=1
+remove vertex7: #Darts=1, #0-cells=1, #1-cells=1, #2-cells=1, #ccs=1, valid=1
+remove vertex8: #Darts=0, #0-cells=0, #1-cells=0, #2-cells=0, #ccs=0, valid=1
+#Darts=6, #0-cells=3, #1-cells=4, #2-cells=2, #ccs=1, valid=1
+remove vertex9: #Darts=4, #0-cells=2, #1-cells=3, #2-cells=2, #ccs=1, valid=1
+***************************** TEST VERTEX REMOVAL 2D DONE.
+***************************** TEST EDGE REMOVAL 2D:
+#Darts=1, #0-cells=1, #1-cells=1, #2-cells=1, #ccs=1, valid=1
+remove edge1: #Darts=0, #0-cells=0, #1-cells=0, #2-cells=0, #ccs=0, valid=1
+#Darts=1, #0-cells=1, #1-cells=1, #2-cells=1, #ccs=1, valid=1
+remove edge2: #Darts=0, #0-cells=0, #1-cells=0, #2-cells=0, #ccs=0, valid=1
+#Darts=2, #0-cells=2, #1-cells=1, #2-cells=2, #ccs=1, valid=1
+remove edge3: #Darts=0, #0-cells=0, #1-cells=0, #2-cells=0, #ccs=0, valid=1
+#Darts=2, #0-cells=1, #1-cells=1, #2-cells=2, #ccs=1, valid=1
+remove edge4: #Darts=0, #0-cells=0, #1-cells=0, #2-cells=0, #ccs=0, valid=1
+#Darts=2, #0-cells=1, #1-cells=1, #2-cells=2, #ccs=1, valid=1
+remove edge5: #Darts=0, #0-cells=0, #1-cells=0, #2-cells=0, #ccs=0, valid=1
+#Darts=3, #0-cells=3, #1-cells=3, #2-cells=1, #ccs=1, valid=1
+remove edge6: #Darts=2, #0-cells=2, #1-cells=2, #2-cells=1, #ccs=1, valid=1
+remove edge7: #Darts=1, #0-cells=1, #1-cells=1, #2-cells=1, #ccs=1, valid=1
+remove edge8: #Darts=0, #0-cells=0, #1-cells=0, #2-cells=0, #ccs=0, valid=1
+#Darts=6, #0-cells=4, #1-cells=5, #2-cells=2, #ccs=1, valid=1
+remove edge9: #Darts=4, #0-cells=4, #1-cells=4, #2-cells=1, #ccs=1, valid=1
+remove edge10: #Darts=3, #0-cells=3, #1-cells=3, #2-cells=1, #ccs=1, valid=1
+remove edge11: #Darts=2, #0-cells=2, #1-cells=2, #2-cells=1, #ccs=1, valid=1
+#Darts=8, #0-cells=6, #1-cells=7, #2-cells=3, #ccs=2, valid=1
+remove edge12: #Darts=6, #0-cells=6, #1-cells=6, #2-cells=2, #ccs=2, valid=1
+#Darts=12, #0-cells=10, #1-cells=11, #2-cells=4, #ccs=3, valid=1
+remove edge13: #Darts=11, #0-cells=10, #1-cells=10, #2-cells=4, #ccs=3, valid=1
+remove edge14: #Darts=9, #0-cells=9, #1-cells=9, #2-cells=3, #ccs=3, valid=1
+#Darts=33, #0-cells=17, #1-cells=21, #2-cells=9, #ccs=4, valid=1
+#Darts=41, #0-cells=18, #1-cells=25, #2-cells=12, #ccs=4, valid=1
+remove edge15: #Darts=39, #0-cells=18, #1-cells=24, #2-cells=11, #ccs=4, valid=1
+remove edge15: #Darts=37, #0-cells=18, #1-cells=23, #2-cells=10, #ccs=4, valid=1
+remove edge15: #Darts=35, #0-cells=18, #1-cells=22, #2-cells=9, #ccs=4, valid=1
+remove edge15: #Darts=33, #0-cells=17, #1-cells=21, #2-cells=9, #ccs=4, valid=1
+***************************** TEST EDGE REMOVAL 2D DONE.
+***************************** TEST INSERT EDGE 2D:
+#Darts=4, #0-cells=4, #1-cells=4, #2-cells=1, #ccs=1, valid=1
+insert edge3: #Darts=6, #0-cells=4, #1-cells=5, #2-cells=2, #ccs=1, valid=1
+#Darts=8, #0-cells=6, #1-cells=7, #2-cells=2, #ccs=1, valid=1
+insert edge4: #Darts=10, #0-cells=6, #1-cells=8, #2-cells=3, #ccs=1, valid=1
+***************************** TEST INSERT EDGE 2D DONE.
+***************************** TEST BASIC CREATION 3D:
+Map valid.
+Nombre de brins : 2
+***************************** TEST BASIC CREATION 3D DONE.
+***************************** TEST CREATION WITH EMBEDDING 3D:
+Parcours all : Parcours all : 
+
+Nombre de brins : 16
+Parcours de CC : 
+New facet : 
+New facet : 
+New facet : 
+New facet : 
+Parcours all : Map valid.
+***************************** TEST CREATION WITH EMBEDDING 3D DONE.
+***************************** TEST SEW 3D:
+Parcours all : Parcours all : Map valid.
+***************************** TEST SEW 3D DONE.
+***************************** TEST TRIANGULATION_2 3D:
+Parcours all avant la triangulation: Parcours all après la triangulation: Map valid.
+***************************** TEST TRIANGULATION_2 3D DONE.
+***************************** TEST TRIANGULATION_3 3D:
+map valid: 1
+Parcours all avant la triangulation: map valid: 1
+Parcours all après la triangulation: Map valid.
+Parcours all après la décousure: Map valid.
+***************************** TEST TRIANGULATION_3 3D DONE.
+***************************** TEST ITERATORS 3D:
+Nombre de brins : 36000, Nombre de CC : 1000
+Toute la carte marquée ? 1
+Parcours à la stl : #cellules=18000., #brins=36000.
+Toute la carte marquée ? 1
+Different const_iterators: 203000
+***************************** TEST ITERATORS 3D DONE.
+***************************** TEST INCIDENCE ITERATORS 3D:
+Map valid : 1
+***************************** TEST INCIDENCE ITERATORS 3D DONE.
+***************************** TEST VERTEX REMOVAL 3D:
+#Darts=1, #0-cells=1, #1-cells=1, #2-cells=1, #3-cells=1, #ccs=1, valid=1
+remove vertex1: #Darts=0, #0-cells=0, #1-cells=0, #2-cells=0, #3-cells=0, #ccs=0, valid=1
+#Darts=1, #0-cells=1, #1-cells=1, #2-cells=1, #3-cells=1, #ccs=1, valid=1
+remove vertex2: #Darts=0, #0-cells=0, #1-cells=0, #2-cells=0, #3-cells=0, #ccs=0, valid=1
+#Darts=2, #0-cells=2, #1-cells=1, #2-cells=2, #3-cells=1, #ccs=1, valid=1
+remove vertex3: #Darts=1, #0-cells=1, #1-cells=1, #2-cells=1, #3-cells=1, #ccs=1, valid=1
+remove vertex4: #Darts=0, #0-cells=0, #1-cells=0, #2-cells=0, #3-cells=0, #ccs=0, valid=1
+#Darts=2, #0-cells=1, #1-cells=1, #2-cells=2, #3-cells=1, #ccs=1, valid=1
+remove vertex5: #Darts=0, #0-cells=0, #1-cells=0, #2-cells=0, #3-cells=0, #ccs=0, valid=1
+#Darts=3, #0-cells=3, #1-cells=3, #2-cells=1, #3-cells=1, #ccs=1, valid=1
+remove vertex6: #Darts=2, #0-cells=2, #1-cells=2, #2-cells=1, #3-cells=1, #ccs=1, valid=1
+remove vertex7: #Darts=1, #0-cells=1, #1-cells=1, #2-cells=1, #3-cells=1, #ccs=1, valid=1
+remove vertex8: #Darts=0, #0-cells=0, #1-cells=0, #2-cells=0, #3-cells=0, #ccs=0, valid=1
+#Darts=6, #0-cells=3, #1-cells=3, #2-cells=1, #3-cells=2, #ccs=1, valid=1
+remove vertex9: #Darts=4, #0-cells=2, #1-cells=2, #2-cells=1, #3-cells=2, #ccs=1, valid=1
+remove vertex10: #Darts=2, #0-cells=1, #1-cells=1, #2-cells=1, #3-cells=2, #ccs=1, valid=1
+remove vertex11: #Darts=0, #0-cells=0, #1-cells=0, #2-cells=0, #3-cells=0, #ccs=0, valid=1
+***************************** TEST VERTEX REMOVAL 3D DONE.
+***************************** TEST EDGE REMOVAL 3D:
+#Darts=1, #0-cells=1, #1-cells=1, #2-cells=1, #3-cells=1, #ccs=1, valid=1
+remove edge1: #Darts=0, #0-cells=0, #1-cells=0, #2-cells=0, #3-cells=0, #ccs=0, valid=1
+#Darts=1, #0-cells=1, #1-cells=1, #2-cells=1, #3-cells=1, #ccs=1, valid=1
+remove edge2: #Darts=0, #0-cells=0, #1-cells=0, #2-cells=0, #3-cells=0, #ccs=0, valid=1
+#Darts=2, #0-cells=2, #1-cells=1, #2-cells=2, #3-cells=1, #ccs=1, valid=1
+remove edge3: #Darts=0, #0-cells=0, #1-cells=0, #2-cells=0, #3-cells=0, #ccs=0, valid=1
+#Darts=2, #0-cells=1, #1-cells=1, #2-cells=2, #3-cells=1, #ccs=1, valid=1
+remove edge4: #Darts=0, #0-cells=0, #1-cells=0, #2-cells=0, #3-cells=0, #ccs=0, valid=1
+#Darts=2, #0-cells=1, #1-cells=1, #2-cells=2, #3-cells=1, #ccs=1, valid=1
+remove edge5: #Darts=0, #0-cells=0, #1-cells=0, #2-cells=0, #3-cells=0, #ccs=0, valid=1
+#Darts=3, #0-cells=3, #1-cells=3, #2-cells=1, #3-cells=1, #ccs=1, valid=1
+remove edge6: #Darts=2, #0-cells=2, #1-cells=2, #2-cells=1, #3-cells=1, #ccs=1, valid=1
+remove edge7: #Darts=1, #0-cells=1, #1-cells=1, #2-cells=1, #3-cells=1, #ccs=1, valid=1
+remove edge8: #Darts=0, #0-cells=0, #1-cells=0, #2-cells=0, #3-cells=0, #ccs=0, valid=1
+#Darts=6, #0-cells=3, #1-cells=3, #2-cells=1, #3-cells=2, #ccs=1, valid=1
+remove edge9: #Darts=4, #0-cells=3, #1-cells=2, #2-cells=1, #3-cells=2, #ccs=1, valid=1
+remove edge10: #Darts=2, #0-cells=2, #1-cells=1, #2-cells=1, #3-cells=2, #ccs=1, valid=1
+remove edge11: #Darts=0, #0-cells=0, #1-cells=0, #2-cells=0, #3-cells=0, #ccs=0, valid=1
+#Darts=6, #0-cells=4, #1-cells=5, #2-cells=2, #3-cells=1, #ccs=1, valid=1
+remove edge12: #Darts=4, #0-cells=4, #1-cells=4, #2-cells=1, #3-cells=1, #ccs=1, valid=1
+#Darts=10, #0-cells=8, #1-cells=9, #2-cells=3, #3-cells=2, #ccs=2, valid=1
+remove edge13: #Darts=9, #0-cells=8, #1-cells=8, #2-cells=3, #3-cells=2, #ccs=2, valid=1
+remove edge14: #Darts=7, #0-cells=7, #1-cells=7, #2-cells=2, #3-cells=2, #ccs=2, valid=1
+#Darts=55, #0-cells=19, #1-cells=27, #2-cells=13, #3-cells=4, #ccs=3, valid=1
+#Darts=71, #0-cells=20, #1-cells=31, #2-cells=16, #3-cells=4, #ccs=3, valid=1
+remove edge15: #Darts=67, #0-cells=20, #1-cells=30, #2-cells=15, #3-cells=4, #ccs=3, valid=1
+remove edge15: #Darts=63, #0-cells=20, #1-cells=29, #2-cells=14, #3-cells=4, #ccs=3, valid=1
+remove edge15: #Darts=59, #0-cells=20, #1-cells=28, #2-cells=13, #3-cells=4, #ccs=3, valid=1
+remove edge15: #Darts=55, #0-cells=19, #1-cells=27, #2-cells=13, #3-cells=4, #ccs=3, valid=1
+***************************** TEST EDGE REMOVAL 3D DONE.
+***************************** TEST FACET REMOVAL 3D:
+#Darts=1, #0-cells=1, #1-cells=1, #2-cells=1, #3-cells=1, #ccs=1, valid=1
+remove facet1: #Darts=0, #0-cells=0, #1-cells=0, #2-cells=0, #3-cells=0, #ccs=0, valid=1
+#Darts=3, #0-cells=3, #1-cells=3, #2-cells=1, #3-cells=1, #ccs=1, valid=1
+remove facet2: #Darts=0, #0-cells=0, #1-cells=0, #2-cells=0, #3-cells=0, #ccs=0, valid=1
+#Darts=6, #0-cells=3, #1-cells=3, #2-cells=1, #3-cells=2, #ccs=1, valid=1
+remove facet3: #Darts=0, #0-cells=0, #1-cells=0, #2-cells=0, #3-cells=0, #ccs=0, valid=1
+#Darts=24, #0-cells=8, #1-cells=12, #2-cells=6, #3-cells=1, #ccs=1, valid=1
+remove facet4: #Darts=20, #0-cells=8, #1-cells=12, #2-cells=5, #3-cells=1, #ccs=1, valid=1
+remove facet5: #Darts=16, #0-cells=8, #1-cells=11, #2-cells=4, #3-cells=1, #ccs=1, valid=1
+remove facet6: #Darts=12, #0-cells=8, #1-cells=10, #2-cells=3, #3-cells=1, #ccs=1, valid=1
+remove facet7: #Darts=8, #0-cells=6, #1-cells=7, #2-cells=2, #3-cells=1, #ccs=1, valid=1
+remove facet8: #Darts=4, #0-cells=4, #1-cells=4, #2-cells=1, #3-cells=1, #ccs=1, valid=1
+remove facet9: #Darts=0, #0-cells=0, #1-cells=0, #2-cells=0, #3-cells=0, #ccs=0, valid=1
+#Darts=48, #0-cells=12, #1-cells=20, #2-cells=11, #3-cells=2, #ccs=1, valid=1
+remove facet10: #Darts=44, #0-cells=12, #1-cells=20, #2-cells=10, #3-cells=2, #ccs=1, valid=1
+remove facet11: #Darts=36, #0-cells=12, #1-cells=20, #2-cells=9, #3-cells=1, #ccs=1, valid=1
+remove edge12: #Darts=34, #0-cells=12, #1-cells=19, #2-cells=8, #3-cells=1, #ccs=1, valid=1
+#Darts=48, #0-cells=12, #1-cells=20, #2-cells=11, #3-cells=2, #ccs=1, valid=1
+#Darts=64, #0-cells=13, #1-cells=24, #2-cells=14, #3-cells=2, #ccs=1, valid=1
+remove facet13: #Darts=58, #0-cells=13, #1-cells=24, #2-cells=13, #3-cells=1, #ccs=1, valid=1
+remove facet13: #Darts=52, #0-cells=13, #1-cells=23, #2-cells=12, #3-cells=1, #ccs=1, valid=1
+remove facet13: #Darts=46, #0-cells=13, #1-cells=22, #2-cells=11, #3-cells=1, #ccs=1, valid=1
+remove facet13: #Darts=40, #0-cells=12, #1-cells=20, #2-cells=10, #3-cells=1, #ccs=1, valid=1
+***************************** TEST FACET REMOVAL 3D DONE.
+***************************** TEST INSERT VERTEX 3D:
+************************* Test createAllBasicCases1 *************************
+Before: #Darts=1, #0-cells=1, #1-cells=1, #2-cells=1, #3-cells=1, #ccs=1, valid=1
+After insert_vertex 1 : #Darts=2, #0-cells=2, #1-cells=2, #2-cells=1, #3-cells=1, #ccs=1, valid=1
+Before: #Darts=1, #0-cells=1, #1-cells=1, #2-cells=1, #3-cells=1, #ccs=1, valid=1
+After insert_vertex 2 : #Darts=2, #0-cells=2, #1-cells=2, #2-cells=1, #3-cells=1, #ccs=1, valid=1
+Before: #Darts=2, #0-cells=2, #1-cells=2, #2-cells=1, #3-cells=1, #ccs=1, valid=1
+After insert_vertex 3 : #Darts=3, #0-cells=3, #1-cells=3, #2-cells=1, #3-cells=1, #ccs=1, valid=1
+Before: #Darts=2, #0-cells=2, #1-cells=2, #2-cells=1, #3-cells=1, #ccs=1, valid=1
+After insert_vertex 4 : #Darts=3, #0-cells=3, #1-cells=3, #2-cells=1, #3-cells=1, #ccs=1, valid=1
+Before: #Darts=2, #0-cells=2, #1-cells=2, #2-cells=1, #3-cells=1, #ccs=1, valid=1
+After insert_vertex 5 : #Darts=3, #0-cells=3, #1-cells=3, #2-cells=1, #3-cells=1, #ccs=1, valid=1
+Before: #Darts=2, #0-cells=2, #1-cells=2, #2-cells=1, #3-cells=1, #ccs=1, valid=1
+After insert_vertex 6 : #Darts=3, #0-cells=3, #1-cells=3, #2-cells=1, #3-cells=1, #ccs=1, valid=1
+Before: #Darts=3, #0-cells=3, #1-cells=3, #2-cells=1, #3-cells=1, #ccs=1, valid=1
+After insert_vertex 7 : #Darts=4, #0-cells=4, #1-cells=4, #2-cells=1, #3-cells=1, #ccs=1, valid=1
+Before: #Darts=3, #0-cells=3, #1-cells=3, #2-cells=1, #3-cells=1, #ccs=1, valid=1
+After insert_vertex 8 : #Darts=4, #0-cells=4, #1-cells=4, #2-cells=1, #3-cells=1, #ccs=1, valid=1
+Before: #Darts=3, #0-cells=3, #1-cells=3, #2-cells=1, #3-cells=1, #ccs=1, valid=1
+After insert_vertex 9 : #Darts=4, #0-cells=4, #1-cells=4, #2-cells=1, #3-cells=1, #ccs=1, valid=1
+Before: #Darts=3, #0-cells=3, #1-cells=3, #2-cells=1, #3-cells=1, #ccs=1, valid=1
+After insert_vertex 10 : #Darts=4, #0-cells=4, #1-cells=4, #2-cells=1, #3-cells=1, #ccs=1, valid=1
+Before: #Darts=3, #0-cells=3, #1-cells=3, #2-cells=1, #3-cells=1, #ccs=1, valid=1
+After insert_vertex 11 : #Darts=4, #0-cells=4, #1-cells=4, #2-cells=1, #3-cells=1, #ccs=1, valid=1
+Before: #Darts=3, #0-cells=3, #1-cells=3, #2-cells=1, #3-cells=1, #ccs=1, valid=1
+After insert_vertex 12 : #Darts=4, #0-cells=4, #1-cells=4, #2-cells=1, #3-cells=1, #ccs=1, valid=1
+************************* Test createAllBasicCases2 *************************
+Before: #Darts=2, #0-cells=2, #1-cells=1, #2-cells=2, #3-cells=1, #ccs=1, valid=1
+After insert_vertex 1 : #Darts=4, #0-cells=3, #1-cells=2, #2-cells=2, #3-cells=1, #ccs=1, valid=1
+Before: #Darts=2, #0-cells=1, #1-cells=1, #2-cells=2, #3-cells=1, #ccs=1, valid=1
+After insert_vertex 2 : #Darts=4, #0-cells=2, #1-cells=2, #2-cells=2, #3-cells=1, #ccs=1, valid=1
+Before: #Darts=3, #0-cells=3, #1-cells=2, #2-cells=2, #3-cells=1, #ccs=1, valid=1
+After insert_vertex 3 : #Darts=4, #0-cells=4, #1-cells=3, #2-cells=2, #3-cells=1, #ccs=1, valid=1
+Before: #Darts=3, #0-cells=3, #1-cells=2, #2-cells=2, #3-cells=1, #ccs=1, valid=1
+After insert_vertex 4 : #Darts=5, #0-cells=4, #1-cells=3, #2-cells=2, #3-cells=1, #ccs=1, valid=1
+Before: #Darts=3, #0-cells=2, #1-cells=2, #2-cells=2, #3-cells=1, #ccs=1, valid=1
+After insert_vertex 5 : #Darts=4, #0-cells=3, #1-cells=3, #2-cells=2, #3-cells=1, #ccs=1, valid=1
+Before: #Darts=4, #0-cells=2, #1-cells=2, #2-cells=3, #3-cells=1, #ccs=1, valid=1
+After insert_vertex 6 : #Darts=6, #0-cells=3, #1-cells=3, #2-cells=3, #3-cells=1, #ccs=1, valid=1
+Before: #Darts=5, #0-cells=4, #1-cells=3, #2-cells=3, #3-cells=1, #ccs=1, valid=1
+After insert_vertex 7 : #Darts=6, #0-cells=5, #1-cells=4, #2-cells=3, #3-cells=1, #ccs=1, valid=1
+Before: #Darts=5, #0-cells=4, #1-cells=3, #2-cells=3, #3-cells=1, #ccs=1, valid=1
+After insert_vertex 8 : #Darts=7, #0-cells=5, #1-cells=4, #2-cells=3, #3-cells=1, #ccs=1, valid=1
+Before: #Darts=4, #0-cells=3, #1-cells=3, #2-cells=2, #3-cells=1, #ccs=1, valid=1
+After insert_vertex 9 : #Darts=6, #0-cells=4, #1-cells=4, #2-cells=2, #3-cells=1, #ccs=1, valid=1
+************************* Test createAllBasicCases2<3> *************************
+Before: #Darts=4, #0-cells=2, #1-cells=1, #2-cells=2, #3-cells=2, #ccs=1, valid=1
+After insert_vertex 1 : #Darts=8, #0-cells=3, #1-cells=2, #2-cells=2, #3-cells=2, #ccs=1, valid=1
+Before: #Darts=4, #0-cells=1, #1-cells=1, #2-cells=2, #3-cells=2, #ccs=1, valid=1
+After insert_vertex 2 : #Darts=8, #0-cells=2, #1-cells=2, #2-cells=2, #3-cells=2, #ccs=1, valid=1
+Before: #Darts=6, #0-cells=3, #1-cells=2, #2-cells=2, #3-cells=1, #ccs=1, valid=1
+After insert_vertex 3 : #Darts=8, #0-cells=4, #1-cells=3, #2-cells=2, #3-cells=1, #ccs=1, valid=1
+Before: #Darts=6, #0-cells=3, #1-cells=2, #2-cells=2, #3-cells=1, #ccs=1, valid=1
+After insert_vertex 4 : #Darts=10, #0-cells=4, #1-cells=3, #2-cells=2, #3-cells=1, #ccs=1, valid=1
+Before: #Darts=6, #0-cells=2, #1-cells=2, #2-cells=2, #3-cells=1, #ccs=1, valid=1
+After insert_vertex 5 : #Darts=8, #0-cells=3, #1-cells=3, #2-cells=2, #3-cells=1, #ccs=1, valid=1
+Before: #Darts=8, #0-cells=2, #1-cells=2, #2-cells=3, #3-cells=2, #ccs=1, valid=1
+After insert_vertex 6 : #Darts=12, #0-cells=3, #1-cells=3, #2-cells=3, #3-cells=2, #ccs=1, valid=1
+Before: #Darts=10, #0-cells=4, #1-cells=3, #2-cells=3, #3-cells=1, #ccs=1, valid=1
+After insert_vertex 7 : #Darts=12, #0-cells=5, #1-cells=4, #2-cells=3, #3-cells=1, #ccs=1, valid=1
+Before: #Darts=10, #0-cells=4, #1-cells=3, #2-cells=3, #3-cells=1, #ccs=1, valid=1
+After insert_vertex 8 : #Darts=14, #0-cells=5, #1-cells=4, #2-cells=3, #3-cells=1, #ccs=1, valid=1
+Before: #Darts=8, #0-cells=3, #1-cells=3, #2-cells=2, #3-cells=1, #ccs=1, valid=1
+After insert_vertex 9 : #Darts=12, #0-cells=4, #1-cells=4, #2-cells=2, #3-cells=1, #ccs=1, valid=1
+************************* Test different cases *************************
+#Darts=1, #0-cells=1, #1-cells=1, #2-cells=1, #3-cells=1, #ccs=1, valid=1
+insert vertex1: #Darts=2, #0-cells=2, #1-cells=2, #2-cells=1, #3-cells=1, #ccs=1, valid=1
+#Darts=1, #0-cells=1, #1-cells=1, #2-cells=1, #3-cells=1, #ccs=1, valid=1
+insert vertex2: #Darts=2, #0-cells=2, #1-cells=2, #2-cells=1, #3-cells=1, #ccs=1, valid=1
+#Darts=2, #0-cells=2, #1-cells=1, #2-cells=2, #3-cells=1, #ccs=1, valid=1
+insert vertex3: #Darts=4, #0-cells=3, #1-cells=2, #2-cells=2, #3-cells=1, #ccs=1, valid=1
+#Darts=2, #0-cells=1, #1-cells=1, #2-cells=2, #3-cells=1, #ccs=1, valid=1
+insert vertex4: #Darts=4, #0-cells=2, #1-cells=2, #2-cells=2, #3-cells=1, #ccs=1, valid=1
+#Darts=2, #0-cells=1, #1-cells=1, #2-cells=2, #3-cells=1, #ccs=1, valid=1
+insert vertex5: #Darts=4, #0-cells=2, #1-cells=2, #2-cells=2, #3-cells=1, #ccs=1, valid=1
+#Darts=3, #0-cells=3, #1-cells=3, #2-cells=1, #3-cells=1, #ccs=1, valid=1
+insert vertex6: #Darts=4, #0-cells=4, #1-cells=4, #2-cells=1, #3-cells=1, #ccs=1, valid=1
+insert vertex7: #Darts=5, #0-cells=5, #1-cells=5, #2-cells=1, #3-cells=1, #ccs=1, valid=1
+insert vertex8: #Darts=6, #0-cells=6, #1-cells=6, #2-cells=1, #3-cells=1, #ccs=1, valid=1
+#Darts=6, #0-cells=3, #1-cells=3, #2-cells=1, #3-cells=2, #ccs=1, valid=1
+insert vertex9: #Darts=8, #0-cells=4, #1-cells=4, #2-cells=1, #3-cells=2, #ccs=1, valid=1
+insert vertex10: #Darts=10, #0-cells=5, #1-cells=5, #2-cells=1, #3-cells=2, #ccs=1, valid=1
+insert vertex11: #Darts=12, #0-cells=6, #1-cells=6, #2-cells=1, #3-cells=2, #ccs=1, valid=1
+#Darts=6, #0-cells=4, #1-cells=5, #2-cells=2, #3-cells=1, #ccs=1, valid=1
+insert vertex12: #Darts=8, #0-cells=5, #1-cells=6, #2-cells=2, #3-cells=1, #ccs=1, valid=1
+#Darts=6, #0-cells=4, #1-cells=5, #2-cells=2, #3-cells=1, #ccs=1, valid=1
+insert vertex13: #Darts=7, #0-cells=5, #1-cells=6, #2-cells=2, #3-cells=1, #ccs=1, valid=1
+insert vertex14: #Darts=9, #0-cells=6, #1-cells=7, #2-cells=2, #3-cells=1, #ccs=1, valid=1
+#Darts=48, #0-cells=12, #1-cells=20, #2-cells=11, #3-cells=2, #ccs=1, valid=1
+insert vertex15: #Darts=52, #0-cells=13, #1-cells=21, #2-cells=11, #3-cells=2, #ccs=1, valid=1
+insert vertex16: #Darts=56, #0-cells=14, #1-cells=22, #2-cells=11, #3-cells=2, #ccs=1, valid=1
+insert vertex17: #Darts=60, #0-cells=15, #1-cells=23, #2-cells=11, #3-cells=2, #ccs=1, valid=1
+insert vertex18: #Darts=64, #0-cells=16, #1-cells=24, #2-cells=11, #3-cells=2, #ccs=1, valid=1
+***************************** TEST INSERT VERTEX 3D DONE.
+***************************** TEST INSERT EDGE 3D:
+#Darts=4, #0-cells=1, #1-cells=1, #2-cells=2, #3-cells=2, #ccs=1, valid=1
+#Darts=4, #0-cells=4, #1-cells=4, #2-cells=1, #3-cells=1, #ccs=1, valid=1
+insert edge4: #Darts=6, #0-cells=4, #1-cells=5, #2-cells=2, #3-cells=1, #ccs=1, valid=1
+#Darts=8, #0-cells=4, #1-cells=4, #2-cells=1, #3-cells=2, #ccs=1, valid=1
+insert edge5: #Darts=12, #0-cells=4, #1-cells=5, #2-cells=2, #3-cells=2, #ccs=1, valid=1
+#Darts=8, #0-cells=6, #1-cells=7, #2-cells=2, #3-cells=1, #ccs=1, valid=1
+insert edge6: #Darts=10, #0-cells=6, #1-cells=8, #2-cells=3, #3-cells=1, #ccs=1, valid=1
+***************************** TEST INSERT EDGE 3D DONE.
+***************************** TEST INSERT DANGLING EDGE 3D:
+#Darts=1, #0-cells=1, #1-cells=1, #2-cells=1, #3-cells=1, #ccs=1, valid=1
+insert dangling edge1: #Darts=3, #0-cells=2, #1-cells=2, #2-cells=1, #3-cells=1, #ccs=1, valid=1
+#Darts=2, #0-cells=1, #1-cells=1, #2-cells=2, #3-cells=1, #ccs=1, valid=1
+insert dangling edge2: #Darts=4, #0-cells=2, #1-cells=2, #2-cells=2, #3-cells=1, #ccs=1, valid=1
+#Darts=4, #0-cells=1, #1-cells=1, #2-cells=2, #3-cells=2, #ccs=1, valid=1
+insert dangling edge3: #Darts=8, #0-cells=2, #1-cells=2, #2-cells=2, #3-cells=2, #ccs=1, valid=1
+#Darts=4, #0-cells=4, #1-cells=4, #2-cells=1, #3-cells=1, #ccs=1, valid=1
+insert dangling edge4: #Darts=6, #0-cells=5, #1-cells=5, #2-cells=1, #3-cells=1, #ccs=1, valid=1
+#Darts=8, #0-cells=4, #1-cells=4, #2-cells=1, #3-cells=2, #ccs=1, valid=1
+insert dangling edge5: #Darts=12, #0-cells=5, #1-cells=5, #2-cells=1, #3-cells=2, #ccs=1, valid=1
+***************************** TEST INSERT DANGLING EDGE 3D DONE.
+***************************** TEST INSERT FACET 3D:
+#Darts=4, #0-cells=4, #1-cells=4, #2-cells=1, #3-cells=1, #ccs=1, valid=1
+insert facet1: #Darts=8, #0-cells=4, #1-cells=4, #2-cells=2, #3-cells=1, #ccs=1, valid=1
+#Darts=6, #0-cells=4, #1-cells=5, #2-cells=2, #3-cells=1, #ccs=1, valid=1
+insert facet2: #Darts=12, #0-cells=4, #1-cells=5, #2-cells=3, #3-cells=2, #ccs=1, valid=1
+#Darts=24, #0-cells=8, #1-cells=12, #2-cells=6, #3-cells=1, #ccs=1, valid=1
+remove facet3: #Darts=20, #0-cells=8, #1-cells=12, #2-cells=5, #3-cells=1, #ccs=1, valid=1
+insert facet3: #Darts=24, #0-cells=8, #1-cells=12, #2-cells=6, #3-cells=1, #ccs=1, valid=1
+#Darts=48, #0-cells=12, #1-cells=20, #2-cells=11, #3-cells=2, #ccs=1, valid=1
+remove facet4: #Darts=40, #0-cells=12, #1-cells=20, #2-cells=10, #3-cells=1, #ccs=1, valid=1
+insert facet4: #Darts=48, #0-cells=12, #1-cells=20, #2-cells=11, #3-cells=2, #ccs=1, valid=1
+***************************** TEST INSERT FACET 3D DONE.
+***************************** TEST BASIC CREATION 3D:
+Map valid.
+Nombre de brins : 2
+***************************** TEST BASIC CREATION 3D DONE.
+***************************** TEST CREATION WITH EMBEDDING 3D:
+Parcours all : Parcours all : 
+
+Nombre de brins : 16
+Parcours de CC : 
+New facet : 
+New facet : 
+New facet : 
+New facet : 
+Parcours all : Map valid.
+***************************** TEST CREATION WITH EMBEDDING 3D DONE.
+***************************** TEST SEW 3D:
+Parcours all : Parcours all : Map valid.
+***************************** TEST SEW 3D DONE.
+***************************** TEST TRIANGULATION_2 3D:
+Parcours all avant la triangulation: Parcours all après la triangulation: Map valid.
+***************************** TEST TRIANGULATION_2 3D DONE.
+***************************** TEST TRIANGULATION_3 3D:
+map valid: 1
+Parcours all avant la triangulation: map valid: 1
+Parcours all après la triangulation: Map valid.
+Parcours all après la décousure: Map valid.
+***************************** TEST TRIANGULATION_3 3D DONE.
+***************************** TEST ITERATORS 3D:
+Nombre de brins : 36000, Nombre de CC : 1000
+Toute la carte marquée ? 1
+Parcours à la stl : #cellules=18000., #brins=36000.
+Toute la carte marquée ? 1
+Different const_iterators: 203000
+***************************** TEST ITERATORS 3D DONE.
+***************************** TEST INCIDENCE ITERATORS 3D:
+Map valid : 1
+***************************** TEST INCIDENCE ITERATORS 3D DONE.
+***************************** TEST VERTEX REMOVAL 3D:
+#Darts=1, #0-cells=1, #1-cells=1, #2-cells=1, #3-cells=1, #ccs=1, valid=1
+remove vertex1: #Darts=0, #0-cells=0, #1-cells=0, #2-cells=0, #3-cells=0, #ccs=0, valid=1
+#Darts=1, #0-cells=1, #1-cells=1, #2-cells=1, #3-cells=1, #ccs=1, valid=1
+remove vertex2: #Darts=0, #0-cells=0, #1-cells=0, #2-cells=0, #3-cells=0, #ccs=0, valid=1
+#Darts=2, #0-cells=2, #1-cells=1, #2-cells=2, #3-cells=1, #ccs=1, valid=1
+remove vertex3: #Darts=1, #0-cells=1, #1-cells=1, #2-cells=1, #3-cells=1, #ccs=1, valid=1
+remove vertex4: #Darts=0, #0-cells=0, #1-cells=0, #2-cells=0, #3-cells=0, #ccs=0, valid=1
+#Darts=2, #0-cells=1, #1-cells=1, #2-cells=2, #3-cells=1, #ccs=1, valid=1
+remove vertex5: #Darts=0, #0-cells=0, #1-cells=0, #2-cells=0, #3-cells=0, #ccs=0, valid=1
+#Darts=3, #0-cells=3, #1-cells=3, #2-cells=1, #3-cells=1, #ccs=1, valid=1
+remove vertex6: #Darts=2, #0-cells=2, #1-cells=2, #2-cells=1, #3-cells=1, #ccs=1, valid=1
+remove vertex7: #Darts=1, #0-cells=1, #1-cells=1, #2-cells=1, #3-cells=1, #ccs=1, valid=1
+remove vertex8: #Darts=0, #0-cells=0, #1-cells=0, #2-cells=0, #3-cells=0, #ccs=0, valid=1
+#Darts=6, #0-cells=3, #1-cells=3, #2-cells=1, #3-cells=2, #ccs=1, valid=1
+remove vertex9: #Darts=4, #0-cells=2, #1-cells=2, #2-cells=1, #3-cells=2, #ccs=1, valid=1
+remove vertex10: #Darts=2, #0-cells=1, #1-cells=1, #2-cells=1, #3-cells=2, #ccs=1, valid=1
+remove vertex11: #Darts=0, #0-cells=0, #1-cells=0, #2-cells=0, #3-cells=0, #ccs=0, valid=1
+***************************** TEST VERTEX REMOVAL 3D DONE.
+***************************** TEST EDGE REMOVAL 3D:
+#Darts=1, #0-cells=1, #1-cells=1, #2-cells=1, #3-cells=1, #ccs=1, valid=1
+remove edge1: #Darts=0, #0-cells=0, #1-cells=0, #2-cells=0, #3-cells=0, #ccs=0, valid=1
+#Darts=1, #0-cells=1, #1-cells=1, #2-cells=1, #3-cells=1, #ccs=1, valid=1
+remove edge2: #Darts=0, #0-cells=0, #1-cells=0, #2-cells=0, #3-cells=0, #ccs=0, valid=1
+#Darts=2, #0-cells=2, #1-cells=1, #2-cells=2, #3-cells=1, #ccs=1, valid=1
+remove edge3: #Darts=0, #0-cells=0, #1-cells=0, #2-cells=0, #3-cells=0, #ccs=0, valid=1
+#Darts=2, #0-cells=1, #1-cells=1, #2-cells=2, #3-cells=1, #ccs=1, valid=1
+remove edge4: #Darts=0, #0-cells=0, #1-cells=0, #2-cells=0, #3-cells=0, #ccs=0, valid=1
+#Darts=2, #0-cells=1, #1-cells=1, #2-cells=2, #3-cells=1, #ccs=1, valid=1
+remove edge5: #Darts=0, #0-cells=0, #1-cells=0, #2-cells=0, #3-cells=0, #ccs=0, valid=1
+#Darts=3, #0-cells=3, #1-cells=3, #2-cells=1, #3-cells=1, #ccs=1, valid=1
+remove edge6: #Darts=2, #0-cells=2, #1-cells=2, #2-cells=1, #3-cells=1, #ccs=1, valid=1
+remove edge7: #Darts=1, #0-cells=1, #1-cells=1, #2-cells=1, #3-cells=1, #ccs=1, valid=1
+remove edge8: #Darts=0, #0-cells=0, #1-cells=0, #2-cells=0, #3-cells=0, #ccs=0, valid=1
+#Darts=6, #0-cells=3, #1-cells=3, #2-cells=1, #3-cells=2, #ccs=1, valid=1
+remove edge9: #Darts=4, #0-cells=3, #1-cells=2, #2-cells=1, #3-cells=2, #ccs=1, valid=1
+remove edge10: #Darts=2, #0-cells=2, #1-cells=1, #2-cells=1, #3-cells=2, #ccs=1, valid=1
+remove edge11: #Darts=0, #0-cells=0, #1-cells=0, #2-cells=0, #3-cells=0, #ccs=0, valid=1
+#Darts=6, #0-cells=4, #1-cells=5, #2-cells=2, #3-cells=1, #ccs=1, valid=1
+remove edge12: #Darts=4, #0-cells=4, #1-cells=4, #2-cells=1, #3-cells=1, #ccs=1, valid=1
+#Darts=10, #0-cells=8, #1-cells=9, #2-cells=3, #3-cells=2, #ccs=2, valid=1
+remove edge13: #Darts=9, #0-cells=8, #1-cells=8, #2-cells=3, #3-cells=2, #ccs=2, valid=1
+remove edge14: #Darts=7, #0-cells=7, #1-cells=7, #2-cells=2, #3-cells=2, #ccs=2, valid=1
+#Darts=55, #0-cells=19, #1-cells=27, #2-cells=13, #3-cells=4, #ccs=3, valid=1
+#Darts=71, #0-cells=20, #1-cells=31, #2-cells=16, #3-cells=4, #ccs=3, valid=1
+remove edge15: #Darts=67, #0-cells=20, #1-cells=30, #2-cells=15, #3-cells=4, #ccs=3, valid=1
+remove edge15: #Darts=63, #0-cells=20, #1-cells=29, #2-cells=14, #3-cells=4, #ccs=3, valid=1
+remove edge15: #Darts=59, #0-cells=20, #1-cells=28, #2-cells=13, #3-cells=4, #ccs=3, valid=1
+remove edge15: #Darts=55, #0-cells=19, #1-cells=27, #2-cells=13, #3-cells=4, #ccs=3, valid=1
+***************************** TEST EDGE REMOVAL 3D DONE.
+***************************** TEST FACET REMOVAL 3D:
+#Darts=1, #0-cells=1, #1-cells=1, #2-cells=1, #3-cells=1, #ccs=1, valid=1
+remove facet1: #Darts=0, #0-cells=0, #1-cells=0, #2-cells=0, #3-cells=0, #ccs=0, valid=1
+#Darts=3, #0-cells=3, #1-cells=3, #2-cells=1, #3-cells=1, #ccs=1, valid=1
+remove facet2: #Darts=0, #0-cells=0, #1-cells=0, #2-cells=0, #3-cells=0, #ccs=0, valid=1
+#Darts=6, #0-cells=3, #1-cells=3, #2-cells=1, #3-cells=2, #ccs=1, valid=1
+remove facet3: #Darts=0, #0-cells=0, #1-cells=0, #2-cells=0, #3-cells=0, #ccs=0, valid=1
+#Darts=24, #0-cells=8, #1-cells=12, #2-cells=6, #3-cells=1, #ccs=1, valid=1
+remove facet4: #Darts=20, #0-cells=8, #1-cells=12, #2-cells=5, #3-cells=1, #ccs=1, valid=1
+remove facet5: #Darts=16, #0-cells=8, #1-cells=11, #2-cells=4, #3-cells=1, #ccs=1, valid=1
+remove facet6: #Darts=12, #0-cells=8, #1-cells=10, #2-cells=3, #3-cells=1, #ccs=1, valid=1
+remove facet7: #Darts=8, #0-cells=6, #1-cells=7, #2-cells=2, #3-cells=1, #ccs=1, valid=1
+remove facet8: #Darts=4, #0-cells=4, #1-cells=4, #2-cells=1, #3-cells=1, #ccs=1, valid=1
+remove facet9: #Darts=0, #0-cells=0, #1-cells=0, #2-cells=0, #3-cells=0, #ccs=0, valid=1
+#Darts=48, #0-cells=12, #1-cells=20, #2-cells=11, #3-cells=2, #ccs=1, valid=1
+remove facet10: #Darts=44, #0-cells=12, #1-cells=20, #2-cells=10, #3-cells=2, #ccs=1, valid=1
+remove facet11: #Darts=36, #0-cells=12, #1-cells=20, #2-cells=9, #3-cells=1, #ccs=1, valid=1
+remove edge12: #Darts=34, #0-cells=12, #1-cells=19, #2-cells=8, #3-cells=1, #ccs=1, valid=1
+#Darts=48, #0-cells=12, #1-cells=20, #2-cells=11, #3-cells=2, #ccs=1, valid=1
+#Darts=64, #0-cells=13, #1-cells=24, #2-cells=14, #3-cells=2, #ccs=1, valid=1
+remove facet13: #Darts=58, #0-cells=13, #1-cells=24, #2-cells=13, #3-cells=1, #ccs=1, valid=1
+remove facet13: #Darts=52, #0-cells=13, #1-cells=23, #2-cells=12, #3-cells=1, #ccs=1, valid=1
+remove facet13: #Darts=46, #0-cells=13, #1-cells=22, #2-cells=11, #3-cells=1, #ccs=1, valid=1
+remove facet13: #Darts=40, #0-cells=12, #1-cells=20, #2-cells=10, #3-cells=1, #ccs=1, valid=1
+***************************** TEST FACET REMOVAL 3D DONE.
+***************************** TEST INSERT VERTEX 3D:
+************************* Test createAllBasicCases1 *************************
+Before: #Darts=1, #0-cells=1, #1-cells=1, #2-cells=1, #3-cells=1, #ccs=1, valid=1
+After insert_vertex 1 : #Darts=2, #0-cells=2, #1-cells=2, #2-cells=1, #3-cells=1, #ccs=1, valid=1
+Before: #Darts=1, #0-cells=1, #1-cells=1, #2-cells=1, #3-cells=1, #ccs=1, valid=1
+After insert_vertex 2 : #Darts=2, #0-cells=2, #1-cells=2, #2-cells=1, #3-cells=1, #ccs=1, valid=1
+Before: #Darts=2, #0-cells=2, #1-cells=2, #2-cells=1, #3-cells=1, #ccs=1, valid=1
+After insert_vertex 3 : #Darts=3, #0-cells=3, #1-cells=3, #2-cells=1, #3-cells=1, #ccs=1, valid=1
+Before: #Darts=2, #0-cells=2, #1-cells=2, #2-cells=1, #3-cells=1, #ccs=1, valid=1
+After insert_vertex 4 : #Darts=3, #0-cells=3, #1-cells=3, #2-cells=1, #3-cells=1, #ccs=1, valid=1
+Before: #Darts=2, #0-cells=2, #1-cells=2, #2-cells=1, #3-cells=1, #ccs=1, valid=1
+After insert_vertex 5 : #Darts=3, #0-cells=3, #1-cells=3, #2-cells=1, #3-cells=1, #ccs=1, valid=1
+Before: #Darts=2, #0-cells=2, #1-cells=2, #2-cells=1, #3-cells=1, #ccs=1, valid=1
+After insert_vertex 6 : #Darts=3, #0-cells=3, #1-cells=3, #2-cells=1, #3-cells=1, #ccs=1, valid=1
+Before: #Darts=3, #0-cells=3, #1-cells=3, #2-cells=1, #3-cells=1, #ccs=1, valid=1
+After insert_vertex 7 : #Darts=4, #0-cells=4, #1-cells=4, #2-cells=1, #3-cells=1, #ccs=1, valid=1
+Before: #Darts=3, #0-cells=3, #1-cells=3, #2-cells=1, #3-cells=1, #ccs=1, valid=1
+After insert_vertex 8 : #Darts=4, #0-cells=4, #1-cells=4, #2-cells=1, #3-cells=1, #ccs=1, valid=1
+Before: #Darts=3, #0-cells=3, #1-cells=3, #2-cells=1, #3-cells=1, #ccs=1, valid=1
+After insert_vertex 9 : #Darts=4, #0-cells=4, #1-cells=4, #2-cells=1, #3-cells=1, #ccs=1, valid=1
+Before: #Darts=3, #0-cells=3, #1-cells=3, #2-cells=1, #3-cells=1, #ccs=1, valid=1
+After insert_vertex 10 : #Darts=4, #0-cells=4, #1-cells=4, #2-cells=1, #3-cells=1, #ccs=1, valid=1
+Before: #Darts=3, #0-cells=3, #1-cells=3, #2-cells=1, #3-cells=1, #ccs=1, valid=1
+After insert_vertex 11 : #Darts=4, #0-cells=4, #1-cells=4, #2-cells=1, #3-cells=1, #ccs=1, valid=1
+Before: #Darts=3, #0-cells=3, #1-cells=3, #2-cells=1, #3-cells=1, #ccs=1, valid=1
+After insert_vertex 12 : #Darts=4, #0-cells=4, #1-cells=4, #2-cells=1, #3-cells=1, #ccs=1, valid=1
+************************* Test createAllBasicCases2 *************************
+Before: #Darts=2, #0-cells=2, #1-cells=1, #2-cells=2, #3-cells=1, #ccs=1, valid=1
+After insert_vertex 1 : #Darts=4, #0-cells=3, #1-cells=2, #2-cells=2, #3-cells=1, #ccs=1, valid=1
+Before: #Darts=2, #0-cells=1, #1-cells=1, #2-cells=2, #3-cells=1, #ccs=1, valid=1
+After insert_vertex 2 : #Darts=4, #0-cells=2, #1-cells=2, #2-cells=2, #3-cells=1, #ccs=1, valid=1
+Before: #Darts=3, #0-cells=3, #1-cells=2, #2-cells=2, #3-cells=1, #ccs=1, valid=1
+After insert_vertex 3 : #Darts=4, #0-cells=4, #1-cells=3, #2-cells=2, #3-cells=1, #ccs=1, valid=1
+Before: #Darts=3, #0-cells=3, #1-cells=2, #2-cells=2, #3-cells=1, #ccs=1, valid=1
+After insert_vertex 4 : #Darts=5, #0-cells=4, #1-cells=3, #2-cells=2, #3-cells=1, #ccs=1, valid=1
+Before: #Darts=3, #0-cells=2, #1-cells=2, #2-cells=2, #3-cells=1, #ccs=1, valid=1
+After insert_vertex 5 : #Darts=4, #0-cells=3, #1-cells=3, #2-cells=2, #3-cells=1, #ccs=1, valid=1
+Before: #Darts=4, #0-cells=2, #1-cells=2, #2-cells=3, #3-cells=1, #ccs=1, valid=1
+After insert_vertex 6 : #Darts=6, #0-cells=3, #1-cells=3, #2-cells=3, #3-cells=1, #ccs=1, valid=1
+Before: #Darts=5, #0-cells=4, #1-cells=3, #2-cells=3, #3-cells=1, #ccs=1, valid=1
+After insert_vertex 7 : #Darts=6, #0-cells=5, #1-cells=4, #2-cells=3, #3-cells=1, #ccs=1, valid=1
+Before: #Darts=5, #0-cells=4, #1-cells=3, #2-cells=3, #3-cells=1, #ccs=1, valid=1
+After insert_vertex 8 : #Darts=7, #0-cells=5, #1-cells=4, #2-cells=3, #3-cells=1, #ccs=1, valid=1
+Before: #Darts=4, #0-cells=3, #1-cells=3, #2-cells=2, #3-cells=1, #ccs=1, valid=1
+After insert_vertex 9 : #Darts=6, #0-cells=4, #1-cells=4, #2-cells=2, #3-cells=1, #ccs=1, valid=1
+************************* Test createAllBasicCases2<3> *************************
+Before: #Darts=4, #0-cells=2, #1-cells=1, #2-cells=2, #3-cells=2, #ccs=1, valid=1
+After insert_vertex 1 : #Darts=8, #0-cells=3, #1-cells=2, #2-cells=2, #3-cells=2, #ccs=1, valid=1
+Before: #Darts=4, #0-cells=1, #1-cells=1, #2-cells=2, #3-cells=2, #ccs=1, valid=1
+After insert_vertex 2 : #Darts=8, #0-cells=2, #1-cells=2, #2-cells=2, #3-cells=2, #ccs=1, valid=1
+Before: #Darts=6, #0-cells=3, #1-cells=2, #2-cells=2, #3-cells=1, #ccs=1, valid=1
+After insert_vertex 3 : #Darts=8, #0-cells=4, #1-cells=3, #2-cells=2, #3-cells=1, #ccs=1, valid=1
+Before: #Darts=6, #0-cells=3, #1-cells=2, #2-cells=2, #3-cells=1, #ccs=1, valid=1
+After insert_vertex 4 : #Darts=10, #0-cells=4, #1-cells=3, #2-cells=2, #3-cells=1, #ccs=1, valid=1
+Before: #Darts=6, #0-cells=2, #1-cells=2, #2-cells=2, #3-cells=1, #ccs=1, valid=1
+After insert_vertex 5 : #Darts=8, #0-cells=3, #1-cells=3, #2-cells=2, #3-cells=1, #ccs=1, valid=1
+Before: #Darts=8, #0-cells=2, #1-cells=2, #2-cells=3, #3-cells=2, #ccs=1, valid=1
+After insert_vertex 6 : #Darts=12, #0-cells=3, #1-cells=3, #2-cells=3, #3-cells=2, #ccs=1, valid=1
+Before: #Darts=10, #0-cells=4, #1-cells=3, #2-cells=3, #3-cells=1, #ccs=1, valid=1
+After insert_vertex 7 : #Darts=12, #0-cells=5, #1-cells=4, #2-cells=3, #3-cells=1, #ccs=1, valid=1
+Before: #Darts=10, #0-cells=4, #1-cells=3, #2-cells=3, #3-cells=1, #ccs=1, valid=1
+After insert_vertex 8 : #Darts=14, #0-cells=5, #1-cells=4, #2-cells=3, #3-cells=1, #ccs=1, valid=1
+Before: #Darts=8, #0-cells=3, #1-cells=3, #2-cells=2, #3-cells=1, #ccs=1, valid=1
+After insert_vertex 9 : #Darts=12, #0-cells=4, #1-cells=4, #2-cells=2, #3-cells=1, #ccs=1, valid=1
+************************* Test different cases *************************
+#Darts=1, #0-cells=1, #1-cells=1, #2-cells=1, #3-cells=1, #ccs=1, valid=1
+insert vertex1: #Darts=2, #0-cells=2, #1-cells=2, #2-cells=1, #3-cells=1, #ccs=1, valid=1
+#Darts=1, #0-cells=1, #1-cells=1, #2-cells=1, #3-cells=1, #ccs=1, valid=1
+insert vertex2: #Darts=2, #0-cells=2, #1-cells=2, #2-cells=1, #3-cells=1, #ccs=1, valid=1
+#Darts=2, #0-cells=2, #1-cells=1, #2-cells=2, #3-cells=1, #ccs=1, valid=1
+insert vertex3: #Darts=4, #0-cells=3, #1-cells=2, #2-cells=2, #3-cells=1, #ccs=1, valid=1
+#Darts=2, #0-cells=1, #1-cells=1, #2-cells=2, #3-cells=1, #ccs=1, valid=1
+insert vertex4: #Darts=4, #0-cells=2, #1-cells=2, #2-cells=2, #3-cells=1, #ccs=1, valid=1
+#Darts=2, #0-cells=1, #1-cells=1, #2-cells=2, #3-cells=1, #ccs=1, valid=1
+insert vertex5: #Darts=4, #0-cells=2, #1-cells=2, #2-cells=2, #3-cells=1, #ccs=1, valid=1
+#Darts=3, #0-cells=3, #1-cells=3, #2-cells=1, #3-cells=1, #ccs=1, valid=1
+insert vertex6: #Darts=4, #0-cells=4, #1-cells=4, #2-cells=1, #3-cells=1, #ccs=1, valid=1
+insert vertex7: #Darts=5, #0-cells=5, #1-cells=5, #2-cells=1, #3-cells=1, #ccs=1, valid=1
+insert vertex8: #Darts=6, #0-cells=6, #1-cells=6, #2-cells=1, #3-cells=1, #ccs=1, valid=1
+#Darts=6, #0-cells=3, #1-cells=3, #2-cells=1, #3-cells=2, #ccs=1, valid=1
+insert vertex9: #Darts=8, #0-cells=4, #1-cells=4, #2-cells=1, #3-cells=2, #ccs=1, valid=1
+insert vertex10: #Darts=10, #0-cells=5, #1-cells=5, #2-cells=1, #3-cells=2, #ccs=1, valid=1
+insert vertex11: #Darts=12, #0-cells=6, #1-cells=6, #2-cells=1, #3-cells=2, #ccs=1, valid=1
+#Darts=6, #0-cells=4, #1-cells=5, #2-cells=2, #3-cells=1, #ccs=1, valid=1
+insert vertex12: #Darts=8, #0-cells=5, #1-cells=6, #2-cells=2, #3-cells=1, #ccs=1, valid=1
+#Darts=6, #0-cells=4, #1-cells=5, #2-cells=2, #3-cells=1, #ccs=1, valid=1
+insert vertex13: #Darts=7, #0-cells=5, #1-cells=6, #2-cells=2, #3-cells=1, #ccs=1, valid=1
+insert vertex14: #Darts=9, #0-cells=6, #1-cells=7, #2-cells=2, #3-cells=1, #ccs=1, valid=1
+#Darts=48, #0-cells=12, #1-cells=20, #2-cells=11, #3-cells=2, #ccs=1, valid=1
+insert vertex15: #Darts=52, #0-cells=13, #1-cells=21, #2-cells=11, #3-cells=2, #ccs=1, valid=1
+insert vertex16: #Darts=56, #0-cells=14, #1-cells=22, #2-cells=11, #3-cells=2, #ccs=1, valid=1
+insert vertex17: #Darts=60, #0-cells=15, #1-cells=23, #2-cells=11, #3-cells=2, #ccs=1, valid=1
+insert vertex18: #Darts=64, #0-cells=16, #1-cells=24, #2-cells=11, #3-cells=2, #ccs=1, valid=1
+***************************** TEST INSERT VERTEX 3D DONE.
+***************************** TEST INSERT EDGE 3D:
+#Darts=4, #0-cells=1, #1-cells=1, #2-cells=2, #3-cells=2, #ccs=1, valid=1
+#Darts=4, #0-cells=4, #1-cells=4, #2-cells=1, #3-cells=1, #ccs=1, valid=1
+insert edge4: #Darts=6, #0-cells=4, #1-cells=5, #2-cells=2, #3-cells=1, #ccs=1, valid=1
+#Darts=8, #0-cells=4, #1-cells=4, #2-cells=1, #3-cells=2, #ccs=1, valid=1
+insert edge5: #Darts=12, #0-cells=4, #1-cells=5, #2-cells=2, #3-cells=2, #ccs=1, valid=1
+#Darts=8, #0-cells=6, #1-cells=7, #2-cells=2, #3-cells=1, #ccs=1, valid=1
+insert edge6: #Darts=10, #0-cells=6, #1-cells=8, #2-cells=3, #3-cells=1, #ccs=1, valid=1
+***************************** TEST INSERT EDGE 3D DONE.
+***************************** TEST INSERT DANGLING EDGE 3D:
+#Darts=1, #0-cells=1, #1-cells=1, #2-cells=1, #3-cells=1, #ccs=1, valid=1
+insert dangling edge1: #Darts=3, #0-cells=2, #1-cells=2, #2-cells=1, #3-cells=1, #ccs=1, valid=1
+#Darts=2, #0-cells=1, #1-cells=1, #2-cells=2, #3-cells=1, #ccs=1, valid=1
+insert dangling edge2: #Darts=4, #0-cells=2, #1-cells=2, #2-cells=2, #3-cells=1, #ccs=1, valid=1
+#Darts=4, #0-cells=1, #1-cells=1, #2-cells=2, #3-cells=2, #ccs=1, valid=1
+insert dangling edge3: #Darts=8, #0-cells=2, #1-cells=2, #2-cells=2, #3-cells=2, #ccs=1, valid=1
+#Darts=4, #0-cells=4, #1-cells=4, #2-cells=1, #3-cells=1, #ccs=1, valid=1
+insert dangling edge4: #Darts=6, #0-cells=5, #1-cells=5, #2-cells=1, #3-cells=1, #ccs=1, valid=1
+#Darts=8, #0-cells=4, #1-cells=4, #2-cells=1, #3-cells=2, #ccs=1, valid=1
+insert dangling edge5: #Darts=12, #0-cells=5, #1-cells=5, #2-cells=1, #3-cells=2, #ccs=1, valid=1
+***************************** TEST INSERT DANGLING EDGE 3D DONE.
+***************************** TEST INSERT FACET 3D:
+#Darts=4, #0-cells=4, #1-cells=4, #2-cells=1, #3-cells=1, #ccs=1, valid=1
+insert facet1: #Darts=8, #0-cells=4, #1-cells=4, #2-cells=2, #3-cells=1, #ccs=1, valid=1
+#Darts=6, #0-cells=4, #1-cells=5, #2-cells=2, #3-cells=1, #ccs=1, valid=1
+insert facet2: #Darts=12, #0-cells=4, #1-cells=5, #2-cells=3, #3-cells=2, #ccs=1, valid=1
+#Darts=24, #0-cells=8, #1-cells=12, #2-cells=6, #3-cells=1, #ccs=1, valid=1
+remove facet3: #Darts=20, #0-cells=8, #1-cells=12, #2-cells=5, #3-cells=1, #ccs=1, valid=1
+insert facet3: #Darts=24, #0-cells=8, #1-cells=12, #2-cells=6, #3-cells=1, #ccs=1, valid=1
+#Darts=48, #0-cells=12, #1-cells=20, #2-cells=11, #3-cells=2, #ccs=1, valid=1
+remove facet4: #Darts=40, #0-cells=12, #1-cells=20, #2-cells=10, #3-cells=1, #ccs=1, valid=1
+insert facet4: #Darts=48, #0-cells=12, #1-cells=20, #2-cells=11, #3-cells=2, #ccs=1, valid=1
+***************************** TEST INSERT FACET 3D DONE.
+***************************** TEST BASIC CREATION 3D:
+Map valid.
+Nombre de brins : 2
+***************************** TEST BASIC CREATION 3D DONE.
+***************************** TEST CREATION WITH EMBEDDING 3D:
+Parcours all : Parcours all : 
+
+Nombre de brins : 16
+Parcours de CC : 
+New facet : 
+New facet : 
+New facet : 
+New facet : 
+Parcours all : Map valid.
+***************************** TEST CREATION WITH EMBEDDING 3D DONE.
+***************************** TEST SEW 3D:
+Parcours all : Parcours all : Map valid.
+***************************** TEST SEW 3D DONE.
+***************************** TEST TRIANGULATION_2 3D:
+Parcours all avant la triangulation: Parcours all après la triangulation: Map valid.
+***************************** TEST TRIANGULATION_2 3D DONE.
+***************************** TEST TRIANGULATION_3 3D:
+map valid: 1
+Parcours all avant la triangulation: map valid: 1
+Parcours all après la triangulation: Map valid.
+Parcours all après la décousure: Map valid.
+***************************** TEST TRIANGULATION_3 3D DONE.
+***************************** TEST ITERATORS 3D:
+Nombre de brins : 36000, Nombre de CC : 1000
+Toute la carte marquée ? 1
+Parcours à la stl : #cellules=18000., #brins=36000.
+Toute la carte marquée ? 1
+Different const_iterators: 203000
+***************************** TEST ITERATORS 3D DONE.
+***************************** TEST INCIDENCE ITERATORS 3D:
+Map valid : 1
+***************************** TEST INCIDENCE ITERATORS 3D DONE.
+***************************** TEST VERTEX REMOVAL 3D:
+#Darts=1, #0-cells=1, #1-cells=1, #2-cells=1, #3-cells=1, #ccs=1, valid=1
+remove vertex1: #Darts=0, #0-cells=0, #1-cells=0, #2-cells=0, #3-cells=0, #ccs=0, valid=1
+#Darts=1, #0-cells=1, #1-cells=1, #2-cells=1, #3-cells=1, #ccs=1, valid=1
+remove vertex2: #Darts=0, #0-cells=0, #1-cells=0, #2-cells=0, #3-cells=0, #ccs=0, valid=1
+#Darts=2, #0-cells=2, #1-cells=1, #2-cells=2, #3-cells=1, #ccs=1, valid=1
+remove vertex3: #Darts=1, #0-cells=1, #1-cells=1, #2-cells=1, #3-cells=1, #ccs=1, valid=1
+remove vertex4: #Darts=0, #0-cells=0, #1-cells=0, #2-cells=0, #3-cells=0, #ccs=0, valid=1
+#Darts=2, #0-cells=1, #1-cells=1, #2-cells=2, #3-cells=1, #ccs=1, valid=1
+remove vertex5: #Darts=0, #0-cells=0, #1-cells=0, #2-cells=0, #3-cells=0, #ccs=0, valid=1
+#Darts=3, #0-cells=3, #1-cells=3, #2-cells=1, #3-cells=1, #ccs=1, valid=1
+remove vertex6: #Darts=2, #0-cells=2, #1-cells=2, #2-cells=1, #3-cells=1, #ccs=1, valid=1
+remove vertex7: #Darts=1, #0-cells=1, #1-cells=1, #2-cells=1, #3-cells=1, #ccs=1, valid=1
+remove vertex8: #Darts=0, #0-cells=0, #1-cells=0, #2-cells=0, #3-cells=0, #ccs=0, valid=1
+#Darts=6, #0-cells=3, #1-cells=3, #2-cells=1, #3-cells=2, #ccs=1, valid=1
+remove vertex9: #Darts=4, #0-cells=2, #1-cells=2, #2-cells=1, #3-cells=2, #ccs=1, valid=1
+remove vertex10: #Darts=2, #0-cells=1, #1-cells=1, #2-cells=1, #3-cells=2, #ccs=1, valid=1
+remove vertex11: #Darts=0, #0-cells=0, #1-cells=0, #2-cells=0, #3-cells=0, #ccs=0, valid=1
+***************************** TEST VERTEX REMOVAL 3D DONE.
+***************************** TEST EDGE REMOVAL 3D:
+#Darts=1, #0-cells=1, #1-cells=1, #2-cells=1, #3-cells=1, #ccs=1, valid=1
+remove edge1: #Darts=0, #0-cells=0, #1-cells=0, #2-cells=0, #3-cells=0, #ccs=0, valid=1
+#Darts=1, #0-cells=1, #1-cells=1, #2-cells=1, #3-cells=1, #ccs=1, valid=1
+remove edge2: #Darts=0, #0-cells=0, #1-cells=0, #2-cells=0, #3-cells=0, #ccs=0, valid=1
+#Darts=2, #0-cells=2, #1-cells=1, #2-cells=2, #3-cells=1, #ccs=1, valid=1
+remove edge3: #Darts=0, #0-cells=0, #1-cells=0, #2-cells=0, #3-cells=0, #ccs=0, valid=1
+#Darts=2, #0-cells=1, #1-cells=1, #2-cells=2, #3-cells=1, #ccs=1, valid=1
+remove edge4: #Darts=0, #0-cells=0, #1-cells=0, #2-cells=0, #3-cells=0, #ccs=0, valid=1
+#Darts=2, #0-cells=1, #1-cells=1, #2-cells=2, #3-cells=1, #ccs=1, valid=1
+remove edge5: #Darts=0, #0-cells=0, #1-cells=0, #2-cells=0, #3-cells=0, #ccs=0, valid=1
+#Darts=3, #0-cells=3, #1-cells=3, #2-cells=1, #3-cells=1, #ccs=1, valid=1
+remove edge6: #Darts=2, #0-cells=2, #1-cells=2, #2-cells=1, #3-cells=1, #ccs=1, valid=1
+remove edge7: #Darts=1, #0-cells=1, #1-cells=1, #2-cells=1, #3-cells=1, #ccs=1, valid=1
+remove edge8: #Darts=0, #0-cells=0, #1-cells=0, #2-cells=0, #3-cells=0, #ccs=0, valid=1
+#Darts=6, #0-cells=3, #1-cells=3, #2-cells=1, #3-cells=2, #ccs=1, valid=1
+remove edge9: #Darts=4, #0-cells=3, #1-cells=2, #2-cells=1, #3-cells=2, #ccs=1, valid=1
+remove edge10: #Darts=2, #0-cells=2, #1-cells=1, #2-cells=1, #3-cells=2, #ccs=1, valid=1
+remove edge11: #Darts=0, #0-cells=0, #1-cells=0, #2-cells=0, #3-cells=0, #ccs=0, valid=1
+#Darts=6, #0-cells=4, #1-cells=5, #2-cells=2, #3-cells=1, #ccs=1, valid=1
+remove edge12: #Darts=4, #0-cells=4, #1-cells=4, #2-cells=1, #3-cells=1, #ccs=1, valid=1
+#Darts=10, #0-cells=8, #1-cells=9, #2-cells=3, #3-cells=2, #ccs=2, valid=1
+remove edge13: #Darts=9, #0-cells=8, #1-cells=8, #2-cells=3, #3-cells=2, #ccs=2, valid=1
+remove edge14: #Darts=7, #0-cells=7, #1-cells=7, #2-cells=2, #3-cells=2, #ccs=2, valid=1
+#Darts=55, #0-cells=19, #1-cells=27, #2-cells=13, #3-cells=4, #ccs=3, valid=1
+#Darts=71, #0-cells=20, #1-cells=31, #2-cells=16, #3-cells=4, #ccs=3, valid=1
+remove edge15: #Darts=67, #0-cells=20, #1-cells=30, #2-cells=15, #3-cells=4, #ccs=3, valid=1
+remove edge15: #Darts=63, #0-cells=20, #1-cells=29, #2-cells=14, #3-cells=4, #ccs=3, valid=1
+remove edge15: #Darts=59, #0-cells=20, #1-cells=28, #2-cells=13, #3-cells=4, #ccs=3, valid=1
+remove edge15: #Darts=55, #0-cells=19, #1-cells=27, #2-cells=13, #3-cells=4, #ccs=3, valid=1
+***************************** TEST EDGE REMOVAL 3D DONE.
+***************************** TEST FACET REMOVAL 3D:
+#Darts=1, #0-cells=1, #1-cells=1, #2-cells=1, #3-cells=1, #ccs=1, valid=1
+remove facet1: #Darts=0, #0-cells=0, #1-cells=0, #2-cells=0, #3-cells=0, #ccs=0, valid=1
+#Darts=3, #0-cells=3, #1-cells=3, #2-cells=1, #3-cells=1, #ccs=1, valid=1
+remove facet2: #Darts=0, #0-cells=0, #1-cells=0, #2-cells=0, #3-cells=0, #ccs=0, valid=1
+#Darts=6, #0-cells=3, #1-cells=3, #2-cells=1, #3-cells=2, #ccs=1, valid=1
+remove facet3: #Darts=0, #0-cells=0, #1-cells=0, #2-cells=0, #3-cells=0, #ccs=0, valid=1
+#Darts=24, #0-cells=8, #1-cells=12, #2-cells=6, #3-cells=1, #ccs=1, valid=1
+remove facet4: #Darts=20, #0-cells=8, #1-cells=12, #2-cells=5, #3-cells=1, #ccs=1, valid=1
+remove facet5: #Darts=16, #0-cells=8, #1-cells=11, #2-cells=4, #3-cells=1, #ccs=1, valid=1
+remove facet6: #Darts=12, #0-cells=8, #1-cells=10, #2-cells=3, #3-cells=1, #ccs=1, valid=1
+remove facet7: #Darts=8, #0-cells=6, #1-cells=7, #2-cells=2, #3-cells=1, #ccs=1, valid=1
+remove facet8: #Darts=4, #0-cells=4, #1-cells=4, #2-cells=1, #3-cells=1, #ccs=1, valid=1
+remove facet9: #Darts=0, #0-cells=0, #1-cells=0, #2-cells=0, #3-cells=0, #ccs=0, valid=1
+#Darts=48, #0-cells=12, #1-cells=20, #2-cells=11, #3-cells=2, #ccs=1, valid=1
+remove facet10: #Darts=44, #0-cells=12, #1-cells=20, #2-cells=10, #3-cells=2, #ccs=1, valid=1
+remove facet11: #Darts=36, #0-cells=12, #1-cells=20, #2-cells=9, #3-cells=1, #ccs=1, valid=1
+remove edge12: #Darts=34, #0-cells=12, #1-cells=19, #2-cells=8, #3-cells=1, #ccs=1, valid=1
+#Darts=48, #0-cells=12, #1-cells=20, #2-cells=11, #3-cells=2, #ccs=1, valid=1
+#Darts=64, #0-cells=13, #1-cells=24, #2-cells=14, #3-cells=2, #ccs=1, valid=1
+remove facet13: #Darts=58, #0-cells=13, #1-cells=24, #2-cells=13, #3-cells=1, #ccs=1, valid=1
+remove facet13: #Darts=52, #0-cells=13, #1-cells=23, #2-cells=12, #3-cells=1, #ccs=1, valid=1
+remove facet13: #Darts=46, #0-cells=13, #1-cells=22, #2-cells=11, #3-cells=1, #ccs=1, valid=1
+remove facet13: #Darts=40, #0-cells=12, #1-cells=20, #2-cells=10, #3-cells=1, #ccs=1, valid=1
+***************************** TEST FACET REMOVAL 3D DONE.
+***************************** TEST INSERT VERTEX 3D:
+************************* Test createAllBasicCases1 *************************
+Before: #Darts=1, #0-cells=1, #1-cells=1, #2-cells=1, #3-cells=1, #ccs=1, valid=1
+After insert_vertex 1 : #Darts=2, #0-cells=2, #1-cells=2, #2-cells=1, #3-cells=1, #ccs=1, valid=1
+Before: #Darts=1, #0-cells=1, #1-cells=1, #2-cells=1, #3-cells=1, #ccs=1, valid=1
+After insert_vertex 2 : #Darts=2, #0-cells=2, #1-cells=2, #2-cells=1, #3-cells=1, #ccs=1, valid=1
+Before: #Darts=2, #0-cells=2, #1-cells=2, #2-cells=1, #3-cells=1, #ccs=1, valid=1
+After insert_vertex 3 : #Darts=3, #0-cells=3, #1-cells=3, #2-cells=1, #3-cells=1, #ccs=1, valid=1
+Before: #Darts=2, #0-cells=2, #1-cells=2, #2-cells=1, #3-cells=1, #ccs=1, valid=1
+After insert_vertex 4 : #Darts=3, #0-cells=3, #1-cells=3, #2-cells=1, #3-cells=1, #ccs=1, valid=1
+Before: #Darts=2, #0-cells=2, #1-cells=2, #2-cells=1, #3-cells=1, #ccs=1, valid=1
+After insert_vertex 5 : #Darts=3, #0-cells=3, #1-cells=3, #2-cells=1, #3-cells=1, #ccs=1, valid=1
+Before: #Darts=2, #0-cells=2, #1-cells=2, #2-cells=1, #3-cells=1, #ccs=1, valid=1
+After insert_vertex 6 : #Darts=3, #0-cells=3, #1-cells=3, #2-cells=1, #3-cells=1, #ccs=1, valid=1
+Before: #Darts=3, #0-cells=3, #1-cells=3, #2-cells=1, #3-cells=1, #ccs=1, valid=1
+After insert_vertex 7 : #Darts=4, #0-cells=4, #1-cells=4, #2-cells=1, #3-cells=1, #ccs=1, valid=1
+Before: #Darts=3, #0-cells=3, #1-cells=3, #2-cells=1, #3-cells=1, #ccs=1, valid=1
+After insert_vertex 8 : #Darts=4, #0-cells=4, #1-cells=4, #2-cells=1, #3-cells=1, #ccs=1, valid=1
+Before: #Darts=3, #0-cells=3, #1-cells=3, #2-cells=1, #3-cells=1, #ccs=1, valid=1
+After insert_vertex 9 : #Darts=4, #0-cells=4, #1-cells=4, #2-cells=1, #3-cells=1, #ccs=1, valid=1
+Before: #Darts=3, #0-cells=3, #1-cells=3, #2-cells=1, #3-cells=1, #ccs=1, valid=1
+After insert_vertex 10 : #Darts=4, #0-cells=4, #1-cells=4, #2-cells=1, #3-cells=1, #ccs=1, valid=1
+Before: #Darts=3, #0-cells=3, #1-cells=3, #2-cells=1, #3-cells=1, #ccs=1, valid=1
+After insert_vertex 11 : #Darts=4, #0-cells=4, #1-cells=4, #2-cells=1, #3-cells=1, #ccs=1, valid=1
+Before: #Darts=3, #0-cells=3, #1-cells=3, #2-cells=1, #3-cells=1, #ccs=1, valid=1
+After insert_vertex 12 : #Darts=4, #0-cells=4, #1-cells=4, #2-cells=1, #3-cells=1, #ccs=1, valid=1
+************************* Test createAllBasicCases2 *************************
+Before: #Darts=2, #0-cells=2, #1-cells=1, #2-cells=2, #3-cells=1, #ccs=1, valid=1
+After insert_vertex 1 : #Darts=4, #0-cells=3, #1-cells=2, #2-cells=2, #3-cells=1, #ccs=1, valid=1
+Before: #Darts=2, #0-cells=1, #1-cells=1, #2-cells=2, #3-cells=1, #ccs=1, valid=1
+After insert_vertex 2 : #Darts=4, #0-cells=2, #1-cells=2, #2-cells=2, #3-cells=1, #ccs=1, valid=1
+Before: #Darts=3, #0-cells=3, #1-cells=2, #2-cells=2, #3-cells=1, #ccs=1, valid=1
+After insert_vertex 3 : #Darts=4, #0-cells=4, #1-cells=3, #2-cells=2, #3-cells=1, #ccs=1, valid=1
+Before: #Darts=3, #0-cells=3, #1-cells=2, #2-cells=2, #3-cells=1, #ccs=1, valid=1
+After insert_vertex 4 : #Darts=5, #0-cells=4, #1-cells=3, #2-cells=2, #3-cells=1, #ccs=1, valid=1
+Before: #Darts=3, #0-cells=2, #1-cells=2, #2-cells=2, #3-cells=1, #ccs=1, valid=1
+After insert_vertex 5 : #Darts=4, #0-cells=3, #1-cells=3, #2-cells=2, #3-cells=1, #ccs=1, valid=1
+Before: #Darts=4, #0-cells=2, #1-cells=2, #2-cells=3, #3-cells=1, #ccs=1, valid=1
+After insert_vertex 6 : #Darts=6, #0-cells=3, #1-cells=3, #2-cells=3, #3-cells=1, #ccs=1, valid=1
+Before: #Darts=5, #0-cells=4, #1-cells=3, #2-cells=3, #3-cells=1, #ccs=1, valid=1
+After insert_vertex 7 : #Darts=6, #0-cells=5, #1-cells=4, #2-cells=3, #3-cells=1, #ccs=1, valid=1
+Before: #Darts=5, #0-cells=4, #1-cells=3, #2-cells=3, #3-cells=1, #ccs=1, valid=1
+After insert_vertex 8 : #Darts=7, #0-cells=5, #1-cells=4, #2-cells=3, #3-cells=1, #ccs=1, valid=1
+Before: #Darts=4, #0-cells=3, #1-cells=3, #2-cells=2, #3-cells=1, #ccs=1, valid=1
+After insert_vertex 9 : #Darts=6, #0-cells=4, #1-cells=4, #2-cells=2, #3-cells=1, #ccs=1, valid=1
+************************* Test createAllBasicCases2<3> *************************
+Before: #Darts=4, #0-cells=2, #1-cells=1, #2-cells=2, #3-cells=2, #ccs=1, valid=1
+After insert_vertex 1 : #Darts=8, #0-cells=3, #1-cells=2, #2-cells=2, #3-cells=2, #ccs=1, valid=1
+Before: #Darts=4, #0-cells=1, #1-cells=1, #2-cells=2, #3-cells=2, #ccs=1, valid=1
+After insert_vertex 2 : #Darts=8, #0-cells=2, #1-cells=2, #2-cells=2, #3-cells=2, #ccs=1, valid=1
+Before: #Darts=6, #0-cells=3, #1-cells=2, #2-cells=2, #3-cells=1, #ccs=1, valid=1
+After insert_vertex 3 : #Darts=8, #0-cells=4, #1-cells=3, #2-cells=2, #3-cells=1, #ccs=1, valid=1
+Before: #Darts=6, #0-cells=3, #1-cells=2, #2-cells=2, #3-cells=1, #ccs=1, valid=1
+After insert_vertex 4 : #Darts=10, #0-cells=4, #1-cells=3, #2-cells=2, #3-cells=1, #ccs=1, valid=1
+Before: #Darts=6, #0-cells=2, #1-cells=2, #2-cells=2, #3-cells=1, #ccs=1, valid=1
+After insert_vertex 5 : #Darts=8, #0-cells=3, #1-cells=3, #2-cells=2, #3-cells=1, #ccs=1, valid=1
+Before: #Darts=8, #0-cells=2, #1-cells=2, #2-cells=3, #3-cells=2, #ccs=1, valid=1
+After insert_vertex 6 : #Darts=12, #0-cells=3, #1-cells=3, #2-cells=3, #3-cells=2, #ccs=1, valid=1
+Before: #Darts=10, #0-cells=4, #1-cells=3, #2-cells=3, #3-cells=1, #ccs=1, valid=1
+After insert_vertex 7 : #Darts=12, #0-cells=5, #1-cells=4, #2-cells=3, #3-cells=1, #ccs=1, valid=1
+Before: #Darts=10, #0-cells=4, #1-cells=3, #2-cells=3, #3-cells=1, #ccs=1, valid=1
+After insert_vertex 8 : #Darts=14, #0-cells=5, #1-cells=4, #2-cells=3, #3-cells=1, #ccs=1, valid=1
+Before: #Darts=8, #0-cells=3, #1-cells=3, #2-cells=2, #3-cells=1, #ccs=1, valid=1
+After insert_vertex 9 : #Darts=12, #0-cells=4, #1-cells=4, #2-cells=2, #3-cells=1, #ccs=1, valid=1
+************************* Test different cases *************************
+#Darts=1, #0-cells=1, #1-cells=1, #2-cells=1, #3-cells=1, #ccs=1, valid=1
+insert vertex1: #Darts=2, #0-cells=2, #1-cells=2, #2-cells=1, #3-cells=1, #ccs=1, valid=1
+#Darts=1, #0-cells=1, #1-cells=1, #2-cells=1, #3-cells=1, #ccs=1, valid=1
+insert vertex2: #Darts=2, #0-cells=2, #1-cells=2, #2-cells=1, #3-cells=1, #ccs=1, valid=1
+#Darts=2, #0-cells=2, #1-cells=1, #2-cells=2, #3-cells=1, #ccs=1, valid=1
+insert vertex3: #Darts=4, #0-cells=3, #1-cells=2, #2-cells=2, #3-cells=1, #ccs=1, valid=1
+#Darts=2, #0-cells=1, #1-cells=1, #2-cells=2, #3-cells=1, #ccs=1, valid=1
+insert vertex4: #Darts=4, #0-cells=2, #1-cells=2, #2-cells=2, #3-cells=1, #ccs=1, valid=1
+#Darts=2, #0-cells=1, #1-cells=1, #2-cells=2, #3-cells=1, #ccs=1, valid=1
+insert vertex5: #Darts=4, #0-cells=2, #1-cells=2, #2-cells=2, #3-cells=1, #ccs=1, valid=1
+#Darts=3, #0-cells=3, #1-cells=3, #2-cells=1, #3-cells=1, #ccs=1, valid=1
+insert vertex6: #Darts=4, #0-cells=4, #1-cells=4, #2-cells=1, #3-cells=1, #ccs=1, valid=1
+insert vertex7: #Darts=5, #0-cells=5, #1-cells=5, #2-cells=1, #3-cells=1, #ccs=1, valid=1
+insert vertex8: #Darts=6, #0-cells=6, #1-cells=6, #2-cells=1, #3-cells=1, #ccs=1, valid=1
+#Darts=6, #0-cells=3, #1-cells=3, #2-cells=1, #3-cells=2, #ccs=1, valid=1
+insert vertex9: #Darts=8, #0-cells=4, #1-cells=4, #2-cells=1, #3-cells=2, #ccs=1, valid=1
+insert vertex10: #Darts=10, #0-cells=5, #1-cells=5, #2-cells=1, #3-cells=2, #ccs=1, valid=1
+insert vertex11: #Darts=12, #0-cells=6, #1-cells=6, #2-cells=1, #3-cells=2, #ccs=1, valid=1
+#Darts=6, #0-cells=4, #1-cells=5, #2-cells=2, #3-cells=1, #ccs=1, valid=1
+insert vertex12: #Darts=8, #0-cells=5, #1-cells=6, #2-cells=2, #3-cells=1, #ccs=1, valid=1
+#Darts=6, #0-cells=4, #1-cells=5, #2-cells=2, #3-cells=1, #ccs=1, valid=1
+insert vertex13: #Darts=7, #0-cells=5, #1-cells=6, #2-cells=2, #3-cells=1, #ccs=1, valid=1
+insert vertex14: #Darts=9, #0-cells=6, #1-cells=7, #2-cells=2, #3-cells=1, #ccs=1, valid=1
+#Darts=48, #0-cells=12, #1-cells=20, #2-cells=11, #3-cells=2, #ccs=1, valid=1
+insert vertex15: #Darts=52, #0-cells=13, #1-cells=21, #2-cells=11, #3-cells=2, #ccs=1, valid=1
+insert vertex16: #Darts=56, #0-cells=14, #1-cells=22, #2-cells=11, #3-cells=2, #ccs=1, valid=1
+insert vertex17: #Darts=60, #0-cells=15, #1-cells=23, #2-cells=11, #3-cells=2, #ccs=1, valid=1
+insert vertex18: #Darts=64, #0-cells=16, #1-cells=24, #2-cells=11, #3-cells=2, #ccs=1, valid=1
+***************************** TEST INSERT VERTEX 3D DONE.
+***************************** TEST INSERT EDGE 3D:
+#Darts=4, #0-cells=1, #1-cells=1, #2-cells=2, #3-cells=2, #ccs=1, valid=1
+#Darts=4, #0-cells=4, #1-cells=4, #2-cells=1, #3-cells=1, #ccs=1, valid=1
+insert edge4: #Darts=6, #0-cells=4, #1-cells=5, #2-cells=2, #3-cells=1, #ccs=1, valid=1
+#Darts=8, #0-cells=4, #1-cells=4, #2-cells=1, #3-cells=2, #ccs=1, valid=1
+insert edge5: #Darts=12, #0-cells=4, #1-cells=5, #2-cells=2, #3-cells=2, #ccs=1, valid=1
+#Darts=8, #0-cells=6, #1-cells=7, #2-cells=2, #3-cells=1, #ccs=1, valid=1
+insert edge6: #Darts=10, #0-cells=6, #1-cells=8, #2-cells=3, #3-cells=1, #ccs=1, valid=1
+***************************** TEST INSERT EDGE 3D DONE.
+***************************** TEST INSERT DANGLING EDGE 3D:
+#Darts=1, #0-cells=1, #1-cells=1, #2-cells=1, #3-cells=1, #ccs=1, valid=1
+insert dangling edge1: #Darts=3, #0-cells=2, #1-cells=2, #2-cells=1, #3-cells=1, #ccs=1, valid=1
+#Darts=2, #0-cells=1, #1-cells=1, #2-cells=2, #3-cells=1, #ccs=1, valid=1
+insert dangling edge2: #Darts=4, #0-cells=2, #1-cells=2, #2-cells=2, #3-cells=1, #ccs=1, valid=1
+#Darts=4, #0-cells=1, #1-cells=1, #2-cells=2, #3-cells=2, #ccs=1, valid=1
+insert dangling edge3: #Darts=8, #0-cells=2, #1-cells=2, #2-cells=2, #3-cells=2, #ccs=1, valid=1
+#Darts=4, #0-cells=4, #1-cells=4, #2-cells=1, #3-cells=1, #ccs=1, valid=1
+insert dangling edge4: #Darts=6, #0-cells=5, #1-cells=5, #2-cells=1, #3-cells=1, #ccs=1, valid=1
+#Darts=8, #0-cells=4, #1-cells=4, #2-cells=1, #3-cells=2, #ccs=1, valid=1
+insert dangling edge5: #Darts=12, #0-cells=5, #1-cells=5, #2-cells=1, #3-cells=2, #ccs=1, valid=1
+***************************** TEST INSERT DANGLING EDGE 3D DONE.
+***************************** TEST INSERT FACET 3D:
+#Darts=4, #0-cells=4, #1-cells=4, #2-cells=1, #3-cells=1, #ccs=1, valid=1
+insert facet1: #Darts=8, #0-cells=4, #1-cells=4, #2-cells=2, #3-cells=1, #ccs=1, valid=1
+#Darts=6, #0-cells=4, #1-cells=5, #2-cells=2, #3-cells=1, #ccs=1, valid=1
+insert facet2: #Darts=12, #0-cells=4, #1-cells=5, #2-cells=3, #3-cells=2, #ccs=1, valid=1
+#Darts=24, #0-cells=8, #1-cells=12, #2-cells=6, #3-cells=1, #ccs=1, valid=1
+remove facet3: #Darts=20, #0-cells=8, #1-cells=12, #2-cells=5, #3-cells=1, #ccs=1, valid=1
+insert facet3: #Darts=24, #0-cells=8, #1-cells=12, #2-cells=6, #3-cells=1, #ccs=1, valid=1
+#Darts=48, #0-cells=12, #1-cells=20, #2-cells=11, #3-cells=2, #ccs=1, valid=1
+remove facet4: #Darts=40, #0-cells=12, #1-cells=20, #2-cells=10, #3-cells=1, #ccs=1, valid=1
+insert facet4: #Darts=48, #0-cells=12, #1-cells=20, #2-cells=11, #3-cells=2, #ccs=1, valid=1
+***************************** TEST INSERT FACET 3D DONE.
+***************************** TEST BASIC CREATION 3D:
+Map valid.
+Nombre de brins : 2
+***************************** TEST BASIC CREATION 3D DONE.
+***************************** TEST CREATION WITH EMBEDDING 3D:
+Parcours all : Parcours all : 
+
+Nombre de brins : 16
+Parcours de CC : 
+New facet : 
+New facet : 
+New facet : 
+New facet : 
+Parcours all : Map valid.
+***************************** TEST CREATION WITH EMBEDDING 3D DONE.
+***************************** TEST SEW 3D:
+Parcours all : Parcours all : Map valid.
+***************************** TEST SEW 3D DONE.
+***************************** TEST TRIANGULATION_2 3D:
+Parcours all avant la triangulation: Parcours all après la triangulation: Map valid.
+***************************** TEST TRIANGULATION_2 3D DONE.
+***************************** TEST TRIANGULATION_3 3D:
+map valid: 1
+Parcours all avant la triangulation: map valid: 1
+Parcours all après la triangulation: Map valid.
+Parcours all après la décousure: Map valid.
+***************************** TEST TRIANGULATION_3 3D DONE.
+***************************** TEST ITERATORS 3D:
+Nombre de brins : 36000, Nombre de CC : 1000
+Toute la carte marquée ? 1
+Parcours à la stl : #cellules=18000., #brins=36000.
+Toute la carte marquée ? 1
+Different const_iterators: 203000
+***************************** TEST ITERATORS 3D DONE.
+***************************** TEST INCIDENCE ITERATORS 3D:
+Map valid : 1
+***************************** TEST INCIDENCE ITERATORS 3D DONE.
+***************************** TEST VERTEX REMOVAL 3D:
+#Darts=1, #0-cells=1, #1-cells=1, #2-cells=1, #3-cells=1, #ccs=1, valid=1
+remove vertex1: #Darts=0, #0-cells=0, #1-cells=0, #2-cells=0, #3-cells=0, #ccs=0, valid=1
+#Darts=1, #0-cells=1, #1-cells=1, #2-cells=1, #3-cells=1, #ccs=1, valid=1
+remove vertex2: #Darts=0, #0-cells=0, #1-cells=0, #2-cells=0, #3-cells=0, #ccs=0, valid=1
+#Darts=2, #0-cells=2, #1-cells=1, #2-cells=2, #3-cells=1, #ccs=1, valid=1
+remove vertex3: #Darts=1, #0-cells=1, #1-cells=1, #2-cells=1, #3-cells=1, #ccs=1, valid=1
+remove vertex4: #Darts=0, #0-cells=0, #1-cells=0, #2-cells=0, #3-cells=0, #ccs=0, valid=1
+#Darts=2, #0-cells=1, #1-cells=1, #2-cells=2, #3-cells=1, #ccs=1, valid=1
+remove vertex5: #Darts=0, #0-cells=0, #1-cells=0, #2-cells=0, #3-cells=0, #ccs=0, valid=1
+#Darts=3, #0-cells=3, #1-cells=3, #2-cells=1, #3-cells=1, #ccs=1, valid=1
+remove vertex6: #Darts=2, #0-cells=2, #1-cells=2, #2-cells=1, #3-cells=1, #ccs=1, valid=1
+remove vertex7: #Darts=1, #0-cells=1, #1-cells=1, #2-cells=1, #3-cells=1, #ccs=1, valid=1
+remove vertex8: #Darts=0, #0-cells=0, #1-cells=0, #2-cells=0, #3-cells=0, #ccs=0, valid=1
+#Darts=6, #0-cells=3, #1-cells=3, #2-cells=1, #3-cells=2, #ccs=1, valid=1
+remove vertex9: #Darts=4, #0-cells=2, #1-cells=2, #2-cells=1, #3-cells=2, #ccs=1, valid=1
+remove vertex10: #Darts=2, #0-cells=1, #1-cells=1, #2-cells=1, #3-cells=2, #ccs=1, valid=1
+remove vertex11: #Darts=0, #0-cells=0, #1-cells=0, #2-cells=0, #3-cells=0, #ccs=0, valid=1
+***************************** TEST VERTEX REMOVAL 3D DONE.
+***************************** TEST EDGE REMOVAL 3D:
+#Darts=1, #0-cells=1, #1-cells=1, #2-cells=1, #3-cells=1, #ccs=1, valid=1
+remove edge1: #Darts=0, #0-cells=0, #1-cells=0, #2-cells=0, #3-cells=0, #ccs=0, valid=1
+#Darts=1, #0-cells=1, #1-cells=1, #2-cells=1, #3-cells=1, #ccs=1, valid=1
+remove edge2: #Darts=0, #0-cells=0, #1-cells=0, #2-cells=0, #3-cells=0, #ccs=0, valid=1
+#Darts=2, #0-cells=2, #1-cells=1, #2-cells=2, #3-cells=1, #ccs=1, valid=1
+remove edge3: #Darts=0, #0-cells=0, #1-cells=0, #2-cells=0, #3-cells=0, #ccs=0, valid=1
+#Darts=2, #0-cells=1, #1-cells=1, #2-cells=2, #3-cells=1, #ccs=1, valid=1
+remove edge4: #Darts=0, #0-cells=0, #1-cells=0, #2-cells=0, #3-cells=0, #ccs=0, valid=1
+#Darts=2, #0-cells=1, #1-cells=1, #2-cells=2, #3-cells=1, #ccs=1, valid=1
+remove edge5: #Darts=0, #0-cells=0, #1-cells=0, #2-cells=0, #3-cells=0, #ccs=0, valid=1
+#Darts=3, #0-cells=3, #1-cells=3, #2-cells=1, #3-cells=1, #ccs=1, valid=1
+remove edge6: #Darts=2, #0-cells=2, #1-cells=2, #2-cells=1, #3-cells=1, #ccs=1, valid=1
+remove edge7: #Darts=1, #0-cells=1, #1-cells=1, #2-cells=1, #3-cells=1, #ccs=1, valid=1
+remove edge8: #Darts=0, #0-cells=0, #1-cells=0, #2-cells=0, #3-cells=0, #ccs=0, valid=1
+#Darts=6, #0-cells=3, #1-cells=3, #2-cells=1, #3-cells=2, #ccs=1, valid=1
+remove edge9: #Darts=4, #0-cells=3, #1-cells=2, #2-cells=1, #3-cells=2, #ccs=1, valid=1
+remove edge10: #Darts=2, #0-cells=2, #1-cells=1, #2-cells=1, #3-cells=2, #ccs=1, valid=1
+remove edge11: #Darts=0, #0-cells=0, #1-cells=0, #2-cells=0, #3-cells=0, #ccs=0, valid=1
+#Darts=6, #0-cells=4, #1-cells=5, #2-cells=2, #3-cells=1, #ccs=1, valid=1
+remove edge12: #Darts=4, #0-cells=4, #1-cells=4, #2-cells=1, #3-cells=1, #ccs=1, valid=1
+#Darts=10, #0-cells=8, #1-cells=9, #2-cells=3, #3-cells=2, #ccs=2, valid=1
+remove edge13: #Darts=9, #0-cells=8, #1-cells=8, #2-cells=3, #3-cells=2, #ccs=2, valid=1
+remove edge14: #Darts=7, #0-cells=7, #1-cells=7, #2-cells=2, #3-cells=2, #ccs=2, valid=1
+#Darts=55, #0-cells=19, #1-cells=27, #2-cells=13, #3-cells=4, #ccs=3, valid=1
+#Darts=71, #0-cells=20, #1-cells=31, #2-cells=16, #3-cells=4, #ccs=3, valid=1
+remove edge15: #Darts=67, #0-cells=20, #1-cells=30, #2-cells=15, #3-cells=4, #ccs=3, valid=1
+remove edge15: #Darts=63, #0-cells=20, #1-cells=29, #2-cells=14, #3-cells=4, #ccs=3, valid=1
+remove edge15: #Darts=59, #0-cells=20, #1-cells=28, #2-cells=13, #3-cells=4, #ccs=3, valid=1
+remove edge15: #Darts=55, #0-cells=19, #1-cells=27, #2-cells=13, #3-cells=4, #ccs=3, valid=1
+***************************** TEST EDGE REMOVAL 3D DONE.
+***************************** TEST FACET REMOVAL 3D:
+#Darts=1, #0-cells=1, #1-cells=1, #2-cells=1, #3-cells=1, #ccs=1, valid=1
+remove facet1: #Darts=0, #0-cells=0, #1-cells=0, #2-cells=0, #3-cells=0, #ccs=0, valid=1
+#Darts=3, #0-cells=3, #1-cells=3, #2-cells=1, #3-cells=1, #ccs=1, valid=1
+remove facet2: #Darts=0, #0-cells=0, #1-cells=0, #2-cells=0, #3-cells=0, #ccs=0, valid=1
+#Darts=6, #0-cells=3, #1-cells=3, #2-cells=1, #3-cells=2, #ccs=1, valid=1
+remove facet3: #Darts=0, #0-cells=0, #1-cells=0, #2-cells=0, #3-cells=0, #ccs=0, valid=1
+#Darts=24, #0-cells=8, #1-cells=12, #2-cells=6, #3-cells=1, #ccs=1, valid=1
+remove facet4: #Darts=20, #0-cells=8, #1-cells=12, #2-cells=5, #3-cells=1, #ccs=1, valid=1
+remove facet5: #Darts=16, #0-cells=8, #1-cells=11, #2-cells=4, #3-cells=1, #ccs=1, valid=1
+remove facet6: #Darts=12, #0-cells=8, #1-cells=10, #2-cells=3, #3-cells=1, #ccs=1, valid=1
+remove facet7: #Darts=8, #0-cells=6, #1-cells=7, #2-cells=2, #3-cells=1, #ccs=1, valid=1
+remove facet8: #Darts=4, #0-cells=4, #1-cells=4, #2-cells=1, #3-cells=1, #ccs=1, valid=1
+remove facet9: #Darts=0, #0-cells=0, #1-cells=0, #2-cells=0, #3-cells=0, #ccs=0, valid=1
+#Darts=48, #0-cells=12, #1-cells=20, #2-cells=11, #3-cells=2, #ccs=1, valid=1
+remove facet10: #Darts=44, #0-cells=12, #1-cells=20, #2-cells=10, #3-cells=2, #ccs=1, valid=1
+remove facet11: #Darts=36, #0-cells=12, #1-cells=20, #2-cells=9, #3-cells=1, #ccs=1, valid=1
+remove edge12: #Darts=34, #0-cells=12, #1-cells=19, #2-cells=8, #3-cells=1, #ccs=1, valid=1
+#Darts=48, #0-cells=12, #1-cells=20, #2-cells=11, #3-cells=2, #ccs=1, valid=1
+#Darts=64, #0-cells=13, #1-cells=24, #2-cells=14, #3-cells=2, #ccs=1, valid=1
+remove facet13: #Darts=58, #0-cells=13, #1-cells=24, #2-cells=13, #3-cells=1, #ccs=1, valid=1
+remove facet13: #Darts=52, #0-cells=13, #1-cells=23, #2-cells=12, #3-cells=1, #ccs=1, valid=1
+remove facet13: #Darts=46, #0-cells=13, #1-cells=22, #2-cells=11, #3-cells=1, #ccs=1, valid=1
+remove facet13: #Darts=40, #0-cells=12, #1-cells=20, #2-cells=10, #3-cells=1, #ccs=1, valid=1
+***************************** TEST FACET REMOVAL 3D DONE.
+***************************** TEST INSERT VERTEX 3D:
+************************* Test createAllBasicCases1 *************************
+Before: #Darts=1, #0-cells=1, #1-cells=1, #2-cells=1, #3-cells=1, #ccs=1, valid=1
+After insert_vertex 1 : #Darts=2, #0-cells=2, #1-cells=2, #2-cells=1, #3-cells=1, #ccs=1, valid=1
+Before: #Darts=1, #0-cells=1, #1-cells=1, #2-cells=1, #3-cells=1, #ccs=1, valid=1
+After insert_vertex 2 : #Darts=2, #0-cells=2, #1-cells=2, #2-cells=1, #3-cells=1, #ccs=1, valid=1
+Before: #Darts=2, #0-cells=2, #1-cells=2, #2-cells=1, #3-cells=1, #ccs=1, valid=1
+After insert_vertex 3 : #Darts=3, #0-cells=3, #1-cells=3, #2-cells=1, #3-cells=1, #ccs=1, valid=1
+Before: #Darts=2, #0-cells=2, #1-cells=2, #2-cells=1, #3-cells=1, #ccs=1, valid=1
+After insert_vertex 4 : #Darts=3, #0-cells=3, #1-cells=3, #2-cells=1, #3-cells=1, #ccs=1, valid=1
+Before: #Darts=2, #0-cells=2, #1-cells=2, #2-cells=1, #3-cells=1, #ccs=1, valid=1
+After insert_vertex 5 : #Darts=3, #0-cells=3, #1-cells=3, #2-cells=1, #3-cells=1, #ccs=1, valid=1
+Before: #Darts=2, #0-cells=2, #1-cells=2, #2-cells=1, #3-cells=1, #ccs=1, valid=1
+After insert_vertex 6 : #Darts=3, #0-cells=3, #1-cells=3, #2-cells=1, #3-cells=1, #ccs=1, valid=1
+Before: #Darts=3, #0-cells=3, #1-cells=3, #2-cells=1, #3-cells=1, #ccs=1, valid=1
+After insert_vertex 7 : #Darts=4, #0-cells=4, #1-cells=4, #2-cells=1, #3-cells=1, #ccs=1, valid=1
+Before: #Darts=3, #0-cells=3, #1-cells=3, #2-cells=1, #3-cells=1, #ccs=1, valid=1
+After insert_vertex 8 : #Darts=4, #0-cells=4, #1-cells=4, #2-cells=1, #3-cells=1, #ccs=1, valid=1
+Before: #Darts=3, #0-cells=3, #1-cells=3, #2-cells=1, #3-cells=1, #ccs=1, valid=1
+After insert_vertex 9 : #Darts=4, #0-cells=4, #1-cells=4, #2-cells=1, #3-cells=1, #ccs=1, valid=1
+Before: #Darts=3, #0-cells=3, #1-cells=3, #2-cells=1, #3-cells=1, #ccs=1, valid=1
+After insert_vertex 10 : #Darts=4, #0-cells=4, #1-cells=4, #2-cells=1, #3-cells=1, #ccs=1, valid=1
+Before: #Darts=3, #0-cells=3, #1-cells=3, #2-cells=1, #3-cells=1, #ccs=1, valid=1
+After insert_vertex 11 : #Darts=4, #0-cells=4, #1-cells=4, #2-cells=1, #3-cells=1, #ccs=1, valid=1
+Before: #Darts=3, #0-cells=3, #1-cells=3, #2-cells=1, #3-cells=1, #ccs=1, valid=1
+After insert_vertex 12 : #Darts=4, #0-cells=4, #1-cells=4, #2-cells=1, #3-cells=1, #ccs=1, valid=1
+************************* Test createAllBasicCases2 *************************
+Before: #Darts=2, #0-cells=2, #1-cells=1, #2-cells=2, #3-cells=1, #ccs=1, valid=1
+After insert_vertex 1 : #Darts=4, #0-cells=3, #1-cells=2, #2-cells=2, #3-cells=1, #ccs=1, valid=1
+Before: #Darts=2, #0-cells=1, #1-cells=1, #2-cells=2, #3-cells=1, #ccs=1, valid=1
+After insert_vertex 2 : #Darts=4, #0-cells=2, #1-cells=2, #2-cells=2, #3-cells=1, #ccs=1, valid=1
+Before: #Darts=3, #0-cells=3, #1-cells=2, #2-cells=2, #3-cells=1, #ccs=1, valid=1
+After insert_vertex 3 : #Darts=4, #0-cells=4, #1-cells=3, #2-cells=2, #3-cells=1, #ccs=1, valid=1
+Before: #Darts=3, #0-cells=3, #1-cells=2, #2-cells=2, #3-cells=1, #ccs=1, valid=1
+After insert_vertex 4 : #Darts=5, #0-cells=4, #1-cells=3, #2-cells=2, #3-cells=1, #ccs=1, valid=1
+Before: #Darts=3, #0-cells=2, #1-cells=2, #2-cells=2, #3-cells=1, #ccs=1, valid=1
+After insert_vertex 5 : #Darts=4, #0-cells=3, #1-cells=3, #2-cells=2, #3-cells=1, #ccs=1, valid=1
+Before: #Darts=4, #0-cells=2, #1-cells=2, #2-cells=3, #3-cells=1, #ccs=1, valid=1
+After insert_vertex 6 : #Darts=6, #0-cells=3, #1-cells=3, #2-cells=3, #3-cells=1, #ccs=1, valid=1
+Before: #Darts=5, #0-cells=4, #1-cells=3, #2-cells=3, #3-cells=1, #ccs=1, valid=1
+After insert_vertex 7 : #Darts=6, #0-cells=5, #1-cells=4, #2-cells=3, #3-cells=1, #ccs=1, valid=1
+Before: #Darts=5, #0-cells=4, #1-cells=3, #2-cells=3, #3-cells=1, #ccs=1, valid=1
+After insert_vertex 8 : #Darts=7, #0-cells=5, #1-cells=4, #2-cells=3, #3-cells=1, #ccs=1, valid=1
+Before: #Darts=4, #0-cells=3, #1-cells=3, #2-cells=2, #3-cells=1, #ccs=1, valid=1
+After insert_vertex 9 : #Darts=6, #0-cells=4, #1-cells=4, #2-cells=2, #3-cells=1, #ccs=1, valid=1
+************************* Test createAllBasicCases2<3> *************************
+Before: #Darts=4, #0-cells=2, #1-cells=1, #2-cells=2, #3-cells=2, #ccs=1, valid=1
+After insert_vertex 1 : #Darts=8, #0-cells=3, #1-cells=2, #2-cells=2, #3-cells=2, #ccs=1, valid=1
+Before: #Darts=4, #0-cells=1, #1-cells=1, #2-cells=2, #3-cells=2, #ccs=1, valid=1
+After insert_vertex 2 : #Darts=8, #0-cells=2, #1-cells=2, #2-cells=2, #3-cells=2, #ccs=1, valid=1
+Before: #Darts=6, #0-cells=3, #1-cells=2, #2-cells=2, #3-cells=1, #ccs=1, valid=1
+After insert_vertex 3 : #Darts=8, #0-cells=4, #1-cells=3, #2-cells=2, #3-cells=1, #ccs=1, valid=1
+Before: #Darts=6, #0-cells=3, #1-cells=2, #2-cells=2, #3-cells=1, #ccs=1, valid=1
+After insert_vertex 4 : #Darts=10, #0-cells=4, #1-cells=3, #2-cells=2, #3-cells=1, #ccs=1, valid=1
+Before: #Darts=6, #0-cells=2, #1-cells=2, #2-cells=2, #3-cells=1, #ccs=1, valid=1
+After insert_vertex 5 : #Darts=8, #0-cells=3, #1-cells=3, #2-cells=2, #3-cells=1, #ccs=1, valid=1
+Before: #Darts=8, #0-cells=2, #1-cells=2, #2-cells=3, #3-cells=2, #ccs=1, valid=1
+After insert_vertex 6 : #Darts=12, #0-cells=3, #1-cells=3, #2-cells=3, #3-cells=2, #ccs=1, valid=1
+Before: #Darts=10, #0-cells=4, #1-cells=3, #2-cells=3, #3-cells=1, #ccs=1, valid=1
+After insert_vertex 7 : #Darts=12, #0-cells=5, #1-cells=4, #2-cells=3, #3-cells=1, #ccs=1, valid=1
+Before: #Darts=10, #0-cells=4, #1-cells=3, #2-cells=3, #3-cells=1, #ccs=1, valid=1
+After insert_vertex 8 : #Darts=14, #0-cells=5, #1-cells=4, #2-cells=3, #3-cells=1, #ccs=1, valid=1
+Before: #Darts=8, #0-cells=3, #1-cells=3, #2-cells=2, #3-cells=1, #ccs=1, valid=1
+After insert_vertex 9 : #Darts=12, #0-cells=4, #1-cells=4, #2-cells=2, #3-cells=1, #ccs=1, valid=1
+************************* Test different cases *************************
+#Darts=1, #0-cells=1, #1-cells=1, #2-cells=1, #3-cells=1, #ccs=1, valid=1
+insert vertex1: #Darts=2, #0-cells=2, #1-cells=2, #2-cells=1, #3-cells=1, #ccs=1, valid=1
+#Darts=1, #0-cells=1, #1-cells=1, #2-cells=1, #3-cells=1, #ccs=1, valid=1
+insert vertex2: #Darts=2, #0-cells=2, #1-cells=2, #2-cells=1, #3-cells=1, #ccs=1, valid=1
+#Darts=2, #0-cells=2, #1-cells=1, #2-cells=2, #3-cells=1, #ccs=1, valid=1
+insert vertex3: #Darts=4, #0-cells=3, #1-cells=2, #2-cells=2, #3-cells=1, #ccs=1, valid=1
+#Darts=2, #0-cells=1, #1-cells=1, #2-cells=2, #3-cells=1, #ccs=1, valid=1
+insert vertex4: #Darts=4, #0-cells=2, #1-cells=2, #2-cells=2, #3-cells=1, #ccs=1, valid=1
+#Darts=2, #0-cells=1, #1-cells=1, #2-cells=2, #3-cells=1, #ccs=1, valid=1
+insert vertex5: #Darts=4, #0-cells=2, #1-cells=2, #2-cells=2, #3-cells=1, #ccs=1, valid=1
+#Darts=3, #0-cells=3, #1-cells=3, #2-cells=1, #3-cells=1, #ccs=1, valid=1
+insert vertex6: #Darts=4, #0-cells=4, #1-cells=4, #2-cells=1, #3-cells=1, #ccs=1, valid=1
+insert vertex7: #Darts=5, #0-cells=5, #1-cells=5, #2-cells=1, #3-cells=1, #ccs=1, valid=1
+insert vertex8: #Darts=6, #0-cells=6, #1-cells=6, #2-cells=1, #3-cells=1, #ccs=1, valid=1
+#Darts=6, #0-cells=3, #1-cells=3, #2-cells=1, #3-cells=2, #ccs=1, valid=1
+insert vertex9: #Darts=8, #0-cells=4, #1-cells=4, #2-cells=1, #3-cells=2, #ccs=1, valid=1
+insert vertex10: #Darts=10, #0-cells=5, #1-cells=5, #2-cells=1, #3-cells=2, #ccs=1, valid=1
+insert vertex11: #Darts=12, #0-cells=6, #1-cells=6, #2-cells=1, #3-cells=2, #ccs=1, valid=1
+#Darts=6, #0-cells=4, #1-cells=5, #2-cells=2, #3-cells=1, #ccs=1, valid=1
+insert vertex12: #Darts=8, #0-cells=5, #1-cells=6, #2-cells=2, #3-cells=1, #ccs=1, valid=1
+#Darts=6, #0-cells=4, #1-cells=5, #2-cells=2, #3-cells=1, #ccs=1, valid=1
+insert vertex13: #Darts=7, #0-cells=5, #1-cells=6, #2-cells=2, #3-cells=1, #ccs=1, valid=1
+insert vertex14: #Darts=9, #0-cells=6, #1-cells=7, #2-cells=2, #3-cells=1, #ccs=1, valid=1
+#Darts=48, #0-cells=12, #1-cells=20, #2-cells=11, #3-cells=2, #ccs=1, valid=1
+insert vertex15: #Darts=52, #0-cells=13, #1-cells=21, #2-cells=11, #3-cells=2, #ccs=1, valid=1
+insert vertex16: #Darts=56, #0-cells=14, #1-cells=22, #2-cells=11, #3-cells=2, #ccs=1, valid=1
+insert vertex17: #Darts=60, #0-cells=15, #1-cells=23, #2-cells=11, #3-cells=2, #ccs=1, valid=1
+insert vertex18: #Darts=64, #0-cells=16, #1-cells=24, #2-cells=11, #3-cells=2, #ccs=1, valid=1
+***************************** TEST INSERT VERTEX 3D DONE.
+***************************** TEST INSERT EDGE 3D:
+#Darts=4, #0-cells=1, #1-cells=1, #2-cells=2, #3-cells=2, #ccs=1, valid=1
+#Darts=4, #0-cells=4, #1-cells=4, #2-cells=1, #3-cells=1, #ccs=1, valid=1
+insert edge4: #Darts=6, #0-cells=4, #1-cells=5, #2-cells=2, #3-cells=1, #ccs=1, valid=1
+#Darts=8, #0-cells=4, #1-cells=4, #2-cells=1, #3-cells=2, #ccs=1, valid=1
+insert edge5: #Darts=12, #0-cells=4, #1-cells=5, #2-cells=2, #3-cells=2, #ccs=1, valid=1
+#Darts=8, #0-cells=6, #1-cells=7, #2-cells=2, #3-cells=1, #ccs=1, valid=1
+insert edge6: #Darts=10, #0-cells=6, #1-cells=8, #2-cells=3, #3-cells=1, #ccs=1, valid=1
+***************************** TEST INSERT EDGE 3D DONE.
+***************************** TEST INSERT DANGLING EDGE 3D:
+#Darts=1, #0-cells=1, #1-cells=1, #2-cells=1, #3-cells=1, #ccs=1, valid=1
+insert dangling edge1: #Darts=3, #0-cells=2, #1-cells=2, #2-cells=1, #3-cells=1, #ccs=1, valid=1
+#Darts=2, #0-cells=1, #1-cells=1, #2-cells=2, #3-cells=1, #ccs=1, valid=1
+insert dangling edge2: #Darts=4, #0-cells=2, #1-cells=2, #2-cells=2, #3-cells=1, #ccs=1, valid=1
+#Darts=4, #0-cells=1, #1-cells=1, #2-cells=2, #3-cells=2, #ccs=1, valid=1
+insert dangling edge3: #Darts=8, #0-cells=2, #1-cells=2, #2-cells=2, #3-cells=2, #ccs=1, valid=1
+#Darts=4, #0-cells=4, #1-cells=4, #2-cells=1, #3-cells=1, #ccs=1, valid=1
+insert dangling edge4: #Darts=6, #0-cells=5, #1-cells=5, #2-cells=1, #3-cells=1, #ccs=1, valid=1
+#Darts=8, #0-cells=4, #1-cells=4, #2-cells=1, #3-cells=2, #ccs=1, valid=1
+insert dangling edge5: #Darts=12, #0-cells=5, #1-cells=5, #2-cells=1, #3-cells=2, #ccs=1, valid=1
+***************************** TEST INSERT DANGLING EDGE 3D DONE.
+***************************** TEST INSERT FACET 3D:
+#Darts=4, #0-cells=4, #1-cells=4, #2-cells=1, #3-cells=1, #ccs=1, valid=1
+insert facet1: #Darts=8, #0-cells=4, #1-cells=4, #2-cells=2, #3-cells=1, #ccs=1, valid=1
+#Darts=6, #0-cells=4, #1-cells=5, #2-cells=2, #3-cells=1, #ccs=1, valid=1
+insert facet2: #Darts=12, #0-cells=4, #1-cells=5, #2-cells=3, #3-cells=2, #ccs=1, valid=1
+#Darts=24, #0-cells=8, #1-cells=12, #2-cells=6, #3-cells=1, #ccs=1, valid=1
+remove facet3: #Darts=20, #0-cells=8, #1-cells=12, #2-cells=5, #3-cells=1, #ccs=1, valid=1
+insert facet3: #Darts=24, #0-cells=8, #1-cells=12, #2-cells=6, #3-cells=1, #ccs=1, valid=1
+#Darts=48, #0-cells=12, #1-cells=20, #2-cells=11, #3-cells=2, #ccs=1, valid=1
+remove facet4: #Darts=40, #0-cells=12, #1-cells=20, #2-cells=10, #3-cells=1, #ccs=1, valid=1
+insert facet4: #Darts=48, #0-cells=12, #1-cells=20, #2-cells=11, #3-cells=2, #ccs=1, valid=1
+***************************** TEST INSERT FACET 3D DONE.
+***************************** TEST BASIC CREATION 3D:
+Map valid.
+Nombre de brins : 2
+***************************** TEST BASIC CREATION 3D DONE.
+***************************** TEST CREATION WITH EMBEDDING 3D:
+Parcours all : Parcours all : 
+
+Nombre de brins : 16
+Parcours de CC : 
+New facet : 
+New facet : 
+New facet : 
+New facet : 
+Parcours all : Map valid.
+***************************** TEST CREATION WITH EMBEDDING 3D DONE.
+***************************** TEST SEW 3D:
+Parcours all : Parcours all : Map valid.
+***************************** TEST SEW 3D DONE.
+***************************** TEST TRIANGULATION_2 3D:
+Parcours all avant la triangulation: Parcours all après la triangulation: Map valid.
+***************************** TEST TRIANGULATION_2 3D DONE.
+***************************** TEST TRIANGULATION_3 3D:
+map valid: 1
+Parcours all avant la triangulation: map valid: 1
+Parcours all après la triangulation: Map valid.
+Parcours all après la décousure: Map valid.
+***************************** TEST TRIANGULATION_3 3D DONE.
+***************************** TEST ITERATORS 3D:
+Nombre de brins : 36000, Nombre de CC : 1000
+Toute la carte marquée ? 1
+Parcours à la stl : #cellules=18000., #brins=36000.
+Toute la carte marquée ? 1
+Different const_iterators: 203000
+***************************** TEST ITERATORS 3D DONE.
+***************************** TEST INCIDENCE ITERATORS 3D:
+Map valid : 1
+***************************** TEST INCIDENCE ITERATORS 3D DONE.
+***************************** TEST VERTEX REMOVAL 3D:
+#Darts=1, #0-cells=1, #1-cells=1, #2-cells=1, #3-cells=1, #ccs=1, valid=1
+remove vertex1: #Darts=0, #0-cells=0, #1-cells=0, #2-cells=0, #3-cells=0, #ccs=0, valid=1
+#Darts=1, #0-cells=1, #1-cells=1, #2-cells=1, #3-cells=1, #ccs=1, valid=1
+remove vertex2: #Darts=0, #0-cells=0, #1-cells=0, #2-cells=0, #3-cells=0, #ccs=0, valid=1
+#Darts=2, #0-cells=2, #1-cells=1, #2-cells=2, #3-cells=1, #ccs=1, valid=1
+remove vertex3: #Darts=1, #0-cells=1, #1-cells=1, #2-cells=1, #3-cells=1, #ccs=1, valid=1
+remove vertex4: #Darts=0, #0-cells=0, #1-cells=0, #2-cells=0, #3-cells=0, #ccs=0, valid=1
+#Darts=2, #0-cells=1, #1-cells=1, #2-cells=2, #3-cells=1, #ccs=1, valid=1
+remove vertex5: #Darts=0, #0-cells=0, #1-cells=0, #2-cells=0, #3-cells=0, #ccs=0, valid=1
+#Darts=3, #0-cells=3, #1-cells=3, #2-cells=1, #3-cells=1, #ccs=1, valid=1
+remove vertex6: #Darts=2, #0-cells=2, #1-cells=2, #2-cells=1, #3-cells=1, #ccs=1, valid=1
+remove vertex7: #Darts=1, #0-cells=1, #1-cells=1, #2-cells=1, #3-cells=1, #ccs=1, valid=1
+remove vertex8: #Darts=0, #0-cells=0, #1-cells=0, #2-cells=0, #3-cells=0, #ccs=0, valid=1
+#Darts=6, #0-cells=3, #1-cells=3, #2-cells=1, #3-cells=2, #ccs=1, valid=1
+remove vertex9: #Darts=4, #0-cells=2, #1-cells=2, #2-cells=1, #3-cells=2, #ccs=1, valid=1
+remove vertex10: #Darts=2, #0-cells=1, #1-cells=1, #2-cells=1, #3-cells=2, #ccs=1, valid=1
+remove vertex11: #Darts=0, #0-cells=0, #1-cells=0, #2-cells=0, #3-cells=0, #ccs=0, valid=1
+***************************** TEST VERTEX REMOVAL 3D DONE.
+***************************** TEST EDGE REMOVAL 3D:
+#Darts=1, #0-cells=1, #1-cells=1, #2-cells=1, #3-cells=1, #ccs=1, valid=1
+remove edge1: #Darts=0, #0-cells=0, #1-cells=0, #2-cells=0, #3-cells=0, #ccs=0, valid=1
+#Darts=1, #0-cells=1, #1-cells=1, #2-cells=1, #3-cells=1, #ccs=1, valid=1
+remove edge2: #Darts=0, #0-cells=0, #1-cells=0, #2-cells=0, #3-cells=0, #ccs=0, valid=1
+#Darts=2, #0-cells=2, #1-cells=1, #2-cells=2, #3-cells=1, #ccs=1, valid=1
+remove edge3: #Darts=0, #0-cells=0, #1-cells=0, #2-cells=0, #3-cells=0, #ccs=0, valid=1
+#Darts=2, #0-cells=1, #1-cells=1, #2-cells=2, #3-cells=1, #ccs=1, valid=1
+remove edge4: #Darts=0, #0-cells=0, #1-cells=0, #2-cells=0, #3-cells=0, #ccs=0, valid=1
+#Darts=2, #0-cells=1, #1-cells=1, #2-cells=2, #3-cells=1, #ccs=1, valid=1
+remove edge5: #Darts=0, #0-cells=0, #1-cells=0, #2-cells=0, #3-cells=0, #ccs=0, valid=1
+#Darts=3, #0-cells=3, #1-cells=3, #2-cells=1, #3-cells=1, #ccs=1, valid=1
+remove edge6: #Darts=2, #0-cells=2, #1-cells=2, #2-cells=1, #3-cells=1, #ccs=1, valid=1
+remove edge7: #Darts=1, #0-cells=1, #1-cells=1, #2-cells=1, #3-cells=1, #ccs=1, valid=1
+remove edge8: #Darts=0, #0-cells=0, #1-cells=0, #2-cells=0, #3-cells=0, #ccs=0, valid=1
+#Darts=6, #0-cells=3, #1-cells=3, #2-cells=1, #3-cells=2, #ccs=1, valid=1
+remove edge9: #Darts=4, #0-cells=3, #1-cells=2, #2-cells=1, #3-cells=2, #ccs=1, valid=1
+remove edge10: #Darts=2, #0-cells=2, #1-cells=1, #2-cells=1, #3-cells=2, #ccs=1, valid=1
+remove edge11: #Darts=0, #0-cells=0, #1-cells=0, #2-cells=0, #3-cells=0, #ccs=0, valid=1
+#Darts=6, #0-cells=4, #1-cells=5, #2-cells=2, #3-cells=1, #ccs=1, valid=1
+remove edge12: #Darts=4, #0-cells=4, #1-cells=4, #2-cells=1, #3-cells=1, #ccs=1, valid=1
+#Darts=10, #0-cells=8, #1-cells=9, #2-cells=3, #3-cells=2, #ccs=2, valid=1
+remove edge13: #Darts=9, #0-cells=8, #1-cells=8, #2-cells=3, #3-cells=2, #ccs=2, valid=1
+remove edge14: #Darts=7, #0-cells=7, #1-cells=7, #2-cells=2, #3-cells=2, #ccs=2, valid=1
+#Darts=55, #0-cells=19, #1-cells=27, #2-cells=13, #3-cells=4, #ccs=3, valid=1
+#Darts=71, #0-cells=20, #1-cells=31, #2-cells=16, #3-cells=4, #ccs=3, valid=1
+remove edge15: #Darts=67, #0-cells=20, #1-cells=30, #2-cells=15, #3-cells=4, #ccs=3, valid=1
+remove edge15: #Darts=63, #0-cells=20, #1-cells=29, #2-cells=14, #3-cells=4, #ccs=3, valid=1
+remove edge15: #Darts=59, #0-cells=20, #1-cells=28, #2-cells=13, #3-cells=4, #ccs=3, valid=1
+remove edge15: #Darts=55, #0-cells=19, #1-cells=27, #2-cells=13, #3-cells=4, #ccs=3, valid=1
+***************************** TEST EDGE REMOVAL 3D DONE.
+***************************** TEST FACET REMOVAL 3D:
+#Darts=1, #0-cells=1, #1-cells=1, #2-cells=1, #3-cells=1, #ccs=1, valid=1
+remove facet1: #Darts=0, #0-cells=0, #1-cells=0, #2-cells=0, #3-cells=0, #ccs=0, valid=1
+#Darts=3, #0-cells=3, #1-cells=3, #2-cells=1, #3-cells=1, #ccs=1, valid=1
+remove facet2: #Darts=0, #0-cells=0, #1-cells=0, #2-cells=0, #3-cells=0, #ccs=0, valid=1
+#Darts=6, #0-cells=3, #1-cells=3, #2-cells=1, #3-cells=2, #ccs=1, valid=1
+remove facet3: #Darts=0, #0-cells=0, #1-cells=0, #2-cells=0, #3-cells=0, #ccs=0, valid=1
+#Darts=24, #0-cells=8, #1-cells=12, #2-cells=6, #3-cells=1, #ccs=1, valid=1
+remove facet4: #Darts=20, #0-cells=8, #1-cells=12, #2-cells=5, #3-cells=1, #ccs=1, valid=1
+remove facet5: #Darts=16, #0-cells=8, #1-cells=11, #2-cells=4, #3-cells=1, #ccs=1, valid=1
+remove facet6: #Darts=12, #0-cells=8, #1-cells=10, #2-cells=3, #3-cells=1, #ccs=1, valid=1
+remove facet7: #Darts=8, #0-cells=6, #1-cells=7, #2-cells=2, #3-cells=1, #ccs=1, valid=1
+remove facet8: #Darts=4, #0-cells=4, #1-cells=4, #2-cells=1, #3-cells=1, #ccs=1, valid=1
+remove facet9: #Darts=0, #0-cells=0, #1-cells=0, #2-cells=0, #3-cells=0, #ccs=0, valid=1
+#Darts=48, #0-cells=12, #1-cells=20, #2-cells=11, #3-cells=2, #ccs=1, valid=1
+remove facet10: #Darts=44, #0-cells=12, #1-cells=20, #2-cells=10, #3-cells=2, #ccs=1, valid=1
+remove facet11: #Darts=36, #0-cells=12, #1-cells=20, #2-cells=9, #3-cells=1, #ccs=1, valid=1
+remove edge12: #Darts=34, #0-cells=12, #1-cells=19, #2-cells=8, #3-cells=1, #ccs=1, valid=1
+#Darts=48, #0-cells=12, #1-cells=20, #2-cells=11, #3-cells=2, #ccs=1, valid=1
+#Darts=64, #0-cells=13, #1-cells=24, #2-cells=14, #3-cells=2, #ccs=1, valid=1
+remove facet13: #Darts=58, #0-cells=13, #1-cells=24, #2-cells=13, #3-cells=1, #ccs=1, valid=1
+remove facet13: #Darts=52, #0-cells=13, #1-cells=23, #2-cells=12, #3-cells=1, #ccs=1, valid=1
+remove facet13: #Darts=46, #0-cells=13, #1-cells=22, #2-cells=11, #3-cells=1, #ccs=1, valid=1
+remove facet13: #Darts=40, #0-cells=12, #1-cells=20, #2-cells=10, #3-cells=1, #ccs=1, valid=1
+***************************** TEST FACET REMOVAL 3D DONE.
+***************************** TEST INSERT VERTEX 3D:
+************************* Test createAllBasicCases1 *************************
+Before: #Darts=1, #0-cells=1, #1-cells=1, #2-cells=1, #3-cells=1, #ccs=1, valid=1
+After insert_vertex 1 : #Darts=2, #0-cells=2, #1-cells=2, #2-cells=1, #3-cells=1, #ccs=1, valid=1
+Before: #Darts=1, #0-cells=1, #1-cells=1, #2-cells=1, #3-cells=1, #ccs=1, valid=1
+After insert_vertex 2 : #Darts=2, #0-cells=2, #1-cells=2, #2-cells=1, #3-cells=1, #ccs=1, valid=1
+Before: #Darts=2, #0-cells=2, #1-cells=2, #2-cells=1, #3-cells=1, #ccs=1, valid=1
+After insert_vertex 3 : #Darts=3, #0-cells=3, #1-cells=3, #2-cells=1, #3-cells=1, #ccs=1, valid=1
+Before: #Darts=2, #0-cells=2, #1-cells=2, #2-cells=1, #3-cells=1, #ccs=1, valid=1
+After insert_vertex 4 : #Darts=3, #0-cells=3, #1-cells=3, #2-cells=1, #3-cells=1, #ccs=1, valid=1
+Before: #Darts=2, #0-cells=2, #1-cells=2, #2-cells=1, #3-cells=1, #ccs=1, valid=1
+After insert_vertex 5 : #Darts=3, #0-cells=3, #1-cells=3, #2-cells=1, #3-cells=1, #ccs=1, valid=1
+Before: #Darts=2, #0-cells=2, #1-cells=2, #2-cells=1, #3-cells=1, #ccs=1, valid=1
+After insert_vertex 6 : #Darts=3, #0-cells=3, #1-cells=3, #2-cells=1, #3-cells=1, #ccs=1, valid=1
+Before: #Darts=3, #0-cells=3, #1-cells=3, #2-cells=1, #3-cells=1, #ccs=1, valid=1
+After insert_vertex 7 : #Darts=4, #0-cells=4, #1-cells=4, #2-cells=1, #3-cells=1, #ccs=1, valid=1
+Before: #Darts=3, #0-cells=3, #1-cells=3, #2-cells=1, #3-cells=1, #ccs=1, valid=1
+After insert_vertex 8 : #Darts=4, #0-cells=4, #1-cells=4, #2-cells=1, #3-cells=1, #ccs=1, valid=1
+Before: #Darts=3, #0-cells=3, #1-cells=3, #2-cells=1, #3-cells=1, #ccs=1, valid=1
+After insert_vertex 9 : #Darts=4, #0-cells=4, #1-cells=4, #2-cells=1, #3-cells=1, #ccs=1, valid=1
+Before: #Darts=3, #0-cells=3, #1-cells=3, #2-cells=1, #3-cells=1, #ccs=1, valid=1
+After insert_vertex 10 : #Darts=4, #0-cells=4, #1-cells=4, #2-cells=1, #3-cells=1, #ccs=1, valid=1
+Before: #Darts=3, #0-cells=3, #1-cells=3, #2-cells=1, #3-cells=1, #ccs=1, valid=1
+After insert_vertex 11 : #Darts=4, #0-cells=4, #1-cells=4, #2-cells=1, #3-cells=1, #ccs=1, valid=1
+Before: #Darts=3, #0-cells=3, #1-cells=3, #2-cells=1, #3-cells=1, #ccs=1, valid=1
+After insert_vertex 12 : #Darts=4, #0-cells=4, #1-cells=4, #2-cells=1, #3-cells=1, #ccs=1, valid=1
+************************* Test createAllBasicCases2 *************************
+Before: #Darts=2, #0-cells=2, #1-cells=1, #2-cells=2, #3-cells=1, #ccs=1, valid=1
+After insert_vertex 1 : #Darts=4, #0-cells=3, #1-cells=2, #2-cells=2, #3-cells=1, #ccs=1, valid=1
+Before: #Darts=2, #0-cells=1, #1-cells=1, #2-cells=2, #3-cells=1, #ccs=1, valid=1
+After insert_vertex 2 : #Darts=4, #0-cells=2, #1-cells=2, #2-cells=2, #3-cells=1, #ccs=1, valid=1
+Before: #Darts=3, #0-cells=3, #1-cells=2, #2-cells=2, #3-cells=1, #ccs=1, valid=1
+After insert_vertex 3 : #Darts=4, #0-cells=4, #1-cells=3, #2-cells=2, #3-cells=1, #ccs=1, valid=1
+Before: #Darts=3, #0-cells=3, #1-cells=2, #2-cells=2, #3-cells=1, #ccs=1, valid=1
+After insert_vertex 4 : #Darts=5, #0-cells=4, #1-cells=3, #2-cells=2, #3-cells=1, #ccs=1, valid=1
+Before: #Darts=3, #0-cells=2, #1-cells=2, #2-cells=2, #3-cells=1, #ccs=1, valid=1
+After insert_vertex 5 : #Darts=4, #0-cells=3, #1-cells=3, #2-cells=2, #3-cells=1, #ccs=1, valid=1
+Before: #Darts=4, #0-cells=2, #1-cells=2, #2-cells=3, #3-cells=1, #ccs=1, valid=1
+After insert_vertex 6 : #Darts=6, #0-cells=3, #1-cells=3, #2-cells=3, #3-cells=1, #ccs=1, valid=1
+Before: #Darts=5, #0-cells=4, #1-cells=3, #2-cells=3, #3-cells=1, #ccs=1, valid=1
+After insert_vertex 7 : #Darts=6, #0-cells=5, #1-cells=4, #2-cells=3, #3-cells=1, #ccs=1, valid=1
+Before: #Darts=5, #0-cells=4, #1-cells=3, #2-cells=3, #3-cells=1, #ccs=1, valid=1
+After insert_vertex 8 : #Darts=7, #0-cells=5, #1-cells=4, #2-cells=3, #3-cells=1, #ccs=1, valid=1
+Before: #Darts=4, #0-cells=3, #1-cells=3, #2-cells=2, #3-cells=1, #ccs=1, valid=1
+After insert_vertex 9 : #Darts=6, #0-cells=4, #1-cells=4, #2-cells=2, #3-cells=1, #ccs=1, valid=1
+************************* Test createAllBasicCases2<3> *************************
+Before: #Darts=4, #0-cells=2, #1-cells=1, #2-cells=2, #3-cells=2, #ccs=1, valid=1
+After insert_vertex 1 : #Darts=8, #0-cells=3, #1-cells=2, #2-cells=2, #3-cells=2, #ccs=1, valid=1
+Before: #Darts=4, #0-cells=1, #1-cells=1, #2-cells=2, #3-cells=2, #ccs=1, valid=1
+After insert_vertex 2 : #Darts=8, #0-cells=2, #1-cells=2, #2-cells=2, #3-cells=2, #ccs=1, valid=1
+Before: #Darts=6, #0-cells=3, #1-cells=2, #2-cells=2, #3-cells=1, #ccs=1, valid=1
+After insert_vertex 3 : #Darts=8, #0-cells=4, #1-cells=3, #2-cells=2, #3-cells=1, #ccs=1, valid=1
+Before: #Darts=6, #0-cells=3, #1-cells=2, #2-cells=2, #3-cells=1, #ccs=1, valid=1
+After insert_vertex 4 : #Darts=10, #0-cells=4, #1-cells=3, #2-cells=2, #3-cells=1, #ccs=1, valid=1
+Before: #Darts=6, #0-cells=2, #1-cells=2, #2-cells=2, #3-cells=1, #ccs=1, valid=1
+After insert_vertex 5 : #Darts=8, #0-cells=3, #1-cells=3, #2-cells=2, #3-cells=1, #ccs=1, valid=1
+Before: #Darts=8, #0-cells=2, #1-cells=2, #2-cells=3, #3-cells=2, #ccs=1, valid=1
+After insert_vertex 6 : #Darts=12, #0-cells=3, #1-cells=3, #2-cells=3, #3-cells=2, #ccs=1, valid=1
+Before: #Darts=10, #0-cells=4, #1-cells=3, #2-cells=3, #3-cells=1, #ccs=1, valid=1
+After insert_vertex 7 : #Darts=12, #0-cells=5, #1-cells=4, #2-cells=3, #3-cells=1, #ccs=1, valid=1
+Before: #Darts=10, #0-cells=4, #1-cells=3, #2-cells=3, #3-cells=1, #ccs=1, valid=1
+After insert_vertex 8 : #Darts=14, #0-cells=5, #1-cells=4, #2-cells=3, #3-cells=1, #ccs=1, valid=1
+Before: #Darts=8, #0-cells=3, #1-cells=3, #2-cells=2, #3-cells=1, #ccs=1, valid=1
+After insert_vertex 9 : #Darts=12, #0-cells=4, #1-cells=4, #2-cells=2, #3-cells=1, #ccs=1, valid=1
+************************* Test different cases *************************
+#Darts=1, #0-cells=1, #1-cells=1, #2-cells=1, #3-cells=1, #ccs=1, valid=1
+insert vertex1: #Darts=2, #0-cells=2, #1-cells=2, #2-cells=1, #3-cells=1, #ccs=1, valid=1
+#Darts=1, #0-cells=1, #1-cells=1, #2-cells=1, #3-cells=1, #ccs=1, valid=1
+insert vertex2: #Darts=2, #0-cells=2, #1-cells=2, #2-cells=1, #3-cells=1, #ccs=1, valid=1
+#Darts=2, #0-cells=2, #1-cells=1, #2-cells=2, #3-cells=1, #ccs=1, valid=1
+insert vertex3: #Darts=4, #0-cells=3, #1-cells=2, #2-cells=2, #3-cells=1, #ccs=1, valid=1
+#Darts=2, #0-cells=1, #1-cells=1, #2-cells=2, #3-cells=1, #ccs=1, valid=1
+insert vertex4: #Darts=4, #0-cells=2, #1-cells=2, #2-cells=2, #3-cells=1, #ccs=1, valid=1
+#Darts=2, #0-cells=1, #1-cells=1, #2-cells=2, #3-cells=1, #ccs=1, valid=1
+insert vertex5: #Darts=4, #0-cells=2, #1-cells=2, #2-cells=2, #3-cells=1, #ccs=1, valid=1
+#Darts=3, #0-cells=3, #1-cells=3, #2-cells=1, #3-cells=1, #ccs=1, valid=1
+insert vertex6: #Darts=4, #0-cells=4, #1-cells=4, #2-cells=1, #3-cells=1, #ccs=1, valid=1
+insert vertex7: #Darts=5, #0-cells=5, #1-cells=5, #2-cells=1, #3-cells=1, #ccs=1, valid=1
+insert vertex8: #Darts=6, #0-cells=6, #1-cells=6, #2-cells=1, #3-cells=1, #ccs=1, valid=1
+#Darts=6, #0-cells=3, #1-cells=3, #2-cells=1, #3-cells=2, #ccs=1, valid=1
+insert vertex9: #Darts=8, #0-cells=4, #1-cells=4, #2-cells=1, #3-cells=2, #ccs=1, valid=1
+insert vertex10: #Darts=10, #0-cells=5, #1-cells=5, #2-cells=1, #3-cells=2, #ccs=1, valid=1
+insert vertex11: #Darts=12, #0-cells=6, #1-cells=6, #2-cells=1, #3-cells=2, #ccs=1, valid=1
+#Darts=6, #0-cells=4, #1-cells=5, #2-cells=2, #3-cells=1, #ccs=1, valid=1
+insert vertex12: #Darts=8, #0-cells=5, #1-cells=6, #2-cells=2, #3-cells=1, #ccs=1, valid=1
+#Darts=6, #0-cells=4, #1-cells=5, #2-cells=2, #3-cells=1, #ccs=1, valid=1
+insert vertex13: #Darts=7, #0-cells=5, #1-cells=6, #2-cells=2, #3-cells=1, #ccs=1, valid=1
+insert vertex14: #Darts=9, #0-cells=6, #1-cells=7, #2-cells=2, #3-cells=1, #ccs=1, valid=1
+#Darts=48, #0-cells=12, #1-cells=20, #2-cells=11, #3-cells=2, #ccs=1, valid=1
+insert vertex15: #Darts=52, #0-cells=13, #1-cells=21, #2-cells=11, #3-cells=2, #ccs=1, valid=1
+insert vertex16: #Darts=56, #0-cells=14, #1-cells=22, #2-cells=11, #3-cells=2, #ccs=1, valid=1
+insert vertex17: #Darts=60, #0-cells=15, #1-cells=23, #2-cells=11, #3-cells=2, #ccs=1, valid=1
+insert vertex18: #Darts=64, #0-cells=16, #1-cells=24, #2-cells=11, #3-cells=2, #ccs=1, valid=1
+***************************** TEST INSERT VERTEX 3D DONE.
+***************************** TEST INSERT EDGE 3D:
+#Darts=4, #0-cells=1, #1-cells=1, #2-cells=2, #3-cells=2, #ccs=1, valid=1
+#Darts=4, #0-cells=4, #1-cells=4, #2-cells=1, #3-cells=1, #ccs=1, valid=1
+insert edge4: #Darts=6, #0-cells=4, #1-cells=5, #2-cells=2, #3-cells=1, #ccs=1, valid=1
+#Darts=8, #0-cells=4, #1-cells=4, #2-cells=1, #3-cells=2, #ccs=1, valid=1
+insert edge5: #Darts=12, #0-cells=4, #1-cells=5, #2-cells=2, #3-cells=2, #ccs=1, valid=1
+#Darts=8, #0-cells=6, #1-cells=7, #2-cells=2, #3-cells=1, #ccs=1, valid=1
+insert edge6: #Darts=10, #0-cells=6, #1-cells=8, #2-cells=3, #3-cells=1, #ccs=1, valid=1
+***************************** TEST INSERT EDGE 3D DONE.
+***************************** TEST INSERT DANGLING EDGE 3D:
+#Darts=1, #0-cells=1, #1-cells=1, #2-cells=1, #3-cells=1, #ccs=1, valid=1
+insert dangling edge1: #Darts=3, #0-cells=2, #1-cells=2, #2-cells=1, #3-cells=1, #ccs=1, valid=1
+#Darts=2, #0-cells=1, #1-cells=1, #2-cells=2, #3-cells=1, #ccs=1, valid=1
+insert dangling edge2: #Darts=4, #0-cells=2, #1-cells=2, #2-cells=2, #3-cells=1, #ccs=1, valid=1
+#Darts=4, #0-cells=1, #1-cells=1, #2-cells=2, #3-cells=2, #ccs=1, valid=1
+insert dangling edge3: #Darts=8, #0-cells=2, #1-cells=2, #2-cells=2, #3-cells=2, #ccs=1, valid=1
+#Darts=4, #0-cells=4, #1-cells=4, #2-cells=1, #3-cells=1, #ccs=1, valid=1
+insert dangling edge4: #Darts=6, #0-cells=5, #1-cells=5, #2-cells=1, #3-cells=1, #ccs=1, valid=1
+#Darts=8, #0-cells=4, #1-cells=4, #2-cells=1, #3-cells=2, #ccs=1, valid=1
+insert dangling edge5: #Darts=12, #0-cells=5, #1-cells=5, #2-cells=1, #3-cells=2, #ccs=1, valid=1
+***************************** TEST INSERT DANGLING EDGE 3D DONE.
+***************************** TEST INSERT FACET 3D:
+#Darts=4, #0-cells=4, #1-cells=4, #2-cells=1, #3-cells=1, #ccs=1, valid=1
+insert facet1: #Darts=8, #0-cells=4, #1-cells=4, #2-cells=2, #3-cells=1, #ccs=1, valid=1
+#Darts=6, #0-cells=4, #1-cells=5, #2-cells=2, #3-cells=1, #ccs=1, valid=1
+insert facet2: #Darts=12, #0-cells=4, #1-cells=5, #2-cells=3, #3-cells=2, #ccs=1, valid=1
+#Darts=24, #0-cells=8, #1-cells=12, #2-cells=6, #3-cells=1, #ccs=1, valid=1
+remove facet3: #Darts=20, #0-cells=8, #1-cells=12, #2-cells=5, #3-cells=1, #ccs=1, valid=1
+insert facet3: #Darts=24, #0-cells=8, #1-cells=12, #2-cells=6, #3-cells=1, #ccs=1, valid=1
+#Darts=48, #0-cells=12, #1-cells=20, #2-cells=11, #3-cells=2, #ccs=1, valid=1
+remove facet4: #Darts=40, #0-cells=12, #1-cells=20, #2-cells=10, #3-cells=1, #ccs=1, valid=1
+insert facet4: #Darts=48, #0-cells=12, #1-cells=20, #2-cells=11, #3-cells=2, #ccs=1, valid=1
+***************************** TEST INSERT FACET 3D DONE.
+***************************** TEST BASIC CREATION 3D:
+Map valid.
+Nombre de brins : 2
+***************************** TEST BASIC CREATION 3D DONE.
+***************************** TEST CREATION WITH EMBEDDING 3D:
+Parcours all : Parcours all : 
+
+Nombre de brins : 16
+Parcours de CC : 
+New facet : 
+New facet : 
+New facet : 
+New facet : 
+Parcours all : Map valid.
+***************************** TEST CREATION WITH EMBEDDING 3D DONE.
+***************************** TEST SEW 3D:
+Parcours all : Parcours all : Map valid.
+***************************** TEST SEW 3D DONE.
+***************************** TEST TRIANGULATION_2 3D:
+Parcours all avant la triangulation: Parcours all après la triangulation: Map valid.
+***************************** TEST TRIANGULATION_2 3D DONE.
+***************************** TEST TRIANGULATION_3 3D:
+map valid: 1
+Parcours all avant la triangulation: map valid: 1
+Parcours all après la triangulation: Map valid.
+Parcours all après la décousure: Map valid.
+***************************** TEST TRIANGULATION_3 3D DONE.
+***************************** TEST ITERATORS 3D:
+Nombre de brins : 36000, Nombre de CC : 1000
+Toute la carte marquée ? 1
+Parcours à la stl : #cellules=18000., #brins=36000.
+Toute la carte marquée ? 1
+Different const_iterators: 203000
+***************************** TEST ITERATORS 3D DONE.
+***************************** TEST INCIDENCE ITERATORS 3D:
+Map valid : 1
+***************************** TEST INCIDENCE ITERATORS 3D DONE.
+***************************** TEST VERTEX REMOVAL 3D:
+#Darts=1, #0-cells=1, #1-cells=1, #2-cells=1, #3-cells=1, #4-cells=1, #ccs=1, valid=1
+remove vertex1: #Darts=0, #0-cells=0, #1-cells=0, #2-cells=0, #3-cells=0, #4-cells=0, #ccs=0, valid=1
+#Darts=1, #0-cells=1, #1-cells=1, #2-cells=1, #3-cells=1, #4-cells=1, #ccs=1, valid=1
+remove vertex2: #Darts=0, #0-cells=0, #1-cells=0, #2-cells=0, #3-cells=0, #4-cells=0, #ccs=0, valid=1
+#Darts=2, #0-cells=2, #1-cells=1, #2-cells=2, #3-cells=1, #4-cells=1, #ccs=1, valid=1
+remove vertex3: #Darts=1, #0-cells=1, #1-cells=1, #2-cells=1, #3-cells=1, #4-cells=1, #ccs=1, valid=1
+remove vertex4: #Darts=0, #0-cells=0, #1-cells=0, #2-cells=0, #3-cells=0, #4-cells=0, #ccs=0, valid=1
+#Darts=2, #0-cells=1, #1-cells=1, #2-cells=2, #3-cells=1, #4-cells=1, #ccs=1, valid=1
+remove vertex5: #Darts=0, #0-cells=0, #1-cells=0, #2-cells=0, #3-cells=0, #4-cells=0, #ccs=0, valid=1
+#Darts=3, #0-cells=3, #1-cells=3, #2-cells=1, #3-cells=1, #4-cells=1, #ccs=1, valid=1
+remove vertex6: #Darts=2, #0-cells=2, #1-cells=2, #2-cells=1, #3-cells=1, #4-cells=1, #ccs=1, valid=1
+remove vertex7: #Darts=1, #0-cells=1, #1-cells=1, #2-cells=1, #3-cells=1, #4-cells=1, #ccs=1, valid=1
+remove vertex8: #Darts=0, #0-cells=0, #1-cells=0, #2-cells=0, #3-cells=0, #4-cells=0, #ccs=0, valid=1
+#Darts=6, #0-cells=3, #1-cells=3, #2-cells=1, #3-cells=2, #4-cells=1, #ccs=1, valid=1
+remove vertex9: #Darts=4, #0-cells=2, #1-cells=2, #2-cells=1, #3-cells=2, #4-cells=1, #ccs=1, valid=1
+remove vertex10: #Darts=2, #0-cells=1, #1-cells=1, #2-cells=1, #3-cells=2, #4-cells=1, #ccs=1, valid=1
+remove vertex11: #Darts=0, #0-cells=0, #1-cells=0, #2-cells=0, #3-cells=0, #4-cells=0, #ccs=0, valid=1
+***************************** TEST VERTEX REMOVAL 3D DONE.
+***************************** TEST EDGE REMOVAL 3D:
+#Darts=1, #0-cells=1, #1-cells=1, #2-cells=1, #3-cells=1, #4-cells=1, #ccs=1, valid=1
+remove edge1: #Darts=0, #0-cells=0, #1-cells=0, #2-cells=0, #3-cells=0, #4-cells=0, #ccs=0, valid=1
+#Darts=1, #0-cells=1, #1-cells=1, #2-cells=1, #3-cells=1, #4-cells=1, #ccs=1, valid=1
+remove edge2: #Darts=0, #0-cells=0, #1-cells=0, #2-cells=0, #3-cells=0, #4-cells=0, #ccs=0, valid=1
+#Darts=2, #0-cells=2, #1-cells=1, #2-cells=2, #3-cells=1, #4-cells=1, #ccs=1, valid=1
+remove edge3: #Darts=0, #0-cells=0, #1-cells=0, #2-cells=0, #3-cells=0, #4-cells=0, #ccs=0, valid=1
+#Darts=2, #0-cells=1, #1-cells=1, #2-cells=2, #3-cells=1, #4-cells=1, #ccs=1, valid=1
+remove edge4: #Darts=0, #0-cells=0, #1-cells=0, #2-cells=0, #3-cells=0, #4-cells=0, #ccs=0, valid=1
+#Darts=2, #0-cells=1, #1-cells=1, #2-cells=2, #3-cells=1, #4-cells=1, #ccs=1, valid=1
+remove edge5: #Darts=0, #0-cells=0, #1-cells=0, #2-cells=0, #3-cells=0, #4-cells=0, #ccs=0, valid=1
+#Darts=3, #0-cells=3, #1-cells=3, #2-cells=1, #3-cells=1, #4-cells=1, #ccs=1, valid=1
+remove edge6: #Darts=2, #0-cells=2, #1-cells=2, #2-cells=1, #3-cells=1, #4-cells=1, #ccs=1, valid=1
+remove edge7: #Darts=1, #0-cells=1, #1-cells=1, #2-cells=1, #3-cells=1, #4-cells=1, #ccs=1, valid=1
+remove edge8: #Darts=0, #0-cells=0, #1-cells=0, #2-cells=0, #3-cells=0, #4-cells=0, #ccs=0, valid=1
+#Darts=6, #0-cells=3, #1-cells=3, #2-cells=1, #3-cells=2, #4-cells=1, #ccs=1, valid=1
+remove edge9: #Darts=4, #0-cells=3, #1-cells=2, #2-cells=1, #3-cells=2, #4-cells=1, #ccs=1, valid=1
+remove edge10: #Darts=2, #0-cells=2, #1-cells=1, #2-cells=1, #3-cells=2, #4-cells=1, #ccs=1, valid=1
+remove edge11: #Darts=0, #0-cells=0, #1-cells=0, #2-cells=0, #3-cells=0, #4-cells=0, #ccs=0, valid=1
+#Darts=6, #0-cells=4, #1-cells=5, #2-cells=2, #3-cells=1, #4-cells=1, #ccs=1, valid=1
+remove edge12: #Darts=4, #0-cells=4, #1-cells=4, #2-cells=1, #3-cells=1, #4-cells=1, #ccs=1, valid=1
+#Darts=10, #0-cells=8, #1-cells=9, #2-cells=3, #3-cells=2, #4-cells=2, #ccs=2, valid=1
+remove edge13: #Darts=9, #0-cells=8, #1-cells=8, #2-cells=3, #3-cells=2, #4-cells=2, #ccs=2, valid=1
+remove edge14: #Darts=7, #0-cells=7, #1-cells=7, #2-cells=2, #3-cells=2, #4-cells=2, #ccs=2, valid=1
+#Darts=55, #0-cells=19, #1-cells=27, #2-cells=13, #3-cells=4, #4-cells=3, #ccs=3, valid=1
+#Darts=71, #0-cells=20, #1-cells=31, #2-cells=16, #3-cells=4, #4-cells=3, #ccs=3, valid=1
+remove edge15: #Darts=67, #0-cells=20, #1-cells=30, #2-cells=15, #3-cells=4, #4-cells=3, #ccs=3, valid=1
+remove edge15: #Darts=63, #0-cells=20, #1-cells=29, #2-cells=14, #3-cells=4, #4-cells=3, #ccs=3, valid=1
+remove edge15: #Darts=59, #0-cells=20, #1-cells=28, #2-cells=13, #3-cells=4, #4-cells=3, #ccs=3, valid=1
+remove edge15: #Darts=55, #0-cells=19, #1-cells=27, #2-cells=13, #3-cells=4, #4-cells=3, #ccs=3, valid=1
+***************************** TEST EDGE REMOVAL 3D DONE.
+***************************** TEST FACET REMOVAL 3D:
+#Darts=1, #0-cells=1, #1-cells=1, #2-cells=1, #3-cells=1, #4-cells=1, #ccs=1, valid=1
+remove facet1: #Darts=0, #0-cells=0, #1-cells=0, #2-cells=0, #3-cells=0, #4-cells=0, #ccs=0, valid=1
+#Darts=3, #0-cells=3, #1-cells=3, #2-cells=1, #3-cells=1, #4-cells=1, #ccs=1, valid=1
+remove facet2: #Darts=0, #0-cells=0, #1-cells=0, #2-cells=0, #3-cells=0, #4-cells=0, #ccs=0, valid=1
+#Darts=6, #0-cells=3, #1-cells=3, #2-cells=1, #3-cells=2, #4-cells=1, #ccs=1, valid=1
+remove facet3: #Darts=0, #0-cells=0, #1-cells=0, #2-cells=0, #3-cells=0, #4-cells=0, #ccs=0, valid=1
+#Darts=24, #0-cells=8, #1-cells=12, #2-cells=6, #3-cells=1, #4-cells=1, #ccs=1, valid=1
+remove facet4: #Darts=20, #0-cells=8, #1-cells=12, #2-cells=5, #3-cells=1, #4-cells=1, #ccs=1, valid=1
+remove facet5: #Darts=16, #0-cells=8, #1-cells=11, #2-cells=4, #3-cells=1, #4-cells=1, #ccs=1, valid=1
+remove facet6: #Darts=12, #0-cells=8, #1-cells=10, #2-cells=3, #3-cells=1, #4-cells=1, #ccs=1, valid=1
+remove facet7: #Darts=8, #0-cells=6, #1-cells=7, #2-cells=2, #3-cells=1, #4-cells=1, #ccs=1, valid=1
+remove facet8: #Darts=4, #0-cells=4, #1-cells=4, #2-cells=1, #3-cells=1, #4-cells=1, #ccs=1, valid=1
+remove facet9: #Darts=0, #0-cells=0, #1-cells=0, #2-cells=0, #3-cells=0, #4-cells=0, #ccs=0, valid=1
+#Darts=48, #0-cells=12, #1-cells=20, #2-cells=11, #3-cells=2, #4-cells=1, #ccs=1, valid=1
+remove facet10: #Darts=44, #0-cells=12, #1-cells=20, #2-cells=10, #3-cells=2, #4-cells=1, #ccs=1, valid=1
+remove facet11: #Darts=36, #0-cells=12, #1-cells=20, #2-cells=9, #3-cells=1, #4-cells=1, #ccs=1, valid=1
+remove edge12: #Darts=34, #0-cells=12, #1-cells=19, #2-cells=8, #3-cells=1, #4-cells=1, #ccs=1, valid=1
+#Darts=48, #0-cells=12, #1-cells=20, #2-cells=11, #3-cells=2, #4-cells=1, #ccs=1, valid=1
+#Darts=64, #0-cells=13, #1-cells=24, #2-cells=14, #3-cells=2, #4-cells=1, #ccs=1, valid=1
+remove facet13: #Darts=58, #0-cells=13, #1-cells=24, #2-cells=13, #3-cells=1, #4-cells=1, #ccs=1, valid=1
+remove facet13: #Darts=52, #0-cells=13, #1-cells=23, #2-cells=12, #3-cells=1, #4-cells=1, #ccs=1, valid=1
+remove facet13: #Darts=46, #0-cells=13, #1-cells=22, #2-cells=11, #3-cells=1, #4-cells=1, #ccs=1, valid=1
+remove facet13: #Darts=40, #0-cells=12, #1-cells=20, #2-cells=10, #3-cells=1, #4-cells=1, #ccs=1, valid=1
+***************************** TEST FACET REMOVAL 3D DONE.
+***************************** TEST INSERT VERTEX 3D:
+************************* Test createAllBasicCases1 *************************
+Before: #Darts=1, #0-cells=1, #1-cells=1, #2-cells=1, #3-cells=1, #4-cells=1, #ccs=1, valid=1
+After insert_vertex 1 : #Darts=2, #0-cells=2, #1-cells=2, #2-cells=1, #3-cells=1, #4-cells=1, #ccs=1, valid=1
+Before: #Darts=1, #0-cells=1, #1-cells=1, #2-cells=1, #3-cells=1, #4-cells=1, #ccs=1, valid=1
+After insert_vertex 2 : #Darts=2, #0-cells=2, #1-cells=2, #2-cells=1, #3-cells=1, #4-cells=1, #ccs=1, valid=1
+Before: #Darts=2, #0-cells=2, #1-cells=2, #2-cells=1, #3-cells=1, #4-cells=1, #ccs=1, valid=1
+After insert_vertex 3 : #Darts=3, #0-cells=3, #1-cells=3, #2-cells=1, #3-cells=1, #4-cells=1, #ccs=1, valid=1
+Before: #Darts=2, #0-cells=2, #1-cells=2, #2-cells=1, #3-cells=1, #4-cells=1, #ccs=1, valid=1
+After insert_vertex 4 : #Darts=3, #0-cells=3, #1-cells=3, #2-cells=1, #3-cells=1, #4-cells=1, #ccs=1, valid=1
+Before: #Darts=2, #0-cells=2, #1-cells=2, #2-cells=1, #3-cells=1, #4-cells=1, #ccs=1, valid=1
+After insert_vertex 5 : #Darts=3, #0-cells=3, #1-cells=3, #2-cells=1, #3-cells=1, #4-cells=1, #ccs=1, valid=1
+Before: #Darts=2, #0-cells=2, #1-cells=2, #2-cells=1, #3-cells=1, #4-cells=1, #ccs=1, valid=1
+After insert_vertex 6 : #Darts=3, #0-cells=3, #1-cells=3, #2-cells=1, #3-cells=1, #4-cells=1, #ccs=1, valid=1
+Before: #Darts=3, #0-cells=3, #1-cells=3, #2-cells=1, #3-cells=1, #4-cells=1, #ccs=1, valid=1
+After insert_vertex 7 : #Darts=4, #0-cells=4, #1-cells=4, #2-cells=1, #3-cells=1, #4-cells=1, #ccs=1, valid=1
+Before: #Darts=3, #0-cells=3, #1-cells=3, #2-cells=1, #3-cells=1, #4-cells=1, #ccs=1, valid=1
+After insert_vertex 8 : #Darts=4, #0-cells=4, #1-cells=4, #2-cells=1, #3-cells=1, #4-cells=1, #ccs=1, valid=1
+Before: #Darts=3, #0-cells=3, #1-cells=3, #2-cells=1, #3-cells=1, #4-cells=1, #ccs=1, valid=1
+After insert_vertex 9 : #Darts=4, #0-cells=4, #1-cells=4, #2-cells=1, #3-cells=1, #4-cells=1, #ccs=1, valid=1
+Before: #Darts=3, #0-cells=3, #1-cells=3, #2-cells=1, #3-cells=1, #4-cells=1, #ccs=1, valid=1
+After insert_vertex 10 : #Darts=4, #0-cells=4, #1-cells=4, #2-cells=1, #3-cells=1, #4-cells=1, #ccs=1, valid=1
+Before: #Darts=3, #0-cells=3, #1-cells=3, #2-cells=1, #3-cells=1, #4-cells=1, #ccs=1, valid=1
+After insert_vertex 11 : #Darts=4, #0-cells=4, #1-cells=4, #2-cells=1, #3-cells=1, #4-cells=1, #ccs=1, valid=1
+Before: #Darts=3, #0-cells=3, #1-cells=3, #2-cells=1, #3-cells=1, #4-cells=1, #ccs=1, valid=1
+After insert_vertex 12 : #Darts=4, #0-cells=4, #1-cells=4, #2-cells=1, #3-cells=1, #4-cells=1, #ccs=1, valid=1
+************************* Test createAllBasicCases2 *************************
+Before: #Darts=2, #0-cells=2, #1-cells=1, #2-cells=2, #3-cells=1, #4-cells=1, #ccs=1, valid=1
+After insert_vertex 1 : #Darts=4, #0-cells=3, #1-cells=2, #2-cells=2, #3-cells=1, #4-cells=1, #ccs=1, valid=1
+Before: #Darts=2, #0-cells=1, #1-cells=1, #2-cells=2, #3-cells=1, #4-cells=1, #ccs=1, valid=1
+After insert_vertex 2 : #Darts=4, #0-cells=2, #1-cells=2, #2-cells=2, #3-cells=1, #4-cells=1, #ccs=1, valid=1
+Before: #Darts=3, #0-cells=3, #1-cells=2, #2-cells=2, #3-cells=1, #4-cells=1, #ccs=1, valid=1
+After insert_vertex 3 : #Darts=4, #0-cells=4, #1-cells=3, #2-cells=2, #3-cells=1, #4-cells=1, #ccs=1, valid=1
+Before: #Darts=3, #0-cells=3, #1-cells=2, #2-cells=2, #3-cells=1, #4-cells=1, #ccs=1, valid=1
+After insert_vertex 4 : #Darts=5, #0-cells=4, #1-cells=3, #2-cells=2, #3-cells=1, #4-cells=1, #ccs=1, valid=1
+Before: #Darts=3, #0-cells=2, #1-cells=2, #2-cells=2, #3-cells=1, #4-cells=1, #ccs=1, valid=1
+After insert_vertex 5 : #Darts=4, #0-cells=3, #1-cells=3, #2-cells=2, #3-cells=1, #4-cells=1, #ccs=1, valid=1
+Before: #Darts=4, #0-cells=2, #1-cells=2, #2-cells=3, #3-cells=1, #4-cells=1, #ccs=1, valid=1
+After insert_vertex 6 : #Darts=6, #0-cells=3, #1-cells=3, #2-cells=3, #3-cells=1, #4-cells=1, #ccs=1, valid=1
+Before: #Darts=5, #0-cells=4, #1-cells=3, #2-cells=3, #3-cells=1, #4-cells=1, #ccs=1, valid=1
+After insert_vertex 7 : #Darts=6, #0-cells=5, #1-cells=4, #2-cells=3, #3-cells=1, #4-cells=1, #ccs=1, valid=1
+Before: #Darts=5, #0-cells=4, #1-cells=3, #2-cells=3, #3-cells=1, #4-cells=1, #ccs=1, valid=1
+After insert_vertex 8 : #Darts=7, #0-cells=5, #1-cells=4, #2-cells=3, #3-cells=1, #4-cells=1, #ccs=1, valid=1
+Before: #Darts=4, #0-cells=3, #1-cells=3, #2-cells=2, #3-cells=1, #4-cells=1, #ccs=1, valid=1
+After insert_vertex 9 : #Darts=6, #0-cells=4, #1-cells=4, #2-cells=2, #3-cells=1, #4-cells=1, #ccs=1, valid=1
+************************* Test createAllBasicCases2<3> *************************
+Before: #Darts=4, #0-cells=2, #1-cells=1, #2-cells=2, #3-cells=2, #4-cells=1, #ccs=1, valid=1
+After insert_vertex 1 : #Darts=8, #0-cells=3, #1-cells=2, #2-cells=2, #3-cells=2, #4-cells=1, #ccs=1, valid=1
+Before: #Darts=4, #0-cells=1, #1-cells=1, #2-cells=2, #3-cells=2, #4-cells=1, #ccs=1, valid=1
+After insert_vertex 2 : #Darts=8, #0-cells=2, #1-cells=2, #2-cells=2, #3-cells=2, #4-cells=1, #ccs=1, valid=1
+Before: #Darts=6, #0-cells=3, #1-cells=2, #2-cells=2, #3-cells=1, #4-cells=1, #ccs=1, valid=1
+After insert_vertex 3 : #Darts=8, #0-cells=4, #1-cells=3, #2-cells=2, #3-cells=1, #4-cells=1, #ccs=1, valid=1
+Before: #Darts=6, #0-cells=3, #1-cells=2, #2-cells=2, #3-cells=1, #4-cells=1, #ccs=1, valid=1
+After insert_vertex 4 : #Darts=10, #0-cells=4, #1-cells=3, #2-cells=2, #3-cells=1, #4-cells=1, #ccs=1, valid=1
+Before: #Darts=6, #0-cells=2, #1-cells=2, #2-cells=2, #3-cells=1, #4-cells=1, #ccs=1, valid=1
+After insert_vertex 5 : #Darts=8, #0-cells=3, #1-cells=3, #2-cells=2, #3-cells=1, #4-cells=1, #ccs=1, valid=1
+Before: #Darts=8, #0-cells=2, #1-cells=2, #2-cells=3, #3-cells=2, #4-cells=1, #ccs=1, valid=1
+After insert_vertex 6 : #Darts=12, #0-cells=3, #1-cells=3, #2-cells=3, #3-cells=2, #4-cells=1, #ccs=1, valid=1
+Before: #Darts=10, #0-cells=4, #1-cells=3, #2-cells=3, #3-cells=1, #4-cells=1, #ccs=1, valid=1
+After insert_vertex 7 : #Darts=12, #0-cells=5, #1-cells=4, #2-cells=3, #3-cells=1, #4-cells=1, #ccs=1, valid=1
+Before: #Darts=10, #0-cells=4, #1-cells=3, #2-cells=3, #3-cells=1, #4-cells=1, #ccs=1, valid=1
+After insert_vertex 8 : #Darts=14, #0-cells=5, #1-cells=4, #2-cells=3, #3-cells=1, #4-cells=1, #ccs=1, valid=1
+Before: #Darts=8, #0-cells=3, #1-cells=3, #2-cells=2, #3-cells=1, #4-cells=1, #ccs=1, valid=1
+After insert_vertex 9 : #Darts=12, #0-cells=4, #1-cells=4, #2-cells=2, #3-cells=1, #4-cells=1, #ccs=1, valid=1
+************************* Test different cases *************************
+#Darts=1, #0-cells=1, #1-cells=1, #2-cells=1, #3-cells=1, #4-cells=1, #ccs=1, valid=1
+insert vertex1: #Darts=2, #0-cells=2, #1-cells=2, #2-cells=1, #3-cells=1, #4-cells=1, #ccs=1, valid=1
+#Darts=1, #0-cells=1, #1-cells=1, #2-cells=1, #3-cells=1, #4-cells=1, #ccs=1, valid=1
+insert vertex2: #Darts=2, #0-cells=2, #1-cells=2, #2-cells=1, #3-cells=1, #4-cells=1, #ccs=1, valid=1
+#Darts=2, #0-cells=2, #1-cells=1, #2-cells=2, #3-cells=1, #4-cells=1, #ccs=1, valid=1
+insert vertex3: #Darts=4, #0-cells=3, #1-cells=2, #2-cells=2, #3-cells=1, #4-cells=1, #ccs=1, valid=1
+#Darts=2, #0-cells=1, #1-cells=1, #2-cells=2, #3-cells=1, #4-cells=1, #ccs=1, valid=1
+insert vertex4: #Darts=4, #0-cells=2, #1-cells=2, #2-cells=2, #3-cells=1, #4-cells=1, #ccs=1, valid=1
+#Darts=2, #0-cells=1, #1-cells=1, #2-cells=2, #3-cells=1, #4-cells=1, #ccs=1, valid=1
+insert vertex5: #Darts=4, #0-cells=2, #1-cells=2, #2-cells=2, #3-cells=1, #4-cells=1, #ccs=1, valid=1
+#Darts=3, #0-cells=3, #1-cells=3, #2-cells=1, #3-cells=1, #4-cells=1, #ccs=1, valid=1
+insert vertex6: #Darts=4, #0-cells=4, #1-cells=4, #2-cells=1, #3-cells=1, #4-cells=1, #ccs=1, valid=1
+insert vertex7: #Darts=5, #0-cells=5, #1-cells=5, #2-cells=1, #3-cells=1, #4-cells=1, #ccs=1, valid=1
+insert vertex8: #Darts=6, #0-cells=6, #1-cells=6, #2-cells=1, #3-cells=1, #4-cells=1, #ccs=1, valid=1
+#Darts=6, #0-cells=3, #1-cells=3, #2-cells=1, #3-cells=2, #4-cells=1, #ccs=1, valid=1
+insert vertex9: #Darts=8, #0-cells=4, #1-cells=4, #2-cells=1, #3-cells=2, #4-cells=1, #ccs=1, valid=1
+insert vertex10: #Darts=10, #0-cells=5, #1-cells=5, #2-cells=1, #3-cells=2, #4-cells=1, #ccs=1, valid=1
+insert vertex11: #Darts=12, #0-cells=6, #1-cells=6, #2-cells=1, #3-cells=2, #4-cells=1, #ccs=1, valid=1
+#Darts=6, #0-cells=4, #1-cells=5, #2-cells=2, #3-cells=1, #4-cells=1, #ccs=1, valid=1
+insert vertex12: #Darts=8, #0-cells=5, #1-cells=6, #2-cells=2, #3-cells=1, #4-cells=1, #ccs=1, valid=1
+#Darts=6, #0-cells=4, #1-cells=5, #2-cells=2, #3-cells=1, #4-cells=1, #ccs=1, valid=1
+insert vertex13: #Darts=7, #0-cells=5, #1-cells=6, #2-cells=2, #3-cells=1, #4-cells=1, #ccs=1, valid=1
+insert vertex14: #Darts=9, #0-cells=6, #1-cells=7, #2-cells=2, #3-cells=1, #4-cells=1, #ccs=1, valid=1
+#Darts=48, #0-cells=12, #1-cells=20, #2-cells=11, #3-cells=2, #4-cells=1, #ccs=1, valid=1
+insert vertex15: #Darts=52, #0-cells=13, #1-cells=21, #2-cells=11, #3-cells=2, #4-cells=1, #ccs=1, valid=1
+insert vertex16: #Darts=56, #0-cells=14, #1-cells=22, #2-cells=11, #3-cells=2, #4-cells=1, #ccs=1, valid=1
+insert vertex17: #Darts=60, #0-cells=15, #1-cells=23, #2-cells=11, #3-cells=2, #4-cells=1, #ccs=1, valid=1
+insert vertex18: #Darts=64, #0-cells=16, #1-cells=24, #2-cells=11, #3-cells=2, #4-cells=1, #ccs=1, valid=1
+***************************** TEST INSERT VERTEX 3D DONE.
+***************************** TEST INSERT EDGE 3D:
+#Darts=4, #0-cells=1, #1-cells=1, #2-cells=2, #3-cells=2, #4-cells=1, #ccs=1, valid=1
+#Darts=4, #0-cells=4, #1-cells=4, #2-cells=1, #3-cells=1, #4-cells=1, #ccs=1, valid=1
+insert edge4: #Darts=6, #0-cells=4, #1-cells=5, #2-cells=2, #3-cells=1, #4-cells=1, #ccs=1, valid=1
+#Darts=8, #0-cells=4, #1-cells=4, #2-cells=1, #3-cells=2, #4-cells=1, #ccs=1, valid=1
+insert edge5: #Darts=12, #0-cells=4, #1-cells=5, #2-cells=2, #3-cells=2, #4-cells=1, #ccs=1, valid=1
+#Darts=8, #0-cells=6, #1-cells=7, #2-cells=2, #3-cells=1, #4-cells=1, #ccs=1, valid=1
+insert edge6: #Darts=10, #0-cells=6, #1-cells=8, #2-cells=3, #3-cells=1, #4-cells=1, #ccs=1, valid=1
+***************************** TEST INSERT EDGE 3D DONE.
+***************************** TEST INSERT DANGLING EDGE 3D:
+#Darts=1, #0-cells=1, #1-cells=1, #2-cells=1, #3-cells=1, #4-cells=1, #ccs=1, valid=1
+insert dangling edge1: #Darts=3, #0-cells=2, #1-cells=2, #2-cells=1, #3-cells=1, #4-cells=1, #ccs=1, valid=1
+#Darts=2, #0-cells=1, #1-cells=1, #2-cells=2, #3-cells=1, #4-cells=1, #ccs=1, valid=1
+insert dangling edge2: #Darts=4, #0-cells=2, #1-cells=2, #2-cells=2, #3-cells=1, #4-cells=1, #ccs=1, valid=1
+#Darts=4, #0-cells=1, #1-cells=1, #2-cells=2, #3-cells=2, #4-cells=1, #ccs=1, valid=1
+insert dangling edge3: #Darts=8, #0-cells=2, #1-cells=2, #2-cells=2, #3-cells=2, #4-cells=1, #ccs=1, valid=1
+#Darts=4, #0-cells=4, #1-cells=4, #2-cells=1, #3-cells=1, #4-cells=1, #ccs=1, valid=1
+insert dangling edge4: #Darts=6, #0-cells=5, #1-cells=5, #2-cells=1, #3-cells=1, #4-cells=1, #ccs=1, valid=1
+#Darts=8, #0-cells=4, #1-cells=4, #2-cells=1, #3-cells=2, #4-cells=1, #ccs=1, valid=1
+insert dangling edge5: #Darts=12, #0-cells=5, #1-cells=5, #2-cells=1, #3-cells=2, #4-cells=1, #ccs=1, valid=1
+***************************** TEST INSERT DANGLING EDGE 3D DONE.
+***************************** TEST INSERT FACET 3D:
+#Darts=4, #0-cells=4, #1-cells=4, #2-cells=1, #3-cells=1, #4-cells=1, #ccs=1, valid=1
+insert facet1: #Darts=8, #0-cells=4, #1-cells=4, #2-cells=2, #3-cells=1, #4-cells=1, #ccs=1, valid=1
+#Darts=6, #0-cells=4, #1-cells=5, #2-cells=2, #3-cells=1, #4-cells=1, #ccs=1, valid=1
+insert facet2: #Darts=12, #0-cells=4, #1-cells=5, #2-cells=3, #3-cells=2, #4-cells=1, #ccs=1, valid=1
+#Darts=24, #0-cells=8, #1-cells=12, #2-cells=6, #3-cells=1, #4-cells=1, #ccs=1, valid=1
+remove facet3: #Darts=20, #0-cells=8, #1-cells=12, #2-cells=5, #3-cells=1, #4-cells=1, #ccs=1, valid=1
+insert facet3: #Darts=24, #0-cells=8, #1-cells=12, #2-cells=6, #3-cells=1, #4-cells=1, #ccs=1, valid=1
+#Darts=48, #0-cells=12, #1-cells=20, #2-cells=11, #3-cells=2, #4-cells=1, #ccs=1, valid=1
+remove facet4: #Darts=40, #0-cells=12, #1-cells=20, #2-cells=10, #3-cells=1, #4-cells=1, #ccs=1, valid=1
+insert facet4: #Darts=48, #0-cells=12, #1-cells=20, #2-cells=11, #3-cells=2, #4-cells=1, #ccs=1, valid=1
+***************************** TEST INSERT FACET 3D DONE.

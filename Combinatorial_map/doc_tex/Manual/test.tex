@@ -1,0 +1,2083 @@
+% ----------------------------------------------------------------------
+% Test document for the CGAL manual LaTeX style:
+% 
+% 16.08.1995   Lutz Kettner
+% 29.09.1999   Susan Hert
+%
+% $Id: test.tex 29897 2006-03-31 19:06:05Z ameyer $
+% $Date: 2006-03-31 21:06:05 +0200 (Fri, 31 Mar 2006) $
+% ----------------------------------------------------------------------
+% The style is compatible with LaTeX2e:
+\documentclass[12pt]{article}
+
+\usepackage{latexsym}
+\usepackage{amssymb}
+\usepackage{makeidx}
+\usepackage{latex_to_html}
+\usepackage{cc_manual}
+\usepackage{cc_manual_index}
+\usepackage{alltt}
+\usepackage{cprog}
+\usepackage{path}
+
+\textwidth 15.4cm 
+\textheight 24cm
+\topmargin -14mm       
+\evensidemargin 3mm 
+\oddsidemargin 3mm
+
+\parindent0em
+\setlength{\parskip}{1ex minus 0.9ex}
+
+\makeindex
+
+\sloppy
+
+% ----------------------------------------------------------------------
+\title {Test Suite for the cc\_manual.sty}
+\author{Lutz Kettner and Susan Hert}
+\date{\ccRevision. \ccDate}
+
+\begin{document}
+
+\maketitle
+
+\begin{ccRefClass}[Nef_polyhedron_S2<Traits>::]{Sphere_point}
+\ccCreationVariable{p}
+
+\ccSetTwoOfThreeColumns{4cm}{2cm}
+
+\ccOperations
+
+\ccMethod{bool operator==(const Nef_polyhedron_S2<Traits>::Sphere_point& q) ;}{Equality.}
+\ccMethod{bool operator==(const Sphere_point& q) ;}{Equality.}
+
+\end{ccRefClass}
+
+\begin{ccRefClass}{Sphere_point2}
+\ccCreationVariable{p}
+
+\ccSetTwoOfThreeColumns{4cm}{2cm}
+
+\ccOperations
+
+\ccMethod{bool operator==(const Nef_polyhedron_S2<Traits>::Sphere_point2& q) ;}{Equality.}
+\ccMethod{bool operator==(const Sphere_point2& q) ;}{Equality.}
+
+\ccSetTwoOfThreeColumns{2.5cm}{3.8cm}
+
+
+\ccFunction{bool equal_as_sets(
+  const Nef_polyhedron_S2<Traits>::Sphere_point c1, 
+  const Nef_polyhedron_S2<Traits>::Sphere_point c2) ;}{
+  returns true iff \ccc{c1} and \ccc{c2} are equal as unoriented
+  circles.  }
+
+\end{ccRefClass}
+
+
+% ----------------------------------------------------------------------
+\section{Introduction}
+
+This document is a test suite for the {\tt cc\_manual.sty}. It is
+arbitrary structured and mostly no introductory explanations will be given.
+Each section will test a particularly feature. Sections were written
+while developing the style or while debugging. Thanks for bug-reports
+made so far and for future reports. Please send bug-reports to {\tt
+hert@mpi-sb.mpg.de}.
+
+
+% ----------------------------------------------------------------------
+\section{Structuring Macros}
+
+\ccDefinition Here comes the general introductory explanation for a
+class etc. The necessary include files.
+
+\ccInclude{CGAL/Vector_2.h}\\
+\ccInclude{CGAL/Point_2.h}
+
+\ccAccessFunctions
+
+\ccPrecond Specific conditions to be checked at run time can be stated 
+           as preconditions in any place.
+
+\ccRequire Specific conditions to be checked at compile time 
+           can be stated as preconditions in any place.
+
+\ccCreation Constructors are defined and explained here.
+
+% ----------------------------------------------------------------------
+\section{ccStyle Character Test}
+
+The formatting macros handle for example the special characters \_,
+{\tt <}, {\tt >}, and {\tt \&} as they appear in \CC\ names and the
+characters \#, \%, \ccHat, and \ccTilde\ as they appear with
+operators. See the following example that is printed using the
+\verb+\cc+{\tt Style} macro\footnote{A footnote in the main text.}:
+
+\ccStyle{
+    #define %^~$@&$ Ret_Type<Template_Param, X<Y> > fct_foo( const X<Y> &a);}
+
+% ----------------------------------------------------------------------
+\begin{ccClass}{Demo_Class1}
+\ccSection{A Simple Class}
+
+Text\footnote{A footnote in a class environment.}.
+
+\ccCreationVariable{p}
+
+\ccStyle{#include< Demo_Class1.h>}
+\ccTwo{Demo_Class1 p;X}{}
+
+  \ccConstructor{Demo_Class1();}{introduces
+     a variable \ccVar\ initialized to the default. \CC\ code:
+     {\tt Demo\_Class1();}. Test
+     ccStyle: \ccStyle{Underscore\_within  ccStyle}.}
+
+  \ccConstructor{Demo_Class1( const Demo_Class1 &);}{copy
+    constructor. \CC\ code: {\tt Demo\_Class1(const Demo\_Class1 \&);}}
+
+\ccThree{Demo_Class1}{p.x();}{}
+
+  \ccMethod{FT   x()  const;}{Cartesian x-coordinate\protect\footnotemark{}.
+    \CC\ code: {\tt FT x() const;}}
+
+  \ccMethod{const FT&   y();}{Cartesian y-coordinate. \CC\ code: {\tt
+      const FT\& y();}}
+
+  \ccMethod{Demo_Class1   
+             transform( const CGAL_HAff_transformation<FT,RT> &t) const;
+             }{ Longish declarations forces the comment to start in
+             the next line.}
+
+  \ccMethod{Demo_Class1   
+             longish_function_name( 
+                        const CGAL_Aff_transformation<FT,RT> &t,
+                        const Dummy_Type &q,
+                        Long_Type_Name Variable_Also_Long) const;
+             }{ Even more longish declarations forces the parameters printed
+             one per line. This was the default formatting.}
+           
+\ccMethod{
+template <class Polyhedron_3, template <typename> class Mask>
+void Sqrt3(Polyhedron_3& p, Mask<Polyhedron_3> mask, int step = 1);
+}{
+applies the $\sqrt{3}$ triangulation on the control mesh \ccc{p} \ccc{step} times.
+The geometry of the refined mesh is computed by the geometry policy \ccc{mask}.
+This function overwrites the control mesh \ccc{p} with the refined mesh.
+
+aa
+}
+             
+\footnotetext{Another footnote in this class file,
+  implemented with mark and text.}
+
+\end{ccClass}
+
+% ----------------------------------------------------------------------
+\section{Spaces Around Pointer * and Reference \& Symbols}
+
+Reference or pointer parameters can occur on both sides of the
+separating space between the return type and the function or method
+name. The formatting normalizes them to the left side. This
+formatting is not done within the\footnotemark{} parameters (, but maybe in the
+future). An example: 
+
+\footnotetext{Another footnote in this main file,
+  implemented with mark and text. Contains enough text to have a 
+linebreak. Or how about a paragraph?
+
+Here it is. Or special macros and images, like \LaTeX.}%
+
+\ccThree{Demo_Class&&}{p.x();}{}
+
+    \ccFunction{Demo_Class& foo1( int& a, int* b);}{}
+    \ccGlue
+    \ccFunction{Demo_Class* foo2( int& a, int* b);}{}
+    \ccGlue
+    \ccFunction{Demo_Class &foo3( int &a, int *b);}{}
+    \ccGlue
+    \ccFunction{Demo_Class *foo4( int &a, int *b);}{}
+
+% ----------------------------------------------------------------------
+\begin{ccClass}{Demo_Class2}
+\section{Operator Test}
+\ccCreationVariable{p}
+
+Type casting through a conversion operator is the default behavior 
+for the formatting routine if the return type before the {\tt 
+operator} keyword is empty.
+
+\ccThree{Demo_Class&&}{A< FT>(p);}{}
+  \ccMethod{ operator int () const;}{Conversion operator.}
+    \ccGlue
+  \ccMethod{operator A<FT>() const;}{Conversion operator.}
+
+Sometimes, there is a choice between
+implementing an operator as a method or as a function. Both
+declarations will produce the same formatting, as demonstrated
+with the next two declarations.
+
+
+  \ccFunction{Demo_Class2
+        operator+(Demo_Class2 p, Demo_Class2 q);}{Declaration via function.}
+    \ccGlue
+  \ccMethod{Demo_Class2
+        operator+(Demo_Class2 q);}{Declaration via method.}
+
+One can locally activate that the operator declaration is shown as it
+is written without operator formatting, {\tt const ...\&}, classname, or
+trailing const declarations for methods removal. This can be done with
+\verb+\+\verb+ccTagFullDeclarations+ within a scope of braces {\tt
+  \{...\}}.
+
+\ccTagFullDeclarations
+  \ccMethod{Demo_Class2
+        operator+(const Demo_Class2& q) const;}{Declaration via method.}
+\ccTagDefaults
+
+There is some laziness allowed in placing spaces around the operator
+characters. See the following examples:
+
+\ccMethod{A
+    operator+(Demo_Class2 q);}{\CC\ code: {\tt A operator+(Demo\_Class2 q);}}
+    \ccGlue
+\ccMethod{A
+    operator +(Demo_Class2 q);}{\CC\ code: {\tt A operator +(Demo\_Class2 q);}}
+    \ccGlue
+\ccMethod{A
+    operator+ (Demo_Class2 q);}{\CC\ code: {\tt A operator+ (Demo\_Class2 q);}}
+    \ccGlue
+\ccMethod{A
+    operator + (Demo_Class2 q);}{\CC\ code: 
+                                {\tt A operator + (Demo\_Class2 q);}}
+
+The keyword {\tt operator} is reserved, but it can appear as a
+substring in another name. See the following examples that this
+style can handle such cases:
+
+\ccMethod{A foo_operator(Demo_Class2 q);}{}
+    \ccGlue
+\ccMethod{A noperator(Demo_Class2 q);}{}
+    \ccGlue
+\ccMethod{A operatoro(Demo_Class2 q);}{}
+    \ccGlue
+\ccMethod{A operator_(Demo_Class2 q);}{}
+    \ccGlue
+\ccMethod{A operator0(Demo_Class2 q);}{}
+
+A problem has occured in detecting the operator keyword if it was
+directly preceded by an {\tt \&} or {\tt *} character. It is fixed as
+the following example demonstrates:
+
+\ccFunction{Int &operator+=( Int a, Int b);}{}
+
+\end{ccClass}
+
+%----------------------------------------------------------------------
+\ccTagDefaults
+\begin{ccClass}{ClassA}
+\section{The List of All Operators}
+
+  \ccFunction{Ptr_Class
+        operator->(ClassA p);}{}
+  \ccGlue
+  \ccFunction{ClassA
+        operator[](ClassA p, int i);}{}
+
+  \ccFunction{ClassA
+        operator()(ClassA p);}{}
+  \ccGlue
+  \ccFunction{ClassA
+        operator()(ClassA p, int i);}{}
+  \ccGlue
+  \ccFunction{ClassA
+        operator()(ClassA p, int i, int j);}{}
+  \ccGlue
+  \ccFunction{ClassA
+        operator()(ClassA p, int i, int j, int k);}{}
+  \ccGlue
+  \ccFunction{ClassA
+        operator()(ClassA p,
+                   const A& a, B& b, C c, const D& d, ClassA
+                   e);}{all number and types of parameters are possible.}
+
+  \ccFunction{ClassA
+        operator++(ClassA p);}{}
+  \ccGlue
+  \ccFunction{ClassA
+        operator++(ClassA p, int);}{The postfix incr.\ operator
+        has a hidden {\tt int} parameter that the formatting does not show.}
+
+  \ccFunction{ClassA
+        operator--(ClassA p);}{}
+  \ccGlue
+  \ccFunction{ClassA
+        operator--(ClassA p, int);}{}
+
+  \ccFunction{ClassA
+        operator~(ClassA p);}{}
+  \ccGlue
+  \ccFunction{ClassA
+        operator!(ClassA p);}{}
+  \ccGlue
+  \ccFunction{ClassA
+        operator-(ClassA p);}{}
+  \ccGlue
+  \ccFunction{ClassA
+        operator+(ClassA p);}{}
+  \ccGlue
+  \ccFunction{ClassA
+        operator&(ClassA p);}{}
+  \ccGlue
+  \ccFunction{ClassA
+        operator*(ClassA p);}{}
+
+  \ccMethod{ void*
+        operator new( size_t);}{Hidden parameters are not shown. \CC\ code: 
+        $\backslash${\tt method\{ void* operator new( size\_t);\}}.}
+
+  \ccMethod{ void
+        operator delete( void*, size_t);}{Hidden parameters are not shown.
+        \CC\ code: $\backslash${\tt method\{ void operator 
+            delete( void*, size\_t);\}}}
+
+  \ccMethod{ void
+        operator delete[]( void*, size_t);}{Hidden parameters are not
+        shown again. 
+        \CC\ code: $\backslash${\tt method\{ void operator
+            delete[]( void*, size\_t);\}}}
+
+  \ccFunction{Member_Ptr
+        operator->*(ClassA p);}{}
+
+  \ccFunction{ClassA
+        operator*(ClassA p, ClassA q);}{}
+  \ccGlue
+  \ccFunction{ClassA
+        operator/(ClassA p, ClassA q);}{}
+  \ccGlue
+  \ccFunction{ClassA
+        operator%(ClassA p, ClassA q);}{}
+  \ccGlue
+  \ccFunction{ClassA
+        operator+(ClassA p, ClassA q);}{}
+  \ccGlue
+  \ccFunction{ClassA
+        operator-(ClassA p, ClassA q);}{}
+  \ccGlue
+  \ccFunction{ClassA
+        operator<<(ClassA p, int i);}{}
+  \ccGlue
+  \ccFunction{ClassA
+        operator>>(ClassA p, int i);}{}
+
+  \ccFunction{ClassA
+        operator<(ClassA p, ClassA q);}{}
+  \ccGlue
+  \ccFunction{ClassA
+        operator<=(ClassA p, ClassA q);}{}
+  \ccGlue
+  \ccFunction{ClassA
+        operator>(ClassA p, ClassA q);}{}
+  \ccGlue
+  \ccFunction{ClassA
+        operator>=(ClassA p, ClassA q);}{}
+  \ccGlue
+  \ccFunction{ClassA
+        operator==(ClassA p, ClassA q);}{}
+  \ccGlue
+  \ccFunction{ClassA
+        operator!=(ClassA p, ClassA q);}{}
+
+  \ccFunction{ClassA
+        operator&(ClassA p, ClassA q);}{}
+  \ccGlue
+  \ccFunction{ClassA
+        operator^(ClassA p, ClassA q);}{}
+  \ccGlue
+  \ccFunction{ClassA
+        operator|(ClassA p, ClassA q);}{}
+
+  \ccFunction{ClassA
+        operator&&(ClassA p, ClassA q);}{}
+  \ccGlue
+  \ccFunction{ClassA
+        operator||(ClassA p, ClassA q);}{}
+
+  \ccFunction{ClassA
+        operator=(ClassA p, ClassA q);}{}
+  \ccGlue
+  \ccFunction{ClassA
+        operator*=(ClassA p, ClassA q);}{}
+  \ccGlue
+  \ccFunction{ClassA
+        operator/=(ClassA p, ClassA q);}{}
+  \ccGlue
+  \ccFunction{ClassA
+        operator%=(ClassA p, ClassA q);}{}
+  \ccGlue
+  \ccFunction{ClassA
+        operator+=(ClassA p, ClassA q);}{}
+  \ccGlue
+  \ccFunction{ClassA
+        operator-=(ClassA p, ClassA q);}{}
+  \ccGlue
+  \ccFunction{ClassA
+        operator<<=(ClassA p, ClassA q);}{}
+  \ccGlue
+  \ccFunction{ClassA
+        operator>>=(ClassA p, ClassA q);}{}
+  \ccGlue
+  \ccFunction{ClassA
+        operator&=(ClassA p, ClassA q);}{}
+  \ccGlue
+  \ccFunction{ClassA
+        operator|=(ClassA p, ClassA q);}{}
+  \ccGlue
+  \ccFunction{ClassA
+        operator^=(ClassA p, ClassA q);}{}
+
+\end{ccClass}
+
+% ----------------------------------------------------------------------
+\section{Scope Operator in Types}
+
+CGAL will use {\tt typedef}'s and the scope operator to define types.
+Here is an example for the scope operator within types.
+
+  \ccSetTwoOfThreeColumns{5.8cm}{1.8cm}
+  \ccFunction{Rep_Class::Nested_Class
+        foo(Rep_Class::Nested_Class p, Demo_Class q);}{
+         Declaration with scope.}
+
+  \ccFunction{Rep_Class :: Nested_Class
+        foo(Rep_Class :: Nested_Class p, Demo_Class q);}{
+         The same, surrounded by spaces.}
+       
+The scope operator now also can be used for the function or method name.
+
+  \ccSetTwoOfThreeColumns{5.8cm}{1.8cm}
+  \ccFunction{Rep_Class::Nested_Class
+        TI::foo(Rep_Class::Nested_Class p, Demo_Class q);}{
+         Declaration with scope.}
+
+  \ccFunction{Rep_Class :: Nested_Class
+        CBP::foo(Rep_Class :: Nested_Class p, Demo_Class q);}{
+         The same, surrounded by spaces.}
+       
+
+% ----------------------------------------------------------------------
+\begin{ccClassTemplate}{ClassB<FT<RT> >}
+\ccSection{Demo Class Template}
+
+\ccCreation
+\ccCreationVariable{p}
+
+\ccTwo{ClassB<FT<RT> > p( A a, B *b);X}{}
+  \ccConstructor{ ClassB();}{ default.}
+  \ccGlue
+  \ccConstructor{ ClassB( ClassB<FT<RT> > q);}{ copy.}
+  \ccGlue
+  \ccConstructor{ ClassB( A a, B *b);}{ arbitrary.}
+
+\ccOperations
+\ccThree{ClassB<FT<RT> >}{foo( q);}{}
+
+  \ccMethod{ ClassB foo( ClassB q);}{
+      wrong, without template parameters.}
+
+  \ccFunction{ ClassB<FT<RT> > foo( ClassB<FT<RT> > q);}{
+      right, with template parameters.}
+\end{ccClassTemplate}
+
+% ----------------------------------------------------------------------
+\section{Abbreviations}
+
+The math set symbols need the package
+{\tt amssymb} and \LaTeXe.
+
+\begin{tabbing}
+  \ccTexHtml{dum \= dummyyyyyyyy \= \kill}{}
+  \> \verb+\CC+         \> \CC         \\
+  \> \verb+\gcc+        \> \gcc        \\
+  \> \verb+\nat+        \> \nat        \\
+  \> \verb+\real+       \> \real       \\
+  \> \verb+\leda+       \> \leda       \\
+  \> \verb+\cgal+       \> \cgal       \\
+  \> \verb+\protocgal+  \> \protocgal  \\
+  \> \verb+\plageo+     \> \plageo     \\ 
+  \> \verb+\+\verb+N+        \> \N        \\
+  \> \verb+\+\verb+Z+        \> \Z        \\
+  \> \verb+\+\verb+R+        \> \R        \\
+  \> \verb+\+\verb+E+        \> \E
+\end{tabbing}
+
+% ----------------------------------------------------------------------
+\section{Enum's}
+
+Enum's are formatted similiar to constructors. Exactly one pair of
+matching braces has to be in the declaration.
+
+\ccTwo{enum Short ( A, B, C);XX}{}
+
+\ccEnum{enum Short { A, B, C};}{ Comment.}
+
+\ccEnum{enum Funny_type_name1 { A_couple_of_entries1,
+    one_with_initialisation1 = 5, another1 = -3};}{ Comment.}
+
+We can even switch the alternative layout on:
+
+\def\ccLongParamLayout{\ccTrue}
+
+\ccEnum{enum Funny_type_name2 { A_couple_of_entries2,
+    one_with_initialisation2 = 5, another2 = -3};}{ Comment.}
+
+\def\ccLongParamLayout{\ccFalse}
+
+
+% ----------------------------------------------------------------------
+\section{Variables, Constants and Typedefs}
+
+\ccSetTwoOfThreeColumns{3.5cm}{3.5cm}
+
+\ccVariable{long int foo4;}{Local variables are possible.}
+
+\ccVariable{long int foo5 = 15;}{Initialisation.}
+
+\ccVariable{const long int foo6 = 15;}{Make a constant.}
+
+\ccTypedef{typedef int integer;}{Simple typedef.}
+
+\ccTypedef{typedef List< int>  Integer_list;}{Typedef including template
+    parameters.}
+
+
+
+% ----------------------------------------------------------------------
+\section{Global Declarations}
+
+\ccGlobalFunction{Intersection_type CGAL_intersection_type(
+      Polygon_2< R>, Polygon_2< R>);}
+
+\ccRequirements
+  The list of compile time requirements for this funciton should be put 
+  under this heading.
+
+\ccGlobalEnum{enum global_enum { A_couple_of_entries3,
+    one_with_initialisation3 = 5, another3 = -3};}
+
+\ccGlobalVariable{int CGAL_global_var;}
+
+
+% ----------------------------------------------------------------------
+\begin{ccClassTemplate}{CGAL_Point_2< R>}
+\section{Default Parameters in Function Argument Lists}
+
+The following example demonstrates the new ability to write default
+parameters with initializers in parantheses notion of \CC.
+
+\ccCreationVariable{p}
+\ccConstructor{CGAL_Point_2(const R::RT &x, const R::RT &y, const R::RT &w = R::RT(1.0));}{blabla}
+\end{ccClassTemplate}
+
+
+
+% ----------------------------------------------------------------------
+\section{Test Indentation and Alternate Formatting}
+
+This example tests the indentation and right margin setting
+possibilities. Two long declarations with alternative formatting rules
+for the function arguments are used. First the  declaration without
+any indentation or margins.
+
+\ccFunction{int a_really_long_function_name( double paramter1, double
+  paramter2);}{the default formatting. A bit more text is necessary to
+  demonstrate the right margin.}
+
+Now with 10mm indentation and 10mm right margin. Note that the
+description is also further indented since all dimensions are
+calculated from left.
+
+\ccTagDefaults
+\def\ind{\hspace*{7mm}}
+\ccTexHtml{\ccwIndent=10mm \ccwRightMargin=10mm}{}
+
+\ccFunction{int a_really_long_function_name( double paramter1, double
+  paramter2);}{the default formatting. A bit more text is necessary to
+  demonstrate the right margin.}
+\renewcommand{\ccLongParamLayout}{\ccTrue}
+
+\ccFunction{int a_really_long_function_name( double paramter1, double
+  paramter2);}{the alternative formatting. A bit more text is necessary to
+  demonstrate the right margin.}
+
+Show the indentation also for template functions.
+
+\ccFunction{template<class A> int bar(A a);}{A bit more text to
+  demonstrate the right margin.}
+
+\renewcommand{\ccLongParamLayout}{\ccFalse}
+
+Check the same alternate indentation with the compatibility mode 
+\verb+\renewcommand{\ccAlternateThreeColumn}{\ccFalse}+
+
+\renewcommand{\ccAlternateThreeColumn}{\ccFalse}
+
+\ccFunction{int a_really_long_function_name( double paramter1, double
+  paramter2);}{the alternative formatting. A bit more text is necessary to
+  demonstrate the right margin.}
+
+Show the indentation also for template functions.
+
+\ccFunction{template<class A> int bar(A a);}{A bit more text to
+  demonstrate the right margin.}
+
+\renewcommand{\ccAlternateThreeColumn}{\ccTrue}
+\ccTexHtml{\ccwIndent=0mm \ccwRightMargin=0mm}{}
+
+% ----------------------------------------------------------------------
+\section{Test the Setting of the Column Widths by Example Texts}
+
+
+\ccSetThreeColumns{int}{foo( int i, int j);}{}
+\ccFunction{int foo( int i, int j);}{returns gnats$(i,j)$.}
+
+\ccSetThreeColumns{int}{}{returns gnats$(i,j)$.}
+\ccFunction{int foo( int i, int j);}{returns gnats$(i,j)$.}
+
+\ccSetThreeColumns{}{foo( int i, int j);}{returns gnats$(i,j)$.}
+\ccFunction{int foo( int i, int j);}{returns gnats$(i,j)$.}
+
+Test it with the special characters (changed catcodes) for function
+and contructor declarations.  
+
+
+\ccSetThreeColumns{_#_^}{_#_^f*&*&oo( int i);}{}
+\ccSetTwoColumns{_#_^ foo( int i, int j);}{}
+\begin{ccClass}{Gnu1}
+  \ccCreationVariable{g}
+  \ccConstructor{Gnu1( double d);}{test.}
+  \ccFunction{int foo( Gnats<T> gn);}{blablabla.}
+\end{ccClass}
+
+Specify a column layout for a function and propagate it to a contructor.
+
+\ccSetThreeColumns{intM}{foo( Gnats<T> gn);M}{}
+\ccPropagateThreeToTwoColumns
+\begin{ccClass}{Gnu2}
+  \ccCreationVariable{g}
+  \ccConstructor{Gnu2( double d);}{test.}
+  \ccFunction{int foo( Gnats<T> gn);}{blablabla.}
+\end{ccClass}
+
+
+% ----------------------------------------------------------------------
+\section{Check Long Constructor Calls}
+
+\begin{ccClassTemplate}{CBP_Bidirectional_circulator< C, C*
+   (C::*next)(), C* (C::*previous)()>} 
+\ccCreationVariable{circ}
+\ccSetTwoColumns{}{a const circulator \ccVar\ with singular value.}
+
+NOTHING is interesting here.
+
+
+\ccConstructor{CBP_Bidirectional_circulator();}{%
+ a const circulator \ccVar\ with singular value.}
+
+\ccConstructor{CBP_Bidirectional_circulator( const C* ptr);}{a
+  const circulator \ccVar\ initialized to point to the element \ccStyle{*ptr}.} 
+\end{ccClassTemplate}
+
+% ----------------------------------------------------------------------
+\section{Glueing Declarations Together}
+
+\ccFunction{int foo( double x);}{}
+\ccGlue
+\ccFunction{int bar( double x);}{}
+
+\ccFunction{int foo( double x);}{Bla.}
+\ccGlue
+\ccFunction{int bar( double x);}{Blubb blubb.}
+
+\ccFunction{int foo_baaaaaaaarrrr( double x);}{%
+     Bla bal blabal blabal blabal blab.}
+\ccGlue
+\ccFunction{int barfoooooooooooooooooo( double x);}{%
+    Blubb blubblubb blubblubb blubblubb blubb.}
+
+\ccFunction{int foo_baaaaaaaarrrr( double x);}{%
+     Blkj fdkjbjlh flknlkj kjh kjh lkjh a bal blabal blabal blabal blab.}
+\ccGlue
+\ccFunction{int bar( double x);}{Blubb blubb.}
+
+\ccFunction{int foo_bar( double x);}{%
+     Blkj fdkjbjlh flknlkj kjh kjh lkjh a bal blabal blabal blabal blab.}
+\ccGlue
+\ccFunction{int foo_bar( double x);}{%
+     Blkj fdkjbjlh flknlkj kjh kjh lkjh a bal blabal blabal blabal
+     Blkj fdkjbjlh flknlkj kjh kjh lkjh a bkuuhd kjwdhwkjdhh blab.}
+\ccGlue
+\ccFunction{int bar( double x);}{Blubb blubb.}
+
+
+% ----------------------------------------------------------------------
+\section{Glueing Declarations Together, New Style}
+
+%\parskip0pt
+
+\ccGlueBegin
+  \ccFunction{int foo( double x);}{}
+  \ccFunction{int bar( double x);}{}
+\ccGlueEnd
+
+\ccGlueBegin
+  \ccFunction{int foo( double x);}{Bla.}
+  \ccFunction{int bar( double x);}{Blubb blubb.}
+\ccGlueEnd
+
+\ccGlueBegin
+  \ccFunction{int foo_baaaaaaaarrrr( double x);}{%
+     Bla bal blabal blabal blabal blab.}
+  \ccFunction{int barfoooooooooooooooooo( double x);}{%
+    Blubb blubblubb blubblubb blubblubb blubb.}
+\ccGlueEnd
+
+\ccGlueBegin
+  \ccFunction{int foo_baaaaaaaarrrr( double x);}{%
+     Blkj fdkjbjlh flknlkj kjh kjh lkjh a bal blabal blabal blabal blab.}
+  \ccFunction{int bar( double x);}{Blubb blubb.}
+\ccGlueEnd
+
+\ccGlueBegin
+  \ccFunction{int foo_bar( double x);}{%
+     Blkj fdkjbjlh flknlkj kjh kjh lkjh a bal blabal blabal blabal blab.}
+  \ccFunction{int foo_bar( double x);}{%
+     Blkj fdkjbjlh flknlkj kjh kjh lkjh a bal blabal blabal blabal
+     Blkj fdkjbjlh flknlkj kjh kjh lkjh a bkuuhd kjwdhwkjdhh blab.}
+  \ccFunction{int bar( double x);}{Blubb blubb.}
+\ccGlueEnd
+
+A bit text thereafter.
+
+A new paragraph to check that \verb+\parskip+ gets restored properly.
+
+% ----------------------------------------------------------------------
+\begin{ccClass}{Base::Derived}
+\section{Nested Classes}
+
+First try, use the scope operator in the class name.
+
+\ccCreationVariable{a}
+
+\ccConstructor{Base::Derived( double x);}{a constructor.}
+\ccFunction{Base::Derived foo( Base::Derived b);}{a function.}
+\end{ccClass}
+
+% ----------------------------------------------------------------------
+\section{Prefix Substitution}
+
+The example illustrates both typical usages (with a fantasy function
+that does not exist in \cgal).
+
+\ccSetThreeColumns{CGAL_Point<R>}{CGAL_f( CGAL_Vector<R> v)}{}
+
+\ccStyle{#include <CGAL/point.h>}
+\\
+\ccFunction{CGAL_Point<R> CGAL_f( CGAL_Vector<R> v);}{%
+    the original \cgal\ prefix.}
+\vspace{-\parskip}
+
+\begin{tabbing}
+\ccTexHtml{CCimplementationNNNMMMMMMMMMMMMMMMMMMMM \= ImplementationMMMMM \= \kill}{}
+  \verb+\def\ccTargetPrefix{}+ \\
+  \verb+\renewcommand{\ccTagReplacePrefix}{\ccTrue}+
+\end{tabbing}
+\def\ccTargetPrefix{}
+\renewcommand{\ccTagReplacePrefix}{\ccTrue}
+\vspace{-\parskip}
+
+\ccStyle{#include <CGAL/point.h>}
+\\
+\ccFunction{CGAL_Point<R> CGAL_f( CGAL_Vector<R> v);}{%
+    assuming name spaces. {\tt ;-)}}
+\vspace{-\parskip}
+
+\begin{tabbing}
+\ccTexHtml{CCimplementationNNNMMMMMMMMMMMMMMMMMMMM \= ImplementationMMMMM \= \kill}{}
+  \verb+\def\ccTargetPrefix{GTE}+ \\
+  \verb+\renewcommand{\ccTagReplaceInclude}{\ccTrue}+
+\end{tabbing}
+\def\ccTargetPrefix{GTE}
+\renewcommand{\ccTagReplaceInclude}{\ccTrue}
+\vspace{-\parskip}
+
+\ccStyle{#include <CGAL/point.h>}
+\\
+\ccFunction{CGAL_Point<R> CGAL_f( CGAL_Vector<R> v);}{%
+    make a Porsche from this declaration.}
+\vspace{-\parskip}
+
+\begin{tabbing}
+\ccTexHtml{CCimplementationNNNMMMMMMMMMMMMMMMMMMMM \= ImplementationMMMMM \= \kill}{}
+  \verb+\renewcommand{\ccTagReplacePrefix}{\ccFalse}+ \\
+  \verb+\renewcommand{\ccTagReplaceInclude}{\ccFalse}+
+\end{tabbing}
+\renewcommand{\ccTagReplacePrefix}{\ccFalse}
+\renewcommand{\ccTagReplaceInclude}{\ccFalse}
+
+% ----------------------------------------------------------------------
+\section{A Constructor for a Nested Class}
+
+The method how it should work:
+
+\begin{ccClass}{CGAL_SegmentTree_2d<T1>::SegTree}
+
+The classname is \ccClassTemplateName.
+
+\ccCreationVariable{t}
+\ccConstructor{CGAL_SegmentTree_2d<T1>::SegTree
+(S2dList::const_iterator first);}{constructor.}
+
+\ccMemberFunction{CGAL_SegmentTree_2d<T1>::SegTree
+    foo (CGAL_SegmentTree_2d<T1>::SegTree same);}{%
+    removal of own type in parameterlist of a member function.} 
+\end{ccClass}
+
+
+The hack I have recommended previously.
+
+\ccFunction{CGAL_SegmentTree_2d<T1>::SegTree
+t(S2dList::const_iterator first);}{fake constructor.}
+
+Another check with the trouble making operator in a member function.
+
+\begin{ccClass}{ClassC}
+\ccCreationVariable{pp}
+  \ccMethod{ClassC operator+(ClassC qq);}{%
+      Declaration of an operator as a member function.}
+\end{ccClass}
+
+
+\ccTexHtml{\ccAutoIndexingOff}{}
+% ----------------------------------------------------------------------
+\section{Font Changes within a Declaration}
+
+In an simple \verb+\ccc{}+ macro: \ccc{var_\tt k_th\ccFont _foo8;} and
+boldface: \ccc{var_\bf k_th\ccFont _foo8;}
+
+A global variable declaration.
+
+\ccSetThreeColumns{\tt k_th\ccFont _dim\ }{\tt k_th\ccFont _foo8;}{}
+\ccVariable{\tt k_th\ccFont _dim \tt k_th\ccFont _foo8;}{%
+    a {\tt k\_th}-dimensional variable.}
+
+A constructor and a member function within a class where the classname
+also uses font changing macros.
+
+\def\ccTagRmEigenClassName{\ccFalse}
+
+\begin{ccClass}{\tt k_th\ccFont _dim_Class}
+  \ccCreationVariable{v}
+  \ccSetThreeColumns{\tt k_th\ccFont _dim_retvalue\ }{v.k_th\ccFont
+    _dim_foo( \tt k_th\ccFont _dim_param)\ ;}{}
+  \ccSetTwoColumns{\tt k_th\ccFont _dim_Class v( \tt k_th\ccFont
+    _dim_param) \ ;}{}
+  \ccConstructor{\tt k_th\ccFont _dim_Class();}{The default constructor.}
+  \ccConstructor{\tt k_th\ccFont _dim_Class( \tt k_th\ccFont
+    _dim_param);}{The custom constructor.}  
+  \ccMemberFunction{\tt k_th\ccFont _dim_retvalue \tt k_th\ccFont
+    _dim_foo( \tt k_th\ccFont _dim_param);}{a function.}
+\end{ccClass}
+
+\def\ccLongParamLayout{\ccTrue}
+
+\begin{ccClassTemplate}{CGAL_Segment_tree_\tt k\ccFont <_T1, _C1, _T2,
+    _C2,\dots, _T\tt k\ccFont , _C\tt k\ccFont , _V>}
+
+\ccCreationVariable{s}
+\ccThree{void}{Dummy}{}
+
+\ccConstructor{CGAL_Segment_tree_\tt k\ccFont <_T1, _C1, _T2,
+    _C2,\dots, _T\tt k\ccFont , _C\tt k\ccFont ,
+    _V>();}{Creation of a {\tt k}-dimensional Segment
+  Tree, where the i-th coordinate has type \ccStyle{_Ti} and a
+  comparator of type \ccStyle{_Ci}. Parameter type
+\ccStyle{Value} is set to \ccStyle{_V}.}
+
+
+\ccMethod{void CGAL_Segment_tree_\tt k \ccFont
+    window_query(GIS_interval_data_\tt k \ccFont 
+    win, back_insert_iterator<GIS_interval_data_list_\tt k\ccFont>  out);}{%
+All elements that
+  intersect the associated $d$-dimensional half open interval of 
+\ccStyle{win} are placed in the list of  \ccStyle{out}.}
+
+\end{ccClassTemplate}
+\def\ccLongParamLayout{\ccFalse}
+\def\ccTagRmEigenClassName{\ccTrue}
+
+\ccTexHtml{\ccAutoIndexingOn}{}
+% ----------------------------------------------------------------------
+\begin{ccClass}{ClassD}
+\section{Customization Tags for the Style}
+
+\ccThree{ClassD}{pp.operator+( const ClassD& qq) const;}{}
+First, a  declaration  with all default substitution rule active.
+
+\ccCreationVariable{pp}
+
+\ccMemberFunction{ClassD operator+(const ClassD& qq) const;}{%
+      member function.}
+
+Second, all rules switched off.
+\ccTagFullDeclarations
+
+\ccMemberFunction{ClassD operator+(const ClassD& qq) const;}{%
+      member function.}
+
+Third, back to the default.
+\ccTagDefaults
+
+\ccMemberFunction{ClassD operator+(const ClassD& qq) const;}{%
+      member function.}
+
+\end{ccClass}
+
+% ----------------------------------------------------------------------
+\begin{ccClass}{Dummy}
+\section{Test the removal or inlining of template declarations}
+\ccCreationVariable{q}
+
+Inlining of template declarations. The default is to format the
+template declaration in an extra line. Here the default with a struct
+and a global function.
+
+\ccSetThreeColumns{template <class T> T*}{X}{}
+\ccSetTwoColumns{template <class T> struct circulator_base \{\};}{}
+\ccStruct{template <class T> 
+          struct circulator_base1 {};}{forward.}
+
+\ccConstructor{template <class T> 
+          Dummy();}{constructor.}
+
+\ccGlobalFunction{template <class T> 
+  T* value_type( const circulator_base<T>&);}
+
+Here with the inlining on.
+
+\def\ccTagTemplateInline{\ccTrue}
+\ccStruct{template <class T> 
+          struct circulator_base2 {};}{forward.}
+
+\ccConstructor{template <class T> 
+          Dummy();}{constructor.}
+
+\ccGlobalFunction{template <class T> 
+  T* value_type( const circulator_base<T>&);}
+\def\ccTagTemplateInline{\ccFalse}
+
+Here with the removal on.
+
+\def\ccTagRmTemplate{\ccTrue}
+\ccStruct{template <class T> 
+          struct circulator_base3 {};}{forward.}
+
+\ccConstructor{template <class T> 
+          Dummy();}{constructor.}
+
+\ccGlobalFunction{template <class T> 
+  T* value_type( const circulator_base<T>&);}
+\def\ccTagRmTemplate{\ccFalse}
+\end{ccClass}
+
+% ----------------------------------------------------------------------
+\begin{ccClassTemplate}{Demo<T>}
+\section{A Function Pointer as an Operator Argument}
+
+\ccCreationVariable{out}
+\ccThree{Ascii_ostream&}{out << ostream& (*f)(ostream&);}{}
+\ccThreeToTwo
+
+\ccMethod{Ascii_ostream& operator<<(ostream& (*f)(ostream&));}
+{manipulators in streams.}
+
+\end{ccClassTemplate}
+
+% ----------------------------------------------------------------------
+\section{Long Class Template Names in Nested Types}
+
+
+\begin{ccClassTemplate}{CGAL_tree_point_interface1<P, W, Key,  
+    Left, Right, Comp>}
+\ccNestedType{Tree_Point}{complies to the container \ccStyle{Point}.}
+\end{ccClassTemplate}
+
+If the class does not fit any longer in one line, it wraps around.
+
+\begin{ccClassTemplate}{CGAL_tree_point_interface2<Point, Window, Key,  
+         Point_func, Window_left_func, 
+         Window_right_func, Compare>}
+\ccNestedType{Tree_Point}{complies to the container \ccStyle{Point}.}
+\end{ccClassTemplate}
+
+The formatting for long parameter lists put the new type name in an extra line.
+
+\begin{ccClassTemplate}{CGAL_tree_point_interface3<Point, Window, Key,  
+         Point_func, Window_left_func, 
+         Window_right_func, Compare>}
+\def\ccLongParamLayout{\ccTrue}
+\ccNestedType{Tree_Point}{complies to the container \ccStyle{Point}.}
+\def\ccLongParamLayout{\ccFalse}
+\end{ccClassTemplate}
+
+The proposed solution uses a typedef to avoid duplicating the long
+template class name all over the specification.
+
+\begin{ccClass}{Point_interface}
+  
+The following line must be done by hand if it should be
+formatted more nicely.
+
+\ccStyle{typedef CGAL_tree_point_interface<Point, Window, Key,  
+         Point_func, Window_left_func, 
+         Window_right_func, Compare> Point_interface;}
+       
+Since here the specification is written in terms of the above
+\ccStyle{typedef}.
+
+\ccNestedType{Tree_Point}{complies to the container \ccStyle{Point}.}
+\end{ccClass}
+
+% ----------------------------------------------------------------------
+\section{HTML Conversion}
+
+Small spaces in math mode: $a\:b\;c\!d$.
+
+The \verb+\ccc+ macro within a math environment: $1 + 3 - \ccc{symbol} = 8$.
+
+A simple class I with a short single character name. No cross linking rules
+
+\begin{ccClassTemplate}{I<X>}
+\ccCreationVariable{i}
+\ccConstructor{I(I<X> j);}{}
+\end{ccClassTemplate}
+
+Superscript $x^2$.
+Simple fraction ${1 \over 2}$.
+Not so simple fraction $\frac{1+2}{2+1}$.
+Emptyset $\emptyset$.
+Squareroot $\sqrt{1+3}$.
+Root of three $\sqrt[3]{1+3}$.
+
+\ccThree{void}{math_foo();}{}
+\ccFunction{void math_foo();}{Simple fraction ${1 \over 2}$.}
+
+% ----------------------------------------------------------------------
+\section{Switch Off Linking and Indexing}
+
+\ccThree{boolx}{a.link5( LinkB a, B b)}{}
+\ccThreeToTwo
+
+\ccHtmlNoClassIndex\ccHtmlNoLinks
+\begin{ccClass}{LinkA}
+\ccCreationVariable{a}
+
+A class \ccClassName\ with \verb+\ccHtmlNoClassIndex+ and
+\verb+\ccHtmlNoLinks+ to suppress cross linking:
+
+  \ccFunction{
+     bool link1(const LinkA& a, const B& b);}{%
+             a function is still indexed.
+         }
+  \ccGlue
+  \ccMethod{
+     bool link2(const LinkA& a, const B& b);}{%
+             a method is never indexed.
+         }
+  \ccGlue
+  \ccStruct{struct LocalX {};}{a nested struct is not indexed.}
+\end{ccClass}
+
+
+\begin{ccClass}{LinkB}
+\ccCreationVariable{b}
+
+A class \ccClassName\ without \verb+\ccHtmlNoClassIndex+ but the individual
+declarations are prefixed with \verb+\ccHtmlNoIndex+ and 
+\verb+\ccHtmlNoLinks+:
+
+  \ccHtmlNoIndex\ccHtmlNoLinks
+  \ccFunction{
+     bool link3(const LinkB& a, const B& b);}{%
+             explicitly not indexed.
+         }
+  \ccGlue
+  \ccMethod{
+     bool link4(const LinkB& a, const B& b);}{%
+             a method is never indexed.
+         }
+  \ccGlue
+  \ccHtmlNoIndex
+  \ccStruct{struct LocalY {};}{a nested struct explicitly not indexed.}
+\end{ccClass}
+
+The same for a global function and struct.
+
+  \ccHtmlNoIndex\ccHtmlNoLinks
+  \ccFunction{
+     bool link5(const LinkB& a, const B& b);}{%
+             explicitly not indexed.
+         }
+  \ccGlue
+  \ccHtmlNoIndex\ccHtmlNoLinks
+  \ccStruct{struct GlobalX {};}{a global struct explicitly not indexed and 
+                                not linked.}
+  \ccGlue
+  \ccStruct{struct GlobalY {};}{a global struct indexed and linked.}
+
+Try it for a reference environment.
+
+\ccFunction{
+     bool link6(const UnlinkedRefClassA& a, const B& b);}{%
+             UnlinkedRefClass is not linked.
+}
+
+\ccHtmlNoRefIndex\ccHtmlNoRefLinks
+\begin{ccRefClass}{UnlinkedRefClassA}
+\ccCreationVariable{a}
+
+A class \ccRefName\ with \verb+\ccHtmlNoRefIndex+ and
+\verb+\ccHtmlNoRefLinks+ to suppress cross linking:
+
+  \ccMethod{
+     bool link7(const UnlinkedRefClassA& a, const B& b);}{%
+             a method is never indexed.
+         }
+  \ccGlue
+  \ccStruct{struct LocalX {};}{a nested struct is not indexed.}
+\end{ccRefClass}
+
+And now try removing links from certain sections of the text.
+
+\begin{ccClass}{turn_off}
+
+\ccDefinition
+
+Class that creates unwanted links so we turn them off
+using \verb+\ccHtmlLinksOff+, \verb+\ccHtmlLinksOn+, and
+\verb+\ccHtmlNoLinksFrom+.
+
+A link to this \ccc{turn_off} should be here, but \ccHtmlLinksOff not
+to this \ccc{turn_off} nor this other \ccc{turn_off}\ccHtmlLinksOn as they
+are between \verb+\ccHtmlLinksOff+ and \verb+\ccHtmlLinksOn+ commands.
+However this \ccc{turn_off} link should be there.  This
+\ccHtmlNoLinksFrom{\ccc{turn_off} and this other \ccc{turn_off}}, which
+are inside the argument of a \verb+\ccHtmlNoLinksFrom+ command, should
+not be linked.
+
+\end{ccClass}
+
+\ccFunction{
+     bool turn_off(const A& a, const B& b);}{%
+             a function name that is linked.
+         }
+
+\ccHtmlLinksOff
+\ccFunction{
+   bool test_me(const turn_off& T);}{%
+      The \ccc{turn_offs} here should not be linked
+   }
+\ccHtmlLinksOn
+
+
+
+
+% ----------------------------------------------------------------------
+\section{Member Function versus Function for Operators}
+
+\begin{ccClass}{CGAL_Geomview_stream}
+\ccCreationVariable{G}
+
+\ccFunction{template <class R>
+            CGAL_Geomview_stream&
+            operator<<(CGAL_Geomview_stream& G,
+                       const CGAL_Point_2<R>& p);}
+{Inserts the point \ccc{p} into the stream \ccVar. (global function)}
+
+\ccMethod{template <class R>
+          CGAL_Geomview_stream&
+          operator<<(const CGAL_Point_2<R>& p);}
+{Inserts the point \ccc{p} into the stream \ccVar. (member function)}
+\end{ccClass} 
+
+% ----------------------------------------------------------------------
+\section{Operators Formatted as Functions}
+\begin{ccClass}{FctClass}
+\ccCreationVariable{f}
+
+Use default settings.
+
+\ccGlueBegin
+\ccMethod{void method() const;}{Normal Const Method.}
+\ccMethod{void operator+(FctClass b) const;}{Normal Const Operator.}
+\ccMethod{void operator()();}{Empty Fct. Operator.}
+\ccMethod{void operator()(int i);}{Fct. Operator.}
+\ccMethod{void operator()() const;}{Empty Fct. Operator.}
+\ccMethod{void operator()(int i, double d) const;}{Fct. Operator.}
+\ccMethod{operator int();}{Conversion Operator.}
+\ccGlueEnd
+
+Format full declarations.
+
+\ccTagFullDeclarations
+
+\ccGlueBegin
+\ccMethod{void method() const;}{Normal Const Method.}
+\ccMethod{void operator+(FctClass b) const;}{Normal Const Operator.}
+\ccMethod{void operator()();}{Empty Fct. Operator.}
+\ccMethod{void operator()(int i);}{Fct. Operator.}
+\ccMethod{void operator()() const;}{Empty Fct. Operator.}
+\ccMethod{void operator()(int i, double d) const;}{Fct. Operator.}
+\ccMethod{operator int();}{Conversion Operator.}
+\ccGlueEnd
+
+\ccTagDefaults
+\end{ccClass}
+
+% ----------------------------------------------------------------------
+\section{Verbatim Environment}
+
+\begin{verbatim}
+int     x;  // Blabal lkjhdfls hf.s //
+int     i;  // This is an int.      //
+double  d;           //     Double. //
+\end{verbatim}
+
+% ----------------------------------------------------------------------
+\begin{ccClass}{Face}
+\ccSection{Removal of Own Class Name}
+\ccCreationVariable{f}
+
+\ccConstructor{Face(Face face);}{}
+\ccGlue
+\ccConstructor{Face(Face_handle n);}{}
+\ccGlue
+\ccConstructor{Face(Facehandle n);}{}
+\ccGlue
+\ccConstructor{Face(handle_Face n);}{}
+\ccGlue
+\ccConstructor{Face(Face5_handle n);}{}
+\ccGlue
+\ccConstructor{Face(handle_5Face n);}{}
+
+\end{ccClass}
+
+% ----------------------------------------------------------------------
+\section{Table Layout in HTML}
+
+First, right column:
+
+\ccFunction{CGAL_Return<X,Y> foos_bar( int x);}{Blkj fdkjbjlh 
+    flknlkj kjh kjh lkjh all .}
+\ccFunction{CGAL_Return<X,Y> foos_bar( int x);}{Blkj fdkjbjlh 
+    flknlkj kjh kjh lkjh all bak.}
+\ccFunction{CGAL_Return<X,Y> foos_bar( int x);}{Blkj fdkjbjlh 
+    flknlkj kjh kjh lkjh all bak bal.}
+\ccFunction{CGAL_Return<X,Y> foos_bar( int x);}{Blkj fdkjbjlh 
+    flknlkj kjh kjh lkjh all bak bal bur.}
+\ccFunction{CGAL_Return<X,Y> foos_bar( int x);}{Blkj fdkjbjlh 
+    flknlkj kjh kjh lkjh all bak bal bur nic.}
+
+Second, the return type.
+
+\ccFunction{CGAL_Return<X,Y> foos_bar( int x);}{}
+\ccFunction{CGAL_Retu_rn<X,Y> foos_bar( int x);}{}
+\ccFunction{CGAL_Retu_1rn<X,Y> foos_bar( int x);}{}
+\ccFunction{CGAL_Retu_12rn<X,Y> foos_bar( int x);}{}
+
+Third, the function declaration.
+
+\ccFunction{CGAL_Return<X,Y> foos_bar( int x);}{Blkj fdkjbjlh 
+    flknlkj kjh kjh lkjh all .}
+\ccFunction{CGAL_Return<X,Y> foos_bar( int1 x);}{Blkj fdkjbjlh 
+    flknlkj kjh kjh lkjh all .}
+\ccFunction{CGAL_Return<X,Y> foos_bar( int_1 x);}{Blkj fdkjbjlh 
+    flknlkj kjh kjh lkjh all .}
+\ccFunction{CGAL_Return<X,Y> foos_bar( int_18 x);}{Blkj fdkjbjlh 
+    flknlkj kjh kjh lkjh all .}
+\ccFunction{int foos_bar( double x);}{}
+
+Same with long return type.
+
+\ccFunction{CGAL_ReturnMMMMM<X,Y> foos_bar( int x);}{Blkj fdkjbjlh 
+    flknlkj kjh kjh lkjh all .}
+\ccFunction{CGAL_ReturnMMMMM<X,Y> foos_bar( int1 x);}{Blkj fdkjbjlh 
+    flknlkj kjh kjh lkjh all .}
+\ccFunction{CGAL_ReturnMMMMM<X,Y> foos_bar( int_1 x);}{Blkj fdkjbjlh 
+    flknlkj kjh kjh lkjh all .}
+\ccFunction{CGAL_ReturnMMMMM<X,Y> foos_bar( int_18 x);}{Blkj fdkjbjlh 
+    flknlkj kjh kjh lkjh all .}
+\ccFunction{CGAL_Retu_12rn<X,Y> foos_bar( double x);}{}
+
+Long comments with long function delaration.
+
+\ccFunction{CGAL_ReturnMMMMM<X,Y> foos_bar( int x);}{Blkj fdkjbjlh 
+    flknlkj kjh kjh lkjh all .}
+\ccFunction{CGAL_Return<X,Y> foos_bar( double<> x);}{Blkj fdkjbjlh 
+    flknlkj kjh kjh lkjh all .}
+\ccFunction{CGAL_Return<X,Y> foos_bar( double<> x);}{Blkj fdkjbjlh 
+    flknlkj kjh kjh lkjh all bak.}
+\ccFunction{CGAL_Return<X,Y> foos_bar( double<> x);}{Blkj fdkjbjlh 
+    flknlkj kjh kjh lkjh all bak bal.}
+\ccFunction{CGAL_Return<X,Y> foos_bar( double<> x);}{Blkj fdkjbjlh 
+    flknlkj kjh kjh lkjh all bak bal bur.}
+\ccFunction{CGAL_Return<X,Y> foos_bar( double<> x);}{Blkj fdkjbjlh 
+    flknlkj kjh kjh lkjh all bak bal bur nic.}
+
+
+Long parameter lists:
+
+\ccFunction{CGAL_Return<X,Y> foos_bar( int x);}{Blkj fdkjbjlh 
+    flknlkj kjh kjh lkjh all .}
+\ccFunction{CGAL_Return<X,Y> foos_bar( int x, double y);}{Blkj fdkjbjlh 
+    flknlkj kjh kjh lkjh all .}
+\ccFunction{CGAL_Return<X,Y> foos_bar( int x, double y, double y);}{
+    Blkj fdkjbjlh flknlkj kjh kjh lkjh all .}
+\ccFunction{CGAL_Return<X,Y> foos_bar( int x, double y, double y, double y);}{
+    Blkj fdkjbjlh flknlkj kjh kjh lkjh all .}
+\ccFunction{CGAL_Return<X,Y> foos_bar( int x, double y, double y, double y, 
+    double y);}{Blkj fdkjbjlh flknlkj kjh kjh lkjh all .}
+\ccFunction{CGAL_Return<X,Y> foos_bar( int x, double y, double y, double y,
+    double y, double y);}{Blkj fdkjbjlh flknlkj kjh kjh lkjh all .}
+
+
+Long parameter lists with long return type:
+
+\ccFunction{CGAL_Ret_12urn<X,Y> foos_bar( int x);}{Blkj fdkjbjlh 
+    flknlkj kjh kjh lkjh all .}
+\ccFunction{CGAL_Ret_12urn<X,Y> foos_bar( int x, double y);}{Blkj fdkjbjlh 
+    flknlkj kjh kjh lkjh all .}
+\ccFunction{CGAL_Ret_12urn<X,Y> foos_bar( int x, double y, double y);}{
+    Blkj fdkjbjlh flknlkj kjh kjh lkjh all .}
+\ccFunction{CGAL_Ret_12urn<X,Y> foos_bar( int x, double y, double y, 
+    double y);}{Blkj fdkjbjlh flknlkj kjh kjh lkjh all .}
+\ccFunction{CGAL_Ret_12urn<X,Y> foos_bar( int x, double y, double y, double y, 
+    double y);}{Blkj fdkjbjlh flknlkj kjh kjh lkjh all .}
+\ccFunction{CGAL_Ret_12urn<X,Y> foos_bar( int x, double y, double y, double y,
+    double y, double y);}{Blkj fdkjbjlh flknlkj kjh kjh lkjh all .}
+
+
+Same, but with alternate parameter layout for long parameter
+names. Long parameter lists:
+
+\def\ccLongParamLayout{\ccTrue}
+
+\ccFunction{CGAL_Return<X,Y> foos_bar( int x);}{Blkj fdkjbjlh 
+    flknlkj kjh kjh lkjh all .}
+\ccFunction{CGAL_Return<X,Y> foos_bar( int x, double y);}{Blkj fdkjbjlh 
+    flknlkj kjh kjh lkjh all .}
+\ccFunction{CGAL_Return<X,Y> foos_bar( int x, double y, double y);}{
+    Blkj fdkjbjlh flknlkj kjh kjh lkjh all .}
+\ccFunction{CGAL_Return<X,Y> foos_bar( int x, double y, double y, double y);}{
+    Blkj fdkjbjlh flknlkj kjh kjh lkjh all .}
+\ccFunction{CGAL_Return<X,Y> foos_bar( int x, double y, double y, double y, 
+    double y);}{Blkj fdkjbjlh flknlkj kjh kjh lkjh all .}
+\ccFunction{CGAL_Return<X,Y> foos_bar( int x, double y, double y, double y,
+    double y, double y);}{Blkj fdkjbjlh flknlkj kjh kjh lkjh all .}
+
+
+Long parameter lists with long return type:
+
+\ccFunction{CGAL_Ret_12urn<X,Y> foos_bar( int x);}{Blkj fdkjbjlh 
+    flknlkj kjh kjh lkjh all .}
+\ccFunction{CGAL_Ret_12urn<X,Y> foos_bar( int x, double y);}{Blkj fdkjbjlh 
+    flknlkj kjh kjh lkjh all .}
+\ccFunction{CGAL_Ret_12urn<X,Y> foos_bar( int x, double y, double y);}{
+    Blkj fdkjbjlh flknlkj kjh kjh lkjh all .}
+\ccFunction{CGAL_Ret_12urn<X,Y> foos_bar( int x, double y, double y, 
+    double y);}{Blkj fdkjbjlh flknlkj kjh kjh lkjh all .}
+\ccFunction{CGAL_Ret_12urn<X,Y> foos_bar( int x, double y, double y, double y, 
+    double y);}{Blkj fdkjbjlh flknlkj kjh kjh lkjh all .}
+\ccFunction{CGAL_Ret_12urn<X,Y> foos_bar( int x, double y, double y, double y,
+    double y, double y);}{Blkj fdkjbjlh flknlkj kjh kjh lkjh all .}
+
+\def\ccLongParamLayout{\ccFalse}
+
+Now, checking a class. Note, comment is always in separate line.
+
+\ccHtmlNoClassFile
+\begin{ccClass}{IndentClass}
+\ccCreationVariable{indent}
+
+\ccConstructor{IndentClass();}{Short comment. Default constr.}
+
+Now one with and one without comment.
+
+\ccConstructor{IndentClass();}{Short comment. Default constr.}
+\ccConstructor{IndentClass();}{}
+
+Here with longer comment.
+
+\ccConstructor{IndentClass();}{Short Short Short Short Short Short
+     Short comment. Default constr.}
+\ccConstructor{IndentClass();}{Short Short Short Short Short Short
+     Short Short Short comment. Default constr.}
+
+Here with long parameter lists.
+
+\ccConstructor{IndentClass( double x, double y, double y, double y, 
+    double y);}{Short comment. Default constr.}
+\ccConstructor{IndentClass( double x, double y, double y, double y, 
+    double y);}{Short comment. Default constr.}
+\ccConstructor{IndentClass( double x, double y, double y, double y, 
+    double y, double y);}{Short comment. Default constr.}
+
+Same, but with alternate parameter layout for long parameter
+names. Here with long parameter lists.
+
+\def\ccLongParamLayout{\ccTrue}
+
+\ccConstructor{IndentClass( double x, double y, double y, double y, 
+    double y);}{Short comment. Default constr.}
+\ccConstructor{IndentClass( double x, double y, double y, double y, 
+    double y);}{Short comment. Default constr.}
+\ccConstructor{IndentClass( double x, double y, double y, double y, 
+    double y, double y);}{Short comment. Default constr.}
+
+\def\ccLongParamLayout{\ccFalse}
+
+Long template parameter list and short function.
+
+\ccFunction{template < class Point, class Vector, class Traits, 
+    class Magnificant> void floo();}{thats it.}
+
+\end{ccClass}
+
+% ----------------------------------------------------------------------
+\section{Bibliography and citations}
+
+Some \cgal\ citations: \cite{fgkss-ckbgc-96,kw-ceapp-97}, maybe
+with a optional comment: \cite[optional comment]{fgkss-ckbgc-96,kw-ceapp-97}.
+
+% ----------------------------------------------------------------------
+\section{Test of New HTML Converter with Macro Expansion}
+
+Accents and Umlaute: \"a\ \"o\ \"u\ \"A\ \"O\ \"{U}\ \'e\ \`e\ \^e\ 
+  \~n\ \c{c}\ \ss{}\ \ae\ \AE\ \aa\ \AA\ \oe\ \OE\ \o\ \O\ \S\ 
+  \P\ \copyright\ \pounds\ \dag\ \ddag\ \l\ \L.
+
+
+Macros \TeX{} \LaTeX\ \LaTeXe\ to name the game.
+
+Greek alphabet: $\alpha\ \beta\ \gamma\ \delta\ \epsilon\ 
+    \varepsilon\ \zeta\ \eta\ \theta\ \vartheta\ \iota\ \kappa\ \lambda\
+    \mu\ \nu\ \xi o\ \pi\ \varpi\ \rho\ \varrho\ \sigma\ \varsigma\ 
+    \tau\ \upsilon\ \phi\ \varphi\ \chi\ \psi\ \omega$,  
+    $\Gamma\ \Delta\ \Theta\ \Lambda\ \Xi\ \Pi\ \Sigma\ \Upsilon\ \Phi\ 
+    \Psi\ \Omega$
+
+Miscelleaneous math: $x \cdot y, x \times y$, $\sqrt{2}$, $\sqrt[4]{18}$,
+    $\frac{1}{2}$.
+
+Some dots: $M \ldots M \cdot M \cdots M \vdots M \ddots M$.
+
+Calligraphic letters: $\mathcal{A}$ $\mathcal{B}$ $\mathcal{C}$ $\mathcal{D}$
+ $\mathcal{E}$ $\mathcal{F}$ $\mathcal{G}$ $\mathcal{H}$ $\mathcal{I}$
+ $\mathcal{J}$ $\mathcal{K}$ $\mathcal{L}$ $\mathcal{M}$ $\mathcal{N}$
+ $\mathcal{O}$ $\mathcal{P}$ $\mathcal{Q}$ $\mathcal{R}$ $\mathcal{S}$
+ $\mathcal{T}$ $\mathcal{U}$ $\mathcal{V}$ $\mathcal{W}$ $\mathcal{X}$
+ $\mathcal{Y}$ $\mathcal{Z}$.
+
+Mathbb letters: $\mathbb{A}$ $\mathbb{B}$ $\mathbb{C}$ $\mathbb{D}$
+ $\mathbb{E}$ $\mathbb{F}$ $\mathbb{G}$ $\mathbb{H}$ $\mathbb{I}$
+ $\mathbb{J}$ $\mathbb{K}$ $\mathbb{L}$ $\mathbb{M}$ $\mathbb{N}$
+ $\mathbb{O}$ $\mathbb{P}$ $\mathbb{Q}$ $\mathbb{R}$ $\mathbb{S}$
+ $\mathbb{T}$ $\mathbb{U}$ $\mathbb{V}$ $\mathbb{W}$ $\mathbb{X}$
+ $\mathbb{Y}$ $\mathbb{Z}$.
+
+Some not-relations: $ \not\in $.
+
+Binary operation symbols: $ \pm \times \div \mp \ast \star \circ \bullet
+ \cap \cup \uplus \sqcap \sqcup \vee \wedge \setminus \wr \diamond
+ \bigtriangleup \bigtriangledown \triangleleft \triangleright \lhd
+ \rhd \unlhd \unrhd \oplus \ominus \otimes \oslash \odot \bigcirc \dagger
+ \ddagger \amalg$.
+
+Relation symbols: $ \leq \prec \preceq \ll \subset \subseteq \sqsubset
+ \sqsubseteq \in \vdash \geq \succ \succeq \gg \supset \supseteq \sqsupset
+ \sqsupseteq \ni \dashv \equiv \sim \simeq \asymp \approx \cong \neq
+ \doteq \notin \models \perp \mid \parallel \bowtie \Join \smile \frown
+ \propto$.
+
+Arrow symbols: $ \leftarrow \Leftarrow \rightarrow \Rightarrow \leftrightarrow
+ \Leftrightarrow \mapsto \hookleftarrow \leftharpoonup \leftharpoondown
+ \rightleftharpoons \longleftarrow \Longleftarrow \longrightarrow
+ \Longrightarrow \longleftrightarrow \Longleftrightarrow \longmapsto
+ \hookrightarrow \rightharpoonup \rightharpoondown \leadsto \uparrow \Uparrow
+ \downarrow \Downarrow \updownarrow \Updownarrow \nearrow \searrow \swarrow
+ \nwarrow$.
+
+Miscellaneous symbols: $\prime \neg \| \backslash \aleph \hbar \imath \jmath
+ \ell \wp \Re \Im \mho \emptyset \nabla \surd \top \bot \angle \forall \exists
+ \flat \natural \sharp \partial \infty \Box \Diamond \triangle \clubsuit
+ \diamondsuit \heartsuit \spadesuit$.
+
+Variable sized symbols (small): $ \sum \prod \coprod \int \oint \bigcap
+ \bigcup \bigsqcup \bigvee \bigwedge \bigodot \bigotimes \bigoplus \biguplus$.
+
+Variable sized symbols (big): \[ \sum \prod \coprod \int \oint \bigcap
+ \bigcup \bigsqcup \bigvee \bigwedge \bigodot \bigotimes \bigoplus \biguplus\].
+
+Delimiters: $ \lfloor x \rfloor, \lceil y \rceil, \langle z \rangle$.
+
+Math accents: $\hat{e}, \acute{e}, \grave{e}, \tilde{n}, \ddot{a}$.
+
+
+\begin{alltt}
+Ha
+%
+\LaTeX{}
+%
+Ha
+\end{alltt}
+
+\ccHtmlCrossLink{FunnyClass}This line should be the target for the 
+hyperlinks emanating from the class \ccc{FunnyClass}.
+
+Here another paragraph mentioning the class \ccc{FunnyClass}. Place
+it in the index, first by default under class, and then additionally under
+nested types.\ccHtmlIndexC{FunnyClass}\ccHtmlIndexC[nested_type]{FunnyClass}
+Put some formated entries in the index. \ccHtmlIndex{PlainClass}
+\ccHtmlIndex[function]{This is {\em Stuff} related to \ldots.}
+
+
+My \ccAnchor{http://www.inf.ethz.ch/personal/kettner/}{homepage} 
+is at \path|http://www.inf.ethz.ch/personal/kettner/|.
+
+\begin{ccHtmlClassFile}{qqq.html}{Declaration of \ccc{Qaa}}
+\begin{ccClass}{Q}
+\ccCreationVariable{y}
+\ccConstructor{Q();}{default}
+\end{ccClass}
+\end{ccHtmlClassFile}
+
+\newcommand{\xa}{hello}
+\newcommand{\xb}[1]{\xa }
+\newcommand{\xc}[1]{\xa}
+\newcommand{\xd}{hello }
+\newcommand{\xe}[1]{%
+#1
+}
+\newcommand{\xf}[1]{ #1 }
+\newcommand{\xg}[1]{#1}
+\newcommand{\xh}[1]{\xg}
+
+Test for spaces in macro expansion: all lines should look the same.
+
+Say hello to me, hellome.\\
+Say \xb{A} to me, \xb{A}me.\\
+Say \xc{A} to me, \xb{A}me.\\
+Say \xd    to me, \xb{A}me.\\
+Say\xe{ hello}to me, hellome.\\
+Say\xe{}hello to me, hellome.\\
+Say\xf{hello}to me, hellome.\\
+Say hello \xh{} t\xh{}o me, hellome.\\
+Say hello\xh{}\ t\xh{}o me, hellome.
+
+Another example, looking slightly different.
+
+Say \ hello to me.\\
+Say\xf{}hello to me.
+
+
+%% ==========================================
+\begin{lcHtmlBlock}
+{\bf Macro expansion tests}
+
+Should all look like
+
+No no \textbf{Bla} bla no no.\\
+%
+\newcommand{\macro}{\textbf{Bla} bla}
+No no \macro\ no no.\\
+%
+\def\macroa{\textbf{Bla} bla}
+No no \macroa\ no no.\\
+%
+\newcommand{\macrob} %%
+
+  {\textbf{Bla}  bla}
+%
+No no \macrob\ no no.\\
+%
+\newcommand{\macroc}{\textbf{Bla} % hahahha
+  bla}
+%
+No no \macroc\ no no.\\
+%
+\newcommand{\a}[1]{\textbf{#1} bla}
+%
+No no \a{Bla} no no.\\
+%
+\def\aa #1{\textbf{#1} bla}
+%
+No no \aa{Bla} no no.\\
+%
+\def\aaa #1#2#3{\textbf{#3#2#1} bla}
+%
+No no \aaa alB no no.\\
+%
+\newcommand{\b}[1]{ #1}
+\newcommand{\b@om}{\textbf{#1} #2}
+%
+No no \b[Bla]{bla}\b{no}\ no.\\
+%
+\newcommand{\bb}[1]{ #1}
+\newcommand{\bb@mo}{\textbf{#1} #2}
+%
+No no \bb{Bla}[bla]\bb{no}\ no.\\
+%
+\newcommand{\bb@omo}{\textbf{#1} #2#3}
+No no \bb[Bla]{bla}[ no]\ no.
+
+
+%% ==========================================
+Should all look like
+
+No no \textbf{Bla} \% \{ \{ \} bla no no.\\
+%
+\newcommand{\macrod}{\textbf{Bla} \% \{ \{ \} bla}
+No no \macrod\ no no.\\
+%
+\newcommand{\|}{\textbf{Bla} \% \{ \{ \} bla}
+%
+No no \| no no.
+
+%% ==========================================
+Should all look like
+
+Hallo Dummy World.\\
+%
+\newenvironment{c}{Hallo}{World}
+\begin{c} Dummy \end{c}.\\
+%
+\newenvironment{d}[1]{#1}{World}
+\begin{d}{Hallo} Dummy \end{d}.\\
+%
+\newenvironment{e}[1]{#1}{World}
+\newcommand{\begin@e@om}{#1#2}
+\begin{e}{Hallo} Dummy \end{e}.\\
+\begin{e}[Hal]{lo} Dummy \end{e}.\\
+%
+\newcommand{\begin@e@moo}{#1#2#3}
+\begin{e}{Ha}[l][lo] Dummy \end{e}.\\
+%
+\newenvironment{ee}{Hallo }{World}
+\newcommand{\begin@ee@o}{Ha#1o}
+\begin{ee} Dummy \end{ee}.\\
+\begin{ee}[ll] Dummy \end{ee}.\\
+%
+Hallo~Dummy World.
+
+\newtheorem{mytheorem}{Theorem}
+
+\begin{mytheorem}
+    Hallo theorem.
+\end{mytheorem}
+
+\begin{mytheorem}[Optional]
+    Hallo {\em emphasized\/} theorem.
+\end{mytheorem}
+
+\paragraph{Paragraph}
+
+blablabla blablabla blablabla blablabla blablabla blablabla blablabla 
+blablabla blablabla blablabla blablabla 
+
+\paragraph*{Paragraph}
+
+blablabla blablabla blablabla blablabla blablabla blablabla blablabla 
+blablabla blablabla blablabla blablabla 
+
+\paragraph[Bloek]{Paragraph}
+
+blablabla blablabla blablabla blablabla blablabla blablabla blablabla 
+blablabla blablabla blablabla blablabla 
+
+\def\qtrue{\ccTrue}
+\def\qfalse{\ccFalse}
+\def\qauto{\ccAuto}
+\newcommand{\qy}[1]{\lciIf{#1}{\lcAsciiToHtml{#1} is true.}
+                              {\lcAsciiToHtml{#1} is false.}}
+
+\newcommand{\qz}[1]{\lciIf{#1}[\lcAsciiToHtml{#1} is auto.]
+                              {\lcAsciiToHtml{#1} is true.}
+                              {\lcAsciiToHtml{#1} is false.}}
+
+\qy\qtrue \\
+\qy\qfalse
+
+\qz\qtrue \\
+\qz\qfalse\\
+\qz\qauto
+
+ccTrueAndFalse \lciIfDefined{\ccTrueAndFalse}{ is defined.}{ is not defined.}\\
+ccTrue \lciIfDefined{\ccTrue}{ is defined.}{ is not defined.}
+
+\lciIfEqual{Hallo}{Hallo}{correct}{wrong}\\
+\lciIfEqual{<}{<}{correct}{wrong}\\
+\lciIfEqual{Hallo}{<}{wrong}{correct}
+
+\ccFunction{int foo( const Bla& ref) const;}{}
+
+\ccGlobalFunction{int foo( const Bla& ref) const;}
+
+\ccClassDeclaration{class Demo;}{huhu}
+
+\ccInclude{CGAL/Vector_2.h}
+
+Stack implemented using macros:
+
+\newcommand{\mystack}{}
+
+Empty stack: stack = \lciPrintStack{\mystack}\\
+Test for emptyness: \lciIfEmpty{\mystack}{correct}{failed}.\\
+\lciPushStack{\mystack}{first item}
+Push an item: stack = \lciPrintStack{\mystack}\\
+Test for non-emptyness: \lciIfEmpty{\mystack}{failed}{correct}.\\
+Show top: \lciTopStack{\mystack}{\mytop}\mytop\\
+\lciPushStack{\mystack}{second item}
+Push an item: stack = \lciPrintStack{\mystack}\\
+Test for non-emptyness: \lciIfEmpty{\mystack}{failed}{correct}.\\
+Show top: \lciTopStack{\mystack}{\mytop}\mytop\\
+\lciPushStack{\mystack}{third item}
+Push an item: stack = \lciPrintStack{\mystack}\\
+\lciPopStack{\mystack}
+Pop an item: stack = \lciPrintStack{\mystack}\\
+\lciPopStack{\mystack}
+Pop an item: stack = \lciPrintStack{\mystack}\\
+\lciPopStack{\mystack}
+Pop an item: stack = \lciPrintStack{\mystack}\\
+Test for emptyness: \lciIfEmpty{\mystack}{correct}{failed}.\\
+
+\end{lcHtmlBlock}
+
+\def\nn #1#2{A#1B#2C}
+
+\begin{alltt}
+\nn {D} {E} F
+\nn {%} {
+E} F
+
+Ha
+%
+\LaTeX Hallo
+%
+Ha
+\end{alltt}
+
+{\it Hallo {\em Du} da}
+
+{\tt Hallo {\em Du} da}
+
+{\sc Hallo {\em Du} da}
+
+$\mathcal{HALLO\ DU\ AUCH}$
+
+\begin{abstract}
+This is an abstract. Blabla Blabla Blabla Blabla
+  Blabla Blabla Blabla Blabla Blabla Blabla Blabla Blabla Blabla
+  Blabla Blabla.
+\end{abstract}
+
+\begin{quote}
+  Two paragraphs in a quoted environment. Blabla Blabla Blabla Blabla
+  Blabla Blabla Blabla Blabla Blabla Blabla Blabla Blabla Blabla
+  Blabla Blabla.
+  
+  Blabla Blabla Blabla Blabla Blabla Blabla Blabla Blabla Blabla
+  Blabla Blabla Blabla Blabla Blabla Blabla.  Blabla Blabla Blabla
+  Blabla Blabla Blabla.
+\end{quote}
+
+\centerline{1st centerline.}
+\centerline{2nd centerline.}
+
+\begin{center}
+  Two paragraphs in a quoted environment. Blabla Blabla Blabla Blabla
+  Blabla Blabla Blabla Blabla Blabla Blabla Blabla Blabla Blabla
+  Blabla Blabla.
+  
+  Blabla Blabla Blabla Blabla Blabla Blabla Blabla Blabla Blabla
+  Blabla Blabla Blabla Blabla Blabla Blabla.  Blabla Blabla Blabla
+  Blabla Blabla Blabla.
+\end{center}
+
+\paragraph{Paragraph}
+
+  Blabla Blabla Blabla Blabla Blabla Blabla Blabla Blabla Blabla
+  Blabla Blabla Blabla Blabla Blabla Blabla.  Blabla Blabla Blabla
+  Blabla Blabla Blabla.
+
+\subparagraph{Subparagraph}
+
+  Blabla Blabla Blabla Blabla Blabla Blabla Blabla Blabla Blabla
+  Blabla Blabla Blabla Blabla Blabla Blabla.  Blabla Blabla Blabla
+  Blabla Blabla Blabla.
+
+\begin{tabular}{llcr}
+A & B & C & D
+\end{tabular}
+
+\begin{tabular}{llcr}\hline
+\multicolumn{2}{l}{HalloLang} & C & D     \\
+A & \multicolumn{2}{l}{HalloLang} & D     \\
+A & B & \multicolumn{2}{l}{HalloLang}     \\
+\multicolumn{4}{l}{HalloLang}             \\
+%
+\multicolumn{2}{l}{HalloLang} & C & D     \\\hline
+A & \multicolumn{2}{l}{HalloLang} & D     \\\hline
+A & B & \multicolumn{2}{l}{HalloLang}     \\\hline
+\multicolumn{4}{l}{HalloLang}             \\\hline
+%
+\multicolumn{2}{l}{HalloLang} & C & D     \\\hline\hline
+A & \multicolumn{2}{l}{HalloLang} & D     \\\hline\hline
+A & B & \multicolumn{2}{l}{HalloLang}     \\\hline\hline
+\multicolumn{4}{l}{HalloLang}             \\\hline\hline
+%
+A & B & C & D                             \\\hline\hline
+\end{tabular}
+
+\newcommand{\lcTabularBorder}{2}
+
+\begin{tabular}{llcr}\hline
+\multicolumn{2}{l}{HalloLang} & C & D     \\
+A & \multicolumn{2}{l}{HalloLang} & D     \\
+A & B & \multicolumn{2}{l}{HalloLang}     \\
+\multicolumn{4}{l}{HalloLang}             \\
+%
+\multicolumn{2}{l}{HalloLang} & C & D     \\\hline
+A & \multicolumn{2}{l}{HalloLang} & D     \\\hline
+A & B & \multicolumn{2}{l}{HalloLang}     \\\hline
+\multicolumn{4}{l}{HalloLang}             \\\hline
+%
+\multicolumn{2}{l}{HalloLang} & C & D     \\\hline\hline
+A & \multicolumn{2}{l}{HalloLang} & D     \\\hline\hline
+A & B & \multicolumn{2}{l}{HalloLang}     \\\hline\hline
+\multicolumn{4}{l}{HalloLang}             \\\hline\hline
+%
+A & B & C & D                             \\\hline\hline
+\end{tabular}
+
+\begin{verbatim}
+<Angle Brackets>
+\end{verbatim}
+
+\begin{alltt}
+<Angle Brackets>
+\end{alltt}
+
+\label{section_here}
+
+Please refer to Section~\ref{section_here}.
+
+Hallo {\bf Boldface} abcdef.
+
+Hallo {\it Italics} abcdef.
+
+Hallo {\tt Typewriter} abcdef.
+
+{\it Hallo {\em Du} da}
+
+{\tt Hallo {\em Du} da}
+
+{\sc Hallo {\em Du} da}
+
+Hallo {\large large} abcdef.
+
+Hallo {\huge huge} abcdef.
+
+Hallo {\small small} abcdef.
+
+\def\llca{Hallo}
+
+\def\llcaa{NEIN}
+
+\def\llcb{
+\llca%
+llca
+}
+\llcb
+
+\def\llcc #1{\llca #1\llca }
+\begin{alltt}
+\llcc{\llca }B
+\end{alltt}
+
+% ----------------------------------------------------------------------
+\begin{lcHtmlBlock}
+\chapter{Test Chapter}
+
+This is my chapter body.
+
+A nice class herin.
+
+\begin{ccClass}{NiceClass}
+\ccNestedType{NType}{comment.}
+\end{ccClass}
+\end{lcHtmlBlock}
+
+% ----------------------------------------------------------------------
+\section{The ccRef... macros}
+
+\begin{ccRefClass}{Circulator_from_container<C>}
+
+This is a ref class \ccRefName\ and should produce an index entry 
+without the template parameter...
+\end{ccRefClass}
+
+\begin{ccRefConcept}{Concept}
+The reference concept \ccRefName\ is talked about here...
+\end{ccRefConcept}
+
+\begin{ccRefConcept}[Scope::]{Concept}
+A reference concept is talked about here...
+
+\ccTypes
+\ccNestedType{Vertex}{is the scope prefix correct here?}
+
+\end{ccRefConcept}
+
+\begin{ccRefConcept}{Concept_name}
+Reference concept \ccRefName, which has an underscore in its name is 
+talked about here...
+\end{ccRefConcept}
+
+\begin{ccRefConcept}{Concept<Template_parameter>}
+
+\ccRefName\ is a templated concept.  The concept name should still be in
+the default font, but there shouldn't be any problems with the template
+parameter name.  The index entry for this should not include the template
+parameter.
+
+\ccTypes
+
+\ccNestedType{Type1}{some type}
+\ccNestedType{Type2}{some other type}
+
+\ccCreationVariable{tc}
+\ccPredicates
+
+\ccMethod{void do_nothing(T& t);}{}
+
+\end{ccRefConcept}
+
+\begin{ccRefConstant}{GLOBAL}
+The constant \ccRefName\ is talked about there
+\end{ccRefConstant}
+
+\begin{ccRefConstant}[Concept::]{GLOBAL}
+The constant \ccRefScope\ccRefName\ is talked about there
+\end{ccRefConstant}
+
+\begin{ccRefEnum}[Class::]{Enum}
+A reference enumeration is talked about here...
+\end{ccRefEnum}
+
+\begin{ccRefEnum}{Enum}
+A reference enumeration is talked about here...
+\end{ccRefEnum}
+
+\begin{ccRefFunction}[Class::]{Function}
+A reference function is talked about here...
+\end{ccRefFunction}
+
+\begin{ccRefFunction}{Function}
+A reference function is talked about here...
+\end{ccRefFunction}
+
+\begin{ccRefFunctionObjectClass}{FOClass}
+Function object class \ccRefName\ is talked about here...
+\end{ccRefFunctionObjectClass}
+
+\begin{ccRefFunctionObjectClass}[Kernel::]{FOConcept}
+Function object class \ccRefScope\ccRefName\ is talked about here...
+\end{ccRefFunctionObjectClass}
+
+\begin{ccRefFunctionObjectConcept}{FOConcept}
+Function object concept \ccRefName\ is talked about here...
+\end{ccRefFunctionObjectConcept}
+
+\begin{ccRefFunctionObjectConcept}[Kernel::]{FOConcept}
+Function object concept \ccRefScope\ccRefName\ is talked about here...
+\end{ccRefFunctionObjectConcept}
+
+\begin{ccRefVariable}[Class::]{Variable}
+A reference variable is talked about here...
+\end{ccRefVariable}
+
+\begin{ccRefVariable}{Variable}
+A reference variable is talked about here...
+\end{ccRefVariable}
+
+\begin{ccRefMacro}[Class::]{Macro}
+A reference macro is talked about here...
+\end{ccRefMacro}
+
+\begin{ccRefMacro}{Macro}
+A reference macro is talked about here...
+\end{ccRefMacro}
+
+\begin{ccRefFunctionObjectConcept}{Kernel::Point_2}
+Some function object concept or other.  Is the ``Kernel'' prefix there?
+\end{ccRefFunctionObjectConcept}
+
+\begin{ccRefFunctionObjectClass}{Point_2<R>}
+Some function object class or other.
+\end{ccRefFunctionObjectClass}
+
+\ccRefIdfierPage{Macro} 
+
+Setting \verb|\ccRefPageFill| to \verb|\hfill|
+
+\renewcommand{\ccRefPageFill}{\hfill}
+\ccRefConceptPage{Concept_name}
+
+\begin{ccRefConcept}{HDS<T,I,A>}
+
+This page number should be with dot fill at the edge of the page
+\renewcommand{\ccRefPageFill}{\dotfill}
+
+\ccRefIdfierPage{HDS<T,I,A>} \\
+\ccRefConceptPage{HDS<T,I,A>} \\
+
+This page number should be (pg. \#):
+
+\gdef\ccRefPageNumAtMargin{\ccFalse}
+\ccRefIdfierPage{HDS<T,I,A>} \\
+\ccRefConceptPage{HDS<T,I,A>} \\
+
+This page number should again be with dot fill at the edge of the page
+
+\gdef\ccRefPageNumAtMargin{\ccTrue}
+\ccRefIdfierPage{HDS<T,I,A>} \\
+\ccRefConceptPage{HDS<T,I,A>} \\
+
+\end{ccRefConcept}
+
+
+% ----------------------------------------------------------------------
+\bibliographystyle{plain}
+\bibliography{cgal}
+
+\lcTex{\printindex}
+
+\end{document}
+
+% EOF %
+
+
+
+

@@ -1,0 +1,176 @@
+% cprog.tex (or cprog.sty) - formatting of C programs
+% By Eamonn McManus <emcmanus@cs.tcd.ie>.  This file is not copyrighted.
+% $Id: cprog.sty 28605 2006-02-17 17:01:13Z lsaboret $
+% see further comments at the end of the file
+
+% This allows C programs to be formatted directly by TeX.  It can be
+% invoked by \cprogfile{filename} or (in LaTeX) \begin{cprog} ...
+% \end{cprog} or (in plain TeX) \cprog ... \end{cprog}.  In LaTeX, the
+% alternative form \begin{cprog*} is allowed, where spaces in C strings
+% are printed using the `square u' character (like LaTeX {verbatim*}).
+% In plain TeX, you have to use \csname cprog*\endcsname for this (sorry).
+% If you are using \cprogfile, say \cprogttspacetrue beforehand if you
+% want this effect.
+
+% The formatting is (necessarily) simple.  C text is set in a normal Roman
+% font, comments in a slanted font, and strings in a typewriter font, with
+% spaces made visible as the `square u' symbol.  Tabs are expanded to four
+% spaces (this does not look good when comments are aligned to the right of
+% program text).  Some pairs of input characters appear as single output
+% characters: << <= >> >= != -> are respectively TeX's \ll \le \gg \ge \ne
+% \rightarrow.
+
+% The fonts below can be changed to alter the setting of the various parts
+% of the program.  The \cprogbaselineskip parameter can be altered to
+% change the line spacing.  LaTeX's \baselinestretch is taken into account
+% too.  The indentation applied to the whole program is \cprogindent,
+% initially 0.  Before and after the program there are skips of
+% \beforecprogskip and \aftercprogskip; the default values are \parskip
+% and 0 respectively (since there will often be a \parskip after the
+% program anyway).
+
+% This package works by making a large number of characters active.  Since
+% even spaces are active, it is possible to examine the next character in
+% a macro by making it a parameter, rather than using \futurelet as one
+% would normally do.  This is more convenient, but the coding does mean
+% that if the next character itself wants to examine a character it may
+% look at a token from the macro rather than the input text.  I think that
+% all cases that occur in practice have been looked after.
+
+% The macros were thrown together rather quickly, and could do with some
+% work.  For example, the big macro defined with @[] taking the place of
+% \{} could be recoded to use \{} and so be more legible.  The grouping of
+% two-character pairs should be controllable, since not everyone will want
+% it.  The internal macros etc should have @ in their names, and should be
+% checked against LaTeX macros for clashes.
+
+% Allow multiple inclusion to go faster.
+\ifx\undefined\cprogsetup       % The whole file.
+
+% Define the fonts used for program text, comments, and strings.
+% Note that if \it is used for \ccommentfont, something will need to
+% be done about $ signs, which come out as pounds sterling.
+\let\ctextfont=\tt \let\ccommentfont=\sl \let\cstringfont=\tt
+
+% Parameters.  Unfortunately \newdimen is \outer (\outerness is a mistake)
+% so we need a subterfuge in case we are skipping the file.
+\csname newdimen\endcsname\cprogbaselineskip \cprogbaselineskip=\baselineskip
+\csname newdimen\endcsname\cprogindent \cprogindent=5pt
+\csname newskip\endcsname\beforecprogskip \beforecprogskip=\parskip
+\csname newskip\endcsname\aftercprogskip \aftercprogskip=\parskip
+\csname newif\endcsname\ifcprogttspace {\let\junk\fi} % if skipping
+
+\def\makeactive#1{\catcode`#1=\active} \def\makeother#1{\catcode`#1=12}
+{\obeyspaces\gdef\activespace{ } \obeylines\gdef\activecr{^^M}}
+{\catcode`|=\catcode`\\ \makeactive\\ |gdef|activebackslash{\}}
+{\catcode9=\active \gdef\activetab{^^I}}
+\def\spacewidthof{\fontdimen2}  % Width of a space in the following font.
+
+% The following group makes many characters active, so that their catcodes
+% in the \cprogchars macro are active, allowing them to be defined.  We
+% could alternatively define more stuff like \activebackslash and use
+% \expandafter or (carefully) \edef to expand these in the macro.
+\begingroup
+\catcode`[=\catcode`{ \catcode`]=\catcode`}
+\makeactive! \makeactive" \makeactive' \makeactive* \makeactive- \makeactive/
+\makeactive< \makeactive> \makeactive\{ \makeactive\} \makeactive|
+\gdef\activestar[*]
+\gdef\cprogchars[%
+    \makeother##\makeother$\makeother&\makeother\%\makeother^%
+    \makeactive"\makeactive'\makeactive*\makeactive-\makeactive/%
+    \makeactive<\makeactive>\makeactive{\makeactive}\makeactive|%
+    \makeactive!\makeactive\\\makeactive_\expandafter\makeactive\activetab%
+    \def!##1[\ifx=##1$\ne$\else\string!##1\fi]%
+    \def-##1[\ifx>##1$\rightarrow$\else$\string-$##1\fi]%
+    \def"[\cquote"]\def'[\cquote']\def*[$\string*$]%
+    % We use \aftergroup in < and > to deal with the fact that #1 might
+    % itself examine the following character.
+    \def<##1[[$\ifx<##1\ll$\else\ifx=##1\le$\else
+      \string<$\aftergroup##1\fi\fi]]%
+    \def>##1[[$\ifx>##1\gg$\else\ifx=##1\ge$\else
+      \string>$\aftergroup##1\fi\fi]]%
+    \def{[\string{]\def}[\string}]\def|[$\string|$]\def~[$\sim$]%
+    \expandafter\def\activebackslash[$\backslash$]%
+    \let/=\ccomment
+    \obeyspaces \expandafter\def\activespace[\leavevmode\space]%
+    \expandafter\def\activetab[\ \ \ \ ]%
+    \obeylines \expandafter\def\activecr[\strut\par]]
+\gdef\cprogarg[\expandafter\def\activebackslash##1[\ifx##1e\let\next\cprogend
+    \else$\backslash$\let\next##1\fi\next]\eatcr]
+\gdef\cprogend nd#1{cprog#2}[\endcprogarg]      % #1 can be space, #2 *.
+\endgroup
+
+\begingroup \makeactive" \makeactive'
+\gdef\cquote#1{% #1 is the quote, " or '.
+    \begingroup \tt\string#1\cstringfont \makeactive\\%
+    \expandafter\let\activebackslash\quotebackslash
+    \expandafter\edef\activespace{\ifcprogttspace\char`\ \else\ \fi}%
+    \expandafter\let\activecr=\unclosedstring
+    \makeother!\makeother*\makeother-\makeother/\makeother<\makeother>%
+    \makeother_\makeother\{\makeother\}\makeother|\makeother~%
+    \ifx"#1\def'{\char13}\else\makeother"\fi
+    \def#1{\tt\string#1\endgroup}}
+\endgroup
+\def\unclosedstring{%
+    \errhelp{A string or character constant earlier in the line was unclosed.^^J
+So I'm closing it now.}%
+    \errmessage{Unclosed string}%
+    \endgroup}
+\newlinechar=`^^J
+\def\quotebackslash#1{\char`\\%
+    \expandafter\ifx\activecr#1\strut\par
+      \else\string#1\fi}
+
+% In a comment, we shrink the width of the opening / to that of a space so
+% that the stars in multiline comments will line up.  We also shrink the
+% closing * for symmetry.
+% Note that \end{cprog} is not recognised in strings or comments.
+\def\spacebox#1{\leavevmode \hbox to \spacewidthof\font{#1\hss}}
+\begingroup \makeactive*
+\gdef\ccomment#1{%
+    \ifx#1*\begingroup \ccommentfont
+      % We want the width of a space in \ccommentfont, not \ctextfont.
+      \spacebox{\ctextfont\string/}*%
+      \makeother-\makeother'\makeother"\makeother/%
+      \expandafter\def\activebackslash{$\backslash$}%
+      \makeactive*\let*=\commentstar
+    \else \leavevmode\string/#1\kern-1pt %
+    \fi}
+\makeother* \makeother/
+\gdef\commentstar#1{%
+    \ifx #1/\endgroup \spacebox{$*$}\string/\let\next\relax%
+    \else $*$\let\next#1%
+    \fi\next}
+\endgroup
+
+% We usually have an active ^^M after \cprog or \begin{cprog}.
+\def\eatcr#1{{\expandafter\ifx\activecr#1\else\aftergroup#1\fi}}
+
+% Expand to stretch and shrink (plus and minus) of parameter #1.
+\def\stretchshrink#1{\expandafter\eatdimenpart\the#1 \end}
+\def\eatdimenpart#1 #2\end{#2}
+
+\ifx\undefined\baselinestretch \def\baselinestretch{1}\fi
+
+\def\cprogsetup{\cprogchars \small \ctextfont \parskip=0pt\stretchshrink\parskip
+    \baselineskip=\baselinestretch\cprogbaselineskip \parindent=\cprogindent
+    \vskip\beforecprogskip }
+\def\endcprog{\endgroup \normalsize \vskip\aftercprogskip}
+\def\cprogfile#1{\begingroup \cprogsetup \input#1\endcprog}
+% The {cprog} environment or \cprog macro reads in all the argument text.
+% By making the C definition of \ much cleverer we could avoid this.
+\def\cprog{\begingroup \cprogttspacefalse \cprogsetup \cprogarg}
+% Like {verbatim*}, {cprog*} uses `square u' for spaces in quoted strings.
+\expandafter\def\csname cprog*\endcsname{%
+        \begingroup \cprogttspacetrue \cprogsetup \cprogarg}
+\expandafter\let\csname endcprog*\endcsname=\endcprog
+% In LaTeX we need to call \end{cprog} properly to close the environment,
+% whereas in plain TeX this will end the job.  The test for LaTeX is not
+% bulletproof, but most plain TeX documents don't refer to the LaTeX logo.
+\ifx\undefined\LaTeX \let\endcprogarg=\endcprog
+\else \def\endcprogarg{\ifcprogttspace\end{cprog*}\else\end{cprog}\fi}
+\fi
+
+\fi     % \ifx\undefined\cprogsetup
+
+\endinput

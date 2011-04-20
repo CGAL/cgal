@@ -1,0 +1,453 @@
+%!PS-Adobe-2.0 EPSF-1.2
+%%Creator: Ipe 5.0
+%%BoundingBox: 162 252 437 547
+%%EndComments
+{\catcode37=9\def\IPEdummy{({{)}} pop
+%%}\makeatletter\let\@notdefinable\relax
+%%\def\IPEc#1[#2]#3{\newcommand{#1}[#2]{#3}\ignorespaces}\@ifundefined
+%%{selectfont}{\let\selectfont\relax\def\fontsize#1#2{}}{}\makeatother
+%%\IPEc\IPEput[4]{\put(0,0){\special{psfile=\IPEfile}}}
+%%\IPEc\IPEmp[2]{\minipage[t]{#1bp}#2\special{color pop}\endminipage}
+%%\IPEc\IPEtext[1]{\makebox(0,0)[lb]{#1\special{color pop}}}
+%%\IPEc\IPEfs[1]{\IPEcolfs{0 0 0}{#1}}
+%%\IPEc\IPEcolfs[2]{\dimen0=#2pt\fontsize{#2}{1.2\dimen0}\selectfont
+%%\special{color push rgb #1}}
+%%\IPEc\IPEsize[2]{\unitlength1bp\ignorespaces}
+%%\IPEsize{272.372}{293.742}
+%%\begin{picture}(272.372,293.742)(163.814,253.129)
+%%\IPEput{162}{252}{437}{547}
+%%\end{picture}\endinput}
+%% Ipe postscript prologue
+
+/IpeDict 60 dict def
+IpeDict begin
+/origmatrix matrix currentmatrix def
+
+/sg {setgray} bind def
+/sc {setrgbcolor} bind def
+/ss {0 setdash setlinewidth} bind def
+/sk {stroke} bind def
+/fi {fill} bind def
+/sfi {gsave fill grestore} bind def
+/mt {moveto} bind def
+/lt {lineto} bind def
+/np {newpath} bind def
+/cl {closepath} bind def
+/N {moveto} bind def
+/L {lineto} bind def
+/E {lineto} bind def
+/C {lineto closepath} bind def
+%%%%
+%% x y size dx dy -> ar -> x y [ draws arrowhead, computes new vertex ]
+/smallarrow {gsave exch atan 4 2 roll translate rotate dup scale
+newpath 0 0 moveto -1 0.3 lineto -1 -0.3 lineto closepath fill
+-1 0 moveto currentpoint transform grestore itransform} bind def
+/ar {gsave exch atan 4 2 roll translate rotate dup scale
+newpath 0 0 moveto -1 0.3 lineto -1 -0.3 lineto closepath
+gsave origmatrix setmatrix [] 0 setdash stroke grestore fill
+0 0 moveto currentpoint transform grestore itransform} bind def
+%%%%
+/af {ar moveto} bind def
+/at {ar lineto} bind def
+%% x y size dx dy -> arw -> [ draws arrowhead ]
+/arw {ar pop pop} bind def
+%%%%
+/ci {0 360 arc} bind def
+/el {gsave concat 0 exch 0 exch 0 360 newpath arc origmatrix
+setmatrix} bind def
+/gs {gsave} bind def
+/gr {grestore} bind def
+/gsts {gsave translate scale } bind def
+%%
+/marker {gsave translate 0 setlinewidth [] 0 setdash newpath} bind def
+/m1 {marker 0 exch 0 exch 0 360 arc stroke grestore} bind def
+/m2 {marker 0 exch 0 exch 0 360 arc fill grestore} bind def
+/m3 {marker dup dup moveto dup dup neg lineto dup neg dup lineto dup
+neg exch lineto closepath stroke grestore} bind def 
+/m4 {marker dup dup moveto dup dup neg lineto dup neg dup lineto dup
+neg exch lineto closepath fill grestore} bind def
+/m5 {marker dup dup moveto dup neg dup lineto dup dup neg moveto dup
+neg exch lineto closepath stroke grestore} bind def
+
+%% splines
+systemdict /setpacking known {/savepacking currentpacking def false
+  setpacking} if
+/q0 {0 0} def
+/q1 {0 0} def
+/q2 {0 0} def
+/q3 {0 0} def
+/p0 {0 0} def
+/p1 {0 0} def
+/p2 {0 0} def
+/p3 {0 0} def
+systemdict /setpacking known {savepacking setpacking} if
+
+%% x y /qi -> defp -> [/qi [x y] def]
+/defp {dup 4 1 roll load astore def} bind def
+
+/midpoint { exch 4 3 roll add 2 div 3 1 roll add 2 div } bind def
+/thirdpoint { exch 4 3 roll 2 mul add 3 div 3 1 roll exch 2 mul add 3
+div } bind def
+
+/prespl {/p3 defp /p2 defp /p1 defp /p0 defp
+p1 p2 thirdpoint /q1 defp
+p2 p1 thirdpoint /q2 defp
+p1 p0 thirdpoint q1 midpoint /q0 defp
+p2 p3 thirdpoint q2 midpoint /q3 defp } bind def
+/postspl { q1 q2 q3 curveto p1 p2 p3 } bind def
+/fspl { prespl q0 moveto postspl } bind def
+/spl { prespl postspl } bind def
+/xspl { pop pop pop pop pop pop } bind def
+
+/qspl { /p2 defp /p1 defp /p0 defp
+p1 p0 midpoint /q0 defp
+p1 p2 midpoint /q3 defp
+p1 q0 thirdpoint /q1 defp
+p1 q3 thirdpoint /q2 defp q0 moveto q1 q2 q3 curveto } bind def
+
+/cqspl { /p2 defp /p1 defp /p0 defp
+p1 p0 midpoint /q0 defp
+p1 p2 midpoint /q3 defp
+p1 q0 thirdpoint /q1 defp
+p1 q3 thirdpoint /q2 defp q0 moveto q1 q2 q3 curveto
+p2 p1 midpoint /q0 defp
+p2 p0 midpoint /q3 defp
+p2 q0 thirdpoint /q1 defp
+p2 q3 thirdpoint /q2 defp q1 q2 q3 curveto
+p0 p2 midpoint /q0 defp
+p0 p1 midpoint /q3 defp
+p0 q0 thirdpoint /q1 defp
+p0 q3 thirdpoint /q2 defp q1 q2 q3 curveto } bind def
+
+%% bitmaps
+/pix { /picstr exch string def } def
+%% wd ht -> preimg -> ..stuff for image..
+/preimg { 8 [ 3 index 0 0 5 index neg 0 7 index ]
+ {currentfile picstr readhexstring pop} } def
+/img { preimg image } bind def
+/kimg { preimg false 3 colorimage } bind def
+%%
+end
+%% Ipe prologue end
+
+IpeDict begin 322.853 373.538 translate
+
+% Preamble 1
+%%\documentclass[a4paper]{article}
+% Group
+
+% Line
+% ss 0
+0.4 [] ss
+np % # 4
+-140 160 mt
+100 160 lt
+100 -80 lt
+-140 -80 lt
+cl % cl
+% sk
+0 sg sk
+% End
+
+% Line
+% ss 0
+0.4 [] ss
+np % # 2
+-140 40 mt
+100 40 lt
+% sk
+0 sg sk
+% End
+
+% Line
+% ss 0
+0.4 [] ss
+np % # 2
+-20 160 mt
+-20 -80 lt
+% sk
+0 sg sk
+% End
+
+% Circle
+% ss 0
+0.4 [] ss
+np % xy
+-140 146.667 % r
+13.3333 ci
+% sk
+0 sg sk
+% End
+
+% Group
+
+% End
+
+% Circle
+% ss 0
+0.4 [] ss
+np % xy
+100 40 % r
+13.3333 ci
+% sk
+0 sg sk
+% End
+
+% Circle
+% ss 0
+0.4 [] ss
+np % xy
+100 160 % r
+13.3333 ci
+% sk
+0 sg sk
+% End
+
+% Circle
+% ss 0
+0.4 [] ss
+np % xy
+-140 40 % r
+13.3333 ci
+% sk
+0 sg sk
+% End
+
+% Circle
+% ss 0
+0.4 [] ss
+np % xy
+-140 -66.6667 % r
+13.3333 ci
+% sk
+0 sg sk
+% End
+
+% Circle
+% ss 0
+0.4 [] ss
+np % xy
+-140 -40 % r
+13.3333 ci
+% sk
+0 sg sk
+% End
+
+% Circle
+% ss 0
+0.4 [] ss
+np % xy
+-20 -80 % r
+13.3333 ci
+% sk
+0 sg sk
+% End
+
+% Line
+% ss 0
+0.4 [] ss
+np % # 2
+-126.667 160 mt
+-126.667 -80 lt
+% sk
+0 sg sk
+% End
+
+% Line
+% ss 0
+0.4 [] ss
+np % # 2
+-100 160 mt
+-100 -80 lt
+% sk
+0 sg sk
+% End
+
+% Circle
+% ss 0
+0.4 [] ss
+np % xy
+-113.333 160 % r
+13.3333 ci
+% sk
+0 sg sk
+% End
+
+% Circle
+% ss 0
+0.4 [] ss
+np % xy
+-113.333 -80 % r
+13.3333 ci
+% sk
+0 sg sk
+% End
+
+% Line
+% ss 0
+0.4 [] ss
+np % # 2
+-140 146.667 mt
+100 146.667 lt
+% sk
+0 sg sk
+% End
+
+% Line
+% ss 0
+0.4 [] ss
+np % # 2
+-140 -13.3333 mt
+100 -13.3333 lt
+% sk
+0 sg sk
+% End
+
+% Line
+% ss 0
+0.4 [] ss
+np % # 2
+-140 -46.6666 mt
+100 -46.6666 lt
+% sk
+0 sg sk
+% End
+
+% Line
+% ss 0
+0.4 [] ss
+np % # 2
+-140 -63.3333 mt
+100 -63.3333 lt
+% sk
+0 sg sk
+% End
+
+% Line
+% ss 0
+0.4 [] ss
+np % # 2
+-113.333 -80 mt
+100 26.6667 lt
+% sk
+0 sg sk
+% End
+
+% Line
+% ss 0
+0.4 [] ss
+np % # 2
+-126.667 146.667 mt
+-6.6667 -80 lt
+% sk
+0 sg sk
+% End
+
+% Circle
+% ss 0
+0.4 [] ss
+np % xy
+-28.9179 -37.8216 % r
+25.5457 ci
+% sk
+0 sg sk
+% End
+
+% Arc
+% ss 0
+0.4 [] ss
+% xy
+-140 -40 % r
+136.8 % ang
+-36 98 np arc
+% sk
+0 sg sk
+% End
+
+% Circle
+% ss 0
+0.4 [] ss
+np % xy
+-86.6667 146.667 % r
+13.3333 ci
+% sk
+0 sg sk
+% End
+
+% Line
+% ss 0
+0.4 [] ss
+np % # 63
+-139.984 159.97 mt
+-137.754 159.768 lt
+-136.403 159.498 lt
+-135.525 159.228 lt
+-134.106 158.655 lt
+-132.991 157.98 lt
+-131.606 157.036 lt
+-130.39 155.991 lt
+-129.546 154.979 lt
+-128.6 153.63 lt
+-127.992 152.45 lt
+-127.384 151.135 lt
+-127.012 149.718 lt
+-126.742 148.302 lt
+-126.607 146.683 lt
+-126.679 -66.78 lt
+-126.735 -68.0727 lt
+-126.961 -69.4778 lt
+-127.355 -70.9954 lt
+-127.889 -72.26 lt
+-128.565 -73.5808 lt
+-129.297 -74.6768 lt
+-130.423 -75.9695 lt
+-131.549 -77.0374 lt
+-132.816 -77.8524 lt
+-134.252 -78.6674 lt
+-136.25 -79.4542 lt
+-137.686 -79.8477 lt
+-139.966 -79.9882 lt
+-9.29708 -79.9986 lt
+-8.38218 -76.7902 lt
+-6.98873 -71.98 lt
+-4.87743 -61.3853 lt
+-3.63881 -51.0436 lt
+-3.31708 -43.5623 lt
+-3.34523 -37.1268 lt
+-3.62674 -41.5389 lt
+-4.49941 -45.4452 lt
+-5.54098 -48.1992 lt
+-7.06111 -51.0657 lt
+-9.34131 -54.2694 lt
+-11.4808 -56.4333 lt
+-13.3668 -58.0351 lt
+-15.3937 -59.5808 lt
+-18.2932 -61.0702 lt
+-20.8831 -62.1381 lt
+-22.9662 -62.6439 lt
+-25.6687 -63.2341 lt
+-28.8778 -63.3465 lt
+-99.977 -63.3149 lt
+-99.9956 146.658 lt
+-99.8549 148.484 lt
+-99.32 150.761 lt
+-98.8133 152.278 lt
+-98.0533 153.571 lt
+-97.2087 154.808 lt
+-96.2235 155.96 lt
+-95.0974 157.028 lt
+-93.8588 157.927 lt
+-92.3668 158.686 lt
+-90.9593 159.36 lt
+-89.3829 159.754 lt
+-87.1027 160.007 lt
+cl % cl
+% fic
+1 1 0 sc sfi
+% sk
+0 sg sk
+% End
+
+% End
+
+end %% of Ipe figure

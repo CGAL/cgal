@@ -1,0 +1,193 @@
+%
+%  Integrated Picture Environment, Version 5.0
+%
+%  Last $Modified: Thursday, March 16, 1995 by otfried $
+%
+\edef\IPEtheAtCatcode{\the\catcode`\@}
+\makeatletter
+%
+\newif\if@IPE@ldLatex
+%
+\@ifundefined{NeedsTeXFormat}{
+  % LaTeX 2.09 
+  \typeout{Style-Option: `ipe' v5.0 for inclusion of Ipe figures}
+  % if no NFSS, disable font size selection
+  \@ifundefined{selectfont}{\def\fontsize#1#2{}\let\selectfont\relax}{}
+  \@IPE@ldLatextrue
+  }{
+  % LaTeX2e
+  \NeedsTeXFormat{LaTeX2e}
+  \ProvidesPackage{ipe}
+  [1995/03/16 v5.0 LaTeX2e package for inclusion of Ipe figures]
+  \typeout{Package: `ipe' v5.0 for inclusion of Ipe figures}
+  \@IPE@ldLatexfalse
+  }
+%
+% ----------------------------------------------------------------------
+%
+%  Package options (in LaTeX2e)
+%
+\if@IPE@ldLatex\else
+  \DeclareOption{nocolor}{\def\color[##1]##2{}}
+  \ProcessOptions
+\fi  
+%
+% ----------------------------------------------------------------------
+%
+% If the \color command (as in the Latex2e color package) is
+% defined, we use that to generate colors, otherwise we create
+% \specials for dvips.
+% If \includegraphics (is in the Latex2e graphicx package) is defined,
+% we use that to include the Postscript part, otherwise we again
+% create dvips specials.
+%
+\@ifundefined{color}{%
+  % Dvips specials
+  \def\IPEcolor[#1]#2{\special{color push #1 #2}\aftergroup\IPE@reset}%
+  \def\IPE@reset{\special{color pop}}}{%
+  % just use \color
+  \let\IPEcolor\color}
+%
+\@ifundefined{includegraphics}{%
+  % \includegraphics not defined, use \specials
+  \def\IPEput#1#2#3#4{\put(0,0){\special{psfile=\IPEfile\space
+        hscale=\IPEscale\space vscale=\IPEscale}}}}{%
+  % graphicx definition
+  \DeclareGraphicsRule{ipe}{eps}{}{}
+  \def\IPEput#1#2#3#4{\put(#1,#2){%
+      \includegraphics[bb=#1 #2 #3 #4,width=\IPEwidth]{\IPEfile}}}}
+%
+% ----------------------------------------------------------------------
+%
+% The complicated test is for compatibility with old Ipe versions.
+% For Ipe 4.0 and up, the following definition is sufficient:
+% \def\Ipe#1{\def\IPEfile{#1}\input{\IPEfile}}
+%
+\def\Ipe#1{{\def\IPEfile{#1}\begingroup
+  \catcode`\%=9\catcode`\!=0\catcode`\-=11\input{\IPEfile}}}
+{\catcode`\-=11\gdef\PS-Adobe-2.0 EPSF-1.2 {\endgroup}}
+%
+% ----------------------------------------------------------------------
+%
+% internal macros: called from Ipe figures, but not by user
+%
+\newif\if@IPE@scalefont
+%
+\long\def\IPEmp#1#2{\makebox(0,0)[lt]{\begin{minipage}[t]{#1\unitlength}%
+  #2\end{minipage}}}
+\long\def\IPEtext#1{\makebox(0,0)[lb]{#1}}
+%
+\def\IPEfs#1{\IPEcolfs{0 0 0}{#1}}
+%
+\def\IPEcolfs#1#2{\dimen0=#2pt\if@IPE@scalefont
+  \multiply\dimen0 by \IPEscale\divide\dimen0 by 100\fi
+  \advance\dimen0 by 0.5pt\count0=\dimen0\divide
+  \count0 by 65536\csname @IPE@25@fs\endcsname
+  \csname @IPE@\the\count0@fs\endcsname\selectfont\IPEcolor[rgb]{#1}}
+%
+% define mapping of fontsizes
+%
+\def\IpeMap#1#2#3{\expandafter\def
+  \csname @IPE@#1@fs\endcsname{\fontsize{#2}{#3}}}
+%
+\IpeMap{0}{5}{6pt}
+\IpeMap{1}{5}{6pt}
+\IpeMap{2}{5}{6pt}
+\IpeMap{3}{5}{6pt}
+\IpeMap{4}{5}{6pt}
+\IpeMap{5}{5}{6pt}
+\IpeMap{6}{6}{7pt}
+\IpeMap{7}{7}{8pt}
+\IpeMap{8}{8}{9.5pt}
+\IpeMap{9}{9}{11pt}
+\IpeMap{10}{10}{12pt}
+%
+% LaTeX2e has a different view of font sizes
+%
+\if@IPE@ldLatex
+\IpeMap{11}{11}{13.6pt}
+\IpeMap{12}{12}{14pt}
+\IpeMap{13}{12}{14pt}
+\IpeMap{14}{14}{18pt}
+\IpeMap{15}{14}{18pt}
+\IpeMap{16}{17}{22pt}
+\IpeMap{17}{17}{22pt}
+\IpeMap{18}{17}{22pt}
+\IpeMap{19}{20}{25pt}
+\IpeMap{20}{20}{25pt}
+\IpeMap{21}{20}{25pt}
+\IpeMap{22}{20}{25pt}
+\IpeMap{23}{25}{30pt}
+\IpeMap{24}{25}{30pt}
+\IpeMap{25}{25}{30pt}
+\else
+\IpeMap{11}{10.95}{13.6pt}
+\IpeMap{12}{12}{14pt}
+\IpeMap{13}{12}{14pt}
+\IpeMap{14}{14.4}{18pt}
+\IpeMap{15}{14.4}{18pt}
+\IpeMap{16}{17.28}{22pt}
+\IpeMap{17}{17.28}{22pt}
+\IpeMap{18}{17.28}{22pt}
+\IpeMap{19}{20.74}{25pt}
+\IpeMap{20}{20.74}{25pt}
+\IpeMap{21}{20.74}{25pt}
+\IpeMap{22}{20.74}{25pt}
+\IpeMap{23}{24.88}{30pt}
+\IpeMap{24}{24.88}{30pt}
+\IpeMap{25}{24.88}{30pt}
+\fi
+%
+% ----------------------------------------------------------------------
+%
+% Macros visible to the user
+%
+\newdimen\IPEwidth
+%
+% scale figure to ARG percent
+%
+\def\IpeScale#1{\edef\IPEscale{#1}%
+  \def\IPEsize##1##2{\unitlength=\IPEscale bp%
+    \divide\unitlength by 100\IPEwidth=##1\unitlength\ignorespaces}%
+  \ignorespaces}
+%
+% scale figure such that width becomes ARG
+%
+\def\IpeFit#1{\def\IPEsize##1##2{\dimen0=##1bp\count0=\dimen0%
+    \IPEwidth=#1\count1=\IPEwidth
+    \divide\count0 by 100\divide\count1 by \count0%
+    \edef\IPEscale{\the\count1}%
+    \unitlength=\IPEscale bp\divide\unitlength by 100%
+    \IPEwidth=##1\unitlength\ignorespaces}%
+  \ignorespaces}
+%
+% Obey or Not Obey \IpeScale for setting fontsize?
+%
+\def\IpeScaleFont{\@IPE@scalefonttrue}
+\def\IpeNoScaleFont{\@IPE@scalefontfalse}
+%
+\IpeScale{100}
+\IpeScaleFont
+%
+% ----------------------------------------------------------------------
+%
+% these definitions are solely for backwards compatibility with
+% ancient Ipe versions 
+%
+\def\IPE@Idraw@header#1{\special{header=Idraw.prologue}}
+\def\IPE@ipe@header#1{\special{header=Ipe-#1.prologue}}
+\def\IPEid#1{\endgroup\catcode`\%=9\ignorespaces}
+\def\IPEcreator{\@ifstar{\IPE@@creator}{\IPE@creator}}
+\def\IPE@creator#1#2{\csname IPE@#1@header\endcsname{#2}\ignorespaces}
+\def\IPE@@creator#1#2{\ignorespaces}
+\def\IPEfontsize#1#2{\dimen2=#2pt\multiply\dimen2 by #1\count1=\dimen2
+  \divide\count1 by 65536\IPEfs{\the\count1}}
+\long\def\IPEpar#1#2#3{\IPEmp{#1}{#3}}
+\def\IPEspecial{psfile=\IPEfile\space hscale=\IPEscale\space vscale=\IPEscale}
+\def\IPEps{\special{\IPEspecial}}
+%
+\catcode`\@=\IPEtheAtCatcode
+\endinput
+%
+% ----------------------------------------------------------------------
+%

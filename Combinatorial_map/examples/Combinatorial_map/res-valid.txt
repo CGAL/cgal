@@ -1,0 +1,10 @@
+#Darts=24, #0-cells=8, #1-cells=12, #2-cells=8, #3-cells=2, #ccs=2, valid=1
+Number of darts of the first tetrahedron: 12
+Number of darts of the face incident to d1: 3
+#Darts=24, #0-cells=4, #1-cells=6, #2-cells=4, #3-cells=1, #4-cells=2, #ccs=1, valid=1
+7; 20; 7; 7; 7; 7; 13; 13; 13; 13; 13; 
+7; 2; 7; 7; 7; 7; 13; 13; 13; 2; 13; 13; 5; 10; 
+#Darts=64, #0-cells=13, #1-cells=24, #2-cells=14, #3-cells=2, #ccs=1, valid=1
+#Darts=36, #0-cells=8, #1-cells=14, #2-cells=9, #3-cells=2, #ccs=1, valid=1
+#Darts=24, #0-cells=8, #1-cells=12, #2-cells=6, #3-cells=1, #ccs=1, valid=1
+Number of darts from the first tetrahedron: 9

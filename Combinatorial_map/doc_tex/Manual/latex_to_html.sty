@@ -1,0 +1,145 @@
+% ___________________________________________________________________________
+% |#########################################################################|
+% |                                                                         |
+% | Latex Converter Style File: latex_to_html.sty                           |
+% | ------------------------------------------------------------------      |
+% | TeX Macros provided on conjunction with the LaTeX converter.            |
+% |                                                                         |
+% | (c) 1998   Lutz Kettner                                                 |
+% |     1999   Susan Hert                                                   |
+% |     2004   Lutz Kettner                                                 |
+% | $Id: latex_to_html.sty 28970 2006-03-01 16:34:30Z ameyer $                                                       |
+% | $Date: 2006-03-01 17:34:30 +0100 (Wed, 01 Mar 2006) $                                            |
+% |_________________________________________________________________________|
+% |#########################################################################|
+% |                                                                         |
+% | Table of Contents:                                                      |
+% |                                                                         |
+% |   o   Release Number Support                                            |
+% |   o   Style Selection                                                   |
+% |   o   Boolean Values and Control Structures                             |
+% |   o   HTML Output and Conversion Macros                                 |
+% |   o   Separation of TeX, HTML and ASCII Parts                           |
+% |                                                                         |
+% |#########################################################################|
+
+% ___________________________________________________________________________
+% ###########################################################################
+% |
+% |   o   Release Number Support
+% |
+% ###########################################################################
+
+
+\usepackage{cc_manual}
+
+\RCSdef{\lcRevision}{$Id: latex_to_html.sty 28970 2006-03-01 16:34:30Z ameyer $}
+\RCSdefDate{\lcDate}{$Date: 2006-03-01 17:34:30 +0100 (Wed, 01 Mar 2006) $}
+
+% Print a release note.
+\catcode`\@=11\relax
+\newwrite\@unused
+\def\typeout#1{{\let\protect\string\immediate\write\@unused{#1}}}
+\typeout{latex_to_html.sty: \lcRevision. \lcDate.}
+\catcode`\@=12\relax
+
+% ___________________________________________________________________________
+% ###########################################################################
+% |
+% |   o   Style Selection                       
+% |
+% ###########################################################################
+
+\newcommand{\lcStyle}[1]{}
+\gdef\lcBodyAttributes{}
+
+% ___________________________________________________________________________
+% ###########################################################################
+% |
+% |   o   Boolean Values and Control Structures
+% |
+% ###########################################################################
+
+\newcommand{\lcFalse}[2]{#2}
+\newcommand{\lcTrue}[2]{#1}
+\newcommand{\lcAuto}[2]{}
+
+% possibly nested control blocks that suppress cross-linking
+\newcommand{\lcNoLinkBegin}{}
+\newcommand{\lcNoLinkEnd}{}
+\newcommand{\lcNoLinkSync}{}
+
+
+% ___________________________________________________________________________
+% ###########################################################################
+% |
+% |   o   HTML Output and Conversion Macros
+% |
+% ###########################################################################
+
+\newcommand{\lcRawHtml}[1]{}
+\newcommand{\lcRawHtmlExpanded}[1]{}
+\newcommand{\lcRawAscii}[1]{}
+\newcommand{\lcAsciiToHtml}[1]{}
+
+\newcommand{\lcAnchor}[2]{#2}
+
+% ___________________________________________________________________________
+% ###########################################################################
+% |
+% |   o   Separation of TeX, HTML and ASCII Parts
+% |
+% ###########################################################################
+
+\newcommand{\lcTex}[1]{#1}
+\newcommand{\lcHtml}[1]{}
+\newcommand{\lcAscii}[1]{}
+
+\newcommand{\lcHtmlCatcode}{%
+                       \ccCatcode
+                       \catcode`\{=12
+                       \catcode`\}=12
+                       \catcode`\\=12
+                  }
+\newcommand{\lcHtmlDefCatcode}{%
+                       \catcode`\@=11\relax
+                       \catcode`\|=0
+                       \catcode`\[=1
+                       \catcode`\]=2
+                       \catcode`\{=12
+                       \catcode`\}=12
+                       \catcode`\\=12
+                  }
+
+\newenvironment{lcTexBlock}{}{}
+
+\newenvironment{lcHtmlBlock}{\begingroup\lcHtmlCatcode \lcParseHtmlBlockBody}{
+                            \endgroup}
+
+%  Take care: catcodes changes a lot here!!
+\begingroup
+\lcHtmlDefCatcode
+|long|gdef|lcParseHtmlBlockBody #1\end{lcHtmlBlock}[%
+  |csname endlcHtmlBlock|endcsname|@checkend[lcHtmlBlock]%
+  |expandafter|endgroup|if@endpe|@doendpe|fi
+  |if@ignore|global|@ignorefalse|ignorespaces|fi
+]
+|endgroup
+
+\newenvironment{lcRawHtmlBlock}{\begingroup\lcHtmlCatcode 
+  \lcParseRawHtmlBlockBody}{\endgroup}
+
+%  Take care: catcodes changes a lot here!!
+\begingroup
+\lcHtmlDefCatcode
+|long|gdef|lcParseRawHtmlBlockBody #1\end{lcRawHtmlBlock}[%
+  |csname endlcRawHtmlBlock|endcsname|@checkend[lcRawHtmlBlock]%
+  |expandafter|endgroup|if@endpe|@doendpe|fi
+  |if@ignore|global|@ignorefalse|ignorespaces|fi
+]
+|endgroup
+
+% ___________________________________________________________________________
+% ###########################################################################
+% | EOF
+% ###########################################################################

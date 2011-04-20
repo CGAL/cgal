@@ -1,0 +1,90 @@
+% +------------------------------------------------------------------------+
+% | Reference manual page: Cell_attribute.tex
+% +------------------------------------------------------------------------+
+% | 04.02.2010   Guillaume Damiand
+% | Package: Combinatorial_map
+% +------------------------------------------------------------------------+
+\ccRefPageBegin
+%%RefPage: end of header, begin of main body
+% +------------------------------------------------------------------------+
+\begin{ccRefClass}{Cell_attribute<CMap,Info_,Tag,OnMerge,OnSplit>}
+\ccRefLabel{CGAL::Cell_attribute}
+
+\ccInclude{CGAL/Cell_attribute.h}
+
+\ccDefinition
+  
+The class \ccRefName\ represents an attribute containing (or not) an information.
+
+\ccIsModel
+\ccRefConceptPage{CGAL::CellAttribute}
+
+\ccParameters
+\ccc{CMap} must be a model of the \ccc{CombinatorialMap}.\\
+\ccc{Info_} is the type of the information contained in the attribute.\\
+%   If \ccc{void}, the cell attribute does not have any information.\\
+\ccc{Tag} is \ccc{Tag_true} to enable the storage of a
+   \ccc{Dart_handle} of the associated cell, \ccc{Tag_false} otherwise.\\
+\ccc{OnMerge} is the type of the functor called before two attributes are merged.\\
+% Must
+%    be either \ccc{Null_functor}, or a model of the 
+%    \ccc{Binary Function} concept having
+%    \ccc{Cell_attribute<CMap,Info,Tag,On_merge,On_split>} as type of
+%    both arguments and \ccc{void} as return type.\\
+\ccc{OnSplit} is the type of the functor called after one attribute is split in two. 
+   % Must be either \ccc{Null_functor}, or a model of the  
+   % \ccc{Binary Function} concept having  
+   % \ccc{Cell_attribute<CMap,Info,Tag,On_merge,On_split>} as type of both 
+   % arguments and \ccc{void} as return type.
+
+   By default, \ccc{OnMerge} and \ccc{OnSplit} are equal to
+   \ccc{Null_functor}; \ccc{Tag} is equal to
+   \ccc{Tag_true}; and \ccc{Info_} is equal to \ccc{void}.
+
+\ccTypes
+\ccThree{typedef CMap::Dart_const_handle}{}{}
+\ccTypedef{typedef Info_ Info;}{}
+\ccGlue
+\ccTypedef{typedef Tag Supports_cell_dart;}{}
+\ccGlue
+\ccTypedef{typedef OnMerge On_merge;}{}
+\ccGlue
+\ccTypedef{typedef OnSplit On_split;}{}
+
+\ccTypedef{typedef CMap::Dart_handle Dart_handle;}{}
+\ccGlue
+\ccTypedef{typedef CMap::Dart_const_handle Dart_const_handle;}{}
+
+% +-----------------------------------+
+% \ccCreation
+% \ccCreationVariable{ca}
+
+% \ccConstructor{Cell_attribute();}{}
+
+% \ccConstructor{Cell_attribute(const Info& info);}
+%  {Constructor initializing the information of \ccc{ca} by the 
+%    copy contructor \ccc{Info(info)}.
+%    Defined only if \ccc{Info} is different from \ccc{void}.}
+
+% % +-----------------------------------+
+% \ccHeading{Access Member Functions}
+
+% \ccMethod{Info& info();}
+%   {Returns the information of \ccc{cawi}. 
+%     Defined only if \ccc{Info} is different from \ccc{void}.}
+
+% \ccMethod{const Info& info() const;}
+%   {Returns the information of \ccc{cawi}, when \ccc{cawi} is const.
+%     Defined only if \ccc{Info} is different from \ccc{void}.}
+
+\ccSeeAlso
+%\ccRefIdfierPage{CGAL::Void_functor}\\
+%\ccRefIdfierPage{CGAL::Cell_attribute_with_info}\\
+\ccRefIdfierPage{CGAL::Combinatorial_map<d,Items,Alloc>}
+
+\end{ccRefClass}
+% +------------------------------------------------------------------------+
+%%RefPage: end of main body, begin of footer
+\ccRefPageEnd
+% EOF
+% +------------------------------------------------------------------------+
