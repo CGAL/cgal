@@ -1,4 +1,4 @@
-// Copyright (c) 2007  INRIA Sophia-Antipolis (France).
+// Copyright (c) 2011  INRIA Saclay (France).
 // All rights reserved.
 //
 // This file is part of CGAL (www.cgal.org); you can redistribute it and/or
@@ -15,43 +15,11 @@
 // $URL$
 // $Id$
 //
-// Author(s)     : Sylvain Pion
+// Author(s)     : Marc Glisse
 
-//| If a compiler does not support rvalue references (from C++0x)
-//| CGAL_CFG_NO_RVALUE_REFERENCE is set. 
+//| If a compiler does not support static_assert (from C++0x)
+//| CGAL_CFG_NO_STATIC_ASSERT is set. 
 
-struct A {
-  A () {}
-
-  // copy semantics
-  A (const A&) {}
-  A& operator=(const A&) { return *this; }
-
-  // move semantics
-  A (A&&) {}
-  A& operator=(A&&) { return *this; }
-
-  ~A () {}
-};
-
-A f()
-{
-  return A();
-}
-
-#include <utility>
-
-A&& f(A&& a)
-{
-  return std::forward<A>(a);
-}
-
-int main()
-{
-  A a = f();
-  A b;
-  b = a;
-  b = f();
-  b = f(A());
-  return 0;
+int main(){
+	static_assert(true,"Everything is fine");
 }
