@@ -397,7 +397,7 @@ if ( CMAKE_COMPILER_IS_GNUCXX )
   
 endif()
 
-message (STATUS "Done\n")
+message (STATUS "Done with initialize\n")
 message( STATUS "Detect external libraries")
 
 include(CGAL_SetupFlags)
@@ -445,8 +445,10 @@ foreach (lib ${CGAL_SUPPORTING_3RD_PARTY_LIRARIES})
     option(WITH_${lib} "Select external library ${lib}" OFF)
   endif()
 
-  # TODO EBEB add config flag
-  add_config_flag( CGAL_USE_${lib} )
+
+  if (WITH_${lib}) 
+    add_config_flag( ${CGAL_EXT_LIB_${lib}_PREFIX} )
+  endif()
 endforeach()
 
 #--------------------------------------------------------------------------------------------------
@@ -555,7 +557,7 @@ set ( CGAL_INSTALL_MAN_DIR "share/man/man1"
 #
 #--------------------------------------------------------------------------------------------------
 
-message (STATUS "Done\n")
+message (STATUS "Written compiler_config.h\n")
 message( STATUS "Generating build files")
 
 
@@ -591,7 +593,7 @@ hide_variable(LIBRARY_OUTPUT_PATH)
 
 if (CGAL_BRANCH_BUILD AND CGAL_REPORT_DUPLICATE_FILES )
 
-  message (STATUS "Done\n")
+  message (STATUS "Generated build files\n")
   message( STATUS "Problems: ")
 
   if (CGAL_DUPLICATE_HEADER_FILES)
