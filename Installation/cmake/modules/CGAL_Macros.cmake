@@ -194,7 +194,7 @@ if( NOT CGAL_MACROS_FILE_INCLUDED )
 
   macro( use_lib lib usefile)
 
-    if ( ${lib_found} )
+    if ( ${lib}_FOUND )
 
       if ( NOT ${lib}_SETUP ) # avoid double usage
   
