@@ -216,9 +216,6 @@ if( NOT CGAL_MACROS_FILE_INCLUDED )
        
           message( STATUS "${lib} definitions: ${${lib}_DEFINITIONS}" )
           add_definitions( ${${lib}_DEFINITIONS} "-DCGAL_USE_${lib}" )
-          if ( "${${lib}_DEFINITIONS}" MATCHES ".*${lib}_USE_F2C.*" )
-            add_definitions( "-DCGAL_USE_F2C" )
-          endif()
 
           if ( ${lib}_LIBRARIES )
             message( STATUS "${lib} libraries:   ${${lib}_LIBRARIES}" )
