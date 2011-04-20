@@ -139,22 +139,29 @@ fi
     CGAL_COMPONENTS=${CGAL_COMPONENTS//[i|I][m|M][a|A][g|G][e|E][i|I][o|O]/ImageIO}
   
     # external libs
-    CGAL_COMPONENTS=${CGAL_COMPONENTS//[l|L][e|E][d|D][a|A]/LEDA}
     CGAL_COMPONENTS=${CGAL_COMPONENTS//[g|G][m|M][p|P]/GMP}
     CGAL_COMPONENTS=${CGAL_COMPONENTS//[g|G][m|M][p|P][x|X][x|X]/GMPXX}
 
     CGAL_COMPONENTS=${CGAL_COMPONENTS//[m|M][p|P][f|F][r|R]/MPFR}
+    CGAL_COMPONENTS=${CGAL_COMPONENTS//[l|L][e|E][d|D][a|A]/LEDA}
     CGAL_COMPONENTS=${CGAL_COMPONENTS//[m|M][p|P][f|F][i|I]/MPFI}
     CGAL_COMPONENTS=${CGAL_COMPONENTS//[r|R][s|S]/RS}
 
+    CGAL_COMPONENTS=${CGAL_COMPONENTS//[o|O][p|P][e|E][n|N][n|N][l|L]/OpenNL}
     CGAL_COMPONENTS=${CGAL_COMPONENTS//[t|T][a|A][u|U][c|C][s|S]/TAUCS}
     CGAL_COMPONENTS=${CGAL_COMPONENTS//[b|B][l|L][a|A][s|S]/BLAS}
-
     CGAL_COMPONENTS=${CGAL_COMPONENTS//[l|L][a|A][p|P][a|A][c|C][k|K]/LAPACK}
-    CGAL_COMPONENTS=${CGAL_COMPONENTS//[o|O][p|P][e|E][n|N][n|N][l|L]/OPENNL}
+
     CGAL_COMPONENTS=${CGAL_COMPONENTS//[q|Q][g|G][l|L][v|V][i|I][e|E][w|W][e|E][r|R]/QGLViewer}
+
+    CGAL_COMPONENTS=${CGAL_COMPONENTS//[z|Z][l|L][i|I][b|B]/zlib}
+
     CGAL_COMPONENTS=${CGAL_COMPONENTS//[e|E][s|S][t|T][b|B][l|L]/ESTBL}
+
     CGAL_COMPONENTS=${CGAL_COMPONENTS//[n|N][t|T][l|L]/NTL}
+
+    CGAL_COMPONENTS=${CGAL_COMPONENTS//[o|O][p|P][e|E][n|N]/OpenGL}
+
 
 #F2C?
 #IPE?
