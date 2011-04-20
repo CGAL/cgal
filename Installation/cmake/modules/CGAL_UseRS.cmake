@@ -62,4 +62,6 @@ if( RS_FOUND AND NOT RS_SETUP )
 
     endif( RS3_FOUND )
 
+  set (RS_SETUP TRUE)
+
   endif( RS_FOUND AND NOT RS_SETUP )
