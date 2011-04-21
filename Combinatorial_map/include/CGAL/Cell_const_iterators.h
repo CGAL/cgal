@@ -26,9 +26,7 @@
 namespace CGAL {
 
   /** @file Cell_const_iterators.h
-   * All the cell const iterators. Not commented in doxygen to avoid too much
-   * classes in the documentation.
-   * There are 3 classes:
+   * The cell const iterators. There are 3 classes:
    *  - CMap_cell_const_iterator<Map,Ite,i,dim>
    *  - CMap_one_dart_per_incident_cell_const_iterator<Map,Ite,i,dim>
    *  - CMap_one_dart_per_cell_const_iterator<Map,Ite,i,dim>

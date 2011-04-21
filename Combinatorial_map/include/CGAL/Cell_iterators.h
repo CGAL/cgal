@@ -358,8 +358,8 @@ namespace CGAL {
     int mmark_number;
   };
   //****************************************************************************
-  /* Class CMap_one_dart_per_incident_cell_iterator<Map,i,j,dim>: to iterate onto the i-cells
-   * incident to the given j-cell (one dart by each i-cell of the j-cell).
+  /* Class CMap_one_dart_per_incident_cell_iterator<Map,i,j,dim>: to iterate
+   * onto one dart per i-cell incident to the given j-cell.
    */
   template <typename Map_,unsigned int i,unsigned int j, 
 	    unsigned int dim=Map_::dimension,bool Const=false>

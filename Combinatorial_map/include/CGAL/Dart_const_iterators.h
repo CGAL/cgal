@@ -24,8 +24,7 @@
 namespace CGAL {
 
   /** @file Dart_const_iterators.h
-   * Definition of dart const iterators.
-   * There are 8 iterators:
+   * Definition of dart const iterators. There are 8 iterators:
    *  - CMap_dart_const_iterator_basic_of_orbit<Map,Beta...>
    *  - CMap_dart_const_iterator_basic_of_cell<Map,i,d>
    *  - CMap_dart_const_iterator_of_orbit<Map,Beta...>

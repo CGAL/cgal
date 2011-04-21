@@ -24,8 +24,7 @@
 namespace CGAL {
 
   /** @file Dart_iterators.h
-   * Definition of dart iterators.
-   * There are 9 iterators:
+   * Definition of dart iterators. There are 9 iterators:
    *  - CMap_dart_iterator_basic_of_orbit<Map,Beta...>
    *  - CMap_dart_iterator_basic_of_cell<Map,i,d>
    *  - CMap_dart_iterator_basic_of_all
