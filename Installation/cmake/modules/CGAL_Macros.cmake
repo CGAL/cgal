@@ -241,7 +241,7 @@ if( NOT CGAL_MACROS_FILE_INCLUDED )
 
     else()
 
-      message( ERROR "Try to use ${lib} that is not found")
+      message( FATAL_ERROR "Try to use ${lib} that is not found")
 
     endif()
 

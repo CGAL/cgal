@@ -52,7 +52,7 @@ foreach (lib ${CGAL_SUPPORTING_3RD_PARTY_LIRARIES})
     else() 
    
       if ("${POSITION}" STRGREATER "-1") 
-        message( ERROR "CGAL requires ${lib} to be found" )
+        message( FATAL_ERROR "CGAL requires ${lib} to be found" )
       endif()
 
     endif()

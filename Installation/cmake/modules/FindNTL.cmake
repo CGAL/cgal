@@ -5,7 +5,7 @@ find_package( GMP REQUIRED )
 
 if( NOT GMP_FOUND )
 
-  message( ERROR "NTL requires GMP" )
+  message( FATAL_ERROR "NTL requires GMP" )
   set( NTL_FOUND FALSE )
 
 else( NOT GMP_FOUND )
@@ -16,7 +16,7 @@ else( NOT GMP_FOUND )
 
   if( _IS_GMP_VERSION_TOO_LOW )
 
-    message( ERROR, "NTL needs GMP>=3.1.1. Your GMP version is ${GMP_VERSION}." )
+    message( FATAL_ERROR, "NTL needs GMP>=3.1.1. Your GMP version is ${GMP_VERSION}." )
 
   else( _IS_GMP_VERSION_TOO_LOW )
 
