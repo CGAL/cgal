@@ -127,11 +127,10 @@ if ( CGAL_BRANCH_BUILD )
   if ( ${CGAL_SCM_NAME} STREQUAL "svn" )
 
     MACRO(Subversion_GET_REVISION dir variable)
-      # EXECUTE_PROCESS(COMMAND ${SVN_EXECUTABLE} info ${dir} -r HEAD
-      EXECUTE_PROCESS(COMMAND ${SVN_EXECUTABLE} info ${dir}
+     EXECUTE_PROCESS(COMMAND ${SVN_EXECUTABLE} info --xml ${dir}
         OUTPUT_VARIABLE ${variable}
         OUTPUT_STRIP_TRAILING_WHITESPACE)
-      STRING(REGEX REPLACE "^(.*\n)?Revision: ([^\n]+).*" "\\2" ${variable} "${${variable}}")
+      STRING(REGEX REPLACE "^(.*\n)?   revision=\"([^\n]+)\".*url.*" "\\2" ${variable} "${${variable}}")
     ENDMACRO(Subversion_GET_REVISION)
 
     # define CGAL_SVN_REVISION 50602

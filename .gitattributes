@@ -166,13 +166,13 @@ Algebraic_kernel_d/include/CGAL/RS/p.h -text
 Algebraic_kernel_d/include/CGAL/RS/pagealloc.h -text
 Algebraic_kernel_d/include/CGAL/RS/polynomial_1_constructors.h -text
 Algebraic_kernel_d/include/CGAL/RS/polynomial_1_eval.h -text
+Algebraic_kernel_d/include/CGAL/RS/polynomial_1_functors.h -text
 Algebraic_kernel_d/include/CGAL/RS/polynomial_1_io.h -text
 Algebraic_kernel_d/include/CGAL/RS/polynomial_1_member.h -text
 Algebraic_kernel_d/include/CGAL/RS/polynomial_1_operators.h -text
 Algebraic_kernel_d/include/CGAL/RS/polynomial_1_parser.h -text
 Algebraic_kernel_d/include/CGAL/RS/polynomial_1_utils.h -text
 Algebraic_kernel_d/include/CGAL/RS/polynomial_converter.h -text
-Algebraic_kernel_d/include/CGAL/RS/polynomial_functors.h -text
 Algebraic_kernel_d/include/CGAL/RS/pp.h -text
 Algebraic_kernel_d/include/CGAL/RS/primes.h -text
 Algebraic_kernel_d/include/CGAL/RS/refine_1.h -text
@@ -1894,6 +1894,7 @@ Maintenance/public_release/announcement/CGAL-3.6-beta1 -text
 Maintenance/public_release/announcement/CGAL-3.6.1 -text
 Maintenance/public_release/announcement/CGAL-3.7 -text
 Maintenance/public_release/announcement/CGAL-3.7-beta1 -text
+Maintenance/public_release/announcement/CGAL-3.8 -text
 Maintenance/public_release/announcement/CGAL-3.8-beta -text
 Maintenance/public_release/scripts/precompiled_demos_zips -text
 Maintenance/public_release/scripts/prepare_release -text

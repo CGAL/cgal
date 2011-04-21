@@ -103,10 +103,12 @@ Requirements:
 \begin{itemize}
 \item all names defined by \cgal\ are in namespace \ccc{CGAL}
   (including namespaces nested in namespace \ccc{CGAL}).
-\item qualify calls of \ccc{is_zero}, \ccc{is_one}, \ccc{is_negative},
-  \ccc{is_positive}, \ccc{sign}, \ccc{abs}, \ccc{compare},
-  \ccc{square} by \texttt{CGAL\_NTS}.
-  \ccIndexSubitem{qualification}{\ccFont CGAL_NTS}%
+\item explicitly prefix calls to template functions of CGAL
+(such as \ccc{square}, \ccc{sign}, \ccc{abs}, \dots) by \ccc{CGAL::}
+to ensure the functions used are the one from CGAL and not one from another
+library. If you want to allow an optimized function from another library
+to be used, then you should not qualify the call and document it explicitly
+ (if appropriate).
 \end{itemize}
 
 %% Recommendations:
