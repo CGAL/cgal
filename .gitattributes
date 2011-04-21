@@ -1591,6 +1591,7 @@ Installation/cmake/modules/CGAL_UseLAPACK.cmake -text
 Installation/cmake/modules/CGAL_UseLEDA.cmake -text
 Installation/cmake/modules/CGAL_UseMPFI.cmake -text
 Installation/cmake/modules/CGAL_UseRS.cmake -text
+Installation/cmake/modules/CGAL_UseRS3.cmake -text
 Installation/cmake/modules/CGAL_UseTAUCS.cmake -text
 Installation/cmake/modules/CGAL_VersionUtils.cmake -text
 Installation/cmake/modules/FindBLAS.cmake -text
@@ -1614,6 +1615,7 @@ Installation/cmake/modules/FindPackageMessage.cmake -text
 Installation/cmake/modules/FindQGLViewer.cmake -text
 Installation/cmake/modules/FindQt3-patched.cmake -text
 Installation/cmake/modules/FindRS.cmake -text
+Installation/cmake/modules/FindRS3.cmake -text
 Installation/cmake/modules/FindTAUCS.cmake -text
 Installation/cmake/modules/Qt3Macros-patched.cmake -text
 Installation/cmake/modules/UseCGAL.cmake -text

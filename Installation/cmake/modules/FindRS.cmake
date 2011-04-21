@@ -15,22 +15,10 @@ if( MPFI_FOUND )
             DOC "The directory containing the RS include files"
            )
 
-  find_path(RS3_INCLUDE_DIR
-            NAMES rs3_fncts.h
-            PATHS ENV RS_INC_DIR
-            DOC "The directory containing the RS3 include files"
-           )
-
   find_library(RS_LIBRARIES
                NAMES rsexport_rs
                PATHS ENV RS_LIB_DIR
                DOC "Path to the RS library"
-              )
-
-  find_library(RS3_LIBRARIES
-               NAMES rs3
-               PATHS ENV RS_LIB_DIR
-               DOC "Path to the RS3 library"
               )
 
   IS_VERSION_LESS("$GMP_VERSION}" "4.2.0" _IS_GMP_VERSION_TO_LOW)
@@ -45,10 +33,6 @@ if( MPFI_FOUND )
     if( RS_INCLUDE_DIR AND RS_LIBRARIES )
       set(RS_FOUND TRUE)
     endif( RS_INCLUDE_DIR AND RS_LIBRARIES )
-
-    if( RS3_INCLUDE_DIR AND RS3_LIBRARIES )
-      set(RS3_FOUND TRUE)
-    endif( RS3_INCLUDE_DIR AND RS3_LIBRARIES )
 
     if( RS_LIBRARIES )
       get_filename_component(RS_LIBRARIES_DIR ${RS_LIBRARIES} PATH CACHE )
