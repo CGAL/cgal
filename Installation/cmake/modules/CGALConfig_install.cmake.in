@@ -77,6 +77,8 @@ set(CGAL_AUTO_LINK_MPFR "@CGAL_AUTO_LINK_MPFR@")
 
 set(CGAL_USE_FILE "${CGAL_MODULES_DIR}/UseCGAL.cmake" )
 
+set(CGAL_ALLOW_ALL_PRECONFIGURED_LIBS_COMPONENT "@CGAL_ALLOW_ALL_PRECONFIGURED_LIBS_COMPONENT@")
+
 if ( CGAL_FIND_REQUIRED )
   set( CHECK_CGAL_COMPONENT_MSG_ON_ERROR TRUE        )
   set( CHECK_CGAL_COMPONENT_ERROR_TYPE   FATAL_ERROR )
@@ -113,10 +115,16 @@ macro(check_cgal_component COMPONENT)
   
 endmacro()
 
-check_cgal_component("")
+check_cgal_component("") # for CGAL itself
 
 foreach( CGAL_COMPONENT ${CGAL_FIND_COMPONENTS} )
-  check_cgal_component("_${CGAL_COMPONENT}")
+
+  list (FIND CGAL_CONFIGURED_LIBRARIES "${CGAL_COMPONENT}" POSITION)
+  if ("${POSITION}" STRGREATER "-1")
+    check_cgal_component("_${CGAL_COMPONENT}")
+# TODO EBEB do something for supporting lib in check_component?
+  endif()
+
 endforeach()
 
 # Starting with cmake 2.6.3, CGAL_FIND_COMPONENTS is cleared out when find_package returns.

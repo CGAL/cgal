@@ -5,7 +5,6 @@
 # The variables used here are defined in the CGALConfig.cmake generated when CGAL was installed.
 #
 #
-
 set(CMAKE_ALLOW_LOOSE_LOOP_CONSTRUCTS true)
 
 include(${CGAL_MODULES_DIR}/CGAL_Macros.cmake)
@@ -35,13 +34,17 @@ if(NOT USE_CGAL_FILE_INCLUDED)
     # TODO-EBEB enable ALL_PRECONFIGURED_LIBS with cmake-option (which is, e.g., not given by testsuite
     if ( ${CGAL_COMPONENT} STREQUAL "ALL_PRECONFIGURED_LIBS" )
 
-      message( STATUS "External libraries are all used")
-      foreach ( CGAL_3RD_PARTY_LIB ${CGAL_SUPPORTING_3RD_PARTY_LIRARIES})
-        if (${CGAL_3RD_PARTY_LIB}_FOUND) 
-          use_lib( ${CGAL_3RD_PARTY_LIB} "###${${CGAL_3RD_PARTY_LIB}_USE_FILE}")
-        endif()
-      endforeach()
-    
+      if (CGAL_ALLOW_ALL_PRECONFIGURED_LIBS_COMPONENT) 
+        message( STATUS "External libraries are all used")
+        foreach ( CGAL_3RD_PARTY_LIB ${CGAL_SUPPORTING_3RD_PARTY_LIRARIES})
+          if (${CGAL_3RD_PARTY_LIB}_FOUND) 
+            use_lib( ${CGAL_3RD_PARTY_LIB} "###${${CGAL_3RD_PARTY_LIB}_USE_FILE}")
+          endif()
+        endforeach()
+      else()
+        message( SEND_ERROR "Component ALL_PRECONFIGURED_LIBS only allow with CGAL_ALLOW_ALL_PRECONFIGURED_LIBS_COMPONENT=ON") 
+      endif()  
+  
     else() 
 
       set( vlib "${CGAL_EXT_LIB_${CGAL_COMPONENT}_PREFIX}" )

@@ -471,6 +471,9 @@ cache_set(CGAL_3RD_PARTY_LIBRARIES_DIRS "" )
 
 include(CGAL_SetupDependencies)
 
+option( CGAL_ALLOW_ALL_PRECONFIGURED_LIBS_COMPONENT "Select to allow
+to use all preconfigured external libraries" OFF)
+
 message (STATUS "Determined all external dependencies\n")
 
 #--------------------------------------------------------------------------------------------------
