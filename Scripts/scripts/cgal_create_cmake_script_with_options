@@ -160,7 +160,7 @@ fi
 
     CGAL_COMPONENTS=${CGAL_COMPONENTS//[n|N][t|T][l|L]/NTL}
 
-    CGAL_COMPONENTS=${CGAL_COMPONENTS//[o|O][p|P][e|E][n|N]/OpenGL}
+    CGAL_COMPONENTS=${CGAL_COMPONENTS//[o|O][p|P][e|E][n|N][g|G][l|L]/OpenGL}
 
 
 #F2C?
