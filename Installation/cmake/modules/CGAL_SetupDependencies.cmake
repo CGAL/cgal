@@ -17,13 +17,13 @@ foreach (lib ${CGAL_SUPPORTING_3RD_PARTY_LIRARIES})
     
     find_package( ${lib} )
    
-    if (${vlib}_FOUND) 
+    if ( ${vlib}_FOUND ) 
       message( STATUS "${lib} is preconfigured with use-file: ${${vlib}_USE_FILE}") 
       message( STATUS "${lib} include:     ${${vlib}_INCLUDE_DIR}" )
       message( STATUS "${lib} libraries:   ${${vlib}_LIBRARIES}" )
       message( STATUS "${lib} definitions: ${${vlib}_DEFINITIONS}" )
    
-      set ( CGAL_USE_${vlib} 1 )
+      set ( CGAL_USE_${vlib} TRUE )
 
       # Part 2: Add some lib-specific definitions or obtain version
    
