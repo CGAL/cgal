@@ -29,6 +29,9 @@ if(NOT USE_CGAL_FILE_INCLUDED)
       add_to_list( CGAL_3RD_PARTY_INCLUDE_DIRS   ${CGAL_${CGAL_COMPONENT}_3RD_PARTY_INCLUDE_DIRS}   )
       add_to_list( CGAL_3RD_PARTY_DEFINITIONS    ${CGAL_${CGAL_COMPONENT}_3RD_PARTY_DEFINITIONS}    )
       add_to_list( CGAL_3RD_PARTY_LIBRARIES_DIRS ${CGAL_${CGAL_COMPONENT}_3RD_PARTY_LIBRARIES_DIRS} )
+# TODO EBEB Is setting CGAL_${CGAL_COMPONENT}_FOUND=TRUE in UseCGAL a good strategy?
+      set( CGAL_${CGAL_COMPONENT}_FOUND TRUE )
+
     endif()
 
     # TODO-EBEB enable ALL_PRECONFIGURED_LIBS with cmake-option (which is, e.g., not given by testsuite
