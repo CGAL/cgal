@@ -417,7 +417,12 @@ endmacro()
 #  Coin is used in KDS, but no FindCoin or FindCOIN exists
 #  There exists FindF2C, FindIPE, FindMKL, but they are only used to support supporting libs
 #  For some weird reason zlib does not work in spelling ZLIB (TODO EBEB? unify?)
-list (INSERT CGAL_SUPPORTING_3RD_PARTY_LIRARIES 0 GMP GMPXX MPFR LEDA MPFI RS RS3 OpenNL TAUCS BLAS LAPACK QGLViewer zlib ESTBL NTL OpenGL)
+list (INSERT CGAL_SUPPORTING_3RD_PARTY_LIRARIES 0 GMP MPFR LEDA MPFI RS RS3 OpenNL TAUCS BLAS LAPACK QGLViewer zlib ESTBL NTL OpenGL)
+if (NOT WIN32)
+  # GMPXX is not supported on WIN32 machines
+  list (INSERT CGAL_SUPPORTING_3RD_PARTY_LIRARIES 1 GMPXX)
+endif()
+
 # Where CMake is run several times, to avoid duplicates
 list(REMOVE_DUPLICATES CGAL_SUPPORTING_3RD_PARTY_LIRARIES)
 hide_variable(CGAL_SUPPORTING_3RD_PARTY_LIRARIES)
