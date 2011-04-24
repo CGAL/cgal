@@ -21,9 +21,9 @@ backport for squeeze:
 Tags
 ----
 
-svn copy $SVNROOT/trunk/Maintenance/deb/sid/debian $SVNROOT/tags/debian/3.8-1
-svn copy $SVNROOT/trunk/Maintenance/deb/wheezy/debian $SVNROOT/tags/debian/3.8-1~wheezy1
-svn copy $SVNROOT/trunk/Maintenance/deb/squeeze/debian $SVNROOT/tags/debian/3.8-1~squeeze1
+svn copy $SVNROOT/branches/next/Maintenance/deb/sid/debian $SVNROOT/tags/debian/3.8-1
+svn copy $SVNROOT/branches/next/Maintenance/deb/wheezy/debian $SVNROOT/tags/debian/3.8-1~wheezy1
+svn copy $SVNROOT/branches/next/Maintenance/deb/squeeze/debian $SVNROOT/tags/debian/3.8-1~squeeze1
 
 or:
 svn copy $SVNROOT/branches/CGAL-3.8-branch/Maintenance/deb/sid/debian $SVNROOT/tags/debian/3.8-1
