@@ -35,7 +35,7 @@ FTP server
 ----------
 
 wget http://www.joachim-reichel.de/tmp/cgal-3.8.tar.bz2
-su AG1-CGAL
+su cgal
 cd /ftp/pub/outgoing/CGAL/debian
 mv pool/non-free/c/cgal/* archive
 rm -fr dists pool
