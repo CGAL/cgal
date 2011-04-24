@@ -1,0 +1,139 @@
+#!/usr/bin/make -f
+
+.NOTPARALLEL:
+
+# Uncomment this to turn on verbose mode.
+# export DH_VERBOSE=1
+
+ifneq (,$(findstring debug,$(DEB_BUILD_OPTIONS)))
+  CXXFLAGS += -g
+endif
+
+ifeq (,$(findstring nostrip,$(DEB_BUILD_OPTIONS)))
+  INSTALL_PROGRAM += -s
+endif
+
+ifeq ($(DEB_BUILD_ARCH),alpha)
+  IEEE_FPU_OPTION = -mieee -mfp-rounding-mode=d
+endif
+
+configure-stamp: patch-stamp
+	dh_testdir
+	mkdir -p static
+	cd static && QTDIR= cmake .. \
+	  -DCMAKE_VERBOSE_MAKEFILE=ON -DCMAKE_INSTALL_PREFIX=/usr -DCMAKE_BUILD_TYPE=Release \
+	  -DCMAKE_SKIP_RPATH=TRUE -DBUILD_SHARED_LIBS=FALSE \
+	  -DWITH_CGAL_Qt3=OFF -DWITH_demos=OFF -DWITH_examples=OFF
+	mkdir -p shared
+	cd shared && QTDIR= cmake .. \
+	  -DCMAKE_VERBOSE_MAKEFILE=ON -DCMAKE_INSTALL_PREFIX=/usr -DCMAKE_BUILD_TYPE=Release \
+	  -DCMAKE_SKIP_RPATH=TRUE -DBUILD_SHARED_LIBS=TRUE \
+	  -DWITH_CGAL_Qt3=OFF -DWITH_demos=OFF -DWITH_examples=OFF
+	touch configure-stamp
+
+build: build-stamp
+build-stamp: configure-stamp
+	dh_testdir
+	dh_prep
+	$(MAKE) -C static
+	$(MAKE) -C shared
+
+	mkdir -p shared/demo/CGAL_ipelets
+	cd shared/demo/CGAL_ipelets && QTDIR= cmake ../../../demo/CGAL_ipelets \
+	  -DCMAKE_VERBOSE_MAKEFILE=ON -DCMAKE_INSTALL_PREFIX=/usr -DCMAKE_BUILD_TYPE=Release \
+	  -DCMAKE_SKIP_RPATH=TRUE -DBUILD_SHARED_LIBS=TRUE \
+	  -DWITH_CGAL_Qt3=OFF -DCGAL_DIR=$(CURDIR)/shared
+	$(MAKE) -C shared/demo/CGAL_ipelets
+
+ifneq (,$(findstring nocheck,$(DEB_BUILD_OPTIONS)))
+	$(MAKE) -C debian/tests IEEE_FPU_OPTION="$(IEEE_FPU_OPTION)" rounding_modes1
+	LD_LIBRARY_PATH=shared/lib debian/tests/rounding_modes1
+	$(MAKE) -C debian/tests IEEE_FPU_OPTION="$(IEEE_FPU_OPTION)" rounding_modes2
+	LD_LIBRARY_PATH=shared/lib debian/tests/rounding_modes2
+endif
+	touch build-stamp
+
+clean: clean-patched unpatch
+clean-patched: patch
+	dh_testdir
+	dh_testroot
+	$(MAKE) -C debian/tests clean
+	rm -fr shared static ipelets
+	rm -f build-stamp configure-stamp
+	dh_clean
+
+install: build
+	dh_testdir
+	dh_testroot
+#	dh_prep
+	dh_installdirs
+
+	$(MAKE) -C static DESTDIR=$(CURDIR)/debian/tmp install
+	$(MAKE) -C shared DESTDIR=$(CURDIR)/debian/tmp install
+	$(MAKE) -C shared/demo/CGAL_ipelets DESTDIR=$(CURDIR)/debian/tmp install
+
+#	$(MAKE) -C shared DESTDIR=$(CURDIR)/debian/tmp install_FindCGAL
+	mkdir -p debian/tmp/usr/share/cmake-2.8/Modules
+	cp cmake/modules/FindCGAL.cmake debian/tmp/usr/share/cmake-2.8/Modules
+
+	mv debian/tmp/usr/share/doc/CGAL-`cat VERSION` debian/tmp/usr/share/doc/cgal
+	mv debian/tmp/usr/share/doc/cgal/CHANGES debian/tmp/usr/share/doc/cgal/changelog
+	rm debian/tmp/usr/share/doc/cgal/LICENSE*
+	rm debian/tmp/usr/share/doc/cgal/AUTHORS
+
+	tar cf - examples | gzip --best >debian/tmp/usr/share/doc/cgal/examples.tar.gz
+	tar cf - demo | gzip --best >debian/tmp/usr/share/doc/cgal/demo.tar.gz
+
+	rm debian/tmp/usr/bin/cgal_make_macosx_app
+
+	dh_install --sourcedir=debian/tmp --list-missing
+
+	ln -s libcgal7 debian/libcgal-demo/usr/share/doc/libcgal-demo
+	mkdir -p debian/libcgal-dev/usr/share/doc
+	ln -s libcgal7 debian/libcgal-dev/usr/share/doc/libcgal-dev
+	mkdir -p debian/libcgal-ipelets/usr/share/doc
+	ln -s libcgal7 debian/libcgal-ipelets/usr/share/doc/libcgal-ipelets
+
+#	install -d debian/libcgal7/DEBIAN
+#	install -m644 debian/libcgal7.shlibs debian/libcgal7/DEBIAN/shlibs
+
+binary-indep: build install
+	dh_testdir -i
+	dh_testroot -i
+	dh_link -i
+	dh_compress -i
+	dh_fixperms -i
+	dh_installdeb -i
+	dh_gencontrol -i
+	dh_md5sums -i
+	dh_builddeb -i
+
+binary-arch: build install
+	dh_testdir -a
+	dh_testroot -a
+	dh_installdocs -plibcgal7 debian/copyright
+	dh_installchangelogs -plibcgal7
+	dh_installman -a
+	dh_link -a
+	dh_strip -a
+	dh_compress -a
+	dh_fixperms -a
+	dh_makeshlibs -a
+	dh_installdeb -a
+	dh_shlibdeps -a -ldebian/libcgal7/usr/lib
+	dh_gencontrol -a
+	dh_md5sums -a
+	dh_builddeb -a
+
+binary: binary-indep binary-arch
+
+patch: patch-stamp
+patch-stamp:
+	dpatch apply-all
+	touch patch-stamp
+
+unpatch:
+	dpatch deapply-all
+	rm -fr patch-stamp debian/patched
+
+.PHONY: build clean binary-indep binary-arch binary install configure patch unpatch

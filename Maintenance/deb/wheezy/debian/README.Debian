@@ -1,0 +1,50 @@
+README.Debian
+-------------
+
+The homepage of CGAL (http://www.cgal.org/) offers more information about CGAL.
+In particular, a mailing list and the documentation for the library (in PDF and
+HTML) are available. The authors ask you to give some feedback about your usage
+of CGAL in a short questionnaire (in the download section).
+
+
+Documentation
+-------------
+
+Note that the CGAL documentation cannot be packaged for Debian due to unclear
+license conditions. The complete documentation in PDF and HTML is available at
+http://www.cgal.org/.
+
+
+Demos and examples
+------------------
+
+Tarballs with demos and examples can be found in /usr/share/doc/libcgal-demo.
+Extract the tarballs somewhere and call "cmake ." to configure the
+demos/examples. Call "make" to build them, either in the top-level directory
+to build all demos/examples (which takes some time and needs quite some disk
+space), or in the subdirectory of the desired demo/exmaple. The cmake option
+-DCMAKE_VERBOSE_MAKEFILE=ON is useful to generate verbose makefiles that show
+each executed command.
+
+
+Demos using libQGLViewer
+------------------------
+
+The Debian package of libQGLViewer uses non-standard library names to offer the
+library in a Qt3 and Qt4 flavor. The build system of CGAL has been patched to
+handle the non-standard library name. If your libQGLViewer packages are older
+than 2.3.1-4 you need to work around another problem with the non-standard
+include directory. Create an include directory with the expected name
+"QGLViewer", e.g.,
+
+  mkdir -p /some/dir
+  ln -s /usr/include/qglviewer-qt4 /some/dir/QGLViewer
+
+and pass the option
+
+  -DQGLVIEWER_INCLUDE_DIR=/some/dir
+
+to cmake. See http://bugs.debian.org/cgi-bin/bugreport.cgi?bug=522659 for more
+information.
+
+ -- Joachim Reichel <reichel@debian.org>  Sat, 06 Feb 2010 12:29:02 +0100
