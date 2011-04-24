@@ -1804,6 +1804,8 @@ Maintenance/MacOSX_Installer/Resources/postupgrade -text
 Maintenance/Third_party/GMP/create_mangled_versions.bat eol=crlf
 Maintenance/Third_party/GMP/gmp-4.2.4.patch.gz -text svneol=unset#application/gzip
 Maintenance/Third_party/GMP/mpfr-2.3.2.patch.gz -text svneol=unset#application/gzip
+Maintenance/deb/ANNOUNCEMENT.beta -text
+Maintenance/deb/ANNOUNCEMENT.final -text
 Maintenance/deb/sid/debian/README.Debian -text
 Maintenance/deb/sid/debian/README.source -text
 Maintenance/deb/sid/debian/changelog -text
