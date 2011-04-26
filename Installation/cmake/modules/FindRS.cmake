@@ -38,10 +38,6 @@ if( MPFI_FOUND )
       get_filename_component(RS_LIBRARIES_DIR ${RS_LIBRARIES} PATH CACHE )
     endif( RS_LIBRARIES )
 
-    if( NOT RS_INCLUDE_DIR OR NOT RS_LIBRARIES_DIR )
-      include( RSConfig OPTIONAL )
-    endif( NOT RS_INCLUDE_DIR OR NOT RS_LIBRARIES_DIR )
-
     include(CGAL_FindPackageHandleStandardArgs)
 
     find_package_handle_standard_args( RS
