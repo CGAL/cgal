@@ -1,0 +1,99 @@
+#!/bin/bash
+
+### Config
+
+userName="Eric Berberich"
+userEmail=eric@mpi-inf.mpg.de
+usernName=eric
+svnGforge=svn+ssh://$userName@scm.gforge.inria.fr/svn/cgal-mirror
+fromSvn=file://$HOME/CGAL/gforge/cgal-m
+#fromSvn=$svnGforge
+fromRev=63050
+gitName=cgal.git
+
+### Authors file
+echo "Get authors file with svn"
+svn cat $fromSvn/branches/next/Maintenance/git/authors-file.txt > authors-file.txt
+
+### Create repo
+
+echo "Create new directory $gitname"
+rm -fr $gitName
+mkdir $gitName
+cd $gitName
+echo
+
+# rewrite root
+rewriteRoot=--rewrite-root=$svnGforge
+rewriteRoot=
+
+# options to speedup
+
+# TODO internal-releases only >= 3.7
+internalReleases="--tags tags/internal-releases"
+internalReleases=
+
+debian="--tags tags/debian"
+debian=
+
+CMD="git svn init $fromSvn $rewriteRoot --trunk branches/next --branches branches/features --branches branches/releases --tags tags/releases $internalReleases $debian"
+# TODO --authors-file ../authors-file.txt?
+echo "Init repository: $CMD"
+$CMD
+echo
+
+### Modify repo/.git/config 
+
+# rename remotes -> remotes/svn
+CMD="sed -e s|remotes|remotes/svn| < .git/config > .git/config.altered"
+echo "Rename 'remotes' to 'remotes/svn' in $gitName/.git/config: $CMD"
+sed -e 's|remotes|remotes/svn|' -e 's|svn/trunk|svn/next|' < .git/config > .git/config.altered
+echo
+
+
+# add 'stable' branch
+#CMD=
+echo "Add 'stable' branch to $gitName/.git/config"
+echo '        fetch = trunk:refs/remotes/svn/stable' >> .git/config.altered
+# TODO git branch --track release git-svn-release-branch?
+#$CMD
+echo
+
+CMD="mv -f .git/config.altered .git/config"
+#echo "Activate new config: $CMD"
+$CMD
+#echo
+
+# add author
+CMD="git config user.name \"$userName\"; git config user.email \"$userEmail\""
+echo "Add author to $gitName/.git/config: $CMD"
+pwd
+#$CMD
+git config user.name  "$userName"
+git config user.email "$userEmail"
+echo
+
+echo "Using config $gitName/.git/config:"
+cat .git/config
+
+### Fetch
+
+#exit
+
+# fetch from svn server
+echo "Fetch from SVN repository: git svn fetch -r$fromRev:HEAD "
+git svn fetch -r$fromRev:HEAD 
+# TODO fetch each branch from its creation-revision only
+
+
+### Branch names
+
+# rename master next
+git branch -m master local/next
+
+
+
+# What about? 
+## git config svn-remote.svn.url $svncgal    (or $svncgal/trunk if you are doing trunk only)
+### http://translate.org.za/blogs/wynand/en/content/changing-your-svn-repository-address-git-svn-setup
+## unhandled.log (which lists all svn properties, such as svn:eol, that has not been converted).
