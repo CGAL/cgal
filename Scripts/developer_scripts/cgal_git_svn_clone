@@ -87,36 +87,31 @@ internalReleasesTags=
 debianTags="--tags tags/debian"
 debianTags=
 
-CMD="git svn init $fromSvn $rewriteRoot --trunk branches/next --branches branches/features --branches branches/releases --tags tags/releases $internalReleasesTags $debianTags"
+#CMD="git svn init $fromSvn $rewriteRoot --prefix=svn/ --trunk branches/next --branches branches/features --branches branches/releases --tags tags/releases $internalReleasesTags $debianTags"
+#sed -i -e 's|svn/trunk|svn/next|' < .git/config
 echo "Init repository: $CMD"
-$CMD
-echo
-
-### Modify repo/.git/config 
-
-# rename remotes -> remotes/svn
-CMD="sed -e s|remotes|remotes/svn| < .git/config > .git/config.altered"
-echo "Rename 'remotes' to 'remotes/svn' in $gitName/.git/config: $CMD"
-sed -e 's|remotes|remotes/svn|' -e 's|svn/trunk|svn/next|' < .git/config > .git/config.altered
-echo
-
-
-# add 'stable' branch
-#CMD=
-echo "Add 'stable' branch to $gitName/.git/config"
-echo '        fetch = trunk:refs/remotes/svn/stable' >> .git/config.altered
-# TODO git branch --track release git-svn-release-branch?
 #$CMD
-echo
 
-CMD="mv -f .git/config.altered .git/config"
-#echo "Activate new config: $CMD"
-$CMD
-#echo
+git svn init $fromSvn $rewriteRoot --prefix=svn/ --trunk trunk 
+git svn init $fromSvn $rewriteRoot --prefix=svn/branches/next/ --trunk branches/next 
+git svn init $fromSvn $rewriteRoot --prefix=svn/branches/features/ --branches branches/features
+git svn init $fromSvn $rewriteRoot --prefix=svn/branches/releases/ --branches branches/releases
+git svn init $fromSvn $rewriteRoot --prefix=svn/tags/releases/ --tags tags/releases
+if [ "$internalReleasesTags" != ""]; then 
+  git svn init $fromSvn $rewriteRoot --prefix=svn/tags/internal-releases/ $internalReleasesTags
+fi
+if [ "$debianTags" != ""]; then 
+  git svn init $fromSvn $rewriteRoot --prefix=svn/tags/debian/ $debianTags
+fi
+sed -e 's|trunk:|stable:|g' -e 's|next/trunk|next|g' -i "" .git/config
+
+# TODO git branch --track release git-svn-release-branch?
+echo
 
 # add author
 CMD="git config user.name \"$userName\"; git config user.email \"$userEmail\""
 echo "Add author to $gitName/.git/config: $CMD"
+echo "PWD" 
 pwd
 #$CMD
 git config user.name  "$userName"
