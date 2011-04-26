@@ -81,13 +81,13 @@ rewriteRoot=
 # options to speedup
 
 # TODO internal-releases only >= 3.7
-internalReleases="--tags tags/internal-releases"
-internalReleases=
+internalReleasesTags="--tags tags/internal-releases"
+internalReleasesTags=
 
-debian="--tags tags/debian"
-debian=
+debianTags="--tags tags/debian"
+debianTags=
 
-CMD="git svn init $fromSvn $rewriteRoot --trunk branches/next --branches branches/features --branches branches/releases --tags tags/releases $internalReleases $debian"
+CMD="git svn init $fromSvn $rewriteRoot --trunk branches/next --branches branches/features --branches branches/releases --tags tags/releases $internalReleasesTags $debianTags"
 echo "Init repository: $CMD"
 $CMD
 echo
