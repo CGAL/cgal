@@ -122,8 +122,6 @@ cat .git/config
 
 ### Fetch
 
-#exit
-
 if [ $skipFetch = 0 ]; then
 
   ### Authors file
@@ -133,11 +131,12 @@ if [ $skipFetch = 0 ]; then
 
   # fetch from svn server
   echo "Fetch from SVN repository: git svn fetch -r$fromRev:HEAD "
-  if [ "$fromRev" = "HEAD" ]; then
-    git svn fetch --authors-file=/tmp/cgal-authors-file.txt -r HEAD 
-  else
-    git svn fetch --authors-file=/tmp/cgal-authors-file.txt -r$fromRev:HEAD 
+  if [ "$fromRev" = "LAST" ]; then
+    # last revision on next
+    fromRev=$(svn info $fromSvn/branches/next | grep "Last Changed Rev: " | tr -d 'Last Changed Rev: ')
+    echo "Last Revision: $fromRev"
   fi
+  git svn fetch --authors-file=/tmp/cgal-authors-file.txt -r$fromRev:HEAD 
   # TODO fetch each branch from its creation-revision only
   echo
 
