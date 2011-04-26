@@ -4,8 +4,9 @@
 
 usage()
 {
-  echo "Usage: `basename $0` [-u userName] [-e UserEmail] [-l userLogin] [-r fromRevision] [-s] [-v] [-h]" >&2
+  echo "Usage: `basename $0` [-u userName] [-e UserEmail] [-l userLogin] [-m svnLocation] [-r fromRevision] [-s] [-g gitname=cgal.git] [-v] [-h]" >&2
   echo >&2
+  echo "  -r gives revision to start from. Other options than a number: LAST, BASE" >&2
   echo "  -s skip fetch" >&2
   echo "  -v the version" >&2
   echo "  -h this info screen" >&2
@@ -17,16 +18,15 @@ usage()
 userName="Eric Berberich"
 userEmail=eric@mpi-inf.mpg.de
 userLogin=eric
-svnGforge=svn+ssh://$userLogin@scm.gforge.inria.fr/svn/cgal-mirror
+svnGforge=svn+ssh://$userLogin@scm.gforge.inria.fr/svn/cgal
 fromSvn=file://$HOME/CGAL/gforge/cgal-m
 #fromSvn=$svnGforge
 fromRev=63050
 gitName=cgal.git
-
 skipFetch=0
 
 # parse command line arguments
-while getopts u:e:l:r:sh OPT; do
+while getopts u:e:l:r:m:g:sh OPT; do
   case "$OPT" in
     u)  userName=$OPTARG
         ;;
@@ -37,10 +37,16 @@ while getopts u:e:l:r:sh OPT; do
     l)  userLogin=$OPTARG
         ;;
 
+    m)  fromSvn=$OPTARG
+        ;;
+
     r)  fromRev=$OPTARG
         ;;
 
     s)  skipFetch=1
+        ;;
+
+    r)  gitName=$OPTARG
         ;;
 
     h)  usage
