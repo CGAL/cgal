@@ -104,8 +104,6 @@ if [ "$debianTags" != ""]; then
   git svn init $fromSvn $rewriteRoot --prefix=svn/tags/debian/ $debianTags
 fi
 sed -e 's|trunk:|stable:|g' -e 's|next/trunk|next|g' -i "" .git/config
-
-# TODO git branch --track release git-svn-release-branch?
 echo
 
 # add author
