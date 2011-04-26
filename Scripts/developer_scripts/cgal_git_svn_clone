@@ -1,15 +1,67 @@
 #!/bin/bash
 
+### Usage
+
+usage()
+{
+  echo "Usage: `basename $0` [-u userName] [-e UserEmail] [-l userLogin] [-r fromRevision] [-s] [-v] [-h]" >&2
+  echo >&2
+  echo "  -s skip fetch" >&2
+  echo "  -v the version" >&2
+  echo "  -h this info screen" >&2
+  echo  >&2
+}
+
 ### Config
 
 userName="Eric Berberich"
 userEmail=eric@mpi-inf.mpg.de
-usernName=eric
-svnGforge=svn+ssh://$userName@scm.gforge.inria.fr/svn/cgal-mirror
+userLogin=eric
+svnGforge=svn+ssh://$userLogin@scm.gforge.inria.fr/svn/cgal-mirror
 fromSvn=file://$HOME/CGAL/gforge/cgal-m
 #fromSvn=$svnGforge
 fromRev=63050
 gitName=cgal.git
+
+skipFetch=0
+
+# parse command line arguments
+while getopts u:e:l:r:sh OPT; do
+  case "$OPT" in
+    u)  userName=$OPTARG
+        ;;
+
+    e)  userEmail=$OPTARG
+        ;;
+
+    l)  userLogin=$OPTARG
+        ;;
+
+    r)  fromRev=$OPTARG
+        ;;
+
+    s)  skipFetch=1
+        ;;
+
+    h)  usage
+        exit 0
+        ;;
+
+    v)  echo "`basename $0` version 0.1"
+        exit 0
+        ;;
+
+    \?) # getopts issues an error message
+        usage
+        exit 1
+        ;;
+  esac
+done
+
+shift `expr $OPTIND - 1`
+
+
+
 
 ### Authors file
 echo "Get authors file with svn"
@@ -80,17 +132,20 @@ cat .git/config
 
 #exit
 
-# fetch from svn server
-echo "Fetch from SVN repository: git svn fetch -r$fromRev:HEAD "
-git svn fetch -r$fromRev:HEAD 
-# TODO fetch each branch from its creation-revision only
+if [ ! skipFetch ]; then
+
+  # fetch from svn server
+  echo "Fetch from SVN repository: git svn fetch -r$fromRev:HEAD "
+  git svn fetch -r$fromRev:HEAD 
+  # TODO fetch each branch from its creation-revision only
 
 
-### Branch names
+  ### Branch names
 
-# rename master next
-git branch -m master local/next
+  # rename master next
+  git branch -m master local/next
 
+fi
 
 
 # What about? 
