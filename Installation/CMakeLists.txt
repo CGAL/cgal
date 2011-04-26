@@ -127,6 +127,7 @@ if ( CGAL_BRANCH_BUILD )
   if ( ${CGAL_SCM_NAME} STREQUAL "svn" )
 
     MACRO(Subversion_GET_REVISION dir variable)
+     # use svnversion
      EXECUTE_PROCESS(COMMAND ${SVN_EXECUTABLE} info --xml ${dir}
         OUTPUT_VARIABLE ${variable}
         OUTPUT_STRIP_TRAILING_WHITESPACE)
