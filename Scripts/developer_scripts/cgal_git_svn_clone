@@ -46,7 +46,7 @@ while getopts u:e:l:r:m:g:sh OPT; do
     s)  skipFetch=1
         ;;
 
-    r)  gitName=$OPTARG
+    g)  gitName=$OPTARG
         ;;
 
     h)  usage
