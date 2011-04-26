@@ -87,22 +87,19 @@ internalReleasesTags=
 debianTags="--tags tags/debian"
 debianTags=
 
-#CMD="git svn init $fromSvn $rewriteRoot --prefix=svn/ --trunk branches/next --branches branches/features --branches branches/releases --tags tags/releases $internalReleasesTags $debianTags"
-#sed -i -e 's|svn/trunk|svn/next|' < .git/config
 echo "Init repository: $CMD"
-#$CMD
-
 git svn init $fromSvn $rewriteRoot --prefix=svn/ --trunk trunk 
 git svn init $fromSvn $rewriteRoot --prefix=svn/branches/next/ --trunk branches/next 
 git svn init $fromSvn $rewriteRoot --prefix=svn/branches/features/ --branches branches/features
 git svn init $fromSvn $rewriteRoot --prefix=svn/branches/releases/ --branches branches/releases
 git svn init $fromSvn $rewriteRoot --prefix=svn/tags/releases/ --tags tags/releases
-if [ "$internalReleasesTags" != ""]; then 
+if [ "$internalReleasesTags" != "" ]; then 
   git svn init $fromSvn $rewriteRoot --prefix=svn/tags/internal-releases/ $internalReleasesTags
 fi
-if [ "$debianTags" != ""]; then 
+if [ "$debianTags" != "" ]; then 
   git svn init $fromSvn $rewriteRoot --prefix=svn/tags/debian/ $debianTags
 fi
+# rename some refs
 sed -e 's|trunk:|stable:|g' -e 's|next/trunk|next|g' -i "" .git/config
 echo
 
