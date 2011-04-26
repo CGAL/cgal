@@ -58,14 +58,7 @@ while getopts u:e:l:r:sh OPT; do
   esac
 done
 
-shift `expr $OPTIND - 1`
-
-
-
-
-### Authors file
-echo "Get authors file with svn"
-svn cat $fromSvn/branches/next/Maintenance/git/authors-file.txt > authors-file.txt
+#shift `expr $OPTIND - 1`
 
 ### Create repo
 
@@ -89,7 +82,6 @@ debian="--tags tags/debian"
 debian=
 
 CMD="git svn init $fromSvn $rewriteRoot --trunk branches/next --branches branches/features --branches branches/releases --tags tags/releases $internalReleases $debian"
-# TODO --authors-file ../authors-file.txt?
 echo "Init repository: $CMD"
 $CMD
 echo
@@ -132,17 +124,29 @@ cat .git/config
 
 #exit
 
-if [ ! skipFetch ]; then
+if [ $skipFetch = 0 ]; then
+
+  ### Authors file
+  echo "Get authors file with svn"
+  svn cat $fromSvn/branches/next/Maintenance/git/authors-file.txt > /tmp/cgal-authors-file.txt
+  echo 
 
   # fetch from svn server
   echo "Fetch from SVN repository: git svn fetch -r$fromRev:HEAD "
-  git svn fetch -r$fromRev:HEAD 
+  if [ "$fromRev" = "HEAD" ]; then
+    git svn fetch --authors-file=/tmp/cgal-authors-file.txt -r HEAD 
+  else
+    git svn fetch --authors-file=/tmp/cgal-authors-file.txt -r$fromRev:HEAD 
+  fi
   # TODO fetch each branch from its creation-revision only
+  echo
 
+  rm -f /tmp/cgal-authors-files.txt
 
   ### Branch names
 
   # rename master next
+  echo "Rename main branch to local/next"
   git branch -m master local/next
 
 fi
