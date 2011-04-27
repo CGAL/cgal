@@ -109,14 +109,14 @@ if( NOT CGAL_MACROS_FILE_INCLUDED )
     message("Compiler version:")
     set(version "Unknown compiler. Cannot display its version")
     foreach(flag "-V" "--version" "-v")
-      execute_process(COMMAND ${CMAKE_CXX_COMPILER} ${flag}
+      execute_process(COMMAND "${CMAKE_CXX_COMPILER}" ${flag}
         RESULT_VARIABLE ok
         OUTPUT_VARIABLE out_version
         ERROR_VARIABLE out_version
         TIMEOUT 5)
       if(ok EQUAL 0)
         if("${out_version}" MATCHES "^clang")
-          execute_process(COMMAND ${CMAKE_CXX_COMPILER} -print-search-dirs
+          execute_process(COMMAND "${CMAKE_CXX_COMPILER}" -print-search-dirs
             RESULT_VARIABLE ok
             OUTPUT_VARIABLE out_search_dirs
             TIMEOUT 5)

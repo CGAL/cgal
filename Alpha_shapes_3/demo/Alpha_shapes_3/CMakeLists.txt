@@ -3,13 +3,7 @@
 
 project (Alpha_shape_3)
 
-cmake_minimum_required(VERSION 2.4.5)
-
-set(CMAKE_ALLOW_LOOSE_LOOP_CONSTRUCTS true)
-
-if ( COMMAND cmake_policy )
-  cmake_policy( SET CMP0003 NEW )  
-endif()
+cmake_minimum_required(VERSION 2.6.2)
 
 find_package(CGAL  COMPONENTS Qt4)
 include(${CGAL_USE_FILE})

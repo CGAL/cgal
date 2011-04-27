@@ -3,13 +3,7 @@
 
 project( Surface_mesh_parameterization_example )
 
-CMAKE_MINIMUM_REQUIRED(VERSION 2.4.5)
-
-set(CMAKE_ALLOW_LOOSE_LOOP_CONSTRUCTS true)
-
-if ( COMMAND cmake_policy )
-  cmake_policy( SET CMP0003 NEW )
-endif()
+CMAKE_MINIMUM_REQUIRED(VERSION 2.6.2)
 
 # Require packages new or improved since CGAL 3.4
 include_directories (BEFORE ../../../Installation/include/)

@@ -5,7 +5,7 @@
 # ${CMAKE_BINARY_DIR} or ${CMAKE_BINARY_DIR}.
 project(CGAL)
 
-CMAKE_MINIMUM_REQUIRED(VERSION 2.6.0 FATAL_ERROR)
+cmake_minimum_required(VERSION 2.6.0 FATAL_ERROR)
 
 # This allows else(), endif(), etc... (without repeating the expression)
 set(CMAKE_ALLOW_LOOSE_LOOP_CONSTRUCTS true)
@@ -42,7 +42,7 @@ if ( CGAL_BRANCH_BUILD )
 
   set(CGAL_INSTALLATION_PACKAGE_DIR "${CMAKE_SOURCE_DIR}/Installation" CACHE PATH "Directory containing the Installation package")
   set(CGAL_MAINTENANCE_PACKAGE_DIR "${CMAKE_SOURCE_DIR}/Maintenance" CACHE PATH "Directory containing the Maintenance package")
-  set(CGAL_CORE_PACKAGE_DIR "${CMAKE_SOURCE_DIR}/Core" CACHE PATH "Directory containing the Maintenance package")
+  set(CGAL_CORE_PACKAGE_DIR "${CMAKE_SOURCE_DIR}/Core" CACHE PATH "Directory containing the Core package")
 
   message(STATUS "Installation package directory: ${CGAL_INSTALLATION_PACKAGE_DIR}")
   message(STATUS "Maintenance package directory: ${CGAL_MAINTENANCE_PACKAGE_DIR}")
@@ -62,7 +62,7 @@ else ( CGAL_BRANCH_BUILD )
 
   set(CGAL_INSTALLATION_PACKAGE_DIR "${CMAKE_SOURCE_DIR}" CACHE PATH "Directory containing the Installation package")
   set(CGAL_MAINTENANCE_PACKAGE_DIR "${CMAKE_SOURCE_DIR}" CACHE PATH "Directory containing the Maintenance package")
-  set(CGAL_CORE_PACKAGE_DIR "${CMAKE_SOURCE_DIR}" CACHE PATH "Directory containing the Maintenance package")
+  set(CGAL_CORE_PACKAGE_DIR "${CMAKE_SOURCE_DIR}" CACHE PATH "Directory containing the Core package")
 
 endif (CGAL_BRANCH_BUILD )
 
@@ -126,12 +126,14 @@ if ( CGAL_BRANCH_BUILD )
 
   if ( ${CGAL_SCM_NAME} STREQUAL "svn" )
 
-    MACRO(Subversion_GET_REVISION dir variable)
-     EXECUTE_PROCESS(COMMAND ${SVN_EXECUTABLE} info --xml ${dir}
+    function(Subversion_GET_REVISION dir variable)
+      # use svnversion
+      execute_process(COMMAND "${SVN_EXECUTABLE}" info --xml "${dir}"
         OUTPUT_VARIABLE ${variable}
         OUTPUT_STRIP_TRAILING_WHITESPACE)
-      STRING(REGEX REPLACE "^(.*\n)?   revision=\"([^\n]+)\".*url.*" "\\2" ${variable} "${${variable}}")
-    ENDMACRO(Subversion_GET_REVISION)
+      string(REGEX REPLACE "^(.*\n)?   revision=\"([^\n]+)\".*url.*" "\\2" ${variable} "${${variable}}")
+      set(${variable} ${${variable}} PARENT_SCOPE)
+    endfunction(Subversion_GET_REVISION)
 
     # define CGAL_SVN_REVISION 50602
     Subversion_GET_REVISION("${CGAL_INSTALLATION_PACKAGE_DIR}" CGAL_TMP_REVISION)
@@ -820,7 +822,7 @@ if( WITH_CPACK AND EXISTS "${CMAKE_ROOT}/Modules/CPack.cmake" )
         set(CPACK_SOURCE_STRIP_FILES "")
     endif()
 
-    INCLUDE(CPack)
+    include(CPack)
     
 endif()
 

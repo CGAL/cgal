@@ -1,13 +1,7 @@
 project (CGAL_Qt4)
 
-CMAKE_MINIMUM_REQUIRED(VERSION 2.4.5 FATAL_ERROR)
+CMAKE_MINIMUM_REQUIRED(VERSION 2.6.2 FATAL_ERROR)
    
-set(CMAKE_ALLOW_LOOSE_LOOP_CONSTRUCTS true)
-  
-if ( COMMAND cmake_policy )
-  cmake_policy( SET CMP0003 NEW )  
-endif()
-
 if ( NOT CGAL_FOUND )   
   find_package(CGAL REQUIRED)
 endif()
