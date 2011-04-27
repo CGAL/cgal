@@ -99,7 +99,7 @@ if [ "$userLogin" = "" ]; then
   exit 1
 fi
 
-# TODO define tags-behavior for developers
+# TODO define tags-behavior for developers, maybe as own svn-remote of git-remote that can be deleted and, if needed, reintegrated
 
 ### Create repo
 
