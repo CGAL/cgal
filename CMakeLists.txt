@@ -1,5 +1,5 @@
 # Top level CMakeLists.txt for CGAL-branchbuild
-CMAKE_MINIMUM_REQUIRED(VERSION 2.6.2)
+cmake_minimum_required(VERSION 2.6.2)
 
 # option for branch build
 
@@ -20,7 +20,7 @@ endif()
 
 if ( ${CGAL_SCM_NAME} STREQUAL "svn" )
 
-  FIND_PROGRAM(SVN_EXECUTABLE svn DOC "subversion command line client")
+  find_program(SVN_EXECUTABLE svn DOC "subversion command line client")
 
   # TODO detect name
   set ( CGAL_SCM_BRANCH_NAME "n/a" )
@@ -29,7 +29,7 @@ endif()
 
 if ( ${CGAL_SCM_NAME} STREQUAL "git" )
 
-  FIND_PROGRAM(GIT_EXECUTABLE git DOC "git command line client")
+  find_program(GIT_EXECUTABLE git DOC "git command line client")
 
 #  EXECUTE_PROCESS(COMMAND ${GIT_EXECUTABLE} --git-dir=${CMAKE_SOURCE_DIR}/.git branch
 #      OUTPUT_VARIABLE CGAL_GIT_BRANCH_OUT
