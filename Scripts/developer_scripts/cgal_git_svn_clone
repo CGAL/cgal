@@ -4,7 +4,7 @@
 
 usage()
 {
-  echo "Usage: `basename $0` [-u userName] [-e UserEmail] [-l userLogin] [-m svnLocation] [-r fromRevision] [-s] [-g gitname=cgal.git] [-v] [-h]" >&2
+  echo "Usage: `basename $0` [-u userName] [-e userEmail] [-l userLogin] [-m svnLocation] [-r fromRevision] [-s] [-g gitname=cgal.git] [-v] [-h]" >&2
   echo >&2
   echo "  -r gives revision to start from. Other options than a number: LAST, BASE" >&2
   echo "  -s skip fetch" >&2
@@ -25,8 +25,11 @@ fromRev=63050
 gitName=cgal.git
 skipFetch=0
 
+# TODO no-tags
+
 # parse command line arguments
-while getopts u:e:l:r:m:g:sh OPT; do
+while getopts "u:e:l:r:m:g:sh" OPT; do
+  echo "$flag" $OPT $OPTIND $OPTARG
   case "$OPT" in
     u)  userName=$OPTARG
         ;;
