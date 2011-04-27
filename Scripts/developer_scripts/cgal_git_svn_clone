@@ -2,16 +2,21 @@
 
 ### Usage
 
+# TODO remove -g xor -c and replace by last argument
+
 usage()
 {
-  echo "Usage: `basename $0` [-u userName] [-e userEmail] [-l userLogin] [-m svnLocation] [-r fromRevision] [-s] [-g gitname=cgal.git] [-c cloneLocation] [-v] [-h]" >&2
+  echo "Usage: `basename $0` [-u userName] [-e userEmail] [-l userLogin] [-c cloneLocation] [-v] [-h] [-g gitname=cgal.git]" >&2
   echo >&2
-  echo "  -r gives revision to start from. Other options than a number: LAST, BASE" >&2
-  echo "  -s skip fetch" >&2
   echo "  -v the version" >&2
   echo "  -h this info screen" >&2
   echo  >&2
 }
+
+#  echo [-m svnLocation] [-r fromRevision] [-s]
+#  echo "  -r gives revision to start from. Other options than a number: LAST, BASE" >&2
+#  echo "  -f skip fetch" >&2
+#  echo "  -t skip tags" >&2
 
 ### Config
 
@@ -23,13 +28,12 @@ fromSvn=file://$HOME/CGAL/gforge/cgal-m
 #fromSvn=$svnGforge
 fromRev=63050
 gitName=cgal.git
+skipTags=0
 skipFetch=0
 cloneLocation=
 
-# TODO no-tags-option
-
 # parse command line arguments
-while getopts "u:e:l:r:m:g:c:sh" OPT; do
+while getopts "u:e:l:r:m:g:c:fth" OPT; do
   case "$OPT" in
     u)  userName=$OPTARG
         ;;
@@ -49,7 +53,10 @@ while getopts "u:e:l:r:m:g:c:sh" OPT; do
     c)  cloneLocation=$OPTARG
         ;;
 
-    s)  skipFetch=1
+    f)  skipFetch=1
+        ;;
+
+    t)  skipTags=1
         ;;
 
     g)  gitName=$OPTARG
@@ -111,19 +118,24 @@ debianTags="--tags tags/debian"
 debianTags=
 
 echo "Init repository: $CMD"
-git svn init $fromSvn $rewriteRoot --prefix=svn/branches/next/ --trunk branches/next 
+git svn init $fromSvn $rewriteRoot --prefix=svn/next/ --trunk branches/next 
 git svn init $fromSvn $rewriteRoot --prefix=svn/ --trunk trunk 
-git svn init $fromSvn $rewriteRoot --prefix=svn/branches/features/ --branches branches/features
-git svn init $fromSvn $rewriteRoot --prefix=svn/branches/releases/ --branches branches/releases
-git svn init $fromSvn $rewriteRoot --prefix=svn/tags/releases/ --tags tags/releases
-if [ "$internalReleasesTags" != "" ]; then 
-  git svn init $fromSvn $rewriteRoot --prefix=svn/tags/internal-releases/ $internalReleasesTags
-fi
-if [ "$debianTags" != "" ]; then 
-  git svn init $fromSvn $rewriteRoot --prefix=svn/tags/debian/ $debianTags
-fi
+git svn init $fromSvn $rewriteRoot --prefix=svn/features/ --branches branches/features
+git svn init $fromSvn $rewriteRoot --prefix=svn/releases/ --branches branches/releases
 # rename some refs
-sed -e 's|trunk:|stable:|g' -e 's|next/trunk|next|g' -i "" .git/config
+sed -e 's|next/trunk|next|g' -e 's|svn/trunk|svn/stable|g' -i "" .git/config
+if [ $skipTags = 0 ]; then 
+  git svn init $fromSvn $rewriteRoot --prefix=svn/tags/releases/ --tags tags/releases
+  sed -e 's|tags/releases/tags|tags/releases|g' -i "" .git/config
+  if [ "$internalReleasesTags" != "" ]; then 
+    git svn init $fromSvn $rewriteRoot --prefix=svn/tags/internal-releases/ $internalReleasesTags
+    sed -e 's|tags/internal-releases/tags|tags/internal-releases|g' -i "" .git/config
+  fi
+  if [ "$debianTags" != "" ]; then 
+    git svn init $fromSvn $rewriteRoot --prefix=svn/tags/debian/ $debianTags
+    sed -e 's|tags/debian/tags|tags/debian|g' -i "" .git/config
+  fi
+fi
 echo
 
 # add author
@@ -152,6 +164,8 @@ if [ $skipFetch = 0 ]; then
     echo 
 
     # fetch from svn server
+    # TODO fetch each branch from its creation-revision only with 
+
     echo "Fetch from SVN repository: git svn fetch -r$fromRev:HEAD "
     if [ "$fromRev" = "LAST" ]; then
       # last revision on next
@@ -159,7 +173,6 @@ if [ $skipFetch = 0 ]; then
       echo "Last Revision: $fromRev"
     fi
     git svn fetch --authors-file=/tmp/cgal-authors-file.txt -r$fromRev:HEAD 
-    # TODO fetch each branch from its creation-revision only
     echo
 
     rm -f /tmp/cgal-authors-files.txt
