@@ -4,13 +4,7 @@
 
 project( Installation_test )
 
-CMAKE_MINIMUM_REQUIRED(VERSION 2.4.5)
-
-set(CMAKE_ALLOW_LOOSE_LOOP_CONSTRUCTS true)
- 
-if ( COMMAND cmake_policy )
-  cmake_policy( SET CMP0003 NEW )  
-endif()
+CMAKE_MINIMUM_REQUIRED(VERSION 2.6.2)
 
 macro(create_link_to_program COMPONENT )
   

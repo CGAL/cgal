@@ -1,5 +1,5 @@
 # Top level CMakeLists.txt for CGAL-branchbuild
-CMAKE_MINIMUM_REQUIRED(VERSION 2.6.0 FATAL_ERROR)
+CMAKE_MINIMUM_REQUIRED(VERSION 2.6.2)
 
 # option for branch build
 

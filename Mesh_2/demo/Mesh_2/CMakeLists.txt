@@ -3,16 +3,10 @@
 
 project( mesh_2_demo )
 
-CMAKE_MINIMUM_REQUIRED(VERSION 2.4.5)
-
-set(CMAKE_ALLOW_LOOSE_LOOP_CONSTRUCTS true)
+CMAKE_MINIMUM_REQUIRED(VERSION 2.6.2)
 
 add_subdirectory(Qt3)
  
-if ( COMMAND cmake_policy )
-  cmake_policy( SET CMP0003 NEW )  
-endif()
-
 find_package(CGAL COMPONENTS Core )
 include( ${CGAL_USE_FILE} )
 
