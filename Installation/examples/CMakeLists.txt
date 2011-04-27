@@ -1,8 +1,6 @@
 project(CGAL_EXAMPLES)
 
-cmake_minimum_required(VERSION 2.4.5)
-
-set(CMAKE_ALLOW_LOOSE_LOOP_CONSTRUCTS true)
+cmake_minimum_required(VERSION 2.6.2)
 
 foreach (package ${CGAL_CONFIGURED_PACKAGES})
   #message (STATUS "Current package: ${package}")
