@@ -4,7 +4,7 @@
 
 usage()
 {
-  echo "Usage: `basename $0` [-u userName] [-e userEmail] [-l userLogin] [-m svnLocation] [-r fromRevision] [-s] [-g gitname=cgal.git] [-v] [-h]" >&2
+  echo "Usage: `basename $0` [-u userName] [-e userEmail] [-l userLogin] [-m svnLocation] [-r fromRevision] [-s] [-g gitname=cgal.git] [-c cloneLocation] [-v] [-h]" >&2
   echo >&2
   echo "  -r gives revision to start from. Other options than a number: LAST, BASE" >&2
   echo "  -s skip fetch" >&2
@@ -24,12 +24,12 @@ fromSvn=file://$HOME/CGAL/gforge/cgal-m
 fromRev=63050
 gitName=cgal.git
 skipFetch=0
+cloneLocation=
 
-# TODO no-tags
+# TODO no-tags-option
 
 # parse command line arguments
-while getopts "u:e:l:r:m:g:sh" OPT; do
-  echo "$flag" $OPT $OPTIND $OPTARG
+while getopts "u:e:l:r:m:g:c:sh" OPT; do
   case "$OPT" in
     u)  userName=$OPTARG
         ;;
@@ -44,6 +44,9 @@ while getopts "u:e:l:r:m:g:sh" OPT; do
         ;;
 
     r)  fromRev=$OPTARG
+        ;;
+
+    c)  cloneLocation=$OPTARG
         ;;
 
     s)  skipFetch=1
@@ -69,6 +72,8 @@ done
 
 #shift `expr $OPTIND - 1`
 
+# TODO check that username/login/email is set
+
 ### Create repo
 
 echo "Create new directory $gitname"
@@ -76,6 +81,21 @@ rm -fr $gitName
 mkdir $gitName
 cd $gitName
 echo
+
+if [ "$cloneLocation" != "" ]; then
+  
+  echo "Cloning repo with svn-remotes from $cloneLocation"
+  git init
+  git remote add sorigin $cloneLocation
+  git config --replace-all remote.sorigin.fetch '+refs/remotes/*:refs/remotes/*'
+  git fetch sorigin
+  git config --remove-section remote.sorigin
+  
+  echo "Checking out remotes/svn/branches/next"
+  git checkout -b local/next remotes/svn/branches/next
+
+fi 
+
 
 # rewrite root
 rewriteRoot=--rewrite-root=$svnGforge
@@ -91,8 +111,8 @@ debianTags="--tags tags/debian"
 debianTags=
 
 echo "Init repository: $CMD"
-git svn init $fromSvn $rewriteRoot --prefix=svn/ --trunk trunk 
 git svn init $fromSvn $rewriteRoot --prefix=svn/branches/next/ --trunk branches/next 
+git svn init $fromSvn $rewriteRoot --prefix=svn/ --trunk trunk 
 git svn init $fromSvn $rewriteRoot --prefix=svn/branches/features/ --branches branches/features
 git svn init $fromSvn $rewriteRoot --prefix=svn/branches/releases/ --branches branches/releases
 git svn init $fromSvn $rewriteRoot --prefix=svn/tags/releases/ --tags tags/releases
@@ -107,11 +127,7 @@ sed -e 's|trunk:|stable:|g' -e 's|next/trunk|next|g' -i "" .git/config
 echo
 
 # add author
-CMD="git config user.name \"$userName\"; git config user.email \"$userEmail\""
-echo "Add author to $gitName/.git/config: $CMD"
-echo "PWD" 
-pwd
-#$CMD
+echo "Add author to $gitName/.git/config"
 git config user.name  "$userName"
 git config user.email "$userEmail"
 echo
@@ -123,32 +139,40 @@ cat .git/config
 
 if [ $skipFetch = 0 ]; then
 
-  ### Authors file
-  echo "Get authors file with svn"
-  svn cat $fromSvn/branches/next/Maintenance/git/authors-file.txt > /tmp/cgal-authors-file.txt
-  echo 
+  if [ "$cloneLocation" != "" ]; then
 
-  # fetch from svn server
-  echo "Fetch from SVN repository: git svn fetch -r$fromRev:HEAD "
-  if [ "$fromRev" = "LAST" ]; then
-    # last revision on next
-    fromRev=$(svn info $fromSvn/branches/next | grep "Last Changed Rev: " | tr -d 'Last Changed Rev: ')
-    echo "Last Revision: $fromRev"
+    echo "Rebase from SVN server"
+    git svn rebase
+
+  else
+
+    ### Authors file
+    echo "Get authors file with svn"
+    svn cat $fromSvn/branches/next/Maintenance/git/authors-file.txt > /tmp/cgal-authors-file.txt
+    echo 
+
+    # fetch from svn server
+    echo "Fetch from SVN repository: git svn fetch -r$fromRev:HEAD "
+    if [ "$fromRev" = "LAST" ]; then
+      # last revision on next
+      fromRev=$(svn info $fromSvn/branches/next | grep "Last Changed Rev: " | tr -d 'Last Changed Rev: ')
+      echo "Last Revision: $fromRev"
+    fi
+    git svn fetch --authors-file=/tmp/cgal-authors-file.txt -r$fromRev:HEAD 
+    # TODO fetch each branch from its creation-revision only
+    echo
+
+    rm -f /tmp/cgal-authors-files.txt
+
+    ### Branch names
+
+    # rename master next
+    echo "Rename main branch to local/next"
+    git branch -m master local/next
+
   fi
-  git svn fetch --authors-file=/tmp/cgal-authors-file.txt -r$fromRev:HEAD 
-  # TODO fetch each branch from its creation-revision only
-  echo
-
-  rm -f /tmp/cgal-authors-files.txt
-
-  ### Branch names
-
-  # rename master next
-  echo "Rename main branch to local/next"
-  git branch -m master local/next
 
 fi
-
 
 # What about? 
 ## git config svn-remote.svn.url $svncgal    (or $svncgal/trunk if you are doing trunk only)
