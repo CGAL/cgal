@@ -2,7 +2,7 @@
 
 ### Usage
 
-# TODO remove -g xor -c and replace by last argument
+# TODO remove -g xor -c and replace by last argument?
 
 usage()
 {
@@ -35,6 +35,8 @@ cloneLocation=
 # parse command line arguments
 while getopts "u:e:l:r:m:g:c:fth" OPT; do
   case "$OPT" in
+
+# for developers
     u)  userName=$OPTARG
         ;;
 
@@ -44,19 +46,7 @@ while getopts "u:e:l:r:m:g:c:fth" OPT; do
     l)  userLogin=$OPTARG
         ;;
 
-    m)  fromSvn=$OPTARG
-        ;;
-
-    r)  fromRev=$OPTARG
-        ;;
-
     c)  cloneLocation=$OPTARG
-        ;;
-
-    f)  skipFetch=1
-        ;;
-
-    t)  skipTags=1
         ;;
 
     g)  gitName=$OPTARG
@@ -70,6 +60,21 @@ while getopts "u:e:l:r:m:g:c:fth" OPT; do
         exit 0
         ;;
 
+# for svn2git cloners
+    m)  fromSvn=$OPTARG
+        ;;
+
+    r)  fromRev=$OPTARG
+        ;;
+
+    f)  skipFetch=1
+        ;;
+
+    t)  skipTags=1
+        ;;
+
+# for all
+
     \?) # getopts issues an error message
         usage
         exit 1
@@ -79,7 +84,22 @@ done
 
 #shift `expr $OPTIND - 1`
 
-# TODO check that username/login/email is set
+if [ "$userName" = "" ]; then
+  echo "No username with -u parameter given"
+  exit 1
+fi
+
+if [ "$userEmail" = "" ]; then
+  echo "No useremail with -e parameter given"
+  exit 1
+fi
+
+if [ "$userLogin" = "" ]; then
+  echo "No userlogin with -l parameter given"
+  exit 1
+fi
+
+# TODO define tags-behavior for developers
 
 ### Create repo
 
@@ -99,7 +119,7 @@ if [ "$cloneLocation" != "" ]; then
   git config --remove-section remote.sorigin
   
   echo "Checking out remotes/svn/branches/next"
-  git checkout -b local/next remotes/svn/branches/next
+  git checkout -b local/next remotes/svn/next
 
 fi 
 
@@ -122,7 +142,8 @@ git svn init $fromSvn $rewriteRoot --prefix=svn/next/ --trunk branches/next
 git svn init $fromSvn $rewriteRoot --prefix=svn/ --trunk trunk 
 git svn init $fromSvn $rewriteRoot --prefix=svn/features/ --branches branches/features
 git svn init $fromSvn $rewriteRoot --prefix=svn/releases/ --branches branches/releases
-# rename some refs
+# rename ref
+# TODO remove 'stable' for developers?
 sed -e 's|next/trunk|next|g' -e 's|svn/trunk|svn/stable|g' -i "" .git/config
 if [ $skipTags = 0 ]; then 
   git svn init $fromSvn $rewriteRoot --prefix=svn/tags/releases/ --tags tags/releases
