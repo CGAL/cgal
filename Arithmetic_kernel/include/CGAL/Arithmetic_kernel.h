@@ -35,7 +35,6 @@
 #include <CGAL/CORE_arithmetic_kernel.h>
 #include <CGAL/LEDA_arithmetic_kernel.h>
 #include <CGAL/GMP_arithmetic_kernel.h>
-#include <CGAL/MP_Float_arithmetic_kernel.h>
 
 
 // Define a default Arithmetic_kernel GMP, CORE, LEDA 

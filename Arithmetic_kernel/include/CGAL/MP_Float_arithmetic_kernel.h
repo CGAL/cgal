@@ -47,7 +47,7 @@ public:
   typedef MP_Float                       Integer;
   typedef CGAL::Quotient<MP_Float>       Rational;
   typedef MP_Float                       Bigfloat;
-  struct Not_implemented{}               Bigfloat_interval;
+  struct  Not_implemented{}              Bigfloat_interval;
 };
 
 template <>
