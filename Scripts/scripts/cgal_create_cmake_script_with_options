@@ -160,8 +160,19 @@ if [ -n "$ENABLE_CTEST" ]; then
 fi
   #---------------------------------------------------------------------------
 
+
   # CGAL and its components
   if [ ! -z "$CGAL_COMPONENTS" ]; then
+
+    # Ensure: Core, Qt3, Qt4, PDB, ImageIO
+    CGAL_COMPONENTS=${CGAL_COMPONENTS//[c|C][o|O][r|R][e|E]/Core}
+    CGAL_COMPONENTS=${CGAL_COMPONENTS//[q|Q][t|T]3/Qt3}
+    CGAL_COMPONENTS=${CGAL_COMPONENTS//[q|Q][t|T]4/Qt4}
+    CGAL_COMPONENTS=${CGAL_COMPONENTS//[p|P][d|D][b|B]/PDB}
+    CGAL_COMPONENTS=${CGAL_COMPONENTS//[i|I][m|M][a|A][g|G][e|E][i|I][o|O]/ImageIO}
+  
+    CGAL_COMPONENTS=${CGAL_COMPONENTS//[r|R][s|S]/RS}
+    CGAL_COMPONENTS=${CGAL_COMPONENTS//[m|M][p|P][f|F][i|I]/MPFI}
 
     OLDIFS="$IFS"
     IFS=':'
@@ -200,8 +211,13 @@ if ( NOT CGAL_FOUND )
   return()  
 
 endif()
+
+# include helper file
+include( ${CGAL_USE_FILE} )
+
 EOF
   #---------------------------------------------------------------------------
+
 
   #vvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvv
   cat << 'EOF'
@@ -276,13 +292,23 @@ EOF
   done
   IFS=$OLDIFS
 
-  #vvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvv
-  cat << 'EOF'
+  # mpfi
+  if [ "$mpfi" = "y" ]; then
 
-# include helper file
-include( ${CGAL_USE_FILE} )
+    #vvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvv
+    cat << 'EOF'
+
+find_package( MPFI )
+if ( MPFI_FOUND )
+ include( ${MPFI_USE_FILE} )
+else()
+  message(STATUS "This project requires the MPFI library, and will not be compiled.")
+  return()  
+endif( MPFI_FOUND ) 
+
 EOF
   #---------------------------------------------------------------------------
+  fi
 
   # mpfi
   if [ "$mpfi" = "y" ]; then

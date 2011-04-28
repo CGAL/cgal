@@ -33,7 +33,14 @@ if(NOT USE_CGAL_FILE_INCLUDED)
     
   include_directories( "${CMAKE_CURRENT_BINARY_DIR}" ) 
 
+  # need to get variable from cache while compiling CGAL, while in a demo it is set in CGALConfig.cmake
+  if ( NOT CGAL_LIBRARY ) 
+    cache_get(CGAL_LIBRARY)
+  endif()
   add_to_list( CGAL_LIBRARIES ${CGAL_LIBRARY} )
+
+  #message (STATUS "LIB: ${CGAL_LIBRARY}")
+  #message (STATUS "LIBS: ${CGAL_LIBRARIES}")
   
   include_directories ( ${CGAL_3RD_PARTY_INCLUDE_DIRS} ${CGAL_INCLUDE_DIRS} )     
   add_definitions     ( ${CGAL_3RD_PARTY_DEFINITIONS}  ${CGAL_DEFINITIONS}  )

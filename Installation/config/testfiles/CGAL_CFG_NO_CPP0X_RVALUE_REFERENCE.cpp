@@ -39,7 +39,7 @@ A f()
   return A();
 }
 
-#include <algorithm>
+#include <utility>
 
 A&& f(A&& a)
 {

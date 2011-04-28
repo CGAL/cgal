@@ -109,14 +109,14 @@ if( NOT CGAL_MACROS_FILE_INCLUDED )
     message("Compiler version:")
     set(version "Unknown compiler. Cannot display its version")
     foreach(flag "-V" "--version" "-v")
-      execute_process(COMMAND ${CMAKE_CXX_COMPILER} ${flag}
+      execute_process(COMMAND "${CMAKE_CXX_COMPILER}" ${flag}
         RESULT_VARIABLE ok
         OUTPUT_VARIABLE out_version
         ERROR_VARIABLE out_version
         TIMEOUT 5)
       if(ok EQUAL 0)
         if("${out_version}" MATCHES "^clang")
-          execute_process(COMMAND ${CMAKE_CXX_COMPILER} -print-search-dirs
+          execute_process(COMMAND "${CMAKE_CXX_COMPILER}" -print-search-dirs
             RESULT_VARIABLE ok
             OUTPUT_VARIABLE out_search_dirs
             TIMEOUT 5)
@@ -150,7 +150,7 @@ if( NOT CGAL_MACROS_FILE_INCLUDED )
       try_run( ${LIB}_RUN_RES
                ${LIB}_COMPILE_RES 
                "${CMAKE_BINARY_DIR}"
-               "${CMAKE_SOURCE_DIR}/config/support/print_${LIB}_version.cpp"
+               "${CGAL_INSTALLATION_PACKAGE_DIR}/config/support/print_${LIB}_version.cpp"
                CMAKE_FLAGS "-DINCLUDE_DIRECTORIES:STRING=${${PKG}_INCLUDE_DIR};${${PKG}_DEPENDENCY_INCLUDE_DIR}"
                            "-DLINK_LIBRARIES:STRING=${${PKG}_LIBRARIES};${${PKG}_DEPENDENCY_LIBRARIES}"
                            "-DLINK_DIRECTORIES:STRING=${${PKG}_LIBRARY_DIR};${${PKG}_DEPENDENCY_LIBRARY_DIR}"

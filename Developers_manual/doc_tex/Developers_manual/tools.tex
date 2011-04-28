@@ -297,9 +297,8 @@ build type specified when building \cgal\ (as defined in {\tt CGALConfig.cmake})
 \ccIndexSubitem{test suite}{internal release}
 
 The shell script {\tt autotest\_cgal} is used to run automated test suites for
-the internal releases of the library. The script takes no command-line
-argument, but it is configurable using a {\tt .autocgalrc} file stored
-in {\tt \$HOME}.
+the internal releases of the library. The script  is configurable using a
+{\tt .autocgalrc} file stored in {\tt \$HOME}.
 It is meant to be run regularly by a cron job run by the testers.
 
 This script allows you to run the testsuite on multiple hosts (remotely or
@@ -448,7 +447,7 @@ all CPU time for itself.  The default value is {\tt ''-19''}.
 
 {\tt ULIMIT\_OPTIONS} specifies the command line options to pass to the
 {\tt ulimit} command, which is used to prevent the test-suite from using
-various system ressources.  It can be used to help killing looping programs.
+various system resources.  It can be used to help killing looping programs.
 For example, specifying {\tt ''-c 0 -t 10800 -v 2000000''} will prevent
 the creation of dumped core files, will stop processes after 3 hours,
 and will kill them if they reach 2GB of memory.
@@ -510,7 +509,7 @@ use the -D option to define cmake variables and -G
 to define a generator if the default is not right for you.
 
 
-The cmake variables {\tt WITH\_CGALCORE, WITH\_CGALimageIO, WITH\_CGALPDB and WITH\_CGALQt}
+The cmake variables {\tt WITH\_CGALCORE, WITH\_CGALimageIO and WITH\_CGALQt}
 are used to enable or disable those \cgal\ components. These are all ON by default.
 You should you define them with OFF if any of those components do not work in your platform. 
 For {\tt these and only these} cmake variables you can define them as environment variables
@@ -573,7 +572,7 @@ export CXX=<some compiler not detected by cmake>
 export CXXFLAGS='-std=c++0x'
 export WITH_CGALimageIO=OFF 
 
-cmake -DWITH_CGALPDB=OFF -DCMAKE_BUILD_TYPE=Release ../../..
+cmake -DWITH_CGALCORE=OFF -DCMAKE_BUILD_TYPE=Release ../../..
 
 make
 \end{verbatim}
@@ -736,7 +735,7 @@ QTDIR=/usr/local/qt2 PARASOFT=/usr/local/parasoft /usr/local/bin/zsh -c\"
 \end{verbatim}
 
 {\tt CGAL\_URL} is the URL where internal releases are available.
-The {\tt LATEST} file is comming from the same location. If this will change,
+The {\tt LATEST} file is coming from the same location. If this will change,
 you may change either {\tt CGAL\_URL}, or {\tt LATEST\_LOCATION}
 in {\tt .autocgalrc}.
 

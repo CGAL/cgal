@@ -10,7 +10,10 @@
 % =============================================================================
 
 \chapter{Robustness Issues\label{chap:robustness}}
-\ccChapterAuthor{Stefan Schirra}
+
+\ccChapterAuthor{Olivier Devillers ({\tt olivier.devillers@inria.fr})\\
+Stefan Schirra
+}
 \ccIndexMainItemBegin{robustness}
 
 Design and correctness proofs of geometric algorithms usually assume exact
@@ -21,7 +24,7 @@ some applications the fraction of bad inputs compared to all possible
 inputs is small, but for other applications this fraction is large.
 
 \cgal\ has a layered design. The correctness of some components depends
-on the correctness of the componenents that are used. Correctness of
+on the correctness of the components that are used. Correctness of
 a component means behaving according to its (mathematical) specification.
 Simply speaking, the source of the robustness problem is that the default
 hardware-supported arithmetic does not really fulfill the requirements of 
@@ -80,7 +83,7 @@ computing the lexicographically smaller point for two given points.
 numerical input data. \cgal\ also provides\footnote{at present, for the 
 dimension 2/3 Cartesian kernel(s) only.}
 % The homogeneous counterpart still needs revision.}
-specialisation of the primitives
+specialization of the primitives
 that (are still fairly generic and) guarantee exact predicate results and
 much higher efficiency than exact number types like arbitrary precision
 integers or rationals. The efficiency relies on the use of speedy 

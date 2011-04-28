@@ -2870,15 +2870,15 @@ namespace CartesianKernelFunctors {
 
     Point_2
     operator()(Origin o) const
-    { return this->operator()(Return_base_tag(), o); }
+    { return Point_2(o); }
 
     Point_2
     operator()(const RT& x, const RT& y) const
-    { return this->operator()(Return_base_tag(), x, y); }
+    { return Point_2(x, y); }
 
     Point_2
     operator()(const RT& x, const RT& y, const RT& w) const
-    { return this->operator()(Return_base_tag(), x, y, w); }
+    { return Point_2(x, y, w); }
   };
 
   template <typename K>
@@ -2905,15 +2905,15 @@ namespace CartesianKernelFunctors {
 
     Point_3
     operator()(Origin o) const
-    { return this->operator()(Return_base_tag(), o); }
+    { return Point_3(o); }
 
     Point_3
     operator()(const RT& x, const RT& y, const RT& z) const
-    { return this->operator()(Return_base_tag(), x, y, z); }
+    { return Point_3(x, y, z); }
 
     Point_3
     operator()(const RT& x, const RT& y, const RT& z, const RT& w) const
-    { return this->operator()(Return_base_tag(), x, y, z, w); }
+    { return Point_3(x, y, z, w); }
   };
 
 

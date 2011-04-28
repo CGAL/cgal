@@ -2,16 +2,10 @@
 
 project( Point_set_demo )
 
-cmake_minimum_required(VERSION 2.4.5)
-
-set(CMAKE_ALLOW_LOOSE_LOOP_CONSTRUCTS true)
+cmake_minimum_required(VERSION 2.6.2)
 
 #option(POINT_SET_DEMO_ENABLE_FORWARD_DECL "In the Point Set demo, enable " OFF)
 #mark_as_advanced(POINT_SET_DEMO_ENABLE_FORWARD_DECL)
-
-if(COMMAND cmake_policy)
-  cmake_policy(SET CMP0003 NEW)
-endif(COMMAND cmake_policy)
 
 # Require packages new or improved since CGAL 3.5 beta 1
 include_directories (BEFORE ../../../Installation/include/)

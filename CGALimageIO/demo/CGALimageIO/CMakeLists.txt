@@ -1,12 +1,6 @@
 project(image_to_vtk_viewer)
 
-cmake_minimum_required(VERSION 2.4.5)
-
-set(CMAKE_ALLOW_LOOSE_LOOP_CONSTRUCTS true)
-
-if ( COMMAND cmake_policy )
-  cmake_policy( SET CMP0003 NEW )  
-endif()
+cmake_minimum_required(VERSION 2.6.2)
 
 
 set(PACKAGE_ROOT ../..)
@@ -19,7 +13,7 @@ foreach(INC_DIR ${PACKAGE_ROOT}/include
     include_directories (BEFORE ${INC_DIR})
   endif()
 endforeach()
-foreach(LIB_DIR ${PACKAGE_ROOT}/../CGALimageIO/src/CGALimageIO)
+foreach(LIB_DIR ${PACKAGE_ROOT}/../CGALimageIO/src/CGALImageIO)
   if (EXISTS ${LIB_DIR})
     link_directories (${LIB_DIR})
   endif()

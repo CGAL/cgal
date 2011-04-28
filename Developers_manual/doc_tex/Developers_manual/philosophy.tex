@@ -11,7 +11,7 @@
 
 \section{Primary design goals\label{sec:design_goals}}
 \ccIndexSubitemBegin{design}{goals}
-The primary design goals of \cgal\ are \cite{fgkss-dccga-00}:
+The primary design goals of \cgal\ are described in \cite{fgkss-dccga-00}:
 
 \subsection*{Correctness}
 \ccIndexMainItem{correctness}
@@ -63,8 +63,8 @@ most probably need adaptation before they can be used.
 {\bf Extensibility.}
 \ccIndexMainItem{extensibility}
 Not all wishes can be fulfilled with \cgal. Users may want to
-extend the library. It should be possible to integrate new 
-classes and algorithms into \cgal.
+extend the library. It should be possible, and in fact desirable, to
+integrate new classes and algorithms into \cgal.
 
 {\bf Openness.}
 \ccIndexMainItem{openness}
@@ -111,6 +111,12 @@ Template Library) or the other parts of the \CC\ Standard Library. An
 example is the use of streams and stream operators in \cgal. Another
 example is the use of container classes and algorithms from the
 \stl. So these concepts should be used uniformly.
+
+\index{boost} \ccIndexMainItem{boost} During the past few years,
+\cgal\ has moved towards using on concepts and ideas from the boost
+libraries, as well as providing interfaces towards boost
+libraries. These include the boost graph library and the boost property
+maps library.
 
 {\bf Complete and Minimal Interfaces.}
 \ccIndexMainItem{completeness}

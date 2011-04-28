@@ -9,7 +9,7 @@
 % $Date$
 % =============================================================================
 
-\chapter{Iterators and Circulators (and Handles)\label{chap:iterators_and_circulators}}
+\chapter{Iterators, Circulators and Handles \label{chap:iterators_and_circulators}}
 \ccIndexMainItemBegin{iterators}
 \ccIndexMainItemBegin{circulators}
 \ccIndexMainItemBegin{\stl} 
@@ -17,7 +17,8 @@
 \ccChapterAuthor{Mariette Yvinec ({\tt yvinec@sophia.inria.fr})}
 
 
-\ccAnchor{http://www.cgal.org/Manual/doc_html/use_of_stl/Chapter_Iterator.html}{Iterators}
+
+{Iterators}
 \ccIndexMainItemDef{iterators}
 are a generalization of pointers that allow a programmer to work 
 with different data structures (containers) in a uniform manner. 
@@ -34,51 +35,50 @@ Iterators are widely used in \cgal\ too.
 \cgal\ extends the idea of the iterator, which works for linear data
 structures, to circular data structures by defining the concept of
 a circulator.  
-\ccAnchor{http://www.cgal.org/Manual/doc_html/use_of_stl/Chapter_Circulator_stl.html}{Circulators}
+\ccAnchor{http://www.cgal.org/Manual/latest/doc_html/cgal_manual/Circulator/Chapter_main.html}{Circulators}
 \ccIndexMainItemDef{circulators}
 are quite similar to iterators, with the
 major difference being the absence of a past-the-end position in a sequence.
 Note that circulators are NOT part of the \stl, but of \cgal.
 
 \ccIndexMainItemBegin{handles}
-In \cgal, we also define the concept of a handle, 
+In \cgal, we also define the concept of 
+\ccAnchor{http://www.cgal.org/Manual/latest/doc_html/cgal_manual/Circulator/Chapter_main.html}{handle}, 
 \ccIndexMainItemDef{handles}
-which bahaves roughly
+which behaves roughly
 like a pointer to an object without an increment or decrement operation.
 More details about handles and their requirements can be found in 
-the \ccAnchor{http://www.cgal.org/Manual/doc_html/frameset/fsSupport.html}{\cgal\ Support Library Reference Manual}. 
+the \ccAnchor{http://www.cgal.org/Manual/latest/doc_html/cgal_manual/Circulator/Chapter_main.html}{chapter Circulators and Handles} of the Support Library part of \cgal\ manual. 
 Section~\ref{sec:handle_vs_it_vs_circ} below discusses when handles
 should be used in your code.
 \ccIndexMainItemEnd{handles}
 
-The concept of iterators is relatively well described in textbooks such as 
-Stroustrup's {\em The C++ Programming Langage} \cite{cgal:s-cpl-97} 
-and Austern's {\em Generic Programming and the \stl} \cite{cgal:a-gps-98}
-and in the
-\ccAnchor{http://www.cgal.org/Manual/doc_html/frameset/fsUseOfSTL.html}{Use of \stl\ and \stl\ Extensions in \cgal\ } manual (which also
-discusses the circulator concept).
-Thus we will not give a full description of this concept here
-but only a few hints about how to use and write iterators (and circulators)
-in \cgal.  Developers should consult the above-mentioned references to become
-familiar with the iterator and circulator concepts in general and, in
-particular, iterator and circulator ranges, dereferencable and past-the-end 
-values, mutable and constant iterators and circulators, and the different 
-categories (forward, bidirectional, random-access, etc.) of iterators and 
-circulators.
+The concepts of iterators is relatively well described in textbooks such as 
+Stroustrup's book ({\em The C++ Programming Language} \cite{cgal:s-cpl-97})
+and Austern's book ({\em Generic Programming and the \stl} \cite{cgal:a-gps-98})
+and in chapter \ccAnchor{http://www.cgal.org/Manual/latest/doc_html/cgal_manual/Circulator/Chapter_main.html}{Handles and Circulators} of the 
+{\em Support Library} part of the \cgal\ manual.
+which also presents the concepts of handles and circulators.
+Thus we will not give a full description of these concept here
+but only a few hints about how to use and write handle, iterators and circulators in \cgal.  Developers should consult the above-mentioned references to become
+familiar with the iterator, circulator and handle concepts. In 
+particular,  the notions of iterator and circulator ranges,
+dereferencable and past-the-end values,
+ mutable and constant iterators and circulators, 
+and the different categories (forward, bidirectional, random-access, etc.) 
+of iterators and circulators, are fundamental.
 
 
 \section{Iterator and circulator traits\label{sec:iterator_traits}}
 \ccIndexMainItemBegin{iterator traits}
 
-The algorithms working with iterators and/or circulators often need to refer
-to types associated with the iterator or circulator (\eg,
-the type of the object referred to by the iterator
-or the type of the distance between two circulators).
+Iterators and/or circulators are required to provide a set 
+of types such as the \ccc{value_type} for the type of objects referred to by the iterator and circulator or the \ccc{difference_type}
+ for the distance between two iterators or circulators.
 These types are usually declared in the iterator or circulator classes. 
-However, for pointer classes, which can be valid models of the iterator
-and circulator concepts,  this not possible. 
-Thus iterator traits have been introduced to resolve this problem.
-An algorithm using an iterator of the type \ccc{Iter} will find the 
+The iterator traits have been introduced to attach such types to pointer classes, thus enabling the  use of pointer classes as models of  iterator
+and circulator concepts.  
+Therefore, an algorithm using an iterator of the type \ccc{Iter} will find the 
 relevant types in an instantiation of a small templated class 
 \ccc{iterator_traits}.
 
@@ -127,7 +127,7 @@ to get values from the input iterators,
 statements like \ccc{*it = ...} are likely to be illegal.
 On the other hand, output iterators are designed for write operations,
 and  the only legal use of the operator * of an output iterator
-\ccc{it} is in the assignement \ccc{ *it = ....}.
+\ccc{it} is in the assignment \ccc{ *it = ....}.
 The code of a standard copy function of the \stl\ 
 provides an example of both of these operations: 
 
@@ -149,7 +149,7 @@ OutputIterator copy(InputIterator first,
 \lcRawHtml{</A>} 
 
 The first two arguments of \ccc{copy} are of type \ccc{InputIterator} 
-(meaning any type that fulfills the requirements for an input iteraor)
+(meaning any type that fulfills the requirements for an input iterator)
 while the third one is of type \ccc{OutputIterator}. If these types 
 were  exchanged, then the statement \ccc{*result = *first;}
 might not be valid.
@@ -186,9 +186,9 @@ and used to output values to the output stream to which it is bound.
 \ccIndexSubitem{\ccFont ostream_iterator}{extension}
 \cgal\ provides extensions of the classes \ccc{istream_iterator}
 and \ccc{ostream_iterator}. The class \ccc{CGAL::Ostream_iterator<T,Stream>} 
-is an output iterator adaptator for the stream class \ccc{Stream} and value 
+is an output iterator adaptor for the stream class \ccc{Stream} and value 
 \ccIndexSubitem{adaptor}{output iterator}
-type \ccc{T}.  It provides output iterators that can be used to ouput values 
+type \ccc{T}.  It provides output iterators that can be used to output values 
 of type \ccc{T} to objects of the class \ccc{Stream}.
 For example, the following code fragment inserts a list of segments into
 a window stream (\ie, it draws the segments in the window) using the 
@@ -199,14 +199,14 @@ typedef CGAL::Cartesian<double>   K;
 typedef K::Segment_2              Segment;
 
 std::vector<Segment>       segments;
-CGAL::Window_stream        W( 400, 400);
+Window_stream        W( 400, 400);
 
 int main (int argc, char** argv)
 {
   // initialize segments
   std::copy( segments.begin(),
              segments.end(),
-             CGAL::Ostream_iterator< Segment, CGAL::Window_stream>( W));
+             CGAL::Ostream_iterator< Segment, Window_stream>( W));
 }
 \end{verbatim}
 
@@ -218,8 +218,8 @@ iterator adaptor for the stream class \ccc{Stream} and value type \ccc{T}.
 These adaptors are particularly useful for stream classes that are similar to
 but not derived from \ccc{std::istream} and \ccc{std::ostream}. The only 
 requirements of the stream classes are that they define \ccc{operator>>}  
-(for \ccc{Istream_iterator}) and \ccc{operator<<} 
-(for \ccc{Ostream_iterator}).
+(for \ccc{Istream_iterator::value_type}) and \ccc{operator<<}
+(for \ccc{Ostream_iterator::value_type}).
 \ccIndexSubitemEnd{iterators}{stream}
 
 {\bf Insert iterators}
@@ -256,7 +256,8 @@ functions (or adaptors)
 \ccc{back_inserter}
 \ccIndexMainItem{\ccFont back_inserter}
 \ccIndexSubitem{adaptor}{for insert iterators}
-and \ccc{inserter} to get inserters from containers.
+and \ccc{inserter} to get insert iterators, also called inserters,
+ from containers.
 \ccIndexMainItem{\ccFont inserter}
 \ccIndexSubitem{containers}{insertion adaptors}
 
@@ -406,8 +407,9 @@ over either a linear or circular sequence:
 \ccStyle{CGAL_For_all_backwards( ic1, ic2)}
 \ccIndexMainItem[C]{CGAL_For_all_backwards}
 
-See the \ccAnchor{http://www.cgal.org/Manual/doc_html/support_lib/Circulator/Chapter_circulator.html}{Circulator documentation} in the
-Support Library Reference Manual for more information and examples.
+See the chapter  \ccAnchor{http://www.cgal.org/Manual/latest/doc_html/cgal_manual/Circulator/Chapter_main.html}{Handles and Circulators}
+ in the {\em Support Library} part of \cgal\ manual 
+for more information and examples.
 
 \subsection{Writing an iterator for your container\label{sec:class_iterator}}
 \ccIndexSubitemBegin{iterators}{writing}
@@ -471,7 +473,7 @@ Requirements:
 
 \item Take care that decrement of the past-the-end value
       is, in accordance with the standard, a legal operation for a 
-      bidirectionnal iterator.
+      bidirectional iterator.
       \ccIndexSubitem{iterators}{bidirectional}
       \ccIndexSubsubitem{iterators}{past-the-end value}{decrement of}
       This can, for example, be used to get the last element of 

@@ -4,13 +4,7 @@
 
 project( Algebraic_kernel_d_test )
 
-CMAKE_MINIMUM_REQUIRED(VERSION 2.4.5)
-
-set(CMAKE_ALLOW_LOOSE_LOOP_CONSTRUCTS true)
-
-if ( COMMAND cmake_policy )
-  cmake_policy( SET CMP0003 NEW )
-endif()
+CMAKE_MINIMUM_REQUIRED(VERSION 2.6.2)
 
 find_package(CGAL QUIET COMPONENTS Core )
 
@@ -48,6 +42,7 @@ if ( CGAL_FOUND )
   create_single_source_cgal_program( "Curve_pair_analysis_2.cpp" )
   create_single_source_cgal_program( "Descartes.cpp" )
   create_single_source_cgal_program( "Real_embeddable_traits_extension.cpp" )
+  create_single_source_cgal_program( "rs_isolator.cpp" )
 
 else()
 

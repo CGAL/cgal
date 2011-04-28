@@ -39,7 +39,7 @@
 #include <qpixmap.h>
 #include <qprinter.h>
 
-#include <CGAL/auto_link/CGALQt.h>
+#include <CGAL/auto_link/CGALQt3.h>
 
 namespace CGAL {
 

@@ -191,7 +191,7 @@ know the type of the representation object. It maintains a \ccc{Rep*} pointer.
 Therefore, this pointer must be cast to a pointer to the actual type
 in the classes derived from \ccc{Handle}. Moreover, since the \ccc{Handle}
 calls the destructor for the representation through a \ccc{Rep*}, the
-desctructor of \ccc{Rep} must be virtual. Finally, debugging is difficult,
+destructor of \ccc{Rep} must be virtual. Finally, debugging is difficult,
 again, because the \ccc{Handle} class does not know the type of the 
 representation object.
 Making the actual type of the representation object a template parameter

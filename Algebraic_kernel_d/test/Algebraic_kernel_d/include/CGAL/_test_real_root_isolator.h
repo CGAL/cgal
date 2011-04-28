@@ -27,9 +27,9 @@
 #include <cassert>
 #include <vector>
 
+#include <CGAL/config.h>
+#include <CGAL/Arithmetic_kernel.h>
 #include <CGAL/ipower.h>
-/*#include <NiX/basic.h>
-#include <NiX/number_type_utils.h>*/
 
 #ifndef CGAL_TEST_REAL_ROOT_ISOLATOR_H
 #define CGAL_TEST_REAL_ROOT_ISOLATOR_H
@@ -44,12 +44,15 @@ int check_intervals_real_root_isolator(
 
     typedef RealRootIsolator Isolator;
     typedef typename Isolator::Bound Bound;
-    
+   
+    typedef typename CGAL::Get_arithmetic_kernel< Bound >::Arithmetic_kernel AK;
+    typedef typename AK::Rational Rational;
+ 
     Isolator Isol(P);
     int n = Isol.number_of_real_roots();
     for(int i=0; i<n; i++) {
-       Bound left  = Isol.left_bound(i);
-       Bound right = Isol.right_bound(i);
+       Rational left  = Isol.left_bound(i);
+       Rational right = Isol.right_bound(i);
 
        if(!Isol.is_exact_root(i)) {
            assert(left < right);
