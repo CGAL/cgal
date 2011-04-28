@@ -39,8 +39,9 @@ namespace internal {
     template <class RandomAccessIterator, class Policy, class Kernel>
     void spatial_sort (
                        RandomAccessIterator begin, RandomAccessIterator end,
+                       const Kernel &k, 
 		       Policy policy,
-                       const Kernel &k, typename Kernel::Point_2 *,
+		       typename Kernel::Point_2 *,
 		       std::ptrdiff_t threshold_hilbert,
 		       std::ptrdiff_t threshold_multiscale,
 		       double ratio)
@@ -61,8 +62,9 @@ namespace internal {
     template <class RandomAccessIterator, class Policy, class Kernel>
     void spatial_sort (
                        RandomAccessIterator begin, RandomAccessIterator end,
+                       const Kernel &k, 
 		       Policy policy,
-                       const Kernel &k, typename Kernel::Point_3 *,
+		       typename Kernel::Point_3 *,
 		       std::ptrdiff_t threshold_hilbert,
 		       std::ptrdiff_t threshold_multiscale,
 		       double ratio)
@@ -83,8 +85,9 @@ namespace internal {
     template <class RandomAccessIterator, class Policy, class Kernel>
     void spatial_sort (
 		       RandomAccessIterator begin, RandomAccessIterator end,
+                       const Kernel &k, 
 		       Policy policy,
-                       const Kernel &k, typename Kernel::Point_d *,
+		       typename Kernel::Point_d *,
 		       std::ptrdiff_t threshold_hilbert,
 		       std::ptrdiff_t threshold_multiscale,
 		       double ratio)
@@ -107,8 +110,8 @@ namespace internal {
 
 template <class RandomAccessIterator, class Policy, class Kernel>
 void spatial_sort (RandomAccessIterator begin, RandomAccessIterator end,
-		   Policy policy,
                    const Kernel &k,
+		   Policy policy,
 		   std::ptrdiff_t threshold_hilbert=0,
 		   std::ptrdiff_t threshold_multiscale=0,
 		   double ratio=0.0)
@@ -116,13 +119,13 @@ void spatial_sort (RandomAccessIterator begin, RandomAccessIterator end,
     typedef std::iterator_traits<RandomAccessIterator> ITraits;
     typedef typename ITraits::value_type               value_type;
 
-    internal::spatial_sort(begin, end, policy, k, static_cast<value_type *> (0),
+    internal::spatial_sort(begin, end, k, policy, static_cast<value_type *> (0),
 			   threshold_hilbert,threshold_multiscale,ratio);
 }
 
-template <class RandomAccessIterator, class Policy>
+template <class RandomAccessIterator>
 void spatial_sort (RandomAccessIterator begin, RandomAccessIterator end,
-		   Policy policy,
+		   Hilbert_sort_median_policy policy,
 		   std::ptrdiff_t threshold_hilbert=0,
 		   std::ptrdiff_t threshold_multiscale=0,
 		   double ratio=0.0)
@@ -132,7 +135,35 @@ void spatial_sort (RandomAccessIterator begin, RandomAccessIterator end,
     typedef CGAL::Kernel_traits<value_type>            KTraits;
     typedef typename KTraits::Kernel                   Kernel;
 
-    spatial_sort (begin, end, policy, Kernel(),
+    spatial_sort (begin, end, Kernel(), policy,
+		  threshold_hilbert,threshold_multiscale,ratio);
+}
+template <class RandomAccessIterator>
+void spatial_sort (RandomAccessIterator begin, RandomAccessIterator end,
+		   Hilbert_sort_middle_policy policy,
+		   std::ptrdiff_t threshold_hilbert=0,
+		   std::ptrdiff_t threshold_multiscale=0,
+		   double ratio=0.0)
+{
+    typedef std::iterator_traits<RandomAccessIterator> ITraits;
+    typedef typename ITraits::value_type               value_type;
+    typedef CGAL::Kernel_traits<value_type>            KTraits;
+    typedef typename KTraits::Kernel                   Kernel;
+
+    spatial_sort (begin, end, Kernel(), policy,
+		  threshold_hilbert,threshold_multiscale,ratio);
+}
+
+
+template <class RandomAccessIterator, class Kernel>
+void spatial_sort (RandomAccessIterator begin, RandomAccessIterator end,
+                   const Kernel &k,
+		   std::ptrdiff_t threshold_hilbert=0,
+		   std::ptrdiff_t threshold_multiscale=0,
+		   double ratio=0.0)
+{
+    spatial_sort (begin, end, k,
+		  Hilbert_sort_median_policy(),
 		  threshold_hilbert,threshold_multiscale,ratio);
 }
 
