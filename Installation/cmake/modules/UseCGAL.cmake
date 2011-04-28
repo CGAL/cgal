@@ -22,7 +22,11 @@ if(NOT USE_CGAL_FILE_INCLUDED)
 
   foreach ( CGAL_COMPONENT ${CGAL_REQUESTED_COMPONENTS} )
     if(WITH_CGAL_${CGAL_COMPONENT})
-      add_to_list( CGAL_LIBRARIES            ${CGAL_${CGAL_COMPONENT}_LIBRARY}              )
+      if(TARGET CGAL_${CGAL_COMPONENT})
+        add_to_list( CGAL_LIBRARIES CGAL_${CGAL_COMPONENT} )
+      else()
+        add_to_list( CGAL_LIBRARIES ${CGAL_${CGAL_COMPONENT}_LIBRARY} )
+      endif()
       add_to_list( CGAL_3RD_PARTY_LIBRARIES  ${CGAL_${CGAL_COMPONENT}_3RD_PARTY_LIBRARIES}  )
       
       add_to_list( CGAL_3RD_PARTY_INCLUDE_DIRS   ${CGAL_${CGAL_COMPONENT}_3RD_PARTY_INCLUDE_DIRS}   )
