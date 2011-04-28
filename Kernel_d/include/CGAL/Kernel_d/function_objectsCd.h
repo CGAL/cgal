@@ -193,6 +193,7 @@ template <class R>
 struct OrientationCd { 
 typedef typename R::Point_d Point_d;
 typedef typename R::LA LA;
+typedef Orientation		result_type;
 
 template <class ForwardIterator>
 Orientation operator()(ForwardIterator first, ForwardIterator last)
@@ -303,6 +304,7 @@ struct Side_of_oriented_sphereCd {
 typedef typename R::Point_d Point_d;
 typedef typename R::LA LA;
 typedef typename R::FT FT;
+typedef Oriented_side  result_type;
 
 template <class ForwardIterator> 
 Oriented_side operator()(ForwardIterator first, ForwardIterator last, 
@@ -349,7 +351,7 @@ struct Side_of_oriented_subsphereCd
 	typedef typename R::Point_d									Point;
 	typedef typename R::LA										LA;
 	typedef typename R::FT										FT;
-	typedef Oriented_side										result_type;
+	typedef Oriented_side  result_type;
     // typedef internal::stateless_predicate_tag predicate_category;
 
 	typedef typename R::Side_of_oriented_sphere_d				Side_of_oriented_sphere;
