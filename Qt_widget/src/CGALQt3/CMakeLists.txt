@@ -1,6 +1,10 @@
 project (CGAL_Qt3)
 
-CMAKE_MINIMUM_REQUIRED(VERSION 2.6.2 FATAL_ERROR)
+# Minimal version of CMake:
+cmake_minimum_required(VERSION 2.6.2)
+
+# Tested version:
+cmake_policy(VERSION 2.8.4)
 
 if ( NOT CGAL_FOUND )
   find_package(CGAL REQUIRED)
