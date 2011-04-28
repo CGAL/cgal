@@ -1,6 +1,6 @@
 project (CGAL_Core)
    
-CMAKE_MINIMUM_REQUIRED(VERSION 2.6.2 FATAL_ERROR)
+cmake_minimum_required(VERSION 2.6.2 FATAL_ERROR)
 
 if ( NOT CGAL_FOUND )
   find_package(CGAL REQUIRED)

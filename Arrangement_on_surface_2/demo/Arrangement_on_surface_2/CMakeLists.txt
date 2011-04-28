@@ -2,7 +2,7 @@
 
 project( Arrangement_2 ) 
 
-CMAKE_MINIMUM_REQUIRED(VERSION 2.6.2)
+cmake_minimum_required(VERSION 2.6.2)
 
 find_package(CGAL COMPONENTS Qt3 Core )
 

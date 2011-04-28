@@ -2,7 +2,7 @@
 
 project (Nef_3_Demo)
 
-CMAKE_MINIMUM_REQUIRED(VERSION 2.6.2)
+cmake_minimum_required(VERSION 2.6.2)
 
 find_package(CGAL COMPONENTS Qt3)
 include(${CGAL_USE_FILE})

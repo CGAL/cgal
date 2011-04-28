@@ -4,7 +4,7 @@
 
 project( Installation_test )
 
-CMAKE_MINIMUM_REQUIRED(VERSION 2.6.2)
+cmake_minimum_required(VERSION 2.6.2)
 
 macro(create_link_to_program COMPONENT )
   

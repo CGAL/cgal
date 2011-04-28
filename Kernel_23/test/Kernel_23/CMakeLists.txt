@@ -3,7 +3,7 @@
 
 project (Kernel_23_Test)
 
-CMAKE_MINIMUM_REQUIRED(VERSION 2.6.2)
+cmake_minimum_required(VERSION 2.6.2)
 
 find_package(CGAL)
 
