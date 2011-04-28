@@ -55,8 +55,8 @@ struct Lift_to_paraboloidCd {
 typedef typename R::Point_d Point_d;
 typedef typename R::FT FT;
 typedef typename R::LA LA;
-
-Point_d operator()(const Point_d& p) const
+typedef Point_d result_type;
+result_type operator()(const Point_d& p) const
 { 
   int d = p.dimension();
   typename LA::Vector h(d+1);
@@ -74,8 +74,8 @@ template <class R>
 struct Project_along_d_axisCd {
 typedef typename R::Point_d Point_d;
 typedef typename R::FT FT;
-
-Point_d operator()(const Point_d& p) const
+typedef Point_d result_type;
+result_type operator()(const Point_d& p) const
 { return Point_d(p.dimension()-1, 
                  p.cartesian_begin(),p.cartesian_end()-1); }
 };
@@ -83,7 +83,8 @@ Point_d operator()(const Point_d& p) const
 template <class R>
 struct MidpointCd {
 typedef typename R::Point_d Point_d;
-Point_d operator()(const Point_d& p, const Point_d& q) const
+typedef Point_d result_type;
+result_type operator()(const Point_d& p, const Point_d& q) const
 { return Point_d(p + (q-p)/2); }
 };
 
@@ -92,8 +93,9 @@ struct Center_of_sphereCd {
 typedef typename R::Point_d Point_d;
 typedef typename R::FT FT;
 typedef typename R::LA LA;
+typedef Point_d result_type;
 template <class Forward_iterator>
-Point_d operator()(Forward_iterator start, Forward_iterator end) const
+result_type operator()(Forward_iterator start, Forward_iterator end) const
 { CGAL_assertion(start!=end);
   int d = start->dimension();
   typename LA::Matrix M(d);
@@ -123,7 +125,8 @@ struct Squared_distanceCd {
 typedef typename R::Point_d Point_d;
 typedef typename R::Vector_d Vector_d;
 typedef typename R::FT FT;
-FT operator()(const Point_d& p, const Point_d& q) const
+typedef FT result_type;
+result_type operator()(const Point_d& p, const Point_d& q) const
 { Vector_d v = p-q; return v.squared_length(); }
 };
 
@@ -132,8 +135,8 @@ struct Position_on_lineCd {
 typedef typename R::Point_d Point_d;
 typedef typename R::LA LA;
 typedef typename R::FT FT;
-
-bool operator()(const Point_d& p, const Point_d& s, const Point_d& t, 
+typedef bool result_type;
+result_type operator()(const Point_d& p, const Point_d& s, const Point_d& t, 
      FT& l) const
 { int d = p.dimension(); 
   CGAL_assertion_msg((d==s.dimension())&&(d==t.dimension()&& d>0), 
@@ -196,7 +199,7 @@ typedef typename R::LA LA;
 typedef Orientation		result_type;
 
 template <class ForwardIterator>
-Orientation operator()(ForwardIterator first, ForwardIterator last)
+result_type  operator()(ForwardIterator first, ForwardIterator last) const
 { TUPLE_DIM_CHECK(first,last,Orientation_d);
   int d = static_cast<int>(std::distance(first,last)); 
   // range contains d points of dimension d-1
@@ -307,8 +310,8 @@ typedef typename R::FT FT;
 typedef Oriented_side  result_type;
 
 template <class ForwardIterator> 
-Oriented_side operator()(ForwardIterator first, ForwardIterator last, 
-                         const Point_d& x)
+result_type operator()(ForwardIterator first, ForwardIterator last, 
+                         const Point_d& x) const
 { 
   TUPLE_DIM_CHECK(first,last,Side_of_oriented_sphere_d);
   int d = static_cast<int>(std::distance(first,last)); // |A| contains |d| points
@@ -460,10 +463,10 @@ struct Side_of_oriented_subsphereCd
 template <class R>
 struct Side_of_bounded_sphereCd { 
 typedef typename R::Point_d Point_d;
-
+typedef Bounded_side result_type;
 template <class ForwardIterator> 
-Bounded_side operator()(ForwardIterator first, ForwardIterator last, 
-                        const Point_d& p)
+result_type operator()(ForwardIterator first, ForwardIterator last, 
+                        const Point_d& p) const
 {
   TUPLE_DIM_CHECK(first,last,region_of_sphere);
   typename R::Orientation_d _orientation;
@@ -495,10 +498,10 @@ struct Contained_in_simplexCd {
 typedef typename R::Point_d Point_d;
 typedef typename R::LA LA;
 typedef typename R::FT FT;
-
+typedef bool result_type;
 template <class ForwardIterator> 
-bool operator()(ForwardIterator first, ForwardIterator last,
-                const Point_d& p)
+result_type  operator()(ForwardIterator first, ForwardIterator last,
+                const Point_d& p) const
 {
   TUPLE_DIM_CHECK(first,last,Contained_in_simplex_d);
   int k = static_cast<int>(std::distance(first,last)); // |A| contains |k| points
@@ -537,9 +540,10 @@ struct Contained_in_affine_hullCd {
 typedef typename R::Point_d Point_d;
 typedef typename R::LA LA;
 
+typedef bool result_type;
 template <class ForwardIterator> 
-bool operator()(ForwardIterator first, ForwardIterator last,
-                const Point_d& p) 
+result_type operator()(ForwardIterator first, ForwardIterator last,
+                const Point_d& p) const
 {
   TUPLE_DIM_CHECK(first,last,Contained_in_affine_hull_d);
   int k = static_cast<int>(std::distance(first,last)); // |A| contains |k| points
@@ -564,9 +568,9 @@ struct Affine_rankCd {
 typedef typename R::Point_d Point_d;
 typedef typename R::Vector_d Vector_d;
 typedef typename R::LA LA;
-
+typedef int result_type;
 template <class ForwardIterator> 
-int operator()(ForwardIterator first, ForwardIterator last) 
+result_type operator()(ForwardIterator first, ForwardIterator last) const
 {
   TUPLE_DIM_CHECK(first,last,Affine_rank_d);
   int k = static_cast<int>(std::distance(first,last)); // |A| contains |k| points
@@ -588,9 +592,9 @@ template <class R>
 struct Affinely_independentCd { 
 typedef typename R::Point_d Point_d;
 typedef typename R::LA LA;
-
+typedef bool result_type;
 template <class ForwardIterator> 
-bool operator()(ForwardIterator first, ForwardIterator last) 
+result_type operator()(ForwardIterator first, ForwardIterator last) const
 { typename R::Affine_rank_d rank;
   int n = static_cast<int>(std::distance(first,last));
   return rank(first,last) == n-1;
@@ -602,7 +606,8 @@ template <class R>
 struct Compare_lexicographicallyCd {
 typedef typename R::Point_d Point_d;
 typedef typename R::Point_d PointD; //MSVC hack
-Comparison_result operator()(const Point_d& p1, const Point_d& p2)
+typedef Comparison_result result_type;
+result_type operator()(const Point_d& p1, const Point_d& p2) const
 { return PointD::cmp(p1,p2); }
 };
 
@@ -611,10 +616,10 @@ struct Contained_in_linear_hullCd {
 typedef typename R::LA LA;
 typedef typename R::FT FT;
 typedef typename R::Vector_d Vector_d;
-
+typedef bool result_type;
 template<class ForwardIterator>
-bool operator()(
-  ForwardIterator first, ForwardIterator last, const Vector_d& x) 
+result_type operator()(
+  ForwardIterator first, ForwardIterator last, const Vector_d& x) const
 { TUPLE_DIM_CHECK(first,last,Contained_in_linear_hull_d);
   int k = static_cast<int>(std::distance(first,last)); // |A| contains |k| vectors
   int d = first->dimension();
@@ -632,8 +637,9 @@ bool operator()(
 template <class R>
 struct Linear_rankCd {
 typedef typename R::LA LA;
+typedef bool result_type;
 template <class ForwardIterator>
-int operator()(ForwardIterator first, ForwardIterator last)
+result_type operator()(ForwardIterator first, ForwardIterator last) const
 { TUPLE_DIM_CHECK(first,last,linear_rank);
   int k = static_cast<int>(std::distance(first,last)); // k vectors
   int d = first->dimension(); 
@@ -648,8 +654,9 @@ int operator()(ForwardIterator first, ForwardIterator last)
 template <class R>
 struct Linearly_independentCd {
 typedef typename R::LA LA;
+typedef bool result_type;
 template <class ForwardIterator>
-bool operator()(ForwardIterator first, ForwardIterator last)
+result_type operator()(ForwardIterator first, ForwardIterator last) const
 { typename R::Linear_rank_d rank;
   return rank(first,last) == static_cast<int>(std::distance(first,last));
 }
@@ -660,9 +667,10 @@ struct Linear_baseCd {
 typedef typename R::LA LA;
 typedef typename R::FT FT;
 typedef typename R::Vector_d Vector_d;
+
 template <class ForwardIterator, class OutputIterator>
 OutputIterator operator()(ForwardIterator first, ForwardIterator last,
-  OutputIterator result)
+  OutputIterator result) const
 { TUPLE_DIM_CHECK(first,last,linear_base);
   int k = static_cast<int>(std::distance(first,last)); // k vectors
   int d = first->dimension();

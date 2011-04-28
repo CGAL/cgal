@@ -7,7 +7,7 @@
 
 namespace CGAL {
 
-namespace CGALi
+namespace internal
 {
 
 template<class Matrix>
@@ -59,7 +59,7 @@ sign_of_determinantDxD_with_interval_arithmetic(Matrix & M)
     return Sign(sign);
 }
 
-} // end of namespace CGALi
+} // end of namespace internal
 
 template<>
 inline
@@ -84,7 +84,7 @@ Linear_algebraCd<Interval_nt_advanced>::sign_of_determinant(const Matrix & M)
 		    M(3,0), M(3,1), M(3,2), M(3,3));
 	    break;
 	default:
-	    return CGALi::sign_of_determinantDxD_with_interval_arithmetic(const_cast<Matrix &>(M));
+	    return internal::sign_of_determinantDxD_with_interval_arithmetic(const_cast<Matrix &>(M));
 	    break;
     }
 }
