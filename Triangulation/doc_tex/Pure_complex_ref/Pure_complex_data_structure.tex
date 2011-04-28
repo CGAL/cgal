@@ -1,0 +1,41 @@
+\begin{ccRefClass}{Pure_complex_data_structure<Dimensionality, PCDSVertex, PCDSSimplex>}
+
+\ccDefinition 
+This class is used for storing the combinatorial information of a pure
+complex (a triangulation of $\sphere^k\subset\real^d$ for some $k\le d$).
+
+\ccInclude{CGAL/Pure_complex_data_structure.h}
+
+\ccParameters
+
+\ccc{Dimensionality} can be either \begin{itemize}
+
+\item \ccPureGlobalScope\ccc{Dimension_tag<d>} for some integer \ccc{d}. This
+indicates that the pure complex can store simplices of dimension at most
+\ccc{d}. The maximum dimension \ccc{d} is known by the compiler, which
+triggers some optimizations. Or
+
+\item \ccPureGlobalScope\ccc{Dynamic_dimension_tag}. In this case, the maximum
+dimension of the simplices is passed as an integer argument to an instance
+constructor (see \ccc{PureComplexDataStructure}).\end{itemize}
+
+\ccc{PCDSVertex} is the class to be used as the base \ccc{Vertex} type in the
+pure complex data structure. It must be a model of the concept
+\ccc{PureComplexDSVertex}. The class template \ccRefName\ accepts that no
+second parameter be specified. It also accepts the tag \ccc{CGAL::Default} as
+second parameter. In both cases, \ccc{PCDSVertex} defaults to
+\ccc{CGAL::Pure_complex_ds_vertex<>}.
+
+
+\ccc{PCDSSimplex} is the class to be used as the base \ccc{Simplex} type in
+the pure complex data structure. It must be a model of the concept
+\ccc{PureComplexDSSimplex}. The class template \ccRefName\ accepts that no
+third parameter be specified. It also accepts the tag \ccc{CGAL::Default} as
+third parameter. In both cases, \ccc{PCDSSimplex} defaults to
+\ccc{CGAL::Pure_complex_ds_simplex<>}.
+
+\ccIsModel
+
+\ccc{PureComplexDataStructure}.
+
+\end{ccRefClass}

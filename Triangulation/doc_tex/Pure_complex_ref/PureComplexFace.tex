@@ -1,0 +1,72 @@
+\begin{ccRefConcept}{PureComplexFace}
+
+\ccDefinition
+
+A \ccRefName\ simply describes a \ccc{k}-face \ccc{f} in a pure complex.
+It stores a handle to a full-dimensional simplex \ccc{s} containing the face
+\ccc{f} in its boundary, as well as the indices of the vertices of \ccc{f} in
+\ccc{s}. It must hold that \ccc{f} is a \textbf{proper} face of simplex
+\ccc{s}, \emph{i.e.}, the dimension of \ccc{f} is strictly less than that of
+\ccc{s}.
+
+\ccTypes
+
+\ccNestedType{Simplex_handle}{Must be the same as the nested type
+\ccc{PCDS::Simplex_handle} of the \ccc{PCDS} in which the \ccc{Face} is
+defined/used.}
+
+\ccNestedType{Vertex_handle}{Must be the same as the nested type
+\ccc{PCDS::Vertex_handle} of the \ccc{PCDS} in which the \ccc{Face} is
+defined/used.}
+
+\ccHasModels
+
+\ccc{Pure_complex_face<PCDS>}.
+
+\ccCreation
+\ccCreationVariable{f}
+
+\ccConstructor{Pure_complex_face(Pure_complex_face g);}{Copy constructor.}
+
+\ccConstructor{Pure_complex_face(Simplex_handle s);}{Sets the \ccc{Face}'s
+simplex to \ccc{s}. \ccPrecond \ccc{s} must be a handle to an existing
+simplex (not the default-constructed \ccc{Simplex_handle()}).}
+
+\ccConstructor{Pure_complex_face(const int ad);}{Setup the \ccc{Face} knowing
+the ambient dimension \ccc{ad}. Sets the \ccc{Face}'s simplex to the
+default-constructed one.}
+
+\ccHeading{Access functions}
+
+\ccMethod{Simplex_handle simplex() const;}{Returns a handle to a simplex that
+has the face in its boundary.}
+
+\ccMethod{int feature_dimension() const;}{Returns the dimension of the face
+(one less than the number of vertices).}
+
+\ccMethod{int index(int i) const;}{Returns the index of the \ccc{i}-th vertex
+of the face in the simplex \ccVar.\ccc{simplex()}. \ccPrecond \ccc{0 <= i <=
+}\ccVar.\ccc{feature_dimension()}.}
+
+\ccMethod{Vertex_handle vertex(int i) const;}{Returns a handle to the
+\ccc{i}-th \ccc{Vertex} of the face in the simplex \ccVar.\ccc{simplex()}.
+\ccPrecond \ccc{0 <= i <= }\ccVar.\ccc{feature_dimension()}.}
+
+\ccHeading{Update functions}
+
+\ccMethod{void clear();}{Sets the facet to the empty set.}
+
+\ccMethod{void set_simplex(Simplex_handle s);}{Sets the simplex of the face to
+\ccc{s}. \ccPrecond \ccc{s} must not be the default-constructed
+\ccc{Simplex_handle}.}
+
+\ccMethod{void set_index(int i, int idx);}{Sets the index of the \ccc{i}-th
+vertex of the face. \ccPrecond \ccc{0 <= idx <=
+}\ccVar.\ccc{simplex()->ambient_dimension()}.}
+
+\ccSeeAlso
+
+\ccc{PureComplexDataStructure}, \\
+\ccc{Pure_complex_face<PCDS>}.
+
+\end{ccRefConcept}

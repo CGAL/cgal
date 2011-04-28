@@ -1,0 +1,81 @@
+\begin{ccRefConcept}{PureComplexDSVertex}
+
+\ccDefinition
+
+The concept \ccRefName\ describes what a vertex is in a model of the concept
+\ccc{PureComplexDataStructure}. It sets requirements of combinatorial nature
+only, as geometry is not concerned here. In particular, we only require that
+the vertex hold a handle to a simplex adjacent to it in the complex.
+
+This concept is a \emph{sub-concept} of the \ccc{PureComplexDataStructure}
+concept.
+
+\ccHasModels
+
+\ccc{Pure_complex_ds_vertex<PCDS>}
+
+\ccTypes
+
+\ccNestedType{Simplex_handle}{A handle to a Simplex.}
+
+\ccNestedType{template<typename PC2> Rebind_PCDS}{This nested template
+class must define a nested type \ccc{Other} which is the rebound vertex
+class template, that is: \ccc{Other == PureComplexDSVertex<PC2>}.}
+
+\ccCreation	
+\ccCreationVariable{v}
+
+\ccConstructor{PureComplexDSVertex();}{The default constructor (no adjacent
+simplex is set).}
+\ccGlue
+\ccConstructor{PureComplexDSVertex(Simplex_handle s);}{Sets the incident
+simplex to \ccc{s}. \ccPrecond \ccc{s} must not be the default-constructed
+\ccc{Simplex_handle}.}
+
+\ccOperations
+
+\ccMethod{void set_simplex(Simplex_handle s);}{Set \ccc{s} as the vertex's
+adjacent simplex. \ccPrecond \ccc{s} must not be the default-constructed
+\ccc{Simplex_handle}.}
+
+\ccMethod{Simplex_handle simplex() const;}{Returns a handle to a simplex
+adjacent to the vertex.}
+
+\ccHeading{Validity check}
+
+\ccMethod{bool is_valid(bool verbose=false, int level=0) const;}{Performs any
+desired test on a vertex. Al least, checks that the pointer to an incident
+simplex is not the default constructed handle (\emph{i.e.}, is not
+\ccc{NULL}). The parameter \ccc{level} is not used, but can be used in derived
+classes.}
+
+\ccHeading{Memory management}
+
+\ccMethod{void*   for_compact_container() const;}{}
+\ccGlue\ccMethod{void* & for_compact_container();}{}
+
+These member functions are required by the classes
+\ccc{Pure_complex_data_structure<Dimensionality, PCDSVertex, PCDSSimplex>} and
+\ccc{Pure_complex<PCTraits, PCDS>} (and its derived classes) because they use
+the \cgal\ container class \ccc{Compact_container} to store their vertices and
+simplices. See the documentation of \ccc{Compact_container} for the exact
+requirements.
+
+\ccHeading{Input/Output}
+
+\ccFunction{template<class PCDS> istream& operator>>(istream & is,
+        Pure_complex_ds_vertex<PCDS> & v);}
+{Reads (possible) non-combinatorial information about a vertex from the stream \ccc{is}
+into \ccc{v}.}
+
+\ccFunction{template<class PCDS> ostream& operator<<(ostream & os, const
+        Pure_complex_ds_vertex<PCDS> & v);}
+{Writes (possible) non-combinatorial information about vertex \ccc{v} to the stream
+    \ccc{os}.}
+
+\ccSeeAlso
+
+\ccc{PureComplexDSSimplex}\\
+\ccc{PureComplexDataStructure}
+
+\end{ccRefConcept}

@@ -1,0 +1,27 @@
+\begin{ccRefClass}{Pure_complex_face<PCDS>}
+
+\ccDefinition
+
+A \ccRefName\ is a model of the concept \ccc{PureComplexFace}.
+
+\ccParameters
+
+\ccc{PCDS} must be a \textbf{very loose} model of the concept
+\ccc{PureComplexDataStructure} in that it must only provide the
+types\begin{itemize}
+\item \ccc{Simplex_handle},
+\item \ccc{Vertex_handle} and
+\item \ccc{Ambient_dimension}\end{itemize} defined in that concept.
+
+% FUTURE: Do we create a \ccc{ProtoComplex} concept?
+
+\ccIsModel
+
+\ccc{PureComplexFace}.
+
+\ccSeeAlso
+
+\ccc{PureComplexFace},\\
+\ccc{PureComplexDataStructure}.
+
+\end{ccRefClass}

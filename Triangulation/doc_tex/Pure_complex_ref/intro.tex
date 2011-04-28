@@ -1,0 +1,61 @@
+%\RCSdef{\RCSPureComplexRev}{$Id$}
+%\RCSdefDate{\RCSPureComplexDate}{$Date$}
+
+\ccRefChapter{Pure Complexes\label{chap:pure_complexes_ref}}
+\ccChapterAuthor{Samuel Hornus}
+
+TODO: add some introductory text here.
+
+\section{Reference Pages Sorted by Type}
+
+\subsection*{Concepts}
+
+\subsubsection*{Pure complex data structure}
+
+\ccRefConceptPage{PureComplexDataStructure}
+
+The above concept is also abbreviated as \ccc{PCDS}. It defines three types,
+\ccc{Vertex}, \ccc{Simplex} and \ccc{Face}, that must respectively fulfill the
+following concepts:
+
+\ccRefConceptPage{PureComplexDSVertex}\\
+\ccRefConceptPage{PureComplexDSSimplex}\\
+\ccRefConceptPage{PureComplexFace}
+
+The above first two concepts are also abbreviated respectively as
+\ccc{PCDSVertex} and \ccc{PCDSSimplex}.
+
+\subsubsection*{(Geometric) pure complex}
+
+\ccRefConceptPage{PureComplexTraits}\\
+\ccRefConceptPage{DelaunayComplexTraits}\\
+\ccRefConceptPage{RegularComplexTraits}
+
+\ccRefConceptPage{PureComplexVertex}\\
+\ccRefConceptPage{PureComplexSimplex}
+
+The above concepts are also abbreviated respectively as \ccc{PCTraits},
+\ccc{DCTraits}, \ccc{RCTraits}, \ccc{PCVertex} and \ccc{PCSimplex}.
+
+\subsection*{Classes}
+
+\subsubsection*{Pure complex data structure}
+
+\ccRefIdfierPage{CGAL::Pure_complex_data_structure<Dimensionality, PCDSVertex, PCDSSimplex>}\\
+\ccRefIdfierPage{CGAL::Pure_complex_ds_vertex<PCDS>}\\
+\ccRefIdfierPage{CGAL::Pure_complex_ds_simplex<PCDS, PCDSSimplexStoragePolicy>}
+
+\ccRefIdfierPage{CGAL::Pure_complex_face<PCDS>}
+
+\subsubsection*{(Geometric) pure complexes}
+
+\ccRefIdfierPage{CGAL::Pure_complex<PCTraits, PCDS>}\\
+\ccRefIdfierPage{CGAL::Delaunay_complex<DCTraits, PCDS>}
+%\ccRefIdfierPage{CGAL::Regular_complex<RCTraits, PCDS>}
+
+\ccRefIdfierPage{CGAL::Pure_complex_vertex<PCTraits, Data, PCDSVertex>}\\
+\ccRefIdfierPage{CGAL::Pure_complex_simplex<PCTraits, Data, PCDSSimplex>}
+
+\subsection*{Enums}
+
+\ccRefIdfierPage{CGAL::Pure_complex::Locate_type}

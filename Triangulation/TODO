@@ -1,0 +1,17 @@
+__________________________________________________________________________ALL
+
+*) FUTURE: better system for simplex's flag (visited)
+_________________________________________________________________________PCDS
+
+_________________________________________________________________PURE_COMPLEX
+
+_____________________________________________________________DELAUNAY_COMPLEX
+
+______________________________________________________________REGULAR_COMPLEX
+
+*) write Regular_complex.h (!)
+*) write RegularComplexTraits.tex
+*) write Regular_complex.tex
+_______________________________________________________________________KERNEL
+
+Commit modif of STL_Ext, Spatial_sorting, etc... to trunk

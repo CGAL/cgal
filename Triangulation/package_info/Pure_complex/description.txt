@@ -1,0 +1,5 @@
+The package Pure_complex provides classes for manipulating pure complexes
+(often called triangulations) in euclidean spaces whose dimension can be
+specified at compile-time or at run-time. It also provides point location and a
+class for building Delaunay complexes supporting both point insertion and
+removal.

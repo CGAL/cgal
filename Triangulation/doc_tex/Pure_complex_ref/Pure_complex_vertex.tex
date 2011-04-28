@@ -1,0 +1,82 @@
+\begin{ccRefClass}{Pure_complex_vertex<PCTraits, Data, PCDSVertex>}
+
+\ccDefinition
+
+The class \ccRefName\ is a model of the concept \ccc{PureComplexVertex}. It is
+used by default for representing vertices in the class
+\ccc{Pure_complex<PCTraits, PCDS>}.
+
+A \ccRefName\ stores a point and an incident simplex.
+
+\ccInclude{CGAL/Pure_complex_vertex.h}
+
+\ccParameters
+
+\ccc{PCTraits} must be a model of the concept \ccc{PureComplexTraits}. It
+provides geometric types and predicates for use in the
+\ccc{Pure_complex<PCTraits, PCDS>} class. It is of interest here for its
+declaration of the \ccc{Point} type.
+
+\ccc{Data} is an optional type of data to be stored in the vertex class. The
+class template \ccRefName\ accepts that no second parameter be specified. In
+this case, \ccc{Data} defaults to \ccc{CGAL::No_vertex_data}.
+
+\ccc{PCDSVertex} must be a model of the concept \ccc{PureComplexDSVertex}. The
+class template \ccRefName\ accepts that no third parameter be specified. It
+also accepts the tag \ccc{CGAL::Default} as third parameter. In both cases,
+\ccc{PCDSVertex} defaults to \ccc{CGAL::Pure_complex_ds_vertex<>}.
+
+\ccInheritsFrom
+
+\ccc{PCDSVertex} (the third template parameter)
+
+\ccIsModel
+
+\ccc{PureComplexVertex}
+
+Additionally, the class \ccRefName\ also provides the following type,
+constructors and methods:
+
+\ccTypes
+
+\ccTypedef{typedef Data Data;}{The type of the additional data stored in the
+vertex. If you read a \ccRefName\ from a stream (a file) or write a \ccRefName
+to a stream, then streaming operators \ccc{<<} and \ccc{>>} must be provided for this
+type.}
+
+\ccCreation
+\ccCreationVariable{v}
+
+\ccConstructor{template< typename T> Pure_complex_vertex(Simplex_handle s,
+const Point & p, const T & t);}{Constructs a vertex with adjacent simplex
+\ccc{s}. The vertex is embedded at point \ccc{p} and the parameter \ccc{t} is
+passed to the \ccc{Data} constructor.}
+
+\ccGlue\ccConstructor{template< typename T> Pure_complex_vertex(const Point
+& p, const T & t);}{Same as above, but without adjacent simplex.}
+
+\ccGlue\ccConstructor{Pure_complex_vertex();}%
+{Same as above, but with default-constructed \ccc{Point} and \ccc{Data}.}
+
+\ccHeading{Data access}
+
+\ccMethod{const Data & data() const;}{Returns a reference to the stored data.}
+\ccGlue\ccMethod{Data & data();}{Returns a reference to the stored data.}
+
+\ccHeading{Input/Output}
+
+\ccFunction{istream & operator>>(istream & is, Pure_complex_vertex & v);}%
+{Inputs the non-combinatorial information given by the vertex, \emph{i.e.},
+the point and other possible information. The data of type \ccc{Data} is
+\textbf{also} read.}
+
+\ccFunction{ostream & operator<<(ostream & os, const Pure_complex_vertex & v);}%
+{Outputs the non-combinatorial information given by the vertex, \emph{i.e.},
+the point and other possible information. The data of type \ccc{Data} is
+\textbf{also} written.}
+
+\ccSeeAlso
+
+\ccc{Pure_complex_simplex<PCTraits, Data, PCDSSimplex>}
+
+\end{ccRefClass}

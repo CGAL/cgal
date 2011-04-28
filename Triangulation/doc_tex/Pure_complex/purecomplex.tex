@@ -1,0 +1,480 @@
+{
+\newcommand{\ie}{\emph{i.e.,}}
+
+\section{Introduction\label{pure_complex:intro}}
+
+A \textbf{finite abstract simplicial complex} is built on a finite set of
+vertices $V$ and consists of a collection $S$ of subsets of $V$ such that
+\begin{itemize}
+\item if $s$ is a set of vertices in $S$, then all the subsets of $s$ are also
+in $S$.
+\end{itemize}
+See the
+\ccAnchor{http://en.wikipedia.org/wiki/Abstract_simplicial_complex}{wikipedia
+entry} for more about abstract simplicial complexes.
+
+The sets in $S$ (which are subsets of $V$) are called \textbf{simplices} (the
+singular of which is \textbf{simplex}).
+%
+A simplex $s\in S$ is \textbf{maximal} if it is not a proper subset of some other
+set in $S$. The simplicial complex is \textbf{pure} (or \textbf{homogeneous})
+if all the maximal simplices have the same cardinality (\ie\ they have the same
+number of vertices). A \textbf{face} of a simplex is a subset of it. A
+\textbf{proper face} of a simplex is a strict subset of it.
+
+If the vertices are embedded into euclidean space $\real^d$, we deal with
+\textbf{finite simplicial complexes} which have slightly different simplices
+and additional requirements:
+\begin{itemize}
+\item vertices corresponds to points in space.
+\item a simplex $s\in S$ is the convex hull of its vertices.
+\item the vertices of a simplex $s\in S$ are affinely independent.
+\item the intersection of any two simplices of $S$ is a proper face of both
+simplices (the empty set counts).
+\end{itemize}
+See the \ccAnchor{http://en.wikipedia.org/wiki/Simplicial_complex}{wikipedia
+entry} for more about simplicial complexes.
+
+This \cgal\ package deals with pure finite simplicial complexes, which we
+abbreviate as \textbf{geometric pure complexes}, \textbf{embedded pure
+complexes} or simply \textbf{pure complexes}. It provides four main classes
+for creating and manipulating pure complexes.
+
+The class \ccc{CGAL::Pure_complex_data_structure<Dimensionality,
+PCDSVertex, PCDSSimplex>} models an abstract pure complex: vertices in this
+class are not embedded in euclidean space but are only of combinatorial
+nature.
+
+The class \ccc{CGAL::Pure_complex<PCTraits, PCDS>} embeds an abstract
+pure complex in euclidean space, thus forming a pure complex. Methods are
+provided for the insertion %and removal
+of points in the complex, the
+traversal of various elements of the complex, as well as the localization of a
+query point inside the complex.
+
+The class \ccc{CGAL::Delaunay_complex<DCTraits, PCDS>} adds further
+constraints to a pure complex, in that all its simplices must have the
+so-called \textbf{Delaunay} or \textbf{empty-ball} property: the interior of
+a ball circumscribing any simplex of a Delaunay simplex must be free from any
+vertex of the complex.
+
+%The class \ccc{CGAL::Regular_complex<RCTraits, PCDS>} is a generalization of
+%the Delaunay complex.
+
+The rest of this user manual gives more details about these classes and the
+data they store, but does not tell the whole story. For the latter, the user
+should have a look at the reference manual of this package. A last remark:
+pure complexes are also called \emph{triangulations}. We feel more confortable
+in using the word \emph{complexes} as it forces us to think ``in dimension
+higher than 3''.
+
+\paragraph{Further definitions}
+
+A $i$-simplex or an $i$-face denotes an $i$-dimensional simplex, or a simplex
+with $i+1$ (affinely independent if embedded) vertices. The term \emph{face}
+gives the additional information that an $i$-face is a sub-face (or a
+sub-simplex) of a higher-dimensional simplex.
+
+A \textbf{face} in a pure complex is an $i$-face for some $i\in[0,d)$;
+a \textbf{facet} in a pure complex is a $(d-1)$-face, where maximal simplices
+in this pure complex have dimension $d$. In particular, vertices are
+$0$-faces.
+
+Two simplices $\sigma$ and $\sigma'$ are \textbf{incident} if and only if
+$\sigma'$ is a proper sub-face of $\sigma$ or \emph{vice versa}.
+Two simplices $\sigma$ and $\sigma'$ are \textbf{adjacent} if and only if
+their intersection is a non empty face.
+
+The bare term ``simplex'' from now on denotes a maximal simplex.
+
+\section{Pure complex data structure\label{pure_complex:pcds}}
+
+\newcommand{\pcds}{\ccc{PCDS}}
+\newcommand{\ad}{\ensuremath{D}}
+\newcommand{\cd}{\ensuremath{d}}
+
+In this section, we describe the concept \ccc{PureComplexDataStructure} for
+which \cgal\ provides one model class:
+\ccc{CGAL::Pure_complex_data_structure<Dimensionality, PCDSVertex,
+PCDSSimplex>}. (The user can read the following as a description of the class,
+rather than the concept). For simplicity, we use the abbreviation \pcds.
+
+A \pcds\ can not represent any abstract pure complex, but rather the
+combinatorial nature of a (geometric) pure complex. For example, a facet
+may be incident to arbitrarily many simplices in an abstract pure complex, but
+to at most two in a \pcds\ (and in fact exactly two as we explain below).
+
+A \pcds\ has a property called the \textbf{ambient dimension} which is a
+positive integer equal to the maximum dimension a maximal simplex can have.
+This ambient dimension can be chosen by the user at the creation of a \pcds\
+and can then be queried using the method \ccc{pcds.ambient_dimension()}.
+A \pcds\ also knows the \textbf{current dimension} of its maximal simplices,
+which can be queried with \ccc{pcds.current_dimension()}. In the sequel, let
+us denote the ambient dimension with \ad\ and the current dimension with \cd.
+It always holds that $\ad>0$ and $\cd\le\ad$.
+
+\paragraph{On the \ccc{Facet} nested type}
+
+In the \ccc{Triangulation_3} \cgal\ package, the reference dimension is always
+3. With respect to this reference dimension (3), a \ccc{Facet} is always a
+triangle, irrespective of the 3D triangulation's current dimension. In
+particular, maximal simplices in degenerate planar 3D triangulation are
+\ccc{Facet}s, not \ccc{Cell}s.
+
+By contrast, in the present \ccc{Pure_complex} \cgal\ package, the reference
+dimension of a pure complex (or a pure complex data structure) is its current
+dimension. This means that, whatever the current dimension is, a maximal
+simplex is always represented by the \ccc{Simplex} nested type, And a
+\ccc{Facet} represents a simplex of dimension \ccc{current_dimension()-1}
+\textbf{and not} \ccc{ambient_dimension()-1}.
+
+\newcommand{\sphere}{\ensuremath{\mathcal S}}
+
+\paragraph{The data structure triangulates $\sphere^\cd$}
+
+Because this is extremely convenient, a \pcds, in fact, ensures that its
+simplices form a \emph{triangulation} of the topological sphere $\sphere^\cd$,
+\emph{i.e.}, form a partition of $\sphere^\cd$ into $\cd$-simplices. When a
+\pcds\ is used as the combinatorial part of a geometric pure complex, one
+vertex of the \pcds\ will be fixed and play the role of the \textbf{vertex at
+infinity}; the pure complex thus formed will cover the whole euclidean space
+using \textbf{infinite} or \textbf{unbounded} simplices outside the convex
+hull of the complex's points. (More details are given in the next section.)
+
+One nice consequence of the above important fact is that the $\cd+1$ neighbors
+of a simplex always exist.
+
+Values of $\cd$ (the \emph{current dimension} of the complex) include
+\begin{itemize}
+\item[$\cd=-2$] This corresponds to the non-existence of any object in
+$\sphere^\ad.$
+\item[$\cd=-1$] This corresponds to a single vertex and a single simplex. In a
+geometric pure complex, this vertex corresponds to the vertex at infinity.
+\item[$\cd=0$] This corresponds to two vertices, each adjacent to one $0$-simplex;
+the two simplices being neighbor of each other. This is the unique
+triangulation of the $0$-sphere.
+\item[$0<\cd\le\ad$] This corresponds to a standard triangulation of
+the sphere $\sphere^\cd$.
+\end{itemize}
+
+% - - - - - - - - - - - - - - - - - - - - - - - - - - - - PCDS IMPLEMENTATION
+
+\subsection{Implementation\label{pure_complex:pcds:impl}}
+
+\paragraph{Storage}
+
+A \pcds\ explicitely stores all of its vertices and maximal simplices.
+
+Each vertex stores a reference (a \ccc{Handle}) to one of its incident
+simplex.
+
+A maximal simplex $\sigma'$ adjacent to the maximal simplex $\sigma$ is called
+a \textbf{neighbor} of $\sigma$ (and $\sigma$ is also a neighbor of
+$\sigma'$). Each maximal simplex stores references to its $\cd+1$ vertices and
+neighbors. Its vertices and neighbors are indexed from $0$ to \cd. The indexes
+of its neighbors have the following meaning: the $i$-th neighbor of $\sigma$
+is the unique neighbor of $\sigma$ that does not contain the $i$-th vertex of
+$\sigma$; in other words, it is the neighbor of $\sigma$ \textbf{opposite} to
+the $i$-th vertex of $\sigma$.
+
+\begin{figure}[htbp]
+\begin{ccTexOnly}
+\begin{center}
+\includegraphics{Pure_complex/fig/simplex-structure.pdf}
+\end{center}
+\end{ccTexOnly}
+\begin{ccHtmlOnly}
+<center>
+<img border=0 src="./fig/simplex-structure.png" align="middle" alt="Index the vertices and neighbors of a simplex">
+</center>
+\end{ccHtmlOnly}
+\caption{Indexing the vertices and neighbors of a simplex $s$.}
+\label{pure_complex:fig:simplex}
+\end{figure} 
+
+\paragraph{Instanciating the class template}
+
+The \ccc{Pure_complex_data_structure<Dimensionality, PCDSVertex, PCDSSimplex>}
+class template is designed in such a way that its user can choose
+\begin{itemize}
+\item the ambient dimension of the pure complex data structure,
+\item the type used to represent vertices, by specifying the \ccc{PCDSVertex}
+template parameter and
+\item the type used to represent simplices, by specifying the
+\ccc{PCDSSimplex} template parameter.
+\end{itemize}
+
+The last two parameters have default values and are thus not necessary, unless
+the user needs custom types (see the reference manual page for this class
+template). The first template parameter, \ccc{Dimensionality}, must be either
+\begin{itemize}
+\item \ccPureGlobalScope\ccc{Dimension_tag<D>} for some integer \ad. This
+indicates that the pure complex can store simplices of dimension at most
+\ad. The maximum dimension \ad\ is known by the compiler, which
+triggers some optimizations. Or
+\item \ccPureGlobalScope\ccc{Dynamic_dimension_tag}. In this case, the maximum
+dimension of the simplices must be passed as an integer argument to an instance
+constructor (see \ccc{PureComplexDataStructure}).
+\end{itemize}
+
+The \ccc{PCDSVertex} and \ccc{PCDSSimplex} parameters to the class template
+must be models of the concepts \ccc{PureComplexDSVertex} and
+\ccc{PureComplexDSSimplex} respectively. \cgal\ provides models for these
+concepts: \ccc{Pure_complex_ds_vertex<PCDS>} and
+\ccc{Pure_complex_ds_simplex<PCDS, PCDSSimplexStoragePolicy>}, which, as one
+can see, take the \pcds\ as a template parameter in order to get access to
+some nested types in \pcds.
+
+\textbf{This creates a circular dependency}, which we resolve in the same way
+as in the \cgal\ \ccc{Triangulation_3} package (see FIXME). Thus, models of
+the concepts \ccc{Pure_complex_ds_vertex<PCDS>} and
+\ccc{Pure_complex_ds_simplex<PCDS, PCDSSimplexStoragePolicy>} (typically a
+user's custom classes) must provide a nested template \ccc{Rebind_PCDS} which
+is documented in those two concept's reference manual pages.
+
+\begin{ccAdvanced}
+Thus, to the user in need of a custom vertex of simplex class, we recommend
+the reading of the documentation of the \cgal\ \ccc{Triangulation_3} package.
+\end{ccAdvanced}
+
+% - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - PCDS EXAMPLES
+
+\subsection{Examples\label{pure_complex:pcds:examples}}
+ 
+\paragraph{Incremental Construction}
+The following example shows how to construct a pure complex data structure by
+inserting vertices. The reader will make the best use of this example by
+reading it slowly, together with the reference manual documentation of the
+methods that are called (see here: \ccc{PureComplexDataStructure}).
+
+\ccIncludeExampleCode{Pure_complex/pure_complex_data_structure.cpp}
+
+
+% - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - PURE COMPLEXES
+
+\section{Pure complexes}
+
+The class \ccc{CGAL::Pure_complex<PCTraits, PCDS>} embeds an abstract pure
+complex in euclidean space, thus forming a pure complex. More precisely, it
+maintains a triangulation (a partition into pairwise interior-disjoint maximal
+simplices) of the convex hull of the points (the embedded vertices) of the
+pure complex, as well as a triangulation of the complement of the convex hull
+\textbf{in the affine subspace} spanned by the complex's points.
+
+Methods are provided for the insertion of points in the complex, the
+contraction of faces, the traversal of various elements of the complex
+as well as the localization of a query point inside the complex.
+
+Unbounded (or infinite) simplices outside the convex hull are each incident to
+a finite facet on the convex hull of the complex and to a unique special
+\textbf{vertex at infinity}. In every infinite simplex, the vertex at infinity
+always has index $0$.
+
+As long as no \emph{advanced} class method is called, it is guaranteed that
+all finite simplices have positive orientation. The infinite simplices are
+oriented so that the convex hull of the complex lies on the negative side of
+the oriented hyperplane defined by the simplex's finite facet.
+
+
+% - - - - - - - - - - - - - - - - - - - - - - - - - PureComplex IMPLEMENTATION
+
+\subsection{Implementation}
+
+The class \ccc{CGAL::Pure_complex<PCTraits, PCDS>} stores a model \ccc{PCDS}
+of the concept \ccc{PureComplexDataStructure} which is instanciated with a
+vertex type that stores a point, and a simplex type that allows the retrieval
+of the point of its vertices.
+
+The template parameter \ccc{PCTraits} must be a model of the concept
+\ccc{PureComplexTraits} which provides the geometric \ccc{Point} type as well
+as various geometric predicates used by the \ccc{Pure_complex} class.
+
+% - - - - - - - - - - - - - - - - - - - - - - - - - - - - PureComplex EXAMPLES
+
+\subsection{Examples}
+
+\paragraph{Incremental Construction}
+
+The following example shows how to construct a pure complex in which we insert
+random points. In \ccc{STEP 1}, we generate one hundred random points in
+$\real^5$, which we then insert into a pure complex. In \ccc{STEP 2}, we have
+a little fun and ask the pure complex to construct the set of edges
+($1$-simplices) incident to the vertex at infinity. It is easy to see that
+these edges are in bijection with the vertices on the convex hull of the
+points. This gives us a handy way to count the convex hull vertices.
+
+\ccIncludeExampleCode{Pure_complex/pure_complex.cpp}
+
+\paragraph{Traversing the facets of the convex hull}
+
+Remember that a pure complex triangulates the convex hull of its points. Each
+facet of the convex hull is adjacent to one finite simplex and one infinite
+simplex. In fact there is a bijection between the infinite simplices and the
+facets of the convex hull. So, in order to traverse the convex hull facets,
+there are (at least) two possibilities:
+
+The first is to iterate over the simplices of the complex and check if they
+are infinite or not:
+
+\begin{ccExampleCode}
+Pure_complex pc;
+
+// ... insert points in the pure complex here.
+
+typedef Pure_complex::Simplex_iterator Simplex_iterator;
+typedef Pure_complex::Facet Facet;
+
+for( Simplex_iterator sit = pc.simplices_begin(); sit != pc.simplices_end(); ++sit )
+{
+    if( pc.is_finite(sit) )
+        continue;
+    Facet ft(sit, 0); // |ft| is a facet of the convex hull
+}
+\end{ccExampleCode}
+(\textbf{Remark}: the code example above will not compile unless you provide
+the missing \ccc{typedef}s and variables declarations.)
+
+A second possibility is to ask the pure complex to gather all the simplices
+incident to the infinite vertex: they form precisely the set of infinite
+simplices:
+
+\begin{ccExampleCode}
+Pure_complex pc;
+
+// ... insert points in the pure complex here.
+
+typedef Pure_complex::Simplex_handle Simplex_handle;
+typedef Pure_complex::Facet Facet;
+typedef std::vector<Simplex_handle> Simplices;
+
+Simplices infinite_simplices;
+std::back_insert_iterator<Simplices> out(infinite_simplices);
+
+pc.gather_incident_simplices(pc.infinite_vertex(), out);
+
+for( Simplices::iterator sit = infinite_simplices.begin(); sit != infinite_simplices.end(); ++sit )
+{
+    Facet ft(*sit, 0); // |ft| is a facet of the convex hull
+}
+\end{ccExampleCode}
+(\textbf{Remark}: the code example above will not compile unless you provide
+the missing \ccc{typedef}s and variables declarations.)
+
+One important difference between the two examples above is that the first uses
+\emph{little} memory but traverses \emph{all} the simplices, while the second
+visits \emph{only} the infinite simplices but stores handles to them into a
+\emph{potentially big} array.
+
+% - - - - - - - - - - - - - - - - - - - - - - - - - - - - - DELAUNAY COMPLEXES
+
+\section{Delaunay complexes}%and regular complexes}
+
+The class \ccc{CGAL::Delaunay_complex<DCTraits, PCDS>} derives from
+\ccc{CGAL::Pure_complex<PCTraits, PCDS>} and adds further constraints to a
+pure complex, in that all its simplices must have the so-called
+\textbf{Delaunay} or \textbf{empty-ball} property: the interior of a ball
+circumscribing any simplex of a Delaunay simplex must be free from any vertex
+of the complex.
+
+The \textbf{circumscribing sphere} of a simplex \ccc{s} is the smallest sphere
+touching all vertices of the simplex. A pure complex triangulating the convex
+hull of a finite point set has the Delaunay (or empty-ball) property if all
+its simplices have the Delaunay (or empty-ball) property.
+
+Informally, a finite simplex has the Delaunay (or empty-ball) property---with
+respect to the complex---if no point of the complex lies in the interior of
+its circumscribing sphere.
+
+When a new point \ccc{p} is inserted into a Delaunay complex, the set of
+finite simplices whose circumscribing sphere contains \ccc{p} are said to
+\textbf{be in conflict} with point \ccc{p}. The set of simplices that are in
+conflict with \ccc{p} form the \textbf{conflict zone}. That conflict zone is
+augmented with the infinite simplices whose finite facet does not lie
+anymore on the convex hull of the complex (with \ccc{p} added). The simplices
+in the conflict zone are removed, leaving a hole that contains \ccc{p}. That
+hole is then re-triangulated in a ``star shape'' centered at \ccc{p}.
+
+% - - - - - - - - - - - - - - - - - - - - - - - - - DELAUNAY IMPLEMENTATION
+
+\subsection{Implementation}
+
+The class \ccc{CGAL::Delaunay_complex<DCTraits, PCDS>} derives from
+\ccc{CGAL::Pure_complex<DCTraits, PCDS>}. It thus stores a model \ccc{PCDS} of
+the concept \ccc{PureComplexDataStructure} which is instanciated with a vertex
+type that stores a geometric point, and a simplex type that allows the
+retrieval of the point of its vertices.
+
+The template parameter \ccc{DCTraits} must be a model of the concept
+\ccc{DelaunayComplexTraits} which provides the geometric \ccc{Point} type as
+well as various geometric predicates used by the \ccc{Delaunay_complex} class.
+The concept \ccc{DelaunayComplexTraits} refines the concept
+\ccc{PureComplexTraits} by requiring a few other geometric predicate necessary
+for the computation of Delaunay complexes.
+
+% - - - - - - - - - - - - - - - - - - - - - - - - - - - - DELAUNAY EXAMPLES
+
+\subsection{Examples}
+
+\paragraph{Access to the conflict zone and created simplices during point
+insertion}
+
+When using a simplex type containing additional custom information, it may be
+useful to get an efficient access to the simplices that are going to be erased
+upon the insertion of a new point in the Delaunay complex, and to the newly
+created simplices. The code example below shows how one can have efficient
+access to both the conflict zone and the created simplices, while still
+retaining an efficient update of the Delaunay complex.
+
+\textbf{Remark}: the code below will not compile unless you provide the
+missing \ccc{typedef}s and variables declarations.
+
+\begin{ccExampleCode}
+Delaunay_complex dc;
+Vertex_handle v;
+// Conflict zone in dimension 0 or 1 are pretty boring.
+assert( 2 <= dc.current_dimension() );
+
+// We insert the points stored in the vector |points|.
+for( pit = points.begin(); pit != points.end(); ++pit )
+{
+    Face           f = dc.make_empty_face();
+    Facet          ft;
+    Simplex_handle s;
+    Locate_type    lt;
+
+    s = dc.locate(*pit, lt, f, ft, v);
+
+    if(    lt == Delaunay_complex::ON_VERTEX
+        || lt == Delaunay_complex::OUTSIDE_AFFINE_HULL )
+    {
+        // There is, a priori, no simplex of interest here.
+        v = pc.insert(*pit, lt, f, ft, s);
+    }
+    else
+    {
+        typedef std::vector<Simplex_handle> Simplices;
+        Simplices conflict_zone, new_simplices;
+        std::back_insert_iterator<Simplices> out(conflict_zone);
+        Facet ftc = dc.compute_conflict_zone(*pit, s, out);
+        /*----------------------------------------------------\
+        | Here, do something with the conflict zone simplices |
+        | stored in |conflict_zone|.                          |
+        | DO NOT MODIFY the vector |conflict_zone|.           |
+        \----------------------------------------------------*/
+        out = std::back_inserter(new_simplices);
+        v = dc.insert_in_hole(p, conflict_zone.begin(), conflict_zone.end(), ftc, out);
+        /*-----------------------------------------------------\
+        |  Here, do something with the newly created simplices |
+        |  stored in |new_simplices|.                          |
+        \-----------------------------------------------------*/
+    }
+}
+\end{ccExampleCode}
+
+\section{Design and Implementation History}
+
+This package is heavily inspired by the works of Michael Seel
+(\ccc{Kernel_d}), Monique Teillaud and Sylvain Pion (\ccc{Triangulation_3})
+and Mariette Yvinec (\ccc{Triangulation_2}).
+It is written by Samuel Hornus.
+}

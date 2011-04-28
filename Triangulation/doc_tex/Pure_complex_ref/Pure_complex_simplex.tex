@@ -1,0 +1,75 @@
+\begin{ccRefClass}{Pure_complex_simplex<PCTraits, Data, PCDSSimplex>}
+
+\ccDefinition
+
+The class \ccRefName\ is a model of the concept \ccc{PureComplexSimplex}. It
+is used by default for representing simplices in the class
+\ccc{Pure_complex<PCTraits, PCDS>}.
+
+A \ccRefName\ stores handles to the vertices of the simplex as well as handles
+to its neighboring simplices.
+
+\ccInclude{CGAL/Pure_complex_simplex.h}
+
+\ccParameters
+
+\ccc{PCTraits} must be a model of the concept \ccc{PureComplexTraits}. It
+provides geometric types and predicates for use in the
+\ccc{Pure_complex<PCTraits, PCDS>} class.
+
+\ccc{Data} is an optional type of data to be stored in the vertex class. The
+class template \ccRefName\ accepts that no second parameter be specified. In
+this case, \ccc{Data} defaults to \ccc{CGAL::No_vertex_data}.
+
+\ccc{PCDSSimplex} must be a model of the concept \ccc{PureComplexDSSimplex}.
+The class template \ccRefName\ accepts that no third parameter be specified.
+It also accepts the tag \ccc{CGAL::Default} as third parameter. In both
+cases, \ccc{PCDSSimplex} defaults to \ccc{CGAL::Pure_complex_ds_simplex<>}.
+
+\ccInheritsFrom
+
+\ccc{PCDSSimplex} (the third template parameter)
+
+\ccIsModel
+
+\ccc{PureComplexSimplex}
+
+Additionally, the class \ccRefName\ also provides the following type,
+constructors and methods:
+
+\ccTypes
+
+\ccTypedef{typedef Data Data;}{The type of the additional data stored in the
+simplex. If you read a \ccRefName\ from a stream (a file) or write a \ccRefName
+to a stream, then streaming operators \ccc{<<} and \ccc{>>} must be provided for this
+type.}
+
+\ccCreation
+\ccCreationVariable{s}
+
+\ccConstructor{template< typename T> Pure_complex_simplex(int dmax, const T
+& t);}{Sets the maximum possible dimension of the simplex to \ccc{dmax}.
+The parameter \ccc{t} is passed to the \ccc{Data} constructor.}
+
+\ccHeading{Data access}
+
+\ccMethod{const Data & data() const;}{Returns a reference to the stored data.}
+\ccGlue\ccMethod{Data & data();}{Returns a reference to the stored data.}
+
+\ccHeading{Input/Output}
+
+\ccFunction{istream & operator>>(istream & is, Pure_complex_simplex & v);}%
+{Inputs the non-combinatorial information given by the simplex, \emph{i.e.},
+the point and other possible information. The data of type \ccc{Data} is
+\textbf{also} read.}
+
+\ccFunction{ostream & operator<<(ostream & os, const Pure_complex_simplex & v);}%
+{Outputs the non-combinatorial information given by the simplex, \emph{i.e.},
+the point and other possible information. The data of type \ccc{Data} is
+\textbf{also} written.}
+
+\ccSeeAlso
+
+\ccc{Pure_complex_vertex<PCTraits, Data, PCDSVertex>}
+
+\end{ccRefClass}
