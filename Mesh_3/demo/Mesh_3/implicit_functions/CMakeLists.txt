@@ -3,6 +3,7 @@
 project( Mesh_3_implicit_functions )
 
 cmake_minimum_required(VERSION 2.6.2)
+cmake_policy(VERSION 2.8.4)
 
 # Include directory of demo includes
 include_directories( BEFORE ${Mesh_3_implicit_functions_BINARY_DIR} ../include )

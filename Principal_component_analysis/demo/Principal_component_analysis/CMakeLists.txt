@@ -3,6 +3,7 @@
 project( PCA_demo )
 
 cmake_minimum_required(VERSION 2.6.2)
+cmake_policy(VERSION 2.8.4)
 
 foreach(INCDIR ../../include ../../../STL_Extension/include ../../../GraphicsView/include ../../../filtered_kernel/include )
   if(EXISTS "${CMAKE_CURRENT_SOURCE_DIR}/${INCDIR}")

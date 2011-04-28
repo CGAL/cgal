@@ -3,6 +3,7 @@
 project( Polyhedron )
 
 cmake_minimum_required(VERSION 2.6.2)
+cmake_policy(VERSION 2.8.4)
 
 #option(POLYHEDRON_DEMO_ENABLE_FORWARD_DECL "In the Polyhedron demo, enable " OFF)
 #mark_as_advanced(POLYHEDRON_DEMO_ENABLE_FORWARD_DECL)

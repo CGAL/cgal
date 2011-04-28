@@ -4,6 +4,7 @@
 project( Surface_mesher_example )
 
 cmake_minimum_required(VERSION 2.6.2)
+cmake_policy(VERSION 2.8.4)
 
 include_directories(../../include)
 

@@ -5,6 +5,7 @@
 project( Convex_hull_d_example )
 
 cmake_minimum_required(VERSION 2.6.2)
+cmake_policy(VERSION 2.8.4)
 
 find_package(CGAL COMPONENTS Core )
 

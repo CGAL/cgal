@@ -4,6 +4,7 @@
 project( Periodic_3_triangulation_3_demo ) 
 
 cmake_minimum_required(VERSION 2.6.2)
+cmake_policy(VERSION 2.8.4)
 
 # Find CGAL
 find_package(CGAL)

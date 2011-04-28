@@ -3,6 +3,7 @@
 project( Kinetic_data_structures_demo )
 
 cmake_minimum_required(VERSION 2.6.2)
+cmake_policy(VERSION 2.8.4)
 
 find_package(CGAL COMPONENTS Qt3 Core)
 

@@ -3,6 +3,7 @@ set ( prj Surface_mesher )
 project ( ${prj} )
 
 cmake_minimum_required(VERSION 2.6.2)
+cmake_policy(VERSION 2.8.4)
 
 set(PACKAGE_ROOT ../..)
 

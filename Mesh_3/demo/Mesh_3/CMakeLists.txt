@@ -3,6 +3,7 @@
 project( Mesh_3_demo )
 
 cmake_minimum_required(VERSION 2.6.2)
+cmake_policy(VERSION 2.8.4)
 
 #option(MESH_3_DEMO_ENABLE_FORWARD_DECL "In the Mesh_3 demo, enable " OFF)
 #mark_as_advanced(MESH_3_DEMO_ENABLE_FORWARD_DECL)

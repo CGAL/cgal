@@ -4,6 +4,7 @@
 project( Surface_mesh_parameterization_example )
 
 cmake_minimum_required(VERSION 2.6.2)
+cmake_policy(VERSION 2.8.4)
 
 # Require packages new or improved since CGAL 3.4
 include_directories (BEFORE ../../../Installation/include/)

@@ -1,4 +1,5 @@
 cmake_minimum_required(VERSION 2.6.2)
+cmake_policy(VERSION 2.8.4)
 
 
 #path where to build libraries

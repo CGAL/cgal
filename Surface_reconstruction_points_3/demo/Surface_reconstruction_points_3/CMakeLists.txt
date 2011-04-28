@@ -3,6 +3,7 @@
 project( Point_set_demo )
 
 cmake_minimum_required(VERSION 2.6.2)
+cmake_policy(VERSION 2.8.4)
 
 #option(POINT_SET_DEMO_ENABLE_FORWARD_DECL "In the Point Set demo, enable " OFF)
 #mark_as_advanced(POINT_SET_DEMO_ENABLE_FORWARD_DECL)

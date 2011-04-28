@@ -4,6 +4,7 @@
 project (Triangulation_demo_3)
 
 cmake_minimum_required(VERSION 2.6.2)
+cmake_policy(VERSION 2.8.4)
 
 find_package(CGAL  COMPONENTS Qt4)
 include(${CGAL_USE_FILE})

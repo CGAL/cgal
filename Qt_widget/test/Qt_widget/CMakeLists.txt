@@ -3,6 +3,7 @@
 project( Qt_widget_test ) 
 
 cmake_minimum_required(VERSION 2.6.2)
+cmake_policy(VERSION 2.8.4)
 
 find_package(CGAL QUIET COMPONENTS Qt3 )
 include( ${CGAL_USE_FILE} )
