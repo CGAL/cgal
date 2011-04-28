@@ -1,6 +1,7 @@
 #include <CGAL/internal/Combination_enumerator.h>
 #include <CGAL/point_generators_d.h>
-#include <CGAL/Simple_cartesian_d.h>
+#include <CGAL/Cartesian_d.h> // this is for Old_kernel_d
+//#include <CGAL/Simple_cartesian_d.h> // this is for New_kernel_d
 #include <CGAL/Filtered_kernel_d.h>
 #include <CGAL/Delaunay_complex.h>
 #include <CGAL/algorithm.h>
@@ -78,7 +79,8 @@ void test(const int D, const int d, const int N, bool no_transform)
             for( int j = 0; j < d; ++j )
                 coords[i] += (*pit)[j] * aff[j][i];
         }
-        points.push_back(Point(coords));
+        points.push_back(Point(coords)); // this is for New_kernel_d
+        points.push_back(Point(D, coords.begin(), coords.end())); // this is for Old_kernel_d
     }
     assert( dc.is_valid() );
     dc.insert(points.begin(), points.end());
@@ -106,7 +108,8 @@ template< int D >
 void go(const int N, const int nb_trials)
 {
     typedef double RT;
-    typedef CGAL::Simple_cartesian_d<RT, D> K;
+    typedef CGAL::Cartesian_d<RT> K; // this is for Old_kernel_d
+    //typedef CGAL::Simple_cartesian_d<RT, D> K; // this is for New_kernel_d
     typedef CGAL::Filtered_kernel_d<K> FK;
     typedef CGAL::Delaunay_complex<FK> Triangulation;
     for( int d = 0; d <= D; ++d )
@@ -130,9 +133,9 @@ int main(int argc, char **argv)
         N = atoi(argv[1]);
     if( argc > 2 )
         nb_trials = atoi(argv[2]);
-    go<1>(N, nb_trials);
-    go<2>(N, nb_trials);
-    go<3>(N, nb_trials);
+    //go<1>(N, nb_trials);
+    //go<2>(N, nb_trials);
+    //go<3>(N, nb_trials);
     go<4>(N, nb_trials);
     go<5>(N, nb_trials);
     cerr << std::endl;
