@@ -29,8 +29,9 @@ struct Dereference_traits_2 {
 typedef CGAL::Exact_predicates_inexact_constructions_kernel    K;
 typedef K::Point_2                                             Point;
 typedef std::vector<Point>::iterator                           Point_it;
-typedef CGAL::Hilbert_sort_2<Dereference_traits_2<K, Point_it> > H_sort;
-typedef CGAL::Multiscale_sort<H_sort>                            My_sort;
+typedef CGAL::Hilbert_sort_2<Dereference_traits_2<K, Point_it>,
+			    CGAL::Hilbert_sort_median_policy > H_sort;
+typedef CGAL::Multiscale_sort<H_sort>                          My_sort;
 int main ()
 {
   My_sort                       my_sort;

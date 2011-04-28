@@ -34,7 +34,7 @@ template <class K>
   : public Hilbert_sort_median_2<K>
 {
  public:
- Hilbert_sort_2 (const K &k , std::ptrdiff_t limit=1 )
+  Hilbert_sort_2 (const K &k=K() , std::ptrdiff_t limit=1 )
    : Hilbert_sort_median_2<K> (k,limit)
     {}
 };
@@ -44,7 +44,7 @@ template <class K>
   : public Hilbert_sort_middle_2<K>
 {
  public:
- Hilbert_sort_2 (const K &k , std::ptrdiff_t limit=1 )
+ Hilbert_sort_2 (const K &k=K() , std::ptrdiff_t limit=1 )
    : Hilbert_sort_middle_2<K> (k,limit)
     {}
 };

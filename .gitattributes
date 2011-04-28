@@ -3313,7 +3313,6 @@ Spatial_sorting/doc_tex/Spatial_sorting_ref/Hilbert_sort_d.tex -text
 Spatial_sorting/doc_tex/Spatial_sorting_ref/SpatialSortingTraits_d.tex -text
 Spatial_sorting/dont_submit -text
 Spatial_sorting/examples/Spatial_sorting/data/input.cin -text
-Spatial_sorting/examples/Spatial_sorting/example_delaunay_2.cmd -text
 Spatial_sorting/examples/Spatial_sorting/hilbert.cpp -text
 Spatial_sorting/examples/Spatial_sorting/hilbert_policies.cpp -text
 Spatial_sorting/examples/Spatial_sorting/small_example_delaunay_2.cpp -text
