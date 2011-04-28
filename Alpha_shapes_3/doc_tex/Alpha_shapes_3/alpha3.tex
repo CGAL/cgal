@@ -319,8 +319,8 @@ requires constructions (squared radius of simplices) while the
 class \ccc{CGAL::Fixed_alpha_shape_3<Dt>} uses only predicates.
 This implies that a certified construction of one (several)
 alpha-shape, using the \ccc{CGAL::Alpha_shape_3<Dt,ExactAlphaComparisonTag>} requires a kernel
-with exact predicates and exact constructions while using a kernel 
-with exact predicates is sufficient for the class \ccc{CGAL::Fixed_alpha_shape_3<Dt>}.
+with exact predicates and exact constructions (or setting \ccc{ExactAlphaComparisonTag} to \ccc{CGAL::Tag_true})
+while using a kernel with exact predicates is sufficient for the class \ccc{CGAL::Fixed_alpha_shape_3<Dt>}.
 This makes the class \ccc{CGAL::Fixed_alpha_shape_3<Dt>} even more efficient in this setting.
 In addition, note that the \ccc{Fixed} version is the only of the
 two that supports incremental insertion and removal of points.
