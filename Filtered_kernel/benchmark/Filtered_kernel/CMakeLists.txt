@@ -4,7 +4,7 @@
 
 project( Filtered_kernel_test )
 
-CMAKE_MINIMUM_REQUIRED(VERSION 2.6.2)
+cmake_minimum_required(VERSION 2.6.2)
 
 add_executable(bench_simple_comparisons bench_simple_comparisons.cpp)
 

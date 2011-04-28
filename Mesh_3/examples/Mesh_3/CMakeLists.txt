@@ -4,7 +4,7 @@
 
 project( Mesh_3_example )
 
-CMAKE_MINIMUM_REQUIRED(VERSION 2.6.2)
+cmake_minimum_required(VERSION 2.6.2)
 
 include_directories(../../include)
 include_directories(../../../Triangulation_3/include)

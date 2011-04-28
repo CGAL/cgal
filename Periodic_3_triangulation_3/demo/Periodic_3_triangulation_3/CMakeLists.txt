@@ -3,7 +3,7 @@
 
 project( Periodic_3_triangulation_3_demo ) 
 
-CMAKE_MINIMUM_REQUIRED(VERSION 2.6.2)
+cmake_minimum_required(VERSION 2.6.2)
 
 # Find CGAL
 find_package(CGAL)

@@ -2,7 +2,7 @@
 
 project( Point_set_processing_3_example )
 
-CMAKE_MINIMUM_REQUIRED(VERSION 2.6.2)
+cmake_minimum_required(VERSION 2.6.2)
 
 # Require packages new or improved since CGAL 3.4
 include_directories (BEFORE ../../../Installation/include/)
