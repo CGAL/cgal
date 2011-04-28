@@ -26,6 +26,7 @@
 
 #include <CGAL/basic.h>
 #include <CGAL/enum.h>
+#include <CGAL/Referenced_argument.h>
 
 #undef CGAL_KD_TRACE
 #undef CGAL_KD_TRACEN
@@ -212,6 +213,91 @@ Orientation operator()(ForwardIterator first, ForwardIterator last)
 }
 };
 
+/* This predicates tests the orientation of (k+1) points that span a
+ * k-dimensional affine subspace of the ambiant d-dimensional space. We
+ * greedily search for an orthogonal projection on a k-dim axis aligned
+ * subspace on which the (full k-dim) predicates answers POSITIVE or NEGATIVE.
+ * If no such subspace is found, return COPLANAR.
+ * IMPORTANT TODO: Current implementation is VERY bad with filters: if one
+ * determinant fails in the filtering step, then all the subsequent ones wil be
+ * in exact arithmetic :-(
+ * TODO: store the axis-aligned subspace that was found in order to avoid
+ * re-searching for it for subsequent calls to operator()
+ */
+template <class R>
+struct Coaffine_orientationCd
+{ 
+    typedef typename R::Point_d Point_d;
+    typedef typename R::LA LA;
+    typedef Orientation		result_type;
+    // typedef internal::stateful_predicate_tag predicate_category;
+    typedef std::vector<int>	Axes;
+    struct State
+    {
+        Axes axes_;
+        bool axes_found_;
+        State(bool b) : axes_(), axes_found_(b) {}
+    };
+    mutable State state_;
+    //typedef Referenced_argument<std::vector<int> > Axes;
+    //typedef Referenced_argument<bool> Ref_bool;
+
+    Coaffine_orientationCd() : state_(false) {}
+    State & state()    {        return state_;    }
+    const State & state() const   {        return state_;    }
+
+    template <class ForwardIterator>
+    result_type operator()(ForwardIterator first, ForwardIterator last) const
+    {
+        TUPLE_DIM_CHECK(first,last,Coaffine_orientation_d);
+        // |k| is the dimension of the affine subspace
+        const int k = std::distance(first,last) - 1;
+        // |d| is the dimension of the ambiant space
+        int d = first->dimension();
+        CGAL_assertion_msg(k <= d,
+                "Coaffine_orientation_d: needs less that (first->dimension() + 1) points.");
+        if( false == state_.axes_found_ )
+        {
+			state_.axes_.resize(d + 1);
+			// We start by choosing the first |k| axes to define a plane of projection
+            int i = 0;
+            for(; i < k;     ++i) state_.axes_[i] = i;
+            for(; i < d + 1; ++i) state_.axes_[i] = -1;
+        }
+        typename ForwardIterator::value_type l = *(first + k);
+        //ForwardIterator l = first + k;
+        typename LA::Matrix M(k); // quadratic
+        while( true )
+        {
+            for (int i = 0; i < k; ++i)
+            {
+                typename ForwardIterator::value_type fpi = *(first + i);
+                for (int j = 0; j < k; ++j) 
+                    M(i,j) = fpi.cartesian(state_.axes_[j]) -
+                        l.cartesian(state_.axes_[j]);
+            }
+            Orientation o = Orientation(LA::sign_of_determinant(M));
+            if( ( o != COPLANAR ) || state_.axes_found_ )
+            {
+                state_.axes_found_ = true;
+                return o;
+            }
+
+            // for generating all possible unordered k-uple in the range
+            // [0 .. d-1]... we go to the next unordered k-uple
+            int index = k - 1;
+            while( (index >= 0) && (state_.axes_[index] == d - k + index) )
+                --index;
+            if( index < 0 )
+                break;
+            ++state_.axes_[index];
+            for(int i = 1; i < k - index; ++i)
+                state_.axes_[index + i] = state_.axes_[index] + i;
+        }
+        return COPLANAR;
+    }
+};
+
 template <class R>
 struct Side_of_oriented_sphereCd { 
 typedef typename R::Point_d Point_d;
@@ -245,6 +331,128 @@ Oriented_side operator()(ForwardIterator first, ForwardIterator last,
   M(d,d) = Sum;
   return - LA::sign_of_determinant(M);
 }
+};
+
+
+/* This predicates takes k+1 points defining a k-sphere in d-dim space, and a
+ * point |x| (assumed to lie in the same affine subspace spanned by the
+ * k-sphere). It tests wether the point |x| lies in the positive or negative
+ * side of the k-sphere.
+ * The parameter |axis| contains the indices of k axis of the canonical base of
+ * R^d, on which the affine subspace projects homeomorphically. We can thus
+ * "complete" the k+1 points with d-k other points along the "non-used" axes
+ * and then call the usual Side_of_oriented_sphereCd predicate.
+ */
+template < class R >
+struct Side_of_oriented_subsphereCd
+{
+	typedef typename R::Point_d									Point;
+	typedef typename R::LA										LA;
+	typedef typename R::FT										FT;
+	typedef Oriented_side										result_type;
+    // typedef internal::stateless_predicate_tag predicate_category;
+
+	typedef typename R::Side_of_oriented_sphere_d				Side_of_oriented_sphere;
+	typedef typename R::Coaffine_orientation_d					Coaffine_orientation;
+	typedef typename Coaffine_orientation::Axes					Axes;
+
+	// DATA MEMBERS
+	mutable Coaffine_orientation ori_;
+	mutable typename LA::Matrix M; // a square matrix of size (D+1)x(D+1)
+	mutable unsigned int adjust_sign_;
+
+	Side_of_oriented_subsphereCd()
+	: ori_(R().coaffine_orientation_d_object()), M(), adjust_sign_(0) { }
+
+	template < class ForwardIterator >
+	result_type operator()(ForwardIterator first, ForwardIterator last, const Point & q) const
+	{
+		const int d = first->dimension();
+		const int k = std::distance(first, last) - 1; // dimension of affine subspace
+		CGAL_assertion_msg( k <= d, "too much points in range.");
+		if( k == d )
+		{
+			Side_of_oriented_sphere sos;
+			return sos(first, last, q); // perhaps slap user on the back of the head here?
+		}
+        if( M.row_dimension() < d+1 )
+            M = typename LA::Matrix(d+1);
+		if( ! ori_.state().axes_found_ )
+		{
+			Orientation o = ori_(first, last);
+            // FIXME: why these two lines below? I would remove them [sam]
+			if( COPLANAR == o )
+				return ON_ORIENTED_BOUNDARY;
+			CGAL_assertion( o == POSITIVE );
+			// Now we can setup the fixed part of the matrix:
+			int a(0);
+			int j(k);
+			typename Axes::iterator axis = ori_.state().axes_.begin();
+			while( j < d )
+			{
+				while( a  == *axis )
+				{
+					++a; ++axis;
+				}
+	            adjust_sign_ = ( adjust_sign_ + j + a ) % 2;
+				int i(0);
+				for( ; i < a; ++i )
+					M(i, j) = FT(0);
+				M(i++, j) = FT(1);  // i.e.: M(a, j) = 1
+				for( ; i < d; ++i )
+					M(i, j) = FT(0);
+				++j;
+				++a;
+			}
+		}
+		typename ForwardIterator::value_type p1 = *first;
+		FT SumFirst(0); // squared length of first subsphere point, seen as vector.
+		for( int i = 0; i < d; ++i )
+		{
+			FT ci = p1.cartesian(i);
+			SumFirst += ci * ci;
+		}
+		int j(0); // iterates overs columns/subsphere points
+		++first;
+		while( first != last )
+		{
+			typename ForwardIterator::value_type v = *first;
+			FT Sum = FT(0);
+			for( int i = 0; i < d; ++i )
+			{
+				FT ci = v.cartesian(i);
+				M(i, j) = ci - p1.cartesian(i);
+				Sum += ci * ci;
+			}
+			M(d, j) = Sum - SumFirst;
+			++first;
+			++j;
+		}
+		int a(0);
+		typename Axes::iterator axis = ori_.state().axes_.begin();
+		while( j < d )
+		{
+			while( a  == *axis )
+			{
+				++a; ++axis;
+			}
+			M(d, j) = FT(1) + FT(2) * p1.cartesian(a);
+			++j;
+			++a;
+		}
+		FT Sum = FT(0);
+		for( int i = 0; i < d; ++i )
+		{
+			FT ci = q.cartesian(i);
+			M(i, d) = ci - p1.cartesian(i);
+			Sum += ci * ci;
+		}
+		M(d, d) = Sum - SumFirst;
+		if( 0 == ( adjust_sign_ % 2 ) )
+			return Oriented_side( - LA::sign_of_determinant( M ) );
+		else
+			return Oriented_side(   LA::sign_of_determinant( M ) );
+	}
 };
 
 template <class R>

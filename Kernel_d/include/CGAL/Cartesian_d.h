@@ -242,7 +242,9 @@ public:
   typedef Position_on_lineCd<Self> Position_on_line_d;
   typedef Barycentric_coordinatesCd<Self> Barycentric_coordinates_d;
   typedef OrientationCd<Self> Orientation_d;
+  typedef Coaffine_orientationCd<Self> Coaffine_orientation_d;
   typedef Side_of_oriented_sphereCd<Self> Side_of_oriented_sphere_d;
+  typedef Side_of_oriented_subsphereCd<Self> Side_of_oriented_subsphere_d;
   typedef Side_of_bounded_sphereCd<Self> Side_of_bounded_sphere_d;
   typedef Contained_in_simplexCd<Self> Contained_in_simplex_d;
   typedef Contained_in_affine_hullCd<Self> Contained_in_affine_hull_d;
@@ -274,8 +276,12 @@ public:
   { return Barycentric_coordinates_d(); }
   Orientation_d orientation_d_object() const
   { return Orientation_d(); }
+  Coaffine_orientation_d coaffine_orientation_d_object() const
+  { return Coaffine_orientation_d(); }
   Side_of_oriented_sphere_d side_of_oriented_sphere_d_object() const
   { return Side_of_oriented_sphere_d(); }
+  Side_of_oriented_subsphere_d side_of_oriented_subsphere_d_object() const
+  { return Side_of_oriented_subsphere_d(); }
   Side_of_bounded_sphere_d side_of_bounded_sphere_d_object() const
   { return Side_of_bounded_sphere_d(); }
   Contained_in_simplex_d contained_in_simplex_d_object() const
