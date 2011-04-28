@@ -12,43 +12,43 @@
 // This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
 // WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
 //
-// $URL$
-// $Id$
+// $URL: svn+ssh://odevil@scm.gforge.inria.fr/svn/cgal/trunk/Spatial_sorting/include/CGAL/Hilbert_sort_d.h $
+// $Id: Hilbert_sort_d.h 51456 2009-08-24 17:10:04Z spion $
 //
 // Author(s)     : Olivier Devillers
 
-#ifndef CGAL_HILBERT_SORT_2_H
-#define CGAL_HILBERT_SORT_2_H
+#ifndef CGAL_HILBERT_SORT_d_H
+#define CGAL_HILBERT_SORT_d_H
 
 #include <CGAL/Hilbert_policy_tags.h>
-#include <CGAL/Hilbert_sort_median_2.h>
-#include <CGAL/Hilbert_sort_middle_2.h>
+#include <CGAL/Hilbert_sort_median_d.h>
+#include <CGAL/Hilbert_sort_middle_d.h>
 
 namespace CGAL {
 
 template <class K,  class Hilbert_policy >
-  class Hilbert_sort_2;
+  class Hilbert_sort_d;
 
 template <class K>  
-  class Hilbert_sort_2<K, Hilbert_sort_median_policy >
-  : public Hilbert_sort_median_2<K>
+  class Hilbert_sort_d<K, Hilbert_sort_median_policy >
+  : public Hilbert_sort_median_d<K>
 {
  public:
- Hilbert_sort_2 (const K &k , std::ptrdiff_t limit=1 )
-   : Hilbert_sort_median_2<K> (k,limit)
+ Hilbert_sort_d (const K &k , std::ptrdiff_t limit=1 )
+   : Hilbert_sort_median_d<K> (k,limit)
     {}
 };
 
 template <class K>
-  class Hilbert_sort_2<K, Hilbert_sort_middle_policy >
-  : public Hilbert_sort_middle_2<K>
+  class Hilbert_sort_d<K, Hilbert_sort_middle_policy >
+  : public Hilbert_sort_middle_d<K>
 {
  public:
- Hilbert_sort_2 (const K &k , std::ptrdiff_t limit=1 )
-   : Hilbert_sort_middle_2<K> (k,limit)
+ Hilbert_sort_d (const K &k , std::ptrdiff_t limit=1 )
+   : Hilbert_sort_middle_d<K> (k,limit)
     {}
 };
 
 } // namespace CGAL
 
-#endif//CGAL_HILBERT_SORT_2_H
+#endif//CGAL_HILBERT_SORT_d_H

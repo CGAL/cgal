@@ -3300,12 +3300,33 @@ Spatial_searching/doc_tex/Spatial_searching/windowQuery.png -text
 Spatial_searching/include/CGAL/internal/K_neighbor_search.h -text
 Spatial_searching/include/CGAL/internal/bounded_priority_queue.h -text
 Spatial_searching/test/Spatial_searching/Compare_methods.cpp -text
+Spatial_sorting/doc_tex/Spatial_sorting/fig/Hilbert-median.gif -text
+Spatial_sorting/doc_tex/Spatial_sorting/fig/Hilbert-median.pdf -text
+Spatial_sorting/doc_tex/Spatial_sorting/fig/Hilbert-middle.gif -text
+Spatial_sorting/doc_tex/Spatial_sorting/fig/Hilbert-middle.pdf -text
+Spatial_sorting/doc_tex/Spatial_sorting/fig/Hilbert8.gif -text
+Spatial_sorting/doc_tex/Spatial_sorting/fig/Hilbert8.pdf -text
 Spatial_sorting/doc_tex/Spatial_sorting/fig/hilbert.png -text
 Spatial_sorting/doc_tex/Spatial_sorting/fig/hilbertLarge.jpg -text
+Spatial_sorting/doc_tex/Spatial_sorting_ref/Hilbert_policy_tags.tex -text
+Spatial_sorting/doc_tex/Spatial_sorting_ref/Hilbert_sort_d.tex -text
+Spatial_sorting/doc_tex/Spatial_sorting_ref/SpatialSortingTraits_d.tex -text
 Spatial_sorting/dont_submit -text
 Spatial_sorting/examples/Spatial_sorting/data/input.cin -text
 Spatial_sorting/examples/Spatial_sorting/example_delaunay_2.cmd -text
+Spatial_sorting/examples/Spatial_sorting/hilbert.cpp -text
+Spatial_sorting/examples/Spatial_sorting/hilbert_policies.cpp -text
+Spatial_sorting/examples/Spatial_sorting/small_example_delaunay_2.cpp -text
 Spatial_sorting/examples/Spatial_sorting/sort_indices.cmd -text
+Spatial_sorting/include/CGAL/Hilbert_policy_tags.h -text
+Spatial_sorting/include/CGAL/Hilbert_sort_d.h -text
+Spatial_sorting/include/CGAL/Hilbert_sort_median_2.h -text
+Spatial_sorting/include/CGAL/Hilbert_sort_median_3.h -text
+Spatial_sorting/include/CGAL/Hilbert_sort_median_d.h -text
+Spatial_sorting/include/CGAL/Hilbert_sort_middle_2.h -text
+Spatial_sorting/include/CGAL/Hilbert_sort_middle_3.h -text
+Spatial_sorting/include/CGAL/Hilbert_sort_middle_base.h -text
+Spatial_sorting/include/CGAL/Hilbert_sort_middle_d.h -text
 Straight_skeleton_2/demo/Straight_skeleton_2/data/complex_0.poly -text svneol=unset#application/octet-stream
 Straight_skeleton_2/demo/Straight_skeleton_2/data/complex_1.poly -text svneol=unset#application/octet-stream
 Straight_skeleton_2/demo/Straight_skeleton_2/data/complex_2.poly -text svneol=unset#application/octet-stream

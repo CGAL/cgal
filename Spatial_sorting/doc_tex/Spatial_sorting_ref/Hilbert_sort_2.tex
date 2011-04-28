@@ -2,9 +2,11 @@
 % | Reference manual page: Hilbert_sort_2.tex
 % +------------------------------------------------------------------------+
 
-\begin{ccRefFunctionObjectClass}{Hilbert_sort_2<Traits>}
+\begin{ccRefFunctionObjectClass}{Hilbert_sort_2<Traits, PolicyTag>}
 \ccDefinition The function object \ccRefName\ sorts iterator ranges of
-\ccc{Traits::Point_2} along a Hilbert curve.
+\ccc{Traits::Point_2} along a Hilbert curve by recursively subdividing
+at the median
+or the middle depending on the \ccc{PolicyTag}.
 
 \ccRequirements \ccc{Traits} is a model for \ccc{SpatialSortingTraits}.
 
