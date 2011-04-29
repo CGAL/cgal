@@ -1,11 +1,15 @@
 project (CGAL_ImageIO)
    
-CMAKE_MINIMUM_REQUIRED(VERSION 2.4.5 FATAL_ERROR)
+# Minimal version of CMake:
+cmake_minimum_required(VERSION 2.6.2)
 
-set(CMAKE_ALLOW_LOOSE_LOOP_CONSTRUCTS true)
-  
-if ( COMMAND cmake_policy )
-  cmake_policy( SET CMP0003 NEW )  
+# Tested version:
+if("${CMAKE_MAJOR_VERSION}.${CMAKE_MINOR_VERSION}" VERSION_GREATER 2.6)
+  if("${CMAKE_MAJOR_VERSION}.${CMAKE_MINOR_VERSION}.${CMAKE_PATCH_VERSION}" VERSION_GREATER 2.8.3)
+    cmake_policy(VERSION 2.8.4)
+  else()
+    cmake_policy(VERSION 2.6)
+  endif()
 endif()
 
 if ( NOT CGAL_FOUND )   

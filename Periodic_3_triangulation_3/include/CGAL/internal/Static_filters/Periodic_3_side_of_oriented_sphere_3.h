@@ -98,17 +98,17 @@ public:
           double maxy = CGAL::abs(pty);
           double maxz = CGAL::abs(ptz);
 
-          double aqtx = CGAL::abs(aqtx);
-          double aqty = CGAL::abs(aqty);
-          double aqtz = CGAL::abs(aqtz);
+          double aqtx = CGAL::abs(qtx);
+          double aqty = CGAL::abs(qty);
+          double aqtz = CGAL::abs(qtz);
 
-          double artx = CGAL::abs(artx);
-          double arty = CGAL::abs(arty);
-          double artz = CGAL::abs(artz);
+          double artx = CGAL::abs(rtx);
+          double arty = CGAL::abs(rty);
+          double artz = CGAL::abs(rtz);
 
-          double astx = CGAL::abs(astx);
-          double asty = CGAL::abs(asty);
-          double astz = CGAL::abs(astz);
+          double astx = CGAL::abs(stx);
+          double asty = CGAL::abs(sty);
+          double astz = CGAL::abs(stz);
           
           if (maxx < aqtx) maxx = aqtx;
           if (maxx < artx) maxx = artx;

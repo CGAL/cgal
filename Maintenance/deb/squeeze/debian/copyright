@@ -9,7 +9,7 @@ version 2.1 or later (at your option), which can be found in
 /usr/share/common-licenses/LGPL-2.1.
 
 The package is not in main, but in non-free since parts of it are licensed
-under the QPL. This license is not DFSG-free, but it permits to autobuild
+under the QPL. This license is not DFSG-free, but it permits one to autobuild
 the package and to redistribute it in the non-free archive.
 
 
