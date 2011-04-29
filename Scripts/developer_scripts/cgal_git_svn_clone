@@ -104,9 +104,9 @@ fi
 ### Create repo
 
 echo "Create new directory $gitname"
-rm -fr $gitName
-mkdir $gitName
-cd $gitName
+rm -fr ./$gitName
+mkdir ./$gitName
+cd ./$gitName
 echo
 
 if [ "$cloneLocation" != "" ]; then
@@ -121,7 +121,7 @@ if [ "$cloneLocation" != "" ]; then
   echo "Checking out remotes/svn/branches/next"
   git checkout -b local/next remotes/svn/next
 
-fi 
+fi
 
 
 # rewrite root
