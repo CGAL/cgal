@@ -48,8 +48,10 @@ inline bool check_tag( Tag_false) {return false;}
 struct Null_tag {};
 
 struct Null_functor {
-//  typedef Null_tag result_type;
-//  typedef Null_tag second_argument_type; 
+  #if defined(BOOST_MSVC) //temporary fix for VC
+  typedef Null_tag result_type;
+  typedef Null_tag second_argument_type; 
+  #endif
 };
 
 
