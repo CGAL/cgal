@@ -5,15 +5,17 @@
 # ${CMAKE_BINARY_DIR} or ${CMAKE_BINARY_DIR}.
 project(CGAL)
 
-cmake_minimum_required(VERSION 2.6.0 FATAL_ERROR)
+# Minimal version of CMake:
+cmake_minimum_required(VERSION 2.6.2)
 
-# This allows else(), endif(), etc... (without repeating the expression)
-set(CMAKE_ALLOW_LOOSE_LOOP_CONSTRUCTS true)
-
-if ( COMMAND cmake_policy )
-  # Libraries linked via full path no longer produce linker search paths.
-  cmake_policy( SET CMP0003 NEW )  
-endif( COMMAND cmake_policy )
+# Tested version:
+if("${CMAKE_MAJOR_VERSION}.${CMAKE_MINOR_VERSION}" VERSION_GREATER 2.6)
+  if("${CMAKE_MAJOR_VERSION}.${CMAKE_MINOR_VERSION}.${CMAKE_PATCH_VERSION}" VERSION_GREATER 2.8.3)
+    cmake_policy(VERSION 2.8.4)
+  else()
+    cmake_policy(VERSION 2.6)
+  endif()
+endif()
 
 #--------------------------------------------------------------------------------------------------
 #
