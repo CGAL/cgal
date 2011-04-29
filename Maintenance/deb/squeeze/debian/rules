@@ -23,12 +23,12 @@ configure-stamp: patch-stamp
 	cd static && QTDIR= cmake .. \
 	  -DCMAKE_VERBOSE_MAKEFILE=ON -DCMAKE_INSTALL_PREFIX=/usr -DCMAKE_BUILD_TYPE=Release \
 	  -DCMAKE_SKIP_RPATH=TRUE -DBUILD_SHARED_LIBS=FALSE \
-	  -DWITH_demos=OFF -DWITH_examples=OFF
+	  -DWITH_CGAL_Qt3=OFF -DWITH_demos=OFF -DWITH_examples=OFF
 	mkdir -p shared
 	cd shared && QTDIR= cmake .. \
 	  -DCMAKE_VERBOSE_MAKEFILE=ON -DCMAKE_INSTALL_PREFIX=/usr -DCMAKE_BUILD_TYPE=Release \
 	  -DCMAKE_SKIP_RPATH=TRUE -DBUILD_SHARED_LIBS=TRUE \
-	  -DWITH_demos=OFF -DWITH_examples=OFF
+	  -DWITH_CGAL_Qt3=OFF -DWITH_demos=OFF -DWITH_examples=OFF
 	touch configure-stamp
 
 build: build-stamp
@@ -41,7 +41,8 @@ build-stamp: configure-stamp
 	mkdir -p shared/demo/CGAL_ipelets
 	cd shared/demo/CGAL_ipelets && QTDIR= cmake ../../../demo/CGAL_ipelets \
 	  -DCMAKE_VERBOSE_MAKEFILE=ON -DCMAKE_INSTALL_PREFIX=/usr -DCMAKE_BUILD_TYPE=Release \
-	  -DCMAKE_SKIP_RPATH=TRUE -DBUILD_SHARED_LIBS=TRUE -DCGAL_DIR=$(CURDIR)/shared
+	  -DCMAKE_SKIP_RPATH=TRUE -DBUILD_SHARED_LIBS=TRUE \
+	  -DWITH_CGAL_Qt3=OFF -DCGAL_DIR=$(CURDIR)/shared
 	$(MAKE) -C shared/demo/CGAL_ipelets
 
 ifneq (,$(findstring nocheck,$(DEB_BUILD_OPTIONS)))
@@ -87,14 +88,14 @@ install: build
 
 	dh_install --sourcedir=debian/tmp --list-missing
 
-	ln -s libcgal6 debian/libcgal-demo/usr/share/doc/libcgal-demo
+	ln -s libcgal7 debian/libcgal-demo/usr/share/doc/libcgal-demo
 	mkdir -p debian/libcgal-dev/usr/share/doc
-	ln -s libcgal6 debian/libcgal-dev/usr/share/doc/libcgal-dev
+	ln -s libcgal7 debian/libcgal-dev/usr/share/doc/libcgal-dev
 	mkdir -p debian/libcgal-ipelets/usr/share/doc
-	ln -s libcgal6 debian/libcgal-ipelets/usr/share/doc/libcgal-ipelets
+	ln -s libcgal7 debian/libcgal-ipelets/usr/share/doc/libcgal-ipelets
 
-#	install -d debian/libcgal6/DEBIAN
-#	install -m644 debian/libcgal6.shlibs debian/libcgal6/DEBIAN/shlibs
+#	install -d debian/libcgal7/DEBIAN
+#	install -m644 debian/libcgal7.shlibs debian/libcgal7/DEBIAN/shlibs
 
 binary-indep: build install
 	dh_testdir -i
@@ -110,8 +111,8 @@ binary-indep: build install
 binary-arch: build install
 	dh_testdir -a
 	dh_testroot -a
-	dh_installdocs -plibcgal6 debian/copyright
-	dh_installchangelogs -plibcgal6
+	dh_installdocs -plibcgal7 debian/copyright
+	dh_installchangelogs -plibcgal7
 	dh_installman -a
 	dh_link -a
 	dh_strip -a
@@ -119,7 +120,7 @@ binary-arch: build install
 	dh_fixperms -a
 	dh_makeshlibs -a
 	dh_installdeb -a
-	dh_shlibdeps -a -ldebian/libcgal6/usr/lib
+	dh_shlibdeps -a -ldebian/libcgal7/usr/lib
 	dh_gencontrol -a
 	dh_md5sums -a
 	dh_builddeb -a

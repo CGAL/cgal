@@ -22,7 +22,11 @@ if(NOT USE_CGAL_FILE_INCLUDED)
 
   foreach ( CGAL_COMPONENT ${CGAL_REQUESTED_COMPONENTS} )
     if(WITH_CGAL_${CGAL_COMPONENT})
-      add_to_list( CGAL_LIBRARIES            ${CGAL_${CGAL_COMPONENT}_LIBRARY}              )
+      if(TARGET CGAL_${CGAL_COMPONENT})
+        add_to_list( CGAL_LIBRARIES CGAL_${CGAL_COMPONENT} )
+      else()
+        add_to_list( CGAL_LIBRARIES ${CGAL_${CGAL_COMPONENT}_LIBRARY} )
+      endif()
       add_to_list( CGAL_3RD_PARTY_LIBRARIES  ${CGAL_${CGAL_COMPONENT}_3RD_PARTY_LIBRARIES}  )
       
       add_to_list( CGAL_3RD_PARTY_INCLUDE_DIRS   ${CGAL_${CGAL_COMPONENT}_3RD_PARTY_INCLUDE_DIRS}   )
@@ -42,7 +46,7 @@ if(NOT USE_CGAL_FILE_INCLUDED)
   #message (STATUS "LIB: ${CGAL_LIBRARY}")
   #message (STATUS "LIBS: ${CGAL_LIBRARIES}")
   
-  include_directories ( ${CGAL_3RD_PARTY_INCLUDE_DIRS} ${CGAL_INCLUDE_DIRS} )     
+  include_directories ( BEFORE ${CGAL_INCLUDE_DIRS} ${CGAL_3RD_PARTY_INCLUDE_DIRS} )     
   add_definitions     ( ${CGAL_3RD_PARTY_DEFINITIONS}  ${CGAL_DEFINITIONS}  )
   
   link_directories    ( ${CGAL_LIBRARIES_DIR} ${CGAL_3RD_PARTY_LIBRARIES_DIRS} )

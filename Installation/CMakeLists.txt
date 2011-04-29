@@ -5,15 +5,17 @@
 # ${CMAKE_BINARY_DIR} or ${CMAKE_BINARY_DIR}.
 project(CGAL)
 
-CMAKE_MINIMUM_REQUIRED(VERSION 2.6.0 FATAL_ERROR)
+# Minimal version of CMake:
+cmake_minimum_required(VERSION 2.6.2)
 
-# This allows else(), endif(), etc... (without repeating the expression)
-set(CMAKE_ALLOW_LOOSE_LOOP_CONSTRUCTS true)
-
-if ( COMMAND cmake_policy )
-  # Libraries linked via full path no longer produce linker search paths.
-  cmake_policy( SET CMP0003 NEW )  
-endif( COMMAND cmake_policy )
+# Tested version:
+if("${CMAKE_MAJOR_VERSION}.${CMAKE_MINOR_VERSION}" VERSION_GREATER 2.6)
+  if("${CMAKE_MAJOR_VERSION}.${CMAKE_MINOR_VERSION}.${CMAKE_PATCH_VERSION}" VERSION_GREATER 2.8.3)
+    cmake_policy(VERSION 2.8.4)
+  else()
+    cmake_policy(VERSION 2.6)
+  endif()
+endif()
 
 #--------------------------------------------------------------------------------------------------
 #
@@ -42,7 +44,7 @@ if ( CGAL_BRANCH_BUILD )
 
   set(CGAL_INSTALLATION_PACKAGE_DIR "${CMAKE_SOURCE_DIR}/Installation" CACHE PATH "Directory containing the Installation package")
   set(CGAL_MAINTENANCE_PACKAGE_DIR "${CMAKE_SOURCE_DIR}/Maintenance" CACHE PATH "Directory containing the Maintenance package")
-  set(CGAL_CORE_PACKAGE_DIR "${CMAKE_SOURCE_DIR}/Core" CACHE PATH "Directory containing the Maintenance package")
+  set(CGAL_CORE_PACKAGE_DIR "${CMAKE_SOURCE_DIR}/Core" CACHE PATH "Directory containing the Core package")
 
   message(STATUS "Installation package directory: ${CGAL_INSTALLATION_PACKAGE_DIR}")
   message(STATUS "Maintenance package directory: ${CGAL_MAINTENANCE_PACKAGE_DIR}")
@@ -62,7 +64,7 @@ else ( CGAL_BRANCH_BUILD )
 
   set(CGAL_INSTALLATION_PACKAGE_DIR "${CMAKE_SOURCE_DIR}" CACHE PATH "Directory containing the Installation package")
   set(CGAL_MAINTENANCE_PACKAGE_DIR "${CMAKE_SOURCE_DIR}" CACHE PATH "Directory containing the Maintenance package")
-  set(CGAL_CORE_PACKAGE_DIR "${CMAKE_SOURCE_DIR}" CACHE PATH "Directory containing the Maintenance package")
+  set(CGAL_CORE_PACKAGE_DIR "${CMAKE_SOURCE_DIR}" CACHE PATH "Directory containing the Core package")
 
 endif (CGAL_BRANCH_BUILD )
 
@@ -126,12 +128,14 @@ if ( CGAL_BRANCH_BUILD )
 
   if ( ${CGAL_SCM_NAME} STREQUAL "svn" )
 
-    MACRO(Subversion_GET_REVISION dir variable)
-     EXECUTE_PROCESS(COMMAND ${SVN_EXECUTABLE} info --xml ${dir}
+    function(Subversion_GET_REVISION dir variable)
+      # use svnversion
+      execute_process(COMMAND "${SVN_EXECUTABLE}" info --xml "${dir}"
         OUTPUT_VARIABLE ${variable}
         OUTPUT_STRIP_TRAILING_WHITESPACE)
-      STRING(REGEX REPLACE "^(.*\n)?   revision=\"([^\n]+)\".*url.*" "\\2" ${variable} "${${variable}}")
-    ENDMACRO(Subversion_GET_REVISION)
+      string(REGEX REPLACE "^(.*\n)?   revision=\"([^\n]+)\".*url.*" "\\2" ${variable} "${${variable}}")
+      set(${variable} ${${variable}} PARENT_SCOPE)
+    endfunction(Subversion_GET_REVISION)
 
     # define CGAL_SVN_REVISION 50602
     Subversion_GET_REVISION("${CGAL_INSTALLATION_PACKAGE_DIR}" CGAL_TMP_REVISION)
@@ -761,7 +765,7 @@ if( WITH_CPACK AND EXISTS "${CMAKE_ROOT}/Modules/CPack.cmake" )
         set(CPACK_SOURCE_STRIP_FILES "")
     endif()
 
-    INCLUDE(CPack)
+    include(CPack)
     
 endif()
 

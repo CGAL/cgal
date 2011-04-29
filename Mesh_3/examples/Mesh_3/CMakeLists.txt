@@ -4,7 +4,14 @@
 
 project( Mesh_3_example )
 
-CMAKE_MINIMUM_REQUIRED(VERSION 2.4.5)
+cmake_minimum_required(VERSION 2.6.2)
+if("${CMAKE_MAJOR_VERSION}.${CMAKE_MINOR_VERSION}" VERSION_GREATER 2.6)
+  if("${CMAKE_MAJOR_VERSION}.${CMAKE_MINOR_VERSION}.${CMAKE_PATCH_VERSION}" VERSION_GREATER 2.8.3)
+    cmake_policy(VERSION 2.8.4)
+  else()
+    cmake_policy(VERSION 2.6)
+  endif()
+endif()
 
 include_directories(../../include)
 include_directories(../../../Triangulation_3/include)
@@ -17,12 +24,6 @@ if ( MESH_3_VERBOSE )
   add_definitions(-DCGAL_MESH_3_VERBOSE)
 endif()
 
-set(CMAKE_ALLOW_LOOSE_LOOP_CONSTRUCTS true)
- 
-if ( COMMAND cmake_policy )
-  cmake_policy( SET CMP0003 NEW )  
-endif()
- 
 find_package(CGAL COMPONENTS ImageIO)
 
 if ( CGAL_FOUND )
