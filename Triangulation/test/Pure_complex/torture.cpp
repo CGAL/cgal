@@ -79,7 +79,7 @@ void test(const int D, const int d, const int N, bool no_transform)
             for( int j = 0; j < d; ++j )
                 coords[i] += (*pit)[j] * aff[j][i];
         }
-        points.push_back(Point(coords)); // this is for New_kernel_d
+        //points.push_back(Point(coords)); // this is for New_kernel_d
         points.push_back(Point(D, coords.begin(), coords.end())); // this is for Old_kernel_d
     }
     assert( dc.is_valid() );
