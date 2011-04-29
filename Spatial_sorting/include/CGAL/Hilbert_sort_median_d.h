@@ -42,10 +42,8 @@ namespace internal {
 	  : axe(a), orient(o), k(_k) {}
         bool operator() (const Point &p, const Point &q) const
         {
-	  return (orient  ? (k.compute_coordinate_d_object() (p,axe) 
-			     > k.compute_coordinate_d_object() (q,axe))
-		          : (k.compute_coordinate_d_object() (p,axe) 
-			     < k.compute_coordinate_d_object() (q,axe)) ) ;
+	  return (orient  ? (k.less_coordinate_d_object() (q,p,axe) )
+	        	  : (k.less_coordinate_d_object() (p,q,axe) ));
         }
     };
 

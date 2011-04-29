@@ -22,13 +22,24 @@ functions and functors.
        }
 
 
-\ccNestedType{Compute_coordinate_d(}%
+\ccNestedType{Compute_coordinate_d}%
        {Functor object type returning the coordinates of a  \ccc{Point_d}.
        Must provide 
         \ccc{FT operator()(Point_d p, int i)}  returning the $i$th
         coordinate of $p$. \ccc{FT} is a type that can be compared by
         operator  \ccc{<} and \ccc{<=} and can be used as
         argument of \ccc{CGAL::to_double}.
+       }
+
+
+\ccNestedType{Less_coordinate_d}%
+       {Binary predicate object type comparing \ccc{Point_d}s
+        along some coordinate.
+        Must provide 
+        \ccc{bool operator()(Point_d p, Point_d q, int i)} where \ccc{true}
+        is returned iff $p_i < q_i$,
+        where $p_i$ and $q_i$ denote $i$th coordinate of point $p$ and $q$,
+        respectively.
        }
 
 \ccCreation
@@ -45,6 +56,7 @@ object types must exist.
 
 \setlength\parskip{0mm}
 \ccMemberFunction{Compute_coordinate_d compute_coordinate_d_object(); }{}
+\ccMemberFunction{Less_coordinate_d less_coordinate_d_object(); }{}
 
 \ccParDims
 \ccHasModels

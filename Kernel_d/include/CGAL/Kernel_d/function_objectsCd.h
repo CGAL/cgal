@@ -49,6 +49,19 @@ class Compute_coordinateCd {
   }
 };
 
+template <typename K>
+class Less_coordinateCd {
+  typedef typename K::FT             FT;
+  typedef typename K::Point_d        Point_d;
+  public:
+  typedef bool                       result_type;
+  const result_type 
+    operator()(const Point_d& p, const Point_d& q, int i) const
+  {
+    return p.cartesian(i)<q.cartesian(i);
+  }
+};
+
 template <class R>
 struct Lift_to_paraboloidCd {
 typedef typename R::Point_d Point_d;

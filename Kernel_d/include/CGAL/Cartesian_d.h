@@ -251,6 +251,7 @@ public:
   typedef Compare_lexicographicallyCd<Self> Compare_lexicographically_d; 
   typedef Lt_from_compare<Self> Less_lexicographically_d;
   typedef Le_from_compare<Self> Less_or_equal_lexicographically_d;
+  typedef Less_coordinateCd<Self> Less_coordinate_d;
   typedef Eq_from_method<Self> Equal_d;
   typedef Center_of_sphereCd<Self> Center_of_sphere_d;
   typedef Contained_in_linear_hullCd<Self> Contained_in_linear_hull_d;  
@@ -260,6 +261,8 @@ public:
 
   Compute_coordinate_d compute_coordinate_d_object() const
   { return Compute_coordinate_d(); }
+  Less_coordinate_d less_coordinate_d_object() const
+  { return Less_coordinate_d(); }
   Lift_to_paraboloid_d lift_to_paraboloid_d_object() const
   { return Lift_to_paraboloid_d(); }
   Project_along_d_axis_d project_along_d_axis_d_object() const
