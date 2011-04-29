@@ -1,4 +1,4 @@
-// Copyright (c) 2007  INRIA Sophia-Antipolis (France).
+// Copyright (c) 2009  INRIA Sophia-Antipolis (France).
 // All rights reserved.
 //
 // This file is part of CGAL (www.cgal.org); you can redistribute it and/or
@@ -12,34 +12,29 @@
 // This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
 // WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
 //
-// $URL$
-// $Id$
+// $URL: svn+ssh://scm.gforge.inria.fr/svn/cgal/branches/CGAL-3.6-branch/Spatial_sorting/include/CGAL/hilbert_sort.h $
+// $Id: hilbert_sort.h 53867 2010-01-28 12:18:19Z lrineau $
 //
-// Author(s)     : Christophe Delage
+// Author(s)     : Olivier Devillers
 
-#ifndef CGAL_HILBERT_SORT_BASE_H
-#define CGAL_HILBERT_SORT_BASE_H
+#ifndef CGAL_HILBERT_POLICY_H
+#define CGAL_HILBERT_POLICY_H
 
-#include <CGAL/basic.h>
-#include <algorithm>
 
 namespace CGAL {
 
-namespace internal {
+struct Middle {};
+struct Median {};
 
-    template <class RandomAccessIterator, class Cmp>
-    RandomAccessIterator
-    hilbert_split (RandomAccessIterator begin, RandomAccessIterator end,
-                   Cmp cmp = Cmp ())
-    {
-        if (begin >= end) return begin;
 
-        RandomAccessIterator middle = begin + (end - begin) / 2;
-        std::nth_element (begin, middle, end, cmp);
-        return middle;
-    }
-}
+// A policy to select the sorting strategy.
+
+template < typename Tag >
+struct Hilbert_policy {};
+
+typedef Hilbert_policy<Middle>      Hilbert_sort_middle_policy;
+typedef Hilbert_policy<Median>      Hilbert_sort_median_policy;
 
 } // namespace CGAL
 
-#endif//CGAL_HILBERT_SORT_BASE_H
+#endif // CGAL_HILBERT_POLICY_H

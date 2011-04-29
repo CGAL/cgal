@@ -1,4 +1,4 @@
-// Copyright (c) 2007  INRIA Sophia-Antipolis (France).
+// Copyright (c) 2010  INRIA Sophia-Antipolis (France).
 // All rights reserved.
 //
 // This file is part of CGAL (www.cgal.org); you can redistribute it and/or
@@ -12,13 +12,13 @@
 // This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
 // WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
 //
-// $URL$
-// $Id$
+// $URL: 
+// $Id: 
 //
-// Author(s)     : Christophe Delage
+// Author(s)     :  Olivier Devillers
 
-#ifndef CGAL_HILBERT_SORT_BASE_H
-#define CGAL_HILBERT_SORT_BASE_H
+#ifndef CGAL_HILBERT_SORT_MIDDLE_BASE_H
+#define CGAL_HILBERT_SORT_MIDDLE_BASE_H
 
 #include <CGAL/basic.h>
 #include <algorithm>
@@ -29,17 +29,15 @@ namespace internal {
 
     template <class RandomAccessIterator, class Cmp>
     RandomAccessIterator
-    hilbert_split (RandomAccessIterator begin, RandomAccessIterator end,
+    fixed_hilbert_split (RandomAccessIterator begin, RandomAccessIterator end,
                    Cmp cmp = Cmp ())
     {
         if (begin >= end) return begin;
 
-        RandomAccessIterator middle = begin + (end - begin) / 2;
-        std::nth_element (begin, middle, end, cmp);
-        return middle;
+        return std::partition (begin, end, cmp);
     }
 }
 
 } // namespace CGAL
 
-#endif//CGAL_HILBERT_SORT_BASE_H
+#endif//CGAL_HILBERT_SORT_MIDDLE_BASE_H
