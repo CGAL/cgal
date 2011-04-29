@@ -349,7 +349,7 @@ private:
     {
       if(!v->constrained())
       {
-        B[v->index()] = div_normalized(v); // rhs -> divergent
+        B[v->index()] = div(v); // rhs -> divergent
         assemble_poisson_row<SparseLinearAlgebraTraits_d>(A,v,B,lambda);
       }
     }
@@ -516,8 +516,8 @@ private:
     v->f() = value;
   }
 
-  // divergent
-  FT div_normalized(Vertex_handle v)
+  // divergent 
+  FT div(Vertex_handle v)
   {
     std::vector<Cell_handle> cells;
     cells.reserve(32);
@@ -525,8 +525,6 @@ private:
     if(cells.size() == 0)
       return 0.0;
 
-    FT length = 100000;
-    int counter = 0;
     FT div = 0.0;
     typename std::vector<Cell_handle>::iterator it;
     for(it = cells.begin(); it != cells.end(); it++)
@@ -544,25 +542,11 @@ private:
 
       // compute n'
       int index = cell->index(v);
-      const Point& x = cell->vertex(index)->point();
       const Point& a = cell->vertex((index+1)%4)->point();
       const Point& b = cell->vertex((index+2)%4)->point();
       const Point& c = cell->vertex((index+3)%4)->point();
       Vector nn = (index%2==0) ? CGAL::cross_product(b-a,c-a) : CGAL::cross_product(c-a,b-a);
-      nn = nn / std::sqrt(nn*nn); // normalize
-      Vector p = a - x;
-      Vector q = b - x;
-      Vector r = c - x;
-      FT p_n = std::sqrt(p*p);
-      FT q_n = std::sqrt(q*q);
-      FT r_n = std::sqrt(r*r);
-      FT solid_angle = p*(CGAL::cross_product(q,r));
-      solid_angle = std::abs(solid_angle * 1.0 / (p_n*q_n*r_n + (p*q)*r_n + (q*r)*p_n + (r*p)*q_n));
-      Triangle face(a,b,c);
-      FT area = std::sqrt(face.squared_area());
-      length = std::sqrt((x-a)*(x-a)) + std::sqrt((x-b)*(x-b)) + std::sqrt((x-c)*(x-c));
-      counter++;
-      div += n * nn * area * 3 / length ;
+      div += n * nn;
     }
     return div;
   }
