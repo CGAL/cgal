@@ -13,7 +13,7 @@ usage()
   echo  >&2
 }
 
-#  echo [-m svnLocation] [-r fromRevision] [-s]
+#  echo "  -m svnLocation
 #  echo "  -r gives revision to start from. Other options than a number: LAST, BASE" >&2
 #  echo "  -f skip fetch" >&2
 #  echo "  -t skip tags" >&2
@@ -99,7 +99,7 @@ if [ "$userLogin" = "" ]; then
   exit 1
 fi
 
-# TODO define tags-behavior for developers, maybe as own svn-remote of git-remote that can be deleted and, if needed, reintegrated
+# TODO define tags-behavior for developers, maybe as own svn-remote of git-remote that can be deleted and, if needed, reintegrated; OR: Convert to GIT tags?
 
 ### Create repo
 
@@ -121,12 +121,12 @@ if [ "$cloneLocation" != "" ]; then
   echo "Checking out remotes/svn/branches/next"
   git checkout -b local/next remotes/svn/next
 
+# TODO: git svn rebase --local
 fi
-
 
 # rewrite root
 rewriteRoot=--rewrite-root=$svnGforge
-rewriteRoot=
+#rewriteRoot=
 
 # options to speedup
 
@@ -176,6 +176,8 @@ if [ $skipFetch = 0 ]; then
 
     echo "Rebase from SVN server"
     git svn rebase
+
+
 
   else
 
