@@ -226,12 +226,12 @@ public:
             if( dc_.is_finite(s) )
             {
                 Oriented_side side = side_of_s_(s->points_begin(), s->points_begin() + cur_dim_ + 1, p_);
-                if( ON_NEGATIVE_SIDE == side )
+                if( ON_POSITIVE_SIDE == side )
                     ok = true;
-                else if( ON_POSITIVE_SIDE == side )
+                else if( ON_NEGATIVE_SIDE == side )
                     ok = false;
                 else
-                    ok = ON_NEGATIVE_SIDE == dc_.perturbed_side_of_positive_sphere<OrientationPredicate>(p_, s, ori_);
+                    ok = ON_POSITIVE_SIDE == dc_.perturbed_side_of_positive_sphere<OrientationPredicate>(p_, s, ori_);
             }
             else
             {
@@ -400,6 +400,7 @@ Delaunay_complex<DCTraits, PCDS>
                 {
                     // we must put the infinite vertex at index 0
                     (*it)->swap_vertices(0, v_idx);
+                    // FIXME: are we sure this preseves the positive orientation of the simplex ?
                     (*it)->swap_vertices(current_dimension() - 1, current_dimension());
                 }
             }
@@ -702,7 +703,7 @@ Delaunay_complex<DCTraits, PCDS>
     {
         if( &p == *cut_pt )
             // because the simplex "s" is assumed to be positively oriented
-            return ON_POSITIVE_SIDE; // we consider |p| to lie outside the sphere
+            return ON_NEGATIVE_SIDE; // we consider |p| to lie outside the sphere
         test_points.clear();
         typename Simplex::Point_const_iterator spit = s->points_begin();
         int adjust_sign = -1;
@@ -727,12 +728,12 @@ Delaunay_complex<DCTraits, PCDS>
                 Point_pointer_iterator(test_points.end()));
 
         if( COPLANAR != ori_value )
-            return Oriented_side( adjust_sign * ori_value );
+            return Oriented_side( - adjust_sign * ori_value );
 
         ++cut_pt;
     }
     CGAL_assertion(false);
-    return ON_POSITIVE_SIDE; // outside circumsphere
+    return ON_NEGATIVE_SIDE; // outside circumsphere
 }
 
 template< typename DCTraits, typename PCDS >
