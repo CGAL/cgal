@@ -118,8 +118,8 @@ void go(const int N, const int nb_trials)
              << "-dimensional regular grid in R^" << D;
         for( int t = 0; t < nb_trials; ++t )
         {
+            cerr << "\n Run " << (t + 1) << ": ";
             test<Triangulation>(D, d, N, t < nb_trials / 2);
-            cerr << ' ' << (t + 1);
         }
     }
 }

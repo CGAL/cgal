@@ -52,7 +52,6 @@ void test(const int d, const string & type, const int N)
     pc.insert(points.begin(),  points.end());
     cerr << "\nChecking topology and geometry...";
     assert( pc.is_valid() );
-    return;
 
     cerr << "\nTraversing finite simplices... ";
     size_t nbfs(0), nbis(0);
@@ -93,7 +92,8 @@ void test(const int d, const string & type, const int N)
 template< int D >
 void go(const int N)
 {
-    typedef CGAL::Gmpq RT;
+    typedef double RT;
+    //typedef CGAL::Gmpq RT;
     typedef CGAL::Cartesian_d<RT> K;
     //typedef CGAL::Simple_cartesian_d<RT, D> K;
     typedef CGAL::Filtered_kernel_d<K> FK;
@@ -108,11 +108,11 @@ int main(int argc, char **argv)
     int N = 100;
     if( argc > 1 )
         N = atoi(argv[1]);
-    // go<5>(N);
+     go<5>(N);
      go<4>(N);
-    // go<3>(N);
-    // go<2>(N);
-    // go<1>(N);
+     go<3>(N);
+     go<2>(N);
+     go<1>(N);
 
     cerr << std::endl;
     return 0;
