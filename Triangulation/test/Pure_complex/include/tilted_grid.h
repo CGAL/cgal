@@ -14,42 +14,32 @@ public:
     typedef std::vector<FT> FTVec;
     typedef std::vector<FTVec> PVec; // array of point coordinates
 
-    void operator()(const int D, const int N, PVec & g, bool last = true) const
+    void operator()(const int D, const int N, PVec & g) const
     {   // create N^D grid
-        if( 0 == D )
+        if( 0 >= D )
         {
             g.push_back(FTVec());
             return;
         }
         PVec h;
-        (*this)(D - 1, N, h, false);
+        (*this)(D - 1, N, h);
         g.clear();
         typename PVec::iterator hit = h.begin();
         while( hit != h.end() )
         {
-            hit->push_back(FT(0)); ++hit;
+            hit->push_back(FT(0));
+            ++hit;
         }
-        for( int i = 1; i <= N; ++i )
+        g.insert(g.end(), h.begin(), h.end());
+        for( int i = 1; i < N; ++i )
         {
-            g.insert(g.end(), h.begin(), h.end());
             hit = h.begin();
             while( hit != h.end() )
             {
-                if( i == 0 )
-                    hit->push_back(FT(i));
-                else
-                {
-                    if( ! last )
-                        (*hit)[D-1] = FT(i);
-                    else if( D >= 3 )
-                        (*hit)[D-1] = FT(i) ;//+ (*hit)[D-3] - (*hit)[D-2];
-                    else if( D == 2 )
-                        (*hit)[D-1] = FT(i) ;//- (*hit)[D-2];
-                    else // D == 1
-                        (*hit)[D-1] = FT(i);
-                }
+                (*hit)[D-1] = FT(i);
                 ++hit;
             }
+            g.insert(g.end(), h.begin(), h.end());
         }
     }
 };
