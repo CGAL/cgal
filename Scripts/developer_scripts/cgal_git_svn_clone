@@ -24,9 +24,9 @@ userName="Eric Berberich"
 userEmail=eric@mpi-inf.mpg.de
 userLogin=eric
 svnGforge=svn+ssh://$userLogin@scm.gforge.inria.fr/svn/cgal
-fromSvn=file://$HOME/CGAL/gforge/cgal-m
-#fromSvn=$svnGforge
-fromRev=63050
+#fromSvn=file://$HOME/CGAL/gforge/cgal-m
+fromSvn=$svnGforge
+fromRev=1
 gitName=cgal.git
 skipTags=0
 skipFetch=0
@@ -174,10 +174,14 @@ if [ $skipFetch = 0 ]; then
 
   if [ "$cloneLocation" != "" ]; then
 
-    echo "Rebase from SVN server"
+    echo "Fetch from real SVN server"
+    git svn fetch
+
+    echo "Checkout 'local/next'"
+    git checkout local/next
+
+    echo "Rebase from real SVN server"
     git svn rebase
-
-
 
   else
 
