@@ -384,10 +384,10 @@ struct Side_of_oriented_subsphereCd
             M = typename LA::Matrix(d+1);
 		if( ! ori_.state().axes_found_ )
 		{
+            // the call to ori_(...) will compute a set of axes to complement our base.
 			Orientation o = ori_(first, last);
-            // FIXME: why these two lines below? I would remove them [sam]
 			if( COPLANAR == o )
-				return ON_ORIENTED_BOUNDARY;
+                std::cerr << "\nAffine base is flat (it should have positive orientation) !!";
 			CGAL_assertion( o == POSITIVE );
 			// Now we can setup the fixed part of the matrix:
 			int a(0);
