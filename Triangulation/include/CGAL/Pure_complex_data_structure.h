@@ -79,7 +79,7 @@ public:
      |rotate_rotor| and |insert_in_tagged_hole|) */
 
     // A co-dimension 1 sub-simplex.
-    typedef std::pair<Simplex_handle, int>          Facet;
+    typedef cpp0x::tuple<Simplex_handle, int>          Facet;
     
     // A co-dimension 2 sub-simplex. called a Rotor because we can rotate
     // the two "covertices" around the sub-simplex. Useful for traversing the
