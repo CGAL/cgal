@@ -1941,6 +1941,7 @@ Maintenance/svn_server/hooks/pre-revprop-change.tmpl -text
 Maintenance/svn_server/hooks/pre-unlock.tmpl -text
 Maintenance/svn_server/hooks/start-commit -text
 Maintenance/svn_server/hooks/start-commit.tmpl -text
+Maintenance/test_handling/candidate_branches -text
 Maintenance/test_handling/testresult.css svneol=native#text/css
 Manual/doc_html/cgal.css -text
 Manual/doc_html/cgal.ico -text
