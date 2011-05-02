@@ -37,14 +37,14 @@
 #include <CGAL/number_type_basic.h>
 #include <boost/operators.hpp>
 #include <CGAL/Interval_arithmetic.h> 
-
+#include <CGAL/Sqrt_extension_fwd.h>
 #include <boost/optional.hpp>
 
 #define CGAL_int(T)    typename First_if_different<int,    T>::Type
 
 namespace CGAL {
 
-template <class NT_,class ROOT_, class AllowCompareDifferentExtensions = ::CGAL::Tag_false, class FilterPredicates = ::CGAL::Tag_false > class Sqrt_extension;
+
 template<class NT, class ROOT, class ACDE_TAG, class FP_TAG >
 void output_maple(std::ostream&, const Sqrt_extension<NT,ROOT,ACDE_TAG,FP_TAG>&);
 
