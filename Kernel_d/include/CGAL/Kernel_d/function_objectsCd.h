@@ -101,11 +101,11 @@ result_type operator()(Forward_iterator start, Forward_iterator end) const
   typename LA::Matrix M(d);
   typename LA::Vector b(d);
   Point_d pd = *start++;
-  for (int i = 0; i < d; i++) { 
+  for (int i = 0; i < d; ++i) { 
     // we set up the equation for p_i
     Point_d pi = *start++;
     b[i] = 0;
-    for (int j = 0; j < d; j++) {
+    for (int j = 0; j < d; ++j) {
       M(i,j) = FT(2)*(pi.cartesian(j) - pd.cartesian(j));
       b[i] += (pi.cartesian(j) - pd.cartesian(j)) *
               (pi.cartesian(j) + pd.cartesian(j));
@@ -191,30 +191,43 @@ OutputIterator operator()(ForwardIterator first, ForwardIterator last,
 }
 };
 
-
 template <class R>
 struct OrientationCd { 
-typedef typename R::Point_d Point_d;
-typedef typename R::LA LA;
-typedef Orientation		result_type;
+    typedef typename R::Point_d     Point_d;
+    typedef typename R::LA          LA;
+    typedef             Orientation result_type;
 
-template <class ForwardIterator>
-result_type  operator()(ForwardIterator first, ForwardIterator last) const
-{ TUPLE_DIM_CHECK(first,last,Orientation_d);
-  int d = static_cast<int>(std::distance(first,last)); 
-  // range contains d points of dimension d-1
-  CGAL_assertion_msg(first->dimension() == d-1,
-  "Orientation_d: needs first->dimension() + 1 many points.");
-  typename LA::Matrix M(d); // quadratic
-  for (int i = 0; i < d; ++first,++i) {
-    for (int j = 0; j < d-1; ++j) 
-      M(i,j) = first->cartesian(j);
-    M(i,d-1) = 1;
-  }
-  int row_correction = ( (d % 2 == 0) ? -1 : +1 );
-  // we invert the sign if the row number is even i.e. d is odd
-  return Orientation(row_correction * LA::sign_of_determinant(M));
-}
+    template <class ForwardIterator>
+    result_type operator()(ForwardIterator first, ForwardIterator last) const
+    {
+        TUPLE_DIM_CHECK(first,last,Orientation_d);
+        int d = static_cast<int>(std::distance(first,last)) - 1;
+        // range contains d+1 points of dimension d
+        CGAL_assertion_msg(first->dimension() == d,
+                "Orientation_d: needs first->dimension() + 1 many points.");
+        /*  TODO : remove this comment. 
+        * This comment includes the old (Michael Seel's) version of
+ *  the predicate, which include a sign correction because he puts the ones at
+ *  the bottom (or right) of the matrix... the new version computes a smaller
+ *  matrix and uses no sign correction)
+            typename LA::Matrix M(d+1); // quadratic
+            for (int i = 0; i < d+1; ++first,++i) {
+            for (int j = 0; j < d; ++j) 
+            M(i,j) = first->cartesian(j);
+            M(i,d) = 1;
+            }
+            int row_correction = ( (d % 2 == 0) ? +1 : -1 );
+        // we invert the sign if the row number is even i.e. d is odd
+        return Orientation(row_correction * LA::sign_of_determinant(M));
+         */
+        typename LA::Matrix M(d);
+        ForwardIterator s = first;
+        ++s;
+        for( int j = 0; j < d; ++s, ++j )
+            for( int i = 0; i < d; ++i )
+                M(i,j) = s->cartesian(i) - first->cartesian(i);
+        return Orientation(LA::sign_of_determinant(M));
+    }
 };
 
 /* This predicates tests the orientation of (k+1) points that span a
@@ -232,8 +245,8 @@ template <class R>
 struct Coaffine_orientationCd
 { 
     typedef typename R::Point_d Point_d;
-    typedef typename R::LA LA;
-    typedef Orientation		result_type;
+    typedef typename R::LA      LA;
+    typedef Orientation		    result_type;
     // typedef internal::stateful_predicate_tag predicate_category;
     typedef std::vector<int>	Axes;
     struct State
@@ -243,23 +256,21 @@ struct Coaffine_orientationCd
         State(bool b) : axes_(), axes_found_(b) {}
     };
     mutable State state_;
-    //typedef Referenced_argument<std::vector<int> > Axes;
-    //typedef Referenced_argument<bool> Ref_bool;
 
     Coaffine_orientationCd() : state_(false) {}
+
     State & state()    {        return state_;    }
     const State & state() const   {        return state_;    }
 
-    template <class ForwardIterator>
+    template < class ForwardIterator >
     result_type operator()(ForwardIterator first, ForwardIterator last) const
     {
         TUPLE_DIM_CHECK(first,last,Coaffine_orientation_d);
         // |k| is the dimension of the affine subspace
         const int k = std::distance(first,last) - 1;
         // |d| is the dimension of the ambiant space
-        int d = first->dimension();
-        CGAL_assertion_msg(k <= d,
-                "Coaffine_orientation_d: needs less that (first->dimension() + 1) points.");
+        const int d = first->dimension();
+        CGAL_assertion_msg(k <= d, "Coaffine_orientation_d: needs less that (first->dimension() + 1) points.");
         if( false == state_.axes_found_ )
         {
 			state_.axes_.resize(d + 1);
@@ -268,17 +279,20 @@ struct Coaffine_orientationCd
             for(; i < k;     ++i) state_.axes_[i] = i;
             for(; i < d + 1; ++i) state_.axes_[i] = -1;
         }
-        typename ForwardIterator::value_type l = *(first + k);
-        //ForwardIterator l = first + k;
+        const typename ForwardIterator::value_type & l(*first);
         typename LA::Matrix M(k); // quadratic
         while( true )
         {
-            for (int i = 0; i < k; ++i)
+            ForwardIterator s = first;
+            ++s;
+            int j(0);
+            while( s != last )
             {
-                typename ForwardIterator::value_type fpi = *(first + i);
-                for (int j = 0; j < k; ++j) 
-                    M(i,j) = fpi.cartesian(state_.axes_[j]) -
-                        l.cartesian(state_.axes_[j]);
+                const typename ForwardIterator::value_type & point(*s);
+                for( int i = 0; i < k; ++i )
+                    M(i,j) = point.cartesian(state_.axes_[i]) - l.cartesian(state_.axes_[i]);
+                ++s;
+                ++j;
             }
             Orientation o = Orientation(LA::sign_of_determinant(M));
             if( ( o != COPLANAR ) || state_.axes_found_ )
@@ -286,16 +300,15 @@ struct Coaffine_orientationCd
                 state_.axes_found_ = true;
                 return o;
             }
-
             // for generating all possible unordered k-uple in the range
-            // [0 .. d-1]... we go to the next unordered k-uple
+            // [0 .. d-1]... we go to the next unordered k-uple:
             int index = k - 1;
             while( (index >= 0) && (state_.axes_[index] == d - k + index) )
                 --index;
             if( index < 0 )
                 break;
             ++state_.axes_[index];
-            for(int i = 1; i < k - index; ++i)
+            for( int i = 1; i < k - index; ++i )
                 state_.axes_[index + i] = state_.axes_[index] + i;
         }
         return COPLANAR;
@@ -334,7 +347,7 @@ result_type operator()(ForwardIterator first, ForwardIterator last,
     M(d,j + 1) = hj; Sum += hj*hj; 
   }
   M(d,d) = Sum;
-  return - LA::sign_of_determinant(M);
+  return result_type( - LA::sign_of_determinant(M));
 }
 };
 
@@ -363,7 +376,7 @@ struct Side_of_oriented_subsphereCd
 
 	// DATA MEMBERS
 	mutable Coaffine_orientation ori_;
-	mutable typename LA::Matrix M; // a square matrix of size (D+1)x(D+1)
+	mutable typename LA::Matrix M; // a square matrix of size (D+1)x(D+1) where D is the ambient dimension 
 	mutable unsigned int adjust_sign_;
 
 	Side_of_oriented_subsphereCd()
@@ -387,7 +400,10 @@ struct Side_of_oriented_subsphereCd
             // the call to ori_(...) will compute a set of axes to complement our base.
 			Orientation o = ori_(first, last);
 			if( COPLANAR == o )
+            {
                 std::cerr << "\nAffine base is flat (it should have positive orientation) !!";
+                //return ON_ORIENTED_BOUNDARY;
+            }
 			CGAL_assertion( o == POSITIVE );
 			// Now we can setup the fixed part of the matrix:
 			int a(0);
