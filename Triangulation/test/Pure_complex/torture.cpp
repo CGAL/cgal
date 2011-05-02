@@ -1,7 +1,11 @@
 #include <CGAL/internal/Combination_enumerator.h>
 #include <CGAL/point_generators_d.h>
+#define USE_NEW_KERNEL
+#ifndef USE_NEW_KERNEL
 #include <CGAL/Cartesian_d.h> // this is for Old_kernel_d
-//#include <CGAL/Simple_cartesian_d.h> // this is for New_kernel_d
+#else
+#include <CGAL/Simple_cartesian_d.h> // this is for New_kernel_d
+#endif
 #include <CGAL/Filtered_kernel_d.h>
 #include <CGAL/Delaunay_complex.h>
 #include <CGAL/algorithm.h>
@@ -79,8 +83,11 @@ void test(const int D, const int d, const int N, bool no_transform)
             for( int j = 0; j < d; ++j )
                 coords[i] += (*pit)[j] * aff[j][i];
         }
-        //points.push_back(Point(coords)); // this is for New_kernel_d
+#ifdef USE_NEW_KERNEL
+        points.push_back(Point(coords)); // this is for New_kernel_d
+#else
         points.push_back(Point(D, coords.begin(), coords.end())); // this is for Old_kernel_d
+#endif
     }
     assert( dc.is_valid() );
     dc.insert(points.begin(), points.end());
@@ -108,8 +115,11 @@ template< int D >
 void go(const int N, const int nb_trials)
 {
     typedef double RT;
+#ifndef USE_NEW_KERNEL
     typedef CGAL::Cartesian_d<RT> K; // this is for Old_kernel_d
-    //typedef CGAL::Simple_cartesian_d<RT, D> K; // this is for New_kernel_d
+#else
+    typedef CGAL::Simple_cartesian_d<RT, D> K; // this is for New_kernel_d
+#endif
     typedef CGAL::Filtered_kernel_d<K> FK;
     typedef CGAL::Delaunay_complex<FK> Triangulation;
     for( int d = 0; d <= D; ++d )
