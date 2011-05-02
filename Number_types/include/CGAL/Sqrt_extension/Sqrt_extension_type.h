@@ -753,7 +753,7 @@ template <class NT_,class ROOT_, class ACDE_TAG_, class FP_TAG>
 void
 print(std::ostream &os, const Sqrt_extension<NT_,ROOT_,ACDE_TAG_,FP_TAG> &r)
 {
-  if(r.is_rational()) {
+  if(!r.is_extended()) {
     os << "(" << r.a0() << ")";
   } else {
     os << "(" << r.a0() << " + " << r.a1() <<
