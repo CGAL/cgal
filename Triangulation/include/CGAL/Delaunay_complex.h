@@ -596,7 +596,7 @@ Delaunay_complex<DCTraits, PCDS>
     {
         Simplex_handle s = infinite_vertex()->simplex()->neighbor(0);
         Orientation o = orientation(s);
-        CGAL_assertion( COPLANAR != o );
+        CGAL_assertion( ZERO != o );
         if( NEGATIVE == o )
             reorient_simplices();
     }
@@ -655,7 +655,7 @@ Delaunay_complex<DCTraits, PCDS>
     {
         Simplex_handle s = infinite_vertex()->simplex()->neighbor(0);
         Orientation o = orientation(s);
-        CGAL_assertion( COPLANAR != o );
+        CGAL_assertion( ZERO != o );
             if( NEGATIVE == o )
                 reorient_simplices();
     }
@@ -727,13 +727,13 @@ Delaunay_complex<DCTraits, PCDS>
                 Point_pointer_iterator(test_points.begin()),
                 Point_pointer_iterator(test_points.end()));
 
-        if( COPLANAR != ori_value )
+        if( ZERO != ori_value )
             return Oriented_side( - adjust_sign * ori_value );
 
         ++cut_pt;
     }
-    CGAL_assertion(false);
-    return ON_NEGATIVE_SIDE; // outside circumsphere
+    CGAL_assertion(false); // we should never reach here
+    return ON_NEGATIVE_SIDE;
 }
 
 template< typename DCTraits, typename PCDS >
