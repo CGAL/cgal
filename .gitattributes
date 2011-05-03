@@ -3868,7 +3868,7 @@ Testsuite/test/collect_cgal_testresults_from_cmake -text
 Testsuite/test/makefile2 -text
 Testsuite/test/run_testsuite_with_cmake -text
 Triangulation/TODO -text
-Triangulation/benchmark/Pure_complex/dc.cpp -text
+Triangulation/benchmark/Triangulation/dc.cpp -text
 Triangulation/doc_tex/Triangulation/PkgDescription.tex -text
 Triangulation/doc_tex/Triangulation/fig/detail.png -text
 Triangulation/doc_tex/Triangulation/fig/illustration.png -text
@@ -3902,8 +3902,8 @@ Triangulation/doc_tex/Triangulation_ref/fig/insert-in-simplex.png -text
 Triangulation/doc_tex/Triangulation_ref/intro.tex -text
 Triangulation/doc_tex/Triangulation_ref/main.tex -text
 Triangulation/dont_submit -text
-Triangulation/examples/Pure_complex/pure_complex.cpp -text
-Triangulation/examples/Pure_complex/pure_complex_data_structure.cpp -text
+Triangulation/examples/Triangulation/pure_complex.cpp -text
+Triangulation/examples/Triangulation/pure_complex_data_structure.cpp -text
 Triangulation/include/CGAL/Convex_hull.h -text
 Triangulation/include/CGAL/Delaunay_complex.h -text
 Triangulation/include/CGAL/PCDS_simplex_default_storage_policy.h -text
@@ -3923,11 +3923,11 @@ Triangulation/include/CGAL/internal/Pure_complex/utilities.h -text
 Triangulation/include/CGAL/internal/Static_or_dynamic_array.h -text
 Triangulation/package_info/Pure_complex/description.txt -text
 Triangulation/package_info/Pure_complex/maintainer -text
-Triangulation/test/Pure_complex/dc.cpp -text
-Triangulation/test/Pure_complex/include/tilted_grid.h -text
-Triangulation/test/Pure_complex/pc.cpp -text
-Triangulation/test/Pure_complex/pcds.cpp -text
-Triangulation/test/Pure_complex/torture.cpp -text
+Triangulation/test/Triangulation/dc.cpp -text
+Triangulation/test/Triangulation/include/tilted_grid.h -text
+Triangulation/test/Triangulation/pc.cpp -text
+Triangulation/test/Triangulation/pcds.cpp -text
+Triangulation/test/Triangulation/torture.cpp -text
 Triangulation_2/demo/Triangulation_2/qt3/help/cindex.html svneol=native#text/html
 Triangulation_2/demo/Triangulation_2/qt3/help/cinput_point_layer.gif -text svneol=unset#image/gif
 Triangulation_2/demo/Triangulation_2/qt3/help/conflict_zone.gif -text svneol=unset#image/gif

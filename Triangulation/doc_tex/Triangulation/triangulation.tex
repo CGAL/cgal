@@ -1,7 +1,6 @@
 {
-\newcommand{\ie}{\emph{i.e.,}}
 
-\section{Introduction\label{pure_complex:intro}}
+\section{Introduction\label{triangulation:intro}}
 
 A \textbf{finite abstract simplicial complex} is built on a finite set of
 vertices $V$ and consists of a collection $S$ of subsets of $V$ such that
@@ -13,12 +12,13 @@ See the
 \ccAnchor{http://en.wikipedia.org/wiki/Abstract_simplicial_complex}{wikipedia
 entry} for more about abstract simplicial complexes.
 
-The sets in $S$ (which are subsets of $V$) are called \textbf{simplices} (the
+The sets in $S$ (which are subsets of $V$) are called
+\textbf{faces} or \textbf{simplices} (the
 singular of which is \textbf{simplex}).
 %
 A simplex $s\in S$ is \textbf{maximal} if it is not a proper subset of some other
 set in $S$. The simplicial complex is \textbf{pure} (or \textbf{homogeneous})
-if all the maximal simplices have the same cardinality (\ie\ they have the same
+if all the maximal simplices have the same cardinality ({\emph{i.e.,}\ they have the same
 number of vertices). A \textbf{face} of a simplex is a subset of it. A
 \textbf{proper face} of a simplex is a strict subset of it.
 
@@ -35,81 +35,75 @@ simplices (the empty set counts).
 See the \ccAnchor{http://en.wikipedia.org/wiki/Simplicial_complex}{wikipedia
 entry} for more about simplicial complexes.
 
-This \cgal\ package deals with pure finite simplicial complexes, which we
-abbreviate as \textbf{geometric pure complexes}, \textbf{embedded pure
-complexes} or simply \textbf{pure complexes}. It provides four main classes
-for creating and manipulating pure complexes.
+This \cgal\ package deals with pure finite simplicial complexes, which
+we will simply call in the sequel \textbf{triangulations}. It provides four main classes
+for creating and manipulating triangulations.
 
-The class \ccc{CGAL::Pure_complex_data_structure<Dimensionality,
-PCDSVertex, PCDSSimplex>} models an abstract pure complex: vertices in this
+The class \ccc{CGAL::Triangulation_data_structure<Dimensionality,
+TDSVertex, TDSSimplex>} models an abstract triangulation: vertices in this
 class are not embedded in euclidean space but are only of combinatorial
 nature.
 
-The class \ccc{CGAL::Pure_complex<PCTraits, PCDS>} embeds an abstract
-pure complex in euclidean space, thus forming a pure complex. Methods are
+The class \ccc{CGAL::Triangulation<TrTraits, TDS>} embeds an abstract
+triangulation in euclidean space, thus forming a triangulation. Methods are
 provided for the insertion %and removal
-of points in the complex, the
-traversal of various elements of the complex, as well as the localization of a
-query point inside the complex.
+of points in the triangulation, the
+traversal of various elements of the triangulation, as well as the localization of a
+query point inside the triangulation.
 
-The class \ccc{CGAL::Delaunay_complex<DCTraits, PCDS>} adds further
-constraints to a pure complex, in that all its simplices must have the
+The class \ccc{CGAL::Delaunay_triangulation<DelaunayTraits, TDS>} adds further
+constraints to a triangulation, in that all its simplices must have the
 so-called \textbf{Delaunay} or \textbf{empty-ball} property: the interior of
-a ball circumscribing any simplex of a Delaunay simplex must be free from any
+a ball circumscribing any face of a Delaunay simplex must be free from any
 vertex of the complex.
 
-%The class \ccc{CGAL::Regular_complex<RCTraits, PCDS>} is a generalization of
-%the Delaunay complex.
+%The class \ccc{CGAL::Regular_triangulation<RegularTraits, TDS>} is a generalization of
+%the Delaunay triangulation.
 
-The rest of this user manual gives more details about these classes and the
-data they store, but does not tell the whole story. For the latter, the user
-should have a look at the reference manual of this package. A last remark:
-pure complexes are also called \emph{triangulations}. We feel more confortable
-in using the word \emph{complexes} as it forces us to think ``in dimension
-higher than 3''.
+%The rest of this user manual gives more details about these classes and the
+%data they store, but does not tell the whole story. For the latter, the user
+%should have a look at the reference manual of this package. 
+%A last remark:
+%pure complexes are also called \emph{triangulations}. We feel more confortable
+%in using the word \emph{complexes} as it forces us to think ``in dimension
+%higher than 3''.
 
 \paragraph{Further definitions}
 
-A $i$-simplex or an $i$-face denotes an $i$-dimensional simplex, or a simplex
-with $i+1$ (affinely independent if embedded) vertices. The term \emph{face}
-gives the additional information that an $i$-face is a sub-face (or a
-sub-simplex) of a higher-dimensional simplex.
+An $i$-face denotes an $i$-dimensional simplex, or a simplex
+with $i+1$ (affinely independent if embedded) vertices.
+We choose the term of \textbf{full cell} to reference a simplex of maximal dimension.
 
-A \textbf{face} in a pure complex is an $i$-face for some $i\in[0,d)$;
-a \textbf{facet} in a pure complex is a $(d-1)$-face, where maximal simplices
-in this pure complex have dimension $d$. In particular, vertices are
+A \textbf{face} in a triangulation is an $i$-face for some $i\in[0,d)$;
+a \textbf{facet} in a triangulation is a $(d-1)$-face, where maximal simplices
+in this triangulation have dimension $d$. In particular, vertices are
 $0$-faces.
 
 Two simplices $\sigma$ and $\sigma'$ are \textbf{incident} if and only if
 $\sigma'$ is a proper sub-face of $\sigma$ or \emph{vice versa}.
-Two simplices $\sigma$ and $\sigma'$ are \textbf{adjacent} if and only if
-their intersection is a non empty face.
 
-The bare term ``simplex'' from now on denotes a maximal simplex.
+\section{Triangulation data structure\label{triangulation:tds}}
 
-\section{Pure complex data structure\label{pure_complex:pcds}}
-
-\newcommand{\pcds}{\ccc{PCDS}}
+\newcommand{\tds}{\ccc{TDS}}
 \newcommand{\ad}{\ensuremath{D}}
 \newcommand{\cd}{\ensuremath{d}}
 
-In this section, we describe the concept \ccc{PureComplexDataStructure} for
+In this section, we describe the concept \ccc{TriangulationDataStructure} for
 which \cgal\ provides one model class:
-\ccc{CGAL::Pure_complex_data_structure<Dimensionality, PCDSVertex,
-PCDSSimplex>}. (The user can read the following as a description of the class,
-rather than the concept). For simplicity, we use the abbreviation \pcds.
+\ccc{CGAL::Triangulation_data_structure<Dimensionality, TDSVertex,
+TDSSimplex>}.  For simplicity, we use the abbreviation \tds.
 
-A \pcds\ can not represent any abstract pure complex, but rather the
-combinatorial nature of a (geometric) pure complex. For example, a facet
+A \tds\ can not represent any abstract pure complex, but rather the
+combinatorial nature of a (geometric) triangulation. For example, a facet
 may be incident to arbitrarily many simplices in an abstract pure complex, but
-to at most two in a \pcds\ (and in fact exactly two as we explain below).
+to at most two in a \tds\ (and in fact exactly two as we explain below).
 
-A \pcds\ has a property called the \textbf{ambient dimension} which is a
+A \tds\ has a property called the \textbf{ambient dimension} which is a
 positive integer equal to the maximum dimension a maximal simplex can have.
-This ambient dimension can be chosen by the user at the creation of a \pcds\
-and can then be queried using the method \ccc{pcds.ambient_dimension()}.
-A \pcds\ also knows the \textbf{current dimension} of its maximal simplices,
-which can be queried with \ccc{pcds.current_dimension()}. In the sequel, let
+This ambient dimension can be chosen by the user at the creation of a \tds\
+and can then be queried using the method \ccc{tds.ambient_dimension()}.
+A \tds\ also knows the \textbf{current dimension} of its maximal simplices,
+which can be queried with \ccc{tds.current_dimension()}. In the sequel, let
 us denote the ambient dimension with \ad\ and the current dimension with \cd.
 It always holds that $\ad>0$ and $\cd\le\ad$.
 
@@ -121,7 +115,7 @@ triangle, irrespective of the 3D triangulation's current dimension. In
 particular, maximal simplices in degenerate planar 3D triangulation are
 \ccc{Facet}s, not \ccc{Cell}s.
 
-By contrast, in the present \ccc{Pure_complex} \cgal\ package, the reference
+By contrast, in the present \ccc{Triangulation} \cgal\ package, the reference
 dimension of a pure complex (or a pure complex data structure) is its current
 dimension. This means that, whatever the current dimension is, a maximal
 simplex is always represented by the \ccc{Simplex} nested type, And a
@@ -132,11 +126,11 @@ simplex is always represented by the \ccc{Simplex} nested type, And a
 
 \paragraph{The data structure triangulates $\sphere^\cd$}
 
-Because this is extremely convenient, a \pcds, in fact, ensures that its
+Because this is extremely convenient, a \tds, in fact, ensures that its
 simplices form a \emph{triangulation} of the topological sphere $\sphere^\cd$,
 \emph{i.e.}, form a partition of $\sphere^\cd$ into $\cd$-simplices. When a
-\pcds\ is used as the combinatorial part of a geometric pure complex, one
-vertex of the \pcds\ will be fixed and play the role of the \textbf{vertex at
+\tds\ is used as the combinatorial part of a geometric pure complex, one
+vertex of the \tds\ will be fixed and play the role of the \textbf{vertex at
 infinity}; the pure complex thus formed will cover the whole euclidean space
 using \textbf{infinite} or \textbf{unbounded} simplices outside the convex
 hull of the complex's points. (More details are given in the next section.)
@@ -157,13 +151,13 @@ triangulation of the $0$-sphere.
 the sphere $\sphere^\cd$.
 \end{itemize}
 
-% - - - - - - - - - - - - - - - - - - - - - - - - - - - - PCDS IMPLEMENTATION
+% - - - - - - - - - - - - - - - - - - - - - - - - - - - - TDS IMPLEMENTATION
 
-\subsection{Implementation\label{pure_complex:pcds:impl}}
+\subsection{Implementation\label{triangulation:tds:impl}}
 
 \paragraph{Storage}
 
-A \pcds\ explicitely stores all of its vertices and maximal simplices.
+A \tds\ explicitely stores all of its vertices and maximal simplices.
 
 Each vertex stores a reference (a \ccc{Handle}) to one of its incident
 simplex.
@@ -180,7 +174,7 @@ the $i$-th vertex of $\sigma$.
 \begin{figure}[htbp]
 \begin{ccTexOnly}
 \begin{center}
-\includegraphics{Pure_complex/fig/simplex-structure.pdf}
+\includegraphics{Triangulation/fig/simplex-structure.pdf}
 \end{center}
 \end{ccTexOnly}
 \begin{ccHtmlOnly}
@@ -189,19 +183,19 @@ the $i$-th vertex of $\sigma$.
 </center>
 \end{ccHtmlOnly}
 \caption{Indexing the vertices and neighbors of a simplex $s$.}
-\label{pure_complex:fig:simplex}
+\label{triangulation:fig:simplex}
 \end{figure} 
 
 \paragraph{Instanciating the class template}
 
-The \ccc{Pure_complex_data_structure<Dimensionality, PCDSVertex, PCDSSimplex>}
+The \ccc{Triangulation_data_structure<Dimensionality, TDSVertex, TDSSimplex>}
 class template is designed in such a way that its user can choose
 \begin{itemize}
 \item the ambient dimension of the pure complex data structure,
-\item the type used to represent vertices, by specifying the \ccc{PCDSVertex}
+\item the type used to represent vertices, by specifying the \ccc{TDSVertex}
 template parameter and
 \item the type used to represent simplices, by specifying the
-\ccc{PCDSSimplex} template parameter.
+\ccc{TDSSimplex} template parameter.
 \end{itemize}
 
 The last two parameters have default values and are thus not necessary, unless
@@ -217,19 +211,19 @@ dimension of the simplices must be passed as an integer argument to an instance
 constructor (see \ccc{PureComplexDataStructure}).
 \end{itemize}
 
-The \ccc{PCDSVertex} and \ccc{PCDSSimplex} parameters to the class template
+The \ccc{TDSVertex} and \ccc{TDSSimplex} parameters to the class template
 must be models of the concepts \ccc{PureComplexDSVertex} and
 \ccc{PureComplexDSSimplex} respectively. \cgal\ provides models for these
-concepts: \ccc{Pure_complex_ds_vertex<PCDS>} and
-\ccc{Pure_complex_ds_simplex<PCDS, PCDSSimplexStoragePolicy>}, which, as one
-can see, take the \pcds\ as a template parameter in order to get access to
-some nested types in \pcds.
+concepts: \ccc{Triangulation_ds_vertex<TDS>} and
+\ccc{Triangulation_ds_simplex<TDS, TDSSimplexStoragePolicy>}, which, as one
+can see, take the \tds\ as a template parameter in order to get access to
+some nested types in \tds.
 
 \textbf{This creates a circular dependency}, which we resolve in the same way
 as in the \cgal\ \ccc{Triangulation_3} package (see FIXME). Thus, models of
-the concepts \ccc{Pure_complex_ds_vertex<PCDS>} and
-\ccc{Pure_complex_ds_simplex<PCDS, PCDSSimplexStoragePolicy>} (typically a
-user's custom classes) must provide a nested template \ccc{Rebind_PCDS} which
+the concepts \ccc{Triangulation_ds_vertex<TDS>} and
+\ccc{Triangulation_ds_simplex<TDS, TDSSimplexStoragePolicy>} (typically a
+user's custom classes) must provide a nested template \ccc{Rebind_TDS} which
 is documented in those two concept's reference manual pages.
 
 \begin{ccAdvanced}
@@ -237,9 +231,9 @@ Thus, to the user in need of a custom vertex of simplex class, we recommend
 the reading of the documentation of the \cgal\ \ccc{Triangulation_3} package.
 \end{ccAdvanced}
 
-% - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - PCDS EXAMPLES
+% - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - TDS EXAMPLES
 
-\subsection{Examples\label{pure_complex:pcds:examples}}
+\subsection{Examples\label{triangulation:tds:examples}}
  
 \paragraph{Incremental Construction}
 The following example shows how to construct a pure complex data structure by
@@ -247,14 +241,14 @@ inserting vertices. The reader will make the best use of this example by
 reading it slowly, together with the reference manual documentation of the
 methods that are called (see here: \ccc{PureComplexDataStructure}).
 
-\ccIncludeExampleCode{Pure_complex/pure_complex_data_structure.cpp}
+\ccIncludeExampleCode{Triangulation/triangulation_data_structure.cpp}
 
 
 % - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - PURE COMPLEXES
 
 \section{Pure complexes}
 
-The class \ccc{CGAL::Pure_complex<PCTraits, PCDS>} embeds an abstract pure
+The class \ccc{CGAL::Triangulation<TrTraits, TDS>} embeds an abstract pure
 complex in euclidean space, thus forming a pure complex. More precisely, it
 maintains a triangulation (a partition into pairwise interior-disjoint maximal
 simplices) of the convex hull of the points (the embedded vertices) of the
@@ -280,14 +274,14 @@ the oriented hyperplane defined by the simplex's finite facet.
 
 \subsection{Implementation}
 
-The class \ccc{CGAL::Pure_complex<PCTraits, PCDS>} stores a model \ccc{PCDS}
-of the concept \ccc{PureComplexDataStructure} which is instanciated with a
+The class \ccc{CGAL::Triangulation<TrTraits, TDS>} stores a model \ccc{TDS}
+of the concept \ccc{TriangulationDataStructure} which is instanciated with a
 vertex type that stores a point, and a simplex type that allows the retrieval
 of the point of its vertices.
 
-The template parameter \ccc{PCTraits} must be a model of the concept
-\ccc{PureComplexTraits} which provides the geometric \ccc{Point} type as well
-as various geometric predicates used by the \ccc{Pure_complex} class.
+The template parameter \ccc{TrTraits} must be a model of the concept
+\ccc{TriangulationTraits} which provides the geometric \ccc{Point} type as well
+as various geometric predicates used by the \ccc{Triangulation} class.
 
 % - - - - - - - - - - - - - - - - - - - - - - - - - - - - PureComplex EXAMPLES
 
@@ -303,7 +297,7 @@ a little fun and ask the pure complex to construct the set of edges
 these edges are in bijection with the vertices on the convex hull of the
 points. This gives us a handy way to count the convex hull vertices.
 
-\ccIncludeExampleCode{Pure_complex/pure_complex.cpp}
+\ccIncludeExampleCode{Triangulation/triangulation.cpp}
 
 \paragraph{Traversing the facets of the convex hull}
 
@@ -317,16 +311,16 @@ The first is to iterate over the simplices of the complex and check if they
 are infinite or not:
 
 \begin{ccExampleCode}
-Pure_complex pc;
+Triangulation t;
 
 // ... insert points in the pure complex here.
 
-typedef Pure_complex::Simplex_iterator Simplex_iterator;
-typedef Pure_complex::Facet Facet;
+typedef Triangulation::Simplex_iterator Simplex_iterator;
+typedef Triangulation::Facet Facet;
 
-for( Simplex_iterator sit = pc.simplices_begin(); sit != pc.simplices_end(); ++sit )
+for( Simplex_iterator sit = t.simplices_begin(); sit != t.simplices_end(); ++sit )
 {
-    if( pc.is_finite(sit) )
+    if( t.is_finite(sit) )
         continue;
     Facet ft(sit, 0); // |ft| is a facet of the convex hull
 }
@@ -339,18 +333,18 @@ incident to the infinite vertex: they form precisely the set of infinite
 simplices:
 
 \begin{ccExampleCode}
-Pure_complex pc;
+Triangulation t;
 
 // ... insert points in the pure complex here.
 
-typedef Pure_complex::Simplex_handle Simplex_handle;
-typedef Pure_complex::Facet Facet;
+typedef Triangulation::Simplex_handle Simplex_handle;
+typedef Triangulation::Facet Facet;
 typedef std::vector<Simplex_handle> Simplices;
 
 Simplices infinite_simplices;
 std::back_insert_iterator<Simplices> out(infinite_simplices);
 
-pc.gather_incident_simplices(pc.infinite_vertex(), out);
+t.gather_incident_simplices(t.infinite_vertex(), out);
 
 for( Simplices::iterator sit = infinite_simplices.begin(); sit != infinite_simplices.end(); ++sit )
 {
@@ -369,8 +363,8 @@ visits \emph{only} the infinite simplices but stores handles to them into a
 
 \section{Delaunay complexes}%and regular complexes}
 
-The class \ccc{CGAL::Delaunay_complex<DCTraits, PCDS>} derives from
-\ccc{CGAL::Pure_complex<PCTraits, PCDS>} and adds further constraints to a
+The class \ccc{CGAL::Delaunay_complex<DCTraits, TDS>} derives from
+\ccc{CGAL::Triangulation<Triangulation Traits, TDS>} and adds further constraints to a
 pure complex, in that all its simplices must have the so-called
 \textbf{Delaunay} or \textbf{empty-ball} property: the interior of a ball
 circumscribing any simplex of a Delaunay simplex must be free from any vertex
@@ -398,8 +392,8 @@ hole is then re-triangulated in a ``star shape'' centered at \ccc{p}.
 
 \subsection{Implementation}
 
-The class \ccc{CGAL::Delaunay_complex<DCTraits, PCDS>} derives from
-\ccc{CGAL::Pure_complex<DCTraits, PCDS>}. It thus stores a model \ccc{PCDS} of
+The class \ccc{CGAL::Delaunay_complex<DCTraits, TDS>} derives from
+\ccc{CGAL::Triangulation<DCTraits, TDS>}. It thus stores a model \ccc{TDS} of
 the concept \ccc{PureComplexDataStructure} which is instanciated with a vertex
 type that stores a geometric point, and a simplex type that allows the
 retrieval of the point of its vertices.
@@ -448,7 +442,7 @@ for( pit = points.begin(); pit != points.end(); ++pit )
         || lt == Delaunay_complex::OUTSIDE_AFFINE_HULL )
     {
         // There is, a priori, no simplex of interest here.
-        v = pc.insert(*pit, lt, f, ft, s);
+        v = t.insert(*pit, lt, f, ft, s);
     }
     else
     {
@@ -476,5 +470,6 @@ for( pit = points.begin(); pit != points.end(); ++pit )
 This package is heavily inspired by the works of Michael Seel
 (\ccc{Kernel_d}), Monique Teillaud and Sylvain Pion (\ccc{Triangulation_3})
 and Mariette Yvinec (\ccc{Triangulation_2}).
-It is written by Samuel Hornus.
+The first version was written by Samuel Hornus and then
+pursued by Samuel Hornus and Olivier Devillers.
 }

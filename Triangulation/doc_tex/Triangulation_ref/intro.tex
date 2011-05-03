@@ -1,8 +1,8 @@
-%\RCSdef{\RCSPureComplexRev}{$Id$}
-%\RCSdefDate{\RCSPureComplexDate}{$Date$}
+%\RCSdef{\RCSTriangulationRev}{$Id$}
+%\RCSdefDate{\RCSTriangulationDate}{$Date$}
 
-\ccRefChapter{Pure Complexes\label{chap:pure_complexes_ref}}
-\ccChapterAuthor{Samuel Hornus}
+\ccRefChapter{Triangulations\label{chap:triangulation_ref}}
+\ccChapterAuthor{Samuel Hornus \and Olivier Devillers}
 
 TODO: add some introductory text here.
 
@@ -12,50 +12,52 @@ TODO: add some introductory text here.
 
 \subsubsection*{Pure complex data structure}
 
-\ccRefConceptPage{PureComplexDataStructure}
+\ccRefConceptPage{TriangulationDataStructure}
 
-The above concept is also abbreviated as \ccc{PCDS}. It defines three types,
-\ccc{Vertex}, \ccc{Simplex} and \ccc{Face}, that must respectively fulfill the
+The above concept is also abbreviated as \ccc{TDS}. It defines three types,
+\ccc{Vertex}, \ccc{Full_cell} and \ccc{Face}, that must respectively fulfill the
 following concepts:
 
-\ccRefConceptPage{PureComplexDSVertex}\\
-\ccRefConceptPage{PureComplexDSSimplex}\\
-\ccRefConceptPage{PureComplexFace}
+\ccRefConceptPage{TriangulationDSVertex}\\
+\ccRefConceptPage{TriangulationDSFullCell}\\
+\ccRefConceptPage{TriangulationFace}
 
 The above first two concepts are also abbreviated respectively as
-\ccc{PCDSVertex} and \ccc{PCDSSimplex}.
+\ccc{TDSVertex} and \ccc{TDSFullCell}.
 
 \subsubsection*{(Geometric) pure complex}
 
-\ccRefConceptPage{PureComplexTraits}\\
-\ccRefConceptPage{DelaunayComplexTraits}\\
-\ccRefConceptPage{RegularComplexTraits}
+\ccRefConceptPage{TriangulationTraits}\\
+\ccRefConceptPage{DelaunayTriangulationTraits}\\
+%\ccRefConceptPage{RegularTriangulationTraits}
 
-\ccRefConceptPage{PureComplexVertex}\\
-\ccRefConceptPage{PureComplexSimplex}
+\ccRefConceptPage{TriangulationVertex}\\
+\ccRefConceptPage{TriangulationFullCell}
 
-The above concepts are also abbreviated respectively as \ccc{PCTraits},
-\ccc{DCTraits}, \ccc{RCTraits}, \ccc{PCVertex} and \ccc{PCSimplex}.
+The above concepts are also abbreviated respectively as \ccc{TrTraits},
+\ccc{DTTraits}, 
+%\ccc{RTTraits},
+ \ccc{TrVertex} and \ccc{TrFullCell}.
 
 \subsection*{Classes}
 
 \subsubsection*{Pure complex data structure}
 
-\ccRefIdfierPage{CGAL::Pure_complex_data_structure<Dimensionality, PCDSVertex, PCDSSimplex>}\\
-\ccRefIdfierPage{CGAL::Pure_complex_ds_vertex<PCDS>}\\
-\ccRefIdfierPage{CGAL::Pure_complex_ds_simplex<PCDS, PCDSSimplexStoragePolicy>}
+\ccRefIdfierPage{CGAL::Triangulation_data_structure<Dimensionality, TDSVertex, TDSFullCell>}\\
+\ccRefIdfierPage{CGAL::Triangulation_ds_vertex<TDS>}\\
+\ccRefIdfierPage{CGAL::Triangulation_ds_full_cell<TDS, TDSFullCellStoragePolicy>}
 
-\ccRefIdfierPage{CGAL::Pure_complex_face<PCDS>}
+\ccRefIdfierPage{CGAL::Triangulation_face<TDS>}
 
 \subsubsection*{(Geometric) pure complexes}
 
-\ccRefIdfierPage{CGAL::Pure_complex<PCTraits, PCDS>}\\
-\ccRefIdfierPage{CGAL::Delaunay_complex<DCTraits, PCDS>}
-%\ccRefIdfierPage{CGAL::Regular_complex<RCTraits, PCDS>}
+\ccRefIdfierPage{CGAL::Triangulation<PCTraits, TDS>}\\
+\ccRefIdfierPage{CGAL::Delaunay_complex<DCTraits, TDS>}
+%\ccRefIdfierPage{CGAL::Regular_complex<RCTraits, TDS>}
 
-\ccRefIdfierPage{CGAL::Pure_complex_vertex<PCTraits, Data, PCDSVertex>}\\
-\ccRefIdfierPage{CGAL::Pure_complex_simplex<PCTraits, Data, PCDSSimplex>}
+\ccRefIdfierPage{CGAL::Triangulation_vertex<PCTraits, Data, TDSVertex>}\\
+\ccRefIdfierPage{CGAL::Triangulation_full_cell<PCTraits, Data, TDSFullCell>}
 
 \subsection*{Enums}
 
-\ccRefIdfierPage{CGAL::Pure_complex::Locate_type}
+\ccRefIdfierPage{CGAL::Triangulation::Locate_type}
