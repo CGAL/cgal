@@ -3923,7 +3923,6 @@ Triangulation/include/CGAL/internal/Pure_complex/utilities.h -text
 Triangulation/include/CGAL/internal/Static_or_dynamic_array.h -text
 Triangulation/package_info/Pure_complex/description.txt -text
 Triangulation/package_info/Pure_complex/maintainer -text
-Triangulation/renaming_scheme -text
 Triangulation/test/Pure_complex/dc.cpp -text
 Triangulation/test/Pure_complex/include/tilted_grid.h -text
 Triangulation/test/Pure_complex/pc.cpp -text
