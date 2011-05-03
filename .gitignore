@@ -1154,10 +1154,10 @@ Triangulation/doc_html
 Triangulation/doc_pdf
 Triangulation/doc_ps
 Triangulation/doc_tex/Pure_complex.*
-Triangulation/doc_tex/Pure_complex_ref/main.aux
-Triangulation/doc_tex/Pure_complex_ref/main.hax
 Triangulation/doc_tex/Triangulation/main.aux
 Triangulation/doc_tex/Triangulation/main.hax
+Triangulation/doc_tex/Triangulation_ref/main.aux
+Triangulation/doc_tex/Triangulation_ref/main.hax
 Triangulation/examples/Pure_complex/*Make*
 Triangulation/examples/Pure_complex/cmake*
 Triangulation/examples/Pure_complex/compile
