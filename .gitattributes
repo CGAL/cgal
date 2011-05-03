@@ -3869,13 +3869,6 @@ Testsuite/test/makefile2 -text
 Testsuite/test/run_testsuite_with_cmake -text
 Triangulation/TODO -text
 Triangulation/benchmark/Pure_complex/dc.cpp -text
-Triangulation/doc_tex/Pure_complex/PkgDescription.tex -text
-Triangulation/doc_tex/Pure_complex/fig/detail.png -text
-Triangulation/doc_tex/Pure_complex/fig/illustration.png -text
-Triangulation/doc_tex/Pure_complex/fig/simplex-structure.pdf -text
-Triangulation/doc_tex/Pure_complex/fig/simplex-structure.png -text
-Triangulation/doc_tex/Pure_complex/main.tex -text
-Triangulation/doc_tex/Pure_complex/purecomplex.tex -text
 Triangulation/doc_tex/Pure_complex_ref/DelaunayComplexTraits.tex -text
 Triangulation/doc_tex/Pure_complex_ref/Delaunay_complex.tex -text
 Triangulation/doc_tex/Pure_complex_ref/PureComplexDSSimplex.tex -text
@@ -3901,6 +3894,13 @@ Triangulation/doc_tex/Pure_complex_ref/fig/insert-in-simplex.pdf -text
 Triangulation/doc_tex/Pure_complex_ref/fig/insert-in-simplex.png -text
 Triangulation/doc_tex/Pure_complex_ref/intro.tex -text
 Triangulation/doc_tex/Pure_complex_ref/main.tex -text
+Triangulation/doc_tex/Triangulation/PkgDescription.tex -text
+Triangulation/doc_tex/Triangulation/fig/detail.png -text
+Triangulation/doc_tex/Triangulation/fig/illustration.png -text
+Triangulation/doc_tex/Triangulation/fig/simplex-structure.pdf -text
+Triangulation/doc_tex/Triangulation/fig/simplex-structure.png -text
+Triangulation/doc_tex/Triangulation/main.tex -text
+Triangulation/doc_tex/Triangulation/purecomplex.tex -text
 Triangulation/dont_submit -text
 Triangulation/examples/Pure_complex/pure_complex.cpp -text
 Triangulation/examples/Pure_complex/pure_complex_data_structure.cpp -text
