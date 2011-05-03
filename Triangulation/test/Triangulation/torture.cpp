@@ -1,6 +1,6 @@
 #include <CGAL/internal/Combination_enumerator.h>
 #include <CGAL/point_generators_d.h>
-#define USE_NEW_KERNEL
+//#define USE_NEW_KERNEL
 #ifndef USE_NEW_KERNEL
 #include <CGAL/Cartesian_d.h> // this is for Old_kernel_d
 #else

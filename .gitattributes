@@ -3878,11 +3878,11 @@ Triangulation/doc_tex/Triangulation/main.tex -text
 Triangulation/doc_tex/Triangulation/triangulation.tex -text
 Triangulation/doc_tex/Triangulation_ref/DelaunayTriangulationTraits.tex -text
 Triangulation/doc_tex/Triangulation_ref/Delaunay_triangulation.tex -text
-Triangulation/doc_tex/Triangulation_ref/PureComplexDSVertex.tex -text
 Triangulation/doc_tex/Triangulation_ref/RegularTriangulation.tex -text
 Triangulation/doc_tex/Triangulation_ref/RegularTriangulationTraits.tex -text
 Triangulation/doc_tex/Triangulation_ref/Triangulation.tex -text
 Triangulation/doc_tex/Triangulation_ref/TriangulationDSFullCell.tex -text
+Triangulation/doc_tex/Triangulation_ref/TriangulationDSVertex.tex -text
 Triangulation/doc_tex/Triangulation_ref/TriangulationDataStructure.tex -text
 Triangulation/doc_tex/Triangulation_ref/TriangulationFace.tex -text
 Triangulation/doc_tex/Triangulation_ref/TriangulationFullCell.tex -text
