@@ -1,3 +1,23 @@
+__________________________________________________________________________RENAMING
+Pure_complex                        Triangulation
+Delaunay_complex                    Delaunay_triangulation
+PureComplexDSSimplex                TriangulationDSFullCell
+PureComplexDataStructure            TriangulationDataStructure
+PureComplexFace                     TriangulationFace
+PureComplexSimplex                  TriangulationFullCell
+PureComplexTraits                   TriangulationTraits 
+PureComplexVertex                   TriangulationVertex
+Pure_complex                        Triangulation  
+Pure_complex_data_structure         Triangulation_data_structure 
+Pure_complex_ds_simplex             Triangulation_ds_full_cell
+Pure_complex_ds_vertex              Triangulation_ds_vertex
+Pure_complex_face                   Triangulation_face
+Pure_complex_locate_type            Triangulation_locate_type
+Pure_complex_simplex                Triangulation_full_cell
+Pure_complex_vertex                 Triangulation_vertex
+RegularComplexTraits                RegularTriangulationTraits 
+Regular_complex                     RegularTriangulation
+
 __________________________________________________________________________ALL
 
 *) FUTURE: better system for simplex's flag (visited)
