@@ -11,6 +11,7 @@
 
 #include <CGAL/basic.h>
 #include <CGAL/Arithmetic_kernel.h>
+#include <CGAL/MP_Float.h>
 
 #include <CGAL/Root_of_traits.h>
 #include <CGAL/Lazy_exact_nt.h>  
@@ -47,7 +48,6 @@ int main(){
     CGAL::Test::test_root_of_traits< double , double , double >();
     
 #ifdef CGAL_USE_GMP
-#ifdef CGAL_USE_MPFI
     //TODO: switch to Gmpq
     {
       typedef CGAL::GMP_arithmetic_kernel AK; 
@@ -56,7 +56,6 @@ int main(){
       typedef AK::Field_with_sqrt FWS;
       test_root_of_traits_for_set(Integer(),Rational(),FWS());
     }
-#endif
 #endif
 #ifdef CGAL_USE_LEDA
     //TODO: switch to Gmpq

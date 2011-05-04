@@ -358,6 +358,11 @@ public :
       typename boost::enable_if<is_implicit_convertible<ET1,ET>,int>::type=0)
     : Base(new Lazy_lazy_exact_Cst<ET, ET1>(x)){}
 
+  template <class ET1>
+  explicit Lazy_exact_nt (const Lazy_exact_nt<ET1> &x,
+  typename boost::disable_if<is_implicit_convertible<ET1,ET>,int>::type=0)
+    : Base(new Lazy_lazy_exact_Cst<ET, ET1>(x)){}
+
   Self operator+ () const
   { return *this; }
 

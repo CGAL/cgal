@@ -25,16 +25,32 @@
 #include <CGAL/Arithmetic_kernel.h>
 #include <CGAL/Sqrt_extension.h>
 #include <CGAL/Quotient.h>
+#include <boost/mpl/has_xxx.hpp>
 
 namespace CGAL {
 
 namespace internal {
 
-//Not a field
+BOOST_MPL_HAS_XXX_TRAIT_NAMED_DEF(Has_typedef_Arithmetic_kernel,Arithmetic_kernel,false)  
+
+template <class NT,bool has_AK=Has_typedef_Arithmetic_kernel<Get_arithmetic_kernel<NT> >::value>
+struct Get_rational_type{
+  typedef Quotient<NT> type;
+};
+
+template <class NT>
+struct Get_rational_type<NT,true>{
+  typedef typename Get_arithmetic_kernel<NT>::Arithmetic_kernel::Rational type;
+};
+
+  
+//Default or not a field.
+//If no specialization of Get_arithmetic_kernel is available, a field type compatible with NT 
+//is made using CGAL::Quotient
 template < typename NT, class Algebraic_category>
 struct Root_of_traits_helper{
 //    typedef Quotient<NT> Root_of_1;
-    typedef typename Get_arithmetic_kernel<NT>::Arithmetic_kernel::Rational Root_of_1;
+    typedef typename Get_rational_type<NT>::type Root_of_1;
     typedef CGAL::Sqrt_extension<Root_of_1,Root_of_1,::CGAL::Tag_true,::CGAL::Tag_true>             Root_of_2;
 //    typedef CGAL::Root_of_2<NT> Root_of_2;
     struct Make_root_of_2{

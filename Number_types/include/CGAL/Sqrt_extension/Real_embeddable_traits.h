@@ -78,10 +78,8 @@ class Real_embeddable_traits< Sqrt_extension<COEFF, ROOT, ACDE_TAG,FP_TAG> >
         // or the root may not. ?? !
         double operator()(const Type& x) const {
             if(x.is_extended()){
-                return CGAL_NTS to_double(x.a0())
-                    +  int(CGAL_NTS sign(x.a1()))
-                    * CGAL_NTS sqrt(CGAL_NTS to_double(x.a1()*x.a1() *
-                                                    Type(x.root())));
+                return to_double(x.a0()) +  to_double(x.a1())
+                    * (std::sqrt) (to_double(x.root()));
             }else{
                 return CGAL_NTS to_double(x.a0());
             }

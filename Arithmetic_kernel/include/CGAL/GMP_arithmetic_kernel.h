@@ -36,8 +36,9 @@
 
 #ifdef CGAL_USE_GMP 
 #ifdef CGAL_USE_MPFI
-
 #define CGAL_HAS_GMP_ARITHMETIC_KERNEL 
+#endif //CGAL_USE_MPFI
+#endif //CGAL_USE_GMP  
 
 #include <CGAL/Gmpz.h>
 #include <CGAL/Gmpq.h>
@@ -53,8 +54,10 @@ class GMP_arithmetic_kernel : public internal::Arithmetic_kernel_base {
 public:
   typedef CGAL::Gmpz           Integer;
   typedef CGAL::Gmpq           Rational;
+  #ifdef CGAL_USE_MPFI
   typedef CGAL::Gmpfr          Bigfloat;
   typedef CGAL::Gmpfi Bigfloat_interval;
+  #endif //CGAL_USE_MPFI
 };
     
 template <>
@@ -65,6 +68,8 @@ template <>
 struct Get_arithmetic_kernel<Gmpq>{
   typedef GMP_arithmetic_kernel Arithmetic_kernel;
 };
+
+#ifdef CGAL_USE_MPFI
 template <>
 struct Get_arithmetic_kernel<Gmpfr>{
   typedef GMP_arithmetic_kernel Arithmetic_kernel;
@@ -73,10 +78,10 @@ template <>
 struct Get_arithmetic_kernel<Gmpfi>{
   typedef GMP_arithmetic_kernel Arithmetic_kernel;
 };
+#endif //CGAL_USE_MPFI
 
 } //namespace CGAL
 
-#endif //CGAL_USE_MPFI
-#endif //CGAL_USE_GMP  
+
 #endif // CGAL_ARITHMETIC_KERNEL_H
 // EOF
