@@ -676,7 +676,7 @@ operator - (const Sqrt_extension<NT,ROOT,ACDE_TAG,FP_TAG>& p){
 // BINARY 
 template <class NT,class ROOT,class ACDE_TAG,class FP_TAG> bool
 operator == (const Sqrt_extension<NT,ROOT,ACDE_TAG,FP_TAG>& p1, const Sqrt_extension<NT,ROOT,ACDE_TAG,FP_TAG>& p2)
-{ return (p1-p2).is_zero() ; }
+{ return ( p1.compare(p2) == CGAL::ZERO ); }
 template <class NT,class ROOT,class ACDE_TAG,class FP_TAG> bool
 operator < (const Sqrt_extension<NT,ROOT,ACDE_TAG,FP_TAG>& p1, const Sqrt_extension<NT,ROOT,ACDE_TAG,FP_TAG>& p2)
 { return ( p1.compare(p2) == CGAL::SMALLER ); }
