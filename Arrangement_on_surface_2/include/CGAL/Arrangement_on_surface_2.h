@@ -1073,8 +1073,6 @@ protected:
   const Traits_adaptor_2 * m_geom_traits;   // the geometry-traits adaptor.
   bool                     m_own_traits;    // inidicates whether the geometry
                                             // traits should be freed up.
-  Arr_boundary_type        m_boundary_types[4];   
-
 public:
   
   /// \name Constructors.
@@ -1654,62 +1652,43 @@ public:
 
 protected:
 
-  /// \name Allocating and de-allocating points and curves.
+  /// \name Determining the boundary-side conditions.
   //@{
 
-  /*! Is one of the given x and y parameter spaces open?
+  /*! Determines whether a boundary-side categoty indicates an open side.
+   */
+  inline bool is_open(Arr_boundary_side_tag) const { return false; }
+  inline bool is_open(Arr_open_side_tag) const { return true; }
+
+  /*! Determines whether the given x and y parameter spaces are open.
    * These parameter spaces are typically associated with a particular curve
    * end.
    * \param ps_x The parameter space in x.
    * \param ps_y The parameter space in y.
    */
-  inline bool is_open(Arr_parameter_space ps_x, Arr_parameter_space ps_y)
-    const
+  inline bool is_open(Arr_parameter_space ps_x, Arr_parameter_space ps_y) const
   {
     return
-      (((ps_x != ARR_INTERIOR) && (m_boundary_types[ps_x] == ARR_OPEN)) ||
-       ((ps_y != ARR_INTERIOR) && (m_boundary_types[ps_y] == ARR_OPEN)));
-  }
+      (((ps_x == ARR_LEFT_BOUNDARY) && is_open(Arr_left_side_category())) ||
+       ((ps_x == ARR_RIGHT_BOUNDARY) && is_open(Arr_right_side_category())) ||
+       ((ps_y == ARR_BOTTOM_BOUNDARY) && is_open(Arr_bottom_side_category())) ||
+       ((ps_y == ARR_TOP_BOUNDARY) && is_open(Arr_top_side_category())));
   
-  /*! Initialize the boundary_types array */
-  inline void init_boundary_types()
-  {
-    init_boundary_side(ARR_LEFT_BOUNDARY, Arr_left_side_category());
-    init_boundary_side(ARR_BOTTOM_BOUNDARY, Arr_bottom_side_category());
-    init_boundary_side(ARR_TOP_BOUNDARY, Arr_top_side_category());
-    init_boundary_side(ARR_RIGHT_BOUNDARY, Arr_right_side_category());
   }
 
-  /*! Initialize the boundary_types array */
-  void init_boundary_side(Arr_parameter_space ps, Arr_oblivious_side_tag)
-  {
-    m_boundary_types[ps] = ARR_OBLIVIOUS;
-  }
-    
-  /*! Initialize the boundary_types array */
-  void init_boundary_side(Arr_parameter_space ps, Arr_open_side_tag)
-  {
-    m_boundary_types[ps] = ARR_OPEN;
-  }
+  /*! Determines whether a boundary-side categoty indicates a constracted side.
+   */
+  inline bool is_contracted(Arr_boundary_side_tag) const { return false; }
+  inline bool is_contracted(Arr_contracted_side_tag) const { return true; }
 
-  /*! Initialize the boundary_types array */
-  void init_boundary_side(Arr_parameter_space ps, Arr_closed_side_tag)
-  {
-    m_boundary_types[ps] = ARR_CLOSED;
-  }
-
-  /*! Initialize the boundary_types array */
-  void init_boundary_side(Arr_parameter_space ps, Arr_contracted_side_tag)
-  {
-    m_boundary_types[ps] = ARR_CONTRACTION;
-  }
-
-  /*! Initialize the boundary_types array */
-  void init_boundary_side(Arr_parameter_space ps, 
-                          Arr_identified_side_tag)
-  {
-    m_boundary_types[ps] = ARR_IDENTIFICATION;
-  }
+  /*! Determines whether a boundary-side categoty indicates a constracted side.
+   */
+  inline bool is_identified(Arr_boundary_side_tag) const { return false; }
+  inline bool is_identified(Arr_identified_side_tag) const { return true; }
+  //@}
+  
+  /// \name Allocating and de-allocating points and curves.
+  //@{
 
   /*! Allocate a new point. */
   Point_2 *_new_point (const Point_2& pt)

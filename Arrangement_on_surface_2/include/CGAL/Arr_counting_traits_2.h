@@ -31,6 +31,7 @@
 
 #include <CGAL/basic.h>
 #include <CGAL/Arr_enums.h>
+#include <CGAL/Arr_tags.h>
 
 namespace CGAL {
 
@@ -62,19 +63,21 @@ public:
     PARAMETER_SPACE_IN_X_CURVE_END_OP,
     PARAMETER_SPACE_IN_X_POINT_OP,
     PARAMETER_SPACE_IN_X_CURVE_OP,
-    COMPARE_Y_NEAR_BOUNDARY_OP,
-    COMPARE_Y_ON_BOUNDARY_OP,
     IS_ON_X_IDENTIFICATION_POINT_OP,
     IS_ON_X_IDENTIFICATION_CURVE_OP,
+    COMPARE_Y_ON_BOUNDARY_OP,
+    COMPARE_Y_NEAR_BOUNDARY_OP,
 
     PARAMETER_SPACE_IN_Y_CURVE_END_OP,
     PARAMETER_SPACE_IN_Y_POINT_OP,
     PARAMETER_SPACE_IN_Y_CURVE_OP,
-    COMPARE_X_NEAR_BOUNDARY_POINT_CURVE_END_OP,
-    COMPARE_X_NEAR_BOUNDARY_CURVE_ENDS_OP,
-    COMPARE_X_ON_BOUNDARY_OP,
     IS_ON_Y_IDENTIFICATION_POINT_OP,
     IS_ON_Y_IDENTIFICATION_CURVE_OP,
+    COMPARE_X_AT_LIMIT_POINT_CURVE_END_OP,
+    COMPARE_X_AT_LIMIT_CURVE_ENDS_OP,
+    COMPARE_X_NEAR_LIMIT_OP,
+    COMPARE_X_ON_BOUNDARY_OP,
+    COMPARE_X_NEAR_BOUNDARY_OP,
     
     NUMBER_OF_OPERATIONS
   };
@@ -162,11 +165,18 @@ public:
   unsigned int count_parameter_space_in_x_point() const
   { return m_counters[PARAMETER_SPACE_IN_X_POINT_OP]; }
   
+  unsigned int count_is_on_x_identification_point() const
+  { return m_counters[IS_ON_X_IDENTIFICATION_POINT_OP]; }
+
+  unsigned int count_is_on_x_identification_curve() const
+  { return m_counters[IS_ON_X_IDENTIFICATION_CURVE_OP]; }
+
+  unsigned int count_compare_y_on_boundary() const
+  { return m_counters[COMPARE_Y_ON_BOUNDARY_OP]; }
+
   unsigned int count_compare_y_near_boundary() const
   { return m_counters[COMPARE_Y_NEAR_BOUNDARY_OP]; }
 
-    unsigned int count_compare_y_on_boundary() const
-  { return m_counters[COMPARE_Y_ON_BOUNDARY_OP]; }
 
   // bottom-top
 
@@ -179,14 +189,26 @@ public:
   unsigned int count_parameter_space_in_y_point() const
   { return m_counters[PARAMETER_SPACE_IN_Y_POINT_OP]; }
 
-  unsigned int count_compare_x_near_boundary_point_curve_end() const
-  { return m_counters[COMPARE_X_NEAR_BOUNDARY_POINT_CURVE_END_OP]; }
+  unsigned int count_is_on_y_identification_point() const
+  { return m_counters[IS_ON_Y_IDENTIFICATION_POINT_OP]; }
 
-  unsigned int count_compare_x_near_boundary_curve_ends() const
-  { return m_counters[COMPARE_X_NEAR_BOUNDARY_CURVE_ENDS_OP]; }
-  
+  unsigned int count_is_on_y_identification_curve() const
+  { return m_counters[IS_ON_Y_IDENTIFICATION_CURVE_OP]; }
+
+  unsigned int count_compare_x_at_limit_point_curve_end() const
+  { return m_counters[COMPARE_X_AT_LIMIT_POINT_CURVE_END_OP]; }
+
+  unsigned int count_compare_x_at_limit_curve_ends() const
+  { return m_counters[COMPARE_X_AT_LIMIT_CURVE_ENDS_OP]; }
+
+  unsigned int count_compare_x_near_limit() const
+  { return m_counters[COMPARE_X_NEAR_LIMIT_OP]; }
+
   unsigned int count_compare_x_on_boundary() const
   { return m_counters[COMPARE_X_ON_BOUNDARY_OP]; }
+
+  unsigned int count_compare_x_near_boundary() const
+  { return m_counters[COMPARE_X_NEAR_BOUNDARY_OP]; }
 
   /// \name Types and functors inherited from the base
   //@{
@@ -537,24 +559,32 @@ public:
 
   };
 
-    /*! A functor that compares the y-coordinates of curve ends near the
-   * boundary of the parameter space.
+  /*! A functor that determines whether a point or a curve lies on an identification in x.
    */
-  class Compare_y_near_boundary_2 {
+  class Is_on_x_identification_2 {
   private:
-    typename Base::Compare_y_near_boundary_2 m_object;
-    unsigned int & m_counter;
+    typename Base::Is_on_x_identificiation_2 m_object;
+    mutable unsigned int & m_counter1;
+    mutable unsigned int & m_counter2;
 
   public:
     /*! Construct */
-    Compare_y_near_boundary_2(const Base * base, unsigned int & counter) :
-      m_object(base->compare_y_near_boundary_2_object()), m_counter(counter) {}
+    Is_on_x_identification_2(const Base * base, 
+                             unsigned int & counter1,
+                             unsigned int & counter2) :
+      m_object(base->is_on_x_identificiation_2_object()), 
+      m_counter1(counter1),
+      m_counter2(counter2) {}
 
     /*! Operate */
-    Comparison_result operator()(const X_monotone_curve_2 & xc1,
-                                 const X_monotone_curve_2 & xc2, 
-                                 Arr_curve_end ce) const
-    { ++m_counter; return m_object(xc1, xc2, ce); }
+    Arr_parameter_space operator()(const Point_2 & p) const
+    { ++m_counter1; return m_object(p); }
+
+
+    /*! Operate */
+    Arr_parameter_space operator()(const X_monotone_curve_2 & xc) const
+    { ++m_counter2; return m_object(xc); }
+
   };
 
   /*! A functor that compares the y-coordinate of two given points
@@ -578,10 +608,27 @@ public:
     { ++m_counter; return m_object(p1, p2); }
   };
   
-  // TODO Is_on_x_identification_2
-  
-  // bottom-top
+  /*! A functor that compares the y-coordinates of curve ends near the
+   * boundary of the parameter space.
+   */
+  class Compare_y_near_boundary_2 {
+  private:
+    typename Base::Compare_y_near_boundary_2 m_object;
+    unsigned int & m_counter;
 
+  public:
+    /*! Construct */
+    Compare_y_near_boundary_2(const Base * base, unsigned int & counter) :
+      m_object(base->compare_y_near_boundary_2_object()), m_counter(counter) {}
+
+    /*! Operate */
+    Comparison_result operator()(const X_monotone_curve_2 & xc1,
+                                 const X_monotone_curve_2 & xc2, 
+                                 Arr_curve_end ce) const
+    { ++m_counter; return m_object(xc1, xc2, ce); }
+  };
+
+  // bottom-top
 
   /*! A functor that determines whether an endpoint of an x-monotone arc lies
    * on a boundary of the parameter space along the y axis.
@@ -619,21 +666,49 @@ public:
     
   };
 
-  /*! A functor that compares the x-coordinates of curve ends near the
+  /*! A functor that determines whether a point or a curve lies on an identification in x.
+   */
+  class Is_on_y_identification_2 {
+  private:
+    typename Base::Is_on_y_identificiation_2 m_object;
+    mutable unsigned int & m_counter1;
+    mutable unsigned int & m_counter2;
+
+  public:
+    /*! Construct */
+    Is_on_y_identification_2(const Base * base, 
+                             unsigned int & counter1,
+                             unsigned int & counter2) :
+      m_object(base->is_on_y_identificiation_2_object()), 
+      m_counter1(counter1),
+      m_counter2(counter2) {}
+
+    /*! Operate */
+    Arr_parameter_space operator()(const Point_2 & p) const
+    { ++m_counter1; return m_object(p); }
+
+
+    /*! Operate */
+    Arr_parameter_space operator()(const X_monotone_curve_2 & xc) const
+    { ++m_counter2; return m_object(xc); }
+
+  };
+
+  /*! A functor that compares the x-limits of curve ends on the
    * boundary of the parameter space.
    */
-  class Compare_x_near_boundary_2 {
+  class Compare_x_at_limit_2 {
   private:
-    typename Base::Compare_x_near_boundary_2 m_object;
+    typename Base::Compare_x_at_limit_2 m_object;
     unsigned int & m_counter1;
     unsigned int & m_counter2;
 
   public:
     /*! Construct */
-    Compare_x_near_boundary_2(const Base * base, 
+    Compare_x_at_limit_2(const Base * base, 
                               unsigned int & counter1,
                               unsigned int & counter2) :
-      m_object(base->compare_x_near_boundary_2_object()), 
+      m_object(base->compare_x_at_limit_2_object()), 
       m_counter1(counter1),
       m_counter2(counter2) {}
 
@@ -651,6 +726,29 @@ public:
     { ++m_counter2; return m_object(xc1, ce1, xc2, ce2); }
   };
 
+
+  /*! A functor that compares the x-coordinates of curve ends near the
+   * boundary of the parameter space.
+   */
+  class Compare_x_near_limit_2 {
+  private:
+    typename Base::Compare_x_near_limit_2 m_object;
+    unsigned int & m_counter;
+  
+  public:
+    /*! Construct */
+    Compare_x_near_limit_2(const Base * base, 
+                              unsigned int & counter) :
+      m_object(base->compare_x_near_limit_2_object()), 
+      m_counter(counter) {}
+
+
+    /*! Operate */
+    Comparison_result operator()(const X_monotone_curve_2 & xc1,
+                                 const X_monotone_curve_2 & xc2,
+                                 Arr_curve_end ce) const
+    { ++m_counter; return m_object(xc1, xc2, ce); }
+  };
 
   /*! A functor that compares the x-coordinate of two given points
    * that lie on horizontal boundaries.
@@ -673,8 +771,28 @@ public:
     { ++m_counter; return m_object(p1, p2); }
   };
 
+  /*! A functor that compares the x-coordinates of curve ends near the
+   * boundary of the parameter space.
+   */
+  class Compare_x_near_boundary_2 {
+  private:
+    typename Base::Compare_x_near_boundary_2 m_object;
+    unsigned int & m_counter;
   
-  // TODO Is_on_y_identification_2
+  public:
+    /*! Construct */
+    Compare_x_near_boundary_2(const Base * base, 
+                              unsigned int & counter) :
+      m_object(base->compare_x_near_boundary_2_object()), 
+      m_counter(counter) {}
+
+
+    /*! Operate */
+    Comparison_result operator()(const X_monotone_curve_2 & xc1,
+                                 const X_monotone_curve_2 & xc2,
+                                 Arr_curve_end ce) const
+    { ++m_counter; return m_object(xc1, xc2, ce); }
+  };
 
   //@}
 
@@ -744,6 +862,20 @@ public:
     ); 
   }
   
+  Is_on_x_identification_2 is_on_x_identification_2_object() const
+  { return Is_on_x_identification_2(
+        this, 
+        m_counters[IS_ON_X_IDENTIFICATION_POINT_OP],
+        m_counters[IS_ON_X_IDENTIFICATION_CURVE_OP]
+    ); 
+  }
+
+  Compare_y_on_boundary_2 compare_on_boundary_2_object() const
+  { return Compare_y_on_boundary_2(this, m_counters[COMPARE_Y_ON_BOUNDARY_OP]); }
+
+  Compare_y_near_boundary_2 compare_near_boundary_2_object() const
+  { return Compare_y_near_boundary_2(this, m_counters[COMPARE_Y_NEAR_BOUNDARY_OP]); }
+
   // bottom-top
   Parameter_space_in_y_2 parameter_space_in_y_2_object() const
   { return Parameter_space_in_y_2(
@@ -754,6 +886,27 @@ public:
     ); 
   }
 
+  Is_on_y_identification_2 is_on_y_identification_2_object() const
+  { return Is_on_y_identification_2(
+        this, 
+        m_counters[IS_ON_Y_IDENTIFICATION_POINT_OP],
+        m_counters[IS_ON_Y_IDENTIFICATION_CURVE_OP]
+    ); 
+  }
+
+  Compare_x_at_limit_2 compare_x_at_limit_2_object() const
+  { return Compare_x_at_limit_2(this, 
+                                m_counters[COMPARE_X_AT_LIMIT_POINT_CURVE_END_OP],
+                                m_counters[COMPARE_X_AT_LIMIT_CURVE_ENDS_OP]); }
+
+  Compare_x_near_limit_2 compare_x_near_limit_2_object() const
+  { return Compare_x_near_limit_2(this, m_counters[COMPARE_X_NEAR_LIMIT_OP]); }
+
+  Compare_x_on_boundary_2 compare_x_on_boundary_2_object() const
+  { return Compare_x_on_boundary_2(this, m_counters[COMPARE_X_ON_BOUNDARY_OP]); }
+  
+  Compare_x_near_boundary_2 compare_x_near_boundary_2_object() const
+  { return Compare_x_near_boundary_2(this, m_counters[COMPARE_X_NEAR_BOUNDARY_OP]); }
 
   //@}
 
@@ -828,10 +981,14 @@ Out_stream & operator<<(Out_stream & os,
      << traits.count_parameter_space_in_x_point() << std::endl
      << "# of PARAMETER_SPACE_IN_X curve operation = "
      << traits.count_parameter_space_in_x_curve() << std::endl
-     << "# of COMPARE_Y_NEAR_BOUNDARY operation = "
-     << traits.count_compare_y_near_boundary() << std::endl
+     << "# of IS_ON_X_IDENTIFICIATION point operation = "
+     << traits.count_is_on_x_identification_point() << std::endl
+     << "# of IS_ON_X_IDENTIFICATION curve operation = "
+     << traits.count_is_on_x_identification_curve() << std::endl
      << "# of COMPARE_Y_ON_BOUNDARY operation = "
      << traits.count_compare_y_on_boundary() << std::endl
+     << "# of COMPARE_Y_NEAR_BOUNDARY operation = "
+     << traits.count_compare_y_near_boundary() << std::endl
     // bottom-top
      << "# of PARAMETER_SPACE_IN_Y curve-end operation = "
      << traits.count_parameter_space_in_y_curve_end() << std::endl
@@ -839,12 +996,20 @@ Out_stream & operator<<(Out_stream & os,
      << traits.count_parameter_space_in_y_point() << std::endl
      << "# of PARAMETER_SPACE_IN_Y curve operation = "
      << traits.count_parameter_space_in_y_curve() << std::endl
-     << "# of COMPARE_X_NEAR_BOUNDARY point/curve-end operation = "
-     << traits.count_compare_x_near_boundary_point_curve_end() << std::endl
-     << "# of COMPARE_X_NEAR_BOUNDARY curve-ends operation = "
-     << traits.count_compare_x_near_boundary_curve_ends() << std::endl
+     << "# of IS_ON_Y_IDENTIFICIATION point operation = "
+     << traits.count_is_on_y_identification_point() << std::endl
+     << "# of IS_ON_Y_IDENTIFICATION curve operation = "
+     << traits.count_is_on_y_identification_curve() << std::endl
+     << "# of COMPARE_X_AT_LIMIT point/curve-end operation = "
+     << traits.count_compare_x_at_limit_point_curve_end() << std::endl
+     << "# of COMPARE_X_AT_LIMIT curve-ends operation = "
+     << traits.count_compare_x_at_limit_curve_ends() << std::endl
+     << "# of COMPARE_X_NEAR_LIMIT operation = "
+     << traits.count_compare_x_near_limit() << std::endl
      << "# of COMPARE_X_ON_BOUNDARY operation = "
      << traits.count_compare_x_on_boundary() << std::endl
+     << "# of COMPARE_X_NEAR_BOUNDARY operation = "
+     << traits.count_compare_x_near_boundary() << std::endl
 
      << "total # = " << sum << std::endl
      << "# of traits constructed = " << Traits::increment(false)

@@ -188,8 +188,9 @@ is_in_face(const Face * f, const Point_2 & p, const Vertex * v) const
     m_traits->compare_x_2_object();
   typename Traits_adaptor_2::Compare_y_at_x_2 cmp_y_at_x_op =
     m_traits->compare_y_at_x_2_object();
-  typename Traits_adaptor_2::Compare_x_near_boundary_2 cmp_x_near_bnd =
-    m_traits->compare_x_near_boundary_2_object();
+  // TODO EBEB->EFI: Do you want Compare_x_point_curve_end_2 or Compare_x_on_boundary_2?
+  typename Traits_adaptor_2::Compare_x_limit_on_boundary_2 cmp_x_limit_on_bnd =
+    m_traits->compare_x_limit_on_boundary_2_object();
   
   /* Maintain a counter of the number of x-monotone curves that intersect an
    * upward vertical ray emanating from p. Handle degenerate cases as
@@ -265,10 +266,11 @@ is_in_face(const Face * f, const Point_2 & p, const Vertex * v) const
         Arr_parameter_space bnd2 = ps_y_op(curr->next()->curve(), ARR_MAX_END);
         if ((bnd1 == ARR_TOP_BOUNDARY) && (bnd2 == ARR_TOP_BOUNDARY)) {
           // Compare the x-coordinates:
+          // TODO EBEB->EFI: Do you want Compare_x_point_curve_end_2 or Compare_x_on_boundary_2?
           Comparison_result rc1 =
-            cmp_x_near_bnd(p, curr->curve(), ARR_MAX_END);
+            cmp_x_limit_on_bnd(p, curr->curve(), ARR_MAX_END);
           Comparison_result rc2 =
-            cmp_x_near_bnd(p, curr->next()->curve(), ARR_MAX_END);
+            cmp_x_limit_on_bnd(p, curr->next()->curve(), ARR_MAX_END);
           if (rc1 == opposite(rc2)) ++num_intersections;
         }
         curr = curr->next();
@@ -334,11 +336,13 @@ is_in_face(const Face * f, const Point_2 & p, const Vertex * v) const
       
       res_source = (bnd_source == ARR_INTERIOR) ?
         cmp_x_op(p, curr->opposite()->vertex()->point()) :
-        cmp_x_near_bnd(p, curr->curve(), ind_source);
+        // TODO EBEB->EFI: Do you want Compare_x_point_curve_end_2 or Compare_x_on_boundary_2?
+        cmp_x_limit_on_bnd(p, curr->curve(), ind_source);
       
       res_target = (bnd_target == ARR_INTERIOR) ?
         cmp_x_op(p, curr->vertex()->point()) :
-        cmp_x_near_bnd(p, curr->curve(), ind_target);
+        // TODO EBEB->EFI: Do you want Compare_x_point_curve_end_2 or Compare_x_on_boundary_2?
+        cmp_x_limit_on_bnd(p, curr->curve(), ind_target);
 
       /* If a vertical ray is shot from p upward, the x-monotone curve
        * associated with curr is hit once.
@@ -720,21 +724,21 @@ _locate_around_pole(Vertex * v,
   
   // Traverse all other halfedges, and compare their x-positions next to the
   // pole with the query curve xc.
-  typename Traits_adaptor_2::Compare_x_near_boundary_2 cmp_x_near_bnd =
-    m_traits->compare_x_near_boundary_2_object();
+  typename Traits_adaptor_2::Compare_x_curve_ends_2 cmp_x_curve_ends =
+    m_traits->compare_x_curve_ends_2_object();
   Arr_curve_end curr_end, next_end;
   Comparison_result curr_res, next_res;
   Comparison_result curr_next_res;
   
   curr_end =
     (curr->direction() == ARR_RIGHT_TO_LEFT) ? ARR_MIN_END : ARR_MAX_END;
-  curr_res = cmp_x_near_bnd(xc, ind, curr->curve(), curr_end);
+  curr_res = cmp_x_curve_ends(xc, ind, curr->curve(), curr_end);
   do {
     next_end =
       (next->direction() == ARR_RIGHT_TO_LEFT) ? ARR_MIN_END : ARR_MAX_END;
-    next_res = cmp_x_near_bnd(xc, ind, next->curve(), next_end);
+    next_res = cmp_x_curve_ends(xc, ind, next->curve(), next_end);
     curr_next_res =
-      cmp_x_near_bnd(curr->curve(), curr_end, next->curve(), next_end);
+      cmp_x_curve_ends(curr->curve(), curr_end, next->curve(), next_end);
     if (curr_next_res == cross_res) {
       // The line of discontinuity must lie between curr and next, so the
       // comparison result of xc with the two curves should be equal:

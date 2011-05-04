@@ -718,8 +718,8 @@ _is_to_left_impl(const Point_2& p, Halfedge_handle he,
   if (ps_y != ARR_INTERIOR) {
     // Check if p is to the left of the minimal curve-end:
     const Comparison_result   res =
-      m_geom_traits->compare_x_near_boundary_2_object() (p, he->curve(),
-                                                         ARR_MIN_END);
+      m_geom_traits->compare_x_point_curve_end_2_object() (p, he->curve(),
+                                                           ARR_MIN_END);
 
     return ((res == SMALLER) || (res == EQUAL && ps_y == ARR_TOP_BOUNDARY));
   }
@@ -755,8 +755,8 @@ _is_to_right_impl(const Point_2& p, Halfedge_handle he,
   if (ps_y != ARR_INTERIOR) {
     // Check if p is to the right of the maximal curve-end:
     const Comparison_result   res =
-      m_geom_traits->compare_x_near_boundary_2_object() (p, he->curve(),
-                                                         ARR_MAX_END);
+      m_geom_traits->compare_x_point_curve_end_2_object() (p, he->curve(),
+                                                           ARR_MAX_END);
 
     return ((res == LARGER) || (res == EQUAL && ps_y == ARR_BOTTOM_BOUNDARY));
   }

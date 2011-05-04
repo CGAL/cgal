@@ -1,0 +1,4 @@
+compare_x_near_limit 16 MIN_END 20 MIN_END EQUAL
+compare_x_near_limit 17 MAX_END 21 MAX_END EQUAL
+compare_x_near_limit 18 MIN_END 22 MIN_END EQUAL
+compare_x_near_limit 19 MAX_END 23 MAX_END EQUAL

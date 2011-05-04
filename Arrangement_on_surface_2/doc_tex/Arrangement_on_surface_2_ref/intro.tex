@@ -2,7 +2,7 @@
 \RCSdefDate{\ArrangementOnSurfaceRefDate}{$Date$}
 \ccRefChapter{2D Arrangements\label{chapterArrangement_on_surface_2_ref}}
 \ccChapterRelease{\ArrangementOnSurfaceRefRev. \ \ArrangementOnSurfaceRefDate}
-\ccChapterAuthor{Ron Wein, Efi Fogel, Baruch Zukerman, Dan Halperin, and Eric Berberich}
+\ccChapterAuthor{Ron Wein, Efi Fogel, Baruch Zukerman, Dan Halperin, Eric Berberich, and Oren Zalzman}
 
 % ===============================================================
 %\section*{Introduction}
@@ -25,7 +25,6 @@ implemented as peripheral classes or as free (global) functions.
 \subsection*{Enumerations}
 
 \ccRefIdfierPage{CGAL::Arr_parameter_space}\\
-\ccRefIdfierPage{CGAL::Arr_boundary_type}\\
 \ccRefIdfierPage{CGAL::Arr_curve_end}\\
 \ccRefIdfierPage{CGAL::Arr_halfedge_direction}
 
@@ -48,6 +47,7 @@ implemented as peripheral classes or as free (global) functions.
 \ccRefConceptPage{ArrangementLandmarkTraits_2}\\
 \ccRefConceptPage{ArrangementXMonotoneTraits_2}\\
 \ccRefConceptPage{ArrangementTraits_2}\\
+\ccRefConceptPage{ArrangementOpenBoundaryTraits_2}\\
 ~\\
 \ccRefConceptPage{ArrangementInputFormatter}\\
 \ccRefConceptPage{ArrangementOutputFormatter} \\
@@ -76,7 +76,8 @@ implemented as peripheral classes or as free (global) functions.
 \ccRefConceptPage{ArrTraits::Equal_2}\\
 \ccRefConceptPage{ArrTraits::ParameterSpaceInX_2}\\
 \ccRefConceptPage{ArrTraits::ParameterSpaceInY_2}\\
-\ccRefConceptPage{ArrTraits::CompareXNearBoundary_2}\\
+\ccRefConceptPage{ArrTraits::CompareXAtLimit_2}\\
+\ccRefConceptPage{ArrTraits::CompareXNearLimit_2}\\
 \ccRefConceptPage{ArrTraits::CompareYNearBoundary_2}\\
 % \ccRefConceptPage{ArrTraits::IsOnXIdentification_2}\\
 % \ccRefConceptPage{ArrTraits::IsOnYIdentification_2}\\
@@ -130,6 +131,14 @@ implemented as peripheral classes or as free (global) functions.
 \ccRefIdfierPage{CGAL::Arr_walk_along_line_point_location<Arrangement>}\\
 \ccRefIdfierPage{CGAL::Arr_trapezoid_ric_point_location<Arrangement>}\\
 \ccRefIdfierPage{CGAL::Arr_landmarks_point_location<Arrangement,Generator>}
+
+\subsection*{Tags}
+
+\ccRefIdfierPage{CGAL::Arr_oblivious_side_tag}\\
+\ccRefIdfierPage{CGAL::Arr_open_side_tag}
+% \ccRefIdfierPage{CGAL::Arr_closed_side_tag}\\
+% \ccRefIdfierPage{CGAL::Arr_contracted_side_tag}\\
+% \ccRefIdfierPage{CGAL::Arr_identified_side_tag}
 
 \subsection*{Functions}
 

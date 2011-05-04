@@ -199,37 +199,38 @@ Summarizing the above, there are four types of arrangement vertices,
 which differ from one another by their location on the imaginary
 bounding rectangle:
 \begin{enumerate}
-\item
-A ``normal'' vertex, associated with a point in $\real^2$ whose
-coordinates are bounded. Such a vertex always lies inside the
-bounding rectangle.
-\item
-A vertex that represent an unbounded end of an $x$-monotone curve
-that is defined at $x = -\infty$ or at $x = \infty$. In case of
-a horizontal line or a curve with a horizontal asymptote, the
-$y$-coordinate of the curve end may be finite (see for example the
-vertices $v_2$ and $v_7$ in Figure~\ref{arr_fig:unb_dcel}), but in
-general the curve end also goes to $y = \pm\infty$ (see for instance
-the vertices $v_1$, $v_3$, $v_6$ and $v_8$ in
-Figure~\ref{arr_fig:unb_dcel}). For our convenience, we will always
-take a ``tall'' enough bounding rectangle and treat such vertices as
-lying on either the left or right rectangle edges (that is, if a curve
-is defined at $x = -\infty$, its left end will be represented by
-a vertex on the left edge of the bounding rectangle, and if it is
-defined at $x = \infty$, its right end will be represented by a
-vertex of the right edge).
-\item
-A vertex that represent the unbounded end of a vertical line or of a
-curve with a vertical asymptote (finite $x$-coordinate and an
-unbounded $y$-coordinate). Such a vertex always lies on one of the
-horizontal edges of the bounding rectangle (either the bottom one if
-$y = -\infty$, or the top one if $y = \infty$). The vertices $v_4$ 
-and $v_5$ in Figure~\ref{arr_fig:unb_dcel} are of this type.
-\item
-The fictitious vertices that represent the four corners of the
-imaginary bounding rectangle.
+\item\label{type-normal}
+  A vertex, associated with a point in $\real^2$ whose
+  coordinates are bounded. Such a vertex always lies inside the
+  bounding rectangle.
+\item\label{type-unbounded}
+  A vertex that represent an unbounded end of an $x$-monotone curve
+  that is defined at $x = -\infty$ or at $x = \infty$. In case of
+  a horizontal line or a curve with a horizontal asymptote, the
+  $y$-coordinate of the curve end may be finite (see for example the
+  vertices $v_2$ and $v_7$ in Figure~\ref{arr_fig:unb_dcel}), but in
+  general the curve end also goes to $y = \pm\infty$ (see for instance
+  the vertices $v_1$, $v_3$, $v_6$ and $v_8$ in
+  Figure~\ref{arr_fig:unb_dcel}). For our convenience, we will always
+  take a ``tall'' enough bounding rectangle and treat such vertices as
+  lying on either the left or right rectangle edges (that is, if a curve
+  is defined at $x = -\infty$, its left end will be represented by
+  a vertex on the left edge of the bounding rectangle, and if it is
+  defined at $x = \infty$, its right end will be represented by a
+  vertex of the right edge).
+\item\label{type-unbounded-vertical}
+  A vertex that represent the unbounded end of a vertical line or of a
+  curve with a vertical asymptote (finite $x$-coordinate and an
+  unbounded $y$-coordinate). Such a vertex always lies on one of the
+  horizontal edges of the bounding rectangle (either the bottom one if
+  $y = -\infty$, or the top one if $y = \infty$). The vertices $v_4$ 
+  and $v_5$ in Figure~\ref{arr_fig:unb_dcel} are of this type.
+\item\label{type-fictitious}
+  The fictitious vertices that represent the four corners of the
+  imaginary bounding rectangle.
 \end{enumerate}
-A vertex at infinity of types 1--3 above always has
+A vertex (at infinity) of Type~\ref{type-unbounded} or
+Type~\ref{type-unbounded-vertical} above always has
 three incident edges: one concrete edge that is associated with an
 unbounded portion of an $x$-monotone curve, and two fictitious edges
 connecting the vertex to its neighboring vertices at infinity.
@@ -243,35 +244,37 @@ following methods, in addition to the ones listed in
 Section~\ref{arr_ssec:traverse}:
 \begin{itemize}
 \item
-The \ccc{Vertex} type provides the three-valued predicates
-\ccc{parameter_space_in_x()} and \ccc{parameter_space_in_y()}.
-The former returns \ccc{ARR_INTERIOR} if the point associated with the
-vertex has a finite $x$-coordinate, \ccc{ARR_LEFT_BOUNDARY}
-if the vertex lies on the left boundary of the parameter space, and
-\ccc{ARR_RIGHT_BOUNDARY} if the vertex lies on the right boundary of
-the parameter space. Similarly, \ccc{parameter_space_in_y()} returns
-\ccc{ARR_INTERIOR}, \ccc{ARR_BOTTOM_BOUNDARY}, or
-\ccc{ARR_TOP_BOUNDARY} depending on whether the point associated with
-the vertex has a finite $y$-coordinate, lies on the bottom boundary of
-the parameter space, or lies on the top boundary. The Boolean predicate
-\ccc{is_at_open_boundary()} is also supported. It checks whether the
-vertex lies at infinity. You can access the point associated with a
-vertex only if it does not lie at infinity (recall that a vertex at
-infinity is not associated with a \ccc{Point_2} object).
+ The \ccc{Vertex} class provides three-valued predicates
+  \ccc{parameter_space_in_x()} and \ccc{parameter_space_in_y()}.
+  Both return \ccc{ARR_INTERIOR} if the point associated with the
+  vertex has a finite $x$-coordinate or a finite $y$-coordinate,
+  respectively. The former returns \ccc{ARR_LEFT_BOUNDARY} if the
+  $x$-coordinate of the point approaches $-\infty$ (the vertex lies
+  on the left boundary-side) and \ccc{ARR_RIGHT_BOUNDARY} if the
+  $x$-coordinate approaches $\infty$ (the vertex lies on the right
+  boundary-side). The latter returns \ccc{ARR_BOTTOM_BOUNDARY} if the
+  $y$-coordinate of the point approaches $-\infty$ (the vertex lies
+  on the bottom boundary-side) and \ccc{ARR_TOP_BOUNDARY} if the
+  $y$-coordinate approaches $\infty$ (the vertex lies on the top
+  boundary-side).
+  The Boolean predicate \ccc{is_at_open_boundary()} is also supported.
+  You can access the point associated with a vertex only if it is not
+  a vertex at an open boundary (recall that a vertex at an open
+  boundary is not associated with a \ccc{Point_2} object).
 %
 \item
-The nested \ccc{Halfedge} class provides the Boolean predicate
-\ccc{is_fictitious()}. The $x$-monotone curve associated with
-a halfedge can be accessed by the \ccc{curve()} method only if the
-halfedge is not fictitious.
+  The nested \ccc{Halfedge} class provides the Boolean predicate
+  \ccc{is_fictitious()}. The $x$-monotone curve associated with
+  a halfedge can be accessed by the \ccc{curve()} method only if the
+  halfedge is not fictitious.
 %
 \item
-The nested \ccc{Face} class provides the Boolean predicate
-\ccc{f.is_fictitious()}. The method \ccc{outer_ccb()} has the
-precondition that the face is not fictitious. Note that valid
-unbounded faces always have valid CCBs (although this CCB may
-comprise only fictitious halfedge in case the arrangement contains
-only bounded curves).
+  The nested \ccc{Face} class provides the Boolean predicate
+  \ccc{f.is_fictitious()}. The method \ccc{outer_ccb()} has the
+  precondition that the face is not fictitious. Note that valid
+  unbounded faces always have valid CCBs (although this CCB may
+  comprise only fictitious halfedge in case the arrangement contains
+  only bounded curves).
 \end{itemize}
 
 The method \ccc{arr.number_of_edges()} does not count the number of

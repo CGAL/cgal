@@ -64,30 +64,33 @@ LEDA_INT_NT=13
 CGAL_GMPZ_NT=14
 CORE_INT_NT=15
 
-COMPARE=3
-VERTEX=4
-IS_VERTICAL=5
-BOUNDARY_NEAR_X=6
-BOUNDARY_NEAR_Y=7
-PARAMETER_SPACE_X=8
-PARAMETER_SPACE_Y=9
-COMPARE_Y_AT_X=10
-COMPARE_Y_AT_X_LEFT=11
-COMPARE_Y_AT_X_RIGHT=12
-MAKE_X_MONOTONE=13
-INTERSECT=14
-SPLIT=15
-ARE_MERGEABLE=16
-MERGE=17
-ERRORS=18
-CONSTRUCTOR=19
-X_ON_IDENTIFICATION=20
-Y_ON_IDENTIFICATION=21
-IS_BOUNDED=22
-IS_IN_X_RANGE=23
-COMPARE_Y_POSITION=24
-IS_BETWEEN_CW=25
-COMPARE_CW_AROUND_POINT=26
+COMPARE=1
+VERTEX=2
+IS_VERTICAL=3
+COMPARE_Y_AT_X=4
+COMPARE_Y_AT_X_LEFT=5
+COMPARE_Y_AT_X_RIGHT=6
+MAKE_X_MONOTONE=7
+INTERSECT=8
+SPLIT=9
+ARE_MERGEABLE=10
+MERGE=11
+ERRORS=12
+CONSTRUCTOR=13
+COMPARE_X_AT_LIMIT=14
+COMPARE_X_NEAR_LIMIT=15
+COMPARE_X_ON_BOUNDARY=16
+COMPARE_X_NEAR_BOUNDARY=17
+COMPARE_Y_NEAR_BOUNDARY=18
+PARAMETER_SPACE_X=19
+PARAMETER_SPACE_Y=20
+X_ON_IDENTIFICATION=21
+Y_ON_IDENTIFICATION=22
+IS_BOUNDED=23
+IS_IN_X_RANGE=24
+COMPARE_Y_POSITION=25
+IS_BETWEEN_CW=26
+COMPARE_CW_AROUND_POINT=27
 
 #---------------------------------------------------------------------#
 #                    configure
@@ -321,8 +324,6 @@ execute_commands_old_structure()
     commands_indicator[COMPARE]=1
     commands_indicator[VERTEX]=1
     commands_indicator[IS_VERTICAL]=1
-    commands_indicator[BOUNDARY_NEAR_X]=1
-    commands_indicator[BOUNDARY_NEAR_Y]=1
     commands_indicator[COMPARE_Y_AT_X]=1
     commands_indicator[COMPARE_Y_AT_X_LEFT]=1
     commands_indicator[COMPARE_Y_AT_X_RIGHT]=1
@@ -356,16 +357,6 @@ execute_commands_old_structure()
 	run_trapped_test test_traits \
 	    data/empty.zero data/$1/is_vertical.xcv data/empty.zero \
 	    data/$1/is_vertical $2
-    fi
-    if [ ${commands_indicator[$BOUNDARY_NEAR_X]} -ne 0 ] ; then
-	run_trapped_test test_traits \
-	    data/empty.zero data/$1/boundary_near_x.xcv data/empty.zero \
-	    data/$1/boundary_near_x $2
-    fi
-    if [ ${commands_indicator[$BOUNDARY_NEAR_Y]} -ne 0 ] ; then
-	run_trapped_test test_traits \
-	    data/empty.zero data/$1/boundary_near_y.xcv data/empty.zero \
-	    data/$1/boundary_near_y $2
     fi
     if [ ${commands_indicator[$COMPARE_Y_AT_X]} -ne 0 ] ; then
 	run_trapped_test test_traits \
@@ -432,8 +423,11 @@ execute_commands_new_structure()
     commands_indicator[COMPARE]=0
     commands_indicator[VERTEX]=0
     commands_indicator[IS_VERTICAL]=0
-    commands_indicator[BOUNDARY_NEAR_X]=0
-    commands_indicator[BOUNDARY_NEAR_Y]=0
+    commands_indicator[COMPARE_X_AT_LIMIT]=0
+    commands_indicator[COMPARE_X_NEAR_LIMIT]=0
+    commands_indicator[COMPARE_X_ON_BOUNDAY]=0
+    commands_indicator[COMPARE_X_NEAR_BOUNDAY]=0
+    commands_indicator[COMPARE_Y_NEAR_BOUNDARY]=0
     commands_indicator[PARAMETER_SPACE_X]=0
     commands_indicator[PARAMETER_SPACE_Y]=0
     commands_indicator[COMPARE_Y_AT_X]=0
@@ -467,13 +461,25 @@ execute_commands_new_structure()
 	run_trapped_test test_traits data/$1/points \
 	    data/$1/xcurves data/$1/curves data/$1/is_vertical $2
     fi
-    if [ ${commands_indicator[$BOUNDARY_NEAR_X]} -ne 0 ] ; then
+    if [ ${commands_indicator[$COMPARE_X_AT_LIMIT]} -ne 0 ] ; then
 	run_trapped_test test_traits data/$1/points \
-	    data/$1/xcurves data/$1/curves data/$1/boundary_near_x $2
+	    data/$1/xcurves data/$1/curves data/$1/compare_x_at_limit $2
     fi
-    if [ ${commands_indicator[$BOUNDARY_NEAR_Y]} -ne 0 ] ; then
+    if [ ${commands_indicator[$COMPARE_X_NEAR_LIMIT]} -ne 0 ] ; then
 	run_trapped_test test_traits data/$1/points \
-	    data/$1/xcurves data/$1/curves data/$1/boundary_near_y $2
+	    data/$1/xcurves data/$1/curves data/$1/compare_x_near_limit $2
+    fi
+    if [ ${commands_indicator[$COMPARE_X_ON_BOUNDARY]} -ne 0 ] ; then
+	run_trapped_test test_traits data/$1/points \
+	    data/$1/xcurves data/$1/curves data/$1/compare_x_on_boundary $2
+    fi
+    if [ ${commands_indicator[$COMPARE_X_NEAR_BOUNDARY]} -ne 0 ] ; then
+	run_trapped_test test_traits data/$1/points \
+	    data/$1/xcurves data/$1/curves data/$1/compare_x_near_boundary $2
+    fi
+    if [ ${commands_indicator[$COMPARE_Y_NEAR_BOUNDARY]} -ne 0 ] ; then
+	run_trapped_test test_traits data/$1/points \
+	    data/$1/xcurves data/$1/curves data/$1/compare_y_near_boundary $2
     fi
     if [ ${commands_indicator[$PARAMETER_SPACE_X]} -ne 0 ] ; then
 	run_trapped_test test_traits data/$1/points \
@@ -531,10 +537,13 @@ execute_commands_traits_adaptor()
 # the new structure is not default, so this function executes only
 # commands that are given as arguments
 
-    commands_indicator[BOUNDARY_NEAR_X]=0
-    commands_indicator[BOUNDARY_NEAR_Y]=0
     commands_indicator[PARAMETER_SPACE_X]=0
     commands_indicator[PARAMETER_SPACE_Y]=0
+    commands_indicator[COMPARE_X_AT_LIMIT]=0
+    commands_indicator[COMPARE_X_NEAR_LIMIT]=0
+    commands_indicator[COMPARE_X_ON_BOUNDARY]=0
+    commands_indicator[COMPARE_X_NEAR_BOUNDARY]=0
+    commands_indicator[COMPARE_Y_NEAR_BOUNDARY]=0
     commands_indicator[COMPARE_Y_AT_X_LEFT]=0
     commands_indicator[ARE_MERGEABLE]=0
     commands_indicator[MERGE]=0
@@ -556,16 +565,6 @@ execute_commands_traits_adaptor()
 	done
     fi
 
-    if [ ${commands_indicator[$BOUNDARY_NEAR_X]} -ne 0 ] ; then
-	run_trapped_test test_traits_adaptor data/test_adaptor/$1/points \
-	    data/test_adaptor/$1/xcurves data/test_adaptor/$1/curves \
-	    data/test_adaptor/$1/boundary_near_x $2
-    fi
-    if [ ${commands_indicator[$BOUNDARY_NEAR_Y]} -ne 0 ] ; then
-	run_trapped_test test_traits_adaptor data/test_adaptor/$1/points \
-	    data/test_adaptor/$1/xcurves data/test_adaptor/$1/curves \
-	    data/test_adaptor/$1/boundary_near_y $2
-    fi
     if [ ${commands_indicator[$PARAMETER_SPACE_X]} -ne 0 ] ; then
 	run_trapped_test test_traits_adaptor data/test_adaptor/$1/points \
 	    data/test_adaptor/$1/xcurves data/test_adaptor/$1/curves \
@@ -575,6 +574,33 @@ execute_commands_traits_adaptor()
 	run_trapped_test test_traits_adaptor data/test_adaptor/$1/points \
 	    data/test_adaptor/$1/xcurves data/test_adaptor/$1/curves \
 	    data/test_adaptor/$1/parameter_space_y $2
+    fi
+    if [ ${commands_indicator[$COMPARE_X_AT_LIMIT]} -ne 0 ] ; then
+	run_trapped_test test_traits_adaptor data/test_adaptor/$1/points \
+	    data/test_adaptor/$1/xcurves data/test_adaptor/$1/curves \
+	    data/test_adaptor/$1/compare_x_at_limit $2
+    fi
+    if [ ${commands_indicator[$COMPARE_X_NEAR_LIMIT]} -ne 0 ] ; then
+	run_trapped_test test_traits_adaptor data/test_adaptor/$1/points \
+	    data/test_adaptor/$1/xcurves data/test_adaptor/$1/curves \
+	    data/test_adaptor/$1/compare_x_near_limit $2
+    fi
+
+    if [ ${commands_indicator[$COMPARE_X_ON_BOUNDARY]} -ne 0 ] ; then
+	run_trapped_test test_traits_adaptor data/test_adaptor/$1/points \
+	    data/test_adaptor/$1/xcurves data/test_adaptor/$1/curves \
+	    data/test_adaptor/$1/compare_x_on_boundary $2
+    fi
+    if [ ${commands_indicator[$COMPARE_X_NEAR_BOUNDARY]} -ne 0 ] ; then
+	run_trapped_test test_traits_adaptor data/test_adaptor/$1/points \
+	    data/test_adaptor/$1/xcurves data/test_adaptor/$1/curves \
+	    data/test_adaptor/$1/compare_x_near_boundary $2
+    fi
+
+    if [ ${commands_indicator[$COMPARE_Y_NEAR_BOUNDARY]} -ne 0 ] ; then
+	run_trapped_test test_traits_adaptor data/test_adaptor/$1/points \
+	    data/test_adaptor/$1/xcurves data/test_adaptor/$1/curves \
+	    data/test_adaptor/$1/compare_y_near_boundary $2
     fi
     if [ ${commands_indicator[$COMPARE_Y_AT_X_LEFT]} -ne 0 ] ; then
 	run_trapped_test test_traits_adaptor data/test_adaptor/$1/points \
@@ -656,8 +682,8 @@ test_linear_traits_adaptor()
 	echo   "   ERROR:    not executed   test_traits_adaptor linear_traits" >> $ERRORFILE
     else
 	execute_commands_traits_adaptor linear linear_traits_adaptor \
-	    COMPARE_Y_AT_X_LEFT ARE_MERGEABLE MERGE IS_IN_X_RANGE COMPARE_Y_POSITION \
-	    IS_BETWEEN_CW COMPARE_CW_AROUND_POINT
+	    COMPARE_Y_AT_X_LEFT ARE_MERGEABLE MERGE IS_IN_X_RANGE \
+	    COMPARE_Y_POSITION IS_BETWEEN_CW COMPARE_CW_AROUND_POINT
     fi
     clean_tests
 }
@@ -673,8 +699,8 @@ test_spherical_arcs_traits_adaptor()
 	echo   "   ERROR:    not executed   test_traits_adaptor spherical_arcs_traits" >> $ERRORFILE
     else
 	execute_commands_traits_adaptor spherical_arcs spherical_arcs_traits_adaptor \
-	    COMPARE_Y_AT_X_LEFT ARE_MERGEABLE MERGE IS_IN_X_RANGE COMPARE_Y_POSITION \
-	    IS_BETWEEN_CW COMPARE_CW_AROUND_POINT
+	    COMPARE_Y_AT_X_LEFT ARE_MERGEABLE MERGE IS_IN_X_RANGE \
+	    COMPARE_Y_POSITION IS_BETWEEN_CW COMPARE_CW_AROUND_POINT
     fi
     clean_tests
 }
@@ -691,7 +717,7 @@ test_segment_traits()
     else
 	execute_commands_old_structure segments segment_traits \
 	    VERTEX IS_VERTICAL COMPARE_Y_AT_X COMPARE_Y_AT_X_LEFT CONSTRUCTOR \
-	    BOUNDARY_NEAR_X BOUNDARY_NEAR_Y COMPARE_Y_AT_X_RIGHT ARE_MERGEABLE
+	    COMPARE_Y_AT_X_RIGHT ARE_MERGEABLE
 
 	execute_commands_new_structure segments segment_traits \
 	    IS_VERTICAL COMPARE_Y_AT_X COMPARE_Y_AT_X_LEFT ARE_MERGEABLE
@@ -715,8 +741,7 @@ test_non_caching_segment_traits()
     else
 	execute_commands_old_structure segments non_caching_segment_traits \
 	    VERTEX IS_VERTICAL COMPARE_Y_AT_X COMPARE_Y_AT_X_LEFT CONSTRUCTOR \
-	    BOUNDARY_NEAR_X BOUNDARY_NEAR_Y COMPARE_Y_AT_X_RIGHT \
-	    ARE_MERGEABLE ERRORS
+	    COMPARE_Y_AT_X_RIGHT ARE_MERGEABLE ERRORS
 
 	execute_commands_new_structure segments segment_traits \
 	    IS_VERTICAL COMPARE_Y_AT_X COMPARE_Y_AT_X_LEFT
@@ -741,7 +766,7 @@ test_polyline_traits()
     else
 	execute_commands_old_structure polylines polyline_traits \
 	    CONSTRUCTOR COMPARE_Y_AT_X_LEFT \
-	    BOUNDARY_NEAR_X BOUNDARY_NEAR_Y COMPARE_Y_AT_X_RIGHT ARE_MERGEABLE
+	    COMPARE_Y_AT_X_RIGHT ARE_MERGEABLE
     fi
     clean_tests
 }
@@ -758,7 +783,7 @@ test_non_caching_polyline_traits()
     else
 	execute_commands_old_structure polylines non_caching_polyline_traits \
 	    CONSTRUCTOR COMPARE_Y_AT_X_LEFT \
-	    BOUNDARY_NEAR_X BOUNDARY_NEAR_Y COMPARE_Y_AT_X_RIGHT ARE_MERGEABLE
+	    COMPARE_Y_AT_X_RIGHT ARE_MERGEABLE
     fi
     clean_tests
 }
@@ -775,8 +800,8 @@ test_linear_traits()
     else
 	execute_commands_old_structure linear/segments linear_traits.segments \
 	    VERTEX IS_VERTICAL COMPARE_Y_AT_X COMPARE_Y_AT_X_LEFT \
-	    COMPARE_Y_AT_X_RIGHT BOUNDARY_NEAR_X BOUNDARY_NEAR_Y CONSTRUCTOR ARE_MERGEABLE
-
+	    COMPARE_Y_AT_X_RIGHT CONSTRUCTOR ARE_MERGEABLE
+	    
 	execute_commands_new_structure linear/segments linear_traits.segments \
 	    IS_VERTICAL COMPARE_Y_AT_X COMPARE_Y_AT_X_LEFT
 
@@ -786,7 +811,7 @@ test_linear_traits()
 
 	execute_commands_old_structure linear/rays linear_traits.rays \
 	    VERTEX IS_VERTICAL COMPARE_Y_AT_X COMPARE_Y_AT_X_LEFT \
-	    COMPARE_Y_AT_X_RIGHT BOUNDARY_NEAR_X BOUNDARY_NEAR_Y CONSTRUCTOR ARE_MERGEABLE
+	    COMPARE_Y_AT_X_RIGHT CONSTRUCTOR ARE_MERGEABLE
 
 	execute_commands_new_structure linear/rays linear_traits.rays \
 	    IS_VERTICAL COMPARE_Y_AT_X COMPARE_Y_AT_X_LEFT
@@ -796,9 +821,10 @@ test_linear_traits()
 	    data/empty.zero data/linear/rays/vertex linear_traits.rays
 
 	execute_commands_new_structure linear/lines linear_traits.lines \
-	    IS_VERTICAL COMPARE_Y_AT_X COMPARE_Y_AT_X_LEFT INTERSECT SPLIT MERGE \
-	    BOUNDARY_NEAR_X BOUNDARY_NEAR_Y PARAMETER_SPACE_X PARAMETER_SPACE_Y
-
+	    IS_VERTICAL COMPARE_Y_AT_X COMPARE_Y_AT_X_LEFT INTERSECT \
+	    SPLIT MERGE \
+	    PARAMETER_SPACE_X PARAMETER_SPACE_Y \
+	    COMPARE_X_AT_LIMIT COMPARE_X_NEAR_LIMIT COMPARE_Y_NEAR_BOUNDARY
     fi
     clean_tests
 }
@@ -815,7 +841,7 @@ test_conic_traits()
     else
 	execute_commands_old_structure conics conic_traits \
 	    INTERSECT SPLIT MERGE COMPARE_Y_AT_X_LEFT \
-	    BOUNDARY_NEAR_X BOUNDARY_NEAR_Y COMPARE_Y_AT_X_RIGHT ARE_MERGEABLE
+	    COMPARE_Y_AT_X_RIGHT ARE_MERGEABLE
 
 	execute_commands_new_structure conics conic_traits \
 	    INTERSECT SPLIT MERGE
@@ -839,7 +865,7 @@ test_line_arc_traits()
     else
 	execute_commands_old_structure circular_lines line_arc_traits \
 	    VERTEX IS_VERTICAL COMPARE_Y_AT_X COMPARE_Y_AT_X_LEFT \
-	    ERRORS BOUNDARY_NEAR_X BOUNDARY_NEAR_Y COMPARE_Y_AT_X_RIGHT MERGE ARE_MERGEABLE
+	    ERRORS COMPARE_Y_AT_X_RIGHT MERGE ARE_MERGEABLE
 
 	execute_commands_new_structure circular_lines line_arc_traits \
 	    IS_VERTICAL COMPARE_Y_AT_X
@@ -867,7 +893,7 @@ test_circular_arc_traits()
     else
 	execute_commands_old_structure circular_arcs circular_arc_traits \
 	    VERTEX IS_VERTICAL COMPARE_Y_AT_X COMPARE_Y_AT_X_LEFT \
-	    ERRORS BOUNDARY_NEAR_X BOUNDARY_NEAR_Y COMPARE_Y_AT_X_RIGHT MERGE ARE_MERGEABLE
+	    ERRORS COMPARE_Y_AT_X_RIGHT MERGE ARE_MERGEABLE
 
 	execute_commands_new_structure circular_arcs circular_arc_traits \
 	    VERTEX IS_VERTICAL COMPARE_Y_AT_X
@@ -887,7 +913,7 @@ test_circular_line_arc_traits()
     else
 	execute_commands_old_structure circular_line_arcs circular_line_arc_traits \
 	    VERTEX IS_VERTICAL CONSTRUCTOR COMPARE_Y_AT_X COMPARE_Y_AT_X_LEFT \
-	    ERRORS BOUNDARY_NEAR_X BOUNDARY_NEAR_Y COMPARE_Y_AT_X_RIGHT MERGE ARE_MERGEABLE
+	    ERRORS COMPARE_Y_AT_X_RIGHT MERGE ARE_MERGEABLE
 
 	execute_commands_new_structure circular_line_arcs circular_line_arc_traits \
 	    IS_VERTICAL COMPARE_Y_AT_X
@@ -911,7 +937,8 @@ test_circle_segments_traits()
     else
 	execute_commands_old_structure circle_segments circle_segments_traits \
 	    VERTEX IS_VERTICAL COMPARE_Y_AT_X COMPARE_Y_AT_X_LEFT \
-	    COMPARE_Y_AT_X_RIGHT BOUNDARY_NEAR_X BOUNDARY_NEAR_Y CONSTRUCTOR ARE_MERGEABLE
+	    COMPARE_Y_AT_X_RIGHT CONSTRUCTOR ARE_MERGEABLE
+	    
 	run_trapped_test test_traits \
 	    data/circle_segments/points data/circle_segments/xcurves.8 \
 	    data/empty.zero data/circle_segments/vertex circle_segments_traits
@@ -946,7 +973,7 @@ test_bezier_traits()
     else
 	execute_commands_old_structure bezier bezier_traits \
 	    COMPARE_Y_AT_X_LEFT COMPARE_Y_AT_X_RIGHT SPLIT \
-	    BOUNDARY_NEAR_X BOUNDARY_NEAR_Y CONSTRUCTOR ERRORS ARE_MERGEABLE
+	    CONSTRUCTOR ERRORS ARE_MERGEABLE
     fi
     clean_tests
 }
@@ -963,11 +990,13 @@ test_spherical_arc_traits()
     else
 	execute_commands_old_structure spherical_arcs spherical_arc_traits \
 	    COMPARE_Y_AT_X_LEFT COMPARE_Y_AT_X_RIGHT INTERSECT \
-	    BOUNDARY_NEAR_X BOUNDARY_NEAR_Y CONSTRUCTOR \
+	    CONSTRUCTOR \
 	    COMPARE MAKE_X_MONOTONE SPLIT MERGE ERRORS ARE_MERGEABLE
 
 	execute_commands_new_structure spherical_arcs spherical_arc_traits \
-	    INTERSECT BOUNDARY_NEAR_X BOUNDARY_NEAR_Y
+	    INTERSECT \
+	    COMPARE_X_ON_BOUNDARY COMPARE_X_NEAR_BOUNDARY \
+	    COMPARE_Y_NEAR_BOUNDARY
 
 	run_trapped_test test_traits \
 	    data/spherical_arcs/compare.pt data/spherical_arcs/compare.xcv \
@@ -991,7 +1020,9 @@ test_rational_arc_traits()
 	    data/empty.zero data/compare rational_arc_traits
 
 	execute_commands_new_structure rational_arcs rational_arc_traits \
-	    VERTEX IS_VERTICAL COMPARE_Y_AT_X COMPARE_Y_AT_X_LEFT SPLIT MERGE
+	    VERTEX IS_VERTICAL COMPARE_Y_AT_X COMPARE_Y_AT_X_LEFT SPLIT MERGE \
+	    COMPARE_X_AT_LIMIT COMPARE_X_NEAR_LIMIT COMPARE_Y_NEAR_BOUNDARY
+	    
     fi
     clean_tests
 }
@@ -1086,9 +1117,9 @@ if [ "${TEST_WITH_CMAKE}" != "FALSE" ]; then
 fi
 
 
-# if [ "${TEST_WITH_CMAKE}" != "FALSE" ]; then
-#     compile_and_run construction_test_suite_generator
-# fi
+if [ "${TEST_WITH_CMAKE}" != "FALSE" ]; then
+    compile_and_run construction_test_suite_generator
+fi
 
 test_segment_traits
 test_non_caching_segment_traits
@@ -1135,7 +1166,7 @@ test_segment_traits_adaptor
 test_linear_traits_adaptor
 test_spherical_arcs_traits_adaptor
 
-#if any error occured then appened the the full error description file to error file
+# if any error occured then appened the the full error description file to error file
 
 if [ -f $FULL_ERROR_DESCRIPTION_FILE ] ; then
     echo "******************** appending all error outputs ********************" >> $ERRORFILE

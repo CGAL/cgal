@@ -38,10 +38,10 @@ namespace CGAL {
 
 struct Arr_boundary_side_tag {};
 struct Arr_oblivious_side_tag : public virtual Arr_boundary_side_tag {};
-struct Arr_open_side_tag : public virtual Arr_boundary_side_tag {};
-struct Arr_closed_side_tag : public virtual Arr_boundary_side_tag {};
-struct Arr_contracted_side_tag : public virtual Arr_boundary_side_tag {};
-struct Arr_identified_side_tag : public virtual Arr_boundary_side_tag {};
+struct Arr_open_side_tag : public virtual Arr_oblivious_side_tag {};
+struct Arr_closed_side_tag : public virtual Arr_oblivious_side_tag {};
+struct Arr_contracted_side_tag : public virtual Arr_oblivious_side_tag {};
+struct Arr_identified_side_tag : public virtual Arr_oblivious_side_tag {};
 
 BOOST_MPL_HAS_XXX_TRAIT_DEF(Arr_left_side_category)
 BOOST_MPL_HAS_XXX_TRAIT_DEF(Arr_bottom_side_category)

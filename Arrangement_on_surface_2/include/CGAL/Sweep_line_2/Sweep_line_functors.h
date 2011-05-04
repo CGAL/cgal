@@ -136,7 +136,7 @@ public:
     // given point and this curve end.
     Arr_curve_end         ind = _curve_end(e2);
     Comparison_result res =
-      m_traits->compare_x_near_boundary_2_object()(pt, e2->curve(), ind);
+      m_traits->compare_x_point_curve_end_2_object()(pt, e2->curve(), ind);
 
     if (res != EQUAL)
       return (res);
@@ -206,9 +206,9 @@ private:
       {
         // Both defined on the left boundary - compare them there.
         CGAL_assertion (ind == ARR_MIN_END);
-
-        return (m_traits->compare_y_near_boundary_2_object() (cv, e2->curve(),
-                                                              ind));
+	
+	return 
+	  m_traits->compare_y_curve_ends_2_object() (cv, e2->curve(), ind);
       }
 
       // The curve end is obviously smaller.
@@ -221,9 +221,9 @@ private:
       {
         // Both defined on the right boundary - compare them there.
         CGAL_assertion (ind == ARR_MAX_END);
-
-        return (m_traits->compare_y_near_boundary_2_object() (cv, e2->curve(),
-                                                              ind));
+	
+        return (m_traits->compare_y_curve_ends_2_object() (cv, e2->curve(),
+							   ind));
       }
 
       // The curve end is obviously larger.
@@ -242,13 +242,15 @@ private:
     CGAL_assertion (ps_y != ARR_INTERIOR);
     Comparison_result res;
 
+    Arr_curve_end ind2 = _curve_end(e2);
+    
     // Act according to the boundary sign of the event.
     if (e2->parameter_space_in_y() == ARR_BOTTOM_BOUNDARY)
     {
-      // Compare the x-positions of the two entities.
-      res = m_traits->compare_x_near_boundary_2_object() (cv, ind, e2->curve(),
-                                                          _curve_end(e2));
 
+      // Compare the x-positions of the two entities.
+      res = m_traits->compare_x_curve_ends_2_object() (cv, ind, 
+						       e2->curve(), ind2);
       if (res != EQUAL)
         return (res);
       
@@ -264,9 +266,8 @@ private:
     if (e2->parameter_space_in_y() == ARR_TOP_BOUNDARY)
     {
       // Compare the x-positions of the two entities.
-      res = m_traits->compare_x_near_boundary_2_object() (cv, ind, e2->curve(),
-                                                          _curve_end(e2));
-
+      res = m_traits->compare_x_curve_ends_2_object() (cv, ind, 
+						       e2->curve(), ind2);
       if (res != EQUAL)
         return (res);
        
@@ -282,7 +283,7 @@ private:
     // If we reached here, e2 is not a boundary event and is associated with
     // a valid point. We compare the x-position of this point with the curve
     // end.
-    res = m_traits->compare_x_near_boundary_2_object() (e2->point(), cv, ind);
+    res = m_traits->compare_x_point_curve_end_2_object() (e2->point(), cv, ind);
 
     if (res != EQUAL)
       return (CGAL::opposite(res));

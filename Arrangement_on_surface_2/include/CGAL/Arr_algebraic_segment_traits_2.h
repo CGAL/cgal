@@ -1,4 +1,4 @@
-// Copyright (c) 2006-2009 Max-Planck-Institute Saarbruecken (Germany).
+// Copyright (c) 2006-2009, 2011 Max-Planck-Institute Saarbruecken (Germany).
 // All rights reserved.
 //
 // This file is part of CGAL (www.cgal.org); you can redistribute it and/or
@@ -119,23 +119,9 @@ public:
         return CKvA_2::instance().equal_2_object();
     }
 
-
-
-    typedef typename CKvA_2::Parameter_space_in_x_2 Parameter_space_in_x_2;
-    Parameter_space_in_x_2 parameter_space_in_x_2_object() const {
-        return CKvA_2::instance().parameter_space_in_x_2_object();
-    }
-
     typedef typename CKvA_2::Parameter_space_in_y_2 Parameter_space_in_y_2;
     Parameter_space_in_y_2 parameter_space_in_y_2_object() const {
         return CKvA_2::instance().parameter_space_in_y_2_object();
-    }
-
-
-    typedef typename CKvA_2::Compare_x_near_boundary_2 
-       Compare_x_near_boundary_2;
-    Compare_x_near_boundary_2 compare_x_near_boundary_2_object() const {
-        return CKvA_2::instance().compare_x_near_boundary_2_object();
     }
 
     typedef typename CKvA_2::Compare_y_near_boundary_2 
@@ -144,6 +130,20 @@ public:
         return CKvA_2::instance().compare_y_near_boundary_2_object();
     }
 
+    typedef typename CKvA_2::Parameter_space_in_x_2 Parameter_space_in_x_2;
+    Parameter_space_in_x_2 parameter_space_in_x_2_object() const {
+        return CKvA_2::instance().parameter_space_in_x_2_object();
+    }
+
+    typedef typename CKvA_2::Compare_x_at_limit_2 Compare_x_at_limit_2;
+    Compare_x_at_limit_2 compare_x_at_limit_2_object() const {
+        return CKvA_2::instance().compare_x_at_limit_2_object();
+    }
+
+    typedef typename CKvA_2::Compare_x_near_limit_2  Compare_x_near_limit_2;
+    Compare_x_near_limit_2 compare_x_near_limit_2_object() const {
+        return CKvA_2::instance().compare_x_near_limit_2_object();
+    }
 
     typedef typename CKvA_2::Construct_min_vertex_2 Construct_min_vertex_2;
     Construct_min_vertex_2 construct_min_vertex_2_object() const {
@@ -200,13 +200,7 @@ public:
         return CKvA_2::instance().merge_2_object();
     }
 
-  // TODO typedef ArrangementDirectionalXMonotoneTraits_2 functors +
-  ///     check Intersect_2 & Split return order
-
-
-  typedef typename CKvA_2::Make_x_monotone_2 Make_x_monotone_2;
-
-
+    typedef typename CKvA_2::Make_x_monotone_2 Make_x_monotone_2;
     Make_x_monotone_2 make_x_monotone_2_object() const {
         return Make_x_monotone_2(&CKvA_2::instance());
     }

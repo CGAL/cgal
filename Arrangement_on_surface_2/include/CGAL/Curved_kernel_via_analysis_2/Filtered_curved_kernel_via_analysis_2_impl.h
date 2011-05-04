@@ -107,6 +107,10 @@ public:
     }
 };
 
+
+// TODO implement Compare_y_limit_on_boundary_2
+
+
 template < class CurvedKernelViaAnalysis_2, class FunctorBase >
 class Compare_y_near_boundary_2 : 
         public FunctorBase::Compare_y_near_boundary_2 {

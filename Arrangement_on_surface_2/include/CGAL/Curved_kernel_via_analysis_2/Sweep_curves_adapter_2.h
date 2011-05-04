@@ -117,12 +117,12 @@ public:
                         return (loc1 == CGAL::ARR_LEFT_BOUNDARY ?
                                  CGAL::SMALLER : CGAL::LARGER);
                     return (_m_adapter->kernel().
-                       compare_y_near_boundary_2_object()(arc, p2.arc(), end));
+                       compare_y_curve_ends_2_object()(arc, p2.arc(), end));
                 }
                 // compare curve ends at +/-oo in y
                 if(Native_arc_2::is_on_bottom_top(loc2)) {
                     CGAL::Comparison_result res = (_m_adapter->kernel().
-                        compare_x_near_boundary_2_object()
+                        compare_x_curve_ends_2_object()
                             (arc, end, p2.arc(), p2.curve_end()));
                     if(res == CGAL::EQUAL && end == p2.curve_end() &&
                             loc1 != loc2) {
@@ -143,8 +143,6 @@ public:
                  CGAL::SMALLER);
         else {
             // point is p1, arc is p2
-            //res = _m_adapter->kernel().
-              //  compare_x_near_boundary_2_object()(pt, arc, end);
             // compares a finite point with a curve end at y=+/-oo:
             res = _m_adapter->kernel().kernel().compare_1_object()
                 (pt.x(), arc.curve_end_x(end));
@@ -254,7 +252,7 @@ public:
         if(Native_arc_2::is_on_left_right(locp)) {
             CGAL_precondition(locp == cv.arc().location(end));
             // compare two curve ends at +/-oo in x
-            return _m_adapter->kernel().compare_y_near_boundary_2_object()
+            return _m_adapter->kernel().compare_y_curve_ends_2_object()
                 (p.arc(), cv.arc(), end);
         }
         // p.arc() has vertical asymptote; cases:
@@ -295,7 +293,7 @@ public:
         // compare either two asymptotic ends or one vertical arc + asymptote
         // check whether result need to be reversed
         CGAL::Comparison_result res =
-             (_m_adapter->kernel().compare_x_near_boundary_2_object()
+             (_m_adapter->kernel().compare_x_curve_ends_2_object()
                   (p.arc(), end, cv.arc(), end2));
 
         if(locp == cv.arc().location(end2) &&

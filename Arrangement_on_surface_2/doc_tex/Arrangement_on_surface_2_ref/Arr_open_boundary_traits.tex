@@ -1,0 +1,381 @@
+% Reference manual page: ArrangementTraits.tex
+% Package: Arrangement_2
+
+\ccRefPageBegin
+\begin{ccRefConcept}{ArrangementOpenBoundaryTraits_2}
+
+\ccDefinition
+% ===========
+An arrangement that supports unbounded $x$-monotone curves maintains
+an implicit bounding rectangle embedded in the \dcel{} structure.
+For each of the four boundary sides, i.e.,~left, right, bottom, and
+top, several predicates that depend on the \emph{side} are required
+to handle $x$-monotone curves that approach infinitiny at the
+corresponding side. These predicates are sufficient to handle not
+only unbounded curves, but also bounded curves that are open.
+However, they can be open only at the boundary of an iso-rectangle
+called the parameter space that confines all the $x$-monotone curves
+of the arrangement. The additional requirements can be organized in
+four different concepts. However, to avoid clutter, we introduce the
+concept \ccRefName, which combines all the four and refines the
+concept \ccc{ArrangementBasicTraits_2}. The arrangement template
+instantiated with a traits class that models this combined concept
+can handle $x$-monotone curves that are unbounded in any direction.
+The concept \ccRefName{} nontheless enables the construction of
+arrangement of open planar $x$-monotone curves. 
+
+An $x$-monotone curve may be \emph{closed}, in which cas its endpoints
+are representable as \ccc{Point_2} objects, or \emph{open}. It can 
+have one open end and one closed end (e.g., a ray). The nature of the
+$x$-monotone curves, whether they are expected to be closed or not at
+any one of the four boundary-sides, is conveyed through the definition
+of the four nested types \ccc{Left_side_category},
+\ccc{Right_side_category}, \ccc{Bottom_side_category}, and
+\ccc{Top_side_category}. If some curves handled by a model of the
+concept \ccRefName{} are expected to be open on the left, the nested
+type \ccc{Left_side_category} must be convertible to
+\ccc{Arr_open_side_tag}. Similarly, if some curves handled by the
+concept are expected to be open on the right, open at the bottom, or
+open at the top, the corresponding nested type must be convertible to
+\ccc{Arr_open_side_tag}. A model of the concept \ccRefName{} must have
+all the four categories convertible to
+\ccc{Arr_open_side_tag}.\footnote{We intend to introduce more concepts
+that require only a subset of the categories to be convertible to
+\ccc{Arr_open_side_tag}.} In this case the \dcel{} of the arrangement
+instantiated with the model is initialized to handle unbounded curves.
+
+%% The traits class needs to support comparisons at infinity, where we
+%% interpret comparisons at infinity as follows: Suppose we wish to compare
+%% the $y$-position of the hyperbolas $y_1 = \frac{1}{x}$ and
+%% $y_2 = \frac{2}{x}$ at $x = \infty$; than since there exists $x_0$ such
+%% that for each finite $x > x_0$ we have $y_2(x) > y_1(x)$ (in our case we
+%% can take $x_0 = 0$), we say that $y_2$ is larger than $y_1$ at infinity.
+%% Similarly, when comparing the $x$-positions of the vertical line $x = 0$
+%% and the $xy$-minimal end of hyperbola $y = \frac{1}{x}$ for $x > 0$
+%% (which has a vertical asymptote at $x = 0$), we define that the line
+%% lies to the {\em left} of the hyperbola. Namely, comparing curves at
+%% their unbounded ends should return the comparison result \ccc{EQUAL}
+%% only if the curves overlap.
+
+\ccRefines
+\ccc{ArrangementBasicTraits_2}
+
+%% \ccTypes
+%% % ======
+%% \ccNestedType{Curve_2}{models the concept \ccc{ArrTraits::Curve_2}.}
+
+\ccHeading{Categories}
+% ==============
+\ccNestedType{Left_side_category}
+  {Must be convertible to either \ccc{Arr_oblivious_side_tag} or
+        \ccc{Arr_open_side_tag}.}
+\ccNestedType{Bottom_side_category}
+  {Must be convertible to either \ccc{Arr_oblivious_side_tag} or
+        \ccc{Arr_open_side_tag}.}
+\ccNestedType{Top_side_category}
+  {Must be convertible to either \ccc{Arr_oblivious_side_tag} or
+        \ccc{Arr_open_side_tag}.}
+\ccNestedType{Right_side_category}
+  {Must be convertible to either \ccc{Arr_oblivious_side_tag} or
+        \ccc{Arr_open_side_tag}.}
+
+\ccHeading{Functor Types}
+% =======================
+\ccThree{Parameter_space_in_x_2}{}{\hspace*{14cm}}
+\ccThreeToTwo
+\ccNestedType{Parameter_space_in_x_2}%
+  {models the concept \ccc{ArrTraits::ParameterSpaceInX_2}.
+  Required only if the traits class supports unbounded curves that
+  approach the left or the right sides (the \ccc{Left_side_category}
+  or the \ccc{Right_side_category} categories are convertible to
+  \ccc{Arr_open_side_tag}).}
+
+\ccThree{Compare_y_near_boundary_2}{}{\hspace*{14cm}}
+\ccThreeToTwo
+\ccNestedType{Compare_y_near_boundary_2}%
+  {models the concept \ccc{ArrTraits::CompareYNearBoundary_2}.
+  Required only if the traits class supports unbounded curves that
+  approach the left or the right sides (the \ccc{Left_side_category}
+  or the \ccc{Right_side_category} categories are convertible to
+  \ccc{Arr_open_side_tag}).}
+
+\ccThree{Parameter_space_in_y_2}{}{\hspace*{14cm}}
+\ccThreeToTwo
+\ccNestedType{Parameter_space_in_y_2}%
+  {models the concept \ccc{ArrTraits::ParameterSpaceInY_2}.
+  Required only if the traits class supports unbounded curves that
+  approach the bottom or the top sides (the \ccc{Bottom_side_category}
+  or the \ccc{Top_side_category} categories are convertible to
+  \ccc{Arr_open_side_tag}).}
+
+\ccThree{Compare_x_at_limit_2}{}{\hspace*{14cm}}
+\ccThreeToTwo
+\ccNestedType{Compare_x_at_limit_2}%
+  {models the concept \ccc{ArrTraits::CompareXAtLimit_2}.
+  Required only if the traits class supports unbounded curves that
+  approach the bottom or the top sides (the \ccc{Bottom_side_category}
+  or the \ccc{Top_side_category} categories are convertible to
+  \ccc{Arr_open_side_tag}).}
+  
+\ccThree{Compare_x_near_limit_2}{}{\hspace*{14cm}}
+\ccThreeToTwo
+\ccNestedType{Compare_x_near_limit_2}%
+  {models the concept \ccc{ArrTraits::CompareXNearLimit_2}.
+  Required only if the traits class supports unbounded curves that
+  approach the bottom or the top sides (the \ccc{Bottom_side_category}
+  or the \ccc{Top_side_category} categories are convertible to
+  \ccc{Arr_open_side_tag}).}
+  
+\ccCreationVariable{traits}
+% \ccCreation
+% ===========
+
+\ccHeading{Accessing Functor Objects}
+% ===================================
+\ccMethod{Parameter_space_in_x_2 parameter_space_in_x_2_object() const;} {}
+\ccMethod{Compare_y_near_boundary_2 compare_y_near_boundary_2_object() const;} {}
+\ccMethod{Parameter_space_in_y_2 parameter_space_in_y_2_object() const;} {}
+\ccMethod{Compare_x_at_limit_2 compare_x_at_limit_2_object() const;} {}
+\ccMethod{Compare_x_near_limit_2 compare_x_near_limit_2_object() const;} {}
+
+\ccHasModels
+% ==========
+\ccc{CGAL::Arr_linear_traits_2<Kernel>}\\
+\ccc{CGAL::Arr_rational_arc_traits_2<AlgKernel,NtTraits>}\\
+\ccc{CGAL::Arr_algebraic_segment_traits_2<Coefficient>}\\
+\ccc{CGAL::Arr_curve_data_traits_2<Tr,XData,Mrg,CData,Cnv>}\\
+\ccc{CGAL::Arr_consolidated_curve_data_traits_2<Traits,Data>}
+
+\ccSeeAlso
+% ========
+\ccc{ArrangementBasicTraits_2}\lcTex{
+  (\ccRefPage{ArrangementBasicTraits_2})}\\
+\ccc{ArrangementXMonotoneTraits_2}\lcTex{
+  (\ccRefPage{ArrangementXMonotoneTraits_2})}\\
+\ccc{ArrangementLandmarkTraits_2}\lcTex{
+  (\ccRefPage{ArrangementLandmarkTraits_2})}
+\ccc{ArrangementTraits_2}\lcTex{
+  (\ccRefPage{ArrangementTraits_2})}
+
+\end{ccRefConcept}
+\ccRefPageEnd
+
+%%%%%%%% Functors %%%%%%%%
+% ========================
+
+%%%%%%%% ParameterSpaceInX_2
+% ==========================
+\ccRefPageBegin
+\begin{ccRefConcept}{ArrTraits::ParameterSpaceInX_2}
+\ccRefines{AdaptableBinaryFunction}
+
+\ccHasModels\ccc{ArrangementOpenBoundaryTraits_2::Parameter_space_in_x_2}
+
+\ccCreationVariable{fo}
+
+\ccMethod{template <typename OutputIterator>
+          Arr_parameter_space operator()(const X_monotone_curve_2& xcv,
+                                         Arr_curve_end ce);}{%
+
+  Given an $x$-monotone curve \ccc{xcv} and an enumeration \ccc{ce}
+  that specifies either the minimum or the maximum end of the curve,
+  determines the location of the curve end along the $x$-dimension.
+  The variable \ccc{xcv} identifies the parametric curve
+  $C(t) = (X(t),Y(t))$ defined over an open or half-open interval with
+  endpoints~$0$ and~$1$. The enumeration \ccc{ce} identifies an open
+  end $d \in \{0,1\}$ of $C$. Formally, determines whether
+  $\lim_{t \rightarrow d} X(t)$ evaluates to $b_l$, $b_r$, or a value
+  in between, where $b_l$ and $b_r$ are the $x$-coordinates of the
+  left and right boundaries of the parameter space, respectively.
+  Returns \ccc{ARR_LEFT_BOUNDARY}, \ccc{ARR_RIGHT_BOUNDARY}, or
+  \ccc{ARR_INTERIOR}, accordingly.
+  \ccPrecond{If the \ccc{Left_side_category} is not convertible to
+  \ccc{Arr_open_side_tag} then \ccc{ce} $\neq$ \ccc{ARR_MIN_END}.}
+  \ccPrecond{If the \ccc{Right_side_category} is not convertible to
+  \ccc{Arr_open_side_tag} then \ccc{ce} $\neq$ \ccc{ARR_MAX_END}.}}
+\end{ccRefConcept}
+\ccRefPageEnd
+
+%%%%%%%% CompareYNearBoundary_2
+% =============================
+\ccRefPageBegin
+\begin{ccRefConcept}{ArrTraits::CompareYNearBoundary_2}
+
+\ccRefines{AdaptableTernaryFunction}
+
+\ccHasModels\ccc{ArrangementOpenBoundaryTraits_2::Compare_y_near_boundary_2}
+
+\ccCreationVariable{fo}
+
+\ccMethod{template <typename OutputIterator>
+          Comparison_result operator()(const X_monotone_curve_2& xcv1,
+                                       const X_monotone_curve_2& xcv2,
+                                       Arr_curve_end ce);}{%
+  Given two $x$-monotone curves \ccc{xcv1} and \ccc{xcv2} and an
+  enumeration \ccc{ce} that specifies either the minimum or the maximum
+  ends of the curves, compares the $y$-coordinate of the curves near
+  their respective ends. Returns \ccc{SMALLER}, \ccc{EQUAL}, or
+  \ccc{LARGER} accordingly. More precisely, compares the
+  $y$-coordinates of the vertical projection of a point $p$ onto
+  \ccc{xcv1} and \ccc{xcv2}. If \ccc{ce} is \ccc{ARR_MIN_END}, the
+  predicate \ccc{Parameter_space_in_x_2} evaluates to
+  \ccc{ARR_LEFT_BOUNDARY} when applied to \ccc{xcv1} and \ccc{ce} and
+  when applied to \ccc{xcv2} and \ccc{ce}. In this case $p$ is
+  located far to the left, such that the result is invariant under
+  a translation of $p$ farther to the left. If \ccc{ce} is
+  \ccc{ARR_MAX_END}, the predicate \ccc{Parameter_space_in_x_2}
+  evaluates to \ccc{ARR_RIGHT_BOUNDARY} when applied to \ccc{xcv1} and
+  \ccc{ce} and when applied to \ccc{xcv2} and \ccc{ce}. In that case
+  $p$ is located far to the right in a similar manner.
+  \ccPrecond{%
+    (\ccc{ce} = \ccc{ARR_MIN_END}) $\Rightarrow$
+     \ccc{parameter_space_in_x_2}(\ccc{xcv2}, \ccc{ce}) =
+     \ccc{parameter_space_in_x_2}(\ccc{xcv1}, \ccc{ce}) =
+     \ccc{ARR_LEFT_BOUNDARY}\\
+    (\ccc{ce} = \ccc{ARR_MAX_END}) $\Rightarrow$
+     \ccc{parameter_space_in_x_2}(\ccc{xcv2}, \ccc{ce}) =
+     \ccc{parameter_space_in_x_2}(\ccc{xcv1}, \ccc{ce}) =
+     \ccc{ARR_RIGHT_BOUNDARY}.}
+  \ccPrecond{If the \ccc{Left_side_category} is not convertible to
+    \ccc{Arr_open_side_tag} then \ccc{ce} $\neq$ \ccc{ARR_MIN_END}.}
+  \ccPrecond{If the \ccc{Right_side_category} is not convertible to
+    \ccc{Arr_open_side_tag} then \ccc{ce} $\neq$ \ccc{ARR_MAX_END}.}}
+\end{ccRefConcept}
+\ccRefPageEnd
+
+%%%%%%%% ParameterSpaceInY_2
+% ==========================
+\ccRefPageBegin
+\begin{ccRefConcept}{ArrTraits::ParameterSpaceInY_2}
+\ccRefines{AdaptableBinaryFunction}
+
+\ccHasModels\ccc{ArrangementOpenBoundaryTraits_2::Parameter_space_in_y_2}
+
+\ccCreationVariable{fo}
+
+\ccMethod{template <typename OutputIterator>
+          Arr_parameter_space operator()(const X_monotone_curve_2& xcv,
+                                         Arr_curve_end ce);}{%
+  Given an $x$-monotone curve \ccc{xcv} and an enumeration \ccc{ce}
+  that specifies either the minimum or the maximum end of the curve,
+  determines the location of the curve end along the $y$-dimension.
+  The variable \ccc{xcv} identifies the parametric curve
+  $C(t) = (X(t),Y(t))$ defined over an open or half-open interval with
+  endpoints~$0$ and~$1$. The enumeration \ccc{ce} identifies an open
+  end $d \in \{0,1\}$ of $C$. Formally, determines whether
+  $\lim_{t \rightarrow d} Y(t)$ evaluates to $b_b$, $b_t$, or a value
+  in between, where $b_b$ and $b_t$ are the $y$-coordinates of the
+  bottom and top boundaries of the parameter space, respectively.
+  Returns \ccc{ARR_BOTTOM_BOUNDARY}, \ccc{ARR_TOP_BOUNDARY}, or
+  \ccc{ARR_INTERIOR}, accordingly.}
+\end{ccRefConcept}
+\ccRefPageEnd
+
+%%%%%%%% CompareXAtLimit_2
+% ================================
+\ccRefPageBegin
+\begin{ccRefConcept}{ArrTraits::CompareXAtLimit_2}
+\ccRefines{AdaptableFunctor}
+
+\ccHasModels\ccc{ArrangementOpenBoundaryTraits_2::Compare_x_at_limit_2}
+
+\ccCreationVariable{fo}
+
+\ccMethod{template <typename OutputIterator>
+          Comparison_result operator()(const Point_2& p,
+                                       const X_monotone_curve_2& xcv,
+                                       Arr_curve_end ce);}{%
+  Given a point \ccc{p}, an $x$-monotone curve \ccc{xcv}, and an
+  enumeration \ccc{ce} that specifies either the minimum or the
+  maximum end of the curve where the curve has a vertical asymptote,
+  compares the $x$-coordinate of \ccc{p} and the $x$-coordinate of the
+  limit of the curve at its specificed end. The variable \ccc{xcv}
+  identifies the parametric curve $C(t) = (X(t),Y(t))$ defined over an
+  open or half-open interval with endpoints~$0$ and~$1$. The
+  enumeration \ccc{ce} identifies an open end $d \in \{0,1\}$ of $C$.
+  Formally, compares the $x$-coordinate of \ccc{p} and
+  $\lim_{t \rightarrow d} X(t)$. Returns \ccc{SMALLER}, \ccc{EQUAL}, or
+  \ccc{LARGER} accordingly.  
+  \ccPrecond{%
+    \ccc{parameter_space_in_y_2}(\ccc{xcv}, \ccc{ce}) $\neq$
+    \ccc{ARR_INTERIOR}.}
+  \ccPrecond{$C$ has a vertical asymptote at its $d$-end; that is,
+    \ccc{parameter_space_in_y_2}(\ccc{xcv}, \ccc{ce}) = \ccc{ARR_INTERIOR}.}}
+%
+\ccMethod{template <typename OutputIterator>
+          Comparison_result operator()(const X_monotone_curve_2& xcv1,
+                                       Arr_curve_end ce1,
+                                       const X_monotone_curve_2& xcv2,
+                                       Arr_curve_end ce2);}{%
+  Given two $x$-monotone curves \ccc{xcv1} and \ccc{xcv2} and two
+  indices \ccc{ce1} and \ccc{ce2} that specify either the minimum
+  or the maximum ends of \ccc{xcv1} and \ccc{xcv2}, respectively,
+  where the curves have vertical asymptotes, compares the
+  $x$-coordinates of the limits of the curves at their specificed
+  ends. The variables \ccc{xcv1} and \ccc{xcv2} identify the
+  parametric curves $C_1(t) = (X_1(t),Y_1(t))$ and
+  $C_2(t) = (X_2(t),Y_2(t))$, respectively, defined over open or
+  half-open intervals with endpoints~$0$ and~$1$. The indices
+  \ccc{ce1} and \ccc{ce2} identify open ends $d_1 \in \{0,1\}$ and
+  $d_2 \in \{0,1\}$ of $C_1$ and $C_2$, respectively. Formally,
+  compares $\lim_{t \rightarrow d_1} X_1(t)$ and
+  $\lim_{t \rightarrow d_2} X_2(t)$. Returns \ccc{SMALLER}, \ccc{EQUAL},
+  or \ccc{LARGER} accordingly. 
+  \ccPrecond{%
+    \ccc{parameter_space_in_y_2}(\ccc{xcv1}, \ccc{ce1}) $\neq$
+    \ccc{ARR_INTERIOR}.}
+  \ccPrecond{%
+    \ccc{parameter_space_in_y_2}(\ccc{xcv2}, \ccc{ce2}) $\neq$
+    \ccc{ARR_INTERIOR}.}
+  \ccPrecond{$C_1$ has a vertical asymptote at its respective end;
+    that is,\\ 
+    \ccc{parameter_space_in_x_2}(\ccc{xcv1}, \ccc{ce1}) =
+    \ccc{ARR_INTERIOR}.}
+  \ccPrecond{$C_2$ has a vertical asymptote at its respective end;
+    that is,\\ 
+    \ccc{parameter_space_in_x_2}(\ccc{xcv2}, \ccc{ce2}) =
+    \ccc{ARR_INTERIOR}.}}
+\end{ccRefConcept}
+\ccRefPageEnd
+
+%%%%%%%% CompareXNearLimit_2
+% =============================
+\ccRefPageBegin
+\begin{ccRefConcept}{ArrTraits::CompareXNearLimit_2}
+\ccRefines{AdaptableTernaryFunction}
+
+\ccHasModels\ccc{ArrangementOpenBoundaryTraits_2::Compare_x_near_limit_2}
+
+\ccCreationVariable{fo}
+
+\ccMethod{template <typename OutputIterator>
+          Comparison_result operator()(const X_monotone_curve_2& xcv1,
+                                       const X_monotone_curve_2& xcv2,
+                                       Arr_curve_end ce);}{%
+  Given two $x$-monotone curves \ccc{xcv1} and \ccc{xcv2} and an
+  enumeration \ccc{ce} that specifies either the minimum ends or the
+  maximum ends of the curves where the curves have a vertical
+  asymptote, compares the $x$-coordinate of the curves near their
+  respective ends. Returns \ccc{SMALLER}, \ccc{EQUAL}, or \ccc{LARGER}
+  accordingly. More precisely, compares the $x$-coordinates of the
+  horizontal projection of a point $p$ onto \ccc{xcv1} and \ccc{xcv2}.
+  If \ccc{xcv1} and \ccc{xcv2} approach the bottom boundary-side, $p$
+  is located far to the bottom, such that the result is invariant
+  under a translation of $p$ farther to the bottom. If \ccc{xcv1}
+  and \ccc{xcv2} approach the top boundary-side, $p$ is located far
+  to the top in a similar manner.
+  \ccPrecond{The $x$-coordinates of the limits of the curves at their
+    respective ends are equal. That is,\\
+    \ccc{compare_x_at_limit_2}(\ccc{xcv1}, \ccc{xcv2}, \ccc{ce}) =
+    \ccc{EQUAL}.}
+  \ccPrecond{Both \ccc{xcv1} and \ccc{xcv2} approach the same
+    boundary-side, either the bottom or the top, at their respective
+    ends. That is,\\
+    \ccc{parameter_space_in_y_2}(\ccc{xcv1}, \ccc{ce}) =
+    \ccc{parameter_space_in_y_2}(\ccc{xcv2}, \ccc{ce}) =
+      \ccc{ARR_BOTTOM_BOUNDARY} or\\
+    \ccc{parameter_space_in_y_2}(\ccc{xcv1}, \ccc{ce}) =
+    \ccc{parameter_space_in_y_2}(\ccc{xcv2}, \ccc{ce}) =
+      \ccc{ARR_TOP_BOUNDARY}.}}
+\end{ccRefConcept}
+\ccRefPageEnd

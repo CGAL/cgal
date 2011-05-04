@@ -2081,23 +2081,75 @@ public:
     result_type operator()(const Arc_2& cv1, const Arc_2& cv2,
                            CGAL::Arr_curve_end ce) const {
         
-        CERR("\ncompare_y_near_boundary; cv1: " << cv1 << "; cv2: " <<
-             cv2 << "; end: " << ce << "\n");
-        
-        CGAL::Arr_parameter_space loc1 = cv1.location(ce);
-        CGAL_precondition(cv1.is_on_left_right(loc1));
-        CGAL_precondition(loc1 == cv2.location(ce));
-        // comparing ids is the same as calling is_identical() ??
-        if (cv1.id() == cv2.id()) {
-            CGAL::Comparison_result res = CGAL::EQUAL;
-            CERR("result: " << res << "\n");
-            return res;
-        } 
-        
-        // in this setting same handling as for +/-oo ?
-        CGAL::Comparison_result res = cv1._compare_arc_numbers(cv2, loc1);
+      CERR("\ncompare_y_near_boundary; cv1: " << cv1 << "; cv2: " <<
+           cv2 << "; end: " << ce << "\n");
+      
+      
+      CGAL::Comparison_result res = CGAL::EQUAL;
+      
+      CGAL::Arr_parameter_space loc1 = cv1.location(ce);
+      CGAL_precondition(cv1.is_on_left_right(loc1));
+      CGAL_precondition(loc1 == cv2.location(ce));
+      // comparing ids is the same as calling is_identical() ??
+      if (cv1.id() == cv2.id()) {
+	CERR("result: " << res << "\n"); // EQUAL
+	return res;
+      } 
+      
+      // both points lie on the left-right-identification, i.e., equalx
+      // TODO this interface is NOT official
+      CGAL::Object obj1 = 
+	cv1.curve().asymptotic_value_of_arc(loc1, cv1.arcno());
+      CGAL::Object obj2 = 
+	cv2.curve().asymptotic_value_of_arc(loc1, cv1.arcno());
+      
+      typename Point_2::Curved_kernel_via_analysis_2::Curve_kernel_2::
+	Algebraic_real_1 y1, y2;
+      CGAL::Arr_parameter_space ps1, ps2;
+      
+      if (CGAL::assign(ps1, obj1)) {
+	if (CGAL::assign(ps2, obj2)) {
+	  res = CGAL::EQUAL;
+	} else {
+	  CGAL_assertion(CGAL::assign(y2, obj2));
+	  res = (ps1 == CGAL::ARR_BOTTOM_BOUNDARY ?
+		 CGAL::SMALLER : CGAL::LARGER);
+	}
+      } else {
+	CGAL_assertion_code(bool check = )
+	  CGAL::assign(y1, obj1);
+	CGAL_assertion(check);
+	if (CGAL::assign(ps2, obj2)) {
+	  res = (ps2 == CGAL::ARR_TOP_BOUNDARY ?
+		 CGAL::SMALLER : CGAL::LARGER);
+	} else {
+	  CGAL_assertion_code(bool check = )
+	    CGAL::assign(y2, obj2);
+	  CGAL_assertion(check);
+          
+	  // Remark: Is filtered
+	  res = Base::_ckva()->kernel().compare_1_object()(y1, y2);
+	}
+      }
+      
+      if (res != EQUAL) {
         CERR("result: " << res << "\n");
         return res;
+      }
+      
+      CGAL_precondition(cv1.is_on_left_right(loc1));
+      CGAL_precondition(loc1 == cv2.location(ce));
+      // comparing ids is the same as calling is_identical() ??
+      if (cv1.id() == cv2.id()) {
+        CGAL::Comparison_result res = CGAL::EQUAL;
+        CERR("result: " << res << "\n");
+        return res;
+      } 
+      
+      // in this setting same handling as for +/-oo ?
+      res = cv1._compare_arc_numbers(cv2, loc1);
+      CERR("result: " << res << "\n");
+      return res;
     }
 };
 
@@ -2160,11 +2212,12 @@ public:
 
 };
 
+
 /*!\brief
- * Functor that compares x-coordinates near the top or bottom boundary
+ * Functor that compares x-limits at the top or bottom boundary
  */
 template < class CurvedKernelViaAnalysis_2 >
-class Compare_x_near_boundary_2 : public 
+class Compare_x_at_limit_2 : public 
 Curved_kernel_via_analysis_2_functor_base< CurvedKernelViaAnalysis_2 > {
 
 public:
@@ -2183,12 +2236,12 @@ public:
 
     //! the arity of the functor
 
-    Compare_x_near_boundary_2(Curved_kernel_via_analysis_2 *kernel) :
+    Compare_x_at_limit_2(Curved_kernel_via_analysis_2 *kernel) :
         Base(kernel) {
     }
 
-    /*!\brief Compare the x-coordinate of a point with the x-coordinate of
-     * an arcend near the boundary at bottom or top boundary
+    /*!\brief Compare the x-limit of a vertical with the x-limit of
+     * an arc end near the boundary at bottom or top boundary
      * 
      * \param p the point direction.
      * \param cv the arc, the endpoint of which is compared.
@@ -2206,12 +2259,13 @@ public:
     result_type operator()(const Point_2& p, const Arc_2& cv,
                            CGAL::Arr_curve_end ce) const {
 
-        CERR("\ncompare_x_near_boundary: p: " << p << "\n cv: " <<
+
+        CERR("\ncompare_x_at_limit: p: " << p << "\n cv: " <<
              cv << "; curve_end: " << ce << "\n");
         
         // this curve end has boundary only in y
         CGAL_precondition(cv.is_on_bottom_top(cv.location(ce)));
-        if (cv.is_singular()) // the curve end goes to singularity => x-order
+        if (cv.is_singular()) // the curve end goes to contraction => x-order
             return CGAL::EQUAL; // doesn't matter   
 
         CGAL::Comparison_result res = 
@@ -2219,21 +2273,11 @@ public:
             kernel().compare_1_object()(
                     p.x(), cv.curve_end_x(ce)
             );
-        // for vertical arcs equality of x-coordinates means overlapping
-        // in case of discontinuity => x-comparison is enough
-        if (res != CGAL::EQUAL || cv.is_vertical() || cv.is_on_disc()) {
-            CERR("result: " << res << "\n");
-            return res;
-        }
-
-        // look at the side from which the 
-        // vertical asymptote is approached 
-        res = (ce == CGAL::ARR_MIN_END ? CGAL::SMALLER : CGAL::LARGER);
         CERR("result: " << res << "\n");
         return res;
     }
 
-    /*! Compare the x-coordinates of 2 arcs ends near the top or bottom 
+    /*! Compare the x-limits of 2 arcs ends near the top or bottom 
      * boundary of the parameter space
      * \param cv1 the first arc.
      * \param ce1 the first arc end indicator -
@@ -2254,7 +2298,7 @@ public:
     result_type operator()(const Arc_2& cv1, CGAL::Arr_curve_end ce1,
                            const Arc_2& cv2, CGAL::Arr_curve_end ce2) const {
 
-        CERR("\ncompare_x_near_boundary: cv1: " << cv1 << "\n cv2: " <<
+        CERR("\ncompare_x_at_limit: cv1: " << cv1 << "\n cv2: " <<
             cv2 << "; end1: " << ce1 << "; end2: " << ce2 << "\n");
         /*CGAL::Arr_boundary_type bnd1 = boundary(end1), 
             bnd2 = cv2.boundary(ce2);*/
@@ -2270,86 +2314,91 @@ public:
                 implemented");
         }
         
-        
-        CGAL::Comparison_result res;
-        if (cv1.is_singular() && cv1.is_singular()) {
-            if (loc1 < loc2) {
-                return CGAL::SMALLER;
-            }
-            if (loc1 > loc2) {
-                return CGAL::LARGER;
-            }
-            // both ends lie at the same singularity => need special handling
-            // but x-order doesn't matter
-        } else  { // establish x-order
-            res = Curved_kernel_via_analysis_2::instance().
-                kernel().compare_1_object()(
-                    cv1.curve_end_x(ce1),
-                    cv2.curve_end_x(ce2)
-            );
-            // x-coordinate comparison is enough for these cases
-            // we assume that either both curve ends lie on disc or neither of
-            // them
-            if (res != CGAL::EQUAL || 
-                (cv1.is_on_disc() && cv1.is_on_disc())) {
-                CERR("result: " << res << "\n");
-                return res;
-            }
-        }    
-        // now we either +/-oo case: ARR_MIN_END > vertical > ARR_MAX_END
-        // or both ends lie at the same singularity: these cases can be 
-        // handled simultaneously  
-        if (cv1.is_vertical()) {
-            if (!cv2.is_vertical()) {
-                return (ce2 == CGAL::ARR_MIN_END ? 
-                        CGAL::SMALLER : CGAL::LARGER);
-            }
-            // both are vertical
-            if (loc1 == loc2) { // both ends converge to the same infinity
-                return CGAL::EQUAL;
-            }
-            return (loc1 == CGAL::ARR_BOTTOM_BOUNDARY ? 
-                    CGAL::SMALLER : CGAL::LARGER);
-        } 
-        
-        if (cv2.is_vertical()) {
-            return (ce1 == CGAL::ARR_MIN_END ? CGAL::LARGER : CGAL::SMALLER);
-        }
-        
-        // otherwise: both ends have asymptotic behaviour or singularity
-        if (ce1 == ce2) { // both ends approach asymptote from one side
-            
-            if(loc1 == loc2) { // need special y-comparison
-                Coordinate_1 x0(cv1.curve_end_x(ce1));
-                res = cv1._compare_arc_numbers(
-                        cv2, CGAL::ARR_INTERIOR, x0, 
-                        (ce1 == CGAL::ARR_MIN_END ? 
-                         CGAL::POSITIVE : CGAL::NEGATIVE)
-                );
-                if ((ce1 == CGAL::ARR_MAX_END &&
-                     loc1 == CGAL::ARR_TOP_BOUNDARY) ||
-                    (ce1 == CGAL::ARR_MIN_END &&
-                     loc1 == CGAL::ARR_BOTTOM_BOUNDARY)) {
-                    res = -res;
-                }
-                CERR("result: " << res << "\n");
-                return res;
-            } 
-            // else: order can be determined without y-comparison
-            //(loc1 == CGAL::ARR_BOTTOM_BOUNDARY ? CGAL::SMALLER :
-            res = CGAL::EQUAL;
-                   //CGAL::LARGER);
-            CERR("result: " << res << "\n");
-            return res;
-        }
-        // curve ends approach vertical asymptote (or singularity) from
-        // different sides => no comparisons required
-        res =  (ce1 == CGAL::ARR_MIN_END ? CGAL::LARGER : CGAL::SMALLER);
+        CGAL::Comparison_result res = Curved_kernel_via_analysis_2::instance().
+	  kernel().compare_1_object()(
+				      cv1.curve_end_x(ce1),
+				      cv2.curve_end_x(ce2)
+				      );
         CERR("result: " << res << "\n");
         return res;
     }
 };
 
+
+/*!\brief
+ * Functor that compares x-coordinates near the top or bottom boundary
+ */
+template < class CurvedKernelViaAnalysis_2 >
+class Compare_x_near_limit_2 : public 
+Curved_kernel_via_analysis_2_functor_base< CurvedKernelViaAnalysis_2 > {
+
+public:
+    //! this instance' first template parameter
+    typedef CurvedKernelViaAnalysis_2 Curved_kernel_via_analysis_2;
+
+    //! the base type
+    typedef 
+    Curved_kernel_via_analysis_2_functor_base< Curved_kernel_via_analysis_2 >
+    Base;
+
+    CGAL_CKvA_2_GRAB_BASE_FUNCTOR_TYPES
+    
+    //! the result type
+    typedef CGAL::Comparison_result result_type;
+
+    //! the arity of the functor
+
+    Compare_x_near_limit_2(Curved_kernel_via_analysis_2 *kernel) :
+        Base(kernel) {
+    }
+
+    /*! Compare the x-coordinates of 2 arcs ends near the top or bottom 
+     * boundary of the parameter space
+     * \param cv1 the first arc.
+     * \param cv2 the second arc.
+     * \param ce the arc end indicator -
+     *            ARR_MIN_END - the minimal end of curves or
+     *            ARR_MAX_END - the maximal end of curves.
+     * \return the second comparison result:
+     *         SMALLER - x(cv1, ce) \< x(cv2, ce);
+     *         EQUAL   - x(cv1, ce) = x(cv2, ce);
+     *         LARGER  - x(cv1, ce) > x(cv2, ce).
+     *
+     * \pre the ce1 end of the arc cv1 lies on a boundary.
+     * \pre the ce2 end of the arc cv2 lies on a boundary.
+     * \pre both curve ends are on the same boundary
+     */
+    result_type operator()(const Arc_2& cv1, const Arc_2& cv2,
+			   CGAL::Arr_curve_end ce) const {
+
+        CERR("\ncompare_x_near_limit: cv1: " << cv1 << "\n cv2: " <<
+            cv2 << "; ce: " << ce << "\n");
+
+        CGAL::Arr_parameter_space 
+	  loc1 = cv1.location(ce), 
+	  loc2 = cv2.location(ce);
+        CGAL_precondition(cv1.is_on_bottom_top(loc1));
+        CGAL_precondition(cv1.is_on_bottom_top(loc2));
+	CGAL_precondition(cv1.compare_x_at_limit(ce, cv2, ce) == CGAL::EQUAL);
+
+        CGAL_precondition(loc1 == loc2);
+
+	Coordinate_1 x0(cv1.curve_end_x(ce));
+	CGAL::Comparison_result res = cv1._compare_arc_numbers(
+				       cv2, CGAL::ARR_INTERIOR, x0, 
+				       (ce == CGAL::ARR_MIN_END ? 
+					CGAL::POSITIVE : CGAL::NEGATIVE)
+				       );
+	if ((ce == CGAL::ARR_MAX_END &&
+	     loc1 == CGAL::ARR_TOP_BOUNDARY) ||
+	    (ce == CGAL::ARR_MIN_END &&
+	     loc1 == CGAL::ARR_BOTTOM_BOUNDARY)) {
+	  res = opposite(res);
+	}
+        CERR("result: " << res << "\n");
+        return res;
+    }
+};
 
 
 /*!\brief 
@@ -2672,8 +2721,10 @@ public:
     // bottom-top
     CGAL_CKvA_2_functor_pred(Parameter_space_in_y_2, 
                              parameter_space_in_y_2_object);
-    CGAL_CKvA_2_functor_pred(Compare_x_near_boundary_2,
-                             compare_x_near_boundary_2_object);
+    CGAL_CKvA_2_functor_pred(Compare_x_at_limit_2,
+                             compare_x_at_limit_2_object);
+    CGAL_CKvA_2_functor_pred(Compare_x_near_limit_2,
+                             compare_x_near_limit_2_object);
 
     CGAL_CKvA_2_functor_cons(X_extreme_points_2, x_extreme_points_2_object);
     CGAL_CKvA_2_functor_cons(Y_extreme_points_2, y_extreme_points_2_object);

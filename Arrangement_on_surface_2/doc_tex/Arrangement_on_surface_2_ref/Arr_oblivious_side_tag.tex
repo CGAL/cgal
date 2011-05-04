@@ -13,13 +13,12 @@
 \ccDefinition
 %============
 
-\ccRefName{} is an empty construct used for dispatching functions based on
-type of curves that induce the arrangement. If all curves are expected not
-to approach the left, right, bottom, or top sides of the boundary of the
-parameter space, the categories \ccc{Arr_left_side_category},
-\ccc{Arr_right_side_category}, \ccc{Arr_bottom_side_category}, and
-\ccc{Arr_top_side_category}, nested in any model of the
-\ccc{ArrangementBasicTraits_2}, must be defined as \ccRefName{}, respectively.
+The categories \ccc{Arr_left_side_category}, \ccc{Arr_right_side_category},
+\ccc{Arr_bottom_side_category}, and \ccc{Arr_top_side_category},
+nested in any model of the \ccc{ArrangementBasicTraits_2}, must be
+convertible to \ccRefName. \ccRefName{} is an empty construct used
+for dispatching functions based on type of curves that induce the
+arrangement.
 
 \ccInclude{CGAL/Arr_tags.h}
 
