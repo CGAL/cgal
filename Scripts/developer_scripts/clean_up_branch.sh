@@ -29,7 +29,7 @@ echo Cleaning $REPO_DIR
 REGEXP='ProgramOutput\.|CMakeFiles|CMakeLists.txt|\.moc$|CMakeCache\.txt|error\.txt|cmake_install\.cmake|Makefile|doc_html|doc_pdf|\.pdflg$|\.ilg$|\.cgallog$|\.blg$|\.bak$|\.hax$|\.aux$|\.maf$|demo.*\/qrc_.*\.cxx|demo.*\/ui_.*\.h'
 
 
-INITIAL=`svn status $1| awk '{if ($1 =="?" ) print $2 }'`
+INITIAL=`svn status --no-ignore $1| awk '{if ($1 =="?" || $1=="I" ) print $2 }'`
 
 
 #first get executable files
