@@ -23,7 +23,7 @@ to be able to combine the good randomized complexity and the
 good effects of locality \cite{acr-icb-03}.
 
 
-The only predicates used by this package are comparisons between coordinates,
+The predicates used by this package are comparisons between coordinates,
 thus there is no robustness issues involved here, for example to choose the
 arithmetic of the kernel.
 
@@ -129,10 +129,16 @@ similar manner and we get also a suitable ordering of the points
 \cgal\ provides Hilbert sorting for points in 2D, 3D and higher dimensions,
 in the middle and the median policies.
 
-The median policy seems interesting in practice and his invariant to
-scaling, while the middle policy is easier to analyze. Most
-theoretical results are using the middle policy
-\cite{acr-icb-03,other-references}..
+The middle policy is easier to analyze, and is interesting in practice
+for well distributed set of points in small dimension (if the number
+of points is really smaller than $2^d$).
+The median policy should be prefered for high dimension or if 
+the point set distribution is not regular (or unknown).
+Since the median policy cannot be much worse than the middle
+policy, while the converse can happen, the median policy is the
+default behavior.
+Most theoretical results are using the middle policy
+\cite{acr-icb-03,other-references}.
 
 
 This other example illustrates the use of the two different policies

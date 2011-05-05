@@ -90,7 +90,6 @@ public:
        }
      }
 
-
      std::vector<RandomAccessIterator> places(nb_splits +1);
      std::vector<int>                  dir   (nb_splits +1);
      places[0]=begin;
@@ -144,15 +143,14 @@ public:
       two_to_dim = 1;
       Starting_position start(_dimension);
 
-
+      int N=end-begin;N*=2;
+      for (int i=0; i<_dimension; ++i) 	start[i]=false; 	// we start below in all coordinates
       for (int i=0; i<_dimension; ++i) {
-	start[i]=false; 	// we start below in all coordinates
 	two_to_dim *= 2;        // compute 2^_dimension
-	if (two_to_dim*2 <= 0) {
-	  CGAL_assertion(end-begin < two_to_dim);//too many points in such dim
-	  break;
-	}
+	N/=2;
+	if (N==0) break;  // not many points, this number of dimension is enough
       }
+
 
       // we start with  direction 0;
       sort (begin, end, start, 0);
