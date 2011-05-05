@@ -1,4 +1,4 @@
-#!/bin/sh
+#!/bin/bash
 #
 # usage: bash clean_up_branch.sh directory [rm]
 #
@@ -16,17 +16,22 @@ fi
 
 if [ ! -e $REPO_DIR/.svn/entries ]; then
   echo "$REPO_DIR is not a working copy"
-  exit
+  exit 1
 fi;
 
-if [ $# -gt 1 -a "$2 == rm" ]; then
-  DELETE=1
+if [ $# -gt 1 ]; then
+  if [ "$2" == "rm" ]; then
+    DELETE=1
+  else
+  echo "Unknown option $2"
+  exit 1     
+  fi
 fi;
 
 echo Cleaning $REPO_DIR
 
 #define regular expression to match generated files
-REGEXP='ProgramOutput\.|CMakeFiles|CMakeLists.txt|\.moc$|CMakeCache\.txt|error\.txt|cmake_install\.cmake|Makefile|doc_html|doc_pdf|\.pdflg$|\.ilg$|\.cgallog$|\.blg$|\.bak$|\.hax$|\.aux$|\.maf$|demo.*\/qrc_.*\.cxx|demo.*\/ui_.*\.h'
+REGEXP='ProgramOutput\.|CMakeFiles|CMakeLists.txt|\.moc$|CMakeCache\.txt|error\.txt|cmake_install\.cmake|Makefile|doc_html|doc_pdf|\.pdflg$|\.ilg$|\.cgallog$|\.blg$|\.bak$|\.hax$|\.aux$|\.maf$|\.hlg$|\.out$|demo.*\/qrc_.*\.cxx|demo.*\/ui_.*\.h'
 
 
 INITIAL=`svn status --no-ignore $1| awk '{if ($1 =="?" || $1=="I" ) print $2 }'`
@@ -68,7 +73,7 @@ if [ $DELETE -eq 1 ]; then
   if [ "$EXECS" -o "$KNOWN" ]; then
     echo "Are you sure you want to execute the printed commands? [YES/NO]"
     read ANSWER
-    if [ "$ANSWER == YES" ]; then
+    if [ "$ANSWER" == "YES" ]; then
       for i in $EXECS $KNOWN; do
         rm -rf $REPO_DIR/$i
       done
