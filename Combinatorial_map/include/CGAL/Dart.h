@@ -20,6 +20,7 @@
 #define CGAL_DART_H 1
 
 #include <CGAL/Compact_container.h>
+#include <CGAL/assertions.h>
 #include <bitset>
 
 namespace CGAL {
@@ -175,16 +176,16 @@ public:
    template<int i>
    typename Attribute_handle<i>::type attribute()
    {
-     BOOST_STATIC_ASSERT( Helper::template Dimension_index<i>::value>=0 ||
-			  "attribute<i> but i-attributes are disabled.");
+     CGAL_static_assertion_msg(Helper::template Dimension_index<i>::value>=0,
+			  "attribute<i> called but i-attributes are disabled.");
      return CGAL::cpp0x::get<Helper::template Dimension_index<i>::value>
        (mattribute_handles); 
    }
    template<int i> 
    typename Attribute_const_handle<i>::type attribute() const
    { 
-     BOOST_STATIC_ASSERT( Helper::template Dimension_index<i>::value>=0 ||
-			  "attribute<i> but i-attributes are disabled.");
+     CGAL_static_assertion_msg(Helper::template Dimension_index<i>::value>=0,
+			  "attribute<i> called but i-attributes are disabled.");
      return CGAL::cpp0x::get<Helper::template Dimension_index<i>::value>
        (mattribute_handles); 
    }
@@ -258,8 +259,8 @@ protected:
    template<int i>
    void set_attribute( typename Attribute_handle<i>::type & ahandle )
    { 
-     BOOST_STATIC_ASSERT( Helper::template Dimension_index<i>::value>=0 ||
-			  "set_attribute<i> but i-attributes are disabled.");
+     CGAL_static_assertion_msg(Helper::template Dimension_index<i>::value>=0,
+            "set_attribute<i> called but i-attributes are disabled.");
      CGAL::cpp0x::get<Helper::template Dimension_index<i>::value>
        (mattribute_handles) = ahandle; 
      if (ahandle!=NULL) ahandle->inc_nb_refs();

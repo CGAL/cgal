@@ -88,8 +88,8 @@ namespace CGAL {
       mcell_mark_number(amap.get_new_mark())
     {
       CGAL_assertion( Ite::is_basic_iterator() );
-
-      assert(amap.is_whole_map_unmarked(mcell_mark_number));
+      CGAL_assertion(amap.is_whole_map_unmarked(mcell_mark_number));
+      
       mark_cell<Map,i,dim>(amap, adart, mcell_mark_number);
     }
   
@@ -196,7 +196,7 @@ namespace CGAL {
       mmark_number(amap.get_new_mark())
     {      
       CGAL_assertion( Ite::is_basic_iterator() );
-      assert(amap.is_whole_map_unmarked(mmark_number));
+      CGAL_assertion(amap.is_whole_map_unmarked(mmark_number));
       mark_cell<Map,i,dim>(amap, adart, mmark_number);
     }
 
@@ -298,7 +298,7 @@ namespace CGAL {
       mmark_number(amap.get_new_mark())
     {
       CGAL_assertion( Base::is_basic_iterator() );
-      assert(amap.is_whole_map_unmarked(mmark_number));
+      CGAL_assertion(amap.is_whole_map_unmarked(mmark_number));
       mark_cell<Map,i,dim>(amap, (*this), mmark_number);
     }
 

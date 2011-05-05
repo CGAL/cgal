@@ -3389,6 +3389,7 @@ Scripts/developer_scripts/check_library_uses_no_qpl_files.exceptions -text
 Scripts/developer_scripts/check_macro_names -text
 Scripts/developer_scripts/check_no_CGAL_USE_without_includes_before -text
 Scripts/developer_scripts/check_svn_keywords -text
+Scripts/developer_scripts/clean_up_branch.sh -text
 Scripts/developer_scripts/common_impl.rb -text
 Scripts/developer_scripts/create_assertions.sh eol=lf
 Scripts/developer_scripts/create_cgal_test -text

@@ -168,11 +168,11 @@ namespace CGAL {
      */
     Combinatorial_map_base()
     {
-      BOOST_STATIC_ASSERT( Dart::dimension==dimension ||
-		     !"Dimension of dart different from dimension of map");
+      CGAL_static_assertion_msg( Dart::dimension==dimension,
+		     "Dimension of dart different from dimension of map");
 
-      BOOST_STATIC_ASSERT( Helper::nb_attribs<=dimension+1 ||
-		     !"Too many attributes in the tuple Attributes_enabled");
+      CGAL_static_assertion_msg( Helper::nb_attribs<=dimension+1,
+		     "Too many attributes in the tuple Attributes_enabled");
 
       this->mnb_used_marks = 0;
       this->mmask_marks.reset();
@@ -180,7 +180,7 @@ namespace CGAL {
 
       for (size_type i = 0; i < NB_MARKS; ++i)
 	{
-	  this->mfree_marks_stack[i] = i;
+	  this->mfree_marks_stack[i] = (int)i;
 	  this->mindex_marks[i]      = i;
 	  this->mnb_marked_darts[i]  = 0;
 	}
@@ -752,8 +752,8 @@ namespace CGAL {
     template<unsigned int i>
     typename Attribute_handle<i>::type create_attribute()
     {      
-      BOOST_STATIC_ASSERT( Helper::template Dimension_index<i>::value>=0 ||
-		     !"create_attribute<i> but i-attributes are disabled");
+      CGAL_static_assertion_msg( Helper::template Dimension_index<i>::value>=0,
+		     "create_attribute<i> but i-attributes are disabled");
       return CGAL::cpp0x::get<Helper::template Dimension_index<i>::value>
 	(mattribute_containers).emplace(); 
     }
@@ -763,8 +763,8 @@ namespace CGAL {
     template<unsigned int i,class A>
     typename Attribute_handle<i>::type create_attribute(const A&a)
     {
-      BOOST_STATIC_ASSERT( Helper::template Dimension_index<i>::value>=0 ||
-		     !"create_attribute<i> but i-attributes are disabled");
+      CGAL_static_assertion_msg( Helper::template Dimension_index<i>::value>=0,
+		     "create_attribute<i> but i-attributes are disabled");
       return CGAL::cpp0x::get<Helper::template Dimension_index<i>::value>
 	(mattribute_containers).emplace(a); 
     }
@@ -774,8 +774,8 @@ namespace CGAL {
     template<unsigned int i>
     void erase_attribute(typename Attribute_handle<i>::type h)
     { 
-      BOOST_STATIC_ASSERT( Helper::template Dimension_index<i>::value>=0 ||
-		     !"erase_attribute<i> but i-attributes are disabled");
+      CGAL_static_assertion_msg( Helper::template Dimension_index<i>::value>=0,
+		     "erase_attribute<i> but i-attributes are disabled");
       CGAL::cpp0x::get<Helper::template Dimension_index<i>::value>
       (mattribute_containers).erase(h); 
     }
@@ -784,8 +784,8 @@ namespace CGAL {
     template <unsigned int i>
     size_type number_of_attributes() const
     {
-      BOOST_STATIC_ASSERT( Helper::template Dimension_index<i>::value>=0 ||
-		     !"number_of_attributes<i> but i-attributes are disabled");
+      CGAL_static_assertion_msg( Helper::template Dimension_index<i>::value>=0,
+		     "number_of_attributes<i> but i-attributes are disabled");
       return  CGAL::cpp0x::get<Helper::template Dimension_index<i>::value>
 	(mattribute_containers).size(); 
     }
@@ -795,8 +795,8 @@ namespace CGAL {
     template<unsigned int i>  
     typename Attribute_range<i>::type & attributes() 
     { 
-      BOOST_STATIC_ASSERT( Helper::template Dimension_index<i>::value>=0 ||
-		     !"attributes<i> but i-attributes are disabled");
+      CGAL_static_assertion_msg( Helper::template Dimension_index<i>::value>=0,
+		     "attributes<i> but i-attributes are disabled");
       return CGAL::cpp0x::get<Helper::template Dimension_index<i>::value>
 	(mattribute_containers);
     }
@@ -804,8 +804,8 @@ namespace CGAL {
     template<unsigned int i>  
     typename Attribute_const_range<i>::type & attributes() const
     {
-      BOOST_STATIC_ASSERT( Helper::template Dimension_index<i>::value>=0 ||
-			   !"attributes<i> but i-attributes are disabled");
+      CGAL_static_assertion_msg( Helper::template Dimension_index<i>::value>=0,
+			   "attributes<i> but i-attributes are disabled");
       return CGAL::cpp0x::get<Helper::template Dimension_index<i>::value>
 	(mattribute_containers); 
     }
@@ -1133,8 +1133,8 @@ namespace CGAL {
     template<unsigned int i>
     void decrease_attribute_ref_counting(Dart_handle adart)
     {
-      BOOST_STATIC_ASSERT( Helper::template Dimension_index<i>::value>=0 ||
-			   !"decrease_attribute_ref_counting<i> but "
+      CGAL_static_assertion_msg( Helper::template Dimension_index<i>::value>=0,
+			   "decrease_attribute_ref_counting<i> but "
 			   "i-attributes are disabled");
       if ( adart->template attribute<i>()!=NULL )
 	{ 
@@ -1151,8 +1151,8 @@ namespace CGAL {
     template<unsigned int i>
     void update_dart_of_attribute(Dart_handle ah, int amark)
     {
-      BOOST_STATIC_ASSERT( Helper::template Dimension_index<i>::value>=0 ||
-			   !"update_dart_of_attribute<i> but "
+      CGAL_static_assertion_msg( Helper::template Dimension_index<i>::value>=0,
+			   "update_dart_of_attribute<i> but "
 			   "i-attributes are disabled");
       CGAL_assertion(ah!=NULL && ah!=null_dart_handle);
 
@@ -1196,8 +1196,8 @@ namespace CGAL {
     template<unsigned int i, class Type_attr>
     void group_enabled_attribute( Dart_handle adart1, Dart_handle adart2)
     {
-      BOOST_STATIC_ASSERT( Helper::template Dimension_index<i>::value>=0 ||
-			   !"group_enabled_attribute<i> but "
+      CGAL_static_assertion_msg( Helper::template Dimension_index<i>::value>=0,
+			   "group_enabled_attribute<i> but "
 			   "i-attributes are disabled");
       CGAL_assertion(adart1 != NULL && adart2 != NULL);
       CGAL_assertion(adart1 != null_dart_handle && adart2 != null_dart_handle);
@@ -1248,8 +1248,8 @@ namespace CGAL {
     template<unsigned int i, class Type_attr>
     void group_enabled_attribute_of_dart( Dart_handle dh1, Dart_handle dh2)
     {
-      BOOST_STATIC_ASSERT( Helper::template Dimension_index<i>::value>=0 ||
-			   !"group_enabled_attribute_of_dart<i> but "
+      CGAL_static_assertion_msg( Helper::template Dimension_index<i>::value>=0,
+			   "group_enabled_attribute_of_dart<i> but "
 			   "i-attributes are disabled");
       CGAL_assertion( dh1!=NULL && dh2!=NULL );
       CGAL_assertion( dh1!=null_dart_handle && dh2!=null_dart_handle );
@@ -1295,8 +1295,8 @@ namespace CGAL {
     template<unsigned int i, class Type_attr>
     bool degroup_enabled_attribute(Dart_handle adart1, Dart_handle adart2)
     {
-      BOOST_STATIC_ASSERT( Helper::template Dimension_index<i>::value>=0 ||
-			   !"degroup_enabled_attribute<i> but "
+      CGAL_static_assertion_msg( Helper::template Dimension_index<i>::value>=0,
+			   "degroup_enabled_attribute<i> but "
 			   "i-attributes are disabled");
       CGAL_assertion(adart1 != NULL && adart2 != NULL);
       CGAL_assertion(adart1 != null_dart_handle && adart2 != null_dart_handle);
@@ -1367,8 +1367,8 @@ namespace CGAL {
     template<unsigned int i, class Type_attr, typename Range>
     bool degroup_enabled_attribute_of_dart( Dart_handle dh1, Dart_handle dh2)
     {
-      BOOST_STATIC_ASSERT( Helper::template Dimension_index<i>::value>=0 ||
-			   !"group_enabled_attribute_of_dart<i> but "
+      CGAL_static_assertion_msg( Helper::template Dimension_index<i>::value>=0,
+			   "group_enabled_attribute_of_dart<i> but "
 			   "i-attributes are disabled");
       CGAL_assertion( dh1!=NULL && dh2!=NULL );
       CGAL_assertion( dh1!=null_dart_handle && dh2!=null_dart_handle );
@@ -1412,8 +1412,8 @@ namespace CGAL {
     bool is_valid_attribute(Dart_const_handle adart, 
 			    unsigned int amark) const
     {
-      BOOST_STATIC_ASSERT( Helper::template Dimension_index<i>::value>=0 ||
-			   !"is_valid_attribute<i> but i-attributes"
+      CGAL_static_assertion_msg( Helper::template Dimension_index<i>::value>=0,
+			   "is_valid_attribute<i> but i-attributes"
 			   " are disabled");
       if ( is_marked(adart, amark) ) return true;
       bool valid = true;
@@ -1473,8 +1473,8 @@ namespace CGAL {
     void set_attribute_of_dart(Dart_handle adart, 
 			       typename Attribute_handle<i>::type ah)
     {
-      BOOST_STATIC_ASSERT( Helper::template Dimension_index<i>::value>=0 ||
-			   !"set_attribute_of_dart<i> but "
+      CGAL_static_assertion_msg(Helper::template Dimension_index<i>::value>=0,
+			   "set_attribute_of_dart<i> but "
 			   "i-attributes are disabled");
       CGAL_assertion( adart!=NULL && adart!=null_dart_handle && ah!=NULL );
       if ( adart->template attribute<i>()==ah ) return;
@@ -1493,8 +1493,8 @@ namespace CGAL {
     void set_attribute(Dart_handle adart, 
 		       typename Attribute_handle<i>::type ah)
     {
-      BOOST_STATIC_ASSERT( Helper::template Dimension_index<i>::value>=0 ||
-			   !"set_attribute<i> but i-attributes are disabled");
+      CGAL_static_assertion_msg(Helper::template Dimension_index<i>::value>=0,
+			   "set_attribute<i> but i-attributes are disabled");
       CGAL_assertion( adart!=NULL && adart!=null_dart_handle && ah!=NULL );
       for (CMap_dart_iterator_of_cell<Self,i> it(*this, adart); 
 	   it.cont(); ++it)
