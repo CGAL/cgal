@@ -177,8 +177,7 @@ public:
           a1_(a1),
           root_(root),
           is_extended_( true ){
-        CGAL_precondition( !CGAL_NTS is_zero(root) || 
- 			!"The root must not be zero. One argument constructor should be used." );
+      CGAL_precondition( ACDE_TAG_::value || !CGAL_NTS is_zero(root) ); //if ACDE_TAG_ is Tag_true, we allow root to be 0
     }
 
     /*! \brief Constructor of Sqrt_extension, from
