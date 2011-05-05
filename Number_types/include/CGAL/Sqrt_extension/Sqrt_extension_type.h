@@ -177,8 +177,8 @@ public:
           a1_(a1),
           root_(root),
           is_extended_( true ){
-//          is_extended_( !ACDE_TAG_::value || !( CGAL_NTS is_zero(root) || CGAL_NTS is_zero(a1) ) ){
-        CGAL_precondition( ACDE_TAG_::value || !CGAL_NTS is_zero(root) ); //if ACDE_TAG_ is Tag_true, we allow root to be 0
+        CGAL_precondition( !CGAL_NTS is_zero(root) || 
+ 			!"The root must not be zero. One argument constructor should be used." );
     }
 
     /*! \brief Constructor of Sqrt_extension, from
@@ -674,8 +674,11 @@ operator - (const Sqrt_extension<NT,ROOT,ACDE_TAG,FP_TAG>& p){
 
 
 // BINARY 
-template <class NT,class ROOT,class ACDE_TAG,class FP_TAG> bool
-operator == (const Sqrt_extension<NT,ROOT,ACDE_TAG,FP_TAG>& p1, const Sqrt_extension<NT,ROOT,ACDE_TAG,FP_TAG>& p2)
+template <class NT,class ROOT,class FP_TAG> bool
+operator == (const Sqrt_extension<NT,ROOT,Tag_false,FP_TAG>& p1, const Sqrt_extension<NT,ROOT,Tag_false,FP_TAG>& p2)
+{ return (p1-p2).is_zero(); }
+template <class NT,class ROOT,class FP_TAG> bool
+operator == (const Sqrt_extension<NT,ROOT,Tag_true,FP_TAG>& p1, const Sqrt_extension<NT,ROOT,Tag_true,FP_TAG>& p2)
 { return ( p1.compare(p2) == CGAL::ZERO ); }
 template <class NT,class ROOT,class ACDE_TAG,class FP_TAG> bool
 operator < (const Sqrt_extension<NT,ROOT,ACDE_TAG,FP_TAG>& p1, const Sqrt_extension<NT,ROOT,ACDE_TAG,FP_TAG>& p2)
