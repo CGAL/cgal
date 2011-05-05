@@ -25,34 +25,6 @@ if( NOT CGAL_COMMON_FILE_INCLUDED )
     set( CMAKE_2_6_3_OR_ABOVE FALSE )
   endif()
     
-  if ( COMMAND cmake_policy )
-    # CMP0007 OLD means: list command ignores empty elements
-    cmake_policy( SET CMP0007 OLD )  
-    if ( CMAKE_2_6_3_OR_ABOVE )
-      # CMP0011 OLD means: Included scripts do NOT automatic cmake_policy
-      # PUSH and POP.
-      # We set that policy to OLD to avoid a warning. We probably could
-      # have set to the NEW policy.
-      cmake_policy( SET CMP0011 OLD )  
-    endif()
-    if(POLICY CMP0017)
-      # New policy since CMake 2.8.4
-      if(NOT RUNNING_CGAL_AUTO_TEST)
-        # We do not set this in the testsuite, to see the warnings.
-        cmake_policy( SET CMP0017 OLD )
-      endif()
-      # CMP0017 OLD means: we want to be able to override CMake modules
-      # that are shipped with CMake.
-      # For the moment, we override:
-      #   FindBLAS.cmake
-      #   FindBoost.cmake
-      #   FindLAPACK.cmake
-      #   FindOpenGL.cmake
-      #   FindPackageMessage.cmake
-      # Laurent Rineau, 2011/03/09
-    endif()
-  endif()
-  
   if ( "${BUILD_SHARED_LIBS}" STREQUAL "" )
     if ( WIN32 )
       set(BUILD_SHARED_LIBS OFF)

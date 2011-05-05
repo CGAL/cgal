@@ -65,7 +65,7 @@ if ( NOT CGAL_TAUCS_FOUND )
   # Search for TAUCS folder.
   #
 
-  #message("DEBUG: CGAL_SOURCE_DIRECTORY = ${CGAL_SOURCE_DIRECTORY}")
+  #message("DEBUG: CGAL_INSTALLATION_PACKAGE_DIR = ${CGAL_INSTALLATION_PACKAGE_DIR}")
 
   # VC++ uses auto-link, thus we search for a folder containing the output of
   # build_taucs_win32_for_CGAL.bat/build_taucs_win64_for_CGAL.bat,
@@ -82,10 +82,10 @@ if ( NOT CGAL_TAUCS_FOUND )
       set( CGAL_TAUCS_FOUND TRUE )
 
     # Else, search for TAUCS in CGAL "auxiliary" folder
-    elseif ( EXISTS "${CGAL_SOURCE_DIRECTORY}/auxiliary/taucs" )
+    elseif ( EXISTS "${CGAL_INSTALLATION_PACKAGE_DIR}/auxiliary/taucs" )
 
-      set( CGAL_TAUCS_INCLUDE_DIR   "${CGAL_SOURCE_DIRECTORY}/auxiliary/taucs/include")
-      set( CGAL_TAUCS_LIBRARIES_DIR "${CGAL_SOURCE_DIRECTORY}/auxiliary/taucs/lib"    )
+      set( CGAL_TAUCS_INCLUDE_DIR   "${CGAL_INSTALLATION_PACKAGE_DIR}/auxiliary/taucs/include")
+      set( CGAL_TAUCS_LIBRARIES_DIR "${CGAL_INSTALLATION_PACKAGE_DIR}/auxiliary/taucs/lib"    )
       set( CGAL_TAUCS_FOUND TRUE )
 
     endif()

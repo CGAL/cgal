@@ -1,4 +1,4 @@
-add_library (CGAL "all_files.cpp" )
+build_cgal_library(CGAL CGAL "") 
 
 include_directories (${CGAL_3RD_PARTY_INCLUDE_DIRS})
 

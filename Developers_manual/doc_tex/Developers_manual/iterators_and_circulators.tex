@@ -48,13 +48,13 @@ In \cgal, we also define the concept of
 which behaves roughly
 like a pointer to an object without an increment or decrement operation.
 More details about handles and their requirements can be found in 
-the \ccAnchor{http://www.cgal.org/Manual/latest/doc_html/cgal_manual/Circulator/Chapter_main.html}{chapter Circuators and Handles} of the Support Library part of \cgal\ manual. 
+the \ccAnchor{http://www.cgal.org/Manual/latest/doc_html/cgal_manual/Circulator/Chapter_main.html}{chapter Circulators and Handles} of the Support Library part of \cgal\ manual. 
 Section~\ref{sec:handle_vs_it_vs_circ} below discusses when handles
 should be used in your code.
 \ccIndexMainItemEnd{handles}
 
 The concepts of iterators is relatively well described in textbooks such as 
-Stroustrup's book ({\em The C++ Programming Langage} \cite{cgal:s-cpl-97})
+Stroustrup's book ({\em The C++ Programming Language} \cite{cgal:s-cpl-97})
 and Austern's book ({\em Generic Programming and the \stl} \cite{cgal:a-gps-98})
 and in chapter \ccAnchor{http://www.cgal.org/Manual/latest/doc_html/cgal_manual/Circulator/Chapter_main.html}{Handles and Circulators} of the 
 {\em Support Library} part of the \cgal\ manual.
@@ -127,7 +127,7 @@ to get values from the input iterators,
 statements like \ccc{*it = ...} are likely to be illegal.
 On the other hand, output iterators are designed for write operations,
 and  the only legal use of the operator * of an output iterator
-\ccc{it} is in the assignement \ccc{ *it = ....}.
+\ccc{it} is in the assignment \ccc{ *it = ....}.
 The code of a standard copy function of the \stl\ 
 provides an example of both of these operations: 
 
@@ -186,9 +186,9 @@ and used to output values to the output stream to which it is bound.
 \ccIndexSubitem{\ccFont ostream_iterator}{extension}
 \cgal\ provides extensions of the classes \ccc{istream_iterator}
 and \ccc{ostream_iterator}. The class \ccc{CGAL::Ostream_iterator<T,Stream>} 
-is an output iterator adaptator for the stream class \ccc{Stream} and value 
+is an output iterator adaptor for the stream class \ccc{Stream} and value 
 \ccIndexSubitem{adaptor}{output iterator}
-type \ccc{T}.  It provides output iterators that can be used to ouput values 
+type \ccc{T}.  It provides output iterators that can be used to output values 
 of type \ccc{T} to objects of the class \ccc{Stream}.
 For example, the following code fragment inserts a list of segments into
 a window stream (\ie, it draws the segments in the window) using the 
@@ -473,7 +473,7 @@ Requirements:
 
 \item Take care that decrement of the past-the-end value
       is, in accordance with the standard, a legal operation for a 
-      bidirectionnal iterator.
+      bidirectional iterator.
       \ccIndexSubitem{iterators}{bidirectional}
       \ccIndexSubsubitem{iterators}{past-the-end value}{decrement of}
       This can, for example, be used to get the last element of 

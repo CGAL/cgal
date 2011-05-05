@@ -1,3 +1,36 @@
+cgal (3.8-1) unstable; urgency=low
+
+  * New upstream release.
+  * Rename binary package libcgal6 to libcgal7 to reflect SONAME change.
+  * Update Standards-Version to 3.9.2 (no changes needed).
+
+ -- Joachim Reichel <reichel@debian.org>  Thu, 21 Apr 2011 18:45:25 +0200
+
+cgal (3.7-5) unstable; urgency=low
+
+  * Upload to unstable.
+
+ -- Joachim Reichel <reichel@debian.org>  Sun, 06 Mar 2011 17:26:11 +0100
+
+cgal (3.7-4) experimental; urgency=low
+
+  * Build with libgmp10 (Closes: #614797). Thanks to Christian M. Amsüss.
+
+ -- Joachim Reichel <reichel@debian.org>  Sun, 27 Feb 2011 16:36:22 +0100
+
+cgal (3.7-3) unstable; urgency=low
+
+  * Disable support for Qt3 because Qt3 has been removed from the repository
+    (Closes: #604478).
+
+ -- Joachim Reichel <reichel@debian.org>  Thu, 10 Feb 2011 21:06:09 +0100
+
+cgal (3.7-2) unstable; urgency=low
+
+  * Upload to unstable.
+
+ -- Joachim Reichel <reichel@debian.org>  Sun, 06 Feb 2011 13:53:00 +0100
+
 cgal (3.7-1) experimental; urgency=low
 
   * New upstream release.

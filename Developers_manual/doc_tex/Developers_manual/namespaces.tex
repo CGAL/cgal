@@ -62,21 +62,18 @@ void my_new_function( My_undocumented_class& );
 
 }} // namespace CGAL::internal
 
-namespace CGAL { namespace Package { namespace internal { namespace tags {
+namespace CGAL { namespace internal { namespace Package { namespace tags {
 
 class Some_further_class_local_to_Package;
 
-}}}} // namespace CGAL::Package::internal::tags
+}}}} // namespace CGAL::internal::Package::tags
 \end{verbatim}
 
 
-\section{Namespace CGAL::NTS}
+\section{Note on global template functions}
 
-{\em \textbf{Note:} This section will be revised once the forthcoming
-  revision of the \CC-standard gets into a more definite state. The
-  standard library has similar problems, e.g. for \ccc{swap()},
-  see\begin{ccTexOnly}\footnote{\path'http://www.open-std.org/jtc1/sc22/wg21/docs/cwg\_toc.html'}\end{ccTexOnly}
-  issues% 
+According to the resolutions of the following issues in the forthcoming
+\CC-standard (
   \begin{ccHtmlOnly}
     <a href="http://www.open-std.org/jtc1/sc22/wg21/docs/lwg-defects.html#225">
   \end{ccHtmlOnly}%
@@ -89,64 +86,14 @@ class Some_further_class_local_to_Package;
     <a href="http://www.open-std.org/jtc1/sc22/wg21/docs/lwg-defects.html#229">
   \end{ccHtmlOnly}%
   229\ccTexHtml{.}{</a>.}
-  Currently, \ccc{CGAL::NTS} does not exist anymore, and the
-  \ccc{CGAL_NTS} macro boils down to \ccc{CGAL::}. As the future
-  interface is not yet fixed, people should still follow the
-  guidelines given below.}
+):
+{\tt
+Unless otherwise specified, no global or non-member function in the standard library 
+shall use a function from another namespace which is found through argument-dependent
+name lookup
+}, the namespace \ccc{CGAL::NTS} does not need to be used anymore 
+(currently \ccc{CGAL_NTS} macro boils down to \ccc{CGAL::}).
 
-We should not define 
-templates in \cgal\ that are likely to conflict with templates in 
-other namespaces.
-For this reason, we have another namespace \ccc{NTS}%
-\ccIndexSubitem{namespace}{\ccFont CGAL::NTS}
-nested in \ccc{CGAL}, which contains potentially conflicting
-template functions.
-
-\subsection{Which function calls should be qualified in \cgal\ code?}
-Out current policy is:
-\begin{itemize}
-\item
-\ccc{max} should be used without qualification\ccIndexGlobalFunction{max}
-\item
-\ccc{min} should be used without qualification\ccIndexGlobalFunction{min}
-\item
-For the following functions, templates are provided in nested namespace
-\ccc{NTS}:
-\begin{itemize}
-\item[]\ccc{abs}\ccIndexGlobalFunction{abs}
-\item[]\ccc{compare}\ccIndexGlobalFunction{compare}
-\item[]\ccc{gcd}\ccIndexGlobalFunction{gcd}
-\item[]\ccc{is_negative}\ccIndexGlobalFunction{is_negative}
-\item[]\ccc{is_positive}\ccIndexGlobalFunction{is_positive}
-\item[]\ccc{is_one}\ccIndexGlobalFunction{is_one}
-\item[]\ccc{is_zero}\ccIndexGlobalFunction{is_zero}
-\item[]\ccc{sign}\ccIndexGlobalFunction{sign}
-\item[]\ccc{square}\ccIndexGlobalFunction{square}
-\end{itemize}
-Calls of the above functions should be qualified using macro 
-\ccc{CGAL_NTS},% 
-\index{CGAL_NTS macro@{\tt CGAL\_NTS} macro}
-which maps to \ccc{CGAL::NTS::}\footnote{The use of
-the macro eases future changes in our policy.}: For example,
-\begin{verbatim}
-if ( CGAL_NTS is_zero(0) ) { /* ... */ } 
-\end{verbatim}
-\item
-The following functions can be qualified by \ccc{CGAL_NTS} as well:
-\begin{itemize} 
-\item[]\ccc{to_double}\ccIndexGlobalFunction{to_double}
-\item[]\ccc{is_valid}\ccIndexGlobalFunction{is_valid}
-\item[]\ccc{is_finite}\ccIndexGlobalFunction{is_finite}
-\item[]\ccc{sqrt}\ccIndexGlobalFunction{sqrt}\\
-\item[]\ccc{div}\ccIndexGlobalFunction{div}\\
-Whenever the argument of \ccc{sqrt} is a concrete type, \ie, it does
-not depend on a template parameter, you should qualify the call of
-\ccc{sqrt}, for example \verb+std::sqrt(2.0)+
-\end{itemize}
-Here, qualification with \ccc{CGAL::} works as well.
-\end{itemize}
-Summarizing, you can always qualify functions on number types
-with \ccc{CGAL_NTS} besides \ccc{min} and \ccc{max}.
 
 \InternalOnly{
 
@@ -156,10 +103,12 @@ Requirements:
 \begin{itemize}
 \item all names defined by \cgal\ are in namespace \ccc{CGAL}
   (including namespaces nested in namespace \ccc{CGAL}).
-\item qualify calls of \ccc{is_zero}, \ccc{is_one}, \ccc{is_negative},
-  \ccc{is_positive}, \ccc{sign}, \ccc{abs}, \ccc{compare},
-  \ccc{square} by \texttt{CGAL\_NTS}.
-  \ccIndexSubitem{qualification}{\ccFont CGAL_NTS}%
+\item explicitly prefix calls to template functions of CGAL
+(such as \ccc{square}, \ccc{sign}, \ccc{abs}, \dots) by \ccc{CGAL::}
+to ensure the functions used are the one from CGAL and not one from another
+library. If you want to allow an optimized function from another library
+to be used, then you should not qualify the call and document it explicitly
+ (if appropriate).
 \end{itemize}
 
 %% Recommendations:

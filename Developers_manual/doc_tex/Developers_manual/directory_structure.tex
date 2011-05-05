@@ -29,6 +29,9 @@ are obligatory.
 Submissions should not contain files in other places than described here.
 It is possible to have some under SVN, but they need to be listed in the
 \ccc{dont_submit} file to avoid being submitted.
+Make sure your package does not have any file clashing with any other packages
+(for example two files named {\tt simple\_example.cpp} in the example directories of 
+two different packages will clash in the target names of cmake).
 
 
 The directory structure of a package named Package should be as follows: 
@@ -140,6 +143,21 @@ The directory structure of a package named Package should be as follows:
        \end{verse}
 \end{description}
 
+
+A package has a name, which identifies it.  This name should obey the same
+rules as for C identifiers: it consists of letters, digits and underscores and
+it does not start with a digit.  Choose a name that is descriptive, yet not
+too long (under 25 characters).  If a package deals with objects of a
+particular dimension, then use the suffixes \_2, \_3, and \_d, especially if
+there exists (or may exist in the future) a package with similar
+functionality in different dimensions.  Examples of good package names are
+\texttt{Triangulation\_2} for a package dealing with triangulations of points
+in the plane and \texttt{Min\_ellipse\_2}, which contains an algorithm that
+finds the minimal enclosing ellipse of a set of points in the plane. The
+package names \texttt{pm} and \texttt{arr} are a bit too terse.
+\texttt{Planar\_map} and \texttt{Arrangement} (or
+\texttt{Arrangement\_2}) are better.
+
 \section{{\tt test} subdirectory}
 \label{sec:test_subdirectory}
 \index{test directory@{\tt test} directory|(}
@@ -201,7 +219,7 @@ name.
 
         When a test program runs correctly, it should return
         \ccIndexSubsubitem{test suite}{program}{return value} the
-        value zero, or, more precisely, the value \verb|std::EXIT_WITH_SUCCESS|
+        value zero, or, more precisely, the value \verb|EXIT_SUCCESS|
         defined in \verb|<cstdlib>|.
         Test programs may not be graphical and they may not require any user 
         interaction.\ccIndexSubitem{test suite}{program}   
@@ -216,56 +234,6 @@ name.
         ./program < program.cin
         \end{verbatim}
 \end{description} 
-
-\begin{ccAdvanced}
-  \textbf{Custom cgal\_test script.} In special cases, you may want to
-  provided a custom {\tt cgal\_test} script to fit special needs. The
-  script should rely on four environment variables:
-        \begin{description}
-            \item[{\tt \$CGAL\_MAKEFILE}]%
-                 \index{CGAL_MAKEFILE variable@{\tt CGAL\_MAKEFILE} variable}%
-                 \ccIndexSubitem{\tt makefile}{\cgal}
-                 (an included makefile, which {\bf must} include the full path
-                  name!!) 
-            \item[{\tt \$PLATFORM}]%
-                 \index{PLATFORM variable@{\tt PLATFORM} variable}
-                 (the extension of this makefile, that will 
-                 be used as an extension to the output files), 
-            \item[{\tt \$TESTSUITE\_CXXFLAGS}]%
-                 \index{TESTSUITE_CXXFLAGS variable@{\tt TESTSUITE\_CXXFLAGS} variable}
-                 (additional compiler flags) 
-            \item[{\tt \$TESTSUITE\_LDFLAGS}] 
-                 \index{TESTSUITE_LDFLAGS variable@{\tt TESTSUITE\_LDFLAGS} variable}
-                 (additional linker flags) 
-        \end{description}
-        The latter two flags must be passed to the makefile%
-        \ccIndexSubitem{\tt makefile}{test suite} and they should
-        precede all other compiler and linker flags. The script then
-        performs all tests using the makefile \verb|$CGAL_MAKEFILE|.
-        
-        To indicate whether the tests are successful or not, the
-        script writes two one-line messages to a file called {\tt
-          error.txt} \index{error.txt@{\tt error.txt}} for each
-        target. If something goes wrong during compilation or during
-        execution, an error message is written that starts with the
-        keyword {\tt ERROR:}; otherwise a message indicating
-        successful compilation or execution is written to this file.
-        Running the script {\tt cgal\_test} must not require any user
-        interaction and the script cleans up after itself by removing
-        object files and executables (usually by using the command
-        {\tt make clean}).
-        
-        \textbf{Custom makefile.} In special cases, you may want to
-        provided a custom {\tt makefile} to fit special needs. Use the
-        two variables \verb|$TESTSUITE_CXXFLAGS|
-        \index{TESTSUITE_CXXFLAGS variable@{\tt TESTSUITE\_CXXFLAGS}
-          variable} and \verb|$TESTSUITE_LDFLAGS|
-        \index{TESTSUITE_LDFLAGS variable@{\tt TESTSUITE\_LDFLAGS}
-          variable} as the first compiler and linker flags,
-        respectively.
-\end{ccAdvanced}
-\ccIndexMainItemEnd{test suite}
-\index{test directory@{\tt test} directory|)}
 
 \section{{\tt doc\_tex} subdirectory}
 \label{sec:doc_tex_subdirectory}
