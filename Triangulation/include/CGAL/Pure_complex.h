@@ -103,12 +103,13 @@ public:
     
 protected: // DATA MEMBERS
 
-    Pure_complex_ds pcds_;
-    const Geom_traits kernel_;
-    Vertex_handle infinity_;
-    mutable Random rng_; // for stochastic walk in the locate() function
-    mutable std::vector<Oriented_side> orientations_;
-    Coaffine_orientation_d coaffine_orientation_;
+    Pure_complex_ds                     pcds_;
+    const Geom_traits                   kernel_;
+    Vertex_handle                       infinity_;
+    mutable std::vector<Oriented_side>  orientations_;
+    Coaffine_orientation_d              coaffine_orientation_;
+    // for stochastic walk in the locate() function:
+    mutable Random                      rng_;
 #ifdef CGAL_PURE_COMPLEX_STATISTICS
     mutable unsigned long walk_size_;
 #endif
