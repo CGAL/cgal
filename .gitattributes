@@ -3300,13 +3300,13 @@ Spatial_searching/benchmark/Spatial_searching/Compare_ANN_STANN_CGAL.cpp -text
 Spatial_searching/demo/Spatial_searching/Qt3/help/index.html svneol=native#text/html
 Spatial_searching/doc_tex/Spatial_searching/Fig1.gif -text svneol=unset#image/gif
 Spatial_searching/doc_tex/Spatial_searching/windowQuery.png -text
-Spatial_searching/doc_tex/Spatial_searching_ref/Distance_for_point_with_info.tex -text
+Spatial_searching/doc_tex/Spatial_searching_ref/Distance_adapter.tex -text
 Spatial_searching/doc_tex/Spatial_searching_ref/RangeSearchTraits.tex -text
-Spatial_searching/doc_tex/Spatial_searching_ref/Search_traits_with_info.tex -text
+Spatial_searching/doc_tex/Spatial_searching_ref/Search_traits_adapter.tex -text
 Spatial_searching/examples/Spatial_searching/searching_with_point_with_info.cpp -text
 Spatial_searching/examples/Spatial_searching/searching_with_point_with_info_inplace.cpp -text
 Spatial_searching/examples/Spatial_searching/searching_with_point_with_info_pmap.cpp -text
-Spatial_searching/include/CGAL/Search_traits_with_info.h -text
+Spatial_searching/include/CGAL/Search_traits_adapter.h -text
 Spatial_searching/include/CGAL/internal/K_neighbor_search.h -text
 Spatial_searching/include/CGAL/internal/bounded_priority_queue.h -text
 Spatial_searching/test/Spatial_searching/Compare_methods.cpp -text
