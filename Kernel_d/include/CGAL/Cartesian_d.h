@@ -58,6 +58,10 @@ public:
   typedef pLA                    LA;
 
   typedef Cartesian_tag        Rep_tag;
+  typedef Cartesian_tag        Kernel_tag;
+
+  enum { Has_filtered_predicates = false };
+  typedef Boolean_tag<Has_filtered_predicates> Has_filtered_predicates_tag;
 
   typedef PointCd2<RT,LA>             Point_d_base; 
   // renamed because of clash with Cartesian...
@@ -74,6 +78,23 @@ public:
 
   typedef typename Point_d_base::Cartesian_const_iterator Cartesian_const_iterator_d;
 
+    // Boolean   had originally been Bool. It was renamed to avoid a conflict
+    // between a macro defined in Xlib.h poorly chosen to have the same name,
+    // that is 'Bool'.
+    typedef typename Same_uncertainty_nt<bool, FT>::type
+                                                        Boolean;
+    typedef typename Same_uncertainty_nt<CGAL::Sign, FT>::type
+                                                        Sign;
+    typedef typename Same_uncertainty_nt<CGAL::Comparison_result, FT>::type
+                                                        Comparison_result;
+    typedef typename Same_uncertainty_nt<CGAL::Orientation, FT>::type
+                                                        Orientation;
+    typedef typename Same_uncertainty_nt<CGAL::Oriented_side, FT>::type
+                                                        Oriented_side;
+    typedef typename Same_uncertainty_nt<CGAL::Bounded_side, FT>::type
+                                                        Bounded_side;
+    typedef typename Same_uncertainty_nt<CGAL::Angle, FT>::type
+                                                        Angle;
 
   typedef Dynamic_dimension_tag            Dimension;
 
