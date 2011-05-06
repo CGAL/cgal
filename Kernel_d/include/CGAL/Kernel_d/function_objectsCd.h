@@ -350,7 +350,7 @@ class Side_of_oriented_sphereCd
     typedef typename R::FT FT;
     typedef typename R::Oriented_side Oriented_side;
 public:
-    typedef typename R::Oriented_side result_type;
+    typedef Oriented_side result_type;
 
     template <class ForwardIterator> 
     result_type operator()(ForwardIterator first, ForwardIterator last, 
@@ -408,12 +408,12 @@ class Side_of_oriented_subsphereCd
     // a square matrix of size (D+1)x(D+1) where D is the ambient dimension 
 	mutable typename LA::Matrix M;
 public:
-	typedef typename R::Oriented_side   result_type;
+	typedef Oriented_side   result_type;
     // typedef internal::stateless_predicate_tag predicate_category;
 
     // constructor
-	Side_of_oriented_subsphereCd()
-	: ori_(R().coaffine_orientation_d_object()), M(), adjust_sign_(0) { }
+	Side_of_oriented_subsphereCd(const R & r = R())
+	: ori_(r.coaffine_orientation_d_object()), M(), adjust_sign_(0) { }
 
 	template < class ForwardIterator >
 	result_type operator()(ForwardIterator first, ForwardIterator last, const Point & q) const
@@ -519,7 +519,7 @@ class Side_of_bounded_sphereCd
     typedef typename R::Oriented_side   Oriented_side;
     typedef typename R::Bounded_side    Bounded_side;
 public:
-    typedef typename R::Bounded_side    result_type;
+    typedef Bounded_side    result_type;
 
     template <class ForwardIterator> 
     result_type operator()(ForwardIterator first, ForwardIterator last, 
@@ -601,8 +601,9 @@ class Contained_in_affine_hullCd
 {
     typedef typename R::Point_d Point_d;
     typedef typename R::LA LA;
+    typedef typename R::Boolean Boolean;
 public:
-    typedef typename R::Boolean result_type;
+    typedef Boolean result_type;
 
     template <class ForwardIterator> 
     result_type operator()(ForwardIterator first, ForwardIterator last,
@@ -677,8 +678,9 @@ class Compare_lexicographicallyCd
 {
     typedef typename R::Point_d Point_d;
     typedef typename R::Point_d PointD; //MSVC hack
+    typedef typename R::Comparison_result Comparison_result;
 public:
-    typedef typename R::Comparison_result result_type;
+    typedef Comparison_result result_type;
 
     result_type operator()(const Point_d & p1, const Point_d & p2) const
     {
