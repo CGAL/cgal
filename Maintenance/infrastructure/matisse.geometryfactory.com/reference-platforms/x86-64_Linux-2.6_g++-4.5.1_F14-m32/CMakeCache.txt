@@ -39,7 +39,7 @@ CGAL_CORE_PACKAGE_DIR:PATH=/home/lrineau/CGAL/CGAL-I
 CGAL_CXX_FLAGS:STRING=-m32 -frounding-math
 
 //Value Computed by CMake
-CGAL_Core_BINARY_DIR:STATIC=/home/lrineau/trunk/Maintenance/infrastructure/matisse.geometryfactory.com/reference-platforms/x86-64_Linux-2.6_g++-4.5.1_F14-m32/src/Core
+CGAL_Core_BINARY_DIR:STATIC=/home/lrineau/trunk/Maintenance/infrastructure/matisse.geometryfactory.com/reference-platforms/x86-64_Linux-2.6_g++-4.5.1_F14-m32/src/CGALCore
 
 //The CGAL_Core library
 CGAL_Core_LIBRARY:STRING=/home/lrineau/trunk/Maintenance/infrastructure/matisse.geometryfactory.com/reference-platforms/x86-64_Linux-2.6_g++-4.5.1_F14-m32/lib/libCGAL_Core.so
@@ -483,8 +483,6 @@ CGAL_ImageIO_3RD_PARTY_DEFINITIONS:INTERNAL=
 CGAL_ImageIO_3RD_PARTY_INCLUDE_DIRS:INTERNAL=
 CGAL_ImageIO_3RD_PARTY_LIBRARIES:INTERNAL=
 CGAL_ImageIO_3RD_PARTY_LIBRARIES_DIRS:INTERNAL=
-//ADVANCED property for variable: CGAL_ImageIO_LIBRARY
-CGAL_ImageIO_LIBRARY-ADVANCED:INTERNAL=1
 CGAL_ImageIO_LIBRARY:INTERNAL=
 //Variable hidden from user
 CGAL_ImageIO_LIBRARY_NAME:INTERNAL=libCGAL_ImageIO.so
@@ -497,8 +495,6 @@ CGAL_Qt3_3RD_PARTY_DEFINITIONS:INTERNAL=
 CGAL_Qt3_3RD_PARTY_INCLUDE_DIRS:INTERNAL=
 CGAL_Qt3_3RD_PARTY_LIBRARIES:INTERNAL=
 CGAL_Qt3_3RD_PARTY_LIBRARIES_DIRS:INTERNAL=
-//ADVANCED property for variable: CGAL_Qt3_LIBRARY
-CGAL_Qt3_LIBRARY-ADVANCED:INTERNAL=1
 CGAL_Qt3_LIBRARY:INTERNAL=
 //Variable hidden from user
 CGAL_Qt3_LIBRARY_NAME:INTERNAL=libCGAL_Qt3.so
@@ -506,8 +502,6 @@ CGAL_Qt4_3RD_PARTY_DEFINITIONS:INTERNAL=
 CGAL_Qt4_3RD_PARTY_INCLUDE_DIRS:INTERNAL=
 CGAL_Qt4_3RD_PARTY_LIBRARIES:INTERNAL=
 CGAL_Qt4_3RD_PARTY_LIBRARIES_DIRS:INTERNAL=
-//ADVANCED property for variable: CGAL_Qt4_LIBRARY
-CGAL_Qt4_LIBRARY-ADVANCED:INTERNAL=1
 CGAL_Qt4_LIBRARY:INTERNAL=
 //Variable hidden from user
 CGAL_Qt4_LIBRARY_NAME:INTERNAL=libCGAL_Qt4.so
