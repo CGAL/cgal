@@ -143,7 +143,9 @@ The function \ccc{compute_implicit_function}() must be called after the insertio
 \ccGlue
 \ccMethod{FT operator()(const Point& p) const;}
 {
-\ccc{ImplicitFunction} interface: evaluates the implicit function at a given 3D query point.
+\ccc{ImplicitFunction} interface: evaluates the implicit function at a
+given 3D query point. The function \ccc{compute_implicit_function} must be
+called before the first call to \ccc{operator()}.
 }
 \ccGlue
 \ccMethod{Point get_inner_point() const;}
