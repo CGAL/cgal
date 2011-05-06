@@ -6,7 +6,7 @@
 #include <CGAL/Random.h>
 #include <CGAL/Search_traits_2.h>
 #include <CGAL/Search_traits_3.h>
-#include <CGAL/Search_traits_with_info.h>
+#include <CGAL/Search_traits_adapter.h>
 #include <CGAL/Orthogonal_incremental_neighbor_search.h>
 #include <CGAL/algorithm.h>
 #include "Point_with_info.h"
@@ -29,8 +29,8 @@ typedef CGAL::Search_traits_3<K> TreeTraits;
 typedef CGAL::Euclidean_distance<TreeTraits> Distance;
 #endif
 typedef Point_with_info_helper<Point>::type                                             Point_with_info;
-typedef CGAL::Search_traits_with_info<Point_with_info,Point_accessor,TreeTraits>        Traits_with_info;
-typedef CGAL::Distance_for_point_with_info <Point_with_info,Point_accessor,Distance>    Distance_with_info;
+typedef CGAL::Search_traits_adapter<Point_with_info,Point_accessor,TreeTraits>        Traits_with_info;
+typedef CGAL::Distance_adapter <Point_with_info,Point_accessor,Distance>    Distance_adapter;
 
   typedef std::vector<Point>               Vector;
 
@@ -99,14 +99,14 @@ main() {
     std::cout << "Testing Sliding_midpoint" << std::endl;
     Splitter_test<TreeTraits,CGAL::Sliding_midpoint<TreeTraits>,Distance > st;
     st(points,query);
-    Splitter_test<Traits_with_info,CGAL::Sliding_midpoint<Traits_with_info>,Distance_with_info > sti;
+    Splitter_test<Traits_with_info,CGAL::Sliding_midpoint<Traits_with_info>,Distance_adapter > sti;
     sti(points,query);
   }
   {
     std::cout << "Testing Sliding_fair" << std::endl;
     Splitter_test<TreeTraits,CGAL::Sliding_fair<TreeTraits>,Distance > st;
     st(points,query);
-    Splitter_test<Traits_with_info,CGAL::Sliding_fair<Traits_with_info>,Distance_with_info > sti;
+    Splitter_test<Traits_with_info,CGAL::Sliding_fair<Traits_with_info>,Distance_adapter > sti;
     sti(points,query);
   }
   
@@ -114,7 +114,7 @@ main() {
     std::cout << "Testing Fair" << std::endl;
     Splitter_test<TreeTraits,CGAL::Fair<TreeTraits>,Distance > st;
     st(points,query);
-    Splitter_test<Traits_with_info,CGAL::Fair<Traits_with_info>,Distance_with_info > sti;
+    Splitter_test<Traits_with_info,CGAL::Fair<Traits_with_info>,Distance_adapter > sti;
     sti(points,query);
   }
   
@@ -122,7 +122,7 @@ main() {
     std::cout << "Testing Median_of_rectangle" << std::endl;
     Splitter_test<TreeTraits,CGAL::Median_of_rectangle<TreeTraits>,Distance > st;
     st(points,query);
-    Splitter_test<Traits_with_info,CGAL::Median_of_rectangle<Traits_with_info>,Distance_with_info > sti;
+    Splitter_test<Traits_with_info,CGAL::Median_of_rectangle<Traits_with_info>,Distance_adapter > sti;
     sti(points,query);
   }
 
@@ -131,7 +131,7 @@ main() {
     std::cout << "Testing Midpoint_of_rectangle" << std::endl;
     Splitter_test<TreeTraits,CGAL::Midpoint_of_rectangle<TreeTraits>,Distance > st;
     st(points,query);
-    Splitter_test<Traits_with_info,CGAL::Midpoint_of_rectangle<Traits_with_info>,Distance_with_info > sti;
+    Splitter_test<Traits_with_info,CGAL::Midpoint_of_rectangle<Traits_with_info>,Distance_adapter > sti;
     sti(points,query);
   }
   
@@ -139,14 +139,14 @@ main() {
     std::cout << "Testing Midpoint_of_max_spread" << std::endl;
     Splitter_test<TreeTraits,CGAL::Midpoint_of_max_spread<TreeTraits>,Distance > st;
     st(points,query);
-    Splitter_test<Traits_with_info,CGAL::Midpoint_of_max_spread<Traits_with_info>,Distance_with_info > sti;
+    Splitter_test<Traits_with_info,CGAL::Midpoint_of_max_spread<Traits_with_info>,Distance_adapter > sti;
     sti(points,query);
   }
   {
     std::cout << "Testing Median_of_max_spread" << std::endl;
     Splitter_test<TreeTraits,CGAL::Median_of_max_spread<TreeTraits>,Distance > st;
     st(points,query);
-    Splitter_test<Traits_with_info,CGAL::Median_of_max_spread<Traits_with_info>,Distance_with_info > sti;
+    Splitter_test<Traits_with_info,CGAL::Median_of_max_spread<Traits_with_info>,Distance_adapter > sti;
     sti(points,query);
   }
 

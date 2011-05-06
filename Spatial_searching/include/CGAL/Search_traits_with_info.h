@@ -27,10 +27,10 @@
 namespace CGAL{
 
 template <class Point_with_info,class Point_accessor,class Base_traits>
-class Search_traits_with_info;
+class Search_traits_adapter;
   
 template <class Point_with_info,class Point_accessor,class Base_distance>
-class Distance_for_point_with_info;
+class Distance_adapter;
   
 namespace internal{
 
@@ -52,8 +52,8 @@ struct Get_iso_box_d<T,true>
 };
   
   template <class Point_with_info,class Point_accessor,class Base_traits>
-  struct Spatial_searching_default_distance< ::CGAL::Search_traits_with_info<Point_with_info,Point_accessor,Base_traits> >{
-    typedef ::CGAL::Distance_for_point_with_info<Point_with_info,
+  struct Spatial_searching_default_distance< ::CGAL::Search_traits_adapter<Point_with_info,Point_accessor,Base_traits> >{
+    typedef ::CGAL::Distance_adapter<Point_with_info,
                                                  Point_accessor,
                                                  typename Spatial_searching_default_distance<Base_traits>::type> type;
   };
@@ -62,13 +62,13 @@ struct Get_iso_box_d<T,true>
   
   
 template <class Point_with_info,class Point_accessor,class Base_traits>
-class Search_traits_with_info : public Base_traits{
+class Search_traits_adapter : public Base_traits{
   Point_accessor accessor;
 public:
   typedef Base_traits Base;
   typedef typename internal::Get_iso_box_d<Base>::type Iso_box_d;
 
-  Search_traits_with_info(const Point_accessor& accessor_=Point_accessor(),
+  Search_traits_adapter(const Point_accessor& accessor_=Point_accessor(),
                           const Base_traits& base=Base_traits()
   ):Base_traits(base),accessor(accessor_){}
 
@@ -110,12 +110,12 @@ public:
 };
 
 template <class Point_with_info,class Point_accessor,class Base_distance>
-class Distance_for_point_with_info : public Base_distance {
+class Distance_adapter : public Base_distance {
   Point_accessor accessor;
   typedef typename Base_distance::FT FT;
 public:
     
-  Distance_for_point_with_info( const Point_accessor& accessor_=Point_accessor(),
+  Distance_adapter( const Point_accessor& accessor_=Point_accessor(),
                          const Base_distance& distance=Base_distance()
   ):Base_distance(distance),accessor(accessor_){}
 

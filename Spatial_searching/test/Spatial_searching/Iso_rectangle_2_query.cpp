@@ -4,7 +4,7 @@
 #include <cassert>
 #include <CGAL/Kd_tree.h>
 #include <CGAL/Search_traits_2.h>
-#include <CGAL/Search_traits_with_info.h>
+#include <CGAL/Search_traits_adapter.h>
 #include <CGAL/point_generators_2.h>
 #include <CGAL/Fuzzy_iso_box.h>
 #include "Point_with_info.h"
@@ -20,7 +20,7 @@ typedef CGAL::Random_points_in_square_2<Point> Random_points_iterator;
 typedef CGAL::Counting_iterator<Random_points_iterator> N_Random_points_iterator;
 typedef CGAL::Search_traits_2<K> Traits;
 typedef Point_with_info_helper<Point>::type                                   Point_with_info;
-typedef CGAL::Search_traits_with_info<Point_with_info,Point_accessor,Traits>  Traits_with_info;
+typedef CGAL::Search_traits_adapter<Point_with_info,Point_accessor,Traits>  Traits_with_info;
 
 template <class SearchTraits>
 void run(std::list<Point> all_points)

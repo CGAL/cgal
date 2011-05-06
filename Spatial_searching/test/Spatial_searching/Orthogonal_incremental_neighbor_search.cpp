@@ -11,7 +11,7 @@
 #include <CGAL/Orthogonal_incremental_neighbor_search.h>
 #include <CGAL/Incremental_neighbor_search.h>
 #include <CGAL/algorithm.h>
-#include <CGAL/Search_traits_with_info.h>
+#include <CGAL/Search_traits_adapter.h>
 #include "Point_with_info.h"
 
 
@@ -39,9 +39,9 @@ typedef Orthogonal_incremental_neighbor_search::iterator        NN_iterator;
 typedef Orthogonal_incremental_neighbor_search::Point_with_transformed_distance Point_with_transformed_distance;
 //typdefs for Point_with_info
 typedef Point_with_info_helper<Point>::type                                             Point_with_info;
-typedef CGAL::Search_traits_with_info<Point_with_info,Point_accessor,TreeTraits>        Traits_with_info;
-typedef CGAL::Distance_for_point_with_info <Point_with_info,Point_accessor,Distance>    Distance_with_info;
-typedef CGAL::Incremental_neighbor_search<Traits_with_info,Distance_with_info>          Orthogonal_incremental_neighbor_search_with_info;
+typedef CGAL::Search_traits_adapter<Point_with_info,Point_accessor,TreeTraits>        Traits_with_info;
+typedef CGAL::Distance_adapter <Point_with_info,Point_accessor,Distance>    Distance_adapter;
+typedef CGAL::Incremental_neighbor_search<Traits_with_info,Distance_adapter>          Orthogonal_incremental_neighbor_search_with_info;
 
 
 template <class K_search>

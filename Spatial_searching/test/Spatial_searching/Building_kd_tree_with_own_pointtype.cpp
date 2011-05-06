@@ -2,7 +2,7 @@
 
 #include <CGAL/basic.h>
 #include <CGAL/Search_traits.h>
-#include <CGAL/Search_traits_with_info.h>
+#include <CGAL/Search_traits_adapter.h>
 #include <CGAL/point_generators_3.h>
 #include <CGAL/Orthogonal_k_neighbor_search.h>
 #include <cassert>
@@ -16,9 +16,9 @@ typedef CGAL::Search_traits<double, Point, const double*, Construct_coord_iterat
 typedef CGAL::Orthogonal_k_neighbor_search<Traits, Distance>                            K_neighbor_search;
 //typdefs for Point_with_info
 typedef Point_with_info_helper<Point>::type                                             Point_with_info;
-typedef CGAL::Search_traits_with_info<Point_with_info,Point_accessor,Traits>            Traits_with_info;
-typedef CGAL::Distance_for_point_with_info <Point_with_info,Point_accessor,Distance>    Distance_with_info;
-typedef CGAL::Orthogonal_k_neighbor_search<Traits_with_info, Distance_with_info>        K_neighbor_search_with_info;
+typedef CGAL::Search_traits_adapter<Point_with_info,Point_accessor,Traits>            Traits_with_info;
+typedef CGAL::Distance_adapter <Point_with_info,Point_accessor,Distance>              Distance_adapter;
+typedef CGAL::Orthogonal_k_neighbor_search<Traits_with_info, Distance_adapter>        K_neighbor_search_with_info;
 
 const unsigned int N = 1000;
 const unsigned int K = 5;

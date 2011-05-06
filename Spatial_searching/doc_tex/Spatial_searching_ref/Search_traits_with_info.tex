@@ -1,17 +1,17 @@
-\begin{ccRefClass}{Search_traits_with_info<Point_with_info,Point_accessor,Base_traits>}
+\begin{ccRefClass}{Search_traits_adapter<Point_with_info,Point_accessor,Base_traits>}
 
 \ccDefinition
   
 The class \ccRefName\ can be used as a template parameter of the kd tree
 and the search classes. When using this traits class in a nearest neighbor search algorithm, the class 
-\ccc{Distance_for_point_with_info<Point_with_info,Point_accessor,Base_distance>}
+\ccc{Distance_for_point_adapter<Point_with_info,Point_accessor,Base_distance>}
 must be used as distance.
 
 
-\ccInclude{CGAL/Search_traits_with_info.h}
+\ccInclude{CGAL/Search_traits_adapter.h}
 
 \ccParameters
-\ccc{Point_with_info} is a point type enhanced with an information.\\
+\ccc{Point_with_info} is a type that has an associated point of type \ccc{Base_type::Point_d}.\\
 \ccc{Point_accessor} is a model of \ccAnchor{http://www.boost.org/doc/libs/release/libs/property_map/index.html}{boost::ReadablePropertyMap}
 with \ccc{Point_with_info} as \ccc{key_type} and \ccc{Base_traits::Point_d} as \ccc{value_type}. 
 In practice, the current implementation requires a class providing \ccc{Base_traits::Point_d operator[] (const Point_with_info& point) const}.\\
@@ -35,7 +35,7 @@ In practice, the current implementation requires a class providing \ccc{Base_tra
 \ccCreationVariable{t}  %% choose variable name
 
 
-\ccConstructor{Search_traits_with_info(const Point_accessor& accessor=Point_accessor(),const Base_traits& base=Base_traits());}
+\ccConstructor{Search_traits_adapter(const Point_accessor& accessor=Point_accessor(),const Base_traits& base=Base_traits());}
 {Constructor initializing the class to \ccc{base} and setting the point accessor of the class to \ccc{accessor}.}
 
 \ccOperations
@@ -46,7 +46,7 @@ In practice, the current implementation requires a class providing \ccc{Base_tra
 
 \ccSeeAlso
 
-\ccc{Distance_for_point_with_info<Point_with_info,Point_accessor,Base_distance>}\\
+\ccc{Distance_for_point_adapter<Point_with_info,Point_accessor,Base_distance>}\\
 \ccc{Search_traits_2<Kernel>}\\
 \ccc{Search_traits_3<Kernel>}\\
 \ccc{Search_traits_d<Kernel>}\\

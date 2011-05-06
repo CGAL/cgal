@@ -1,7 +1,7 @@
 #include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
 #include <CGAL/basic.h>
 #include <CGAL/Search_traits_3.h>
-#include <CGAL/Search_traits_with_info.h>
+#include <CGAL/Search_traits_adapter.h>
 #include <CGAL/point_generators_3.h>
 #include <CGAL/Orthogonal_k_neighbor_search.h>
 #include <boost/iterator/counting_iterator.hpp>
@@ -17,7 +17,7 @@ typedef boost::const_associative_property_map<std::map<Point,Point_3> >         
   
 typedef CGAL::Random_points_in_cube_3<Point_3>                                          Random_points_iterator;
 typedef CGAL::Search_traits_3<Kernel>                                                   Traits_base;
-typedef CGAL::Search_traits_with_info<Point,My_Point_accessor,Traits_base>              Traits;
+typedef CGAL::Search_traits_adapter<Point,My_Point_accessor,Traits_base>              Traits;
 
 
 typedef CGAL::Orthogonal_k_neighbor_search<Traits>                      K_neighbor_search;

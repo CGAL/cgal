@@ -5,7 +5,7 @@
 #include <CGAL/Manhattan_distance_iso_box_point.h>
 #include <CGAL/K_neighbor_search.h>
 #include <CGAL/Search_traits_2.h>
-#include <CGAL/Search_traits_with_info.h>
+#include <CGAL/Search_traits_adapter.h>
 #include "Point_with_info.h"
 
 typedef CGAL::Cartesian<double> Kernel;
@@ -16,9 +16,9 @@ typedef CGAL::Manhattan_distance_iso_box_point<TreeTraits> Distance;
 typedef CGAL::K_neighbor_search<TreeTraits, Distance> Neighbor_search;
 //typdefs for Point_with_info
 typedef Point_with_info_helper<Point_d>::type                                           Point_with_info;
-typedef CGAL::Search_traits_with_info<Point_with_info,Point_accessor,TreeTraits>        Traits_with_info;
-typedef CGAL::Distance_for_point_with_info <Point_with_info,Point_accessor,Distance>    Distance_with_info;
-typedef CGAL::K_neighbor_search<Traits_with_info, Distance_with_info>                   Neighbor_search_with_info;
+typedef CGAL::Search_traits_adapter<Point_with_info,Point_accessor,TreeTraits>        Traits_with_info;
+typedef CGAL::Distance_adapter <Point_with_info,Point_accessor,Distance>    Distance_adapter;
+typedef CGAL::K_neighbor_search<Traits_with_info, Distance_adapter>                   Neighbor_search_with_info;
 
 const unsigned int K = 8;
 
