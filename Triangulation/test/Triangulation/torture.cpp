@@ -35,7 +35,7 @@ void test(const int D, const int d, const int N, bool no_transform)
 
     DC dc(D);
 
-    vector<int> coords(D);
+    vector<RT> coords(D);
     vector<Point> points;
     CGAL::Random rng;
 
@@ -81,7 +81,7 @@ void test(const int D, const int d, const int N, bool no_transform)
         {
             coords[i] = 0;
             for( int j = 0; j < d; ++j )
-                coords[i] += (*pit)[j] * aff[j][i];
+                coords[i] = coords[i] + (*pit)[j] * aff[j][i];
         }
 #ifdef USE_NEW_KERNEL
         points.push_back(Point(coords)); // this is for New_kernel_d
@@ -90,6 +90,7 @@ void test(const int D, const int d, const int N, bool no_transform)
 #endif
     }
     assert( dc.is_valid() );
+    cout << " Inserting " << points.size() << " points.";
     dc.insert(points.begin(), points.end());
     assert( d >= dc.current_dimension() );
     assert( points.size() >= dc.number_of_vertices() );
@@ -98,11 +99,12 @@ void test(const int D, const int d, const int N, bool no_transform)
     assert( dc.is_valid() );
     if( 2 == dc.current_dimension() )
         assert( 2 * dc.number_of_vertices() == dc.number_of_simplices() + 2 );
-    if( dc.current_dimension() > 4 )
+    if( dc.current_dimension() > 3 )
     {
         std::random_shuffle(points.begin(), points.end());
         points.resize(100);
     }
+    cout << " Removing " << points.size() << " points.";
     dc.remove(points.begin(), points.end());
     assert( dc.is_valid() );
     dc.clear();
@@ -115,6 +117,8 @@ template< int D >
 void go(const int N, const int nb_trials)
 {
     typedef double RT;
+    //typedef CGAL::Quotient<CGAL::MP_Float> RT;
+    //typedef CGAL::Gmpq RT;
 #ifndef USE_NEW_KERNEL
     typedef CGAL::Cartesian_d<RT> K; // this is for Old_kernel_d
 #else
@@ -124,11 +128,11 @@ void go(const int N, const int nb_trials)
     typedef CGAL::Delaunay_complex<FK> Triangulation;
     for( int d = 0; d <= D; ++d )
     {
-        cerr << "\nDelaunay of " << d
-             << "-dimensional regular grid in R^" << D;
+        cout << "\n\n** Delaunay of " << d
+             << "-dimensional regular grid in R^" << D << endl;
         for( int t = 0; t < nb_trials; ++t )
         {
-            cerr << "\n Run " << (t + 1) << ": ";
+            cout << "\n Run " << (t + 1) << ": ";
             test<Triangulation>(D, d, N, t < nb_trials / 2);
         }
     }
@@ -143,11 +147,11 @@ int main(int argc, char **argv)
         N = atoi(argv[1]);
     if( argc > 2 )
         nb_trials = atoi(argv[2]);
-    //go<1>(N, nb_trials);
-    //go<2>(N, nb_trials);
-    //go<3>(N, nb_trials);
+    go<1>(N, nb_trials);
+    go<2>(N, nb_trials);
+    go<3>(N, nb_trials);
     go<4>(N, nb_trials);
     go<5>(N, nb_trials);
-    cerr << std::endl;
+    cout << std::endl;
     return 0;
 }
