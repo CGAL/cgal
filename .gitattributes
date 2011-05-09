@@ -3902,7 +3902,7 @@ Triangulation/doc_tex/Triangulation_ref/fig/insert-in-simplex.png -text
 Triangulation/doc_tex/Triangulation_ref/intro.tex -text
 Triangulation/doc_tex/Triangulation_ref/main.tex -text
 Triangulation/dont_submit -text
-Triangulation/examples/Triangulation/pure_complex.cpp -text
+Triangulation/examples/Triangulation/triangulation.cpp -text
 Triangulation/examples/Triangulation/triangulation_data_structure.cpp -text
 Triangulation/include/CGAL/Convex_hull.h -text
 Triangulation/include/CGAL/Delaunay_complex.h -text
