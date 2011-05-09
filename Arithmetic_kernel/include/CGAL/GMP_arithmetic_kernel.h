@@ -29,21 +29,22 @@
 #ifndef CGAL_GMP_ARITHMETIC_KERNEL_H
 #define CGAL_GMP_ARITHMETIC_KERNEL_H
 
+#ifdef CGAL_USE_GMP 
+
 #include <CGAL/basic.h>
 #include <CGAL/Arithmetic_kernel/Arithmetic_kernel_base.h>
 #include <CGAL/Get_arithmetic_kernel.h>
 
 
-#ifdef CGAL_USE_GMP 
-#ifdef CGAL_USE_MPFI
-#define CGAL_HAS_GMP_ARITHMETIC_KERNEL 
-#endif //CGAL_USE_MPFI
-#endif //CGAL_USE_GMP  
 
 #include <CGAL/Gmpz.h>
 #include <CGAL/Gmpq.h>
+
+#ifdef CGAL_USE_MPFI
+#define CGAL_HAS_GMP_ARITHMETIC_KERNEL 
 #include <CGAL/Gmpfr.h>
 #include <CGAL/Gmpfi.h>
+#endif //CGAL_USE_MPFI
 
 namespace CGAL {
 
@@ -82,6 +83,7 @@ struct Get_arithmetic_kernel<Gmpfi>{
 
 } //namespace CGAL
 
+#endif //CGAL_USE_GMP
 
 #endif // CGAL_ARITHMETIC_KERNEL_H
 // EOF
