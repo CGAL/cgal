@@ -3895,10 +3895,10 @@ Triangulation/doc_tex/Triangulation_ref/Triangulation_face.tex -text
 Triangulation/doc_tex/Triangulation_ref/Triangulation_full_cell.tex -text
 Triangulation/doc_tex/Triangulation_ref/Triangulation_locate_type.tex -text
 Triangulation/doc_tex/Triangulation_ref/Triangulation_vertex.tex -text
+Triangulation/doc_tex/Triangulation_ref/fig/insert-in-cell.pdf -text
+Triangulation/doc_tex/Triangulation_ref/fig/insert-in-cell.png -text
 Triangulation/doc_tex/Triangulation_ref/fig/insert-in-face.pdf -text
 Triangulation/doc_tex/Triangulation_ref/fig/insert-in-face.png -text
-Triangulation/doc_tex/Triangulation_ref/fig/insert-in-simplex.pdf -text
-Triangulation/doc_tex/Triangulation_ref/fig/insert-in-simplex.png -text
 Triangulation/doc_tex/Triangulation_ref/intro.tex -text
 Triangulation/doc_tex/Triangulation_ref/main.tex -text
 Triangulation/dont_submit -text
