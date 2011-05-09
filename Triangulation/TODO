@@ -28,14 +28,12 @@ code
 /Simplex/Full_cell/
 /simplex/full_cell/
 /number_of_simplices/number_of_full_cells/
-/is_simplex/is_full_cell/
 /gather_simplices/gather_full_cells/
 /gather_incident_simplices/incident_full_cells/
 /gather_adjacent_simplices/compute_star/
 /gather_incident_simplices/incident_simplices/
 /contract_face/collapse_face/
-/insert_in_simplex/insert_in_full_cell/
-
+/index_of/index/
 
 
 

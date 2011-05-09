@@ -1,81 +1,81 @@
-\begin{ccRefConcept}{PureComplexDSVertex}
+\begin{ccRefConcept}{TriangulationDSVertex}
 
 \ccDefinition
 
 The concept \ccRefName\ describes what a vertex is in a model of the concept
-\ccc{PureComplexDataStructure}. It sets requirements of combinatorial nature
+\ccc{TriangulationDataStructure}. It sets requirements of combinatorial nature
 only, as geometry is not concerned here. In particular, we only require that
-the vertex hold a handle to a simplex adjacent to it in the complex.
+the vertex hold a handle to a full cell incident to it in the triangulation.
 
-This concept is a \emph{sub-concept} of the \ccc{PureComplexDataStructure}
+This concept is a \emph{sub-concept} of the \ccc{TriangulationDataStructure}
 concept.
 
 \ccHasModels
 
-\ccc{Pure_complex_ds_vertex<PCDS>}
+\ccc{Triangulation_ds_vertex<TDS>}
 
 \ccTypes
 
-\ccNestedType{Simplex_handle}{A handle to a Simplex.}
+\ccNestedType{Full_cell_handle}{A handle to a cell.}
 
-\ccNestedType{template<typename PC2> Rebind_PCDS}{This nested template
+\ccNestedType{template<typename PC2> Rebind_TDS}{This nested template
 class must define a nested type \ccc{Other} which is the rebound vertex
-class template, that is: \ccc{Other == PureComplexDSVertex<PC2>}.}
+class template, that is: \ccc{Other == TriangulationDSVertex<PC2>}.}
 
 \ccCreation	
 \ccCreationVariable{v}
 
-\ccConstructor{PureComplexDSVertex();}{The default constructor (no adjacent
-simplex is set).}
+\ccConstructor{TriangulationDSVertex();}{The default constructor (no adjacent
+cell is set).}
 \ccGlue
-\ccConstructor{PureComplexDSVertex(Simplex_handle s);}{Sets the incident
-simplex to \ccc{s}. \ccPrecond \ccc{s} must not be the default-constructed
-\ccc{Simplex_handle}.}
+\ccConstructor{TriangulationDSVertex(Full_cell_handle s);}{Sets the incident
+cell to \ccc{s}. \ccPrecond \ccc{s} must not be the default-constructed
+\ccc{Full_cell_handle}.}
 
 \ccOperations
 
-\ccMethod{void set_simplex(Simplex_handle s);}{Set \ccc{s} as the vertex's
-adjacent simplex. \ccPrecond \ccc{s} must not be the default-constructed
-\ccc{Simplex_handle}.}
+\ccMethod{void set_full_cell(Full_cell_handle c);}{Set \ccc{c} as the vertex's
+incident cell. \ccPrecond \ccc{c} must not be the default-constructed
+\ccc{Full_cell_handle}.}
 
-\ccMethod{Simplex_handle simplex() const;}{Returns a handle to a simplex
-adjacent to the vertex.}
+\ccMethod{Full_cell_handle full_cell() const;}{Returns a handle to a
+  full cell incident to the vertex.}
 
 \ccHeading{Validity check}
 
 \ccMethod{bool is_valid(bool verbose=false, int level=0) const;}{Performs any
 desired test on a vertex. Al least, checks that the pointer to an incident
-simplex is not the default constructed handle (\emph{i.e.}, is not
+cell is not the default constructed handle (\emph{i.e.}, is not
 \ccc{NULL}). The parameter \ccc{level} is not used, but can be used in derived
 classes.}
 
-\ccHeading{Memory management}
+% \ccHeading{Memory management}
 
-\ccMethod{void*   for_compact_container() const;}{}
-\ccGlue\ccMethod{void* & for_compact_container();}{}
+% \ccMethod{void*   for_compact_container() const;}{}
+% \ccGlue\ccMethod{void* & for_compact_container();}{}
 
-These member functions are required by the classes
-\ccc{Pure_complex_data_structure<Dimensionality, PCDSVertex, PCDSSimplex>} and
-\ccc{Pure_complex<PCTraits, PCDS>} (and its derived classes) because they use
-the \cgal\ container class \ccc{Compact_container} to store their vertices and
-simplices. See the documentation of \ccc{Compact_container} for the exact
-requirements.
+% These member functions are required by the classes
+% \ccc{Triangulation_data_structure<Dimensionality, TDSVertex, TDSSimplex>} and
+% \ccc{Triangulation<TrTraits, TDS>} (and its derived classes) because they use
+% the \cgal\ container class \ccc{Compact_container} to store their vertices and
+% simplices. See the documentation of \ccc{Compact_container} for the exact
+% requirements.
 
 \ccHeading{Input/Output}
 
-\ccFunction{template<class PCDS> istream& operator>>(istream & is,
-        Pure_complex_ds_vertex<PCDS> & v);}
+\ccFunction{template<class TDS> istream& operator>>(istream & is,
+        Triangulation_ds_vertex<TDS> & v);}
 {Reads (possible) non-combinatorial information about a vertex from the stream \ccc{is}
 into \ccc{v}.}
 
-\ccFunction{template<class PCDS> ostream& operator<<(ostream & os, const
-        Pure_complex_ds_vertex<PCDS> & v);}
+\ccFunction{template<class TDS> ostream& operator<<(ostream & os, const
+        Triangulation_ds_vertex<TDS> & v);}
 {Writes (possible) non-combinatorial information about vertex \ccc{v} to the stream
     \ccc{os}.}
 
 \ccSeeAlso
 
-\ccc{PureComplexDSSimplex}\\
-\ccc{PureComplexDataStructure}
+\ccc{TriangulationDSSimplex}\\
+\ccc{TriangulationDataStructure}
 
 \end{ccRefConcept}

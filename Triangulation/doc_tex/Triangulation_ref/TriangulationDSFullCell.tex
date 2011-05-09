@@ -1,96 +1,101 @@
-\begin{ccRefConcept}{PureComplexDSSimplex}
+\begin{ccRefConcept}{TriangulationDSFullCell}
 
 \ccDefinition
 
-The concept \ccRefName\ describes what a simplex is in a model of the concept
-\ccc{PureComplexDataStructure}. It sets requirements of combinatorial nature
+The concept \ccRefName\ describes what a full cell is in a model of the concept
+\ccc{TriangulationDataStructure}. It sets requirements of combinatorial nature
 only, as geometry is not concerned here.
+In the context of triangulation, the term cell refer to a face of
+maximal dimension that we often emphasize with the term {\em full cell}.
 
-A \ccRefName\ is responsible for storing handles to the vertices of a simplex
+A \ccRefName\ is responsible for storing handles to the vertices of a
+full cell
 as well as handles to its neighbors.
 
-This concept is a \emph{sub-concept} of the \ccc{PureComplexDataStructure}
+This concept is a \emph{sub-concept} of the \ccc{TriangulationDataStructure}
 concept.
 
 \ccHasModels
 
-\ccc{Pure_complex_ds_simplex<PCDS, PCDSSimplexStoragePolicy>}
+\ccc{Triangulation_ds_full_cell<TDS, TDSFullCellStoragePolicy>}
 
 \ccTypes
 
-\ccNestedType{Vertex_handle}{}
-\ccGlue\ccNestedType{Vertex_const_handle}{A handle to a vertex.}
+\ccNestedType{Vertex_handle}%{}
+%\ccGlue\ccNestedType{Vertex_const_handle}
+{A handle to a vertex.}
 
-\ccNestedType{Vertex_handle_const_iterator}{An iterator over the handles to
-the vertices of the simplex.}
+\ccNestedType{Vertex_handle_iterator}{An iterator over the handles to
+the vertices of the cell.}
 
-\ccNestedType{Simplex_handle}{}
-\ccGlue\ccNestedType{Simplex_const_handle}{A handle to a simplex.}
+\ccNestedType{Full_cell_handle}%{}
+%\ccGlue\ccNestedType{Full_cell_const_handle}
+{A handle to a full cell.}
 
-\ccNestedType{template<typename PC2> Rebind_PCDS}{This nested template
-class must define a nested type \ccc{Other} which is the rebound simplex
-class template, that is: \ccc{Other == PureComplexDSSimplex<PC2>}.}
+\ccNestedType{template<typename PC2> Rebind_TDS}{This nested template
+class must define a nested type \ccc{Other} which is the rebound cell
+class template, that is: \ccc{Other == TriangulationDSFullCell<PC2>}.}
 
 \ccCreation	
-\ccCreationVariable{s}
+\ccCreationVariable{c}
 
-\ccConstructor{PureComplexDSSimplex(int dmax);}{Sets the maximum possible
-dimension of the simplex.}
+\ccConstructor{TriangulationDSFullCell(int dmax);}{Sets the maximum possible
+dimension of the cell.}
 
-\ccConstructor{PureComplexDSSimplex(const PureComplexDSSimplex & c);}%
+\ccConstructor{TriangulationDSFullCell(const TriangulationDSFullCell & fc);}%
 {Copy constructor.}
 
-If you want to create a simplex as part of a \ccc{PureComplexDataStructure},
-you would rather want to call the \ccc{new_simplex()} from the latter concept,
-as it is not possible to incorporate an existing external simplex into a pure
-complex.
+If you want to create a cell as part of a \ccc{TriangulationDataStructure},
+you would rather want to call the \ccc{new_full_cell()} from the latter concept,
+as it is not possible to incorporate an existing external cell into
+a triangulation.
 
 \ccHeading{Access functions}
 
 \ccMethod{int ambient_dimension() const;}{Returns one less than the maximum
-number of vertices that the simplex can store. This does \textbf{not} return
-the dimension of the actual simplex stored in \ccVar.}
+number of vertices that the full cell can store. This does \textbf{not} return
+the dimension of the actual full cell stored in \ccVar.}
 
-\ccMethod{Vertex_handle_const_iterator vertices_begin() const;}
+\ccMethod{Vertex_handle_iterator vertices_begin() const;}
 {Returns an iterator to the first \ccc{Vertex_handle} stored in the
 simplex.}
 
-\ccMethod{Vertex_handle_const_iterator vertices_end() const;}
+\ccMethod{Vertex_handle_iterator vertices_end() const;}
 {Returns an iterator pointing beyond the last \ccc{Vertex_handle} stored in
 the simplex.}
 
 \ccMethod{Vertex_handle vertex(const int i) const;}{Returns the \ccc{i}-th vertex
-of the simplex. \ccPrecond \ccc{0 <= i <= ambient_dimension()}.}
+of the cell. \ccPrecond \ccc{0 <= i <= ambient_dimension()}.}
 
-\ccGlue\ccMethod{Simplex_handle neighbor(const int i) const;}{Returns the
-simplex opposite to the \ccc{i}-th vertex of the simplex \ccVar. \ccPrecond \ccc{0
+\ccGlue\ccMethod{Full_cell_handle neighbor(const int i) const;}{Returns the
+cell opposite to the \ccc{i}-th vertex of the cell \ccVar. \ccPrecond \ccc{0
 <= i <= ambient_dimension()}.}
 
 \ccMethod{int mirror_index(const int i) const;}{Returns the index \ccc{j} of
-the simplex \ccc{s} as a neighbor in the simplex \ccc{s.neighbor(i);}. If the
+the cell \ccc{s} as a neighbor in the cell \ccc{s.neighbor(i);}. If the
 returned integer is not negative, it holds that \ccVar.%
 \ccc{neighbor(i)->neighbor(j) == }\ccVar. Returns
-\ccc{-1} if \ccc{s} has no neighboring simplex of index \ccc{i}. \ccPrecond \ccc{0 <=
+\ccc{-1} if \ccc{s} has no neighboring cell of index \ccc{i}. \ccPrecond \ccc{0 <=
 i <= ambient_dimension()}.}
 
-\ccMethod{int index_of(Simplex_const_handle n) const;}{Returns the index \ccc{i}
+\ccMethod{int index(Full_cell_handle n) const;}{Returns the index \ccc{i}
 of the neighbor \ccc{n} such that \ccc{s.neighbor(i)==n}. \ccPrecond \ccc{n}
 must be a neighbor of \ccc{s}.}
 \ccGlue
-\ccMethod{int index_of(Vertex_const_handle v) const;}{Returns the index \ccc{i} of
+\ccMethod{int index(Vertex_handle v) const;}{Returns the index \ccc{i} of
 the vertex \ccc{v} such that \ccc{s.vertex(i)==v}. \ccPrecond \ccc{v} must be
 a vertex of the \ccc{s}.}
 
 \ccMethod{unsigned int get_flags() const;}{Returns an \ccc{unsigned int}.
-Typically used to mark the simplex as \emph{visited} during operations on a
-\ccc{PureComplexDataStructure}.}
+Typically used to mark the cell as \emph{visited} during operations on a
+\ccc{TriangulationDataStructure}.}
 
 \begin{ccAdvanced}
 \ccMethod{Vertex_handle mirror_vertex(const int i, const int cur_dim) const;}
-{Returns a handle to the mirror vertex of the \ccc{i}-th vertex of simplex
+{Returns a handle to the mirror vertex of the \ccc{i}-th vertex of cell
 \ccVar. This function works even if the neighbor information stored in the
-simplex is corrupted -- useful when temporary corruption is necessary during
-surgical operation on a pure complex. \ccPrecond \ccc{0 <= i <=
+cell is corrupted -- useful when temporary corruption is necessary during
+surgical operation on a triangulation. \ccPrecond \ccc{0 <= i <=
 ambient_dimension()} and \ccc{0 <= cur_dim <= ambient_dimension()}.}
 \end{ccAdvanced}
 
@@ -98,22 +103,22 @@ ambient_dimension()} and \ccc{0 <= cur_dim <= ambient_dimension()}.}
 \ccHeading{Update functions} % - - - - - - - - - - - - - - - - - UPDATES
 
 \ccMethod{void set_vertex(const int i, Vertex_handle v);}{Sets the $i$-th
-vertex of the simplex. \ccPrecond \ccc{0 <= i <= ambient_dimension()}.}
+vertex of the cell. \ccPrecond \ccc{0 <= i <= ambient_dimension()}.}
 
-\ccMethod{void set_neighbor(const int i, Simplex_handle n);} {Sets the
-\ccc{i}-th neighboring simplex of \ccVar\ to \ccc{n}. Simplex \ccc{n} is
+\ccMethod{void set_neighbor(const int i, Full_cell_handle n);} {Sets the
+\ccc{i}-th neighboring cell of \ccVar\ to \ccc{n}. Full cell \ccc{n} is
 opposite to the $i$-th vertex of \ccVar. \ccPrecond \ccc{0 <= i <=
 ambient_dimension()}.}
 
 \ccMethod{void set_mirror_index(const int i, const int index);} {Sets the
 mirror index of the $i$-th vertex of \ccVar\ to \ccc{index}. This corresponds
-to the index, in \ccc{s->neighbor(i)}, of the simplex \ccc{s}.\\
+to the index, in \ccVar\ccc{->neighbor(i)}, of the cell \ccVar.\\
 Note: an implementation of the concept \ccVar\ may choose not to store mirror
 indices, in which case this function should do nothing.
 \ccPrecond \ccc{0 <= i <= ambient_dimension()}.}
 
 \ccMethod{void swap_vertices(int d1, int d2);}{Switches the orientation of the
-simplex \ccVar\ by swapping its vertices with index \ccc{d1} and \ccc{d2}.
+cell \ccVar\ by swapping its vertices with index \ccc{d1} and \ccc{d2}.
 \ccPrecond \ccc{0 <= d1 <= ambient_dimension()} and \ccc{0 <= d2 <=
 ambient_dimension()}.}
 
@@ -122,56 +127,56 @@ flags variable.}
 
 \ccHeading{Queries}
 
-\ccMethod{bool has_vertex(Vertex_const_handle v) const;}{Returns \ccc{true}
-if the vertex \ccc{v} is a vertex of the simplex \ccVar. Returns \ccc{false}
+\ccMethod{bool has_vertex(Vertex_handle v) const;}{Returns \ccc{true}
+if the vertex \ccc{v} is a vertex of the cell \ccVar. Returns \ccc{false}
 otherwise.}
 
-\ccMethod{bool has_vertex(Vertex_const_handle v, int & ret) const;}%
+\ccMethod{bool has_vertex(Vertex_handle v, int & ret) const;}%
 {Returns \ccc{true} and sets the value of \ccc{ret} to the index of \ccc{v} in
-\ccVar\ if the vertex \ccc{v} is a vertex of the simplex \ccVar. Returns
+\ccVar\ if the vertex \ccc{v} is a vertex of the cell \ccVar. Returns
 \ccc{false} otherwise.}
 
-\ccMethod{bool has_neighbor(Simplex_const_handle n) const;}{Returns \ccc{true}
-if the simplex \ccc{n} is a neighbor of the simplex \ccVar. Returns
+\ccMethod{bool has_neighbor(Full_cell_handle n) const;}{Returns \ccc{true}
+if the cell \ccc{n} is a neighbor of the cell \ccVar. Returns
 \ccc{false} otherwise.}
 
-\ccMethod{bool has_neighbor(Simplex_const_handle n, int & ret) const;}%
+\ccMethod{bool has_neighbor(Full_cell_handle n, int & ret) const;}%
 {Returns \ccc{true} and sets the value of \ccc{ret} to the index of \ccc{n} as
-a neighbor of \ccVar\ if the simplex \ccc{n} is a neighbor of the simplex
+a neighbor of \ccVar\ if the cell \ccc{n} is a neighbor of the cell
 \ccVar. Returns \ccc{false} otherwise.}
 
 \ccHeading{Validity check}
 
 \ccMethod{bool is_valid(bool verbose=false, int level=0) const;}{Performs any
-desired test on a simplex. \emph{E.g.}, checks that for each existing vertex,
+desired test on a cell. \emph{E.g.}, checks that for each existing vertex,
 there is an existing neighbor.}
 
-\ccHeading{Memory management}
+% \ccHeading{Memory management}
 
-\ccMethod{void*   for_compact_container() const;}{}
-\ccGlue\ccMethod{void* & for_compact_container();}{}
+% \ccMethod{void*   for_compact_container() const;}{}
+% \ccGlue\ccMethod{void* & for_compact_container();}{}
 
-These member functions are required by the classes
-\ccc{Pure_complex_data_structure<Dimensionality, PCDSVertex, PCDSSimplex>} and
-\ccc{Pure_complex<PCTraits, PCDS>} (and its derived classes) because they use
-\ccc{Compact_container} to store their vertices and simplices. See the
-documentation of \ccc{Compact_container} for the exact requirements.
+% These member functions are required by the classes
+% \ccc{Pure_complex_data_structure<Dimensionality, TDSVertex, TDSFullCell>} and
+% \ccc{Pure_complex<PCTraits, TDS>} (and its derived classes) because they use
+% \ccc{Compact_container} to store their vertices and simplices. See the
+% documentation of \ccc{Compact_container} for the exact requirements.
 
 \ccHeading{Input/Output}
 
-\ccFunction{template<class PCDS> istream& operator>>(istream & is,
-        Pure_complex_ds_simplex<PCDS> & s);}
-{Reads (possible) non-combinatorial information about a simplex from the stream \ccc{is}
+\ccFunction{template<class TDS> istream& operator>>(istream & is,
+        Pure_complex_ds_full_cell<TDS> & s);}
+{Reads (possible) non-combinatorial information about a cell from the stream \ccc{is}
 into \ccc{s}.}
 
-\ccFunction{template<class PCDS> ostream& operator<<(ostream & os, const
-        Pure_complex_ds_simplex<PCDS> & s);}
-{Writes (possible) non-combinatorial information about simplex \ccc{v} to the stream
+\ccFunction{template<class TDS> ostream& operator<<(ostream & os, const
+        Pure_complex_ds_full_cell<TDS> & s);}
+{Writes (possible) non-combinatorial information about cell \ccc{v} to the stream
     \ccc{os}.}
 
 \ccSeeAlso
 
-\ccc{PureComplexDSVertex}\\
-\ccc{PureComplexDataStructure}
+\ccc{TriangulationDSVertex}\\
+\ccc{TriangulationDataStructure}
 
 \end{ccRefConcept}
