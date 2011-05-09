@@ -1165,7 +1165,7 @@ operator<<(std::ostream & os, const Pure_complex<PCT, PCDS> & tr)
     // outputs dimensions and number of vertices
     size_t n = tr.number_of_vertices();
     if( is_ascii(os) )
-        os << tr.current_dimension() << std::endl << n;
+        os << tr.current_dimension() << std::endl << n << std::endl;
     else
     {
         write(os, tr.current_dimension());
@@ -1181,13 +1181,13 @@ operator<<(std::ostream & os, const Pure_complex<PCT, PCDS> & tr)
 
     // infinite vertex has index 0
     index_of_vertex[tr.infinite_vertex()] = i++;
-    os << tr.infinite_vertex();
-    for( Vertex_iterator it = tr.vertices_begin(); it != tr.vertices_end(); ++it, ++i )
+    os << *tr.infinite_vertex();
+    for( Vertex_iterator it = tr.vertices_begin(); it != tr.vertices_end(); ++it )
     {
-        if( is_infinite(*it) )
+        if( tr.is_infinite(it) )
             continue;
         os << *it; // write the vertex
-        index_of_vertex[it] = i;
+        index_of_vertex[it] = i++;
     }
     CGAL_assertion( i == n+1 );
 
