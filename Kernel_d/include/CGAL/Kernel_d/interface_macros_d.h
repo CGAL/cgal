@@ -53,56 +53,56 @@ CGAL_Kernel_obj(Line_d)
 
 
 CGAL_Kernel_pred(Affinely_independent_d,
-		 affinely_independent_d_object)
+                 affinely_independent_d_object)
 CGAL_Kernel_pred(Affine_rank_d,
-		 affine_rank_d_object)
+                 affine_rank_d_object)
 CGAL_Kernel_pred(Compare_lexicographically_d,
-		 compare_lexicographically_d_object)
+                 compare_lexicographically_d_object)
 CGAL_Kernel_pred(Contained_in_affine_hull_d,
-		 contained_in_affine_hull_d_object)
+                 contained_in_affine_hull_d_object)
 CGAL_Kernel_pred(Contained_in_linear_hull_d,
-		 contained_in_linear_hull_d_object)
+                 contained_in_linear_hull_d_object)
 CGAL_Kernel_pred(Contained_in_simplex_d,
-		 contained_in_simplex_d_object)
+                 contained_in_simplex_d_object)
 // TODO: create a Do_intersect_d functor
 //CGAL_Kernel_pred(Do_intersect_d,
-//		 do_intersect_d_object)
+//                 do_intersect_d_object)
 CGAL_Kernel_pred(Less_lexicographically_d,
-		 less_lexicographically_d_object)
+                 less_lexicographically_d_object)
 CGAL_Kernel_pred(Less_or_equal_lexicographically_d,
-		 less_or_equal_lexicographically_d_object)
+                 less_or_equal_lexicographically_d_object)
 CGAL_Kernel_pred(Linearly_independent_d,
-		 linearly_independent_d_object)
+                 linearly_independent_d_object)
 CGAL_Kernel_pred(Linear_rank_d,
-		 linear_rank_d_object)
+                 linear_rank_d_object)
 CGAL_Kernel_pred(Orientation_d,
-		 orientation_d_object)
+                 orientation_d_object)
 CGAL_Kernel_pred(Coaffine_orientation_d,
-		 coaffine_orientation_d_object)
+                 coaffine_orientation_d_object)
 CGAL_Kernel_pred(Side_of_bounded_sphere_d,
-		 side_of_bounded_sphere_d_object)
+                 side_of_bounded_sphere_d_object)
 CGAL_Kernel_pred(Side_of_oriented_sphere_d,
-		 side_of_oriented_sphere_d_object)
+                 side_of_oriented_sphere_d_object)
 CGAL_Kernel_pred(Side_of_oriented_subsphere_d,
-		 side_of_oriented_subsphere_d_object)
+                 side_of_oriented_subsphere_d_object)
 CGAL_Kernel_pred(Oriented_side_d,
-		 oriented_side_d_object)
+                 oriented_side_d_object)
 
 
 CGAL_Kernel_cons(Linear_base_d,
-		 linear_base_d_object)
+                 linear_base_d_object)
 CGAL_Kernel_cons(Center_of_sphere_d,
-		 center_of_sphere_d_object)
+                 center_of_sphere_d_object)
 CGAL_Kernel_cons(Intersection_d_,
-		 intersection_d_object)
+                 intersection_d_object)
 CGAL_Kernel_cons(Lift_to_paraboloid_d,
-		 lift_to_paraboloid_d_object)
+                 lift_to_paraboloid_d_object)
 CGAL_Kernel_cons(Midpoint_d,
-		 midpoint_d_object)
+                 midpoint_d_object)
 CGAL_Kernel_cons(Project_along_d_axis_d,
-		 project_along_d_axis_d_object)
+                 project_along_d_axis_d_object)
 CGAL_Kernel_cons(Squared_distance_d,
-		 squared_distance_d_object)
+                 squared_distance_d_object)
 
 #undef CGAL_Kernel_pred
 #undef CGAL_Kernel_cons

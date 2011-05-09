@@ -44,18 +44,18 @@
 namespace CGAL {
 
 // Guess which compiler needs this work around ?
-namespace CGALi {
+namespace internal {
 template < typename K1, typename K2 >
 struct Default_converter_d {
   typedef typename K1::FT FT1;
   typedef typename K2::FT FT2;
   typedef ::CGAL::NT_converter<FT1, FT2> Type;
 };
-} // namespace CGALi
+} // namespace internal
 
 template < class K1, class K2,
           //class Converter = NT_converter<typename K1::FT, typename K2::FT> >
-           class Converter = typename CGALi::Default_converter_d<K1, K2>::Type >
+           class Converter = typename internal::Default_converter_d<K1, K2>::Type >
 class Cartesian_converter_d : public Enum_converter
 {
     typedef Enum_converter   Base;

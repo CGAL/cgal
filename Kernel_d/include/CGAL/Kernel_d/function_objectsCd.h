@@ -401,6 +401,7 @@ class Side_of_oriented_subsphereCd
 	typedef typename R::Oriented_side   Oriented_side;
 	typedef typename R::Side_of_oriented_sphere_d	Side_of_oriented_sphere;
 	typedef typename R::Coaffine_orientation_d		Coaffine_orientation;
+	typedef typename LA::Matrix	        Matrix;	
 	typedef typename Coaffine_orientation::Axes		Axes;
 	// DATA MEMBERS
 	mutable Coaffine_orientation ori_;
@@ -427,7 +428,7 @@ public:
 			return sos(first, last, q); // perhaps slap user on the back of the head here?
 		}
         if( M.row_dimension() < d+1 )
-            M = typename LA::Matrix(d+1);
+            M = Matrix(d+1);
 		if( ! ori_.state().axes_found_ )
 		{
             // the call to ori_(...) will compute a set of axes to complement our base.

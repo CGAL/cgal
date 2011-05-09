@@ -12,6 +12,10 @@ namespace internal
 
 template<class Matrix>
 Sign // The matrix is row major: M[i] represents row i.
+/*
+FIXME : the function DOES MODIFY the matrix M, but calling functions
+assume M is not modified --> BUGS. (e.g. Side_of_oriented_subsphere)
+*/
 sign_of_determinantDxD_with_interval_arithmetic(Matrix & M)
 // attempts to compute the determinant using interval arithmetic
 {

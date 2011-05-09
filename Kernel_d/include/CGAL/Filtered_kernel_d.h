@@ -26,21 +26,21 @@ struct Filtered_kernel_d : public Cartesian_d<typename Kernel::FT>
     // the corresponding exact kernel
     //typedef Linear_algebraCd< Exact_nt, boost::pool_allocator<Exact_nt> > Exact_linalg;
     typedef Linear_algebraCd< Exact_nt > Exact_linalg;
-    typedef Cartesian_d<Exact_nt, Exact_linalg>		EK;
+    typedef Cartesian_d<Exact_nt, Exact_linalg>		Exact_kernel;
     
     // the kernel used for filtered predicates
     typedef Interval_nt<false> IA;
     //typedef Linear_algebraCd<IA, boost::pool_allocator<IA> > Interval_linalg;
-    typedef Linear_algebraCd<IA > Interval_linalg;
-    typedef Cartesian_d<IA, Interval_linalg >	FK;
+    typedef Linear_algebraCd<IA> Interval_linalg;
+    typedef Cartesian_d<IA, Interval_linalg >	Approximate_kernel;
     
     // the converter
-    typedef Cartesian_converter_d<Base, EK>	C2E;
-    typedef Cartesian_converter_d<Base, FK>	C2F;
+    typedef Cartesian_converter_d<Base, Exact_kernel>	C2E;
+    typedef Cartesian_converter_d<Base, Approximate_kernel>	C2F;
 
     // we change the predicates.
 #define CGAL_Kernel_pred(P, Pf) \
-    typedef Filtered_predicate<typename EK::P, typename FK::P, C2E, C2F> P; \
+    typedef Filtered_predicate<typename Exact_kernel::P, typename Approximate_kernel::P, C2E, C2F> P; \
     P Pf() const { return P(); }
 
     // we don't touch the constructions.
