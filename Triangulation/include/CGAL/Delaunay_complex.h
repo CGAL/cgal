@@ -24,10 +24,10 @@
 
 namespace CGAL {
 
-template< typename DCTraits, typename _PCDS = Default >
+template< typename DCTraits, typename _TDS = Default >
 class Delaunay_complex
 : public Pure_complex<DCTraits,
-            typename Default::Get<_PCDS, Pure_complex_data_structure<
+            typename Default::Get<_TDS, Pure_complex_data_structure<
                              typename Ambient_dimension<typename DCTraits::Point_d>::type,
                              Pure_complex_vertex<DCTraits>,
                              Pure_complex_simplex<DCTraits> >
@@ -35,13 +35,13 @@ class Delaunay_complex
 {
     typedef typename Ambient_dimension<typename DCTraits::Point_d>::type
                                                     Ambient_dimension_;
-    typedef typename Default::Get<_PCDS, Pure_complex_data_structure<
+    typedef typename Default::Get<_TDS, Pure_complex_data_structure<
                          Ambient_dimension_,
                          Pure_complex_vertex<DCTraits>,
                          Pure_complex_simplex<DCTraits> >
-                >::type                         PCDS;
-    typedef Pure_complex<DCTraits, PCDS>        Base;
-    typedef Delaunay_complex<DCTraits, _PCDS>   Self;
+                >::type                         TDS;
+    typedef Pure_complex<DCTraits, TDS>        Base;
+    typedef Delaunay_complex<DCTraits, _TDS>   Self;
 
     typedef typename DCTraits::Side_of_oriented_subsphere_d
                                                     Side_of_oriented_subsphere_d;
@@ -281,9 +281,9 @@ private:
 
 // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - REMOVALS
 
-template< typename DCTraits, typename PCDS >
-typename Delaunay_complex<DCTraits, PCDS>::Simplex_handle
-Delaunay_complex<DCTraits, PCDS>
+template< typename DCTraits, typename TDS >
+typename Delaunay_complex<DCTraits, TDS>::Simplex_handle
+Delaunay_complex<DCTraits, TDS>
 ::remove( Vertex_handle v )
 {
     CGAL_precondition( is_finite(v) );
@@ -349,7 +349,7 @@ Delaunay_complex<DCTraits, PCDS>
     // OK, create a Dark Delaunay complex
     typedef Pure_complex_vertex<Geom_traits, Vertex_handle> Dark_vertex_base;
     typedef Pure_complex_simplex<Geom_traits,
-        internal::Pure_complex::Dark_simplex_data<Self> > Dark_simplex_base;
+        internal::Triangulation::Dark_simplex_data<Self> > Dark_simplex_base;
     typedef Pure_complex_data_structure<Ambient_dimension, Dark_vertex_base, Dark_simplex_base> Dark_pcds;
     typedef Delaunay_complex<DCTraits, Dark_pcds>   Dark_complex;
     typedef typename Dark_complex::Face             Dark_face;
@@ -458,7 +458,7 @@ Delaunay_complex<DCTraits, PCDS>
     
     dark_ft = dark_side.compute_conflict_zone(v->point(), dark_s, dark_out);
 
-    // THE FOLLOWING SHOULD MAYBE GO IN PCDS.
+    // THE FOLLOWING SHOULD MAYBE GO IN TDS.
     // IF SO: make sure to remove set/get_visited from Pure_complex.
     // Here is the plan:
     // 1. Pick any Facet from boundary of the light zone
@@ -582,9 +582,9 @@ Delaunay_complex<DCTraits, PCDS>
     return ret_s;
 }
 
-template< typename DCTraits, typename PCDS >
+template< typename DCTraits, typename TDS >
 void
-Delaunay_complex<DCTraits, PCDS>
+Delaunay_complex<DCTraits, TDS>
 ::remove_decrease_dimension(Vertex_handle v)
 {
     CGAL_precondition( current_dimension() >= 0 );
@@ -604,9 +604,9 @@ Delaunay_complex<DCTraits, PCDS>
 
 // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - INSERTIONS
 
-template< typename DCTraits, typename PCDS >
-typename Delaunay_complex<DCTraits, PCDS>::Vertex_handle
-Delaunay_complex<DCTraits, PCDS>
+template< typename DCTraits, typename TDS >
+typename Delaunay_complex<DCTraits, TDS>::Vertex_handle
+Delaunay_complex<DCTraits, TDS>
 ::insert(const Point & p, const Locate_type lt, const Face & f, const Facet & ft, const Simplex_handle s)
 {
     switch( lt )
@@ -638,9 +638,9 @@ Delaunay_complex<DCTraits, PCDS>
     }
 }
 
-template< typename DCTraits, typename PCDS >
-typename Delaunay_complex<DCTraits, PCDS>::Vertex_handle
-Delaunay_complex<DCTraits, PCDS>
+template< typename DCTraits, typename TDS >
+typename Delaunay_complex<DCTraits, TDS>::Vertex_handle
+Delaunay_complex<DCTraits, TDS>
 ::insert_outside_affine_hull(const Point & p)
 {
     // we don't use Base::insert_outside_affine_hull(...) because here, we
@@ -662,9 +662,9 @@ Delaunay_complex<DCTraits, PCDS>
     return v;
 }
 
-template< typename DCTraits, typename PCDS >
-typename Delaunay_complex<DCTraits, PCDS>::Vertex_handle
-Delaunay_complex<DCTraits, PCDS>
+template< typename DCTraits, typename TDS >
+typename Delaunay_complex<DCTraits, TDS>::Vertex_handle
+Delaunay_complex<DCTraits, TDS>
 ::insert_in_conflict_zone(const Point & p, const Simplex_handle s)
 {
     typedef std::vector<Simplex_handle> Simplex_h_vector;
@@ -680,10 +680,10 @@ Delaunay_complex<DCTraits, PCDS>
 // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - GATHERING CONFLICTING SIMPLICES
 
 // NOT DOCUMENTED
-template< typename DCTraits, typename PCDS >
+template< typename DCTraits, typename TDS >
 template< typename OrientationPred >
 Oriented_side
-Delaunay_complex<DCTraits, PCDS>
+Delaunay_complex<DCTraits, TDS>
 ::perturbed_side_of_positive_sphere(const Point & p, Simplex_const_handle s,
         const OrientationPred & ori) const
 {
@@ -696,7 +696,7 @@ Delaunay_complex<DCTraits, PCDS>
         points[i] = &(s->vertex(i)->point());
     points[i] = &p;
     std::sort(points.begin(), points.end(),
-            internal::Pure_complex::Compare_points_for_perturbation<Self>(*this));
+            internal::Triangulation::Compare_points_for_perturbation<Self>(*this));
     typename Points::const_reverse_iterator cut_pt = points.rbegin();
     Points test_points;
     while( cut_pt != points.rend() )
@@ -720,7 +720,7 @@ Delaunay_complex<DCTraits, PCDS>
         test_points.push_back(&p);
 
         typedef typename CGAL::Iterator_project<typename Points::iterator,
-                        internal::Pure_complex::Point_from_pointer<Self>,
+                        internal::Triangulation::Point_from_pointer<Self>,
                 const Point &, const Point *> Point_pointer_iterator;
 
         Orientation ori_value = ori(
@@ -736,9 +736,9 @@ Delaunay_complex<DCTraits, PCDS>
     return ON_NEGATIVE_SIDE;
 }
 
-template< typename DCTraits, typename PCDS >
+template< typename DCTraits, typename TDS >
 bool
-Delaunay_complex<DCTraits, PCDS>
+Delaunay_complex<DCTraits, TDS>
 ::conflict(const Point & p, Simplex_const_handle s) const
 {
     CGAL_precondition( 2 <= current_dimension() );
@@ -756,10 +756,10 @@ Delaunay_complex<DCTraits, PCDS>
     }
 }
 
-template< typename DCTraits, typename PCDS >
+template< typename DCTraits, typename TDS >
 template< typename OutputIterator >
-typename Delaunay_complex<DCTraits, PCDS>::Facet
-Delaunay_complex<DCTraits, PCDS>
+typename Delaunay_complex<DCTraits, TDS>::Facet
+Delaunay_complex<DCTraits, TDS>
 ::compute_conflict_zone(const Point & p, const Simplex_handle s, OutputIterator out) const
 {
     CGAL_precondition( 2 <= current_dimension() );

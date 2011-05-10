@@ -15,8 +15,8 @@
 //
 // Author(s)    : Samuel Hornus
 
-#ifndef CGAL_PCDS_SIMPLEX_DEFAULT_STORAGE_POLICY_H
-#define CGAL_PCDS_SIMPLEX_DEFAULT_STORAGE_POLICY_H
+#ifndef CGAL_TDS_SIMPLEX_DEFAULT_STORAGE_POLICY_H
+#define CGAL_TDS_SIMPLEX_DEFAULT_STORAGE_POLICY_H
 
 #include <CGAL/Dimension.h>
 #include <CGAL/Compact_container.h>
@@ -26,13 +26,13 @@ namespace CGAL {
 
 // POLICY TAG
 
-struct PCDS_simplex_default_storage_policy {}; // stores no additional data. Uses XOR trick.
+struct TDS_simplex_default_storage_policy {}; // stores no additional data. Uses XOR trick.
 
 template< typename V, typename S, typename D, typename StoragePolicy >
-struct PCS_data; // PCS = Pure-Complex Simplex
+struct TS_data; // TS = Pure-Complex Simplex
 
 template< typename Vertex_handle, typename Simplex_handle, typename Dimen >
-struct PCS_data< Vertex_handle, Simplex_handle, Dimen, PCDS_simplex_default_storage_policy >
+struct TS_data< Vertex_handle, Simplex_handle, Dimen, TDS_simplex_default_storage_policy >
 {
     typedef typename internal::Dimen_plus_one<Dimen>::type Dimen_plus;
     typedef typename internal::S_or_D_array< Vertex_handle, Dimen_plus, true >     Vertex_handle_array;
@@ -41,7 +41,7 @@ struct PCS_data< Vertex_handle, Simplex_handle, Dimen, PCDS_simplex_default_stor
     Vertex_handle_array  vertices_;
     Simplex_handle_array neighbors_;
 
-    PCS_data(const int dmax)
+    TS_data(const int dmax)
     : vertices_(dmax+1), neighbors_(dmax+1)
     {}
     void*   for_compact_container() const { return vertices_.for_compact_container(); }
@@ -88,4 +88,4 @@ struct PCS_data< Vertex_handle, Simplex_handle, Dimen, PCDS_simplex_default_stor
 
 } //namespace CGAL
 
-#endif // CGAL_PCDS_SIMPLEX_DEFAULT_STORAGE_POLICY_H
+#endif // CGAL_TDS_SIMPLEX_DEFAULT_STORAGE_POLICY_H

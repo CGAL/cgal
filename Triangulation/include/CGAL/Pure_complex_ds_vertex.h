@@ -15,8 +15,8 @@
 //
 // Author(s)    : Samuel Hornus
 
-#ifndef CGAL_PURE_COMPLEX_DS_VERTEX_H
-#define CGAL_PURE_COMPLEX_DS_VERTEX_H
+#ifndef CGAL_TRIANGULATION_DS_VERTEX_H
+#define CGAL_TRIANGULATION_DS_VERTEX_H
 
 //#include <CGAL/basic.h>
 //#include <CGAL/Iterator_project.h>
@@ -25,20 +25,20 @@
 
 namespace CGAL {
 
-/* PCDS must be a model of the concept 'PureComplexDataStructure' that 
+/* TDS must be a model of the concept 'PureComplexDataStructure' that 
     stores vertices of type 'Pure_complex_ds_vertex<Pure_complex>'
  */
 
-template< class PCDS = void >
+template< class TDS = void >
 class Pure_complex_ds_vertex 
 {
-    typedef Pure_complex_ds_vertex<PCDS> Self;
+    typedef Pure_complex_ds_vertex<TDS> Self;
 
 public:
-    typedef typename PCDS::Simplex_handle       Simplex_handle;
+    typedef typename TDS::Simplex_handle       Simplex_handle;
 
     template <typename PC2>
-    struct Rebind_PCDS
+    struct Rebind_TDS
     {
         typedef Pure_complex_ds_vertex<PC2> Other;
     };
@@ -89,9 +89,9 @@ public: // FOR MEMORY MANAGEMENT
 
 // FUNCTIONS THAT ARE NOT MEMBER FUNCTIONS:
 
-template < class PCDS >
+template < class TDS >
 std::istream &
-operator>>(std::istream & is, Pure_complex_ds_vertex<PCDS> & v)
+operator>>(std::istream & is, Pure_complex_ds_vertex<TDS> & v)
 {
     /*if( is_ascii(is) )
     {}
@@ -99,9 +99,9 @@ operator>>(std::istream & is, Pure_complex_ds_vertex<PCDS> & v)
     return is;
 }
 
-template< class PCDS >
+template< class TDS >
 std::ostream &
-operator<<(std::ostream & os, const Pure_complex_ds_vertex<PCDS> & v)
+operator<<(std::ostream & os, const Pure_complex_ds_vertex<TDS> & v)
 {
     /*if( is_ascii(os) )
     {
@@ -117,10 +117,10 @@ template<>
 class Pure_complex_ds_vertex<void>
 {
 public:
-    typedef internal::Pure_complex::Dummy_PCDS  Pure_complex_ds;
+    typedef internal::Triangulation::Dummy_TDS  Pure_complex_ds;
     typedef Pure_complex_ds::Simplex_handle     Simplex_handle;
     template <typename PC2>
-    struct Rebind_PCDS
+    struct Rebind_TDS
     {
         typedef Pure_complex_ds_vertex<PC2> Other;
     };
@@ -128,4 +128,4 @@ public:
 
 } //namespace CGAL
 
-#endif // CGAL_PURE_COMPLEX_DS_VERTEX_H
+#endif // CGAL_TRIANGULATION_DS_VERTEX_H

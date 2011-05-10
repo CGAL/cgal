@@ -15,21 +15,21 @@
 //
 // Author(s)    : Samuel Hornus
 
-#ifndef CGAL_PURE_COMPLEX_FACE_H
-#define CGAL_PURE_COMPLEX_FACE_H
+#ifndef CGAL_TRIANGULATION_FACE_H
+#define CGAL_TRIANGULATION_FACE_H
 
 #include <CGAL/basic.h>
 #include <CGAL/internal/Static_or_dynamic_array.h>
 
 namespace CGAL {
 
-template< typename PCDS >
+template< typename TDS >
 class Pure_complex_face
 {
-    typedef typename internal::Dimen_plus_one<typename PCDS::Ambient_dimension>::type Dimen_plus;
+    typedef typename internal::Dimen_plus_one<typename TDS::Ambient_dimension>::type Dimen_plus;
 public:
-    typedef typename PCDS::Simplex_handle           Simplex_handle;
-    typedef typename PCDS::Vertex_handle            Vertex_handle;
+    typedef typename TDS::Simplex_handle           Simplex_handle;
+    typedef typename TDS::Vertex_handle            Vertex_handle;
     typedef internal::S_or_D_array<int, Dimen_plus> Indices;
 
 protected:
@@ -104,4 +104,4 @@ public:
 
 } //namespace CGAL
 
-#endif // CGAL_PURE_COMPLEX_FACE_H
+#endif // CGAL_TRIANGULATION_FACE_H

@@ -15,19 +15,19 @@
 //
 // Author(s)    : Samuel Hornus (Well... `copy, paste and hack' of Monique Teillaud's work)
 
-#ifndef CGAL_INTERNAL_PURE_COMPLEX_PURE_COMPLEX_DS_ITERATORS_H
-#define CGAL_INTERNAL_PURE_COMPLEX_PURE_COMPLEX_DS_ITERATORS_H
+#ifndef CGAL_INTERNAL_TRIANGULATION_TRIANGULATION_DS_ITERATORS_H
+#define CGAL_INTERNAL_TRIANGULATION_TRIANGULATION_DS_ITERATORS_H
 
 namespace CGAL {
 
 namespace internal {
-namespace Pure_complex {
+namespace Triangulation {
 
-template< typename PCDS >
-class Pure_complex_ds_facet_iterator
+template< typename TDS >
+class Triangulation_ds_facet_iterator
 {
-    typedef typename PCDS::Simplex_handle   Simplex_handle;
-    typedef typename PCDS::Facet            Facet;
+    typedef typename TDS::Simplex_handle   Simplex_handle;
+    typedef typename TDS::Facet            Facet;
 
     typedef Facet                           value_type;
     typedef const Facet *                   pointer;
@@ -36,14 +36,14 @@ class Pure_complex_ds_facet_iterator
     typedef std::ptrdiff_t                  difference_type;
     typedef std::bidirectional_iterator_tag iterator_category;
 
-    typedef Pure_complex_ds_facet_iterator<PCDS> Facet_iterator;
+    typedef Triangulation_ds_facet_iterator<TDS> Facet_iterator;
 
-    PCDS & pcds_;
+    TDS & pcds_;
     Facet ft_;
     const int cur_dim_;
 
 public:
-    Pure_complex_ds_facet_iterator(PCDS & pcds)
+    Triangulation_ds_facet_iterator(TDS & pcds)
     : pcds_(pcds), ft_(pcds.simplices_begin(), 0), cur_dim_(pcds.current_dimension())
     {
         CGAL_assertion( cur_dim_ > 0 );
@@ -51,7 +51,7 @@ public:
             raw_increment();
     }
 
-    Pure_complex_ds_facet_iterator(PCDS & pcds, int)
+    Triangulation_ds_facet_iterator(TDS & pcds, int)
     : pcds_(pcds), ft_(pcds.simplices_end(), 0), cur_dim_(pcds.current_dimension())
     {
         CGAL_assertion( cur_dim_ > 0 );
@@ -142,9 +142,9 @@ private:
     }
 };
 
-}; // namespace Pure_complex
+}; // namespace Triangulation
 }; // namespace internal
 
 } //namespace CGAL
 
-#endif // CGAL_INTERNAL_PURE_COMPLEX_PURE_COMPLEX_DS_ITERATORS_H
+#endif // CGAL_INTERNAL_TRIANGULATION_TRIANGULATION_DS_ITERATORS_H

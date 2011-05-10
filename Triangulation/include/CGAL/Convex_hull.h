@@ -30,17 +30,17 @@
 
 namespace CGAL {
 
-template <  class CHTraits, class PCDS_ = Default >
+template <  class CHTraits, class TDS_ = Default >
 class Convex_hull
 {
     typedef typename Ambient_dimension<typename PCTraits::Point_d>::type
                                                     Ambient_dimension_;
-    typedef typename Default::Get<PCDS_, Pure_complex_data_structure
+    typedef typename Default::Get<TDS_, Pure_complex_data_structure
                     <   Ambient_dimension_,
                         Pure_complex_vertex<PCTraits>,
                         Pure_complex_simplex<PCTraits> >
-                        >::type                     PCDS;
-    typedef Pure_complex<PCTraits, PCDS_>           Self;
+                        >::type                     TDS;
+    typedef Pure_complex<PCTraits, TDS_>           Self;
 
     typedef typename PCTraits::Coaffine_orientation_d
                                                     Coaffine_orientation_d;

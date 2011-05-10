@@ -15,8 +15,8 @@
 //
 // Author(s)    : Samuel Hornus
 
-#ifndef CGAL_PURE_COMPLEX_H
-#define CGAL_PURE_COMPLEX_H
+#ifndef CGAL_TRIANGULATION_H
+#define CGAL_TRIANGULATION_H
 
 #include <boost/iterator/filter_iterator.hpp>
 #include <CGAL/internal/Pure_complex/utilities.h>
@@ -30,17 +30,17 @@
 
 namespace CGAL {
 
-template <  class PCTraits, class PCDS_ = Default >
+template <  class PCTraits, class TDS_ = Default >
 class Pure_complex
 {
     typedef typename Ambient_dimension<typename PCTraits::Point_d>::type
                                                     Ambient_dimension_;
-    typedef typename Default::Get<PCDS_, Pure_complex_data_structure
+    typedef typename Default::Get<TDS_, Pure_complex_data_structure
                     <   Ambient_dimension_,
                         Pure_complex_vertex<PCTraits>,
                         Pure_complex_simplex<PCTraits> >
-                        >::type                     PCDS;
-    typedef Pure_complex<PCTraits, PCDS_>           Self;
+                        >::type                     TDS;
+    typedef Pure_complex<PCTraits, TDS_>           Self;
 
     typedef typename PCTraits::Coaffine_orientation_d
                                                     Coaffine_orientation_d;
@@ -49,31 +49,31 @@ class Pure_complex
 public:
 
     typedef PCTraits                                Geom_traits;
-    typedef PCDS                                    Pure_complex_ds;
+    typedef TDS                                    Pure_complex_ds;
 
-    typedef typename PCDS::Vertex                   Vertex;
-    typedef typename PCDS::Simplex                  Simplex;
-    typedef typename PCDS::Facet                    Facet;
-    typedef typename PCDS::Face                     Face;
+    typedef typename TDS::Vertex                   Vertex;
+    typedef typename TDS::Simplex                  Simplex;
+    typedef typename TDS::Facet                    Facet;
+    typedef typename TDS::Face                     Face;
 
     typedef Ambient_dimension_                      Ambient_dimension;
     typedef typename Geom_traits::Point_d           Point;
     typedef typename Geom_traits::Point_d           Point_d;
 
-    typedef typename PCDS::Vertex_handle            Vertex_handle;
-    typedef typename PCDS::Vertex_iterator          Vertex_iterator;
-    typedef typename PCDS::Vertex_const_handle      Vertex_const_handle;
-    typedef typename PCDS::Vertex_const_iterator    Vertex_const_iterator;
+    typedef typename TDS::Vertex_handle            Vertex_handle;
+    typedef typename TDS::Vertex_iterator          Vertex_iterator;
+    typedef typename TDS::Vertex_const_handle      Vertex_const_handle;
+    typedef typename TDS::Vertex_const_iterator    Vertex_const_iterator;
 
-    typedef typename PCDS::Simplex_handle           Simplex_handle;
-    typedef typename PCDS::Simplex_iterator         Simplex_iterator;
-    typedef typename PCDS::Simplex_const_handle     Simplex_const_handle;
-    typedef typename PCDS::Simplex_const_iterator   Simplex_const_iterator;
+    typedef typename TDS::Simplex_handle           Simplex_handle;
+    typedef typename TDS::Simplex_iterator         Simplex_iterator;
+    typedef typename TDS::Simplex_const_handle     Simplex_const_handle;
+    typedef typename TDS::Simplex_const_iterator   Simplex_const_iterator;
     
-    typedef typename PCDS::Facet_iterator           Facet_iterator;
+    typedef typename TDS::Facet_iterator           Facet_iterator;
 
-    typedef typename PCDS::size_type                size_type;
-    typedef typename PCDS::difference_type          difference_type;
+    typedef typename TDS::size_type                size_type;
+    typedef typename TDS::difference_type          difference_type;
 
     /// The type of location a new point is found lying on
     enum  Locate_type
@@ -110,7 +110,7 @@ protected: // DATA MEMBERS
     Coaffine_orientation_d              coaffine_orientation_;
     // for stochastic walk in the locate() function:
     mutable Random                      rng_;
-#ifdef CGAL_PURE_COMPLEX_STATISTICS
+#ifdef CGAL_TRIANGULATION_STATISTICS
     mutable unsigned long walk_size_;
 #endif
 
@@ -146,7 +146,7 @@ public:
         , kernel_(k)
         , infinity_()
         , rng_((long)0)
-#ifdef CGAL_PURE_COMPLEX_STATISTICS
+#ifdef CGAL_TRIANGULATION_STATISTICS
         ,walk_size_(0)
 #endif
     {
@@ -415,7 +415,7 @@ public:
     OutputIterator gather_incident_upper_faces( Vertex_const_handle v, const int d,
                                                 OutputIterator out)
     {
-        internal::Pure_complex::Compare_vertices_for_upper_face<Self> cmp(*this);
+        internal::Triangulation::Compare_vertices_for_upper_face<Self> cmp(*this);
         return pcds().gather_incident_upper_faces(v, d, out, cmp);
     }
 
@@ -446,7 +446,7 @@ public:
         orientations_.resize(1 + ambient_dimension());
         // Our coaffine orientation predicates HAS state member variables
         coaffine_orientation_predicate() = geom_traits().coaffine_orientation_d_object();
-#ifdef CGAL_PURE_COMPLEX_STATISTICS
+#ifdef CGAL_TRIANGULATION_STATISTICS
         walk_size_ = 0;
 #endif
     }
@@ -571,9 +571,9 @@ public:
 
 // CLASS MEMBER FUNCTIONS
 
-template < class PCT, class PCDS >
+template < class PCT, class TDS >
 void
-Pure_complex<PCT, PCDS>
+Pure_complex<PCT, TDS>
 ::reorient_simplices()
 {
     if( current_dimension() < 1 )
@@ -595,9 +595,9 @@ Pure_complex<PCT, PCDS>
 // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
 // - - - - - - - - - - - - - - - - - - - - - - - - THE REMOVAL METHODS
 
-template < class PCT, class PCDS >
-typename Pure_complex<PCT, PCDS>::Vertex_handle
-Pure_complex<PCT, PCDS>
+template < class PCT, class TDS >
+typename Pure_complex<PCT, TDS>::Vertex_handle
+Pure_complex<PCT, TDS>
 ::contract_face(const Point & p, const Face & f)
 {
     CGAL_precondition( is_finite(f) );
@@ -610,9 +610,9 @@ Pure_complex<PCT, PCDS>
 // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
 // - - - - - - - - - - - - - - - - - - - - - - - - THE INSERTION METHODS
 
-template < class PCT, class PCDS >
-typename Pure_complex<PCT, PCDS>::Vertex_handle
-Pure_complex<PCT, PCDS>
+template < class PCT, class TDS >
+typename Pure_complex<PCT, TDS>::Vertex_handle
+Pure_complex<PCT, TDS>
 ::insert(const Point & p, const Locate_type lt, const Face & f, const Facet & ft, const Simplex_handle s)
 {
     switch( lt )
@@ -649,9 +649,9 @@ Pure_complex<PCT, PCDS>
     return Vertex_handle();
 }
 
-template < class PCT, class PCDS >
-typename Pure_complex<PCT, PCDS>::Vertex_handle
-Pure_complex<PCT, PCDS>
+template < class PCT, class TDS >
+typename Pure_complex<PCT, TDS>::Vertex_handle
+Pure_complex<PCT, TDS>
 ::insert(const Point & p, Simplex_handle start)
 {
     Locate_type lt;
@@ -661,9 +661,9 @@ Pure_complex<PCT, PCDS>
     return insert(p, lt, f, ft, s);
 }
 
-template < class PCT, class PCDS >
-typename Pure_complex<PCT, PCDS>::Vertex_handle
-Pure_complex<PCT, PCDS>
+template < class PCT, class TDS >
+typename Pure_complex<PCT, TDS>::Vertex_handle
+Pure_complex<PCT, TDS>
 ::insert(const Point & p, Vertex_handle v)
 {
     if( Vertex_handle() == v )
@@ -671,9 +671,9 @@ Pure_complex<PCT, PCDS>
     return insert(p, v->simplex());
 }
 
-template < class PCT, class PCDS >
-typename Pure_complex<PCT, PCDS>::Vertex_handle
-Pure_complex<PCT, PCDS>
+template < class PCT, class TDS >
+typename Pure_complex<PCT, TDS>::Vertex_handle
+Pure_complex<PCT, TDS>
 ::insert_in_face(const Point & p, const Face & f)
 {
     CGAL_precondition( ! is_infinite(f) );
@@ -682,9 +682,9 @@ Pure_complex<PCT, PCDS>
     return v;
 }
 
-template < class PCT, class PCDS >
-typename Pure_complex<PCT, PCDS>::Vertex_handle
-Pure_complex<PCT, PCDS>
+template < class PCT, class TDS >
+typename Pure_complex<PCT, TDS>::Vertex_handle
+Pure_complex<PCT, TDS>
 ::insert_in_facet(const Point & p, const Facet & ft)
 {
     CGAL_precondition( ! is_infinite(ft) );
@@ -693,9 +693,9 @@ Pure_complex<PCT, PCDS>
     return v;
 }
 
-template < class PCT, class PCDS >
-typename Pure_complex<PCT, PCDS>::Vertex_handle
-Pure_complex<PCT, PCDS>
+template < class PCT, class TDS >
+typename Pure_complex<PCT, TDS>::Vertex_handle
+Pure_complex<PCT, TDS>
 ::insert_in_simplex(const Point & p, Simplex_handle s)
 {
     CGAL_precondition( is_finite(s) );
@@ -705,9 +705,9 @@ Pure_complex<PCT, PCDS>
 }
 
 // NOT DOCUMENTED...
-template < class PCT, class PCDS >
-typename Pure_complex<PCT, PCDS>::Vertex_handle
-Pure_complex<PCT, PCDS>
+template < class PCT, class TDS >
+typename Pure_complex<PCT, TDS>::Vertex_handle
+Pure_complex<PCT, TDS>
 ::insert_outside_convex_hull_1(const Point & p, Simplex_handle s)
 {
     // This is a special case for dimension 1, because in that case, the right
@@ -725,9 +725,9 @@ Pure_complex<PCT, PCDS>
     return v;
 }
 
-template < class PCT, class PCDS >
-typename Pure_complex<PCT, PCDS>::Vertex_handle
-Pure_complex<PCT, PCDS>
+template < class PCT, class TDS >
+typename Pure_complex<PCT, TDS>::Vertex_handle
+Pure_complex<PCT, TDS>
 ::insert_outside_convex_hull(const Point & p, Simplex_handle s)
 {
     if( 1 == current_dimension() )
@@ -756,9 +756,9 @@ Pure_complex<PCT, PCDS>
     return v;
 }
 
-template < class PCT, class PCDS >
-typename Pure_complex<PCT, PCDS>::Vertex_handle
-Pure_complex<PCT, PCDS>
+template < class PCT, class TDS >
+typename Pure_complex<PCT, TDS>::Vertex_handle
+Pure_complex<PCT, TDS>
 ::insert_outside_affine_hull(const Point & p)
 {
     CGAL_precondition( current_dimension() < ambient_dimension() );
@@ -780,10 +780,10 @@ Pure_complex<PCT, PCDS>
 // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
 // - - - - - - - - - - - - - - - - - - - - THE MAIN LOCATE(...) FUNCTION
 
-template < class PCT, class PCDS >
+template < class PCT, class TDS >
 template< typename OrientationPredicate >
-typename Pure_complex<PCT, PCDS>::Simplex_handle
-Pure_complex<PCT, PCDS>
+typename Pure_complex<PCT, TDS>::Simplex_handle
+Pure_complex<PCT, TDS>
 ::do_locate(   const Point & p, // query point
             Locate_type & loc_type,// type of result (simplex, face, vertex)
             Face & face,// the face containing the query in its interior (when appropriate)
@@ -848,7 +848,7 @@ Pure_complex<PCT, PCDS>
     bool simplex_not_found = true;
     while(simplex_not_found) // we walk until we locate the query point |p|
     {
-    #ifdef CGAL_PURE_COMPLEX_STATISTICS
+    #ifdef CGAL_TRIANGULATION_STATISTICS
         ++walk_size_;
     #endif
         // For the remembering stochastic walk, we need to start trying
@@ -944,9 +944,9 @@ Pure_complex<PCT, PCDS>
     return s;
 }
 
-template < class PCT, class PCDS >
-typename Pure_complex<PCT, PCDS>::Simplex_handle
-Pure_complex<PCT, PCDS>
+template < class PCT, class TDS >
+typename Pure_complex<PCT, TDS>::Simplex_handle
+Pure_complex<PCT, TDS>
 ::locate(   const Point & p, // query point
             Locate_type & loc_type,// type of result (simplex, face, vertex)
             Face & face,// the face containing the query in its interior (when appropriate)
@@ -966,9 +966,9 @@ Pure_complex<PCT, PCDS>
 // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
 // - - - - - - - - - - - - - - - - - - - - the locate(...) variants
 
-template < class PCT, class PCDS >
-typename Pure_complex<PCT, PCDS>::Simplex_handle
-Pure_complex<PCT, PCDS>
+template < class PCT, class TDS >
+typename Pure_complex<PCT, TDS>::Simplex_handle
+Pure_complex<PCT, TDS>
 ::locate(   const Point & p,
             Locate_type & loc_type,
             Face & face,
@@ -980,9 +980,9 @@ Pure_complex<PCT, PCDS>
     return locate(p, loc_type, face, facet, start->simplex());
 }
 
-template < class PCT, class PCDS >
-typename Pure_complex<PCT, PCDS>::Simplex_handle
-Pure_complex<PCT, PCDS>
+template < class PCT, class TDS >
+typename Pure_complex<PCT, TDS>::Simplex_handle
+Pure_complex<PCT, TDS>
 ::locate(const Point & p, Simplex_handle s) const
 {
     Locate_type lt;
@@ -991,9 +991,9 @@ Pure_complex<PCT, PCDS>
     return locate(p, lt, face, facet, s);
 }
 
-template < class PCT, class PCDS >
-typename Pure_complex<PCT, PCDS>::Simplex_handle
-Pure_complex<PCT, PCDS>
+template < class PCT, class TDS >
+typename Pure_complex<PCT, TDS>::Simplex_handle
+Pure_complex<PCT, TDS>
 ::locate(const Point & p, Vertex_handle v) const
 {
     if( Vertex_handle() != v )
@@ -1003,9 +1003,9 @@ Pure_complex<PCT, PCDS>
 
 // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - VALIDITY
 
-template < class PCT, class PCDS >
+template < class PCT, class TDS >
 bool
-Pure_complex<PCT, PCDS>
+Pure_complex<PCT, TDS>
 ::is_valid(bool verbose, int level) const
 { 
     if( ! pcds().is_valid(verbose, level) )
@@ -1055,8 +1055,8 @@ Pure_complex<PCT, PCDS>
     return true;
 }
 
-template < class PCT, class PCDS >
-bool Pure_complex<PCT, PCDS>::are_incident_simplices_valid(Vertex_const_handle v, bool verbose, int level) const
+template < class PCT, class TDS >
+bool Pure_complex<PCT, TDS>::are_incident_simplices_valid(Vertex_const_handle v, bool verbose, int level) const
 {
     if( current_dimension() <= 0 )
         return true;
@@ -1089,9 +1089,9 @@ bool Pure_complex<PCT, PCDS>::are_incident_simplices_valid(Vertex_const_handle v
 
 // FUNCTIONS THAT ARE NOT MEMBER FUNCTIONS:
 
-template < class PCT, class PCDS >
+template < class PCT, class TDS >
 std::istream & 
-operator>>(std::istream & is, Pure_complex<PCT, PCDS> & tr)
+operator>>(std::istream & is, Pure_complex<PCT, TDS> & tr)
   // reads :
   // - the dimensions (ambient and current)
   // - the number of finite vertices
@@ -1101,7 +1101,7 @@ operator>>(std::istream & is, Pure_complex<PCT, PCDS> & tr)
   // of vertices, plus the non combinatorial information on each simplex
   // - the neighbors of each simplex by their index in the preceding list
 {
-    typedef Pure_complex<PCT, PCDS> PC;
+    typedef Pure_complex<PCT, TDS> PC;
     typedef typename PC::Vertex_handle         Vertex_handle;
     typedef typename PC::Vertex_iterator       Vertex_iterator;
     typedef typename PC::Simplex_handle        Simplex_handle;
@@ -1144,9 +1144,9 @@ operator>>(std::istream & is, Pure_complex<PCT, PCDS> & tr)
    return tr.pcds().read_simplices(is, vertices);
 }
 
-template < class PCT, class PCDS >
+template < class PCT, class TDS >
 std::ostream & 
-operator<<(std::ostream & os, const Pure_complex<PCT, PCDS> & tr)
+operator<<(std::ostream & os, const Pure_complex<PCT, TDS> & tr)
   // writes :
   // - the dimensions (ambient and current)
   // - the number of finite vertices
@@ -1156,7 +1156,7 @@ operator<<(std::ostream & os, const Pure_complex<PCT, PCDS> & tr)
   // of vertices, plus the non combinatorial information on each simplex
   // - the neighbors of each simplex by their index in the preceding list
 {
-    typedef Pure_complex<PCT, PCDS> PC;
+    typedef Pure_complex<PCT, TDS> PC;
     typedef typename PC::Vertex_const_handle         Vertex_handle;
     typedef typename PC::Vertex_const_iterator       Vertex_iterator;
     typedef typename PC::Simplex_const_handle        Simplex_handle;
@@ -1197,4 +1197,4 @@ operator<<(std::ostream & os, const Pure_complex<PCT, PCDS> & tr)
 
 } //namespace CGAL
 
-#endif // CGAL_PURE_COMPLEX_H
+#endif // CGAL_TRIANGULATION_H

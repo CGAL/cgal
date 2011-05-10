@@ -15,29 +15,29 @@
 //
 // Author(s)    : Samuel Hornus
 
-#ifndef CGAL_INTERNAL_PURE_COMPLEX_UTILITIES_H
-#define CGAL_INTERNAL_PURE_COMPLEX_UTILITIES_H
+#ifndef CGAL_INTERNAL_TRIANGULATION_UTILITIES_H
+#define CGAL_INTERNAL_TRIANGULATION_UTILITIES_H
 
 #include <CGAL/basic.h>
 
 namespace CGAL {
 
 namespace internal {
-namespace Pure_complex {
+namespace Triangulation {
 
-template< class PCDS >
+template< class TDS >
 struct Dark_simplex_data
 {
-    typedef typename PCDS::Simplex_handle Simplex_handle;
+    typedef typename TDS::Simplex_handle Simplex_handle;
     Simplex_handle light_copy_;
     int count_;
     Dark_simplex_data() : light_copy_(), count_(0) {}
 };
 
-template< class PCDS >
+template< class TDS >
 struct Compare_faces_with_common_first_vertex
 {
-    typedef typename PCDS::Face Face;
+    typedef typename TDS::Face Face;
 
     const int d_;
 
@@ -130,9 +130,9 @@ struct Point_from_pointer
 };
 
 
-}; // namespace Pure_complex
+}; // namespace Triangulation
 }; // namespace internal
 
 } //namespace CGAL
 
-#endif // CGAL_INTERNAL_PURE_COMPLEX_UTILITIES_H
+#endif // CGAL_INTERNAL_TRIANGULATION_UTILITIES_H

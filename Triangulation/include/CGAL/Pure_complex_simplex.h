@@ -15,8 +15,8 @@
 //
 // Author(s)    : Samuel Hornus
 
-#ifndef CGAL_PURE_COMPLEX_SIMPLEX_H
-#define CGAL_PURE_COMPLEX_SIMPLEX_H
+#ifndef CGAL_TRIANGULATION_SIMPLEX_H
+#define CGAL_TRIANGULATION_SIMPLEX_H
 
 #include <CGAL/Pure_complex_ds_simplex.h>
 #include <CGAL/Iterator_project.h>
@@ -26,13 +26,13 @@ namespace CGAL {
 
 struct No_simplex_data {};
 
-template< class PCTraits, typename Data_ = No_simplex_data, class PCDSSimplex = Default >
-class Pure_complex_simplex : public Default::Get<PCDSSimplex, Pure_complex_ds_simplex<> >::type
+template< class PCTraits, typename Data_ = No_simplex_data, class TDSSimplex = Default >
+class Pure_complex_simplex : public Default::Get<TDSSimplex, Pure_complex_ds_simplex<> >::type
 {
-    // The default type for PCDSSimplex is Pure_complex_ds_simplex<> :
-    typedef typename Default::Get<PCDSSimplex, Pure_complex_ds_simplex<> >::type
+    // The default type for TDSSimplex is Pure_complex_ds_simplex<> :
+    typedef typename Default::Get<TDSSimplex, Pure_complex_ds_simplex<> >::type
                                                                 Base;
-    typedef Pure_complex_simplex<PCTraits, Data_, PCDSSimplex>  Self;
+    typedef Pure_complex_simplex<PCTraits, Data_, TDSSimplex>  Self;
 public:
     typedef Data_                                       Data;
     typedef typename Base::Vertex_handle                Vertex_handle;
@@ -50,11 +50,11 @@ public:
     using Base::vertices_begin;
     using Base::vertices_end;
 
-    template< class PCDS2 >
-    struct Rebind_PCDS
+    template< class TDS2 >
+    struct Rebind_TDS
     {
-        typedef typename Base::template Rebind_PCDS<PCDS2>::Other PCDSSimplex2;
-        typedef Pure_complex_simplex<PCTraits, Data_, PCDSSimplex2> Other;
+        typedef typename Base::template Rebind_TDS<TDS2>::Other TDSSimplex2;
+        typedef Pure_complex_simplex<PCTraits, Data_, TDSSimplex2> Other;
     };
 
     Pure_complex_simplex(const int d)
@@ -131,9 +131,9 @@ operator<<(std::ostream & os, const No_simplex_data & nd)
     return os;
 }
 
-template < typename PCDS, typename Data, typename SSP >
+template < typename TDS, typename Data, typename SSP >
 std::ostream &
-operator<<(std::ostream & O, const Pure_complex_simplex<PCDS, Data, SSP> & s)
+operator<<(std::ostream & O, const Pure_complex_simplex<TDS, Data, SSP> & s)
 {
     /*if( is_ascii(O) )
     {
@@ -144,9 +144,9 @@ operator<<(std::ostream & O, const Pure_complex_simplex<PCDS, Data, SSP> & s)
     return O;
 }
 
-template < typename PCDS, typename Data, typename SSP >
+template < typename TDS, typename Data, typename SSP >
 std::istream &
-operator>>(std::istream & I, Pure_complex_simplex<PCDS, Data, SSP> & s)
+operator>>(std::istream & I, Pure_complex_simplex<TDS, Data, SSP> & s)
 {
     /*if( is_ascii(I) )
     {}
@@ -157,4 +157,4 @@ operator>>(std::istream & I, Pure_complex_simplex<PCDS, Data, SSP> & s)
 
 } //namespace CGAL
 
-#endif // CGAL_PURE_COMPLEX_SIMPLEX_H
+#endif // CGAL_TRIANGULATION_SIMPLEX_H

@@ -15,15 +15,15 @@
 //
 // Author(s)    : Samuel Hornus
 
-#ifndef CGAL_INTERNAL_PURE_COMPLEX_DUMMY_PCDS_H
-#define CGAL_INTERNAL_PURE_COMPLEX_DUMMY_PCDS_H
+#ifndef CGAL_INTERNAL_TRIANGULATION_DUMMY_TDS_H
+#define CGAL_INTERNAL_TRIANGULATION_DUMMY_TDS_H
 
 namespace CGAL {
 
 namespace internal {
-namespace Pure_complex {
+namespace Triangulation {
 
-struct Dummy_PCDS
+struct Dummy_TDS
 { 
     struct Vertex {};
     struct Vertex_handle {};
@@ -38,9 +38,9 @@ struct Dummy_PCDS
     struct Vertex_handle_const_iterator {};
 };
 
-}; // namespace Pure_complex
+}; // namespace Triangulation
 }; // namespace internal
 
 } //namespace CGAL
 
-#endif // CGAL_INTERNAL_PURE_COMPLEX_DUMMY_PCDS_H
+#endif // CGAL_INTERNAL_TRIANGULATION_DUMMY_TDS_H

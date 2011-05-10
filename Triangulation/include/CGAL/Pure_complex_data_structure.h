@@ -15,8 +15,8 @@
 //
 // Author(s)    : Samuel Hornus
 
-#ifndef CGAL_PURE_COMPLEX_DATA_STRUCTURE_H
-#define CGAL_PURE_COMPLEX_DATA_STRUCTURE_H
+#ifndef CGAL_TRIANGULATION_DATA_STRUCTURE_H
+#define CGAL_TRIANGULATION_DATA_STRUCTURE_H
 
 #include <CGAL/basic.h>
 #include <CGAL/tuple.h>
@@ -47,8 +47,8 @@ class Pure_complex_data_structure
     typedef typename Default::Get<Sb, Pure_complex_ds_simplex<> >::type S_base;
 
 public:
-    typedef typename V_base::template Rebind_PCDS<Self>::Other  Vertex;
-    typedef typename S_base::template Rebind_PCDS<Self>::Other  Simplex;
+    typedef typename V_base::template Rebind_TDS<Self>::Other  Vertex;
+    typedef typename S_base::template Rebind_TDS<Self>::Other  Simplex;
 
 protected:
     typedef Compact_container<Vertex>   Vertex_container;
@@ -70,7 +70,7 @@ public:
     typedef typename Simplex_container::const_iterator  Simplex_const_handle;
     typedef typename Simplex_container::const_iterator  Simplex_const_iterator;
 
-    typedef internal::Pure_complex::Pure_complex_ds_facet_iterator<Self>
+    typedef internal::Triangulation::Triangulation_ds_facet_iterator<Self>
                                                         Facet_iterator;
 
     /* The 2 types defined below, |Facet| and |Rotor| are used when traversing
@@ -650,7 +650,7 @@ Pure_complex_data_structure<Dim, Vb, Sb>
     Vertices vertices(1 + current_dimension());
     Indices sorted_idx(1 + current_dimension());
     // setup Face comparator and Face_set
-    typedef internal::Pure_complex::Compare_faces_with_common_first_vertex<Self>
+    typedef internal::Triangulation::Compare_faces_with_common_first_vertex<Self>
         Upper_face_comparator;
     Upper_face_comparator ufc(d);
     typedef std::set<Face, Upper_face_comparator> Face_set;
@@ -1489,4 +1489,4 @@ operator<<(std::ostream & os, const Pure_complex_data_structure<Dimen, Vb, Sb> &
 
 } //namespace CGAL
 
-#endif // CGAL_PURE_COMPLEX_DATA_STRUCTURE_H
+#endif // CGAL_TRIANGULATION_DATA_STRUCTURE_H

@@ -15,8 +15,8 @@
 //
 // Author(s)    : Samuel Hornus
 
-#ifndef CGAL_PCDS_SIMPLEX_MIRROR_STORAGE_POLICY_H
-#define CGAL_PCDS_SIMPLEX_MIRROR_STORAGE_POLICY_H
+#ifndef CGAL_TDS_SIMPLEX_MIRROR_STORAGE_POLICY_H
+#define CGAL_TDS_SIMPLEX_MIRROR_STORAGE_POLICY_H
 
 #include <CGAL/PCDS_simplex_default_storage_policy.h>
 
@@ -24,13 +24,13 @@ namespace CGAL {
 
 // POLICY TAGS
 
-struct PCDS_simplex_mirror_storage_policy {}; // Stores the mirror index of all vertices.
+struct TDS_simplex_mirror_storage_policy {}; // Stores the mirror index of all vertices.
 
 template< typename Vertex_handle, typename Simplex_handle, typename Ambient_dimension >
-struct   PCS_data< Vertex_handle, Simplex_handle, Ambient_dimension, PCDS_simplex_mirror_storage_policy >
-: public PCS_data< Vertex_handle, Simplex_handle, Ambient_dimension, PCDS_simplex_default_storage_policy >
+struct   TS_data< Vertex_handle, Simplex_handle, Ambient_dimension, TDS_simplex_mirror_storage_policy >
+: public TS_data< Vertex_handle, Simplex_handle, Ambient_dimension, TDS_simplex_default_storage_policy >
 {
-    typedef PCS_data< Vertex_handle, Simplex_handle, Ambient_dimension, PCDS_simplex_default_storage_policy > Base;
+    typedef TS_data< Vertex_handle, Simplex_handle, Ambient_dimension, TDS_simplex_default_storage_policy > Base;
     typedef typename Base::Vertex_handle_array          Vertex_handle_array;
     typedef typename Base::Simplex_handle_array         Simplex_handle_array;
     typedef typename internal::S_or_D_array< int, typename Base::Dimen_plus >   Int_array;
@@ -39,7 +39,7 @@ private:
     Int_array            mirror_vertices_;
 
 public:
-    PCS_data(const int dmax)
+    TS_data(const int dmax)
     : Base(dmax), mirror_vertices_(dmax+1)
     {}
 
@@ -67,4 +67,4 @@ public:
 
 } //namespace CGAL
 
-#endif // CGAL_PCDS_SIMPLEX_MIRROR_STORAGE_POLICY_H
+#endif // CGAL_TDS_SIMPLEX_MIRROR_STORAGE_POLICY_H

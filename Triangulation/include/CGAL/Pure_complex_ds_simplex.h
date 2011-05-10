@@ -15,8 +15,8 @@
 //
 // Author(s)    : Samuel Hornus
 
-#ifndef CGAL_PURE_COMPLEX_DS_SIMPLEX_H
-#define CGAL_PURE_COMPLEX_DS_SIMPLEX_H
+#ifndef CGAL_TRIANGULATION_DS_SIMPLEX_H
+#define CGAL_TRIANGULATION_DS_SIMPLEX_H
 
 #include <CGAL/PCDS_simplex_default_storage_policy.h>
 #include <CGAL/PCDS_simplex_mirror_storage_policy.h>
@@ -28,30 +28,30 @@
 
 namespace CGAL {
 
-template< class PCDS = void, typename SimplexStoragePolicy = Default >
+template< class TDS = void, typename SimplexStoragePolicy = Default >
 class Pure_complex_ds_simplex
 {
-    typedef typename Default::Get<SimplexStoragePolicy, PCDS_simplex_default_storage_policy>::type
+    typedef typename Default::Get<SimplexStoragePolicy, TDS_simplex_default_storage_policy>::type
                                                     Storage_policy;
-    typedef Pure_complex_ds_simplex<PCDS>           Self;
-    typedef typename PCDS::Ambient_dimension        Ambient_dimension;
+    typedef Pure_complex_ds_simplex<TDS>           Self;
+    typedef typename TDS::Ambient_dimension        Ambient_dimension;
 
 public:
-    typedef typename PCDS::Face                     Face;
-    typedef typename PCDS::Vertex_handle            Vertex_handle;
-    typedef typename PCDS::Simplex_handle           Simplex_handle;
-    typedef typename PCDS::Vertex_const_handle      Vertex_const_handle;
-    typedef typename PCDS::Simplex_const_handle     Simplex_const_handle;
+    typedef typename TDS::Face                     Face;
+    typedef typename TDS::Vertex_handle            Vertex_handle;
+    typedef typename TDS::Simplex_handle           Simplex_handle;
+    typedef typename TDS::Vertex_const_handle      Vertex_const_handle;
+    typedef typename TDS::Simplex_const_handle     Simplex_const_handle;
     template< typename PC2 >
-    struct Rebind_PCDS
+    struct Rebind_TDS
     {
         typedef Pure_complex_ds_simplex<PC2, SimplexStoragePolicy> Other;
     };
 
 private: // STORAGE
-    typedef PCS_data< Vertex_handle, Simplex_handle,
+    typedef TS_data< Vertex_handle, Simplex_handle,
                       Ambient_dimension, Storage_policy >   Combinatorics;
-    friend class PCS_data< Vertex_handle, Simplex_handle,
+    friend class TS_data< Vertex_handle, Simplex_handle,
                       Ambient_dimension, Storage_policy >;
     // array of vertices
     typedef typename Combinatorics::Vertex_handle_array     Vertex_handle_array;
@@ -221,7 +221,7 @@ public:
                 }
                 // Here, we can't check if neighbor(i) counts *this as a neighbor
                 // because we can't construct a Simplex_handle to *this...
-                // So we have to do this check in the `parent' class (PCDS)
+                // So we have to do this check in the `parent' class (TDS)
             }
         }
         return true;
@@ -244,9 +244,9 @@ private:
 
 // FUNCTIONS THAT ARE NOT MEMBER FUNCTIONS:
 
-template < typename PCDS, typename SSP >
+template < typename TDS, typename SSP >
 std::ostream &
-operator<<(std::ostream & O, const Pure_complex_ds_simplex<PCDS,SSP> & s)
+operator<<(std::ostream & O, const Pure_complex_ds_simplex<TDS,SSP> & s)
 {
     /*if( is_ascii(O) )
     {
@@ -256,9 +256,9 @@ operator<<(std::ostream & O, const Pure_complex_ds_simplex<PCDS,SSP> & s)
     return O;
 }
 
-template < typename PCDS, typename SSP >
+template < typename TDS, typename SSP >
 std::istream &
-operator>>(std::istream & I, Pure_complex_ds_simplex<PCDS,SSP> & s)
+operator>>(std::istream & I, Pure_complex_ds_simplex<TDS,SSP> & s)
 {
     /*if( is_ascii(I) )
     {}
@@ -274,14 +274,14 @@ template< typename StoragePolicy >
 class Pure_complex_ds_simplex<void, StoragePolicy>
 {
 public:
-    typedef internal::Pure_complex::Dummy_PCDS          PC;
+    typedef internal::Triangulation::Dummy_TDS          PC;
     typedef PC::Vertex_handle   Vertex_handle;
     typedef PC::Vertex_const_handle   Vertex_const_handle;
     typedef PC::Simplex_handle  Simplex_handle;
     typedef PC::Simplex_const_handle  Simplex_const_handle;
     typedef PC::Vertex_handle_const_iterator Vertex_handle_const_iterator;
     template <typename PC2>
-    struct Rebind_PCDS
+    struct Rebind_TDS
     {
         typedef Pure_complex_ds_simplex<PC2, StoragePolicy> Other;
     };
@@ -291,4 +291,4 @@ public:
 
 } //namespace CGAL
 
-#endif // CGAL_PURE_COMPLEX_DS_SIMPLEX_H
+#endif // CGAL_TRIANGULATION_DS_SIMPLEX_H

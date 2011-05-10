@@ -15,8 +15,8 @@
 //
 // Author(s)    : Samuel Hornus
 
-#ifndef CGAL_REGULAR_COMPLEX_H
-#define CGAL_REGULAR_COMPLEX_H
+#ifndef CGAL_REGULAR_TRIANGULATION_H
+#define CGAL_REGULAR_TRIANGULATION_H
 
 #include <CGAL/Pure_complex.h>
 #include <CGAL/Dimension.h>
@@ -24,10 +24,10 @@
 
 namespace CGAL {
 
-template< typename RCTraits, typename PCDS_ = Default >
+template< typename RCTraits, typename TDS_ = Default >
 class Regular_complex
 : public Pure_complex<RCTraits,
-         typename Default::Get<PCDS_, Pure_complex_data_structure<
+         typename Default::Get<TDS_, Pure_complex_data_structure<
                              typename Ambient_dimension<typename RCTraits::Point_d>::type,
                              Pure_complex_vertex<RCTraits>,
                              Pure_complex_simplex<RCTraits> >
@@ -35,13 +35,13 @@ class Regular_complex
 {
     typedef typename Ambient_dimension<typename RCTraits::Point_d>::type
                                                     Ambient_dimension_;
-    typedef typename Default::Get<PCDS_, Pure_complex_data_structure<
+    typedef typename Default::Get<TDS_, Pure_complex_data_structure<
                          Ambient_dimension_,
                          Pure_complex_vertex<RCTraits>,
                          Pure_complex_simplex<RCTraits> >
-                >::type                         PCDS;
-    typedef Pure_complex<RCTraits, PCDS>        Base;
-    typedef Regular_complex<RCTraits, PCDS_>    Self;
+                >::type                         TDS;
+    typedef Pure_complex<RCTraits, TDS>        Base;
+    typedef Regular_complex<RCTraits, TDS_>    Self;
 
 public:
     typedef Ambient_dimension_                  Ambient_dimension;
@@ -49,4 +49,4 @@ public:
 
 } //namespace CGAL
 
-#endif CGAL_REGULAR_COMPLEX_H
+#endif CGAL_REGULAR_TRIANGULATION_H

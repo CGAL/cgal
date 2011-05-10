@@ -15,8 +15,8 @@
 //
 // Author(s)    : Samuel Hornus
 
-#ifndef CGAL_PURE_COMPLEX_VERTEX_H
-#define CGAL_PURE_COMPLEX_VERTEX_H
+#ifndef CGAL_TRIANGULATION_VERTEX_H
+#define CGAL_TRIANGULATION_VERTEX_H
 
 #include <CGAL/Pure_complex_ds_vertex.h>
 #include <CGAL/Default.h>
@@ -26,24 +26,24 @@ namespace CGAL {
 
 struct No_vertex_data {};
 
-template< class PCTraits, typename Data_ = No_vertex_data, class PCDSVertex = Default >
-class Pure_complex_vertex : public Default::Get<PCDSVertex, Pure_complex_ds_vertex<> >::type
+template< class PCTraits, typename Data_ = No_vertex_data, class TDSVertex = Default >
+class Pure_complex_vertex : public Default::Get<TDSVertex, Pure_complex_ds_vertex<> >::type
 {
-    // The default type for PCDSVertex is Pure_complex_ds_vertex<> :
-    typedef typename Default::Get<PCDSVertex, Pure_complex_ds_vertex<> >::type
+    // The default type for TDSVertex is Pure_complex_ds_vertex<> :
+    typedef typename Default::Get<TDSVertex, Pure_complex_ds_vertex<> >::type
                                                                 Base;
-    typedef Pure_complex_vertex<PCTraits, Data_, PCDSVertex>    Self;
+    typedef Pure_complex_vertex<PCTraits, Data_, TDSVertex>    Self;
 public:
     typedef Data_                               Data;
     typedef typename PCTraits::Point_d          Point;
     typedef typename PCTraits::Point_d          Point_d;
     typedef typename Base::Simplex_handle       Simplex_handle;
 
-    template <typename PCDS2>
-    struct Rebind_PCDS
+    template <typename TDS2>
+    struct Rebind_TDS
     {
-        typedef typename Base::template Rebind_PCDS<PCDS2>::Other PCDSVertex2;
-        typedef Pure_complex_vertex<PCTraits, Data_, PCDSVertex2> Other;
+        typedef typename Base::template Rebind_TDS<TDS2>::Other TDSVertex2;
+        typedef Pure_complex_vertex<PCTraits, Data_, TDSVertex2> Other;
     };
 
 private: // DATA MEMBERS
@@ -122,4 +122,4 @@ operator<<(std::ostream & os, const Pure_complex_vertex<A, Data, B> & v)
 
 } //namespace CGAL
 
-#endif // CGAL_PURE_COMPLEX_VERTEX_H
+#endif // CGAL_TRIANGULATION_VERTEX_H
