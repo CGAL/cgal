@@ -18,7 +18,7 @@
 #ifndef CGAL_TRIANGULATION_VERTEX_H
 #define CGAL_TRIANGULATION_VERTEX_H
 
-#include <CGAL/Pure_complex_ds_vertex.h>
+#include <CGAL/Triangulation_ds_vertex.h>
 #include <CGAL/Default.h>
 #include <CGAL/Random.h>
 
@@ -26,24 +26,24 @@ namespace CGAL {
 
 struct No_vertex_data {};
 
-template< class PCTraits, typename Data_ = No_vertex_data, class TDSVertex = Default >
-class Pure_complex_vertex : public Default::Get<TDSVertex, Pure_complex_ds_vertex<> >::type
+template< class TriangulationTraits, typename Data_ = No_vertex_data, class TDSVertex = Default >
+class Pure_complex_vertex : public Default::Get<TDSVertex, Triangulation_ds_vertex<> >::type
 {
-    // The default type for TDSVertex is Pure_complex_ds_vertex<> :
-    typedef typename Default::Get<TDSVertex, Pure_complex_ds_vertex<> >::type
+    // The default type for TDSVertex is Triangulation_ds_vertex<> :
+    typedef typename Default::Get<TDSVertex, Triangulation_ds_vertex<> >::type
                                                                 Base;
-    typedef Pure_complex_vertex<PCTraits, Data_, TDSVertex>    Self;
+    typedef Pure_complex_vertex<TriangulationTraits, Data_, TDSVertex>    Self;
 public:
     typedef Data_                               Data;
-    typedef typename PCTraits::Point_d          Point;
-    typedef typename PCTraits::Point_d          Point_d;
+    typedef typename TriangulationTraits::Point_d          Point;
+    typedef typename TriangulationTraits::Point_d          Point_d;
     typedef typename Base::Simplex_handle       Simplex_handle;
 
     template <typename TDS2>
     struct Rebind_TDS
     {
         typedef typename Base::template Rebind_TDS<TDS2>::Other TDSVertex2;
-        typedef Pure_complex_vertex<PCTraits, Data_, TDSVertex2> Other;
+        typedef Pure_complex_vertex<TriangulationTraits, Data_, TDSVertex2> Other;
     };
 
 private: // DATA MEMBERS

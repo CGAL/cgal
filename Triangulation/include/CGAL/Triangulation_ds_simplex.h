@@ -29,11 +29,11 @@
 namespace CGAL {
 
 template< class TDS = void, typename SimplexStoragePolicy = Default >
-class Pure_complex_ds_simplex
+class Triangulation_ds_simplex
 {
     typedef typename Default::Get<SimplexStoragePolicy, TDS_simplex_default_storage_policy>::type
                                                     Storage_policy;
-    typedef Pure_complex_ds_simplex<TDS>           Self;
+    typedef Triangulation_ds_simplex<TDS>           Self;
     typedef typename TDS::Ambient_dimension        Ambient_dimension;
 
 public:
@@ -42,10 +42,10 @@ public:
     typedef typename TDS::Simplex_handle           Simplex_handle;
     typedef typename TDS::Vertex_const_handle      Vertex_const_handle;
     typedef typename TDS::Simplex_const_handle     Simplex_const_handle;
-    template< typename PC2 >
+    template< typename TDS2 >
     struct Rebind_TDS
     {
-        typedef Pure_complex_ds_simplex<PC2, SimplexStoragePolicy> Other;
+        typedef Triangulation_ds_simplex<TDS2, SimplexStoragePolicy> Other;
     };
 
 private: // STORAGE
@@ -67,7 +67,7 @@ private: // STORAGE
 public:
     typedef typename Vertex_handle_array::const_iterator    Vertex_handle_const_iterator;
 
-    Pure_complex_ds_simplex(const int dmax)
+    Triangulation_ds_simplex(const int dmax)
     : flags_(0), combinatorics_(dmax)
     {
 		CGAL_assertion( dmax > 0 );
@@ -79,11 +79,11 @@ public:
         }
     }
 
-    Pure_complex_ds_simplex(const Pure_complex_ds_simplex & s)
+    Triangulation_ds_simplex(const Triangulation_ds_simplex & s)
     : flags_(s.flags_), combinatorics_(s.combinatorics_)
     {}
 
-    ~Pure_complex_ds_simplex() {}
+    ~Triangulation_ds_simplex() {}
 
     int ambient_dimension() const
     {
@@ -246,7 +246,7 @@ private:
 
 template < typename TDS, typename SSP >
 std::ostream &
-operator<<(std::ostream & O, const Pure_complex_ds_simplex<TDS,SSP> & s)
+operator<<(std::ostream & O, const Triangulation_ds_simplex<TDS,SSP> & s)
 {
     /*if( is_ascii(O) )
     {
@@ -258,7 +258,7 @@ operator<<(std::ostream & O, const Pure_complex_ds_simplex<TDS,SSP> & s)
 
 template < typename TDS, typename SSP >
 std::istream &
-operator>>(std::istream & I, Pure_complex_ds_simplex<TDS,SSP> & s)
+operator>>(std::istream & I, Triangulation_ds_simplex<TDS,SSP> & s)
 {
     /*if( is_ascii(I) )
     {}
@@ -271,19 +271,19 @@ operator>>(std::istream & I, Pure_complex_ds_simplex<TDS,SSP> & s)
 // we must declare it for each possible simplex storage policy because :
 // (GCC error:) default template arguments may not be used in partial specializations
 template< typename StoragePolicy >
-class Pure_complex_ds_simplex<void, StoragePolicy>
+class Triangulation_ds_simplex<void, StoragePolicy>
 {
 public:
-    typedef internal::Triangulation::Dummy_TDS          PC;
-    typedef PC::Vertex_handle   Vertex_handle;
-    typedef PC::Vertex_const_handle   Vertex_const_handle;
-    typedef PC::Simplex_handle  Simplex_handle;
-    typedef PC::Simplex_const_handle  Simplex_const_handle;
-    typedef PC::Vertex_handle_const_iterator Vertex_handle_const_iterator;
-    template <typename PC2>
+    typedef internal::Triangulation::Dummy_TDS          TDS;
+    typedef TDS::Vertex_handle   Vertex_handle;
+    typedef TDS::Vertex_const_handle   Vertex_const_handle;
+    typedef TDS::Simplex_handle  Simplex_handle;
+    typedef TDS::Simplex_const_handle  Simplex_const_handle;
+    typedef TDS::Vertex_handle_const_iterator Vertex_handle_const_iterator;
+    template <typename TDS2>
     struct Rebind_TDS
     {
-        typedef Pure_complex_ds_simplex<PC2, StoragePolicy> Other;
+        typedef Triangulation_ds_simplex<TDS2, StoragePolicy> Other;
     };
     Vertex_handle_const_iterator vertices_begin();
     Vertex_handle_const_iterator vertices_end();

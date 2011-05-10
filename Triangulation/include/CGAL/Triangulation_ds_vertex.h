@@ -18,29 +18,27 @@
 #ifndef CGAL_TRIANGULATION_DS_VERTEX_H
 #define CGAL_TRIANGULATION_DS_VERTEX_H
 
-//#include <CGAL/basic.h>
-//#include <CGAL/Iterator_project.h>
 #include <CGAL/Compact_container.h>
 #include <CGAL/internal/Triangulation/Dummy_TDS.h>
 
 namespace CGAL {
 
-/* TDS must be a model of the concept 'PureComplexDataStructure' that 
-    stores vertices of type 'Pure_complex_ds_vertex<Pure_complex>'
+/* The template parameter TDS must be a model of the concept
+ * 'TriangulationDataStructure' that stores vertices of type
+ * 'Triangulation_ds_vertex<TDS>'
  */
-
 template< class TDS = void >
-class Pure_complex_ds_vertex 
+class Triangulation_ds_vertex 
 {
-    typedef Pure_complex_ds_vertex<TDS> Self;
+    typedef Triangulation_ds_vertex<TDS> Self;
 
 public:
     typedef typename TDS::Simplex_handle       Simplex_handle;
 
-    template <typename PC2>
+    template <typename TDS2>
     struct Rebind_TDS
     {
-        typedef Pure_complex_ds_vertex<PC2> Other;
+        typedef Triangulation_ds_vertex<TDS2> Other;
     };
 
 protected: // DATA MEMBERS
@@ -48,14 +46,14 @@ protected: // DATA MEMBERS
 
 public:	
     // Constructs a vertex with adjacent simplex 's'
-    Pure_complex_ds_vertex(Simplex_handle s) : simplex_(s)
+    Triangulation_ds_vertex(Simplex_handle s) : simplex_(s)
     {
         CGAL_assertion( Simplex_handle() != s );
     }
     // Constructs a vertex with no adjacent simplex
-    Pure_complex_ds_vertex() : simplex_() {}
+    Triangulation_ds_vertex() : simplex_() {}
 
-    ~Pure_complex_ds_vertex() {}
+    ~Triangulation_ds_vertex() {}
 
     /// Set 's' as an adjacent simplex
     void set_simplex(Simplex_handle s)
@@ -85,13 +83,13 @@ public: // FOR MEMORY MANAGEMENT
     void*   for_compact_container() const { return simplex_.for_compact_container(); }
     void* & for_compact_container()       { return simplex_.for_compact_container(); }
 
-};  // end of Pure_complex_ds_vertex
+};  // end of Triangulation_ds_vertex
 
 // FUNCTIONS THAT ARE NOT MEMBER FUNCTIONS:
 
 template < class TDS >
 std::istream &
-operator>>(std::istream & is, Pure_complex_ds_vertex<TDS> & v)
+operator>>(std::istream & is, Triangulation_ds_vertex<TDS> & v)
 {
     /*if( is_ascii(is) )
     {}
@@ -101,7 +99,7 @@ operator>>(std::istream & is, Pure_complex_ds_vertex<TDS> & v)
 
 template< class TDS >
 std::ostream &
-operator<<(std::ostream & os, const Pure_complex_ds_vertex<TDS> & v)
+operator<<(std::ostream & os, const Triangulation_ds_vertex<TDS> & v)
 {
     /*if( is_ascii(os) )
     {
@@ -114,15 +112,15 @@ operator<<(std::ostream & os, const Pure_complex_ds_vertex<TDS> & v)
 // Special case: specialization when template parameter is void.
 
 template<>
-class Pure_complex_ds_vertex<void>
+class Triangulation_ds_vertex<void>
 {
 public:
-    typedef internal::Triangulation::Dummy_TDS  Pure_complex_ds;
-    typedef Pure_complex_ds::Simplex_handle     Simplex_handle;
-    template <typename PC2>
+    typedef internal::Triangulation::Dummy_TDS  Triangulation_ds;
+    typedef Triangulation_ds::Simplex_handle     Simplex_handle;
+    template <typename TDS2>
     struct Rebind_TDS
     {
-        typedef Pure_complex_ds_vertex<PC2> Other;
+        typedef Triangulation_ds_vertex<TDS2> Other;
     };
 };
 

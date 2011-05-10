@@ -18,7 +18,7 @@
 #ifndef CGAL_TRIANGULATION_SIMPLEX_H
 #define CGAL_TRIANGULATION_SIMPLEX_H
 
-#include <CGAL/Pure_complex_ds_simplex.h>
+#include <CGAL/Triangulation_ds_simplex.h>
 #include <CGAL/Iterator_project.h>
 #include <CGAL/Default.h>
 
@@ -26,21 +26,21 @@ namespace CGAL {
 
 struct No_simplex_data {};
 
-template< class PCTraits, typename Data_ = No_simplex_data, class TDSSimplex = Default >
-class Pure_complex_simplex : public Default::Get<TDSSimplex, Pure_complex_ds_simplex<> >::type
+template< class TriangulationTraits, typename Data_ = No_simplex_data, class TDSSimplex = Default >
+class Pure_complex_simplex : public Default::Get<TDSSimplex, Triangulation_ds_simplex<> >::type
 {
-    // The default type for TDSSimplex is Pure_complex_ds_simplex<> :
-    typedef typename Default::Get<TDSSimplex, Pure_complex_ds_simplex<> >::type
+    // The default type for TDSSimplex is Triangulation_ds_simplex<> :
+    typedef typename Default::Get<TDSSimplex, Triangulation_ds_simplex<> >::type
                                                                 Base;
-    typedef Pure_complex_simplex<PCTraits, Data_, TDSSimplex>  Self;
+    typedef Pure_complex_simplex<TriangulationTraits, Data_, TDSSimplex>  Self;
 public:
     typedef Data_                                       Data;
     typedef typename Base::Vertex_handle                Vertex_handle;
     typedef typename Base::Vertex_const_handle          Vertex_const_handle;
     typedef typename Base::Vertex_handle_const_iterator Vertex_handle_const_iterator;
     typedef typename Base::Simplex_const_handle         Simplex_const_handle;
-    typedef typename PCTraits::Point_d                  Point;
-    typedef typename PCTraits::Point_d                  Point_d;
+    typedef typename TriangulationTraits::Point_d                  Point;
+    typedef typename TriangulationTraits::Point_d                  Point_d;
 
 private: // DATA MEMBERS
     Data    data_;
@@ -54,7 +54,7 @@ public:
     struct Rebind_TDS
     {
         typedef typename Base::template Rebind_TDS<TDS2>::Other TDSSimplex2;
-        typedef Pure_complex_simplex<PCTraits, Data_, TDSSimplex2> Other;
+        typedef Pure_complex_simplex<TriangulationTraits, Data_, TDSSimplex2> Other;
     };
 
     Pure_complex_simplex(const int d)
@@ -69,7 +69,7 @@ public:
 
     Point circumcenter() const
     {
-        PCTraits pct;
+        TriangulationTraits pct;
         Vertex_handle_const_iterator vhit = vertices_begin();
         while( vhit != vertices_end() )
         {

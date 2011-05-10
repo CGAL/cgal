@@ -24,8 +24,8 @@
 #include <CGAL/iterator.h>
 #include <CGAL/Compact_container.h>
 #include <CGAL/Triangulation_face.h>
-#include <CGAL/Pure_complex_ds_vertex.h>
-#include <CGAL/Pure_complex_ds_simplex.h>
+#include <CGAL/Triangulation_ds_vertex.h>
+#include <CGAL/Triangulation_ds_simplex.h>
 #include <CGAL/internal/Combination_enumerator.h>
 #include <CGAL/internal/Triangulation/utilities.h>
 #include <CGAL/internal/Triangulation/Triangulation_ds_iterators.h>
@@ -43,8 +43,8 @@ template<   class Dimen,
 class Pure_complex_data_structure
 {
     typedef Pure_complex_data_structure<Dimen, Vb, Sb>                  Self;
-    typedef typename Default::Get<Vb, Pure_complex_ds_vertex<> >::type  V_base;
-    typedef typename Default::Get<Sb, Pure_complex_ds_simplex<> >::type S_base;
+    typedef typename Default::Get<Vb, Triangulation_ds_vertex<> >::type  V_base;
+    typedef typename Default::Get<Sb, Triangulation_ds_simplex<> >::type S_base;
 
 public:
     typedef typename V_base::template Rebind_TDS<Self>::Other  Vertex;

@@ -3908,13 +3908,13 @@ Triangulation/include/CGAL/Convex_hull.h -text
 Triangulation/include/CGAL/Delaunay_complex.h -text
 Triangulation/include/CGAL/Pure_complex.h -text
 Triangulation/include/CGAL/Pure_complex_data_structure.h -text
-Triangulation/include/CGAL/Pure_complex_ds_simplex.h -text
-Triangulation/include/CGAL/Pure_complex_ds_vertex.h -text
 Triangulation/include/CGAL/Pure_complex_simplex.h -text
 Triangulation/include/CGAL/Pure_complex_vertex.h -text
 Triangulation/include/CGAL/Regular_complex.h -text
 Triangulation/include/CGAL/TDS_simplex_default_storage_policy.h -text
 Triangulation/include/CGAL/TDS_simplex_mirror_storage_policy.h -text
+Triangulation/include/CGAL/Triangulation_ds_simplex.h -text
+Triangulation/include/CGAL/Triangulation_ds_vertex.h -text
 Triangulation/include/CGAL/Triangulation_face.h -text
 Triangulation/include/CGAL/internal/Combination_enumerator.h -text
 Triangulation/include/CGAL/internal/Static_or_dynamic_array.h -text
