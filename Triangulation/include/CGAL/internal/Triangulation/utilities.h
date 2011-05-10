@@ -66,17 +66,17 @@ public:
     }
 };
 
-template< class PC >
+template< class T >
 struct Compare_vertices_for_upper_face
 {
-    typedef typename PC::Vertex_const_handle VCH;
+    typedef typename T::Vertex_const_handle VCH;
 
-    const PC & pc_;
+    const T & t_;
 
 public:
 
-    Compare_vertices_for_upper_face(const PC & pc)
-    : pc_(pc)
+    Compare_vertices_for_upper_face(const T & t)
+    : t_(t)
     {}
 
     explicit Compare_vertices_for_upper_face();
@@ -85,40 +85,40 @@ public:
     {
         if( left == right )
             return false;
-        if( pc_.is_infinite(left) )
+        if( t_.is_infinite(left) )
             return true;
-        if( pc_.is_infinite(right) )
+        if( t_.is_infinite(right) )
             return false;
         return left < right;
     }
 };
 
-template< class PC >
+template< class T >
 struct Compare_points_for_perturbation
 {
-    typedef typename PC::Point_d Point;
+    typedef typename T::Point_d Point;
 
-    const PC & pc_;
+    const T & t_;
 
 public:
 
-    Compare_points_for_perturbation(const PC & pc)
-    : pc_(pc)
+    Compare_points_for_perturbation(const T & t)
+    : t_(t)
     {}
 
     explicit Compare_points_for_perturbation();
 
     bool operator()(const Point * left, const Point * right) const
     {
-        return (SMALLER == pc_.geom_traits().compare_lexicographically_d_object()(*left, *right));
+        return (SMALLER == t_.geom_traits().compare_lexicographically_d_object()(*left, *right));
     }
 };
 
-template< class PC >
+template< class T >
 struct Point_from_pointer
 {
-    typedef const typename PC::Point_d *   argument_type;
-    typedef const typename PC::Point_d     result_type;
+    typedef const typename T::Point_d *   argument_type;
+    typedef const typename T::Point_d     result_type;
     result_type & operator()(argument_type & x) const 
     {
         return (*x);

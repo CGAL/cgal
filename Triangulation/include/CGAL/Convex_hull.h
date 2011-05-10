@@ -18,7 +18,7 @@
 /* RANDOM DESIGN IDEAS:
 - Use a policy tag to choose for incremental with inserts only or
   incremental with  removals and inserts.
-  In the first case: use Pure_complex for storage.
+  In the first case: use Triangulation for storage.
   In the second case: use Delaunay !
     In this second case, we must keeps the points that are inserted in the hull,
     as they may become part of the boundary later on, when some points are removed.
@@ -33,18 +33,18 @@ namespace CGAL {
 template <  class CHTraits, class TDS_ = Default >
 class Convex_hull
 {
-    typedef typename Ambient_dimension<typename PCTraits::Point_d>::type
+    typedef typename Ambient_dimension<typename CHTraits::Point_d>::type
                                                     Ambient_dimension_;
-    typedef typename Default::Get<TDS_, Pure_complex_data_structure
+    typedef typename Default::Get<TDS_, Triangulation_data_structure
                     <   Ambient_dimension_,
-                        Pure_complex_vertex<PCTraits>,
-                        Pure_complex_simplex<PCTraits> >
+                        Triangulation_vertex<CHTraits>,
+                        Triangulation_full_cell<CHTraits> >
                         >::type                     TDS;
-    typedef Pure_complex<PCTraits, TDS_>           Self;
+    typedef Convex_hull<CHTraits, TDS_>           Self;
 
-    typedef typename PCTraits::Coaffine_orientation_d
+    typedef typename CHTraits::Coaffine_orientation_d
                                                     Coaffine_orientation_d;
-    typedef typename PCTraits::Orientation_d        Orientation_d;
+    typedef typename CHTraits::Orientation_d        Orientation_d;
 
 public:
 };

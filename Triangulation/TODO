@@ -19,16 +19,16 @@ Pure_complex_locate_type            Triangulation_locate_type
 Pure_complex_simplex                Triangulation_full_cell
 Pure_complex_vertex                 Triangulation_vertex
 RegularComplexTraits                RegularTriangulationTraits 
-Regular_complex                     RegularTriangulation
+Regular_complex                     Regular_triangulation
 
 code
 
-/Pure_complex/Triangulation/
-/Delaunay_complex/Delaunay_triangulation/
-/Simplex/Full_cell/
-/simplex/full_cell/
-/number_of_simplices/number_of_full_cells/
-/gather_simplices/gather_full_cells/
+[DONE] /Pure_complex/Triangulation/
+[DONE] /Delaunay_complex/Delaunay_triangulation/
+[DONE] /Simplex/Full_cell/
+[DONE] /simplex/full_cell/
+[DONE] /number_of_simplices/number_of_full_cells/
+[DONE] /gather_simplices/gather_full_cells/
 /gather_incident_simplices/incident_full_cells/
 /gather_adjacent_simplices/compute_star/
 /gather_incident_simplices/incident_simplices/
@@ -42,7 +42,7 @@ code
 
 is_boundary_facet
 
-to remove (comment)
+to remove (comment) (sam: I find them useful!)
 gather_incident_faces
 gather_incident_upper_faces
 
