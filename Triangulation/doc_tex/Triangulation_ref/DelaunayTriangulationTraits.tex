@@ -1,22 +1,22 @@
 
-\begin{ccRefConcept}{DelaunayComplexTraits}
+\begin{ccRefConcept}{DelaunayTriangulationTraits}
 
 \ccDefinition
 
 The concept \ccRefName\ describes the various types and functions that a class
 has to provide as the first parameter (\ccc{DCTraits}) to the class template
-\ccc{Delaunay_complex<DCTraits, PCDS>}. It brings the geometric ingredient to
+\ccc{Delaunay_triangulation<DTTraits, TDS>}. It brings the geometric ingredient to
 the definition of a Delaunay complex, while the combinatorial ingredient is
-brought by the second template parameter, \ccc{PCDS}.
+brought by the second template parameter, \ccc{TDS}.
 
 \ccRefines
 
-\ccc{PureComplexTraits}.
+\ccc{TriangulationTraits}.
 
 \ccTypes
 
-\ccNestedType{Point_d}{This nested type is defined in the ``parent'' concept
-\ccc{PureComplexTraits}.}
+%\ccNestedType{Point_d}{This nested type is defined in the ``parent'' concept
+%\ccc{TriangulationTraits}.}
 
 \ccNestedType{Side_of_oriented_sphere_d}{A predicate object that must provide
 the templated operator\\\ccc{template<typename ForwardIterator> Oriented_side
@@ -30,9 +30,11 @@ lies on the sphere \ccc{S}. If the simplex \ccc{[start,end)} is positively
 oriented, then the positive side of sphere \ccc{S} corresponds geometrically
 to the bounded side of \ccc{S} and the negative side corresponds to the
 unbounded side of \ccc{S}. If the simplex is negatively oriented, the
-correspondance is inverted. \\ The range's size must of course be one more
-than the dimension of the euclidean space the points live in: \ccPrecond
-\ccc{std::distance(start,end)==start->dimension()+1}. The points in range
+correspondance is inverted. 
+%\\ The range's size must of course be one more
+%than the dimension of the euclidean space the points live in: 
+\ccPrecond
+\ccc{std::distance(start,end)} is equal to \ccc{start->dimension()+1}. The points in range
 \ccc{[start,end)} must be affinely independent, \emph{i.e.,} the simplex must
 not be flat.}
 
@@ -40,25 +42,28 @@ not be flat.}
 provide the templated operator\\\ccc{template<typename ForwardIterator>
 Oriented_side operator()(ForwardIterator start, ForwardIterator end, const
 Point_d & p)}.\\
-Let Aff be the affine subspace spanned by the points in range
+Let $\cal A$ be the affine subspace spanned by the points in range
 \ccc{[start,end)}. The operator behaves in the same way as the above predicate
-\ccc{Side_of_oriented_sphere_d}, but operates in the affine subspace Aff. It
-is guaranteed that the affine subspace Aff is given a consistent orientation
+\ccc{Side_of_oriented_sphere_d}, but operates in the affine subspace $\cal A$. It
+is guaranteed that the affine subspace $\cal A$ is given a consistent orientation
 when it is called many times with simplex points (in range \ccc{[start,end)})
-living in a same affine subspace.\\
-\textbf{Important.} Information about the affine subspace Aff is computed
+living in a same affine subspace.
+\note{
+OD: ce point est a revoir
+\textbf{Important.} Information about the affine subspace $\cal A$ is computed
 \textbf{once} and then stored in the predicate class, so it is wise to keep an
 instance of the predicate around as long as one is sure that the affine
-subspace Aff doesn't change.
-\ccPrecond \ccc{std::distance(start,end)>=3} and
-\ccc{std::distance(start,end)<=start->dimension()+1}. The points in range
-\ccc{[start,end)} must be affinely independent in Aff, \emph{i.e.,} the
-simplex must not be flat in Aff.}
+subspace $\cal A$ doesn't change.}
+\ccPrecond 
+$3\leq$\ccc{std::distance(start,end)}$\leq$\ccc{start->dimension()+1}. The points in range
+\ccc{[start,end)} must be affinely independent in $\cal A$, \emph{i.e.,} the
+simplex must not be flat in $\cal A$.
+}
 
 \ccCreation
 \ccCreationVariable{traits}
 
-\ccConstructor{DelaunayComplexTraits();}{The default constructor.}
+\ccConstructor{DelaunayTriangulationTraits();}{The default constructor.}
 
 \ccOperations
 
@@ -75,10 +80,10 @@ const;}
 
 \ccc{Cartesian_d<FT, Dim, LA>},\\
 \ccc{Simple_cartesian_d<FT, Dim, LA>},\\
-\ccc{Filtered_kernel_d<K>} (recommended).
+\ccc{Filtered_kernel_d<K>} (recommended).\note{c'est quoi K?}
 
 \ccSeeAlso
 
-\ccc{PureComplexTraits}
+\ccc{TriangulationTraits}
 
 \end{ccRefConcept}

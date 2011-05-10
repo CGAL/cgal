@@ -1,79 +1,82 @@
-\begin{ccRefClass}{Delaunay_complex<DCTraits, PCDS>}
+\begin{ccRefClass}{Delaunay_triangulation<DTTraits, TDS>}
 
 \ccDefinition
 
 The class \ccRefName\ is used to maintain the simplices and vertices of a
 Delaunay complex embedded in $\real^D$. It permits point insertion and
-removal. The dimension $D$ should be kept reasonably small: higher than 7 or
-8, you are entering a realm where patience is a highly useful virtue.
+removal. The dimension $D$ should be kept reasonably small,
+see the perfromances section in the user manual for what reasonable
+means.
+%: higher than 7 or 8, 
+%you are entering a realm where patience is a highly useful virtue.
 
-\ccInclude{CGAL/Delaunay_complex.h}
+\ccInclude{CGAL/Delaunay_triangulation.h}
 
 \ccInheritsFrom
-\ccc{Pure_complex<DCTraits, PCDS>}.
+\ccc{Triangulation<DTTraits, TDS>}.
 
 \ccParameters
 
-\ccc{DCTraits} is the geometric traits class that provides the geometric types
-and predicates needed by Delaunay complexes. \ccc{DCTraits} must be a model of
-the concept \ccc{DelaunayComplexTraits}.
+\ccc{DTTraits} is the geometric traits class that provides the geometric types
+and predicates needed by Delaunay complexes. \ccc{DTTraits} must be a model of
+the concept \ccc{DelaunayTriangulationTraits}.
 
-\ccc{PCDS} is the class used to store the underlying pure complex data
-structure. \ccc{PCDS} must be a model of the concept
-\ccc{PureComplexDataStructure}. The class template \ccRefName\ accepts that no
+\ccc{TDS} is the class used to store the underlying triangulation data
+structure. \ccc{TDS} must be a model of the concept
+\ccc{TriangulationDataStructure}. The class template \ccRefName\ accepts that no
 second parameter be specified. It also accepts the tag \ccc{CGAL::Default} as
-second parameter. In both cases, \ccc{PCDS} defaults to
-\ccc{Pure_complex_data_structure<
-                    Ambient_dimension<DCTraits::Point_d>::type,
-                    Pure_complex_vertex<DCTraits>,
-                    Pure_complex_simplex<DCTraits> >}.
+second parameter. In both cases, \ccc{TDS} defaults to
+\ccc{Triangulation_data_structure<
+                    Ambient_dimension<DTTraits::Point_d>::type,
+                    Triangulation_vertex<DTTraits>,
+                    Triangulation_simplex<DTTraits> >}.
 
 
 \ccTypes % - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - TYPES
 
-The class \ccc{Delaunay_complex<DCTraits, PCDS>} inherits all the types
-defined in the base class \ccc{Pure_complex<DCTraits, PCDS>}. Additionally, it
+The class \ccc{Delaunay_triangulation<DTTraits, TDS>} inherits all the types
+defined in the base class \ccc{Triangulation<DTTraits, TDS>}. Additionally, it
 defines or overloads the following types:
 
-\ccTypedef{typedef DCTraits Geom_traits;}%
-{The model for the \ccc{DelaunayComplexTraits} concept.}
-\ccTypedef{typedef DCTraits::Point_d Point;}%
-{A point in euclidean space.}
+%\ccTypedef{typedef DTTraits Geom_traits;}%
+%{The model for the \ccc{DelaunayComplexTraits} concept.}
+%\ccTypedef{typedef DTTraits::Point_d Point;}%
+%{A point in euclidean space.}
 
 
 \ccCreation % - - - - - - - - - - - - - - - - - - - - - - - - - - - CREATION
-\ccCreationVariable{dc}
+\ccCreationVariable{dt}
 
 
-\ccConstructor{Delaunay_complex(const int dim, const Geom_traits k =
-Geom_traits());}{Instantiates a Delaunay complex with one vertex (the vertex
+\ccConstructor{Delaunay_triangulation(const int dim, const Geom_traits k =
+Geom_traits());}{Instantiates a Delaunay triangulation with one vertex (the vertex
 at infinity). See the description of the inherited nested type
-\ccc{Pure_complex<CCTraits, PCDS>::Ambient_dimension} for an explanation of
+\ccc{Triangulation<DTTraits, TDS>::Ambient_dimension} for an explanation of
 the use of the parameter \ccc{dim}. The complex stores a copy of the geometric
 traits \ccc{k}.}
 
 
 \ccHeading{Point removal} % - - - - - - - - - - - - - - - - - - - - - REMOVAL
 
-\ccMethod{Simplex_handle remove(Vertex_handle);}{Remove the vertex \ccc{v}
-from the Delaunay complex. If the current dimension of the complex has not
-changed after the removal, then the returned simplex \ccc{s} geometrically
+\ccMethod{Full_cell_handle remove(Vertex_handle);}{Remove the vertex \ccc{v}
+from the Delaunay triangulation. If the current dimension of the triangulation has not
+changed after the removal, then the returned cell \ccc{c} geometrically
 contains the removed vertex \ccc{v} (\ccc{s} can be finite or infinite).
-Otherwise, the default-constructed \ccc{Simplex_handle} is returned.
-\ccPrecond \ccc{v} is a vertex of the complex, different from the
+Otherwise, the default-constructed \ccc{Full_cell_handle} is returned.
+\ccPrecond \ccc{v} is a vertex of the triangulation, different from the
 \ccc{infinite_vertex()}.}
 
-\ccMethod{Simplex_handle remove(const Point & p);}{Locate the point \ccc{p} in
-the Delaunay complex. If a vertex is found at position \ccc{p}, it is removed
-from it, otherwise, the default-constructed \ccc{Simplex_handle} is returned.
-If \ccc{p} is found and if the current dimension of the complex has not
-changed after the removal, then the returned simplex \ccc{s} geometrically
-contains the removed point \ccc{p} (\ccc{s} can be finite or infinite).
-Otherwise, the default-constructed \ccc{Simplex_handle} is returned.}
+% \ccMethod{Full_cell_handle remove(const Point & p);}{Locate the point \ccc{p} in
+% the Delaunay triangulation. If a vertex is found at position \ccc{p}, it is removed
+% from it, otherwise, the default-constructed \ccc{Full_cell_handle} is returned.
+% If \ccc{p} is found and if the current dimension of the complex has not
+% changed after the removal, then the returned simplex \ccc{s} geometrically
+% contains the removed point \ccc{p} (\ccc{s} can be finite or infinite).
+% Otherwise, the default-constructed \ccc{Full_cell_handle} is returned.}
 
-\ccMethod{Simplex_handle remove(const Point & p, Simplex_handle hint);}{Same
-as above, but uses \ccc{hint} as a starting point for locating the point
-\ccc{p} in the complex.}
+% \ccMethod{Full_cell_handle remove(const Point & p, Full_cell_handle hint);}{Same
+% as above, but uses \ccc{hint} as a starting point for locating the point
+% \ccc{p} in the complex.}
 
 \ccMethod{template< typename ForwardIterator > size_type remove(ForwardIterator
 start, ForwardIterator end);}{Remove the points or the vertices (through their
@@ -85,14 +88,14 @@ elements actually removed.}
 
 \ccMethod{template< typename ForwardIterator >
 size_type insert(ForwardIterator s, ForwardIterator e);}%
-{Inserts the points found in range \ccc{[s,e)} in the Delaunay complex.
+{Inserts the points found in range \ccc{[s,e)} in the Delaunay triangulation.
 Returns the number of vertices actually inserted. (If \ccc{n>1} vertices share
 the same position in space, only one insertion is counted.)}
 
-\ccMethod{Vertex_handle insert(const Point & p, const Simplex_handle start
-= Simplex_handle());}{Inserts point \ccc{p} in the pure complex. Returns a
-\ccc{Vertex_handle} to the vertex of the pure complex with position \ccc{p}.
-Prior to the actual insertion, \ccc{p} is located in the pure complex;
+\ccMethod{Vertex_handle insert(const Point & p, const Full_cell_handle start
+= Full_cell_handle());}{Inserts point \ccc{p} in the Delaunay triangulation. Returns a
+\ccc{Vertex_handle} to the vertex of the triangulation with position \ccc{p}.
+Prior to the actual insertion, \ccc{p} is located in the triangulation;
 \ccc{start} is used as a starting place for locating \ccc{p}.}
 
 \ccMethod{Vertex_handle insert(const Point & p, const Vertex_handle v);}%
@@ -101,30 +104,30 @@ Prior to the actual insertion, \ccc{p} is located in the pure complex;
 \begin{ccAdvanced}
 
 \ccMethod{Vertex_handle insert(const Point & p, const Locate_type lt,
-const Face & f, const Facet & ft, const Simplex_handle s);}
-{Inserts the point \ccc{p} in the Delaunay complex. Returns a handle to the
+const Face & f, const Facet & ft, const Full_cell_handle c);}
+{Inserts the point \ccc{p} in the Delaunay triangulation. Returns a handle to the
 (possibly newly created) vertex at that position. The behavior depends on the
 value of \ccc{lt}:\begin{itemize} \item[\ccc{OUTSIDE_AFFINE_HULL}] Point
 \ccc{p} is inserted so as to increase the current dimension of the Delaunay
-complex. The method \ccVar.\ccc{insert_outside_affine_hull()} is called.
+triangulation. The method \ccVar.\ccc{insert_outside_affine_hull()} is called.
 \item[\ccc{ON_VERTEX}] The position of the vertex \ccc{v} described by \ccc{f}
 is set to \ccc{p}. \ccc{v} is returned. \item[Anything else] The point \ccc{p}
-is inserted in the conflict zone \textbf{which is assumed} to contain simplex
-\ccc{s}. (Roughly speaking, the method \ccVar.\ccc{insert_in_conflict_zone()}
+is inserted in the conflict zone \textbf{which is assumed} to contain cell
+\ccc{c}. (Roughly speaking, the method \ccVar.\ccc{insert_in_conflict_zone()}
 is called.)\end{itemize} \ccPrecond The parameters \ccc{lt}, \ccc{f}, \ccc{ft}
-and \ccc{s} must be consistent with the localization of point \ccc{p} in the
-Delaunay complex.}
+and \ccc{c} must be consistent with the localization of point \ccc{p} in the
+Delaunay triangulation.}
 
 \ccMethod{Vertex_handle insert_outside_affine_hull(const Point & p);}
-{Inserts the point \ccc{p} in the Delaunay complex. Returns a handle to the
+{Inserts the point \ccc{p} in the Delaunay triangulation. Returns a handle to the
 (possibly newly created) vertex at that position. \ccPrecond The point \ccc{p}
-must lie outside the affine hull of the Delaunay complex. This implies that
+must lie outside the affine hull of the Delaunay triangulation. This implies that
 \ccVar.\ccc{current_dimension()} must be less that
 \ccVar.\ccc{ambient_dimension()}.}
 
 \ccMethod{Vertex_handle insert_in_conflict_zone(const Point & p, const
-Simplex_handle s);}
-{Inserts the point \ccc{p} in the Delaunay complex. Returns a handle to the
+Full_cell_handle s);}
+{Inserts the point \ccc{p} in the Delaunay triangulation. Returns a handle to the
 (possibly newly created) vertex at that position.\ccPrecond The point \ccc{p}
 must be in conflict with the simplex \ccc{s}.}
 
@@ -132,18 +135,21 @@ must be in conflict with the simplex \ccc{s}.}
 
 \ccHeading{Queries} % - - - - - - - - - - - - - - - - - - - - - - - - QUERIES
 
-\ccMethod{bool conflict(const Point & p, Simplex_const_handle s)
+\ccMethod{bool conflict(const Point & p, Full_cell_const_handle c)
 const;}{Returns \ccc{true} if and only if the point \ccc{p} is in (Delaunay)
-conflict with simplex \ccc{s} (\emph{i.e.}, simplex \ccc{s} does not satisfy
-the empty-ball property partly because of point \ccc{p}).}
+conflict with cell \ccc{c} (\emph{i.e.}, the circumscribing ball of
+$c$ contains $p$).
+}
 
 \begin{ccAdvanced}
 
-\ccMethod{Facet compute_conflict_zone(const Point & p, const Simplex_handle s,
+\ccMethod{Facet compute_conflict_zone(const Point & p, const Full_cell_handle c,
 OutputIterator out) const;}{Outputs handles to the simplices in confict with
-point \ccc{p} into the \ccc{OutputIterator out}. The simplex \ccc{s} is used
-as a starting point for the gathering. \ccPrecond \ccc{s} must be in conflict
-with \ccc{p}.\\ \ccVar.\ccc{current_dimension() >= 2}.}
+point \ccc{p} into the \ccc{OutputIterator out}. The cell \ccc{c} is used
+as a starting point for the gathering. 
+\ccPrecond \ccc{c} is in conflict
+with \ccc{p}.\\ \ccVar.\ccc{current_dimension()}$\geq 2$.
+}
 
 \end{ccAdvanced}
 

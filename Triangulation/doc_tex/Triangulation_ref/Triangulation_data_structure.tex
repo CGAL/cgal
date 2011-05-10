@@ -1,10 +1,10 @@
-\begin{ccRefClass}{Pure_complex_data_structure<Dimensionality, PCDSVertex, PCDSSimplex>}
+\begin{ccRefClass}{Triangulation_data_structure<Dimensionality, TDSVertex, TDSFullCell>}
 
 \ccDefinition 
-This class is used for storing the combinatorial information of a pure
-complex (a triangulation of $\sphere^k\subset\real^d$ for some $k\le d$).
+This class is used for storing the combinatorial information of a triangulation
+of dimension $k\leq d$.
 
-\ccInclude{CGAL/Pure_complex_data_structure.h}
+\ccInclude{CGAL/Triangulation_data_structure.h}
 
 \ccParameters
 
@@ -17,25 +17,25 @@ triggers some optimizations. Or
 
 \item \ccPureGlobalScope\ccc{Dynamic_dimension_tag}. In this case, the maximum
 dimension of the simplices is passed as an integer argument to an instance
-constructor (see \ccc{PureComplexDataStructure}).\end{itemize}
+constructor (see \ccc{TriangulationDataStructure}).\end{itemize}
 
-\ccc{PCDSVertex} is the class to be used as the base \ccc{Vertex} type in the
-pure complex data structure. It must be a model of the concept
-\ccc{PureComplexDSVertex}. The class template \ccRefName\ accepts that no
+\ccc{TDSVertex} is the class to be used as the base \ccc{Vertex} type in the
+triangulation data structure. It must be a model of the concept
+\ccc{TriangulationDSVertex}. The class template \ccRefName\ accepts that no
 second parameter be specified. It also accepts the tag \ccc{CGAL::Default} as
-second parameter. In both cases, \ccc{PCDSVertex} defaults to
-\ccc{CGAL::Pure_complex_ds_vertex<>}.
+second parameter. In both cases, \ccc{TDSVertex} defaults to
+\ccc{CGAL::Triangulation_ds_vertex<>}.
 
 
-\ccc{PCDSSimplex} is the class to be used as the base \ccc{Simplex} type in
-the pure complex data structure. It must be a model of the concept
-\ccc{PureComplexDSSimplex}. The class template \ccRefName\ accepts that no
+\ccc{TDSFullCell} is the class to be used as the base \ccc{Full_cell} type in
+the triangulation data structure. It must be a model of the concept
+\ccc{TriangulationDSFullCell}. The class template \ccRefName\ accepts that no
 third parameter be specified. It also accepts the tag \ccc{CGAL::Default} as
-third parameter. In both cases, \ccc{PCDSSimplex} defaults to
-\ccc{CGAL::Pure_complex_ds_simplex<>}.
+third parameter. In both cases, \ccc{TDSFullCell} defaults to
+\ccc{CGAL::Triangulation_ds_full_cell<>}.
 
 \ccIsModel
 
-\ccc{PureComplexDataStructure}.
+\ccc{TriangulationDataStructure}.
 
 \end{ccRefClass}

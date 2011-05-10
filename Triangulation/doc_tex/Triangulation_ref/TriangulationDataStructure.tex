@@ -172,24 +172,28 @@ if the traversal of that \ccc{Facet} leads to a good cell.\\
 All the good cells are outputed into the last argument \ccc{out}.}
 
 \ccMethod{template< typename OutputIterator > OutputIterator
-incident_full_cells(Vertex_const_handle v, OutputIterator out) const;}
+incident_full_cells(Vertex_handle v, OutputIterator out) const;}
 {Insert in \ccc{out} all the cells that are incident to the vertex
 \ccc{v}, \emph{i.e.}, the full cells that have the \ccc{Vertex v} as a vertex.
 Returns the (modified) output iterator.
-\ccPrecond\ccc{is_full_cell(f.full_cell())}.}
-
+%\ccPrecond\ccc{is_full_cell(f.full_cell())}
+\note{OD: je vire la precondition (is-valid est pas vraiment une
+  precondition, puisque c'est garanti par la structure hors fonctions advanced).}
+}
 \ccMethod{template< typename OutputIterator > OutputIterator
 incident_full_cells(const Face & f, OutputIterator out) const;}
 {Insert in \ccc{out} all the cells that are incident to the face \ccc{f},
 \emph{i.e.}, the full cells that have the \ccc{Face f} as a subface.
 Returns the (probably modified) output iterator.
-\ccPrecond\ccc{is_full_cell(f.full_cell())}.}
+%\ccPrecond\ccc{is_full_cell(f.full_cell())}.
+}
 
 \ccMethod{template< typename OutputIterator > OutputIterator
 compute_star(const Face & f, OutputIterator out) const;}
 {Insert in \ccc{out} all the full cells that share at least one vertex with the \ccc{Face
 f}. Returns the (probably modified) output iterator.
-\ccPrecond\ccc{is_full_cell(f.full_cell())}.}
+%\ccPrecond\ccc{is_full_cell(f.full_cell())}.
+}
 
 % \ccMethod{template< typename OutputIterator > OutputIterator
 % gather_incident_faces(Vertex_const_handle v, const int d, OutputIterator
@@ -224,7 +228,7 @@ f}. Returns the (probably modified) output iterator.
 %\ccGlue
 %\ccMethod{Vertex_const_handle vertex(Full_cell_const_handle c, const int i) const;}
 { Returns a handle to the \ccc{i}-th \ccc{Vertex} of the \ccc{Full_cell} \ccc{c}.
-\ccPrecond \ccc{0 <= i <=} \ccVar.\ccc{current_dimension()}.}
+\ccPrecond $0\leq i\leq$\ccVar.\ccc{current_dimension()}.}
 
 \ccMethod{int mirror_index(Full_cell_handle c, int i) const;}%{}
 %\ccGlue\ccMethod{int mirror_index(Full_cell_const_handle s, int i) const;}
@@ -233,8 +237,8 @@ Equivalently, returns the index of \ccc{s} in its \ccc{i}-th neighbor.
 \note{If there is no \ccc{i}-th neighbor of \ccc{c}, then
 returns \ccc{-1}. OD: c'est quoi ca ? il y a toujours un i$i$th neighbor
 si $d<D$.}
-\ccPrecond \ccc{0 <= i <=} \ccVar.\ccc{current_dimension}()\\
-and \ccc{s != Simplex_handle()}. }
+\ccPrecond $0\leq i\leq$\ccVar.\ccc{current_dimension}()\\
+and $s$ is not the default constructed \ccc{Full_cell_handle}. }
 
 %\ccMethod{Vertex_const_iterator vertices_begin() const;}
 %{
@@ -261,7 +265,7 @@ The beyond vertex of \ccVar.
 %\ccMethod{Full_cell_const_handle simplex(Vertex_const_handle v) const;}
 {Returns a full cell incident to \ccc{Vertex} \ccc{v}. Note that this simplex is
 not unique (\ccc{v} is typically adjacent to more than one simplex).
-\ccPrecond\ccc{v != Vertex_handle()}}
+\ccPrecond\ccc{v} is not the default constructed \ccc{Vertex_handle}}
 
 \ccMethod{Full_cell_handle neighbor(Full_cell_handle c, int i) const;}%{}
 %\ccGlue
@@ -270,8 +274,8 @@ not unique (\ccc{v} is typically adjacent to more than one simplex).
 opposite to the \ccc{i}-th vertex of \ccc{s}. 
 \note{If there is no opposite cell,
 then returns \ccc{Full_cell_handle()}.OD: meme rq}
-\ccPrecond\ccc{0 <= i <=}\ccVar.\ccc{current_dimension()}\\
-and \ccc{c != Full_cell_handle()}}
+\ccPrecond$0\leq i \leq$\ccVar.\ccc{current_dimension()}\\
+and \ccc{c} is not the default constructed \ccc{Full_cell_handle}}
 
 %\ccMethod{Simplex_const_iterator full_cells_begin() const;}
 %{
@@ -315,7 +319,7 @@ which does \textbf{not} belong to \ccc{c}.}
 function returns \ccc{true} when the \ccc{Facet f} is part of the boundary of
 that subset, and \ccc{false} otherwise.
 \note{bof, ces trucs de flags sont publics ? si oui ils faut qu'ils
-  soient robustes et documenté partout}
+  soient robustes et documente partout}
 }
 
 \end{ccAdvanced}
@@ -333,8 +337,8 @@ a sphere of dimension \ccVar.\ccc{current_dimension()}).}
 \ccMethod{void remove_decrease_dimension(Vertex_handle v, Vertex_handle
 star);} {This method does exactly the opposite of
 \ccc{insert_increase_dimension()}. \ccPrecond Both vertices \ccc{v} and
-\ccc{star} must share an edge with all vertices.
-\ccc{current_dimension() >= -1}.}
+\ccc{star} must share an edge with all vertices and the current
+dimension is not -2.}
 
 \begin{ccAdvanced}
 
@@ -360,8 +364,7 @@ the triangulation.}
 vertex \ccc{v} in the cell \ccc{c} and returns a handle to it. The cell
 \ccc{c} is subdivided into \ccVar.\ccc{current_dimension())+1} cells which
 share the vertex \ccc{v}.
-\ccPrecond\ccc{0 <} \ccVar.\ccc{current_dimension()}\\ and
-\ccc{c!=Simplex_handle()}\\ and \ccc{c} is a simplex of \ccVar.}
+\ccPrecond Current dimension is positive and \ccc{c} is a simplex of \ccVar.}
 \begin{ccTexOnly}
 \begin{center}
 \includegraphics{Triangulation_ref/fig/insert-in-cell.pdf}
@@ -418,8 +421,9 @@ associated with its infinite vertex.) The storage of the vertices in the
 full cell is such that, if \ccc{f} was a cell of maximal dimension in the
 initial complex, then \ccc{(f,v)}, in this order, is the corresponding cell
 in the updated triangulation. A handle to \ccc{v} is returned.
-\ccPrecond\ccVar.\ccc{current_dimension() < }
-\ccVar.\ccc{ambient_dimension()} and \ccc{is_vertex(star)}}
+\ccPrecond\ccVar.
+The current dimension is strictly less than the ambient dimension
+and \ccc{star} is a vertex of \ccVar.}
 
 \begin{ccAdvanced}
 
@@ -446,8 +450,8 @@ j);}
 
 \ccMethod{void set_current_dimension(int d);} { Forces the current dimension
 of the complex to \ccc{d}. This will have weird consequences if you don't know
-what you are doing. \ccPrecond \ccc{-1 <= d &&
-d <=} \ccVar.\ccc{ambient_dimension()}}
+what you are doing. 
+\ccPrecond $-1\leq d\leq$\ccc{ambient_dimension()}.}
 
 \ccMethod{template< OutputIterator > Full_cell_handle insert_in_tagged_hole(
         Vertex_handle v, Facet f, OutputIterator new_simplices);}
@@ -480,7 +484,7 @@ are neighbors in the data structure.}
 tds);}
 {Reads a combinatorial triangulation from \ccc{is} and assigns it to
 \ccc{tds}. \ccPrecond The dimension of the input complex must be less than or
-equal to \ccc{pcds.ambient_dimension()}.}
+equal to \ccVar.\ccc{ambient_dimension()}.}
 
 \ccFunction{ostream & operator<<(ostream & os, const TriangulationDataStructure
 & tds);}
@@ -492,8 +496,10 @@ the number of cells, the indices of the vertices of each cell and then the
 indices of the neighbors of each cell, where the index corresponds to the
 preceding list of cells.
 
+\note{
 TODO: explain that custom vertex/cell type will have their data input and
 output properly (if the classes provide these operators).
+}
 
 \ccSeeAlso
 

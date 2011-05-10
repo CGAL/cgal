@@ -1,47 +1,47 @@
-\begin{ccRefClass}{Pure_complex_ds_simplex<PCDS, PCDSSimplexStoragePolicy>}
+\begin{ccRefClass}{Triangulation_ds_full_cell<TDS, TDSFullCellStoragePolicy>}
 
 \ccDefinition
 
-The class \ccRefName\ serves as the default simplex template parameter in the
-class \ccc{Pure_complex_data_structure<Dimensionality, PCDSVertex,
-PCDSSimplex>}.
+The class \ccRefName\ serves as the default full cell template parameter in the
+class \ccc{Triangulation_data_structure<Dimensionality, TDSVertex,
+TDSFullCell>}.
 
 This class does not provide any geometric capabilities but only combinatorial
-(adjacency) information. Thus, if the \ccc{Pure_complex_data_structure} is
-used as a parameter of a geometric complex, then its simplex template
+(adjacency) information. Thus, if the \ccc{Triangulation_data_structure} is
+used as a parameter of a geometric complex, then its full cell template
 parameter has to fulfill additional geometric requirements, i.e. it has to be
-a model of the refined concept \ccc{PureComplexSimplex}.
+a model of the refined concept \ccc{TriangulationFullCell}.
 
 This class can be used directly or can serve as a base to derive other classes
 with some additional attributes tuned for a specific application.
 
-\ccInclude{CGAL/Pure_complex_ds_simplex.h}
+\ccInclude{CGAL/Triangulation_ds_full_cell.h}
 
 \ccParameters
 
-The first template parameter, \ccc{PCDS}, must be a model of the
-\ccc{PureComplexDataStructure} concept. It defaults to \ccc{void}, which is
+The first template parameter, \ccc{TDS}, must be a model of the
+\ccc{TriangulationDataStructure} concept. It defaults to \ccc{void}, which is
 used to break some dependency cycles.
 
-The second parameter, \ccc{PCDSSimplexStoragePolicy}, indicates whether or not
-the simplex should additionally store the mirror indices (the indices, in each
+The second parameter, \ccc{TDSFullCellStoragePolicy}, indicates whether or not
+the full cell should additionally store the mirror indices (the indices, in each
 neighbor, of the mirror vertices). This improves speed a little, but takes
 more space. It can take two ``values'':\begin{itemize}
 
-\item \ccc{PCDS_simplex_default_storage_policy}, which is the \textbf{default}
+\item \ccc{TDS_full_cell_default_storage_policy}, which is the \textbf{default}
 value. In that case, the mirror indices are \textbf{not stored}.
 
-\item \ccc{PCDS_simplex_mirror_storage_policy}. In that case, the mirror
+\item \ccc{TDS_full_cell_mirror_storage_policy}. In that case, the mirror
 indices are stored.
 \end{itemize}
- See the user manual (TODO) for how to choose the second option.
+ See the user manual \note{TODO} for how to choose the second option.
 
 \ccIsModel
 
-\ccc{PureComplexDSSimplex}
+\ccc{TriangulationDSFullCell}
 
 \ccSeeAlso
 
-\ccc{Pure_complex_ds_vertex<PCDS>}
+\ccc{Triangulation_ds_vertex<TDS>}
 
 \end{ccRefClass}

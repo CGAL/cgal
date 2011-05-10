@@ -1,38 +1,38 @@
-\begin{ccRefClass}{Pure_complex_simplex<PCTraits, Data, PCDSSimplex>}
+\begin{ccRefClass}{Triangulation_full_cell<TrTraits, Data, TDSFullCell>}
 
 \ccDefinition
 
-The class \ccRefName\ is a model of the concept \ccc{PureComplexSimplex}. It
+The class \ccRefName\ is a model of the concept \ccc{TriangulationFullCell}. It
 is used by default for representing simplices in the class
-\ccc{Pure_complex<PCTraits, PCDS>}.
+\ccc{Triangulation<TrTraits, TDS>}.
 
-A \ccRefName\ stores handles to the vertices of the simplex as well as handles
-to its neighboring simplices.
+A \ccRefName\ stores handles to the vertices of the cell as well as handles
+to its neighboring cells.
 
-\ccInclude{CGAL/Pure_complex_simplex.h}
+\ccInclude{CGAL/Triangulation_simplex.h}
 
 \ccParameters
 
-\ccc{PCTraits} must be a model of the concept \ccc{PureComplexTraits}. It
+\ccc{TrTraits} must be a model of the concept \ccc{TriangulationTraits}. It
 provides geometric types and predicates for use in the
-\ccc{Pure_complex<PCTraits, PCDS>} class.
+\ccc{Triangulation<TrTraits, TDS>} class.
 
 \ccc{Data} is an optional type of data to be stored in the vertex class. The
 class template \ccRefName\ accepts that no second parameter be specified. In
 this case, \ccc{Data} defaults to \ccc{CGAL::No_vertex_data}.
 
-\ccc{PCDSSimplex} must be a model of the concept \ccc{PureComplexDSSimplex}.
+\ccc{TDSFullCell} must be a model of the concept \ccc{TriangulationDSFullCell}.
 The class template \ccRefName\ accepts that no third parameter be specified.
 It also accepts the tag \ccc{CGAL::Default} as third parameter. In both
-cases, \ccc{PCDSSimplex} defaults to \ccc{CGAL::Pure_complex_ds_simplex<>}.
+cases, \ccc{TDSFullCell} defaults to \ccc{CGAL::Triangulation_ds_full_cell<>}.
 
 \ccInheritsFrom
 
-\ccc{PCDSSimplex} (the third template parameter)
+\ccc{TDSFullCell} (the third template parameter)
 
 \ccIsModel
 
-\ccc{PureComplexSimplex}
+\ccc{TriangulationFullCell}
 
 Additionally, the class \ccRefName\ also provides the following type,
 constructors and methods:
@@ -40,15 +40,15 @@ constructors and methods:
 \ccTypes
 
 \ccTypedef{typedef Data Data;}{The type of the additional data stored in the
-simplex. If you read a \ccRefName\ from a stream (a file) or write a \ccRefName
+cell. If you read a \ccRefName\ from a stream (a file) or write a \ccRefName
 to a stream, then streaming operators \ccc{<<} and \ccc{>>} must be provided for this
 type.}
 
 \ccCreation
-\ccCreationVariable{s}
+\ccCreationVariable{c}
 
-\ccConstructor{template< typename T> Pure_complex_simplex(int dmax, const T
-& t);}{Sets the maximum possible dimension of the simplex to \ccc{dmax}.
+\ccConstructor{template< typename T> Triangulation_full_cell(int dmax, const T
+& t);}{Sets the maximum possible dimension of the cell to \ccc{dmax}.
 The parameter \ccc{t} is passed to the \ccc{Data} constructor.}
 
 \ccHeading{Data access}
@@ -58,18 +58,18 @@ The parameter \ccc{t} is passed to the \ccc{Data} constructor.}
 
 \ccHeading{Input/Output}
 
-\ccFunction{istream & operator>>(istream & is, Pure_complex_simplex & v);}%
-{Inputs the non-combinatorial information given by the simplex, \emph{i.e.},
+\ccFunction{istream & operator>>(istream & is, Triangulation_full_cell & v);}%
+{Inputs the non-combinatorial information given by the cell, \emph{i.e.},
 the point and other possible information. The data of type \ccc{Data} is
 \textbf{also} read.}
 
-\ccFunction{ostream & operator<<(ostream & os, const Pure_complex_simplex & v);}%
-{Outputs the non-combinatorial information given by the simplex, \emph{i.e.},
+\ccFunction{ostream & operator<<(ostream & os, const Triangulation_full_cell & v);}%
+{Outputs the non-combinatorial information given by the cell, \emph{i.e.},
 the point and other possible information. The data of type \ccc{Data} is
 \textbf{also} written.}
 
 \ccSeeAlso
 
-\ccc{Pure_complex_vertex<PCTraits, Data, PCDSVertex>}
+\ccc{Triangulation_vertex<TrTraits, Data, TDSVertex>}
 
 \end{ccRefClass}

@@ -1,12 +1,17 @@
-\begin{ccRefConcept}{PureComplexTraits}
+\begin{ccRefConcept}{TriangulationTraits}
 
 \ccDefinition
 
 The concept \ccRefName\ describes the various types and functions that a class
-has to provide as the first parameter (\ccc{PCTraits}) to the class template
-\ccc{Pure_complex<PCTraits, PCDS>}. It brings the geometric ingredient to the
-definition of a pure complex, while the combinatorial ingredient is brought by
-the second template parameter, \ccc{PCDS}.
+has to provide as the first parameter (\ccc{TrTraits}) to the class template
+\ccc{Triangulation<TrTraits, TDS>}. It brings the geometric ingredient to the
+definition of a triangulation, while the combinatorial ingredient is brought by
+the second template parameter, \ccc{TDS}.
+
+Inserting a range of points in a triangulation is optimized using
+spatial sorting, thus besides the requirements below, 
+a class provided as \ccc{TrTraits} should also satisfies  the concept 
+\ccc{SpatialSortingTraits_d}.
 
 \ccTypes
 
@@ -20,11 +25,13 @@ operator()(ForwardIterator start, ForwardIterator end)}.\\The operator returns
 end)} has a positive orientation, \emph{i.e.}, the last point \ccc{p} of the
 range lies on the positive side of the oriented hyperplane \ccc{h} defined by
 the other points. It returns \ccc{NEGATIVE} if \ccc{p} lies on the negative
-side of \ccc{h} and returns \ccc{COPLANAR} if \ccc{p} lies on \ccc{h}.\\ The
-range's size must of course be one more than the dimension of the euclidean
-space the points live in: \ccPrecond The number of points in the range
+side of \ccc{h} and returns \ccc{COPLANAR} if \ccc{p} lies on \ccc{h}.
+%\\ The
+%range's size must of course be one more than the dimension of the euclidean
+%space the points live in.
+ \ccPrecond The number of points in the range
 must be equal to one more than the dimension of the euclidean space the points
-live in, \emph{i.e.}, \ccc{std::distance(start,end)==start->dimension()+1}.}
+live in, \emph{i.e.}, \ccc{std::distance(start,end)} is equal to \ccc{start->dimension()+1}.}
 
 \ccNestedType{Coaffine_orientation_d}{Same as above, but the operator can use
 less points as input. The orientation is taken for some
@@ -32,7 +39,7 @@ arbitrary---\textbf{but consistent}---orientation of the affine subspace
 spanned by the input points. By consistent, it is meant that an affine
 subspace will always have the same orientation whatever the set of points
 spanning it. \ccPrecond
-\ccc{2<=std::distance(start,end)<=start->dimension()+1}.}
+$2\leq$\ccc{std::distance(start,end)}$\leq$\ccc{start->dimension()+1}.}
 
 \ccNestedType{Compare_lexicographically_d}{A predicate object that must
 provide the operator\\\ccc{Comparison_result operator()(const Point_d & p,
@@ -61,12 +68,12 @@ operator()(ForwardIterator start, ForwardIterator end)}.\\The operator
 constructs the center of the sphere circumscribing the points in
 the range \ccc{R=[start, end)}. \ccPrecond The number of points in the range
 must be equal to one more than the dimension of the euclidean space the points
-live in, \emph{i.e.}, \ccc{std::distance(start,end)==start->dimension()+1}.}
+live in, \emph{i.e.}, \ccc{std::distance(start,end)} is equal to \ccc{start->dimension()+1}.}
 
 \ccCreation
 \ccCreationVariable{traits}
 
-\ccConstructor{PureComplexTraits();}{The default constructor.}
+\ccConstructor{TriangulationTraits();}{The default constructor.}
 
 \ccOperations
 
@@ -98,9 +105,11 @@ const;}%
 \ccc{Cartesian_d<FT, Dim, LA>},\\
 \ccc{Simple_cartesian_d<FT, Dim, LA>},\\
 \ccc{Filtered_kernel_d<K>} (recommended).
+\note{a revoir en fonction des disponibilitees}
 
 \ccSeeAlso
 
-\ccc{DelaunayComplexTraits}
+\ccc{DelaunayTriangulationTraits}
+
 
 \end{ccRefConcept}

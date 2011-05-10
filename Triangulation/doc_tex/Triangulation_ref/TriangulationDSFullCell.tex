@@ -65,18 +65,18 @@ simplex.}
 the simplex.}
 
 \ccMethod{Vertex_handle vertex(const int i) const;}{Returns the \ccc{i}-th vertex
-of the cell. \ccPrecond \ccc{0 <= i <= ambient_dimension()}.}
+of the cell. \ccPrecond $0\leq i\leq$\ccc{ambient_dimension()}.}
 
 \ccGlue\ccMethod{Full_cell_handle neighbor(const int i) const;}{Returns the
-cell opposite to the \ccc{i}-th vertex of the cell \ccVar. \ccPrecond \ccc{0
-<= i <= ambient_dimension()}.}
+cell opposite to the \ccc{i}-th vertex of the cell \ccVar. \ccPrecond 
+$0\leq i\leq$\ccc{ambient_dimension()}.}
 
 \ccMethod{int mirror_index(const int i) const;}{Returns the index \ccc{j} of
 the cell \ccc{s} as a neighbor in the cell \ccc{s.neighbor(i);}. If the
 returned integer is not negative, it holds that \ccVar.%
 \ccc{neighbor(i)->neighbor(j) == }\ccVar. Returns
-\ccc{-1} if \ccc{s} has no neighboring cell of index \ccc{i}. \ccPrecond \ccc{0 <=
-i <= ambient_dimension()}.}
+\ccc{-1} if \ccc{s} has no neighboring cell of index \ccc{i}. 
+\ccPrecond $0\leq i\leq$\ccc{ambient_dimension()}.}
 
 \ccMethod{int index(Full_cell_handle n) const;}{Returns the index \ccc{i}
 of the neighbor \ccc{n} such that \ccc{s.neighbor(i)==n}. \ccPrecond \ccc{n}
@@ -95,32 +95,32 @@ Typically used to mark the cell as \emph{visited} during operations on a
 {Returns a handle to the mirror vertex of the \ccc{i}-th vertex of cell
 \ccVar. This function works even if the neighbor information stored in the
 cell is corrupted -- useful when temporary corruption is necessary during
-surgical operation on a triangulation. \ccPrecond \ccc{0 <= i <=
-ambient_dimension()} and \ccc{0 <= cur_dim <= ambient_dimension()}.}
+surgical operation on a triangulation. 
+\ccPrecond $0\leq i,$\ccc{cur_dim}$\leq$\ccc{ambient_dimension()}.}
 \end{ccAdvanced}
 
 
 \ccHeading{Update functions} % - - - - - - - - - - - - - - - - - UPDATES
 
 \ccMethod{void set_vertex(const int i, Vertex_handle v);}{Sets the $i$-th
-vertex of the cell. \ccPrecond \ccc{0 <= i <= ambient_dimension()}.}
+vertex of the cell. 
+\ccPrecond $0\leq i\leq$\ccc{ambient_dimension()}.}
 
 \ccMethod{void set_neighbor(const int i, Full_cell_handle n);} {Sets the
 \ccc{i}-th neighboring cell of \ccVar\ to \ccc{n}. Full cell \ccc{n} is
-opposite to the $i$-th vertex of \ccVar. \ccPrecond \ccc{0 <= i <=
-ambient_dimension()}.}
+opposite to the $i$-th vertex of \ccVar. 
+\ccPrecond $0\leq i\leq$\ccc{ambient_dimension()}.}
 
 \ccMethod{void set_mirror_index(const int i, const int index);} {Sets the
 mirror index of the $i$-th vertex of \ccVar\ to \ccc{index}. This corresponds
 to the index, in \ccVar\ccc{->neighbor(i)}, of the cell \ccVar.\\
 Note: an implementation of the concept \ccVar\ may choose not to store mirror
 indices, in which case this function should do nothing.
-\ccPrecond \ccc{0 <= i <= ambient_dimension()}.}
+\ccPrecond $0\leq i\leq$\ccc{ambient_dimension()}.}
 
 \ccMethod{void swap_vertices(int d1, int d2);}{Switches the orientation of the
 cell \ccVar\ by swapping its vertices with index \ccc{d1} and \ccc{d2}.
-\ccPrecond \ccc{0 <= d1 <= ambient_dimension()} and \ccc{0 <= d2 <=
-ambient_dimension()}.}
+\ccPrecond $0\leq d1,d2\leq$\ccc{ambient_dimension()}.}
 
 \ccMethod{void set_flags(const unsigned int f) const;}{Sets the value of the
 flags variable.}

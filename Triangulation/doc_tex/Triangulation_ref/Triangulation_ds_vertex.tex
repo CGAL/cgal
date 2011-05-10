@@ -1,35 +1,35 @@
-\begin{ccRefClass}{Pure_complex_ds_vertex<PCDS>}
+\begin{ccRefClass}{Triangulation_ds_vertex<PCDS>}
 
 \ccDefinition
 
 The class \ccRefName\ serves as the default vertex template parameter in the
-class \ccc{Pure_complex_data_structure<Dimensionality, PCDSVertex,
-PCDSSimplex>}.
+class \ccc{Triangulation_data_structure<Dimensionality, TDSVertex,
+TDSFullCell>}.
 
 This class does not contain any geometric information but only combinatorial
-(adjacency) information. Thus, if the \ccc{Pure_complex_data_structure} is
+(adjacency) information. Thus, if the \ccc{Triangulation_data_structure} is
 used as a parameter of a geometric complex, then its vertex template parameter
 has to fulfill additional geometric requirements, \emph{i.e.}, it has to be a
-model of the refined concept \ccc{PureComplexVertex}.
+model of the refined concept \ccc{TriangulationVertex}.
 
 This class can be used directly or can serve as a base to derive other classes
 with some additional attributes tuned for a specific application (a color for
 example).
 
-\ccInclude{CGAL/Pure_complex_ds_vertex.h}
+\ccInclude{CGAL/Triangulation_ds_vertex.h}
 
 \ccParameters
 
-The template parameter \ccc{PCDS} must be a model of the
-\ccc{PureComplexDataStructure} concept. It defaults to \ccc{void}, which is
+The template parameter \ccc{TDS} must be a model of the
+\ccc{TriangulationDataStructure} concept. It defaults to \ccc{void}, which is
 used to break some dependency cycles.
 
 \ccIsModel
 
-\ccc{PureComplexDSVertex}
+\ccc{TriangulationDSVertex}
 
 \ccSeeAlso
 
-\ccc{Pure_complex_ds_simplex<PCDS, PCDSSimplexStoragePolicy>}
+\ccc{Triangulation_ds_full_cell<TDS, TDSFullCellStoragePolicy>}
 
 \end{ccRefClass}

@@ -1,36 +1,36 @@
-\begin{ccRefClass}{Pure_complex<PCTraits, PCDS>}
+\begin{ccRefClass}{Triangulation<TrTraits, TDS>}
 
 \ccDefinition
 
-The class \ccRefName\ is used to store and query the simplices and vertices of
-a pure complex embedded in $\real^d$.
+The class \ccRefName\ is used to store and query the cells and vertices of
+a triangulation embedded in $\real^d$.
 
-\ccInclude{CGAL/Pure_complex.h}
+\ccInclude{CGAL/Triangulation.h}
 
 \ccParameters
 
-\ccc{PCTraits} is the geometric traits class that provides the geometric types
-and predicates needed by pure complexes. \ccc{PCTraits} must be a model of the
-concept \ccc{PureComplexTraits}.
+\ccc{TrTraits} is the geometric traits class that provides the geometric types
+and predicates needed by triangulations. \ccc{TrTraits} must be a model of the
+concept \ccc{TriangulationTraits}.
 
-\ccc{PCDS} is the class used to store the underlying pure complex data
-structure. \ccc{PCDS} must be a model of the concept
-\ccc{PureComplexDataStructure}. The class template \ccRefName\ accepts that no
+\ccc{TDS} is the class used to store the underlying triangulation data
+structure. \ccc{TDS} must be a model of the concept
+\ccc{TriangulationDataStructure}. The class template \ccRefName\ accepts that no
 second parameter be specified. It also accepts the tag \ccc{CGAL::Default} as
-second parameter. In both cases, \ccc{PCDS} defaults to
-\ccc{Pure_complex_data_structure<Ambient_dimension<PCTraits::Point_d>::type,
-Pure_complex_vertex<PCTraits>, Pure_complex_simplex<PCTraits>>}.
+second parameter. In both cases, \ccc{TDS} defaults to
+\ccc{Triangulation_data_structure<Ambient_dimension<TrTraits::Point_d>::type,
+Triangulation_vertex<TrTraits>, Triangulation_full_cell<TrTraits>>}.
 
 \ccTypes
 
-The following types are self-explanatory:
+%The following types are self-explanatory: % but we are explaining anyway
 
-\ccTypedef{typedef PCTraits Geom_traits;}%
-{The model for the \ccc{PureComplexTraits} concept.}
+\ccTypedef{typedef TrTraits Geom_traits;}%
+{The model for the \ccc{TriangulationTraits} concept.}
 
-\ccTypedef{typedef  PCTraits::Point_d Point;}{A point in euclidean space.}
+\ccTypedef{typedef  TrTraits::Point_d Point;}{A point in euclidean space.}
 
-\ccTypedef{typedef Ambient_dimension<PCTraits::Point_d>::type
+\ccTypedef{typedef Ambient_dimension<TrTraits::Point_d>::type
  Ambient_dimension;}%
 {This indicates whether the dimension of the ambient euclidean space is static
 (\ccc{Ambient_dimension}=\ccGlobalScope\ccc{Dimension_tag<int dim>}) or
@@ -38,21 +38,21 @@ dynamic (\ccc{Ambient_dimension}=\ccGlobalScope\ccc{Dynamic_dimension_tag}).
 In the latter case, the \ccc{dim} parameter passed to the class's constructor
 is used.}
 
-\ccTypedef{typedef PCDS Pure_complex_ds;}%
+\ccTypedef{typedef TDS Triangulation_ds;}%
 {The second template parameter.}
 
-\ccTypedef{typedef PCDS::Vertex Vertex;}{A model of the concept
-\ccc{PureComplexVertex}.}
+\ccTypedef{typedef TDS::Vertex Vertex;}{A model of the concept
+\ccc{TriangulationVertex}.}
 \ccGlue
-\ccTypedef{typedef PCDS::Simplex Simplex;}{A model of the concept
-\ccc{PureComplexSimplex}.}
+\ccTypedef{typedef TDS::Full_cell Full_cell;}{A model of the concept
+\ccc{TriangulationFullCell}.}
 \ccGlue
-\ccTypedef{typedef PCDS::Facet Facet;}{}
+\ccTypedef{typedef TDS::Facet Facet;}{}
 \ccGlue
-\ccTypedef{typedef PCDS::Face Face;}%
-{A model of the concept \ccc{PureComplexFace}.}
+\ccTypedef{typedef TDS::Face Face;}%
+{A model of the concept \ccc{TriangulationFace}.}
 
-The vertices and simplices of pure complexes are accessed through handles,
+The vertices and cells of triangulations are accessed through handles,
 iterators and circulators. A handle is a model of the \ccc{Handle} concept,
 and supports the two dereference operators \ccc{operator*} and
 \ccc{operator->}. A circulator is a model of the concept \ccc{Circulator}.
@@ -63,25 +63,23 @@ Iterators and circulators are bidirectional and non-mutable.
 Iterators and circulators are convertible to the corresponding handles, thus
 the user can pass them directly as arguments to the functions.
 
-\ccTypedef{typedef  PCDS::Vertex_handle            Vertex_handle;}{}
-\ccGlue\ccTypedef{typedef  PCDS::Vertex_iterator    Vertex_iterator;}{}
-\ccGlue\ccTypedef{typedef PCDS::Vertex_const_handle Vertex_const_handle;}{}
-\ccGlue\ccTypedef{typedef PCDS::Vertex_const_iterator
-Vertex_const_iterator;}{}
+\ccTypedef{typedef  TDS::Vertex_handle            Vertex_handle;}{}
+\ccGlue\ccTypedef{typedef  TDS::Vertex_iterator    Vertex_iterator;}{}
+%\ccGlue\ccTypedef{typedef TDS::Vertex_const_handle Vertex_const_handle;}{}
+%\ccGlue\ccTypedef{typedef TDS::Vertex_const_iterator Vertex_const_iterator;}{}
 
-\ccTypedef{typedef  PCDS::Simplex_handle           Simplex_handle;}{}
-\ccGlue\ccTypedef{typedef  PCDS::Simplex_iterator         Simplex_iterator;}{}
-\ccGlue\ccTypedef{typedef PCDS::Simplex_const_handle Simplex_const_handle;}{}
-\ccGlue\ccTypedef{typedef PCDS::Simplex_const_iterator
-Simplex_const_iterator;}{}
+\ccTypedef{typedef  TDS::Full_cell_handle           Full_cell_handle;}{}
+\ccGlue\ccTypedef{typedef  TDS::Full_cell_iterator         Full_cell_iterator;}{}
+%\ccGlue\ccTypedef{typedef TDS::Full_cell_const_handle Full_cell_const_handle;}{}
+%\ccGlue\ccTypedef{typedef TDS::Full_cell_const_iterator Full_cell_const_iterator;}{}
 
-\ccTypedef{typedef PCDS::size_type size_type;}{Size type (an unsigned integral
+\ccTypedef{typedef TDS::size_type size_type;}{Size type (an unsigned integral
 type).}
-\ccGlue\ccTypedef{typedef PCDS::difference_type difference_type;}{Difference
+\ccGlue\ccTypedef{typedef TDS::difference_type difference_type;}{Difference
 type (a signed integral type).}
 
 The \ccRefName\ class also defines the following enum type to specify
-which case occurs when locating a point in the complex:
+which case occurs when locating a point in the triangulation:
 
 \ccEnum{
 enum  Locate_type
@@ -89,31 +87,32 @@ enum  Locate_type
       ON_VERTEX
     , IN_FACE
     , IN_FACET
-    , IN_SIMPLEX
+    , IN_FULL_CELL
     , OUTSIDE_CONVEX_HULL
     , OUTSIDE_AFFINE_HULL
 };}{}
 
 \ccCreation
-\ccCreationVariable{c}
+\ccCreationVariable{t}
 
-\ccConstructor{Pure_complex(const int dim, const Geom_traits & k =
+\ccConstructor{Triangulation(const int dim, const Geom_traits & k =
 Geom_traits())}
-{Instantiates a pure complex with one vertex (the vertex at infinity). See the
+{Instantiates a triangulation with one vertex (the vertex at infinity). See the
 description of the nested type \ccc{Ambient_dimension} above for an
-explanation of the use of the parameter \ccc{dim}. The complex stores a copy
+explanation of the use of the parameter \ccc{dim}. The triangulation stores a copy
 of the geometric traits \ccc{k}.}
 
 \ccHeading{Access functions}
 
-\ccMethod{const Pure_complex_ds & pcds() const;}%
-{Returns a const reference to the underlying pure-complex data structure.}
+\ccMethod{const Triangulation_ds & tds() const;}%
+{Returns a const reference to the underlying triangulation data structure.}
 
 \begin{ccAdvanced}
-\ccMethod{Pure_complex_ds & pcds();}%
-{Returns a (non-const) reference to the underlying pure-complex data
-structure.}
-
+\ccMethod{Triangulation_ds & tds();}%
+{Returns a %(non-const) 
+reference to the underlying triangulation data structure.
+The responsability of keeping the data structure valid belongs to the
+user when using advanced operations.}
 \end{ccAdvanced}
 
 \ccMethod{const Geom_traits & geom_traits() const;}%
@@ -123,35 +122,34 @@ structure.}
 {Returns the dimension of the embedding euclidean space.}
 \ccGlue
 \ccMethod{int current_dimension() const;}%
-{Returns the dimension of the pure complex (as an embedded manifold).}
+{Returns the dimension of the triangulation (as an embedded manifold).}
 
 \ccMethod{bool empty() const;}%
-{Returns \ccc{true} if the pure complex has no finite vertex. Returns
+{Returns \ccc{true} if the triangulation has no finite vertex. Returns
 \ccc{false} otherwise.}
 \ccGlue
 \ccMethod{size_type number_of_vertices() const;}%
-{Returns the number of finite vertices in the complex.}
+{Returns the number of finite vertices in the triangulation.}
 \ccGlue
-\ccMethod{size_type number_of_simplices() const;}%
-{Returns the number of simplices of maximal dimension in the complex
-(simplices adjacent to the vertex at infinity are counted).}
+\ccMethod{size_type number_of_full_cells() const;}%
+{Returns the number of cells of maximal dimension in the triangulation
+(cells incident to the vertex at infinity are counted).}
 
 \ccMethod{Vertex_handle infinite_vertex() const;}%
 {Returns a handle to the vertex at infinity.}
 
-\ccMethod{Simplex_handle infinite_simplex() const;}%
-{Returns a handle to some simplex adjacent to the vertex at infinity.}
+\ccMethod{Full_cell_handle infinite_full_cell() const;}%
+{Returns a handle to some cell incident to the vertex at infinity.}
 
 \ccHeading{Non-constant-time access functions}
 
-\ccMethod{size_type number_of_finite_simplices() const;}%
-{Returns the number of simplices of maximal dimension all of whose vertices
-are finite. (simplices adjacent to the vertex at infinity are \textbf{not}
-counted).}
+\ccMethod{size_type number_of_finite_full_cells() const;}%
+{Returns the number of cells of maximal dimension that are not
+  incident to the vertex at infinity.}
 
 \ccHeading{Geometric access functions}
 
-TODO
+\note{TODO}
 
 \ccHeading{Tests for finite and infinite elements}
 
@@ -160,224 +158,242 @@ TODO
 
 \ccGlue
 
-\ccMethod{bool is_infinite(const Simplex_handle s) const;}
+\ccMethod{bool is_infinite(const Full_cell_handle s) const;}
 {Returns \ccc{true} if and only if \ccc{s} is incident to the infinite vertex.
-\ccPrecond\ccc{0 <= }\ccVar.\ccc{current_dimension()}.}
+%\ccPrecond $0\leq$\ccVar.\ccc{current_dimension()}.
+}
 
 \ccGlue
 
 \ccMethod{bool is_infinite(const Facet & ft) const;}
 {Returns \ccc{true} if and only if facet \ccc{ft} is incident to the infinite
-vertex. \ccPrecond\ccc{1 <= }\ccVar.\ccc{current_dimension()}.}
+vertex. 
+%\ccPrecond$1\leq$\ccVar.\ccc{current_dimension()}.
+}
 
 \ccGlue
 
 \ccMethod{bool is_infinite(const Face & f) const;}{Returns \ccc{true} if and
-only if the face \ccc{f} is incident to the infinite vertex. \ccPrecond{\ccc{2
-<= }\ccVar.\ccc{current_dimension()}}.}
+only if the face \ccc{f} is incident to the infinite vertex. 
+%\ccPrecond $2\leq$\ccVar.\ccc{current_dimension()}.
+}
+\note{je comprends pas bien toute ces preconditions, je les vire,
+et je vire aussi les is-finite.}
 
-\ccMethod{bool is_finite(const Vertex_handle v) const;} {Returns \ccc{true} if
-and only if the vertex \ccc{v} is not the infinite vertex.}
+% \ccMethod{bool is_finite(const Vertex_handle v) const;} {Returns \ccc{true} if
+% and only if the vertex \ccc{v} is not the infinite vertex.}
 
-\ccGlue
+% \ccGlue
 
-\ccMethod{bool is_finite(const Simplex_handle s) const;}{Returns \ccc{true} if
-and only if all vertices of \ccc{s} are finite. \ccPrecond\ccc{0 <=
-}\ccVar.\ccc{current_dimension()}.}
+% \ccMethod{bool is_finite(const Full_cell_handle s) const;}{Returns \ccc{true} if
+% and only if all vertices of \ccc{s} are finite. 
+% %\ccPrecond\ccc{0 <=}\ccVar.\ccc{current_dimension()}.
+% }
 
-\ccGlue
+% \ccGlue
 
-\ccMethod{bool is_finite(const Facet & ft) const;}{Returns \ccc{true} if and
-only if all vertices of the facet \ccc{ft} are finite. \ccPrecond\ccc{1 <=
-}\ccVar.\ccc{current_dimension()}.}
+% \ccMethod{bool is_finite(const Facet & ft) const;}{Returns \ccc{true} if and
+% only if all vertices of the facet \ccc{ft} are finite. 
+% %\ccPrecond\ccc{1 <=}\ccVar.\ccc{current_dimension()}.
+% }
 
-\ccGlue
+% \ccGlue
 
-\ccMethod{bool is_finite(const Face & f) const;}{Returns \ccc{true} if and
-only if all vertices of the face \ccc{f} are finite. \ccPrecond{\ccc{2 <=
-}\ccVar.\ccc{current_dimension()}}.}
+% \ccMethod{bool is_finite(const Face & f) const;}{Returns \ccc{true} if and
+% only if all vertices of the face \ccc{f} are finite. 
+% %\ccPrecond{\ccc{2 <=}\ccVar.\ccc{current_dimension()}}.
+% }
 
 \ccHeading{Queries}
 
 \ccMethod{bool is_vertex(const Point & p, Vertex_handle & v) const;} {Tests
-whether \ccc{p} is a vertex of \ccVar\ by locating \ccc{p} in the complex.  If
+whether \ccc{p} is a vertex of \ccVar\ by locating \ccc{p} in the triangulation.  If
 \ccc{p} is found, the associated vertex \ccc{v} is given.}
 
 \ccGlue\ccMethod{bool is_vertex(const Point & p, Vertex_handle & v,
-Simplex_handle hint) const;} {Same as above.  The \ccc{Simplex_handle hint} is
+Full_cell_handle hint) const;} {Same as above.  The \ccc{Full_cell_handle hint} is
 an optional parameter that is used as a hint for the point location.}
 
 \ccGlue\ccMethod{bool is_vertex(Vertex_handle v) const;}
 {Tests whether \ccc{v} is a vertex of \ccVar.}
 
-\ccMethod{bool is_simplex(Simplex_handle c) const;}
-{Tests whether \ccc{c} is a simplex of \ccVar.}
+\ccMethod{bool is_full_cell(Full_cell_handle c) const;}
+{Tests whether \ccc{c} is a cell of \ccVar.}
 
-\ccMethod{Orientation orientation(Simplex_const_handle s) const;}
-{Returns the orientation of the finite simplex \ccc{s}:
+\ccMethod{Orientation orientation(Full_cell_const_handle c) const;}
+{Returns the orientation of the finite cell \ccc{c}:
 \ccGlobalScope\ccc{POSITIVE}, \ccGlobalScope\ccc{NEGATIVE} or
 \ccGlobalScope\ccc{COPLANAR}. If \ccVar.\ccc{current_dimension() == 0}, then
-\ccGlobalScope\ccc{POSITIVE} is returned. \ccPrecond Simplex \ccc{s} must be
-finite.}
+\ccGlobalScope\ccc{POSITIVE} is returned. \ccPrecond Full cell \ccc{c} must be
+finite.
+\note{should be removed, a valid cell is positive}
+}
 
 \ccMethod{template< typename OutputIterator > OutputIterator
-gather_incident_simplices(Vertex_const_handle v, OutputIterator out) const;}
-{Insert in \ccc{out} all the simplices that are incident to the vertex
-\ccc{v}, \emph{i.e.}, the simplices that have the \ccc{Vertex v} as a vertex.
+incident_full_cells(Vertex_const_handle v, OutputIterator out) const;}
+{Insert in \ccc{out} all the cells that are incident to the vertex
+\ccc{v}, \emph{i.e.}, the cells that have the \ccc{Vertex v} as a vertex.
 Returns the (modified) output iterator.
-\ccPrecond\ccc{is_simplex(f.simplex())}.}
+%\ccPrecond\ccc{is_full_cell(f.full_cell())}.
+}
 
 \ccMethod{template< typename OutputIterator > OutputIterator
-gather_incident_simplices(const Face & f, OutputIterator out) const;}
-{Insert in \ccc{out} all the simplices that are incident to the face \ccc{f},
-\emph{i.e.}, the simplices that have the \ccc{Face f} as a subface.
+incident_full_cells(const Face & f, OutputIterator out) const;}
+{Insert in \ccc{out} all the cells that are incident to the face \ccc{f},
+\emph{i.e.}, the cells that have the \ccc{Face f} as a subface.
 Returns the (probably modified) output iterator.
-\ccPrecond\ccc{is_simplex(f.simplex())}.}
+%\ccPrecond\ccc{is_full_cell(f.full_cell())}.
+}
 
 \ccMethod{template< typename OutputIterator > OutputIterator
-gather_adjacent_simplices(const Face & f, OutputIterator out) const;}
-{Insert in \ccc{out} all the simplices that are adjacent to the face \ccc{f},
-\emph{i.e.}, the simplices that share at least one vertex with the \ccc{Face
+compute_star(const Face & f, OutputIterator out) const;}
+{Insert in \ccc{out} all the cells that share at least one vertex with the \ccc{Face
 f}. Returns the (probably modified) output iterator.
-\ccPrecond\ccc{is_simplex(f.simplex())}.}
+%\ccPrecond\ccc{is_full_cell(f.full_cell())}.
+}
 
 \ccMethod{template< typename OutputIterator > OutputIterator
-gather_incident_faces(Vertex_const_handle v, const int d, OutputIterator
+incident_faces(Vertex_handle v, const int d, OutputIterator
 out);}{Constructs all the \ccc{Face}s of dimension \ccc{d} incident to
-\ccc{Vertex} v and inserts them in the \ccc{OutputIterator out}. If \ccc{d
->=} \ccVar.\ccc{current_dimension()}, then no \ccc{Face} is
-constructed.\ccPrecond\ccc{0 < d}.}
+\ccc{Vertex} v and inserts them in the \ccc{OutputIterator out}. If
+$d\geq$  \ccVar.\ccc{current_dimension()}, then no \ccc{Face} is
+constructed.
+\ccPrecond$0 < d$.
+}
 
-\ccMethod{template< typename OutputIterator > OutputIterator
-gather_incident_upper_faces(Vertex_const_handle v, int d, OutputIterator
-out);}{Constructs all the \textbf{upper} \ccc{Face}s of dimension \ccc{d}
-incident to \ccc{Vertex} v and inserts them in the \ccc{OutputIterator out}.\\
-Assuming some total ordering on the vertices of the complex (which is
-invariant as long as no vertex is inserted in or removed from the complex), a
-\ccc{Face} incident to \ccc{v} is an \emph{upper} \ccc{Face} if and only if
-its vertices occur at \ccc{v} or beyond \ccc{v} in the ordering.\\ In
-particular, taking the disjoint union of the upper \ccc{Face}s of dimension
-\ccc{d} incident to every vertex of the complex yields exactly the set of
-faces of dimension \ccc{d} of the complex.\\ The constructed \ccc{Faces} are
-lexicographically ordered using the vertex order as base ordering. In order to
-make it easy to find the infinite \ccc{Faces}, the latter ordering makes the
-vertex at infinity the smallest vertex; so calling the method on a finite
-vertex will construct only finite faces and calling it on the vertex at
-infinity will produce all infinite \ccc{d}-faces. (Elle est pas belle, la vie
-?) If \ccc{d >=} \ccVar.\ccc{current_dimension()}, then no \ccc{Face} is
-constructed.\ccPrecond\ccc{0 < d}.}
+% \ccMethod{template< typename OutputIterator > OutputIterator
+% incident_upper_faces(Vertex_const_handle v, int d, OutputIterator
+% out);}{Constructs all the \textbf{upper} \ccc{Face}s of dimension \ccc{d}
+% incident to \ccc{Vertex} v and inserts them in the \ccc{OutputIterator out}.\\
+% Assuming some total ordering on the vertices of the triangulation (which is
+% invariant as long as no vertex is inserted in or removed from the triangulation), a
+% \ccc{Face} incident to \ccc{v} is an \emph{upper} \ccc{Face} if and only if
+% its vertices occur at \ccc{v} or beyond \ccc{v} in the ordering.\\ In
+% particular, taking the disjoint union of the upper \ccc{Face}s of dimension
+% \ccc{d} incident to every vertex of the triangulation yields exactly the set of
+% faces of dimension \ccc{d} of the triangulation.\\ The constructed \ccc{Faces} are
+% lexicographically ordered using the vertex order as base ordering. In order to
+% make it easy to find the infinite \ccc{Faces}, the latter ordering makes the
+% vertex at infinity the smallest vertex; so calling the method on a finite
+% vertex will construct only finite faces and calling it on the vertex at
+% infinity will produce all infinite \ccc{d}-faces. (Elle est pas belle, la vie
+% ?) If \ccc{d >=} \ccVar.\ccc{current_dimension()}, then no \ccc{Face} is
+% constructed.\ccPrecond\ccc{0 < d}.}
 
-\ccGlue\ccMethod{template< typename OutputIterator, typename Comparator >
-OutputIterator gather_incident_upper_faces(Vertex_const_handle v, const int d,
-OutputIterator out, Comparator cmp);} {Same as above, but uses \ccc{cmp} as
-the vertex ordering to define the upper faces.}
+% \ccGlue\ccMethod{template< typename OutputIterator, typename Comparator >
+% OutputIterator incident_upper_faces(Vertex_const_handle v, const int d,
+% OutputIterator out, Comparator cmp);} {Same as above, but uses \ccc{cmp} as
+% the vertex ordering to define the upper faces.}
 
 \ccHeading{Faces and Facets} % - - - - - - - - - - - - - - - - - - - - FACETS
 
-\ccMethod{Simplex_handle simplex_of(const Facet & f) const;}
-{Returns a simplex containing the facet \ccc{f}}
+\ccMethod{Full_cell_handle full_cell(const Facet & f) const;}
+{Returns a cell containing the facet \ccc{f}}
 
 \ccMethod{int index_of_covertex(const Facet & f) const;}
-{Returns the index of the vertex of the simplex
-\ccc{s=}\ccVar.\ccc{simplex_of(f)} which does \textbf{not} belong to \ccc{s}.}
+{Returns the index of the vertex of the cell
+\ccc{c=}\ccVar.\ccc{full_cell(f)} which does \textbf{not} belong to \ccc{c}.}
 
 \ccMethod{Face make_empty_face() const;}{Returns an empty \ccc{Face}.}
+\note{to be removed, internal use only. at least should be advanced}
 
-\ccHeading{Complex traversal} % - - - - - - - - - - - - - - - - - - TRAVERSAL
 
-\ccMethod{Vertex_const_iterator vertices_begin() const;}{}
-\ccGlue\ccMethod{Vertex_iterator vertices_begin();}
+\ccHeading{Triangulation traversal} % - - - - - - - - - - - - - - - - - - TRAVERSAL
+
+%\ccMethod{Vertex_const_iterator vertices_begin() const;}{}
+%\ccGlue
+\ccMethod{Vertex_iterator vertices_begin();}
 {The first vertex of \ccVar.}
-\ccGlue\ccMethod{Vertex_const_iterator vertices_end() const;}{}
+%\ccGlue\ccMethod{Vertex_const_iterator vertices_end() const;}{}
 \ccGlue\ccMethod{Vertex_iterator vertices_end();}
 {The beyond vertex of \ccVar.}
 
-\ccMethod{Finite_vertex_const_iterator finite_vertices_begin() const;}{}
-\ccGlue\ccMethod{Finite_vertex_iterator finite_vertices_begin();}
+%\ccMethod{Finite_vertex_const_iterator finite_vertices_begin() const;}{}
+%\ccGlue
+\ccMethod{Finite_vertex_iterator finite_vertices_begin();}
 {The first finite vertex of \ccVar.}
-\ccGlue\ccMethod{Finite_vertex_const_iterator finite_vertices_end() const;}{}
+%\ccGlue\ccMethod{Finite_vertex_const_iterator finite_vertices_end() const;}{}
 \ccGlue\ccMethod{Finite_vertex_iterator finite_vertices_end();}
 {The beyond finite vertex of \ccVar.}
 
-\ccMethod{Simplex_const_iterator simplices_begin() const;}{}
-\ccGlue\ccMethod{Simplex_iterator simplices_begin();}
-{The first simplex of \ccVar.}
-\ccGlue\ccMethod{Simplex_const_iterator simplices_end() const;}{}
-\ccGlue\ccMethod{Simplex_iterator simplices_end();}
-{The beyond simplex of \ccVar.}
+%\ccMethod{Full_cell_const_iterator full_cells_begin()const;}{}\ccGlue
+\ccMethod{Full_cell_iterator full_cells_begin();}
+{The first cell of \ccVar.}
+%\ccGlue\ccMethod{Full_cell_const_iterator full_cells_end() const;}{}
+\ccGlue\ccMethod{Full_cell_iterator full_cells_end();}
+{The beyond cell of \ccVar.}
 
-\ccMethod{Finite_simplex_const_iterator finite_simplices_begin() const;}{}
-\ccGlue\ccMethod{Finite_simplex_iterator finite_simplices_begin();}
-{The first finite simplex of \ccVar.}
-\ccGlue
-\ccMethod{Finite_simplex_const_iterator finite_simplices_end() const;}{}
-\ccGlue\ccMethod{Finite_simplex_iterator finite_simplices_end();}
-{The beyond finite simplex of \ccVar.}
+%\ccMethod{Finite_full_cell_const_iterator finite_full_cells_begin()  const;}{}\ccGlue
+\ccMethod{Finite_full_cell_iterator finite_full_cells_begin();}
+{The first finite cell of \ccVar.}
+%\ccGlue\ccMethod{Finite_full_cell_const_iterator finite_full_cells_end() const;}{}
+\ccGlue\ccMethod{Finite_full_cell_iterator finite_full_cells_end();}
+{The beyond finite cell of \ccVar.}
 
 \ccMethod{Facet_iterator facets_begin();}
-{Iterator to the first facet of the complex.}
+{Iterator to the first facet of the triangulation.}
 \ccGlue
 \ccMethod{Facet_iterator facets_end();}
-{Iterator to the beyond facet of the complex.}
+{Iterator to the beyond facet of the triangulation.}
 
 \ccMethod{Finite_facet_iterator finite_facets_begin();}
-{Iterator to the first finite facet of the complex.}
+{Iterator to the first finite facet of the triangulation.}
 \ccGlue
 \ccMethod{Finite_facet_iterator finite_facets_end();}
-{Iterator to the beyond finite facet of the complex.}
+{Iterator to the beyond finite facet of the triangulation.}
 
 \ccHeading{Point location} % - - - - - - - - - - - - - - - - - POINT LOCATION
 
 The class \ccRefName\ provides methods to locate a query point with respect to
-the pure complex:
+the triangulation:
 
-\ccMethod{Simplex_handle locate(const Point & query,
-Simplex_handle start = Simplex_handle()) const;}
-{If the point \ccc{query} lies inside a bounded (finite) simplex of \ccVar,
-the latter simplex is returned.\\
-If \ccc{query} lies on the boundary of some finite simplices, one of them
+\ccMethod{Full_cell_handle locate(const Point & query,
+Full_cell_handle start = Full_cell_handle()) const;}
+{If the point \ccc{query} lies inside a bounded (finite) cell of \ccVar,
+the latter cell is returned.\\
+If \ccc{query} lies on the boundary of some finite cells, one of them
 is returned.\\
 Let $d=$\ccVar.\ccc{current_dimension()}. If the point \ccc{query} lies
-outside the convex hull of the points, an infinite simplex with vertices $\{
-p_1, p_2, \ldots, p_d, \infty\}$ is returned such that the simplex $(p_1, p_2,
-\ldots, p_d, query)$ is positively oriented (the rest of the pure complex lies
+outside the convex hull of the points, an infinite cell with vertices $\{
+p_1, p_2, \ldots, p_d, \infty\}$ is returned such that the cell $(p_1, p_2,
+\ldots, p_d, query)$ is positively oriented (the rest of the triangulation lies
 on the other side of facet $(p_1, p_2, \ldots, p_d)$).\\
 The optional argument \ccc{start} is used as a starting place for the search.}
 
-\ccMethod{Simplex_handle locate(const Point & query, Vertex_handle hint)
+\ccMethod{Full_cell_handle locate(const Point & query, Vertex_handle hint)
 const;}
 {Same as above but uses \ccc{hint} as the starting place for the search.}
 
-\ccMethod{Simplex_handle locate(const Point & query, Locate_type & loc_type,
-Face & f, Facet & ft, Simplex_handle start = Simplex_handle()) const;}
+\ccMethod{Full_cell_handle locate(const Point & query, Locate_type & loc_type,
+Face & f, Facet & ft, Full_cell_handle start = Full_cell_handle()) const;}
 {The optional argument \ccc{start} is used as a starting place for the
 search.\\ If the \ccc{query} point lies outside the affine hull of the points,
 which can happen when \ccVar.\ccc{current_dimension() < }
 \ccVar.\ccc{ambient_dimension()}, \ccc{loc_type} is set to
-\ccc{OUTSIDE_AFFINE_HULL}, and the returned simplex has no meaning. As a
+\ccc{OUTSIDE_AFFINE_HULL}, and the returned cell has no meaning. As a
 particular case, if there is no finite vertex yet in the triangulation,
 \ccc{loc_type} is set to \ccc{OUTSIDE_AFFINE_HULL} and \textit{locate} returns
-\ccc{Simplex_handle()}.\\ If the \ccc{query} point lies inside the affine hull
+\ccc{Full_cell_handle()}.\\ If the \ccc{query} point lies inside the affine hull
 of the points, a $k$-face that contains \ccc{query} \textbf{in its relative
 interior} is returned. (If the $k$-face is finite, it is
 unique.)\begin{itemize} \item[$k=0$] \ccc{loc_type} is set to \ccc{ON_VERTEX},
-\ccc{f} is set to the vertex \ccc{v} the \ccc{query} lies on and a simplex
+\ccc{f} is set to the vertex \ccc{v} the \ccc{query} lies on and a cell
 having \ccc{v} as a vertex is returned.
 \item[$0<k<$\ccc{c.current_dimension()-1}] \ccc{loc_type} is set to
 \ccc{IN_FACE}, \ccc{f} is set to the unique finite face containing the
-\ccc{query} point. A simplex having \ccc{f} on its boundary is returned.
+\ccc{query} point. A cell having \ccc{f} on its boundary is returned.
 \item[$k=$\ccc{c.current_dimension()-1}] \ccc{loc_type} is set to
 \ccc{IN_FACET}, \ccc{ft} is set to one of the two finite facets containing the
-\ccc{query} point. The simplex of \ccc{ft} is returned.
+\ccc{query} point. The cell of \ccc{ft} is returned.
 \item[$k=$\ccc{c.current_dimension()}] If the \ccc{query} point lies
-\textbf{outside} the convex hull of the points in the pure complex, then
-\ccc{loc_type} is set to \ccc{OUTSIDE_CONVEX_HULL} and a simplex is returned
+\textbf{outside} the convex hull of the points in the triangulation, then
+\ccc{loc_type} is set to \ccc{OUTSIDE_CONVEX_HULL} and a cell is returned
 as in the \ccc{locate} method above. If the \ccc{query} point lies
-\textbf{inside} the convex hull of the points in the pure complex, then
-\ccc{loc_type} is set to \ccc{IN_SIMPLEX} and the unique simplex containing
+\textbf{inside} the convex hull of the points in the triangulation, then
+\ccc{loc_type} is set to \ccc{IN_FULL_CELL} and the unique cell containing
 the \ccc{query} point is returned. \end{itemize}}
 
-\ccMethod{Simplex_handle
+\ccMethod{Full_cell_handle
           locate(const Point & query, Locate_type & loc_type,
                  Face & f, Vertex_handle hint) const;}
 {Same as above but uses \ccc{hint} as the starting place for the search.}
@@ -386,9 +402,9 @@ the \ccc{query} point is returned. \end{itemize}}
 
 \begin{ccAdvanced}
 
-\ccMethod{Vertex_handle contract_face(const Point & p, const Face & f);}
+\ccMethod{Vertex_handle collapse_face(const Point & p, const Face & f);}
 {Contracts the \ccc{Face f} to a single vertex at position \ccc{p}. Returns a
-handle to that vertex. \ccPrecond The contracted pure complex must be valid
+handle to that vertex. \ccPrecond The contracted triangulation must be valid
 (\emph{i.e.}, be a triangulation of a sphere of dimension
 \ccVar.\ccc{current_dimension()}).}
 
@@ -399,18 +415,18 @@ handle to that vertex. \ccPrecond The contracted pure complex must be valid
 \ccHeading{Point insertion}
 
 The class \ccRefName\ provides functions to insert a given point in the
-pure complex:
+triangulation:
 
 \ccMethod{template< typename ForwardIterator >
 size_type insert(ForwardIterator s, ForwardIterator e);}%
-{Inserts the points found in range \ccc{[s,e)} in the pure complex. Returns
-the number of vertices actually inserted. (If \ccc{n>1} vertices share the
-same position in space, only one insertion is counted.)}
+{Inserts the points found in range \ccc{[s,e)} in the triangulation. Returns
+the number of vertices actually inserted. (If several vertices share the
+same position in space, only the first insertion is counted.)}
 
-\ccMethod{Vertex_handle insert(const Point & p, Simplex_handle start =
-Simplex_handle());}{Inserts point \ccc{p} in the pure complex.  Returns a
-\ccc{Vertex_handle} to the vertex of the pure complex with position \ccc{p}.
-Prior to the actual insertion, \ccc{p} is located in the pure complex;
+\ccMethod{Vertex_handle insert(const Point & p, Full_cell_handle start =
+Full_cell_handle());}{Inserts point \ccc{p} in the triangulation.  Returns a
+\ccc{Vertex_handle} to the vertex of the triangulation with position \ccc{p}.
+Prior to the actual insertion, \ccc{p} is located in the triangulation;
 \ccc{start} is used as a starting place  for locating \ccc{p}.}
 
 \ccMethod{Vertex_handle insert(const Point & p, Vertex_handle v);}%
@@ -419,58 +435,58 @@ Prior to the actual insertion, \ccc{p} is located in the pure complex;
 \begin{ccAdvanced}
 
 \ccMethod{Vertex_handle insert(const Point & query, const Locate_type
-loc_type, const Face & f, const Facet & ft, const Simplex_handle s);} {Inserts
-point \ccc{query} into the pure complex and returns a handle to the
+loc_type, const Face & f, const Facet & ft, const Full_cell_handle c);} {Inserts
+point \ccc{query} into the triangulation and returns a handle to the
 \ccc{Vertex} at that position. The action taken depends on the value of
 \ccc{loc_type}:\begin{itemize} \item[\ccc{ON_VERTEX}] The point of the
 \ccc{Vertex} described by \ccc{f} is set to \ccc{query}. \item[\ccc{IN_FACE}]
 The point \ccc{query} is inserted in the \ccc{Face f}. \item[\ccc{IN_FACET}]
 The point \ccc{query} is inserted in the \ccc{Facet ft}. \item[Anything else]
-The point \ccc{query} is inserted in the pure complex according to the value
-of \ccc{loc_type}, using the simplex \ccc{s}.\end{itemize} This method is used
+The point \ccc{query} is inserted in the triangulation according to the value
+of \ccc{loc_type}, using the cell \ccc{c}.\end{itemize} This method is used
 internally by the other \ccc{insert()} methods.}
 
 \ccMethod{template < typename ForwardIterator, typename OutputIterator >
 Vertex_handle insert_in_hole(const Point & p, ForwardIterator s,
-ForwardIterator e, const Facet & ft, OutputIterator out);}{The simplices in
-the range \ccc{C=[s, e)} are removed, thus forming a hole. A \ccc{Vertex} is
+ForwardIterator e, const Facet & ft, OutputIterator out);}{The cells in
+the range $C=$\ccc{[s, e)} are removed, thus forming a hole. A \ccc{Vertex} is
 inserted at position \ccc{p} and connected to the boundary of the hole in
-order to ``close it''. A \ccc{Vertex_handle} to the new \ccc{Vertex} is
-returned. The facet \ccc{ft} must lie on the boundary of \ccc{C} and its
-defining simplex, \ccVar.\ccc{simplex_of(ft)} must lie inside \ccc{C}. Handles
-to the newly created simplices are output in the \ccc{out} output iterator.
-\ccPrecond \ccc{C} must be a (geometric) ball, must contain \ccc{p} in its
-interior and not contain any vertex all of whose adjacent simplices are in
-\ccc{C}. (This implies that \ccVar.\ccc{current_dimension() >= 2} if
-\ccc{|C|>1}.)\\ The boundary of \ccc{C} must be a triangulation of the sphere
+order to ``fill it''. A \ccc{Vertex_handle} to the new \ccc{Vertex} is
+returned. The facet \ccc{ft} must lie on the boundary of $C$ and its
+defining cell, \ccVar.\ccc{full_cell(ft)} must lie inside $C$. Handles
+to the newly created cells are output in the \ccc{out} output iterator.
+\ccPrecond $C$ must be a (geometric) ball, must contain \ccc{p} in its
+interior and not contain any vertex all of whose incident cells are in
+$C$. (This implies that \ccVar.\ccc{current_dimension()}$\geq2$ if
+$|C|>1$.) The boundary of $C$ must be a triangulation of the sphere
 $\sphere^{k-1}$.}
 
 \ccMethod{template < typename ForwardIterator > Vertex_handle
 insert_in_hole(const Point & p, ForwardIterator s, ForwardIterator e, const
-Facet & ft);}{Same as above, but the newly created simplices are not
-retrived.}
+Facet & ft);}{Same as above, but the newly created cells are not
+retrieved.}
 
 \ccMethod{Vertex_handle insert_in_face(const Point & p, const Face & f);}%
-{Inserts point \ccc{p} in the pure complex.
+{Inserts point \ccc{p} in the triangulation.
 \ccPrecond \ccc{p} must lie in the relative interior of \ccc{f}.}
 
 \ccMethod{Vertex_handle insert_in_facet(const Point & p, const Facet & ft);}%
-{Inserts point \ccc{p} in the pure complex.
+{Inserts point \ccc{p} in the triangulation.
 \ccPrecond \ccc{p} must lie in the relative interior of \ccc{ft}.}
 
-\ccMethod{Vertex_handle insert_in_simplex(const Point & p, Simplex_handle
+\ccMethod{Vertex_handle insert_in_full_cell(const Point & p, Full_cell_handle
 s);}%
-{Inserts point \ccc{p} in the pure complex. \ccPrecond \ccc{p} must lie in the
+{Inserts point \ccc{p} in the triangulation. \ccPrecond \ccc{p} must lie in the
 interior of \ccc{s}.}
 
 \ccMethod{Vertex_handle insert_outside_convex_hull(const Point &,
-        Simplex_handle s);}%
-{Inserts point \ccc{p} in the pure complex.
+        Full_cell_handle s);}%
+{Inserts point \ccc{p} in the triangulation.
 \ccPrecond \ccc{p} must lie outside the convex hull of \ccVar. The half-space
-defined by the infinite simplex \ccc{s} must contain \ccc{p}.}
+defined by the infinite cell \ccc{s} must contain \ccc{p}.}
 
 \ccMethod{Vertex_handle insert_outside_affine_hull(const Point &);}%
-{Inserts point \ccc{p} in the pure complex.
+{Inserts point \ccc{p} in the triangulation.
 \ccPrecond \ccc{p} must lie outside the \textbf{affine} hull of \ccVar.}
 
 \end{ccAdvanced}
@@ -478,44 +494,46 @@ defined by the infinite simplex \ccc{s} must contain \ccc{p}.}
 \ccHeading{Validity check}
 
 \ccMethod{bool is_valid(bool verbose = true, int level = 0) const;}
-{Partially checks whether \ccVar\ is a pure complex. This function returns
-\ccc{true} if the combinatorial pure complex data structure's \ccc{is_valid()}
+{Partially checks whether \ccVar\ is a triangulation. This function returns
+\ccc{true} if the combinatorial triangulation data structure's \ccc{is_valid()}
 test returns \ccc{true} and if some geometric tests are passed with success.
-For each infinite simplex, it is checked that the index of the infinite vertex
-is 0. For each finite simplex, it is checked that its orientation is
+\note{is it really necessary to have the following :
+For each infinite cell, it is checked that the index of the infinite vertex
+is 0. }
+For each finite cell, it is checked that its orientation is
 positive.}
 
-\ccMethod{bool are_incident_simplices_valid(Vertex_const_handle v, bool
+\ccMethod{bool are_incident_full_cells_valid(Vertex_const_handle v, bool
 verbose = true, int level = 0) const;} {Returns \ccc{true} if and only if all
-finite simplices incident to \ccc{v} have positive orientation.}
+finite cells incident to \ccc{v} have positive orientation.}
 
 \ccHeading{Input/Output}
 
-\ccFunction{istream & operator>> (istream & is, Pure_complex & pc);}
+\ccFunction{istream & operator>> (istream & is, Triangulation & t);}
 {Reads the underlying combinatorial triangulation from \ccc{is} by
-calling the corresponding input operator of the pure complex data
+calling the corresponding input operator of the triangulation data
 structure class (note that the infinite vertex is numbered 0), and the
 non-combinatorial information by calling the corresponding input
-operators of the vertex and the simplex classes (such as point
+operators of the vertex and the cell classes (such as point
 coordinates), which are provided by overloading the stream operators
-of the vertex and simplex types. Assigns the resulting triangulation to
-\ccc{pc}.}
+of the vertex and cell types. Assigns the resulting triangulation to
+\ccc{t}.}
 
-\ccFunction{ostream& operator<< (ostream& os, const Pure_complex & pc);}
-{Writes the pure complex \ccc{pc} into \ccc{os}.}
+\ccFunction{ostream& operator<< (ostream& os, const Triangulation & t);}
+{Writes the triangulation \ccc{t} into \ccc{os}.}
 
 The information in the \ccc{iostream} is: the current dimension, the number of
 finite vertices, the non-combinatorial information about vertices (point,
-\emph{etc.}), the number of simplices, the indices of the vertices of each
-simplex, plus the non-combinatorial information about each simplex, then the
-indices of the neighbors of each simplex, where the index corresponds to the
-preceding list of simplices.
+\emph{etc.}), the number of cells, the indices of the vertices of each
+cell, plus the non-combinatorial information about each cell, then the
+indices of the neighbors of each cell, where the index corresponds to the
+preceding list of cells.
 
 \ccSeeAlso
 
-\ccc{Pure_complex_data_structure<Dimensionality, PCDSVertex, PCDSSimplex>},\\
-\ccc{Delaunay_complex<DCTraits, PCDS>},\\
-\ccc{Regular_complex<RCTraits, PCDS>}.
+\ccc{Triangulation_data_structure<Dimensionality, TDSVertex, TDSFullCell>},\\
+\ccc{Delaunay_triangulation<DTTraits, TDS>},\\
+%\ccc{Regular_triangulation<RTTraits, TDS>}.
 
 \end{ccRefClass}
 

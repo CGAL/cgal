@@ -1,53 +1,53 @@
-\begin{ccRefConcept}{PureComplexSimplex}
+\begin{ccRefConcept}{TriangulationFullCell}
 
 \ccDefinition
 
 The concept \ccRefName\ describes the requirements on the type used by the
-class \ccc{Pure_complex<PCTraits, PCDS>}, and its derived classes, to
-represent a simplex.
+class \ccc{Triangulation<TrTraits, TDS>}, and its derived classes, to
+represent a cell.
 
 \ccRefines
 
-\ccc{PureComplexDSSimplex}
+\ccc{TriangulationDSFullCell}
 
 We only list below the additional specific requirements of \ccRefName.
 
-Compared to \ccc{PureComplexDSSimplex}, the main difference is the addition of
-methods to access and iterate over the position of the simplex's vertices as
-well as a method for constructing the center of the simplex's circumsphere.
+Compared to \ccc{TriangulationDSFullCell}, the main difference is the addition of
+methods to access and iterate over the position of the cell's vertices as
+well as a method for constructing the center of the cell's circumsphere.
 
 \ccHasModels
 
-\ccc{Pure_complex_simplex<PCTraits, PCDSSimplex>}
+\ccc{Triangulation_full_cell<TrTraits, TDSFullCell>}
 
 \ccTypes
 
 \ccNestedType{Point}%
-{The type of the point stored in the simplex's vertices. It must be the same
-as the point type \ccc{PureComplexTraits::Point} (or its refined concepts)
-defined by the geometric traits of the \ccc{Pure_complex<PCTraits, PCDS>}
+{The type of the point stored in the cell's vertices. It must be the same
+as the point type \ccc{TriangulationTraits::Point} (or its refined concepts)
+defined by the geometric traits of the \ccc{Triangulation<TrTraits, TDS>}
 class.}
 
 \ccNestedType{Point_const_iterator}{An iterator over the points of the
-simplex.}
+cell.}
 
-\ccCreationVariable{s}
+\ccCreationVariable{c}
 
 \ccOperations
 
 \ccMethod{Point_const_iterator points_begin() const;}
-{Returns an iterator pointing to the first point of the simplex.}
+{Returns an iterator pointing to the first point of the cell.}
 \ccGlue
 \ccMethod{Point_const_iterator points_end() const;}
-{Returns an iterator pointing beyond the last point of the simplex.}
+{Returns an iterator pointing beyond the last point of the cell.}
 
 \ccMethod{Point circumcenter() const;}{Returns the center of the sphere
-circumscribing the simplex.}
+circumscribing the cell.}
 
 \ccSeeAlso
 
-\ccc{Pure_complex_simplex<PCTraits, PCDSSimplex>}\\
-\ccc{PureComplexVertex}\\
-\ccc{Pure_complex<PCTraits, PCDS>}
+\ccc{Triangulation_full_cell<TrTraits, TDSFullCell>}\\
+\ccc{TriangulationVertex}\\
+\ccc{Triangulation<TrTraits, TDS>}
 
 \end{ccRefConcept}

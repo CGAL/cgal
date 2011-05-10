@@ -1,15 +1,15 @@
-\begin{ccRefClass}{Pure_complex_face<PCDS>}
+\begin{ccRefClass}{Triangulation_face<TDS>}
 
 \ccDefinition
 
-A \ccRefName\ is a model of the concept \ccc{PureComplexFace}.
+A \ccRefName\ is a model of the concept \ccc{TriangulationFace}.
 
 \ccParameters
 
-\ccc{PCDS} must be a \textbf{very loose} model of the concept
-\ccc{PureComplexDataStructure} in that it must only provide the
+\ccc{TDS} must be a \textbf{very loose} model of the concept
+\ccc{TriangulationDataStructure} in that it must only provide the
 types\begin{itemize}
-\item \ccc{Simplex_handle},
+\item \ccc{Full_cell_handle},
 \item \ccc{Vertex_handle} and
 \item \ccc{Ambient_dimension}\end{itemize} defined in that concept.
 
@@ -17,11 +17,11 @@ types\begin{itemize}
 
 \ccIsModel
 
-\ccc{PureComplexFace}.
+\ccc{TriangulationFace}.
 
 \ccSeeAlso
 
-\ccc{PureComplexFace},\\
-\ccc{PureComplexDataStructure}.
+\ccc{TriangulationFace},\\
+\ccc{TriangulationDataStructure}.
 
 \end{ccRefClass}

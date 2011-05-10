@@ -1,10 +1,7 @@
 {
 
-\def\note#1{
-  {\marginpar%
-    [\hfill\llap{\textcircled{\small{$\circledcirc$}}$\!\Longrightarrow$}]%
-    {\rlap{$\Longleftarrow\!$\textcircled{\small{$\circledcirc$}}}}} {\color{red}
-  \textsf{$\langle\!\langle${#1}$\rangle\!\rangle$}}%
+\def\note#1{ {\color{red}
+  \textsf{$\langle\!\langle${#1}$\rangle\!\rangle$}}
 }
 
 \section{Introduction\label{triangulation:intro}}
@@ -266,9 +263,9 @@ methods that are called (see here: \ccc{TriangulationDataStructure}).
 \ccIncludeExampleCode{Triangulation/triangulation_data_structure.cpp}
 
 
-% - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - PURE COMPLEXES
+% - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - TRIANGULATIONS
 
-\section{Pure complexes}
+\section{Triangulations}
 
 The class \ccc{CGAL::Triangulation<TrTraits, TDS>} embeds an abstract pure
 complex in euclidean space, thus forming a pure complex. More precisely, it
@@ -381,9 +378,9 @@ One important difference between the two examples above is that the first uses
 visits \emph{only} the infinite simplices but stores handles to them into a
 \emph{potentially big} array.
 
-% - - - - - - - - - - - - - - - - - - - - - - - - - - - - - DELAUNAY COMPLEXES
+% - - - - - - - - - - - - - - - - - - - - - - - - - - - - - DELAUNAY TRIANGULATIONS
 
-\section{Delaunay complexes}%and regular complexes}
+\section{Delaunay triangulations}%and regular complexes}
 
 The class \ccc{CGAL::Delaunay_complex<DCTraits, TDS>} derives from
 \ccc{CGAL::Triangulation<Triangulation Traits, TDS>} and adds further constraints to a
@@ -486,6 +483,10 @@ for( pit = points.begin(); pit != points.end(); ++pit )
     }
 }
 \end{ccExampleCode}
+
+\section{Complexity and performances}
+
+\note{todo}
 
 \section{Design and Implementation History}
 
