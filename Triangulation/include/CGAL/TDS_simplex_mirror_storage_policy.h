@@ -18,7 +18,7 @@
 #ifndef CGAL_TDS_SIMPLEX_MIRROR_STORAGE_POLICY_H
 #define CGAL_TDS_SIMPLEX_MIRROR_STORAGE_POLICY_H
 
-#include <CGAL/PCDS_simplex_default_storage_policy.h>
+#include <CGAL/TDS_simplex_default_storage_policy.h>
 
 namespace CGAL {
 

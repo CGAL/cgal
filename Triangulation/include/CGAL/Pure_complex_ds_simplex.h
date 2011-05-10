@@ -18,8 +18,8 @@
 #ifndef CGAL_TRIANGULATION_DS_SIMPLEX_H
 #define CGAL_TRIANGULATION_DS_SIMPLEX_H
 
-#include <CGAL/PCDS_simplex_default_storage_policy.h>
-#include <CGAL/PCDS_simplex_mirror_storage_policy.h>
+#include <CGAL/TDS_simplex_default_storage_policy.h>
+#include <CGAL/TDS_simplex_mirror_storage_policy.h>
 #include <CGAL/internal/Triangulation/Dummy_TDS.h>
 #include <CGAL/Dimension.h>
 #include <CGAL/Default.h>
