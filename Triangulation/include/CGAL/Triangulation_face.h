@@ -24,7 +24,7 @@
 namespace CGAL {
 
 template< typename TDS >
-class Pure_complex_face
+class Triangulation_face
 {
     typedef typename internal::Dimen_plus_one<typename TDS::Ambient_dimension>::type Dimen_plus;
 public:
@@ -37,20 +37,20 @@ protected:
     Indices                     indices_;
 
 public:
-    explicit Pure_complex_face(Simplex_handle s)
+    explicit Triangulation_face(Simplex_handle s)
     : simplex_(s), indices_(s->ambient_dimension()+1)
     {
         CGAL_assertion( Simplex_handle() != s );
         clear();
     }
 
-    explicit Pure_complex_face(const int ambient_dim)
+    explicit Triangulation_face(const int ambient_dim)
     : simplex_(), indices_(ambient_dim+1)
     {
         clear();
     }
 
-    Pure_complex_face(const Pure_complex_face & f)
+    Triangulation_face(const Triangulation_face & f)
     : simplex_(f.simplex_), indices_(f.indices_)
     {}
 

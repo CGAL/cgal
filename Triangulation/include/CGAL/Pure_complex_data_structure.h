@@ -23,7 +23,7 @@
 #include <CGAL/Default.h>
 #include <CGAL/iterator.h>
 #include <CGAL/Compact_container.h>
-#include <CGAL/Pure_complex_face.h>
+#include <CGAL/Triangulation_face.h>
 #include <CGAL/Pure_complex_ds_vertex.h>
 #include <CGAL/Pure_complex_ds_simplex.h>
 #include <CGAL/internal/Combination_enumerator.h>
@@ -86,7 +86,7 @@ public:
     // boundary of a hole. NOT DOCUMENTED
     typedef cpp0x::tuple<Simplex_handle, int, int>    Rotor;
 
-    typedef Pure_complex_face<Self>                 Face;
+    typedef Triangulation_face<Self>                 Face;
 
 protected: // DATA MEMBERS
 
