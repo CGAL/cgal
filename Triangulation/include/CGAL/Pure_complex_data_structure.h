@@ -27,8 +27,8 @@
 #include <CGAL/Pure_complex_ds_vertex.h>
 #include <CGAL/Pure_complex_ds_simplex.h>
 #include <CGAL/internal/Combination_enumerator.h>
-#include <CGAL/internal/Pure_complex/utilities.h>
-#include <CGAL/internal/Pure_complex/Triangulation_ds_iterators.h>
+#include <CGAL/internal/Triangulation/utilities.h>
+#include <CGAL/internal/Triangulation/Triangulation_ds_iterators.h>
 
 #include <algorithm>
 #include <vector>

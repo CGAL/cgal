@@ -21,7 +21,7 @@
 //#include <CGAL/basic.h>
 //#include <CGAL/Iterator_project.h>
 #include <CGAL/Compact_container.h>
-#include <CGAL/internal/Pure_complex/Dummy_TDS.h>
+#include <CGAL/internal/Triangulation/Dummy_TDS.h>
 
 namespace CGAL {
 

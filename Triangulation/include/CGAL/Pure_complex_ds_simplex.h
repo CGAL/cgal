@@ -20,7 +20,7 @@
 
 #include <CGAL/PCDS_simplex_default_storage_policy.h>
 #include <CGAL/PCDS_simplex_mirror_storage_policy.h>
-#include <CGAL/internal/Pure_complex/Dummy_TDS.h>
+#include <CGAL/internal/Triangulation/Dummy_TDS.h>
 #include <CGAL/Dimension.h>
 #include <CGAL/Default.h>
 #include <CGAL/array.h>

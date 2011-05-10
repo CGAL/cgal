@@ -19,7 +19,7 @@
 #define CGAL_TRIANGULATION_H
 
 #include <boost/iterator/filter_iterator.hpp>
-#include <CGAL/internal/Pure_complex/utilities.h>
+#include <CGAL/internal/Triangulation/utilities.h>
 #include <CGAL/Pure_complex_data_structure.h>
 #include <CGAL/Pure_complex_simplex.h>
 #include <CGAL/Pure_complex_vertex.h>
