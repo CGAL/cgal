@@ -29,13 +29,12 @@ namespace CGAL {
 
 /** Minimal items for dD combinatorial map.
  * Combinatorial_map_min_items defines what is the minimal item
- * class for a d-map It provides definitions for darts and the number of
- * Boolean marks.
+ * class for a d-map It provides definitions for darts without attribute.
  */
 template <unsigned int d>
 struct Combinatorial_map_min_items
 {
-   /// Dart_wrapper defines the type of darts used.
+   /// Dart_wrapper defines the type of darts used, and enabled attributes.
    template < class Refs >
    struct Dart_wrapper
    {

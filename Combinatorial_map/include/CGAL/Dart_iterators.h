@@ -1256,7 +1256,7 @@ namespace CGAL {
 
       for ( unsigned int k=0; k<=d; ++k )
 	{
-	  if ( k!=i && is_unmarked((*this), k, mmark_number) )
+	  if ( k!=i && this->is_unmarked((*this), k, mmark_number) )
 	    {
 	      if (nd == NULL)
 		{
@@ -1348,7 +1348,7 @@ namespace CGAL {
 
       for ( unsigned int k=2; k<=d; ++k )
 	{
-	  if ( is_unmarked2((*this), 0, k, mmark_number) )
+	  if ( this->is_unmarked2((*this), 0, k, mmark_number) )
 	    {
 	      if (nd == NULL)
 		{
@@ -1364,7 +1364,7 @@ namespace CGAL {
 		}
 	      
 	    }
-	  if ( is_unmarked2((*this), k, 1, mmark_number) )
+	  if ( this->is_unmarked2((*this), k, 1, mmark_number) )
 	    {
 	      if (nd == NULL)
 		{
@@ -1381,7 +1381,7 @@ namespace CGAL {
 	    }
 	  for ( unsigned int l=k+1; l<=d; ++l )
 	    {
-	      if ( is_unmarked2((*this), k, l, mmark_number) )
+	      if ( this->is_unmarked2((*this), k, l, mmark_number) )
 		{
 		  if (nd == NULL)
 		    {
@@ -1396,7 +1396,7 @@ namespace CGAL {
 		      this->mmap->mark((*this)->beta(k)->beta(l), mmark_number);
 		    }
 		}
-	      if ( is_unmarked2((*this), l, k, mmark_number) )
+	      if ( this->is_unmarked2((*this), l, k, mmark_number) )
 		{
 		  if (nd == NULL)
 		    {
@@ -1488,7 +1488,7 @@ namespace CGAL {
 
       for ( unsigned int k=2; k<=d; ++k )
 	{
-	  if ( is_unmarked((*this), k, mmark_number) )
+	  if ( this->is_unmarked((*this), k, mmark_number) )
 	    {
 	      if (nd == NULL)
 		{
@@ -2172,7 +2172,7 @@ namespace CGAL {
 
       for ( unsigned int k=0; k<2; ++k )
 	{
-	  if ( is_unmarked((*this), k, mmark_number) )
+	  if ( this->is_unmarked((*this), k, mmark_number) )
 	    {
 	      if (nd == NULL)
 		{
@@ -2192,7 +2192,7 @@ namespace CGAL {
       for ( unsigned int k=2; k<=d; ++k )
 	{
 	  if ( k!=i-1 && k!=i && k!=i+1 && 
-	       is_unmarked((*this), k, mmark_number) )
+	       this->is_unmarked((*this), k, mmark_number) )
 	    {
 	      if (nd == NULL)
 		{
@@ -2288,7 +2288,7 @@ namespace CGAL {
 
       for ( int k=1; k>=0; --k )
 	{
-	  if ( is_unmarked((*this), k, mmark_number) )
+	  if ( this->is_unmarked((*this), k, mmark_number) )
 	    {
 	      if (nd == NULL)
 		{
@@ -2307,7 +2307,7 @@ namespace CGAL {
       for ( unsigned int k=2; k<=d; ++k )
 	{
 	  if ( k!=i-1 && k!=i && k!=i+1 && 
-	       is_unmarked((*this), k, mmark_number) )
+	       this->is_unmarked((*this), k, mmark_number) )
 	    {
 	      if (nd == NULL)
 		{
@@ -2398,7 +2398,7 @@ namespace CGAL {
 
       for ( unsigned int k=3; k<=d; ++k )
 	{
-	  if ( is_unmarked((*this), k, mmark_number) )
+	  if ( this->is_unmarked((*this), k, mmark_number) )
 	    {
 	      if (nd == NULL)
 		{
@@ -2513,7 +2513,7 @@ namespace CGAL {
 
       for ( unsigned int k=4; k<=d; ++k )
 	{
-	  if ( is_unmarked((*this), k, mmark_number) )
+	  if ( this->is_unmarked((*this), k, mmark_number) )
 	    {
 	      if (nd == NULL)
 		{
