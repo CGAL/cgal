@@ -109,6 +109,6 @@ struct S_or_D_array< Containee, Dynamic_dimension_tag, true >
 
 } // end of namespace internal
 
-} //namespace CGAL
+} // end of namespace CGAL
 
 #endif // CGAL_INTERNAL_STATIC_OR_DYNAMIC_ARRAY_H

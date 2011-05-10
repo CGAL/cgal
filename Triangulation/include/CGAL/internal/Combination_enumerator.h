@@ -132,6 +132,6 @@ public:
 
 } // end of namespace internal
 
-} //namespace CGAL
+} // end of namespace CGAL
 
 #endif // CGAL_INTERNAL_COMBINATION_ENUMERATOR_H

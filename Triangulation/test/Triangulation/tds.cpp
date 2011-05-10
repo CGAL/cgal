@@ -6,22 +6,22 @@
 
 using namespace std;
 
-template<typename PCDS>
+template<typename TDS>
 void test(const int d, const string & type)
 {
     // we must write 'typename' below, because we are in a template-function,
-    // so the parser has no way to know that PCDS contains sub-types, before
+    // so the parser has no way to know that TDS contains sub-types, before
     // instanciating the function.
-    typedef typename PCDS::Vertex Vertex;
-    typedef typename PCDS::Vertex_handle Vertex_handle;
-    typedef typename PCDS::Vertex_iterator Vertex_iterator;
-    typedef typename PCDS::Simplex Simplex;
-    typedef typename PCDS::Simplex_handle Simplex_handle;
-    typedef typename PCDS::Face Face;
-    typedef typename PCDS::Facet Facet;
-    typedef typename PCDS::Facet_iterator Facet_iterator;
+    typedef typename TDS::Vertex Vertex;
+    typedef typename TDS::Vertex_handle Vertex_handle;
+    typedef typename TDS::Vertex_iterator Vertex_iterator;
+    typedef typename TDS::Simplex Simplex;
+    typedef typename TDS::Simplex_handle Simplex_handle;
+    typedef typename TDS::Face Face;
+    typedef typename TDS::Facet Facet;
+    typedef typename TDS::Facet_iterator Facet_iterator;
 
-    PCDS pc(d);
+    TDS pc(d);
     cerr << "\nChecking Pure_cds of (" << type << ") dimension "
         << pc.ambient_dimension();
     assert(pc.empty());
@@ -104,7 +104,7 @@ void test(const int d, const string & type)
     std::ifstream fi((string("output-pcds-")+type).c_str());
     if( d % 2 )
         CGAL::set_binary_mode(fi);
-    PCDS input_pcds(d);
+    TDS input_pcds(d);
     fi >> input_pcds;
     fi.close();
 
@@ -116,20 +116,20 @@ void test(const int d, const string & type)
 }
 
 #define test_static(DIM) {  \
-    typedef CGAL::Pure_complex_data_structure<CGAL::Dimension_tag<DIM> > PCDS; \
-        test<PCDS>(DIM, string("static")+string(#DIM)); }
+    typedef CGAL::Pure_complex_data_structure<CGAL::Dimension_tag<DIM> > TDS; \
+        test<TDS>(DIM, string("static")+string(#DIM)); }
 #define test_dyn(DIM) { \
-    typedef CGAL::Pure_complex_data_structure<CGAL::Dynamic_dimension_tag> PCDS; \
-        test<PCDS>(DIM, string("dynamic")+string(#DIM)) ;}
+    typedef CGAL::Pure_complex_data_structure<CGAL::Dynamic_dimension_tag> TDS; \
+        test<TDS>(DIM, string("dynamic")+string(#DIM)) ;}
 
 #define test_mirror_static(DIM) {  \
-    typedef CGAL::Pure_complex_ds_simplex<void, CGAL::PCDS_simplex_mirror_storage_policy> My_ds_simplex;  \
+    typedef CGAL::Pure_complex_ds_simplex<void, CGAL::TDS_simplex_mirror_storage_policy> My_ds_simplex;  \
     typedef CGAL::Pure_complex_data_structure<CGAL::Dimension_tag<DIM>, \
                                               CGAL::Pure_complex_ds_vertex<>, \
                                               My_ds_simplex> My_pcds;  \
         test<My_pcds>(DIM, string("mirror&static")+string(#DIM)); }
 #define test_mirror_dyn(DIM) { \
-    typedef CGAL::Pure_complex_ds_simplex<void, CGAL::PCDS_simplex_mirror_storage_policy> My_ds_simplex;  \
+    typedef CGAL::Pure_complex_ds_simplex<void, CGAL::TDS_simplex_mirror_storage_policy> My_ds_simplex;  \
     typedef CGAL::Pure_complex_data_structure<CGAL::Dynamic_dimension_tag, \
                                               CGAL::Pure_complex_ds_vertex<>, \
                                               My_ds_simplex> My_pcds;  \

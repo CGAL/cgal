@@ -3917,8 +3917,8 @@ Triangulation/include/CGAL/Pure_complex_simplex.h -text
 Triangulation/include/CGAL/Pure_complex_vertex.h -text
 Triangulation/include/CGAL/Regular_complex.h -text
 Triangulation/include/CGAL/internal/Combination_enumerator.h -text
-Triangulation/include/CGAL/internal/Pure_complex/Dummy_PCDS.h -text
-Triangulation/include/CGAL/internal/Pure_complex/Pure_complex_ds_iterators.h -text
+Triangulation/include/CGAL/internal/Pure_complex/Dummy_TDS.h -text
+Triangulation/include/CGAL/internal/Pure_complex/Triangulation_ds_iterators.h -text
 Triangulation/include/CGAL/internal/Pure_complex/utilities.h -text
 Triangulation/include/CGAL/internal/Static_or_dynamic_array.h -text
 Triangulation/package_info/Pure_complex/description.txt -text
