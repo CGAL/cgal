@@ -33,7 +33,7 @@ class Triangulation_ds_vertex
     typedef Triangulation_ds_vertex<TDS> Self;
 
 public:
-    typedef typename TDS::Simplex_handle       Simplex_handle;
+    typedef typename TDS::Full_cell_handle       Full_cell_handle;
 
     template <typename TDS2>
     struct Rebind_TDS
@@ -42,37 +42,37 @@ public:
     };
 
 protected: // DATA MEMBERS
-    Simplex_handle simplex_; // A handle to an adjacent simplex
+    Full_cell_handle full_cell_; // A handle to an adjacent full_cell
 
 public:	
-    // Constructs a vertex with adjacent simplex 's'
-    Triangulation_ds_vertex(Simplex_handle s) : simplex_(s)
+    // Constructs a vertex with adjacent full_cell 's'
+    Triangulation_ds_vertex(Full_cell_handle s) : full_cell_(s)
     {
-        CGAL_assertion( Simplex_handle() != s );
+        CGAL_assertion( Full_cell_handle() != s );
     }
-    // Constructs a vertex with no adjacent simplex
-    Triangulation_ds_vertex() : simplex_() {}
+    // Constructs a vertex with no adjacent full_cell
+    Triangulation_ds_vertex() : full_cell_() {}
 
     ~Triangulation_ds_vertex() {}
 
-    /// Set 's' as an adjacent simplex
-    void set_simplex(Simplex_handle s)
+    /// Set 's' as an adjacent full_cell
+    void set_full_cell(Full_cell_handle s)
     {
-		CGAL_precondition( Simplex_handle() != s );
-        simplex_ = s;
+		CGAL_precondition( Full_cell_handle() != s );
+        full_cell_ = s;
     }
 
-    /// Returns a simplex adjacent to the vertex
-    Simplex_handle simplex() const
+    /// Returns a full_cell adjacent to the vertex
+    Full_cell_handle full_cell() const
     {
-        return simplex_;
+        return full_cell_;
     }
 
     bool is_valid(bool verbose = true, int /* level */ = 0) const
     {
-        if( Simplex_handle() == simplex() )
+        if( Full_cell_handle() == full_cell() )
         {
-            if( verbose ) CGAL_warning_msg(false, "vertex has no incident simplex.");
+            if( verbose ) CGAL_warning_msg(false, "vertex has no incident full cell.");
             return false;
         }
         return true;
@@ -80,8 +80,8 @@ public:
 
 public: // FOR MEMORY MANAGEMENT
 
-    void*   for_compact_container() const { return simplex_.for_compact_container(); }
-    void* & for_compact_container()       { return simplex_.for_compact_container(); }
+    void*   for_compact_container() const { return full_cell_.for_compact_container(); }
+    void* & for_compact_container()       { return full_cell_.for_compact_container(); }
 
 };  // end of Triangulation_ds_vertex
 
@@ -116,7 +116,7 @@ class Triangulation_ds_vertex<void>
 {
 public:
     typedef internal::Triangulation::Dummy_TDS  Triangulation_ds;
-    typedef Triangulation_ds::Simplex_handle     Simplex_handle;
+    typedef Triangulation_ds::Full_cell_handle     Full_cell_handle;
     template <typename TDS2>
     struct Rebind_TDS
     {

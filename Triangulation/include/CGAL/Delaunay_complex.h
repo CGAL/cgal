@@ -29,16 +29,16 @@ class Delaunay_complex
 : public Pure_complex<DCTraits,
             typename Default::Get<_TDS, Pure_complex_data_structure<
                              typename Ambient_dimension<typename DCTraits::Point_d>::type,
-                             Pure_complex_vertex<DCTraits>,
-                             Pure_complex_simplex<DCTraits> >
+                             Triangulation_vertex<DCTraits>,
+                             Triangulation_full_cell<DCTraits> >
                     >::type >
 {
     typedef typename Ambient_dimension<typename DCTraits::Point_d>::type
                                                     Ambient_dimension_;
     typedef typename Default::Get<_TDS, Pure_complex_data_structure<
                          Ambient_dimension_,
-                         Pure_complex_vertex<DCTraits>,
-                         Pure_complex_simplex<DCTraits> >
+                         Triangulation_vertex<DCTraits>,
+                         Triangulation_full_cell<DCTraits> >
                 >::type                         TDS;
     typedef Pure_complex<DCTraits, TDS>        Base;
     typedef Delaunay_complex<DCTraits, _TDS>   Self;
@@ -57,7 +57,7 @@ public: // PUBLIC NESTED TYPES
     typedef typename Base::Pure_complex_ds          Pure_complex_ds;
 
     typedef typename Base::Vertex                   Vertex;
-    typedef typename Base::Simplex                  Simplex;
+    typedef typename Base::Full_cell                Full_cell;
     typedef typename Base::Facet                    Facet;
     typedef typename Base::Face                     Face;
 
@@ -70,10 +70,10 @@ public: // PUBLIC NESTED TYPES
     typedef typename Base::Vertex_const_handle      Vertex_const_handle;
     typedef typename Base::Vertex_const_iterator    Vertex_const_iterator;
 
-    typedef typename Base::Simplex_handle           Simplex_handle;
-    typedef typename Base::Simplex_iterator         Simplex_iterator;
-    typedef typename Base::Simplex_const_handle     Simplex_const_handle;
-    typedef typename Base::Simplex_const_iterator   Simplex_const_iterator;
+    typedef typename Base::Full_cell_handle           Full_cell_handle;
+    typedef typename Base::Full_cell_iterator         Full_cell_iterator;
+    typedef typename Base::Full_cell_const_handle     Full_cell_const_handle;
+    typedef typename Base::Full_cell_const_iterator   Full_cell_const_iterator;
 
     typedef typename Base::size_type                size_type;
     typedef typename Base::difference_type          difference_type;
@@ -87,11 +87,11 @@ protected: // DATA MEMBERS
 public:
     
     using Base::ambient_dimension;
-    using Base::are_incident_simplices_valid;
+    using Base::are_incident_full_cells_valid;
     using Base::coaffine_orientation_predicate;
     using Base::current_dimension;
-    using Base::gather_adjacent_simplices;
-    using Base::gather_incident_simplices;
+    using Base::gather_adjacent_full_cells;
+    using Base::gather_incident_full_cells;
     using Base::geom_traits;
     using Base::get_visited;
     using Base::index_of_covertex;
@@ -103,14 +103,14 @@ public:
     using Base::is_valid;
     using Base::locate;
     using Base::make_empty_face;
-    using Base::new_simplex;
+    using Base::new_full_cell;
     using Base::number_of_vertices;
     using Base::orientation;
     using Base::pcds;
-    using Base::reorient_simplices;
+    using Base::reorient_full_cells;
     using Base::set_visited;
-    using Base::simplices_begin;
-    using Base::simplices_end;
+    using Base::full_cells_begin;
+    using Base::full_cells_end;
     using Base::vertices_begin;
     using Base::vertices_end;
     // using Base::
@@ -140,13 +140,13 @@ public:
 
     // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - REMOVALS
 
-    Simplex_handle remove(Vertex_handle);
-    Simplex_handle remove(const Point & p, Simplex_handle hint = Simplex_handle())
+    Full_cell_handle remove(Vertex_handle);
+    Full_cell_handle remove(const Point & p, Full_cell_handle hint = Full_cell_handle())
     {
         Vertex_handle v;
         if( is_vertex(p, v, hint) )
             return remove(v);
-        return Simplex_handle();
+        return Full_cell_handle();
     }
 
     template< typename ForwardIterator >
@@ -170,39 +170,39 @@ public:
         std::vector<Point> points(start, end);
         std::random_shuffle(points.begin(), points.end());
         spatial_sort(points.begin(), points.end(), geom_traits());
-        Simplex_handle hint;
+        Full_cell_handle hint;
         for( typename std::vector<Point>::const_iterator p = points.begin(); p != points.end(); ++p )
         {
-            hint = insert(*p, hint)->simplex();
+            hint = insert(*p, hint)->full_cell();
         }
         return number_of_vertices() - n;
     }
-    Vertex_handle insert(const Point &, const Locate_type, const Face &, const Facet &, const Simplex_handle);
-    Vertex_handle insert(const Point & p, const Simplex_handle start = Simplex_handle())
+    Vertex_handle insert(const Point &, const Locate_type, const Face &, const Facet &, const Full_cell_handle);
+    Vertex_handle insert(const Point & p, const Full_cell_handle start = Full_cell_handle())
     {
         Locate_type lt;
         Face f(ambient_dimension());
         Facet ft;
-        Simplex_handle s = locate(p, lt, f, ft, start);
+        Full_cell_handle s = locate(p, lt, f, ft, start);
         return insert(p, lt, f, ft, s);
     }
     Vertex_handle insert(const Point & p, const Vertex_handle hint)
     {
         CGAL_assertion( Vertex_handle() != hint );
-        return insert(p, hint->simplex());
+        return insert(p, hint->full_cell());
     }
     Vertex_handle insert_outside_affine_hull(const Point &);
-    Vertex_handle insert_in_conflict_zone(const Point &, const Simplex_handle);
+    Vertex_handle insert_in_conflict_zone(const Point &, const Full_cell_handle);
 
 // - - - - - - - - - - - - - - - - - - - - - - - - - GATHERING CONFLICTING SIMPLICES
 
-    bool conflict(const Point &, Simplex_const_handle) const;
+    bool conflict(const Point &, Full_cell_const_handle) const;
     template< class OrientationPredicate >
     Oriented_side perturbed_side_of_positive_sphere(const Point &,
-            Simplex_const_handle, const OrientationPredicate &) const;
+            Full_cell_const_handle, const OrientationPredicate &) const;
 
     template< typename OutputIterator >
-    Facet compute_conflict_zone(const Point &, const Simplex_handle, OutputIterator) const;
+    Facet compute_conflict_zone(const Point &, const Full_cell_handle, OutputIterator) const;
 
     template < typename OrientationPredicate, typename SideOfOrientedSpherePredicate >
     class Conflict_predicate
@@ -220,7 +220,7 @@ public:
                 const SideOfOrientedSpherePredicate & side)
         : dc_(dc), p_(p), ori_(ori), side_of_s_(side), cur_dim_(dc.current_dimension()) {}
         inline
-        bool operator()(Simplex_const_handle s) const
+        bool operator()(Full_cell_const_handle s) const
         {
             bool ok;
             if( dc_.is_finite(s) )
@@ -260,7 +260,7 @@ public:
         inline
         bool operator()(const Facet & f) const
         {
-            return pred_(dc_.simplex_of(f)->neighbor(dc_.index_of_covertex(f)));
+            return pred_(dc_.full_cell_of(f)->neighbor(dc_.index_of_covertex(f)));
         }
     };
 
@@ -282,7 +282,7 @@ private:
 // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - REMOVALS
 
 template< typename DCTraits, typename TDS >
-typename Delaunay_complex<DCTraits, TDS>::Simplex_handle
+typename Delaunay_complex<DCTraits, TDS>::Full_cell_handle
 Delaunay_complex<DCTraits, TDS>
 ::remove( Vertex_handle v )
 {
@@ -293,45 +293,45 @@ Delaunay_complex<DCTraits, TDS>
     if( 0 == current_dimension() )
     {
         remove_decrease_dimension(v);
-        return Simplex_handle();
+        return Full_cell_handle();
     }
     else if( 1 == current_dimension() )
     {   // THE CASE cur_dim == 1
         if( 2 == number_of_vertices() )
         {
             remove_decrease_dimension(v);
-            return Simplex_handle();
+            return Full_cell_handle();
         }
-        Simplex_handle left = v->simplex();
+        Full_cell_handle left = v->full_cell();
         if( is_infinite(left) && left->neighbor(0)->index_of(left) == 0 ) // we are on the infinite right.
             left = left->neighbor(0);
         if( 0 == left->index_of(v) )
             left = left->neighbor(1);
         CGAL_assertion( 1 == left->index_of(v) );
-        Simplex_handle right = left->neighbor(0);
+        Full_cell_handle right = left->neighbor(0);
         if( is_finite(right) )
         {
-            pcds().associate_vertex_with_simplex(left, 1, right->vertex(1));
+            pcds().associate_vertex_with_full_cell(left, 1, right->vertex(1));
             set_neighbors(left, 0, right->neighbor(0), right->mirror_index(0));
         }
         else
         {
-            pcds().associate_vertex_with_simplex(left, 1, left->vertex(0));
-            pcds().associate_vertex_with_simplex(left, 0, infinite_vertex());
+            pcds().associate_vertex_with_full_cell(left, 1, left->vertex(0));
+            pcds().associate_vertex_with_full_cell(left, 0, infinite_vertex());
             set_neighbors(left, 0, left->neighbor(1), left->mirror_index(1));
             set_neighbors(left, 1, right->neighbor(1), right->mirror_index(1));
         }
         pcds().delete_vertex(v);
-        pcds().delete_simplex(right);
+        pcds().delete_full_cell(right);
         return left;
     }
 
     // THE CASE cur_dim >= 2
     // Gather the finite vertices sharing an edge with |v|
-    typedef std::vector<Simplex_handle> Simplices;
+    typedef std::vector<Full_cell_handle> Simplices;
     Simplices simps;
     std::back_insert_iterator<Simplices> out(simps);
-    gather_incident_simplices(v, out);
+    gather_incident_full_cells(v, out);
     typedef std::set<Vertex_handle> Vertex_set;
     Vertex_set verts;
     Vertex_handle vh;
@@ -347,15 +347,15 @@ Delaunay_complex<DCTraits, TDS>
         }
 
     // OK, create a Dark Delaunay complex
-    typedef Pure_complex_vertex<Geom_traits, Vertex_handle> Dark_vertex_base;
-    typedef Pure_complex_simplex<Geom_traits,
-        internal::Triangulation::Dark_simplex_data<Self> > Dark_simplex_base;
-    typedef Pure_complex_data_structure<Ambient_dimension, Dark_vertex_base, Dark_simplex_base> Dark_pcds;
+    typedef Triangulation_vertex<Geom_traits, Vertex_handle> Dark_vertex_base;
+    typedef Triangulation_full_cell<Geom_traits,
+        internal::Triangulation::Dark_full_cell_data<Self> > Dark_full_cell_base;
+    typedef Pure_complex_data_structure<Ambient_dimension, Dark_vertex_base, Dark_full_cell_base> Dark_pcds;
     typedef Delaunay_complex<DCTraits, Dark_pcds>   Dark_complex;
     typedef typename Dark_complex::Face             Dark_face;
     typedef typename Dark_complex::Facet            Dark_facet;
     typedef typename Dark_complex::Vertex_handle    Dark_v_handle;
-    typedef typename Dark_complex::Simplex_handle   Dark_s_handle;
+    typedef typename Dark_complex::Full_cell_handle   Dark_s_handle;
     Dark_complex dark_side(ambient_dimension());
     Dark_s_handle dark_s;
     Dark_v_handle dark_v;
@@ -365,7 +365,7 @@ Delaunay_complex<DCTraits, TDS>
     while( vit != verts.end() )
     {
         dark_v = dark_side.insert((*vit)->point(), dark_s);
-        dark_s = dark_v->simplex();
+        dark_s = dark_v->full_cell();
         dark_v->data() = *vit;
         light_to_dark[*vit] = dark_v;
         ++vit;
@@ -377,30 +377,30 @@ Delaunay_complex<DCTraits, TDS>
         if( (size_type)(verts.size() + 1) == number_of_vertices() )
         {
             remove_decrease_dimension(v);
-            return Simplex_handle();
+            return Full_cell_handle();
         }
         else
         {   // |v| is strictly outside the convex hull of the rest of the points. This is an
-            // easy case: first, modify the finite simplices, then, delete the infinite ones.
+            // easy case: first, modify the finite full_cells, then, delete the infinite ones.
             // We don't even need the Dark complex.
-            // First, mark the infinite simplices
+            // First, mark the infinite full_cells
             for( typename Simplices::iterator it = simps.begin(); it != simps.end(); ++it )
             {
                 if( is_infinite(*it) )
                     set_visited(*it, true); // mark it for deletion
             }
-            // Then, modify the finite simplices:
+            // Then, modify the finite full_cells:
             for( typename Simplices::iterator it = simps.begin(); it != simps.end(); ++it )
             {
                 if( get_visited(*it) )
                         continue;
                 int v_idx = (*it)->index_of(v);
-                pcds().associate_vertex_with_simplex(*it, v_idx, infinite_vertex());
+                pcds().associate_vertex_with_full_cell(*it, v_idx, infinite_vertex());
                 if( v_idx != 0 )
                 {
                     // we must put the infinite vertex at index 0
                     (*it)->swap_vertices(0, v_idx);
-                    // FIXME: are we sure this preseves the positive orientation of the simplex ?
+                    // FIXME: are we sure this preseves the positive orientation of the full_cell ?
                     (*it)->swap_vertices(current_dimension() - 1, current_dimension());
                 }
             }
@@ -411,20 +411,20 @@ Delaunay_complex<DCTraits, TDS>
                     continue;
                 for( int i = 1; i <= current_dimension(); ++i )
                 {
-                    (*it)->vertex(i)->set_simplex(*it);
-                    Simplex_handle n = (*it)->neighbor(i);
+                    (*it)->vertex(i)->set_full_cell(*it);
+                    Full_cell_handle n = (*it)->neighbor(i);
                     if( ! get_visited(n) )
                         continue;
                     int n_idx = n->index_of(v);
                     set_neighbors(*it, i, n->neighbor(n_idx), n->neighbor(n_idx)->index_of(n));
                 }
             }
-            Simplex_handle ret_s;
-            // Then, we delete the infinite simplices
+            Full_cell_handle ret_s;
+            // Then, we delete the infinite full_cells
             for( typename Simplices::iterator it = simps.begin(); it != simps.end(); ++it )
             {
                 if( get_visited(*it) )
-                    pcds().delete_simplex(*it);
+                    pcds().delete_full_cell(*it);
                 else
                     ret_s = *it;
             }
@@ -439,7 +439,7 @@ Delaunay_complex<DCTraits, TDS>
     }
 
     // Now, compute the conflict zone of v->point() in
-    // the dark side. This is precisely the set of simplices
+    // the dark side. This is precisely the set of full_cells
     // that we have to glue back into the light side.
     Dark_face       dark_f = dark_side.make_empty_face();
     Dark_facet      dark_ft;
@@ -448,13 +448,13 @@ Delaunay_complex<DCTraits, TDS>
     CGAL_assertion( lt != Dark_complex::ON_VERTEX
         && lt != Dark_complex::OUTSIDE_AFFINE_HULL );
 
-    // |ret_s| is the simplex that we return
+    // |ret_s| is the full_cell that we return
     Dark_s_handle dark_ret_s = dark_s;
-    Simplex_handle ret_s;
+    Full_cell_handle ret_s;
 
-    typedef std::vector<Dark_s_handle> Dark_simplices;
-    Dark_simplices conflict_zone;
-    std::back_insert_iterator<Dark_simplices> dark_out(conflict_zone);
+    typedef std::vector<Dark_s_handle> Dark_full_cells;
+    Dark_full_cells conflict_zone;
+    std::back_insert_iterator<Dark_full_cells> dark_out(conflict_zone);
     
     dark_ft = dark_side.compute_conflict_zone(v->point(), dark_s, dark_out);
 
@@ -466,20 +466,20 @@ Delaunay_complex<DCTraits, TDS>
     // 3. stitch.
 
     // 1. Build a facet on the boudary of the light zone:
-    Simplex_handle light_s = *simps.begin();
+    Full_cell_handle light_s = *simps.begin();
     Facet light_ft(light_s, light_s->index_of(v));
 
     // 2. Find corresponding Dark_facet on boundary of the dark zone
-    Dark_simplices dark_incident_s;
+    Dark_full_cells dark_incident_s;
     for( int i = 0; i <= current_dimension(); ++i )
     {
         if( index_of_covertex(light_ft) == i )
             continue;
-        Dark_v_handle dark_v = light_to_dark[simplex_of(light_ft)->vertex(i)];
+        Dark_v_handle dark_v = light_to_dark[full_cell_of(light_ft)->vertex(i)];
         dark_incident_s.clear();
         dark_out = std::back_inserter(dark_incident_s);
-        dark_side.gather_incident_simplices(dark_v, dark_out);
-        for( typename Dark_simplices::iterator it = dark_incident_s.begin(); it != dark_incident_s.end(); ++it )
+        dark_side.gather_incident_full_cells(dark_v, dark_out);
+        for( typename Dark_full_cells::iterator it = dark_incident_s.begin(); it != dark_incident_s.end(); ++it )
         {
             (*it)->data().count_ += 1;
         }
@@ -487,18 +487,18 @@ Delaunay_complex<DCTraits, TDS>
 
     for( typename Simplices::iterator it = simps.begin(); it != simps.end(); ++it )
         set_visited(*it, true);
-    CGAL_assertion( get_visited(simplex_of(light_ft)) );
-    for( typename Dark_simplices::iterator it = conflict_zone.begin(); it != conflict_zone.end(); ++it )
+    CGAL_assertion( get_visited(full_cell_of(light_ft)) );
+    for( typename Dark_full_cells::iterator it = conflict_zone.begin(); it != conflict_zone.end(); ++it )
         dark_side.set_visited(*it, true);
 
     bool dark_facet_found(false);
-    for( typename Dark_simplices::iterator it = dark_incident_s.begin(); it != dark_incident_s.end(); ++it )
+    for( typename Dark_full_cells::iterator it = dark_incident_s.begin(); it != dark_incident_s.end(); ++it )
     {
         if( current_dimension() != (*it)->data().count_ )
             continue;
         if( ! dark_side.get_visited(*it) )
             continue;
-        // We found a simplex incident to the dark facet corresponding to the light facet |light_ft|
+        // We found a full_cell incident to the dark facet corresponding to the light facet |light_ft|
         dark_facet_found = true;
         int ft_idx = 0;
         while( light_s->has_vertex((*it)->vertex(ft_idx)->data()) )
@@ -507,24 +507,24 @@ Delaunay_complex<DCTraits, TDS>
     }
     // Now, we are ready to traverse both boundary and do the stiching.
 
-    // But first, we create the new simplices in the light complex,
+    // But first, we create the new full_cells in the light complex,
     // with as much adjacency information as possible.
 
-    // Create new simplices with vertices
-    for( typename Dark_simplices::iterator it = conflict_zone.begin(); it != conflict_zone.end(); ++it )
+    // Create new full_cells with vertices
+    for( typename Dark_full_cells::iterator it = conflict_zone.begin(); it != conflict_zone.end(); ++it )
     {
-        Simplex_handle new_s = new_simplex();
+        Full_cell_handle new_s = new_full_cell();
         (*it)->data().light_copy_ = new_s;
         for( int i = 0; i <= current_dimension(); ++i )
-            pcds().associate_vertex_with_simplex(new_s, i, (*it)->vertex(i)->data());
+            pcds().associate_vertex_with_full_cell(new_s, i, (*it)->vertex(i)->data());
         if( dark_ret_s == *it )
             ret_s = new_s;
     }
 
     // Setup adjacencies inside the hole
-    for( typename Dark_simplices::iterator it = conflict_zone.begin(); it != conflict_zone.end(); ++it )
+    for( typename Dark_full_cells::iterator it = conflict_zone.begin(); it != conflict_zone.end(); ++it )
     {
-        Simplex_handle new_s = (*it)->data().light_copy_;
+        Full_cell_handle new_s = (*it)->data().light_copy_;
         for( int i = 0; i <= current_dimension(); ++i )
             if( dark_side.get_visited((*it)->neighbor(i)) )
                 pcds().set_neighbors(new_s, i, (*it)->neighbor(i)->data().light_copy_, (*it)->mirror_index(i));
@@ -534,7 +534,7 @@ Delaunay_complex<DCTraits, TDS>
     typedef std::queue<std::pair<Facet, Dark_facet> > Queue;
     Queue q;
     q.push(std::make_pair(light_ft, dark_ft));
-    dark_s = dark_side.simplex_of(dark_ft);
+    dark_s = dark_side.full_cell_of(dark_ft);
     int dark_i = dark_side.index_of_covertex(dark_ft);
     // mark dark_ft as visited:
     // TODO try by marking with Dark_v_handle (vertex)
@@ -545,11 +545,11 @@ Delaunay_complex<DCTraits, TDS>
         q.pop();
         light_ft = p.first;
         dark_ft = p.second;
-        light_s = simplex_of(light_ft);
+        light_s = full_cell_of(light_ft);
         int light_i = index_of_covertex(light_ft);
-        dark_s = dark_side.simplex_of(dark_ft);
+        dark_s = dark_side.full_cell_of(dark_ft);
         int dark_i = dark_side.index_of_covertex(dark_ft);
-        Simplex_handle light_n = light_s->neighbor(light_i);
+        Full_cell_handle light_n = light_s->neighbor(light_i);
         set_neighbors(dark_s->data().light_copy_, dark_i, light_n, light_s->mirror_index(light_i));
         for( int di = 0; di <= current_dimension(); ++di )
         {
@@ -562,9 +562,9 @@ Delaunay_complex<DCTraits, TDS>
                 light_r = pcds().rotate_rotor(light_r);
             while( ! dark_side.pcds().is_boundary_facet(dark_r) )
                 dark_r = dark_side.pcds().rotate_rotor(dark_r);
-            Dark_s_handle dark_ns = dark_side.simplex_of(dark_r);
+            Dark_s_handle dark_ns = dark_side.full_cell_of(dark_r);
             int dark_ni = dark_side.index_of_covertex(dark_r);
-            Simplex_handle light_ns = simplex_of(light_r);
+            Full_cell_handle light_ns = full_cell_of(light_r);
             int light_ni = index_of_covertex(light_r);
             // mark dark_r as visited:
             // TODO try by marking with Dark_v_handle (vertex)
@@ -577,7 +577,7 @@ Delaunay_complex<DCTraits, TDS>
             q.push(std::make_pair(Facet(light_ns, light_ni), Dark_facet(dark_ns, dark_ni)));
         }
     }
-    pcds().delete_simplices(simps.begin(), simps.end());
+    pcds().delete_full_cells(simps.begin(), simps.end());
     pcds().delete_vertex(v);
     return ret_s;
 }
@@ -594,11 +594,11 @@ Delaunay_complex<DCTraits, TDS>
     side_of_oriented_subsphere_predicate() = geom_traits().side_of_oriented_subsphere_d_object();
     if( 1 <= current_dimension() )
     {
-        Simplex_handle s = infinite_vertex()->simplex()->neighbor(0);
+        Full_cell_handle s = infinite_vertex()->full_cell()->neighbor(0);
         Orientation o = orientation(s);
         CGAL_assertion( ZERO != o );
         if( NEGATIVE == o )
-            reorient_simplices();
+            reorient_full_cells();
     }
 }
 
@@ -607,7 +607,7 @@ Delaunay_complex<DCTraits, TDS>
 template< typename DCTraits, typename TDS >
 typename Delaunay_complex<DCTraits, TDS>::Vertex_handle
 Delaunay_complex<DCTraits, TDS>
-::insert(const Point & p, const Locate_type lt, const Face & f, const Facet & ft, const Simplex_handle s)
+::insert(const Point & p, const Locate_type lt, const Face & f, const Facet & ft, const Full_cell_handle s)
 {
     switch( lt )
     {
@@ -628,7 +628,7 @@ Delaunay_complex<DCTraits, TDS>
                 {
                     return insert_outside_convex_hull_1(p, s);
                 }
-                Vertex_handle v = pcds().insert_in_simplex(s);
+                Vertex_handle v = pcds().insert_in_full_cell(s);
                 v->set_point(p);
                 return v;
             }
@@ -653,11 +653,11 @@ Delaunay_complex<DCTraits, TDS>
     v->set_point(p);
     if( current_dimension() >= 1 )
     {
-        Simplex_handle s = infinite_vertex()->simplex()->neighbor(0);
+        Full_cell_handle s = infinite_vertex()->full_cell()->neighbor(0);
         Orientation o = orientation(s);
         CGAL_assertion( ZERO != o );
             if( NEGATIVE == o )
-                reorient_simplices();
+                reorient_full_cells();
     }
     return v;
 }
@@ -665,14 +665,14 @@ Delaunay_complex<DCTraits, TDS>
 template< typename DCTraits, typename TDS >
 typename Delaunay_complex<DCTraits, TDS>::Vertex_handle
 Delaunay_complex<DCTraits, TDS>
-::insert_in_conflict_zone(const Point & p, const Simplex_handle s)
+::insert_in_conflict_zone(const Point & p, const Full_cell_handle s)
 {
-    typedef std::vector<Simplex_handle> Simplex_h_vector;
-    typedef typename Simplex_h_vector::iterator SHV_iterator;
-    static Simplex_h_vector cs; // for storing conflicting simplices.
+    typedef std::vector<Full_cell_handle> Full_cell_h_vector;
+    typedef typename Full_cell_h_vector::iterator SHV_iterator;
+    static Full_cell_h_vector cs; // for storing conflicting full_cells.
     cs.clear();
     // cs.reserve(64);
-    std::back_insert_iterator<Simplex_h_vector> out(cs);
+    std::back_insert_iterator<Full_cell_h_vector> out(cs);
     Facet ft = compute_conflict_zone(p, s, out);
     return insert_in_hole(p, cs.begin(), cs.end(), ft);
 }
@@ -684,10 +684,10 @@ template< typename DCTraits, typename TDS >
 template< typename OrientationPred >
 Oriented_side
 Delaunay_complex<DCTraits, TDS>
-::perturbed_side_of_positive_sphere(const Point & p, Simplex_const_handle s,
+::perturbed_side_of_positive_sphere(const Point & p, Full_cell_const_handle s,
         const OrientationPred & ori) const
 {
-    CGAL_precondition_msg( is_finite(s), "simplex must be finite");
+    CGAL_precondition_msg( is_finite(s), "full cell must be finite");
     CGAL_expensive_precondition( POSITIVE == orientation(s) );
     typedef std::vector<const Point *> Points;
     Points points(current_dimension() + 2);
@@ -702,10 +702,10 @@ Delaunay_complex<DCTraits, TDS>
     while( cut_pt != points.rend() )
     {
         if( &p == *cut_pt )
-            // because the simplex "s" is assumed to be positively oriented
+            // because the full_cell "s" is assumed to be positively oriented
             return ON_NEGATIVE_SIDE; // we consider |p| to lie outside the sphere
         test_points.clear();
-        typename Simplex::Point_const_iterator spit = s->points_begin();
+        typename Full_cell::Point_const_iterator spit = s->points_begin();
         int adjust_sign = -1;
         for( i = 0; i < current_dimension(); ++i )
         {
@@ -739,7 +739,7 @@ Delaunay_complex<DCTraits, TDS>
 template< typename DCTraits, typename TDS >
 bool
 Delaunay_complex<DCTraits, TDS>
-::conflict(const Point & p, Simplex_const_handle s) const
+::conflict(const Point & p, Full_cell_const_handle s) const
 {
     CGAL_precondition( 2 <= current_dimension() );
     if( current_dimension() < ambient_dimension() )
@@ -760,14 +760,14 @@ template< typename DCTraits, typename TDS >
 template< typename OutputIterator >
 typename Delaunay_complex<DCTraits, TDS>::Facet
 Delaunay_complex<DCTraits, TDS>
-::compute_conflict_zone(const Point & p, const Simplex_handle s, OutputIterator out) const
+::compute_conflict_zone(const Point & p, const Full_cell_handle s, OutputIterator out) const
 {
     CGAL_precondition( 2 <= current_dimension() );
     if( current_dimension() < ambient_dimension() )
     {
         Conflict_pred_in_subspace c(*this, p, coaffine_orientation_predicate(), side_of_oriented_subsphere_predicate());
         Conflict_traversal_pred_in_subspace tp(*this, c);
-        return pcds().gather_simplices(s, tp, out);
+        return pcds().gather_full_cells(s, tp, out);
     }
     else
     {
@@ -775,7 +775,7 @@ Delaunay_complex<DCTraits, TDS>
         Side_of_oriented_sphere_d side = geom_traits().side_of_oriented_sphere_d_object();
         Conflict_pred_in_fullspace c(*this, p, ori, side);
         Conflict_traversal_pred_in_fullspace tp(*this, c);
-        return pcds().gather_simplices(s, tp, out);
+        return pcds().gather_full_cells(s, tp, out);
     }
 }
 

@@ -18,29 +18,29 @@
 #ifndef CGAL_TRIANGULATION_SIMPLEX_H
 #define CGAL_TRIANGULATION_SIMPLEX_H
 
-#include <CGAL/Triangulation_ds_simplex.h>
+#include <CGAL/Triangulation_ds_full_cell.h>
 #include <CGAL/Iterator_project.h>
 #include <CGAL/Default.h>
 
 namespace CGAL {
 
-struct No_simplex_data {};
+struct No_full_cell_data {};
 
-template< class TriangulationTraits, typename Data_ = No_simplex_data, class TDSSimplex = Default >
-class Pure_complex_simplex : public Default::Get<TDSSimplex, Triangulation_ds_simplex<> >::type
+template< class TriangulationTraits, typename Data_ = No_full_cell_data, class TDSFullCell = Default >
+class Triangulation_full_cell : public Default::Get<TDSFullCell, Triangulation_ds_full_cell<> >::type
 {
-    // The default type for TDSSimplex is Triangulation_ds_simplex<> :
-    typedef typename Default::Get<TDSSimplex, Triangulation_ds_simplex<> >::type
+    // The default type for TDSFullCell is Triangulation_ds_full_cell<> :
+    typedef typename Default::Get<TDSFullCell, Triangulation_ds_full_cell<> >::type
                                                                 Base;
-    typedef Pure_complex_simplex<TriangulationTraits, Data_, TDSSimplex>  Self;
+    typedef Triangulation_full_cell<TriangulationTraits, Data_, TDSFullCell>  Self;
 public:
     typedef Data_                                       Data;
     typedef typename Base::Vertex_handle                Vertex_handle;
     typedef typename Base::Vertex_const_handle          Vertex_const_handle;
     typedef typename Base::Vertex_handle_const_iterator Vertex_handle_const_iterator;
-    typedef typename Base::Simplex_const_handle         Simplex_const_handle;
-    typedef typename TriangulationTraits::Point_d                  Point;
-    typedef typename TriangulationTraits::Point_d                  Point_d;
+    typedef typename Base::Full_cell_const_handle       Full_cell_const_handle;
+    typedef typename TriangulationTraits::Point_d       Point;
+    typedef typename TriangulationTraits::Point_d       Point_d;
 
 private: // DATA MEMBERS
     Data    data_;
@@ -53,18 +53,18 @@ public:
     template< class TDS2 >
     struct Rebind_TDS
     {
-        typedef typename Base::template Rebind_TDS<TDS2>::Other TDSSimplex2;
-        typedef Pure_complex_simplex<TriangulationTraits, Data_, TDSSimplex2> Other;
+        typedef typename Base::template Rebind_TDS<TDS2>::Other TDSFullCell2;
+        typedef Triangulation_full_cell<TriangulationTraits, Data_, TDSFullCell2> Other;
     };
 
-    Pure_complex_simplex(const int d)
+    Triangulation_full_cell(const int d)
         : Base(d), data_() {}
 
     template< typename T >
-    Pure_complex_simplex(const int d, const T & t)
+    Triangulation_full_cell(const int d, const T & t)
         : Base(d), data_(t) {}
 
-    Pure_complex_simplex(const Self & s)
+    Triangulation_full_cell(const Self & s)
         : Base(s), data_(s.data_)  {}
 
     Point circumcenter() const
@@ -120,20 +120,20 @@ public:
 // FUNCTIONS THAT ARE NOT MEMBER FUNCTIONS:
 
 std::istream &
-operator>>(std::istream & is, No_simplex_data &)
+operator>>(std::istream & is, No_full_cell_data &)
 {
     return is;
 }
 
 std::ostream &
-operator<<(std::ostream & os, const No_simplex_data & nd)
+operator<<(std::ostream & os, const No_full_cell_data & nd)
 {
     return os;
 }
 
 template < typename TDS, typename Data, typename SSP >
 std::ostream &
-operator<<(std::ostream & O, const Pure_complex_simplex<TDS, Data, SSP> & s)
+operator<<(std::ostream & O, const Triangulation_full_cell<TDS, Data, SSP> & s)
 {
     /*if( is_ascii(O) )
     {
@@ -146,7 +146,7 @@ operator<<(std::ostream & O, const Pure_complex_simplex<TDS, Data, SSP> & s)
 
 template < typename TDS, typename Data, typename SSP >
 std::istream &
-operator>>(std::istream & I, Pure_complex_simplex<TDS, Data, SSP> & s)
+operator>>(std::istream & I, Triangulation_full_cell<TDS, Data, SSP> & s)
 {
     /*if( is_ascii(I) )
     {}

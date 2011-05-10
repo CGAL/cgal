@@ -28,30 +28,30 @@ class Triangulation_face
 {
     typedef typename internal::Dimen_plus_one<typename TDS::Ambient_dimension>::type Dimen_plus;
 public:
-    typedef typename TDS::Simplex_handle           Simplex_handle;
-    typedef typename TDS::Vertex_handle            Vertex_handle;
+    typedef typename TDS::Full_cell_handle          Full_cell_handle;
+    typedef typename TDS::Vertex_handle             Vertex_handle;
     typedef internal::S_or_D_array<int, Dimen_plus> Indices;
 
 protected:
-    Simplex_handle              simplex_;
-    Indices                     indices_;
+    Full_cell_handle        full_cell_;
+    Indices                 indices_;
 
 public:
-    explicit Triangulation_face(Simplex_handle s)
-    : simplex_(s), indices_(s->ambient_dimension()+1)
+    explicit Triangulation_face(Full_cell_handle s)
+    : full_cell_(s), indices_(s->ambient_dimension()+1)
     {
-        CGAL_assertion( Simplex_handle() != s );
+        CGAL_assertion( Full_cell_handle() != s );
         clear();
     }
 
     explicit Triangulation_face(const int ambient_dim)
-    : simplex_(), indices_(ambient_dim+1)
+    : full_cell_(), indices_(ambient_dim+1)
     {
         clear();
     }
 
     Triangulation_face(const Triangulation_face & f)
-    : simplex_(f.simplex_), indices_(f.indices_)
+    : full_cell_(f.full_cell_), indices_(f.indices_)
     {}
 
     int feature_dimension() const
@@ -61,9 +61,9 @@ public:
         return (i-1);
     }
 
-    Simplex_handle simplex() const
+    Full_cell_handle full_cell() const
     {
-        return simplex_;
+        return full_cell_;
     }
 
     int index(const int i) const
@@ -77,7 +77,7 @@ public:
         int j = index(i);
         if( j == -1 )
             return Vertex_handle();
-        return simplex()->vertex(j);
+        return full_cell()->vertex(j);
     }
 
 // - - - - - - - - - - - - - - - - - -  UPDATE FUNCTIONS	
@@ -89,10 +89,10 @@ public:
             indices_[i] = -1;
     }
 
-    void set_simplex(Simplex_handle s)
+    void set_full_cell(Full_cell_handle s)
     {
-        CGAL_precondition( Simplex_handle() != s );
-        simplex_ = s;
+        CGAL_precondition( Full_cell_handle() != s );
+        full_cell_ = s;
     }
 
     void set_index(const int i, const int idx)

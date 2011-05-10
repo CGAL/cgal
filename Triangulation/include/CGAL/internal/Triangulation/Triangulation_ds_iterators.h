@@ -26,8 +26,8 @@ namespace Triangulation {
 template< typename TDS >
 class Triangulation_ds_facet_iterator
 {
-    typedef typename TDS::Simplex_handle   Simplex_handle;
-    typedef typename TDS::Facet            Facet;
+    typedef typename TDS::Full_cell_handle  Full_cell_handle;
+    typedef typename TDS::Facet             Facet;
 
     typedef Facet                           value_type;
     typedef const Facet *                   pointer;
@@ -44,7 +44,7 @@ class Triangulation_ds_facet_iterator
 
 public:
     Triangulation_ds_facet_iterator(TDS & pcds)
-    : pcds_(pcds), ft_(pcds.simplices_begin(), 0), cur_dim_(pcds.current_dimension())
+    : pcds_(pcds), ft_(pcds.full_cells_begin(), 0), cur_dim_(pcds.current_dimension())
     {
         CGAL_assertion( cur_dim_ > 0 );
         while( ! canonical() )
@@ -52,7 +52,7 @@ public:
     }
 
     Triangulation_ds_facet_iterator(TDS & pcds, int)
-    : pcds_(pcds), ft_(pcds.simplices_end(), 0), cur_dim_(pcds.current_dimension())
+    : pcds_(pcds), ft_(pcds.full_cells_end(), 0), cur_dim_(pcds.current_dimension())
     {
         CGAL_assertion( cur_dim_ > 0 );
         CGAL_assertion( canonical() );
@@ -107,28 +107,28 @@ public:
 private:
     bool canonical()
     {
-        if( pcds_.simplices_end() == pcds_.simplex_of(ft_) )
+        if( pcds_.full_cells_end() == pcds_.full_cell_of(ft_) )
             return ( 0 == pcds_.index_of_covertex(ft_) );
-        return ( pcds_.simplex_of(ft_) <
-                    pcds_.simplex_of(ft_)->neighbor(pcds_.index_of_covertex(ft_)) );
+        return ( pcds_.full_cell_of(ft_) <
+                    pcds_.full_cell_of(ft_)->neighbor(pcds_.index_of_covertex(ft_)) );
     }
 
     void raw_decrement()
     {
         int i = pcds_.index_of_covertex(ft_);
         if( i == 0 )
-            ft_ = Facet(--pcds_.simplex_of(ft_), cur_dim_);
+            ft_ = Facet(--pcds_.full_cell_of(ft_), cur_dim_);
         else
-            ft_ = Facet(pcds_.simplex_of(ft_), i - 1);
+            ft_ = Facet(pcds_.full_cell_of(ft_), i - 1);
     }
 
     void raw_increment()
     {
         int i = pcds_.index_of_covertex(ft_);
         if( i == cur_dim_ )
-            ft_ = Facet(++pcds_.simplex_of(ft_), 0);
+            ft_ = Facet(++pcds_.full_cell_of(ft_), 0);
         else
-            ft_ = Facet(pcds_.simplex_of(ft_), i + 1);
+            ft_ = Facet(pcds_.full_cell_of(ft_), i + 1);
     }
 
     void decrement()

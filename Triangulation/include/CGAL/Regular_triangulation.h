@@ -25,22 +25,22 @@
 namespace CGAL {
 
 template< typename RCTraits, typename TDS_ = Default >
-class Regular_complex
-: public Pure_complex<RCTraits,
-         typename Default::Get<TDS_, Pure_complex_data_structure<
+class Regular_triangulation
+: public Triangulation<RCTraits,
+         typename Default::Get<TDS_, Triangulation_data_structure<
                              typename Ambient_dimension<typename RCTraits::Point_d>::type,
-                             Pure_complex_vertex<RCTraits>,
-                             Pure_complex_simplex<RCTraits> >
+                             Triangulation_vertex<RCTraits>,
+                             Triangulation_simplex<RCTraits> >
                     >::type >
 {
     typedef typename Ambient_dimension<typename RCTraits::Point_d>::type
                                                     Ambient_dimension_;
-    typedef typename Default::Get<TDS_, Pure_complex_data_structure<
+    typedef typename Default::Get<TDS_, Triangulation_data_structure<
                          Ambient_dimension_,
-                         Pure_complex_vertex<RCTraits>,
-                         Pure_complex_simplex<RCTraits> >
+                         Triangulation_vertex<RCTraits>,
+                         Triangulation_simplex<RCTraits> >
                 >::type                         TDS;
-    typedef Pure_complex<RCTraits, TDS>        Base;
+    typedef Triangulation<RCTraits, TDS>        Base;
     typedef Regular_complex<RCTraits, TDS_>    Self;
 
 public:

@@ -25,7 +25,7 @@
 #include <CGAL/Compact_container.h>
 #include <CGAL/Triangulation_face.h>
 #include <CGAL/Triangulation_ds_vertex.h>
-#include <CGAL/Triangulation_ds_simplex.h>
+#include <CGAL/Triangulation_ds_full_cell.h>
 #include <CGAL/internal/Combination_enumerator.h>
 #include <CGAL/internal/Triangulation/utilities.h>
 #include <CGAL/internal/Triangulation/Triangulation_ds_iterators.h>
@@ -44,15 +44,15 @@ class Pure_complex_data_structure
 {
     typedef Pure_complex_data_structure<Dimen, Vb, Sb>                  Self;
     typedef typename Default::Get<Vb, Triangulation_ds_vertex<> >::type  V_base;
-    typedef typename Default::Get<Sb, Triangulation_ds_simplex<> >::type S_base;
+    typedef typename Default::Get<Sb, Triangulation_ds_full_cell<> >::type S_base;
 
 public:
     typedef typename V_base::template Rebind_TDS<Self>::Other  Vertex;
-    typedef typename S_base::template Rebind_TDS<Self>::Other  Simplex;
+    typedef typename S_base::template Rebind_TDS<Self>::Other  Full_cell;
 
 protected:
     typedef Compact_container<Vertex>   Vertex_container;
-    typedef Compact_container<Simplex>  Simplex_container;
+    typedef Compact_container<Full_cell>  Full_cell_container;
 
 public:
     typedef Dimen                      Ambient_dimension;
@@ -65,26 +65,26 @@ public:
     typedef typename Vertex_container::const_iterator   Vertex_const_handle;
     typedef typename Vertex_container::const_iterator   Vertex_const_iterator;
 
-    typedef typename Simplex_container::iterator        Simplex_handle;
-    typedef typename Simplex_container::iterator        Simplex_iterator;
-    typedef typename Simplex_container::const_iterator  Simplex_const_handle;
-    typedef typename Simplex_container::const_iterator  Simplex_const_iterator;
+    typedef typename Full_cell_container::iterator        Full_cell_handle;
+    typedef typename Full_cell_container::iterator        Full_cell_iterator;
+    typedef typename Full_cell_container::const_iterator  Full_cell_const_handle;
+    typedef typename Full_cell_container::const_iterator  Full_cell_const_iterator;
 
     typedef internal::Triangulation::Triangulation_ds_facet_iterator<Self>
                                                         Facet_iterator;
 
     /* The 2 types defined below, |Facet| and |Rotor| are used when traversing
-     the boundary `B' of the union of a set of simplices. |Rotor| makes it
+     the boundary `B' of the union of a set of full cells. |Rotor| makes it
      easy to rotate around itself, in the search of neighbors in `B' (see
      |rotate_rotor| and |insert_in_tagged_hole|) */
 
     // A co-dimension 1 sub-simplex.
-    typedef cpp0x::tuple<Simplex_handle, int>          Facet;
+    typedef cpp0x::tuple<Full_cell_handle, int>          Facet;
     
     // A co-dimension 2 sub-simplex. called a Rotor because we can rotate
     // the two "covertices" around the sub-simplex. Useful for traversing the
     // boundary of a hole. NOT DOCUMENTED
-    typedef cpp0x::tuple<Simplex_handle, int, int>    Rotor;
+    typedef cpp0x::tuple<Full_cell_handle, int, int>    Rotor;
 
     typedef Triangulation_face<Self>                 Face;
 
@@ -92,14 +92,14 @@ protected: // DATA MEMBERS
 
     int dmax_, dcur_; // dimension of the current complex
     Vertex_container  vertices_;  // list of all vertices
-    Simplex_container simplices_; // list of all simplices
+    Full_cell_container full_cells_; // list of all full cells
 
 private:
 
     void clean_dynamic_memory()
     { 
         vertices_.clear();
-        simplices_.clear();
+        full_cells_.clear();
     }
 
     template < class Dim_tag >
@@ -117,7 +117,7 @@ private:
 public:
 
     Pure_complex_data_structure(const int dim) 
-        : dmax_(get_ambient_dimension<Dimen>::value(dim)), dcur_(-2), vertices_(), simplices_()
+        : dmax_(get_ambient_dimension<Dimen>::value(dim)), dcur_(-2), vertices_(), full_cells_()
     {
         CGAL_assertion_msg(dmax_ > 0, "ambient dimension must be positive.");
     }
@@ -142,29 +142,29 @@ protected:
 
 public:
 
-    /* returns the current dimension of the simplices in the complex. */
+    /* returns the current dimension of the full cells in the complex. */
     int ambient_dimension() const { return dmax_; }
     int current_dimension() const { return dcur_; }
 
     size_type number_of_vertices() const  { return this->vertices_.size();}
-    size_type number_of_simplices() const  { return this->simplices_.size();}
+    size_type number_of_full_cells() const  { return this->full_cells_.size();}
 
     bool empty() const { return current_dimension() == -2; }
 
     Vertex_container & vertices() { return vertices_; }
     const Vertex_container & vertices() const { return vertices_; }
-    Simplex_container & simplices() { return simplices_; }
-    const Simplex_container & simplices() const { return simplices_; }
+    Full_cell_container & full_cells() { return full_cells_; }
+    const Full_cell_container & full_cells() const { return full_cells_; }
 
-    Vertex_handle vertex(const Simplex_handle s, const int i) const 
+    Vertex_handle vertex(const Full_cell_handle s, const int i) const 
     {
-        CGAL_precondition(s != Simplex_handle() && check_range(i));
+        CGAL_precondition(s != Full_cell_handle() && check_range(i));
         return s->vertex(i);
     }
 
-    Vertex_const_handle vertex(const Simplex_const_handle s, const int i) const 
+    Vertex_const_handle vertex(const Full_cell_const_handle s, const int i) const 
     {
-        CGAL_precondition(s != Simplex_handle() && check_range(i));
+        CGAL_precondition(s != Full_cell_handle() && check_range(i));
         return s->vertex(i);
     }
 
@@ -178,49 +178,49 @@ public:
         return v == vit;
     }
 
-    bool is_simplex(const Simplex_const_handle & s) const
+    bool is_full_cell(const Full_cell_const_handle & s) const
     {
-        if( Simplex_const_handle() == s )
+        if( Full_cell_const_handle() == s )
             return false;
-        Simplex_const_iterator sit = simplices_begin();
-        while( sit != simplices_end() && ( s != sit ) )
+        Full_cell_const_iterator sit = full_cells_begin();
+        while( sit != full_cells_end() && ( s != sit ) )
             ++sit;
         return s == sit;
     }
 
-    Simplex_handle simplex(const Vertex_handle v) const 
+    Full_cell_handle full_cell(const Vertex_handle v) const 
     {
         CGAL_precondition(v != Vertex_handle());
-        return v->simplex();
+        return v->full_cell();
     } 
 
-    Simplex_const_handle simplex(const Vertex_const_handle v) const 
+    Full_cell_const_handle full_cell(const Vertex_const_handle v) const 
     {
         CGAL_precondition(Vertex_const_handle() != v);
-        return v->simplex();
+        return v->full_cell();
     }
 
-    Simplex_handle neighbor(const Simplex_handle s, const int i) const 
+    Full_cell_handle neighbor(const Full_cell_handle s, const int i) const 
     {
-        CGAL_precondition(Simplex_handle() != s && check_range(i));
+        CGAL_precondition(Full_cell_handle() != s && check_range(i));
         return s->neighbor(i);
     }
 
-    Simplex_const_handle neighbor(const Simplex_const_handle s, const int i) const 
+    Full_cell_const_handle neighbor(const Full_cell_const_handle s, const int i) const 
     {
-        CGAL_precondition(Simplex_const_handle() != s && check_range(i));
+        CGAL_precondition(Full_cell_const_handle() != s && check_range(i));
         return s->neighbor(i);
     }
 
-    int mirror_index(const Simplex_handle s, const int i) const
+    int mirror_index(const Full_cell_handle s, const int i) const
     {
-        CGAL_precondition(Simplex_handle() != s && check_range(i));
+        CGAL_precondition(Full_cell_handle() != s && check_range(i));
         return s->mirror_index(i);
     }
 
-    int mirror_index(const Simplex_const_handle s, const int i) const
+    int mirror_index(const Full_cell_const_handle s, const int i) const
     {
-        CGAL_precondition(Simplex_const_handle() != s && check_range(i));
+        CGAL_precondition(Full_cell_const_handle() != s && check_range(i));
         return s->mirror_index(i);
     }
 
@@ -234,7 +234,7 @@ public:
     // works for Face_ = Facet and Face_ = Rotor.
     // NOT DOCUMENTED for the Rotor case...
     template< typename Face_ >
-    Simplex_handle simplex_of(const Face_ & f) const
+    Full_cell_handle full_cell_of(const Face_ & f) const
     {
         return cpp0x::get<0>(f);
     }
@@ -259,9 +259,9 @@ public:
     template< class Face_ >
     bool is_boundary_facet(const Face_ & f) const
     {
-        if( get_visited(neighbor(simplex_of(f), index_of_covertex(f))) )
+        if( get_visited(neighbor(full_cell_of(f), index_of_covertex(f))) )
             return false;
-        if( ! get_visited(simplex_of(f)) )
+        if( ! get_visited(full_cell_of(f)) )
             return false;
         return true;
     }
@@ -269,9 +269,9 @@ public:
     // NOT DOCUMENTED...
     Rotor rotate_rotor(Rotor & f)
     {
-        int opposite = mirror_index(simplex_of(f), index_of_covertex(f));
-        Simplex_handle s = neighbor(simplex_of(f), index_of_covertex(f));
-        int new_second = s->index_of(vertex(simplex_of(f), index_of_second_covertex(f)));
+        int opposite = mirror_index(full_cell_of(f), index_of_covertex(f));
+        Full_cell_handle s = neighbor(full_cell_of(f), index_of_covertex(f));
+        int new_second = s->index_of(vertex(full_cell_of(f), index_of_second_covertex(f)));
         return Rotor(s, new_second, opposite);
     }
 
@@ -287,7 +287,7 @@ public:
 
 // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - INSERTIONS
 
-    Vertex_handle insert_in_simplex(Simplex_handle);
+    Vertex_handle insert_in_full_cell(Full_cell_handle);
     Vertex_handle insert_in_face(const Face &);
     Vertex_handle insert_in_facet(const Facet &);
     template< typename Forward_iterator >
@@ -296,31 +296,31 @@ public:
     Vertex_handle insert_in_hole(Forward_iterator, const Forward_iterator, Facet, OutputIterator);
 
     template< typename OutputIterator >
-    Simplex_handle insert_in_tagged_hole(Vertex_handle, Facet, OutputIterator);
+    Full_cell_handle insert_in_tagged_hole(Vertex_handle, Facet, OutputIterator);
 
 	Vertex_handle insert_increase_dimension(Vertex_handle);
 
     // NOT DOCUMENTED
-    void clear_visited_marks(Simplex_handle) const;
+    void clear_visited_marks(Full_cell_handle) const;
 
     //  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  DANGEROUS UPDATE OPERATIONS
 
     // NOT DOCUMENTED
-    bool get_visited(Simplex_handle s) const
+    bool get_visited(Full_cell_handle s) const
     {
-        CGAL_precondition(s != Simplex_handle());
+        CGAL_precondition(s != Full_cell_handle());
         return static_cast<bool>(s->get_flags() & (unsigned int)1);
     }
-    bool get_visited(Simplex_const_handle s) const
+    bool get_visited(Full_cell_const_handle s) const
     {
-        CGAL_precondition(s != Simplex_const_handle());
+        CGAL_precondition(s != Full_cell_const_handle());
         return static_cast<bool>(s->get_flags() & (unsigned int)1);
     }
 
     // NOT DOCUMENTED
-    void set_visited(Simplex_handle s, bool b) const
+    void set_visited(Full_cell_handle s, bool b) const
     {
-        CGAL_precondition(s != Simplex_handle());
+        CGAL_precondition(s != Full_cell_handle());
         unsigned int flags = s->get_flags();
         if( b )
             flags = (flags | (unsigned int)1);
@@ -341,29 +341,29 @@ public:
         dcur_ = d;
     }
 
-    Simplex_handle new_simplex(const Simplex_handle s)
+    Full_cell_handle new_full_cell(const Full_cell_handle s)
     { 
-        return simplices_.emplace(*s);
+        return full_cells_.emplace(*s);
     }
 
-    Simplex_handle new_simplex()
+    Full_cell_handle new_full_cell()
     { 
-        return simplices_.emplace(dmax_);
+        return full_cells_.emplace(dmax_);
     }
 
-    void delete_simplex(Simplex_handle s)
+    void delete_full_cell(Full_cell_handle s)
     {
-        CGAL_precondition(Simplex_handle() != s);
-        // CGAL_expensive_precondition(is_simplex(s));
-        simplices_.erase(s);
+        CGAL_precondition(Full_cell_handle() != s);
+        // CGAL_expensive_precondition(is_full_cell(s));
+        full_cells_.erase(s);
     }
 
     template< typename Forward_iterator >
-    void delete_simplices(Forward_iterator start, Forward_iterator end)
+    void delete_full_cells(Forward_iterator start, Forward_iterator end)
     {
         Forward_iterator s = start;
         while( s != end )
-            simplices_.erase(*s++);
+            full_cells_.erase(*s++);
     }
 
     template< class T >
@@ -383,21 +383,21 @@ public:
         vertices_.erase(v);
     }
 
-    void associate_vertex_with_simplex(Simplex_handle s, const int i, Vertex_handle v)
+    void associate_vertex_with_full_cell(Full_cell_handle s, const int i, Vertex_handle v)
     {
         CGAL_precondition(check_range(i));
-        CGAL_precondition(s != Simplex_handle());
+        CGAL_precondition(s != Full_cell_handle());
         CGAL_precondition(v != Vertex_handle());
         s->set_vertex(i, v);
-        v->set_simplex(s);
+        v->set_full_cell(s);
     }
 
-    void set_neighbors(Simplex_handle s, int i, Simplex_handle s1, int j)
+    void set_neighbors(Full_cell_handle s, int i, Full_cell_handle s1, int j)
     {
         CGAL_precondition(check_range(i));
         CGAL_precondition(check_range(j));
-        CGAL_precondition(s  != Simplex_handle());
-        CGAL_precondition(s1 != Simplex_handle());
+        CGAL_precondition(s  != Full_cell_handle());
+        CGAL_precondition(s1 != Full_cell_handle());
         s->set_neighbor(i, s1);
         s1->set_neighbor(j, s);
         s->set_mirror_index(i, j);
@@ -409,11 +409,11 @@ public:
     bool is_valid(bool = true, int = 0) const;
     /*  op Partially checks whether |\Mvar| is an abstract simplicial
         complex. This function terminates without error if each vertex is a
-        vertex of the simplex of which it claims to be a vertex, if the
-        vertices of all simplices are pairwise distinct, if the neighbor
-        relationship is symmetric, and if neighboring simplices share exactly
+        vertex of the full_cell of which it claims to be a vertex, if the
+        vertices of all full_cells are pairwise distinct, if the neighbor
+        relationship is symmetric, and if neighboring full_cells share exactly
         |dcur_| vertices.  It returns an error message if one of these
-        conditions is violated.  Note that it is not checked whether simplices
+        conditions is violated.  Note that it is not checked whether full_cells
         that share |dcur_| vertices are neighbors in the data structure.
     */
 
@@ -422,13 +422,13 @@ public:
 
     Vertex_iterator vertices_begin() { return vertices_.begin(); }
     Vertex_iterator vertices_end()   { return vertices_.end(); }
-    Simplex_iterator simplices_begin() { return simplices_.begin(); }
-    Simplex_iterator simplices_end()   { return simplices_.end(); }
+    Full_cell_iterator full_cells_begin() { return full_cells_.begin(); }
+    Full_cell_iterator full_cells_end()   { return full_cells_.end(); }
 
     Vertex_const_iterator vertices_begin() const { return vertices_.begin(); }
     Vertex_const_iterator vertices_end()   const { return vertices_.end(); }
-    Simplex_const_iterator simplices_begin() const { return simplices_.begin(); }
-    Simplex_const_iterator simplices_end()   const { return simplices_.end(); }
+    Full_cell_const_iterator full_cells_begin() const { return full_cells_.begin(); }
+    Full_cell_const_iterator full_cells_end()   const { return full_cells_.end(); }
 
     Facet_iterator facets_begin()
     {
@@ -441,17 +441,17 @@ public:
         return Facet_iterator(*this, 0);
     }
 
-// - - - - - - - - - - - - - - - - - - - - - - - - - - - SIMPLEX GATHERING
+// - - - - - - - - - - - - - - - - - - - - - - - - - - - FULL CELL GATHERING
 
-    // a traversal predicate for gathering simplices incident to a given face
-    // ``incident'' means that the given face is a subface of the simplex
-    class Incident_simplex_traversal_predicate
+    // a traversal predicate for gathering full_cells incident to a given face
+    // ``incident'' means that the given face is a subface of the full_cell
+    class Incident_full_cell_traversal_predicate
     {
         const Face & f_;
         int dim_;
         const Pure_complex_data_structure & pcds_;
     public:
-        Incident_simplex_traversal_predicate(const Pure_complex_data_structure & pcds,
+        Incident_full_cell_traversal_predicate(const Pure_complex_data_structure & pcds,
                                             const Face & f)
         : f_(f), pcds_(pcds)
         {
@@ -459,7 +459,7 @@ public:
         }
         bool operator()(const Facet & facet) const
         {
-            Vertex_handle v = pcds_.simplex_of(facet)->vertex(pcds_.index_of_covertex(facet));
+            Vertex_handle v = pcds_.full_cell_of(facet)->vertex(pcds_.index_of_covertex(facet));
             for( int i = 0; i <= dim_; ++i )
             {
                 if( v == f_.vertex(i) )
@@ -469,15 +469,15 @@ public:
         }
     };
 
-    // a traversal predicate for gathering simplices adjacent to a given face
-    // ``adjacent'' means that the given face shares at least one vertex with the simplex
-    class Adjacent_simplex_traversal_predicate
+    // a traversal predicate for gathering full_cells adjacent to a given face
+    // ``adjacent'' means that the given face shares at least one vertex with the full_cell
+    class Adjacent_full_cell_traversal_predicate
     {
         const Face & f_;
         int dim_;
         const Pure_complex_data_structure & pcds_;
     public:
-        Adjacent_simplex_traversal_predicate(const Pure_complex_data_structure & pcds,
+        Adjacent_full_cell_traversal_predicate(const Pure_complex_data_structure & pcds,
                                             const Face & f)
         : f_(f), pcds_(pcds)
         {
@@ -485,7 +485,7 @@ public:
         }
         bool operator()(const Facet & facet) const
         {
-            Simplex_handle s = pcds_.simplex_of(facet)->neighbor(pcds_.index_of_covertex(facet));
+            Full_cell_handle s = pcds_.full_cell_of(facet)->neighbor(pcds_.index_of_covertex(facet));
             for( int j = 0; j <= pcds_.current_dimension(); ++j )
             {
                 for( int i = 0; i <= dim_; ++i )
@@ -497,13 +497,13 @@ public:
     };
 
     template< typename TraversalPredicate, typename OutputIterator >
-    Facet gather_simplices(Simplex_handle, TraversalPredicate &, OutputIterator &) const;
+    Facet gather_full_cells(Full_cell_handle, TraversalPredicate &, OutputIterator &) const;
     template< typename OutputIterator >
-    OutputIterator gather_incident_simplices(const Face &, OutputIterator) const;
+    OutputIterator gather_incident_full_cells(const Face &, OutputIterator) const;
     template< typename OutputIterator >
-    OutputIterator gather_incident_simplices(Vertex_const_handle, OutputIterator) const;
+    OutputIterator gather_incident_full_cells(Vertex_const_handle, OutputIterator) const;
     template< typename OutputIterator >
-    OutputIterator gather_adjacent_simplices(const Face &, OutputIterator) const;
+    OutputIterator gather_adjacent_full_cells(const Face &, OutputIterator) const;
 #ifndef CGAL_CFG_NO_CPP0X_DEFAULT_TEMPLATE_ARGUMENTS_FOR_FUNCTION_TEMPLATES 
     template< typename OutputIterator, typename Comparator = std::less<Vertex_const_handle> >
     OutputIterator gather_incident_upper_faces(Vertex_const_handle v, const int d, OutputIterator out, Comparator cmp = Comparator())
@@ -532,8 +532,8 @@ public:
 
 // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - INPUT / OUTPUT
 
-    std::istream & read_simplices(std::istream &, const std::vector<Vertex_handle> &);
-    std::ostream & write_simplices(std::ostream &, std::map<Vertex_const_handle, int> &) const;
+    std::istream & read_full_cells(std::istream &, const std::vector<Vertex_handle> &);
+    std::ostream & write_full_cells(std::ostream &, std::map<Vertex_const_handle, int> &) const;
 
 }; // end of ``declaration/definition'' of Pure_complex_data_structure<...>
 
@@ -548,11 +548,11 @@ template< class Dim, class Vb, class Sb >
 template< typename OutputIterator >
 OutputIterator
 Pure_complex_data_structure<Dim, Vb, Sb>
-::gather_incident_simplices(const Face & f, OutputIterator out) const
+::gather_incident_full_cells(const Face & f, OutputIterator out) const
 {
-    // CGAL_expensive_precondition_msg(is_simplex(f.simplex()), "the facet does not belong to the Pure_complex");
-    Incident_simplex_traversal_predicate tp(*this, f);
-    gather_simplices(f.simplex(), tp, out);
+    // CGAL_expensive_precondition_msg(is_full_cell(f.full_cell()), "the facet does not belong to the Pure_complex");
+    Incident_full_cell_traversal_predicate tp(*this, f);
+    gather_full_cells(f.full_cell(), tp, out);
     return out;
 }
 
@@ -560,24 +560,24 @@ template< class Dim, class Vb, class Sb >
 template< typename OutputIterator >
 OutputIterator
 Pure_complex_data_structure<Dim, Vb, Sb>
-::gather_incident_simplices(Vertex_const_handle v, OutputIterator out) const
+::gather_incident_full_cells(Vertex_const_handle v, OutputIterator out) const
 {
 //    CGAL_expensive_precondition(is_vertex(v));
     CGAL_precondition(Vertex_handle() != v);
-    Face f(v->simplex());
-    f.set_index(0, v->simplex()->index_of(v));
-    return gather_incident_simplices(f, out);
+    Face f(v->full_cell());
+    f.set_index(0, v->full_cell()->index_of(v));
+    return gather_incident_full_cells(f, out);
 }
 
 template< class Dim, class Vb, class Sb >
 template< typename OutputIterator >
 OutputIterator
 Pure_complex_data_structure<Dim, Vb, Sb>
-::gather_adjacent_simplices(const Face & f, OutputIterator out) const
+::gather_adjacent_full_cells(const Face & f, OutputIterator out) const
 {
-    // CGAL_precondition_msg(is_simplex(f.simplex()), "the facet does not belong to the Pure_complex");
-    Adjacent_simplex_traversal_predicate tp(*this, f);
-    gather_simplices(f.simplex(), tp, out);
+    // CGAL_precondition_msg(is_full_cell(f.full_cell()), "the facet does not belong to the Pure_complex");
+    Adjacent_full_cell_traversal_predicate tp(*this, f);
+    gather_full_cells(f.full_cell(), tp, out);
     return out;
 }
 
@@ -585,24 +585,24 @@ template< class Dim, class Vb, class Sb >
 template< typename TraversalPredicate, typename OutputIterator >
 typename Pure_complex_data_structure<Dim, Vb, Sb>::Facet
 Pure_complex_data_structure<Dim, Vb, Sb>
-::gather_simplices(   Simplex_handle start,
+::gather_full_cells(   Full_cell_handle start,
                     TraversalPredicate & tp,
                     OutputIterator & out) const
 {
-    std::queue<Simplex_handle> queue;
+    std::queue<Full_cell_handle> queue;
     set_visited(start, true);
     queue.push(start);
     const int cur_dim = current_dimension();
     Facet ft;
     while( ! queue.empty() )
     {
-        Simplex_handle s = queue.front();
+        Full_cell_handle s = queue.front();
         queue.pop();
         *out = s;
         ++out;
         for( int i = 0; i <= cur_dim; ++i )
         {
-            Simplex_handle n = s->neighbor(i);
+            Full_cell_handle n = s->neighbor(i);
             if( ! get_visited(n) )
             {
                 set_visited(n, true);
@@ -638,13 +638,13 @@ Pure_complex_data_structure<Dim, Vb, Sb>
     CGAL_precondition( 0 < d );
     if( d >= current_dimension() )
         return out;
-    typedef std::vector<Simplex_handle> Simplices;
+    typedef std::vector<Full_cell_handle> Simplices;
     Simplices simps;
     simps.reserve(64);
-    // gather incident simplices
+    // gather incident full_cells
     std::back_insert_iterator<Simplices> sout(simps);
-    gather_incident_simplices(v, sout);
-    // for storing the handles to the vertices of a simplex
+    gather_incident_full_cells(v, sout);
+    // for storing the handles to the vertices of a full_cell
     typedef std::vector<Vertex_const_handle> Vertices;
     typedef std::vector<int> Indices;
     Vertices vertices(1 + current_dimension());
@@ -657,8 +657,8 @@ Pure_complex_data_structure<Dim, Vb, Sb>
     Face_set face_set(ufc);
     for( typename Simplices::const_iterator s = simps.begin(); s != simps.end(); ++s )
     {
-        int v_idx(0); // the index of |v| in the sorted simplex
-        // get the vertices of the simplex and sort them
+        int v_idx(0); // the index of |v| in the sorted full_cell
+        // get the vertices of the full_cell and sort them
         for( int i = 0; i <= current_dimension(); ++i )
             vertices[i] = (*s)->vertex(i);
         if( upper_faces )
@@ -714,16 +714,16 @@ Pure_complex_data_structure<Dim, Vb, Sb>
 {
     const int fd = f.feature_dimension();
     CGAL_precondition( (1 <= fd ) && (fd < current_dimension()));
-    std::vector<Simplex_handle> simps;
+    std::vector<Full_cell_handle> simps;
     // save the Face's vertices:
-    Simplex s;
+    Full_cell s;
     for( int i = 0; i <= fd; ++i )
         s.set_vertex(i, f.vertex(i));
-    // compute adjacent simplices
+    // compute adjacent full_cells
     simps.reserve(64);
-    std::back_insert_iterator<std::vector<Simplex_handle> > out(simps);
-    gather_adjacent_simplices(f, out);
-    Vertex_handle v = insert_in_hole(simps.begin(), simps.end(), Facet(f.simplex(), f.index(0)));
+    std::back_insert_iterator<std::vector<Full_cell_handle> > out(simps);
+    gather_adjacent_full_cells(f, out);
+    Vertex_handle v = insert_in_hole(simps.begin(), simps.end(), Facet(f.full_cell(), f.index(0)));
     for( int i = 0; i <= fd; ++i )
         delete_vertex(s.vertex(i));
     return v;
@@ -742,49 +742,49 @@ Pure_complex_data_structure<Dim, Vb, Sb>
     }
     else if( 0 == current_dimension() )
     {
-        delete_simplex(v->simplex());
+        delete_full_cell(v->full_cell());
         delete_vertex(v);
-        star->simplex()->set_neighbor(0, Simplex_handle());
+        star->full_cell()->set_neighbor(0, Full_cell_handle());
         set_current_dimension(-1);
         return;
     }
     else if( 1 == current_dimension() )
     {
-        Simplex_handle s = v->simplex();
+        Full_cell_handle s = v->full_cell();
         int star_index;
         if( s->has_vertex(star, star_index) )
             s = s->neighbor(star_index);
         // Here, |s| is not adjacent to |star|, so it's the only finite
-        // simplex
-        Simplex_handle inf1 = s->neighbor(0);
-        Simplex_handle inf2 = s->neighbor(1);
+        // full_cell
+        Full_cell_handle inf1 = s->neighbor(0);
+        Full_cell_handle inf2 = s->neighbor(1);
         Vertex_handle v2 = s->vertex(1 - s->index_of(v));
         delete_vertex(v);
-        delete_simplex(s);
+        delete_full_cell(s);
         inf1->set_vertex(1, Vertex_handle());
         inf1->set_vertex(1, Vertex_handle());
-        inf2->set_neighbor(1, Simplex_handle());
-        inf2->set_neighbor(1, Simplex_handle());
-        associate_vertex_with_simplex(inf1, 0, star);
-        associate_vertex_with_simplex(inf2, 0, v2);
+        inf2->set_neighbor(1, Full_cell_handle());
+        inf2->set_neighbor(1, Full_cell_handle());
+        associate_vertex_with_full_cell(inf1, 0, star);
+        associate_vertex_with_full_cell(inf2, 0, v2);
         set_neighbors(inf1, 0, inf2, 0);
         set_current_dimension(0);
         return;
     }
-    typedef std::vector<Simplex_handle> Simplices;
+    typedef std::vector<Full_cell_handle> Simplices;
     Simplices simps;
-    gather_incident_simplices(v, std::back_inserter(simps));
+    gather_incident_full_cells(v, std::back_inserter(simps));
     for( typename Simplices::iterator it = simps.begin(); it != simps.end(); ++it )
     {
         int v_idx = (*it)->index_of(v);
         if( ! (*it)->has_vertex(star) )
         {
-            delete_simplex((*it)->neighbor(v_idx));
+            delete_full_cell((*it)->neighbor(v_idx));
             for( int i = 0; i <= current_dimension(); ++i )
-                (*it)->vertex(i)->set_simplex(*it);
+                (*it)->vertex(i)->set_full_cell(*it);
         }
         else
-            star->set_simplex(*it);
+            star->set_full_cell(*it);
         if( v_idx != current_dimension() )
         {
             (*it)->swap_vertices(v_idx, current_dimension());
@@ -792,7 +792,7 @@ Pure_complex_data_structure<Dim, Vb, Sb>
                 (*it)->swap_vertices(current_dimension() - 2, current_dimension() - 1);
         }
         (*it)->set_vertex(current_dimension(), Vertex_handle());
-        (*it)->set_neighbor(current_dimension(), Simplex_handle());
+        (*it)->set_neighbor(current_dimension(), Full_cell_handle());
     }
     set_current_dimension(current_dimension()-1);
     delete_vertex(v);
@@ -804,31 +804,31 @@ Pure_complex_data_structure<Dim, Vb, Sb>
 template <class Dim, class Vb, class Sb>
 typename Pure_complex_data_structure<Dim, Vb, Sb>::Vertex_handle
 Pure_complex_data_structure<Dim, Vb, Sb>
-::insert_in_simplex(Simplex_handle s)
+::insert_in_full_cell(Full_cell_handle s)
 {
     CGAL_precondition(0 < current_dimension());
-    CGAL_precondition(Simplex_handle() != s);
-    // CGAL_expensive_precondition(is_simplex(s));
+    CGAL_precondition(Full_cell_handle() != s);
+    // CGAL_expensive_precondition(is_full_cell(s));
 
     const int cur_dim = current_dimension();
     Vertex_handle v = new_vertex();
-    // the simplex simps is just used to store the handle to all the new simplices.
-    Simplex simps(ambient_dimension());
+    // the full_cell 'fc' is just used to store the handle to all the new full_cells.
+    Full_cell fc(ambient_dimension());
     for( int i = 1; i <= cur_dim; ++i )
     {
-        Simplex_handle new_s = new_simplex(s);
-        simps.set_neighbor(i, new_s);
-        associate_vertex_with_simplex(new_s, i, v);
-        s->vertex(i-1)->set_simplex(new_s);
+        Full_cell_handle new_s = new_full_cell(s);
+        fc.set_neighbor(i, new_s);
+        associate_vertex_with_full_cell(new_s, i, v);
+        s->vertex(i-1)->set_full_cell(new_s);
         set_neighbors(new_s, i, neighbor(s, i), mirror_index(s, i));
     }
-    simps.set_neighbor(0, s);
-    associate_vertex_with_simplex(s, 0, v);
+    fc.set_neighbor(0, s);
+    associate_vertex_with_full_cell(s, 0, v);
     for( int i = 0; i <= cur_dim; ++i )
         for( int j = 0; j <= cur_dim; ++j )
         {
             if( j == i ) continue;
-            set_neighbors(simps.neighbor(i), j, simps.neighbor(j), i);
+            set_neighbors(fc.neighbor(i), j, fc.neighbor(j), i);
         }
     return v;
 }
@@ -838,19 +838,19 @@ typename Pure_complex_data_structure<Dim, Vb, Sb>::Vertex_handle
 Pure_complex_data_structure<Dim, Vb, Sb>
 ::insert_in_face(const Face & f)
 {
-    std::vector<Simplex_handle> simps;
+    std::vector<Full_cell_handle> simps;
     simps.reserve(64);
-    std::back_insert_iterator<std::vector<Simplex_handle> > out(simps);
-    gather_incident_simplices(f, out);
-    return insert_in_hole(simps.begin(), simps.end(), Facet(f.simplex(), f.index(0)));
+    std::back_insert_iterator<std::vector<Full_cell_handle> > out(simps);
+    gather_incident_full_cells(f, out);
+    return insert_in_hole(simps.begin(), simps.end(), Facet(f.full_cell(), f.index(0)));
 }
 template <class Dim, class Vb, class Sb >
 typename Pure_complex_data_structure<Dim, Vb, Sb>::Vertex_handle
 Pure_complex_data_structure<Dim, Vb, Sb>
 ::insert_in_facet(const Facet & ft)
 {
-    Simplex_handle s[2];
-    s[0] = simplex_of(ft);
+    Full_cell_handle s[2];
+    s[0] = full_cell_of(ft);
     int i = index_of_covertex(ft);
     s[1] = s[0]->neighbor(i);
     i = ( i + 1 ) % current_dimension();
@@ -859,33 +859,33 @@ Pure_complex_data_structure<Dim, Vb, Sb>
 
 template <class Dim, class Vb, class Sb >
 template < typename OutputIterator >
-typename Pure_complex_data_structure<Dim, Vb, Sb>::Simplex_handle
+typename Pure_complex_data_structure<Dim, Vb, Sb>::Full_cell_handle
 Pure_complex_data_structure<Dim, Vb, Sb>
 ::insert_in_tagged_hole(Vertex_handle v, Facet f,
-                        OutputIterator new_simplices)
+                        OutputIterator new_full_cells)
 {
     CGAL_assertion_msg(is_boundary_facet(f), "starting facet should be on the hole boundary");
 
     const int cur_dim = current_dimension();
 
-    Simplex_handle old_s = simplex_of(f);
-    Simplex_handle new_s = new_simplex();
+    Full_cell_handle old_s = full_cell_of(f);
+    Full_cell_handle new_s = new_full_cell();
     const int facet_index = index_of_covertex(f);
 
     int i(0);
     for( ; i < facet_index; ++i )
-        associate_vertex_with_simplex(new_s, i, old_s->vertex(i));
+        associate_vertex_with_full_cell(new_s, i, old_s->vertex(i));
     ++i; // skip facet_index
     for( ; i <= cur_dim; ++i )
-        associate_vertex_with_simplex(new_s, i, old_s->vertex(i));
-    associate_vertex_with_simplex(new_s, facet_index, v);
+        associate_vertex_with_full_cell(new_s, i, old_s->vertex(i));
+    associate_vertex_with_full_cell(new_s, facet_index, v);
     set_neighbors(  new_s,
                     facet_index,
                     neighbor(old_s, facet_index),
                     mirror_index(old_s, facet_index));
 
-    // add the new simplex to the list of new simplices
-    *new_simplices++ = new_s;
+    // add the new full_cell to the list of new full_cells
+    *new_full_cells++ = new_s;
 
     // check all of |Facet f|'s neighbors
     for( i = 0; i <= cur_dim; ++i )
@@ -894,7 +894,7 @@ Pure_complex_data_structure<Dim, Vb, Sb>
             continue;
         // we define a |Rotor| because it makes it easy to rotate around
         // in a self contained fashion. The corresponding potential
-        // boundary facet is Facet(simplex_of(rot), index_of_covertex(rot))
+        // boundary facet is Facet(full_cell_of(rot), index_of_covertex(rot))
         Rotor rot(old_s, i, facet_index);
         // |rot| on line above, stands for Candidate Facet
         while( ! is_boundary_facet(rot) )
@@ -902,19 +902,19 @@ Pure_complex_data_structure<Dim, Vb, Sb>
 
         // we did find the |i|-th neighbor of Facet(old_s, facet_index)...
         // has it already been extruded to center point |v| ?
-        Simplex_handle outside = neighbor(simplex_of(rot), index_of_covertex(rot));
-        Simplex_handle inside  = simplex_of(rot);
+        Full_cell_handle outside = neighbor(full_cell_of(rot), index_of_covertex(rot));
+        Full_cell_handle inside  = full_cell_of(rot);
         Vertex_handle m = inside->mirror_vertex(index_of_covertex(rot), current_dimension());
         int index = outside->index_of(m);
-        Simplex_handle new_neighbor = outside->neighbor(index);
+        Full_cell_handle new_neighbor = outside->neighbor(index);
 
         if( new_neighbor == inside )
         {   // not already extruded... we do it recursively
             new_neighbor = insert_in_tagged_hole(   v,
-                                                    Facet(simplex_of(rot), index_of_covertex(rot)),
-                                                    new_simplices);
+                                                    Facet(full_cell_of(rot), index_of_covertex(rot)),
+                                                    new_full_cells);
         }
-        // now the new neighboring simplex exists, we link both
+        // now the new neighboring full_cell exists, we link both
         set_neighbors(new_s, i, new_neighbor, index_of_second_covertex(rot));
     }
     return new_s;
@@ -935,7 +935,7 @@ Pure_complex_data_structure<Dim, Vb, Sb>
         set_visited(*sit++, true);
     Vertex_handle v = new_vertex();
     insert_in_tagged_hole(v, f, out);
-    delete_simplices(start, end);
+    delete_full_cells(start, end);
     return v;
 }
 
@@ -952,17 +952,17 @@ Pure_complex_data_structure<Dim, Vb, Sb>
 template <class Dim, class Vb, class Sb>
 void
 Pure_complex_data_structure<Dim, Vb, Sb>
-::clear_visited_marks(Simplex_handle start) const
+::clear_visited_marks(Full_cell_handle start) const
 {
-    CGAL_precondition(start != Simplex_handle());
+    CGAL_precondition(start != Full_cell_handle());
 
-    std::queue<Simplex_handle> queue;
+    std::queue<Full_cell_handle> queue;
     set_visited(start, false);
     queue.push(start);
     const int cur_dim = current_dimension();
     while( ! queue.empty() )
     {
-        Simplex_handle s = queue.front();
+        Full_cell_handle s = queue.front();
         queue.pop();
         for( int i = 0; i <= cur_dim; ++i )
         {
@@ -979,25 +979,25 @@ template <class Dim, class Vb, class Sb>
 void Pure_complex_data_structure<Dim, Vb, Sb>
 ::do_insert_increase_dimension(const Vertex_handle x, const Vertex_handle star)
 {
-    Simplex_handle start = simplices_begin();
-    Simplex_handle swap_me;
+    Full_cell_handle start = full_cells_begin();
+    Full_cell_handle swap_me;
     const int cur_dim = current_dimension();
-    for( Simplex_iterator S = simplices_begin(); S != simplices_end(); ++S )
+    for( Full_cell_iterator S = full_cells_begin(); S != full_cells_end(); ++S )
     {
         if( Vertex_handle() != S->vertex(cur_dim) )
             continue;
         set_visited(S, true);
-        // extends simplex |S| to include the new vertex as the
+        // extends full_cell |S| to include the new vertex as the
         // current_dimension()-th vertex
-        associate_vertex_with_simplex(S, cur_dim, x);
+        associate_vertex_with_full_cell(S, cur_dim, x);
         if( ! S->has_vertex(star) )
-        {   // S is bounded, we create its unbounded "twin" simplex
-            Simplex_handle S_new = new_simplex();
+        {   // S is bounded, we create its unbounded "twin" full_cell
+            Full_cell_handle S_new = new_full_cell();
             set_neighbors(S, cur_dim, S_new, 0);
-            associate_vertex_with_simplex(S_new, 0, star);
+            associate_vertex_with_full_cell(S_new, 0, star);
             // here, we could be clever so as to get consistent orientation
             for( int k = 1; k <= cur_dim; ++k )
-                associate_vertex_with_simplex(S_new, k, vertex(S, k - 1));
+                associate_vertex_with_full_cell(S_new, k, vertex(S, k - 1));
         }
         else if( cur_dim == 2 )
         {   // if cur. dim. is 2, we must take care of the 'rightmost' infinite vertex.
@@ -1007,11 +1007,11 @@ void Pure_complex_data_structure<Dim, Vb, Sb>
     }
     // now we setup the neighbors
     set_visited(start, false);
-    std::queue<Simplex_handle> queue;
+    std::queue<Full_cell_handle> queue;
     queue.push(start);
     while( ! queue.empty() )
     {
-        Simplex_handle S = queue.front();
+        Full_cell_handle S = queue.front();
         queue.pop();
         // here, the first visit above ensured that all neighbors exist now.
         // Now we need to connect them with adjacency relation
@@ -1024,10 +1024,10 @@ void Pure_complex_data_structure<Dim, Vb, Sb>
         }
         else
         {
-            Simplex_handle S_new = neighbor(S, cur_dim);
+            Full_cell_handle S_new = neighbor(S, cur_dim);
             for( int k = 0 ; k < cur_dim ; ++k )
             {
-                Simplex_handle S_opp = neighbor(S, k);
+                Full_cell_handle S_opp = neighbor(S, k);
                 if( ! S_opp->has_vertex(star) )   
                     set_neighbors(S_new, k + 1, neighbor(S_opp, cur_dim), mirror_index(S, k) + 1);
                     // neighbor of S_new opposite to v is S_new'
@@ -1044,13 +1044,13 @@ void Pure_complex_data_structure<Dim, Vb, Sb>
     }
     if( ( ( cur_dim % 2 ) == 0 ) && ( cur_dim > 1 ) )
     {
-        for( Simplex_iterator S = simplices_begin(); S != simplices_end(); ++S )
+        for( Full_cell_iterator S = full_cells_begin(); S != full_cells_end(); ++S )
         {
             if( x != S->vertex(cur_dim) )
                 S->swap_vertices(cur_dim - 1, cur_dim);
         }
     }
-    if( Simplex_handle() != swap_me )
+    if( Full_cell_handle() != swap_me )
         swap_me->swap_vertices(1, 2);
 }
 
@@ -1078,8 +1078,8 @@ Pure_complex_data_structure<Dim, Vb, Sb>
         case -2:
         {   // insertion of the first vertex
             // ( geometrically : infinite vertex )
-            Simplex_handle s = new_simplex();
-            associate_vertex_with_simplex(s, 0, v);
+            Full_cell_handle s = new_full_cell();
+            associate_vertex_with_full_cell(s, 0, v);
             break;
         }
         case -1:
@@ -1087,10 +1087,10 @@ Pure_complex_data_structure<Dim, Vb, Sb>
             // ( geometrically : first finite vertex )
             //we create a triangulation of the 0-sphere, with
             // vertices |star| and |v|
-            Simplex_handle infinite_simplex = star->simplex();
-            Simplex_handle finite_simplex = new_simplex();
-            associate_vertex_with_simplex(finite_simplex, 0, v);
-            set_neighbors(infinite_simplex, 0, finite_simplex, 0);
+            Full_cell_handle infinite_full_cell = star->full_cell();
+            Full_cell_handle finite_full_cell = new_full_cell();
+            associate_vertex_with_full_cell(finite_full_cell, 0, v);
+            set_neighbors(infinite_full_cell, 0, finite_full_cell, 0);
             break;
         }
         default:
@@ -1107,24 +1107,24 @@ template <class Dimen, class Vb, class Sb>
 bool Pure_complex_data_structure<Dimen, Vb, Sb>
 ::is_valid(bool verbose, int /* level */) const
 { 
-    Simplex_const_handle s, t;
+    Full_cell_const_handle s, t;
     Vertex_const_handle v;
     int i, j, k;
 
     if( dcur_ == -2 )
     {
-        if( ! vertices_.empty() || ! simplices_.empty() )
+        if( ! vertices_.empty() || ! full_cells_.empty() )
         {
-            if( verbose ) CGAL_warning_msg(false, "current dimension is -2 but there are vertices or simplices");
+            if( verbose ) CGAL_warning_msg(false, "current dimension is -2 but there are vertices or full_cells");
             return false;
         }
     }
 
     if( dcur_ == -1 )
     {
-        if ( (number_of_vertices() != 1) || (number_of_simplices() != 1) )
+        if ( (number_of_vertices() != 1) || (number_of_full_cells() != 1) )
         {
-            if( verbose ) CGAL_warning_msg(false, "current dimension is -1 but there isn't one vertex and one simplex");
+            if( verbose ) CGAL_warning_msg(false, "current dimension is -1 but there isn't one vertex and one full_cell");
             return false;
         }
     }
@@ -1135,10 +1135,10 @@ bool Pure_complex_data_structure<Dimen, Vb, Sb>
         if( ! v->is_valid(verbose) )
             return false;
         bool ok(false);
-        // check that |v|'s simplex actually contains |v|
+        // check that |v|'s full_cell actually contains |v|
         for( i = 0; i <= fake_dcur; ++i )
         {
-            if( v->simplex()->vertex(i) == v )
+            if( v->full_cell()->vertex(i) == v )
             {
                 ok = true;
                 break;
@@ -1146,17 +1146,17 @@ bool Pure_complex_data_structure<Dimen, Vb, Sb>
         }
         if( ! ok )
         {
-            if( verbose ) CGAL_warning_msg(false, "the simplex incident to some vertex does not contain that vertex.");
+            if( verbose ) CGAL_warning_msg(false, "the full_cell incident to some vertex does not contain that vertex.");
             return false;
         }
     }
-    // FUTURE: for each vertex v, gather incident simplices. then, check that
-    // any simplex containing v is among those gathered simplices...
+    // FUTURE: for each vertex v, gather incident full_cells. then, check that
+    // any full_cell containing v is among those gathered full_cells...
 
     if( dcur_ < 0 )
         return true;
 
-    for( s = simplices_begin(); s != simplices_end(); ++s )
+    for( s = full_cells_begin(); s != full_cells_end(); ++s )
     {
         if( ! s->is_valid(verbose) )
             return false;
@@ -1164,15 +1164,15 @@ bool Pure_complex_data_structure<Dimen, Vb, Sb>
             for( j = i + 1; j <= dcur_; ++j )
                 if( vertex(s,i) == vertex(s,j) )
                 {
-                    CGAL_warning_msg(false, "a simplex has two equal vertices");
+                    CGAL_warning_msg(false, "a full_cell has two equal vertices");
                     return false;
                 }
     }
 
-    for( s = simplices_begin(); s != simplices_end(); ++s )
+    for( s = full_cells_begin(); s != full_cells_end(); ++s )
     {
         for( i = 0; i <= dcur_; ++i )
-            if( (t = neighbor(s,i)) != Simplex_const_handle() )
+            if( (t = neighbor(s,i)) != Full_cell_const_handle() )
             {
                 int l = mirror_index(s,i);
                 if( s != neighbor(t,l) || i != mirror_index(t,l) )
@@ -1188,14 +1188,14 @@ bool Pure_complex_data_structure<Dimen, Vb, Sb>
                             ;
                         if( k > dcur_ )
                         {
-                            if( verbose ) CGAL_warning_msg(false, "too few shared vertices between neighbors simplices.");
+                            if( verbose ) CGAL_warning_msg(false, "too few shared vertices between neighbors full_cells.");
                             return false;
                         }
                     }
             }
             else
             {
-                if( verbose ) CGAL_warning_msg(false, "simplex has a NULL neighbor");
+                if( verbose ) CGAL_warning_msg(false, "full_cell has a NULL neighbor");
                 return false;
             }
     }
@@ -1217,7 +1217,7 @@ void Pure_complex_data_structure<Dim, Vb, Sb>
     for( Vertex_iterator vit = vertices_begin(); vit != vertices_end(); ++vit )
         vit->idx_ = count++;
     edges.resize(number_of_vertices()+1);
-    for( Simplex_iterator sit = simplices_begin(); sit != simplices_end(); ++sit )
+    for( Full_cell_iterator sit = full_cells_begin(); sit != full_cells_end(); ++sit )
     {
         int v1 = 0;
         while( v1 < current_dimension() )
@@ -1256,9 +1256,9 @@ void Pure_complex_data_structure<Dim, Vb, Sb>
 template<class Dimen, class Vb, class Sb>
 std::istream &
 Pure_complex_data_structure<Dimen, Vb, Sb>
-::read_simplices(std::istream & is, const std::vector<Vertex_handle> & vertices)
+::read_full_cells(std::istream & is, const std::vector<Vertex_handle> & vertices)
 {
-    size_t m; // number of simplices
+    size_t m; // number of full_cells
     int index;
     const int cd = current_dimension();
     if( is_ascii(is) )
@@ -1266,14 +1266,14 @@ Pure_complex_data_structure<Dimen, Vb, Sb>
     else
         read(is, m, io_Read_write());
 
-    std::vector<Simplex_handle> simplices;
-    simplices.reserve(m);
-    // read the vertices of each simplex
+    std::vector<Full_cell_handle> full_cells;
+    full_cells.reserve(m);
+    // read the vertices of each full_cell
     size_t i = 0;
     while( i < m )
     {
-        Simplex_handle s = new_simplex();
-        simplices.push_back(s);
+        Full_cell_handle s = new_full_cell();
+        full_cells.push_back(s);
         for( int j = 0; j <= cd; ++j )
         {
             if( is_ascii(is) )
@@ -1282,12 +1282,12 @@ Pure_complex_data_structure<Dimen, Vb, Sb>
                 read(is, index);
             s->set_vertex(j, vertices[index]);
         }
-        // read other non-combinatorial information for the simplices
+        // read other non-combinatorial information for the full_cells
         is >> (*s);
         ++i;
     }
 
-    // read the neighbors of each simplex
+    // read the neighbors of each full_cell
     i = 0;
     if( is_ascii(is) )
         while( i < m )
@@ -1295,7 +1295,7 @@ Pure_complex_data_structure<Dimen, Vb, Sb>
         for( int j = 0; j <= cd; ++j )
         {
             is >> index;
-            simplices[i]->set_neighbor(j, simplices[index]);
+            full_cells[i]->set_neighbor(j, full_cells[index]);
         }
         ++i;
     }
@@ -1305,7 +1305,7 @@ Pure_complex_data_structure<Dimen, Vb, Sb>
         for( int j = 0; j <= cd; ++j )
         {
             read(is, index);
-            simplices[i]->set_neighbor(j, simplices[index]);
+            full_cells[i]->set_neighbor(j, full_cells[index]);
         }
         ++i;
     }
@@ -1313,14 +1313,14 @@ Pure_complex_data_structure<Dimen, Vb, Sb>
     // compute the mirror indices
     for( i = 0; i < m; ++i )
     {
-        Simplex_handle s = simplices[i];
+        Full_cell_handle s = full_cells[i];
         for( int j = 0; j <= cd; ++j )
         {
             if( -1 != s->mirror_index(j) )
                 continue;
-            Simplex_handle n = s->neighbor(j);
+            Full_cell_handle n = s->neighbor(j);
             int k = 0;
-            Simplex_handle nn = n->neighbor(k);
+            Full_cell_handle nn = n->neighbor(k);
             while( s != nn )
                 nn = n->neighbor(++k);
             s->set_mirror_index(j,k);
@@ -1334,11 +1334,11 @@ Pure_complex_data_structure<Dimen, Vb, Sb>
 template<class Dimen, class Vb, class Sb>
 std::ostream &
 Pure_complex_data_structure<Dimen, Vb, Sb>
-::write_simplices(std::ostream & os, std::map<Vertex_const_handle, int> & index_of_vertex) const
+::write_full_cells(std::ostream & os, std::map<Vertex_const_handle, int> & index_of_vertex) const
 {
-    std::map<Simplex_const_handle, int> index_of_simplex;
+    std::map<Full_cell_const_handle, int> index_of_full_cell;
 
-    size_t m = number_of_simplices();
+    size_t m = number_of_full_cells();
 
     if( is_ascii(os) )
         os << std::endl << m;
@@ -1346,11 +1346,11 @@ Pure_complex_data_structure<Dimen, Vb, Sb>
         write(os, m, io_Read_write());
 
     const int cur_dim = current_dimension();
-    // write the vertex indices of each simplex
+    // write the vertex indices of each full_cell
     size_t i = 0;
-    for( Simplex_const_iterator it = simplices_begin(); it != simplices_end(); ++it )
+    for( Full_cell_const_iterator it = full_cells_begin(); it != full_cells_end(); ++it )
     {
-        index_of_simplex[it] = i++;
+        index_of_full_cell[it] = i++;
         if( is_ascii(os) )
             os << std::endl;
         for( int j = 0; j <= cur_dim; ++j )
@@ -1360,25 +1360,25 @@ Pure_complex_data_structure<Dimen, Vb, Sb>
             else
                 write(os, index_of_vertex[it->vertex(j)]);
         }
-        // write other non-combinatorial information for the simplices
+        // write other non-combinatorial information for the full_cells
         os << (*it);
     }
 
     CGAL_assertion( i == m );
 
-    // write the neighbors of each simplex
+    // write the neighbors of each full_cell
     if( is_ascii(os) )
-        for( Simplex_const_iterator it = simplices_begin(); it != simplices_end(); ++it )
+        for( Full_cell_const_iterator it = full_cells_begin(); it != full_cells_end(); ++it )
         {
             os << std::endl;
             for( int j = 0; j <= cur_dim; ++j )
-                os << ' ' << index_of_simplex[it->neighbor(j)];
+                os << ' ' << index_of_full_cell[it->neighbor(j)];
         }
     else
-        for( Simplex_const_iterator it = simplices_begin(); it != simplices_end(); ++it )
+        for( Full_cell_const_iterator it = full_cells_begin(); it != full_cells_end(); ++it )
         {
             for( int j = 0; j <= cur_dim; ++j )
-                write(os, index_of_simplex[it->neighbor(j)]);
+                write(os, index_of_full_cell[it->neighbor(j)]);
         }
 
     return os;
@@ -1395,16 +1395,16 @@ operator>>(std::istream & is, Pure_complex_data_structure<Dimen, Vb, Sb> & tr)
   // - the dimensions (ambient and current)
   // - the number of finite vertices
   // - the non combinatorial information on vertices (point, etc)
-  // - the number of simplices
-  // - the simplices by the indices of their vertices in the preceding list
-  // of vertices, plus the non combinatorial information on each simplex
-  // - the neighbors of each simplex by their index in the preceding list
+  // - the number of full_cells
+  // - the full_cells by the indices of their vertices in the preceding list
+  // of vertices, plus the non combinatorial information on each full_cell
+  // - the neighbors of each full_cell by their index in the preceding list
 {
     typedef Pure_complex_data_structure<Dimen, Vb, Sb> PC;
     typedef typename PC::Vertex_handle         Vertex_handle;
     typedef typename PC::Vertex_iterator       Vertex_iterator;
-    typedef typename PC::Simplex_handle        Simplex_handle;
-    typedef typename PC::Simplex_iterator      Simplex_iterator;
+    typedef typename PC::Full_cell_handle        Full_cell_handle;
+    typedef typename PC::Full_cell_iterator      Full_cell_iterator;
 
     // read current dimension and number of vertices
     size_t n;
@@ -1438,7 +1438,7 @@ operator>>(std::istream & is, Pure_complex_data_structure<Dimen, Vb, Sb> & tr)
     }
 
     // now, read the combinatorial information
-    return tr.read_simplices(is, vertices);
+    return tr.read_full_cells(is, vertices);
 }
 
 template<class Dimen, class Vb, class Sb>
@@ -1448,16 +1448,16 @@ operator<<(std::ostream & os, const Pure_complex_data_structure<Dimen, Vb, Sb> &
   // - the dimensions (ambient and current)
   // - the number of finite vertices
   // - the non combinatorial information on vertices (point, etc)
-  // - the number of simplices
-  // - the simplices by the indices of their vertices in the preceding list
-  // of vertices, plus the non combinatorial information on each simplex
-  // - the neighbors of each simplex by their index in the preceding list
+  // - the number of full cells
+  // - the full cells by the indices of their vertices in the preceding list
+  // of vertices, plus the non combinatorial information on each full_cell
+  // - the neighbors of each full_cell by their index in the preceding list
 {
     typedef Pure_complex_data_structure<Dimen, Vb, Sb> PC;
     typedef typename PC::Vertex_const_handle         Vertex_handle;
     typedef typename PC::Vertex_const_iterator       Vertex_iterator;
-    typedef typename PC::Simplex_const_handle        Simplex_handle;
-    typedef typename PC::Simplex_const_iterator      Simplex_iterator;
+    typedef typename PC::Full_cell_const_handle        Full_cell_handle;
+    typedef typename PC::Full_cell_const_iterator      Full_cell_iterator;
 
     // outputs dimension and number of vertices
     size_t n = tr.number_of_vertices();
@@ -1484,7 +1484,7 @@ operator<<(std::ostream & os, const Pure_complex_data_structure<Dimen, Vb, Sb> &
     CGAL_assertion( i == n );
 
     // output the combinatorial information
-    return tr.write_simplices(os, index_of_vertex);
+    return tr.write_full_cells(os, index_of_vertex);
 }
 
 } //namespace CGAL

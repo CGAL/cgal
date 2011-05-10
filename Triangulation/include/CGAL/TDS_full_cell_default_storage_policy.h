@@ -15,8 +15,8 @@
 //
 // Author(s)    : Samuel Hornus
 
-#ifndef CGAL_TDS_SIMPLEX_DEFAULT_STORAGE_POLICY_H
-#define CGAL_TDS_SIMPLEX_DEFAULT_STORAGE_POLICY_H
+#ifndef CGAL_TDS_FULL_CELL_DEFAULT_STORAGE_POLICY_H
+#define CGAL_TDS_FULL_CELL_DEFAULT_STORAGE_POLICY_H
 
 #include <CGAL/Dimension.h>
 #include <CGAL/Compact_container.h>
@@ -26,22 +26,22 @@ namespace CGAL {
 
 // POLICY TAG
 
-struct TDS_simplex_default_storage_policy {}; // stores no additional data. Uses XOR trick.
+struct TDS_full_cell_default_storage_policy {}; // stores no additional data. Uses XOR trick.
 
 template< typename V, typename S, typename D, typename StoragePolicy >
-struct TS_data; // TS = Pure-Complex Simplex
+struct TFC_data; // TFC = Triangulation Full Cell
 
-template< typename Vertex_handle, typename Simplex_handle, typename Dimen >
-struct TS_data< Vertex_handle, Simplex_handle, Dimen, TDS_simplex_default_storage_policy >
+template< typename Vertex_handle, typename Full_cell_handle, typename Dimen >
+struct TFC_data< Vertex_handle, Full_cell_handle, Dimen, TDS_full_cell_default_storage_policy >
 {
     typedef typename internal::Dimen_plus_one<Dimen>::type Dimen_plus;
     typedef typename internal::S_or_D_array< Vertex_handle, Dimen_plus, true >     Vertex_handle_array;
-    typedef typename internal::S_or_D_array< Simplex_handle, Dimen_plus >    Simplex_handle_array;
+    typedef typename internal::S_or_D_array< Full_cell_handle, Dimen_plus >    Full_cell_handle_array;
 
     Vertex_handle_array  vertices_;
-    Simplex_handle_array neighbors_;
+    Full_cell_handle_array neighbors_;
 
-    TS_data(const int dmax)
+    TFC_data(const int dmax)
     : vertices_(dmax+1), neighbors_(dmax+1)
     {}
     void*   for_compact_container() const { return vertices_.for_compact_container(); }
@@ -61,8 +61,8 @@ struct TS_data< Vertex_handle, Simplex_handle, Dimen, TDS_simplex_default_storag
     int mirror_index(const int i) const
     {
         int index = 0;
-        Simplex_handle n = neighbors_[i];
-        Simplex_handle o = n->neighbor(index);
+        Full_cell_handle n = neighbors_[i];
+        Full_cell_handle o = n->neighbor(index);
         while( &(o->combinatorics_) != this )
             o = n->neighbor(++index);
         return index;
@@ -88,4 +88,4 @@ struct TS_data< Vertex_handle, Simplex_handle, Dimen, TDS_simplex_default_storag
 
 } //namespace CGAL
 
-#endif // CGAL_TDS_SIMPLEX_DEFAULT_STORAGE_POLICY_H
+#endif // CGAL_TDS_FULL_CELL_DEFAULT_STORAGE_POLICY_H

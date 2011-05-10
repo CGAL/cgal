@@ -26,12 +26,12 @@ namespace internal {
 namespace Triangulation {
 
 template< class TDS >
-struct Dark_simplex_data
+struct Dark_full_cell_data
 {
-    typedef typename TDS::Simplex_handle Simplex_handle;
-    Simplex_handle light_copy_;
+    typedef typename TDS::Full_cell_handle Full_cell_handle;
+    Full_cell_handle light_copy_;
     int count_;
-    Dark_simplex_data() : light_copy_(), count_(0) {}
+    Dark_full_cell_data() : light_copy_(), count_(0) {}
 };
 
 template< class TDS >

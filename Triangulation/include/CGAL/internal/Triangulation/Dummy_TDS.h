@@ -30,11 +30,11 @@ struct Dummy_TDS
     struct Vertex_iterator {};
     struct Vertex_const_handle {};
     struct Vertex_const_iterator {};
-    struct Simplex {};
-    struct Simplex_handle {};
-    struct Simplex_iterator {};
-    struct Simplex_const_handle {};
-    struct Simplex_const_iterator {};
+    struct Full_cell {};
+    struct Full_cell_handle {};
+    struct Full_cell_iterator {};
+    struct Full_cell_const_handle {};
+    struct Full_cell_const_iterator {};
     struct Vertex_handle_const_iterator {};
 };
 

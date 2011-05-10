@@ -27,23 +27,23 @@ namespace CGAL {
 struct No_vertex_data {};
 
 template< class TriangulationTraits, typename Data_ = No_vertex_data, class TDSVertex = Default >
-class Pure_complex_vertex : public Default::Get<TDSVertex, Triangulation_ds_vertex<> >::type
+class Triangulation_vertex : public Default::Get<TDSVertex, Triangulation_ds_vertex<> >::type
 {
     // The default type for TDSVertex is Triangulation_ds_vertex<> :
     typedef typename Default::Get<TDSVertex, Triangulation_ds_vertex<> >::type
                                                                 Base;
-    typedef Pure_complex_vertex<TriangulationTraits, Data_, TDSVertex>    Self;
+    typedef Triangulation_vertex<TriangulationTraits, Data_, TDSVertex>    Self;
 public:
-    typedef Data_                               Data;
-    typedef typename TriangulationTraits::Point_d          Point;
-    typedef typename TriangulationTraits::Point_d          Point_d;
-    typedef typename Base::Simplex_handle       Simplex_handle;
+    typedef Data_                                   Data;
+    typedef typename TriangulationTraits::Point_d   Point;
+    typedef typename TriangulationTraits::Point_d   Point_d;
+    typedef typename Base::Full_cell_handle         Full_cell_handle;
 
     template <typename TDS2>
     struct Rebind_TDS
     {
         typedef typename Base::template Rebind_TDS<TDS2>::Other TDSVertex2;
-        typedef Pure_complex_vertex<TriangulationTraits, Data_, TDSVertex2> Other;
+        typedef Triangulation_vertex<TriangulationTraits, Data_, TDSVertex2> Other;
     };
 
 private: // DATA MEMBERS
@@ -52,18 +52,18 @@ private: // DATA MEMBERS
 
 public:
     template< typename T >
-    Pure_complex_vertex(Simplex_handle s, const Point & p, const T & t)
+    Triangulation_vertex(Full_cell_handle s, const Point & p, const T & t)
     : Base(s), point_(p), data_(t) {}
-    Pure_complex_vertex(Simplex_handle s, const Point & p)
+    Triangulation_vertex(Full_cell_handle s, const Point & p)
     : Base(s), point_(p), data_() {}
     template< typename T >
-    Pure_complex_vertex(const Point & p, const T & t)
+    Triangulation_vertex(const Point & p, const T & t)
     : Base(), point_(p), data_(t) {}
-    Pure_complex_vertex(const Point & p)
+    Triangulation_vertex(const Point & p)
     : Base(), point_(p), data_() {}
-    Pure_complex_vertex() : Base(), point_(), data_() {}
+    Triangulation_vertex() : Base(), point_(), data_() {}
 
-    ~Pure_complex_vertex() {}
+    ~Triangulation_vertex() {}
 
     /// Set the position in space of the vertex to 'p'
     void set_point(const Point & p)
@@ -87,7 +87,7 @@ public:
         return data_;
     }
 
-};  // end of Pure_complex_vertex
+};  // end of Triangulation_vertex
 
 // NON CLASS-MEMBER FUNCTIONS
 
@@ -105,7 +105,7 @@ operator<<(std::ostream & os, const No_vertex_data & nd)
 
 template < class A, typename Data, class B >
 std::istream &
-operator>>(std::istream & is, Pure_complex_vertex<A, Data, B> & v)
+operator>>(std::istream & is, Triangulation_vertex<A, Data, B> & v)
 {
     is >> v.point();
     return (is >> v.data());
@@ -113,7 +113,7 @@ operator>>(std::istream & is, Pure_complex_vertex<A, Data, B> & v)
 
 template< class A, typename Data, class B >
 std::ostream &
-operator<<(std::ostream & os, const Pure_complex_vertex<A, Data, B> & v)
+operator<<(std::ostream & os, const Triangulation_vertex<A, Data, B> & v)
 {
     os << v.point();
     os << v.data();

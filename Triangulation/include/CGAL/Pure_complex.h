@@ -21,8 +21,8 @@
 #include <boost/iterator/filter_iterator.hpp>
 #include <CGAL/internal/Triangulation/utilities.h>
 #include <CGAL/Pure_complex_data_structure.h>
-#include <CGAL/Pure_complex_simplex.h>
-#include <CGAL/Pure_complex_vertex.h>
+#include <CGAL/Triangulation_full_cell.h>
+#include <CGAL/Triangulation_vertex.h>
 #include <CGAL/spatial_sort.h>
 #include <CGAL/Dimension.h>
 #include <CGAL/iterator.h>
@@ -30,31 +30,32 @@
 
 namespace CGAL {
 
-template <  class PCTraits, class TDS_ = Default >
+template <  class TriangulationTraits, class TDS_ = Default >
 class Pure_complex
 {
-    typedef typename Ambient_dimension<typename PCTraits::Point_d>::type
+    typedef typename Ambient_dimension<typename TriangulationTraits::Point_d>::type
                                                     Ambient_dimension_;
     typedef typename Default::Get<TDS_, Pure_complex_data_structure
                     <   Ambient_dimension_,
-                        Pure_complex_vertex<PCTraits>,
-                        Pure_complex_simplex<PCTraits> >
+                        Triangulation_vertex<TriangulationTraits>,
+                        Triangulation_full_cell<TriangulationTraits> >
                         >::type                     TDS;
-    typedef Pure_complex<PCTraits, TDS_>           Self;
+    typedef Pure_complex<TriangulationTraits, TDS_> Self;
 
-    typedef typename PCTraits::Coaffine_orientation_d
+    typedef typename TriangulationTraits::Coaffine_orientation_d
                                                     Coaffine_orientation_d;
-    typedef typename PCTraits::Orientation_d        Orientation_d;
+    typedef typename TriangulationTraits::Orientation_d
+                                                    Orientation_d;
 
 public:
 
-    typedef PCTraits                                Geom_traits;
-    typedef TDS                                    Pure_complex_ds;
+    typedef TriangulationTraits                     Geom_traits;
+    typedef TDS                                     Pure_complex_ds;
 
-    typedef typename TDS::Vertex                   Vertex;
-    typedef typename TDS::Simplex                  Simplex;
-    typedef typename TDS::Facet                    Facet;
-    typedef typename TDS::Face                     Face;
+    typedef typename TDS::Vertex                    Vertex;
+    typedef typename TDS::Full_cell                 Full_cell;
+    typedef typename TDS::Facet                     Facet;
+    typedef typename TDS::Face                      Face;
 
     typedef Ambient_dimension_                      Ambient_dimension;
     typedef typename Geom_traits::Point_d           Point;
@@ -65,10 +66,10 @@ public:
     typedef typename TDS::Vertex_const_handle      Vertex_const_handle;
     typedef typename TDS::Vertex_const_iterator    Vertex_const_iterator;
 
-    typedef typename TDS::Simplex_handle           Simplex_handle;
-    typedef typename TDS::Simplex_iterator         Simplex_iterator;
-    typedef typename TDS::Simplex_const_handle     Simplex_const_handle;
-    typedef typename TDS::Simplex_const_iterator   Simplex_const_iterator;
+    typedef typename TDS::Full_cell_handle           Full_cell_handle;
+    typedef typename TDS::Full_cell_iterator         Full_cell_iterator;
+    typedef typename TDS::Full_cell_const_handle     Full_cell_const_handle;
+    typedef typename TDS::Full_cell_const_iterator   Full_cell_const_iterator;
     
     typedef typename TDS::Facet_iterator           Facet_iterator;
 
@@ -94,10 +95,10 @@ public:
         Finite_vertex_iterator;
     typedef boost::filter_iterator<Finiteness_predicate, Vertex_const_iterator>
         Finite_vertex_const_iterator;
-    typedef boost::filter_iterator<Finiteness_predicate, Simplex_iterator>
-        Finite_simplex_iterator;
-    typedef boost::filter_iterator<Finiteness_predicate, Simplex_const_iterator>
-        Finite_simplex_const_iterator;
+    typedef boost::filter_iterator<Finiteness_predicate, Full_cell_iterator>
+        Finite_full_cell_iterator;
+    typedef boost::filter_iterator<Finiteness_predicate, Full_cell_const_iterator>
+        Finite_full_cell_const_iterator;
     typedef boost::filter_iterator<Finiteness_predicate, Facet_iterator>
         Finite_facet_iterator;
     
@@ -126,9 +127,9 @@ public:
     // works for Face_ = Facet and Face_ = Rotor.
     // NOT DOCUMENTED for the Rotor case...
     template< typename Face_ >
-    Simplex_handle simplex_of(const Face_ & f) const
+    Full_cell_handle full_cell_of(const Face_ & f) const
     {
-        return pcds().simplex_of(f);
+        return pcds().full_cell_of(f);
     }
 
     // works for Face_ = Facet and Face_ = Rotor.
@@ -158,18 +159,18 @@ public:
     // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - ACCESS FUNCTIONS
 
     // NOT DOCUMENTED -- TRY TO REMOVE IF POSSIBLE (CF Delaunay_complex::remove)
-    bool get_visited(Simplex_handle s) const
+    bool get_visited(Full_cell_handle s) const
     {
         return pcds().get_visited(s);
     }
     // NOT DOCUMENTED -- TRY TO REMOVE IF POSSIBLE (CF Delaunay_complex::remove)
-    bool get_visited(Simplex_const_handle s) const
+    bool get_visited(Full_cell_const_handle s) const
     {
         return pcds().get_visited(s);
     }
 
     // NOT DOCUMENTED -- TRY TO REMOVE IF POSSIBLE (CF Delaunay_complex::remove)
-    void set_visited(Simplex_handle s, bool b) const
+    void set_visited(Full_cell_handle s, bool b) const
     {
         pcds().set_visited(s, b);
     }
@@ -212,9 +213,9 @@ public:
         return pcds().number_of_vertices() - 1;
     }
 
-    size_type number_of_simplices() const
+    size_type number_of_full_cells() const
     {
-        return pcds().number_of_simplices();
+        return pcds().number_of_full_cells();
     }
 
     Vertex_handle infinite_vertex() const
@@ -222,19 +223,19 @@ public:
         return infinity_;
     }
 
-    Simplex_handle infinite_simplex() const
+    Full_cell_handle infinite_full_cell() const
     {
-        CGAL_assertion(infinite_vertex()->simplex()->has_vertex(infinite_vertex()));
-        return infinite_vertex()->simplex();
+        CGAL_assertion(infinite_vertex()->full_cell()->has_vertex(infinite_vertex()));
+        return infinite_vertex()->full_cell();
     }
 
 // - - - - - - - - - - - - - - - - - - - - - - - - - NON CONSTANT-TIME ACCESS FUNCTIONS
 
-    size_type number_of_finite_simplices() const
+    size_type number_of_finite_full_cells() const
     {
-        Simplex_const_iterator s = simplices_begin();
-        size_type result = number_of_simplices();
-        for( ; s != simplices_end(); ++s )
+        Full_cell_const_iterator s = full_cells_begin();
+        size_type result = number_of_full_cells();
+        for( ; s != full_cells_end(); ++s )
         {
             if( is_infinite(s) )
                 --result;
@@ -259,20 +260,20 @@ public:
     Finite_vertex_const_iterator finite_vertices_end() const
     { return Finite_vertex_const_iterator(Finiteness_predicate(*this), vertices_end(), vertices_end()); }
 
-    Simplex_iterator simplices_begin() { return pcds().simplices_begin(); }
-    Simplex_iterator simplices_end()   { return pcds().simplices_end(); }
+    Full_cell_iterator full_cells_begin() { return pcds().full_cells_begin(); }
+    Full_cell_iterator full_cells_end()   { return pcds().full_cells_end(); }
 
-    Simplex_const_iterator simplices_begin() const { return pcds().simplices_begin(); }
-    Simplex_const_iterator simplices_end()   const { return pcds().simplices_end(); }
+    Full_cell_const_iterator full_cells_begin() const { return pcds().full_cells_begin(); }
+    Full_cell_const_iterator full_cells_end()   const { return pcds().full_cells_end(); }
 
-    Finite_simplex_iterator finite_simplices_begin()
-    { return Finite_simplex_iterator(Finiteness_predicate(*this), simplices_begin(), simplices_end()); }
-    Finite_simplex_iterator finite_simplices_end()
-    { return Finite_simplex_iterator(Finiteness_predicate(*this), simplices_end(), simplices_end()); }
-    Finite_simplex_const_iterator finite_simplices_begin() const
-    { return Finite_simplex_const_iterator(Finiteness_predicate(*this), simplices_begin(), simplices_end()); }
-    Finite_simplex_const_iterator finite_simplices_end() const
-    { return Finite_simplex_const_iterator(Finiteness_predicate(*this), simplices_end(), simplices_end()); }
+    Finite_full_cell_iterator finite_full_cells_begin()
+    { return Finite_full_cell_iterator(Finiteness_predicate(*this), full_cells_begin(), full_cells_end()); }
+    Finite_full_cell_iterator finite_full_cells_end()
+    { return Finite_full_cell_iterator(Finiteness_predicate(*this), full_cells_end(), full_cells_end()); }
+    Finite_full_cell_const_iterator finite_full_cells_begin() const
+    { return Finite_full_cell_const_iterator(Finiteness_predicate(*this), full_cells_begin(), full_cells_end()); }
+    Finite_full_cell_const_iterator finite_full_cells_end() const
+    { return Finite_full_cell_const_iterator(Finiteness_predicate(*this), full_cells_end(), full_cells_end()); }
 
     Facet_iterator facets_begin() { return pcds().facets_begin(); }
     Facet_iterator facets_end() { return pcds().facets_end(); }
@@ -297,12 +298,12 @@ public:
 
 // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - SIMPLE QUERIES
 
-    bool is_vertex(const Point & p, Vertex_handle & v, Simplex_handle hint = Simplex_handle()) const
+    bool is_vertex(const Point & p, Vertex_handle & v, Full_cell_handle hint = Full_cell_handle()) const
     {
         Locate_type lt;
         Face f(ambient_dimension());
         Facet ft;
-        Simplex_handle s = locate(p, lt, f, ft, hint);
+        Full_cell_handle s = locate(p, lt, f, ft, hint);
         if( ON_VERTEX == lt )
         {
             v = s->vertex(f.index(0));
@@ -316,9 +317,9 @@ public:
         return pcds().is_vertex(v);
     }
 
-    bool is_simplex(Simplex_const_handle s) const
+    bool is_full_cell(Full_cell_const_handle s) const
     {
-        return pcds().is_simplex(s);
+        return pcds().is_full_cell(s);
     }
 
     bool is_infinite(Vertex_const_handle v) const
@@ -327,16 +328,16 @@ public:
         return (infinite_vertex() == v);
     }
 
-    bool is_infinite(Simplex_const_handle s) const
+    bool is_infinite(Full_cell_const_handle s) const
     {
-        CGAL_precondition(Simplex_const_handle() != s);
+        CGAL_precondition(Full_cell_const_handle() != s);
         return is_infinite(s->vertex(0));
     }
 
     bool is_infinite(const Facet & ft) const
     {
-        Simplex_const_handle s = simplex_of(ft);
-        CGAL_precondition(s != Simplex_handle());
+        Full_cell_const_handle s = full_cell_of(ft);
+        CGAL_precondition(s != Full_cell_handle());
         if( is_infinite(s) )
             return (index_of_covertex(ft) != 0);
         return false;
@@ -344,8 +345,8 @@ public:
 
     bool is_infinite(const Face & f) const
     {
-        Simplex_const_handle s = f.simplex();
-        CGAL_precondition(s != Simplex_handle());
+        Full_cell_const_handle s = f.full_cell();
+        CGAL_precondition(s != Full_cell_handle());
         if( is_infinite(s) )
         {
             int i(0);
@@ -366,7 +367,7 @@ public:
         return (! is_infinite(v));
     }
 
-    bool is_finite(Simplex_const_handle s) const
+    bool is_finite(Full_cell_const_handle s) const
     {
         return (! is_infinite(s));
     }
@@ -384,19 +385,19 @@ public:
     // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - ELEMENT GATHERING
 
     template< typename OutputIterator >
-    OutputIterator gather_incident_simplices(const Face & f, OutputIterator out) const
+    OutputIterator gather_incident_full_cells(const Face & f, OutputIterator out) const
     {
-        return pcds().gather_incident_simplices(f, out);
+        return pcds().gather_incident_full_cells(f, out);
     }
     template< typename OutputIterator >
-    OutputIterator gather_incident_simplices(Vertex_const_handle v, OutputIterator out) const
+    OutputIterator gather_incident_full_cells(Vertex_const_handle v, OutputIterator out) const
     {
-        return pcds().gather_incident_simplices(v, out);
+        return pcds().gather_incident_full_cells(v, out);
     }
     template< typename OutputIterator >
-    OutputIterator gather_adjacent_simplices(const Face & f, OutputIterator out) const
+    OutputIterator gather_adjacent_full_cells(const Face & f, OutputIterator out) const
     {
-        return pcds().gather_incident_simplices(f, out);
+        return pcds().gather_incident_full_cells(f, out);
     }
 
     template< typename OutputIterator >
@@ -419,7 +420,7 @@ public:
         return pcds().gather_incident_upper_faces(v, d, out, cmp);
     }
 
-    Orientation orientation(Simplex_const_handle s, bool in_is_valid = false) const
+    Orientation orientation(Full_cell_const_handle s, bool in_is_valid = false) const
     {
         if( ! in_is_valid )
             CGAL_assertion( is_finite(s) );
@@ -442,7 +443,7 @@ public:
     {
         pcds_.clear();
         infinity_ = pcds().insert_increase_dimension();
-        // A simplex has at most 1 + ambient_dimension() faces:
+        // A full_cell has at most 1 + ambient_dimension() facets:
         orientations_.resize(1 + ambient_dimension());
         // Our coaffine orientation predicates HAS state member variables
         coaffine_orientation_predicate() = geom_traits().coaffine_orientation_d_object();
@@ -456,9 +457,9 @@ public:
         pcds().set_current_dimension(d);
     }
 
-    Simplex_handle new_simplex()
+    Full_cell_handle new_full_cell()
     { 
-        return pcds().new_simplex();
+        return pcds().new_full_cell();
     }
 
     Vertex_handle  new_vertex(const Point & p) 
@@ -466,7 +467,7 @@ public:
         return pcds().new_vertex(p);
     }
 
-    void set_neighbors(Simplex_handle s, int i, Simplex_handle s1, int j)
+    void set_neighbors(Full_cell_handle s, int i, Full_cell_handle s1, int j)
     {
         pcds().set_neighbors(s, i, s1, j);
     }
@@ -474,22 +475,22 @@ public:
 // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - VALIDITY
 
     bool is_valid(bool = true, int = 0) const;
-    bool are_incident_simplices_valid(Vertex_const_handle, bool = true, int = 0) const;
+    bool are_incident_full_cells_valid(Vertex_const_handle, bool = true, int = 0) const;
 
 // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - POINT LOCATION
 
 protected:
     template< typename OrientationPredicate >
-    Simplex_handle do_locate(   const Point &, Locate_type &, Face &, Facet &,
-                                Simplex_handle start = Simplex_handle(),
+    Full_cell_handle do_locate(   const Point &, Locate_type &, Face &, Facet &,
+                                Full_cell_handle start = Full_cell_handle(),
                                 OrientationPredicate & o = geom_traits().orientation_d_object()) const;
 public:
-    Simplex_handle locate(  const Point &, Locate_type &, Face &, Facet &,
-                            Simplex_handle start = Simplex_handle()) const;
-    Simplex_handle locate(  const Point &, Locate_type &, Face &, Facet &,
+    Full_cell_handle locate(  const Point &, Locate_type &, Face &, Facet &,
+                            Full_cell_handle start = Full_cell_handle()) const;
+    Full_cell_handle locate(  const Point &, Locate_type &, Face &, Facet &,
                             Vertex_handle) const;
-    Simplex_handle locate(const Point & p, Simplex_handle s = Simplex_handle()) const;
-    Simplex_handle locate(const Point & p, Vertex_handle v) const;
+    Full_cell_handle locate(const Point & p, Full_cell_handle s = Full_cell_handle()) const;
+    Full_cell_handle locate(const Point & p, Vertex_handle v) const;
 
 // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - REMOVALS
 
@@ -504,16 +505,16 @@ public:
         std::vector<Point> points(start, end);
         std::random_shuffle(points.begin(), points.end());
         spatial_sort(points.begin(), points.end(), geom_traits());
-        Simplex_handle hint = Simplex_handle();
+        Full_cell_handle hint = Full_cell_handle();
         typename std::vector<Point>::const_iterator s = points.begin();
         while( s != points.end() )
         {
-            hint = insert(*s++, hint)->simplex();
+            hint = insert(*s++, hint)->full_cell();
         }
         return number_of_vertices() - n;
     }
-    Vertex_handle insert(const Point &, const Locate_type, const Face &, const Facet &, const Simplex_handle);
-    Vertex_handle insert(const Point &, Simplex_handle start = Simplex_handle());
+    Vertex_handle insert(const Point &, const Locate_type, const Face &, const Facet &, const Full_cell_handle);
+    Vertex_handle insert(const Point &, Full_cell_handle start = Full_cell_handle());
     Vertex_handle insert(const Point &, Vertex_handle);
     template< typename ForwardIterator >
     Vertex_handle insert_in_hole(const Point & p, ForwardIterator start, ForwardIterator end, const Facet & ft)
@@ -531,9 +532,9 @@ public:
     }
     Vertex_handle insert_in_face(const Point &, const Face &);
     Vertex_handle insert_in_facet(const Point &, const Facet &);
-    Vertex_handle insert_in_simplex(const Point &, Simplex_handle);
-    Vertex_handle insert_outside_convex_hull_1(const Point &, Simplex_handle);
-    Vertex_handle insert_outside_convex_hull(const Point &, Simplex_handle);
+    Vertex_handle insert_in_full_cell(const Point &, Full_cell_handle);
+    Vertex_handle insert_outside_convex_hull_1(const Point &, Full_cell_handle);
+    Vertex_handle insert_outside_convex_hull(const Point &, Full_cell_handle);
     Vertex_handle insert_outside_affine_hull(const Point &);
 
 // - - - - - - - - - - - - - - - - - - - - - - - - - - - FACET-TRAVERSAL PREDICATES
@@ -552,9 +553,9 @@ public:
         // FUTURE change parameter to const reference
         bool operator()(Facet f) const
         {
-            Simplex_handle s = pc_.simplex_of(f);
+            Full_cell_handle s = pc_.full_cell_of(f);
             const int i = pc_.index_of_covertex(f);
-            Simplex_handle n = s->neighbor(i);
+            Full_cell_handle n = s->neighbor(i);
             if( pc_.is_finite(n) )
                 return false;
             n->vertex(0)->set_point(p_);
@@ -562,8 +563,8 @@ public:
             return ok;
         }
     };
-    // make sure all simplices have positive orientation
-    void reorient_simplices();
+    // make sure all full_cells have positive orientation
+    void reorient_full_cells();
 
 }; // Pure_complex<...>
 
@@ -571,15 +572,15 @@ public:
 
 // CLASS MEMBER FUNCTIONS
 
-template < class PCT, class TDS >
+template < class TT, class TDS >
 void
-Pure_complex<PCT, TDS>
-::reorient_simplices()
+Pure_complex<TT, TDS>
+::reorient_full_cells()
 {
     if( current_dimension() < 1 )
         return;
-    Simplex_iterator sit = simplices_begin();
-    Simplex_iterator send = simplices_end();
+    Full_cell_iterator sit = full_cells_begin();
+    Full_cell_iterator send = full_cells_end();
     while( sit != send )
     {
         if( is_infinite(sit) && (1 == current_dimension()) )
@@ -595,31 +596,31 @@ Pure_complex<PCT, TDS>
 // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
 // - - - - - - - - - - - - - - - - - - - - - - - - THE REMOVAL METHODS
 
-template < class PCT, class TDS >
-typename Pure_complex<PCT, TDS>::Vertex_handle
-Pure_complex<PCT, TDS>
+template < class TT, class TDS >
+typename Pure_complex<TT, TDS>::Vertex_handle
+Pure_complex<TT, TDS>
 ::contract_face(const Point & p, const Face & f)
 {
     CGAL_precondition( is_finite(f) );
     Vertex_handle v = pcds().contract_face(f);
     v->set_point(p);
-    CGAL_expensive_postcondition_msg(are_incident_simplices_valid(v), "new point is not where it should be");
+    CGAL_expensive_postcondition_msg(are_incident_full_cells_valid(v), "new point is not where it should be");
     return v;
 }
 
 // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
 // - - - - - - - - - - - - - - - - - - - - - - - - THE INSERTION METHODS
 
-template < class PCT, class TDS >
-typename Pure_complex<PCT, TDS>::Vertex_handle
-Pure_complex<PCT, TDS>
-::insert(const Point & p, const Locate_type lt, const Face & f, const Facet & ft, const Simplex_handle s)
+template < class TT, class TDS >
+typename Pure_complex<TT, TDS>::Vertex_handle
+Pure_complex<TT, TDS>
+::insert(const Point & p, const Locate_type lt, const Face & f, const Facet & ft, const Full_cell_handle s)
 {
     switch( lt )
     {
         case IN_SIMPLEX:
             //std::cerr << " IS";
-            return insert_in_simplex(p, s);
+            return insert_in_full_cell(p, s);
             break;
         case OUTSIDE_CONVEX_HULL:
             //std::cerr << " OCH";
@@ -649,31 +650,31 @@ Pure_complex<PCT, TDS>
     return Vertex_handle();
 }
 
-template < class PCT, class TDS >
-typename Pure_complex<PCT, TDS>::Vertex_handle
-Pure_complex<PCT, TDS>
-::insert(const Point & p, Simplex_handle start)
+template < class TT, class TDS >
+typename Pure_complex<TT, TDS>::Vertex_handle
+Pure_complex<TT, TDS>
+::insert(const Point & p, Full_cell_handle start)
 {
     Locate_type lt;
     Face f(ambient_dimension());
     Facet ft;
-    Simplex_handle s = locate(p, lt, f, ft, start);
+    Full_cell_handle s = locate(p, lt, f, ft, start);
     return insert(p, lt, f, ft, s);
 }
 
-template < class PCT, class TDS >
-typename Pure_complex<PCT, TDS>::Vertex_handle
-Pure_complex<PCT, TDS>
+template < class TT, class TDS >
+typename Pure_complex<TT, TDS>::Vertex_handle
+Pure_complex<TT, TDS>
 ::insert(const Point & p, Vertex_handle v)
 {
     if( Vertex_handle() == v )
         v = infinite_vertex();
-    return insert(p, v->simplex());
+    return insert(p, v->full_cell());
 }
 
-template < class PCT, class TDS >
-typename Pure_complex<PCT, TDS>::Vertex_handle
-Pure_complex<PCT, TDS>
+template < class TT, class TDS >
+typename Pure_complex<TT, TDS>::Vertex_handle
+Pure_complex<TT, TDS>
 ::insert_in_face(const Point & p, const Face & f)
 {
     CGAL_precondition( ! is_infinite(f) );
@@ -682,9 +683,9 @@ Pure_complex<PCT, TDS>
     return v;
 }
 
-template < class PCT, class TDS >
-typename Pure_complex<PCT, TDS>::Vertex_handle
-Pure_complex<PCT, TDS>
+template < class TT, class TDS >
+typename Pure_complex<TT, TDS>::Vertex_handle
+Pure_complex<TT, TDS>
 ::insert_in_facet(const Point & p, const Facet & ft)
 {
     CGAL_precondition( ! is_infinite(ft) );
@@ -693,30 +694,30 @@ Pure_complex<PCT, TDS>
     return v;
 }
 
-template < class PCT, class TDS >
-typename Pure_complex<PCT, TDS>::Vertex_handle
-Pure_complex<PCT, TDS>
-::insert_in_simplex(const Point & p, Simplex_handle s)
+template < class TT, class TDS >
+typename Pure_complex<TT, TDS>::Vertex_handle
+Pure_complex<TT, TDS>
+::insert_in_full_cell(const Point & p, Full_cell_handle s)
 {
     CGAL_precondition( is_finite(s) );
-    Vertex_handle v = pcds().insert_in_simplex(s);
+    Vertex_handle v = pcds().insert_in_full_cell(s);
     v->set_point(p);
     return v;
 }
 
 // NOT DOCUMENTED...
-template < class PCT, class TDS >
-typename Pure_complex<PCT, TDS>::Vertex_handle
-Pure_complex<PCT, TDS>
-::insert_outside_convex_hull_1(const Point & p, Simplex_handle s)
+template < class TT, class TDS >
+typename Pure_complex<TT, TDS>::Vertex_handle
+Pure_complex<TT, TDS>
+::insert_outside_convex_hull_1(const Point & p, Full_cell_handle s)
 {
     // This is a special case for dimension 1, because in that case, the right
-    // infinite simplex is not correctly oriented... (sice its first vertex is the
+    // infinite full_cell is not correctly oriented... (sice its first vertex is the
     // infinite one...
     CGAL_precondition( is_infinite(s) );
     CGAL_precondition( 1 == current_dimension() );
     bool swap = (0 == s->neighbor(0)->index_of(s));
-    Vertex_handle v = pcds().insert_in_simplex(s);
+    Vertex_handle v = pcds().insert_in_full_cell(s);
     v->set_point(p);
     if( swap )
     {
@@ -725,10 +726,10 @@ Pure_complex<PCT, TDS>
     return v;
 }
 
-template < class PCT, class TDS >
-typename Pure_complex<PCT, TDS>::Vertex_handle
-Pure_complex<PCT, TDS>
-::insert_outside_convex_hull(const Point & p, Simplex_handle s)
+template < class TT, class TDS >
+typename Pure_complex<TT, TDS>::Vertex_handle
+Pure_complex<TT, TDS>
+::insert_outside_convex_hull(const Point & p, Full_cell_handle s)
 {
     if( 1 == current_dimension() )
     {
@@ -736,29 +737,29 @@ Pure_complex<PCT, TDS>
     }
     CGAL_precondition( is_infinite(s) );
     CGAL_assertion( current_dimension() >= 2 );
-    std::vector<Simplex_handle> simps;
+    std::vector<Full_cell_handle> simps;
     simps.reserve(64);
-    std::back_insert_iterator<std::vector<Simplex_handle> > out(simps);
+    std::back_insert_iterator<std::vector<Full_cell_handle> > out(simps);
     if( current_dimension() < ambient_dimension() )
     {
         Outside_convex_hull_traversal_predicate<Coaffine_orientation_d>
             ochtp(*this, p, coaffine_orientation_predicate());
-        pcds().gather_simplices(s, ochtp, out);
+        pcds().gather_full_cells(s, ochtp, out);
     }
     else
     {
         Orientation_d ori = geom_traits().orientation_d_object();
         Outside_convex_hull_traversal_predicate<Orientation_d>
             ochtp(*this, p, ori);
-        pcds().gather_simplices(s, ochtp, out);
+        pcds().gather_full_cells(s, ochtp, out);
     }
     Vertex_handle v = insert_in_hole(p, simps.begin(), simps.end(), Facet(s, 0));
     return v;
 }
 
-template < class PCT, class TDS >
-typename Pure_complex<PCT, TDS>::Vertex_handle
-Pure_complex<PCT, TDS>
+template < class TT, class TDS >
+typename Pure_complex<TT, TDS>::Vertex_handle
+Pure_complex<TT, TDS>
 ::insert_outside_affine_hull(const Point & p)
 {
     CGAL_precondition( current_dimension() < ambient_dimension() );
@@ -768,11 +769,11 @@ Pure_complex<PCT, TDS>
     v->set_point(p);
     if( current_dimension() >= 1 )
     {
-        Simplex_handle s = infinite_vertex()->simplex()->neighbor(0);
+        Full_cell_handle s = infinite_vertex()->full_cell()->neighbor(0);
         Orientation o = orientation(s);
         CGAL_assertion( COPLANAR != o );
             if( NEGATIVE == o )
-                reorient_simplices();
+                reorient_full_cells();
     }
     return v;
 }
@@ -780,15 +781,15 @@ Pure_complex<PCT, TDS>
 // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
 // - - - - - - - - - - - - - - - - - - - - THE MAIN LOCATE(...) FUNCTION
 
-template < class PCT, class TDS >
+template < class TT, class TDS >
 template< typename OrientationPredicate >
-typename Pure_complex<PCT, TDS>::Simplex_handle
-Pure_complex<PCT, TDS>
+typename Pure_complex<TT, TDS>::Full_cell_handle
+Pure_complex<TT, TDS>
 ::do_locate(   const Point & p, // query point
-            Locate_type & loc_type,// type of result (simplex, face, vertex)
+            Locate_type & loc_type,// type of result (full_cell, face, vertex)
             Face & face,// the face containing the query in its interior (when appropriate)
             Facet & facet,// the facet containing the query in its interior (when appropriate)
-            const Simplex_handle start// starting simplex for the walk
+            const Full_cell_handle start// starting full_cell for the walk
             , OrientationPredicate & orientation_pred
         ) const
 {
@@ -797,11 +798,11 @@ Pure_complex<PCT, TDS>
     if( cur_dim == -1 )
     {
         loc_type = OUTSIDE_AFFINE_HULL;
-        return Simplex_handle();
+        return Full_cell_handle();
     }
     else if( cur_dim == 0 )
     {
-        Vertex_handle vit = infinite_simplex()->neighbor(0)->vertex(0);
+        Vertex_handle vit = infinite_full_cell()->neighbor(0)->vertex(0);
         if( EQUAL != geom_traits().compare_lexicographically_d_object()(p, vit->point()) )
         {
             loc_type = OUTSIDE_AFFINE_HULL;
@@ -809,19 +810,19 @@ Pure_complex<PCT, TDS>
         else
         {
             loc_type = ON_VERTEX;
-            face.set_simplex(vit->simplex());
+            face.set_full_cell(vit->full_cell());
             face.set_index(0, 0);
         }
-        return vit->simplex();
+        return vit->full_cell();
     }
 
-    Simplex_handle s;
+    Full_cell_handle s;
 
-    // if we don't know where to start, we start from any bounded simplex
-    if( Simplex_handle() == start )
+    // if we don't know where to start, we start from any bounded full_cell
+    if( Full_cell_handle() == start )
         // THE HACK THAT NOBODY SHOULD DO... BUT DIFFICULT TO WORK AROUND
         // THIS... TODO: WORK AROUND IT
-        s = const_cast<Self*>(this)->infinite_simplex()->neighbor(0);
+        s = const_cast<Self*>(this)->infinite_full_cell()->neighbor(0);
     else
     {
         s = start;
@@ -838,15 +839,15 @@ Pure_complex<PCT, TDS>
             p) )
         {
             loc_type = OUTSIDE_AFFINE_HULL;
-            return Simplex_handle();
+            return Full_cell_handle();
         }
     }
 
-    // we remember the |previous|ly visited simplex to avoid the evaluation
+    // we remember the |previous|ly visited full_cell to avoid the evaluation
     // of one |orientation| predicate
-    Simplex_handle previous = Simplex_handle();
-    bool simplex_not_found = true;
-    while(simplex_not_found) // we walk until we locate the query point |p|
+    Full_cell_handle previous = Full_cell_handle();
+    bool full_cell_not_found = true;
+    while(full_cell_not_found) // we walk until we locate the query point |p|
     {
     #ifdef CGAL_TRIANGULATION_STATISTICS
         ++walk_size_;
@@ -854,19 +855,19 @@ Pure_complex<PCT, TDS>
         // For the remembering stochastic walk, we need to start trying
         // with a random index:
         int j, i = rng_.get_int(0, cur_dim);
-        // we check |p| against all the simplex's hyperplanes in turn
+        // we check |p| against all the full_cell's hyperplanes in turn
        
         for(j = 0; j <= cur_dim; ++j, i = (i + 1) % (cur_dim + 1) )
         {
-            Simplex_handle next = s->neighbor(i);
+            Full_cell_handle next = s->neighbor(i);
             if( previous == next )
             {   // no need to compute the orientation, we already know it
                 orientations_[i] = POSITIVE;
-                continue; // go to next simplex's facet
+                continue; // go to next full_cell's facet
             }
 
             // we temporarily substitute |p| to the |i|-th point of the
-            // simplex
+            // full_cell
             Point backup = s->vertex(i)->point();
             s->vertex(i)->set_point(p);
 
@@ -874,38 +875,38 @@ Pure_complex<PCT, TDS>
                 s->points_begin(),
                 s->points_begin() + cur_dim + 1);
 
-            // restore the correct point for vertex |i| of the simplex
+            // restore the correct point for vertex |i| of the full_cell
             s->vertex(i)->set_point(backup);
 
             if( orientations_[i] != NEGATIVE )
             {
                 // from this facet's point of view, we are inside the
-                // simplex or on its boundary, so we continue to next facet
+                // full_cell or on its boundary, so we continue to next facet
                 continue;
             }
 
             // At this point, we know that we have to jump to the |next|
-            // simplex because orientation_[i] == NEGATIVE
+            // full_cell because orientation_[i] == NEGATIVE
             previous = s;
             s = next;
             if( is_infinite(next) )
             {   // we have arrived OUTSIDE the convex hull of the triangulation,
                 // so we stop the search
-                simplex_not_found = false;
+                full_cell_not_found = false;
                 loc_type = OUTSIDE_CONVEX_HULL;
-                face.set_simplex(s);
+                face.set_full_cell(s);
             }
             break;
         } // end of the 'for' loop
-        if( ( cur_dim + 1 ) == j ) // we found the simplex containing |p|
-            simplex_not_found = false;
+        if( ( cur_dim + 1 ) == j ) // we found the full_cell containing |p|
+            full_cell_not_found = false;
     }
-    // Here, we know in which simplex |p| is in.
+    // Here, we know in which full_cell |p| is in.
     // We now check more precisely where |p| landed:
-    // vertex, facet, face or simplex.
+    // vertex, facet, face or full_cell.
     if( ! is_infinite(s) )
     {
-        face.set_simplex(s);
+        face.set_full_cell(s);
         int num(0);
         int verts(0);
         for(int i = 0; i <= cur_dim; ++i)
@@ -944,14 +945,14 @@ Pure_complex<PCT, TDS>
     return s;
 }
 
-template < class PCT, class TDS >
-typename Pure_complex<PCT, TDS>::Simplex_handle
-Pure_complex<PCT, TDS>
+template < class TT, class TDS >
+typename Pure_complex<TT, TDS>::Full_cell_handle
+Pure_complex<TT, TDS>
 ::locate(   const Point & p, // query point
-            Locate_type & loc_type,// type of result (simplex, face, vertex)
+            Locate_type & loc_type,// type of result (full_cell, face, vertex)
             Face & face,// the face containing the query in its interior (when appropriate)
             Facet & facet,// the facet containing the query in its interior (when appropriate)
-            Simplex_handle start// starting simplex for the walk
+            Full_cell_handle start// starting full_cell for the walk
         ) const
 {
     if( current_dimension() == ambient_dimension() )
@@ -966,9 +967,9 @@ Pure_complex<PCT, TDS>
 // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
 // - - - - - - - - - - - - - - - - - - - - the locate(...) variants
 
-template < class PCT, class TDS >
-typename Pure_complex<PCT, TDS>::Simplex_handle
-Pure_complex<PCT, TDS>
+template < class TT, class TDS >
+typename Pure_complex<TT, TDS>::Full_cell_handle
+Pure_complex<TT, TDS>
 ::locate(   const Point & p,
             Locate_type & loc_type,
             Face & face,
@@ -977,13 +978,13 @@ Pure_complex<PCT, TDS>
 {
     if( Vertex_handle() == start )
         start = infinite_vertex();
-    return locate(p, loc_type, face, facet, start->simplex());
+    return locate(p, loc_type, face, facet, start->full_cell());
 }
 
-template < class PCT, class TDS >
-typename Pure_complex<PCT, TDS>::Simplex_handle
-Pure_complex<PCT, TDS>
-::locate(const Point & p, Simplex_handle s) const
+template < class TT, class TDS >
+typename Pure_complex<TT, TDS>::Full_cell_handle
+Pure_complex<TT, TDS>
+::locate(const Point & p, Full_cell_handle s) const
 {
     Locate_type lt;
     Face face(ambient_dimension());
@@ -991,28 +992,28 @@ Pure_complex<PCT, TDS>
     return locate(p, lt, face, facet, s);
 }
 
-template < class PCT, class TDS >
-typename Pure_complex<PCT, TDS>::Simplex_handle
-Pure_complex<PCT, TDS>
+template < class TT, class TDS >
+typename Pure_complex<TT, TDS>::Full_cell_handle
+Pure_complex<TT, TDS>
 ::locate(const Point & p, Vertex_handle v) const
 {
     if( Vertex_handle() != v )
         v = infinite_vertex();
-    return this->locate(p, v->simplex());
+    return this->locate(p, v->full_cell());
 }
 
 // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - VALIDITY
 
-template < class PCT, class TDS >
+template < class TT, class TDS >
 bool
-Pure_complex<PCT, TDS>
+Pure_complex<TT, TDS>
 ::is_valid(bool verbose, int level) const
 { 
     if( ! pcds().is_valid(verbose, level) )
         return false;
 
-    Simplex_const_iterator s;
-    for( s = simplices_begin(); s != simplices_end(); ++s )
+    Full_cell_const_iterator s;
+    for( s = full_cells_begin(); s != full_cells_end(); ++s )
     {
         if( s->has_vertex(infinite_vertex()) )
         {
@@ -1026,13 +1027,13 @@ Pure_complex<PCT, TDS>
     if( current_dimension() < 0 )
         return true;
     Orientation o;
-    for( s = simplices_begin(); s != simplices_end(); ++s )
+    for( s = full_cells_begin(); s != full_cells_end(); ++s )
     {
         if( is_infinite(s) )
         {
             if( current_dimension() > 1 )
             {
-                Simplex_handle fs = s->neighbor(0);
+                Full_cell_handle fs = s->neighbor(0);
                 infinite_vertex()->set_point(fs->vertex(s->mirror_index(0))->point());
                 o = - orientation(s, true);
             }
@@ -1043,28 +1044,28 @@ Pure_complex<PCT, TDS>
             o = orientation(s, true);
         if( NEGATIVE == o )
         {
-            if( verbose ) CGAL_warning_msg(false, "simplex is not correctly oriented");
+            if( verbose ) CGAL_warning_msg(false, "full_cell is not correctly oriented");
             return false;
         }
         if( COPLANAR == o )
         {
-            if( verbose ) CGAL_warning_msg(false, "simplex is flat");
+            if( verbose ) CGAL_warning_msg(false, "full_cell is flat");
             return false;
         }
     }
     return true;
 }
 
-template < class PCT, class TDS >
-bool Pure_complex<PCT, TDS>::are_incident_simplices_valid(Vertex_const_handle v, bool verbose, int level) const
+template < class TT, class TDS >
+bool Pure_complex<TT, TDS>::are_incident_full_cells_valid(Vertex_const_handle v, bool verbose, int level) const
 {
     if( current_dimension() <= 0 )
         return true;
-    typedef std::vector<Simplex_const_handle> Simps;
+    typedef std::vector<Full_cell_const_handle> Simps;
     Simps simps;
     simps.reserve(64);
     std::back_insert_iterator<Simps> out(simps);
-    gather_incident_simplices(v, out);
+    gather_incident_full_cells(v, out);
     typename Simps::const_iterator sit = simps.begin();
     for( ; sit != simps.end(); ++sit )
     {
@@ -1073,12 +1074,12 @@ bool Pure_complex<PCT, TDS>::are_incident_simplices_valid(Vertex_const_handle v,
         Orientation o = orientation(*sit);
         if( NEGATIVE == o )
         {
-            if( verbose ) CGAL_warning_msg(false, "simplex is not correctly oriented");
+            if( verbose ) CGAL_warning_msg(false, "full_cell is not correctly oriented");
             return false;
         }
         if( COPLANAR == o )
         {
-            if( verbose ) CGAL_warning_msg(false, "simplex is flat");
+            if( verbose ) CGAL_warning_msg(false, "full_cell is flat");
             return false;
         }
     }
@@ -1089,23 +1090,23 @@ bool Pure_complex<PCT, TDS>::are_incident_simplices_valid(Vertex_const_handle v,
 
 // FUNCTIONS THAT ARE NOT MEMBER FUNCTIONS:
 
-template < class PCT, class TDS >
+template < class TT, class TDS >
 std::istream & 
-operator>>(std::istream & is, Pure_complex<PCT, TDS> & tr)
+operator>>(std::istream & is, Pure_complex<TT, TDS> & tr)
   // reads :
   // - the dimensions (ambient and current)
   // - the number of finite vertices
   // - the non combinatorial information on vertices (point, etc)
-  // - the number of simplices
-  // - the simplices by the indices of their vertices in the preceding list
-  // of vertices, plus the non combinatorial information on each simplex
-  // - the neighbors of each simplex by their index in the preceding list
+  // - the number of full_cells
+  // - the full_cells by the indices of their vertices in the preceding list
+  // of vertices, plus the non combinatorial information on each full_cell
+  // - the neighbors of each full_cell by their index in the preceding list
 {
-    typedef Pure_complex<PCT, TDS> PC;
+    typedef Pure_complex<TT, TDS> PC;
     typedef typename PC::Vertex_handle         Vertex_handle;
     typedef typename PC::Vertex_iterator       Vertex_iterator;
-    typedef typename PC::Simplex_handle        Simplex_handle;
-    typedef typename PC::Simplex_iterator      Simplex_iterator;
+    typedef typename PC::Full_cell_handle        Full_cell_handle;
+    typedef typename PC::Full_cell_iterator      Full_cell_iterator;
 
     // read current dimension and number of vertices
     size_t n;
@@ -1141,26 +1142,26 @@ operator>>(std::istream & is, Pure_complex<PCT, TDS> & tr)
     }
 
     // now, read the combinatorial information
-   return tr.pcds().read_simplices(is, vertices);
+   return tr.pcds().read_full_cells(is, vertices);
 }
 
-template < class PCT, class TDS >
+template < class TT, class TDS >
 std::ostream & 
-operator<<(std::ostream & os, const Pure_complex<PCT, TDS> & tr)
+operator<<(std::ostream & os, const Pure_complex<TT, TDS> & tr)
   // writes :
   // - the dimensions (ambient and current)
   // - the number of finite vertices
   // - the non combinatorial information on vertices (point, etc)
-  // - the number of simplices
-  // - the simplices by the indices of their vertices in the preceding list
-  // of vertices, plus the non combinatorial information on each simplex
-  // - the neighbors of each simplex by their index in the preceding list
+  // - the number of full_cells
+  // - the full_cells by the indices of their vertices in the preceding list
+  // of vertices, plus the non combinatorial information on each full_cell
+  // - the neighbors of each full_cell by their index in the preceding list
 {
-    typedef Pure_complex<PCT, TDS> PC;
+    typedef Pure_complex<TT, TDS> PC;
     typedef typename PC::Vertex_const_handle         Vertex_handle;
     typedef typename PC::Vertex_const_iterator       Vertex_iterator;
-    typedef typename PC::Simplex_const_handle        Simplex_handle;
-    typedef typename PC::Simplex_const_iterator      Simplex_iterator;
+    typedef typename PC::Full_cell_const_handle        Full_cell_handle;
+    typedef typename PC::Full_cell_const_iterator      Full_cell_iterator;
 
     // outputs dimensions and number of vertices
     size_t n = tr.number_of_vertices();
@@ -1192,7 +1193,7 @@ operator<<(std::ostream & os, const Pure_complex<PCT, TDS> & tr)
     CGAL_assertion( i == n+1 );
 
     // output the combinatorial information
-    return tr.pcds().write_simplices(os, index_of_vertex);
+    return tr.pcds().write_full_cells(os, index_of_vertex);
 }
 
 } //namespace CGAL

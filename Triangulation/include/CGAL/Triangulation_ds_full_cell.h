@@ -15,11 +15,11 @@
 //
 // Author(s)    : Samuel Hornus
 
-#ifndef CGAL_TRIANGULATION_DS_SIMPLEX_H
-#define CGAL_TRIANGULATION_DS_SIMPLEX_H
+#ifndef CGAL_TRIANGULATION_DS_FULL_CELL_H
+#define CGAL_TRIANGULATION_DS_FULL_CELL_H
 
-#include <CGAL/TDS_simplex_default_storage_policy.h>
-#include <CGAL/TDS_simplex_mirror_storage_policy.h>
+#include <CGAL/TDS_full_cell_default_storage_policy.h>
+#include <CGAL/TDS_full_cell_mirror_storage_policy.h>
 #include <CGAL/internal/Triangulation/Dummy_TDS.h>
 #include <CGAL/Dimension.h>
 #include <CGAL/Default.h>
@@ -28,35 +28,35 @@
 
 namespace CGAL {
 
-template< class TDS = void, typename SimplexStoragePolicy = Default >
-class Triangulation_ds_simplex
+template< class TDS = void, typename FullCellStoragePolicy = Default >
+class Triangulation_ds_full_cell
 {
-    typedef typename Default::Get<SimplexStoragePolicy, TDS_simplex_default_storage_policy>::type
+    typedef typename Default::Get<FullCellStoragePolicy, TDS_full_cell_default_storage_policy>::type
                                                     Storage_policy;
-    typedef Triangulation_ds_simplex<TDS>           Self;
+    typedef Triangulation_ds_full_cell<TDS>           Self;
     typedef typename TDS::Ambient_dimension        Ambient_dimension;
 
 public:
     typedef typename TDS::Face                     Face;
     typedef typename TDS::Vertex_handle            Vertex_handle;
-    typedef typename TDS::Simplex_handle           Simplex_handle;
+    typedef typename TDS::Full_cell_handle           Full_cell_handle;
     typedef typename TDS::Vertex_const_handle      Vertex_const_handle;
-    typedef typename TDS::Simplex_const_handle     Simplex_const_handle;
+    typedef typename TDS::Full_cell_const_handle     Full_cell_const_handle;
     template< typename TDS2 >
     struct Rebind_TDS
     {
-        typedef Triangulation_ds_simplex<TDS2, SimplexStoragePolicy> Other;
+        typedef Triangulation_ds_full_cell<TDS2, FullCellStoragePolicy> Other;
     };
 
 private: // STORAGE
-    typedef TS_data< Vertex_handle, Simplex_handle,
+    typedef TFC_data< Vertex_handle, Full_cell_handle,
                       Ambient_dimension, Storage_policy >   Combinatorics;
-    friend class TS_data< Vertex_handle, Simplex_handle,
+    friend class TFC_data< Vertex_handle, Full_cell_handle,
                       Ambient_dimension, Storage_policy >;
     // array of vertices
     typedef typename Combinatorics::Vertex_handle_array     Vertex_handle_array;
     // neighbor simplices
-    typedef typename Combinatorics::Simplex_handle_array    Simplex_handle_array;
+    typedef typename Combinatorics::Full_cell_handle_array    Full_cell_handle_array;
 
     // NOT DOCUMENTED...
     typename Combinatorics::Xor_type xor_of_vertices(const int cur_dim) const
@@ -67,23 +67,23 @@ private: // STORAGE
 public:
     typedef typename Vertex_handle_array::const_iterator    Vertex_handle_const_iterator;
 
-    Triangulation_ds_simplex(const int dmax)
+    Triangulation_ds_full_cell(const int dmax)
     : flags_(0), combinatorics_(dmax)
     {
 		CGAL_assertion( dmax > 0 );
         for( int i = 0; i <= dmax; ++i )
         {
-            set_neighbor(i, Simplex_handle());
+            set_neighbor(i, Full_cell_handle());
             set_vertex(i, Vertex_handle());
             set_mirror_index(i, -1);
         }
     }
 
-    Triangulation_ds_simplex(const Triangulation_ds_simplex & s)
+    Triangulation_ds_full_cell(const Triangulation_ds_full_cell & s)
     : flags_(s.flags_), combinatorics_(s.combinatorics_)
     {}
 
-    ~Triangulation_ds_simplex() {}
+    ~Triangulation_ds_full_cell() {}
 
     int ambient_dimension() const
     {
@@ -106,7 +106,7 @@ public:
         return vertices()[i];
     }
 
-    Simplex_handle neighbor(const int i) const
+    Full_cell_handle neighbor(const int i) const
     {
         CGAL_precondition(0<=i && i<=ambient_dimension());
         return neighbors()[i];
@@ -125,7 +125,7 @@ public:
         return combinatorics_.mirror_vertex(i, cur_dim);
     }
 
-    int index_of(Simplex_const_handle s) const
+    int index_of(Full_cell_const_handle s) const
     {
         // WE ASSUME THE SIMPLEX WE ARE LOOKING FOR INDEED EXISTS !
         CGAL_precondition(has_neighbor(s));
@@ -151,7 +151,7 @@ public:
 		vertices()[i] = v;
 	}
 
-	void set_neighbor(const int i, Simplex_handle s)
+	void set_neighbor(const int i, Full_cell_handle s)
 	{
 		CGAL_precondition(0<=i && i<=ambient_dimension());
 		neighbors()[i] = s;
@@ -178,13 +178,13 @@ public:
         return (index <= d);
     }
 
-    bool has_neighbor(Simplex_const_handle s) const
+    bool has_neighbor(Full_cell_const_handle s) const
     {
         int index;
         return has_neighbor(s, index);
     }
 
-    bool has_neighbor(Simplex_const_handle s, int & index) const
+    bool has_neighbor(Full_cell_const_handle s, int & index) const
     {
         const int d = ambient_dimension();
         index = 0;
@@ -214,13 +214,13 @@ public:
         {
             if( Vertex_handle() != vertex(i) )
             {
-                if( Simplex_handle() == neighbor(i) )
+                if( Full_cell_handle() == neighbor(i) )
                 {
-                    if( verbose ) CGAL_warning_msg(false, "vertex has no opposite simplex.");
+                    if( verbose ) CGAL_warning_msg(false, "vertex has no opposite full cell.");
                     return false;
                 }
                 // Here, we can't check if neighbor(i) counts *this as a neighbor
-                // because we can't construct a Simplex_handle to *this...
+                // because we can't construct a Full_cell_handle to *this...
                 // So we have to do this check in the `parent' class (TDS)
             }
         }
@@ -229,8 +229,8 @@ public:
 
 private:
     // access to data members:
-    Simplex_handle_array & neighbors() {return combinatorics_.neighbors_; }
-    const Simplex_handle_array & neighbors() const {return combinatorics_.neighbors_; }
+    Full_cell_handle_array & neighbors() {return combinatorics_.neighbors_; }
+    const Full_cell_handle_array & neighbors() const {return combinatorics_.neighbors_; }
     Vertex_handle_array & vertices() {return combinatorics_.vertices_; }
     const Vertex_handle_array & vertices() const {return combinatorics_.vertices_; }
 
@@ -246,7 +246,7 @@ private:
 
 template < typename TDS, typename SSP >
 std::ostream &
-operator<<(std::ostream & O, const Triangulation_ds_simplex<TDS,SSP> & s)
+operator<<(std::ostream & O, const Triangulation_ds_full_cell<TDS,SSP> & s)
 {
     /*if( is_ascii(O) )
     {
@@ -258,7 +258,7 @@ operator<<(std::ostream & O, const Triangulation_ds_simplex<TDS,SSP> & s)
 
 template < typename TDS, typename SSP >
 std::istream &
-operator>>(std::istream & I, Triangulation_ds_simplex<TDS,SSP> & s)
+operator>>(std::istream & I, Triangulation_ds_full_cell<TDS,SSP> & s)
 {
     /*if( is_ascii(I) )
     {}
@@ -268,22 +268,22 @@ operator>>(std::istream & I, Triangulation_ds_simplex<TDS,SSP> & s)
 
 // Special case: specialization when template parameter is void.
 
-// we must declare it for each possible simplex storage policy because :
+// we must declare it for each possible full_cell storage policy because :
 // (GCC error:) default template arguments may not be used in partial specializations
 template< typename StoragePolicy >
-class Triangulation_ds_simplex<void, StoragePolicy>
+class Triangulation_ds_full_cell<void, StoragePolicy>
 {
 public:
     typedef internal::Triangulation::Dummy_TDS          TDS;
     typedef TDS::Vertex_handle   Vertex_handle;
     typedef TDS::Vertex_const_handle   Vertex_const_handle;
-    typedef TDS::Simplex_handle  Simplex_handle;
-    typedef TDS::Simplex_const_handle  Simplex_const_handle;
+    typedef TDS::Full_cell_handle  Full_cell_handle;
+    typedef TDS::Full_cell_const_handle  Full_cell_const_handle;
     typedef TDS::Vertex_handle_const_iterator Vertex_handle_const_iterator;
     template <typename TDS2>
     struct Rebind_TDS
     {
-        typedef Triangulation_ds_simplex<TDS2, StoragePolicy> Other;
+        typedef Triangulation_ds_full_cell<TDS2, StoragePolicy> Other;
     };
     Vertex_handle_const_iterator vertices_begin();
     Vertex_handle_const_iterator vertices_end();
@@ -291,4 +291,4 @@ public:
 
 } //namespace CGAL
 
-#endif // CGAL_TRIANGULATION_DS_SIMPLEX_H
+#endif // CGAL_TRIANGULATION_DS_FULL_CELL_H
