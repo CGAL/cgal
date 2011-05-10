@@ -22,7 +22,7 @@ $\sphere^D.$
 \item[-1] This corresponds to a single vertex and a single simplex. In a
 geometric realization of the \ccRefName\ (\emph{e.g.}, in a
 \ccc{Triangulation<TrTraits, TDS>} or a
-\ccc{Delaunay_triangulation<TrTraits, TDS>}), this vertex
+\ccc{Delaunay_triangulation<DTTraits, TDS>}), this vertex
 corresponds to \emph{the vertex at infinity}.
 
 \item[0] This corresponds to two vertices, each adjacent to one $0$-simplex;
@@ -41,7 +41,7 @@ is a proper face of $\sigma$.
 
 \ccHasModels
 
-\ccc{Triangulation_data_structure<Dimensionality, TDSVertex, TDSSimplex>}
+\ccc{Triangulation_data_structure<Dimensionality, TDSVertex, TDSFullCell>}
 
 \ccTypes
 
@@ -50,9 +50,9 @@ is a proper face of $\sigma$.
 A model of the concept \ccc{TriangulationDSVertex}.
 }
 \ccGlue
-\ccNestedType{Simplex}
+\ccNestedType{Full_cell}
 {
-A model of the concept \ccc{TriangulationDSSimplex}.
+A model of the concept \ccc{TriangulationDSFullCell}.
 }
 
 The concept \ccRefName\ also defines a type for describing facets of the
@@ -103,7 +103,7 @@ Iterator over the list of vertices.
 %Iterator over the list of vertices (\ccc{const} casted).
 %}
 \ccGlue
-\ccNestedType{Full _cell_iterator}
+\ccNestedType{Full_cell_iterator}
 {
 Iterator over the list of cells.
 }
@@ -169,7 +169,7 @@ cells are also good.\\
 The argument \ccc{tp} is a predicate that takes as argument a \ccc{Facet}
 whose containing \ccc{Full_cell} is good. The predicate must return \ccc{true}
 if the traversal of that \ccc{Facet} leads to a good cell.\\
-All the good cells are outputed into the last argument \ccc{out}.}
+All the good cells are outputted into the last argument \ccc{out}.}
 
 \ccMethod{template< typename OutputIterator > OutputIterator
 incident_full_cells(Vertex_handle v, OutputIterator out) const;}
