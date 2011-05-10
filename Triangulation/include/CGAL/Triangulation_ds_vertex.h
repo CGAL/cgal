@@ -30,13 +30,13 @@ namespace CGAL {
 template< class TDS = void >
 class Triangulation_ds_vertex 
 {
-    typedef Triangulation_ds_vertex<TDS> Self;
+    typedef Triangulation_ds_vertex<TDS>    Self;
 
 public:
-    typedef typename TDS::Full_cell_handle       Full_cell_handle;
+    typedef typename TDS::Full_cell_handle  Full_cell_handle; /* Concept */
 
     template <typename TDS2>
-    struct Rebind_TDS
+    struct Rebind_TDS /* Concept */
     {
         typedef Triangulation_ds_vertex<TDS2> Other;
     };
@@ -46,29 +46,29 @@ protected: // DATA MEMBERS
 
 public:	
     // Constructs a vertex with adjacent full_cell 's'
-    Triangulation_ds_vertex(Full_cell_handle s) : full_cell_(s)
+    Triangulation_ds_vertex(Full_cell_handle s) : full_cell_(s) /* Concept */
     {
         CGAL_assertion( Full_cell_handle() != s );
     }
     // Constructs a vertex with no adjacent full_cell
-    Triangulation_ds_vertex() : full_cell_() {}
+    Triangulation_ds_vertex() : full_cell_() {} /* Concept */
 
     ~Triangulation_ds_vertex() {}
 
     /// Set 's' as an adjacent full_cell
-    void set_full_cell(Full_cell_handle s)
+    void set_full_cell(Full_cell_handle s) /* Concept */
     {
 		CGAL_precondition( Full_cell_handle() != s );
         full_cell_ = s;
     }
 
     /// Returns a full_cell adjacent to the vertex
-    Full_cell_handle full_cell() const
+    Full_cell_handle full_cell() const /* Concept */
     {
         return full_cell_;
     }
 
-    bool is_valid(bool verbose = true, int /* level */ = 0) const
+    bool is_valid(bool verbose = true, int /* level */ = 0) const /* Concept */
     {
         if( Full_cell_handle() == full_cell() )
         {
@@ -89,7 +89,7 @@ public: // FOR MEMORY MANAGEMENT
 
 template < class TDS >
 std::istream &
-operator>>(std::istream & is, Triangulation_ds_vertex<TDS> & v)
+operator>>(std::istream & is, Triangulation_ds_vertex<TDS> & v) /* Concept */
 {
     /*if( is_ascii(is) )
     {}
@@ -99,7 +99,7 @@ operator>>(std::istream & is, Triangulation_ds_vertex<TDS> & v)
 
 template< class TDS >
 std::ostream &
-operator<<(std::ostream & os, const Triangulation_ds_vertex<TDS> & v)
+operator<<(std::ostream & os, const Triangulation_ds_vertex<TDS> & v) /* Concept */
 {
     /*if( is_ascii(os) )
     {
@@ -114,11 +114,11 @@ operator<<(std::ostream & os, const Triangulation_ds_vertex<TDS> & v)
 template<>
 class Triangulation_ds_vertex<void>
 {
-public:
     typedef internal::Triangulation::Dummy_TDS  Triangulation_ds;
-    typedef Triangulation_ds::Full_cell_handle     Full_cell_handle;
+public:
+    typedef Triangulation_ds::Full_cell_handle     Full_cell_handle; /* Concept */
     template <typename TDS2>
-    struct Rebind_TDS
+    struct Rebind_TDS /* Concept */
     {
         typedef Triangulation_ds_vertex<TDS2> Other;
     };

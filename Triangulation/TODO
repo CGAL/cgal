@@ -59,7 +59,7 @@ __________________________________________________________________________ALL
 
 _________________________________________________TRIANGULATION_DATA_STRUCTURE
 
-*) TriangulationDataStructure.tex:
+*) TriangulationDataStructure:
   - Remove the precise type definition in the documentation of the type Facet
     Or write typedef CGAL::cpp0x::tuple<Full_cell_handle, int> Facet;
   - full_cell_of(Facet) OR full_cell(Facet) ?
@@ -72,6 +72,11 @@ _________________________________________________TRIANGULATION_DATA_STRUCTURE
 *) Triangulation_data_structure.h:
   - Ensure that it is topologically possible to collapse the Face in
     collapse_face(Face)
+
+*) TriangulationDSVertex
+  - Should we put >> and << in the documentation of the class
+    Triangulation_ds_vertex instead of in that of the concept ?
+
 ________________________________________________________________TRIANGULATION
 
 _______________________________________________________DELAUNAY_TRIANGULATION
