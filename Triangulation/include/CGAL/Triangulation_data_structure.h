@@ -234,7 +234,7 @@ public:
     // works for Face_ = Facet and Face_ = Rotor.
     // NOT DOCUMENTED for the Rotor case...
     template< typename Face_ >
-    Full_cell_handle full_cell_of(const Face_ & f) const
+    Full_cell_handle full_cell(const Face_ & f) const
     {
         return cpp0x::get<0>(f);
     }
@@ -259,9 +259,9 @@ public:
     template< class Face_ >
     bool is_boundary_facet(const Face_ & f) const
     {
-        if( get_visited(neighbor(full_cell_of(f), index_of_covertex(f))) )
+        if( get_visited(neighbor(full_cell(f), index_of_covertex(f))) )
             return false;
-        if( ! get_visited(full_cell_of(f)) )
+        if( ! get_visited(full_cell(f)) )
             return false;
         return true;
     }
@@ -269,9 +269,9 @@ public:
     // NOT DOCUMENTED...
     Rotor rotate_rotor(Rotor & f)
     {
-        int opposite = mirror_index(full_cell_of(f), index_of_covertex(f));
-        Full_cell_handle s = neighbor(full_cell_of(f), index_of_covertex(f));
-        int new_second = s->index_of(vertex(full_cell_of(f), index_of_second_covertex(f)));
+        int opposite = mirror_index(full_cell(f), index_of_covertex(f));
+        Full_cell_handle s = neighbor(full_cell(f), index_of_covertex(f));
+        int new_second = s->index(vertex(full_cell(f), index_of_second_covertex(f)));
         return Rotor(s, new_second, opposite);
     }
 
@@ -282,7 +282,7 @@ protected:
 public:
 // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - REMOVALS
 
-    Vertex_handle contract_face(const Face &);
+    Vertex_handle collapse_face(const Face &);
     void remove_decrease_dimension(Vertex_handle, Vertex_handle);
 
 // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - INSERTIONS
@@ -459,7 +459,7 @@ public:
         }
         bool operator()(const Facet & facet) const
         {
-            Vertex_handle v = tds_.full_cell_of(facet)->vertex(tds_.index_of_covertex(facet));
+            Vertex_handle v = tds_.full_cell(facet)->vertex(tds_.index_of_covertex(facet));
             for( int i = 0; i <= dim_; ++i )
             {
                 if( v == f_.vertex(i) )
@@ -469,15 +469,14 @@ public:
         }
     };
 
-    // a traversal predicate for gathering full_cells adjacent to a given face
-    // ``adjacent'' means that the given face shares at least one vertex with the full_cell
-    class Adjacent_full_cell_traversal_predicate
+    // a traversal predicate for gathering full_cells having a given face as subface
+    class Star_traversal_predicate
     {
         const Face & f_;
         int dim_;
         const Triangulation_data_structure & tds_;
     public:
-        Adjacent_full_cell_traversal_predicate(const Triangulation_data_structure & tds,
+        Star_traversal_predicate(const Triangulation_data_structure & tds,
                                             const Face & f)
         : f_(f), tds_(tds)
         {
@@ -485,7 +484,7 @@ public:
         }
         bool operator()(const Facet & facet) const
         {
-            Full_cell_handle s = tds_.full_cell_of(facet)->neighbor(tds_.index_of_covertex(facet));
+            Full_cell_handle s = tds_.full_cell(facet)->neighbor(tds_.index_of_covertex(facet));
             for( int j = 0; j <= tds_.current_dimension(); ++j )
             {
                 for( int i = 0; i <= dim_; ++i )
@@ -499,34 +498,34 @@ public:
     template< typename TraversalPredicate, typename OutputIterator >
     Facet gather_full_cells(Full_cell_handle, TraversalPredicate &, OutputIterator &) const;
     template< typename OutputIterator >
-    OutputIterator gather_incident_full_cells(const Face &, OutputIterator) const;
+    OutputIterator incident_full_cells(const Face &, OutputIterator) const;
     template< typename OutputIterator >
-    OutputIterator gather_incident_full_cells(Vertex_const_handle, OutputIterator) const;
+    OutputIterator incident_full_cells(Vertex_const_handle, OutputIterator) const;
     template< typename OutputIterator >
-    OutputIterator gather_adjacent_full_cells(const Face &, OutputIterator) const;
+    OutputIterator compute_star(const Face &, OutputIterator) const;
 #ifndef CGAL_CFG_NO_CPP0X_DEFAULT_TEMPLATE_ARGUMENTS_FOR_FUNCTION_TEMPLATES 
     template< typename OutputIterator, typename Comparator = std::less<Vertex_const_handle> >
-    OutputIterator gather_incident_upper_faces(Vertex_const_handle v, const int d, OutputIterator out, Comparator cmp = Comparator())
+    OutputIterator incident_upper_faces(Vertex_const_handle v, const int d, OutputIterator out, Comparator cmp = Comparator())
     {
-        return gather_incident_faces(v, d, out, cmp, true);
+        return incident_faces(v, d, out, cmp, true);
     }
     template< typename OutputIterator, typename Comparator = std::less<Vertex_const_handle> >
-    OutputIterator gather_incident_faces(Vertex_const_handle, const int, OutputIterator, Comparator = Comparator(), bool = false);
+    OutputIterator incident_faces(Vertex_const_handle, const int, OutputIterator, Comparator = Comparator(), bool = false);
 #else
     template< typename OutputIterator, typename Comparator >
-    OutputIterator gather_incident_upper_faces(Vertex_const_handle v, const int d, OutputIterator out, Comparator cmp = Comparator())
+    OutputIterator incident_upper_faces(Vertex_const_handle v, const int d, OutputIterator out, Comparator cmp = Comparator())
     {
-        return gather_incident_faces(v, d, out, cmp, true);
+        return incident_faces(v, d, out, cmp, true);
     }
     template< typename OutputIterator >
-    OutputIterator gather_incident_upper_faces(Vertex_const_handle v, const int d, OutputIterator out)
+    OutputIterator incident_upper_faces(Vertex_const_handle v, const int d, OutputIterator out)
     {
-        return gather_incident_faces(v, d, out, std::less<Vertex_const_handle>(), true);
+        return incident_faces(v, d, out, std::less<Vertex_const_handle>(), true);
     }
     template< typename OutputIterator, typename Comparator >
-    OutputIterator gather_incident_faces(Vertex_const_handle, const int, OutputIterator, Comparator = Comparator(), bool = false);
+    OutputIterator incident_faces(Vertex_const_handle, const int, OutputIterator, Comparator = Comparator(), bool = false);
     template< typename OutputIterator >
-    OutputIterator gather_incident_faces(Vertex_const_handle, const int, OutputIterator,
+    OutputIterator incident_faces(Vertex_const_handle, const int, OutputIterator,
         std::less<Vertex_const_handle> = std::less<Vertex_const_handle>(), bool = false);
 #endif
 
@@ -548,7 +547,7 @@ template< class Dim, class Vb, class Sb >
 template< typename OutputIterator >
 OutputIterator
 Triangulation_data_structure<Dim, Vb, Sb>
-::gather_incident_full_cells(const Face & f, OutputIterator out) const
+::incident_full_cells(const Face & f, OutputIterator out) const
 {
     // CGAL_expensive_precondition_msg(is_full_cell(f.full_cell()), "the facet does not belong to the Triangulation");
     Incident_full_cell_traversal_predicate tp(*this, f);
@@ -560,23 +559,23 @@ template< class Dim, class Vb, class Sb >
 template< typename OutputIterator >
 OutputIterator
 Triangulation_data_structure<Dim, Vb, Sb>
-::gather_incident_full_cells(Vertex_const_handle v, OutputIterator out) const
+::incident_full_cells(Vertex_const_handle v, OutputIterator out) const
 {
 //    CGAL_expensive_precondition(is_vertex(v));
     CGAL_precondition(Vertex_handle() != v);
     Face f(v->full_cell());
-    f.set_index(0, v->full_cell()->index_of(v));
-    return gather_incident_full_cells(f, out);
+    f.set_index(0, v->full_cell()->index(v));
+    return incident_full_cells(f, out);
 }
 
 template< class Dim, class Vb, class Sb >
 template< typename OutputIterator >
 OutputIterator
 Triangulation_data_structure<Dim, Vb, Sb>
-::gather_adjacent_full_cells(const Face & f, OutputIterator out) const
+::compute_star(const Face & f, OutputIterator out) const
 {
     // CGAL_precondition_msg(is_full_cell(f.full_cell()), "the facet does not belong to the Triangulation");
-    Adjacent_full_cell_traversal_predicate tp(*this, f);
+    Star_traversal_predicate tp(*this, f);
     gather_full_cells(f.full_cell(), tp, out);
     return out;
 }
@@ -622,10 +621,10 @@ template< class Dim, class Vb, class Sb >
 template< typename OutputIterator >
 OutputIterator
 Triangulation_data_structure<Dim, Vb, Sb>
-::gather_incident_faces(Vertex_const_handle v, const int d, OutputIterator out,
+::incident_faces(Vertex_const_handle v, const int d, OutputIterator out,
     std::less<Vertex_const_handle> cmp, bool upper_faces)
 {
-    return gather_incident_faces<OutputIterator, std::less<Vertex_const_handle> >(v, d, out, cmp, upper_faces);
+    return incident_faces<OutputIterator, std::less<Vertex_const_handle> >(v, d, out, cmp, upper_faces);
 }
 #endif
 
@@ -633,7 +632,7 @@ template< class Dim, class Vb, class Sb >
 template< typename OutputIterator, typename Comparator >
 OutputIterator
 Triangulation_data_structure<Dim, Vb, Sb>
-::gather_incident_faces(Vertex_const_handle v, const int d, OutputIterator out, Comparator cmp, bool upper_faces)
+::incident_faces(Vertex_const_handle v, const int d, OutputIterator out, Comparator cmp, bool upper_faces)
 {
     CGAL_precondition( 0 < d );
     if( d >= current_dimension() )
@@ -643,7 +642,7 @@ Triangulation_data_structure<Dim, Vb, Sb>
     simps.reserve(64);
     // gather incident full_cells
     std::back_insert_iterator<Simplices> sout(simps);
-    gather_incident_full_cells(v, sout);
+    incident_full_cells(v, sout);
     // for storing the handles to the vertices of a full_cell
     typedef std::vector<Vertex_const_handle> Vertices;
     typedef std::vector<int> Indices;
@@ -683,7 +682,7 @@ Triangulation_data_structure<Dim, Vb, Sb>
         // stores the index of the vertices of s in the same order
         // as in |vertices|:
         for( int i = 0; i <= current_dimension(); ++i )
-            sorted_idx[i] = (*s)->index_of(vertices[i]);
+            sorted_idx[i] = (*s)->index(vertices[i]);
         // init state for enumerating all candidate faces:
         internal::Combination_enumerator f_idx(d, v_idx + 1, current_dimension());
         Face f(*s);
@@ -710,7 +709,7 @@ Triangulation_data_structure<Dim, Vb, Sb>
 template <class Dim, class Vb, class Sb>
 typename Triangulation_data_structure<Dim, Vb, Sb>::Vertex_handle
 Triangulation_data_structure<Dim, Vb, Sb>
-::contract_face(const Face & f)
+::collapse_face(const Face & f)
 {
     const int fd = f.feature_dimension();
     CGAL_precondition( (1 <= fd ) && (fd < current_dimension()));
@@ -719,10 +718,10 @@ Triangulation_data_structure<Dim, Vb, Sb>
     Full_cell s;
     for( int i = 0; i <= fd; ++i )
         s.set_vertex(i, f.vertex(i));
-    // compute adjacent full_cells
+    // compute the star of f
     simps.reserve(64);
     std::back_insert_iterator<std::vector<Full_cell_handle> > out(simps);
-    gather_adjacent_full_cells(f, out);
+    compute_star(f, out);
     Vertex_handle v = insert_in_hole(simps.begin(), simps.end(), Facet(f.full_cell(), f.index(0)));
     for( int i = 0; i <= fd; ++i )
         delete_vertex(s.vertex(i));
@@ -754,11 +753,11 @@ Triangulation_data_structure<Dim, Vb, Sb>
         int star_index;
         if( s->has_vertex(star, star_index) )
             s = s->neighbor(star_index);
-        // Here, |s| is not adjacent to |star|, so it's the only finite
+        // Here, |star| is not a vertex of |s|, so it's the only finite
         // full_cell
         Full_cell_handle inf1 = s->neighbor(0);
         Full_cell_handle inf2 = s->neighbor(1);
-        Vertex_handle v2 = s->vertex(1 - s->index_of(v));
+        Vertex_handle v2 = s->vertex(1 - s->index(v));
         delete_vertex(v);
         delete_full_cell(s);
         inf1->set_vertex(1, Vertex_handle());
@@ -773,10 +772,10 @@ Triangulation_data_structure<Dim, Vb, Sb>
     }
     typedef std::vector<Full_cell_handle> Simplices;
     Simplices simps;
-    gather_incident_full_cells(v, std::back_inserter(simps));
+    incident_full_cells(v, std::back_inserter(simps));
     for( typename Simplices::iterator it = simps.begin(); it != simps.end(); ++it )
     {
-        int v_idx = (*it)->index_of(v);
+        int v_idx = (*it)->index(v);
         if( ! (*it)->has_vertex(star) )
         {
             delete_full_cell((*it)->neighbor(v_idx));
@@ -841,7 +840,7 @@ Triangulation_data_structure<Dim, Vb, Sb>
     std::vector<Full_cell_handle> simps;
     simps.reserve(64);
     std::back_insert_iterator<std::vector<Full_cell_handle> > out(simps);
-    gather_incident_full_cells(f, out);
+    incident_full_cells(f, out);
     return insert_in_hole(simps.begin(), simps.end(), Facet(f.full_cell(), f.index(0)));
 }
 template <class Dim, class Vb, class Sb >
@@ -850,7 +849,7 @@ Triangulation_data_structure<Dim, Vb, Sb>
 ::insert_in_facet(const Facet & ft)
 {
     Full_cell_handle s[2];
-    s[0] = full_cell_of(ft);
+    s[0] = full_cell(ft);
     int i = index_of_covertex(ft);
     s[1] = s[0]->neighbor(i);
     i = ( i + 1 ) % current_dimension();
@@ -868,7 +867,7 @@ Triangulation_data_structure<Dim, Vb, Sb>
 
     const int cur_dim = current_dimension();
 
-    Full_cell_handle old_s = full_cell_of(f);
+    Full_cell_handle old_s = full_cell(f);
     Full_cell_handle new_s = new_full_cell();
     const int facet_index = index_of_covertex(f);
 
@@ -894,7 +893,7 @@ Triangulation_data_structure<Dim, Vb, Sb>
             continue;
         // we define a |Rotor| because it makes it easy to rotate around
         // in a self contained fashion. The corresponding potential
-        // boundary facet is Facet(full_cell_of(rot), index_of_covertex(rot))
+        // boundary facet is Facet(full_cell(rot), index_of_covertex(rot))
         Rotor rot(old_s, i, facet_index);
         // |rot| on line above, stands for Candidate Facet
         while( ! is_boundary_facet(rot) )
@@ -902,16 +901,16 @@ Triangulation_data_structure<Dim, Vb, Sb>
 
         // we did find the |i|-th neighbor of Facet(old_s, facet_index)...
         // has it already been extruded to center point |v| ?
-        Full_cell_handle outside = neighbor(full_cell_of(rot), index_of_covertex(rot));
-        Full_cell_handle inside  = full_cell_of(rot);
+        Full_cell_handle outside = neighbor(full_cell(rot), index_of_covertex(rot));
+        Full_cell_handle inside  = full_cell(rot);
         Vertex_handle m = inside->mirror_vertex(index_of_covertex(rot), current_dimension());
-        int index = outside->index_of(m);
+        int index = outside->index(m);
         Full_cell_handle new_neighbor = outside->neighbor(index);
 
         if( new_neighbor == inside )
         {   // not already extruded... we do it recursively
             new_neighbor = insert_in_tagged_hole(   v,
-                                                    Facet(full_cell_of(rot), index_of_covertex(rot)),
+                                                    Facet(full_cell(rot), index_of_covertex(rot)),
                                                     new_full_cells);
         }
         // now the new neighboring full_cell exists, we link both
@@ -1001,7 +1000,7 @@ void Triangulation_data_structure<Dim, Vb, Sb>
         }
         else if( cur_dim == 2 )
         {   // if cur. dim. is 2, we must take care of the 'rightmost' infinite vertex.
-            if( S->mirror_index(S->index_of(star)) == 0 )
+            if( S->mirror_index(S->index(star)) == 0 )
                 swap_me = S;
         }
     }

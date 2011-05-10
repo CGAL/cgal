@@ -29,14 +29,14 @@ code
 [DONE] /simplex/full_cell/
 [DONE] /number_of_simplices/number_of_full_cells/
 [DONE] /gather_simplices/gather_full_cells/
-/gather_incident_simplices/incident_full_cells/
-/gather_adjacent_simplices/compute_star/
-/gather_incident_simplices/incident_simplices/
-/contract_face/collapse_face/
-/index_of/index/
+[DONE] /gather_incident_simplices/incident_full_cells/
+[DONE] /gather_adjacent_simplices/compute_star/
+    but why not star?
+[DONE] /contract_face/collapse_face/
+[DONE] /index_of/index/
 /is_finite/! is_infinite/
-/contract_face/collapse_face/
-/full_cell_of/full_cell/
+[DONE] /contract_face/collapse_face/
+[DONE] /full_cell_of/full_cell/
 
 
 

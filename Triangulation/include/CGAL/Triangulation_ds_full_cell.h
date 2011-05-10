@@ -125,9 +125,9 @@ public:
         return combinatorics_.mirror_vertex(i, cur_dim);
     }
 
-    int index_of(Full_cell_const_handle s) const
+    int index(Full_cell_const_handle s) const
     {
-        // WE ASSUME THE SIMPLEX WE ARE LOOKING FOR INDEED EXISTS !
+        // WE ASSUME THE FULL CELL WE ARE LOOKING FOR INDEED EXISTS !
         CGAL_precondition(has_neighbor(s));
         int index(0);
         while( neighbor(index) != s )
@@ -135,7 +135,7 @@ public:
         return index;
     }
 
-    int index_of(Vertex_const_handle v) const
+    int index(Vertex_const_handle v) const
     {
         // WE ASSUME THE VERTEX WE ARE LOOKING FOR INDEED EXISTS !
         CGAL_precondition(has_vertex(v));

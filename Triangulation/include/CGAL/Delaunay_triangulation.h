@@ -90,8 +90,8 @@ public:
     using Base::are_incident_full_cells_valid;
     using Base::coaffine_orientation_predicate;
     using Base::current_dimension;
-    using Base::gather_adjacent_full_cells;
-    using Base::gather_incident_full_cells;
+    using Base::compute_star;
+    using Base::incident_full_cells;
     using Base::geom_traits;
     using Base::get_visited;
     using Base::index_of_covertex;
@@ -260,7 +260,7 @@ public:
         inline
         bool operator()(const Facet & f) const
         {
-            return pred_(dc_.full_cell_of(f)->neighbor(dc_.index_of_covertex(f)));
+            return pred_(dc_.full_cell(f)->neighbor(dc_.index_of_covertex(f)));
         }
     };
 
@@ -303,11 +303,11 @@ Delaunay_triangulation<DCTraits, TDS>
             return Full_cell_handle();
         }
         Full_cell_handle left = v->full_cell();
-        if( is_infinite(left) && left->neighbor(0)->index_of(left) == 0 ) // we are on the infinite right.
+        if( is_infinite(left) && left->neighbor(0)->index(left) == 0 ) // we are on the infinite right.
             left = left->neighbor(0);
-        if( 0 == left->index_of(v) )
+        if( 0 == left->index(v) )
             left = left->neighbor(1);
-        CGAL_assertion( 1 == left->index_of(v) );
+        CGAL_assertion( 1 == left->index(v) );
         Full_cell_handle right = left->neighbor(0);
         if( is_finite(right) )
         {
@@ -331,7 +331,7 @@ Delaunay_triangulation<DCTraits, TDS>
     typedef std::vector<Full_cell_handle> Simplices;
     Simplices simps;
     std::back_insert_iterator<Simplices> out(simps);
-    gather_incident_full_cells(v, out);
+    incident_full_cells(v, out);
     typedef std::set<Vertex_handle> Vertex_set;
     Vertex_set verts;
     Vertex_handle vh;
@@ -394,7 +394,7 @@ Delaunay_triangulation<DCTraits, TDS>
             {
                 if( get_visited(*it) )
                         continue;
-                int v_idx = (*it)->index_of(v);
+                int v_idx = (*it)->index(v);
                 tds().associate_vertex_with_full_cell(*it, v_idx, infinite_vertex());
                 if( v_idx != 0 )
                 {
@@ -415,8 +415,8 @@ Delaunay_triangulation<DCTraits, TDS>
                     Full_cell_handle n = (*it)->neighbor(i);
                     if( ! get_visited(n) )
                         continue;
-                    int n_idx = n->index_of(v);
-                    set_neighbors(*it, i, n->neighbor(n_idx), n->neighbor(n_idx)->index_of(n));
+                    int n_idx = n->index(v);
+                    set_neighbors(*it, i, n->neighbor(n_idx), n->neighbor(n_idx)->index(n));
                 }
             }
             Full_cell_handle ret_s;
@@ -467,7 +467,7 @@ Delaunay_triangulation<DCTraits, TDS>
 
     // 1. Build a facet on the boudary of the light zone:
     Full_cell_handle light_s = *simps.begin();
-    Facet light_ft(light_s, light_s->index_of(v));
+    Facet light_ft(light_s, light_s->index(v));
 
     // 2. Find corresponding Dark_facet on boundary of the dark zone
     Dark_full_cells dark_incident_s;
@@ -475,10 +475,10 @@ Delaunay_triangulation<DCTraits, TDS>
     {
         if( index_of_covertex(light_ft) == i )
             continue;
-        Dark_v_handle dark_v = light_to_dark[full_cell_of(light_ft)->vertex(i)];
+        Dark_v_handle dark_v = light_to_dark[full_cell(light_ft)->vertex(i)];
         dark_incident_s.clear();
         dark_out = std::back_inserter(dark_incident_s);
-        dark_side.gather_incident_full_cells(dark_v, dark_out);
+        dark_side.incident_full_cells(dark_v, dark_out);
         for( typename Dark_full_cells::iterator it = dark_incident_s.begin(); it != dark_incident_s.end(); ++it )
         {
             (*it)->data().count_ += 1;
@@ -487,7 +487,7 @@ Delaunay_triangulation<DCTraits, TDS>
 
     for( typename Simplices::iterator it = simps.begin(); it != simps.end(); ++it )
         set_visited(*it, true);
-    CGAL_assertion( get_visited(full_cell_of(light_ft)) );
+    CGAL_assertion( get_visited(full_cell(light_ft)) );
     for( typename Dark_full_cells::iterator it = conflict_zone.begin(); it != conflict_zone.end(); ++it )
         dark_side.set_visited(*it, true);
 
@@ -534,7 +534,7 @@ Delaunay_triangulation<DCTraits, TDS>
     typedef std::queue<std::pair<Facet, Dark_facet> > Queue;
     Queue q;
     q.push(std::make_pair(light_ft, dark_ft));
-    dark_s = dark_side.full_cell_of(dark_ft);
+    dark_s = dark_side.full_cell(dark_ft);
     int dark_i = dark_side.index_of_covertex(dark_ft);
     // mark dark_ft as visited:
     // TODO try by marking with Dark_v_handle (vertex)
@@ -545,9 +545,9 @@ Delaunay_triangulation<DCTraits, TDS>
         q.pop();
         light_ft = p.first;
         dark_ft = p.second;
-        light_s = full_cell_of(light_ft);
+        light_s = full_cell(light_ft);
         int light_i = index_of_covertex(light_ft);
-        dark_s = dark_side.full_cell_of(dark_ft);
+        dark_s = dark_side.full_cell(dark_ft);
         int dark_i = dark_side.index_of_covertex(dark_ft);
         Full_cell_handle light_n = light_s->neighbor(light_i);
         set_neighbors(dark_s->data().light_copy_, dark_i, light_n, light_s->mirror_index(light_i));
@@ -555,22 +555,22 @@ Delaunay_triangulation<DCTraits, TDS>
         {
             if( di == dark_i )
                 continue;
-            int li = light_s->index_of(dark_s->vertex(di)->data());
+            int li = light_s->index(dark_s->vertex(di)->data());
             typename Triangulation_ds::Rotor light_r(light_s, li, light_i);
             typename Dark_triangulation::Triangulation_ds::Rotor dark_r(dark_s, di, dark_i);
             while( ! tds().is_boundary_facet(light_r) )
                 light_r = tds().rotate_rotor(light_r);
             while( ! dark_side.tds().is_boundary_facet(dark_r) )
                 dark_r = dark_side.tds().rotate_rotor(dark_r);
-            Dark_s_handle dark_ns = dark_side.full_cell_of(dark_r);
+            Dark_s_handle dark_ns = dark_side.full_cell(dark_r);
             int dark_ni = dark_side.index_of_covertex(dark_r);
-            Full_cell_handle light_ns = full_cell_of(light_r);
+            Full_cell_handle light_ns = full_cell(light_r);
             int light_ni = index_of_covertex(light_r);
             // mark dark_r as visited:
             // TODO try by marking with Dark_v_handle (vertex)
             Dark_s_handle outside = dark_ns->neighbor(dark_ni);
             Dark_v_handle mirror = dark_ns->mirror_vertex(dark_ni, current_dimension());
-            int dn = outside->index_of(mirror);
+            int dn = outside->index(mirror);
             if( Dark_s_handle() == outside->neighbor(dn) )
                 continue;
             outside->set_neighbor(dn, Dark_s_handle());

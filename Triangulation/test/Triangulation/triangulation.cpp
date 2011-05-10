@@ -28,10 +28,10 @@ void test(const int d, const string & type, int N)
 
     typedef CGAL::Random_points_in_iso_box_d<Point> Random_points_iterator;
 
-    T pc(d);
+    T tri(d);
     cerr << "\nChecking Triangulation of (" << type << d << ") dimension "
-        << pc.ambient_dimension();
-    assert(pc.empty());
+        << tri.ambient_dimension();
+    assert(tri.empty());
 
     vector<RT> coords(d);
 	vector<Point> points;
@@ -41,29 +41,29 @@ void test(const int d, const string & type, int N)
 
     cerr << '\n' << points.size() << " points in the grid.";
 
-    pc.insert(points.begin(), points.end());
-    assert( pc.is_valid() );
+    tri.insert(points.begin(), points.end());
+    assert( tri.is_valid() );
 
     cerr << "\nTraversing finite full_cells... ";
     size_t nbfs(0), nbis(0);
-    Finite_full_cell_const_iterator fsit = pc.finite_full_cells_begin();
-    while( fsit != pc.finite_full_cells_end() )
+    Finite_full_cell_const_iterator fsit = tri.finite_full_cells_begin();
+    while( fsit != tri.finite_full_cells_end() )
     {
         Point c = fsit->circumcenter();
         ++fsit, ++nbfs;
     }
     cerr << nbfs << " + ";
     vector<Full_cell_handle> infinite_full_cells;
-    pc.gather_incident_full_cells(pc.infinite_vertex(), std::back_inserter(infinite_full_cells));
+    tri.incident_full_cells(tri.infinite_vertex(), std::back_inserter(infinite_full_cells));
     nbis = infinite_full_cells.size();
     cerr << nbis << " = " << (nbis+nbfs)
-    << " = " << pc.number_of_full_cells();
+    << " = " << tri.number_of_full_cells();
 
     // CLEAR
-    pc.clear();
-    assert(-1==pc.current_dimension());
-    assert(pc.empty());
-    assert( pc.is_valid() );
+    tri.clear();
+    assert(-1==tri.current_dimension());
+    assert(tri.empty());
+    assert( tri.is_valid() );
 }
 
 /*#define test_static(DIM) {  \
@@ -77,14 +77,14 @@ void test(const int d, const string & type, int N)
     typedef CGAL::Triangulation_ds_full_cell<void, CGAL::T_full_cell_mirror_storage_policy> My_ds_full_cell;  \
     typedef CGAL::Triangulation_data_structure<CGAL::Dimension_tag<DIM>, \
                                               CGAL::Triangulation_ds_vertex<>, \
-                                              My_ds_full_cell> My_pcds;  \
-        test<My_pcds>(DIM, string("mirror&static")+string(#DIM)); }
+                                              My_ds_full_cell> My_tds;  \
+        test<My_tds>(DIM, string("mirror&static")+string(#DIM)); }
 #define test_mirror_dyn(DIM) { \
     typedef CGAL::Triangulation_ds_full_cell<void, CGAL::T_full_cell_mirror_storage_policy> My_ds_full_cell;  \
     typedef CGAL::Triangulation_data_structure<CGAL::Dynamic_dimension_tag, \
                                               CGAL::Triangulation_ds_vertex<>, \
-                                              My_ds_full_cell> My_pcds;  \
-        test<My_pcds>(DIM, string("mirror&dynamic")+string(#DIM)) ;}
+                                              My_ds_full_cell> My_tds;  \
+        test<My_tds>(DIM, string("mirror&dynamic")+string(#DIM)) ;}
 */
 
 template< int D >

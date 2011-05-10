@@ -127,9 +127,9 @@ public:
     // works for Face_ = Facet and Face_ = Rotor.
     // NOT DOCUMENTED for the Rotor case...
     template< typename Face_ >
-    Full_cell_handle full_cell_of(const Face_ & f) const
+    Full_cell_handle full_cell(const Face_ & f) const
     {
-        return tds().full_cell_of(f);
+        return tds().full_cell(f);
     }
 
     // works for Face_ = Facet and Face_ = Rotor.
@@ -336,7 +336,7 @@ public:
 
     bool is_infinite(const Facet & ft) const
     {
-        Full_cell_const_handle s = full_cell_of(ft);
+        Full_cell_const_handle s = full_cell(ft);
         CGAL_precondition(s != Full_cell_handle());
         if( is_infinite(s) )
             return (index_of_covertex(ft) != 0);
@@ -385,39 +385,39 @@ public:
     // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - ELEMENT GATHERING
 
     template< typename OutputIterator >
-    OutputIterator gather_incident_full_cells(const Face & f, OutputIterator out) const
+    OutputIterator incident_full_cells(const Face & f, OutputIterator out) const
     {
-        return tds().gather_incident_full_cells(f, out);
+        return tds().incident_full_cells(f, out);
     }
     template< typename OutputIterator >
-    OutputIterator gather_incident_full_cells(Vertex_const_handle v, OutputIterator out) const
+    OutputIterator incident_full_cells(Vertex_const_handle v, OutputIterator out) const
     {
-        return tds().gather_incident_full_cells(v, out);
+        return tds().incident_full_cells(v, out);
     }
     template< typename OutputIterator >
-    OutputIterator gather_adjacent_full_cells(const Face & f, OutputIterator out) const
+    OutputIterator compute_star(const Face & f, OutputIterator out) const
     {
-        return tds().gather_incident_full_cells(f, out);
+        return tds().compute_star(f, out);
     }
 
     template< typename OutputIterator >
-    OutputIterator gather_incident_faces(Vertex_const_handle v, const int d, OutputIterator out)
+    OutputIterator incident_faces(Vertex_const_handle v, const int d, OutputIterator out)
     {
-        return tds().gather_incident_faces(v, d, out);
+        return tds().incident_faces(v, d, out);
     }
 
     template< typename OutputIterator, class Comparator >
-    OutputIterator gather_incident_upper_faces( Vertex_const_handle v, const int d,
+    OutputIterator incident_upper_faces( Vertex_const_handle v, const int d,
                                                 OutputIterator out, Comparator cmp = Comparator())
     {
-        return tds().gather_incident_upper_faces(v, d, out, cmp);
+        return tds().incident_upper_faces(v, d, out, cmp);
     }
     template< typename OutputIterator >
-    OutputIterator gather_incident_upper_faces( Vertex_const_handle v, const int d,
+    OutputIterator incident_upper_faces( Vertex_const_handle v, const int d,
                                                 OutputIterator out)
     {
         internal::Triangulation::Compare_vertices_for_upper_face<Self> cmp(*this);
-        return tds().gather_incident_upper_faces(v, d, out, cmp);
+        return tds().incident_upper_faces(v, d, out, cmp);
     }
 
     Orientation orientation(Full_cell_const_handle s, bool in_is_valid = false) const
@@ -553,7 +553,7 @@ public:
         // FUTURE change parameter to const reference
         bool operator()(Facet f) const
         {
-            Full_cell_handle s = t_.full_cell_of(f);
+            Full_cell_handle s = t_.full_cell(f);
             const int i = t_.index_of_covertex(f);
             Full_cell_handle n = s->neighbor(i);
             if( t_.is_finite(n) )
@@ -716,7 +716,7 @@ Triangulation<TT, TDS>
     // infinite one...
     CGAL_precondition( is_infinite(s) );
     CGAL_precondition( 1 == current_dimension() );
-    bool swap = (0 == s->neighbor(0)->index_of(s));
+    bool swap = (0 == s->neighbor(0)->index(s));
     Vertex_handle v = tds().insert_in_full_cell(s);
     v->set_point(p);
     if( swap )
@@ -1065,7 +1065,7 @@ bool Triangulation<TT, TDS>::are_incident_full_cells_valid(Vertex_const_handle v
     Simps simps;
     simps.reserve(64);
     std::back_insert_iterator<Simps> out(simps);
-    gather_incident_full_cells(v, out);
+    incident_full_cells(v, out);
     typename Simps::const_iterator sit = simps.begin();
     for( ; sit != simps.end(); ++sit )
     {

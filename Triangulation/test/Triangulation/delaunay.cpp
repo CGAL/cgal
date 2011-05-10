@@ -60,7 +60,7 @@ void test(const int d, const string & type, const int N)
         ++fsit, ++nbfs;
     cerr << nbfs << " + ";
     vector<Full_cell_handle> infinite_full_cells;
-    pc.gather_incident_full_cells(pc.infinite_vertex(), std::back_inserter(infinite_full_cells));
+    pc.incident_full_cells(pc.infinite_vertex(), std::back_inserter(infinite_full_cells));
     nbis = infinite_full_cells.size();
     cerr << nbis << " = " << (nbis+nbfs)
     << " = " << pc.number_of_full_cells();
@@ -70,7 +70,7 @@ void test(const int d, const string & type, const int N)
     typedef std::vector<Face> Faces;
     Faces edges;
     std::back_insert_iterator<Faces> out(edges);
-    pc.gather_incident_upper_faces(pc.infinite_vertex(), 1, out);
+    pc.incident_upper_faces(pc.infinite_vertex(), 1, out);
     // Count the number of points on the convex hull
     std::cout << "\nThere are " << edges.size() << " vertices on the convex hull.";
     edges.clear();
