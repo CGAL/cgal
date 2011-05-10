@@ -2,7 +2,7 @@
 //#include <CGAL/Simple_cartesian_d.h>
 #include <CGAL/Cartesian_d.h>
 #include <CGAL/Filtered_kernel_d.h>
-#include <CGAL/Pure_complex.h>
+#include <CGAL/Triangulation.h>
 #include <CGAL/algorithm.h>
 #include <tilted_grid.h>
 #include <vector>
@@ -11,25 +11,25 @@
 
 using namespace std;
 
-template<typename PC>
+template<typename T>
 void test(const int d, const string & type, int N)
 {
     // we must write 'typename' below, because we are in a template-function,
-    // so the parser has no way to know that PC contains sub-types, before
+    // so the parser has no way to know that T contains sub-types, before
     // instanciating the function.
-    typedef typename PC::Vertex Vertex;
-    typedef typename PC::Vertex_handle Vertex_handle;
-    typedef typename PC::Simplex Simplex;
-    typedef typename PC::Simplex_handle Simplex_handle;
-    typedef typename PC::Facet Facet;
-    typedef typename PC::Point Point;
-    typedef typename PC::Geom_traits::RT RT;
-    typedef typename PC::Finite_simplex_const_iterator Finite_simplex_const_iterator;
+    typedef typename T::Vertex Vertex;
+    typedef typename T::Vertex_handle Vertex_handle;
+    typedef typename T::Full_cell Full_cell;
+    typedef typename T::Full_cell_handle Full_cell_handle;
+    typedef typename T::Facet Facet;
+    typedef typename T::Point Point;
+    typedef typename T::Geom_traits::RT RT;
+    typedef typename T::Finite_full_cell_const_iterator Finite_full_cell_const_iterator;
 
     typedef CGAL::Random_points_in_iso_box_d<Point> Random_points_iterator;
 
-    PC pc(d);
-    cerr << "\nChecking Pure_complex of (" << type << d << ") dimension "
+    T pc(d);
+    cerr << "\nChecking Triangulation of (" << type << d << ") dimension "
         << pc.ambient_dimension();
     assert(pc.empty());
 
@@ -44,20 +44,20 @@ void test(const int d, const string & type, int N)
     pc.insert(points.begin(), points.end());
     assert( pc.is_valid() );
 
-    cerr << "\nTraversing finite simplices... ";
+    cerr << "\nTraversing finite full_cells... ";
     size_t nbfs(0), nbis(0);
-    Finite_simplex_const_iterator fsit = pc.finite_simplices_begin();
-    while( fsit != pc.finite_simplices_end() )
+    Finite_full_cell_const_iterator fsit = pc.finite_full_cells_begin();
+    while( fsit != pc.finite_full_cells_end() )
     {
         Point c = fsit->circumcenter();
         ++fsit, ++nbfs;
     }
     cerr << nbfs << " + ";
-    vector<Simplex_handle> infinite_simplices;
-    pc.gather_incident_simplices(pc.infinite_vertex(), std::back_inserter(infinite_simplices));
-    nbis = infinite_simplices.size();
+    vector<Full_cell_handle> infinite_full_cells;
+    pc.gather_incident_full_cells(pc.infinite_vertex(), std::back_inserter(infinite_full_cells));
+    nbis = infinite_full_cells.size();
     cerr << nbis << " = " << (nbis+nbfs)
-    << " = " << pc.number_of_simplices();
+    << " = " << pc.number_of_full_cells();
 
     // CLEAR
     pc.clear();
@@ -67,23 +67,23 @@ void test(const int d, const string & type, int N)
 }
 
 /*#define test_static(DIM) {  \
-    typedef CGAL::Pure_complex_data_structure<CGAL::Dimension_tag<DIM>> PC; \
-        test<PC>(DIM, string("static")+string(#DIM)); }
+    typedef CGAL::Triangulation_data_structure<CGAL::Dimension_tag<DIM>> T; \
+        test<T>(DIM, string("static")+string(#DIM)); }
 #define test_dyn(DIM) { \
-    typedef CGAL::Pure_complex_data_structure<CGAL::Dynamic_dimension_tag> PC; \
-        test<PC>(DIM, string("dynamic")+string(#DIM)) ;}
+    typedef CGAL::Triangulation_data_structure<CGAL::Dynamic_dimension_tag> T; \
+        test<T>(DIM, string("dynamic")+string(#DIM)) ;}
 
 #define test_mirror_static(DIM) {  \
-    typedef CGAL::Pure_complex_ds_simplex<void, CGAL::PC_simplex_mirror_storage_policy> My_ds_simplex;  \
-    typedef CGAL::Pure_complex_data_structure<CGAL::Dimension_tag<DIM>, \
-                                              CGAL::Pure_complex_ds_vertex<>, \
-                                              My_ds_simplex> My_pcds;  \
+    typedef CGAL::Triangulation_ds_full_cell<void, CGAL::T_full_cell_mirror_storage_policy> My_ds_full_cell;  \
+    typedef CGAL::Triangulation_data_structure<CGAL::Dimension_tag<DIM>, \
+                                              CGAL::Triangulation_ds_vertex<>, \
+                                              My_ds_full_cell> My_pcds;  \
         test<My_pcds>(DIM, string("mirror&static")+string(#DIM)); }
 #define test_mirror_dyn(DIM) { \
-    typedef CGAL::Pure_complex_ds_simplex<void, CGAL::PC_simplex_mirror_storage_policy> My_ds_simplex;  \
-    typedef CGAL::Pure_complex_data_structure<CGAL::Dynamic_dimension_tag, \
-                                              CGAL::Pure_complex_ds_vertex<>, \
-                                              My_ds_simplex> My_pcds;  \
+    typedef CGAL::Triangulation_ds_full_cell<void, CGAL::T_full_cell_mirror_storage_policy> My_ds_full_cell;  \
+    typedef CGAL::Triangulation_data_structure<CGAL::Dynamic_dimension_tag, \
+                                              CGAL::Triangulation_ds_vertex<>, \
+                                              My_ds_full_cell> My_pcds;  \
         test<My_pcds>(DIM, string("mirror&dynamic")+string(#DIM)) ;}
 */
 
@@ -94,7 +94,7 @@ void go(int N)
     //typedef CGAL::Simple_cartesian_d<RT, D> K;
     typedef CGAL::Cartesian_d<RT> K;
     typedef CGAL::Filtered_kernel_d<K> FK;
-    typedef CGAL::Pure_complex<FK> Triangulation;
+    typedef CGAL::Triangulation<FK> Triangulation;
     //test<Triangulation>(D, "static", N);
     test<Triangulation>(D, "dynamic", N);
 }

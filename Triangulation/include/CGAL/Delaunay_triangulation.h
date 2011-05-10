@@ -18,16 +18,16 @@
 #ifndef CGAL_DELAUNAY_COMPLEX_H
 #define CGAL_DELAUNAY_COMPLEX_H
 
-#include <CGAL/Pure_complex.h>
+#include <CGAL/Triangulation.h>
 #include <CGAL/Dimension.h>
 #include <CGAL/Default.h>
 
 namespace CGAL {
 
 template< typename DCTraits, typename _TDS = Default >
-class Delaunay_complex
-: public Pure_complex<DCTraits,
-            typename Default::Get<_TDS, Pure_complex_data_structure<
+class Delaunay_triangulation
+: public Triangulation<DCTraits,
+            typename Default::Get<_TDS, Triangulation_data_structure<
                              typename Ambient_dimension<typename DCTraits::Point_d>::type,
                              Triangulation_vertex<DCTraits>,
                              Triangulation_full_cell<DCTraits> >
@@ -35,13 +35,13 @@ class Delaunay_complex
 {
     typedef typename Ambient_dimension<typename DCTraits::Point_d>::type
                                                     Ambient_dimension_;
-    typedef typename Default::Get<_TDS, Pure_complex_data_structure<
+    typedef typename Default::Get<_TDS, Triangulation_data_structure<
                          Ambient_dimension_,
                          Triangulation_vertex<DCTraits>,
                          Triangulation_full_cell<DCTraits> >
                 >::type                         TDS;
-    typedef Pure_complex<DCTraits, TDS>        Base;
-    typedef Delaunay_complex<DCTraits, _TDS>   Self;
+    typedef Triangulation<DCTraits, TDS>        Base;
+    typedef Delaunay_triangulation<DCTraits, _TDS>   Self;
 
     typedef typename DCTraits::Side_of_oriented_subsphere_d
                                                     Side_of_oriented_subsphere_d;
@@ -54,7 +54,7 @@ class Delaunay_complex
 public: // PUBLIC NESTED TYPES
 
     typedef DCTraits                                Geom_traits;
-    typedef typename Base::Pure_complex_ds          Pure_complex_ds;
+    typedef typename Base::Triangulation_ds          Triangulation_ds;
 
     typedef typename Base::Vertex                   Vertex;
     typedef typename Base::Full_cell                Full_cell;
@@ -106,7 +106,7 @@ public:
     using Base::new_full_cell;
     using Base::number_of_vertices;
     using Base::orientation;
-    using Base::pcds;
+    using Base::tds;
     using Base::reorient_full_cells;
     using Base::set_visited;
     using Base::full_cells_begin;
@@ -117,12 +117,12 @@ public:
     
 // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - CREATION
 
-    Delaunay_complex(const int dim, const Geom_traits k = Geom_traits())
+    Delaunay_triangulation(const int dim, const Geom_traits k = Geom_traits())
     : Base(dim, k), side_of_oss_()
     {
     }
 
-    ~Delaunay_complex() {}
+    ~Delaunay_triangulation() {}
 
 // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - ACCESS
 
@@ -282,8 +282,8 @@ private:
 // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - REMOVALS
 
 template< typename DCTraits, typename TDS >
-typename Delaunay_complex<DCTraits, TDS>::Full_cell_handle
-Delaunay_complex<DCTraits, TDS>
+typename Delaunay_triangulation<DCTraits, TDS>::Full_cell_handle
+Delaunay_triangulation<DCTraits, TDS>
 ::remove( Vertex_handle v )
 {
     CGAL_precondition( is_finite(v) );
@@ -311,18 +311,18 @@ Delaunay_complex<DCTraits, TDS>
         Full_cell_handle right = left->neighbor(0);
         if( is_finite(right) )
         {
-            pcds().associate_vertex_with_full_cell(left, 1, right->vertex(1));
+            tds().associate_vertex_with_full_cell(left, 1, right->vertex(1));
             set_neighbors(left, 0, right->neighbor(0), right->mirror_index(0));
         }
         else
         {
-            pcds().associate_vertex_with_full_cell(left, 1, left->vertex(0));
-            pcds().associate_vertex_with_full_cell(left, 0, infinite_vertex());
+            tds().associate_vertex_with_full_cell(left, 1, left->vertex(0));
+            tds().associate_vertex_with_full_cell(left, 0, infinite_vertex());
             set_neighbors(left, 0, left->neighbor(1), left->mirror_index(1));
             set_neighbors(left, 1, right->neighbor(1), right->mirror_index(1));
         }
-        pcds().delete_vertex(v);
-        pcds().delete_full_cell(right);
+        tds().delete_vertex(v);
+        tds().delete_full_cell(right);
         return left;
     }
 
@@ -346,17 +346,17 @@ Delaunay_complex<DCTraits, TDS>
             verts.insert(vh);
         }
 
-    // OK, create a Dark Delaunay complex
+    // OK, create a Dark Delaunay triangulation
     typedef Triangulation_vertex<Geom_traits, Vertex_handle> Dark_vertex_base;
     typedef Triangulation_full_cell<Geom_traits,
         internal::Triangulation::Dark_full_cell_data<Self> > Dark_full_cell_base;
-    typedef Pure_complex_data_structure<Ambient_dimension, Dark_vertex_base, Dark_full_cell_base> Dark_pcds;
-    typedef Delaunay_complex<DCTraits, Dark_pcds>   Dark_complex;
-    typedef typename Dark_complex::Face             Dark_face;
-    typedef typename Dark_complex::Facet            Dark_facet;
-    typedef typename Dark_complex::Vertex_handle    Dark_v_handle;
-    typedef typename Dark_complex::Full_cell_handle   Dark_s_handle;
-    Dark_complex dark_side(ambient_dimension());
+    typedef Triangulation_data_structure<Ambient_dimension, Dark_vertex_base, Dark_full_cell_base> Dark_tds;
+    typedef Delaunay_triangulation<DCTraits, Dark_tds>   Dark_triangulation;
+    typedef typename Dark_triangulation::Face             Dark_face;
+    typedef typename Dark_triangulation::Facet            Dark_facet;
+    typedef typename Dark_triangulation::Vertex_handle    Dark_v_handle;
+    typedef typename Dark_triangulation::Full_cell_handle   Dark_s_handle;
+    Dark_triangulation dark_side(ambient_dimension());
     Dark_s_handle dark_s;
     Dark_v_handle dark_v;
     typedef std::map<Vertex_handle, Dark_v_handle> Vertex_map;
@@ -382,7 +382,7 @@ Delaunay_complex<DCTraits, TDS>
         else
         {   // |v| is strictly outside the convex hull of the rest of the points. This is an
             // easy case: first, modify the finite full_cells, then, delete the infinite ones.
-            // We don't even need the Dark complex.
+            // We don't even need the Dark triangulation.
             // First, mark the infinite full_cells
             for( typename Simplices::iterator it = simps.begin(); it != simps.end(); ++it )
             {
@@ -395,7 +395,7 @@ Delaunay_complex<DCTraits, TDS>
                 if( get_visited(*it) )
                         continue;
                 int v_idx = (*it)->index_of(v);
-                pcds().associate_vertex_with_full_cell(*it, v_idx, infinite_vertex());
+                tds().associate_vertex_with_full_cell(*it, v_idx, infinite_vertex());
                 if( v_idx != 0 )
                 {
                     // we must put the infinite vertex at index 0
@@ -424,11 +424,11 @@ Delaunay_complex<DCTraits, TDS>
             for( typename Simplices::iterator it = simps.begin(); it != simps.end(); ++it )
             {
                 if( get_visited(*it) )
-                    pcds().delete_full_cell(*it);
+                    tds().delete_full_cell(*it);
                 else
                     ret_s = *it;
             }
-            pcds().delete_vertex(v);
+            tds().delete_vertex(v);
             return ret_s;
         }
     }
@@ -443,10 +443,10 @@ Delaunay_complex<DCTraits, TDS>
     // that we have to glue back into the light side.
     Dark_face       dark_f = dark_side.make_empty_face();
     Dark_facet      dark_ft;
-    typename Dark_complex::Locate_type     lt;
+    typename Dark_triangulation::Locate_type     lt;
     dark_s = dark_side.locate(v->point(), lt, dark_f, dark_ft);
-    CGAL_assertion( lt != Dark_complex::ON_VERTEX
-        && lt != Dark_complex::OUTSIDE_AFFINE_HULL );
+    CGAL_assertion( lt != Dark_triangulation::ON_VERTEX
+        && lt != Dark_triangulation::OUTSIDE_AFFINE_HULL );
 
     // |ret_s| is the full_cell that we return
     Dark_s_handle dark_ret_s = dark_s;
@@ -459,7 +459,7 @@ Delaunay_complex<DCTraits, TDS>
     dark_ft = dark_side.compute_conflict_zone(v->point(), dark_s, dark_out);
 
     // THE FOLLOWING SHOULD MAYBE GO IN TDS.
-    // IF SO: make sure to remove set/get_visited from Pure_complex.
+    // IF SO: make sure to remove set/get_visited from Triangulation.
     // Here is the plan:
     // 1. Pick any Facet from boundary of the light zone
     // 2. Find corresponding Facet on boundary of dark zone
@@ -507,7 +507,7 @@ Delaunay_complex<DCTraits, TDS>
     }
     // Now, we are ready to traverse both boundary and do the stiching.
 
-    // But first, we create the new full_cells in the light complex,
+    // But first, we create the new full_cells in the light triangulation,
     // with as much adjacency information as possible.
 
     // Create new full_cells with vertices
@@ -516,7 +516,7 @@ Delaunay_complex<DCTraits, TDS>
         Full_cell_handle new_s = new_full_cell();
         (*it)->data().light_copy_ = new_s;
         for( int i = 0; i <= current_dimension(); ++i )
-            pcds().associate_vertex_with_full_cell(new_s, i, (*it)->vertex(i)->data());
+            tds().associate_vertex_with_full_cell(new_s, i, (*it)->vertex(i)->data());
         if( dark_ret_s == *it )
             ret_s = new_s;
     }
@@ -527,7 +527,7 @@ Delaunay_complex<DCTraits, TDS>
         Full_cell_handle new_s = (*it)->data().light_copy_;
         for( int i = 0; i <= current_dimension(); ++i )
             if( dark_side.get_visited((*it)->neighbor(i)) )
-                pcds().set_neighbors(new_s, i, (*it)->neighbor(i)->data().light_copy_, (*it)->mirror_index(i));
+                tds().set_neighbors(new_s, i, (*it)->neighbor(i)->data().light_copy_, (*it)->mirror_index(i));
     }
 
     // 3. Stitch
@@ -556,12 +556,12 @@ Delaunay_complex<DCTraits, TDS>
             if( di == dark_i )
                 continue;
             int li = light_s->index_of(dark_s->vertex(di)->data());
-            typename Pure_complex_ds::Rotor light_r(light_s, li, light_i);
-            typename Dark_complex::Pure_complex_ds::Rotor dark_r(dark_s, di, dark_i);
-            while( ! pcds().is_boundary_facet(light_r) )
-                light_r = pcds().rotate_rotor(light_r);
-            while( ! dark_side.pcds().is_boundary_facet(dark_r) )
-                dark_r = dark_side.pcds().rotate_rotor(dark_r);
+            typename Triangulation_ds::Rotor light_r(light_s, li, light_i);
+            typename Dark_triangulation::Triangulation_ds::Rotor dark_r(dark_s, di, dark_i);
+            while( ! tds().is_boundary_facet(light_r) )
+                light_r = tds().rotate_rotor(light_r);
+            while( ! dark_side.tds().is_boundary_facet(dark_r) )
+                dark_r = dark_side.tds().rotate_rotor(dark_r);
             Dark_s_handle dark_ns = dark_side.full_cell_of(dark_r);
             int dark_ni = dark_side.index_of_covertex(dark_r);
             Full_cell_handle light_ns = full_cell_of(light_r);
@@ -577,18 +577,18 @@ Delaunay_complex<DCTraits, TDS>
             q.push(std::make_pair(Facet(light_ns, light_ni), Dark_facet(dark_ns, dark_ni)));
         }
     }
-    pcds().delete_full_cells(simps.begin(), simps.end());
-    pcds().delete_vertex(v);
+    tds().delete_full_cells(simps.begin(), simps.end());
+    tds().delete_vertex(v);
     return ret_s;
 }
 
 template< typename DCTraits, typename TDS >
 void
-Delaunay_complex<DCTraits, TDS>
+Delaunay_triangulation<DCTraits, TDS>
 ::remove_decrease_dimension(Vertex_handle v)
 {
     CGAL_precondition( current_dimension() >= 0 );
-    pcds().remove_decrease_dimension(v, infinite_vertex());
+    tds().remove_decrease_dimension(v, infinite_vertex());
     // reset the predicates:
     coaffine_orientation_predicate() = geom_traits().coaffine_orientation_d_object();
     side_of_oriented_subsphere_predicate() = geom_traits().side_of_oriented_subsphere_d_object();
@@ -605,8 +605,8 @@ Delaunay_complex<DCTraits, TDS>
 // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - INSERTIONS
 
 template< typename DCTraits, typename TDS >
-typename Delaunay_complex<DCTraits, TDS>::Vertex_handle
-Delaunay_complex<DCTraits, TDS>
+typename Delaunay_triangulation<DCTraits, TDS>::Vertex_handle
+Delaunay_triangulation<DCTraits, TDS>
 ::insert(const Point & p, const Locate_type lt, const Face & f, const Facet & ft, const Full_cell_handle s)
 {
     switch( lt )
@@ -628,7 +628,7 @@ Delaunay_complex<DCTraits, TDS>
                 {
                     return insert_outside_convex_hull_1(p, s);
                 }
-                Vertex_handle v = pcds().insert_in_full_cell(s);
+                Vertex_handle v = tds().insert_in_full_cell(s);
                 v->set_point(p);
                 return v;
             }
@@ -639,14 +639,14 @@ Delaunay_complex<DCTraits, TDS>
 }
 
 template< typename DCTraits, typename TDS >
-typename Delaunay_complex<DCTraits, TDS>::Vertex_handle
-Delaunay_complex<DCTraits, TDS>
+typename Delaunay_triangulation<DCTraits, TDS>::Vertex_handle
+Delaunay_triangulation<DCTraits, TDS>
 ::insert_outside_affine_hull(const Point & p)
 {
     // we don't use Base::insert_outside_affine_hull(...) because here, we
     // also need to reset the side_of_oriented_subsphere functor.
     CGAL_precondition( current_dimension() < ambient_dimension() );
-    Vertex_handle v = pcds().insert_increase_dimension(infinite_vertex());
+    Vertex_handle v = tds().insert_increase_dimension(infinite_vertex());
     // reset the predicates:
     coaffine_orientation_predicate() = geom_traits().coaffine_orientation_d_object();
     side_of_oriented_subsphere_predicate() = geom_traits().side_of_oriented_subsphere_d_object();
@@ -663,8 +663,8 @@ Delaunay_complex<DCTraits, TDS>
 }
 
 template< typename DCTraits, typename TDS >
-typename Delaunay_complex<DCTraits, TDS>::Vertex_handle
-Delaunay_complex<DCTraits, TDS>
+typename Delaunay_triangulation<DCTraits, TDS>::Vertex_handle
+Delaunay_triangulation<DCTraits, TDS>
 ::insert_in_conflict_zone(const Point & p, const Full_cell_handle s)
 {
     typedef std::vector<Full_cell_handle> Full_cell_h_vector;
@@ -683,7 +683,7 @@ Delaunay_complex<DCTraits, TDS>
 template< typename DCTraits, typename TDS >
 template< typename OrientationPred >
 Oriented_side
-Delaunay_complex<DCTraits, TDS>
+Delaunay_triangulation<DCTraits, TDS>
 ::perturbed_side_of_positive_sphere(const Point & p, Full_cell_const_handle s,
         const OrientationPred & ori) const
 {
@@ -738,7 +738,7 @@ Delaunay_complex<DCTraits, TDS>
 
 template< typename DCTraits, typename TDS >
 bool
-Delaunay_complex<DCTraits, TDS>
+Delaunay_triangulation<DCTraits, TDS>
 ::conflict(const Point & p, Full_cell_const_handle s) const
 {
     CGAL_precondition( 2 <= current_dimension() );
@@ -758,8 +758,8 @@ Delaunay_complex<DCTraits, TDS>
 
 template< typename DCTraits, typename TDS >
 template< typename OutputIterator >
-typename Delaunay_complex<DCTraits, TDS>::Facet
-Delaunay_complex<DCTraits, TDS>
+typename Delaunay_triangulation<DCTraits, TDS>::Facet
+Delaunay_triangulation<DCTraits, TDS>
 ::compute_conflict_zone(const Point & p, const Full_cell_handle s, OutputIterator out) const
 {
     CGAL_precondition( 2 <= current_dimension() );
@@ -767,7 +767,7 @@ Delaunay_complex<DCTraits, TDS>
     {
         Conflict_pred_in_subspace c(*this, p, coaffine_orientation_predicate(), side_of_oriented_subsphere_predicate());
         Conflict_traversal_pred_in_subspace tp(*this, c);
-        return pcds().gather_full_cells(s, tp, out);
+        return tds().gather_full_cells(s, tp, out);
     }
     else
     {
@@ -775,7 +775,7 @@ Delaunay_complex<DCTraits, TDS>
         Side_of_oriented_sphere_d side = geom_traits().side_of_oriented_sphere_d_object();
         Conflict_pred_in_fullspace c(*this, p, ori, side);
         Conflict_traversal_pred_in_fullspace tp(*this, c);
-        return pcds().gather_full_cells(s, tp, out);
+        return tds().gather_full_cells(s, tp, out);
     }
 }
 

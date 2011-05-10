@@ -2,7 +2,7 @@
 //#include <CGAL/Simple_cartesian_d.h>
 #include <CGAL/Cartesian_d.h>
 #include <CGAL/Filtered_kernel_d.h>
-#include <CGAL/Delaunay_complex.h>
+#include <CGAL/Delaunay_triangulation.h>
 #include <CGAL/spatial_sort.h>
 #include <CGAL/algorithm.h>
 #include <CGAL/Gmpq.h>
@@ -23,18 +23,18 @@ void test(const int d, const string & type, const int N)
     // instanciating the function.
     typedef typename DC::Vertex Vertex;
     typedef typename DC::Vertex_handle Vertex_handle;
-    typedef typename DC::Simplex Simplex;
-    typedef typename DC::Simplex_handle Simplex_handle;
+    typedef typename DC::Full_cell Full_cell;
+    typedef typename DC::Full_cell_handle Full_cell_handle;
     typedef typename DC::Facet Facet;
     typedef typename DC::Face Face;
     typedef typename DC::Point Point;
     typedef typename DC::Geom_traits::RT RT;
-    typedef typename DC::Finite_simplex_const_iterator Finite_simplex_const_iterator;
+    typedef typename DC::Finite_full_cell_const_iterator Finite_full_cell_const_iterator;
 
     typedef CGAL::Random_points_in_iso_box_d<Point> Random_points_iterator;
 
     DC pc(d);
-    cerr << "\nChecking Delaunay_complex of (" << type << d << ") dimension with " << N << " points";
+    cerr << "\nChecking Delaunay triangulation of (" << type << d << ") dimension with " << N << " points";
     assert(pc.empty());
 
     vector<Point> points;
@@ -53,17 +53,17 @@ void test(const int d, const string & type, const int N)
     cerr << "\nChecking topology and geometry...";
     assert( pc.is_valid() );
 
-    cerr << "\nTraversing finite simplices... ";
+    cerr << "\nTraversing finite full_cells... ";
     size_t nbfs(0), nbis(0);
-    Finite_simplex_const_iterator fsit = pc.finite_simplices_begin();
-    while( fsit != pc.finite_simplices_end() )
+    Finite_full_cell_const_iterator fsit = pc.finite_full_cells_begin();
+    while( fsit != pc.finite_full_cells_end() )
         ++fsit, ++nbfs;
     cerr << nbfs << " + ";
-    vector<Simplex_handle> infinite_simplices;
-    pc.gather_incident_simplices(pc.infinite_vertex(), std::back_inserter(infinite_simplices));
-    nbis = infinite_simplices.size();
+    vector<Full_cell_handle> infinite_full_cells;
+    pc.gather_incident_full_cells(pc.infinite_vertex(), std::back_inserter(infinite_full_cells));
+    nbis = infinite_full_cells.size();
     cerr << nbis << " = " << (nbis+nbfs)
-    << " = " << pc.number_of_simplices();
+    << " = " << pc.number_of_full_cells();
     cerr << "\nComplex has current dimension " << pc.current_dimension();
 
     // Count convex hull vertices:
@@ -97,7 +97,7 @@ void go(const int N)
     typedef CGAL::Cartesian_d<RT> K;
     //typedef CGAL::Simple_cartesian_d<RT, D> K;
     typedef CGAL::Filtered_kernel_d<K> FK;
-    typedef CGAL::Delaunay_complex<FK> Triangulation;
+    typedef CGAL::Delaunay_triangulation<FK> Triangulation;
     test<Triangulation>(D, "dynamic", N);
     //test<Triangulation>(D, "static", N);
 }

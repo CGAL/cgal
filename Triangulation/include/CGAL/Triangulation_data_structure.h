@@ -40,9 +40,9 @@ namespace CGAL {
 template<   class Dimen,
             class Vb = Default,
             class Sb = Default >
-class Pure_complex_data_structure
+class Triangulation_data_structure
 {
-    typedef Pure_complex_data_structure<Dimen, Vb, Sb>                  Self;
+    typedef Triangulation_data_structure<Dimen, Vb, Sb>                  Self;
     typedef typename Default::Get<Vb, Triangulation_ds_vertex<> >::type  V_base;
     typedef typename Default::Get<Sb, Triangulation_ds_full_cell<> >::type S_base;
 
@@ -90,7 +90,7 @@ public:
 
 protected: // DATA MEMBERS
 
-    int dmax_, dcur_; // dimension of the current complex
+    int dmax_, dcur_; // dimension of the current triangulation
     Vertex_container  vertices_;  // list of all vertices
     Full_cell_container full_cells_; // list of all full cells
 
@@ -116,13 +116,13 @@ private:
 
 public:
 
-    Pure_complex_data_structure(const int dim) 
+    Triangulation_data_structure(const int dim) 
         : dmax_(get_ambient_dimension<Dimen>::value(dim)), dcur_(-2), vertices_(), full_cells_()
     {
         CGAL_assertion_msg(dmax_ > 0, "ambient dimension must be positive.");
     }
 
-    ~Pure_complex_data_structure()
+    ~Triangulation_data_structure()
     {
         clean_dynamic_memory();
     }
@@ -142,7 +142,7 @@ protected:
 
 public:
 
-    /* returns the current dimension of the full cells in the complex. */
+    /* returns the current dimension of the full cells in the triangulation. */
     int ambient_dimension() const { return dmax_; }
     int current_dimension() const { return dcur_; }
 
@@ -449,17 +449,17 @@ public:
     {
         const Face & f_;
         int dim_;
-        const Pure_complex_data_structure & pcds_;
+        const Triangulation_data_structure & tds_;
     public:
-        Incident_full_cell_traversal_predicate(const Pure_complex_data_structure & pcds,
+        Incident_full_cell_traversal_predicate(const Triangulation_data_structure & tds,
                                             const Face & f)
-        : f_(f), pcds_(pcds)
+        : f_(f), tds_(tds)
         {
             dim_ = f.feature_dimension();
         }
         bool operator()(const Facet & facet) const
         {
-            Vertex_handle v = pcds_.full_cell_of(facet)->vertex(pcds_.index_of_covertex(facet));
+            Vertex_handle v = tds_.full_cell_of(facet)->vertex(tds_.index_of_covertex(facet));
             for( int i = 0; i <= dim_; ++i )
             {
                 if( v == f_.vertex(i) )
@@ -475,18 +475,18 @@ public:
     {
         const Face & f_;
         int dim_;
-        const Pure_complex_data_structure & pcds_;
+        const Triangulation_data_structure & tds_;
     public:
-        Adjacent_full_cell_traversal_predicate(const Pure_complex_data_structure & pcds,
+        Adjacent_full_cell_traversal_predicate(const Triangulation_data_structure & tds,
                                             const Face & f)
-        : f_(f), pcds_(pcds)
+        : f_(f), tds_(tds)
         {
             dim_ = f.feature_dimension();
         }
         bool operator()(const Facet & facet) const
         {
-            Full_cell_handle s = pcds_.full_cell_of(facet)->neighbor(pcds_.index_of_covertex(facet));
-            for( int j = 0; j <= pcds_.current_dimension(); ++j )
+            Full_cell_handle s = tds_.full_cell_of(facet)->neighbor(tds_.index_of_covertex(facet));
+            for( int j = 0; j <= tds_.current_dimension(); ++j )
             {
                 for( int i = 0; i <= dim_; ++i )
                     if( s->vertex(j) == f_.vertex(i) )
@@ -535,7 +535,7 @@ public:
     std::istream & read_full_cells(std::istream &, const std::vector<Vertex_handle> &);
     std::ostream & write_full_cells(std::ostream &, std::map<Vertex_const_handle, int> &) const;
 
-}; // end of ``declaration/definition'' of Pure_complex_data_structure<...>
+}; // end of ``declaration/definition'' of Triangulation_data_structure<...>
 
 // = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =
 
@@ -547,10 +547,10 @@ public:
 template< class Dim, class Vb, class Sb >
 template< typename OutputIterator >
 OutputIterator
-Pure_complex_data_structure<Dim, Vb, Sb>
+Triangulation_data_structure<Dim, Vb, Sb>
 ::gather_incident_full_cells(const Face & f, OutputIterator out) const
 {
-    // CGAL_expensive_precondition_msg(is_full_cell(f.full_cell()), "the facet does not belong to the Pure_complex");
+    // CGAL_expensive_precondition_msg(is_full_cell(f.full_cell()), "the facet does not belong to the Triangulation");
     Incident_full_cell_traversal_predicate tp(*this, f);
     gather_full_cells(f.full_cell(), tp, out);
     return out;
@@ -559,7 +559,7 @@ Pure_complex_data_structure<Dim, Vb, Sb>
 template< class Dim, class Vb, class Sb >
 template< typename OutputIterator >
 OutputIterator
-Pure_complex_data_structure<Dim, Vb, Sb>
+Triangulation_data_structure<Dim, Vb, Sb>
 ::gather_incident_full_cells(Vertex_const_handle v, OutputIterator out) const
 {
 //    CGAL_expensive_precondition(is_vertex(v));
@@ -572,10 +572,10 @@ Pure_complex_data_structure<Dim, Vb, Sb>
 template< class Dim, class Vb, class Sb >
 template< typename OutputIterator >
 OutputIterator
-Pure_complex_data_structure<Dim, Vb, Sb>
+Triangulation_data_structure<Dim, Vb, Sb>
 ::gather_adjacent_full_cells(const Face & f, OutputIterator out) const
 {
-    // CGAL_precondition_msg(is_full_cell(f.full_cell()), "the facet does not belong to the Pure_complex");
+    // CGAL_precondition_msg(is_full_cell(f.full_cell()), "the facet does not belong to the Triangulation");
     Adjacent_full_cell_traversal_predicate tp(*this, f);
     gather_full_cells(f.full_cell(), tp, out);
     return out;
@@ -583,8 +583,8 @@ Pure_complex_data_structure<Dim, Vb, Sb>
 
 template< class Dim, class Vb, class Sb >
 template< typename TraversalPredicate, typename OutputIterator >
-typename Pure_complex_data_structure<Dim, Vb, Sb>::Facet
-Pure_complex_data_structure<Dim, Vb, Sb>
+typename Triangulation_data_structure<Dim, Vb, Sb>::Facet
+Triangulation_data_structure<Dim, Vb, Sb>
 ::gather_full_cells(   Full_cell_handle start,
                     TraversalPredicate & tp,
                     OutputIterator & out) const
@@ -621,7 +621,7 @@ Pure_complex_data_structure<Dim, Vb, Sb>
 template< class Dim, class Vb, class Sb >
 template< typename OutputIterator >
 OutputIterator
-Pure_complex_data_structure<Dim, Vb, Sb>
+Triangulation_data_structure<Dim, Vb, Sb>
 ::gather_incident_faces(Vertex_const_handle v, const int d, OutputIterator out,
     std::less<Vertex_const_handle> cmp, bool upper_faces)
 {
@@ -632,7 +632,7 @@ Pure_complex_data_structure<Dim, Vb, Sb>
 template< class Dim, class Vb, class Sb >
 template< typename OutputIterator, typename Comparator >
 OutputIterator
-Pure_complex_data_structure<Dim, Vb, Sb>
+Triangulation_data_structure<Dim, Vb, Sb>
 ::gather_incident_faces(Vertex_const_handle v, const int d, OutputIterator out, Comparator cmp, bool upper_faces)
 {
     CGAL_precondition( 0 < d );
@@ -708,8 +708,8 @@ Pure_complex_data_structure<Dim, Vb, Sb>
 // - - - - - - - - - - - - - - - - - - - - - - - - THE REMOVAL METHODS
 
 template <class Dim, class Vb, class Sb>
-typename Pure_complex_data_structure<Dim, Vb, Sb>::Vertex_handle
-Pure_complex_data_structure<Dim, Vb, Sb>
+typename Triangulation_data_structure<Dim, Vb, Sb>::Vertex_handle
+Triangulation_data_structure<Dim, Vb, Sb>
 ::contract_face(const Face & f)
 {
     const int fd = f.feature_dimension();
@@ -731,7 +731,7 @@ Pure_complex_data_structure<Dim, Vb, Sb>
 
 template <class Dim, class Vb, class Sb>
 void
-Pure_complex_data_structure<Dim, Vb, Sb>
+Triangulation_data_structure<Dim, Vb, Sb>
 ::remove_decrease_dimension(Vertex_handle v, Vertex_handle star)
 {
     CGAL_assertion( current_dimension() >= -1 );
@@ -802,8 +802,8 @@ Pure_complex_data_structure<Dim, Vb, Sb>
 // - - - - - - - - - - - - - - - - - - - - - - - - THE INSERTION METHODS
 
 template <class Dim, class Vb, class Sb>
-typename Pure_complex_data_structure<Dim, Vb, Sb>::Vertex_handle
-Pure_complex_data_structure<Dim, Vb, Sb>
+typename Triangulation_data_structure<Dim, Vb, Sb>::Vertex_handle
+Triangulation_data_structure<Dim, Vb, Sb>
 ::insert_in_full_cell(Full_cell_handle s)
 {
     CGAL_precondition(0 < current_dimension());
@@ -834,8 +834,8 @@ Pure_complex_data_structure<Dim, Vb, Sb>
 }
 
 template <class Dim, class Vb, class Sb >
-typename Pure_complex_data_structure<Dim, Vb, Sb>::Vertex_handle
-Pure_complex_data_structure<Dim, Vb, Sb>
+typename Triangulation_data_structure<Dim, Vb, Sb>::Vertex_handle
+Triangulation_data_structure<Dim, Vb, Sb>
 ::insert_in_face(const Face & f)
 {
     std::vector<Full_cell_handle> simps;
@@ -845,8 +845,8 @@ Pure_complex_data_structure<Dim, Vb, Sb>
     return insert_in_hole(simps.begin(), simps.end(), Facet(f.full_cell(), f.index(0)));
 }
 template <class Dim, class Vb, class Sb >
-typename Pure_complex_data_structure<Dim, Vb, Sb>::Vertex_handle
-Pure_complex_data_structure<Dim, Vb, Sb>
+typename Triangulation_data_structure<Dim, Vb, Sb>::Vertex_handle
+Triangulation_data_structure<Dim, Vb, Sb>
 ::insert_in_facet(const Facet & ft)
 {
     Full_cell_handle s[2];
@@ -859,8 +859,8 @@ Pure_complex_data_structure<Dim, Vb, Sb>
 
 template <class Dim, class Vb, class Sb >
 template < typename OutputIterator >
-typename Pure_complex_data_structure<Dim, Vb, Sb>::Full_cell_handle
-Pure_complex_data_structure<Dim, Vb, Sb>
+typename Triangulation_data_structure<Dim, Vb, Sb>::Full_cell_handle
+Triangulation_data_structure<Dim, Vb, Sb>
 ::insert_in_tagged_hole(Vertex_handle v, Facet f,
                         OutputIterator new_full_cells)
 {
@@ -922,8 +922,8 @@ Pure_complex_data_structure<Dim, Vb, Sb>
 
 template< class Dim, class Vb, class Sb >
 template< typename Forward_iterator, typename OutputIterator >
-typename Pure_complex_data_structure<Dim, Vb, Sb>::Vertex_handle
-Pure_complex_data_structure<Dim, Vb, Sb>
+typename Triangulation_data_structure<Dim, Vb, Sb>::Vertex_handle
+Triangulation_data_structure<Dim, Vb, Sb>
 ::insert_in_hole(   Forward_iterator start, Forward_iterator end, Facet f,
                     OutputIterator out)
 {
@@ -941,8 +941,8 @@ Pure_complex_data_structure<Dim, Vb, Sb>
 
 template< class Dim, class Vb, class Sb >
 template< typename Forward_iterator >
-typename Pure_complex_data_structure<Dim, Vb, Sb>::Vertex_handle
-Pure_complex_data_structure<Dim, Vb, Sb>
+typename Triangulation_data_structure<Dim, Vb, Sb>::Vertex_handle
+Triangulation_data_structure<Dim, Vb, Sb>
 ::insert_in_hole(Forward_iterator start, Forward_iterator end, Facet f)
 {
     Emptyset_iterator out;
@@ -951,7 +951,7 @@ Pure_complex_data_structure<Dim, Vb, Sb>
 
 template <class Dim, class Vb, class Sb>
 void
-Pure_complex_data_structure<Dim, Vb, Sb>
+Triangulation_data_structure<Dim, Vb, Sb>
 ::clear_visited_marks(Full_cell_handle start) const
 {
     CGAL_precondition(start != Full_cell_handle());
@@ -976,7 +976,7 @@ Pure_complex_data_structure<Dim, Vb, Sb>
 }
 
 template <class Dim, class Vb, class Sb>
-void Pure_complex_data_structure<Dim, Vb, Sb>
+void Triangulation_data_structure<Dim, Vb, Sb>
 ::do_insert_increase_dimension(const Vertex_handle x, const Vertex_handle star)
 {
     Full_cell_handle start = full_cells_begin();
@@ -1055,8 +1055,8 @@ void Pure_complex_data_structure<Dim, Vb, Sb>
 }
 
 template <class Dim, class Vb, class Sb>
-typename Pure_complex_data_structure<Dim, Vb, Sb>::Vertex_handle
-Pure_complex_data_structure<Dim, Vb, Sb>
+typename Triangulation_data_structure<Dim, Vb, Sb>::Vertex_handle
+Triangulation_data_structure<Dim, Vb, Sb>
 ::insert_increase_dimension(Vertex_handle star = Vertex_handle())
 {
     const int prev_cur_dim = current_dimension();
@@ -1104,7 +1104,7 @@ Pure_complex_data_structure<Dim, Vb, Sb>
 // - - - - - - - - - - - - - - - - - - - - - - - - VALIDITY CHECKS
 
 template <class Dimen, class Vb, class Sb>
-bool Pure_complex_data_structure<Dimen, Vb, Sb>
+bool Triangulation_data_structure<Dimen, Vb, Sb>
 ::is_valid(bool verbose, int /* level */) const
 { 
     Full_cell_const_handle s, t;
@@ -1208,7 +1208,7 @@ bool Pure_complex_data_structure<Dimen, Vb, Sb>
 // NOT DOCUMENTED
 template <class Dim, class Vb, class Sb>
 template <class OutStream>
-void Pure_complex_data_structure<Dim, Vb, Sb>
+void Triangulation_data_structure<Dim, Vb, Sb>
 ::write_graph(OutStream & os)
 {
     std::vector<std::set<int> > edges;
@@ -1255,7 +1255,7 @@ void Pure_complex_data_structure<Dim, Vb, Sb>
 // NOT DOCUMENTED...
 template<class Dimen, class Vb, class Sb>
 std::istream &
-Pure_complex_data_structure<Dimen, Vb, Sb>
+Triangulation_data_structure<Dimen, Vb, Sb>
 ::read_full_cells(std::istream & is, const std::vector<Vertex_handle> & vertices)
 {
     size_t m; // number of full_cells
@@ -1333,7 +1333,7 @@ Pure_complex_data_structure<Dimen, Vb, Sb>
 // NOT DOCUMENTED...
 template<class Dimen, class Vb, class Sb>
 std::ostream &
-Pure_complex_data_structure<Dimen, Vb, Sb>
+Triangulation_data_structure<Dimen, Vb, Sb>
 ::write_full_cells(std::ostream & os, std::map<Vertex_const_handle, int> & index_of_vertex) const
 {
     std::map<Full_cell_const_handle, int> index_of_full_cell;
@@ -1390,7 +1390,7 @@ Pure_complex_data_structure<Dimen, Vb, Sb>
 
 template<class Dimen, class Vb, class Sb>
 std::istream & 
-operator>>(std::istream & is, Pure_complex_data_structure<Dimen, Vb, Sb> & tr)
+operator>>(std::istream & is, Triangulation_data_structure<Dimen, Vb, Sb> & tr)
   // reads :
   // - the dimensions (ambient and current)
   // - the number of finite vertices
@@ -1400,11 +1400,11 @@ operator>>(std::istream & is, Pure_complex_data_structure<Dimen, Vb, Sb> & tr)
   // of vertices, plus the non combinatorial information on each full_cell
   // - the neighbors of each full_cell by their index in the preceding list
 {
-    typedef Pure_complex_data_structure<Dimen, Vb, Sb> PC;
-    typedef typename PC::Vertex_handle         Vertex_handle;
-    typedef typename PC::Vertex_iterator       Vertex_iterator;
-    typedef typename PC::Full_cell_handle        Full_cell_handle;
-    typedef typename PC::Full_cell_iterator      Full_cell_iterator;
+    typedef Triangulation_data_structure<Dimen, Vb, Sb> TDS;
+    typedef typename TDS::Vertex_handle         Vertex_handle;
+    typedef typename TDS::Vertex_iterator       Vertex_iterator;
+    typedef typename TDS::Full_cell_handle        Full_cell_handle;
+    typedef typename TDS::Full_cell_iterator      Full_cell_iterator;
 
     // read current dimension and number of vertices
     size_t n;
@@ -1417,7 +1417,7 @@ operator>>(std::istream & is, Pure_complex_data_structure<Dimen, Vb, Sb> & tr)
         read(is, n, io_Read_write());
     }
 
-    CGAL_assertion_msg( cd <= tr.ambient_dimension(), "input Pure_complex_data_structure has too high dimension");
+    CGAL_assertion_msg( cd <= tr.ambient_dimension(), "input Triangulation_data_structure has too high dimension");
 
     tr.clear();
     tr.set_current_dimension(cd);
@@ -1443,7 +1443,7 @@ operator>>(std::istream & is, Pure_complex_data_structure<Dimen, Vb, Sb> & tr)
 
 template<class Dimen, class Vb, class Sb>
 std::ostream & 
-operator<<(std::ostream & os, const Pure_complex_data_structure<Dimen, Vb, Sb> & tr)
+operator<<(std::ostream & os, const Triangulation_data_structure<Dimen, Vb, Sb> & tr)
   // writes :
   // - the dimensions (ambient and current)
   // - the number of finite vertices
@@ -1453,11 +1453,11 @@ operator<<(std::ostream & os, const Pure_complex_data_structure<Dimen, Vb, Sb> &
   // of vertices, plus the non combinatorial information on each full_cell
   // - the neighbors of each full_cell by their index in the preceding list
 {
-    typedef Pure_complex_data_structure<Dimen, Vb, Sb> PC;
-    typedef typename PC::Vertex_const_handle         Vertex_handle;
-    typedef typename PC::Vertex_const_iterator       Vertex_iterator;
-    typedef typename PC::Full_cell_const_handle        Full_cell_handle;
-    typedef typename PC::Full_cell_const_iterator      Full_cell_iterator;
+    typedef Triangulation_data_structure<Dimen, Vb, Sb> TDS;
+    typedef typename TDS::Vertex_const_handle         Vertex_handle;
+    typedef typename TDS::Vertex_const_iterator       Vertex_iterator;
+    typedef typename TDS::Full_cell_const_handle        Full_cell_handle;
+    typedef typename TDS::Full_cell_const_iterator      Full_cell_iterator;
 
     // outputs dimension and number of vertices
     size_t n = tr.number_of_vertices();

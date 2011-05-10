@@ -3905,12 +3905,12 @@ Triangulation/dont_submit -text
 Triangulation/examples/Triangulation/triangulation.cpp -text
 Triangulation/examples/Triangulation/triangulation_data_structure.cpp -text
 Triangulation/include/CGAL/Convex_hull.h -text
-Triangulation/include/CGAL/Delaunay_complex.h -text
-Triangulation/include/CGAL/Pure_complex.h -text
-Triangulation/include/CGAL/Pure_complex_data_structure.h -text
+Triangulation/include/CGAL/Delaunay_triangulation.h -text
 Triangulation/include/CGAL/Regular_triangulation.h -text
 Triangulation/include/CGAL/TDS_full_cell_default_storage_policy.h -text
 Triangulation/include/CGAL/TDS_full_cell_mirror_storage_policy.h -text
+Triangulation/include/CGAL/Triangulation.h -text
+Triangulation/include/CGAL/Triangulation_data_structure.h -text
 Triangulation/include/CGAL/Triangulation_ds_full_cell.h -text
 Triangulation/include/CGAL/Triangulation_ds_vertex.h -text
 Triangulation/include/CGAL/Triangulation_face.h -text

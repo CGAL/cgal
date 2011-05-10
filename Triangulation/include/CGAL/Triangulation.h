@@ -20,7 +20,7 @@
 
 #include <boost/iterator/filter_iterator.hpp>
 #include <CGAL/internal/Triangulation/utilities.h>
-#include <CGAL/Pure_complex_data_structure.h>
+#include <CGAL/Triangulation_data_structure.h>
 #include <CGAL/Triangulation_full_cell.h>
 #include <CGAL/Triangulation_vertex.h>
 #include <CGAL/spatial_sort.h>
@@ -31,16 +31,16 @@
 namespace CGAL {
 
 template <  class TriangulationTraits, class TDS_ = Default >
-class Pure_complex
+class Triangulation
 {
     typedef typename Ambient_dimension<typename TriangulationTraits::Point_d>::type
                                                     Ambient_dimension_;
-    typedef typename Default::Get<TDS_, Pure_complex_data_structure
+    typedef typename Default::Get<TDS_, Triangulation_data_structure
                     <   Ambient_dimension_,
                         Triangulation_vertex<TriangulationTraits>,
                         Triangulation_full_cell<TriangulationTraits> >
                         >::type                     TDS;
-    typedef Pure_complex<TriangulationTraits, TDS_> Self;
+    typedef Triangulation<TriangulationTraits, TDS_> Self;
 
     typedef typename TriangulationTraits::Coaffine_orientation_d
                                                     Coaffine_orientation_d;
@@ -50,7 +50,7 @@ class Pure_complex
 public:
 
     typedef TriangulationTraits                     Geom_traits;
-    typedef TDS                                     Pure_complex_ds;
+    typedef TDS                                     Triangulation_ds;
 
     typedef typename TDS::Vertex                    Vertex;
     typedef typename TDS::Full_cell                 Full_cell;
@@ -104,7 +104,7 @@ public:
     
 protected: // DATA MEMBERS
 
-    Pure_complex_ds                     pcds_;
+    Triangulation_ds                     tds_;
     const Geom_traits                   kernel_;
     Vertex_handle                       infinity_;
     mutable std::vector<Oriented_side>  orientations_;
@@ -121,7 +121,7 @@ public:
 
 	Face make_empty_face() const
 	{
-		return pcds().make_empty_face();
+		return tds().make_empty_face();
 	}
 
     // works for Face_ = Facet and Face_ = Rotor.
@@ -129,7 +129,7 @@ public:
     template< typename Face_ >
     Full_cell_handle full_cell_of(const Face_ & f) const
     {
-        return pcds().full_cell_of(f);
+        return tds().full_cell_of(f);
     }
 
     // works for Face_ = Facet and Face_ = Rotor.
@@ -137,13 +137,13 @@ public:
     template< class Face_ >
     int index_of_covertex(const Face_ & f) const
     {
-        return pcds().index_of_covertex<Face_>(f);
+        return tds().index_of_covertex<Face_>(f);
     }
 
     // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - CREATION
 
-    Pure_complex(const int dim, const Geom_traits k = Geom_traits())
-        : pcds_(dim)
+    Triangulation(const int dim, const Geom_traits k = Geom_traits())
+        : tds_(dim)
         , kernel_(k)
         , infinity_()
         , rng_((long)0)
@@ -154,25 +154,25 @@ public:
         clear();
     }
 
-    ~Pure_complex() {}
+    ~Triangulation() {}
 
     // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - ACCESS FUNCTIONS
 
-    // NOT DOCUMENTED -- TRY TO REMOVE IF POSSIBLE (CF Delaunay_complex::remove)
+    // NOT DOCUMENTED -- FIXME TRY TO REMOVE IF POSSIBLE (CF Delaunay_triangulation::remove)
     bool get_visited(Full_cell_handle s) const
     {
-        return pcds().get_visited(s);
+        return tds().get_visited(s);
     }
-    // NOT DOCUMENTED -- TRY TO REMOVE IF POSSIBLE (CF Delaunay_complex::remove)
+    // NOT DOCUMENTED -- FIXME TRY TO REMOVE IF POSSIBLE (CF Delaunay_triangulation::remove)
     bool get_visited(Full_cell_const_handle s) const
     {
-        return pcds().get_visited(s);
+        return tds().get_visited(s);
     }
 
-    // NOT DOCUMENTED -- TRY TO REMOVE IF POSSIBLE (CF Delaunay_complex::remove)
+    // NOT DOCUMENTED -- FIXME TRY TO REMOVE IF POSSIBLE (CF Delaunay_triangulation::remove)
     void set_visited(Full_cell_handle s, bool b) const
     {
-        pcds().set_visited(s, b);
+        tds().set_visited(s, b);
     }
 
     Coaffine_orientation_d & coaffine_orientation_predicate()
@@ -185,14 +185,14 @@ public:
         return coaffine_orientation_;
     }
 
-    const Pure_complex_ds & pcds() const
+    const Triangulation_ds & tds() const
     {
-        return pcds_;
+        return tds_;
     }
 
-    Pure_complex_ds & pcds()
+    Triangulation_ds & tds()
     {
-        return pcds_;
+        return tds_;
     }
 
     const Geom_traits & geom_traits() const
@@ -200,8 +200,8 @@ public:
         return kernel_;
     }
 
-    int ambient_dimension() const { return pcds().ambient_dimension(); }
-    int current_dimension() const { return pcds().current_dimension(); }
+    int ambient_dimension() const { return tds().ambient_dimension(); }
+    int current_dimension() const { return tds().current_dimension(); }
 
     bool empty() const
     {
@@ -210,12 +210,12 @@ public:
 
     size_type number_of_vertices() const
     {
-        return pcds().number_of_vertices() - 1;
+        return tds().number_of_vertices() - 1;
     }
 
     size_type number_of_full_cells() const
     {
-        return pcds().number_of_full_cells();
+        return tds().number_of_full_cells();
     }
 
     Vertex_handle infinite_vertex() const
@@ -245,11 +245,11 @@ public:
 
 // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - TRAVERSAL
 
-    Vertex_iterator vertices_begin() { return pcds().vertices_begin(); }
-    Vertex_iterator vertices_end()   { return pcds().vertices_end(); }
+    Vertex_iterator vertices_begin() { return tds().vertices_begin(); }
+    Vertex_iterator vertices_end()   { return tds().vertices_end(); }
 
-    Vertex_const_iterator vertices_begin() const { return pcds().vertices_begin(); }
-    Vertex_const_iterator vertices_end()   const { return pcds().vertices_end(); }
+    Vertex_const_iterator vertices_begin() const { return tds().vertices_begin(); }
+    Vertex_const_iterator vertices_end()   const { return tds().vertices_end(); }
 
     Finite_vertex_iterator finite_vertices_begin()
     { return Finite_vertex_iterator(Finiteness_predicate(*this), vertices_begin(), vertices_end()); }
@@ -260,11 +260,11 @@ public:
     Finite_vertex_const_iterator finite_vertices_end() const
     { return Finite_vertex_const_iterator(Finiteness_predicate(*this), vertices_end(), vertices_end()); }
 
-    Full_cell_iterator full_cells_begin() { return pcds().full_cells_begin(); }
-    Full_cell_iterator full_cells_end()   { return pcds().full_cells_end(); }
+    Full_cell_iterator full_cells_begin() { return tds().full_cells_begin(); }
+    Full_cell_iterator full_cells_end()   { return tds().full_cells_end(); }
 
-    Full_cell_const_iterator full_cells_begin() const { return pcds().full_cells_begin(); }
-    Full_cell_const_iterator full_cells_end()   const { return pcds().full_cells_end(); }
+    Full_cell_const_iterator full_cells_begin() const { return tds().full_cells_begin(); }
+    Full_cell_const_iterator full_cells_end()   const { return tds().full_cells_end(); }
 
     Finite_full_cell_iterator finite_full_cells_begin()
     { return Finite_full_cell_iterator(Finiteness_predicate(*this), full_cells_begin(), full_cells_end()); }
@@ -275,8 +275,8 @@ public:
     Finite_full_cell_const_iterator finite_full_cells_end() const
     { return Finite_full_cell_const_iterator(Finiteness_predicate(*this), full_cells_end(), full_cells_end()); }
 
-    Facet_iterator facets_begin() { return pcds().facets_begin(); }
-    Facet_iterator facets_end() { return pcds().facets_end(); }
+    Facet_iterator facets_begin() { return tds().facets_begin(); }
+    Facet_iterator facets_end() { return tds().facets_end(); }
     Facet_iterator finite_facets_begin()
     { return Finite_facet_iterator(Finiteness_predicate(*this), facets_begin(), facets_end()); }
     Facet_iterator finite_facets_end()
@@ -286,13 +286,13 @@ public:
 
     class Finiteness_predicate
     {
-        const Self & pc_;
+        const Self & t_;
     public:
-        Finiteness_predicate(const Self & pc) : pc_(pc) {}
+        Finiteness_predicate(const Self & t) : t_(t) {}
         template < class T >
         bool operator()(const T & t)
         {
-            return ( pc_.is_finite(t.vertex(0)) );
+            return ( t_.is_finite(t.vertex(0)) );
         }
     };
 
@@ -314,12 +314,12 @@ public:
 
     bool is_vertex(Vertex_const_handle v) const
     {
-        return pcds().is_vertex(v);
+        return tds().is_vertex(v);
     }
 
     bool is_full_cell(Full_cell_const_handle s) const
     {
-        return pcds().is_full_cell(s);
+        return tds().is_full_cell(s);
     }
 
     bool is_infinite(Vertex_const_handle v) const
@@ -387,37 +387,37 @@ public:
     template< typename OutputIterator >
     OutputIterator gather_incident_full_cells(const Face & f, OutputIterator out) const
     {
-        return pcds().gather_incident_full_cells(f, out);
+        return tds().gather_incident_full_cells(f, out);
     }
     template< typename OutputIterator >
     OutputIterator gather_incident_full_cells(Vertex_const_handle v, OutputIterator out) const
     {
-        return pcds().gather_incident_full_cells(v, out);
+        return tds().gather_incident_full_cells(v, out);
     }
     template< typename OutputIterator >
     OutputIterator gather_adjacent_full_cells(const Face & f, OutputIterator out) const
     {
-        return pcds().gather_incident_full_cells(f, out);
+        return tds().gather_incident_full_cells(f, out);
     }
 
     template< typename OutputIterator >
     OutputIterator gather_incident_faces(Vertex_const_handle v, const int d, OutputIterator out)
     {
-        return pcds().gather_incident_faces(v, d, out);
+        return tds().gather_incident_faces(v, d, out);
     }
 
     template< typename OutputIterator, class Comparator >
     OutputIterator gather_incident_upper_faces( Vertex_const_handle v, const int d,
                                                 OutputIterator out, Comparator cmp = Comparator())
     {
-        return pcds().gather_incident_upper_faces(v, d, out, cmp);
+        return tds().gather_incident_upper_faces(v, d, out, cmp);
     }
     template< typename OutputIterator >
     OutputIterator gather_incident_upper_faces( Vertex_const_handle v, const int d,
                                                 OutputIterator out)
     {
         internal::Triangulation::Compare_vertices_for_upper_face<Self> cmp(*this);
-        return pcds().gather_incident_upper_faces(v, d, out, cmp);
+        return tds().gather_incident_upper_faces(v, d, out, cmp);
     }
 
     Orientation orientation(Full_cell_const_handle s, bool in_is_valid = false) const
@@ -441,8 +441,8 @@ public:
 
     void clear()
     {
-        pcds_.clear();
-        infinity_ = pcds().insert_increase_dimension();
+        tds_.clear();
+        infinity_ = tds().insert_increase_dimension();
         // A full_cell has at most 1 + ambient_dimension() facets:
         orientations_.resize(1 + ambient_dimension());
         // Our coaffine orientation predicates HAS state member variables
@@ -454,22 +454,22 @@ public:
 
     void set_current_dimension(const int d)
     {
-        pcds().set_current_dimension(d);
+        tds().set_current_dimension(d);
     }
 
     Full_cell_handle new_full_cell()
     { 
-        return pcds().new_full_cell();
+        return tds().new_full_cell();
     }
 
     Vertex_handle  new_vertex(const Point & p) 
     {
-        return pcds().new_vertex(p);
+        return tds().new_vertex(p);
     }
 
     void set_neighbors(Full_cell_handle s, int i, Full_cell_handle s1, int j)
     {
-        pcds().set_neighbors(s, i, s1, j);
+        tds().set_neighbors(s, i, s1, j);
     }
 
 // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - VALIDITY
@@ -526,7 +526,7 @@ public:
     Vertex_handle insert_in_hole(const Point & p, ForwardIterator start, ForwardIterator end, const Facet & ft, 
                                  OutputIterator out)
     {
-        Vertex_handle v = pcds().insert_in_hole(start, end, ft, out);
+        Vertex_handle v = tds().insert_in_hole(start, end, ft, out);
         v->set_point(p);
         return v;
     }
@@ -542,21 +542,21 @@ public:
     template< typename OrientationPredicate >
     class Outside_convex_hull_traversal_predicate
     {
-        Pure_complex & pc_;
+        Triangulation & t_;
         const Point & p_;
         OrientationPredicate & ori_;
         int cur_dim_;
     public:
-        Outside_convex_hull_traversal_predicate(Pure_complex & pc, const Point & p,
+        Outside_convex_hull_traversal_predicate(Triangulation & t, const Point & p,
                                     OrientationPredicate & ori)
-        : pc_(pc), p_(p), ori_(ori), cur_dim_(pc.current_dimension()) {}
+        : t_(t), p_(p), ori_(ori), cur_dim_(t.current_dimension()) {}
         // FUTURE change parameter to const reference
         bool operator()(Facet f) const
         {
-            Full_cell_handle s = pc_.full_cell_of(f);
-            const int i = pc_.index_of_covertex(f);
+            Full_cell_handle s = t_.full_cell_of(f);
+            const int i = t_.index_of_covertex(f);
             Full_cell_handle n = s->neighbor(i);
-            if( pc_.is_finite(n) )
+            if( t_.is_finite(n) )
                 return false;
             n->vertex(0)->set_point(p_);
             bool ok = (POSITIVE == ori_(n->points_begin(), n->points_begin() + cur_dim_ + 1));
@@ -566,7 +566,7 @@ public:
     // make sure all full_cells have positive orientation
     void reorient_full_cells();
 
-}; // Pure_complex<...>
+}; // Triangulation<...>
 
 // = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = 
 
@@ -574,7 +574,7 @@ public:
 
 template < class TT, class TDS >
 void
-Pure_complex<TT, TDS>
+Triangulation<TT, TDS>
 ::reorient_full_cells()
 {
     if( current_dimension() < 1 )
@@ -597,12 +597,12 @@ Pure_complex<TT, TDS>
 // - - - - - - - - - - - - - - - - - - - - - - - - THE REMOVAL METHODS
 
 template < class TT, class TDS >
-typename Pure_complex<TT, TDS>::Vertex_handle
-Pure_complex<TT, TDS>
+typename Triangulation<TT, TDS>::Vertex_handle
+Triangulation<TT, TDS>
 ::contract_face(const Point & p, const Face & f)
 {
     CGAL_precondition( is_finite(f) );
-    Vertex_handle v = pcds().contract_face(f);
+    Vertex_handle v = tds().contract_face(f);
     v->set_point(p);
     CGAL_expensive_postcondition_msg(are_incident_full_cells_valid(v), "new point is not where it should be");
     return v;
@@ -612,8 +612,8 @@ Pure_complex<TT, TDS>
 // - - - - - - - - - - - - - - - - - - - - - - - - THE INSERTION METHODS
 
 template < class TT, class TDS >
-typename Pure_complex<TT, TDS>::Vertex_handle
-Pure_complex<TT, TDS>
+typename Triangulation<TT, TDS>::Vertex_handle
+Triangulation<TT, TDS>
 ::insert(const Point & p, const Locate_type lt, const Face & f, const Facet & ft, const Full_cell_handle s)
 {
     switch( lt )
@@ -651,8 +651,8 @@ Pure_complex<TT, TDS>
 }
 
 template < class TT, class TDS >
-typename Pure_complex<TT, TDS>::Vertex_handle
-Pure_complex<TT, TDS>
+typename Triangulation<TT, TDS>::Vertex_handle
+Triangulation<TT, TDS>
 ::insert(const Point & p, Full_cell_handle start)
 {
     Locate_type lt;
@@ -663,8 +663,8 @@ Pure_complex<TT, TDS>
 }
 
 template < class TT, class TDS >
-typename Pure_complex<TT, TDS>::Vertex_handle
-Pure_complex<TT, TDS>
+typename Triangulation<TT, TDS>::Vertex_handle
+Triangulation<TT, TDS>
 ::insert(const Point & p, Vertex_handle v)
 {
     if( Vertex_handle() == v )
@@ -673,42 +673,42 @@ Pure_complex<TT, TDS>
 }
 
 template < class TT, class TDS >
-typename Pure_complex<TT, TDS>::Vertex_handle
-Pure_complex<TT, TDS>
+typename Triangulation<TT, TDS>::Vertex_handle
+Triangulation<TT, TDS>
 ::insert_in_face(const Point & p, const Face & f)
 {
     CGAL_precondition( ! is_infinite(f) );
-    Vertex_handle v = pcds().insert_in_face(f);
+    Vertex_handle v = tds().insert_in_face(f);
     v->set_point(p);
     return v;
 }
 
 template < class TT, class TDS >
-typename Pure_complex<TT, TDS>::Vertex_handle
-Pure_complex<TT, TDS>
+typename Triangulation<TT, TDS>::Vertex_handle
+Triangulation<TT, TDS>
 ::insert_in_facet(const Point & p, const Facet & ft)
 {
     CGAL_precondition( ! is_infinite(ft) );
-    Vertex_handle v = pcds().insert_in_facet(ft);
+    Vertex_handle v = tds().insert_in_facet(ft);
     v->set_point(p);
     return v;
 }
 
 template < class TT, class TDS >
-typename Pure_complex<TT, TDS>::Vertex_handle
-Pure_complex<TT, TDS>
+typename Triangulation<TT, TDS>::Vertex_handle
+Triangulation<TT, TDS>
 ::insert_in_full_cell(const Point & p, Full_cell_handle s)
 {
     CGAL_precondition( is_finite(s) );
-    Vertex_handle v = pcds().insert_in_full_cell(s);
+    Vertex_handle v = tds().insert_in_full_cell(s);
     v->set_point(p);
     return v;
 }
 
 // NOT DOCUMENTED...
 template < class TT, class TDS >
-typename Pure_complex<TT, TDS>::Vertex_handle
-Pure_complex<TT, TDS>
+typename Triangulation<TT, TDS>::Vertex_handle
+Triangulation<TT, TDS>
 ::insert_outside_convex_hull_1(const Point & p, Full_cell_handle s)
 {
     // This is a special case for dimension 1, because in that case, the right
@@ -717,7 +717,7 @@ Pure_complex<TT, TDS>
     CGAL_precondition( is_infinite(s) );
     CGAL_precondition( 1 == current_dimension() );
     bool swap = (0 == s->neighbor(0)->index_of(s));
-    Vertex_handle v = pcds().insert_in_full_cell(s);
+    Vertex_handle v = tds().insert_in_full_cell(s);
     v->set_point(p);
     if( swap )
     {
@@ -727,8 +727,8 @@ Pure_complex<TT, TDS>
 }
 
 template < class TT, class TDS >
-typename Pure_complex<TT, TDS>::Vertex_handle
-Pure_complex<TT, TDS>
+typename Triangulation<TT, TDS>::Vertex_handle
+Triangulation<TT, TDS>
 ::insert_outside_convex_hull(const Point & p, Full_cell_handle s)
 {
     if( 1 == current_dimension() )
@@ -744,26 +744,26 @@ Pure_complex<TT, TDS>
     {
         Outside_convex_hull_traversal_predicate<Coaffine_orientation_d>
             ochtp(*this, p, coaffine_orientation_predicate());
-        pcds().gather_full_cells(s, ochtp, out);
+        tds().gather_full_cells(s, ochtp, out);
     }
     else
     {
         Orientation_d ori = geom_traits().orientation_d_object();
         Outside_convex_hull_traversal_predicate<Orientation_d>
             ochtp(*this, p, ori);
-        pcds().gather_full_cells(s, ochtp, out);
+        tds().gather_full_cells(s, ochtp, out);
     }
     Vertex_handle v = insert_in_hole(p, simps.begin(), simps.end(), Facet(s, 0));
     return v;
 }
 
 template < class TT, class TDS >
-typename Pure_complex<TT, TDS>::Vertex_handle
-Pure_complex<TT, TDS>
+typename Triangulation<TT, TDS>::Vertex_handle
+Triangulation<TT, TDS>
 ::insert_outside_affine_hull(const Point & p)
 {
     CGAL_precondition( current_dimension() < ambient_dimension() );
-    Vertex_handle v = pcds().insert_increase_dimension(infinite_vertex());
+    Vertex_handle v = tds().insert_increase_dimension(infinite_vertex());
     // reset the orientation predicate:
     coaffine_orientation_predicate() = geom_traits().coaffine_orientation_d_object();
     v->set_point(p);
@@ -783,8 +783,8 @@ Pure_complex<TT, TDS>
 
 template < class TT, class TDS >
 template< typename OrientationPredicate >
-typename Pure_complex<TT, TDS>::Full_cell_handle
-Pure_complex<TT, TDS>
+typename Triangulation<TT, TDS>::Full_cell_handle
+Triangulation<TT, TDS>
 ::do_locate(   const Point & p, // query point
             Locate_type & loc_type,// type of result (full_cell, face, vertex)
             Face & face,// the face containing the query in its interior (when appropriate)
@@ -946,8 +946,8 @@ Pure_complex<TT, TDS>
 }
 
 template < class TT, class TDS >
-typename Pure_complex<TT, TDS>::Full_cell_handle
-Pure_complex<TT, TDS>
+typename Triangulation<TT, TDS>::Full_cell_handle
+Triangulation<TT, TDS>
 ::locate(   const Point & p, // query point
             Locate_type & loc_type,// type of result (full_cell, face, vertex)
             Face & face,// the face containing the query in its interior (when appropriate)
@@ -968,8 +968,8 @@ Pure_complex<TT, TDS>
 // - - - - - - - - - - - - - - - - - - - - the locate(...) variants
 
 template < class TT, class TDS >
-typename Pure_complex<TT, TDS>::Full_cell_handle
-Pure_complex<TT, TDS>
+typename Triangulation<TT, TDS>::Full_cell_handle
+Triangulation<TT, TDS>
 ::locate(   const Point & p,
             Locate_type & loc_type,
             Face & face,
@@ -982,8 +982,8 @@ Pure_complex<TT, TDS>
 }
 
 template < class TT, class TDS >
-typename Pure_complex<TT, TDS>::Full_cell_handle
-Pure_complex<TT, TDS>
+typename Triangulation<TT, TDS>::Full_cell_handle
+Triangulation<TT, TDS>
 ::locate(const Point & p, Full_cell_handle s) const
 {
     Locate_type lt;
@@ -993,8 +993,8 @@ Pure_complex<TT, TDS>
 }
 
 template < class TT, class TDS >
-typename Pure_complex<TT, TDS>::Full_cell_handle
-Pure_complex<TT, TDS>
+typename Triangulation<TT, TDS>::Full_cell_handle
+Triangulation<TT, TDS>
 ::locate(const Point & p, Vertex_handle v) const
 {
     if( Vertex_handle() != v )
@@ -1006,10 +1006,10 @@ Pure_complex<TT, TDS>
 
 template < class TT, class TDS >
 bool
-Pure_complex<TT, TDS>
+Triangulation<TT, TDS>
 ::is_valid(bool verbose, int level) const
 { 
-    if( ! pcds().is_valid(verbose, level) )
+    if( ! tds().is_valid(verbose, level) )
         return false;
 
     Full_cell_const_iterator s;
@@ -1057,7 +1057,7 @@ Pure_complex<TT, TDS>
 }
 
 template < class TT, class TDS >
-bool Pure_complex<TT, TDS>::are_incident_full_cells_valid(Vertex_const_handle v, bool verbose, int level) const
+bool Triangulation<TT, TDS>::are_incident_full_cells_valid(Vertex_const_handle v, bool verbose, int level) const
 {
     if( current_dimension() <= 0 )
         return true;
@@ -1092,7 +1092,7 @@ bool Pure_complex<TT, TDS>::are_incident_full_cells_valid(Vertex_const_handle v,
 
 template < class TT, class TDS >
 std::istream & 
-operator>>(std::istream & is, Pure_complex<TT, TDS> & tr)
+operator>>(std::istream & is, Triangulation<TT, TDS> & tr)
   // reads :
   // - the dimensions (ambient and current)
   // - the number of finite vertices
@@ -1102,11 +1102,11 @@ operator>>(std::istream & is, Pure_complex<TT, TDS> & tr)
   // of vertices, plus the non combinatorial information on each full_cell
   // - the neighbors of each full_cell by their index in the preceding list
 {
-    typedef Pure_complex<TT, TDS> PC;
-    typedef typename PC::Vertex_handle         Vertex_handle;
-    typedef typename PC::Vertex_iterator       Vertex_iterator;
-    typedef typename PC::Full_cell_handle        Full_cell_handle;
-    typedef typename PC::Full_cell_iterator      Full_cell_iterator;
+    typedef Triangulation<TT, TDS> T;
+    typedef typename T::Vertex_handle         Vertex_handle;
+    typedef typename T::Vertex_iterator       Vertex_iterator;
+    typedef typename T::Full_cell_handle        Full_cell_handle;
+    typedef typename T::Full_cell_iterator      Full_cell_iterator;
 
     // read current dimension and number of vertices
     size_t n;
@@ -1119,7 +1119,7 @@ operator>>(std::istream & is, Pure_complex<TT, TDS> & tr)
         read(is, n, io_Read_write());
     }
 
-    CGAL_assertion_msg( cd <= tr.ambient_dimension(), "input Pure_complex has too high dimension");
+    CGAL_assertion_msg( cd <= tr.ambient_dimension(), "input Triangulation has too high dimension");
 
     tr.clear();
     tr.set_current_dimension(cd);
@@ -1142,12 +1142,12 @@ operator>>(std::istream & is, Pure_complex<TT, TDS> & tr)
     }
 
     // now, read the combinatorial information
-   return tr.pcds().read_full_cells(is, vertices);
+   return tr.tds().read_full_cells(is, vertices);
 }
 
 template < class TT, class TDS >
 std::ostream & 
-operator<<(std::ostream & os, const Pure_complex<TT, TDS> & tr)
+operator<<(std::ostream & os, const Triangulation<TT, TDS> & tr)
   // writes :
   // - the dimensions (ambient and current)
   // - the number of finite vertices
@@ -1157,11 +1157,11 @@ operator<<(std::ostream & os, const Pure_complex<TT, TDS> & tr)
   // of vertices, plus the non combinatorial information on each full_cell
   // - the neighbors of each full_cell by their index in the preceding list
 {
-    typedef Pure_complex<TT, TDS> PC;
-    typedef typename PC::Vertex_const_handle         Vertex_handle;
-    typedef typename PC::Vertex_const_iterator       Vertex_iterator;
-    typedef typename PC::Full_cell_const_handle        Full_cell_handle;
-    typedef typename PC::Full_cell_const_iterator      Full_cell_iterator;
+    typedef Triangulation<TT, TDS> T;
+    typedef typename T::Vertex_const_handle         Vertex_handle;
+    typedef typename T::Vertex_const_iterator       Vertex_iterator;
+    typedef typename T::Full_cell_const_handle        Full_cell_handle;
+    typedef typename T::Full_cell_const_iterator      Full_cell_iterator;
 
     // outputs dimensions and number of vertices
     size_t n = tr.number_of_vertices();
@@ -1193,7 +1193,7 @@ operator<<(std::ostream & os, const Pure_complex<TT, TDS> & tr)
     CGAL_assertion( i == n+1 );
 
     // output the combinatorial information
-    return tr.pcds().write_full_cells(os, index_of_vertex);
+    return tr.tds().write_full_cells(os, index_of_vertex);
 }
 
 } //namespace CGAL

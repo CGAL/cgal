@@ -7,7 +7,7 @@
 #include <CGAL/Simple_cartesian_d.h> // this is for New_kernel_d
 #endif
 #include <CGAL/Filtered_kernel_d.h>
-#include <CGAL/Delaunay_complex.h>
+#include <CGAL/Delaunay_triangulation.h>
 #include <CGAL/algorithm.h>
 #include <tilted_grid.h>
 #include <vector>
@@ -26,12 +26,12 @@ void test(const int D, const int d, const int N, bool no_transform)
     // instanciating the function.
     typedef typename DC::Vertex Vertex;
     typedef typename DC::Vertex_handle Vertex_handle;
-    typedef typename DC::Simplex Simplex;
-    typedef typename DC::Simplex_handle Simplex_handle;
+    typedef typename DC::Full_cell Full_cell;
+    typedef typename DC::Full_cell_handle Full_cell_handle;
     typedef typename DC::Facet Facet;
     typedef typename DC::Point Point;
     typedef typename DC::Geom_traits::RT RT;
-    typedef typename DC::Finite_simplex_const_iterator Finite_simplex_const_iterator;
+    typedef typename DC::Finite_full_cell_const_iterator Finite_full_cell_const_iterator;
 
     DC dc(D);
 
@@ -98,7 +98,7 @@ void test(const int D, const int d, const int N, bool no_transform)
         assert( d > dc.current_dimension() );
     assert( dc.is_valid() );
     if( 2 == dc.current_dimension() )
-        assert( 2 * dc.number_of_vertices() == dc.number_of_simplices() + 2 );
+        assert( 2 * dc.number_of_vertices() == dc.number_of_full_cells() + 2 );
     if( dc.current_dimension() > 3 )
     {
         std::random_shuffle(points.begin(), points.end());
@@ -125,7 +125,7 @@ void go(const int N, const int nb_trials)
     typedef CGAL::Simple_cartesian_d<RT, D> K; // this is for New_kernel_d
 #endif
     typedef CGAL::Filtered_kernel_d<K> FK;
-    typedef CGAL::Delaunay_complex<FK> Triangulation;
+    typedef CGAL::Delaunay_triangulation<FK> Triangulation;
     for( int d = 0; d <= D; ++d )
     {
         cout << "\n\n** Delaunay of " << d

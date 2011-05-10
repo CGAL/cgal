@@ -1,5 +1,5 @@
 
-#include <CGAL/Pure_complex_data_structure.h>
+#include <CGAL/Triangulation_data_structure.h>
 #include <vector>
 #include <string>
 #include <fstream>
@@ -15,14 +15,14 @@ void test(const int d, const string & type)
     typedef typename TDS::Vertex Vertex;
     typedef typename TDS::Vertex_handle Vertex_handle;
     typedef typename TDS::Vertex_iterator Vertex_iterator;
-    typedef typename TDS::Simplex Simplex;
-    typedef typename TDS::Simplex_handle Simplex_handle;
+    typedef typename TDS::Full_cell Full_cell;
+    typedef typename TDS::Full_cell_handle Full_cell_handle;
     typedef typename TDS::Face Face;
     typedef typename TDS::Facet Facet;
     typedef typename TDS::Facet_iterator Facet_iterator;
 
     TDS pc(d);
-    cerr << "\nChecking Pure_cds of (" << type << ") dimension "
+    cerr << "\nChecking Tds of (" << type << ") dimension "
         << pc.ambient_dimension();
     assert(pc.empty());
     vector<Vertex_handle> vhs;
@@ -36,16 +36,16 @@ void test(const int d, const string & type)
         
         assert(i == pc.current_dimension());
         assert(!pc.is_vertex(Vertex_handle()));
-        assert(!pc.is_simplex(Simplex_handle()));
+        assert(!pc.is_full_cell(Full_cell_handle()));
         assert(pc.is_vertex(vhs[i]));
-        assert(pc.is_simplex(vhs[i]->simplex()));
+        assert(pc.is_full_cell(vhs[i]->full_cell()));
 
         if( pc.current_dimension() > 0 )
         {
-            //int nbs = pc.number_of_simplices();
-            pc.insert_in_simplex(pc.simplex(vhs[i+1]));
+            //int nbs = pc.number_of_full_cells();
+            pc.insert_in_full_cell(pc.full_cell(vhs[i+1]));
             ++nb_verts;
-            //assert((size_t)(nbs+pc.current_dimension())==pc.number_of_simplices());
+            //assert((size_t)(nbs+pc.current_dimension())==pc.number_of_full_cells());
         }
         assert( pc.is_valid() );
     }
@@ -54,8 +54,8 @@ void test(const int d, const string & type)
 	if( d > 1 )
     {
         // insert in hole
-        std::vector<Simplex_handle> simps;
-        simps.push_back(pc.simplices_begin());
+        std::vector<Full_cell_handle> simps;
+        simps.push_back(pc.full_cells_begin());
         simps.push_back(pc.neighbor(simps[0],0));
         pc.insert_in_hole(simps.begin(), simps.end(), Facet(simps[0],1));
     }
@@ -90,22 +90,22 @@ void test(const int d, const string & type)
         size_t nbfft(0);
         while( fit != pc.facets_end() )
             ++fit, ++nbfft;
-        cerr << '\n' << pc.number_of_simplices() << " simplices, ";
+        cerr << '\n' << pc.number_of_full_cells() << " full cells, ";
         cerr << ' ' << nbfft << " facets.";
     }
  
     // TEST File I/O
-    std::ofstream fo((string("output-pcds-")+type).c_str());
+    std::ofstream fo((string("output-tds-")+type).c_str());
     if( d % 2 )
         CGAL::set_binary_mode(fo);
     fo << pc;
     fo.close();
 
-    std::ifstream fi((string("output-pcds-")+type).c_str());
+    std::ifstream fi((string("output-tds-")+type).c_str());
     if( d % 2 )
         CGAL::set_binary_mode(fi);
-    TDS input_pcds(d);
-    fi >> input_pcds;
+    TDS input_tds(d);
+    fi >> input_tds;
     fi.close();
 
     // CLEAR
@@ -116,24 +116,24 @@ void test(const int d, const string & type)
 }
 
 #define test_static(DIM) {  \
-    typedef CGAL::Pure_complex_data_structure<CGAL::Dimension_tag<DIM> > TDS; \
+    typedef CGAL::Triangulation_data_structure<CGAL::Dimension_tag<DIM> > TDS; \
         test<TDS>(DIM, string("static")+string(#DIM)); }
 #define test_dyn(DIM) { \
-    typedef CGAL::Pure_complex_data_structure<CGAL::Dynamic_dimension_tag> TDS; \
+    typedef CGAL::Triangulation_data_structure<CGAL::Dynamic_dimension_tag> TDS; \
         test<TDS>(DIM, string("dynamic")+string(#DIM)) ;}
 
 #define test_mirror_static(DIM) {  \
-    typedef CGAL::Pure_complex_ds_simplex<void, CGAL::TDS_simplex_mirror_storage_policy> My_ds_simplex;  \
-    typedef CGAL::Pure_complex_data_structure<CGAL::Dimension_tag<DIM>, \
-                                              CGAL::Pure_complex_ds_vertex<>, \
-                                              My_ds_simplex> My_pcds;  \
-        test<My_pcds>(DIM, string("mirror&static")+string(#DIM)); }
+    typedef CGAL::Triangulation_ds_full_cell<void, CGAL::TDS_full_cell_mirror_storage_policy> My_ds_full_cell;  \
+    typedef CGAL::Triangulation_data_structure<CGAL::Dimension_tag<DIM>, \
+                                              CGAL::Triangulation_ds_vertex<>, \
+                                              My_ds_full_cell> My_tds;  \
+        test<My_tds>(DIM, string("mirror&static")+string(#DIM)); }
 #define test_mirror_dyn(DIM) { \
-    typedef CGAL::Pure_complex_ds_simplex<void, CGAL::TDS_simplex_mirror_storage_policy> My_ds_simplex;  \
-    typedef CGAL::Pure_complex_data_structure<CGAL::Dynamic_dimension_tag, \
-                                              CGAL::Pure_complex_ds_vertex<>, \
-                                              My_ds_simplex> My_pcds;  \
-        test<My_pcds>(DIM, string("mirror&dynamic")+string(#DIM)) ;}
+    typedef CGAL::Triangulation_ds_full_cell<void, CGAL::TDS_full_cell_mirror_storage_policy> My_ds_full_cell;  \
+    typedef CGAL::Triangulation_data_structure<CGAL::Dynamic_dimension_tag, \
+                                              CGAL::Triangulation_ds_vertex<>, \
+                                              My_ds_full_cell> My_tds;  \
+        test<My_tds>(DIM, string("mirror&dynamic")+string(#DIM)) ;}
 
 
 int main()
