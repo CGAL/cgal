@@ -47,8 +47,8 @@ class Triangulation_data_structure
     typedef typename Default::Get<Sb, Triangulation_ds_full_cell<> >::type S_base;
 
 public:
-    typedef typename V_base::template Rebind_TDS<Self>::Other  Vertex;
-    typedef typename S_base::template Rebind_TDS<Self>::Other  Full_cell;
+    typedef typename V_base::template Rebind_TDS<Self>::Other  Vertex; /* Concept */
+    typedef typename S_base::template Rebind_TDS<Self>::Other  Full_cell; /* Concept */
 
 protected:
     typedef Compact_container<Vertex>   Vertex_container;
@@ -57,21 +57,21 @@ protected:
 public:
     typedef Dimen                      Ambient_dimension;
 
-    typedef typename Vertex_container::size_type        size_type;
-    typedef typename Vertex_container::difference_type  difference_type;
+    typedef typename Vertex_container::size_type        size_type; /* Concept */
+    typedef typename Vertex_container::difference_type  difference_type; /* Concept */
 
-    typedef typename Vertex_container::iterator         Vertex_handle;
-    typedef typename Vertex_container::iterator         Vertex_iterator;
+    typedef typename Vertex_container::iterator         Vertex_handle; /* Concept */
+    typedef typename Vertex_container::iterator         Vertex_iterator; /* Concept */
     typedef typename Vertex_container::const_iterator   Vertex_const_handle;
     typedef typename Vertex_container::const_iterator   Vertex_const_iterator;
 
-    typedef typename Full_cell_container::iterator        Full_cell_handle;
-    typedef typename Full_cell_container::iterator        Full_cell_iterator;
+    typedef typename Full_cell_container::iterator        Full_cell_handle; /* Concept */
+    typedef typename Full_cell_container::iterator        Full_cell_iterator; /* Concept */
     typedef typename Full_cell_container::const_iterator  Full_cell_const_handle;
     typedef typename Full_cell_container::const_iterator  Full_cell_const_iterator;
 
-    typedef internal::Triangulation::Triangulation_ds_facet_iterator<Self>
-                                                        Facet_iterator;
+    typedef internal::Triangulation::
+            Triangulation_ds_facet_iterator<Self>         Facet_iterator; /* Concept */
 
     /* The 2 types defined below, |Facet| and |Rotor| are used when traversing
      the boundary `B' of the union of a set of full cells. |Rotor| makes it
@@ -79,14 +79,14 @@ public:
      |rotate_rotor| and |insert_in_tagged_hole|) */
 
     // A co-dimension 1 sub-simplex.
-    typedef cpp0x::tuple<Full_cell_handle, int>          Facet;
+    typedef cpp0x::tuple<Full_cell_handle, int>         Facet; /* Concept */
     
     // A co-dimension 2 sub-simplex. called a Rotor because we can rotate
     // the two "covertices" around the sub-simplex. Useful for traversing the
     // boundary of a hole. NOT DOCUMENTED
     typedef cpp0x::tuple<Full_cell_handle, int, int>    Rotor;
 
-    typedef Triangulation_face<Self>                 Face;
+    typedef Triangulation_face<Self>                    Face; /* Concept */
 
 protected: // DATA MEMBERS
 
@@ -116,7 +116,7 @@ private:
 
 public:
 
-    Triangulation_data_structure(const int dim) 
+    Triangulation_data_structure(const int dim)  /* Concept */
         : dmax_(get_ambient_dimension<Dimen>::value(dim)), dcur_(-2), vertices_(), full_cells_()
     {
         CGAL_assertion_msg(dmax_ > 0, "ambient dimension must be positive.");
@@ -143,32 +143,41 @@ protected:
 public:
 
     /* returns the current dimension of the full cells in the triangulation. */
-    int ambient_dimension() const { return dmax_; }
-    int current_dimension() const { return dcur_; }
+    int ambient_dimension() const { return dmax_; } /* Concept */
+    int current_dimension() const { return dcur_; } /* Concept */
 
-    size_type number_of_vertices() const  { return this->vertices_.size();}
-    size_type number_of_full_cells() const  { return this->full_cells_.size();}
+    size_type number_of_vertices() const /* Concept */
+    {
+        return this->vertices_.size();
+    }
+    size_type number_of_full_cells() const /* Concept */
+    {
+        return this->full_cells_.size();
+    }
 
-    bool empty() const { return current_dimension() == -2; }
+    bool empty() const /* Concept */
+    {
+        return current_dimension() == -2;
+    }
 
     Vertex_container & vertices() { return vertices_; }
     const Vertex_container & vertices() const { return vertices_; }
     Full_cell_container & full_cells() { return full_cells_; }
     const Full_cell_container & full_cells() const { return full_cells_; }
 
-    Vertex_handle vertex(const Full_cell_handle s, const int i) const 
+    Vertex_handle vertex(const Full_cell_handle s, const int i) const /* Concept */
     {
         CGAL_precondition(s != Full_cell_handle() && check_range(i));
         return s->vertex(i);
     }
 
-    Vertex_const_handle vertex(const Full_cell_const_handle s, const int i) const 
+    Vertex_const_handle vertex(const Full_cell_const_handle s, const int i) const /* Concept */
     {
         CGAL_precondition(s != Full_cell_handle() && check_range(i));
         return s->vertex(i);
     }
 
-    bool is_vertex(const Vertex_const_handle & v) const
+    bool is_vertex(const Vertex_const_handle & v) const /* Concept */
     {
         if( Vertex_const_handle() == v )
             return false;
@@ -178,7 +187,7 @@ public:
         return v == vit;
     }
 
-    bool is_full_cell(const Full_cell_const_handle & s) const
+    bool is_full_cell(const Full_cell_const_handle & s) const /* Concept */
     {
         if( Full_cell_const_handle() == s )
             return false;
@@ -188,31 +197,31 @@ public:
         return s == sit;
     }
 
-    Full_cell_handle full_cell(const Vertex_handle v) const 
+    Full_cell_handle full_cell(const Vertex_handle v) const /* Concept */
     {
         CGAL_precondition(v != Vertex_handle());
         return v->full_cell();
     } 
 
-    Full_cell_const_handle full_cell(const Vertex_const_handle v) const 
+    Full_cell_const_handle full_cell(const Vertex_const_handle v) const /* Concept */
     {
         CGAL_precondition(Vertex_const_handle() != v);
         return v->full_cell();
     }
 
-    Full_cell_handle neighbor(const Full_cell_handle s, const int i) const 
+    Full_cell_handle neighbor(const Full_cell_handle s, const int i) const /* Concept */
     {
         CGAL_precondition(Full_cell_handle() != s && check_range(i));
         return s->neighbor(i);
     }
 
-    Full_cell_const_handle neighbor(const Full_cell_const_handle s, const int i) const 
+    Full_cell_const_handle neighbor(const Full_cell_const_handle s, const int i) const/* Concept */
     {
         CGAL_precondition(Full_cell_const_handle() != s && check_range(i));
         return s->neighbor(i);
     }
 
-    int mirror_index(const Full_cell_handle s, const int i) const
+    int mirror_index(const Full_cell_handle s, const int i) const /* Concept */
     {
         CGAL_precondition(Full_cell_handle() != s && check_range(i));
         return s->mirror_index(i);
@@ -220,13 +229,13 @@ public:
 
     int mirror_index(const Full_cell_const_handle s, const int i) const
     {
-        CGAL_precondition(Full_cell_const_handle() != s && check_range(i));
+        CGAL_precondition(Full_cell_const_handle() != s && check_range(i)); /* Concept */
         return s->mirror_index(i);
     }
 
     // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - FACETS OPERATIONS
 
-	Face make_empty_face() const
+	Face make_empty_face() const /* Concept */
 	{
 		return Face(ambient_dimension());
 	}
@@ -234,7 +243,7 @@ public:
     // works for Face_ = Facet and Face_ = Rotor.
     // NOT DOCUMENTED for the Rotor case...
     template< typename Face_ >
-    Full_cell_handle full_cell(const Face_ & f) const
+    Full_cell_handle full_cell(const Face_ & f) const /* Concept */
     {
         return cpp0x::get<0>(f);
     }
@@ -242,7 +251,7 @@ public:
     // works for Face_ = Facet and Face_ = Rotor.
     // NOT DOCUMENTED for the Rotor case...
     template< class Face_ >
-    int index_of_covertex(const Face_ & f) const
+    int index_of_covertex(const Face_ & f) const /* Concept */
     {
         return cpp0x::get<1>(f);
     }
@@ -282,23 +291,23 @@ protected:
 public:
 // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - REMOVALS
 
-    Vertex_handle collapse_face(const Face &);
-    void remove_decrease_dimension(Vertex_handle, Vertex_handle);
+    Vertex_handle collapse_face(const Face &); /* Concept */
+    void remove_decrease_dimension(Vertex_handle, Vertex_handle); /* Concept */
 
 // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - INSERTIONS
 
-    Vertex_handle insert_in_full_cell(Full_cell_handle);
-    Vertex_handle insert_in_face(const Face &);
-    Vertex_handle insert_in_facet(const Facet &);
+    Vertex_handle insert_in_full_cell(Full_cell_handle); /* Concept */
+    Vertex_handle insert_in_face(const Face &); /* Concept */
+    Vertex_handle insert_in_facet(const Facet &); /* Concept */
     template< typename Forward_iterator >
-    Vertex_handle insert_in_hole(Forward_iterator, const Forward_iterator, Facet);
+    Vertex_handle insert_in_hole(Forward_iterator, const Forward_iterator, Facet); /* Concept */
     template< typename Forward_iterator, typename OutputIterator >
-    Vertex_handle insert_in_hole(Forward_iterator, const Forward_iterator, Facet, OutputIterator);
+    Vertex_handle insert_in_hole(Forward_iterator, const Forward_iterator, Facet, OutputIterator); /* Concept */
 
     template< typename OutputIterator >
     Full_cell_handle insert_in_tagged_hole(Vertex_handle, Facet, OutputIterator);
 
-	Vertex_handle insert_increase_dimension(Vertex_handle);
+	Vertex_handle insert_increase_dimension(Vertex_handle); /* Concept */
 
     // NOT DOCUMENTED
     void clear_visited_marks(Full_cell_handle) const;
@@ -329,13 +338,13 @@ public:
         s->set_flags(flags);
     }
 
-    void clear()
+    void clear() /* Concept */
     {
         clean_dynamic_memory();
         dcur_ = -2; 
     }
 
-    void set_current_dimension(const int d)
+    void set_current_dimension(const int d) /* Concept */
     {
         CGAL_precondition(-1<=d && d<=ambient_dimension());
         dcur_ = d;
@@ -346,12 +355,12 @@ public:
         return full_cells_.emplace(*s);
     }
 
-    Full_cell_handle new_full_cell()
+    Full_cell_handle new_full_cell() /* Concept */
     { 
         return full_cells_.emplace(dmax_);
     }
 
-    void delete_full_cell(Full_cell_handle s)
+    void delete_full_cell(Full_cell_handle s) /* Concept */
     {
         CGAL_precondition(Full_cell_handle() != s);
         // CGAL_expensive_precondition(is_full_cell(s));
@@ -359,7 +368,7 @@ public:
     }
 
     template< typename Forward_iterator >
-    void delete_full_cells(Forward_iterator start, Forward_iterator end)
+    void delete_full_cells(Forward_iterator start, Forward_iterator end) /* Concept */
     {
         Forward_iterator s = start;
         while( s != end )
@@ -372,18 +381,18 @@ public:
         return vertices_.emplace(t);
     }
 
-    Vertex_handle new_vertex()
+    Vertex_handle new_vertex() /* Concept */
     { 
         return vertices_.emplace();
     }
 
-    void delete_vertex(Vertex_handle v)
+    void delete_vertex(Vertex_handle v) /* Concept */
     {
         CGAL_precondition( Vertex_handle() != v );
         vertices_.erase(v);
     }
 
-    void associate_vertex_with_full_cell(Full_cell_handle s, const int i, Vertex_handle v)
+    void associate_vertex_with_full_cell(Full_cell_handle s, const int i, Vertex_handle v) /* Concept */
     {
         CGAL_precondition(check_range(i));
         CGAL_precondition(s != Full_cell_handle());
@@ -392,7 +401,7 @@ public:
         v->set_full_cell(s);
     }
 
-    void set_neighbors(Full_cell_handle s, int i, Full_cell_handle s1, int j)
+    void set_neighbors(Full_cell_handle s, int i, Full_cell_handle s1, int j) /* Concept */
     {
         CGAL_precondition(check_range(i));
         CGAL_precondition(check_range(j));
@@ -406,7 +415,7 @@ public:
 
     // SANITY CHECKS
 
-    bool is_valid(bool = true, int = 0) const;
+    bool is_valid(bool = true, int = 0) const; /* Concept */
     /*  op Partially checks whether |\Mvar| is an abstract simplicial
         complex. This function terminates without error if each vertex is a
         vertex of the full_cell of which it claims to be a vertex, if the
@@ -420,23 +429,23 @@ public:
     // NOT DOCUMENTED
     template< class OutStream> void write_graph(OutStream &);
 
-    Vertex_iterator vertices_begin() { return vertices_.begin(); }
-    Vertex_iterator vertices_end()   { return vertices_.end(); }
-    Full_cell_iterator full_cells_begin() { return full_cells_.begin(); }
-    Full_cell_iterator full_cells_end()   { return full_cells_.end(); }
+    Vertex_iterator vertices_begin() { return vertices_.begin(); } /* Concept */
+    Vertex_iterator vertices_end()   { return vertices_.end();   } /* Concept */
+    Full_cell_iterator full_cells_begin() { return full_cells_.begin(); } /* Concept */
+    Full_cell_iterator full_cells_end()   { return full_cells_.end();   } /* Concept */
 
-    Vertex_const_iterator vertices_begin() const { return vertices_.begin(); }
-    Vertex_const_iterator vertices_end()   const { return vertices_.end(); }
-    Full_cell_const_iterator full_cells_begin() const { return full_cells_.begin(); }
-    Full_cell_const_iterator full_cells_end()   const { return full_cells_.end(); }
+    Vertex_const_iterator vertices_begin() const { return vertices_.begin(); } /* Concept */
+    Vertex_const_iterator vertices_end()   const { return vertices_.end();   } /* Concept */
+    Full_cell_const_iterator full_cells_begin() const { return full_cells_.begin(); } /* Concept */
+    Full_cell_const_iterator full_cells_end()   const { return full_cells_.end();   } /* Concept */
 
-    Facet_iterator facets_begin()
+    Facet_iterator facets_begin() /* Concept */
     {
         if( current_dimension() <= 0 )
             return facets_end();
         return Facet_iterator(*this);
     }
-    Facet_iterator facets_end()
+    Facet_iterator facets_end() /* Concept */
     {
         return Facet_iterator(*this, 0);
     }
@@ -496,13 +505,13 @@ public:
     };
 
     template< typename TraversalPredicate, typename OutputIterator >
-    Facet gather_full_cells(Full_cell_handle, TraversalPredicate &, OutputIterator &) const;
+    Facet gather_full_cells(Full_cell_handle, TraversalPredicate &, OutputIterator &) const; /* Concept */
     template< typename OutputIterator >
-    OutputIterator incident_full_cells(const Face &, OutputIterator) const;
+    OutputIterator incident_full_cells(const Face &, OutputIterator) const; /* Concept */
     template< typename OutputIterator >
-    OutputIterator incident_full_cells(Vertex_const_handle, OutputIterator) const;
+    OutputIterator incident_full_cells(Vertex_const_handle, OutputIterator) const; /* Concept */
     template< typename OutputIterator >
-    OutputIterator compute_star(const Face &, OutputIterator) const;
+    OutputIterator compute_star(const Face &, OutputIterator) const; /* Concept */
 #ifndef CGAL_CFG_NO_CPP0X_DEFAULT_TEMPLATE_ARGUMENTS_FOR_FUNCTION_TEMPLATES 
     template< typename OutputIterator, typename Comparator = std::less<Vertex_const_handle> >
     OutputIterator incident_upper_faces(Vertex_const_handle v, const int d, OutputIterator out, Comparator cmp = Comparator())
@@ -547,7 +556,7 @@ template< class Dim, class Vb, class Sb >
 template< typename OutputIterator >
 OutputIterator
 Triangulation_data_structure<Dim, Vb, Sb>
-::incident_full_cells(const Face & f, OutputIterator out) const
+::incident_full_cells(const Face & f, OutputIterator out) const /* Concept */
 {
     // CGAL_expensive_precondition_msg(is_full_cell(f.full_cell()), "the facet does not belong to the Triangulation");
     Incident_full_cell_traversal_predicate tp(*this, f);
@@ -559,7 +568,7 @@ template< class Dim, class Vb, class Sb >
 template< typename OutputIterator >
 OutputIterator
 Triangulation_data_structure<Dim, Vb, Sb>
-::incident_full_cells(Vertex_const_handle v, OutputIterator out) const
+::incident_full_cells(Vertex_const_handle v, OutputIterator out) const /* Concept */
 {
 //    CGAL_expensive_precondition(is_vertex(v));
     CGAL_precondition(Vertex_handle() != v);
@@ -572,7 +581,7 @@ template< class Dim, class Vb, class Sb >
 template< typename OutputIterator >
 OutputIterator
 Triangulation_data_structure<Dim, Vb, Sb>
-::compute_star(const Face & f, OutputIterator out) const
+::compute_star(const Face & f, OutputIterator out) const /* Concept */
 {
     // CGAL_precondition_msg(is_full_cell(f.full_cell()), "the facet does not belong to the Triangulation");
     Star_traversal_predicate tp(*this, f);
@@ -584,9 +593,9 @@ template< class Dim, class Vb, class Sb >
 template< typename TraversalPredicate, typename OutputIterator >
 typename Triangulation_data_structure<Dim, Vb, Sb>::Facet
 Triangulation_data_structure<Dim, Vb, Sb>
-::gather_full_cells(   Full_cell_handle start,
+::gather_full_cells(Full_cell_handle start,
                     TraversalPredicate & tp,
-                    OutputIterator & out) const
+                    OutputIterator & out) const /* Concept */
 {
     std::queue<Full_cell_handle> queue;
     set_visited(start, true);
@@ -709,7 +718,7 @@ Triangulation_data_structure<Dim, Vb, Sb>
 template <class Dim, class Vb, class Sb>
 typename Triangulation_data_structure<Dim, Vb, Sb>::Vertex_handle
 Triangulation_data_structure<Dim, Vb, Sb>
-::collapse_face(const Face & f)
+::collapse_face(const Face & f) /* Concept */
 {
     const int fd = f.feature_dimension();
     CGAL_precondition( (1 <= fd ) && (fd < current_dimension()));
@@ -731,7 +740,7 @@ Triangulation_data_structure<Dim, Vb, Sb>
 template <class Dim, class Vb, class Sb>
 void
 Triangulation_data_structure<Dim, Vb, Sb>
-::remove_decrease_dimension(Vertex_handle v, Vertex_handle star)
+::remove_decrease_dimension(Vertex_handle v, Vertex_handle star) /* Concept */
 {
     CGAL_assertion( current_dimension() >= -1 );
     if( -1 == current_dimension() )
@@ -803,7 +812,7 @@ Triangulation_data_structure<Dim, Vb, Sb>
 template <class Dim, class Vb, class Sb>
 typename Triangulation_data_structure<Dim, Vb, Sb>::Vertex_handle
 Triangulation_data_structure<Dim, Vb, Sb>
-::insert_in_full_cell(Full_cell_handle s)
+::insert_in_full_cell(Full_cell_handle s) /* Concept */
 {
     CGAL_precondition(0 < current_dimension());
     CGAL_precondition(Full_cell_handle() != s);
@@ -835,7 +844,7 @@ Triangulation_data_structure<Dim, Vb, Sb>
 template <class Dim, class Vb, class Sb >
 typename Triangulation_data_structure<Dim, Vb, Sb>::Vertex_handle
 Triangulation_data_structure<Dim, Vb, Sb>
-::insert_in_face(const Face & f)
+::insert_in_face(const Face & f) /* Concept */
 {
     std::vector<Full_cell_handle> simps;
     simps.reserve(64);
@@ -846,7 +855,7 @@ Triangulation_data_structure<Dim, Vb, Sb>
 template <class Dim, class Vb, class Sb >
 typename Triangulation_data_structure<Dim, Vb, Sb>::Vertex_handle
 Triangulation_data_structure<Dim, Vb, Sb>
-::insert_in_facet(const Facet & ft)
+::insert_in_facet(const Facet & ft) /* Concept */
 {
     Full_cell_handle s[2];
     s[0] = full_cell(ft);
@@ -923,8 +932,8 @@ template< class Dim, class Vb, class Sb >
 template< typename Forward_iterator, typename OutputIterator >
 typename Triangulation_data_structure<Dim, Vb, Sb>::Vertex_handle
 Triangulation_data_structure<Dim, Vb, Sb>
-::insert_in_hole(   Forward_iterator start, Forward_iterator end, Facet f,
-                    OutputIterator out)
+::insert_in_hole(Forward_iterator start, Forward_iterator end, Facet f,
+                 OutputIterator out) /* Concept */
 {
     CGAL_expensive_precondition(
             ( std::distance(start, end) == 1 )
@@ -942,7 +951,7 @@ template< class Dim, class Vb, class Sb >
 template< typename Forward_iterator >
 typename Triangulation_data_structure<Dim, Vb, Sb>::Vertex_handle
 Triangulation_data_structure<Dim, Vb, Sb>
-::insert_in_hole(Forward_iterator start, Forward_iterator end, Facet f)
+::insert_in_hole(Forward_iterator start, Forward_iterator end, Facet f) /* Concept */
 {
     Emptyset_iterator out;
     return insert_in_hole(start, end, f, out);
@@ -1056,7 +1065,7 @@ void Triangulation_data_structure<Dim, Vb, Sb>
 template <class Dim, class Vb, class Sb>
 typename Triangulation_data_structure<Dim, Vb, Sb>::Vertex_handle
 Triangulation_data_structure<Dim, Vb, Sb>
-::insert_increase_dimension(Vertex_handle star = Vertex_handle())
+::insert_increase_dimension(Vertex_handle star = Vertex_handle()) /* Concept */
 {
     const int prev_cur_dim = current_dimension();
     CGAL_precondition(prev_cur_dim < ambient_dimension());
@@ -1104,7 +1113,7 @@ Triangulation_data_structure<Dim, Vb, Sb>
 
 template <class Dimen, class Vb, class Sb>
 bool Triangulation_data_structure<Dimen, Vb, Sb>
-::is_valid(bool verbose, int /* level */) const
+::is_valid(bool verbose, int /* level */) const /* Concept */
 { 
     Full_cell_const_handle s, t;
     Vertex_const_handle v;

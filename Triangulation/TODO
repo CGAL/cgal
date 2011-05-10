@@ -1,6 +1,8 @@
+
 __________________________________________________________________________RENAMING
 
-doc
+*) doc :
+--------
 
 Pure_complex                        Triangulation
 Delaunay_complex                    Delaunay_triangulation
@@ -21,48 +23,61 @@ Pure_complex_vertex                 Triangulation_vertex
 RegularComplexTraits                RegularTriangulationTraits 
 Regular_complex                     Regular_triangulation
 
-code
+*) code not done :
+------------------
 
-[DONE] /Pure_complex/Triangulation/
-[DONE] /Delaunay_complex/Delaunay_triangulation/
-[DONE] /Simplex/Full_cell/
-[DONE] /simplex/full_cell/
-[DONE] /number_of_simplices/number_of_full_cells/
-[DONE] /gather_simplices/gather_full_cells/
-[DONE] /gather_incident_simplices/incident_full_cells/
-[DONE] /gather_adjacent_simplices/compute_star/
-    but why not star?
-[DONE] /contract_face/collapse_face/
-[DONE] /index_of/index/
 /is_finite/! is_infinite/
-[DONE] /contract_face/collapse_face/
-[DONE] /full_cell_of/full_cell/
-
-
-
 is_boundary_facet
 
-to remove (comment) (sam: I find them useful!)
+*) code done :
+--------------
+
+/Pure_complex/Triangulation/
+/Delaunay_complex/Delaunay_triangulation/
+/Simplex/Full_cell/
+/simplex/full_cell/
+/number_of_simplices/number_of_full_cells/
+/gather_simplices/gather_full_cells/
+/gather_incident_simplices/incident_full_cells/
+/gather_adjacent_simplices/compute_star/
+    but why not star?
+/contract_face/collapse_face/
+/index_of/index/
+/contract_face/collapse_face/
+/full_cell_of/full_cell/
+
+*) to remove (comment) :
+------------------------
+
 gather_incident_faces
-gather_incident_upper_faces
-
-
+gather_incident_upper_faces (sam: I find them useful!)
 
 
 __________________________________________________________________________ALL
 
 *) FUTURE: better system for simplex's flag (visited)
-_________________________________________________________________________PCDS
 
-_________________________________________________________________PURE_COMPLEX
+_________________________________________________TRIANGULATION_DATA_STRUCTURE
 
-_____________________________________________________________DELAUNAY_COMPLEX
+*) TriangulationDataStructure.tex:
+  - Remove the precise type definition in the documentation of the type Facet
+    Or write typedef CGAL::cpp0x::tuple<Full_cell_handle, int> Facet;
+  - full_cell_of(Facet) OR full_cell(Facet) ?
+  - OK, virer is_boundary_facet de la doc du concept : à mettre dans la doc
+    de la classe ?
+  - idem pour insert_in_tagged_hole.
+  - Should we put >> and << in the documentation of the class
+    Triangulation_data_structure ?
 
-______________________________________________________________REGULAR_COMPLEX
+*) Triangulation_data_structure.h:
+  - Ensure that it is topologically possible to collapse the Face in
+    collapse_face(Face)
+________________________________________________________________TRIANGULATION
 
-*) write Regular_complex.h (!)
-*) write RegularComplexTraits.tex
-*) write Regular_complex.tex
-_______________________________________________________________________KERNEL
+_______________________________________________________DELAUNAY_TRIANGULATION
 
-...
+________________________________________________________REGULAR_TRIANGULATION
+
+*) write Regular_triangulaion.h (!)
+*) write RegularTriangulationTraits.tex
+*) write Regular_triangulation.tex
