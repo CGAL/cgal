@@ -2,12 +2,18 @@
 #include <CGAL/myeigen.h>
 #include <CGAL/Kernel_d/Cartesian_base.h>
 #include <CGAL/Kernel_d/Cartesian_filter_NT.h>
+#include <CGAL/Kernel_d/Cartesian_filter_K.h>
 #include <CGAL/Gmpq.h>
 #include <CGAL/Interval_nt.h>
 #include <iostream>
 typedef CGAL::Cartesian_base_d<double,CGAL::Dimension_tag<2> > K0;
+#if 0
 typedef CGAL::Cartesian_filter_NT<K0> K1;
-//typedef CGAL::Cartesian_change_FT<K0,double> K1;
+#elif 1
+typedef CGAL::Cartesian_base_d<CGAL::Interval_nt_advanced,CGAL::Dimension_tag<2> > KA;
+typedef CGAL::Cartesian_base_d<CGAL::Gmpq,CGAL::Dimension_tag<2> > KE;
+typedef CGAL::Cartesian_filter_K<K0,KA,KE> K1;
+#endif
 typedef K1::Point P;
 typedef K1::Vector V;
 typedef K1::Segment S;
