@@ -511,7 +511,7 @@ public:
     template< typename OutputIterator >
     OutputIterator incident_full_cells(Vertex_const_handle, OutputIterator) const; /* Concept */
     template< typename OutputIterator >
-    OutputIterator compute_star(const Face &, OutputIterator) const; /* Concept */
+    OutputIterator star(const Face &, OutputIterator) const; /* Concept */
 #ifndef CGAL_CFG_NO_CPP0X_DEFAULT_TEMPLATE_ARGUMENTS_FOR_FUNCTION_TEMPLATES 
     template< typename OutputIterator, typename Comparator = std::less<Vertex_const_handle> >
     OutputIterator incident_upper_faces(Vertex_const_handle v, const int d, OutputIterator out, Comparator cmp = Comparator())
@@ -581,7 +581,7 @@ template< class Dim, class Vb, class Sb >
 template< typename OutputIterator >
 OutputIterator
 Triangulation_data_structure<Dim, Vb, Sb>
-::compute_star(const Face & f, OutputIterator out) const /* Concept */
+::star(const Face & f, OutputIterator out) const /* Concept */
 {
     // CGAL_precondition_msg(is_full_cell(f.full_cell()), "the facet does not belong to the Triangulation");
     Star_traversal_predicate tp(*this, f);
@@ -730,7 +730,7 @@ Triangulation_data_structure<Dim, Vb, Sb>
     // compute the star of f
     simps.reserve(64);
     std::back_insert_iterator<std::vector<Full_cell_handle> > out(simps);
-    compute_star(f, out);
+    star(f, out);
     Vertex_handle v = insert_in_hole(simps.begin(), simps.end(), Facet(f.full_cell(), f.index(0)));
     for( int i = 0; i <= fd; ++i )
         delete_vertex(s.vertex(i));

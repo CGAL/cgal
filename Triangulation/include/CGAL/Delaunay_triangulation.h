@@ -90,7 +90,7 @@ public:
     using Base::are_incident_full_cells_valid;
     using Base::coaffine_orientation_predicate;
     using Base::current_dimension;
-    using Base::compute_star;
+    using Base::star;
     using Base::incident_full_cells;
     using Base::geom_traits;
     using Base::get_visited;

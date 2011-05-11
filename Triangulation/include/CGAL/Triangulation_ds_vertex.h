@@ -42,27 +42,27 @@ public:
     };
 
 protected: // DATA MEMBERS
-    Full_cell_handle full_cell_; // A handle to an adjacent full_cell
+    Full_cell_handle full_cell_; // A handle to an incident full_cell
 
 public:	
-    // Constructs a vertex with adjacent full_cell 's'
+    // Constructs a vertex with incident full_cell 's'
     Triangulation_ds_vertex(Full_cell_handle s) : full_cell_(s) /* Concept */
     {
         CGAL_assertion( Full_cell_handle() != s );
     }
-    // Constructs a vertex with no adjacent full_cell
+    // Constructs a vertex with no incident full_cell
     Triangulation_ds_vertex() : full_cell_() {} /* Concept */
 
     ~Triangulation_ds_vertex() {}
 
-    /// Set 's' as an adjacent full_cell
+    /// Set 's' as an incident full_cell
     void set_full_cell(Full_cell_handle s) /* Concept */
     {
 		CGAL_precondition( Full_cell_handle() != s );
         full_cell_ = s;
     }
 
-    /// Returns a full_cell adjacent to the vertex
+    /// Returns a full_cell incident to the vertex
     Full_cell_handle full_cell() const /* Concept */
     {
         return full_cell_;
@@ -72,7 +72,8 @@ public:
     {
         if( Full_cell_handle() == full_cell() )
         {
-            if( verbose ) CGAL_warning_msg(false, "vertex has no incident full cell.");
+            if( verbose )
+                CGAL_warning_msg(false, "vertex has no incident full cell.");
             return false;
         }
         return true;

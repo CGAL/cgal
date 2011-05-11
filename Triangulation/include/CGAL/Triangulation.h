@@ -395,9 +395,9 @@ public:
         return tds().incident_full_cells(v, out);
     }
     template< typename OutputIterator >
-    OutputIterator compute_star(const Face & f, OutputIterator out) const
+    OutputIterator star(const Face & f, OutputIterator out) const
     {
-        return tds().compute_star(f, out);
+        return tds().star(f, out);
     }
 
     template< typename OutputIterator >
