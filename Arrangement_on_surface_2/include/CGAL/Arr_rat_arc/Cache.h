@@ -72,11 +72,11 @@ public:
         Rational_function_canonicalized_pair,
         Less_compare_rational_function_pair_key> Rational_function_canonicalized_pair_map;
 public:
-  Cache() {};
+  Cache() : _rat_func_map_watermark(128),_rat_pair_map_watermark(128){};
   
-  const Rational_function&  get_rational_function( const Polynomial_1& numer,
-      const Polynomial_1& denom, 
-      Algebraic_kernel kernel = Algebraic_kernel()) const
+  const Rational_function&  get_rational_function(const Polynomial_1& numer,
+                                                  const Polynomial_1& denom,
+                                                  Algebraic_kernel kernel = Algebraic_kernel()) 
   {
     Rational_function_key key  = get_key(numer,denom);
 
@@ -89,13 +89,18 @@ public:
       }
     else    //element does not exist, create it & insert to cache
       {
+        //first check if to clean up cache
+        if (_rat_func_map.size() > _rat_func_map_watermark)
+          rat_func_map_clean_up();
+
+        //then inert the new element
         Rational_function f(numer,denom,kernel);
         typename Rational_function_map::iterator it2 = _rat_func_map.insert(it,std::make_pair(key,f)); 
         return it2->second; 
       } 
   }
   const Rational_function&  get_rational_function( const Rational& rat,
-      Algebraic_kernel kernel = Algebraic_kernel()) const
+      Algebraic_kernel kernel = Algebraic_kernel()) 
   {
     Integer  numer,denom;
     typename FT_rat_1::Decompose()(rat,numer,denom);
@@ -108,7 +113,7 @@ public:
 
   const Rational_function_pair get_rational_pair ( const Rational_function& f, 
       const Rational_function& g,
-      Algebraic_kernel kernel = Algebraic_kernel()) const
+      Algebraic_kernel kernel = Algebraic_kernel()) 
   {
     CGAL_precondition(!(f==g));
     Rational_function_canonicalized_pair_key key  = get_key(f,g);
@@ -123,6 +128,10 @@ public:
       }
     else    //element does not exist, 
       {
+        //first check if to clean up cache
+        if (_rat_pair_map.size() > _rat_pair_map_watermark)
+          rat_pair_map_clean_up();
+
         //create it & insert to cache
         Rational_function_canonicalized_pair p(f,g,kernel);
         typename Rational_function_canonicalized_pair_map::const_iterator it2 = 
@@ -131,7 +140,11 @@ public:
       }
   }
 
-
+  void clear() 
+  {
+    _rat_func_map.clear();
+    _rat_pair_map.clear();
+  }
 private:
   Rational_function_key get_key(const Polynomial_1& numer, const Polynomial_1& denom) const 
   {
@@ -149,9 +162,59 @@ private:
 
   }
 
+  void rat_func_map_clean_up()
+  {
+    //find eraseable rational functions
+    std::vector<Rational_function_key> eraseable;
+    for ( Rational_function_map::iterator iter = _rat_func_map.begin();
+          iter != _rat_func_map.end();
+          ++iter)
+    {
+      if (iter->second.is_shared() == false)
+        eraseable.push_back(iter->first);
+    }
+
+    //erase functions
+    for ( std::vector<Rational_function_key>::iterator iter = eraseable.begin();
+          iter != eraseable.end();
+          ++iter)
+    {
+      _rat_func_map.erase(*iter);
+    }
+
+    //re-set watermark
+    _rat_func_map_watermark = 2*_rat_func_map.size();
+    return;
+  }
+  void rat_pair_map_clean_up()
+  {
+    //find eraseable rational functions
+    std::vector<Rational_function_canonicalized_pair_key> eraseable;
+    for ( Rational_function_canonicalized_pair_map::iterator iter = _rat_pair_map.begin();
+          iter != _rat_pair_map.end();
+          ++iter)
+    {
+      if (iter->second.is_shared() == false)
+        eraseable.push_back(iter->first);
+    }
+
+    //erase functions
+    for ( std::vector<Rational_function_canonicalized_pair_key>::iterator iter = eraseable.begin();
+          iter != eraseable.end();
+          ++iter)
+    {
+      _rat_pair_map.erase(*iter);
+    }
+
+    //re-set watermark
+    _rat_pair_map_watermark = 2*_rat_pair_map.size();
+    return;
+  }
 private:
-  mutable Rational_function_map                  _rat_func_map;      
-  mutable Rational_function_canonicalized_pair_map _rat_pair_map;
+  mutable Rational_function_map                     _rat_func_map;
+  unsigned int _rat_func_map_watermark;
+  mutable Rational_function_canonicalized_pair_map  _rat_pair_map;
+  unsigned int _rat_pair_map_watermark;
 }; //Cache
  
 }   //namespace Arr_rational_arc
