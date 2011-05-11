@@ -60,7 +60,9 @@ of the face in the cell \ccVar.\ccc{full_cell()}. \ccPrecond $0\leq i\leq$\ccVar
 \ccc{Full_cell_handle}.}
 
 \ccMethod{void set_index(int i, int j);}{Sets the index of the \ccc{i}-th
-vertex of the face. \ccPrecond $0\leq j\leq$\ccVar.\ccc{full_cell()->ambient_dimension()}.}
+vertex of the face.
+\ccPrecond $0\leq i<$\ccVar.\ccc{full_cell()->ambient_dimension()}.
+\ccPrecond $0\leq j\leq$\ccVar.\ccc{full_cell()->ambient_dimension()}.}
 
 \ccSeeAlso
 

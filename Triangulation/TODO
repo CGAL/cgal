@@ -26,6 +26,7 @@ Regular_complex                     Regular_triangulation
 *) code not done :
 ------------------
 
+/IN_SIMPLEX/IN_FULL_CELL
 /is_finite/! is_infinite/
 flag stuff, really documented ? : is_boundary_facet
 

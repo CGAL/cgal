@@ -28,8 +28,8 @@ class Triangulation_face
 {
     typedef typename internal::Dimen_plus_one<typename TDS::Ambient_dimension>::type Dimen_plus;
 public:
-    typedef typename TDS::Full_cell_handle          Full_cell_handle;
-    typedef typename TDS::Vertex_handle             Vertex_handle;
+    typedef typename TDS::Full_cell_handle          Full_cell_handle; /* Concept */
+    typedef typename TDS::Vertex_handle             Vertex_handle; /* Concept */
     typedef internal::S_or_D_array<int, Dimen_plus> Indices;
 
 protected:
@@ -37,42 +37,42 @@ protected:
     Indices                 indices_;
 
 public:
-    explicit Triangulation_face(Full_cell_handle s)
+    explicit Triangulation_face(Full_cell_handle s) /* Concept */
     : full_cell_(s), indices_(s->ambient_dimension()+1)
     {
         CGAL_assertion( Full_cell_handle() != s );
         clear();
     }
 
-    explicit Triangulation_face(const int ambient_dim)
+    explicit Triangulation_face(const int ambient_dim) /* Concept */
     : full_cell_(), indices_(ambient_dim+1)
     {
         clear();
     }
 
-    Triangulation_face(const Triangulation_face & f)
+    Triangulation_face(const Triangulation_face & f) /* Concept */
     : full_cell_(f.full_cell_), indices_(f.indices_)
     {}
 
-    int feature_dimension() const
+    int feature_dimension() const /* Concept */
     {
         int i(0);
         while( -1 != indices_[i] ) ++i;
         return (i-1);
     }
 
-    Full_cell_handle full_cell() const
+    Full_cell_handle full_cell() const /* Concept */
     {
         return full_cell_;
     }
 
-    int index(const int i) const
+    int index(const int i) const /* Concept */
     {
         CGAL_precondition( (0 <= i) && (i <= feature_dimension()) );
         return indices_[i];
     }
 
-    Vertex_handle vertex(const int i) const
+    Vertex_handle vertex(const int i) const /* Concept */
     {
         int j = index(i);
         if( j == -1 )
@@ -82,21 +82,22 @@ public:
 
 // - - - - - - - - - - - - - - - - - -  UPDATE FUNCTIONS	
 
-    void clear()
+    void clear() /* Concept */
     {    
         const int d = indices_.size();
         for(int i = 0; i < d; ++i )
             indices_[i] = -1;
     }
 
-    void set_full_cell(Full_cell_handle s)
+    void set_full_cell(Full_cell_handle s) /* Concept */
     {
         CGAL_precondition( Full_cell_handle() != s );
         full_cell_ = s;
     }
 
-    void set_index(const int i, const int idx)
+    void set_index(const int i, const int idx) /* Concept */
     {
+        CGAL_precondition( (0 <= i) && ((size_t)i+1 < indices_.size()) );
         CGAL_precondition( (0 <= idx) && ((size_t)idx < indices_.size()) );
         indices_[i] = idx;
     }

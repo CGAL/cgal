@@ -909,7 +909,7 @@ Triangulation<TT, TDS>
         face.set_full_cell(s);
         int num(0);
         int verts(0);
-        for(int i = 0; i <= cur_dim; ++i)
+        for(int i = 0; i < cur_dim; ++i)
         {
             if( orientations_[i] == COPLANAR )
             {
@@ -919,6 +919,17 @@ Triangulation<TT, TDS>
             else
                 face.set_index(verts++, i);
         }
+        //-- We could put if{}else{} below in the loop above, but then we would
+        // need to test if (verts < cur_dim) many times... we do it only once
+        // here:
+        if( orientations_[cur_dim] == COPLANAR )
+        {
+            ++num;
+            facet = Facet(s, cur_dim);
+        }
+        else if( verts < cur_dim )
+            face.set_index(verts, cur_dim);
+        //--//
         if( 0 == num )
         {
             loc_type = IN_SIMPLEX;
