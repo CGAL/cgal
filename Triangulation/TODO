@@ -27,7 +27,7 @@ Regular_complex                     Regular_triangulation
 ------------------
 
 /is_finite/! is_infinite/
-is_boundary_facet
+flag stuff, really documented ? : is_boundary_facet
 
 *) code done :
 --------------
@@ -46,12 +46,13 @@ is_boundary_facet
 /contract_face/collapse_face/
 /full_cell_of/full_cell/
 
+
+
 *) to remove (comment) :
 ------------------------
 
 gather_incident_faces
-gather_incident_upper_faces (sam: I find them useful!)
-
+gather_incident_upper_faces (sam: I find them useful! olivier: ok)
 
 __________________________________________________________________________ALL
 

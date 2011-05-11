@@ -189,38 +189,43 @@ Returns the (probably modified) output iterator.
 }
 
 \ccMethod{template< typename OutputIterator > OutputIterator
-compute_star(const Face & f, OutputIterator out) const;}
+star(const Face & f, OutputIterator out) const;}
 {Insert in \ccc{out} all the full cells that share at least one vertex with the \ccc{Face
 f}. Returns the (probably modified) output iterator.
 %\ccPrecond\ccc{is_full_cell(f.full_cell())}.
 }
 
-% \ccMethod{template< typename OutputIterator > OutputIterator
-% gather_incident_faces(Vertex_const_handle v, const int d, OutputIterator
-% out);}{Constructs all the \ccc{Face}s of dimension \ccc{d} incident to
-% \ccc{Vertex} v and inserts them in the \ccc{OutputIterator out}.  If \ccc{d
-% >=} \ccVar.\ccc{current_dimension()}, then no \ccc{Face} is
-% constructed.\ccPrecond\ccc{0 < d}.}
+\ccMethod{template< typename OutputIterator > OutputIterator
+ incident_faces(Vertex_const_handle v, const int d, OutputIterator
+ out);}{Constructs all the \ccc{Face}s of dimension \ccc{d} incident to
+ \ccc{Vertex} v and inserts them in the \ccc{OutputIterator out}.  If \ccc{d
+ >=} \ccVar.\ccc{current_dimension()}, then no \ccc{Face} is
+ constructed.
+\ccPrecond\ccc{0 < d}.
+}
 
-% \ccMethod{template< typename OutputIterator > OutputIterator
-% gather_incident_upper_faces(Vertex_const_handle v, const int d, OutputIterator
-% out);}{Constructs all the \textbf{upper} \ccc{Face}s of dimension \ccc{d}
-% incident to \ccc{Vertex} v and inserts them in the \ccc{OutputIterator out}.\\
-% Assuming some total ordering on the vertices of the complex (which is
-% invariant as long as no vertex is inserted in or removed from the complex), a
-% \ccc{Face} incident to \ccc{v} is an \emph{upper} \ccc{Face} if and only if
-% its vertices occur at \ccc{v} or beyond \ccc{v} in the ordering.\\ In
-% particular, taking the disjoint union of the upper \ccc{Face}s of dimension
-% \ccc{d} incident to every vertex of the complex yields exactly the set of
-% faces of dimension \ccc{d} of the complex.\\ The constructed \ccc{Faces} are
-% lexicographically ordered (using the vertex order as base ordering). If \ccc{d
-% >=} \ccVar.\ccc{current_dimension()}, then no \ccc{Face} is
-% constructed.\ccPrecond\ccc{0 < d}.}
+\ccMethod{template< typename OutputIterator > OutputIterator
+incident_upper_faces(Vertex_const_handle v, const int d, OutputIterator
+ out);}{Constructs all the \textbf{upper} \ccc{Face}s of dimension \ccc{d}
+ incident to \ccc{Vertex} v and inserts them in the \ccc{OutputIterator out}.\\
+ Assuming some total ordering on the vertices of the complex (which is
+ invariant as long as no vertex is inserted in or removed from the complex), a
+ \ccc{Face} incident to \ccc{v} is an \emph{upper} \ccc{Face} if and only if
+ its vertices occur at \ccc{v} or beyond \ccc{v} in the ordering.\\ In
+ particular, taking the disjoint union of the upper \ccc{Face}s of dimension
+ \ccc{d} incident to every vertex of the complex yields exactly the set of
+ faces of dimension \ccc{d} of the complex.\\ The constructed \ccc{Faces} are
+ lexicographically ordered (using the vertex order as base
+ ordering). If
+$d\geq$\ccVar.\ccc{current_dimension()}, then no \ccc{Face} is
+ constructed.
+\ccPrecond\ccc{0 < d}.
+}
 
-% \ccGlue\ccMethod{template< typename OutputIterator, typename Comparator >
-% OutputIterator gather_incident_upper_faces(Vertex_const_handle v, const int d,
-% OutputIterator out, Comparator cmp);} {Same as above, but uses \ccc{cmp} as
-% the vertex ordering to define the upper faces.}
+\ccGlue\ccMethod{template< typename OutputIterator, typename Comparator >
+ OutputIterator incident_upper_faces(Vertex_const_handle v, const int d,
+ OutputIterator out, Comparator cmp);} {Same as above, but uses \ccc{cmp} as
+ the vertex ordering to define the upper faces.}
 
 \ccHeading{Accessing the vertices} % --------------------- ACCESS TO VERTICES
 

@@ -246,7 +246,7 @@ Returns the (probably modified) output iterator.
 }
 
 \ccMethod{template< typename OutputIterator > OutputIterator
-compute_star(const Face & f, OutputIterator out) const;}
+star(const Face & f, OutputIterator out) const;}
 {Insert in \ccc{out} all the cells that share at least one vertex with the \ccc{Face
 f}. Returns the (probably modified) output iterator.
 %\ccPrecond\ccc{is_full_cell(f.full_cell())}.
@@ -261,29 +261,31 @@ constructed.
 \ccPrecond$0 < d$.
 }
 
-% \ccMethod{template< typename OutputIterator > OutputIterator
-% incident_upper_faces(Vertex_const_handle v, int d, OutputIterator
-% out);}{Constructs all the \textbf{upper} \ccc{Face}s of dimension \ccc{d}
-% incident to \ccc{Vertex} v and inserts them in the \ccc{OutputIterator out}.\\
-% Assuming some total ordering on the vertices of the triangulation (which is
-% invariant as long as no vertex is inserted in or removed from the triangulation), a
-% \ccc{Face} incident to \ccc{v} is an \emph{upper} \ccc{Face} if and only if
-% its vertices occur at \ccc{v} or beyond \ccc{v} in the ordering.\\ In
-% particular, taking the disjoint union of the upper \ccc{Face}s of dimension
-% \ccc{d} incident to every vertex of the triangulation yields exactly the set of
-% faces of dimension \ccc{d} of the triangulation.\\ The constructed \ccc{Faces} are
-% lexicographically ordered using the vertex order as base ordering. In order to
-% make it easy to find the infinite \ccc{Faces}, the latter ordering makes the
-% vertex at infinity the smallest vertex; so calling the method on a finite
-% vertex will construct only finite faces and calling it on the vertex at
-% infinity will produce all infinite \ccc{d}-faces. (Elle est pas belle, la vie
-% ?) If \ccc{d >=} \ccVar.\ccc{current_dimension()}, then no \ccc{Face} is
-% constructed.\ccPrecond\ccc{0 < d}.}
+\ccMethod{template< typename OutputIterator > OutputIterator
+incident_upper_faces(Vertex_const_handle v, int d, OutputIterator
+out);}{Constructs all the \textbf{upper} \ccc{Face}s of dimension \ccc{d}
+incident to \ccc{Vertex} v and inserts them in the \ccc{OutputIterator out}.\\
+Assuming some total ordering on the vertices of the triangulation (which is
+invariant as long as no vertex is inserted in or removed from the triangulation), a
+\ccc{Face} incident to \ccc{v} is an \emph{upper} \ccc{Face} if and only if
+its vertices occur at \ccc{v} or beyond \ccc{v} in the ordering.\\ In
+particular, taking the disjoint union of the upper \ccc{Face}s of dimension
+\ccc{d} incident to every vertex of the triangulation yields exactly the set of
+faces of dimension \ccc{d} of the triangulation.\\ The constructed \ccc{Faces} are
+lexicographically ordered using the vertex order as base ordering. In order to
+make it easy to find the infinite \ccc{Faces}, the latter ordering makes the
+vertex at infinity the smallest vertex; so calling the method on a finite
+vertex will construct only finite faces and calling it on the vertex at
+infinity will produce all infinite \ccc{d}-faces. (Elle est pas belle, la vie
+?) If $d\geq $\ccVar.\ccc{current_dimension()}, then no \ccc{Face} is
+constructed.
+\ccPrecond$0 < d$.
+}
 
-% \ccGlue\ccMethod{template< typename OutputIterator, typename Comparator >
-% OutputIterator incident_upper_faces(Vertex_const_handle v, const int d,
-% OutputIterator out, Comparator cmp);} {Same as above, but uses \ccc{cmp} as
-% the vertex ordering to define the upper faces.}
+\ccGlue\ccMethod{template< typename OutputIterator, typename Comparator >
+OutputIterator incident_upper_faces(Vertex_const_handle v, const int d,
+OutputIterator out, Comparator cmp);} {Same as above, but uses \ccc{cmp} as
+the vertex ordering to define the upper faces.}
 
 \ccHeading{Faces and Facets} % - - - - - - - - - - - - - - - - - - - - FACETS
 
