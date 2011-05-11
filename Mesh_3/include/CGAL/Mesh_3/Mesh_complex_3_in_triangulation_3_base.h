@@ -112,6 +112,11 @@ public:
   /// Removes facet \c facet from 2D complex
   void remove_from_complex(const Facet& facet);
 
+  /// Removes facet(\c cell, \c i) from 2D complex
+  void remove_from_complex(const Cell_handle& c, const int i) {
+    remove_from_complex(Facet(c, i));
+  }
+
   /// Sets surface index of facet \c facet to \c index
   void set_surface_patch_index(const Facet& f, const Surface_patch_index& index)
   {
@@ -423,7 +428,7 @@ public:
   typedef Surface_patch_index   Surface_index;
 
   void set_surface_index(const Facet& f, const Surface_index& index)
-  { set_surface_patch_index(f.first, index); }
+  { set_surface_patch_index(f, index); }
   
   void set_surface_index(const Cell_handle& c, const int i, const Surface_index& index)
   { set_surface_patch_index(c,i,index); }
