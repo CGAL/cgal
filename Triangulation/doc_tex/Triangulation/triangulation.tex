@@ -117,26 +117,25 @@ which can be queried with \ccc{tds.current_dimension()}. In the sequel, let
 us denote the ambient dimension with \ad\ and the current dimension with \cd.
 It always holds that $-2\leq\ad\leq\cd$ and $0<D$.
 
-\note{A mon avis ce paragraphe est pas tres approprie, en 3D le type
-\ccc{Cell} est utilise en dimension degenere
 
-\paragraph{On the \ccc{Facet} nested type}
+\note{ I remove some comments about 3D vs dD which are not exact.
+in T3D package in degenerate dimension
+\ccc{Cell} is actually used with the same meaning as here 
+(a $d$-face  and not a $D$-face.}
+% \paragraph{On the \ccc{Facet} nested type}
+%  In the \ccc{Triangulation_3} \cgal\ package, the ambient dimension is always
+% 3. With respect to this reference dimension (3), a \ccc{Facet} is always a
+% 2-face (triangle),
+% irrespective of the 3D triangulation's current dimension. In
+% particular, full cells in degenerate planar 3D triangulation are
+% \ccc{Facet}s, not \ccc{Cell}s.
 
-
-In the \ccc{Triangulation_3} \cgal\ package, the ambient dimension is always
-3. With respect to this reference dimension (3), a \ccc{Facet} is always a
-2-face (triangle),
-irrespective of the 3D triangulation's current dimension. In
-particular, full cells in degenerate planar 3D triangulation are
-\ccc{Facet}s, not \ccc{Cell}s.
-
-By contrast, in the present \ccc{Triangulation} \cgal\ package, the reference
-dimension of a pure complex (or a pure complex data structure) is its current
-dimension. This means that, whatever the current dimension is, a full
-cell is always represented by the \ccc{FullCell} nested type, And a
-\ccc{Facet} represents a face of dimension \ccc{current_dimension()-1}
-\textbf{and not} \ccc{ambient_dimension()-1}.
-}
+% By contrast, in the present \ccc{Triangulation} \cgal\ package, the reference
+% dimension of a pure complex (or a pure complex data structure) is its current
+% dimension. This means that, whatever the current dimension is, a full
+% cell is always represented by the \ccc{FullCell} nested type, And a
+% \ccc{Facet} represents a face of dimension \ccc{current_dimension()-1}
+% \textbf{and not} \ccc{ambient_dimension()-1}.
 
 \newcommand{\sphere}{\ensuremath{\mathcal S}}
 
@@ -153,17 +152,22 @@ affine hull of its vertices
 using \textbf{infinite} or \textbf{unbounded} cells to fill the space  outside the convex
 hull of the triangulation's finite vertices. (More details are given in the next section.)
 
-One nice consequence of the above important fact is that the $\cd+1$ neighbors
-of a full cell always exist.
+
+One nice consequence of the above important fact is that a cell has
+always exactly  $\cd+1$ neighbors.
+Two  full cells $\sigma$ and $\sigma'$ sharing a facet are called
+\textbf{neighbor}.
+
 
 Values of $\cd$ (the \emph{current dimension} of the complex) include
 \begin{itemize}
 \item[$\cd=-2$] This corresponds to the non-existence of any object in
-$\sphere^\ad.$
+  the \tds.
 \item[$\cd=-1$] This corresponds to a single vertex and a single cell. In a
 geometric triangulation, this vertex corresponds to the vertex at infinity.
-\item[$\cd=0$] This corresponds to two vertices, each incident to one $0$-face;
-the two cells being neighbor of each other. This is the unique
+\item[$\cd=0$] This corresponds to two vertices, each corresponding to
+  a cell;
+The two cells being neighbor of each other. This is the unique
 triangulation of the $0$-sphere.
 \item[$0<\cd\le\ad$] This corresponds to a standard triangulation of
 the sphere $\sphere^\cd$.
@@ -186,8 +190,7 @@ A \tds\ explicitely stores its vertices and full cells.
 Each vertex stores a reference (a \ccc{Handle}) to one of its incident
 full cell.
 
-Two  full cells $\sigma$ and $\sigma'$ sharing a facet are called
-\textbf{neighbor}.
+
 Each full cell stores references to its $\cd+1$ vertices and
 neighbors. Its vertices and neighbors are indexed from $0$ to \cd. The indexes
 of its neighbors have the following meaning: the $i$-th neighbor of $\sigma$
@@ -244,9 +247,11 @@ can see, take the \tds\ as a template parameter in order to get access to
 some nested types in \tds.
 
 \textbf{This creates a circular dependency}, which we resolve in the same way
-as in the \cgal\ \ccc{Triangulation_3} package (see FIXME). Thus, models of
+as in the \cgal\ \ccc{Triangulation_3} package (see
+Chapters~\ref{chapter-TDS3}~and~\ref{chapter-Triangulation3}).
+ Thus, models of
 the concepts \ccc{Triangulation_ds_vertex<TDS>} and
-\ccc{Triangulation_ds_simplex<TDS, TDSFullCellStoragePolicy>} (typically a
+\ccc{Triangulation_ds_full_cell<TDS, TDSFullCellStoragePolicy>} (typically a
 user's custom classes) must provide a nested template \ccc{Rebind_TDS} which
 is documented in those two concept's reference manual pages.
 
@@ -260,7 +265,7 @@ the reading of the documentation of the \cgal\ \ccc{Triangulation_3} package.
 \subsection{Examples\label{triangulation:tds:examples}}
  
 \paragraph{Incremental Construction}
-The following example shows how to construct a pure complex data structure by
+The following example shows how to construct a triangulation data structure by
 inserting vertices. The reader will make the best use of this example by
 reading it slowly, together with the reference manual documentation of the
 methods that are called (see here: \ccc{TriangulationDataStructure}).
@@ -272,26 +277,27 @@ methods that are called (see here: \ccc{TriangulationDataStructure}).
 
 \section{Triangulations}
 
-The class \ccc{CGAL::Triangulation<TrTraits, TDS>} embeds an abstract pure
-complex in euclidean space, thus forming a pure complex. More precisely, it
+The class \ccc{CGAL::Triangulation<TrTraits, TDS>} embeds an abstract 
+triangulation in euclidean space. More precisely, it
 maintains a triangulation (a partition into pairwise interior-disjoint full
 cells) of the convex hull of the points (the embedded vertices) of the
-pure complex, as well as a triangulation of the complement of the convex hull
-\textbf{in the affine subspace} spanned by the complex's points.
+triangulation, as well as a triangulation of the complement of the convex hull
+\textbf{in the affine subspace} spanned by the triangulation's points.
 
-Methods are provided for the insertion of points in the complex, the
-contraction of faces, the traversal of various elements of the complex
-as well as the localization of a query point inside the complex.
+Methods are provided for the insertion of points in the triangulation, the
+contraction of faces, the traversal of various elements of the triangulation
+as well as the localization of a query point inside the triangulation.
 
-Unbounded (or infinite) simplices outside the convex hull are each incident to
-a finite facet on the convex hull of the complex and to a unique special
-\textbf{vertex at infinity}. In every infinite simplex, the vertex at infinity
-always has index $0$.
+Infinite cells outside the convex hull are each incident to
+a finite facet on the convex hull of the triangulation and to a unique special
+\textbf{vertex at infinity}. 
+\note{In every infinite cell, the vertex at infinity
+always has index $0$.}
 
 As long as no \emph{advanced} class method is called, it is guaranteed that
-all finite simplices have positive orientation. The infinite simplices are
-oriented so that the convex hull of the complex lies on the negative side of
-the oriented hyperplane defined by the simplex's finite facet.
+all finite cells have positive orientation. The infinite cells are
+oriented so that the convex hull of the triangulation lies on the negative side of
+the oriented hyperplane defined by the cell's finite facet.
 
 
 % - - - - - - - - - - - - - - - - - - - - - - - - - Triangulation IMPLEMENTATION
@@ -300,7 +306,7 @@ the oriented hyperplane defined by the simplex's finite facet.
 
 The class \ccc{CGAL::Triangulation<TrTraits, TDS>} stores a model \ccc{TDS}
 of the concept \ccc{TriangulationDataStructure} which is instanciated with a
-vertex type that stores a point, and a simplex type that allows the retrieval
+vertex type that stores a point, and a full cell type that allows the retrieval
 of the point of its vertices.
 
 The template parameter \ccc{TrTraits} must be a model of the concept
@@ -313,11 +319,11 @@ as various geometric predicates used by the \ccc{Triangulation} class.
 
 \paragraph{Incremental Construction}
 
-The following example shows how to construct a pure complex in which we insert
+The following example shows how to construct a triangulation in which we insert
 random points. In \ccc{STEP 1}, we generate one hundred random points in
-$\real^5$, which we then insert into a pure complex. In \ccc{STEP 2}, we have
-a little fun and ask the pure complex to construct the set of edges
-($1$-simplices) incident to the vertex at infinity. It is easy to see that
+$\real^5$, which we then insert into a triangulation. In \ccc{STEP 2}, we have
+a little fun and ask the triangulation to construct the set of edges
+($1$-cells) incident to the vertex at infinity. It is easy to see that
 these edges are in bijection with the vertices on the convex hull of the
 points. This gives us a handy way to count the convex hull vertices.
 
@@ -325,24 +331,24 @@ points. This gives us a handy way to count the convex hull vertices.
 
 \paragraph{Traversing the facets of the convex hull}
 
-Remember that a pure complex triangulates the convex hull of its points. Each
-facet of the convex hull is incident to one finite simplex and one infinite
-simplex. In fact there is a bijection between the infinite simplices and the
+Remember that a triangulation triangulates the convex hull of its points. Each
+facet of the convex hull is incident to one finite cell and one infinite
+cell. In fact there is a bijection between the infinite cells and the
 facets of the convex hull. So, in order to traverse the convex hull facets,
 there are (at least) two possibilities:
 
-The first is to iterate over the simplices of the complex and check if they
+The first is to iterate over the cells of the triangulation and check if they
 are infinite or not:
 
 \begin{ccExampleCode}
 Triangulation t;
 
-// ... insert points in the pure complex here.
+// ... insert points in the triangulation here.
 
-typedef Triangulation::Simplex_iterator Simplex_iterator;
+typedef Triangulation::Full_cell_iterator Full_cell_iterator;
 typedef Triangulation::Facet Facet;
 
-for( Simplex_iterator sit = t.simplices_begin(); sit != t.simplices_end(); ++sit )
+for( Full_cell_iterator sit = t.full_cells_begin(); sit != t.full_cells_end(); ++sit )
 {
     if( t.is_finite(sit) )
         continue;
@@ -352,25 +358,25 @@ for( Simplex_iterator sit = t.simplices_begin(); sit != t.simplices_end(); ++sit
 (\textbf{Remark}: the code example above will not compile unless you provide
 the missing \ccc{typedef}s and variables declarations.)
 
-A second possibility is to ask the pure complex to gather all the simplices
+A second possibility is to ask the triangulation to gather all the cells
 incident to the infinite vertex: they form precisely the set of infinite
-simplices:
+cells:
 
 \begin{ccExampleCode}
 Triangulation t;
 
-// ... insert points in the pure complex here.
+// ... insert points in the triangulation here.
 
-typedef Triangulation::Simplex_handle Simplex_handle;
+typedef Triangulation::Full_cell_handle Full_cell_handle;
 typedef Triangulation::Facet Facet;
-typedef std::vector<Simplex_handle> Simplices;
+typedef std::vector<Full_cell_handle> Full_cells;
 
-Simplices infinite_simplices;
-std::back_insert_iterator<Simplices> out(infinite_simplices);
+Full_cells infinite_full_cells;
+std::back_insert_iterator<Full_cells> out(infinite_full_cells);
 
-t.incident_simplices(t.infinite_vertex(), out);
+t.incident_full_cells(t.infinite_vertex(), out);
 
-for( Simplices::iterator sit = infinite_simplices.begin(); sit != infinite_simplices.end(); ++sit )
+for( Full_cells::iterator sit = infinite_full_cells.begin(); sit != infinite_full_cells.end(); ++sit )
 {
     Facet ft(*sit, 0); // |ft| is a facet of the convex hull
 }
@@ -379,112 +385,114 @@ for( Simplices::iterator sit = infinite_simplices.begin(); sit != infinite_simpl
 the missing \ccc{typedef}s and variables declarations.)
 
 One important difference between the two examples above is that the first uses
-\emph{little} memory but traverses \emph{all} the simplices, while the second
-visits \emph{only} the infinite simplices but stores handles to them into a
+\emph{little} memory but traverses \emph{all} the cells, while the second
+visits \emph{only} the infinite cells but stores handles to them into a
 \emph{potentially big} array.
 
 % - - - - - - - - - - - - - - - - - - - - - - - - - - - - - DELAUNAY TRIANGULATIONS
 
-\section{Delaunay triangulations}%and regular complexes}
+\section{Delaunay triangulations}%and regular triangulationes}
 
-The class \ccc{CGAL::Delaunay_complex<DCTraits, TDS>} derives from
+The class \ccc{CGAL::Delaunay_triangulation<DTTraits, TDS>} derives from
 \ccc{CGAL::Triangulation<Triangulation Traits, TDS>} and adds further constraints to a
-pure complex, in that all its simplices must have the so-called
+triangulation, in that all its cells must have the so-called
 \textbf{Delaunay} or \textbf{empty-ball} property: the interior of a ball
-circumscribing any simplex of a Delaunay simplex must be free from any vertex
-of the complex.
+circumscribing any face of a Delaunay cell must be free from any vertex
+of the triangulation.
 
-The \textbf{circumscribing sphere} of a simplex \ccc{s} is the smallest sphere
-touching all vertices of the simplex. A pure complex triangulating the convex
+The \textbf{circumscribing sphere} of a face \ccc{s} is the smallest sphere
+touching all vertices of the face. A triangulation of the convex
 hull of a finite point set has the Delaunay (or empty-ball) property if all
-its simplices have the Delaunay (or empty-ball) property.
+its cells have the Delaunay (or empty-ball) property.
 
-Informally, a finite simplex has the Delaunay (or empty-ball) property---with
-respect to the complex---if no point of the complex lies in the interior of
+Informally, a finite cell has the Delaunay (or empty-ball) property---with
+respect to the triangulation---if no point of the triangulation lies in the interior of
 its circumscribing sphere.
 
-When a new point \ccc{p} is inserted into a Delaunay complex, the set of
-finite simplices whose circumscribing sphere contains \ccc{p} are said to
-\textbf{be in conflict} with point \ccc{p}. The set of simplices that are in
+When a new point \ccc{p} is inserted into a Delaunay triangulation, the set of
+finite cells whose circumscribing sphere contains \ccc{p} are said to
+\textbf{be in conflict} with point \ccc{p}. The set of cells that are in
 conflict with \ccc{p} form the \textbf{conflict zone}. That conflict zone is
-augmented with the infinite simplices whose finite facet does not lie
-anymore on the convex hull of the complex (with \ccc{p} added). The simplices
+augmented with the infinite cells whose finite facet does not lie
+anymore on the convex hull of the triangulation (with \ccc{p} added). The cells
 in the conflict zone are removed, leaving a hole that contains \ccc{p}. That
 hole is then re-triangulated in a ``star shape'' centered at \ccc{p}.
+
+Delaunay triangulation also supports vertex removal.
 
 % - - - - - - - - - - - - - - - - - - - - - - - - - DELAUNAY IMPLEMENTATION
 
 \subsection{Implementation}
 
-The class \ccc{CGAL::Delaunay_complex<DCTraits, TDS>} derives from
-\ccc{CGAL::Triangulation<DCTraits, TDS>}. It thus stores a model \ccc{TDS} of
+The class \ccc{CGAL::Delaunay_triangulation<DTTraits, TDS>} derives from
+\ccc{CGAL::Triangulation<DTTraits, TDS>}. It thus stores a model \ccc{TDS} of
 the concept \ccc{TriangulationDataStructure} which is instanciated with a vertex
-type that stores a geometric point, and a simplex type that allows the
+type that stores a geometric point, and a full cell type that allows the
 retrieval of the point of its vertices.
 
-The template parameter \ccc{DCTraits} must be a model of the concept
-\ccc{DelaunayComplexTraits} which provides the geometric \ccc{Point} type as
-well as various geometric predicates used by the \ccc{Delaunay_complex} class.
-The concept \ccc{DelaunayComplexTraits} refines the concept
+The template parameter \ccc{DTTraits} must be a model of the concept
+\ccc{DelaunayTriangulationTraits} which provides the geometric \ccc{Point} type as
+well as various geometric predicates used by the \ccc{Delaunay_triangulation} class.
+The concept \ccc{DelaunayTriangulationTraits} refines the concept
 \ccc{TriangulationTraits} by requiring a few other geometric predicate necessary
-for the computation of Delaunay complexes.
+for the computation of Delaunay triangulations.
 
 % - - - - - - - - - - - - - - - - - - - - - - - - - - - - DELAUNAY EXAMPLES
 
 \subsection{Examples}
 
-\paragraph{Access to the conflict zone and created simplices during point
+\paragraph{Access to the conflict zone and created cells during point
 insertion}
 
-When using a simplex type containing additional custom information, it may be
-useful to get an efficient access to the simplices that are going to be erased
-upon the insertion of a new point in the Delaunay complex, and to the newly
-created simplices. The code example below shows how one can have efficient
-access to both the conflict zone and the created simplices, while still
-retaining an efficient update of the Delaunay complex.
+When using a cell type containing additional custom information, it may be
+useful to get an efficient access to the cells that are going to be erased
+upon the insertion of a new point in the Delaunay triangulation, and to the newly
+created cells. The code example below shows how one can have efficient
+access to both the conflict zone and the created cells, while still
+retaining an efficient update of the Delaunay triangulation.
 
 \textbf{Remark}: the code below will not compile unless you provide the
 missing \ccc{typedef}s and variables declarations.
 
 \begin{ccExampleCode}
-Delaunay_complex dc;
+Delaunay_triangulation t;
 Vertex_handle v;
 // Conflict zone in dimension 0 or 1 are pretty boring.
-assert( 2 <= dc.current_dimension() );
+assert( 2 <= t.current_dimension() );
 
 // We insert the points stored in the vector |points|.
 for( pit = points.begin(); pit != points.end(); ++pit )
 {
-    Face           f = dc.make_empty_face();
-    Facet          ft;
-    Simplex_handle s;
-    Locate_type    lt;
+    Face             f = t.make_empty_face();
+    Facet            ft;
+    Full_cell_handle c;
+    Locate_type      lt;
 
-    s = dc.locate(*pit, lt, f, ft, v);
+    c = t.locate(*pit, lt, f, ft, v);
 
-    if(    lt == Delaunay_complex::ON_VERTEX
-        || lt == Delaunay_complex::OUTSIDE_AFFINE_HULL )
+    if(    lt == Delaunay_triangulation::ON_VERTEX
+        || lt == Delaunay_triangulation::OUTSIDE_AFFINE_HULL )
     {
-        // There is, a priori, no simplex of interest here.
+        // There is, a priori, no full_cell of interest here.
         v = t.insert(*pit, lt, f, ft, s);
     }
     else
     {
-        typedef std::vector<Simplex_handle> Simplices;
-        Simplices conflict_zone, new_simplices;
-        std::back_insert_iterator<Simplices> out(conflict_zone);
-        Facet ftc = dc.compute_conflict_zone(*pit, s, out);
+        typedef std::vector<Full_cell_handle> Full_cells;
+        Full_cells conflict_zone, new_full_cells;
+        std::back_insert_iterator<Full_cells> out(conflict_zone);
+        Facet ftc = t.compute_conflict_zone(*pit, s, out);
         /*----------------------------------------------------\
-        | Here, do something with the conflict zone simplices |
+        | Here, do something with the conflict zone cells     |
         | stored in |conflict_zone|.                          |
         | DO NOT MODIFY the vector |conflict_zone|.           |
         \----------------------------------------------------*/
-        out = std::back_inserter(new_simplices);
-        v = dc.insert_in_hole(p, conflict_zone.begin(), conflict_zone.end(), ftc, out);
-        /*-----------------------------------------------------\
-        |  Here, do something with the newly created simplices |
-        |  stored in |new_simplices|.                          |
-        \-----------------------------------------------------*/
+        out = std::back_inserter(new_full_cells);
+        v = t.insert_in_hole(p, conflict_zone.begin(), conflict_zone.end(), ftc, out);
+        /*----------------------------------------------------\
+        |  Here, do something with the newly created cells    |
+        |  stored in |new_full_cells|.                        |
+        \----------------------------------------------------*/
     }
 }
 \end{ccExampleCode}

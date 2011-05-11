@@ -40,8 +40,6 @@ flag stuff, really documented ? : is_boundary_facet
 /number_of_simplices/number_of_full_cells/
 /gather_simplices/gather_full_cells/
 /gather_incident_simplices/incident_full_cells/
-/gather_adjacent_simplices/compute_star/
-    but why not star?
 /contract_face/collapse_face/
 /index_of/index/
 /contract_face/collapse_face/
@@ -49,11 +47,12 @@ flag stuff, really documented ? : is_boundary_facet
 
 
 
-*) to remove (comment) :
+*) to do ?
 ------------------------
 
-gather_incident_faces
-gather_incident_upper_faces (sam: I find them useful! olivier: ok)
+/gather_adjacent_simplices/star/  or    /compute_star/star/
+/gather_incident_faces/incident_faces/
+/gather_incident_upper_faces/incident_upper_faces/
 
 __________________________________________________________________________ALL
 
@@ -79,7 +78,17 @@ _________________________________________________TRIANGULATION_DATA_STRUCTURE
   - Should we put >> and << in the documentation of the class
     Triangulation_ds_vertex instead of in that of the concept ?
 
+*) TDSFullCellStoragePolicy
+   what is it ?
+   it is undocumented.
+   if the aim is to choose between "full representation" and "1-skeleton"
+   I would prefer a different TDS class, at least the doc has to rewriten a sentence
+   like "class TDS explicitely stores its vertices and full cells" 
+   does not apply to 1-skeleton representation
+
 ________________________________________________________________TRIANGULATION
+
+*) Why vertex at infinity should have index 0 in all cells it appears ?
 
 _______________________________________________________DELAUNAY_TRIANGULATION
 
