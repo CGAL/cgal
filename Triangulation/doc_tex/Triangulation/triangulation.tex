@@ -103,7 +103,7 @@ which \cgal\ provides one model class:
 \ccc{CGAL::Triangulation_data_structure<Dimensionality, TDSVertex,
 TDSFullCell>}.  For simplicity, we use the abbreviation \tds.
 
-A \tds\ can not represent any abstract pure complex, but rather the
+A \tds\ cannot represent any abstract pure complex, but rather the
 combinatorial nature of a (geometric) triangulation. For example, a facet
 may be incident to arbitrarily many simplices in an abstract pure complex, but
 to at most two in a \tds\ (and in fact exactly two as we explain below).
@@ -115,12 +115,13 @@ and can then be queried using the method \ccc{tds.ambient_dimension()}.
 A \tds\ also knows the \textbf{current dimension} of its full cells,
 which can be queried with \ccc{tds.current_dimension()}. In the sequel, let
 us denote the ambient dimension with \ad\ and the current dimension with \cd.
-It always holds that $\ad>0$ and $\cd\le\ad$.
+It always holds that $-2\leq\ad\leq\cd$ and $0<D$.
+
+\note{A mon avis ce paragraphe est pas tres approprie, en 3D le type
+\ccc{Cell} est utilise en dimension degenere
 
 \paragraph{On the \ccc{Facet} nested type}
 
-\note{A mon avis ce paragraphe est pas tres approprie, en 3D le type
-\ccc{Cell} est utilise en dimension degenere}
 
 In the \ccc{Triangulation_3} \cgal\ package, the ambient dimension is always
 3. With respect to this reference dimension (3), a \ccc{Facet} is always a
@@ -135,6 +136,7 @@ dimension. This means that, whatever the current dimension is, a full
 cell is always represented by the \ccc{FullCell} nested type, And a
 \ccc{Facet} represents a face of dimension \ccc{current_dimension()-1}
 \textbf{and not} \ccc{ambient_dimension()-1}.
+}
 
 \newcommand{\sphere}{\ensuremath{\mathcal S}}
 
