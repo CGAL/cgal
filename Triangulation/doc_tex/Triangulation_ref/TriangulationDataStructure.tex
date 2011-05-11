@@ -25,8 +25,8 @@ geometric realization of the \ccRefName\ (\emph{e.g.}, in a
 \ccc{Delaunay_triangulation<DTTraits, TDS>}), this vertex
 corresponds to \emph{the vertex at infinity}.
 
-\item[0] This corresponds to two vertices, each adjacent to one $0$-simplex;
-the two simplices being neighbor of each other. This is the unique
+\item[0] This corresponds to two vertices, each incident to one $0$-face;
+the two cells being neighbor of each other. This is the unique
 triangulation of the $0$-sphere.
 
 \item[$d>0$] This corresponds to a standard triangulation of the sphere
@@ -159,7 +159,7 @@ contains no simplex. Returns \ccc{false} otherwise. }
 {}
 
 \ccMethod{template< typename TraversalPredicate, typename OutputIterator >
-void gather_full_cells(Full_cell_handle c, TraversalPredicate & tp,
+void full_cells(Full_cell_handle c, TraversalPredicate & tp,
 OutputIterator & out) const;}
 {This function computes (\emph{gathers}) a connected set of full cells
 satifying a common criteria. Call them \emph{good} cells. It is assumed
@@ -269,7 +269,7 @@ The beyond vertex of \ccVar.
 %\ccGlue
 %\ccMethod{Full_cell_const_handle simplex(Vertex_const_handle v) const;}
 {Returns a full cell incident to \ccc{Vertex} \ccc{v}. Note that this simplex is
-not unique (\ccc{v} is typically adjacent to more than one simplex).
+not unique (\ccc{v} is typically incident to more than one simplex).
 \ccPrecond\ccc{v} is not the default constructed \ccc{Vertex_handle}}
 
 \ccMethod{Full_cell_handle neighbor(Full_cell_handle c, int i) const;}%{}
@@ -405,7 +405,7 @@ simplices in the range $C=$\ccc{[start, end)} are removed, thus forming a hole.
 A \ccc{Vertex} is inserted and connected to the boundary of the hole in order
 to ``close it''. A \ccc{Vertex_handle} to the new \ccc{Vertex} is returned.
 \ccPrecond $C$ must be a (combinatorial) ball and not contain any vertex
-all of whose adjacent simplices are in $C$. (This implies that
+all of whose incident simplices are in $C$. (This implies that
 \ccVar.\ccc{current_dimension()}$\geq2$ if $|C|>1$.)\\ The boundary of
 $C$ must be a (combinatorial) triangulation of the sphere
 $\sphere^{d-1}$.}
@@ -445,7 +445,7 @@ no associated cell nor index yet.}
 \ccMethod{void associate_vertex_with_full_cell(Full_cell_handle c, int i,
 Vertex_handle v);}
 {Sets the \ccc{i}-th vertex of \ccc{c} to \ccc{v} and, if \ccc{v} is non-NULL,
-sets \ccc{c} as the adjacent cell of \ccc{v}.}
+sets \ccc{c} as the incident cell of \ccc{v}.}
 
 \ccMethod{void set_neighbors(Full_cell_handle ci, int i, Full_cell_handle cj, int
 j);}

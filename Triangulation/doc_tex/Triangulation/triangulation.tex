@@ -23,7 +23,9 @@ singular of which is \textbf{simplex}).
 A simplex $s\in S$ is \textbf{maximal} if it is not a proper subset of some other
 set in $S$. The simplicial complex is \textbf{pure} (or \textbf{homogeneous})
 if all the maximal simplices have the same cardinality ({\emph{i.e.,}\ they have the same
-number of vertices). A \textbf{face} of a simplex is a subset of it. A
+number of vertices). 
+In the sequel, we will call these maximal simplices \textbf{(full) cell}.
+A \textbf{face} of a simplex is a subset of it. A
 \textbf{proper face} of a simplex is a strict subset of it.
 
 If the vertices are embedded into euclidean space $\real^d$, we deal with
@@ -49,7 +51,8 @@ class are not embedded in euclidean space but are only of combinatorial
 nature.
 
 The class \ccc{CGAL::Triangulation<TrTraits, TDS>} embeds an abstract
-triangulation in euclidean space, thus forming a triangulation. Methods are
+triangulation in euclidean space, thus forming a geometric
+triangulation. Methods are
 provided for the insertion %and removal
 of points in the triangulation, the
 traversal of various elements of the triangulation, as well as the localization of a
@@ -59,7 +62,8 @@ The class \ccc{CGAL::Delaunay_triangulation<DelaunayTraits, TDS>} adds further
 constraints to a triangulation, in that all its simplices must have the
 so-called \textbf{Delaunay} or \textbf{empty-ball} property: the interior of
 a ball circumscribing any face of a Delaunay simplex must be free from any
-vertex of the complex.
+vertex of the triangulation. Delaunay triangulation supports deletion
+of vertices.
 
 %The class \ccc{CGAL::Regular_triangulation<RegularTraits, TDS>} is a generalization of
 %the Delaunay triangulation.
@@ -80,11 +84,10 @@ with $i+1$ (affinely independent if embedded) vertices.
 If the maximal dimension of a simplex in the simplicial complex is
 $d$, we call:\\
 --- an $i$-face for some $i\in[0,d]$ a  \textbf{face};\\
+--- a $0$-face a \textbf{vertex};\\
 --- a $(d-2)$-face a \textbf{ridge};\\
 --- a $(d-1)$-face a \textbf{facet}; and\\
 --- a $d$-face  a \textbf{full cell}.
-
-In particular, vertices are $0$-faces.
 
 Two faces $\sigma$ and $\sigma'$ are \textbf{incident} if and only if
 $\sigma'$ is a proper sub-face of $\sigma$ or \emph{vice versa}.
@@ -157,7 +160,7 @@ Values of $\cd$ (the \emph{current dimension} of the complex) include
 $\sphere^\ad.$
 \item[$\cd=-1$] This corresponds to a single vertex and a single cell. In a
 geometric triangulation, this vertex corresponds to the vertex at infinity.
-\item[$\cd=0$] This corresponds to two vertices, each adjacent to one $0$-simplex;
+\item[$\cd=0$] This corresponds to two vertices, each incident to one $0$-face;
 the two cells being neighbor of each other. This is the unique
 triangulation of the $0$-sphere.
 \item[$0<\cd\le\ad$] This corresponds to a standard triangulation of
@@ -181,9 +184,9 @@ A \tds\ explicitely stores its vertices and full cells.
 Each vertex stores a reference (a \ccc{Handle}) to one of its incident
 full cell.
 
-A full cell $\sigma'$ adjacent to the full cell $\sigma$ is called
-a \textbf{neighbor} of $\sigma$ (and $\sigma$ is also a neighbor of
-$\sigma'$). Each full cell stores references to its $\cd+1$ vertices and
+Two  full cells $\sigma$ and $\sigma'$ sharing a facet are called
+\textbf{neighbor}.
+Each full cell stores references to its $\cd+1$ vertices and
 neighbors. Its vertices and neighbors are indexed from $0$ to \cd. The indexes
 of its neighbors have the following meaning: the $i$-th neighbor of $\sigma$
 is the unique neighbor of $\sigma$ that does not contain the $i$-th vertex of
@@ -321,7 +324,7 @@ points. This gives us a handy way to count the convex hull vertices.
 \paragraph{Traversing the facets of the convex hull}
 
 Remember that a pure complex triangulates the convex hull of its points. Each
-facet of the convex hull is adjacent to one finite simplex and one infinite
+facet of the convex hull is incident to one finite simplex and one infinite
 simplex. In fact there is a bijection between the infinite simplices and the
 facets of the convex hull. So, in order to traverse the convex hull facets,
 there are (at least) two possibilities:
@@ -363,7 +366,7 @@ typedef std::vector<Simplex_handle> Simplices;
 Simplices infinite_simplices;
 std::back_insert_iterator<Simplices> out(infinite_simplices);
 
-t.gather_incident_simplices(t.infinite_vertex(), out);
+t.incident_simplices(t.infinite_vertex(), out);
 
 for( Simplices::iterator sit = infinite_simplices.begin(); sit != infinite_simplices.end(); ++sit )
 {
