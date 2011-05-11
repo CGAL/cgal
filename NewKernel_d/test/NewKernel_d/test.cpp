@@ -3,27 +3,32 @@
 #include <CGAL/Kernel_d/Cartesian_base.h>
 #include <CGAL/Kernel_d/Cartesian_filter_NT.h>
 #include <CGAL/Kernel_d/Cartesian_filter_K.h>
+#include <CGAL/Kernel_d/Lazy_cartesian.h>
 #include <CGAL/Gmpq.h>
 #include <CGAL/Interval_nt.h>
 #include <iostream>
 typedef CGAL::Cartesian_base_d<double,CGAL::Dimension_tag<2> > K0;
-#if 0
-typedef CGAL::Cartesian_filter_NT<K0> K1;
-#elif 1
 typedef CGAL::Cartesian_base_d<CGAL::Interval_nt_advanced,CGAL::Dimension_tag<2> > KA;
 typedef CGAL::Cartesian_base_d<CGAL::Gmpq,CGAL::Dimension_tag<2> > KE;
+#if 0
+typedef K0 K1;
+#elif 0
+typedef CGAL::Cartesian_filter_NT<K0> K1;
+#elif 1
 typedef CGAL::Cartesian_filter_K<K0,KA,KE> K1;
+#elif 1
+struct K1: CGAL::Lazy_cartesian<KE,KA,CGAL::CartesianD_converter<KE,KA>,K1>{};
 #endif
 typedef K1::Point P;
 typedef K1::Vector V;
 typedef K1::Segment S;
 //typedef K1::Construct_point CP;
 typedef K1::Construct<CGAL::Construct_point_tag>::type CP;
-typedef K1::Construct_vector CV;
-typedef K1::Construct_cartesian_const_iterator CCI;
+typedef K1::Construct<CGAL::Construct_vector_tag>::type CV;
+typedef K1::Construct<CGAL::Construct_cartesian_const_iterator_tag>::type CCI;
 typedef K1::Predicate<CGAL::Orientation_tag>::type PO;
 typedef K1::Cartesian_const_iterator CI;
-typedef K1::Compute_cartesian_coordinate CC;
+typedef K1::Compute<CGAL::Compute_cartesian_coordinate_tag>::type CC;
 
 int main(){
 	CP cp; CCI ci; CC cc; PO po;
