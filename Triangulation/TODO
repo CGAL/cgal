@@ -86,7 +86,11 @@ _________________________________________________TRIANGULATION_DATA_STRUCTURE
    like "class TDS explicitely stores its vertices and full cells" 
    does not apply to 1-skeleton representation
 
+*) default dim parameter in constructor (especially in the static case)
+
 ________________________________________________________________TRIANGULATION
+
+*) default dim parameter in constructor (especially in the static case)
 
 *) Why vertex at infinity should have index 0 in all cells it appears ?
 
