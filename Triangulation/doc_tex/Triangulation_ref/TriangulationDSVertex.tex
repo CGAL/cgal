@@ -12,11 +12,14 @@ concept.
 
 \ccHasModels
 
-\ccc{Triangulation_ds_vertex<TDS>}
+\ccc{Triangulation_ds_vertex<TDS>}\\
+\ccc{Triangulation_vertex<TrTraits, Data, TDSVertex>}
 
 \ccTypes
 
-\ccNestedType{Full_cell_handle}{A handle to a cell.}
+\ccNestedType{Full_cell_handle}{A handle to a cell. It must be the same as the
+nested type \ccc{TDS::Full_cell_handle} of the \ccc{TDS} in which the
+\ccc{TriangulationDSVertex} is defined/used.}
 
 \ccNestedType{template<typename PC2> Rebind_TDS}{This nested template
 class must define a nested type \ccc{Other} which is the rebound vertex
@@ -55,7 +58,7 @@ classes.}
 % \ccGlue\ccMethod{void* & for_compact_container();}{}
 
 % These member functions are required by the classes
-% \ccc{Triangulation_data_structure<Dimensionality, TDSVertex, TDSSimplex>} and
+% \ccc{Triangulation_data_structure<Dimensionality, TDSVertex, TDSFullCell>} and
 % \ccc{Triangulation<TrTraits, TDS>} (and its derived classes) because they use
 % the \cgal\ container class \ccc{Compact_container} to store their vertices and
 % simplices. See the documentation of \ccc{Compact_container} for the exact
@@ -75,7 +78,7 @@ into \ccc{v}.}
 
 \ccSeeAlso
 
-\ccc{TriangulationDSSimplex}\\
+\ccc{TriangulationDSFullCell}\\
 \ccc{TriangulationDataStructure}
 
 \end{ccRefConcept}

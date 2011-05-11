@@ -6,31 +6,36 @@ The concept \ccRefName\ describes what a full cell is in a model of the concept
 \ccc{TriangulationDataStructure}. It sets requirements of combinatorial nature
 only, as geometry is not concerned here.
 In the context of triangulation, the term cell refer to a face of
-maximal dimension that we often emphasize with the term {\em full cell}.
+\emph{maximal} dimension. We emphasize this maximality characteristic by using
+the term {\em full cell}.
 
 A \ccRefName\ is responsible for storing handles to the vertices of a
-full cell
-as well as handles to its neighbors.
+full cell as well as handles to its neighbors.
 
 This concept is a \emph{sub-concept} of the \ccc{TriangulationDataStructure}
 concept.
 
 \ccHasModels
 
-\ccc{Triangulation_ds_full_cell<TDS, TDSFullCellStoragePolicy>}
+\ccc{Triangulation_ds_full_cell<TDS, TDSFullCellStoragePolicy>}\\
+\ccc{Triangulation_full_cell<TrTraits, Data, TDSFullCell>}
 
 \ccTypes
 
 \ccNestedType{Vertex_handle}%{}
 %\ccGlue\ccNestedType{Vertex_const_handle}
-{A handle to a vertex.}
+{A handle to a vertex. It must be the same as the
+nested type \ccc{TDS::Vertex_handle} of the \ccc{TDS} in which the
+\ccc{TriangulationDSFullCell} is defined/used.}
 
 \ccNestedType{Vertex_handle_iterator}{An iterator over the handles to
 the vertices of the cell.}
 
 \ccNestedType{Full_cell_handle}%{}
 %\ccGlue\ccNestedType{Full_cell_const_handle}
-{A handle to a full cell.}
+{A handle to a full cell. It must be the same as the
+nested type \ccc{TDS::Full_cell_handle} of the \ccc{TDS} in which the
+\ccc{TriangulationDSFullCell} is defined/used.}
 
 \ccNestedType{template<typename PC2> Rebind_TDS}{This nested template
 class must define a nested type \ccc{Other} which is the rebound cell
@@ -58,11 +63,11 @@ the dimension of the actual full cell stored in \ccVar.}
 
 \ccMethod{Vertex_handle_iterator vertices_begin() const;}
 {Returns an iterator to the first \ccc{Vertex_handle} stored in the
-simplex.}
+full cell.}
 
 \ccMethod{Vertex_handle_iterator vertices_end() const;}
 {Returns an iterator pointing beyond the last \ccc{Vertex_handle} stored in
-the simplex.}
+the full cell.}
 
 \ccMethod{Vertex_handle vertex(const int i) const;}{Returns the \ccc{i}-th vertex
 of the cell. \ccPrecond $0\leq i\leq$\ccc{ambient_dimension()}.}
@@ -93,10 +98,11 @@ Typically used to mark the cell as \emph{visited} during operations on a
 \begin{ccAdvanced}
 \ccMethod{Vertex_handle mirror_vertex(const int i, const int cur_dim) const;}
 {Returns a handle to the mirror vertex of the \ccc{i}-th vertex of cell
-\ccVar. This function works even if the neighbor information stored in the
-cell is corrupted -- useful when temporary corruption is necessary during
-surgical operation on a triangulation. 
-\ccPrecond $0\leq i,$\ccc{cur_dim}$\leq$\ccc{ambient_dimension()}.}
+\ccVar. This function works even if the neighboring information stored in the
+neighbor full cell \ccc{*}\ccVar\ccc{.neighbor(i)} is corrupted. This is useful
+when temporary corruption is necessary during surgical operation on a
+triangulation.  \ccPrecond $0\leq
+i,$\ccc{cur_dim}$\leq$\ccc{ambient_dimension()}.}
 \end{ccAdvanced}
 
 
