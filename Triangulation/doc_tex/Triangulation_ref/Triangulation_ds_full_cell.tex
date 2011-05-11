@@ -26,15 +26,26 @@ used to break some dependency cycles.
 The second parameter, \ccc{TDSFullCellStoragePolicy}, indicates whether or not
 the full cell should additionally store the mirror indices (the indices, in each
 neighbor, of the mirror vertices). This improves speed a little, but takes
-more space. It can take two ``values'':\begin{itemize}
+more space:
 
-\item \ccc{TDS_full_cell_default_storage_policy}, which is the \textbf{default}
-value. In that case, the mirror indices are \textbf{not stored}.
+The class template \ccRefName\ accepts that no second parameter be specified.
+It also accepts the tag \ccc{CGAL::Default} as second parameter. Both cases are
+equivalent to setting \ccc{TDSFullCellStoragePolicy} to
+\ccc{CGAL::TDS_full_cell_default_storage_policy}.
 
-\item \ccc{TDS_full_cell_mirror_storage_policy}. In that case, the mirror
+When the second parameter is specified, its possible ``values''
+are:\begin{itemize}
+
+\item \ccc{CGAL::Default}, which is the \textbf{default} value. In that case, the
+policy \ccc{CGAL::TDS_full_cell_default_storage_policy} is used.
+
+\item \ccc{CGAL::TDS_full_cell_default_storage_policy}. In that case, the mirror
+indices are \textbf{not stored}.
+
+\item \ccc{CGAL::TDS_full_cell_mirror_storage_policy}. In that case, the mirror
 indices are stored.
 \end{itemize}
- See the user manual \note{TODO} for how to choose the second option.
+See the user manual \note{TODO} for how to choose the second option.
 
 \ccIsModel
 
