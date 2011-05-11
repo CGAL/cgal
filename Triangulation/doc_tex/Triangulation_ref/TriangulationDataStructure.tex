@@ -58,7 +58,8 @@ A model of the concept \ccc{TriangulationDSFullCell}.
 The concept \ccRefName\ also defines a type for describing facets of the
 triangulation with codimension~1:
 
-\ccTypedef{typedef std::pair<Full_cell_handle, int> Facet;}
+%\ccTypedef{typedef std::pair<Full_cell_handle, int> Facet;}
+\ccNestedType{Facet}
 {A facet of a full cell. Its dimension is
 \ccc{current_dimension()-1}. \ccc{Facet f(c,i)} represents the facet of
 full cell \ccc{c} opposite to its \ccc{i}-th vertex}
@@ -308,26 +309,30 @@ The beyond full cell of \ccVar.
 \ccMethod{Facet_iterator facets_end();}
 {Iterator to the beyond facet of the triangulation.}
 
-\ccMethod{Full_cell_handle full_cell_of(const Facet & f) const;}
+\ccMethod{Full_cell_handle full_cell(const Facet & f) const;}
 {Returns a full cell containing the facet \ccc{f}}
 
 \ccMethod{int index_of_covertex(const Facet & f) const;}
-{Returns the index of vertex of the cell \ccc{c=}\ccVar.\ccc{full_cell_of(f)}
+{Returns the index of vertex of the cell \ccc{c=}\ccVar.\ccc{full_cell(f)}
 which does \textbf{not} belong to \ccc{c}.}
 
-\ccMethod{Face make_empty_face() const;}{Returns an empty \ccc{Face}.}
-
-\begin{ccAdvanced}
-
-\ccMethod{bool is_boundary_facet(const Facet & f) const;}
-{When a subset of the full cells has their \ccc{flags} set to \ccc{1}, this
-function returns \ccc{true} when the \ccc{Facet f} is part of the boundary of
-that subset, and \ccc{false} otherwise.
-\note{bof, ces trucs de flags sont publics ? si oui ils faut qu'ils
-  soient robustes et documente partout}
+\ccMethod{Face make_empty_face() const;}{Returns an empty \ccc{Face}.
+\note{SH: Peut-être mettre cette fonction dans la doc de la classe? ou
+nulle-part. La doc de \ccc{TriangulationFace} est sûrment suffisante.}%
 }
 
-\end{ccAdvanced}
+%\begin{ccAdvanced}
+%
+%\ccMethod{bool is_boundary_facet(const Facet & f) const;}
+%{When a subset of the full cells has their \ccc{flags} set to \ccc{1}, this
+%function returns \ccc{true} when the \ccc{Facet f} is part of the boundary of
+%that subset, and \ccc{false} otherwise.
+%\note{OD: bof, ces trucs de flags sont publics ? si oui ils faut qu'ils
+%  soient robustes et documente partout}
+%\note{SH: Oui, a mon avis, il faut virer cette fonction de la doc.}
+%}
+%
+%\end{ccAdvanced}
 
 \ccHeading{Vertex removal} % - - - - - - - - - - - - - - - - - - - - REMOVALS
 

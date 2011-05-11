@@ -27,32 +27,19 @@ Regular_complex                     Regular_triangulation
 ------------------
 
 /IN_SIMPLEX/IN_FULL_CELL
+
 /is_finite/! is_infinite/
+
 flag stuff, really documented ? : is_boundary_facet
 
-*) code done :
---------------
-
-/Pure_complex/Triangulation/
-/Delaunay_complex/Delaunay_triangulation/
-/Simplex/Full_cell/
-/simplex/full_cell/
-/number_of_simplices/number_of_full_cells/
-/gather_simplices/gather_full_cells/
-/gather_incident_simplices/incident_full_cells/
-/contract_face/collapse_face/
-/index_of/index/
-/contract_face/collapse_face/
-/full_cell_of/full_cell/
-
-
+bring part of Delaunay::remove into TDS (see comments in Delaunay_triangulation.h, and item FUTURE below)
 
 *) to do ?
 ------------------------
 
-/gather_adjacent_simplices/star/  or    /compute_star/star/
-/gather_incident_faces/incident_faces/
-/gather_incident_upper_faces/incident_upper_faces/
+[DONE] /gather_adjacent_simplices/star/  or    /compute_star/star/
+[DONE] /gather_incident_faces/incident_faces/
+[DONE] /gather_incident_upper_faces/incident_upper_faces/
 
 __________________________________________________________________________ALL
 
@@ -61,12 +48,7 @@ __________________________________________________________________________ALL
 _________________________________________________TRIANGULATION_DATA_STRUCTURE
 
 *) TriangulationDataStructure:
-  - Remove the precise type definition in the documentation of the type Facet
-    Or write typedef CGAL::cpp0x::tuple<Full_cell_handle, int> Facet;
-  - full_cell_of(Facet) OR full_cell(Facet) ?
-  - OK, virer is_boundary_facet de la doc du concept : à mettre dans la doc
-    de la classe ?
-  - idem pour insert_in_tagged_hole.
+  - Virer insert_in_tagged_hole de la doc TriangulationDataStructure
   - Should we put >> and << in the documentation of the class
     Triangulation_data_structure ?
 
