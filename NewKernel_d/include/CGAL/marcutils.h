@@ -124,6 +124,11 @@ namespace CGAL {
 		}
 	};
 
+#ifdef CGAL_CXX0X
+	using std::decay;
+#else
+	template<class T> struct decay : boost::remove_cv<typename boost::decay<T>::type> {};
+#endif
 }
 
 #endif
