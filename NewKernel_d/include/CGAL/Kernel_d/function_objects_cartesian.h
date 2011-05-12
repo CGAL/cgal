@@ -167,6 +167,7 @@ template<class R_> struct Less_coordinate {
 	typedef typename R_::FT FT;
 	typedef typename R::Comparison_result result_type;
 	typedef typename R::template Compute<Compute_cartesian_coordinate_tag>::type Cc;
+	// This is_exact thing should be reengineered.
 	typedef typename CGAL::Is_exact<Cc>::type Is_exact;
 
 	template<class V,class W,class I>
@@ -176,7 +177,40 @@ template<class R_> struct Less_coordinate {
 	}
 };
 
+template<class R_> struct Construct_segment {
+	typedef R_ R;
+	typedef typename R_::Point Point;
+	typedef typename R_::Segment Segment;
+	typedef Segment result_type;
+#ifdef CGAL_CXX0X
+	template<class...U> result_type operator()(U&&...u)const{
+		return result_type(std::forward<U>(u)...);
+	}
+#else
+	result_type operator()(Point const&a, Point const&b)const{
+		return result_type(a,b);
+	}
+#endif
+};
 
+template<class R_> struct Construct_segment_extremity {
+	typedef R_ R;
+	typedef typename R_::Point Point;
+	typedef typename R_::Segment Segment;
+	typedef Point result_type;
+	result_type operator()(Segment const&s, int i)const{
+		if(i==0) return s.source();
+		CGAL_assertion(i==1);
+		return s.target();
+	}
+#ifdef CGAL_CXX0X
+	result_type operator()(Segment &&s, int i)const{
+		if(i==0) return std::move(s).source();
+		CGAL_assertion(i==1);
+		return std::move(s).target();
+	}
+#endif
+};
 
 }
 }

@@ -15,7 +15,7 @@ template <class R_> class Segmentd {
 	public:
 	typedef Segmentd<R_> Segment;
 #ifdef CGAL_CXX0X
-	template<class...U>
+	template<class...U,class=typename std::enable_if<!std::is_same<std::tuple<typename std::decay<U>::type...>,std::tuple<Segmentd>>::value>::type>
 	Segmentd(U&&...u):data(std::forward<U>(u)...){}
 #else
 	Segmentd(){}

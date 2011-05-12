@@ -50,6 +50,10 @@ CGAL_Kernel_cons2(Construct_opposite_vector,
 		  construct_opposite_vector_object)
 CGAL_Kernel_cons2(Construct_midpoint,
 		  construct_midpoint_object)
+CGAL_Kernel_cons2(Construct_segment,
+		  construct_segment_object)
+CGAL_Kernel_cons2(Construct_segment_extremity,
+		  construct_segment_extremity_object)
 
 CGAL_Kernel_comp1(Compute_cartesian_coordinate,
 		  compute_cartesian_coordinate_object)
