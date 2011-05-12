@@ -14,7 +14,7 @@ int main()
     const int N = 100; // we will insert 100 points
 
     // |Cartesian_d| is a model of the concept TriangulationTraits
-    typedef CGAL::Cartesian_d<double> FK;
+    typedef CGAL::Cartesian_d<double> FK; //K
 
     // |Filtered_kernel_d|  provides exact geometric predicates
     //typedef CGAL::Filtered_kernel_d<K> FK;
@@ -22,7 +22,7 @@ int main()
     // Here is our Triangulation type:
     typedef CGAL::Triangulation<FK> T;
 
-    typedef T::Point_d Point;
+    typedef T::Point Point;
 
     // - - - - - - - - - - - - - - - - - - - - - - - - STEP 1
 
