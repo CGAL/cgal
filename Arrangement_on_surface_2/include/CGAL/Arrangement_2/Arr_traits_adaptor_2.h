@@ -1359,7 +1359,7 @@ public:
     {
 
       Arr_parameter_space ps = 
-        m_base->parameter_space_in_x_2_object()(xcv, ce);
+        m_base->parameter_space_in_y_2_object()(xcv, ce);
 
       CGAL_precondition(ps != ARR_INTERIOR);
 
