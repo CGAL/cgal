@@ -2046,6 +2046,11 @@ namespace CGAL {
   {
   public:
     typedef Combinatorial_map<d_, Items_,Alloc_>  Self;
+    typedef Combinatorial_map_base<d_, Self, Items_, Alloc_> Base;
+
+    typedef typename Base::Dart_handle Dart_handle;
+    typedef typename Base::Dart_const_handle Dart_const_handle;
+    typedef typename Base::Alloc Alloc;
   };
 
 
