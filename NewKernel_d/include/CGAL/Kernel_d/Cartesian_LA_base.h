@@ -55,6 +55,7 @@ struct Cartesian_LA_base_d : public Dimension_base<Dim_>
     typedef LA_vector Point;
     typedef LA_vector Vector;
 
+#if 0
     // old way
     typedef CartesianDVectorBase::Construct_LA_vector<Self> Construct_point;
     typedef CartesianDVectorBase::Construct_LA_vector<Self> Construct_vector;
@@ -65,6 +66,7 @@ struct Cartesian_LA_base_d : public Dimension_base<Dim_>
     typedef CartesianDVectorBase::Construct_midpoint<Self> Construct_midpoint;
 
     typedef CartesianDVectorBase::Compute_cartesian_coordinate<Self> Compute_cartesian_coordinate;
+#endif
 
     // new way
     template<class, /* C++ sucks */ int=0> struct Construct {
