@@ -1,5 +1,5 @@
 #include <CGAL/point_generators_d.h>
-#include <CGAL/Filtered_kernel_d.h>
+//#include <CGAL/Filtered_kernel_d.h>
 #include <CGAL/Triangulation.h>
 #include <CGAL/Cartesian_d.h>
 #include <CGAL/algorithm.h>
@@ -14,10 +14,10 @@ int main()
     const int N = 100; // we will insert 100 points
 
     // |Cartesian_d| is a model of the concept TriangulationTraits
-    typedef CGAL::Cartesian_d<double> K;
+    typedef CGAL::Cartesian_d<double> FK;
 
     // |Filtered_kernel_d|  provides exact geometric predicates
-    typedef CGAL::Filtered_kernel_d<K> FK;
+    //typedef CGAL::Filtered_kernel_d<K> FK;
 
     // Here is our Triangulation type:
     typedef CGAL::Triangulation<FK> T;
