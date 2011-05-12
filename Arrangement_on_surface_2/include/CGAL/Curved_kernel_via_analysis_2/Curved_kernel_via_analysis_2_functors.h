@@ -2101,7 +2101,7 @@ public:
       CGAL::Object obj1 = 
 	cv1.curve().asymptotic_value_of_arc(loc1, cv1.arcno());
       CGAL::Object obj2 = 
-	cv2.curve().asymptotic_value_of_arc(loc1, cv1.arcno());
+	cv2.curve().asymptotic_value_of_arc(loc1, cv2.arcno());
       
       typename Point_2::Curved_kernel_via_analysis_2::Curve_kernel_2::
 	Algebraic_real_1 y1, y2;
