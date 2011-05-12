@@ -26,13 +26,19 @@ typedef K1::Segment S;
 typedef K1::Construct<CGAL::Construct_point_tag>::type CP;
 typedef K1::Construct<CGAL::Construct_vector_tag>::type CV;
 typedef K1::Construct<CGAL::Construct_segment_tag>::type CS;
+typedef K1::Construct<CGAL::Construct_segment_extremity_tag>::type CSE;
 typedef K1::Construct<CGAL::Construct_cartesian_const_iterator_tag>::type CCI;
 typedef K1::Predicate<CGAL::Orientation_tag>::type PO;
 typedef K1::Cartesian_const_iterator CI;
 typedef K1::Compute<CGAL::Compute_cartesian_coordinate_tag>::type CC;
 
 int main(){
-	CP cp; CCI ci; CC cc; PO po; CS cs;
+	CP cp;
+	CCI ci;
+	CC cc;
+	PO po;
+	CS cs;
+	CSE cse;
 	P a=cp(3,4);
 	P b=cp(5,6,7);
 	int rr[]={3,5,2};
@@ -42,8 +48,8 @@ int main(){
 	S s=cs(c,d);
 	std::cout << cc(a,1) << std::endl;
 	std::cout << cc(b,1) << std::endl;
-	std::cout << cc(s[0],1) << std::endl;
-	std::cout << cc(s[1],1) << std::endl;
+	std::cout << cc(cse(s,0),1) << std::endl;
+	std::cout << cc(cse(s,1),1) << std::endl;
 	for(CI i=ci.begin(a);i!=ci.end(a);++i)
 		std::cout << *i << ' ';
 	std::cout << '\n';
