@@ -40,7 +40,7 @@ namespace internal {
 	bool orient;
 	double value;
         Fixed_hilbert_cmp_d (int a, bool o, double v, const K &_k = K()) 
-	  : axe(a), k(_k), orient(o), value(v) {}
+	  :  k(_k), axe(a), orient(o), value(v) {}
         bool operator() (const Point &p) const
         {
 	  return (orient  

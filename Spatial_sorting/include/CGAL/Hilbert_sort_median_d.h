@@ -39,7 +39,7 @@ namespace internal {
 	int axe;
 	bool orient;
         Hilbert_cmp_d (int a, bool o, const K &_k = K()) 
-	  : axe(a), k(_k), orient(o) {}
+	  : k(_k), axe(a),  orient(o) {}
         bool operator() (const Point &p, const Point &q) const
         {
 	  return (orient  ? (k.less_coordinate_d_object() (q,p,axe) )
