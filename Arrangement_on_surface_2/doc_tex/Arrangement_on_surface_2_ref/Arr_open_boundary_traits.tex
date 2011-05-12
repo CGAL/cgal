@@ -173,8 +173,7 @@ instantiated with the model is initialized to handle unbounded curves.
 
 \ccCreationVariable{fo}
 
-\ccMethod{template <typename OutputIterator>
-          Arr_parameter_space operator()(const X_monotone_curve_2& xcv,
+\ccMethod{Arr_parameter_space operator()(const X_monotone_curve_2& xcv,
                                          Arr_curve_end ce);}{%
 
   Given an $x$-monotone curve \ccc{xcv} and an enumeration \ccc{ce}
@@ -207,8 +206,7 @@ instantiated with the model is initialized to handle unbounded curves.
 
 \ccCreationVariable{fo}
 
-\ccMethod{template <typename OutputIterator>
-          Comparison_result operator()(const X_monotone_curve_2& xcv1,
+\ccMethod{Comparison_result operator()(const X_monotone_curve_2& xcv1,
                                        const X_monotone_curve_2& xcv2,
                                        Arr_curve_end ce);}{%
   Given two $x$-monotone curves \ccc{xcv1} and \ccc{xcv2} and an
@@ -253,8 +251,7 @@ instantiated with the model is initialized to handle unbounded curves.
 
 \ccCreationVariable{fo}
 
-\ccMethod{template <typename OutputIterator>
-          Arr_parameter_space operator()(const X_monotone_curve_2& xcv,
+\ccMethod{Arr_parameter_space operator()(const X_monotone_curve_2& xcv,
                                          Arr_curve_end ce);}{%
   Given an $x$-monotone curve \ccc{xcv} and an enumeration \ccc{ce}
   that specifies either the minimum or the maximum end of the curve,
@@ -281,8 +278,7 @@ instantiated with the model is initialized to handle unbounded curves.
 
 \ccCreationVariable{fo}
 
-\ccMethod{template <typename OutputIterator>
-          Comparison_result operator()(const Point_2& p,
+\ccMethod{Comparison_result operator()(const Point_2& p,
                                        const X_monotone_curve_2& xcv,
                                        Arr_curve_end ce);}{%
   Given a point \ccc{p}, an $x$-monotone curve \ccc{xcv}, and an
@@ -302,8 +298,7 @@ instantiated with the model is initialized to handle unbounded curves.
   \ccPrecond{$C$ has a vertical asymptote at its $d$-end; that is,
     \ccc{parameter_space_in_y_2}(\ccc{xcv}, \ccc{ce}) = \ccc{ARR_INTERIOR}.}}
 %
-\ccMethod{template <typename OutputIterator>
-          Comparison_result operator()(const X_monotone_curve_2& xcv1,
+\ccMethod{Comparison_result operator()(const X_monotone_curve_2& xcv1,
                                        Arr_curve_end ce1,
                                        const X_monotone_curve_2& xcv2,
                                        Arr_curve_end ce2);}{%
@@ -348,8 +343,7 @@ instantiated with the model is initialized to handle unbounded curves.
 
 \ccCreationVariable{fo}
 
-\ccMethod{template <typename OutputIterator>
-          Comparison_result operator()(const X_monotone_curve_2& xcv1,
+\ccMethod{Comparison_result operator()(const X_monotone_curve_2& xcv1,
                                        const X_monotone_curve_2& xcv2,
                                        Arr_curve_end ce);}{%
   Given two $x$-monotone curves \ccc{xcv1} and \ccc{xcv2} and an
