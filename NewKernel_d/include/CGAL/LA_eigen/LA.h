@@ -13,6 +13,7 @@
 
 namespace CGAL {
 
+//FIXME: where could we use Matrix_base instead of Matrix?
 template<class NT_> struct LA_eigen {
 	typedef NT_ NT;
 	// Dim_ real dimension
@@ -20,20 +21,30 @@ template<class NT_> struct LA_eigen {
 	template<class Dim_,class Max_dim_=Dim_> struct Vector {
 		typedef Eigen::Matrix<NT,Eigen_dimension<Dim_>::value,1,Eigen::ColMajor|Eigen::AutoAlign,Eigen_dimension<Max_dim_>::value,1> type;
 		typedef Construct_eigen<type> Constructor;
-		//typedef NT const* const_iterator;
-		//FIXME: use Matrix_base instead in the iterator?
+#if (EIGEN_WORLD_VERSION>=3)
+		typedef NT const* const_iterator;
+#else
 		typedef Iterator_from_indices<const type,const NT
 #ifndef CGAL_CXX0X
 			,NT
 #endif
 			> const_iterator;
+#endif
 
 		template<class Vec_>static const_iterator vector_begin(Vec_ const&a){
+#if (EIGEN_WORLD_VERSION>=3)
+			return &a[0];
+#else
 			return const_iterator(a,0);
+#endif
 		}
 
 		template<class Vec_>static const_iterator vector_end(Vec_ const&a){
+#if (EIGEN_WORLD_VERSION>=3)
+			return &a[0]+a.size();
+#else
 			return const_iterator(a,a.size());
+#endif
 		}
 
 	};

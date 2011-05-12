@@ -32,13 +32,20 @@
 #include <CGAL/Bbox_2.h>
 #include <CGAL/Bbox_3.h>
 #include <vector>
+#include <CGAL/transforming_iterator.h>
 #include <CGAL/Default.h>
+#include <boost/mpl/has_xxx.hpp>
 
 #ifdef CGAL_HAS_THREADS
 #  include <boost/thread/tss.hpp>
 #endif
 
 namespace CGAL {
+namespace internal {
+	BOOST_MPL_HAS_XXX_TRAIT_DEF(AT)
+	BOOST_MPL_HAS_XXX_TRAIT_DEF(ET)
+}
+
 
 template <typename AT, typename ET, typename EFT, typename E2A> class Lazy;
 
@@ -81,10 +88,11 @@ depth(const Lazy<AT,ET,EFT,E2A>& l)
 }
 
 
+/*
 #define CGAL_LAZY_FORWARD(T) \
-  inline const T & approx(const T& d) { return d; } \
-  inline const T & exact (const T& d) { return d; } \
-  inline unsigned  depth (const T&  ) { return 0; }
+  inline T const & approx(T const& d) { return d; } \
+  inline T const & exact (T const& d) { return d; } \
+  inline unsigned  depth (T const&  ) { return 0; }
 
 
 CGAL_LAZY_FORWARD(double)
@@ -97,7 +105,13 @@ CGAL_LAZY_FORWARD(Origin)
 CGAL_LAZY_FORWARD(Orientation)
 CGAL_LAZY_FORWARD(Bbox_2)
 CGAL_LAZY_FORWARD(Bbox_3)
-
+*/
+template<class T>
+inline T const & approx(T const& d) { return d; };
+template<class T>
+inline T const & exact (T const& d) { return d; };
+template<class T>
+inline unsigned  depth (T const&  ) { return 0; };
 
 
 #ifdef CGAL_LAZY_KERNEL_DEBUG
@@ -407,11 +421,11 @@ public:
 template <typename AC, typename EC, typename E2A,
           typename L1, typename L2, typename L3>
 class Lazy_rep_3
-  : public Lazy_rep<typename AC::result_type, typename EC::result_type, E2A>
+  : public Lazy_rep<typename decay<typename AC::result_type>::type, typename decay<typename EC::result_type>::type, E2A>
   , private EC
 {
-  typedef typename AC::result_type AT;
-  typedef typename EC::result_type ET;
+  typedef typename decay<typename AC::result_type>::type AT;
+  typedef typename decay<typename EC::result_type>::type ET;
   typedef Lazy_rep<AT, ET, E2A> Base;
 
   mutable L1 l1_;
@@ -834,16 +848,36 @@ public:
 template < typename K1, typename K2 >
 struct Approx_converter
 {
+  typedef Approx_converter<K1,K2> Self;
   typedef K1         Source_kernel;
   typedef K2         Target_kernel;
   //typedef Converter  Number_type_converter;
+
+  template<class,bool/*ET*/,bool/*iter*/> struct result_;
+  template<class T,bool b> struct result_<T,true,b> {
+	  typedef typename T::AT const& type;
+  };
+  template<class T> struct result_<T,false,true> {
+	  typedef transforming_iterator<Self,T> type;
+  };
+
+  template<class,bool=true> struct result;
+  template<class T,bool b> struct result<Self(T),b> : result_<T,internal::has_AT<T>::value,is_iterator<T>::value>{};
+  template<bool b> struct result<Self(Null_vector),b>{typedef Null_vector type;};
+  template<bool b> struct result<Self(Bbox_2),b>{typedef Bbox_2 type;};
+  template<bool b> struct result<Self(Bbox_3),b>{typedef Bbox_3 type;};
 
   template < typename T >
   const typename T::AT&
   operator()(const T&t) const
   { return t.approx(); }
 
-  //TODO: a transforming_iterator version
+  template <class It>
+  transforming_iterator<Self,typename boost::enable_if<is_iterator<It>,It>::type>
+  operator()(const It& i) const
+  {
+	  return make_transforming_iterator(i,*this);
+  }
 
   const Null_vector&
   operator()(const Null_vector& n) const
@@ -861,14 +895,36 @@ struct Approx_converter
 template < typename K1, typename K2 >
 struct Exact_converter
 {
+  typedef Exact_converter<K1,K2> Self;
   typedef K1         Source_kernel;
   typedef K2         Target_kernel;
   //typedef Converter  Number_type_converter;
+
+  template<class,bool/*ET*/,bool/*iter*/> struct result_;
+  template<class T,bool b> struct result_<T,true,b> {
+	  typedef typename T::ET const& type;
+  };
+  template<class T> struct result_<T,false,true> {
+	  typedef transforming_iterator<Self,T> type;
+  };
+
+  template<class,bool=true> struct result;
+  template<class T,bool b> struct result<Self(T),b> : result_<T,internal::has_ET<T>::value,is_iterator<T>::value>{};
+  template<bool b> struct result<Self(Null_vector),b>{typedef Null_vector type;};
+  template<bool b> struct result<Self(Bbox_2),b>{typedef Bbox_2 type;};
+  template<bool b> struct result<Self(Bbox_3),b>{typedef Bbox_3 type;};
 
   template < typename T >
   const typename T::ET&
   operator()(const T&t) const
   { return t.exact(); }
+
+  template <class It>
+  transforming_iterator<Self,typename boost::enable_if<is_iterator<It>,It>::type>
+  operator()(const It& i) const
+  {
+	  return make_transforming_iterator(i,*this);
+  }
 
   const Null_vector&
   operator()(const Null_vector& n) const
@@ -1720,8 +1776,8 @@ struct Lazy_construction
   typedef typename LK::Exact_kernel EK;
   typedef typename EK::FT EFT;
   typedef typename Default::Get<E2A_, typename LK::E2A>::type E2A;
-  typedef typename AC::result_type AT;
-  typedef typename EC::result_type ET;
+  typedef typename decay<typename AC::result_type>::type AT;
+  typedef typename decay<typename EC::result_type>::type ET;
   typedef Lazy<AT, ET, EFT, E2A> Handle;
   //typedef typename Type_mapper<AT,AK,LK>::type result_type;
   typedef Handle result_type;
