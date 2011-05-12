@@ -50,22 +50,22 @@ template<class K1, class K2> class CartesianD_converter {
 	}
 
 	typename K2::Point operator()(typename K1::Point const& p)const{
-		typename K1::template Construct<Construct_cartesian_const_iterator_tag>::type i;
+		typename K1::template Construct<Construct_point_cartesian_const_iterator_tag>::type i;
 		typename K2::template Construct<Construct_point_tag>::type cp;
 		return cp(operator()(i.begin(p)),operator()(i.end(p)));
 	}
 
 	typename K2::Vector operator()(typename First_if_different<typename K1::Vector,typename K1::Point>::Type const& p)const{
-		typename K1::template Construct<Construct_cartesian_const_iterator_tag>::type i;
+		typename K1::template Construct<Construct_vector_cartesian_const_iterator_tag>::type i;
 		typename K2::template Construct<Construct_vector_tag>::type cv;
 		return cv(operator()(i.begin(p)),operator()(i.end(p)));
 	}
 
 	typename K2::Segment operator()(typename K1::Segment const& s)const{
-		//typename K1::template Construct<Construct_cartesian_const_iterator_tag>::type i;
+		typename K1::template Construct<Construct_segment_extremity_tag>::type f;
 		//FIXME: should replace source and target by a functor
 		typename K2::template Construct<Construct_segment_tag>::type cs;
-		return cs(operator()(s.source()),operator()(s.target()));
+		return cs(operator()(f(s,0)),operator()(f(s,1)));
 	}
 
 	Object

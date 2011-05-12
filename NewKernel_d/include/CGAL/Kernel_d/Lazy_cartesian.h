@@ -4,15 +4,18 @@
 #include <CGAL/basic.h>
 #include <CGAL/Lazy.h>
 #include <CGAL/Filtered_predicate.h>
+#include <CGAL/iterator_from_indices.h>
 
 namespace CGAL {
 
 template <class EK_, class AK_, class E2A_, class Kernel>
-struct Lazy_cartesian
+struct Lazy_cartesian : Dimension_base<typename EK_::Default_ambient_dimension>
 {
     //CGAL_CONSTEXPR Lazy_cartesian(){}
     //CGAL_CONSTEXPR Lazy_cartesian(int d):Base_(d){}
 
+    //TODO: store an AK and an EK
+    typedef Lazy_cartesian<EK_,AK_,E2A_,Kernel> Self;
     typedef AK_   Approximate_kernel;
     typedef EK_   Exact_kernel;
     typedef E2A_  E2A;
@@ -23,6 +26,8 @@ struct Lazy_cartesian
 
     typedef typename Exact_kernel::Rep_tag Rep_tag;
     typedef typename Exact_kernel::Kernel_tag Kernel_tag;
+    typedef typename Exact_kernel::Default_ambient_dimension Default_ambient_dimension;
+    typedef typename Exact_kernel::Max_ambient_dimension Max_ambient_dimension;
 
     typedef typename Same_uncertainty_nt<bool, FT>::type
 	    Boolean;
@@ -60,16 +65,29 @@ struct Lazy_cartesian
 	    typedef Lazy_construction<Kernel,FA,FE> type;
     };
 
+    typedef Iterator_from_indices<const Point, const FT, FT, typename Compute<Compute_cartesian_coordinate_tag>::type> Point_cartesian_const_iterator;
+    typedef Iterator_from_indices<const Vector, const FT, FT, typename Compute<Compute_cartesian_coordinate_tag>::type> Vector_cartesian_const_iterator;
     //TODO:
     //typedef ????????? Cartesian_const_iterator;
     //typedef ????????? Construct_cartesian_const_iterator
-//
-//    template<int i> struct Compute<Compute_cartesian_coordinate_tag,i> {
-//	    typedef Compute_cartesian_coordinate type;
-//    };
-//    template<int i> struct Construct<Construct_cartesian_const_iterator_tag,i> {
-//	    typedef Construct_cartesian_const_iterator type;
-//    };
+    template<class U>
+    struct Construct_iter {
+	    typedef U result_type;
+	    template<class T>
+	    result_type begin(T const& t)const{
+		    return result_type(t,0);
+	    }
+	    template<class T>
+	    result_type end(T const& t)const{
+		    return result_type(t,Self().dimension());
+	    }
+    };
+    template<int i> struct Construct<Construct_point_cartesian_const_iterator_tag,i> {
+	    typedef Construct_iter<Point_cartesian_const_iterator> type;
+    };
+    template<int i> struct Construct<Construct_vector_cartesian_const_iterator_tag,i> {
+	    typedef Construct_iter<Vector_cartesian_const_iterator> type;
+    };
 };
 
 

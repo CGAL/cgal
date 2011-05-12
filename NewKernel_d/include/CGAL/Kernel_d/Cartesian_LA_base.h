@@ -49,7 +49,8 @@ struct Cartesian_LA_base_d : public Dimension_base<Dim_>
     typedef typename LA::template Vector<Dim_> LA_vector_selector;
     typedef typename LA_vector_selector::type LA_vector;
     typedef typename LA_vector_selector::Constructor Constructor;
-    typedef typename LA_vector_selector::const_iterator Cartesian_const_iterator;
+    typedef typename LA_vector_selector::const_iterator Point_cartesian_const_iterator;
+    typedef typename LA_vector_selector::const_iterator Vector_cartesian_const_iterator;
 
     // convert types to the new way? painful to use...
     typedef LA_vector Point;
@@ -78,7 +79,10 @@ struct Cartesian_LA_base_d : public Dimension_base<Dim_>
     template<int i> struct Construct<Construct_point_tag,i> {
 	    typedef CartesianDVectorBase::Construct_LA_vector<Self> type;
     };
-    template<int i> struct Construct<Construct_cartesian_const_iterator_tag,i> {
+    template<int i> struct Construct<Construct_point_cartesian_const_iterator_tag,i> {
+	    typedef CartesianDVectorBase::Construct_cartesian_const_iterator<Self> type;
+    };
+    template<int i> struct Construct<Construct_vector_cartesian_const_iterator_tag,i> {
 	    typedef CartesianDVectorBase::Construct_cartesian_const_iterator<Self> type;
     };
     template<int i> struct Construct<Construct_sum_of_vectors_tag,i> {

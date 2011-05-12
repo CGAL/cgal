@@ -121,7 +121,8 @@ template<class R_> struct Construct_cartesian_const_iterator {
 	typedef R_ R;
 	typedef typename R::LA_vector argument_type;
 	typedef typename R::LA_vector_selector S_;
-	typedef typename R::Cartesian_const_iterator result_type;
+	typedef typename R::Point_cartesian_const_iterator result_type;
+	// same as Vector
 
 	result_type begin(argument_type const& v)const{
 		return S_::vector_begin(v);

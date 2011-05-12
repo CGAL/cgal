@@ -17,7 +17,9 @@ namespace CGAL {
 	struct Construct_line_tag {};
 	struct Construct_direction_tag {};
 	struct Construct_ray_tag {};
-	struct Construct_cartesian_const_iterator_tag {};
+	//struct Construct_cartesian_const_iterator_tag {};
+	struct Construct_point_cartesian_const_iterator_tag {};
+	struct Construct_vector_cartesian_const_iterator_tag {};
 	struct Construct_midpoint_tag {};
 	struct Construct_segment_extremity_tag {};
 	struct Construct_sum_of_vectors_tag {};

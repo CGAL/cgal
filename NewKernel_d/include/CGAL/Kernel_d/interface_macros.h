@@ -40,8 +40,10 @@ CGAL_Kernel_cons1(Construct_vector,
 		  construct_vector_object)
 CGAL_Kernel_cons1(Construct_point,
 		  construct_point_object)
-CGAL_Kernel_cons1(Construct_cartesian_const_iterator,
-		  construct_cartesian_const_iterator_object)
+CGAL_Kernel_cons1(Construct_point_cartesian_const_iterator,
+		  construct_point_cartesian_const_iterator_object)
+CGAL_Kernel_cons1(Construct_vector_cartesian_const_iterator,
+		  construct_vector_cartesian_const_iterator_object)
 CGAL_Kernel_cons2(Construct_sum_of_vectors,
 		  construct_sum_of_vectors_object)
 CGAL_Kernel_cons2(Construct_difference_of_vectors,

@@ -36,13 +36,15 @@ struct Cartesian_change_FT_base : public
 	    Angle;
 
     typedef NT_converter<typename Kernel_base::FT,FT> FT_converter;
-    typedef transforming_iterator<FT_converter,typename Kernel_base::Cartesian_const_iterator> Cartesian_const_iterator;
+    typedef transforming_iterator<FT_converter,typename Kernel_base::Point_cartesian_const_iterator> Point_cartesian_const_iterator;
+    typedef transforming_iterator<FT_converter,typename Kernel_base::Vector_cartesian_const_iterator> Vector_cartesian_const_iterator;
 
     //FIXME: what if the functor's constructor takes a kernel as argument?
-    struct Construct_cartesian_const_iterator {
-	    typedef typename Kernel_base::template Construct<Construct_cartesian_const_iterator_tag>::type Functor_base;
+    template<class Tag,class Type>
+    struct Construct_cartesian_const_iterator_ {
+	    typedef typename Kernel_base::template Construct<Tag>::type Functor_base;
 	    Functor_base f;
-	    typedef Cartesian_const_iterator result_type;
+	    typedef Type result_type;
 	    template<class T>
 	    result_type begin(T const& v)const{
 		    return make_transforming_iterator(f.begin(v),FT_converter());
@@ -52,6 +54,8 @@ struct Cartesian_change_FT_base : public
 		    return make_transforming_iterator(f.end(v),FT_converter());
 	    }
     };
+    typedef Construct_cartesian_const_iterator_<Construct_point_cartesian_const_iterator_tag,Point_cartesian_const_iterator> Construct_point_cartesian_const_iterator;
+    typedef Construct_cartesian_const_iterator_<Construct_vector_cartesian_const_iterator_tag,Vector_cartesian_const_iterator> Construct_vector_cartesian_const_iterator;
 
     struct Compute_cartesian_coordinate {
 	    typedef typename Kernel_base::template Compute<Compute_cartesian_coordinate_tag>::type Functor_base;
@@ -70,8 +74,11 @@ struct Cartesian_change_FT_base : public
     template<class T,int i=0> struct Predicate { typedef Null_functor type; };
     template<class T,int i=0> struct Construct :
 	    Kernel_base::template Construct<T> { };
-    template<int i> struct Construct<Construct_cartesian_const_iterator_tag,i> {
-	    typedef Construct_cartesian_const_iterator type;
+    template<int i> struct Construct<Construct_point_cartesian_const_iterator_tag,i> {
+	    typedef Construct_point_cartesian_const_iterator type;
+    };
+    template<int i> struct Construct<Construct_vector_cartesian_const_iterator_tag,i> {
+	    typedef Construct_vector_cartesian_const_iterator type;
     };
 };
 
