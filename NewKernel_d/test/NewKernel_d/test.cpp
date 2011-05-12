@@ -14,7 +14,7 @@ typedef CGAL::Cartesian_base_d<CGAL::Gmpq,CGAL::Dimension_tag<2> > KE;
 typedef K0 K1;
 #elif 0
 typedef CGAL::Cartesian_filter_NT<K0> K1;
-#elif 1
+#elif 0
 typedef CGAL::Cartesian_filter_K<K0,KA,KE> K1;
 #elif 1
 struct K1: CGAL::Lazy_cartesian<KE,KA,CGAL::CartesianD_converter<KE,KA>,K1>{};
@@ -27,9 +27,9 @@ typedef K1::Construct<CGAL::Construct_point_tag>::type CP;
 typedef K1::Construct<CGAL::Construct_vector_tag>::type CV;
 typedef K1::Construct<CGAL::Construct_segment_tag>::type CS;
 typedef K1::Construct<CGAL::Construct_segment_extremity_tag>::type CSE;
-typedef K1::Construct<CGAL::Construct_cartesian_const_iterator_tag>::type CCI;
+typedef K1::Construct<CGAL::Construct_point_cartesian_const_iterator_tag>::type CCI;
 typedef K1::Predicate<CGAL::Orientation_tag>::type PO;
-typedef K1::Cartesian_const_iterator CI;
+typedef K1::Point_cartesian_const_iterator CI;
 typedef K1::Compute<CGAL::Compute_cartesian_coordinate_tag>::type CC;
 
 int main(){
