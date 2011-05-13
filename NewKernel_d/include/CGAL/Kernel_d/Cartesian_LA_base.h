@@ -2,6 +2,7 @@
 #define CGAL_KERNEL_D_CARTESIAN_LA_BASE_H
 
 #include <CGAL/basic.h>
+#include <CGAL/Origin.h>
 
 #include <CGAL/representation_tags.h>
 #include <CGAL/functor_tags.h>
@@ -20,6 +21,7 @@ template < typename FT_, typename Dim_>
 struct Cartesian_LA_base_d : public Dimension_base<Dim_>
 {
     typedef FT_                                         FT;
+    typedef FT_                                         RT;
     typedef Cartesian_LA_base_d<FT_,Dim_>               Self;
     typedef Cartesian_tag                               Rep_tag;
     typedef Cartesian_tag                               Kernel_tag;
@@ -74,10 +76,10 @@ struct Cartesian_LA_base_d : public Dimension_base<Dim_>
 	    typedef Null_functor type;
     };
     template<int i> struct Construct<Construct_vector_tag,i> {
-	    typedef CartesianDVectorBase::Construct_LA_vector<Self> type;
+	    typedef CartesianDVectorBase::Construct_LA_vector<Self,Null_vector> type;
     };
     template<int i> struct Construct<Construct_point_tag,i> {
-	    typedef CartesianDVectorBase::Construct_LA_vector<Self> type;
+	    typedef CartesianDVectorBase::Construct_LA_vector<Self,Origin> type;
     };
     template<int i> struct Construct<Construct_point_cartesian_const_iterator_tag,i> {
 	    typedef CartesianDVectorBase::Construct_cartesian_const_iterator<Self> type;

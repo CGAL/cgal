@@ -30,7 +30,7 @@ BOOST_PP_REPEAT_FROM_TO(2, 11, CODE, _ )
 }
 #endif
 
-template<class R_> struct Construct_LA_vector
+template<class R_,class Zero_> struct Construct_LA_vector
 #ifndef CGAL_CXX0X
 : internal::Construct_LA_vector_<R_,R_::Default_ambient_dimension::value>
 #endif
@@ -46,6 +46,9 @@ template<class R_> struct Construct_LA_vector
 		return typename Constructor::Dimension()(d);
 	}
 	result_type operator()()const{
+		return typename Constructor::Dimension()(dim);
+	}
+	result_type operator()(Zero_ const&)const{
 		return typename Constructor::Dimension()(dim);
 	}
 	result_type operator()(result_type const& v)const{
@@ -109,7 +112,9 @@ template<class R_> struct Compute_cartesian_coordinate {
 #ifdef CGAL_CXX0X
 	typedef decltype(std::declval<const first_argument_type>()[0]) result_type;
 #else
-	typedef FT result_type; // FT const& doesn't work with some LA
+	typedef FT const& result_type;
+	// FT const& doesn't work with some LA (Eigen2 for instance) so we
+	// should use plain FT or find a way to detect this.
 #endif
 
 	result_type operator()(first_argument_type const& v,int i)const{

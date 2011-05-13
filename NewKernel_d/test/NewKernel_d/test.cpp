@@ -4,6 +4,7 @@
 #include <CGAL/Kernel_d/Cartesian_filter_NT.h>
 #include <CGAL/Kernel_d/Cartesian_filter_K.h>
 #include <CGAL/Kernel_d/Lazy_cartesian.h>
+#include <CGAL/Kernel_d/Wrapper/Cartesian_wrap.h>
 #include <CGAL/Gmpq.h>
 #include <CGAL/Interval_nt.h>
 #include <iostream>
@@ -11,13 +12,18 @@ typedef CGAL::Cartesian_base_d<double,CGAL::Dimension_tag<2> > K0;
 typedef CGAL::Cartesian_base_d<CGAL::Interval_nt_advanced,CGAL::Dimension_tag<2> > KA;
 typedef CGAL::Cartesian_base_d<CGAL::Gmpq,CGAL::Dimension_tag<2> > KE;
 #if 0
-typedef K0 K1;
+typedef K0 K2;
 #elif 0
-typedef CGAL::Cartesian_filter_NT<K0> K1;
-#elif 0
-typedef CGAL::Cartesian_filter_K<K0,KA,KE> K1;
+typedef CGAL::Cartesian_filter_NT<K0> K2;
 #elif 1
-struct K1: CGAL::Lazy_cartesian<KE,KA,CGAL::CartesianD_converter<KE,KA>,K1>{};
+typedef CGAL::Cartesian_filter_K<K0,KA,KE> K2;
+#elif 1
+struct K2: CGAL::Lazy_cartesian<KE,KA,CGAL::CartesianD_converter<KE,KA>,K2>{};
+#endif
+#if 1
+typedef K2 K1;
+#elif 1
+typedef CGAL::Cartesian_wrap<K2> K1;
 #endif
 typedef K1::Point P;
 typedef K1::Vector V;

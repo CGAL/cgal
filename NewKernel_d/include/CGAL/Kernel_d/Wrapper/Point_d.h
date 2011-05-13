@@ -1,5 +1,5 @@
-#ifndef CGAL_WRAPPER_VECTOR_D_H
-#define CGAL_WRAPPER_VECTOR_D_H
+#ifndef CGAL_WRAPPER_POINT_D_H
+#define CGAL_WRAPPER_POINT_D_H
 
 #include <CGAL/Origin.h>
 #include <CGAL/Kernel/mpl.h>
@@ -16,25 +16,25 @@
 namespace CGAL {
 
 template <class R_>
-class Vector_d : public R_::Kernel_base::Vector
+class Point_d : public R_::Kernel_base::Point
 {
   typedef typename R_::RT                    RT_;
   typedef typename R_::FT                    FT_;
   typedef typename R_::Kernel_base           Kbase;
-  typedef typename R_::Point                 Point_;
-  typedef typename Kbase::template Construct<Construct_vector_tag>::type CVBase;
+  typedef typename R_::Vector                Vector_;
+  typedef typename Kbase::template Construct<Construct_point_tag>::type CPBase;
   typedef typename Kbase::template Compute<Compute_cartesian_coordinate_tag>::type CCBase;
 
-  typedef Vector_d                            Self;
-  BOOST_STATIC_ASSERT((boost::is_same<Self, typename R_::Vector>::value));
+  typedef Point_d                            Self;
+  BOOST_STATIC_ASSERT((boost::is_same<Self, typename R_::Point>::value));
 
 public:
 
   typedef typename R_::Default_ambient_dimension Ambient_dimension;
   typedef Dimension_tag<0>  Feature_dimension;
 
-  typedef typename R_::Vector_cartesian_const_iterator Cartesian_const_iterator;
-  typedef typename Kbase::Vector      Rep;
+  typedef typename R_::Point_cartesian_const_iterator Cartesian_const_iterator;
+  typedef typename Kbase::Point      Rep;
 
   const Rep& rep() const
   {
@@ -49,52 +49,52 @@ public:
   typedef          R_                       R;
 
 #ifdef CGAL_CXX0X
-  template<class...U,class=typename std::enable_if<!std::is_same<std::tuple<typename std::decay<U>::type...>,std::tuple<Vector_d> >::value>::type> explicit Vector_d(U&&...u)
-	  : Rep(CVBase()(std::forward<U>(u)...)){}
+  template<class...U,class=typename std::enable_if<!std::is_same<std::tuple<typename std::decay<U>::type...>,std::tuple<Point_d> >::value>::type> explicit Point_d(U&&...u)
+	  : Rep(CPBase()(std::forward<U>(u)...)){}
 
-//  // called from Construct_vector_d
-//  template<class...U> explicit Vector_d(Eval_functor&&,U&&...u)
+//  // called from Construct_point_d
+//  template<class...U> explicit Point_d(Eval_functor&&,U&&...u)
 //	  : Rep(Eval_functor(), std::forward<U>(u)...){}
-  template<class F,class...U> explicit Vector_d(Eval_functor&&,F&&f,U&&...u)
+  template<class F,class...U> explicit Point_d(Eval_functor&&,F&&f,U&&...u)
 	  : Rep(std::forward<F>(f)(std::forward<U>(u)...)){}
 
 #if 0
   // the new standard may make this necessary
-  Vector_d(Vector_d const&)=default;
-  Vector_d(Vector_d &);//=default;
-  Vector_d(Vector_d &&)=default;
+  Point_d(Point_d const&)=default;
+  Point_d(Point_d &);//=default;
+  Point_d(Point_d &&)=default;
 #endif
 
   // try not to use these
-  Vector_d(Rep const& v) : Rep(v) {}
-  Vector_d(Rep& v) : Rep(static_cast<Rep const&>(v)) {}
-  Vector_d(Rep&& v) : Rep(std::move(v)) {}
+  Point_d(Rep const& v) : Rep(v) {}
+  Point_d(Rep& v) : Rep(static_cast<Rep const&>(v)) {}
+  Point_d(Rep&& v) : Rep(std::move(v)) {}
 
   // this one should be implicit
-  Vector_d(Null_vector const& v)
-    : Rep(CVBase()(v)) {}
-  Vector_d(Null_vector& v)
-    : Rep(CVBase()(v)) {}
-  Vector_d(Null_vector&& v)
-    : Rep(CVBase()(std::move(v))) {}
+  Point_d(Origin const& v)
+    : Rep(CPBase()(v)) {}
+  Point_d(Origin& v)
+    : Rep(CPBase()(v)) {}
+  Point_d(Origin&& v)
+    : Rep(CPBase()(std::move(v))) {}
 
 #else
 
-  Vector_d() : Rep(CVBase()()) {}
+  Point_d() : Rep(CPBase()()) {}
 
-  Vector_d(Rep const& v) : Rep(v) {} // try not to use it
+  Point_d(Rep const& v) : Rep(v) {} // try not to use it
 
 #define CODE(Z,N,_) template<BOOST_PP_ENUM_PARAMS(N,class T)> \
-  explicit Vector_d(BOOST_PP_ENUM_BINARY_PARAMS(N,T,const&t)) \
-  : Rep(CVBase()( \
+  explicit Point_d(BOOST_PP_ENUM_BINARY_PARAMS(N,T,const&t)) \
+  : Rep(CPBase()( \
 	BOOST_PP_ENUM_PARAMS(N,t))) {} \
   \
   template<class F,BOOST_PP_ENUM_PARAMS(N,class T)> \
-  Vector_d(Eval_functor,F const& f,BOOST_PP_ENUM_BINARY_PARAMS(N,T,const&t)) \
+  Point_d(Eval_functor,F const& f,BOOST_PP_ENUM_BINARY_PARAMS(N,T,const&t)) \
   : Rep(f(BOOST_PP_ENUM_PARAMS(N,t))) {}
   /*
   template<BOOST_PP_ENUM_PARAMS(N,class T)> \
-  Vector_d(Eval_functor,BOOST_PP_ENUM_BINARY_PARAMS(N,T,const&t)) \
+  Point_d(Eval_functor,BOOST_PP_ENUM_BINARY_PARAMS(N,T,const&t)) \
   : Rep(Eval_functor(), BOOST_PP_ENUM_PARAMS(N,t)) {}
   */
 
@@ -102,8 +102,8 @@ public:
 #undef CODE
  
   // this one should be implicit
-  Vector_d(Null_vector const& v)
-    : Rep(CVBase()(v)) {}
+  Point_d(Null_vector const& v)
+    : Rep(CPBase()(v)) {}
 
 #endif
 
@@ -111,10 +111,6 @@ public:
 	  return CCBase()(rep(),i);
   }
 
-  Vector_d operator-() const
-  {
-    return typename R::template Construct<Construct_opposite_vector_tag>::type()(*this);
-  }
 
   /*
   Direction_d direction() const
@@ -227,23 +223,23 @@ public:
 */
 };
 #if 0
-template <class R_> Vector_d<R_>::Vector_d(Vector_d &)=default;
+template <class R_> Point_d<R_>::Point_d(Point_d &)=default;
 #endif
 
 //TODO: IO
 
-template <class R_>
-Vector_d<R_> operator+(const Vector_d<R_>& v,const Vector_d<R_>& w)
-{
-	return typename R_::template Construct<Construct_sum_of_vectors_tag>::type()(v,w);
-}
-
-template <class R_>
-Vector_d<R_> operator-(const Vector_d<R_>& v,const Vector_d<R_>& w)
-{
-	return typename R_::template Construct<Construct_difference_of_vectors_tag>::type()(v,w);
-}
+//template <class R_>
+//Vector_d<R_> operator+(const Vector_d<R_>& v,const Vector_d<R_>& w) const
+//{
+//	return typename R::template Construct<Construct_sum_of_vectors_tag>::type()(v,w);
+//}
+//
+//template <class R_>
+//Vector_d<R_> operator-(const Vector_d<R_>& v,const Vector_d<R_>& w) const
+//{
+//	return typename R::template Construct<Construct_difference_of_vectors_tag>::type()(v,w);
+//}
 
 } //namespace CGAL
 
-#endif // CGAL_WRAPPER_VECTOR_D_H
+#endif // CGAL_WRAPPER_POINT_D_H
