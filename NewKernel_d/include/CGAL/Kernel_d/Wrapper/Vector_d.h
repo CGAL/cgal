@@ -30,6 +30,7 @@ class Vector_d : public R_::Kernel_base::Vector
 
 public:
 
+  typedef Tag_true Is_wrapper;
   typedef typename R_::Default_ambient_dimension Ambient_dimension;
   typedef Dimension_tag<0>  Feature_dimension;
 

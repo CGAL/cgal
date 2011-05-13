@@ -129,6 +129,19 @@ namespace CGAL {
 #else
 	template<class T> struct decay : boost::remove_cv<typename boost::decay<T>::type> {};
 #endif
+
+	template<class T,class U> struct Type_copy_ref { typedef U type; };
+	template<class T,class U> struct Type_copy_ref<T&,U> { typedef U& type; };
+#ifdef CGAL_CXX0X
+	template<class T,class U> struct Type_copy_ref<T&&,U> { typedef U&& type; };
+#endif
+	template<class T,class U> struct Type_copy_cv { typedef U type; };
+	template<class T,class U> struct Type_copy_cv<T const,U> { typedef U const type; };
+	template<class T,class U> struct Type_copy_cv<T volatile,U> { typedef U volatile type; };
+	template<class T,class U> struct Type_copy_cv<T const volatile,U> { typedef U const volatile type; };
+
+	template<class T,class U> struct Type_copy_cvref :
+		Type_copy_ref<T,typename Type_copy_cv<typename boost::remove_reference<T>::type,U>::type> {};
 }
 
 #endif

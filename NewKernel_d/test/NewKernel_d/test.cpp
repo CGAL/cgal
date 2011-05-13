@@ -15,12 +15,12 @@ typedef CGAL::Cartesian_base_d<CGAL::Gmpq,CGAL::Dimension_tag<2> > KE;
 typedef K0 K2;
 #elif 0
 typedef CGAL::Cartesian_filter_NT<K0> K2;
-#elif 1
+#elif 0
 typedef CGAL::Cartesian_filter_K<K0,KA,KE> K2;
 #elif 1
 struct K2: CGAL::Lazy_cartesian<KE,KA,CGAL::CartesianD_converter<KE,KA>,K2>{};
 #endif
-#if 1
+#if 0
 typedef K2 K1;
 #elif 1
 typedef CGAL::Cartesian_wrap<K2> K1;
