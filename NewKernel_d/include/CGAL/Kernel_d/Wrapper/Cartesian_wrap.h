@@ -129,6 +129,7 @@ struct Cartesian_wrap : public Base_
 #endif
 	    };
     };
+    //TODO: if B is Null_functor, let type be the same
     template<class T,int i=0> struct Compute {
 	    typedef typename Kernel_base::template Compute<T>::type B;
 	    struct type {
