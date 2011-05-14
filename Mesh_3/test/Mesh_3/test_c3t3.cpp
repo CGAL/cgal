@@ -301,11 +301,19 @@ struct Tester
 
     c3t3.set_subdomain_index(ch, subdomain_index_bis);
     c3t3.set_surface_patch_index(f2, surface_patch_index_bis);
+#ifndef CGAL_MESH_3_NO_DEPRECATED_SURFACE_INDEX
+    c3t3.set_surface_index(f2, surface_patch_index_bis);
+    c3t3.set_surface_index(f2.first, f2.second, surface_patch_index_bis);
+#endif
     c3t3.set_dimension(vh, 1);
     c3t3.set_index(vh, vertex_index);
 
     assert(c3t3.subdomain_index(ch) == subdomain_index_bis);
     assert(c3t3.surface_patch_index(f2) == surface_patch_index_bis);
+#ifndef CGAL_MESH_3_NO_DEPRECATED_SURFACE_INDEX
+    assert(c3t3.surface_index(f2) == surface_patch_index_bis);
+    assert(c3t3.surface_index(f2.first, f2.second) == surface_patch_index_bis);
+#endif
     assert(c3t3.in_dimension(vh) == 1);
     assert(c3t3.index(vh) == vertex_index);
 

@@ -18,7 +18,7 @@
 // Author(s)     : Marc Glisse
 
 //| If a compiler does not support static_assert (from C++0x)
-//| CGAL_CFG_NO_STATIC_ASSERT is set. 
+//| CGAL_CFG_NO_CPP0X_STATIC_ASSERT is set. 
 
 int main(){
 	static_assert(true,"Everything is fine");

@@ -136,12 +136,10 @@ compute_average_spacing(
   // precondition: at least 2 nearest neighbors
   CGAL_point_set_processing_precondition(k >= 2);
 
-  InputIterator it;
-
   // Instanciate a KD-tree search.
   // Note: We have to convert each input iterator to Point_3.
   std::vector<Point> kd_tree_points; 
-  for(it = first; it != beyond; it++)
+  for(InputIterator it = first; it != beyond; it++)
   {
       Point point = get(point_pmap, it);
       kd_tree_points.push_back(point);
@@ -152,7 +150,7 @@ compute_average_spacing(
   // vectors (already normalized)
   FT sum_spacings = (FT)0.0;
   unsigned int nb_points = 0;
-  for(it = first; it != beyond; it++)
+  for(InputIterator it = first; it != beyond; it++)
   {
     sum_spacings += internal::compute_average_spacing<Kernel,Tree>(get(point_pmap,it),tree,k);
     nb_points++;
