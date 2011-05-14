@@ -15,6 +15,7 @@ namespace CGAL {
 	DECL_OBJ(Bbox);
 #undef DECL_OBJ
 
+	//TODO: split into _begin and _end ?
 	struct Construct_point_cartesian_const_iterator_tag {};
 	struct Construct_vector_cartesian_const_iterator_tag {};
 
@@ -34,15 +35,18 @@ namespace CGAL {
 	DECL_CONSTRUCT(Construct_opposite_vector,Vector);
 #undef DECL_CONSTRUCT
 
-	struct Compute_cartesian_coordinate_tag {};
-	struct Compute_homogeneous_coordinate_tag {};
-	struct Compute_squared_distance_tag {};
-	struct Compute_squared_length_tag {};
+#define DECL_COMPUTE(X) struct X##_tag {}
+	DECL_COMPUTE(Compute_cartesian_coordinate);
+	DECL_COMPUTE(Compute_homogeneous_coordinate);
+	DECL_COMPUTE(Compute_squared_distance);
+	DECL_COMPUTE(Compute_squared_length);
+#undef DECL_COMPUTE
 
-	struct Predicate_less_cartesian_coordinate_tag {};
-	//FIXME: choose a convention
-	struct Predicate_orientation_tag {};
-	struct Orientation_tag {};
-	struct Predicate_in_sphere_tag {};
+	//FIXME: choose a convention: prefix with Predicate_ ?
+#define DECL_PREDICATE(X) struct X##_tag {}
+	DECL_PREDICATE(Less_cartesian_coordinate);
+	DECL_PREDICATE(Orientation);
+	DECL_PREDICATE(In_sphere);
+#undef DECL_PREDICATE
 }
 #endif // CGAL_FUNCTOR_TAGS_H

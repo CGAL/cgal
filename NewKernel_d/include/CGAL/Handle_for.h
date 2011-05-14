@@ -127,6 +127,13 @@ public:
     }
     BOOST_PP_REPEAT_FROM_TO(1,11,CODE,_)
 #undef CODE
+    template <class F>
+    Handle_for(Eval_functor,F const&f)
+      : ptr_(allocator.allocate(1))
+    {
+        new (&(ptr_->t)) element_type(f());
+        ptr_->count = 1;
+    }
 #endif // CGAL_CFG_NO_CPP0X_VARIADIC_TEMPLATES
 
     Handle_for(const Handle_for& h)

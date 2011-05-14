@@ -103,8 +103,8 @@ public:
 #undef CODE
  
   // this one should be implicit
-  Point_d(Null_vector const& v)
-    : Rep(CPBase()(v)) {}
+  Point_d(Origin const& o)
+    : Rep(CPBase()(o)) {}
 
 #endif
 

@@ -162,12 +162,13 @@ template<class R_> struct Compute_squared_distance {
 	}
 };
 
-template<class R_> struct Less_coordinate {
+template<class R_> struct Less_cartesian_coordinate {
 	typedef R_ R;
 	typedef typename R_::FT FT;
 	typedef typename R::Comparison_result result_type;
 	typedef typename R::template Compute<Compute_cartesian_coordinate_tag>::type Cc;
-	// This is_exact thing should be reengineered.
+	// TODO: This is_exact thing should be reengineered.
+	// the goal is to have a way to tell: don't filter this
 	typedef typename CGAL::Is_exact<Cc>::type Is_exact;
 
 	template<class V,class W,class I>
