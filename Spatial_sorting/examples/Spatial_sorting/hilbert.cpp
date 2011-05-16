@@ -17,6 +17,6 @@ int main ()
 
   CGAL::hilbert_sort (v.begin(), v.end());            // sort
 
-  for(int i=0; i<size; ++i)std::cout<<v[i]<<std::endl;//output
+  for(std::size_t i=0; i<size; ++i)std::cout<<v[i]<<std::endl;//output
   return 0;
 }
