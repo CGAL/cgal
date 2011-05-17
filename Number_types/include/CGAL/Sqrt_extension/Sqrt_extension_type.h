@@ -39,6 +39,7 @@
 #include <CGAL/Interval_arithmetic.h> 
 #include <CGAL/Sqrt_extension_fwd.h>
 #include <boost/optional.hpp>
+#include <boost/type_traits/is_same.hpp>
 
 #define CGAL_int(T)    typename First_if_different<int,    T>::Type
 
@@ -229,6 +230,9 @@ public:
     inline const ROOT& gamma() const { return root_; }  //for backward compatibility
     //! Access operator for is_extended_, \c const
     inline const bool& is_extended() const { return is_extended_; }
+    inline bool is_rational() const {
+      CGAL_precondition( (boost::is_same<NT,ROOT>::value) || !"NT and ROOT should be identical and rational");
+      return !is_extended_;} //for backward compatibility
     
     //!check if the number is an extension (test the values) and update the internal flag
     inline bool check_if_is_extended() {
