@@ -81,6 +81,10 @@ void Extract_OneRing(Polyhedron &P, vector<vector<int > > &neigh_vtx)
 {
 	neigh_vtx.clear();
 	neigh_vtx.resize(P.size_of_vertices());
+	for (int i = 0; i <neigh_vtx.size(); i++)
+	{
+		neigh_vtx[i].push_back(i);
+	}
 	map<Vertex_iterator, int> vidx;
 	int idx = 0;
 	for (Vertex_iterator vit = P.vertices_begin(); vit != P.vertices_end(); vit++)
@@ -110,13 +114,58 @@ void Extract_OneRing(Polyhedron &P, vector<vector<int > > &neigh_vtx)
 
 }
 
+void k_Ring(Polyhedron &P, size_t k, int idx, vector<int> &neigh_vtx_lv_k)
+{
+
+
+	vector<vector<int > > neigh_vtx;
+	Extract_OneRing(P, neigh_vtx);
+	neigh_vtx_lv_k = neigh_vtx[idx];          // setting one-ring as the lowest level
+
+	vector<int> border_vtx = neigh_vtx[idx];  // "boundary" vertices on relative levels
+
+	for (size_t level = 1; level < k; level++)
+	{
+		vector<int> new_border_vtx;
+		while (!border_vtx.empty())
+		{
+			int border_idx = border_vtx.back();
+			border_vtx.pop_back();
+			for (int i = 0; i < neigh_vtx[border_idx].size(); i++)
+			{
+				int border_neigh_idx = neigh_vtx[border_idx][i];
+				vector<int> ::iterator result = find(neigh_vtx_lv_k.begin(), neigh_vtx_lv_k.end(), border_neigh_idx);
+				if (result == neigh_vtx_lv_k.end())   // justify whether the neighboring vertex of border vertex is already included
+				{
+					neigh_vtx_lv_k.push_back(border_neigh_idx);
+					new_border_vtx.push_back(border_neigh_idx);
+				}
+			}
+
+		}
+		border_vtx = new_border_vtx;
+	}
+}
+
 int main() {
 	Polyhedron P;
 	LoadOFF(P);
 	cout << P.size_of_vertices() << " vertices;  " << P.size_of_facets() << "facets" << endl;
 
-	vector<vector<int > > neigh_vtx;
-	Extract_OneRing(P, neigh_vtx);
+	vector<int > neigh_vtx_lv;
+	cout << "Determine level of k-ring: ";
+	size_t k;
+	cin >> k;
+	cout << "Determine vertex index: ";
+	int idx;
+	cin >> idx;
+	k_Ring(P, k, idx, neigh_vtx_lv);
+	cout << endl << neigh_vtx_lv.size() << " neighboring vertices:" << endl;
+	for (int i = 0; i < neigh_vtx_lv.size(); i++)
+	{
+		cout << neigh_vtx_lv[i] << endl;
+	}
+
 	return 0;
 }
 
