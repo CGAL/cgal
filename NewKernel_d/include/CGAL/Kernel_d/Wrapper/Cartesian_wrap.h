@@ -77,8 +77,30 @@ struct Cartesian_wrap : public Base_
     template<bool b> struct map_type<X##_tag,b> { typedef X type; };
 #include <CGAL/Kernel_d/interface_macros.h>
 
-    template<class T,int i=0> struct Construct {
-	    typedef typename Kernel_base::template Construct<T>::type B;
+    //TODO:FIXME: if B is Null_functor, let type be the same
+    template<class T,class D=void,class=typename map_functor_type<T>::type> struct Functor {
+	    typedef typename Kernel_base::template Functor<T>::type B;
+	    struct type {
+		    typedef typename B::result_type result_type;
+#ifdef CGAL_CXX0X
+		    template<class...U> result_type operator()(U&&...u)const{
+			    return B()(internal::Forward_rep()(u)...);
+		    }
+#else
+#define VAR(Z,N,_) internal::Forward_rep()(u##N)
+#define CODE(Z,N,_) template<BOOST_PP_ENUM_PARAMS(N,class U)> result_type \
+		    operator()(BOOST_PP_ENUM_BINARY_PARAMS(N,U,const&u))const{ \
+			    return B()(BOOST_PP_ENUM(N,VAR,)); \
+		    }
+		    BOOST_PP_REPEAT_FROM_TO(1,11,CODE,_)
+#undef CODE
+#undef VAR
+#endif
+	    };
+    };
+
+    template<class T,class D> struct Functor<T,D,Construct_tag> {
+	    typedef typename Kernel_base::template Functor<T>::type B;
 	    struct type {
 		    typedef typename map_result_tag<T>::type result_tag;
 		    typedef typename map_kernel_obj<Self,result_tag>::type result_type;
@@ -102,54 +124,13 @@ struct Cartesian_wrap : public Base_
     //TODO: adapt all functors
     //TODO: safely apply .rep() to the arguments (and transforming_iterator)
     //FIXME: looks like only those 2 are missing
-    template<int i> struct Construct<Construct_point_cartesian_const_iterator_tag,i> {
-	    typedef typename Kernel_base::template Construct<Construct_point_cartesian_const_iterator_tag>::type type;
+    template<class D> struct Functor<Construct_point_cartesian_const_iterator_tag,D> {
+	    typedef typename Kernel_base::template Functor<Construct_point_cartesian_const_iterator_tag>::type type;
     };
-    template<int i> struct Construct<Construct_vector_cartesian_const_iterator_tag,i> {
-	    typedef typename Kernel_base::template Construct<Construct_vector_cartesian_const_iterator_tag>::type type;
+    template<class D> struct Functor<Construct_vector_cartesian_const_iterator_tag,D> {
+	    typedef typename Kernel_base::template Functor<Construct_vector_cartesian_const_iterator_tag>::type type;
     };
 
-    template<class T,int i=0> struct Predicate {
-	    typedef typename Kernel_base::template Predicate<T>::type B;
-	    struct type {
-		    typedef typename B::result_type result_type;
-#ifdef CGAL_CXX0X
-		    template<class...U> result_type operator()(U&&...u)const{
-			    return B()(internal::Forward_rep()(u)...);
-		    }
-#else
-#define VAR(Z,N,_) internal::Forward_rep()(u##N)
-#define CODE(Z,N,_) template<BOOST_PP_ENUM_PARAMS(N,class U)> result_type \
-		    operator()(BOOST_PP_ENUM_BINARY_PARAMS(N,U,const&u))const{ \
-			    return B()(BOOST_PP_ENUM(N,VAR,)); \
-		    }
-		    BOOST_PP_REPEAT_FROM_TO(1,11,CODE,_)
-#undef CODE
-#undef VAR
-#endif
-	    };
-    };
-    //TODO: if B is Null_functor, let type be the same
-    template<class T,int i=0> struct Compute {
-	    typedef typename Kernel_base::template Compute<T>::type B;
-	    struct type {
-		    typedef typename B::result_type result_type;
-#ifdef CGAL_CXX0X
-		    template<class...U> result_type operator()(U&&...u)const{
-			    return B()(internal::Forward_rep()(u)...);
-		    }
-#else
-#define VAR(Z,N,_) internal::Forward_rep()(u##N)
-#define CODE(Z,N,_) template<BOOST_PP_ENUM_PARAMS(N,class U)> result_type \
-		    operator()(BOOST_PP_ENUM_BINARY_PARAMS(N,U,const&u))const{ \
-			    return B()(BOOST_PP_ENUM(N,VAR,)); \
-		    }
-		    BOOST_PP_REPEAT_FROM_TO(1,11,CODE,_)
-#undef CODE
-#undef VAR
-#endif
-	    };
-    };
 };
 
 } //namespace CGAL

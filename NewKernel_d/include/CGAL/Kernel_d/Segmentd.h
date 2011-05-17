@@ -8,7 +8,7 @@ template <class R_> class Segmentd {
 	typedef typename R_::FT FT_;
 	typedef typename R_::Point Point_;
 	typedef typename R_::Vector Vector_;
-	typedef typename R_::template Construct<Construct_vector_tag>::type Cv_;
+	typedef typename R_::template Functor<Construct_vector_tag>::type Cv_;
 //	typedef typename R_::Compute_squared_distance Csd_;
 	typedef std::pair<Point_,Point_> Data_;
 	Data_ data;

@@ -3,6 +3,13 @@
 namespace CGAL {
 	class Null_type {~Null_type();}; // no such object should be created
 
+	struct Predicate_tag {};
+	struct Construct_tag {};
+	struct Compute_tag {};
+	struct Misc_tag {};
+
+	template<class>struct map_functor_type{typedef Misc_tag type;};
+
 	template<class,class>struct map_kernel_obj{typedef Null_type type;};
 #define DECL_OBJ(X) struct X##_tag {}; \
 	template<class K>struct map_kernel_obj<K,X##_tag>{typedef typename K::X type;}
@@ -15,13 +22,10 @@ namespace CGAL {
 	DECL_OBJ(Bbox);
 #undef DECL_OBJ
 
-	//TODO: split into _begin and _end ?
-	struct Construct_point_cartesian_const_iterator_tag {};
-	struct Construct_vector_cartesian_const_iterator_tag {};
-
 	template<class T>struct map_result_tag{typedef Null_type type;};
 #define DECL_CONSTRUCT(X,Y) struct X##_tag {}; \
-	template<>struct map_result_tag<X##_tag>{typedef Y##_tag type;}
+	template<>struct map_result_tag<X##_tag>{typedef Y##_tag type;}; \
+	template<>struct map_functor_type<X##_tag>{typedef Construct_tag type;}
 	DECL_CONSTRUCT(Construct_vector,Vector);
 	DECL_CONSTRUCT(Construct_point,Point);
 	DECL_CONSTRUCT(Construct_segment,Segment);
@@ -35,7 +39,8 @@ namespace CGAL {
 	DECL_CONSTRUCT(Construct_opposite_vector,Vector);
 #undef DECL_CONSTRUCT
 
-#define DECL_COMPUTE(X) struct X##_tag {}
+#define DECL_COMPUTE(X) struct X##_tag {}; \
+	template<>struct map_functor_type<X##_tag>{typedef Compute_tag type;}
 	DECL_COMPUTE(Compute_cartesian_coordinate);
 	DECL_COMPUTE(Compute_homogeneous_coordinate);
 	DECL_COMPUTE(Compute_squared_distance);
@@ -43,10 +48,18 @@ namespace CGAL {
 #undef DECL_COMPUTE
 
 	//FIXME: choose a convention: prefix with Predicate_ ?
-#define DECL_PREDICATE(X) struct X##_tag {}
+#define DECL_PREDICATE(X) struct X##_tag {}; \
+	template<>struct map_functor_type<X##_tag>{typedef Predicate_tag type;}
 	DECL_PREDICATE(Less_cartesian_coordinate);
 	DECL_PREDICATE(Orientation);
 	DECL_PREDICATE(In_sphere);
 #undef DECL_PREDICATE
+
+#define DECL_MISC(X) struct X##_tag {}; \
+	template<>struct map_functor_type<X##_tag>{typedef Misc_tag type;}
+	//TODO: split into _begin and _end ?
+	DECL_MISC(Construct_point_cartesian_const_iterator);
+	DECL_MISC(Construct_vector_cartesian_const_iterator);
+#undef DECL_MISC
 }
 #endif // CGAL_FUNCTOR_TAGS_H

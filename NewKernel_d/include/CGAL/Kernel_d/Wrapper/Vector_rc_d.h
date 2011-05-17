@@ -22,8 +22,8 @@ template <class R_>
 class Vector_rc_d
 {
   typedef typename R_::Kernel_base           Kbase;
-  typedef typename Kbase::template Construct<Construct_point_tag>::type CPBase;
-  typedef typename Kbase::template Compute<Compute_cartesian_coordinate_tag>::type CCBase;
+  typedef typename Kbase::template Functor<Construct_point_tag>::type CPBase;
+  typedef typename Kbase::template Functor<Compute_cartesian_coordinate_tag>::type CCBase;
 
   typedef Vector_rc_d                            Self;
   BOOST_STATIC_ASSERT((boost::is_same<Self, typename R_::Vector>::value));

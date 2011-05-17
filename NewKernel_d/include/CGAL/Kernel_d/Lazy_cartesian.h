@@ -8,6 +8,7 @@
 
 namespace CGAL {
 
+	//TODO: ? use Lazy_cartesian instead of Kernel ?
 template <class EK_, class AK_, class E2A_, class Kernel>
 struct Lazy_cartesian : Dimension_base<typename EK_::Default_ambient_dimension>
 {
@@ -49,27 +50,29 @@ struct Lazy_cartesian : Dimension_base<typename EK_::Default_ambient_dimension>
 
 #include <CGAL/Kernel_d/interface_macros.h>
 
-    template<class T,int i=0> struct Predicate {
-	    typedef typename Approximate_kernel::template Predicate<T>::type FA;
-	    typedef typename Exact_kernel::template Predicate<T>::type FE;
+    template<class T,class D=void,class=typename map_functor_type<T>::type> struct Functor {
+	    typedef Null_functor type;
+    };
+	    //FIXME: what do we do with D here?
+    template<class T,class D> struct Functor<T,D,Predicate_tag> {
+	    typedef typename Approximate_kernel::template Functor<T>::type FA;
+	    typedef typename Exact_kernel::template Functor<T>::type FE;
 	    typedef Filtered_predicate<FE,FA,C2E,C2A> type;
     };
-    template<class T,int i=0> struct Compute {
-	    typedef typename Approximate_kernel::template Compute<T>::type FA;
-	    typedef typename Exact_kernel::template Compute<T>::type FE;
+    template<class T,class D> struct Functor<T,D,Compute_tag> {
+	    typedef typename Approximate_kernel::template Functor<T>::type FA;
+	    typedef typename Exact_kernel::template Functor<T>::type FE;
 	    typedef Lazy_construction_nt<Kernel,FA,FE> type;
     };
-    template<class T,int i=0> struct Construct {
-	    typedef typename Approximate_kernel::template Construct<T>::type FA;
-	    typedef typename Exact_kernel::template Construct<T>::type FE;
+    template<class T,class D> struct Functor<T,D,Construct_tag> {
+	    typedef typename Approximate_kernel::template Functor<T>::type FA;
+	    typedef typename Exact_kernel::template Functor<T>::type FE;
 	    typedef Lazy_construction<Kernel,FA,FE> type;
     };
 
-    typedef Iterator_from_indices<const Point, const FT, FT, typename Compute<Compute_cartesian_coordinate_tag>::type> Point_cartesian_const_iterator;
-    typedef Iterator_from_indices<const Vector, const FT, FT, typename Compute<Compute_cartesian_coordinate_tag>::type> Vector_cartesian_const_iterator;
-    //TODO:
-    //typedef ????????? Cartesian_const_iterator;
-    //typedef ????????? Construct_cartesian_const_iterator
+    typedef Iterator_from_indices<const Point, const FT, FT, typename Functor<Compute_cartesian_coordinate_tag>::type> Point_cartesian_const_iterator;
+    typedef Iterator_from_indices<const Vector, const FT, FT, typename Functor<Compute_cartesian_coordinate_tag>::type> Vector_cartesian_const_iterator;
+
     template<class U>
     struct Construct_iter {
 	    typedef U result_type;
@@ -82,12 +85,13 @@ struct Lazy_cartesian : Dimension_base<typename EK_::Default_ambient_dimension>
 		    return result_type(t,Self().dimension());
 	    }
     };
-    template<int i> struct Construct<Construct_point_cartesian_const_iterator_tag,i> {
+    template<class D> struct Functor<Construct_point_cartesian_const_iterator_tag,D,Misc_tag> {
 	    typedef Construct_iter<Point_cartesian_const_iterator> type;
     };
-    template<int i> struct Construct<Construct_vector_cartesian_const_iterator_tag,i> {
+    template<class D> struct Functor<Construct_vector_cartesian_const_iterator_tag,D,Misc_tag> {
 	    typedef Construct_iter<Vector_cartesian_const_iterator> type;
     };
+    //TODO: what about other functors of the Misc category?
 };
 
 

@@ -72,43 +72,35 @@ struct Cartesian_LA_base_d : public Dimension_base<Dim_>
 #endif
 
     // new way
-    template<class, /* C++ sucks */ int=0> struct Construct {
+    template<class, class=void> struct Functor {
 	    typedef Null_functor type;
     };
-    template<int i> struct Construct<Construct_vector_tag,i> {
+    template<class D> struct Functor<Construct_vector_tag,D> {
 	    typedef CartesianDVectorBase::Construct_LA_vector<Self,Null_vector> type;
     };
-    template<int i> struct Construct<Construct_point_tag,i> {
+    template<class D> struct Functor<Construct_point_tag,D> {
 	    typedef CartesianDVectorBase::Construct_LA_vector<Self,Origin> type;
     };
-    template<int i> struct Construct<Construct_point_cartesian_const_iterator_tag,i> {
+    template<class D> struct Functor<Construct_point_cartesian_const_iterator_tag,D> {
 	    typedef CartesianDVectorBase::Construct_cartesian_const_iterator<Self> type;
     };
-    template<int i> struct Construct<Construct_vector_cartesian_const_iterator_tag,i> {
+    template<class D> struct Functor<Construct_vector_cartesian_const_iterator_tag,D> {
 	    typedef CartesianDVectorBase::Construct_cartesian_const_iterator<Self> type;
     };
-    template<int i> struct Construct<Construct_sum_of_vectors_tag,i> {
+    template<class D> struct Functor<Construct_sum_of_vectors_tag,D> {
 	    typedef CartesianDVectorBase::Construct_sum_of_vectors<Self> type;
     };
-    template<int i> struct Construct<Construct_difference_of_vectors_tag,i> {
+    template<class D> struct Functor<Construct_difference_of_vectors_tag,D> {
 	    typedef CartesianDVectorBase::Construct_difference_of_vectors<Self> type;
     };
-    template<int i> struct Construct<Construct_opposite_vector_tag,i> {
+    template<class D> struct Functor<Construct_opposite_vector_tag,D> {
 	    typedef CartesianDVectorBase::Construct_opposite_vector<Self> type;
     };
-    template<int i> struct Construct<Construct_midpoint_tag,i> {
+    template<class D> struct Functor<Construct_midpoint_tag,D> {
 	    typedef CartesianDVectorBase::Construct_midpoint<Self> type;
     };
-
-    template<class,int=0> struct Compute {
-	    typedef Null_functor type;
-    };
-    template<int i> struct Compute<Compute_cartesian_coordinate_tag,i> {
+    template<class D> struct Functor<Compute_cartesian_coordinate_tag,D> {
 	    typedef CartesianDVectorBase::Compute_cartesian_coordinate<Self> type;
-    };
-
-    template<class,int=0> struct Predicate {
-	    typedef Null_functor type;
     };
 
     CGAL_CONSTEXPR Cartesian_LA_base_d(){}

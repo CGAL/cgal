@@ -16,6 +16,25 @@ BOOST_MPL_HAS_XXX_TRAIT_DEF(Direction)
 BOOST_MPL_HAS_XXX_TRAIT_DEF(Line)
 }
 
+template<class R_,class Derived_> struct Cartesian_define_all_functors
+: public R_
+{
+	typedef R_ Kernel_base;
+	template<class F, class D=void> struct Functor
+		: Kernel_base::template Functor<F,D>
+	{ };
+#define CGAL_Kernel_cons2(F,f) \
+	template<class D> struct Functor <F##_tag,D> { \
+		typedef CartesianDKernelFunctors::F<Derived_> type; \
+	};
+	//type f() const { return type(); }
+#define CGAL_Kernel_pred(F,f) CGAL_Kernel_cons2(F,f)
+#define CGAL_Kernel_comp2(F,f) CGAL_Kernel_cons2(F,f)
+
+#include <CGAL/Kernel_d/interface_macros.h>
+
+};
+
 template<class R_,bool force_=false> struct Cartesian_complete_types 
 : public R_
 {
@@ -29,90 +48,47 @@ template<class R_,bool force_=false,class Derived_=R_> struct Cartesian_complete
 : public R_
 {
 	typedef R_ Kernel_base;
-	template<class F> struct Construct {
-		typedef typename Kernel_base::template Construct<F>::type Base_functor;
-		typedef typename boost::mpl::if_<boost::is_same<Base_functor,Null_functor>,
-			typename Cartesian_complete_constructors<R_,true,Derived_>::template Construct<F>::type,
+	template<class F,class D=void,class=typename map_functor_type<F>::type> struct Functor :
+		R_::template Functor<F,D> {};
+	template<class F,class D> struct Functor<F,D,Construct_tag> {
+		typedef typename Kernel_base::template Functor<F>::type Base_functor;
+		typedef typename boost::mpl::if_c<force_||boost::is_same<Base_functor,Null_functor>::value,
+			typename Cartesian_define_all_functors<R_,Derived_>::template Functor<F>::type,
 			Base_functor>::type type;
 	};
 
 };
-
-template<class R_,class Derived_> struct Cartesian_complete_constructors <R_,true,Derived_>
-: public R_
-{
-	typedef R_ Kernel_base;
-	template<class F, int i=0> struct Construct
-		: Kernel_base::template Construct<F>
-	{ };
-#define CGAL_Kernel_cons2(F,f) \
-	template<int i> struct Construct <F##_tag,i> { \
-		typedef CartesianDKernelFunctors::F<Derived_> type; \
-		type f() const { return type(); } \
-	};
-#include <CGAL/Kernel_d/interface_macros.h>
-
-};
-
 
 template<class R_,bool force_=false,class Derived_=R_> struct Cartesian_complete_predicates 
 : public R_
 {
 	typedef R_ Kernel_base;
-	template<class F> struct Predicate {
-		typedef typename Kernel_base::template Predicate<F>::type Base_functor;
-		typedef typename boost::mpl::if_<boost::is_same<Base_functor,Null_functor>,
-			typename Cartesian_complete_predicates<R_,true,Derived_>::template Predicate<F>::type,
+	template<class F,class D=void,class=typename map_functor_type<F>::type> struct Functor :
+		R_::template Functor<F,D> {};
+	template<class F,class D> struct Functor<F,D,Predicate_tag> {
+		typedef typename Kernel_base::template Functor<F>::type Base_functor;
+		typedef typename boost::mpl::if_c<force_||boost::is_same<Base_functor,Null_functor>::value,
+			typename Cartesian_define_all_functors<R_,Derived_>::template Functor<F>::type,
 			Base_functor>::type type;
 	};
 
 };
-
-template<class R_,class Derived_> struct Cartesian_complete_predicates <R_,true,Derived_>
-: public R_
-{
-	typedef R_ Kernel_base;
-	template<class F, int i=0> struct Predicate
-		: Kernel_base::template Predicate<F>
-	{ };
-#define CGAL_Kernel_pred(F,f) \
-	template<int i> struct Predicate <F##_tag,i> { \
-		typedef CartesianDKernelFunctors::F<Derived_> type; \
-		type f() const { return type(); } \
-	};
-#include <CGAL/Kernel_d/interface_macros.h>
-
-};
-
 
 template<class R_,bool force_=false,class Derived_=R_> struct Cartesian_complete_computes 
 : public R_
 {
 	typedef R_ Kernel_base;
-	template<class F> struct Compute {
-		typedef typename Kernel_base::template Compute<F>::type Base_functor;
-		typedef typename boost::mpl::if_<boost::is_same<Base_functor,Null_functor>,
-			typename Cartesian_complete_computes<R_,true,Derived_>::template Compute<F>::type,
+	template<class F,class D=void,class=typename map_functor_type<F>::type> struct Functor :
+		R_::template Functor<F,D> {};
+	template<class F,class D> struct Functor<F,D,Compute_tag> {
+		typedef typename Kernel_base::template Functor<F>::type Base_functor;
+		typedef typename boost::mpl::if_c<force_||boost::is_same<Base_functor,Null_functor>::value,
+			typename Cartesian_define_all_functors<R_,Derived_>::template Functor<F>::type,
 			Base_functor>::type type;
 	};
 
 };
 
-template<class R_,class Derived_> struct Cartesian_complete_computes <R_,true,Derived_>
-: public R_
-{
-	typedef R_ Kernel_base;
-	template<class F, int i=0> struct Compute
-		: Kernel_base::template Compute<F>
-	{ };
-#define CGAL_Kernel_comp2(F,f) \
-	template<int i> struct Compute <F##_tag,i> { \
-		typedef CartesianDKernelFunctors::F<Derived_> type; \
-		type f() const { return type(); } \
-	};
-#include <CGAL/Kernel_d/interface_macros.h>
-
-};
 }
 
 #endif // CGAL_KERNEL_D_CARTESIAN_COMPLETE_H

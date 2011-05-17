@@ -17,11 +17,13 @@ struct Cartesian_filter_NT : public Base_
     typedef typename internal::Exact_type_selector<typename Kernel_base::FT>::Type  Exact_nt;
     typedef Cartesian_change_FT<Kernel_base,Exact_nt> K2;
 
-    template<class T,int i=0> struct Predicate {
+    template<class T,class D=void,class=typename map_functor_type<T>::type> struct Functor :
+       Kernel_base::template Functor<T,D> {};
+    template<class T,class D> struct Functor<T,D,Predicate_tag> {
 	    struct type {
 		    //TODO: use compression (derive from a compressed_pair?)
-		    typedef typename K1::template Predicate<T>::type P1; P1 p1;
-		    typedef typename K2::template Predicate<T>::type P2; P2 p2;
+		    typedef typename K1::template Functor<T>::type P1; P1 p1;
+		    typedef typename K2::template Functor<T>::type P2; P2 p2;
 		    typedef typename P2::result_type result_type;
 
 		    //FIXME: if predicate's constructor takes a kernel as argument, how do we translate that?
@@ -43,7 +45,6 @@ struct Cartesian_filter_NT : public Base_
 			    return p2(std::forward<U>(u)...);
 		    }
 #else
-		    //FIXME: usual boost preprocessor magic
 		    result_type operator()()const{ // does it make sense to have 0 argument?
 			    {
 			          Protect_FPU_rounding<true> p;

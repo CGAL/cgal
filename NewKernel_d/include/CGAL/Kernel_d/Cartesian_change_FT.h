@@ -42,7 +42,7 @@ struct Cartesian_change_FT_base : public
     //FIXME: what if the functor's constructor takes a kernel as argument?
     template<class Tag,class Type>
     struct Construct_cartesian_const_iterator_ {
-	    typedef typename Kernel_base::template Construct<Tag>::type Functor_base;
+	    typedef typename Kernel_base::template Functor<Tag>::type Functor_base;
 	    Functor_base f;
 	    typedef Type result_type;
 	    template<class T>
@@ -58,7 +58,7 @@ struct Cartesian_change_FT_base : public
     typedef Construct_cartesian_const_iterator_<Construct_vector_cartesian_const_iterator_tag,Vector_cartesian_const_iterator> Construct_vector_cartesian_const_iterator;
 
     struct Compute_cartesian_coordinate {
-	    typedef typename Kernel_base::template Compute<Compute_cartesian_coordinate_tag>::type Functor_base;
+	    typedef typename Kernel_base::template Functor<Compute_cartesian_coordinate_tag>::type Functor_base;
 	    Functor_base f;
 	    typedef FT result_type;
 	    template<class Obj_>
@@ -67,17 +67,19 @@ struct Cartesian_change_FT_base : public
 	    }
     };
 
-    template<class T,int i=0> struct Compute { typedef Null_functor type; };
-    template<int i> struct Compute<Compute_cartesian_coordinate_tag,i> {
+    template<class T,class U=void,class=typename map_functor_type<T>::type> struct Functor :
+	    Kernel_base::template Functor<T,U> { };
+    template<class T,class U> struct Functor<T,U,Compute_tag>
+	{ typedef Null_functor type; };
+    template<class T,class U> struct Functor<T,U,Predicate_tag>
+	{ typedef Null_functor type; };
+    template<class D> struct Functor<Compute_cartesian_coordinate_tag,D,Compute_tag> {
 	    typedef Compute_cartesian_coordinate type;
     };
-    template<class T,int i=0> struct Predicate { typedef Null_functor type; };
-    template<class T,int i=0> struct Construct :
-	    Kernel_base::template Construct<T> { };
-    template<int i> struct Construct<Construct_point_cartesian_const_iterator_tag,i> {
+    template<class D> struct Functor<Construct_point_cartesian_const_iterator_tag,D,Misc_tag> {
 	    typedef Construct_point_cartesian_const_iterator type;
     };
-    template<int i> struct Construct<Construct_vector_cartesian_const_iterator_tag,i> {
+    template<class D> struct Functor<Construct_vector_cartesian_const_iterator_tag,D,Misc_tag> {
 	    typedef Construct_vector_cartesian_const_iterator type;
     };
 };

@@ -22,9 +22,9 @@ class Segment_d : public R_::Kernel_base::Segment
   typedef typename R_::FT                    FT_;
   typedef typename R_::Kernel_base           Kbase;
   typedef typename R_::Point                 Point_;
-  typedef typename Kbase::template Construct<Construct_point_tag>::type CPBase;
-  typedef typename Kbase::template Construct<Construct_segment_tag>::type CSBase;
-  typedef typename Kbase::template Construct<Construct_segment_extremity_tag>::type CSEBase;
+  typedef typename Kbase::template Functor<Construct_point_tag>::type CPBase;
+  typedef typename Kbase::template Functor<Construct_segment_tag>::type CSBase;
+  typedef typename Kbase::template Functor<Construct_segment_extremity_tag>::type CSEBase;
 
   typedef Segment_d                            Self;
   BOOST_STATIC_ASSERT((boost::is_same<Self, typename R_::Segment>::value));
