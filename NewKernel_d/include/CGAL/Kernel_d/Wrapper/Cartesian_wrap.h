@@ -3,9 +3,14 @@
 
 #include <CGAL/basic.h>
 #include <CGAL/is_iterator.h>
+
 #include <CGAL/Kernel_d/Wrapper/Point_d.h>
 #include <CGAL/Kernel_d/Wrapper/Vector_d.h>
 #include <CGAL/Kernel_d/Wrapper/Segment_d.h>
+
+#include <CGAL/Kernel_d/Wrapper/Point_rc_d.h>
+#include <CGAL/Kernel_d/Wrapper/Vector_rc_d.h>
+
 #include <boost/mpl/or.hpp>
 
 namespace CGAL {
@@ -105,6 +110,80 @@ struct Cartesian_wrap : public Base_
     };
 
     template<class T,class D> struct Functor<T,D,Construct_tag,false> {
+	    typedef typename Kernel_base::template Functor<T>::type B;
+	    struct type {
+		    typedef typename map_result_tag<T>::type result_tag;
+		    typedef typename map_kernel_obj<Self,result_tag>::type result_type;
+#ifdef CGAL_CXX0X
+		    template<class...U> result_type operator()(U&&...u)const{
+			    return result_type(Eval_functor(),B(),internal::Forward_rep()(u)...);
+		    }
+#else
+#define VAR(Z,N,_) internal::Forward_rep()(u##N)
+#define CODE(Z,N,_) template<BOOST_PP_ENUM_PARAMS(N,class U)> result_type \
+		    operator()(BOOST_PP_ENUM_BINARY_PARAMS(N,U,const&u))const{ \
+			    return result_type(Eval_functor(),B(),BOOST_PP_ENUM(N,VAR,)); \
+		    }
+		    BOOST_PP_REPEAT_FROM_TO(1,11,CODE,_)
+#undef CODE
+#undef VAR
+#endif
+	    };
+    };
+
+};
+
+template < typename Base_ >
+struct Cartesian_refcount : public Base_
+{
+    CGAL_CONSTEXPR Cartesian_refcount(){}
+    CGAL_CONSTEXPR Cartesian_refcount(int d):Base_(d){}
+    typedef Base_ Kernel_base;
+    typedef Cartesian_refcount Self;
+
+    template <class T,bool=false> struct map_type;
+#define CGAL_Kernel_obj(X) typedef X##_rc_d<Cartesian_refcount> X; \
+    template<bool b> struct map_type<X##_tag,b> { typedef X type; };
+    CGAL_Kernel_obj(Point)
+    CGAL_Kernel_obj(Vector)
+
+    template<class T> struct Dispatch {
+	    //typedef typename map_functor_type<T>::type f_t;
+	    typedef typename map_result_tag<T>::type r_t;
+	    enum {
+		    is_nul = boost::is_same<typename Kernel_base::template Functor<T>::type,Null_functor>::value,
+		    ret_rcobj = boost::is_same<r_t,Point_tag>::value || boost::is_same<r_t,Vector_tag>::value
+	    };
+    };
+
+    //Translate the arguments
+    template<class T,class D=void,bool=Dispatch<T>::is_nul,bool=Dispatch<T>::ret_rcobj> struct Functor {
+	    typedef typename Kernel_base::template Functor<T>::type B;
+	    struct type {
+		    typedef typename B::result_type result_type;
+#ifdef CGAL_CXX0X
+		    template<class...U> result_type operator()(U&&...u)const{
+			    return B()(internal::Forward_rep()(u)...);
+		    }
+#else
+#define VAR(Z,N,_) internal::Forward_rep()(u##N)
+#define CODE(Z,N,_) template<BOOST_PP_ENUM_PARAMS(N,class U)> result_type \
+		    operator()(BOOST_PP_ENUM_BINARY_PARAMS(N,U,const&u))const{ \
+			    return B()(BOOST_PP_ENUM(N,VAR,)); \
+		    }
+		    BOOST_PP_REPEAT_FROM_TO(1,11,CODE,_)
+#undef CODE
+#undef VAR
+#endif
+	    };
+    };
+
+    //Translate both the arguments and the result
+    template<class T,class D,bool b> struct Functor<T,D,true,b> {
+	    typedef Null_functor type;
+    };
+
+    template<class T,class D> struct Functor<T,D,false,true> {
 	    typedef typename Kernel_base::template Functor<T>::type B;
 	    struct type {
 		    typedef typename map_result_tag<T>::type result_tag;

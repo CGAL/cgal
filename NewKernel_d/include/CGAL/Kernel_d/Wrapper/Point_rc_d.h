@@ -50,10 +50,10 @@ public:
 
 #ifdef CGAL_CXX0X
   template<class...U,class=typename std::enable_if<!std::is_same<std::tuple<typename std::decay<U>::type...>,std::tuple<Point_rc_d> >::value>::type> explicit Point_rc_d(U&&...u)
-	  : Rep(Eval_functor(),CPBase(),std::forward<U>(u)...){}
+	  : data(Eval_functor(),CPBase(),std::forward<U>(u)...){}
 
   template<class F,class...U> explicit Point_rc_d(Eval_functor&&,F&&f,U&&...u)
-	  : Rep(Eval_functor(),std::forward<F>(f),std::forward<U>(u)...){}
+	  : data(Eval_functor(),std::forward<F>(f),std::forward<U>(u)...){}
 
   // try not to use these
   Point_rc_d(Rep const& v) : data(v) {}
