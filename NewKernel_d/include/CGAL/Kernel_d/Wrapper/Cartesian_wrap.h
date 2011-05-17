@@ -77,8 +77,8 @@ struct Cartesian_wrap : public Base_
     template<bool b> struct map_type<X##_tag,b> { typedef X type; };
 #include <CGAL/Kernel_d/interface_macros.h>
 
-    //TODO:FIXME: if B is Null_functor, let type be the same
-    template<class T,class D=void,class=typename map_functor_type<T>::type> struct Functor {
+    //Translate the arguments
+    template<class T,class D=void,class=typename map_functor_type<T>::type,bool=boost::is_same<typename Kernel_base::template Functor<T>::type,Null_functor>::value> struct Functor {
 	    typedef typename Kernel_base::template Functor<T>::type B;
 	    struct type {
 		    typedef typename B::result_type result_type;
@@ -99,7 +99,12 @@ struct Cartesian_wrap : public Base_
 	    };
     };
 
-    template<class T,class D> struct Functor<T,D,Construct_tag> {
+    //Translate both the arguments and the result
+    template<class T,class D,class C> struct Functor<T,D,C,true> {
+	    typedef Null_functor type;
+    };
+
+    template<class T,class D> struct Functor<T,D,Construct_tag,false> {
 	    typedef typename Kernel_base::template Functor<T>::type B;
 	    struct type {
 		    typedef typename map_result_tag<T>::type result_tag;
@@ -120,16 +125,6 @@ struct Cartesian_wrap : public Base_
 #endif
 	    };
     };
-
-    //TODO: adapt all functors
-    //TODO: safely apply .rep() to the arguments (and transforming_iterator)
-    //FIXME: looks like only those 2 are missing
-    //template<class D> struct Functor<Construct_point_cartesian_const_iterator_tag,D> {
-    //        typedef typename Kernel_base::template Functor<Construct_point_cartesian_const_iterator_tag>::type type;
-    //};
-    //template<class D> struct Functor<Construct_vector_cartesian_const_iterator_tag,D> {
-    //        typedef typename Kernel_base::template Functor<Construct_vector_cartesian_const_iterator_tag>::type type;
-    //};
 
 };
 

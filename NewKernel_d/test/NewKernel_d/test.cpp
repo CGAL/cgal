@@ -22,8 +22,11 @@ struct K2: CGAL::Lazy_cartesian<KE,KA,CGAL::CartesianD_converter<KE,KA>,K2>{};
 #endif
 #if 0
 typedef K2 K1;
-#elif 1
+#elif 0
 typedef CGAL::Cartesian_wrap<K2> K1;
+#elif 1
+typedef CGAL::Cartesian_wrap<K2> K3;
+typedef CGAL::Cartesian_wrap<K3> K1;
 #endif
 typedef K1::Point P;
 typedef K1::Vector V;
