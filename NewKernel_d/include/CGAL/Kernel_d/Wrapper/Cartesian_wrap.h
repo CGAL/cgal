@@ -124,12 +124,12 @@ struct Cartesian_wrap : public Base_
     //TODO: adapt all functors
     //TODO: safely apply .rep() to the arguments (and transforming_iterator)
     //FIXME: looks like only those 2 are missing
-    template<class D> struct Functor<Construct_point_cartesian_const_iterator_tag,D> {
-	    typedef typename Kernel_base::template Functor<Construct_point_cartesian_const_iterator_tag>::type type;
-    };
-    template<class D> struct Functor<Construct_vector_cartesian_const_iterator_tag,D> {
-	    typedef typename Kernel_base::template Functor<Construct_vector_cartesian_const_iterator_tag>::type type;
-    };
+    //template<class D> struct Functor<Construct_point_cartesian_const_iterator_tag,D> {
+    //        typedef typename Kernel_base::template Functor<Construct_point_cartesian_const_iterator_tag>::type type;
+    //};
+    //template<class D> struct Functor<Construct_vector_cartesian_const_iterator_tag,D> {
+    //        typedef typename Kernel_base::template Functor<Construct_vector_cartesian_const_iterator_tag>::type type;
+    //};
 
 };
 

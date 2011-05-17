@@ -3,6 +3,9 @@
 namespace CGAL {
 	class Null_type {~Null_type();}; // no such object should be created
 
+	struct Begin_tag {};
+	struct End_tag {};
+
 	struct Predicate_tag {};
 	struct Construct_tag {};
 	struct Compute_tag {};

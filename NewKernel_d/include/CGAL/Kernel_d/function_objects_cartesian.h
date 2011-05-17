@@ -70,7 +70,7 @@ template<class R_> struct Construct_opposite_vector {
 	typedef Vector argument_type;
 	result_type operator()(Vector const&v)const{
 		CI ci;
-		return CV()(make_transforming_iterator(ci.begin(v),std::negate<FT>()),make_transforming_iterator(ci.end(v),std::negate<FT>()));
+		return CV()(make_transforming_iterator(ci(v,Begin_tag()),std::negate<FT>()),make_transforming_iterator(ci(v,End_tag()),std::negate<FT>()));
 	}
 };
 
@@ -85,7 +85,7 @@ template<class R_> struct Construct_sum_of_vectors {
 	typedef Vector second_argument_type;
 	result_type operator()(Vector const&a, Vector const&b)const{
 		CI ci;
-		return CV()(make_transforming_pair_iterator(ci.begin(a),ci.begin(b),std::plus<FT>()),make_transforming_pair_iterator(ci.end(a),ci.end(b),std::plus<FT>()));
+		return CV()(make_transforming_pair_iterator(ci(a,Begin_tag()),ci(b,Begin_tag()),std::plus<FT>()),make_transforming_pair_iterator(ci(a,End_tag()),ci(b,End_tag()),std::plus<FT>()));
 	}
 };
 
@@ -100,7 +100,7 @@ template<class R_> struct Construct_difference_of_vectors {
 	typedef Vector second_argument_type;
 	result_type operator()(Vector const&a, Vector const&b)const{
 		CI ci;
-		return CV()(make_transforming_pair_iterator(ci.begin(a),ci.begin(b),std::minus<FT>()),make_transforming_pair_iterator(ci.end(a),ci.end(b),std::minus<FT>()));
+		return CV()(make_transforming_pair_iterator(ci(a,Begin_tag()),ci(b,Begin_tag()),std::minus<FT>()),make_transforming_pair_iterator(ci(a,End_tag()),ci(b,End_tag()),std::minus<FT>()));
 	}
 };
 
@@ -122,7 +122,7 @@ template<class R_> struct Construct_midpoint {
 		CI ci;
 		//Divide<FT,int> half(2);
 		//return CP()(make_transforming_iterator(make_transforming_pair_iterator(ci.begin(a),ci.begin(b),std::plus<FT>()),half),make_transforming_iterator(make_transforming_pair_iterator(ci.end(a),ci.end(b),std::plus<FT>()),half));
-		return CP()(make_transforming_pair_iterator(ci.begin(a),ci.begin(b),Average()),make_transforming_pair_iterator(ci.end(a),ci.end(b),Average()));
+		return CP()(make_transforming_pair_iterator(ci(a,Begin_tag()),ci(b,Begin_tag()),Average()),make_transforming_pair_iterator(ci(a,End_tag()),ci(b,End_tag()),Average()));
 	}
 };
 
@@ -137,7 +137,7 @@ template<class R_> struct Compute_squared_length {
 		CI ci;
 		typename Algebraic_structure_traits<FT>::Square f;
 		// TODO: avoid this FT(0)+...
-		return std::accumulate(make_transforming_iterator(ci.begin(a),f),make_transforming_iterator(ci.end(a),f),FT(0));
+		return std::accumulate(make_transforming_iterator(ci(a,Begin_tag()),f),make_transforming_iterator(ci(a,End_tag()),f),FT(0));
 	}
 };
 
@@ -158,7 +158,7 @@ template<class R_> struct Compute_squared_distance {
 		CI ci;
 		Sq_diff f;
 		// TODO: avoid this FT(0)+...
-		return std::accumulate(make_transforming_pair_iterator(ci.begin(a),ci.begin(b),f),make_transforming_pair_iterator(ci.end(a),ci.end(b),f),FT(0));
+		return std::accumulate(make_transforming_pair_iterator(ci(a,Begin_tag()),ci(b,Begin_tag()),f),make_transforming_pair_iterator(ci(a,End_tag()),ci(b,End_tag()),f),FT(0));
 	}
 };
 

@@ -129,10 +129,10 @@ template<class R_> struct Construct_cartesian_const_iterator {
 	typedef typename R::Point_cartesian_const_iterator result_type;
 	// same as Vector
 
-	result_type begin(argument_type const& v)const{
+	result_type operator()(argument_type const& v,Begin_tag)const{
 		return S_::vector_begin(v);
 	}
-	result_type end(argument_type const& v)const{
+	result_type operator()(argument_type const& v,End_tag)const{
 		return S_::vector_end(v);
 	}
 };

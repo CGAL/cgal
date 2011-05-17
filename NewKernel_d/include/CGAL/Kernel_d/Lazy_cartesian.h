@@ -77,11 +77,11 @@ struct Lazy_cartesian : Dimension_base<typename EK_::Default_ambient_dimension>
     struct Construct_iter {
 	    typedef U result_type;
 	    template<class T>
-	    result_type begin(T const& t)const{
+	    result_type operator()(T const& t,Begin_tag)const{
 		    return result_type(t,0);
 	    }
 	    template<class T>
-	    result_type end(T const& t)const{
+	    result_type operator()(T const& t,End_tag)const{
 		    return result_type(t,Self().dimension());
 	    }
     };

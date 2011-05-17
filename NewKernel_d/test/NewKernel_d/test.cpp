@@ -56,7 +56,7 @@ int main(){
 	std::cout << cc(b,1) << std::endl;
 	std::cout << cc(cse(s,0),1) << std::endl;
 	std::cout << cc(cse(s,1),1) << std::endl;
-	for(CI i=ci.begin(a);i!=ci.end(a);++i)
+	for(CI i=ci(a,CGAL::Begin_tag());i!=ci(a,CGAL::End_tag());++i)
 		std::cout << *i << ' ';
 	std::cout << '\n';
 	P tab[]={a,b,c};
