@@ -388,6 +388,7 @@ insert_in_face_interior(const X_monotone_curve_2& cv, Face_handle f)
     // right end.
     _place_and_set_curve_end (p_f, cv, ARR_MAX_END, ps_x2, ps_y2, &fict_prev2);
 
+
   // Create the edge connecting the two vertices (note we know v1 is 
   // lexicographically smaller than v2).
   DHalfedge       *new_he;
@@ -410,10 +411,12 @@ insert_in_face_interior(const X_monotone_curve_2& cv, Face_handle f)
   }
   else
   {
+
     // Both vertices are inserted using their predecessor halfedges.
     // Note that in this case we may create a new face.
-    bool        new_face_created = false;
 
+    bool        new_face_created = false;
+  
     new_he = _insert_at_vertices (cv,
                                   fict_prev1, 
                                   fict_prev2,
@@ -2532,6 +2535,7 @@ _insert_at_vertices(const X_monotone_curve_2& cv,
 {
   CGAL_precondition(prev1 != NULL);
   CGAL_precondition(prev2 != NULL);
+  CGAL_precondition(prev1 != prev2); 
 
   // Get the vertices that match cv's endpoints.
   DVertex     *v1 = prev1->vertex();
@@ -2594,7 +2598,7 @@ _insert_at_vertices(const X_monotone_curve_2& cv,
         std::cout << "curr: fictitious" << std::endl;
       }
       std::cout << "dir: " 
-                << (curr->direction() == CGAL::LEFT_TO_RIGHT ? "L2R" : "R2L") 
+                << (curr->direction() == CGAL::ARR_LEFT_TO_RIGHT ? "L2R" : "R2L") 
                 << std::endl;
       curr = curr->next();
     }
@@ -2616,7 +2620,7 @@ _insert_at_vertices(const X_monotone_curve_2& cv,
         std::cout << "curr: fictitious" << std::endl;
       }
       std::cout << "dir: " 
-                << (curr->direction() == CGAL::LEFT_TO_RIGHT ? "L2R" : "R2L") 
+                << (curr->direction() == CGAL::ARR_LEFT_TO_RIGHT ? "L2R" : "R2L") 
                 << std::endl;
       curr = curr->next();
     }
