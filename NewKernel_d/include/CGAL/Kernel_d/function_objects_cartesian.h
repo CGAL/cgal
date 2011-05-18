@@ -2,6 +2,7 @@
 #define CGAL_KERNEL_D_FUNCTION_OBJECTS_CARTESIAN_H
 
 #include <CGAL/marcutils.h>
+#include <CGAL/store_kernel.h>
 #include <CGAL/is_iterator.h>
 #include <CGAL/number_utils.h>
 #include <CGAL/Kernel/Return_base_tag.h>
@@ -14,7 +15,8 @@
 namespace CGAL {
 namespace CartesianDKernelFunctors {
 
-template<class R_> struct Orientation {
+template<class R_> struct Orientation : private Store_kernel<R_> {
+	CGAL_FUNCTOR_INIT_STORE(Orientation)
 	typedef R_ R;
 	typedef typename R_::FT FT;
 	typedef typename R::Vector Vector;
@@ -24,7 +26,7 @@ template<class R_> struct Orientation {
 
 	template<class Iter>
 	result_type operator()(Iter f, Iter const& e, Vector_tag)const{
-		typename R::template Functor<Compute_cartesian_coordinate_tag>::type c;
+		typename R::template Functor<Compute_cartesian_coordinate_tag>::type c(this->kernel());
 		Matrix m(R().dimension(),R().dimension());
 		for(int i=0;f!=e;++f,++i) {
 		for(int j=0;j<R().dimension();++j){
@@ -36,7 +38,7 @@ template<class R_> struct Orientation {
 	}
 	template<class Iter>
 	result_type operator()(Iter f, Iter const& e, Point_tag)const{
-		typename R::template Functor<Compute_cartesian_coordinate_tag>::type c;
+		typename R::template Functor<Compute_cartesian_coordinate_tag>::type c(this->kernel());
 		Matrix m(R().dimension(),R().dimension());
 		Point const& p0=*f++;
 		for(int i=0;f!=e;++f,++i) {
@@ -60,7 +62,8 @@ template<class R_> struct Orientation {
 };
 
 
-template<class R_> struct Construct_opposite_vector {
+template<class R_> struct Construct_opposite_vector : private Store_kernel<R_> {
+	CGAL_FUNCTOR_INIT_STORE(Construct_opposite_vector)
 	typedef R_ R;
 	typedef typename R_::FT FT;
 	typedef typename R::Vector Vector;
@@ -69,12 +72,13 @@ template<class R_> struct Construct_opposite_vector {
 	typedef Vector result_type;
 	typedef Vector argument_type;
 	result_type operator()(Vector const&v)const{
-		CI ci;
-		return CV()(make_transforming_iterator(ci(v,Begin_tag()),std::negate<FT>()),make_transforming_iterator(ci(v,End_tag()),std::negate<FT>()));
+		CI ci(this->kernel());
+		return CV(this->kernel())(make_transforming_iterator(ci(v,Begin_tag()),std::negate<FT>()),make_transforming_iterator(ci(v,End_tag()),std::negate<FT>()));
 	}
 };
 
-template<class R_> struct Construct_sum_of_vectors {
+template<class R_> struct Construct_sum_of_vectors : private Store_kernel<R_> {
+	CGAL_FUNCTOR_INIT_STORE(Construct_sum_of_vectors)
 	typedef R_ R;
 	typedef typename R_::FT FT;
 	typedef typename R::Vector Vector;
@@ -84,12 +88,13 @@ template<class R_> struct Construct_sum_of_vectors {
 	typedef Vector first_argument_type;
 	typedef Vector second_argument_type;
 	result_type operator()(Vector const&a, Vector const&b)const{
-		CI ci;
-		return CV()(make_transforming_pair_iterator(ci(a,Begin_tag()),ci(b,Begin_tag()),std::plus<FT>()),make_transforming_pair_iterator(ci(a,End_tag()),ci(b,End_tag()),std::plus<FT>()));
+		CI ci(this->kernel());
+		return CV(this->kernel())(make_transforming_pair_iterator(ci(a,Begin_tag()),ci(b,Begin_tag()),std::plus<FT>()),make_transforming_pair_iterator(ci(a,End_tag()),ci(b,End_tag()),std::plus<FT>()));
 	}
 };
 
-template<class R_> struct Construct_difference_of_vectors {
+template<class R_> struct Construct_difference_of_vectors : private Store_kernel<R_> {
+	CGAL_FUNCTOR_INIT_STORE(Construct_difference_of_vectors)
 	typedef R_ R;
 	typedef typename R_::FT FT;
 	typedef typename R::Vector Vector;
@@ -99,12 +104,13 @@ template<class R_> struct Construct_difference_of_vectors {
 	typedef Vector first_argument_type;
 	typedef Vector second_argument_type;
 	result_type operator()(Vector const&a, Vector const&b)const{
-		CI ci;
-		return CV()(make_transforming_pair_iterator(ci(a,Begin_tag()),ci(b,Begin_tag()),std::minus<FT>()),make_transforming_pair_iterator(ci(a,End_tag()),ci(b,End_tag()),std::minus<FT>()));
+		CI ci(this->kernel());
+		return CV(this->kernel())(make_transforming_pair_iterator(ci(a,Begin_tag()),ci(b,Begin_tag()),std::minus<FT>()),make_transforming_pair_iterator(ci(a,End_tag()),ci(b,End_tag()),std::minus<FT>()));
 	}
 };
 
-template<class R_> struct Construct_midpoint {
+template<class R_> struct Construct_midpoint : private Store_kernel<R_> {
+	CGAL_FUNCTOR_INIT_STORE(Construct_midpoint)
 	typedef R_ R;
 	typedef typename R_::FT FT;
 	typedef typename R::Point Point;
@@ -119,14 +125,15 @@ template<class R_> struct Construct_midpoint {
 		}
 	};
 	result_type operator()(Point const&a, Point const&b)const{
-		CI ci;
+		CI ci(this->kernel());
 		//Divide<FT,int> half(2);
-		//return CP()(make_transforming_iterator(make_transforming_pair_iterator(ci.begin(a),ci.begin(b),std::plus<FT>()),half),make_transforming_iterator(make_transforming_pair_iterator(ci.end(a),ci.end(b),std::plus<FT>()),half));
-		return CP()(make_transforming_pair_iterator(ci(a,Begin_tag()),ci(b,Begin_tag()),Average()),make_transforming_pair_iterator(ci(a,End_tag()),ci(b,End_tag()),Average()));
+		//return CP(this->kernel())(make_transforming_iterator(make_transforming_pair_iterator(ci.begin(a),ci.begin(b),std::plus<FT>()),half),make_transforming_iterator(make_transforming_pair_iterator(ci.end(a),ci.end(b),std::plus<FT>()),half));
+		return CP(this->kernel())(make_transforming_pair_iterator(ci(a,Begin_tag()),ci(b,Begin_tag()),Average()),make_transforming_pair_iterator(ci(a,End_tag()),ci(b,End_tag()),Average()));
 	}
 };
 
-template<class R_> struct Compute_squared_length {
+template<class R_> struct Compute_squared_length : private Store_kernel<R_> {
+	CGAL_FUNCTOR_INIT_STORE(Compute_squared_length)
 	typedef R_ R;
 	typedef typename R_::FT FT;
 	typedef typename R::Vector Vector;
@@ -134,14 +141,15 @@ template<class R_> struct Compute_squared_length {
 	typedef FT result_type;
 	typedef Vector argument_type;
 	result_type operator()(Vector const&a)const{
-		CI ci;
+		CI ci(this->kernel());
 		typename Algebraic_structure_traits<FT>::Square f;
 		// TODO: avoid this FT(0)+...
 		return std::accumulate(make_transforming_iterator(ci(a,Begin_tag()),f),make_transforming_iterator(ci(a,End_tag()),f),FT(0));
 	}
 };
 
-template<class R_> struct Compute_squared_distance {
+template<class R_> struct Compute_squared_distance : private Store_kernel<R_> {
+	CGAL_FUNCTOR_INIT_STORE(Compute_squared_distance)
 	typedef R_ R;
 	typedef typename R_::FT FT;
 	typedef typename R::Point Point;
@@ -155,14 +163,15 @@ template<class R_> struct Compute_squared_distance {
 		}
 	};
 	result_type operator()(Point const&a, Point const&b)const{
-		CI ci;
+		CI ci(this->kernel());
 		Sq_diff f;
 		// TODO: avoid this FT(0)+...
 		return std::accumulate(make_transforming_pair_iterator(ci(a,Begin_tag()),ci(b,Begin_tag()),f),make_transforming_pair_iterator(ci(a,End_tag()),ci(b,End_tag()),f),FT(0));
 	}
 };
 
-template<class R_> struct Less_cartesian_coordinate {
+template<class R_> struct Less_cartesian_coordinate : private Store_kernel<R_> {
+	CGAL_FUNCTOR_INIT_STORE(Less_cartesian_coordinate)
 	typedef R_ R;
 	typedef typename R_::FT FT;
 	typedef typename R::Comparison_result result_type;
@@ -173,18 +182,20 @@ template<class R_> struct Less_cartesian_coordinate {
 
 	template<class V,class W,class I>
 	result_type operator()(V const&a, V const&b, I i)const{
-		Cc c;
+		Cc c(this->kernel());
 		return c(a,i)<c(b,i);
 	}
 };
 
 template<class R_> struct Construct_segment {
+	CGAL_FUNCTOR_INIT_IGNORE(Construct_segment)
 	typedef R_ R;
 	typedef typename R_::Point Point;
 	typedef typename R_::Segment Segment;
 	typedef Segment result_type;
 #ifdef CGAL_CXX0X
 	template<class...U> result_type operator()(U&&...u)const{
+		// should use Construct_point ?
 		return result_type(std::forward<U>(u)...);
 	}
 #else
@@ -194,7 +205,9 @@ template<class R_> struct Construct_segment {
 #endif
 };
 
+// This should be part of Construct_point, according to Kernel_23 conventions
 template<class R_> struct Construct_segment_extremity {
+	CGAL_FUNCTOR_INIT_IGNORE(Construct_segment_extremity)
 	typedef R_ R;
 	typedef typename R_::Point Point;
 	typedef typename R_::Segment Segment;

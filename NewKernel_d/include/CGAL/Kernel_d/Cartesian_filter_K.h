@@ -8,13 +8,19 @@
 namespace CGAL {
 
 template < typename Base_, typename AK_, typename EK_ >
-struct Cartesian_filter_K : public Base_
+struct Cartesian_filter_K : public Base_,
+	private Store_kernel<AK_>, private Store_kernel2<EK_>
 {
     CGAL_CONSTEXPR Cartesian_filter_K(){}
     CGAL_CONSTEXPR Cartesian_filter_K(int d):Base_(d){}
+    //FIXME: or do we want an instance of AK and EK belonging to this kernel,
+    //instead of a reference to external ones?
+    CGAL_CONSTEXPR Cartesian_filter_K(AK_ const&a,EK_ const&b):Base_(),Store_kernel<AK_>(a),Store_kernel2<EK_>(b){}
+    CGAL_CONSTEXPR Cartesian_filter_K(int d,AK_ const&a,EK_ const&b):Base_(d),Store_kernel<AK_>(a),Store_kernel2<EK_>(b){}
     typedef Base_ Kernel_base;
     typedef AK_ AK;
     typedef EK_ EK;
+    //TODO: C2A/C2E should be able to convert *this into this->kernel() or this->kernel2().
     typedef CartesianD_converter<Kernel_base,AK> C2A;
     typedef CartesianD_converter<Kernel_base,EK> C2E;
 

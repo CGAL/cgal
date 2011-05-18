@@ -6,6 +6,7 @@
 #include <CGAL/argument_swaps.h>
 #include <CGAL/Kernel/Return_base_tag.h>
 #include <CGAL/transforming_iterator.h>
+#include <CGAL/store_kernel.h>
 
 namespace CGAL {
 namespace CartesianDVectorBase {
@@ -35,6 +36,7 @@ template<class R_,class Zero_> struct Construct_LA_vector
 : internal::Construct_LA_vector_<R_,R_::Default_ambient_dimension::value>
 #endif
 {
+	CGAL_FUNCTOR_INIT_IGNORE(Construct_LA_vector)
 	typedef R_ R;
 	typedef typename R::Constructor Constructor;
 	typedef typename R::FT FT;
@@ -104,6 +106,7 @@ template<class R_,class Zero_> struct Construct_LA_vector
 };
 
 template<class R_> struct Compute_cartesian_coordinate {
+	CGAL_FUNCTOR_INIT_IGNORE(Compute_cartesian_coordinate)
 	typedef R_ R;
 	typedef typename R_::FT FT;
 	typedef typename R::LA_vector first_argument_type;
@@ -123,6 +126,7 @@ template<class R_> struct Compute_cartesian_coordinate {
 };
 
 template<class R_> struct Construct_cartesian_const_iterator {
+	CGAL_FUNCTOR_INIT_IGNORE(Construct_cartesian_const_iterator)
 	typedef R_ R;
 	typedef typename R::LA_vector argument_type;
 	typedef typename R::LA_vector_selector S_;
@@ -138,6 +142,7 @@ template<class R_> struct Construct_cartesian_const_iterator {
 };
 
 template<class R_> struct Construct_midpoint {
+	CGAL_FUNCTOR_INIT_IGNORE(Construct_midpoint)
 	typedef R_ R;
 	typedef typename R::Point first_argument_type;
 	typedef typename R::Point second_argument_type;
@@ -149,6 +154,7 @@ template<class R_> struct Construct_midpoint {
 };
 
 template<class R_> struct Construct_sum_of_vectors {
+	CGAL_FUNCTOR_INIT_IGNORE(Construct_sum_of_vectors)
 	typedef R_ R;
 	typedef typename R::Vector first_argument_type;
 	typedef typename R::Vector second_argument_type;
@@ -160,6 +166,7 @@ template<class R_> struct Construct_sum_of_vectors {
 };
 
 template<class R_> struct Construct_difference_of_vectors {
+	CGAL_FUNCTOR_INIT_IGNORE(Construct_difference_of_vectors)
 	typedef R_ R;
 	typedef typename R::Vector first_argument_type;
 	typedef typename R::Vector second_argument_type;
@@ -171,6 +178,7 @@ template<class R_> struct Construct_difference_of_vectors {
 };
 
 template<class R_> struct Construct_opposite_vector {
+	CGAL_FUNCTOR_INIT_IGNORE(Construct_opposite_vector)
 	typedef R_ R;
 	typedef typename R::Vector result_type;
 	typedef typename R::Vector argument_type;
@@ -181,6 +189,7 @@ template<class R_> struct Construct_opposite_vector {
 };
 
 template<class R_> struct Compute_scalar_product {
+	CGAL_FUNCTOR_INIT_IGNORE(Compute_scalar_product)
 	typedef R_ R;
 	typedef typename R::LA LA;
 	typedef typename R::FT result_type;

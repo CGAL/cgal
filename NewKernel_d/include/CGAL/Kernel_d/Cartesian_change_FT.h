@@ -15,6 +15,7 @@ struct Cartesian_change_FT_base : public
     CGAL_CONSTEXPR Cartesian_change_FT_base(){}
     CGAL_CONSTEXPR Cartesian_change_FT_base(int d):Base_(d){}
 
+    typedef Cartesian_change_FT_base Self;
     typedef Base_ Kernel_base;
     typedef FT_ RT;
     typedef FT_ FT;
@@ -39,19 +40,20 @@ struct Cartesian_change_FT_base : public
     typedef transforming_iterator<FT_converter,typename Kernel_base::Point_cartesian_const_iterator> Point_cartesian_const_iterator;
     typedef transforming_iterator<FT_converter,typename Kernel_base::Vector_cartesian_const_iterator> Vector_cartesian_const_iterator;
 
-    //FIXME: what if the functor's constructor takes a kernel as argument?
     template<class Tag,class Type>
     struct Construct_cartesian_const_iterator_ {
 	    typedef typename Kernel_base::template Functor<Tag>::type Functor_base;
+	    Construct_cartesian_const_iterator_(){}
+	    Construct_cartesian_const_iterator_(Self const&r):f(r){}
 	    Functor_base f;
 	    typedef Type result_type;
 	    template<class T>
-	    result_type begin(T const& v)const{
-		    return make_transforming_iterator(f.begin(v),FT_converter());
+	    result_type operator()(T const& v, Begin_tag)const{
+		    return make_transforming_iterator(f(v,Begin_tag()),FT_converter());
 	    }
 	    template<class T>
-	    result_type end(T const& v)const{
-		    return make_transforming_iterator(f.end(v),FT_converter());
+	    result_type operator()(T const& v, End_tag)const{
+		    return make_transforming_iterator(f(v,End_tag()),FT_converter());
 	    }
     };
     typedef Construct_cartesian_const_iterator_<Construct_point_cartesian_const_iterator_tag,Point_cartesian_const_iterator> Construct_point_cartesian_const_iterator;
@@ -59,6 +61,8 @@ struct Cartesian_change_FT_base : public
 
     struct Compute_cartesian_coordinate {
 	    typedef typename Kernel_base::template Functor<Compute_cartesian_coordinate_tag>::type Functor_base;
+	    Compute_cartesian_coordinate(){}
+	    Compute_cartesian_coordinate(Self const&r):f(r){}
 	    Functor_base f;
 	    typedef FT result_type;
 	    template<class Obj_>

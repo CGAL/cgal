@@ -9,16 +9,22 @@
 #include <CGAL/is_iterator.h>
 #include <CGAL/transforming_iterator.h>
 #include <boost/utility/enable_if.hpp>
+#include <CGAL/store_kernel.h>
 
 namespace CGAL {
-template<class K1, class K2> class CartesianD_converter {
+	//TODO: special case when K1==K2 (or they are very close?)
+template<class K1, class K2> class CartesianD_converter
+	: private Store_kernel<K1>, private Store_kernel2<K2>
+{
 	typedef CartesianD_converter<K1,K2> Self;
 	typedef typename K1::FT FT1;
 	typedef typename K2::FT FT2;
 	typedef NT_converter<FT1, FT2> NTc;
 	NTc c;
-	// TODO: store a K1 and a K2 and have a suitable constructor
 	public:
+	CartesianD_converter(){}
+	CartesianD_converter(K1 const&a,K2 const&b):Store_kernel<K1>(a),Store_kernel2<K2>(b){}
+
 	// For boost::result_of, used in transforming_iterator
 	template<class T,int i=0> struct result;
 	template<class T,int i> struct result<Self(T),i>{
@@ -50,21 +56,20 @@ template<class K1, class K2> class CartesianD_converter {
 	}
 
 	typename K2::Point operator()(typename K1::Point const& p)const{
-		typename K1::template Functor<Construct_point_cartesian_const_iterator_tag>::type i;
-		typename K2::template Functor<Construct_point_tag>::type cp;
+		typename K1::template Functor<Construct_point_cartesian_const_iterator_tag>::type i(this->kernel());
+		typename K2::template Functor<Construct_point_tag>::type cp(this->kernel2());
 		return cp(operator()(i(p,Begin_tag())),operator()(i(p,End_tag())));
 	}
 
 	typename K2::Vector operator()(typename First_if_different<typename K1::Vector,typename K1::Point>::Type const& p)const{
-		typename K1::template Functor<Construct_vector_cartesian_const_iterator_tag>::type i;
-		typename K2::template Functor<Construct_vector_tag>::type cv;
+		typename K1::template Functor<Construct_vector_cartesian_const_iterator_tag>::type i(this->kernel());
+		typename K2::template Functor<Construct_vector_tag>::type cv(this->kernel2());
 		return cv(operator()(i(p,Begin_tag())),operator()(i(p,End_tag())));
 	}
 
 	typename K2::Segment operator()(typename K1::Segment const& s)const{
-		typename K1::template Functor<Construct_segment_extremity_tag>::type f;
-		//FIXME: should replace source and target by a functor
-		typename K2::template Functor<Construct_segment_tag>::type cs;
+		typename K1::template Functor<Construct_segment_extremity_tag>::type f(this->kernel());
+		typename K2::template Functor<Construct_segment_tag>::type cs(this->kernel2());
 		return cs(operator()(f(s,0)),operator()(f(s,1)));
 	}
 
