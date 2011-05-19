@@ -60,13 +60,13 @@ NT my_rand()
 
 //----------------------
 
-template<class T>
-bool is_RO2_class(const CGAL::Sqrt_extension<T,T>& ){ return true;}
+template<class T,class ACDE_TAG,class FP_TAG>
+bool is_RO2_class(const CGAL::Sqrt_extension<T,T,ACDE_TAG,FP_TAG>& ){ return true;}
 template<class T>
 bool is_RO2_class(const T& ){ return false;}
 
-template<class T>
-CGAL::Sqrt_extension<T,T> conjugate(const CGAL::Sqrt_extension<T,T>& R){
+template<class T,class ACDE_TAG,class FP_TAG>
+CGAL::Sqrt_extension<T,T,ACDE_TAG,FP_TAG> conjugate(const CGAL::Sqrt_extension<T,T,ACDE_TAG,FP_TAG>& R){
   return R.conjugate();
 }
 

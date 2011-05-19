@@ -43,11 +43,11 @@ class Algebraic_extension_traits<CGAL::Sqrt_extension<COEFF,ROOT,ACDE_TAG,FP_TAG
         }
     };
     
-  template <class COEFF_, class ROOT_>
-  class Standardise<CGAL::Sqrt_extension<COEFF_,ROOT_,ACDE_TAG,FP_TAG> > {
+  template <class COEFF_, class ROOT_,class ACDE_TAG_,class FP_TAG_>
+  class Standardise<CGAL::Sqrt_extension<COEFF_,ROOT_,ACDE_TAG_,FP_TAG_> > {
         Standardise<COEFF_> standardise;
     public:
-    typedef CGAL::Sqrt_extension<COEFF_,ROOT_,ACDE_TAG,FP_TAG> Type_;
+    typedef CGAL::Sqrt_extension<COEFF_,ROOT_,ACDE_TAG_,FP_TAG_> Type_;
         typedef Type_ argument_type;
         typedef Type_ result_type;
     Type_ operator () (const Type_& a) const {       

@@ -212,6 +212,12 @@ public:
     }
   }
 
+  
+  Self conjugate() const
+  {
+    if(!is_extended_) return *this;
+    return Self(a0_,-a1_,root_);
+  }
 
     //! Access operator for a0_, \c const
     inline const NT& a0() const { return a0_; }
