@@ -40,7 +40,7 @@ int main ()
   std::vector<Point_it>         iterators;  iterators.reserve(size);
   CGAL::Random_points_in_square_2<Point> gen (10.0);
 
-  for (int i = 0; i < size; ++i) points.push_back (*gen++);
+  for (std::size_t i = 0; i < size; ++i) points.push_back (*gen++);
   for(Point_it it = points.begin(); it != points.end(); ++it)
     iterators.push_back(it);
   my_sort(iterators.begin(), iterators.end());
