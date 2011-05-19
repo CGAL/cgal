@@ -13,11 +13,11 @@ typedef Kernel::Point_3 Point_3;
 
 typedef std::size_t Point;
 
-typedef boost::const_associative_property_map<std::map<Point,Point_3> >                 My_Point_accessor;
+typedef boost::const_associative_property_map<std::map<Point,Point_3> >                 My_point_property_map;
   
 typedef CGAL::Random_points_in_cube_3<Point_3>                                          Random_points_iterator;
 typedef CGAL::Search_traits_3<Kernel>                                                   Traits_base;
-typedef CGAL::Search_traits_adapter<Point,My_Point_accessor,Traits_base>              Traits;
+typedef CGAL::Search_traits_adapter<Point,My_point_property_map,Traits_base>            Traits;
 
 
 typedef CGAL::Orthogonal_k_neighbor_search<Traits>                      K_neighbor_search;
@@ -39,17 +39,17 @@ int main() {
   points[5]=Point_3(*rpit++);
   points[6]=Point_3(*rpit++);
 
-  My_Point_accessor accessor(points);
+  My_point_property_map ppmap(points);
 
   // Insert number_of_data_points in the tree
   Tree tree(
     boost::counting_iterator<std::size_t>(0),
     boost::counting_iterator<std::size_t>(points.size()),
     Splitter(),
-    Traits(accessor)
+    Traits(ppmap)
   );
   Point_3 query(0.0, 0.0, 0.0);
-  Distance tr_dist(accessor);
+  Distance tr_dist(ppmap);
 
   // search K nearest neighbours
   K_neighbor_search search(tree, query, K,0,true,tr_dist);

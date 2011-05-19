@@ -16,8 +16,8 @@ typedef CGAL::Manhattan_distance_iso_box_point<TreeTraits> Distance;
 typedef CGAL::K_neighbor_search<TreeTraits, Distance> Neighbor_search;
 //typdefs for Point_with_info
 typedef Point_with_info_helper<Point_d>::type                                           Point_with_info;
-typedef CGAL::Search_traits_adapter<Point_with_info,Point_accessor,TreeTraits>        Traits_with_info;
-typedef CGAL::Distance_adapter <Point_with_info,Point_accessor,Distance>    Distance_adapter;
+typedef CGAL::Search_traits_adapter<Point_with_info,Point_property_map,TreeTraits>        Traits_with_info;
+typedef CGAL::Distance_adapter <Point_with_info,Point_property_map,Distance>    Distance_adapter;
 typedef CGAL::K_neighbor_search<Traits_with_info, Distance_adapter>                   Neighbor_search_with_info;
 
 const unsigned int K = 8;

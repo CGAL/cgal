@@ -31,8 +31,8 @@ for example \ccc{CGAL::Search_traits_2<CGAL::Cartesian<double> >}.
 
 Expects for the second template argument a model of the
 concept \ccc{GeneralDistance}. If \ccc{Traits} is 
-\ccc{CGAL::Search_traits_adapter<Point_with_info,Point_accessor,Base_traits>}
-the default type is \ccc{CGAL::Distance_adapter<Point_with_info,Point_accessor,CGAL::Euclidean_distance<Traits> >},
+\ccc{CGAL::Search_traits_adapter<Key,PointPropertyMap,Base_traits>}
+the default type is \ccc{CGAL::Distance_adapter<Key,PointPropertyMap,CGAL::Euclidean_distance<Traits> >},
 and \ccc{CGAL::Euclidean_distance<Traits>} otherwise.
 
 

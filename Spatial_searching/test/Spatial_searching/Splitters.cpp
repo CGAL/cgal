@@ -29,8 +29,8 @@ typedef CGAL::Search_traits_3<K> TreeTraits;
 typedef CGAL::Euclidean_distance<TreeTraits> Distance;
 #endif
 typedef Point_with_info_helper<Point>::type                                             Point_with_info;
-typedef CGAL::Search_traits_adapter<Point_with_info,Point_accessor,TreeTraits>        Traits_with_info;
-typedef CGAL::Distance_adapter <Point_with_info,Point_accessor,Distance>    Distance_adapter;
+typedef CGAL::Search_traits_adapter<Point_with_info,Point_property_map,TreeTraits>        Traits_with_info;
+typedef CGAL::Distance_adapter <Point_with_info,Point_property_map,Distance>    Distance_adapter;
 
   typedef std::vector<Point>               Vector;
 

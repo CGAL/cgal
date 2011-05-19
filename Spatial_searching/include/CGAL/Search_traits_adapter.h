@@ -26,10 +26,10 @@
 
 namespace CGAL{
 
-template <class Point_with_info,class Point_accessor,class Base_traits>
+template <class Point_with_info,class PointPropertyMap,class Base_traits>
 class Search_traits_adapter;
   
-template <class Point_with_info,class Point_accessor,class Base_distance>
+template <class Point_with_info,class PointPropertyMap,class Base_distance>
 class Distance_adapter;
   
 namespace internal{
@@ -51,84 +51,84 @@ struct Get_iso_box_d<T,true>
   typedef typename T::Iso_box_d type;
 };
   
-  template <class Point_with_info,class Point_accessor,class Base_traits>
-  struct Spatial_searching_default_distance< ::CGAL::Search_traits_adapter<Point_with_info,Point_accessor,Base_traits> >{
+  template <class Point_with_info,class PointPropertyMap,class Base_traits>
+  struct Spatial_searching_default_distance< ::CGAL::Search_traits_adapter<Point_with_info,PointPropertyMap,Base_traits> >{
     typedef ::CGAL::Distance_adapter<Point_with_info,
-                                                 Point_accessor,
+                                                 PointPropertyMap,
                                                  typename Spatial_searching_default_distance<Base_traits>::type> type;
   };
 
 } //namespace internal
   
   
-template <class Point_with_info,class Point_accessor,class Base_traits>
+template <class Point_with_info,class PointPropertyMap,class Base_traits>
 class Search_traits_adapter : public Base_traits{
-  Point_accessor accessor;
+  PointPropertyMap ppmap;
 public:
   typedef Base_traits Base;
   typedef typename internal::Get_iso_box_d<Base>::type Iso_box_d;
 
-  Search_traits_adapter(const Point_accessor& accessor_=Point_accessor(),
+  Search_traits_adapter(const PointPropertyMap& ppmap_=PointPropertyMap(),
                           const Base_traits& base=Base_traits()
-  ):Base_traits(base),accessor(accessor_){}
+  ):Base_traits(base),ppmap(ppmap_){}
 
   typedef typename Base_traits::Cartesian_const_iterator_d      Cartesian_const_iterator_d;
   typedef Point_with_info                                       Point_d;
   typedef typename Base_traits::FT                              FT;
 
   struct Construct_cartesian_const_iterator_d: public Base_traits::Construct_cartesian_const_iterator_d{
-    Point_accessor accessor;
+    PointPropertyMap ppmap;
     using Base_traits::Construct_cartesian_const_iterator_d::operator();
     
-    Construct_cartesian_const_iterator_d(const typename Base_traits::Construct_cartesian_const_iterator_d& base, const Point_accessor& accessor_)
-      :Base_traits::Construct_cartesian_const_iterator_d(base), accessor(accessor_){}
+    Construct_cartesian_const_iterator_d(const typename Base_traits::Construct_cartesian_const_iterator_d& base, const PointPropertyMap& ppmap_)
+      :Base_traits::Construct_cartesian_const_iterator_d(base), ppmap(ppmap_){}
     
     typename Base_traits::Cartesian_const_iterator_d operator()(const Point_with_info& p) const
-    { return this->operator() (accessor[p]); }
+    { return this->operator() (ppmap[p]); }
 
     typename Base_traits::Cartesian_const_iterator_d operator()(const Point_with_info& p, int)  const
-    { return this->operator() (accessor[p],0); }
+    { return this->operator() (ppmap[p],0); }
   };
   
   struct Construct_iso_box_d: public Base::Construct_iso_box_d{
-    Point_accessor accessor;
+    PointPropertyMap ppmap;
     
     Iso_box_d operator() () const {return this->Construct_iso_box_d();}
     Iso_box_d operator() (const Point_with_info& p, const Point_with_info& q, FT epsilon=FT(0)) const
     {
-      return static_cast<const typename Base::Construct_iso_box_d* >(this)->operator() (accessor[p],accessor[q],epsilon);
+      return static_cast<const typename Base::Construct_iso_box_d* >(this)->operator() (ppmap[p],ppmap[q],epsilon);
     }
   };
   
-  const Point_accessor& point_accessor() const {return accessor;}
+  const PointPropertyMap& point_property_map() const {return ppmap;}
   
   Construct_cartesian_const_iterator_d construct_cartesian_const_iterator_d_object() const {
     return Construct_cartesian_const_iterator_d(
       static_cast<const Base*>(this)->construct_cartesian_const_iterator_d_object(),
-      accessor);
+      ppmap);
   }
 };
 
-template <class Point_with_info,class Point_accessor,class Base_distance>
+template <class Point_with_info,class PointPropertyMap,class Base_distance>
 class Distance_adapter : public Base_distance {
-  Point_accessor accessor;
+  PointPropertyMap ppmap;
   typedef typename Base_distance::FT FT;
 public:
     
-  Distance_adapter( const Point_accessor& accessor_=Point_accessor(),
+  Distance_adapter( const PointPropertyMap& ppmap_=PointPropertyMap(),
                          const Base_distance& distance=Base_distance()
-  ):Base_distance(distance),accessor(accessor_){}
+  ):Base_distance(distance),ppmap(ppmap_){}
 
   using Base_distance::transformed_distance;
   
   typedef Point_with_info Point_d;
   typedef typename Base_distance::Query_item Query_item;
 
-  const Point_accessor& point_accessor() const {return accessor;}    
+  const PointPropertyMap& point_property_map() const {return ppmap;}    
 
   FT transformed_distance(const Query_item& p1, const Point_with_info& p2) const
   {
-    return this->transformed_distance(p1,accessor[p2]);
+    return this->transformed_distance(p1,ppmap[p2]);
   }
 
   template <class FT>

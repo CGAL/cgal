@@ -39,8 +39,8 @@ typedef Orthogonal_incremental_neighbor_search::iterator        NN_iterator;
 typedef Orthogonal_incremental_neighbor_search::Point_with_transformed_distance Point_with_transformed_distance;
 //typdefs for Point_with_info
 typedef Point_with_info_helper<Point>::type                                             Point_with_info;
-typedef CGAL::Search_traits_adapter<Point_with_info,Point_accessor,TreeTraits>        Traits_with_info;
-typedef CGAL::Distance_adapter <Point_with_info,Point_accessor,Distance>    Distance_adapter;
+typedef CGAL::Search_traits_adapter<Point_with_info,Point_property_map,TreeTraits>        Traits_with_info;
+typedef CGAL::Distance_adapter <Point_with_info,Point_property_map,Distance>    Distance_adapter;
 typedef CGAL::Incremental_neighbor_search<Traits_with_info,Distance_adapter>          Orthogonal_incremental_neighbor_search_with_info;
 
 

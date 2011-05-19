@@ -12,14 +12,14 @@ typedef Kernel::Point_3 Point_3;
 
 typedef boost::tuple<Point_3,int> Point;
 
-struct My_Point_accessor{
+struct My_point_property_map{
   const Point_3& operator[](const Point& p) const {return boost::get<0>(p);}
 };
 
 
 typedef CGAL::Random_points_in_cube_3<Point_3>                                          Random_points_iterator;
 typedef CGAL::Search_traits_3<Kernel>                                                   Traits_base;
-typedef CGAL::Search_traits_adapter<Point,My_Point_accessor,Traits_base>              Traits;
+typedef CGAL::Search_traits_adapter<Point,My_point_property_map,Traits_base>            Traits;
 
 
 typedef CGAL::Orthogonal_k_neighbor_search<Traits>                      K_neighbor_search;

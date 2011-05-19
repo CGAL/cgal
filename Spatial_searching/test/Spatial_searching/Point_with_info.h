@@ -17,7 +17,7 @@ struct Point_with_info_helper{
 };
 
 
-struct Point_accessor{
+struct Point_property_map{
   template <class Point>
   const Point& operator[](const My_point_with_info<Point>& p) const {return p.point();}
 };
@@ -26,7 +26,7 @@ template <class Point>
 const Point& get_point(const Point& p) {return p;}
 
 template <class Point>
-const Point& get_point(const My_point_with_info<Point>& p) {return Point_accessor()[p];}
+const Point& get_point(const My_point_with_info<Point>& p) {return Point_property_map()[p];}
 
 template <class Point>
 struct Create_point_with_info : public std::unary_function<Point,Point>{
