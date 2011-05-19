@@ -24,14 +24,23 @@ struct Store_kernel {
 	enum { kernel_is_stored = false };
 	R_ kernel()const{return R_();}
 	typedef R_ reference_type;
+	void set_kernel(R_ const&){}
 };
 template<class R_>
 struct Store_kernel<R_,false> {
-	Store_kernel(){ CGAL_warning_msg(true,"I should know my kernel"); }
+	Store_kernel():rp(0){
+		//CGAL_warning_msg(true,"I should know my kernel");
+		//Can't do the check here, Filtered_predicate doesn't let you
+		//initialize c2a/c2e.
+	}
 	Store_kernel(R_ const& r):rp(&r){}
 	enum { kernel_is_stored = true };
-	R_ const& kernel()const{return *rp;}
+	R_ const& kernel()const{
+		CGAL_warning_msg(rp==0,"I should know my kernel"); }
+		return *rp;
+	}
 	typedef R_ const& reference_type;
+	void set_kernel(R_ const&r){rp=&r;}
 	private:
 	R_ const* rp;
 };
@@ -44,14 +53,18 @@ struct Store_kernel2 {
 	enum { kernel2_is_stored = false };
 	R_ kernel2()const{return R_();}
 	typedef R_ reference2_type;
+	void set_kernel2(R_ const&){}
 };
 template<class R_>
 struct Store_kernel2<R_,false> {
-	Store_kernel2(){ CGAL_warning_msg(true,"I should know my kernel"); }
+	Store_kernel2(){
+		//CGAL_warning_msg(true,"I should know my kernel");
+	}
 	Store_kernel2(R_ const& r):rp(&r){}
 	enum { kernel2_is_stored = true };
 	R_ const& kernel2()const{return *rp;}
 	typedef R_ const& reference2_type;
+	void set_kernel2(R_ const&r){rp=&r;}
 	private:
 	R_ const* rp;
 };
