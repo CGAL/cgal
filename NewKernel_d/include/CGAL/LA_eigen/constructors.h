@@ -20,6 +20,7 @@ template <class Vector_> struct Construct_eigen {
 	template<typename Iter>
 	result_type operator()(int d,Iter const& f,Iter const& e) const {
 		CGAL_assertion(d==std::distance(f,e));
+		//FIXME: the std::min is useless? it causes problems for intel/clang
 		CGAL_assertion(d<=std::min(result_type::SizeAtCompileTime,result_type::MaxSizeAtCompileTime));
 		result_type a(d);
 		// TODO: check the right way to do this

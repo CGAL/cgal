@@ -16,7 +16,7 @@ namespace CGAL {
 template<class K1, class K2> class CartesianD_converter
 	: private Store_kernel<K1>, private Store_kernel2<K2>
 {
-	typedef CartesianD_converter<K1,K2> Self;
+	typedef CartesianD_converter Self;
 	typedef typename K1::FT FT1;
 	typedef typename K2::FT FT2;
 	typedef NT_converter<FT1, FT2> NTc;
@@ -35,6 +35,7 @@ template<class K1, class K2> class CartesianD_converter
 #endif
 		typedef transforming_iterator<Self,T> type;
 	};
+	template<int i> struct result<Self(K1),i>{typedef K2 type;};
 	template<int i> struct result<Self(int),i>{typedef int type;};
 	template<int i> struct result<Self(Origin),i>{typedef Origin type;};
 	template<int i> struct result<Self(Null_vector),i>{typedef Null_vector type;};
@@ -43,6 +44,7 @@ template<class K1, class K2> class CartesianD_converter
 	template<int i> struct result<Self(typename K1::Point),i>{typedef typename K2::Point type;};
 	template<int i> struct result<Self(typename First_if_different<typename K1::Vector,typename K1::Point>::Type),i>{typedef typename K2::Vector type;};
 
+	typename Store_kernel2<K2>::reference2_type operator()(K1 const&)const{return this->kernel2();}
 	int operator()(int i)const{return i;}
 	Origin operator()(Origin const&o)const{return o;}
 	Null_vector operator()(Null_vector const&v)const{return v;}

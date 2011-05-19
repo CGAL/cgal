@@ -23,6 +23,7 @@ struct Store_kernel {
 	Store_kernel(R_ const&){}
 	enum { kernel_is_stored = false };
 	R_ kernel()const{return R_();}
+	typedef R_ reference_type;
 };
 template<class R_>
 struct Store_kernel<R_,false> {
@@ -30,6 +31,7 @@ struct Store_kernel<R_,false> {
 	Store_kernel(R_ const& r):rp(&r){}
 	enum { kernel_is_stored = true };
 	R_ const& kernel()const{return *rp;}
+	typedef R_ const& reference_type;
 	private:
 	R_ const* rp;
 };
@@ -41,6 +43,7 @@ struct Store_kernel2 {
 	Store_kernel2(R_ const&){}
 	enum { kernel2_is_stored = false };
 	R_ kernel2()const{return R_();}
+	typedef R_ reference2_type;
 };
 template<class R_>
 struct Store_kernel2<R_,false> {
@@ -48,6 +51,7 @@ struct Store_kernel2<R_,false> {
 	Store_kernel2(R_ const& r):rp(&r){}
 	enum { kernel2_is_stored = true };
 	R_ const& kernel2()const{return *rp;}
+	typedef R_ const& reference2_type;
 	private:
 	R_ const* rp;
 };
