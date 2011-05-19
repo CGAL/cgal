@@ -17,6 +17,7 @@ if ( CGAL_FOUND )
   include_directories (BEFORE ../../include)
 
   create_single_source_cgal_program( "hello.cpp" )
+  create_single_source_cgal_program( "k-ring.cpp" )
 
 else()
   
