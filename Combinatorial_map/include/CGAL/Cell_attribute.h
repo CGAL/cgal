@@ -135,13 +135,17 @@ namespace CGAL {
 
   public:
     void * for_compact_container() const 
-    { return &mrefcounting; }
+    { return vp; }
     void * & for_compact_container()       
-    { return &mrefcounting; }
+    { return vp; }
 
   private:
     /// Reference counting: the number of darts linked to this cell.
-    unsigned int mrefcounting;
+    union
+    {
+      unsigned int mrefcounting;
+      void        *vp;
+    };
   };
 
   /** Definition of cell attribute.
