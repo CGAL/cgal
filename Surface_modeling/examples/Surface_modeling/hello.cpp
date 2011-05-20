@@ -8,15 +8,9 @@
 typedef CGAL::Simple_cartesian<double>      Kernel;
 typedef CGAL::Polyhedron_3<Kernel>          Polyhedron;
 typedef Polyhedron::HalfedgeDS              HalfedgeDS;
-typedef Kernel::Vector_3                                     Vector;
 
-typedef Polyhedron::Vertex                                   Vertex;
-typedef Polyhedron::Vertex_iterator                          Vertex_iterator;
-typedef Polyhedron::Halfedge_handle                          Halfedge_handle;
-typedef Polyhedron::Edge_iterator                            Edge_iterator;
-typedef Polyhedron::Facet_iterator                           Facet_iterator;
+typedef Polyhedron::Vertex_const_handle                      Vertex_handle;
 typedef Polyhedron::Halfedge_around_vertex_const_circulator  HV_circulator;
-typedef Polyhedron::Halfedge_around_facet_circulator         HF_circulator;
 
 using namespace std;
 
@@ -77,74 +71,34 @@ void LoadOFF(Polyhedron &P)
 	P.delegate( triangle);
 }
 
-void Extract_OneRing(Polyhedron &P, vector<vector<int > > &neigh_vtx)
+
+void k_ring(Polyhedron &P, Vertex_handle v, size_t k, vector<Vertex_handle> &neigh_vtx)
 {
 	neigh_vtx.clear();
-	neigh_vtx.resize(P.size_of_vertices());
-	for (int i = 0; i <neigh_vtx.size(); i++)
-	{
-		neigh_vtx[i].push_back(i);
-	}
-	map<Vertex_iterator, int> vidx;
-	int idx = 0;
-	for (Vertex_iterator vit = P.vertices_begin(); vit != P.vertices_end(); vit++)
-	{
-		vidx[vit] = idx++;
-	}
+	neigh_vtx.push_back(v);
+	int idx_lv = 0;    // pointing the neighboring vertices on current level
+	int idx_lv_end;
 
-	vector<map<int, int> > edges(P.size_of_vertices());
-	for (Facet_iterator fit = P.facets_begin(); fit != P.facets_end(); fit++)
+
+	for (size_t lv = 0; lv < k; lv++)
 	{
-		HF_circulator h = fit->facet_begin();
-		HF_circulator h_next = fit->facet_begin();
-		h_next++;
-		vector<int> test;
-		do  
+		idx_lv_end = neigh_vtx.size(); 
+		for ( ;idx_lv < idx_lv_end; idx_lv++ )
 		{
-			if (edges[vidx[h->vertex()]][vidx[h_next->vertex()]] == 0)
-			{
-				neigh_vtx[vidx[h->vertex()]].push_back(vidx[h_next->vertex()]);
-				neigh_vtx[vidx[h_next->vertex()]].push_back(vidx[h->vertex()]);
-				edges[vidx[h->vertex()]][vidx[h_next->vertex()]] = 1;
-				edges[vidx[h_next->vertex()]][vidx[h->vertex()]] = 1;
-			}
-			h_next++;
-		} while ( ++h != fit->facet_begin() );
-	}
-
-}
-
-void k_Ring(Polyhedron &P, size_t k, int idx, vector<int> &neigh_vtx_lv_k)
-{
-
-
-	vector<vector<int > > neigh_vtx;
-	Extract_OneRing(P, neigh_vtx);
-	neigh_vtx_lv_k = neigh_vtx[idx];          // setting one-ring as the lowest level
-
-	vector<int> border_vtx = neigh_vtx[idx];  // "boundary" vertices on relative levels
-
-	for (size_t level = 1; level < k; level++)
-	{
-		vector<int> new_border_vtx;
-		while (!border_vtx.empty())
-		{
-			int border_idx = border_vtx.back();
-			border_vtx.pop_back();
-			for (int i = 0; i < neigh_vtx[border_idx].size(); i++)
-			{
-				int border_neigh_idx = neigh_vtx[border_idx][i];
-				vector<int> ::iterator result = find(neigh_vtx_lv_k.begin(), neigh_vtx_lv_k.end(), border_neigh_idx);
-				if (result == neigh_vtx_lv_k.end())   // justify whether the neighboring vertex of border vertex is already included
+			Vertex_handle vh = neigh_vtx[idx_lv];
+			HV_circulator wc = vh->vertex_begin(), done(wc);
+			do {
+				Vertex_handle wh = wc->opposite()->vertex();
+				vector<Vertex_handle> ::iterator result = find(neigh_vtx.begin(), neigh_vtx.end(), wh);
+				if (result == neigh_vtx.end())
 				{
-					neigh_vtx_lv_k.push_back(border_neigh_idx);
-					new_border_vtx.push_back(border_neigh_idx);
+					neigh_vtx.push_back(wh);
 				}
-			}
-
+				++wc;
+			}while(wc != done);
 		}
-		border_vtx = new_border_vtx;
 	}
+	
 }
 
 int main() {
@@ -152,19 +106,17 @@ int main() {
 	LoadOFF(P);
 	cout << P.size_of_vertices() << " vertices;  " << P.size_of_facets() << "facets" << endl;
 
-	vector<int > neigh_vtx_lv;
+	vector<Vertex_handle> neigh_vtx;
 	cout << "Determine level of k-ring: ";
 	size_t k;
 	cin >> k;
 	cout << "Determine vertex index: ";
-	int idx;
-	cin >> idx;
-	k_Ring(P, k, idx, neigh_vtx_lv);
-	cout << endl << neigh_vtx_lv.size() << " neighboring vertices:" << endl;
-	for (int i = 0; i < neigh_vtx_lv.size(); i++)
+	k_ring(P, P.vertices_begin(), k, neigh_vtx);
+	cout << endl << neigh_vtx.size() << " neighboring vertices:" << endl;
+	/*for (int i = 0; i < neigh_vtx.size(); i++)
 	{
-		cout << neigh_vtx_lv[i] << endl;
-	}
+		cout << neigh_vtx[i] << endl;
+	}*/
 
 	return 0;
 }
