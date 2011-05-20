@@ -117,11 +117,7 @@ if [ "$cloneLocation" != "" ]; then
   git config --replace-all remote.sorigin.fetch '+refs/remotes/*:refs/remotes/*'
   git fetch sorigin
   git config --remove-section remote.sorigin
-  
-  echo "Checking out remotes/svn/branches/next"
-  git checkout -b local/next remotes/svn/next
 
-# TODO: git svn rebase --local
 fi
 
 # rewrite root
@@ -132,10 +128,10 @@ rewriteRoot=--rewrite-root=$svnGforge
 
 # TODO internal-releases only >= 3.7
 internalReleasesTags="--tags tags/internal-releases"
-internalReleasesTags=
+#internalReleasesTags=
 
 debianTags="--tags tags/debian"
-debianTags=
+#debianTags=
 
 echo "Init repository: $CMD"
 git svn init $fromSvn $rewriteRoot --prefix=svn/next/ --trunk branches/next 
@@ -174,11 +170,14 @@ if [ $skipFetch = 0 ]; then
 
   if [ "$cloneLocation" != "" ]; then
 
-    echo "Fetch from real SVN server"
+    echo "Rsyncing svn"
+    rsync -arP --progress $cloneLocation/.git/svn/ .git/svn/
+
+    echo "Fetch from GForge's svn"
     git svn fetch
 
-    echo "Checkout 'local/next'"
-    git checkout local/next
+    echo "Checking out remotes/svn/next"
+    git checkout -b local/next remotes/svn/next
 
     echo "Rebase from real SVN server"
     git svn rebase
@@ -203,6 +202,11 @@ if [ $skipFetch = 0 ]; then
     echo
 
     rm -f /tmp/cgal-authors-files.txt
+
+    ### Tags 
+   
+    # TODO
+
 
     ### Branch names
 
