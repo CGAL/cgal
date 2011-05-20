@@ -1,6 +1,7 @@
 #include <CGAL/Simple_cartesian.h>
 #include <CGAL/Polyhedron_incremental_builder_3.h>
 #include <CGAL/Polyhedron_3.h>
+#include <CGAL/IO/Polyhedron_iostream.h>
 #include <iostream>
 #include <string>
 #include <fstream>
@@ -103,7 +104,11 @@ void k_ring(Polyhedron &P, Vertex_handle v, size_t k, vector<Vertex_handle> &nei
 
 int main() {
 	Polyhedron P;
-	LoadOFF(P);
+	string filename;
+	cin >> filename;
+	ifstream file;
+	file.open(&filename[0]);
+	file >> P;
 	cout << P.size_of_vertices() << " vertices;  " << P.size_of_facets() << "facets" << endl;
 
 	vector<Vertex_handle> neigh_vtx;
