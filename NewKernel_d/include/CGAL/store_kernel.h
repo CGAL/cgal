@@ -36,7 +36,7 @@ struct Store_kernel<R_,false> {
 	Store_kernel(R_ const& r):rp(&r){}
 	enum { kernel_is_stored = true };
 	R_ const& kernel()const{
-		CGAL_warning_msg(rp==0,"I should know my kernel"); }
+		CGAL_warning_msg(rp==0,"I should know my kernel");
 		return *rp;
 	}
 	typedef R_ const& reference_type;
@@ -62,7 +62,10 @@ struct Store_kernel2<R_,false> {
 	}
 	Store_kernel2(R_ const& r):rp(&r){}
 	enum { kernel2_is_stored = true };
-	R_ const& kernel2()const{return *rp;}
+	R_ const& kernel2()const{
+		CGAL_warning_msg(rp==0,"I should know my kernel");
+		return *rp;
+	}
 	typedef R_ const& reference2_type;
 	void set_kernel2(R_ const&r){rp=&r;}
 	private:

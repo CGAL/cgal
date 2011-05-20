@@ -3,20 +3,22 @@
 
 #include <CGAL/basic.h>
 #include <CGAL/Lazy.h>
+#include <CGAL/Default.h>
 #include <CGAL/Filtered_predicate.h>
 #include <CGAL/iterator_from_indices.h>
 
 namespace CGAL {
 
-	//TODO: ? use Lazy_cartesian instead of Kernel ?
-template <class EK_, class AK_, class E2A_, class Kernel>
+template <class EK_, class AK_, class E2A_/*, class Kernel_=Default*/>
 struct Lazy_cartesian : Dimension_base<typename EK_::Default_ambient_dimension>
 {
     //CGAL_CONSTEXPR Lazy_cartesian(){}
     //CGAL_CONSTEXPR Lazy_cartesian(int d):Base_(d){}
 
     //TODO: store an AK and an EK
-    typedef Lazy_cartesian<EK_,AK_,E2A_,Kernel> Self;
+    typedef Lazy_cartesian<EK_,AK_,E2A_/*,Kernel_*/> Self;
+    //typedef typename Default::Get<Kernel_,Self>::type Kernel;
+    typedef Self  Kernel;
     typedef AK_   Approximate_kernel;
     typedef EK_   Exact_kernel;
     typedef E2A_  E2A;

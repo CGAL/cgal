@@ -39,7 +39,7 @@ typedef CGAL::Cartesian_filter_NT<K0> K2;
 #elif 0
 typedef CGAL::Cartesian_filter_K<K0,KA,KE> K2;
 #elif 1
-struct K2: CGAL::Lazy_cartesian<KE,KA,CGAL::CartesianD_converter<KE,KA>,K2>{};
+typedef CGAL::Lazy_cartesian<KE,KA,CGAL::CartesianD_converter<KE,KA> > K2;
 #endif
 #if 0
 typedef K2 K1;
