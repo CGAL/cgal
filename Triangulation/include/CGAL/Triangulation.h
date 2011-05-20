@@ -79,10 +79,10 @@ public:
     /// The type of location a new point is found lying on
     enum  Locate_type
     {
-          ON_VERTEX  = 0
-        , IN_FACE    = 1 // simplex of dimension in [1, |current_dimension()| - 2]
-        , IN_FACET   = 2 // simplex of dimension |current_dimension()| - 1
-        , IN_SIMPLEX = 3
+          ON_VERTEX = 0 // simplex of dimension 0
+        , IN_FACE   = 1 // simplex of dimension in [ 1, |current_dimension()| - 2 ]
+        , IN_FACET  = 2 // simplex of dimension |current_dimension()| - 1
+        , IN_FULL_CELL  = 3 /// simplex of dimension |current_dimension()|
         , OUTSIDE_CONVEX_HULL = 4
         , OUTSIDE_AFFINE_HULL = 5
     };
@@ -618,30 +618,24 @@ Triangulation<TT, TDS>
 {
     switch( lt )
     {
-        case IN_SIMPLEX:
-            //std::cerr << " IS";
+        case IN_FULL_CELL:
             return insert_in_full_cell(p, s);
             break;
         case OUTSIDE_CONVEX_HULL:
-            //std::cerr << " OCH";
             return insert_outside_convex_hull(p, s);
             break;
         case OUTSIDE_AFFINE_HULL:
-            //std::cerr << " OAF";
             return insert_outside_affine_hull(p);
             break;
         case IN_FACET:
         {
-            //std::cerr << " IFT";
             return insert_in_facet(p, ft);
             break;
         }
         case IN_FACE:
-            //std::cerr << " IF" << f.feature_dimension();
             return insert_in_face(p, f);
             break;
         case ON_VERTEX:
-            //std::cerr << " OV";
             s->vertex(f.index(0))->set_point(p);
             return s->vertex(f.index(0));
             break;
@@ -919,7 +913,7 @@ Triangulation<TT, TDS>
             else
                 face.set_index(verts++, i);
         }
-        //-- We could put if{}else{} below in the loop above, but then we would
+        //-- We could put the if{}else{} below in the loop above, but then we would
         // need to test if (verts < cur_dim) many times... we do it only once
         // here:
         if( orientations_[cur_dim] == COPLANAR )
@@ -929,10 +923,10 @@ Triangulation<TT, TDS>
         }
         else if( verts < cur_dim )
             face.set_index(verts, cur_dim);
-        //--//
+        //-- end of remark above //
         if( 0 == num )
         {
-            loc_type = IN_SIMPLEX;
+            loc_type = IN_FULL_CELL;
             face.clear();
         }
         else if( cur_dim == num )
@@ -941,17 +935,6 @@ Triangulation<TT, TDS>
             loc_type = IN_FACET;
         else
             loc_type = IN_FACE;
-            
-#if 0 // if ! defined( CGAL_NDEBUG )
-        // informative test that can be removed:
-        if( loc_type == IN_FACE || loc_type == IN_FACET )
-        {
-            std::cerr << "\n[Degenerate input : loc_type = " << loc_type << ':';
-            for(int i = 0; i <= cur_dim; ++i)
-                std::cerr << ' ' << orientations_[i];
-            std::cerr << ']';
-        }
-#endif
     }
     return s;
 }

@@ -42,9 +42,9 @@ template<   class Dimen,
             class Sb = Default >
 class Triangulation_data_structure
 {
-    typedef Triangulation_data_structure<Dimen, Vb, Sb>                  Self;
-    typedef typename Default::Get<Vb, Triangulation_ds_vertex<> >::type  V_base;
-    typedef typename Default::Get<Sb, Triangulation_ds_full_cell<> >::type S_base;
+    typedef Triangulation_data_structure<Dimen, Vb, Sb>                     Self;
+    typedef typename Default::Get<Vb, Triangulation_ds_vertex<> >::type     V_base;
+    typedef typename Default::Get<Sb, Triangulation_ds_full_cell<> >::type  S_base;
 
 public:
     typedef typename V_base::template Rebind_TDS<Self>::Other  Vertex; /* Concept */
