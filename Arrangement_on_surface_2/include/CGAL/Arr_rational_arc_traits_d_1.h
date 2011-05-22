@@ -74,8 +74,8 @@ public:
   typedef typename Base_rational_arc_ds_1::FT_rat_1               FT_rat_1; 
   typedef typename Base_rational_arc_ds_1::Polynomial_traits_1    Polynomial_traits_1;
   
-  typedef typename Algebraic_kernel::Bound Bound; 
-  typedef Bound Approximate_number_type; 
+  typedef typename Algebraic_kernel::Bound                        Bound; 
+  typedef Bound                                                   Approximate_number_type; 
   
   typedef CGAL::Arr_rational_arc::Rational_function<Kernel_,Algebraic_kernel_>         Rational_function;
   typedef CGAL::Arr_rational_arc::Cache<Kernel_,Algebraic_kernel_>                     Cache;
@@ -94,7 +94,7 @@ public:
   typedef Arr_open_side_tag          Arr_top_side_category;
   typedef Arr_open_side_tag          Arr_right_side_category;
 private:
-  Cache _cache;
+  mutable Cache _cache;
 public:
 
   //------------
@@ -106,12 +106,12 @@ public:
   Arr_rational_arc_traits_d_1 ()
   {}
 
-  class Construct_rational_x_curve_2
+  class Construct_x_monotone_curve_2
   {
   private:
     Cache& _cache;
   public:
-    Construct_rational_x_curve_2(Cache& cache) : _cache(cache) {}
+    Construct_x_monotone_curve_2(Cache& cache) : _cache(cache) {}
     template <class InputIterator>
     X_monotone_curve_2 operator() ( InputIterator begin, InputIterator end) const
     {
@@ -160,16 +160,16 @@ public:
     }
   };
 
-  Construct_rational_x_curve_2 construct_rational_x_curve_2_object () 
+  Construct_x_monotone_curve_2 construct_x_monotone_curve_2_object () 
   {
-    return Construct_rational_x_curve_2(_cache);
+    return Construct_x_monotone_curve_2(_cache);
   }
-  class Construct_rational_curve_2
+  class Construct_curve_2
   {
   private:
     Cache& _cache;
   public:
-    Construct_rational_curve_2(Cache& cache) : _cache(cache) {}
+    Construct_curve_2(Cache& cache) : _cache(cache) {}
     template <class InputIterator>
     Curve_2 operator() (InputIterator begin, InputIterator end) const
     {
@@ -217,9 +217,9 @@ public:
     }
   };
 
-  Construct_rational_curve_2 construct_rational_curve_2_object () 
+  Construct_curve_2 construct_curve_2_object () 
   {
-    return Construct_rational_curve_2(_cache);
+    return Construct_curve_2(_cache);
   }
 
   class Construct_point_2
@@ -253,6 +253,31 @@ public:
   Construct_point_2 construct_point_2_object()
   {
     return Construct_point_2(_cache);
+  }
+
+  class Construct_vertical_segment
+  {
+  private:
+    Cache& _cache;
+  public:
+    Construct_vertical_segment(Cache& cache) : _cache(cache) {}
+    Vertical_segment operator() (const Point_2& p) const
+    { 
+      return Vertical_segment(p);
+    }
+    Vertical_segment operator() (const Point_2& p, bool is_directed_up) const
+    { 
+      return Vertical_segment(p,is_directed_up);
+    }
+    Vertical_segment operator() (const Point_2& p1,const Point_2& p2) const
+    {       
+      return Vertical_segment(p1,p2,_cache);
+    }
+  }; //Construct_vertical_segment
+
+  Construct_vertical_segment construct_vertical_segment_object() const
+  {
+    return Construct_vertical_segment(_cache);
   }
 
   //------------------------
@@ -300,14 +325,14 @@ public:
      *         SMALLER if x(p1) < x(p2), or if x(p1) = x(p2) and y(p1) < y(p2);
      *         EQUAL if the two points are equal.
      */
-    Comparison_result operator() (const Point_2& p1, const Point_2& p2) 
+    Comparison_result operator() (const Point_2& p1, const Point_2& p2) const 
     {
       return p1.compare_xy_2(p2,_cache);
     }
   };
 
   /*! Obtain a Compare_xy_2 functor object. */
-  Compare_xy_2 compare_xy_2_object () 
+  Compare_xy_2 compare_xy_2_object () const
   {
     return Compare_xy_2(_cache);
   }
@@ -394,14 +419,14 @@ public:
      *         LARGER if y(p) > cv(x(p)), i.e. the point is above the curve;
      *         EQUAL if p lies on the curve.
      */
-    Comparison_result operator() (const Point_2& p,const X_monotone_curve_2& cv) 
+    Comparison_result operator() (const Point_2& p,const X_monotone_curve_2& cv) const
     {
       return (cv.point_position (p,_cache));
     }
   };
 
   /*! Obtain a Compare_y_at_x_2 functor object. */
-  Compare_y_at_x_2 compare_y_at_x_2_object () 
+  Compare_y_at_x_2 compare_y_at_x_2_object () const
   {
     return Compare_y_at_x_2(_cache);
   }
@@ -427,7 +452,7 @@ public:
      *         the left of p: SMALLER, LARGER or EQUAL.
      */
     Comparison_result operator() (const X_monotone_curve_2& cv1,const X_monotone_curve_2& cv2,
-                                  const Point_2& p) 
+                                  const Point_2& p) const
     {
       // Make sure that p lies on both curves, and that both are defined to its
       // left (so their left endpoint is lexicographically smaller than p).
@@ -446,7 +471,7 @@ public:
   };
 
   /*! Obtain a Compare_y_at_x_left_2 functor object. */
-  Compare_y_at_x_left_2 compare_y_at_x_left_2_object () 
+  Compare_y_at_x_left_2 compare_y_at_x_left_2_object () const
   {
     return Compare_y_at_x_left_2(_cache);
   }
@@ -494,7 +519,7 @@ public:
   };
 
   /*! Obtain a Compare_y_at_x_right_2 functor object. */
-  Compare_y_at_x_right_2 compare_y_at_x_right_2_object () 
+  Compare_y_at_x_right_2 compare_y_at_x_right_2_object () const
   {
     return Compare_y_at_x_right_2(_cache);
   }
@@ -527,7 +552,7 @@ public:
      * \param p2 The second point.
      * \return (true) if the two point are the same; (false) otherwise.
      */
-    bool operator() (const Point_2& p1, const Point_2& p2) 
+    bool operator() (const Point_2& p1, const Point_2& p2) const
     {
       if (&p1 == &p2)
         return (true);
@@ -537,7 +562,7 @@ public:
   };
 
   /*! Obtain an Equal_2 functor object. */
-  Equal_2 equal_2_object () 
+  Equal_2 equal_2_object () const
   {
     return Equal_2(_cache);
   }
@@ -598,7 +623,7 @@ public:
      * \pre p lies on cv but is not one of its end-points.
      */
     void operator() (const X_monotone_curve_2& cv, const Point_2 & p,
-        X_monotone_curve_2& c1, X_monotone_curve_2& c2) 
+        X_monotone_curve_2& c1, X_monotone_curve_2& c2) const
     {
       cv.split (p, c1, c2,_cache);
       return;
@@ -606,7 +631,7 @@ public:
   };
 
   /*! Obtain a Split_2 functor object. */
-  Split_2 split_2_object () 
+  Split_2 split_2_object () const
   {
     return Split_2(_cache);
   }
@@ -630,21 +655,21 @@ public:
     template<class OutputIterator>
     OutputIterator operator() ( const X_monotone_curve_2& cv1,
                                 const X_monotone_curve_2& cv2,
-                                OutputIterator oi)  
+                                OutputIterator oi)  const
     {
       return (cv1.intersect (cv2, oi,_cache));
     }
     template<class OutputIterator>
     OutputIterator operator() ( const X_monotone_curve_2& cv1,
                                 const Vertical_segment& cv2,
-                                OutputIterator oi)  
+                                OutputIterator oi) const 
     {
       return (cv1.intersect (cv2, oi,_cache));
     }
   };
 
   /*! Obtain an Intersect_2 functor object. */
-  Intersect_2 intersect_2_object () 
+  Intersect_2 intersect_2_object () const
   {
     return Intersect_2(_cache);
   }
@@ -877,7 +902,7 @@ public:
   };
 
   /*! Obtain a Compare_y_near_boundary_2 function object */
-  Compare_y_near_boundary_2 compare_y_near_boundary_2_object() 
+  Compare_y_near_boundary_2 compare_y_near_boundary_2_object() const
   { return Compare_y_near_boundary_2(_cache); }
 
  
@@ -943,14 +968,14 @@ public:
      */
     Comparison_result operator()( const X_monotone_curve_2& xcv1, 
                                   const X_monotone_curve_2& xcv2, 
-                                  Arr_curve_end ce)
+                                  Arr_curve_end ce) const
     {
       return xcv1.compare_near_end(xcv2,ce,_cache);
     }
   }; //Compare_x_near_limit_2
 
   /*! Obtain a Compare_x_near_limit_2 function object */
-  Compare_x_near_limit_2 compare_x_near_limit_2_object() 
+  Compare_x_near_limit_2 compare_x_near_limit_2_object() const
   { return Compare_x_near_limit_2(_cache); }
 
   class Compare_endpoints_xy_2
