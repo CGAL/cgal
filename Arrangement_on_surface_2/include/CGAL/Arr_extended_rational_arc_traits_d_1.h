@@ -31,7 +31,6 @@
 #include "boost/variant.hpp"
 
 #include <CGAL/Arr_ver_support/Rational_arc_with_ver_d_1.h>
-//#include "Rational_arc_with_ver_d_1.h"
 
 namespace CGAL {
 
