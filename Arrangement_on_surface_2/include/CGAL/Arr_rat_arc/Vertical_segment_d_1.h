@@ -30,7 +30,6 @@
 #include <CGAL/Arr_rat_arc/Rational_function.h>
 #include <CGAL/Arr_rat_arc/Rational_function_canonicalized_pair.h>
 #include <CGAL/Arr_rat_arc/Algebraic_point_2.h>
-#include <CGAL/Arr_rat_arc/Singleton.h>
 
 namespace CGAL {
 namespace Arr_rational_arc {
@@ -49,11 +48,9 @@ public:
   typedef CGAL::Arr_rational_arc::Rational_function_pair <Kernel_,Algebraic_kernel> Rational_function_pair;
   typedef CGAL::Arr_rational_arc::Algebraic_point_2 <Kernel_,Algebraic_kernel>      Algebraic_point_2;
   typedef typename Base::Algebraic_real_1                                           Algebraic_real_1;
+
+  typedef CGAL::Arr_rational_arc::Cache<Kernel_,Algebraic_kernel_>                  Cache;
  
-  typedef CGAL::Arr_rational_arc::Cache<Kernel_,Algebraic_kernel_>                Cache;
-  typedef Singleton<Cache>                                                        Rational_functions_cache;
-
-
 public:
   ////////////////////
   //concept functions
@@ -71,14 +68,14 @@ public:
     _min_parameter_space = is_directed_up ?  ARR_INTERIOR  : ARR_BOTTOM_BOUNDARY ;
   }
   //construct a vertical line at between points p1,p2
-  Vertical_segment_d_1(const Algebraic_point_2& p1,const Algebraic_point_2& p2)
+  Vertical_segment_d_1(const Algebraic_point_2& p1,const Algebraic_point_2& p2,Cache& cache)
     :_max_parameter_space(ARR_INTERIOR), _min_parameter_space(ARR_INTERIOR)
   {
     CGAL_precondition(p1.x() == p2.x());
-    CGAL_precondition(p1.compare_xy_2(p2) != CGAL::EQUAL);
+    CGAL_precondition(p1.compare_xy_2(p2,cache) != CGAL::EQUAL);
 
-    Cache* cache = Rational_functions_cache::instance();
-    Rational_function_pair rat_func_pair = cache->get_rational_pair(p1.rational_function(),p2.rational_function());
+    Rational_function_pair rat_func_pair = cache.get_rational_pair( p1.rational_function(),
+                                                                    p2.rational_function());
     Comparison_result comp (rat_func_pair.compare_f_g_at(p1.x()));
     CGAL_postcondition(comp  != CGAL::EQUAL);
 
