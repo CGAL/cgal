@@ -78,12 +78,6 @@ public:
                                                                     other.rational_function()); 
     return rat_func_pair.compare_f_g_at(_x_coordinate);
   }
- 
-  bool operator == (const Algebraic_point_2_rep & other) const
-  {
-    return (  (this->_x_coordinate == other.x()) &&
-              (this->_rational_function == other.rational_function()) );      
-  }
   Algebraic_real_1& x() 
   {
     return _x_coordinate;
@@ -138,8 +132,8 @@ public:
   std::pair<double,double> to_double() const
   {
     double x = CGAL::to_double(_x_coordinate);
-    double numer_val = evaluate_at(_rational_function.numer(),_x_coordinate);
-    double denom_val = evaluate_at(_rational_function.denom(),_x_coordinate);
+    double numer_val = evaluate_at(_rational_function.numer(),x);
+    double denom_val = evaluate_at(_rational_function.denom(),x);
     return std::make_pair(x,numer_val/denom_val);
   }
   std::pair<Bound,Bound> approximate_absolute_x( int a) const
@@ -230,13 +224,13 @@ private:
     typedef CGAL::Coercion_traits<NTX,BFI> CT;
     return typename CT::Cast()(x);
   }
-  double evaluate_at(const Polynomial_1& poly, double x)
+  double evaluate_at(const Polynomial_1& poly,const double x) const
   {
-    x_val = 1;
+    double x_val = 1;
     double ret_val(0);
     for (int i(0); i <= poly.degree(); ++i)
     {
-      ret_val = ret_val + x_val*CGAL::to_double(poly()[i]);
+      ret_val = ret_val + x_val*CGAL::to_double(poly[i]);
       x_val = x_val*x;
     }
     return ret_val;
@@ -298,12 +292,6 @@ public:
     if (this->is_identical (other))
       return CGAL::EQUAL;
     return this->ptr()->compare_xy_2(*other.ptr(),cache);
-  }
-  bool operator == (const Self & other) const
-  {
-    if (this->is_identical (other))
-      return true;
-    return this->ptr() == other.ptr();
   }
   Algebraic_real_1& x()
   {

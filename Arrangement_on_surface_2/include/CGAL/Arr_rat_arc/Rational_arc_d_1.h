@@ -1175,7 +1175,7 @@ public:
     if (! _has_same_base (arc))
       return (false);
 
-    // Check that the arc endpoints are the same.
+    // Check that the arc left endpoints are the same.
     Arr_parameter_space inf1 = left_infinite_in_x();
     Arr_parameter_space inf2 = arc.left_infinite_in_x();
 
@@ -1183,20 +1183,21 @@ public:
       return (false);
 
     if (inf1 == ARR_INTERIOR)
-      {
-        inf1 = left_infinite_in_y();
-        inf2 = arc.left_infinite_in_y();
+    {
+      inf1 = left_infinite_in_y();
+      inf2 = arc.left_infinite_in_y();
 
-        if (inf1 != inf2)
-          return (false);
-      }
+      if (inf1 != inf2)
+        return (false);
+    }
 
     if (inf1 == ARR_INTERIOR &&
         CGAL::compare(left().x(), arc.left().x()) != EQUAL)
-      {
-        return (false);
-      }
+    {
+      return (false);
+    }
 
+    // Check that the arc right endpoints are the same.
     inf1 = right_infinite_in_x();
     inf2 = arc.right_infinite_in_x();
 
@@ -1204,13 +1205,13 @@ public:
       return (false);
 
     if (inf1 == ARR_INTERIOR)
-      {
+    {
         inf1 = right_infinite_in_y();
         inf2 = arc.right_infinite_in_y();
 
         if (inf1 != inf2)
           return (false);
-      }
+    }
 
     if (inf1 == ARR_INTERIOR &&
         CGAL::compare(right().x(), arc.right().x()) != EQUAL)
@@ -1464,24 +1465,24 @@ protected:
   {
     return (this->_f == arc._f);
   }
-  bool operator == (const Self& arc) const
-  {
-    if (this == &arc)
-      return true;
-    if ((_info ==arc._info) &&(_has_same_base(arc) ))
-      {
-        bool same_source(true);
-        bool same_target(true);
-        if (  (this->source_infinite_in_x () == ARR_INTERIOR) && 
-            (this->source_infinite_in_y () == ARR_INTERIOR) )
-          same_source = (this->source() == arc.source());
-        if (  (this->target_infinite_in_x () == ARR_INTERIOR) && 
-            (this->target_infinite_in_y () == ARR_INTERIOR) )
-          same_target = (this->target() == arc.target());
-        return (same_source && same_target);
-      }
-    return false;
-  }
+  //bool operator == (const Self& arc) const
+  //{
+  //  if (this == &arc)
+  //    return true;
+  //  if ((_info ==arc._info) &&(_has_same_base(arc) ))
+  //    {
+  //      bool same_source(true);
+  //      bool same_target(true);
+  //      if (  (this->source_infinite_in_x () == ARR_INTERIOR) && 
+  //          (this->source_infinite_in_y () == ARR_INTERIOR) )
+  //        same_source = (this->source() == arc.source());
+  //      if (  (this->target_infinite_in_x () == ARR_INTERIOR) && 
+  //          (this->target_infinite_in_y () == ARR_INTERIOR) )
+  //        same_target = (this->target() == arc.target());
+  //      return (same_source && same_target);
+  //    }
+  //  return false;
+  //}
 
   //---------------------------------------------------------------------
   //Compute infinity type of the rational function P(x)/Q(x) at x = -oo.
@@ -1852,17 +1853,16 @@ public:
     CGAL_precondition (this->is_valid() && this->is_continuous());
     CGAL_precondition (arc.is_valid() && arc.is_continuous());
 
-    if (*this == arc)
-      {
-        Self      overlap_arc (*this);
-        *oi = make_object (overlap_arc);
-        ++oi;
-        return (oi);
-      }
+    if (this->equals(arc))
+    {
+      Self      overlap_arc (*this);
+      *oi = make_object (overlap_arc);
+      ++oi;
+      return (oi);
+    }
 
     if (this->_has_same_base (arc))
-      {
-      
+    {      
         // Get the left and right endpoints of (*this) and their information
         // bits.
         const Algebraic_point_2&   left1 = (this->is_directed_right() ? 
@@ -1872,15 +1872,15 @@ public:
         int      info_left1, info_right1;
 
         if (this->is_directed_right())
-          {
-            info_left1 = (this->_info & this->SRC_INFO_BITS);
-            info_right1 = ((this->_info & this->TRG_INFO_BITS) >> 4);
-          }
+        {
+          info_left1 = (this->_info & this->SRC_INFO_BITS);
+          info_right1 = ((this->_info & this->TRG_INFO_BITS) >> 4);
+        }
         else
-          {
-            info_right1 = (this->_info & this->SRC_INFO_BITS);
-            info_left1 = ((this->_info & this->TRG_INFO_BITS) >> 4);
-          }
+        {
+          info_right1 = (this->_info & this->SRC_INFO_BITS);
+          info_left1 = ((this->_info & this->TRG_INFO_BITS) >> 4);
+        }
 
         // Get the left and right endpoints of the other arc and their
         // information bits.
@@ -1889,15 +1889,15 @@ public:
         int      info_left2, info_right2;
 
         if (arc.is_directed_right())
-          {
-            info_left2 = (arc._info & this->SRC_INFO_BITS);
-            info_right2 = ((arc._info & this->TRG_INFO_BITS) >> 4);
-          }
+        {
+          info_left2 = (arc._info & this->SRC_INFO_BITS);
+          info_right2 = ((arc._info & this->TRG_INFO_BITS) >> 4);
+        }
         else
-          {
-            info_right2 = (arc._info & this->SRC_INFO_BITS);
-            info_left2 = ((arc._info & this->TRG_INFO_BITS) >> 4);
-          }
+        {
+          info_right2 = (arc._info & this->SRC_INFO_BITS);
+          info_left2 = ((arc._info & this->TRG_INFO_BITS) >> 4);
+        }
 
         // Locate the left curve-end with larger x-coordinate.
         bool             at_minus_infinity = false;
@@ -1907,37 +1907,37 @@ public:
         int              info_left;
 
         if (inf_l1 == ARR_INTERIOR && inf_l2 == ARR_INTERIOR)
+        {
+          // Let p_left be the rightmost of the two left endpoints.
+          if (left1.x() > left2.x())
           {
-            // Let p_left be the rightmost of the two left endpoints.
-            if (left1.x() > left2.x())
-              {
-                p_left = left1;
-                info_left = info_left1;
-              }
-            else
-              {
-                p_left = left2;
-                info_left = info_left2;
-              }
-          }
-        else if (inf_l1 == ARR_INTERIOR)
-          {
-            // Let p_left be the left endpoint of (*this).
             p_left = left1;
             info_left = info_left1;
           }
-        else if (inf_l2 == ARR_INTERIOR)
+          else
           {
-            // Let p_left be the left endpoint of the other arc.
             p_left = left2;
             info_left = info_left2;
           }
+        }
+        else if (inf_l1 == ARR_INTERIOR)
+        {
+          // Let p_left be the left endpoint of (*this).
+          p_left = left1;
+          info_left = info_left1;
+        }
+        else if (inf_l2 == ARR_INTERIOR)
+        {
+          // Let p_left be the left endpoint of the other arc.
+          p_left = left2;
+          info_left = info_left2;
+        }
         else
-          {
-            // Both arcs are defined at x = -oo.
-            at_minus_infinity = true;
-            info_left = info_left1;
-          }
+        {
+          // Both arcs are defined at x = -oo.
+          at_minus_infinity = true;
+          info_left = info_left1;
+        }
 
         // Locate the right curve-end with smaller x-coordinate.
         bool             at_plus_infinity = false;
@@ -1947,66 +1947,65 @@ public:
         int              info_right;
 
         if (inf_r1 == ARR_INTERIOR && inf_r2 == ARR_INTERIOR)
+        {
+          // Let p_right be the rightmost of the two right endpoints.
+          if (right1.x() < right2.x())
           {
-            // Let p_right be the rightmost of the two right endpoints.
-            if (right1.x() < right2.x())
-              {
-                p_right = right1;
-                info_right = info_right1;
-              }
-            else
-              {
-                p_right = right2;
-                info_right = info_right2;
-              }
-          }
-        else if (inf_r1 == ARR_INTERIOR)
-          {
-            // Let p_right be the right endpoint of (*this).
             p_right = right1;
             info_right = info_right1;
           }
-        else if (inf_r2 == ARR_INTERIOR)
+          else
           {
-            // Let p_right be the right endpoint of the other arc.
             p_right = right2;
             info_right = info_right2;
           }
+        }
+        else if (inf_r1 == ARR_INTERIOR)
+        {
+          // Let p_right be the right endpoint of (*this).
+          p_right = right1;
+          info_right = info_right1;
+        }
+        else if (inf_r2 == ARR_INTERIOR)
+        {
+          // Let p_right be the right endpoint of the other arc.
+          p_right = right2;
+          info_right = info_right2;
+        }
         else
-          {
-            // Both arcs are defined at x = +oo.
-            at_plus_infinity = true;
-            info_right = info_right2;
-          }
+        {
+          // Both arcs are defined at x = +oo.
+          at_plus_infinity = true;
+          info_right = info_right2;
+        }
 
         // Check the case of two bounded (in x) ends.
         if (! at_minus_infinity && ! at_plus_infinity)
+        {
+          Comparison_result res = CGAL::compare(p_left.x(), p_right.x());
+          if (res == LARGER)
           {
-            Comparison_result res = CGAL::compare(p_left.x(), p_right.x());
-
-            if (res == LARGER)
-              {
-                // The x-range of the overlap is empty, so there is no overlap.
-                return (oi);
-              }
-            else if (res == EQUAL)
-              {
-                // We have a single overlapping point. Just make sure this point
-                // is not at y = -/+ oo.
-                if (info_left && 
-                    (this->SRC_AT_Y_MINUS_INFTY | this->SRC_AT_Y_PLUS_INFTY) == 0 &&
-                    info_right && 
-                    (this->SRC_AT_Y_MINUS_INFTY | this->SRC_AT_Y_PLUS_INFTY) == 0)
-                  {
-                    Intersection_point_2  ip (p_left, 0);
-
-                    *oi = make_object (ip);
-                    ++oi;
-                  }
-
-                return (oi);
-              }
+            // The x-range of the overlap is empty, so there is no overlap.
+            return (oi);
           }
+          else if (res == EQUAL)
+          {
+            // We have a single overlapping point. Just make sure this point
+                // is not at y = -/+ oo.
+            if (info_left && 
+                (this->SRC_AT_Y_MINUS_INFTY | this->SRC_AT_Y_PLUS_INFTY) == 0 &&
+                 info_right && 
+                (this->SRC_AT_Y_MINUS_INFTY | this->SRC_AT_Y_PLUS_INFTY) == 0)
+            {
+              Intersection_point_2  ip (p_left, 0);
+
+              *oi = make_object (ip);
+              ++oi;
+            }
+
+            return (oi);
+          }
+        }
 
         // Create the overlapping portion of the rational arc by properly setting
         // the source (left) and target (right) endpoints and their information

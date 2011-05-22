@@ -30,8 +30,8 @@
 #include <vector>
 #include "boost/variant.hpp"
 
-//#include <CGAL/Arr_ver_support/Rational_arc_with_ver_d_1.h>
-#include "Rational_arc_with_ver_d_1.h"
+#include <CGAL/Arr_ver_support/Rational_arc_with_ver_d_1.h>
+//#include "Rational_arc_with_ver_d_1.h"
 
 namespace CGAL {
 
@@ -133,24 +133,23 @@ public:
   class Construct_vertical_x_curve_2
   {
   private:
-    typename Traits::Construct_vertical_segment construct_vertical_segment;
      Traits& _traits;
   public:
     Construct_vertical_x_curve_2(Traits& traits) 
-      :_traits(traits),
-      construct_vertical_segment(_traits.construct_vertical_segment_object()) {}
+      :_traits(traits)
+    {}
 
     X_monotone_curve_2 operator() (const Point_2& p1,const Point_2& p2) const
     {
-      return construct_vertical_segment (p1,p2);
+      return _traits.construct_vertical_segment_object() (p1,p2);
     }
     X_monotone_curve_2 operator() (const Point_2& p) const
     {
-      return construct_vertical_segment (p);
+      return _traits.construct_vertical_segment_object() (p);
     }
     X_monotone_curve_2 operator() (const Point_2& p, bool is_directed_up) const
     {
-      return construct_vertical_segment (p,is_directed_up);
+      return _traits.construct_vertical_segment_object() (p,is_directed_up);
     }
   };  //Construct_vertical_x_curve_2
 
@@ -162,24 +161,22 @@ public:
   class Construct_vertical_curve_2
   {
   private:
-    typename Traits::Construct_vertical_segment construct_vertical_segment;
     Traits& _traits;
   public:
     Construct_vertical_curve_2 (Traits& traits)
-      :_traits(traits),
-      construct_vertical_segment(_traits.construct_vertical_segment_object()) 
+      :_traits(traits)
     {}
     Curve_2 operator() (const Point_2& p1,const Point_2& p2) const
     {
-      return construct_vertical_segment (p1,p2);
+      return _traits.construct_vertical_segment_object()(p1,p2);
     }
     Curve_2 operator() (const Point_2& p) const
     {
-      return construct_vertical_segment (p);
+      return _traits.construct_vertical_segment_object()(p);
     }
     Curve_2 operator() (const Point_2& p, bool is_directed_up) const
     {
-      return construct_vertical_segment (p,is_directed_up);
+      return _traits.construct_vertical_segment_object()(p,is_directed_up);
     }
     
   };  //Construct_vertical_curve_2
@@ -193,48 +190,46 @@ public:
   {
   private: 
     typedef typename Traits::Algebraic_real_1 Algebraic_real_1;
-    typename Traits::Construct_curve_2 construct_curve_2;
     Traits& _traits;
   public:
     Construct_curve_2 (Traits& traits) 
-      :_traits(traits),
-      construct_curve_2(_traits.construct_curve_2_object())
+      :_traits(traits)
     {}
     template <class InputIterator>
     Curve_2 operator() (InputIterator begin, InputIterator end) const
     {
-      return construct_curve_2 (begin,end); 
+      return _traits.construct_curve_2_object()(begin,end); 
     }
     template <class InputIterator>
     Curve_2 operator() (InputIterator begin, InputIterator end,const Algebraic_real_1& x_s, bool dir_right) const
     {
-      return construct_curve_2 (begin,end,x_s,dir_right); 
+      return _traits.construct_curve_2_object()(begin,end,x_s,dir_right); 
     }
     template <class InputIterator>
     Curve_2 operator() (InputIterator begin, InputIterator end,
                         const Algebraic_real_1& x_s, const Algebraic_real_1& x_t) const
     {
-      return construct_curve_2 (begin,end,x_s,x_t); 
+      return _traits.construct_curve_2_object()(begin,end,x_s,x_t); 
     }
     template <class InputIterator>
     Curve_2 operator() (InputIterator begin_numer, InputIterator end_numer,
                         InputIterator begin_denom, InputIterator end_denom) const 
     {
-      return construct_curve_2 (begin_numer, end_numer,begin_denom,end_denom); 
+      return _traits.construct_curve_2_object()(begin_numer, end_numer,begin_denom,end_denom); 
     }
     template <class InputIterator>
     Curve_2 operator() (InputIterator begin_numer, InputIterator end_numer,
                         InputIterator begin_denom, InputIterator end_denom,
                         const Algebraic_real_1& x_s, bool dir_right) const
     {
-      return construct_curve_2 (begin_numer, end_numer,begin_denom,end_denom,x_s,dir_right); 
+      return _traits.construct_curve_2_object()(begin_numer, end_numer,begin_denom,end_denom,x_s,dir_right); 
     }
     template <class InputIterator>
     Curve_2 operator() (InputIterator begin_numer, InputIterator end_numer,
                         InputIterator begin_denom, InputIterator end_denom,
                         const Algebraic_real_1& x_s, const Algebraic_real_1& x_t) const
     {
-      return construct_curve_2 (begin_numer, end_numer,begin_denom,end_denom,x_s,x_t); 
+      return _traits.construct_curve_2_object()(begin_numer, end_numer,begin_denom,end_denom,x_s,x_t); 
     }
   };  //Construct_rational_curve_2
 
@@ -246,49 +241,47 @@ public:
   {
   private: 
     typedef typename Traits::Algebraic_real_1 Algebraic_real_1;
-    typename Traits::Construct_x_monotone_curve_2 construct_x_monotone_curve_2;
     Traits& _traits;
   public:
     Construct_x_monotone_curve_2 (Traits& traits)
-      :_traits(traits),
-      construct_x_monotone_curve_2(_traits.construct_x_monotone_curve_2_object())
+      :_traits(traits)
     {}
     template <class InputIterator>
     X_monotone_curve_2 operator() (InputIterator begin, InputIterator end) const
     {
-      return construct_x_monotone_curve_2 (begin,end); 
+      return _traits.construct_x_monotone_curve_2_object()(begin,end); 
     }
     template <class InputIterator>
     X_monotone_curve_2 operator() ( InputIterator begin, InputIterator end,
                                     const Algebraic_real_1& x_s, bool dir_right) const
     {
-      return construct_x_monotone_curve_2 (begin,end,x_s,dir_right); 
+      return _traits.construct_x_monotone_curve_2_object()(begin,end,x_s,dir_right); 
     }
     template <class InputIterator>
     X_monotone_curve_2 operator() (InputIterator begin, InputIterator end,
                                    const Algebraic_real_1& x_s, const Algebraic_real_1& x_t) const
     {
-      return construct_x_monotone_curve_2 (begin,end,x_s,x_t); 
+      return _traits.construct_x_monotone_curve_2_object()(begin,end,x_s,x_t); 
     }
     template <class InputIterator>
     X_monotone_curve_2 operator() ( InputIterator begin_numer, InputIterator end_numer,
                                     InputIterator begin_denom, InputIterator end_denom) const 
     {
-      return construct_x_monotone_curve_2 (begin_numer, end_numer,begin_denom,end_denom); 
+      return _traits.construct_x_monotone_curve_2_object()(begin_numer, end_numer,begin_denom,end_denom); 
     }
     template <class InputIterator>
     X_monotone_curve_2 operator() ( InputIterator begin_numer, InputIterator end_numer,
                                     InputIterator begin_denom, InputIterator end_denom,
                                     const Algebraic_real_1& x_s, bool dir_right) const
     {
-      return construct_x_monotone_curve_2 (begin_numer, end_numer,begin_denom,end_denom,x_s,dir_right); 
+      return _traits.construct_x_monotone_curve_2_object()(begin_numer, end_numer,begin_denom,end_denom,x_s,dir_right); 
     }
     template <class InputIterator>
     X_monotone_curve_2 operator() ( InputIterator begin_numer, InputIterator end_numer,
                                     InputIterator begin_denom, InputIterator end_denom,
                                     const Algebraic_real_1& x_s, const Algebraic_real_1& x_t) const
     {
-      return construct_x_monotone_curve_2 (begin_numer, end_numer,begin_denom,end_denom,x_s,x_t); 
+      return _traits.construct_x_monotone_curve_2_object()(begin_numer, end_numer,begin_denom,end_denom,x_s,x_t); 
     }
   };  //Construct_rational_x_curve_2
 
@@ -498,9 +491,10 @@ public:
       }
       Comparison_result operator() (const Vertical_segment & cv) const
       {
-        typename Traits::Compare_xy_2 compare_xy_2 = _traits.compare_xy_2_object();
-        CGAL_precondition(compare_xy_2(_p,cv.max()) == CGAL::EQUAL);       
+        CGAL_precondition(_traits.compare_x_2_object()(_p,cv.max()) == CGAL::EQUAL);       
 
+        typename Traits::Compare_xy_2 compare_xy_2 = _traits.compare_xy_2_object();
+        
         if (Is_line(cv))
           return CGAL::EQUAL;
         if ((Max_bounded(cv)) && (!Min_bounded(cv)) )
@@ -642,7 +636,23 @@ public:
         if (&cv1 == &cv2)
           return (true);
 
-        return (cv1==cv2);
+        if (CGAL::compare(cv1.x(),cv2.x()) != CGAL::EQUAL)
+          return false;
+
+        if (Is_line(cv1) && Is_line(cv2))
+          return true;
+
+        if (Is_segment(cv1) && Is_segment(cv2))
+          return (_traits.equal_2_object() (cv1.min(),cv2.min()) &&
+                  _traits.equal_2_object() (cv1.max(),cv2.max()) );
+
+        if (Max_bounded(cv1) && Max_bounded(cv2))
+          return (_traits.equal_2_object() (cv1.max(),cv2.max() ));
+
+        if (Min_bounded(cv1) && Min_bounded(cv2))
+          return (_traits.equal_2_object() (cv1.min(),cv2.min() ));
+        
+        return false;
       }
     };  //Equal_2_visitor
   };  //Equal_2
@@ -1083,23 +1093,23 @@ public:
         //try to merge at common maximum
         if ((Max_bounded(cv1)) && (Max_bounded(cv2)))
         {
-          if (cv1.max() == cv2.max())
+          if (_traits.equal_2_object()(cv1.max(),cv2.max()))
             return true;
         }
         //try to merge at common minimum
         if ((Min_bounded(cv1)) && (Min_bounded(cv2)))
         {
-          if (cv1.min() == cv2.min())
+          if (_traits.equal_2_object()(cv1.min(),cv2.min()))
             return true;
         }
         //try to merge at minimum and maximum 
         if ((Max_bounded(cv1)) && (Min_bounded(cv2)))
         {
-          res = (cv1.max() == cv2.min());
+          res = (_traits.equal_2_object()(cv1.max(),cv2.min()));
         }
         if ((Min_bounded(cv1)) && (Max_bounded(cv2)))
         {
-          res = (res || (cv1.min() == cv2.max()));
+          res = (res || (_traits.equal_2_object()(cv1.min(),cv2.max())));
         }
         return res;
       }
@@ -1171,7 +1181,7 @@ public:
         Vertical_segment _c;
         if ((Max_bounded(cv1)) && 
             (Max_bounded(cv2)) &&
-            (cv1.max() == cv2.max()))
+            (compare_xy_2(cv1.max() , cv2.max()) == CGAL::EQUAL))
         {
           //merge at cv1.max() and cv2.max()
             if ((Min_bounded(cv1) == false) || (Min_bounded(cv2) == false))
@@ -1184,7 +1194,7 @@ public:
 
         if ((Min_bounded(cv1)) && 
             (Min_bounded(cv2)) &&
-            (cv1.min() == cv2.min()))
+            (compare_xy_2(cv1.min() , cv2.min()) == CGAL::EQUAL))
         {
           //merge at cv1.min() and cv2.min()
             if ((Max_bounded(cv1) == false) || (Max_bounded(cv2) == false))
@@ -1197,7 +1207,7 @@ public:
 
         if ((Max_bounded(cv1)) && 
             (Min_bounded(cv2)) &&
-            (cv1.max() == cv2.min()))
+            (compare_xy_2(cv1.max() , cv2.min()) == CGAL::EQUAL))
           {
             //merge at cv1.max() and cv2.min
             if ((Min_bounded(cv1) == false) && (Max_bounded(cv2) == false))

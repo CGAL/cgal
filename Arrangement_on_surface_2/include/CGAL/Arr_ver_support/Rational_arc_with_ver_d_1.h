@@ -25,8 +25,8 @@
 #include <CGAL/Arr_tags.h>
 
 #include "boost/variant.hpp"
-//#include <CGAL/Arr_ver_support/Visitors_d_1.h>
-#include "Visitors_d_1.h"
+#include <CGAL/Arr_ver_support/Visitors_d_1.h>
+//#include "Visitors_d_1.h"
 
 namespace CGAL {
 namespace Arr_vertical_rational_arc {

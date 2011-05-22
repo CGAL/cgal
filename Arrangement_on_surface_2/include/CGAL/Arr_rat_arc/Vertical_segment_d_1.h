@@ -94,13 +94,6 @@ public:
   {
     return (_min.x() == other.x()) ;
   }
-  bool operator== (const Self& other) const
-  {
-    if ((has_same_min(other))&&
-        (has_same_max(other)))
-      return true;
-    return false;
-  }
   Self& operator= (const Self & other)
   {
     if (this != &other) // protect against invalid self-assignment
@@ -171,22 +164,6 @@ public:
   
 private:
 
-  bool has_same_min(const Self& other) const
-  {
-    if (this->_min_parameter_space != other._min_parameter_space)
-      return false;
-    if (this->_min_parameter_space ==  CGAL:: ARR_BOTTOM_BOUNDARY)
-      return true;
-    return (_min == other.min());
-  }
-  bool has_same_max(const Self& other) const
-  {
-    if (this->_max_parameter_space != other._max_parameter_space)
-      return false;
-    if (this->_min_parameter_space ==  CGAL::ARR_TOP_BOUNDARY)
-      return true;
-    return (_max == other.max());
-  }
   bool is_line() const
   {
     return ((_max_parameter_space == ARR_TOP_BOUNDARY   ) && 
