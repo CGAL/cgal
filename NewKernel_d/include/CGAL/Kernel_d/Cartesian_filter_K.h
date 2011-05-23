@@ -4,6 +4,7 @@
 #include <CGAL/basic.h>
 #include <CGAL/Kernel_d/Cartesian_converter.h>
 #include <CGAL/Filtered_predicate.h>
+#include <boost/mpl/if.hpp>
 
 namespace CGAL {
 
@@ -20,7 +21,12 @@ struct Cartesian_filter_K : public Base_,
     typedef Base_ Kernel_base;
     typedef AK_ AK;
     typedef EK_ EK;
-    //TODO: C2A/C2E should be able to convert *this into this->kernel() or this->kernel2().
+    typedef typename Store_kernel<AK_>::reference_type AK_rt;
+    AK_rt approximate_kernel()const{return this->kernel();}
+    typedef typename Store_kernel2<EK_>::reference2_type EK_rt;
+    EK_rt exact_kernel()const{return this->kernel2();}
+
+    //TODO: C2A/C2E could be able to convert *this into this->kernel() or this->kernel2().
     typedef CartesianD_converter<Kernel_base,AK> C2A;
     typedef CartesianD_converter<Kernel_base,EK> C2E;
 

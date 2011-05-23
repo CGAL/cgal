@@ -15,7 +15,12 @@ struct Lazy_cartesian : Dimension_base<typename EK_::Default_ambient_dimension>
     //CGAL_CONSTEXPR Lazy_cartesian(){}
     //CGAL_CONSTEXPR Lazy_cartesian(int d):Base_(d){}
 
-    //TODO: store an AK and an EK
+    //TODO: Do we want to store an AK and an EK? Or just references?
+    //FIXME: references would be better I guess.
+    AK_ ak; EK_ ek;
+    AK_ const& approximate_kernel()const{return ak;}
+    EK_ const& exact_kernel()const{return ek;}
+
     typedef Lazy_cartesian<EK_,AK_,E2A_/*,Kernel_*/> Self;
     //typedef typename Default::Get<Kernel_,Self>::type Kernel;
     typedef Self  Kernel;

@@ -852,6 +852,9 @@ struct Approx_converter
   typedef K1         Source_kernel;
   typedef K2         Target_kernel;
   //typedef Converter  Number_type_converter;
+  Approx_converter(){}
+  Approx_converter(K1 const&,K2 const&){}
+  //TODO: check that it is normal that we never need k1 or k2 here
 
   template<class,bool/*ET*/,bool/*iter*/> struct result_;
   template<class T,bool b> struct result_<T,true,b> {
@@ -899,6 +902,9 @@ struct Exact_converter
   typedef K1         Source_kernel;
   typedef K2         Target_kernel;
   //typedef Converter  Number_type_converter;
+  Exact_converter(){}
+  Exact_converter(K1 const&,K2 const&){}
+  //TODO: check that it is normal that we never need k1 or k2 here
 
   template<class,bool/*ET*/,bool/*iter*/> struct result_;
   template<class T,bool b> struct result_<T,true,b> {
@@ -1784,6 +1790,7 @@ struct Lazy_construction
 
   AC ac;
   EC ec;
+  //TODO: need a constructor to initialize ac and ec properly
 
 public:
 
