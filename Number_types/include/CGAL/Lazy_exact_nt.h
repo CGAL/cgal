@@ -1126,6 +1126,7 @@ public:
 
 
 CGAL_DEFINE_COERCION_TRAITS_FOR_SELF_TEM(Lazy_exact_nt<ET>, class ET)
+CGAL_DEFINE_COERCION_TRAITS_FROM_TO_TEM(ET,Lazy_exact_nt<ET>,class ET)
 
 template<class ET1, class ET2 >
 struct Coercion_traits< Lazy_exact_nt<ET1>, Lazy_exact_nt<ET2> >

@@ -267,8 +267,6 @@ Arithmetic_kernel/include/CGAL/CORE_arithmetic_kernel.h -text
 Arithmetic_kernel/include/CGAL/GMP_arithmetic_kernel.h -text
 Arithmetic_kernel/include/CGAL/LEDA_arithmetic_kernel.h -text
 Arithmetic_kernel/include/CGAL/MP_Float_arithmetic_kernel.h -text
-Arithmetic_kernel/include/CGAL/OLD/GMP/Gmpfr_interval_type.h -text
-Arithmetic_kernel/include/CGAL/OLD/Gmpfr_interval.h -text
 Arithmetic_kernel/package_info/Arithmetic_kernel/description.txt -text
 Arithmetic_kernel/package_info/Arithmetic_kernel/maintainer -text
 Arithmetic_kernel/test/Arithmetic_kernel/Arithmetic_kernel.cpp -text
