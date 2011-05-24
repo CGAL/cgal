@@ -23,9 +23,12 @@
 #include <CGAL/Kd_tree_rectangle.h>
 #include <boost/mpl/has_xxx.hpp>
 #include <CGAL/Euclidean_distance.h> //for default distance specialization
+#include <boost/property_map/property_map.hpp>
 
 namespace CGAL{
 
+using ::get;
+  
 template <class Point_with_info,class PointPropertyMap,class Base_traits>
 class Search_traits_adapter;
   
@@ -84,10 +87,10 @@ public:
       :Base_traits::Construct_cartesian_const_iterator_d(base), ppmap(ppmap_){}
     
     typename Base_traits::Cartesian_const_iterator_d operator()(const Point_with_info& p) const
-    { return this->operator() (ppmap[p]); }
+    { return this->operator() (get(ppmap,p)); }
 
     typename Base_traits::Cartesian_const_iterator_d operator()(const Point_with_info& p, int)  const
-    { return this->operator() (ppmap[p],0); }
+    { return this->operator() (get(ppmap,p),0); }
   };
   
   struct Construct_iso_box_d: public Base::Construct_iso_box_d{
@@ -96,7 +99,7 @@ public:
     Iso_box_d operator() () const {return this->Construct_iso_box_d();}
     Iso_box_d operator() (const Point_with_info& p, const Point_with_info& q, FT epsilon=FT(0)) const
     {
-      return static_cast<const typename Base::Construct_iso_box_d* >(this)->operator() (ppmap[p],ppmap[q],epsilon);
+      return static_cast<const typename Base::Construct_iso_box_d* >(this)->operator() (get(ppmap,p),get(ppmap,q),epsilon);
     }
   };
   
@@ -128,7 +131,7 @@ public:
 
   FT transformed_distance(const Query_item& p1, const Point_with_info& p2) const
   {
-    return this->transformed_distance(p1,ppmap[p2]);
+    return this->transformed_distance(p1,get(ppmap,p2));
   }
 
   template <class FT>

@@ -12,9 +12,8 @@ in a nearest neighbor search algorithm, this class must be used as distance.
 
 \ccParameters
 \ccc{Key} is a type that is associated to a point of type \ccc{Base_distance::Point_d}.\\
-\ccc{PointPropertyMap} is a functor providing \ccc{Base_traits::Point_d operator[] (const Key& point) const}.
-In particular any model of \ccAnchor{http://www.boost.org/doc/libs/release/libs/property_map/doc/ReadablePropertyMap.html}{boost::ReadablePropertyMap}
-with \ccc{Key} as \ccc{key_type} and \ccc{Base_distance::Point_d} as \ccc{value_type} matches.\\
+\ccc{PointPropertyMap} is a model of \ccAnchor{http://www.boost.org/doc/libs/release/libs/property_map/doc/ReadablePropertyMap.html}{boost::ReadablePropertyMap}
+with \ccc{Key} as \ccc{key_type} and \ccc{Base_distance::Point_d} as \ccc{value_type}.\\
 \ccc{Base_distance} is a model of either \ccc{GeneralDistance} or \ccc{OrthogonalDistance}.
 
 \ccInheritsFrom

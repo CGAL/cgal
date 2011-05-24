@@ -12,10 +12,21 @@ typedef Kernel::Point_3 Point_3;
 
 typedef std::size_t Point;
 
-struct My_point_property_map{
+//definition of the property map and get
+//function as friend function to have access to
+//private member
+class My_point_property_map{
   const std::vector<Point_3>& points;
+public:
+  typedef Point_3 value_type;
+  typedef const value_type& reference;
+  typedef Point key_type;
+  typedef boost::readable_property_map_tag category;  
+
   My_point_property_map(const std::vector<Point_3>& pts):points(pts){}
-  const Point_3& operator[](std::size_t i) const {return points[i];}
+
+  friend reference get(const My_point_property_map& ppmap,key_type i) 
+  {return ppmap.points[i];}
 };
 
 
