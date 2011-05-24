@@ -164,7 +164,14 @@ Io_implicit_function_plugin::
 load_function_plugins()
 {
   QDir pluginsDir(qApp->applicationDirPath());
-  if ( !pluginsDir.cd("implicit_functions") ) { return; }
+  QString dirname = pluginsDir.dirName();
+  if ( !pluginsDir.cd("implicit_functions") ) { 
+    // In that case, dirname may be "Debug" or "Release" and one has to
+    // search in ../implicit_functions/Debug or
+    // ../implicit_functions/Release
+    QString newDir = QString("../implicit_functions/") + dirname;
+    if( !pluginsDir.cd(newDir) ) return; 
+  }
   
   Q_FOREACH (QString fileName, pluginsDir.entryList(QDir::Files))
   {

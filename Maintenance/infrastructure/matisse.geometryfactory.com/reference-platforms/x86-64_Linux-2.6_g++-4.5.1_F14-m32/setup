@@ -1,2 +1,6 @@
 export QTDIR=/usr/lib/qt-3.3
+
 CXXFLAGS=-m32
+CFLAGS=-m32
+export CXXFLAGS
+export CFLAGS

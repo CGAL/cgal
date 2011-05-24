@@ -1,3 +1,23 @@
+// Copyright (c) 2008  GeometryFactory Sarl (France).
+// All rights reserved.
+//
+// This file is part of CGAL (www.cgal.org); you may redistribute it under
+// the terms of the Q Public License version 1.0.
+// See the file LICENSE.QPL distributed with CGAL.
+//
+// Licensees holding a valid commercial license may use this file in
+// accordance with the commercial license agreement provided with the software.
+//
+// This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
+// WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
+//
+// $URL:  $
+// $Id:  $
+// 
+//
+// Author(s)     : Ophir Setter <ophirset@post.tau.ac.il>
+//                 
+
 // CGAL headers
 #include <CGAL/Exact_predicates_exact_constructions_kernel.h>
 #include <CGAL/envelope_3.h>
@@ -35,8 +55,6 @@ typedef CGAL::L1_voronoi_traits_2<Kernel>                Traits_3;
 typedef Traits_3::Surface_3                              Surface_3;
 typedef CGAL::Envelope_diagram_2<Traits_3>               Envelope_diagram_2;
 
-// Ask Efi how to get rid of this. I was not successful in defining a new
-// << operator that does not output a string for Arr_linear_object
 namespace CGAL {
   template <typename Kernel, typename T>
   Qt::PainterOstream<T>&
