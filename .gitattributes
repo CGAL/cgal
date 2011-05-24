@@ -3198,6 +3198,7 @@ Scripts/developer_scripts/remove_package_files_from_build_tree.rb -text
 Scripts/developer_scripts/remove_package_files_from_build_tree_impl.rb -text
 Scripts/developer_scripts/replace_CGAL_NAMESPACE.py -text
 Scripts/developer_scripts/test_testsuite_submission -text
+Scripts/developer_scripts/update_git_svn_clone -text
 Scripts/scripts/cgal_create_cmake_script -text
 Scripts/scripts/cgal_create_cmake_script_with_options -text
 SearchStructures/doc_tex/SearchStructures/d-range.gif -text svneol=unset#image/gif
