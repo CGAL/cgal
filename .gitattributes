@@ -3314,9 +3314,14 @@ Spatial_sorting/doc_tex/Spatial_sorting/fig/hilbertLarge.jpg -text
 Spatial_sorting/doc_tex/Spatial_sorting_ref/Hilbert_policy_tags.tex -text
 Spatial_sorting/doc_tex/Spatial_sorting_ref/Hilbert_sort_d.tex -text
 Spatial_sorting/doc_tex/Spatial_sorting_ref/SpatialSortingTraits_d.tex -text
+Spatial_sorting/doc_tex/Spatial_sorting_ref/Spatial_sort_traits_adapter_2.tex -text
+Spatial_sorting/doc_tex/Spatial_sorting_ref/Spatial_sort_traits_adapter_3.tex -text
 Spatial_sorting/examples/Spatial_sorting/hilbert.cpp -text
 Spatial_sorting/examples/Spatial_sorting/hilbert_policies.cpp -text
 Spatial_sorting/examples/Spatial_sorting/small_example_delaunay_2.cpp -text
+Spatial_sorting/examples/Spatial_sorting/sp_sort_using_property_map_2.cpp -text
+Spatial_sorting/examples/Spatial_sorting/sp_sort_using_property_map_3.cpp -text
+Spatial_sorting/examples/Spatial_sorting/sp_sort_using_property_map_d.cpp -text
 Spatial_sorting/include/CGAL/Hilbert_policy_tags.h -text
 Spatial_sorting/include/CGAL/Hilbert_sort_d.h -text
 Spatial_sorting/include/CGAL/Hilbert_sort_median_2.h -text
@@ -3326,6 +3331,8 @@ Spatial_sorting/include/CGAL/Hilbert_sort_middle_2.h -text
 Spatial_sorting/include/CGAL/Hilbert_sort_middle_3.h -text
 Spatial_sorting/include/CGAL/Hilbert_sort_middle_base.h -text
 Spatial_sorting/include/CGAL/Hilbert_sort_middle_d.h -text
+Spatial_sorting/include/CGAL/Spatial_sort_traits_adapter_2.h -text
+Spatial_sorting/include/CGAL/Spatial_sort_traits_adapter_3.h -text
 Straight_skeleton_2/demo/Straight_skeleton_2/data/complex_0.poly -text svneol=unset#application/octet-stream
 Straight_skeleton_2/demo/Straight_skeleton_2/data/complex_1.poly -text svneol=unset#application/octet-stream
 Straight_skeleton_2/demo/Straight_skeleton_2/data/complex_2.poly -text svneol=unset#application/octet-stream
@@ -4112,7 +4119,7 @@ Triangulation_3/examples/Triangulation_3/info_insert_with_zip_iterator.cpp -text
 Triangulation_3/include/CGAL/internal/Static_filters/Compare_weighted_squared_radius_3.h -text
 Triangulation_3/include/CGAL/internal/Static_filters/Power_test_3.h -text
 Triangulation_3/include/CGAL/internal/Static_filters/Regular_triangulation_static_filters_traits_3.h -text
-Triangulation_3/include/CGAL/internal/spatial_sorting_traits_with_indices.h -text
+Triangulation_3/include/CGAL/internal/info_check.h -text
 Triangulation_3/test/Triangulation_3/include/CGAL/_test_remove_cluster.h -text
 Triangulation_3/test/Triangulation_3/test_regular_insert_range_with_info.cpp -text
 Triangulation_3/test/Triangulation_3/test_static_filters.cpp -text
