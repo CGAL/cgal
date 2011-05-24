@@ -13,6 +13,8 @@ usage()
   echo  >&2
 }
 
+# TODO write cloneLocation to config(file)
+
 #  echo "  -m svnLocation
 #  echo "  -r gives revision to start from. Other options than a number: LAST, BASE" >&2
 #  echo "  -f skip fetch" >&2
@@ -185,7 +187,7 @@ if [ $skipFetch = 0 ]; then
 
     git remote rm origin # TODO remove line?
    
-    git svn fetch
+    git svn fetch # TODO --authors-file=/tmp/cgal-authors-file.txt
 
     git branch -a
     git checkout master
