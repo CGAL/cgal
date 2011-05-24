@@ -17,9 +17,9 @@ CGAL::Cartesian_complete_predicates<
 CGAL::Cartesian_complete_constructors<
 CGAL::Cartesian_complete_computes<
 CGAL::Cartesian_complete_types<
-CGAL::Cartesian_refcount<
+//CGAL::Cartesian_refcount<
 CGAL::Cartesian_LA_base_d<double,CGAL::Dimension_tag<2> >
->
+//>
 >, false, RC
 >, false, RC
 >, false, RC
@@ -34,13 +34,14 @@ typedef RC K0;
 
 #if 0
 typedef K0 K2;
-#elif 0
+#elif 1
 typedef CGAL::Cartesian_filter_NT<K0> K2;
-#elif 0
+#elif 1
 typedef CGAL::Cartesian_filter_K<K0,KA,KE> K2;
 #elif 1
 typedef CGAL::Lazy_cartesian<KE,KA,CGAL::CartesianD_converter<KE,KA> > K2;
 #endif
+
 #if 0
 typedef K2 K1;
 #elif 1
@@ -62,13 +63,20 @@ typedef K1::Functor<CGAL::Orientation_tag>::type PO;
 typedef K1::Point_cartesian_const_iterator CI;
 typedef K1::Functor<CGAL::Compute_cartesian_coordinate_tag>::type CC;
 
+#if 1
+#define Kinit (k)
+#else
+#define Kinit
+#endif
+
 int main(){
-	CP cp;
-	CCI ci;
-	CC cc;
-	PO po;
-	CS cs;
-	CSE cse;
+	K1 k;
+	CP cp Kinit;
+	CCI ci Kinit;
+	CC cc Kinit;
+	PO po Kinit;
+	CS cs Kinit;
+	CSE cse Kinit;
 	P a=cp(3,4);
 	P b=cp(5,6,7);
 	int rr[]={3,5,2};

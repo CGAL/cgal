@@ -25,13 +25,9 @@ struct Cartesian_filter_NT : public Base_
 		    typedef typename K1::template Functor<T>::type P1; P1 p1;
 		    typedef typename K2::template Functor<T>::type P2; P2 p2;
 		    typedef typename P2::result_type result_type;
-
-		    //FIXME: if predicate's constructor takes a kernel as argument, how do we translate that?
-#ifdef CGAL_CXX0X
-		    template<class...U> type(U&&...u):p1(std::forward<U>(u)...),p2(std::forward<U>(u)...){}
-#else
-		    //FIXME: usual boost preprocessor magic
-#endif
+		    type(){}
+		    type(Cartesian_filter_NT const&k):p1(reinterpret_cast<K1 const&>(k)),p2(reinterpret_cast<K2 const&>(k)){}
+		    //FIXME: if predicate's constructor takes a kernel as argument, how do we translate that? reinterpret_cast is really ugly and possibly unsafe.
 
 #ifdef CGAL_CXX0X
 		    template<class...U> result_type operator()(U&&...u)const{

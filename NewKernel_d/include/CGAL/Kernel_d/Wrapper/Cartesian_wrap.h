@@ -86,16 +86,19 @@ struct Cartesian_wrap : public Base_
     template<class T,class D=void,class=typename map_functor_type<T>::type,bool=boost::is_same<typename Kernel_base::template Functor<T>::type,Null_functor>::value> struct Functor {
 	    typedef typename Kernel_base::template Functor<T>::type B;
 	    struct type {
+		    B b;
+		    type(){}
+		    type(Self const&k):b(k){}
 		    typedef typename B::result_type result_type;
 #ifdef CGAL_CXX0X
 		    template<class...U> result_type operator()(U&&...u)const{
-			    return B()(internal::Forward_rep()(u)...);
+			    return b(internal::Forward_rep()(u)...);
 		    }
 #else
 #define VAR(Z,N,_) internal::Forward_rep()(u##N)
 #define CODE(Z,N,_) template<BOOST_PP_ENUM_PARAMS(N,class U)> result_type \
 		    operator()(BOOST_PP_ENUM_BINARY_PARAMS(N,U,const&u))const{ \
-			    return B()(BOOST_PP_ENUM(N,VAR,)); \
+			    return b(BOOST_PP_ENUM(N,VAR,)); \
 		    }
 		    BOOST_PP_REPEAT_FROM_TO(1,11,CODE,_)
 #undef CODE
@@ -112,17 +115,20 @@ struct Cartesian_wrap : public Base_
     template<class T,class D> struct Functor<T,D,Construct_tag,false> {
 	    typedef typename Kernel_base::template Functor<T>::type B;
 	    struct type {
+		    B b;
+		    type(){}
+		    type(Self const&k):b(k){}
 		    typedef typename map_result_tag<T>::type result_tag;
 		    typedef typename map_kernel_obj<Self,result_tag>::type result_type;
 #ifdef CGAL_CXX0X
 		    template<class...U> result_type operator()(U&&...u)const{
-			    return result_type(Eval_functor(),B(),internal::Forward_rep()(u)...);
+			    return result_type(Eval_functor(),b,internal::Forward_rep()(u)...);
 		    }
 #else
 #define VAR(Z,N,_) internal::Forward_rep()(u##N)
 #define CODE(Z,N,_) template<BOOST_PP_ENUM_PARAMS(N,class U)> result_type \
 		    operator()(BOOST_PP_ENUM_BINARY_PARAMS(N,U,const&u))const{ \
-			    return result_type(Eval_functor(),B(),BOOST_PP_ENUM(N,VAR,)); \
+			    return result_type(Eval_functor(),b,BOOST_PP_ENUM(N,VAR,)); \
 		    }
 		    BOOST_PP_REPEAT_FROM_TO(1,11,CODE,_)
 #undef CODE
@@ -160,16 +166,19 @@ struct Cartesian_refcount : public Base_
     template<class T,class D=void,bool=Dispatch<T>::is_nul,bool=Dispatch<T>::ret_rcobj> struct Functor {
 	    typedef typename Kernel_base::template Functor<T>::type B;
 	    struct type {
+		    B b;
+		    type(){}
+		    type(Self const&k):b(k){}
 		    typedef typename B::result_type result_type;
 #ifdef CGAL_CXX0X
 		    template<class...U> result_type operator()(U&&...u)const{
-			    return B()(internal::Forward_rep()(u)...);
+			    return b(internal::Forward_rep()(u)...);
 		    }
 #else
 #define VAR(Z,N,_) internal::Forward_rep()(u##N)
 #define CODE(Z,N,_) template<BOOST_PP_ENUM_PARAMS(N,class U)> result_type \
 		    operator()(BOOST_PP_ENUM_BINARY_PARAMS(N,U,const&u))const{ \
-			    return B()(BOOST_PP_ENUM(N,VAR,)); \
+			    return b(BOOST_PP_ENUM(N,VAR,)); \
 		    }
 		    BOOST_PP_REPEAT_FROM_TO(1,11,CODE,_)
 #undef CODE
@@ -186,17 +195,20 @@ struct Cartesian_refcount : public Base_
     template<class T,class D> struct Functor<T,D,false,true> {
 	    typedef typename Kernel_base::template Functor<T>::type B;
 	    struct type {
+		    B b;
+		    type(){}
+		    type(Self const&k):b(k){}
 		    typedef typename map_result_tag<T>::type result_tag;
 		    typedef typename map_kernel_obj<Self,result_tag>::type result_type;
 #ifdef CGAL_CXX0X
 		    template<class...U> result_type operator()(U&&...u)const{
-			    return result_type(Eval_functor(),B(),internal::Forward_rep()(u)...);
+			    return result_type(Eval_functor(),b,internal::Forward_rep()(u)...);
 		    }
 #else
 #define VAR(Z,N,_) internal::Forward_rep()(u##N)
 #define CODE(Z,N,_) template<BOOST_PP_ENUM_PARAMS(N,class U)> result_type \
 		    operator()(BOOST_PP_ENUM_BINARY_PARAMS(N,U,const&u))const{ \
-			    return result_type(Eval_functor(),B(),BOOST_PP_ENUM(N,VAR,)); \
+			    return result_type(Eval_functor(),b,BOOST_PP_ENUM(N,VAR,)); \
 		    }
 		    BOOST_PP_REPEAT_FROM_TO(1,11,CODE,_)
 #undef CODE

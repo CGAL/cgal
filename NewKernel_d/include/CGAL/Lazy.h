@@ -1295,6 +1295,8 @@ struct Lazy_construction_nt {
 
   AC ac;
   EC ec;
+  Lazy_construction_nt(){}
+  Lazy_construction_nt(LK const&k):ac(k.approximate_kernel()),ec(k.exact_kernel()){}
 
   template <typename L1>
   result_type operator()(const L1& l1) const
@@ -1790,7 +1792,8 @@ struct Lazy_construction
 
   AC ac;
   EC ec;
-  //TODO: need a constructor to initialize ac and ec properly
+  Lazy_construction(){}
+  Lazy_construction(LK const&k):ac(k.approximate_kernel()),ec(k.exact_kernel()){}
 
 public:
 

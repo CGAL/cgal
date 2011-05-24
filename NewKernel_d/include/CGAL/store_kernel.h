@@ -29,14 +29,12 @@ struct Store_kernel {
 template<class R_>
 struct Store_kernel<R_,false> {
 	Store_kernel():rp(0){
-		//CGAL_warning_msg(true,"I should know my kernel");
-		//Can't do the check here, Filtered_predicate doesn't let you
-		//initialize c2a/c2e.
+		CGAL_warning_msg(true,"I should know my kernel");
 	}
 	Store_kernel(R_ const& r):rp(&r){}
 	enum { kernel_is_stored = true };
 	R_ const& kernel()const{
-		CGAL_warning_msg(rp==0,"I should know my kernel");
+		CGAL_warning_msg(rp!=0,"I should know my kernel");
 		return *rp;
 	}
 	typedef R_ const& reference_type;

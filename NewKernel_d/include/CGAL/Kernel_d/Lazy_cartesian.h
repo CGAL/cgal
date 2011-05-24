@@ -17,6 +17,8 @@ struct Lazy_cartesian : Dimension_base<typename EK_::Default_ambient_dimension>
 
     //TODO: Do we want to store an AK and an EK? Or just references?
     //FIXME: references would be better I guess.
+    //TODO: In any case, make sure that we don't end up storing this kernel for
+    //nothing (it is not empty but references empty kernels or something)
     AK_ ak; EK_ ek;
     AK_ const& approximate_kernel()const{return ak;}
     EK_ const& exact_kernel()const{return ek;}
@@ -81,15 +83,18 @@ struct Lazy_cartesian : Dimension_base<typename EK_::Default_ambient_dimension>
     typedef Iterator_from_indices<const Vector, const FT, FT, typename Functor<Compute_cartesian_coordinate_tag>::type> Vector_cartesian_const_iterator;
 
     template<class U>
-    struct Construct_iter {
+    struct Construct_iter : private Store_kernel<Kernel> {
+	    Construct_iter(){}
+	    Construct_iter(Kernel const&k):Store_kernel<Kernel>(k){}
+	    //FIXME: pass the kernel to the functor in the iterator
 	    typedef U result_type;
 	    template<class T>
 	    result_type operator()(T const& t,Begin_tag)const{
-		    return result_type(t,0);
+		    return result_type(t,0,this->kernel());
 	    }
 	    template<class T>
 	    result_type operator()(T const& t,End_tag)const{
-		    return result_type(t,Self().dimension());
+		    return result_type(t,Self().dimension(),this->kernel());
 	    }
     };
     template<class D> struct Functor<Construct_point_cartesian_const_iterator_tag,D,Misc_tag> {

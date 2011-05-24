@@ -29,6 +29,7 @@ class Iterator_from_indices
 	typedef std::size_t index_t;
 	Container_& cont;
 	index_t index;
+	Coord_access ca;
 	void increment(){ ++index; }
 	void decrement(){ --index; }
 	void advance(std::ptrdiff_t n){ index+=n; }
@@ -41,12 +42,14 @@ class Iterator_from_indices
 	}
 	Ref_ dereference()const{
 		//FIXME: use the functor properly
-		Coord_access ca;
 		return ca(cont,index);
 	}
 	public:
 	Iterator_from_indices(Container_& cont_,std::size_t n)
 		: cont(cont_), index(n) {}
+	template<class T>
+	Iterator_from_indices(Container_& cont_,std::size_t n,T const&t)
+		: cont(cont_), index(n), ca(t) {}
 };
 }
 #endif // CGAL_ITERATOR_FROM_INDICES_H

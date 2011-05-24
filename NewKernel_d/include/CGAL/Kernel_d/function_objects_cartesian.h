@@ -49,6 +49,9 @@ template<class R_> struct Orientation : private Store_kernel<R_> {
 		}
 		return R::LA::sign_of_determinant(CGAL_MOVE(m));
 	}
+	//FIXME!!!
+	//when Point and Vector are distinct types, the dispatch should be made
+	//in a way that doesn't instantiate a conversion from Point to Vector
 	template<class Iter>
 	result_type operator()(Iter const&f, Iter const& e)const{
 		typename std::iterator_traits<Iter>::difference_type d=std::distance(f,e);
