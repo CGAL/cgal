@@ -106,17 +106,20 @@ fi
 echo "Create new directory $gitname"
 rm -fr ./$gitName
 mkdir ./$gitName
-cd ./$gitName
+#cd ./$gitName
 echo
 
 if [ "$cloneLocation" != "" ]; then
   
   echo "Cloning repo with svn-remotes from $cloneLocation"
-  git init
-  git remote add sorigin $cloneLocation
-  git config --replace-all remote.sorigin.fetch '+refs/remotes/*:refs/remotes/*'
-  git fetch sorigin
-  git config --remove-section remote.sorigin
+#  git init
+#  git remote add sorigin $cloneLocation
+#  git config --replace-all remote.sorigin.fetch '+refs/remotes/*:refs/remotes/*'
+#  git fetch sorigin
+#  git config --remove-section remote.sorigin
+
+  git clone $cloneLocation $gitName
+  cd $gitName
 
 fi
 
@@ -128,10 +131,10 @@ rewriteRoot=--rewrite-root=$svnGforge
 
 # TODO internal-releases only >= 3.7
 internalReleasesTags="--tags tags/internal-releases"
-#internalReleasesTags=
+internalReleasesTags=
 
 debianTags="--tags tags/debian"
-#debianTags=
+debianTags=
 
 echo "Init repository: $CMD"
 git svn init $fromSvn $rewriteRoot --prefix=svn/next/ --trunk branches/next 
@@ -164,23 +167,51 @@ echo
 echo "Using config $gitName/.git/config:"
 cat .git/config
 
+echo "Branches 1"
+git branch -a
+
 ### Fetch
 
 if [ $skipFetch = 0 ]; then
 
   if [ "$cloneLocation" != "" ]; then
 
+#
+#  #  git config svn.authorsfile $(basename $(pwd))/git-authors
+##  rsync -avpP user@hostname.tld:/path/to/git-svn.git/svn .git/
+##  git svn fetch --all && git svn rebase
+#
     echo "Rsyncing svn"
-    rsync -arP --progress $cloneLocation/.git/svn/ .git/svn/
+#    rsync -arpP --progress $cloneLocation/.git/refs/remotes/svn .git/refs/remotes/
+    rsync -arpP --progress $cloneLocation/.git/svn .git/
 
-    echo "Fetch from GForge's svn"
+# 
+    echo "Fetching svn-branches"
+#    git fetch $cloneLocation refs/heads/master:refs/remotes/svn/stable refs/heads/local-svn/next:refs/remotes/svn/next refs/heads/local-svn/features/*:refs/remotes/svn/features/* refs/heads/local-svn/releases/*:refs/remotes/svn/releases/*
+    git fetch $cloneLocation refs/remotes/svn/stable:refs/remotes/svn/stable refs/remotes/svn/next:refs/remotes/svn/next refs/remotes/svn/features/*:refs/remotes/svn/features/* refs/remotes/svn/releases/*:refs/remotes/svn/releases/*
+#    git fetch $cloneLocation --all
+
+    git remote rm origin # TODO remove line?
+   
     git svn fetch
 
-    echo "Checking out remotes/svn/next"
-    git checkout -b local/next remotes/svn/next
+    git branch -a
+    git checkout master
+    git branch -D local-svn/next
 
-    echo "Rebase from real SVN server"
-    git svn rebase
+    echo "Update refs"
+    git for-each-ref --format='%(refname)' refs/remotes/svn | while read branch_ref; do
+      branch=${branch_ref#refs/remotes/svn/}
+      echo "Update $branch"
+done
+
+    git svn rebase --all
+
+    git checkout -b local-svn/next remotes/svn/next
+    git branch -D master
+
+    git branch
+
 
   else
 
