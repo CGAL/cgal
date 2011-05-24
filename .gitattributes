@@ -3316,6 +3316,7 @@ Spatial_sorting/doc_tex/Spatial_sorting_ref/Hilbert_sort_d.tex -text
 Spatial_sorting/doc_tex/Spatial_sorting_ref/SpatialSortingTraits_d.tex -text
 Spatial_sorting/doc_tex/Spatial_sorting_ref/Spatial_sort_traits_adapter_2.tex -text
 Spatial_sorting/doc_tex/Spatial_sorting_ref/Spatial_sort_traits_adapter_3.tex -text
+Spatial_sorting/doc_tex/Spatial_sorting_ref/Spatial_sort_traits_adapter_d.tex -text
 Spatial_sorting/examples/Spatial_sorting/hilbert.cpp -text
 Spatial_sorting/examples/Spatial_sorting/hilbert_policies.cpp -text
 Spatial_sorting/examples/Spatial_sorting/small_example_delaunay_2.cpp -text
@@ -3333,6 +3334,7 @@ Spatial_sorting/include/CGAL/Hilbert_sort_middle_base.h -text
 Spatial_sorting/include/CGAL/Hilbert_sort_middle_d.h -text
 Spatial_sorting/include/CGAL/Spatial_sort_traits_adapter_2.h -text
 Spatial_sorting/include/CGAL/Spatial_sort_traits_adapter_3.h -text
+Spatial_sorting/include/CGAL/Spatial_sort_traits_adapter_d.h -text
 Straight_skeleton_2/demo/Straight_skeleton_2/data/complex_0.poly -text svneol=unset#application/octet-stream
 Straight_skeleton_2/demo/Straight_skeleton_2/data/complex_1.poly -text svneol=unset#application/octet-stream
 Straight_skeleton_2/demo/Straight_skeleton_2/data/complex_2.poly -text svneol=unset#application/octet-stream

@@ -161,7 +161,7 @@ such an order provides enough randomness to combine the advantages of a random
 \cgal\ provides spatial sorting for points in 2D, 3D and higher dimensions,
 with the middle and the median policies for Hilbert sort in the buckets.
 
-\subsection{Examples}
+\subsection{Basic Example}
 
 The following example shows that, on particular input, spatial sort
 runs much faster than a bad order or than Hilbert sort (below results
@@ -176,11 +176,19 @@ $ ./small_example_delaunay_2
 
 \ccIncludeExampleCode{Spatial_sorting/small_example_delaunay_2.cpp}
 
-Next example describes how a traits class different than CGAL Kernel can be
-used to sort a container of handle on points instead of points directly.
+%Next example describes how a traits class different than CGAL Kernel can be
+%used to sort a container of handle on points instead of points directly.
+%\ccIncludeExampleCode{Spatial_sorting/sort_indices.cpp}
 
-\ccIncludeExampleCode{Spatial_sorting/sort_indices.cpp}
+\subsection{Using your own Point Type}
+If you want to sort points of your own point type,
+you only have to provide functors that compare
+the \ccc{x} and \ccc{y} coordinates of your points. Note that in case you simply want
+to associate an extra information to your point you might consider the example of this section
+\ref{sec:sort_any_type_2}
+as an alternative.
 
+\ccIncludeExampleCode{Spatial_sorting/myPoint.cpp}
 
 \subsection{Sorting Arbitrary Types}
 \label{sec:sort_any_type}
@@ -206,12 +214,5 @@ In this example program, the sorted sequence of points is retrieved
 using the indices of the points in a vector of pairs of point and integer.
 \ccIncludeExampleCode{Spatial_sorting/sp_sort_using_property_map_d.cpp}
 
-If you want to sort points of your own point type,
-you only have to provide functors that compare
-the \ccc{x} and \ccc{y} coordinates of your points. Note that in case you simply want
-to associate an extra information to your point you might consider the example of this section
-\ref{sec:sort_any_type_2}
-as an alternative.
 
-\ccIncludeExampleCode{Spatial_sorting/myPoint.cpp}
 

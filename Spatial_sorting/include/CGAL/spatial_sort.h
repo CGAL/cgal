@@ -40,7 +40,7 @@ namespace internal {
     void spatial_sort (
                        RandomAccessIterator begin, RandomAccessIterator end,
                        const Kernel &k, 
-		       Policy policy,
+		       Policy /*policy*/,
 		       typename Kernel::Point_2 *,
 		       std::ptrdiff_t threshold_hilbert,
 		       std::ptrdiff_t threshold_multiscale,
@@ -63,7 +63,7 @@ namespace internal {
     void spatial_sort (
                        RandomAccessIterator begin, RandomAccessIterator end,
                        const Kernel &k, 
-		       Policy policy,
+		       Policy /*policy*/,
 		       typename Kernel::Point_3 *,
 		       std::ptrdiff_t threshold_hilbert,
 		       std::ptrdiff_t threshold_multiscale,
@@ -86,7 +86,7 @@ namespace internal {
     void spatial_sort (
 		       RandomAccessIterator begin, RandomAccessIterator end,
                        const Kernel &k, 
-		       Policy policy,
+		       Policy /*policy*/,
 		       typename Kernel::Point_d *,
 		       std::ptrdiff_t threshold_hilbert,
 		       std::ptrdiff_t threshold_multiscale,

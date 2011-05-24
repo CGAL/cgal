@@ -1,0 +1,36 @@
+\begin{ccRefClass}{Spatial_sort_traits_adapter_d<Base_traits,PointPropertyMap>} 
+
+\ccDefinition 
+
+Given a property map associating a key to a point, the class \ccRefName\ induces a spatial
+reorder of the keys instead of the points, the comparisons being done on the associated points.
+In other words, the traits provides to a spatial sort  algorithm a point type which is a key,
+while the actual point type is \ccc{Base_traits::Point_d}.
+
+\ccRequirements \ccc{Base_traits} is a model for \ccc{SpatialSortingTraits_d}.
+\ccc{PointPropertyMap} is a model of \ccAnchor{http://www.boost.org/doc/libs/release/libs/property_map/doc/ReadablePropertyMap.html}{boost::ReadablePropertyMap}
+with \ccc{Base_traits::Point_d} as \ccc{value_type}.
+
+
+\ccInheritsFrom
+\ccc{Base_traits}
+
+\ccIsModel
+\ccc{SpatialSortingTraits_d}
+
+\ccTypes
+\ccTypedef{boost::property_traits<PointPropertyMap>::key_type Point_d;}{}
+
+\ccTagFullDeclarations
+\ccCreationVariable{o}
+\ccCreation
+\ccConstructor{Spatial_sort_traits_adapter_d(Base_traits base=Base_traits());}{}
+\ccConstructor{Spatial_sort_traits_adapter_d(const PointPropertyMap& ppmap,Base_traits base=Base_traits());}{}
+
+\ccOperations
+\ccThree{void;;}{A}{}
+
+\ccMethod{const PointPropertyMap& point_property_map() const;}{Returns a const reference to the point property map.}
+
+
+\end{ccRefClass}
