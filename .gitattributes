@@ -266,8 +266,6 @@ Approximate_min_ellipsoid_d/documentation/boundingbox.mw -text svneol=native#app
 Arithmetic_kernel/include/CGAL/CORE_arithmetic_kernel.h -text
 Arithmetic_kernel/include/CGAL/GMP_arithmetic_kernel.h -text
 Arithmetic_kernel/include/CGAL/LEDA_arithmetic_kernel.h -text
-Arithmetic_kernel/include/CGAL/OLD/GMP/Gmpfr_interval_type.h -text
-Arithmetic_kernel/include/CGAL/OLD/Gmpfr_interval.h -text
 Arithmetic_kernel/package_info/Arithmetic_kernel/description.txt -text
 Arithmetic_kernel/package_info/Arithmetic_kernel/maintainer -text
 Arithmetic_kernel/test/Arithmetic_kernel/Arithmetic_kernel.cpp -text
@@ -1378,6 +1376,8 @@ Envelope_3/test/Envelope_3/data/spheres/stest6.cin -text
 Envelope_3/test/Envelope_3/data/spheres/stest7.cin -text
 Envelope_3/test/Envelope_3/data/spheres/stest8.cin -text
 Envelope_3/test/Envelope_3/data/spheres/stest9.cin -text
+Envelope_3/test/Envelope_3/data/triangles/edge_bug.cin -text
+Envelope_3/test/Envelope_3/data/triangles/edge_bug_all.cin -text
 Envelope_3/test/Envelope_3/data/triangles/grid_inter_tri_const_envelope.cin -text
 Envelope_3/test/Envelope_3/data/triangles/grid_inter_tri_const_envelope_40.cin -text
 Envelope_3/test/Envelope_3/data/triangles/grid_intersecting_triangles.cin -text
@@ -3188,6 +3188,7 @@ Scripts/developer_scripts/check_library_uses_no_qpl_files.exceptions -text
 Scripts/developer_scripts/check_macro_names -text
 Scripts/developer_scripts/check_no_CGAL_USE_without_includes_before -text
 Scripts/developer_scripts/check_svn_keywords -text
+Scripts/developer_scripts/clean_up_branch.sh -text
 Scripts/developer_scripts/common_impl.rb -text
 Scripts/developer_scripts/create_assertions.sh eol=lf
 Scripts/developer_scripts/create_cgal_test -text

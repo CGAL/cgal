@@ -45,7 +45,7 @@ isolator<Polynomial_>::operator()(const Polynomial_ &p,unsigned int prec){
         CGAL_error_msg(
                 "isolator not implemented for this type of polynomials");
         return std::vector<Gmpfi>();
-};
+}
 
 template <>
 inline std::vector<Gmpfi>
@@ -69,7 +69,7 @@ isolator<Polynomial<Gmpz> >::operator()(const Polynomial<Gmpz> &p,
                 intervals.push_back(Gmpfi(intervals_mpfi[j]));
         free(intervals_mpfi);
         return intervals;
-};
+}
 
 } // namespace RS
 

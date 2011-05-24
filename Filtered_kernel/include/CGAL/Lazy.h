@@ -1393,9 +1393,9 @@ public:
 
   template < typename L1>
   result_type
-  operator()(const L1& l1, int i) const
+  operator()(const L1& l1, int) const
   {
-    return result_type(&l1,i);
+    return result_type(&l1,2);
   }
 
 };
@@ -1422,9 +1422,9 @@ public:
 
   template < typename L1>
   result_type
-  operator()(const L1& l1, int i) const
+  operator()(const L1& l1, int) const
   {
-    return result_type(&l1,i);
+    return result_type(&l1,3);
   }
 
 };

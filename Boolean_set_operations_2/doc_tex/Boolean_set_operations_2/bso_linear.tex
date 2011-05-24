@@ -5,7 +5,7 @@ The basic library of \cgal\ includes the \ccc{Polygon_2<Kernel,Container>}
 class-template that represents a linear polygon in the plane. The
 polygon is represented by its vertices stored in a container of
 objects of type \ccc{Kernel::Point_2}. The polygon edges are line
-segments (\ccc{Kenrel::Segment_2} objects) between adjacent points in
+segments (\ccc{Kernel::Segment_2} objects) between adjacent points in
 the container. By default, the \ccc{Container} is a vector of
 \ccc{Kernel::Point_2} objects.
 
@@ -37,7 +37,7 @@ computes the union of two polygons is called \ccc{join()}, since
 the word \ccc{union} is reserved in \CC.} \ccc{difference()},
 \ccc{symmetric_difference()} and the predicate \ccc{do_intersect()}
 that accept two \ccc{Polygon_2} objects as their input. We explain how
-these functions should be used throught several examples in the
+these functions should be used through several examples in the
 following sections.
 
 % ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -151,7 +151,7 @@ upside-down triangle. In general, there are many ways to arrive at
 a particular point set. However, the set of polygons with holes
 obtained through the application of any sequence of operations is
 unique. The set depicted on the right is represented as a single
-polygon having a triangular outer boundary with a single triangluar
+polygon having a triangular outer boundary with a single triangular
 hole in its interior --- and not as three triangles that have no holes
 at all. As a general rule, if two point sets are connected, then they
 belong to the same polygon with holes.
@@ -233,7 +233,7 @@ output polygons to its associated container.
 \subsubsection{Example --- Joining and Intersecting Simple Polygons\label{bso_sssec:ex_simple_bops}}
 % ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-The following example demonstartes the usage of the free functions
+The following example demonstrates the usage of the free functions
 \ccc{join()} and \ccc{intersect()} for computing the union and the
 intersection of the two simple polygons depicted in
 Figure~\ref{fig:simple}~(b). The example uses the auxiliary function
@@ -245,7 +245,7 @@ the header file \ccc{print_utils.h} under the examples folder.
 % ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 \subsubsection{Operations on Polygons with Holes\label{bso_sssec:pwh_bops}}
 % ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-We have demonstrated that free functions that perform boolean set operations on simple polygons may output polygons with holes. In addition to these functions, the Boolean set-operations package provides the following overriden free functions that accept
+We have demonstrated that free functions that perform boolean set operations on simple polygons may output polygons with holes. In addition to these functions, the Boolean set-operations package provides the following overridden free functions that accept
 \ccc{General_polygon_with_holes_2} objects as their input - 
 %Having introduced polygons with holes and explained how the free functions
 %output such objects, it is only natural to perform operations on sets that
@@ -284,7 +284,7 @@ contains of five holes:
 
 \ccIncludeExampleCode{Boolean_set_operations_2/symmetric_difference.cpp}
 
-In some cases it is convinient to connect the outer boundary of a
+In some cases it is convenient to connect the outer boundary of a
 polygon with holes with the holes inside it. The
 function \ccc{connect_holes()} accepts a polygon with
 holes, and connects the topmost vertex in each hole with the polygon
@@ -331,7 +331,7 @@ into the set using the \ccc{insert()} method, as long as the inserted
 polygons and the existing polygons in the set are disjoint. 
 The \ccc{Polygon_set_2} class also provides access functions for
 accessing the polygons with holes it contains, and a few queries. The
-most improtant query is \ccc{S.oriented_side(q)}, which determined
+most important query is \ccc{S.oriented_side(q)}, which determined
 whether the query point $q$ is contained in the interior of the set
 $S$, lies on the boundary of the set, or neither.
 
@@ -347,8 +347,8 @@ functions.
 
 Member functions of the \ccc{General_polygon_set_2} that perform
 Boolean set-operations come in two flavors: for example, \ccc{S.join(P, Q)}
-computes the union of $P$ and $Q$ and assigned the reuslt to $S$, while
-\ccc{S.join(P)} preformes the operation $S \longleftarrow S \cup P$.
+computes the union of $P$ and $Q$ and assigned the result to $S$, while
+\ccc{S.join(P)} performs the operation $S \longleftarrow S \cup P$.
 Similarly, \ccc{S.complement(P)} sets $S$ to be the complement of $P$,
 while $S.complement()$ simply negates the set $S$.
 
@@ -358,7 +358,7 @@ while $S.complement()$ simply negates the set $S$.
 
 The free functions reviewed in Section~\ref{bso_ssec:polygons_with_holes}
 serve as a wrapper for the polygon-set class, and are only provided for
-convinience. A typical such function constructs a pair of
+convenience. A typical such function constructs a pair of
 \ccc{General_polygon_set_2} objects, invokes the appropriate method to
 apply the desired Boolean operation, and transforms the resulting
 polygon set to the required output format. Thus, when several

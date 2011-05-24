@@ -26,6 +26,7 @@
 #define CGAL_TAGS_H
 
 #include <CGAL/IO/io_tags.h>
+#include <boost/config.hpp>
 
 namespace CGAL {
 

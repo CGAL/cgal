@@ -266,17 +266,21 @@ intersection_collinear_segments(const typename K::Segment_3 &s1,
   if ( cln_order(p,r,q) ){
     if ( cln_order(p,s,q) )
       return make_object(s2);
-    if ( cln_order(r,p,s) )
-      return r!=p ? make_object( typename K::Segment_3(r,p) ) : make_object(p);
-    else
-      return r!=q ? make_object( typename K::Segment_3(r,q) ) : make_object(q);
+    if ( cln_order(r,p,s) ){
+      if (r!=p) return make_object( typename K::Segment_3(r,p) );
+      if ( cln_order(r,q,s) ) return make_object(s1);
+      return make_object(p);
+    }
+    return r!=q ? make_object( typename K::Segment_3(r,q) ) : make_object(q);
   }
 
   if ( cln_order(p,s,q) ){
-    if ( cln_order(r,p,s) )
-      return s!=p ? make_object( typename K::Segment_3(s,p) ) : make_object(p);
-    else
-      return s!=q ? make_object( typename K::Segment_3(s,q) ) : make_object(q);
+    if ( cln_order(r,p,s) ){
+      if (s!=p) return make_object( typename K::Segment_3(s,p) );
+      if (cln_order(r,q,s)) return make_object(s1);  
+      return make_object(p);
+    }
+   return s!=q ? make_object( typename K::Segment_3(s,q) ) : make_object(q);
   }
   
   if ( cln_order(r,p,s) )

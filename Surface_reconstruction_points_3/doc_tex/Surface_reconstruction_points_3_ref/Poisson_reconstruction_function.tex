@@ -4,8 +4,8 @@
 % | 07.09.2007   Pierre Alliez, Laurent Saboret, Gael Guennebaud
 % | Package: Surface_reconstruction_points_3
 % |
-\RCSdef{\RCSPoissonreconstructionfunctionRev}{$Id$}
-\RCSdefDate{\RCSPoissonreconstructionfunctionDate}{$Date$}
+%\RCSdef{\RCSPoissonreconstructionfunctionRev}{$Id$}
+%\RCSdefDate{\RCSPoissonreconstructionfunctionDate}{$Date$}
 % |
 \ccRefPageBegin
 %%RefPage: end of header, begin of main body
@@ -143,7 +143,9 @@ The function \ccc{compute_implicit_function}() must be called after the insertio
 \ccGlue
 \ccMethod{FT operator()(const Point& p) const;}
 {
-\ccc{ImplicitFunction} interface: evaluates the implicit function at a given 3D query point.
+\ccc{ImplicitFunction} interface: evaluates the implicit function at a
+given 3D query point. The function \ccc{compute_implicit_function} must be
+called before the first call to \ccc{operator()}.
 }
 \ccGlue
 \ccMethod{Point get_inner_point() const;}
@@ -156,7 +158,7 @@ Returns a point located inside the inferred surface.
 
 \ccExample
 
-See \ccc{poisson_reconstruction_example.cpp}.
+See \ccReferToExampleCode{Surface_reconstruction_points_3/poisson_reconstruction_example.cpp}.
 
 \end{ccRefClass}
 
