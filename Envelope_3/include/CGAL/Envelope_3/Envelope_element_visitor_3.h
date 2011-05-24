@@ -632,8 +632,9 @@ public:
                                     original_src->point())) ||
         (original_src->is_at_open_boundary() && is_min_end_at_inf))
     {
-      overlaps++;
       source_is_special = true;
+      if (split_points.front().third == true)
+        overlaps++;
     }
     
     // check if target is a special vertex, by checking the last point in
