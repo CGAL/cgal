@@ -53,7 +53,7 @@ namespace internal {
     template <class RandomAccessIterator, class Policy, class Kernel>
       void hilbert_sort (RandomAccessIterator begin, 
 			 RandomAccessIterator end,
-			 Policy policy,
+			 Policy /*policy*/,
 			 const Kernel &k, typename Kernel::Point_3 *)
     {
         boost::rand48 random;
@@ -65,7 +65,7 @@ namespace internal {
     template <class RandomAccessIterator, class Policy, class Kernel>
       void hilbert_sort (RandomAccessIterator begin,
 			 RandomAccessIterator end,
-			 Policy policy,
+			 Policy /*policy*/,
 			 const Kernel &k, typename Kernel::Point_d *)
     {
         boost::rand48 random;
