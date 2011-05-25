@@ -52,7 +52,7 @@ using \ccc{Make_x_monotone_2}.
 %These may be split up further into \ccc{X_monotone_curve_2} using 
 %\ccc{Make_x_monotone_2}. 
 
-The template parameter to the traits must be a model of the 
+The template parameter of the traits must be a model of the 
 concept \ccc{AlgebraicKernel_d_1}. 
 A rational function is then represented by two polynomials $P$ and $Q$ of type 
 \ccc{AlgebraicKernel_d_1::Polynomial_1}. 
@@ -78,8 +78,8 @@ separate member function that cleans up the cache on demand.
 \ccIsModel
   \ccc{ArrangementTraits_2}\\
 %  \ccc{ArrangementLandmarkTraits_2}\\ %% not a model of this concept since construction of segment is not easy 
-  \ccc{ArrangementDirectionalXMonotoneTraits_2}
-
+  \ccc{ArrangementDirectionalXMonotoneTraits_2}\\
+  \ccc{ArrangementOpenBoundaryTraits_2}
 
 \ccTypes \ccThree{}{xxxxxxxxxxxxxxxxxxxxxx}{x} 
 \ccTypedef{typedef AlgebraicKernel_d_1 Algebraic_kernel_d_1;}{}\ccGlue
