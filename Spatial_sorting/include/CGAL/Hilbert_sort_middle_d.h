@@ -146,17 +146,16 @@ public:
     template <class RandomAccessIterator>
     void operator() (RandomAccessIterator begin, RandomAccessIterator end) const
     {
-      K k;
-      _dimension = begin->dimension();
+      _dimension = _k.point_dimension_d_object()(*begin);
       two_to_dim = 1;
       Starting_position start(_dimension);
       Corner min(_dimension),max(_dimension);
 
       for (int i=0; i<_dimension; ++i) 
-	min[i]=max[i]=to_double( k.compute_coordinate_d_object() (*begin,i) );
+	min[i]=max[i]=to_double( _k.compute_coordinate_d_object() (*begin,i) );
       for(RandomAccessIterator it=begin+1; it<end; ++it){
 	for (int i=0; i<_dimension; ++i){
-	  double d=  to_double( k.compute_coordinate_d_object() (*it,i) );
+	  double d=  to_double( _k.compute_coordinate_d_object() (*it,i) );
 	  if (d < min[i]) min[i] = d;
 	  if (d > max[i]) max[i] = d;
 	}

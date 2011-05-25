@@ -1717,6 +1717,7 @@ Kernel_23/test/Kernel_23/CMakeLists.txt -text
 Kernel_d/doc_tex/Kernel_d/hypercube.png -text
 Kernel_d/doc_tex/Kernel_d_ref/Kernel_Compute_coordinate_d.tex -text
 Kernel_d/doc_tex/Kernel_d_ref/Kernel_Less_coordinate_d.tex -text
+Kernel_d/doc_tex/Kernel_d_ref/Kernel_Point_dimension_d.tex -text
 Kernel_d/include/CGAL/Kernel_d/Cartesian_const_iterator_d.h -text
 Kernel_d/test/Kernel_d/Linear_algebra-test.cmd eol=lf
 Kinetic_data_structures/demo/Kinetic_data_structures/data/after002 -text
