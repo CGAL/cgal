@@ -78,12 +78,12 @@ iso-rectangular area called the parameter space.\footnote{The term
   package is going through to support arrangements embedded on
   certain two-dimensional parametric surfaces in three-dimensions
   (or higher).} For planar curves the parameter space is typically
-defined as $\mathbb{R}^2$. The iso-rectangule can be unbounded, open,
+defined as $\mathbb{R}^2$. The iso-rectangle can be unbounded, open,
 or closed. The basic set of predicates is sufficient for constructing
 arrangements of $x$-monotone curves that do not reach or approach the
 boundary of the parameter space. The nature of the input curves,
 whether they are expected to reach or approach the left, right,
-bootom, or top side of the boundary of the parameter space, must be
+bottom, or top side of the boundary of the parameter space, must be
 conveyed by the traits class. This is done through the definition of
 four additional nested types, namely \ccc{Left_side_category},
 \ccc{Right_side_category}, \ccc{Bottom_side_category}, and
@@ -119,7 +119,7 @@ concept must define a fixed precision number type (typically
 \end{description}
 
 %~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-\subsubsection{Supporting Interesecting $x$-Monotone Curves
+\subsubsection{Supporting Intersecting $x$-Monotone Curves
 \label{arr_sssec:tr_xmon_concept}}
 %~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
@@ -190,10 +190,10 @@ an implicit bounding rectangle in the \dcel{} structure; see
 Section~\ref{arr_sec:unbounded}. The unbounded ends of vertical rays, 
 vertical lines, and curves with vertical asymptotes are represented
 by vertices that lie on the bottom or top sides of this implicit
-rectabgle. These vertices are not associated with points, but are
+rectangle. These vertices are not associated with points, but are
 associated with (finite) $x$-coordinates. The unbounded ends of all
 other curves are represented by vertices that lie on the left or
-right sides of this implicit rectabgle. These vertices are not
+right sides of this implicit rectangle. These vertices are not
 associated with points either. Edges connect these vertices and the
 four vertices that represents the corners of this implicit rectangle
 to form the rectangle.
@@ -206,12 +206,12 @@ curve $C(t) = (X(t),Y(t))$ defined over a closed, open, or half open
 interval with endpoints~$0$ and~$1$. Let $b_l$ and $b_r$ denote the
 $x$-coordinates of the left and right boundaries of the parameter
 space, respectively. Let $b_b$ and $b_t$ denote the $y$-coordinates
-of the bootom and top boundaries of the parameter space, respectively.
+of the bottom and top boundaries of the parameter space, respectively.
 If the parameter space is, for example, the entire plane,
 $b_l = b_b = -\infty$ and $b_r = b_t = +\infty$.
 
 Several predicates are required to handle $x$-monotone curves that
-approach infinitiny and thus approach the boundary of the parameter
+approach infinity and thus approach the boundary of the parameter
 space. These predicates are sufficient to handle not only unbounded
 curves, but also bounded curves that are open. However, they can be
 open only at the boundary of the parameter space. The additional
@@ -223,7 +223,7 @@ models of concepts associated with the left and right sides,
 respectively. We defer the introducing the four individual concepts to
 a later release to avoid clutter. Instead, we introduce the single
 concept \ccc{ArrangementOpenBoundaryTraits_2}, which combines all the
-four concepts. The comined concept refines the concept
+four concepts. The combined concept refines the concept
 \ccc{ArrangementBasicTraits_2}. The arrangement template
 instantiated with a traits class that models this combined concept
 can handle curves that are unbounded in any direction. If some
@@ -267,7 +267,7 @@ divided into $x$-monotone sub curves (and perhaps points) before it
 is inserted into an arrangement. This asymmetry is also reflected the
 additional predicates listed below. Notice that curves that reach the
 left or right boundary sides are handled by the single predicate
-\ccc{Compare_y_near_boundary_2}, while the nadling of curves that
+\ccc{Compare_y_near_boundary_2}, while the handling of curves that
 reach the bottom or top boundary sides is performed by the two
 predicates \ccc{Compare_x_at_limit_2} and \ccc{Compare_x_near_limit_2}.
 
@@ -826,34 +826,67 @@ multiplicity $1$:
 \subsection{A Traits Class for Arcs of Rational Functions\label{arr_ssec:tr_ratfunc}}
 %---------------------------------------------------------
 
-A {\em rational function} is given by the equation $y =
-\frac{P(x)}{Q(x)}$, where $P$ and $Q$ are polynomials of arbitrary
-degrees. In particular, if $Q(x) = 1$, then the function is a
-simple polynomial function. A bounded {\em rational arc} is
-defined by the graph of a rational function over some interval
-$[x_{\rm min}, x_{\rm max}]$, where $Q$ does not have any real
-roots in this interval (Thus, the arc does not contain any poles).
+
+
+
+The traits class  \ccc{Arr_rational_function_traits_2<AlgebraicKernel_d_1>} 
+is a model of the \ccc{ArrangementTraits_2}
+concept. It handles bounded or unbounded arcs of rational functions,
+referred to as {\sl rational arcs} (in particular, such an arc may
+correspond to the entire graph of a rational function), and enables the
+construction and maintenance of arrangements of such arcs. 
 Rational functions, and polynomial functions in particular, are
 not only interesting in their own right, they are also very useful
 for approximating or interpolating more complicated curves; see,
 e.g.,~\cite[Chapter~3]{cgal:ptvf-nrcpp-02}.
 
+A rational function $y = \frac{P(x)}{Q(x)}$ is defined by two polynomials 
+$P$ and $Q$ of arbitrary degrees. 
+If $Q(x) = 1$ then the function is a simple polynomial function.
+Usually the domain is $\R$ but the function may also be 
+restricted to a bounded interval $[x_{\rm min}, x_{\rm max}]$ 
+or defined over a ray $(-\infty, x_{\rm max}]$ or over $[x_{\rm min}, \infty)$. 
+Rational functions are represented by the nested type \ccc{Curve_2}. 
+Note that a rational function may be not continuous since roots of $Q$ induce 
+vertical asymptotes, which would contradict the notion of an $x$-monotone curve as 
+it is introduced by the \ccc{ArrangementTraits_2} concept. 
+Thus, continuous portions of rational functions are represented by the nested 
+type \ccc{X_monotone_curve_2}, which is different from \ccc{Curve_2}.
+Constructors for both classes are provided by the traits. 
+A \ccc{Curve_2} may be split up into several \ccc{X_monotone_curve_2}
+using \ccc{Make_x_monotone_2}. 
+
 Using the \ccc{Arr_rational_function_traits_2<AlgebraicKernel_d_1>} class
 template it is possible to construct and maintain arrangement of
-rational arcs. 
-The template argument must be a model of the concept \ccc{AlgebraicKernel_d_1}. 
-Given that this is an exact algerbaic kernel, the computations with rational 
-arcs are guaranteed to be robust and exact. 
-A rational function is represented by two polynomials $P$ and $Q$ of type 
+rational arcs.  
+The template parameter of the traits must be a model of the 
+concept \ccc{AlgebraicKernel_d_1}. 
+A rational function is then represented by two polynomials $P$ and $Q$ of type 
 \ccc{AlgebraicKernel_d_1::Polynomial_1}. 
-A point is represented by a rational function and its $x$-coordinate which is 
+A point is represented by a rational function and its $x$-coordinate, which is 
 of type \ccc{AlgebraicKernel_d_1::Algebraic_real_1}. 
 Note that an explicit representation of the $y$-coordinate is only computed upon 
-request which can be a rather costly operation. 
+request, which can be a rather costly operation. 
+
+
+The constructed rational functions are cached by the traits class. 
+The cache is local to each traits class object. 
+It is therefore necessary to construct the curves using the constructor 
+objects provided by member functions of the traits class. 
+%This is also the reason why IO is not handled via the usual stream operators. 
+Moreover, a curve must only be used by the traits class object that was 
+used to construct it. 
+The cache is automatically  cleaned up from time to time.
+The amortized clean up costs are constant. 
+In addition, there is also a 
+separate member function that cleans up the cache on demand.  
+
 
 \ccc{Arr_rational_function_traits_2<AlgebraicKernel_d_1>} is a model of the
-\ccc{ArrangementTraits_2} concept as well as the \ccc{ArrangementDirectionalXMonotoneTraits_2}
-which enables Boolean set operations. 
+\ccc{ArrangementTraits_2} concept, 
+the \ccc{ArrangementOpenBoundaryTraits_2} concept, 
+and the \ccc{ArrangementDirectionalXMonotoneTraits_2} concept, 
+the later enabling Boolean set operations. 
 
 Note that it is not a model of  \ccc{ArrangementLandmarkTraits_2} concept,
 so it is not possible to use the landmark point-location strategy.
