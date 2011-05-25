@@ -62,6 +62,10 @@ CGAL_Kernel_comp1(Compute_cartesian_coordinate,
 
 CGAL_Kernel_pred(Orientation,
 		 orientation_object)
+CGAL_Kernel_pred(Orientation_of_points,
+		 orientation_of_points_object)
+CGAL_Kernel_pred(Orientation_of_vectors,
+		 orientation_of_vectors_object)
 CGAL_Kernel_pred(Less_cartesian_coordinate,
 		 less_cartesian_coordinate_object)
 

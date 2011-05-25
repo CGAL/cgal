@@ -17,9 +17,9 @@ CGAL::Cartesian_complete_predicates<
 CGAL::Cartesian_complete_constructors<
 CGAL::Cartesian_complete_computes<
 CGAL::Cartesian_complete_types<
-//CGAL::Cartesian_refcount<
+CGAL::Cartesian_refcount<
 CGAL::Cartesian_LA_base_d<double,CGAL::Dimension_tag<2> >
-//>
+>
 >, false, RC
 >, false, RC
 >, false, RC
@@ -34,7 +34,7 @@ typedef RC K0;
 
 #if 0
 typedef K0 K2;
-#elif 1
+#elif 0
 typedef CGAL::Cartesian_filter_NT<K0> K2;
 #elif 1
 typedef CGAL::Cartesian_filter_K<K0,KA,KE> K2;
