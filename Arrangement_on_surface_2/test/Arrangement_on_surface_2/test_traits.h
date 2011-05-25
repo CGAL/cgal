@@ -54,8 +54,10 @@
 #include <CGAL/Arr_geodesic_arc_on_sphere_traits_2.h>
 
 #elif TEST_TRAITS == RATIONAL_ARC_TRAITS
-#include <CGAL/CORE_algebraic_number_traits.h>
-#include <CGAL/Arr_rational_arc_traits_2.h>
+//#include <CGAL/CORE_algebraic_number_traits.h>  //OS - new
+//#include <CGAL/Arr_rational_arc_traits_2.h>
+#include <CGAL/Arr_rational_arc_traits_d_1.h>
+
 
 #elif TEST_TRAITS == ALGEBRAIC_TRAITS
 #include <CGAL/Arr_algebraic_segment_traits_2.h>
@@ -162,13 +164,21 @@ typedef CGAL::Arr_geodesic_arc_on_sphere_traits_2<Kernel>        Traits;
 #define TRAITS_TYPE "Spherical Arc"
 
 #elif TEST_TRAITS == RATIONAL_ARC_TRAITS
-typedef CGAL::CORE_algebraic_number_traits                 Nt_traits;
-typedef Nt_traits::Rational                                Rational;
-typedef Nt_traits::Algebraic                               Algebraic;
-typedef CGAL::Arr_rational_arc_traits_2<Kernel,Nt_traits>  Traits;
-typedef Traits::Rat_vector                                 Rat_vector;
-typedef Traits::Point_2                                    Point_2;
+//typedef CGAL::CORE_algebraic_number_traits                 Nt_traits; //OS - new
+//typedef Nt_traits::Rational                                Rational;
+//typedef Nt_traits::Algebraic                               Algebraic;
+//typedef CGAL::Arr_rational_arc_traits_2<Kernel,Nt_traits>  Traits;
+//typedef Traits::Rat_vector                                 Rat_vector;
+//typedef Traits::Point_2                                    Point_2;
+//#define TRAITS_TYPE "Rational Arc"
+
+typedef CGAL::Arr_rational_arc_traits_d_1<Kernel>	         Traits;
+typedef Traits::Rational                                     Rational;
+typedef Traits::Algebraic_real_1                             Algebraic_real_1;
+typedef Traits::Point_2                                      Point_2;
+typedef Traits::Rat_vector                                   Rat_vector;
 #define TRAITS_TYPE "Rational Arc"
+
 
 #elif TEST_TRAITS == ALGEBRAIC_TRAITS
 typedef CGAL::Arr_algebraic_segment_traits_2<Number_type>  Traits;

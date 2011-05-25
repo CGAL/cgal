@@ -832,8 +832,7 @@ Traits_base_test<T_Traits>::read_curve(stream& is,
   return true;
 }
 
-#if TEST_TRAITS == CORE_CONIC_TRAITS || \
-    TEST_TRAITS == RATIONAL_ARC_TRAITS
+#if TEST_TRAITS == CORE_CONIC_TRAITS 
 
 // conic traits and rational traits use same number 
 // type CORE:Expr so this code can be shared
@@ -900,19 +899,31 @@ Traits_base_test<Traits>::read_curve(stream& is, Curve_2& cv)
 #endif
 
 #if TEST_TRAITS == RATIONAL_ARC_TRAITS
+/*! Read a point */
 
-/*! Read a xcurve */
 template <>
 template <class stream>
 bool
-Traits_base_test<Traits>::read_xcurve(stream& is, X_monotone_curve_2& xcv)
+Traits_base_test<Traits>::read_point(stream& is, Point_2& p)
 {
-  Curve_2 tmp_cv;
-  if (!read_curve(is, tmp_cv))
-    return false;
-  xcv = X_monotone_curve_2(tmp_cv);
+  Traits::Construct_point_2 construct_point_2 = m_traits.construct_point_2_object();
+
+  Rational x, y;
+  is >> x >> y ;
+  p = construct_point_2(x, y);
   return true;
 }
+
+template <class stream>
+bool read_rational_to_real(stream& is, Algebraic_real_1& r)
+{
+  static Traits::Algebraic_kernel algebraic_kernel;
+  Rational rat;
+  is >> rat;
+  r = algebraic_kernel.construct_algebraic_real_1_object()(rat);
+  return true;
+}
+
 
 template <class stream>
 bool read_coefficients(stream& is, Rat_vector& coeffs)
@@ -928,14 +939,119 @@ bool read_coefficients(stream& is, Rat_vector& coeffs)
   return true;
 }
 
+/*! Read a xcurve */
+template <>
+template <class stream>
+bool
+Traits_base_test<Traits>::read_xcurve(stream& is, X_monotone_curve_2& xcv)
+{  
+  //curve constructor  
+  const Traits::Construct_x_monotone_curve_2  construct_x_monotone_curve_2  
+    = m_traits.construct_x_monotone_curve_2_object();
+  
+  // Get the arc type:
+  Rat_vector p_coeffs, q_coeffs;
+  Algebraic_real_1 src, trg;
+  int dir = 0;
+  char type;
+  is >> type;
+  if (type == 'a' || type == 'A') 
+  {
+    //Default constructor
+    xcv = X_monotone_curve_2();
+    return true;
+  }
+  else if (type == 'b' || type == 'B') 
+  {
+    //Constructor of a whole polynomial curve
+    if (read_coefficients(is,p_coeffs))
+      xcv = construct_x_monotone_curve_2(p_coeffs.begin(),p_coeffs.end());
+    else
+      return false;
+    return true;
+  }
+  else if (type == 'c' || type == 'C') 
+  {
+    //Constructor of a polynomial ray
+    if (!read_coefficients(is,p_coeffs))
+      return false;
+    if (!read_rational_to_real(is,src))
+      return false;    
+    is >> dir;    
+    xcv = construct_x_monotone_curve_2(p_coeffs.begin(),p_coeffs.end(), src, (dir == 0 ? false : true));
+    return true;
+  }
+  else if (type == 'd' || type == 'D') 
+  {
+    //Constructor of a polynomial arc
+    if (!read_coefficients(is,p_coeffs))
+      return false;
+    if (!read_rational_to_real(is,src))
+      return false;    
+    if (!read_rational_to_real(is,trg))
+      return false;    
+    xcv = construct_x_monotone_curve_2(p_coeffs.begin(),p_coeffs.end(), src, trg);
+    return true;
+  }
+  else if (type == 'e' || type == 'E') 
+  {
+    //Constructor of a whole rational function
+    if (!read_coefficients(is,p_coeffs))
+      return false;
+    if (!read_coefficients(is,q_coeffs))
+      return false;
+    xcv = construct_x_monotone_curve_2(p_coeffs.begin(),p_coeffs.end(), q_coeffs.begin(),q_coeffs.end());
+    return true;
+  }
+  else if (type == 'f' || type == 'F') 
+  {
+    //Constructor of a ray of a rational function
+    if (!read_coefficients(is,p_coeffs))
+      return false;
+    if (!read_coefficients(is,q_coeffs))
+      return false;
+    if (!read_rational_to_real(is,src))
+      return false;    
+    is >> dir;    
+    xcv =construct_x_monotone_curve_2(p_coeffs.begin(),p_coeffs.end(), 
+                                      q_coeffs.begin(),q_coeffs.end(), 
+                                      src, (dir == 0 ? false : true));
+    return true;
+  }
+  else if (type == 'g' || type == 'G') 
+  {
+    //Constructor of a bounded rational arc
+    if (!read_coefficients(is, p_coeffs))
+      return false;
+    if (!read_coefficients(is, q_coeffs))
+      return false;
+    if (!read_rational_to_real(is,src))
+      return false;    
+    if (!read_rational_to_real(is,trg))
+      return false;  
+
+    xcv = construct_x_monotone_curve_2( p_coeffs.begin(),p_coeffs.end(), 
+                                        q_coeffs.begin(),q_coeffs.end(), 
+                                        src, trg);
+    return true;
+  }
+  // If we reached here, we have an unknown rational arc type:
+  std::cerr << "Illegal rational arc type specification: " << type << "."
+            << std::endl;
+  return (false);
+}
+
 /*! Read a curve */
 template <>
 template <class stream>
 bool Traits_base_test<Traits>::read_curve(stream& is, Curve_2& cv)
-{
+{  
+  //curve constructor
+  const Traits::Construct_curve_2  construct_curve_2  = m_traits.construct_curve_2_object();
+
   // Get the arc type:
   Rat_vector p_coeffs, q_coeffs;
-  Algebraic src, trg;
+  Algebraic_real_1 src, trg;
   int dir = 0;
   char type;
   is >> type;
@@ -949,7 +1065,7 @@ bool Traits_base_test<Traits>::read_curve(stream& is, Curve_2& cv)
   {
     //Constructor of a whole polynomial curve
     if (read_coefficients(is,p_coeffs))
-      cv = Curve_2(p_coeffs);
+      cv = construct_curve_2(p_coeffs.begin(),p_coeffs.end());
     else
       return false;
     return true;
@@ -959,8 +1075,10 @@ bool Traits_base_test<Traits>::read_curve(stream& is, Curve_2& cv)
     //Constructor of a polynomial ray
     if (!read_coefficients(is,p_coeffs))
       return false;
-    is >> src >> dir;
-    cv = Curve_2(p_coeffs, src, (dir == 0 ? false : true));
+    if (!read_rational_to_real(is,src))
+      return false;    
+    is >> dir;
+    cv = construct_curve_2(p_coeffs.begin(),p_coeffs.end(), src, (dir == 0 ? false : true));
     return true;
   }
   else if (type == 'd' || type == 'D') 
@@ -968,8 +1086,11 @@ bool Traits_base_test<Traits>::read_curve(stream& is, Curve_2& cv)
     //Constructor of a polynomial arc
     if (!read_coefficients(is,p_coeffs))
       return false;
-    is >> src >> trg;
-    cv = Curve_2(p_coeffs, src, trg);
+    if (!read_rational_to_real(is,src))
+      return false;    
+    if (!read_rational_to_real(is,trg))
+      return false;    
+    cv = construct_curve_2(p_coeffs.begin(),p_coeffs.end(), src, trg);
     return true;
   }
   else if (type == 'e' || type == 'E') 
@@ -979,7 +1100,7 @@ bool Traits_base_test<Traits>::read_curve(stream& is, Curve_2& cv)
       return false;
     if (!read_coefficients(is,q_coeffs))
       return false;
-    cv = Curve_2(p_coeffs, q_coeffs);
+    cv = construct_curve_2(p_coeffs.begin(),p_coeffs.end(), q_coeffs.begin(),q_coeffs.end());
     return true;
   }
   else if (type == 'f' || type == 'F') 
@@ -989,8 +1110,12 @@ bool Traits_base_test<Traits>::read_curve(stream& is, Curve_2& cv)
       return false;
     if (!read_coefficients(is,q_coeffs))
       return false;
-    is >> src >> dir;
-    cv = Curve_2(p_coeffs, q_coeffs, src, (dir == 0 ? false : true));
+    if (!read_rational_to_real(is,src))
+      return false;    
+    is >> dir;  
+    cv =construct_curve_2(p_coeffs.begin(),p_coeffs.end(), 
+                          q_coeffs.begin(),q_coeffs.end(), 
+                          src, (dir == 0 ? false : true));
     return true;
   }
   else if (type == 'g' || type == 'G') 
@@ -1000,8 +1125,13 @@ bool Traits_base_test<Traits>::read_curve(stream& is, Curve_2& cv)
       return false;
     if (!read_coefficients(is, q_coeffs))
       return false;
-    is >> src >> trg;
-    cv = Curve_2(p_coeffs, q_coeffs, src, trg);
+    if (!read_rational_to_real(is,src))
+      return false;    
+    if (!read_rational_to_real(is,trg))
+      return false;        
+    cv = construct_curve_2(p_coeffs.begin(),p_coeffs.end(), 
+                           q_coeffs.begin(),q_coeffs.end(), 
+                           src, trg);
     return true;
   }
   // If we reached here, we have an unknown rational arc type:
