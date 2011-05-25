@@ -22,7 +22,7 @@ get(const First_of_pair&, const First_of_pair::key_type& k) {
   return k.first;
 }
 
-typedef CGAL::Spatial_sort_traits_adapter_2<Kernel,First_of_pair>   Search_traits_2;
+typedef CGAL::Spatial_sort_traits_adapter_2<Kernel,First_of_pair> Search_traits_2;
 
 int main()
 {

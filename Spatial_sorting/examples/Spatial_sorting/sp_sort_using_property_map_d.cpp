@@ -41,15 +41,20 @@ int main()
   std::vector<Vect_ppmap::key_type> indices;
   indices.reserve(points.size());  
   
-  std::copy(boost::counting_iterator<Vect_ppmap::key_type>(0),
-            boost::counting_iterator<Vect_ppmap::key_type>(points.size()),
-            std::back_inserter(indices));
+  std::copy(
+    boost::counting_iterator<Vect_ppmap::key_type>(0),
+    boost::counting_iterator<Vect_ppmap::key_type>(points.size()),
+    std::back_inserter(indices) );
   
-  CGAL::spatial_sort( indices.begin(),indices.end(),Search_traits_d(Vect_ppmap(points)) );
+  CGAL::spatial_sort( 
+    indices.begin(),
+    indices.end(),
+    Search_traits_d(Vect_ppmap(points)) );
+
   std::vector<Vect_ppmap::key_type>::iterator it=indices.begin();
   for (;it!=indices.end();++it)
     std::cout << points[*it].second << " ";
-  std::cout << "\n";
+  std::cout << std::endl;
 
   std::cout << "done" << std::endl;
   

@@ -43,6 +43,15 @@ public:
 
     
     
+  struct Point_dimension_d: public Base_traits::Point_dimension_d{
+    Point_dimension_d(const PointPropertyMap& ppmap,const typename Base_traits::Point_dimension_d& base):
+      Base_traits::Point_dimension_d(base),ppmap_(ppmap){}
+    const PointPropertyMap& ppmap_;
+    int operator()(Arg_type p) const {
+      return static_cast<const typename Base_traits::Point_dimension_d*>(this)->operator()(get(ppmap_,p));
+    }
+  };
+
   struct Less_coordinate_d: public Base_traits::Less_coordinate_d{
     Less_coordinate_d(const PointPropertyMap& ppmap,const typename Base_traits::Less_coordinate_d& base):
       Base_traits::Less_coordinate_d(base),ppmap_(ppmap){}
@@ -64,6 +73,7 @@ public:
  
  
 
+  Point_dimension_d point_dimension_d_object () const {return Point_dimension_d(ppmap_,static_cast<const Gt*>(this)->point_dimension_d_object() );}
   Less_coordinate_d less_coordinate_d_object () const {return Less_coordinate_d(ppmap_,static_cast<const Gt*>(this)->less_coordinate_d_object() );}
   Compute_coordinate_d compute_coordinate_d_object () const {return Compute_coordinate_d(ppmap_,static_cast<const Gt*>(this)->compute_coordinate_d_object() );}
   

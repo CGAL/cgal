@@ -4,10 +4,11 @@
 #include <vector>
 #include <boost/iterator/counting_iterator.hpp>
 
-typedef CGAL::Simple_cartesian<double>                           Kernel;
-typedef Kernel::Point_3                                          Point_3;
+typedef CGAL::Simple_cartesian<double>                  Kernel;
+typedef Kernel::Point_3                                 Point_3;
 //using a pointer as a special property map type
-typedef CGAL::Spatial_sort_traits_adapter_3<Kernel,Point_3*>     Search_traits_3;
+typedef 
+  CGAL::Spatial_sort_traits_adapter_3<Kernel,Point_3*>  Search_traits_3;
 
 int main()
 {

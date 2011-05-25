@@ -41,7 +41,7 @@ class Compute_coordinateHd {
   typedef typename K::Point_d        Point_d;
  public:
   typedef FT                         result_type;  
-  const result_type 
+  result_type 
     operator()(const Point_d& p, int i) const
   {
     return p.cartesian(i);
@@ -54,7 +54,7 @@ class Point_dimensionHd {
   typedef typename K::Point_d        Point_d;
   public:
   typedef int                       result_type;
-  const result_type 
+  result_type 
     operator()(const Point_d& p) const
   {
     return p.dimension();
@@ -67,7 +67,7 @@ class Less_coordinateHd {
   typedef typename K::Point_d        Point_d;
   public:
   typedef bool                       result_type;
-  const result_type 
+  result_type 
     operator()(const Point_d& p, const Point_d& q, int i) const
   {
     int d = p.dimension();
