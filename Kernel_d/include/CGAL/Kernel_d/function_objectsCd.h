@@ -50,6 +50,19 @@ class Compute_coordinateCd {
 };
 
 template <typename K>
+class Point_dimensionCd {
+  typedef typename K::FT             FT;
+  typedef typename K::Point_d        Point_d;
+  public:
+  typedef int                       result_type;
+  const result_type 
+    operator()(const Point_d& p) const
+  {
+    return p.dimension();
+  }
+};
+
+template <typename K>
 class Less_coordinateCd {
   typedef typename K::FT             FT;
   typedef typename K::Point_d        Point_d;

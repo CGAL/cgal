@@ -297,7 +297,7 @@ int main ()
         std::cout << "            Sorting points...    " << std::flush;
 
 	cost.reset();cost.start();
-        CGAL::hilbert_sort (v.begin(), v.end());
+        CGAL::hilbert_sort (v.begin(), v.end(),CGAL::Hilbert_sort_median_policy());
 	cost.stop();
 
         std::cout << "done in "<<cost.time()<<"seconds." << std::endl;

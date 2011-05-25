@@ -49,6 +49,19 @@ class Compute_coordinateHd {
 };
 
 template <typename K>
+class Point_dimensionHd {
+  typedef typename K::RT             RT;
+  typedef typename K::Point_d        Point_d;
+  public:
+  typedef int                       result_type;
+  const result_type 
+    operator()(const Point_d& p) const
+  {
+    return p.dimension();
+  }
+};
+
+template <typename K>
 class Less_coordinateHd {
   typedef typename K::RT             RT;
   typedef typename K::Point_d        Point_d;
@@ -61,6 +74,7 @@ class Less_coordinateHd {
     return p.cartesian(i)*q.homogeneous(d)<q.cartesian(i)*p.homogeneous(d);
   }
 };
+
 
 template <class R>
 struct Lift_to_paraboloidHd {
