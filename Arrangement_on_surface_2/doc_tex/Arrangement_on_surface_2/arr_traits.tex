@@ -823,8 +823,7 @@ multiplicity $1$:
 \ccIncludeExampleCode{Arrangement_on_surface_2/conic_multiplicities.cpp}
 
 %---------------------------------------------------------
-\subsection{A Traits Class for Arcs of Rational Functions
-  \label{arr_ssec:tr_ratfunc}}
+\subsection{A Traits Class for Arcs of Rational Functions\label{arr_ssec:tr_ratfunc}}
 %---------------------------------------------------------
 
 A {\em rational function} is given by the equation $y =
@@ -839,38 +838,30 @@ not only interesting in their own right, they are also very useful
 for approximating or interpolating more complicated curves; see,
 e.g.,~\cite[Chapter~3]{cgal:ptvf-nrcpp-02}.
 
-The computations with rational arcs are guaranteed to be robust and 
-exact, assuming that the coefficient of the polynomials $P$ and $Q$
-are rational  numbers. The $x$-values that determine the interval
-over which the arc is defined can however be arbitrary algebraic
-numbers.
-
-Using the \ccc{Arr_rational_arc_traits_2<AlgKernel, NtTraits>} class
+Using the \ccc{Arr_rational_function_traits_2<AlgebraicKernel_d_1>} class
 template it is possible to construct and maintain arrangement of
-rational arcs. The template parameters are very similar to the
-ones used by the \ccc{Arr_conic_traits_2} class template; see
-the previous section. However, no rational kernel is needed. Also
-in this case it is recommended to use the
-\ccc{CORE_algebraic_number_traits} class, with a kernel instantiated
-with the \ccc{Algebraic} type defined by this class.
+rational arcs. 
+The template argument must be a model of the concept \ccc{AlgebraicKernel_d_1}. 
+Given that this is an exact algerbaic kernel, the computations with rational 
+arcs are guaranteed to be robust and exact. 
+A rational function is represented by two polynomials $P$ and $Q$ of type 
+\ccc{AlgebraicKernel_d_1::Polynomial_1}. 
+A point is represented by a rational function and its $x$-coordinate which is 
+of type \ccc{AlgebraicKernel_d_1::Algebraic_real_1}. 
+Note that an explicit representation of the $y$-coordinate is only computed upon 
+request which can be a rather costly operation. 
 
-The \ccc{Arr_rational_arc_traits_2} is a model of the
-\ccc{ArrangementTraits_2} concept (but not of the
-\ccc{ArrangementLandmarkTraits_2} concept, so it is not possible
-to use the landmark point-location strategy for arrangements of
-rational arcs). Its \ccc{Point_2} type is derived from
-\ccc{AlgKernel::Point_2}, while the \ccc{Curve_2} and
-\ccc{X_monotone_curve_2} types refer to the same class (note that
-a rational arc is always $x$-monotone). The traits class also
-defines the \ccc{Rat_vector} type, representing a vector of
-rational coefficients, (whose type is \ccc{NtTraits::Rational}). A
-rational arc can be constructed from a single vector of
-coefficients, specifying the polynomial $P$ alone (and $Q(x) =
-1$), or from two vectors of coefficients, specifying both $P$ and
-$Q$.
+\ccc{Arr_rational_function_traits_2<AlgebraicKernel_d_1>} is a model of the
+\ccc{ArrangementTraits_2} concept as well as the \ccc{ArrangementDirectionalXMonotoneTraits_2}
+which enables Boolean set operations. 
 
-\begin{figure}[t]
-\begin{ccTexOnly}
+Note that it is not a model of  \ccc{ArrangementLandmarkTraits_2} concept,
+so it is not possible to use the landmark point-location strategy.
+%\footnote{This requires a relaxation of \ccc{ArrangementLandmarkTraits_2}, 
+%which will be submitted separately.}
+
+\begin{figure}[h] 
+\begin{ccTexOnly} 
   \begin{center}
   \includegraphics{Arrangement_on_surface_2/fig/ex_16}
   \end{center}
@@ -889,9 +880,11 @@ arrangement of rational arcs depicted in
 Figure~\ref{arr_fig:ex_16}. Note the usage of the two
 constructors, for polynomial arcs and for rational arcs:
 
+\pagebreak[3]
+
 \ccIncludeExampleCode{Arrangement_on_surface_2/rational_functions.cpp}
 
-\begin{figure}[t]
+\begin{figure}[h]
 \begin{ccTexOnly}
   \begin{center}
   \includegraphics{Arrangement_on_surface_2/fig/ex_unb_rat}
