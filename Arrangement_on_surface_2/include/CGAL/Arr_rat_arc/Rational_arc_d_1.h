@@ -1701,19 +1701,21 @@ public:
   typedef Continuous_rational_arc_d_1<Kernel, Algebraic_kernel> Self;
   typedef Base_rational_arc_d_1<Kernel_, Algebraic_kernel>  Base;
 
-  typedef typename Base::Integer    Integer;
-  typedef typename Base::Rational    Rational; 
-  typedef typename Base::Algebraic_real_1  Algebraic_real_1;
-  typedef typename Base::Algebraic_point_2  Algebraic_point_2;
-  typedef typename Base::Polynomial_1   Polynomial_1;    //TODO: possibly change to  Poly_int_1 
-  typedef typename Base::Multiplicity   Multiplicity;
-  typedef typename Base::Rational_function  Rational_function;
+  typedef typename Base::Integer                Integer;
+  typedef typename Base::Rational               Rational; 
+  typedef typename Base::Algebraic_real_1       Algebraic_real_1;
+  typedef typename Base::Algebraic_point_2      Algebraic_point_2;
+  typedef typename Base::Polynomial_1           Polynomial_1;    //TODO: possibly change to  Poly_int_1 
+  typedef typename Base::Multiplicity           Multiplicity;
+  typedef typename Base::Rational_function      Rational_function;
   typedef typename Base::Rational_function_pair Rational_function_pair;
    
   
-  typedef typename Base::Rat_vector    Rat_vector;
-  typedef typename Base::Algebraic_vector  Algebraic_vector;
-  typedef typename Base::Multiplicity_vector Multiplicity_vector;
+  typedef typename Base::Rat_vector             Rat_vector;
+  typedef typename Base::Algebraic_vector       Algebraic_vector;
+  typedef typename Base::Multiplicity_vector    Multiplicity_vector;
+
+  typedef typename Base::Cache                  Cache;
 
   typedef std::pair<Algebraic_point_2, Multiplicity>        Intersection_point_2;
   //typedef std::pair<Algebraic_point_2, unsigned int>  Intersection_point_2;
@@ -1742,7 +1744,7 @@ public:
    * Constructor of a whole polynomial curve.
    * \param pcoeffs The rational coefficients of the polynomial p(x).
    */
-  Continuous_rational_arc_d_1 (const Rat_vector& pcoeffs,Cache& cache) :
+  Continuous_rational_arc_d_1 (const Rat_vector& pcoeffs, Cache& cache) :
     Base (pcoeffs,cache)
   {}
 
@@ -1755,7 +1757,7 @@ public:
    * \param dir_right Is the ray directed to the right (to +oo)
    *                  or to the left (to -oo).
    */
-  Continuous_rational_arc_d_1 ( const Rat_vector& pcoeffs,const Algebraic_real_1& x_s, 
+  Continuous_rational_arc_d_1 ( const Rat_vector& pcoeffs, const Algebraic_real_1& x_s, 
                                 bool dir_right,Cache& cache) :
     Base (pcoeffs, x_s, dir_right,cache)
   {}
@@ -2313,13 +2315,15 @@ public:
   typedef Base_rational_arc_d_1<Kernel_, Algebraic_kernel>  Base;
   typedef Continuous_rational_arc_d_1<Kernel_, Algebraic_kernel> Continuous_arc;
 
-  typedef typename Base::Integer    Integer;
-  typedef typename Base::Rational    Rational; 
-  typedef typename Base::Algebraic_real_1  Algebraic_real_1;
-  typedef typename Base::Algebraic_point_2  Algebraic_point_2;
+  typedef typename Base::Integer                Integer;
+  typedef typename Base::Rational               Rational; 
+  typedef typename Base::Algebraic_real_1       Algebraic_real_1;
+  typedef typename Base::Algebraic_point_2      Algebraic_point_2;
 
   typedef typename Base::Rat_vector             Rat_vector;
   
+  typedef typename Base::Cache                  Cache;
+
   /// \name Constrcution methods.
   //@{
 
@@ -2334,7 +2338,7 @@ public:
    * Constructor of a whole polynomial curve.
    * \param pcoeffs The rational coefficients of the polynomial p(x).
    */
-  Rational_arc_d_1 (const Rat_vector& pcoeffs,Cache& cache) :
+  Rational_arc_d_1 (const Rat_vector& pcoeffs, Cache& cache) :
     Base (pcoeffs,cache)
   {}
 
@@ -2347,7 +2351,7 @@ public:
    * \param dir_right Is the ray directed to the right (to +oo)
    *                  or to the left (to -oo).
    */
-  Rational_arc_d_1 (const Rat_vector& pcoeffs,const Algebraic_real_1& x_s, 
+  Rational_arc_d_1 (const Rat_vector& pcoeffs, const Algebraic_real_1& x_s, 
                     bool dir_right,Cache& cache) :
     Base (pcoeffs, x_s, dir_right,cache)
   {}
@@ -2359,7 +2363,7 @@ public:
    * \param x_t The x-coordinate of the target point.
    * \pre The two x-coordinates must not be equal.
    */
-  Rational_arc_d_1 (const Rat_vector& pcoeffs,const Algebraic_real_1& x_s, 
+  Rational_arc_d_1 (const Rat_vector& pcoeffs, const Algebraic_real_1& x_s, 
                     const Algebraic_real_1& x_t,Cache& cache) :
     Base (pcoeffs, x_s, x_t,cache)
   {}

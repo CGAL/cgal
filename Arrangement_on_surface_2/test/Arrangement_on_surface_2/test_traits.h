@@ -164,6 +164,8 @@ typedef CGAL::Arr_geodesic_arc_on_sphere_traits_2<Kernel>        Traits;
 #define TRAITS_TYPE "Spherical Arc"
 
 #elif TEST_TRAITS == RATIONAL_ARC_TRAITS
+
+// TODO: This is for old Ron's traits---remove.
 //typedef CGAL::CORE_algebraic_number_traits                 Nt_traits; //OS - new
 //typedef Nt_traits::Rational                                Rational;
 //typedef Nt_traits::Algebraic                               Algebraic;
@@ -172,7 +174,7 @@ typedef CGAL::Arr_geodesic_arc_on_sphere_traits_2<Kernel>        Traits;
 //typedef Traits::Point_2                                    Point_2;
 //#define TRAITS_TYPE "Rational Arc"
 
-typedef CGAL::Arr_rational_arc_traits_d_1<Kernel>	         Traits;
+typedef CGAL::Arr_rational_arc_traits_d_1<Kernel>	     Traits;
 typedef Traits::Rational                                     Rational;
 typedef Traits::Algebraic_real_1                             Algebraic_real_1;
 typedef Traits::Point_2                                      Point_2;

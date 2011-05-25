@@ -151,8 +151,8 @@ public:
   }
   std::pair<Bound,Bound> approximate_relative_y( int r) const
   {
-    BFI_traits::Set_precision       set_precision;
-    BFI_polynomial_traits::Evaluate evaluate;
+    typename BFI_traits::Set_precision       set_precision;
+    typename BFI_polynomial_traits::Evaluate evaluate;
     long precision = 16;
     Rational error_bound = CGAL::ipower(Rational(1,2),r);
     while (true)
@@ -191,8 +191,8 @@ public:
 private:
   std::pair<Bound,Bound> approximate_absolute_y( int a,unsigned int& precision ) const
   {
-    BFI_traits::Set_precision       set_precision;
-    BFI_polynomial_traits::Evaluate evaluate;
+    typename BFI_traits::Set_precision       set_precision;
+    typename BFI_polynomial_traits::Evaluate evaluate;
     Rational error_bound = CGAL::ipower(Rational(1,2),a);
     while (true)
     {
@@ -265,8 +265,8 @@ private:
   
   static Self& get_default_instance()
   {
-    static Rational_function::Polynomial_1 numer(0);
-    static Rational_function::Polynomial_1 denom(1);
+    static typename Rational_function::Polynomial_1 numer(0);
+    static typename Rational_function::Polynomial_1 denom(1);
     static Rational_function rational_function(numer,denom);
 
     static Algebraic_kernel kernel;

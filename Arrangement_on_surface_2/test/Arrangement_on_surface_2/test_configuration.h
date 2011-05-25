@@ -24,7 +24,7 @@
 #define LEDA_INT_NT                     13
 #define CGAL_GMPZ_NT                    14
 #define CORE_INT_NT                     15
-#define CORE_RAT_NT                     16  //OS - new
+#define CORE_RAT_NT                     16
 
 #define CARTESIAN_KERNEL                0
 #define SIMPLE_CARTESIAN_KERNEL         1
@@ -43,13 +43,6 @@
 #define SPHERICAL_ARC_TRAITS            11
 #define RATIONAL_ARC_TRAITS             12
 #define ALGEBRAIC_TRAITS                13
-
-//--------------------------------------------//
-//my code, later to be removed...             //
-#define TEST_NT          CORE_RAT_NT          //
-#define TEST_KERNEL      CARTESIAN_KERNEL     //
-#define TEST_TRAITS      RATIONAL_ARC_TRAITS  //
-//--------------------------------------------//
 
 // Default value based on dependencies:
 #if TEST_TRAITS == CORE_CONIC_TRAITS

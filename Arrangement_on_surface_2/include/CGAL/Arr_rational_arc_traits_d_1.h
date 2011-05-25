@@ -46,7 +46,7 @@ namespace CGAL {
  */
  
 template < class Kernel_, 
-   class Algebraic_kernel_ = Algebraic_kernel_d_1 <typename Fraction_traits <typename Kernel_::FT>::Numerator_type> >
+           class Algebraic_kernel_ = Algebraic_kernel_d_1 <typename Fraction_traits <typename Kernel_::FT>::Numerator_type> >
 class Arr_rational_arc_traits_d_1
 {
 public:

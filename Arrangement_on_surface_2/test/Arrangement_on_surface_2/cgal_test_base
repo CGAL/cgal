@@ -63,6 +63,7 @@ LAZY_GMPZ_NT=12
 LEDA_INT_NT=13
 CGAL_GMPZ_NT=14
 CORE_INT_NT=15
+CORE_RAT_NT=16
 
 COMPARE=1
 VERTEX=2
@@ -425,8 +426,8 @@ execute_commands_new_structure()
     commands_indicator[IS_VERTICAL]=0
     commands_indicator[COMPARE_X_AT_LIMIT]=0
     commands_indicator[COMPARE_X_NEAR_LIMIT]=0
-    commands_indicator[COMPARE_X_ON_BOUNDAY]=0
-    commands_indicator[COMPARE_X_NEAR_BOUNDAY]=0
+    commands_indicator[COMPARE_X_ON_BOUNDARY]=0
+    commands_indicator[COMPARE_X_NEAR_BOUNDARY]=0
     commands_indicator[COMPARE_Y_NEAR_BOUNDARY]=0
     commands_indicator[PARAMETER_SPACE_X]=0
     commands_indicator[PARAMETER_SPACE_Y]=0
@@ -1011,7 +1012,7 @@ test_spherical_arc_traits()
 test_rational_arc_traits()
 {
 # function     executable  number type   kernel            traits
-    compile_test test_traits $CORE_EXPR_NT $CARTESIAN_KERNEL $RATIONAL_ARC_TRAITS rational_arc_traits
+    compile_test test_traits $CORE_RAT_NT $CARTESIAN_KERNEL $RATIONAL_ARC_TRAITS rational_arc_traits
     if [ ${res} -eq 0 ] ; then
 	echo   "   ERROR:    not executed   test_traits rational_arc_traits" >> $ERRORFILE
     else

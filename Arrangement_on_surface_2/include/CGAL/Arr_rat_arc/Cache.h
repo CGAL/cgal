@@ -52,11 +52,13 @@ public:
   };
 
   typedef typename std::map< Rational_function_key,
-        Rational_function,
-        Less_compare_rational_function_key>   Rational_function_map;
+                             Rational_function,
+                             Less_compare_rational_function_key>
+                                                      Rational_function_map;
 
-  typedef typename Rational_function::Id_type                         Rational_function_id_type;
-  typedef std::pair<Rational_function_id_type,Rational_function_id_type> Rational_function_canonicalized_pair_key;
+  typedef typename Rational_function::Id_type         Rational_function_id_type;
+  typedef std::pair<Rational_function_id_type,Rational_function_id_type>
+    Rational_function_canonicalized_pair_key;
 
   class Less_compare_rational_function_pair_key
   {
@@ -166,20 +168,22 @@ private:
   {
     //find eraseable rational functions
     std::vector<Rational_function_key> eraseable;
-    for ( Rational_function_map::iterator iter = _rat_func_map.begin();
-          iter != _rat_func_map.end();
-          ++iter)
+    typename Rational_function_map::iterator iter1;
+    for ( iter1 = _rat_func_map.begin();
+          iter1 != _rat_func_map.end();
+          ++iter1)
     {
-      if (iter->second.is_shared() == false)
-        eraseable.push_back(iter->first);
+      if (iter1->second.is_shared() == false)
+        eraseable.push_back(iter1->first);
     }
 
     //erase functions
-    for ( std::vector<Rational_function_key>::iterator iter = eraseable.begin();
-          iter != eraseable.end();
-          ++iter)
+    typename std::vector<Rational_function_key>::iterator iter2;
+    for ( iter2 = eraseable.begin();
+          iter2 != eraseable.end();
+          ++iter2)
     {
-      _rat_func_map.erase(*iter);
+      _rat_func_map.erase(*iter2);
     }
 
     //re-set watermark
@@ -190,20 +194,22 @@ private:
   {
     //find eraseable rational functions
     std::vector<Rational_function_canonicalized_pair_key> eraseable;
-    for ( Rational_function_canonicalized_pair_map::iterator iter = _rat_pair_map.begin();
-          iter != _rat_pair_map.end();
-          ++iter)
+    typename Rational_function_canonicalized_pair_map::iterator iter1;
+    for ( iter1 = _rat_pair_map.begin();
+          iter1 != _rat_pair_map.end();
+          ++iter1)
     {
-      if (iter->second.is_shared() == false)
-        eraseable.push_back(iter->first);
+      if (iter1->second.is_shared() == false)
+        eraseable.push_back(iter1->first);
     }
 
     //erase functions
-    for ( std::vector<Rational_function_canonicalized_pair_key>::iterator iter = eraseable.begin();
-          iter != eraseable.end();
-          ++iter)
+    typename std::vector<Rational_function_canonicalized_pair_key>::iterator iter2;
+    for ( iter2 = eraseable.begin();
+          iter2 != eraseable.end();
+          ++iter2)
     {
-      _rat_pair_map.erase(*iter);
+      _rat_pair_map.erase(*iter2);
     }
 
     //re-set watermark
