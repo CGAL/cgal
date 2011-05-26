@@ -24,30 +24,9 @@ good effects of locality \cite{acr-icb-03}.
 
 
 The predicates used by this package are comparisons between coordinates,
-thus there is no robustness issues involved here, for example to choose the
+thus there is no robustness issue involved here, for example to choose the
 arithmetic of the kernel.
 
-
-
-\begin{ccTexOnly}
-\newpage
-\end{ccTexOnly}
-
-
-\begin{figure}
-\begin{ccHtmlOnly}
-<center>
-<img border=0 src="./fig/Hilbert8.gif" align=middle>
-</center>
-\end{ccHtmlOnly} 
-\begin{ccTexOnly}
-\begin{center}
-\includegraphics[width=11.5cm]{Spatial_sorting/fig/Hilbert8}
-\end{center}
-\end{ccTexOnly}
-\caption{Hilbert mapping
-\label{Spatial_sorting_fig_Hilbert8}}
-\end{figure}
 
 \section{Hilbert Sorting\label{sec:hilbert_sorting}}
 
@@ -70,8 +49,23 @@ $f(\frac{3}{4})=(1,\frac{1}{2})$.
 Then each square is subdivided in the same way recursively.
 Figure~\ref{Spatial_sorting_fig_Hilbert8} illustrates this process.
 
+\begin{figure}
+\begin{ccHtmlOnly}
+<center>
+<img border=0 src="./fig/Hilbert8.gif" align=middle>
+</center>
+\end{ccHtmlOnly} 
+\begin{ccTexOnly}
+\begin{center}
+\includegraphics[width=11.5cm]{Spatial_sorting/fig/Hilbert8}
+\end{center}
+\end{ccTexOnly}
+\caption{Hilbert mapping
+\label{Spatial_sorting_fig_Hilbert8}}
+\end{figure}
+
 Now given a set of 2D points, they can be sorted in the order they have on such
-a space filling curve as illustrated on Figure~\ref{Spatial_sorting_fig_Hilbert_middle} :
+a space filling curve as illustrated in Figure~\ref{Spatial_sorting_fig_Hilbert_middle} :
 
 \begin{figure}[h]
 \begin{ccHtmlOnly}
@@ -99,6 +93,14 @@ The code to use Hilbert sort is as simple as the following example:
 \ccIncludeExampleCode{Spatial_sorting/hilbert.cpp}
 
 
+If instead of subdividing the square in a fixed way at its middle point,
+ as above, we subdivide it
+by splitting at the median point (in $x$ or $y$ directions alternating),
+we construct a 2-d tree adapted to the point set. This tree can be visited in a
+similar manner and we get also a suitable ordering of the points
+(see Figure~\ref{Spatial_sorting_fig_Hilbert_median}).
+
+
 \begin{figure}[t]
 \begin{ccHtmlOnly}
 <center>
@@ -113,17 +115,6 @@ The code to use Hilbert sort is as simple as the following example:
 \caption{Hilbert sort with median policy
 \label{Spatial_sorting_fig_Hilbert_median}}
 \end{figure}
-
-If instead of subdividing the square in a fixed way at its middle point,
- as above, we subdivide it
-by splitting at the median point (in $x$ or $y$ directions alternating),
-we construct a 2-d tree adapted to the point set. This tree can be visited in a
-similar manner and we get also a suitable ordering of the points
-(see Figure~\ref{Spatial_sorting_fig_Hilbert_median}).
-
-
-
-
 
 
 \cgal\ provides Hilbert sorting for points in 2D, 3D and higher dimensions,
