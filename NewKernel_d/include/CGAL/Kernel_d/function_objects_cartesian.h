@@ -26,11 +26,13 @@ template<class R_> struct Orientation_of_points : private Store_kernel<R_> {
 	template<class Iter>
 	result_type operator()(Iter f, Iter const& e)const{
 		typename R::template Functor<Compute_cartesian_coordinate_tag>::type c(this->kernel());
-		Matrix m(R().dimension(),R().dimension());
+		typename R::template Functor<Point_dimension_tag>::type pd(this->kernel());
 		Point const& p0=*f++;
+		int d=pd(p0);
+		Matrix m(d,d);
 		for(int i=0;f!=e;++f,++i) {
-		for(int j=0;j<R().dimension();++j){
 			Point const& p=*f;
+		for(int j=0;j<d;++j){
 			m(i,j)=c(p,j)-c(p0,j);
 		}
 		}
@@ -50,10 +52,16 @@ template<class R_> struct Orientation_of_vectors : private Store_kernel<R_> {
 	template<class Iter>
 	result_type operator()(Iter f, Iter const& e)const{
 		typename R::template Functor<Compute_cartesian_coordinate_tag>::type c(this->kernel());
-		Matrix m(R().dimension(),R().dimension());
-		for(int i=0;f!=e;++f,++i) {
-		for(int j=0;j<R().dimension();++j){
+		typename R::template Functor<Point_dimension_tag>::type vd(this->kernel());
+		Vector const& v0=*f;
+		int d=vd(v0);
+		Matrix m(d,d);
+		for(int j=0;j<d;++j){
+			m(0,j)=c(v0,j);
+		}
+		for(int i=1;++f!=e;++i) {
 			Vector const& v=*f;
+		for(int j=0;j<d;++j){
 			m(i,j)=c(v,j);
 		}
 		}
@@ -62,6 +70,7 @@ template<class R_> struct Orientation_of_vectors : private Store_kernel<R_> {
 	//TODO: version that takes objects directly instead of iterators
 };
 
+#if 0
 template<class R_,bool=boost::is_same<typename R_::Point,typename R_::Vector>::value> struct Orientation : private Store_kernel<R_> {
 	CGAL_FUNCTOR_INIT_STORE(Orientation)
 	typedef R_ R;
@@ -71,15 +80,15 @@ template<class R_,bool=boost::is_same<typename R_::Point,typename R_::Vector>::v
 	typedef typename R::Orientation result_type;
 	typedef typename R::template Functor<Orientation_of_points_tag>::type OP;
 	typedef typename R::template Functor<Orientation_of_vectors_tag>::type OV;
-	typedef typename R::LA::template Matrix<typename R::Default_ambient_dimension,typename R::Default_ambient_dimension,typename R::Max_ambient_dimension,typename R::Max_ambient_dimension>::type Matrix;
 
 	//FIXME!!!
 	//when Point and Vector are distinct types, the dispatch should be made
 	//in a way that doesn't instantiate a conversion from Point to Vector
 	template<class Iter>
 	result_type operator()(Iter const&f, Iter const& e)const{
+		typename R::template Functor<Point_dimension_tag>::type pd(this->kernel());
 		typename std::iterator_traits<Iter>::difference_type d=std::distance(f,e);
-		int dim=R().dimension();
+		int dim=pd(*f); // BAD
 		if(d==dim) return OV(this->kernel())(f,e);
 		CGAL_assertion(d==dim+1);
 		return OP(this->kernel())(f,e);
@@ -113,7 +122,7 @@ template<class R_> struct Orientation<R_,false> : private Store_kernel<R_> {
 	}
 	//TODO: version that takes objects directly instead of iterators
 };
-
+#endif
 
 template<class R_> struct Construct_opposite_vector : private Store_kernel<R_> {
 	CGAL_FUNCTOR_INIT_STORE(Construct_opposite_vector)

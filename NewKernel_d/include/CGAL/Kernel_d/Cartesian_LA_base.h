@@ -102,6 +102,12 @@ struct Cartesian_LA_base_d : public Dimension_base<Dim_>
     template<class D> struct Functor<Compute_cartesian_coordinate_tag,D> {
 	    typedef CartesianDVectorBase::Compute_cartesian_coordinate<Self> type;
     };
+    template<class D> struct Functor<Point_dimension_tag,D> {
+	    typedef CartesianDVectorBase::PV_dimension<Self> type;
+    };
+    template<class D> struct Functor<Vector_dimension_tag,D> {
+	    typedef CartesianDVectorBase::PV_dimension<Self> type;
+    };
 
     CGAL_CONSTEXPR Cartesian_LA_base_d(){}
     CGAL_CONSTEXPR Cartesian_LA_base_d(int d):Dimension_base<Dim_>(d){}

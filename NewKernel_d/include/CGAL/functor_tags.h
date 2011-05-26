@@ -65,6 +65,8 @@ namespace CGAL {
 	//TODO: split into _begin and _end ?
 	DECL_MISC(Construct_point_cartesian_const_iterator);
 	DECL_MISC(Construct_vector_cartesian_const_iterator);
+	DECL_MISC(Point_dimension);
+	DECL_MISC(Vector_dimension);
 #undef DECL_MISC
 }
 #endif // CGAL_FUNCTOR_TAGS_H

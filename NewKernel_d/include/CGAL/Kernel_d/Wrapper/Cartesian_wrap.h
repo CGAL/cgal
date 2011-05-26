@@ -13,6 +13,8 @@
 
 #include <boost/mpl/or.hpp>
 
+//TODO: do we want to store the kernel ref in the Object wrappers? It would allow for additions and operator[] and things like that to work, but objects would still need to be created by functors.
+
 namespace CGAL {
 namespace internal {
 BOOST_MPL_HAS_XXX_TRAIT_DEF(Is_wrapper)

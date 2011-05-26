@@ -12,7 +12,10 @@ namespace CGAL {
 namespace CartesianDVectorBase {
 #ifndef CGAL_CXX0X
 namespace internal {
-template<class R_,int dim_> struct Construct_LA_vector_;
+template<class R_,int dim_> struct Construct_LA_vector_ {
+	struct Never_use {};
+	void operator()(Never_use)const;
+};
 #define CODE(Z,N,_) template<class R> struct Construct_LA_vector_<R,N> { \
 	typedef typename R::Constructor Constructor; \
 	typedef typename R::FT FT; \
@@ -198,6 +201,18 @@ template<class R_> struct Compute_scalar_product {
 
 	result_type operator()(first_argument_type const& a, second_argument_type const& b)const{
 		return LA::dot_product(a,b);
+	}
+};
+
+template<class R_> struct PV_dimension {
+	CGAL_FUNCTOR_INIT_IGNORE(PV_dimension)
+	typedef R_ R;
+	typedef typename R::LA_vector argument_type;
+	typedef int result_type;
+
+	// take a template argument instead?
+	result_type operator()(argument_type const& v)const{
+		return R::LA::size_of_vector(v);
 	}
 };
 

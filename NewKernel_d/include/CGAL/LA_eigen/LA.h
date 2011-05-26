@@ -63,6 +63,10 @@ template<class NT_> struct LA_eigen {
 	};
 	public:
 
+	template<class Vec_>static int size_of_vector(Vec_ const&v){
+		return v.size();
+	}
+
 	template<class Vec_>static NT dot_product(Vec_ const&a,Vec_ const&b){
 		return a.dot(b);
 	}
