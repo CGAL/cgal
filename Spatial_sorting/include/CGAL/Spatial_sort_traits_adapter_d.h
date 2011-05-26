@@ -22,7 +22,13 @@
 #define CGAL_SPATIAL_SORT_TRAITS_ADAPTER_D_H
 
 #include <boost/call_traits.hpp>
-#include <boost/property_map/property_map.hpp>
+#include <boost/version.hpp>
+#if BOOST_VERSION >= 104000
+  #include <boost/property_map/property_map.hpp>
+#else
+  #include <boost/property_map.hpp>
+#endif
+
 
 namespace CGAL{
 
