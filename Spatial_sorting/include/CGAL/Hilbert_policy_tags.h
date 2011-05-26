@@ -1,4 +1,4 @@
-// Copyright (c) 2009  INRIA Sophia-Antipolis (France).
+// Copyright (c) 2011  INRIA Sophia-Antipolis (France).
 // All rights reserved.
 //
 // This file is part of CGAL (www.cgal.org); you can redistribute it and/or
@@ -12,8 +12,8 @@
 // This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
 // WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
 //
-// $URL: svn+ssh://scm.gforge.inria.fr/svn/cgal/branches/CGAL-3.6-branch/Spatial_sorting/include/CGAL/hilbert_sort.h $
-// $Id: hilbert_sort.h 53867 2010-01-28 12:18:19Z lrineau $
+// $URL$
+// $Id$
 //
 // Author(s)     : Olivier Devillers
 
