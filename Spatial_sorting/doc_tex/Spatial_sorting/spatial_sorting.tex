@@ -183,11 +183,20 @@ as an alternative.
 
 \subsection{Sorting Arbitrary Types}
 \label{sec:sort_any_type}
-It is possible using a traits class adapter to sort a random-access
-iterator range over objects of an arbitrary type, if this type is associated
-to a point. The association to the point is done thanks to a 
+The spatial sorting traits class provides a point type and
+functors for comparing, for example, the \ccc{x}-coordinates
+of two points.
+%
+If you want to sort something else than just points, for example
+a sequence of tuples containing a point,  or a sequence of indices
+in a vector of points, you need another level of indirection.
+%
+We provide the spatial sorting traits class adapters which are templated by
+another spatial sorting traits class, and a 
 \ccAnchor{http://www.boost.org/doc/libs/release/libs/property_map/index.html}{property map}.
-The following examples show several applications.
+which allows to obtain a point from whatever you want to sort. 
+
+The following examples illustrate the usage of these traits class adapters.
 
 \subsubsection{Sorting using pairs of points and integers}
 \label{sec:sort_any_type_2}
