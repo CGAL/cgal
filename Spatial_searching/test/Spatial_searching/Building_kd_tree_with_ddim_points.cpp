@@ -32,7 +32,7 @@ int main() {
   std::vector<Point> points;
   
   Point_generator g(3);
-  CGAL::copy_n( g, N, std::back_inserter(points));
+  CGAL::cpp0x::copy_n( g, N, std::back_inserter(points));
   g++;
   Point query = *g;
   

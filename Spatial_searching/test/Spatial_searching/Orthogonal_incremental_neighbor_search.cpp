@@ -63,7 +63,7 @@ main() {
   // in a register with a distance in memory
   CGAL::Set_ieee_double_precision pfr;
 
-  CGAL::copy_n( g, 1000, std::back_inserter(points));
+  CGAL::cpp0x::copy_n( g, 1000, std::back_inserter(points));
 
   Tree t(points.begin(), points.end());
   g++;

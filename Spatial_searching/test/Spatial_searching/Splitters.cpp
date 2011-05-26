@@ -101,7 +101,7 @@ main() {
 
   Vector points;
   Random_points g( 150.0);
-  CGAL::copy_n( g, 1000, std::back_inserter(points));
+  CGAL::cpp0x::copy_n( g, 1000, std::back_inserter(points));
     
   g++;
   Point query = *g;

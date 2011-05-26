@@ -32,6 +32,14 @@
 
 namespace CGAL {
 
+namespace cpp0x {
+#ifndef CGAL_CFG_NO_CPP0X_COPY_N
+  using std::copy_n;
+#else
+  using CGAL::copy_n;
+#endif
+} // cpp0x
+
 // copy_n is usually in the STL as well, but not in the official
 // standard. We provide our own copy_n.  It is planned for C++0x.
 

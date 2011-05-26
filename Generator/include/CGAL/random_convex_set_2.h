@@ -71,7 +71,7 @@ random_convex_set_2( std::size_t n,
   // build random point set:
   Container points;
   points.reserve( n);
-  CGAL::copy_n( pg, n, back_inserter( points));
+  CGAL::cpp0x::copy_n( pg, n, back_inserter( points));
 
   // compute centroid of points:
   Point_2 centroid = CGAL::centroid( points.begin(), points.end(), t );
