@@ -50,27 +50,38 @@
 \end{ccRefFunction}
 
 %% +---------------------------------------------+
-\begin{ccRefFunction}{copy_n}
-  \label{sectionCopyN}
 
-  \ccDefinition The function \ccRefName\ copies $n$ items from an
-  input iterator to an output iterator which is useful for possibly
-  infinite
-  sequences of random geometric objects.\footnote{%
-    The \stl\ release June 13, 1997, from SGI contains an equivalent
-    function, but it is not part of the ISO standard.}
+\begin{ccRefFunction}{cpp0x::copy_n}
+  There is actually no class in namespace \ccc{CGAL::cpp0x} with this name, but a using declaration which
+  imports a function from another namespace.  By order of priority: the one in namespace
+  \ccc{std} is used (provided by C++0x), if not found, then the one in namespace
+  \ccc{CGAL} is used.
+\end{ccRefFunction}
+
+\begin{ccRefFunction}{copy_n}
+  This function is deprecated \ccc{cpp0x::copy_n} should be used instead.
+  \begin{ccDeprecated}
+    \label{sectionCopyN}
+
+    \ccDefinition The function \ccRefName\ copies $n$ items from an
+    input iterator to an output iterator which is useful for possibly
+    infinite
+    sequences of random geometric objects.\footnote{%
+      The \stl\ release June 13, 1997, from SGI contains an equivalent
+      function, but it is not part of the ISO standard.}
   
-  \ccInclude{CGAL/algorithm.h}
+    \ccInclude{CGAL/algorithm.h}
   
-  \ccThree{OutputIterator}{copy_n}{}
-  \ccFunction{template <class InputIterator, class Size, class
-    OutputIterator> OutputIterator copy_n(InputIterator first, Size n,
-    OutputIterator result);}{copies the first $n$ items from
-    \ccc{first} to \ccc{result}. Returns the value of \ccc{result}
-    after inserting the $n$ items.}
+    \ccThree{OutputIterator}{copy_n}{}
+    \ccFunction{template <class InputIterator, class Size, class
+      OutputIterator> OutputIterator copy_n(InputIterator first, Size n,
+      OutputIterator result);}{copies the first $n$ items from
+      \ccc{first} to \ccc{result}. Returns the value of \ccc{result}
+      after inserting the $n$ items.}
   
-  \ccSeeAlso
-  \ccRefIdfierPage{CGAL::Counting_iterator<Iterator, Value>}
+    \ccSeeAlso
+    \ccRefIdfierPage{CGAL::Counting_iterator<Iterator, Value>}
+  \end{ccDeprecated}
 \end{ccRefFunction}
 
 %% +---------------------------------------------+
