@@ -193,8 +193,9 @@ public:
       boost::is_same< typename Fraction_traits<ROOT>::Numerator_type,NTX >
     > >::type* = 0  )
   {
+    typename Fraction_traits<NT>::Compose compose_nt;
     if ( a != 0 ) {
-      a0_ = NT(-b,2*a);
+      a0_ = compose_nt(-b,2*a);
       root_ = CGAL_NTS square(a0_) - ROOT(c,a);
       if(CGAL_NTS is_zero(root_)) {
 	is_extended_ = false;
@@ -206,7 +207,7 @@ public:
     else {
       CGAL_assertion( b != 0 );
       is_extended_ = false;
-      a0_ = NT(-c,b);
+      a0_ = compose_nt(-c,b);
       a1_ = 0;
       root_ = 0;
     }
