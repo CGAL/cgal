@@ -33,6 +33,7 @@ void extract_k_ring(const Polyhedron &P, Vertex_handle v, int k)
   dist[v] = 0;
   queue.push_back(v);
 
+  
   while(! queue.empty()){
     v = queue.front();
     int d = dist[v];

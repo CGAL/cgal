@@ -3780,6 +3780,7 @@ Surface_modeling/examples/Surface_modeling/Deform_mesh.cpp -text
 Surface_modeling/examples/Surface_modeling/Deform_mesh.h -text
 Surface_modeling/examples/Surface_modeling/example.cpp -text
 Surface_modeling/examples/Surface_modeling/k-ring_BGL.cpp -text
+Surface_modeling/include/CGAL/Deform_mesh.h -text
 Surface_reconstruction_points_3/demo/Surface_reconstruction_points_3/GlSplat/cmake/FindGLEW.cmake -text
 Surface_reconstruction_points_3/demo/Surface_reconstruction_points_3/GlSplat/cmake/FindQGLViewer.cmake -text
 Surface_reconstruction_points_3/demo/Surface_reconstruction_points_3/GlSplat/glsplat.qrc -text
