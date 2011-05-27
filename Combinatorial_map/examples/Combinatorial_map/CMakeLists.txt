@@ -12,7 +12,7 @@ CMAKE_MINIMUM_REQUIRED(VERSION 2.4.5)
 #set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++0x")
 set(CMAKE_ALLOW_LOOSE_LOOP_CONSTRUCTS true)
 
-SET(CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_DEBUG} -w -pedantic -Wextra  -Wall")
+SET(CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_DEBUG} -w -Wall -pedantic") # -Wextra")
 
 if ( COMMAND cmake_policy )
   cmake_policy( SET CMP0003 NEW )

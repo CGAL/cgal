@@ -65,7 +65,7 @@ public:
 
     typedef CGAL::Cell_attribute< Refs, int > Int_attrib;
     
-    typedef CGAL::cpp0x::tuple<Int_attrib, CGAL::Disabled, Int_attrib> 
+    typedef CGAL::cpp0x::tuple<Int_attrib, void, Int_attrib> 
     Attributes;
   };
 };

@@ -40,6 +40,118 @@ namespace CGAL
 
   namespace internal
   {    
+	  // There is a problem on windows to handle tuple containing void. To solve this, we
+	  // transform such a tuple in tuple containing Disabled.
+	template<typename T>
+	struct Convert_void
+	{ typedef T type; };
+
+	template<>
+	struct Convert_void<void>
+	{ typedef CGAL::Disabled type; };
+
+	#ifndef CGAL_CFG_NO_CPP0X_VARIADIC_TEMPLATES
+	template<typename ... Items>
+	struct Convert_tuple_with_void;
+    
+	template<typename ... Items>
+	struct Convert_tuple_with_void<CGAL::cpp0x::tuple<Items...> >
+	{
+	typedef CGAL::cpp0x::tuple<typename Convert_void<Items>::type... > type;
+	};
+#else //CGAL_CFG_NO_CPP0X_VARIADIC_TEMPLATES
+	template <class T1>
+	struct Convert_tuple_with_void;
+
+	template <>
+	struct Convert_tuple_with_void<CGAL::cpp0x::tuple<> >
+	{
+	typedef CGAL::cpp0x::tuple<> type;
+	};
+	template <class T1>
+	struct Convert_tuple_with_void<CGAL::cpp0x::tuple<T1> >
+	{
+	typedef CGAL::cpp0x::tuple<typename Convert_void<T1>::type > type;
+	};
+	template <class T1, class T2>
+	struct Convert_tuple_with_void<CGAL::cpp0x::tuple<T1,T2> >
+	{
+	typedef CGAL::cpp0x::tuple<typename Convert_void<T1>::type,
+			     typename Convert_void<T2>::type> type;
+	};
+	template <class T1, class T2, class T3>
+	struct Convert_tuple_with_void<CGAL::cpp0x::tuple<T1,T2,T3> >
+	{
+	typedef CGAL::cpp0x::tuple<typename Convert_void<T1>::type,
+			     typename Convert_void<T2>::type,
+			     typename Convert_void<T3>::type> type;
+	};
+	template <class T1, class T2, class T3, class T4>
+	struct Convert_tuple_with_void<CGAL::cpp0x::tuple<T1,T2,T3,T4> >
+	{
+	typedef CGAL::cpp0x::tuple<typename Convert_void<T1>::type,
+			     typename Convert_void<T2>::type,
+			     typename Convert_void<T3>::type,
+			     typename Convert_void<T4>::type> type;
+	};
+	template <class T1, class T2, class T3, class T4, class T5>
+	struct Convert_tuple_with_void<CGAL::cpp0x::tuple<T1,T2,T3,T4, T5> >
+	{
+	typedef CGAL::cpp0x::tuple<typename Convert_void<T1>::type,
+			     typename Convert_void<T2>::type,
+			     typename Convert_void<T3>::type,
+			     typename Convert_void<T4>::type,
+			     typename Convert_void<T5>::type> type;
+	};
+	template <class T1, class T2, class T3, class T4, class T5, class T6>
+	struct Convert_tuple_with_void<CGAL::cpp0x::tuple<T1,T2,T3,T4,T5,T6> >
+	{
+	typedef CGAL::cpp0x::tuple<typename Convert_void<T1>::type,
+			     typename Convert_void<T2>::type,
+			     typename Convert_void<T3>::type,
+			     typename Convert_void<T4>::type,
+			     typename Convert_void<T5>::type,
+			     typename Convert_void<T6>::type> type;
+	};
+	template <class T1, class T2, class T3, class T4, class T5, class T6, class T7>
+	struct Convert_tuple_with_void<CGAL::cpp0x::tuple<T1,T2,T3,T4,T5,T6,T7> >
+	{
+	typedef CGAL::cpp0x::tuple<typename Convert_void<T1>::type,
+			     typename Convert_void<T2>::type,
+			     typename Convert_void<T3>::type,
+			     typename Convert_void<T4>::type,
+			     typename Convert_void<T5>::type,
+			     typename Convert_void<T6>::type,
+			     typename Convert_void<T7>::type> type;
+	};
+	template <class T1, class T2, class T3, class T4, class T5, class T6, class T7,
+			  class T8>
+	struct Convert_tuple_with_void<CGAL::cpp0x::tuple<T1,T2,T3,T4,T5,T6,T7,T8> >
+	{
+	typedef CGAL::cpp0x::tuple<typename Convert_void<T1>::type,
+			     typename Convert_void<T2>::type,
+			     typename Convert_void<T3>::type,
+			     typename Convert_void<T4>::type,
+			     typename Convert_void<T5>::type,
+			     typename Convert_void<T6>::type,
+			     typename Convert_void<T7>::type,
+			     typename Convert_void<T8>::type> type;
+	};
+	template <class T1, class T2, class T3, class T4, class T5, class T6, class T7,
+			  class T8, class T9>
+	struct Convert_tuple_with_void<CGAL::cpp0x::tuple<T1,T2,T3,T4,T5,T6,T7,T8,T9> >
+	{
+	typedef CGAL::cpp0x::tuple<typename Convert_void<T1>::type,
+			     typename Convert_void<T2>::type,
+			     typename Convert_void<T3>::type,
+			     typename Convert_void<T4>::type,
+			     typename Convert_void<T5>::type,
+			     typename Convert_void<T6>::type,
+			     typename Convert_void<T7>::type,
+			     typename Convert_void<T8>::type,
+			     typename Convert_void<T9>::type> type;
+	};
+#endif //CGAL_CFG_NO_CPP0X_VARIADIC_TEMPLATES
     
 #ifndef CGAL_CFG_NO_CPP0X_VARIADIC_TEMPLATES
 //count the number of time a given type is present in a tuple
@@ -1300,7 +1412,7 @@ struct Combinatorial_map_helper
   };
 
   // All the attributes (with CGAL::Disabled)
-  typedef typename CMap::Attributes Attributes;
+  typedef typename internal::Convert_tuple_with_void<typename CMap::Attributes>::type Attributes;
 
   // Enabled attributes (without CGAL::Disabled)
   typedef typename Keep_type_different_of<Disabled,
