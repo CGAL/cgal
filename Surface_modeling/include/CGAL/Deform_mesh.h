@@ -26,20 +26,25 @@ class Deform_mesh
 {
 private:
 	Polyhedron polyhedron;                // target mesh
+  std::map<Vertex_handle, Vertex_handle> s2t;          // access from source mesh to target mesh
   std::vector<Vertex_handle> roi;
-  std::vector<Vertex_handle> hdl;
-  std::vector<Vertex_handle> dsplc;         // displacement of handles
+  std::vector<Vertex_handle> hdl;           // user specified handles, storing the target positions
 
   Taucs_solver_traits<double> solver;
 
 public:
 	// The constructor gets the Polyhedron that we will model
 	Deform_mesh(Polyhedron &P)
+    :polyhedron(P)
 	{
-		polyhedron = P;
+    Vertex_iterator vit_t = polyhedron.vertices_begin();
+		for (Vertex_iterator vit_s = P.vertices_begin(); vit_s != P.vertices_end(); vit_s++)
+		{
+      s2t[vit_s] =vit_t;
+		}
 	}
 
-	// Release ressources
+	// Release resources
 	~Deform_mesh(void)
 	{
 	}
@@ -50,10 +55,10 @@ public:
 		roi.clear();
 		for (Vertex_iterator vit = begin; vit != end; vit ++)
 		{
-			Vertex_handle handle = vit;
+			Vertex_handle handle = s2t[vit];
 			roi.push_back(handle);
 		}
-		roi.push_back(end);
+		roi.push_back(s2t[end]);
 
 		int idx_lv = 0;    // pointing the neighboring vertices on current level
 		int idx_lv_end;
@@ -84,10 +89,10 @@ public:
 		hdl.clear();
 		for (Vertex_iterator vit = begin; vit != end; vit ++)
 		{
-			Vertex_handle handle = vit;
+			Vertex_handle handle = s2t[vit];
 			hdl.push_back(handle);
 		}
-		hdl.push_back(end);
+		hdl.push_back(s2t[end]);
 	}
 
 
@@ -164,9 +169,11 @@ public:
 	}
 
 	// The operator will be called in a real time loop from the GUI.
-	void operator()(Point p, Vector v)
+	void operator()(Vertex_iterator vit, Vector v)
 	{
-		p = p - v;
+  
+    Point p = s2t[vit]->point();
+		p = p-v;
 	}
 };
 
