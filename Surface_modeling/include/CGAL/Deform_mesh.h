@@ -1,15 +1,14 @@
-#pragma once
+#ifndef CGAL_DEFORM_MESH_H
+#define CGAL_DEFORM_MESH_H
+
 
 #include <CGAL/trace.h>
 #include <CGAL/Timer.h>
 #include <CGAL/Simple_cartesian.h>
-#include <CGAL/Polyhedron_incremental_builder_3.h>
 #include <CGAL/Polyhedron_3.h>
 #include <CGAL/IO/Polyhedron_iostream.h>
 #include <CGAL/Taucs_solver_traits.h>
-#include <iostream>
-#include <string>
-#include <fstream>
+
 
 typedef CGAL::Simple_cartesian<double>      Kernel;
 typedef Kernel::Vector_3                    Vector;
@@ -20,8 +19,6 @@ typedef Polyhedron::Vertex_const_handle                      Vertex_handle;
 typedef Polyhedron::Vertex_iterator							             Vertex_iterator;
 typedef Polyhedron::Halfedge_around_vertex_const_circulator  HV_circulator;
 
-using namespace std;
-using namespace CGAL;
 
 namespace CGAL {
 
@@ -29,11 +26,11 @@ class Deform_mesh
 {
 private:
 	Polyhedron polyhedron;                // target mesh
-	vector<Vertex_handle> roi;
-	vector<Vertex_handle> hdl;
-	vector<Vertex_handle> dsplc;         // displacement of handles
+  std::vector<Vertex_handle> roi;
+  std::vector<Vertex_handle> hdl;
+  std::vector<Vertex_handle> dsplc;         // displacement of handles
 
-	Taucs_solver_traits<double> solver;
+  Taucs_solver_traits<double> solver;
 
 public:
 	// The constructor gets the Polyhedron that we will model
@@ -70,7 +67,7 @@ public:
 				HV_circulator wc = vh->vertex_begin(), done(wc);
 				do {
 					Vertex_handle wh = wc->opposite()->vertex();
-					vector<Vertex_handle> ::iterator result = find(roi.begin(), roi.end(), wh);
+          std::vector<Vertex_handle> ::iterator result = find(roi.begin(), roi.end(), wh);
 					if (result == roi.end())
 					{
 						roi.push_back(wh);
@@ -99,15 +96,15 @@ public:
 	{
 		CGAL_TRACE_STREAM << "Calls preprocess()\n";
 
-		CGAL::Timer task_timer; task_timer.start();
+		Timer task_timer; task_timer.start();
 
 		// get #variables
 		unsigned int nb_variables = polyhedron.size_of_vertices();
 
 		CGAL_TRACE_STREAM << "  Creates matrix...\n";
 		// Assemble linear system A*X=B
-		Taucs_solver_traits<double>::Matrix A(nb_variables); // matrix is symmetric definite positive
-		Taucs_solver_traits<double>::Vector X(nb_variables), B(nb_variables);
+    Taucs_solver_traits<double>::Matrix A(nb_variables); // matrix is symmetric definite positive
+    Taucs_solver_traits<double>::Vector X(nb_variables), B(nb_variables);
 
 		assemble_laplacian(A, "uni");
 
@@ -126,9 +123,9 @@ public:
 	}
 
 	// Assemble Laplacian matrix A of linear system A*X=B 
-	void assemble_laplacian(Taucs_solver_traits<double>::Matrix& A, string type)
+	void assemble_laplacian(Taucs_solver_traits<double>::Matrix& A, std::string type)
 	{
-		map<Vertex_handle, int> idx;
+    std::map<Vertex_handle, int> idx;
 		int index = 0;
 		for (Vertex_iterator vit = polyhedron.vertices_begin(); vit != polyhedron.vertices_end(); vit++)
 		{
@@ -175,4 +172,6 @@ public:
 
 
 } //namespace CGAL
+
+#endif  // CGAL_DEFORM_MESH_H
 
