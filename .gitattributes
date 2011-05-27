@@ -3776,6 +3776,7 @@ Surface_mesher/examples/Surface_mesher/skip_vcproj_auto_generation -text
 Surface_mesher/find_debug_macros -text
 Surface_mesher/find_non_debug_macros -text
 Surface_mesher/test/Surface_mesher/combined_spheres.cin -text
+Surface_modeling/examples/Surface_modeling/example.cpp -text
 Surface_modeling/examples/Surface_modeling/k-ring_BGL.cpp -text
 Surface_reconstruction_points_3/demo/Surface_reconstruction_points_3/GlSplat/cmake/FindGLEW.cmake -text
 Surface_reconstruction_points_3/demo/Surface_reconstruction_points_3/GlSplat/cmake/FindQGLViewer.cmake -text
