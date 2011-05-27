@@ -31,8 +31,7 @@ Regular_triangulation_euclidean_traits_3<K>
   typedef internal::Alpha_nt<Regular_triangulation_euclidean_traits_3<K>,K,mode,Tag_true> Alpha_nt;
 public:
   typedef Regular_triangulation_euclidean_traits_3<K> Base;
-  typedef typename Base::Side_of_bounded_orthogonal_sphere_3 
-                                       Side_of_bounded_sphere_3;
+  using Base::side_of_bounded_sphere_3_object;
   
   typedef Alpha_nt                          FT;
 
@@ -69,12 +68,6 @@ public:
       return Compute_squared_radius_3();
     }
   //---------------------------------------------------------------------
-
-  Side_of_bounded_sphere_3 
-  side_of_bounded_sphere_3_object() const
-    {
-      return Side_of_bounded_sphere_3();
-    }
 };
 
 }//namespace CGAL

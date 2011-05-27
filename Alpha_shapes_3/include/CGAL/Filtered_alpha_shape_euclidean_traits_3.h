@@ -282,9 +282,38 @@ COMPARE_FUNCTIONS(!=)
 template <class K,bool mode=true>
 class Filtered_alpha_shape_euclidean_traits_3: public K
 {
-  typedef internal::Alpha_nt<Regular_triangulation_euclidean_traits_3<K>,K,mode,Tag_false> Alpha_nt;
+  typedef internal::Alpha_nt<K,K,mode,Tag_false> Alpha_nt;
 public:
   typedef Alpha_nt                          FT;
+
+  class  Compute_squared_radius_3 {
+    typedef typename K::Point_3 Point_3;
+  public:
+    FT operator() (const Point_3& p, 
+                   const Point_3& q , 
+                   const Point_3& r, 
+                   const Point_3& s)
+    {return FT(p,q,r,s);}
+
+    FT operator() ( const Point_3& p, 
+                    const Point_3& q , 
+                    const Point_3& r)
+    {return FT(p,q,r); }
+
+    FT operator() (const Point_3& p, 
+                   const Point_3& q )
+    {return FT(p,q); }
+
+    FT operator() (const Point_3& p) 
+    {return FT(p);}
+  };
+
+  Compute_squared_radius_3 
+  compute_squared_radius_3_object() const
+    {
+      return Compute_squared_radius_3();
+    }
+
 };
 
 
