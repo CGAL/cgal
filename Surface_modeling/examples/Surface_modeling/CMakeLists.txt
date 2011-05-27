@@ -19,6 +19,7 @@ if ( CGAL_FOUND )
   create_single_source_cgal_program( "hello.cpp" )
   create_single_source_cgal_program( "k-ring.cpp" )
   create_single_source_cgal_program( "k-ring_BGL.cpp" )
+  create_single_source_cgal_program( "example.cpp" )
 
 else()
   

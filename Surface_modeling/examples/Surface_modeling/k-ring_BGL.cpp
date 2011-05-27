@@ -68,10 +68,12 @@ int main() {
 	size_t k;
 	cin >> k;
 	//cout << "Determine vertex index: ";
-	k_ring(P, P.vertices_begin(), k, neigh_vtx);
+	vertex_iterator vb, ve;	
+	boost::tie(vb,ve) = boost::vertices(P);
+	k_ring(P, *vb, k, neigh_vtx);
 
 	///////// output indices of neighboting vertices ///////////////////////
-	vertex_iterator vb, ve;		 // associate indices to the vertices using the "id()" field of the vertex.
+		 
 	int index = 0;
 	// boost::tie assigns the first and second element of the std::pair
 	// returned by boost::vertices to the variables vit and ve

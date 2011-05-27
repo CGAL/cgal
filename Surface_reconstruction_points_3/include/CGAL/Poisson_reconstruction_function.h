@@ -253,7 +253,7 @@ public:
   // This variant provides the default sparse linear traits class = Taucs_symmetric_solver_traits.
   bool compute_implicit_function()
   {
-    return compute_implicit_function< Taucs_symmetric_solver_traits<double> >();
+    return compute_implicit_function< Taucs_solver_traits<double> >();
   }
   /// @endcond
 

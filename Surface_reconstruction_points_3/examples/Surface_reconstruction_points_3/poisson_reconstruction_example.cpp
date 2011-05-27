@@ -40,7 +40,7 @@ int main(void)
     // + property maps to access each point's position and normal.
     // The position property map can be omitted here as we use iterators over Point_3 elements.
     PointList points;
-    std::ifstream stream("data/kitten.xyz");
+    std::ifstream stream("E://Research/Projects/GSoC/gsoc2011-surface-modeling-Yzju/Surface_reconstruction_points_3/examples/Surface_reconstruction_points_3/data/kitten.xyz");
     if (!stream ||
         !CGAL::read_xyz_points_and_normals(
                               stream,
