@@ -417,6 +417,18 @@ insert_in_face_interior(const X_monotone_curve_2& cv, Face_handle f)
 
     bool        new_face_created = false;
   
+    // This is a bug fix and we could not think of a better one. 
+    // In case the inserted curve has two vertical asymptotes at the top 
+    // it happens that fict_prev1 is split by the max end and becomes the 
+    // prev edge, which is fict_prev2. Since both pointers are equal they 
+    // both point to the max end. Thus, we advance fict_prev1 by one 
+    // such that it points to the min end again. 
+    // Note that this only happens at the top. At the bottom everything 
+    // goes fine since the insertion order is reverted with respect to the 
+    // orientation of the edges. 
+    if (fict_prev1 == fict_prev2)
+      fict_prev1 = fict_prev1->next();
+
     new_he = _insert_at_vertices (cv,
                                   fict_prev1, 
                                   fict_prev2,
