@@ -1,30 +1,26 @@
-#include "stdafx.h"
-
 //! \file examples/Arrangement_2/unbounded_rational_functions.cpp
 // Constructing an arrangement of unbounded portions of rational functions.
 #include <CGAL/basic.h>
 
-#include <CGAL/Arithmetic_kernel.h>               //NT
-#include <CGAL/Algebraic_kernel_d_1.h>            //Algebraic Kernel
-#include <CGAL/Arr_rational_function_traits_2.h>  //Traits
-#include <CGAL/Arrangement_2.h>                   //Arrangement
+#include <CGAL/CORE_BigInt.h>                    //NT
+#include <CGAL/Algebraic_kernel_d_1.h>           //Algebraic Kernel
+#include <CGAL/Arr_rational_function_traits_2.h> //Traits
+#include <CGAL/Arrangement_2.h>                  //Arrangement
 
-typedef CGAL::CORE_arithmetic_kernel::Integer		Number_type;
-typedef CGAL::Algebraic_kernel_d_1<Number_type>		AK1;
-typedef CGAL::Arr_rational_function_traits_2<AK1>	Traits_2;
+typedef CORE::BigInt	                           Number_type;
+typedef CGAL::Algebraic_kernel_d_1<Number_type>	   AK1;
+typedef CGAL::Arr_rational_function_traits_2<AK1>  Traits_2;
 
-typedef AK1::Polynomial_1                             Polynomial_1;
-typedef AK1::Algebraic_real_1                         Alg_real_1;
+typedef Traits_2::Polynomial_1                     Polynomial_1;
+typedef Traits_2::Algebraic_real_1                 Alg_real_1;
 
-typedef CGAL::Arrangement_2<Traits_2>                 Arrangement_2;
+typedef CGAL::Arrangement_2<Traits_2>              Arrangement_2;
 
 int main ()
 {
-  // an object of Algebraic_kernel_d_1
-  AK1 ak1;
-  
   // Traits class object 
-  Traits_2 traits; 
+  Traits_2 traits;
+  AK1 ak1 = traits.algebraic_kernel_d_1(); 
   
   // constructor for rational functions 
   Traits_2::Construct_curve_2 construct
@@ -62,18 +58,18 @@ int main ()
   arcs.push_back(construct(minusP3.begin(),minusP3.end(), Q3.begin(), Q3.end(), Alg_real_1(0), false));
 
   // Construct the arrangement of the six arcs.
-  Arrangement_2              arr;
+  Arrangement_2      arr;
   insert (arr, arcs.begin(), arcs.end());
 
   // Print the arrangement size.
   std::cout << "The arrangement size:" << std::endl
-            << "   V = " << arr.number_of_vertices()
-            << " (plus " << arr.number_of_vertices_at_infinity()
-            << " at infinity)"
-            << ",  E = " << arr.number_of_edges() 
-            << ",  F = " << arr.number_of_faces() 
-            << " (" << arr.number_of_unbounded_faces() << " unbounded)"
-            << std::endl << std::endl;
+    << "   V = " << arr.number_of_vertices()
+    << " (plus " << arr.number_of_vertices_at_infinity()
+    << " at infinity)"
+    << ",  E = " << arr.number_of_edges() 
+    << ",  F = " << arr.number_of_faces() 
+    << " (" << arr.number_of_unbounded_faces() << " unbounded)"
+    << std::endl << std::endl;
 
   return 0;
 }

@@ -46,7 +46,6 @@ public:
   //typedef typename Algebraic_kernel::Multiplicity_type  Multiplicity;
   typedef unsigned int                              Multiplicity;
   typedef typename Algebraic_kernel::Coefficient    Coefficient;
-  typedef typename Algebraic_kernel::Polynomial_1   Polynomial;
   
   typedef typename CGAL::Get_arithmetic_kernel<Coefficient>::Arithmetic_kernel Arithmetic_kernel;
   typedef typename Arithmetic_kernel::Rational            Rational; 
@@ -55,7 +54,7 @@ public:
   
   typedef typename Algebraic_kernel::Polynomial_1             Polynomial_1;
   typedef typename CGAL::Polynomial_traits_d<Polynomial_1>    Polynomial_traits_1;
-  typedef Fraction_traits <typename Rational>                 FT_rat_1;
+  typedef Fraction_traits <Rational>                          FT_rat_1;
   typedef typename Algebraic_kernel::Solve_1                  Solve_1;
   typedef typename Algebraic_kernel::Bound                    Bound;
   typedef typename CGAL::Algebraic_structure_traits<Polynomial_1> AT_poly;

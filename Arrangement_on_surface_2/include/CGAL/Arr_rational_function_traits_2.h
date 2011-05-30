@@ -45,20 +45,20 @@ namespace CGAL {
  *           rational and algebraic types. 
  */
  
-template < class Algebraic_kernel_ >
+template < class AlgebraicKernel_d_1 >
 class Arr_rational_function_traits_2
 {
 public:
-  typedef Algebraic_kernel_                                                   Algebraic_kernel;
+  typedef AlgebraicKernel_d_1                                             Algebraic_kernel_d_1;
  
-  typedef Arr_rational_function_traits_2<Algebraic_kernel>               Self;
-  typedef Arr_rational_arc::Base_rational_arc_ds_1<Algebraic_kernel>  Base_rational_arc_ds_1;
+  typedef Arr_rational_function_traits_2<Algebraic_kernel_d_1>            Self;
+  typedef Arr_rational_arc::Base_rational_arc_ds_1<Algebraic_kernel_d_1>  Base_rational_arc_ds_1;
 
   // Traits objects:
-  typedef Arr_rational_arc::Base_rational_arc_d_1<Algebraic_kernel>       Base_curve_2;
-  typedef Arr_rational_arc::Continuous_rational_arc_d_1<Algebraic_kernel> X_monotone_curve_2;
-  typedef Arr_rational_arc::Rational_arc_d_1<Algebraic_kernel>            Curve_2;
-  typedef Arr_rational_arc::Algebraic_point_2<Algebraic_kernel>           Point_2;
+  typedef Arr_rational_arc::Base_rational_arc_d_1<Algebraic_kernel_d_1>       Base_curve_2;
+  typedef Arr_rational_arc::Continuous_rational_arc_d_1<Algebraic_kernel_d_1> X_monotone_curve_2;
+  typedef Arr_rational_arc::Rational_arc_d_1<Algebraic_kernel_d_1>            Curve_2;
+  typedef Arr_rational_arc::Algebraic_point_2<Algebraic_kernel_d_1>           Point_2;
 
   typedef typename Base_rational_arc_ds_1::Algebraic_real_1       Algebraic_real_1;
   typedef typename Base_rational_arc_ds_1::Multiplicity           Multiplicity;
@@ -66,19 +66,19 @@ public:
 
   typedef typename Base_rational_arc_ds_1::Integer                Integer;
   typedef typename Base_rational_arc_ds_1::Rational               Rational; 
-  typedef typename Base_rational_arc_ds_1::Polynomial             Polynomial; 
+  typedef typename Base_rational_arc_ds_1::Polynomial_1           Polynomial_1; 
   typedef typename Base_rational_arc_ds_1::Coefficient            Coefficient; 
 
   typedef typename Base_rational_arc_ds_1::FT_rat_1               FT_rat_1; 
   typedef typename Base_rational_arc_ds_1::Polynomial_traits_1    Polynomial_traits_1;
   
-  typedef typename Algebraic_kernel::Bound                        Bound; 
+  typedef typename Algebraic_kernel_d_1::Bound                        Bound; 
   typedef Bound                                                   Approximate_number_type; 
   
-  typedef CGAL::Arr_rational_arc::Rational_function<Algebraic_kernel_>         Rational_function;
-  typedef CGAL::Arr_rational_arc::Cache<Algebraic_kernel_>                     Cache;
+  typedef CGAL::Arr_rational_arc::Rational_function<Algebraic_kernel_d_1>         Rational_function;
+  typedef CGAL::Arr_rational_arc::Cache<Algebraic_kernel_d_1>                     Cache;
 
-  typedef typename Arr_rational_arc::Vertical_segment_d_1 <Algebraic_kernel>    Vertical_segment; 
+  typedef typename Arr_rational_arc::Vertical_segment_d_1 <Algebraic_kernel_d_1>    Vertical_segment; 
 
   //Category tags:
   typedef Tag_true Has_left_category;
@@ -93,7 +93,11 @@ public:
   typedef Arr_open_side_tag          Arr_right_side_category;
 private:
   mutable Cache _cache;
+  Algebraic_kernel_d_1 _ak; 
 public:
+
+  const Algebraic_kernel_d_1& algebraic_kernel_d_1() const {return _ak;}
+  // Algebraic_kernel_d_1& algebraic_kernel_d_1()             {return _ak;}
 
   //------------
   //Constructors
@@ -233,12 +237,11 @@ public:
     }
     Point_2 operator() (const Rational& x,const Rational& y)
     { 
-      Algebraic_kernel algebraic_kernel;
       Integer  y_numer,y_denom;
       typename FT_rat_1::Decompose()(y,y_numer,y_denom);
       
       return Point_2( _cache.get_rational_function (Rational(y_numer  , y_denom )),
-                      algebraic_kernel.construct_algebraic_real_1_object()(x));
+          this->algebraic_kernel_d_1().construct_algebraic_real_1_object()(x));
     }
     Point_2 operator() (const Algebraic_real_1& x,const Rational& y)
     {   
@@ -1030,7 +1033,7 @@ public:
       return Approximate_number_type(p.x().lower());
     } 
     Approximate_number_type approx_y(const Point_2& p){
-      typedef typename Algebraic_kernel::Polynomial_1 Polynomial_1;
+      typedef typename Algebraic_kernel_d_1::Polynomial_1 Polynomial_1;
       typename CGAL::Coercion_traits<Polynomial_1,Bound>::Cast cast;  
       return
         cast(p.rational_function().numer()).evaluate(p.x().lower())/
