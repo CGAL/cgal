@@ -1,15 +1,15 @@
+
 //! \file examples/Arrangement_2/unbounded_rational_functions.cpp
 // Constructing an arrangement of unbounded portions of rational functions.
 #include <CGAL/basic.h>
 
-#include <CGAL/Gmpz.h>
 #include <CGAL/Algebraic_kernel_d_1.h>
 #include <CGAL/Arr_rational_function_traits_2.h>
 #include <CGAL/Arrangement_2.h>
 
 typedef CGAL::Gmpz                                    Integer;
 typedef CGAL::Algebraic_kernel_d_1<Integer>           AK1; 
-typedef CGAL::Arr_rational_function_traits_2<AK1>     Traits_2; 
+typedef CGAL::Arr_rational_function_traits_2<AK1>	  Traits_2;
 
 typedef AK1::Polynomial_1                             Polynomial_1;
 typedef AK1::Algebraic_real_1                         Alg_real_1;
