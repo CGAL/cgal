@@ -188,9 +188,8 @@ is_in_face(const Face * f, const Point_2 & p, const Vertex * v) const
     m_traits->compare_x_2_object();
   typename Traits_adaptor_2::Compare_y_at_x_2 cmp_y_at_x_op =
     m_traits->compare_y_at_x_2_object();
-  // TODO EBEB->EFI: Do you want Compare_x_point_curve_end_2 or Compare_x_on_boundary_2?
-  typename Traits_adaptor_2::Compare_x_limit_on_boundary_2 cmp_x_limit_on_bnd =
-    m_traits->compare_x_limit_on_boundary_2_object();
+  typename Traits_adaptor_2::Compare_x_point_curve_end_2 cmp_x_pt_ce =
+    m_traits->compare_x_point_curve_end_2_object();
   
   /* Maintain a counter of the number of x-monotone curves that intersect an
    * upward vertical ray emanating from p. Handle degenerate cases as
@@ -266,11 +265,10 @@ is_in_face(const Face * f, const Point_2 & p, const Vertex * v) const
         Arr_parameter_space bnd2 = ps_y_op(curr->next()->curve(), ARR_MAX_END);
         if ((bnd1 == ARR_TOP_BOUNDARY) && (bnd2 == ARR_TOP_BOUNDARY)) {
           // Compare the x-coordinates:
-          // TODO EBEB->EFI: Do you want Compare_x_point_curve_end_2 or Compare_x_on_boundary_2?
           Comparison_result rc1 =
-            cmp_x_limit_on_bnd(p, curr->curve(), ARR_MAX_END);
+            cmp_x_pt_ce(p, curr->curve(), ARR_MAX_END);
           Comparison_result rc2 =
-            cmp_x_limit_on_bnd(p, curr->next()->curve(), ARR_MAX_END);
+            cmp_x_pt_ce(p, curr->next()->curve(), ARR_MAX_END);
           if (rc1 == opposite(rc2)) ++num_intersections;
         }
         curr = curr->next();
@@ -336,13 +334,11 @@ is_in_face(const Face * f, const Point_2 & p, const Vertex * v) const
       
       res_source = (bnd_source == ARR_INTERIOR) ?
         cmp_x_op(p, curr->opposite()->vertex()->point()) :
-        // TODO EBEB->EFI: Do you want Compare_x_point_curve_end_2 or Compare_x_on_boundary_2?
-        cmp_x_limit_on_bnd(p, curr->curve(), ind_source);
+        cmp_x_pt_ce(p, curr->curve(), ind_source);
       
       res_target = (bnd_target == ARR_INTERIOR) ?
         cmp_x_op(p, curr->vertex()->point()) :
-        // TODO EBEB->EFI: Do you want Compare_x_point_curve_end_2 or Compare_x_on_boundary_2?
-        cmp_x_limit_on_bnd(p, curr->curve(), ind_target);
+        cmp_x_pt_ce(p, curr->curve(), ind_target);
 
       /* If a vertical ray is shot from p upward, the x-monotone curve
        * associated with curr is hit once.
