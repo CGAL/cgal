@@ -53,37 +53,32 @@ namespace Arr_rational_arc {
 //
 // where Numerator and Denominator are polynomial with integer (or rational) coefficients.
 // The class is templated with two parameters: 
-// Kernel:  A kernel, where Kernel::FT is the number type for the coefficients
 // Algebraic_kernel: An algebraic kernel for the intersection points of the curves
 //
 // This class serves as the base for the classes:
 // Rational_arc_d_1 (a general, not necessarily continuous arc) 
 // Continuous_rational_arc_d_1 (a continuous portion of a rational function).
 //--------------------------------------------------------------------------//
-template < class Kernel_, 
-   class Algebraic_kernel_ = Algebraic_kernel_d_1 <typename Fraction_traits <typename Kernel_::FT>::Numerator_type> >
+template < class Algebraic_kernel_ >
 class Base_rational_arc_d_1
 {
 public:
+  typedef Algebraic_kernel_                       Algebraic_kernel;
+  typedef Base_rational_arc_d_1<Algebraic_kernel> Self;
 
-  typedef Kernel_           Kernel;
-  typedef Algebraic_kernel_         Algebraic_kernel;
-  typedef Base_rational_arc_d_1<Kernel, Algebraic_kernel> Self;
-
-  typedef CGAL::Arr_rational_arc::Base_rational_arc_ds_1<Kernel, Algebraic_kernel>      Base_rational_arc_ds_1;
-  typedef CGAL::Arr_rational_arc::Rational_function<Kernel, Algebraic_kernel>           Rational_function;
-  typedef CGAL::Arr_rational_arc::Rational_function_pair<Kernel, Algebraic_kernel>      Rational_function_pair;
-  typedef CGAL::Arr_rational_arc::Algebraic_point_2<Kernel, Algebraic_kernel>           Algebraic_point_2;
-  typedef CGAL::Arr_rational_arc::Vertical_segment_d_1 <Kernel,Algebraic_kernel>        Vertical_segment_d_1; 
-  typedef CGAL::Arr_rational_arc::Cache<Kernel_, Algebraic_kernel>                      Cache;
+  typedef CGAL::Arr_rational_arc::Base_rational_arc_ds_1<Algebraic_kernel>      Base_rational_arc_ds_1;
+  typedef CGAL::Arr_rational_arc::Rational_function<Algebraic_kernel>           Rational_function;
+  typedef CGAL::Arr_rational_arc::Rational_function_pair<Algebraic_kernel>      Rational_function_pair;
+  typedef CGAL::Arr_rational_arc::Algebraic_point_2<Algebraic_kernel>           Algebraic_point_2;
+  typedef CGAL::Arr_rational_arc::Vertical_segment_d_1 <Algebraic_kernel>       Vertical_segment_d_1; 
+  typedef CGAL::Arr_rational_arc::Cache<Algebraic_kernel>                       Cache;
 
   typedef typename Base_rational_arc_ds_1::Multiplicity   Multiplicity;
   typedef typename Base_rational_arc_ds_1::Polynomial_1   Polynomial;
-  typedef typename Base_rational_arc_ds_1::Coefficient   Coefficient;
-  typedef typename Base_rational_arc_ds_1::FT     FT;
+  typedef typename Base_rational_arc_ds_1::Coefficient    Coefficient;
   typedef typename Base_rational_arc_ds_1::Arithmetic_kernel Arithmetic_kernel;
-  typedef typename Base_rational_arc_ds_1::Rational    Rational; 
-  typedef typename Base_rational_arc_ds_1::Integer    Integer;
+  typedef typename Base_rational_arc_ds_1::Rational       Rational; 
+  typedef typename Base_rational_arc_ds_1::Integer        Integer;
   typedef typename Base_rational_arc_ds_1::Algebraic_real_1  Algebraic_real_1;
   typedef typename Base_rational_arc_ds_1::Algebraic_vector  Algebraic_vector;
   typedef typename Base_rational_arc_ds_1::Multiplicity_vector Multiplicity_vector;
@@ -91,17 +86,16 @@ public:
   typedef std::vector<Rational>         Rat_vector;
 
   typedef typename Base_rational_arc_ds_1::Polynomial_1   Polynomial_1;
-  typedef CGAL::Polynomial_traits_d<Polynomial_1>    Polynomial_traits_1;
-  typedef typename Base_rational_arc_ds_1::FT_rat_1    FT_rat_1;
-  typedef typename Base_rational_arc_ds_1::Solve_1    Solve_1;
-  typedef typename Algebraic_kernel::Bound      Bound;
+  typedef CGAL::Polynomial_traits_d<Polynomial_1>         Polynomial_traits_1;
+  typedef typename Base_rational_arc_ds_1::FT_rat_1       FT_rat_1;
+  typedef typename Base_rational_arc_ds_1::Solve_1        Solve_1;
+  typedef typename Algebraic_kernel::Bound                Bound;
   typedef CGAL::Algebraic_structure_traits<Polynomial_1>  AT_poly;
   
-  typedef CGAL::Polynomial<Rational>      Poly_rat_1;
-  typedef CGAL::Polynomial_traits_d<Poly_rat_1>    PT_rat_1;
-  typedef CGAL::Fraction_traits <Poly_rat_1>    FT_poly_rat_1;
+  typedef CGAL::Polynomial<Rational>              Poly_rat_1;
+  typedef CGAL::Polynomial_traits_d<Poly_rat_1>   PT_rat_1;
+  typedef CGAL::Fraction_traits <Poly_rat_1>      FT_poly_rat_1;
  
-  BOOST_STATIC_ASSERT ((boost::is_same<Rational,FT>::value));
   BOOST_STATIC_ASSERT ((boost::is_same<Integer,Coefficient>::value));
   BOOST_STATIC_ASSERT ((boost::is_same<Polynomial_1,typename FT_poly_rat_1::Numerator_type>::value));
 
@@ -1676,11 +1670,10 @@ protected:
 
 //-------------------------------
 //! Exporter for rational arcs.
-template < class Kernel_,
-   class Algebraic_kernel_  >
+template <class Algebraic_kernel_  >
 std::ostream&
 operator<< (std::ostream& os, 
-    const Base_rational_arc_d_1<Kernel_, Algebraic_kernel_> & arc)
+    const Base_rational_arc_d_1<Algebraic_kernel_> & arc)
 {
   return (arc.print (os));
 }
@@ -1688,18 +1681,15 @@ operator<< (std::ostream& os,
 /*! \class Continuous_rational_arc_d_1
  * Representation of a continuous portion of a rational function.
  */
-template < class Kernel_, 
-   class Algebraic_kernel_ = Algebraic_kernel_d_1 <typename Fraction_traits <typename Kernel_::FT>::Numerator_type> >
+template < class Algebraic_kernel_ >
 class Continuous_rational_arc_d_1:
-    public Base_rational_arc_d_1<Kernel_, Algebraic_kernel_>
+    public Base_rational_arc_d_1<Algebraic_kernel_>
 {
 public:
-
-  typedef Kernel_            Kernel;
   typedef Algebraic_kernel_          Algebraic_kernel;
   
-  typedef Continuous_rational_arc_d_1<Kernel, Algebraic_kernel> Self;
-  typedef Base_rational_arc_d_1<Kernel_, Algebraic_kernel>  Base;
+  typedef Continuous_rational_arc_d_1<Algebraic_kernel> Self;
+  typedef Base_rational_arc_d_1<Algebraic_kernel>  Base;
 
   typedef typename Base::Integer                Integer;
   typedef typename Base::Rational               Rational; 
@@ -2064,7 +2054,7 @@ public:
 
   template<class OutputIterator>
   OutputIterator intersect (const //Vertical_segment_d_1& ver,
-                            CGAL::Arr_rational_arc::Vertical_segment_d_1 <Kernel,Algebraic_kernel>&
+                            CGAL::Arr_rational_arc::Vertical_segment_d_1 <Algebraic_kernel>&
                              ver,
                             OutputIterator oi,
                             Cache& cache) const
@@ -2302,25 +2292,23 @@ public:
   // * Representation of a generic, not necessarily continuous, portion of a
   // * rational function.
   // */
-template < class Kernel_, 
-   class Algebraic_kernel_ = Algebraic_kernel_d_1 <typename Fraction_traits <typename Kernel_::FT>::Numerator_type> >
-class Rational_arc_d_1 : public Base_rational_arc_d_1<Kernel_, Algebraic_kernel_>
+template < class Algebraic_kernel_ >
+class Rational_arc_d_1 : public Base_rational_arc_d_1<Algebraic_kernel_>
 {
 public:
 
-  typedef Kernel_            Kernel;
-  typedef Algebraic_kernel_          Algebraic_kernel;
+  typedef Algebraic_kernel_                         Algebraic_kernel;
   
-  typedef Rational_arc_d_1<Kernel, Algebraic_kernel>   Self;
-  typedef Base_rational_arc_d_1<Kernel_, Algebraic_kernel>  Base;
-  typedef Continuous_rational_arc_d_1<Kernel_, Algebraic_kernel> Continuous_arc;
+  typedef Rational_arc_d_1<Algebraic_kernel>        Self;
+  typedef Base_rational_arc_d_1<Algebraic_kernel>   Base;
+  typedef Continuous_rational_arc_d_1<Algebraic_kernel> Continuous_arc;
 
-  typedef typename Base::Integer                Integer;
-  typedef typename Base::Rational               Rational; 
-  typedef typename Base::Algebraic_real_1       Algebraic_real_1;
-  typedef typename Base::Algebraic_point_2      Algebraic_point_2;
+  typedef typename Base::Integer    Integer;
+  typedef typename Base::Rational   Rational; 
+  typedef typename Base::Algebraic_real_1  Algebraic_real_1;
+  typedef typename Base::Algebraic_point_2 Algebraic_point_2;
 
-  typedef typename Base::Rat_vector             Rat_vector;
+  typedef typename Base::Rat_vector        Rat_vector;
   
   typedef typename Base::Cache                  Cache;
 

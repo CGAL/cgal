@@ -36,41 +36,37 @@
 namespace CGAL {
 namespace Arr_rational_arc {
 
-template < class Kernel_, 
-   class Algebraic_kernel_ = Algebraic_kernel_d_1 <typename Fraction_traits <typename Kernel_::FT>::Numerator_type> >
+template <class Algebraic_kernel_ >
 class Base_rational_arc_ds_1
 {
 public:
-  typedef Kernel_           Kernel;
-  typedef Algebraic_kernel_         Algebraic_kernel;
-  typedef Base_rational_arc_ds_1<Kernel, Algebraic_kernel> Self;
+  typedef Algebraic_kernel_                         Algebraic_kernel;
+  typedef Base_rational_arc_ds_1<Algebraic_kernel>  Self;
 
   //typedef typename Algebraic_kernel::Multiplicity_type  Multiplicity;
-  typedef unsigned int          Multiplicity;
-  typedef typename Algebraic_kernel::Coefficient   Coefficient;
+  typedef unsigned int                              Multiplicity;
+  typedef typename Algebraic_kernel::Coefficient    Coefficient;
   typedef typename Algebraic_kernel::Polynomial_1   Polynomial;
-
-  typedef typename Kernel::FT           FT;
-  typedef typename CGAL::Get_arithmetic_kernel<FT>::Arithmetic_kernel Arithmetic_kernel;
-  typedef typename Arithmetic_kernel::Rational       Rational; 
-  typedef typename Arithmetic_kernel::Integer       Integer;
+  
+  typedef typename CGAL::Get_arithmetic_kernel<Coefficient>::Arithmetic_kernel Arithmetic_kernel;
+  typedef typename Arithmetic_kernel::Rational            Rational; 
+  typedef typename Arithmetic_kernel::Integer             Integer;
   typedef typename Algebraic_kernel::Algebraic_real_1     Algebraic_real_1;
   
-  typedef typename Algebraic_kernel::Polynomial_1     Polynomial_1;
-  typedef typename CGAL::Polynomial_traits_d<Polynomial_1>   Polynomial_traits_1;
-  typedef Fraction_traits <typename Kernel::FT>      FT_rat_1;
-  typedef typename Algebraic_kernel::Solve_1      Solve_1;
-  typedef typename Algebraic_kernel::Bound       Bound;
+  typedef typename Algebraic_kernel::Polynomial_1             Polynomial_1;
+  typedef typename CGAL::Polynomial_traits_d<Polynomial_1>    Polynomial_traits_1;
+  typedef Fraction_traits <typename Rational>                 FT_rat_1;
+  typedef typename Algebraic_kernel::Solve_1                  Solve_1;
+  typedef typename Algebraic_kernel::Bound                    Bound;
   typedef typename CGAL::Algebraic_structure_traits<Polynomial_1> AT_poly;
   
-  typedef typename CGAL::Polynomial<Rational>      Poly_rat_1;
-  typedef typename CGAL::Polynomial_traits_d<Poly_rat_1>   PT_rat_1;
-  typedef typename CGAL::Fraction_traits <Poly_rat_1>    FT_poly_rat_1;
-  typedef std::vector<Algebraic_real_1>        Algebraic_vector;
-  typedef std::vector<Multiplicity>         Multiplicity_vector;
+  typedef typename CGAL::Polynomial<Rational>               Poly_rat_1;
+  typedef typename CGAL::Polynomial_traits_d<Poly_rat_1>    PT_rat_1;
+  typedef typename CGAL::Fraction_traits <Poly_rat_1>       FT_poly_rat_1;
+  typedef std::vector<Algebraic_real_1>                     Algebraic_vector;
+  typedef std::vector<Multiplicity>                               Multiplicity_vector;
   typedef std::vector<std::pair<Algebraic_real_1, Multiplicity> > Root_multiplicity_vector;
 
-  BOOST_STATIC_ASSERT ((boost::is_same<Rational,FT>::value));
   BOOST_STATIC_ASSERT ((boost::is_same<Integer,Coefficient>::value));
   BOOST_STATIC_ASSERT ((boost::is_same<Polynomial_1,typename FT_poly_rat_1::Numerator_type>::value));
 

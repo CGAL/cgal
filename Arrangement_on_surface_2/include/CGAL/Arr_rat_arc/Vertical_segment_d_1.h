@@ -34,22 +34,20 @@
 namespace CGAL {
 namespace Arr_rational_arc {
 
-template <  class Kernel_, 
-            class Algebraic_kernel_ = Algebraic_kernel_d_1 <typename Fraction_traits <typename Kernel_::FT>::Numerator_type> >
-class Vertical_segment_d_1: public Base_rational_arc_ds_1<Kernel_, Algebraic_kernel_>
+template <class Algebraic_kernel_ >
+class Vertical_segment_d_1: public Base_rational_arc_ds_1<Algebraic_kernel_>
 {
 public:
-  typedef Kernel_                                           Kernel;
-  typedef Algebraic_kernel_                                 Algebraic_kernel;
-  typedef Base_rational_arc_ds_1<Kernel_, Algebraic_kernel> Base;
-  typedef Vertical_segment_d_1<Kernel_, Algebraic_kernel>   Self;
+  typedef Algebraic_kernel_                        Algebraic_kernel;
+  typedef Base_rational_arc_ds_1<Algebraic_kernel> Base;
+  typedef Vertical_segment_d_1<Algebraic_kernel>   Self;
 
-  typedef CGAL::Arr_rational_arc::Rational_function <Kernel_, Algebraic_kernel>     Rational_function;
-  typedef CGAL::Arr_rational_arc::Rational_function_pair <Kernel_,Algebraic_kernel> Rational_function_pair;
-  typedef CGAL::Arr_rational_arc::Algebraic_point_2 <Kernel_,Algebraic_kernel>      Algebraic_point_2;
-  typedef typename Base::Algebraic_real_1                                           Algebraic_real_1;
+  typedef CGAL::Arr_rational_arc::Rational_function <Algebraic_kernel>      Rational_function;
+  typedef CGAL::Arr_rational_arc::Rational_function_pair <Algebraic_kernel> Rational_function_pair;
+  typedef CGAL::Arr_rational_arc::Algebraic_point_2 <Algebraic_kernel>      Algebraic_point_2;
+  typedef typename Base::Algebraic_real_1                                   Algebraic_real_1;
 
-  typedef CGAL::Arr_rational_arc::Cache<Kernel_,Algebraic_kernel_>                  Cache;
+  typedef CGAL::Arr_rational_arc::Cache<Algebraic_kernel_>                  Cache;
  
 public:
   ////////////////////
@@ -236,11 +234,10 @@ private:
 
 //-------------------------------
 //! Exporter for Vertical_segment.
-template < class Kernel_,
-   class Algebraic_kernel_  >
+template <class Algebraic_kernel_  >
 std::ostream&
 operator<< (std::ostream& os, 
-    const Vertical_segment_d_1<Kernel_, Algebraic_kernel_> & ver)
+    const Vertical_segment_d_1<Algebraic_kernel_> & ver)
 {
   return (ver.print (os));
 }

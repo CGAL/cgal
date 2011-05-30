@@ -21,17 +21,15 @@ namespace Arr_rational_arc {
 //-------------------
 //Algebraic_point_2_rep
 //-------------------
-template < class Kernel_, 
-   class Algebraic_kernel_ = Algebraic_kernel_d_1 <typename Fraction_traits <typename Kernel_::FT>::Numerator_type> >
-class Algebraic_point_2_rep: public Base_rational_arc_ds_1<Kernel_, Algebraic_kernel_>
+template < class Algebraic_kernel_ >
+class Algebraic_point_2_rep: public Base_rational_arc_ds_1<Algebraic_kernel_>
 {
 public:
-  typedef Kernel_                                           Kernel;
-  typedef Algebraic_kernel_                                 Algebraic_kernel;
-  typedef Base_rational_arc_ds_1<Kernel_, Algebraic_kernel> Base;
+  typedef Algebraic_kernel_                        Algebraic_kernel;
+  typedef Base_rational_arc_ds_1<Algebraic_kernel> Base;
  
-  typedef CGAL::Arr_rational_arc::Rational_function<Kernel_, Algebraic_kernel>        Rational_function;
-  typedef CGAL::Arr_rational_arc::Rational_function_pair<Kernel_,Algebraic_kernel>    Rational_function_pair;
+  typedef CGAL::Arr_rational_arc::Rational_function<Algebraic_kernel>        Rational_function;
+  typedef CGAL::Arr_rational_arc::Rational_function_pair<Algebraic_kernel>   Rational_function_pair;
   
   typedef typename Base::Algebraic_real_1   Algebraic_real_1;
   typedef typename Algebraic_kernel::Bound  Bound;
@@ -51,7 +49,7 @@ public:
   typedef typename Base::FT_rat_1               FT_rat_1; 
   typedef typename Base::Polynomial_traits_1    Polynomial_traits_1;
 
-  typedef CGAL::Arr_rational_arc::Cache<Kernel_,Algebraic_kernel_>      Cache;
+  typedef CGAL::Arr_rational_arc::Cache<Algebraic_kernel_>      Cache;
 
 public:
   Algebraic_point_2_rep(){}
@@ -244,17 +242,15 @@ private:
 
 
 
-template < class Kernel_, 
-   class Algebraic_kernel_ = Algebraic_kernel_d_1 <typename Fraction_traits <typename Kernel_::FT>::Numerator_type> >
-class Algebraic_point_2: public Handle_with_policy<Algebraic_point_2_rep<Kernel_,Algebraic_kernel_> >
+template <class Algebraic_kernel_ >
+class Algebraic_point_2: public Handle_with_policy<Algebraic_point_2_rep<Algebraic_kernel_> >
 {
  
 public:
-  typedef Kernel_                                             Kernel;
-  typedef Algebraic_kernel_                                   Algebraic_kernel;
-  typedef Handle_with_policy<Algebraic_point_2_rep<Kernel_,Algebraic_kernel_> > Base;
-  typedef Algebraic_point_2<Kernel,Algebraic_kernel>          Self;
-  typedef Algebraic_point_2_rep<Kernel_,Algebraic_kernel_>    Rep;
+  typedef Algebraic_kernel_                                             Algebraic_kernel;
+  typedef Handle_with_policy<Algebraic_point_2_rep<Algebraic_kernel_> > Base;
+  typedef Algebraic_point_2<Algebraic_kernel>                 Self;
+  typedef Algebraic_point_2_rep<Algebraic_kernel_>            Rep;
   typedef typename Rep::Rational                              Rational;
   typedef typename Rep::Algebraic_real_1                      Algebraic_real_1;
   typedef typename Rep::Rational_function                     Rational_function;
@@ -341,11 +337,10 @@ public:
 };  //Algebraic_point_2
 
 
-template < class Kernel_,
-   class Algebraic_kernel_  >
+template < class Algebraic_kernel_  >
 std::ostream&
 operator<< (std::ostream& os,
-            const Algebraic_point_2<Kernel_, Algebraic_kernel_> & p)
+            const Algebraic_point_2<Algebraic_kernel_> & p)
 {
   return (p.print (os));
 }

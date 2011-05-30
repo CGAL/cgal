@@ -28,16 +28,14 @@
 namespace CGAL {
 namespace Arr_rational_arc
 {
-template < class Kernel_, 
-   class Algebraic_kernel_ = Algebraic_kernel_d_1 <typename Fraction_traits <typename Kernel_::FT>::Numerator_type> >
-class Rational_function_pair: public Base_rational_arc_ds_1<Kernel_, Algebraic_kernel_>
+template <class Algebraic_kernel_ >
+class Rational_function_pair: public Base_rational_arc_ds_1<Algebraic_kernel_>
 {
 public:
-  typedef Kernel_             Kernel;
-  typedef Algebraic_kernel_          Algebraic_kernel;
-  typedef Base_rational_arc_ds_1<Kernel_, Algebraic_kernel> Base;
-  typedef CGAL::Arr_rational_arc::Rational_function_canonicalized_pair<Kernel, Algebraic_kernel> Rational_function_canonicalized_pair;
-  typedef CGAL::Arr_rational_arc::Rational_function<Kernel_, Algebraic_kernel> Rational_function;
+  typedef Algebraic_kernel_                         Algebraic_kernel;
+  typedef Base_rational_arc_ds_1<Algebraic_kernel>  Base;
+  typedef CGAL::Arr_rational_arc::Rational_function_canonicalized_pair<Algebraic_kernel> Rational_function_canonicalized_pair;
+  typedef CGAL::Arr_rational_arc::Rational_function<Algebraic_kernel> Rational_function;
 
   typedef typename Base::Polynomial_1    Polynomial_1;
   typedef typename Base::Algebraic_real_1   Algebraic_real_1;

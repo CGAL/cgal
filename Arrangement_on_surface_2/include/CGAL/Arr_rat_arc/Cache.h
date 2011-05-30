@@ -11,25 +11,23 @@ namespace Arr_rational_arc {
 //-------------------
 //Cache 
 //-------------------
-template < class Kernel_, 
-   class Algebraic_kernel_ = Algebraic_kernel_d_1 <typename Fraction_traits <typename Kernel_::FT>::Numerator_type> >
-class Cache : public Base_rational_arc_ds_1<Kernel_, Algebraic_kernel_>
+template < class Algebraic_kernel_ >
+class Cache : public Base_rational_arc_ds_1<Algebraic_kernel_>
 {
 public:
-  typedef Kernel_            Kernel;
-  typedef Algebraic_kernel_         Algebraic_kernel;
-  typedef Base_rational_arc_ds_1<Kernel_, Algebraic_kernel> Base;
+  typedef Algebraic_kernel_                        Algebraic_kernel;
+  typedef Base_rational_arc_ds_1<Algebraic_kernel> Base;
  
   typedef typename Base::Polynomial_1         Polynomial_1;
-  typedef typename Base::Rational          Rational;
-  typedef typename Base::Algebraic_real_1        Algebraic_real_1;
-  typedef typename Base::Integer          Integer ;
-  typedef typename Base::FT_rat_1          FT_rat_1;
-  typedef typename Base::Polynomial_traits_1       Polynomial_traits_1;
+  typedef typename Base::Rational             Rational;
+  typedef typename Base::Algebraic_real_1     Algebraic_real_1;
+  typedef typename Base::Integer              Integer ;
+  typedef typename Base::FT_rat_1             FT_rat_1;
+  typedef typename Base::Polynomial_traits_1  Polynomial_traits_1;
 
-  typedef CGAL::Arr_rational_arc::Rational_function<Kernel_, Algebraic_kernel>    Rational_function;
-  typedef CGAL::Arr_rational_arc::Rational_function_canonicalized_pair<Kernel_, Algebraic_kernel>  Rational_function_canonicalized_pair;
-  typedef CGAL::Arr_rational_arc::Rational_function_pair<Kernel_, Algebraic_kernel> Rational_function_pair;
+  typedef CGAL::Arr_rational_arc::Rational_function<Algebraic_kernel>    Rational_function;
+  typedef CGAL::Arr_rational_arc::Rational_function_canonicalized_pair<Algebraic_kernel>  Rational_function_canonicalized_pair;
+  typedef CGAL::Arr_rational_arc::Rational_function_pair<Algebraic_kernel> Rational_function_pair;
 
   typedef std::pair<Polynomial_1,Polynomial_1>      Rational_function_key;
   class Less_compare_rational_function_key

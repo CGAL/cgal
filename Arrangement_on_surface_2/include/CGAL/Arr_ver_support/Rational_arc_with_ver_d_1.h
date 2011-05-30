@@ -31,17 +31,15 @@ namespace CGAL {
 namespace Arr_vertical_rational_arc {
 
 template <class Arc_,
-          class Kernel_, 
           class Algebraic_kernel_>
 class Rational_arc_with_ver_d_1
 {
 public:
 
   typedef Arc_                                                  Arc;
-  typedef Kernel_                                               Kernel;
   typedef Algebraic_kernel_                                     Algebraic_kernel;
   
-  typedef Rational_arc_with_ver_d_1<Arc,Kernel,Algebraic_kernel>   Self;
+  typedef Rational_arc_with_ver_d_1<Arc,Algebraic_kernel>   Self;
    
   typedef typename Arc::Vertical_segment_d_1                  Vertical_segment; 
 
@@ -294,11 +292,10 @@ private:
 //-------------------------------
 //! Exporter for rational arcs.
 template <class Arc_,
-          class Kernel_, 
           class Algebraic_kernel_>
 std::ostream&
 operator<< (std::ostream& os, 
-            const Rational_arc_with_ver_d_1<Arc_, Kernel_,  Algebraic_kernel_> & _arc)
+            const Rational_arc_with_ver_d_1<Arc_, Algebraic_kernel_> & _arc)
 {
    return (boost::apply_visitor(Print_visitor < Arc_, typename Arc_::Vertical_segment_d_1 > (os),_arc.variant()));
 }

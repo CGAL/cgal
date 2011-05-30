@@ -25,22 +25,20 @@
 namespace CGAL {
 namespace Arr_rational_arc {
 
-template < class Kernel_, 
-   class Algebraic_kernel_ = Algebraic_kernel_d_1 <typename Fraction_traits <typename Kernel_::FT>::Numerator_type> >
-class Rational_function_rep : public Base_rational_arc_ds_1<Kernel_, Algebraic_kernel_>
+template <class Algebraic_kernel_ >
+class Rational_function_rep : public Base_rational_arc_ds_1<Algebraic_kernel_>
 {
 public:
-  typedef Kernel_                                           Kernel;
-  typedef Algebraic_kernel_                                 Algebraic_kernel;
-  typedef Base_rational_arc_ds_1<Kernel_, Algebraic_kernel> Base;
+  typedef Algebraic_kernel_                        Algebraic_kernel;
+  typedef Base_rational_arc_ds_1<Algebraic_kernel> Base;
 
-  typedef typename Base::Polynomial_1    Polynomial_1;
+  typedef typename Base::Polynomial_1       Polynomial_1;
   typedef typename Base::Algebraic_real_1   Algebraic_real_1;
   typedef typename Base::Algebraic_vector   Algebraic_vector;
-  typedef typename Base::Multiplicity    Multiplicity;
-  typedef typename Base::Multiplicity_vector  Multiplicity_vector;
+  typedef typename Base::Multiplicity       Multiplicity;
+  typedef typename Base::Multiplicity_vector      Multiplicity_vector;
   typedef typename Base::Root_multiplicity_vector Root_multiplicity_vector;
-  typedef typename Base::Solve_1     Solve_1;
+  typedef typename Base::Solve_1            Solve_1;
     
 public:
   Rational_function_rep () {}
@@ -181,22 +179,20 @@ private:
 
 };//Rational_function_rep 
 
-template < class Kernel_, 
-   class Algebraic_kernel_ = Algebraic_kernel_d_1 <typename Fraction_traits <typename Kernel_::FT>::Numerator_type> >
-class Rational_function: public Handle_with_policy<Rational_function_rep<Kernel_,Algebraic_kernel_> >
+template < class Algebraic_kernel_ >
+class Rational_function: public Handle_with_policy<Rational_function_rep<Algebraic_kernel_> >
 {
 public:
-  typedef Kernel_            Kernel;
   typedef Algebraic_kernel_         Algebraic_kernel;
-  typedef Handle_with_policy<Rational_function_rep<Kernel_,Algebraic_kernel_> > Base;
-  typedef Rational_function<Kernel,Algebraic_kernel>          Self;
-  typedef Rational_function_rep<Kernel_,Algebraic_kernel_>    Rep;
-  typedef typename Rep::Algebraic_real_1                      Algebraic_real_1;
-  typedef typename Rep::Polynomial_1                          Polynomial_1;
-  typedef typename Rep::Algebraic_vector                      Algebraic_vector;
-  typedef typename Rep::Multiplicity_vector                   Multiplicity_vector;
+  typedef Handle_with_policy<Rational_function_rep<Algebraic_kernel_> > Base;
+  typedef Rational_function<Algebraic_kernel>           Self;
+  typedef Rational_function_rep<Algebraic_kernel_>      Rep;
+  typedef typename Rep::Algebraic_real_1                Algebraic_real_1;
+  typedef typename Rep::Polynomial_1                    Polynomial_1;
+  typedef typename Rep::Algebraic_vector                Algebraic_vector;
+  typedef typename Rep::Multiplicity_vector             Multiplicity_vector;
 
-  typedef typename Base::Id_type                              Id_type;
+  typedef typename Base::Id_type                        Id_type;
 private:
   static Self& get_default_instance(){
     static Self x = Self(Polynomial_1(0),Polynomial_1(1)); 
