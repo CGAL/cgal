@@ -178,7 +178,7 @@ aggregated version. In all other cases it is sufficient to use a model
 of the \ccc{ArrangementXMonotoneTraits_2} concept.
 
 %~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-\subsubsection{Supporting Open Curves}
+\subsubsection{Supporting Unbounded Curves}
 %~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 %
 \lcTex{\color{red}}
@@ -196,35 +196,36 @@ other curves are represented by vertices that lie on the left or
 right sides of this implicit rectangle. These vertices are not
 associated with points either. Edges connect these vertices and the
 four vertices that represents the corners of this implicit rectangle
-to form the rectangle.
-
-The implicit rectangle is embedded in the plane as a rectangle that
-contains all the curves of the arrangement. The embedding rectangle
-is referred to as the parameter space. In the following we assume
-that an $x$ monotone curve $C$ can be considered as a parametric
-curve $C(t) = (X(t),Y(t))$ defined over a closed, open, or half open
-interval with endpoints~$0$ and~$1$. Let $b_l$ and $b_r$ denote the
-$x$-coordinates of the left and right boundaries of the parameter
-space, respectively. Let $b_b$ and $b_t$ denote the $y$-coordinates
-of the bottom and top boundaries of the parameter space, respectively.
-If the parameter space is, for example, the entire plane,
-$b_l = b_b = -\infty$ and $b_r = b_t = +\infty$.
+to form the rectangle. The implicit rectangle is embedded in the
+plane as a rectangle that contains all the curves of the arrangement.
+The embedding rectangle is referred to as the parameter space. 
 
 Several predicates are required to handle $x$-monotone curves that
 approach infinity and thus approach the boundary of the parameter
 space. These predicates are sufficient to handle not only unbounded
 curves, but also bounded curves that are open. However, they can be
-open only at the boundary of the parameter space. The additional
-requirements are organized in four different concepts, one for each
-side. Models of the concept associated with the bottom and top sides
-can only handle curves with finite $x$-coordinates. Curves with
-negative infinite and positive infinite $x$-coordinates are handled by
-models of concepts associated with the left and right sides,
-respectively. We defer the introducing the four individual concepts to
-a later release to avoid clutter. Instead, we introduce the single
-concept \ccc{ArrangementOpenBoundaryTraits_2}, which combines all the
-four concepts. The combined concept refines the concept
-\ccc{ArrangementBasicTraits_2}. The arrangement template
+open only at the boundary of the parameter space. Accordingly, we
+extend the definifion of the parameter space as follows:
+Let $b_l$ and $b_r$ denote the $x$-coordinates of the left and right
+boundaries of the parameter space, respectively. Let $b_b$ and $b_t$
+denote the $y$-coordinates of the bottom and top boundaries of the
+parameter space, respectively. If the parameter space is, for example,
+the entire plane (which is currently the only option supported by the
+package), $b_l = b_b = -\infty$ and $b_r = b_t = +\infty$.
+In the following we assume that an $x$ monotone curve $C$ can be
+considered as a parametric curve $C(t) = (X(t),Y(t))$ defined over a
+closed, open, or half open interval with endpoints~$0$ and~$1$. 
+
+The additional requirements are organized in four different concepts,
+one for each side. Models of the concept associated with the bottom
+and top sides can only handle curves with finite $x$-coordinates.
+Curves with negative infinite and positive infinite $x$-coordinates
+are handled by models of concepts associated with the left and right
+sides, respectively. We defer the introducing the four individual
+concepts to a later release to avoid clutter. Instead, we introduce
+the single concept \ccc{ArrangementOpenBoundaryTraits_2}, which
+combines all the four concepts. The combined concept refines the
+concept \ccc{ArrangementBasicTraits_2}. The arrangement template
 instantiated with a traits class that models this combined concept
 can handle curves that are unbounded in any direction. If some
 curves inserted into an arrangement object are expected to be
@@ -236,7 +237,7 @@ template must be instantiated with a model of the
 \ccc{ArrangementOpenBoundaryTraits} concept.\footnote{We
   intend to enhance the arrangement template to handle curves confined
   to a bounded yet open parameter space. A curve that reaches the
-  boundary of the parameter space in this case is unbounded and open.}
+  boundary of the parameter space in this case is bounded and open.}
 
 All the four types \ccc{Left_side_category},
 \ccc{Right_side_category}, \ccc{Bottom_side_category}, and
