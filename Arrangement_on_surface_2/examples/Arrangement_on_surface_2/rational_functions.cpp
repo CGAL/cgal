@@ -4,12 +4,13 @@
 
 #include <CGAL/basic.h>
 
-#include <CGAL/Algebraic_kernel_d_1.h>
-#include <CGAL/Arr_rational_function_traits_2.h>
-#include <CGAL/Arrangement_2.h>
+#include <CGAL/Arithmetic_kernel.h>               //NT
+#include <CGAL/Algebraic_kernel_d_1.h>            //Algebraic Kernel
+#include <CGAL/Arr_rational_function_traits_2.h>  //Traits
+#include <CGAL/Arrangement_2.h>                   //Arrangement
 
-typedef CGAL::Gmpz                                    Integer;
-typedef CGAL::Algebraic_kernel_d_1<Integer>           AK1; 
+typedef CGAL::CORE_arithmetic_kernel::Integer		Number_type;
+typedef CGAL::Algebraic_kernel_d_1<Number_type>		AK1;
 typedef CGAL::Arr_rational_function_traits_2<AK1>	  Traits_2;
 
 typedef AK1::Polynomial_1                             Polynomial_1;
@@ -33,24 +34,24 @@ int main ()
   // Create an arc supported by the polynomial y = x^4 - 6x^2 + 8,
   // defined over the interval [-2, 2]:
   Polynomial_1 P1 = x*x*x*x - 6*x*x + 8;
-  arcs.push_back(construct_arc(P1, Alg_real_1(-2), Alg_real_1(2)));
+  arcs.push_back(construct_arc(P1.begin(), P1.end(), Alg_real_1(-2), Alg_real_1(2)));
 
   // Create an arc supported by the function y = x / (1 + x^2),
   // defined over the interval [-3, 3]:
   Polynomial_1 P2 = x;
   Polynomial_1 Q2 = 1+x*x;
   
-  arcs.push_back(construct_arc(P2, Q2, Alg_real_1(-3), Alg_real_1(3)));
+  arcs.push_back(construct_arc(P2.begin(), P2.end(), Q2.begin(), Q2.end(), Alg_real_1(-3), Alg_real_1(3)));
       
   // Create an arc supported by the parbola y = 8 - x^2,
   // defined over the interval [-2, 3]:
   Polynomial_1 P3 = 8 - x*x; 
-  arcs.push_back(construct_arc(P3, Alg_real_1(-2), Alg_real_1(3)));
+  arcs.push_back(construct_arc(P3.begin(), P3.end(), Alg_real_1(-2), Alg_real_1(3)));
   
   // Create an arc supported by the line y = -2x,
   // defined over the interval [-3, 0]:
   Polynomial_1 P4 = -2*x;
-  arcs.push_back(construct_arc(P4, Alg_real_1(-3), Alg_real_1(0)));
+  arcs.push_back(construct_arc(P4.begin(), P4.end(), Alg_real_1(-3), Alg_real_1(0)));
   
   // Construct the arrangement of the four arcs.
   Arrangement_2              arr;

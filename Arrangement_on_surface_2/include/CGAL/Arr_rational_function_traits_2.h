@@ -45,22 +45,20 @@ namespace CGAL {
  *           rational and algebraic types. 
  */
  
-template < class Kernel_, 
-           class Algebraic_kernel_ = Algebraic_kernel_d_1 <typename Fraction_traits <typename Kernel_::FT>::Numerator_type> >
-class Arr_rational_arc_traits_d_1
+template < class Algebraic_kernel_ >
+class Arr_rational_function_traits_2
 {
 public:
-  typedef Kernel_                                                             Kernel;
   typedef Algebraic_kernel_                                                   Algebraic_kernel;
  
-  typedef Arr_rational_arc_traits_d_1<Kernel, Algebraic_kernel>               Self;
-  typedef Arr_rational_arc::Base_rational_arc_ds_1<Kernel, Algebraic_kernel>  Base_rational_arc_ds_1;
+  typedef Arr_rational_function_traits_2<Algebraic_kernel>               Self;
+  typedef Arr_rational_arc::Base_rational_arc_ds_1<Algebraic_kernel>  Base_rational_arc_ds_1;
 
   // Traits objects:
-  typedef Arr_rational_arc::Base_rational_arc_d_1<Kernel, Algebraic_kernel>       Base_curve_2;
-  typedef Arr_rational_arc::Continuous_rational_arc_d_1<Kernel, Algebraic_kernel> X_monotone_curve_2;
-  typedef Arr_rational_arc::Rational_arc_d_1<Kernel, Algebraic_kernel>            Curve_2;
-  typedef Arr_rational_arc::Algebraic_point_2<Kernel, Algebraic_kernel>           Point_2;
+  typedef Arr_rational_arc::Base_rational_arc_d_1<Algebraic_kernel>       Base_curve_2;
+  typedef Arr_rational_arc::Continuous_rational_arc_d_1<Algebraic_kernel> X_monotone_curve_2;
+  typedef Arr_rational_arc::Rational_arc_d_1<Algebraic_kernel>            Curve_2;
+  typedef Arr_rational_arc::Algebraic_point_2<Algebraic_kernel>           Point_2;
 
   typedef typename Base_rational_arc_ds_1::Algebraic_real_1       Algebraic_real_1;
   typedef typename Base_rational_arc_ds_1::Multiplicity           Multiplicity;
@@ -77,10 +75,10 @@ public:
   typedef typename Algebraic_kernel::Bound                        Bound; 
   typedef Bound                                                   Approximate_number_type; 
   
-  typedef CGAL::Arr_rational_arc::Rational_function<Kernel_,Algebraic_kernel_>         Rational_function;
-  typedef CGAL::Arr_rational_arc::Cache<Kernel_,Algebraic_kernel_>                     Cache;
+  typedef CGAL::Arr_rational_arc::Rational_function<Algebraic_kernel_>         Rational_function;
+  typedef CGAL::Arr_rational_arc::Cache<Algebraic_kernel_>                     Cache;
 
-  typedef typename Arr_rational_arc::Vertical_segment_d_1 <Kernel,Algebraic_kernel>    Vertical_segment; 
+  typedef typename Arr_rational_arc::Vertical_segment_d_1 <Algebraic_kernel>    Vertical_segment; 
 
   //Category tags:
   typedef Tag_true Has_left_category;
@@ -103,7 +101,7 @@ public:
 
   //---------------------
   // Default constructor.
-  Arr_rational_arc_traits_d_1 ()
+  Arr_rational_function_traits_2 ()
   {}
 
   class Construct_x_monotone_curve_2
@@ -1053,7 +1051,7 @@ public:
   {
     _cache.clear();
   }
-};
+}; //Arr_rational_function_traits_2
 
 }   //namespace CGAL {
 

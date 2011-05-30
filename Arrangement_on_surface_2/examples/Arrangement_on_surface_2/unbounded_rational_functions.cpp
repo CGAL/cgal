@@ -1,15 +1,17 @@
+#include "stdafx.h"
 
 //! \file examples/Arrangement_2/unbounded_rational_functions.cpp
 // Constructing an arrangement of unbounded portions of rational functions.
 #include <CGAL/basic.h>
 
-#include <CGAL/Algebraic_kernel_d_1.h>
-#include <CGAL/Arr_rational_function_traits_2.h>
-#include <CGAL/Arrangement_2.h>
+#include <CGAL/Arithmetic_kernel.h>               //NT
+#include <CGAL/Algebraic_kernel_d_1.h>            //Algebraic Kernel
+#include <CGAL/Arr_rational_function_traits_2.h>  //Traits
+#include <CGAL/Arrangement_2.h>                   //Arrangement
 
-typedef CGAL::Gmpz                                    Integer;
-typedef CGAL::Algebraic_kernel_d_1<Integer>           AK1; 
-typedef CGAL::Arr_rational_function_traits_2<AK1>	  Traits_2;
+typedef CGAL::CORE_arithmetic_kernel::Integer		Number_type;
+typedef CGAL::Algebraic_kernel_d_1<Number_type>		AK1;
+typedef CGAL::Arr_rational_function_traits_2<AK1>	Traits_2;
 
 typedef AK1::Polynomial_1                             Polynomial_1;
 typedef AK1::Algebraic_real_1                         Alg_real_1;
@@ -22,7 +24,7 @@ int main ()
   AK1 ak1;
   
   // Traits class object 
-  Traits_2 traits(ak1); 
+  Traits_2 traits; 
   
   // constructor for rational functions 
   Traits_2::Construct_curve_2 construct
@@ -37,24 +39,27 @@ int main ()
   
   // Create the rational functions (y = 1 / x), and (y = -1 / x).
   Polynomial_1 P1(1);
+  Polynomial_1 minusP1(-P1);
   Polynomial_1 Q1 = x;
-  arcs.push_back(construct( P1, Q1));
-  arcs.push_back(construct(-P1, Q1));
+  arcs.push_back(construct( P1.begin(), P1.end(), Q1.begin(),Q1.end()));
+  arcs.push_back(construct(minusP1.begin(),minusP1.end(), Q1.begin(),Q1.end()));
 
   // Create a bounded segments of the parabolas (y = -4*x^2 + 3) and
   // (y = 4*x^2 - 3), defined over [-sqrt(3)/2, sqrt(3)/2].
   Polynomial_1 P2 = -4*x*x+3; 
-  std::vector<Alg_real_1> roots;
+  Polynomial_1 minusP2 = -P2; 
+  std::vector<std::pair<Alg_real_1,int> > roots;
   ak1.solve_1_object()(P2,std::back_inserter(roots));// [-sqrt(3)/2, sqrt(3)/2]
-  arcs.push_back(construct( P2, roots[0], roots[1]));
-  arcs.push_back(construct(-P2, roots[0], roots[1]));
+  arcs.push_back(construct(P2.begin(), P2.end(), roots[0].first, roots[1].first));
+  arcs.push_back(construct(minusP2.begin(),minusP2.end(), roots[0].first, roots[1].first));
 
   // Create the rational function (y = 1 / 2*x) for x > 0, and the
   // rational function (y = -1 / 2*x) for x < 0.
   Polynomial_1 P3(1);
+  Polynomial_1 minusP3(-P3);
   Polynomial_1 Q3 = 2*x;
-  arcs.push_back(construct( P3, Q3, Algebraic(0), true ));
-  arcs.push_back(construct(-P3, Q3, Algebraic(0), false));
+  arcs.push_back(construct( P3.begin(), P3.end(), Q3.begin(), Q3.end(), Alg_real_1(0), true ));
+  arcs.push_back(construct(minusP3.begin(),minusP3.end(), Q3.begin(), Q3.end(), Alg_real_1(0), false));
 
   // Construct the arrangement of the six arcs.
   Arrangement_2              arr;
@@ -72,5 +77,3 @@ int main ()
 
   return 0;
 }
-
-#endif
