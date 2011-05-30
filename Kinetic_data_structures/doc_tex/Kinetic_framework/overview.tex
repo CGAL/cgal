@@ -32,7 +32,7 @@ structure interacts with the various parts. The main concepts are
   the correct order and audit kinetic data structures. There should be
   one instance of a model of this concept per simulation.
 \item the \ccc{Kinetic::Kernel}. The structure of a
-  \ccc{Kinetic::Kernel} is analogous to the static CGAL (i.e.,
+  \ccc{Kinetic::Kernel} is analogous to the static \cgal\ (i.e.,
   non-kinetic) kernels in that it defines a set of primitives and
   functors which generate certificates from the primitives.
 \item the \ccc{Kinetic::ActiveObjectsTable}. Models of this concept hold a
@@ -42,7 +42,7 @@ structure interacts with the various parts. The main concepts are
   primitives are added or primitives are deleted.
   There is generally one instance of a model of this concept per simulation.
 \item the \ccc{Kinetic::InstantaneousKernel}. Models of this concept allow
-  existing non-kinetic CGAL data structures to be used on a snapshot
+  existing non-kinetic \cgal\ data structures to be used on a snapshot
   of kinetic data. As a result, pre-existing static structures can be
   used to initialize and audit kinetic data structures.
 \item the \ccc{Kinetic::FunctionKernel}. This concept is the computational

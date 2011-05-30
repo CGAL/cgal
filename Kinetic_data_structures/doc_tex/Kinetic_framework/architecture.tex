@@ -211,7 +211,7 @@ structure.
 \subsection{The Kinetic::InstantaneousKernel\label{sec:kds_instantaneous_kernel}}
 
 
-The \ccc{Kinetic::InstantaneousKernel} allows existing CGAL data structures
+The \ccc{Kinetic::InstantaneousKernel} allows existing \cgal\ data structures
 to be used on moving data as it appears at some instant of time.
 Models of this concept are, by definition, models of a CGAL
 Kernel or a traits class, and, therefore, can then be used as
@@ -227,7 +227,7 @@ initialization, as well as at times during the simulation when we want
 to insert a point to the kinetic Delaunay triangulation, a static
 version of the Delaunay triangulation is conceptually instantiated.
 More precisely, the time for the copy of the model of the
-\ccc{Kinetic::InstantaneousKernel} stored in the CGAL triangulation is set
+\ccc{Kinetic::InstantaneousKernel} stored in the \cgal\ triangulation is set
 to be the current time (or rather, as discussed in the introduction, a
 more convenient time determined by the \ccc{Kinetic::Simulator}
 combinatorially equivalent to the current time).  The kinetic data
