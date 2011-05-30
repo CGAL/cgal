@@ -89,18 +89,20 @@ protected:
   typedef CGAL::internal::Arr_bottom_top_implementation_dispatch< 
     Arr_bottom_side_category, Arr_top_side_category > BT;
   
-  typedef typename BT::Parameter_space_in_y_2_curve_end_tag      Psy_2_curve_end_tag;
-  typedef typename BT::Parameter_space_in_y_2_curve_tag          Psy_2_curve_tag;
-  typedef typename BT::Parameter_space_in_y_2_point_tag          Psy_2_point_tag;
-  typedef typename BT::Is_on_x_identification_2_curve_tag        Ioxi_2_curve_tag;
-  typedef typename BT::Is_on_x_identification_2_point_tag        Ioxi_2_point_tag;
+  typedef typename BT::Parameter_space_in_y_2_curve_end_tag          Psy_2_curve_end_tag;
+  typedef typename BT::Parameter_space_in_y_2_curve_tag              Psy_2_curve_tag;
+  typedef typename BT::Parameter_space_in_y_2_point_tag              Psy_2_point_tag;
+  typedef typename BT::Is_on_x_identification_2_curve_tag            Ioxi_2_curve_tag;
+  typedef typename BT::Is_on_x_identification_2_point_tag            Ioxi_2_point_tag;
 
-  typedef typename BT::Compare_x_at_limit_2_point_curve_end_tag  Cmp_x_al_2_point_curve_end_tag;
-  typedef typename BT::Compare_x_at_limit_2_curve_ends_tag       Cmp_x_al_2_curve_ends_tag;
-  typedef typename BT::Compare_x_near_limit_2_curve_ends_tag     Cmp_x_nl_2_curve_ends_tag;
+  typedef typename BT::Compare_x_at_limit_2_point_curve_end_tag      Cmp_x_al_2_point_curve_end_tag;
+  typedef typename BT::Compare_x_at_limit_2_curve_ends_tag           Cmp_x_al_2_curve_ends_tag;
+  typedef typename BT::Compare_x_near_limit_2_curve_ends_tag         Cmp_x_nl_2_curve_ends_tag;
 
-  typedef typename BT::Compare_x_on_boundary_2_points_tag        Cmp_x_ob_2_points_tag;
-  typedef typename BT::Compare_x_near_boundary_2_curve_ends_tag  Cmp_x_nb_2_curve_ends_tag;
+  typedef typename BT::Compare_x_on_boundary_2_points_tag            Cmp_x_ob_2_points_tag;
+  typedef typename BT::Compare_x_on_boundary_2_point_curve_end_tag   Cmp_x_ob_2_point_curve_end_tag;
+  typedef typename BT::Compare_x_on_boundary_2_curve_ends_tag        Cmp_x_ob_2_curve_ends_tag;
+  typedef typename BT::Compare_x_near_boundary_2_curve_ends_tag      Cmp_x_nb_2_curve_ends_tag;
 
 public:
 
@@ -1074,14 +1076,37 @@ public:
     friend class Arr_traits_basic_adaptor_2<Base>;
         
   public:
-    /*! Compare the x-coordinate of two given points that lie on horizontal
-     * boundaries
+    /*! Compare the x-coordinate of two given points projected onto the horizontal boundaries
      * \param p1 the first point.
      * \param p2 the second point.
      */
     Comparison_result operator()(const Point_2 & p1, const Point_2 & p2) const
     {
       return comp_x_on_bnd (p1, p2, Cmp_x_ob_2_points_tag());      
+    }
+
+    /*! Compare the x-coordinate of a point and a curve-end projected onto the horizontal
+     * boundaries
+     * \param pt the point.
+     * \param xcv the curve
+     * \param ce the curve-end
+     */
+    Comparison_result operator()(const Point_2 & pt, const X_monotone_curve_2 & xcv, Arr_curve_end ce) const
+    {
+      return comp_x_on_bnd (pt, xcv, ce, Cmp_x_ob_2_point_curve_end_tag());      
+    }
+
+    /*! Compare the x-coordinates of two curve-ends projected onto the horizontal
+     * boundaries
+     * \param xcv1 the curve
+     * \param ce1 the curve-end
+     * \param xcv2 the curve
+     * \param ce2 the curve-end
+     */
+    Comparison_result operator()(const X_monotone_curve_2 & xcv1, Arr_curve_end ce1, 
+                                 const X_monotone_curve_2 & xcv2, Arr_curve_end ce2) const
+    {
+      return comp_x_on_bnd (xcv1, ce1, xcv2, ce2, Cmp_x_ob_2_curve_ends_tag());      
     }
 
   private:
@@ -1097,6 +1122,36 @@ public:
       CGAL_error();
       return SMALLER;
     }
+
+    Comparison_result comp_x_on_bnd (const Point_2 & pt, const X_monotone_curve_2 & xcv, Arr_curve_end ce,
+                                     Arr_use_traits_tag) const
+    {
+      return m_base->compare_x_on_boundary_2_object ()(pt, xcv, ce);
+    }
+
+    Comparison_result comp_x_on_bnd (const Point_2 &, const X_monotone_curve_2 & xcv, Arr_curve_end ce,
+                                     Arr_use_dummy_tag) const
+    {
+      CGAL_error();
+      return SMALLER;
+    }
+
+
+    Comparison_result comp_x_on_bnd (const X_monotone_curve_2 & xcv1, Arr_curve_end ce1, 
+                                     const X_monotone_curve_2 & xcv2, Arr_curve_end ce2,
+                                     Arr_use_traits_tag) const
+    {
+      return m_base->compare_x_on_boundary_2_object ()(xcv1, ce1, xcv2, ce2);
+    }
+
+    Comparison_result comp_x_on_bnd (const X_monotone_curve_2 & xcv1, Arr_curve_end ce1,
+                                     const X_monotone_curve_2 & xcv2, Arr_curve_end ce2,
+                                     Arr_use_dummy_tag) const
+    {
+      CGAL_error();
+      return SMALLER;
+    }
+
   };
   
   /*! Obtain a Compare_x_on_boundary_2 function object. */
@@ -1304,15 +1359,13 @@ public:
     friend class Arr_traits_basic_adaptor_2<Base>;
  
   protected: 
-    
-    // for open
-    Comparison_result _compare_point_curve_end(const Point_2 & pt,
-                                               const X_monotone_curve_2 & xcv,
-                                               Arr_curve_end ce,
-                                               Arr_open_side_tag) const
+
+    Comparison_result _compare_point_curve_end_with_asymptote(const Point_2 & pt,
+                                                              const X_monotone_curve_2 & xcv,
+                                                              Arr_curve_end ce) const
     {
       Comparison_result res = 
-	m_base->compare_x_at_limit_2_object()(pt, xcv, ce);
+	m_base->compare_x_on_boundary_2_object()(pt, xcv, ce);
       
       if (res != EQUAL || m_base->is_vertical_2_object()(xcv)) {
 	return res;
@@ -1324,6 +1377,28 @@ public:
       
       return res;
     
+    }
+    
+    // for contraction
+    Comparison_result _compare_point_curve_end(const Point_2 & pt,
+                                               const X_monotone_curve_2 & xcv,
+                                               Arr_curve_end ce,
+                                               Arr_contracted_side_tag) const
+    {
+      return _compare_point_curve_end_with_asymptote(pt, xcv, ce);
+    }
+
+
+
+
+
+    // for open
+    Comparison_result _compare_point_curve_end(const Point_2 & pt,
+                                               const X_monotone_curve_2 & xcv,
+                                               Arr_curve_end ce,
+                                               Arr_open_side_tag) const
+    {
+      return _compare_point_curve_end_with_asymptote(pt, xcv, ce);
     }
 
     // for non-open
