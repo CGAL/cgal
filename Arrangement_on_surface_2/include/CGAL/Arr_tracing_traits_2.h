@@ -1092,6 +1092,45 @@ public:
       std::cout << "  result: " << cr << std::endl;
       return cr;
     }
+
+    /*! Operate
+     * \param pt the point.
+     * \param xcv the curve.
+     * \param ce the curve-end
+     */
+    Comparison_result operator()(const Point_2 & pt, 
+                                 const X_monotone_curve_2 & xcv, Arr_curve_end ce) const
+    {
+      if (!m_enabled) return m_object(pt, xcv, ce);
+      std::cout << "compare_x_on_boundary" << std::endl
+                << "  pt: " << pt << std::endl
+                << " xcv: " << xcv << std::endl
+                << "  ce: " << ce << std::endl;
+      Comparison_result cr = m_object(pt, xcv, ce);
+      std::cout << "  result: " << cr << std::endl;
+      return cr;
+    }
+
+    /*! Operate
+     * \param xcv1 the first curve.
+     * \param ce1 the first curve-end
+     * \param xcv2 the second curve.
+     * \param ce2 the second curve-end
+     */
+    Comparison_result operator()(const X_monotone_curve_2 & xcv1, Arr_curve_end ce1,
+                                 const X_monotone_curve_2 & xcv2, Arr_curve_end ce2) const
+    {
+      if (!m_enabled) return m_object(xcv2, ce1, xcv2, ce2);
+      std::cout << "compare_x_on_boundary" << std::endl
+                << "xcv1: " << xcv1 << std::endl
+                << " ce1: " << ce1 << std::endl
+                << "xcv2: " << xcv2 << std::endl
+                << " ce2: " << ce2 << std::endl;
+      Comparison_result cr = m_object(xcv1, ce1, xcv2, ce2);
+      std::cout << "  result: " << cr << std::endl;
+      return cr;
+    }
+
   };
   
   /*! A functor that compares the x-coordinates of curve ends near the

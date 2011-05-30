@@ -951,6 +951,24 @@ public:
       return m_base->compare_x_on_boundary_2_object()(p1.base(), p2.base());
     }
 
+    /*! Use tag dispatching to avoid compilation errors in case the functor
+     * is not defined
+     */
+    Comparison_result operator() (const Point_2 & pt,
+                                  const X_monotone_curve_2& xcv, Arr_curve_end ce) const
+    {
+      return m_base->compare_x_on_boundary_2_object()(pt.base(), xcv.base(), ce);
+    }
+
+    /*! Use tag dispatching to avoid compilation errors in case the functor
+     * is not defined
+     */
+    Comparison_result operator() (const X_monotone_curve_2& xcv1, Arr_curve_end ce1,
+                                  const X_monotone_curve_2& xcv2, Arr_curve_end ce2) const
+    {
+      return m_base->compare_x_on_boundary_2_object()(xcv1.base(), ce1, xcv2.base(), ce2);
+    }
+
   };
 
   /*! Obtain a Compare_x_on_boundary_2 object

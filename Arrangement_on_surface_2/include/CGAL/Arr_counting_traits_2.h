@@ -76,7 +76,9 @@ public:
     COMPARE_X_AT_LIMIT_POINT_CURVE_END_OP,
     COMPARE_X_AT_LIMIT_CURVE_ENDS_OP,
     COMPARE_X_NEAR_LIMIT_OP,
-    COMPARE_X_ON_BOUNDARY_OP,
+    COMPARE_X_ON_BOUNDARY_POINTS_OP,
+    COMPARE_X_ON_BOUNDARY_POINT_CURVE_END_OP,
+    COMPARE_X_ON_BOUNDARY_CURVE_ENDS_OP,
     COMPARE_X_NEAR_BOUNDARY_OP,
     
     NUMBER_OF_OPERATIONS
@@ -204,8 +206,14 @@ public:
   unsigned int count_compare_x_near_limit() const
   { return m_counters[COMPARE_X_NEAR_LIMIT_OP]; }
 
-  unsigned int count_compare_x_on_boundary() const
-  { return m_counters[COMPARE_X_ON_BOUNDARY_OP]; }
+  unsigned int count_compare_x_on_boundary_points() const
+  { return m_counters[COMPARE_X_ON_BOUNDARY_POINTS_OP]; }
+
+  unsigned int count_compare_x_on_boundary_point_curve_end() const
+  { return m_counters[COMPARE_X_ON_BOUNDARY_POINT_CURVE_END_OP]; }
+
+  unsigned int count_compare_x_on_boundary_curve_ends() const
+  { return m_counters[COMPARE_X_ON_BOUNDARY_CURVE_ENDS_OP]; }
 
   unsigned int count_compare_x_near_boundary() const
   { return m_counters[COMPARE_X_NEAR_BOUNDARY_OP]; }
@@ -756,19 +764,35 @@ public:
   class Compare_x_on_boundary_2 {
   private:
     typename Base::Compare_x_on_boundary_2 m_object;
-    unsigned int & m_counter;
+    unsigned int & m_counter1;
+    unsigned int & m_counter2;
+    unsigned int & m_counter3;
 
   public:
     /*! Construct */
-    Compare_x_on_boundary_2(const Base * base, unsigned int & counter) :
+  Compare_x_on_boundary_2(const Base * base, 
+                          unsigned int & counter1, unsigned int & counter2, unsigned int & counter3 ) :
       m_object(base->compare_x_on_boundary_2_object()),
-      m_counter(counter)
+      m_counter1(counter1),
+      m_counter2(counter2),
+      m_counter3(counter3),
     {}
 
     /*! Operate */
     Comparison_result operator()(const Point_2 & p1,
                                  const Point_2 & p2) const
-    { ++m_counter; return m_object(p1, p2); }
+    { ++m_counter1; return m_object(p1, p2); }
+
+    /*! Operate */
+    Comparison_result operator()(const Point_2 & pt,
+                                 const X_monotone_curve_2 & xcv, Arr_curve_end ce) const
+    { ++m_counter2; return m_object(pt, xcv, ce); }
+
+    /*! Operate */
+    Comparison_result operator()(const X_monotone_curve_2 & xcv1, Arr_curve_end ce1,
+                                 const X_monotone_curve_2 & xcv2, Arr_curve_end ce2) const
+    { ++m_counter3; return m_object(xcv1, ce1, xcv2, ce2); }
+
   };
 
   /*! A functor that compares the x-coordinates of curve ends near the
@@ -903,8 +927,11 @@ public:
   { return Compare_x_near_limit_2(this, m_counters[COMPARE_X_NEAR_LIMIT_OP]); }
 
   Compare_x_on_boundary_2 compare_x_on_boundary_2_object() const
-  { return Compare_x_on_boundary_2(this, m_counters[COMPARE_X_ON_BOUNDARY_OP]); }
-  
+  { return Compare_x_on_boundary_2(this, 
+                                   m_counters[COMPARE_X_ON_BOUNDARY_POINTS_OP],
+                                   m_counters[COMPARE_X_ON_BOUNDARY_POINT_CURVE_END_OP],
+                                   m_counters[COMPARE_X_ON_BOUNDARY_CURVE_ENDS_OP]); }
+ 
   Compare_x_near_boundary_2 compare_x_near_boundary_2_object() const
   { return Compare_x_near_boundary_2(this, m_counters[COMPARE_X_NEAR_BOUNDARY_OP]); }
 
@@ -1006,8 +1033,12 @@ Out_stream & operator<<(Out_stream & os,
      << traits.count_compare_x_at_limit_curve_ends() << std::endl
      << "# of COMPARE_X_NEAR_LIMIT operation = "
      << traits.count_compare_x_near_limit() << std::endl
-     << "# of COMPARE_X_ON_BOUNDARY operation = "
-     << traits.count_compare_x_on_boundary() << std::endl
+     << "# of COMPARE_X_ON_BOUNDARY points operation = "
+     << traits.count_compare_x_on_boundary_points() << std::endl
+     << "# of COMPARE_X_ON_BOUNDARY point/curve-end operation = "
+     << traits.count_compare_x_on_boundary_point_curve_end() << std::endl
+     << "# of COMPARE_X_ON_BOUNDARY curve-ends operation = "
+     << traits.count_compare_x_on_boundary_curve_ends() << std::endl
      << "# of COMPARE_X_NEAR_BOUNDARY operation = "
      << traits.count_compare_x_near_boundary() << std::endl
 
