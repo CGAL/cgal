@@ -59,6 +59,20 @@ namespace CGAL
 	{
 	typedef CGAL::cpp0x::tuple<typename Convert_void<Items>::type... > type;
 	};
+    
+        template<typename T1, typename ... T>
+	struct My_length<CGAL::cpp0x::tuple<T1, T...> >
+	{
+	  static const int value = My_length<CGAL::cpp0x::tuple<T...> >::value + 1;
+	};
+    
+        template<>
+	struct My_length<CGAL::cpp0x::tuple<> >
+	{
+	  static const int value = 0;
+	};
+    
+
 #else //CGAL_CFG_NO_CPP0X_VARIADIC_TEMPLATES
 	template <class T1>
 	struct Convert_tuple_with_void;
@@ -150,6 +164,61 @@ namespace CGAL
 			     typename Convert_void<T7>::type,
 			     typename Convert_void<T8>::type,
 			     typename Convert_void<T9>::type> type;
+	};
+	template <class T>
+	struct My_length;
+
+	template <>
+	struct My_length<CGAL::cpp0x::tuple<> >
+	{
+	  static const int value = 0;
+	};
+	template <class T1>
+	struct My_length<CGAL::cpp0x::tuple<T1> >
+	{
+	  static const int value = 1;
+	};
+	template <class T1, class T2>
+	struct My_length<CGAL::cpp0x::tuple<T1,T2> >
+	{
+	  static const int value = 2;
+	};
+	template <class T1, class T2, class T3>
+	struct My_length<CGAL::cpp0x::tuple<T1,T2,T3> >
+	{
+	  static const int value = 3;
+	};
+	template <class T1, class T2, class T3, class T4>
+	struct My_length<CGAL::cpp0x::tuple<T1,T2,T3,T4> >
+	{
+	  static const int value = 4;
+	};
+	template <class T1, class T2, class T3, class T4, class T5>
+	struct My_length<CGAL::cpp0x::tuple<T1,T2,T3,T4, T5> >
+	{
+	  static const int value = 5;
+	};
+	template <class T1, class T2, class T3, class T4, class T5, class T6>
+	struct My_length<CGAL::cpp0x::tuple<T1,T2,T3,T4,T5,T6> >
+	{
+	  static const int value = 6;
+	};
+	template <class T1, class T2, class T3, class T4, class T5, class T6, class T7>
+	struct My_length<CGAL::cpp0x::tuple<T1,T2,T3,T4,T5,T6,T7> >
+	{
+	  static const int value = 7;
+	};
+	template <class T1, class T2, class T3, class T4, class T5, class T6, class T7,
+			  class T8>
+	struct My_length<CGAL::cpp0x::tuple<T1,T2,T3,T4,T5,T6,T7,T8> >
+	{
+	  static const int value = 8;
+	};
+	template <class T1, class T2, class T3, class T4, class T5, class T6, class T7,
+			  class T8, class T9>
+	struct My_length<CGAL::cpp0x::tuple<T1,T2,T3,T4,T5,T6,T7,T8,T9> >
+	{
+	  static const int value = 9;
 	};
 #endif //CGAL_CFG_NO_CPP0X_VARIADIC_TEMPLATES
     
@@ -268,7 +337,7 @@ struct Number_of_different_type_in_tuple<Type,CGAL::cpp0x::tuple<T1,T2,T3,T4,T5,
 //count the number of time a given type have been found
 //within a tuple, until reaching position the k'th type of the tuple.
 //dim is the total size of the tuple
-template <class Type,int k,class T,int dim=CGAL::cpp0x::tuple_size<T>::value-1>
+template <class Type,int k,class T,int dim=CGAL::internal::My_length<T>::value-1>
 struct Nb_type_in_tuple_up_to_k;
 
 template <class Type,int dim,int k,class T1,class ... T>
@@ -294,7 +363,7 @@ struct Nb_type_in_tuple_up_to_k<Type,k,CGAL::cpp0x::tuple<T1>,dim >{
 //within a tuple, until reaching position the k'th type of the tuple.
 //dim is the total size of the tuple
 #ifndef CGAL_CFG_NO_CPP0X_VARIADIC_TEMPLATES
-template <class Type, int k,class T,int dim=CGAL::cpp0x::tuple_size<T>::value-1>
+template <class Type, int k,class T,int dim=CGAL::internal::My_length<T>::value-1>
 struct Nb_type_different_in_tuple_up_to_k;
 
 template <class Type,int dim,int k,class T1,class ... T>
@@ -317,7 +386,7 @@ struct Nb_type_different_in_tuple_up_to_k<Type,k,CGAL::cpp0x::tuple<T1>,dim >{
   static const int value= pos==k? boost::is_same<T1,Type>::value?-dim-1:0 : 0;
 };
 #else
-template <class Type, int k,class T,int dim=CGAL::cpp0x::tuple_size<T>::value-1>
+template <class Type, int k,class T,int dim=CGAL::internal::My_length<T>::value-1>
 struct Nb_type_different_in_tuple_up_to_k;
 
 template <class Type,int dim,int k,class T1>
@@ -501,7 +570,7 @@ struct Tuple_converter<Functor,CGAL::cpp0x::tuple<T1,T2,T3,T4,T5,T6,T7,T8,T9> >{
 #endif //CGAL_CFG_NO_CPP0X_VARIADIC_TEMPLATES
 
 //Apply a functor to each element of a tuple
-template<class Functor,class Tuple,int pos=CGAL::cpp0x::tuple_size<Tuple>::value-1>
+template<class Functor,class Tuple,int pos=CGAL::internal::My_length<Tuple>::value-1>
 struct Apply_functor_to_each_tuple_element
 {
   static void run(Tuple& t){
@@ -535,7 +604,7 @@ struct Clear_all
 #ifndef CGAL_CFG_NO_CPP0X_VARIADIC_TEMPLATES
 //if the number of elements in T is lower than size,
 //append void
-template <int size,class Tuple,int remaining = size - CGAL::cpp0x::tuple_size<Tuple>::value>
+template <int size,class Tuple,int remaining = size - CGAL::internal::My_length<Tuple>::value>
 struct Fill_tag_false;
 
 template <int size, class ... T,int remaining>
@@ -555,7 +624,7 @@ struct Fill_tag_false<size,CGAL::cpp0x::tuple<T...>,0 >
 //append Type
 #ifndef CGAL_CFG_NO_CPP0X_VARIADIC_TEMPLATES
 template <class Type,int size, class Tuple, 
-	  int remaining = size - CGAL::cpp0x::tuple_size<Tuple>::value>
+	  int remaining = size - CGAL::internal::My_length<Tuple>::value>
 struct Fill_type;
 
 template <class Type, int size, class ... T, int remaining>
@@ -1413,6 +1482,7 @@ struct Combinatorial_map_helper
 
   // All the attributes (with CGAL::Disabled)
   typedef typename internal::Convert_tuple_with_void<typename CMap::Attributes>::type Attributes;
+  // typedef typename CMap::Attributes Attributes;
 
   // Enabled attributes (without CGAL::Disabled)
   typedef typename Keep_type_different_of<Disabled,
@@ -1421,7 +1491,7 @@ struct Combinatorial_map_helper
   // Number of all attributes
   /*  Does not compile on windows !!
       static const unsigned int number_of_attributes = 
-      CGAL::cpp0x::tuple_size<Attributes>::value; */
+      CGAL::internal::My_length<Attributes>::value; */
 
   // Number of enabled attributes
   static const unsigned int nb_attribs = 
@@ -1447,7 +1517,7 @@ struct Combinatorial_map_helper
   typedef Attribute_const_iterators Attribute_const_handles;
 
   //Helper class allowing to retrieve the type of the attribute of dimension d
-  template<int d, int in_tuple=(d<CGAL::cpp0x::tuple_size<Attributes>::value)>
+  template<int d, int in_tuple=(d<CGAL::internal::My_length<Attributes>::value)>
   struct Attribute_type
   { typedef typename CGAL::cpp0x::tuple_element<d,Attributes>::type type; };
 
