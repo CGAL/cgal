@@ -29,4 +29,7 @@
 ./data/triangles/grid_inter_tri_const_envelope_40.cin
 ./data/triangles/random_50_small_0.5.in
 ./data/triangles/random_50_small_1.in
+./data/triangles/edge_bug.cin
+./data/triangles/edge_bug_all.cin
+
 

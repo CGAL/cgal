@@ -18,7 +18,7 @@ if(GMP_FOUND)
 
   # Find CORE include folder
   find_path(CGAL_CORE_INCLUDE_DIR NAMES CORE.h 
-            PATHS ${CMAKE_SOURCE_DIR}/include/CGAL/CORE
+            PATHS ${CGAL_CORE_PACKAGE_DIR}/include/CGAL/CORE
             DOC "The directory containing the CORE include files shipped with CGAL"
            )
 

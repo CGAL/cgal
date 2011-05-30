@@ -189,7 +189,7 @@ class Ugcd:public Primes{
             return dG;
         };
 
-}; // class Primes
+}; // class Ugcd
 
 } // namespace RS_MGCD
 } // namespace CGAL

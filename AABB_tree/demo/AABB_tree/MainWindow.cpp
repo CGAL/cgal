@@ -402,8 +402,10 @@ void MainWindow::on_actionRefine_loop_triggered()
 
 void MainWindow::on_actionSave_snapshot_triggered()
 {
+	// save snapshot to file
 	QApplication::setOverrideCursor(Qt::WaitCursor);
-  m_pViewer->saveSnapshot(QString("snapshot.png"));
+  QString filename = QFileDialog::getSaveFileName(this,tr("Save snapshot to file..."),"snapshot00.png","*.png");
+  m_pViewer->saveSnapshot(filename);
 	QApplication::restoreOverrideCursor();
 }
 void MainWindow::on_actionCopy_snapshot_triggered()

@@ -1,5 +1,6 @@
 abru = Antoine Bru <Antoine.Bru@sophia.inria.fr>
 afabri = Andreas Fabri <Andreas.Fabri@geometryfactory.com>
+andreasfabri = Andreas Fabri <Andreas.Fabri@geometryfactory.com>
 akobel = Alexander Kobel <akobel@mpi-inf.mpg.de>
 amebarki = Abdelkrim Mebarki <Abdelkrim.Mebarki@sophia.inria.fr>
 ameyer = Andreas Meyer <Andreas.Meyer@sophia.inria.fr>

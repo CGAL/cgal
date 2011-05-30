@@ -377,7 +377,7 @@ public:
   }
   
   /// Returns past-the-end iterator on facet of the 1D complex
-  Edges_in_complex_iterator edges_in_complex_end() const
+  Edges_in_complex_iterator edges_in_complex_end(const Curve_segment_index& = Curve_segment_index()) const
   {
     return CGAL::filter_iterator(this->triangulation().finite_edges_end(),
                                  Edge_iterator_not_in_complex(*this));

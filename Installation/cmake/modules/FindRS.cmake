@@ -1,6 +1,7 @@
 # RS needs GMP 4.2 or newer, this script will fail if an old version is
 # detected
 
+find_package( GMP )
 find_package( MPFI )
 
 if( MPFI_FOUND )
@@ -31,6 +32,10 @@ if( MPFI_FOUND )
                PATHS ENV RS_LIB_DIR
                DOC "Path to the RS3 library"
               )
+
+  if ( NOT CGAL_GMP_VERSION ) 
+    set ( CGAL_GMP_VERSION ${GMP_VERSION} )
+  endif()
 
   IS_VERSION_LESS("${CGAL_GMP_VERSION}" "4.2.0" _IS_GMP_VERSION_TO_LOW)
 

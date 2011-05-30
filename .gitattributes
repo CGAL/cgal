@@ -159,22 +159,25 @@ Algebraic_kernel_d/include/CGAL/RS/compare_1.h -text
 Algebraic_kernel_d/include/CGAL/RS/crt.h -text
 Algebraic_kernel_d/include/CGAL/RS/dyadic.h -text
 Algebraic_kernel_d/include/CGAL/RS/inverse.h -text
+Algebraic_kernel_d/include/CGAL/RS/isolator_1.h -text
+Algebraic_kernel_d/include/CGAL/RS/isole_1.h -text
 Algebraic_kernel_d/include/CGAL/RS/memory.h -text
 Algebraic_kernel_d/include/CGAL/RS/p.h -text
 Algebraic_kernel_d/include/CGAL/RS/pagealloc.h -text
 Algebraic_kernel_d/include/CGAL/RS/polynomial_1_constructors.h -text
 Algebraic_kernel_d/include/CGAL/RS/polynomial_1_eval.h -text
+Algebraic_kernel_d/include/CGAL/RS/polynomial_1_functors.h -text
 Algebraic_kernel_d/include/CGAL/RS/polynomial_1_io.h -text
 Algebraic_kernel_d/include/CGAL/RS/polynomial_1_member.h -text
 Algebraic_kernel_d/include/CGAL/RS/polynomial_1_operators.h -text
 Algebraic_kernel_d/include/CGAL/RS/polynomial_1_parser.h -text
 Algebraic_kernel_d/include/CGAL/RS/polynomial_1_utils.h -text
 Algebraic_kernel_d/include/CGAL/RS/polynomial_converter.h -text
-Algebraic_kernel_d/include/CGAL/RS/polynomial_functors.h -text
 Algebraic_kernel_d/include/CGAL/RS/pp.h -text
 Algebraic_kernel_d/include/CGAL/RS/primes.h -text
 Algebraic_kernel_d/include/CGAL/RS/refine_1.h -text
 Algebraic_kernel_d/include/CGAL/RS/refine_1_rs.h -text
+Algebraic_kernel_d/include/CGAL/RS/rs_calls_1.h -text
 Algebraic_kernel_d/include/CGAL/RS/sign_1.h -text
 Algebraic_kernel_d/include/CGAL/RS/sign_1_no_rs.h -text
 Algebraic_kernel_d/include/CGAL/RS/sign_1_rs.h -text
@@ -202,6 +205,7 @@ Algebraic_kernel_d/test/Algebraic_kernel_d/include/CGAL/_test_algebraic_kernel_2
 Algebraic_kernel_d/test/Algebraic_kernel_d/include/CGAL/_test_bitstream_descartes.h -text
 Algebraic_kernel_d/test/Algebraic_kernel_d/include/CGAL/_test_real_comparable.h -text
 Algebraic_kernel_d/test/Algebraic_kernel_d/include/CGAL/_test_real_root_isolator.h -text
+Algebraic_kernel_d/test/Algebraic_kernel_d/rs_isolator.cpp -text
 Alpha_shapes_2/demo/Alpha_shapes_2/data/m30f.jpg -text svneol=unset#image/jpeg
 Alpha_shapes_2/demo/Alpha_shapes_2/qt3/help/index.html svneol=native#text/html
 Alpha_shapes_2/doc_tex/Alpha_shapes_2/alpha-detail.png -text
@@ -265,8 +269,6 @@ Approximate_min_ellipsoid_d/documentation/boundingbox.mw -text svneol=native#app
 Arithmetic_kernel/include/CGAL/CORE_arithmetic_kernel.h -text
 Arithmetic_kernel/include/CGAL/GMP_arithmetic_kernel.h -text
 Arithmetic_kernel/include/CGAL/LEDA_arithmetic_kernel.h -text
-Arithmetic_kernel/include/CGAL/OLD/GMP/Gmpfr_interval_type.h -text
-Arithmetic_kernel/include/CGAL/OLD/Gmpfr_interval.h -text
 Arithmetic_kernel/package_info/Arithmetic_kernel/description.txt -text
 Arithmetic_kernel/package_info/Arithmetic_kernel/maintainer -text
 Arithmetic_kernel/test/Arithmetic_kernel/Arithmetic_kernel.cpp -text
@@ -1228,7 +1230,7 @@ CGAL_ipelets/include/CGAL/CGAL_Ipelet_base_v6.h -text
 CGAL_ipelets/include/CGAL/CGAL_Ipelet_base_v7.h -text
 CGAL_ipelets/include/CGAL/grabbers.h -text
 CGAL_ipelets/package_info/CGAL_ipelets/maintainer -text
-CGALimageIO/src/CGALimageIO/CMakeLists.txt -text
+CGALimageIO/src/CGALImageIO/CMakeLists.txt -text
 Circular_kernel_2/benchmark/parser/Report.pdf -text svneol=unset#application/pdf
 Circular_kernel_2/benchmark/readme.doc -text svneol=unset#application/msword
 Circular_kernel_2/benchmark/readme.pdf -text svneol=unset#application/pdf
@@ -1295,7 +1297,6 @@ Convex_hull_2/doc_tex/Convex_hull_2/saarhull.png -text svneol=unset#image/png
 Convex_hull_3/demo/Convex_hull_3/CMakeLists.txt -text
 Convex_hull_3/doc_tex/Convex_hull_3/bunny.png -text
 Convex_hull_3/doc_tex/Convex_hull_3/bunny.wrl.gz -text
-Core/src/CGALCore/all_files.cpp -text
 Developers_manual/doc_tex/Developers_manual/fig/Cartesian_ipoint.gif -text svneol=unset#image/gif
 Developers_manual/doc_tex/Developers_manual/fig/Cartesian_orientation.png -text svneol=unset#image/png
 Developers_manual/doc_tex/Developers_manual/fig/Object.gif -text svneol=unset#image/gif
@@ -1378,6 +1379,8 @@ Envelope_3/test/Envelope_3/data/spheres/stest6.cin -text
 Envelope_3/test/Envelope_3/data/spheres/stest7.cin -text
 Envelope_3/test/Envelope_3/data/spheres/stest8.cin -text
 Envelope_3/test/Envelope_3/data/spheres/stest9.cin -text
+Envelope_3/test/Envelope_3/data/triangles/edge_bug.cin -text
+Envelope_3/test/Envelope_3/data/triangles/edge_bug_all.cin -text
 Envelope_3/test/Envelope_3/data/triangles/grid_inter_tri_const_envelope.cin -text
 Envelope_3/test/Envelope_3/data/triangles/grid_inter_tri_const_envelope_40.cin -text
 Envelope_3/test/Envelope_3/data/triangles/grid_intersecting_triangles.cin -text
@@ -1541,6 +1544,7 @@ GraphicsView/doc_tex/GraphicsView/full.png -text
 GraphicsView/doc_tex/GraphicsView/uml-design.graphml -text
 GraphicsView/doc_tex/GraphicsView/uml-design.pdf -text
 GraphicsView/doc_tex/GraphicsView/uml-design.png -text
+GraphicsView/src/CGALQt4/GraphicsView.qtmoc.cmake -text
 HalfedgeDS/doc_tex/HalfedgeDS/fig/halfedge.gif -text svneol=unset#image/gif
 HalfedgeDS/doc_tex/HalfedgeDS/fig/halfedge.pdf -text svneol=unset#application/pdf
 HalfedgeDS/doc_tex/HalfedgeDS/fig/halfedge_small.gif -text svneol=unset#image/gif
@@ -1563,6 +1567,7 @@ HalfedgeDS/examples/HalfedgeDS/hds_prog_default_with_ccb.cpp -text
 HalfedgeDS/examples/HalfedgeDS/hds_prog_graph_with_ccb.cpp -text
 Installation/INSTALL -text
 Installation/LICENSE.FREE_USE -text
+Installation/VERSION -text
 Installation/auxiliary/cgal_create_cmake_script.1 -text
 Installation/cgal.css svneol=native#text/css
 Installation/changes.html svneol=native#text/html
@@ -1586,10 +1591,14 @@ Installation/cmake/modules/CGAL_SetupFlags.cmake -text
 Installation/cmake/modules/CGAL_SetupGMP.cmake -text
 Installation/cmake/modules/CGAL_SetupGMPXX.cmake -text
 Installation/cmake/modules/CGAL_SetupLEDA.cmake -text
+Installation/cmake/modules/CGAL_SetupMPFI.cmake -text
+Installation/cmake/modules/CGAL_SetupNTL.cmake -text
+Installation/cmake/modules/CGAL_SetupRS.cmake -text
 Installation/cmake/modules/CGAL_UseBLAS.cmake -text
 Installation/cmake/modules/CGAL_UseLAPACK.cmake -text
 Installation/cmake/modules/CGAL_UseMKL.cmake -text
 Installation/cmake/modules/CGAL_UseMPFI.cmake -text
+Installation/cmake/modules/CGAL_UseNTL.cmake -text
 Installation/cmake/modules/CGAL_UseRS.cmake -text
 Installation/cmake/modules/CGAL_UseTAUCS.cmake -text
 Installation/cmake/modules/CGAL_VersionUtils.cmake -text
@@ -1608,6 +1617,7 @@ Installation/cmake/modules/FindLEDA.cmake -text
 Installation/cmake/modules/FindMKL.cmake -text
 Installation/cmake/modules/FindMPFI.cmake -text
 Installation/cmake/modules/FindMPFR.cmake -text
+Installation/cmake/modules/FindNTL.cmake -text
 Installation/cmake/modules/FindOpenGL.cmake -text
 Installation/cmake/modules/FindPackageMessage.cmake -text
 Installation/cmake/modules/FindQGLViewer.cmake -text
@@ -1628,10 +1638,10 @@ Installation/config/support/print_TAUCS_version.cpp -text
 Installation/config/support/print_ZLIB_version.cpp -text
 Installation/config/support/test_BOOST_THREAD.cpp -text
 Installation/config/testfiles/CGAL_CFG_NO_CPP0X_ISFINITE.cpp -text
+Installation/config/version.h.in -text
 Installation/doc_tex/Installation/cmakelogo.png -text svneol=unset#image/png
 Installation/doc_tex/Installation/illustration.png -text
 Installation/html2textrc -text
-Installation/src/CGAL/all_files.cpp -text
 Installation/src/CMakeLists.txt -text
 Installation/test/Installation/CMakeLists.txt -text
 Installation/test/Installation/link_to_CGAL.cpp -text
@@ -1767,7 +1777,8 @@ Kinetic_data_structures/include/CGAL/Kinetic/Inexact_simulation_traits.h -text
 Kinetic_data_structures/include/CGAL/Kinetic/Regular_triangulation_CORE_exact_simulation_traits.h -text
 Kinetic_data_structures/include/CGAL/Kinetic/listeners.h -text
 Kinetic_data_structures/include/CGAL/Tools/utility_macros.h -text
-Kinetic_data_structures/src/CGALQt/Kinetic_print.xpm -text
+Kinetic_data_structures/src/CGALQt3/Kinetic_data_structures.qtmoc.cmake -text
+Kinetic_data_structures/src/CGALQt3/Kinetic_print.xpm -text
 Kinetic_data_structures/test/Kinetic_data_structures/data/points_3.n=10,d=1,n -text
 Kinetic_data_structures/test/Kinetic_data_structures/data/points_3.n=10,d=3 -text
 Kinetic_data_structures/test/Kinetic_data_structures/data/points_3.n=10,d=3,n -text
@@ -1796,20 +1807,8 @@ Maintenance/MacOSX_Installer/Resources/postupgrade -text
 Maintenance/Third_party/GMP/create_mangled_versions.bat eol=crlf
 Maintenance/Third_party/GMP/gmp-4.2.4.patch.gz -text svneol=unset#application/gzip
 Maintenance/Third_party/GMP/mpfr-2.3.2.patch.gz -text svneol=unset#application/gzip
-Maintenance/deb/lenny/debian/README.Debian -text
-Maintenance/deb/lenny/debian/README.source -text
-Maintenance/deb/lenny/debian/changelog -text
-Maintenance/deb/lenny/debian/compat -text
-Maintenance/deb/lenny/debian/control -text
-Maintenance/deb/lenny/debian/copyright -text
-Maintenance/deb/lenny/debian/libcgal-demo.install -text
-Maintenance/deb/lenny/debian/libcgal-dev.install -text
-Maintenance/deb/lenny/debian/libcgal5-ipelets.install -text
-Maintenance/deb/lenny/debian/libcgal5.install -text
-Maintenance/deb/lenny/debian/libcgal5.shlibs -text
-Maintenance/deb/lenny/debian/patches/00list -text
-Maintenance/deb/lenny/debian/rules -text
-Maintenance/deb/lenny/debian/watch -text
+Maintenance/deb/ANNOUNCEMENT.beta -text
+Maintenance/deb/ANNOUNCEMENT.final -text
 Maintenance/deb/sid/debian/README.Debian -text
 Maintenance/deb/sid/debian/README.source -text
 Maintenance/deb/sid/debian/changelog -text
@@ -1817,9 +1816,9 @@ Maintenance/deb/sid/debian/compat -text
 Maintenance/deb/sid/debian/control -text
 Maintenance/deb/sid/debian/libcgal-demo.install -text
 Maintenance/deb/sid/debian/libcgal-dev.install -text
-Maintenance/deb/sid/debian/libcgal5-ipelets.install -text
-Maintenance/deb/sid/debian/libcgal5.install -text
-Maintenance/deb/sid/debian/libcgal5.shlibs -text
+Maintenance/deb/sid/debian/libcgal-ipelets.install -text
+Maintenance/deb/sid/debian/libcgal7.install -text
+Maintenance/deb/sid/debian/libcgal7.shlibs -text
 Maintenance/deb/sid/debian/patches/00list -text
 Maintenance/deb/sid/debian/rules -text
 Maintenance/deb/sid/debian/watch -text
@@ -1830,12 +1829,25 @@ Maintenance/deb/squeeze/debian/compat -text
 Maintenance/deb/squeeze/debian/control -text
 Maintenance/deb/squeeze/debian/libcgal-demo.install -text
 Maintenance/deb/squeeze/debian/libcgal-dev.install -text
-Maintenance/deb/squeeze/debian/libcgal5-ipelets.install -text
-Maintenance/deb/squeeze/debian/libcgal5.install -text
-Maintenance/deb/squeeze/debian/libcgal5.shlibs -text
+Maintenance/deb/squeeze/debian/libcgal-ipelets.install -text
+Maintenance/deb/squeeze/debian/libcgal7.install -text
+Maintenance/deb/squeeze/debian/libcgal7.shlibs -text
 Maintenance/deb/squeeze/debian/patches/00list -text
 Maintenance/deb/squeeze/debian/rules -text
 Maintenance/deb/squeeze/debian/watch -text
+Maintenance/deb/wheezy/debian/README.Debian -text
+Maintenance/deb/wheezy/debian/README.source -text
+Maintenance/deb/wheezy/debian/changelog -text
+Maintenance/deb/wheezy/debian/compat -text
+Maintenance/deb/wheezy/debian/control -text
+Maintenance/deb/wheezy/debian/libcgal-demo.install -text
+Maintenance/deb/wheezy/debian/libcgal-dev.install -text
+Maintenance/deb/wheezy/debian/libcgal-ipelets.install -text
+Maintenance/deb/wheezy/debian/libcgal7.install -text
+Maintenance/deb/wheezy/debian/libcgal7.shlibs -text
+Maintenance/deb/wheezy/debian/patches/00list -text
+Maintenance/deb/wheezy/debian/rules -text
+Maintenance/deb/wheezy/debian/watch -text
 Maintenance/infrastructure/cgal.geometryfactory.com/.autocgal_with_cmake_rc -text
 Maintenance/infrastructure/cgal.geometryfactory.com/.autocgalrc -text
 Maintenance/infrastructure/cgal.geometryfactory.com/.cgal_create_new_release_rc -text
@@ -1866,18 +1878,18 @@ Maintenance/infrastructure/delaunay.geometryfactory.com/reference-platforms/i686
 Maintenance/infrastructure/delaunay.geometryfactory.com/reference-platforms/x64_Cygwin-Vista_MSVS2010-64bits/setup -text
 Maintenance/infrastructure/matisse.geometryfactory.com/.autocgalrc -text
 Maintenance/infrastructure/matisse.geometryfactory.com/reference-platforms/setup-common -text
-Maintenance/infrastructure/matisse.geometryfactory.com/reference-platforms/x86-64_Linux-2.6_IntelCompiler-11.0-with-g++-4.4.0_F13/setup -text
-Maintenance/infrastructure/matisse.geometryfactory.com/reference-platforms/x86-64_Linux-2.6_IntelCompiler-11.1-with-g++-4.4.1_F13-strict-ansi/setup -text
-Maintenance/infrastructure/matisse.geometryfactory.com/reference-platforms/x86-64_Linux-2.6_IntelCompiler-11.1-with-g++-4.4.1_F13/setup -text
-Maintenance/infrastructure/matisse.geometryfactory.com/reference-platforms/x86-64_Linux-2.6_g++-4.4.0_Release-F13/setup -text
-Maintenance/infrastructure/matisse.geometryfactory.com/reference-platforms/x86-64_Linux-2.6_g++-4.4.1_F13-ansi/setup -text
-Maintenance/infrastructure/matisse.geometryfactory.com/reference-platforms/x86-64_Linux-2.6_g++-4.4.4_F13-MATCHING-BUG-6/setup -text
-Maintenance/infrastructure/matisse.geometryfactory.com/reference-platforms/x86-64_Linux-2.6_g++-4.4.4_F13-m32/setup -text
-Maintenance/infrastructure/matisse.geometryfactory.com/reference-platforms/x86-64_Linux-2.6_g++-4.4.4_F13/setup -text
-Maintenance/infrastructure/matisse.geometryfactory.com/reference-platforms/x86-64_Linux-2.6_g++-4.5-branch_CXX0X-F13/setup -text
-Maintenance/infrastructure/matisse.geometryfactory.com/reference-platforms/x86-64_Linux-2.6_g++-4.5-branch_Release-F13/setup -text
-Maintenance/infrastructure/matisse.geometryfactory.com/reference-platforms/x86-64_Linux-2.6_g++-trunk_CXX0X-F13/setup -text
-Maintenance/infrastructure/matisse.geometryfactory.com/reference-platforms/x86-64_Linux-2.6_llvm-clang-with-g++-4.4.1_F13/setup -text
+Maintenance/infrastructure/matisse.geometryfactory.com/reference-platforms/x86-64_Linux-2.6_IntelCompiler-11.0-with-g++-4.5.1_F14/setup -text
+Maintenance/infrastructure/matisse.geometryfactory.com/reference-platforms/x86-64_Linux-2.6_IntelCompiler-11.1-with-g++-4.5.1_F14-strict-ansi/setup -text
+Maintenance/infrastructure/matisse.geometryfactory.com/reference-platforms/x86-64_Linux-2.6_IntelCompiler-11.1-with-g++-4.5.1_F14/setup -text
+Maintenance/infrastructure/matisse.geometryfactory.com/reference-platforms/x86-64_Linux-2.6_g++-4.5-branch_CXX0X-F14/setup -text
+Maintenance/infrastructure/matisse.geometryfactory.com/reference-platforms/x86-64_Linux-2.6_g++-4.5-branch_Release-F14/setup -text
+Maintenance/infrastructure/matisse.geometryfactory.com/reference-platforms/x86-64_Linux-2.6_g++-4.5.1_F14-MATCHING-BUG-6/setup -text
+Maintenance/infrastructure/matisse.geometryfactory.com/reference-platforms/x86-64_Linux-2.6_g++-4.5.1_F14-ansi/setup -text
+Maintenance/infrastructure/matisse.geometryfactory.com/reference-platforms/x86-64_Linux-2.6_g++-4.5.1_F14-m32/setup -text
+Maintenance/infrastructure/matisse.geometryfactory.com/reference-platforms/x86-64_Linux-2.6_g++-4.5.1_F14/setup -text
+Maintenance/infrastructure/matisse.geometryfactory.com/reference-platforms/x86-64_Linux-2.6_g++-4.5.1_Release-F14/setup -text
+Maintenance/infrastructure/matisse.geometryfactory.com/reference-platforms/x86-64_Linux-2.6_g++-trunk_CXX0X-F14/setup -text
+Maintenance/infrastructure/matisse.geometryfactory.com/reference-platforms/x86-64_Linux-2.6_llvm-clang-with-g++-4.5.1_F14/setup -text
 Maintenance/infrastructure/scripts/rename_a_test_platform -text
 Maintenance/public_release/announcement/CGAL-3.2 -text
 Maintenance/public_release/announcement/CGAL-3.3 -text
@@ -1893,6 +1905,7 @@ Maintenance/public_release/announcement/CGAL-3.6-beta1 -text
 Maintenance/public_release/announcement/CGAL-3.6.1 -text
 Maintenance/public_release/announcement/CGAL-3.7 -text
 Maintenance/public_release/announcement/CGAL-3.7-beta1 -text
+Maintenance/public_release/announcement/CGAL-3.8 -text
 Maintenance/public_release/announcement/CGAL-3.8-beta -text
 Maintenance/public_release/scripts/precompiled_demos_zips -text
 Maintenance/public_release/scripts/prepare_release -text
@@ -1930,6 +1943,7 @@ Maintenance/svn_server/hooks/pre-revprop-change.tmpl -text
 Maintenance/svn_server/hooks/pre-unlock.tmpl -text
 Maintenance/svn_server/hooks/start-commit -text
 Maintenance/svn_server/hooks/start-commit.tmpl -text
+Maintenance/test_handling/candidate_branches -text
 Maintenance/test_handling/testresult.css svneol=native#text/css
 Manual/doc_html/cgal.css -text
 Manual/doc_html/cgal.ico -text
@@ -2641,6 +2655,7 @@ Nef_S2/doc_tex/Nef_S2_ref/fig/shalfedge.pdf -text svneol=unset#application/pdf
 Nef_S2/doc_tex/Nef_S2_ref/fig/shalfloopB.gif -text svneol=unset#image/gif
 Nef_S2/doc_tex/Nef_S2_ref/fig/shalfloopB.pdf -text svneol=unset#application/pdf
 Nef_S2/include/CGAL/IO/Nef_polyhedron_iostream_S2.h -text
+Nef_S2/src/CGALQt3/Nef_S2.qtmoc.cmake -text
 Number_types/doc_tex/NumberTypeSupport/illustration.png -text
 Number_types/doc_tex/NumberTypeSupport_ref/CORE_BigFloat.tex -text
 Number_types/doc_tex/NumberTypeSupport_ref/Gmpfi.tex -text
@@ -3146,7 +3161,8 @@ Qt_widget/doc_tex/Qt_widget/standard_toolbar.pdf -text svneol=unset#application/
 Qt_widget/doc_tex/Qt_widget/standard_toolbar.png -text svneol=unset#image/png
 Qt_widget/doc_tex/Qt_widget/triangulation.gif -text svneol=unset#image/gif
 Qt_widget/doc_tex/Qt_widget/triangulation.pdf -text svneol=unset#application/pdf
-Qt_widget/src/CGALQt/CMakeLists.txt -text
+Qt_widget/src/CGALQt3/CMakeLists.txt -text
+Qt_widget/src/CGALQt3/Qt_widget.qtmoc.cmake -text
 Ridges_3/doc_tex/Ridges_3/RidgesMechPartDetail.png -text
 Ridges_3/doc_tex/Ridges_3/david_crest.jpg -text
 Ridges_3/doc_tex/Ridges_3/david_crest_small.png -text svneol=unset#image/png
@@ -3175,6 +3191,7 @@ Scripts/developer_scripts/check_library_uses_no_qpl_files.exceptions -text
 Scripts/developer_scripts/check_macro_names -text
 Scripts/developer_scripts/check_no_CGAL_USE_without_includes_before -text
 Scripts/developer_scripts/check_svn_keywords -text
+Scripts/developer_scripts/clean_up_branch.sh -text
 Scripts/developer_scripts/common_impl.rb -text
 Scripts/developer_scripts/create_assertions.sh eol=lf
 Scripts/developer_scripts/create_cgal_test -text

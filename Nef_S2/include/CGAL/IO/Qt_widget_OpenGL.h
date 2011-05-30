@@ -33,7 +33,7 @@
 #include <qpopupmenu.h>
 #include <qpoint.h>
 
-#include <CGAL/auto_link/CGALQt.h>
+#include <CGAL/auto_link/CGALQt3.h>
 
 namespace CGAL {
 

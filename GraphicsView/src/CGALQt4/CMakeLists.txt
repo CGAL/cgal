@@ -1,17 +1,22 @@
 project (CGAL_Qt4)
 
-CMAKE_MINIMUM_REQUIRED(VERSION 2.4.5 FATAL_ERROR)
-   
-set(CMAKE_ALLOW_LOOSE_LOOP_CONSTRUCTS true)
-  
-if ( COMMAND cmake_policy )
-  cmake_policy( SET CMP0003 NEW )  
+# Minimal version of CMake:
+cmake_minimum_required(VERSION 2.6.2)
+
+# Tested version:
+if("${CMAKE_MAJOR_VERSION}.${CMAKE_MINOR_VERSION}" VERSION_GREATER 2.6)
+  if("${CMAKE_MAJOR_VERSION}.${CMAKE_MINOR_VERSION}.${CMAKE_PATCH_VERSION}" VERSION_GREATER 2.8.3)
+    cmake_policy(VERSION 2.8.4)
+  else()
+    cmake_policy(VERSION 2.6)
+  endif()
 endif()
 
 if ( NOT CGAL_FOUND )   
   find_package(CGAL REQUIRED)
-  include(${CGAL_USE_FILE})
 endif()
+
+include(${CGAL_USE_FILE})
 
 set( QT_USE_QTMAIN   TRUE )
 set( QT_USE_QTOPENGL TRUE )
@@ -50,25 +55,31 @@ if( QT4_FOUND )
     cache_set(CGAL_Qt4_3RD_PARTY_LIBRARIES    ${QT_LIBRARIES}   ${OPENGL_LIBRARIES}   )
     cache_set(CGAL_Qt4_3RD_PARTY_DEFINITIONS  ${QT_DEFINITIONS} ${OPENGL_DEFINITIONS} )
 
-      # moc files that are compiled directly as cpp files
-    qt4_wrap_cpp(mocfiles ../../include/CGAL/Qt/GraphicsViewNavigation.h 
-                          ../../include/CGAL/Qt/DemosMainWindow.h
-                          ../../include/CGAL/Qt/GraphicsItem.h
-                          ../../include/CGAL/Qt/GraphicsViewInput.h)
+    set(mocfiles "")
+    set(RESOURCE_FILES "")
 
-    # qrc files (resources files, that contain icons, at least)
-    qt4_add_resources ( RESOURCE_FILES ../../demo/resources/CGAL.qrc ../../demo/icons/Input.qrc ../../demo/icons/File.qrc ../../demo/icons/Triangulation_2.qrc)
-
+    foreach (package ${CGAL_CONFIGURED_PACKAGES} )
+      file(GLOB PACKAGE_QTMOC_FILES "${package}/src/CGALQt4/*.qtmoc.cmake")
+      foreach(package_qtmoc_file ${PACKAGE_QTMOC_FILES})
+         # includes 'moccing' for sources/headers in package + collects lists of moc-files for dependency (to properly build the lib)
+        include(${package_qtmoc_file}) 
+#        message(STATUS QTMOC------------FILE: ${package_qtmoc_file})      
+      endforeach()
+    endforeach()
+  
     set( CGAL_Qt4_BASENAME CGAL_Qt4 )
 
-    add_library( CGAL_Qt4 debug.cpp 
-			  GraphicsViewNavigation.cpp
-			  GraphicsViewPolylineInput.cpp
-			  DemosMainWindow.cpp
-			  utility.cpp
-                          ${mocfiles} 
-			  ${RESOURCE_FILES} )
-    
+    foreach(mocfile ${mocfiles})
+      list(APPEND additional_files ${mocfile})
+    endforeach()
+    foreach(resfile ${RESOURCE_FILES})
+      list(APPEND additional_files ${resfile})
+    endforeach()
+
+#    message(STATUS "Additional input files: ${additional_files}")
+
+    build_cgal_library( CGAL_Qt4 CGALQt4 "${additional_files}")
+
     if ( NOT CGAL_IS_CURRENT_SCRIPT_TOP_LEVEL )
       add_dependencies( CGAL_Qt4 CGAL )
     endif()    

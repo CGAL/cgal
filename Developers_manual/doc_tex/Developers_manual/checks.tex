@@ -30,10 +30,11 @@ checks (Section~\ref{sec:checks_controlling}). Finally, a statement
 about exception handling is given
 (Section~\ref{sec:exception_handling}).
 
-The default behavior of these checks is to throw exceptions for reporting
-failures.  It is also forbidden to call \ccc{std::abort}, \ccc{std::exit}
+It is forbidden to call \ccc{std::abort}, \ccc{std::exit}
 or \ccc{assert} directly from \cgal, as these do not allow the user code to
 react after the error (application processes are killed).
+Thus, the default behavior of all checks is to throw exceptions for reporting
+failures.
 
 % -----------------------------------------------------------------------------
 \section{Categories of checks\label{sec:checks_categories}}
@@ -43,10 +44,10 @@ There are four types of checks.
 %
 \begin{itemize}
 \item \textbf{Preconditions}\ccIndexMainItemDef{preconditions}
-      check if a routine has been called
-      in a proper fashion. If a precondition fails it is the
-      responsibility of the caller (usually the user of the library) to fix
-      the problem.
+      check if a routine has been called in a proper fashion and the input
+      adheres to the specifications given by the author of the function.
+      If a precondition fails, it is the responsibility of the caller
+      (usually the user of the library) to fix the problem.
 \item \textbf{Postconditions}\ccIndexMainItemDef{postconditions}
       check if a routine does what it promises
       to do.  If a postcondition fails it is the fault of this routine, so
@@ -58,7 +59,7 @@ There are four types of checks.
       are checks for which it is not so severe if they fail.
 \end{itemize}
 
-The addording macro names all have the format \ccc{CGAL_<check_type>} where
+The according macro names all have the format \ccc{CGAL_<check_type>} where
 \ccc{<check_type>} can be one of
 \begin{itemize}
  \item \ccc{precondition}
@@ -91,6 +92,7 @@ attributes:
 
 The format is one of
 \begin{itemize}
+ \item \ccc{CGAL_<check_type>}
  \item \ccc{CGAL_expensive_<check_type>}
  \item \ccc{CGAL_exactness_<check_type>}
  \item \ccc{CGAL_expensive_exactness_<check_type>}
@@ -132,7 +134,7 @@ the check fails, an error message similar to
 \end{verbatim}
 %
 is written to the standard error stream and the program is aborted. If
-an additional explanantion should be given to the user,%
+an additional explanation should be given to the user,%
 \ccIndexSubitem{checks}{adding failure message to}
 macros \ccc{CGAL_<check_type>_msg(<Cond>,<Msg>)} can be used. The text in
 \ccc{<Msg>} is just appended to the failure message given above.
