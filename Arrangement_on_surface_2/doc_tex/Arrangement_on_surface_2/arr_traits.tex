@@ -187,7 +187,7 @@ of the \ccc{ArrangementXMonotoneTraits_2} concept.
 \end{ccHtmlOnly}
 An arrangement that supports unbounded $x$-monotone curves maintains
 an implicit bounding rectangle in the \dcel{} structure; see
-Section~\ref{arr_sec:unbounded}. The unbounded ends of vertical rays, 
+Section~\ref{arr_ssec:unb_rep}. The unbounded ends of vertical rays, 
 vertical lines, and curves with vertical asymptotes are represented
 by vertices that lie on the bottom or top sides of this implicit
 rectangle. These vertices are not associated with points, but are
@@ -347,7 +347,9 @@ predicates \ccc{Compare_x_at_limit_2} and \ccc{Compare_x_near_limit_2}.
 
 In the rest of this section we review the traits classes
 included in the public distribution of \cgal, that handle line
-segments, polylines and conic arcs. The last subsection overviews
+segments, polylines, conic arcs, rational functions, and arcs of
+B\'{e}zier and algebraic curves. 
+The last subsection overviews
 decorators for geometric traits classes distributed with \cgal,
 which extend other geometric traits-class by attaching auxiliary
 data with the geometric objects.
