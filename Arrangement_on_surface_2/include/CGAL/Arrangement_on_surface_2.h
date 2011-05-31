@@ -656,10 +656,6 @@ public:
     Vertex()
     {}
 
-    /*! \deprecated Use is_at_open_boundary instead. */
-    CGAL_DEPRECATED bool is_at_infinity() const
-    { return (Base::has_null_point()); }
-
     /*! Check whether the vertex lies on an open boundary. */
     bool is_at_open_boundary () const
     {
