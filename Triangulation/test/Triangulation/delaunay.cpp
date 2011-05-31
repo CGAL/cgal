@@ -34,13 +34,13 @@ void test(const int d, const string & type, const int N)
     typedef CGAL::Random_points_in_iso_box_d<Point> Random_points_iterator;
 
     DC pc(d);
-    cerr << "\nChecking Delaunay triangulation of (" << type << d << ") dimension with " << N << " points";
+    cerr << "\nBuilding Delaunay triangulation of (" << type << d << ") dimension with " << N << " points";
     assert(pc.empty());
 
     vector<Point> points;
     CGAL::Random rng;
     Random_points_iterator rand_it(d, 2.0, rng);
-    //CGAL::copy_n(rand_it, N, std::back_inserter(points));
+    //CGAL::copy_n(rand_it, N, back_inserter(points));
     
 	vector<int> coords(d);
     for( int i = 0; i < N; ++i )
@@ -60,27 +60,38 @@ void test(const int d, const string & type, const int N)
         ++fsit, ++nbfs;
     cerr << nbfs << " + ";
     vector<Full_cell_handle> infinite_full_cells;
-    pc.incident_full_cells(pc.infinite_vertex(), std::back_inserter(infinite_full_cells));
+    pc.incident_full_cells(pc.infinite_vertex(), back_inserter(infinite_full_cells));
     nbis = infinite_full_cells.size();
     cerr << nbis << " = " << (nbis+nbfs)
     << " = " << pc.number_of_full_cells();
     cerr << "\nComplex has current dimension " << pc.current_dimension();
 
     // Count convex hull vertices:
-    typedef std::vector<Face> Faces;
-    Faces edges;
-    std::back_insert_iterator<Faces> out(edges);
-    pc.incident_upper_faces(pc.infinite_vertex(), 1, out);
-    // Count the number of points on the convex hull
-    std::cout << "\nThere are " << edges.size() << " vertices on the convex hull.";
-    edges.clear();
+    if( pc.ambient_dimension() > 1 )
+    {
+        typedef vector<Face> Faces;
+        Faces edges;
+        back_insert_iterator<Faces> out(edges);
+        pc.incident_faces(pc.infinite_vertex(), 1, out);
+        cout << "\nThere are " << edges.size() << " vertices on the convex hull.";
+        edges.clear();
+    }
+    else // pc.ambient_dimension() == 1
+    {
+        typedef vector<Full_cell_handle> Cells;
+        Cells cells;
+        back_insert_iterator<Cells> out(cells);
+        pc.incident_full_cells(pc.infinite_vertex(), out);
+        cout << "\nThere are " << cells.size() << " vertices on the convex hull.";
+        cells.clear();
+    }
 
     // Remove all !
-    std::cerr << "\nBefore removal: " << pc.number_of_vertices() << " vertices. After: ";
-    std::random_shuffle(points.begin(),  points.end());
+    cerr << "\nBefore removal: " << pc.number_of_vertices() << " vertices. After: ";
+    random_shuffle(points.begin(),  points.end());
     pc.remove(points.begin(),  points.end());
     assert( pc.is_valid() );
-    std::cerr << pc.number_of_vertices() << " vertices.";
+    cerr << pc.number_of_vertices() << " vertices.";
     // assert( pc.empty() ); NOT YET !
     // CLEAR
     pc.clear();
@@ -114,6 +125,6 @@ int main(int argc, char **argv)
      go<2>(N);
      go<1>(N);
 
-    cerr << std::endl;
+    cerr << endl;
     return 0;
 }

@@ -77,9 +77,6 @@ ________________________________________________________________TRIANGULATION
 
 *) Why vertex at infinity should have index 0 in all cells it appears ?
 
-*) seems there is a bug in test triangulation.cpp for dimension 1: there is
-zero vertices on the convex hull !! (should be 2)
-
 _______________________________________________________DELAUNAY_TRIANGULATION
 
 ________________________________________________________REGULAR_TRIANGULATION
