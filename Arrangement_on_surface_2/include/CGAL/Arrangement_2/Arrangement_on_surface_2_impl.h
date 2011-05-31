@@ -3995,7 +3995,7 @@ _is_inside_new_face (const DHalfedge *prev1,
              (x_res == LARGER)));
   }
 
-  // TODO EBEB minimal point can also be on left boundary, where we have to call compare_x_at_limit/near_limit or compare_x_on_boundary/compare_x_near_boundary respectively
+  // TODO EBEB minimal point can also be on left boundary where we have to call boundary-functors
 
   return (m_geom_traits->compare_y_at_x_right_2_object()
           (*p_cv_curr, *p_cv_next, v_min->point()) == LARGER);
