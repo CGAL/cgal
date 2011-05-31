@@ -50,6 +50,25 @@ public:
     typedef typename V_base::template Rebind_TDS<Self>::Other  Vertex; /* Concept */
     typedef typename S_base::template Rebind_TDS<Self>::Other  Full_cell; /* Concept */
 
+    // we want to store an object of this class in every Full_cell:
+    class Full_cell_data
+    {
+        unsigned char bits_;
+        public:
+        Full_cell_data() : bits_(0) {}
+        Full_cell_data(const Full_cell_data & fcd) : bits_(fcd.bits_) {}
+
+        void clear()         { bits_ = 0; }
+        void mark_visited()  { bits_ = 1; }
+        void clear_visited() { bits_ = 0; }
+
+        bool is_clear()   const { return bits_ == 0; }
+        bool is_visited() const { return bits_ == 1; }
+        // WARNING: if we use more bits and several bits can be set at once,
+        // then make sure to use bitwise operation above, instead of direct
+        // affectation.
+    };
+
 protected:
     typedef Compact_container<Vertex>   Vertex_container;
     typedef Compact_container<Full_cell>  Full_cell_container;
@@ -80,7 +99,7 @@ public:
 
     // A co-dimension 1 sub-simplex.
     typedef cpp0x::tuple<Full_cell_handle, int>         Facet; /* Concept */
-    
+
     // A co-dimension 2 sub-simplex. called a Rotor because we can rotate
     // the two "covertices" around the sub-simplex. Useful for traversing the
     // boundary of a hole. NOT DOCUMENTED
@@ -97,7 +116,7 @@ protected: // DATA MEMBERS
 private:
 
     void clean_dynamic_memory()
-    { 
+    {
         vertices_.clear();
         full_cells_.clear();
     }
@@ -201,7 +220,7 @@ public:
     {
         CGAL_precondition(v != Vertex_handle());
         return v->full_cell();
-    } 
+    }
 
     Full_cell_const_handle full_cell(const Vertex_const_handle v) const /* Concept */
     {
@@ -309,39 +328,38 @@ public:
 
 	Vertex_handle insert_increase_dimension(Vertex_handle); /* Concept */
 
+private:
+
     // NOT DOCUMENTED
     void clear_visited_marks(Full_cell_handle) const;
 
     //  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -  DANGEROUS UPDATE OPERATIONS
 
+private:
+
     // NOT DOCUMENTED
-    bool get_visited(Full_cell_handle s) const
+    template< typename FCH > // FCH = Full_cell_[const_]handle
+    bool get_visited(FCH c) const
     {
-        CGAL_precondition(s != Full_cell_handle());
-        return static_cast<bool>(s->get_flags() & (unsigned int)1);
-    }
-    bool get_visited(Full_cell_const_handle s) const
-    {
-        CGAL_precondition(s != Full_cell_const_handle());
-        return static_cast<bool>(s->get_flags() & (unsigned int)1);
+        return c->get_tds_data().is_visited();
     }
 
     // NOT DOCUMENTED
-    void set_visited(Full_cell_handle s, bool b) const
+    template< typename FCH > // FCH = Full_cell_[const_]handle
+    void set_visited(FCH c, bool m) const
     {
-        CGAL_precondition(s != Full_cell_handle());
-        unsigned int flags = s->get_flags();
-        if( b )
-            flags = (flags | (unsigned int)1);
+        if( m )
+            c->get_tds_data().mark_visited();
         else
-            flags = (flags & (~(unsigned int)1));
-        s->set_flags(flags);
+            c->get_tds_data().clear_visited();
     }
+
+public:
 
     void clear() /* Concept */
     {
         clean_dynamic_memory();
-        dcur_ = -2; 
+        dcur_ = -2;
     }
 
     void set_current_dimension(const int d) /* Concept */
@@ -351,12 +369,12 @@ public:
     }
 
     Full_cell_handle new_full_cell(const Full_cell_handle s)
-    { 
+    {
         return full_cells_.emplace(*s);
     }
 
     Full_cell_handle new_full_cell() /* Concept */
-    { 
+    {
         return full_cells_.emplace(dmax_);
     }
 
@@ -377,12 +395,12 @@ public:
 
     template< class T >
     Vertex_handle new_vertex( const T & t )
-    { 
+    {
         return vertices_.emplace(t);
     }
 
     Vertex_handle new_vertex() /* Concept */
-    { 
+    {
         return vertices_.emplace();
     }
 
@@ -512,7 +530,7 @@ public:
     OutputIterator incident_full_cells(Vertex_const_handle, OutputIterator) const; /* Concept */
     template< typename OutputIterator >
     OutputIterator star(const Face &, OutputIterator) const; /* Concept */
-#ifndef CGAL_CFG_NO_CPP0X_DEFAULT_TEMPLATE_ARGUMENTS_FOR_FUNCTION_TEMPLATES 
+#ifndef CGAL_CFG_NO_CPP0X_DEFAULT_TEMPLATE_ARGUMENTS_FOR_FUNCTION_TEMPLATES
     template< typename OutputIterator, typename Comparator = std::less<Vertex_const_handle> >
     OutputIterator incident_upper_faces(Vertex_const_handle v, const int d, OutputIterator out, Comparator cmp = Comparator())
     {
@@ -549,7 +567,7 @@ public:
 
 // FUNCTIONS THAT ARE MEMBER FUNCTIONS:
 
-// - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
+// - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 // - - - - - - - - - - - - - - - - - - - - - - - - THE GATHERING METHODS
 
 template< class Dim, class Vb, class Sb >
@@ -625,7 +643,7 @@ Triangulation_data_structure<Dim, Vb, Sb>
     return ft;
 }
 
-#ifdef CGAL_CFG_NO_CPP0X_DEFAULT_TEMPLATE_ARGUMENTS_FOR_FUNCTION_TEMPLATES 
+#ifdef CGAL_CFG_NO_CPP0X_DEFAULT_TEMPLATE_ARGUMENTS_FOR_FUNCTION_TEMPLATES
 template< class Dim, class Vb, class Sb >
 template< typename OutputIterator >
 OutputIterator
@@ -712,7 +730,7 @@ Triangulation_data_structure<Dim, Vb, Sb>
     return out;
 }
 
-// - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
+// - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 // - - - - - - - - - - - - - - - - - - - - - - - - THE REMOVAL METHODS
 
 template <class Dim, class Vb, class Sb>
@@ -806,7 +824,7 @@ Triangulation_data_structure<Dim, Vb, Sb>
     delete_vertex(v);
 }
 
-// - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
+// - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 // - - - - - - - - - - - - - - - - - - - - - - - - THE INSERTION METHODS
 
 template <class Dim, class Vb, class Sb>
@@ -960,7 +978,7 @@ Triangulation_data_structure<Dim, Vb, Sb>
 template <class Dim, class Vb, class Sb>
 void
 Triangulation_data_structure<Dim, Vb, Sb>
-::clear_visited_marks(Full_cell_handle start) const
+::clear_visited_marks(Full_cell_handle start) const // NOT DOCUMENTED
 {
     CGAL_precondition(start != Full_cell_handle());
 
@@ -1036,7 +1054,7 @@ void Triangulation_data_structure<Dim, Vb, Sb>
             for( int k = 0 ; k < cur_dim ; ++k )
             {
                 Full_cell_handle S_opp = neighbor(S, k);
-                if( ! S_opp->has_vertex(star) )   
+                if( ! S_opp->has_vertex(star) )
                     set_neighbors(S_new, k + 1, neighbor(S_opp, cur_dim), mirror_index(S, k) + 1);
                     // neighbor of S_new opposite to v is S_new'
                     // the vertex opposite to v remains the same but ...
@@ -1108,13 +1126,13 @@ Triangulation_data_structure<Dim, Vb, Sb>
     return v;
 }
 
-// - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
+// - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 // - - - - - - - - - - - - - - - - - - - - - - - - VALIDITY CHECKS
 
 template <class Dimen, class Vb, class Sb>
 bool Triangulation_data_structure<Dimen, Vb, Sb>
 ::is_valid(bool verbose, int /* level */) const /* Concept */
-{ 
+{
     Full_cell_const_handle s, t;
     Vertex_const_handle v;
     int i, j, k;
@@ -1210,7 +1228,7 @@ bool Triangulation_data_structure<Dimen, Vb, Sb>
     return true;
 }
 
-// - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
+// - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 // - - - - - - - - - - - - - - - - - - - - - - - - INPUT / OUTPUT
 
 // NOT DOCUMENTED
@@ -1392,12 +1410,12 @@ Triangulation_data_structure<Dimen, Vb, Sb>
     return os;
 }
 
-// = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = 
+// = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = =
 
 // FUNCTIONS THAT ARE NOT MEMBER FUNCTIONS:
 
 template<class Dimen, class Vb, class Sb>
-std::istream & 
+std::istream &
 operator>>(std::istream & is, Triangulation_data_structure<Dimen, Vb, Sb> & tr)
   // reads :
   // - the dimensions (ambient and current)
@@ -1450,7 +1468,7 @@ operator>>(std::istream & is, Triangulation_data_structure<Dimen, Vb, Sb> & tr)
 }
 
 template<class Dimen, class Vb, class Sb>
-std::ostream & 
+std::ostream &
 operator<<(std::ostream & os, const Triangulation_data_structure<Dimen, Vb, Sb> & tr)
   // writes :
   // - the dimensions (ambient and current)

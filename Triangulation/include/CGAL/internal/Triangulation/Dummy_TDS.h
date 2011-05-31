@@ -36,6 +36,7 @@ struct Dummy_TDS
     struct Full_cell_const_handle {};
     struct Full_cell_const_iterator {};
     struct Vertex_handle_const_iterator {};
+    struct Full_cell_data {};
 };
 
 }; // namespace Triangulation

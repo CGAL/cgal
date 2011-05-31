@@ -22,6 +22,8 @@
 #include <CGAL/Dimension.h>
 #include <CGAL/Default.h>
 
+#include <algorithm>
+
 namespace CGAL {
 
 template< typename DCTraits, typename _TDS = Default >
@@ -93,7 +95,6 @@ public:
     using Base::star;
     using Base::incident_full_cells;
     using Base::geom_traits;
-    using Base::get_visited;
     using Base::index_of_covertex;
     using Base::infinite_vertex;
     using Base::insert_in_hole;
@@ -108,12 +109,32 @@ public:
     using Base::orientation;
     using Base::tds;
     using Base::reorient_full_cells;
-    using Base::set_visited;
     using Base::full_cells_begin;
     using Base::full_cells_end;
     using Base::vertices_begin;
     using Base::vertices_end;
     // using Base::
+    
+// - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - UTILITIES
+
+    // A co-dimension 2 sub-simplex. called a Rotor because we can rotate
+    // the two "covertices" around the sub-simplex. Useful for traversing the
+    // boundary of a hole. NOT DOCUMENTED
+    typedef cpp0x::tuple<Full_cell_handle, int, int>    Rotor;
+    // NOT DOCUMENTED
+    // A Rotor has two covertices
+    int index_of_second_covertex(const Rotor & f) const
+    {
+        return cpp0x::get<2>(f);
+    }
+    // NOT DOCUMENTED...
+    Rotor rotate_rotor(Rotor & f)
+    {
+        int opposite = full_cell(f)->mirror_index(index_of_covertex(f));
+        Full_cell_handle s = full_cell(f)->neighbor(index_of_covertex(f));
+        int new_second = s->index(full_cell(f)->vertex(index_of_second_covertex(f)));
+        return Rotor(s, new_second, opposite);
+    }
     
 // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - CREATION
 
@@ -274,6 +295,27 @@ private:
             Conflict_traversal_pred_in_subspace;
     typedef Conflict_traversal_predicate<Conflict_pred_in_fullspace>
             Conflict_traversal_pred_in_fullspace;
+
+    // This is used in the |remove(v)| member function to manage sets of Full_cell_handles
+    template< typename FCH >
+    struct Full_cell_set : public std::vector<FCH>
+    {
+        typedef std::vector<FCH> Base;
+        using Base::begin;
+        using Base::end;
+        void make_searchable()
+        {   // sort the full cell handles
+            std::sort(begin(), end());
+        }
+        bool contains(const FCH & fch) const
+        {
+            return std::binary_search(begin(), end(), fch);
+        }
+        bool contains_1st_and_not_2nd(const FCH & fst, const FCH & snd) const
+        {
+            return ( ! contains(snd) ) && ( contains(fst) );
+        }
+    };
 };
 
 // = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = = 
@@ -328,7 +370,7 @@ Delaunay_triangulation<DCTraits, TDS>
 
     // THE CASE cur_dim >= 2
     // Gather the finite vertices sharing an edge with |v|
-    typedef std::vector<Full_cell_handle> Simplices;
+    typedef Full_cell_set<Full_cell_handle> Simplices;
     Simplices simps;
     std::back_insert_iterator<Simplices> out(simps);
     incident_full_cells(v, out);
@@ -346,7 +388,7 @@ Delaunay_triangulation<DCTraits, TDS>
             verts.insert(vh);
         }
 
-    // OK, create a Dark Delaunay triangulation
+    // After gathering finite neighboring vertices, create their Dark Delaunay triangulation
     typedef Triangulation_vertex<Geom_traits, Vertex_handle> Dark_vertex_base;
     typedef Triangulation_full_cell<Geom_traits,
         internal::Triangulation::Dark_full_cell_data<Self> > Dark_full_cell_base;
@@ -374,6 +416,8 @@ Delaunay_triangulation<DCTraits, TDS>
     if( dark_side.current_dimension() != current_dimension() )
     {
         CGAL_assertion( dark_side.current_dimension() + 1 == current_dimension() );
+        // Here, the finite neighbors of |v| span a affine subspace of
+        // dimension one less than the current dimension. Two cases are possible:
         if( (size_type)(verts.size() + 1) == number_of_vertices() )
         {
             remove_decrease_dimension(v);
@@ -383,17 +427,19 @@ Delaunay_triangulation<DCTraits, TDS>
         {   // |v| is strictly outside the convex hull of the rest of the points. This is an
             // easy case: first, modify the finite full_cells, then, delete the infinite ones.
             // We don't even need the Dark triangulation.
-            // First, mark the infinite full_cells
+            Simplices infinite_simps;
+            {
+                Simplices finite_simps;
+                for( typename Simplices::iterator it = simps.begin(); it != simps.end(); ++it )
+                    if( is_infinite(*it) )
+                        infinite_simps.push_back(*it);
+                    else
+                        finite_simps.push_back(*it);
+                simps.swap(finite_simps);
+            } // now, simps only contains finite simplices
+            // First, modify the finite full_cells:
             for( typename Simplices::iterator it = simps.begin(); it != simps.end(); ++it )
             {
-                if( is_infinite(*it) )
-                    set_visited(*it, true); // mark it for deletion
-            }
-            // Then, modify the finite full_cells:
-            for( typename Simplices::iterator it = simps.begin(); it != simps.end(); ++it )
-            {
-                if( get_visited(*it) )
-                        continue;
                 int v_idx = (*it)->index(v);
                 tds().associate_vertex_with_full_cell(*it, v_idx, infinite_vertex());
                 if( v_idx != 0 )
@@ -404,16 +450,17 @@ Delaunay_triangulation<DCTraits, TDS>
                     (*it)->swap_vertices(current_dimension() - 1, current_dimension());
                 }
             }
+            // Make the handles to infinite full cells searchable
+            infinite_simps.make_searchable();
             // Then, modify the neighboring relation
             for( typename Simplices::iterator it = simps.begin(); it != simps.end(); ++it )
             {
-                if( get_visited(*it) )
-                    continue;
                 for( int i = 1; i <= current_dimension(); ++i )
                 {
                     (*it)->vertex(i)->set_full_cell(*it);
                     Full_cell_handle n = (*it)->neighbor(i);
-                    if( ! get_visited(n) )
+                    // Was |n| a finite full cell prior to removing |v| ?
+                    if( ! infinite_simps.contains(n) )
                         continue;
                     int n_idx = n->index(v);
                     set_neighbors(*it, i, n->neighbor(n_idx), n->neighbor(n_idx)->index(n));
@@ -421,15 +468,10 @@ Delaunay_triangulation<DCTraits, TDS>
             }
             Full_cell_handle ret_s;
             // Then, we delete the infinite full_cells
-            for( typename Simplices::iterator it = simps.begin(); it != simps.end(); ++it )
-            {
-                if( get_visited(*it) )
-                    tds().delete_full_cell(*it);
-                else
-                    ret_s = *it;
-            }
+            for( typename Simplices::iterator it = infinite_simps.begin(); it != infinite_simps.end(); ++it )
+                tds().delete_full_cell(*it);
             tds().delete_vertex(v);
-            return ret_s;
+            return simps.front();
         }
     }
     else //  From here on, dark_side.current_dimension() == current_dimension()
@@ -452,14 +494,15 @@ Delaunay_triangulation<DCTraits, TDS>
     Dark_s_handle dark_ret_s = dark_s;
     Full_cell_handle ret_s;
 
-    typedef std::vector<Dark_s_handle> Dark_full_cells;
+    typedef Full_cell_set<Dark_s_handle> Dark_full_cells;
     Dark_full_cells conflict_zone;
     std::back_insert_iterator<Dark_full_cells> dark_out(conflict_zone);
     
     dark_ft = dark_side.compute_conflict_zone(v->point(), dark_s, dark_out);
+    // Make the dark simplices in the conflict zone searchable
+    conflict_zone.make_searchable();
 
     // THE FOLLOWING SHOULD MAYBE GO IN TDS.
-    // IF SO: make sure to remove set/get_visited from Triangulation.
     // Here is the plan:
     // 1. Pick any Facet from boundary of the light zone
     // 2. Find corresponding Facet on boundary of dark zone
@@ -485,27 +528,20 @@ Delaunay_triangulation<DCTraits, TDS>
         }
     }
 
-    for( typename Simplices::iterator it = simps.begin(); it != simps.end(); ++it )
-        set_visited(*it, true);
-    CGAL_assertion( get_visited(full_cell(light_ft)) );
-    for( typename Dark_full_cells::iterator it = conflict_zone.begin(); it != conflict_zone.end(); ++it )
-        dark_side.set_visited(*it, true);
-
-    bool dark_facet_found(false);
     for( typename Dark_full_cells::iterator it = dark_incident_s.begin(); it != dark_incident_s.end(); ++it )
     {
         if( current_dimension() != (*it)->data().count_ )
             continue;
-        if( ! dark_side.get_visited(*it) )
+        if( ! conflict_zone.contains(*it) )
             continue;
         // We found a full_cell incident to the dark facet corresponding to the light facet |light_ft|
-        dark_facet_found = true;
         int ft_idx = 0;
-        while( light_s->has_vertex((*it)->vertex(ft_idx)->data()) )
+        while( light_s->has_vertex( (*it)->vertex(ft_idx)->data() ) )
             ++ft_idx;
         dark_ft = Dark_facet(*it, ft_idx);
+        break;
     }
-    // Now, we are ready to traverse both boundary and do the stiching.
+    // Pre-3. Now, we are ready to traverse both boundary and do the stiching.
 
     // But first, we create the new full_cells in the light triangulation,
     // with as much adjacency information as possible.
@@ -526,11 +562,12 @@ Delaunay_triangulation<DCTraits, TDS>
     {
         Full_cell_handle new_s = (*it)->data().light_copy_;
         for( int i = 0; i <= current_dimension(); ++i )
-            if( dark_side.get_visited((*it)->neighbor(i)) )
+            if( conflict_zone.contains((*it)->neighbor(i)) )
                 tds().set_neighbors(new_s, i, (*it)->neighbor(i)->data().light_copy_, (*it)->mirror_index(i));
     }
 
     // 3. Stitch
+    simps.make_searchable();
     typedef std::queue<std::pair<Facet, Dark_facet> > Queue;
     Queue q;
     q.push(std::make_pair(light_ft, dark_ft));
@@ -556,12 +593,15 @@ Delaunay_triangulation<DCTraits, TDS>
             if( di == dark_i )
                 continue;
             int li = light_s->index(dark_s->vertex(di)->data());
-            typename Triangulation_ds::Rotor light_r(light_s, li, light_i);
-            typename Dark_triangulation::Triangulation_ds::Rotor dark_r(dark_s, di, dark_i);
-            while( ! tds().is_boundary_facet(light_r) )
-                light_r = tds().rotate_rotor(light_r);
-            while( ! dark_side.tds().is_boundary_facet(dark_r) )
-                dark_r = dark_side.tds().rotate_rotor(dark_r);
+            Rotor light_r(light_s, li, light_i);
+            typename Dark_triangulation::Rotor dark_r(dark_s, di, dark_i);
+            
+            while( simps.contains(full_cell(light_r)->neighbor(index_of_covertex(light_r))) )
+                light_r = rotate_rotor(light_r);
+
+            while( conflict_zone.contains(dark_side.full_cell(dark_r)->neighbor(dark_side.index_of_covertex(dark_r))) )
+                dark_r = dark_side.rotate_rotor(dark_r);
+
             Dark_s_handle dark_ns = dark_side.full_cell(dark_r);
             int dark_ni = dark_side.index_of_covertex(dark_r);
             Full_cell_handle light_ns = full_cell(light_r);

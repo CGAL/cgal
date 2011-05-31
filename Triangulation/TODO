@@ -43,7 +43,8 @@ bring part of Delaunay::remove into TDS (see comments in Delaunay_triangulation.
 
 __________________________________________________________________________ALL
 
-*) FUTURE: better system for simplex's flag (visited)
+*) FUTURE: better system for simplex's flags to know if we can use them or not
+    in Delaunay_triangulation::remove(Vertex_handle)
 
 _________________________________________________TRIANGULATION_DATA_STRUCTURE
 
@@ -75,6 +76,9 @@ ________________________________________________________________TRIANGULATION
 *) default dim parameter in constructor (especially in the static case)
 
 *) Why vertex at infinity should have index 0 in all cells it appears ?
+
+*) seems there is a bug in test triangulation.cpp for dimension 1: there is
+zero vertices on the convex hull !! (should be 2)
 
 _______________________________________________________DELAUNAY_TRIANGULATION
 

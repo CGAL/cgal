@@ -158,22 +158,28 @@ public:
 
     // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - ACCESS FUNCTIONS
 
-    // NOT DOCUMENTED -- FIXME TRY TO REMOVE IF POSSIBLE (CF Delaunay_triangulation::remove)
+    /* These three function are no longer needed since we do not use them anymore
+       in the Delaunay_triangulation::remove. *But*, they may reappear in the future
+       if we manage to passe the information that flags/TDS_data is available or not
+       for marking simplices in Delaunay_triangulation::remove. This would be useful
+       to make it a little faster, instead of binary searching if a simplex is marked
+       or not... 
+    // NOT DOCUMENTED -- 
     bool get_visited(Full_cell_handle s) const
     {
         return tds().get_visited(s);
     }
-    // NOT DOCUMENTED -- FIXME TRY TO REMOVE IF POSSIBLE (CF Delaunay_triangulation::remove)
+    // NOT DOCUMENTED -- 
     bool get_visited(Full_cell_const_handle s) const
     {
         return tds().get_visited(s);
     }
 
-    // NOT DOCUMENTED -- FIXME TRY TO REMOVE IF POSSIBLE (CF Delaunay_triangulation::remove)
+    // NOT DOCUMENTED -- 
     void set_visited(Full_cell_handle s, bool b) const
     {
         tds().set_visited(s, b);
-    }
+    } */
 
     Coaffine_orientation_d & coaffine_orientation_predicate()
     {

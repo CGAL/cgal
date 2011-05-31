@@ -32,8 +32,8 @@ template< class TDS = void, typename FullCellStoragePolicy = Default >
 class Triangulation_ds_full_cell
 {
     typedef typename Default::Get<FullCellStoragePolicy, TDS_full_cell_default_storage_policy>::type
-                                                    Storage_policy;
-    typedef Triangulation_ds_full_cell<TDS>           Self;
+                                                   Storage_policy;
+    typedef Triangulation_ds_full_cell<TDS>        Self;
     typedef typename TDS::Ambient_dimension        Ambient_dimension;
 
 public:
@@ -42,6 +42,7 @@ public:
     typedef typename TDS::Vertex_const_handle      Vertex_const_handle;
     typedef typename TDS::Full_cell_handle         Full_cell_handle; /* Concept */
     typedef typename TDS::Full_cell_const_handle   Full_cell_const_handle;
+    typedef typename TDS::Full_cell_data           TDS_data; /* data that the TDS wants to be stored here */
     template< typename TDS2 >
     struct Rebind_TDS /* Concept */
     {
@@ -69,9 +70,9 @@ public:
     typedef Vertex_handle_const_iterator    Vertex_handle_iterator; /* Concept */
 
     Triangulation_ds_full_cell(const int dmax) /* Concept */
-    : flags_(0), combinatorics_(dmax)
+    : combinatorics_(dmax), tds_data_()
     {
-		CGAL_assertion( dmax > 0 );
+        CGAL_assertion( dmax > 0 );
         for( int i = 0; i <= dmax; ++i )
         {
             set_neighbor(i, Full_cell_handle());
@@ -81,7 +82,7 @@ public:
     }
 
     Triangulation_ds_full_cell(const Triangulation_ds_full_cell & s) /* Concept */
-    : flags_(s.flags_), combinatorics_(s.combinatorics_)
+    : combinatorics_(s.combinatorics_), tds_data_(s.tds_data_)
     {}
 
     ~Triangulation_ds_full_cell() {}
@@ -119,7 +120,7 @@ public:
         return combinatorics_.mirror_index(i);
     }
 
-	// Advanced...
+    // Advanced...
     Vertex_handle mirror_vertex(const int i, const int cur_dim) const /* Concept */
     {
         CGAL_precondition(0<=i && i<=ambient_dimension());
@@ -146,23 +147,23 @@ public:
         return index;
     }
 
-	void set_vertex(const int i, Vertex_handle v) /* Concept */
-	{
-		CGAL_precondition(0<=i && i<=ambient_dimension());
-		vertices()[i] = v;
-	}
+    void set_vertex(const int i, Vertex_handle v) /* Concept */
+    {
+        CGAL_precondition(0<=i && i<=ambient_dimension());
+        vertices()[i] = v;
+    }
 
-	void set_neighbor(const int i, Full_cell_handle s) /* Concept */
-	{
-		CGAL_precondition(0<=i && i<=ambient_dimension());
-		neighbors()[i] = s;
-	}
+    void set_neighbor(const int i, Full_cell_handle s) /* Concept */
+    {
+        CGAL_precondition(0<=i && i<=ambient_dimension());
+        neighbors()[i] = s;
+    }
 
-	void set_mirror_index(const int i, const int index) /* Concept */
-	{
-		CGAL_precondition(0<=i && i<=ambient_dimension());
-		combinatorics_.set_mirror_index(i, index);
-	}
+    void set_mirror_index(const int i, const int index) /* Concept */
+    {
+        CGAL_precondition(0<=i && i<=ambient_dimension());
+        combinatorics_.set_mirror_index(i, index);
+    }
 
     bool has_vertex(Vertex_const_handle v) const /* Concept */
     {
@@ -201,9 +202,8 @@ public:
         combinatorics_.swap_vertices(d1, d2);
     }
 
-    unsigned int get_flags() const { return flags_; } /* Concept */
-    // Don't forget that member variable flags_ is mutable...
-    void set_flags(unsigned int f) const { flags_ = f; } /* Concept */
+    const TDS_data & get_tds_data() const { return tds_data_; } /* Concept */
+    TDS_data & get_tds_data() { return tds_data_; } /* Concept */
 
     void*   for_compact_container() const { return combinatorics_.for_compact_container(); }
     void* & for_compact_container() { return combinatorics_.for_compact_container(); }
@@ -236,11 +236,8 @@ private:
     const Vertex_handle_array & vertices() const {return combinatorics_.vertices_; }
 
     // DATA MEMBERS
-    // |flags_| is the 'visited' mark when traversing. |flag_| is also used
-    // in delaunay_triangulation_d for finding simplices in conflict with a
-    // newly inserted point
-    mutable unsigned int    flags_;
-    Combinatorics           combinatorics_;
+    Combinatorics       combinatorics_;
+    mutable TDS_data    tds_data_;
 };
 
 // FUNCTIONS THAT ARE NOT MEMBER FUNCTIONS:
@@ -275,12 +272,13 @@ template< typename StoragePolicy >
 class Triangulation_ds_full_cell<void, StoragePolicy>
 {
 public:
-    typedef internal::Triangulation::Dummy_TDS          TDS;
-    typedef TDS::Vertex_handle   Vertex_handle;
-    typedef TDS::Vertex_const_handle   Vertex_const_handle;
-    typedef TDS::Full_cell_handle  Full_cell_handle;
-    typedef TDS::Full_cell_const_handle  Full_cell_const_handle;
-    typedef TDS::Vertex_handle_const_iterator Vertex_handle_const_iterator;
+    typedef internal::Triangulation::Dummy_TDS  TDS;
+    typedef TDS::Vertex_handle                  Vertex_handle;
+    typedef TDS::Vertex_const_handle            Vertex_const_handle;
+    typedef TDS::Full_cell_handle               Full_cell_handle;
+    typedef TDS::Full_cell_const_handle         Full_cell_const_handle;
+    typedef TDS::Vertex_handle_const_iterator   Vertex_handle_const_iterator;
+    typedef typename TDS::Full_cell_data        TDS_data;
     template <typename TDS2>
     struct Rebind_TDS
     {
