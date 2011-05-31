@@ -28,6 +28,7 @@
 
 #define CARTESIAN_KERNEL                0
 #define SIMPLE_CARTESIAN_KERNEL         1
+#define UNIVARIATE_ALGEBRAIC_KERNEL     2
 
 #define SEGMENT_TRAITS                  0
 #define NON_CACHING_SEGMENT_TRAITS      1

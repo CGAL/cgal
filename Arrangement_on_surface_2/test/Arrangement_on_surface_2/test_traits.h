@@ -56,7 +56,7 @@
 #elif TEST_TRAITS == RATIONAL_ARC_TRAITS
 //#include <CGAL/CORE_algebraic_number_traits.h>  //OS - new
 //#include <CGAL/Arr_rational_arc_traits_2.h>
-#include <CGAL/Arr_rational_arc_traits_d_1.h>
+#include <CGAL/Arr_rational_function_traits_2.h>
 
 
 #elif TEST_TRAITS == ALGEBRAIC_TRAITS
@@ -174,7 +174,7 @@ typedef CGAL::Arr_geodesic_arc_on_sphere_traits_2<Kernel>        Traits;
 //typedef Traits::Point_2                                    Point_2;
 //#define TRAITS_TYPE "Rational Arc"
 
-typedef CGAL::Arr_rational_arc_traits_d_1<Kernel>	     Traits;
+typedef CGAL::Arr_rational_function_traits_2<Kernel>	     Traits;
 typedef Traits::Rational                                     Rational;
 typedef Traits::Algebraic_real_1                             Algebraic_real_1;
 typedef Traits::Point_2                                      Point_2;

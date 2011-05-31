@@ -917,7 +917,7 @@ Traits_base_test<Traits>::read_point(stream& is, Point_2& p)
 template <class stream>
 bool read_rational_to_real(stream& is, Algebraic_real_1& r)
 {
-  static Traits::Algebraic_kernel algebraic_kernel;
+  static Traits::Algebraic_kernel_d_1 algebraic_kernel;
   Rational rat;
   is >> rat;
   r = algebraic_kernel.construct_algebraic_real_1_object()(rat);
