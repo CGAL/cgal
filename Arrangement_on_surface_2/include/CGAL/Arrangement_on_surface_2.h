@@ -73,15 +73,15 @@ public:
   typedef Arr_traits_basic_adaptor_2<Geometry_traits_2>   Traits_adaptor_2;
   
   // .. as it completes (potentially) missing side tags
-  typedef typename Traits_adaptor_2::Arr_left_side_category    Arr_left_side_category;
-  typedef typename Traits_adaptor_2::Arr_bottom_side_category  Arr_bottom_side_category;
-  typedef typename Traits_adaptor_2::Arr_top_side_category     Arr_top_side_category;
-  typedef typename Traits_adaptor_2::Arr_right_side_category   Arr_right_side_category;
+  typedef typename Traits_adaptor_2::Left_side_category    Left_side_category;
+  typedef typename Traits_adaptor_2::Bottom_side_category  Bottom_side_category;
+  typedef typename Traits_adaptor_2::Top_side_category     Top_side_category;
+  typedef typename Traits_adaptor_2::Right_side_category   Right_side_category;
   
   BOOST_MPL_ASSERT(
       (typename 
-       Arr_sane_identified_tagging< Arr_left_side_category, Arr_bottom_side_category, 
-       Arr_top_side_category, Arr_right_side_category >::result)
+       Arr_sane_identified_tagging< Left_side_category, Bottom_side_category, 
+       Top_side_category, Right_side_category >::result)
   );
 
 public:
@@ -95,8 +95,8 @@ public:
   // maybe remove this in a future version (that supports complete handling
   // of all sides)
   typedef typename Arr_are_all_sides_oblivious_tag< 
-    Arr_left_side_category, Arr_bottom_side_category, 
-    Arr_top_side_category, Arr_right_side_category >::result
+    Left_side_category, Bottom_side_category, 
+    Top_side_category, Right_side_category >::result
   Are_all_sides_oblivious_tag;
   
 public:
@@ -1669,10 +1669,10 @@ protected:
   inline bool is_open(Arr_parameter_space ps_x, Arr_parameter_space ps_y) const
   {
     return
-      (((ps_x == ARR_LEFT_BOUNDARY) && is_open(Arr_left_side_category())) ||
-       ((ps_x == ARR_RIGHT_BOUNDARY) && is_open(Arr_right_side_category())) ||
-       ((ps_y == ARR_BOTTOM_BOUNDARY) && is_open(Arr_bottom_side_category())) ||
-       ((ps_y == ARR_TOP_BOUNDARY) && is_open(Arr_top_side_category())));
+      (((ps_x == ARR_LEFT_BOUNDARY) && is_open(Left_side_category())) ||
+       ((ps_x == ARR_RIGHT_BOUNDARY) && is_open(Right_side_category())) ||
+       ((ps_y == ARR_BOTTOM_BOUNDARY) && is_open(Bottom_side_category())) ||
+       ((ps_y == ARR_TOP_BOUNDARY) && is_open(Top_side_category())));
   
   }
 

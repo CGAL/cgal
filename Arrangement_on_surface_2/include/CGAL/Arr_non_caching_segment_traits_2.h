@@ -62,10 +62,10 @@ public:
   typedef typename Base::Has_left_category           Has_left_category;
   typedef typename Base::Has_do_intersect_category   Has_do_intersect_category;
 
-  typedef typename Base::Arr_left_side_category      Arr_left_side_category;
-  typedef typename Base::Arr_bottom_side_category    Arr_bottom_side_category;
-  typedef typename Base::Arr_top_side_category       Arr_top_side_category;
-  typedef typename Base::Arr_right_side_category     Arr_right_side_category;
+  typedef typename Base::Left_side_category      Left_side_category;
+  typedef typename Base::Bottom_side_category    Bottom_side_category;
+  typedef typename Base::Top_side_category       Top_side_category;
+  typedef typename Base::Right_side_category     Right_side_category;
 
   typedef typename Base::Point_2                     Point_2;
   typedef typename Base::X_monotone_curve_2          X_monotone_curve_2;

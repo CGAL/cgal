@@ -87,10 +87,10 @@ public:
   typedef Tag_true              Has_merge_category;
   typedef Tag_true              Has_do_intersect_category;
 
-  typedef Arr_open_side_tag     Arr_left_side_category;
-  typedef Arr_open_side_tag     Arr_top_side_category;
-  typedef Arr_open_side_tag     Arr_bottom_side_category;
-  typedef Arr_open_side_tag     Arr_right_side_category;
+  typedef Arr_open_side_tag     Left_side_category;
+  typedef Arr_open_side_tag     Top_side_category;
+  typedef Arr_open_side_tag     Bottom_side_category;
+  typedef Arr_open_side_tag     Right_side_category;
 public:
   typedef std::vector<CGAL::Object> Object_vector;
 private:

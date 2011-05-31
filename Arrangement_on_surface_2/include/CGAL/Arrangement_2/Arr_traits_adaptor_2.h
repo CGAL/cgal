@@ -61,20 +61,20 @@ public:
   typedef typename Base::Has_do_intersect_category  Has_do_intersect_category;
 
   typedef typename internal::Arr_complete_left_side_tag< Base >::Tag 
-                                                    Arr_left_side_category;
+                                                    Left_side_category;
   typedef typename internal::Arr_complete_bottom_side_tag< Base >::Tag 
-                                                    Arr_bottom_side_category;
+                                                    Bottom_side_category;
   typedef typename internal::Arr_complete_top_side_tag< Base >::Tag 
-                                                    Arr_top_side_category;
+                                                    Top_side_category;
   typedef typename internal::Arr_complete_right_side_tag< Base >::Tag 
-                                                    Arr_right_side_category;
+                                                    Right_side_category;
 
 protected:
 
   // left-right dispatch
   
   typedef CGAL::internal::Arr_left_right_implementation_dispatch< 
-    Arr_left_side_category, Arr_right_side_category > LR;
+    Left_side_category, Right_side_category > LR;
   
   typedef typename LR::Parameter_space_in_x_2_curve_end_tag      Psx_2_curve_end_tag;
   typedef typename LR::Parameter_space_in_x_2_curve_tag          Psx_2_curve_tag;
@@ -87,7 +87,7 @@ protected:
   
   // bottom-top dispatch
   typedef CGAL::internal::Arr_bottom_top_implementation_dispatch< 
-    Arr_bottom_side_category, Arr_top_side_category > BT;
+    Bottom_side_category, Top_side_category > BT;
   
   typedef typename BT::Parameter_space_in_y_2_curve_end_tag          Psy_2_curve_end_tag;
   typedef typename BT::Parameter_space_in_y_2_curve_tag              Psy_2_curve_tag;
@@ -1317,10 +1317,10 @@ public:
       switch (ps1) {
         
       case ARR_LEFT_BOUNDARY:
-        return _compare_curve_ends(xcv1, xcv2, ce, Arr_left_side_category());
+        return _compare_curve_ends(xcv1, xcv2, ce, Left_side_category());
 
       case ARR_RIGHT_BOUNDARY:
-        return _compare_curve_ends(xcv1, xcv2, ce, Arr_right_side_category());
+        return _compare_curve_ends(xcv1, xcv2, ce, Right_side_category());
         
       case ARR_INTERIOR:
         // fall-through
@@ -1441,10 +1441,10 @@ public:
       switch (ps) {
         
       case ARR_BOTTOM_BOUNDARY:
-        return _compare_point_curve_end(pt, xcv, ce, Arr_bottom_side_category());
+        return _compare_point_curve_end(pt, xcv, ce, Bottom_side_category());
 
       case ARR_TOP_BOUNDARY:
-        return _compare_point_curve_end(pt, xcv, ce, Arr_top_side_category());
+        return _compare_point_curve_end(pt, xcv, ce, Top_side_category());
         
       case ARR_INTERIOR:
         // fall-through
@@ -1617,7 +1617,7 @@ public:
         if (second_open) {
           return _compare_curve_ends(xcv1, ce1, xcv2, ce2, 
                                      // both sides are open, so pick one
-                                     Arr_bottom_side_category());
+                                     Bottom_side_category());
         } else {
           return CGAL::opposite(m_base->compare_x_point_curve_end_2_object()(
                                    m_base->construct_vertex_at_curve_end_2_object()(xcv2, ce2),
@@ -1632,7 +1632,7 @@ public:
         } else {
           return _compare_curve_ends(xcv1, ce1, xcv2, ce2, 
                                      // both sides are non-open, so pick one
-                                     Arr_bottom_side_category());
+                                     Bottom_side_category());
         }
       }
 
@@ -1723,16 +1723,16 @@ public:
       switch (ps) {
         
       case ARR_LEFT_BOUNDARY:
-        return _is_closed(Arr_left_side_category());
+        return _is_closed(Left_side_category());
         
       case ARR_BOTTOM_BOUNDARY:
-        return _is_closed(Arr_bottom_side_category());
+        return _is_closed(Bottom_side_category());
         
       case ARR_TOP_BOUNDARY:
-        return _is_closed(Arr_top_side_category());
+        return _is_closed(Top_side_category());
         
       case ARR_RIGHT_BOUNDARY:
-        return _is_closed(Arr_right_side_category());
+        return _is_closed(Right_side_category());
         
       case ARR_INTERIOR:
         // fall-through
@@ -2515,13 +2515,13 @@ public:
   typedef typename Base::Has_do_intersect_category     Has_do_intersect_category;
 
   typedef typename internal::Arr_complete_left_side_tag< Base >::Tag
-                                                       Arr_left_side_category;
+                                                       Left_side_category;
   typedef typename internal::Arr_complete_bottom_side_tag< Base >::Tag 
-                                                       Arr_bottom_side_category;
+                                                       Bottom_side_category;
   typedef typename internal::Arr_complete_top_side_tag< Base >::Tag 
-                                                       Arr_top_side_category;
+                                                       Top_side_category;
   typedef typename internal::Arr_complete_right_side_tag< Base >::Tag 
-                                                       Arr_right_side_category;
+                                                       Right_side_category;
 
   /// \name Construction.
   //@{

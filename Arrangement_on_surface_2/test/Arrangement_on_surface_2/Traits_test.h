@@ -773,11 +773,11 @@ bool Traits_test<T_Traits>::
 parameter_space_in_x_wrapper(std::istringstream& str_stream)
 {
   typedef typename CGAL::internal::Arr_complete_left_side_tag< T_Traits >::Tag
-    Arr_left_side_category;
+    Left_side_category;
   typedef typename CGAL::internal::Arr_complete_right_side_tag< T_Traits >::Tag
-    Arr_right_side_category;
+    Right_side_category;
   typedef CGAL::internal::Arr_left_right_implementation_dispatch
-    <Arr_left_side_category, Arr_right_side_category>           LR;
+    <Left_side_category, Right_side_category>           LR;
   typedef typename LR::Parameter_space_in_x_2_curve_end_tag     Psx_tag;
   return parameter_space_in_x_wrapper_imp(str_stream, Psx_tag());
 }
@@ -836,11 +836,11 @@ bool Traits_test<T_Traits>::
 compare_y_near_boundary_wrapper(std::istringstream& str_stream)
 {
   typedef typename CGAL::internal::Arr_complete_left_side_tag< T_Traits >::Tag
-    Arr_left_side_category;
+    Left_side_category;
   typedef typename CGAL::internal::Arr_complete_right_side_tag< T_Traits >::Tag
-    Arr_right_side_category;
+    Right_side_category;
   typedef CGAL::internal::Arr_left_right_implementation_dispatch
-    <Arr_left_side_category, Arr_right_side_category>           LR;
+    <Left_side_category, Right_side_category>           LR;
   typedef typename LR::Compare_y_near_boundary_2_curve_ends_tag Cmp_tag;
   return compare_y_near_boundary_wrapper_imp(str_stream, Cmp_tag());
 }
@@ -893,11 +893,11 @@ bool Traits_test<T_Traits>::
 parameter_space_in_y_wrapper(std::istringstream& str_stream)
 {
   typedef typename CGAL::internal::Arr_complete_bottom_side_tag<T_Traits>::Tag
-    Arr_bottom_side_category;
+    Bottom_side_category;
   typedef typename CGAL::internal::Arr_complete_top_side_tag<T_Traits>::Tag
-    Arr_top_side_category;
+    Top_side_category;
   typedef CGAL::internal::Arr_bottom_top_implementation_dispatch
-    <Arr_bottom_side_category, Arr_top_side_category>           BT;
+    <Bottom_side_category, Top_side_category>           BT;
   typedef typename BT::Parameter_space_in_y_2_curve_end_tag     Psy_tag;
   return parameter_space_in_y_wrapper_imp(str_stream, Psy_tag());
 }
@@ -956,11 +956,11 @@ bool Traits_test<T_Traits>::
 compare_x_near_limit_wrapper(std::istringstream& str_stream)
 {
   typedef typename CGAL::internal::Arr_complete_bottom_side_tag<T_Traits>::Tag
-    Arr_bottom_side_category;
+    Bottom_side_category;
   typedef typename CGAL::internal::Arr_complete_top_side_tag<T_Traits>::Tag
-    Arr_top_side_category;
+    Top_side_category;
   typedef CGAL::internal::Arr_bottom_top_implementation_dispatch
-    <Arr_bottom_side_category, Arr_top_side_category>           BT;
+    <Bottom_side_category, Top_side_category>           BT;
   typedef typename BT::Compare_x_near_limit_2_curve_ends_tag Cmp_tag;
   return compare_x_near_limit_wrapper_imp(str_stream, Cmp_tag());
 }
@@ -1014,11 +1014,11 @@ bool Traits_test<T_Traits>::
 compare_x_at_limit_wrapper(std::istringstream& str_stream)
 {
   typedef typename CGAL::internal::Arr_complete_bottom_side_tag<T_Traits>::Tag
-    Arr_bottom_side_category;
+    Bottom_side_category;
   typedef typename CGAL::internal::Arr_complete_top_side_tag<T_Traits>::Tag
-    Arr_top_side_category;
+    Top_side_category;
   typedef CGAL::internal::Arr_bottom_top_implementation_dispatch
-    <Arr_bottom_side_category, Arr_top_side_category> BT;
+    <Bottom_side_category, Top_side_category> BT;
   typedef typename BT::Compare_x_at_limit_2_curve_ends_tag             Cmp_tag1;
   typedef typename BT::Compare_x_at_limit_2_point_curve_end_tag        Cmp_tag2;
   typedef typename CGAL::internal::Or_traits<Cmp_tag1, Cmp_tag2>::type Cmp_tag;
@@ -1099,11 +1099,11 @@ bool Traits_test<T_Traits>::
 compare_x_near_boundary_wrapper(std::istringstream& str_stream)
 {
   typedef typename CGAL::internal::Arr_complete_bottom_side_tag<T_Traits>::Tag
-    Arr_bottom_side_category;
+    Bottom_side_category;
   typedef typename CGAL::internal::Arr_complete_top_side_tag<T_Traits>::Tag
-    Arr_top_side_category;
+    Top_side_category;
   typedef CGAL::internal::Arr_bottom_top_implementation_dispatch
-    <Arr_bottom_side_category, Arr_top_side_category>           BT;
+    <Bottom_side_category, Top_side_category>           BT;
   typedef typename BT::Compare_x_near_boundary_2_curve_ends_tag Cmp_tag;
   return compare_x_near_boundary_wrapper_imp(str_stream, Cmp_tag());
 }
@@ -1157,11 +1157,11 @@ bool Traits_test<T_Traits>::
 compare_x_on_boundary_wrapper(std::istringstream& str_stream)
 {
   typedef typename CGAL::internal::Arr_complete_bottom_side_tag<T_Traits>::Tag
-    Arr_bottom_side_category;
+    Bottom_side_category;
   typedef typename CGAL::internal::Arr_complete_top_side_tag<T_Traits>::Tag
-    Arr_top_side_category;
+    Top_side_category;
   typedef CGAL::internal::Arr_bottom_top_implementation_dispatch
-    <Arr_bottom_side_category, Arr_top_side_category> BT;
+    <Bottom_side_category, Top_side_category> BT;
   typedef typename BT::Compare_x_on_boundary_2_points_tag              Cmp_tag1;
   typedef typename BT::Compare_x_on_boundary_2_point_curve_end_tag     Cmp_tag2;
   typedef typename BT::Compare_x_on_boundary_2_curve_ends_tag          Cmp_tag3;

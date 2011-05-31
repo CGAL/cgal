@@ -53,32 +53,32 @@ Arrangement_on_surface_2<GeomTraits, TopTraits>::Arrangement_on_surface_2 () :
   m_topol_traits()
 {
   
-  typedef has_Arr_left_side_category<GeomTraits> Cond_left;
+  typedef has_Left_side_category<GeomTraits> Cond_left;
   typedef internal::Validate_left_side_tag< GeomTraits, Cond_left::value > 
     Validate_left_side_tag;
   void (Validate_left_side_tag::*pleft)(void) =
-    &Validate_left_side_tag::missing__Arr_left_side_category;
+    &Validate_left_side_tag::missing__Left_side_category;
   (void)pleft;
   
- typedef has_Arr_bottom_side_category<GeomTraits> Cond_bottom;
+ typedef has_Bottom_side_category<GeomTraits> Cond_bottom;
   typedef internal::Validate_bottom_side_tag< GeomTraits, Cond_bottom::value > 
     Validate_bottom_side_tag;
   void (Validate_bottom_side_tag::*pbottom)(void) =
-    &Validate_bottom_side_tag::missing__Arr_bottom_side_category;
+    &Validate_bottom_side_tag::missing__Bottom_side_category;
   (void)pbottom;
 
- typedef has_Arr_top_side_category<GeomTraits> Cond_top;
+ typedef has_Top_side_category<GeomTraits> Cond_top;
   typedef internal::Validate_top_side_tag< GeomTraits, Cond_top::value > 
     Validate_top_side_tag;
   void (Validate_top_side_tag::*ptop)(void) =
-    &Validate_top_side_tag::missing__Arr_top_side_category;
+    &Validate_top_side_tag::missing__Top_side_category;
   (void)ptop;
 
- typedef has_Arr_right_side_category<GeomTraits> Cond_right;
+ typedef has_Right_side_category<GeomTraits> Cond_right;
   typedef internal::Validate_right_side_tag< GeomTraits, Cond_right::value > 
     Validate_right_side_tag;
   void (Validate_right_side_tag::*pright)(void) =
-    &Validate_right_side_tag::missing__Arr_right_side_category;
+    &Validate_right_side_tag::missing__Right_side_category;
   (void)pright;
 
   // Initialize the DCEL structure to represent an empty arrangement.
@@ -110,32 +110,32 @@ Arrangement_on_surface_2(const Geometry_traits_2 * geom_traits) :
   m_topol_traits (geom_traits)
 {
   
- typedef has_Arr_left_side_category<GeomTraits> Cond_left;
+ typedef has_Left_side_category<GeomTraits> Cond_left;
   typedef internal::Validate_left_side_tag< GeomTraits, Cond_left::value > 
     Validate_left_side_tag;
   void (Validate_left_side_tag::*pleft)(void) =
-    &Validate_left_side_tag::missing__Arr_left_side_category;
+    &Validate_left_side_tag::missing__Left_side_category;
   (void)pleft;
   
- typedef has_Arr_bottom_side_category<GeomTraits> Cond_bottom;
+ typedef has_Bottom_side_category<GeomTraits> Cond_bottom;
   typedef internal::Validate_bottom_side_tag< GeomTraits, Cond_bottom::value > 
     Validate_bottom_side_tag;
   void (Validate_bottom_side_tag::*pbottom)(void) =
-    &Validate_bottom_side_tag::missing__Arr_bottom_side_category;
+    &Validate_bottom_side_tag::missing__Bottom_side_category;
   (void)pbottom;
 
- typedef has_Arr_top_side_category<GeomTraits> Cond_top;
+ typedef has_Top_side_category<GeomTraits> Cond_top;
   typedef internal::Validate_top_side_tag< GeomTraits, Cond_top::value > 
     Validate_top_side_tag;
   void (Validate_top_side_tag::*ptop)(void) =
-    &Validate_top_side_tag::missing__Arr_top_side_category;
+    &Validate_top_side_tag::missing__Top_side_category;
   (void)ptop;
 
- typedef has_Arr_right_side_category<GeomTraits> Cond_right;
+ typedef has_Right_side_category<GeomTraits> Cond_right;
   typedef internal::Validate_right_side_tag< GeomTraits, Cond_right::value > 
     Validate_right_side_tag;
   void (Validate_right_side_tag::*pright)(void) =
-    &Validate_right_side_tag::missing__Arr_right_side_category;
+    &Validate_right_side_tag::missing__Right_side_category;
   (void)pright;
 
   // Initialize the DCEL structure to represent an empty arrangement.
@@ -3406,15 +3406,15 @@ _compare_vertices_xy_impl (const DVertex * v1, const DVertex * v2,
   // "negative" contraction is the smallest vertex, and the "positive"
   // contraction is considered to be the largest vertex.
   if (((ps_y1 == ARR_BOTTOM_BOUNDARY) &&
-      is_contracted(Arr_bottom_side_category())) ||
+      is_contracted(Bottom_side_category())) ||
       ((ps_y2 == ARR_TOP_BOUNDARY) &&
-       is_contracted(Arr_top_side_category())))
+       is_contracted(Top_side_category())))
     return SMALLER;
 
   if (((ps_y2 == ARR_BOTTOM_BOUNDARY) &&
-      is_contracted(Arr_bottom_side_category())) ||
+      is_contracted(Bottom_side_category())) ||
       ((ps_y1 == ARR_TOP_BOUNDARY) &&
-       is_contracted(Arr_top_side_category())))
+       is_contracted(Top_side_category())))
     return LARGER;
 
   // Check the boundary conditions in x:
@@ -3595,15 +3595,15 @@ _find_leftmost_vertex_on_open_loop (const DHalfedge *he_before,
       //
       if ((ps_x == ARR_LEFT_BOUNDARY) && (ps_x_next == ARR_RIGHT_BOUNDARY))
       {
-        CGAL_assertion(is_identified(Arr_left_side_category()) && 
-                       is_identified(Arr_right_side_category()));
+        CGAL_assertion(is_identified(Left_side_category()) && 
+                       is_identified(Right_side_category()));
         x_cross_count++;
         index--;
       }
       else if ((ps_x == ARR_RIGHT_BOUNDARY) && (ps_x_next == ARR_LEFT_BOUNDARY))
       {
-        CGAL_assertion(is_identified(Arr_left_side_category()) && 
-                       is_identified(Arr_right_side_category()));
+        CGAL_assertion(is_identified(Left_side_category()) && 
+                       is_identified(Right_side_category()));
         x_cross_count++;
         index++;
       }
@@ -3612,8 +3612,8 @@ _find_leftmost_vertex_on_open_loop (const DHalfedge *he_before,
       if (((ps_y == ARR_BOTTOM_BOUNDARY) && (ps_y_next == ARR_TOP_BOUNDARY)) ||
           ((ps_y == ARR_TOP_BOUNDARY) && (ps_y_next == ARR_BOTTOM_BOUNDARY)))
       {
-        CGAL_assertion(is_identified(Arr_bottom_side_category()) &&
-                       is_identified(Arr_top_side_category()));
+        CGAL_assertion(is_identified(Bottom_side_category()) &&
+                       is_identified(Top_side_category()));
         y_cross_count++;
       }
     }
@@ -3763,15 +3763,15 @@ _find_leftmost_vertex_on_closed_loop (const DHalfedge *he_anchor,
       //
       if ((ps_x == ARR_LEFT_BOUNDARY) && (ps_x_next == ARR_RIGHT_BOUNDARY))
       {
-        CGAL_assertion(is_identified(Arr_left_side_category()) && 
-                       is_identified(Arr_right_side_category()));
+        CGAL_assertion(is_identified(Left_side_category()) && 
+                       is_identified(Right_side_category()));
         x_cross_count++;
         index--;
       }
       else if ((ps_x == ARR_RIGHT_BOUNDARY) && (ps_x_next == ARR_LEFT_BOUNDARY))
       {
-        CGAL_assertion(is_identified(Arr_left_side_category()) && 
-                       is_identified(Arr_right_side_category()));
+        CGAL_assertion(is_identified(Left_side_category()) && 
+                       is_identified(Right_side_category()));
         x_cross_count++;
         index++;
       }
@@ -3780,8 +3780,8 @@ _find_leftmost_vertex_on_closed_loop (const DHalfedge *he_anchor,
       if (((ps_y == ARR_BOTTOM_BOUNDARY) && (ps_y_next == ARR_TOP_BOUNDARY)) ||
           ((ps_y == ARR_TOP_BOUNDARY) && (ps_y_next == ARR_BOTTOM_BOUNDARY)))
       {
-        CGAL_assertion(is_identified(Arr_bottom_side_category()) &&
-                       is_identified(Arr_top_side_category()));
+        CGAL_assertion(is_identified(Bottom_side_category()) &&
+                       is_identified(Top_side_category()));
         y_cross_count++;
       }
     }
@@ -3884,9 +3884,9 @@ _is_inside_new_face (const DHalfedge *prev1,
   // Check if the vertex lies on the identification curve in y, in which case
   // special care must be taken.
   if (((v_min->parameter_space_in_y() == ARR_BOTTOM_BOUNDARY) &&
-       is_identified(Arr_bottom_side_category())) ||
+       is_identified(Bottom_side_category())) ||
       ((v_min->parameter_space_in_y() == ARR_TOP_BOUNDARY) &&
-       is_identified(Arr_top_side_category())))
+       is_identified(Top_side_category())))
   {
     // Both current and next curves are incident to the identification curve.
     // As v_min is the leftmost vertex, we now that their left ends must have
@@ -3922,9 +3922,9 @@ _is_inside_new_face (const DHalfedge *prev1,
   // Check if the leftmost vertex is acontraction point in y, in which case
   // special care must be taken.
   if (((v_min->parameter_space_in_y() == ARR_BOTTOM_BOUNDARY) &&
-       is_contracted(Arr_bottom_side_category())) ||
+       is_contracted(Bottom_side_category())) ||
       ((v_min->parameter_space_in_y() == ARR_TOP_BOUNDARY) &&
-       is_contracted(Arr_top_side_category())))
+       is_contracted(Top_side_category())))
   {
     // Get the curve-ends for cv_curr and cv_next that conincide with the
     // contraction point.

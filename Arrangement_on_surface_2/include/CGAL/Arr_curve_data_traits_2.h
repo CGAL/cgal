@@ -69,13 +69,13 @@ public:
                                                       Has_do_intersect_category;
 
   typedef typename internal::Arr_complete_left_side_tag< Base_traits_2 >::Tag
-                                                      Arr_left_side_category;
+                                                      Left_side_category;
   typedef typename internal::Arr_complete_bottom_side_tag< Base_traits_2 >::Tag
-                                                      Arr_bottom_side_category;
+                                                      Bottom_side_category;
   typedef typename internal::Arr_complete_top_side_tag< Base_traits_2 >::Tag
-                                                      Arr_top_side_category;
+                                                      Top_side_category;
   typedef typename internal::Arr_complete_right_side_tag< Base_traits_2 >::Tag
-                                                      Arr_right_side_category;
+                                                      Right_side_category;
 
   // Representation of a curve with an addtional data field:
   typedef _Curve_data_ex<Base_curve_2, Curve_data>    Curve_2;

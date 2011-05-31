@@ -96,22 +96,22 @@ public:
   typedef typename Traits_adaptor_2::Point_2            Point_2;
   typedef typename Traits_adaptor_2::X_monotone_curve_2 X_monotone_curve_2;
 
-  typedef typename Traits_adaptor_2::Arr_left_side_category   Arr_left_side_category;
-  typedef typename Traits_adaptor_2::Arr_bottom_side_category Arr_bottom_side_category;
-  typedef typename Traits_adaptor_2::Arr_top_side_category    Arr_top_side_category;
-  typedef typename Traits_adaptor_2::Arr_right_side_category  Arr_right_side_category;
+  typedef typename Traits_adaptor_2::Left_side_category   Left_side_category;
+  typedef typename Traits_adaptor_2::Bottom_side_category Bottom_side_category;
+  typedef typename Traits_adaptor_2::Top_side_category    Top_side_category;
+  typedef typename Traits_adaptor_2::Right_side_category  Right_side_category;
 
   BOOST_MPL_ASSERT(
       (typename 
-       Arr_sane_identified_tagging< Arr_left_side_category, Arr_bottom_side_category, 
-       Arr_top_side_category, Arr_right_side_category >::result)
+       Arr_sane_identified_tagging< Left_side_category, Bottom_side_category, 
+       Top_side_category, Right_side_category >::result)
   );
   
 protected:
 
   typedef typename Arr_are_all_sides_oblivious_tag< 
-                     Arr_left_side_category, Arr_bottom_side_category, 
-                     Arr_top_side_category, Arr_right_side_category >::result
+                     Left_side_category, Bottom_side_category, 
+                     Top_side_category, Right_side_category >::result
   Are_all_sides_oblivious_tag;
   
 public:

@@ -234,6 +234,27 @@ CGAL 3.8 offers the following improvements and new functionality :  </p>
   <li>Fix several bugs in the traits class Arr_Bezier_curve_traits_2 for arrangement of Bezier curves.
 </ul> 
 
+
+
+
+<h3>Arrangements</h3>
+
+<h4>2D Arrangements</h4>
+<ul>
+ 
+  <li> The tags in the geometry traits that indicate the type of boundary of 
+    the embedding surface were replaced by the following new tags:
+    Left_side_category
+    Bottom_side_category
+    Top_side_category
+    Right_side_category
+    It is still possible not to indicate the tags at all. Default values are assumed. This however will
+    produce warning messages, and should be avoided.</li>
+
+</ul>
+
+
+
 <h3>2D Minkowski Sums</h3>
 <ul>
   <li>A bug in the convolution method was fixed.

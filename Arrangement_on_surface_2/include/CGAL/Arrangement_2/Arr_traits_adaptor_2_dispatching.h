@@ -340,72 +340,72 @@ struct Arr_left_right_implementation_dispatch {
 public:
   
   //! This instance's first template parameter
-  typedef ArrLeftSideTag   Arr_left_side_category;
+  typedef ArrLeftSideTag   Left_side_category;
   
   //! This instance's second template parameter
-  typedef ArrRightSideTag  Arr_right_side_category;
+  typedef ArrRightSideTag  Right_side_category;
   
 public:
   
   //! tag type for Parameter_space_in_x_2 (curve-end signature)
   typedef typename internal::Or_traits<
     typename 
-    internal::Parameter_space_in_x_2::Curve_end< Arr_left_side_category >::type,
+    internal::Parameter_space_in_x_2::Curve_end< Left_side_category >::type,
     typename 
-    internal::Parameter_space_in_x_2::Curve_end< Arr_right_side_category >::type 
+    internal::Parameter_space_in_x_2::Curve_end< Right_side_category >::type 
   >::type
   Parameter_space_in_x_2_curve_end_tag;
 
   //! tag type for Parameter_space_in_x_2 (curve signature)
   typedef typename internal::Or_traits<
     typename 
-    internal::Parameter_space_in_x_2::Curve< Arr_left_side_category >::type,
+    internal::Parameter_space_in_x_2::Curve< Left_side_category >::type,
     typename 
-    internal::Parameter_space_in_x_2::Curve< Arr_right_side_category >::type 
+    internal::Parameter_space_in_x_2::Curve< Right_side_category >::type 
   >::type
   Parameter_space_in_x_2_curve_tag;
   
   //! tag type for Parameter_space_in_x_2 (point signature)
   typedef typename internal::Or_traits<
     typename
-    internal::Parameter_space_in_x_2::Point< Arr_left_side_category >::type,
+    internal::Parameter_space_in_x_2::Point< Left_side_category >::type,
     typename
-    internal::Parameter_space_in_x_2::Point< Arr_right_side_category >::type >::type
+    internal::Parameter_space_in_x_2::Point< Right_side_category >::type >::type
   Parameter_space_in_x_2_point_tag;
 
   //! tag type for Is_on_y_identification_2 (curve signature)
   typedef typename internal::Or_traits<
     typename 
-    internal::Is_on_y_identification_2::Curve< Arr_left_side_category >::type,
+    internal::Is_on_y_identification_2::Curve< Left_side_category >::type,
     typename 
-    internal::Is_on_y_identification_2::Curve< Arr_right_side_category >::type 
+    internal::Is_on_y_identification_2::Curve< Right_side_category >::type 
   >::type
   Is_on_y_identification_2_curve_tag;
 
   //! tag type for Is_on_y_identification_2 (point signature)
   typedef typename internal::Or_traits<
     typename 
-    internal::Is_on_y_identification_2::Point< Arr_left_side_category >::type,
+    internal::Is_on_y_identification_2::Point< Left_side_category >::type,
     typename 
-    internal::Is_on_y_identification_2::Point< Arr_right_side_category >::type 
+    internal::Is_on_y_identification_2::Point< Right_side_category >::type 
   >::type
   Is_on_y_identification_2_point_tag;
 
   //! tag type for Compare_y_on_boundary_2 (points signature)
   typedef typename internal::Or_traits<
     typename 
-    internal::Compare_y_on_boundary_2::Points< Arr_left_side_category >::type,
+    internal::Compare_y_on_boundary_2::Points< Left_side_category >::type,
     typename 
-    internal::Compare_y_on_boundary_2::Points< Arr_right_side_category >::type 
+    internal::Compare_y_on_boundary_2::Points< Right_side_category >::type 
   >::type
   Compare_y_on_boundary_2_points_tag;
 
   //! tag type for Compare_y_near_boundary_2 (curve-ends signature)
   typedef typename internal::Or_traits<
     typename 
-    internal::Compare_y_near_boundary_2::Curve_ends< Arr_left_side_category >::type,
+    internal::Compare_y_near_boundary_2::Curve_ends< Left_side_category >::type,
     typename 
-    internal::Compare_y_near_boundary_2::Curve_ends< Arr_right_side_category >::type 
+    internal::Compare_y_near_boundary_2::Curve_ends< Right_side_category >::type 
   >::type
   Compare_y_near_boundary_2_curve_ends_tag;
 
@@ -835,119 +835,119 @@ struct Arr_bottom_top_implementation_dispatch {
 public:
   
   //! This instance's first template parameter
-  typedef ArrBottomSideTag   Arr_bottom_side_category;
+  typedef ArrBottomSideTag   Bottom_side_category;
   
   //! This instance's second template parameter
-  typedef ArrTopSideTag  Arr_top_side_category;
+  typedef ArrTopSideTag  Top_side_category;
   
 public:
 
   //! tag type for Parameter_space_in_y_2 (curve-end signature)
   typedef typename internal::Or_traits<
     typename 
-    internal::Parameter_space_in_y_2::Curve_end< Arr_bottom_side_category >::type,
+    internal::Parameter_space_in_y_2::Curve_end< Bottom_side_category >::type,
     typename 
-    internal::Parameter_space_in_y_2::Curve_end< Arr_top_side_category >::type 
+    internal::Parameter_space_in_y_2::Curve_end< Top_side_category >::type 
   >::type
   Parameter_space_in_y_2_curve_end_tag;
 
   //! tag type for Parameter_space_in_y_2 (curve signature)
   typedef typename internal::Or_traits<
     typename 
-    internal::Parameter_space_in_y_2::Curve< Arr_bottom_side_category >::type,
+    internal::Parameter_space_in_y_2::Curve< Bottom_side_category >::type,
     typename 
-    internal::Parameter_space_in_y_2::Curve< Arr_top_side_category >::type 
+    internal::Parameter_space_in_y_2::Curve< Top_side_category >::type 
   >::type
   Parameter_space_in_y_2_curve_tag;
   
   //! tag type for Parameter_space_in_y_2 (point signature)
   typedef typename internal::Or_traits<
     typename
-    internal::Parameter_space_in_y_2::Point< Arr_bottom_side_category >::type,
+    internal::Parameter_space_in_y_2::Point< Bottom_side_category >::type,
     typename
-    internal::Parameter_space_in_y_2::Point< Arr_top_side_category >::type >::type
+    internal::Parameter_space_in_y_2::Point< Top_side_category >::type >::type
   Parameter_space_in_y_2_point_tag;
   
   //! tag type for Is_on_x_identification_2 (curve signature)
   typedef typename internal::Or_traits<
     typename 
-    internal::Is_on_x_identification_2::Curve< Arr_bottom_side_category >::type,
+    internal::Is_on_x_identification_2::Curve< Bottom_side_category >::type,
     typename 
-    internal::Is_on_x_identification_2::Curve< Arr_top_side_category >::type 
+    internal::Is_on_x_identification_2::Curve< Top_side_category >::type 
   >::type
   Is_on_x_identification_2_curve_tag;
 
   //! tag type for Is_on_x_identification_2 (point signature)
   typedef typename internal::Or_traits<
     typename 
-    internal::Is_on_x_identification_2::Point< Arr_bottom_side_category >::type,
+    internal::Is_on_x_identification_2::Point< Bottom_side_category >::type,
     typename 
-    internal::Is_on_x_identification_2::Point< Arr_top_side_category >::type 
+    internal::Is_on_x_identification_2::Point< Top_side_category >::type 
   >::type
   Is_on_x_identification_2_point_tag;
 
   //! tag type for Compare_x_at_limit_2 (point-curve-end signature)
   typedef typename internal::Or_traits<
     typename 
-    internal::Compare_x_at_limit_2::Point_curve_end< Arr_bottom_side_category >
+    internal::Compare_x_at_limit_2::Point_curve_end< Bottom_side_category >
     ::type,
     typename 
-    internal::Compare_x_at_limit_2::Point_curve_end< Arr_top_side_category >::type 
+    internal::Compare_x_at_limit_2::Point_curve_end< Top_side_category >::type 
   >::type
   Compare_x_at_limit_2_point_curve_end_tag;
 
   //! tag type for Compare_x_at_limit_2 (curve-ends signature)
   typedef typename internal::Or_traits<
     typename 
-    internal::Compare_x_at_limit_2::Curve_ends< Arr_bottom_side_category >::type,
+    internal::Compare_x_at_limit_2::Curve_ends< Bottom_side_category >::type,
     typename 
-    internal::Compare_x_at_limit_2::Curve_ends< Arr_top_side_category >::type 
+    internal::Compare_x_at_limit_2::Curve_ends< Top_side_category >::type 
   >::type
   Compare_x_at_limit_2_curve_ends_tag;
 
   //! tag type for Compare_x_near_limit_boundary_2 (curve-ends signature)
   typedef typename internal::Or_traits<
     typename 
-    internal::Compare_x_near_limit_2::Curve_ends< Arr_bottom_side_category >
+    internal::Compare_x_near_limit_2::Curve_ends< Bottom_side_category >
     ::type,
     typename 
-    internal::Compare_x_near_limit_2::Curve_ends< Arr_top_side_category >::type 
+    internal::Compare_x_near_limit_2::Curve_ends< Top_side_category >::type 
   >::type
   Compare_x_near_limit_2_curve_ends_tag;
 
   //! tag type for Compare_x_on_boundary_2 (points signature)
   typedef typename internal::Or_traits<
     typename 
-    internal::Compare_x_on_boundary_2::Points< Arr_bottom_side_category >::type,
+    internal::Compare_x_on_boundary_2::Points< Bottom_side_category >::type,
     typename 
-    internal::Compare_x_on_boundary_2::Points< Arr_top_side_category >::type 
+    internal::Compare_x_on_boundary_2::Points< Top_side_category >::type 
   >::type
   Compare_x_on_boundary_2_points_tag;
 
   //! tag type for Compare_x_on_boundary_2 (points signature)
   typedef typename internal::Or_traits<
     typename 
-    internal::Compare_x_on_boundary_2::Points< Arr_bottom_side_category >::type,
+    internal::Compare_x_on_boundary_2::Points< Bottom_side_category >::type,
     typename 
-    internal::Compare_x_on_boundary_2::Curve_ends< Arr_top_side_category >::type 
+    internal::Compare_x_on_boundary_2::Curve_ends< Top_side_category >::type 
   >::type
   Compare_x_on_boundary_2_point_curve_end_tag;
 
   //! tag type for Compare_x_on_boundary_2 (points signature)
   typedef typename internal::Or_traits<
     typename 
-    internal::Compare_x_on_boundary_2::Curve_ends< Arr_bottom_side_category >::type,
+    internal::Compare_x_on_boundary_2::Curve_ends< Bottom_side_category >::type,
     typename 
-    internal::Compare_x_on_boundary_2::Curve_ends< Arr_top_side_category >::type 
+    internal::Compare_x_on_boundary_2::Curve_ends< Top_side_category >::type 
   >::type
   Compare_x_on_boundary_2_curve_ends_tag;
   
   //! tag type for Compare_x_near_boundary_2 (curve-ends signature)
   typedef typename internal::Or_traits<
     typename 
-    internal::Compare_x_near_boundary_2::Curve_ends< Arr_bottom_side_category >::type,
+    internal::Compare_x_near_boundary_2::Curve_ends< Bottom_side_category >::type,
     typename 
-    internal::Compare_x_near_boundary_2::Curve_ends< Arr_top_side_category >::type 
+    internal::Compare_x_near_boundary_2::Curve_ends< Top_side_category >::type 
   >::type
   Compare_x_near_boundary_2_curve_ends_tag;
 

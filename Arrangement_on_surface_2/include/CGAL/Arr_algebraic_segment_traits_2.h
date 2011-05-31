@@ -92,10 +92,10 @@ public:
     typedef typename CKvA_2::Has_do_intersect_category 
       Has_do_intersect_category;
 
-    typedef typename CKvA_2::Arr_left_side_category Arr_left_side_category;
-    typedef typename CKvA_2::Arr_bottom_side_category Arr_bottom_side_category;
-    typedef typename CKvA_2::Arr_top_side_category Arr_top_side_category;
-    typedef typename CKvA_2::Arr_right_side_category Arr_right_side_category;
+    typedef typename CKvA_2::Left_side_category Left_side_category;
+    typedef typename CKvA_2::Bottom_side_category Bottom_side_category;
+    typedef typename CKvA_2::Top_side_category Top_side_category;
+    typedef typename CKvA_2::Right_side_category Right_side_category;
 
     typedef typename CKvA_2::Multiplicity Multiplicity;
 

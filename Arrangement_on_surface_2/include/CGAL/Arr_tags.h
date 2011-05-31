@@ -43,10 +43,10 @@ struct Arr_closed_side_tag : public virtual Arr_oblivious_side_tag {};
 struct Arr_contracted_side_tag : public virtual Arr_oblivious_side_tag {};
 struct Arr_identified_side_tag : public virtual Arr_oblivious_side_tag {};
 
-BOOST_MPL_HAS_XXX_TRAIT_DEF(Arr_left_side_category)
-BOOST_MPL_HAS_XXX_TRAIT_DEF(Arr_bottom_side_category)
-BOOST_MPL_HAS_XXX_TRAIT_DEF(Arr_top_side_category)
-BOOST_MPL_HAS_XXX_TRAIT_DEF(Arr_right_side_category)
+BOOST_MPL_HAS_XXX_TRAIT_DEF(Left_side_category)
+BOOST_MPL_HAS_XXX_TRAIT_DEF(Bottom_side_category)
+BOOST_MPL_HAS_XXX_TRAIT_DEF(Top_side_category)
+BOOST_MPL_HAS_XXX_TRAIT_DEF(Right_side_category)
 
 namespace internal {
 
@@ -57,7 +57,7 @@ struct Get_left_side_tag {
 
 template < class Traits_ >
 struct Get_left_side_tag< Traits_, true > {
-  typedef typename Traits_::Arr_left_side_category Tag;
+  typedef typename Traits_::Left_side_category Tag;
 };
 
 template < class Traits_ >
@@ -73,7 +73,7 @@ public:
   typedef Traits_ Traits;
 
   typedef typename
-  Get_left_side_tag< Traits, has_Arr_left_side_category< Traits >::value >::Tag Tag;
+  Get_left_side_tag< Traits, has_Left_side_category< Traits >::value >::Tag Tag;
 };
 
 template < class GeometryTraits_2, bool b > 
@@ -81,15 +81,15 @@ struct Validate_left_side_tag {};
 
 template < class GeometryTraits_2 >
 struct Validate_left_side_tag< GeometryTraits_2, true > {
-  void missing__Arr_left_side_category() {}
+  void missing__Left_side_category() {}
 };
 
 template < class GeometryTraits_2 >
 struct Validate_left_side_tag< GeometryTraits_2, false > {
-  void missing__Arr_left_side_category()
+  void missing__Left_side_category()
   { 
     bool 
-      missing__Arr_left_side_category__assuming__Arr_oblivious_side_tag__instead; 
+      missing__Left_side_category__assuming__Arr_oblivious_side_tag__instead; 
   }
 };
 
@@ -101,7 +101,7 @@ struct Get_bottom_side_tag {
 
 template < class Traits_ >
 struct Get_bottom_side_tag< Traits_, true > {
-  typedef typename Traits_::Arr_bottom_side_category Tag;
+  typedef typename Traits_::Bottom_side_category Tag;
 };
 
 template < class Traits_ >
@@ -117,7 +117,7 @@ public:
   typedef Traits_ Traits;
 
   typedef typename
-  Get_bottom_side_tag< Traits, has_Arr_bottom_side_category< Traits >::value >::Tag 
+  Get_bottom_side_tag< Traits, has_Bottom_side_category< Traits >::value >::Tag 
   Tag;
 };
 
@@ -126,15 +126,15 @@ struct Validate_bottom_side_tag {};
 
 template < class GeometryTraits_2 >
 struct Validate_bottom_side_tag< GeometryTraits_2, true > {
-  void missing__Arr_bottom_side_category() {}
+  void missing__Bottom_side_category() {}
 };
 
 template < class GeometryTraits_2 >
 struct Validate_bottom_side_tag< GeometryTraits_2, false > {
-  void missing__Arr_bottom_side_category()
+  void missing__Bottom_side_category()
   { 
     bool 
-      missing__Arr_bottom_side_category__assuming__Arr_oblivious_side_tag__instead; 
+      missing__Bottom_side_category__assuming__Arr_oblivious_side_tag__instead; 
   }
 };
 
@@ -146,7 +146,7 @@ struct Get_top_side_tag {
 
 template < class Traits_ >
 struct Get_top_side_tag< Traits_, true > {
-  typedef typename Traits_::Arr_top_side_category Tag;
+  typedef typename Traits_::Top_side_category Tag;
 };
 
 template < class Traits_ >
@@ -162,7 +162,7 @@ public:
   typedef Traits_ Traits;
 
   typedef typename
-  Get_top_side_tag< Traits, has_Arr_top_side_category< Traits >::value >::Tag Tag;
+  Get_top_side_tag< Traits, has_Top_side_category< Traits >::value >::Tag Tag;
 };
 
 template < class GeometryTraits_2, bool b > 
@@ -170,14 +170,14 @@ struct Validate_top_side_tag {};
 
 template < class GeometryTraits_2 >
 struct Validate_top_side_tag< GeometryTraits_2, true > {
-  void missing__Arr_top_side_category() {}
+  void missing__Top_side_category() {}
 };
 
 template < class GeometryTraits_2 >
 struct Validate_top_side_tag< GeometryTraits_2, false > {
-  void missing__Arr_top_side_category()
+  void missing__Top_side_category()
   { 
-    bool missing__Arr_top_side_category__assuming__Arr_oblivious_side_tag__instead; 
+    bool missing__Top_side_category__assuming__Arr_oblivious_side_tag__instead; 
   }
 };
 
@@ -189,7 +189,7 @@ struct Get_right_side_tag {
 
 template < class Traits_ >
 struct Get_right_side_tag< Traits_, true > {
-  typedef typename Traits_::Arr_right_side_category Tag;
+  typedef typename Traits_::Right_side_category Tag;
 };
 
 template < class Traits_ >
@@ -205,7 +205,7 @@ public:
   typedef Traits_ Traits;
 
   typedef typename
-  Get_right_side_tag< Traits, has_Arr_right_side_category< Traits >::value >::Tag 
+  Get_right_side_tag< Traits, has_Right_side_category< Traits >::value >::Tag 
   Tag;
 };
 
@@ -214,15 +214,15 @@ struct Validate_right_side_tag {};
 
 template < class GeometryTraits_2 >
 struct Validate_right_side_tag< GeometryTraits_2, true > {
-  void missing__Arr_right_side_category() {}
+  void missing__Right_side_category() {}
 };
 
 template < class GeometryTraits_2 >
 struct Validate_right_side_tag< GeometryTraits_2, false > {
-  void missing__Arr_right_side_category()
+  void missing__Right_side_category()
   { 
     bool 
-      missing__Arr_right_side_category__assuming__Arr_oblivious_side_tag__instead; 
+      missing__Right_side_category__assuming__Arr_oblivious_side_tag__instead; 
   }
 };
 
@@ -249,16 +249,16 @@ struct Arr_are_all_sides_oblivious_tag {
 public:
 
   //! This instance's first template parameter
-  typedef ArrLeftSideTag   Arr_left_side_category;
+  typedef ArrLeftSideTag   Left_side_category;
   
   //! This instance's second template parameter
-  typedef ArrBottomSideTag Arr_bottom_side_category;
+  typedef ArrBottomSideTag Bottom_side_category;
   
   //! This instance's third template parameter
-  typedef ArrTopSideTag    Arr_top_side_category;
+  typedef ArrTopSideTag    Top_side_category;
   
   //! This instance's fourth template parameter
-  typedef ArrRightSideTag  Arr_right_side_category;
+  typedef ArrRightSideTag  Right_side_category;
   
 private:
   
@@ -266,22 +266,22 @@ private:
   typedef boost::mpl::bool_< false > false_;
   
   typedef boost::mpl::if_< 
-       boost::is_same< Arr_left_side_category, Arr_oblivious_side_tag >,
+       boost::is_same< Left_side_category, Arr_oblivious_side_tag >,
        true_, false_ > 
   Left_oblivious;
 
   typedef boost::mpl::if_< 
-       boost::is_same< Arr_bottom_side_category, Arr_oblivious_side_tag >,
+       boost::is_same< Bottom_side_category, Arr_oblivious_side_tag >,
        true_, false_ > 
   Bottom_oblivious;
 
   typedef boost::mpl::if_< 
-       boost::is_same< Arr_top_side_category, Arr_oblivious_side_tag >,
+       boost::is_same< Top_side_category, Arr_oblivious_side_tag >,
        true_, false_ > 
   Top_oblivious;
 
   typedef boost::mpl::if_< 
-       boost::is_same< Arr_right_side_category, Arr_oblivious_side_tag >,
+       boost::is_same< Right_side_category, Arr_oblivious_side_tag >,
        true_, false_ > 
   Right_oblivious;
   
@@ -308,16 +308,16 @@ struct Arr_are_all_sides_non_open_tag {
 public:
 
   //! This instance's first template parameter
-  typedef ArrLeftSideTag   Arr_left_side_category;
+  typedef ArrLeftSideTag   Left_side_category;
   
   //! This instance's second template parameter
-  typedef ArrBottomSideTag Arr_bottom_side_category;
+  typedef ArrBottomSideTag Bottom_side_category;
   
   //! This instance's third template parameter
-  typedef ArrTopSideTag    Arr_top_side_category;
+  typedef ArrTopSideTag    Top_side_category;
   
   //! This instance's fourth template parameter
-  typedef ArrRightSideTag  Arr_right_side_category;
+  typedef ArrRightSideTag  Right_side_category;
   
 private:
   
@@ -325,22 +325,22 @@ private:
   typedef boost::mpl::bool_< false > false_;
   
   typedef boost::mpl::if_< 
-       boost::is_same< Arr_left_side_category, Arr_open_side_tag >,
+       boost::is_same< Left_side_category, Arr_open_side_tag >,
        true_, false_ > 
   Left_open;
 
   typedef boost::mpl::if_< 
-       boost::is_same< Arr_bottom_side_category, Arr_open_side_tag >,
+       boost::is_same< Bottom_side_category, Arr_open_side_tag >,
        true_, false_ > 
   Bottom_open;
 
   typedef boost::mpl::if_< 
-       boost::is_same< Arr_top_side_category, Arr_open_side_tag >,
+       boost::is_same< Top_side_category, Arr_open_side_tag >,
        true_, false_ > 
   Top_open;
 
   typedef boost::mpl::if_< 
-       boost::is_same< Arr_right_side_category, Arr_open_side_tag >,
+       boost::is_same< Right_side_category, Arr_open_side_tag >,
        true_, false_ > 
   Right_open;
   
@@ -369,16 +369,16 @@ struct Arr_sane_identified_tagging {
 public:
   
   //! This instance's first template parameter
-  typedef ArrLeftSideTag   Arr_left_side_category;
+  typedef ArrLeftSideTag   Left_side_category;
   
   //! This instance's second template parameter
-  typedef ArrBottomSideTag Arr_bottom_side_category;
+  typedef ArrBottomSideTag Bottom_side_category;
   
   //! This instance's third template parameter
-  typedef ArrTopSideTag    Arr_top_side_category;
+  typedef ArrTopSideTag    Top_side_category;
   
   //! This instance's fourth template parameter
-  typedef ArrRightSideTag  Arr_right_side_category;
+  typedef ArrRightSideTag  Right_side_category;
   
 private:
   
@@ -386,22 +386,22 @@ private:
   typedef boost::mpl::bool_< false > false_;
   
   typedef boost::mpl::if_< 
-       boost::is_same< Arr_left_side_category, Arr_identified_side_tag >,
+       boost::is_same< Left_side_category, Arr_identified_side_tag >,
        true_, false_ > 
   Left_identified;
 
   typedef boost::mpl::if_<
-       boost::is_same< Arr_bottom_side_category, Arr_identified_side_tag >,
+       boost::is_same< Bottom_side_category, Arr_identified_side_tag >,
        true_, false_ > 
   Bottom_identified;
 
   typedef boost::mpl::if_< 
-       boost::is_same< Arr_top_side_category, Arr_identified_side_tag >,
+       boost::is_same< Top_side_category, Arr_identified_side_tag >,
        true_, false_ > 
   Top_identified;
   
   typedef boost::mpl::if_< 
-       boost::is_same< Arr_right_side_category, Arr_identified_side_tag >,
+       boost::is_same< Right_side_category, Arr_identified_side_tag >,
        true_, false_ > 
   Right_identified;
 

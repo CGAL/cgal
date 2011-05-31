@@ -63,13 +63,13 @@ public:
                                                     Has_do_intersect_category;
 
   typedef typename internal::Arr_complete_left_side_tag< Base_traits_2 >::Tag 
-                                                    Arr_left_side_category;
+                                                    Left_side_category;
   typedef typename internal::Arr_complete_bottom_side_tag< Base_traits_2 >::Tag
-                                                    Arr_bottom_side_category;
+                                                    Bottom_side_category;
   typedef typename internal::Arr_complete_top_side_tag< Base_traits_2 >::Tag
-                                                   Arr_top_side_category;
+                                                   Top_side_category;
   typedef typename internal::Arr_complete_right_side_tag< Base_traits_2 >::Tag
-                                                    Arr_right_side_category;
+                                                    Right_side_category;
   
   /* Overlay is implemented as sweep-line visitor. The sweep-line algorithm
    * never uses Compare_y_at_x_left_2, and it never performs merging of curves.
