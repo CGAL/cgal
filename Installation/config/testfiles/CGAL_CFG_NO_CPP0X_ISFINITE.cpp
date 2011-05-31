@@ -24,6 +24,11 @@
 #include <cassert>
 #include <cmath>
 
+#ifdef isfinite
+#  error isfinite cannot be a macro if one want to use C++0x std::isfinite
+// On Intel Compiler 12, isfinite is a macro in <cmath.h> :-(
+#endif
+
 template < typename T >
 void use(T) {}
 

@@ -18,6 +18,7 @@
 #include <QPluginLoader>
 #include <QMessageBox>
 #include <QScrollBar>
+#include <QClipboard>
 
 #include <CGAL_demo/Plugin_interface.h>
 #include <CGAL_demo/Io_plugin_interface.h>
@@ -550,3 +551,27 @@ void MainWindow::setAddKeyFrameKeyboardModifiers(::Qt::KeyboardModifiers m)
 {
   viewer->setAddKeyFrameKeyboardModifiers(m);
 }
+
+void MainWindow::on_actionCopy_snapshot_triggered()
+{
+  // copy snapshot to clipboard
+	QApplication::setOverrideCursor(Qt::WaitCursor);
+  QClipboard *qb = QApplication::clipboard();
+  viewer->makeCurrent();
+  viewer->raise();
+  QImage snapshot = viewer->grabFrameBuffer(true);
+  qb->setImage(snapshot);
+	QApplication::restoreOverrideCursor();
+}
+
+void MainWindow::on_actionSave_snapshot_triggered()
+{
+	// save snapshot to file
+	QApplication::setOverrideCursor(Qt::WaitCursor);
+  QString filename = QFileDialog::getSaveFileName(this,tr("Save snapshot to file..."),"snapshot00.png","*.png");
+  viewer->saveSnapshot(filename);
+	QApplication::restoreOverrideCursor();
+}
+
+
+

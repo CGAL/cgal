@@ -5,12 +5,13 @@
 #include <CGAL/Cartesian.h>
 #include <CGAL/Arrangement_on_surface_2.h>
 #include <CGAL/Arr_geodesic_arc_on_sphere_traits_2.h>
+#include <CGAL/Arr_counting_traits_2.h>
 #include <CGAL/Arr_spherical_topology_traits_2.h>
 #include <list>
 
 typedef CGAL::Gmpq                                           Number_type;
 typedef CGAL::Cartesian<Number_type>                         Kernel;
-typedef CGAL::Arr_geodesic_arc_on_sphere_traits_2<Kernel>
+typedef CGAL::Arr_counting_traits_2< CGAL::Arr_geodesic_arc_on_sphere_traits_2<Kernel> >
                                                              Geom_traits_2;
 typedef Geom_traits_2::Point_2                               Point_2;
 typedef Geom_traits_2::X_monotone_curve_2                    X_monotone_curve_2;
@@ -52,6 +53,8 @@ int main ()
             << "   V = " << arr.number_of_vertices()
             << ",  E = " << arr.number_of_edges() 
             << ",  F = " << arr.number_of_faces() << std::endl;
+
+  std::cout << *(arr.geometry_traits()) << std::endl;
 
   return 0;
 }

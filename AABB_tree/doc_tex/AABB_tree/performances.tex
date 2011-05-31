@@ -115,7 +115,7 @@ The experiments described above are neither exhaustive nor conclusive as we have
 
 \begin{itemize}
 
-\item Kernel: The type of CGAL kernel turns out to dominate the final execution times, the maximum performances being obtained with the simple Cartesian kernel parameterized with the double precision number type. In applications where the intersection and distance execution times are crucial it is possible to use this kernel for the AABB tree in combination with a more robust kernel for the main data structure.
+\item Kernel: The type of \cgal\ kernel turns out to dominate the final execution times, the maximum performances being obtained with the simple Cartesian kernel parameterized with the double precision number type. In applications where the intersection and distance execution times are crucial it is possible to use this kernel for the AABB tree in combination with a more robust kernel for the main data structure.
 
 \item Primitives: Although the number of input primitives plays an obvious role in the final performance, their distribution in space is at least equally important in order to obtain a well-balanced AABB tree. Ideally the primitives must be evenly distributed in space and the long primitives spanning the bounding box of the tree root node must be avoided as much as possible. It is often beneficial to split these long primitives into smaller ones before constructing the tree, e.g., through recursive longest edge bisection for triangle surface meshes.
 
