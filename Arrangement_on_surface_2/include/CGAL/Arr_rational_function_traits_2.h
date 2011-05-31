@@ -230,7 +230,7 @@ public:
     return Construct_curve_2(_cache);
   }
 
-  /*! Construct a point xxx */
+  /*! Construct a point */
   class Construct_point_2
   {
   protected:
