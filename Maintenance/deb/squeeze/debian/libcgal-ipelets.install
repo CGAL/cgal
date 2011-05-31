@@ -1,2 +1,0 @@
-# use wildcard to avoid hard-coding the Ipe version
-usr/lib/ipe/*  usr/lib/ipe
