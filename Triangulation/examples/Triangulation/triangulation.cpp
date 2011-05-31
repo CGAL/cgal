@@ -48,7 +48,7 @@ int main()
     typedef std::vector<Face> Faces;
     Faces edges;
     std::back_insert_iterator<Faces> out(edges);
-    t.incident_upper_faces(t.infinite_vertex(), 1, out);
+    t.incident_faces(t.infinite_vertex(), 1, out);
     // Count the number of points on the convex hull
     std::cout << "There are " << edges.size() << " vertices on the convex hull.";
     edges.clear();
