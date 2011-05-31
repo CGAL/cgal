@@ -1,8 +1,7 @@
-{
 
-\def\note#1{ {\color{red}
-  \textsf{$\langle\!\langle${#1}$\rangle\!\rangle$}}
-}
+\newcommand{\note}[1]{\begin{ccTexOnly}%
+{\color{red}$\langle\!\langle$#1$\rangle\!\rangle$}\end{ccTexOnly}}
+\newcommand{\sphere}{\ensuremath{\mathcal S}}
 
 \section{Introduction\label{triangulation:intro}}
 
@@ -22,11 +21,11 @@ singular of which is \textbf{simplex}).
 %
 A simplex $s\in S$ is \textbf{maximal} if it is not a proper subset of some other
 set in $S$. The simplicial complex is \textbf{pure} (or \textbf{homogeneous})
-if all the maximal simplices have the same cardinality ({\emph{i.e.,}\ they have the same
-number of vertices). 
+if all the maximal simplices have the same cardinality, \emph{i.e.}, they have the same
+number of vertices. 
 In the sequel, we will call these maximal simplices \textbf{(full) cell}.
-A \textbf{face} of a simplex is a subset of it. A
-\textbf{proper face} of a simplex is a strict subset of it.
+A \textbf{face} of a simplex is a subset of it.
+A \textbf{proper face} of a simplex is a strict subset of it.
 
 If the vertices are embedded into euclidean space $\real^d$, we deal with
 \textbf{finite simplicial complexes} which have slightly different simplices
@@ -118,10 +117,9 @@ us denote the ambient dimension with \ad\ and the current dimension with \cd.
 It always holds that $-2\leq\ad\leq\cd$ and $0<D$.
 
 
-\note{ I remove some comments about 3D vs dD which are not exact.
-in T3D package in degenerate dimension
-\ccc{Cell} is actually used with the same meaning as here 
-(a $d$-face  and not a $D$-face.}
+\note{I remove some comments about 3D vs dD which are not exact. %
+in T3D package in degenerate dimension \ccc{Cell} is actually used with the %
+same meaning as here (a $d$-face  and not a $D$-face).}
 % \paragraph{On the \ccc{Facet} nested type}
 %  In the \ccc{Triangulation_3} \cgal\ package, the ambient dimension is always
 % 3. With respect to this reference dimension (3), a \ccc{Facet} is always a
@@ -136,8 +134,6 @@ in T3D package in degenerate dimension
 % cell is always represented by the \ccc{FullCell} nested type, And a
 % \ccc{Facet} represents a face of dimension \ccc{current_dimension()-1}
 % \textbf{and not} \ccc{ambient_dimension()-1}.
-
-\newcommand{\sphere}{\ensuremath{\mathcal S}}
 
 \paragraph{The data structure triangulates $\sphere^\cd$}
 
@@ -508,4 +504,3 @@ This package is heavily inspired by the works of Michael Seel
 and Mariette Yvinec (\ccc{Triangulation_2}).
 The first version was written by Samuel Hornus and then
 pursued by Samuel Hornus and Olivier Devillers.
-}
