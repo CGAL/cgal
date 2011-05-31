@@ -1226,8 +1226,15 @@ struct Min <Lazy_exact_nt<ET> >
 
     Lazy_exact_nt<ET> operator()( const Lazy_exact_nt<ET>& x, const Lazy_exact_nt<ET>& y) const
     {
-        CGAL_PROFILER(std::string("calls to    : ") + std::string(CGAL_PRETTY_FUNCTION));
-        return new Lazy_exact_Min<ET>(x, y);
+      if (x.identical(y)){
+        return x;
+      }
+      Uncertain<bool> res = x.approx() < y.approx();
+      if(is_certain(res)){
+        return res.make_certain() ? x : y; ;
+      }
+      CGAL_PROFILER(std::string("calls to    : ") + std::string(CGAL_PRETTY_FUNCTION));
+      return new Lazy_exact_Min<ET>(x, y);
     }
 };
 
@@ -1237,6 +1244,13 @@ struct Max <Lazy_exact_nt<ET> >
 
     Lazy_exact_nt<ET> operator()( const Lazy_exact_nt<ET>& x, const Lazy_exact_nt<ET>& y) const
     {
+      if (x.identical(y)){
+        return x;
+      }
+      Uncertain<bool> res = x.approx() > y.approx();
+      if(is_certain(res)){
+        return  res.make_certain() ? x : y;
+      }
         CGAL_PROFILER(std::string("calls to    : ") + std::string(CGAL_PRETTY_FUNCTION));
         return new Lazy_exact_Max<ET>(x, y);
     }
