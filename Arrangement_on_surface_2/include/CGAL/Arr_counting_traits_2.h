@@ -775,7 +775,7 @@ public:
       m_object(base->compare_x_on_boundary_2_object()),
       m_counter1(counter1),
       m_counter2(counter2),
-      m_counter3(counter3),
+      m_counter3(counter3)
     {}
 
     /*! Operate */
