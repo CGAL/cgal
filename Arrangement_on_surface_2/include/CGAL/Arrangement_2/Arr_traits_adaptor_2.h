@@ -1486,19 +1486,13 @@ public:
  
 
   protected:
-    // for open
-    Comparison_result _compare_curve_ends(const X_monotone_curve_2 & xcv1,
+   
+    Comparison_result _compare_curve_ends_same_x(const X_monotone_curve_2 & xcv1,
                                           Arr_curve_end ce1,
                                           const X_monotone_curve_2 & xcv2,
-                                          Arr_curve_end ce2, 
-                                          Arr_open_side_tag) const {
-      
-      Comparison_result res = 
-	m_base->compare_x_at_limit_2_object()(xcv1, ce1, xcv2, ce2);
-      
-      if (res != EQUAL) {
-	return res;
-      }
+                                          Arr_curve_end ce2) const {
+
+      CGAL::Comparison_result res = CGAL::EQUAL;
 
       CGAL::Arr_parameter_space loc1 = m_base->parameter_space_in_y_2_object()(xcv1, ce1);
       CGAL::Arr_parameter_space loc2 = m_base->parameter_space_in_y_2_object()(xcv2, ce2);
@@ -1540,10 +1534,47 @@ public:
       // different sides => no comparisons required
       res =  (ce1 == CGAL::ARR_MIN_END ? CGAL::LARGER : CGAL::SMALLER);
       return res;
-    
+
     }
 
-    // for non-open
+
+    // for open
+    Comparison_result _compare_curve_ends(const X_monotone_curve_2 & xcv1,
+                                          Arr_curve_end ce1,
+                                          const X_monotone_curve_2 & xcv2,
+                                          Arr_curve_end ce2, 
+                                          Arr_open_side_tag) const {
+      
+      Comparison_result res = 
+	m_base->compare_x_at_limit_2_object()(xcv1, ce1, xcv2, ce2);
+      
+      if (res == EQUAL) {
+        res = _compare_curve_ends_same_x(xcv1, ce1, xcv2, ce2);
+      }
+      
+      return res;
+      
+    }
+
+    // for contracted
+    Comparison_result _compare_curve_ends(const X_monotone_curve_2 & xcv1,
+                                          Arr_curve_end ce1,
+                                          const X_monotone_curve_2 & xcv2,
+                                          Arr_curve_end ce2, 
+                                          Arr_contracted_side_tag) const {
+      
+      Comparison_result res = 
+	m_base->compare_x_on_boundary_2_object()(xcv1, ce1, xcv2, ce2);
+      
+      if (res == EQUAL) {
+        res = _compare_curve_ends_same_x(xcv1, ce1, xcv2, ce2);
+      }
+      
+      return res;
+    }      
+
+
+    // for others
     Comparison_result _compare_curve_ends(const X_monotone_curve_2 & xcv1,
                                           Arr_curve_end ce1,
                                           const X_monotone_curve_2 & xcv2,
