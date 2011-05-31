@@ -27,10 +27,10 @@
 
 namespace CGAL {
  
-template <class NT, class ROOT> 
-class Chinese_remainder_traits<CGAL::Sqrt_extension<NT,ROOT> >{
+template <class NT, class ROOT, class ACDE_TAG,class FP_TAG> 
+class Chinese_remainder_traits<CGAL::Sqrt_extension<NT,ROOT,ACDE_TAG,FP_TAG> >{
 private:
-    typedef CGAL::Sqrt_extension<NT,ROOT> EXT;   
+  typedef CGAL::Sqrt_extension<NT,ROOT,ACDE_TAG,FP_TAG> EXT;   
     typedef Chinese_remainder_traits<NT> CRT_NT;
     typedef Chinese_remainder_traits<ROOT> CRT_ROOT;
 

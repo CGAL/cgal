@@ -1,4 +1,4 @@
-// Copyright (c) 2006-2009 Max-Planck-Institute Saarbruecken (Germany).
+// Copyright (c) 2011 GeoemtryFactory
 // All rights reserved.
 //
 // This file is part of CGAL (www.cgal.org); you can redistribute it and/or
@@ -15,20 +15,20 @@
 // $URL$
 // $Id$
 //
-// Author(s)     : Michael Hemmer <hemmer@mpi-inf.mpg.de> 
 //
-// ============================================================================
-//
-//    \brief provide base class for Get_arithmetic_kernel  
+// Author(s)     : Sebastien Loriot <Sebastien.Loriot@geometryfactory.com>
 //
 
-#ifndef CGAL_GET_ARITHMETIC_KERNEL_H
-#define CGAL_GET_ARITHMETIC_KERNEL_H
 
-#include  <CGAL/basic.h>
 
-namespace CGAL {
-template< class NT > struct Get_arithmetic_kernel{};
+#ifndef CGAL_SQRT_EXTENSION_FWD_H
+#define CGAL_SQRT_EXTENSION_FWD_H
+
+namespace CGAL{
+
+template <class NT_,class ROOT_, class AllowCompareDifferentExtensions = ::CGAL::Tag_false, class FilterPredicates = ::CGAL::Tag_false > 
+class Sqrt_extension;
+  
 } //namespace CGAL
 
-#endif // CGAL_GET_ARITHMETIC_KERNEL_H
+#endif // CGAL_SQRT_EXTENSION_FWD_H
