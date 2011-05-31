@@ -26,7 +26,7 @@
 #define CGAL_IO_TAGS_H
 
 #include <cstddef>
-#include <CGAL/compiler_config.h>
+#include <CGAL/config.h>
 
 namespace CGAL {
 

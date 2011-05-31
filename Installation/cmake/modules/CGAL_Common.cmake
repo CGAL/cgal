@@ -9,6 +9,10 @@ endif()
 
 include(CGAL_Macros)
 
+if(RUNNING_CGAL_AUTO_TEST)
+# Just to avoid a warning from CMake if that variable is set on the command line...
+endif()
+
 # Common settings for CGAL cmake scripts
 if( NOT CGAL_COMMON_FILE_INCLUDED )
   set(CGAL_COMMON_FILE_INCLUDED 1 )

@@ -1121,6 +1121,7 @@ public:
 
 
 CGAL_DEFINE_COERCION_TRAITS_FOR_SELF_TEM(Lazy_exact_nt<ET>, class ET)
+CGAL_DEFINE_COERCION_TRAITS_FROM_TO_TEM(ET,Lazy_exact_nt<ET>,class ET)
 
 template<class ET1, class ET2 >
 struct Coercion_traits< Lazy_exact_nt<ET1>, Lazy_exact_nt<ET2> >
@@ -1225,8 +1226,15 @@ struct Min <Lazy_exact_nt<ET> >
 
     Lazy_exact_nt<ET> operator()( const Lazy_exact_nt<ET>& x, const Lazy_exact_nt<ET>& y) const
     {
-        CGAL_PROFILER(std::string("calls to    : ") + std::string(CGAL_PRETTY_FUNCTION));
-        return new Lazy_exact_Min<ET>(x, y);
+      if (x.identical(y)){
+        return x;
+      }
+      Uncertain<bool> res = x.approx() < y.approx();
+      if(is_certain(res)){
+        return res.make_certain() ? x : y;
+      }
+      CGAL_PROFILER(std::string("calls to    : ") + std::string(CGAL_PRETTY_FUNCTION));
+      return new Lazy_exact_Min<ET>(x, y);
     }
 };
 
@@ -1236,6 +1244,13 @@ struct Max <Lazy_exact_nt<ET> >
 
     Lazy_exact_nt<ET> operator()( const Lazy_exact_nt<ET>& x, const Lazy_exact_nt<ET>& y) const
     {
+      if (x.identical(y)){
+        return x;
+      }
+      Uncertain<bool> res = x.approx() > y.approx();
+      if(is_certain(res)){
+        return  res.make_certain() ? x : y;
+      }
         CGAL_PROFILER(std::string("calls to    : ") + std::string(CGAL_PRETTY_FUNCTION));
         return new Lazy_exact_Max<ET>(x, y);
     }

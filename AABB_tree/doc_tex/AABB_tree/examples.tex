@@ -6,7 +6,7 @@ In the following example a set of 3D triangles is stored in a list. The AABB pri
 \ccIncludeExampleCode{AABB_tree/AABB_triangle_3_example.cpp}
 
 \subsection{Tree of Polyhedron Triangle Facets for Intersection Queries}
-In the following example the AABB primitive wraps a facet handle of a triangle polyhedral surface as \ccc{id} and the corresponding 3D triangle as geometric object. From a segment query we test the intersections, then compute the number of intersections, compute the first encountered intersection (generally a point), compute all intersections (where each intersection is a pair of one CGAL object and one primitive id - here a face handle) and compute all intersected primitives. The latter involves only tests and no predicates and is hence faster than computing all intersections. We also compute the first encountered intersection with a plane query, which is generally a segment.
+In the following example the AABB primitive wraps a facet handle of a triangle polyhedral surface as \ccc{id} and the corresponding 3D triangle as geometric object. From a segment query we test the intersections, then compute the number of intersections, compute the first encountered intersection (generally a point), compute all intersections (where each intersection is a pair of one \cgal\ object and one primitive id - here a face handle) and compute all intersected primitives. The latter involves only tests and no predicates and is hence faster than computing all intersections. We also compute the first encountered intersection with a plane query, which is generally a segment.
 \ccIncludeExampleCode{AABB_tree/AABB_polyhedron_facet_intersection_example.cpp}
 
 \subsection{Tree of Polyhedron Triangle Facets for Distance Queries}

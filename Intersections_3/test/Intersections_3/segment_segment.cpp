@@ -9,6 +9,87 @@ typedef CGAL::Cartesian<FT>                                 K;
 // The construction test has to be working
 // The equal test has to be working
 
+#define TEST_CASE_SEGMENT_BASE(i,j,k,l,i1,i2) \
+{\
+  typename K::Segment_3 s1(pts[i],pts[j]); \
+  typename K::Segment_3 s2(pts[k],pts[l]); \
+  CGAL::Object obj= CGAL::intersection(s1,s2); \
+  typename K::Segment_3 s; \
+  typename K::Segment_3 res(pts[i1],pts[i2]);\
+  if (!CGAL::assign(s,obj) || ( s!=res && s!=res.opposite() )  ) {\
+    std::cerr << "ERROR test-case "<< i << j << k <<l <<std::endl; \
+    exit (EXIT_FAILURE);\
+  }\
+}
+
+#define TEST_CASE_SEGMENT(i,j,k,l,i1,i2) \
+  TEST_CASE_SEGMENT_BASE(i,j,k,l,i1,i2) \
+  TEST_CASE_SEGMENT_BASE(j,i,k,l,i1,i2) \
+  TEST_CASE_SEGMENT_BASE(i,j,l,k,i1,i2) \
+  TEST_CASE_SEGMENT_BASE(j,i,l,k,i1,i2) \
+  TEST_CASE_SEGMENT_BASE(k,l,i,j,i1,i2) \
+  TEST_CASE_SEGMENT_BASE(k,l,j,i,i1,i2) \
+  TEST_CASE_SEGMENT_BASE(l,k,i,j,i1,i2) \
+  TEST_CASE_SEGMENT_BASE(l,k,j,i,i1,i2) 
+  
+#define TEST_CASE_POINT_BASE(i,j,k,l,ind) \
+{\
+  typename K::Segment_3 s1(pts[i],pts[j]); \
+  typename K::Segment_3 s2(pts[k],pts[l]); \
+  CGAL::Object obj= CGAL::intersection(s1,s2); \
+  typename K::Point_3 p; \
+  if (!CGAL::assign(p,obj) || p!=pts[ind] ) {\
+    std::cerr << "ERROR test-case "<< i << j << k <<l <<std::endl; \
+    exit (EXIT_FAILURE);\
+  }\
+}
+
+#define TEST_CASE_POINT(i,j,k,l,ind) \
+  TEST_CASE_POINT_BASE(i,j,k,l,ind) \
+  TEST_CASE_POINT_BASE(j,i,k,l,ind) \
+  TEST_CASE_POINT_BASE(i,j,l,k,ind) \
+  TEST_CASE_POINT_BASE(j,i,l,k,ind) \
+  TEST_CASE_POINT_BASE(k,l,i,j,ind) \
+  TEST_CASE_POINT_BASE(k,l,j,i,ind) \
+  TEST_CASE_POINT_BASE(l,k,i,j,ind) \
+  TEST_CASE_POINT_BASE(l,k,j,i,ind)
+  
+
+#define TEST_CASE_EMPTY_BASE(i,j,k,l) \
+{\
+  typename K::Segment_3 s1(pts[i],pts[j]); \
+  typename K::Segment_3 s2(pts[k],pts[l]); \
+  CGAL::Object obj= CGAL::intersection(s1,s2); \
+  if ( !obj.empty() ) {\
+    std::cerr << "ERROR test-case "<< i << j << k <<l <<std::endl; \
+    exit (EXIT_FAILURE);\
+  }\
+}
+
+#define TEST_CASE_EMPTY(i,j,k,l) \
+  TEST_CASE_EMPTY_BASE(i,j,k,l)\
+  TEST_CASE_EMPTY_BASE(i,j,l,k)\
+  TEST_CASE_EMPTY_BASE(j,i,k,l)\
+  TEST_CASE_EMPTY_BASE(j,i,l,k)\
+  TEST_CASE_EMPTY_BASE(k,l,i,j)\
+  TEST_CASE_EMPTY_BASE(l,k,i,j)\
+  TEST_CASE_EMPTY_BASE(k,l,j,i)\
+  TEST_CASE_EMPTY_BASE(l,k,j,i)
+
+template <class K>
+void all_cases_collinear(typename K::Point_3 pts[4]){
+  std::cout << "4 points cases\n";
+  TEST_CASE_EMPTY(0,1,2,3)
+  TEST_CASE_SEGMENT(0,2,1,3,1,2)
+  TEST_CASE_SEGMENT(0,3,2,1,1,2)
+  std::cout << "3 points cases\n";
+  TEST_CASE_SEGMENT(0,1,0,2,0,1)
+  TEST_CASE_SEGMENT(0,2,1,2,1,2)
+  TEST_CASE_POINT(1,2,0,1,1)
+  std::cout << "2 points cases\n";
+  TEST_CASE_SEGMENT(1,2,1,2,1,2)
+}
+
 template <class K>
 void _test_intersection_construct(K)
 {
@@ -68,5 +149,9 @@ int main()
 {
   K k;
   _test_intersection_construct(k);
+  
+   
+  K::Point_3 pts[4] = {K::Point_3(0,0,0),K::Point_3(1,0,0),K::Point_3(2,0,0),K::Point_3(3,0,0)};
+  all_cases_collinear<K>(pts);
   return 0;
 }
