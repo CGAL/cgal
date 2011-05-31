@@ -19,7 +19,7 @@
 % }
 %--------------------------------------------------------------------------------
 \begin{ccRefFunction}{is_removable<CMap,i>}
-\ccInclude{Combinatorial_map_operations.h}\\
+\ccInclude{CGAL/Combinatorial_map_operations.h}\\
 \ccFunction{template <class CMap, unsigned int i>
     bool is_removable(const CMap& cm, typename CMap::Dart_const_handle dh);}
          {Returns true iff the $i$-cell containing \ccc{dh} can be removed,
@@ -35,7 +35,7 @@
 \end{ccRefFunction}
 %--------------------------------------------------------------------------------
 \begin{ccRefFunction}{remove_cell<CMap,i>}
-\ccInclude{Combinatorial_map_operations.h}\\
+\ccInclude{CGAL/Combinatorial_map_operations.h}\\
 
 \ccFunction{template <class CMap, unsigned int i>
   unsigned int remove_cell(CMap& cm, typename CMap::Dart_handle dh);}
@@ -131,7 +131,7 @@
 \end{ccRefFunction}
 %--------------------------------------------------------------------------------
 \begin{ccRefFunction}{is_insertable_cell_1_in_cell_2<CMap>}
-\ccInclude{Combinatorial_map_operations.h}\\
+\ccInclude{CGAL/Combinatorial_map_operations.h}\\
 
 \ccFunction{template < class CMap >
   bool is_insertable_cell_1_in_cell_2(const CMap & cm,
@@ -157,7 +157,7 @@
 \end{ccRefFunction}
 %--------------------------------------------------------------------------------
 \begin{ccRefFunction}{is_insertable_cell_2_in_cell_3<CMap,InputIterator>}
-\ccInclude{Combinatorial_map_operations.h}\\
+\ccInclude{CGAL/Combinatorial_map_operations.h}\\
 
 \ccFunction{template <class CMap, class InputIterator>
   bool is_insertable_cell_2_in_cell_3(const CMap & cm, 
@@ -183,7 +183,7 @@
 \end{ccRefFunction}
 %--------------------------------------------------------------------------------
 \begin{ccRefFunction}{insert_cell_0_in_cell_1<CMap>}
-\ccInclude{Combinatorial_map_operations.h}\\
+\ccInclude{CGAL/Combinatorial_map_operations.h}\\
 
 \ccFunction{template < class CMap >
   typename CMap::Dart_handle insert_cell_0_in_cell_1(CMap& cm,
@@ -217,7 +217,7 @@
 \end{ccRefFunction}
 %--------------------------------------------------------------------------------
 \begin{ccRefFunction}{insert_cell_0_in_cell_2<CMap>}
-\ccInclude{Combinatorial_map_operations.h}\\
+\ccInclude{CGAL/Combinatorial_map_operations.h}\\
 
 \ccFunction{template <class CMap>
       typename CMap::Dart_handle insert_cell_0_in_cell_2(CMap & cm,
@@ -251,7 +251,7 @@
 \end{ccRefFunction}
 %--------------------------------------------------------------------------------
 \begin{ccRefFunction}{insert_cell_1_in_cell_2<CMap>}
-\ccInclude{Combinatorial_map_operations.h}\\
+\ccInclude{CGAL/Combinatorial_map_operations.h}\\
 
 \ccFunction{template < class CMap >
   typename CMap::Dart_handle insert_cell_1_in_cell_2(CMap& cm,
@@ -286,7 +286,7 @@
 \end{ccRefFunction}
 %--------------------------------------------------------------------------------
 \begin{ccRefFunction}{insert_dangling_cell_1_in_cell_2<CMap>}
-\ccInclude{Combinatorial_map_operations.h}\\
+\ccInclude{CGAL/Combinatorial_map_operations.h}\\
 
 \ccFunction{template < class CMap >
   typename CMap::Dart_handle insert_dangling_cell_1_in_cell_2(CMap& cm,
@@ -314,7 +314,7 @@ being attached only by one of its extremity to the 0-cell containing \ccc{dh}.
 \end{ccRefFunction}
 %--------------------------------------------------------------------------------
 \begin{ccRefFunction}{insert_cell_2_in_cell_3<CMap,InputIterator>}
-\ccInclude{Combinatorial_map_operations.h}\\
+\ccInclude{CGAL/Combinatorial_map_operations.h}\\
 
 \ccFunction{template <class CMap, class InputIterator>
   typename CMap::Dart_handle insert_cell_2_in_cell_3(CMap & cm,

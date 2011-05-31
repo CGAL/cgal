@@ -60,6 +60,8 @@ namespace CGAL
 	typedef CGAL::cpp0x::tuple<typename Convert_void<Items>::type... > type;
 	};
     
+        template<typename ... T>
+        struct My_length;    
         template<typename T1, typename ... T>
 	struct My_length<CGAL::cpp0x::tuple<T1, T...> >
 	{

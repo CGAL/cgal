@@ -12,6 +12,8 @@ struct Convert_void<void>
 
 #ifndef CGAL_CFG_NO_CPP0X_VARIADIC_TEMPLATES
 template<typename ... Items>
+struct Convert_tuple_with_void;
+template<typename ... Items>
 struct Convert_tuple_with_void<CGAL::cpp0x::tuple<Items...> >
 {
   typedef CGAL::cpp0x::tuple<typename Convert_void<Items>::type... > type;

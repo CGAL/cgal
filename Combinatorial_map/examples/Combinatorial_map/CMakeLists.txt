@@ -39,7 +39,7 @@ if ( CGAL_FOUND )
   create_single_source_cgal_program( "map_3_with_colored_facets.cpp" )
   create_single_source_cgal_program( "map_3_operations.cpp" )
   create_single_source_cgal_program( "map_3_marks.cpp" )
-  create_single_source_cgal_program( "test-tuple.cc" )
+#  create_single_source_cgal_program( "test-tuple.cc" )
 else()
   
     message(STATUS "This program requires the CGAL library, and will not be compiled.")
