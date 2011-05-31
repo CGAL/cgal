@@ -42,17 +42,14 @@ template <class T,class U> struct is_iterator_type_<T,U,true> :
 	boost::is_convertible<typename std::iterator_traits<T>::iterator_category,U>
 	{};
 
-template <class T> struct decay_array { typedef T type; };
-template <class T> struct decay_array<T[]> { typedef T* type; };
-template <class T,int d> struct decay_array<T[d]> { typedef T* type; };
 }
 
 // NOTE: we don't want the real std::decay or functions are included
 template <class T> struct is_iterator :
-	internal::is_iterator_<typename internal::decay_array<typename boost::remove_cv<typename boost::remove_reference<T>::type>::type>::type> {};
+	internal::is_iterator_<typename boost::remove_cv<typename boost::remove_reference<T>::type>::type> {};
 
 template <class T,class Tag> struct is_iterator_type :
-	internal::is_iterator_type_<typename internal::decay_array<typename boost::remove_cv<typename boost::remove_reference<T>::type>::type>::type,Tag> {};
+	internal::is_iterator_type_<typename boost::remove_cv<typename boost::remove_reference<T>::type>::type,Tag> {};
 
 template <class T,class U,bool=is_iterator<T>::value> struct is_iterator_to {
 	enum { value=false };
