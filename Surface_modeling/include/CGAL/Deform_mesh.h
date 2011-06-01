@@ -15,8 +15,10 @@ typedef Kernel::Vector_3                    Vector;
 typedef Kernel::Point_3                     Point;
 typedef CGAL::Polyhedron_3<Kernel>          Polyhedron;
 
-typedef Polyhedron::Vertex_const_handle                      Vertex_handle;
+typedef Polyhedron::Vertex_handle                            Vertex_handle;
+typedef Polyhedron::Vertex_const_handle                      Vertex_const_handle;
 typedef Polyhedron::Vertex_iterator							             Vertex_iterator;
+typedef Polyhedron::Vertex_const_iterator                    Vertex_const_iterator;
 typedef Polyhedron::Halfedge_around_vertex_const_circulator  HV_circulator;
 
 
@@ -24,9 +26,9 @@ namespace CGAL {
 
 class Deform_mesh
 {
-private:
+public:
 	Polyhedron polyhedron;                // target mesh
-  std::map<Vertex_handle, Vertex_handle> s2t;          // access from source mesh to target mesh
+  std::map<Vertex_const_handle, Vertex_handle> s2t;          // access from source mesh to target mesh
   std::vector<Vertex_handle> roi;
   std::vector<Vertex_handle> hdl;           // user specified handles, storing the target positions
 
@@ -38,9 +40,9 @@ public:
     :polyhedron(P)
 	{
     Vertex_iterator vit_t = polyhedron.vertices_begin();
-		for (Vertex_iterator vit_s = P.vertices_begin(); vit_s != P.vertices_end(); vit_s++)
+		for (Vertex_const_iterator vit_s = P.vertices_begin(); vit_s != P.vertices_end(); vit_s++)
 		{
-      s2t[vit_s] =vit_t;
+      s2t[vit_s] = vit_t;
 		}
 	}
 
@@ -49,48 +51,54 @@ public:
 	{
 	}
 
-	// The region of interest and the handles are a set of vertices
-	void region_of_interest(Vertex_iterator begin, Vertex_iterator end, size_t k)
+	// The region of interest and the handles are a set of vertices on target mesh, iterators come from source mesh
+	void region_of_interest(Vertex_const_iterator begin, Vertex_const_iterator end, size_t k)
 	{
-		roi.clear();
-		for (Vertex_iterator vit = begin; vit != end; vit ++)
+    std::vector<Vertex_const_handle> roi_s;
+		for (Vertex_const_iterator vit = begin; vit != end; vit ++)
 		{
-			Vertex_handle handle = s2t[vit];
-			roi.push_back(handle);
+      roi_s.push_back(vit);
 		}
-		roi.push_back(s2t[end]);
+    roi_s.push_back(end);
 
 		int idx_lv = 0;    // pointing the neighboring vertices on current level
 		int idx_lv_end;
 
 		for (size_t lv = 0; lv < k; lv++)
 		{
-			idx_lv_end = roi.size(); 
+			idx_lv_end = roi_s.size(); 
 			for ( ;idx_lv < idx_lv_end; idx_lv++ )
 			{
-				Vertex_handle vh = roi[idx_lv];
+				Vertex_const_handle vh = roi_s[idx_lv];
 				HV_circulator wc = vh->vertex_begin(), done(wc);
 				do {
-					Vertex_handle wh = wc->opposite()->vertex();
-          std::vector<Vertex_handle> ::iterator result = find(roi.begin(), roi.end(), wh);
-					if (result == roi.end())
+					Vertex_const_handle wh = wc->opposite()->vertex();
+          std::vector<Vertex_const_handle> ::iterator result = find(roi_s.begin(), roi_s.end(), wh);
+					if (result == roi_s.end())
 					{
-						roi.push_back(wh);
+						roi_s.push_back(wh);
 					}
 					++wc;
 				}while(wc != done);
 			}
 		}
+
+    // mapping handles from source to target
+    roi.clear();
+    for (int i = 0; i < roi_s.size(); i++)
+    {
+      roi.push_back(s2t[roi_s[i]]);
+    }
+
 	}
 
 
-	void handles(Vertex_iterator begin, Vertex_iterator end)
+	void handles(Vertex_const_iterator begin, Vertex_const_iterator end)
 	{
 		hdl.clear();
-		for (Vertex_iterator vit = begin; vit != end; vit ++)
+		for (Vertex_const_iterator vit = begin; vit != end; vit ++)
 		{
-			Vertex_handle handle = s2t[vit];
-			hdl.push_back(handle);
+			hdl.push_back(s2t[vit]);
 		}
 		hdl.push_back(s2t[end]);
 	}
@@ -130,22 +138,22 @@ public:
 	// Assemble Laplacian matrix A of linear system A*X=B 
 	void assemble_laplacian(Taucs_solver_traits<double>::Matrix& A, std::string type)
 	{
-    std::map<Vertex_handle, int> idx;
+    std::map<Vertex_const_handle, int> idx;
 		int index = 0;
-		for (Vertex_iterator vit = polyhedron.vertices_begin(); vit != polyhedron.vertices_end(); vit++)
+		for (Vertex_const_iterator vit = polyhedron.vertices_begin(); vit != polyhedron.vertices_end(); vit++)
 		{
 			idx[vit] = index;
 			index++;
 		}
 
-		for (Vertex_iterator vit = polyhedron.vertices_begin(); vit != polyhedron.vertices_end(); vit++)
+		for (Vertex_const_iterator vit = polyhedron.vertices_begin(); vit != polyhedron.vertices_end(); vit++)
 		{
-			Vertex_handle vi = vit;
+			Vertex_const_handle vi = vit;
 			double diagonal = 0;
 			int idx_i = idx[vi];
 			HV_circulator wc = vi->vertex_begin(), done(wc);
 			do {
-				Vertex_handle vj = wc->opposite()->vertex();
+				Vertex_const_handle vj = wc->opposite()->vertex();
 				double wij = 1;
 				if (type == "cot")   // cotangent Laplacian weights
 				{
@@ -169,11 +177,11 @@ public:
 	}
 
 	// The operator will be called in a real time loop from the GUI.
-	void operator()(Vertex_iterator vit, Vector v)
+	void operator()(Vertex_const_iterator vit, Vector v)
 	{
-  
     Point p = s2t[vit]->point();
 		p = p-v;
+    s2t[vit]->point() = p;
 	}
 };
 

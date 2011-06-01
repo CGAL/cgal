@@ -9,16 +9,16 @@ int main() {
 	
 	// read an off file
 	Polyhedron P;           //source mesh
-	cout << "Please input filename: ";
-	string filename;
-	cin >> filename;
-	string fullname = filename + ".off";
-	ifstream input(&fullname[0]);
+  std::cout << "Please input filename: ";
+  std::string filename;
+  std::cin >> filename;
+	std::string fullname = filename + ".off";
+	std::ifstream input(&fullname[0]);
 	input >> P;
-	cout << P.size_of_vertices() << " vertices;  " << P.size_of_facets() << "facets" << endl;
+  std::cout << P.size_of_vertices() << " vertices;  " << P.size_of_facets() << "facets" << std::endl;
 	input.close();
 
-	Deform_mesh deform(P);          
+  CGAL::Deform_mesh deform(P);          
 	
 	// takes arbitrary vertex as handle
 	deform.handles(P.vertices_begin(), P.vertices_begin());
@@ -31,14 +31,15 @@ int main() {
 
 	// displaces the handle by the Vector_3   v - origin
 	Vector translation = P.vertices_begin()->point() - CGAL::ORIGIN;
-	deform(P.vertices_begin()->point(), translation);
+	deform(P.vertices_begin(), translation);
 
 	// write the polyhedron to a file
-	string outname = filename + "_arap.off";
-	cout << "output to " << outname << "...";
-	ofstream output(&outname[0]);
-	output << P;
+	std::string outname = filename + "_arap.off";
+  std::cout << "output to " << outname << "...";
+	std::ofstream output(&outname[0]);
+	output << deform.polyhedron;
 	output.close();
-	cout << "done." << endl;
+  std::cout << "done." << std::endl;
+  output.close();
 	return 0;
 }
