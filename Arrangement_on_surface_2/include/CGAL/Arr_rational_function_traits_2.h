@@ -93,13 +93,17 @@ public:
   typedef Arr_open_side_tag          Right_side_category;
 
 private:
-  mutable Cache _cache;
-  Algebraic_kernel_d_1 _ak; 
+  mutable Cache           _cache;
+  Algebraic_kernel_d_1*   _ak_ptr;
+  bool                    delete_ak;
 
 public:
-  const Algebraic_kernel_d_1& algebraic_kernel_d_1() const {return _ak;}
+  const Algebraic_kernel_d_1* algebraic_kernel_d_1() const {return _ak_ptr;}
   // Algebraic_kernel_d_1& algebraic_kernel_d_1()             {return _ak;}
+protected:
+  Cache& cache() const {return _cache;}
 
+public:
   //------------
   //Constructors
   //------------
@@ -107,7 +111,20 @@ public:
   //---------------------
   // Default constructor.
   Arr_rational_function_traits_2 ()
+    :delete_ak(true)
+  {
+    _ak_ptr = new Algebraic_kernel_d_1;
+  }
+
+  Arr_rational_function_traits_2 (Algebraic_kernel_d_1*   ak_ptr)
+    :_ak_ptr(ak_ptr),delete_ak(false)
   {}
+
+  ~Arr_rational_function_traits_2 ()
+  {
+    if (delete_ak)
+      delete (_ak_ptr);
+  }
 
   class Construct_x_monotone_curve_2
   {
@@ -257,14 +274,14 @@ public:
       Integer  y_numer,y_denom;
       typename FT_rat_1::Decompose()(y,y_numer,y_denom);
       
-      return Point_2(_traits->_cache.get_rational_function (Rational(y_numer, y_denom)),
-                     _traits->algebraic_kernel_d_1().construct_algebraic_real_1_object()(x));
+      return Point_2(_traits->cache().get_rational_function (Rational(y_numer, y_denom)),
+                     _traits->algebraic_kernel_d_1()->construct_algebraic_real_1_object()(x));
     }
     Point_2 operator() (const Algebraic_real_1& x,const Rational& y)
     {   
       Integer  y_numer,y_denom;
       typename FT_rat_1::Decompose()(y,y_numer,y_denom);
-      return Point_2(_cache.get_rational_function (Rational(y_numer, y_denom)), x);
+      return Point_2(_traits->cache().get_rational_function (Rational(y_numer, y_denom)), x);
     }
   }; //Construct_point
 
