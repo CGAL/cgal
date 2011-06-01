@@ -10,7 +10,7 @@
 
 #define CGAL_TEST(b) if (!(b)) { ++cgal_test_res; \
 std::cerr<<"ERROR: ("<<__LINE__ <<") test "<<#b<<" failed."<<std::endl; } \
-else {}
+else
 
 #define CGAL_IO_TEST(datao,datai) { \
 std::ostrstream OS; OS<<datao<<'\n'<<'\0'; \
