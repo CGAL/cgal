@@ -272,38 +272,38 @@ int main ()
   assert(ident12() == false);
 
   BOOST_STATIC_ASSERT(
-      (boost::is_same< CGAL::internal::Arr_complete_left_side_tag< Traits5 >::Tag,
+      (boost::is_same< CGAL::internal::Arr_complete_left_side_category< Traits5 >::Tag,
        CGAL::Arr_oblivious_side_tag >::value)
   );
   BOOST_STATIC_ASSERT(
-      (boost::is_same< CGAL::internal::Arr_complete_left_side_tag< Traits1 >::Tag,
+      (boost::is_same< CGAL::internal::Arr_complete_left_side_category< Traits1 >::Tag,
        CGAL::Arr_open_side_tag >::value)
   );
 
   BOOST_STATIC_ASSERT(
-      (boost::is_same<CGAL::internal::Arr_complete_bottom_side_tag< Traits5 >::Tag,
+      (boost::is_same<CGAL::internal::Arr_complete_bottom_side_category< Traits5 >::Tag,
        CGAL::Arr_oblivious_side_tag >::value)
   );
   BOOST_STATIC_ASSERT(
-      (boost::is_same<CGAL::internal::Arr_complete_bottom_side_tag< Traits1 >::Tag,
+      (boost::is_same<CGAL::internal::Arr_complete_bottom_side_category< Traits1 >::Tag,
        CGAL::Arr_open_side_tag >::value)
   );
 
   BOOST_STATIC_ASSERT(
-      (boost::is_same< CGAL::internal::Arr_complete_top_side_tag< Traits5 >::Tag,
+      (boost::is_same< CGAL::internal::Arr_complete_top_side_category< Traits5 >::Tag,
        CGAL::Arr_oblivious_side_tag >::value)
   );
   BOOST_STATIC_ASSERT(
-      (boost::is_same< CGAL::internal::Arr_complete_top_side_tag< Traits1 >::Tag,
+      (boost::is_same< CGAL::internal::Arr_complete_top_side_category< Traits1 >::Tag,
        CGAL::Arr_open_side_tag >::value)
   );
 
   BOOST_STATIC_ASSERT(
-      (boost::is_same< CGAL::internal::Arr_complete_right_side_tag< Traits5 >::Tag,
+      (boost::is_same< CGAL::internal::Arr_complete_right_side_category< Traits5 >::Tag,
        CGAL::Arr_oblivious_side_tag >::value)
   );
   BOOST_STATIC_ASSERT(
-      (boost::is_same< CGAL::internal::Arr_complete_right_side_tag< Traits1 >::Tag,
+      (boost::is_same< CGAL::internal::Arr_complete_right_side_category< Traits1 >::Tag,
        CGAL::Arr_open_side_tag >::value)
   );
   
