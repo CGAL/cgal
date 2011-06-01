@@ -58,13 +58,13 @@ public:
   typedef typename Traits_2::Point_2                    Point_2;
 
   // should be ok, as Traits_ has already extended by Basic_sweep_line
-  typedef typename internal::Arr_complete_left_side_tag< Traits_2 >::Tag
+  typedef typename internal::Arr_complete_left_side_category< Traits_2 >::Tag
                                                         Left_side_category;
-  typedef typename internal::Arr_complete_bottom_side_tag< Traits_2 >::Tag
+  typedef typename internal::Arr_complete_bottom_side_category< Traits_2 >::Tag
                                                         Bottom_side_category;
-  typedef typename internal::Arr_complete_top_side_tag< Traits_2 >::Tag
+  typedef typename internal::Arr_complete_top_side_category< Traits_2 >::Tag
                                                         Top_side_category;
-  typedef typename internal::Arr_complete_right_side_tag< Traits_2 >::Tag
+  typedef typename internal::Arr_complete_right_side_category< Traits_2 >::Tag
                                                         Right_side_category;
 
   typedef Subcurve_                                     Subcurve;

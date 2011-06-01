@@ -80,13 +80,13 @@ public:
   typedef typename Traits_2::Has_do_intersect_category
                                                     Has_do_intersect_category;
 
-  typedef typename internal::Arr_complete_left_side_tag< Traits_2 >::Tag
+  typedef typename internal::Arr_complete_left_side_category< Traits_2 >::Tag
                                                     Left_side_category;
-  typedef typename internal::Arr_complete_bottom_side_tag< Traits_2 >::Tag
+  typedef typename internal::Arr_complete_bottom_side_category< Traits_2 >::Tag
                                                     Bottom_side_category;
-  typedef typename internal::Arr_complete_top_side_tag< Traits_2 >::Tag
+  typedef typename internal::Arr_complete_top_side_category< Traits_2 >::Tag
                                                     Top_side_category;
-  typedef typename internal::Arr_complete_right_side_tag< Traits_2 >::Tag
+  typedef typename internal::Arr_complete_right_side_category< Traits_2 >::Tag
                                                     Right_side_category;
 
   /* Overlay is implemented as sweep-line visitor. The sweep-line algorithm

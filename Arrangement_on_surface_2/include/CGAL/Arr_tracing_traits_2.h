@@ -205,13 +205,13 @@ public:
   typedef typename Base::Has_merge_category         Has_merge_category;
   typedef typename Base::Has_do_intersect_category  Has_do_intersect_category;
 
-  typedef typename internal::Arr_complete_left_side_tag< Base >::Tag
+  typedef typename internal::Arr_complete_left_side_category< Base >::Tag
                                                 Left_side_category;
-  typedef typename internal::Arr_complete_bottom_side_tag< Base >::Tag
+  typedef typename internal::Arr_complete_bottom_side_category< Base >::Tag
                                                 Bottom_side_category;
-  typedef typename internal::Arr_complete_top_side_tag< Base >::Tag
+  typedef typename internal::Arr_complete_top_side_category< Base >::Tag
                                                 Top_side_category;
-  typedef typename internal::Arr_complete_right_side_tag< Base >::Tag
+  typedef typename internal::Arr_complete_right_side_category< Base >::Tag
                                                 Right_side_category;
   
   typedef typename Base::Point_2                Point_2;

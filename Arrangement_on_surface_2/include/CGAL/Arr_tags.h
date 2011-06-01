@@ -66,7 +66,7 @@ struct Get_left_side_tag< Traits_, false > {
 };
 
 template < class Traits_ >
-struct Arr_complete_left_side_tag {
+struct Arr_complete_left_side_category {
 
 public:
 
@@ -110,7 +110,7 @@ struct Get_bottom_side_tag< Traits_, false > {
 };
 
 template < class Traits_ >
-struct Arr_complete_bottom_side_tag {
+struct Arr_complete_bottom_side_category {
 
 public:
 
@@ -155,7 +155,7 @@ struct Get_top_side_tag< Traits_, false > {
 };
 
 template < class Traits_ >
-struct Arr_complete_top_side_tag {
+struct Arr_complete_top_side_category {
 
 public:
 
@@ -198,7 +198,7 @@ struct Get_right_side_tag< Traits_, false > {
 };
 
 template < class Traits_ >
-struct Arr_complete_right_side_tag {
+struct Arr_complete_right_side_category {
 
 public:
 
