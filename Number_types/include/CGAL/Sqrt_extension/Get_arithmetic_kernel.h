@@ -27,8 +27,8 @@
 
 namespace CGAL {
 
-template <class COEFF, class ROOT>
-struct Get_arithmetic_kernel<Sqrt_extension<COEFF,ROOT> >{
+template <class COEFF, class ROOT, class ACDE_TAG,class FP_TAG>
+struct Get_arithmetic_kernel<Sqrt_extension<COEFF,ROOT,ACDE_TAG,FP_TAG> >{
   typedef Get_arithmetic_kernel<COEFF> GET;
   typedef typename GET::Arithmetic_kernel Arithmetic_kernel;
 };
