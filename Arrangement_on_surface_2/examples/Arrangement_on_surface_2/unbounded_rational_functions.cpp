@@ -19,9 +19,9 @@ typedef CGAL::Arrangement_2<Traits_2>              Arrangement_2;
 int main ()
 {
   // Traits class object 
-  Traits_2 traits;
-  AK1 ak1 = traits.algebraic_kernel_d_1(); 
-  
+  AK1 ak1; 
+  Traits_2 traits(&ak1);
+    
   // constructor for rational functions 
   Traits_2::Construct_curve_2 construct
     = traits.construct_curve_2_object(); 
@@ -45,7 +45,7 @@ int main ()
   Polynomial_1 P2 = -4*x*x+3; 
   Polynomial_1 minusP2 = -P2; 
   std::vector<std::pair<Alg_real_1,int> > roots;
-  ak1.solve_1_object()(P2,std::back_inserter(roots));// [-sqrt(3)/2, sqrt(3)/2]
+  traits.algebraic_kernel_d_1()->solve_1_object()(P2,std::back_inserter(roots));// [-sqrt(3)/2, sqrt(3)/2]
   arcs.push_back(construct(P2.begin(), P2.end(), roots[0].first, roots[1].first));
   arcs.push_back(construct(minusP2.begin(),minusP2.end(), roots[0].first, roots[1].first));
 
@@ -58,7 +58,8 @@ int main ()
   arcs.push_back(construct(minusP3.begin(),minusP3.end(), Q3.begin(), Q3.end(), Alg_real_1(0), false));
 
   // Construct the arrangement of the six arcs.
-  Arrangement_2      arr;
+  //Arrangement_2 arr(&traits);
+  Arrangement_2 arr;
   insert (arr, arcs.begin(), arcs.end());
 
   // Print the arrangement size.

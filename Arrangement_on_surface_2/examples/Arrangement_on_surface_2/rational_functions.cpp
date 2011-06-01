@@ -1,6 +1,5 @@
 //! \file examples/Arrangement_2/ex_rational_functions.cpp
 // Constructing an arrangement of arcs of rational functions.
-
 #include <CGAL/basic.h>
 
 #include <CGAL/CORE_BigInt.h>                      //NT
@@ -31,10 +30,10 @@ int main ()
   std::vector<Traits_2::X_monotone_curve_2>  arcs;
   
   // Create an arc supported by the polynomial y = x^4 - 6x^2 + 8,
-  // defined over the interval [-2, 2]:
+  // defined over the interval [-2.1, 2.1]:
   Polynomial_1 P1 = x*x*x*x - 6*x*x + 8;
   arcs.push_back( construct_arc(P1.begin(), P1.end(), 
-          Alg_real_1(-2), Alg_real_1(2)));
+          Alg_real_1(-2.1), Alg_real_1(2.1)));
 
   // Create an arc supported by the function y = x / (1 + x^2),
   // defined over the interval [-3, 3]:
@@ -57,7 +56,7 @@ int main ()
           Alg_real_1(-3), Alg_real_1(0)));
   
   // Construct the arrangement of the four arcs.
-  Arrangement_2      arr;
+  Arrangement_2 arr(&traits);
   insert (arr, arcs.begin(), arcs.end());
 
   // Print the arrangement size.
