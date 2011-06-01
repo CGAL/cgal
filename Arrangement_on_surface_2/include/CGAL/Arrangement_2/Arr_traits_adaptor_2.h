@@ -1360,9 +1360,32 @@ public:
  
   protected: 
 
-    Comparison_result _compare_point_curve_end_with_asymptote(const Point_2 & pt,
-                                                              const X_monotone_curve_2 & xcv,
-                                                              Arr_curve_end ce) const
+    // for open
+    Comparison_result _compare_point_curve_end(const Point_2 & pt,
+                                               const X_monotone_curve_2 & xcv,
+                                               Arr_curve_end ce,
+                                               Arr_open_side_tag) const
+    {
+      Comparison_result res = 
+	m_base->compare_x_at_limit_2_object()(pt, xcv, ce);
+      
+      if (res != EQUAL || m_base->is_vertical_2_object()(xcv)) {
+	return res;
+      }
+      
+      // look at the side from which the 
+      // vertical asymptote is approached 
+      res = (ce == CGAL::ARR_MIN_END ? CGAL::SMALLER : CGAL::LARGER);
+      
+      return res;
+    }
+
+
+    // for contraction
+    Comparison_result _compare_point_curve_end(const Point_2 & pt,
+                                               const X_monotone_curve_2 & xcv,
+                                               Arr_curve_end ce,
+                                               Arr_contracted_side_tag) const
     {
       Comparison_result res = 
 	m_base->compare_x_on_boundary_2_object()(pt, xcv, ce);
@@ -1376,32 +1399,9 @@ public:
       res = (ce == CGAL::ARR_MIN_END ? CGAL::SMALLER : CGAL::LARGER);
       
       return res;
-    
-    }
-    
-    // for contraction
-    Comparison_result _compare_point_curve_end(const Point_2 & pt,
-                                               const X_monotone_curve_2 & xcv,
-                                               Arr_curve_end ce,
-                                               Arr_contracted_side_tag) const
-    {
-      return _compare_point_curve_end_with_asymptote(pt, xcv, ce);
     }
 
-
-
-
-
-    // for open
-    Comparison_result _compare_point_curve_end(const Point_2 & pt,
-                                               const X_monotone_curve_2 & xcv,
-                                               Arr_curve_end ce,
-                                               Arr_open_side_tag) const
-    {
-      return _compare_point_curve_end_with_asymptote(pt, xcv, ce);
-    }
-
-    // for non-open
+    // for others
     Comparison_result _compare_point_curve_end(const Point_2 & pt,
                                                const X_monotone_curve_2 & xcv,
                                                Arr_curve_end ce,
