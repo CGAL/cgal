@@ -2854,6 +2854,7 @@ Polygon/doc_tex/Polygon/polygon.png -text
 Polyhedron/demo/Polyhedron/MainWindow.ui -text
 Polyhedron/demo/Polyhedron/Polyhedron_3.qrc -text
 Polyhedron/demo/Polyhedron/Remeshing_dialog.ui -text
+Polyhedron/demo/Polyhedron/Show_point_dialog.ui -text
 Polyhedron/demo/Polyhedron/cgal_test_with_cmake eol=lf
 Polyhedron/demo/Polyhedron/data/anchor.off -text svneol=unset#application/octet-stream
 Polyhedron/demo/Polyhedron/data/bones.off -text svneol=unset#application/octet-stream

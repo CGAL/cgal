@@ -36,11 +36,17 @@ include_directories( BEFORE ./ ./include ../../include )
 find_package(CGAL COMPONENTS Qt4)
 include( ${CGAL_USE_FILE} )
 
+option( POLYHEDRON_QTSCRIPT_DEBUGGER 
+  "Activate the use of Qt Script Debugger in Polyhedron_3 demo" OFF)
+
 # Find Qt4 itself
 set( QT_USE_QTXML    TRUE )
 set( QT_USE_QTMAIN   TRUE )
 set( QT_USE_QTSCRIPT  TRUE )
 set( QT_USE_QTOPENGL  TRUE )
+if( POLYHEDRON_QTSCRIPT_DEBUGGER)
+  set( QT_USE_QTSCRIPTTOOLS  TRUE )
+endif()
 find_package(Qt4)
 
 # Find OpenGL
@@ -49,6 +55,7 @@ find_package(OpenGL)
 # Find QGLViewer
 if(QT4_FOUND)
   include(${QT_USE_FILE})
+  include_directories( ${QT_INCLUDE_DIR}/QtScriptTools )
   find_package(QGLViewer )
 endif(QT4_FOUND)
 
@@ -81,6 +88,7 @@ if(CGAL_Qt4_FOUND AND QT4_FOUND AND OPENGL_FOUND AND QGLVIEWER_FOUND)
   endif(LAPACK_FOUND)
 
   qt4_wrap_ui( MainWindowUI_files MainWindow.ui )
+  qt4_wrap_ui( Show_point_dialogUI_FILES Show_point_dialog.ui )
   qt4_wrap_ui( remeshingUI_FILES  Remeshing_dialog.ui)
   qt4_wrap_ui( meshingUI_FILES  Meshing_dialog.ui Meshing_pause_widget.ui )
 
@@ -103,7 +111,9 @@ if(CGAL_Qt4_FOUND AND QT4_FOUND AND OPENGL_FOUND AND QGLVIEWER_FOUND)
               Scene_polyhedron_item.cpp
               Scene_textured_polyhedron_item.cpp
               Scene_c2t3_item.cpp
-              Scene_nef_polyhedron_item.cpp)
+              Scene_nef_polyhedron_item.cpp
+              Show_point_dialog.cpp
+              )
 
   # AUXILIARY LIBRARIES
 
@@ -126,6 +136,8 @@ if(CGAL_Qt4_FOUND AND QT4_FOUND AND OPENGL_FOUND AND QGLVIEWER_FOUND)
     ${OPENGL_gl_LIBRARY}
     ${OPENGL_glu_LIBRARY}
     )
+
+  add_library(point_dialog Show_point_dialog.cpp Show_point_dialog.ui ${Show_point_dialogUI_FILES} )
 
   add_library(scene_c2t3_item SHARED
     Scene_c2t3_item.cpp Scene_c2t3_item.moc)
@@ -183,8 +195,13 @@ if(CGAL_Qt4_FOUND AND QT4_FOUND AND OPENGL_FOUND AND QGLVIEWER_FOUND)
 
 
   # Link with Qt libraries
+  if( POLYHEDRON_QTSCRIPT_DEBUGGER )
+    add_definitions( -DQT_SCRIPTTOOLS_LIB )
+    target_link_libraries( Polyhedron_3 QtScriptTools )
+  endif()
   target_link_libraries( Polyhedron_3 ${QT_LIBRARIES} )
   target_link_libraries( Polyhedron_3 demo_framework )
+  target_link_libraries( Polyhedron_3 point_dialog )
 
   # Link with CGAL
   target_link_libraries( Polyhedron_3 ${CGAL_LIBRARIES} ${CGAL_3RD_PARTY_LIBRARIES} )
