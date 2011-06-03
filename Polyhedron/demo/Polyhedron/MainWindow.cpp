@@ -677,7 +677,7 @@ void MainWindow::open(QString filename, bool no_popup)
 void MainWindow::selectSceneItem(int i)
 {
   if(i < 0) return;
-  if((unsigned int)i >= scene->numberOfEntries()) return;
+  if(i >= scene->numberOfEntries()) return;
 
   treeView->selectionModel()->select(scene->createSelection(i),
                                      QItemSelectionModel::ClearAndSelect);
