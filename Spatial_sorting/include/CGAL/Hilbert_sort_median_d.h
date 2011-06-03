@@ -23,6 +23,7 @@
 #include <CGAL/basic.h>
 #include <functional>
 #include <cstddef>
+#include <iterator>
 #include <CGAL/Hilbert_sort_base.h>
 
 namespace CGAL {
@@ -143,7 +144,8 @@ public:
       two_to_dim = 1;
       Starting_position start(_dimension);
 
-      int N=end-begin;N*=2;
+      typename std::iterator_traits<RandomAccessIterator>::difference_type N=end-begin;
+      N*=2;
       for (int i=0; i<_dimension; ++i) 	start[i]=false; 	// we start below in all coordinates
       for (int i=0; i<_dimension; ++i) {
 	two_to_dim *= 2;        // compute 2^_dimension
