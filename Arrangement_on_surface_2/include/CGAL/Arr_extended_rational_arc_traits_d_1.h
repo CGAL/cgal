@@ -1,4 +1,4 @@
-// Copyright (c) 2010  Tel-Aviv University (Israel), INRIA Sophia-Antipolis (France).
+// Copyright (c) 2011 Tel-Aviv University (Israel), INRIA Sophia-Antipolis (France).
 // All rights reserved.
 //
 // This file is part of CGAL (www.cgal.org); you may redistribute it under

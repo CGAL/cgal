@@ -1,4 +1,4 @@
-// Copyright (c) 2003-2006  INRIA Sophia-Antipolis (France).
+// Copyright (c) 2003,2004,2005,2006,2007,2008,2009,2010,2011 INRIA Sophia-Antipolis (France).
 // All rights reserved.
 //
 // This file is part of CGAL (www.cgal.org); you may redistribute it under
