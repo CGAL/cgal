@@ -134,7 +134,7 @@ Scene::item(Item_id index) const
   return m_entries.value(index); // QList::value checks bounds
 }
 
-size_t
+int
 Scene::numberOfEntries() const
 {
   return m_entries.size();

@@ -55,7 +55,7 @@ public:
   int duplicate(int index); 
 
   // Accessors (getters)
-  size_t numberOfEntries() const;
+  int numberOfEntries() const;
   const QList<Scene_item*>& entries() const { return m_entries; }
   Q_INVOKABLE Scene_item* item(int) const ;
   int mainSelectionIndex() const;

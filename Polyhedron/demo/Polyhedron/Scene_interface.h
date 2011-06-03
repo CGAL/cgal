@@ -63,7 +63,7 @@ public:
   // clonable), returns -1.
 
   // Accessors (getters)
-  virtual size_t numberOfEntries() const = 0;
+  virtual int numberOfEntries() const = 0;
   virtual Scene_item* item(Item_id) const = 0;
   virtual Item_id mainSelectionIndex() const = 0;
   virtual QList<Item_id> selectionIndices() const = 0;
