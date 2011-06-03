@@ -88,16 +88,15 @@ public:
   //! \name Arrangement types
   //!@{
   typedef Arr_spherical_topology_traits_2<Geometry_traits_2, Dcel> Self;
-  typedef Arrangement_on_surface_2<Geometry_traits_2, Self>        Arr;
-  typedef typename Arr::Traits_adaptor_2 Traits_adaptor_2;
+  typedef Arr_traits_basic_adaptor_2<Geometry_traits_2>   Traits_adaptor_2;
   //!@}
   
   ///! \name The side tags
   //@{
-  typedef typename Arr::Left_side_category              Left_side_category;
-  typedef typename Arr::Bottom_side_category            Bottom_side_category;
-  typedef typename Arr::Top_side_category               Top_side_category;
-  typedef typename Arr::Right_side_category             Right_side_category;
+  typedef typename Traits_adaptor_2::Left_side_category   Left_side_category;
+  typedef typename Traits_adaptor_2::Bottom_side_category Bottom_side_category;
+  typedef typename Traits_adaptor_2::Top_side_category    Top_side_category;
+  typedef typename Traits_adaptor_2::Right_side_category  Right_side_category;
   
   BOOST_MPL_ASSERT
   (
@@ -359,6 +358,7 @@ public:
 private:
   /// \name Auxiliary type definitions.
   //@{
+  typedef Arrangement_on_surface_2<Geometry_traits_2, Self>        Arr;
 
   // Type definition for the constuction sweep-line visitor.
   typedef Arr_construction_subcurve<Geometry_traits_2>          CSubcurve; 
