@@ -128,6 +128,12 @@ if(CGAL_Qt4_FOUND AND QT4_FOUND AND OPENGL_FOUND AND QGLVIEWER_FOUND)
     Scene_item_with_display_list.cpp
     Polyhedron_demo_plugin_helper.cpp)
 
+  target_link_libraries(demo_framework
+    ${QGLVIEWER_LIBRARIES}
+    ${OPENGL_gl_LIBRARY}
+    ${OPENGL_glu_LIBRARY}
+    )
+
   add_library(scene_basic_objects SHARED
     Scene_plane_item.cpp Scene_plane_item.moc)
   target_link_libraries(scene_basic_objects 
@@ -137,7 +143,7 @@ if(CGAL_Qt4_FOUND AND QT4_FOUND AND OPENGL_FOUND AND QGLVIEWER_FOUND)
     ${OPENGL_glu_LIBRARY}
     )
 
-  add_library(point_dialog Show_point_dialog.cpp Show_point_dialog.ui ${Show_point_dialogUI_FILES} )
+  add_library(point_dialog SHARED Show_point_dialog.cpp Show_point_dialog.ui ${Show_point_dialogUI_FILES} )
 
   add_library(scene_c2t3_item SHARED
     Scene_c2t3_item.cpp Scene_c2t3_item.moc)
