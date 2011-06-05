@@ -829,9 +829,6 @@ multiplicity $1$:
 \subsection{A Traits Class for Arcs of Rational Functions\label{arr_ssec:tr_ratfunc}}
 %---------------------------------------------------------
 
-
-
-
 The traits class  \ccc{Arr_rational_function_traits_2<AlgebraicKernel_d_1>} 
 is a model of the \ccc{ArrangementTraits_2}
 concept. It handles bounded or unbounded arcs of rational functions,
@@ -843,34 +840,43 @@ not only interesting in their own right, they are also very useful
 for approximating or interpolating more complicated curves; see,
 e.g.,~\cite[Chapter~3]{cgal:ptvf-nrcpp-02}.
 
-A rational function $y = \frac{P(x)}{Q(x)}$ is defined by two polynomials 
-$P$ and $Q$ of arbitrary degrees. 
-If $Q(x) = 1$ then the function is a simple polynomial function.
-Usually the domain is $\R$ but the function may also be 
-restricted to a bounded interval $[x_{\rm min}, x_{\rm max}]$ 
-or defined over a ray $(-\infty, x_{\rm max}]$ or over $[x_{\rm min}, \infty)$. 
-Rational functions are represented by the nested type \ccc{Curve_2}. 
-Note that a rational function may be not continuous since roots of $Q$ induce 
-vertical asymptotes, which would contradict the notion of an $x$-monotone curve as 
-it is introduced by the \ccc{ArrangementTraits_2} concept. 
-Thus, continuous portions of rational functions are represented by the nested 
-type \ccc{X_monotone_curve_2}, which is different from \ccc{Curve_2}.
-Constructors for both classes are provided by the traits. 
-A \ccc{Curve_2} may be split up into several \ccc{X_monotone_curve_2}
-using \ccc{Make_x_monotone_2}. 
+A rational function $y = \frac{P(x)}{Q(x)}$ is defined by two
+polynomials $P$ and $Q$ of arbitrary degrees.  If $Q(x) = 1$ then
+the function is a simple polynomial function. Usually the domain is
+$\R$ but the function may also be restricted to a bounded interval
+$[x_{\rm min}, x_{\rm max}]$ or defined over a ray
+$(-\infty, x_{\rm max}]$ or over $[x_{\rm min}, \infty)$. Rational
+functions are represented by the nested type \ccc{Curve_2}. Note
+that a rational function may be not continuous since roots of $Q$
+induce vertical asymptotes, which would contradict the notion of an
+$x$-monotone curve as it is introduced by the \ccc{ArrangementTraits_2}
+concept. Thus, continuous portions of rational functions are
+represented by the nested type \ccc{X_monotone_curve_2}, which is
+different from \ccc{Curve_2}. Constructors for both classes are
+provided by the traits. A \ccc{Curve_2} may be split up into several
+\ccc{X_monotone_curve_2} using \ccc{Make_x_monotone_2}. 
 
-Using the \ccc{Arr_rational_function_traits_2<AlgebraicKernel_d_1>} class
-template it is possible to construct and maintain arrangement of
-rational arcs.  
-The template parameter of the traits must be a model of the 
-concept \ccc{AlgebraicKernel_d_1}. 
-A rational function is then represented by two polynomials $P$ and $Q$ of type 
-\ccc{AlgebraicKernel_d_1::Polynomial_1}. 
-A point is represented by a rational function and its $x$-coordinate, which is 
-of type \ccc{AlgebraicKernel_d_1::Algebraic_real_1}. 
-Note that an explicit representation of the $y$-coordinate is only computed upon 
-request, which can be a rather costly operation. 
-
+Using the \ccc{Arr_rational_function_traits_2<AlgebraicKernel_d_1>}
+class template it is possible to construct and maintain arrangement
+of rational arcs. The template parameter of the traits must model
+the concept \ccc{AlgebraicKernel_d_1}. The type
+\ccc{Coefficient} nested in any model of the concept
+\ccc{AlgebraicKernel_d_1} that is used to instantiate
+the traits class template must be an integral type, e.g.,
+<CORE::BigInt>. However, the coefficient of the polynomials can be
+rational numbers. For example, the \ccc{Algebraic_kernel_d_1<NT>}
+class template models the concept \ccc{AlgebraicKernel_d_1}. Thus,
+the instance \ccc{Algebraic_kernel_d_1<CORE::BigInt>} can be used to
+instantiate the traits class. Notice that the type
+\ccc{AlgebraicKernel_d_1::Bound} used to define the $x$-values that
+determine the interval over which the rational arcs are defined can
+be arbitrary algebraic numbers. A rational function then is represented
+by two polynomials $P$ and $Q$ of type
+\ccc{AlgebraicKernel_d_1::Polynomial_1}. A point is represented by a
+rational function and its $x$-coordinate, which is of type
+\ccc{AlgebraicKernel_d_1::Algebraic_real_1}. Note that an explicit
+representation of the $y$-coordinate is only computed upon request, as
+it can be a rather costly operation. 
 
 The constructed rational functions are cached by the traits class. 
 The cache is local to each traits class object. 
