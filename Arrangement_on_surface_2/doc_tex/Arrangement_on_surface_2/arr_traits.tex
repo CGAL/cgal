@@ -846,15 +846,15 @@ polynomials $P$ and $Q$ of arbitrary degrees.  If $Q(x) = 1$ then
 the function is a simple polynomial function. Usually the domain is
 $\R$ but the function may also be restricted to a bounded interval
 $[x_{\rm min}, x_{\rm max}]$ or defined over a ray
-$(-\infty, x_{\rm max}]$ or over $[x_{\rm min}, \infty)$. Rational
+$(-\infty, x_{\rm max}]$ or $[x_{\rm min}, \infty)$. Rational
 functions are represented by the nested type \ccc{Curve_2}. Note
 that a rational function may be not continuous since roots of $Q$
 induce vertical asymptotes, which would contradict the notion of an
 $x$-monotone curve as it is introduced by the \ccc{ArrangementTraits_2}
-concept. Thus, continuous portions of rational functions are
-represented by the nested type \ccc{X_monotone_curve_2}, which is
-different from \ccc{Curve_2}. Constructors for both classes are
-provided by the traits. A \ccc{Curve_2} may be split up into several
+concept. Continuous portions of rational functions are represented
+by the nested type \ccc{X_monotone_curve_2}, which is different than
+\ccc{Curve_2}. Constructors for both types are provided by the
+traits. A \ccc{Curve_2} may be split up into several
 \ccc{X_monotone_curve_2} using \ccc{Make_x_monotone_2}.
 
 Using the \ccc{Arr_rational_function_traits_2<AlgebraicKernel_d_1>}
@@ -865,11 +865,11 @@ represented as the quotient of two polynomials $P$ and $Q$ of type
 \ccc{AlgebraicKernel_d_1::Polynomial_1} and an $x$-interval over which
 the polynomials are defined. The type of the polynomial coefficients,
 namely \ccc{AlgebraicKernel_d_1::Coefficient}, cannot be algebraic.
-Notice, that there is no need for this type to be rational either, as
-using rational coefficients does not extend the domain of the rational
-arcs, and using rational numbers is typically less efficient than
-using integers. The type of the interval bounds, namely
-\ccc{AlgebraicKernel_d_1::Bound}, however, is algebraic. A point is
+Moreover, it is recommended that this type is not made rational either,
+since using rational, as opposed to integral, coefficients does not
+extend the range of the rational arcs and is typically less efficient.
+The type of the interval bounds, namely
+\ccc{AlgebraicKernel_d_1::Bound}, however, can be algebraic. A point is
 represented by a rational function and its $x$-coordinate, which is of
 type \ccc{AlgebraicKernel_d_1::Algebraic_real_1}. Note that an explicit
 representation of the $y$-coordinate is only computed upon request, as
