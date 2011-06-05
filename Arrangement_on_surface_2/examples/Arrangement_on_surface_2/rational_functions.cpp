@@ -18,6 +18,8 @@ typedef CGAL::Arrangement_2<Traits_2>              Arrangement_2;
 
 int main ()
 {
+  CGAL::set_pretty_mode(std::cout);             // for nice printouts.
+
   // create a polynomial representing x .-)
   Polynomial_1 x = CGAL::shift(Polynomial_1(1),1);
 
@@ -32,8 +34,9 @@ int main ()
   // Create an arc supported by the polynomial y = x^4 - 6x^2 + 8,
   // defined over the interval [-2.1, 2.1]:
   Polynomial_1 P1 = x*x*x*x - 6*x*x + 8;
-  arcs.push_back( construct_arc(P1.begin(), P1.end(), 
-          Alg_real_1(-2.1), Alg_real_1(2.1)));
+  Alg_real_1 l(Traits_2::Algebraic_kernel_d_1::Bound(-2.1));
+  Alg_real_1 r(Traits_2::Algebraic_kernel_d_1::Bound(2.1));
+  arcs.push_back( construct_arc(P1.begin(), P1.end(), l, r));
 
   // Create an arc supported by the function y = x / (1 + x^2),
   // defined over the interval [-3, 3]:
