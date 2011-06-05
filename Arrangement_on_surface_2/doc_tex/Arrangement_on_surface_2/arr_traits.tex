@@ -881,19 +881,18 @@ to construct curves using only the constructor objects provided by
 member functions of the traits class.
 %This is also the reason why IO is not handled via the usual stream operators. 
 Moreover, a curve must only be used by the traits class object that
-was used to construct it. These
-constructors have an aditional advantage. They enable the conveniency
-to provide the two defining polynomials using rational coefficients.
-For each constructor of a rational curve defined by two polynomials,
-say $P$ and $Q$, if the user chooses to provide rational coefficients
-for $P$ and $Q$, the constructor normalizes the coefficients and
-generates two new polynomials $P'$ and $Q'$ with coefficients of the
-appropriate integral type, such that quotients $P/Q$ and $P'/Q'$ are
-identical.
-The cache is automatically cleaned up from
-time to time. The amortized clean up costs are constant. In addition,
-there is also a separate member function that cleans up the cache on
-demand.
+was used to construct it. These constructors have an aditional
+advantage. They enable the conveniency to provide the two defining
+polynomials using rational coefficients. For each constructor of
+a rational curve, of either the type \ccc{Curve} or
+\ccc{X_monotone_curve}, defined by two polynomials, say $P$ and $Q$,
+if the user chooses to provide rational coefficients for $P$ and $Q$,
+the constructor normalizes the coefficients and generates two new
+defining polynomials $P'$ and $Q'$ with coefficients of the
+appropriate integral type, such that quotients $P/Q$ and $P'/Q'$ are 
+identical. The cache is automatically cleaned up from time to
+time. The amortized clean up costs are constant. In addition, there is
+also a separate member function that cleans up the cache on demand.
 
 \ccc{Arr_rational_function_traits_2<AlgebraicKernel_d_1>} is a model
 of the concepts \ccc{ArrangementTraits_2},
