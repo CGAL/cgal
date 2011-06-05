@@ -829,15 +829,16 @@ multiplicity $1$:
 \subsection{A Traits Class for Arcs of Rational Functions\label{arr_ssec:tr_ratfunc}}
 %---------------------------------------------------------
 
-The traits class  \ccc{Arr_rational_function_traits_2<AlgebraicKernel_d_1>} 
-is a model of the \ccc{ArrangementTraits_2}
-concept. It handles bounded or unbounded arcs of rational functions,
-referred to as {\sl rational arcs} (in particular, such an arc may
-correspond to the entire graph of a rational function), and enables the
-construction and maintenance of arrangements of such arcs. 
-Rational functions, and polynomial functions in particular, are
-not only interesting in their own right, they are also very useful
-for approximating or interpolating more complicated curves; see,
+The traits class
+\ccc{Arr_rational_function_traits_2<AlgebraicKernel_d_1>} is a model
+of the \ccc{ArrangementTraits_2} concept. It handles bounded or
+unbounded arcs of rational functions, referred to as
+\emph{rational arcs} (in particular, such an arc may correspond to the
+entire graph of a rational function), and enables the construction and
+maintenance of arrangements of such arcs. Rational functions, and
+polynomial functions in particular, are not only interesting in their
+own right, they are also very useful for approximating or
+interpolating more complicated curves; see,
 e.g.,~\cite[Chapter~3]{cgal:ptvf-nrcpp-02}.
 
 A rational function $y = \frac{P(x)}{Q(x)}$ is defined by two
@@ -854,50 +855,53 @@ concept. Thus, continuous portions of rational functions are
 represented by the nested type \ccc{X_monotone_curve_2}, which is
 different from \ccc{Curve_2}. Constructors for both classes are
 provided by the traits. A \ccc{Curve_2} may be split up into several
-\ccc{X_monotone_curve_2} using \ccc{Make_x_monotone_2}. 
+\ccc{X_monotone_curve_2} using \ccc{Make_x_monotone_2}.
 
 Using the \ccc{Arr_rational_function_traits_2<AlgebraicKernel_d_1>}
 class template it is possible to construct and maintain arrangement
 of rational arcs. The template parameter of the traits must model
-the concept \ccc{AlgebraicKernel_d_1}. The type
-\ccc{Coefficient} nested in any model of the concept
-\ccc{AlgebraicKernel_d_1} that is used to instantiate
-the traits class template must be an integral type, e.g.,
-<CORE::BigInt>. However, the coefficient of the polynomials can be
-rational numbers. For example, the \ccc{Algebraic_kernel_d_1<NT>}
-class template models the concept \ccc{AlgebraicKernel_d_1}. Thus,
-the instance \ccc{Algebraic_kernel_d_1<CORE::BigInt>} can be used to
-instantiate the traits class. Notice that the type
-\ccc{AlgebraicKernel_d_1::Bound} used to define the $x$-values that
-determine the interval over which the rational arcs are defined can
-be arbitrary algebraic numbers. A rational function then is represented
-by two polynomials $P$ and $Q$ of type
-\ccc{AlgebraicKernel_d_1::Polynomial_1}. A point is represented by a
-rational function and its $x$-coordinate, which is of type
-\ccc{AlgebraicKernel_d_1::Algebraic_real_1}. Note that an explicit
+the concept \ccc{AlgebraicKernel_d_1}. A rational function then is
+represented as the quotient of two polynomials $P$ and $Q$ of type
+\ccc{AlgebraicKernel_d_1::Polynomial_1} and an $x$-interval over which
+the polynomials are defined. The type of the polynomial coefficients,
+namely \ccc{AlgebraicKernel_d_1::Coefficient}, cannot be algebraic.
+Notice, that there is no need for this type to be rational either, as
+using rational coefficients does not extend the domain of the rational
+arcs, and using rational numbers is typically less efficient than
+using integers. The type of the interval bounds, namely
+\ccc{AlgebraicKernel_d_1::Bound}, however, is algebraic. A point is
+represented by a rational function and its $x$-coordinate, which is of
+type \ccc{AlgebraicKernel_d_1::Algebraic_real_1}. Note that an explicit
 representation of the $y$-coordinate is only computed upon request, as
-it can be a rather costly operation. 
+it can be a rather costly operation.
 
-The constructed rational functions are cached by the traits class. 
-The cache is local to each traits class object. 
-It is therefore necessary to construct the curves using the constructor 
-objects provided by member functions of the traits class. 
+The constructed rational functions are cached by the traits class. The
+cache is local to each traits class object. It is therefore necessary
+to construct curves using only the constructor objects provided by
+member functions of the traits class.
 %This is also the reason why IO is not handled via the usual stream operators. 
-Moreover, a curve must only be used by the traits class object that was 
-used to construct it. 
-The cache is automatically  cleaned up from time to time.
-The amortized clean up costs are constant. 
-In addition, there is also a 
-separate member function that cleans up the cache on demand.  
+Moreover, a curve must only be used by the traits class object that
+was used to construct it. These
+constructors have an aditional advantage. They enable the conveniency
+to provide the two defining polynomials using rational coefficients.
+For each constructor of a rational curve defined by two polynomials,
+say $P$ and $Q$, if the user chooses to provide rational coefficients
+for $P$ and $Q$, the constructor normalizes the coefficients and
+generates two new polynomials $P'$ and $Q'$ with coefficients of the
+appropriate integral type, such that quotients $P/Q$ and $P'/Q'$ are
+identical.
+The cache is automatically cleaned up from
+time to time. The amortized clean up costs are constant. In addition,
+there is also a separate member function that cleans up the cache on
+demand.
 
-
-\ccc{Arr_rational_function_traits_2<AlgebraicKernel_d_1>} is a model of 
-the concepts \ccc{ArrangementTraits_2}, \ccc{ArrangementOpenBoundaryTraits_2},
-and \ccc{ArrangementDirectionalXMonotoneTraits_2}; 
-the later enables Boolean set operations. 
-
-Note that it is not a model of  \ccc{ArrangementLandmarkTraits_2} concept,
-so it is not possible to use the landmark point-location strategy.
+\ccc{Arr_rational_function_traits_2<AlgebraicKernel_d_1>} is a model
+of the concepts \ccc{ArrangementTraits_2},
+\ccc{ArrangementOpenBoundaryTraits_2}, and
+\ccc{ArrangementDirectionalXMonotoneTraits_2}; the later enables
+Boolean set operations. Note that it is not a model of
+\ccc{ArrangementLandmarkTraits_2} concept, so it is not possible to
+use the landmark point-location strategy.
 %\footnote{This requires a relaxation of \ccc{ArrangementLandmarkTraits_2}, 
 %which will be submitted separately.}
 
@@ -942,8 +946,8 @@ constructed in
 \end{figure}
 
 The following example demonstrates the construction of an
-arrangement of six rational arcs --- four unbounded arcs and two
-bounded ones --- as depicted in Figure~\ref{arr_fig:ex_unb1}. Note
+arrangement of six rational arcs---four unbounded arcs and two
+bounded ones---as depicted in Figure~\ref{arr_fig:ex_unb1}. Note
 the usage of the constructors of an entire rational function and of
 an infinite ``ray'' of such a function. Also observe that the hyperbolas
 $y = \pm\frac{1}{x}$ and $y = \pm\frac{1}{2x}$ never intersect, although
