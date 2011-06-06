@@ -365,11 +365,11 @@ template<class Map>
 
   d1 = make_combinatorial_tetrahedron(map);
 
-  cout << "Parcours all avant la triangulation: "; ;
+  cout << "Before insert_cell_0_in_cell_2: "; ;
 
   insert_cell_0_in_cell_2(map,d1);
 
-  cout << "Parcours all après la triangulation: "; ;
+  cout << "After insert_cell_0_in_cell_2: "; ;
 
   if (map.is_valid()) cout << "Map valid." << endl;
   map.clear();
@@ -389,18 +389,18 @@ template<class Map>
 
   cout << "map valid: " << map.is_valid() << endl;
   // Display all the vertices
-  cout << "Parcours all avant la triangulation: "; ;
+  cout << "Before insert_cell_0_in_cell_2: "; ;
 
   // Triangulate the facet between the two tetrahedra
   insert_cell_0_in_cell_2(map,d1);
 
   cout << "map valid: " << map.is_valid() << endl;
-  cout << "Parcours all après la triangulation: "; ;
+  cout << "After insert_cell_0_in_cell_2: "; ;
 
   if (map.is_valid()) cout << "Map valid." << endl;
 
   map.template unsew<3>(d1);
-  cout << "Parcours all après la décousure: "; ;
+  cout << "After unsew: "; ;
 
   if (map.is_valid()) cout << "Map valid." << endl;
   map.clear();
@@ -422,7 +422,7 @@ template<class Map>
       map.template sew<3>(d1->beta(2), d3->beta(2));
     }
 
-  // Deux parcours de brins imbriqués
+  // Two nested iterators
   cout << "Nombre de brins : " << map.number_of_darts() << ", "
        << "Nombre de CC : " << flush;
   mark = map.get_new_mark();
@@ -439,7 +439,7 @@ template<class Map>
         }
     }
   cout << nbc << endl;
-  cout << "Toute la carte marquée ? " << map.is_whole_map_marked(mark)
+  cout << "All the darts marked ? " << map.is_whole_map_marked(mark)
        << endl;
   map.unmark_all(mark);
 
@@ -460,16 +460,16 @@ template<class Map>
             }
         }
       cout << nbc << "." << ", #brins=" << nb2 << "." << endl
-	   << "Toute la carte marquée ? " << map.is_whole_map_marked(mark)
+	   << "All the darts marked ? " << map.is_whole_map_marked(mark)
 	   << endl;
 	   map.unmark_all(mark);
     }*/
 
-  // Parcours à la stl
+  // Iterator stl like
   {
     nbc = 0, nb2 = 0;
 	unsigned nbtest=0;
-    cout << "Parcours à la stl : #cellules=" << flush;
+    cout << "Iterator stl like: #cellules=" << flush;
    for (typename Map::Dart_range::const_iterator it1(map.darts().begin());
 	it1!=map.darts().end(); ++it1)
       {
@@ -492,7 +492,7 @@ template<class Map>
 	  }
       }
     cout << nbc << "." << ", #brins=" << nb2 << "." << endl
-	 << "Toute la carte marquée ? " << map.is_whole_map_marked(mark) << endl;
+	 << "All the darts marked ? " << map.is_whole_map_marked(mark) << endl;
 	{
 		for (typename Map::template One_dart_per_cell_range<0>::const_iterator
 		   it2(map.template one_dart_per_cell<0>().begin());
@@ -517,40 +517,6 @@ template<class Map>
 
   mark = map.get_new_mark();
 
-  // Parcours de toute les cellules incidentes à toute les cellules.
-  {
-    /*    for (int i = 0; i <= 5; ++i)
-      {
-	for (int j = 0; j <= 5; ++j)
-	  {
-	    unsigned int nbc = 0;
-	      
-	    CGAL::Orbit orbiti =
-	      i==5?CGAL::ALL_DARTS_ORBIT:Map::CELL_ORBIT[i];
-	    CGAL::Orbit orbitj =
-	      j==5?CGAL::ALL_DARTS_ORBIT:Map::CELL_ORBIT[j];
-
-	    for (CGAL::CMap_dart_iterator_of_all<Map> it1(map);
-		 it1.cont(); ++it1)
-	      {
-		if (!map.is_marked(*it1, mark))
-		  {
-		    drawCell3(map, *it1, orbiti, mark);
-		    nbc = 0;
-		    typename Map::Cell_iterator_of_orbit it2(map, *it1,
-							     orbitj, orbiti);
-		    for ( ; it2.cont(); ++it2)
-		      { ++nbc; }
-		    cout << " est incidente à " << nbc << " "
-			 << Map::ORBIT_NAME[orbitj] << "." << endl;
-		  }
-	      }
-	    assert(map.is_whole_map_marked(mark));
-	    map.unmark_all(mark);
-	  }
-      }
-    */
-  }
   map.free_mark(mark);
   map.clear();
     

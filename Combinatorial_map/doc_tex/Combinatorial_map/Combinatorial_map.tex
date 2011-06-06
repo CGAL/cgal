@@ -1676,15 +1676,15 @@ second loop enumerates all the darts of the facet incident to dart
 
 \begin{ccExampleCode}
   typedef CGAL::Combinatorial_map<3> CMap_3; 
-  typedef CMap_3::Dart_handle Dart_handle;
+  typedef CMap_3::Dart_const_handle Dart_const_handle;
 
   int main() 
   { 
     CMap_3 cm;
 
     // Create two tetrahedra.  
-    Dart_handle dh1 = CGAL::make_combinatorial_tetrahedron(cm); 
-    Dart_handle dh2 = CGAL::make_combinatorial_tetrahedron(cm);
+    Dart_const_handle dh1 = CGAL::make_combinatorial_tetrahedron(cm); 
+    Dart_const_handle dh2 = CGAL::make_combinatorial_tetrahedron(cm);
   
     // Display the combinatorial map characteristics.
     cm.display_characteristics(std::cout); 
@@ -1703,14 +1703,16 @@ second loop enumerates all the darts of the facet incident to dart
              <<res<<std::endl;
 
     res = 0; 
-    // Iterate over all the darts of the facet incident to dh1.  
+    // Iterate over all the darts of the facet incident to dh2.  
     for (CMap_3::Dart_of_orbit_range<1>::const_iterator
-         it(cm.darts_of_orbit<1>(dh1).begin()),
+         it(cm.darts_of_orbit<1>(dh2).begin()),
          itend(cm.darts_of_orbit<1>(dh1).end()); it!=itend; ++it) 
        ++res;
   
-    std::cout<<"Number of darts of the facet containing dh1: "
+    std::cout<<"Number of darts of the facet containing dh2: "
              <<res<<std::endl; 
+
+    return EXIT_SUCCESS;
 }
 \end{ccExampleCode}
 
@@ -1718,7 +1720,7 @@ The output is:
 \begin{verbatim}
 #Darts=24, #0-cells=8, #1-cells=12, #2-cells=8, #3-cells=2, #ccs=2, valid=1
 Number of darts of the first tetrahedron: 12
-Number of darts of the facet containing d1: 3
+Number of darts of the facet containing dh2: 3
 \end{verbatim}
 
 which gives the number of darts of the combinatorial map, the numbers
@@ -1821,7 +1823,7 @@ int main()
   cm.display_characteristics(std::cout) 
         << ", valid=" << cm.is_valid() << std::endl;
 
-  return 1;
+  return EXIT_SUCCESS;
 }
 \end{ccExampleCode}
 
@@ -1946,6 +1948,7 @@ int main()
   
   cm.display_characteristics(std::cout);
   std::cout<<", valid="<<cm.is_valid()<<std::endl;
+  return EXIT_SUCCESS;
 }
 \end{ccExampleCode}
 
@@ -2058,7 +2061,7 @@ int main()
   cm.display_characteristics(std::cout);
   std::cout<<", valid="<<cm.is_valid()<<std::endl;
 
-  return 1;
+  return EXIT_SUCCESS;
 }
 \end{ccExampleCode}
 

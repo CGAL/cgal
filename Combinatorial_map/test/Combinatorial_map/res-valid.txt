@@ -18,13 +18,13 @@ Parcours all : #Darts=16, #0-cells=8, #1-cells=8, #2-cells=8, #ccs=3Map valid.
 Parcours all : #Darts=8, #0-cells=8, #1-cells=7, #2-cells=4, #ccs=3Parcours all : #Darts=8, #0-cells=6, #1-cells=6, #2-cells=4, #ccs=2Map valid.
 ***************************** TEST SEW 2D DONE.
 ***************************** TEST TRIANGULATION_2 2D:
-Parcours all avant la triangulation: #Darts=12, #0-cells=4, #1-cells=6, #2-cells=4, #ccs=1Parcours all après la triangulation: #Darts=18, #0-cells=5, #1-cells=9, #2-cells=6, #ccs=1Map valid.
+Parcours all before insert_cell_0_in_cell_2: #Darts=12, #0-cells=4, #1-cells=6, #2-cells=4, #ccs=1Parcours all after insert_cell_0_in_cell_2: #Darts=18, #0-cells=5, #1-cells=9, #2-cells=6, #ccs=1Map valid.
 ***************************** TEST TRIANGULATION_2 2D DONE.
 ***************************** TEST ITERATORS 2D:
 Nombre de brins : 9000, Nombre de CC : 1000
-Toute la carte marquée ? 1
-Parcours à la stl : #cellules=6000., #brins=9000.
-Toute la carte marquée ? 1
+All darts marked? 1
+Iterator stl like: #cellules=6000., #brins=9000.
+All the darts marked ? 1
 ***************************** TEST ITERATORS 2D DONE.
 ***************************** TEST INCIDENCE ITERATORS 2D:
 Map valid : 1
@@ -104,13 +104,13 @@ Parcours all : #Darts=16, #0-cells=8, #1-cells=8, #2-cells=8, #ccs=3Map valid.
 Parcours all : #Darts=8, #0-cells=8, #1-cells=7, #2-cells=4, #ccs=3Parcours all : #Darts=8, #0-cells=6, #1-cells=6, #2-cells=4, #ccs=2Map valid.
 ***************************** TEST SEW 2D DONE.
 ***************************** TEST TRIANGULATION_2 2D:
-Parcours all avant la triangulation: #Darts=12, #0-cells=4, #1-cells=6, #2-cells=4, #ccs=1Parcours all après la triangulation: #Darts=18, #0-cells=5, #1-cells=9, #2-cells=6, #ccs=1Map valid.
+Parcours all before insert_cell_0_in_cell_2: #Darts=12, #0-cells=4, #1-cells=6, #2-cells=4, #ccs=1Parcours all after insert_cell_0_in_cell_2: #Darts=18, #0-cells=5, #1-cells=9, #2-cells=6, #ccs=1Map valid.
 ***************************** TEST TRIANGULATION_2 2D DONE.
 ***************************** TEST ITERATORS 2D:
 Nombre de brins : 9000, Nombre de CC : 1000
-Toute la carte marquée ? 1
-Parcours à la stl : #cellules=6000., #brins=9000.
-Toute la carte marquée ? 1
+All darts marked? 1
+Iterator stl like: #cellules=6000., #brins=9000.
+All the darts marked ? 1
 ***************************** TEST ITERATORS 2D DONE.
 ***************************** TEST INCIDENCE ITERATORS 2D:
 Map valid : 1
@@ -190,13 +190,13 @@ Parcours all : #Darts=16, #0-cells=8, #1-cells=8, #2-cells=8, #ccs=3Map valid.
 Parcours all : #Darts=8, #0-cells=8, #1-cells=7, #2-cells=4, #ccs=3Parcours all : #Darts=8, #0-cells=6, #1-cells=6, #2-cells=4, #ccs=2Map valid.
 ***************************** TEST SEW 2D DONE.
 ***************************** TEST TRIANGULATION_2 2D:
-Parcours all avant la triangulation: #Darts=12, #0-cells=4, #1-cells=6, #2-cells=4, #ccs=1Parcours all après la triangulation: #Darts=18, #0-cells=5, #1-cells=9, #2-cells=6, #ccs=1Map valid.
+Parcours all before insert_cell_0_in_cell_2: #Darts=12, #0-cells=4, #1-cells=6, #2-cells=4, #ccs=1Parcours all after insert_cell_0_in_cell_2: #Darts=18, #0-cells=5, #1-cells=9, #2-cells=6, #ccs=1Map valid.
 ***************************** TEST TRIANGULATION_2 2D DONE.
 ***************************** TEST ITERATORS 2D:
 Nombre de brins : 9000, Nombre de CC : 1000
-Toute la carte marquée ? 1
-Parcours à la stl : #cellules=6000., #brins=9000.
-Toute la carte marquée ? 1
+All darts marked? 1
+Iterator stl like: #cellules=6000., #brins=9000.
+All the darts marked ? 1
 ***************************** TEST ITERATORS 2D DONE.
 ***************************** TEST INCIDENCE ITERATORS 2D:
 Map valid : 1
@@ -275,19 +275,19 @@ Parcours all : Map valid.
 Parcours all : Parcours all : Map valid.
 ***************************** TEST SEW 3D DONE.
 ***************************** TEST TRIANGULATION_2 3D:
-Parcours all avant la triangulation: Parcours all après la triangulation: Map valid.
+Before insert_cell_0_in_cell_2: After insert_cell_0_in_cell_2: Map valid.
 ***************************** TEST TRIANGULATION_2 3D DONE.
 ***************************** TEST TRIANGULATION_3 3D:
 map valid: 1
-Parcours all avant la triangulation: map valid: 1
-Parcours all après la triangulation: Map valid.
-Parcours all après la décousure: Map valid.
+Before insert_cell_0_in_cell_2: map valid: 1
+After insert_cell_0_in_cell_2: Map valid.
+After unsew: Map valid.
 ***************************** TEST TRIANGULATION_3 3D DONE.
 ***************************** TEST ITERATORS 3D:
 Nombre de brins : 36000, Nombre de CC : 1000
-Toute la carte marquée ? 1
-Parcours à la stl : #cellules=18000., #brins=36000.
-Toute la carte marquée ? 1
+All the darts marked ? 1
+Iterator stl like: #cellules=18000., #brins=36000.
+All the darts marked ? 1
 Different const_iterators: 203000
 ***************************** TEST ITERATORS 3D DONE.
 ***************************** TEST INCIDENCE ITERATORS 3D:
@@ -514,19 +514,19 @@ Parcours all : Map valid.
 Parcours all : Parcours all : Map valid.
 ***************************** TEST SEW 3D DONE.
 ***************************** TEST TRIANGULATION_2 3D:
-Parcours all avant la triangulation: Parcours all après la triangulation: Map valid.
+Before insert_cell_0_in_cell_2: After insert_cell_0_in_cell_2: Map valid.
 ***************************** TEST TRIANGULATION_2 3D DONE.
 ***************************** TEST TRIANGULATION_3 3D:
 map valid: 1
-Parcours all avant la triangulation: map valid: 1
-Parcours all après la triangulation: Map valid.
-Parcours all après la décousure: Map valid.
+Before insert_cell_0_in_cell_2: map valid: 1
+After insert_cell_0_in_cell_2: Map valid.
+After unsew: Map valid.
 ***************************** TEST TRIANGULATION_3 3D DONE.
 ***************************** TEST ITERATORS 3D:
 Nombre de brins : 36000, Nombre de CC : 1000
-Toute la carte marquée ? 1
-Parcours à la stl : #cellules=18000., #brins=36000.
-Toute la carte marquée ? 1
+All the darts marked ? 1
+Iterator stl like: #cellules=18000., #brins=36000.
+All the darts marked ? 1
 Different const_iterators: 203000
 ***************************** TEST ITERATORS 3D DONE.
 ***************************** TEST INCIDENCE ITERATORS 3D:
@@ -753,19 +753,19 @@ Parcours all : Map valid.
 Parcours all : Parcours all : Map valid.
 ***************************** TEST SEW 3D DONE.
 ***************************** TEST TRIANGULATION_2 3D:
-Parcours all avant la triangulation: Parcours all après la triangulation: Map valid.
+Before insert_cell_0_in_cell_2: After insert_cell_0_in_cell_2: Map valid.
 ***************************** TEST TRIANGULATION_2 3D DONE.
 ***************************** TEST TRIANGULATION_3 3D:
 map valid: 1
-Parcours all avant la triangulation: map valid: 1
-Parcours all après la triangulation: Map valid.
-Parcours all après la décousure: Map valid.
+Before insert_cell_0_in_cell_2: map valid: 1
+After insert_cell_0_in_cell_2: Map valid.
+After unsew: Map valid.
 ***************************** TEST TRIANGULATION_3 3D DONE.
 ***************************** TEST ITERATORS 3D:
 Nombre de brins : 36000, Nombre de CC : 1000
-Toute la carte marquée ? 1
-Parcours à la stl : #cellules=18000., #brins=36000.
-Toute la carte marquée ? 1
+All the darts marked ? 1
+Iterator stl like: #cellules=18000., #brins=36000.
+All the darts marked ? 1
 Different const_iterators: 203000
 ***************************** TEST ITERATORS 3D DONE.
 ***************************** TEST INCIDENCE ITERATORS 3D:
@@ -992,19 +992,19 @@ Parcours all : Map valid.
 Parcours all : Parcours all : Map valid.
 ***************************** TEST SEW 3D DONE.
 ***************************** TEST TRIANGULATION_2 3D:
-Parcours all avant la triangulation: Parcours all après la triangulation: Map valid.
+Before insert_cell_0_in_cell_2: After insert_cell_0_in_cell_2: Map valid.
 ***************************** TEST TRIANGULATION_2 3D DONE.
 ***************************** TEST TRIANGULATION_3 3D:
 map valid: 1
-Parcours all avant la triangulation: map valid: 1
-Parcours all après la triangulation: Map valid.
-Parcours all après la décousure: Map valid.
+Before insert_cell_0_in_cell_2: map valid: 1
+After insert_cell_0_in_cell_2: Map valid.
+After unsew: Map valid.
 ***************************** TEST TRIANGULATION_3 3D DONE.
 ***************************** TEST ITERATORS 3D:
 Nombre de brins : 36000, Nombre de CC : 1000
-Toute la carte marquée ? 1
-Parcours à la stl : #cellules=18000., #brins=36000.
-Toute la carte marquée ? 1
+All the darts marked ? 1
+Iterator stl like: #cellules=18000., #brins=36000.
+All the darts marked ? 1
 Different const_iterators: 203000
 ***************************** TEST ITERATORS 3D DONE.
 ***************************** TEST INCIDENCE ITERATORS 3D:
@@ -1231,19 +1231,19 @@ Parcours all : Map valid.
 Parcours all : Parcours all : Map valid.
 ***************************** TEST SEW 3D DONE.
 ***************************** TEST TRIANGULATION_2 3D:
-Parcours all avant la triangulation: Parcours all après la triangulation: Map valid.
+Before insert_cell_0_in_cell_2: After insert_cell_0_in_cell_2: Map valid.
 ***************************** TEST TRIANGULATION_2 3D DONE.
 ***************************** TEST TRIANGULATION_3 3D:
 map valid: 1
-Parcours all avant la triangulation: map valid: 1
-Parcours all après la triangulation: Map valid.
-Parcours all après la décousure: Map valid.
+Before insert_cell_0_in_cell_2: map valid: 1
+After insert_cell_0_in_cell_2: Map valid.
+After unsew: Map valid.
 ***************************** TEST TRIANGULATION_3 3D DONE.
 ***************************** TEST ITERATORS 3D:
 Nombre de brins : 36000, Nombre de CC : 1000
-Toute la carte marquée ? 1
-Parcours à la stl : #cellules=18000., #brins=36000.
-Toute la carte marquée ? 1
+All the darts marked ? 1
+Iterator stl like: #cellules=18000., #brins=36000.
+All the darts marked ? 1
 Different const_iterators: 203000
 ***************************** TEST ITERATORS 3D DONE.
 ***************************** TEST INCIDENCE ITERATORS 3D:
@@ -1470,19 +1470,19 @@ Parcours all : Map valid.
 Parcours all : Parcours all : Map valid.
 ***************************** TEST SEW 3D DONE.
 ***************************** TEST TRIANGULATION_2 3D:
-Parcours all avant la triangulation: Parcours all après la triangulation: Map valid.
+Before insert_cell_0_in_cell_2: After insert_cell_0_in_cell_2: Map valid.
 ***************************** TEST TRIANGULATION_2 3D DONE.
 ***************************** TEST TRIANGULATION_3 3D:
 map valid: 1
-Parcours all avant la triangulation: map valid: 1
-Parcours all après la triangulation: Map valid.
-Parcours all après la décousure: Map valid.
+Before insert_cell_0_in_cell_2: map valid: 1
+After insert_cell_0_in_cell_2: Map valid.
+After unsew: Map valid.
 ***************************** TEST TRIANGULATION_3 3D DONE.
 ***************************** TEST ITERATORS 3D:
 Nombre de brins : 36000, Nombre de CC : 1000
-Toute la carte marquée ? 1
-Parcours à la stl : #cellules=18000., #brins=36000.
-Toute la carte marquée ? 1
+All the darts marked ? 1
+Iterator stl like: #cellules=18000., #brins=36000.
+All the darts marked ? 1
 Different const_iterators: 203000
 ***************************** TEST ITERATORS 3D DONE.
 ***************************** TEST INCIDENCE ITERATORS 3D:

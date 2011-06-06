@@ -133,13 +133,13 @@ void test2D()
 
     d1 = make_combinatorial_tetrahedron ( map );
 
-    cout << "Parcours all avant la triangulation: ";
+    cout << "Parcours all before insert_cell_0_in_cell_2: ";
     drawAllPoints(map);
 
     // Triangulate the facet between the two triangles
     insert_cell_0_in_cell_2( map, d1 );
 
-    cout << "Parcours all après la triangulation: ";
+    cout << "Parcours all after insert_cell_0_in_cell_2: ";
     drawAllPoints(map);
 
     if ( map.is_valid() ) cout << "Map valid." << endl;
@@ -162,7 +162,7 @@ void test2D()
         map.template sew<2> ( d1->beta ( 1 ), d3->beta ( 1 ) );
     }
 
-    // Deux parcours de brins imbriqués
+    // Two nested iterators
     cout << "Nombre de brins : " << map.number_of_darts() << ", "
          << "Nombre de CC : " << flush;
     mark = map.get_new_mark();
@@ -181,7 +181,7 @@ void test2D()
         }
     }
     cout << nbc << endl;
-    cout << "Toute la carte marquée ? " << map.is_whole_map_marked ( mark )
+    cout << "All darts marked? " << map.is_whole_map_marked ( mark )
          << endl;
     map.unmark_all ( mark );
 
@@ -203,15 +203,15 @@ void test2D()
             }
 	    }
         cout << nbc << "." << ", #brins=" << nb2 << "." << endl
-             << "Toute la carte marquée ? " << map.is_whole_map_marked ( mark )
+             << "All the darts marked ? " << map.is_whole_map_marked ( mark )
              << endl;
 	     map.unmark_all ( mark );
     }*/
 
-    // Parcours à la stl
+    // Iterator stl like
     { 
       nbc = 0; nb2 = 0;
-      cout << "Parcours à la stl : #cellules=" << flush;
+      cout << "Iterator stl like: #cellules=" << flush;
       for ( typename Map::Dart_range::iterator it1= map.darts().begin();
 	    it1!=map.darts().end(); ++it1 )
         {
@@ -228,7 +228,7 @@ void test2D()
             }
         }
         cout << nbc << "." << ", #brins=" << nb2 << "." << endl
-             << "Toute la carte marquée ? " << map.is_whole_map_marked ( mark ) << endl;
+             << "All the darts marked ? " << map.is_whole_map_marked ( mark ) << endl;
         map.unmark_all ( mark );
     }
     map.free_mark ( mark );
@@ -245,42 +245,6 @@ void test2D()
     cout << "Map valid : " << map.is_valid() << endl;
 
     mark = map.get_new_mark();
-
-    // Parcours de toute les cellules incidentes à toute les cellules.
-    {
-      // TODO un static foreach
-      /*        for ( int i = 0; i <= 4; ++i )
-        {
-            for ( int j = 0; j <= 4; ++j )
-            {
-                int nbc = 0;
-
-                CGAL::Orbit orbiti =
-                    i==4?CGAL::ALL_DARTS_ORBIT:Map::CELL_ORBIT[i];
-                CGAL::Orbit orbitj =
-                    j==4?CGAL::ALL_DARTS_ORBIT:Map::CELL_ORBIT[j];
-
-		for ( typename Map::Dart_iterator it1=map.darts_begin();it1!=map.darts_end(); ++for )
-                {
-                    if ( !map.is_marked ( *it1, mark ) )
-                    {
-                        drawCell2 ( map, *it1, orbiti, mark );
-                        nbc = 0;
-                        typename Map::Cell_iterator_of_orbit it2 ( map, *it1,
-                                orbitj, orbiti );
-                        for ( ; it2.cont(); ++it2 )
-                        {
-                            ++nbc;
-                        }
-                        cout << " est incidente à " << nbc << " "
-                             << Map::ORBIT_NAME[orbitj] << "." << endl;
-                    }
-                }
-                assert ( map.is_whole_map_marked ( mark ) );
-                map.unmark_all ( mark );
-            }
-	    }*/
-    }
 
     // Un parcours de cellule.
     {
