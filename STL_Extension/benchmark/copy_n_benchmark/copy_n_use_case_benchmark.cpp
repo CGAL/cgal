@@ -10,6 +10,9 @@
 
 #include <CGAL/Simple_cartesian.h>
 #include <CGAL/point_generators_2.h>
+#include <CGAL/compiler_config.h>
+
+
 
 int format_output(const char* lib, const char* generator, int n, float time) {
   return std::printf("| %s || %s || %d || %.4fM items/sec\n", lib, generator, n, time);
@@ -50,11 +53,9 @@ int main(int argc, char* argv[]) {
   
 #ifndef CGAL_CFG_NO_CPP0X_COPY_N
   timer.restart();
-  for (int i = 0; i < repeats; ++i) { CGAL::copy_n( g, n, points.begin()); }
+  for (int i = 0; i < repeats; ++i) { std::copy_n( g, n, points.begin()); }
   time = (double)n*repeats/timer.elapsed()/1.0E6;
   format_output("stdlib", generator, n, time);
-#else
-  #error "Benchmark not possible without C++0x-copy_n Support"
 #endif
 
   //wiki markup footer
