@@ -52,7 +52,7 @@ random_convex_set_2( std::size_t n,
   using std::partial_sum;
   using std::less;
   using std::max_element;
-  using CGAL::copy_n;
+  using CGAL::cpp0x::copy_n;
 
   typedef typename Traits::Point_2         Point_2;
   typedef typename Traits::FT              FT;
