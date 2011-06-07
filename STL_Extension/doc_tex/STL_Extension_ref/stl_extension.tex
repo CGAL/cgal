@@ -29,12 +29,11 @@
 \begin{ccRefFunction}{cpp0x::prev}
   \label{sectionPrev}
   \label{sectionGenericFunctions}
-  There is actually no function in namespace \ccc{CGAL::cpp0x} with
-  this name, but a using declaration which imports a function from
-  another namespace. If C++0x is available the one in namespace
-  \ccc{std} is used. If not found, \ccc{cpp0x::prev} is declared with
-  the signature given in the standard and forwarded to \ccc{boost::prior}.
-  
+  If C++0x is available the function \ccc{std::prev} is imported into
+  this namespace, otherwise \ccc{cpp0x::prev} is declared with the
+  signature as given in $\mathsection$ 24.4.4 of the ISO C++ Standard
+  and forwarded to \ccc{boost::prior}.
+
   \ccInclude{CGAL/algorithm.h}
 \end{ccRefFunction}
 
