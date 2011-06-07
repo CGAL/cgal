@@ -9006,6 +9006,16 @@ void test_tuple(){
   CGAL_assertion( CGAL::cpp0x::get<1>(t1)==i2 );
 }
 
+void test_prev_next()
+{
+  std::vector<int> V;
+  V.push_back(1);
+  V.push_back(2);
+  V.push_back(3);
+
+  CGAL_assertion(cpp0x::next(cpp0x::next(V.begin())) == cpp0x::prev(V.end()));
+}
+
 
 int main() {
   init_global_data();
@@ -9027,6 +9037,7 @@ int main() {
   test_Quadruple();
   clean_global_data();
   test_tuple();
+  test_prev_next();
   return 0;
 }
 // EOF //
