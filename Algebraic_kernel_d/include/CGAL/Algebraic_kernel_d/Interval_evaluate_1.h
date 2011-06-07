@@ -78,7 +78,7 @@ struct Interval_evaluate_1 : public std::binary_function
     Coefficient_const_iterator_range range = 
       typename PT_1::Construct_coefficient_const_iterator_range()(p);
     
-    Coefficient_const_iterator it = CGAL::predecessor(range.second);
+    Coefficient_const_iterator it = CGAL::cpp0x::prev(range.second);
     
     Coercion_interval res(cast(*it));
     

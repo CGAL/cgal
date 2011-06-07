@@ -122,7 +122,7 @@ public:
         
         while ( lCurrVertex != aVerticesEnd )
         {
-          XY_Iterator lNextVertex = ( lCurrVertex == lLastVertex ? lFirstVertex : CGAL::successor(lCurrVertex) ) ;
+          XY_Iterator lNextVertex = ( lCurrVertex == lLastVertex ? lFirstVertex : CGAL::cpp0x::next(lCurrVertex) ) ;
           
           add_segment_2 ( *lCurrVertex, *lNextVertex, aLayer, aColor ) ;
           
