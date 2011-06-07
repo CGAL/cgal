@@ -56,17 +56,17 @@ public:
   typedef typename Base::X_monotone_curve_2         X_monotone_curve_2;
   typedef typename Base::Point_2                    Point_2;
 
-  // Tags.
+  // Categorys.
   typedef typename Base::Has_left_category          Has_left_category;
   typedef typename Base::Has_do_intersect_category  Has_do_intersect_category;
 
-  typedef typename internal::Arr_complete_left_side_category< Base >::Tag 
+  typedef typename internal::Arr_complete_left_side_category< Base >::Category 
                                                     Left_side_category;
-  typedef typename internal::Arr_complete_bottom_side_category< Base >::Tag 
+  typedef typename internal::Arr_complete_bottom_side_category< Base >::Category 
                                                     Bottom_side_category;
-  typedef typename internal::Arr_complete_top_side_category< Base >::Tag 
+  typedef typename internal::Arr_complete_top_side_category< Base >::Category 
                                                     Top_side_category;
-  typedef typename internal::Arr_complete_right_side_category< Base >::Tag 
+  typedef typename internal::Arr_complete_right_side_category< Base >::Category 
                                                     Right_side_category;
 
 protected:
@@ -2514,13 +2514,13 @@ public:
   typedef typename Base::Has_merge_category            Has_merge_category;
   typedef typename Base::Has_do_intersect_category     Has_do_intersect_category;
 
-  typedef typename internal::Arr_complete_left_side_category< Base >::Tag
+  typedef typename internal::Arr_complete_left_side_category< Base >::Category
                                                        Left_side_category;
-  typedef typename internal::Arr_complete_bottom_side_category< Base >::Tag 
+  typedef typename internal::Arr_complete_bottom_side_category< Base >::Category 
                                                        Bottom_side_category;
-  typedef typename internal::Arr_complete_top_side_category< Base >::Tag 
+  typedef typename internal::Arr_complete_top_side_category< Base >::Category 
                                                        Top_side_category;
-  typedef typename internal::Arr_complete_right_side_category< Base >::Tag 
+  typedef typename internal::Arr_complete_right_side_category< Base >::Category 
                                                        Right_side_category;
 
   /// \name Construction.

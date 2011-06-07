@@ -52,17 +52,17 @@ namespace internal {
 
 //! type to provide left side tag (is oblivious if not existing)
 template < class Traits_, bool B >
-struct Get_left_side_tag { 
+struct Get_left_side_category { 
 };
 
 template < class Traits_ >
-struct Get_left_side_tag< Traits_, true > {
-  typedef typename Traits_::Left_side_category Tag;
+struct Get_left_side_category< Traits_, true > {
+  typedef typename Traits_::Left_side_category Category;
 };
 
 template < class Traits_ >
-struct Get_left_side_tag< Traits_, false > {
-  typedef Arr_oblivious_side_tag Tag;
+struct Get_left_side_category< Traits_, false > {
+  typedef Arr_oblivious_side_tag Category;
 };
 
 template < class Traits_ >
@@ -73,19 +73,19 @@ public:
   typedef Traits_ Traits;
 
   typedef typename
-  Get_left_side_tag< Traits, has_Left_side_category< Traits >::value >::Tag Tag;
+  Get_left_side_category< Traits, has_Left_side_category< Traits >::value >::Category Category;
 };
 
 template < class GeometryTraits_2, bool b > 
-struct Validate_left_side_tag {};
+struct Validate_left_side_category {};
 
 template < class GeometryTraits_2 >
-struct Validate_left_side_tag< GeometryTraits_2, true > {
+struct Validate_left_side_category< GeometryTraits_2, true > {
   void missing__Left_side_category() {}
 };
 
 template < class GeometryTraits_2 >
-struct Validate_left_side_tag< GeometryTraits_2, false > {
+struct Validate_left_side_category< GeometryTraits_2, false > {
   void missing__Left_side_category()
   { 
     bool 
@@ -96,17 +96,17 @@ struct Validate_left_side_tag< GeometryTraits_2, false > {
 
 //! type to provide bottom side tag (is oblivious if not existing)
 template < class Traits_, bool B >
-struct Get_bottom_side_tag { 
+struct Get_bottom_side_category { 
 };
 
 template < class Traits_ >
-struct Get_bottom_side_tag< Traits_, true > {
-  typedef typename Traits_::Bottom_side_category Tag;
+struct Get_bottom_side_category< Traits_, true > {
+  typedef typename Traits_::Bottom_side_category Category;
 };
 
 template < class Traits_ >
-struct Get_bottom_side_tag< Traits_, false > {
-  typedef Arr_oblivious_side_tag Tag;
+struct Get_bottom_side_category< Traits_, false > {
+  typedef Arr_oblivious_side_tag Category;
 };
 
 template < class Traits_ >
@@ -117,20 +117,20 @@ public:
   typedef Traits_ Traits;
 
   typedef typename
-  Get_bottom_side_tag< Traits, has_Bottom_side_category< Traits >::value >::Tag 
-  Tag;
+  Get_bottom_side_category< Traits, has_Bottom_side_category< Traits >::value >::Category 
+  Category;
 };
 
 template < class GeometryTraits_2, bool b > 
-struct Validate_bottom_side_tag {};
+struct Validate_bottom_side_category {};
 
 template < class GeometryTraits_2 >
-struct Validate_bottom_side_tag< GeometryTraits_2, true > {
+struct Validate_bottom_side_category< GeometryTraits_2, true > {
   void missing__Bottom_side_category() {}
 };
 
 template < class GeometryTraits_2 >
-struct Validate_bottom_side_tag< GeometryTraits_2, false > {
+struct Validate_bottom_side_category< GeometryTraits_2, false > {
   void missing__Bottom_side_category()
   { 
     bool 
@@ -141,17 +141,17 @@ struct Validate_bottom_side_tag< GeometryTraits_2, false > {
 
 //! type to provide top side tag (is oblivious if not existing)
 template < class Traits_, bool B >
-struct Get_top_side_tag { 
+struct Get_top_side_category { 
 };
 
 template < class Traits_ >
-struct Get_top_side_tag< Traits_, true > {
-  typedef typename Traits_::Top_side_category Tag;
+struct Get_top_side_category< Traits_, true > {
+  typedef typename Traits_::Top_side_category Category;
 };
 
 template < class Traits_ >
-struct Get_top_side_tag< Traits_, false > {
-  typedef Arr_oblivious_side_tag Tag;
+struct Get_top_side_category< Traits_, false > {
+  typedef Arr_oblivious_side_tag Category;
 };
 
 template < class Traits_ >
@@ -162,19 +162,19 @@ public:
   typedef Traits_ Traits;
 
   typedef typename
-  Get_top_side_tag< Traits, has_Top_side_category< Traits >::value >::Tag Tag;
+  Get_top_side_category< Traits, has_Top_side_category< Traits >::value >::Category Category;
 };
 
 template < class GeometryTraits_2, bool b > 
-struct Validate_top_side_tag {};
+struct Validate_top_side_category {};
 
 template < class GeometryTraits_2 >
-struct Validate_top_side_tag< GeometryTraits_2, true > {
+struct Validate_top_side_category< GeometryTraits_2, true > {
   void missing__Top_side_category() {}
 };
 
 template < class GeometryTraits_2 >
-struct Validate_top_side_tag< GeometryTraits_2, false > {
+struct Validate_top_side_category< GeometryTraits_2, false > {
   void missing__Top_side_category()
   { 
     bool missing__Top_side_category__assuming__Arr_oblivious_side_tag__instead; 
@@ -184,17 +184,17 @@ struct Validate_top_side_tag< GeometryTraits_2, false > {
 
 //! type to provide right side tag (is oblivious if not existing)
 template < class Traits_, bool B >
-struct Get_right_side_tag { 
+struct Get_right_side_category { 
 };
 
 template < class Traits_ >
-struct Get_right_side_tag< Traits_, true > {
-  typedef typename Traits_::Right_side_category Tag;
+struct Get_right_side_category< Traits_, true > {
+  typedef typename Traits_::Right_side_category Category;
 };
 
 template < class Traits_ >
-struct Get_right_side_tag< Traits_, false > {
-  typedef Arr_oblivious_side_tag Tag;
+struct Get_right_side_category< Traits_, false > {
+  typedef Arr_oblivious_side_tag Category;
 };
 
 template < class Traits_ >
@@ -205,20 +205,20 @@ public:
   typedef Traits_ Traits;
 
   typedef typename
-  Get_right_side_tag< Traits, has_Right_side_category< Traits >::value >::Tag 
-  Tag;
+  Get_right_side_category< Traits, has_Right_side_category< Traits >::value >::Category 
+  Category;
 };
 
 template < class GeometryTraits_2, bool b > 
-struct Validate_right_side_tag {};
+struct Validate_right_side_category {};
 
 template < class GeometryTraits_2 >
-struct Validate_right_side_tag< GeometryTraits_2, true > {
+struct Validate_right_side_category< GeometryTraits_2, true > {
   void missing__Right_side_category() {}
 };
 
 template < class GeometryTraits_2 >
-struct Validate_right_side_tag< GeometryTraits_2, false > {
+struct Validate_right_side_category< GeometryTraits_2, false > {
   void missing__Right_side_category()
   { 
     bool 
@@ -242,23 +242,23 @@ struct Arr_not_all_sides_non_open_tag {};
 
 /*!\brief Struct to determine whether all side tags are "oblivious"
  */
-template < class ArrLeftSideTag, class ArrBottomSideTag, 
-           class ArrTopSideTag, class ArrRightSideTag >
+template < class ArrLeftSideCategory, class ArrBottomSideCategory, 
+           class ArrTopSideCategory, class ArrRightSideCategory >
 struct Arr_are_all_sides_oblivious_tag {
 
 public:
 
   //! This instance's first template parameter
-  typedef ArrLeftSideTag   Left_side_category;
+  typedef ArrLeftSideCategory   Left_side_category;
   
   //! This instance's second template parameter
-  typedef ArrBottomSideTag Bottom_side_category;
+  typedef ArrBottomSideCategory Bottom_side_category;
   
   //! This instance's third template parameter
-  typedef ArrTopSideTag    Top_side_category;
+  typedef ArrTopSideCategory    Top_side_category;
   
   //! This instance's fourth template parameter
-  typedef ArrRightSideTag  Right_side_category;
+  typedef ArrRightSideCategory  Right_side_category;
   
 private:
   
@@ -301,23 +301,23 @@ public:
 
 /*!\brief Struct to determine whether all side tags are "non-open"
  */
-template < class ArrLeftSideTag, class ArrBottomSideTag, 
-           class ArrTopSideTag, class ArrRightSideTag >
+template < class ArrLeftSideCategory, class ArrBottomSideCategory, 
+           class ArrTopSideCategory, class ArrRightSideCategory >
 struct Arr_are_all_sides_non_open_tag {
 
 public:
 
   //! This instance's first template parameter
-  typedef ArrLeftSideTag   Left_side_category;
+  typedef ArrLeftSideCategory   Left_side_category;
   
   //! This instance's second template parameter
-  typedef ArrBottomSideTag Bottom_side_category;
+  typedef ArrBottomSideCategory Bottom_side_category;
   
   //! This instance's third template parameter
-  typedef ArrTopSideTag    Top_side_category;
+  typedef ArrTopSideCategory    Top_side_category;
   
   //! This instance's fourth template parameter
-  typedef ArrRightSideTag  Right_side_category;
+  typedef ArrRightSideCategory  Right_side_category;
   
 private:
   
@@ -362,23 +362,23 @@ public:
 
 /*!\brief Struct to check consistent tagging of identifications
  */
-template < class ArrLeftSideTag, class ArrBottomSideTag, 
-           class ArrTopSideTag, class ArrRightSideTag >
+template < class ArrLeftSideCategory, class ArrBottomSideCategory, 
+           class ArrTopSideCategory, class ArrRightSideCategory >
 struct Arr_sane_identified_tagging {
 
 public:
   
   //! This instance's first template parameter
-  typedef ArrLeftSideTag   Left_side_category;
+  typedef ArrLeftSideCategory   Left_side_category;
   
   //! This instance's second template parameter
-  typedef ArrBottomSideTag Bottom_side_category;
+  typedef ArrBottomSideCategory Bottom_side_category;
   
   //! This instance's third template parameter
-  typedef ArrTopSideTag    Top_side_category;
+  typedef ArrTopSideCategory    Top_side_category;
   
   //! This instance's fourth template parameter
-  typedef ArrRightSideTag  Right_side_category;
+  typedef ArrRightSideCategory  Right_side_category;
   
 private:
   

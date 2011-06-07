@@ -64,10 +64,10 @@ struct Default_planar_topology :
   public internal::Default_planar_topology_impl < 
     GeomTraits, Dcel, 
     typename Arr_are_all_sides_oblivious_tag< 
-      typename internal::Arr_complete_left_side_category< GeomTraits >::Tag,
-      typename internal::Arr_complete_bottom_side_category< GeomTraits> ::Tag,
-      typename internal::Arr_complete_top_side_category< GeomTraits >::Tag,
-      typename internal::Arr_complete_right_side_category< GeomTraits >::Tag >::result 
+      typename internal::Arr_complete_left_side_category< GeomTraits >::Category,
+      typename internal::Arr_complete_bottom_side_category< GeomTraits> ::Category,
+      typename internal::Arr_complete_top_side_category< GeomTraits >::Category,
+      typename internal::Arr_complete_right_side_category< GeomTraits >::Category >::result 
 >
 {};
 
