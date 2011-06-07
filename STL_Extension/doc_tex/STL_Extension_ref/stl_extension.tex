@@ -13,40 +13,76 @@
 %% +=========================================================================+
 
 %% +---------------------------------------------+
+\begin{ccRefFunction}{cpp0x::next}
+  \label{sectionNext}
+  \label{sectionGenericFunctions}
+  There is actually no function in namespace \ccc{CGAL::cpp0x} with
+  this name, but a using declaration which imports a function from
+  another namespace. By order of priority: the one in namespace
+  \ccc{std} is used (provided by C++0x), if not found, then the one in
+  namespace \ccc{boost} is used.
+
+  \ccInclude{CGAL/algorithm.h}
+\end{ccRefFunction}
+
+%% +---------------------------------------------+
+\begin{ccRefFunction}{cpp0x::prev}
+  \label{sectionPrev}
+  \label{sectionGenericFunctions}
+  There is actually no function in namespace \ccc{CGAL::cpp0x} with
+  this name, but a using declaration which imports a function from
+  another namespace. If C++0x is available the one in namespace
+  \ccc{std} is used. If not found, \ccc{cpp0x::prev} is declared with
+  the signature given in the standard and forwarded to \ccc{boost::prior}.
+  
+  \ccInclude{CGAL/algorithm.h}
+\end{ccRefFunction}
+
+%% +---------------------------------------------+
 \begin{ccRefFunction}{predecessor}
   \label{sectionPredecessor}
   \label{sectionGenericFunctions}
+  This function is deprecated. \ccc{CGAL::cpp0x::prev} should be used
+  instead.
+  
 
-  \ccDefinition The function \ccRefName\ returns the previous iterator,
-  i.e. the result of \ccc{operator--} on a bidirectional iterator.
+  \begin{ccDeprecated}
+    \ccDefinition The function \ccRefName\ returns the previous iterator,
+    i.e. the result of \ccc{operator--} on a bidirectional iterator.
+    
+    \ccInclude{CGAL/algorithm.h}
   
-  \ccInclude{CGAL/algorithm.h}
-  
-  \ccThree{BidirectionalIterator}{predecessor}{}
-  \ccFunction{template <class BidirectionalIterator>
-              BidirectionalIterator predecessor(BidirectionalIterator it);}
+    \ccThree{BidirectionalIterator}{predecessor}{}
+    \ccFunction{template <class BidirectionalIterator>
+      BidirectionalIterator predecessor(BidirectionalIterator it);}
     {returns \ccc{--it}.}
-  
-  \ccSeeAlso
-  \ccRefIdfierPage{CGAL::successor}
+    
+    \ccSeeAlso
+    \ccRefIdfierPage{CGAL::successor}
+  \end{ccDeprecated}
 \end{ccRefFunction}
 
 %% +---------------------------------------------+
 \begin{ccRefFunction}{successor}
   \label{sectionSuccessor}
 
-  \ccDefinition The function \ccRefName\ returns the next iterator, i.e.
-  the result of \ccc{operator++} on a forward iterator.
+  This function is deprecated. \ccc{CGAL::cpp0x::next} should be used
+  instead.
+
+  \begin{ccDeprecated}
+    \ccDefinition The function \ccRefName\ returns the next iterator, i.e.
+    the result of \ccc{operator++} on a forward iterator.
   
-  \ccInclude{CGAL/algorithm.h}
+    \ccInclude{CGAL/algorithm.h}
   
-  \ccThree{ForwardIterator}{successor}{}
-  \ccFunction{template <class ForwardIterator>
-              ForwardIterator successor(ForwardIterator it);}
+    \ccThree{ForwardIterator}{successor}{}
+    \ccFunction{template <class ForwardIterator>
+      ForwardIterator successor(ForwardIterator it);}
     {returns \ccc{++it}.}
   
-  \ccSeeAlso
-  \ccRefIdfierPage{CGAL::predecessor}
+    \ccSeeAlso
+    \ccRefIdfierPage{CGAL::predecessor}
+  \end{ccDeprecated}
 \end{ccRefFunction}
 
 %% +---------------------------------------------+
