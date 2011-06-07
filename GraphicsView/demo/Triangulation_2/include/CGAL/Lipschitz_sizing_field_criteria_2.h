@@ -24,21 +24,27 @@ public:
 protected:
     
   Sizing_field* sizing_field;
+
+  typedef typename CDT::Geom_traits Geom_traits;
+  Geom_traits traits;
     
 public:
     
   typedef Delaunay_mesh_criteria_2<CDT> Base;
     
   Lipschitz_sizing_field_criteria_2(const double aspect_bound = 0.125,
-				    Sizing_field* sf = 0)
-    : Base(aspect_bound), sizing_field(sf)
+				    Sizing_field* sf = 0,
+                                    const Geom_traits& traits = Geom_traits())
+    : Base(aspect_bound), sizing_field(sf), traits(traits)
   {}
 
   Lipschitz_sizing_field_criteria_2& operator =(const Lipschitz_sizing_field_criteria_2<CDT,SF>& c)
   {
+    if(&c == this) return *this;
     this->sizing_field = c.sizing_field;
+    this->traits = c.traits;
     return *this;
-  }    
+  }
 
   inline const Sizing_field* sizing_field_object()
   {
@@ -81,8 +87,9 @@ public:
 
     typedef typename Base::Is_bad::Point_2 Point_2;
 
-    Is_bad(const double aspect_bound, Sizing_field* sf)
-      : Base::Is_bad(aspect_bound), sizing_field(sf)
+    Is_bad(const double aspect_bound, Sizing_field* sf, 
+           const Geom_traits& traits)
+      : Base::Is_bad(aspect_bound, traits), sizing_field(sf)
     {
     }
 
@@ -189,7 +196,7 @@ public:
 
   Is_bad is_bad_object() const
   { 
-    return Is_bad(this->bound(), sizing_field);
+    return Is_bad(this->bound(), sizing_field, traits);
   }
 
 };

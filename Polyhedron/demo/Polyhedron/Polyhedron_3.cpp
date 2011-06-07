@@ -25,11 +25,26 @@ int main(int argc, char **argv)
     mainWindow.setAddKeyFrameKeyboardModifiers(::Qt::MetaModifier);
     args.removeAt(0);
   }
-
+#ifdef QT_SCRIPT_LIB
+  if(!args.empty() && args[0] == "--debug-scripts")
+  {
+    mainWindow.enableScriptDebugger();
+    args.removeAt(0);
+  }
+  mainWindow.open("autostart.js", true);
+#endif
   Q_FOREACH(QString filename, args) {
     mainWindow.open(filename);
   }
-  return app.exec();
+
+  // A Qt Script may have closed the main window
+  // The following loop launch app.exec() only if there is a visible
+  // window.
+  Q_FOREACH (QWidget *widget, QApplication::topLevelWidgets()) {
+    if(widget->isVisible())
+      return app.exec();
+  }
+  return 0;
 }
 
 #ifndef USE_FORWARD_DECL
