@@ -772,9 +772,9 @@ template <typename T_Traits>
 bool Traits_test<T_Traits>::
 parameter_space_in_x_wrapper(std::istringstream& str_stream)
 {
-  typedef typename CGAL::internal::Arr_complete_left_side_category< T_Traits >::Tag
+  typedef typename CGAL::internal::Arr_complete_left_side_category< T_Traits >::Category
     Left_side_category;
-  typedef typename CGAL::internal::Arr_complete_right_side_category< T_Traits >::Tag
+  typedef typename CGAL::internal::Arr_complete_right_side_category< T_Traits >::Category
     Right_side_category;
   typedef CGAL::internal::Arr_left_right_implementation_dispatch
     <Left_side_category, Right_side_category>           LR;
@@ -835,9 +835,9 @@ template <typename T_Traits>
 bool Traits_test<T_Traits>::
 compare_y_near_boundary_wrapper(std::istringstream& str_stream)
 {
-  typedef typename CGAL::internal::Arr_complete_left_side_category< T_Traits >::Tag
+  typedef typename CGAL::internal::Arr_complete_left_side_category< T_Traits >::Category
     Left_side_category;
-  typedef typename CGAL::internal::Arr_complete_right_side_category< T_Traits >::Tag
+  typedef typename CGAL::internal::Arr_complete_right_side_category< T_Traits >::Category
     Right_side_category;
   typedef CGAL::internal::Arr_left_right_implementation_dispatch
     <Left_side_category, Right_side_category>           LR;
@@ -892,9 +892,9 @@ template <typename T_Traits>
 bool Traits_test<T_Traits>::
 parameter_space_in_y_wrapper(std::istringstream& str_stream)
 {
-  typedef typename CGAL::internal::Arr_complete_bottom_side_category<T_Traits>::Tag
+  typedef typename CGAL::internal::Arr_complete_bottom_side_category<T_Traits>::Category
     Bottom_side_category;
-  typedef typename CGAL::internal::Arr_complete_top_side_category<T_Traits>::Tag
+  typedef typename CGAL::internal::Arr_complete_top_side_category<T_Traits>::Category
     Top_side_category;
   typedef CGAL::internal::Arr_bottom_top_implementation_dispatch
     <Bottom_side_category, Top_side_category>           BT;
@@ -955,9 +955,9 @@ template <typename T_Traits>
 bool Traits_test<T_Traits>::
 compare_x_near_limit_wrapper(std::istringstream& str_stream)
 {
-  typedef typename CGAL::internal::Arr_complete_bottom_side_category<T_Traits>::Tag
+  typedef typename CGAL::internal::Arr_complete_bottom_side_category<T_Traits>::Category
     Bottom_side_category;
-  typedef typename CGAL::internal::Arr_complete_top_side_category<T_Traits>::Tag
+  typedef typename CGAL::internal::Arr_complete_top_side_category<T_Traits>::Category
     Top_side_category;
   typedef CGAL::internal::Arr_bottom_top_implementation_dispatch
     <Bottom_side_category, Top_side_category>           BT;
@@ -1013,9 +1013,9 @@ template <typename T_Traits>
 bool Traits_test<T_Traits>::
 compare_x_at_limit_wrapper(std::istringstream& str_stream)
 {
-  typedef typename CGAL::internal::Arr_complete_bottom_side_category<T_Traits>::Tag
+  typedef typename CGAL::internal::Arr_complete_bottom_side_category<T_Traits>::Category
     Bottom_side_category;
-  typedef typename CGAL::internal::Arr_complete_top_side_category<T_Traits>::Tag
+  typedef typename CGAL::internal::Arr_complete_top_side_category<T_Traits>::Category
     Top_side_category;
   typedef CGAL::internal::Arr_bottom_top_implementation_dispatch
     <Bottom_side_category, Top_side_category> BT;
@@ -1098,9 +1098,9 @@ template <typename T_Traits>
 bool Traits_test<T_Traits>::
 compare_x_near_boundary_wrapper(std::istringstream& str_stream)
 {
-  typedef typename CGAL::internal::Arr_complete_bottom_side_category<T_Traits>::Tag
+  typedef typename CGAL::internal::Arr_complete_bottom_side_category<T_Traits>::Category
     Bottom_side_category;
-  typedef typename CGAL::internal::Arr_complete_top_side_category<T_Traits>::Tag
+  typedef typename CGAL::internal::Arr_complete_top_side_category<T_Traits>::Category
     Top_side_category;
   typedef CGAL::internal::Arr_bottom_top_implementation_dispatch
     <Bottom_side_category, Top_side_category>           BT;
@@ -1156,9 +1156,9 @@ template <typename T_Traits>
 bool Traits_test<T_Traits>::
 compare_x_on_boundary_wrapper(std::istringstream& str_stream)
 {
-  typedef typename CGAL::internal::Arr_complete_bottom_side_category<T_Traits>::Tag
+  typedef typename CGAL::internal::Arr_complete_bottom_side_category<T_Traits>::Category
     Bottom_side_category;
-  typedef typename CGAL::internal::Arr_complete_top_side_category<T_Traits>::Tag
+  typedef typename CGAL::internal::Arr_complete_top_side_category<T_Traits>::Category
     Top_side_category;
   typedef CGAL::internal::Arr_bottom_top_implementation_dispatch
     <Bottom_side_category, Top_side_category> BT;
