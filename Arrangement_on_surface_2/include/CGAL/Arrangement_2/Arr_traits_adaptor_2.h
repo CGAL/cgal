@@ -56,7 +56,7 @@ public:
   typedef typename Base::X_monotone_curve_2         X_monotone_curve_2;
   typedef typename Base::Point_2                    Point_2;
 
-  // Categorys.
+  // Categories
   typedef typename Base::Has_left_category          Has_left_category;
   typedef typename Base::Has_do_intersect_category  Has_do_intersect_category;
 
@@ -523,7 +523,7 @@ public:
     
     bool is_on_y_idn (const X_monotone_curve_2 & xcv, Arr_use_traits_tag) const
     {
-      return m_base->is_on_identification_2_object ()(xcv);
+      return m_base->is_on_y_identification_2_object ()(xcv);
     }
 
     bool is_on_y_idn (const X_monotone_curve_2 &, Arr_use_dummy_tag) const
@@ -837,7 +837,7 @@ public:
      */
     bool operator()(const X_monotone_curve_2 & xcv) const
     {
-      return is_on_idn (xcv,  Ioxi_2_curve_tag());      
+      return is_on_x_idn (xcv,  Ioxi_2_curve_tag());      
     }
 
   private:
@@ -2509,19 +2509,15 @@ public:
   typedef typename Base::X_monotone_curve_2            X_monotone_curve_2;
   typedef typename Base::Point_2                       Point_2;
 
-  // Tags.
+  // Categories.
   typedef typename Base::Has_left_category             Has_left_category;
   typedef typename Base::Has_merge_category            Has_merge_category;
   typedef typename Base::Has_do_intersect_category     Has_do_intersect_category;
 
-  typedef typename internal::Arr_complete_left_side_category< Base >::Category
-                                                       Left_side_category;
-  typedef typename internal::Arr_complete_bottom_side_category< Base >::Category 
-                                                       Bottom_side_category;
-  typedef typename internal::Arr_complete_top_side_category< Base >::Category 
-                                                       Top_side_category;
-  typedef typename internal::Arr_complete_right_side_category< Base >::Category 
-                                                       Right_side_category;
+  typedef typename Base::Left_side_category            Left_side_category;
+  typedef typename Base::Bottom_side_category          Bottom_side_category;
+  typedef typename Base::Top_side_category             Top_side_category;
+  typedef typename Base::Right_side_category           Right_side_category;
 
   /// \name Construction.
   //@{
