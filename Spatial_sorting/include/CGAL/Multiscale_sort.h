@@ -53,6 +53,6 @@ public:
     }
 };
 
-} //namespace CGAL
+} // namespace CGAL
 
 #endif // CGAL_MULTISCALE_SORT_H

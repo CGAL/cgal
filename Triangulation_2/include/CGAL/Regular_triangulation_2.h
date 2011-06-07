@@ -28,7 +28,8 @@
 #include <boost/bind.hpp>
 
 #ifndef CGAL_TRIANGULATION_2_DONT_INSERT_RANGE_OF_POINTS_WITH_INFO
-#include <CGAL/internal/spatial_sorting_traits_with_indices.h>
+#include <CGAL/Spatial_sort_traits_adapter_2.h>
+#include <CGAL/internal/info_check.h>
 
 #include <boost/iterator/zip_iterator.hpp>
 #include <boost/mpl/and.hpp>
@@ -383,6 +384,7 @@ public:
 
 #ifndef CGAL_TRIANGULATION_2_DONT_INSERT_RANGE_OF_POINTS_WITH_INFO
 private:
+  //top stands for tuple-or-pair
   template <class Info>
   const Weighted_point& top_get_first(const std::pair<Weighted_point,Info>& pair) const { return pair.first; }
   template <class Info>
@@ -396,10 +398,10 @@ private:
   std::ptrdiff_t insert_with_info(InputIterator first,InputIterator last)
   {
     int n = number_of_vertices();
-    std::vector<std::size_t> indices;
+    std::vector<std::ptrdiff_t> indices;
     std::vector<Weighted_point> points;
     std::vector<typename Triangulation_data_structure::Vertex::Info> infos;
-    std::size_t index=0;
+    std::ptrdiff_t index=0;
     for (InputIterator it=first;it!=last;++it){
       Tuple_or_pair pair = *it;
       points.push_back( top_get_first(pair) );
@@ -407,14 +409,13 @@ private:
       indices.push_back(index++);
     }
 
-    typedef internal::Vector_property_map<Weighted_point> Point_pmap;
-    typedef internal::Spatial_sort_traits_with_property_map_2<Geom_traits,Point_pmap> Search_traits;
+    typedef Spatial_sort_traits_adapter_2<Geom_traits,Weighted_point*> Search_traits;
     
-    spatial_sort(indices.begin(),indices.end(),Search_traits(Point_pmap(points),geom_traits()));    
+    spatial_sort(indices.begin(),indices.end(),Search_traits(&(points[0]),geom_traits()));    
 
     Face_handle hint;
     Vertex_handle v_hint;
-    for (typename std::vector<std::size_t>::const_iterator
+    for (typename std::vector<std::ptrdiff_t>::const_iterator
       it = indices.begin(), end = indices.end();
       it != end; ++it)
     {
