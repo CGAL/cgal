@@ -9006,16 +9006,6 @@ void test_tuple(){
   CGAL_assertion( CGAL::cpp0x::get<1>(t1)==i2 );
 }
 
-void test_predecessor_successor()
-{
-  std::vector<int> V;
-  V.push_back(1);
-  V.push_back(2);
-  V.push_back(3);
-
-  CGAL_assertion(successor(successor(V.begin())) == predecessor(V.end()));
-}
-
 
 int main() {
   init_global_data();
@@ -9035,7 +9025,6 @@ int main() {
   test_Const_oneset_iterator();
   test_Triple();
   test_Quadruple();
-  test_predecessor_successor();
   clean_global_data();
   test_tuple();
   return 0;
