@@ -171,7 +171,7 @@ $ ./small_example_delaunay_2
 %used to sort a container of handle on points instead of points directly.
 %\ccIncludeExampleCode{Spatial_sorting/sort_indices.cpp}
 
-\subsection{Using your own Point Type}
+\subsection{Using Your Own Point Type}
 If you want to sort points of your own point type,
 you only have to provide functors that compare
 the \ccc{x} and \ccc{y} coordinates of your points. Note that in case you simply want
@@ -198,18 +198,18 @@ which allows to obtain a point from whatever you want to sort.
 
 The following examples illustrate the usage of these traits class adapters.
 
-\subsubsection{Sorting using pairs of points and integers}
+\subsubsection{Sorting Using Pairs of Points and Integers}
 \label{sec:sort_any_type_2}
 In this example program, the sorted sequence of points is retrieved 
 using a vector of pairs of points and integers.
 \ccIncludeExampleCode{Spatial_sorting/sp_sort_using_property_map_2.cpp}
 
-\subsubsection{Sorting using indices of points}
+\subsubsection{Sorting Using Indices of Points}
 In this example program, the sorted sequence of points is retrieved 
 using the indices of the points in a vector of points.
 \ccIncludeExampleCode{Spatial_sorting/sp_sort_using_property_map_3.cpp}
 
-\subsubsection{Sorting using indices of pairs of points and integers}
+\subsubsection{Sorting Using Indices of Pairs of Points and Integers}
 In this example program, the sorted sequence of points is retrieved 
 using the indices of the points in a vector of pairs of points and integers.
 \ccIncludeExampleCode{Spatial_sorting/sp_sort_using_property_map_d.cpp}
