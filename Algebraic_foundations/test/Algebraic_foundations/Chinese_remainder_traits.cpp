@@ -47,12 +47,12 @@ struct Get_max_coefficient{
     }
 };
 
-template <class NT, class Root>
-struct Get_max_coefficient<CGAL::Sqrt_extension<NT, Root> >{        
+template <class NT, class Root,class ACDE_TAG, class FP_TAG>
+struct Get_max_coefficient<CGAL::Sqrt_extension<NT, Root, ACDE_TAG, FP_TAG> >{        
     typedef Get_max_coefficient<NT> GMC;
     typedef typename GMC::result_type result_type;
     
-    result_type operator () (const CGAL::Sqrt_extension<NT, Root>& a) {             
+    result_type operator () (const CGAL::Sqrt_extension<NT, Root, ACDE_TAG, FP_TAG>& a) {             
         GMC gmc;
         return std::max(std::max(gmc(a.a0()), gmc(a.a1())), gmc(NT(a.root())));            
     }

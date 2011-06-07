@@ -28,7 +28,7 @@
 #include  <CGAL/basic.h>
 
 namespace CGAL {
-template< class NT > struct Get_arithmetic_kernel;
+template< class NT > struct Get_arithmetic_kernel{};
 } //namespace CGAL
 
 #endif // CGAL_GET_ARITHMETIC_KERNEL_H

@@ -86,7 +86,6 @@
 #include <CGAL/long_long.h>
 #endif
 
-#include <CGAL/Root_of_traits.h>
 
 
 #ifdef CGAL_USE_GMP

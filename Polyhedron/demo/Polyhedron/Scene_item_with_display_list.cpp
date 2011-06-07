@@ -69,4 +69,5 @@ void Scene_item_with_display_list::changed()
   for(int i = 0; i < NB_OF_DISPLAY_LISTS; ++i) {
     display_list_built[i] = false;
   }
+  Scene_item::changed();
 }

@@ -140,6 +140,8 @@ installer from \boostprodownloadpage.
 Since \texttt{Boost.Thread} is required, make sure to either install the precompiled 
 libraries for your compiler or to build \texttt{libboost-thread}.
 
+As on Windows there is no canonical directory for where to find \boost\ we recommend that you define the environment variable \ccc{BOOST_ROOT} and set it 
+to  where you have installed \boost, that is it should be something like \texttt{C:\boost\boost_1_41_0}.
 
 \subsection{GMP and MPFR \label{thirdparty:GMP} \label{thirdparty:MPFR}}
 
@@ -803,9 +805,9 @@ cmake -DCGAL_DIR=CGAL-3.8 -DCMAKE_BUILD_TYPE=Debug -DCMAKE_CXX_FLAGS=-O2 -DCGAL_
 
 For relatively simple programs the Bourne-shell script \texttt{cgal\_create\_cmake\_script} can be used
 (a short description of this file is provided in Appendix \ref{sec:create_cgal_cmake_script}).
-More generally, within a cmake script, once CGAL has been found using \texttt{find\_package}
+More generally, within a cmake script, once \cgal\ has been found using \texttt{find\_package}
 the variable \texttt{CGAL\_USE\_FILE} is set to a compilation environment CMake file. Including
-this file within a cmake script sets up include paths and libraries to link with of CGAL and third party libraries.
+this file within a cmake script sets up include paths and libraries to link with of \cgal\ and third party libraries.
 
 
 \section{Summary of Configuration Variables}
@@ -984,7 +986,7 @@ Under Linux, the GMPXX is also searched for, and you may specify the following v
 \index{cgal!general-config-cmake-vars-dep-mpfi}\index{cgal configuration cmake variables - dependencies - mpfi}
 \subsubsection{MPFI library}
 
-CGAL provides a number type based on this library, but the CGAL library
+\cgal\ provides a number type based on this library, but the \cgal\ library
 itself does not depend on MPFI. This means that this library must be
 configured when compiling an application that uses the above number type.
 

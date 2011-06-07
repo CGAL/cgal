@@ -4,3 +4,4 @@ include/CGAL/Arr_great_circular_arc_on_cylinder_traits_2.h
 include/CGAL/Arr_polycurve_traits_2.h
 include/CGAL/Arr_geometry_traits/Polycurve_2.h
 demo/Arr_algebraic_segment_traits_2
+include/CGAL/Arr_geometry_traits/One_root_number.h
