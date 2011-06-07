@@ -31,6 +31,7 @@ FULL_ERROR_DESCRIPTION_FILE=ProgramOutput.error.txt
 
 CARTESIAN_KERNEL=0
 SIMPLE_CARTESIAN_KERNEL=1
+UNIVARIATE_ALGEBRAIC_KERNEL=2
 
 SEGMENT_TRAITS=0
 NON_CACHING_SEGMENT_TRAITS=1
@@ -1012,7 +1013,7 @@ test_spherical_arc_traits()
 test_rational_arc_traits()
 {
 # function     executable  number type   kernel            traits
-    compile_test test_traits $CORE_RAT_NT $CARTESIAN_KERNEL $RATIONAL_ARC_TRAITS rational_arc_traits
+    compile_test test_traits $CORE_INT_NT $UNIVARIATE_ALGEBRAIC_KERNEL $RATIONAL_ARC_TRAITS rational_arc_traits
     if [ ${res} -eq 0 ] ; then
 	echo   "   ERROR:    not executed   test_traits rational_arc_traits" >> $ERRORFILE
     else
