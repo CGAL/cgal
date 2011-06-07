@@ -924,16 +924,16 @@ public:
   >::type
   Compare_x_on_boundary_2_points_tag;
 
-  //! tag type for Compare_x_on_boundary_2 (points signature)
+  //! tag type for Compare_x_on_boundary_2 (point_curve-end signature)
   typedef typename internal::Or_traits<
     typename 
-    internal::Compare_x_on_boundary_2::Points< Bottom_side_category >::type,
+    internal::Compare_x_on_boundary_2::Point_curve_end< Bottom_side_category >::type,
     typename 
-    internal::Compare_x_on_boundary_2::Curve_ends< Top_side_category >::type 
+    internal::Compare_x_on_boundary_2::Point_curve_end< Top_side_category >::type 
   >::type
   Compare_x_on_boundary_2_point_curve_end_tag;
 
-  //! tag type for Compare_x_on_boundary_2 (points signature)
+  //! tag type for Compare_x_on_boundary_2 (curve-ends signature)
   typedef typename internal::Or_traits<
     typename 
     internal::Compare_x_on_boundary_2::Curve_ends< Bottom_side_category >::type,
