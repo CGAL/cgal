@@ -128,8 +128,10 @@ are_strictly_ordered(const T & a, const T & b, const T & c, Compare cmp)
 }
 
 
+#ifndef CGAL_NO_DEPRECATED_CODE
 template <class ForwardIterator>
 inline
+CGAL_DEPRECATED
 ForwardIterator
 successor( ForwardIterator it )
 {
@@ -138,11 +140,13 @@ successor( ForwardIterator it )
 
 template <class BidirectionalIterator>
 inline
+CGAL_DEPRECATED
 BidirectionalIterator
 predecessor( BidirectionalIterator it )
 {
   return --it;
 }
+#endif // CGAL_NO_DEPRECATED_CODE
 
 template < class ForwardIterator >
 std::pair< ForwardIterator, ForwardIterator >
