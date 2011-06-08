@@ -366,7 +366,12 @@ rectangular_p_center_2(ForwardIterator f,
                        Traits& t)
 {
   CGAL_optimisation_precondition(p >= 2 && p < 5);
-
+  typename std::iterator_traits<ForwardIterator>::difference_type 
+    nb_pts=std::distance(f,l);
+  r=0;
+  if (nb_pts==p) return std::copy(f,l,o);
+  if (nb_pts<p)  return o;
+  
   if (p == 2)
     return rectangular_2_center_2(f, l, o, r, t);
   else if (p == 3)
