@@ -177,15 +177,34 @@ public:
 
   std::ostream& print (std::ostream& os) const
   {
-    os <<"x = " << _x_coordinate<<" ";
-    os <<"rational function = ( " ;
-    Base::print_polynomial(os, _rational_function.numer(), 'x');
-    os << ") / (";
-    Base::print_polynomial(os, _rational_function.denom(), 'x');
-    os << ")";
-
-    return os;
-  }
+    std::pair<double,double> double_p;
+    switch(::CGAL::get_mode(os))
+    {
+          case ::CGAL::IO::PRETTY:
+          double_p = this->to_double();
+          os <<"(" ;
+          os << double_p.first;
+          os <<" , " ;
+          os << double_p.second;
+          os << ")";
+          break;
+          
+          case ::CGAL::IO::BINARY:
+          std::cerr << "BINARY format not yet implemented" << std::endl;
+          break;
+          
+          default:
+          // ASCII
+          os <<"x = " << _x_coordinate<<" ";
+          os <<"rational function = ( " ;
+          Base::print_polynomial(os, _rational_function.numer(), 'x');
+          os << ") / (";
+          Base::print_polynomial(os, _rational_function.denom(), 'x');
+          os << ")";
+     }
+     
+     return os;
+ }
 private:
   std::pair<Bound,Bound> approximate_absolute_y( int a,unsigned int& precision ) const
   {
