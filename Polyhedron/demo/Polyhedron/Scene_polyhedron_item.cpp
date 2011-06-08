@@ -350,29 +350,33 @@ Scene_polyhedron_item::select(double orig_x,
         if(closest_point) {
           Polyhedron::Facet_handle selected_fh = closest->second;
 
-          Polyhedron::Halfedge_around_facet_circulator 
-            he_it = selected_fh->facet_begin(),
-            around_end = he_it;
+          // The computation of the nearest vertex may be costly.  Only
+          // do it if some objects are connected to the signal
+          // 'selected_vertex'.
+          if(QObject::receivers(SIGNAL(selected_vertex(void*))) > 0) 
+          {
+            Polyhedron::Halfedge_around_facet_circulator 
+              he_it = selected_fh->facet_begin(),
+              around_end = he_it;
 
-          Polyhedron::Vertex_handle 
-            v = he_it->vertex(),
-            nearest_v = v;
+            Polyhedron::Vertex_handle v = he_it->vertex(), nearest_v = v;
 
-          Kernel::FT sq_dist = CGAL::squared_distance(*closest_point,
-                                                      v->point());
+            Kernel::FT sq_dist = CGAL::squared_distance(*closest_point,
+                                                        v->point());
 
-          while(++he_it != around_end) {
-            v = he_it->vertex();
-            Kernel::FT new_sq_dist = CGAL::squared_distance(*closest_point,
-                                                            v->point());
-            if(new_sq_dist < sq_dist) {
-              sq_dist = new_sq_dist;
-              nearest_v = v;
+            while(++he_it != around_end) {
+              v = he_it->vertex();
+              Kernel::FT new_sq_dist = CGAL::squared_distance(*closest_point,
+                                                              v->point());
+              if(new_sq_dist < sq_dist) {
+                sq_dist = new_sq_dist;
+                nearest_v = v;
+              }
             }
+            emit selected_vertex((void*)(&*nearest_v));
           }
           
           emit selected_facet((void*)(&*selected_fh));
-          emit selected_vertex((void*)(&*nearest_v));
           if(erase_next_picked_facet_m) {
             polyhedron()->erase_facet(selected_fh->halfedge());
             polyhedron()->normalize_border();
