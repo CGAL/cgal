@@ -1,8 +1,11 @@
 //! \file examples/Arrangement_2/ex_rational_functions.cpp
 // Constructing an arrangement of arcs of rational functions.
+#include "stdafx.h"
+
 #include <CGAL/basic.h>
 
 #include <CGAL/CORE_BigInt.h>                      //NT
+//#include <CGAL/CORE_BigRat.h>                      //NT
 #include <CGAL/Algebraic_kernel_d_1.h>             //Algebraic Kernel
 #include <CGAL/Arr_rational_function_traits_2.h>   //Traits
 #include <CGAL/Arrangement_2.h>                    //Arrangement
