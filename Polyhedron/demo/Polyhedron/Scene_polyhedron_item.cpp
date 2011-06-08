@@ -353,7 +353,7 @@ Scene_polyhedron_item::select(double orig_x,
           // The computation of the nearest vertex may be costly.  Only
           // do it if some objects are connected to the signal
           // 'selected_vertex'.
-          if(QObject::receivers(SIGNAL(selected_vertex(void*))) > 0) 
+          if(QObject::receivers(SIGNAL(selected_vertex(void*))) > 0)
           {
             Polyhedron::Halfedge_around_facet_circulator 
               he_it = selected_fh->facet_begin(),

@@ -157,6 +157,9 @@ MainWindow::MainWindow(QWidget* parent)
   connect(scene, SIGNAL(updated()),
           viewer, SLOT(update()));
 
+  connect(scene, SIGNAL(updated()),
+          this, SLOT(selectionChanged()));
+
   connect(scene, SIGNAL(itemAboutToBeDestroyed(Scene_item*)),
           this, SLOT(removeManipulatedFrame(Scene_item*)));
 
@@ -742,10 +745,26 @@ void MainWindow::selectionChanged()
   Scene_item* item = scene->item(getSelectedSceneItemIndex());
   if(item != NULL && item->manipulatable()) {
     viewer->setManipulatedFrame(item->manipulatedFrame());
+  } else {
+    viewer->setManipulatedFrame(0);
+  }
+  if(viewer->manipulatedFrame() == 0) {
+    Q_FOREACH(Scene_item* item, scene->entries()) {
+      if(item->manipulatable() && item->manipulatedFrame() != 0) {
+        if(viewer->manipulatedFrame() != 0) {
+          // there are at least two possible frames
+          viewer->setManipulatedFrame(0);
+          break;
+        } else {
+          viewer->setManipulatedFrame(item->manipulatedFrame());
+        }
+      }
+    }
+  }
+  if(viewer->manipulatedFrame() != 0) {
     connect(viewer->manipulatedFrame(), SIGNAL(modified()),
             this, SLOT(updateInfo()));
   }
-  
   viewer->updateGL();
 }
 
