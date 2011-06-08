@@ -10,78 +10,94 @@
 #include <CGAL/Taucs_solver_traits.h>
 
 
-typedef CGAL::Simple_cartesian<double>      Kernel;
-typedef Kernel::Vector_3                    Vector;
-typedef Kernel::Point_3                     Point;
-typedef CGAL::Polyhedron_3<Kernel>          Polyhedron;
-
-typedef Polyhedron::Vertex_handle                            Vertex_handle;
-typedef Polyhedron::Vertex_const_handle                      Vertex_const_handle;
-typedef Polyhedron::Vertex_iterator							             Vertex_iterator;
-typedef Polyhedron::Vertex_const_iterator                    Vertex_const_iterator;
-typedef Polyhedron::Halfedge_around_vertex_const_circulator  HV_circulator;
-
-
 namespace CGAL {
 
+/// @heading Parameters:
+/// @param Gt Geometric traits class.
+
+template <class Gt>
 class Deform_mesh
 {
+// Public types
 public:
-	Polyhedron polyhedron;                // target mesh
+
+  typedef Gt Geom_traits; ///< Geometric traits class
+
+  // Geometric types
+  typedef typename Geom_traits::Point_3 Point; ///< typedef to Geom_traits::Point_3
+  typedef typename Geom_traits::Vector_3 Vector; ///< typedef to Geom_traits::Vector_3
+
+  // Internal polyhedron mesh pf type Polyhedron_3.
+  typedef typename Polyhedron_3<Geom_traits> Polyhedron;
+
+  // Repeat Polyhedron types
+  typedef typename Polyhedron::Vertex_handle                              Vertex_handle;
+  typedef typename Polyhedron::Vertex_const_handle                        Vertex_const_handle;
+  typedef typename Polyhedron::Vertex_iterator							              Vertex_iterator;
+  typedef typename Polyhedron::Vertex_const_iterator                      Vertex_const_iterator;
+  typedef typename Polyhedron::Halfedge_around_vertex_const_circulator    HV_circulator;
+
+  // Data members.
+public:
+
+  Polyhedron polyhedron;                // target mesh
   std::map<Vertex_const_handle, Vertex_handle> s2t;          // access from source mesh to target mesh
   std::vector<Vertex_handle> roi;
   std::vector<Vertex_handle> hdl;           // user specified handles, storing the target positions
 
-  Taucs_solver_traits<double> solver;
 
+  // Taucs_solver_traits<double> solver;
+
+  // Public methods
 public:
-	// The constructor gets the Polyhedron that we will model
-	Deform_mesh(Polyhedron &P)
+
+  // The constructor gets the Polyhedron that we will model
+  Deform_mesh(Polyhedron &P)
     :polyhedron(P)
-	{
+  {
     Vertex_iterator vit_t = polyhedron.vertices_begin();
-		for (Vertex_const_iterator vit_s = P.vertices_begin(); vit_s != P.vertices_end(); vit_s++)
-		{
+    for (Vertex_const_iterator vit_s = P.vertices_begin(); vit_s != P.vertices_end(); vit_s++)
+    {
       s2t[vit_s] = vit_t;
-		}
-	}
+    }
+  }
 
-	// Release resources
-	~Deform_mesh(void)
-	{
-	}
+  // Release resources
+  ~Deform_mesh(void)
+  {
+  }
 
-	// The region of interest and the handles are a set of vertices on target mesh, iterators come from source mesh
-	void region_of_interest(Vertex_const_iterator begin, Vertex_const_iterator end, size_t k)
-	{
+  // The region of interest and the handles are a set of vertices on target mesh, iterators come from source mesh
+  void region_of_interest(Vertex_const_iterator begin, Vertex_const_iterator end, size_t k)
+  {
     std::vector<Vertex_const_handle> roi_s;
-		for (Vertex_const_iterator vit = begin; vit != end; vit ++)
-		{
+    for (Vertex_const_iterator vit = begin; vit != end; vit ++)
+    {
       roi_s.push_back(vit);
-		}
+    }
     roi_s.push_back(end);
 
-		int idx_lv = 0;    // pointing the neighboring vertices on current level
-		int idx_lv_end;
+    int idx_lv = 0;    // pointing the neighboring vertices on current level
+    int idx_lv_end;
 
-		for (size_t lv = 0; lv < k; lv++)
-		{
-			idx_lv_end = roi_s.size(); 
-			for ( ;idx_lv < idx_lv_end; idx_lv++ )
-			{
-				Vertex_const_handle vh = roi_s[idx_lv];
-				HV_circulator wc = vh->vertex_begin(), done(wc);
-				do {
-					Vertex_const_handle wh = wc->opposite()->vertex();
+    for (size_t lv = 0; lv < k; lv++)
+    {
+      idx_lv_end = roi_s.size(); 
+      for ( ;idx_lv < idx_lv_end; idx_lv++ )
+      {
+        Vertex_const_handle vh = roi_s[idx_lv];
+        HV_circulator wc = vh->vertex_begin(), done(wc);
+        do {
+          Vertex_const_handle wh = wc->opposite()->vertex();
           std::vector<Vertex_const_handle> ::iterator result = find(roi_s.begin(), roi_s.end(), wh);
-					if (result == roi_s.end())
-					{
-						roi_s.push_back(wh);
-					}
-					++wc;
-				}while(wc != done);
-			}
-		}
+          if (result == roi_s.end())
+          {
+            roi_s.push_back(wh);
+          }
+          ++wc;
+        }while(wc != done);
+      }
+    }
 
     // mapping handles from source to target
     roi.clear();
@@ -90,53 +106,73 @@ public:
       roi.push_back(s2t[roi_s[i]]);
     }
 
-	}
+  }
 
 
-	void handles(Vertex_const_iterator begin, Vertex_const_iterator end)
-	{
-		hdl.clear();
-		for (Vertex_const_iterator vit = begin; vit != end; vit ++)
-		{
-			hdl.push_back(s2t[vit]);
-		}
-		hdl.push_back(s2t[end]);
-	}
+  void handles(Vertex_const_iterator begin, Vertex_const_iterator end)
+  {
+    hdl.clear();
+    for (Vertex_const_iterator vit = begin; vit != end; vit ++)
+    {
+      hdl.push_back(s2t[vit]);
+    }
+    hdl.push_back(s2t[end]);
+  }
 
 
-	// Before we can model we have to do some precomputation
-	void preprocess()
-	{
-		CGAL_TRACE_STREAM << "Calls preprocess()\n";
+  // Before we can model we have to do some precomputation
+  ///
+  /// @commentheading Template parameters:
+  /// @param SparseLinearAlgebraTraits_d Symmetric definite positive sparse linear solver.
+  template <class SparseLinearAlgebraTraits_d>
+  void preprocess(
+    SparseLinearAlgebraTraits_d& solver = SparseLinearAlgebraTraits_d())
+  {
+    CGAL_TRACE_STREAM << "Calls preprocess()\n";
 
-		Timer task_timer; task_timer.start();
+    Timer task_timer; task_timer.start();
 
-		// get #variables
-		unsigned int nb_variables = polyhedron.size_of_vertices();
+    // get #variables
+    unsigned int nb_variables = polyhedron.size_of_vertices();
 
-		CGAL_TRACE_STREAM << "  Creates matrix...\n";
-		// Assemble linear system A*X=B
-    Taucs_solver_traits<double>::Matrix A(nb_variables); // matrix is symmetric definite positive
-    Taucs_solver_traits<double>::Vector X(nb_variables), B(nb_variables);
+    CGAL_TRACE_STREAM << "  Creates matrix...\n";
+    // Assemble linear system A*X=B
+    typename SparseLinearAlgebraTraits_d::Matrix A(nb_variables); // matrix is symmetric definite positive
+    typename SparseLinearAlgebraTraits_d::Vector X(nb_variables), B(nb_variables);
 
-		assemble_laplacian(A, "uni");
+    assemble_laplacian<SparseLinearAlgebraTraits_d>(A, "uni");
 
-		CGAL_TRACE_STREAM << "  Creates matrix: done (" << task_timer.time() << " s)\n";
+    CGAL_TRACE_STREAM << "  Creates matrix: done (" << task_timer.time() << " s)\n";
 
-		CGAL_TRACE_STREAM << "  Pre-factorizing linear system...\n";
+    CGAL_TRACE_STREAM << "  Pre-factorizing linear system...\n";
 
-		// Pre-factorizing the linear system A*X=B
-		task_timer.reset();
-		double D;
-		if(!solver.pre_factor(A, D))
-			return;
+    // Pre-factorizing the linear system A*X=B
+    task_timer.reset();
+    double D;
+    if(!solver.pre_factor(A, D))
+      return;
 
-		CGAL_TRACE_STREAM << "  Pre-factorizing linear system: done (" << task_timer.time() << " s)\n";
+    CGAL_TRACE_STREAM << "  Pre-factorizing linear system: done (" << task_timer.time() << " s)\n";
 
-	}
+  }
+
+
+  void preprocess()
+  {
+    return preprocess< Taucs_solver_traits<double> >();
+  }
+
+  void preprocess( Taucs_solver_traits<double>& solver )
+  {
+    return preprocess< Taucs_solver_traits<double> >(solver);
+  }
 
 	// Assemble Laplacian matrix A of linear system A*X=B 
-	void assemble_laplacian(Taucs_solver_traits<double>::Matrix& A, std::string type)
+  ///
+  /// @commentheading Template parameters:
+  /// @param SparseLinearAlgebraTraits_d Symmetric definite positive sparse linear solver.
+  template <class SparseLinearAlgebraTraits_d>
+	void assemble_laplacian(typename SparseLinearAlgebraTraits_d::Matrix& A, std::string type)
 	{
     std::map<Vertex_const_handle, int> idx;
 		int index = 0;
