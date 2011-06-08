@@ -446,13 +446,15 @@ macro( add_config_flag flag )
 
 endmacro()
 
+cache_get(CONFIG_CXX_FLAGS)
+
 foreach(config_test_cpp ${all_config_tests})
     
     # Test's name is .cpp's base name
     get_filename_component(config_test_name ${config_test_cpp} NAME_WE)
     
     # Compile and run ${config_test_cpp}. Exit code is stored in ${config_test_name}.
-    if( RUNNING_CGAL_AUTO_TEST OR "${config_test_name}" MATCHES "^${config_test_name}$" )
+    if( RUNNING_CGAL_AUTO_TEST OR "${config_test_name}" MATCHES "^${config_test_name}$" OR NOT ${CONFIG_CXX_FLAGS} STREQUAL  ${CMAKE_CXX_FLAGS})
 
       CHECK_CXX_FILE_RUNS(${config_test_cpp} ${config_test_name} ${config_test_name})
 
@@ -467,6 +469,8 @@ foreach(config_test_cpp ${all_config_tests})
     add_config_flag( ${config_test_name} ${config_test_name} )
     
 endforeach()
+
+cache_set(CONFIG_CXX_FLAGS ${CMAKE_CXX_FLAGS})
 
 add_config_flag( CGAL_USE_GMP )
 add_config_flag( CGAL_USE_MPFR )
