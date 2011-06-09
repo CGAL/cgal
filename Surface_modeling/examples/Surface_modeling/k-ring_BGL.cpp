@@ -10,7 +10,7 @@
 #include <fstream>
 
 typedef CGAL::Cartesian<double>                                      Kernel;
-typedef Kernel::Point_3                                              Point;
+//typedef Kernel::Point_3                                              Point;
 typedef CGAL::Polyhedron_3<Kernel,CGAL::Polyhedron_items_with_id_3>  Polyhedron;
 
 typedef boost::graph_traits<Polyhedron>::vertex_descriptor		vertex_descriptor;
@@ -76,7 +76,7 @@ int main() {
 		 
 	int index = 0;
 	// boost::tie assigns the first and second element of the std::pair
-	// returned by boost::vertices to the variables vit and ve
+	// returned by boost::vertices to the variables vb and ve
 	for(boost::tie(vb,ve)=boost::vertices(P); vb!=ve; ++vb ){
 		vertex_descriptor  vd = *vb;
 		vd->id() = index++;

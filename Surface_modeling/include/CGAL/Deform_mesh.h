@@ -28,7 +28,7 @@ public:
   typedef typename Geom_traits::Vector_3 Vector; ///< typedef to Geom_traits::Vector_3
 
   // Internal polyhedron mesh pf type Polyhedron_3.
-  typedef typename Polyhedron_3<Geom_traits> Polyhedron;
+  typedef typename Polyhedron_3<Geom_traits>              Polyhedron;
 
   // Repeat Polyhedron types
   typedef typename Polyhedron::Vertex_handle                              Vertex_handle;
@@ -59,6 +59,7 @@ public:
     for (Vertex_const_iterator vit_s = P.vertices_begin(); vit_s != P.vertices_end(); vit_s++)
     {
       s2t[vit_s] = vit_t;
+      vit_t++;
     }
   }
 
