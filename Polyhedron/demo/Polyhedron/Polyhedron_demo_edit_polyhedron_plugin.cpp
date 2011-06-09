@@ -7,6 +7,10 @@
 #include <QMainWindow>
 #include <QMessageBox>
 #include <QInputDialog>
+#include <QSettings>
+
+#include <QDockWidget>
+#include "ui_Deform_mesh.h"
 
 #include "Polyhedron_type.h"  // defines the Polyhedron type
 
@@ -41,7 +45,10 @@ public:
     : Polyhedron_demo_plugin_helper(), size(0)
   {}
 
+  ~Polyhedron_demo_edit_polyhedron_plugin();
+
   void init(QMainWindow* mainWindow, Scene_interface* scene_interface);
+
   QList<QAction*> actions() const {
     return QList<QAction*>() << actionToggleEdit;
   }
@@ -56,9 +63,22 @@ private:
   typedef std::map<QObject*, Polyhedron_deformation_data> Deform_map;
   Deform_map deform_map;
 
+  Ui::DeformMesh deform_mesh_widget;
+  QDockWidget* widget;
+
   QAction* actionToggleEdit;
   int size;
 }; // end Polyhedron_demo_edit_polyhedron_plugin
+
+Polyhedron_demo_edit_polyhedron_plugin::
+~Polyhedron_demo_edit_polyhedron_plugin()
+{
+  QSettings settings;
+  settings.beginGroup("Polyhedron edition");
+  settings.setValue("Deform_mesh widget area", 
+                    this->mw->dockWidgetArea(widget));
+  settings.endGroup();
+}
 
 void Polyhedron_demo_edit_polyhedron_plugin::init(QMainWindow* mainWindow, 
                                                   Scene_interface* scene_interface)
@@ -66,6 +86,17 @@ void Polyhedron_demo_edit_polyhedron_plugin::init(QMainWindow* mainWindow,
   actionToggleEdit = new QAction(tr("Toggle &edition of item(s)"), mainWindow);
   actionToggleEdit->setObjectName("actionToggleEdit");
   actionToggleEdit->setShortcut(QKeySequence(Qt::CTRL + Qt::Key_E));
+  
+  QSettings settings;
+  settings.beginGroup("Polyhedron edition");
+  int i = settings.value("Deform_mesh widget area", 
+                         Qt::LeftDockWidgetArea).toInt();
+  Qt::DockWidgetArea area = static_cast<Qt::DockWidgetArea>(i);
+  settings.endGroup();
+  widget = new QDockWidget();
+  deform_mesh_widget.setupUi(widget);
+  mainWindow->addDockWidget(area, widget);
+
   Polyhedron_demo_plugin_helper::init(mainWindow, scene_interface);
 }
 
