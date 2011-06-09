@@ -26,13 +26,13 @@
 
 namespace CGAL {
 
-template< class COEFF, class ROOT >
-class Real_embeddable_traits< Sqrt_extension<COEFF, ROOT> >
+template< class COEFF, class ROOT, class ACDE_TAG, class FP_TAG >
+class Real_embeddable_traits< Sqrt_extension<COEFF, ROOT, ACDE_TAG,FP_TAG> >
   : public INTERN_RET::Real_embeddable_traits_base<
-                  Sqrt_extension<COEFF, ROOT>,
+                  Sqrt_extension<COEFF, ROOT, ACDE_TAG,FP_TAG>,
                   typename Real_embeddable_traits<COEFF>::Is_real_embeddable > {
   public:
-    typedef Sqrt_extension<COEFF, ROOT> Type;
+  typedef Sqrt_extension<COEFF, ROOT, ACDE_TAG,FP_TAG> Type;
 
     class Sgn
         : public std::unary_function< Type, ::CGAL::Sign >{
@@ -78,10 +78,8 @@ class Real_embeddable_traits< Sqrt_extension<COEFF, ROOT> >
         // or the root may not. ?? !
         double operator()(const Type& x) const {
             if(x.is_extended()){
-                return CGAL_NTS to_double(x.a0())
-                    +  int(CGAL_NTS sign(x.a1()))
-                    * CGAL_NTS sqrt(CGAL_NTS to_double(x.a1()*x.a1() *
-                                                    Type(x.root())));
+                return to_double(x.a0()) +  to_double(x.a1())
+                    * (std::sqrt) (to_double(x.root()));
             }else{
                 return CGAL_NTS to_double(x.a0());
             }

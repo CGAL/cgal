@@ -62,6 +62,10 @@ protected slots:
   void readSettings();
   void writeSettings();
 
+	// snapshot
+	void on_actionCopy_snapshot_triggered();
+	void on_actionSave_snapshot_triggered();
+
   // load, erase, duplicate
   void on_actionEraseAll_triggered();
   void on_actionLoad_triggered();

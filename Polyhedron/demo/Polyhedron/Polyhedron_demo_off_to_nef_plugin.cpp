@@ -36,7 +36,7 @@ Polyhedron_demo_off_to_nef_plugin::load(QFileInfo fileinfo) {
     std::cerr << "Error!\n";
   Scene_nef_polyhedron_item* item = new Scene_nef_polyhedron_item();
 
-  if(!item->load(in))
+  if(!item->load_from_off(in))
   {
     delete item;
     return 0;

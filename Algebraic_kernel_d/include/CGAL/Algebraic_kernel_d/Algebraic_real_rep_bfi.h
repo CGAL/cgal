@@ -39,16 +39,15 @@
 #include <CGAL/Interval_traits.h>
 #include <CGAL/Bigfloat_interval_traits.h>
 #include <CGAL/convert_to_bfi.h>
-
+#include <CGAL/Sqrt_extension_fwd.h>
+#include <CGAL/Get_arithmetic_kernel.h>
 
 namespace CGAL {
-
-template <class NT> struct Get_arithmetic_kernel;
 
 // it would be nice to remove the explicit use of Sqrt_extension 
 // in this file. However, it is much more efficient to convert the root 
 // only once. see convert_to_bfi  
-template <class COEFF, class ROOT> class Sqrt_extension; 
+//template <class COEFF, class ROOT> class Sqrt_extension;  //use forward declaration instead
 
 namespace internal {
 
@@ -98,11 +97,11 @@ private:
         }
     }
 
-   template <class COEFF, class ROOT, class OI > 
+   template <class COEFF, class ROOT, class ACDE_TAG, class FP_TAG, class OI > 
     inline 
     void
     convert_coeffs(
-            const CGAL::Polynomial< CGAL::Sqrt_extension<COEFF,ROOT> >& poly,
+            const CGAL::Polynomial< CGAL::Sqrt_extension<COEFF,ROOT,ACDE_TAG,FP_TAG> >& poly,
             OI it ) const {
         
         BFI root(0);

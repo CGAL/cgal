@@ -36,7 +36,7 @@
 #include <CGAL/Lazy.h>
 #include <CGAL/Lazy_kernel.h>
 #include <CGAL/Lazy_circular_kernel_constructions.h>
-#include <CGAL/Root_of_2.h>
+#include <CGAL/Root_of_traits.h>
 #include <boost/mpl/if.hpp>
 #include <CGAL/Kernel/Type_mapper.h>
 

@@ -1,6 +1,7 @@
 #ifndef SCENE_H
 #define SCENE_H
 #include "config.h"
+#include "Scene_config.h"
 
 #include "Scene_interface.h"
 #include "Scene_draw_interface.h"
@@ -21,10 +22,11 @@
 class QEvent;
 class QMouseEvent;
 
-class Scene  :
+class SCENE_EXPORT Scene  :
   public QAbstractListModel, public Scene_interface, public Scene_draw_interface
 {
   Q_OBJECT
+  Q_PROPERTY(int numberOfEntries READ numberOfEntries)
 
   friend class SceneDelegate;
 
@@ -40,19 +42,24 @@ public:
   Scene(QObject*  parent);
   ~Scene();
 
-  Item_id addItem(Scene_item* item);
+  int addItem(Scene_item* item);
+  Scene_item* replaceItem(int index, Scene_item* item);
 
-  int erase(int);     // Returns the index of the polyhedra just before the
-                      // one that is erased, or just after. Returns -1 if
-                      // the list is empty.
+  Q_INVOKABLE int erase(int);  
+  int erase(QList<int>);  
+  // Returns the index of the polyhedra just before the
+  // one that is erased, or just after. Returns -1 if
+  // the list is empty.
 
   // Duplicate a scene item. Return the ID of the new item (-1 on error).
-  Item_id duplicate(Item_id index); 
+  int duplicate(int index); 
 
   // Accessors (getters)
-  size_t numberOfEntries() const;
-  Scene_item* item(Item_id) const ;
-  Item_id mainSelectionIndex() const;
+  int numberOfEntries() const;
+  const QList<Scene_item*>& entries() const { return m_entries; }
+  Q_INVOKABLE Scene_item* item(int) const ;
+  int mainSelectionIndex() const;
+  QList<int> selectionIndices() const;
   int selectionAindex() const;
   int selectionBindex() const;
 
@@ -83,15 +90,22 @@ public:
 
   // auxiliary public function for QMainWindow
   QItemSelection createSelection(int i);
+  QItemSelection createSelectionAll();
 
 public slots:
   // Notify the scene that an item was modified
-  void itemChanged(Item_id i); 
+  void itemChanged(); // slots called by items themself
+  void itemChanged(int i); 
   void itemChanged(Scene_item*);
 
-  void setSelectedItem(Item_id i )
+  void setSelectedItem(int i )
   {
     selected_item = i;
+  };
+
+  void setSelectedItemsList(QList<int> l )
+  {
+    selected_items_list = l;
   };
 
   // Accessors (setters)
@@ -100,21 +114,27 @@ public slots:
   void setItemB(int i);
 
 signals:
+  void newItem(int);
   void updated_bbox();
   void updated();
   void itemAboutToBeDestroyed(Scene_item*);
+  void selectionRay(double, double, double, double, double, double);
+
+private slots:
+  void setSelectionRay(double, double, double, double, double, double);
 
 private:
   void draw_aux(bool with_names);
   typedef QList<Scene_item*> Entries;
-  Entries entries;
+  Entries m_entries;
   int selected_item;
+  QList<int> selected_items_list;
   int item_A;
   int item_B;
 
 }; // end class Scene
 
-class SceneDelegate : public QItemDelegate
+class SCENE_EXPORT SceneDelegate : public QItemDelegate
 {
 public:
   SceneDelegate(QObject * parent = 0)

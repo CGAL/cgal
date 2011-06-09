@@ -39,7 +39,7 @@
 #include <CGAL/Profile_counter.h>
 #include <CGAL/Lazy.h>
 
-// #include <CGAL/Root_of_traits.h> // TODO
+#include <CGAL/Sqrt_extension_fwd.h>
 
 /*
  * This file contains the definition of the number type Lazy_exact_nt<ET>,
@@ -356,6 +356,11 @@ public :
   template <class ET1>
   Lazy_exact_nt (const Lazy_exact_nt<ET1> &x,
       typename boost::enable_if<is_implicit_convertible<ET1,ET>,int>::type=0)
+    : Base(new Lazy_lazy_exact_Cst<ET, ET1>(x)){}
+
+  template <class ET1>
+  explicit Lazy_exact_nt (const Lazy_exact_nt<ET1> &x,
+  typename boost::disable_if<is_implicit_convertible<ET1,ET>,int>::type=0)
     : Base(new Lazy_lazy_exact_Cst<ET, ET1>(x)){}
 
   Self operator+ () const
@@ -1121,6 +1126,7 @@ public:
 
 
 CGAL_DEFINE_COERCION_TRAITS_FOR_SELF_TEM(Lazy_exact_nt<ET>, class ET)
+CGAL_DEFINE_COERCION_TRAITS_FROM_TO_TEM(ET,Lazy_exact_nt<ET>,class ET)
 
 template<class ET1, class ET2 >
 struct Coercion_traits< Lazy_exact_nt<ET1>, Lazy_exact_nt<ET2> >
@@ -1225,8 +1231,15 @@ struct Min <Lazy_exact_nt<ET> >
 
     Lazy_exact_nt<ET> operator()( const Lazy_exact_nt<ET>& x, const Lazy_exact_nt<ET>& y) const
     {
-        CGAL_PROFILER(std::string("calls to    : ") + std::string(CGAL_PRETTY_FUNCTION));
-        return new Lazy_exact_Min<ET>(x, y);
+      if (x.identical(y)){
+        return x;
+      }
+      Uncertain<bool> res = x.approx() < y.approx();
+      if(is_certain(res)){
+        return res.make_certain() ? x : y;
+      }
+      CGAL_PROFILER(std::string("calls to    : ") + std::string(CGAL_PRETTY_FUNCTION));
+      return new Lazy_exact_Min<ET>(x, y);
     }
 };
 
@@ -1236,6 +1249,13 @@ struct Max <Lazy_exact_nt<ET> >
 
     Lazy_exact_nt<ET> operator()( const Lazy_exact_nt<ET>& x, const Lazy_exact_nt<ET>& y) const
     {
+      if (x.identical(y)){
+        return x;
+      }
+      Uncertain<bool> res = x.approx() > y.approx();
+      if(is_certain(res)){
+        return  res.make_certain() ? x : y;
+      }
         CGAL_PROFILER(std::string("calls to    : ") + std::string(CGAL_PRETTY_FUNCTION));
         return new Lazy_exact_Max<ET>(x, y);
     }
@@ -1297,94 +1317,9 @@ fit_in_double(const Lazy_exact_nt<ET>& l, double& r)
 
 } // namespace internal
 
-// We create a type of new node in Lazy_exact_nt's DAG
-// for the make_root_of_2() operation.
-
-template <typename ET >
-struct Lazy_exact_ro2
-  : public Lazy_exact_nt_rep< typename Root_of_traits<ET>::RootOf_2 >
-{
-    typedef typename Root_of_traits<ET>::RootOf_2   RO2;
-    typedef Lazy_exact_nt_rep<RO2>                  Base;
-    typedef typename Base::AT::Protector            P;
-
-
-    mutable Lazy_exact_nt<ET> op1, op2, op3;
-    bool smaller;
-    bool old_rep;//if the rep=true then representation with polynomial coeff, else alpha, beta, gamma
-
-
-    Lazy_exact_ro2 (const Lazy_exact_nt<ET> &a,
-                    const Lazy_exact_nt<ET> &b,
-                    const Lazy_exact_nt<ET> &c, bool s)
-      : Base((P(), make_root_of_2(a.approx(), b.approx(), c.approx(), s))),
-        op1(a), op2(b), op3(c), smaller(s), old_rep(true) {}
-
-    Lazy_exact_ro2 (const Lazy_exact_nt<ET> &a,
-                    const Lazy_exact_nt<ET> &b,
-                    const Lazy_exact_nt<ET> &c)
-      : Base((P(), make_root_of_2(a.approx(), b.approx(), c.approx()))),
-        op1(a), op2(b), op3(c), smaller(true), old_rep(false) {}
-
-    void update_exact() const
-    {
-        if (old_rep)
-          this->et = new RO2(make_root_of_2(op1.exact(), op2.exact(),
-                                            op3.exact(), smaller));
-        else
-          this->et = new RO2(make_root_of_2(op1.exact(), op2.exact(),
-                                            op3.exact()));
-        if (!this->approx().is_point())
-            this->at = to_interval(*(this->et));
-        this->prune_dag();
-
-    }
-
-    void prune_dag() const
-    {
-        op1 = op2 = op3 = Lazy_exact_nt<ET>();
-    }
-};
-
-template <typename NT >
-struct Root_of_traits< Lazy_exact_nt < NT > >
-{
-private:
-    typedef Root_of_traits<NT> T;
-public:
-    typedef Root_of_traits< Lazy_exact_nt < NT > > Base;
-    typedef Lazy_exact_nt< typename T::RootOf_1 > RootOf_1;
-    typedef Lazy_exact_nt< typename T::RootOf_2 > RootOf_2;
-    typedef RootOf_2 Root_of_2;
-    typedef RootOf_1 Root_of_1;
-    struct Make_root_of_2{
-        typedef RootOf_2 result_type;
-        Root_of_2
-        operator()(const Lazy_exact_nt<NT>& a, const Lazy_exact_nt<NT>& b, const Lazy_exact_nt<NT>& c) const{
-            return new Lazy_exact_ro2<NT>(a, b, c);
-        };
-        RootOf_2
-        operator()(const Lazy_exact_nt<NT>& a, const Lazy_exact_nt<NT>& b, const Lazy_exact_nt<NT>& c, bool smaller) const{
-          return new Lazy_exact_ro2<NT>(a, b, c, smaller);
-        };
-    };
-
-};
-
-
-//these two functions for test suite requirement
-template < typename RT >
-typename CGAL::Root_of_traits<CGAL::Lazy_exact_nt<RT> >::RootOf_2 make_sqrt(const CGAL::Lazy_exact_nt< RT> & r)
-{
-  typedef Lazy_exact_nt< RT> TT;
-  CGAL_assertion(r >= 0);
-  if(CGAL_NTS is_zero(r)) return make_root_of_2((TT) 1,(TT) 0,(TT) 0);
-  return make_root_of_2((TT) 1,(TT) 0,-r,false);
-}
-
-template < typename RT >
+template <class NT_,class ROOT_, class ACDE_TAG_, class FP_TAG>
 void
-print(std::ostream &os, const CGAL::Lazy_exact_nt< Root_of_2<RT> > &r)
+print(std::ostream &os, const CGAL::Lazy_exact_nt< Sqrt_extension<NT_,ROOT_,ACDE_TAG_,FP_TAG> > &r)
 {
   print(os,r.exact());
 }

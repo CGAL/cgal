@@ -31,11 +31,11 @@
 namespace CGAL {
 
 
-template<class NT, class ROOT>
+template<class NT, class ROOT, class ACDE_TAG, class FP_TAG>
 void
-input_ascii(std::istream& is , Sqrt_extension<NT,ROOT>& result){
+input_ascii(std::istream& is , Sqrt_extension<NT,ROOT,ACDE_TAG,FP_TAG>& result){
 
-    typedef Sqrt_extension<NT,ROOT> EXT; 
+  typedef Sqrt_extension<NT,ROOT,ACDE_TAG,FP_TAG> EXT; 
 
     char c;
     NT a0;
@@ -66,9 +66,9 @@ input_ascii(std::istream& is , Sqrt_extension<NT,ROOT>& result){
         result = EXT(a0,a1,root);
 }
 
-template<class NT, class ROOT>
+template<class NT, class ROOT, class ACDE_TAG, class FP_TAG>
 void
-output_maple(std::ostream& os, const Sqrt_extension<NT,ROOT>& x){
+output_maple(std::ostream& os, const Sqrt_extension<NT,ROOT,ACDE_TAG,FP_TAG>& x){
     CGAL::IO::Mode o_mode=::CGAL::get_mode(os);
     ::CGAL::set_mode(os,CGAL::IO::PRETTY);
     
@@ -93,20 +93,20 @@ output_maple(std::ostream& os, const Sqrt_extension<NT,ROOT>& x){
     return;
 }
 
-template< class NT, class ROOT >
+template< class NT, class ROOT, class ACDE_TAG, class FP_TAG >
 void
-output_benchmark( std::ostream& os, const Sqrt_extension<NT,ROOT>& x ) {
+output_benchmark( std::ostream& os, const Sqrt_extension<NT,ROOT,ACDE_TAG,FP_TAG>& x ) {
     os << "Sqrt_extension( " << bmformat( x.a0() ) << ", " << bmformat( x.a1() )
        << ", " << bmformat( x.root()) << " )";
 }
 
 // Benchmark_rep specialization 
-template < class NT, class ROOT >
-class Benchmark_rep< CGAL::Sqrt_extension< NT, ROOT > > {
-    const CGAL::Sqrt_extension< NT, ROOT >& t;
+template < class NT, class ROOT, class ACDE_TAG, class FP_TAG >
+class Benchmark_rep< CGAL::Sqrt_extension< NT,ROOT, ACDE_TAG, FP_TAG> > {
+    const CGAL::Sqrt_extension< NT,ROOT,ACDE_TAG,FP_TAG>& t;
 public:
     //! initialize with a const reference to \a t.
-    Benchmark_rep( const CGAL::Sqrt_extension< NT, ROOT >& tt) : t(tt) {}
+    Benchmark_rep( const CGAL::Sqrt_extension< NT,ROOT,ACDE_TAG,FP_TAG>& tt) : t(tt) {}
     //! perform the output, calls \c operator\<\< by default.
     std::ostream& operator()( std::ostream& out) const { 
         output_benchmark( out, t );
@@ -116,16 +116,16 @@ public:
     static std::string get_benchmark_name() {
         std::stringstream ss;
         ss << "Sqrt_extension< " << Benchmark_rep< NT >::get_benchmark_name() 
-           << ", " << Benchmark_rep< ROOT >::get_benchmark_name() << " >";
+           << ", " << Benchmark_rep< ROOT>::get_benchmark_name() << " >";
         return ss.str();
     }
 };
 
 
-template <class COEFF, class ROOT>
-struct Needs_parens_as_product< Sqrt_extension<COEFF,ROOT> >{
+template <class COEFF, class ROOT, class ACDE_TAG,class FP_TAG>
+struct Needs_parens_as_product< Sqrt_extension<COEFF,ROOT,ACDE_TAG,FP_TAG> >{
 public:
-    typedef Sqrt_extension<COEFF,ROOT> NT;
+    typedef Sqrt_extension<COEFF,ROOT,ACDE_TAG,FP_TAG> NT;
     bool operator()(const NT& t){
         if( t.a0() != NT(0) && t.a1() != NT(0)){
             return true;
@@ -138,9 +138,9 @@ public:
     }
 };
 
-template <class NT,class ROOT>
+template <class NT,class ROOT, class ACDE_TAG,class FP_TAG>
 std::ostream& operator << (std::ostream& os,
-        const Sqrt_extension<NT,ROOT>& ext){
+        const Sqrt_extension<NT,ROOT,ACDE_TAG,FP_TAG>& ext){
     switch(CGAL::get_mode(os)) {
     case CGAL::IO::PRETTY:
         output_maple(os,ext); break; 
@@ -157,8 +157,8 @@ std::ostream& operator << (std::ostream& os,
  *  (\c LiS::IO::ASCII or \c LiS::IO::BINARY) and the input from
  *  \c is must have the format of output to a stream of the same mode.
  */
-template <class NT,class ROOT>
-std::istream& operator >> (std::istream& is, Sqrt_extension<NT,ROOT>& ext) {
+template <class NT,class ROOT, class ACDE_TAG, class FP_TAG>
+std::istream& operator >> (std::istream& is, Sqrt_extension<NT,ROOT,ACDE_TAG,FP_TAG>& ext) {
     CGAL_precondition(!CGAL::is_pretty(is));
     input_ascii(is,ext);
     return is;

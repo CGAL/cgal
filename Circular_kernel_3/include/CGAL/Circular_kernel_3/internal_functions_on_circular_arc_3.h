@@ -364,7 +364,7 @@ namespace CGAL {
         return true;
       if (type==POLAR){
         bool circle_contains_north = arc.supporting_circle().center().z() > sphere.center().z();
-        typename SK::Root_of_2 radius=make_root_of_2(typename SK::FT(0),typename SK::FT(1),sphere.squared_radius());
+        typename SK::Root_of_2 radius=make_sqrt(sphere.squared_radius());
         typename SK::Circular_arc_point_3 pole (
           typename SK::Algebraic_kernel::Root_for_spheres_2_3( sphere.center().x(),
                                                               sphere.center().y(),
@@ -410,7 +410,7 @@ namespace CGAL {
         case THREADED:
         case POLAR:{
           bool circle_contains_north = arc.supporting_circle().center().z() > sphere.center().z();
-          typename SK::Root_of_2 radius=make_root_of_2(typename SK::FT(0),typename SK::FT(1),sphere.squared_radius());
+          typename SK::Root_of_2 radius=make_sqrt(sphere.squared_radius());
           typename SK::Circular_arc_point_3 pole (
             typename SK::Algebraic_kernel::Root_for_spheres_2_3( sphere.center().x(),
                                                                 sphere.center().y(),
