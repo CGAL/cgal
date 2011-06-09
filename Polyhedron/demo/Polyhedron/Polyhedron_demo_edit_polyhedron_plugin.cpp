@@ -54,7 +54,7 @@ public:
   }
 
 public slots:
-  void on_actionToggleEdit_triggered();
+  void on_actionToggleEdit_triggered(bool);
   void edition();
 
   void item_destroyed();
@@ -86,6 +86,7 @@ void Polyhedron_demo_edit_polyhedron_plugin::init(QMainWindow* mainWindow,
   actionToggleEdit = new QAction(tr("Toggle &edition of item(s)"), mainWindow);
   actionToggleEdit->setObjectName("actionToggleEdit");
   actionToggleEdit->setShortcut(QKeySequence(Qt::CTRL + Qt::Key_E));
+  actionToggleEdit->setCheckable(true);
   
   QSettings settings;
   settings.beginGroup("Polyhedron edition");
@@ -97,10 +98,20 @@ void Polyhedron_demo_edit_polyhedron_plugin::init(QMainWindow* mainWindow,
   deform_mesh_widget.setupUi(widget);
   mainWindow->addDockWidget(area, widget);
 
+  // bind states of actionToggleEdit and editModeCb
+  connect(actionToggleEdit, SIGNAL(triggered(bool)),
+          deform_mesh_widget.editModeCb, SLOT(setChecked(bool)));
+  connect(deform_mesh_widget.editModeCb, SIGNAL(clicked(bool)),
+          actionToggleEdit, SLOT(setChecked(bool)));
+
+  // make editModeCb actually trigger the slot
+  connect(deform_mesh_widget.editModeCb, SIGNAL(clicked(bool)),
+          this, SLOT(on_actionToggleEdit_triggered(bool)));
+
   Polyhedron_demo_plugin_helper::init(mainWindow, scene_interface);
 }
 
-void Polyhedron_demo_edit_polyhedron_plugin::on_actionToggleEdit_triggered() {
+void Polyhedron_demo_edit_polyhedron_plugin::on_actionToggleEdit_triggered(bool) {
   bool found_polyhedron = false;
   bool edit_needed = false;
   QList<Scene_item*> changed_items;
