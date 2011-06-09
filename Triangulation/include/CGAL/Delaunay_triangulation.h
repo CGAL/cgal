@@ -300,9 +300,9 @@ private:
     template< typename FCH >
     struct Full_cell_set : public std::vector<FCH>
     {
-        typedef std::vector<FCH> Base;
-        using Base::begin;
-        using Base::end;
+        typedef std::vector<FCH> Base_set;
+        using Base_set::begin;
+        using Base_set::end;
         void make_searchable()
         {   // sort the full cell handles
             std::sort(begin(), end());

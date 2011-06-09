@@ -44,11 +44,11 @@ class Triangulation_data_structure
 {
     typedef Triangulation_data_structure<Dimen, Vb, Sb>                     Self;
     typedef typename Default::Get<Vb, Triangulation_ds_vertex<> >::type     V_base;
-    typedef typename Default::Get<Sb, Triangulation_ds_full_cell<> >::type  S_base;
+    typedef typename Default::Get<Sb, Triangulation_ds_full_cell<> >::type  FC_base;
 
 public:
-    typedef typename V_base::template Rebind_TDS<Self>::Other  Vertex; /* Concept */
-    typedef typename S_base::template Rebind_TDS<Self>::Other  Full_cell; /* Concept */
+    typedef typename V_base::template Rebind_TDS<Self>::Other   Vertex; /* Concept */
+    typedef typename FC_base::template Rebind_TDS<Self>::Other  Full_cell; /* Concept */
 
     // we want to store an object of this class in every Full_cell:
     class Full_cell_data
