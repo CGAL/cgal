@@ -1,6 +1,4 @@
-// Copyright (c) 2010  GeometryFactory (France),
-//               2010  CNRS (France).
-// All rights reserved.
+// Copyright (c) 2010 CNRS (France), All rights reserved.
 //
 // This file is part of CGAL (www.cgal.org); you can redistribute it and/or
 // modify it under the terms of the GNU Lesser General Public License as
@@ -16,8 +14,7 @@
 // $URL$
 // $Id$
 //
-// Author(s)     : Sebastien Loriot <sebastien.loriot@geometryfactory.com>
-//                 Guillaume Damiand <guillaume.damiand@liris.cnrs.fr>
+// Author(s)     : Guillaume Damiand <guillaume.damiand@liris.cnrs.fr>
 //
 #ifndef CGAL_INTERNAL_COMBINATORIAL_MAP_UTILITY_H
 #define CGAL_INTERNAL_COMBINATORIAL_MAP_UTILITY_H 1
@@ -35,7 +32,8 @@
 
 namespace CGAL 
 {
-  struct Disabled {}; // If we want to use CGAL::Disabled for disabled attributes
+  // struct Disabled {}; // If we want to use CGAL::Disabled for disabled attributes
+  // typedef CGAL::Void Disabled; 
   // typedef void Disabled; // If we wand to use void, does not compile on windows
 
   namespace internal
@@ -48,7 +46,7 @@ namespace CGAL
 
 	template<>
 	struct Convert_void<void>
-	{ typedef CGAL::Disabled type; };
+	{ typedef CGAL::Void type; };
 
 	#ifndef CGAL_CFG_NO_CPP0X_VARIADIC_TEMPLATES
 	template<typename ... Items>
@@ -633,7 +631,7 @@ template <class Type, int size, class ... T, int remaining>
 struct Fill_type<Type,size,CGAL::cpp0x::tuple<T...>,remaining>
 {
   typedef typename Fill_type<Type,size,
-			     CGAL::cpp0x::tuple<T...,Disabled>,remaining - 1>::type type;
+			     CGAL::cpp0x::tuple<T...,Void>,remaining - 1>::type type;
 };
 
 template < class Type,int size, class ... T >
@@ -645,7 +643,7 @@ struct Fill_type<Type,size,CGAL::cpp0x::tuple<T...>,0 >
 template < int size, class Tuple >
 struct Fill_disabled
 {
-  typedef typename Fill_type<Disabled,size,Tuple>::type type;
+  typedef typename Fill_type<Void,size,Tuple>::type type;
 };
 #else
 template <class Type,int size, class Tuple>
@@ -1000,7 +998,7 @@ struct Foreach_static<Functor,0>
 #endif //CGAL_CFG_NO_CPP0X_VARIADIC_TEMPLATES
 
 //Helper function that is calling
-//Functor if TAG is different from Disabled
+//Functor if TAG is different from Void
 #ifndef CGAL_CFG_NO_CPP0X_VARIADIC_TEMPLATES
 template <class Functor,int n,class Type>
 struct Conditionnal_run{
@@ -1011,7 +1009,7 @@ struct Conditionnal_run{
 };
 
 template <class Functor,int n>
-struct Conditionnal_run<Functor,n,Disabled>
+struct Conditionnal_run<Functor,n,Void>
 {
   template <class ... T>
   static void run(T...){}
@@ -1080,7 +1078,7 @@ struct Conditionnal_run{
 };
 
 template <class Functor,int n>
-struct Conditionnal_run<Functor,n,Disabled>
+struct Conditionnal_run<Functor,n,Void>
 {
   static void run(){}
 
@@ -1115,7 +1113,7 @@ struct Conditionnal_run<Functor,n,Disabled>
 
 //Same as Foreach_static excepted that Functor
 //is called for case k only if the k'th type in the tuple
-//is different from Disabled. Note that to the converse of Foreach_static
+//is different from Void. Note that to the converse of Foreach_static
 //Functor are called from n =0 to k
 #ifndef CGAL_CFG_NO_CPP0X_VARIADIC_TEMPLATES
 template <class Functor,class T,int n=0>
@@ -1482,12 +1480,12 @@ struct Combinatorial_map_helper
     typedef typename CGAL::Compact_container<T,Attr_allocator>::const_iterator type;
   };
 
-  // All the attributes (with CGAL::Disabled)
+  // All the attributes (with CGAL::Void)
   typedef typename internal::Convert_tuple_with_void<typename CMap::Attributes>::type Attributes;
   // typedef typename CMap::Attributes Attributes;
 
-  // Enabled attributes (without CGAL::Disabled)
-  typedef typename Keep_type_different_of<Disabled,
+  // Enabled attributes (without CGAL::Void)
+  typedef typename Keep_type_different_of<Void,
     Attributes>::type Enabled_attributes;
 
   // Number of all attributes
@@ -1497,13 +1495,13 @@ struct Combinatorial_map_helper
 
   // Number of enabled attributes
   static const unsigned int nb_attribs = 
-    Number_of_different_type_in_tuple<Disabled,Enabled_attributes>::value;
+    Number_of_different_type_in_tuple<Void,Enabled_attributes>::value;
       
   // Given a dimension of the cell, return the index of corresponding attribute
   template <int d>
   struct Dimension_index
   { static const int value=
-        Nb_type_different_in_tuple_up_to_k<Disabled,d,Attributes>::value; };  
+        Nb_type_different_in_tuple_up_to_k<Void,d,Attributes>::value; };  
 
   // All these type contains as many entries than the number of enabled attributes
   typedef typename Tuple_converter< Add_compact_container,
@@ -1525,7 +1523,7 @@ struct Combinatorial_map_helper
 
   template<int d>
   struct Attribute_type<d,0>
-  { typedef Disabled type; };
+  { typedef Void type; };
 
   // Helper class allowing to retreive the d-cell-handle attribute
   template<int d, class Type=typename CGAL::cpp0x::tuple_element<d,Attributes>::type>
@@ -1536,8 +1534,8 @@ struct Combinatorial_map_helper
   };
   
   template<int d>
-  struct Attribute_handle<d,Disabled>
-  { typedef Disabled type; };
+  struct Attribute_handle<d,Void>
+  { typedef Void type; };
 
   // Helper class allowing to retreive the d-cell-const handle attribute
   template<int d, class Type=typename CGAL::cpp0x::tuple_element<d,Attributes>::type  >
@@ -1549,8 +1547,8 @@ struct Combinatorial_map_helper
   };
   
   template<int d>
-  struct Attribute_const_handle<d,Disabled>
-  { typedef Disabled type; };
+  struct Attribute_const_handle<d,Void>
+  { typedef Void type; };
 
   // Helper class allowing to retreive the d-cell-iterator attribute
   template<int d, class Type=typename CGAL::cpp0x::tuple_element<d,Attributes>::type>
@@ -1562,8 +1560,8 @@ struct Combinatorial_map_helper
   };
   
   template<int d>
-  struct Attribute_iterator<d,Disabled>
-  { typedef Disabled type; };
+  struct Attribute_iterator<d,Void>
+  { typedef Void type; };
 
   // Helper class allowing to retreive the d-cell-const handle attribute
   template<int d, class Type=typename CGAL::cpp0x::tuple_element<d,Attributes>::type  >
@@ -1575,8 +1573,8 @@ struct Combinatorial_map_helper
   };
   
   template<int d>
-  struct Attribute_const_iterator<d,Disabled>
-  { typedef Disabled type; };
+  struct Attribute_const_iterator<d,Void>
+  { typedef Void type; };
 
   // Helper class allowing to retreive the d-cell-attribute range
   template<int d, class Type=
@@ -1588,8 +1586,8 @@ struct Combinatorial_map_helper
   };
   
   template<int d>
-  struct Attribute_range<d,Disabled>
-  { typedef Disabled type; };
+  struct Attribute_range<d,Void>
+  { typedef Void type; };
 
   // Helper class allowing to retreive the d-cell-attribute range
   template<int d, class Type=typename CGAL::cpp0x::tuple_element<d,Attributes>::type  >
@@ -1601,8 +1599,8 @@ struct Combinatorial_map_helper
   };
   
   template<int d>
-  struct Attribute_const_range<d,Disabled>
-  { typedef Disabled type; };
+  struct Attribute_const_range<d,Void>
+  { typedef Void type; };
 
   #ifndef CGAL_CFG_NO_CPP0X_VARIADIC_TEMPLATES
   // To iterate onto each dimension of the map

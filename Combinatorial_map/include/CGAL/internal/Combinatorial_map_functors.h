@@ -556,7 +556,7 @@ namespace CGAL {
 
     // Specialization for i-attributes disabled.
     template <typename CMap, unsigned int i>
-    struct Group_one_attribute_functor<CMap,i,CGAL::Disabled>
+    struct Group_one_attribute_functor<CMap,i,CGAL::Void>
     {
       static void run(CMap*,
 		      typename CMap::Dart_handle,
@@ -580,7 +580,7 @@ namespace CGAL {
     
     // Specialization for i-attributes disabled.
     template <typename CMap, unsigned int i>
-    struct Degroup_one_attribute_functor<CMap,i,CGAL::Disabled>
+    struct Degroup_one_attribute_functor<CMap,i,CGAL::Void>
     {
       static bool run(CMap*,
 		      typename CMap::Dart_handle,
@@ -604,7 +604,7 @@ namespace CGAL {
     
     // Specialization for i-attributes disabled.
     template <typename CMap, unsigned int i, typename Range>
-    struct Degroup_one_attribute_of_dart_functor<CMap, i, CGAL::Disabled, Range>
+    struct Degroup_one_attribute_of_dart_functor<CMap, i, CGAL::Void, Range>
     {
       static bool run(CMap*,
 		      typename CMap::Dart_handle,
@@ -946,7 +946,7 @@ namespace CGAL {
 
     // Specialization for disabled attributes.
     template<typename Map,unsigned int i>
-    struct Call_split_functor<Map,i,CGAL::Disabled>
+    struct Call_split_functor<Map,i,CGAL::Void>
     {
       static void run(typename Map::Dart_handle, 
 		      typename Map::Dart_handle)
