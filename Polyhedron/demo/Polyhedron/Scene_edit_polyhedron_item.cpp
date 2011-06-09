@@ -25,6 +25,7 @@ struct Scene_edit_polyhedron_item_priv {
   Selected_vertices selected_vertices;
   Vertex_handle selected_vertex;
   Kernel::Point_3 orig_pos;
+  Kernel::Point_3 last_pos;
 }; // end struct Scene_edit_polyhedron_item_priv
 
 Scene_edit_polyhedron_item::Scene_edit_polyhedron_item(Scene_polyhedron_item* poly_item)
@@ -111,7 +112,7 @@ changed()
 {
   d->poly_item->changed();
   Scene_item::changed();
-  d->orig_pos = current_position();
+  d->last_pos = current_position();
 }
 
 void 
@@ -207,6 +208,7 @@ void Scene_edit_polyhedron_item::vertex_has_been_selected(void* void_ptr) {
   }
   const Kernel::Point_3& p = vh->point();
   d->orig_pos = p;
+  d->last_pos = p;
   d->frame->setPosition(qglviewer::Vec(p.x(), p.y(), p.z()));
   connect(d->frame, SIGNAL(modified()),
           this, SIGNAL(modified()));
@@ -230,6 +232,10 @@ Scene_edit_polyhedron_item::selected_vertices() const {
 Kernel::Point_3 Scene_edit_polyhedron_item::current_position() const {
   const qglviewer::Vec vec = d->frame->position();
   return Kernel::Point_3(vec.x, vec.y, vec.z);
+}
+
+Kernel::Point_3 Scene_edit_polyhedron_item::last_position() const {
+  return d->last_pos;
 }
 
 Kernel::Point_3 Scene_edit_polyhedron_item::original_position() const {

@@ -316,8 +316,10 @@ if(CGAL_Qt4_FOUND AND QT4_FOUND AND OPENGL_FOUND AND QGLVIEWER_FOUND)
 
   polyhedron_demo_plugin(trivial_plugin Polyhedron_demo_trivial_plugin)
 
-  polyhedron_demo_plugin(edit_polyhedron_plugin Polyhedron_demo_edit_polyhedron_plugin)
-  target_link_libraries(edit_polyhedron_plugin scene_polyhedron_item scene_edit_polyhedron_item)
+  if(TAUCS_FOUND)
+    polyhedron_demo_plugin(edit_polyhedron_plugin Polyhedron_demo_edit_polyhedron_plugin)
+    target_link_libraries(edit_polyhedron_plugin scene_polyhedron_item scene_edit_polyhedron_item)
+  endif()
 
   polyhedron_demo_plugin(cut_plugin Polyhedron_demo_cut_plugin)
   target_link_libraries(cut_plugin scene_polyhedron_item scene_basic_objects)

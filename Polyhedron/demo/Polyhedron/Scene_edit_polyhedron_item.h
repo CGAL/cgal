@@ -53,6 +53,7 @@ public:
   // Functions related to the edition
   Kernel::Point_3 original_position() const;
   Kernel::Point_3 current_position() const;
+  Kernel::Point_3 last_position() const;
   Polyhedron::Vertex_handle selected_vertex() const;
   QList<Polyhedron::Vertex_handle> selected_vertices() const;
 

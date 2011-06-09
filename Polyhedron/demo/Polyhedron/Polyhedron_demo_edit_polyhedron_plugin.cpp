@@ -1,11 +1,33 @@
+#include "Polyhedron_demo_plugin_helper.h"
+
 #include "Scene_polyhedron_item.h"
 #include "Scene_edit_polyhedron_item.h"
 #include <QAction>
+#include <QKeySequence>
 #include <QMainWindow>
 #include <QMessageBox>
 #include <QInputDialog>
 
-#include "Polyhedron_demo_plugin_helper.h"
+#include "Polyhedron_type.h"  // defines the Polyhedron type
+
+//#include <CGAL/Deform_mesh_BGL.h> // TODO: uncomment that! Do not compile
+                                    // on Linux at the moment.
+
+// Fake declaration needed because I cannot include
+// <CGAL/Deform_mesh_BGL.h>.  TODO: replace that be the actual #include
+namespace CGAL {
+  template <typename Polyhedron>
+  struct Deform_mesh_BGL {
+    Deform_mesh_BGL(Polyhedron&) {}
+  };
+}
+
+typedef CGAL::Deform_mesh_BGL<Polyhedron> Deform_mesh;
+
+struct Polyhedron_deformation_data {
+  Deform_mesh* deform_mesh;
+  Polyhedron* polyhedron_copy; // For a possible undo operation. To be written.
+};
 
 class Polyhedron_demo_edit_polyhedron_plugin : 
   public QObject,
@@ -28,7 +50,12 @@ public slots:
   void on_actionToggleEdit_triggered();
   void edition();
 
+  void item_destroyed();
+
 private:
+  typedef std::map<QObject*, Polyhedron_deformation_data> Deform_map;
+  Deform_map deform_map;
+
   QAction* actionToggleEdit;
   int size;
 }; // end Polyhedron_demo_edit_polyhedron_plugin
@@ -38,6 +65,7 @@ void Polyhedron_demo_edit_polyhedron_plugin::init(QMainWindow* mainWindow,
 {
   actionToggleEdit = new QAction(tr("Toggle &edition of item(s)"), mainWindow);
   actionToggleEdit->setObjectName("actionToggleEdit");
+  actionToggleEdit->setShortcut(QKeySequence(Qt::CTRL + Qt::Key_E));
   Polyhedron_demo_plugin_helper::init(mainWindow, scene_interface);
 }
 
@@ -60,6 +88,8 @@ void Polyhedron_demo_edit_polyhedron_plugin::on_actionToggleEdit_triggered() {
       edit_needed = true;
       connect(edit_poly, SIGNAL(modified()),
               this, SLOT(edition()));
+      connect(edit_poly, SIGNAL(destroyed()),
+              this, SLOT(item_destroyed()));
     } else if(Scene_edit_polyhedron_item* poly_item = 
               qobject_cast<Scene_edit_polyhedron_item*>(scene->item(i))) 
     {
@@ -88,6 +118,18 @@ void Polyhedron_demo_edit_polyhedron_plugin::on_actionToggleEdit_triggered() {
   }
 }
 
+// Remove from 'deform_map' the metadata that corresponds to the deleted
+// item.
+void Polyhedron_demo_edit_polyhedron_plugin::item_destroyed() {
+  QObject* obj = sender(); // the item that is destroyed
+  Deform_map::iterator it = deform_map.find(obj);
+  if(it != deform_map.end()) {
+    delete it->second.polyhedron_copy;
+    //    delete it->second.deform_mesh;  // TODO: uncomment that!
+    deform_map.erase(it);
+  }
+}
+
 void Polyhedron_demo_edit_polyhedron_plugin::edition() {
   QObject* obj = sender();
   Scene_edit_polyhedron_item* edit_item = 
@@ -98,18 +140,47 @@ void Polyhedron_demo_edit_polyhedron_plugin::edition() {
     return;
   }
 
+  Polyhedron* polyhedron = edit_item->polyhedron();
+
+  Deform_mesh* deform = 0;  // Will be initialized below...
+
+  Deform_map::iterator deform_it = deform_map.find(edit_item);
+  if(deform_it == deform_map.end()) {
+    // First time. Need to create the Deform_mesh object.
+    deform = new Deform_mesh(*polyhedron);
+
+    // create a new entry in the map
+    Polyhedron_deformation_data& data = deform_map[edit_item]; 
+
+    data.deform_mesh = deform;
+    data.polyhedron_copy = new Polyhedron(*polyhedron); // copy
+
+  } else {
+    // In that case deform_it->second is the data associated to 'polyhedron'.
+    deform = deform_it->second.deform_mesh;
+  }
+
   typedef Kernel::Point_3 Point;
   typedef Kernel::Vector_3 Vector;
   typedef Polyhedron::Vertex_handle Vertex_handle;
 
   const Point& orig = edit_item->original_position();
-  const Vector move_vector = edit_item->current_position() - orig;
+  Q_UNUSED(orig)
+  const Point& last_position = edit_item->last_position();
+  const Vector translation = edit_item->current_position() - last_position;
 
+  // ACTUAL DEFORMATION
+  // This should be modified to use Deform_mesh instead.
   Q_FOREACH(Vertex_handle vh, edit_item->selected_vertices())
   {
-    vh->point() = vh->point() + move_vector;
+    vh->point() = vh->point() + translation;
   }
-  edit_item->changed(); // that reset the original_position()
+  // END OF ACTUAL DEFORMATION
+
+  // signal to the item that it needs to recompute its internal structures
+  edit_item->changed(); // that reset the last_position()
+
+  // signal to the scene that the item needs to be redrawn.
   scene->itemChanged(edit_item);
 }
 
