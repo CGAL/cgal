@@ -150,7 +150,7 @@ template <typename KdTree>
 void 
 PointsInKdTreeGraphicsItem<KdTree>::paint(QPainter *painter, 
                                     const QStyleOptionGraphicsItem *option,
-                                    QWidget * widget)
+                                    QWidget * /*widget*/)
 {
   Iso_rectangle_2 isor = convert(option->exposedRect);
   Fuzzy_iso_box range(isor.vertex(0), isor.vertex(2));

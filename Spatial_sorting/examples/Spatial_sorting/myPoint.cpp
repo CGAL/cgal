@@ -2,13 +2,13 @@
 
 struct MyPoint {
   double x,y;
-
+  int color;
   MyPoint()
-    : x(0), y(0)
+    : x(0), y(0),color(0)
   {}
 
-  MyPoint(double x, double y)
-    : x(x), y(y)
+  MyPoint(double x, double y, int color=0)
+    : x(x), y(y), color(color)
   {}
 };
 
@@ -51,12 +51,22 @@ struct MySpatialSortingTraits {
 
 int main()
 {
-  MyPoint points[2];
+  std::vector< MyPoint > points;
 
-  points[0] = MyPoint(78,12);
-  points[1] = MyPoint(3,121);
+  points.push_back(MyPoint(14,12, 3));
+  points.push_back(MyPoint(1,2  , 0));
+  points.push_back(MyPoint(414,2, 5));
+  points.push_back(MyPoint(4,21 , 1));
+  points.push_back(MyPoint(7,74 , 2));
+  points.push_back(MyPoint(74,4 , 4));  
+  
   MySpatialSortingTraits sst;
-  CGAL::spatial_sort(points, points+2, sst);
+  CGAL::spatial_sort(points.begin(), points.end(), sst);
+
+  for (std::vector< MyPoint >::iterator it=points.begin();it!=points.end();++it)
+    std::cout << it->color << " ";
+  std::cout << "\n";  
+  
   std::cerr << "done" << std::endl;
   return 0;
 }

@@ -124,8 +124,8 @@ PolylinesGraphicsItem<P>::boundingRect() const
 template <typename P>
 void 
 PolylinesGraphicsItem<P>::paint(QPainter *painter, 
-                                const QStyleOptionGraphicsItem *option,
-                                QWidget * widget)
+                                const QStyleOptionGraphicsItem */*option*/,
+                                QWidget * /*widget*/)
 {
 
   painterostream = PainterOstream<Traits>(painter);

@@ -1406,6 +1406,8 @@ Alpha_shape_2<Dt>::find_alpha_solid() const
   // starting point for searching 
   // takes O(#alpha_shape) time
   Coord_type alpha_solid = 0;
+  
+  if (number_of_vertices()<3) return alpha_solid;
 
   Finite_vertices_iterator vertex_it;
   // only finite vertices

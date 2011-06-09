@@ -141,8 +141,8 @@ QRectF
   template <typename K>
 void 
   RegularGridGraphicsItem<K>::paint(QPainter *painter, 
-                                    const QStyleOptionGraphicsItem *option,
-                                    QWidget * widget)
+                                    const QStyleOptionGraphicsItem */*option*/,
+                                    QWidget * /*widget*/)
 {
   QRectF rect = boundingRect();
   double b = rect.bottom();
