@@ -63,6 +63,11 @@ public slots:
               double dir_x,
               double dir_y,
               double dir_z);
+
+signals:
+  void selected_vertex(void*);
+  void selected_facet(void*);
+
 private:
   // Initialization
   void init();

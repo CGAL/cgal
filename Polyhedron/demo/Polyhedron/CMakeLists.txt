@@ -109,6 +109,7 @@ if(CGAL_Qt4_FOUND AND QT4_FOUND AND OPENGL_FOUND AND QGLVIEWER_FOUND)
               Scene_plane_item.cpp
               Scene_polygon_soup.cpp 
               Scene_polyhedron_item.cpp
+              Scene_edit_polyhedron_item.cpp
               Scene_textured_polyhedron_item.cpp
               Scene_c2t3_item.cpp
               Scene_nef_polyhedron_item.cpp
@@ -152,6 +153,10 @@ if(CGAL_Qt4_FOUND AND QT4_FOUND AND OPENGL_FOUND AND QGLVIEWER_FOUND)
   add_library(scene_polyhedron_item SHARED
     Scene_polyhedron_item.cpp Scene_polyhedron_item.moc)
   target_link_libraries(scene_polyhedron_item demo_framework)
+
+  add_library(scene_edit_polyhedron_item SHARED
+    Scene_edit_polyhedron_item.cpp Scene_edit_polyhedron_item.moc)
+  target_link_libraries(scene_edit_polyhedron_item demo_framework)
 
   if(TAUCS_FOUND)
   add_library(scene_textured_polyhedron_item SHARED
@@ -310,6 +315,9 @@ if(CGAL_Qt4_FOUND AND QT4_FOUND AND OPENGL_FOUND AND QGLVIEWER_FOUND)
   target_link_libraries(nef_plugin scene_nef_polyhedron_item)
 
   polyhedron_demo_plugin(trivial_plugin Polyhedron_demo_trivial_plugin)
+
+  polyhedron_demo_plugin(edit_polyhedron_plugin Polyhedron_demo_edit_polyhedron_plugin)
+  target_link_libraries(edit_polyhedron_plugin scene_polyhedron_item scene_edit_polyhedron_item)
 
   polyhedron_demo_plugin(cut_plugin Polyhedron_demo_cut_plugin)
   target_link_libraries(cut_plugin scene_polyhedron_item scene_basic_objects)
