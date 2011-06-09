@@ -243,7 +243,7 @@ MainWindow::update()
 
   CGAL::Qt::Converter<K> convert;  
 
-  if(this->actionShowPCenter->isChecked()){
+  if(this->actionShowPCenter->isChecked() && convex_hull.size()>=3){
     for(std::size_t i=0; i< P; i++){
       p_center[i]->setRect(convert(p_center_iso_rectangle[i]));
       p_center[i]->show();
