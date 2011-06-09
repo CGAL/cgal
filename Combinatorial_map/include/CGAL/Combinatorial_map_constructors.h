@@ -159,53 +159,7 @@ typename Map::Dart_handle make_combinatorial_hexahedron(Map& amap)
 
   return make_combinatorial_hexahedron(amap, d1, d2, d3, d4, d5, d6);
 }
-
-/** Save the combinatorial map.
- * @param amap the combinatorial map.
- * @param aos the ostream where write the map.
- */
-template < class Map >
-void save(Map& amap, std::ostream& aos)
-{
-  typedef typename Map::Dart_handle Dart_handle;
-  std::map< Dart_handle, unsigned int > dartid;
-  typename std::map< Dart_handle, unsigned int >::iterator itmapid;
-
-  // 1) We number all the darts
-  unsigned int i=0;
-  for (typename Map::Dart_iterator_of_all it(amap); 
-       it!=dart_iterator_of_all_end(amap); ++it)
-    {
-      dartid[*it]=i++;
-    }
-
-  // 2) We save the darts beta
-  std::cout<<""<<std::endl;
-  for (typename Map::Dart_iterator_of_all it(amap); 
-       it!=dart_iterator_of_all_end(amap); ++it)
-    {
-      
-    }
-
-   // TODO
-}
-
-/** Load a combinatorial map from the given flux.
- * The map is not clear before to load the new map.
- * @param amap the combinatorial map.
- * @param ais the istream where read the map.
- * @return a dart of the new map, NULL if an error 
- */
-template < class Map >
-typename Map::Dart_handle load(Map& amap, std::istream& ais)
-{
-   typedef typename Map::Dart_handle Dart_handle;
-   std::vector< Dart_handle > darts;
-   std::string txt;
-
-   // TODO
-}
-
+  
 } // namespace CGAL
 
 #endif // CGAL_COMBINATORIAL_MAP_CONSTRUCTORS_H //

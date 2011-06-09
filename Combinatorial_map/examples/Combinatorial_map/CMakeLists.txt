@@ -5,7 +5,7 @@
 # ou
 # cmake ../ -DCMAKE_BUILD_TYPE=Release
 
-project( Map_3_examples )
+project( Combinatorial_map_examples )
 
 CMAKE_MINIMUM_REQUIRED(VERSION 2.4.5)
 
@@ -18,11 +18,7 @@ if ( COMMAND cmake_policy )
   cmake_policy( SET CMP0003 NEW )
 endif()
 
-if (CMAKE_BUILD_TYPE STREQUAL "Debug")
-  set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -O0")
-endif()
-
-# Pour le problème de valgrind avec CGAL
+# For the problem with valgrind
 # add_definition(-DCGAL_DISABLE_ROUNDING_MATH_CHECK)
 
 find_package(CGAL QUIET COMPONENTS Core )
@@ -39,7 +35,6 @@ if ( CGAL_FOUND )
   create_single_source_cgal_program( "map_3_with_colored_facets.cpp" )
   create_single_source_cgal_program( "map_3_operations.cpp" )
   create_single_source_cgal_program( "map_3_marks.cpp" )
-#  create_single_source_cgal_program( "test-tuple.cc" )
 else()
   
     message(STATUS "This program requires the CGAL library, and will not be compiled.")

@@ -1,7 +1,0 @@
-cd debug; make; cd ..
-debug/Combinatorial_map_test > res.txt 2>&1
-xxdiff res-valid.txt res.txt
-
-cd release; make; cd ..
-release/Combinatorial_map_test > res.txt 2>&1
-xxdiff res-valid.txt res.txt

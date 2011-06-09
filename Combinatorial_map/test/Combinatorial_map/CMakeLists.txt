@@ -1,7 +1,7 @@
 #  cd debug; cmake .. -DCMAKE_BUILD_TYPE=Debug
 #  cd release; cmake .. -DCMAKE_BUILD_TYPE=Release
 
-project( Combinatorial_Map_test )
+project( Combinatorial_map_test )
 
 CMAKE_MINIMUM_REQUIRED(VERSION 2.4.5)
 
@@ -36,15 +36,8 @@ endif ( NOT CGAL_FOUND )
 
 include( ${CGAL_USE_FILE} )
 
-# Try to use gcov but does not work... TODO
-#set(CMAKE_CXX_FLAGS "-g -frounding-math")
-#set(CMAKE_CXX_FLAGS_DEBUG ${CMAKE_CXX_FLAGS})
-#add_definitions(-fprofile-arcs -ftest-coverage)
-
-#include( CGAL_CreateSingleSourceCGALProgram )
 include_directories(BEFORE  ../../include)
 add_executable(Combinatorial_map_test Combinatorial_map_test.cpp)
-#create_single_source_cgal_program( "Combinatorial_map_test.cpp" )
 target_link_libraries(Combinatorial_map_test ${CGAL_LIBRARIES}
                                              ${CGAL_3RD_PARTY_LIBRARIES} )
 

@@ -2046,6 +2046,7 @@ namespace CGAL {
   // =  mnull_dart_container.emplace( std::bitset<NB_MARKS>() );
   // Does not work on windows => segfault
   // Thus we initialize null_dart_handle in the Combinatorial_map constructor
+  // Not thread safe !
 
   template < unsigned int d_, 
 	     class Items_=Combinatorial_map_min_items<d_>,
