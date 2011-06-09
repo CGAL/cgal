@@ -43,6 +43,12 @@ struct Memory_sizer
 #if defined _MSC_VER
 #  include <windows.h>
 #  include "psapi.h"
+
+// auto-link with psapi.lib
+#  define CGAL_LIB_NAME psapi
+#  define CGAL_AUTO_LINK_NOMANGLE
+#  include <CGAL/auto_link/auto_link.h>
+
 #elif defined __linux__ 
 #  include <fstream>
 #  include <cstddef>

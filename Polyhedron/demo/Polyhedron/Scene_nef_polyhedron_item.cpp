@@ -5,6 +5,7 @@
 #include <CGAL/Polyhedron_incremental_builder_3.h>
 // #include <CGAL/OFF_to_nef_3.h>
 #include <CGAL/IO/Polyhedron_iostream.h>
+#include <CGAL/IO/Nef_polyhedron_iostream_3.h>
 #include <CGAL/Inverse_index.h>
 
 #include <QObject>
@@ -49,7 +50,7 @@ Scene_nef_polyhedron_item::clone() const {
 }
 
 bool
-Scene_nef_polyhedron_item::load(std::istream& in)
+Scene_nef_polyhedron_item::load_from_off(std::istream& in)
 {
 //   const std::size_t discarded = CGAL::OFF_to_nef_3(in, *nef_poly);
 //   return discarded != 0;
@@ -69,6 +70,20 @@ Scene_nef_polyhedron_item::font() const {
   QFont font;
   font.setItalic(!font.italic());
   return font;
+}
+
+bool
+Scene_nef_polyhedron_item::load(std::istream& in)
+{
+  in >> *nef_poly;
+  return in;
+}
+
+bool
+Scene_nef_polyhedron_item::save(std::ostream& in) const
+{
+  in << *nef_poly;
+  return in;
 }
 
 QString 

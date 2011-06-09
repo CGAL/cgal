@@ -144,8 +144,8 @@ if  ${MAKE_CMD} -f Makefile help | grep "pca_plugin" > /dev/null; then
   compile_and_run pca_plugin
   NEED_CLEAN=y
 fi
-if  ${MAKE_CMD} -f Makefile help | grep "polygon_soup" > /dev/null; then 
-  compile_and_run polygon_soup
+if  ${MAKE_CMD} -f Makefile help | grep "scene_polygon_soup" > /dev/null; then 
+  compile_and_run scene_polygon_soup
   NEED_CLEAN=y
 fi
 if  ${MAKE_CMD} -f Makefile help | grep "remeshing_plugin" > /dev/null; then 

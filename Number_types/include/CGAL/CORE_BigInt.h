@@ -30,13 +30,6 @@
 
 namespace CGAL {
 
-template<>
-struct Root_of_traits<CORE::BigInt>: public internal::Root_of_traits_helper<CORE::BigInt,
-    Euclidean_ring_tag>{
-  typedef CORE::BigRat RootOf_1;
-  typedef CORE::BigRat Root_of_1;
-};
-
 //
 // Algebraic structure traits
 //

@@ -125,7 +125,7 @@ QList<QAction*> Polyhedron_demo_trivial_plugin::actions() const {
 
 void Polyhedron_demo_trivial_plugin::bbox()
 {
-  for(size_t i = 0, end = scene->numberOfEntries();
+  for(int i = 0, end = scene->numberOfEntries();
       i < end; ++i)
   {
     if(qobject_cast<Scene_bbox_item*>(scene->item(i)))

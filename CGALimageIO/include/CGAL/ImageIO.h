@@ -21,7 +21,7 @@
 #ifndef IMAGEIO_H
 #define IMAGEIO_H
 
-#include <CGAL/compiler_config.h>
+#include <CGAL/config.h>
 
 #include <CGAL/auto_link/ImageIO.h>
 

@@ -48,17 +48,6 @@
 namespace CGAL {
 
 
-template<>
-struct Root_of_traits<leda::integer>: public 
-internal::Root_of_traits_helper<leda::integer,
-    Euclidean_ring_tag>{
-  typedef leda::rational RootOf_1;
-  typedef leda::rational Root_of_1;
-};
-
-
-
-
 template <> class Algebraic_structure_traits< leda_integer >
   : public Algebraic_structure_traits_base< leda_integer,
                                             Euclidean_ring_tag >  {

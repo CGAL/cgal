@@ -32,7 +32,7 @@ bool Polyhedron_demo_off_plugin::canLoad() const {
 
 Scene_item* 
 Polyhedron_demo_off_plugin::load(QFileInfo fileinfo) {
-
+  if(fileinfo.suffix().toLower() != "off") return 0;
   // Open file
   std::ifstream in(fileinfo.filePath().toUtf8());
   if(!in) {

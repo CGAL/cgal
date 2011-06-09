@@ -322,6 +322,15 @@ std::istream& operator>>( std::istream& in, File_header_OFF& h) {
         else
             c = 0;
         h.set_vertices( a);
+        if (b<0){
+          in.clear( std::ios::badbit );
+          if ( h.verbose()) {
+              std::cerr << " " << std::endl;
+              std::cerr << "error: File_header_OFF(): File contains < 0 facets."
+                        << std::endl;
+          }
+          return in;
+        }
         h.set_facets( b);
         n_h = c;
     } else {
@@ -332,6 +341,15 @@ std::istream& operator>>( std::istream& in, File_header_OFF& h) {
             h.set_vertices(n);
         }
         in >> n;
+        if (n < 0){
+          in.clear( std::ios::badbit );
+          if ( h.verbose()) {
+              std::cerr << " " << std::endl;
+              std::cerr << "error: File_header_OFF(): File contains < 0 facets."
+                        << std::endl;
+          }
+          return in;          
+        }
         h.set_facets(n);
         if ( h.off())
             in >> n_h;
@@ -340,12 +358,11 @@ std::istream& operator>>( std::istream& in, File_header_OFF& h) {
     }
     if ( n_h == 0)
         h.set_index_offset( 0);
-    if ( ! in || h.size_of_vertices() <= 0 || h.size_of_facets() < 0) {
+    if ( ! in || h.size_of_vertices() <= 0 ) {
         in.clear( std::ios::badbit);
         if ( h.verbose()) {
             std::cerr << " " << std::endl;
-            std::cerr << "error: File_header_OFF(): "
-                         "File contains <= 0 vertices or < 0 facets."
+            std::cerr << "error: File_header_OFF(): File contains <= 0 vertices."
                       << std::endl;
         }
         return in;

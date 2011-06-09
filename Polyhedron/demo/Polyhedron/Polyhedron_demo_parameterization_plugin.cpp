@@ -5,6 +5,7 @@
 #include "Scene_polyhedron_item.h"
 #include "Scene_textured_polyhedron_item.h"
 #include "Textured_polyhedron_type.h"
+#include "Polyhedron_type.h"
 
 #include <QTime>
 

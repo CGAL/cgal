@@ -81,7 +81,7 @@ The algorithm is in general not robust to outliers, although a few outliers do n
 \end{center}
 
 
-The algorithm works well even when the inferred surface is composed of several connected components, provided that both all normals are properly estimated and oriented (the current CGAL normal orienter algorithm may fail in some cases, see \ccc{CGAL::mst_orient_normals()}), and that the final contouring algorithm is properly seeded for each component. When the inferred surface is composed of several nested connected components care should be taken to orient the normals of each component in alternation (inward/outward) so that the final contouring stage picks a proper contouring value.
+The algorithm works well even when the inferred surface is composed of several connected components, provided that both all normals are properly estimated and oriented (the current \cgal\ normal orienter algorithm may fail in some cases, see \ccc{CGAL::mst_orient_normals()}), and that the final contouring algorithm is properly seeded for each component. When the inferred surface is composed of several nested connected components care should be taken to orient the normals of each component in alternation (inward/outward) so that the final contouring stage picks a proper contouring value.
 
 
 \subsubsection{Contouring Parameters}

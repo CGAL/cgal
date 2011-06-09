@@ -136,8 +136,8 @@ QRectF
   template <typename T, typename K>
 void 
   RegularGridVectorFieldGraphicsItem<T,K>::paint(QPainter *painter, 
-                                    const QStyleOptionGraphicsItem *option,
-                                    QWidget * widget)
+                                    const QStyleOptionGraphicsItem */*option*/,
+                                    QWidget * /*widget*/)
 {
 
   painterostream = PainterOstream<Geom_traits>(painter);

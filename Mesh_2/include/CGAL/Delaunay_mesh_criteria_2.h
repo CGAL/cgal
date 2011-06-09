@@ -31,7 +31,7 @@ class Delaunay_mesh_criteria_2
 
 protected:
   typedef typename Tr::Geom_traits Geom_traits;
-  const Geom_traits& traits;
+  Geom_traits traits;
 
 public:
   typedef typename Tr::Face_handle Face_handle;

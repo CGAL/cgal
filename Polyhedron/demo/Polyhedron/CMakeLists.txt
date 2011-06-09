@@ -36,11 +36,17 @@ include_directories( BEFORE ./ ./include ../../include )
 find_package(CGAL COMPONENTS Qt4)
 include( ${CGAL_USE_FILE} )
 
+option( POLYHEDRON_QTSCRIPT_DEBUGGER 
+  "Activate the use of Qt Script Debugger in Polyhedron_3 demo" OFF)
+
 # Find Qt4 itself
 set( QT_USE_QTXML    TRUE )
 set( QT_USE_QTMAIN   TRUE )
 set( QT_USE_QTSCRIPT  TRUE )
 set( QT_USE_QTOPENGL  TRUE )
+if( POLYHEDRON_QTSCRIPT_DEBUGGER)
+  set( QT_USE_QTSCRIPTTOOLS  TRUE )
+endif()
 find_package(Qt4)
 
 # Find OpenGL
@@ -49,6 +55,7 @@ find_package(OpenGL)
 # Find QGLViewer
 if(QT4_FOUND)
   include(${QT_USE_FILE})
+  include_directories( ${QT_INCLUDE_DIR}/QtScriptTools )
   find_package(QGLViewer )
 endif(QT4_FOUND)
 
@@ -80,9 +87,10 @@ if(CGAL_Qt4_FOUND AND QT4_FOUND AND OPENGL_FOUND AND QGLVIEWER_FOUND)
     message(STATUS "NOTICE: LAPACK is not found. curvatures estimation will not be available.")
   endif(LAPACK_FOUND)
 
-  qt4_wrap_ui( UI_FILES MainWindow.ui )
-
+  qt4_wrap_ui( MainWindowUI_files MainWindow.ui )
+  qt4_wrap_ui( Show_point_dialogUI_FILES Show_point_dialog.ui )
   qt4_wrap_ui( remeshingUI_FILES  Remeshing_dialog.ui)
+  qt4_wrap_ui( meshingUI_FILES  Meshing_dialog.ui Meshing_pause_widget.ui )
 
   include(AddFileDependencies)
 
@@ -92,62 +100,85 @@ if(CGAL_Qt4_FOUND AND QT4_FOUND AND OPENGL_FOUND AND QGLVIEWER_FOUND)
   qt4_generate_moc( "Viewer.h" "${CMAKE_CURRENT_BINARY_DIR}/Viewer_moc.cpp" )
   add_file_dependencies( Viewer_moc.cpp "${CMAKE_CURRENT_SOURCE_DIR}/Viewer.h" )
 
-  qt4_generate_moc( "Scene.h" "${CMAKE_CURRENT_BINARY_DIR}/Scene_moc.cpp" )
-  add_file_dependencies( Scene_moc.cpp "${CMAKE_CURRENT_SOURCE_DIR}/Scene.h" )
-
-  
   qt4_generate_moc( "Polyhedron_demo_remeshing_plugin_cgal_code.cpp" "${CMAKE_CURRENT_BINARY_DIR}/Polyhedron_demo_remeshing_plugin_cgal_code.moc" )
 
   qt4_add_resources ( RESOURCE_FILES Polyhedron_3.qrc )
 
-  qt4_automoc(Scene_item.cpp
+  qt4_automoc(Scene.cpp
+              Scene_item.cpp
               Scene_plane_item.cpp
               Scene_polygon_soup.cpp 
               Scene_polyhedron_item.cpp
+              Scene_edit_polyhedron_item.cpp
               Scene_textured_polyhedron_item.cpp
               Scene_c2t3_item.cpp
-              Scene_nef_polyhedron_item.cpp)
+              Scene_nef_polyhedron_item.cpp
+              Show_point_dialog.cpp
+              )
 
   # AUXILIARY LIBRARIES
 
   # put plugins (which are shared libraries) at the same location as
   # executable files
-
   set(LIBRARY_OUTPUT_PATH ${RUNTIME_OUTPUT_PATH})
 
-  add_library(scene_item SHARED
+  add_library(demo_framework SHARED
+    Scene.cpp
+    Viewer.cpp Viewer_moc.cpp
     Scene_item.cpp Scene_item.moc
     Scene_item_with_display_list.cpp
     Polyhedron_demo_plugin_helper.cpp)
 
+  target_link_libraries(demo_framework
+    ${QGLVIEWER_LIBRARIES}
+    ${OPENGL_gl_LIBRARY}
+    ${OPENGL_glu_LIBRARY}
+    )
+
   add_library(scene_basic_objects SHARED
     Scene_plane_item.cpp Scene_plane_item.moc)
-  target_link_libraries(scene_basic_objects scene_item ${QGLVIEWER_LIBRARIES} ${OPENGL_gl_LIBRARY} ${OPENGL_glu_LIBRARY})
+  target_link_libraries(scene_basic_objects 
+    demo_framework
+    ${QGLVIEWER_LIBRARIES}
+    ${OPENGL_gl_LIBRARY}
+    ${OPENGL_glu_LIBRARY}
+    )
+
+  add_library(point_dialog SHARED Show_point_dialog.cpp Show_point_dialog.ui ${Show_point_dialogUI_FILES} )
 
   add_library(scene_c2t3_item SHARED
     Scene_c2t3_item.cpp Scene_c2t3_item.moc)
-  target_link_libraries(scene_c2t3_item scene_item)
+  target_link_libraries(scene_c2t3_item demo_framework)
 
   add_library(scene_polyhedron_item SHARED
     Scene_polyhedron_item.cpp Scene_polyhedron_item.moc)
-  target_link_libraries(scene_polyhedron_item scene_item)
+  target_link_libraries(scene_polyhedron_item demo_framework)
+
+  add_library(scene_edit_polyhedron_item SHARED
+    Scene_edit_polyhedron_item.cpp Scene_edit_polyhedron_item.moc)
+  target_link_libraries(scene_edit_polyhedron_item demo_framework)
 
   if(TAUCS_FOUND)
   add_library(scene_textured_polyhedron_item SHARED
     Scene_textured_polyhedron_item.cpp texture.cpp Scene_textured_polyhedron_item.moc)
-  target_link_libraries(scene_textured_polyhedron_item scene_item)
+  target_link_libraries(scene_textured_polyhedron_item demo_framework)
   endif(TAUCS_FOUND)
 
-  add_library(polygon_soup SHARED
+  add_library(scene_polygon_soup_item SHARED
     Scene_polygon_soup.cpp Scene_polygon_soup.moc)
-  target_link_libraries(polygon_soup scene_item)
+  target_link_libraries(scene_polygon_soup_item demo_framework scene_polyhedron_item)
 
   add_library(scene_nef_polyhedron_item SHARED
     Scene_nef_polyhedron_item.cpp Scene_nef_polyhedron_item.moc
     Scene_nef_rendering.cpp)
-  target_link_libraries(scene_nef_polyhedron_item scene_polyhedron_item)
+  target_link_libraries(scene_nef_polyhedron_item demo_framework scene_polyhedron_item)
 
-  foreach( lib scene_item scene_basic_objects scene_polyhedron_item polygon_soup scene_nef_polyhedron_item )
+  foreach( lib 
+      demo_framework
+      scene_basic_objects
+      scene_polyhedron_item
+      scene_polygon_soup_item
+      scene_nef_polyhedron_item )
     add_to_cached_list( CGAL_EXECUTABLE_TARGETS ${lib} )
   endforeach()
 
@@ -156,13 +187,12 @@ if(CGAL_Qt4_FOUND AND QT4_FOUND AND OPENGL_FOUND AND QGLVIEWER_FOUND)
     add_definitions(-DUSE_FORWARD_DECL)
     add_executable  ( Polyhedron_3 MainWindow.cpp
       Polyhedron_3.cpp
-      Viewer.cpp
-      Scene.cpp
+#      Viewer.cpp
+#      Scene.cpp
 #      MainWindow_curvature_estimation.cpp
       MainWindow_moc.cpp
-      Scene_moc.cpp
-      Viewer_moc.cpp
-      ${UI_FILES} ${RESOURCE_FILES} )
+#      Viewer_moc.cpp
+      ${MainWindowUI_files} ${RESOURCE_FILES} )
     add_to_cached_list( CGAL_EXECUTABLE_TARGETS Polyhedron_3 )
     if(TAUCS_FOUND)
 #      add_executable( Polyhedron_3 Scene_tex_rendering.cpp Scene_tex_polyhedron_operations.cpp )
@@ -176,16 +206,19 @@ if(CGAL_Qt4_FOUND AND QT4_FOUND AND OPENGL_FOUND AND QGLVIEWER_FOUND)
 
 
   # Link with Qt libraries
+  if( POLYHEDRON_QTSCRIPT_DEBUGGER )
+    add_definitions( -DQT_SCRIPTTOOLS_LIB )
+    target_link_libraries( Polyhedron_3 QtScriptTools )
+  endif()
   target_link_libraries( Polyhedron_3 ${QT_LIBRARIES} )
+  target_link_libraries( Polyhedron_3 demo_framework )
+  target_link_libraries( Polyhedron_3 point_dialog )
 
   # Link with CGAL
   target_link_libraries( Polyhedron_3 ${CGAL_LIBRARIES} ${CGAL_3RD_PARTY_LIBRARIES} )
 
   # Link with libQGLViewer, OpenGL
   target_link_libraries( Polyhedron_3 ${QGLVIEWER_LIBRARIES} ${OPENGL_gl_LIBRARY} ${OPENGL_glu_LIBRARY} )
-
-  # Link with the scene_item library.
-#  target_link_libraries( Polyhedron_3 scene_item )
 
   add_to_cached_list( CGAL_EXECUTABLE_TARGETS Polyhedron_3 )
 
@@ -198,26 +231,37 @@ if(CGAL_Qt4_FOUND AND QT4_FOUND AND OPENGL_FOUND AND QGLVIEWER_FOUND)
   macro(polyhedron_demo_plugin plugin_name plugin_implementation_base_name)
     list_split(option ARGN_TAIL ${ARGN} )
     if(NOT ${option} STREQUAL "EXCLUDE_FROM_ALL")
-      set(other_sources ${ARGN})
-      set(option "")
+      if(NOT ${option} STREQUAL "NO_MOC")
+        set(other_sources ${ARGN})
+        set(option "")
+      else()
+        set(other_sources ${ARGN_TAIL})
+      endif()
     else()
       set(other_sources ${ARGN_TAIL})
     endif()
-    qt4_generate_moc( ${plugin_implementation_base_name}.cpp "${CMAKE_CURRENT_BINARY_DIR}/${plugin_implementation_base_name}.moc" )
-    add_file_dependencies( ${plugin_implementation_base_name}.moc "${CMAKE_CURRENT_SOURCE_DIR}/${plugin_implementation_base_name}.cpp" )
+    if("${option}" STREQUAL "NO_MOC") 
+      set(option "")
+      set(moc_file_name "")
+    else()
+      set(moc_file_name ${plugin_implementation_base_name}.moc )
+      qt4_generate_moc( ${plugin_implementation_base_name}.cpp "${CMAKE_CURRENT_BINARY_DIR}/${moc_file_name}" )
+      add_file_dependencies( ${moc_file_name} "${CMAKE_CURRENT_SOURCE_DIR}/${plugin_implementation_base_name}.cpp" )
+    endif()
 
-    add_library(${plugin_name} MODULE ${option} ${plugin_implementation_base_name}.moc ${plugin_implementation_base_name}.cpp ${other_sources})
+    add_library(${plugin_name} MODULE ${option} ${moc_file_name} ${plugin_implementation_base_name}.cpp ${other_sources})
     add_to_cached_list( CGAL_EXECUTABLE_TARGETS ${plugin_name} )
     # Link with Qt
     target_link_libraries( ${plugin_name} ${QT_LIBRARIES} )
-    # Link with scene_item
-    target_link_libraries( ${plugin_name} scene_item)
+    # Link with the demo_framework
+    target_link_libraries( ${plugin_name} demo_framework)
     # Link with CGAL
     target_link_libraries( ${plugin_name} ${CGAL_LIBRARIES} ${CGAL_3RD_PARTY_LIBRARIES} )
+    add_dependencies( ${plugin_name} Polyhedron_3 )
   endmacro(polyhedron_demo_plugin)
 
   polyhedron_demo_plugin(remeshing_plugin Polyhedron_demo_remeshing_plugin Polyhedron_demo_remeshing_plugin_cgal_code.cpp Polyhedron_demo_remeshing_plugin_cgal_code.moc ${remeshingUI_FILES})
-  target_link_libraries(remeshing_plugin scene_polyhedron_item polygon_soup scene_c2t3_item)
+  target_link_libraries(remeshing_plugin scene_polyhedron_item scene_polygon_soup_item scene_c2t3_item)
 
   if ( Boost_VERSION GREATER 103400 )
     qt4_generate_moc( "Polyhedron_demo_mesh_3_plugin_cgal_code.cpp" "${CMAKE_CURRENT_BINARY_DIR}/Scene_c3t3_item.moc" )
@@ -230,13 +274,13 @@ if(CGAL_Qt4_FOUND AND QT4_FOUND AND OPENGL_FOUND AND QGLVIEWER_FOUND)
   endif( Boost_VERSION GREATER 103400 )
 
   polyhedron_demo_plugin(inside_out_plugin Polyhedron_demo_inside_out_plugin)
-  target_link_libraries(inside_out_plugin scene_polyhedron_item polygon_soup)
+  target_link_libraries(inside_out_plugin scene_polyhedron_item scene_polygon_soup_item)
 
   polyhedron_demo_plugin(off_plugin Polyhedron_demo_off_plugin)
-  target_link_libraries(off_plugin scene_polyhedron_item polygon_soup)
+  target_link_libraries(off_plugin scene_polyhedron_item scene_polygon_soup_item)
 
   polyhedron_demo_plugin(orient_soup_plugin Polyhedron_demo_orient_soup_plugin)
-  target_link_libraries(orient_soup_plugin polygon_soup)
+  target_link_libraries(orient_soup_plugin scene_polygon_soup_item scene_polyhedron_item)
 
   polyhedron_demo_plugin(triangulate_facets_plugin Polyhedron_demo_triangulate_facets_plugin)
   target_link_libraries(triangulate_facets_plugin scene_polyhedron_item)
@@ -271,6 +315,9 @@ if(CGAL_Qt4_FOUND AND QT4_FOUND AND OPENGL_FOUND AND QGLVIEWER_FOUND)
   target_link_libraries(nef_plugin scene_nef_polyhedron_item)
 
   polyhedron_demo_plugin(trivial_plugin Polyhedron_demo_trivial_plugin)
+
+  polyhedron_demo_plugin(edit_polyhedron_plugin Polyhedron_demo_edit_polyhedron_plugin)
+  target_link_libraries(edit_polyhedron_plugin scene_polyhedron_item scene_edit_polyhedron_item)
 
   polyhedron_demo_plugin(cut_plugin Polyhedron_demo_cut_plugin)
   target_link_libraries(cut_plugin scene_polyhedron_item scene_basic_objects)

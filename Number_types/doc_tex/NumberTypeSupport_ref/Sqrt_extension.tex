@@ -4,6 +4,11 @@
 \begin{ccRefClass}{Sqrt_extension<NT,ROOT>}
 \def\ccTagOperatorLayout{\ccFalse}
 
+In addition, \ccc{Sqrt_extension} has another two default template arguments:\\
+$\cdot$ \ccc{DifferentExtensionComparable} = \ccc{::CGAL::Tag_false}\\
+$\cdot$ \ccc{FilterPredicates} = \ccc{::CGAL::Tag_false}\\
+See below for more details. 
+
 \ccDefinition
 
 An instance of this class represents an extension of the type \ccc{NT} by
@@ -12,18 +17,28 @@ An instance of this class represents an extension of the type \ccc{NT} by
 \ccc{NT} is required to be an \ccc{IntegralDomainWithoutDivision}. \\
 \ccRefName\ is \ccc{RealEmbeddable} if NT is  \ccc{RealEmbeddable}.
 
-For example: Let \ccc{Integer} be some type representing $\Z$, then 
+
+
+For example, let \ccc{Integer} be some type representing $\Z$, then 
 \ccc{Sqrt_extension<Integer,Integer>} is able to represent $\Z[\sqrt{root}]$
-for some arbitrary value $root$. The value of $root$ is set at 
-construction time, or left open if $root$ is not specified.
+for some arbitrary Integer  $root$.\footnote{$R[a]$ denotes the 
+extension of a ring $R$ by an element $a$. 
+See also: \url{http://mathworld.wolfram.com/ExtensionRing.html}}
+The value of $root$ is set at 
+construction time, or set to zero if it is not specified.
 
-Note that the given $root$ is stored as it is given to the constructor. In particular, an extension by a square root of a square is considered as an extension.  
+Arithmetic operations among different extensions, say $\Z[\sqrt{a}]$ 
+and $\Z[\sqrt{b}]$, are not supported. 
+The result would be in $\Z[\sqrt{a},\sqrt{b}]$, which is not 
+representable by \ccc{Sqrt_extension<Integer,Integer>}. 
+\textbf{The user is responsible to check that arithmetic operations 
+are carried out for elements from the same extensions only.}
+This is not tested by \ccRefName\ for efficiency reasons. 
+A violation of the precondition leads to undefined behavior.
+Be aware that for efficiency reasons the given $root$ is stored as it is given to 
+the constructor. In particular, an extension by a square root of a square is 
+considered as an extension.  
 
-
-\textbf {It is not possible to interoperate two values from two different 
-extensions $\Z[\sqrt{a}]$ and $\Z[\sqrt{b}]$, since the result is in 
-$\Z[\sqrt{a},\sqrt{b}]$, which is not representable by 
-\ccc{Sqrt_extension<Integer,Integer>}. }
 
 %However, both \ccc{NT} and \ccc{ROOT} can themselves be an instance of
 %\ccc{Sqrt_extension}, yielding a nested extension, e.g.,
@@ -31,15 +46,15 @@ $\Z[\sqrt{a},\sqrt{b}]$, which is not representable by
 %$\Z[\sqrt{a}][\sqrt{b}]$ for some integers $a$ and $b$. 
 
 
-\begin{ccAdvanced}
- Since elements of \ccRefName\ that lie in different extensions 
-are not interoperable with respect to any arithmetic operations, the full
- value range of \ccRefName\ does not represent an algebraic structure.
- However, each subset of the value range that represents the extension of
- NT by a particular square root is a valid algebraic structure, since 
-this subset is closed under all provided arithmetic  operations.
 
-From there, \ccRefName\ can be used as if it were a model of an algebraic structure concept, with the following correspondence:
+Since elements of \ccRefName\ that lie in different extensions 
+are not interoperable with respect to any arithmetic operations, the full
+value range of \ccRefName\ does not represent an algebraic structure.
+However, each subset of the value range that represents the extension of
+NT by a particular square root is a valid algebraic structure, since 
+this subset is closed under all provided arithmetic  operations.
+From there, \ccRefName\ can be used as if it were a model of an algebraic structure 
+concept, with the following correspondence:
 
 \begin{tabular}{ll}
  NT & \ccRefName\  \\
@@ -52,9 +67,8 @@ From there, \ccRefName\ can be used as if it were a model of an algebraic struct
 \hline 
 \end{tabular}
 
-The extension of an \ccc{UniqueFactorizationDomain} or 
-\ccc{EuclideanRing} is just an \ccc{IntegralDomain}, since the extension in general destroys the unique factorization property, e.g., 
-\[10 = \sqrt{10} \cdot \sqrt{10} = 2 \cdot 5 \mbox{ over} \Z[\sqrt{10}]\]
+The extension of a \ccc{UniqueFactorizationDomain} or 
+\ccc{EuclideanRing} is just an \ccc{IntegralDomain}, since the extension in general destroys the unique factorization property. For instance consider $\Z[\sqrt{10}]$, the extension of $\Z$ by $\sqrt{10}$: in $\Z[\sqrt{10}]$ the element 10 has two different factorizations $\sqrt{10} \cdot \sqrt{10}$ and  $2 \cdot 5$. In particular, the factorization is not unique. 
 
 %For example take $\Z[\sqrt{10}]$:  \\
 %as indicated by \cite{e-eacfcc-03} referring to \cite{hardy-wright,hasse}:
@@ -64,10 +78,6 @@ The extension of an \ccc{UniqueFactorizationDomain} or
 %because \[10 = \sqrt{10} \cdot \sqrt{10} = 2 \cdot 5\]$ factors in two essentially
 %different ways. \\
 
-\textbf{ Note that the user is responsible for checking that the elements of 
-\ccRefName\ that are manipulated are actually in a same extension field. 
-If different extension fields are mixed together, 
-the code may crash at runtime!} \\
 
 %However, \ccRefName\ is useful for lengthy computations 
 %over one quadratic extension, e.g. it can be used as coefficient type for 
@@ -75,9 +85,14 @@ the code may crash at runtime!} \\
 %\ccc{Sqrt_extension} in place of \ccc{leda_real} or \ccc{CORE::Expr}, 
 %since it does not suffer from growing expression trees.
 
-In the same way \ccc{Sqrt_extension} can be used as if it were a model of \ccc{RealEmbeddable} if \ccc{NT} is model of \ccc{RealEmbeddable}. \textbf{Comparisons of two values from different extension via operators is not allowed.} However, the 
-member function compare provides this comparison. 
-\end{ccAdvanced}
+
+If \ccc{NT} is a model of \ccc{RealEmbeddable} the type \ccc{Sqrt_extension} is also considered as \ccc{RealEmbeddable}. However, by default it is not allowed to compare values from different extensions for efficiency reasons. In case such a comparison becomes necessary, use the member function compare with the according Boolean flag. 
+If such a comparison is a very frequent case, override the default of \ccc{DifferentExtensionComparable} by giving  \ccc{::CGAL::Tag_true} as third template parameter. This effects the behavior of compare functions as well as the compare operators. 
+
+
+The fourth template argument, \ccc{FilterPredicates}, triggers an internal filter that may speed up comparisons and sign computations. In case \ccc{FilterPredicates} is set to \ccc{CGAL::Tag_true} the type first computes a double interval containing the represented number and tries to perform the comparison or sign computation using this interval. Once computed, this interval is stored by the corresponding \ccc{Sqrt_extension} object for further usage. Note that this internal filter is switched off by default, since it may conflict with other filtering methods, such as \ccc{CGAL::Lazy_exact_nt<Sqrt_extension>}. 
+
+In case \ccc{NT} is not \ccc{RealEmbeddable}, \ccc{DifferentExtensionComparable} as well as \ccc{FilterPredicates} have no effect. 
 
 \ccIsModel 
 \begin{tabular}{ll}
@@ -88,7 +103,9 @@ member function compare provides this comparison.
 \ccc{ImplicitInteroperable} & with int\\
 \ccc{ImplicitInteroperable} & with NT\\
 \ccc{Fraction}          & if NT is a \ccc{Fraction}\\
+\ccc{RootOf_2}&\\
 \end{tabular}
+
 
 %\begin{ccAdvanced}
 %\ccc{Sqrt_extension} is \ccc{Modularizable} in case \ccc{NT} is 
@@ -96,18 +113,18 @@ member function compare provides this comparison.
 %\end{ccAdvanced}
 
 \ccCreation
-
+\ccTwo{xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx}{}
 \ccCreationVariable{ext}
 \ccConstructor{Sqrt_extension ();} 
-        {Introduces an variable initialized with 0.}
+        {Introduces an variable initialized with 0.} \ccGlue
 \ccConstructor{Sqrt_extension (const Sqrt_extension& x);}
- 	{copy constructor.}
+ 	{Copy constructor.}\ccGlue
 \ccConstructor{Sqrt_extension (const int &i);}
-        {Constructor from int.}
+        {Introduces an variable initialized with $i$.}\ccGlue
 \ccConstructor{Sqrt_extension (const NT &x);}
-        {Constructor from type NT.}
+        {Introduces an variable initialized with $x$.}
 \ccConstructor{Sqrt_extension (int a0, int a1, int r);}
- 	{Constructor from int: \ccVar $= a0 +a1 \cdot sqrt(r)$. \ccPrecond{$r \neq 0$}}
+ 	{Constructor from int: \ccVar $= a0 +a1 \cdot sqrt(r)$. \ccPrecond{$r \neq 0$}}\ccGlue
 \ccConstructor{Sqrt_extension (NT a0, NT a1, ROOT r);}
  	{General constructor: \ccVar $= a0 + a1 \cdot sqrt(r)$. \ccPrecond{$r \neq 0$}}
 
@@ -116,34 +133,39 @@ member function compare provides this comparison.
 An object of type \ccc{Sqrt_extension} represent an expression of the form: 
 $a0 + a1 * sqrt(root)$. 
 
+\ccMethod{const NT & a0 () const ;    }{Const access operator for a0} \ccGlue
+\ccMethod{const NT & a1 () const ;    }{Const access operator for a1}\ccGlue
+\ccMethod{const ROOT & 	root () const;}{Const access operator for root}\ccGlue
+
+%\ccMethod{void 	number (NT& a0, NT& a1, ROOT& root) const;}
+%{Simultaneous access to all relevant members.}
+
 \ccMethod{bool is_extended () const;}
  	{Returns true in case root of \ccVar\ is not zero.  \\
          Note that $a1 == 0 $ does not imply $root == 0$. }   
 
-\ccMethod{const NT & a0 () const ;    }{Const access operator for a0} \ccGlue
-%\ccMethod{NT & 	a0 ()    ;    }{Access operator for a0.}\ccGlue
-\ccMethod{const NT & a1 () const ;    }{Const access operator for a1}\ccGlue
-%\ccMethod{NT & 	a1 ()    ;    }{Access operator for a1.}\ccGlue
-\ccMethod{const ROOT & 	root () const;}{Const access operator for root}\ccGlue
-%\ccMethod{ROOT & 	root ()  ;    }{Access operator for root.}
-
 %Member functions:\\
 \ccMethod{void 	simplify ();}
-        { Propagates the simplify command to members of \ccVar. \\
-          see also: \ccc{AlgebraicStructureTraits::Simplify}.}
+        { Simplifies the representation, in particular $root$ is set to 
+          zero if $a1$ is zero, that is, \ccVar\ becomes not extended.\\
+          Moreover, it propagates the simplify command to members
+          %, that is $a0$, $a1$ and $root$, 
+          of \ccVar. see also: \ccc{AlgebraicStructureTraits::Simplify}.     
+        }
 \ccMethod{bool 	is_zero () const;}
         {returns true if \ccVar\ represents the value zero.}
 
 \ccMethod{CGAL::Sign sign () const;}
-        {Determines sign of \ccVar\ by (repeated) squaring.
+        {Determines the sign of \ccVar\ by (repeated) squaring.
         \ccPrecond \ccc{Sqrt_extension} is \ccc{RealEmbeddable}.}
+
 \ccMethod{Sqrt_extension abs () const;}
  	{returns the absolute value of \ccVar. 
         \ccPrecond \ccc{Sqrt_extension} is \ccc{RealEmbeddable}.}
 
 \ccMethod{
 CGAL::Comparison_result compare 
-(const Sqrt_extension& y, bool in_same_extension = true) const;}{
+(const Sqrt_extension& y, bool in_same_extension = !DifferentExtensionComparable::value) const;}{
   Compares \ccVar\ with y. \\
   The optional bool \ccc{in_same_extension} indicates whether \ccVar\ 
   and $y$ are in the same extension of NT.
@@ -167,8 +189,8 @@ CGAL::Comparison_result compare
 \ccMethod{Sqrt_extension & operator*=(const Sqrt_extension& a);}
 {\ccPrecond \ccc{(this->root()==0 or a.root()==0 or this->root() == a.root())} }\ccGlue
 
-In case \ccc{NT} is an \ccc{IntegralDomain} operator/ implements integral division. 
-%In case \ccc{NT} is a \ccc{Field} operator/ implements the field division.    
+In case \ccc{NT} is only an \ccc{IntegralDomain} operator/ implements integral division. 
+In case \ccc{NT} is a \ccc{Field} operator/ implements the field division.    
 
 \ccFunction{Sqrt_extension operator/(const Sqrt_extension&a,const Sqrt_extension& b);}
 {\ccPrecond \ccc{(a.root()==0 or b.root()==0 or a.root() == b.root())} }\ccGlue
@@ -238,4 +260,18 @@ They assume that corresponding stream operators for type \ccc{NT} and \ccc{ROOT}
 % 	write Sqrt_extension to os in LiS::IO::PRETTY format
 %void 	output_ascii (std::ostream &os) const
 % 	write Sqrt_extension to os in a format readable by input_ascii()
+\ccSeeAlso
+
+
+\ccRefIdfierPage{IntegralDomainWithoutDivision}\\
+\ccRefIdfierPage{IntegralDomain}\\
+\ccRefIdfierPage{Field}\\
+\ccRefIdfierPage{RealEmbeddable}\\
+\ccRefIdfierPage{ImplicitInteroperable}\\
+\ccRefIdfierPage{Fraction}\\
+\ccRefIdfierPage{RootOf_2}\\
+
+\ccRefIdfierPage{CGAL::Tag_true}\\
+\ccRefIdfierPage{CGAL::Tag_false}\\
+
 \end{ccRefClass}

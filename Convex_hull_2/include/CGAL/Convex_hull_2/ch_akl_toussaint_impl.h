@@ -98,9 +98,9 @@ ch_akl_toussaint(ForwardIterator first, ForwardIterator last,
   std::sort( successor(region2.begin() ), region2.end(), 
              ch_traits.less_xy_2_object() );
   std::sort( successor(region3.begin() ), region3.end(),
-             bind(ch_traits.less_xy_2_object(), _2, _1) );
+             boost::bind(ch_traits.less_xy_2_object(), _2, _1) );
   std::sort( successor(region4.begin() ), region4.end(), 
-             bind(ch_traits.less_xy_2_object(), _2, _1) );
+             boost::bind(ch_traits.less_xy_2_object(), _2, _1) );
 
   if (! equal_points(*w,*s) )
   {

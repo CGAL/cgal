@@ -131,8 +131,8 @@ PolygonGraphicsItem<P>::boundingRect() const
 template <typename P>
 void 
 PolygonGraphicsItem<P>::paint(QPainter *painter, 
-                                    const QStyleOptionGraphicsItem *option,
-                                    QWidget * widget)
+                                    const QStyleOptionGraphicsItem */*option*/,
+                                    QWidget * /*widget*/)
 {
   painter->setPen(this->edgesPen());
   painterostream = PainterOstream<Traits>(painter);

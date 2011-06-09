@@ -59,7 +59,8 @@
 <td width="28%">
 
 <table CELLSPACING=0>
-<tr><td><a href="#release3.8">3.8</a>&nbsp;<td> (XXX 2011)
+<tr><td><a href="#release3.9">3.9</a>&nbsp;<td> (XXX 2011)
+<tr><td><a href="#release3.8">3.8</a>&nbsp;<td> (April 2011)
 <tr><td><a href="#release3.7">3.7</a>&nbsp;<td> (October 2010)
 <tr><td><a href="#release3.6.1">3.6.1</a>&nbsp;<td> (June 2010)
 <tr><td><a href="#release3.6">3.6</a>&nbsp;<td> (March 2010)
@@ -97,9 +98,36 @@ Number of lines of code of CGAL<br>
 
 <HR>
 
-<h2 id="release3.8">Release 3.8 </h2>
+<h2 id="release3.9">Release 3.9 </h2>
 <DIV>
 <p> Release date: XXX 2011</p>
+
+<p>
+CGAL 3.9 offers the following improvements and new functionality :  </p>
+
+<h3>General</h3>
+<ul>
+  <li>The class Root_of_2 is now deprecated. It is recommended to use the class Sqrt_extension instead.</li>
+  <li>The class Sqrt_extension is now used everywhere in CGAL where an algebraic number of degree 2 is needed. 
+      This change has been done in the Root_of_traits mechanism (indirectly packages 2D Circular kernel and 3D Spherical kernel)
+      and the packages 2D Segment Delaunay Graphs and 2D Arrangements.</li>
+  <li>Various fixes in the manual.</li>
+</ul>
+
+  <h3>dD Kernel</h3>
+      <li>The d-dimensional kernel concept and models have been modified 
+          to additionally provide two new functors Less_coordinate_d and Point_dimension_d.</li>
+  <h3>Spatial_sorting  (major new feature added)</h3>
+<ul>
+      <li>General dimension is now supported.</li>
+      <li>Hilbert sorting admits now two policies: splitting at
+      median or at middle (see user manual).</li>
+      <li>Using a property map, sorting on keys instead of points is now easier</li> 
+      </ul>
+
+<h2 id="release3.8">Release 3.8 </h2>
+<DIV>
+<p> Release date: April 2011</p>
 
 <p>
 CGAL 3.8 offers the following improvements and new functionality :  </p>
