@@ -1,15 +1,13 @@
 #include <CGAL/Polyhedron_items_with_id_3.h>
-
+#include <CGAL/Taucs_solver_traits.h>
 #include <CGAL/Deform_mesh_BGL.h>
 
+typedef CGAL::Cartesian<double>                                                      Kernel;
+typedef Kernel::Vector_3                                                             Vector;
+typedef CGAL::Polyhedron_3<Kernel,CGAL::Polyhedron_items_with_id_3>                  Polyhedron;
+typedef CGAL::Deform_mesh_BGL<Polyhedron, CGAL::Taucs_solver_traits<double> >        Deform_mesh;
 
-typedef CGAL::Cartesian<double>                                       Kernel;
-typedef Kernel::Vector_3                                              Vector;
-typedef CGAL::Polyhedron_3<Kernel,CGAL::Polyhedron_items_with_id_3>   Polyhedron;
-typedef CGAL::Deform_mesh_BGL<Polyhedron>                             Deform_mesh;
-
-typedef boost::graph_traits<Polyhedron>::vertex_iterator		          vertex_iterator;
-
+typedef boost::graph_traits<Polyhedron>::vertex_iterator		                         vertex_iterator;
 
 
 int main() {
@@ -33,7 +31,7 @@ int main() {
 	deform.handles(vb, vb);
 
 	// determine the k-ring
-	deform.region_of_interest(vb, vb, 2);
+	deform.region_of_interest(vb, vb, 1);
 
 	// does the precomputation
 	deform.preprocess();
