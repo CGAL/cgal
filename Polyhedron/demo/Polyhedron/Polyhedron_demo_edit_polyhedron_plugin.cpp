@@ -180,12 +180,15 @@ convert_to_edit_polyhedron(Item_id i,
 
   edit_poly->setVisible(poly_item->visible());
   edit_poly->setHandlesRegionSize(deform_mesh_widget.handlesRegionSize->value());
+  edit_poly->setInterestRegionSize(deform_mesh_widget.interestRegionSize->value());
   connect(edit_poly, SIGNAL(modified()),
           this, SLOT(edition()));
   connect(edit_poly, SIGNAL(destroyed()),
           this, SLOT(item_destroyed()));
   connect(deform_mesh_widget.handlesRegionSize, SIGNAL(valueChanged(int)),
           edit_poly, SLOT(setHandlesRegionSize(int)));
+  connect(deform_mesh_widget.interestRegionSize, SIGNAL(valueChanged(int)),
+          edit_poly, SLOT(setInterestRegionSize(int)));
   scene->replaceItem(i, edit_poly);
   return edit_poly;
 }

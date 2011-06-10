@@ -3,6 +3,7 @@
 #include "Polyhedron_type.h"
 
 #include <boost/foreach.hpp>
+#include <algorithm>
 
 #include <QVariant>
 #include <set>
@@ -20,9 +21,12 @@ typedef Selected_vertices::iterator Selected_vertices_it;
 
 struct Scene_edit_polyhedron_item_priv {
   Scene_polyhedron_item* poly_item;
-  int zone_size;
+  int handlesRegionSize;
+  int interestRegionSize;
   qglviewer::ManipulatedFrame* frame;
-  Selected_vertices selected_vertices;
+  Selected_vertices handles_vertices;
+  Selected_vertices roi_vertices;
+  Selected_vertices roi_minus_handles_vertices;
   Vertex_handle selected_vertex;
   Kernel::Point_3 orig_pos;
   Kernel::Point_3 last_pos;
@@ -32,7 +36,7 @@ Scene_edit_polyhedron_item::Scene_edit_polyhedron_item(Scene_polyhedron_item* po
   : d(new Scene_edit_polyhedron_item_priv)
 {
   d->poly_item = poly_item;
-  d->zone_size = 0;
+  d->handlesRegionSize = 0;
   d->frame = new ManipulatedFrame();
   d->frame->setProperty("item", QVariant::fromValue<QObject*>(this));
   if(!connect(poly_item, SIGNAL(selected_vertex(void*)),
@@ -74,13 +78,24 @@ Scene_edit_polyhedron_item::toolTip() const
 
 void Scene_edit_polyhedron_item::draw() const {
   d->poly_item->direct_draw();
-  if(!d->selected_vertices.empty()) {
+  if(!d->handles_vertices.empty() || !d->roi_minus_handles_vertices.empty()) {
     CGAL::GL::Point_size point_size; point_size.set_point_size(5);
-    CGAL::GL::Color color; color.set_rgb_color(0, 0, 0);
+    CGAL::GL::Color color; color.set_rgb_color(1.f, 0, 0);
     ::glBegin(GL_POINTS);
     for(Selected_vertices_it 
-          it = d->selected_vertices.begin(),
-          end = d->selected_vertices.end();
+          it = d->handles_vertices.begin(),
+          end = d->handles_vertices.end();
+        it != end; ++it)
+    {
+      const Kernel::Point_3& p = (*it)->point();
+      ::glVertex3d(p.x(), p.y(), p.z());
+    }
+    ::glEnd();
+    color.set_rgb_color(1.f, 0.5f, 0);
+    ::glBegin(GL_POINTS);
+    for(Selected_vertices_it 
+          it = d->roi_minus_handles_vertices.begin(),
+          end = d->roi_minus_handles_vertices.end();
         it != end; ++it)
     {
       const Kernel::Point_3& p = (*it)->point();
@@ -144,9 +159,17 @@ Scene_polyhedron_item* Scene_edit_polyhedron_item::to_polyhedron_item() const {
 void 
 Scene_edit_polyhedron_item::setHandlesRegionSize(int i) {
   if(i >= 0) {
-    std::cerr << "item \"" << qPrintable(name()) 
-              << "\".setZoneSize(" << i << ")\n";
-    d->zone_size = i;
+    d->handlesRegionSize = i;
+    if(d->selected_vertex != Vertex_handle()) {
+      vertex_has_been_selected(&*d->selected_vertex);
+    }
+  }
+}
+
+void 
+Scene_edit_polyhedron_item::setInterestRegionSize(int i) {
+  if(i >= 0) {
+    d->interestRegionSize = i;
     if(d->selected_vertex != Vertex_handle()) {
       vertex_has_been_selected(&*d->selected_vertex);
     }
@@ -167,6 +190,25 @@ struct Get_vertex_handle : public CGAL::Modifier_base<Polyhedron::HDS>
   }
 };
 
+Selected_vertices extend_once(Selected_vertices selected_vertices)
+{
+  std::set<Vertex_handle> original_set = selected_vertices;
+  BOOST_FOREACH(Vertex_handle v, original_set) {
+    Polyhedron::Halfedge_around_vertex_circulator 
+      he_it = v->vertex_begin(), he_it_end(he_it);
+    if(he_it != 0) {
+      do {
+        const Vertex_handle other_v = he_it->opposite()->vertex();
+        if( selected_vertices.find(other_v) == selected_vertices.end() )
+        {
+          selected_vertices.insert(other_v);
+        }
+      } while(++he_it != he_it_end);
+    }
+  }
+  return selected_vertices;
+}
+
 void Scene_edit_polyhedron_item::vertex_has_been_selected(void* void_ptr) {
   Polyhedron* poly = d->poly_item->polyhedron();
 
@@ -180,36 +222,32 @@ void Scene_edit_polyhedron_item::vertex_has_been_selected(void* void_ptr) {
   Vertex_handle vh = get_vertex_handle.vh;
   d->selected_vertex = vh;
 
-  std::cerr << "Selected vertex: " << void_ptr << " = " << vh->point()
-            << std::endl;
-  d->selected_vertices.clear();
+  // std::cerr << "Selected vertex: " << void_ptr << " = " << vh->point()
+  //           << std::endl;
+  d->handles_vertices.clear();
 
-  d->selected_vertices.insert(vh);
+  d->handles_vertices.insert(vh);
 
-  std::cerr << "d->zone_size = " << d->zone_size << std::endl;
-  // Naive way to compute the k-neighborhood of vh, with k==d->zone_size.
-  for(int i = 0; i < d->zone_size; ++i) {
-    std::set<Vertex_handle> selected_vertices;
-    for(Selected_vertices_it 
-          it = d->selected_vertices.begin(),
-          end = d->selected_vertices.end();
-        it != end; ++it) {
-      selected_vertices.insert(*it);
-    }
-    BOOST_FOREACH(Vertex_handle v, selected_vertices) {
-      Polyhedron::Halfedge_around_vertex_circulator 
-        he_it = v->vertex_begin(), he_it_end(he_it);
-      if(he_it != 0) {
-        do {
-          const Vertex_handle other_v = he_it->opposite()->vertex();
-          if( d->selected_vertices.find(other_v) == d->selected_vertices.end() )
-          {
-            d->selected_vertices.insert(other_v);
-          }
-        } while(++he_it != he_it_end);
-      }
-    }
+  // Naive way to compute the k-neighborhood of vh, with k==d->handlesRegionSize.
+  for(int i = 0; i < d->handlesRegionSize; ++i) {
+    d->handles_vertices = extend_once(d->handles_vertices);
   }
+  d->roi_vertices = d->handles_vertices;
+  std::cerr << d->handlesRegionSize << " " << d->interestRegionSize << std::endl;
+  for(int i = d->handlesRegionSize; i < d->interestRegionSize; ++i)
+  {
+    d->roi_vertices = extend_once(d->roi_vertices);
+  }
+
+  // compute the difference
+  d->roi_minus_handles_vertices.clear();
+  std::set_difference(d->roi_vertices.begin(),
+                      d->roi_vertices.end(),
+                      d->handles_vertices.begin(),
+                      d->handles_vertices.end(),
+                      std::inserter(d->roi_minus_handles_vertices,
+                                    d->roi_minus_handles_vertices.begin()));
+
   const Kernel::Point_3& p = vh->point();
   d->orig_pos = p;
   d->last_pos = p;
@@ -225,9 +263,18 @@ Scene_edit_polyhedron_item::selected_vertex() const {
 }
 
 QList<Vertex_handle>
-Scene_edit_polyhedron_item::selected_vertices() const {
+Scene_edit_polyhedron_item::handles_vertices() const {
   QList<Vertex_handle> result;
-  BOOST_FOREACH(Vertex_handle vh, d->selected_vertices) {
+  BOOST_FOREACH(Vertex_handle vh, d->handles_vertices) {
+    result << vh;
+  }
+  return result;
+}
+
+QList<Vertex_handle>
+Scene_edit_polyhedron_item::vertices_in_region_of_interest() const {
+  QList<Vertex_handle> result;
+  BOOST_FOREACH(Vertex_handle vh, d->roi_vertices) {
     result << vh;
   }
   return result;

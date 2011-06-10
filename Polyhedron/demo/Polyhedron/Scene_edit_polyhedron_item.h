@@ -60,7 +60,13 @@ public:
   Kernel::Point_3 current_position() const;
   Kernel::Point_3 last_position() const;
   Polyhedron::Vertex_handle selected_vertex() const;
-  QList<Polyhedron::Vertex_handle> selected_vertices() const;
+
+  QList<Polyhedron::Vertex_handle> handles_vertices() const;
+  QList<Polyhedron::Vertex_handle> vertices_in_region_of_interest() const;
+
+  /// @deprecated
+  QList<Polyhedron::Vertex_handle> selected_vertices() 
+  { return handles_vertices(); }
 
   /// Returns a Scene_polyhedron_item from the edit polyhedron item, and
   /// transfer the ownership of the polyhedron to it.
@@ -82,6 +88,7 @@ public slots:
               double dir_z);
   void setZoneSize(int i) { setHandlesRegionSize(i); } /// @deprecated
   void setHandlesRegionSize(int i);
+  void setInterestRegionSize(int i);
   void vertex_has_been_selected(void* vertex_handle);
 
 signals:
