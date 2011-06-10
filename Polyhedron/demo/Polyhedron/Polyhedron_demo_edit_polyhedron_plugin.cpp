@@ -272,13 +272,16 @@ void Polyhedron_demo_edit_polyhedron_plugin::edition() {
   const Point& last_position = edit_item->last_position();
   const Vector translation = edit_item->current_position() - last_position;
 
-  // ACTUAL DEFORMATION
+  // -- ACTUAL DEFORMATION --
+
   // This should be modified to use Deform_mesh instead.
   Q_FOREACH(Vertex_handle vh, edit_item->selected_vertices())
   {
     vh->point() = vh->point() + translation;
   }
-  // END OF ACTUAL DEFORMATION
+  // could also use the list 'edit_item->vertices_in_region_of_interest()'
+
+  // -- END OF ACTUAL DEFORMATION --
 
   // signal to the item that it needs to recompute its internal structures
   edit_item->changed(); // that reset the last_position()
