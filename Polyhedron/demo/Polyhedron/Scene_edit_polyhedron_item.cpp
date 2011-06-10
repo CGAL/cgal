@@ -142,11 +142,14 @@ Scene_polyhedron_item* Scene_edit_polyhedron_item::to_polyhedron_item() const {
 }
 
 void 
-Scene_edit_polyhedron_item::setZoneSize(int i) {
+Scene_edit_polyhedron_item::setHandlesRegionSize(int i) {
   if(i >= 0) {
     std::cerr << "item \"" << qPrintable(name()) 
               << "\".setZoneSize(" << i << ")\n";
     d->zone_size = i;
+    if(d->selected_vertex != Vertex_handle()) {
+      vertex_has_been_selected(&*d->selected_vertex);
+    }
   }
 }
 
@@ -175,6 +178,7 @@ void Scene_edit_polyhedron_item::vertex_has_been_selected(void* void_ptr) {
 
   poly->delegate(get_vertex_handle);
   Vertex_handle vh = get_vertex_handle.vh;
+  d->selected_vertex = vh;
 
   std::cerr << "Selected vertex: " << void_ptr << " = " << vh->point()
             << std::endl;
@@ -240,6 +244,24 @@ Kernel::Point_3 Scene_edit_polyhedron_item::last_position() const {
 
 Kernel::Point_3 Scene_edit_polyhedron_item::original_position() const {
   return d->orig_pos;
+}
+
+void Scene_edit_polyhedron_item::setVisible(bool b) {
+  d->poly_item->setVisible(b);
+  Scene_item::setVisible(b);
+}
+void Scene_edit_polyhedron_item::setColor(QColor c) {
+  d->poly_item->setColor(c);
+  Scene_item::setColor(c);
+}
+void Scene_edit_polyhedron_item::setName(QString n) {
+  Scene_item::setName(n);
+  n.replace(" (edit)", "");
+  d->poly_item->setName(n);
+}
+void Scene_edit_polyhedron_item::setRenderingMode(RenderingMode m) {
+  d->poly_item->setRenderingMode(m);
+  Scene_item::setRenderingMode(m);
 }
 
 #include "Scene_edit_polyhedron_item.moc"

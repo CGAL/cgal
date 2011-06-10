@@ -35,6 +35,11 @@ public:
   // Function for displaying meta-data of the item
   QString toolTip() const;
 
+  void setColor(QColor c);
+  void setName(QString n);
+  void setVisible(bool b);
+  void setRenderingMode(RenderingMode m);
+
   // // Function to override the context menu
   // QMenu* contextMenu();
   
@@ -75,7 +80,8 @@ public slots:
               double dir_x,
               double dir_y,
               double dir_z);
-  void setZoneSize(int i);
+  void setZoneSize(int i) { setHandlesRegionSize(i); } /// @deprecated
+  void setHandlesRegionSize(int i);
   void vertex_has_been_selected(void* vertex_handle);
 
 signals:

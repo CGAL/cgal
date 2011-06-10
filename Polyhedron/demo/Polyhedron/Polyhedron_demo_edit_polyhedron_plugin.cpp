@@ -42,7 +42,7 @@ class Polyhedron_demo_edit_polyhedron_plugin :
 
 public:
   Polyhedron_demo_edit_polyhedron_plugin() 
-    : Polyhedron_demo_plugin_helper(), size(0)
+    : Polyhedron_demo_plugin_helper(), size(0), edit_mode(false)
   {}
 
   ~Polyhedron_demo_edit_polyhedron_plugin();
@@ -58,8 +58,17 @@ public slots:
   void edition();
 
   void item_destroyed();
+  void new_item_created(int item_id);
 
 private:
+  typedef Scene_interface::Item_id Item_id;
+
+  Scene_edit_polyhedron_item* 
+  convert_to_edit_polyhedron(Item_id, Scene_polyhedron_item*);
+
+  Scene_polyhedron_item* 
+  convert_to_plain_polyhedron(Item_id, Scene_edit_polyhedron_item*);
+
   typedef std::map<QObject*, Polyhedron_deformation_data> Deform_map;
   Deform_map deform_map;
 
@@ -68,6 +77,7 @@ private:
 
   QAction* actionToggleEdit;
   int size;
+  bool edit_mode;
 }; // end Polyhedron_demo_edit_polyhedron_plugin
 
 Polyhedron_demo_edit_polyhedron_plugin::
@@ -108,54 +118,81 @@ void Polyhedron_demo_edit_polyhedron_plugin::init(QMainWindow* mainWindow,
   connect(deform_mesh_widget.editModeCb, SIGNAL(clicked(bool)),
           this, SLOT(on_actionToggleEdit_triggered(bool)));
 
+  // Connect Scene::newItem so that, if edit_mode==true, convert
+  // automatically polyhedron items to "edit polyhedron" items.
+  QObject* scene = dynamic_cast<QObject*>(scene_interface);
+  if(scene) {
+    connect(scene, SIGNAL(newItem(int)),
+            this, SLOT(new_item_created(int)));
+  } else {
+    std::cerr << "ERROR " << __FILE__ << ":" << __LINE__ << " :"
+              << " cannot convert scene_interface to scene!\n"; 
+  }
   Polyhedron_demo_plugin_helper::init(mainWindow, scene_interface);
 }
 
-void Polyhedron_demo_edit_polyhedron_plugin::on_actionToggleEdit_triggered(bool) {
-  bool found_polyhedron = false;
-  bool edit_needed = false;
-  QList<Scene_item*> changed_items;
-  Q_FOREACH(Scene_interface::Item_id i, scene->selectionIndices())
-  {
-    if(Scene_polyhedron_item* poly_item = 
-       qobject_cast<Scene_polyhedron_item*>(scene->item(i))) 
-    {
-      found_polyhedron = true;
-      Scene_edit_polyhedron_item* edit_poly = 
-        new Scene_edit_polyhedron_item(poly_item);
-      edit_poly->setColor(poly_item->color());
-      edit_poly->setName(QString("%1 (edit)").arg(poly_item->name()));
-      scene->replaceItem(i, edit_poly);
-      changed_items.push_back(scene->item(i));
-      edit_needed = true;
-      connect(edit_poly, SIGNAL(modified()),
-              this, SLOT(edition()));
-      connect(edit_poly, SIGNAL(destroyed()),
-              this, SLOT(item_destroyed()));
-    } else if(Scene_edit_polyhedron_item* poly_item = 
-              qobject_cast<Scene_edit_polyhedron_item*>(scene->item(i))) 
-    {
-      found_polyhedron = true;
-      scene->replaceItem(i, poly_item->to_polyhedron_item());
-      delete poly_item;
+void
+Polyhedron_demo_edit_polyhedron_plugin::new_item_created(int item_id)
+{
+  if(edit_mode) {
+    Scene_polyhedron_item* poly_item = 
+      qobject_cast<Scene_polyhedron_item*>(scene->item(item_id));
+    if(poly_item) {
+      convert_to_edit_polyhedron(item_id, poly_item);
     }
   }
-  if(found_polyhedron == false) {
-    QMessageBox::warning(mw, tr("Warning"),
-                         tr("No polyhedron was selected"));
-  }
-  if(edit_needed) {
-    size = QInputDialog::getInt(mw, 
-                                tr("Polyhedron edition zone"),
-                                tr("Size of edition zone:"),
-                                size /* default value */ , 
-                                0 /* min */ );
-    std::cerr << "size = " << size << std::endl;
-    Q_FOREACH(Scene_item* item, changed_items)
-    {
-      Scene_edit_polyhedron_item* poly_edit_item = 
-        qobject_cast<Scene_edit_polyhedron_item*>(item);
-      if(poly_edit_item) poly_edit_item->setZoneSize(size);
+}
+
+Scene_edit_polyhedron_item*
+Polyhedron_demo_edit_polyhedron_plugin::
+convert_to_edit_polyhedron(Item_id i,
+                           Scene_polyhedron_item* poly_item)
+{
+  QString poly_item_name = poly_item->name();
+  Scene_edit_polyhedron_item* edit_poly = 
+    new Scene_edit_polyhedron_item(poly_item);
+  edit_poly->setColor(poly_item->color());
+  edit_poly->setName(QString("%1 (edit)").arg(poly_item->name()));
+
+  poly_item->setName(poly_item_name); // Because it is changed when the
+                                      // name of edit_poly is changed.
+
+  edit_poly->setVisible(poly_item->visible());
+  edit_poly->setHandlesRegionSize(deform_mesh_widget.handlesRegionSize->value());
+  connect(edit_poly, SIGNAL(modified()),
+          this, SLOT(edition()));
+  connect(edit_poly, SIGNAL(destroyed()),
+          this, SLOT(item_destroyed()));
+  connect(deform_mesh_widget.handlesRegionSize, SIGNAL(valueChanged(int)),
+          edit_poly, SLOT(setHandlesRegionSize(int)));
+  scene->replaceItem(i, edit_poly);
+  return edit_poly;
+}
+
+Scene_polyhedron_item*
+Polyhedron_demo_edit_polyhedron_plugin::
+convert_to_plain_polyhedron(Item_id i,
+                            Scene_edit_polyhedron_item* edit_item) 
+{
+  Scene_polyhedron_item* poly_item = edit_item->to_polyhedron_item();
+  scene->replaceItem(i, poly_item);
+  delete edit_item;
+  return poly_item;
+}
+
+void Polyhedron_demo_edit_polyhedron_plugin::on_actionToggleEdit_triggered(bool edit) {
+  this->edit_mode = edit;
+  for(Scene_interface::Item_id i = 0, end = scene->numberOfEntries();
+      i < end; ++i)
+  {
+    Scene_polyhedron_item* poly_item = 
+      qobject_cast<Scene_polyhedron_item*>(scene->item(i));
+    Scene_edit_polyhedron_item* edit_item = 
+      qobject_cast<Scene_edit_polyhedron_item*>(scene->item(i));
+    if(edit && poly_item) {
+      convert_to_edit_polyhedron(i, poly_item);
+    } else if(!edit && edit_item) {
+      convert_to_plain_polyhedron(i, edit_item);
     }
   }
 }
