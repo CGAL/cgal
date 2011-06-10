@@ -21,69 +21,41 @@
 //
 // Author(s)     : Lutz Kettner, Sylvain Pion
 
+// This header has been deprecated and all types are aliases for the
+// respective type in boost/cstdint.hpp.
+// boost/cstdint.hpp is preferred over cstdint as there are numerous
+// compilers and platforms with slight variations in availability of
+// the C99 headers and their C++0x equivalents
+
 #ifndef CGAL_KNOWN_BIT_SIZE_INTEGERS_H
 #define CGAL_KNOWN_BIT_SIZE_INTEGERS_H
 
+#if defined(_MSC_VER) || defined(__BORLANDC__) || defined(__DMC__)
+#  pragma message ("Warning: This header is deprecated. Please use boost/cstdint.hpp instead")
+#elif defined(__GNUC__) || defined(__HP_aCC) || defined(__SUNPRO_CC) || defined(__IBMCPP__)
+#  warning "This header is deprecated. Please use boost/cstdint.hpp instead"
+#endif
+
 #include <CGAL/number_type_basic.h>
 #include <boost/mpl/if.hpp>
+#include <boost/cstdint.hpp>
 
 namespace CGAL {
 
-namespace internal {
+  typedef boost::int8_t    Integer8;
+  typedef boost::int16_t   Integer16;
+  typedef boost::int32_t   Integer32;
 
-namespace mpl = boost::mpl;
+  typedef boost::uint8_t   UInteger8;
+  typedef boost::uint16_t  UInteger16;
+  typedef boost::uint32_t  UInteger32;
 
-template < int size >
-struct No_Integer_Type_Of_Size;
-
-// Provides a signed integral type whose sizeof() is s.
-// If not possible, gives No_Integer_Type_Of_Size<s>.
-template < int s >
-struct SizeofSelect
-{
-    typedef typename mpl::if_c< (sizeof(signed char) == s), signed char,
-	      typename mpl::if_c< (sizeof(short) == s), short,
-	        typename mpl::if_c< (sizeof(int) == s), int,
-	          typename mpl::if_c< (sizeof(long) == s), long,
-		    No_Integer_Type_Of_Size<s> >::type >::type >::type >::type  Type;
-};
-
-// Same thing for unsigned types.
-template < int s >
-struct USizeofSelect
-{
-    typedef typename mpl::if_c< (sizeof(unsigned char) == s), unsigned char,
-	      typename mpl::if_c< (sizeof(unsigned short) ==s), unsigned short,
-	        typename mpl::if_c< (sizeof(unsigned int) == s), unsigned int,
-	          typename mpl::if_c< (sizeof(unsigned long) == s),
-		                                              unsigned long,
-		    No_Integer_Type_Of_Size<s> >::type >::type >::type >::type  Type;
-};
-
-} // namespace internal
-
-
-typedef internal::SizeofSelect<1>::Type  Integer8;
-typedef internal::SizeofSelect<2>::Type  Integer16;
-typedef internal::SizeofSelect<4>::Type  Integer32;
-
-typedef internal::USizeofSelect<1>::Type  UInteger8;
-typedef internal::USizeofSelect<2>::Type  UInteger16;
-typedef internal::USizeofSelect<4>::Type  UInteger32;
-
-#if defined __ia64__ || defined __x86_64
-    typedef long                     Integer64;
-    typedef unsigned long            UInteger64;
+#ifndef BOOST_NO_INT64_T
 #   define CGAL_HAS_INTEGER64
+  typedef boost::int64_t   Integer64;
+  typedef boost::uint64_t  UInteger64;
+// this macro is still provided but its use is discouraged
 #endif
-
-#if defined _MSC_VER
-    typedef __int64                  Integer64;
-    typedef unsigned __int64         UInteger64;
-#   define CGAL_HAS_INTEGER64
-#endif
-
-// 64 integer types are defined for other platforms in CGAL/long_long.h
 
 } //namespace CGAL
 
