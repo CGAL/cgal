@@ -60,6 +60,19 @@ public slots:
   void item_destroyed();
   void new_item_created(int item_id);
 
+  void update_handlesRegionSize(int interestRegionSizeValue) {
+    if(deform_mesh_widget.handlesRegionSize->value() > interestRegionSizeValue)
+    {
+      deform_mesh_widget.handlesRegionSize->setValue(interestRegionSizeValue);
+    }
+  }
+  void update_interestRegionSize(int handlesRegionSizeValue) {
+    if(deform_mesh_widget.interestRegionSize->value() < handlesRegionSizeValue)
+    {
+      deform_mesh_widget.interestRegionSize->setValue(handlesRegionSizeValue);
+    }
+  }
+
 private:
   typedef Scene_interface::Item_id Item_id;
 
@@ -128,6 +141,14 @@ void Polyhedron_demo_edit_polyhedron_plugin::init(QMainWindow* mainWindow,
     std::cerr << "ERROR " << __FILE__ << ":" << __LINE__ << " :"
               << " cannot convert scene_interface to scene!\n"; 
   }
+
+  // Make sure handlesRegionSize->value() is always smaller than 
+  // interestRegionSize->value()
+  connect(deform_mesh_widget.handlesRegionSize, SIGNAL(valueChanged(int)),
+          this, SLOT(update_interestRegionSize(int)));
+  connect(deform_mesh_widget.interestRegionSize, SIGNAL(valueChanged(int)),
+          this, SLOT(update_handlesRegionSize(int)));
+
   Polyhedron_demo_plugin_helper::init(mainWindow, scene_interface);
 }
 
