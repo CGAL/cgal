@@ -22,7 +22,6 @@
 #include <CGAL/Combinatorial_map_constructors.h>
 #include <CGAL/Combinatorial_map_operations.h>
 
-#include <CGAL/IO/Polyhedron_iostream.h>
 #include <iostream>
 #include <fstream>
 

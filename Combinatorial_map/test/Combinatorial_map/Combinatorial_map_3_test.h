@@ -22,8 +22,6 @@
 #include <CGAL/Combinatorial_map_constructors.h>
 #include <CGAL/Combinatorial_map_operations.h>
 
-#include <CGAL/Delaunay_triangulation_3.h>
-#include <CGAL/IO/Polyhedron_iostream.h>
 #include <iostream>
 #include <fstream>
 
