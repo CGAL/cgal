@@ -22,33 +22,33 @@ A model of the basic concept, \ccc{ArrangementBasicTraits_2},
 needs to define the types \ccc{Point_2} and
 \ccc{X_monotone_curve_2}, where objects of the first type are
 the geometric mapping of arrangement vertices, and objects of the
-latter type are the geometric mapping of edges. In addition, it has to
-support the following set of predicates:
+latter type are the geometric mapping of edges. Such a model has to
+support in addition the following set of operations: 
 \begin{description}
-\item[\ccc{Compare_x_2}:] Compare the $x$-coordinates of two points.
+\item[\ccc{Compare_x_2}:] Compares the $x$-coordinates of two points.
   %
-\item[\ccc{Compare_xy_2}:] Compare two points lexicographically, by
+\item[\ccc{Compare_xy_2}:] Compares two points lexicographically, by
   their $x$-coordinates and then (in case of equality) by their
   $y$-coordinates.
   %
 \item[\ccc{Construct_min_vertex_2},\ccc{Construct_max_vertex_2}:]
-  Return the left endpoint (similarly, the right endpoint) of
+  Returns the left endpoint (similarly, the right endpoint) of
   an $x$-monotone curve.
   %
 \item[\ccc{Compare_y_at_x_2}:] Given an $x$-monotone curve $c$ and a
-  point $p$ that lies in its $x$-range, determine whether $p$ lies
-  below, above or on $c$.
+  point $p$ that lies in its $x$-range, this predicate determines
+  whether $p$ lies below, above or on $c$.
   %
 \item[\ccc{Compare_y_at_x_right_2}:]
   Given two $x$-monotone curves $c_1$ and $c_2$ that share a common
-  left endpoint $p$, determine whether $c_1$ lies above or under $c_2$
-  immediately to the right of $p$, or whether the two curves coincide
-  there.
-\item[\ccc{Equal_2}:] Check two points and two curves for equality
+  left endpoint $p$, this predicate determines whether $c_1$ lies
+  above or under $c_2$ immediately to the right of $p$, or whether the
+  two curves coincide there.
+\item[\ccc{Equal_2}:] Checks two points and two curves for equality
   (two curves are equal if their graph is the same).
   %
 \item[\ccc{Is_vertical_2}:]
-  Determine whether an $x$-monotone curve is vertical.
+  Determines whether an $x$-monotone curve is vertical.
 \end{description}
 
 Each model of the concept \ccc{ArrangementBasicTraits_2}
@@ -57,9 +57,9 @@ whether the traits class supports the following predicate:
 \begin{description}
 \item[\ccc{Compare_y_at_x_left_2}:]
   Given two $x$-monotone curves $c_1$ and $c_2$ that share a common
-  right endpoint $p$, determine whether $c_1$ lies above or under
-  $c_2$ immediately to the left of $p$, or whether the two curves
-  coincide there.
+  right endpoint $p$, this predicate determines whether $c_1$ lies
+  above or under $c_2$ immediately to the left of $p$, or whether the
+  two curves coincide there.
 \end{description}
 This predicate is optional, as it can be answered using the
 other traits-class primitives, and we wish to alleviate the
@@ -109,13 +109,14 @@ concept must define a fixed precision number type (typically
 \begin{description}
 \item[\ccc{Approximate_2}:]
   Given a point \ccc{p}, approximate the $x$ and $y$-coordinates
-  of \ccc{p} using the fixed precision number type. We use this operation
-  for approximate computations --- there are certain operations in the
-  search for the location of the point that need not be exact and we can
-  perform them faster than other operations.
+  of \ccc{p} using the fixed precision number type. We use this
+  operation for approximate computations---there are certain
+  operations in the search for the location of the point that need not
+  be exact and we can perform them faster than other operations.
 %
 \item[\ccc{Construct_x_monotone_curve_2}:] Given two points $p_1$ and
-  $p_2$, construct an $x$-monotone curve connecting $p_1$ and $p_2$.
+  $p_2$, this predicate constructs an $x$-monotone curve connecting
+  $p_1$ and $p_2$.
 \end{description}
 
 %~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -128,8 +129,8 @@ concept, which refines the \ccc{ArrangementBasicTraits_2}
 concept, has to support the following functions:
 \begin{description}
 \item[\ccc{Intersection_2}:]
-  Compute all intersection points and overlapping sections of
-  two given $x$-monotone curves. If possible, compute also the
+  Computes all intersection points and overlapping sections of
+  two given $x$-monotone curves. If possible, computes also the
   multiplicity of each intersection point.\footnote{If the two
     curves intersect at a point $p$ but have different tangents, $p$
     is of multiplicity 1. If the tangents are also equal but the their
@@ -137,16 +138,16 @@ concept, has to support the following functions:
   Knowing the multiplicity of an intersection point is not required,
   but it can speed up the arrangement construction.
 %
-\item[\ccc{Split_2}:] Split an $x$-monotone curve $c$ into two subcurves
+\item[\ccc{Split_2}:] Splits an $x$-monotone curve $c$ into two subcurves
   at a point $p$ lying in the interior of $c$.
 %
 \item[\ccc{Are_mergeable_2}:] Given two $x$-monotone curve $c_1$ and
-  $c_2$ that share a common endpoint, determine whether $c_1$ and $c_2$
-  are \emph{mergeable}, that is, whether they can be merged to form a
-  single continuous $x$-monotone curve of the type supported by the
-  traits class.
+  $c_2$ that share a common endpoint, this predicate determines
+  whether $c_1$ and $c_2$ are \emph{mergeable}, that is, whether they
+  can be merged to form a single continuous $x$-monotone curve of the
+  type supported by the traits class.
 %
-\item[\ccc{Merge_2}:] Merge two mergeable $x$-monotone curves.
+\item[\ccc{Merge_2}:] Merges two mergeable $x$-monotone curves.
 \end{description}
 Using a model of the \ccc{ArrangementXMonotoneTraits_2}, it is
 possible to construct arrangements of sets of $x$-monotone curves
@@ -205,23 +206,24 @@ approach infinity and thus approach the boundary of the parameter
 space. These predicates are sufficient to handle not only curves
 confined to an unbounded parameter space, but also curves confined
 to a bounded parameter space with open boundaries. Accordingly, we
-extend the definifion of the parameter space as follows:
-Let $b_l$ and $b_r$ denote the $x$-coordinates of the left and right
-boundaries of the parameter space, respectively. Let $b_b$ and $b_t$
-denote the $y$-coordinates of the bottom and top boundaries of the
-parameter space, respectively. If the parameter space is, for example,
-the entire plane (which is currently the only option supported by the
-package), $b_l = b_b = -\infty$ and $b_r = b_t = +\infty$.
-In the following we assume that an $x$ monotone curve $C$ can be
-considered as a parametric curve $C(t) = (X(t),Y(t))$ defined over a
-closed, open, or half open interval with endpoints~$0$ and~$1$. 
+extend the definifion of the parameter space to have either bounded or
+unbounded boundaries. Let $b_l$ and $b_r$ denote the $x$-coordinates
+of the left and right boundaries of the parameter space,
+respectively. Let $b_b$ and $b_t$ denote the $y$-coordinates of the
+bottom and top boundaries of the parameter space, respectively. If the
+parameter space is, for example, the entire plane (which is currently
+the only option supported by the package), $b_l = b_b = -\infty$ and
+$b_r = b_t = +\infty$. In the following we assume that an $x$ monotone
+curve $C$ can be considered as a parametric curve $C(t) = (X(t),Y(t))$
+defined over a closed, open, or half open interval with endpoints~$0$
+and~$1$.
 
 The additional requirements are organized in four different concepts,
 one for each side. Models of the concept associated with the bottom
 and top sides can only handle curves with finite $x$-coordinates.
 Curves with negative infinite and positive infinite $x$-coordinates
 are handled by models of concepts associated with the left and right
-sides, respectively. We defer the introducing the four individual
+sides, respectively. We defer the introducing of the four individual
 concepts to a later release to avoid clutter. Instead, we introduce
 the single concept \ccc{ArrangementOpenBoundaryTraits_2}, which
 combines all the four concepts. The combined concept refines the
@@ -263,82 +265,88 @@ $x$-coordinates and $y$-coordinates are differently handled. This
 asymmetry is brought on by the various algorithms applied to
 arrangements, the input and output arguments of which are $x$-monotone
 curves. Indeed, all curves maintained by any arrangement are
-continuous weekly $x$-monotone curves. A non $x$-monotone curve is
+continuous weakly $x$-monotone curves. A non $x$-monotone curve is
 divided into $x$-monotone sub curves (and perhaps points) before it
-is inserted into an arrangement. This asymmetry is also reflected the
-additional predicates listed below. Notice that curves that reach the
-left or right boundary sides are handled by the single predicate
-\ccc{Compare_y_near_boundary_2}, while the handling of curves that
-reach the bottom or top boundary sides is performed by the two
-predicates \ccc{Compare_x_at_limit_2} and \ccc{Compare_x_near_limit_2}.
+is inserted into an arrangement. This asymmetry is also reflected in
+the additional predicates listed below. Notice that curves that reach
+the left or right boundary sides are handled by the two predicates
+\ccc{Parameter_space_in_x_2} and \ccc{Compare_y_near_boundary_2},
+while the handling of curves that reach the bottom or top boundary
+sides is performed by the three predicates
+\ccc{Parameter_space_in_y_2}, \ccc{Compare_x_at_limit_2}, and
+\ccc{Compare_x_near_limit_2}.
 
 \begin{description}
 \item[\ccc{Parameter_space_in_x_2}:]
   Given a parametric $x$-monotone curve $C(t) = (X(t),Y(t))$ and an
-  enumeration that specifies either the minimum end or the maximum end
+  enumerator that specifies either the minimum end or the maximum end
   of the curve, and thus maps to a parameter value $d \in \{0,1\}$,
-  determine the location of the curve end along the $x$-dimension.
-  Formally, determine whether $\lim_{t \rightarrow d} X(t)$ evaluates
-  to $b_l$, $b_r$, or a value in between.
+  this predicate determines the location of the curve end along the
+  $x$-dimension. Formally, the predicate determines whether
+  $\lim_{t \rightarrow d} X(t)$ evaluates to $b_l$, $b_r$, or a value
+  in between.
   %
 \item[\ccc{Compare_y_near_boundary_2}:]
-  Given two $x$-monotone curves $C_1$ and $C_2$ and an enumeration $i$
+  Given two $x$-monotone curves $C_1$ and $C_2$ and an enumerator $i$
   that specifies either the minimum ends or the maximum ends of the
-  two curves, compare the $y$-coordinates of the curves near their
-  respective ends. That is, compare the $y$-coordinates of the
-  vertical projection of a point $p$ onto $C_1$ and onto $C_2$. If the
-  enumeration $i$ specifies the minimum ends, the curves must approach
-  the left boundary-side. In this case $p$ is located far to the left,
-  such that the result is invariant under a translation of $p$ farther
-  to the left. If $i$ specifies the maximum ends, the curves must
-  approach the right boundary-side. In that case $p$ is located far to
-  the right in a similar manner.
+  two curves, this predicate compares the $y$-coordinates of the
+  curves near their respective ends. That is, the predicate compares
+  the $y$-coordinates of the vertical projection of a point $p$ onto
+  $C_1$ and onto $C_2$. If the enumerator $i$ specifies the minimum
+  ends, the curves must approach the left boundary-side. In this case
+  $p$ is located far to the left, such that the result is invariant
+  under a translation of $p$ farther to the left. If $i$ specifies the
+  maximum ends, the curves must approach the right boundary-side. In
+  that case $p$ is located far to the right in a similar manner.
   %
 \item[\ccc{Parameter_space_in_y_2}:]
   Given a parametric $x$-monotone curve $C(t) = (X(t),Y(t))$ and an
-  enumeration that specifies either the minimum end or the maximum end
+  enumerator that specifies either the minimum end or the maximum end
   of the curve, and thus maps to a parameter value $d \in \{0,1\}$,
-  determine the location of the curve end along the $y$-dimension.
-  Formally, determine whether $\lim_{t \rightarrow d} Y(t)$ evaluates
-  to $b_b$, $b_t$, or a value in between.
+  this predicate determines the location of the curve end along the
+  $y$-dimension. Formally, the predicate determines whether
+  $\lim_{t \rightarrow d} Y(t)$ evaluates to $b_b$, $b_t$, or a value
+  in between.
   %
 \item[\ccc{Compare_x_at_limit_2}:]
-  This predicate is overloaded with two versions as follows:
+  Two versions of this predicate are provided:
   (i) Given a point $p$, a parametric $x$-monotone curve
-    $C(t) = (X(t),Y(t))$, and an enumeration that specifies either the
+    $C(t) = (X(t),Y(t))$, and an enumerator that specifies either the
     minimum end or the maximum end of the curve, and thus maps to a
-    parameter value $d \in \{0,1\}$, compare the $x$-coordinate of $p$
-    and $\lim_{t \rightarrow d} X(t)$. A precondition assures that $C$
-    has a vertical asymptote at its $d$-end; that is
-    $b_l < \lim_{t \rightarrow d} X(t) < b_r$.
+    parameter value $d \in \{0,1\}$, this predicate compares the
+    $x$-coordinate of $p$ and $\lim_{t \rightarrow d} X(t)$. A
+    precondition assures that $C$ has a vertical asymptote at its
+    $d$-end; that is $b_l < \lim_{t \rightarrow d} X(t) < b_r$.
   (ii) Given two parametric $x$-monotone curves
     $C_1(t) = (X_1(t),Y_1(t))$ and $C_2(t) = (X_2(t),Y_2(t))$ and two
-    enumerations that specify either the minimum end or the maximum
+    enumerators that specify either the minimum end or the maximum
     end of each curve, and thus map to parameter values
     $d_1\in \{0,1\}$ and $d_2 \in \{0,1\}$ for $C_1$ and for $C_2$,
-    respectively, compare $\lim_{t \rightarrow d_1} X_1(t)$ and
-    $\lim_{t \rightarrow d_2} X_2(t)$. A precondition assures that $C_1$
-    and $C_2$ have vertical asymptote at their respective ends;
-    that is $b_l < \lim_{t \rightarrow d_1} X_1(t) < b_r$ and
+    respectively, this predicate compares
+    $\lim_{t \rightarrow d_1} X_1(t)$ and $\lim_{t \rightarrow d_2} X_2(t)$.
+    A precondition assures that $C_1$ and $C_2$ have vertical
+    asymptote at their respective ends; that is
+    $b_l < \lim_{t \rightarrow d_1} X_1(t) < b_r$ and
     $b_l < \lim_{t \rightarrow d_2} X_2(t)< b_r$.
 %
 \item[\ccc{Compare_x_near_limit_2}:]
-  Given two $x$-monotone curves $C_1$ and $C_2$ and an enumeration $i$
+  Given two $x$-monotone curves $C_1$ and $C_2$ and an enumerator $i$
   that specifies either the minimum ends or the maximum ends of the
-  two curves, compare the $x$-coordinates of the curves near their
-  respective ends. That is, compare the $y$-coordinates of the
-  horizontal projection of a point $p$ onto $C_1$ and onto $C_2$.
-  A precondition assures that $C_1$ and $C_2$ have vertical asymptote
-  at their respective ends. Furthermore, both curves approach the same
-  boundary-side, either the bottom or the top, at their respective
-  ends. If both curves approach the bottom boundary-side, $p$ is
-  located far to the bottom, such that the result is invariant under a
-  translation of $p$ farther to the bottom. If both curves approach
-  the top boundary-side, $p$ is located far to the top in a similar
-  manner. Another precondition assures that the $x$-coordinates of the
-  limits of the curves at their respective ends are equal. That is,
-  the predicate \ccc{Compare_x_at_limit_2} applied to $C_1$, $C_2$,
-  and $i$ evaluates to \ccc{EQUAL}.
+  two curves, this predicate compares the $x$-coordinates of the
+  curves near their respective ends. That is, the predicate compares
+  the $x$-coordinates of the horizontal projection of a point $p$ onto
+  $C_1$ and onto $C_2$. A precondition assures that $C_1$ and $C_2$
+  have vertical asymptote at their respective ends. Furthermore, both
+  curves approach the same boundary-side, either the bottom or the
+  top, at their respective ends. If both curves approach the bottom
+  boundary-side, $p$ is located far to the bottom, such that the
+  result is invariant under a translation of $p$ farther to the
+  bottom. If both curves approach the top boundary-side, $p$ is
+  located far to the top in a similar manner. Another precondition
+  assures that the $x$-coordinates of the limits of the curves at
+  their respective ends are equal. That is, the predicate
+  \ccc{Compare_x_at_limit_2} applied to $C_1$, $C_2$, and $i$
+  evaluates to \ccc{EQUAL}.
 \end{description}
 \lcTex{\color{black}}
 \begin{ccHtmlOnly}
@@ -831,7 +839,7 @@ multiplicity $1$:
 
 The traits class
 \ccc{Arr_rational_function_traits_2<AlgebraicKernel_d_1>} is a model
-of the \ccc{ArrangementTraits_2} concept. It handles bounded or
+of the \ccc{ArrangementTraits_2} concept. It handles bounded and
 unbounded arcs of rational functions, referred to as
 \emph{rational arcs} (in particular, such an arc may correspond to the
 entire graph of a rational function), and enables the construction and
@@ -847,20 +855,22 @@ the function is a simple polynomial function. Usually the domain is
 $\R$ but the function may also be restricted to a bounded interval
 $[x_{\rm min}, x_{\rm max}]$ or defined over a ray
 $(-\infty, x_{\rm max}]$ or $[x_{\rm min}, \infty)$. Rational
-functions are represented by the nested type \ccc{Curve_2}. Note
-that a rational function may be not continuous since roots of $Q$
-induce vertical asymptotes, which would contradict the notion of an
-$x$-monotone curve as it is introduced by the \ccc{ArrangementTraits_2}
-concept. Continuous portions of rational functions are represented
-by the nested type \ccc{X_monotone_curve_2}, which is different than
-\ccc{Curve_2}. Constructors for both types are provided by the
-traits. A \ccc{Curve_2} may be split up into several
+functions are represented by the nested type \ccc{Curve_2}.
+A rational arc is always $x$-monotone in the mathematical
+sense. However, it is not necessarily continuous, as it may have
+singularities. An arc that has singularities must 
+be split into continuous portions before being inserted into the
+arrangement. Arbitrary rational functions are represented by the 
+nested type \ccc{Curve_2} and continuous portions of rational
+functions are represented by the nested type
+\ccc{X_monotone_curve_2}. Constructors for both types are provided by
+the traits. A \ccc{Curve_2} may be split up into several
 \ccc{X_monotone_curve_2} using \ccc{Make_x_monotone_2}.
 
 Using the \ccc{Arr_rational_function_traits_2<AlgebraicKernel_d_1>}
 class template it is possible to construct and maintain arrangement
-of rational arcs. The template parameter of the traits must model
-the concept \ccc{AlgebraicKernel_d_1}. A rational function then is
+of rational arcs. The template parameter of the traits must be a model
+of the concept \ccc{AlgebraicKernel_d_1}. A rational function is
 represented as the quotient of two polynomials $P$ and $Q$ of type
 \ccc{AlgebraicKernel_d_1::Polynomial_1} and an $x$-interval over which
 the polynomials are defined. The type of the polynomial coefficients,
@@ -881,18 +891,21 @@ to construct curves using only the constructor objects provided by
 member functions of the traits class.
 %This is also the reason why IO is not handled via the usual stream operators. 
 Moreover, a curve must only be used by the traits class object that
-was used to construct it. These constructors have an aditional
-advantage. They enable the conveniency to provide the two defining
-polynomials using rational coefficients. For each constructor of
+was used to construct it. The cache is automatically cleaned up from
+time to time. The amortized clean up costs are constant. In addition,
+there is also a separate member function that cleans up the cache on
+demand.
+
+The curve constructors have an additional advantage. They conveniently
+enable the provision of two polynomials that define a rational arc
+using rational coefficients. For each constructor of
 a rational curve, of either the type \ccc{Curve} or
 \ccc{X_monotone_curve}, defined by two polynomials, say $P$ and $Q$,
 if the user chooses to provide rational coefficients for $P$ and $Q$,
 the constructor normalizes the coefficients and generates two new
 defining polynomials $P'$ and $Q'$ with coefficients of the
 appropriate integral type, such that quotients $P/Q$ and $P'/Q'$ are 
-identical. The cache is automatically cleaned up from time to
-time. The amortized clean up costs are constant. In addition, there is
-also a separate member function that cleans up the cache on demand.
+identical.
 
 \ccc{Arr_rational_function_traits_2<AlgebraicKernel_d_1>} is a model
 of the concepts \ccc{ArrangementTraits_2},
@@ -946,7 +959,7 @@ constructed in
 
 The following example demonstrates the construction of an
 arrangement of six rational arcs---four unbounded arcs and two
-bounded ones---as depicted in Figure~\ref{arr_fig:ex_unb1}. Note
+bounded ones---as depicted in Figure~\ref{arr_fig:ex_unb_rat}. Note
 the usage of the constructors of an entire rational function and of
 an infinite ``ray'' of such a function. Also observe that the hyperbolas
 $y = \pm\frac{1}{x}$ and $y = \pm\frac{1}{2x}$ never intersect, although
