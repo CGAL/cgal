@@ -140,10 +140,10 @@ public:
       }
   }
 
-  void clear() 
+  void cleanup() 
   {
-    _rat_func_map.clear();
-    _rat_pair_map.clear();
+    rat_func_map_clean_up();
+    rat_pair_map_clean_up();
   }
 private:
   Rational_function_key get_key(const Polynomial_1& numer, const Polynomial_1& denom) const 

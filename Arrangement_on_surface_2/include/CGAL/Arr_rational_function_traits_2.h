@@ -1088,7 +1088,7 @@ public:
 
   void cleanup_cache() const
   {
-    _cache.clear();
+    _cache.cleanup();
   }
 }; //Arr_rational_function_traits_2
 
