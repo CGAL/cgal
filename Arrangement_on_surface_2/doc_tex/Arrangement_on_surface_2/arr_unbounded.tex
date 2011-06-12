@@ -167,7 +167,7 @@ $\calC$. This process would result in a set $\calC$ of bounded curves
 straightforward to compute the arrangement induced by this set.
 However, we would like to operate directly on the unbounded curves
 without having to preprocess them. Therefore, we use an implicit
-bounding rectangle embedded in the \dcel\ structure.
+bounding rectangle embedded in the \dcel{} structure.
 Figure~\ref{arr_fig:unb_dcel} shows the arrangement of four lines
 that subdivide the plane into eight unbounded faces and two bounded
 ones. Notice that in this case the unbounded faces have outer
@@ -180,7 +180,7 @@ represent portions of the bounding rectangle. Note that the outer CCBs
 of the unbounded faces contain fictitious halfedges. The twins of these
 halfedges form together one connected component that corresponds to
 the entire imaginary rectangle, which forms a single hole in a face
-$\tilde{f}$. We say that $\tilde{f}$ is \emph{fictitious}, as it does
+$f_0$. We say that $f_0$ is \emph{fictitious}, as it does
 not corresponds to a real two-dimensional cell of the arrangement.
 
 Observe that there are four extra vertices at infinity that do not lie
