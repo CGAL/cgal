@@ -898,14 +898,16 @@ demand.
 
 The curve constructors have an additional advantage. They conveniently
 enable the provision of two polynomials that define a rational arc
-using rational coefficients. For each constructor of
-a rational curve, of either the type \ccc{Curve} or
-\ccc{X_monotone_curve}, defined by two polynomials, say $P$ and $Q$,
-if the user chooses to provide rational coefficients for $P$ and $Q$,
-the constructor normalizes the coefficients and generates two new
-defining polynomials $P'$ and $Q'$ with coefficients of the
-appropriate integral type, such that quotients $P/Q$ and $P'/Q'$ are 
-identical.
+using rational coefficients. For example, let $P$ and $Q$ denote two
+polynomials with integral coefficients that define a rational arc at
+interest, and let $P'$ and $Q'$ denote two polynomials with rational
+coefficients that define the same rational arc; that is, the quotients
+$P/Q$ and $P'/Q'$ are identical. You can construct the rational arc
+providing $P'$ and $Q'$ to the constructor. In this case the
+constructor normalizes the coefficients and stores the desired
+polynomials $P$ and $Q$. You need, however, to explicitly use the 
+types provided by the \emph{Polynomial} package to construct $P'$ and
+$Q'$.
 
 \ccc{Arr_rational_function_traits_2<AlgebraicKernel_d_1>} is a model
 of the concepts \ccc{ArrangementTraits_2},
@@ -917,7 +919,7 @@ use the landmark point-location strategy.
 %\footnote{This requires a relaxation of \ccc{ArrangementLandmarkTraits_2}, 
 %which will be submitted separately.}
 
-\begin{figure}[h] 
+\begin{figure}[h]
 \begin{ccTexOnly} 
   \begin{center}
   \includegraphics{Arrangement_on_surface_2/fig/ex_16}

@@ -14,7 +14,7 @@
 %============
 
 The traits class \ccRefName\ is a model of the \ccc{ArrangementTraits_2}
-concept. It handles bounded or unbounded arcs of rational functions,
+concept. It handles bounded and unbounded arcs of rational functions,
 referred to as {\sl rational arcs} (in particular, such an arc may
 correspond to the entire graph of a rational function), and enables the
 construction and maintenance of arrangements of such arcs. 
@@ -204,11 +204,12 @@ may not contain a vertical asymptote in its interior $x$-range.
 \ccGlue
 \ccMethod{const Point_2& source() const;}
   {returns the source point of the arc.
-   \ccPrecond{The source is finite in both $x$ and $y$.}}
+   \ccPrecond{Both the $x$- and $y$-coordinates of the source point is
+   finite.}}
 \ccGlue
 \ccMethod{Algebraic_real_1 source_x() const;}
   {returns the $x$-coordinate of the source point.
-   \ccPrecond{The source point is finite in $x$.}}
+   \ccPrecond{The $x$-coordinate of the source point is finite.}}
 %\ccGlue
 %\ccMethod{Algebraic_real_1 source_y() const;}
 %  {returns the $y$-coordinate of the source point.
@@ -226,11 +227,12 @@ may not contain a vertical asymptote in its interior $x$-range.
 \ccGlue
 \ccMethod{const Point_2& target() const;}
   {returns the target point of the arc.
-   \ccPrecond{The target is finite in both $x$ and $y$.}}
+   \ccPrecond{Both the $x$- and $y$-coordinates of the target point is
+   finite.}}
 \ccGlue
 \ccMethod{Algebraic_real_1 target_x() const;}
   {returns the $x$-coordinate of the target point.
-   \ccPrecond{The target point is finite in $x$.}}
+   \ccPrecond{The $x$-coordinate of the target point is finite.}}
 %\ccGlue
 %\ccMethod{Algebraic_real_1 target_y() const;}
 %  {returns the $y$-coordinate of the target point.
@@ -248,11 +250,11 @@ may not contain a vertical asymptote in its interior $x$-range.
 \ccGlue
 \ccMethod{const Point_2& left() const;}
   {returns the left point of the arc.
-   \ccPrecond{The left is finite in both $x$ and $y$.}}
+   \ccPrecond{Both the $x$- and $y$-coordinates of the left point is finite.}}
 \ccGlue
 \ccMethod{Algebraic_real_1 left_x() const;}
   {returns the $x$-coordinate of the left point.
-   \ccPrecond{The left point is finite in $x$.}}
+   \ccPrecond{The $x$-coordinate of the left point is finite.}}
 %\ccGlue
 %\ccMethod{Algebraic_real_1 left_y() const;}
 %  {returns the $y$-coordinate of the left point.
@@ -270,7 +272,8 @@ may not contain a vertical asymptote in its interior $x$-range.
 \ccGlue
 \ccMethod{const Point_2& right() const;}
   {returns the right point of the arc.
-   \ccPrecond{The right is finite in both $x$ and $y$.}}
+   \ccPrecond{Both the $x$- and $y$-coordinates of The right point is
+   finite.}}
 \ccGlue
 \ccMethod{Algebraic_real_1 right_x() const;}
   {returns the $x$-coordinate of the right point.
