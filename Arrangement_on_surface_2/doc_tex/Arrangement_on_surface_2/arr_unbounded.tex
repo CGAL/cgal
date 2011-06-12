@@ -245,22 +245,28 @@ Section~\ref{arr_ssec:traverse}:
 \begin{itemize}
 \item
  The \ccc{Vertex} class provides three-valued predicates
-  \ccc{parameter_space_in_x()} and \ccc{parameter_space_in_y()}.
-  Both return \ccc{ARR_INTERIOR} if the point associated with the
-  vertex has a finite $x$-coordinate or a finite $y$-coordinate,
-  respectively. The former returns \ccc{ARR_LEFT_BOUNDARY} if the
-  $x$-coordinate of the point approaches $-\infty$ (the vertex lies
-  on the left boundary-side) and \ccc{ARR_RIGHT_BOUNDARY} if the
+  \ccc{parameter_space_in_x()} and
+  \ccc{parameter_space_in_y()}.\footnote{The term parameter space
+    stems from a major extension the arrangement package is going
+    through to support arrangements embedded on certain
+    two-dimensional parametric surfaces in three-dimensions (or
+    higher).} Both return \ccc{ARR_INTERIOR} if the point associated
+  with the vertex has a finite $x$-coordinate or a finite
+  $y$-coordinate, respectively. The former returns
+  \ccc{ARR_LEFT_BOUNDARY} if the $x$-coordinate of the point
+  approaches $-\infty$ (the vertex lies on the left side of the
+  imaginary bounding rectangle) and \ccc{ARR_RIGHT_BOUNDARY} if the
   $x$-coordinate approaches $\infty$ (the vertex lies on the right
-  boundary-side). The latter returns \ccc{ARR_BOTTOM_BOUNDARY} if the
-  $y$-coordinate of the point approaches $-\infty$ (the vertex lies
-  on the bottom boundary-side) and \ccc{ARR_TOP_BOUNDARY} if the
-  $y$-coordinate approaches $\infty$ (the vertex lies on the top
-  boundary-side).
-  The Boolean predicate \ccc{is_at_open_boundary()} is also supported.
-  You can access the point associated with a vertex only if it is not
-  a vertex at an open boundary (recall that a vertex at an open
-  boundary is not associated with a \ccc{Point_2} object).
+  side of the imaginary bounding rectangle). The latter returns
+  \ccc{ARR_BOTTOM_BOUNDARY} if the $y$-coordinate of the point
+  approaches $-\infty$ (the vertex lies on the bottom side of the
+  imaginary bounding rectangle) and \ccc{ARR_TOP_BOUNDARY} if the
+  $y$-coordinate approaches $\infty$ (the vertex lies on the top side
+  of the imaginary bounding rectangle). The Boolean predicate
+  \ccc{is_at_open_boundary()} is also supported. You can access the
+  point associated with a vertex only if it is not a vertex at an open
+  boundary (recall that a vertex at an open boundary is not associated
+  with a \ccc{Point_2} object).
 %
 \item
   The nested \ccc{Halfedge} class provides the Boolean predicate
