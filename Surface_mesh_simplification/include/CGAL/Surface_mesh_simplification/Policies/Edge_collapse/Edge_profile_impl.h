@@ -234,7 +234,7 @@ void Edge_profile<ECM>::Extract_triangles_and_link( VertexIdxMap const&    verte
     
     v1 = v2 ;
      
-    e02 = opposite_edge(prev_edge(e02,surface()), surface);
+    e02 = opposite_edge(prev_edge(e02,surface()), surface());
   }
   while ( e02 != mV1V0 ) ;
 }
