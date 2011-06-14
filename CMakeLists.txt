@@ -22,9 +22,22 @@ if ( ${CGAL_SCM_NAME} STREQUAL "svn" )
 
   find_program(SVN_EXECUTABLE svn DOC "subversion command line client")
 
-  # TODO detect name
-  set ( CGAL_SCM_BRANCH_NAME "n/a" )
+  function(Subversion_GET_URL dir variable)
+    # use svnversion
+    execute_process(COMMAND "${SVN_EXECUTABLE}" info --xml "${dir}"
+      OUTPUT_VARIABLE ${variable}
+      OUTPUT_STRIP_TRAILING_WHITESPACE)
+    string(REGEX REPLACE ".*<url>([^<]+)</url>.*" "\\1" ${variable} "${${variable}}")
+    if(NOT variable)
+      message("Warning: can not get the Subversion URL of directory ${dir}")
+    endif()
+    set(${variable} ${${variable}} PARENT_SCOPE)
+  endfunction(Subversion_GET_URL)
 
+  Subversion_GET_URL("${CGAL_INSTALLATION_PACKAGE_DIR}" CGAL_INSTALLATION_SVN_URL)
+  string(REGEX REPLACE "(.*)/Installation" "\\1" CGAL_TMP_SVN_BRANCH_NAME "${CGAL_INSTALLATION_SVN_URL}")
+
+  set ( CGAL_SCM_BRANCH_NAME "${CGAL_TMP_SVN_BRANCH_NAME}" )
 endif()
 
 if ( ${CGAL_SCM_NAME} STREQUAL "git" )

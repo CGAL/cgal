@@ -189,8 +189,7 @@ void Edge_profile<ECM>::Extract_triangles_and_link( VertexIdxMap const&    verte
   
   do
   {
-    e02 = next_edge_ccw(e02,surface());
-    
+    e02 = opposite(prev_edge(e02,surface()), surface());
     vertex_descriptor v2 = target(e02,surface());
   
     if ( v2 != mV1 )
@@ -212,7 +211,7 @@ void Edge_profile<ECM>::Extract_triangles_and_link( VertexIdxMap const&    verte
   
   v0 = mV1;
   
-  e02 = next_edge_ccw(mV1V0,surface());
+  e02 = opposite(prev_edge(mV1V0,surface()), surface());
   
   v1 = target(e02,surface()); 
 
@@ -221,7 +220,7 @@ void Edge_profile<ECM>::Extract_triangles_and_link( VertexIdxMap const&    verte
   if ( v1 != mV0 && lCollected.find(vertex_idx[v1]) == lCollected.end() )
     mLink.push_back(v1) ;
   
-  e02 = next_edge_ccw(e02,surface());
+  e02 = opposite(prev_edge(e02,surface()), surface());
   
   do
   {
@@ -235,8 +234,7 @@ void Edge_profile<ECM>::Extract_triangles_and_link( VertexIdxMap const&    verte
     
     v1 = v2 ;
      
-    e02 = next_edge_ccw(e02,surface());
-    
+    e02 = opposite(prev_edge(e02,surface()), surface);
   }
   while ( e02 != mV1V0 ) ;
 }

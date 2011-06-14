@@ -134,6 +134,9 @@ if ( CGAL_BRANCH_BUILD )
         OUTPUT_VARIABLE ${variable}
         OUTPUT_STRIP_TRAILING_WHITESPACE)
       string(REGEX REPLACE "^(.*\n)?   revision=\"([^\n]+)\".*url.*" "\\2" ${variable} "${${variable}}")
+      if(NOT variable)
+        message("Warning: can not get the Subversion revision of directory ${dir}")
+      endif()
       set(${variable} ${${variable}} PARENT_SCOPE)
     endfunction(Subversion_GET_REVISION)
 
