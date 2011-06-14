@@ -51,10 +51,10 @@ namespace CGAL {
   typedef boost::uint32_t  UInteger32;
 
 #ifndef BOOST_NO_INT64_T
+// this macro is still provided but its use is discouraged
 #   define CGAL_HAS_INTEGER64
   typedef boost::int64_t   Integer64;
   typedef boost::uint64_t  UInteger64;
-// this macro is still provided but its use is discouraged
 #endif
 
 } //namespace CGAL
