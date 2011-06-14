@@ -263,7 +263,7 @@ MainWindow::MainWindow(QWidget* parent)
   QScriptValue fun = script_engine->newFunction(myPrintFunction);
   script_engine->globalObject().setProperty("print", fun);
   
-  evaluate_script("print('hello', 'world', 'from QtScript!')");
+  //  evaluate_script("print('hello', 'world', 'from QtScript!')");
   QScriptValue mainWindowObjectValue = script_engine->newQObject(this);
   script_engine->globalObject().setProperty("main_window", mainWindowObjectValue);
 
