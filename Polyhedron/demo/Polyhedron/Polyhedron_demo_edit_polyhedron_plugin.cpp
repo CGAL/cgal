@@ -267,10 +267,13 @@ void Polyhedron_demo_edit_polyhedron_plugin::edition() {
   typedef Kernel::Vector_3 Vector;
   typedef Polyhedron::Vertex_handle Vertex_handle;
 
-  const Point& orig = edit_item->original_position();
-  Q_UNUSED(orig)
   const Point& last_position = edit_item->last_position();
   const Vector translation = edit_item->current_position() - last_position;
+
+  // 'orig' could be used instead of 'last_position', to get the
+  // translation vector from the first position.
+  const Point& orig = edit_item->original_position();
+  Q_UNUSED(orig)
 
   // -- ACTUAL DEFORMATION --
 
