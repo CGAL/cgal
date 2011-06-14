@@ -1,24 +1,23 @@
-#include <CGAL/known_bit_size_integers.h>
 #include <cassert>
 #include <iostream>
 
 int main()
 {
-  std::cout << "Verifying the sizes of CGAL::[U]Integer{8,16,32,64}"
+  std::cout << "Verifying the sizes of boost::[u]int{8,16,32,64}_t"
             << std::endl;
 
-  assert(sizeof(CGAL::Integer8)  == 1);
-  assert(sizeof(CGAL::Integer16) == 2);
-  assert(sizeof(CGAL::Integer32) == 4);
-#ifdef CGAL_HAS_INTEGER64
-  assert(sizeof(CGAL::Integer64) == 8);
+  assert(sizeof(boost::int8_t)  == 1);
+  assert(sizeof(boost::int16_t) == 2);
+  assert(sizeof(boost::int32_t) == 4);
+#ifndef BOOST_NO_INT64_T
+  assert(sizeof(boost::int64_t) == 8);
 #endif
 
-  assert(sizeof(CGAL::UInteger8)  == 1);
-  assert(sizeof(CGAL::UInteger16) == 2);
-  assert(sizeof(CGAL::UInteger32) == 4);
-#ifdef CGAL_HAS_INTEGER64
-  assert(sizeof(CGAL::UInteger64) == 8);
+  assert(sizeof(boost::uint8_t)  == 1);
+  assert(sizeof(boost::uint16_t) == 2);
+  assert(sizeof(boost::uint32_t) == 4);
+#ifndef BOOST_NO_INT64_T
+  assert(sizeof(boost::uint64_t) == 8);
 #endif
 
   return 0;

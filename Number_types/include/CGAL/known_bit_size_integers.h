@@ -37,8 +37,9 @@
 #endif
 
 #include <CGAL/number_type_basic.h>
-#include <boost/mpl/if.hpp>
 #include <boost/cstdint.hpp>
+
+#ifndef CGAL_NO_DEPRECATED_CODE
 
 namespace CGAL {
 
@@ -58,5 +59,7 @@ namespace CGAL {
 #endif
 
 } //namespace CGAL
+
+#endif // CGAL_NO_DEPRECATED_CODE
 
 #endif // CGAL_KNOWN_BIT_SIZE_INTEGERS_H
