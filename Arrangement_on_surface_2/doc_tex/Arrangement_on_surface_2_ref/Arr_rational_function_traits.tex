@@ -13,7 +13,7 @@
 \ccDefinition
 %============
 
-The traits class \ccRefName\ is a model of the \ccc{ArrangementTraits_2}
+The traits class \ccRefName{} is a model of the \ccc{ArrangementTraits_2}
 concept. It handles bounded and unbounded arcs of rational functions,
 referred to as {\sl rational arcs} (in particular, such an arc may
 correspond to the entire graph of a rational function), and enables the
@@ -30,8 +30,8 @@ restricted to a bounded interval $[x_{\rm min}, x_{\rm max}]$
 or defined over a ray $(-\infty, x_{\rm max}]$ or over $[x_{\rm min}, \infty)$. 
 Rational functions are represented by the nested type \ccc{Curve_2}. 
 Note that a rational function may be not continuous since roots of $Q$ induce 
-vertical asymptotes, which would contradict the notion of an $x$-monotone curve as 
-it is introduced by the \ccc{ArrangementTraits_2} concept. 
+vertical asymptotes, which would contradict the notion of an $x$-monotone curve
+as it is introduced by the \ccc{ArrangementTraits_2} concept. 
 Thus, continuous portions of rational functions are represented by the nested 
 type \ccc{X_monotone_curve_2}, which is different from \ccc{Curve_2}.
 Constructors for both classes are provided by the traits. 
@@ -72,7 +72,6 @@ The cache is automatically  cleaned up from time to time.
 The amortized clean up costs are constant. However, there is also a 
 separate member function that cleans up the cache on demand.  
 
-
 \ccInclude{CGAL/Arr_rational_function_traits_2.h}
 
 \ccIsModel
@@ -81,7 +80,8 @@ separate member function that cleans up the cache on demand.
   \ccc{ArrangementDirectionalXMonotoneTraits_2}\\
   \ccc{ArrangementOpenBoundaryTraits_2}
 
-\ccTypes \ccThree{}{xxxxxxxxxxxxxxxxxxxxxx}{x} 
+\ccTypes
+\ccThree{}{xxxxxxxxxxxxxxxxxxxxxx}{x} 
 \ccTypedef{typedef AlgebraicKernel_d_1 Algebraic_kernel_d_1;}{}\ccGlue
 \ccTypedef{typedef AlgebraicKernel_d_1::Coefficient Coefficient;}{}\ccGlue
 \ccTypedef{typedef AlgebraicKernel_d_1::Polynomial_1 Polynomial_1;}{}\ccGlue
@@ -91,24 +91,32 @@ separate member function that cleans up the cache on demand.
 %\ccTypedef{typedef AlgebraicKernel_d_1::Bound Approximate_number_type;}{}\ccGlue
 %\ccNestedType{Approximate_2}{
 %A model of \ccc{ArrangementLandmarkTraits_2::Approximate_2}}\ccGlue
-%\ccMethod{Approximate_2 approximate_2_object() const;}{ Returns an instance of \ccc{Construct_curve_2}.}
+%\ccMethod{Approximate_2 approximate_2_object() const;}{Returns an instance of \ccc{Construct_curve_2}.}
 
+\ccCreation
+% =========
+\ccConstructor{Arr_rational_function_traits_2<AlgebraicKernel_d_1>(const Algebraic_kernel_d_1* kernel);}
+  {constructs an empty traits that uses the kernel pointed by \ccc{kernel}
+   for performing algebraic operations.}
 
 \ccOperations
+% ===========
 \ccThree{xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx}{xxxxxxx}{} 
-\ccMethod{Construct_curve_2 construct_curve_2_object() const;}{ Returns an instance of \ccc{Construct_curve_2}.}\ccGlue
-%\ccMethod{Curve_importer_2 curve_importer_2_object() const;}{ Returns an instance of \ccc{Curve_importer_2}.}\ccGlue
-%\ccMethod{Curve_exporter_2 curve_exporter_2_object() const;}{ Returns an instance of \ccc{Curve_exporter_2}.}\ccGlue
-\ccMethod{Construct_x_monotone_curve_2 construct_x_monotone_curve_2_object() const;}{ Returns an instance of \ccc{Construct_x_monotone_curve_2}.}\ccGlue
-%\ccMethod{X_monotone_curve_importer_2 x_monotone_curve_importer_2_object() const;}{ Returns an instance of \ccc{X_monotone_curve_importer_2}.}\ccGlue
-%\ccMethod{X_monotone_curve_exporter_2 x_monotone_curve_exporter_2_object() const;}{ Returns an instance of \ccc{X_monotone_curve_exporter_2}.}\ccGlue
+\ccMethod{Construct_curve_2 construct_curve_2_object() const;}
+  {Returns an instance of \ccc{Construct_curve_2}.}\ccGlue
+%\ccMethod{Curve_importer_2 curve_importer_2_object() const;}{Returns an instance of \ccc{Curve_importer_2}.}\ccGlue
+%\ccMethod{Curve_exporter_2 curve_exporter_2_object() const;}{Returns an instance of \ccc{Curve_exporter_2}.}\ccGlue
+\ccMethod{Construct_x_monotone_curve_2 construct_x_monotone_curve_2_object() const;}
+  {Returns an instance of \ccc{Construct_x_monotone_curve_2}.}\ccGlue
+%\ccMethod{X_monotone_curve_importer_2 x_monotone_curve_importer_2_object() const;}{Returns an instance of \ccc{X_monotone_curve_importer_2}.}\ccGlue
+%\ccMethod{X_monotone_curve_exporter_2 x_monotone_curve_exporter_2_object() const;}{Returns an instance of \ccc{X_monotone_curve_exporter_2}.}\ccGlue
 
-\ccMethod{void cleanup_cache() const;}{Deletes all curves from the cache that exist only there.}
-\ccMethod{const Algebraic_kernel_d_1& algebraic_kernel_d_1() const;}{
-Returns a const reference to the used algerbaic kernel instance.}
+\ccMethod{void cleanup_cache() const;}
+  {Deletes all curves from the cache that exist only there.}
+\ccMethod{const Algebraic_kernel_d_1& algebraic_kernel_d_1() const;}
+  {Returns a const reference to the used algerbaic kernel instance.}
 
-
-\subsection*{Class   Arr\_rational\_function\_traits\_2$<$AlgebraicKernel\_d\_1$>$::Curve\_2}
+\subsection*{Class Arr\_rational\_function\_traits\_2$<$AlgebraicKernel\_d\_1$>$::Curve\_2}
 \begin{ccClass}{Arr_rational_function_traits_2<AlgebraicKernel_d_1>::Curve_2}
 \ccCreationVariable{curve}
 
@@ -125,8 +133,8 @@ to represent rational functions which may be restricted to a certain x-range.
 
 
 \ccTypes \ccThree{}{xxxxxxxxxxxxxxxxxxxxxx}{x}
-\ccTypedef{typedef AlgebraicKernel_d_1::Polynomial_1 Polynomial_1; }{}\ccGlue
-\ccTypedef{typedef AlgebraicKernel_d_1::Algebraic_real_1 Algebraic_real_1; }{}
+\ccTypedef{typedef AlgebraicKernel_d_1::Polynomial_1 Polynomial_1;}{}\ccGlue
+\ccTypedef{typedef AlgebraicKernel_d_1::Algebraic_real_1 Algebraic_real_1;}{}
 
 \ccOperations
 \ccThree{xxxxxxxxxxxxxxxxxxxx}{xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx}{}
@@ -177,8 +185,8 @@ may not contain a vertical asymptote in its interior $x$-range.
 % \ccc{LessThanComparable}\\ should we add this, its possible to define some order.. 
 
 \ccTypes \ccThree{}{xxxxxxxxxxxxxxxxxxxxxx}{x}
-\ccTypedef{typedef AlgebraicKernel_d_1::Polynomial_1 Polynomial_1; }{}\ccGlue
-\ccTypedef{typedef AlgebraicKernel_d_1::Algebraic_real_1 Algebraic_real_1; }{}\ccGlue
+\ccTypedef{typedef AlgebraicKernel_d_1::Polynomial_1 Polynomial_1;}{}\ccGlue
+\ccTypedef{typedef AlgebraicKernel_d_1::Algebraic_real_1 Algebraic_real_1;}{}\ccGlue
 \ccTypedef{typedef Arr_rational_function_traits_2<AlgebraicKernel_d_1>::Point_2 Point_2;}{}
 
 \ccOperations
@@ -287,10 +295,7 @@ may not contain a vertical asymptote in its interior $x$-range.
   {returns whether the curve is oriented from left to right.}
 \end{ccClass}
 
-
-
-
-\subsection*{Class   Arr\_rational\_function\_traits\_2$<$AlgebraicKernel\_d\_1$>$::Point\_2}
+\subsection*{Class Arr\_rational\_function\_traits\_2$<$AlgebraicKernel\_d\_1$>$::Point\_2}
 \begin{ccClass}{Arr_rational_function_traits_2<AlgebraicKernel_d_1>::Point_2}
 \ccCreationVariable{point}
 
@@ -302,68 +307,67 @@ may not contain a vertical asymptote in its interior $x$-range.
 \ccc{LessThanComparable}
 
 \ccTypes \ccThree{}{xxxxxxxxxxxxxxxxxxxxxx}{x}
-\ccTypedef{typedef AlgebraicKernel_d_1::Polynomial_1 Polynomial_1; }{}\ccGlue
-\ccTypedef{typedef AlgebraicKernel_d_1::Algebraic_real_1 Algebraic_real_1; }{}\ccGlue
-\ccTypedef{typedef AlgebraicKernel_d_1::Bound Bound; }{}
+\ccTypedef{typedef AlgebraicKernel_d_1::Polynomial_1 Polynomial_1;}{}\ccGlue
+\ccTypedef{typedef AlgebraicKernel_d_1::Algebraic_real_1 Algebraic_real_1;}{}\ccGlue
+\ccTypedef{typedef AlgebraicKernel_d_1::Bound Bound;}{}
 
 \ccOperations
 \ccThree{xxxxxxxxxxxxxxxxxxxxxxxxx}{xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx}{}
 \ccTwo  {xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx}{}
 
 \ccMethod{Polynomial_1 numerator () const;}
-{returns the numerator of the supporting rational function.}
+  {returns the numerator of the supporting rational function.}
 
 \ccMethod{Polynomial_1 denominator () const;}
-{returns the denominator of the supporting rational function.}
+  {returns the denominator of the supporting rational function.}
 
-\ccMethod{std::pair<double,double> to_double() const;}{
-  returns double-approximations of the x- and y-coordinates. 
-}
+\ccMethod{std::pair<double,double> to_double() const;}
+  {returns double-approximations of the x- and y-coordinates.}
 
 \ccMethod{Algebraic_real_1 x() const;}
-{returns the $x$-coordinate of the point.}
+  {returns the $x$-coordinate of the point.}
 \ccThree{xxxxxxxxxxxxxxxxxxxxxxxx}{xxxxx}{}
 
 \ccMethod{Algebraic_real_1 y() const;}
-{obtains the y-coordinates of the point. {\bf Attention:} As described above, points are not stored by their y-coordinate in \ccc{Algebraic_real_1} representation. In fact, this representation must be computed on demand, and might become quite costly for points defined by high-degree polynomials. Therefore, it is recommended to avoid calls to this function as much as possible.  
-}
+  {obtains the y-coordinates of the point. {\bf Attention:} As described above,
+   points are not stored by their y-coordinate in \ccc{Algebraic_real_1}
+   representation. In fact, this representation must be computed on demand, and
+   might become quite costly for points defined by high-degree polynomials.
+   Therefore, it is recommended to avoid calls to this function as much as
+   possible.}
 
-\ccMethod{std::pair<Bound,Bound>  approximate_absolute_x(int a) const;}{
-Computes a pair $p$ approximating the $x$-coordinate with 
-respect to the given absolute precision $a$. 
-\ccPostcond{$p.first \leq x \leq p.second $}
-\ccPostcond{$p.second - p.first \leq  2^{-a} $}
-}
+\ccMethod{std::pair<Bound,Bound>  approximate_absolute_x(int a) const;}
+  {Computes a pair $p$ approximating the $x$-coordinate with 
+   respect to the given absolute precision $a$. 
+   \ccPostcond{$p.first \leq x \leq p.second $}
+   \ccPostcond{$p.second - p.first \leq  2^{-a} $}}
 
-\ccMethod{std::pair<Bound,Bound> approximate_absolute_y(int a) const;}{
-Computes a pair $p$ approximating the $y$-coordinate with 
-respect to the given absolute precision $a$. 
-\ccPostcond{$p.first \leq y \leq p.second $}
-\ccPostcond{$p.second - p.first \leq  2^{-a} $}
-}
+\ccMethod{std::pair<Bound,Bound> approximate_absolute_y(int a) const;}
+  {Computes a pair $p$ approximating the $y$-coordinate with 
+   respect to the given absolute precision $a$. 
+   \ccPostcond{$p.first \leq y \leq p.second $}
+   \ccPostcond{$p.second - p.first \leq  2^{-a} $}}
 
-\ccMethod{std::pair<Bound,Bound> approximate_relative_x(int r) const;}{
-Computes a pair $p$ approximating the $x$-coordinate with 
-respect to the given relative precision $r$. 
-\ccPostcond{$p.first \leq x \leq p.second $}
-\ccPostcond{$p.second - p.first \leq  2^{-r}|x| $}
-}
+\ccMethod{std::pair<Bound,Bound> approximate_relative_x(int r) const;}
+  {Computes a pair $p$ approximating the $x$-coordinate with 
+   respect to the given relative precision $r$. 
+   \ccPostcond{$p.first \leq x \leq p.second $}
+   \ccPostcond{$p.second - p.first \leq  2^{-r}|x| $}}
 
-\ccMethod{std::pair<Bound,Bound> approximate_relative_y(int r) const;}{
-Computes a pair $p$ approximating the $y$-coordinate with 
-respect to the given relative precision $r$. 
-\ccPostcond{$p.first \leq y \leq p.second $}
-\ccPostcond{$p.second - p.first \leq  2^{-r}|y| $}
-}
+\ccMethod{std::pair<Bound,Bound> approximate_relative_y(int r) const;}
+  {Computes a pair $p$ approximating the $y$-coordinate with 
+   respect to the given relative precision $r$. 
+   \ccPostcond{$p.first \leq y \leq p.second $}
+   \ccPostcond{$p.second - p.first \leq  2^{-r}|y| $}}
 
 \end{ccClass}
 \subsection*{Class   Arr\_rational\_function\_traits\_2$<$AlgebraicKernel\_d\_1$>$::Construct\_curve\_2}
 \begin{ccClass}{Arr_rational_function_traits_2<AlgebraicKernel_d_1>::Construct_curve_2}
 \ccCreationVariable{construct}
 
-Functor to construct a \ccc{Curve_2}. To enable caching the class is not default 
-constructible and must be obtained via the function \ccc{construct_curve_2_object()}, 
-which is a member of the traits. 
+Functor to construct a \ccc{Curve_2}. To enable caching the class is not
+default constructible and must be obtained via the function
+\ccc{construct_curve_2_object()}, which is a member of the traits. 
 
 \ccIsModel
 \ccc{Assignable}\\
@@ -372,67 +376,91 @@ which is a member of the traits.
 \ccc{AdaptableUnaryFunction}
 
 \ccTypes \ccThree{}{xxxxxxxxxxxxxxxxxxxxxx}{x}
-\ccTypedef{typedef AlgebraicKernel_d_1::Polynomial_1 Polynomial_1; }{}\ccGlue
-\ccTypedef{typedef AlgebraicKernel_d_1::Algebraic_real_1 Algebraic_real_1; }{}\ccGlue
-\ccTypedef{typedef Arr_rational_function_traits_2<AlgebraicKernel_d_1>::Curve_2 result_type; }{}
+\ccTypedef{typedef AlgebraicKernel_d_1::Polynomial_1 Polynomial_1;}{}\ccGlue
+\ccTypedef{typedef AlgebraicKernel_d_1::Algebraic_real_1 Algebraic_real_1;}{}\ccGlue
+\ccTypedef{typedef Arr_rational_function_traits_2<AlgebraicKernel_d_1>::Curve_2 result_type;}{}
 
-\ccTypedef{typedef Polynomial_1 argument_type; }{}\ccGlue
-\ccTypedef{typedef Polynomial_1 first_argument_type; }{}\ccGlue
-\ccTypedef{typedef Polynomial_1 second_argument_type; }{}
+\ccTypedef{typedef Polynomial_1 argument_type;}{}\ccGlue
+\ccTypedef{typedef Polynomial_1 first_argument_type;}{}\ccGlue
+\ccTypedef{typedef Polynomial_1 second_argument_type;}{}
 
 \ccOperations
 \ccThree{xxxxxxxxxxx}{xxxxx}{}
 \ccTwo  {xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx}{}
 
-
-\ccMethod{ Curve_2 operator()(Polynomial_1 P) const;}
-{
-Constructs a curve representing   the polynomial function $y = P(x)$.
-}
-
-
+% Operators that accept polynomials:
+\ccMethod{Curve_2 operator()(Polynomial_1 P) const;}
+  {Constructs a curve representing the polynomial function $y = P(x)$.}\ccGlue
 \ccMethod{Curve_2 operator()(Polynomial_1 P, const Algebraic_real_1& x, bool right) const;}
-{
-Constructs a curve representing   the polynomial function $y = P(x)$.
-The function is defined over the interval $[x,+\infty)$ if $right$ is true and $(-\infty,x]$ otherwise. 
-}
-
+  {Constructs a curve representing the polynomial function $y = P(x)$.
+   The function is defined over the interval $[x,+\infty)$ if $right$ is true
+   and $(-\infty,x]$ otherwise.}\ccGlue
 \ccMethod{Curve_2 operator()(Polynomial_1 P, const Algebraic_real_1& lower, const Algebraic_real_1& upper) const;}
-{
-Constructs a curve representing   the polynomial function $y = P(x)$.
-The function is defined over the interval $[lower,upper]$. 
-}
-
-
-\ccMethod{ Curve_2 operator()(Polynomial_1 P, Polynomial_1 Q) const;}
-{
-Constructs a curve representing   the rational function $y = P(x)/Q(x)$.
-}
-
-
+  {Constructs a curve representing the polynomial function $y = P(x)$.
+  The function is defined over the interval $[lower,upper]$.}\ccGlue
+\ccMethod{Curve_2 operator()(Polynomial_1 P, Polynomial_1 Q) const;}
+  {Constructs a curve representing the rational function $y = P(x)/Q(x)$.}\ccGlue
 \ccMethod{Curve_2 operator()(Polynomial_1 P, Polynomial_1 Q, const Algebraic_real_1& x, bool right) const;}
-{
-Constructs a curve representing   the rational function $y = P(x)/Q(x)$.
-The function is defined over the interval $I=[x,+\infty)$ if $right$ is true and $I=(-\infty,x]$ otherwise.
-}
-
+  {Constructs a curve representing the rational function $y = P(x)/Q(x)$.
+   The function is defined over the interval $I=[x,+\infty)$ if $right$ is
+   true and $I=(-\infty,x]$ otherwise.}\ccGlue
 \ccMethod{Curve_2 operator()(Polynomial_1 P, Polynomial_1 Q, const Algebraic_real_1& lower, const Algebraic_real_1& upper) const;}
-{
-Constructs a curve representing   the rational function $y = P(x)/Q(x)$.
-The function is defined over the interval $I=[lower,upper]$. 
-}
+  {Constructs a curve representing the rational function $y = P(x)/Q(x)$.
+   The function is defined over the interval $I=[lower,upper]$.}
 
+% Operators that accept polynomial coefficients:
+\ccMethod{template <typename InputIterator>
+Curve_2 operator()(InputIterator begin, InputIterator end) const;}
+  {Constructs a curve representing the polynomial function $y = P(x)$, where
+   the coefficients of $P$ are given in the range \ccc{[begin,end)}.}\ccGlue
+\ccMethod{template <typename InputIterator>
+Curve_2 operator()(InputIterator begin, InputIterator end,
+                   const Algebraic_real_1& x, bool right) const;}
+  {Constructs a curve representing the polynomial function $y = P(x)$, where
+   the coefficients of $P$ are given in the range \ccc{[begin,end)}. The
+   function is defined over the interval $[x,+\infty)$ if $right$ is true
+   and $(-\infty,x]$ otherwise.}\ccGlue
+\ccMethod{template <typename InputIterator>
+Curve_2 operator()(InputIterator begin, InputIterator end,
+                   const Algebraic_real_1& lower,
+                   const Algebraic_real_1& upper) const;}
+  {Constructs a curve representing the polynomial function $y = P(x)$, where
+   the coefficients of $P$ are given in the range \ccc{[begin,end)}. The
+   function is defined over the interval $[lower,upper]$.}\ccGlue
+\ccMethod{template <typename InputIterator>
+Curve_2 operator()(InputIterator begin_numer, InputIterator end_numer,
+                   InputIterator begin_denom, InputIterator end_denom) const;}
+  {Constructs a curve representing the rational function $y = P(x)/Q(x)$,
+   where the coefficients of $P$ and $Q$ are given in the ranges
+   \ccc{[begin_numer,end_numer)} and \ccc{[begin_denom,end_denom)},
+   respectively.}\ccGlue
+\ccMethod{template <typename InputIterator>
+Curve_2 operator()(InputIterator begin_numer, InputIterator end_numer,
+                   InputIterator begin_denom, InputIterator end_denom,
+                   const Algebraic_real_1& x, bool right) const;}
+  {Constructs a curve representing the rational function $y = P(x)/Q(x)$,
+   where the coefficients of $P$ and $Q$ are given in the ranges
+   \ccc{[begin_numer,end_numer)} and \ccc{[begin_denom,end_denom)},
+   respectively. The function is defined over the interval $I=[x,+\infty)$
+   if $right$ is true and $I=(-\infty,x]$ otherwise.}\ccGlue
+\ccMethod{template <typename InputIterator>
+Curve_2 operator()(InputIterator begin_numer, InputIterator end_numer,
+                   InputIterator begin_denom, InputIterator end_denom,
+                   const Algebraic_real_1& lower,
+                   const Algebraic_real_1& upper) const;}
+  {Constructs a curve representing the rational function $y = P(x)/Q(x)$,
+   where the coefficients of $P$ and $Q$ are given in the ranges
+   \ccc{[begin_numer,end_numer)} and \ccc{[begin_denom,end_denom)}, 
+   respectively. The function is defined over the interval $I=[lower,upper]$.}
 
 \end{ccClass}
 
 \subsection*{Class   Arr\_rational\_function\_traits\_2$<$AlgebraicKernel\_d\_1$>$::Construct\_x\_monotone\_curve\_2}
 \begin{ccClass}{Arr_rational_function_traits_2<AlgebraicKernel_d_1>::Construct_x_monotone_curve_2}
 
-
-Functor to construct a \ccc{X_monotone_curve_2}. To enable caching the class is not default 
-constructible and must be obtained via the function \ccc{construct_x_monotone_curve_2_object()}, 
-which is a member of the traits. 
-
+Functor to construct a \ccc{X_monotone_curve_2}. To enable caching the class
+is not default constructible and must be obtained via the function
+\ccc{construct_x_monotone_curve_2_object()}, which is a member of the traits. 
 
 \ccCreationVariable{construct}
 \ccIsModel
@@ -442,61 +470,102 @@ which is a member of the traits.
 \ccc{AdaptableUnaryFunction}
 
 \ccTypes \ccThree{}{xxxxxxxxxxxxxxxxxxxxxx}{x}
-\ccTypedef{typedef AlgebraicKernel_d_1::Polynomial_1 Polynomial_1; }{}\ccGlue
-\ccTypedef{typedef AlgebraicKernel_d_1::Algebraic_real_1 Algebraic_real_1; }{}\ccGlue
-\ccTypedef{typedef Arr_rational_function_traits_2<AlgebraicKernel_d_1>::X_monotone_curve_2 result_type; }{}\ccGlue
-\ccTypedef{typedef Polynomial_1 argument_type; }{}\ccGlue
-\ccTypedef{typedef Polynomial_1 first_argument_type; }{}\ccGlue
-\ccTypedef{typedef Polynomial_1 second_argument_type; }{}
+\ccTypedef{typedef AlgebraicKernel_d_1::Polynomial_1 Polynomial_1;}{}\ccGlue
+\ccTypedef{typedef AlgebraicKernel_d_1::Algebraic_real_1 Algebraic_real_1;}{}\ccGlue
+\ccTypedef{typedef Arr_rational_function_traits_2<AlgebraicKernel_d_1>::X_monotone_curve_2 result_type;}{}\ccGlue
+\ccTypedef{typedef Polynomial_1 argument_type;}{}\ccGlue
+\ccTypedef{typedef Polynomial_1 first_argument_type;}{}\ccGlue
+\ccTypedef{typedef Polynomial_1 second_argument_type;}{}
 
 \ccOperations
 \ccThree{xxxxxxxxxxxxxxxxxxxx}{xx}{}
 \ccTwo  {xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx}{}
 
-
-\ccMethod{ X_monotone_curve_2 operator()(Polynomial_1 P) const;}
-{
-Constructs an $x$-monotone curve supported by  the polynomial function $y = P(x)$.
+% Operators that accept polynomials:
+\ccMethod{X_monotone_curve_2 operator()(Polynomial_1 P) const;}
+  {Constructs an $x$-monotone curve supported by the polynomial function
+   $y = P(x)$.}\ccGlue
+\ccMethod{X_monotone_curve_2 operator()(Polynomial_1 P,
+                                        const Algebraic_real_1& x,
+                                        bool right) const;}
+  {Constructs an $x$-monotone curve supported by the polynomial function
+   $y = P(x)$. The function is defined over the interval $[x,+\infty)$ if
+   $right$ is true and $(-\infty,x]$ otherwise.}\ccGlue
+\ccMethod{X_monotone_curve_2 operator()(Polynomial_1 P,
+                                        const Algebraic_real_1& lower,
+                                        const Algebraic_real_1& upper); const}
+  {Constructs an $x$-monotone curve supported by the polynomial function
+   $y = P(x)$. The function is defined over the interval $[lower,upper]$.}\ccGlue
+\ccMethod{X_monotone_curve_2 operator()(Polynomial_1 P, Polynomial_1 Q); const}
+  {Constructs an $x$-monotone curve supported by  the rational function
+   $y = P(x)/Q(x)$.
+   \ccPrecond{$Q$ has no real roots.}}\ccGlue
+\ccMethod{X_monotone_curve_2 operator()(Polynomial_1 P, Polynomial_1 Q,
+                                        const Algebraic_real_1& x,
+                                        bool right); const}
+  {Constructs an $x$-monotone curve supported by the rational function
+   $y = P(x)/Q(x)$. The function is defined over the interval $I=[x,+\infty)$
+   if $right$ is true and $I=(-\infty,x]$ otherwise.
+   \ccPrecond{$Q$ has no real roots in the interior of $I$.}}\ccGlue
+\ccMethod{X_monotone_curve_2 operator()(Polynomial_1 P, Polynomial_1 Q,
+                                        const Algebraic_real_1& lower,
+                                        const Algebraic_real_1& upper); const
 }
+  {Constructs an $x$-monotone curve supported by the rational function
+   $y = P(x)/Q(x)$. The function is defined over the interval $I=[lower,upper]$. 
+   \ccPrecond{$Q$ has no real roots in the interior of $I$.}}
 
-
-\ccMethod{X_monotone_curve_2 operator()(Polynomial_1 P, const Algebraic_real_1& x, bool right) const;}
-{
-Constructs an $x$-monotone curve supported by  the polynomial function $y = P(x)$.
-The function is defined over the interval $[x,+\infty)$ if $right$ is true and $(-\infty,x]$ otherwise. 
+% Operators that accept polynomial coefficients:
+\ccMethod{template <typename InputIterator>
+X_monotone_curve_2 operator()(InputIterator begin, InputIterator end) const;}
+  {Constructs an $x$-monotone curve supported by the polynomial function
+   $y = P(x)$, where the coefficients of $P$ are given in the range
+   \ccc{[begin,end)}.}\ccGlue
+\ccMethod{template <typename InputIterator>
+X_monotone_curve_2 operator()(InputIterator begin, InputIterator end,
+                              const Algebraic_real_1& x, bool right) const;}
+  {Constructs an $x$-monotone curve supported by the polynomial function
+   $y = P(x)$, where the coefficients of $P$ are given in the range
+   \ccc{[begin,end)}. The function is defined over the interval $[x,+\infty)$
+   if $right$ is true and $(-\infty,x]$ otherwise.}\ccGlue
+\ccMethod{template <typename InputIterator>
+X_monotone_curve_2 operator()(InputIterator begin, InputIterator end
+                              const Algebraic_real_1& lower,
+                              const Algebraic_real_1& upper); const}
+  {Constructs an $x$-monotone curve supported by the polynomial function
+   $y = P(x)$, where the coefficients of $P$ are given in the range
+   \ccc{[begin,end)}. The function is defined over the interval
+   $[lower,upper]$.}\ccGlue
+\ccMethod{template <typename InputIterator>
+X_monotone_curve_2 operator()(InputIterator begin_numer, InputIterator end_numer,
+                              InputIterator begin_denom, InputIterator end_denom); const}
+  {Constructs an $x$-monotone curve supported by the rational function
+   $y = P(x)/Q(x)$, where the coefficients of $P$ and $Q$ are given in the
+   ranges \ccc{[begin_numer,end_numer)} and \ccc{[begin_denom,end_denom)},
+   respectively.
+   \ccPrecond{$Q$ has no real roots.}}\ccGlue
+\ccMethod{template <typename InputIterator>
+X_monotone_curve_2 operator()(InputIterator begin_numer, InputIterator end_numer,
+                              InputIterator begin_denom, InputIterator end_denom,
+                              const Algebraic_real_1& x, bool right); const}
+  {Constructs an $x$-monotone curve supported by the rational function
+   $y = P(x)/Q(x)$, where the coefficients of $P$ and $Q$ are given in the
+   ranges \ccc{[begin_numer,end_numer)} and \ccc{[begin_denom,end_denom)},
+   respectively. The function is defined over the interval $I=[x,+\infty)$
+   if $right$ is true and $I=(-\infty,x]$ otherwise.
+   \ccPrecond{$Q$ has no real roots in the interior of $I$.}}\ccGlue
+\ccMethod{template <typename InputIterator>
+X_monotone_curve_2 operator()(InputIterator begin_numer, InputIterator end_numer,
+                              InputIterator begin_denom, InputIterator end_denom,
+                              const Algebraic_real_1& lower, const Algebraic_real_1& upper); const
 }
-
-\ccMethod{X_monotone_curve_2 operator()(Polynomial_1 P, const Algebraic_real_1& lower, const Algebraic_real_1& upper); const }
-{
-Constructs an $x$-monotone curve supported by  the polynomial function $y = P(x)$.
-The function is defined over the interval $[lower,upper]$. 
-}
-
-
-\ccMethod{ X_monotone_curve_2 operator()(Polynomial_1 P, Polynomial_1 Q); const }
-{
-Constructs an $x$-monotone curve supported by  the rational function $y = P(x)/Q(x)$.
-\ccPrecond{$Q$ has no real roots.}
-}
-
-
-\ccMethod{X_monotone_curve_2 operator()(Polynomial_1 P, Polynomial_1 Q, const Algebraic_real_1& x, bool right); const}
-{
-Constructs an $x$-monotone curve supported by  the rational function $y = P(x)/Q(x)$.
-The function is defined over the interval $I=[x,+\infty)$ if $right$ is true and $I=(-\infty,x]$ otherwise.
-\ccPrecond{$Q$ has no real roots in the interior of $I$.}
-}
-
-\ccMethod{X_monotone_curve_2 operator()(Polynomial_1 P, Polynomial_1 Q, const Algebraic_real_1& lower, const Algebraic_real_1& upper); const
-}{
-Constructs an $x$-monotone curve supported by  the rational function $y = P(x)/Q(x)$.
-The function is defined over the interval $I=[lower,upper]$. 
-\ccPrecond{$Q$ has no real roots in the interior of $I$.}
-}
+  {Constructs an $x$-monotone curve supported by the rational function
+   $y = P(x)/Q(x)$, where the coefficients of $P$ and $Q$ are given in the
+   ranges \ccc{[begin_numer,end_numer)} and \ccc{[begin_denom,end_denom)},
+   respectively. The function is defined over the interval $I=[lower,upper]$. 
+   \ccPrecond{$Q$ has no real roots in the interior of $I$.}}
 
 \end{ccClass}
-
-
 
 %\subsection*{Class   Arr\_rational\_function\_traits\_2$<$AlgebraicKernel\_d\_1$>$::Importer}
 %\begin{ccClass}{Arr_rational_function_traits_2<AlgebraicKernel_d_1>::Importer}
@@ -568,10 +637,6 @@ The function is defined over the interval $I=[lower,upper]$.
 %}
 %
 %\end{ccClass}
-
-
-
-
 
 \end{ccRefClass}
 \ccRefPageEnd
