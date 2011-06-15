@@ -58,8 +58,7 @@ public:
   typedef Traits_                                   Traits;
   typedef Arr_traits_with_vertical_segments<Traits> Self;
   
-  typedef typename Traits::Kernel                   Kernel;
-  typedef typename Traits::Algebraic_kernel         Algebraic_kernel;
+  typedef typename Traits::Algebraic_kernel_d_1     Algebraic_kernel_d_1;
 
   typedef typename Traits::Point_2                  Point_2;
   typedef typename Traits::Multiplicity             Multiplicity;
@@ -69,7 +68,7 @@ public:
 
   typedef typename Traits::Integer                  Integer;
   typedef typename Traits::Rational                 Rational; 
-  typedef typename Traits::Polynomial               Polynomial; 
+  typedef typename Traits::Polynomial_1             Polynomial_1; 
   typedef typename Traits::Rational_function        Rational_function;
 
   
@@ -78,9 +77,9 @@ public:
   typedef typename Traits::Vertical_segment         Vertical_segment;
 
   typedef Arr_vertical_rational_arc::Rational_arc_with_ver_d_1 
-    <Non_vertical_x_curve_2,Kernel,Algebraic_kernel>                 X_monotone_curve_2;
+    <Non_vertical_x_curve_2,Algebraic_kernel_d_1>                 X_monotone_curve_2;
   typedef Arr_vertical_rational_arc::Rational_arc_with_ver_d_1 
-    <Non_vertical_curve_2,Kernel,Algebraic_kernel>                   Curve_2;
+    <Non_vertical_curve_2,Algebraic_kernel_d_1>                   Curve_2;
   
   //Category tags:
   typedef Tag_true              Has_left_category;
@@ -95,6 +94,8 @@ public:
   typedef std::vector<CGAL::Object> Object_vector;
 private:
   mutable Traits _traits;
+public:
+  const Algebraic_kernel_d_1* algebraic_kernel_d_1() const {return _traits.algebraic_kernel_d_1();}
 
 public:
   //------------
