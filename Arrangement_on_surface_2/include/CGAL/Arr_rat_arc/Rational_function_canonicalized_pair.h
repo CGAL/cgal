@@ -272,7 +272,7 @@ public:
   }
   const Rational_function& g() const 
   {
-    return g;
+    return _g;
   }
   const Algebraic_vector & roots() const
   {

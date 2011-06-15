@@ -133,7 +133,7 @@ public:
       _ak_ptr = other.algebraic_kernel_d_1();    
 
     //copy cache
-
+    _cache.initialize(other.cache(),*_ak_ptr);
   }
 
   ~Arr_rational_function_traits_2 ()
