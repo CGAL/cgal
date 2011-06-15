@@ -1,16 +1,27 @@
 //! \file examples/Arrangement_2/ex_rational_functions.cpp
 // Constructing an arrangement of arcs of rational functions.
+
 #include <CGAL/basic.h>
 
-#include <CGAL/CORE_BigInt.h>                      //Integer
-#include <CGAL/CORE_BigRat.h>                      //Rational
-#include <CGAL/Algebraic_kernel_d_1.h>             //Algebraic Kernel
-#include <CGAL/Arr_rational_function_traits_2.h>   //Traits
-#include <CGAL/Arrangement_2.h>                    //Arrangement
+#ifndef CGAL_USE_CORE
+#include <iostream>
+int main ()
+{
+  std::cout << "Sorry, this example needs CORE ..." << std::endl; 
+  return 0;
+}
+
+#else
+
+#include <CGAL/CORE_BigInt.h>                      // Integer
+#include <CGAL/CORE_BigRat.h>                      // Rational
+#include <CGAL/Algebraic_kernel_d_1.h>             // Algebraic Kernel
+#include <CGAL/Arr_rational_function_traits_2.h>   // Traits
+#include <CGAL/Arrangement_2.h>                    // Arrangement
 
 typedef CORE::BigInt                               Integer;
 typedef CORE::BigRat                               Rational;
-typedef CGAL::Algebraic_kernel_d_1<Integer>	       AK1;
+typedef CGAL::Algebraic_kernel_d_1<Integer>	   AK1;
 typedef CGAL::Arr_rational_function_traits_2<AK1>  Traits_2;
 
 typedef std::vector<Rational>                      Rat_vec;
@@ -43,7 +54,7 @@ int main ()
   
   Alg_real_1 l(Traits_2::Algebraic_kernel_d_1::Bound(-2.1));
   Alg_real_1 r(Traits_2::Algebraic_kernel_d_1::Bound(2.1));
-  arcs.push_back( construct_arc(P1.begin(),P1.end(),Q1.begin(),Q1.end(), l, r));
+  arcs.push_back(construct_arc(P1.begin(), P1.end(), Q1.begin(), Q1.end(), l, r));
 
   // Create an arc supported by the function y = 0.1x / (0.1 + 0.1x^2),
   // defined over the interval [-3, 3]:
@@ -55,8 +66,8 @@ int main ()
   Q2.push_back(Rational(0));
   Q2.push_back(Rational(1,10));
   
-  arcs.push_back( construct_arc( P2.begin(),P2.end(), Q2.begin(),Q2.end(),
-                                 Alg_real_1(-3), Alg_real_1(3)));
+  arcs.push_back(construct_arc(P2.begin(), P2.end(), Q2.begin(), Q2.end(),
+                               Alg_real_1(-3), Alg_real_1(3)));
   
   // Create an arc supported by the parbola y = 0.8 - 0.1x^2 / 0.1,
   // defined over the interval [-2, 3]:
@@ -67,7 +78,7 @@ int main ()
 
   Q3.push_back(Rational(1,10));
   
-  arcs.push_back(construct_arc(P3.begin(), P3.end(),Q3.begin(), Q3.end(),
+  arcs.push_back(construct_arc(P3.begin(), P3.end(), Q3.begin(), Q3.end(),
                                Alg_real_1(-2), Alg_real_1(3)));
   
   // Create an arc supported by the line y = -0.2x / 0.1,
@@ -76,8 +87,8 @@ int main ()
   P4.push_back(Rational(0));
   P4.push_back(Rational(-1,5));
   Q4.push_back(Rational(1,10));
-  arcs.push_back(construct_arc(P4.begin(), P4.end(),Q4.begin(), Q4.end(),
-                               Alg_real_1(-3),Alg_real_1(0)));
+  arcs.push_back(construct_arc(P4.begin(), P4.end(), Q4.begin(), Q4.end(),
+                               Alg_real_1(-3), Alg_real_1(0)));
 
   // Print the arcs.
   for (unsigned int i(0); i < arcs.size(); ++i)
@@ -85,7 +96,7 @@ int main ()
 
   // Construct the arrangement of the four arcs.
   Arrangement_2 arr(&traits);
-  insert (arr, arcs.begin(), arcs.end());
+  insert(arr, arcs.begin(), arcs.end());
 
   // Print the arrangement size.
   std::cout << "The arrangement size:" << std::endl
@@ -95,3 +106,5 @@ int main ()
 
   return 0;
 }
+
+#endif
