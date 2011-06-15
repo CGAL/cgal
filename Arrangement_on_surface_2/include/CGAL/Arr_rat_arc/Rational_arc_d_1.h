@@ -167,27 +167,41 @@ public:
  
   //---------------------------------------------------------------------------
   //Constructor of a whole polynomial curve defined by pcoeffs - the rational coefficients of the polynomial p(x).
+  
+  Base_rational_arc_d_1 (const Polynomial_1& P,Cache& cache) :
+    _info (0)
+  {
+    _init(P,Integer(1),cache);
+  }
+
   Base_rational_arc_d_1 (const Rat_vector& pcoeffs,Cache& cache) :
     _info (0)
   {
+    // Set the numerator & denominator polynomials.
+    Polynomial_1 _numer;
+    Poly_rat_1 num_rat (typename PT_rat_1::Construct_polynomial()(pcoeffs.begin(),pcoeffs.end()));
+    Integer denom_int;
+    typename FT_poly_rat_1::Decompose()(num_rat,_numer,denom_int);
+        
+    _init(_numer,denom_int,cache);
+  }
+
+  void _init(const Polynomial_1& P,const Integer& Q_int,Cache& cache)
+  {
+    CGAL_precondition(!CGAL::is_zero(Q_int));
+    //set rational function 
+    Polynomial_1 Q= typename Polynomial_traits_1::Construct_polynomial()(Q_int);
+    _f = get_rational_function (P,Q,cache);
+
     //Mark that the endpoints of the polynomial are unbounded
     //(the source is at x = -oo and the target is at x = +oo).
     _info = (_info | SRC_AT_X_MINUS_INFTY);
     _info = (_info | TRG_AT_X_PLUS_INFTY);
     _info = (_info | IS_DIRECTED_RIGHT);
 
-    // Set the numerator & denominator polynomials.
-    Polynomial_1 _numer,_denom;
-    Poly_rat_1 num_rat (typename PT_rat_1::Construct_polynomial()(pcoeffs.begin(),pcoeffs.end()));
-    Integer denom_int;
-    typename FT_poly_rat_1::Decompose()(num_rat,_numer,denom_int);
-    _denom = typename Polynomial_traits_1::Construct_polynomial()(denom_int);
-    _f = get_rational_function (_numer,_denom,cache);
-
-
     // Check whether the end points lie at y = -oo or at y = +oo.
-    const int    deg_num (CGAL::degree(_numer));
-    Integer lead_coeff(CGAL::leading_coefficient(_numer));
+    const int    deg_num (CGAL::degree(P));
+    Integer lead_coeff(CGAL::leading_coefficient(Q));
     CGAL::Sign   lead_sign (CGAL::sign (lead_coeff));
   
     if (deg_num > 0)
@@ -218,17 +232,15 @@ public:
       {
         // In the case of a constant polynomial it is possible to set a finite
         // y-coordinate for the source and target points.
-        _ps=Algebraic_point_2(get_rational_function (_numer,_denom,cache),
-                              Algebraic_real_1());  //x coordinate is 0 although in practice is +-oo
-        _pt=Algebraic_point_2(get_rational_function (_numer,_denom,cache), 
-                              Algebraic_real_1());  //x coordinate is 0 although in practice is +-oo
+        _ps=Algebraic_point_2(_f,Algebraic_real_1());  //x coordinate is 0 although in practice is +-oo
+        _pt=Algebraic_point_2(_f,Algebraic_real_1());  //x coordinate is 0 although in practice is +-oo
       }
 
     // Mark that the arc is continuous and valid.
     _info = (_info | IS_CONTINUOUS);
     _info = (_info | IS_VALID);
-  }
 
+  }  
   //---------------------------------------------------------------------------
   //Constructor of a polynomial ray, defined by y = p(x), 
   //for x_s <= x if the ray is directed to the right, or
@@ -236,35 +248,50 @@ public:
   //param pcoeffs The rational coefficients of the polynomial p(x).
   //param x_s The x-coordinate of the source point.
   //param dir_right Is the ray directed to the right (to +oo) or to the left (to -oo).
+
+  Base_rational_arc_d_1 (const Polynomial_1& P,const Algebraic_real_1& x_s, bool dir_right,Cache& cache) :
+    _info (0)
+  {
+    _init(P,Polynomial_1(1),x_s,dir_right,cache);
+  }
+
   Base_rational_arc_d_1 (const Rat_vector& pcoeffs,const Algebraic_real_1& x_s, bool dir_right,Cache& cache) :
     _info (0)
   {
-    // Mark that the target points of the polynomial is unbounded.
-    if (dir_right)
-      {
-        _info = (_info | TRG_AT_X_PLUS_INFTY);
-        _info = (_info | IS_DIRECTED_RIGHT);
-      }
-    else
-      {
-        _info = (_info | TRG_AT_X_MINUS_INFTY);
-      }
-
     // Set the numerator & denominator polynomials.
-    Polynomial_1 _numer,_denom;
+    Polynomial_1 _numer;
     Poly_rat_1 num_rat (typename PT_rat_1::Construct_polynomial()(pcoeffs.begin(),pcoeffs.end()));
     Integer denom_int;
     typename FT_poly_rat_1::Decompose()(num_rat,_numer,denom_int);
-    _denom = typename Polynomial_traits_1::Construct_polynomial()(denom_int);
-    _f = get_rational_function (_numer,_denom,cache);
+    
+    _init(_numer,denom_int,x_s,dir_right,cache);
+  }
 
-  
+  void _init(const Polynomial_1& P,const Integer& Q_int,
+             const Algebraic_real_1& x_s, bool dir_right,Cache& cache)
+  {
+    CGAL_precondition(!CGAL::is_zero(Q_int));
+    //set rational function 
+    Polynomial_1 Q= typename Polynomial_traits_1::Construct_polynomial()(Q_int);
+    _f = get_rational_function (P,Q,cache);
+
+    // Mark that the target points of the polynomial is unbounded.
+    if (dir_right)
+    {
+      _info = (_info | TRG_AT_X_PLUS_INFTY);
+      _info = (_info | IS_DIRECTED_RIGHT);
+    }
+    else
+    {
+      _info = (_info | TRG_AT_X_MINUS_INFTY);
+    }
+
     // Set the source point.
     _ps=Algebraic_point_2(_f,x_s);
 
     // Check whether the target point lies at y = -oo or at y = +oo.
-    const int   deg_num (CGAL::degree(_numer));
-    Integer  lead_coeff(CGAL::leading_coefficient(_numer));
+    const int   deg_num (CGAL::degree(P));
+    Integer  lead_coeff(CGAL::leading_coefficient(P));
     CGAL::Sign  lead_sign (CGAL::sign (lead_coeff));
 
     if (deg_num > 0)
@@ -295,17 +322,17 @@ public:
       {
         // In the case of a constant polynomial it is possible to set a finite
         // y-coordinate for the target point.
-        _pt=Algebraic_point_2(get_rational_function (_numer,_denom,cache), 
+        _pt=Algebraic_point_2(get_rational_function (P,Q,cache), 
                               Algebraic_real_1()); //x coordinate is 0 although in practice is +-oo
       }
 
     // Mark that the arc is continuous and valid.
     _info = (_info | IS_CONTINUOUS);
     _info = (_info | IS_VALID);
+
+
   }
 
-
- 
   //---------------------------------------------------------------------------
   //Constructor of a polynomial arc, defined by y = p(x), x_min <= x <= x_max.
   //for x_s <= x if the ray is directed to the right, or
@@ -314,11 +341,36 @@ public:
   //param x_s The x-coordinate of the source point.
   //param x_t The x-coordinate of the target point.
   //precondition: The two x-coordinates must not be equal.
-  Base_rational_arc_d_1 ( const Rat_vector& pcoeffs,
+  Base_rational_arc_d_1 ( const Polynomial_1& P,
                           const Algebraic_real_1& x_s,const Algebraic_real_1& x_t,
                           Cache& cache):
     _info (0)
   {
+    _init(P,Integer(1),x_s,x_t,cache);
+  }
+  Base_rational_arc_d_1 ( const Rat_vector& pcoeffs,
+                          const Algebraic_real_1& x_s,const Algebraic_real_1& x_t,
+                          Cache& cache):
+    _info (0)
+  {    
+    // Set the numerator & denominator polynomials.
+    Polynomial_1 _numer;
+    Poly_rat_1 num_rat (typename PT_rat_1::Construct_polynomial()(pcoeffs.begin(),pcoeffs.end()));
+    Integer denom_int;
+    typename FT_poly_rat_1::Decompose()(num_rat,_numer,denom_int);
+    
+    _init(_numer,denom_int,x_s,x_t,cache);
+  }    
+
+  void _init (const Polynomial_1& P,const Integer& Q_int,
+              const Algebraic_real_1& x_s,const Algebraic_real_1& x_t,
+              Cache& cache)
+  {
+    CGAL_precondition(!CGAL::is_zero(Q_int));
+    //set rational function 
+    Polynomial_1 Q= typename Polynomial_traits_1::Construct_polynomial()(Q_int);
+    _f = get_rational_function (P,Q,cache);
+
     // Compare the x-coordinates and determine the direction.
     Comparison_result   x_res = CGAL::compare (x_s, x_t);
 
@@ -327,15 +379,6 @@ public:
     if (x_res == SMALLER)
       _info = (_info | IS_DIRECTED_RIGHT);
 
-    // Set the numerator & denominator polynomials.
-    Polynomial_1 _numer,_denom;
-    Poly_rat_1 num_rat (typename PT_rat_1::Construct_polynomial()(pcoeffs.begin(),pcoeffs.end()));
-    Integer denom_int;
-    typename FT_poly_rat_1::Decompose()(num_rat,_numer,denom_int);
-    _denom = typename Polynomial_traits_1::Construct_polynomial()(denom_int);
-    _canonicalize(_numer,_denom);
-    _f = get_rational_function (_numer,_denom,cache);
-
     // Set the endpoints.
     _ps=Algebraic_point_2(_f,x_s);
     _pt=Algebraic_point_2(_f,x_t);
@@ -343,22 +386,21 @@ public:
     // Mark that the arc is continuous and valid.
     _info = (_info | IS_CONTINUOUS);
     _info = (_info | IS_VALID);
-  }    
+    return;
+  }
 
   //---------------------------------------------------------------------------
   //Constructor of a polynomial function, defined by y = p(x)/q(x) for any x.
   //param pcoeffs The rational coefficients of the polynomial p(x).
   //param qcoeffs The rational coefficients of the polynomial q(x).
+  Base_rational_arc_d_1 (const Polynomial_1& P, const Polynomial_1& Q,Cache& cache) :
+    _info (0)
+  {
+    _init (P,Q,cache);
+  }
   Base_rational_arc_d_1 (const Rat_vector& pcoeffs, const Rat_vector& qcoeffs,Cache& cache) :
     _info (0)
   {
-    // Mark that the endpoints of the rational functions are unbounded (the
-    // source is at x = -oo and the target is at x = +oo).
-    _info = (_info | SRC_AT_X_MINUS_INFTY);
-    _info = (_info | TRG_AT_X_PLUS_INFTY);
-    _info = (_info | IS_DIRECTED_RIGHT);
-
-    // Set the numerator & denominator polynomials.
     Polynomial_1 _numer,_denom;
     Poly_rat_1 numer_rat (typename PT_rat_1::Construct_polynomial()(pcoeffs.begin(),pcoeffs.end()));
     Poly_rat_1 denom_rat (typename PT_rat_1::Construct_polynomial()(qcoeffs.begin(),qcoeffs.end()));
@@ -367,15 +409,30 @@ public:
     typename FT_poly_rat_1::Decompose()(denom_rat,_denom,denom_denom_int);
     _numer *= denom_denom_int;
     _denom *= denom_numer_int;
-    _canonicalize(_numer,_denom);
-    _f = get_rational_function (_numer,_denom,cache);
 
-    CGAL_precondition_msg (!CGAL::is_zero(_denom),
-        "The denominator polynomial must not be 0.");
+    _init (_numer,_denom,cache);
+  }
+  void _init (const Polynomial_1& _P, const Polynomial_1& _Q,Cache& cache) 
+  {
+    CGAL_precondition(!CGAL::is_zero(_Q));
+    //set rational function 
+    // Set the numerator & denominator polynomials.
 
+    Polynomial_1 P,Q;
+    _canonicalize(_P,_Q,P,Q);
+                     
+    _f = get_rational_function (P,Q,cache);
+
+    // Mark that the endpoints of the rational functions are unbounded (the
+    // source is at x = -oo and the target is at x = +oo).
+    _info = (_info | SRC_AT_X_MINUS_INFTY);
+    _info = (_info | TRG_AT_X_PLUS_INFTY);
+    _info = (_info | IS_DIRECTED_RIGHT);
+
+    
     // Analyze the bahaviour of the rational function at x = -oo (the source).
     Algebraic_real_1           y0;
-    const Arr_parameter_space inf_s = _analyze_at_minus_infinity (_numer, _denom, y0);
+    const Arr_parameter_space inf_s = _analyze_at_minus_infinity (P, Q, y0);
 
     if (inf_s == ARR_BOTTOM_BOUNDARY)
       _info = (_info | SRC_AT_Y_MINUS_INFTY);
@@ -384,7 +441,7 @@ public:
     else // if (inf_s == ARR_INTERIOR)
       _ps = Algebraic_point_2();   //the point is a dummy
     //Analyze the bahaviour of the rational function at x = +oo (the target).
-    const Arr_parameter_space inf_t = _analyze_at_plus_infinity (_numer, _denom, y0);
+    const Arr_parameter_space inf_t = _analyze_at_plus_infinity (P, Q, y0);
 
     if (inf_t == ARR_BOTTOM_BOUNDARY)
       _info = (_info | TRG_AT_Y_MINUS_INFTY);
@@ -399,7 +456,6 @@ public:
             (IS_CONTINUOUS | IS_VALID) : IS_VALID ) );
   }
 
- 
   //---------------------------------------------------------------------------
   //Constructor of a ray of a rational function, defined by y = p(x)/q(x),
   //for x_s <= x if the ray is directed to the right, or 
@@ -408,11 +464,40 @@ public:
   //param qcoeffs The rational coefficients of the polynomial q(x).
   //param x_s The x-coordinate of the source point.
   //param dir_right Is the ray directed to the right (to +oo) or to the left (to -oo).
+  Base_rational_arc_d_1 ( const Polynomial_1& P, const Polynomial_1& Q,
+                          const Algebraic_real_1& x_s, bool dir_right,
+                          Cache& cache) :
+    _info (0)
+  {
+    _init (P,Q,x_s,dir_right,cache);
+  }
   Base_rational_arc_d_1 ( const Rat_vector& pcoeffs, const Rat_vector& qcoeffs,
                           const Algebraic_real_1& x_s, bool dir_right,
                           Cache& cache) :
     _info (0)
   {
+    // Set the numerator and denominator polynomials.
+    Polynomial_1 _numer,_denom;
+    Poly_rat_1 numer_rat (typename PT_rat_1::Construct_polynomial()(pcoeffs.begin(),pcoeffs.end()));
+    Poly_rat_1 denom_rat (typename PT_rat_1::Construct_polynomial()(qcoeffs.begin(),qcoeffs.end()));
+    Integer denom_numer_int,denom_denom_int;
+    typename FT_poly_rat_1::Decompose()(numer_rat,_numer,denom_numer_int);
+    typename FT_poly_rat_1::Decompose()(denom_rat,_denom,denom_denom_int);
+    _numer *= denom_denom_int;
+    _denom *= denom_numer_int;
+
+    _init (_numer,_denom,x_s,dir_right,cache);
+  }
+  void _init ( const Polynomial_1& _P, const Polynomial_1& _Q,
+               const Algebraic_real_1& x_s, bool dir_right,
+               Cache& cache) 
+  {
+    CGAL_precondition(!CGAL::is_zero(_Q));
+    //set rational function 
+    Polynomial_1 P,Q;
+    _canonicalize(_P,_Q,P,Q);
+    _f = get_rational_function (P,Q,cache);
+
     // Mark that the target points of the polynomial is unbounded.
     if (dir_right)
       {
@@ -424,25 +509,11 @@ public:
         _info = (_info | TRG_AT_X_MINUS_INFTY);
       }
 
-    // Set the numerator and denominator polynomials.
-    Polynomial_1 _numer,_denom;
-    Poly_rat_1 numer_rat (typename PT_rat_1::Construct_polynomial()(pcoeffs.begin(),pcoeffs.end()));
-    Poly_rat_1 denom_rat (typename PT_rat_1::Construct_polynomial()(qcoeffs.begin(),qcoeffs.end()));
-    Integer denom_numer_int,denom_denom_int;
-    typename FT_poly_rat_1::Decompose()(numer_rat,_numer,denom_numer_int);
-    typename FT_poly_rat_1::Decompose()(denom_rat,_denom,denom_denom_int);
-    _numer *= denom_denom_int;
-    _denom *= denom_numer_int;
-    _canonicalize(_numer,_denom);
-    _f = get_rational_function (_numer,_denom,cache);
-
-    CGAL_precondition_msg (!CGAL::is_zero(_denom),
-        "The denominator polynomial must not be 0.");
 
     //The source point has a bounded x-coordinate. 
     _ps=Algebraic_point_2(_f,x_s);
     //check if the source point lies next to a pole.
-    if (typename Algebraic_kernel::Sign_at_1()(_denom,x_s) != CGAL::ZERO)
+    if (typename Algebraic_kernel::Sign_at_1()(Q,x_s) != CGAL::ZERO)
       {
         // We have a nomral endpoint.
         //nothing to do....
@@ -463,12 +534,12 @@ public:
     if (dir_right)
       {
         // The target point is at x = +oo.
-        inf_t=_analyze_at_plus_infinity (_numer, _denom, y0);
+        inf_t=_analyze_at_plus_infinity (P, Q, y0);
       }
     else
       {
         // The target point is at x = -oo.
-        inf_t =_analyze_at_minus_infinity (_numer, _denom, y0);
+        inf_t =_analyze_at_minus_infinity (P, Q, y0);
       }
   
     if (inf_t == ARR_BOTTOM_BOUNDARY) 
@@ -483,7 +554,6 @@ public:
     _info = ( _info | ( this->_is_continuous() ?
             (IS_CONTINUOUS | IS_VALID) : IS_VALID ) );
   }
-  
   //---------------------------------------------------------------------------
   //Constructor of a ray of a rational function, defined by y = p(x)/q(x),
   //where: x_min <= x <= x_max
@@ -492,19 +562,18 @@ public:
   //param x_s The x-coordinate of the source point.
   //param x_t The x-coordinate of the target point.
   //precondition: The two x-coordinates must not be equal.
-  Base_rational_arc_d_1 ( const Rat_vector& pcoeffs, const Rat_vector& qcoeffs,
+  Base_rational_arc_d_1 ( const Polynomial_1& P, const Polynomial_1& Q,
                           const Algebraic_real_1& x_s, const Algebraic_real_1& x_t,
-                          Cache& cache) :
+                          Cache& cache):
     _info (0)
   {
-    // Compare the x-coordinates and determine the direction.
-    Comparison_result   x_res = CGAL::compare (x_s, x_t);
-    CGAL_precondition (x_res != EQUAL);
-
-    if (x_res == SMALLER)
-      _info = (_info | IS_DIRECTED_RIGHT);
-
-    // Set the numerator and denominator polynomials.
+    _init(P,Q,x_s,x_t,cache);
+  }
+  Base_rational_arc_d_1 ( const Rat_vector& pcoeffs, const Rat_vector& qcoeffs,
+                          const Algebraic_real_1& x_s, const Algebraic_real_1& x_t,
+                          Cache& cache):
+    _info(0)
+  {
     Polynomial_1 _numer,_denom;
     Poly_rat_1 numer_rat (typename PT_rat_1::Construct_polynomial()(pcoeffs.begin(),pcoeffs.end()));
     Poly_rat_1 denom_rat (typename PT_rat_1::Construct_polynomial()(qcoeffs.begin(),qcoeffs.end()));
@@ -513,18 +582,31 @@ public:
     typename FT_poly_rat_1::Decompose()(denom_rat,_denom,denom_denom_int);
     _numer *= denom_denom_int;
     _denom *= denom_numer_int;
-    _canonicalize(_numer,_denom);
-    _f = get_rational_function (_numer,_denom,cache);
 
-    CGAL_precondition_msg (!CGAL::is_zero(_denom),
-        "The denominator polynomial must not be 0.");
+    _init(_numer,_denom,x_s,x_t,cache);
+  }
+  void _init ( const Polynomial_1& _P, const Polynomial_1& _Q,
+               const Algebraic_real_1& x_s, const Algebraic_real_1& x_t,
+               Cache& cache)
+  {
+    CGAL_precondition(!CGAL::is_zero(_Q));
+    //set rational function 
+    Polynomial_1 P,Q;
+    _canonicalize(_P,_Q,P,Q);
+    _f = get_rational_function (P,Q,cache);
 
+    // Compare the x-coordinates and determine the direction.
+    Comparison_result   x_res = CGAL::compare (x_s, x_t);
+    CGAL_precondition (x_res != EQUAL);
 
-    //Set the source point and check if it lies next to a pole.
+    if (x_res == SMALLER)
+      _info = (_info | IS_DIRECTED_RIGHT);
+
+        //Set the source point and check if it lies next to a pole.
     _ps=Algebraic_point_2(_f,x_s);
 
     //check if source point lies next to a pole.
-    if (typename Algebraic_kernel::Sign_at_1()(_denom,x_s) != CGAL::ZERO)
+    if (typename Algebraic_kernel::Sign_at_1()(Q,x_s) != CGAL::ZERO)
       {
         // We have a nomral endpoint.
         //nothing to do ..
@@ -545,7 +627,7 @@ public:
     _pt=Algebraic_point_2(_f,x_t);
 
     //check if target point lies next to a pole.
-    if (typename Algebraic_kernel::Sign_at_1()(_denom,x_t) != CGAL::ZERO)
+    if (typename Algebraic_kernel::Sign_at_1()(Q,x_t) != CGAL::ZERO)
       {
         // We have a nomral endpoint.
         //nothing to do ..
@@ -566,8 +648,8 @@ public:
     //as continuous only if the denominator has no roots.
     _info = ( _info | ( this->_is_continuous() ?
             (IS_CONTINUOUS | IS_VALID) : IS_VALID ) );
-  }
 
+  }
   //-----------------------------
   // Accessing the arc properties
   //-----------------------------
@@ -1293,9 +1375,9 @@ public:
     else if (inf_x == ARR_RIGHT_BOUNDARY)
       os << "(+oo";
     else if (source_infinite_in_y() != ARR_INTERIOR)
-      os << '(' << source_x();
+      os << '(' << CGAL::to_double(source_x());
     else
-      os << '[' << source().x();
+      os << '[' << CGAL::to_double(source().x());
 
     os << ", ";
 
@@ -1305,9 +1387,9 @@ public:
     else if (inf_x == ARR_RIGHT_BOUNDARY)
       os << "+oo)";
     else if (target_infinite_in_y() != ARR_INTERIOR)
-      os << target_x() << ')';
+      os << CGAL::to_double(target_x()) << ')';
     else
-      os << target().x() << ']';
+      os << CGAL::to_double(target().x()) << ']';
 
     return (os);
   }
@@ -1323,19 +1405,26 @@ protected:
   // Cannonicalize numerator and denominator such that:
   //  There are no common devisor
   //  If negative sign exists, it is in the numerator
-  void _canonicalize(Polynomial_1& _numer,Polynomial_1& _denom)
+  void _canonicalize(const Polynomial_1& P,const Polynomial_1& Q,
+                     Polynomial_1& P_new  ,Polynomial_1& Q_new)
   {
-    Polynomial_1 gcd = CGAL::gcd(_numer,_denom);
+    Polynomial_1 gcd = CGAL::gcd(P,Q);
     if (gcd != 1)
-      {
-        _numer=CGAL::integral_division(_numer,gcd);
-        _denom=CGAL::integral_division(_denom,gcd);
-      }
-    if (typename AT_poly::Unit_part()(_denom) == -1) //leading coefficient sign
-      {
-        _numer*=-1;
-        _denom*=-1;
-      }
+    {
+      P_new=CGAL::integral_division(P,gcd);
+      Q_new=CGAL::integral_division(Q,gcd);
+    }
+    else
+    {
+      P_new=P;
+      Q_new=Q;
+    }
+
+    if (typename AT_poly::Unit_part()(Q_new) == -1) //leading coefficient sign
+    {
+      P_new*=-1;
+      Q_new*=-1;
+    }
     return;
   }
 
@@ -1734,6 +1823,9 @@ public:
    * Constructor of a whole polynomial curve.
    * \param pcoeffs The rational coefficients of the polynomial p(x).
    */
+  Continuous_rational_arc_d_1 (const Polynomial_1& P, Cache& cache) :
+    Base (P,cache)
+  {}
   Continuous_rational_arc_d_1 (const Rat_vector& pcoeffs, Cache& cache) :
     Base (pcoeffs,cache)
   {}
@@ -1747,10 +1839,16 @@ public:
    * \param dir_right Is the ray directed to the right (to +oo)
    *                  or to the left (to -oo).
    */
+  Continuous_rational_arc_d_1 ( const Polynomial_1& P,const Algebraic_real_1& x_s, 
+                                bool dir_right,Cache& cache) :
+    Base (P, x_s, dir_right,cache)
+  {}
+
   Continuous_rational_arc_d_1 ( const Rat_vector& pcoeffs, const Algebraic_real_1& x_s, 
                                 bool dir_right,Cache& cache) :
     Base (pcoeffs, x_s, dir_right,cache)
   {}
+
 
   /*!
    * Constructor of a polynomial arc, defined by y = p(x), x_min <= x <= x_max.
@@ -1759,6 +1857,12 @@ public:
    * \param x_t The x-coordinate of the target point.
    * \pre The two x-coordinates must not be equal.
    */
+  Continuous_rational_arc_d_1 ( const Polynomial_1& P,
+                                const Algebraic_real_1& x_s, const Algebraic_real_1& x_t,
+                                Cache& cache) :
+    Base (P, x_s, x_t,cache)
+  {}
+
   Continuous_rational_arc_d_1 ( const Rat_vector& pcoeffs,
                                 const Algebraic_real_1& x_s, const Algebraic_real_1& x_t,
                                 Cache& cache) :
@@ -1771,6 +1875,17 @@ public:
    * \param qcoeffs The rational coefficients of the polynomial q(x).
    * \pre The denominator polynomial q(x) does not have any roots.
    */
+  Continuous_rational_arc_d_1 ( const Polynomial_1& P,const Polynomial_1& Q,
+                                Cache& cache) :
+    Base (P, Q,cache)
+  {
+    if (!this->_is_continuous())
+      {
+        // Invalid arc, as it is not continuous.
+        this->set_invalid();
+      }
+  }
+
   Continuous_rational_arc_d_1 ( const Rat_vector& pcoeffs,
                                 const Rat_vector& qcoeffs,
                                 Cache& cache) :
@@ -1795,6 +1910,17 @@ public:
    * \pre The denominator polynomial q(x) does not have any roots in the
    *      x-range of definition.
    */
+  Continuous_rational_arc_d_1 ( const Polynomial_1& P,const Polynomial_1& Q,
+                                const Algebraic_real_1& x_s, bool dir_right,
+                                Cache& cache) :
+    Base (P, Q, x_s, dir_right,cache)
+  {
+    if (!this->_is_continuous())
+      {
+        // Invalid arc, as it is not continuous.
+        this->set_invalid();
+      }
+  }
   Continuous_rational_arc_d_1 ( const Rat_vector& pcoeffs,const Rat_vector& qcoeffs,
                                 const Algebraic_real_1& x_s, bool dir_right,
                                 Cache& cache) :
@@ -1806,7 +1932,6 @@ public:
         this->set_invalid();
       }
   }
-  
   /*!
    * Constructor of a bounded rational arc, defined by y = p(x)/q(x), 
    * where: x_min <= x <= x_max.
@@ -1818,6 +1943,16 @@ public:
    * \pre The denominator polynomial q(x) does not have any roots in the
    *      x-range of definition (x_min, x_max).
    */
+  Continuous_rational_arc_d_1 ( const Polynomial_1& P,const Polynomial_1& Q,
+                                const Algebraic_real_1& x_s, const Algebraic_real_1& x_t,Cache& cache) :
+    Base (P, Q, x_s, x_t,cache)
+  {
+    if (!this->_is_continuous())
+      {
+        // Invalid arc, as it is not continuous.
+        this->set_invalid();
+      }
+  }
   Continuous_rational_arc_d_1 ( const Rat_vector& pcoeffs,const Rat_vector& qcoeffs,
                                 const Algebraic_real_1& x_s, const Algebraic_real_1& x_t,Cache& cache) :
     Base (pcoeffs, qcoeffs, x_s, x_t,cache)
@@ -1828,6 +1963,7 @@ public:
         this->set_invalid();
       }
   }
+
   //@}
 
   /// \name Constructions of points and curves.
@@ -2326,6 +2462,10 @@ public:
    * Constructor of a whole polynomial curve.
    * \param pcoeffs The rational coefficients of the polynomial p(x).
    */
+  Rational_arc_d_1 (const Polynomial_1& P, Cache& cache) :
+    Base (P,cache)
+  {}
+
   Rational_arc_d_1 (const Rat_vector& pcoeffs, Cache& cache) :
     Base (pcoeffs,cache)
   {}
@@ -2339,10 +2479,16 @@ public:
    * \param dir_right Is the ray directed to the right (to +oo)
    *                  or to the left (to -oo).
    */
+  Rational_arc_d_1 (const Polynomial_1& P, const Algebraic_real_1& x_s, 
+                    bool dir_right,Cache& cache) :
+    Base (P, x_s, dir_right,cache)
+  {}
+
   Rational_arc_d_1 (const Rat_vector& pcoeffs, const Algebraic_real_1& x_s, 
                     bool dir_right,Cache& cache) :
     Base (pcoeffs, x_s, dir_right,cache)
   {}
+
 
   /*!
    * Constructor of a polynomial arc, defined by y = p(x), x_min <= x <= x_max.
@@ -2351,6 +2497,11 @@ public:
    * \param x_t The x-coordinate of the target point.
    * \pre The two x-coordinates must not be equal.
    */
+  Rational_arc_d_1 (const Polynomial_1& P, const Algebraic_real_1& x_s, 
+                    const Algebraic_real_1& x_t,Cache& cache) :
+    Base (P, x_s, x_t,cache)
+  {}
+
   Rational_arc_d_1 (const Rat_vector& pcoeffs, const Algebraic_real_1& x_s, 
                     const Algebraic_real_1& x_t,Cache& cache) :
     Base (pcoeffs, x_s, x_t,cache)
@@ -2361,6 +2512,10 @@ public:
    * \param pcoeffs The rational coefficients of the polynomial p(x).
    * \param qcoeffs The rational coefficients of the polynomial q(x).
    */
+  Rational_arc_d_1 (const Polynomial_1& P,const Polynomial_1& Q,Cache& cache) :
+    Base (P, Q,cache)
+  {}
+
   Rational_arc_d_1 (const Rat_vector& pcoeffs, const Rat_vector& qcoeffs,Cache& cache) :
     Base (pcoeffs, qcoeffs,cache)
   {}
@@ -2375,6 +2530,10 @@ public:
    * \param dir_right Is the ray directed to the right (to +oo)
    *                  or to the left (to -oo).
    */
+  Rational_arc_d_1 (const Polynomial_1& P,const Polynomial_1& Q,
+                    const Algebraic_real_1& x_s, bool dir_right,Cache& cache) :
+    Base (P, Q, x_s, dir_right,cache)
+  {}
   Rational_arc_d_1 (const Rat_vector& pcoeffs, const Rat_vector& qcoeffs,
                     const Algebraic_real_1& x_s, bool dir_right,Cache& cache) :
     Base (pcoeffs, qcoeffs, x_s, dir_right,cache)
@@ -2389,6 +2548,10 @@ public:
    * \param x_t The x-coordinate of the target point.
    * \pre The two x-coordinates must not be equal.
    */
+  Rational_arc_d_1 (const Polynomial_1& P,const Polynomial_1& Q,
+                    const Algebraic_real_1& x_s, const Algebraic_real_1& x_t,Cache& cache) :
+    Base (P, Q, x_s, x_t,cache)
+  {}
   Rational_arc_d_1 (const Rat_vector& pcoeffs, const Rat_vector& qcoeffs,
                     const Algebraic_real_1& x_s, const Algebraic_real_1& x_t,Cache& cache) :
     Base (pcoeffs, qcoeffs, x_s, x_t,cache)

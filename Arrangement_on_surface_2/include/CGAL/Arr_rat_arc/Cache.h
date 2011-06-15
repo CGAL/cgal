@@ -17,6 +17,7 @@ class Cache : public Base_rational_arc_ds_1<Algebraic_kernel_>
 public:
   typedef Algebraic_kernel_                        Algebraic_kernel;
   typedef Base_rational_arc_ds_1<Algebraic_kernel> Base;
+  typedef Cache<Algebraic_kernel>                  Self;
  
   typedef typename Base::Polynomial_1         Polynomial_1;
   typedef typename Base::Rational             Rational;
@@ -73,6 +74,41 @@ public:
         Less_compare_rational_function_pair_key> Rational_function_canonicalized_pair_map;
 public:
   Cache() : _rat_func_map_watermark(128),_rat_pair_map_watermark(128){};
+  Cache(const Self& other)
+  {
+    //copy rational function map
+    typename Rational_function_map::iterator iter1;
+    for ( iter1 = other.rat_func_map().begin();
+          iter1 != other.rat_func_map().end();
+          ++iter1)
+    {
+      if (iter1->second.is_shared())
+        _rat_func_map.insert(*iter1); 
+    }
+    
+    _rat_func_map_watermark = 2*_rat_func_map.size();
+
+    //copy rational function pair map
+    typename Rational_function_canonicalized_pair_map::iterator iter2;
+    for ( iter2  = other.rat_pair_map().begin();
+          iter2 != other.rat_pair_map().end();
+          ++iter2)
+    {
+      if (iter2->second.is_shared())
+        _rat_pair_map.insert(iter2);
+    }
+    _rat_pair_map_watermark = 2*_rat_pair_map.size();
+
+  }
+  const Rational_function_map& rat_func_map() const
+  {
+    return _rat_func_map;
+  }
+
+  const Rational_function_canonicalized_pair_map& rat_pair_map() const
+  {
+    return _rat_pair_map;
+  }
   
   const Rational_function&  get_rational_function(const Polynomial_1& numer,
                                                   const Polynomial_1& denom,
@@ -93,7 +129,7 @@ public:
         if (_rat_func_map.size() > _rat_func_map_watermark)
           rat_func_map_clean_up();
 
-        //then inert the new element
+        //then insert the new element
         Rational_function f(numer,denom,kernel);
         typename Rational_function_map::iterator it2 = _rat_func_map.insert(it,std::make_pair(key,f)); 
         return it2->second; 
