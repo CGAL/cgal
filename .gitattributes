@@ -1653,6 +1653,7 @@ Interpolation/doc_tex/Interpolation/nn_coords.gif -text svneol=unset#image/gif
 Interpolation/doc_tex/Interpolation/nn_coords.ipe -text svneol=unset#application/postscript
 Interpolation/doc_tex/Interpolation/nn_coords.pdf -text svneol=unset#application/pdf
 Interpolation/doc_tex/Interpolation/nn_coords.xml svneol=native#text/xml
+Intersections_2/benchmark/Intersections_2/variant_any_object.cpp -text
 Intersections_2/include/CGAL/Circle_2_Line_2_intersection.h -text
 Intersections_3/include/CGAL/Triangle_3_Triangle_3_intersection.h -text
 Intersections_3/include/CGAL/internal/Intersections_3/Triangle_3_Line_3_intersection.h -text
