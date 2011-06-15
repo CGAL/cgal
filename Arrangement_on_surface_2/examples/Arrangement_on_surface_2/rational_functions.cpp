@@ -1,6 +1,5 @@
 //! \file examples/Arrangement_2/ex_rational_functions.cpp
 // Constructing an arrangement of arcs of rational functions.
-
 #include <CGAL/basic.h>
 
 #include <CGAL/CORE_BigInt.h>                      //NT
@@ -37,29 +36,35 @@ int main ()
   Polynomial_1 P1 = x*x*x*x - 6*x*x + 8;
   Alg_real_1 l(Traits_2::Algebraic_kernel_d_1::Bound(-2.1));
   Alg_real_1 r(Traits_2::Algebraic_kernel_d_1::Bound(2.1));
-  arcs.push_back( construct_arc(P1.begin(), P1.end(), l, r));
+  arcs.push_back( construct_arc(P1, l, r));
 
   // Create an arc supported by the function y = x / (1 + x^2),
   // defined over the interval [-3, 3]:
   Polynomial_1 P2 = x;
   Polynomial_1 Q2 = 1+x*x;
   
-  arcs.push_back( construct_arc( P2.begin(), P2.end(), Q2.begin(), Q2.end(),
-          Alg_real_1(-3), Alg_real_1(3)));
+  arcs.push_back( construct_arc( P2, Q2,
+                                 Alg_real_1(-3), Alg_real_1(3)));
   
   // Create an arc supported by the parbola y = 8 - x^2,
   // defined over the interval [-2, 3]:
   Polynomial_1 P3 = 8 - x*x; 
-  arcs.push_back(construct_arc(P3.begin(), P3.end(), 
-          Alg_real_1(-2), Alg_real_1(3)));
+  arcs.push_back(construct_arc(P3, 
+                               Alg_real_1(-2), Alg_real_1(3)));
   
   // Create an arc supported by the line y = -2x,
   // defined over the interval [-3, 0]:
   Polynomial_1 P4 = -2*x;
-  arcs.push_back(construct_arc(P4.begin(), P4.end(), 
-          Alg_real_1(-3), Alg_real_1(0)));
+  arcs.push_back(construct_arc(P4, 
+                               Alg_real_1(-3), Alg_real_1(0)));
   
   // Construct the arrangement of the four arcs.
+
+  // Print the arcs.
+  for (unsigned int i(0); i < arcs.size(); ++i)
+    std::cout << arcs[i]<<std::endl;
+
+
   Arrangement_2 arr(&traits);
   insert (arr, arcs.begin(), arcs.end());
 

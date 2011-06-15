@@ -18,8 +18,6 @@ typedef CGAL::Arrangement_2<Traits_2>              Arrangement_2;
 
 int main ()
 {
-  CGAL::set_pretty_mode(std::cout);             // for nice printouts.
-
   // Traits class object 
   AK1 ak1; 
   Traits_2 traits(&ak1);
@@ -39,8 +37,8 @@ int main ()
   Polynomial_1 P1(1);
   Polynomial_1 minusP1(-P1);
   Polynomial_1 Q1 = x;
-  arcs.push_back(construct( P1.begin(), P1.end(), Q1.begin(),Q1.end()));
-  arcs.push_back(construct(minusP1.begin(),minusP1.end(), Q1.begin(),Q1.end()));
+  arcs.push_back(construct( P1, Q1));
+  arcs.push_back(construct(minusP1, Q1));
 
   // Create a bounded segments of the parabolas (y = -4*x^2 + 3) and
   // (y = 4*x^2 - 3), defined over [-sqrt(3)/2, sqrt(3)/2].
@@ -48,16 +46,16 @@ int main ()
   Polynomial_1 minusP2 = -P2; 
   std::vector<std::pair<Alg_real_1,int> > roots;
   traits.algebraic_kernel_d_1()->solve_1_object()(P2,std::back_inserter(roots));// [-sqrt(3)/2, sqrt(3)/2]
-  arcs.push_back(construct(P2.begin(), P2.end(), roots[0].first, roots[1].first));
-  arcs.push_back(construct(minusP2.begin(),minusP2.end(), roots[0].first, roots[1].first));
+  arcs.push_back(construct(P2, roots[0].first, roots[1].first));
+  arcs.push_back(construct(minusP2, roots[0].first, roots[1].first));
 
   // Create the rational function (y = 1 / 2*x) for x > 0, and the
   // rational function (y = -1 / 2*x) for x < 0.
   Polynomial_1 P3(1);
   Polynomial_1 minusP3(-P3);
   Polynomial_1 Q3 = 2*x;
-  arcs.push_back(construct( P3.begin(), P3.end(), Q3.begin(), Q3.end(), Alg_real_1(0), true ));
-  arcs.push_back(construct(minusP3.begin(),minusP3.end(), Q3.begin(), Q3.end(), Alg_real_1(0), false));
+  arcs.push_back(construct( P3, Q3, Alg_real_1(0), true ));
+  arcs.push_back(construct(minusP3, Q3, Alg_real_1(0), false));
 
   // Construct the arrangement of the six arcs.
   //Arrangement_2 arr(&traits);
