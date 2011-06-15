@@ -21,7 +21,6 @@
 // ============================================================================
 
 #include <CGAL/Cartesian.h>
-#include <CGAL/known_bit_size_integers.h>
 #include <CGAL/IO/Verbose_ostream.h>
 #include <CGAL/IO/binary_file_io.h>
 #include <CGAL/IO/File_writer_OFF.h>
@@ -31,7 +30,7 @@
 #include <iostream>
 #include <fstream>
 #include <vector>
-
+#include <boost/cstdint.hpp>
 
 using namespace std;
 
@@ -142,7 +141,7 @@ int main( int argc, char **argv) {
     if ( c < '0' && c > '9')
         binary_mesh = 1;
     in.putback(c);
-    CGAL::Integer32   number;
+    boost::int32_t    number;
     if ( ! binary_mesh) {
         in >> number;
         if ( number != 1)

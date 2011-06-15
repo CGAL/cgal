@@ -20,7 +20,6 @@ include( ${CGAL_USE_FILE} )
 set ( QT_USE_QTXML    TRUE )
 set ( QT_USE_QTMAIN   TRUE )
 set ( QT_USE_QTOPENGL TRUE )
-set ( QT_USE_QTASSISTANT TRUE )
 find_package(Qt4)
 
 # Find OpenGL

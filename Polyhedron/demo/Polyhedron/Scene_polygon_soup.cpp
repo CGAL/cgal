@@ -162,7 +162,7 @@ Scene_polygon_soup::load(std::istream& in)
 #if CGAL_VERSION_NR >= 1030700091
   typedef std::size_t indices_t;
 #else
-  typedef CGAL::Integer32 indices_t;
+  typedef boost::int32_t indices_t;
 #endif
   if(!soup)
     soup = new Polygon_soup;

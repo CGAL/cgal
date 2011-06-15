@@ -112,8 +112,8 @@ LineGraphicsItem<CK>::boundingRect() const
 template <typename CK>
 void 
 LineGraphicsItem<CK>::paint(QPainter *painter, 
-                                    const QStyleOptionGraphicsItem *option,
-                                    QWidget * widget)
+                                    const QStyleOptionGraphicsItem */*option*/,
+                                    QWidget * /*widget*/)
 {
   painter->setPen(this->Pen());
   painterostream = PainterOstream<CK>(painter, boundingRect());

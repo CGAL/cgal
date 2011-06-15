@@ -29,6 +29,37 @@
 
 namespace CGAL {
 
+template < typename NT >
+struct Root_of_traits;
+
+template < class NT >
+inline
+typename Root_of_traits< NT >::Root_of_2
+make_root_of_2(const NT &a, const NT &b, const NT &c)
+{
+    typename Root_of_traits<NT>::Make_root_of_2 make_root_of_2;
+    return make_root_of_2(a,b,c);
+}
+
+
+template < class NT >
+inline
+typename Root_of_traits< NT >::Root_of_2
+make_root_of_2(const NT &a, const NT &b, const NT &c,const bool smaller)
+{
+    typename Root_of_traits<NT>::Make_root_of_2 make_root_of_2;
+    return make_root_of_2(a,b,c,smaller);
+}
+
+template < class NT >
+inline 
+typename Root_of_traits< NT >::Root_of_2
+make_sqrt(const NT &a)
+{
+  typename Root_of_traits<NT>::Make_sqrt make_sqrt;
+  return make_sqrt(a);
+}
+
 namespace internal {
 
 BOOST_MPL_HAS_XXX_TRAIT_NAMED_DEF(Has_typedef_Arithmetic_kernel,Arithmetic_kernel,false)  
@@ -234,36 +265,6 @@ struct Root_of_traits<Interval_nt<B> >{
     }
   };
 };
-
-template < class NT >
-inline
-typename Root_of_traits< NT >::Root_of_2
-make_root_of_2(const NT &a, const NT &b, const NT &c)
-{
-    typename Root_of_traits<NT>::Make_root_of_2 make_root_of_2;
-    return make_root_of_2(a,b,c);
-}
-
-
-template < class NT >
-inline
-typename Root_of_traits< NT >::Root_of_2
-make_root_of_2(const NT &a, const NT &b, const NT &c,const bool smaller)
-{
-    typename Root_of_traits<NT>::Make_root_of_2 make_root_of_2;
-    return make_root_of_2(a,b,c,smaller);
-}
-
-template < class NT >
-inline 
-typename Root_of_traits< NT >::Root_of_2
-make_sqrt(const NT &a)
-{
-  typename Root_of_traits<NT>::Make_sqrt make_sqrt;
-  return make_sqrt(a);
-}
-
-
 
 
 } //namespace CGAL

@@ -112,8 +112,8 @@ SegmentsGraphicsItem<P>::boundingRect() const
 template <typename P>
 void 
 SegmentsGraphicsItem<P>::paint(QPainter *painter, 
-                                    const QStyleOptionGraphicsItem *option,
-                                    QWidget * widget)
+                                    const QStyleOptionGraphicsItem */*option*/,
+                                    QWidget * /*widget*/)
 {
 
   painterostream = PainterOstream<Traits>(painter);
