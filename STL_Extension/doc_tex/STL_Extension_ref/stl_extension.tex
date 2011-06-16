@@ -22,6 +22,13 @@
   \ccc{std} is used (provided by C++0x), if not found, then the one in
   namespace \ccc{boost} is used.
 
+  \ccDefinition The function returns the result of \ccc{operator++} on
+  a ForwardIterator. The exact behaviour is described in $\mathsection
+  24.4.4$ of the C++0x standard.
+
+  \ccAnchor{http://www.boost.org/doc/libs/1_46_1/libs/utility/utility.htm#functions_next_prior}{Boost
+    Documentation}
+
   \ccInclude{CGAL/algorithm.h}
 \end{ccRefFunction}
 
@@ -31,8 +38,15 @@
   \label{sectionGenericFunctions}
   If C++0x is available the function \ccc{std::prev} is imported into
   the namespace \ccc{CGAL::cpp0x}, otherwise \ccc{CGAL::cpp0x::prev} is declared with the
-  signature as given in $\mathsection$ 24.4.4 of the ISO C++ Standard
+  signature as given in $\mathsection 24.4.4$ of the ISO C++ Standard
   and forwarded to \ccc{boost::prior}.
+
+  \ccDefinition The function returns the result of \ccc{operator--} on
+  a BidirectionalIterator. The exact behaviour is described in $\mathsection
+  24.4.4$ of the C++0x standard.
+
+  \ccAnchor{http://www.boost.org/doc/libs/1_46_1/libs/utility/utility.htm#functions_next_prior}{Boost
+    Documentation}
 
   \ccInclude{CGAL/algorithm.h}
 \end{ccRefFunction}
