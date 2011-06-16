@@ -36,7 +36,7 @@ namespace CGAL {
 // copy_n is usually in the STL as well, but not in the official
 // standard. We provide our own copy_n.  It is planned for C++0x. 
 // Our own version is declared deprecated, if std::copy_n is
-// available. If std::copy_n is available 
+// available.
 
 #ifndef CGAL_CFG_NO_CPP0X_COPY_N
 #ifndef CGAL_NO_DEPRECATED_CODE
