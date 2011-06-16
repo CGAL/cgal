@@ -21,9 +21,11 @@
 #define CGAL_CONVEX_HULL_TRAITS_3_H
 
 #include <CGAL/Polyhedron_3.h>
+#include <CGAL/Convex_hull_face_base_2.h>
 #include <CGAL/Projection_traits_xy_3.h>
 #include <CGAL/Projection_traits_xz_3.h>
 #include <CGAL/Projection_traits_yz_3.h>
+#include <list>
 
 namespace CGAL {
 template < class R_ >
@@ -34,7 +36,7 @@ protected:
   typedef typename R_::Point_3              Point_3;
   typedef typename R_::Vector_3             Vector_3;
 
-  Point_3 p_, q_, r_;
+  Point_3  p_,  q_,  r_;
 public:
   typedef R_                                     R;
 
@@ -115,9 +117,15 @@ public:
       const Point_3& hp = h.p();
       const Point_3& hq = h.q();
       const Point_3& hr = h.r();
-      typename OldK::Less_signed_distance_to_plane_3 
-	less_signed_distance_to_plane_3;
-      return less_signed_distance_to_plane_3(hp, hq, hr, p, q);
+      //typename OldK::Less_signed_distance_to_plane_3 
+      //	less_signed_distance_to_plane_3;
+      // return less_signed_distance_to_plane_3(hp, hq, hr, p, q);
+      return has_smaller_signed_dist_to_planeC3(hp.x(), hp.y(), hp.z(),
+                                                hq.x(), hq.y(), hq.z(),
+                                                hr.x(), hr.y(), hr.z(),
+                                                p.x(), p.y(), p.z(),
+                                                q.x(), q.y(), q.z());
+      
     }
   };
 
@@ -143,6 +151,14 @@ public:
     }
 };
 
+
+template <typename GT>
+struct GT3 {
+  typedef typename GT::Point_3 Point_2;
+};
+
+
+
 template <class R_>
 class Convex_hull_traits_3 
 {
@@ -156,7 +172,6 @@ class Convex_hull_traits_3
   typedef typename R::Vector_3                   Vector_3;
 
   typedef CGAL::Polyhedron_3<R>                  Polyhedron_3;
-
 
   typedef typename R::Construct_segment_3        Construct_segment_3;
   typedef typename R::Construct_ray_3            Construct_ray_3;
@@ -186,9 +201,6 @@ class Convex_hull_traits_3
                                                Less_signed_distance_to_plane_3;
 
   // required for degenerate case of all points coplanar
-  typedef Projection_traits_xy_3<R> Traits_xy;
-  typedef Projection_traits_xz_3<R> Traits_xz;
-  typedef Projection_traits_yz_3<R> Traits_yz;
   typedef CGAL::Max_coordinate_3<Vector_3>             Max_coordinate_3;
 
   // for postcondition checking 

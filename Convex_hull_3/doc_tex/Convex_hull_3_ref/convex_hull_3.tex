@@ -47,9 +47,10 @@ Both functions require the following:
 \begin{enumerate}
    \item \ccc{InputIterator::value_type} is equivalent to \ccc{Traits::Point_3}.
    \item \ccc{Traits} is a model of the concept \ccc{ConvexHullTraits_3}
-         \ccIndexMainItem[c]{ConvexHullTraits_3}.  When it is known that
-         the input points are not all coplanar, the types \ccc{Traits_xy}, 
-         \ccc{Traits_yx}, and \ccc{Traits_yz} need not be provided.
+         \ccIndexMainItem[c]{ConvexHullTraits_3}.  
+         %When it is known that
+         %the input points are not all coplanar, the types \ccc{Traits_xy}, 
+         %\ccc{Traits_yx}, and \ccc{Traits_yz} need not be provided.
          For the purposes of checking the postcondition that the convex hull
          is valid, \ccc{Traits} should also be a model of the concept
          \ccc{IsStronglyConvexTraits_3}.
@@ -67,9 +68,11 @@ and for the second, it is required that
        \ccc{ConvexHullPolyhedron_3}.
 \end{itemize}
 
-The default traits class for both versions of \ccc{convex_hull_3} is 
-\ccc{Convex_hull_traits_3<R>},%
-with the representation \ccc{R} determined by \ccc{InputIterator::value_type}.
+For both versions, if the kernel \ccc{R} of the points determined by \ccc{InputIterator::value_type}
+is a kernel with exact predicates but inexact constructions 
+(in practice we check \ccc{R::Has_filtered_predicates_tag} is \ccc{Tag_true} and \ccc{R::FT} is a floating point type),
+then the default traits class of \ccc{convex_hull_3} is \ccc{Convex_hull_traits_3<R>}, and \ccc{R} otherwise.
+
 
 \ccSeeAlso
 

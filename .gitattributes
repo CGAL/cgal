@@ -1417,9 +1417,16 @@ Convex_decomposition_3/test/Convex_decomposition_3/star.nef3 -text
 Convex_hull_2/demo/Convex_hull_2/help/index.html svneol=native#text/html
 Convex_hull_2/doc_tex/Convex_hull_2/convex_hull.png -text
 Convex_hull_2/doc_tex/Convex_hull_2/saarhull.png -text svneol=unset#image/png
+Convex_hull_3/benchmark/Convex_hull_3/compare_different_approach.cpp -text
+Convex_hull_3/benchmark/Convex_hull_3/is_on_positive_side.cpp -text
 Convex_hull_3/demo/Convex_hull_3/CMakeLists.txt -text
 Convex_hull_3/doc_tex/Convex_hull_3/bunny.png -text
 Convex_hull_3/doc_tex/Convex_hull_3/bunny.wrl.gz -text
+Convex_hull_3/doc_tex/Convex_hull_3/chull_bimba.png -text
+Convex_hull_3/doc_tex/Convex_hull_3_ref/convex_hull_3_to_polyhedron_3.tex -text
+Convex_hull_3/examples/Convex_hull_3/incremental_hull_class_3.cpp -text
+Convex_hull_3/include/CGAL/convex_hull_3_to_polyhedron_3.h -text
+Convex_hull_3/test/Convex_hull_3/quick_hull_default_traits.cpp -text
 Developers_manual/doc_tex/Developers_manual/fig/Cartesian_ipoint.gif -text svneol=unset#image/gif
 Developers_manual/doc_tex/Developers_manual/fig/Cartesian_orientation.png -text svneol=unset#image/png
 Developers_manual/doc_tex/Developers_manual/fig/Object.gif -text svneol=unset#image/gif

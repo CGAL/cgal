@@ -1,14 +1,13 @@
 #include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
 #include <CGAL/point_generators_3.h>
 #include <CGAL/algorithm.h>
-#include <CGAL/Convex_hull_traits_3.h>
+#include <CGAL/Polyhedron_3.h>
 #include <CGAL/convex_hull_3.h>
 #include <vector>
 
 
 typedef CGAL::Exact_predicates_inexact_constructions_kernel  K;
-typedef CGAL::Convex_hull_traits_3<K>             Traits;
-typedef Traits::Polyhedron_3                      Polyhedron_3;
+typedef CGAL::Polyhedron_3<K>                     Polyhedron_3;
 typedef K::Segment_3                              Segment_3;
 
 // define point creator
@@ -32,10 +31,12 @@ int main()
   CGAL::convex_hull_3(points.begin(), points.end(), ch_object);
 
   // determine what kind of object it is
-  if (CGAL::object_cast<Segment_3>(&ch_object) )
-     std::cout << "convex hull is a segment " << std::endl;
-  else if (CGAL::object_cast<Polyhedron_3>(&ch_object) )
-     std::cout << "convex hull is a polyhedron " << std::endl;
+  if ( const Segment_3* segment=CGAL::object_cast<Segment_3>(&ch_object) ){
+     std::cout << "convex hull is the segment " << *segment << std::endl;
+  }
+  else if (const Polyhedron_3* poly = CGAL::object_cast<Polyhedron_3>(&ch_object) )
+     std::cout << "convex hull is a polyhedron with " 
+               << poly->size_of_vertices() << " vertices" << std::endl;
   else
      std::cout << "convex hull error!" << std::endl;
 
