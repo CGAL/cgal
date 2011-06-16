@@ -7,9 +7,34 @@
 #include <CGAL/Join_input_iterator.h>
 
 #include <vector>
+#include <functional>
+
 #include <boost/variant.hpp>
 #include <boost/optional.hpp>
 #include <boost/timer.hpp>
+
+template<typename Ret, typename K>
+struct segment_point_2_visitor : public boost::static_visitor<Ret>
+{
+  segment_point_2_visitor(std::function<Ret(const typename K::Segment_2&)> t, 
+			  std::function<Ret(const typename K::Point_2&)> u) 
+    : t(t), u(u) {}
+
+  std::function<Ret(const typename K::Segment_2&)> t;
+  std::function<Ret(const typename K::Point_2&)> u;
+
+  Ret operator()(const typename K::Segment_2& x) { return t(x); }
+  Ret operator()(const typename K::Point_2& x) { return u(x); }
+};
+
+template<typename K, typename X, typename Y>
+struct intersection_traits;
+
+template<typename K>
+struct intersection_traits<K, typename K::Segment_2, typename K::Segment_2> {
+  typedef typename boost::optional< boost::variant<typename K::Segment_2, typename K::Point_2 > > result_type;
+};
+
 
 template <class K>
 boost::optional< 
@@ -79,13 +104,22 @@ struct raise_if : public boost::static_visitor<>
 
 cpp0x::tuple<int, int, int> intersect_each_new(const Vector& segs) {
   cpp0x::tuple<int, int, int> ret = cpp0x::make_tuple(0, 0, 0);
+  typedef intersection_traits<K, Segment, Segment>::result_type result_type;
+
   // Calculate the intersections between each segment
   for(Vector::const_iterator it = segs.begin(); it != segs.end(); ++it) {
     const Segment& seg_1 = *it;
     for(Vector::const_iterator it2 = segs.begin(); it2 != segs.end(); ++it2) {
-      boost::optional< boost::variant<Segment, Point> > obj = intersection_new(seg_1, *it2, K());
+      result_type obj = intersection_new(seg_1, *it2, K());
       if(obj) {
 	boost::apply_visitor(raise_if(&ret), *obj);
+	//with c++0x
+#ifndef CGAL_CFG_NO_CPP0X_LAMBDAS 1
+	segment_point_2_visitor<void, K> visitor([&ret](const Segment& s) { ++(cpp0x::get<1>(ret)); },
+						 [&ret](const Point& s) { ++(cpp0x::get<0>(ret)); });
+	
+	boost::apply_visitor(visitor, *obj);
+#endif
       } else {
 	++(cpp0x::get<2>(ret));
       }
