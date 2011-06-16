@@ -96,90 +96,42 @@ if [ $# -ne 0 ] ; then
   done
 else
   echo "Run all tests."
-if  ${MAKE_CMD} -f Makefile help | grep "Polyhedron_3" > /dev/null; then 
-  compile_and_run Polyhedron_3
-  NEED_CLEAN=y
-fi
-if  ${MAKE_CMD} -f Makefile help | grep "convex_hull_plugin" > /dev/null; then 
-  compile_and_run convex_hull_plugin
-  NEED_CLEAN=y
-fi
-if  ${MAKE_CMD} -f Makefile help | grep "cut_plugin" > /dev/null; then 
-  compile_and_run cut_plugin
-  NEED_CLEAN=y
-fi
-if  ${MAKE_CMD} -f Makefile help | grep "inside_out_plugin" > /dev/null; then 
-  compile_and_run inside_out_plugin
-  NEED_CLEAN=y
-fi
-if  ${MAKE_CMD} -f Makefile help | grep "kernel_plugin" > /dev/null; then 
-  compile_and_run kernel_plugin
-  NEED_CLEAN=y
-fi
-if  ${MAKE_CMD} -f Makefile help | grep "mesh_3_plugin" > /dev/null; then 
-  compile_and_run mesh_3_plugin
-  NEED_CLEAN=y
-fi
-if  ${MAKE_CMD} -f Makefile help | grep "mesh_simplification_plugin" > /dev/null; then 
-  compile_and_run mesh_simplification_plugin
-  NEED_CLEAN=y
-fi
-if  ${MAKE_CMD} -f Makefile help | grep "nef_plugin" > /dev/null; then 
-  compile_and_run nef_plugin
-  NEED_CLEAN=y
-fi
-if  ${MAKE_CMD} -f Makefile help | grep "off_plugin" > /dev/null; then 
-  compile_and_run off_plugin
-  NEED_CLEAN=y
-fi
-if  ${MAKE_CMD} -f Makefile help | grep "off_to_nef_plugin" > /dev/null; then 
-  compile_and_run off_to_nef_plugin
-  NEED_CLEAN=y
-fi
-if  ${MAKE_CMD} -f Makefile help | grep "orient_soup_plugin" > /dev/null; then 
-  compile_and_run orient_soup_plugin
-  NEED_CLEAN=y
-fi
-if  ${MAKE_CMD} -f Makefile help | grep "pca_plugin" > /dev/null; then 
-  compile_and_run pca_plugin
-  NEED_CLEAN=y
-fi
-if  ${MAKE_CMD} -f Makefile help | grep "scene_polygon_soup" > /dev/null; then 
-  compile_and_run scene_polygon_soup
-  NEED_CLEAN=y
-fi
-if  ${MAKE_CMD} -f Makefile help | grep "remeshing_plugin" > /dev/null; then 
-  compile_and_run remeshing_plugin
-  NEED_CLEAN=y
-fi
-if  ${MAKE_CMD} -f Makefile help | grep "scene_basic_objects" > /dev/null; then 
-  compile_and_run scene_basic_objects
-  NEED_CLEAN=y
-fi
-if  ${MAKE_CMD} -f Makefile help | grep "scene_item" > /dev/null; then 
-  compile_and_run scene_item
-  NEED_CLEAN=y
-fi
-if  ${MAKE_CMD} -f Makefile help | grep "scene_nef_polyhedron_item" > /dev/null; then 
-  compile_and_run scene_nef_polyhedron_item
-  NEED_CLEAN=y
-fi
-if  ${MAKE_CMD} -f Makefile help | grep "scene_polyhedron_item" > /dev/null; then 
-  compile_and_run scene_polyhedron_item
-  NEED_CLEAN=y
-fi
-if  ${MAKE_CMD} -f Makefile help | grep "self_intersection_plugin" > /dev/null; then 
-  compile_and_run self_intersection_plugin
-  NEED_CLEAN=y
-fi
-if  ${MAKE_CMD} -f Makefile help | grep "subdivision_methods_plugin" > /dev/null; then 
-  compile_and_run subdivision_methods_plugin
-  NEED_CLEAN=y
-fi
-if  ${MAKE_CMD} -f Makefile help | grep "trivial_plugin" > /dev/null; then 
-  compile_and_run trivial_plugin
-  NEED_CLEAN=y
-fi
+
+  for target in  \
+      demo_framework \
+      Polyhedron_3 \
+      scene_basic_objects \
+      scene_c2t3_item \
+      scene_edit_polyhedron_item \
+      scene_nef_polyhedron_item \
+      scene_polygon_soup_item \
+      scene_polyhedron_item \
+      scene_textured_polyhedron_item \
+      convex_hull_plugin \
+      cut_plugin \
+      edit_polyhedron_plugin \
+      inside_out_plugin \
+      kernel_plugin \
+      mesh_3_plugin \
+      mesh_simplification_plugin \
+      nef_plugin \
+      off_plugin \
+      off_to_nef_plugin \
+      orient_soup_plugin \
+      parameterization_plugin \
+      pca_plugin \
+      point_dialog \
+      remeshing_plugin \
+      self_intersection_plugin \
+      subdivision_methods_plugin \
+      triangulate_facets_plugin \
+      trivial_plugin
+  do
+      if  ${MAKE_CMD} -f Makefile help | grep "$target" > /dev/null; then 
+          compile_and_run "$target"
+          NEED_CLEAN=y
+      fi
+  done
 fi
 
 #
