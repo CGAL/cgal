@@ -353,7 +353,7 @@ MainWindow::on_actionSaveConstraints_triggered()
 
 
 void
-MainWindow::saveConstraints(QString fileName)
+MainWindow::saveConstraints(QString /*fileName*/)
 {
   QMessageBox::warning(this,
                        tr("saveConstraints"),

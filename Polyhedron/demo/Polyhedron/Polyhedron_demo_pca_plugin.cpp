@@ -14,6 +14,16 @@
 #include <CGAL/Make_quad_soup.h> // output for plane fitting
 #include <CGAL/Make_bar.h> // output for line fitting
 
+#include "Kernel_type.h"
+typedef Kernel::Plane_3 Plane;
+typedef Kernel::Iso_cuboid_3 Iso_cuboid;
+typedef Kernel::Triangle_3 Triangle;
+typedef Kernel::Line_3 Line;
+typedef Kernel::Vector_3 Vector;
+typedef Kernel::Point_3 Point;
+typedef Kernel::FT FT;
+
+
 class Polyhedron_demo_pca_plugin : 
   public QObject,
   public Polyhedron_demo_plugin_helper

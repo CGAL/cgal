@@ -56,7 +56,7 @@ isolator<Polynomial<Gmpz> >::operator()(const Polynomial<Gmpz> &p,
         mpz_t *coeffs=(mpz_t*)malloc((degree+1)*sizeof(mpz_t));
         mpfi_ptr *intervals_mpfi=(mpfi_ptr*)malloc(degree*sizeof(mpfi_ptr));
         std::vector<Gmpfi> intervals;
-        for(int i=0;i<=degree;++i)
+        for(unsigned int i=0;i<=degree;++i)
                 coeffs[i][0]=*(p[i].mpz());
         init_solver();
         create_rs_upoly(coeffs,degree,rs_get_default_up());

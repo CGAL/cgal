@@ -41,12 +41,40 @@ class Compute_coordinateHd {
   typedef typename K::Point_d        Point_d;
  public:
   typedef FT                         result_type;  
-  const result_type 
+  result_type 
     operator()(const Point_d& p, int i) const
   {
     return p.cartesian(i);
   }
 };
+
+template <typename K>
+class Point_dimensionHd {
+  typedef typename K::RT             RT;
+  typedef typename K::Point_d        Point_d;
+  public:
+  typedef int                       result_type;
+  result_type 
+    operator()(const Point_d& p) const
+  {
+    return p.dimension();
+  }
+};
+
+template <typename K>
+class Less_coordinateHd {
+  typedef typename K::RT             RT;
+  typedef typename K::Point_d        Point_d;
+  public:
+  typedef bool                       result_type;
+  result_type 
+    operator()(const Point_d& p, const Point_d& q, int i) const
+  {
+    int d = p.dimension();
+    return p.cartesian(i)*q.homogeneous(d)<q.cartesian(i)*p.homogeneous(d);
+  }
+};
+
 
 template <class R>
 struct Lift_to_paraboloidHd {

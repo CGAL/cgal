@@ -1,6 +1,7 @@
 #include <QApplication>
 #include <QMessageBox>
 #include <QMainWindow>
+#include "Kernel_type.h"
 #include "Polyhedron_type.h"
 #include "Scene_polyhedron_item.h"
 
@@ -13,6 +14,8 @@
 
 #include <CGAL/self_intersect.h>
 #include <CGAL/Make_triangle_soup.h>
+
+typedef Kernel::Triangle_3 Triangle;
 
 class Polyhedron_demo_self_intersection_plugin : 
   public QObject,

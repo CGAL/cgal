@@ -356,6 +356,45 @@ rectangular_p_center_matrix_search_2(
     f, l, o, r, Four_covering_algorithm(), t);
 } // rectangular_p_center_matrix_search_2(f, l, o, r, p)
 
+
+namespace internal{
+template <class Iterator>
+bool is_distance_greater_than_p
+  ( Iterator begin,Iterator end,
+    typename std::iterator_traits<Iterator>::difference_type p,
+    std::random_access_iterator_tag)
+{
+  return std::distance(begin,end) > p;
+}
+
+template <class Iterator>
+bool is_distance_greater_than_p
+  ( Iterator begin,Iterator end,
+    typename std::iterator_traits<Iterator>::difference_type p,
+    std::forward_iterator_tag)
+{
+  Iterator it=begin;
+  while(p!=0){
+    if (it==end) return false;
+    ++it;
+    --p;
+  }
+  if (it!=end) return true; 
+  return false;
+}
+
+template <class Iterator>
+bool is_distance_greater_than_p
+  (Iterator begin,Iterator end,
+   typename std::iterator_traits<Iterator>::difference_type p)
+{
+  return 
+    is_distance_greater_than_p(begin,end,p,
+      typename std::iterator_traits<Iterator>::iterator_category());
+}
+
+} //namespace internal
+
 template < class ForwardIterator, class OutputIterator, class Traits >
 inline OutputIterator
 rectangular_p_center_2(ForwardIterator f,
@@ -366,7 +405,9 @@ rectangular_p_center_2(ForwardIterator f,
                        Traits& t)
 {
   CGAL_optimisation_precondition(p >= 2 && p < 5);
-
+  r=0;
+  if ( !internal::is_distance_greater_than_p(f,l,p) ) return std::copy(f,l,o);
+  
   if (p == 2)
     return rectangular_2_center_2(f, l, o, r, t);
   else if (p == 3)

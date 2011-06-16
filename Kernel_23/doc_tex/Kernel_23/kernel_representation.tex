@@ -44,7 +44,7 @@ kernel concept. For all kernel objects types, the types
 \ccHtmlNoLinksFrom{\ccc{CGAL::Type<Kernel>}} and 
 \ccHtmlNoLinksFrom{\ccc{Kernel::Type}} are identical.
 
-CGAL offers four families of concrete models for the concept Kernel,
+\cgal\ offers four families of concrete models for the concept Kernel,
 two based on the \ccHtmlNoLinksFrom{Cartesian} representation of
 points and two based on the homogeneous representation of points. The
 interface of the kernel objects is designed such that it works well
@@ -92,7 +92,7 @@ this case. With \ccc{Cartesian<FieldNumberType>}, both
 \ccc{FieldNumberType}.
 
 \ccc{Cartesian<FieldNumberType>} uses reference counting internally to
-save copying costs. CGAL also provides
+save copying costs. \cgal\ also provides
 \ccc{Simple_cartesian<FieldNumberType>}, a kernel that uses
 \ccHtmlNoLinksFrom{Cartesian} representation but no reference
 counting.  Debugging is easier with
@@ -131,7 +131,7 @@ quotients, i.e., a numerator and a denominator. With
 \ccc{RingNumberType}.
 
 \ccc{Homogeneous<RingNumberType>} uses reference counting internally
-to save copying costs. CGAL also provides
+to save copying costs. \cgal\ also provides
 \ccc{Simple_homogeneous<RingNumberType>}, a kernel that uses
 \ccHtmlNoLinksFrom{homogeneous} representation but no reference
 counting. Debugging is easier with
