@@ -99,6 +99,7 @@ else
 
   for target in  \
       demo_framework \
+      point_dialog \
       Polyhedron_3 \
       scene_basic_objects \
       scene_c2t3_item \
@@ -120,7 +121,6 @@ else
       orient_soup_plugin \
       parameterization_plugin \
       pca_plugin \
-      point_dialog \
       remeshing_plugin \
       self_intersection_plugin \
       subdivision_methods_plugin \
