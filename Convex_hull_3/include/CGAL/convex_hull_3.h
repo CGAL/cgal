@@ -55,17 +55,6 @@ namespace CGAL {
 
 namespace internal{  namespace Convex_hull_3{
 
-struct Plane_equation {
-  template <class Facet>
-  typename Facet::Plane_3 operator()( Facet& f) {
-      typename Facet::Halfedge_handle h = f.halfedge();
-      typedef typename Facet::Plane_3  Plane;
-      return Plane( h->vertex()->point(),
-                    h->next()->vertex()->point(),
-                    h->next()->next()->vertex()->point());
-  }
-};
-
 //struct to select the default traits class for computing convex hull
 template< class Point_3,
           class Is_floating_point=typename boost::is_floating_point<typename Kernel_traits<Point_3>::Kernel::FT>::type,
@@ -753,8 +742,6 @@ ch_quickhull_polyhedron_3(std::list<typename Traits::Point_3>& points,
     }
   }
   
-  std::transform( P.facets_begin(), P.facets_end(), P.planes_begin(),Plane_equation());
-
 }
 
 } } //namespace internal::Convex_hull_3

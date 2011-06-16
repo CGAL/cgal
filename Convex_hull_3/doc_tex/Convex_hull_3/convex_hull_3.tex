@@ -36,8 +36,11 @@ point set or not.  This function is used in postcondition testing for
 
 \subsection{Example}
 The following program computes the convex hull of a set of 250 random
-points chosen from a sphere of radius 100.  It then determines if the 
-resulting hull is a segment or a polyhedron.  
+points chosen from a sphere of radius 100. We assume that the points are
+not all identical and not all collinear, thus we directly use a polyhedron
+as output. Note the usage of the functor \ccc{Plane_from_facet} together with
+\ccc{std::transform} to compute the equations of the plane of each facet
+of the convex hull.
 
 \ccIncludeExampleCode{Convex_hull_3/quickhull_3.cpp}
 

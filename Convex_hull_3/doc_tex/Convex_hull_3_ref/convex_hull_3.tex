@@ -24,7 +24,7 @@ void convex_hull_3(InputIterator first, InputIterator last,
 computes the convex hull of the set of points in the range
 [\ccc{first}, \ccc{last}).  The polyhedron \ccc{P} is cleared, then
 the convex hull is stored in \ccc{P} 
-and the plane equations of each face are computed.
+and the plane equations of each face are not computed.
 \ccPrecond: There are at least four points in the range 
 [\ccc{first}, \ccc{last}) not all of which are collinear.
 }
@@ -39,7 +39,7 @@ void convex_hull_3(InputIterator first, InputIterator last,
 computes the convex hull of the set of points in the range
 [\ccc{first}, \ccc{last}).  The result, which may be a point, a segment,
 a triangle, or a polyhedron, is stored in \ccc{ch_object}.  When
-the result is a polyhedron, the plane equations of each face are computed.
+the result is a polyhedron, the plane equations of each face are not computed.
 }
 
 \ccHeading{Requirements}

@@ -14,6 +14,16 @@ typedef K::Segment_3                              Segment_3;
 typedef K::Point_3                                Point_3;
 typedef CGAL::Creator_uniform_3<double, Point_3>  PointCreator;
 
+//a functor computing the plane containing a triangular facet
+struct Plane_from_facet {
+  Polyhedron_3::Plane_3 operator()(Polyhedron_3::Facet& f) {
+      Polyhedron_3::Halfedge_handle h = f.halfedge();
+      return Polyhedron_3::Plane_3( h->vertex()->point(),
+                                    h->next()->vertex()->point(),
+                                    h->next()->next()->vertex()->point());
+  }
+};
+
 
 int main()
 {
@@ -24,21 +34,17 @@ int main()
   std::vector<Point_3> points;
   CGAL::copy_n( gen, 250, std::back_inserter(points) );
 
-  // define object to hold convex hull
-  CGAL::Object ch_object;
+  // define polyhedron to hold convex hull
+  Polyhedron_3 poly;
+  
+  // compute convex hull of non-collinear points
+  CGAL::convex_hull_3(points.begin(), points.end(), poly);
 
-  // compute convex hull
-  CGAL::convex_hull_3(points.begin(), points.end(), ch_object);
+  std::cout << "The convex hull contains " << poly.size_of_vertices() << " vertices" << std::endl;
+  
+  //compute the equations of the plane of each polyhedron facet.
+  std::transform( poly.facets_begin(), poly.facets_end(), poly.planes_begin(),Plane_from_facet());
 
-  // determine what kind of object it is
-  if ( const Segment_3* segment=CGAL::object_cast<Segment_3>(&ch_object) ){
-     std::cout << "convex hull is the segment " << *segment << std::endl;
-  }
-  else if (const Polyhedron_3* poly = CGAL::object_cast<Polyhedron_3>(&ch_object) )
-     std::cout << "convex hull is a polyhedron with " 
-               << poly->size_of_vertices() << " vertices" << std::endl;
-  else
-     std::cout << "convex hull error!" << std::endl;
 
   return 0;
 }
