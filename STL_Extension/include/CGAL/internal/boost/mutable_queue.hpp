@@ -28,7 +28,7 @@
 #include <iterator>
 
 namespace CGAL { namespace internal {
-namespace boost {
+namespace boost_ {
 
   // The mutable queue whose elements are indexed
   //
@@ -149,5 +149,5 @@ namespace boost {
   };
 
 
-} } } //namespace CGAL::internal::boost
+} } } //namespace CGAL::internal::boost_
 #endif // CGAL_INTERNAL_BOOST_MUTABLE_QUEUE_HPP

@@ -24,7 +24,7 @@
 #include <boost/config.hpp>
 
 namespace CGAL { namespace internal {
-namespace boost {
+namespace boost_ {
 
 /*
  * Note: array_binary_tree is a completey balanced binary tree.
@@ -185,6 +185,6 @@ struct compare_array_node {
   Compare comp;
 };
 
-} } } //namespace CGAL::internal::boost
+} } } //namespace CGAL::internal::boost_
 
 #endif /* CGAL_INTERNAL_ARRAY_BINARY_TREE_HPP */

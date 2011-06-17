@@ -40,7 +40,7 @@
 
 namespace CGAL{ namespace internal {
   
-namespace boost {
+namespace boost_ {
 
   template <class TreeNode, class Compare, class ExternalData>
   inline TreeNode up_heap(TreeNode x, const Compare& comp, ExternalData& edata) {
@@ -70,5 +70,5 @@ namespace boost {
     (void)up_heap(x, comp, edata);
   }
 
-} } } //namespace CGAL::internal::boost
+} } } //namespace CGAL::internal::boost_
 #endif //CGAL_INTERNAL_BOOST_MUTABLE_HEAP_H

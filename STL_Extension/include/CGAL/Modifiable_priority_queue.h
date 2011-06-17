@@ -33,9 +33,9 @@ template <class IndexedType,
           class RandomAccessContainer = std::vector<IndexedType>, 
           class Comp = std::less<typename RandomAccessContainer::value_type>,
           class ID = ::boost::identity_property_map >
-class mutable_queue_with_remove : public internal::boost::mutable_queue<IndexedType,RandomAccessContainer,Comp,ID>
+class mutable_queue_with_remove : public internal::boost_::mutable_queue<IndexedType,RandomAccessContainer,Comp,ID>
 {
-  typedef internal::boost::mutable_queue<IndexedType,RandomAccessContainer,Comp,ID> Base;
+  typedef internal::boost_::mutable_queue<IndexedType,RandomAccessContainer,Comp,ID> Base;
 public:
   typedef typename Base::size_type size_type;
   typedef typename Base::Node Node;
