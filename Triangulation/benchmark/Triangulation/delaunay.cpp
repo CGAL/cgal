@@ -2,7 +2,7 @@
 #include <CGAL/Cartesian_d.h>
 //#include <CGAL/Simple_cartesian_d.h>
 //#include <CGAL/Filtered_kernel_d.h>
-#include <CGAL/Delaunay_complex.h>
+#include <CGAL/Delaunay_triangulation.h>
 #include <CGAL/algorithm.h>
 #include <vector>
 #include <string>
@@ -12,32 +12,32 @@
 
 using namespace std;
 
-template<typename DC>
+template<typename DT>
 void test(const int d, const string & type, const int N)
 {
-    typedef typename DC::Vertex Vertex;
-    typedef typename DC::Vertex_handle Vertex_handle;
-    typedef typename DC::Simplex Simplex;
-    typedef typename DC::Simplex_handle Simplex_handle;
-    typedef typename DC::Facet Facet;
-    typedef typename DC::Point Point;
-    typedef typename DC::Geom_traits::RT RT;
-    typedef typename DC::Finite_simplex_const_iterator Finite_simplex_const_iterator;
+    typedef typename DT::Vertex Vertex;
+    typedef typename DT::Vertex_handle Vertex_handle;
+    typedef typename DT::Full_cell Full_cell;
+    typedef typename DT::Full_cell_handle Full_cell_handle;
+    typedef typename DT::Facet Facet;
+    typedef typename DT::Point Point;
+    typedef typename DT::Geom_traits::RT RT;
+    typedef typename DT::Finite_full_cell_const_iterator Finite_full_cell_const_iterator;
 
     typedef CGAL::Random_points_in_iso_box_d<Point> Random_points_iterator;
 
-    DC pc(d);
-    cout << "\nBench'ing Delaunay_complex of (" << type << d << ") dimension with " << N << " points";
-    assert(pc.empty());
+    DT dt(d);
+    cout << "\nBench'ing Delaunay_triangulation of (" << type << d << ") dimension with " << N << " points";
+    assert(dt.empty());
 
     vector<Point> points;
     CGAL::Random rng;
     Random_points_iterator rand_it(d, 2.0, rng);
     CGAL::copy_n(rand_it, N, std::back_inserter(points));
-    pc.insert(points.begin(), points.end());
+    dt.insert(points.begin(), points.end());
     int nbfs(0);
-    cout << '\n' << pc.number_of_vertices() << " vertices, " << (nbfs = pc.number_of_finite_simplices())
-        << " finite simplices and " << (pc.number_of_simplices() - nbfs) << " convex hull Facets.";
+    cout << '\n' << dt.number_of_vertices() << " vertices, " << (nbfs = dt.number_of_finite_simplices())
+        << " finite simplices and " << (dt.number_of_simplices() - nbfs) << " convex hull Facets.";
 }
 
 template< int D, typename RT >
@@ -46,7 +46,7 @@ void go(const int N)
     //typedef CGAL::Simple_cartesian_d<RT, D> K;
     typedef CGAL::Cartesian_d<RT> K;
     //typedef CGAL::Filtered_kernel_d<K> FK;
-    typedef CGAL::Delaunay_complex<K/*FK*/> Triangulation;
+    typedef CGAL::Delaunay_triangulation<K> Triangulation;
     test<Triangulation>(D, "static", N);
 }
 

@@ -38,7 +38,7 @@ int main()
     T t(D);
     assert(t.empty());
 
-    // insert the points in the pure complex
+    // insert the points in the triangulation
     t.insert(points.begin(), points.end());
     assert( t.is_valid() );
 

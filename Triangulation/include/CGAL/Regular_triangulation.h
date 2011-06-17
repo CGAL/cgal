@@ -18,30 +18,30 @@
 #ifndef CGAL_REGULAR_TRIANGULATION_H
 #define CGAL_REGULAR_TRIANGULATION_H
 
-#include <CGAL/Pure_complex.h>
+#include <CGAL/Triangulation.h>
 #include <CGAL/Dimension.h>
 #include <CGAL/Default.h>
 
 namespace CGAL {
 
-template< typename RCTraits, typename TDS_ = Default >
+template< typename RTTraits, typename TDS_ = Default >
 class Regular_triangulation
-: public Triangulation<RCTraits,
+: public Triangulation<RTTraits,
          typename Default::Get<TDS_, Triangulation_data_structure<
-                             typename Ambient_dimension<typename RCTraits::Point_d>::type,
-                             Triangulation_vertex<RCTraits>,
-                             Triangulation_simplex<RCTraits> >
+                             typename Ambient_dimension<typename RTTraits::Point_d>::type,
+                             Triangulation_vertex<RTTraits>,
+                             Triangulation_full_cell<RTTraits> >
                     >::type >
 {
-    typedef typename Ambient_dimension<typename RCTraits::Point_d>::type
+    typedef typename Ambient_dimension<typename RTTraits::Point_d>::type
                                                     Ambient_dimension_;
     typedef typename Default::Get<TDS_, Triangulation_data_structure<
                          Ambient_dimension_,
-                         Triangulation_vertex<RCTraits>,
-                         Triangulation_simplex<RCTraits> >
+                         Triangulation_vertex<RTTraits>,
+                         Triangulation_full_cell<RTTraits> >
                 >::type                         TDS;
-    typedef Triangulation<RCTraits, TDS>        Base;
-    typedef Regular_complex<RCTraits, TDS_>    Self;
+    typedef Triangulation<RTTraits, TDS>        Base;
+    typedef Regular_triangulation<RTTraits, TDS_>    Self;
 
 public:
     typedef Ambient_dimension_                  Ambient_dimension;

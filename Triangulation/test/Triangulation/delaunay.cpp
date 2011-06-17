@@ -64,7 +64,7 @@ void test(const int d, const string & type, const int N)
     nbis = infinite_full_cells.size();
     cerr << nbis << " = " << (nbis+nbfs)
     << " = " << pc.number_of_full_cells();
-    cerr << "\nComplex has current dimension " << pc.current_dimension();
+    cerr << "\nThe triangulation has current dimension " << pc.current_dimension();
 
     // Count convex hull vertices:
     if( pc.ambient_dimension() > 1 )
