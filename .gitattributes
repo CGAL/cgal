@@ -3311,6 +3311,9 @@ Ridges_3/examples/Ridges_3/skip_vcproj_auto_generation -text
 Ridges_3/test/Ridges_3/data/ellipsoid.off -text svneol=unset#application/octet-stream
 Robustness/demo/Robustness/help/index.html svneol=native#text/html
 STL_Extension/doc_tex/STL_Extension/plusplus.png -text
+STL_Extension/include/CGAL/internal/boost/array_binary_tree.hpp -text
+STL_Extension/include/CGAL/internal/boost/mutable_heap.hpp -text
+STL_Extension/include/CGAL/internal/boost/mutable_queue.hpp -text
 STL_Extension/test/STL_Extension/test_Uncertain.cpp -text
 STL_Extension/test/STL_Extension/test_type_traits.cpp -text
 Scripts/developer_scripts/autotest_cgal -text
