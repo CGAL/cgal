@@ -42,7 +42,7 @@ int main()
 
   std::cout << "The convex hull contains " << poly.size_of_vertices() << " vertices" << std::endl;
   
-  //compute the equations of the plane of each polyhedron facet.
+  // assign a plane equation to each polyhedron facet using functor Plane_from_facet
   std::transform( poly.facets_begin(), poly.facets_end(), poly.planes_begin(),Plane_from_facet());
 
 
