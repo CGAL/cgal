@@ -1,0 +1,4 @@
+The package Triangulation provides classes for manipulating triangulations in
+euclidean spaces whose dimension can be specified at compile-time or at
+run-time. It also provides point location and a class for building Delaunay
+triangulation supporting both point insertion and removal.
