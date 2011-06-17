@@ -141,7 +141,7 @@ int main()
   }
   CGAL_assertion( q.empty() );
   
-//testing update
+//testing update (increase key)
   data.clear();
   data.reserve(10);
   for (int i=0;i<10;++i){
@@ -154,8 +154,34 @@ int main()
     q.update(&data[0]+i,true);
     CGAL_assertion(q.top()->first==i);
   }
+
+//testing contains
+  for (int i=0;i<10;++i){
+    q.erase(&data[0]+i,true);
+    CGAL_assertion(queue_size(q,45)==9-i);
+  }
   
-//testing remove (emulate pop)
+//testing update (decrease key of top)
+  data.clear();
+  data.reserve(10);
+  for (int i=0;i<10;++i){
+    data.push_back(Type(i,i));
+    q.push(&data[0]+i);
+  }
+
+  for (std::size_t i=0;i<9;++i){
+    data[i].second=10+i;
+    q.update(&data[0]+i,true);
+    CGAL_assertion(q.top()->first==i+1);
+  }
+  
+//revert order
+  for (std::size_t i=0;i<10;++i){
+    data[9-i].second=i;
+    q.update(&data[0]+9-i,true);
+    CGAL_assertion(q.top()->first==9);
+  }  
+//testing remove (emulate pop)  
   for (std::size_t i=0;i<10;++i){
     CGAL_assertion(q.top()->first==9-i);
     q.erase(&data[0]-i+9,true);
