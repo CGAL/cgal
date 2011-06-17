@@ -56,7 +56,7 @@ public:
   }
   
   bool contains(const IndexedType& x) const {
-    return this->index_array[ get(this->id, x) ] < this->c.size();
+    return this->index_array[ get(this->id, x) ] !=this->index_array.size();
   }
 };
 
