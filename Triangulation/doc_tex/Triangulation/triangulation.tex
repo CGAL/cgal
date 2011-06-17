@@ -2,6 +2,7 @@
 \newcommand{\note}[1]{\begin{ccTexOnly}%
 {\color{red}$\langle\!\langle$#1$\rangle\!\rangle$}\end{ccTexOnly}}
 \newcommand{\sphere}{\ensuremath{\mathcal S}}
+\renewcommand{\real}{\ensuremath{\mathbb R}}
 
 \section{Introduction\label{triangulation:intro}}
 
@@ -23,7 +24,7 @@ A simplex $s\in S$ is \textbf{maximal} if it is not a proper subset of some othe
 set in $S$. The simplicial complex is \textbf{pure} (or \textbf{homogeneous})
 if all the maximal simplices have the same cardinality, \emph{i.e.}, they have the same
 number of vertices. 
-In the sequel, we will call these maximal simplices \textbf{(full) cell}.
+In the sequel, we will call these maximal simplices \textbf{(full) cells}.
 A \textbf{face} of a simplex is a subset of it.
 A \textbf{proper face} of a simplex is a strict subset of it.
 
@@ -41,7 +42,7 @@ See the \ccAnchor{http://en.wikipedia.org/wiki/Simplicial_complex}{wikipedia
 entry} for more about simplicial complexes.
 
 This \cgal\ package deals with pure finite simplicial complexes, which
-we will simply call in the sequel \textbf{triangulations}. It provides four main classes
+we will simply call in the sequel \textbf{triangulations}. It provides three main classes
 for creating and manipulating triangulations.
 
 The class \ccc{CGAL::Triangulation_data_structure<Dimensionality,
@@ -57,19 +58,20 @@ of points in the triangulation, the
 traversal of various elements of the triangulation, as well as the localization of a
 query point inside the triangulation.
 
-The class \ccc{CGAL::Delaunay_triangulation<DelaunayTraits, TDS>} adds further
+The class \ccc{CGAL::Delaunay_triangulation<DTTraits, TDS>} adds further
 constraints to a triangulation, in that all its simplices must have the
 so-called \textbf{Delaunay} or \textbf{empty-ball} property: the interior of
-a ball circumscribing any face of a Delaunay simplex must be free from any
-vertex of the triangulation. Delaunay triangulation supports deletion
-of vertices.
+a ball circumscribing any simplex (or full cell) must be free from any
+vertex of the triangulation. The \ccc{CGAL::Delaunay_triangulation} class
+supports deletion of vertices.
 
 %The class \ccc{CGAL::Regular_triangulation<RegularTraits, TDS>} is a generalization of
 %the Delaunay triangulation.
 
-%The rest of this user manual gives more details about these classes and the
-%data they store, but does not tell the whole story. For the latter, the user
-%should have a look at the reference manual of this package. 
+The rest of this user manual gives more details about these classes and the
+data they store, but does not tell the whole story. For the latter, the user
+should have a look at the reference manual of this package. 
+
 %A last remark:
 %pure complexes are also called \emph{triangulations}. We feel more confortable
 %in using the word \emph{complexes} as it forces us to think ``in dimension
@@ -77,16 +79,18 @@ of vertices.
 
 \paragraph{Further definitions}
 
-An $i$-face denotes an $i$-dimensional simplex, or a simplex
-with $i+1$ (affinely independent if embedded) vertices.
+An $i$-face denotes an $i$-dimensional simplex, or a simplex with $i+1$
+vertices. When these vertices are embedded in euclidean space, they must be
+affinely independent.
 
-If the maximal dimension of a simplex in the simplicial complex is
-$d$, we call:\\
---- an $i$-face for some $i\in[0,d]$ a  \textbf{face};\\
---- a $0$-face a \textbf{vertex};\\
---- a $(d-2)$-face a \textbf{ridge};\\
---- a $(d-1)$-face a \textbf{facet}; and\\
---- a $d$-face  a \textbf{full cell}.
+If the maximal dimension of a simplex in the triangulation is
+$d$, we call:\begin{itemize}
+\item an $i$-face for some $i\in[0,d]$ a  \textbf{face};
+\item a $0$-face a \textbf{vertex};
+\item a $(d-2)$-face a \textbf{ridge};
+\item a $(d-1)$-face a \textbf{facet}; and
+\item a $d$-face  a \textbf{full cell}.
+\end{itemize}
 
 Two faces $\sigma$ and $\sigma'$ are \textbf{incident} if and only if
 $\sigma'$ is a proper sub-face of $\sigma$ or \emph{vice versa}.
@@ -114,35 +118,33 @@ and can then be queried using the method \ccc{tds.ambient_dimension()}.
 A \tds\ also knows the \textbf{current dimension} of its full cells,
 which can be queried with \ccc{tds.current_dimension()}. In the sequel, let
 us denote the ambient dimension with \ad\ and the current dimension with \cd.
-It always holds that $-2\leq\ad\leq\cd$ and $0<D$.
+It always holds that $-2\leq\cd\leq\ad$ and $0<\ad$.
 
-
-\note{I remove some comments about 3D vs dD which are not exact. %
-in T3D package in degenerate dimension \ccc{Cell} is actually used with the %
-same meaning as here (a $d$-face  and not a $D$-face).}
-% \paragraph{On the \ccc{Facet} nested type}
-%  In the \ccc{Triangulation_3} \cgal\ package, the ambient dimension is always
-% 3. With respect to this reference dimension (3), a \ccc{Facet} is always a
-% 2-face (triangle),
-% irrespective of the 3D triangulation's current dimension. In
-% particular, full cells in degenerate planar 3D triangulation are
-% \ccc{Facet}s, not \ccc{Cell}s.
-
-% By contrast, in the present \ccc{Triangulation} \cgal\ package, the reference
-% dimension of a pure complex (or a pure complex data structure) is its current
-% dimension. This means that, whatever the current dimension is, a full
-% cell is always represented by the \ccc{FullCell} nested type, And a
-% \ccc{Facet} represents a face of dimension \ccc{current_dimension()-1}
-% \textbf{and not} \ccc{ambient_dimension()-1}.
+%\note{I remove some comments about 3D vs dD which are not exact. %
+%in T3D package in degenerate dimension \ccc{Cell} is actually used with the %
+%same meaning as here (a $d$-face  and not a $D$-face).}
+%% \paragraph{On the \ccc{Facet} nested type}
+%%  In the \ccc{Triangulation_3} \cgal\ package, the ambient dimension is always
+%% 3. With respect to this reference dimension (3), a \ccc{Facet} is always a
+%% 2-face (triangle),
+%% irrespective of the 3D triangulation's current dimension. In
+%% particular, full cells in degenerate planar 3D triangulation are
+%% \ccc{Facet}s, not \ccc{Cell}s.
+%
+%% By contrast, in the present \ccc{Triangulation} \cgal\ package, the reference
+%% dimension of a pure complex (or a pure complex data structure) is its current
+%% dimension. This means that, whatever the current dimension is, a full
+%% cell is always represented by the \ccc{FullCell} nested type, And a
+%% \ccc{Facet} represents a face of dimension \ccc{current_dimension()-1}
+%% \textbf{and not} \ccc{ambient_dimension()-1}.
 
 \paragraph{The data structure triangulates $\sphere^\cd$}
 
-In a first approximation,
-a \tds, can be viewed as
+In a first approximation, a \tds\ can be viewed as
 a \emph{triangulation} of the topological sphere $\sphere^\cd$,
 \emph{i.e.}, its faces can be embedded to form a partition of $\sphere^\cd$ into $\cd$-simplices. When a
 \tds\ is used as the combinatorial part of a geometric triangulation, one
-vertex of the \tds\ will be the \textbf{vertex at
+special vertex of the \tds\ plays the role of the \textbf{vertex at
 infinity}; we can consider that the triangulation covers the whole
 affine hull of its vertices
 using \textbf{infinite} or \textbf{unbounded} cells to fill the space  outside the convex
@@ -152,10 +154,10 @@ hull of the triangulation's finite vertices. (More details are given in the next
 One nice consequence of the above important fact is that a cell has
 always exactly  $\cd+1$ neighbors.
 Two  full cells $\sigma$ and $\sigma'$ sharing a facet are called
-\textbf{neighbor}.
+\textbf{neighbors}.
 
 
-Values of $\cd$ (the \emph{current dimension} of the complex) include
+Possible values of $\cd$ (the \emph{current dimension} of the triangulation) include
 \begin{itemize}
 \item[$\cd=-2$] This corresponds to the non-existence of any object in
   the \tds.
@@ -183,7 +185,7 @@ implementing the concept \ccc{TriangulationDataStructure}.
 
 A \tds\ explicitely stores its vertices and full cells.
 
-Each vertex stores a reference (a \ccc{Handle}) to one of its incident
+Each vertex stores a reference (a \ccc{handle}) to one of its incident
 full cell.
 
 
@@ -214,10 +216,10 @@ the $i$-th vertex of $\sigma$.
 The \ccc{Triangulation_data_structure<Dimensionality, TDSVertex, TDSFullCell>}
 class template is designed in such a way that its user can choose
 \begin{itemize}
-\item the ambient dimension of the pure complex data structure,
-\item the type used to represent vertices, by specifying the \ccc{TDSVertex}
+\item the ambient dimension of the triangulation data structure by specifying the \ccc{Dimensionality} template parameter,
+\item the type used to represent vertices by specifying the \ccc{TDSVertex}
 template parameter and
-\item the type used to represent simplices, by specifying the
+\item the type used to represent simplices by specifying the
 \ccc{TDSFullCell} template parameter.
 \end{itemize}
 
@@ -245,11 +247,9 @@ some nested types in \tds.
 \textbf{This creates a circular dependency}, which we resolve in the same way
 as in the \cgal\ \ccc{Triangulation_3} package (see
 Chapters~\ref{chapter-TDS3}~and~\ref{chapter-Triangulation3}).
- Thus, models of
-the concepts \ccc{Triangulation_ds_vertex<TDS>} and
-\ccc{Triangulation_ds_full_cell<TDS, TDSFullCellStoragePolicy>} (typically a
-user's custom classes) must provide a nested template \ccc{Rebind_TDS} which
-is documented in those two concept's reference manual pages.
+Thus, models of the concepts \ccc{TriangulationDSVertex} and
+\ccc{TriangulationDSFullCell} must provide a nested template \ccc{Rebind_TDS}
+which is documented in those two concept's reference manual pages.
 
 \begin{ccAdvanced}
 Thus, to the user in need of a custom vertex of simplex class, we recommend
@@ -274,7 +274,7 @@ methods that are called (see here: \ccc{TriangulationDataStructure}).
 \section{Triangulations}
 
 The class \ccc{CGAL::Triangulation<TrTraits, TDS>} embeds an abstract 
-triangulation in euclidean space. More precisely, it
+triangulation into euclidean space. More precisely, it
 maintains a triangulation (a partition into pairwise interior-disjoint full
 cells) of the convex hull of the points (the embedded vertices) of the
 triangulation, as well as a triangulation of the complement of the convex hull
@@ -289,6 +289,8 @@ a finite facet on the convex hull of the triangulation and to a unique special
 \textbf{vertex at infinity}. 
 \note{In every infinite cell, the vertex at infinity
 always has index $0$.}
+\note{SH: the above note this should go in the documentation of the
+\ccc{TriangulationDataStructure} concept, or that of the class?}
 
 As long as no \emph{advanced} class method is called, it is guaranteed that
 all finite cells have positive orientation. The infinite cells are
@@ -321,7 +323,9 @@ $\real^5$, which we then insert into a triangulation. In \ccc{STEP 2}, we have
 a little fun and ask the triangulation to construct the set of edges
 ($1$-cells) incident to the vertex at infinity. It is easy to see that
 these edges are in bijection with the vertices on the convex hull of the
-points. This gives us a handy way to count the convex hull vertices.
+points. This gives us a handy way to count the convex hull vertices. (Note that
+in general, this set of vertices is a superset of the set of extremal vertices
+of the convex hull.)
 
 \ccIncludeExampleCode{Triangulation/triangulation.cpp}
 
@@ -399,11 +403,11 @@ of the triangulation.
 The \textbf{circumscribing sphere} of a face \ccc{s} is the smallest sphere
 touching all vertices of the face. A triangulation of the convex
 hull of a finite point set has the Delaunay (or empty-ball) property if all
-its cells have the Delaunay (or empty-ball) property.
+its cells have the Delaunay (or empty-ball) property:
 
 Informally, a finite cell has the Delaunay (or empty-ball) property---with
-respect to the triangulation---if no point of the triangulation lies in the interior of
-its circumscribing sphere.
+respect to the triangulation---if no vertex of the triangulation lies in the
+interior of its circumscribing sphere.
 
 When a new point \ccc{p} is inserted into a Delaunay triangulation, the set of
 finite cells whose circumscribing sphere contains \ccc{p} are said to
@@ -447,13 +451,13 @@ created cells. The code example below shows how one can have efficient
 access to both the conflict zone and the created cells, while still
 retaining an efficient update of the Delaunay triangulation.
 
-\textbf{Remark}: the code below will not compile unless you provide the
-missing \ccc{typedef}s and variables declarations.
+(\textbf{Remark}: the code below will not compile unless you provide the
+missing \ccc{typedef}s and variables declarations.)
 
 \begin{ccExampleCode}
 Delaunay_triangulation t;
 Vertex_handle v;
-// Conflict zone in dimension 0 or 1 are pretty boring.
+// Conflict zones in dimension 0 or 1 are pretty boring.
 assert( 2 <= t.current_dimension() );
 
 // We insert the points stored in the vector |points|.
