@@ -20,7 +20,7 @@ struct Plane_from_facet {
       Polyhedron_3::Halfedge_handle h = f.halfedge();
       return Polyhedron_3::Plane_3( h->vertex()->point(),
                                     h->next()->vertex()->point(),
-                                    h->next()->next()->vertex()->point());
+                                    h->opposite()->vertex()->point());
   }
 };
 

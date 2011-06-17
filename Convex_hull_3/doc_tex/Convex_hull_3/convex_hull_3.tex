@@ -99,21 +99,6 @@ not all of them are vertices of the hull.
 
 \section{Performance}
 
-\begin{figure}
-\begin{ccTexOnly}
-\begin{center}
-\includegraphics[width=12cm]{Convex_hull_3/chull_bimba.png}
-\end{center}
-\end{ccTexOnly}
-\begin{ccHtmlOnly}
-<CENTER>
-<img border=0 src="./chull_bimba.png" alt="the convex hull of the bimba model">
-</CENTER>
-\end{ccHtmlOnly}
-\caption{The convex hull of a model made of 192135 points.
-\label{fig-ch-bimba}}
-\end{figure}
-
 In the following, we compare the running times of the three approaches to compute 3D convex hulls.
 For the static version (using \ccc{CGAL::convex_hull_3}) and the dynamic version
 (using \ccc{CGAL::Delaunay_triangulation_3} and \ccc{CGAL::convex_hull_3_to_polyhedron_3}), the kernel

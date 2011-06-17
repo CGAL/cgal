@@ -29,11 +29,12 @@ void load_from_file(const char* path,std::vector<Point_3>& points)
   infile >> nbpt;
   points.reserve(nbpt);
   Point_3 p;
-  while (--nbpt>0)
+  do
   {
     infile >> p;
     points.push_back(p);
   }
+  while (--nbpt>0);
 }
   
 int main(int argc,char** argv)
