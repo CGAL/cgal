@@ -8,13 +8,17 @@
 // http://www.boost.org/LICENSE_1_0.txt)
 //=======================================================================
 //
-#ifndef BOOST_ARRAY_BINARY_TREE_HPP
-#define BOOST_ARRAY_BINARY_TREE_HPP
+// $URL$
+// $Id$
+//
+#ifndef CGAL_INTERNAL_ARRAY_BINARY_TREE_HPP
+#define CGAL_INTERNAL_ARRAY_BINARY_TREE_HPP
 
 #include <iterator>
 #include <functional>
 #include <boost/config.hpp>
 
+namespace CGAL { namespace internal {
 namespace boost {
 
 /*
@@ -42,7 +46,7 @@ public:
 
   struct children_type {
     struct iterator
-        : boost::iterator<std::bidirectional_iterator_tag, ArrayBinaryTreeNode,
+        : ::boost::iterator<std::bidirectional_iterator_tag, ArrayBinaryTreeNode,
                        difference_type, array_binary_tree_node*, ArrayBinaryTreeNode&>
     { // replace with iterator_adaptor implementation -JGS
 
@@ -135,7 +139,7 @@ public:
   */
   template <class ExternalData>
   inline void swap(ArrayBinaryTreeNode x, ExternalData& edata ) {
-    using boost::get;
+    using ::boost::get;
 
     value_type tmp = x.value();
 
@@ -176,6 +180,6 @@ struct compare_array_node {
   Compare comp;
 };
 
-} // namespace boost
+} } } //namespace CGAL::internal::boost
 
-#endif /* BOOST_ARRAY_BINARY_TREE_HPP */
+#endif /* CGAL_INTERNAL_ARRAY_BINARY_TREE_HPP */

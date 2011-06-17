@@ -24,7 +24,7 @@
 #ifdef CGAL_SURFACE_MESH_SIMPLIFICATION_USE_RELAXED_HEAP
 #include <boost/pending/relaxed_heap.hpp>
 #else
-#include <boost/pending/mutable_queue.hpp>
+#include <CGAL/internal/boost/mutable_queue.hpp>
 
 
 namespace CGAL {
@@ -32,15 +32,17 @@ namespace CGAL {
 template <class IndexedType, 
           class RandomAccessContainer = std::vector<IndexedType>, 
           class Comp = std::less<typename RandomAccessContainer::value_type>,
-          class ID = boost::identity_property_map >
-class mutable_queue_with_remove : public boost::mutable_queue<IndexedType,RandomAccessContainer,Comp,ID>
+          class ID = ::boost::identity_property_map >
+class mutable_queue_with_remove : public internal::boost::mutable_queue<IndexedType,RandomAccessContainer,Comp,ID>
 {
-  typedef boost::mutable_queue<IndexedType,RandomAccessContainer,Comp,ID> Base;
+  typedef internal::boost::mutable_queue<IndexedType,RandomAccessContainer,Comp,ID> Base;
 public:
   typedef typename Base::size_type size_type;
   typedef typename Base::Node Node;
 
-  mutable_queue_with_remove(size_type n, const Comp& x=Comp(), const ID& _id=ID()) : Base(n,x,_id) {}
+  mutable_queue_with_remove(size_type n, const Comp& x=Comp(), const ID& _id=ID()) : Base(n,x,_id) {
+    this->index_array = typename Base::IndexArray(n,n);
+  }
 
   void remove(const IndexedType& x){
     //first place element at the top
@@ -51,7 +53,13 @@ public:
     while (node.has_parent())
       node.swap(node.parent(), this->index_array);
     //then pop it
-    this->pop();
+    pop();
+  }
+  
+  void pop(){
+    size_type id_front = get(this->id, this->c.front());
+    static_cast<Base*>(this)->pop();
+    this->index_array[ id_front ] = this->index_array.size();
   }
   
   bool contains(const IndexedType& x) const {

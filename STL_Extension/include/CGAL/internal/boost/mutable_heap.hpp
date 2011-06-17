@@ -8,8 +8,11 @@
 // http://www.boost.org/LICENSE_1_0.txt)
 //=======================================================================
 //
-#ifndef BOOST_GRAPH_DETAIL_MUTABLE_HEAP_H
-#define BOOST_GRAPH_DETAIL_MUTABLE_HEAP_H
+// $URL$
+// $Id$
+//
+#ifndef CGAL_INTERNAL_BOOST_MUTABLE_HEAP_H
+#define CGAL_INTERNAL_BOOST_MUTABLE_HEAP_H
 
 /*
   There are a few things wrong with this set of functions.
@@ -30,6 +33,8 @@
 
  */
 
+namespace CGAL{ namespace internal {
+  
 namespace boost {
 
   template <class TreeNode, class Compare, class ExternalData>
@@ -60,5 +65,5 @@ namespace boost {
     (void)up_heap(x, comp, edata);
   }
 
-}
-#endif
+} } } //namespace CGAL::internal::boost
+#endif //CGAL_INTERNAL_BOOST_MUTABLE_HEAP_H

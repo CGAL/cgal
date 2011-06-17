@@ -8,18 +8,21 @@
 // http://www.boost.org/LICENSE_1_0.txt)
 //=======================================================================
 //
-#ifndef BOOST_MUTABLE_QUEUE_HPP
-#define BOOST_MUTABLE_QUEUE_HPP
+// $URL$
+// $Id$
+//
+#ifndef CGAL_INTERNAL_BOOST_MUTABLE_QUEUE_HPP
+#define CGAL_INTERNAL_BOOST_MUTABLE_QUEUE_HPP
 
 #include <vector>
 #include <algorithm>
 #include <functional>
 #include <boost/property_map/property_map.hpp>
-#include <boost/pending/mutable_heap.hpp>
-#include <boost/pending/is_heap.hpp>
-#include <boost/graph/detail/array_binary_tree.hpp>
+#include <CGAL/internal/boost/mutable_heap.hpp>
+#include <CGAL/internal/boost/array_binary_tree.hpp>
 #include <iterator>
 
+namespace CGAL { namespace internal {
 namespace boost {
 
   // The mutable queue whose elements are indexed
@@ -38,7 +41,7 @@ namespace boost {
   template <class IndexedType,
             class RandomAccessContainer = std::vector<IndexedType>,
             class Comp = std::less<typename RandomAccessContainer::value_type>,
-            class ID = identity_property_map >
+            class ID = ::boost::identity_property_map >
   class mutable_queue {
   public:
     typedef IndexedType value_type;
@@ -130,6 +133,5 @@ namespace boost {
   };
 
 
-}
-
-#endif // BOOST_MUTABLE_QUEUE_HPP
+} } } //namespace CGAL::internal::boost
+#endif // CGAL_INTERNAL_BOOST_MUTABLE_QUEUE_HPP
