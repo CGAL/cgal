@@ -11,6 +11,11 @@
 // $URL$
 // $Id$
 //
+// NOTE: this file have been taken from boost 1.46.1 for using
+//       with Modificable_priority_queue (to enhance the 
+//       non-documented mutable_queue).
+//       original file is <boost/pending/mutable_heap.hpp>
+//
 #ifndef CGAL_INTERNAL_BOOST_MUTABLE_HEAP_H
 #define CGAL_INTERNAL_BOOST_MUTABLE_HEAP_H
 

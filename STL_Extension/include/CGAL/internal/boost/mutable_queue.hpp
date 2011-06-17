@@ -11,6 +11,11 @@
 // $URL$
 // $Id$
 //
+// NOTE: this file have been taken from boost 1.46.1 for using
+//       with Modificable_priority_queue (to enhance the 
+//       non-documented mutable_queue).
+//       original file is <boost/pending/mutable_queue.hpp>
+//
 #ifndef CGAL_INTERNAL_BOOST_MUTABLE_QUEUE_HPP
 #define CGAL_INTERNAL_BOOST_MUTABLE_QUEUE_HPP
 
@@ -63,6 +68,14 @@ namespace boost {
       : index_array(n), comp(x), id(_id) {
       c.reserve(n);
     }
+//SL: added this constructor so that index_array is filled with
+//    indices equals to n. Maintaining this property in pop allows
+//    to have a method to detect if an element is in the queue
+    mutable_queue(size_type n, const Comp& x, const ID& _id,bool)
+      : index_array(n,n), comp(x), id(_id) {
+      c.reserve(n);
+    }
+    
     template <class ForwardIterator>
     mutable_queue(ForwardIterator first, ForwardIterator last,
                   const Comp& x, const ID& _id)
@@ -75,7 +88,10 @@ namespace boost {
     }
 
     bool empty() const { return c.empty(); }
-
+//SL: modified this function so that the element popped from the queue
+//    has its index set to the max number of element. That way we know
+//    that an element is not in the tree if its index is the max number
+//    of elements.
     void pop() {
       value_type tmp = c.back();
       c.back() = c.front();
@@ -83,10 +99,10 @@ namespace boost {
 
       size_type id_f = get(id, c.back());
       size_type id_b = get(id, tmp);
-      size_type i = index_array[ id_b ];
+      //SL was: size_type i = index_array[ id_b ];
       index_array[ id_b ] = index_array[ id_f ];
-      index_array[ id_f ] = i;
-
+      //SL was: index_array[ id_f ] = i; 
+      index_array[ id_f ] = index_array.size(); /*SL added*/
       c.pop_back();
       Node node(c.begin(), c.end(), c.begin(), id);
       down_heap(node, comp, index_array);

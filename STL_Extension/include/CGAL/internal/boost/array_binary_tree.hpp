@@ -11,6 +11,11 @@
 // $URL$
 // $Id$
 //
+// NOTE: this file have been taken from boost 1.46.1 for using
+//       with Modificable_priority_queue (to enhance the 
+//       non-documented mutable_queue).
+//       original file is <boost/graph/detail/array_binary_tree.hpp>
+//
 #ifndef CGAL_INTERNAL_ARRAY_BINARY_TREE_HPP
 #define CGAL_INTERNAL_ARRAY_BINARY_TREE_HPP
 
