@@ -37,6 +37,8 @@ the vertices of the cell.}
 nested type \ccc{TDS::Full_cell_handle} of the \ccc{TDS} in which the
 \ccc{TriangulationDSFullCell} is defined/used.}
 
+\ccTypedef{typedef TDS::Full_cell_data TDS_data;}{}
+
 \ccNestedType{template<typename PC2> Rebind_TDS}{This nested template
 class must define a nested type \ccc{Other} which is the rebound cell
 class template, that is: \ccc{Other == TriangulationDSFullCell<PC2>}.}
@@ -91,9 +93,12 @@ must be a neighbor of \ccc{s}.}
 the vertex \ccc{v} such that \ccc{s.vertex(i)==v}. \ccPrecond \ccc{v} must be
 a vertex of the \ccc{s}.}
 
-\ccMethod{unsigned int get_flags() const;}{Returns an \ccc{unsigned int}.
-Typically used to mark the cell as \emph{visited} during operations on a
-\ccc{TriangulationDataStructure}.}
+\ccMethod{const TDS_data & get_tds_data() const;}{Returns the data member of
+type \ccc{TDS_data}. It is typically used to mark the cell as \emph{visited}
+during operations on a \ccc{TriangulationDataStructure}.}
+
+\ccMethod{TDS_data & get_tds_data();}{Same as above, but returns a reference to
+a non-\ccc{const} object.}
 
 \begin{ccAdvanced}
 \ccMethod{Vertex_handle mirror_vertex(const int i, const int cur_dim) const;}
@@ -127,9 +132,6 @@ indices, in which case this function should do nothing.
 \ccMethod{void swap_vertices(int d1, int d2);}{Switches the orientation of the
 cell \ccVar\ by swapping its vertices with index \ccc{d1} and \ccc{d2}.
 \ccPrecond $0\leq d1,d2\leq$\ccc{ambient_dimension()}.}
-
-\ccMethod{void set_flags(const unsigned int f) const;}{Sets the value of the
-flags variable.}
 
 \ccHeading{Queries}
 

@@ -463,14 +463,6 @@ of the complex to \ccc{d}. This will have weird consequences if you don't know
 what you are doing. 
 \ccPrecond $-1\leq d\leq$\ccc{ambient_dimension()}.}
 
-\ccMethod{template< OutputIterator > Full_cell_handle insert_in_tagged_hole(
-        Vertex_handle v, Facet f, OutputIterator new_simplices);}
-{A set \ccc{C} of simplices satisfying the same condition as in method
-\ccRefName\ccc{::insert_in_hole()} is assumed to be flagged to \ccc{1}. This
-method creates new simplices from \ccc{Vertex} v to the boundary of \ccc{C}.
-The boundary is recognized by checking the flags of the simplices.
-This method is called by \ccRefName\ccc{::insert_in_hole()}.}
-
 \end{ccAdvanced}
 
 \ccHeading{Validity check} % - - - - - - - - - - - - - - - - - - - - VALIDITY
