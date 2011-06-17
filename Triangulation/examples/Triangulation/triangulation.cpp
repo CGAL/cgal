@@ -50,7 +50,7 @@ int main()
     std::back_insert_iterator<Faces> out(edges);
     t.incident_faces(t.infinite_vertex(), 1, out);
     // Count the number of points on the convex hull
-    std::cout << "There are " << edges.size() << " vertices on the convex hull.";
+    std::cout << "There are " << edges.size() << " vertices on the (triangulated) convex hull.";
     edges.clear();
 
     // cleanup

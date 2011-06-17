@@ -3,13 +3,13 @@
 \ccDefinition
 
 The class \ccRefName\ is a model of the concept \ccc{TriangulationFullCell}. It
-is used by default for representing simplices in the class
+is used by default for representing full cells in the class
 \ccc{Triangulation<TrTraits, TDS>}.
 
 A \ccRefName\ stores handles to the vertices of the cell as well as handles
 to its neighboring cells.
 
-\ccInclude{CGAL/Triangulation_simplex.h}
+\ccInclude{CGAL/Triangulation_full_cell.h}
 
 \ccParameters
 
@@ -19,7 +19,7 @@ provides geometric types and predicates for use in the
 
 \ccc{Data} is an optional type of data to be stored in the vertex class. The
 class template \ccRefName\ accepts that no second parameter be specified. In
-this case, \ccc{Data} defaults to \ccc{CGAL::No_vertex_data}.
+this case, \ccc{Data} defaults to \ccc{CGAL::No_full_cell_data}.
 
 \ccc{TDSFullCell} must be a model of the concept \ccc{TriangulationDSFullCell}.
 The class template \ccRefName\ accepts that no third parameter be specified.
