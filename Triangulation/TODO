@@ -30,8 +30,6 @@ Regular_complex                     Regular_triangulation
 
 /is_finite/! is_infinite/
 
-flag stuff, really documented ? : is_boundary_facet
-
 bring part of Delaunay::remove into TDS (see comments in Delaunay_triangulation.h, and item FUTURE below)
 
 *) to do ?
