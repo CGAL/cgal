@@ -2433,20 +2433,21 @@ class Rational_arc_d_1 : public Base_rational_arc_d_1<Algebraic_kernel_>
 {
 public:
 
-  typedef Algebraic_kernel_                         Algebraic_kernel;
+  typedef Algebraic_kernel_                             Algebraic_kernel;
   
-  typedef Rational_arc_d_1<Algebraic_kernel>        Self;
-  typedef Base_rational_arc_d_1<Algebraic_kernel>   Base;
+  typedef Rational_arc_d_1<Algebraic_kernel>            Self;
+  typedef Base_rational_arc_d_1<Algebraic_kernel>       Base;
   typedef Continuous_rational_arc_d_1<Algebraic_kernel> Continuous_arc;
 
-  typedef typename Base::Integer    Integer;
-  typedef typename Base::Rational   Rational; 
-  typedef typename Base::Algebraic_real_1  Algebraic_real_1;
-  typedef typename Base::Algebraic_point_2 Algebraic_point_2;
-
-  typedef typename Base::Rat_vector        Rat_vector;
-  
-  typedef typename Base::Cache                  Cache;
+  typedef typename Base::Integer                        Integer;
+  typedef typename Base::Rational                       Rational; 
+  typedef typename Base::Algebraic_real_1               Algebraic_real_1;
+  typedef typename Base::Algebraic_point_2              Algebraic_point_2;
+  typedef typename Base::Polynomial_1                   Polynomial_1;
+ 
+  typedef typename Base::Rat_vector                     Rat_vector;
+ 
+  typedef typename Base::Cache                          Cache;
 
   /// \name Constrcution methods.
   //@{
