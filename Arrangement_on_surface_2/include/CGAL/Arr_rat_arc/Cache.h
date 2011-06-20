@@ -8,10 +8,11 @@
 
 namespace CGAL {
 namespace Arr_rational_arc {
+
 //-------------------
 //Cache 
 //-------------------
-template < class Algebraic_kernel_ >
+template <typename Algebraic_kernel_>
 class Cache : public Base_rational_arc_ds_1<Algebraic_kernel_>
 {
 public:
@@ -26,24 +27,31 @@ public:
   typedef typename Base::FT_rat_1             FT_rat_1;
   typedef typename Base::Polynomial_traits_1  Polynomial_traits_1;
 
-  typedef CGAL::Arr_rational_arc::Rational_function<Algebraic_kernel>    Rational_function;
-  typedef CGAL::Arr_rational_arc::Rational_function_canonicalized_pair<Algebraic_kernel>  Rational_function_canonicalized_pair;
-  typedef CGAL::Arr_rational_arc::Rational_function_pair<Algebraic_kernel> Rational_function_pair;
+  typedef CGAL::Arr_rational_arc::Rational_function<Algebraic_kernel>
+    Rational_function;
+  typedef CGAL::Arr_rational_arc::Rational_function_canonicalized_pair<Algebraic_kernel>
+    Rational_function_canonicalized_pair;
+  typedef CGAL::Arr_rational_arc::Rational_function_pair<Algebraic_kernel>
+    Rational_function_pair;
 
   typedef std::pair<Polynomial_1,Polynomial_1>      Rational_function_key;
   class Less_compare_rational_function_key
   {
   public:
-    Comparison_result compare(const Rational_function_key& k1, const Rational_function_key& k2) const
+    Comparison_result compare(const Rational_function_key& k1,
+                              const Rational_function_key& k2) const
     {
-      Comparison_result cr = typename Polynomial_traits_1::Compare()(k1.first,k2.first);
+      Comparison_result cr =
+        typename Polynomial_traits_1::Compare()(k1.first, k2.first);
       if (cr != CGAL::EQUAL)
         return (cr);
-      cr = typename Polynomial_traits_1::Compare()(k1.second,k2.second);
+      cr = typename Polynomial_traits_1::Compare()(k1.second, k2.second);
 
       return cr;
     }
-    bool operator()(const Rational_function_key& k1, const Rational_function_key& k2) const
+
+    bool operator()(const Rational_function_key& k1,
+                    const Rational_function_key& k2) const
     {
       Comparison_result cr = compare(k1,k2);
       return ((cr == CGAL::LARGER) ? true : false);
@@ -56,7 +64,7 @@ public:
                                                       Rational_function_map;
 
   typedef typename Rational_function::Id_type         Rational_function_id_type;
-  typedef std::pair<Rational_function_id_type,Rational_function_id_type>
+  typedef std::pair<Rational_function_id_type, Rational_function_id_type>
     Rational_function_canonicalized_pair_key;
 
   class Less_compare_rational_function_pair_key
@@ -70,11 +78,14 @@ public:
   };
 
   typedef typename std::map< Rational_function_canonicalized_pair_key,
-        Rational_function_canonicalized_pair,
-        Less_compare_rational_function_pair_key> Rational_function_canonicalized_pair_map;
+                             Rational_function_canonicalized_pair,
+                             Less_compare_rational_function_pair_key>
+    Rational_function_canonicalized_pair_map;
 public:
   Cache() : _rat_func_map_watermark(128),_rat_pair_map_watermark(128){};
-  void initialize(const Self& other, Algebraic_kernel& kernel = Algebraic_kernel())
+
+  void initialize(const Self& other,
+                  Algebraic_kernel& kernel = Algebraic_kernel())
   {
     //copy rational function map
     typename Rational_function_map::const_iterator iter1;
@@ -85,8 +96,9 @@ public:
       if (iter1->second.is_shared())
       { 
         Rational_function_key key   = iter1->first;
-        Rational_function f(iter1->second.numer(),
-                            iter1->second.denom(),kernel);  //construct new instance
+        //construct new instance
+        Rational_function f(iter1->second.numer(), iter1->second.denom(),
+                            kernel);
         _rat_func_map.insert(std::make_pair(key,f)); 
       }
     }
@@ -102,8 +114,9 @@ public:
       if (iter2->second.is_shared())
       {
         Rational_function_canonicalized_pair_key key  = iter2->first;
+        //construct new instance
         Rational_function_canonicalized_pair p(iter2->second.f(),
-                                               iter2->second.g(),kernel);  //construct new instance
+                                               iter2->second.g(), kernel);
         _rat_pair_map.insert(std::make_pair(key,p)); 
       }
     }
@@ -120,9 +133,10 @@ public:
     return _rat_pair_map;
   }
   
-  const Rational_function&  get_rational_function(const Polynomial_1& numer,
-                                                  const Polynomial_1& denom,
-                                                  Algebraic_kernel& kernel = Algebraic_kernel()) 
+  const Rational_function& get_rational_function(const Polynomial_1& numer,
+                                                 const Polynomial_1& denom,
+                                                 Algebraic_kernel& kernel =
+                                                   Algebraic_kernel()) 
   {
     Rational_function_key key  = get_key(numer,denom);
 
@@ -141,7 +155,8 @@ public:
 
         //then insert the new element
         Rational_function f(numer,denom,kernel);
-        typename Rational_function_map::iterator it2 = _rat_func_map.insert(it,std::make_pair(key,f)); 
+        typename Rational_function_map::iterator it2 =
+          _rat_func_map.insert(it,std::make_pair(key,f)); 
         return it2->second; 
       } 
   }
@@ -151,22 +166,26 @@ public:
     Integer  numer,denom;
     typename FT_rat_1::Decompose()(rat,numer,denom);
 
-    Polynomial_1 numer_poly = typename Polynomial_traits_1::Construct_polynomial()(numer);
-    Polynomial_1 denom_poly = typename Polynomial_traits_1::Construct_polynomial()(denom);
+    Polynomial_1 numer_poly =
+      typename Polynomial_traits_1::Construct_polynomial()(numer);
+    Polynomial_1 denom_poly =
+      typename Polynomial_traits_1::Construct_polynomial()(denom);
 
     return get_rational_function (numer_poly,denom_poly,kernel);
   }
 
-  const Rational_function_pair get_rational_pair ( const Rational_function& f, 
-      const Rational_function& g,
-      Algebraic_kernel& kernel = Algebraic_kernel()) 
+  const Rational_function_pair get_rational_pair(const Rational_function& f, 
+                                                 const Rational_function& g,
+                                                 Algebraic_kernel& kernel =
+                                                   Algebraic_kernel()) 
   {
     CGAL_precondition(!(f==g));
     Rational_function_canonicalized_pair_key key  = get_key(f,g);
     bool is_opposite = (f.id() < g.id()) ? false : true ; 
 
     //look if element exists in cache already
-    typename Rational_function_canonicalized_pair_map::iterator it = _rat_pair_map.lower_bound(key);
+    typename Rational_function_canonicalized_pair_map::iterator it =
+      _rat_pair_map.lower_bound(key);
   
     if(it != _rat_pair_map.end() && !(_rat_pair_map.key_comp()(key, it->first)))
       {
@@ -192,15 +211,17 @@ public:
     rat_pair_map_clean_up();
   }
 private:
-  Rational_function_key get_key(const Polynomial_1& numer, const Polynomial_1& denom) const 
+  Rational_function_key get_key(const Polynomial_1& numer,
+                                const Polynomial_1& denom) const 
   {
     return Rational_function_key(numer, denom);
   }
   Rational_function_key get_key(const Rational_function& f) const
   {
-    return get_key( f.numer(),f.denom());
+    return get_key(f.numer(), f.denom());
   }
-  Rational_function_canonicalized_pair_key get_key(const Rational_function& f, const Rational_function& g) const
+  Rational_function_canonicalized_pair_key
+  get_key(const Rational_function& f, const Rational_function& g) const
   {
     return (f.id() < g.id()) ?
       Rational_function_canonicalized_pair_key( f.id(),g.id() ):
