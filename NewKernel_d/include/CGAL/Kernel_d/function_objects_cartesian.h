@@ -2,6 +2,7 @@
 #define CGAL_KERNEL_D_FUNCTION_OBJECTS_CARTESIAN_H
 
 #include <CGAL/marcutils.h>
+#include <CGAL/Dimension.h>
 #include <CGAL/store_kernel.h>
 #include <CGAL/is_iterator.h>
 #include <CGAL/number_utils.h>
@@ -123,6 +124,41 @@ template<class R_> struct Orientation<R_,false> : private Store_kernel<R_> {
 	//TODO: version that takes objects directly instead of iterators
 };
 #endif
+
+template<class R_> struct Side_of_oriented_sphere : private Store_kernel<R_> {
+	CGAL_FUNCTOR_INIT_STORE(Side_of_oriented_sphere)
+	typedef R_ R;
+	typedef typename R_::FT FT;
+	typedef typename R::Point Point;
+	typedef typename R::Oriented_side result_type;
+	typedef typename Increment_dimension<typename R::Default_ambient_dimension>::type D1;
+	typedef typename Increment_dimension<typename R::Max_ambient_dimension>::type D2;
+	typedef typename R::LA::template Matrix<D1,D1,D2,D2>::type Matrix;
+
+	template<class Iter>
+	result_type operator()(Iter f, Iter const& e)const{
+		typename R::template Functor<Compute_cartesian_coordinate_tag>::type c(this->kernel());
+		typename R::template Functor<Point_dimension_tag>::type pd(this->kernel());
+		Point const& p0=*f++;
+		int d=pd(p0);
+		FT sq=0;
+		for(int j=0;j<d;++j){
+			sq-=c(p0,j);
+		}
+		Matrix m(d+1,d+1);
+		for(int i=0;f!=e;++f,++i) {
+			Point const& p=*f;
+			m(i,d)=sq;
+			for(int j=0;j<d;++j){
+				FT const& x=c(p,j);
+				m(i,j)=x-c(p0,j);
+				m(i,d)+=CGAL::square(x);
+			}
+		}
+		return R::LA::sign_of_determinant(CGAL_MOVE(m));
+	}
+	//TODO: version that takes objects directly instead of iterators
+};
 
 template<class R_> struct Construct_opposite_vector : private Store_kernel<R_> {
 	CGAL_FUNCTOR_INIT_STORE(Construct_opposite_vector)

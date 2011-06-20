@@ -60,6 +60,7 @@ typedef K1::Functor<CGAL::Construct_segment_tag>::type CS;
 typedef K1::Functor<CGAL::Construct_segment_extremity_tag>::type CSE;
 typedef K1::Functor<CGAL::Construct_point_cartesian_const_iterator_tag>::type CCI;
 typedef K1::Functor<CGAL::Orientation_of_points_tag>::type PO;
+typedef K1::Functor<CGAL::Side_of_oriented_sphere_tag>::type SOS;
 typedef K1::Point_cartesian_const_iterator CI;
 typedef K1::Functor<CGAL::Compute_cartesian_coordinate_tag>::type CC;
 
@@ -77,6 +78,7 @@ int main(){
 	PO po Kinit;
 	CS cs Kinit;
 	CSE cse Kinit;
+	SOS sos Kinit;
 	P a=cp(3,4);
 	P b=cp(5,6,7);
 	int rr[]={3,5,2};
@@ -91,6 +93,7 @@ int main(){
 	for(CI i=ci(a,CGAL::Begin_tag());i!=ci(a,CGAL::End_tag());++i)
 		std::cout << *i << ' ';
 	std::cout << '\n';
-	P tab[]={a,b,c};
-	std::cout << po(&tab[0],tab+3) << std::endl;
+	P tab[]={a,b,c,d};
+	std::cout << po (&tab[0],tab+3) << std::endl;
+	std::cout << sos(&tab[0],tab+4) << std::endl;
 }

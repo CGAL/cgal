@@ -57,7 +57,7 @@ namespace CGAL {
 	DECL_PREDICATE(Orientation);
 	DECL_PREDICATE(Orientation_of_points);
 	DECL_PREDICATE(Orientation_of_vectors);
-	DECL_PREDICATE(In_sphere);
+	DECL_PREDICATE(Side_of_oriented_sphere);
 #undef DECL_PREDICATE
 
 #define DECL_MISC(X) struct X##_tag {}; \
