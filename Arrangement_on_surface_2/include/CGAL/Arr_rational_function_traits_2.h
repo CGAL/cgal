@@ -160,6 +160,7 @@ public:
 
   public:
     Construct_x_monotone_curve_2(Cache& cache) : _cache(cache) {}
+
     X_monotone_curve_2 operator()( const Polynomial_1& P) const
     {
       return X_monotone_curve_2(P, _cache);
@@ -187,12 +188,14 @@ public:
       Rat_vector rat_vec(begin,end);
       return X_monotone_curve_2(rat_vec, x_s,dir_right,_cache);
     }
+
     X_monotone_curve_2 operator()(const Polynomial_1& P,
                                   const Algebraic_real_1& x_s,
                                   const Algebraic_real_1& x_t) const
     {
       return X_monotone_curve_2(P, x_s, x_t, _cache);
     }
+
     template <typename InputIterator>
     X_monotone_curve_2 operator()(InputIterator begin, InputIterator end,
                                   const Algebraic_real_1& x_s,
@@ -201,11 +204,13 @@ public:
       Rat_vector rat_vec(begin,end);
       return X_monotone_curve_2(rat_vec, x_s, x_t, _cache);
     }
+
     X_monotone_curve_2 operator()(const Polynomial_1& P,
                                   const Polynomial_1& Q) const 
     {
       return X_monotone_curve_2(P, Q, _cache);
     }
+
     template <typename InputIterator>
     X_monotone_curve_2 operator()(InputIterator begin_numer,
                                   InputIterator end_numer,
@@ -237,6 +242,7 @@ public:
       return X_monotone_curve_2(rat_vec_numer, rat_vec_denom, x_s,dir_right,
                                 _cache);
     }
+
     X_monotone_curve_2 operator()(const Polynomial_1& P,
                                   const Polynomial_1& Q,
                                   const Algebraic_real_1& x_s,
@@ -299,16 +305,16 @@ public:
     }
 
     Curve_2 operator()(const Polynomial_1& P,
-                       const Algebraic_real_1& x_s, const Algebraic_real_1& x_t)
-      const
+                       const Algebraic_real_1& x_s,
+                       const Algebraic_real_1& x_t) const
     {
       return Curve_2(P, x_s, x_t, _cache);
     }
 
     template <typename InputIterator>
     Curve_2 operator()(InputIterator begin, InputIterator end,
-                       const Algebraic_real_1& x_s, const Algebraic_real_1& x_t)
-      const
+                       const Algebraic_real_1& x_s,
+                       const Algebraic_real_1& x_t) const
     {
       Rat_vector rat_vec(begin,end);
       return Curve_2(rat_vec, x_s, x_t, _cache);
@@ -327,6 +333,7 @@ public:
       Rat_vector rat_vec_denom(begin_denom, end_denom);
       return Curve_2(rat_vec_numer, rat_vec_denom, _cache);
     }
+
     Curve_2 operator()(const Polynomial_1& P, const Polynomial_1& Q,
                        const Algebraic_real_1& x_s, bool dir_right) const
     {
@@ -343,7 +350,6 @@ public:
       return Curve_2(rat_vec_numer, rat_vec_denom, x_s, dir_right, _cache);
     }
 
-    template <typename InputIterator>
     Curve_2 operator()(const Polynomial_1& P, const Polynomial_1& Q,
                        const Algebraic_real_1& x_s,
                        const Algebraic_real_1& x_t) const
