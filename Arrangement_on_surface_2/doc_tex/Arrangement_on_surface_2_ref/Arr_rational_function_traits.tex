@@ -113,8 +113,8 @@ separate member function that cleans up the cache on demand.
 
 \ccMethod{void cleanup_cache() const;}
   {Deletes all curves from the cache that exist only there.}
-\ccMethod{const Algebraic_kernel_d_1& algebraic_kernel_d_1() const;}
-  {Returns a const reference to the used algerbaic kernel instance.}
+\ccMethod{const Algebraic_kernel_d_1* algebraic_kernel_d_1() const;}
+  {Returns a pointer to the used algerbaic kernel object.}
 
 \subsection*{Class Arr\_rational\_function\_traits\_2$<$AlgebraicKernel\_d\_1$>$::Curve\_2}
 \begin{ccClass}{Arr_rational_function_traits_2<AlgebraicKernel_d_1>::Curve_2}
@@ -125,12 +125,7 @@ to represent rational functions which may be restricted to a certain x-range.
 
 \ccIsModel
 
-\ccc{Assignable}\\
-\ccc{CopyConstructible}\\
-\ccc{DefaultConstructible}\\
-\ccc{EqualityComparable}
-% \ccc{LessThanComparable}\\ should we add this, its possible to define some order.. 
-
+\ccc{ArrTraits::Curve_2}
 
 \ccTypes \ccThree{}{xxxxxxxxxxxxxxxxxxxxxx}{x}
 \ccTypedef{typedef AlgebraicKernel_d_1::Polynomial_1 Polynomial_1;}{}\ccGlue
@@ -178,11 +173,7 @@ may not contain a vertical asymptote in its interior $x$-range.
 \ccCreationVariable{xcurve}
 
 \ccIsModel
-\ccc{Assignable}\\
-\ccc{CopyConstructible}\\
-\ccc{DefaultConstructible}\\
-\ccc{EqualityComparable}
-% \ccc{LessThanComparable}\\ should we add this, its possible to define some order.. 
+\ccc{ArrTraits::XMonotoneCurve_2}
 
 \ccTypes \ccThree{}{xxxxxxxxxxxxxxxxxxxxxx}{x}
 \ccTypedef{typedef AlgebraicKernel_d_1::Polynomial_1 Polynomial_1;}{}\ccGlue
@@ -300,11 +291,7 @@ may not contain a vertical asymptote in its interior $x$-range.
 \ccCreationVariable{point}
 
 \ccIsModel
-\ccc{Assignable}\\
-\ccc{CopyConstructible}\\
-\ccc{DefaultConstructible}\\
-\ccc{EqualityComparable}\\
-\ccc{LessThanComparable}
+\ccc{ArrTraits::Point_2}
 
 \ccTypes \ccThree{}{xxxxxxxxxxxxxxxxxxxxxx}{x}
 \ccTypedef{typedef AlgebraicKernel_d_1::Polynomial_1 Polynomial_1;}{}\ccGlue
