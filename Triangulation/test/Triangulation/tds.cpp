@@ -21,57 +21,57 @@ void test(const int d, const string & type)
     typedef typename TDS::Facet Facet;
     typedef typename TDS::Facet_iterator Facet_iterator;
 
-    TDS pc(d);
+    TDS tds(d);
     cerr << "\nChecking Tds of (" << type << ") dimension "
-        << pc.ambient_dimension();
-    assert(pc.empty());
+        << tds.ambient_dimension();
+    assert(tds.empty());
     vector<Vertex_handle> vhs;
-    vhs.push_back(pc.insert_increase_dimension());
-    assert( pc.is_valid() );
+    vhs.push_back(tds.insert_increase_dimension());
+    assert( tds.is_valid() );
     size_t nb_verts = 1;
     for( int i = 0; i <= d; ++i )
     {
-        vhs.push_back(pc.insert_increase_dimension(vhs[0]));
+        vhs.push_back(tds.insert_increase_dimension(vhs[0]));
         ++nb_verts;
         
-        assert(i == pc.current_dimension());
-        assert(!pc.is_vertex(Vertex_handle()));
-        assert(!pc.is_full_cell(Full_cell_handle()));
-        assert(pc.is_vertex(vhs[i]));
-        assert(pc.is_full_cell(vhs[i]->full_cell()));
+        assert(i == tds.current_dimension());
+        assert(!tds.is_vertex(Vertex_handle()));
+        assert(!tds.is_full_cell(Full_cell_handle()));
+        assert(tds.is_vertex(vhs[i]));
+        assert(tds.is_full_cell(vhs[i]->full_cell()));
 
-        if( pc.current_dimension() > 0 )
+        if( tds.current_dimension() > 0 )
         {
-            //int nbs = pc.number_of_full_cells();
-            pc.insert_in_full_cell(pc.full_cell(vhs[i+1]));
+            //int nbs = tds.number_of_full_cells();
+            tds.insert_in_full_cell(tds.full_cell(vhs[i+1]));
             ++nb_verts;
-            //assert((size_t)(nbs+pc.current_dimension())==pc.number_of_full_cells());
+            //assert((size_t)(nbs+tds.current_dimension())==tds.number_of_full_cells());
         }
-        assert( pc.is_valid() );
+        assert( tds.is_valid() );
     }
-    assert((nb_verts == pc.number_of_vertices()));
+    assert((nb_verts == tds.number_of_vertices()));
 
 	if( d > 1 )
     {
         // insert in hole
         std::vector<Full_cell_handle> simps;
-        simps.push_back(pc.full_cells_begin());
-        simps.push_back(pc.neighbor(simps[0],0));
-        pc.insert_in_hole(simps.begin(), simps.end(), Facet(simps[0],1));
+        simps.push_back(tds.full_cells_begin());
+        simps.push_back(tds.neighbor(simps[0],0));
+        tds.insert_in_hole(simps.begin(), simps.end(), Facet(simps[0],1));
     }
 
    // TEST Faces enumeration
     typedef std::vector<Face> Faces;
     Faces faces;
-    for( Vertex_iterator vit = pc.vertices_begin(); vit != pc.vertices_end(); ++vit )
+    for( Vertex_iterator vit = tds.vertices_begin(); vit != tds.vertices_end(); ++vit )
     {
-        for( int d = 1; d < pc.current_dimension() - 1; ++d )
+        for( int d = 1; d < tds.current_dimension() - 1; ++d )
         {
             cerr << '\n' << d << "-dimensional faces adjacent to " << &(*vit)
-                << " ( current dimension is " << pc.current_dimension() << " )";
+                << " ( current dimension is " << tds.current_dimension() << " )";
             faces.clear();
             std::back_insert_iterator<Faces> out(faces);
-            pc.incident_upper_faces(vit, d, out);
+            tds.incident_upper_faces(vit, d, out);
             typename Faces::iterator fit = faces.begin();
             while( fit != faces.end() )
             {
@@ -84,13 +84,13 @@ void test(const int d, const string & type)
     }
 
     // TEST Finite iterators
-    if( pc.current_dimension() > 0 )
+    if( tds.current_dimension() > 0 )
     {
-        Facet_iterator fit = pc.facets_begin();
+        Facet_iterator fit = tds.facets_begin();
         size_t nbfft(0);
-        while( fit != pc.facets_end() )
+        while( fit != tds.facets_end() )
             ++fit, ++nbfft;
-        cerr << '\n' << pc.number_of_full_cells() << " full cells, ";
+        cerr << '\n' << tds.number_of_full_cells() << " full cells, ";
         cerr << ' ' << nbfft << " facets.";
     }
  
@@ -98,7 +98,7 @@ void test(const int d, const string & type)
     std::ofstream fo((string("output-tds-")+type).c_str());
     if( d % 2 )
         CGAL::set_binary_mode(fo);
-    fo << pc;
+    fo << tds;
     fo.close();
 
     std::ifstream fi((string("output-tds-")+type).c_str());
@@ -108,11 +108,19 @@ void test(const int d, const string & type)
     fi >> input_tds;
     fi.close();
 
+    // TEST Copy Constructor
+    TDS tds2(tds);
+    assert( tds2.is_valid() );
+    assert( tds.current_dimension() == tds2.current_dimension() );
+    assert( tds.ambient_dimension() == tds2.ambient_dimension() );
+    assert( tds.number_of_vertices() == tds2.number_of_vertices() );
+    assert( tds.number_of_full_cells() == tds2.number_of_full_cells() );
+
     // CLEAR
-    pc.clear();
-    assert(-2==pc.current_dimension());
-    assert(pc.empty());
-    assert( pc.is_valid() );
+    tds.clear();
+    assert(-2==tds.current_dimension());
+    assert(tds.empty());
+    assert( tds.is_valid() );
 }
 
 #define test_static(DIM) {  \

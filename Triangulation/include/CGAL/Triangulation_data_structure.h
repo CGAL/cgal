@@ -146,6 +146,34 @@ public:
         clean_dynamic_memory();
     }
 
+    Triangulation_data_structure(const Triangulation_data_structure & tds)
+        : dmax_(tds.dmax_), dcur_(tds.dcur_),
+        vertices_(tds.vertices_), full_cells_(tds.full_cells_)
+    {
+        typedef std::map<Vertex_const_handle, Vertex_handle> V_map;
+        typedef std::map<Full_cell_const_handle, Full_cell_handle> C_map;
+        V_map vmap;
+        C_map cmap;
+        Vertex_const_iterator vfrom = tds.vertices_begin();
+        Vertex_iterator vto = vertices_begin();
+        Full_cell_const_iterator cfrom = tds.full_cells_begin();
+        Full_cell_iterator cto = full_cells_begin();
+        while( vfrom != tds.vertices_end() )
+            vmap[vfrom++] = vto++;
+        while( cfrom != tds.full_cells_end() )
+            cmap[cfrom++] = cto++;
+        cto = full_cells_begin();
+        while( cto != full_cells_end() )
+        {
+            for( int i = 0; i <= current_dimension(); ++i )
+            {
+                associate_vertex_with_full_cell(cto, i, vmap[cto->vertex(i)]);
+                cto->set_neighbor(i, cmap[cto->neighbor(i)]);
+            }
+            ++cto;
+        }
+    }
+
     // QUERIES
 
 protected:
