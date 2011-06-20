@@ -1702,6 +1702,39 @@ public:
     return Object();
   }
 
+  template <typename L1, typename L2, typename L3>
+  result_type
+  operator()(const L1& l1, const L2& l2, const L3& l3) const
+  {
+    CGAL_BRANCH_PROFILER(std::string(" failures/calls to   : ") + std::string(CGAL_PRETTY_FUNCTION), tmp);
+    Protect_FPU_rounding<Protection> P;
+    try {
+      Lazy_object lo(new Lazy_rep_3<AC, EC, E2A, L1, L2, L3>(ac, ec, l1, l2, l3));
+
+      if(lo.approx().is_empty())
+        return Object();
+
+#define CGAL_Kernel_obj(X) \
+      if (object_cast<typename AK::X>(& (lo.approx()))) { \
+	typedef Lazy_rep_1<Object_cast<typename AK::X>, Object_cast<typename EK::X>, E2A, Lazy_object> Lcr; \
+	Lcr * lcr = new Lcr(Object_cast<typename AK::X>(), Object_cast<typename EK::X>(), lo); \
+	return make_object(typename LK::X(lcr)); \
+      }
+
+#include <CGAL/Kernel/interface_macros.h>
+
+      std::cerr << "object_cast inside Lazy_construction_rep::operator() failed. It needs more else if's (#1)" << std::endl;
+      std::cerr << "dynamic type of the Object : " << lo.approx().type().name() << std::endl;
+
+    } catch (Uncertain_conversion_exception) {
+      CGAL_BRANCH_PROFILER_BRANCH(tmp);
+      Protect_FPU_rounding<!Protection> P2(CGAL_FE_TONEAREST);
+      ET eto = ec(CGAL::exact(l1), CGAL::exact(l2), CGAL::exact(l3));
+      return make_lazy<LK>(eto);
+    }
+    return Object();
+  }
+
 };
 
 
