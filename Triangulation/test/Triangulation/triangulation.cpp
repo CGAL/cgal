@@ -59,6 +59,14 @@ void test(const int d, const string & type, int N)
     cerr << nbis << " = " << (nbis+nbfs)
     << " = " << tri.number_of_full_cells();
 
+    // TEST Copy Constructor
+    T tri2(tri);
+    assert( tri2.is_valid() );
+    assert( tri.current_dimension() == tri2.current_dimension() );
+    assert( tri.ambient_dimension() == tri2.ambient_dimension() );
+    assert( tri.number_of_vertices() == tri2.number_of_vertices() );
+    assert( tri.number_of_full_cells() == tri2.number_of_full_cells() );
+
     // CLEAR
     tri.clear();
     assert(-1==tri.current_dimension());

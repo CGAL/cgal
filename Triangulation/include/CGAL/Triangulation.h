@@ -153,6 +153,28 @@ public:
     {
         clear();
     }
+    
+    Triangulation(const Triangulation & t2)
+        : tds_(t2.tds_)
+        , kernel_(t2.kernel_)
+        , infinity_()
+        , rng_(t2.rng_)
+#ifdef CGAL_TRIANGULATION_STATISTICS
+        ,walk_size_(t2.walk_size_)
+#endif
+    {
+        // We find the vertex at infinity by scanning the vertices of both
+        // triangulations. This works because Compact_container garantees that
+        // the vertices in the copy (*this) are stored in the same order as in
+        // the original triangulation (t2)
+        infinity_ = vertices_begin();
+        Vertex_const_iterator inf2 = t2.vertices_begin();
+        while( inf2 != t2.infinite_vertex() )
+        {
+            ++infinity_;
+            ++inf2;
+        }
+    }
 
     ~Triangulation() {}
 

@@ -102,6 +102,9 @@ description of the nested type \ccc{Ambient_dimension} above for an
 explanation of the use of the parameter \ccc{dim}. The triangulation stores a copy
 of the geometric traits \ccc{k}.}
 
+\ccConstructor{Triangulation(const Triangulation & t2);}
+{The copy constructor. All vertices and full cells are duplicated.}
+
 \ccHeading{Access functions}
 
 \ccMethod{const Triangulation_ds & tds() const;}%

@@ -22,7 +22,7 @@ void test(const int d, const string & type)
     typedef typename TDS::Facet_iterator Facet_iterator;
 
     TDS tds(d);
-    cerr << "\nChecking Tds of (" << type << ") dimension "
+    cout << "\nChecking Tds of (" << type << ") dimension "
         << tds.ambient_dimension();
     assert(tds.empty());
     vector<Vertex_handle> vhs;
@@ -67,7 +67,7 @@ void test(const int d, const string & type)
     {
         for( int d = 1; d < tds.current_dimension() - 1; ++d )
         {
-            cerr << '\n' << d << "-dimensional faces adjacent to " << &(*vit)
+            cout << '\n' << d << "-dimensional faces adjacent to " << &(*vit)
                 << " ( current dimension is " << tds.current_dimension() << " )";
             faces.clear();
             std::back_insert_iterator<Faces> out(faces);
@@ -75,9 +75,9 @@ void test(const int d, const string & type)
             typename Faces::iterator fit = faces.begin();
             while( fit != faces.end() )
             {
-                cerr << '\n';
-                for( int i = 0; i <= d; ++i )
-                    cerr << ' ' << &(*fit->vertex(i));
+                //cout << '\n';
+                //for( int i = 0; i <= d; ++i )
+                //    cout << ' ' << &(*fit->vertex(i));
                 ++fit;
             }
         }
@@ -90,8 +90,8 @@ void test(const int d, const string & type)
         size_t nbfft(0);
         while( fit != tds.facets_end() )
             ++fit, ++nbfft;
-        cerr << '\n' << tds.number_of_full_cells() << " full cells, ";
-        cerr << ' ' << nbfft << " facets.";
+        cout << '\n' << tds.number_of_full_cells() << " full cells, ";
+        cout << ' ' << nbfft << " facets.";
     }
  
     // TEST File I/O
@@ -174,6 +174,6 @@ int main()
     test_mirror_dyn(2);
     test_mirror_dyn(1);
 
-    cerr << std::endl;
+    cout << std::endl;
     return 0;
 }
