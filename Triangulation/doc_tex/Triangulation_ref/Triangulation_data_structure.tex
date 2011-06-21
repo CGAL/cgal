@@ -11,12 +11,12 @@ of dimension $k\leq d$.
 \ccc{Dimensionality} can be either \begin{itemize}
 
 \item \ccPureGlobalScope\ccc{Dimension_tag<d>} for some integer \ccc{d}. This
-indicates that the pure complex can store simplices of dimension at most
+indicates that the triangulation data structure can store simplices (full cells) of dimension at most
 \ccc{d}. The maximum dimension \ccc{d} is known by the compiler, which
 triggers some optimizations. Or
 
 \item \ccPureGlobalScope\ccc{Dynamic_dimension_tag}. In this case, the maximum
-dimension of the simplices is passed as an integer argument to an instance
+dimension of the simplices (full cells) is passed as an integer argument to an instance
 constructor (see \ccc{TriangulationDataStructure}).\end{itemize}
 
 \ccc{TDSVertex} is the class to be used as the base \ccc{Vertex} type in the
@@ -37,6 +37,8 @@ third parameter. In both cases, \ccc{TDSFullCell} defaults to
 \ccIsModel
 
 \ccc{TriangulationDataStructure}.
+
+In addition, the class \ccRefName\ provides the following types and methods:
 
 \ccCreation
 \ccCreationVariable{t}
