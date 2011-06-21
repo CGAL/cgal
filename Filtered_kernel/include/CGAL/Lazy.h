@@ -1710,26 +1710,24 @@ public:
 
     // We now check vector<X>
   
-      #define CGAL_Kernel_obj(X) \
-        {  \
+#define CGAL_Kernel_obj(X) \
+      {  \
         const std::vector<typename AK::X>* v_ptr;\
         if ( (v_ptr = object_cast<std::vector<typename AK::X> >(& (lo.approx()))) ) { \
-        \
-        std::vector<typename LK::X> V;\
-        V.resize(v_ptr->size());                           \
-        for (unsigned int i = 0; i < v_ptr->size(); i++) {               \
-          V[i] = typename LK::X(new Lazy_rep_1<Ith_for_intersection<typename AK::X>, \
-                                Ith_for_intersection<typename EK::X>, E2A, Lazy_object> \
-                                (Ith_for_intersection<typename AK::X>(i), Ith_for_intersection<typename EK::X>(i), lo)); \
-                                                                        \
-        }                                                               \
-        return make_object(V);                                          \
+          std::vector<typename LK::X> V;\
+          V.resize(v_ptr->size());                           \
+          for (unsigned int i = 0; i < v_ptr->size(); i++) {               \
+            V[i] = typename LK::X(new Lazy_rep_1<Ith_for_intersection<typename AK::X>, \
+                                  Ith_for_intersection<typename EK::X>, E2A, Lazy_object> \
+                                  (Ith_for_intersection<typename AK::X>(i), Ith_for_intersection<typename EK::X>(i), lo)); \
+          }                                                           \
+          return make_object(V);                                      \
         }\
-    }
+      }
 
-  CGAL_Kernel_obj(Point_2)
-  CGAL_Kernel_obj(Point_3)  
-  #undef CGAL_Kernel_obj
+CGAL_Kernel_obj(Point_2)
+CGAL_Kernel_obj(Point_3)  
+#undef CGAL_Kernel_obj
 
       std::cerr << "object_cast inside Lazy_construction_rep::operator() failed. It needs more else if's (#1)" << std::endl;
       std::cerr << "dynamic type of the Object : " << lo.approx().type().name() << std::endl;
