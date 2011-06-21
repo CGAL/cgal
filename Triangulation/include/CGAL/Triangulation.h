@@ -104,7 +104,7 @@ public:
     
 protected: // DATA MEMBERS
 
-    Triangulation_ds                     tds_;
+    Triangulation_ds                    tds_;
     const Geom_traits                   kernel_;
     Vertex_handle                       infinity_;
     mutable std::vector<Oriented_side>  orientations_;
