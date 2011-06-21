@@ -174,6 +174,10 @@ public:
             ++infinity_;
             ++inf2;
         }
+        // A full_cell has at most 1 + ambient_dimension() facets:
+        orientations_.resize(1 + ambient_dimension());
+        // Our coaffine orientation predicates HAS state member variables
+        coaffine_orientation_predicate() = geom_traits().coaffine_orientation_d_object();
     }
 
     ~Triangulation() {}
