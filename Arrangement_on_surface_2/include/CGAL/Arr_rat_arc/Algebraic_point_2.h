@@ -21,20 +21,20 @@ namespace Arr_rational_arc {
 //-------------------
 //Algebraic_point_2_rep
 //-------------------
-template <typename Algebraic_kernel_>
-class Algebraic_point_2_rep : public Base_rational_arc_ds_1<Algebraic_kernel_>
+template <typename Algebraic_kernel_d_1>
+class Algebraic_point_2_rep : public Base_rational_arc_ds_1<Algebraic_kernel_d_1>
 {
 public:
-  typedef Algebraic_kernel_                         Algebraic_kernel;
-  typedef Base_rational_arc_ds_1<Algebraic_kernel>  Base;
+  typedef Algebraic_kernel_d_1                          Algebraic_kernel_d_1;
+  typedef Base_rational_arc_ds_1<Algebraic_kernel_d_1>  Base;
  
-  typedef CGAL::Arr_rational_arc::Rational_function<Algebraic_kernel>
+  typedef CGAL::Arr_rational_arc::Rational_function<Algebraic_kernel_d_1>
                                                     Rational_function;
-  typedef CGAL::Arr_rational_arc::Rational_function_pair<Algebraic_kernel>
+  typedef CGAL::Arr_rational_arc::Rational_function_pair<Algebraic_kernel_d_1>
                                                     Rational_function_pair;
   
   typedef typename Base::Algebraic_real_1           Algebraic_real_1;
-  typedef typename Algebraic_kernel::Bound          Bound;
+  typedef typename Algebraic_kernel_d_1::Bound          Bound;
   typedef typename Base::Integer                    Integer ;
   typedef typename Base::Rational                   Rational ;
   typedef typename Base::Polynomial_1               Polynomial_1;
@@ -52,8 +52,7 @@ public:
   typedef typename Base::FT_rat_1                   FT_rat_1; 
   typedef typename Base::Polynomial_traits_1        Polynomial_traits_1;
 
-  typedef CGAL::Arr_rational_arc::Cache<Algebraic_kernel_>
-                                                    Cache;
+  typedef CGAL::Arr_rational_arc::Cache<Algebraic_kernel_d_1> Cache;
 
 public:
   Algebraic_point_2_rep(){}
@@ -74,7 +73,7 @@ public:
   }
 
   Comparison_result compare_xy_2(const Algebraic_point_2_rep& other,
-                                 Cache& cache, Algebraic_kernel& kernel) const
+                                 Cache& cache) const
   {
     Comparison_result comp = CGAL::compare(_x_coordinate, other.x());
     if (comp != EQUAL)
@@ -82,8 +81,7 @@ public:
     if (_rational_function == other.rational_function())
       return EQUAL;
     Rational_function_pair rat_func_pair =
-      cache.get_rational_pair(_rational_function, other.rational_function(),
-                              kernel);
+      cache.get_rational_pair(_rational_function, other.rational_function());
     return rat_func_pair.compare_f_g_at(_x_coordinate);
   }
 
@@ -289,7 +287,7 @@ private:
   Rational_function _rational_function;  //supporting rational function
   Algebraic_real_1  _x_coordinate;
 
-  Algebraic_kernel _algebraic_kernel;
+  Algebraic_kernel_d_1 _algebraic_kernel;
 };
 
 
@@ -300,10 +298,10 @@ class Algebraic_point_2 :
 {
  
 public:
-  typedef Algebraic_kernel_                                   Algebraic_kernel;
+  typedef Algebraic_kernel_                                   Algebraic_kernel_d_1;
   typedef Handle_with_policy<Algebraic_point_2_rep<Algebraic_kernel_> >
                                                               Base;
-  typedef Algebraic_point_2<Algebraic_kernel>                 Self;
+  typedef Algebraic_point_2<Algebraic_kernel_d_1>                 Self;
   typedef Algebraic_point_2_rep<Algebraic_kernel_>            Rep;
   typedef typename Rep::Rational                              Rational;
   typedef typename Rep::Algebraic_real_1                      Algebraic_real_1;
@@ -316,11 +314,11 @@ private:
   
   static Self& get_default_instance()
   {
+    static Algebraic_kernel_d_1 kernel;
     static typename Rational_function::Polynomial_1 numer(0);
     static typename Rational_function::Polynomial_1 denom(1);
-    static Rational_function rational_function(numer,denom);
-
-    static Algebraic_kernel kernel;
+    static Rational_function rational_function(numer,denom,&kernel);
+    
     static Algebraic_real_1 x_coordinate =
       kernel.construct_algebraic_real_1_object()(Rational(0));
     
@@ -343,11 +341,11 @@ public:
 
 
   Comparison_result compare_xy_2(const Algebraic_point_2& other,
-                                 Cache& cache, Algebraic_kernel& kernel) const
+                                 Cache& cache) const
   {
     if (this->is_identical (other))
       return CGAL::EQUAL;
-    return this->ptr()->compare_xy_2(*other.ptr(), cache, kernel);
+    return this->ptr()->compare_xy_2(*other.ptr(), cache);
   }
 
   const Polynomial_1& numerator() const { return this->ptr()->numerator(); }

@@ -25,27 +25,27 @@
 namespace CGAL {
 namespace Arr_rational_arc {
 
-template <class Algebraic_kernel_ >
-class Rational_function_rep : public Base_rational_arc_ds_1<Algebraic_kernel_>
+template <class AlgebraicKernel_d_1 >
+class Rational_function_rep : public Base_rational_arc_ds_1<AlgebraicKernel_d_1>
 {
 public:
-  typedef Algebraic_kernel_                        Algebraic_kernel;
-  typedef Base_rational_arc_ds_1<Algebraic_kernel> Base;
+  typedef AlgebraicKernel_d_1                          Algebraic_kernel_d_1;
+  typedef Base_rational_arc_ds_1<Algebraic_kernel_d_1> Base;
 
-  typedef typename Base::Polynomial_1       Polynomial_1;
-  typedef typename Base::Algebraic_real_1   Algebraic_real_1;
-  typedef typename Base::Algebraic_vector   Algebraic_vector;
-  typedef typename Base::Multiplicity       Multiplicity;
+  typedef typename Base::Polynomial_1             Polynomial_1;
+  typedef typename Base::Algebraic_real_1         Algebraic_real_1;
+  typedef typename Base::Algebraic_vector         Algebraic_vector;
+  typedef typename Base::Multiplicity             Multiplicity;
   typedef typename Base::Multiplicity_vector      Multiplicity_vector;
   typedef typename Base::Root_multiplicity_vector Root_multiplicity_vector;
-  typedef typename Base::Solve_1            Solve_1;
+  typedef typename Base::Solve_1                  Solve_1;
     
 public:
-  Rational_function_rep () {}
+  Rational_function_rep () : _ak_ptr(NULL){}
   Rational_function_rep ( const Polynomial_1& numer,
-      const Polynomial_1& denom, 
-      Algebraic_kernel kernel = Algebraic_kernel()):
-    _numer(numer), _denom(denom),_kernel(kernel) 
+                          const Polynomial_1& denom, 
+                          Algebraic_kernel_d_1* ak_ptr):
+    _numer(numer), _denom(denom),_ak_ptr(ak_ptr)
   {
     initialize();
   }
@@ -104,6 +104,7 @@ public:
 private:
   void initialize()
   {
+    CGAL_precondition (_ak_ptr != NULL);
     CGAL_precondition (CGAL::is_zero(_denom) == false);
     if (CGAL::is_zero(_numer))
       {
@@ -112,7 +113,7 @@ private:
         return;
       }
 
-    Solve_1 solve_1 (_kernel.solve_1_object());
+    Solve_1 solve_1 (_ak_ptr->solve_1_object());
     Root_multiplicity_vector rm_poles_vec,rm_intersctions_vec;
     solve_1(_denom, std::back_inserter(rm_poles_vec));  //poles
     solve_1(_numer, std::back_inserter(rm_intersctions_vec)); //intersections with zero
@@ -175,7 +176,7 @@ private:
   Algebraic_vector _event_roots;   //poles and intersection points with y=0, function can change signs in these events
   Multiplicity_vector _event_multiplicities; //multiplicities of the events
   std::vector<CGAL::Sign> _sign;    //function's sign in the corresponding interval induced by _event_roots (if no roots then only one value)
-  Algebraic_kernel _kernel;
+  mutable Algebraic_kernel_d_1*   _ak_ptr;
 
 };//Rational_function_rep 
 
@@ -183,9 +184,9 @@ template < class Algebraic_kernel_ >
 class Rational_function: public Handle_with_policy<Rational_function_rep<Algebraic_kernel_> >
 {
 public:
-  typedef Algebraic_kernel_         Algebraic_kernel;
+  typedef Algebraic_kernel_         Algebraic_kernel_d_1;
   typedef Handle_with_policy<Rational_function_rep<Algebraic_kernel_> > Base;
-  typedef Rational_function<Algebraic_kernel>           Self;
+  typedef Rational_function<Algebraic_kernel_d_1>           Self;
   typedef Rational_function_rep<Algebraic_kernel_>      Rep;
   typedef typename Rep::Algebraic_real_1                Algebraic_real_1;
   typedef typename Rep::Polynomial_1                    Polynomial_1;
@@ -194,15 +195,17 @@ public:
 
   typedef typename Base::Id_type                        Id_type;
 private:
-  static Self& get_default_instance(){
-    static Self x = Self(Polynomial_1(0),Polynomial_1(1)); 
+  static Self& get_default_instance()
+  {
+    static Algebraic_kernel_d_1 kernel;
+    static Self x = Self(Polynomial_1(0),Polynomial_1(1),&kernel); 
     return x; 
   } 
 public:
   Rational_function ( const Polynomial_1& numer,
-      const Polynomial_1& denom, 
-      Algebraic_kernel kernel = Algebraic_kernel())
-    : Base(numer,denom,kernel) {}
+                      const Polynomial_1& denom, 
+                      Algebraic_kernel_d_1* ak_ptr)
+    : Base(numer,denom,ak_ptr) {}
 
   //used to solve VS bug...
   Rational_function (const Self & r = get_default_instance()) : Base(static_cast<const Base &> (r)) {}

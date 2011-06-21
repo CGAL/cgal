@@ -26,31 +26,32 @@
 namespace CGAL {
 namespace Arr_rational_arc {
 
-template < class Algebraic_kernel_ >
-class Rational_function_canonicalized_pair_rep: public Base_rational_arc_ds_1<Algebraic_kernel_>
+template < class AlgebraicKernel_d_1 >
+class Rational_function_canonicalized_pair_rep: public Base_rational_arc_ds_1<AlgebraicKernel_d_1>
 {
 public:
-  typedef Algebraic_kernel_                         Algebraic_kernel;
-  typedef Base_rational_arc_ds_1<Algebraic_kernel>  Base;
+  typedef AlgebraicKernel_d_1                           Algebraic_kernel_d_1;
+  typedef Base_rational_arc_ds_1<Algebraic_kernel_d_1>  Base;
 
-  typedef CGAL::Arr_rational_arc::Rational_function<Algebraic_kernel> Rational_function;
-  typedef typename Base::Polynomial_1                                 Polynomial_1;
-  typedef typename Base::Algebraic_real_1                             Algebraic_real_1;
-  typedef typename Base::Algebraic_vector                             Algebraic_vector;
-  typedef typename Base::Multiplicity                                 Multiplicity;
-  typedef typename Base::Multiplicity_vector                          Multiplicity_vector;
-  typedef typename Base::Root_multiplicity_vector                     Root_multiplicity_vector;
-  typedef typename Base::Solve_1                                      Solve_1;
-  typedef typename Base::Bound                                        Bound;
-  typedef typename Base::Coefficient                                  Coefficient;
+  typedef CGAL::Arr_rational_arc::Rational_function<Algebraic_kernel_d_1> Rational_function;
+  typedef typename Base::Polynomial_1                                     Polynomial_1;
+  typedef typename Base::Algebraic_real_1                                 Algebraic_real_1;
+  typedef typename Base::Algebraic_vector                                 Algebraic_vector;
+  typedef typename Base::Multiplicity                                     Multiplicity;
+  typedef typename Base::Multiplicity_vector                              Multiplicity_vector;
+  typedef typename Base::Root_multiplicity_vector                         Root_multiplicity_vector;
+  typedef typename Base::Solve_1                                          Solve_1;
+  typedef typename Base::Bound                                            Bound;
+  typedef typename Base::Coefficient                                      Coefficient;
     
  
 public:
   Rational_function_canonicalized_pair_rep( const Rational_function& f, 
-      const Rational_function& g,
-      Algebraic_kernel kernel = Algebraic_kernel())
-    :_kernel(kernel),_f(f),_g(g)
+                                            const Rational_function& g,
+                                            Algebraic_kernel_d_1* ak_ptr)
+    :_f(f),_g(g),_ak_ptr(ak_ptr)
   {
+    CGAL_precondition (_ak_ptr != NULL);
     //canonicalized representation
     if ( !(f.id() < g.id()) ) 
       std::swap(_f,_g);
@@ -58,7 +59,7 @@ public:
           
     CGAL_precondition(CGAL::is_zero(_resultant) == false); // //f and g are not the same...
                 
-    Solve_1 solve_1 (kernel.solve_1_object());   
+    Solve_1 solve_1 (_ak_ptr->solve_1_object());   
     Root_multiplicity_vector rm_vec;
     
 #if 1
@@ -334,7 +335,7 @@ private:
       b = Bound(0);
     else
       {
-        b  = (_kernel.approximate_relative_1_object()(_event_roots.front(),0)).first - 1;  //lower bound of first root
+        b  = (_ak_ptr->approximate_relative_1_object()(_event_roots.front(),0)).first - 1;  //lower bound of first root
       }
     return is_above_at(b);
   }
@@ -347,11 +348,11 @@ private:
     //f-g= -------------------------------------- at b
     //    denom _f  * denom _g 
 
-    Algebraic_real_1 x (_kernel.construct_algebraic_real_1_object()(b));  //TODO: unnescecary construction of real
+    Algebraic_real_1 x (_ak_ptr->construct_algebraic_real_1_object()(b));  //TODO: unnescecary construction of real
   
-    CGAL::Sign   numer = _kernel.sign_at_1_object()(_resultant,x);
-    CGAL::Sign   denom_f =  _kernel.sign_at_1_object()(_f.denom(),x);
-    CGAL::Sign   denom_g =  _kernel.sign_at_1_object()(_g.denom(),x);
+    CGAL::Sign   numer = _ak_ptr->sign_at_1_object()(_resultant,x);
+    CGAL::Sign   denom_f =  _ak_ptr->sign_at_1_object()(_f.denom(),x);
+    CGAL::Sign   denom_g =  _ak_ptr->sign_at_1_object()(_g.denom(),x);
     CGAL::Sign   denom = denom_f * denom_g ;
     CGAL::Sign   s = numer*denom;
 
@@ -371,18 +372,19 @@ private:
   
     tmp_is_above.reserve(_event_roots.size()+1);  
     //left boundary
-    Bound b  = (_kernel.approximate_relative_1_object()(_event_roots.front(),0)).first - 1;  //lower bound of first root
+    Bound b  = (_ak_ptr->approximate_relative_1_object()
+      (_event_roots.front(),0)).first - 1;  //lower bound of first root
     tmp_is_above.push_back(is_above_at(b));  
   
     //mid intervals
     for (typename Algebraic_vector::size_type i=0; i < _event_roots.size()-1; ++i)
       {
-        b = _kernel.bound_between_1_object()(_event_roots[i],_event_roots[i+1]);
+        b = _ak_ptr->bound_between_1_object()(_event_roots[i],_event_roots[i+1]);
         tmp_is_above.push_back(is_above_at(b));      
       }
 
     //right boundary
-    b  = (_kernel.approximate_relative_1_object()(_event_roots.back(),0)).second + 1;  //lower bound of last root
+    b  = (_ak_ptr->approximate_relative_1_object()(_event_roots.back(),0)).second + 1;  //lower bound of last root
     tmp_is_above.push_back(is_above_at(b));
     return tmp_is_above;
   }
@@ -394,16 +396,16 @@ private:
   Algebraic_vector _event_roots;  //roots of resultant merged with roots of f & g's denomenators
   Multiplicity_vector _multiplicities;
   std::vector<bool> _is_above;   //is f above g in the interval induced by index i of _roots
-  Algebraic_kernel _kernel;
+  Algebraic_kernel_d_1* _ak_ptr;
 }; // Rational_function_canonicalized_pair_rep
 
 template < class Algebraic_kernel_>
 class Rational_function_canonicalized_pair: public Handle_with_policy<Rational_function_canonicalized_pair_rep<Algebraic_kernel_> >
 {
 public:
-  typedef Algebraic_kernel_                                                                 Algebraic_kernel;
+  typedef Algebraic_kernel_                                                                 Algebraic_kernel_d_1;
   typedef Handle_with_policy<Rational_function_canonicalized_pair_rep<Algebraic_kernel_> >  Base;
-  typedef Rational_function_canonicalized_pair<Algebraic_kernel>                            Self;
+  typedef Rational_function_canonicalized_pair<Algebraic_kernel_d_1>                            Self;
   typedef Rational_function_canonicalized_pair_rep<Algebraic_kernel_>                       Rep;
   typedef typename Rep::Rational_function                     Rational_function;
   typedef typename Rep::Algebraic_real_1                      Algebraic_real_1;
@@ -413,9 +415,9 @@ public:
   typedef typename Rep::Root_multiplicity_vector              Root_multiplicity_vector;
 
   Rational_function_canonicalized_pair( const Rational_function& f, 
-      const Rational_function& g,
-      Algebraic_kernel kernel = Algebraic_kernel())
-    : Base (f,g,kernel) {}
+                                        const Rational_function& g,
+                                        Algebraic_kernel_d_1* ak_ptr)
+    : Base (f,g,ak_ptr) {}
   //used to solve VS bug...
   Rational_function_canonicalized_pair (const Self & p) : Base(static_cast<const Base &> (p)) {}
 

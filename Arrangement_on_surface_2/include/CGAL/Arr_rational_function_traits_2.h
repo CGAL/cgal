@@ -129,11 +129,14 @@ public:
   Arr_rational_function_traits_2() : delete_ak(true)
   {
     _ak_ptr = new Algebraic_kernel_d_1;
+    _cache.initialize(_ak_ptr);
   }
 
   Arr_rational_function_traits_2(Algebraic_kernel_d_1* ak_ptr) :
     _ak_ptr(ak_ptr),delete_ak(false)
-  {}
+  {
+    _cache.initialize(_ak_ptr);
+  }
 
   Arr_rational_function_traits_2(const Self& other)
     :delete_ak(other.delete_ak_internal_flag())
@@ -554,8 +557,7 @@ public:
      */
     Comparison_result operator()(const Point_2& p1, const Point_2& p2) const 
     {
-      return p1.compare_xy_2(p2, _traits->cache(),
-                             *_traits->algebraic_kernel_d_1());
+      return p1.compare_xy_2(p2, _traits->cache());
     }
   };
 
@@ -801,8 +803,7 @@ public:
         return true;
 
       return
-        (p1.compare_xy_2(p2, _traits->cache(),
-                         *_traits->algebraic_kernel_d_1()) == CGAL::EQUAL) ?
+        (p1.compare_xy_2(p2, _traits->cache()) == CGAL::EQUAL) ?
          true : false;
     }
   };

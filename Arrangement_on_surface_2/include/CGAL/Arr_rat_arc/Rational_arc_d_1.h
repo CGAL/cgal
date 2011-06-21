@@ -112,27 +112,21 @@ public:
 public:
   const Rational_function& get_rational_function(const Polynomial_1& numerator,
                                                  const Polynomial_1& denominator,
-                                                 Cache& cache,
-                                                 Algebraic_kernel kernel =
-                                                   Algebraic_kernel()) const
+                                                 Cache& cache) const
   {
-    return cache.get_rational_function(numerator, denominator, kernel);
+    return cache.get_rational_function(numerator, denominator);
   }
   const Rational_function& get_rational_function(const Rational& rat,
-                                                 Cache& cache,
-                                                 Algebraic_kernel kernel =
-                                                   Algebraic_kernel()) const
+                                                 Cache& cache) const
   {
-    return cache.get_rational_function(rat,kernel);
+    return cache.get_rational_function(rat);
   }
   const Rational_function_pair get_rational_pair(const Rational_function& f, 
                                                  const Rational_function& g,
-                                                 Cache& cache,
-                                                 Algebraic_kernel kernel =
-                                                   Algebraic_kernel()) const
+                                                 Cache& cache) const
   {
     CGAL_precondition(f.id() != g.id());
-    return cache.get_rational_pair(f, g, kernel);
+    return cache.get_rational_pair(f, g);
   }
 
 public:
@@ -2680,18 +2674,6 @@ public:
     return (oi);
   }
 
-protected:
-
-  /*! Check whether the arc is continuous. */
-  bool _check_continuity()
-  {
-    if (this->_is_continuous())
-    {
-      // The denominator polynomial does not contain any roots in the interior
-      // of the arc: mark it as a continuous arc.
-      this->_info = (this->_info | Base::IS_CONTINUOUS);
-    }
-  }
 };
 
 
