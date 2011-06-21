@@ -102,6 +102,8 @@ public:
     return _rational_function;
   }
 
+  const Polynomial_1& numerator() const { return _rational_function.numer(); }
+  const Polynomial_1& denominator() const { return _rational_function.denom(); }
 
   //new functions...
   Algebraic_real_1 y() const
@@ -164,6 +166,12 @@ public:
   }
   std::pair<Bound,Bound> approximate_relative_y( int r) const
   {
+    // return zero if y is zero (the code below would not terminate)
+    // moreover approx relative is actually not well defined 
+    if(_rational_function.sign_at(_x_coordinate)==CGAL::ZERO)
+      return std::make_pair(Bound(0),Bound(0));
+    
+    
     typename BFI_traits::Set_precision       set_precision;
     typename BFI_polynomial_traits::Evaluate evaluate;
     long precision = 16;
@@ -302,6 +310,7 @@ public:
   typedef typename Rep::Rational_function                     Rational_function;
   typedef typename Rep::Bound                                 Bound;
   typedef typename Rep::Cache                                 Cache;
+  typedef typename Rep::Polynomial_1 Polynomial_1; 
 
 private:
   
@@ -341,6 +350,9 @@ public:
     return this->ptr()->compare_xy_2(*other.ptr(), cache, kernel);
   }
 
+  const Polynomial_1& numerator() const { return this->ptr()->numerator(); }
+  const Polynomial_1& denominator() const { return this->ptr()->denominator(); }
+  
   Algebraic_real_1& x()
   {
     if (this->is_shared())

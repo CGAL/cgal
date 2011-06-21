@@ -690,11 +690,11 @@ public:
       CGAL_precondition(cv1.point_position(p,_cache) == EQUAL &&
                         cv2.point_position(p,_cache) == EQUAL);
 
-      CGAL_precondition((cv1.left_infinite_in_x() != ARR_INTERIOR ||
-                         cv1.left_infinite_in_y() != ARR_INTERIOR ||
+      CGAL_precondition((cv1.left_boundary_in_x() != ARR_INTERIOR ||
+                         cv1.left_boundary_in_y() != ARR_INTERIOR ||
                          (p.x() > cv1.left().x())) &&
-                        (cv2.left_infinite_in_x() != ARR_INTERIOR ||
-                         cv2.left_infinite_in_y() != ARR_INTERIOR ||
+                        (cv2.left_boundary_in_x() != ARR_INTERIOR ||
+                         cv2.left_boundary_in_y() != ARR_INTERIOR ||
                          (p.x() > cv2.left().x())));
 
       // Compare the two arcs.
@@ -738,11 +738,11 @@ public:
                         cv2.point_position (p,_cache) == EQUAL);
 
 
-      CGAL_precondition((cv1.right_infinite_in_x() != ARR_INTERIOR ||
-                         cv1.right_infinite_in_y() != ARR_INTERIOR ||
+      CGAL_precondition((cv1.right_boundary_in_x() != ARR_INTERIOR ||
+                         cv1.right_boundary_in_y() != ARR_INTERIOR ||
                          (p.x() < cv1.right().x())) &&
-                        (cv2.right_infinite_in_x() != ARR_INTERIOR ||
-                         cv2.right_infinite_in_y() != ARR_INTERIOR ||
+                        (cv2.right_boundary_in_x() != ARR_INTERIOR ||
+                         cv2.right_boundary_in_y() != ARR_INTERIOR ||
                          (p.x() < cv2.right().x())));
 
  
@@ -997,7 +997,7 @@ public:
         Arr_curve_end ce) const
     {
       return (ce == ARR_MIN_END) ?
-        xcv.left_infinite_in_x() : xcv.right_infinite_in_x();
+        xcv.left_boundary_in_x() : xcv.right_boundary_in_x();
     }
 
     /*! Obtains the parameter space at a point along the x-axis.
@@ -1040,7 +1040,7 @@ public:
         Arr_curve_end ce) const
     {
       return (ce == ARR_MIN_END) ?
-        xcv.left_infinite_in_y() : xcv.right_infinite_in_y();
+        xcv.left_boundary_in_y() : xcv.right_boundary_in_y();
     }
 
     /*! Obtains the parameter space at a point along the y-axis.

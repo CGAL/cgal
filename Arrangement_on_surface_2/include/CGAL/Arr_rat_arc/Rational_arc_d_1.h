@@ -717,7 +717,7 @@ public:
 
   //---------------------------------------------------------
   //Check if the x-coordinate of the source point is infinite
-  Arr_parameter_space source_infinite_in_x() const
+  Arr_parameter_space source_boundary_in_x() const
   {
     return
       ((_info & SRC_AT_X_MINUS_INFTY) != 0) ? ARR_LEFT_BOUNDARY :
@@ -727,7 +727,7 @@ public:
 
   //---------------------------------------------------------
   //Check if the y-coordinate of the source point is infinite
-  Arr_parameter_space source_infinite_in_y() const
+  Arr_parameter_space source_boundary_in_y() const
   {
     return
       ((_info & SRC_AT_Y_MINUS_INFTY) != 0) ? ARR_BOTTOM_BOUNDARY :
@@ -737,7 +737,7 @@ public:
 
   //---------------------------------------------------------
   //Check if the x-coordinate of the target point is infinite
-  Arr_parameter_space target_infinite_in_x() const
+  Arr_parameter_space target_boundary_in_x() const
   {
     return
       ((_info & TRG_AT_X_MINUS_INFTY) != 0) ? ARR_LEFT_BOUNDARY :
@@ -747,7 +747,7 @@ public:
 
   //---------------------------------------------------------
   //Check if the y-coordinate of the target point is infinite
-  Arr_parameter_space target_infinite_in_y() const
+  Arr_parameter_space target_boundary_in_y() const
   {
     return
       ((_info & TRG_AT_Y_MINUS_INFTY) != 0) ? ARR_BOTTOM_BOUNDARY :
@@ -760,8 +760,8 @@ public:
   const Algebraic_point_2& source() const
   {
     CGAL_precondition ((_info & IS_VALID) != 0 &&
-        source_infinite_in_x() == ARR_INTERIOR &&
-        source_infinite_in_y() == ARR_INTERIOR);
+        source_boundary_in_x() == ARR_INTERIOR &&
+        source_boundary_in_y() == ARR_INTERIOR);
     return (_ps);
   }
 
@@ -770,7 +770,7 @@ public:
   Algebraic_real_1 source_x() const
   {
     CGAL_precondition((_info & IS_VALID) != 0 &&
-        source_infinite_in_x() == ARR_INTERIOR);
+        source_boundary_in_x() == ARR_INTERIOR);
     return (_ps.x());
   }
 
@@ -780,7 +780,7 @@ public:
   //Algebraic source_y () const
   //{
   // CGAL_precondition ((_info & IS_VALID) != 0 &&
-  //        source_infinite_in_y() == ARR_INTERIOR);
+  //        source_boundary_in_y() == ARR_INTERIOR);
   // return (_ps.y());
   //}
 
@@ -789,8 +789,8 @@ public:
   const Algebraic_point_2& target() const
   {
     CGAL_precondition((_info & IS_VALID) != 0 &&
-        target_infinite_in_x() == ARR_INTERIOR &&
-        target_infinite_in_y() == ARR_INTERIOR);
+        target_boundary_in_x() == ARR_INTERIOR &&
+        target_boundary_in_y() == ARR_INTERIOR);
     return (_pt);
   }
 
@@ -799,7 +799,7 @@ public:
   Algebraic_real_1 target_x() const
   {
     CGAL_precondition((_info & IS_VALID) != 0 &&
-        target_infinite_in_x() == ARR_INTERIOR);
+        target_boundary_in_x() == ARR_INTERIOR);
     return (_pt.x());
   }
 
@@ -809,46 +809,46 @@ public:
   //Algebraic target_y () const
   //{
   // CGAL_precondition ((_info & IS_VALID) != 0 &&
-  //        target_infinite_in_y() == ARR_INTERIOR);
+  //        target_boundary_in_y() == ARR_INTERIOR);
   // return (_pt.y());
   //}
 
   //-------------------------------------------------------
   //Check if the x-coordinate of the left point is infinite
-  Arr_parameter_space left_infinite_in_x() const
+  Arr_parameter_space left_boundary_in_x() const
   {
     return ((_info & IS_DIRECTED_RIGHT) != 0) ?
-      source_infinite_in_x() : target_infinite_in_x();
+      source_boundary_in_x() : target_boundary_in_x();
   }
 
   //-------------------------------------------------------
   //Check if the y-coordinate of the left point is infinite
-  Arr_parameter_space left_infinite_in_y() const
+  Arr_parameter_space left_boundary_in_y() const
   {
     return ((_info & IS_DIRECTED_RIGHT) != 0) ?
-      source_infinite_in_y() : target_infinite_in_y();
+      source_boundary_in_y() : target_boundary_in_y();
   }
   //--------------------------------------------------------
   //Check if the x-coordinate of the right point is infinite
-  Arr_parameter_space right_infinite_in_x() const
+  Arr_parameter_space right_boundary_in_x() const
   {
     return ((_info & IS_DIRECTED_RIGHT) != 0) ?
-      target_infinite_in_x() : source_infinite_in_x();
+      target_boundary_in_x() : source_boundary_in_x();
   }
 
   //--------------------------------------------------------
   //Check if the y-coordinate of the right point is infinite
-  Arr_parameter_space right_infinite_in_y() const
+  Arr_parameter_space right_boundary_in_y() const
   {
     return ((_info & IS_DIRECTED_RIGHT) != 0) ?
-      target_infinite_in_y() : source_infinite_in_y();
+      target_boundary_in_y() : source_boundary_in_y();
   }
 
   //------------------------------------
   //Get the x_value of the left endpoint
   const Algebraic_real_1& left_x() const
   {
-    CGAL_precondition(left_infinite_in_x() == ARR_INTERIOR);
+    CGAL_precondition(left_boundary_in_x() == ARR_INTERIOR);
     return ((_info & IS_DIRECTED_RIGHT) ? _ps.x() : _pt.x());
   }
 
@@ -857,15 +857,15 @@ public:
   const Algebraic_real_1& right_x() const
   {
     CGAL_precondition((_info & IS_VALID) != 0 &&
-        right_infinite_in_x() == ARR_INTERIOR );
+        right_boundary_in_x() == ARR_INTERIOR );
     return ((_info & IS_DIRECTED_RIGHT) ? _pt.x() : _ps.x());
   }
   //---------------------
   //Get the left endpoint
   const Algebraic_point_2& left() const
   {
-    CGAL_precondition(left_infinite_in_x() == ARR_INTERIOR &&
-        left_infinite_in_y() == ARR_INTERIOR);
+    CGAL_precondition(left_boundary_in_x() == ARR_INTERIOR &&
+        left_boundary_in_y() == ARR_INTERIOR);
     return ((_info & IS_DIRECTED_RIGHT) ? _ps : _pt);
   }
 
@@ -873,8 +873,8 @@ public:
   //Get the right endpoint
   const Algebraic_point_2& right() const
   {
-    CGAL_precondition(right_infinite_in_x() == ARR_INTERIOR &&
-        right_infinite_in_y() == ARR_INTERIOR);
+    CGAL_precondition(right_boundary_in_x() == ARR_INTERIOR &&
+        right_boundary_in_y() == ARR_INTERIOR);
     return ((_info & IS_DIRECTED_RIGHT) ? _pt : _ps);
   }
 
@@ -919,22 +919,22 @@ public:
 
 //   bool is_intersecting(Self& arc)
 //   {
-//     Arr_parameter_space left_parameter_space = ( (left_infinite_in_x()!= ARR_INTERIOR) &&(arc.left_infinite_in_x() != ARR_INTERIOR) ) ?
+//     Arr_parameter_space left_parameter_space = ( (left_boundary_in_x()!= ARR_INTERIOR) &&(arc.left_boundary_in_x() != ARR_INTERIOR) ) ?
 //       ARR_LEFT_BOUNDARY :
 //       ARR_INTERIOR;
-//     Arr_parameter_space right_parameter_space = ( (right_infinite_in_x()!= ARR_INTERIOR) &&(arc.right_infinite_in_x()!= ARR_INTERIOR) ) ?
+//     Arr_parameter_space right_parameter_space = ( (right_boundary_in_x()!= ARR_INTERIOR) &&(arc.right_boundary_in_x()!= ARR_INTERIOR) ) ?
 //       ARR_RIGHT_BOUNDARY :
 //       ARR_INTERIOR;
 //     Algebraic_real_1 left,right;
 //     if (left_parameter_space == ARR_INTERIOR)
 //       left = 
-//         (left_infinite_in_x()!= ARR_INTERIOR)     ? arc.left_x():
-//         (arc.left_infinite_in_x()!= ARR_INTERIOR) ? left_x() :
+//         (left_boundary_in_x()!= ARR_INTERIOR)     ? arc.left_x():
+//         (arc.left_boundary_in_x()!= ARR_INTERIOR) ? left_x() :
 //         (arc.left_x() < left_x())                 ? left_x() :
 //         arc.left_x();
 //     if (right_parameter_space == ARR_INTERIOR)
-//       right = (right_infinite_in_x()!= ARR_INTERIOR)  ? arc.right_x():
-//         (arc.right_infinite_in_x()!= ARR_INTERIOR) ? right_x() :
+//       right = (right_boundary_in_x()!= ARR_INTERIOR)  ? arc.right_x():
+//         (arc.right_boundary_in_x()!= ARR_INTERIOR) ? right_x() :
 //         (arc.right_x() < right_x())     ? right_x() :
 //         arc.right_x();
 //     if (left > right)
@@ -1046,8 +1046,8 @@ public:
     Algebraic_real_1 x0;
 
     if (ce == ARR_MIN_END) {
-      CGAL_assertion(left_infinite_in_x() == ARR_INTERIOR &&
-          left_infinite_in_y() != ARR_INTERIOR);
+      CGAL_assertion(left_boundary_in_x() == ARR_INTERIOR &&
+          left_boundary_in_y() != ARR_INTERIOR);
       if ((_info & IS_DIRECTED_RIGHT) != 0)
         x0 = _ps.x();
       else
@@ -1055,8 +1055,8 @@ public:
     }
     else
       {
-        CGAL_assertion(right_infinite_in_x() == ARR_INTERIOR &&
-            right_infinite_in_y() != ARR_INTERIOR);
+        CGAL_assertion(right_boundary_in_x() == ARR_INTERIOR &&
+            right_boundary_in_y() != ARR_INTERIOR);
         if ((_info & IS_DIRECTED_RIGHT) != 0)
           x0 = _pt.x();
         else
@@ -1082,17 +1082,17 @@ public:
     CGAL_precondition_code(
       if (ce == ARR_MIN_END)
       {
-        CGAL_precondition(this->left_infinite_in_y() != ARR_INTERIOR);
-        CGAL_precondition(arc.left_infinite_in_y() != ARR_INTERIOR);
-        CGAL_precondition(this->left_infinite_in_y() ==
-                          arc.left_infinite_in_y());
+        CGAL_precondition(this->left_boundary_in_y() != ARR_INTERIOR);
+        CGAL_precondition(arc.left_boundary_in_y() != ARR_INTERIOR);
+        CGAL_precondition(this->left_boundary_in_y() ==
+                          arc.left_boundary_in_y());
       }
       else // (ce == ARR_MAX_END)
       {
-        CGAL_precondition(this->right_infinite_in_y() != ARR_INTERIOR);
-        CGAL_precondition(arc.right_infinite_in_y() != ARR_INTERIOR);
-        CGAL_precondition(this->right_infinite_in_y() ==
-                          arc.right_infinite_in_y());
+        CGAL_precondition(this->right_boundary_in_y() != ARR_INTERIOR);
+        CGAL_precondition(arc.right_boundary_in_y() != ARR_INTERIOR);
+        CGAL_precondition(this->right_boundary_in_y() ==
+                          arc.right_boundary_in_y());
       }
       );
 
@@ -1110,14 +1110,14 @@ public:
     CGAL::Comparison_result comp_f_g_y = rat_pair.compare_f_g_at(x,ce == ARR_MAX_END ? CGAL::NEGATIVE : CGAL::POSITIVE);
     if( ce == ARR_MAX_END)
     {
-      if(right_infinite_in_y() == ARR_BOTTOM_BOUNDARY)
+      if(right_boundary_in_y() == ARR_BOTTOM_BOUNDARY)
         return comp_f_g_y; 
       else
         return -comp_f_g_y;
     }
     else
     {
-      if(left_infinite_in_y() == ARR_BOTTOM_BOUNDARY)
+      if(left_boundary_in_y() == ARR_BOTTOM_BOUNDARY)
         return -comp_f_g_y; 
       else
         return comp_f_g_y;
@@ -1134,8 +1134,8 @@ public:
 
     if (ind1 == ARR_MIN_END)
       {
-        CGAL_assertion(left_infinite_in_x() == ARR_INTERIOR &&
-            left_infinite_in_y() != ARR_INTERIOR);
+        CGAL_assertion(left_boundary_in_x() == ARR_INTERIOR &&
+            left_boundary_in_y() != ARR_INTERIOR);
         if ((_info & IS_DIRECTED_RIGHT) != 0)
           x1 = _ps.x();
         else
@@ -1143,8 +1143,8 @@ public:
       }
     else
       {
-        CGAL_assertion(right_infinite_in_x() == ARR_INTERIOR &&
-            right_infinite_in_y() != ARR_INTERIOR);
+        CGAL_assertion(right_boundary_in_x() == ARR_INTERIOR &&
+            right_boundary_in_y() != ARR_INTERIOR);
         if ((_info & IS_DIRECTED_RIGHT) != 0)
           x1 = _pt.x();
         else
@@ -1156,8 +1156,8 @@ public:
 
     if (ind2 == ARR_MIN_END)
       {
-        CGAL_assertion(arc.left_infinite_in_x() == ARR_INTERIOR &&
-            arc.left_infinite_in_y() != ARR_INTERIOR);
+        CGAL_assertion(arc.left_boundary_in_x() == ARR_INTERIOR &&
+            arc.left_boundary_in_y() != ARR_INTERIOR);
         if ((arc._info & IS_DIRECTED_RIGHT) != 0)
           x2 = arc._ps.x();
         else
@@ -1165,8 +1165,8 @@ public:
       }
     else
       {
-        CGAL_assertion(arc.right_infinite_in_x() == ARR_INTERIOR &&
-            arc.right_infinite_in_y() != ARR_INTERIOR);
+        CGAL_assertion(arc.right_boundary_in_x() == ARR_INTERIOR &&
+            arc.right_boundary_in_y() != ARR_INTERIOR);
         if ((arc._info & IS_DIRECTED_RIGHT) != 0)
           x2 = arc._pt.x();
         else
@@ -1199,8 +1199,8 @@ public:
     if( ind1 == ARR_MAX_END)
     {
       CGAL_postcondition(ind2 == ARR_MAX_END); 
-      CGAL_postcondition(right_infinite_in_y() == arc.right_infinite_in_y());
-      if(right_infinite_in_y() == ARR_BOTTOM_BOUNDARY)
+      CGAL_postcondition(right_boundary_in_y() == arc.right_boundary_in_y());
+      if(right_boundary_in_y() == ARR_BOTTOM_BOUNDARY)
         return comp_f_g_y; 
       else
         return -comp_f_g_y;
@@ -1208,8 +1208,8 @@ public:
     else
     {
       CGAL_postcondition(ind2 == ARR_MIN_END); 
-      CGAL_postcondition(left_infinite_in_y() == arc.left_infinite_in_y());
-      if(left_infinite_in_y() == ARR_BOTTOM_BOUNDARY)
+      CGAL_postcondition(left_boundary_in_y() == arc.left_boundary_in_y());
+      if(left_boundary_in_y() == ARR_BOTTOM_BOUNDARY)
         return -comp_f_g_y; 
       else
         return comp_f_g_y;
@@ -1263,8 +1263,8 @@ public:
   Comparison_result compare_at_minus_infinity(const Self& arc,
                                               Cache& cache) const
   {
-    CGAL_precondition(left_infinite_in_x() == ARR_LEFT_BOUNDARY &&
-        arc.left_infinite_in_x() == ARR_LEFT_BOUNDARY);
+    CGAL_precondition(left_boundary_in_x() == ARR_LEFT_BOUNDARY &&
+        arc.left_boundary_in_x() == ARR_LEFT_BOUNDARY);
 
     //check if the base functions are equal
     if (_has_same_base(arc))
@@ -1285,8 +1285,8 @@ public:
   Comparison_result compare_at_plus_infinity(const Self& arc,
                                              Cache& cache) const
   {
-    CGAL_precondition(right_infinite_in_x() == ARR_RIGHT_BOUNDARY &&
-        arc.right_infinite_in_x() == ARR_RIGHT_BOUNDARY);
+    CGAL_precondition(right_boundary_in_x() == ARR_RIGHT_BOUNDARY &&
+        arc.right_boundary_in_x() == ARR_RIGHT_BOUNDARY);
 
     //check if the base functions are equal
     if (_has_same_base(arc))
@@ -1309,16 +1309,16 @@ public:
       return false;
 
     // Check that the arc left endpoints are the same.
-    Arr_parameter_space inf1 = left_infinite_in_x();
-    Arr_parameter_space inf2 = arc.left_infinite_in_x();
+    Arr_parameter_space inf1 = left_boundary_in_x();
+    Arr_parameter_space inf2 = arc.left_boundary_in_x();
 
     if (inf1 != inf2)
       return false;
 
     if (inf1 == ARR_INTERIOR)
     {
-      inf1 = left_infinite_in_y();
-      inf2 = arc.left_infinite_in_y();
+      inf1 = left_boundary_in_y();
+      inf2 = arc.left_boundary_in_y();
 
       if (inf1 != inf2)
         return false;
@@ -1331,16 +1331,16 @@ public:
     }
 
     // Check that the arc right endpoints are the same.
-    inf1 = right_infinite_in_x();
-    inf2 = arc.right_infinite_in_x();
+    inf1 = right_boundary_in_x();
+    inf2 = arc.right_boundary_in_x();
 
     if (inf1 != inf2)
       return false;
 
     if (inf1 == ARR_INTERIOR)
     {
-        inf1 = right_infinite_in_y();
-        inf2 = arc.right_infinite_in_y();
+        inf1 = right_boundary_in_y();
+        inf2 = arc.right_boundary_in_y();
 
         if (inf1 != inf2)
           return false;
@@ -1369,16 +1369,16 @@ public:
 
     // Check if the left endpoint of one curve is the right endpoint of the other.
 
-    return ((right_infinite_in_x() == ARR_INTERIOR &&
-            right_infinite_in_y() == ARR_INTERIOR &&
-            arc.left_infinite_in_x() == ARR_INTERIOR &&
-            arc.left_infinite_in_y() == ARR_INTERIOR &&
+    return ((right_boundary_in_x() == ARR_INTERIOR &&
+            right_boundary_in_y() == ARR_INTERIOR &&
+            arc.left_boundary_in_x() == ARR_INTERIOR &&
+            arc.left_boundary_in_y() == ARR_INTERIOR &&
             //CGAL::equal(right_x() ,arc.left_x() )) ||
             (right_x() == arc.left_x() )) ||
-        (left_infinite_in_x() == ARR_INTERIOR &&
-            left_infinite_in_y() == ARR_INTERIOR &&
-            arc.right_infinite_in_x() == ARR_INTERIOR &&
-            arc.right_infinite_in_y() == ARR_INTERIOR &&
+        (left_boundary_in_x() == ARR_INTERIOR &&
+            left_boundary_in_y() == ARR_INTERIOR &&
+            arc.right_boundary_in_x() == ARR_INTERIOR &&
+            arc.right_boundary_in_y() == ARR_INTERIOR &&
             //CGAL::equal(left_x(), arc.right_x())));  
             (left_x() == arc.right_x())));  
   }
@@ -1426,24 +1426,24 @@ public:
     os << ") on ";
 
     // Print the definition range.
-    Arr_parameter_space      inf_x = source_infinite_in_x();
+    Arr_parameter_space      inf_x = source_boundary_in_x();
     if (inf_x == ARR_LEFT_BOUNDARY) 
       os << "(-oo";
     else if (inf_x == ARR_RIGHT_BOUNDARY)
       os << "(+oo";
-    else if (source_infinite_in_y() != ARR_INTERIOR)
+    else if (source_boundary_in_y() != ARR_INTERIOR)
       os << '(' << CGAL::to_double(source_x());
     else
       os << '[' << CGAL::to_double(source().x());
 
     os << ", ";
 
-    inf_x = target_infinite_in_x();
+    inf_x = target_boundary_in_x();
     if (inf_x == ARR_LEFT_BOUNDARY) 
       os << "-oo)";
     else if (inf_x == ARR_RIGHT_BOUNDARY)
       os << "+oo)";
-    else if (target_infinite_in_y() != ARR_INTERIOR)
+    else if (target_boundary_in_y() != ARR_INTERIOR)
       os << CGAL::to_double(target_x()) << ')';
     else
       os << CGAL::to_double(target().x()) << ']';
@@ -1614,11 +1614,11 @@ protected:
   //    {
   //      bool same_source(true);
   //      bool same_target(true);
-  //      if (  (this->source_infinite_in_x () == ARR_INTERIOR) && 
-  //          (this->source_infinite_in_y () == ARR_INTERIOR) )
+  //      if (  (this->source_boundary_in_x () == ARR_INTERIOR) && 
+  //          (this->source_boundary_in_y () == ARR_INTERIOR) )
   //        same_source = (this->source() == arc.source());
-  //      if (  (this->target_infinite_in_x () == ARR_INTERIOR) && 
-  //          (this->target_infinite_in_y () == ARR_INTERIOR) )
+  //      if (  (this->target_boundary_in_x () == ARR_INTERIOR) && 
+  //          (this->target_boundary_in_y () == ARR_INTERIOR) )
   //        same_target = (this->target() == arc.target());
   //      return (same_source && same_target);
   //    }
@@ -1836,6 +1836,8 @@ template < class Algebraic_kernel_ >
 class Continuous_rational_arc_d_1:
     public Base_rational_arc_d_1<Algebraic_kernel_>
 {
+public:
+  bool is_left_to_right() const { return (this->_info && Base::IS_DIRECTED_RIGHT);}
 public:
   typedef Algebraic_kernel_                             Algebraic_kernel;
   
@@ -2101,8 +2103,8 @@ public:
 
       // Locate the left curve-end with larger x-coordinate.
       bool             at_minus_infinity = false;
-      Arr_parameter_space    inf_l1 = this->left_infinite_in_x();
-      Arr_parameter_space    inf_l2 = arc.left_infinite_in_x();
+      Arr_parameter_space    inf_l1 = this->left_boundary_in_x();
+      Arr_parameter_space    inf_l2 = arc.left_boundary_in_x();
       Algebraic_point_2          p_left;
       int              info_left;
 
@@ -2141,8 +2143,8 @@ public:
 
       // Locate the right curve-end with smaller x-coordinate.
       bool             at_plus_infinity = false;
-      Arr_parameter_space    inf_r1 = this->right_infinite_in_x();
-      Arr_parameter_space    inf_r2 = arc.right_infinite_in_x();
+      Arr_parameter_space    inf_r1 = this->right_boundary_in_x();
+      Arr_parameter_space    inf_r2 = arc.right_boundary_in_x();
       Algebraic_point_2      p_right;
       int              info_right;
       
@@ -2344,11 +2346,11 @@ public:
 
     // Make sure that p lies on the interior of the arc.
     CGAL_precondition(this->point_position(p,cache) == EQUAL &&
-                      (this->source_infinite_in_x() != ARR_INTERIOR ||
-                       this->source_infinite_in_y() != ARR_INTERIOR ||
+                      (this->source_boundary_in_x() != ARR_INTERIOR ||
+                       this->source_boundary_in_y() != ARR_INTERIOR ||
                        (p.x() != this->_ps.x()))  &&
-                      (this->target_infinite_in_x() != ARR_INTERIOR ||
-                       this->target_infinite_in_y() != ARR_INTERIOR ||
+                      (this->target_boundary_in_x() != ARR_INTERIOR ||
+                       this->target_boundary_in_y() != ARR_INTERIOR ||
                        (p.x() != this->_pt.x())));
 
     // Make copies of the current arc.
@@ -2384,30 +2386,30 @@ public:
     CGAL_precondition(this->can_merge_with(arc));
 
     // Check if we should extend the arc to the left or to the right.
-    if (this->right_infinite_in_x() == ARR_INTERIOR &&
-        this->right_infinite_in_y() == ARR_INTERIOR &&
-        arc.left_infinite_in_x() == ARR_INTERIOR &&
-        arc.left_infinite_in_y() == ARR_INTERIOR &&
+    if (this->right_boundary_in_x() == ARR_INTERIOR &&
+        this->right_boundary_in_y() == ARR_INTERIOR &&
+        arc.left_boundary_in_x() == ARR_INTERIOR &&
+        arc.left_boundary_in_y() == ARR_INTERIOR &&
         (this->right().x() == arc.left().x()))
     {
       // Extend the arc to the right.
       if ((this->_info & this->IS_DIRECTED_RIGHT) != 0)
       {
-        if (arc.right_infinite_in_x() == ARR_INTERIOR &&
-            arc.right_infinite_in_y() == ARR_INTERIOR)
+        if (arc.right_boundary_in_x() == ARR_INTERIOR &&
+            arc.right_boundary_in_y() == ARR_INTERIOR)
         {
           this->_pt = arc.right();
         }
         else
         {
-          if (arc.right_infinite_in_x() == ARR_LEFT_BOUNDARY)
+          if (arc.right_boundary_in_x() == ARR_LEFT_BOUNDARY)
             this->_info = (this->_info | this->TRG_AT_X_MINUS_INFTY);
-          else if (arc.right_infinite_in_x() == ARR_RIGHT_BOUNDARY)
+          else if (arc.right_boundary_in_x() == ARR_RIGHT_BOUNDARY)
             this->_info = (this->_info | this->TRG_AT_X_PLUS_INFTY);
           
-          if (arc.right_infinite_in_y() == ARR_BOTTOM_BOUNDARY)
+          if (arc.right_boundary_in_y() == ARR_BOTTOM_BOUNDARY)
             this->_info = (this->_info | this->TRG_AT_Y_MINUS_INFTY);
-          else if (arc.right_infinite_in_y() == ARR_TOP_BOUNDARY)
+          else if (arc.right_boundary_in_y() == ARR_TOP_BOUNDARY)
             this->_info = (this->_info | this->TRG_AT_Y_PLUS_INFTY);
 
           this->_pt = (arc._info & this->IS_DIRECTED_RIGHT) ? arc._pt : arc._ps;
@@ -2415,21 +2417,21 @@ public:
       }
       else
       {
-        if (arc.right_infinite_in_x() == ARR_INTERIOR &&
-            arc.right_infinite_in_y() == ARR_INTERIOR)
+        if (arc.right_boundary_in_x() == ARR_INTERIOR &&
+            arc.right_boundary_in_y() == ARR_INTERIOR)
         {
           this->_ps = arc.right();
         }
         else
         {
-          if (arc.right_infinite_in_x() == ARR_LEFT_BOUNDARY)
+          if (arc.right_boundary_in_x() == ARR_LEFT_BOUNDARY)
             this->_info = (this->_info | this->SRC_AT_X_MINUS_INFTY);
-          else if (arc.right_infinite_in_x() == ARR_RIGHT_BOUNDARY)
+          else if (arc.right_boundary_in_x() == ARR_RIGHT_BOUNDARY)
             this->_info = (this->_info | this->SRC_AT_X_PLUS_INFTY);
 
-          if (arc.right_infinite_in_y() == ARR_BOTTOM_BOUNDARY)
+          if (arc.right_boundary_in_y() == ARR_BOTTOM_BOUNDARY)
             this->_info = (this->_info | this->SRC_AT_Y_MINUS_INFTY);
-          else if (arc.right_infinite_in_y() == ARR_TOP_BOUNDARY)
+          else if (arc.right_boundary_in_y() == ARR_TOP_BOUNDARY)
             this->_info = (this->_info | this->SRC_AT_Y_PLUS_INFTY);
 
           this->_ps = (arc._info & this->IS_DIRECTED_RIGHT) ? arc._pt : arc._ps;
@@ -2438,30 +2440,30 @@ public:
     }
     else
     {
-      CGAL_precondition(this->left_infinite_in_x() == ARR_INTERIOR &&
-                        this->left_infinite_in_y() == ARR_INTERIOR &&
-                        arc.right_infinite_in_x() == ARR_INTERIOR &&
-                        arc.right_infinite_in_y() == ARR_INTERIOR &&
+      CGAL_precondition(this->left_boundary_in_x() == ARR_INTERIOR &&
+                        this->left_boundary_in_y() == ARR_INTERIOR &&
+                        arc.right_boundary_in_x() == ARR_INTERIOR &&
+                        arc.right_boundary_in_y() == ARR_INTERIOR &&
                         (this->left().x() == arc.right().x()));
 
       // Extend the arc to the left.
       if ((this->_info & this->IS_DIRECTED_RIGHT) != 0)
       {
-        if (arc.left_infinite_in_x() == ARR_INTERIOR &&
-            arc.left_infinite_in_y() == ARR_INTERIOR)
+        if (arc.left_boundary_in_x() == ARR_INTERIOR &&
+            arc.left_boundary_in_y() == ARR_INTERIOR)
         {
           this->_ps = arc.left();
         }
         else
         {
-          if (arc.left_infinite_in_x() == ARR_LEFT_BOUNDARY)
+          if (arc.left_boundary_in_x() == ARR_LEFT_BOUNDARY)
             this->_info = (this->_info | this->SRC_AT_X_MINUS_INFTY);
-          else if (arc.left_infinite_in_x() == ARR_RIGHT_BOUNDARY)
+          else if (arc.left_boundary_in_x() == ARR_RIGHT_BOUNDARY)
             this->_info = (this->_info | this->SRC_AT_X_PLUS_INFTY);
 
-          if (arc.left_infinite_in_y() == ARR_BOTTOM_BOUNDARY)
+          if (arc.left_boundary_in_y() == ARR_BOTTOM_BOUNDARY)
             this->_info = (this->_info | this->SRC_AT_Y_MINUS_INFTY);
-          else if (arc.left_infinite_in_y() == ARR_TOP_BOUNDARY)
+          else if (arc.left_boundary_in_y() == ARR_TOP_BOUNDARY)
             this->_info = (this->_info | this->SRC_AT_Y_PLUS_INFTY);
 
           this->_ps = (arc._info & this->IS_DIRECTED_RIGHT) ? arc._ps : arc._pt;
@@ -2469,21 +2471,21 @@ public:
       }
       else
       {
-        if (arc.left_infinite_in_x() == ARR_INTERIOR &&
-            arc.left_infinite_in_y() == ARR_INTERIOR)
+        if (arc.left_boundary_in_x() == ARR_INTERIOR &&
+            arc.left_boundary_in_y() == ARR_INTERIOR)
         {
           this->_pt = arc.left();
         }
         else
         {
-          if (arc.left_infinite_in_x() == ARR_LEFT_BOUNDARY)
+          if (arc.left_boundary_in_x() == ARR_LEFT_BOUNDARY)
             this->_info = (this->_info | this->TRG_AT_X_MINUS_INFTY);
-          else if (arc.left_infinite_in_x() == ARR_RIGHT_BOUNDARY)
+          else if (arc.left_boundary_in_x() == ARR_RIGHT_BOUNDARY)
             this->_info = (this->_info | this->TRG_AT_X_PLUS_INFTY);
 
-          if (arc.left_infinite_in_y() == ARR_BOTTOM_BOUNDARY)
+          if (arc.left_boundary_in_y() == ARR_BOTTOM_BOUNDARY)
             this->_info = (this->_info | this->TRG_AT_Y_MINUS_INFTY);
-          else if (arc.left_infinite_in_y() == ARR_TOP_BOUNDARY)
+          else if (arc.left_boundary_in_y() == ARR_TOP_BOUNDARY)
             this->_info = (this->_info | this->TRG_AT_Y_PLUS_INFTY);
 
           this->_pt = (arc._info & this->IS_DIRECTED_RIGHT) ? arc._ps : arc._pt;
