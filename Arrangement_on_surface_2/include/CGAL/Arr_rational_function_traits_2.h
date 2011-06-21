@@ -49,10 +49,12 @@ template <typename AlgebraicKernel_d_1>
 class Arr_rational_function_traits_2
 {
 public:
-  typedef AlgebraicKernel_d_1                                             Algebraic_kernel_d_1;
+  typedef AlgebraicKernel_d_1                           Algebraic_kernel_d_1;
  
-  typedef Arr_rational_function_traits_2<Algebraic_kernel_d_1>            Self;
-  typedef Arr_rational_arc::Base_rational_arc_ds_1<Algebraic_kernel_d_1>  Base_rational_arc_ds_1;
+  typedef Arr_rational_function_traits_2<Algebraic_kernel_d_1>
+                                                        Self;
+  typedef Arr_rational_arc::Base_rational_arc_ds_1<Algebraic_kernel_d_1>
+                                                        Base_rational_arc_ds_1;
 
   // Traits objects:
   typedef Arr_rational_arc::Base_rational_arc_d_1<Algebraic_kernel_d_1>
@@ -75,7 +77,6 @@ public:
 
   typedef typename Base_rational_arc_ds_1::FT_rat_1           FT_rat_1; 
   typedef typename Base_rational_arc_ds_1::Polynomial_traits_1
-
     Polynomial_traits_1;
   
   typedef typename Algebraic_kernel_d_1::Bound                Bound; 
@@ -153,31 +154,51 @@ public:
       delete (_ak_ptr);
   }
 
+  /*! A functor that constructs an x_monotone curve */
   class Construct_x_monotone_curve_2
   {
-  private:
-    Cache& _cache;
+  protected:
+    typedef Arr_rational_function_traits_2<Algebraic_kernel_d_1> Traits;
+    typedef CGAL::Arr_rational_arc::Cache<Algebraic_kernel_d_1>  Cache;
 
+    /*! The traits */
+    const Traits* _traits;
+
+    /*! Constructor
+     * \param traits the traits
+     */
+    Construct_x_monotone_curve_2(const Traits* traits) : _traits(traits) {}
+
+    friend class Arr_rational_function_traits_2<Algebraic_kernel_d_1>;
+    
   public:
-    Construct_x_monotone_curve_2(Cache& cache) : _cache(cache) {}
-
+    typedef typename Base_rational_arc_ds_1::Polynomial_1 Polynomial_1; 
+    typedef typename Base_rational_arc_ds_1::Algebraic_real_1
+                                                          Algebraic_real_1;
+    typedef Arr_rational_arc::Continuous_rational_arc_d_1<Algebraic_kernel_d_1>
+                                                          X_monotone_curve_2;
+    typedef Polynomial_1                                  argument_type;
+    typedef Polynomial_1                                  first_argument_type;
+    typedef Polynomial_1                                  second_argument_type;
+    typedef X_monotone_curve_2                            result_type;
+    
     X_monotone_curve_2 operator()( const Polynomial_1& P) const
     {
-      return X_monotone_curve_2(P, _cache);
+      return X_monotone_curve_2(P, _traits->cache());
     }
 
     template <typename InputIterator>
     X_monotone_curve_2 operator()( InputIterator begin, InputIterator end) const
     {
       Rat_vector rat_vec(begin,end);
-      return X_monotone_curve_2(rat_vec, _cache);
+      return X_monotone_curve_2(rat_vec, _traits->cache());
     }
 
     X_monotone_curve_2 operator()(const Polynomial_1& P,
                                   const Algebraic_real_1& x_s,
                                   bool dir_right) const
     {
-      return X_monotone_curve_2(P, x_s, dir_right, _cache);
+      return X_monotone_curve_2(P, x_s, dir_right, _traits->cache());
     }
 
     template <typename InputIterator>
@@ -186,14 +207,14 @@ public:
                                   bool dir_right) const
     {
       Rat_vector rat_vec(begin,end);
-      return X_monotone_curve_2(rat_vec, x_s,dir_right,_cache);
+      return X_monotone_curve_2(rat_vec, x_s, dir_right, _traits->cache());
     }
 
     X_monotone_curve_2 operator()(const Polynomial_1& P,
                                   const Algebraic_real_1& x_s,
                                   const Algebraic_real_1& x_t) const
     {
-      return X_monotone_curve_2(P, x_s, x_t, _cache);
+      return X_monotone_curve_2(P, x_s, x_t, _traits->cache());
     }
 
     template <typename InputIterator>
@@ -202,13 +223,13 @@ public:
                                   const Algebraic_real_1& x_t) const
     {
       Rat_vector rat_vec(begin,end);
-      return X_monotone_curve_2(rat_vec, x_s, x_t, _cache);
+      return X_monotone_curve_2(rat_vec, x_s, x_t, _traits->cache());
     }
 
     X_monotone_curve_2 operator()(const Polynomial_1& P,
                                   const Polynomial_1& Q) const 
     {
-      return X_monotone_curve_2(P, Q, _cache);
+      return X_monotone_curve_2(P, Q, _traits->cache());
     }
 
     template <typename InputIterator>
@@ -219,14 +240,14 @@ public:
     {
       Rat_vector rat_vec_numer(begin_numer,end_numer);
       Rat_vector rat_vec_denom(begin_denom,end_denom);
-      return X_monotone_curve_2(rat_vec_numer, rat_vec_denom, _cache);
+      return X_monotone_curve_2(rat_vec_numer, rat_vec_denom, _traits->cache());
     }
 
     X_monotone_curve_2 operator()(const Polynomial_1& P, const Polynomial_1& Q,
                                   const Algebraic_real_1& x_s,
                                   bool dir_right) const
     {
-      return X_monotone_curve_2(P, Q, x_s, dir_right, _cache);
+      return X_monotone_curve_2(P, Q, x_s, dir_right, _traits->cache());
     }
 
     template <typename InputIterator>
@@ -240,7 +261,7 @@ public:
       Rat_vector rat_vec_numer(begin_numer,end_numer);
       Rat_vector rat_vec_denom(begin_denom,end_denom);
       return X_monotone_curve_2(rat_vec_numer, rat_vec_denom, x_s,dir_right,
-                                _cache);
+                                _traits->cache());
     }
 
     X_monotone_curve_2 operator()(const Polynomial_1& P,
@@ -248,7 +269,7 @@ public:
                                   const Algebraic_real_1& x_s,
                                   const Algebraic_real_1& x_t) const
     {
-      return X_monotone_curve_2(P, Q, x_s, x_t, _cache);
+      return X_monotone_curve_2(P, Q, x_s, x_t, _traits->cache());
     }
 
     template <typename InputIterator>
@@ -261,39 +282,60 @@ public:
     {
       Rat_vector rat_vec_numer(begin_numer, end_numer);
       Rat_vector rat_vec_denom(begin_denom, end_denom);
-      return X_monotone_curve_2(rat_vec_numer, rat_vec_denom, x_s, x_t, _cache);
+      return X_monotone_curve_2(rat_vec_numer, rat_vec_denom, x_s, x_t,
+                                _traits->cache());
     }
   };
 
   Construct_x_monotone_curve_2 construct_x_monotone_curve_2_object() 
   {
-    return Construct_x_monotone_curve_2(_cache);
+    return Construct_x_monotone_curve_2(this);
   }
 
+  /*! A functor that constructs an arbitrary curve */
   class Construct_curve_2
   {
-  private:
-    Cache& _cache;
+  protected:
+    typedef Arr_rational_function_traits_2<Algebraic_kernel_d_1> Traits;
+    typedef CGAL::Arr_rational_arc::Cache<Algebraic_kernel_d_1>  Cache;
 
+    /*! The traits */
+    const Traits* _traits;
+
+    /*! Constructor
+     * \param traits the traits
+     */
+    Construct_curve_2(const Traits* traits) : _traits(traits) {}
+
+    friend class Arr_rational_function_traits_2<Algebraic_kernel_d_1>;
+    
   public:
-    Construct_curve_2(Cache& cache) : _cache(cache) {}
-
+    typedef typename Base_rational_arc_ds_1::Polynomial_1 Polynomial_1; 
+    typedef typename Base_rational_arc_ds_1::Algebraic_real_1
+                                                          Algebraic_real_1;
+    typedef Arr_rational_arc::Rational_arc_d_1<Algebraic_kernel_d_1>
+                                                          Curve_2;
+    typedef Polynomial_1                                  argument_type;
+    typedef Polynomial_1                                  first_argument_type;
+    typedef Polynomial_1                                  second_argument_type;
+    typedef Curve_2                                       result_type;
+    
     Curve_2 operator()(const Polynomial_1& P) const
     {
-      return Curve_2(P,_cache);
+      return Curve_2(P, _traits->cache());
     }
 
     template <typename InputIterator>
     Curve_2 operator()(InputIterator begin, InputIterator end) const
     {
       Rat_vector rat_vec(begin, end);
-      return Curve_2(rat_vec, _cache);
+      return Curve_2(rat_vec, _traits->cache());
     }
 
     Curve_2 operator()(const Polynomial_1& P,
                        const Algebraic_real_1& x_s, bool dir_right) const
     {
-      return Curve_2(P, x_s, dir_right, _cache);
+      return Curve_2(P, x_s, dir_right, _traits->cache());
     }
 
     template <typename InputIterator>
@@ -301,14 +343,14 @@ public:
                        const Algebraic_real_1& x_s, bool dir_right) const
     {
       Rat_vector rat_vec(begin, end);
-      return Curve_2(rat_vec, x_s, dir_right, _cache);
+      return Curve_2(rat_vec, x_s, dir_right, _traits->cache());
     }
 
     Curve_2 operator()(const Polynomial_1& P,
                        const Algebraic_real_1& x_s,
                        const Algebraic_real_1& x_t) const
     {
-      return Curve_2(P, x_s, x_t, _cache);
+      return Curve_2(P, x_s, x_t, _traits->cache());
     }
 
     template <typename InputIterator>
@@ -317,12 +359,12 @@ public:
                        const Algebraic_real_1& x_t) const
     {
       Rat_vector rat_vec(begin,end);
-      return Curve_2(rat_vec, x_s, x_t, _cache);
+      return Curve_2(rat_vec, x_s, x_t, _traits->cache());
     }
 
     Curve_2 operator()(const Polynomial_1& P, const Polynomial_1& Q) const 
     {
-      return Curve_2(P, Q, _cache);
+      return Curve_2(P, Q, _traits->cache());
     }
 
     template <typename InputIterator>
@@ -331,13 +373,13 @@ public:
     {
       Rat_vector rat_vec_numer(begin_numer, end_numer);
       Rat_vector rat_vec_denom(begin_denom, end_denom);
-      return Curve_2(rat_vec_numer, rat_vec_denom, _cache);
+      return Curve_2(rat_vec_numer, rat_vec_denom, _traits->cache());
     }
 
     Curve_2 operator()(const Polynomial_1& P, const Polynomial_1& Q,
                        const Algebraic_real_1& x_s, bool dir_right) const
     {
-      return Curve_2(P, Q, x_s, dir_right, _cache);
+      return Curve_2(P, Q, x_s, dir_right, _traits->cache());
     }
 
     template <typename InputIterator>
@@ -347,14 +389,15 @@ public:
     {
       Rat_vector rat_vec_numer(begin_numer,end_numer);
       Rat_vector rat_vec_denom(begin_denom,end_denom);
-      return Curve_2(rat_vec_numer, rat_vec_denom, x_s, dir_right, _cache);
+      return Curve_2(rat_vec_numer, rat_vec_denom, x_s, dir_right,
+                     _traits->cache());
     }
 
     Curve_2 operator()(const Polynomial_1& P, const Polynomial_1& Q,
                        const Algebraic_real_1& x_s,
                        const Algebraic_real_1& x_t) const
     {
-      return Curve_2(P, Q, x_s, x_t, _cache);
+      return Curve_2(P, Q, x_s, x_t, _traits->cache());
     }
 
     template <typename InputIterator>
@@ -365,13 +408,13 @@ public:
     {
       Rat_vector rat_vec_numer(begin_numer,end_numer);
       Rat_vector rat_vec_denom(begin_denom,end_denom);
-      return Curve_2(rat_vec_numer, rat_vec_denom, x_s, x_t, _cache);
+      return Curve_2(rat_vec_numer, rat_vec_denom, x_s, x_t, _traits->cache());
     }
   };
 
   Construct_curve_2 construct_curve_2_object() 
   {
-    return Construct_curve_2(_cache);
+    return Construct_curve_2(this);
   }
 
   /*! Construct a point */
