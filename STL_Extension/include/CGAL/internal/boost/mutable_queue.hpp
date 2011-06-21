@@ -22,7 +22,7 @@
 #include <vector>
 #include <algorithm>
 #include <functional>
-#include <boost/property_map/property_map.hpp>
+#include <CGAL/internal/boost/property_map.h>
 #include <CGAL/internal/boost/mutable_heap.hpp>
 #include <CGAL/internal/boost/array_binary_tree.hpp>
 #include <iterator>
