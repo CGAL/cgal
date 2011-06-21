@@ -19,7 +19,7 @@
 //
 
 
-#include <CGAL/Homogeneous.h>
+#include <CGAL/Cartesian.h>
 #include <CGAL/point_generators_3.h>
 #include <CGAL/Convex_hull_d.h>
 #include <CGAL/Convex_hull_d_traits_3.h>
@@ -30,14 +30,14 @@
 #include <cassert>
 
 #ifdef CGAL_USE_GMP
-#include <CGAL/Gmpz.h>
-typedef CGAL::Gmpz RT;
+#include <CGAL/Gmpq.h>
+typedef CGAL::Gmpq RT;
 #else
 #include <CGAL/MP_Float.h>
-typedef CGAL::MP_Float RT;
+typedef CGAL::Quotient<CGAL::MP_Float> RT;
 #endif
 
-typedef CGAL::Homogeneous<RT>                      K;
+typedef CGAL::Cartesian<RT>                        K;
 typedef K::Point_3                                 Point_3;
 typedef CGAL::Polyhedron_3< K>                     Polyhedron_3;
 
