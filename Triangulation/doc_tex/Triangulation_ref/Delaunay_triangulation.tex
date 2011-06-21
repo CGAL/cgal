@@ -2,23 +2,20 @@
 
 \ccDefinition
 
-The class \ccRefName\ is used to maintain the simplices and vertices of a
+The class \ccRefName\ is used to maintain the full cells and vertices of a
 Delaunay complex embedded in $\real^D$. It permits point insertion and
 removal. The dimension $D$ should be kept reasonably small,
-see the perfromances section in the user manual for what reasonable
+see the performances section in the user manual for what reasonable
 means.
 %: higher than 7 or 8, 
 %you are entering a realm where patience is a highly useful virtue.
 
 \ccInclude{CGAL/Delaunay_triangulation.h}
 
-\ccInheritsFrom
-\ccc{Triangulation<DTTraits, TDS>}.
-
 \ccParameters
 
 \ccc{DTTraits} is the geometric traits class that provides the geometric types
-and predicates needed by Delaunay complexes. \ccc{DTTraits} must be a model of
+and predicates needed by Delaunay triangulations. \ccc{DTTraits} must be a model of
 the concept \ccc{DelaunayTriangulationTraits}.
 
 \ccc{TDS} is the class used to store the underlying triangulation data
@@ -32,17 +29,12 @@ second parameter. In both cases, \ccc{TDS} defaults to
                     Triangulation_simplex<DTTraits> >}.
 
 
-\ccTypes % - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - TYPES
+\ccInheritsFrom
+\ccc{Triangulation<DTTraits, TDS>}.
 
 The class \ccc{Delaunay_triangulation<DTTraits, TDS>} inherits all the types
 defined in the base class \ccc{Triangulation<DTTraits, TDS>}. Additionally, it
-defines or overloads the following types:
-
-%\ccTypedef{typedef DTTraits Geom_traits;}%
-%{The model for the \ccc{DelaunayComplexTraits} concept.}
-%\ccTypedef{typedef DTTraits::Point_d Point;}%
-%{A point in euclidean space.}
-
+defines or overloads the following methods:
 
 \ccCreation % - - - - - - - - - - - - - - - - - - - - - - - - - - - CREATION
 \ccCreationVariable{dt}
@@ -58,10 +50,10 @@ traits \ccc{k}.}
 
 \ccHeading{Point removal} % - - - - - - - - - - - - - - - - - - - - - REMOVAL
 
-\ccMethod{Full_cell_handle remove(Vertex_handle);}{Remove the vertex \ccc{v}
+\ccMethod{Full_cell_handle remove(Vertex_handle v);}{Remove the vertex \ccc{v}
 from the Delaunay triangulation. If the current dimension of the triangulation has not
 changed after the removal, then the returned cell \ccc{c} geometrically
-contains the removed vertex \ccc{v} (\ccc{s} can be finite or infinite).
+contains the removed vertex \ccc{v} (\ccc{c} can be finite or infinite).
 Otherwise, the default-constructed \ccc{Full_cell_handle} is returned.
 \ccPrecond \ccc{v} is a vertex of the triangulation, different from the
 \ccc{infinite_vertex()}.}
@@ -88,12 +80,14 @@ elements actually removed.}
 
 \ccMethod{template< typename ForwardIterator >
 size_type insert(ForwardIterator s, ForwardIterator e);}%
-{Inserts the points found in range \ccc{[s,e)} in the Delaunay triangulation.
-Returns the number of vertices actually inserted. (If \ccc{n>1} vertices share
+{Inserts the points found in range \ccc{[s,e)} in the Delaunay triangulation
+and ensures that the empty-ball property is preserved.
+Returns the number of vertices actually inserted. (If more than one vertex share
 the same position in space, only one insertion is counted.)}
 
 \ccMethod{Vertex_handle insert(const Point & p, const Full_cell_handle start
-= Full_cell_handle());}{Inserts point \ccc{p} in the Delaunay triangulation. Returns a
+= Full_cell_handle());}{Inserts point \ccc{p} in the Delaunay triangulation
+and ensures that the empty-ball property is preserved. Returns a
 \ccc{Vertex_handle} to the vertex of the triangulation with position \ccc{p}.
 Prior to the actual insertion, \ccc{p} is located in the triangulation;
 \ccc{start} is used as a starting place for locating \ccc{p}.}
@@ -105,7 +99,9 @@ Prior to the actual insertion, \ccc{p} is located in the triangulation;
 
 \ccMethod{Vertex_handle insert(const Point & p, const Locate_type lt,
 const Face & f, const Facet & ft, const Full_cell_handle c);}
-{Inserts the point \ccc{p} in the Delaunay triangulation. Returns a handle to the
+{Inserts the point \ccc{p} in the Delaunay triangulation
+and ensures that the empty-ball property is preserved.
+Returns a handle to the
 (possibly newly created) vertex at that position. The behavior depends on the
 value of \ccc{lt}:\begin{itemize} \item[\ccc{OUTSIDE_AFFINE_HULL}] Point
 \ccc{p} is inserted so as to increase the current dimension of the Delaunay
@@ -138,7 +134,7 @@ must be in conflict with the simplex \ccc{s}.}
 \ccMethod{bool conflict(const Point & p, Full_cell_const_handle c)
 const;}{Returns \ccc{true} if and only if the point \ccc{p} is in (Delaunay)
 conflict with cell \ccc{c} (\emph{i.e.}, the circumscribing ball of
-$c$ contains $p$).
+$c$ contains $p$ in its interior).
 }
 
 \begin{ccAdvanced}
@@ -146,7 +142,7 @@ $c$ contains $p$).
 \ccMethod{Facet compute_conflict_zone(const Point & p, const Full_cell_handle c,
 OutputIterator out) const;}{Outputs handles to the simplices in confict with
 point \ccc{p} into the \ccc{OutputIterator out}. The cell \ccc{c} is used
-as a starting point for the gathering. 
+as a starting point for gathering the cells in conflict with \ccc{p}. 
 \ccPrecond \ccc{c} is in conflict
 with \ccc{p}.\\ \ccVar.\ccc{current_dimension()}$\geq 2$.
 }
