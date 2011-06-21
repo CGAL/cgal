@@ -1233,12 +1233,6 @@ Circular_kernel_2/benchmark/readme.doc -text svneol=unset#application/msword
 Circular_kernel_2/benchmark/readme.pdf -text svneol=unset#application/pdf
 Circular_kernel_2/benchmark/readme.sxw -text
 Circular_kernel_2/changes -text
-Circular_kernel_2/demo/Circular_kernel_2/Qt3/README -text
-Circular_kernel_2/demo/Circular_kernel_2/Qt3/help/get_arc.jpeg -text svneol=unset#image/jpeg
-Circular_kernel_2/demo/Circular_kernel_2/Qt3/help/index.html svneol=native#text/html
-Circular_kernel_2/demo/Circular_kernel_2/Qt3/help/planar_map_icon.jpeg -text svneol=unset#image/jpeg
-Circular_kernel_2/demo/Circular_kernel_2/Qt3/help/sweeper.jpeg -text svneol=unset#image/jpeg
-Circular_kernel_2/demo/Circular_kernel_2/Qt3/help/trash.jpeg -text svneol=unset#image/jpeg
 Circular_kernel_2/doc_tex/Circular_kernel_2/fig/Boolean_operation.png -text
 Circular_kernel_2/doc_tex/Circular_kernel_2/fig/Boolean_operation_detail.png -text
 Circular_kernel_2/doc_tex/Circular_kernel_2_ref/GeomFunctorsCompute.tex -text
