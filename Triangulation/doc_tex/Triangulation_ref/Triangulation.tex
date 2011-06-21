@@ -73,6 +73,8 @@ the user can pass them directly as arguments to the functions.
 %\ccGlue\ccTypedef{typedef TDS::Full_cell_const_handle Full_cell_const_handle;}{}
 %\ccGlue\ccTypedef{typedef TDS::Full_cell_const_iterator Full_cell_const_iterator;}{}
 
+\ccTypedef{typedef  TDS::Facet_iterator Facet_iterator;}{}
+
 \ccTypedef{typedef TDS::size_type size_type;}{Size type (an unsigned integral
 type).}
 \ccGlue\ccTypedef{typedef TDS::difference_type difference_type;}{Difference
@@ -93,7 +95,7 @@ enum  Locate_type
 };}{See \ccc{CGAL::Triangulation::Locate_type}}
 
 \ccCreation
-\ccCreationVariable{t}
+\ccCreationVariable{tr}
 
 \ccConstructor{Triangulation(const int dim, const Geom_traits & k =
 Geom_traits())}
@@ -149,10 +151,6 @@ user when using advanced operations.}
 \ccMethod{size_type number_of_finite_full_cells() const;}%
 {Returns the number of cells of maximal dimension that are not
   incident to the vertex at infinity.}
-
-\ccHeading{Geometric access functions}
-
-\note{TODO}
 
 \ccHeading{Tests for finite and infinite elements}
 
@@ -229,9 +227,10 @@ an optional parameter that is used as a hint for the point location.}
 {Returns the orientation of the finite cell \ccc{c}:
 \ccGlobalScope\ccc{POSITIVE}, \ccGlobalScope\ccc{NEGATIVE} or
 \ccGlobalScope\ccc{COPLANAR}. If \ccVar.\ccc{current_dimension() == 0}, then
-\ccGlobalScope\ccc{POSITIVE} is returned. \ccPrecond Full cell \ccc{c} must be
-finite.
-\note{should be removed, a valid cell is positive}
+\ccGlobalScope\ccc{POSITIVE} is returned. Under normal circumstances, the function
+should always return \ccGlobalScope\ccc{POSITIVE}.
+\ccPrecond Full cell \ccc{c} must be finite.
+\note{should be removed, a valid cell is positive}\note{SH: what if user modifies the triangulation arbitrarily?}
 }
 
 \ccMethod{template< typename OutputIterator > OutputIterator
@@ -301,9 +300,10 @@ the vertex ordering to define the upper faces.}
 {Returns the index of the vertex of the cell
 \ccc{c=}\ccVar.\ccc{full_cell(f)} which does \textbf{not} belong to \ccc{c}.}
 
-\ccMethod{Face make_empty_face() const;}{Returns an empty \ccc{Face}.}
-\note{to be removed, internal use only. at least should be advanced}
-
+%\begin{ccAdvanced}
+%\ccMethod{Face make_empty_face() const;}{Returns an empty \ccc{Face}.}
+%%\note{to be removed, internal use only. at least should be advanced}
+%\end{ccAdvanced}
 
 \ccHeading{Triangulation traversal} % - - - - - - - - - - - - - - - - - - TRAVERSAL
 
@@ -441,15 +441,15 @@ Prior to the actual insertion, \ccc{p} is located in the triangulation;
 
 \begin{ccAdvanced}
 
-\ccMethod{Vertex_handle insert(const Point & query, const Locate_type
+\ccMethod{Vertex_handle insert(const Point & p, const Locate_type
 loc_type, const Face & f, const Facet & ft, const Full_cell_handle c);} {Inserts
-point \ccc{query} into the triangulation and returns a handle to the
+point \ccc{p} into the triangulation and returns a handle to the
 \ccc{Vertex} at that position. The action taken depends on the value of
 \ccc{loc_type}:\begin{itemize} \item[\ccc{ON_VERTEX}] The point of the
-\ccc{Vertex} described by \ccc{f} is set to \ccc{query}. \item[\ccc{IN_FACE}]
-The point \ccc{query} is inserted in the \ccc{Face f}. \item[\ccc{IN_FACET}]
-The point \ccc{query} is inserted in the \ccc{Facet ft}. \item[Anything else]
-The point \ccc{query} is inserted in the triangulation according to the value
+\ccc{Vertex} described by \ccc{f} is set to \ccc{p}. \item[\ccc{IN_FACE}]
+The point \ccc{p} is inserted in the \ccc{Face f}. \item[\ccc{IN_FACET}]
+The point \ccc{p} is inserted in the \ccc{Facet ft}. \item[Anything else]
+The point \ccc{p} is inserted in the triangulation according to the value
 of \ccc{loc_type}, using the cell \ccc{c}.\end{itemize} This method is used
 internally by the other \ccc{insert()} methods.}
 
