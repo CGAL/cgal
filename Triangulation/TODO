@@ -4,40 +4,10 @@ __________________________________________________________________________RENAMI
 *) doc :
 --------
 
-Pure_complex                        Triangulation
-Delaunay_complex                    Delaunay_triangulation
-PureComplexDSSimplex                TriangulationDSFullCell
-PureComplexDataStructure            TriangulationDataStructure
-PureComplexFace                     TriangulationFace
-PureComplexSimplex                  TriangulationFullCell
-PureComplexTraits                   TriangulationTraits 
-PureComplexVertex                   TriangulationVertex
-Pure_complex                        Triangulation  
-Pure_complex_data_structure         Triangulation_data_structure 
-Pure_complex_ds_simplex             Triangulation_ds_full_cell
-Pure_complex_ds_vertex              Triangulation_ds_vertex
-Pure_complex_face                   Triangulation_face
-Pure_complex_locate_type            Triangulation_locate_type
-Pure_complex_simplex                Triangulation_full_cell
-Pure_complex_vertex                 Triangulation_vertex
-RegularComplexTraits                RegularTriangulationTraits 
-Regular_complex                     Regular_triangulation
-
 *) code not done :
 ------------------
 
-/IN_SIMPLEX/IN_FULL_CELL
-
-/is_finite/! is_infinite/
-
 bring part of Delaunay::remove into TDS (see comments in Delaunay_triangulation.h, and item FUTURE below)
-
-*) to do ?
-------------------------
-
-[DONE] /gather_adjacent_simplices/star/  or    /compute_star/star/
-[DONE] /gather_incident_faces/incident_faces/
-[DONE] /gather_incident_upper_faces/incident_upper_faces/
 
 __________________________________________________________________________ALL
 
@@ -47,7 +17,6 @@ __________________________________________________________________________ALL
 _________________________________________________TRIANGULATION_DATA_STRUCTURE
 
 *) TriangulationDataStructure:
-  - Virer insert_in_tagged_hole de la doc TriangulationDataStructure
   - Should we put >> and << in the documentation of the class
     Triangulation_data_structure ?
 
@@ -60,12 +29,13 @@ _________________________________________________TRIANGULATION_DATA_STRUCTURE
     Triangulation_ds_vertex instead of in that of the concept ?
 
 *) TDSFullCellStoragePolicy
-   what is it ?
-   it is undocumented.
+   what is it ? => see the doc.
+   it is undocumented. => it is documented (Triangulation_ds_full_cell)
    if the aim is to choose between "full representation" and "1-skeleton"
    I would prefer a different TDS class, at least the doc has to rewriten a sentence
    like "class TDS explicitely stores its vertices and full cells" 
    does not apply to 1-skeleton representation
+   => no, this has nothing to do with 1-skeleton.
 
 *) default dim parameter in constructor (especially in the static case)
 
@@ -74,6 +44,9 @@ ________________________________________________________________TRIANGULATION
 *) default dim parameter in constructor (especially in the static case)
 
 *) Why vertex at infinity should have index 0 in all cells it appears ?
+    This is a convention that is enforced throughout the code. Makes it faster
+    to check for an infinite cell.
+    The "old" package "Convex_hull_d" does the same.
 
 _______________________________________________________DELAUNAY_TRIANGULATION
 
