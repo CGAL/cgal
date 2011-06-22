@@ -176,11 +176,7 @@ All the good cells are outputted into the last argument \ccc{out}.}
 incident_full_cells(Vertex_handle v, OutputIterator out) const;}
 {Insert in \ccc{out} all the cells that are incident to the vertex
 \ccc{v}, \emph{i.e.}, the full cells that have the \ccc{Vertex v} as a vertex.
-Returns the (modified) output iterator.
-%\ccPrecond\ccc{is_full_cell(f.full_cell())}
-\note{OD: je vire la precondition (is-valid est pas vraiment une
-  precondition, puisque c'est garanti par la structure hors fonctions advanced).}
-}
+Returns the (modified) output iterator.}
 \ccMethod{template< typename OutputIterator > OutputIterator
 incident_full_cells(const Face & f, OutputIterator out) const;}
 {Insert in \ccc{out} all the cells that are incident to the face \ccc{f},
@@ -240,9 +236,6 @@ $d\geq$\ccVar.\ccc{current_dimension()}, then no \ccc{Face} is
 %\ccGlue\ccMethod{int mirror_index(Full_cell_const_handle s, int i) const;}
 {Returns the index of the vertex mirror of the \ccc{i}-th vertex of \ccc{c}.
 Equivalently, returns the index of \ccc{s} in its \ccc{i}-th neighbor.
-\note{If there is no \ccc{i}-th neighbor of \ccc{c}, then
-returns \ccc{-1}. OD: c'est quoi ca ? il y a toujours un i$i$th neighbor
-si $d<D$.}
 \ccPrecond $0\leq i\leq$\ccVar.\ccc{current_dimension}()\\
 and $s$ is not the default constructed \ccc{Full_cell_handle}. }
 
@@ -278,8 +271,6 @@ not unique (\ccc{v} is typically incident to more than one simplex).
 %\ccMethod{Full_cell_const_handle neighbor(Full_cell_const_handle s, int i) const;} 
 { Returns a \ccc{Full_cell_handle} pointing to the \ccc{Full_cell}
 opposite to the \ccc{i}-th vertex of \ccc{s}. 
-\note{If there is no opposite cell,
-then returns \ccc{Full_cell_handle()}.OD: meme rq}
 \ccPrecond$0\leq i \leq$\ccVar.\ccc{current_dimension()}\\
 and \ccc{c} is not the default constructed \ccc{Full_cell_handle}}
 
@@ -316,10 +307,9 @@ The beyond full cell of \ccVar.
 {Returns the index of vertex of the cell \ccc{c=}\ccVar.\ccc{full_cell(f)}
 which does \textbf{not} belong to \ccc{c}.}
 
-\ccMethod{Face make_empty_face() const;}{Returns an empty \ccc{Face}.
-\note{SH: Peut-être mettre cette fonction dans la doc de la classe? ou
-nulle-part. La doc de \ccc{TriangulationFace} est sûrment suffisante.}%
-}
+\ccMethod{Face make_empty_face() const;}{Returns an empty \ccc{Face}
+ready to be setup with any $k$-face of the (combinatorial) triangulation with
+$k<$\ccVar.\ccc{current_dimension()}. See \ccc{TriangulationFace}.}
 
 %\begin{ccAdvanced}
 %
