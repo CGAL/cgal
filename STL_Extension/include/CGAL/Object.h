@@ -34,6 +34,7 @@
 #include <typeinfo>
 
 #include <boost/variant.hpp>
+#include <boost/optional.hpp>
 
 namespace CGAL {
 
@@ -111,9 +112,14 @@ class Object
     Object(const T& t) {
       // we cannot invoke another ctor from here, so we have to behave
       // like the copy ctor of our base
-      CGAL::Object tmp = boost::apply_visitor(Object_from_variant(), t);
-      this->ptr = tmp.ptr;
-      (this->ptr)->add_reference();
+      if(t) {
+        CGAL::Object tmp = boost::apply_visitor(Object_from_variant(), *t);
+        this->ptr = tmp.ptr;
+        (this->ptr)->add_reference();
+      } else {
+	typedef Wrapper<Empty>  Wrap;
+        ptr = new Wrap(Empty());
+      }
     }
 
     template <class T>
