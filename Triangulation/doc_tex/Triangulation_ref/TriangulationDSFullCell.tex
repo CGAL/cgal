@@ -39,9 +39,9 @@ nested type \ccc{TDS::Full_cell_handle} of the \ccc{TDS} in which the
 
 \ccTypedef{typedef TDS::Full_cell_data TDS_data;}{}
 
-\ccNestedType{template<typename PC2> Rebind_TDS}{This nested template
+\ccNestedType{template<typename TDS2> Rebind_TDS}{This nested template
 class must define a nested type \ccc{Other} which is the rebound cell
-class template, that is: \ccc{Other == TriangulationDSFullCell<PC2>}.}
+class template, that is: \ccc{Other == TriangulationDSFullCell<TDS2>}.}
 
 \ccCreation	
 \ccCreationVariable{c}
@@ -165,8 +165,8 @@ there is an existing neighbor.}
 % \ccGlue\ccMethod{void* & for_compact_container();}{}
 
 % These member functions are required by the classes
-% \ccc{Pure_complex_data_structure<Dimensionality, TDSVertex, TDSFullCell>} and
-% \ccc{Pure_complex<PCTraits, TDS>} (and its derived classes) because they use
+% \ccc{Triangulation_data_structure<Dimensionality, TDSVertex, TDSFullCell>} and
+% \ccc{Triangulation<TrTraits, TDS>} (and its derived classes) because they use
 % \ccc{Compact_container} to store their vertices and simplices. See the
 % documentation of \ccc{Compact_container} for the exact requirements.
 

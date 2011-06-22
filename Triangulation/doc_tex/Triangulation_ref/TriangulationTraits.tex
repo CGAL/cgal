@@ -3,14 +3,17 @@
 \ccDefinition
 
 The concept \ccRefName\ describes the various types and functions that a class
-has to provide as the first parameter (\ccc{TrTraits}) to the class template
+must provide as the first parameter (\ccc{TrTraits}) to the class template
 \ccc{Triangulation<TrTraits, TDS>}. It brings the geometric ingredient to the
 definition of a triangulation, while the combinatorial ingredient is brought by
 the second template parameter, \ccc{TDS}.
 
 Inserting a range of points in a triangulation is optimized using
 spatial sorting, thus besides the requirements below, 
-a class provided as \ccc{TrTraits} should also satisfies  the concept 
+a class provided as \ccc{TrTraits} should also satisfies the concept 
+\ccc{SpatialSortingTraits_d}.
+
+\ccRefines
 \ccc{SpatialSortingTraits_d}.
 
 \ccTypes
