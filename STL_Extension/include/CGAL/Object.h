@@ -33,6 +33,8 @@
 
 #include <typeinfo>
 
+#include <boost/variant.hpp>
+
 namespace CGAL {
 
 template <class T>
@@ -71,6 +73,13 @@ class Object
     struct Empty {};
     typedef Handle_for_virtual<Ref_counted_virtual> base;
 
+    struct Object_from_variant : public boost::static_visitor<CGAL::Object> {
+      template<typename T>
+      CGAL::Object operator()(const T& t) const { 
+        return make_object(t);
+      }  
+    };
+
   public:
 
     struct private_tag{};
@@ -96,6 +105,16 @@ class Object
         ptr = new Wrap(t);
     }
 #endif
+
+    // implicit constructor from boost::variant
+    template<typename T>
+    Object(const T& t) {
+      // we cannot invoke another ctor from here, so we have to behave
+      // like the copy ctor of our base
+      CGAL::Object tmp = boost::apply_visitor(Object_from_variant(), t);
+      this->ptr = tmp.ptr;
+      (this->ptr)->add_reference();
+    }
 
     template <class T>
     bool assign(T &t) const
@@ -210,7 +229,6 @@ T object_cast(const Object & o)
         throw Bad_object_cast();
     return *result;
 }
-
 } //namespace CGAL
 
 #endif // CGAL_OBJECT_H
