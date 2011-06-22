@@ -28,28 +28,33 @@
 namespace CGAL {
 namespace Arr_rational_arc
 {
-template < class AlgebraicKernel_d_1 >
-class Rational_function_ordered_pair: public Base_rational_arc_ds_1<AlgebraicKernel_d_1>
+template <typename AlgebraicKernel_d_1>
+class Rational_function_ordered_pair:
+    public Base_rational_arc_ds_1<AlgebraicKernel_d_1>
 {
 public:
-  typedef AlgebraicKernel_d_1                             Algebraic_kernel_d_1;
-  typedef Base_rational_arc_ds_1<Algebraic_kernel_d_1>    Base;
-  typedef CGAL::Arr_rational_arc::Rational_function_pair<Algebraic_kernel_d_1>  Rational_function_pair;
-  typedef CGAL::Arr_rational_arc::Rational_function<Algebraic_kernel_d_1>       Rational_function;
+  typedef AlgebraicKernel_d_1                          Algebraic_kernel_d_1;
+  typedef Base_rational_arc_ds_1<Algebraic_kernel_d_1> Base;
+  typedef CGAL::Arr_rational_arc::Rational_function_pair<Algebraic_kernel_d_1>
+                                                       Rational_function_pair;
+  typedef CGAL::Arr_rational_arc::Rational_function<Algebraic_kernel_d_1>
+                                                       Rational_function;
 
-  typedef typename Base::Polynomial_1             Polynomial_1;
-  typedef typename Base::Algebraic_real_1         Algebraic_real_1;
-  typedef typename Base::Algebraic_vector         Algebraic_vector;
-  typedef typename Base::Multiplicity             Multiplicity;
-  typedef typename Base::Multiplicity_vector      Multiplicity_vector;
-  typedef typename Base::Root_multiplicity_vector Root_multiplicity_vector;
+  typedef typename Base::Polynomial_1                  Polynomial_1;
+  typedef typename Base::Algebraic_real_1              Algebraic_real_1;
+  typedef typename Base::Algebraic_vector              Algebraic_vector;
+  typedef typename Base::Multiplicity                  Multiplicity;
+  typedef typename Base::Multiplicity_vector           Multiplicity_vector;
+  typedef typename Base::Root_multiplicity_vector      Root_multiplicity_vector;
  
 public:
-  Rational_function_ordered_pair( const Rational_function_pair& rat_pair, bool is_opposite = false)
-    : _rat_pair(rat_pair), _is_opposite(is_opposite)
+  Rational_function_ordered_pair(const Rational_function_pair& rat_pair,
+                                 bool is_opposite = false) :
+    _rat_pair(rat_pair), _is_opposite(is_opposite)
   {}
        
-  Comparison_result compare_f_g_at(const Algebraic_real_1& x , CGAL::Sign epsilon = CGAL::ZERO)
+  Comparison_result compare_f_g_at(const Algebraic_real_1& x,
+                                   CGAL::Sign epsilon = CGAL::ZERO)
   {
     Comparison_result cr =  _rat_pair.compare_f_g_at(x,epsilon);
     if (_is_opposite == false)
@@ -58,6 +63,7 @@ public:
       (cr == CGAL:: SMALLER ) ? CGAL:: LARGER  :
       /* (cr == CGAL::EQUAL)*/   CGAL:: EQUAL;
   }
+
   Comparison_result compare_f_g_at(Arr_parameter_space boundary)
   {
     Comparison_result cr =  _rat_pair.compare_f_g_at(boundary);
@@ -68,15 +74,20 @@ public:
       /* (cr == CGAL::EQUAL)*/ CGAL::EQUAL;
   }
 
-  bool is_intersecting_in_range( const Arr_parameter_space left_parameter_space ,const Algebraic_real_1 left,
-      const Arr_parameter_space right_parameter_space ,const Algebraic_real_1 right)
+  bool is_intersecting_in_range(const Arr_parameter_space left_parameter_space,
+                                const Algebraic_real_1 left,
+                                const Arr_parameter_space right_parameter_space,
+                                const Algebraic_real_1 right)
   {
-    return _rat_pair.is_intersecting_in_range(left_parameter_space,left,right_parameter_space,right);
+    return _rat_pair.is_intersecting_in_range(left_parameter_space, left,
+                                              right_parameter_space, right);
   }
+
   const Algebraic_vector & roots() const
   {
     return _rat_pair.roots();
   }
+
   const Multiplicity_vector & multiplicities() const
   {
     return _rat_pair.multiplicities();
@@ -90,4 +101,5 @@ private:
 
 }   //namespace Arr_rational_arc
 }   //namespace CGAL {   
+
 #endif //CGAL_RATIONAL_FUNCTION_ORDERED_PAIR_H

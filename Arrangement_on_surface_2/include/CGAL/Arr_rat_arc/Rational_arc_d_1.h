@@ -60,7 +60,7 @@ namespace Arr_rational_arc {
 // Continuous_rational_arc_d_1 (a continuous portion of a rational function).
 //--------------------------------------------------------------------------//
 
-template < class Algebraic_kernel_ >
+template <typename Algebraic_kernel_>
 class Base_rational_arc_d_1
 {
 public:
@@ -179,7 +179,7 @@ public:
   Base_rational_arc_d_1(const Polynomial_1& P, Cache& cache) :
     _info(0)
   {
-    _init(P,Integer(1),cache);
+    _init(P, Integer(1), cache);
   }
 
   Base_rational_arc_d_1(const Rat_vector& pcoeffs, Cache& cache) :
@@ -190,7 +190,7 @@ public:
     Poly_rat_1 num_rat(typename PT_rat_1::Construct_polynomial()(pcoeffs.begin(),
                                                                  pcoeffs.end()));
     Integer denom_int;
-    typename FT_poly_rat_1::Decompose()(num_rat,_numer, denom_int);
+    typename FT_poly_rat_1::Decompose()(num_rat, _numer, denom_int);
         
     _init(_numer,denom_int,cache);
   }
@@ -214,38 +214,38 @@ public:
     CGAL::Sign   lead_sign(CGAL::sign(lead_coeff));
   
     if (deg_num > 0)
-      {
-        // Check if the degree is even or odd and check the sign of the leading
-        // coefficient of the polynomial.
+    {
+      // Check if the degree is even or odd and check the sign of the leading
+      // coefficient of the polynomial.
    
-        CGAL_assertion(lead_sign != CGAL::ZERO);
+      CGAL_assertion(lead_sign != CGAL::ZERO);
 
-        if (deg_num % 2 == 0)
-          {
-            // Polynomial of an even degree.
-            if (lead_sign == CGAL::NEGATIVE) 
-              _info = (_info | SRC_AT_Y_MINUS_INFTY | TRG_AT_Y_MINUS_INFTY);
-            else
-              _info = (_info | SRC_AT_Y_PLUS_INFTY | TRG_AT_Y_PLUS_INFTY);
-          }
-        else
-          {
-            // Polynomial of an odd degree.
-            if (lead_sign == CGAL::NEGATIVE)
-              _info = (_info | SRC_AT_Y_PLUS_INFTY | TRG_AT_Y_MINUS_INFTY);
-            else
-              _info = (_info | SRC_AT_Y_MINUS_INFTY | TRG_AT_Y_PLUS_INFTY);
-          }
-      }
-    else
+      if (deg_num % 2 == 0)
       {
-        // In the case of a constant polynomial it is possible to set a finite
-        // y-coordinate for the source and target points.
-        //x coordinate is 0 although in practice is +-oo
-        _ps = Algebraic_point_2(_f,Algebraic_real_1());
-        //x coordinate is 0 although in practice is +-oo
-        _pt = Algebraic_point_2(_f,Algebraic_real_1());
+        // Polynomial of an even degree.
+        if (lead_sign == CGAL::NEGATIVE) 
+          _info = (_info | SRC_AT_Y_MINUS_INFTY | TRG_AT_Y_MINUS_INFTY);
+        else
+          _info = (_info | SRC_AT_Y_PLUS_INFTY | TRG_AT_Y_PLUS_INFTY);
       }
+      else
+      {
+        // Polynomial of an odd degree.
+        if (lead_sign == CGAL::NEGATIVE)
+          _info = (_info | SRC_AT_Y_PLUS_INFTY | TRG_AT_Y_MINUS_INFTY);
+        else
+          _info = (_info | SRC_AT_Y_MINUS_INFTY | TRG_AT_Y_PLUS_INFTY);
+      }
+    }
+    else
+    {
+      // In the case of a constant polynomial it is possible to set a finite
+      // y-coordinate for the source and target points.
+      //x coordinate is 0 although in practice is +-oo
+      _ps = Algebraic_point_2(_f,Algebraic_real_1());
+      //x coordinate is 0 although in practice is +-oo
+      _pt = Algebraic_point_2(_f,Algebraic_real_1());
+    }
 
     // Mark that the arc is continuous and valid.
     _info = (_info | IS_CONTINUOUS);
@@ -306,47 +306,45 @@ public:
 
     // Check whether the target point lies at y = -oo or at y = +oo.
     const int   deg_num(CGAL::degree(P));
-    Integer  lead_coeff(CGAL::leading_coefficient(P));
+    Integer     lead_coeff(CGAL::leading_coefficient(P));
     CGAL::Sign  lead_sign(CGAL::sign(lead_coeff));
 
     if (deg_num > 0)
-      {
-        //Check if the degree is even or odd and check the sign of the leading
-        // coefficient of the polynomial.
-        CGAL_assertion(lead_sign != CGAL::ZERO);
+    {
+      //Check if the degree is even or odd and check the sign of the leading
+      // coefficient of the polynomial.
+      CGAL_assertion(lead_sign != CGAL::ZERO);
 
-        if (dir_right)
-          {
-            // The target is at x= +oo, thus:
-            if (lead_sign == CGAL::POSITIVE)
-              _info = (_info | TRG_AT_Y_PLUS_INFTY);
-            else
-              _info = (_info | TRG_AT_Y_MINUS_INFTY);
-          }
-        else
-          {
-            // The target is at x= -oo, thus:
-            if ((deg_num % 2 == 0 && lead_sign == CGAL::POSITIVE) ||
-                (deg_num % 2 == 1 && lead_sign == CGAL::NEGATIVE))
-              _info = (_info | TRG_AT_Y_PLUS_INFTY);
-            else
-              _info = (_info | TRG_AT_Y_MINUS_INFTY);
-          }
-      }
-    else
+      if (dir_right)
       {
-        // In the case of a constant polynomial it is possible to set a finite
-        // y-coordinate for the target point.
-        // x coordinate is 0 although in practice is +-oo
-        _pt = Algebraic_point_2(get_rational_function(P, Q, cache), 
-                                Algebraic_real_1());
+        // The target is at x= +oo, thus:
+        if (lead_sign == CGAL::POSITIVE)
+          _info = (_info | TRG_AT_Y_PLUS_INFTY);
+        else
+          _info = (_info | TRG_AT_Y_MINUS_INFTY);
       }
+      else
+      {
+        // The target is at x= -oo, thus:
+        if ((deg_num % 2 == 0 && lead_sign == CGAL::POSITIVE) ||
+            (deg_num % 2 == 1 && lead_sign == CGAL::NEGATIVE))
+          _info = (_info | TRG_AT_Y_PLUS_INFTY);
+        else
+          _info = (_info | TRG_AT_Y_MINUS_INFTY);
+      }
+    }
+    else
+    {
+      // In the case of a constant polynomial it is possible to set a finite
+      // y-coordinate for the target point.
+      // x coordinate is 0 although in practice is +-oo
+      _pt = Algebraic_point_2(get_rational_function(P, Q, cache), 
+                              Algebraic_real_1());
+    }
 
     // Mark that the arc is continuous and valid.
     _info = (_info | IS_CONTINUOUS);
     _info = (_info | IS_VALID);
-
-
   }
 
   //---------------------------------------------------------------------------
@@ -430,8 +428,8 @@ public:
                          PT_rat_1::Construct_polynomial()(qcoeffs.begin(),
                                                           qcoeffs.end()));
     Integer denom_numer_int,denom_denom_int;
-    typename FT_poly_rat_1::Decompose()(numer_rat,_numer, denom_numer_int);
-    typename FT_poly_rat_1::Decompose()(denom_rat,_denom, denom_denom_int);
+    typename FT_poly_rat_1::Decompose()(numer_rat, _numer, denom_numer_int);
+    typename FT_poly_rat_1::Decompose()(denom_rat, _denom, denom_denom_int);
     _numer *= denom_denom_int;
     _denom *= denom_numer_int;
 
@@ -646,22 +644,22 @@ public:
 
     //check if source point lies next to a pole.
     if (typename Algebraic_kernel::Sign_at_1()(Q,x_s) != CGAL::ZERO)
-      {
-        // We have a nomral endpoint.
-        //nothing to do ..
-      }
+    {
+      // We have a nomral endpoint.
+      //nothing to do ..
+    }
     else
-      {
-        // The y-coodinate is unbounded, but we can set its sign.
-        std::pair<CGAL::Sign, CGAL::Sign>  signs = _analyze_near_pole(x_s);
-        const CGAL::Sign sign_s =
-          ((_info & IS_DIRECTED_RIGHT) != 0) ? signs.second : signs.first;
+    {
+      // The y-coodinate is unbounded, but we can set its sign.
+      std::pair<CGAL::Sign, CGAL::Sign>  signs = _analyze_near_pole(x_s);
+      const CGAL::Sign sign_s =
+        ((_info & IS_DIRECTED_RIGHT) != 0) ? signs.second : signs.first;
    
-        if (sign_s == CGAL::NEGATIVE)
-          _info = (_info | SRC_AT_Y_MINUS_INFTY);
-        else
-          _info = (_info | SRC_AT_Y_PLUS_INFTY);
-      }
+      if (sign_s == CGAL::NEGATIVE)
+        _info = (_info | SRC_AT_Y_MINUS_INFTY);
+      else
+        _info = (_info | SRC_AT_Y_PLUS_INFTY);
+    }
 
     //Set the target point and check if it lies next to a pole.
     _pt=Algebraic_point_2(_f,x_t);
@@ -1101,7 +1099,9 @@ public:
       return CGAL::EQUAL;
     Rational_function_pair rat_pair = get_rational_pair(_f,arc._f,cache);
     
-    CGAL::Comparison_result comp_f_g_y = rat_pair.compare_f_g_at(x,ce == ARR_MAX_END ? CGAL::NEGATIVE : CGAL::POSITIVE);
+    CGAL::Comparison_result comp_f_g_y =
+      rat_pair.compare_f_g_at(x,ce == ARR_MAX_END ?
+                              CGAL::NEGATIVE : CGAL::POSITIVE);
     if( ce == ARR_MAX_END)
     {
       if(right_boundary_in_y() == ARR_BOTTOM_BOUNDARY)
@@ -1233,7 +1233,9 @@ public:
   //   EQUAL if the two supporting functions are equal;
   //   LARGER if (*this) lies above the other arc.
 
-  Comparison_result compare_at_intersection (const Self& arc,const Algebraic_point_2& p,bool to_left,Cache& cache) const
+  Comparison_result compare_at_intersection(const Self& arc,
+                                            const Algebraic_point_2& p,
+                                            bool to_left, Cache& cache) const
   {
     CGAL_precondition(this->point_position(p,cache) == CGAL::EQUAL &&
                       arc.point_position(p,cache)   == CGAL::EQUAL);
@@ -1242,8 +1244,9 @@ public:
     if (_has_same_base(arc))
       return CGAL::EQUAL;
 
-    Rational_function_pair rat_pair = get_rational_pair(this->_f,arc._f,cache);
-    return rat_pair.compare_f_g_at(p.x(),to_left ? CGAL::SMALLER : CGAL::LARGER );
+    Rational_function_pair rat_pair = get_rational_pair(this->_f, arc._f,cache);
+    return rat_pair.compare_f_g_at(p.x(),
+                                   to_left ? CGAL::SMALLER : CGAL::LARGER);
   }
 
   //------------------------------------------------------------------
@@ -1264,7 +1267,7 @@ public:
     if (_has_same_base(arc))
       return CGAL::EQUAL;
 
-    Rational_function_pair rat_pair = get_rational_pair(this->_f,arc._f,cache);
+    Rational_function_pair rat_pair = get_rational_pair(this->_f, arc._f, cache);
     return rat_pair.compare_f_g_at(ARR_LEFT_BOUNDARY);
   }
 
@@ -1286,7 +1289,7 @@ public:
     if (_has_same_base(arc))
       return CGAL::EQUAL;
 
-    Rational_function_pair rat_pair = get_rational_pair(this->_f,arc._f,cache);
+    Rational_function_pair rat_pair = get_rational_pair(this->_f, arc._f, cache);
     return rat_pair.compare_f_g_at(ARR_RIGHT_BOUNDARY);
   }
 
@@ -1478,8 +1481,6 @@ protected:
     }
     return;
   }
-
-
   
   //--------------------------------------------------------------------------
   // Check if the given x-value is in the x-range of the arc.
@@ -1496,59 +1497,59 @@ protected:
 
     eq_src = eq_trg = false;
     if ((_info & IS_DIRECTED_RIGHT) != 0)
-      {
-        // Compare to the left endpoint (the source in this case).
-        if ((_info & SRC_AT_X_MINUS_INFTY) != 0)
-          {
-            res1 = LARGER;
-          }
-        else
-          {
-            res1 = CGAL::compare(x, _ps.x());
-
-            if (res1 == SMALLER)
-              return false;
-         
-            if (res1 == EQUAL)
-              {
-                eq_src = true;
-                return true;
-              }
-          }
-       
-        // Compare to the right endpoint (the target in this case).
-        if ((_info & TRG_AT_X_PLUS_INFTY) != 0)
-          return true;
-
-        const Comparison_result  res2 = CGAL::compare(x, _pt.x());
-       
-        if (res2 == LARGER)
-          return false;
-        
-        if (res2 == EQUAL)
-          eq_trg = true;
-
-        return true;
-      }
-     
-    // Compare to the left endpoint (the target in this case).
-    if ((_info & TRG_AT_X_MINUS_INFTY) != 0)
+    {
+      // Compare to the left endpoint (the source in this case).
+      if ((_info & SRC_AT_X_MINUS_INFTY) != 0)
       {
         res1 = LARGER;
       }
-    else
+      else
       {
-        res1 = CGAL::compare(x, _pt.x());
+        res1 = CGAL::compare(x, _ps.x());
 
         if (res1 == SMALLER)
           return false;
          
         if (res1 == EQUAL)
-          {
-            eq_trg = true;
-            return true;
-          }
+        {
+          eq_src = true;
+          return true;
+        }
       }
+       
+      // Compare to the right endpoint (the target in this case).
+      if ((_info & TRG_AT_X_PLUS_INFTY) != 0)
+        return true;
+
+      const Comparison_result  res2 = CGAL::compare(x, _pt.x());
+       
+      if (res2 == LARGER)
+        return false;
+        
+      if (res2 == EQUAL)
+        eq_trg = true;
+
+      return true;
+    }
+     
+    // Compare to the left endpoint (the target in this case).
+    if ((_info & TRG_AT_X_MINUS_INFTY) != 0)
+    {
+      res1 = LARGER;
+    }
+    else
+    {
+      res1 = CGAL::compare(x, _pt.x());
+
+      if (res1 == SMALLER)
+        return false;
+         
+      if (res1 == EQUAL)
+      {
+        eq_trg = true;
+        return true;
+      }
+    }
        
     // Compare to the right endpoint (the source in this case).
     if ((_info & SRC_AT_X_PLUS_INFTY) != 0)

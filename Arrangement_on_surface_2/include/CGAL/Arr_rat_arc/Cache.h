@@ -1,3 +1,22 @@
+// Copyright (c) 2011 Tel-Aviv University (Israel), INRIA Sophia-Antipolis (France).
+// All rights reserved.
+//
+// This file is part of CGAL (www.cgal.org); you may redistribute it under
+// the terms of the Q Public License version 1.0.
+// See the file LICENSE.QPL distributed with CGAL.
+//
+// Licensees holding a valid commercial license may use this file in
+// accordance with the commercial license agreement provided with the software.
+//
+// This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
+// WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
+//
+// $URL$
+// $Id$
+//
+// Author(s)     : Oren Salzman <orenzalz@post.tau.ac.il >
+//                 Michael Hemmer <Michael.Hemmer@sophia.inria.fr>
+
 #ifndef CGAL_RATIONAL_ARC_CACHE
 #define CGAL_RATIONAL_ARC_CACHE
 
@@ -16,16 +35,16 @@ template <typename AlgebraicKernel_d_1>
 class Cache : public Base_rational_arc_ds_1<AlgebraicKernel_d_1>
 {
 public:
-  typedef AlgebraicKernel_d_1                          Algebraic_kernel_d_1;
-  typedef Base_rational_arc_ds_1<Algebraic_kernel_d_1> Base;
-  typedef Cache<Algebraic_kernel_d_1>                  Self;
+  typedef AlgebraicKernel_d_1                           Algebraic_kernel_d_1;
+  typedef Base_rational_arc_ds_1<Algebraic_kernel_d_1>  Base;
+  typedef Cache<Algebraic_kernel_d_1>                   Self;
  
-  typedef typename Base::Polynomial_1         Polynomial_1;
-  typedef typename Base::Rational             Rational;
-  typedef typename Base::Algebraic_real_1     Algebraic_real_1;
-  typedef typename Base::Integer              Integer ;
-  typedef typename Base::FT_rat_1             FT_rat_1;
-  typedef typename Base::Polynomial_traits_1  Polynomial_traits_1;
+  typedef typename Base::Polynomial_1                   Polynomial_1;
+  typedef typename Base::Rational                       Rational;
+  typedef typename Base::Algebraic_real_1               Algebraic_real_1;
+  typedef typename Base::Integer                        Integer ;
+  typedef typename Base::FT_rat_1                       FT_rat_1;
+  typedef typename Base::Polynomial_traits_1            Polynomial_traits_1;
 
   typedef CGAL::Arr_rational_arc::Rational_function<Algebraic_kernel_d_1>
     Rational_function;
@@ -34,7 +53,7 @@ public:
   typedef CGAL::Arr_rational_arc::Rational_function_pair<Algebraic_kernel_d_1>
     Rational_function_pair;
 
-  typedef std::pair<Polynomial_1,Polynomial_1>      Rational_function_key;
+  typedef std::pair<Polynomial_1,Polynomial_1>          Rational_function_key;
   class Less_compare_rational_function_key
   {
   public:
@@ -58,9 +77,9 @@ public:
     }
   };
 
-  typedef typename std::map< Rational_function_key,
-                             Rational_function,
-                             Less_compare_rational_function_key>
+  typedef typename std::map<Rational_function_key,
+                            Rational_function,
+                            Less_compare_rational_function_key>
                                                       Rational_function_map;
 
   typedef typename Rational_function::Id_type         Rational_function_id_type;
@@ -81,15 +100,16 @@ public:
                              Rational_function_canonicalized_pair,
                              Less_compare_rational_function_pair_key>
     Rational_function_canonicalized_pair_map;
+
 public:
-  Cache() : _rat_func_map_watermark(128),_rat_pair_map_watermark(128),_ak_ptr(NULL){};
+  Cache() :
+    _rat_func_map_watermark(128), _rat_pair_map_watermark(128), _ak_ptr(NULL){};
 
   void initialize(Algebraic_kernel_d_1* ak_ptr)
   {
     _ak_ptr = ak_ptr;
   }
-  void initialize(const Self& other,
-                  Algebraic_kernel_d_1* ak_ptr)
+  void initialize(const Self& other, Algebraic_kernel_d_1* ak_ptr)
   {
     //copy kernel pointer
     _ak_ptr = ak_ptr;
@@ -192,21 +212,21 @@ public:
       _rat_pair_map.lower_bound(key);
   
     if(it != _rat_pair_map.end() && !(_rat_pair_map.key_comp()(key, it->first)))
-      {
-        return (Rational_function_pair(it->second,is_opposite));
-      }
+    {
+      return (Rational_function_pair(it->second,is_opposite));
+    }
     else    //element does not exist, 
-      {
-        //first check if to clean up cache
-        if (_rat_pair_map.size() > _rat_pair_map_watermark)
-          rat_pair_map_clean_up();
+    {
+      //first check if to clean up cache
+      if (_rat_pair_map.size() > _rat_pair_map_watermark)
+        rat_pair_map_clean_up();
 
-        //create it & insert to cache
-        Rational_function_canonicalized_pair p(f,g,_ak_ptr);
-        typename std::pair<Rational_function_canonicalized_pair_map::const_iterator,bool> res = 
-          _rat_pair_map.insert(std::make_pair(key,p));
-        return (Rational_function_pair(res.first->second,is_opposite));
-      }
+      //create it & insert to cache
+      Rational_function_canonicalized_pair p(f, g, _ak_ptr);
+      std::pair<typename Rational_function_canonicalized_pair_map::const_iterator, bool> res = 
+        _rat_pair_map.insert(std::make_pair(key,p));
+      return (Rational_function_pair(res.first->second,is_opposite));
+    }
   }
 
   void cleanup() 
@@ -220,10 +240,12 @@ private:
   {
     return Rational_function_key(numer, denom);
   }
+
   Rational_function_key get_key(const Rational_function& f) const
   {
     return get_key(f.numer(), f.denom());
   }
+
   Rational_function_canonicalized_pair_key
   get_key(const Rational_function& f, const Rational_function& g) const
   {
@@ -283,13 +305,13 @@ private:
 
     //re-set watermark
     _rat_pair_map_watermark = 2*_rat_pair_map.size();
-    return;
   }
+
 private:
-  mutable Rational_function_map                     _rat_func_map;
-  unsigned int _rat_func_map_watermark;
+  mutable Rational_function_map   _rat_func_map;
+  unsigned int                    _rat_func_map_watermark;
   mutable Rational_function_canonicalized_pair_map  _rat_pair_map;
-  unsigned int _rat_pair_map_watermark;
+  unsigned int                    _rat_pair_map_watermark;
   mutable Algebraic_kernel_d_1*   _ak_ptr;
 }; //Cache
  

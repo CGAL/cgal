@@ -96,10 +96,10 @@ public:
   {
     if (this != &other) // protect against invalid self-assignment
     {
-        _min = other.min();
-        _max = other.max();
-        _min_parameter_space = other.min_parameter_space();
-        _max_parameter_space = other.max_parameter_space();
+      _min = other.min();
+      _max = other.max();
+      _min_parameter_space = other.min_parameter_space();
+      _max_parameter_space = other.max_parameter_space();
     }
     return *this;
   }
@@ -113,7 +113,7 @@ public:
   }
   Algebraic_point_2& min() 
   {
-      return _min;
+    return _min;
   }
   const Algebraic_point_2 & min() const
   {
@@ -149,14 +149,14 @@ public:
   }
   bool max_bounded() const
   {
-     CGAL_precondition( (_max_parameter_space == ARR_TOP_BOUNDARY) ||
-                        (_max_parameter_space == ARR_INTERIOR)) ;
-     return (_max_parameter_space == ARR_TOP_BOUNDARY) ? false : true;
+    CGAL_precondition( (_max_parameter_space == ARR_TOP_BOUNDARY) ||
+                       (_max_parameter_space == ARR_INTERIOR)) ;
+    return (_max_parameter_space == ARR_TOP_BOUNDARY) ? false : true;
   }
   bool min_bounded() const
   {
-   CGAL_precondition( (_min_parameter_space == ARR_BOTTOM_BOUNDARY) ||
-                      (_min_parameter_space == ARR_INTERIOR)) ;
+    CGAL_precondition( (_min_parameter_space == ARR_BOTTOM_BOUNDARY) ||
+                       (_min_parameter_space == ARR_INTERIOR)) ;
     return (_min_parameter_space == ARR_BOTTOM_BOUNDARY) ? false : true;
   }
   
@@ -170,18 +170,18 @@ private:
   bool is_ray() const
   {
     CGAL_precondition( (_max_parameter_space == ARR_TOP_BOUNDARY) ||
-                        (_max_parameter_space == ARR_INTERIOR)) ;
+                       (_max_parameter_space == ARR_INTERIOR)) ;
     CGAL_precondition( (_min_parameter_space == ARR_BOTTOM_BOUNDARY) ||
-                      (_min_parameter_space == ARR_INTERIOR)) ;
+                       (_min_parameter_space == ARR_INTERIOR)) ;
     return (  ((_max_parameter_space == ARR_TOP_BOUNDARY) && (_min_parameter_space == ARR_INTERIOR        ))||
               ((_max_parameter_space == ARR_INTERIOR    ) && (_min_parameter_space == ARR_BOTTOM_BOUNDARY ))  );
   }
   bool is_segment() const
   {
     CGAL_precondition( (_max_parameter_space == ARR_TOP_BOUNDARY) ||
-                        (_max_parameter_space == ARR_INTERIOR)) ;
+                       (_max_parameter_space == ARR_INTERIOR)) ;
     CGAL_precondition( (_min_parameter_space == ARR_BOTTOM_BOUNDARY) ||
-                      (_min_parameter_space == ARR_INTERIOR)) ;
+                       (_min_parameter_space == ARR_INTERIOR)) ;
     return ((_max_parameter_space ==  ARR_INTERIOR) && 
             (_min_parameter_space ==  ARR_INTERIOR) );
   }
@@ -190,39 +190,39 @@ public:
   //------------------------
   // Print the vertical segment.
   std::ostream& print (std::ostream& os) const
-   {    
-      os << "x = " << _min.x() << " ";
-      //print lower point
-      if (_min_parameter_space == CGAL::ARR_BOTTOM_BOUNDARY)
-      {
-         os << "min y = -oo";
-      }
-      else
-      {
-         os << "y = (";    
-         print_polynomial (os, _min.rational_function().numer(), 'x');
-         os << ") / (";
-         print_polynomial (os, _min.rational_function().denom(), 'x');
-         os << ")";
-      }
+  {    
+    os << "x = " << _min.x() << " ";
+    //print lower point
+    if (_min_parameter_space == CGAL::ARR_BOTTOM_BOUNDARY)
+    {
+      os << "min y = -oo";
+    }
+    else
+    {
+      os << "y = (";    
+      print_polynomial (os, _min.rational_function().numer(), 'x');
+      os << ") / (";
+      print_polynomial (os, _min.rational_function().denom(), 'x');
+      os << ")";
+    }
      
-      os << " to ";
+    os << " to ";
      
-      //print lower point
-      if (_max_parameter_space == CGAL::ARR_TOP_BOUNDARY)
-      {
-         os << "max y = +oo";
-      }
-      else
-      {
-         os << "y = (";    
-         print_polynomial (os, _max.rational_function().numer(), 'x');
-         os << ") / (";
-         print_polynomial (os, _max.rational_function().denom(), 'x');
-         os << ")";
-      }
-      return (os);
-   }
+    //print lower point
+    if (_max_parameter_space == CGAL::ARR_TOP_BOUNDARY)
+    {
+      os << "max y = +oo";
+    }
+    else
+    {
+      os << "y = (";    
+      print_polynomial (os, _max.rational_function().numer(), 'x');
+      os << ") / (";
+      print_polynomial (os, _max.rational_function().denom(), 'x');
+      os << ")";
+    }
+    return (os);
+  }
 
 private:
   Algebraic_point_2 _min;
@@ -232,18 +232,17 @@ private:
   CGAL::Arr_parameter_space _max_parameter_space;
 }; //Vertical_segment
 
-//-------------------------------
-//! Exporter for Vertical_segment.
-template <class Algebraic_kernel_  >
-std::ostream&
-operator<< (std::ostream& os, 
-    const Vertical_segment_d_1<Algebraic_kernel_> & ver)
-{
-  return (ver.print (os));
-}
+  //-------------------------------
+  //! Exporter for Vertical_segment.
+  template <class Algebraic_kernel_  >
+  std::ostream&
+  operator<< (std::ostream& os, 
+              const Vertical_segment_d_1<Algebraic_kernel_> & ver)
+  {
+    return (ver.print (os));
+  }
 
 } //namespace Arr_rational_arc {
 } //namespace CGAL {
-
 
 #endif  //CGAL_VERTICAL_SEGMENT_D_1

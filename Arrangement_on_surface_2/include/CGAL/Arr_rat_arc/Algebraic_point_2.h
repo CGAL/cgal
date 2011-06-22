@@ -1,3 +1,22 @@
+// Copyright (c) 2011 Tel-Aviv University (Israel), INRIA Sophia-Antipolis (France).
+// All rights reserved.
+//
+// This file is part of CGAL (www.cgal.org); you may redistribute it under
+// the terms of the Q Public License version 1.0.
+// See the file LICENSE.QPL distributed with CGAL.
+//
+// Licensees holding a valid commercial license may use this file in
+// accordance with the commercial license agreement provided with the software.
+//
+// This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
+// WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
+//
+// $URL$
+// $Id$
+//
+// Author(s)     : Oren Salzman <orenzalz@post.tau.ac.il >
+//                 Michael Hemmer <Michael.Hemmer@sophia.inria.fr>
+
 #ifndef CGAL_ALBERAIC_POINT_D_1_H
 #define CGAL_ALBERAIC_POINT_D_1_H
 
@@ -18,15 +37,17 @@
 
 namespace CGAL {
 namespace Arr_rational_arc {
+
 //-------------------
 //Algebraic_point_2_rep
 //-------------------
-template <typename Algebraic_kernel_d_1>
-class Algebraic_point_2_rep : public Base_rational_arc_ds_1<Algebraic_kernel_d_1>
+template <typename AlgebraicKernelD_1>
+class Algebraic_point_2_rep : public Base_rational_arc_ds_1<AlgebraicKernelD_1>
 {
 public:
-  typedef Algebraic_kernel_d_1                          Algebraic_kernel_d_1;
-  typedef Base_rational_arc_ds_1<Algebraic_kernel_d_1>  Base;
+  typedef AlgebraicKernelD_1                        Algebraic_kernel_d_1;
+  typedef Base_rational_arc_ds_1<Algebraic_kernel_d_1>
+                                                    Base;
  
   typedef CGAL::Arr_rational_arc::Rational_function<Algebraic_kernel_d_1>
                                                     Rational_function;
@@ -34,7 +55,7 @@ public:
                                                     Rational_function_pair;
   
   typedef typename Base::Algebraic_real_1           Algebraic_real_1;
-  typedef typename Algebraic_kernel_d_1::Bound          Bound;
+  typedef typename Algebraic_kernel_d_1::Bound      Bound;
   typedef typename Base::Integer                    Integer ;
   typedef typename Base::Rational                   Rational ;
   typedef typename Base::Polynomial_1               Polynomial_1;
@@ -52,7 +73,8 @@ public:
   typedef typename Base::FT_rat_1                   FT_rat_1; 
   typedef typename Base::Polynomial_traits_1        Polynomial_traits_1;
 
-  typedef CGAL::Arr_rational_arc::Cache<Algebraic_kernel_d_1> Cache;
+  typedef CGAL::Arr_rational_arc::Cache<Algebraic_kernel_d_1>
+                                                    Cache;
 
 public:
   Algebraic_point_2_rep(){}
@@ -205,30 +227,30 @@ public:
     std::pair<double,double> double_p;
     switch(::CGAL::get_mode(os))
     {
-          case ::CGAL::IO::PRETTY:
-          double_p = this->to_double();
-          os <<"(" ;
-          os << double_p.first;
-          os <<" , " ;
-          os << double_p.second;
-          os << ")";
-          break;
+     case ::CGAL::IO::PRETTY:
+      double_p = this->to_double();
+      os <<"(" ;
+      os << double_p.first;
+      os <<" , " ;
+      os << double_p.second;
+      os << ")";
+      break;
           
-          case ::CGAL::IO::BINARY:
-          std::cerr << "BINARY format not yet implemented" << std::endl;
-          break;
+     case ::CGAL::IO::BINARY:
+      std::cerr << "BINARY format not yet implemented" << std::endl;
+      break;
           
-          default:
-          // ASCII
-          os <<"x = " << _x_coordinate<<" ";
-          os <<"rational function = ( " ;
-          Base::print_polynomial(os, _rational_function.numer(), 'x');
-          os << ") / (";
-          Base::print_polynomial(os, _rational_function.denom(), 'x');
-          os << ")";
-     }
+     default:
+      // ASCII
+      os <<"x = " << _x_coordinate<<" ";
+      os <<"rational function = ( " ;
+      Base::print_polynomial(os, _rational_function.numer(), 'x');
+      os << ") / (";
+      Base::print_polynomial(os, _rational_function.denom(), 'x');
+      os << ")";
+    }
      
-     return os;
+    return os;
  }
 private:
   std::pair<Bound,Bound> approximate_absolute_y( int a,unsigned int& precision ) const
@@ -290,34 +312,31 @@ private:
   Algebraic_kernel_d_1 _algebraic_kernel;
 };
 
-
-
 template <typename Algebraic_kernel_ >
 class Algebraic_point_2 :
     public Handle_with_policy<Algebraic_point_2_rep<Algebraic_kernel_> >
 {
  
 public:
-  typedef Algebraic_kernel_                                   Algebraic_kernel_d_1;
+  typedef Algebraic_kernel_                               Algebraic_kernel_d_1;
   typedef Handle_with_policy<Algebraic_point_2_rep<Algebraic_kernel_> >
-                                                              Base;
-  typedef Algebraic_point_2<Algebraic_kernel_d_1>                 Self;
-  typedef Algebraic_point_2_rep<Algebraic_kernel_>            Rep;
-  typedef typename Rep::Rational                              Rational;
-  typedef typename Rep::Algebraic_real_1                      Algebraic_real_1;
-  typedef typename Rep::Rational_function                     Rational_function;
-  typedef typename Rep::Bound                                 Bound;
-  typedef typename Rep::Cache                                 Cache;
-  typedef typename Rep::Polynomial_1 Polynomial_1; 
+                                                          Base;
+  typedef Algebraic_point_2<Algebraic_kernel_d_1>         Self;
+  typedef Algebraic_point_2_rep<Algebraic_kernel_>        Rep;
+  typedef typename Rep::Rational                          Rational;
+  typedef typename Rep::Algebraic_real_1                  Algebraic_real_1;
+  typedef typename Rep::Rational_function                 Rational_function;
+  typedef typename Rep::Bound                             Bound;
+  typedef typename Rep::Cache                             Cache;
+  typedef typename Rep::Polynomial_1                      Polynomial_1; 
 
 private:
-  
   static Self& get_default_instance()
   {
     static Algebraic_kernel_d_1 kernel;
     static typename Rational_function::Polynomial_1 numer(0);
     static typename Rational_function::Polynomial_1 denom(1);
-    static Rational_function rational_function(numer,denom,&kernel);
+    static Rational_function rational_function(numer, denom, &kernel);
     
     static Algebraic_real_1 x_coordinate =
       kernel.construct_algebraic_real_1_object()(Rational(0));
@@ -338,7 +357,6 @@ public:
   //used to solve VS bug...
   Algebraic_point_2(const Self & p = get_default_instance()) :
     Base(static_cast<const Base &> (p)) {}
-
 
   Comparison_result compare_xy_2(const Algebraic_point_2& other,
                                  Cache& cache) const

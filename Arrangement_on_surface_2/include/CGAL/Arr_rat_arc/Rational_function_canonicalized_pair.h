@@ -26,78 +26,82 @@
 namespace CGAL {
 namespace Arr_rational_arc {
 
-template < class AlgebraicKernel_d_1 >
-class Rational_function_canonicalized_pair_rep: public Base_rational_arc_ds_1<AlgebraicKernel_d_1>
+template <typename AlgebraicKernel_d_1>
+class Rational_function_canonicalized_pair_rep:
+    public Base_rational_arc_ds_1<AlgebraicKernel_d_1>
 {
 public:
   typedef AlgebraicKernel_d_1                           Algebraic_kernel_d_1;
   typedef Base_rational_arc_ds_1<Algebraic_kernel_d_1>  Base;
 
-  typedef CGAL::Arr_rational_arc::Rational_function<Algebraic_kernel_d_1> Rational_function;
-  typedef typename Base::Polynomial_1                                     Polynomial_1;
-  typedef typename Base::Algebraic_real_1                                 Algebraic_real_1;
-  typedef typename Base::Algebraic_vector                                 Algebraic_vector;
-  typedef typename Base::Multiplicity                                     Multiplicity;
-  typedef typename Base::Multiplicity_vector                              Multiplicity_vector;
-  typedef typename Base::Root_multiplicity_vector                         Root_multiplicity_vector;
-  typedef typename Base::Solve_1                                          Solve_1;
-  typedef typename Base::Bound                                            Bound;
-  typedef typename Base::Coefficient                                      Coefficient;
-    
+  typedef CGAL::Arr_rational_arc::Rational_function<Algebraic_kernel_d_1>
+                                                        Rational_function;
+  typedef typename Base::Polynomial_1                   Polynomial_1;
+  typedef typename Base::Algebraic_real_1               Algebraic_real_1;
+  typedef typename Base::Algebraic_vector               Algebraic_vector;
+  typedef typename Base::Multiplicity                   Multiplicity;
+  typedef typename Base::Multiplicity_vector            Multiplicity_vector;
+  typedef typename Base::Root_multiplicity_vector       Root_multiplicity_vector;
+  typedef typename Base::Solve_1                        Solve_1;
+  typedef typename Base::Bound                          Bound;
+  typedef typename Base::Coefficient                    Coefficient;
  
 public:
-  Rational_function_canonicalized_pair_rep( const Rational_function& f, 
-                                            const Rational_function& g,
-                                            Algebraic_kernel_d_1* ak_ptr)
+  Rational_function_canonicalized_pair_rep(const Rational_function& f, 
+                                           const Rational_function& g,
+                                           Algebraic_kernel_d_1* ak_ptr)
     :_f(f),_g(g),_ak_ptr(ak_ptr)
   {
-    CGAL_precondition (_ak_ptr != NULL);
+    CGAL_precondition(_ak_ptr != NULL);
     //canonicalized representation
     if ( !(f.id() < g.id()) ) 
       std::swap(_f,_g);
     _resultant  = (_f.numer() * _g.denom() - _f.denom() * _g.numer());
-          
-    CGAL_precondition(CGAL::is_zero(_resultant) == false); // //f and g are not the same...
+
+    //f and g are not the same...
+    CGAL_precondition(CGAL::is_zero(_resultant) == false);
                 
-    Solve_1 solve_1 (_ak_ptr->solve_1_object());   
+    Solve_1 solve_1(_ak_ptr->solve_1_object());   
     Root_multiplicity_vector rm_vec;
     
 #if 1
-    solve_1 (_resultant,std::back_inserter(rm_vec));
+    solve_1(_resultant,std::back_inserter(rm_vec));
 #else
     assert(false);
-    // don't use this code yet since g and resultant/g may still have a common root
+    // don't use this code yet since g and resultant/g may still have a
+    // common root
     if( CGAL::internal::may_have_common_factor(_f.denom(),_g.denom())){
-      Polynomial_1 g = CGAL::gcd(_f.denom(),_g.denom());
-      solve_1 (CGAL::integral_division(_resultant,g),std::back_inserter(rm_vec));
-      solve_1 (g,std::back_inserter(rm_vec));
-      std::sort(rm_vec.begin(),rm_vec.end());
+      Polynomial_1 g = CGAL::gcd(_f.denom(), _g.denom());
+      solve_1(CGAL::integral_division(_resultant, g),
+              std::back_inserter(rm_vec));
+      solve_1(g, std::back_inserter(rm_vec));
+      std::sort(rm_vec.begin(), rm_vec.end());
     }else{
-      solve_1(_resultant,std::back_inserter(rm_vec));
+      solve_1(_resultant, std::back_inserter(rm_vec));
     }
 #endif
 
     _roots.reserve(rm_vec.size());
     _multiplicities.reserve(rm_vec.size());
   
-    for ( typename Root_multiplicity_vector::iterator it = rm_vec.begin();
-                it != rm_vec.end() ; 
-                ++ it)
-      {
-        _roots.push_back(it->first);
-        _multiplicities.push_back(it->second);
-      }
+    for (typename Root_multiplicity_vector::iterator it = rm_vec.begin();
+         it != rm_vec.end() ; 
+         ++it)
+    {
+      _roots.push_back(it->first);
+      _multiplicities.push_back(it->second);
+    }
 
     Algebraic_vector tmp;
     tmp.reserve(_f.poles().size() + _g.poles().size());
     _event_roots.reserve(rm_vec.size() + _f.poles().size() + _g.poles().size());
     //merge the roots of f,g & resultant
     std::merge( _f.poles().begin(), _f.poles().end(),
-        _g.poles().begin(), _g.poles().end(),
-        std::back_inserter(tmp));
-    std::merge( tmp.begin(), tmp.end(),
-        _roots.begin(), _roots.end(),
-        std::back_inserter(_event_roots));
+                _g.poles().begin(), _g.poles().end(),
+                std::back_inserter(tmp));
+    std::merge(tmp.begin(), tmp.end(),
+               _roots.begin(), _roots.end(),
+               std::back_inserter(_event_roots));
   
     //remove duplicate entries
     typename Algebraic_vector::iterator new_end,old_end;
@@ -108,106 +112,121 @@ public:
     bool curr_is_above = get_is_above_near_minus_infinity();
     _is_above.push_back(curr_is_above);
 
-    CGAL_precondition(boost::is_sorted(_f.poles().begin(),_f.poles().end()));
-    CGAL_precondition(boost::is_sorted(_g.poles().begin(),_g.poles().end()));
-    CGAL_precondition(boost::is_sorted(_roots.begin(),_roots.end()));
+    // TBD: is_sorted is provided both by stl and boost. The interface of
+    // boost version changed, and as of version ? it accepts a single
+    // argument, that is a model of the SinglePassRange concept. The stl
+    // version, on the other hand, is on it's way out.
+    // (The name is wrong-should be is_ordered).
+    //
+    // CGAL_precondition(boost::is_sorted(_f.poles().begin(),_f.poles().end()));
+    // CGAL_precondition(boost::is_sorted(_g.poles().begin(),_g.poles().end()));
+    // CGAL_precondition(boost::is_sorted(_roots.begin(),_roots.end()));
 
     typename Algebraic_vector ::const_iterator it_f_pole = _f.poles().begin();
-    typename Multiplicity_vector::const_iterator it_f_mult = _f.pole_multiplicities().begin();
+    typename Multiplicity_vector::const_iterator it_f_mult =
+      _f.pole_multiplicities().begin();
     typename Algebraic_vector ::const_iterator it_g_pole = _g.poles().begin();
-    typename Multiplicity_vector::const_iterator it_g_mult = _g.pole_multiplicities().begin();
+    typename Multiplicity_vector::const_iterator it_g_mult =
+      _g.pole_multiplicities().begin();
     typename Algebraic_vector ::const_iterator it_r_root = _roots.begin();
-    typename Multiplicity_vector::const_iterator it_r_mult = _multiplicities.begin() ; 
+    typename Multiplicity_vector::const_iterator it_r_mult =
+      _multiplicities.begin() ; 
     while ( (it_f_pole != _f.poles().end()) || 
         (it_g_pole != _g.poles().end()) || 
         (it_r_root != _roots.end()))
+    {
+      //std::cout << "_f._poles.size() " << _f._poles.size() <<std::endl;
+      //std::cout << "_g._poles.size() " << _g._poles.size()<< std::endl;
+      //std::cout << "_roots.size()    " << _roots.size() << std::endl;
+      //if current event is only a pole of f
+      if ((it_f_pole != _f.poles().end())         && 
+          ((it_g_pole == _g.poles().end()) || (*it_f_pole < *it_g_pole)) &&
+          ((it_r_root == _roots.end()) || (*it_f_pole < *it_r_root)))
       {
-        //std::cout << "_f._poles.size() " << _f._poles.size() <<std::endl;
-        //std::cout << "_g._poles.size() " << _g._poles.size()<< std::endl;
-        //std::cout << "_roots.size()    " << _roots.size() << std::endl;
-        //if current event is only a pole of f
-        if ((it_f_pole != _f.poles().end())         && 
-            ((it_g_pole == _g.poles().end()) || (*it_f_pole < *it_g_pole)) &&
-            ((it_r_root == _roots.end()) || (*it_f_pole < *it_r_root)))
-          {
-            if (*it_f_mult % 2 == 1)
-              curr_is_above = (curr_is_above == true ) ? false : true;
-            _is_above.push_back(curr_is_above);
-            ++it_f_pole;
-            ++it_f_mult;
-          }
-        //if current event is only a pole of g
-        else if ((it_g_pole != _g.poles().end())         && 
-            ((it_f_pole == _f.poles().end()) || (*it_g_pole < *it_f_pole)) &&
-            ((it_r_root == _roots.end()) || (*it_g_pole < *it_r_root)))
-          {
-            if (*it_g_mult % 2 == 1)
-              curr_is_above = (curr_is_above == true ) ? false : true;
-            _is_above.push_back(curr_is_above);
-            ++it_g_pole;
-            ++it_g_mult;
-          }
-        //if current event is only a pole of r
-        else if ((it_r_root != _roots.end())         && 
-            ((it_f_pole == _f.poles().end()) || (*it_r_root < *it_f_pole)) &&
-            ((it_g_pole == _g.poles().end()) || (*it_r_root < *it_g_pole)))
-          {
-            if (*it_r_mult % 2 == 1)
-              curr_is_above = (curr_is_above == true ) ? false : true;
-            _is_above.push_back(curr_is_above);
-            ++it_r_root;
-            ++it_r_mult;
-          }
-        //if current event is a pole of f g and r
-        else if ( (it_f_pole != _f.poles().end()) && 
-            (it_g_pole != _g.poles().end()) && 
-            (it_r_root != _roots.end()) &&
-            (*it_r_root == *it_f_pole)    && 
-            (*it_r_root == *it_g_pole))
-          {     
-            //both functions switch signs
-            if (_f.sign_at (*it_r_root,CGAL::NEGATIVE) == _g.sign_at (*it_r_root,CGAL::NEGATIVE))
-              curr_is_above = !curr_is_above;
-            if (*it_r_mult % 2 == 1)
-              curr_is_above = !curr_is_above;
-            if (_f.sign_at (*it_r_root,CGAL::POSITIVE) == _g.sign_at (*it_r_root,CGAL::POSITIVE))
-              curr_is_above = !curr_is_above;
-            _is_above.push_back(curr_is_above);
-            ++it_f_pole;
-            ++it_f_mult;
-            ++it_g_pole;
-            ++it_g_mult;
-            ++it_r_root;
-            ++it_r_mult;
-          }
-        else
-          {
-            //should not be reached
-            CGAL_postcondition_msg(false,"invalid case in computing _is_above");
-          }
+        if (*it_f_mult % 2 == 1)
+          curr_is_above = (curr_is_above == true ) ? false : true;
+        _is_above.push_back(curr_is_above);
+        ++it_f_pole;
+        ++it_f_mult;
       }
+      //if current event is only a pole of g
+      else if ((it_g_pole != _g.poles().end())         && 
+               ((it_f_pole == _f.poles().end()) || (*it_g_pole < *it_f_pole)) &&
+               ((it_r_root == _roots.end()) || (*it_g_pole < *it_r_root)))
+      {
+        if (*it_g_mult % 2 == 1)
+          curr_is_above = (curr_is_above == true ) ? false : true;
+        _is_above.push_back(curr_is_above);
+        ++it_g_pole;
+        ++it_g_mult;
+      }
+      //if current event is only a pole of r
+      else if ((it_r_root != _roots.end())         && 
+               ((it_f_pole == _f.poles().end()) || (*it_r_root < *it_f_pole)) &&
+               ((it_g_pole == _g.poles().end()) || (*it_r_root < *it_g_pole)))
+      {
+        if (*it_r_mult % 2 == 1)
+          curr_is_above = (curr_is_above == true ) ? false : true;
+        _is_above.push_back(curr_is_above);
+        ++it_r_root;
+        ++it_r_mult;
+      }
+      //if current event is a pole of f g and r
+      else if ( (it_f_pole != _f.poles().end()) && 
+                (it_g_pole != _g.poles().end()) && 
+                (it_r_root != _roots.end()) &&
+                (*it_r_root == *it_f_pole)    && 
+                (*it_r_root == *it_g_pole))
+      {
+        //both functions switch signs
+        if (_f.sign_at(*it_r_root, CGAL::NEGATIVE) ==
+            _g.sign_at(*it_r_root, CGAL::NEGATIVE))
+          curr_is_above = !curr_is_above;
+        if (*it_r_mult % 2 == 1)
+          curr_is_above = !curr_is_above;
+        if (_f.sign_at(*it_r_root, CGAL::POSITIVE) ==
+            _g.sign_at(*it_r_root, CGAL::POSITIVE))
+          curr_is_above = !curr_is_above;
+        _is_above.push_back(curr_is_above);
+        ++it_f_pole;
+        ++it_f_mult;
+        ++it_g_pole;
+        ++it_g_mult;
+        ++it_r_root;
+        ++it_r_mult;
+      }
+      else
+      {
+        //should not be reached
+        CGAL_postcondition_msg(false,"invalid case in computing _is_above");
+      }
+    }
     //std::cout << "_is_above.size()            " << _is_above.size() <<std::endl;
     //std::cout << " _event_roots.size() + 1    " <<  _event_roots.size() + 1 << std::endl;
     CGAL_postcondition(_is_above.size() == _event_roots.size() + 1);
     //check for validity using explicit computation
-    CGAL_postcondition_code( 
-        std::vector<bool> tmp_is_above = compute_is_above_explicitly();
-    );
+    CGAL_postcondition_code(std::vector<bool> tmp_is_above =
+                            compute_is_above_explicitly();
+                            );
     CGAL_postcondition(_is_above == tmp_is_above);   
   }
-  Comparison_result compare_f_g_at(const Algebraic_real_1& x , CGAL::Sign epsilon = CGAL::ZERO) const
+
+  Comparison_result compare_f_g_at(const Algebraic_real_1& x,
+                                   CGAL::Sign epsilon = CGAL::ZERO) const
   {
     //f and g must be different 
     CGAL_precondition(!CGAL::is_zero(_resultant));
 
     //find interval 
-    typename Algebraic_vector::const_iterator iter = std::lower_bound(_event_roots.begin(), _event_roots.end(),x);
+    typename Algebraic_vector::const_iterator iter =
+      std::lower_bound(_event_roots.begin(), _event_roots.end(),x);
   
     //case of a value larger than largest root
     if (iter == _event_roots.end())
       return (_is_above.back() ? CGAL:: LARGER : CGAL::SMALLER);
 
-    typename Algebraic_vector::iterator::difference_type dist = iter - _event_roots.begin();
+    typename Algebraic_vector::iterator::difference_type dist =
+      iter - _event_roots.begin();
 
     //if x is not a root, ignore epsilons 
     if (*iter != x){
@@ -216,11 +235,12 @@ public:
 
     //x is a root 
     if (epsilon == CGAL::ZERO){
-      CGAL_precondition(_f.poles().end() == std::find(_f.poles().begin(), _f.poles().end(),x));
-      CGAL_precondition(_g.poles().end() == std::find(_g.poles().begin(), _g.poles().end(),x));
+      CGAL_precondition(_f.poles().end() ==
+                        std::find(_f.poles().begin(), _f.poles().end(),x));
+      CGAL_precondition(_g.poles().end() ==
+                        std::find(_g.poles().begin(), _g.poles().end(),x));
       return (CGAL::EQUAL);
     }
-
     
     if (epsilon == CGAL::NEGATIVE)
       return (_is_above[dist] ? CGAL:: LARGER : CGAL::SMALLER);
@@ -229,7 +249,7 @@ public:
   }
   Comparison_result compare_f_g_at(Arr_parameter_space boundary) const
   {
-    CGAL_precondition ( (boundary == ARR_LEFT_BOUNDARY) ||
+    CGAL_precondition((boundary == ARR_LEFT_BOUNDARY) ||
         (boundary == ARR_RIGHT_BOUNDARY) );
   
     //f and g are the same...
@@ -242,14 +262,17 @@ public:
       return _is_above.back()  ? CGAL::LARGER : CGAL::SMALLER ;
   }
 
-  bool is_intersecting_in_range( const Arr_parameter_space left_parameter_space ,const Algebraic_real_1 left,
-      const Arr_parameter_space right_parameter_space ,const Algebraic_real_1 right) const
+  bool is_intersecting_in_range(const Arr_parameter_space left_parameter_space,
+                                const Algebraic_real_1 left,
+                                const Arr_parameter_space right_parameter_space,
+                                const Algebraic_real_1 right) const
   {
     //the two function intersect iff the left index and the right index
     //of the array _is_above are different
 
     //get left index
-    typename Algebraic_vector::const_iterator left_index = (left_parameter_space == ARR_LEFT_BOUNDARY) ? 
+    typename Algebraic_vector::const_iterator left_index =
+      (left_parameter_space == ARR_LEFT_BOUNDARY) ? 
       _event_roots.begin():
       std::lower_bound(_event_roots.begin(), _event_roots.end(),left);
     //check if intersect at left index
@@ -257,7 +280,8 @@ public:
       return true;
 
     //get right index
-    typename Algebraic_vector::const_iterator right_index =(right_parameter_space == ARR_RIGHT_BOUNDARY) ? 
+    typename Algebraic_vector::const_iterator right_index =
+      (right_parameter_space == ARR_RIGHT_BOUNDARY) ? 
       _event_roots.begin():
       std::lower_bound(_event_roots.begin(), _event_roots.end(),right);
     //check if intersect at right index
@@ -267,25 +291,28 @@ public:
     //check if indices are the same
     return (left_index == right_index);
   }
+
   const Rational_function& f() const 
   {
     return _f;
   }
+
   const Rational_function& g() const 
   {
     return _g;
   }
+
   const Algebraic_vector & roots() const
   {
     return _roots;
   }
+
   const Multiplicity_vector & multiplicities() const
   {
     return _multiplicities;
   }
 
 private:
-
   bool get_is_above_near_minus_infinity()
   {
     bool r = _get_is_above_near_minus_infinity();
@@ -295,8 +322,8 @@ private:
 
   bool _get_is_above_near_minus_infinity()
   {
-    int f_deg = CGAL::degree (_f.numer()) - CGAL::degree (_f.denom());
-    int g_deg = CGAL::degree (_g.numer()) - CGAL::degree (_g.denom());
+    int f_deg = CGAL::degree(_f.numer()) - CGAL::degree(_f.denom());
+    int g_deg = CGAL::degree(_g.numer()) - CGAL::degree(_g.denom());
 
     if (f_deg > g_deg)  //f is stronger than g
       {
@@ -315,27 +342,30 @@ private:
             
     //both have the same degree difference, 
     //check who's leading coeeficient ratio is larger
-    Coefficient lead_coeff_ratio =  CGAL::abs (CGAL::leading_coefficient(_f.numer())) *
+    Coefficient lead_coeff_ratio =
+      CGAL::abs(CGAL::leading_coefficient(_f.numer())) *
       CGAL::leading_coefficient(_g.denom()) -
-      CGAL::abs (CGAL::leading_coefficient(_g.numer())) *
+      CGAL::abs(CGAL::leading_coefficient(_g.numer())) *
       CGAL::leading_coefficient(_f.denom());
     if (lead_coeff_ratio > 0)//f is stronger than g
       return (_f.sign_near_minus_infinity() == CGAL::NEGATIVE ) ? false : true;
     if (lead_coeff_ratio < 0)  //g is stronger than f
       return (_g.sign_near_minus_infinity() == CGAL::NEGATIVE ) ? true : false;
 
-    //ratio is the same, instead of continuing with taylor expansion, compute explicitly
+    //ratio is the same, instead of continuing with taylor expansion,
+    //compute explicitly
 
     return __get_is_above_near_minus_infinity();
   }
 
-  bool __get_is_above_near_minus_infinity(){
+  bool __get_is_above_near_minus_infinity()
+  {
     Bound b;
     if (_event_roots.empty())
       b = Bound(0);
     else
       {
-        b  = (_ak_ptr->approximate_relative_1_object()(_event_roots.front(),0)).first - 1;  //lower bound of first root
+        b = (_ak_ptr->approximate_relative_1_object()(_event_roots.front(), 0)).first - 1;  //lower bound of first root
       }
     return is_above_at(b);
   }
@@ -348,15 +378,16 @@ private:
     //f-g= -------------------------------------- at b
     //    denom _f  * denom _g 
 
-    Algebraic_real_1 x (_ak_ptr->construct_algebraic_real_1_object()(b));  //TODO: unnescecary construction of real
+    //TODO: unnescecary construction of real
+    Algebraic_real_1 x(_ak_ptr->construct_algebraic_real_1_object()(b));
   
-    CGAL::Sign   numer = _ak_ptr->sign_at_1_object()(_resultant,x);
-    CGAL::Sign   denom_f =  _ak_ptr->sign_at_1_object()(_f.denom(),x);
-    CGAL::Sign   denom_g =  _ak_ptr->sign_at_1_object()(_g.denom(),x);
+    CGAL::Sign   numer = _ak_ptr->sign_at_1_object()(_resultant, x);
+    CGAL::Sign   denom_f = _ak_ptr->sign_at_1_object()(_f.denom(),x);
+    CGAL::Sign   denom_g = _ak_ptr->sign_at_1_object()(_g.denom(),x);
     CGAL::Sign   denom = denom_f * denom_g ;
     CGAL::Sign   s = numer*denom;
 
-    CGAL_precondition (s != CGAL::ZERO);
+    CGAL_precondition(s != CGAL::ZERO);
 
     return (s == CGAL::POSITIVE);
   }
@@ -364,11 +395,11 @@ private:
   {
     std::vector<bool> tmp_is_above;
     if (_event_roots.size()== 0)
-      {
-        Bound b = 1; //all bound are legal, choose 1 for simplicity
-        tmp_is_above.push_back(is_above_at(b));  
-        return tmp_is_above;
-      }
+    {
+      Bound b = 1; //all bound are legal, choose 1 for simplicity
+      tmp_is_above.push_back(is_above_at(b));  
+      return tmp_is_above;
+    }
   
     tmp_is_above.reserve(_event_roots.size()+1);  
     //left boundary
@@ -377,14 +408,15 @@ private:
     tmp_is_above.push_back(is_above_at(b));  
   
     //mid intervals
-    for (typename Algebraic_vector::size_type i=0; i < _event_roots.size()-1; ++i)
-      {
-        b = _ak_ptr->bound_between_1_object()(_event_roots[i],_event_roots[i+1]);
-        tmp_is_above.push_back(is_above_at(b));      
-      }
+    typename Algebraic_vector::size_type i;
+    for (i = 0; i < _event_roots.size()-1; ++i)
+    {
+      b = _ak_ptr->bound_between_1_object()(_event_roots[i],_event_roots[i+1]);
+      tmp_is_above.push_back(is_above_at(b));      
+    }
 
     //right boundary
-    b  = (_ak_ptr->approximate_relative_1_object()(_event_roots.back(),0)).second + 1;  //lower bound of last root
+    b = (_ak_ptr->approximate_relative_1_object()(_event_roots.back(), 0)).second + 1;  //lower bound of last root
     tmp_is_above.push_back(is_above_at(b));
     return tmp_is_above;
   }
@@ -400,28 +432,34 @@ private:
 }; // Rational_function_canonicalized_pair_rep
 
 template < class Algebraic_kernel_>
-class Rational_function_canonicalized_pair: public Handle_with_policy<Rational_function_canonicalized_pair_rep<Algebraic_kernel_> >
+class Rational_function_canonicalized_pair:
+    public Handle_with_policy<Rational_function_canonicalized_pair_rep
+                              <Algebraic_kernel_> >
 {
 public:
-  typedef Algebraic_kernel_                                                                 Algebraic_kernel_d_1;
-  typedef Handle_with_policy<Rational_function_canonicalized_pair_rep<Algebraic_kernel_> >  Base;
-  typedef Rational_function_canonicalized_pair<Algebraic_kernel_d_1>                            Self;
-  typedef Rational_function_canonicalized_pair_rep<Algebraic_kernel_>                       Rep;
-  typedef typename Rep::Rational_function                     Rational_function;
-  typedef typename Rep::Algebraic_real_1                      Algebraic_real_1;
-  typedef typename Rep::Polynomial_1                          Polynomial_1;
-  typedef typename Rep::Algebraic_vector                      Algebraic_vector;
-  typedef typename Rep::Multiplicity_vector                   Multiplicity_vector;
-  typedef typename Rep::Root_multiplicity_vector              Root_multiplicity_vector;
+  typedef Algebraic_kernel_                           Algebraic_kernel_d_1;
+  typedef Rational_function_canonicalized_pair_rep<Algebraic_kernel_d_1>
+                                                      Rep;
+  typedef Handle_with_policy<Rep>                     Base;
+  typedef Rational_function_canonicalized_pair<Algebraic_kernel_d_1>
+                                                      Self;
+  typedef typename Rep::Rational_function             Rational_function;
+  typedef typename Rep::Algebraic_real_1              Algebraic_real_1;
+  typedef typename Rep::Polynomial_1                  Polynomial_1;
+  typedef typename Rep::Algebraic_vector              Algebraic_vector;
+  typedef typename Rep::Multiplicity_vector           Multiplicity_vector;
+  typedef typename Rep::Root_multiplicity_vector      Root_multiplicity_vector;
 
-  Rational_function_canonicalized_pair( const Rational_function& f, 
-                                        const Rational_function& g,
-                                        Algebraic_kernel_d_1* ak_ptr)
-    : Base (f,g,ak_ptr) {}
+  Rational_function_canonicalized_pair(const Rational_function& f, 
+                                       const Rational_function& g,
+                                       Algebraic_kernel_d_1* ak_ptr) :
+    Base(f, g, ak_ptr) {}
   //used to solve VS bug...
-  Rational_function_canonicalized_pair (const Self & p) : Base(static_cast<const Base &> (p)) {}
+  Rational_function_canonicalized_pair(const Self & p) :
+    Base(static_cast<const Base &> (p)) {}
 
-  Comparison_result compare_f_g_at(const Algebraic_real_1& x , CGAL::Sign epsilon = CGAL::ZERO) const
+  Comparison_result compare_f_g_at(const Algebraic_real_1& x,
+                                   CGAL::Sign epsilon = CGAL::ZERO) const
   {
     return this->ptr()->compare_f_g_at(x,epsilon);
   }
@@ -430,10 +468,14 @@ public:
   {
     return this->ptr()->compare_f_g_at(boundary);
   }
-  bool is_intersecting_in_range( const Arr_parameter_space left_parameter_space ,const Algebraic_real_1 left,
-      const Arr_parameter_space right_parameter_space ,const Algebraic_real_1 right) const
+
+  bool is_intersecting_in_range(const Arr_parameter_space left_parameter_space,
+                                const Algebraic_real_1 left,
+                                const Arr_parameter_space right_parameter_space,
+                                const Algebraic_real_1 right) const
   {
-    return this->ptr()->is_intersecting_in_range(left_parameter_space,left,right_parameter_space,right);
+    return this->ptr()->is_intersecting_in_range(left_parameter_space, left,
+                                                 right_parameter_space, right);
   }
     
   const Rational_function& f() const 
@@ -445,10 +487,12 @@ public:
   {
     return this->ptr()->g();
   }
+
   const Algebraic_vector & roots() const
   {
     return this->ptr()->roots();
   }
+
   const Multiplicity_vector & multiplicities() const
   {
     return this->ptr()->multiplicities();
