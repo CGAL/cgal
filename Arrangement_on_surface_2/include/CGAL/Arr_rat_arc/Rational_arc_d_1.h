@@ -67,17 +67,15 @@ public:
   typedef Algebraic_kernel_                                 Algebraic_kernel;
   typedef Base_rational_arc_d_1<Algebraic_kernel>           Self;
 
-  typedef CGAL::Arr_rational_arc::Base_rational_arc_ds_1<Algebraic_kernel>
+  typedef Base_rational_arc_ds_1<Algebraic_kernel>
     Base_rational_arc_ds_1;
-  typedef CGAL::Arr_rational_arc::Rational_function<Algebraic_kernel>
-                                                            Rational_function;
-  typedef CGAL::Arr_rational_arc::Rational_function_pair<Algebraic_kernel>
+  typedef Rational_function<Algebraic_kernel>               Rational_function;
+  typedef Rational_function_pair<Algebraic_kernel>
     Rational_function_pair;
-  typedef CGAL::Arr_rational_arc::Algebraic_point_2<Algebraic_kernel>
+  typedef Algebraic_point_2<Algebraic_kernel>
                                                             Algebraic_point_2;
-  typedef CGAL::Arr_rational_arc::Vertical_segment_d_1 <Algebraic_kernel>
-    Vertical_segment_d_1; 
-  typedef CGAL::Arr_rational_arc::Cache<Algebraic_kernel>   Cache;
+  typedef Vertical_segment_d_1 <Algebraic_kernel>           Vertical_segment_d_1;
+  typedef Cache<Algebraic_kernel>   Cache;
 
   typedef typename Base_rational_arc_ds_1::Multiplicity     Multiplicity;
   typedef typename Base_rational_arc_ds_1::Polynomial_1     Polynomial_1;
@@ -93,15 +91,15 @@ public:
   
   typedef std::vector<Rational>                             Rat_vector;
 
-  typedef CGAL::Polynomial_traits_d<Polynomial_1>           Polynomial_traits_1;
+  typedef Polynomial_traits_d<Polynomial_1>                 Polynomial_traits_1;
   typedef typename Base_rational_arc_ds_1::FT_rat_1         FT_rat_1;
   typedef typename Base_rational_arc_ds_1::Solve_1          Solve_1;
   typedef typename Algebraic_kernel::Bound                  Bound;
-  typedef CGAL::Algebraic_structure_traits<Polynomial_1>    AT_poly;
+  typedef Algebraic_structure_traits<Polynomial_1>          AT_poly;
   
-  typedef CGAL::Polynomial<Rational>                        Poly_rat_1;
-  typedef CGAL::Polynomial_traits_d<Poly_rat_1>             PT_rat_1;
-  typedef CGAL::Fraction_traits <Poly_rat_1>                FT_poly_rat_1;
+  typedef Polynomial<Rational>                              Poly_rat_1;
+  typedef Polynomial_traits_d<Poly_rat_1>                   PT_rat_1;
+  typedef Fraction_traits <Poly_rat_1>                      FT_poly_rat_1;
 
   typedef Algebraic_point_2                                 Point_2;
   
@@ -374,7 +372,7 @@ public:
     Integer denom_int;
     typename FT_poly_rat_1::Decompose()(num_rat, _numer, denom_int);
     
-    _init(_numer,denom_int,x_s,x_t,cache);
+    _init(_numer, denom_int, x_s, x_t, cache);
   }    
 
   void _init(const Polynomial_1& P,const Integer& Q_int,
@@ -964,44 +962,43 @@ public:
     // Split the arc, such that c1 lies to the left of the pole and (*this)
     // to its right.
     if ((_info & IS_DIRECTED_RIGHT) != 0)
-      {
-        c1._pt = p0;
-        c1._info = (c1._info & ~TRG_INFO_BITS);
-        if (sign_left == CGAL::NEGATIVE)
-          c1._info = (c1._info | TRG_AT_Y_MINUS_INFTY);
-        else
-          c1._info = (c1._info | TRG_AT_Y_PLUS_INFTY);
+    {
+      c1._pt = p0;
+      c1._info = (c1._info & ~TRG_INFO_BITS);
+      if (sign_left == CGAL::NEGATIVE)
+        c1._info = (c1._info | TRG_AT_Y_MINUS_INFTY);
+      else
+        c1._info = (c1._info | TRG_AT_Y_PLUS_INFTY);
 
-        this->_ps = p0;
-        this->_info = (this->_info & ~SRC_INFO_BITS);
-        if (sign_right == CGAL::NEGATIVE)
-          this->_info = (this->_info | SRC_AT_Y_MINUS_INFTY);
-        else
-          this->_info = (this->_info | SRC_AT_Y_PLUS_INFTY);
-      }
+      this->_ps = p0;
+      this->_info = (this->_info & ~SRC_INFO_BITS);
+      if (sign_right == CGAL::NEGATIVE)
+        this->_info = (this->_info | SRC_AT_Y_MINUS_INFTY);
+      else
+        this->_info = (this->_info | SRC_AT_Y_PLUS_INFTY);
+    }
     else
-      {
-        c1._ps = p0;
-        c1._info = (c1._info & ~SRC_INFO_BITS);
-        if (sign_left == CGAL::NEGATIVE)
-          c1._info = (c1._info | SRC_AT_Y_MINUS_INFTY);
-        else
-          c1._info = (c1._info | SRC_AT_Y_PLUS_INFTY);
+    {
+      c1._ps = p0;
+      c1._info = (c1._info & ~SRC_INFO_BITS);
+      if (sign_left == CGAL::NEGATIVE)
+        c1._info = (c1._info | SRC_AT_Y_MINUS_INFTY);
+      else
+        c1._info = (c1._info | SRC_AT_Y_PLUS_INFTY);
   
-        this->_pt = p0;
-        this->_info = (this->_info & ~TRG_INFO_BITS);
-        if (sign_right == CGAL::NEGATIVE)
-          this->_info = (this->_info | TRG_AT_Y_MINUS_INFTY);
-        else
-          this->_info = (this->_info | TRG_AT_Y_PLUS_INFTY);
-      }
+      this->_pt = p0;
+      this->_info = (this->_info & ~TRG_INFO_BITS);
+      if (sign_right == CGAL::NEGATIVE)
+        this->_info = (this->_info | TRG_AT_Y_MINUS_INFTY);
+      else
+        this->_info = (this->_info | TRG_AT_Y_PLUS_INFTY);
+    }
 
     // Mark the sub-arc c1 as continuous.
     c1._info = (c1._info | IS_CONTINUOUS);
 
     return (c1);
   }
-  
   
   //---------------
   //name Predicates
@@ -1566,7 +1563,6 @@ protected:
     return true;
   }
 
- 
   //----------------------------------------------------------
   // Check if the given x-value is in the x-range of the arc, 
   // excluding its open ends.
@@ -1733,8 +1729,7 @@ protected:
         else
         {
           // The root lies in the interior of the arc.
-          *oi = *x_iter;
-          ++oi;
+          *oi++ = *x_iter;
         }
       }
     }
@@ -1832,7 +1827,9 @@ class Continuous_rational_arc_d_1:
     public Base_rational_arc_d_1<Algebraic_kernel_>
 {
 public:
-  bool is_left_to_right() const { return (this->_info && Base::IS_DIRECTED_RIGHT);}
+  bool is_left_to_right() const
+  { return (this->_info && Base::IS_DIRECTED_RIGHT); }
+
 public:
   typedef Algebraic_kernel_                             Algebraic_kernel;
   
@@ -1982,6 +1979,7 @@ public:
       this->set_invalid();
     }
   }
+
   Continuous_rational_arc_d_1(const Rat_vector& pcoeffs,
                               const Rat_vector& qcoeffs,
                               const Algebraic_real_1& x_s, bool dir_right,
@@ -2051,8 +2049,7 @@ public:
     if (this->equals(arc))
     {
       Self      overlap_arc(*this);
-      *oi = make_object(overlap_arc);
-      ++oi;
+      *oi++ = make_object(overlap_arc);
       return (oi);
     }
 
@@ -2196,8 +2193,7 @@ public:
           {
             Intersection_point_2  ip(p_left, 0);
 
-            *oi = make_object(ip);
-            ++oi;
+            *oi++ = make_object(ip);
           }
 
           return (oi);
@@ -2216,9 +2212,7 @@ public:
                            this->IS_DIRECTED_RIGHT | this->IS_CONTINUOUS | 
                            this->IS_VALID);
 
-      *oi = make_object(overlap_arc);
-      ++oi;
-
+      *oi++ = make_object(overlap_arc);
       return (oi);
     }
     
@@ -2247,12 +2241,11 @@ public:
       if (this->_is_in_true_x_range(*x_iter) && arc._is_in_true_x_range(*x_iter))
       {
         // Compute the intersection point and obtain its multiplicity.
-        Algebraic_point_2   p(this->_f,*x_iter);
+        Algebraic_point_2   p(this->_f, *x_iter);
         // Output the intersection point:
-        Intersection_point_2  ip(p,*m_iter);
+        Intersection_point_2  ip(p, *m_iter);
 
-        *oi = make_object(ip);
-        ++oi;
+        *oi++ = make_object(ip);
       }
     }
 
@@ -2260,11 +2253,9 @@ public:
   }
 
   template<class OutputIterator>
-  OutputIterator
-  intersect(const CGAL::Arr_rational_arc::Vertical_segment_d_1<Algebraic_kernel>&
-              ver,
-            OutputIterator oi,
-            Cache& cache) const
+  OutputIterator intersect(const Vertical_segment_d_1<Algebraic_kernel>& ver,
+                           OutputIterator oi,
+                           Cache& cache) const
   {
     CGAL_precondition(this->is_valid() && this->is_continuous());
     
@@ -2278,8 +2269,7 @@ public:
     {
       if (this->_f == ver.min_f())
       {
-        oi = make_object( Intersection_point_2(ver.min(),1));
-        oi++;
+        *oi++ = make_object(Intersection_point_2(ver.min(), 1));
         return oi;
       }
       else
@@ -2291,8 +2281,7 @@ public:
           return oi;
         if (c == CGAL::EQUAL)
         {
-          oi = make_object(Intersection_point_2(ver.min(),1));
-          oi++;
+          *oi++ = make_object(Intersection_point_2(ver.min(), 1));
           return oi;
         }
       }
@@ -2303,8 +2292,7 @@ public:
     {
       if (this->_f == ver.max_f())
       {
-        oi = make_object(Intersection_point_2(ver.max(),1));
-        oi++;
+        *oi++ = make_object(Intersection_point_2(ver.max(),1));
         return oi;
       }
       else
@@ -2316,15 +2304,13 @@ public:
           return oi;
         if (c == CGAL::EQUAL)
         {
-          oi = make_object(Intersection_point_2(ver.max(),1));
-          oi++;
+          *oi++ = make_object(Intersection_point_2(ver.max(),1));
           return oi;
         }
       }
     }
     //the vertical segment's min point is below the curve
-    oi = make_object(Intersection_point_2(Algebraic_point_2(this->_f, x), 1));
-    oi++;
+    *oi++ = make_object(Intersection_point_2(Algebraic_point_2(this->_f, x), 1));
     return oi;
   }
   
@@ -2501,7 +2487,6 @@ template < class Algebraic_kernel_ >
 class Rational_arc_d_1 : public Base_rational_arc_d_1<Algebraic_kernel_>
 {
 public:
-
   typedef Algebraic_kernel_                             Algebraic_kernel;
   
   typedef Rational_arc_d_1<Algebraic_kernel>            Self;
@@ -2550,12 +2535,12 @@ public:
    *                  or to the left (to -oo).
    */
   Rational_arc_d_1(const Polynomial_1& P, const Algebraic_real_1& x_s, 
-                   bool dir_right,Cache& cache) :
+                   bool dir_right, Cache& cache) :
     Base(P, x_s, dir_right,cache)
   {}
 
   Rational_arc_d_1(const Rat_vector& pcoeffs, const Algebraic_real_1& x_s, 
-                   bool dir_right,Cache& cache) :
+                   bool dir_right, Cache& cache) :
     Base(pcoeffs, x_s, dir_right,cache)
   {}
 
@@ -2605,6 +2590,7 @@ public:
                    const Algebraic_real_1& x_s, bool dir_right, Cache& cache) :
     Base(P, Q, x_s, dir_right, cache)
   {}
+
   Rational_arc_d_1(const Rat_vector& pcoeffs, const Rat_vector& qcoeffs,
                    const Algebraic_real_1& x_s, bool dir_right, Cache& cache) :
     Base(pcoeffs, qcoeffs, x_s, dir_right, cache)
@@ -2624,6 +2610,7 @@ public:
                    Cache& cache) :
     Base(P, Q, x_s, x_t, cache)
   {}
+
   Rational_arc_d_1(const Rat_vector& pcoeffs, const Rat_vector& qcoeffs,
                    const Algebraic_real_1& x_s, const Algebraic_real_1& x_t,
                    Cache& cache) :
@@ -2653,8 +2640,7 @@ public:
     if (q_roots.empty())
     {
       arc.set_continuous();
-      *oi = Continuous_arc(arc);
-      ++oi;
+      *oi++ = Continuous_arc(arc);
       return (oi);
     }
 
@@ -2663,22 +2649,18 @@ public:
 
     for (iter = q_roots.begin(); iter != q_roots.end(); ++iter)
     {
-      *oi = Continuous_arc(arc.split_at_pole(*iter));
-      ++oi;
+      *oi++ = Continuous_arc(arc.split_at_pole(*iter));
     }
 
     // Add the final x-monotone sub-arc.
     arc.set_continuous();
-    *oi = Continuous_arc(arc);
-    ++oi;
+    *oi++ = Continuous_arc(arc);
 
     return (oi);
   }
-
 };
-
-
 
 }   //name_space Arr_rational_arc
 }       //namespace CGAL {
+
 #endif //CGAL_RATIONAL_ARC_D_1_H
