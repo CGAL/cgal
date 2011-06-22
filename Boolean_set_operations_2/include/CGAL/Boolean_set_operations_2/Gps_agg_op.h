@@ -122,9 +122,6 @@ public:
   {
     std::list<Meta_X_monotone_curve_2> curves_list;
 
-    typename Meta_traits::Compare_endpoints_xy_2 cmp_endpoints = 
-      m_traits->compare_endpoints_xy_2_object();
-
     unsigned int n_inf_pgn = 0; // number of infinte polygons (arrangement 
                                 // with a contained unbounded face
     unsigned int n_pgn = 0;     // number of polygons (arrangements)
