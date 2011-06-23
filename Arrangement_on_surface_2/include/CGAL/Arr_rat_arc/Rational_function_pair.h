@@ -33,18 +33,19 @@ class Rational_function_pair:
     public Base_rational_arc_ds_1<AlgebraicKernel_d_1>
 {
 public:
-  typedef AlgebraicKernel_d_1                          Algebraic_kernel_d_1;
+  typedef AlgebraicKernel_d_1                         Algebraic_kernel_d_1;
   typedef Base_rational_arc_ds_1<Algebraic_kernel_d_1> Base;
-  typedef Rational_function_canonicalized_pair<Algebraic_kernel_d_1>
+  typedef CGAL::Arr_rational_arc::Rational_function_canonicalized_pair<Algebraic_kernel_d_1>
     Rational_function_canonicalized_pair;
-  typedef Rational_function<Algebraic_kernel_d_1>      Rational_function;
+  typedef CGAL::Arr_rational_arc::Rational_function<Algebraic_kernel_d_1>
+                                                      Rational_function;
 
-  typedef typename Base::Polynomial_1                  Polynomial_1;
-  typedef typename Base::Algebraic_real_1              Algebraic_real_1;
-  typedef typename Base::Algebraic_vector              Algebraic_vector;
-  typedef typename Base::Multiplicity                  Multiplicity;
-  typedef typename Base::Multiplicity_vector           Multiplicity_vector;
-  typedef typename Base::Root_multiplicity_vector      Root_multiplicity_vector;
+  typedef typename Base::Polynomial_1                 Polynomial_1;
+  typedef typename Base::Algebraic_real_1             Algebraic_real_1;
+  typedef typename Base::Algebraic_vector             Algebraic_vector;
+  typedef typename Base::Multiplicity                 Multiplicity;
+  typedef typename Base::Multiplicity_vector          Multiplicity_vector;
+  typedef typename Base::Root_multiplicity_vector     Root_multiplicity_vector;
  
 public:
   Rational_function_pair(const Rational_function_canonicalized_pair& rat_pair,

@@ -67,15 +67,17 @@ public:
   typedef Algebraic_kernel_                                 Algebraic_kernel;
   typedef Base_rational_arc_d_1<Algebraic_kernel>           Self;
 
-  typedef Base_rational_arc_ds_1<Algebraic_kernel>
+  typedef CGAL::Arr_rational_arc::Base_rational_arc_ds_1<Algebraic_kernel>
     Base_rational_arc_ds_1;
-  typedef Rational_function<Algebraic_kernel>               Rational_function;
-  typedef Rational_function_pair<Algebraic_kernel>
+  typedef CGAL::Arr_rational_arc::Rational_function<Algebraic_kernel>
+                                                            Rational_function;
+  typedef CGAL::Arr_rational_arc::Rational_function_pair<Algebraic_kernel>
     Rational_function_pair;
-  typedef Algebraic_point_2<Algebraic_kernel>
+  typedef CGAL::Arr_rational_arc::Algebraic_point_2<Algebraic_kernel>
                                                             Algebraic_point_2;
-  typedef Vertical_segment_d_1 <Algebraic_kernel>           Vertical_segment_d_1;
-  typedef Cache<Algebraic_kernel>   Cache;
+  typedef CGAL::Arr_rational_arc::Vertical_segment_d_1 <Algebraic_kernel>
+                                                            Vertical_segment_d_1;
+  typedef CGAL::Arr_rational_arc::Cache<Algebraic_kernel>   Cache;
 
   typedef typename Base_rational_arc_ds_1::Multiplicity     Multiplicity;
   typedef typename Base_rational_arc_ds_1::Polynomial_1     Polynomial_1;
@@ -250,6 +252,7 @@ public:
     _info = (_info | IS_VALID);
 
   }  
+
   //---------------------------------------------------------------------------
   //Constructor of a polynomial ray, defined by y = p(x), 
   //for x_s <= x if the ray is directed to the right, or
@@ -516,6 +519,7 @@ public:
 
     _init(_numer,_denom, x_s, dir_right, cache);
   }
+
   void _init(const Polynomial_1& _P, const Polynomial_1& _Q,
              const Algebraic_real_1& x_s, bool dir_right,
              Cache& cache) 
@@ -540,7 +544,7 @@ public:
 
 
     //The source point has a bounded x-coordinate. 
-    _ps=Algebraic_point_2(_f,x_s);
+    _ps = Algebraic_point_2(_f, x_s);
     //check if the source point lies next to a pole.
     if (typename Algebraic_kernel::Sign_at_1()(Q, x_s) != CGAL::ZERO)
     {
@@ -598,6 +602,7 @@ public:
   {
     _init(P, Q, x_s, x_t, cache);
   }
+
   Base_rational_arc_d_1(const Rat_vector& pcoeffs, const Rat_vector& qcoeffs,
                         const Algebraic_real_1& x_s, const Algebraic_real_1& x_t,
                         Cache& cache):
@@ -619,6 +624,7 @@ public:
 
     _init(_numer,_denom,x_s,x_t,cache);
   }
+
   void _init(const Polynomial_1& _P, const Polynomial_1& _Q,
              const Algebraic_real_1& x_s, const Algebraic_real_1& x_t,
              Cache& cache)
@@ -687,6 +693,7 @@ public:
             (IS_CONTINUOUS | IS_VALID) : IS_VALID ) );
 
   }
+
   //-----------------------------
   // Accessing the arc properties
   //-----------------------------

@@ -23,6 +23,7 @@
 #include <CGAL/Arr_rat_arc/Base_rational_arc_ds_1.h>
 #include <CGAL/Arr_rat_arc/Rational_function.h>
 #include <CGAL/Handle_with_policy.h>
+
 namespace CGAL {
 namespace Arr_rational_arc {
 
@@ -118,9 +119,9 @@ public:
     // version, on the other hand, is on it's way out.
     // (The name is wrong-should be is_ordered).
     //
-    // CGAL_precondition(boost::is_sorted(_f.poles().begin(),_f.poles().end()));
-    // CGAL_precondition(boost::is_sorted(_g.poles().begin(),_g.poles().end()));
-    // CGAL_precondition(boost::is_sorted(_roots.begin(),_roots.end()));
+    // CGAL_precondition(std::is_sorted(_f.poles().begin(),_f.poles().end()));
+    // CGAL_precondition(std::is_sorted(_g.poles().begin(),_g.poles().end()));
+    // CGAL_precondition(std::is_sorted(_roots.begin(),_roots.end()));
 
     typename Algebraic_vector ::const_iterator it_f_pole = _f.poles().begin();
     typename Multiplicity_vector::const_iterator it_f_mult =
@@ -425,13 +426,15 @@ private:
   Rational_function _f,_g;
   Polynomial_1  _resultant;
   Algebraic_vector _roots;
-  Algebraic_vector _event_roots;  //roots of resultant merged with roots of f & g's denomenators
+  //roots of resultant merged with roots of f & g's denomenators
+  Algebraic_vector _event_roots;
   Multiplicity_vector _multiplicities;
-  std::vector<bool> _is_above;   //is f above g in the interval induced by index i of _roots
+  //is f above g in the interval induced by index i of _roots
+  std::vector<bool> _is_above;
   Algebraic_kernel_d_1* _ak_ptr;
 }; // Rational_function_canonicalized_pair_rep
 
-template < class Algebraic_kernel_>
+template <typename Algebraic_kernel_>
 class Rational_function_canonicalized_pair:
     public Handle_with_policy<Rational_function_canonicalized_pair_rep
                               <Algebraic_kernel_> >
@@ -497,10 +500,9 @@ public:
   {
     return this->ptr()->multiplicities();
   }
-
 };  //Rational_function_canonicalized_pair
-
 
 }   //namespace Arr_rational_arc
 }   //namespace CGAL {   
+
 #endif //CGAL_RATIONAL_FUNCTION_CANONICALIZED_PAIR_H
