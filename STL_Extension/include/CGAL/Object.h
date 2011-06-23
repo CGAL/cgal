@@ -107,9 +107,9 @@ class Object
     }
 #endif
 
-    // implicit constructor from boost::variant
-    template<typename T>
-    Object(const T& t) {
+    // implicit constructor from optionals containing variants
+    template<typename Variant>
+    Object(const boost::optional<Variant>& t) {
       // we cannot invoke another ctor from here, so we have to behave
       // like the copy ctor of our base
       if(t) {
