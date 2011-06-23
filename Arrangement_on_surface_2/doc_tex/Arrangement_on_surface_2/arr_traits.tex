@@ -72,19 +72,19 @@ implementer may choose to provide it.
 \begin{ccHtmlOnly}
 <font color="#ff0000">
 \end{ccHtmlOnly}
-The $x$-monotone curves of an arrangement are confined to an
-iso-rectangular area called the parameter space. For planar curves the
-parameter space is typically defined as $\mathbb{R}^2$. The
+The $x$-monotone curves of an arrangement are embedded in an
+iso-rectangular area called the parameter space. For planar curves
+the parameter space is typically defined as $\mathbb{R}^2$. The
 iso-rectangle can be unbounded, open, or closed. The basic set of
 predicates is sufficient for constructing arrangements of $x$-monotone
 curves that do not reach or approach the boundary of the parameter
-space. The nature of the input curves, whether they are expected to
-reach or approach the left, right, bottom, or top side of the boundary
-of the parameter space, must be conveyed by the traits class. This is
-done through the definition of four additional nested types, namely
-\ccc{Left_side_category}, \ccc{Right_side_category},
-\ccc{Bottom_side_category}, and \ccc{Top_side_category}. Each such
-type must be convertible to the type \ccc{Arr_oblivious_side_tag} for
+space. The nature of the input curves, i.e. whether some of them are
+expected to reach or approach the left, right, bottom, or top side of
+the boundary of the parameter space, must be conveyed by the traits
+class. This is done through the definition of four additional nested
+types, namely \ccc{Left_side_category}, \ccc{Right_side_category},
+\ccc{Bottom_side_category}, and \ccc{Top_side_category}. Each of those
+types must be convertible to the type \ccc{Arr_oblivious_side_tag} for
 the class to be a model of the concept \ccc{ArrangementBasicTraits_2}.
 \lcTex{\color{black}}
 \begin{ccHtmlOnly}
@@ -214,20 +214,25 @@ curve $C$ can be considered as a parametric curve $C(t) = (X(t),Y(t))$
 defined over a closed, open, or half open interval with endpoints~$0$
 and~$1$.
 
-The additional requirements are organized in four different concepts,
-one for each side. Models of the concept associated with the bottom
-and top sides can only handle curves with finite $x$-coordinates.
-Curves with negative infinite and positive infinite $x$-coordinates
-are handled by models of concepts associated with the left and right
-sides, respectively. We defer the introducing of the four individual
-concepts to a later release to avoid clutter. Instead, we introduce
-the single concept \ccc{ArrangementOpenBoundaryTraits_2}, which
-combines all the four concepts. The combined concept refines the
-concept \ccc{ArrangementBasicTraits_2}. The arrangement template
-instantiated with a traits class that models this combined concept
-can handle curves that are unbounded in any direction. If some
-curves inserted into an arrangement object are expected to be
-unbounded, namely, there exists $d \in \{0,1\}$ such that
+%% The additional requirements are organized in four different concepts,
+%% one for each side. Models of the concept associated with the bottom
+%% and top sides can only handle curves with finite $x$-coordinates.
+%% Curves with negative infinite and positive infinite $x$-coordinates
+%% are handled by models of concepts associated with the left and right
+%% sides, respectively. We defer the introducing of the four individual
+%% concepts to a later release to avoid clutter. Instead, we introduce
+%% the single concept \ccc{ArrangementOpenBoundaryTraits_2}, which
+%% combines all the four concepts. The combined concept refines the
+%% concept \ccc{ArrangementBasicTraits_2}. The arrangement template
+%% instantiated with a traits class that models this combined concept
+%% can handle curves that are unbounded in any direction.
+Models of the concept \ccc{ArrangementOpenBoundaryTraits_2} handle
+curves that approach the boundary of the parameter space. This concept
+refines the concept \ccc{ArrangementBasicTraits_2}. The arrangement
+template instantiated with a traits class that models this concept
+can handle curves that are unbounded in any direction. If some curves
+inserted into an arrangement object are expected to be unbounded, namely,
+there exists $d \in \{0,1\}$ such that
 $\lim_{t \rightarrow d}X(t) = \pm\infty$ or
 $\lim_{t \rightarrow d}y(t) = \pm\infty$
 holds for at least one input curve $C(t) = (X(t),Y(t))$, the arrangement
@@ -264,13 +269,14 @@ curves. Indeed, all curves maintained by any arrangement are
 continuous weakly $x$-monotone curves. A non $x$-monotone curve is
 divided into $x$-monotone sub curves (and perhaps points) before it
 is inserted into an arrangement. This asymmetry is also reflected in
-the additional predicates listed below. Notice that curves that reach
-the left or right boundary sides are handled by the two predicates
-\ccc{Parameter_space_in_x_2} and \ccc{Compare_y_near_boundary_2},
-while the handling of curves that reach the bottom or top boundary
-sides is performed by the three predicates
-\ccc{Parameter_space_in_y_2}, \ccc{Compare_x_at_limit_2}, and
-\ccc{Compare_x_near_limit_2}.
+the additional predicates listed below.
+%% Notice that curves that reach
+%% the left or right boundary sides are handled by the two predicates
+%% \ccc{Parameter_space_in_x_2} and \ccc{Compare_y_near_boundary_2},
+%% while the handling of curves that reach the bottom or top boundary
+%% sides is performed by the three predicates
+%% \ccc{Parameter_space_in_y_2}, \ccc{Compare_x_at_limit_2}, and
+%% \ccc{Compare_x_near_limit_2}.
 
 \begin{description}
 \item[\ccc{Parameter_space_in_x_2}:]
@@ -363,8 +369,11 @@ data with the geometric objects.
 \label{arr_ssec:tr_segs}}
 %--------------------------------------------------------------
 
-The \ccc{Arr_segment_traits_2<Kernel>} class used so far
-in most example programs in this chapter is parameterized by a
+The \ccc{Arr_segment_traits_2<Kernel>} class used so far in most
+example programs in this chapter is a model of the concepts
+\ccc{ArrangementTraits_2}, \ccc{ArrangementLandmarkTraits_2},
+and \ccc{ArrangementDirectionalXMonotoneTraits_2}; the later
+enables Boolean set operations. It is parameterized by a
 geometric kernel and uses the \ccc{Kernel::Point_2} type as it
 point type. However, neither the \ccc{Curve_2} nor the
 \ccc{X_monotone_curve_2} types are identical to the
@@ -470,11 +479,13 @@ data is stored with the line segments.
 
 The class \ccc{Arr_non_caching_segment_traits_2<Kernel>} inherits
 from \ccc{Arr_non_caching_segment_basic_traits_2<Kernel>} and
-extends it to be a model of the \ccc{ArrangementTraits_2} concept.
-It may thus be used to construct arrangement of intersecting line
-segments, but as explained above, for efficiency reasons it is
-recommended to use it only when the arrangement is very sparse and
-contains hardly any intersection points.
+extends it to be a model of the concepts \ccc{ArrangementTraits_2},
+\ccc{ArrangementLandmarkTraits_2},and
+\ccc{ArrangementDirectionalXMonotoneTraits_2}. It may thus be used to
+construct arrangement of intersecting line segments, but as explained
+above, for efficiency reasons it is recommended to use it only when
+the arrangement is very sparse and contains hardly any intersection
+points.
 
 In the following example we read an input file containing a set of
 line segments that are pairwise disjoint in their interior. As the
@@ -593,9 +604,14 @@ of dilated polygons.
 
 The \ccc{Arr_circle_segment_traits_2<Kernel>} class-template is designed
 for efficient handling of arrangements of circular arcs and line segments.
-It is parameterized by a geometric kernel, and can handle arrangements of
+It is a model of the concepts \ccc{ArrangementTraits_2} and
+\ccc{ArrangementDirectionalXMonotoneTraits_2}; the later enables
+Boolean set operations. Note that it is not a model of
+\ccc{ArrangementLandmarkTraits_2} concept, so it is impossible to
+use the landmark point-location strategy. The traits class template 
+is parameterized by a geometric kernel, and can handle arrangements of
 segments of \ccc{Kernel::Circle_2} objects (full circles are also supported)
-or of \ccc{Kernel::Line_2} objects --- namely circular arcs and line segments.
+or of \ccc{Kernel::Line_2} objects---namely circular arcs and line segments.
 It is important to observe that the nested \ccc{Point_2} type defined by the
 traits class, whose coordinates are typically algebraic numbers of degree 2,
 is {\em not} the same as the \ccc{Kernel::Point_2} type, which is capable of
@@ -762,7 +778,7 @@ computations on the number types it defines.
 \end{itemize}
 
 The \ccc{Arr_conic_traits_2} models the \ccc{ArrangementTraits_2} and
-the \ccc{ArrangementLandmarkTraits_2} concepts. (It supports
+\ccc{ArrangementLandmarkTraits_2} concepts. (It supports
 the landmark point-location strategy). Its \ccc{Point_2} type is
 derived from \ccc{AlgKernel::Point_2}, while the \ccc{Curve_2}
 type represents a bounded, not necessarily $x$-monotone, conic arc.
@@ -834,9 +850,8 @@ multiplicity $1$:
 %---------------------------------------------------------
 
 The traits class
-\ccc{Arr_rational_function_traits_2<AlgebraicKernel_d_1>} is a model
-of the \ccc{ArrangementTraits_2} concept. It handles bounded and
-unbounded arcs of rational functions, referred to as
+\ccc{Arr_rational_function_traits_2<AlgebraicKernel_d_1>} handles
+bounded and unbounded arcs of rational functions, referred to as
 \emph{rational arcs} (in particular, such an arc may correspond to the
 entire graph of a rational function), and enables the construction and
 maintenance of arrangements of such arcs. Rational functions, and
@@ -844,6 +859,16 @@ polynomial functions in particular, are not only interesting in their
 own right, they are also very useful for approximating or
 interpolating more complicated curves; see,
 e.g.,~\cite[Chapter~3]{cgal:ptvf-nrcpp-02}.
+
+\ccc{Arr_rational_function_traits_2<AlgebraicKernel_d_1>} is a model
+of the concepts \ccc{ArrangementTraits_2},
+\ccc{ArrangementOpenBoundaryTraits_2}, and
+\ccc{ArrangementDirectionalXMonotoneTraits_2}; the later enables
+Boolean set operations. Note that it is not a model of
+\ccc{ArrangementLandmarkTraits_2} concept, so it is impossible to use
+the landmark point-location strategy with this traits class.
+%\footnote{This requires a relaxation of \ccc{ArrangementLandmarkTraits_2}, 
+%which will be submitted separately.}
 
 A rational function $y = \frac{P(x)}{Q(x)}$ is defined by two
 polynomials $P$ and $Q$ of arbitrary degrees.  If $Q(x) = 1$ then
@@ -902,16 +927,6 @@ $P/Q$ and $P'/Q'$ are identical. You can construct the rational arc
 providing the coefficients of $P'$ and $Q'$ to the constructor. In this
 case the constructor normalizes the coefficients and stores the desired
 polynomials $P$ and $Q$.
-
-\ccc{Arr_rational_function_traits_2<AlgebraicKernel_d_1>} is a model
-of the concepts \ccc{ArrangementTraits_2},
-\ccc{ArrangementOpenBoundaryTraits_2}, and
-\ccc{ArrangementDirectionalXMonotoneTraits_2}; the later enables
-Boolean set operations. Note that it is not a model of
-\ccc{ArrangementLandmarkTraits_2} concept, so it is not possible to
-use the landmark point-location strategy.
-%\footnote{This requires a relaxation of \ccc{ArrangementLandmarkTraits_2}, 
-%which will be submitted separately.}
 
 \begin{figure}[h]
 \begin{ccTexOnly} 
@@ -1008,7 +1023,7 @@ See the Reference Manual for the exact interface of the \ccc{Point_2},
 
 The \ccc{Arr_Bezier_curve_traits_2} is a model of the
 \ccc{ArrangementTraits_2} concept (but not of the
-\ccc{ArrangementLandmarkTraits_2} concept, so it is not possible
+\ccc{ArrangementLandmarkTraits_2} concept, so it is impossible
 to use the landmark point-location strategy for arrangements of
 rational arcs).
 
@@ -1065,7 +1080,7 @@ we support unbounded curves, vertical curves or segments, and isolated points.
 
 The \ccc{Arr_algebraic_segment_traits_2<Coefficient>} class template 
 is a model of the \ccc{ArrangementTraits_2} concept (but not of the
-\ccc{ArrangementLandmarkTraits_2} concept, so it is not possible
+\ccc{ArrangementLandmarkTraits_2} concept, so it is impossible
 to use the landmark point-location strategy for arrangements of
 algebraic curves).
 The template argument \ccc{Coefficient} determines 

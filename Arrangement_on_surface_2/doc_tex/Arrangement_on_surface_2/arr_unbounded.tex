@@ -196,8 +196,8 @@ rectangle and a single unbounded face bounded by the imaginary
 bounding rectangle. 
 
 Summarizing the above, there are four types of arrangement vertices,
-which differ from one another by their location on the imaginary
-bounding rectangle:
+which differ from one another by their location with respect to the
+imaginary bounding rectangle:
 \begin{enumerate}
 \item\label{type-normal}
   A vertex, associated with a point in $\real^2$ whose
@@ -254,15 +254,11 @@ Section~\ref{arr_ssec:traverse}:
   with the vertex has a finite $x$-coordinate or a finite
   $y$-coordinate, respectively. The former returns
   \ccc{ARR_LEFT_BOUNDARY} if the $x$-coordinate of the point
-  approaches $-\infty$ (the vertex lies on the left side of the
-  imaginary bounding rectangle) and \ccc{ARR_RIGHT_BOUNDARY} if the
-  $x$-coordinate approaches $\infty$ (the vertex lies on the right
-  side of the imaginary bounding rectangle). The latter returns
+  approaches $-\infty$ and \ccc{ARR_RIGHT_BOUNDARY} if the
+  $x$-coordinate approaches $\infty$. The latter returns
   \ccc{ARR_BOTTOM_BOUNDARY} if the $y$-coordinate of the point
-  approaches $-\infty$ (the vertex lies on the bottom side of the
-  imaginary bounding rectangle) and \ccc{ARR_TOP_BOUNDARY} if the
-  $y$-coordinate approaches $\infty$ (the vertex lies on the top side
-  of the imaginary bounding rectangle). The Boolean predicate
+  approaches $-\infty$ and \ccc{ARR_TOP_BOUNDARY} if the
+  $y$-coordinate approaches $\infty$. The Boolean predicate
   \ccc{is_at_open_boundary()} is also supported. You can access the
   point associated with a vertex only if it is not a vertex at an open
   boundary (recall that a vertex at an open boundary is not associated
