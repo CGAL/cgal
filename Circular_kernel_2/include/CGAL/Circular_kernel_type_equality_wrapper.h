@@ -31,7 +31,7 @@
 #include <CGAL/Circular_arc_2.h>
 #include <CGAL/Circular_arc_point_2.h>
 #include <CGAL/Line_arc_2.h>
-#include <CGAL/Root_of_2.h>
+#include <CGAL/Root_of_traits.h>
 
 
 namespace CGAL {
@@ -49,13 +49,10 @@ struct Circular_kernel_type_equality_wrapper
     typedef CGAL::Line_arc_2<Kernel>                   Line_arc_2;
     typedef CGAL::Circular_arc_point_2<Kernel>         Circular_arc_point_2;
 
-    //typedef CGAL::Root_of_2<typename Kernel_base::FT>  Root_of_2;
-    
-	//Something has to be done with these 3, maybe a lazy Algebraic kernel?
+    //Something has to be done with these 3, maybe a lazy Algebraic kernel?
 	   
     //typedef Polynomial_for_circles_2_2<Kernel>   Polynomial_for_circles_2_2;
     //typedef Polynomial_1_2<Kernel>               Polynomial_1_2;
-    //typedef Root_of_2<Kernel>                    Root_of_2;   
 };
 
 } //namespace CGAL

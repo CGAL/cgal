@@ -26,7 +26,7 @@
 #define CGAL_ALGEBRAIC_KERNEL_FOR_CIRCLES_2_2_H
 
 #include <CGAL/Quotient.h>
-#include <CGAL/Root_of_2.h>
+#include <CGAL/Root_of_traits.h>
 #include <CGAL/Polynomials_2_2.h>
 #include <CGAL/Polynomials_1_2.h>
 #include <CGAL/Root_for_circles_2_2.h>

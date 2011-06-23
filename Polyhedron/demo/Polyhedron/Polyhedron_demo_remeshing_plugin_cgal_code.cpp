@@ -296,6 +296,8 @@ Scene_item* cgal_code_remesh(QWidget* parent,
   { // new scope for the initialization, so that the vector
     // polyhedron_points is destroyed as soon as the initialization is
     // finished
+    typedef Kernel::Point_3 Point;
+
     std::vector<Point> polyhedron_points;
     polyhedron_points.reserve(pMesh->size_of_vertices());
     std::copy(pMesh->points_begin(), pMesh->points_end(), 

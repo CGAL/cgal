@@ -12,8 +12,8 @@
 #include <cmath>
 
 #include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
-typedef CGAL::Exact_predicates_inexact_constructions_kernel Kernel;
-typedef Kernel::Plane_3 Plane_3;
+typedef CGAL::Exact_predicates_inexact_constructions_kernel Kernel_epic;
+typedef Kernel_epic::Plane_3 Plane_3;
 
 class SCENE_BASIC_OBJECTS_EXPORT Scene_plane_item 
   : public Scene_item

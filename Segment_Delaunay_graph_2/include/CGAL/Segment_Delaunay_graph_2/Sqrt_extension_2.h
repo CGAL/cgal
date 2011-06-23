@@ -23,7 +23,7 @@
 #ifndef CGAL_SEGMENT_DELAUNAY_GRAPH_2_SQRT_EXTENSION_2_H
 #define CGAL_SEGMENT_DELAUNAY_GRAPH_2_SQRT_EXTENSION_2_H
 
-#include <CGAL/Segment_Delaunay_graph_2/Sqrt_extension_1.h>
+#include <CGAL/Sqrt_extension.h>
 
 
 
@@ -36,7 +36,7 @@ class Sqrt_extension_2
 {
 private:
   typedef Sqrt_extension_2<NT>  Self;
-  typedef Sqrt_extension_1<NT>  Sqrt_1;
+  typedef Sqrt_extension<NT,NT,Tag_true>  Sqrt_1;
 
   NT a0_, a1_, a2_, a3_;
   NT A_, B_;

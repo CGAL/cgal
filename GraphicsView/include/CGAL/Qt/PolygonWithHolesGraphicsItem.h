@@ -135,8 +135,8 @@ PolygonWithHolesGraphicsItem<P>::boundingRect() const
 template <typename P>
 void 
 PolygonWithHolesGraphicsItem<P>::paint(QPainter *painter, 
-				       const QStyleOptionGraphicsItem *option,
-				       QWidget * widget)
+				       const QStyleOptionGraphicsItem */*option*/,
+				       QWidget * /*widget*/)
 {
   Converter<Traits> convert;
   QPainterPath border;

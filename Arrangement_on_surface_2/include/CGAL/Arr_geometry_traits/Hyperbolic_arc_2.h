@@ -23,7 +23,6 @@
 /*! \file
  * Header file for the _Hyperbolic_arc_2<Kernel, Filter> class.
  */
-#include <CGAL/Arr_traits_2/One_root_number.h>
 #include <CGAL/Arr_traits_2/Circle_segment_2.h>
 #include <CGAL/Bbox_2.h>
 #include <CGAL/Handle_for.h>

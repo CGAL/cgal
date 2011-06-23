@@ -53,7 +53,6 @@
 #include <CGAL/Quotient_fwd.h>
 
 #include <CGAL/Kernel/mpl.h>      // First_if_different
-#include <CGAL/known_bit_size_integers.h>
 #include <CGAL/enum.h>            // CGAL::Sign etc.
 #include <CGAL/tags.h>            // Tag_true / Tag_false
 
@@ -86,7 +85,6 @@
 #include <CGAL/long_long.h>
 #endif
 
-#include <CGAL/Root_of_traits.h>
 
 
 #ifdef CGAL_USE_GMP

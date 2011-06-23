@@ -20,7 +20,9 @@ public:
   ~Scene_nef_polyhedron_item();
 
   Scene_nef_polyhedron_item* clone() const;
+  bool load_from_off(std::istream& in);
   bool load(std::istream& in);
+  bool save(std::ostream& in) const;
 
   QFont font() const;
   QString toolTip() const;

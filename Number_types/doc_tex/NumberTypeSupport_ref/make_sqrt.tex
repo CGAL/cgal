@@ -1,0 +1,22 @@
+\begin{ccRefFunction}{make_sqrt<RT>}
+
+\ccDefinition
+
+The function \ccRefName\ constructs a square root of a given value of type $RT$. 
+Depending on the type $RT$ the square root may be returned in a new type that 
+can represent algebraic extensions of degree $2$.
+
+\ccInclude{CGAL/Root_of_traits.h}
+
+\ccFunction{template <typename RT> Root_of_traits<RT>::Root_of_2 make_sqrt(const RT& x);}{
+  Returns $\sqrt{x}.$
+\ccPrecond{\ccc{RT} is a \ccc{RealEmbeddable} \ccc{IntegralDomain}.}
+\ccPrecond{ $x \leq 0 $}
+}
+
+\ccSeeAlso
+\ccRefIdfierPage{RootOf_2}\\
+\ccRefIdfierPage{CGAL::make_root_of_2<RT>}\\
+\ccRefIdfierPage{CGAL::Root_of_traits<RT>}\\
+
+\end{ccRefFunction}

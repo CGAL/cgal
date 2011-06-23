@@ -972,7 +972,7 @@ void Texture::GenerateHStripes(unsigned int width,
 //***************************************
 void Texture::GenerateGrid(unsigned int width,
 			   unsigned int height, 
-			   int size,
+			   int /*size*/,
 			   unsigned int thickness,
 			   unsigned char r,
 			   unsigned char g,
@@ -1016,7 +1016,7 @@ void Texture::GenerateGrid(unsigned int width,
 
 void Texture::GenerateGradientH(unsigned int width,
 				unsigned int height,
-				int size)
+				int /*size*/)
 {
   Alloc(width,height,24);
 
@@ -1034,7 +1034,7 @@ void Texture::GenerateGradientH(unsigned int width,
 }
 void Texture::GenerateGradientV(unsigned int width,
 				unsigned int height,
-				int size)
+				int /*size*/)
 {
   Alloc(width,height,24);
 

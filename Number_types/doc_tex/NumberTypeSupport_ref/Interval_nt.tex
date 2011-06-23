@@ -29,7 +29,7 @@ So each variable is an interval representing any value inside the interval.
 All arithmetic operations (+, -, $*$, $/$, $\sqrt{}$, \ccc{square()},
 \ccc{min()}, \ccc{max()} and \ccc{abs()}) on intervals preserve the inclusion.
 This property can be expressed by the following formula ($x$ and $y$ are
-reals, $X$ and $Y$ are intervals, $\mathcal{OP}$ is an arithmetic operation):
+real, $X$ and $Y$ are intervals, $\mathcal{OP}$ is an arithmetic operation):
 
 $$
 \forall\ x \in X, \forall\ y \in Y, (x\ \mathcal{OP}\ y)
@@ -118,7 +118,7 @@ The comparison operators ($<$, $>$, $<=$, $>=$, $==$, $!=$, \ccc{sign()}
 and \ccc{compare()}) have the following semantic: it is the intuitive
 one when for all couples of values in both intervals, the comparison
 is identical (case of non-overlapping intervals).  This can be expressed
-by the following formula ($x$ and $y$ are reals, $X$ and $Y$ are
+by the following formula ($x$ and $y$ are real, $X$ and $Y$ are
 intervals, $\mathcal{OP}$ is a comparison operator):
 
 $$
@@ -134,7 +134,7 @@ $$
 Otherwise, the comparison is not safe, and we specify this by returning
 a type encoding this uncertainty, namely using \ccc{Uncertain<bool>}
 or \ccc{Uncertain<Sign>}, which
-can be probed for uncertainty explicitely, and which has a conversion to
+can be probed for uncertainty explicitly, and which has a conversion to
 the normal type (e.g. \ccc{bool}) which throws an exception when the
 conversion is not certain.  Note that each failed conversion increments
 a profiling counter (see \ccc{CGAL_PROFILE}), and then throws the exception of
@@ -159,7 +159,7 @@ type \ccc{unsafe_comparison}.
 \ccFunction{Uncertain<Sign> sign(Interval_nt i);}{}
 
 \ccTypedef{typedef Interval_nt<false>  Interval_nt_advanced;}
-{This typedef (at namespace CGAL scope) exists for backward compatibility,
+{This typedef (at namespace \cgal\ scope) exists for backward compatibility,
  as well as removing the need to remember the Boolean value for the template
  parameter.}
 
