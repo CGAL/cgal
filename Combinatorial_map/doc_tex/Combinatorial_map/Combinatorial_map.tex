@@ -1240,46 +1240,7 @@ combinatorial tetrahedron. Finally, these tetrahedron are merged.  The
 marks allow us to know which darts come from the first and second
 tetrahedron.
 
-\begin{ccExampleCode}
-  CMap_3 cm;
-  
-  // Reserve a mark
-  int mark = cm.get_new_mark();
-  if ( mark==-1 )
-    {
-      std::cerr<<"No more free mark, exit."<<std::endl;
-      exit(-1);
-    }
-  
-  // Create two tetrahedra.
-  Dart_handle dh1 = CGAL::make_combinatorial_tetrahedron(cm);  
-  Dart_handle dh2 = CGAL::make_combinatorial_tetrahedron(cm);
-
-  // 3-sew them.
-  cm.sew<3>(dh1, dh2);
-  
-  // Mark the darts belonging to the first tetrahedron.
-  for  (CMap_3::Dart_of_cell_range<3>::const_iterator 
-          it(cm.darts_of_cell<3>(dh1).begin()),
-          itend(cm.darts_of_cell<3>(dh1).end()); it!=itend; ++it)
-    cm.mark(it, mark);
-
-  // Remove the common 2-cell between the two tetrahedra:
-  // the two tetrahedra are merged.
-  CGAL::remove_cell<CMap_3, 2>(cm, dh1);
-
-  // Thanks to the mark, we know which darts come from the first tetrahedron.
-  unsigned int res=0;
-  for (CMap_3::Dart_range::const_iterator it(cm.darts().begin()),
-	 itend(cm.darts().end()); it!=itend; ++it)
-    {
-      if ( cm.is_marked(it, mark) )
-	++res;
-    }
-  
-  std::cout<<"Number of darts from the first tetrahedron: "<<res<<std::endl;
-  cm.free_mark(mark);
-\end{ccExampleCode}
+\ccIncludeExampleCode{Combinatorial_map/map_3_marks.cpp}
 
 \end{ccAdvanced}
 
@@ -1674,47 +1635,7 @@ second loop enumerates all the darts of the facet incident to dart
 \ccc{dh1} and to the first tetrahedron by using the range
 \ccc{Dart_of_orbit_range<1>}.
 
-\begin{ccExampleCode}
-  typedef CGAL::Combinatorial_map<3> CMap_3; 
-  typedef CMap_3::Dart_const_handle Dart_const_handle;
-
-  int main() 
-  { 
-    CMap_3 cm;
-
-    // Create two tetrahedra.  
-    Dart_const_handle dh1 = CGAL::make_combinatorial_tetrahedron(cm); 
-    Dart_const_handle dh2 = CGAL::make_combinatorial_tetrahedron(cm);
-  
-    // Display the combinatorial map characteristics.
-    cm.display_characteristics(std::cout); 
-    std::cout<<", valid="<<cm.is_valid()<<std::endl;
-  
-    unsigned int res = 0; 
-    // Iterate over all the darts of the first tetrahedron.  
-    // Note that CMap_3::Dart_of_orbit_range<1,2> in 3D is equivalent to 
-    // CMap_3::Dart_of_cell_range<3>.  
-    for  (CMap_3::Dart_of_orbit_range<1,2>::const_iterator
-          it(cm.darts_of_orbit<1,2>(dh1).begin()),
-          itend(cm.darts_of_orbit<1,2>(dh1).end()); it!=itend; ++it) 
-       ++res;
-
-    std::cout<<"Number of darts of the first tetrahedron: "
-             <<res<<std::endl;
-
-    res = 0; 
-    // Iterate over all the darts of the facet incident to dh2.  
-    for (CMap_3::Dart_of_orbit_range<1>::const_iterator
-         it(cm.darts_of_orbit<1>(dh2).begin()),
-         itend(cm.darts_of_orbit<1>(dh1).end()); it!=itend; ++it) 
-       ++res;
-  
-    std::cout<<"Number of darts of the facet containing dh2: "
-             <<res<<std::endl; 
-
-    return EXIT_SUCCESS;
-}
-\end{ccExampleCode}
+\ccIncludeExampleCode{Combinatorial_map/map_3_simple_example.cpp}
 
 The output is:
 \begin{verbatim}
@@ -1761,71 +1682,7 @@ we remove the inserted 2-cell, then the two inserted 1-cells. We get
 back the initial combinatorial hexahedron, which is verified by displaying once
 again the characteristics of the combinatorial map.
 
-\begin{ccExampleCode}
-typedef CGAL::Combinatorial_map<3> CMap_3;
-typedef CMap::Dart_handle          Dart_handle;
-
-int main()
-{
-  CMap cm;
-
-  // Create a cuboidal cell.
-  Dart_handle dh1 = CGAL::make_hexahedral_cell(cm);
-
-  // Add two 1-cells along two opposite 2-cells.
-  CGAL_assertion( CGAL::is_insertable_cell_1_in_cell_2
-                        (cm,dh1->beta(1),dh1->beta(0)) );
-
-  CGAL::insert_cell_1_in_cell_2(cm,dh1->beta(1),dh1->beta(0));
-  CGAL_assertion( cm.is_valid() );
-
-  Dart_handle dh2=dh1->beta(2)->beta(1)->beta(1)->beta(2);
-  CGAL_assertion( CGAL::is_insertable_cell_1_in_cell_2
-                        (cm,dh2,dh2->beta(1)->beta(1)) );
-
-  CGAL::insert_cell_1_in_cell_2(cm,dh2,dh2->beta(1)->beta(1));
-  CGAL_assertion( cm.is_valid() );
-
-  // Insert a 2-cell along these two new 1-cells 
-  // plus two initial 1-cells of the cuboidal cell.
-  std::vector<Dart_handle> path;
-  path.push_back(dh1->beta(1));
-  path.push_back(dh1->beta(0)->beta(2)->beta(1));
-  path.push_back(dh2->beta(0));
-  path.push_back(dh2->beta(2)->beta(1));
-
-  CGAL_assertion( CGAL::is_insertable_cell_2_in_cell_3
-                        (cm,path.begin(),path.end()) );
-  
-  Dart_handle dh3=CGAL::insert_cell_2_in_cell_3
-                        (cm,path.begin(),path.end());
-  CGAL_assertion( cm.is_valid() );
-  
-  // Display the combinatorial map characteristics.
-  cm.display_characteristics(std::cout) 
-       << ", valid=" << cm.is_valid() << std::endl;
-
-  // We use the removal operations to get back 
-  // to the initial cuboidal cell.
-  CGAL_assertion( CGAL::is_removable<CMap_3, 2>(cm,dh3) );
-  CGAL::remove_cell<CMap_3, 2>(cm,dh3);
-  CGAL_assertion( cm.is_valid() );
-
-  CGAL_assertion( CGAL::is_removable<CMap_3, 1>(cm,dh1->beta(1)) );
-  CGAL::remove_cell<CMap_3, 1>(cm,dh1->beta(1));
-  CGAL_assertion( cm.is_valid() );
-
-  CGAL_assertion( CGAL::is_removable<CMap_3, 1>(cm,dh2->beta(0)) );
-  CGAL::remove_cell<CMap_3, 1>(cm,dh2->beta(0));
-  CGAL_assertion( cm.is_valid() );
-  
-  // Display the combinatorial map characteristics.
-  cm.display_characteristics(std::cout) 
-        << ", valid=" << cm.is_valid() << std::endl;
-
-  return EXIT_SUCCESS;
-}
-\end{ccExampleCode}
+\ccIncludeExampleCode{Combinatorial_map/map_3_operations.cpp}
 
 The output is:
 \begin{verbatim}
@@ -1908,49 +1765,7 @@ simplex, we must create five 3D simplexes, and sew them correctly
 two by two by $\beta_3$ (and so on if you want to create higher
 dimensional combinatorial map).
 
-\begin{ccExampleCode}
-typedef CGAL::Combinatorial_map<4> CMap_4;
-typedef CMap_4::Dart_handle Dart_handle;
-
-Dart_handle make_triangle(CMap_4& amap)
-{
- Dart_handle d1 = amap.create_dart();
- Dart_handle d2 = amap.create_dart();
- Dart_handle d3 = amap.create_dart();
- amap.link_beta<1>(d1,d2);
- amap.link_beta<1>(d2,d3);
- amap.link_beta<1>(d3,d1);
- return d1;
-}
- 
-Dart_handle make_tetrahedron(CMap_4& amap)
-{
-  Dart_handle d1 = make_triangle(amap);
-  Dart_handle d2 = make_triangle(amap);
-  Dart_handle d3 = make_triangle(amap);
-  Dart_handle d4 = make_triangle(amap);
-  amap.link_beta<2>(d1, d2);
-  amap.link_beta<2>(d3, d2->beta(0));
-  amap.link_beta<2>(d1->beta(1), d3->beta(0));
-  amap.link_beta<2>(d4, d2->beta(1));
-  amap.link_beta<2>(d4->beta(0), d3->beta(1));
-  amap.link_beta<2>(d4->beta(1), d1->beta(0));
-  return d1;
-}
-
-int main()
-{
-  CMap_4 cm;
-  Dart_handle d1 = make_tetrahedron(cm);
-  Dart_handle d2 = make_tetrahedron(cm);
-  
-  cm.sew<4>(d1,d2);
-  
-  cm.display_characteristics(std::cout);
-  std::cout<<", valid="<<cm.is_valid()<<std::endl;
-  return EXIT_SUCCESS;
-}
-\end{ccExampleCode}
+\ccIncludeExampleCode{Combinatorial_map/map_4_simple_example.cpp}
 
 The output is:
 \begin{verbatim}
@@ -1973,97 +1788,7 @@ two initial values.  When an attribute \ccc{ca1} is split in the two
 attributes \ccc{ca1} and \ccc{ca2}, the value of each attribute is
 half of the first value.
 
-\begin{ccExampleCode}
-struct Sum_functor
-{
-  template<class Cell_attribute>
-  void operator()(Cell_attribute& ca1,Cell_attribute& ca2)
-  { ca1.info()=ca1.info()+ca2.info(); }
-};
-struct Divide_by_two_functor
-{
-  template<class Cell_attribute>
-  void operator()(Cell_attribute& ca1,Cell_attribute& ca2)
-  {
-    ca1.info()=(ca1.info()/2);
-    ca2.info()=(ca1.info());
-  }
-};
-
-struct Myitem
-{
-  template<class CMap>
-  struct Dart_wrapper
-  {
-    typedef CGAL::Dart<3, CMap> Dart;
-    typedef CGAL::Cell_attribute<CMap, int, CGAL::Tag_true,
-				 Sum_functor, Divide_by_two_functor>
-                         Facet_attribute;
-    typedef CGAL::cpp0x::tuple<void,void,Facet_attribute> Attributes;
-  };
-};
-
-typedef CGAL::Combinatorial_map<3,Myitem> CMap_3;
-typedef CMap_3::Dart_handle               Dart_handle;
-
-int main()
-{
-  CMap_3 cm;
-  
-  // Create 2 cubes.
-  Dart_handle dh1 = CGAL::make_hexahedral_cell(cm);
-  Dart_handle dh2 = CGAL::make_hexahedral_cell(cm);
-
-  // 1) Create all 2-attributes and associate them to darts.
-  for (CMap_3::Dart_range::iterator 
-	 it=cm.darts().begin(), itend=cm.darts().end();
-	 it!=itend; ++it)
-    {
-      if ( it->attribute<2>()==NULL )
-	cm.set_attribute<2>(it, cm.create_attribute<2>());
-    }
-  
-  // 2) Set the info of all facets of the first cube to 7
-  for (CMap_3::Cell_of_cell_range<2, 3>::iterator 
-	 it=cm.cells_of_cell<2,3>(dh1).begin(), 
-	 itend=cm.cells_of_cell<2,3>(dh1).end(); it!=itend; ++it)
-    { it->attribute<2>()->info()=7; }
-  
-  // 3) Set the info of all facets of the second cube to 13
-  for (CMap_3::Cell_of_cell_range<2, 3>::iterator it=
-	 cm.cells_of_cell<2,3>(dh2).begin(),
-	 itend=cm.cells_of_cell<2,3>(dh2).end(); it!=itend; ++it)
-    { it->attribute<2>()->info()=13; }
-  
-  // 4) 3-Sew the two cubes along one facet
-  cm.sew<3>(dh1->beta(1)->beta(1)->beta(2), dh2->beta(2));
-
-  // 5) Display all the values of 2-attributes
-  for (CMap_3::Attribute_range<2>::type::iterator 
-	 it=cm.attributes<2>().begin(), itend=cm.attributes<2>().end(); 
-       it!=itend; ++it)
-    {
-      std::cout<<it->info()<<"; ";
-    }
-  std::cout<<std::endl;
-
-  // 6) Barycentric triangulation of the facet between the two cubes.
-  CGAL::insert_cell_0_in_cell_2(cm, dh2->beta(2));
-
-  // 7) Display all the values of 2-attributes
-  for (CMap_3::Attribute_range<2>::type::iterator 
-	 it=cm.attributes<2>().begin(), itend=cm.attributes<2>().end(); 
-       it!=itend; ++it)
-    {
-      std::cout<<it->info()<<"; ";
-    }
-  std::cout<<std::endl;
-  cm.display_characteristics(std::cout);
-  std::cout<<", valid="<<cm.is_valid()<<std::endl;
-
-  return EXIT_SUCCESS;
-}
-\end{ccExampleCode}
+\ccIncludeExampleCode{Combinatorial_map/map_3_with_colored_facets.cpp}
 
 The output is:
 \begin{verbatim}
