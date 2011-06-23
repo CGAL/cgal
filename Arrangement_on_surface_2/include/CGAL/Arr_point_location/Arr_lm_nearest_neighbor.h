@@ -131,6 +131,8 @@ public:
    */
   struct Construct_coord_iterator
   {
+    typedef ANT*                                        result_type;
+    
     /*! Get an iterator for the approximate coordinates. */
     const ANT* operator() (const NN_Point_2& nnp) const
     {
