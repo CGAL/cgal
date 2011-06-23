@@ -151,11 +151,6 @@ public:
     p_polyY(NULL),
     p_normY(NULL)
   {
-    CGAL_precondition_code (
-        Rat_kernel                    ker;
-        typename Rat_kernel::Equal_2  equal = ker.equal_2_object();
-    );
-
     // Copy the control points and compute their bounding box.
     const int   pts_size = std::distance (pts_begin, pts_end);
     double      x, y;

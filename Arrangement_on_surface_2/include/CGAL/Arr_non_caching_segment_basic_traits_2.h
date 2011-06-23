@@ -196,10 +196,6 @@ public:
       Kernel kernel;
 
       // The two segments must be defined at q and also to its right.
-      CGAL_precondition_code(
-        Compare_y_at_x_2 compare_y_at_x = kernel.compare_y_at_x_2_object();
-        );
-
       CGAL_precondition
         (Segment_assertions::_assert_is_point_on(p, cv1, Has_exact_division())&&
          Segment_assertions::_assert_is_point_on(p, cv2, Has_exact_division()));
