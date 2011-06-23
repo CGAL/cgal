@@ -1362,7 +1362,6 @@ Combinatorial_map/doc_tex/Combinatorial_map_ref/Dart.tex -text
 Combinatorial_map/doc_tex/Combinatorial_map_ref/Dart_base.tex -text
 Combinatorial_map/doc_tex/Combinatorial_map_ref/intro.tex -text
 Combinatorial_map/doc_tex/Combinatorial_map_ref/main.tex -text
-Combinatorial_map/doc_tex/wrapper.tex -text
 Combinatorial_map/dont_submit -text
 Combinatorial_map/examples/Combinatorial_map/CMakeLists.txt -text
 Combinatorial_map/examples/Combinatorial_map/map_3_marks.cpp -text
@@ -1390,10 +1389,6 @@ Combinatorial_map/test/Combinatorial_map/CMakeLists.txt -text
 Combinatorial_map/test/Combinatorial_map/Combinatorial_map_2_test.h -text
 Combinatorial_map/test/Combinatorial_map/Combinatorial_map_3_test.h -text
 Combinatorial_map/test/Combinatorial_map/Combinatorial_map_test.cpp -text
-Combinatorial_map/test/Combinatorial_map/data/aircraft.off -text
-Combinatorial_map/test/Combinatorial_map/data/points -text
-Combinatorial_map/test/Combinatorial_map/data/small_points -text
-Combinatorial_map/test/Combinatorial_map/data/small_points2 -text
 Convex_decomposition_3/demo/Convex_decomposition_3/star.nef3 -text
 Convex_decomposition_3/doc_tex/Convex_decomposition_3/PkgDescription.tex -text
 Convex_decomposition_3/doc_tex/Convex_decomposition_3/fig/teaser.png -text
