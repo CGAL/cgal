@@ -52,10 +52,11 @@
 %% +---------------------------------------------+
 
 \begin{ccRefFunction}{cpp0x::copy_n}
-  There is actually no class in namespace \ccc{CGAL::cpp0x} with this name, but a using declaration which
-  imports a function from another namespace. By order of priority: the one in namespace
-  \ccc{std} is used (provided by C++0x), if not found, then the one in namespace
-  \ccc{CGAL} is used.
+  There is actually no class in namespace \ccc{CGAL::cpp0x} with this
+  name, but a using declaration which imports a function from another
+  namespace. By order of priority: the one in namespace \ccc{std} is
+  used (provided by C++0x), if not found, a replacement
+  implementation is used.
 
   \ccDefinition The function \ccRefName\ copies $n$ items from an
   input iterator to an output iterator. Its exact behaviour is
