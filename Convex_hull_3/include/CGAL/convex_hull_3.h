@@ -692,7 +692,7 @@ ch_quickhull_polyhedron_3(std::list<typename Traits::Point_3>& points,
   
   typename Traits::Coplanar_3  coplanar = traits.coplanar_3_object(); 
   // find both min and max here since using signed distance.  If all points
-  // are on the negative side of ths plane, the max element will be on the
+  // are on the negative side of the plane, the max element will be on the
   // plane.
   std::pair<P3_iterator, P3_iterator> min_max;
   min_max = CGAL::min_max_element(points.begin(), points.end(), 
@@ -740,6 +740,8 @@ ch_quickhull_polyhedron_3(std::list<typename Traits::Point_3>& points,
       internal::Build_convex_hull_from_TDS_2<typename Polyhedron_3::HalfedgeDS,Tds> builder(tds);
       P.delegate(builder);
     }
+    else
+      P.make_tetrahedron(v0->point(),v1->point(),v2->point(),v3->point());
   }
   
 }
@@ -845,8 +847,18 @@ convex_hull_3(InputIterator first, InputIterator beyond,
   } else {
     internal::Convex_hull_3::ch_quickhull_polyhedron_3(points, point1_it, point2_it, point3_it, P, traits);
   }
-  ch_object = make_object(P);
-  //std::cout << "|V| = " << P.size_of_vertices() << std::endl;
+  CGAL_assertion(P.size_of_vertices()>=3);
+  if (boost::next(P.vertices_begin(),3) == P.vertices_end()){
+    typedef typename Traits::Triangle_3                Triangle_3;
+    typename Traits::Construct_triangle_3 construct_triangle =
+           traits.construct_triangle_3_object();
+    Triangle_3 tri = construct_triangle(P.halfedges_begin()->vertex()->point(), 
+                                        P.halfedges_begin()->next()->vertex()->point(),
+                                        P.halfedges_begin()->opposite()->vertex()->point());
+    ch_object = make_object(tri);
+  }
+  else
+    ch_object = make_object(P);
 }
 
 
