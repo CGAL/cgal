@@ -168,7 +168,6 @@ public:
       // Make sure that p lies on the interior of the curve.
       CGAL_precondition_code (
         Compare_xy_2 compare_xy = base.compare_xy_2_object();
-        Compare_y_at_x_2 compare_y_at_x = base.compare_y_at_x_2_object();
       );
 
       Construct_min_vertex_2 min_vertex = base.construct_min_vertex_2_object();
