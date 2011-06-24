@@ -130,6 +130,17 @@ CGAL 3.9 offers the following improvements and new functionality :  </p>
       <li>Using a property map, sorting on keys instead of points is now easier</li> 
 </ul>
 
+<h3>dD Spatial Searching (major new feature added)</h3>
+<ul>
+      <li>A traits-class and distance adapter that together with a point property map,
+       allow to make nearest neighbor queries on keys instead of points have been added.</li> 
+      <li>Few bug fixes in the documentation have revealed some inconsistencies 
+      that have been corrected. Two traits class concept are now documented (RangeSearchTraits 
+      and SearchTraits). Most other changes concerns only classes documented as advanced. 
+      One issue that user can encounter is due to an additional requirement on the nested 
+      class Construct_cartesian_const_iterator_d defined in the concept SearchTraits that must 
+      provide a nested type result_type.</li>
+</ul>
 <h3>dD Kernel</h3>
 <ul>
       <li>The d-dimensional kernel concept and models have been modified 
