@@ -96,7 +96,7 @@ template <class Vertex_handle>
 struct Construct_cartesian_const_iterator_vertex_handle_3
 {
   typedef CGAL::Point_vertex_handle_3<Vertex_handle> Point_vertex_handle_3;
-
+  typedef const double* result_type;
   const double* operator()(const Point_vertex_handle_3& p) const
   { return static_cast<const double*>(p.m_coord); }
 
