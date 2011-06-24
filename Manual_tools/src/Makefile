@@ -217,7 +217,7 @@ cpinstall:
 	install -m 644 ${BIB_CONFIG_FILES} "${LATEX_CONV_CONFIG}/html/Biblio"
 
 mvinstall: ${PROGRAM_FILES}
-	install ${PROGRAM_FILES} ${LATEX_CONV_BIN}
+	install ${PROGRAM_FILES} "${LATEX_CONV_BIN}"
 
 install: rminstall pathinstall cpinstall mvinstall refinstall gifinstall
 

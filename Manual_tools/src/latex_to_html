@@ -649,8 +649,8 @@ d
 
 # Read resource file
 # ------------------
-if [ -r ${LATEX_CONV_RESOURCE} ]; then
-  source ${LATEX_CONV_RESOURCE}
+if [ -r "${LATEX_CONV_RESOURCE}" ]; then
+  source "${LATEX_CONV_RESOURCE}"
 fi
 
 
