@@ -26,11 +26,11 @@ Darts and non void attributes are stored in memory using
 \ccParameters
 \ccc{d} an integer for the dimension of the map.\\
 \ccc{Items} must be a model of the \ccc{CombinatorialMapItems} concept. \\
-\ccc{Alloc} must be a standard allocator for \stl\ container classes.
+\ccc{Alloc} has to match the standard allocator requirements. The  \ccc{rebind} mechanism from \ccc{Alloc} will be used to create appropriate allocators internally with value type \ccc{Dart}.
 
 There are two default template arguments:
 \ccc{Combinatorial_map_min_items<d>} for \ccc{Items} and
-\ccc{CGAL_ALLOCATOR(int)} for \ccc{Alloc}.
+\ccc{CGAL_ALLOCATOR(int)} from the \ccc{<CGAL/memory.h>} header file for \ccc{Alloc}.
 
 \ccTypes
 \ccThree{typedef Combinatorial_map<d,Items,Alloc>}{}{}
