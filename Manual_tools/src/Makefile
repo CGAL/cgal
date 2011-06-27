@@ -194,30 +194,30 @@ cc_remove_unwanted_links : cc_remove_unwanted_links.o
 # Installation Targets:
 # =====================================================================
 rminstall:
-	test -d ${LATEX_CONV_CONFIG} || rm -fr ${LATEX_CONV_CONFIG}
+	test -d "${LATEX_CONV_CONFIG}" || rm -fr "${LATEX_CONV_CONFIG}"
 
 pathinstall:
-	test -d ${LATEX_CONV_CONFIG}      || mkdir ${LATEX_CONV_CONFIG}
-	test -d ${LATEX_CONV_CONFIG}/html || mkdir ${LATEX_CONV_CONFIG}/html
-	test -d ${LATEX_CONV_CONFIG}/html/style || mkdir ${LATEX_CONV_CONFIG}/html/style
-	test -d ${LATEX_CONV_CONFIG}/html/Biblio || mkdir ${LATEX_CONV_CONFIG}/html/Biblio
-	test -d ${LATEX_CONV_CONFIG}/gif  || mkdir ${LATEX_CONV_CONFIG}/gif
-	test -d ${LATEX_CONV_CONFIG}/ref_pages|| mkdir ${LATEX_CONV_CONFIG}/ref_pages
+	test -d "${LATEX_CONV_CONFIG}"      || mkdir "${LATEX_CONV_CONFIG}"
+	test -d "${LATEX_CONV_CONFIG}/html" || mkdir "${LATEX_CONV_CONFIG}/html"
+	test -d "${LATEX_CONV_CONFIG}/html/style" || mkdir "${LATEX_CONV_CONFIG}/html/style"
+	test -d "${LATEX_CONV_CONFIG}/html/Biblio" || mkdir "${LATEX_CONV_CONFIG}/html/Biblio"
+	test -d "${LATEX_CONV_CONFIG}/gif"  || mkdir "${LATEX_CONV_CONFIG}/gif"
+	test -d "${LATEX_CONV_CONFIG}/ref_pages" || mkdir "${LATEX_CONV_CONFIG}/ref_pages"
 
 gifinstall:
-	install -m 644 ${GIF_CONFIG_FILES}  ${LATEX_CONV_CONFIG}/gif
+	install -m 644 ${GIF_CONFIG_FILES}  "${LATEX_CONV_CONFIG}/gif"
 
 refinstall:
-	install -m 644 ${REF_CONFIG_FILES}  ${LATEX_CONV_CONFIG}/ref_pages
+	install -m 644 ${REF_CONFIG_FILES}  "${LATEX_CONV_CONFIG}/ref_pages"
 
 cpinstall:
-	install ${SCRIPT_FILES}  ${LATEX_CONV_BIN}
-	install -m 644 ${HTML_CONFIG_FILES} ${LATEX_CONV_CONFIG}/html
-	install -m 644 ${HTML_STYLE_IMAGES} ${LATEX_CONV_CONFIG}/html/style
-	install -m 644 ${BIB_CONFIG_FILES} ${LATEX_CONV_CONFIG}/html/Biblio
+	install ${SCRIPT_FILES}  "${LATEX_CONV_BIN}"
+	install -m 644 ${HTML_CONFIG_FILES} "${LATEX_CONV_CONFIG}/html"
+	install -m 644 ${HTML_STYLE_IMAGES} "${LATEX_CONV_CONFIG}/html/style"
+	install -m 644 ${BIB_CONFIG_FILES} "${LATEX_CONV_CONFIG}/html/Biblio"
 
 mvinstall: ${PROGRAM_FILES}
-	install ${PROGRAM_FILES} ${LATEX_CONV_BIN}
+	install ${PROGRAM_FILES} "${LATEX_CONV_BIN}"
 
 install: rminstall pathinstall cpinstall mvinstall refinstall gifinstall
 

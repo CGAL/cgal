@@ -114,16 +114,27 @@ CGAL 3.9 offers the following improvements and new functionality :  </p>
   <li>Various fixes in the manual.</li>
 </ul>
 
-  <h3>dD Kernel</h3>
-      <li>The d-dimensional kernel concept and models have been modified 
-          to additionally provide two new functors Less_coordinate_d and Point_dimension_d.</li>
-  <h3>Spatial_sorting  (major new feature added)</h3>
+<h3>Combinatorial_map (major new feature added)</h3>
+<ul>
+  <li>A new combinatorial data structure allowing to describe any orientable subdivided object whatever its dimension.</li>
+  <li>It describes all cells of the subdivision and all the incidence and adjacency relations between these cells.</li>
+  <li>For example it allows to describe a 3D object subdivided in vertices, edges, faces and volumes.</li>
+  <li>This package can be seen as the generalization in dD of the haldedge data structure.</li>
+</ul>
+
+<h3>Spatial_sorting  (major new feature added)</h3>
 <ul>
       <li>General dimension is now supported.</li>
       <li>Hilbert sorting admits now two policies: splitting at
       median or at middle (see user manual).</li>
       <li>Using a property map, sorting on keys instead of points is now easier</li> 
-      </ul>
+</ul>
+
+<h3>dD Kernel</h3>
+<ul>
+      <li>The d-dimensional kernel concept and models have been modified 
+          to additionally provide two new functors Less_coordinate_d and Point_dimension_d.</li>
+</ul>
 
 <h2 id="release3.8">Release 3.8 </h2>
 <DIV>

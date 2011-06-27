@@ -1,0 +1,73 @@
+% +------------------------------------------------------------------------+
+% | Reference manual page: Combinatorial_map.tex
+% +------------------------------------------------------------------------+
+% | 04.02.2010   Guillaume Damiand
+% | Package: Combinatorial_map
+% +------------------------------------------------------------------------+
+\ccRefPageBegin
+%%RefPage: end of header, begin of main body
+% +------------------------------------------------------------------------+
+
+\begin{ccRefClass}{Combinatorial_map<d,Items,Alloc>}
+\ccRefLabel{CGAL::Combinatorial_map}
+
+\ccInclude{CGAL/Combinatorial_map.h}
+
+\ccDefinition
+  
+The class \ccRefName\ represents a $d$D combinatorial map.
+
+Darts and non void attributes are stored in memory using
+\ccc{CGAL::Compact_container}, using \ccc{Alloc} as allocator.
+
+\ccIsModel
+\ccRefConceptPage{CombinatorialMap}
+
+\ccParameters
+\ccc{d} an integer for the dimension of the map.\\
+\ccc{Items} must be a model of the \ccc{CombinatorialMapItems} concept. \\
+\ccc{Alloc} has to match the standard allocator requirements. The  \ccc{rebind} mechanism from \ccc{Alloc} will be used to create appropriate allocators internally with value type \ccc{Dart}.
+
+There are two default template arguments:
+\ccc{Combinatorial_map_min_items<d>} for \ccc{Items} and
+\ccc{CGAL_ALLOCATOR(int)} from the \ccc{<CGAL/memory.h>} header file for \ccc{Alloc}.
+
+\ccTypes
+\ccThree{typedef Combinatorial_map<d,Items,Alloc>}{}{}
+\ccTypedef{typedef Combinatorial_map<d,Items,Alloc> Self;}{}
+\ccGlue
+\ccTypedef{typedef Items::Dart_wrapper<Self>::Dart Dart;}{}
+
+\ccHeading{Complexity}
+
+The complexity of \ccc{sew} and \ccc{unsew} is in $O(|S|\times |c|)$, $S$
+being the set of darts of the orbit
+$\orb{\mb{1},\ldots,\mb{i-2},\mb{i+2},\ldots,\mb{d}}$ for the
+considered dart, and $c$ the biggest $j$-cell merged or
+split during the sew such that $j$-attributes are non void.
+
+% The complexity of \ccc{topo_sew}, and \ccc{topo_unsew} are in
+% $O(|S|\times c)$, $S$ being the set of darts of the orbit
+% $\orb{\mb{1},\ldots,\mb{i-2},\mb{i+2},\ldots,\mb{d}}$ for the
+% considered dart.
+
+The complexity of \ccc{set_attribute} is in $O(|c|)$, $c$ being the
+$i$-cell containing the considered dart.
+
+The complexity of \ccc{unmark_all} and \ccc{free_mark} is in $O(1)$ if
+all the darts of the combinatorial map have the same mark, and in
+$O(|D|)$ otherwise, $D$ being the set of darts of the combinatorial
+map.
+
+Other methods have all a constant time complexity.
+
+\ccSeeAlso
+\ccRefConceptPage{CombinatorialMapItems}\\
+\ccRefConceptPage{Dart}\\
+
+\end{ccRefClass}
+% +------------------------------------------------------------------------+
+%%RefPage: end of main body, begin of footer
+\ccRefPageEnd
+% EOF
+% +------------------------------------------------------------------------+

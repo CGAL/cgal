@@ -113,12 +113,6 @@ MainWindow::MainWindow(QWidget* parent)
   treeView = ui->treeView;
   viewer = ui->viewer;
 
-  // Setup the submenu of the View menu that can toggle the dockwidgets
-  Q_FOREACH(QDockWidget* widget, findChildren<QDockWidget*>()) {
-    ui->menuDockWindows->addAction(widget->toggleViewAction());
-  }
-  ui->menuDockWindows->removeAction(ui->dummyAction);
-
   // do not save the state of the viewer (anoying)
   viewer->setStateFileName(QString::null);
 
@@ -288,6 +282,12 @@ MainWindow::MainWindow(QWidget* parent)
 
   // Load plugins, and re-enable actions that need it.
   loadPlugins();
+
+  // Setup the submenu of the View menu that can toggle the dockwidgets
+  Q_FOREACH(QDockWidget* widget, findChildren<QDockWidget*>()) {
+    ui->menuDockWindows->addAction(widget->toggleViewAction());
+  }
+  ui->menuDockWindows->removeAction(ui->dummyAction);
 
   readSettings(); // Among other things, the column widths are stored.
 

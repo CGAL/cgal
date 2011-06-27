@@ -25,11 +25,11 @@
 #define CGAL_IO_FILE_SCANNER_OFF_H 1
 
 #include <CGAL/basic.h>
-#include <CGAL/known_bit_size_integers.h>
 #include <cstddef>
 #include <CGAL/IO/binary_file_io.h>
 #include <CGAL/IO/File_header_OFF.h>
 #include <iostream>
+#include <boost/cstdint.hpp>
 
 #include <CGAL/Point_3.h>
 #include <CGAL/Vector_3.h>
@@ -379,7 +379,7 @@ public:
   void scan_facet( std::size_t& size, std::size_t CGAL_assertion_code(current_facet)) {
         CGAL_assertion( current_facet < size_of_facets());
         if ( binary()){
-          Integer32 i32;
+            boost::int32_t i32;
             I_Binary_read_big_endian_integer32( m_in, i32);
             size = i32;
         } else {
@@ -391,7 +391,7 @@ public:
   void scan_facet_vertex_index( std::size_t& index,
                                 std::size_t current_facet) {
     if ( binary()){
-      Integer32 i32;
+      boost::int32_t i32;
       I_Binary_read_big_endian_integer32( m_in, i32);
       index = i32;
     } else
