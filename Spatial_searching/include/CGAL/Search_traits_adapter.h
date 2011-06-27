@@ -23,6 +23,8 @@
 #include <CGAL/Kd_tree_rectangle.h>
 #include <boost/mpl/has_xxx.hpp>
 #include <CGAL/Euclidean_distance.h> //for default distance specialization
+
+#include <boost/version.hpp>
 #if BOOST_VERSION >= 104000
   #include <boost/property_map/property_map.hpp>
 #else
