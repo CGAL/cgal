@@ -103,7 +103,9 @@ public:
     PointPropertyMap ppmap;
     typedef typename Base_traits::FT  FT; // needed for VC++, because otherwise it is taken from the private typedef of the base class
 
-    Iso_box_d operator() () const {return this->Construct_iso_box_d();}
+    Iso_box_d operator() () const {
+      return static_cast<const typename Base::Construct_iso_box_d* >(this)->operator() ();
+    }
     Iso_box_d operator() (const Point_with_info& p, const Point_with_info& q, FT epsilon=FT(0)) const
     {
       return static_cast<const typename Base::Construct_iso_box_d* >(this)->operator() (get(ppmap,p),get(ppmap,q),epsilon);
