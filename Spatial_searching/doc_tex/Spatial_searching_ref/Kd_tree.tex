@@ -50,10 +50,10 @@ with value type \ccc{Point_d*}.}
 \ccCreation
 \ccCreationVariable{tree}
 
-\ccConstructor{Kd_tree(Splitter s=Splitter());}{Constructs an empty $k$-$d$ tree.}
+\ccConstructor{Kd_tree(Splitter s=Splitter(),Traits t=Traits());}{Constructs an empty $k$-$d$ tree.}
 
 \ccConstructor
-{template <class InputIterator> Kd_tree(InputIterator first, InputIterator beyond, Splitter s=Splitter());}
+{template <class InputIterator> Kd_tree(InputIterator first, InputIterator beyond, Splitter s=Splitter(),Traits t=Traits());}
 {
 Constructs a $k$-$d$ tree on the elements from the sequence 
 \ccc{[first, beyond)} using the splitting rule implemented by \ccc{s}. 
@@ -74,7 +74,9 @@ The value type of the \ccc{InputIterator} must be \ccc{Point_d}.}
 template <class OutputIterator, class FuzzyQueryItem>
 OutputIterator search(OutputIterator it, FuzzyQueryItem q);}
 {Reports the points that are approximately contained by~\ccc{q}.
-The types \ccc{FuzzyQueryItem::Point_d} and \ccc{Point_d} must be equivalent.} 
+The types \ccc{FuzzyQueryItem::Point_d} and \ccc{Point_d} must be equivalent.
+To use this function \ccc{Traits} must be a model of the concept \ccc{RangeSearchTraits}.
+} 
 
 \ccMethod{iterator begin();}{Returns an iterator to the first point in the tree.}
 \ccMethod{iterator end();}{Returns the corresponding past-the-end iterator.}
@@ -85,12 +87,14 @@ The types \ccc{FuzzyQueryItem::Point_d} and \ccc{Point_d} must be equivalent.}
 \ccMethod{unsigned int size();}
 {Returns the number of points that are stored in the tree.}
 
+\ccMethod{Traits traits() const;}{return the instance of the traits used to construct the tree.}
+
 \begin{ccAdvanced}
 
 \ccMethod{Node_handle root();}
 {Returns a handle to the root node of the tree.}
 
-\ccMethod{const Kd_tree_rectangle<Traits>& bounding_box();}{returns a const reference
+\ccMethod{const Kd_tree_rectangle<FT>& bounding_box();}{returns a const reference
 to the bounding box of the root node of the tree.}
 
 \ccMethod{std::ostream& statistics(std::ostream& s);}

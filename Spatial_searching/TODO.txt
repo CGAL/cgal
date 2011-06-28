@@ -1,0 +1,1 @@
+*in SearchTraits, FT should be comparable. Check that RT is only needed

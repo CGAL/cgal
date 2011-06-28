@@ -26,7 +26,7 @@ namespace CGAL {
 
   template <class SearchTraits>
   class Fuzzy_sphere{
-
+    SearchTraits traits;
     public:
 
     typedef typename SearchTraits::FT FT;
@@ -41,15 +41,17 @@ namespace CGAL {
 
 
     	// default constructor
-    	Fuzzy_sphere() {}
+    	Fuzzy_sphere(const SearchTraits& traits_=SearchTraits()):traits(traits_) {}
 		
 
 	// constructor
-	Fuzzy_sphere(const Point_d& center, FT radius, FT epsilon=FT(0)) : 
-          c(center), r(radius), eps(epsilon)
+	Fuzzy_sphere(const Point_d& center, FT radius, FT epsilon=FT(0),const SearchTraits& traits_=SearchTraits()) : 
+	traits(traits_),c(center), r(radius), eps(epsilon) 
 	{ 	// avoid problems if eps > r
 		if (eps>r) eps=r; 
-	} 
+                typename SearchTraits::Construct_cartesian_const_iterator_d ccci=
+                  traits.construct_cartesian_const_iterator_d_object();
+	}
         	
         bool contains(const Point_d& p) const {
 		// test whether the squared distance 
@@ -57,7 +59,8 @@ namespace CGAL {
 		// is at most the squared_radius
 		FT squared_radius = r*r;
 		FT distance=FT(0);
-		typename SearchTraits::Construct_cartesian_const_iterator_d construct_it;
+		typename SearchTraits::Construct_cartesian_const_iterator_d construct_it=
+                  traits.construct_cartesian_const_iterator_d_object();
                 typename SearchTraits::Cartesian_const_iterator_d cit = construct_it(c),
 		                                                  pit = construct_it(p),
                                                                   end = construct_it(c, 0);
@@ -71,13 +74,14 @@ namespace CGAL {
         }
 
         
-	bool inner_range_intersects(const Kd_tree_rectangle<SearchTraits>& rectangle) const {                          
+	bool inner_range_intersects(const Kd_tree_rectangle<FT>& rectangle) const {                          
                 // test whether the interior of a sphere
 		// with radius (r-eps) intersects r, i.e.
                 // if the minimal distance of r to c is less than r-eps
 		FT distance = FT(0);
 		FT squared_radius = (r-eps)*(r-eps);
-		typename SearchTraits::Construct_cartesian_const_iterator_d construct_it;
+		typename SearchTraits::Construct_cartesian_const_iterator_d construct_it=
+                  traits.construct_cartesian_const_iterator_d_object();
                 typename SearchTraits::Cartesian_const_iterator_d cit = construct_it(c),
                                                                   end = construct_it(c, 0);
 		for (int i = 0; cit != end && (distance < squared_radius); ++cit, ++i) {
@@ -93,14 +97,15 @@ namespace CGAL {
 	}
 
 
-	bool outer_range_contains(const Kd_tree_rectangle<SearchTraits>& rectangle) const { 
+	bool outer_range_contains(const Kd_tree_rectangle<FT>& rectangle) const { 
         // test whether the interior of a sphere
 	// with radius (r+eps) is contained by r, i.e.
         // if the minimal distance of the boundary of r 
         // to c is less than r+eps                         
 	FT distance=FT(0);
 	FT squared_radius = (r+eps)*(r+eps);	
-	typename SearchTraits::Construct_cartesian_const_iterator_d construct_it;
+	typename SearchTraits::Construct_cartesian_const_iterator_d construct_it=
+          traits.construct_cartesian_const_iterator_d_object();
 	typename SearchTraits::Cartesian_const_iterator_d cit = construct_it(c),
                                                           end = construct_it(c, 0);
         for (int i = 0; cit != end && (distance < squared_radius) ; ++cit,++i) {
