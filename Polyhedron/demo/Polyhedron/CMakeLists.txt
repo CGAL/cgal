@@ -156,7 +156,7 @@ if(CGAL_Qt4_FOUND AND QT4_FOUND AND OPENGL_FOUND AND QGLVIEWER_FOUND)
 
   add_library(scene_edit_polyhedron_item SHARED
     Scene_edit_polyhedron_item.cpp Scene_edit_polyhedron_item.moc)
-  target_link_libraries(scene_edit_polyhedron_item demo_framework)
+  target_link_libraries(scene_edit_polyhedron_item scene_polyhedron_item demo_framework)
 
   if(TAUCS_FOUND)
   add_library(scene_textured_polyhedron_item SHARED

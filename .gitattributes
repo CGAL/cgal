@@ -1234,12 +1234,6 @@ Circular_kernel_2/benchmark/readme.doc -text svneol=unset#application/msword
 Circular_kernel_2/benchmark/readme.pdf -text svneol=unset#application/pdf
 Circular_kernel_2/benchmark/readme.sxw -text
 Circular_kernel_2/changes -text
-Circular_kernel_2/demo/Circular_kernel_2/Qt3/README -text
-Circular_kernel_2/demo/Circular_kernel_2/Qt3/help/get_arc.jpeg -text svneol=unset#image/jpeg
-Circular_kernel_2/demo/Circular_kernel_2/Qt3/help/index.html svneol=native#text/html
-Circular_kernel_2/demo/Circular_kernel_2/Qt3/help/planar_map_icon.jpeg -text svneol=unset#image/jpeg
-Circular_kernel_2/demo/Circular_kernel_2/Qt3/help/sweeper.jpeg -text svneol=unset#image/jpeg
-Circular_kernel_2/demo/Circular_kernel_2/Qt3/help/trash.jpeg -text svneol=unset#image/jpeg
 Circular_kernel_2/doc_tex/Circular_kernel_2/fig/Boolean_operation.png -text
 Circular_kernel_2/doc_tex/Circular_kernel_2/fig/Boolean_operation_detail.png -text
 Circular_kernel_2/doc_tex/Circular_kernel_2_ref/GeomFunctorsCompute.tex -text
@@ -1289,6 +1283,8 @@ Combinatorial_map/doc_tex/Combinatorial_map/fig/intuitif-example-map2d.fig -text
 Combinatorial_map/doc_tex/Combinatorial_map/fig/intuitif-example-zoom.fig -text
 Combinatorial_map/doc_tex/Combinatorial_map/fig/intuitif-example-zoom2.fig -text
 Combinatorial_map/doc_tex/Combinatorial_map/fig/intuitif-example.fig -text
+Combinatorial_map/doc_tex/Combinatorial_map/fig/logo-cmap-small.fig -text
+Combinatorial_map/doc_tex/Combinatorial_map/fig/logo-cmap.fig -text
 Combinatorial_map/doc_tex/Combinatorial_map/fig/map2d-with-attrib.fig -text
 Combinatorial_map/doc_tex/Combinatorial_map/fig/object2d-nonmanifold.fig -text
 Combinatorial_map/doc_tex/Combinatorial_map/fig/object2d.fig -text
@@ -1355,6 +1351,8 @@ Combinatorial_map/doc_tex/Combinatorial_map/fig/png/triangulation.png -text
 Combinatorial_map/doc_tex/Combinatorial_map/fig/quasivariete.fig -text
 Combinatorial_map/doc_tex/Combinatorial_map/fig/quasivarietea.fig -text
 Combinatorial_map/doc_tex/Combinatorial_map/fig/triangulation.fig -text
+Combinatorial_map/doc_tex/Combinatorial_map/logo-combinatorial-map-small.png -text
+Combinatorial_map/doc_tex/Combinatorial_map/logo-combinatorial-map.png -text
 Combinatorial_map/doc_tex/Combinatorial_map/main.tex -text
 Combinatorial_map/doc_tex/Combinatorial_map_ref/CellAttribute.tex -text
 Combinatorial_map/doc_tex/Combinatorial_map_ref/Cell_attribute.tex -text
@@ -1368,7 +1366,6 @@ Combinatorial_map/doc_tex/Combinatorial_map_ref/Dart.tex -text
 Combinatorial_map/doc_tex/Combinatorial_map_ref/Dart_base.tex -text
 Combinatorial_map/doc_tex/Combinatorial_map_ref/intro.tex -text
 Combinatorial_map/doc_tex/Combinatorial_map_ref/main.tex -text
-Combinatorial_map/doc_tex/wrapper.tex -text
 Combinatorial_map/dont_submit -text
 Combinatorial_map/examples/Combinatorial_map/CMakeLists.txt -text
 Combinatorial_map/examples/Combinatorial_map/map_3_marks.cpp -text
@@ -1396,10 +1393,6 @@ Combinatorial_map/test/Combinatorial_map/CMakeLists.txt -text
 Combinatorial_map/test/Combinatorial_map/Combinatorial_map_2_test.h -text
 Combinatorial_map/test/Combinatorial_map/Combinatorial_map_3_test.h -text
 Combinatorial_map/test/Combinatorial_map/Combinatorial_map_test.cpp -text
-Combinatorial_map/test/Combinatorial_map/data/aircraft.off -text
-Combinatorial_map/test/Combinatorial_map/data/points -text
-Combinatorial_map/test/Combinatorial_map/data/small_points -text
-Combinatorial_map/test/Combinatorial_map/data/small_points2 -text
 Convex_decomposition_3/demo/Convex_decomposition_3/star.nef3 -text
 Convex_decomposition_3/doc_tex/Convex_decomposition_3/PkgDescription.tex -text
 Convex_decomposition_3/doc_tex/Convex_decomposition_3/fig/teaser.png -text
@@ -2007,6 +2000,7 @@ Maintenance/infrastructure/matisse.geometryfactory.com/reference-platforms/setup
 Maintenance/infrastructure/matisse.geometryfactory.com/reference-platforms/x86-64_Linux-2.6_IntelCompiler-11.0-with-g++-4.5.1_F14/setup -text
 Maintenance/infrastructure/matisse.geometryfactory.com/reference-platforms/x86-64_Linux-2.6_IntelCompiler-11.1-with-g++-4.5.1_F14-strict-ansi/setup -text
 Maintenance/infrastructure/matisse.geometryfactory.com/reference-platforms/x86-64_Linux-2.6_IntelCompiler-11.1-with-g++-4.5.1_F14/setup -text
+Maintenance/infrastructure/matisse.geometryfactory.com/reference-platforms/x86-64_Linux-2.6_IntelCompiler-12.0-with-g++-4.5.1_F14/setup -text
 Maintenance/infrastructure/matisse.geometryfactory.com/reference-platforms/x86-64_Linux-2.6_g++-4.5-branch_CXX0X-F14/setup -text
 Maintenance/infrastructure/matisse.geometryfactory.com/reference-platforms/x86-64_Linux-2.6_g++-4.5-branch_Release-F14/setup -text
 Maintenance/infrastructure/matisse.geometryfactory.com/reference-platforms/x86-64_Linux-2.6_g++-4.5.1_F14-MATCHING-BUG-6/setup -text
