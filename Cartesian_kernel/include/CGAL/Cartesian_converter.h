@@ -103,14 +103,20 @@ public:
 
 #include <CGAL/Kernel/interface_macros.h>
 
-      if (const std::vector<typename K1::Point_2> * ptr = object_cast<std::vector<typename K1::Point_2> >(&obj)) {
-	std::vector<typename K2::Point_2> res;
-        res.reserve((*ptr).size());
-	for(unsigned int i=0; i < (*ptr).size(); i++){
-	  res.push_back(operator()((*ptr)[i]));
-	}
-	return make_object(res);
+#define CGAL_Kernel_obj(X) \
+      if (const std::vector<typename K1::X> * ptr = object_cast<std::vector<typename K1::X> >(&obj)) { \
+	std::vector<typename K2::X> res; \
+        res.reserve((*ptr).size()); \
+	for(unsigned int i=0; i < (*ptr).size(); i++){ \
+	  res.push_back(operator()((*ptr)[i])); \
+	} \
+	return make_object(res); \
       }
+
+      CGAL_Kernel_obj(Point_2)
+      CGAL_Kernel_obj(Point_3)
+#undef CGAL_Kernel_obj
+       
       CGAL_error_msg("Cartesian_converter is unable to determine what is wrapped in the Object");
       return Object();
 	

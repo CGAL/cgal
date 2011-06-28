@@ -9,7 +9,7 @@ In general mixed operations are provided by overloaded operators and
 functions or just via implicit constructor calls. 
 This level of interoperability is reflected by the concept 
 \ccc{ImplicitInteroperable}. However, within template code the result type, 
-or so called coercion type, of an mixed arithmetic operation may be unclear.
+or so called coercion type, of a mixed arithmetic operation may be unclear.
 Therefore, the package introduces \ccc{CGAL::Coercion_traits}
 giving access to the coercion type via \ccc{CGAL::Coercion_traits<A,B>::Type}
 for two interoperable types \ccc{A} and \ccc{B}. 
@@ -71,7 +71,7 @@ or operator and function overloads. This level of interoperability is
 reflected by the concept \ccc{ImplicitInteroperable}.
 For template code, th
 But in case of template code, the
-result type, or so called coercion type, of an mixed operation can be unclear. 
+result type, or so called coercion type, of a mixed operation can be unclear. 
 For these cases the package provides the class 
 \ccc{CGAL::Coercion_traits}, which gives access to the coercion type via
 \ccc{CGAL::Coercion_traits<A,B>::Type} for two \ccc{ImplicitInteroperable} 
