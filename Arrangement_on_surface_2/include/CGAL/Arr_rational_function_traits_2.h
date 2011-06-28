@@ -290,7 +290,7 @@ public:
     }
   };
 
-  Construct_x_monotone_curve_2 construct_x_monotone_curve_2_object() 
+  Construct_x_monotone_curve_2 construct_x_monotone_curve_2_object() const
   {
     return Construct_x_monotone_curve_2(this);
   }
@@ -415,7 +415,7 @@ public:
     }
   };
 
-  Construct_curve_2 construct_curve_2_object() 
+  Construct_curve_2 construct_curve_2_object() const
   {
     return Construct_curve_2(this);
   }
@@ -465,7 +465,7 @@ public:
     }
   }; //Construct_point
 
-  Construct_point_2 construct_point_2_object()
+  Construct_point_2 construct_point_2_object() const
   {
     return Construct_point_2(this);
   }
@@ -1294,7 +1294,7 @@ public:
     }
   };
   
-  Approximate_2 approximate_2_object(){return Approximate_2();}
+  Approximate_2 approximate_2_object() const { return Approximate_2(); }
 
   void cleanup_cache() const
   {
