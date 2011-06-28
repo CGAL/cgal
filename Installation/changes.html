@@ -141,6 +141,18 @@ CGAL 3.9 offers the following improvements and new functionality :  </p>
       class Construct_cartesian_const_iterator_d defined in the concept SearchTraits that must 
       provide a nested type result_type.</li>
 </ul>
+
+<h3>3D Convex Hull (major performance improvement)</h3>
+<ul>
+      <li>The quickhull implementation of CGAL (CGAL::convex_hull_3)
+          has been worked out to provide very better performances.</li>
+      <li>The function CGAL::convex_hull_3 no longer computes the plane
+          equations of the facets of the output polyhedron. However an example is 
+          provided to show how to compute them easily.</li>
+      <li>A global function convex_hull_3_to_polyhedron_3 is now provided to extract
+      the convex hull of a 3D points set from a triangulation of these points.</li>
+</ul>
+
 <h3>dD Kernel</h3>
 <ul>
       <li>The d-dimensional kernel concept and models have been modified 
