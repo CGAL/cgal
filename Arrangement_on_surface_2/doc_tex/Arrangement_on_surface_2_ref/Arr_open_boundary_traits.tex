@@ -173,7 +173,7 @@ instantiated with the model is initialized to handle unbounded curves.
 
 \ccCreationVariable{fo}
 
-\ccMethod{Arr_parameter_space operator()(const X_monotone_curve_2& xcv,
+\ccMethod{Arr_parameter_space operator()(const ArrTraits::X_monotone_curve_2& xcv,
                                          Arr_curve_end ce);}{%
 
   Given an $x$-monotone curve \ccc{xcv} and an enumeration \ccc{ce}
@@ -188,9 +188,9 @@ instantiated with the model is initialized to handle unbounded curves.
   left and right boundaries of the parameter space, respectively.
   Returns \ccc{ARR_LEFT_BOUNDARY}, \ccc{ARR_RIGHT_BOUNDARY}, or
   \ccc{ARR_INTERIOR}, accordingly.
-  \ccPrecond{If \ccc{Left_side_category} is not convertible to
+  \ccPrecond{If \ccc{ArrTraits::Left_side_category} is not convertible to
     \ccc{Arr_open_side_tag} then \ccc{ce} $\neq$ \ccc{ARR_MIN_END}.}
-  \ccPrecond{If \ccc{Right_side_category} is not convertible to
+  \ccPrecond{If \ccc{ArrTraits::Right_side_category} is not convertible to
     \ccc{Arr_open_side_tag} then \ccc{ce} $\neq$ \ccc{ARR_MAX_END}.}
   \ccPostcond{If \ccc{ce} = \ccc{ARR_MIN_END} then the result is either
     \ccc{ARR_LEFT_BOUNDARY} or \ccc{ARR_INTERIOR}.}
@@ -210,8 +210,8 @@ instantiated with the model is initialized to handle unbounded curves.
 
 \ccCreationVariable{fo}
 
-\ccMethod{Comparison_result operator()(const X_monotone_curve_2& xcv1,
-                                       const X_monotone_curve_2& xcv2,
+\ccMethod{Comparison_result operator()(const ArrTraits::X_monotone_curve_2& xcv1,
+                                       const ArrTraits::X_monotone_curve_2& xcv2,
                                        Arr_curve_end ce);}{%
   Given two $x$-monotone curves \ccc{xcv1} and \ccc{xcv2} and an
   enumeration \ccc{ce} that specifies either the minimum or the maximum
@@ -229,9 +229,9 @@ instantiated with the model is initialized to handle unbounded curves.
   evaluates to \ccc{ARR_RIGHT_BOUNDARY} when applied to \ccc{xcv1} and
   \ccc{ce} and when applied to \ccc{xcv2} and \ccc{ce}. In that case
   $p$ is located far to the right in a similar manner.
-  \ccPrecond{If \ccc{Left_side_category} is not convertible to
+  \ccPrecond{If \ccc{ArrTraits::Left_side_category} is not convertible to
     \ccc{Arr_open_side_tag} then \ccc{ce} $\neq$ \ccc{ARR_MIN_END}.}
-  \ccPrecond{If \ccc{Right_side_category} is not convertible to
+  \ccPrecond{If \ccc{ArrTraits::Right_side_category} is not convertible to
     \ccc{Arr_open_side_tag} then \ccc{ce} $\neq$ \ccc{ARR_MAX_END}.}
   \ccPrecond{%
      \ccc{parameter_space_in_x_2}(\ccc{xcv2}, \ccc{ce}) =
@@ -255,7 +255,7 @@ instantiated with the model is initialized to handle unbounded curves.
 
 \ccCreationVariable{fo}
 
-\ccMethod{Arr_parameter_space operator()(const X_monotone_curve_2& xcv,
+\ccMethod{Arr_parameter_space operator()(const ArrTraits::X_monotone_curve_2& xcv,
                                          Arr_curve_end ce);}{%
   Given an $x$-monotone curve \ccc{xcv} and an enumeration \ccc{ce}
   that specifies either the minimum or the maximum end of the curve,
@@ -269,9 +269,9 @@ instantiated with the model is initialized to handle unbounded curves.
   bottom and top boundaries of the parameter space, respectively.
   Returns \ccc{ARR_BOTTOM_BOUNDARY}, \ccc{ARR_TOP_BOUNDARY}, or
   \ccc{ARR_INTERIOR}, accordingly.
-  \ccPostcond{If \ccc{Bottom_side_category} is not convertible to
+  \ccPostcond{If \ccc{ArrTraits::Bottom_side_category} is not convertible to
     \ccc{Arr_open_side_tag} then the result is not \ccc{ARR_BOTTOM_BOUNDARY}.}
-  \ccPostcond{If \ccc{Top_side_category} is not convertible to
+  \ccPostcond{If \ccc{ArrTraits::Top_side_category} is not convertible to
     \ccc{Arr_open_side_tag} then the result is not \ccc{ARR_TOP_BOUNDARY}.}}
 \end{ccRefConcept}
 \ccRefPageEnd
@@ -286,8 +286,8 @@ instantiated with the model is initialized to handle unbounded curves.
 
 \ccCreationVariable{fo}
 
-\ccMethod{Comparison_result operator()(const Point_2& p,
-                                       const X_monotone_curve_2& xcv,
+\ccMethod{Comparison_result operator()(const ArrTraits::Point_2& p,
+                                       const ArrTraits::X_monotone_curve_2& xcv,
                                        Arr_curve_end ce);}{%
   Given a point \ccc{p}, an $x$-monotone curve \ccc{xcv}, and an
   enumeration \ccc{ce} that specifies either the minimum or the
@@ -305,9 +305,9 @@ instantiated with the model is initialized to handle unbounded curves.
   \ccPrecond{$C$ has a vertical asymptote at its $d$-end; that is,
     \ccc{parameter_space_in_x_2}(\ccc{xcv}, \ccc{ce}) = \ccc{ARR_INTERIOR}.}}
 %
-\ccMethod{Comparison_result operator()(const X_monotone_curve_2& xcv1,
+\ccMethod{Comparison_result operator()(const ArrTraits::X_monotone_curve_2& xcv1,
                                        Arr_curve_end ce1,
-                                       const X_monotone_curve_2& xcv2,
+                                       const ArrTraits::X_monotone_curve_2& xcv2,
                                        Arr_curve_end ce2);}{%
   Given two $x$-monotone curves \ccc{xcv1} and \ccc{xcv2} and two
   indices \ccc{ce1} and \ccc{ce2} that specify either the minimum
@@ -350,8 +350,8 @@ instantiated with the model is initialized to handle unbounded curves.
 
 \ccCreationVariable{fo}
 
-\ccMethod{Comparison_result operator()(const X_monotone_curve_2& xcv1,
-                                       const X_monotone_curve_2& xcv2,
+\ccMethod{Comparison_result operator()(const ArrTraits::X_monotone_curve_2& xcv1,
+                                       const ArrTraits::X_monotone_curve_2& xcv2,
                                        Arr_curve_end ce);}{%
   Given two $x$-monotone curves \ccc{xcv1} and \ccc{xcv2} and an
   enumeration \ccc{ce} that specifies either the minimum ends or the
