@@ -33,6 +33,33 @@ typedef CGAL::Random_points_in_sphere_3<Point_3,Creator>  Generator;
 
 const unsigned int num = 40;
 
+template <class Facet_handle>
+void compute_plane_equation(Facet_handle f) 
+{
+   typedef typename Facet_handle::value_type         Facet;
+   typedef typename Facet::Halfedge_handle           Halfedge_handle;
+   typedef typename Facet::Plane_3                   Plane_3;
+
+   Halfedge_handle h = (*f).halfedge();
+   (*f).plane() = Plane_3(h->opposite()->vertex()->point(),
+                          h->vertex()->point(),
+                          h->next()->vertex()->point());
+}
+
+
+template <class Plane, class Facet_handle>
+void get_plane(Plane& plane, Facet_handle f) 
+{
+   typedef typename Facet_handle::value_type         Facet;
+   typedef typename Facet::Halfedge_handle           Halfedge_handle;
+
+   Halfedge_handle h = (*f).halfedge();
+   plane = Plane(h->opposite()->vertex()->point(),
+		   h->vertex()->point(),
+		   h->next()->vertex()->point());
+}
+
+
 void test_tetrahedron_convexity()
 {
     Polyhedron_3 P;
@@ -45,7 +72,7 @@ void test_tetrahedron_convexity()
     for( Polyhedron_3::Facet_iterator f = P.facets_begin();
          f != P.facets_end(); ++f )
     {
-        CGAL::compute_plane_equation(f);
+        compute_plane_equation(f);
     }
 
     assert( CGAL::is_strongly_convex_3(P) );
@@ -62,7 +89,7 @@ void test_triangle_convexity()
     for( Polyhedron_3::Facet_iterator f = P.facets_begin();
          f != P.facets_end(); ++f )
     {
-        CGAL::compute_plane_equation(f);
+        compute_plane_equation(f);
     }
 
     assert( CGAL::is_strongly_convex_3(P) );

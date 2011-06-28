@@ -1,14 +1,17 @@
 #include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
 #include <CGAL/point_generators_3.h>
 #include <CGAL/Delaunay_triangulation_3.h>
+#include <CGAL/Polyhedron_3.h>
+#include <CGAL/convex_hull_3_to_polyhedron_3.h>
 #include <CGAL/algorithm.h>
 
 #include <list>
 
-typedef CGAL::Exact_predicates_inexact_constructions_kernel  K;
-typedef K::Point_3                                  Point_3;
-typedef CGAL::Delaunay_triangulation_3<K>           Delaunay;
-typedef Delaunay::Vertex_handle                     Vertex_handle;
+typedef CGAL::Exact_predicates_inexact_constructions_kernel      K;
+typedef K::Point_3                                              Point_3;
+typedef CGAL::Delaunay_triangulation_3<K>                       Delaunay;
+typedef Delaunay::Vertex_handle                                 Vertex_handle;
+typedef CGAL::Polyhedron_3<K>                                   Polyhedron_3;
 
 int main()
 {
@@ -34,9 +37,15 @@ int main()
      v_set_it++;
   }
 
-  vertices.clear();
-  T.incident_vertices(T.infinite_vertex(), std::back_inserter(vertices));
+  //copy the convex hull of points into a polyhedron and use it
+  //to get the number of points on the convex hull
+  Polyhedron_3 chull;
+  CGAL::convex_hull_3_to_polyhedron_3(T,chull);
+  
   std::cout << "After removal of 25 points, there are "
-            << vertices.size() << " points on the convex hull." << std::endl;
+            << chull.size_of_vertices() << " points on the convex hull." << std::endl;
+  
+
+  
   return 0;
 }
