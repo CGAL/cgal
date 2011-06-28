@@ -60,24 +60,14 @@ int main()
   Polynomial_1 x = CGAL::shift(Polynomial_1(1),1);
   
   // Create the rational function y = 1 / ((x - 2)(x - 5)) = 1 / (x^2 - 7x + 10)
-  // Create the rational function y = 1 / ((2 - x)(x - 5)) = 1 / (-x^2 + 7x - 10)
-  Polynomial_1 P(1);
-  Polynomial_1 Q1 = x*x - 7*x + 10;
-  Polynomial_1 Q2 = -x*x + 7*x - 10;
+  Polynomial_1 P1(1);
+  Polynomial_1 P2(-1);
+  Polynomial_1 Q = x*x - 7*x + 10;
 
-  Curve_2 c1 = construct(P, Q1, Alg_real_1(2), Alg_real_1(5));
-  Curve_2 c2 = construct(P, Q2, Alg_real_1(2), Alg_real_1(5));
+  Curve_2 c1 = construct(P1, Q, Alg_real_1(2), Alg_real_1(5));
+  Curve_2 c2 = construct(P2, Q, Alg_real_1(2), Alg_real_1(5));
 
-  // Construct the arrangement of the six arcs.
-  Arrangement_2 arr;
-  insert(arr, c1);
-  insert(arr, c2);
-  
-  if (!arr.is_valid()) {
-    std::cerr << "The arrangement is not valid!" << std::endl;
-    return -1;
-  }
-  
+  // Output
   const char * names[5] = {
     "number of vertices",
     "number of vertices at infinity",
@@ -86,16 +76,54 @@ int main()
     "number of unbounded faces"
   };
   
-  Arrangement_2::Size expected_sizes[] = {0, 4, 2, 3, 3};
+  Arrangement_2::Size expected_sizes[] = {0, 2, 1, 2, 2};
+  
+  // Construct the 1st arrangement.
+  Arrangement_2 arr1(&traits);
+  insert(arr1, c1);
+
+  if (!arr1.is_valid()) {
+    std::cerr << "The first arrangement is not valid!" << std::endl;
+    return -1;
+  }
+
   Arrangement_2::Size sizes[5];
-  sizes[0] = arr.number_of_vertices();
-  sizes[1] = arr.number_of_vertices_at_infinity();
-  sizes[2] = arr.number_of_edges();
-  sizes[3] = arr.number_of_faces();
-  sizes[4] = arr.number_of_unbounded_faces();
+  sizes[0] = arr1.number_of_vertices();
+  sizes[1] = arr1.number_of_vertices_at_infinity();
+  sizes[2] = arr1.number_of_edges();
+  sizes[3] = arr1.number_of_faces();
+  sizes[4] = arr1.number_of_unbounded_faces();
 
   unsigned int i;
   int result = 0;
+  for (i = 0; i < 5; ++ i) {
+    if (expected_sizes[i] != sizes[i]) {
+      std::cerr << names[i] << ": " << sizes[i] << ", expected: "
+                << expected_sizes[i] << std::endl;
+      result = -1;
+    } else {
+      std::cout << names[i] << ": " << sizes[i] << std::endl;
+    }
+  }
+
+  // If a failure has already occured, abort.
+  if (result < 0) return result;
+  
+  // Construct the 2nd arrangement.
+  Arrangement_2 arr2(&traits);
+  insert(arr2, c2);
+  
+  if (!arr1.is_valid()) {
+    std::cerr << "The first arrangement is not valid!" << std::endl;
+    return -1;
+  }
+
+  sizes[0] = arr1.number_of_vertices();
+  sizes[1] = arr1.number_of_vertices_at_infinity();
+  sizes[2] = arr1.number_of_edges();
+  sizes[3] = arr1.number_of_faces();
+  sizes[4] = arr1.number_of_unbounded_faces();
+
   for (i = 0; i < 5; ++ i) {
     if (expected_sizes[i] != sizes[i]) {
       std::cerr << names[i] << ": " << sizes[i] << ", expected: "
