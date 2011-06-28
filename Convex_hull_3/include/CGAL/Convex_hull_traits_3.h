@@ -153,7 +153,7 @@ public:
 
 
 template <typename GT>
-struct GT3 {
+struct GT3_for_CH3 {
   typedef typename GT::Point_3 Point_2;
 };
 
