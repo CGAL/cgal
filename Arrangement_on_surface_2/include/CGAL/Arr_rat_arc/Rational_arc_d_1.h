@@ -75,7 +75,7 @@ public:
     Rational_function_pair;
   typedef CGAL::Arr_rational_arc::Algebraic_point_2<Algebraic_kernel>
                                                             Algebraic_point_2;
-  typedef CGAL::Arr_rational_arc::Vertical_segment_d_1 <Algebraic_kernel>
+  typedef CGAL::Arr_rational_arc::Vertical_segment_d_1<Algebraic_kernel>
                                                             Vertical_segment_d_1;
   typedef CGAL::Arr_rational_arc::Cache<Algebraic_kernel>   Cache;
 
@@ -1696,7 +1696,7 @@ protected:
   //Compute all zeros of the denominator polynomial that lie within the
   // x-range of the arc
 
-  template <class OutputIterator>
+  template <typename OutputIterator>
   OutputIterator _denominator_roots(OutputIterator oi, bool& root_at_ps,
                                     bool& root_at_pt) const
   {
@@ -1814,7 +1814,7 @@ protected:
 
 //-------------------------------
 //! Exporter for rational arcs.
-template <class Algebraic_kernel_>
+template <typename Algebraic_kernel_>
 std::ostream& operator<<(std::ostream& os, 
                          const Base_rational_arc_d_1<Algebraic_kernel_> & arc)
 {
@@ -1824,7 +1824,7 @@ std::ostream& operator<<(std::ostream& os,
 /*! \class Continuous_rational_arc_d_1
  * Representation of a continuous portion of a rational function.
  */
-template < class Algebraic_kernel_ >
+template <typename Algebraic_kernel_>
 class Continuous_rational_arc_d_1:
     public Base_rational_arc_d_1<Algebraic_kernel_>
 {
@@ -1846,8 +1846,8 @@ public:
   typedef typename Base::Multiplicity                   Multiplicity;
   typedef typename Base::Rational_function              Rational_function;
   typedef typename Base::Rational_function_pair         Rational_function_pair;
-   
-  
+  typedef typename Base::Vertical_segment_d_1           Vertical_segment_d_1;
+
   typedef typename Base::Rat_vector                     Rat_vector;
   typedef typename Base::Algebraic_vector               Algebraic_vector;
   typedef typename Base::Multiplicity_vector            Multiplicity_vector;
@@ -2041,7 +2041,7 @@ public:
    * \param oi The output iterator.
    * \return The past-the-end iterator.
    */
-  template<class OutputIterator>
+  template <typename OutputIterator>
   OutputIterator intersect(const Self& arc, OutputIterator oi,
                            Cache& cache) const
   {
@@ -2254,9 +2254,8 @@ public:
     return (oi);
   }
 
-  template<class OutputIterator>
-  OutputIterator intersect(const Vertical_segment_d_1<Algebraic_kernel>& ver,
-                           OutputIterator oi,
+  template <typename OutputIterator>
+  OutputIterator intersect(const Vertical_segment_d_1& ver, OutputIterator oi,
                            Cache& cache) const
   {
     CGAL_precondition(this->is_valid() && this->is_continuous());
@@ -2485,7 +2484,7 @@ public:
   // * Representation of a generic, not necessarily continuous, portion of a
   // * rational function.
   // */
-template < class Algebraic_kernel_ >
+template <typename Algebraic_kernel_>
 class Rational_arc_d_1 : public Base_rational_arc_d_1<Algebraic_kernel_>
 {
 public:
@@ -2625,7 +2624,7 @@ public:
    * sub-arcs, splitting it at the roots of the denominator polynomial.
    * \param oi An output iterator of Continuous_rational_arc_d_1 objects.
    */
-  template <class OutputIterator>
+  template <typename OutputIterator>
   OutputIterator make_continuous(OutputIterator oi) const
   {
     // Compute the roots of the denominator polynomial.
