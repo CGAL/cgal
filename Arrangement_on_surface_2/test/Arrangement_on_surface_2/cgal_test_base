@@ -1148,6 +1148,7 @@ test_algebraic_traits_leda
 
 compile_and_run test_insertion
 compile_and_run test_unbounded_rational_insertion
+compile_and_run test_rational_function_traits_2
 compile_and_run test_removal
 compile_and_run test_iso_verts
 

@@ -824,6 +824,7 @@ Arrangement_on_surface_2/test/Arrangement_on_surface_2/test_do_equal.cpp -text
 Arrangement_on_surface_2/test/Arrangement_on_surface_2/test_do_intersect.cpp -text
 Arrangement_on_surface_2/test/Arrangement_on_surface_2/test_observer.cmd -text
 Arrangement_on_surface_2/test/Arrangement_on_surface_2/test_observer.cpp -text
+Arrangement_on_surface_2/test/Arrangement_on_surface_2/test_rational_function_traits_2.cpp -text
 Arrangement_on_surface_2/test/Arrangement_on_surface_2/test_traits_adaptor.cpp -text
 Arrangement_on_surface_2/test/Arrangement_on_surface_2/test_traits_adaptor.h -text
 Arrangement_on_surface_2/test/Arrangement_on_surface_2/test_zone.cpp -text
