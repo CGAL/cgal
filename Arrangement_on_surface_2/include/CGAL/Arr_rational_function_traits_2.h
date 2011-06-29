@@ -116,8 +116,8 @@ public:
   } 
   // Algebraic_kernel_d_1& algebraic_kernel_d_1()             {return _ak;}
 
-protected:
-  Cache& cache() const {return _cache;}
+public:
+  const Cache& cache() const {return _cache;}
 
 public:
   //------------
@@ -143,12 +143,12 @@ public:
   {
     //copy kernel
     if (delete_ak)
-      _ak_ptr = new Algebraic_kernel_d_1;
+      _ak_ptr = new Algebraic_kernel_d_1(*other.algebraic_kernel_d_1());
     else
       _ak_ptr = other.algebraic_kernel_d_1();    
 
     //copy cache
-    _cache.initialize(other.cache(), *_ak_ptr);
+    _cache.initialize(other.cache(), _ak_ptr);
   }
 
   ~Arr_rational_function_traits_2()

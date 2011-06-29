@@ -112,18 +112,18 @@ public:
 public:
   const Rational_function& get_rational_function(const Polynomial_1& numerator,
                                                  const Polynomial_1& denominator,
-                                                 Cache& cache) const
+                                                 const Cache& cache) const
   {
     return cache.get_rational_function(numerator, denominator);
   }
   const Rational_function& get_rational_function(const Rational& rat,
-                                                 Cache& cache) const
+                                                 const Cache& cache) const
   {
     return cache.get_rational_function(rat);
   }
   const Rational_function_pair get_rational_pair(const Rational_function& f, 
                                                  const Rational_function& g,
-                                                 Cache& cache) const
+                                                 const Cache& cache) const
   {
     CGAL_precondition(f.id() != g.id());
     return cache.get_rational_pair(f, g);
@@ -176,13 +176,13 @@ public:
   // Constructor of a whole polynomial curve defined by pcoeffs - the rational
   // coefficients of the polynomial p(x).
   
-  Base_rational_arc_d_1(const Polynomial_1& P, Cache& cache) :
+  Base_rational_arc_d_1(const Polynomial_1& P, const Cache& cache) :
     _info(0)
   {
     _init(P, Integer(1), cache);
   }
 
-  Base_rational_arc_d_1(const Rat_vector& pcoeffs, Cache& cache) :
+  Base_rational_arc_d_1(const Rat_vector& pcoeffs, const Cache& cache) :
     _info(0)
   {
     // Set the numerator & denominator polynomials.
@@ -195,7 +195,7 @@ public:
     _init(_numer,denom_int,cache);
   }
 
-  void _init(const Polynomial_1& P,const Integer& Q_int,Cache& cache)
+  void _init(const Polynomial_1& P,const Integer& Q_int,const Cache& cache)
   {
     CGAL_precondition(!CGAL::is_zero(Q_int));
     //set rational function 
@@ -263,14 +263,14 @@ public:
   //(to -oo).
 
   Base_rational_arc_d_1(const Polynomial_1& P, const Algebraic_real_1& x_s,
-                        bool dir_right, Cache& cache) :
+                        bool dir_right, const Cache& cache) :
     _info(0)
   {
     _init(P, Polynomial_1(1), x_s, dir_right, cache);
   }
 
   Base_rational_arc_d_1(const Rat_vector& pcoeffs,const Algebraic_real_1& x_s,
-                        bool dir_right, Cache& cache) :
+                        bool dir_right, const Cache& cache) :
     _info(0)
   {
     // Set the numerator & denominator polynomials.
@@ -284,7 +284,7 @@ public:
   }
 
   void _init(const Polynomial_1& P,const Integer& Q_int,
-             const Algebraic_real_1& x_s, bool dir_right,Cache& cache)
+             const Algebraic_real_1& x_s, bool dir_right,const Cache& cache)
   {
     CGAL_precondition(!CGAL::is_zero(Q_int));
     //set rational function 
@@ -358,14 +358,14 @@ public:
   //precondition: The two x-coordinates must not be equal.
   Base_rational_arc_d_1(const Polynomial_1& P,
                         const Algebraic_real_1& x_s, const Algebraic_real_1& x_t,
-                        Cache& cache):
+                        const Cache& cache):
     _info(0)
   {
     _init(P,Integer(1), x_s, x_t, cache);
   }
   Base_rational_arc_d_1(const Rat_vector& pcoeffs,
                         const Algebraic_real_1& x_s,const Algebraic_real_1& x_t,
-                        Cache& cache):
+                        const Cache& cache):
     _info(0)
   {    
     // Set the numerator & denominator polynomials.
@@ -380,7 +380,7 @@ public:
 
   void _init(const Polynomial_1& P,const Integer& Q_int,
              const Algebraic_real_1& x_s,const Algebraic_real_1& x_t,
-             Cache& cache)
+             const Cache& cache)
   {
     CGAL_precondition(!CGAL::is_zero(Q_int));
     //set rational function 
@@ -410,14 +410,14 @@ public:
   //param pcoeffs The rational coefficients of the polynomial p(x).
   //param qcoeffs The rational coefficients of the polynomial q(x).
   Base_rational_arc_d_1(const Polynomial_1& P, const Polynomial_1& Q,
-                        Cache& cache) :
+                        const Cache& cache) :
     _info(0)
   {
     _init(P,Q,cache);
   }
 
   Base_rational_arc_d_1(const Rat_vector& pcoeffs, const Rat_vector& qcoeffs,
-                        Cache& cache) :
+                        const Cache& cache) :
     _info(0)
   {
     Polynomial_1 _numer;
@@ -436,7 +436,7 @@ public:
 
     _init(_numer,_denom,cache);
   }
-  void _init(const Polynomial_1& _P, const Polynomial_1& _Q, Cache& cache) 
+  void _init(const Polynomial_1& _P, const Polynomial_1& _Q, const Cache& cache) 
   {
     CGAL_precondition(!CGAL::is_zero(_Q));
     //set rational function 
@@ -492,14 +492,14 @@ public:
   //(to -oo).
   Base_rational_arc_d_1(const Polynomial_1& P, const Polynomial_1& Q,
                         const Algebraic_real_1& x_s, bool dir_right,
-                        Cache& cache) :
+                        const Cache& cache) :
     _info(0)
   {
     _init(P, Q, x_s, dir_right, cache);
   }
   Base_rational_arc_d_1(const Rat_vector& pcoeffs, const Rat_vector& qcoeffs,
                         const Algebraic_real_1& x_s, bool dir_right,
-                        Cache& cache) :
+                        const Cache& cache) :
     _info(0)
   {
     // Set the numerator and denominator polynomials.
@@ -522,7 +522,7 @@ public:
 
   void _init(const Polynomial_1& _P, const Polynomial_1& _Q,
              const Algebraic_real_1& x_s, bool dir_right,
-             Cache& cache) 
+             const Cache& cache) 
   {
     CGAL_precondition(!CGAL::is_zero(_Q));
     //set rational function 
@@ -597,7 +597,7 @@ public:
   //precondition: The two x-coordinates must not be equal.
   Base_rational_arc_d_1(const Polynomial_1& P, const Polynomial_1& Q,
                         const Algebraic_real_1& x_s, const Algebraic_real_1& x_t,
-                        Cache& cache):
+                        const Cache& cache):
     _info(0)
   {
     _init(P, Q, x_s, x_t, cache);
@@ -605,7 +605,7 @@ public:
 
   Base_rational_arc_d_1(const Rat_vector& pcoeffs, const Rat_vector& qcoeffs,
                         const Algebraic_real_1& x_s, const Algebraic_real_1& x_t,
-                        Cache& cache):
+                        const Cache& cache):
     _info(0)
   {
     Polynomial_1 _numer;
@@ -627,7 +627,7 @@ public:
 
   void _init(const Polynomial_1& _P, const Polynomial_1& _Q,
              const Algebraic_real_1& x_s, const Algebraic_real_1& x_t,
-             Cache& cache)
+             const Cache& cache)
   {
     CGAL_precondition(!CGAL::is_zero(_Q));
     //set rational function 
@@ -1020,7 +1020,7 @@ public:
   //       LARGER if the point is above the arc;
   //       EQUAL if p lies on the arc.
   Comparison_result point_position(const Algebraic_point_2& p,
-                                   Cache& cache) const
+                                   const Cache& cache) const
   {
     // Make sure that p is in the x-range of the arc and check whether it
     // has the same x-coordinate as one of the endpoints.
@@ -1071,7 +1071,7 @@ public:
   //Compare the x-coordinate of a vertical asymptotes of the two arcs.
   //approaching from the same direction
   Comparison_result compare_near_end(const Self& arc, Arr_curve_end ce,
-                                     Cache& cache) const
+                                     const Cache& cache) const
   {
     CGAL_precondition_code(
       if (ce == ARR_MIN_END)
@@ -1119,7 +1119,7 @@ public:
   //------------------------------------------------------------------
   //Compare the x-coordinate of a vertical asymptotes of the two arcs.   
   Comparison_result compare_ends(Arr_curve_end ind1,const Self& arc, 
-                                 Arr_curve_end ind2, Cache& cache) const
+                                 Arr_curve_end ind2, const Cache& cache) const
   {
     // Get the x-coordinates of the first vertical asymptote.
     Algebraic_real_1             x1;
@@ -1231,7 +1231,7 @@ public:
 
   Comparison_result compare_at_intersection(const Self& arc,
                                             const Algebraic_point_2& p,
-                                            bool to_left, Cache& cache) const
+                                            bool to_left, const Cache& cache) const
   {
     CGAL_precondition(this->point_position(p,cache) == CGAL::EQUAL &&
                       arc.point_position(p,cache)   == CGAL::EQUAL);
@@ -1254,7 +1254,7 @@ public:
   //   LARGER if (*this) lies above the other arc.
 
   Comparison_result compare_at_minus_infinity(const Self& arc,
-                                              Cache& cache) const
+                                              const Cache& cache) const
   {
     CGAL_precondition(left_parameter_space_in_x() == ARR_LEFT_BOUNDARY &&
                       arc.left_parameter_space_in_x() == ARR_LEFT_BOUNDARY);
@@ -1277,7 +1277,7 @@ public:
   //       LARGER if (*this) lies above the other arc.
 
   Comparison_result compare_at_plus_infinity(const Self& arc,
-                                             Cache& cache) const
+                                             const Cache& cache) const
   {
     CGAL_precondition(right_parameter_space_in_x() == ARR_RIGHT_BOUNDARY &&
                       arc.right_parameter_space_in_x() == ARR_RIGHT_BOUNDARY);
@@ -1881,11 +1881,11 @@ public:
    * Constructor of a whole polynomial curve.
    * \param pcoeffs The rational coefficients of the polynomial p(x).
    */
-  Continuous_rational_arc_d_1(const Polynomial_1& P, Cache& cache) :
+  Continuous_rational_arc_d_1(const Polynomial_1& P, const Cache& cache) :
     Base(P, cache)
   {}
 
-  Continuous_rational_arc_d_1(const Rat_vector& pcoeffs, Cache& cache) :
+  Continuous_rational_arc_d_1(const Rat_vector& pcoeffs, const Cache& cache) :
     Base(pcoeffs, cache)
   {}
 
@@ -1900,13 +1900,13 @@ public:
    */
   Continuous_rational_arc_d_1(const Polynomial_1& P,
                               const Algebraic_real_1& x_s, 
-                              bool dir_right, Cache& cache) :
+                              bool dir_right, const Cache& cache) :
     Base(P, x_s, dir_right,cache)
   {}
 
   Continuous_rational_arc_d_1(const Rat_vector& pcoeffs,
                               const Algebraic_real_1& x_s, 
-                              bool dir_right, Cache& cache) :
+                              bool dir_right, const Cache& cache) :
     Base(pcoeffs, x_s, dir_right,cache)
   {}
 
@@ -1920,13 +1920,13 @@ public:
    */
   Continuous_rational_arc_d_1(const Polynomial_1& P,
                               const Algebraic_real_1& x_s,
-                              const Algebraic_real_1& x_t, Cache& cache) :
+                              const Algebraic_real_1& x_t, const Cache& cache) :
     Base(P, x_s, x_t,cache)
   {}
 
   Continuous_rational_arc_d_1(const Rat_vector& pcoeffs,
                               const Algebraic_real_1& x_s,
-                              const Algebraic_real_1& x_t, Cache& cache) :
+                              const Algebraic_real_1& x_t, const Cache& cache) :
     Base(pcoeffs, x_s, x_t,cache)
   {}
 
@@ -1937,7 +1937,7 @@ public:
    * \pre The denominator polynomial q(x) does not have any roots.
    */
   Continuous_rational_arc_d_1(const Polynomial_1& P, const Polynomial_1& Q,
-                              Cache& cache) :
+                              const Cache& cache) :
     Base(P, Q,cache)
   {
     if (!this->_is_continuous())
@@ -1948,7 +1948,7 @@ public:
   }
 
   Continuous_rational_arc_d_1(const Rat_vector& pcoeffs,
-                              const Rat_vector& qcoeffs, Cache& cache) :
+                              const Rat_vector& qcoeffs, const Cache& cache) :
     Base(pcoeffs, qcoeffs,cache)
   {
     if (!this->_is_continuous())
@@ -1972,7 +1972,7 @@ public:
    */
   Continuous_rational_arc_d_1(const Polynomial_1& P,const Polynomial_1& Q,
                               const Algebraic_real_1& x_s, bool dir_right,
-                              Cache& cache) :
+                              const Cache& cache) :
     Base(P, Q, x_s, dir_right,cache)
   {
     if (!this->_is_continuous())
@@ -1985,7 +1985,7 @@ public:
   Continuous_rational_arc_d_1(const Rat_vector& pcoeffs,
                               const Rat_vector& qcoeffs,
                               const Algebraic_real_1& x_s, bool dir_right,
-                              Cache& cache) :
+                              const Cache& cache) :
     Base(pcoeffs, qcoeffs, x_s, dir_right,cache)
   {
     if (!this->_is_continuous())
@@ -2008,7 +2008,7 @@ public:
    */
   Continuous_rational_arc_d_1(const Polynomial_1& P,const Polynomial_1& Q,
                               const Algebraic_real_1& x_s,
-                              const Algebraic_real_1& x_t,Cache& cache) :
+                              const Algebraic_real_1& x_t,const Cache& cache) :
     Base(P, Q, x_s, x_t,cache)
   {
     if (!this->_is_continuous())
@@ -2020,7 +2020,7 @@ public:
   Continuous_rational_arc_d_1(const Rat_vector& pcoeffs,
                               const Rat_vector& qcoeffs,
                               const Algebraic_real_1& x_s,
-                              const Algebraic_real_1& x_t, Cache& cache) :
+                              const Algebraic_real_1& x_t, const Cache& cache) :
     Base(pcoeffs, qcoeffs, x_s, x_t,cache)
   {
     if (!this->_is_continuous())
@@ -2043,7 +2043,7 @@ public:
    */
   template <typename OutputIterator>
   OutputIterator intersect(const Self& arc, OutputIterator oi,
-                           Cache& cache) const
+                           const Cache& cache) const
   {
     CGAL_precondition(this->is_valid() && this->is_continuous());
     CGAL_precondition(arc.is_valid() && arc.is_continuous());
@@ -2256,7 +2256,7 @@ public:
 
   template <typename OutputIterator>
   OutputIterator intersect(const Vertical_segment_d_1& ver, OutputIterator oi,
-                           Cache& cache) const
+                           const Cache& cache) const
   {
     CGAL_precondition(this->is_valid() && this->is_continuous());
     
@@ -2322,7 +2322,7 @@ public:
    * \param c2 Output: The first resulting arc, lying to the right of p.
    * \pre p lies in the interior of the arc (not one of its endpoints).
    */
-  void split(const Algebraic_point_2& p, Self& c1, Self& c2, Cache& cache) const
+  void split(const Algebraic_point_2& p, Self& c1, Self& c2, const Cache& cache) const
   {
     CGAL_precondition(this->is_valid() && this->is_continuous());
 
@@ -2518,11 +2518,11 @@ public:
    * Constructor of a whole polynomial curve.
    * \param pcoeffs The rational coefficients of the polynomial p(x).
    */
-  Rational_arc_d_1(const Polynomial_1& P, Cache& cache) :
+  Rational_arc_d_1(const Polynomial_1& P, const Cache& cache) :
     Base(P, cache)
   {}
 
-  Rational_arc_d_1(const Rat_vector& pcoeffs, Cache& cache) :
+  Rational_arc_d_1(const Rat_vector& pcoeffs, const Cache& cache) :
     Base(pcoeffs, cache)
   {}
 
@@ -2536,12 +2536,12 @@ public:
    *                  or to the left (to -oo).
    */
   Rational_arc_d_1(const Polynomial_1& P, const Algebraic_real_1& x_s, 
-                   bool dir_right, Cache& cache) :
+                   bool dir_right, const Cache& cache) :
     Base(P, x_s, dir_right,cache)
   {}
 
   Rational_arc_d_1(const Rat_vector& pcoeffs, const Algebraic_real_1& x_s, 
-                   bool dir_right, Cache& cache) :
+                   bool dir_right, const Cache& cache) :
     Base(pcoeffs, x_s, dir_right,cache)
   {}
 
@@ -2554,12 +2554,12 @@ public:
    * \pre The two x-coordinates must not be equal.
    */
   Rational_arc_d_1(const Polynomial_1& P, const Algebraic_real_1& x_s, 
-                   const Algebraic_real_1& x_t, Cache& cache) :
+                   const Algebraic_real_1& x_t, const Cache& cache) :
     Base(P, x_s, x_t, cache)
   {}
 
   Rational_arc_d_1(const Rat_vector& pcoeffs, const Algebraic_real_1& x_s, 
-                   const Algebraic_real_1& x_t,Cache& cache) :
+                   const Algebraic_real_1& x_t,const Cache& cache) :
     Base(pcoeffs, x_s, x_t, cache)
   {}
 
@@ -2568,12 +2568,12 @@ public:
    * \param pcoeffs The rational coefficients of the polynomial p(x).
    * \param qcoeffs The rational coefficients of the polynomial q(x).
    */
-  Rational_arc_d_1(const Polynomial_1& P,const Polynomial_1& Q, Cache& cache) :
+  Rational_arc_d_1(const Polynomial_1& P,const Polynomial_1& Q, const Cache& cache) :
     Base(P, Q,cache)
   {}
 
   Rational_arc_d_1(const Rat_vector& pcoeffs, const Rat_vector& qcoeffs,
-                   Cache& cache) :
+                   const Cache& cache) :
     Base(pcoeffs, qcoeffs, cache)
   {}
 
@@ -2588,12 +2588,12 @@ public:
    *                  or to the left (to -oo).
    */
   Rational_arc_d_1(const Polynomial_1& P,const Polynomial_1& Q,
-                   const Algebraic_real_1& x_s, bool dir_right, Cache& cache) :
+                   const Algebraic_real_1& x_s, bool dir_right, const Cache& cache) :
     Base(P, Q, x_s, dir_right, cache)
   {}
 
   Rational_arc_d_1(const Rat_vector& pcoeffs, const Rat_vector& qcoeffs,
-                   const Algebraic_real_1& x_s, bool dir_right, Cache& cache) :
+                   const Algebraic_real_1& x_s, bool dir_right, const Cache& cache) :
     Base(pcoeffs, qcoeffs, x_s, dir_right, cache)
   {}
   
@@ -2608,13 +2608,13 @@ public:
    */
   Rational_arc_d_1(const Polynomial_1& P,const Polynomial_1& Q,
                    const Algebraic_real_1& x_s, const Algebraic_real_1& x_t,
-                   Cache& cache) :
+                   const Cache& cache) :
     Base(P, Q, x_s, x_t, cache)
   {}
 
   Rational_arc_d_1(const Rat_vector& pcoeffs, const Rat_vector& qcoeffs,
                    const Algebraic_real_1& x_s, const Algebraic_real_1& x_t,
-                   Cache& cache) :
+                   const Cache& cache) :
     Base(pcoeffs, qcoeffs, x_s, x_t, cache)
   {}
   //@}

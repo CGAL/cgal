@@ -95,7 +95,7 @@ public:
   }
 
   Comparison_result compare_xy_2(const Algebraic_point_2_rep& other,
-                                 Cache& cache) const
+                                 const Cache& cache) const
   {
     Comparison_result comp = CGAL::compare(_x_coordinate, other.x());
     if (comp != EQUAL)
@@ -359,7 +359,7 @@ public:
     Base(static_cast<const Base &> (p)) {}
 
   Comparison_result compare_xy_2(const Algebraic_point_2& other,
-                                 Cache& cache) const
+                                 const Cache& cache) const
   {
     if (this->is_identical (other))
       return CGAL::EQUAL;

@@ -130,8 +130,6 @@ public:
       }
     }
     
-    _rat_func_map_watermark = 2*_rat_func_map.size();
-
     //copy rational function pair map
     typename Rational_function_canonicalized_pair_map::const_iterator iter2;
     for ( iter2  = other.rat_pair_map().begin();
@@ -147,7 +145,6 @@ public:
         _rat_pair_map.insert(std::make_pair(key,p)); 
       }
     }
-    _rat_pair_map_watermark = 2*_rat_pair_map.size();
 
   }
   const Rational_function_map& rat_func_map() const
@@ -161,7 +158,7 @@ public:
   }
   
   const Rational_function& get_rational_function(const Polynomial_1& numer,
-                                                 const Polynomial_1& denom) 
+                                                 const Polynomial_1& denom) const
   {
     CGAL_precondition (_ak_ptr != NULL);
     Rational_function_key key  = get_key(numer,denom);
@@ -176,7 +173,7 @@ public:
     else    //element does not exist, create it & insert to cache
       {
         //first check if to clean up cache
-        if (_rat_func_map.size() > _rat_func_map_watermark)
+         if (_rat_func_map.size() > _rat_func_map_watermark)
           rat_func_map_clean_up();
 
         //then insert the new element
@@ -186,7 +183,7 @@ public:
         return it2->second; 
       } 
   }
-  const Rational_function&  get_rational_function( const Rational& rat) 
+  const Rational_function&  get_rational_function( const Rational& rat) const
   {
     Integer  numer,denom;
     typename FT_rat_1::Decompose()(rat,numer,denom);
@@ -200,7 +197,7 @@ public:
   }
 
   const Rational_function_pair get_rational_pair(const Rational_function& f, 
-                                                 const Rational_function& g) 
+                                                 const Rational_function& g) const
   {
     CGAL_precondition (_ak_ptr != NULL);
     CGAL_precondition(!(f==g));
@@ -229,10 +226,10 @@ public:
     }
   }
 
-  void cleanup() 
+  void cleanup() const
   {
-    rat_func_map_clean_up();
     rat_pair_map_clean_up();
+    rat_func_map_clean_up();
   }
 private:
   Rational_function_key get_key(const Polynomial_1& numer,
@@ -255,8 +252,9 @@ private:
 
   }
 
-  void rat_func_map_clean_up()
-  {
+  void rat_func_map_clean_up() const 
+  {                                             
+   
     //find eraseable rational functions
     std::vector<Rational_function_key> eraseable;
     typename Rational_function_map::iterator iter1;
@@ -278,10 +276,13 @@ private:
     }
 
     //re-set watermark
-    _rat_func_map_watermark = 2*_rat_func_map.size();
+    _rat_func_map_watermark = (std::max)(
+        2*_rat_func_map.size(),
+        typename Rational_function_map::size_type(128));
+    
     return;
   }
-  void rat_pair_map_clean_up()
+  void rat_pair_map_clean_up() const 
   {
     //find eraseable rational functions
     std::vector<Rational_function_canonicalized_pair_key> eraseable;
@@ -304,14 +305,16 @@ private:
     }
 
     //re-set watermark
-    _rat_pair_map_watermark = 2*_rat_pair_map.size();
+    _rat_pair_map_watermark = 
+      (std::max)(2*_rat_pair_map.size(),
+          typename Rational_function_canonicalized_pair_map::size_type(128));
   }
 
 private:
   mutable Rational_function_map   _rat_func_map;
-  unsigned int                    _rat_func_map_watermark;
+  mutable unsigned int                    _rat_func_map_watermark;
   mutable Rational_function_canonicalized_pair_map  _rat_pair_map;
-  unsigned int                    _rat_pair_map_watermark;
+  mutable unsigned int                    _rat_pair_map_watermark;
   mutable Algebraic_kernel_d_1*   _ak_ptr;
 }; //Cache
  
