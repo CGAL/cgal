@@ -49,8 +49,6 @@ namespace CGAL {
 	traits(traits_),c(center), r(radius), eps(epsilon) 
 	{ 	// avoid problems if eps > r
 		if (eps>r) eps=r; 
-                typename SearchTraits::Construct_cartesian_const_iterator_d ccci=
-                  traits.construct_cartesian_const_iterator_d_object();
 	}
         	
         bool contains(const Point_d& p) const {

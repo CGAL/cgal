@@ -106,9 +106,9 @@ public:
     Iso_box_d operator() () const {
       return static_cast<const typename Base::Construct_iso_box_d* >(this)->operator() ();
     }
-    Iso_box_d operator() (const Point_with_info& p, const Point_with_info& q, FT epsilon=FT(0)) const
+    Iso_box_d operator() (const Point_with_info& p, const Point_with_info& q) const
     {
-      return static_cast<const typename Base::Construct_iso_box_d* >(this)->operator() (get(ppmap,p),get(ppmap,q),epsilon);
+      return static_cast<const typename Base::Construct_iso_box_d* >(this)->operator() (get(ppmap,p),get(ppmap,q));
     }
   };
   

@@ -53,8 +53,7 @@ void run(const std::vector<Point>& points)
       it != points.end();
       it++){
     if( std::find(result.begin(), result.end(), *it) == result.end()){
-      Distance d;
-      assert(d.transformed_distance(query, *it) >= dist);
+      assert(Distance().transformed_distance(query, *it) >= dist);
     }
   }
   std::cout << "done" << std::endl;  
