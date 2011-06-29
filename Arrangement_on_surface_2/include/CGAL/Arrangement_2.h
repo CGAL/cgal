@@ -164,18 +164,13 @@ public:
   ///! \name Specialized access methods.
   //@{
 
-  /*! Get the geometry-traits class (for backward compatibility). */
+  /*! Obtain the geometry-traits class. */
   const Traits_2* traits () const
   {
     return (this->geometry_traits());
   }
 
-  Traits_2* traits ()
-  {
-    return (this->geometry_traits());
-  }
-
-  /*! Get the number of vertices at infinity. */
+  /*! Obtain the number of vertices at infinity. */
   Size number_of_vertices_at_infinity () const
   {
     // The vertices at infinity are valid, but not concrete:
@@ -183,7 +178,7 @@ public:
             this->topology_traits()->number_of_concrete_vertices());
   }
 
-  /*! Get the unbounded face (non-const version). */
+  /*! Obtain the unbounded face (non-const version). */
   Face_handle unbounded_face ()
   {
     // The fictitious un_face contains all other valid faces in a single
