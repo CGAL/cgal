@@ -33,5 +33,5 @@ if ( CGAL_FOUND )
   create_single_source_cgal_program( Simple_cartesian.cpp )
   create_single_source_cgal_program( Simple_homogeneous.cpp )
   create_single_source_cgal_program( test_kernel__.cpp )
-
+  create_single_source_cgal_program( overload_bug.cpp )
 endif()
