@@ -57,7 +57,7 @@ int main(int argc, char* argv[])
   // default construction 
   {
     Traits_2 traits; 
-    const Algebraic_kernel_d_1* ak (traits.algebraic_kernel_d_1());
+    const Algebraic_kernel_d_1* ak (traits.algebraic_kernel_d_1()); (void) ak;
   }
   
   
@@ -140,18 +140,16 @@ int main(int argc, char* argv[])
     {Curve_2 dummy(curve);}
     {Curve_2 dummy = curve;}
     
-    const Polynomial_1& P(curve.numerator());
-    const Polynomial_1& Q(curve.denominator());
-    assert(P == Polynomial_1(0));
-    assert(Q == Polynomial_1(1));
+    assert(CGAL::degree(curve.numerator())  >=0);
+    assert(CGAL::degree(curve.denominator())>=0);
     assert(curve.is_continuous());
     assert(curve.left_parameter_space_in_x()==CGAL::ARR_LEFT_BOUNDARY);
     assert(curve.right_parameter_space_in_x()==CGAL::ARR_RIGHT_BOUNDARY);
   }
   {
     Curve_2 curve = construct_curve_2(P,one,two);
-    const Polynomial_1& P(curve.numerator());
-    const Polynomial_1& Q(curve.denominator());
+    assert(CGAL::degree(curve.numerator())  >=0);
+    assert(CGAL::degree(curve.denominator())>=0);
     assert(curve.is_continuous());
     assert(curve.left_parameter_space_in_x()==CGAL::ARR_INTERIOR);
     assert(curve.right_parameter_space_in_x()==CGAL::ARR_INTERIOR);
@@ -170,8 +168,8 @@ int main(int argc, char* argv[])
     {X_monotone_curve_2 dummy(xcurve);}
     {X_monotone_curve_2 dummy = xcurve;}
         
-    const Polynomial_1& P(xcurve.numerator());
-    const Polynomial_1& Q(xcurve.denominator());
+    assert(CGAL::degree(xcurve.numerator())  >=0);
+    assert(CGAL::degree(xcurve.denominator())>=0);
     assert(xcurve.source_parameter_space_in_x()==CGAL::ARR_INTERIOR);
     assert(xcurve.source_parameter_space_in_y()==CGAL::ARR_INTERIOR);
     xcurve.source(); 
@@ -212,7 +210,7 @@ int main(int argc, char* argv[])
   
   {
     Arrangement_2 arr; 
-    const Traits_2* traits = arr.traits();
+    const Traits_2* traits = arr.traits();(void) traits; 
   }
 
   { 
