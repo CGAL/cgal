@@ -11,7 +11,7 @@ lines and rays.
 %--------------------------------------------
 
 Consider the arrangement induced by the two lines $y = x$ and
-$y = -x$. These two line intersect at the origin, such that the
+$y = -x$. These two lines intersect at the origin, such that the
 arrangement contains a single vertex $v = (0,0)$, with four infinite
 rays emanating from it. Each ray corresponds to an arrangement edge,
 and these edges subdivide the plane into four unbounded faces.
@@ -151,11 +151,11 @@ Halfedges are drawn as thin arrows. The vertices $v_1, \ldots, v_8$
 lie at infinity, and are not associated with valid points. The
 halfedges that connect them are fictitious, and are not associated
 with concrete curves. The face denoted $f_0$ (lightly shaded)
-is the fictitious ``unbounded face'' which lies outside the imaginary
+is the fictitious ``unbounded face'' which lies outside the bounding
 rectangle (dashed) that bounds the actual arrangement. The four
 fictitious vertices $v_{\rm bl}, v_{\rm tl}, v_{\rm br}$ and
-$v_{\rm tr}$ represent the four corners of the imaginary bounding
-rectangle..\label{arr_fig:unb_dcel}}
+$v_{\rm tr}$ represent the four corners of the bounding
+rectangle.\label{arr_fig:unb_dcel}}
 \end{figure}
 
 Given a set $\calC$ of unbounded curves, a simple approach for
@@ -179,32 +179,31 @@ infinity, and the halfedges connecting them are \emph{fictitious}, and
 represent portions of the bounding rectangle. Note that the outer CCBs
 of the unbounded faces contain fictitious halfedges. The twins of these
 halfedges form together one connected component that corresponds to
-the entire imaginary rectangle, which forms a single hole in a face
+the entire bounding rectangle, which forms a single hole in a face
 $f_0$. We say that $f_0$ is \emph{fictitious}, as it does
-not corresponds to a real two-dimensional cell of the arrangement.
+not correspond to a real two-dimensional cell of the arrangement.
 
 Observe that there are four extra vertices at infinity that do not lie
 on any curve; they are denoted as $v_{\rm bl}, v_{\rm tl}, 
 v_{\rm br}$, and $v_{\rm tr}$, and represent the bottom-left, top-left,
 bottom-right, and top-right corners of the bounding rectangle,
 respectively. Similarly, there are fictitious halfedges that lie on
-the top, the bottom, the left, or the right edge of the imaginary
-bounding rectangle. When the arrangement is empty, there are exactly
+the top, the bottom, the left, or the right edge of the bounding
+rectangle. When the arrangement is empty, there are exactly
 four pairs of fictitious halfedges, that divide the plane into two
-faces, namely a fictitious face lying outside of the imaginary bounding
-rectangle and a single unbounded face bounded by the imaginary
-bounding rectangle. 
+faces, namely a fictitious face lying outside of the bounding
+rectangle and a single unbounded face bounded by the bounding rectangle. 
 
 Summarizing the above, there are four types of arrangement vertices,
 which differ from one another by their location with respect to the
-imaginary bounding rectangle:
+bounding bounding rectangle:
 \begin{enumerate}
 \item\label{type-normal}
   A vertex, associated with a point in $\real^2$ whose
   coordinates are bounded. Such a vertex always lies inside the
   bounding rectangle.
 \item\label{type-unbounded}
-  A vertex that represent an unbounded end of an $x$-monotone curve
+  A vertex that represents an unbounded end of an $x$-monotone curve
   that is defined at $x = -\infty$ or at $x = \infty$. In case of
   a horizontal line or a curve with a horizontal asymptote, the
   $y$-coordinate of the curve end may be finite (see for example the
@@ -227,7 +226,7 @@ imaginary bounding rectangle:
   and $v_5$ in Figure~\ref{arr_fig:unb_dcel} are of this type.
 \item\label{type-fictitious}
   The fictitious vertices that represent the four corners of the
-  imaginary bounding rectangle.
+  bounding bounding rectangle.
 \end{enumerate}
 A vertex (at infinity) of Type~\ref{type-unbounded} or
 Type~\ref{type-unbounded-vertical} above always has
@@ -259,7 +258,7 @@ Section~\ref{arr_ssec:traverse}:
   \ccc{ARR_BOTTOM_BOUNDARY} if the $y$-coordinate of the point
   approaches $-\infty$ and \ccc{ARR_TOP_BOUNDARY} if the
   $y$-coordinate approaches $\infty$. The Boolean predicate
-  \ccc{is_at_open_boundary()} is also supported. You can access the
+  \ccc{is_at_open_boundary()} is also provided. You can access the
   point associated with a vertex only if it is not a vertex at an open
   boundary (recall that a vertex at an open boundary is not associated
   with a \ccc{Point_2} object).
@@ -273,7 +272,7 @@ Section~\ref{arr_ssec:traverse}:
 \item
   The nested \ccc{Face} class provides the Boolean predicate
   \ccc{f.is_fictitious()}. The method \ccc{outer_ccb()} has the
-  precondition that the face is not fictitious. Note that valid
+  precondition that the face is not fictitious. Note that non-fictitious
   unbounded faces always have valid CCBs (although this CCB may
   comprise only fictitious halfedge in case the arrangement contains
   only bounded curves).
@@ -283,9 +282,9 @@ The method \ccc{arr.number_of_edges()} does not count the number of
 fictitious edges, (which is always
 \ccc{arr.number_of_vertices_at_infinity() + 4}), and the iterators
 returned by \ccc{arr.edges_begin()} and \ccc{arr.edges_end()} specify
-a range of valid edges. Similarly, \ccc{arr.number_of_faces()} does not
-count the fictitious face.
-However, the \ccc{Ccb_halfedge_circulator} of the outer boundary of an
+a range of non-fictitious edges. Similarly, \ccc{arr.number_of_faces()}
+does not count the fictitious face. However, the
+\ccc{Ccb_halfedge_circulator} of the outer boundary of an
 unbounded face or the \ccc{Halfegde_around_vertex_circulator} of a vertex
 at infinity do traverse fictitious halfedges. For example, it is possible
 to traverse the outer boundaries of the unbounded arrangement edges
