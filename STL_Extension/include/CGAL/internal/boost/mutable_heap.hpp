@@ -51,10 +51,7 @@ namespace boost_ {
 
   template <class TreeNode, class Compare, class ExternalData>
   inline TreeNode down_heap(TreeNode x, const Compare& comp, ExternalData& edata) {
-	  std::cerr << "Enter down_heap" << std::endl;
     while (x.children().size() > 0) {
-		
-	  std::cerr << "  call min_element" << std::endl;
       typename TreeNode::children_type::iterator 
         child_iter = std::min_element(x.children().begin(),
                                       x.children().end(), 
