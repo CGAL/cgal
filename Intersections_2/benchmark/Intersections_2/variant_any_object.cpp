@@ -107,88 +107,106 @@ typedef Creator_uniform_2<double,Point>  Pt_creator;
 typedef K::Segment_2         Segment;
 typedef std::vector<Segment> Vector;
 
-cpp0x::tuple<int, int, int> intersect_each_object(const Vector& segs) {
-  // Calculate the intersections between each segment
-  cpp0x::tuple<int, int, int> ret = cpp0x::make_tuple(0, 0, 0);
+template<typename F>
+void intersect_each(F f, const Vector& segs) {
   for(Vector::const_iterator it = segs.begin(); it != segs.end(); ++it) {
-    const Segment& seg_1 = *it;
-    for(Vector::const_iterator it2 = segs.begin(); it2 != segs.end(); ++it2) {
-      Object obj = intersection(seg_1, *it2);
-      if (const Point * point = object_cast<Point>(&obj)) {
-	(void)point;
-	++(cpp0x::get<0>(ret));
-      } else if (const Segment * segment = object_cast<Segment>(&obj)) {
-	(void)segment;
-	++(cpp0x::get<1>(ret));
-      } else {
-	++(cpp0x::get<2>(ret));
+      const Segment& seg_1 = *it;
+      for(Vector::const_iterator it2 = segs.begin(); it2 != segs.end(); ++it2) {
+        f(seg_1, *it2);
       }
-    }
   }
-
-  return ret;
 }
 
-cpp0x::tuple<int, int, int> intersect_each_do(const Vector& segs) {
-  // Calculate the intersections between each segment
-  cpp0x::tuple<int, int, int> ret = cpp0x::make_tuple(0, 0, 0);
-
-  std::vector<Point> res_points;
-  std::vector<Segment> res_segs;
-
-  // typedef decltype(std::back_inserter(res_points)) iter1;
-  // typedef decltype(std::back_inserter(res_segs)) iter2;
-  typedef typename std::back_insert_iterator< std::vector<Point> >   Iter1;
-  typedef typename std::back_insert_iterator< std::vector<Segment> > Iter2;
-
-  CGAL::Dispatch_or_drop_output_iterator<CGAL::cpp0x::tuple<Point,Segment>,
-                                         CGAL::cpp0x::tuple<Iter1,Iter2>
-                                         > do_it(std::back_inserter(res_points), std::back_inserter(res_segs));
-  
-  // auto do_it2 = CGAL::dispatch_or_drop_output(std::back_inserter(res_points), std::back_inserter(res_segs));
-  
-  for(Vector::const_iterator it = segs.begin(); it != segs.end(); ++it) {
-    const Segment& seg_1 = *it;
-    for(Vector::const_iterator it2 = segs.begin(); it2 != segs.end(); ++it2) {
-      intersect_do_iterator(seg_1, *it2, K(), do_it);
-    }
-  }
-  cpp0x::get<0>(ret) = res_points.size();
-  cpp0x::get<1>(ret) = res_segs.size();
-  cpp0x::get<2>(ret) = (segs.size()*segs.size()) - res_points.size() - res_segs.size();
-  return ret;
-}
-
-
-struct raise_if : public boost::static_visitor<>
-{
-  raise_if(cpp0x::tuple<int, int, int>* t) : t(t) {}
-
-  void operator()(const Point& p) const { (void)p; ++(cpp0x::get<0>(*t)); }  
-  void operator()(const Segment& s) const { (void)s; ++(cpp0x::get<1>(*t)); }
-  cpp0x::tuple<int, int, int>* t;
+struct Vec_holder {
+  Vec_holder(std::vector<Point>* p, std::vector<Segment>* s) : p(p), s(s) { }
+protected:
+  std::vector<Point>* p;
+  std::vector<Segment>* s;
 };
 
-cpp0x::tuple<int, int, int> intersect_each_variant(const Vector& segs) {
-  cpp0x::tuple<int, int, int> ret = cpp0x::make_tuple(0, 0, 0);
+struct Visitor : public boost::static_visitor<>, Vec_holder
+{
+  Visitor(std::vector<Point>* p, std::vector<Segment>* s) : 
+    Vec_holder(p, s) { }
+
+  void operator()(const Point& point) { p->push_back(point);  }  
+  void operator()(const Segment& segment) { s->push_back(segment);  }
+};
+
+struct Variant_f {
+  Variant_f(std::vector<Point>* p, std::vector<Segment>* s) : v(p, s)
+    { }
   typedef Intersection_traits<K, Segment, Segment> Traits;
   typedef Traits::result_type result_type;
 
-  // Calculate the intersections between each segment
-  for(Vector::const_iterator it = segs.begin(); it != segs.end(); ++it) {
-    const Segment& seg_1 = *it;
-    for(Vector::const_iterator it2 = segs.begin(); it2 != segs.end(); ++it2) {
-      result_type obj = intersection_variant(seg_1, *it2, K());
-      if(obj) {
-	boost::apply_visitor(raise_if(&ret), *obj);
-      } else {
-	++(cpp0x::get<2>(ret));
-      }
-    }
+  Visitor v;
+  void operator()(const Segment& s1, const Segment& s2) {
+    result_type obj = intersection_variant(s1, s2, K());
+    if(obj) {
+      boost::apply_visitor(v, *obj);
+    } 
   }
+};
+
+struct Object_f : Vec_holder {
+  Object_f(std::vector<Point>* p, std::vector<Segment>* s) : 
+    Vec_holder(p, s) { }
   
-  return ret;
-}
+  void operator()(const Segment& s1, const Segment& s2) {
+    Object obj = intersection(s1, s2);
+      if (const Point * point = object_cast<Point>(&obj)) {
+        p->push_back(*point);
+      } else if (const Segment * segment = object_cast<Segment>(&obj)) {
+        s->push_back(*segment);
+      } 
+  }
+};
+
+struct Any_f : Vec_holder {
+  Any_f(std::vector<Point>* p, std::vector<Segment>* s) : 
+    Vec_holder(p, s) { }
+  
+  void operator()(const Segment& s1, const Segment& s2) {
+    boost::any obj = intersection_any(s1, s2, K());
+    if (const Point * point = boost::any_cast<Point>(&obj)) {
+       p->push_back(*point);
+    } else if (const Segment * segment = boost::any_cast<Segment>(&obj)) {
+      s->push_back(*segment);
+    } 
+  }
+};  
+
+
+struct Object_from_variant_f : Vec_holder {
+  Object_from_variant_f(std::vector<Point>* p, std::vector<Segment>* s) : 
+    Vec_holder(p, s) { }
+  
+  void operator()(const Segment& s1, const Segment& s2) {
+    Object obj = intersection_variant(s1, s2, K());
+      if (const Point * point = object_cast<Point>(&obj)) {
+        p->push_back(*point);
+      } else if (const Segment * segment = object_cast<Segment>(&obj)) {
+        s->push_back(*segment);
+      } 
+  }
+};
+
+struct Do_f : Vec_holder {
+  Do_f(std::vector<Point>* p, std::vector<Segment>* s) : 
+    Vec_holder(p, s) { }
+
+  typedef typename std::back_insert_iterator< std::vector<Point> >   Iter1;
+  typedef typename std::back_insert_iterator< std::vector<Segment> > Iter2;
+
+  void operator()(const Segment& s1, const Segment& s2) {
+
+    CGAL::Dispatch_or_drop_output_iterator<CGAL::cpp0x::tuple<Point,Segment>,
+                                           CGAL::cpp0x::tuple<Iter1,Iter2>
+                                           > do_it(std::back_inserter(*p), std::back_inserter(*s));
+    
+    intersect_do_iterator(s1, s2, K(), do_it);
+  }
+};
 
 #if !defined(CGAL_CFG_NO_CPP0X_VARIADIC_TEMPLATES) && !defined(CGAL_CFG_NO_CPP0X_TUPLE)
 cpp0x::tuple<int, int, int> intersect_each_variant_overload(const Vector& segs) {
@@ -220,60 +238,14 @@ cpp0x::tuple<int, int, int> intersect_each_variant_overload(const Vector& segs) 
 }
 #endif
 
-cpp0x::tuple<int, int, int> intersect_each_variant_to_object(const Vector& segs) {
-  cpp0x::tuple<int, int, int> ret = cpp0x::make_tuple(0, 0, 0);
-
-  // Calculate the intersections between each segment
-  for(Vector::const_iterator it = segs.begin(); it != segs.end(); ++it) {
-    const Segment& seg_1 = *it;
-    for(Vector::const_iterator it2 = segs.begin(); it2 != segs.end(); ++it2) {
-      CGAL::Object obj = intersection_variant(seg_1, *it2, K());
-      if (const Point * point = object_cast<Point>(&obj)) {
-	(void)point;
-	++(cpp0x::get<0>(ret));
-      } else if(const Segment * segment = object_cast<Segment>(&obj)) {
-	  (void)segment;
-	  ++(cpp0x::get<1>(ret));
-      } else {
-        ++(cpp0x::get<2>(ret));
-      }
-    }
-  }
-  return ret;
-}
-
-
-cpp0x::tuple<int, int, int> intersect_each_any(const Vector& segs) {
-  cpp0x::tuple<int, int, int> ret = cpp0x::make_tuple(0, 0, 0);
-  // Calculate the intersections between each segment
-  for(Vector::const_iterator it = segs.begin(); it != segs.end(); ++it) {
-    const Segment& seg_1 = *it;
-    for(Vector::const_iterator it2 = segs.begin(); it2 != segs.end(); ++it2) {
-      boost::any obj = intersection_any(seg_1, *it2, K());
-      if (const Point * point = boost::any_cast<Point>(&obj)) {
-	(void)point;
-	++(cpp0x::get<0>(ret));
-      } else if (const Segment * segment = boost::any_cast<Segment>(&obj)) {
-	(void)segment;
-	++(cpp0x::get<1>(ret));
-      } else {
-	++(cpp0x::get<2>(ret));
-      }
-      
-    }
-  }
-  
-  return ret;
-}
-
 int main(int argc, char* argv[]) {
   int repeats = 100;
-  int segments = 200;
+  int seg_count = 200;
 
   if(argc > 1)
     repeats = boost::lexical_cast<int>(argv[1]);
   if(argc > 2)
-    segments = boost::lexical_cast<int>(argv[2]);
+    seg_count = boost::lexical_cast<int>(argv[2]);
 
   // Create test segment set. Prepare a vector for 200 segments.
   Vector segs;
@@ -291,58 +263,62 @@ int main(int argc, char* argv[]) {
   typedef Creator_uniform_2< Point, Segment> Seg_creator;
   typedef Join_input_iterator_2< P1, P2, Seg_creator> Seg_iterator;
   Seg_iterator g( p1, p2);
-  CGAL::copy_n( g, segments, std::back_inserter(segs));
+  CGAL::copy_n( g, seg_count, std::back_inserter(segs));
 
-  cpp0x::tuple<int, int, int> t(0, 0, 0);
+  std::vector<Point> points;
+  std::vector<Segment> segments;
+  points.clear(); segments.clear(); points.reserve(0); segments.reserve(0);
+  //one run to get the size
+  intersect_each(Variant_f(&points, &segments), segs);
 
   boost::timer timer;
 
   // variant vs object vs any
 
+  points.clear(); segments.clear();
   timer.restart();
-  for(int i = 0; i < repeats; ++i)
-    t = intersect_each_object(segs);
+
+  for(int i = 0; i < repeats; ++i) {
+    intersect_each(Object_f(&points, &segments), segs);
+    points.clear(); segments.clear();
+  }
   std::cout << "Time for object: " << timer.elapsed() << '\n';
-  std::cout << cpp0x::get<0>(t) << " " << cpp0x::get<1>(t) << " " << cpp0x::get<2>(t) << '\n';
 
-  t = cpp0x::make_tuple(0, 0, 0);
-
+  points.clear(); segments.clear();
   timer.restart();
-  for(int i = 0; i < repeats; ++i)
-    t = intersect_each_variant(segs);
+
+  for(int i = 0; i < repeats; ++i) {
+    intersect_each(Variant_f(&points, &segments), segs);
+    points.clear(); segments.clear();
+  }
   std::cout << "Time for variant: " << timer.elapsed() << '\n';
-  std::cout << cpp0x::get<0>(t) << " " << cpp0x::get<1>(t) << " " << cpp0x::get<2>(t) << '\n';
 
-  t = cpp0x::make_tuple(0, 0, 0);
-
-#if !defined(CGAL_CFG_NO_CPP0X_VARIADIC_TEMPLATES) && !defined(CGAL_CFG_NO_CPP0X_TUPLE)
+  points.clear(); segments.clear();
   timer.restart();
-  for(int i = 0; i < repeats; ++i)
-    t = intersect_each_variant_overload(segs);
-  std::cout << "Time for variant with overloads: " << timer.elapsed() << '\n';
-  std::cout << cpp0x::get<0>(t) << " " << cpp0x::get<1>(t) << " " << cpp0x::get<2>(t) << '\n';
 
-  t = cpp0x::make_tuple(0, 0, 0);
-#endif
-
-  timer.restart();
-  for(int i = 0; i < repeats; ++i)
-    t = intersect_each_any(segs);
+  for(int i = 0; i < repeats; ++i) {
+    intersect_each(Any_f(&points, &segments), segs);
+    points.clear(); segments.clear();
+  }
   std::cout << "Time for any: " << timer.elapsed() << '\n';
-  std::cout << cpp0x::get<0>(t) << " " << cpp0x::get<1>(t) << " " << cpp0x::get<2>(t) << '\n';
 
+  points.clear(); segments.clear();
   timer.restart();
-  for(int i = 0; i < repeats; ++i)
-    t = intersect_each_variant_to_object(segs);
+
+  for(int i = 0; i < repeats; ++i) {
+    intersect_each(Object_from_variant_f(&points, &segments), segs);
+    points.clear(); segments.clear();
+  }
   std::cout << "Time for object_from_variant: " << timer.elapsed() << '\n';
-  std::cout << cpp0x::get<0>(t) << " " << cpp0x::get<1>(t) << " " << cpp0x::get<2>(t) << '\n';
 
+  points.clear(); segments.clear();
   timer.restart();
-  for(int i = 0; i < repeats; ++i)
-    t = intersect_each_do(segs);
-  std::cout << "Time for dispatch_output: " << timer.elapsed() << '\n';
-  std::cout << cpp0x::get<0>(t) << " " << cpp0x::get<1>(t) << " " << cpp0x::get<2>(t) << '\n';
 
+  for(int i = 0; i < repeats; ++i) {
+    intersect_each(Do_f(&points, &segments), segs);
+    points.clear(); segments.clear();
+  }
+  std::cout << "Time for dispatch_output: " << timer.elapsed() << '\n';
 
   std::cout << std::flush;
 }
