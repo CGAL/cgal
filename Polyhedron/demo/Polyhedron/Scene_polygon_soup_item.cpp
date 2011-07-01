@@ -1,4 +1,4 @@
-#include "Scene_polygon_soup.h"
+#include "Scene_polygon_soup_item.h"
 #include "Scene_polyhedron_item.h"
 #include <CGAL/IO/Polyhedron_iostream.h>
 #include "Polyhedron_type.h"
@@ -136,28 +136,28 @@ struct Polyhedron_to_polygon_soup_writer {
   }
 }; // end struct Polyhedron_to_soup_writer
 
-Scene_polygon_soup::Scene_polygon_soup()
+Scene_polygon_soup_item::Scene_polygon_soup_item()
   : Scene_item_with_display_list(),
     soup(0),
     oriented(false)
 {
 }
 
-Scene_polygon_soup::~Scene_polygon_soup()
+Scene_polygon_soup_item::~Scene_polygon_soup_item()
 {
   delete soup;
 }
 
-Scene_polygon_soup* 
-Scene_polygon_soup::clone() const {
-  Scene_polygon_soup* new_soup = new Scene_polygon_soup();
+Scene_polygon_soup_item* 
+Scene_polygon_soup_item::clone() const {
+  Scene_polygon_soup_item* new_soup = new Scene_polygon_soup_item();
   new_soup->soup = soup->clone();
   new_soup->oriented = oriented;
   return new_soup;
 }
 
 bool
-Scene_polygon_soup::load(std::istream& in)
+Scene_polygon_soup_item::load(std::istream& in)
 {
 #if CGAL_VERSION_NR >= 1030700091
   typedef std::size_t indices_t;
@@ -204,7 +204,7 @@ Scene_polygon_soup::load(std::istream& in)
 #include <CGAL/IO/generic_print_polyhedron.h>
 #include <iostream>
 
-void Scene_polygon_soup::load(Scene_polyhedron_item* poly_item) {
+void Scene_polygon_soup_item::load(Scene_polyhedron_item* poly_item) {
   if(!poly_item) return;
   if(!poly_item->polyhedron()) return;
 
@@ -219,18 +219,18 @@ void Scene_polygon_soup::load(Scene_polyhedron_item* poly_item) {
 }
 
 void
-Scene_polygon_soup::setDisplayNonManifoldEdges(const bool b)
+Scene_polygon_soup_item::setDisplayNonManifoldEdges(const bool b)
 {
   soup->display_non_manifold_edges = b;
   changed();
 }
 
 bool
-Scene_polygon_soup::displayNonManifoldEdges() const {
+Scene_polygon_soup_item::displayNonManifoldEdges() const {
   return soup->display_non_manifold_edges;
 }
 
-void Scene_polygon_soup::shuffle_orientations()
+void Scene_polygon_soup_item::shuffle_orientations()
 {
   for(Polygon_soup::size_type i = 0, end = soup->polygons.size();
       i < end; ++i)
@@ -241,7 +241,7 @@ void Scene_polygon_soup::shuffle_orientations()
   changed();
 }
 
-void Scene_polygon_soup::inside_out()
+void Scene_polygon_soup_item::inside_out()
 {
   for(Polygon_soup::size_type i = 0, end = soup->polygons.size();
       i < end; ++i)
@@ -253,7 +253,7 @@ void Scene_polygon_soup::inside_out()
 }
 
 bool 
-Scene_polygon_soup::orient()
+Scene_polygon_soup_item::orient()
 {
   typedef Polygon_soup::Polygons::size_type size_type;
   typedef Polygon_soup::Edges_map Edges;
@@ -362,7 +362,7 @@ Scene_polygon_soup::orient()
 
 
 bool 
-Scene_polygon_soup::save(std::ostream& out) const
+Scene_polygon_soup_item::save(std::ostream& out) const
 {
   typedef Polygon_soup::size_type size_type;
   CGAL::File_writer_OFF writer(out);
@@ -424,7 +424,7 @@ Polygon_soup::operator()(Polyhedron::HalfedgeDS& out_hds)
 }
 
 bool 
-Scene_polygon_soup::exportAsPolyhedron(Polyhedron* out_polyhedron)
+Scene_polygon_soup_item::exportAsPolyhedron(Polyhedron* out_polyhedron)
 {
   orient();
   out_polyhedron->delegate(*soup);
@@ -432,7 +432,7 @@ Scene_polygon_soup::exportAsPolyhedron(Polyhedron* out_polyhedron)
 }
 
 QString 
-Scene_polygon_soup::toolTip() const
+Scene_polygon_soup_item::toolTip() const
 {
   if(!soup)
     return QString();
@@ -449,7 +449,7 @@ Scene_polygon_soup::toolTip() const
 }
 
 void
-Scene_polygon_soup::direct_draw() const {
+Scene_polygon_soup_item::direct_draw() const {
   typedef Polygon_soup::Polygons::const_iterator Polygons_iterator;
   typedef Polygon_soup::Polygons::size_type size_type;
   for(Polygons_iterator it = soup->polygons.begin();
@@ -498,7 +498,7 @@ Scene_polygon_soup::direct_draw() const {
 }
 
 void
-Scene_polygon_soup::draw_points() const {
+Scene_polygon_soup_item::draw_points() const {
   if(soup == 0) return;
   ::glBegin(GL_POINTS);
   for(Polygon_soup::Points::const_iterator pit = soup->points.begin(),
@@ -511,12 +511,12 @@ Scene_polygon_soup::draw_points() const {
 }
 
 bool
-Scene_polygon_soup::isEmpty() const {
+Scene_polygon_soup_item::isEmpty() const {
   return (soup == 0 || soup->points.empty());
 }
 
-Scene_polygon_soup::Bbox
-Scene_polygon_soup::bbox() const {
+Scene_polygon_soup_item::Bbox
+Scene_polygon_soup_item::bbox() const {
   const Point_3& p = *(soup->points.begin());
   CGAL::Bbox_3 bbox(p.x(), p.y(), p.z(), p.x(), p.y(), p.z());
   for(Polygon_soup::Points::const_iterator it = soup->points.begin();
@@ -529,7 +529,7 @@ Scene_polygon_soup::bbox() const {
 }
 
 void 
-Scene_polygon_soup::new_vertex(const double& x,
+Scene_polygon_soup_item::new_vertex(const double& x,
                                const double& y,
                                const double& z)
 {
@@ -537,7 +537,7 @@ Scene_polygon_soup::new_vertex(const double& x,
 }
                                
 void 
-Scene_polygon_soup::new_triangle(const std::size_t i,
+Scene_polygon_soup_item::new_triangle(const std::size_t i,
                                  const std::size_t j,
                                  const std::size_t k)
 {
@@ -548,4 +548,4 @@ Scene_polygon_soup::new_triangle(const std::size_t i,
   soup->polygons.push_back(new_polygon);
 }
                                
-#include "Scene_polygon_soup.moc"
+#include "Scene_polygon_soup_item.moc"

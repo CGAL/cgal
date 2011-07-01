@@ -1,7 +1,7 @@
-#ifndef SCENE_POLYGON_SOUP_H
-#define SCENE_POLYGON_SOUP_H
+#ifndef SCENE_POLYGON_SOUP_ITEM_H
+#define SCENE_POLYGON_SOUP_ITEM_H
 
-#include "Scene_polygon_soup_config.h"
+#include "Scene_polygon_soup_item_config.h"
 #include "Scene_item_with_display_list.h"
 #include <iostream>
 
@@ -10,15 +10,15 @@
 struct Polygon_soup;
 class Scene_polyhedron_item;
 
-class SCENE_POLYGON_SOUP_EXPORT Scene_polygon_soup 
+class SCENE_POLYGON_SOUP_EXPORT Scene_polygon_soup_item 
   : public Scene_item_with_display_list 
 {
   Q_OBJECT
 public:  
-  Scene_polygon_soup();
-  ~Scene_polygon_soup();
+  Scene_polygon_soup_item();
+  ~Scene_polygon_soup_item();
 
-  Scene_polygon_soup* clone() const;
+  Scene_polygon_soup_item* clone() const;
   bool load(std::istream& in);
   void load(Scene_polyhedron_item*);
   bool save(std::ostream& out) const;
@@ -50,6 +50,6 @@ public slots:
 private:
   Polygon_soup* soup;
   bool oriented;
-}; // end class Scene_polygon_soup
+}; // end class Scene_polygon_soup_item
 
-#endif // SCENE_POLYGON_SOUP_H
+#endif // SCENE_POLYGON_SOUP_ITEM_H
