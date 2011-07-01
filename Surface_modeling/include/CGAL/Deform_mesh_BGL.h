@@ -8,7 +8,7 @@
 #include <CGAL/boost/graph/graph_traits_Polyhedron_3.h>
 #include <CGAL/boost/graph/properties_Polyhedron_3.h>
 #include <CGAL/boost/graph/halfedge_graph_traits_Polyhedron_3.h>
-#include <svd.h>
+#include <CGAL/svd.h>
 
 
 
@@ -44,7 +44,7 @@ public:
   // Data members.
 public:
 
-  Polyhedron* polyhedron;                     // target mesh, must be modified
+  Polyhedron* polyhedron;                     // source mesh, can not be modified
   std::vector<vertex_descriptor> roi;
   std::vector<vertex_descriptor> hdl;         // user specified handles, storing the target positions
 
@@ -67,15 +67,15 @@ public:
     vertex_iterator vb, ve;
     for(boost::tie(vb,ve) = boost::vertices(*polyhedron); vb != ve; ++vb )
     {
-      rot_mtr[*vb].resize(6);
+      rot_mtr[*vb].resize(9);
     }
 
-    vertex_iterator vb, ve;
     for(boost::tie(vb,ve) = boost::vertices(*polyhedron); vb != ve; ++vb )
     {
       solution[*vb] = (*vb)->point();
     }
 
+    iterations = 10;
 
   }
 
@@ -321,7 +321,7 @@ public:
   // assign translation vector to handles
 	void operator()(Vector translation)
 	{
-    for (int idx = 0; idx < hdl.size(); idx ++)
+    for (int idx = 0; idx < hdl.size(); idx++)
     {
       vertex_descriptor vd = hdl[idx];
       solution[vd] = vd->point() + translation;
@@ -332,12 +332,12 @@ public:
   void optimal_rotations()
   {
     // malloc memory for svd decomposition
-    float** u = new (float*)[4];    // covariance matrix
+    float** u = new float*[4];    // covariance matrix
     for (int i = 0; i < 4; i++)
     {
       u[i] = new float[4];
     }
-    float** v = new (float*)[4];
+    float** v = new float*[4];
     for (int i = 0; i < 4; i++)
     {
       v[i] = new float[4];
@@ -389,7 +389,7 @@ public:
         svdcmp(u, 3, 3, w, v);
 
         // extract rotation matrix
-        for (int i = 0; i < 6; i++)
+        for (int i = 0; i < 9; i++)
         {
           rot_mtr[*vb][i] = 0;
         }
@@ -431,11 +431,12 @@ public:
     int idx = 0;
     for ( boost::tie(vb,ve) = boost::vertices(*polyhedron); vb != ve; ++vb )
     {
-      // only accumulate roi vertices
-      std::vector<vertex_descriptor> ::iterator result = find(roi.begin(), roi.end(), *vb);
-      if ( result == roi.end() )
+      // only accumulate ( roi - hdl ) vertices
+      std::vector<vertex_descriptor> ::iterator result_roi = find(roi.begin(), roi.end(), *vb);
+      std::vector<vertex_descriptor> ::iterator result_hdl = find(hdl.begin(), hdl.end(), *vb);
+      if ( result_roi == roi.end() || result_hdl != hdl.end() )
       {
-        Bx[idx] = (*vb)->point().x(); By[idx] = (*vb)->point().y(); Bz[idx] = (*vb)->point().z();
+        Bx[idx] = solution[*vb].x(); By[idx] = solution[*vb].y(); Bz[idx] = solution[*vb].z();
       }
       else
       {
@@ -448,13 +449,15 @@ public:
           Vector pij = vi->point() - vj->point();
           double wij = edge_weight[*e];
           Vector rot_p(0, 0, 0);                 // vector ( r_i + r_j )*p_ij
-          for (int i = 0; i < 3; i++)
+          for (int j = 0; j < 3; j++)
           {
-            for (int j = 0; j < 3; j++)
-            {
-              rot_p[i] += (rot_mtr[vi][i*3+j]+rot_mtr[vj][i*3+j])*pij[j];
-            }
+            double x = ( rot_mtr[vi][j] + rot_mtr[vj][j] ) * pij[j];
+            double y = ( rot_mtr[vi][3+j] + rot_mtr[vj][3+j] ) * pij[j];
+            double z = ( rot_mtr[vi][6+j] + rot_mtr[vj][6+j] ) * pij[j];
+            Vector v(x, y, z);
+            rot_p = rot_p + v;
           }
+          
           Vector vec = wij*rot_p/2.0;
           Bx[idx] += vec.x(); By[idx] += vec.y(); Bz[idx] += vec.z();
         }
@@ -469,7 +472,10 @@ public:
     idx = 0;
     for ( boost::tie(vb,ve) = boost::vertices(*polyhedron); vb != ve; ++vb )
     {
-      solution[*vb].x() = X[idx]; solution[*vb].y() = Y[idx]; solution[*vb].z() = Z[idx]; 
+      Point p(X[idx], Y[idx], Z[idx]);
+      solution[*vb] = p;
+      //solution[*vb].x() = X[idx]; solution[*vb].y() = Y[idx]; solution[*vb].z() = Z[idx]; 
+      idx++;
     }
 
   }
@@ -493,15 +499,16 @@ public:
           Vector pij = vi->point() - vj->point();
           double wij = edge_weight[*e];
           Vector rot_p(0, 0, 0);                 // vector rot_i*p_ij
-          for (int i = 0; i < 3; i++)
+          for (int j = 0; j < 3; j++)
           {
-            for (int j = 0; j < 3; j++)
-            {
-              rot_p[i] += rot_mtr[vi][i*3+j] * pij[j];
-            }
+            double x = rot_mtr[vi][j] * pij[j];
+            double y = rot_mtr[vi][3+j] * pij[j];
+            double z = rot_mtr[vi][6+j] * pij[j];
+            Vector v(x, y, z);
+            rot_p = rot_p + v;
           }
-          Vector vec = (solution[vi] - solution[vj]) - rot_p;
-          sum_of_energy += wij*vec.squared_length();
+          Vector qij = solution[vi] - solution[vj];
+          sum_of_energy += wij*(qij - rot_p).squared_length();
         }
       }
     }
@@ -509,7 +516,7 @@ public:
   }
 
   // Deformation on roi vertices
-  void deform()
+  void deform(Polyhedron* P)
   {
     // iterations
     CGAL_TRACE_STREAM << "iteration started...\n";
@@ -522,11 +529,15 @@ public:
     }
     CGAL_TRACE_STREAM << "iteration end!\n";
 
-    // copy solution to polyhedron
+    // copy solution to target mesh P
+    vertex_iterator vb_t, ve_t;
+    boost::tie(vb_t,ve_t) = boost::vertices(*P);
+
     vertex_iterator vb, ve;
     for(boost::tie(vb,ve) = boost::vertices(*polyhedron); vb != ve; ++vb )
     {
-      (*vb)->point() = solution[*vb];
+      (*vb_t)->point() = solution[*vb];
+      vb_t++;
     }
   }
 };

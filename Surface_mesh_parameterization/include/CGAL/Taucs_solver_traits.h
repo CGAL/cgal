@@ -525,7 +525,7 @@ public:
 	bool solve (const Vector& B, Vector& X)
 	{
 			int     success;
-			success = taucs_ooc_solve_lu(matrix.get(),
+			success = taucs_ooc_solve_lu(mtr.get(),
 				X.get_taucs_vector(),
 				(T*) B.get_taucs_vector());
 			if (success != TAUCS_SUCCESS)

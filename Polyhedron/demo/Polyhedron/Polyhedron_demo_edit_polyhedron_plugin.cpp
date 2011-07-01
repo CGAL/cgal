@@ -246,26 +246,34 @@ void Polyhedron_demo_edit_polyhedron_plugin::edition() {
   Deform_map::iterator deform_it = deform_map.find(edit_item);
   if(deform_it == deform_map.end()) {
     // First time. Need to create the Deform_mesh object.
-    deform = new Deform_mesh(polyhedron);
 
     // create a new entry in the map
     Polyhedron_deformation_data& data = deform_map[edit_item]; 
 
-    data.deform_mesh = deform;
     data.polyhedron_copy = new Polyhedron(*polyhedron); // copy and source mesh
+    deform = new Deform_mesh(data.polyhedron_copy);
+    data.deform_mesh = deform;
 
-    // assgin handles to target mesh
+    std::map<Vertex_handle, Vertex_handle> t2s;       // map vertices from target mesh to source mesh
+    Vertex_handle vd_s = data.polyhedron_copy->vertices_begin();
+    for ( Vertex_handle vd_t = polyhedron->vertices_begin(); vd_t != polyhedron->vertices_end(); vd_t++ )
+    {
+      t2s[vd_t] = vd_s;
+      vd_s++;
+    }
+
+    // assign handles to source mesh
     deform->handle_clear();
     Q_FOREACH(Vertex_handle vh, edit_item->selected_vertices())
     {
-      deform->handle_push(vh);
+      deform->handle_push(t2s[vh]);
     }
 
-    // assign roi to target mesh
+    // assign roi to source mesh
     deform->roi_clear();
     Q_FOREACH(Vertex_handle vh, edit_item->vertices_in_region_of_interest())
     {
-      deform->roi_push(vh);
+      deform->roi_push(t2s[vh]);
     }
 
     // precomputation of Laplacian matrix
@@ -274,22 +282,23 @@ void Polyhedron_demo_edit_polyhedron_plugin::edition() {
   } else {
     // In that case deform_it->second is the data associated to 'polyhedron'.
     deform = deform_it->second.deform_mesh;
+
   }
 
-  
 
   const Point& last_position = edit_item->last_position();
-  const Vector translation = edit_item->current_position() - last_position;
 
   // 'orig' could be used instead of 'last_position', to get the
   // translation vector from the first position.
   const Point& orig = edit_item->original_position();
   Q_UNUSED(orig)
 
+  const Vector translation = edit_item->current_position() - orig;
+
   // -- ACTUAL DEFORMATION --
 
-  
-  deform->deform();
+  (*deform)(translation);
+  deform->deform(polyhedron);
   
 
   // This should be modified to use Deform_mesh instead.
