@@ -3014,6 +3014,7 @@ Polyhedron/demo/Polyhedron/data/star.off -text svneol=unset#application/octet-st
 Polyhedron/demo/Polyhedron/data/translated-cube.off -text svneol=unset#application/octet-stream
 Polyhedron/demo/Polyhedron/data/tripod.off -text svneol=unset#application/octet-stream
 Polyhedron/demo/Polyhedron/data/turbine.off -text svneol=unset#application/octet-stream
+Polyhedron/demo/Polyhedron/nrutil.cpp -text
 Polyhedron/demo/Polyhedron/resources/about.html svneol=native#text/html
 Polyhedron/demo/Polyhedron/resources/boolean-diff.png -text svneol=unset#image/png
 Polyhedron/demo/Polyhedron/resources/boolean-intersection.png -text svneol=unset#image/png

@@ -318,7 +318,8 @@ if(CGAL_Qt4_FOUND AND QT4_FOUND AND OPENGL_FOUND AND QGLVIEWER_FOUND)
   polyhedron_demo_plugin(trivial_plugin Polyhedron_demo_trivial_plugin)
 
   if(TAUCS_FOUND)
-    polyhedron_demo_plugin(edit_polyhedron_plugin Polyhedron_demo_edit_polyhedron_plugin ${editionUI_FILES})
+    polyhedron_demo_plugin(edit_polyhedron_plugin Polyhedron_demo_edit_polyhedron_plugin
+nrutil.cpp ${editionUI_FILES})
     target_link_libraries(edit_polyhedron_plugin scene_polyhedron_item scene_edit_polyhedron_item)
   endif()
 
