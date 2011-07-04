@@ -250,10 +250,15 @@ void Polyhedron_demo_edit_polyhedron_plugin::edition() {
     // create a new entry in the map
     Polyhedron_deformation_data& data = deform_map[edit_item]; 
 
+    // AF: We should not really copy the polyhedron.  This is expensive for big real world data sets
+    //     Instead we could store the position of the vertices of the ROI before the deformation in order to undo
+    //     Think about how this can be done in the Deform class
+    //
     data.polyhedron_copy = new Polyhedron(*polyhedron); // copy and source mesh
     deform = new Deform_mesh(data.polyhedron_copy);
     data.deform_mesh = deform;
 
+    // AF: Is this map still needed for something?
     std::map<Vertex_handle, Vertex_handle> t2s;       // map vertices from target mesh to source mesh
     Vertex_handle vd_s = data.polyhedron_copy->vertices_begin();
     for ( Vertex_handle vd_t = polyhedron->vertices_begin(); vd_t != polyhedron->vertices_end(); vd_t++ )
