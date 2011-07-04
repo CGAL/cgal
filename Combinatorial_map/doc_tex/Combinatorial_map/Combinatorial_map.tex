@@ -1,8 +1,13 @@
 \def\ccTagRmTrailingConst{\ccFalse}
 
-\newcommand{\mb}[1]{\beta_{#1}}
-\newcommand{\orb}[1]{\langle{}#1\rangle{}}
 \newcommand{\nulldart}{\texttt{null\_dart\_handle}}
+\newcommand{\mb}[1]{\beta_{#1}}
+
+\def\betazero{\ccTexHtml{$\beta_0$}{&beta;<SUB>0</SUB>}}
+\def\betaun{\ccTexHtml{$\beta_1$}{&beta;<SUB>1</SUB>}}
+
+% \newcommand{\orb}[1]{&lang;#1&rang;}
+\newcommand{\orb}[1]{\langle{}#1\rangle{}}
 
 \newcommand{\cell}[1]{\emph{#1}-cell}
 \newcommand{\cells}[1]{\emph{#1}-cells}
@@ -106,7 +111,7 @@ Figure~\ref{fig-exemple-3Dmanifold}.
 
 First let us start in 2D (Figure~\ref{fig-exemple-combi-maps} (Left)).
 Facet $f_1$ is described by four darts. These darts are linked
-together with pointers. Starting from a dart and following a $\beta_1$
+together with pointers. Starting from a dart and following a \betaun{} %\mbeta{1}
 pointer, we get to a dart which belongs to the same facet but to the
 next edge (1-cell, which explains the index~1 of~$\beta_1$).
 Starting from any dart and following $\beta_1$ pointers, we can reach
