@@ -60,7 +60,7 @@ int main()
   CGAL::remove_cell<CMap_3,1>(cm,dh2->beta(0));
   CGAL_assertion( cm.is_valid() );
   
-  // Display the m characteristics.
+  // Display the combinatorial map characteristics.
   cm.display_characteristics(std::cout) << ", valid=" 
 					<< cm.is_valid() << std::endl;
 
