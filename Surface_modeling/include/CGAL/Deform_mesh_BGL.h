@@ -8,14 +8,10 @@
 #include <CGAL/boost/graph/graph_traits_Polyhedron_3.h>
 #include <CGAL/boost/graph/properties_Polyhedron_3.h>
 #include <CGAL/boost/graph/halfedge_graph_traits_Polyhedron_3.h>
-
-
-// AF: Will svd be something encapsulated by the SparseLinearAlgebraTraits_d ??
-//     In this case you should anticipate this in your code and not use it here directly
 #include <CGAL/svd.h>
 
 
-// AF: These includes are not needed
+
 #include <iostream>
 #include <list>
 #include <fstream>
@@ -51,12 +47,15 @@ public:
   Polyhedron* polyhedron;                     // source mesh, can not be modified
   std::vector<vertex_descriptor> roi;
   std::vector<vertex_descriptor> hdl;         // user specified handles, storing the target positions
+  std::vector<vertex_descriptor> ros;         // region of solution, including roi and hard constraints outside roi
+  
 
   int iterations;                                     // number of iterations
-  std::map<vertex_descriptor, std::vector<double> > rot_mtr;               // rotations matrices of all vertices
+  std::map<vertex_descriptor, std::vector<double> > rot_mtr;               // rotation matrices of all vertices
   std::map<edge_descriptor, double> edge_weight;           // weight of edges
   SparseLinearAlgebraTraits_d m_solver;               // linear sparse solver
   std::map<vertex_descriptor, Point> solution;        // storing vertex solution during iterations
+  std::map<vertex_descriptor, int> ros_idx;           // index of ros vertices
 
 
   // Public methods
@@ -66,7 +65,6 @@ public:
   Deform_mesh_BGL(Polyhedron* P)
     :polyhedron(P)
   {
-    polyhedron = P;
 
     vertex_iterator vb, ve;
     for(boost::tie(vb,ve) = boost::vertices(*polyhedron); vb != ve; ++vb )
@@ -88,9 +86,7 @@ public:
   {
   }
 
-  // AF: please put a comment what this function computes
-  //
-  // The region of interest and the handles are a set of vertices on target mesh
+  // determine the roi vertices inside k-ring for all the vertices from begin to end
   void region_of_interest(vertex_iterator begin, vertex_iterator end, size_t k)
   {
     roi.clear();
@@ -98,14 +94,11 @@ public:
     {
       roi.push_back(*vit);
     }
-    // AF: Why do you insert end?
-    // Iterator ranges are usually half open 
     roi.push_back(*end);
   
     int idx_lv = 0;    // pointing the neighboring vertices on current level
     int idx_lv_end;
     
-    // AF:: This loop has a running time quadratic in the size of the region of interst
     for (size_t lv = 0; lv < k; lv++)
     {
       idx_lv_end = roi.size(); 
@@ -161,6 +154,39 @@ public:
   }
 
 
+  // find region of solution, including roi and hard constraints, which is the 1-ring vertices out roi
+  void region_of_solution()
+  {
+    ros.clear();
+    for (int i = 0; i < roi.size(); i++)
+    {
+      ros.push_back(roi[i]);
+    }
+
+    std::vector<vertex_descriptor> hard_constraints;
+    for (int i = 0;i < roi.size(); i++)
+    {
+      vertex_descriptor vd = roi[i];
+      in_edge_iterator e, e_end;
+      for (boost::tie(e,e_end) = boost::in_edges(vd, *polyhedron); e != e_end; e++)
+      {
+        vertex_descriptor vt = boost::source(*e, *polyhedron);
+        std::vector<vertex_descriptor> ::iterator result_roi = find(roi.begin(), roi.end(), vt);
+        std::vector<vertex_descriptor> ::iterator result = find(hard_constraints.begin(), hard_constraints.end(), vt);
+        if ( result == hard_constraints.end() && result_roi == roi.end() )    // neighboring vertices outside roi 
+        {
+          hard_constraints.push_back(vt);
+        }
+      }
+    }
+
+    for (int i = 0; i < hard_constraints.size(); i++)
+    {
+      ros.push_back(hard_constraints[i]);
+    }
+    
+  }
+
   // Before we can model we have to do some precomputation
   ///
   /// @commentheading Template parameters:
@@ -171,14 +197,14 @@ public:
 
     Timer task_timer; task_timer.start();
 
-    // get #variables
-    unsigned int nb_variables = boost::num_vertices(*polyhedron);
 
     CGAL_TRACE_STREAM << "  Creates matrix...\n";
-    // Assemble linear system A*X=B
-    typename SparseLinearAlgebraTraits_d::Matrix A(nb_variables); // matrix is symmetric definite positive
 
     compute_edge_weight();
+    region_of_solution();
+
+    // Assemble linear system A*X=B
+    typename SparseLinearAlgebraTraits_d::Matrix A(ros.size()); // matrix is symmetric definite positive
     assemble_laplacian(A, "cot");
 
     CGAL_TRACE_STREAM << "  Creates matrix: done (" << task_timer.time() << " s)\n";
@@ -205,68 +231,47 @@ public:
     }
   }
 
-  // AF: You set up a N*N matrix, even if the ROI is small.
-  //     Is the matrix the solver deals with internally small, becaused there are so many zeros?
-
-  // AF: 'type' should be an enum not a string 
-  // Assemble Laplacian matrix A of linear system A*X=B 
+	// Assemble Laplacian matrix A of linear system A*X=B
   ///
   /// @commentheading Template parameters:
   /// @param SparseLinearAlgebraTraits_d definite positive sparse linear solver.
-	void assemble_laplacian(typename SparseLinearAlgebraTraits_d::Matrix& A, std::string type)
+  void assemble_laplacian(typename SparseLinearAlgebraTraits_d::Matrix& A, std::string type)
 	{
-    std::map<vertex_descriptor, int> idx;         // index of vertices
-    vertex_iterator vb, ve;
-    int index = 0;
-    for(boost::tie(vb,ve) = boost::vertices(*polyhedron); vb != ve; ++vb )
+    // initialize the indices of roi vertices and Laplacian matrix
+    ros_idx.clear();
+    for (int i = 0; i < ros.size(); i++)
     {
-      idx[*vb] = index;
-      index++;
+      ros_idx[ros[i]] = i;
+      A.set_coef(i, i, 1.0, true);     
     }
 
-    // build trivial diagonal matrix
-    for (int i = 0; i < boost::num_vertices(*polyhedron); i++)
-    {
-      A.set_coef(i, i, 1.0, true);
-    }
-
-    // determine vertices inside roi while outside handles
-    // the rows of these vertices are non-trivial
-    std::map<vertex_descriptor, int> non_trivial;
-    for(boost::tie(vb,ve) = boost::vertices(*polyhedron); vb != ve; ++vb )
-    {
-      non_trivial[*vb] = 0;
-    }
-
-    for (int i = 0; i < roi.size(); i++)
-    {
-      non_trivial[roi[i]] = 1;
-    }
-    for (int i = 0; i < hdl.size(); i++)
-    {
-      non_trivial[hdl[i]] = 0;
-    }
-
-    /// assign cotangent Laplacian to non-trivial vertices
-    for(boost::tie(vb,ve) = boost::vertices(*polyhedron); vb != ve; ++vb )
-      {
-        vertex_descriptor vi = *vb;
-      if (non_trivial[vi])
+    /// assign cotangent Laplacian to ros vertices
+		for(int i = 0; i < ros.size(); i++)
+		{
+			vertex_descriptor vi = ros[i];
+      std::vector<vertex_descriptor> ::iterator result_roi = find(roi.begin(), roi.end(), vi);
+      std::vector<vertex_descriptor> ::iterator result_hdl = find(hdl.begin(), hdl.end(), vi);
+      if ( result_roi != roi.end() && result_hdl == hdl.end() )  // vertices of ( roi - hdl )
       {
         double diagonal = 0;
-        int idx_i = idx[vi];
+        int idx_i = ros_idx[vi];
         in_edge_iterator e, e_end;
         for (boost::tie(e,e_end) = boost::in_edges(vi, *polyhedron); e != e_end; e++)
         {
           vertex_descriptor vj = boost::source(*e, *polyhedron);
-          double wij = 1;
-          if (type == "cot")   // cotangent Laplacian weights
+          // only account neighboring vertices inside ros
+          std::vector<vertex_descriptor> ::iterator result_neigh = find(ros.begin(), ros.end(), vj);
+          if ( result_neigh != ros.end() )
           {
-            wij = edge_weight[*e];
-          }
-          int idx_j = idx[vj];
-          A.set_coef(idx_i, idx_j, -wij, true);	// off-diagonal coefficient
-          diagonal += wij;
+            double wij = 1;
+            if (type == "cot")                    // cotangent Laplacian weights
+            {
+              wij = edge_weight[*e];
+            }
+            int idx_j = ros_idx[vj];
+            A.set_coef(idx_i, idx_j, -wij, true);	// off-diagonal coefficient
+            diagonal += wij;
+          }    
         }
         // diagonal coefficient
         A.set_coef(idx_i, idx_i, diagonal);
@@ -306,7 +311,6 @@ public:
      }
   }
 
-  // AF: Have a function for the non-border case that does less computation as there is a shared edge
   // Returns the cotanget value of angle v0_v1_v2
   double cot_value(vertex_descriptor v0, vertex_descriptor v1, vertex_descriptor v2)
   {
@@ -314,10 +318,12 @@ public:
     Vector vec0 = v1->point() - v2->point();
     Vector vec1 = v2->point() - v0->point();
     Vector vec2 = v0->point() - v1->point();
-    double e0 = std::sqrt(vec0.squared_length()); 
-    double e1 = std::sqrt(vec1.squared_length());
-    double e2 = std::sqrt(vec2.squared_length());
-    double cos_angle = (e0*e0+e2*e2-e1*e1)/2.0/e0/e2;  // AF: no need for a product; simmply don't call sqrt
+    double e0_square = vec0.squared_length();
+    double e1_square = vec1.squared_length();
+    double e2_square = vec2.squared_length();
+    double e0 = std::sqrt(e0_square); 
+    double e2 = std::sqrt(e2_square);
+    double cos_angle = ( e0_square + e2_square - e1_square ) / 2.0 / e0 / e2;
     double sin_angle = std::sqrt(1-cos_angle*cos_angle);
 
     return (cos_angle/sin_angle);
@@ -358,66 +364,54 @@ public:
     }
     float* w = new float[4];
 
-    vertex_iterator vb, ve;
+    // only accumulate ros vertices
     int idx = 0;
-    for ( boost::tie(vb,ve) = boost::vertices(*polyhedron); vb != ve; ++vb )
+    for ( int i = 0; i < ros.size(); i++ )
     {
-      // only accumulate roi vertices
-      std::vector<vertex_descriptor> ::iterator result = find(roi.begin(), roi.end(), *vb);
-      if ( result == roi.end() )
+      vertex_descriptor vi = ros[i];
+      // compute covariance matrix
+      for (int i = 0; i < 4; i++)
       {
-        rot_mtr[*vb][0] = 1; rot_mtr[*vb][1] = 0; rot_mtr[*vb][2] = 0;
-        rot_mtr[*vb][3] = 0; rot_mtr[*vb][4] = 1; rot_mtr[*vb][5] = 0;
-        rot_mtr[*vb][6] = 0; rot_mtr[*vb][7] = 0; rot_mtr[*vb][8] = 1;
+        w[i] = 0;
+        for (int j = 0; j < 4; j++)
+        {
+          u[i][j] = 0;
+          v[i][j] = 0;
+        }
       }
-      else
+      in_edge_iterator e, e_end;
+      for (boost::tie(e,e_end) = boost::in_edges(vi, *polyhedron); e != e_end; e++)
       {
-        // compute covariance matrix
-        for (int i = 0; i < 4; i++)
+        vertex_descriptor vj = boost::source(*e, *polyhedron);
+        Vector pij = vi->point() - vj->point();
+        Vector qij = solution[vi] - solution[vj];
+        double wij = edge_weight[*e];
+        for (int i = 0; i < 3; i++)
         {
-          w[i] = 0;
-          for (int j = 0; j < 4; j++)
+          for (int j = 0; j < 3; j++)
           {
-            u[i][j] = 0;
-            v[i][j] = 0;
+            u[i+1][j+1] += wij*pij[i]*qij[j]; 
           }
         }
-        vertex_descriptor vi = *vb;
-        in_edge_iterator e, e_end;
-        for (boost::tie(e,e_end) = boost::in_edges(vi, *polyhedron); e != e_end; e++)
+      }
+
+      // svd decomposition
+      svdcmp(u, 3, 3, w, v);
+
+      // extract rotation matrix
+      for (int i = 0; i < 9; i++)
+      {
+        rot_mtr[vi][i] = 0;
+      }
+      for (int i = 0; i < 3; i++)      // row index
+      {
+        for (int j = 0; j < 3; j++)   // column index
         {
-          vertex_descriptor vj = boost::source(*e, *polyhedron);
-          Vector pij = vi->point() - vj->point();
-          Vector qij = solution[vi] - solution[vj];
-          double wij = edge_weight[*e];
-          for (int i = 0; i < 3; i++)
+          for (int k = 0; k < 3; k++)
           {
-            for (int j = 0; j < 3; j++)
-            {
-              u[i+1][j+1] += wij*pij[i]*qij[j]; 
-            }
-          }
+            rot_mtr[vi][i*3+j] += v[i+1][k+1] * u[j+1][k+1];
+          }  
         }
-
-        // svd decomposition
-        svdcmp(u, 3, 3, w, v);
-
-        // extract rotation matrix
-        for (int i = 0; i < 9; i++)
-        {
-          rot_mtr[*vb][i] = 0;
-        }
-        for (int i = 0; i < 3; i++)      // row index
-        {
-          for (int j = 0; j < 3; j++)   // column index
-          {
-            for (int k = 0; k < 3; k++)
-            {
-              rot_mtr[*vb][i*3+j] += v[i+1][k+1] * u[j+1][k+1];
-            }  
-          }
-        }
-
       }
     }
   
@@ -435,62 +429,58 @@ public:
   // Global step of iterations, updating solution
   void update_solution()
   {
-    unsigned int nb_variables = boost::num_vertices(*polyhedron);
-    typename SparseLinearAlgebraTraits_d::Vector X(nb_variables), Bx(nb_variables);
-    typename SparseLinearAlgebraTraits_d::Vector Y(nb_variables), By(nb_variables);
-    typename SparseLinearAlgebraTraits_d::Vector Z(nb_variables), Bz(nb_variables);
+    typename SparseLinearAlgebraTraits_d::Vector X(ros.size()), Bx(ros.size());
+    typename SparseLinearAlgebraTraits_d::Vector Y(ros.size()), By(ros.size());
+    typename SparseLinearAlgebraTraits_d::Vector Z(ros.size()), Bz(ros.size());
 
     // assemble right columns of linear system
-    vertex_iterator vb, ve;
-    int idx = 0;
-    for ( boost::tie(vb,ve) = boost::vertices(*polyhedron); vb != ve; ++vb )
+    for ( int i = 0; i < ros.size(); i++ )
     {
-      // only accumulate ( roi - hdl ) vertices
-      std::vector<vertex_descriptor> ::iterator result_roi = find(roi.begin(), roi.end(), *vb); // AF: Too expensive for large ROIs
-      std::vector<vertex_descriptor> ::iterator result_hdl = find(hdl.begin(), hdl.end(), *vb);
-      if ( result_roi == roi.end() || result_hdl != hdl.end() )
-      {// AF: it's a vertex not in the ROI vertex or a handle
-        //    Do we really have to compute things for non ROI vertices
-        Bx[idx] = solution[*vb].x(); By[idx] = solution[*vb].y(); Bz[idx] = solution[*vb].z();
+      vertex_descriptor vi = ros[i];
+      std::vector<vertex_descriptor> ::iterator result_roi = find(roi.begin(), roi.end(), vi);
+      std::vector<vertex_descriptor> ::iterator result_hdl = find(hdl.begin(), hdl.end(), vi);
+      if ( result_roi == roi.end() || result_hdl != hdl.end() )   // handle vertices or hard constraints
+      {
+        Bx[ros_idx[vi]] = solution[vi].x(); By[ros_idx[vi]] = solution[vi].y(); Bz[ros_idx[vi]] = solution[vi].z();
       }
-      else 
-        { //// AF: it's a ROI vertex and not a handle
-        Bx[idx] = 0; By[idx] = 0;Bz[idx] = 0;
-        vertex_descriptor vi = *vb;
+      else  // roi vertices
+      {
+        Bx[ros_idx[vi]] = 0; By[ros_idx[vi]] = 0;Bz[ros_idx[vi]] = 0;
         in_edge_iterator e, e_end;
         for (boost::tie(e,e_end) = boost::in_edges(vi, *polyhedron); e != e_end; e++)
         {
           vertex_descriptor vj = boost::source(*e, *polyhedron);
-          Vector pij = vi->point() - vj->point();
-          double wij = edge_weight[*e];
-          Vector rot_p(0, 0, 0);                 // vector ( r_i + r_j )*p_ij
-          for (int j = 0; j < 3; j++)
+          // only account neighboring vertices inside ros
+          std::vector<vertex_descriptor> ::iterator result_neigh = find(ros.begin(), ros.end(), vj);
+          if ( result_neigh != ros.end() )
           {
-            double x = ( rot_mtr[vi][j] + rot_mtr[vj][j] ) * pij[j];
-            double y = ( rot_mtr[vi][3+j] + rot_mtr[vj][3+j] ) * pij[j];
-            double z = ( rot_mtr[vi][6+j] + rot_mtr[vj][6+j] ) * pij[j];
-            Vector v(x, y, z);
-            rot_p = rot_p + v;
-          }
-          
-          Vector vec = wij*rot_p/2.0;
-          Bx[idx] += vec.x(); By[idx] += vec.y(); Bz[idx] += vec.z();
+            Vector pij = vi->point() - vj->point();
+            double wij = edge_weight[*e];
+            Vector rot_p(0, 0, 0);                 // vector ( r_i + r_j )*p_ij
+            for (int j = 0; j < 3; j++)
+            {
+              double x = ( rot_mtr[vi][j] + rot_mtr[vj][j] ) * pij[j];
+              double y = ( rot_mtr[vi][3+j] + rot_mtr[vj][3+j] ) * pij[j];
+              double z = ( rot_mtr[vi][6+j] + rot_mtr[vj][6+j] ) * pij[j];
+              Vector v(x, y, z);
+              rot_p = rot_p + v;
+            }
+            Vector vec = wij*rot_p/2.0;
+            Bx[ros_idx[vi]] += vec.x(); By[ros_idx[vi]] += vec.y(); Bz[ros_idx[vi]] += vec.z();
+          }  
         }
       }
-      idx++;
     }
 
     // solve "A*X = B".
     m_solver.solve(Bx, X); m_solver.solve(By, Y); m_solver.solve(Bz, Z);
 
     // copy to solution
-    idx = 0;
-    for ( boost::tie(vb,ve) = boost::vertices(*polyhedron); vb != ve; ++vb )
+    for (int i = 0; i < ros.size(); i++)
     {
-      Point p(X[idx], Y[idx], Z[idx]);
-      solution[*vb] = p;
-      //solution[*vb].x() = X[idx]; solution[*vb].y() = Y[idx]; solution[*vb].z() = Z[idx]; 
-      idx++;
+      vertex_descriptor vd = ros[i];
+      Point p(X[ros_idx[vd]], Y[ros_idx[vd]], Z[ros_idx[vd]]);
+      solution[vd] = p;
     }
 
   }
@@ -499,32 +489,27 @@ public:
   double energy()
   {
     double sum_of_energy = 0;
-    vertex_iterator vb, ve;
-    for(boost::tie(vb,ve) = boost::vertices(*polyhedron); vb != ve; ++vb )
+    // only accumulate ros vertices
+    for( int i = 0; i < ros.size(); i++ )
     {
-      // only accumulate roi vertices
-      std::vector<vertex_descriptor> ::iterator result = find(roi.begin(), roi.end(), *vb);
-      if ( result != roi.end() )
+      vertex_descriptor vi = ros[i];
+      in_edge_iterator e, e_end;
+      for (boost::tie(e,e_end) = boost::in_edges(vi, *polyhedron); e != e_end; e++)
       {
-        vertex_descriptor vi = *vb;
-        in_edge_iterator e, e_end;
-        for (boost::tie(e,e_end) = boost::in_edges(vi, *polyhedron); e != e_end; e++)
+        vertex_descriptor vj = boost::source(*e, *polyhedron);
+        Vector pij = vi->point() - vj->point();
+        double wij = edge_weight[*e];
+        Vector rot_p(0, 0, 0);                 // vector rot_i*p_ij
+        for (int j = 0; j < 3; j++)
         {
-          vertex_descriptor vj = boost::source(*e, *polyhedron);
-          Vector pij = vi->point() - vj->point();
-          double wij = edge_weight[*e];
-          Vector rot_p(0, 0, 0);                 // vector rot_i*p_ij
-          for (int j = 0; j < 3; j++)
-          {
-            double x = rot_mtr[vi][j] * pij[j];
-            double y = rot_mtr[vi][3+j] * pij[j];
-            double z = rot_mtr[vi][6+j] * pij[j];
-            Vector v(x, y, z);
-            rot_p = rot_p + v;
-          }
-          Vector qij = solution[vi] - solution[vj];
-          sum_of_energy += wij*(qij - rot_p).squared_length();
+          double x = rot_mtr[vi][j] * pij[j];
+          double y = rot_mtr[vi][3+j] * pij[j];
+          double z = rot_mtr[vi][6+j] * pij[j];
+          Vector v(x, y, z);
+          rot_p = rot_p + v;
         }
+        Vector qij = solution[vi] - solution[vj];
+        sum_of_energy += wij*(qij - rot_p).squared_length();
       }
     }
     return sum_of_energy;
@@ -544,7 +529,6 @@ public:
     }
     CGAL_TRACE_STREAM << "iteration end!\n";
 
-    // AF: The deform step should definitely NOT operate on ALL vertices, but only on the ROI
     // copy solution to target mesh P
     vertex_iterator vb_t, ve_t;
     boost::tie(vb_t,ve_t) = boost::vertices(*P);
