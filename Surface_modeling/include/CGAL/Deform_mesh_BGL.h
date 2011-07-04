@@ -8,10 +8,14 @@
 #include <CGAL/boost/graph/graph_traits_Polyhedron_3.h>
 #include <CGAL/boost/graph/properties_Polyhedron_3.h>
 #include <CGAL/boost/graph/halfedge_graph_traits_Polyhedron_3.h>
+
+
+// AF: Will svd be something encapsulated by the SparseLinearAlgebraTraits_d ??
+//     In this case you should anticipate this in your code and not use it here directly
 #include <CGAL/svd.h>
 
 
-
+// AF: These includes are not needed
 #include <iostream>
 #include <list>
 #include <fstream>
@@ -84,6 +88,8 @@ public:
   {
   }
 
+  // AF: please put a comment what this function computes
+  //
   // The region of interest and the handles are a set of vertices on target mesh
   void region_of_interest(vertex_iterator begin, vertex_iterator end, size_t k)
   {
@@ -92,11 +98,14 @@ public:
     {
       roi.push_back(*vit);
     }
+    // AF: Why do you insert end?
+    // Iterator ranges are usually half open 
     roi.push_back(*end);
   
     int idx_lv = 0;    // pointing the neighboring vertices on current level
     int idx_lv_end;
     
+    // AF:: This loop has a running time quadratic in the size of the region of interst
     for (size_t lv = 0; lv < k; lv++)
     {
       idx_lv_end = roi.size(); 
@@ -196,7 +205,11 @@ public:
     }
   }
 
-	// Assemble Laplacian matrix A of linear system A*X=B 
+  // AF: You set up a N*N matrix, even if the ROI is small.
+  //     Is the matrix the solver deals with internally small, becaused there are so many zeros?
+
+  // AF: 'type' should be an enum not a string 
+  // Assemble Laplacian matrix A of linear system A*X=B 
   ///
   /// @commentheading Template parameters:
   /// @param SparseLinearAlgebraTraits_d definite positive sparse linear solver.
@@ -235,9 +248,9 @@ public:
     }
 
     /// assign cotangent Laplacian to non-trivial vertices
-		for(boost::tie(vb,ve) = boost::vertices(*polyhedron); vb != ve; ++vb )
-		{
-			vertex_descriptor vi = *vb;
+    for(boost::tie(vb,ve) = boost::vertices(*polyhedron); vb != ve; ++vb )
+      {
+        vertex_descriptor vi = *vb;
       if (non_trivial[vi])
       {
         double diagonal = 0;
@@ -293,6 +306,7 @@ public:
      }
   }
 
+  // AF: Have a function for the non-border case that does less computation as there is a shared edge
   // Returns the cotanget value of angle v0_v1_v2
   double cot_value(vertex_descriptor v0, vertex_descriptor v1, vertex_descriptor v2)
   {
@@ -303,7 +317,7 @@ public:
     double e0 = std::sqrt(vec0.squared_length()); 
     double e1 = std::sqrt(vec1.squared_length());
     double e2 = std::sqrt(vec2.squared_length());
-    double cos_angle = (e0*e0+e2*e2-e1*e1)/2.0/e0/e2;
+    double cos_angle = (e0*e0+e2*e2-e1*e1)/2.0/e0/e2;  // AF: no need for a product; simmply don't call sqrt
     double sin_angle = std::sqrt(1-cos_angle*cos_angle);
 
     return (cos_angle/sin_angle);
@@ -432,14 +446,15 @@ public:
     for ( boost::tie(vb,ve) = boost::vertices(*polyhedron); vb != ve; ++vb )
     {
       // only accumulate ( roi - hdl ) vertices
-      std::vector<vertex_descriptor> ::iterator result_roi = find(roi.begin(), roi.end(), *vb);
+      std::vector<vertex_descriptor> ::iterator result_roi = find(roi.begin(), roi.end(), *vb); // AF: Too expensive for large ROIs
       std::vector<vertex_descriptor> ::iterator result_hdl = find(hdl.begin(), hdl.end(), *vb);
       if ( result_roi == roi.end() || result_hdl != hdl.end() )
-      {
+      {// AF: it's a vertex not in the ROI vertex or a handle
+        //    Do we really have to compute things for non ROI vertices
         Bx[idx] = solution[*vb].x(); By[idx] = solution[*vb].y(); Bz[idx] = solution[*vb].z();
       }
-      else
-      {
+      else 
+        { //// AF: it's a ROI vertex and not a handle
         Bx[idx] = 0; By[idx] = 0;Bz[idx] = 0;
         vertex_descriptor vi = *vb;
         in_edge_iterator e, e_end;
@@ -529,6 +544,7 @@ public:
     }
     CGAL_TRACE_STREAM << "iteration end!\n";
 
+    // AF: The deform step should definitely NOT operate on ALL vertices, but only on the ROI
     // copy solution to target mesh P
     vertex_iterator vb_t, ve_t;
     boost::tie(vb_t,ve_t) = boost::vertices(*P);
