@@ -68,10 +68,6 @@ necessary. However, as implementing the predicate directly
 may prove to be more efficient, the traits-class
 implementer may choose to provide it.
 
-\lcTex{\color{red}}
-\begin{ccHtmlOnly}
-<font color="#ff0000">
-\end{ccHtmlOnly}
 The basic set of predicates is sufficient for constructing
 arrangements of $x$-monotone curves that do not reach or approach the
 boundary of the parameter space. The nature of the input curves, i.e.,
@@ -83,10 +79,6 @@ four additional nested types, namely \ccc{Left_side_category},
 \ccc{Top_side_category}. Each of those types must be convertible to
 the type \ccc{Arr_oblivious_side_tag} for the class to be a model of
 the concept \ccc{ArrangementBasicTraits_2}.
-\lcTex{\color{black}}
-\begin{ccHtmlOnly}
-<font color="#000000">
-\end{ccHtmlOnly}
 
 %~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 \subsubsection{The Landmarks Concept
@@ -175,10 +167,6 @@ of the \ccc{ArrangementXMonotoneTraits_2} concept.
 \subsubsection{Supporting Unbounded Curves}
 %~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 %
-\lcTex{\color{red}}
-\begin{ccHtmlOnly}
-<font color="#ff0000">
-\end{ccHtmlOnly}
 An arrangement that supports unbounded $x$-monotone curves maintains
 an implicit bounding rectangle in the \dcel{} structure; see
 Section~\ref{arr_ssec:unb_rep}. The unbounded ends of vertical rays, 
@@ -195,8 +183,8 @@ to form the rectangle.
 Several predicates are required to handle $x$-monotone curves that
 approach infinity and thus approach the boundary of the parameter
 space. These predicates are sufficient to handle not only curves
-confined to an unbounded parameter space, but also curves confined
-to a bounded parameter space with open boundaries. Let $b_l$ and
+embedded in an unbounded parameter space, but also curves embedded
+in a bounded parameter space with open boundaries. Let $b_l$ and
 $b_r$ denote the $x$-coordinates of the left and right boundaries of
 the parameter space, respectively. Let $b_b$ and $b_t$ denote the
 $y$-coordinates of the bottom and top boundaries of the parameter
@@ -312,9 +300,10 @@ the additional predicates listed below.
     $C(t) = (X(t),Y(t))$, and an enumerator that specifies either the
     minimum end or the maximum end of the curve, and thus maps to a
     parameter value $d \in \{0,1\}$, this predicate compares the
-    $x$-coordinate of $p$ and $\lim_{t \rightarrow d} X(t)$. A
-    precondition assures that $C$ has a vertical asymptote at its
-    $d$-end; that is $b_l < \lim_{t \rightarrow d} X(t) < b_r$.
+    $x$-coordinate of $p$ and $\lim_{t \rightarrow d} X(t)$. If the
+    parameter space is unbounded, a precondition assures that $C$
+    has a vertical asymptote at its $d$-end; that is
+    $\lim_{t \rightarrow d} X(t)$ is finite.
   (ii) Given two parametric $x$-monotone curves
     $C_1(t) = (X_1(t),Y_1(t))$ and $C_2(t) = (X_2(t),Y_2(t))$ and two
     enumerators that specify either the minimum end or the maximum
@@ -322,34 +311,30 @@ the additional predicates listed below.
     $d_1\in \{0,1\}$ and $d_2 \in \{0,1\}$ for $C_1$ and for $C_2$,
     respectively, this predicate compares
     $\lim_{t \rightarrow d_1} X_1(t)$ and $\lim_{t \rightarrow d_2} X_2(t)$.
-    A precondition assures that $C_1$ and $C_2$ have vertical
-    asymptote at their respective ends; that is
-    $b_l < \lim_{t \rightarrow d_1} X_1(t) < b_r$ and
-    $b_l < \lim_{t \rightarrow d_2} X_2(t)< b_r$.
+    If the parameter space is unbounded, a precondition assures that
+    $C_1$ and $C_2$ have vertical asymptote at their respective ends;
+    that is $\lim_{t \rightarrow d_1} X_1(t)$ and
+    $\lim_{t \rightarrow d_2} X_2(t)$ are finite.
 %
 \item[\ccc{Compare_x_near_limit_2}:]
   Given two $x$-monotone curves $C_1$ and $C_2$ and an enumerator $i$
   that specifies either the minimum ends or the maximum ends of the
   two curves, this predicate compares the $x$-coordinates of the
   curves near their respective ends. That is, the predicate compares
-  the $x$-coordinates of the horizontal projection of a point $p$ onto
-  $C_1$ and onto $C_2$. A precondition assures that $C_1$ and $C_2$
-  have vertical asymptote at their respective ends. Furthermore, both
-  curves approach the same boundary-side, either the bottom or the
-  top, at their respective ends. If both curves approach the bottom
-  boundary-side, $p$ is located far to the bottom, such that the
-  result is invariant under a translation of $p$ farther to the
-  bottom. If both curves approach the top boundary-side, $p$ is
-  located far to the top in a similar manner. Another precondition
-  assures that the $x$-coordinates of the limits of the curves at
-  their respective ends are equal. That is, the predicate
-  \ccc{Compare_x_at_limit_2} applied to $C_1$, $C_2$, and $i$
-  evaluates to \ccc{EQUAL}.
+  the $x$-coordinates of the horizontal projection of a point $p$
+  onto $C_1$ and onto $C_2$. If the parameter space is unbounded, a
+  precondition assures that $C_1$ and $C_2$ have vertical asymptote
+  at their respective ends. Furthermore, both curves approach the
+  same boundary-side, either the bottom or the top, at their
+  respective ends. If both curves approach the bottom boundary-side,
+  $p$ is located far to the bottom, such that the result is invariant
+  under a translation of $p$ farther to the bottom. If both curves
+  approach the top boundary-side, $p$ is located far to the top in a
+  similar manner. Another precondition assures that the
+  $x$-coordinates of the limits of the curves at their respective
+  ends are equal. That is, the predicate \ccc{Compare_x_at_limit_2}
+  applied to $C_1$, $C_2$, and $i$ evaluates to \ccc{EQUAL}.
 \end{description}
-\lcTex{\color{black}}
-\begin{ccHtmlOnly}
-<font color="#000000">
-\end{ccHtmlOnly}
 
 In the rest of this section we review the traits classes
 included in the public distribution of \cgal, that handle line
@@ -1172,7 +1157,7 @@ its $x$-range contains no critical point in its interior.
 \end{ccTexOnly}
 \begin{ccHtmlOnly}
  <p><center>
- <img src="./fig/cylindrical_decomposition.gif" border=0 alt="The braic curves">
+ <img src="./fig/cylindrical_decomposition.gif" border=0 alt="The algebraic curves">
  </center>
 \end{ccHtmlOnly}
 \caption{The critical $x$-coordinates of an algebraic curve (dashed lines),
