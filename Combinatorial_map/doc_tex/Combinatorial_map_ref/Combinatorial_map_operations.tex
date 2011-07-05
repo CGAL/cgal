@@ -49,7 +49,7 @@
    non void, and if there are two distinct (\emph{i+1})-cells around dart
    \ccc{dh}, \ccc{Attribute_type<i+1>::type::On_merge}(\emph{a1},\emph{a2}) is
    called, with \emph{a1} the (\emph{i+1})-attribute associated to \ccc{dh},
-   and \emph{a2} the (\emph{i+1})-attribute associated to $\beta_{i+1}$(\emph{dh}).\\
+   and \emph{a2} the (\emph{i+1})-attribute associated to \betaipun{}(\emph{dh}).\\
    %
    If a \emph{j}-cell is disconnected in two \emph{j}-cells during the
    operation, and if \emph{j}-attributes are non void,
@@ -139,7 +139,7 @@
                        typename CMap::Dart_const_handle dh2);}
 {Returns true iff it is possible to insert a 1-cell in \ccc{cm}
   between \ccc{dh1} and \ccc{dh2}, 
-  i.e. if \emph{dh1} $\neq$ \emph{dh2} and \emph{dh1} $\in <\beta_1>$(\emph{dh2}).
+  i.e. if \emph{dh1} $\neq$ \emph{dh2} and \emph{dh1} $\in$ \orbit{\betaun{}}(\emph{dh2}).
  \ccPrecond{\ccc{CMap::dimension}$\geq$ 2, 
    \ccc{*dh1}$\in$\ccc{cm.darts()}, and \ccc{*dh2}$\in$\ccc{cm.darts()}.}
 }

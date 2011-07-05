@@ -13,7 +13,7 @@
 \ccDefinition
   
 The concept \ccRefName\ defines a \emph{d}-dimensional dart.  A dart mainly
-stores handles to the darts linked with itself by $\beta_i$, $\forall$
+stores handles to the darts linked with itself by \betai{}, $\forall$
 \emph{i}, 0 $\leq$ \emph{i} $\leq$ \emph{d}. Moreover, it stores also handles to each
 non void attribute associated with itself.
 
@@ -49,19 +49,19 @@ handles initialized to NULL, for each non void attribute.
 \ccThree{Dart_const_handle}{beta(unsigned int i) const}{}
 %
 \ccMethod{Dart_handle beta(unsigned int i);}
-         {Returns $\beta_i$(\ccc{d0}).
+         {Returns \betai{}(\ccc{d0}).
           \ccPrecond{0 $\leq$ \emph{i} $\leq$ \emph{dimension}.}}
 \ccGlue
 \ccMethod{Dart_const_handle beta(unsigned int i) const;}
-         {Returns $\beta_i$(\ccc{d0}) when \ccc{d0} is const.
+         {Returns \betai{}(\ccc{d0}) when \ccc{d0} is const.
           \ccPrecond{0 $\leq$ \emph{i} $\leq$ \emph{dimension}.}}
 
 \ccMethod{Dart_handle beta_inv(unsigned int i);}
-         {Returns $\beta_i^{-1}$(\ccc{d0}).
+         {Returns \betaiinv{}(\ccc{d0}).
           \ccPrecond{0 $\leq$ \emph{i} $\leq$ \emph{dimension}.}}
 \ccGlue
 \ccMethod{Dart_const_handle beta_inv(unsigned int i) const;}
-         {Returns $\beta_i^{-1}$(\ccc{d0}) when \ccc{d0} is const.
+         {Returns \betaiinv{}(\ccc{d0}) when \ccc{d0} is const.
           \ccPrecond{0 $\leq$ \emph{i} $\leq$ \emph{dimension}.}}
 
 \ccMethod{bool is_free(unsigned int i) const;} 
