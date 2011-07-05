@@ -466,8 +466,8 @@ public:
 
     const_pointer c = &*cit;
 
-    for (typename All_items::const_iterator it = all_items.begin(), end = all_items.end();
-         it != end; ++it) {
+    for (typename All_items::const_iterator it = all_items.begin(), itend = all_items.end();
+         it != itend; ++it) {
       const_pointer p = it->first;
       size_type s = it->second;
 
@@ -610,8 +610,8 @@ void Compact_container<T, Allocator>::merge(Self &d)
 template < class T, class Allocator >
 void Compact_container<T, Allocator>::clear()
 {
-  for (typename All_items::iterator it = all_items.begin(), end = all_items.end();
-       it != end; ++it) {
+  for (typename All_items::iterator it = all_items.begin(), itend = all_items.end();
+       it != itend; ++it) {
     pointer p = it->first;
     size_type s = it->second;
     for (pointer pp = p + 1; pp != p + s - 1; ++pp) {

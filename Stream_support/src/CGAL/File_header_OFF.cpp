@@ -22,7 +22,6 @@
 // Author(s)     : Lutz Kettner  <kettner@mpi-sb.mpg.de>
 
 #include <CGAL/basic.h>
-#include <CGAL/known_bit_size_integers.h>
 #include <cstdlib>
 #include <cctype>
 #include <cstring>
@@ -30,6 +29,7 @@
 #include <CGAL/IO/binary_file_io.h>
 #include <CGAL/IO/File_header_OFF.h>
 #include <algorithm>
+#include <boost/cstdint.hpp>
 
 namespace CGAL {
 
@@ -310,7 +310,7 @@ std::istream& operator>>( std::istream& in, File_header_OFF& h) {
     // Read remaining size value(s).
     int n_h;
     if ( h.binary()) {
-        Integer32 a, b, c;
+        boost::int32_t a, b, c;
         I_Binary_read_big_endian_integer32( in, a);
         if ( h.n_dimensional()) {
             h.set_dimension( a);

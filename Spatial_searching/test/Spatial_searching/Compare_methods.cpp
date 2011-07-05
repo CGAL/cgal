@@ -69,7 +69,7 @@ void one_run(int NB_INPUT_POINTS,int VALUE_OF_K,int NB_NEIGH){
     OK_search::Tree ok_tree(points.begin(),points.end());
     OK_search ok_search(ok_tree, query,VALUE_OF_K);
     OK_search::iterator ok_it=ok_search.begin(), ok_end=ok_search.end();
-    for (int j=0; (j < NB_NEIGH-1)&&(ok_it!=ok_end); ++j,++ok_it);
+    for (int j=0; (j < NB_NEIGH-1)&&(ok_it!=ok_end); ++j,++ok_it) {}
     time.stop(); ok_time=time.time(); std::cout << ok_time << " "; time.reset();
     if (NB_INPUT_POINTS!=0){
       CGAL_assertion(ok_it!=ok_end);
@@ -89,8 +89,7 @@ void one_run(int NB_INPUT_POINTS,int VALUE_OF_K,int NB_NEIGH){
     K_search::Tree k_tree(points.begin(),points.end());
     K_search k_search(k_tree, query,VALUE_OF_K);
     K_search::iterator k_it=k_search.begin(), k_end=k_search.end();
-    for (int j=0; (j < NB_NEIGH-1)&&(k_it!=k_end); ++j,++k_it);
-      //~ //std::cout <<   (*k_it).first << "  at squared distance = " << (*k_it).second << std::endl;  
+    for (int j=0; (j < NB_NEIGH-1)&&(k_it!=k_end); ++j,++k_it) {}
     time.stop(); k_time=time.time(); std::cout << k_time << " "; time.reset();
     if (NB_INPUT_POINTS!=0){
       CGAL_assertion(k_it!=k_end);
@@ -108,8 +107,7 @@ void one_run(int NB_INPUT_POINTS,int VALUE_OF_K,int NB_NEIGH){
     OI_search::Tree oi_tree(points.begin(),points.end());
     OI_search oi_search(oi_tree, query);
     OI_search::iterator oi_it=oi_search.begin(), oi_end=oi_search.end();
-    for (int j=0; (j < NB_NEIGH-1)&&(oi_it!=oi_end); ++j,++oi_it);
-      //~ std::cout <<   (*oi_it).first << "  at squared distance = " << (*oi_it).second << std::endl;
+    for (int j=0; (j < NB_NEIGH-1)&&(oi_it!=oi_end); ++j,++oi_it) {}
     time.stop(); oi_time=time.time(); std::cout << oi_time << " "; time.reset();
     if (NB_INPUT_POINTS!=0){
       CGAL_assertion(oi_it!=oi_end);
@@ -127,8 +125,7 @@ void one_run(int NB_INPUT_POINTS,int VALUE_OF_K,int NB_NEIGH){
     I_search::Tree i_tree(points.begin(),points.end());
     I_search i_search(i_tree, query);
     I_search::iterator i_it=i_search.begin(), i_end=i_search.end();
-    for (int j=0; (j < NB_NEIGH-1)&&(i_it!=i_end); ++j,++i_it);
-      //~ std::cout <<   (*i_it).first << "  at squared distance = " << (*i_it).second << std::endl;  
+    for (int j=0; (j < NB_NEIGH-1)&&(i_it!=i_end); ++j,++i_it) {}
     time.stop(); i_time=time.time(); std::cout << i_time << " "; time.reset();
     if (NB_INPUT_POINTS!=0){
       CGAL_assertion(i_it!=i_end);

@@ -3983,6 +3983,7 @@ remove_dim_down(Vertex_handle v, VertexRemover &remover, OutputItCells fit) {
   for(All_cells_iterator afi = tds().raw_cells_begin(); 
       afi != tds().raw_cells_end(); 
       afi++) *fit++ = afi;
+  return remover;
 }
 
 template < class Gt, class Tds >
@@ -3993,6 +3994,7 @@ remove_1D(Vertex_handle v, VertexRemover &remover, OutputItCells fit) {
   Point p = v->point();
   remove_1D(v, remover);
   *fit++ = locate(p);
+  return remover;
 }
 
 template < class Gt, class Tds >
