@@ -1,7 +1,6 @@
 \def\ccTagRmTrailingConst{\ccFalse}
 
 \newcommand{\nulldart}{\texttt{null\_dart\_handle}}
-\newcommand{\mb}[1]{\beta_{#1}}
 
 \def\betats{\ccTexHtml{$\beta$}{&beta;}}
 \def\betazero{\ccTexHtml{$\beta_0$}{&beta;<SUB>0</SUB>}}
@@ -20,17 +19,12 @@
 \def\betajmun{\ccTexHtml{$\beta_{j-1}$}{&beta;<SUB>j-1</SUB>}}
 \def\betaiinv{\ccTexHtml{$\beta_i^{-1}$}{&beta;<sub>i</sub><sup>-1</sup>}}
 \def\betajinv{\ccTexHtml{$\beta_j^{-1}$}{&beta;<sub>j</sub><sup>-1</sup>}}
-
 \def\comp{\ccTexHtml{$\circ$}{&deg;}}
-
-
-\def\pmun{\ccTexHtml{$p^{-1}$}{p<SUP>-1</SUP>}}
-
-\newcommand{\orbit}[1]{\ccTexHtml{$\langle{}$}{&lang;}#1\ccTexHtml{$\rangle{}$}{&rang;}}
-\newcommand{\orb}[1]{\langle{}#1\rangle{}}
+\def\pinv{\ccTexHtml{$p^{-1}$}{p<SUP>-1</SUP>}}
 
 \newcommand{\cell}[1]{\emph{#1}-cell}
 \newcommand{\cells}[1]{\emph{#1}-cells}
+\newcommand{\orbit}[1]{\ccTexHtml{$\langle{}$}{&lang;}#1\ccTexHtml{$\rangle{}$}{&rang;}}
 
 \section{Introduction}
 A \emph{d}-dimensional combinatorial map is a data structure
@@ -1143,7 +1137,7 @@ There are three different categories of dart range classes:
 \begin{itemize}
 \item \ccc{Dart_range}: range of all the darts of a combinatorial map;
 \item \ccc{Dart_of_orbit_range<Beta...>}: range of all the darts of
-  the orbit $\orb{Beta...}$(\emph{d0}) for a given \emph{d0}.  $Beta...$ is a
+  the orbit \orbit{Beta...}(\emph{d0}) for a given \emph{d0}.  \ccc{Beta...} is a
   sequence of integers \ccTexHtml{$i_1$}{i<sub>1</sub>},$\ldots$,\ccTexHtml{$i_k$}{i<sub>k</sub>}, each \ccTexHtml{$i_j$}{i<sub>j</sub>} $\in$
   \{0,\ldots,\emph{d}\}. These integers must satisfy:\ccTexHtml{$i_1$}{i<sub>1</sub>}<\ccTexHtml{$i_2$}{i<sub>2</sub>}<$\ldots$<\ccTexHtml{$i_k$}{i<sub>k</sub>},
   and (\ccTexHtml{$i_1$}{i<sub>1</sub>}$\neq$ 0 or \ccTexHtml{$i_2$}{i<sub>2</sub>}$\neq$ 1) (for example
@@ -1866,12 +1860,12 @@ defined on \emph{E} if:
   p(\emph{e1})=p(\emph{e2})$\neq \varnothing \Rightarrow$ \emph{e1}=\emph{e2}.
 \end{enumerate}
 
-The inverse \pmun{} of this partial permutation is also a partial
+The inverse \pinv{} of this partial permutation is also a partial
 permutation and is defined by:
 \begin{enumerate}
-\item \pmun{}($\varnothing$)=$\varnothing$;
+\item \pinv{}($\varnothing$)=$\varnothing$;
 \item $\forall$ \emph{e} $\in$ \emph{E}, if it exists \emph{a}$\in$ \emph{E} such that \emph{p}(\emph{a})=\emph{e},
-  then \pmun{}(\emph{e})=a, otherwise \pmun{}(\emph{e})=$\varnothing$.
+  then \pinv{}(\emph{e})=a, otherwise \pinv{}(\emph{e})=$\varnothing$.
 \end{enumerate}
 
 Let \emph{E} be a set, and \emph{p} a partial permutation on \emph{E}.  An element
