@@ -56,9 +56,9 @@ void set_cutting_value(FT v);}
 
 \ccMethod{FT cutting_value();}{Returns the cutting value.}
 
-% \ccMethod{template <class SpatialPoint>
-% bool has_on_negative_side(SpatialPoint p);}
-% {Returns true if and only if the coordinate of \ccc{p} in the cutting dimension is smaller than the cutting value.}
+\ccMethod{template <class SpatialPoint>
+bool has_on_negative_side(SpatialPoint p);}
+{Returns true if and only if the coordinate of \ccc{p} in the cutting dimension is smaller than the cutting value.}
 
 \ccMethod{ 
 Plane_separator<FT> operator=(Plane_separator<FT> s2);}

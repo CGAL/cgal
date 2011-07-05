@@ -46,10 +46,10 @@ Expects for the template argument a model of the concept
 \ccCreation
 \ccCreationVariable{wd}  %% choose variable name
 
-\ccConstructor{Weighted_Minkowski_distance(int d,Traits t=Traits());}{Constructor implementing $l_2$ metric for $d$-dimensional points.}
+\ccConstructor{Weighted_Minkowski_distance(int d);}{Constructor implementing $l_2$ metric for $d$-dimensional points.}
 
 \ccConstructor{template <class InputIterator>
-               Weighted_Minkowski_distance(FT power, int dim, InputIterator wb, InputIterator we,Traits t=Traits());}
+               Weighted_Minkowski_distance(FT power, int dim, InputIterator wb, InputIterator we);}
 {Constructor implementing the $l_{power}(weights)$ metric. $power \leq 0$ denotes the $l_{\infty}(weights)$ metric.
 The values in the iterator range \ccc{[wb,we)} are the weight. }
 
@@ -59,11 +59,11 @@ The values in the iterator range \ccc{[wb,we)} are the weight. }
 \ccMethod{FT transformed_distance(Point_d q, Point_d r);}{Returns $d^{power}$, 
 where $d$ denotes the distance between \ccc{q} and~\ccc{r}.}
 
-\ccMethod{FT min_distance_to_rectangle(Point_d q, Kd_tree_rectangle<FT> r;);}
+\ccMethod{FT min_distance_to_rectangle(Point_d q, Kd_tree_rectangle<Traits> r;);}
 {Returns $d^{power}$, where $d$ denotes the distance between the query item \ccc{q} and
 the point on the boundary of \ccc{r} closest to \ccc{q}.}
 
-\ccMethod{FT max_distance_to_rectangle(Point_d q, Kd_tree_rectangle<FT> r;);}
+\ccMethod{FT max_distance_to_rectangle(Point_d q, Kd_tree_rectangle<Traits> r;);}
 {Returns $d^{power}$, where $d$ denotes the distance between the query item \ccc{q} and
 the point on the boundary of \ccc{r} farthest to \ccc{q}.}
 

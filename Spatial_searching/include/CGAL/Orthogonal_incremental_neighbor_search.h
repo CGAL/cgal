@@ -1,4 +1,4 @@
-// Copyright (c) 2002,2011 Utrecht University (The Netherlands).
+// Copyright (c) 2002 Utrecht University (The Netherlands).
 // All rights reserved.
 //
 // This file is part of CGAL (www.cgal.org); you may redistribute it under
@@ -30,7 +30,7 @@
 namespace CGAL {
 
   template <class SearchTraits, 
-            class Distance_= typename internal::Spatial_searching_default_distance<SearchTraits>::type,
+            class Distance_= Euclidean_distance<SearchTraits>,
             class Splitter_ = Sliding_midpoint<SearchTraits>,
             class Tree_= Kd_tree<SearchTraits, Splitter_, Tag_true> >
   class Orthogonal_incremental_neighbor_search {
@@ -60,7 +60,7 @@ namespace CGAL {
     };
 
     class Iterator_implementation {
-      SearchTraits traits;
+
     public:
 
       int number_of_neighbours_computed;
@@ -134,7 +134,7 @@ namespace CGAL {
       // constructor
       Iterator_implementation(Tree& tree,const Query_item& q, const Distance& tr,
 			      FT Eps=FT(0.0), bool search_nearest=true)
-	: traits(tree.traits()),number_of_neighbours_computed(0), number_of_internal_nodes_visited(0), 
+	: number_of_neighbours_computed(0), number_of_internal_nodes_visited(0), 
 	number_of_leaf_nodes_visited(0), number_of_items_visited(0),
 	Orthogonal_distance_instance(tr), multiplication_factor(Orthogonal_distance_instance.transformed_distance(FT(1.0)+Eps)), 
 	query_point(q), search_nearest_neighbour(search_nearest), 
@@ -242,7 +242,7 @@ namespace CGAL {
 	    next_neighbour_found=
 	      (rd < multiplication_factor*Item_PriorityQueue.top()->second);
         }
-	typename SearchTraits::Construct_cartesian_const_iterator_d construct_it=traits.construct_cartesian_const_iterator_d_object();
+	typename SearchTraits::Construct_cartesian_const_iterator_d construct_it;
 	typename SearchTraits::Cartesian_const_iterator_d query_point_it = construct_it(query_point);
         // otherwise browse the tree further
         while ((!next_neighbour_found) && (!PriorityQueue.empty())) {

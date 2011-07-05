@@ -1,4 +1,4 @@
-// Copyright (c) 2002,2011 Utrecht University (The Netherlands).
+// Copyright (c) 2002 Utrecht University (The Netherlands).
 // All rights reserved.
 //
 // This file is part of CGAL (www.cgal.org); you may redistribute it under
@@ -26,8 +26,7 @@ namespace CGAL {
 
   template <class SearchTraits>
   class Fuzzy_iso_box{
-    SearchTraits traits;
-    
+
     public:
 
     typedef typename SearchTraits::Point_d Point_d;
@@ -40,7 +39,7 @@ namespace CGAL {
 
     private:
 
-    typename Construct_min_vertex_d::result_type min, max;
+    Point_d min, max;
     Cartesian_const_iterator_d min_begin, max_begin;
     FT eps;
     unsigned int dim;
@@ -48,13 +47,13 @@ namespace CGAL {
     public:
 
     	// default constructor
-    	Fuzzy_iso_box(const SearchTraits& traits_=SearchTraits()):traits(traits_) {}
+    	Fuzzy_iso_box() {}
 
         // constructor
-	Fuzzy_iso_box(const Point_d& p, const Point_d& q, FT epsilon=FT(0),const SearchTraits& traits_=SearchTraits()) 
-	  : traits(traits_), eps(epsilon)
+	Fuzzy_iso_box(const Point_d& p, const Point_d& q, FT epsilon=FT(0)) 
+	  : eps(epsilon)
         {
-	  Construct_cartesian_const_iterator_d construct_it=traits.construct_cartesian_const_iterator_d_object();
+	  Construct_cartesian_const_iterator_d construct_it;
 	  Cartesian_const_iterator_d begin = construct_it(p),
 	    end = construct_it(p,1);
 	  dim = static_cast<unsigned int>(end - begin);
@@ -70,7 +69,7 @@ namespace CGAL {
 
         	
         bool contains(const Point_d& p) const {	
-	  Construct_cartesian_const_iterator_d construct_it=traits.construct_cartesian_const_iterator_d_object();
+	  Construct_cartesian_const_iterator_d construct_it;
 	  Cartesian_const_iterator_d pit = construct_it(p);
 	  Cartesian_const_iterator_d minit= min_begin, maxit = max_begin; 
 		for (unsigned int i = 0; i < dim; ++i, ++pit, ++minit, ++maxit) {
@@ -79,7 +78,7 @@ namespace CGAL {
 		return true; 
         }
 
-	bool inner_range_intersects(const Kd_tree_rectangle<FT>& rectangle) const { 
+	bool inner_range_intersects(const Kd_tree_rectangle<SearchTraits>& rectangle) const { 
 	  Cartesian_const_iterator_d minit= min_begin, maxit = max_begin;   
  		for (unsigned int i = 0; i < dim; ++i, ++minit, ++maxit) {
         		if ( ((*maxit)-eps < rectangle.min_coord(i)) 
@@ -89,7 +88,7 @@ namespace CGAL {
 	}
 
 
-	bool outer_range_contains(const Kd_tree_rectangle<FT>& rectangle) const {  
+	bool outer_range_contains(const Kd_tree_rectangle<SearchTraits>& rectangle) const {  
 	  Cartesian_const_iterator_d minit= min_begin, maxit = max_begin;   
     		for (unsigned int i = 0; i < dim; ++i, ++minit, ++maxit) {
         		if (  ((*maxit)+eps < rectangle.max_coord(i) ) 

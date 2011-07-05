@@ -64,7 +64,7 @@ CGAL_INSTALL_CMAKE_DIR:STRING=lib/CGAL
 
 //The folder where CGAL documentation and license files will be
 // installed, relative to CMAKE_INSTALL_PREFIX
-CGAL_INSTALL_DOC_DIR:STRING=share/doc/CGAL-3.8.1-I
+CGAL_INSTALL_DOC_DIR:STRING=share/doc/CGAL-3.5-I-140
 
 //The folder where CGAL header files will be installed, relative
 // to CMAKE_INSTALL_PREFIX

@@ -1,0 +1,57 @@
+% +------------------------------------------------------------------------+
+% | Reference manual page: TreeTraits.tex
+% +------------------------------------------------------------------------+
+% | 1.07.2001   Johan W.H. Tangelder
+% | Package: ASPAS
+% | 
+\RCSdef{\RCSTreeTraitsRev}{$Id$}
+\RCSdefDate{\RCSTreeTraitsDate}{$Date$}
+% |
+%%RefPage: end of header, begin of main body
+% +------------------------------------------------------------------------+
+
+
+\begin{ccRefConcept}{TreeTraits}
+
+\ccDefinition
+  
+The concept \ccRefName\ defines the requirements for a tree traits class, which is used as
+a template class for the construction of a tree. 
+It is assumed that the tree consists of internal nodes
+and leaf nodes. There are two types of external nodes. Extended internal nodes support orthogonal range searching.
+Unextended internal nodes do not support orthogonal range searching.
+Leaf nodes have a bucket size denoting the maximal number of points that can be 
+stored at a leaf node.
+
+\ccTypes
+
+\ccNestedType{Point}{$d$-dimensional point.}
+\ccNestedType{Point_iterator}{Point iterator.}
+\ccNestedType{Container}{Point container.}
+\ccNestedType{Separator}{Separator.}
+\ccNestedType{NT}{Number type.}
+
+\ccCreation
+\ccCreationVariable{tr}  %% choose variable name
+
+
+\ccHasModels
+
+\ccc{CGAL::Kd_tree_traits_point<SpatialPoint, Distance>}
+
+\ccSeeAlso
+
+\ccc{CGAL::Kd_tree_traits_point_2<Kernel>}
+\ccc{CGAL::Kd_tree_traits_point_3<Kernel>}
+\ccc{CGAL::Kd_tree_traits_point_d<Kernel>}
+\ccc{CGAL::Kd_tree_traits_point<Point,CartesianCoordinateIterator, class ConstructCartesianCoordinateIterator>},
+\ccc{CGAL::Kd_tree<Traits>}.
+
+\end{ccRefConcept}
+
+
+% +------------------------------------------------------------------------+
+%%RefPage: end of main body, begin of footer
+% EOF
+% +------------------------------------------------------------------------+
+

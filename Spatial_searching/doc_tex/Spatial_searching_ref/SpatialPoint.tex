@@ -1,0 +1,73 @@
+% +------------------------------------------------------------------------+
+% | Reference manual page: SpatialPoint.tex
+% +------------------------------------------------------------------------+
+% | 1.07.2001   Johan W.H. Tangelder
+% | Package: ASPAS
+% | 
+\RCSdef{\RCSSpatialPointRev}{$Id$}
+\RCSdefDate{\RCSSpatialPointDate}{$Date$}
+% |
+%%RefPage: end of header, begin of main body
+% +------------------------------------------------------------------------+
+
+
+\begin{ccRefConcept}{SearchTraits}
+
+%% \ccHtmlCrossLink{}     %% add further rules for cross referencing links
+%% \ccHtmlIndexC[concept]{} %% add further index entries
+
+\ccDefinition
+  
+The concept \ccClassTemplateName\ defines the requirements for the template 
+parameter of the search classes.  
+
+\ccTypes
+
+\ccNestedType{Point_d}{Point type. \ccc{CGAL::Kernel_traits} has to be
+specialized for this type.}
+
+
+\ccNestedType{Iso_box_d}{Iso box type. It is only needed for range search queries.}
+\ccNestedType{Sphere_d}{Sphere type. It is only needed for range search queries.}
+
+\ccNestedType{FT}{The number type of the \ccHtmlNoLinksFrom{Cartesian} coordinates of types \ccc{Point_d}}
+
+
+\ccNestedType{Cartesian_const_iterator_d}{An random access iterator type to enumerate the 
+\ccHtmlNoLinksFrom{Cartesian} coordinates of a point.}
+
+\ccNestedType{Construct_cartesian_const_iterator_d}{Functor with operators to construct iterators on the
+first and the past-the-end iterator for the \ccHtmlNoLinksFrom{Cartesian} coordinates of a point.}
+
+%\ccNestedType{Construct_iso_box_d}{Functor with operator to construct the iso box from two points.}
+%
+\ccNestedType {Construct_center_d}{Functor with operator to construct 
+the center of an object of type \ccc{Sphere_d}.}
+
+\ccNestedType {Construct_squared_radius_d}{Functor with operator to compute 
+the squared radius of a an object of type \ccc{Sphere_d}.}
+
+\ccNestedType {Construct_min_vertex_d}{Functor with operator to construct 
+the vertex with lexicographically smallest coordinates of an object of type \ccc{Iso_box_d}.}
+
+\ccNestedType {Construct_max_vertex_d}{Functor with operator to construct 
+the vertex with lexicographically largest coordinates of an object of type \ccc{Iso_box_d}.}
+
+
+
+
+\ccHasModels
+\ccc{CGAL::Cartesian_d<FT>}\\
+\ccc{CGAL::Homogeneous_d<RT>}\\
+\ccc{CGAL::Search_traits_2<Kernel>}\\
+\ccc{CGAL::Search_traits_3<Kernel>}, \\
+\ccc{CGAL::Search_traits<NT,Point,CartesianCoordinateIterator,ConstructCartesianCoordinateIterator,ConstructMinVertex,ConstructMaxVertex>}.
+
+
+\end{ccRefConcept}
+
+% +------------------------------------------------------------------------+
+%%RefPage: end of main body, begin of footer
+% EOF
+% +------------------------------------------------------------------------+
+

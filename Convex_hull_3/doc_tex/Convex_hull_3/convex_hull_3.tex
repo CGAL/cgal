@@ -20,11 +20,8 @@ computing the hull.
 
 The function \ccc{convex_hull_3} is parameterized by a traits class,
 which specifies the types and geometric primitives to be used in the
-computation. If input points from a kernel with exact predicates 
-and non-exact constructions are used, and a certified result is expected,
-the traits \ccc{Convex_hull_traits_3<R>} should be used 
-(\ccc{R} being the input kernel). Note that the default traits class takes this into
-account.
+computation.  The default for this traits class is
+\ccc{Convex_hull_traits_3}\ccIndexMainItem[C]{Convex_hull_traits_3}.
 
 \subsection{Convexity Checking}
 
@@ -36,11 +33,8 @@ point set or not.  This function is used in postcondition testing for
 
 \subsection{Example}
 The following program computes the convex hull of a set of 250 random
-points chosen from a sphere of radius 100. We assume that the points are
-not all identical and not all collinear, thus we directly use a polyhedron
-as output. Note the usage of the functor \ccc{Plane_from_facet} together with
-\ccc{std::transform} to compute the equations of the plane of each facet
-of the convex hull.
+points chosen from a sphere of radius 100.  It then determines if the 
+resulting hull is a segment or a polyhedron.  
 
 \ccIncludeExampleCode{Convex_hull_3/quickhull_3.cpp}
 
@@ -51,7 +45,7 @@ of the convex hull.
 The function \ccc{convex_hull_incremental_3} %
 \ccIndexMainItem[C]{convex_hull_incremental_3} provides an
 interface similar to \ccc{convex_hull_3} for the $d$-dimensional 
-incremental construction algorithm \cite{cms-frric-93}  
+incremental construction algorithm \cite{cms-frric-93}.  
 implemented by the class \ccc{CGAL::Convex_hull_d<R>} that is specialized 
 to three dimensions. This function accepts an iterator range over a set of
 input points and returns a polyhedron, but it does not have a traits class
@@ -59,13 +53,9 @@ in its interface.  It uses the kernel
 class \ccc{Kernel} used in the polyhedron type to define an instance of the 
 adapter traits class \ccc{CGAL::Convex_hull_d_traits_3<Kernel>}.
 
-In almost all cases, the static and the dynamic version  will
-be faster than the incremental convex hull algorithm (mainly
-because of the lack of efficient filtering and the overhead
-of the general d-dimension). The incremental version is provided for
-completeness and educational purposes. You  should use the dynamic
-version when you need an  efficient incremental  convex hull algorithm. 
-
+In most cases, the function \ccc{convex_hull_3} will be faster than
+\ccc{convex_hull_incremental_3}.  The latter is provided mainly 
+for comparison purposes. 
 
 To use the full functionality available with the $d$-dimensional class 
 \ccc{CGAL::Convex_hull_d<R>} in three dimensions (\textit{e.g.}, the ability
@@ -76,7 +66,7 @@ example.
 
 \subsection{Example}
 
-\ccIncludeExampleCode{Convex_hull_3/incremental_hull_class_3.cpp}
+\ccIncludeExampleCode{Convex_hull_3/incremental_hull_3_demo.cpp}
 
 \section{Dynamic  Convex Hull Construction}
 \ccIndexSubitem{convex hull, 3D}{dynamic}
@@ -97,18 +87,4 @@ not all of them are vertices of the hull.
 \subsection{Example}
 \ccIncludeExampleCode{Convex_hull_3/dynamic_hull_3.cpp}
 
-\section{Performance}
 
-In the following, we compare the running times of the three approaches to compute 3D convex hulls.
-For the static version (using \ccc{CGAL::convex_hull_3}) and the dynamic version
-(using \ccc{CGAL::Delaunay_triangulation_3} and \ccc{CGAL::convex_hull_3_to_polyhedron_3}), the kernel
-used was \ccc{CGAL::Exact_predicates_inexact_constructions_kernel}. For the incremental version
-(using \ccc{CGAL::convex_hull_incremental_3}), the kernel used was \ccc{CGAL::Exact_predicates_exact_constructions_kernel}.
-
-To compute the convex hull of a million of random points in a unit ball the static approach needed 1.63s, while 
-the dynamic and incremental approaches needed 9.50s and 11.54s respectively.
-To compute the convex hull of the model of Figure \ref{fig-ch-bimba} featuring 192135 points, 
-the static approach needed 0.18s, while the dynamic and incremental approaches needed 1.90s and 6.80s respectively.
-
-The measurements have been performed using \cgal\ 3.9, using the \gnu\ \CC\  compiler version 4.3.5, under Linux (Debian distribution),
-with the compilation options \texttt{-O3 -DCGAL\_NDEBUG}. The computer used was equipped with a 64bit Intel Xeon 2.27GHz processor and 12GB of RAM.

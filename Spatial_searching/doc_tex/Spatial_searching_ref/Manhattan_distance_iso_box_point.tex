@@ -45,7 +45,7 @@ Expects for the template argument a model for the concept
 \ccCreation
 \ccCreationVariable{md}  %% choose variable name
 
-\ccConstructor{Manhattan_distance_iso_box_point(Traits t=Traits());}{Default constructor.}
+\ccConstructor{Manhattan_distance_iso_box_point();}{Default constructor.}
 
 \ccOperations
 
@@ -57,11 +57,11 @@ distance between \ccc{b} and \ccc{p}.}
 \ccMethod{FT inverse_of_transformed_distance(FT d);} {Returns the value of the inverse 
                                                       of the transform function applied to $d$.}
 
-\ccMethod{FT min_distance_to_rectangle(Query_item b, Kd_tree_rectangle<FT> r);}
+\ccMethod{FT min_distance_to_rectangle(Query_item b, Kd_tree_rectangle<Traits> r);}
 {Returns the minimal distance between a point from \ccc{b} and a point from
 \ccc{r}.}
 
-\ccMethod{FT max_distance_to_rectangle(Query_item b, Kd_tree_rectangle<FT> r);}
+\ccMethod{FT max_distance_to_rectangle(Query_item b, Kd_tree_rectangle<Traits> r);}
 {Returns the maximal distance between the iso-box \ccc{b} and
 a point from \ccc{r} furthest to \ccc{b}.}
 

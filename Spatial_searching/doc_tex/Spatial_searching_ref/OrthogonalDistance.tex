@@ -46,11 +46,11 @@ E.g., for an Euclidean distance the transformed distance is the squared Euclidea
 
 \ccMethod{FT transformed_distance(Query_item q, Point_d r);}{Returns the transformed distance between \ccc{q} and~\ccc{r}.}
 
-\ccMethod{FT min_distance_to_rectangle(Query_item q, Kd_tree_rectangle<FT> r);}
+\ccMethod{FT min_distance_to_rectangle(Query_item q, Kd_tree_rectangle<Traits> r);}
 {Returns the transformed distance between \ccc{q} and
 the point on the boundary of \ccc{r} closest to \ccc{q}.}
 
-\ccMethod{FT max_distance_to_rectangle(Query_item q, Kd_tree_rectangle<FT> r);}
+\ccMethod{FT max_distance_to_rectangle(Query_item q, Kd_tree_rectangle<Traits> r);}
 {Returns the transformed distance between \ccc{q} and
 the point on the boundary of \ccc{r} farthest to \ccc{q}.}
 

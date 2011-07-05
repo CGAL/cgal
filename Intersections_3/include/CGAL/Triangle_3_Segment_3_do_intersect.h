@@ -25,12 +25,6 @@ namespace CGAL {
 
 namespace internal {
 
-template <class K>
-bool do_intersect_coplanar( const typename K::Point_3& A,
-                            const typename K::Point_3& B,
-                            const typename K::Point_3& C,  
-                            const typename K::Point_3 & p,
-                            const typename K::Point_3 & q, const K & k );
 
 template <class K>
 bool do_intersect_coplanar(const typename K::Triangle_3 &t, 
@@ -50,6 +44,10 @@ bool do_intersect_coplanar(const typename K::Triangle_3 &t,
   typename K::Construct_vertex_3 vertex_on =
     k.construct_vertex_3_object();
   
+  typename K::Coplanar_orientation_3 coplanar_orientation = 
+    k.coplanar_orientation_3_object();
+  
+
   const Point_3 & p = point_on(s,0);
   const Point_3 & q = point_on(s,1);
   
@@ -57,22 +55,7 @@ bool do_intersect_coplanar(const typename K::Triangle_3 &t,
   const Point_3 &  B = vertex_on(t,1);
   const Point_3 &  C = vertex_on(t,2);
   
-  return do_intersect_coplanar(A,B,C,p,q,k);
-}
 
-
-template <class K>
-bool do_intersect_coplanar( const typename K::Point_3& A,
-                            const typename K::Point_3& B,
-                            const typename K::Point_3& C,  
-                            const typename K::Point_3 & p,
-                            const typename K::Point_3 & q, const K & k )
-{
-  typedef typename K::Point_3 Point_3;  
-  
-  typename K::Coplanar_orientation_3 coplanar_orientation = 
-    k.coplanar_orientation_3_object();  
-  
   const Point_3 *  a = &A;
   const Point_3 *  b = &B;
   const Point_3 *  c = &C;

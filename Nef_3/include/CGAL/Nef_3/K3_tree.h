@@ -504,8 +504,8 @@ public:
       std::list<Candidate> S;
       const Node* node;
       Traits traits;
-      CGAL_assertion_code( Segment_3 prev_segment;)
-      CGAL_assertion_code( bool first_segment;)
+      CGAL_assertion_code( Segment_3 prev_segment);
+      CGAL_assertion_code( bool first_segment);
     public:
       Iterator() : node(0) {}
       Iterator( const Node* root, const Segment_3& s) {

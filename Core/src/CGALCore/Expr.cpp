@@ -75,7 +75,7 @@ const Expr& Expr::getOne() {
 //
 void Expr::doubleInterval(double & lb, double & ub) const {
   double d = doubleValue();
-  if (! CGAL_CORE_finite(d)) {	// if overflow, underflow or NaN
+  if (!finite(d)) {	// if overflow, underflow or NaN
     lb = ub = d;
     return;
   }

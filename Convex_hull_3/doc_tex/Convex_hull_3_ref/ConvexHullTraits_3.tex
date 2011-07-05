@@ -63,26 +63,26 @@ provides \ccc{bool operator()(Plane_3 p, Point_3 q, Point_3 r)}, which
 returns true iff the signed distance from \ccc{q} to \ccc{p} is smaller
 than the signed distance from \ccc{r} to \ccc{p}}
 
-%To handle the degenerate case when all points are coplanar, the following
-%three types that are default-constructable are necessary:
-%
-%\ccNestedType{Traits_xy}{A model of \ccc{ConvexHullTraits_2} for points projected
-%                         into the $xy$-plane}
-%\ccNestedType{Traits_xz}{A model of \ccc{ConvexHullTraits_2} for points projected
-%                         into the $xz$-plane}
-%\ccNestedType{Traits_yz}{A model of \ccc{ConvexHullTraits_2} for points projected
-%                         into the $yz$-plane}
+To handle the degenerate case when all points are coplanar, the following
+three types that are default-constructable are necessary:
 
-%One also needs the following function object to help choose which of the above
-%traits classes to use:
-%
-%\ccNestedType{Max_coordinate_3}{Function object type that provides
-%\ccc{int operator()(Vector_3 v)}, which returns the index (0, 1, or 2 for
-%$x$, $y$, or $z$, respectively) of the coordinate of $v$ with maximum absolute 
-%value.}
+\ccNestedType{Traits_xy}{A model of \ccc{ConvexHullTraits_2} for points projected
+                         into the $xy$-plane}
+\ccNestedType{Traits_xz}{A model of \ccc{ConvexHullTraits_2} for points projected
+                         into the $xz$-plane}
+\ccNestedType{Traits_yz}{A model of \ccc{ConvexHullTraits_2} for points projected
+                         into the $yz$-plane}
 
-%These types need not be provided when it is known that the points are
-%not all coplanar.
+One also needs the following function object to help choose which of the above
+traits classes to use:
+
+\ccNestedType{Max_coordinate_3}{Function object type that provides
+\ccc{int operator()(Vector_3 v)}, which returns the index (0, 1, or 2 for
+$x$, $y$, or $z$, respectively) of the coordinate of $v$ with maximum absolute 
+value.}
+
+These types need not be provided when it is known that the points are
+not all coplanar.
 
 \ccCreation
 \ccCreationVariable{traits}
@@ -103,8 +103,7 @@ predicate object type.  For example:
 \ccAutoIndexingOn
 
 \ccHasModels
-\ccRefIdfierPage{CGAL::Convex_hull_traits_3<R>}\\
-All kernels of CGAL
+\ccRefIdfierPage{CGAL::Convex_hull_traits_3<R>}
 
 %\ccSeeAlso
 

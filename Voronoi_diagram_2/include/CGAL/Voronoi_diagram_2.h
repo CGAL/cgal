@@ -746,7 +746,6 @@ public:
   // insert is not really supported...
   inline Face_handle insert(const Site_2& t, const Tag_false&) {
     INSERT_IS_NOT_SUPPORTED(t);
-    return Face_handle();
   }
 
  public:

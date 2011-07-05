@@ -1,4 +1,4 @@
-// Copyright (c) 2002,2011  Utrecht University (The Netherlands).
+// Copyright (c) 2002  Utrecht University (The Netherlands).
 // All rights reserved.
 //
 // This file is part of CGAL (www.cgal.org); you may redistribute it under
@@ -248,7 +248,7 @@ namespace CGAL {
     template <class OutputIterator, class FuzzyQueryItem>
     OutputIterator 
     search(OutputIterator it, const FuzzyQueryItem& q,
-	   Kd_tree_rectangle<FT>& b) 
+	   Kd_tree_rectangle<TreeTraits>& b) 
     {
       if (is_leaf()) { 
 	if (n>0) 
@@ -258,7 +258,7 @@ namespace CGAL {
       }
       else {
 	// after splitting b denotes the lower part of b
-	Kd_tree_rectangle<FT> b_upper(b);
+	Kd_tree_rectangle<TreeTraits> b_upper(b);
 	b.split(b_upper, sep.cutting_dimension(),
 		sep.cutting_value());
                              

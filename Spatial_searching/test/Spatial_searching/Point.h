@@ -35,7 +35,6 @@ namespace CGAL {
 
 
 struct Construct_coord_iterator {
-  typedef const double* result_type;
   const double* operator()(const Point& p) const 
   { return static_cast<const double*>(p.vec); }
 

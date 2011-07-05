@@ -163,7 +163,7 @@ private:
       else if ( perturbation() != pv.perturbation() )
         return *perturbation() < *pv.perturbation();
       else
-        return false; // all characteristics are the same!
+        return true; // all characteristics are the same!
     }
     
   private:

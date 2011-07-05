@@ -3,25 +3,20 @@
 #include <CGAL/Cartesian.h>
 #include <CGAL/point_generators_2.h>
 #include <CGAL/Search_traits_2.h>
-#include <CGAL/Search_traits_adapter.h>
 #include <CGAL/Orthogonal_k_neighbor_search.h>
-#include "Point_with_info.h"
 #include <set>
 
 typedef CGAL::Cartesian<double> K;
 typedef K::Point_2 Point;
-typedef CGAL::Random_points_in_square_2<Point>                          Random_points_iterator;
-typedef CGAL::Counting_iterator<Random_points_iterator>                 N_Random_points_iterator;
-typedef CGAL::Search_traits_2<K>                                        TreeTraits;
-typedef CGAL::Orthogonal_k_neighbor_search<TreeTraits>                  Neighbor_search;
-//typdefs fo Point_with_info
-typedef Point_with_info_helper<Point>::type                                                             Point_with_info;
-typedef CGAL::Search_traits_adapter<Point_with_info,Point_property_map,TreeTraits>                        Traits_with_info;
-typedef CGAL::Distance_adapter <Point_with_info,Point_property_map,Neighbor_search::Distance>   Distance_adapter;
-typedef CGAL::Orthogonal_k_neighbor_search<Traits_with_info,Distance_adapter>                         Neighbor_search_with_info;
+typedef CGAL::Random_points_in_square_2<Point> Random_points_iterator;
+typedef CGAL::Counting_iterator<Random_points_iterator> N_Random_points_iterator;
+typedef CGAL::Search_traits_2<K> TreeTraits;
+typedef CGAL::Orthogonal_k_neighbor_search<TreeTraits> Neighbor_search;
+typedef Neighbor_search::Tree Tree;
 
-template <class K_search>
-void search(bool nearest)
+
+void 
+search(bool nearest)
 {
   const unsigned int N = 1000;
   const double cube_side_length = 1.0;
@@ -32,22 +27,19 @@ void search(bool nearest)
 			    N_Random_points_iterator(N));
  
   
-  typename K_search::Tree tree(
-    boost::make_transform_iterator(points.begin(),Create_point_with_info<typename K_search::Point_d>()),
-    boost::make_transform_iterator(points.end(),Create_point_with_info<typename K_search::Point_d>())
-  );
+  Tree tree(points.begin(), points.end());
   Point query(0,0);
   
-  K_search search(tree, query, N/2 , 0.0, nearest);
+  Neighbor_search search(tree, query, N/2 , 0.0, nearest);
  
   std::vector<Point> result, diff; 
-  // report the N/2 furthest neighbors and their distance
+   // report the N/2 furthest neighbors and their distance
 
   //std::copy(search.begin(), search.end(), std::back_inserter(result));
-  for(typename K_search::iterator nit = search.begin();
+  for(Neighbor_search::iterator nit = search.begin();
       nit != search.end();
       nit++){
-    result.push_back(get_point(nit->first));
+    result.push_back(nit->first);
   }
 
   std::sort(points.begin(), points.end());
@@ -91,10 +83,8 @@ void search(bool nearest)
 
 int main()
 {
-  search<Neighbor_search>(true);
-  search<Neighbor_search>(false);
-  search<Neighbor_search_with_info>(true);
-  search<Neighbor_search_with_info>(false);
+  search(true);
+  search(false);
   std::cout << "done" << std::endl;
   return 0;
 }

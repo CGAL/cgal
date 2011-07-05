@@ -124,7 +124,7 @@ PolylinesGraphicsItem<P>::boundingRect() const
 template <typename P>
 void 
 PolylinesGraphicsItem<P>::paint(QPainter *painter, 
-                                const QStyleOptionGraphicsItem * /*option*/,
+                                const QStyleOptionGraphicsItem */*option*/,
                                 QWidget * /*widget*/)
 {
 

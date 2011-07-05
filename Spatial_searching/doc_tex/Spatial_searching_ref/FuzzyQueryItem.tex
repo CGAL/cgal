@@ -38,11 +38,11 @@ The concept \ccRefName\ describes the requirements for fuzzy $d$-dimensional spa
 
 \ccMethod{bool contains(Point_d p); const}{test whether $q$ contains $p$.}
 
-\ccMethod{bool inner_range_intersects(const Kd_tree_rectangle<FT>& rectangle); const}
+\ccMethod{bool inner_range_intersects(const Kd_tree_rectangle<Traits>& rectangle); const}
 {test whether the inner approximation of the spatial object intersects a rectangle
 associated with a node of a tree. }
 
-\ccMethod{bool outer_range_contains(const Kd_tree_rectangle<FT>& rectangle); const}
+\ccMethod{bool outer_range_contains(const Kd_tree_rectangle<Traits>& rectangle); const}
 {test whether the outer approximation of the spatial object encloses the rectangle
 associated with a node of a tree.}
 

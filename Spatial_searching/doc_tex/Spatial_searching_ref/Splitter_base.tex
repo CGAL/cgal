@@ -1,0 +1,70 @@
+% +------------------------------------------------------------------------+
+% | Reference manual page: Splitter.tex
+% +------------------------------------------------------------------------+
+% | 1.07.2001   Johan W.H. Tangelder
+% | Package: ASPAS
+% | 
+\RCSdef{\RCSSplitterRev}{$Id$}
+\RCSdefDate{\RCSSplitterDate}{$Date$}
+% |
+%%RefPage: end of header, begin of main body
+% +------------------------------------------------------------------------+
+
+
+\begin{ccRefClass}{Splitter_base<FT>}
+
+%% \ccHtmlCrossLink{}     %% add further rules for cross referencing links
+%% \ccHtmlIndexC[concept]{} %% add further index entries
+
+\begin{ccAdvanced}
+
+\ccDefinition
+  
+The class \ccRefName\ serves as a base class  for implementing splitting rules.
+
+\ccTypes
+
+\ccNestedType{FT}{Number type.}
+\ccNestedType{Container}{Point container.}
+\ccNestedType{Separator}{Separator.} 
+
+\ccCreationVariable{s}  %% choose variable name
+
+The parameters \ccc{aspect_ratio} and  \ccc{bucket_size}
+define the way in which $k$-$d$ tree is constructed.
+
+\ccOperations
+
+\ccMethod{
+void operator()(Separator& s, Container& c0, Container& c1);} 
+{Modifies the separator $s$, 
+and splits \ccc{c0} into \ccc{c0} and \ccc{c1},
+using the splitting dimension and the splitting value of the modified separator.
+}
+
+\ccMethod{FT aspect_ratio();}{Returns the maximal ratio between the largest and smallest side
+of a cell allowed for fair splitting.}
+
+\ccMethod{int bucket_size();} {Returns the bucket size of the leaf nodes.}
+
+
+ 
+
+\ccSeeAlso
+\ccc{CGAL::Fair<Traits, PointContainer, SpatialSeparator>}, \\
+\ccc{CGAL::Median_of_rectangle<Traits, PointContainer, SpatialSeparator>}, \\
+\ccc{CGAL::Median_of_max_spread<Traits, PointContainer, SpatialSeparator>}, \\
+\ccc{CGAL::Midpoint_of_rectangle<Traits, PointContainer, SpatialSeparator>}, \\
+\ccc{CGAL::Midpoint_of_max_spread<Traits, PointContainer, SpatialSeparator>}, \\
+\ccc{CGAL::Sliding_fair<Traits, PointContainer, SpatialSeparator>}, \\
+\ccc{CGAL::Sliding_midpoint<Traits, PointContainer, SpatialSeparator>.}
+
+\end{ccAdvanced}
+
+\end{ccRefClass}
+
+% +------------------------------------------------------------------------+
+%%RefPage: end of main body, begin of footer
+% EOF
+% +------------------------------------------------------------------------+
+

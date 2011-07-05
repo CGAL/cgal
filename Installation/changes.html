@@ -130,33 +130,28 @@ CGAL 3.9 offers the following improvements and new functionality :  </p>
       <li>Using a property map, sorting on keys instead of points is now easier</li> 
 </ul>
 
-<h3>dD Spatial Searching (major new feature added)</h3>
-<ul>
-      <li>A traits-class and distance adapter that together with a point property map,
-       allow to make nearest neighbor queries on keys instead of points have been added.</li> 
-      <li>Few bug fixes in the documentation have revealed some inconsistencies 
-      that have been corrected. Two traits class concept are now documented (RangeSearchTraits 
-      and SearchTraits). Most other changes concerns only classes documented as advanced. 
-      One issue that user can encounter is due to an additional requirement on the nested 
-      class Construct_cartesian_const_iterator_d defined in the concept SearchTraits that must 
-      provide a nested type result_type.</li>
-</ul>
-
-<h3>3D Convex Hull (major performance improvement)</h3>
-<ul>
-      <li>The quickhull implementation of CGAL (CGAL::convex_hull_3)
-          has been worked out to provide very better performances.</li>
-      <li>The function CGAL::convex_hull_3 no longer computes the plane
-          equations of the facets of the output polyhedron. However an example is 
-          provided to show how to compute them easily.</li>
-      <li>A global function convex_hull_3_to_polyhedron_3 is now provided to extract
-      the convex hull of a 3D points set from a triangulation of these points.</li>
-</ul>
-
 <h3>dD Kernel</h3>
 <ul>
       <li>The d-dimensional kernel concept and models have been modified 
           to additionally provide two new functors Less_coordinate_d and Point_dimension_d.</li>
+</ul>
+
+<h3>2D Arrangements</h3>
+<ul>
+      <li>A new geometry-traits class that handles rational arcs, namely
+	<code>Arr_rational_function_traits_2</code>, has been introduced.
+	It replaced an old traits class, which handled the same family of
+	curves, but it was less efficient. The new traits exploits CGAL
+	algebraic kernels and polynomials, which were not available at
+	the time the old traits class was developed.</li>
+      <li>A new geometry traits concept called
+	<code>ArrangementOpenBoundaryTraits_2</code> has been introduced.
+	A model of this concept suports curves that approach the open
+	boundary of an iso-rectangular area called parameter space, which can
+	be unbounded or bounded. The general code of the package, however,
+	supports only the unbounded parameter space. We intend to enhance the
+	general code to support also bounded parameter spaces in a future
+	release.</li>
 </ul>
 
 <h2 id="release3.8">Release 3.8 </h2>
@@ -295,6 +290,30 @@ CGAL 3.8 offers the following improvements and new functionality :  </p>
   <li>Fix a bug in the method insert_at_vertices of the Arrangement_2 class.
   <li>Fix several bugs in the traits class Arr_Bezier_curve_traits_2 for arrangement of Bezier curves.
 </ul> 
+
+
+
+
+<h3>Arrangements</h3>
+
+<h4>2D Arrangements</h4>
+<ul>
+  <li>The deprecated member function is_at_infinity() of
+    Arrangement_2::Vertex has been removed. It has been previously
+    replaced new function is_at_open_boundary().
+  
+  <li> The tags in the geometry traits that indicate the type of boundary of 
+    the embedding surface were replaced by the following new tags:
+    Left_side_category
+    Bottom_side_category
+    Top_side_category
+    Right_side_category
+    It is still possible not to indicate the tags at all. Default values are assumed. This however will
+    produce warning messages, and should be avoided.</li>
+
+</ul>
+
+
 
 <h3>2D Minkowski Sums</h3>
 <ul>

@@ -33,7 +33,10 @@
 namespace CGAL {
 namespace internal{
   
-template <class SearchTraits,class Distance_,class Splitter_,class Tree_>
+template <class SearchTraits, 
+          class Distance_= Euclidean_distance<SearchTraits>,
+          class Splitter_= Sliding_midpoint<SearchTraits> ,
+          class Tree_= Kd_tree<SearchTraits, Splitter_, Tag_true> >
 class K_neighbor_search {
 
 public:

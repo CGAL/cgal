@@ -1,5 +1,13 @@
+Qt3
 TODO
 changes
-benchmark
-
+GNUmakefile
+examples/Circular_kernel_2/makefile 
+bench
+Benchmarks
+include/CGAL/Filtered_hexagon_circular_kernel_2.h
+include/CGAL/Filtered_hexagon_circular_kernel_2
+Lazy_circular_kernel_2.h
+Lazy_circular_kernel_constructions.h
+old_lazy
 

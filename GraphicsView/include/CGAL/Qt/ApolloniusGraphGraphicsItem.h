@@ -99,7 +99,7 @@ ApolloniusGraphGraphicsItem<AG,K>::boundingRect() const
 
 template <typename AG, typename K>
 void 
-ApolloniusGraphGraphicsItem<AG,K>::paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget * /*w*/)
+ApolloniusGraphGraphicsItem<AG,K>::paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget */*w*/)
 {
 
   painter->setPen(this->sitesPen());

@@ -1,0 +1,101 @@
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
+<html>
+  <head>
+    <title>Circular Kernel 2D</title>
+  </head>
+
+  <body>
+    <P align="center"><FONT size="5">How to use the<p>"Circular Kernel 2D"<p>Demo</FONT></P>
+    <br>
+This demo illustrates the intersection functionality provided by the CGAL's Circular_kernel_2.
+<p>
+You can easily input circular arcs and segments using the mouse.  The first click is the center
+of the supporting circle, the second will select the radius, then you have
+to enter two rays delimiting the arc.  Pressing the 'c' key while entering
+the second ray will take the opposite arc (the yellow part).
+<p>
+<IMG SRC="help/sweeper.jpeg" HEIGHT=30>
+Clicking in this icon will toggle the intersections visibility.
+<p>
+<IMG SRC="help/trash.jpeg" HEIGHT=30>
+To erase the content of the arcs container, just click on the trash.
+<p>
+<IMG SRC="help/planar_map_icon.jpeg" HEIGHT=30>
+Toggling this button will change the object you are inserting between circular arcs and segments.
+<p>
+<IMG SRC="help/get_arc.jpeg" HEIGHT=30>
+This button toggles the display of the arcs container.
+<p>
+
+    <br>
+    Plus the Usual Functionality of a Qt_widget demo:
+    <UL>
+      <LI><A href="#new">Reset application</A></LI>
+      <LI><A href="#new_window">Creating a new window</A></LI>
+      <LI><A href="#print">Print</A></LI>
+      <LI><A href="#close_window">Close the current window</A></LI>
+      <LI><A href="#quit">Quit the application</A></LI>      
+    </UL><br>
+
+    <P align="left"><STRONG><FONT size="5"></FONT></STRONG>&nbsp;</P>
+    <P align="left"><STRONG><FONT size="5"></FONT></STRONG>&nbsp;</P>
+    <P align="left"><STRONG><FONT size="5"></FONT></STRONG>&nbsp;</P>
+    <P align="left"><STRONG><FONT size="5"></FONT></STRONG>&nbsp;</P>
+
+    <P align="left"><STRONG><FONT color="#3300cc" size="4"><A name="new">
+	  </A></FONT></STRONG>&nbsp;</P>
+    <P align="left"><STRONG><FONT color="#3300cc" size="4"></FONT>
+      </STRONG>&nbsp;</P>
+    <P align="left"><STRONG>
+	<FONT color="#3300cc" size="3">Reset application</FONT></STRONG></P>
+    Press Ctrl+N combination keys or go to File menu and choose "New". 
+    The triangulation will be erased, the window's viewport will be set 
+    to default. (-1, 1, -1, 1)
+
+    <P align="left"><STRONG><FONT color="#3300cc" size="4">
+	  <A name="new_window"></A></FONT></STRONG>&nbsp;</P>
+    <P align="left"><STRONG><FONT color="#3300cc" size="4">
+	</FONT></STRONG>&nbsp;</P>
+    <P align="left"><STRONG>
+	<FONT color="#3300cc" size="3">Create a new window</FONT></STRONG></P>
+    Press Ctrl+W combination keys or go to File menu and choose "New Window". 
+    A new window will appear, modifying the viewport to make the 
+    triangulation fit in the new window.
+
+    <P align="left"><STRONG><FONT color="#3300cc" size="4">
+	  <A name="print"></A></FONT></STRONG>&nbsp;</P>
+    <P align="left"><STRONG><FONT color="#3300cc" size="4">
+	</FONT></STRONG>&nbsp;</P>
+    <P align="left"><STRONG>
+	<FONT color="#3300cc" size="3">Print</FONT></STRONG></P>
+    Press Ctrl+P combination keys or go to File menu and choose "Print". 
+    The visible area on the screen will be outputed to the print device 
+    of your choice.
+
+
+    <P align="left"><STRONG><FONT color="#3300cc" size="4">
+	  <A name="close_window"></A></FONT></STRONG>&nbsp;</P>
+    <P align="left"><STRONG><FONT color="#3300cc" size="4">
+	</FONT></STRONG>&nbsp;</P>
+    <P align="left"><STRONG>
+	<FONT color="#3300cc" size="3">Close the current window</FONT>
+      </STRONG></P>
+    Press Ctrl+X combination keys or go to File menu and choose "Close". 
+    You may do it for any window other than the initial one, this operation 
+    will close only the one you have choosen. If you do this for the initial 
+    parent window, it will close the others too.
+
+    <P align="left"><STRONG><FONT color="#3300cc" size="4">
+	  <A name="quit"></A></FONT></STRONG>&nbsp;</P>
+    <P align="left"><STRONG><FONT color="#3300cc" size="4">
+	</FONT></STRONG>&nbsp;</P>
+    <P align="left"><STRONG>
+	<FONT color="#3300cc" size="3">Quit the application</FONT></STRONG></P>
+    Press Ctrl+Q combination keys or go to File menu and choose "Quit". 
+    When you quit the application, all the windows you have created will 
+    be destroyed.
+
+<br>
+<hr>
+  </body>
+</html>

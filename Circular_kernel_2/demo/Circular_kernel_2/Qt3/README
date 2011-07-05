@@ -1,0 +1,3 @@
+demo allows to enter line segments and circular arcs
+and computes the arrangement
+it also allows to read .dxf files (autocad format)

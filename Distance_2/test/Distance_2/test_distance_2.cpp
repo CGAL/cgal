@@ -1,9 +1,5 @@
 // 2D distance tests.
 
-#ifdef NDEBUG
-#undef NDEBUG //this testsuite requires NDEBUG to be not defined
-#endif
-
 #include <CGAL/Object.h>
 #include <CGAL/Line_2.h>
 #include <CGAL/Point_2.h>
@@ -18,6 +14,10 @@
 #include <vector>
 #include <iostream>
 #include <cassert>
+
+#ifdef NDEBUG
+#  error The test-suite needs no NDEBUG defined
+#endif
 
 const double epsilon = 0.001;
 

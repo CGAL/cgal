@@ -1,4 +1,4 @@
-// Copyright (c) 2002,2011 Utrecht University (The Netherlands).
+// Copyright (c) 2002 Utrecht University (The Netherlands).
 // All rights reserved.
 //
 // This file is part of CGAL (www.cgal.org); you may redistribute it under
@@ -27,22 +27,22 @@
 
 namespace CGAL {
 
-  template <class Construct_cartesian_const_iterator_d, class P, class T>
+  template <class SearchTraits, class P, class T>
   struct set_bounds_from_pointer : public std::unary_function<P, void> {
     int dim;
     T *lower;
     T *upper;
-    Construct_cartesian_const_iterator_d construct_it;
     
-    set_bounds_from_pointer(int d, T *l, T *u,Construct_cartesian_const_iterator_d construct_it_) 
-      : dim(d), lower(l), upper(u), construct_it(construct_it_)
+    set_bounds_from_pointer(int d, T *l, T *u) 
+      : dim(d), lower(l), upper(u) 
     {}
 
     void 
     operator()(P p) 
     {
       T h;
-      typename Construct_cartesian_const_iterator_d::result_type pit = construct_it(*p);
+      typename SearchTraits::Construct_cartesian_const_iterator_d construct_it;
+      typename SearchTraits::Cartesian_const_iterator_d pit = construct_it(*p);
       for (int i = 0; i < dim; ++i, ++pit) {
 	h=(*pit);
 	if (h < lower[i]) lower[i] = h;
@@ -52,10 +52,10 @@ namespace CGAL {
   };
 
 
-  template <class FT_> 
+  template <class SearchTraits> 
   class Kd_tree_rectangle {
   public:
-    typedef FT_ FT;
+    typedef typename SearchTraits::FT FT;
     typedef FT T;
     
   private:
@@ -112,41 +112,56 @@ namespace CGAL {
     
     
     explicit 
-    Kd_tree_rectangle(const Kd_tree_rectangle<FT>& r) 
+    Kd_tree_rectangle(const Kd_tree_rectangle<SearchTraits>& r) 
       : dim(r.dim), lower_(new FT[dim]), upper_(new FT[dim]), 
 	max_span_coord_(r.max_span_coord_) 
     {
       std::copy(r.lower_, r.lower_+dim, lower_);
       std::copy(r.upper_, r.upper_+dim, upper_);
     }
-
-    template <class Construct_cartesian_const_iterator_d,class PointPointerIter>
-    void update_from_point_pointers(PointPointerIter begin, 
-                                    PointPointerIter end,
-                                    const Construct_cartesian_const_iterator_d& construct_it
-    ) 
+    
+    template <class PointPointerIter> // was PointIter
+    Kd_tree_rectangle(int d,  PointPointerIter begin,  PointPointerIter end)
+      : dim(d), lower_(new FT[d]), upper_(new FT[d]) 
     {
-      if (begin ==end)
-        return;
       // initialize with values of first point
-      typename Construct_cartesian_const_iterator_d::result_type bit = construct_it(**begin);
+      typename SearchTraits::Construct_cartesian_const_iterator_d construct_it;
+      typename SearchTraits::Cartesian_const_iterator_d bit = construct_it(**begin);
       
-      for (int i=0; i < dim; ++i, ++bit) {
-        lower_[i]= *bit; upper_[i]=lower_[i];
+      for (int i=0; i < dim; ++bit, ++i){
+	lower_[i]=(*bit); upper_[i]=lower_[i];
       }
       begin++;
       typedef typename std::iterator_traits<PointPointerIter>::value_type P;
-      std::for_each(begin, end,set_bounds_from_pointer<Construct_cartesian_const_iterator_d,P,T>(dim, lower_, upper_,construct_it));
+
+      std::for_each(begin, end, set_bounds_from_pointer<SearchTraits, P,T>(dim, lower_, upper_));
+      set_max_span();
+    }
+
+    template <class PointPointerIter>
+    void update_from_point_pointers(PointPointerIter begin, 
+                                    PointPointerIter end) 
+    {
+      if (begin ==end) { // no points
+	for (int i=0; i < dim; ++i) {
+	  lower_[i]= FT(1); upper_[i]= FT(-1);
+	}
+      } else {
+	// initialize with values of first point
+	typename SearchTraits::Construct_cartesian_const_iterator_d construct_it;
+	typename SearchTraits::Cartesian_const_iterator_d bit = construct_it(**begin);
+	
+	for (int i=0; i < dim; ++i, ++bit) {
+	  lower_[i]= *bit; upper_[i]=lower_[i];
+	}
+	begin++;
+	typedef typename std::iterator_traits<PointPointerIter>::value_type P;
+	std::for_each(begin, end,
+		      set_bounds_from_pointer<SearchTraits,P,T>(dim, lower_, upper_));
+      }
       set_max_span();
     }
     
-    template <class Construct_cartesian_const_iterator_d,class PointPointerIter> // was PointIter
-    Kd_tree_rectangle(int d,  PointPointerIter begin,  PointPointerIter end,const Construct_cartesian_const_iterator_d& construct_it)
-      : dim(d), lower_(new FT[d]), upper_(new FT[d]) 
-    {
-      update_from_point_pointers<Construct_cartesian_const_iterator_d>(begin,end,construct_it);
-    }
-
     inline int 
     max_span_coord() const 
     { 
@@ -221,11 +236,9 @@ namespace CGAL {
       return dim;
     }
 
-    const T* lower() const {return lower_;}
-    const T* upper() const {return upper_;}    
  
-    Kd_tree_rectangle<FT>& 
-    operator=(const Kd_tree_rectangle<FT>& r) 
+    Kd_tree_rectangle<SearchTraits>& 
+    operator=(const Kd_tree_rectangle<SearchTraits>& r) 
     {
       CGAL_assertion(dimension() == r.dimension());
       if (this != &r) {
@@ -240,9 +253,9 @@ namespace CGAL {
 
   }; // of class Kd_tree_rectangle
 
-  template <class FT>
+  template <class SearchTraits>
   std::ostream& 
-  operator<<(std::ostream& s, const Kd_tree_rectangle<FT>& r) 
+  operator<<(std::ostream& s, const Kd_tree_rectangle<SearchTraits>& r) 
   {
     return r.print(s);
   }

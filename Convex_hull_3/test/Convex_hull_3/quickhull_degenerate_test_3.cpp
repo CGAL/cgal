@@ -87,21 +87,6 @@ void test_coplanar_yz()
    assert( CGAL::assign(P, ch_object) );
 }
 
-void test_coplanar_triangle(){
-  std::list<Point_3>  points;
-  points.push_back(Point_3(0,0,0));
-  points.push_back(Point_3(0,4,0));
-  points.push_back(Point_3(4,0,0));
-  points.push_back(Point_3(1,1,0));
-  points.push_back(Point_3(1,2,0));
-  points.push_back(Point_3(2,1,0));
-
-  CGAL::Object ch_object;
-  CGAL::convex_hull_3(points.begin(), points.end(), ch_object, Traits());
-  Triangle_3 T;
-  assert( CGAL::assign(T, ch_object) );  
-}
-
 void test_coplanar_arbitrary()
 {
    typedef CGAL::Creator_uniform_3<double,Point_3>            Creator;
@@ -196,14 +181,6 @@ int main()
   Triangle_3 ch_triangle;
   assert(CGAL::assign(ch_triangle, ch_object));
 
-  std::cout << "Testing hull of four points " << std::endl;
-  Point_3 p4(1, 1, 1);
-  points.push_back(p4);
-  CGAL::convex_hull_3(points.begin(), points.end(), ch_object, ch_traits);
-  Polyhedron_3  poly;
-  assert(CGAL::assign(poly, ch_object));
-  assert(poly.size_of_vertices()==4);
-
   std::cout << "Testing hull of collinear points " << std::endl;
   test_collinear();
 
@@ -215,10 +192,6 @@ int main()
   test_coplanar_yz();
   std::cout << "Testing hull of points in arbitrary plane " << std::endl;
   test_coplanar_arbitrary();
-  std::cout << "Testing hull of points in arbitrary plane " << std::endl;
-  test_coplanar_arbitrary();
-  std::cout << "Testing hull of coplanar points which convex hull is a triangle " << std::endl;
-  test_coplanar_triangle();
 
   return 0;
 }

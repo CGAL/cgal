@@ -1,0 +1,80 @@
+% +------------------------------------------------------------------------+
+% | Reference manual page: Kd_tree_traits_point.tex
+% +------------------------------------------------------------------------+
+% | 1.07.2001   Johan W.H. Tangelder
+% | Package: ASPAS
+% | 
+\RCSdef{\RCSKdtreetraitspoint2Rev}{$Id$}
+\RCSdefDate{\RCSKdtreetraitspoint2Date}{$Date$}
+% |
+%%RefPage: end of header, begin of main body
+% +------------------------------------------------------------------------+
+
+
+\begin{ccRefClass}{Search_traits_3<Kernel>}
+
+%% \ccHtmlCrossLink{}     %% add further rules for cross referencing links
+%% \ccHtmlIndexC[class]{} %% add further index entries
+
+\ccDefinition
+  
+The class \ccRefName\ can be used as a template parameter of the kd tree
+and the search classes.  \ccc{Kernel} must be a \cgal\ kernel.
+
+
+\ccInclude{CGAL/Search_traits_3.h}
+
+\ccParameters
+Expects for the template argument a model of the concept \ccc{Kernel},
+for example \ccc{CGAL::Cartesian<double>} or \ccc{CGAL::Simple_cartesian<CGAL::Gmp_q>}.
+
+\ccIsModel
+
+\ccc{SearchTraits}.
+
+\ccTypes
+
+\ccTypedef{Kernel::FT FT;}{Number type.}
+
+\ccTypedef {Kernel::Point_3 Point_d;}{Point type.}
+\ccTypedef {Kernel::Iso_cuboid_3 Iso_box_d;}{Iso box type.}
+\ccTypedef {Kernel::Sphere_3 Sphere_d;}{Sphere type.}
+
+\ccTypedef {Kernel::Cartesian_const_iterator_3 Cartesian_const_iterator_d;}{An iterator over the Cartesian
+	coordinates.}
+
+\ccTypedef {Kernel::Construct_cartesian_const_iterator_3 Construct_cartesian_const_iterator_d;}{A functor with
+two function operators, which return the begin and past the end iterator for the Cartesian coordinates. 
+The functor for begin has as argument a \ccc{Point_d}. The functor for the past the end iterator, 
+has as argument a \ccc{Point_d} and an \ccc{int}.}
+
+
+%\ccTypedef {Kernel::Construct_iso_cuboid_3 Construct_iso_box_d;}{Functor with operator to construct 
+%the iso box from two points.}
+
+\ccTypedef {Kernel::Construct_center_3 Construct_center_d;}{Functor with operator to construct 
+the center of an object of type \ccc{Sphere_d}.}
+
+\ccTypedef {Kernel::Compute_squared_radius_3 Construct_squared_radius_d;}{Functor with operator to compute 
+the squared radius of a an object of type \ccc{Sphere_d}.}
+
+\ccTypedef {Kernel::Construct_min_vertex_3 Construct_min_vertex_d;}{Functor with operator to construct 
+the vertex with lexicographically smallest coordinates of an object of type \ccc{Iso_box_d}.}
+
+\ccTypedef {Kernel::Construct_max_vertex_3 Construct_max_vertex_d;}{Functor with operator to construct 
+the vertex with lexicographically largest coordinates of an object of type \ccc{Iso_box_d}.}
+
+
+\ccSeeAlso
+
+\ccc{Search_traits_2<Kernel>}\\
+\ccc{Search_traits<Point,CartesianConstIterator,ConstructCartesianConstIterator}
+
+\end{ccRefClass}
+
+
+% +------------------------------------------------------------------------+
+%%RefPage: end of main body, begin of footer
+% EOF
+% +------------------------------------------------------------------------+
+

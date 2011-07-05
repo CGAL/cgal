@@ -23,7 +23,7 @@ if ( CGAL_FOUND )
 
   create_single_source_cgal_program( "input.cpp" )
   create_single_source_cgal_program( "kernel.cpp" )
-  create_single_source_cgal_program( "gv_terrain.cpp" )
+  create_single_source_cgal_program( "terrain.cpp" )
 
 else()
   

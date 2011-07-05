@@ -491,7 +491,7 @@ compare_y_at_end(const X_monotone_curve_2& xcv1,
     {
       // Compare the relative position of the curves at x boundary.
       return (traits->compare_y_near_boundary_2_object()
-	      (xcv1, xcv2, curve_end));
+              (xcv1, xcv2, curve_end));
     }
     
     // Check if the left end of xcv2 lies at y boundary.
@@ -549,21 +549,21 @@ compare_y_at_end(const X_monotone_curve_2& xcv1,
       // we readily know their relative position (recall that they do not
       // instersect).
       if (ps_y1 == ARR_BOTTOM_BOUNDARY && ps_y2 == ARR_TOP_BOUNDARY)
-	return (SMALLER);
+        return (SMALLER);
       else if (ps_y1 == ARR_TOP_BOUNDARY && ps_y2 == ARR_BOTTOM_BOUNDARY)
-	return (LARGER);
+        return (LARGER);
 
       // Both curves have vertical asymptotes with the same sign in y.
       // Check which asymptote is the rightmost. Note that in this case
       // the vertical asymptotes cannot be equal.
-      l_res = traits->compare_x_near_boundary_2_object()
-	(xcv1, curve_end, xcv2, curve_end);
+      l_res = traits->compare_x_curve_ends_2_object()
+        (xcv1, curve_end, xcv2, curve_end);
       CGAL_assertion (l_res != EQUAL);
       
       if (ps_y1 == ARR_TOP_BOUNDARY)
-	return (l_res);
+        return (l_res);
       else
-	return CGAL::opposite(l_res);
+        return CGAL::opposite(l_res);
     }
 
     // xcv1 has a vertical asymptote and xcv2 has a normal left endpoint.
@@ -571,7 +571,7 @@ compare_y_at_end(const X_monotone_curve_2& xcv1,
     const Point_2&  left2 = 
       (curve_end == ARR_MIN_END) ? min_vertex(xcv2) : max_vertex(xcv2);
         
-    l_res = traits->compare_x_near_boundary_2_object()
+    l_res = traits->compare_x_point_curve_end_2_object()
       (left2, xcv1, curve_end);
     
     if (l_res == LARGER)
@@ -584,9 +584,9 @@ compare_y_at_end(const X_monotone_curve_2& xcv1,
     else
     {
       if (ps_y1 == ARR_BOTTOM_BOUNDARY)
-	return (SMALLER);          // xcv1 is obviously below xcv2.
+        return (SMALLER);          // xcv1 is obviously below xcv2.
       else
-	return (LARGER);           // xcv2 is obviously above xcv1.
+        return (LARGER);           // xcv2 is obviously above xcv1.
     }
   }
   else if (ps_y2 != ARR_INTERIOR)
@@ -596,7 +596,7 @@ compare_y_at_end(const X_monotone_curve_2& xcv1,
     const Point_2&  left1 = 
       (curve_end == ARR_MIN_END) ? min_vertex(xcv1) : max_vertex(xcv1);
         
-    l_res = traits->compare_x_near_boundary_2_object()
+    l_res = traits->compare_x_point_curve_end_2_object()
       (left1, xcv2, curve_end);
     
     if (l_res == LARGER)

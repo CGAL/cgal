@@ -74,7 +74,7 @@ public:
    */
   Expr(float f) : RCExpr(NULL) { // check for valid numbers
     // (i.e., not infinite and not NaN)
-    if (! CGAL_CORE_finite(f)) {
+    if (!finite(f)) {
       std::cerr << " ERROR : constructed an invalid float! " << std::endl;
       if (AbortFlag)
         abort();
@@ -85,7 +85,7 @@ public:
   /// constructor for <tt>double</tt>
   Expr(double d) : RCExpr(NULL) { // check for valid numbers
     // (i.e., not infinite and not NaN)
-    if (! CGAL_CORE_finite(d)) {
+    if (!finite(d)) {
       std::cerr << " ERROR : constructed an invalid double! " << std::endl;
       if (AbortFlag)
         abort();
