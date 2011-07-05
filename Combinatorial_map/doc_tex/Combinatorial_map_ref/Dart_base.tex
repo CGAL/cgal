@@ -13,12 +13,12 @@
 
 \ccDefinition
   
-The class \ccRefName\ represents a $d$D dart.
+The class \ccRefName\ represents a \emph{d}D dart.
 
-$\beta_i$ pointers are coded in a array of $d+1$ \ccc{Dart_handle}
+$\beta_i$ pointers are coded in a array of \emph{d+1} \ccc{Dart_handle}
 (because we describe also the $\beta_0$ link).  Attributes are
 associated to each dart by \ccc{Attribute_handle<i>}, one for each
-non void $i$-attribute.
+non void \emph{i}-attribute.
 
 \ccIsModel
 \ccRefConceptPage{Dart}
@@ -43,12 +43,12 @@ non void $i$-attribute.
 \ccHeading{Complexity}
 
 Each $\beta_i$ link is initialized to \ccc{CMap::null_dart_handle}, and each 
-attribute handle of non void $i$-attribute is initialized to NULL
+attribute handle of non void \emph{i}-attribute is initialized to NULL
 at the creation of the dart, thus the complexity of the creation is in
-$O(d+1)$.
+\emph{O}(\emph{d+1}).
 
 The complexity of \ccc{opposite} and \ccc{other_extremity} methods is in
-$O(d+1)$.
+\emph{O}(\emph{d+1}).
 
 Other methods have all a constant time complexity.
 

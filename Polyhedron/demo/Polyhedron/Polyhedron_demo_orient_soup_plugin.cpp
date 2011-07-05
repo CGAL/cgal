@@ -5,7 +5,7 @@
 #include <QMessageBox>
 #include <QtDebug>
 
-#include "Scene_polygon_soup.h"
+#include "Scene_polygon_soup_item.h"
 #include "Scene_polyhedron_item.h"
 
 #include "Polyhedron_demo_plugin_interface.h"
@@ -71,8 +71,8 @@ void Polyhedron_demo_orient_soup_plugin::orient()
 {
   Q_FOREACH(Scene_interface::Item_id index, scene->selectionIndices())
   {
-    Scene_polygon_soup* item = 
-      qobject_cast<Scene_polygon_soup*>(scene->item(index));
+    Scene_polygon_soup_item* item = 
+      qobject_cast<Scene_polygon_soup_item*>(scene->item(index));
 
     if(item)
     {
@@ -110,8 +110,8 @@ void Polyhedron_demo_orient_soup_plugin::shuffle()
 {
   const Scene_interface::Item_id index = scene->mainSelectionIndex();
   
-  Scene_polygon_soup* item = 
-    qobject_cast<Scene_polygon_soup*>(scene->item(index));
+  Scene_polygon_soup_item* item = 
+    qobject_cast<Scene_polygon_soup_item*>(scene->item(index));
 
   if(item) {
     item->shuffle_orientations();
@@ -121,7 +121,7 @@ void Polyhedron_demo_orient_soup_plugin::shuffle()
     Scene_polyhedron_item* poly_item = 
       qobject_cast<Scene_polyhedron_item*>(scene->item(index));
     if(poly_item) {
-      item = new Scene_polygon_soup();
+      item = new Scene_polygon_soup_item();
       item->setName(poly_item->name());
       item->setColor(poly_item->color());
       item->setRenderingMode(poly_item->renderingMode());
@@ -139,8 +139,8 @@ void Polyhedron_demo_orient_soup_plugin::displayNonManifoldEdges()
 {
   const Scene_interface::Item_id index = scene->mainSelectionIndex();
   
-  Scene_polygon_soup* item = 
-    qobject_cast<Scene_polygon_soup*>(scene->item(index));
+  Scene_polygon_soup_item* item = 
+    qobject_cast<Scene_polygon_soup_item*>(scene->item(index));
 
   if(item)
   {

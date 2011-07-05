@@ -382,7 +382,7 @@ convert() {
         if [[ $PathName == /* ]]; then
             error 3 "LaTeX filename must be given with a relative path."
         fi
-        ${MakePath} ${TmpDir}/${PathName}
+        ${MakePath} "${TmpDir}"/${PathName}
     fi
 
     # derive LogFile from rootname, and copy existing 'latex_to_html.hlg' to it
@@ -394,7 +394,7 @@ convert() {
     # check for <rootname>.aux files automatically
     ExOpt=""
     if [ -r ${PathName}${RootName}.aux ]; then
-    grep "\\bibcite[{]" ${PathName}${RootName}.aux > ${TmpDir}/${RootName}.auxtmp
+    grep "\\bibcite[{]" ${PathName}${RootName}.aux > "${TmpDir}"/${RootName}.auxtmp
     fi
 
     # Convert LaTeX into HTML.
@@ -404,7 +404,7 @@ convert() {
 
     # create minitocs
     
-    cd ${TmpDir}
+    cd "${TmpDir}"
 
     find . -name "*.minitoc" | while read minitoc ; do
       targetfilename=${minitoc%.minitoc}
@@ -427,7 +427,7 @@ d
     # Duplicate directory structure into OutDir
     # ---------------------------------------------------------------------
     lgout -n "duplicating directory structure"
-    cd ${TmpDir}
+    cd "${TmpDir}"
     # make sure we get all subdirectories
     AllSubDirs=`find . -type d -print | sed 's/^[.][/]//'`
     AllSubDirsPostfix=`find . -depth -type d -print | sed 's/^[.][/]//'`
@@ -442,7 +442,7 @@ d
       cd $dir
       cat cc_anchor_rules.stage_1 | sed 's/\[cccbegin\]//g' | sed 's/\[cccend\]//g' > cc_anchor_rules.stage_1.tmp
       mv cc_anchor_rules.stage_1.tmp cc_anchor_rules.stage_1
-      cd ${TmpDir}
+      cd "${TmpDir}"
     done
 
     # Prepare stage 2 crosslink rules
@@ -461,7 +461,7 @@ d
             \cat cc_anchor_rules.stage_1 | grep -E -e "^local" | sed 's/^local//' > cc_anchor_rules.stage_0
             \cat cc_anchor_rules.stage_1 | grep -v -E -e "^local" > cc_anchor_rules.stage_1.tmp
             \mv cc_anchor_rules.stage_1.tmp cc_anchor_rules.stage_1
-            cd ${TmpDir}
+            cd "${TmpDir}"
         fi
     done
     vout ""
@@ -520,7 +520,7 @@ d
                 vout ""
             fi
         done
-        cd ${TmpDir}
+        cd "${TmpDir}"
         vout ""
     done
     vout ""
@@ -530,16 +530,16 @@ d
     # --------------------------
     lgout -n ", "
     lgout "creating the index"
-    cat ${TmpDir}/manual.hidx | sed 's/\[cccbegin\]//g' | sed 's/\[cccend\]//g' > ${TmpDir}/manual.hidx.tmp
-    mv ${TmpDir}/manual.hidx.tmp ${TmpDir}/manual.hidx
-    vout "makeindex -s ${ConfigHtml}/html_index.mst ${TmpDir}/manual.hidx"
-    run_command makeindex -s ${ConfigHtml}/html_index.mst ${TmpDir}/manual.hidx
+    cat "${TmpDir}"/manual.hidx | sed 's/\[cccbegin\]//g' | sed 's/\[cccend\]//g' > "${TmpDir}"/manual.hidx.tmp
+    mv "${TmpDir}"/manual.hidx.tmp "${TmpDir}"/manual.hidx
+    vout "makeindex -s ${ConfigHtml}/html_index.mst "${TmpDir}"/manual.hidx"
+    run_command makeindex -s ${ConfigHtml}/html_index.mst "${TmpDir}"/manual.hidx
 
-    run_command cc_index_link ${TmpDir}/HREF ${TmpDir}/manual.ind ${TmpDir}/cc_index
-    \cat ${TmpDir}/cc_index_header ${TmpDir}/cc_index ${TmpDir}/cc_index_footer > ${TmpDir}/manual_index.html
+    run_command cc_index_link "${TmpDir}"/HREF "${TmpDir}"/manual.ind "${TmpDir}"/cc_index
+    \cat "${TmpDir}"/cc_index_header "${TmpDir}"/cc_index "${TmpDir}"/cc_index_footer > "${TmpDir}"/manual_index.html
 
     CurrentLen=0
-    cd ${TmpDir}
+    cd "${TmpDir}"
 
     # Apply anchor filter to all HTML files creating the crosslinks
     # ---------------------------------------------------------------------
@@ -555,7 +555,7 @@ d
           cat $filename | cc_remove_unwanted_links > $filename.tmp
           mv $filename.tmp $filename
         done
-        cd ${TmpDir}
+        cd "${TmpDir}"
         lgout -n "]"
     done
 
@@ -566,10 +566,10 @@ d
 
     cp -r ${ConfigHtml}/style ${OutDir}
 
-    if [ -r ${TmpDir}/latex_to_html.css ]; then
-        cp ${TmpDir}/latex_to_html.css ${OutDir}
+    if [ -r "${TmpDir}"/latex_to_html.css ]; then
+        cp "${TmpDir}"/latex_to_html.css ${OutDir}
     else
-        error noexit "CSS file '${TmpDir}/latex_to_html.css' not found, trying default."
+        error noexit "CSS file '"${TmpDir}"/latex_to_html.css' not found, trying default."
         if [ -r ${ConfigHtml}/default.css ]; then
             cp ${ConfigHtml}/default.css ${OutDir}/latex_to_html.css
         else
@@ -627,10 +627,10 @@ d
     lgout "pwd: `pwd`"
     cp -r ${ConfigHtml}/Biblio ${OutDir}
 
-    cp ${TmpDir}/comments.xml ${OutDir}
-    if [ -d ${TmpDir}/benchmarks ] ; then
+    cp "${TmpDir}"/comments.xml ${OutDir}
+    if [ -d "${TmpDir}"/benchmarks ] ; then
         mkdir -p ${OutDir}/benchmarks
-        cp -r ${TmpDir}/benchmarks/*.tar.gz ${OutDir}/benchmarks
+        cp -r "${TmpDir}"/benchmarks/*.tar.gz ${OutDir}/benchmarks
     fi
 
     # finish, write timing to logfile and close it
@@ -649,8 +649,8 @@ d
 
 # Read resource file
 # ------------------
-if [ -r ${LATEX_CONV_RESOURCE} ]; then
-  source ${LATEX_CONV_RESOURCE}
+if [ -r "${LATEX_CONV_RESOURCE}" ]; then
+  source "${LATEX_CONV_RESOURCE}"
 fi
 
 
@@ -842,7 +842,7 @@ done
 # Make a subdirectory for the temp_path:
 # --------------------------------------
 TmpDir=${TmpPath}/latex_to_html_tmp_${USER}_${RANDOM}
-while [ -d ${TmpDir} ]; do
+while [ -d "${TmpDir}" ]; do
     TmpDir=${TmpPath}/latex_to_html_tmp_${USER}_${RANDOM}
 done
 
@@ -883,19 +883,19 @@ fi
 
 # Make a subdirectory for the temp_path:
 # --------------------------------------
-if [ -d ${TmpDir} ]; then
+if [ -d "${TmpDir}" ]; then
     # with the randomly chosen name above this should not happen anymore
     warning "the dir '$TmpDir' exists already."
     warning "         It will be removed."
-    \rm -r ${TmpDir}
+    \rm -r "${TmpDir}"
 fi
-${MakePath} ${TmpDir}
+${MakePath} "${TmpDir}"
 
 
 # Convert
 # -------
 # prepare common options
-ExtractOptions="${ExtractOptions} -date \"${LATEX_CONV_DATE}\" -release \"${LATEX_CONV_RELEASE}\" -title \"${LATEX_CONV_TITLE}\" -author \"${LATEX_CONV_AUTHOR}\" ${CppHeader} -config ${ConfigPath} -tmp ${TmpDir}"
+ExtractOptions="${ExtractOptions} -date \"${LATEX_CONV_DATE}\" -release \"${LATEX_CONV_RELEASE}\" -title \"${LATEX_CONV_TITLE}\" -author \"${LATEX_CONV_AUTHOR}\" ${CppHeader} -config ${ConfigPath} -tmp "${TmpDir}""
 
 # make pathnames absolute pathnames
 CurrentDir=$PWD
@@ -920,7 +920,7 @@ done
 # Cleanup
 # -------
 if [ $KeepTmp -eq 0 ]; then
-    \rm -r ${TmpDir}
+    \rm -r "${TmpDir}"
 else
     echo "NOTE: The tmp directory '${TmpDir}' was kept."  1>&2
 fi

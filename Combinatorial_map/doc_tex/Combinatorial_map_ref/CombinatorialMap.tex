@@ -12,7 +12,7 @@
 
 \ccDefinition
   
-The concept \ccRefName\ defines a $d$-dimensional combinatorial map.
+The concept \ccRefName\ defines a \emph{d}-dimensional combinatorial map.
 
 %\ccParameters
 %\ccc{d} an integer for the dimension of the map.\\
@@ -38,12 +38,12 @@ The concept \ccRefName\ defines a $d$-dimensional combinatorial map.
 
 % +-----------------------------------+
 \ccConstants
-\ccVariable{static unsigned int dimension;}{The dimension $d$ of \ccc{cm}, equal to \ccc{Dart::dimension.}}
+\ccVariable{static unsigned int dimension;}{The dimension \emph{d} of \ccc{cm}, equal to \ccc{Dart::dimension.}}
 \ccGlue
 \ccVariable{static size_type NB_MARKS;}{The number of available Boolean marks of \ccc{cm}.}
 \ccGlue
 \ccVariable{static Dart_handle null_dart_handle;}{The null dart handle constant: a dart \ccc{d0}
-  is $i$-free if \ccc{d0.beta(i)==null_dart_handle}. 
+  is \emph{i}-free if \ccc{d0.beta(i)==null_dart_handle}. 
   Note that \ccc{*null_dart_handle}$\notin$ \ccc{cm.darts()}.}
 
 
@@ -55,30 +55,30 @@ The concept \ccRefName\ defines a $d$-dimensional combinatorial map.
 
 \ccNestedType{Attributes} 
 {The tuple of attributes, containing at most
-  $dimension+1$ types (one for each possible cell of the combinatorial
+  \emph{dimension+1} types (one for each possible cell of the combinatorial
   map).  Each type of the tuple must be either a model of the
   \ccc{CellAttribute} concept or \ccc{void}.
   The first type corresponds to 0-attributes, 
   the second to 1-attributes and so on. 
   If the $i^{\mbox{th}}$ type in the tuple is \ccc{void}, 
-  $(i-1)$-attributes are disabled. Otherwise, $(i-1)$-attributes are enabled and
-  have the given type.  If the size of the tuple is $k$,
-  with $k < dimension+1$, $\forall i: k \leq i \leq dimension$,
-  $i$-attributes are disabled.}
+  \emph{(i-1)}-attributes are disabled. Otherwise, \emph{(i-1)}-attributes are enabled and
+  have the given type.  If the size of the tuple is \emph{k},
+  with \emph{k < dimension+1}, $\forall$ \emph{i}: \emph{k} $\leq$ \emph{i} $\leq$ dimension,
+  \emph{i}-attributes are disabled.}
 
 \ccNestedType{template<unsigned int i> Attribute_type<i>::type}
-   {Type of $i$-attributes, a model of \ccc{CellAttribute} concept.
+   {Type of \emph{i}-attributes, a model of \ccc{CellAttribute} concept.
      \ccc{Attribute_type<i>::type::Dart_handle} is equal to \ccc{Dart_handle}, and
      \ccc{Attribute_type<i>::type::Dart_const_handle} is equal to \ccc{Dart_const_handle}.
-  \ccPrecond{$0 \leq i \leq dimension$ and $i$-attributes are non void.}}
-\ccGlue
+  \ccPrecond{0 $\leq$ \emph{i} $\leq$ dimension and \emph{i}-attributes are non void.}}
+\ccGlue	
 \ccNestedType{template<unsigned int i> Attribute_handle<i>::type}
-    {Handle to $i$-attributes, equal to \ccc{Dart::Attribute_handle<i>::type}.
-      \ccPrecond{$0 \leq i \leq dimension$ and $i$-attributes are non void.}}
+    {Handle to \emph{i}-attributes, equal to \ccc{Dart::Attribute_handle<i>::type}.
+      \ccPrecond{0 $\leq$ \emph{i} $\leq$ dimension and \emph{i}-attributes are non void.}}
 \ccGlue
 \ccNestedType{template<unsigned int i> Attribute_const_handle<i>::type}
-    {Const handle to $i$-attributes, equal to \ccc{Dart::Attribute_const_handle<i>::type}.
-      \ccPrecond{$0 \leq i \leq dimension$ and $i$-attributes are non void.}}
+    {Const handle to \emph{i}-attributes, equal to \ccc{Dart::Attribute_const_handle<i>::type}.
+      \ccPrecond{0 $\leq$ \emph{i} $\leq$ dimension and \emph{i}-attributes are non void.}}
 
 \ccHeading{Range types}
 \ccNestedType{Dart_range}{Range of all the darts of \ccc{cm}.
@@ -88,11 +88,11 @@ The concept \ccRefName\ defines a $d$-dimensional combinatorial map.
   This type is a model of \ccc{ConstRange} concept, its iterator type is bidirectional and its value type is \ccc{Dart}.}
 
 \ccNestedType{template<unsigned int i> Attribute_range<i>::type}
-{Range of all the $i$-attributes (which must be non void), with $0 \leq i \leq dimension$.
+{Range of all the \emph{i}-attributes (which must be non void), with 0 $\leq$ \emph{i} $\leq$ dimension.
   This type is a model of \ccc{Range} concept, its iterator type is bidirectional and its value type is \ccc{Attribute_type<i>::type}.}
 \ccGlue
 \ccNestedType{template<unsigned int i> Attribute_const_range<i>::type}
-{Const range of all the $i$-attributes (which must be non void), with $0 \leq i \leq dimension$.
+{Const range of all the \emph{i}-attributes (which must be non void), with 0 $\leq$ \emph{i} $\leq$ dimension.
   This type is a model of \ccc{ConstRange} concept, its iterator type is bidirectional and its value type is \ccc{Attribute_type<i>::type}.}
 
 %
@@ -105,49 +105,49 @@ The concept \ccRefName\ defines a $d$-dimensional combinatorial map.
   This type is a model of \ccc{ConstRange} concept, its iterator type is forward and its value type is \ccc{Dart}.}
 
 \ccNestedType{template<unsigned int i,unsigned int dim=dimension> Dart_of_cell_range}
-{Range of all the darts of an $i$-cell in $dim$ dimension
-  (with $0\leq i \leq dim+1$ and $0 \leq dim \leq dimension$). If $i==dim+1$,  
+{Range of all the darts of an \emph{i}-cell in \emph{dim} dimension
+  (with 0$\leq$ \emph{i} $\leq$ \emph{dim+1} and 0 $\leq$ \emph{dim} $\leq$ \emph{dimension}). If \emph{i==dim+1},  
   range of all the darts of a connected component.
   This type is a model of \ccc{Range} concept, its iterator type is forward and its value type is \ccc{Dart}.}
 \ccGlue
 \ccNestedType{template<unsigned int i,unsigned int dim=dimension> Dart_of_cell_const_range}
-{Const range of all the darts of the $i$-cell in $dim$ dimension 
-  (with $0\leq i \leq dim+1$ and $0 \leq dim \leq dimension$). If $i==dim+1$,  
+{Const range of all the darts of the \emph{i}-cell in \emph{dim} dimension 
+  (with 0$\leq$ \emph{i} $\leq$ \emph{dim+1} and 0 $\leq$ \emph{dim} $\leq$ \emph{dimension}). If \emph{i==dim+1},  
   range of all the darts of a connected component.
   This type is a model of \ccc{ConstRange} concept, its iterator type is forward and its value type is \ccc{Dart}.}
 
 \ccNestedType{template<unsigned int i,unsigned int j,unsigned int dim=dimension> 
   One_dart_per_incident_cell_range}
-{Range of one dart of each $i$-cell incident to one $j$-cell.
-  Cells are considered in $dim$ dimension  
-  (with $0\leq i \leq dim+1$, $0\leq j \leq dim+1$ and
-  $0 \leq dim \leq dimension$). If $i==dim+1$,  
-  consider each connected component instead of each $i$-cell. If $j==dim+1$,
-  consider one connected component instead of one $j$-cell.
+{Range of one dart of each \emph{i}-cell incident to one \emph{j}-cell.
+  Cells are considered in \emph{dim} dimension  
+  (with 0$\leq$ \emph{i} $\leq$ \emph{dim+1}, 0$\leq$ \emph{j} $\leq$ \emph{dim+1} and
+  0 $\leq$ \emph{dim} $\leq$ \emph{dimension}). If \emph{i}==\emph{dim+1},  
+  consider each connected component instead of each \emph{i}-cell. If \emph{j}==\emph{dim+1},
+  consider one connected component instead of one \emph{j}-cell.	
   This type is a model of \ccc{Range} concept, its iterator type is forward and its value type is \ccc{Dart}.}
 \ccGlue
 \ccNestedType{template<unsigned int i,unsigned int j,unsigned int dim=dimension> 
   One_dart_per_incident_cell_const_range}
-{Const range of one dart of each $i$-cell incident to one $j$-cell.
-  Cells are considered in $dim$ dimension  
-  (with $0\leq i \leq dim+1$, $0\leq j \leq dim+1$ and
-  $0 \leq dim \leq dimension$). If $i==dim+1$,  
-  consider each connected component instead of each $i$-cell. If $j==dim+1$,
-  consider one connected component instead of one $j$-cell.
+{Const range of one dart of each \emph{i}-cell incident to one \emph{j}-cell.
+  Cells are considered in \emph{dim} dimension  
+  (with 0$\leq$ \emph{i} $\leq$ \emph{dim+1}, 0$\leq$ \emph{j} $\leq$ \emph{dim+1} and
+  0 $\leq$ \emph{dim} $\leq$ \emph{dimension}). If \emph{i==dim+1},  
+  consider each connected component instead of each \emph{i}-cell. If \emph{j==dim+1},
+  consider one connected component instead of one \emph{j}-cell.
   This type is a model of \ccc{ConstRange} concept, its iterator type is forward and its value type is \ccc{Dart}.}
 
 \ccNestedType{template<unsigned int i,unsigned int dim=dimension> One_dart_per_cell_range}
-{Range of one dart of each $i$-cell of \ccc{cm}.
-  Cells are considered in $dim$ dimension  
-  (with $0\leq i \leq dim+1$ and $0 \leq dim \leq dimension$). If $i==dim+1$,  
-  consider each connected component instead of each $i$-cell. 
+{Range of one dart of each \emph{i}-cell of \ccc{cm}.
+  Cells are considered in \emph{dim} dimension  
+  (with 0$\leq$ \emph{i} $\leq$ \emph{dim+1} and 0 $\leq$ \emph{dim} $\leq$ \emph{dimension}). If \emph{i==dim+1},  
+  consider each connected component instead of each \emph{i}-cell. 
   This type is a model of \ccc{Range} concept, its iterator type is forward and its value type is \ccc{Dart}.}
 \ccGlue
 \ccNestedType{template<unsigned int i,unsigned int dim=dimension> One_dart_per_cell_const_range}
-{Const range of one dart of each $i$-cell of \ccc{cm}.
-  Cells are considered in $dim$ dimension 
-  (with $0\leq i \leq dim+1$ and $0 \leq dim \leq dimension$). If $i==dim+1$,  
-  consider each connected component instead of each $i$-cell. 
+{Const range of one dart of each \emph{i}-cell of \ccc{cm}.
+  Cells are considered in \emph{dim} dimension 
+  (with 0$\leq$ \emph{i} $\leq$ \emph{dim+1} and 0 $\leq$ \emph{dim} $\leq$ \emph{dimension}). If \emph{i==dim+1},  
+  consider each connected component instead of each \emph{i}-cell. 
   This type is a model of \ccc{ConstRange} concept, its iterator type is forward and its value type is \ccc{Dart}.}
 
 % +-----------------------------------+
@@ -158,25 +158,26 @@ The concept \ccRefName\ defines a $d$-dimensional combinatorial map.
 
 \ccMethod{bool is_valid() const;}
          {Returns true iff \ccc{cm} is valid.}
-A combinatorial map \ccc{cm} is valid (see Sections~\ref{ssec-combi-map-and-darts} and \ref{ssec-combimap-validity}) if for all dart handle $dh$ such that 
+A combinatorial map \ccc{cm} is valid (see Sections~\ref{ssec-combi-map-and-darts} and \ref{ssec-combimap-validity}) if for all dart handle \emph{dh} such that 
 \ccc{*dh} $\in$\ccc{cm.darts()}:\\
 \begin{itemize}
 \item \ccc{dh->is_free(0)}, or \ccc{dh->beta(0)->beta(1)==dh};
 \item \ccc{dh->is_free(1)}, or \ccc{dh->beta(1)->beta(0)==dh};
-\item $\forall i$, $2\leq i\leq dimension$: 
+\item $\forall$ \emph{i}, 
+2$\leq$ \emph{i}$\leq$ \emph{dimension}: 
   \ccc{dh->is_free(i)}, or \ccc{dh->beta(i)->beta(i)==dh};
-\item $\forall i, j$, $0\leq i<i+2\leq j\leq dimension$ such that $j\geq 3$:
+\item $\forall$ \emph{i},\emph{j}, 0$\leq$ \emph{i}<\emph{i}+2$\leq$ \emph{j}$\leq$ \emph{dimension} such that \emph{j}$\geq$ 3:
   \ccc{dh->beta(i)->beta(j)==null_dart_handle} or
   \ccc{dh->beta(i)->beta(j)->beta(i)->beta(j)==dh};
-\item $\forall i$, $0\leq i\leq dimension$ such that $i$-attributes are non void:
-   $\forall dh2$ such that \ccc{*dh2} belong to the same $i$-cell than \ccc{*dh}:
+\item $\forall$  \emph{i}, 0$\leq$ \emph{i}$\leq$ \emph{dimension} such that \emph{i}-attributes are non void:
+   $\forall$ \emph{dh2} such that \ccc{*dh2} belong to the same \emph{i}-cell than \ccc{*dh}:
    \ccc{dh2->attribute<i>()==dh->attribute<i>()}.
  \end{itemize}
 
 \ccMethod{bool is_without_boundary(unsigned int i) const;}
-         {Returns true iff \ccc{cm} is wihout $i$-boundary
+         {Returns true iff \ccc{cm} is wihout \emph{i}-boundary
           (i.e. there is no \ccc{i}-free dart).
-          \ccPrecond{$0\leq i \leq dimension$.}}
+          \ccPrecond{0$\leq$ \emph{i} $\leq$ \emph{dimension}.}}
 
 \ccMethod{bool is_without_boundary() const;}
          {Returns true iff \ccc{cm} is without boundary in all dimensions.}
@@ -195,24 +196,24 @@ A combinatorial map \ccc{cm} is valid (see Sections~\ref{ssec-combi-map-and-dart
 %      \ccPrecond{$0 \leq i \leq dimension$.}}
 
 \ccMethod{template <unsigned int i> size_type number_of_attributes() const;}
-   {Returns the number of $i$-attributes in \ccc{cm}. 
-     \ccPrecond{$0 \leq i \leq dimension$, and $i$-attributes are non void.}}
+   {Returns the number of \emph{i}-attributes in \ccc{cm}. 
+     \ccPrecond{0 $\leq$ \emph{i} $\leq$ \emph{dimension}, and \emph{i}-attributes are non void.}}
 
 \ccMethod{template <unsigned int i> bool is_sewable(Dart_const_handle dh1, Dart_const_handle dh2) const;}
-         {Returns true iff \ccc{dh1} can be $i$-sewn with \ccc{dh2} by 
+         {Returns true iff \ccc{dh1} can be \emph{i}-sewn with \ccc{dh2} by 
            keeping \ccc{cm} valid, i.e. if there is
-           a bijection $f$ between all the darts of the orbit
-           $D_1=\orb{\mb{1},\ldots,\mb{i-2},\mb{i+2},\ldots,\mb{d}}(dh1)$ and
-           $D_2=\orb{\mb{1},\ldots,\mb{i-2},\mb{i+2},\ldots,\mb{d}}(dh2)$
-           satisfying: $f(dh1)=dh2$, and for all $d'_1 \in D_1$, for all $j\in
-           \{1,\ldots,i-2,i+2,\ldots,d\}$,
-           $f(\mb{j}(d'_1))=\mb{j}^{-1}(f(d'_1))$.           
-          \ccPrecond{$0 \leq i \leq dimension$, \ccc{*dh1}$\in$\ccc{cm.darts()}, 
-            and \ccc{*dh2}$\in$\ccc{cm.darts()}.}}
+           a bijection \emph{f} between all the darts of the orbit
+           \emph{D1}=$\orb{\mb{1},\ldots,\mb{i-2},\mb{i+2},\ldots,\mb{d}}$(\emph{dh1}) and
+           \emph{D2}=$\orb{\mb{1},\ldots,\mb{i-2},\mb{i+2},\ldots,\mb{d}}$(\emph{dh2})
+           satisfying: \emph{f}(\emph{dh1})=\emph{dh2}, and for all \emph{d'1} $\in$ \emph{D1}, for all \emph{j}$\in$
+           \{1,$\ldots$,\emph{i}-2,\emph{i}+2,$\ldots$,\emph{d}\},
+           \emph{f}$(\mb{j}$(\emph{d'1}))=$\mb{j}^{-1}$(\emph{f}(\emph{d'1})).           
+          \ccPrecond{0 $\leq$ \emph{i} $\leq$ \emph{dimension}, \ccc{*dh1}$\in$\ccc{cm.darts()}, 
+            and \ccc{*dh2}$\in$\ccc{cm.darts()}.}}	
 
 \ccMethod{std::ostream& display_characteristics(std::ostream & os) const;}
 {Displays on \ccc{os} the characteristics of \ccc{cm}: its number of darts, 
-  its number of $i$-cells, for each $i$, $0\leq i\leq CMap::dimension$, 
+  its number of \emph{i}-cells, for each \emph{i}, 0$\leq$ \emph{i}$\leq$ CMap::\emph{dimension}, 
   and its number of connected components.}
 Example of output for a 3D combinatorial map containing two disjoint
 combinatorial tetrahedra:\\
@@ -229,12 +230,12 @@ combinatorial tetrahedra:\\
     {Returns a const range of all the darts in \ccc{cm}.}
 
 \ccMethod{template<unsigned int i> Attribute_range<i>::type & attributes();}
-   {Returns a range of all the $i$-attributes in \ccc{cm}.
-     \ccPrecond{$0 \leq i \leq dimension$, and $i$-attributes are non void.}}
+   {Returns a range of all the \emph{i}-attributes in \ccc{cm}.
+     \ccPrecond{0 $\leq$ \emph{i} $\leq$ \emph{dimension}, and \emph{i}-attributes are non void.}}
 \ccGlue
 \ccMethod{template<unsigned int i> Attribute_const_range<i>::type & attributes() const;}
-   {Returns a const range of all the  $i$-attributes in \ccc{cm}.
-     \ccPrecond{$0 \leq i \leq dimension$, and $i$-attributes are non void.}}
+   {Returns a const range of all the  \emph{i}-attributes in \ccc{cm}.
+     \ccPrecond{0 $\leq$ \emph{i} $\leq$ \emph{dimension}, and \emph{i}-attributes are non void.}}
 
 % \ccMethod{std::vector<unsigned int> count_cells(const std::vector<unsigned int>& acells) const;}
 %     {count the number of $i$-cells of the combinatorial map, for each $i$ in the 
@@ -246,51 +247,51 @@ combinatorial tetrahedra:\\
 \ccMethod{template<unsigned int ... Beta> Dart_of_orbit_range darts_of_orbit(Dart_handle dh);}
    {Returns a range of all the darts of the orbit \ccc{<Beta...>(dh)}.
      \ccPrecond{\ccc{*dh}$\in$\ccc{cm.darts()} and \ccc{Beta...} is a
-     sequence of integers $i_1,\ldots,i_k$, such that each $i_j \in
-     \{0,\ldots,dimension\}$, with $i_1<i_2<\ldots<i_k$, and $(i_1\neq
-     0$ or $i_2 \neq 1)$.}}
+     sequence of integers \ccTexHtml{$i_1$}{i<sub>1</sub>},$\ldots$,\ccTexHtml{$i_k$}{i<sub>k</sub>} , such that each \ccTexHtml{$i_j$}{i<sub>j</sub>} $\in
+     $\{0,$\ldots$,\emph{dimension}\}, with \ccTexHtml{$i_1$}{i<sub>1</sub>} <\ccTexHtml{$i_2$}{i<sub>1</sub>} <$\ldots$<\ccTexHtml{$i_k$}{i<sub>k</sub>} , and (\ccTexHtml{$i_1$}{i<sub>1</sub>}$\neq$
+     0 or \emph{i2} $\neq$ 1).}}
 \ccGlue
 \ccMethod{template<unsigned int ... Beta> Dart_of_orbit_const_range darts_of_orbit(Dart_const_handle dh) const;}
    {Returns a const range of all the darts of the orbit \ccc{<Beta...>(dh)}.
    \ccPrecond{Same as for the non const version.}}
 
 \ccMethod{template<unsigned int i,unsigned int dim=dimension> Dart_of_cell_range darts_of_cell(Dart_handle dh);}
-   {Returns a range of all the darts of the $i$-cell containing \ccc{dh}.
-    $i$-cells are considered in $dim$ dimension. If $i==dim+1$,  
+   {Returns a range of all the darts of the \emph{i}-cell containing \ccc{dh}.
+    \emph{i}-cells are considered in \emph{dim} dimension. If \emph{i==dim+1},  
     range of all the darts of the connected component containing \ccc{dh}.
   \ccPrecond{\ccc{*dh}$\in$\ccc{cm.darts()},
-    $0\leq i \leq dim+1$ and $0 \leq dim \leq dimension$.}}
+    0$\leq$ \emph{i} $\leq$ \emph{dim+1} and 0 $\leq$ \emph{dim} $\leq$ \emph{dimension}.}}
 \ccGlue
 \ccMethod{template<unsigned int i,unsigned int dim=dimension> Dart_of_cell_const_range darts_of_cell(Dart_const_handle dh) const;}
-   {Returns a const range of all the darts of the $i$-cell containing \ccc{dh}.
-    $i$-cells are considered in $dim$ dimension. If $i==dim+1$,  
+   {Returns a const range of all the darts of the \emph{i}-cell containing \ccc{dh}.
+    \emph{i}-cells are considered in \emph{dim} dimension. If \emph{i==dim+1},  
     const range of all the darts of the connected component containing \ccc{dh}.
    \ccPrecond{Same as for the non const version.}}
 
 \ccMethod{template<unsigned int i,unsigned int j,unsigned int dim=dimension> One_dart_per_incident_cell_range  one_dart_per_incident_cell(Dart_handle dh);}
-   {Returns a range of one dart of each $i$-cell incident to the $j$-cell 
-     containing \ccc{dh}. Cells are considered in $dim$ dimension. If $i==dim+1$,  
-     consider each connected component instead of each $i$-cell. If $j==dim+1$,
-     consider the connected component containing \ccc{dh} instead of the $j$-cell.
-     \ccPrecond{\ccc{*dh}$\in$\ccc{cm.darts()}, $0\leq i \leq dim+1$,
-       $0\leq j \leq dim+1$ and $0\leq dim \leq dimension$.}}
+   {Returns a range of one dart of each \emph{i}-cell incident to the \emph{j}-cell 
+     containing \ccc{dh}. Cells are considered in \emph{dim} dimension. If \emph{i==dim+1},  
+     consider each connected component instead of each \emph{i}-cell. If \emph{j==dim+1},
+     consider the connected component containing \ccc{dh} instead of the \emph{j}-cell.
+     \ccPrecond{\ccc{*dh}$\in$\ccc{cm.darts()}, 0$\leq$ \emph{i} $\leq$ \emph{dim+1},
+       0$\leq$ \emph{j} $\leq$ \emph{dim+1} and 0$\leq$ \emph{dim} $\leq$ \emph{dimension}.}}
 \ccGlue
 \ccMethod{template<unsigned int i,unsigned int j,unsigned int dim=dimension> One_dart_per_incident_cell_const_range one_dart_per_incident_cell(Dart_const_handle dh) const;}
-   {Returns a const range of one dart of each $i$-cell incident to the $j$-cell 
-     containing \ccc{dh}. Cells are considered in $dim$ dimension. If $i==dim+1$,  
-     consider each connected component instead of each $i$-cell. If $j==dim+1$,
-     consider the connected component containing \ccc{dh} instead of the $j$-cell.
+   {Returns a const range of one dart of each \emph{i}-cell incident to the \emph{j}-cell 
+     containing \ccc{dh}. Cells are considered in \emph{dim} dimension. If \emph{i==dim+1},  
+     consider each connected component instead of each \emph{i}-cell. If \emph{j==dim+1},
+     consider the connected component containing \ccc{dh} instead of the \emph{j}-cell.
      \ccPrecond{Same as for the non const version.}}
 
 \ccMethod{template<unsigned int i,unsigned int dim=dimension> One_dart_per_cell_range one_dart_per_cell();}
-    {Returns a range of one dart of each $i$-cell in \ccc{cm}.
-     Cells are considered in $dim$ dimension. If $i==dim+1$,  
+    {Returns a range of one dart of each \emph{i}-cell in \ccc{cm}.
+     Cells are considered in \emph{dim} dimension. If \emph{i==dim+1},  
      range of one dart of each connected component in \ccc{cm}.
-  \ccPrecond{$0\leq i \leq dim+1$ and $0\leq dim \leq dimension$.}}
+  \ccPrecond{0$\leq$ \emph{i} $\leq$ \emph{dim+1} and 0$\leq$ \emph{dim} $\leq$ \emph{dimension}.}}
 \ccGlue
 \ccMethod{template<unsigned int i,unsigned int dim=dimension> One_dart_per_cell_const_range one_dart_per_cell() const;}
-    {Returns a const range of one dart of each $i$-cell in \ccc{cm}.
-     Cells are considered in $dim$ dimension. If $i==dim+1$,  
+    {Returns a const range of one dart of each \emph{i}-cell in \ccc{cm}.
+     Cells are considered in \emph{dim} dimension. If \emph{i==dim+1},  
      const range of one dart of each connected component in \ccc{cm}.
    \ccPrecond{Same as for the non const version.}}
 
@@ -298,36 +299,36 @@ combinatorial tetrahedra:\\
 \ccHeading{Modifiers}
 \ccMethod{Dart_handle create_dart();} 
    {Creates a new dart in \ccc{cm}, and returns the corresponding handle.
-    A new dart is initialized to be $i$-free,
-    $\forall i$: $0 \leq i \leq dimension$, and to have no associated 
+    A new dart is initialized to be emph{i}-free,
+    $\forall$ \emph{i}: 0 $\leq$ \emph{i} $\leq$ \emph{dimension}, and to have no associated 
     attribute for each non void attribute.
   }
 \ccMethod{void erase_dart(Dart_handle dh);}
    {Removes \ccc{dh} from \ccc{cm}.}
 
 \ccMethod{template <unsigned int i> Attribute_handle<i>::type create_attribute();}
-{Creates a new $i$-attribute in \ccc{cm}, and returns the corresponding handle.
-  \ccPrecond{$0 \leq i \leq dimension$, and $i$-attributes are non void.}}
-
+{Creates a new \emph{i}-attribute in \ccc{cm}, and returns the corresponding handle.
+  \ccPrecond{0 $\leq$ \emph{i} $\leq$ \emph{dimension}, and \emph{i}-attributes are non void.}}
+	
 \ccMethod{template <unsigned int i,class A> Attribute_handle<i>::type 
   create_attribute(const A&a);}
-{Creates a new $i$-attribute in \ccc{cm} initialized 
+{Creates a new \emph{i}-attribute in \ccc{cm} initialized 
   by the constructor \ccc{A(a)}, and returns the corresponding handle. \ccc{A} must be 
-  a type compatible with the information contained in the $i$-attributes 
+  a type compatible with the information contained in the \emph{i}-attributes 
   (compatible means that there is a constructor for the information type 
-  taking an $A$ as parameter).
-  \ccPrecond{$0 \leq i \leq dimension$, and $i$-attributes are non void.}}
+  taking an \emph{A} as parameter).
+  \ccPrecond{0 $\leq$ \emph{i} $\leq$ \emph{dimension}, and \emph{i}-attributes are non void.}}
 
 \ccMethod{template <unsigned int i> void erase_attribute(Attribute_handle<i>::type ah);}
-{Removes the $i$-attribute \ccc{ah} from \ccc{cm}.
-  \ccPrecond{$0 \leq i \leq dimension$, $i$-attributes are non void,
+{Removes the \emph{i}-attribute \ccc{ah} from \ccc{cm}.
+  \ccPrecond{0 $\leq$ \emph{i} $\leq$ \emph{dimension}, \emph{i}-attributes are non void,
     and \ccc{*ah}$\in$\ccc{cm.attributes<i>()}.}}
 
 \ccMethod{template <unsigned int i> void set_attribute(Dart_handle dh, Attribute_handle<i>::type ah);} 
-   {Associates the $i$-attribute of all the darts of the $i$-cell 
+   {Associates the \emph{i}-attribute of all the darts of the \emph{i}-cell 
      containing \ccc{dh} to \ccc{ah}.
-  \ccPrecond{\ccc{*dh}$\in$\ccc{cm.darts()}, $0 \leq i \leq dimension$, 
-    $i$-attributes are non void, and \ccc{*ah}$\in$\ccc{cm.attributes<i>()}.}}
+  \ccPrecond{\ccc{*dh}$\in$\ccc{cm.darts()}, 0 $\leq$ \emph{i} $\leq$ \emph{dimension}, 
+    \emph{i}-attributes are non void, and \ccc{*ah}$\in$\ccc{cm.attributes<i>()}.}}
 
 \ccMethod{void clear();}
    {Deletes all the darts and all the attributes of \ccc{cm}.}
@@ -337,24 +338,24 @@ combinatorial tetrahedra:\\
 \ccMethod{template <unsigned int i> void sew(Dart_handle dh1,
   Dart_handle dh2, bool update_attributes=true);} {Links by $\beta_i$
   two by two all the darts of the orbit
-  $D_1=\orb{\mb{1},\ldots,\mb{i-2},\mb{i+2},\ldots,\mb{d}}$(\ccc{dh1}) and
-  $D_2=\orb{\mb{0},\mb{2},\ldots,\mb{i-2},\mb{i+2},\ldots,\mb{d}}$(\ccc{dh2})
-  such that $d_2=f(d_1)$, $f$ being the bijection between $D_1$ and $D_2$ 
-  satisfying: $f(dh1)=dh2$, and for all $d'_1 \in D_1$, for all $j\in
-  \{1,\ldots,i-2,i+2,\ldots,d\}$,
-  $f(\mb{j}(d'_1))=\mb{j}^{-1}(f(d'_1))$.
+  \emph{D1}=$\orb{\mb{1},\ldots,\mb{i-2},\mb{i+2},\ldots,\mb{d}}$(\ccc{dh1}) and
+  \emph{D2}=$\orb{\mb{0},\mb{2},\ldots,\mb{i-2},\mb{i+2},\ldots,\mb{d}}$(\ccc{dh2})
+  such that \emph{d2}=\emph{f}(\emph{d1}), \emph{f} being the bijection between \emph{D1} and \emph{D2} 
+  satisfying: \emph{f}(\emph{dh1})=\emph{dh2}, and for all \emph{d'1} $\in$ \emph{D1}, for all \emph{j}$\in
+  $\{1,$\ldots$,\emph{i}-2,\emph{i}+2,$\ldots$,\emph{d}\},
+  \emph{f}$(\mb{j}$(\emph{d'1}))=$\mb{j}^{-1}$(\emph{f}(\emph{d'1})).
 
   If \ccc{update_attributes} is \ccc{true}, when necessary, non void
   attributes are updated to ensure the validity of \ccc{cm}: for each
-  $j$-cells $c_1$ and $c_2$ which are merged into one $j$-cell during
-  the sew, the two associated attributes $attr_1$ and $attr_2$ are
+  \emph{j}-cells \emph{c1} and \emph{c2} which are merged into one \emph{j}-cell during
+  the sew, the two associated attributes \emph{attr1} and \emph{attr2} are
   considered.  If one attribute is
   NULL and the other not, the non NULL attribute is associated to all
   the darts of the resulting cell.  When the two attributes are non
   NULL, functor \ccc{Attribute_type<i>::type::On_merge} is called on
-  the two attributes $attr_1$ and $attr_2$. Then, the attribute
-  $attr_1$ is associated to all darts of the resulting
-  $j$-cell. Finally, attribute $attr_2$ is removed from \ccc{cm}.
+  the two attributes \emph{attr1} and \emph{attr2}. Then, the attribute
+  \emph{attr1} is associated to all darts of the resulting
+  \emph{j}-cell. Finally, attribute \emph{attr2} is removed from \ccc{cm}.
   \ccPrecond{\ccc{cm.is_sewable<i>(dh1,dh2)}.}
   \begin{ccAdvanced}
     If \ccc{update_attributes} is \ccc{false}, non void attributes are
@@ -369,14 +370,14 @@ combinatorial tetrahedra:\\
   $\orb{\mb{1},\ldots,\mb{i-2},\mb{i+2},\ldots,\mb{d}}$(\ccc{dh}).  If
   \ccc{update_attributes} is \ccc{true}, when necessary, non void
   attributes are updated to ensure the validity of \ccc{cm}: for each
-  $j$-cell $c$ split in two $j$-cells $c_1$ and $c_2$ by the
-  operation, if $c$ is associated to a $j$-attribute $attr_1$, then
-  this attribute is duplicated into $attr_2$, and all the darts
-  belonging to $c_2$ are associated with this new attribute.  Finally,
+  \emph{j}-cell \emph{c} split in two \emph{j}-cells \emph{c1} and \emph{c2} by the
+  operation, if \emph{c} is associated to a \emph{j}-attribute \emph{attr1}, then
+  this attribute is duplicated into \emph{attr2}, and all the darts
+  belonging to \emph{c2} are associated with this new attribute.  Finally,
   the functor \ccc{Attribute_type<i>::type::On_split} is called on the
-  two attributes $attr_1$ and $attr_2$.
- \ccPrecond{$0 \leq i \leq dimension$, \ccc{*dh}$\in$\ccc{cm.darts()} and
-   \ccc{dh} is not $i$-free.}
+  two attributes \emph{attr1} and \emph{attr2}.
+ \ccPrecond{0 $\leq$ \emph{i} $\leq$ \emph{dimension}, \ccc{*dh}$\in$\ccc{cm.darts()} and
+   \ccc{dh} is not \emph{i}-free.}
 \begin{ccAdvanced}
   If \ccc{update_attributes} is \ccc{false}, non void attributes are
   not updated thus \ccc{cm} can be no more valid after this
@@ -393,8 +394,8 @@ combinatorial tetrahedra:\\
   dart not, the non null attribute is associated to the dart having a null attribute. 
   If both darts have an attribute, 
   the attribute of \ccc{dh1} is associated to \ccc{dh2}.
-  \ccPrecond{$0 \leq i \leq dimension$, \ccc{*dh1}$\in$\ccc{cm.darts()},
-    \ccc{*dh2}$\in$\ccc{cm.darts()} and ($i<2$ or \ccc{dh1}$\neq$\ccc{dh2}).}}
+  \ccPrecond{0 $\leq$ \emph{i} $\leq$ \emph{dimension}, \ccc{*dh1}$\in$\ccc{cm.darts()},
+    \ccc{*dh2}$\in$\ccc{cm.darts()} and (\emph{i}<2 or \ccc{dh1}$\neq$\ccc{dh2}).}}
 
 
 % \ccMethod{template <unsigned int i> void link_beta(Dart_handle dh1, 
@@ -413,8 +414,8 @@ combinatorial tetrahedra:\\
     \ccc{cm} can be no more valid after this modification. 
     Attributes of \ccc{dh} and $\beta_i$(\ccc{dh})
     are not modified.
-    \ccPrecond{$0 \leq i \leq dimension$, \ccc{*dh}$\in$\ccc{cm.darts()},
-      and \ccc{dh} is not $i$-free.}}
+    \ccPrecond{0 $\leq$ \emph{i} $\leq$ \emph{dimension}, \ccc{*dh}$\in$\ccc{cm.darts()},
+      and \ccc{dh} is not \emph{i}-free.}}
 
 % \ccMethod{template <unsigned int i> 
 %   void topo_sew(Dart_handle dh1, Dart_handle dh2);}
@@ -442,7 +443,7 @@ combinatorial tetrahedra:\\
 
 \ccMethod{bool is_reserved(int amark) const;}
   {Returns true iff \ccc{amark} is a reserved mark of \ccc{cm}.
-  \ccPrecond{$amark \geq 0$ and $amark <$ \ccc{NB_MARKS}.}}
+  \ccPrecond{\emph{amark} $\geq$ 0 and \emph{amark} < \ccc{NB_MARKS}.}}
 
 \ccMethod{bool is_marked(Dart_const_handle dh, int amark) const;}
    {Returns true iff \ccc{dh} is marked for \ccc{amark}.

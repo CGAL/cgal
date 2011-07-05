@@ -42,7 +42,7 @@ int main()
 {
   CMap_3 cm;
   
-  // Create 2 cubes.
+  // Create 2 hexahedra.
   Dart_handle dh1 = make_combinatorial_hexahedron(cm);
   Dart_handle dh2 = make_combinatorial_hexahedron(cm);
 
@@ -55,22 +55,22 @@ int main()
 	cm.set_attribute<2>(it, cm.create_attribute<2>());
     }  
   
-  // 2) Set the color of all facets of the first cube to 1
+  // 2) Set the color of all facets of the first hexahedron to 7.
   for (CMap_3::One_dart_per_incident_cell_range<2, 3>::iterator 
 	 it=cm.one_dart_per_incident_cell<2,3>(dh1).begin(), 
 	 itend=cm.one_dart_per_incident_cell<2,3>(dh1).end(); it!=itend; ++it)
     { it->attribute<2>()->info()=7; }
   
-  // 3) Set the color of all facets of the second cube to 19
+  // 3) Set the color of all facets of the second hexahedron to 13.
   for (CMap_3::One_dart_per_incident_cell_range<2, 3>::iterator it=
 	 cm.one_dart_per_incident_cell<2,3>(dh2).begin(),
 	 itend=cm.one_dart_per_incident_cell<2,3>(dh2).end(); it!=itend; ++it)
     { it->attribute<2>()->info()=13; }
   
-  // 4) 3-Sew the two cubes along one facet
+  // 4) 3-Sew the two hexahedra along one facet.
   cm.sew<3>(dh1->beta(1)->beta(1)->beta(2), dh2->beta(2));
 
-  // 5) Display all the values of 2-attributes
+  // 5) Display all the values of 2-attributes.
   for (CMap_3::Attribute_range<2>::type::iterator 
 	 it=cm.attributes<2>().begin(), itend=cm.attributes<2>().end(); 
        it!=itend; ++it)
@@ -79,10 +79,10 @@ int main()
     }
   std::cout<<std::endl;
 
-  // 6) Barycentric triangulation of one facet of the first cube.
+  // 6) Insert a vertex in one facet of the first hexahedron.
   CGAL::insert_cell_0_in_cell_2(cm, dh2->beta(2));
 
-  // 7) Display all the values of 2-attributes
+  // 7) Display all the values of 2-attributes.
   for (CMap_3::Attribute_range<2>::type::iterator 
 	 it=cm.attributes<2>().begin(), itend=cm.attributes<2>().end(); 
        it!=itend; ++it)
