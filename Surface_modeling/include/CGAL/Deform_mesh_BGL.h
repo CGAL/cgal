@@ -48,14 +48,19 @@ public:
   std::vector<vertex_descriptor> roi;
   std::vector<vertex_descriptor> hdl;         // user specified handles, storing the target positions
   std::vector<vertex_descriptor> ros;         // region of solution, including roi and hard constraints outside roi
-  
+  std::map<vertex_descriptor, int> vertex_idx;        // storing indices of all vertices 
+  std::map<vertex_descriptor, int> ros_idx;           // index of ros vertices
+  std::map<edge_descriptor, int> edge_idx;            // storing indices of all edges
+  std::vector<int> is_roi;                   // flag that indicates vertex inside roi or not 
+  std::vector<int> is_hdl;
+  std::vector<int> is_ros;
 
   int iterations;                                     // number of iterations
-  std::map<vertex_descriptor, std::vector<double> > rot_mtr;               // rotation matrices of all vertices
-  std::map<edge_descriptor, double> edge_weight;           // weight of edges
+  std::vector< std::vector<double> >  rot_mtr;                       // rotation matrices of ros vertices
+  std::vector<double> edge_weight;                    // weight of edges
   SparseLinearAlgebraTraits_d m_solver;               // linear sparse solver
-  std::map<vertex_descriptor, Point> solution;        // storing vertex solution during iterations
-  std::map<vertex_descriptor, int> ros_idx;           // index of ros vertices
+  std::vector<Point>  solution;                       // sotring position of all vertices during iterations
+  
 
 
   // Public methods
@@ -66,15 +71,29 @@ public:
     :polyhedron(P)
   {
 
+    // initialize index maps
     vertex_iterator vb, ve;
+    int idx = 0;
     for(boost::tie(vb,ve) = boost::vertices(*polyhedron); vb != ve; ++vb )
     {
-      rot_mtr[*vb].resize(9);
+      vertex_idx[*vb] = idx;
+      idx++;
     }
 
+    edge_iterator eb, ee;
+    idx = 0;
+    for(boost::tie(eb,ee) = boost::edges(*polyhedron); eb != ee; ++eb )
+    {
+      edge_idx[*eb] = idx;
+      idx++;
+    }
+
+    edge_weight.resize(idx);
+
+    solution.clear();
     for(boost::tie(vb,ve) = boost::vertices(*polyhedron); vb != ve; ++vb )
     {
-      solution[*vb] = (*vb)->point();
+      solution.push_back( (*vb)->point() );
     }
 
     iterations = 10;
@@ -118,6 +137,7 @@ public:
       }
     }
     
+   
 
   }
 
@@ -153,6 +173,16 @@ public:
     hdl.push_back(vd);
   }
 
+  // compute cotangent weights of all edges 
+  void compute_edge_weight()
+  {
+    edge_iterator eb, ee;    
+    for(boost::tie(eb,ee) = boost::edges(*polyhedron); eb != ee; ++eb )
+    {
+      int e_idx = edge_idx[*eb];
+      edge_weight[e_idx] = cot_value(*eb) / 2.0;
+    }
+  }
 
   // find region of solution, including roi and hard constraints, which is the 1-ring vertices out roi
   void region_of_solution()
@@ -183,6 +213,45 @@ public:
     for (int i = 0; i < hard_constraints.size(); i++)
     {
       ros.push_back(hard_constraints[i]);
+    }
+
+    // initialize the indices of ros vertices, rotation matrices and solution
+    ros_idx.clear();
+    for (int i = 0; i < ros.size(); i++)
+    {
+      ros_idx[ros[i]] = i;    
+    }
+
+    
+    rot_mtr.resize(ros.size());
+    for ( int i = 0; i < ros.size(); i++)
+    {
+      rot_mtr[i].resize(9);
+    }
+
+    // initialize the flag vectors that indicate vertex inside roi/handle/ros or not
+    is_roi.clear(); 
+    is_roi.resize( boost::num_vertices(*polyhedron) );
+    for ( int i = 0; i < roi.size(); i++ )
+    {
+      int idx = vertex_idx[roi[i]];
+      is_roi[idx] = 1;
+    }
+
+    is_hdl.clear(); 
+    is_hdl.resize( boost::num_vertices(*polyhedron) );
+    for ( int i = 0; i < hdl.size(); i++ )
+    {
+      int idx = vertex_idx[hdl[i]];
+      is_hdl[idx] = 1;
+    }
+
+    is_ros.clear(); 
+    is_ros.resize( boost::num_vertices(*polyhedron) );
+    for ( int i = 0; i < ros.size(); i++ )
+    {
+      int idx = vertex_idx[ros[i]];
+      is_ros[idx] = 1;
     }
     
   }
@@ -221,15 +290,6 @@ public:
 
   }
 
-  // pre-compute cotangent weight of edges
-  void compute_edge_weight()
-  {
-    edge_iterator eb, ee;
-    for(boost::tie(eb,ee) = boost::edges(*polyhedron); eb != ee; ++eb )
-    {
-      edge_weight[*eb] = cot_value(*eb) / 2.0;
-    }
-  }
 
 	// Assemble Laplacian matrix A of linear system A*X=B
   ///
@@ -237,11 +297,9 @@ public:
   /// @param SparseLinearAlgebraTraits_d definite positive sparse linear solver.
   void assemble_laplacian(typename SparseLinearAlgebraTraits_d::Matrix& A, std::string type)
 	{
-    // initialize the indices of roi vertices and Laplacian matrix
-    ros_idx.clear();
+    // initialize the Laplacian matrix
     for (int i = 0; i < ros.size(); i++)
     {
-      ros_idx[ros[i]] = i;
       A.set_coef(i, i, 1.0, true);     
     }
 
@@ -249,32 +307,24 @@ public:
 		for(int i = 0; i < ros.size(); i++)
 		{
 			vertex_descriptor vi = ros[i];
-      std::vector<vertex_descriptor> ::iterator result_roi = find(roi.begin(), roi.end(), vi);
-      std::vector<vertex_descriptor> ::iterator result_hdl = find(hdl.begin(), hdl.end(), vi);
-      if ( result_roi != roi.end() && result_hdl == hdl.end() )  // vertices of ( roi - hdl )
+      if ( is_roi[vertex_idx[vi]] && !is_hdl[vertex_idx[vi]] )          // vertices of ( roi - hdl )
       {
         double diagonal = 0;
-        int idx_i = ros_idx[vi];
         in_edge_iterator e, e_end;
         for (boost::tie(e,e_end) = boost::in_edges(vi, *polyhedron); e != e_end; e++)
         {
           vertex_descriptor vj = boost::source(*e, *polyhedron);
-          // only account neighboring vertices inside ros
-          std::vector<vertex_descriptor> ::iterator result_neigh = find(ros.begin(), ros.end(), vj);
-          if ( result_neigh != ros.end() )
+          double wij = 1;
+          if (type == "cot")                    // cotangent Laplacian weights
           {
-            double wij = 1;
-            if (type == "cot")                    // cotangent Laplacian weights
-            {
-              wij = edge_weight[*e];
-            }
-            int idx_j = ros_idx[vj];
-            A.set_coef(idx_i, idx_j, -wij, true);	// off-diagonal coefficient
-            diagonal += wij;
-          }    
+            wij = edge_weight[edge_idx[*e]];
+          }
+          int ros_idx_j = ros_idx[vj];
+          A.set_coef(i, ros_idx_j, -wij, true);	// off-diagonal coefficient
+          diagonal += wij;  
         }
         // diagonal coefficient
-        A.set_coef(idx_i, idx_i, diagonal);
+        A.set_coef(i, i, diagonal);
       } 
 		}
 
@@ -344,7 +394,7 @@ public:
     for (int idx = 0; idx < hdl.size(); idx++)
     {
       vertex_descriptor vd = hdl[idx];
-      solution[vd] = vd->point() + translation;
+      solution[vertex_idx[vd]] = vd->point() + translation;
     }
 	}
 
@@ -365,18 +415,17 @@ public:
     float* w = new float[4];
 
     // only accumulate ros vertices
-    int idx = 0;
     for ( int i = 0; i < ros.size(); i++ )
     {
       vertex_descriptor vi = ros[i];
       // compute covariance matrix
-      for (int i = 0; i < 4; i++)
+      for (int j = 0; j < 4; j++)
       {
-        w[i] = 0;
-        for (int j = 0; j < 4; j++)
+        w[j] = 0;
+        for (int k = 0; k < 4; k++)
         {
-          u[i][j] = 0;
-          v[i][j] = 0;
+          u[j][k] = 0;
+          v[j][k] = 0;
         }
       }
       in_edge_iterator e, e_end;
@@ -384,13 +433,13 @@ public:
       {
         vertex_descriptor vj = boost::source(*e, *polyhedron);
         Vector pij = vi->point() - vj->point();
-        Vector qij = solution[vi] - solution[vj];
-        double wij = edge_weight[*e];
-        for (int i = 0; i < 3; i++)
+        Vector qij = solution[vertex_idx[vi]] - solution[vertex_idx[vj]];
+        double wij = edge_weight[edge_idx[*e]];
+        for (int j = 0; j < 3; j++)
         {
-          for (int j = 0; j < 3; j++)
+          for (int k = 0; k < 3; k++)
           {
-            u[i+1][j+1] += wij*pij[i]*qij[j]; 
+            u[j+1][k+1] += wij*pij[j]*qij[k]; 
           }
         }
       }
@@ -399,17 +448,17 @@ public:
       svdcmp(u, 3, 3, w, v);
 
       // extract rotation matrix
-      for (int i = 0; i < 9; i++)
+      for (int j = 0; j < 9; j++)
       {
-        rot_mtr[vi][i] = 0;
+        rot_mtr[i][j] = 0;
       }
-      for (int i = 0; i < 3; i++)      // row index
+      for (int j = 0; j < 3; j++)      // row index
       {
-        for (int j = 0; j < 3; j++)   // column index
+        for (int k = 0; k < 3; k++)   // column index
         {
-          for (int k = 0; k < 3; k++)
+          for (int l = 0; l < 3; l++)
           {
-            rot_mtr[vi][i*3+j] += v[i+1][k+1] * u[j+1][k+1];
+            rot_mtr[i][j*3+k] += v[j+1][l+1] * u[k+1][l+1];
           }  
         }
       }
@@ -437,37 +486,32 @@ public:
     for ( int i = 0; i < ros.size(); i++ )
     {
       vertex_descriptor vi = ros[i];
-      std::vector<vertex_descriptor> ::iterator result_roi = find(roi.begin(), roi.end(), vi);
-      std::vector<vertex_descriptor> ::iterator result_hdl = find(hdl.begin(), hdl.end(), vi);
-      if ( result_roi == roi.end() || result_hdl != hdl.end() )   // handle vertices or hard constraints
+      int vertex_idx_i = vertex_idx[vi];
+      if ( !is_roi[vertex_idx_i] || is_hdl[vertex_idx_i] )   // hard constraints or handle vertices
       {
-        Bx[ros_idx[vi]] = solution[vi].x(); By[ros_idx[vi]] = solution[vi].y(); Bz[ros_idx[vi]] = solution[vi].z();
+        Bx[i] = solution[vertex_idx_i].x(); By[i] = solution[vertex_idx_i].y(); Bz[i] = solution[vertex_idx_i].z();
       }
       else  // roi vertices
       {
-        Bx[ros_idx[vi]] = 0; By[ros_idx[vi]] = 0;Bz[ros_idx[vi]] = 0;
+        Bx[i] = 0; By[i] = 0; Bz[i] = 0;
         in_edge_iterator e, e_end;
         for (boost::tie(e,e_end) = boost::in_edges(vi, *polyhedron); e != e_end; e++)
         {
           vertex_descriptor vj = boost::source(*e, *polyhedron);
-          // only account neighboring vertices inside ros
-          std::vector<vertex_descriptor> ::iterator result_neigh = find(ros.begin(), ros.end(), vj);
-          if ( result_neigh != ros.end() )
+          int ros_idx_j = ros_idx[vj]; 
+          Vector pij = vi->point() - vj->point();
+          double wij = edge_weight[edge_idx[*e]];
+          Vector rot_p(0, 0, 0);                  // vector ( r_i + r_j )*p_ij
+          for (int j = 0; j < 3; j++)
           {
-            Vector pij = vi->point() - vj->point();
-            double wij = edge_weight[*e];
-            Vector rot_p(0, 0, 0);                 // vector ( r_i + r_j )*p_ij
-            for (int j = 0; j < 3; j++)
-            {
-              double x = ( rot_mtr[vi][j] + rot_mtr[vj][j] ) * pij[j];
-              double y = ( rot_mtr[vi][3+j] + rot_mtr[vj][3+j] ) * pij[j];
-              double z = ( rot_mtr[vi][6+j] + rot_mtr[vj][6+j] ) * pij[j];
-              Vector v(x, y, z);
-              rot_p = rot_p + v;
-            }
-            Vector vec = wij*rot_p/2.0;
-            Bx[ros_idx[vi]] += vec.x(); By[ros_idx[vi]] += vec.y(); Bz[ros_idx[vi]] += vec.z();
-          }  
+            double x = ( rot_mtr[i][j] + rot_mtr[ros_idx_j][j] ) * pij[j];
+            double y = ( rot_mtr[i][3+j] + rot_mtr[ros_idx_j][3+j] ) * pij[j];
+            double z = ( rot_mtr[i][6+j] + rot_mtr[ros_idx_j][6+j] ) * pij[j];
+            Vector v(x, y, z);
+            rot_p = rot_p + v;
+          }
+          Vector vec = wij*rot_p/2.0;
+          Bx[i] += vec.x(); By[i] += vec.y(); Bz[i] += vec.z(); 
         }
       }
     }
@@ -478,9 +522,8 @@ public:
     // copy to solution
     for (int i = 0; i < ros.size(); i++)
     {
-      vertex_descriptor vd = ros[i];
-      Point p(X[ros_idx[vd]], Y[ros_idx[vd]], Z[ros_idx[vd]]);
-      solution[vd] = p;
+      Point p(X[i], Y[i], Z[i]);
+      solution[vertex_idx[ros[i]]] = p;
     }
 
   }
@@ -498,17 +541,17 @@ public:
       {
         vertex_descriptor vj = boost::source(*e, *polyhedron);
         Vector pij = vi->point() - vj->point();
-        double wij = edge_weight[*e];
+        double wij = edge_weight[edge_idx[*e]];
         Vector rot_p(0, 0, 0);                 // vector rot_i*p_ij
         for (int j = 0; j < 3; j++)
         {
-          double x = rot_mtr[vi][j] * pij[j];
-          double y = rot_mtr[vi][3+j] * pij[j];
-          double z = rot_mtr[vi][6+j] * pij[j];
+          double x = rot_mtr[i][j] * pij[j];
+          double y = rot_mtr[i][3+j] * pij[j];
+          double z = rot_mtr[i][6+j] * pij[j];
           Vector v(x, y, z);
           rot_p = rot_p + v;
         }
-        Vector qij = solution[vi] - solution[vj];
+        Vector qij = solution[vertex_idx[vi]] - solution[vertex_idx[vj]];
         sum_of_energy += wij*(qij - rot_p).squared_length();
       }
     }
@@ -536,7 +579,7 @@ public:
     vertex_iterator vb, ve;
     for(boost::tie(vb,ve) = boost::vertices(*polyhedron); vb != ve; ++vb )
     {
-      (*vb_t)->point() = solution[*vb];
+      (*vb_t)->point() = solution[vertex_idx[*vb]];
       vb_t++;
     }
   }
