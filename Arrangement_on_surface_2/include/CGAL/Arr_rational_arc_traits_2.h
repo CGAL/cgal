@@ -20,6 +20,8 @@
 #ifndef CGAL_ARR_RATIONAL_ARC_TRAITS_2_H
 #define CGAL_ARR_RATIONAL_ARC_TRAITS_2_H
 
+#define CGAL_DEPRECATED_HEADER "<CGAL/Arr_rational_arc_traits_2.h>"
+#define CGAL_REPLACEMENT_HEADER "<CGAL/Arr_rational_function_traits_2.h>"
 #include <CGAL/internal/deprecation_warning.h>
 
 /*! \file
