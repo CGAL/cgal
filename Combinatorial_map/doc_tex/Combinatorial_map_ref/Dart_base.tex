@@ -15,8 +15,8 @@
   
 The class \ccRefName\ represents a \emph{d}D dart.
 
-$\beta_i$ pointers are coded in a array of \emph{d+1} \ccc{Dart_handle}
-(because we describe also the $\beta_0$ link).  Attributes are
+\betai{} pointers are coded in a array of \emph{d+1} \ccc{Dart_handle}
+(because we describe also the \betazero{} link).  Attributes are
 associated to each dart by \ccc{Attribute_handle<i>}, one for each
 non void \emph{i}-attribute.
 
@@ -42,7 +42,7 @@ non void \emph{i}-attribute.
 
 \ccHeading{Complexity}
 
-Each $\beta_i$ link is initialized to \ccc{CMap::null_dart_handle}, and each 
+Each \betai{} link is initialized to \ccc{CMap::null_dart_handle}, and each 
 attribute handle of non void \emph{i}-attribute is initialized to NULL
 at the creation of the dart, thus the complexity of the creation is in
 \emph{O}(\emph{d+1}).

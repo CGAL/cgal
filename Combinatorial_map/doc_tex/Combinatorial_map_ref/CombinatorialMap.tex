@@ -60,7 +60,7 @@ The concept \ccRefName\ defines a \emph{d}-dimensional combinatorial map.
   \ccc{CellAttribute} concept or \ccc{void}.
   The first type corresponds to 0-attributes, 
   the second to 1-attributes and so on. 
-  If the $i^{\mbox{th}}$ type in the tuple is \ccc{void}, 
+  If the \ccTexHtml{$i^{\mbox{th}}$}{i<sup>th</sup>} type in the tuple is \ccc{void}, 
   \emph{(i-1)}-attributes are disabled. Otherwise, \emph{(i-1)}-attributes are enabled and
   have the given type.  If the size of the tuple is \emph{k},
   with \emph{k < dimension+1}, $\forall$ \emph{i}: \emph{k} $\leq$ \emph{i} $\leq$ dimension,
@@ -203,11 +203,11 @@ A combinatorial map \ccc{cm} is valid (see Sections~\ref{ssec-combi-map-and-dart
          {Returns true iff \ccc{dh1} can be \emph{i}-sewn with \ccc{dh2} by 
            keeping \ccc{cm} valid, i.e. if there is
            a bijection \emph{f} between all the darts of the orbit
-           \emph{D1}=$\orb{\mb{1},\ldots,\mb{i-2},\mb{i+2},\ldots,\mb{d}}$(\emph{dh1}) and
-           \emph{D2}=$\orb{\mb{1},\ldots,\mb{i-2},\mb{i+2},\ldots,\mb{d}}$(\emph{dh2})
+           \emph{D1}=\orbit{\betaun{},$\ldots$,\betaimdeux{},\betaipdeux{},$\ldots$,\betad{}}(\emph{dh1}) and
+           \emph{D2}=\orbit{\betaun{},$\ldots$,\betaimdeux{},\betaipdeux{},$\ldots$,\betad{}}(\emph{dh2})
            satisfying: \emph{f}(\emph{dh1})=\emph{dh2}, and for all \emph{d'1} $\in$ \emph{D1}, for all \emph{j}$\in$
            \{1,$\ldots$,\emph{i}-2,\emph{i}+2,$\ldots$,\emph{d}\},
-           \emph{f}$(\mb{j}$(\emph{d'1}))=$\mb{j}^{-1}$(\emph{f}(\emph{d'1})).           
+           \emph{f}(\betaj{}(\emph{d'1}))=\betajinv{}(\emph{f}(\emph{d'1})).           
           \ccPrecond{0 $\leq$ \emph{i} $\leq$ \emph{dimension}, \ccc{*dh1}$\in$\ccc{cm.darts()}, 
             and \ccc{*dh2}$\in$\ccc{cm.darts()}.}}	
 
@@ -248,8 +248,8 @@ combinatorial tetrahedra:\\
    {Returns a range of all the darts of the orbit \ccc{<Beta...>(dh)}.
      \ccPrecond{\ccc{*dh}$\in$\ccc{cm.darts()} and \ccc{Beta...} is a
      sequence of integers \ccTexHtml{$i_1$}{i<sub>1</sub>},$\ldots$,\ccTexHtml{$i_k$}{i<sub>k</sub>} , such that each \ccTexHtml{$i_j$}{i<sub>j</sub>} $\in
-     $\{0,$\ldots$,\emph{dimension}\}, with \ccTexHtml{$i_1$}{i<sub>1</sub>} <\ccTexHtml{$i_2$}{i<sub>1</sub>} <$\ldots$<\ccTexHtml{$i_k$}{i<sub>k</sub>} , and (\ccTexHtml{$i_1$}{i<sub>1</sub>}$\neq$
-     0 or \emph{i2} $\neq$ 1).}}
+     $\{0,$\ldots$,\emph{dimension}\}, with \ccTexHtml{$i_1$}{i<sub>1</sub>} <\ccTexHtml{$i_2$}{i<sub>2</sub>} <$\ldots$<\ccTexHtml{$i_k$}{i<sub>k</sub>} , and (\ccTexHtml{$i_1$}{i<sub>1</sub>}$\neq$
+     0 or \ccTexHtml{$i_2$}{i<sub>2</sub>} $\neq$ 1).}}
 \ccGlue
 \ccMethod{template<unsigned int ... Beta> Dart_of_orbit_const_range darts_of_orbit(Dart_const_handle dh) const;}
    {Returns a const range of all the darts of the orbit \ccc{<Beta...>(dh)}.
@@ -336,14 +336,14 @@ combinatorial tetrahedra:\\
 \ccOperations
 
 \ccMethod{template <unsigned int i> void sew(Dart_handle dh1,
-  Dart_handle dh2, bool update_attributes=true);} {Links by $\beta_i$
+  Dart_handle dh2, bool update_attributes=true);} {Links by \betai{}
   two by two all the darts of the orbit
-  \emph{D1}=$\orb{\mb{1},\ldots,\mb{i-2},\mb{i+2},\ldots,\mb{d}}$(\ccc{dh1}) and
-  \emph{D2}=$\orb{\mb{0},\mb{2},\ldots,\mb{i-2},\mb{i+2},\ldots,\mb{d}}$(\ccc{dh2})
+  \emph{D1}=\orbit{\betaun{},$\ldots$,\betaimdeux{},\betaipdeux{},$\ldots$,\betad{}}(\ccc{dh1}) and
+  \emph{D2}=\orbit{\betazero{},\betadeux{},$\ldots$,\betaimdeux{},\betaipdeux{},$\ldots$,\betad{}}	(\ccc{dh2})
   such that \emph{d2}=\emph{f}(\emph{d1}), \emph{f} being the bijection between \emph{D1} and \emph{D2} 
   satisfying: \emph{f}(\emph{dh1})=\emph{dh2}, and for all \emph{d'1} $\in$ \emph{D1}, for all \emph{j}$\in
   $\{1,$\ldots$,\emph{i}-2,\emph{i}+2,$\ldots$,\emph{d}\},
-  \emph{f}$(\mb{j}$(\emph{d'1}))=$\mb{j}^{-1}$(\emph{f}(\emph{d'1})).
+  \emph{f}(\betaj{}(\emph{d'1}))=\betajinv{}(\emph{f}(\emph{d'1})).
 
   If \ccc{update_attributes} is \ccc{true}, when necessary, non void
   attributes are updated to ensure the validity of \ccc{cm}: for each
@@ -365,9 +365,9 @@ combinatorial tetrahedra:\\
 }
 
 \ccMethod{template <unsigned int i> void unsew(Dart_handle dh, bool
-  update_attributes=true);} {Unlinks by $\beta_i$ all the darts in the
+  update_attributes=true);} {Unlinks by \betai{} all the darts in the
   orbit
-  $\orb{\mb{1},\ldots,\mb{i-2},\mb{i+2},\ldots,\mb{d}}$(\ccc{dh}).  If
+  \orbit{\betaun{},$\ldots$,\betaimdeux{},\betaipdeux{},$\ldots$,\betad{}}(\ccc{dh}).  If
   \ccc{update_attributes} is \ccc{true}, when necessary, non void
   attributes are updated to ensure the validity of \ccc{cm}: for each
   \emph{j}-cell \emph{c} split in two \emph{j}-cells \emph{c1} and \emph{c2} by the
@@ -387,7 +387,7 @@ combinatorial tetrahedra:\\
 \begin{ccAdvanced}
 
 \ccMethod{template <unsigned int i> void link_beta(Dart_handle dh1, Dart_handle dh2, bool update_attributes=true);}
-{Links \ccc{dh1} and \ccc{dh2}  by $\beta_i$. 
+{Links \ccc{dh1} and \ccc{dh2}  by \betai{}. 
   \ccc{cm} can be no more valid after this modification.  If
   \ccc{update_attributes} is true, non void attributes of \ccc{dh1} and
   \ccc{dh2} are updated: if one dart has an attribute and the second
@@ -410,9 +410,9 @@ combinatorial tetrahedra:\\
 %   directions (for dh and for its neighbor).}
 
 \ccMethod{template <unsigned int i> void unlink_beta(Dart_handle dh);}
-  {Unlinks \ccc{dh} and $\beta_i($\ccc{dh}$)$ by $\beta_i$ .
+  {Unlinks \ccc{dh} and \betai{}(\ccc{dh}) by \betai{} .
     \ccc{cm} can be no more valid after this modification. 
-    Attributes of \ccc{dh} and $\beta_i$(\ccc{dh})
+    Attributes of \ccc{dh} and \betai{}(\ccc{dh})
     are not modified.
     \ccPrecond{0 $\leq$ \emph{i} $\leq$ \emph{dimension}, \ccc{*dh}$\in$\ccc{cm.darts()},
       and \ccc{dh} is not \emph{i}-free.}}
