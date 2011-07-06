@@ -53,13 +53,13 @@ do_intersect(const typename K::Line_2 &line,
 }
 
 template <class K>
-typename CGAL::Intersection_traits
+typename CGAL::Intersection_traits_2
 <K, typename K::Point_2, typename K::Line_2>::result_type
 intersection(const typename K::Point_2 &pt, 
 	     const typename K::Line_2 &line,
 	     const K& k)
 {
-  typedef typename CGAL::Intersection_traits
+  typedef typename CGAL::Intersection_traits_2
     <K, typename K::Point_2, typename K::Line_2>::result_type result_type;
 
     if (do_intersect(pt,line, k)) {
@@ -69,7 +69,7 @@ intersection(const typename K::Point_2 &pt,
 }
 
 template <class K>
-typename CGAL::Intersection_traits
+typename CGAL::Intersection_traits_2
 <K, typename K::Point_2, typename K::Line_2>::result_type
 intersection(const typename K::Line_2 &line,
 	     const typename K::Point_2 &pt, 
@@ -79,46 +79,6 @@ intersection(const typename K::Line_2 &line,
 }
 
 } // namespace internal
-
-template <class K>
-inline 
-bool
-do_intersect(const Line_2<K> &line, 
-	     const Point_2<K> &pt)
-{
-  typedef typename K::Do_intersect_2 Do_intersect;
-    return Do_intersect()(pt, line);
-}
-
-template <class K>
-inline 
-bool
-do_intersect(const Point_2<K> &pt,
-	     const Line_2<K> &line)
-{
-  typedef typename K::Do_intersect_2 Do_intersect;
-    return Do_intersect()(pt, line);
-}
-
-template <class K>
-inline 
-Object
-intersection(const Line_2<K> &line, 
-	     const Point_2<K> &pt)
-{
-  typedef typename K::Intersect_2 Intersect;
-  return Intersect()(pt, line);
-}
-
-template <class K>
-inline 
-Object
-intersection(const Point_2<K> &pt,
-	     const Line_2<K> &line)
-{
-  typedef typename K::Intersect_2 Intersect;
-  return Intersect()(pt, line);
-}
 
 } //namespace CGAL
 

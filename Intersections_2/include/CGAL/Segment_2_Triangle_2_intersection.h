@@ -154,13 +154,13 @@ intersection_segment() const
 
 
 template <class K>
-typename CGAL::Intersection_traits
+typename CGAL::Intersection_traits_2
 <K, typename K::Segment_2, typename K::Triangle_2>::result_type
 intersection(const typename K::Segment_2 &seg, 
 	     const typename K::Triangle_2&tr,
 	     const K&)
 {
-    typedef typename CGAL::Intersection_traits
+    typedef typename CGAL::Intersection_traits_2
       <K, typename K::Segment_2, typename K::Triangle_2>::result_type result_type;
 
     typedef Segment_2_Triangle_2_pair<K> is_t;
@@ -178,7 +178,7 @@ intersection(const typename K::Segment_2 &seg,
 
 
 template <class K>
-typename CGAL::Intersection_traits
+typename CGAL::Intersection_traits_2
 <K, typename K::Segment_2, typename K::Triangle_2>::result_type
 intersection(const typename K::Triangle_2&tr,
 	     const typename K::Segment_2 &seg, 
@@ -200,38 +200,6 @@ inline bool do_intersect(
 }
 
 } // namespace internal
-
-template <class K>
-inline Object
-intersection(const Segment_2<K> &seg, const Triangle_2<K> &tr)
-{
-  typedef typename K::Intersect_2 Intersect;
-  return Intersect()(seg, tr);
-}
-
-template <class K>
-inline Object
-intersection(const Triangle_2<K> &tr, const Segment_2<K> &seg)
-{
-  typedef typename K::Intersect_2 Intersect;
-    return Intersect()(seg, tr);
-}
-
-template <class K>
-inline bool
-do_intersect(const Segment_2<K> &seg, const Triangle_2<K> &tr)
-{
-  typedef typename K::Do_intersect_2 Do_intersect;
-  return Do_intersect()(seg, tr);
-}
-
-template <class K>
-inline bool
-do_intersect(const Triangle_2<K> &tr, const Segment_2<K> &seg)
-{
-  typedef typename K::Do_intersect_2 Do_intersect;
-  return Do_intersect()(seg, tr);
-}
 
 } //namespace CGAL
 

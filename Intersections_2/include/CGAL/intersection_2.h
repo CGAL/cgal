@@ -27,8 +27,43 @@
 #define CGAL_INTERSECTION_2_H
 
 #include <CGAL/Intersection_traits_2.h>
+#include <CGAL/Kernel_traits.h>
 #include <CGAL/intersection_2_1.h>
 #include <CGAL/intersection_2_2.h>
 #include <CGAL/intersection_2_3.h>
+
+namespace CGAL {
+
+// The global functions do_intersect and intersection 
+
+// SFINAE is used to distinguish between a 2-dimensional and a
+// 3-dimensional object using the Intersection_traits_2/3
+
+template <class A, class B>
+inline
+Object
+intersection(const A& a,
+             const B& b, typename Intersection_traits_2< typename CGAL::Kernel_traits<A>::Kernel, A, B>::result_type* d = 0)
+{
+  (void)d;
+  typedef typename CGAL::Kernel_traits<A>::Kernel K;
+  typedef typename K::Intersect_2 Intersect;
+  return Intersect()(a, b);
+}
+
+template <class A, class B>
+inline bool 
+do_intersect(const A& p1, const B& p2, 
+             typename Intersection_traits_2< typename CGAL::Kernel_traits<A>::Kernel, A, B>::result_type* d = 0)
+{
+  (void)d;
+  typedef typename CGAL::Kernel_traits<A>::Kernel K;
+  typedef typename K::Do_intersect_2 Do_intersect;
+  return Do_intersect()(p1, p2);
+}
+
+}
+
+
 
 #endif // CGAL_INTERSECTION_2_H

@@ -156,41 +156,6 @@ intersection(const typename K::Triangle_2 &tr,
 
 } // namespace internal
 
-
-template <class K>
-inline 
-bool
-do_intersect(const Triangle_2<K> &tr, const Point_2<K> &pt)
-{
-  typedef typename K::Do_intersect_2 Do_intersect;
-  return Do_intersect()(pt, tr);
-}
-
-template <class K>
-inline 
-bool 
-do_intersect(const Point_2<K> &pt, const Triangle_2<K> &tr)
-{
-  typedef typename K::Do_intersect_2 Do_intersect;
-  return Do_intersect()(pt, tr);
-}
-
-template <class K>
-inline Object
-intersection(const Triangle_2<K> &tr, const Point_2<K> &pt)
-{
-  typedef typename K::Intersect_2 Intersect;
-  return Intersect()(pt, tr);
-}
-
-template <class K>
-inline Object
-intersection(const Point_2<K> &pt, const Triangle_2<K> &tr)
-{
-  typedef typename K::Intersect_2 Intersect;
-  return Intersect()(pt, tr);
-}
-
 } //namespace CGAL
 
 #endif

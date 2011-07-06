@@ -28,7 +28,7 @@
 
 #define CGAL_INTERSECTION_TRAITS_2(A, B, R1, R2)                          \
   template<typename K>                                                  \
-  struct Intersection_traits<K, typename K::A, typename K::B>  {        \
+  struct Intersection_traits_2<K, typename K::A, typename K::B>  {        \
     typedef typename boost::variant<typename K::R1, typename K::R2 >    \
                      variant_type;                                      \
     typedef typename boost::optional< variant_type > result_type;       \
@@ -36,7 +36,7 @@
 
 #define CGAL_INTERSECTION_TRAITS_3(A, B, R1, R2, R3)                      \
   template<typename K>                                                  \
-  struct Intersection_traits<K, typename K::A, typename K::B>  {        \
+  struct Intersection_traits_2<K, typename K::A, typename K::B>  {        \
     typedef typename boost::variant<typename K::R1, typename K::R2,     \
                                     typename K::R3> variant_type;       \
     typedef typename boost::optional< variant_type > result_type;       \
@@ -46,7 +46,7 @@ namespace CGAL {
 
 // only declaration
 template<typename, typename, typename>
-struct Intersection_traits;
+struct Intersection_traits_2;
 
 CGAL_INTERSECTION_TRAITS_2(Line_2, Line_2, Point_2, Line_2);
 
@@ -73,7 +73,7 @@ CGAL_INTERSECTION_TRAITS_2(Triangle_2, Ray_2, Point_2, Segment_2);
 CGAL_INTERSECTION_TRAITS_2(Ray_2, Triangle_2, Point_2, Segment_2);
 
 template<typename K>
-struct Intersection_traits<K, typename K::Triangle_2, typename K::Triangle_2>  {
+struct Intersection_traits_2<K, typename K::Triangle_2, typename K::Triangle_2>  {
   typedef typename 
   boost::variant< typename K::Point_2, typename K::Segment_2,
                   typename K::Triangle_2, typename std::vector< typename K::Point_2 > > variant_type;
@@ -92,19 +92,19 @@ CGAL_INTERSECTION_TRAITS_2(Ray_2, Iso_rectangle_2, Point_2, Segment_2);
 
 // Variants of one for backwards compatibility
 template<typename K>
-struct Intersection_traits<K, typename K::Iso_rectangle_2, typename K::Iso_rectangle_2>  {
+struct Intersection_traits_2<K, typename K::Iso_rectangle_2, typename K::Iso_rectangle_2>  {
   typedef typename boost::variant<typename K::Iso_rectangle_2> variant_type;
   typedef boost::optional<variant_type> result_type;
 };
 
 template<typename K, typename B>
-struct Intersection_traits <K, typename K::Point_2, B> {
+struct Intersection_traits_2<K, typename K::Point_2, B> {
   typedef typename boost::variant<typename K::Point_2> variant_type;
   typedef boost::optional<variant_type> result_type;
 };
 
 template<typename K, typename A>
-struct Intersection_traits <K, A, typename K::Point_2> {
+struct Intersection_traits_2<K, A, typename K::Point_2> {
   typedef typename boost::variant<typename K::Point_2> variant_type;
   typedef boost::optional<variant_type> result_type;
 };

@@ -234,13 +234,13 @@ Ray_2_Ray_2_pair<K>::intersection_ray() const
 
 
 template <class K>
-typename CGAL::Intersection_traits
+typename CGAL::Intersection_traits_2
   <K, typename K::Ray_2, typename K::Ray_2>::result_type
 intersection(const typename K::Ray_2 &ray1, 
 	     const typename K::Ray_2 &ray2,
 	     const K&)
 {
-    typedef typename CGAL::Intersection_traits
+    typedef typename CGAL::Intersection_traits_2
       <K, typename K::Ray_2, typename K::Ray_2>::result_type result_type;
 
     typedef Ray_2_Ray_2_pair<K> is_t;
@@ -259,26 +259,6 @@ intersection(const typename K::Ray_2 &ray1,
 }
 
 } // namespace internal
-
-
-template <class K>
-inline
-bool
-do_intersect(const Ray_2<K> &ray1, 
-	     const Ray_2<K> &ray2)
-{
-  typedef typename K::Do_intersect_2 Do_intersect;
-  return Do_intersect()(ray1, ray2);
-}
-
-template <class K>
-Object
-intersection(const Ray_2<K> &ray1, 
-	     const Ray_2<K> &ray2)
-{
-  typedef typename K::Intersect_2 Intersect;
-  return Intersect()(ray1, ray2);
-}
 
 } //namespace CGAL
 

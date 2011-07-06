@@ -34,14 +34,14 @@ namespace CGAL {
 namespace internal {
 
 template <class K>
-typename CGAL::Intersection_traits
+typename CGAL::Intersection_traits_2
 <K, typename K::Iso_rectangle_2, typename K::Iso_rectangle_2>::result_type
 intersection(
     const typename K::Iso_rectangle_2 &irect1,
     const typename K::Iso_rectangle_2 &irect2,
     const K&)
 {
-    typedef typename CGAL::Intersection_traits
+    typedef typename CGAL::Intersection_traits_2
       <K, typename K::Iso_rectangle_2, typename K::Iso_rectangle_2>::result_type result_type;
 
     typedef typename K::FT  FT;
@@ -84,17 +84,6 @@ intersection(
 
 
 } // namespace internal
-
-
-template <class K>
-inline
-Object
-intersection(const Iso_rectangle_2<K> &irect1,
-             const Iso_rectangle_2<K> &irect2)
-{
-  typedef typename K::Intersect_2 Intersect;
-  return Intersect()(irect1, irect2);
-}
 
 
 template <class K>
