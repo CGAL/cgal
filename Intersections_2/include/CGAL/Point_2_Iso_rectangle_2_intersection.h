@@ -28,6 +28,7 @@
 #include <CGAL/Iso_rectangle_2.h>
 #include <CGAL/Point_2.h>
 #include <CGAL/Object.h>
+#include <CGAL/Intersection_traits_2.h>
 
 namespace CGAL {
 
@@ -54,28 +55,30 @@ do_intersect(const typename K::Iso_rectangle_2 &iso,
 }
 
 template <class K>
-Object
+typename CGAL::Intersection_traits
+<K, typename K::Point_2, typename K::Iso_rectangle_2>::result_type
 intersection(const typename K::Point_2 &pt,
 	     const typename K::Iso_rectangle_2 &iso,
 	     const K& k)
 {
+  typedef typename CGAL::Intersection_traits
+    <K, typename K::Point_2, typename K::Iso_rectangle_2>::result_type result_type;
+
   if (internal::do_intersect(pt,iso,k)) {
-    return make_object(pt);
-    }
-    return Object();
+    return result_type(pt);
+  }
+  return result_type();
 }
 
 
 template <class K>
-Object
+typename CGAL::Intersection_traits
+<K, typename K::Point_2, typename K::Iso_rectangle_2>::result_type
 intersection(const typename K::Iso_rectangle_2 &iso,
 	     const typename K::Point_2 &pt,
 	     const K& k)
 {
-  if (internal::do_intersect(pt,iso,k)) {
-    return make_object(pt);
-    }
-    return Object();
+  return internal::intersection(pt, iso, k);
 }
 
 } // namespace internal

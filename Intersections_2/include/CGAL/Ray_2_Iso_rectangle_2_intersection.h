@@ -32,7 +32,7 @@
 #include <CGAL/kernel_assertions.h>
 #include <CGAL/number_utils.h>
 #include <CGAL/Object.h>
-
+#include <CGAL/Intersection_traits_2.h>
 
 namespace CGAL {
 
@@ -80,26 +80,31 @@ inline bool do_intersect(const typename K::Iso_rectangle_2 &p2,
 }
 
 template <class K>
-Object
+typename CGAL::Intersection_traits
+<K, typename K::Ray_2, typename K::Iso_rectangle_2>::result_type
 intersection(const typename K::Ray_2 &ray,
 	     const typename K::Iso_rectangle_2 &iso,
 	     const K& )
 {
+    typedef typename CGAL::Intersection_traits
+      <K, typename K::Ray_2, typename K::Iso_rectangle_2>::result_type result_type;
+
     typedef Ray_2_Iso_rectangle_2_pair<K> is_t;
     is_t ispair(&ray, &iso);
     switch (ispair.intersection_type()) {
     case is_t::NO_INTERSECTION:
     default:
-        return Object();
+        return result_type();
     case is_t::POINT:
-        return make_object(ispair.intersection_point());
+        return result_type(ispair.intersection_point());
     case is_t::SEGMENT:
-        return make_object(ispair.intersection_segment());
+        return result_type(ispair.intersection_segment());
     }
 }
 
 template <class K>
-Object
+typename CGAL::Intersection_traits
+<K, typename K::Ray_2, typename K::Iso_rectangle_2>::result_type
 intersection(const typename K::Iso_rectangle_2 &iso,
 	     const typename K::Ray_2 &ray,
 	     const K& k)

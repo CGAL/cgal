@@ -28,6 +28,7 @@
 #include <CGAL/Ray_2.h>
 #include <CGAL/Point_2.h>
 #include <CGAL/Object.h>
+#include <CGAL/Intersection_traits_2.h>
 
 namespace CGAL {
 
@@ -56,15 +57,19 @@ do_intersect(const typename K::Ray_2 &ray,
 
 
 template <class K>
-Object
+typename CGAL::Intersection_traits
+<K, typename K::Point_2, typename K::Ray_2>::result_type
 intersection(const typename K::Point_2 &pt, 
 	     const typename K::Ray_2 &ray,
 	     const K& k)
 {
+  typedef typename CGAL::Intersection_traits
+    <K, typename K::Point_2, typename K::Ray_2>::result_type result_type;
+
   if (do_intersect(pt,ray, k)) {
-    return make_object(pt);
+    return result_type(pt);
   }
-  return Object();
+  return result_type();
 }
 
 template <class K>
@@ -73,10 +78,7 @@ intersection(const typename K::Ray_2 &ray,
 	     const typename K::Point_2 &pt, 
 	     const K& k)
 {
-  if (do_intersect(pt,ray, k)) {
-    return make_object(pt);
-  }
-  return Object();
+  return internal::intersection(pt, ray, k);
 }
 
 } // namespace internal

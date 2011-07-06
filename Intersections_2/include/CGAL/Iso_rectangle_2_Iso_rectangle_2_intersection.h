@@ -27,22 +27,26 @@
 
 #include <CGAL/Iso_rectangle_2.h>
 #include <CGAL/Object.h>
+#include <CGAL/Intersection_traits_2.h>
 
 namespace CGAL {
 
 namespace internal {
 
 template <class K>
-Object
+typename CGAL::Intersection_traits
+<K, typename K::Iso_rectangle_2, typename K::Iso_rectangle_2>::result_type
 intersection(
     const typename K::Iso_rectangle_2 &irect1,
     const typename K::Iso_rectangle_2 &irect2,
     const K&)
 {
+    typedef typename CGAL::Intersection_traits
+      <K, typename K::Iso_rectangle_2, typename K::Iso_rectangle_2>::result_type result_type;
+
     typedef typename K::FT  FT;
     Rational_traits<FT>  rt;
     typename K::Construct_point_2 construct_point_2;
-    typename K::Construct_object_2 construct_object;
     typename K::Construct_iso_rectangle_2 construct_iso_rectangle_2;
     const typename K::Point_2 &min1 = (irect1.min)();
     const typename K::Point_2 &min2 = (irect2.min)();
@@ -54,11 +58,11 @@ intersection(
     minx = (min1.x() >= min2.x()) ? min1.x() : min2.x();
     maxx = (max1.x() <= max2.x()) ? max1.x() : max2.x();
     if (maxx < minx)
-        return Object();
+        return result_type();
     miny = (min1.y() >= min2.y()) ? min1.y() : min2.y();
     maxy = (max1.y() <= max2.y()) ? max1.y() : max2.y();
     if (maxy < miny)
-        return Object();
+        return result_type();
     if (rt.denominator(minx) == rt.denominator(miny)) {
         newmin = construct_point_2(rt.numerator(minx), rt.numerator(miny),
 				   rt.denominator(minx));
@@ -75,7 +79,7 @@ intersection(
 				   rt.numerator(maxy)   * rt.denominator(maxx),
 				   rt.denominator(maxx) * rt.denominator(maxy));
     }
-    return construct_object(construct_iso_rectangle_2(newmin, newmax));
+    return result_type(construct_iso_rectangle_2(newmin, newmax));
 }
 
 

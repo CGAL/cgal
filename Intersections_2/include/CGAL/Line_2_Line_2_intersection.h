@@ -30,7 +30,7 @@
 #include <CGAL/Point_2.h>
 #include <CGAL/kernel_assertions.h>
 #include <CGAL/number_utils.h>
-#include <CGAL/Object.h>
+#include <CGAL/Intersection_traits_2.h>
 
 namespace CGAL {
 
@@ -70,21 +70,24 @@ inline bool do_intersect(
 
 
 template <class K>
-Object
+typename CGAL::Intersection_traits
+<K, typename K::Line_2, typename K::Line_2>::result_type
 intersection(const typename K::Line_2 &line1, 
 	     const typename K::Line_2 &line2,
 	     const K&)
 {
     typedef Line_2_Line_2_pair<K> is_t;
+    typedef typename CGAL::Intersection_traits
+      <K, typename K::Line_2, typename K::Line_2>::result_type result_type;
     is_t linepair(&line1, &line2);
     switch (linepair.intersection_type()) {
     case is_t::NO_INTERSECTION:
     default:
-        return Object();
+      return result_type();
     case is_t::POINT:
-        return make_object(linepair.intersection_point());
+        return result_type(linepair.intersection_point());
     case is_t::LINE:
-        return make_object(line1);
+        return result_type(line1);
     }
 }
 

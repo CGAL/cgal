@@ -27,6 +27,7 @@
 
 #include <CGAL/Point_2.h>
 #include <CGAL/Object.h>
+#include <CGAL/Intersection_traits_2.h>
 
 namespace CGAL {
 
@@ -41,14 +42,18 @@ do_intersect(const typename K::Point_2 &pt1,
 }
 
 template <class K>
-Object
+typename CGAL::Intersection_traits
+<K, typename K::Point_2, typename K::Point_2>::result_type
 intersection(const typename K::Point_2 &pt1, 
 	     const typename K::Point_2 &pt2)
 {
+  typedef typename CGAL::Intersection_traits
+    <K, typename K::Point_2, typename K::Point_2>::result_type result_type;
+
     if (pt1 == pt2) {
-        return make_object(pt1);
+      return result_type(pt1);
     }
-    return Object();
+    return result_type();
 }
 
 }// namespace internal
