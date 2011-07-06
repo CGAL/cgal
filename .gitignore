@@ -150,6 +150,8 @@ Installation/auxiliary/gdb/python/CGAL/__init__.pyc
 Installation/auxiliary/gdb/python/CGAL/printers.pyc
 Installation/auxiliary/gdb/test
 Installation/cmake/modules/*.tmp
+Installation/test/Installation/cgal_test
+Installation/test/Installation/deprecation_warning
 Jet_fitting_3/examples/Jet_fitting_3/*.exe
 Jet_fitting_3/examples/Jet_fitting_3/*.sln
 Jet_fitting_3/examples/Jet_fitting_3/*.vcproj

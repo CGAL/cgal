@@ -1775,8 +1775,10 @@ Installation/config/version.h.in -text
 Installation/doc_tex/Installation/cmakelogo.png -text svneol=unset#image/png
 Installation/doc_tex/Installation/illustration.png -text
 Installation/html2textrc -text
+Installation/include/CGAL/internal/deprecation_warning.h -text
 Installation/src/CMakeLists.txt -text
 Installation/test/Installation/CMakeLists.txt -text
+Installation/test/Installation/deprecation_warning.cpp -text
 Installation/test/Installation/link_to_CGAL.cpp -text
 Installation/test/Installation/link_to_CGAL_Core.cpp -text
 Installation/test/Installation/link_to_CGAL_ImageIO.cpp -text
