@@ -4,23 +4,26 @@
 
 #include <CGAL/trace.h>
 #include <CGAL/Timer.h>
-#include <CGAL/IO/Polyhedron_iostream.h>
 #include <CGAL/boost/graph/graph_traits_Polyhedron_3.h>
 #include <CGAL/boost/graph/properties_Polyhedron_3.h>
 #include <CGAL/boost/graph/halfedge_graph_traits_Polyhedron_3.h>
+
+// AF: Will svd be something encapsulated by the SparseLinearAlgebraTraits_d ??	 
+//     In this case you should anticipate this in your code and not use it here directly
+
+// YX: I don't think we need to encapsulated svd decomposition into SparseLinearAlgebraTraits_d
+//     since it is independent of template. Also we are still not sure whether to adopt it 
+//     in the final version 
 #include <CGAL/svd.h>
 
 
-
-#include <iostream>
-#include <list>
-#include <fstream>
+// AF: These includes are not needed
+// YX: Solved.
 
 
 namespace CGAL {
 
-/// @heading Parameters:
-/// @param Gt Geometric traits class.
+enum LapType { uni, cot };
 
 template <class Polyhedron, class SparseLinearAlgebraTraits_d>
 class Deform_mesh_BGL
@@ -88,7 +91,6 @@ public:
       idx++;
     }
 
-    edge_weight.resize(idx);
 
     solution.clear();
     for(boost::tie(vb,ve) = boost::vertices(*polyhedron); vb != ve; ++vb )
@@ -105,6 +107,9 @@ public:
   {
   }
 
+   // AF: please put a comment what this function computes
+   // YX: Solved.
+
   // determine the roi vertices inside k-ring for all the vertices from begin to end
   void region_of_interest(vertex_iterator begin, vertex_iterator end, size_t k)
   {
@@ -113,11 +118,23 @@ public:
     {
       roi.push_back(*vit);
     }
+    // AF: Why do you insert end?	 
+    // Iterator ranges are usually half open
+
+    // YX: These are not iterators of vertex list, they are just pointers to all the vertices.
+    //     So we can not forget end. 
+    //     Actually This API seems not very reasonable to me. Maybe we can delete it directly,
+    //     since we already have the API that allows us select k-ring neighboring vertices.
+    //     How do you think?
     roi.push_back(*end);
   
     int idx_lv = 0;    // pointing the neighboring vertices on current level
     int idx_lv_end;
     
+    // AF:: This loop has a running time quadratic in the size of the region of interst
+    // YX: I am not quite convinced about the efficiency of this loop. Is there any better 
+    //     implementation that I can learn? It seems that Laurent also use the similar 
+    //     algorithm to achieve this. 
     for (size_t lv = 0; lv < k; lv++)
     {
       idx_lv_end = roi.size(); 
@@ -176,11 +193,27 @@ public:
   // compute cotangent weights of all edges 
   void compute_edge_weight()
   {
+    // refer the information that whether the weight of an edge has already computed
+    std::vector<int> edge_weight_computed(boost::num_edges(*polyhedron));  
+
+    edge_weight.clear();
+    edge_weight.resize(boost::num_edges(*polyhedron));
     edge_iterator eb, ee;    
     for(boost::tie(eb,ee) = boost::edges(*polyhedron); eb != ee; ++eb )
     {
       int e_idx = edge_idx[*eb];
-      edge_weight[e_idx] = cot_value(*eb) / 2.0;
+      if ( !edge_weight_computed[e_idx] )
+      {
+        double weight = cot_value(*eb) / 2.0;
+        edge_weight[e_idx] = weight;
+        edge_weight_computed[e_idx] = 1;
+        // assign the weights to opposite edges
+        edge_descriptor e_oppo = CGAL::opposite_edge(*eb, *polyhedron);   
+        int e_oppo_idx = edge_idx[e_oppo];
+        edge_weight[e_oppo_idx] = weight;
+        edge_weight_computed[e_oppo_idx] = 1;
+      }
+
     }
   }
 
@@ -274,7 +307,8 @@ public:
 
     // Assemble linear system A*X=B
     typename SparseLinearAlgebraTraits_d::Matrix A(ros.size()); // matrix is symmetric definite positive
-    assemble_laplacian(A, "cot");
+    enum LapType type = cot;
+    assemble_laplacian(A, type);
 
     CGAL_TRACE_STREAM << "  Creates matrix: done (" << task_timer.time() << " s)\n";
 
@@ -291,11 +325,18 @@ public:
   }
 
 
+   // AF: You set up a N*N matrix, even if the ROI is small.	 
+   //     Is the matrix the solver deals with internally small, becaused there are so many zeros?	 
+   // YX: Solved.
+ 	 
+   // AF: 'type' should be an enum not a string
+   // YX: Solved.
+
 	// Assemble Laplacian matrix A of linear system A*X=B
   ///
   /// @commentheading Template parameters:
   /// @param SparseLinearAlgebraTraits_d definite positive sparse linear solver.
-  void assemble_laplacian(typename SparseLinearAlgebraTraits_d::Matrix& A, std::string type)
+  void assemble_laplacian(typename SparseLinearAlgebraTraits_d::Matrix& A, enum LapType type)
 	{
     // initialize the Laplacian matrix
     for (int i = 0; i < ros.size(); i++)
@@ -315,7 +356,7 @@ public:
         {
           vertex_descriptor vj = boost::source(*e, *polyhedron);
           double wij = 1;
-          if (type == "cot")                    // cotangent Laplacian weights
+          if (type == cot)                    // cotangent Laplacian weights
           {
             wij = edge_weight[edge_idx[*e]];
           }
@@ -360,6 +401,9 @@ public:
         return ( cot_value(v0, v2, v1) + cot_value(v0, v3, v1) );
      }
   }
+
+  // AF: Have a function for the non-border case that does less computation as there is a shared edge
+  // YX: Solved. See the function compute_edge_weight().
 
   // Returns the cotanget value of angle v0_v1_v2
   double cot_value(vertex_descriptor v0, vertex_descriptor v1, vertex_descriptor v2)
@@ -571,6 +615,9 @@ public:
       CGAL_TRACE_STREAM << ite << " iterations: energy = " << energy() << "\n";
     }
     CGAL_TRACE_STREAM << "iteration end!\n";
+
+    // AF: The deform step should definitely NOT operate on ALL vertices, but only on the ROI
+    // YX: Solved.
 
     // copy solution to target mesh P
     vertex_iterator vb_t, ve_t;
