@@ -16,7 +16,8 @@
   
 The class \ccRefName\ serves as a traits class for the function
 \ccc{convex_hull_3}.  This is the default traits class for this
-function.
+function when \ccc{R} is a kernel with exact predicates but inexact constructions
+(note below that the type \ccc{Plane_3} is a triple of \ccc{Point_3} and not \ccc{R::Plane_3}).
 
 \ccInclude{CGAL/Convex_hull_traits_3.h}
 
@@ -101,7 +102,7 @@ function.
 \ccCreation
 \ccCreationVariable{traits}  %% choose variable name
 
-\ccConstructor{Convex_hull_traits_3(Convex_hull_traits_2& t);}%
+\ccConstructor{Convex_hull_traits_3(Convex_hull_traits_3& t);}%
               {copy constructor.}
 
 \ccOperations

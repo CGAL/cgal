@@ -30,8 +30,10 @@ Expects for the first template argument an implementation of the concept \ccc{Se
 for example \ccc{CGAL::Cartesian_d<double>}.
 
 Expects for the second template argument a model of the
-concept \ccc{GeneralDistance}. The default type is 
-\ccc{CGAL::Euclidean_distance<Traits>}.
+concept \ccc{GeneralDistance}. If \ccc{Traits} is 
+\ccc{CGAL::Search_traits_adapter<Key,PointPropertyMap,Base_traits>}
+the default type is \ccc{CGAL::Distance_for_point_adapter<Key,PointPropertyMap,CGAL::Euclidean_distance<Traits> >},
+and \ccc{CGAL::Euclidean_distance<Traits>} otherwise.
 
 
 Expects for fourth template argument an implementation of the concept \ccc{SpatialTree}.
@@ -42,6 +44,7 @@ template argument \ccc{CGAL::Tag_false} makes that the tree is built with unexte
 
 \ccTypedef{Traits::Point_d Point_d;}{Point type.}
 \ccTypedef{Traits::FT FT;}{Number type.}
+\ccTypedef{GeneralDistance Distance;}{Distance type.}
 \ccTypedef{std::pair<Point_d,FT> Point_with_transformed_distance;}{Pair of point and transformed distance.} 
 
 \ccNestedType{iterator}{Bidirectional iterator with value type \ccc{Point_with_distance}

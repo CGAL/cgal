@@ -11,7 +11,7 @@ int main()
 {
   CMap_3 cm;
   
-  // Reserve a mark
+  // 1) Reserve a mark.
   int mark = cm.get_new_mark();
   if ( mark==-1 )
     {
@@ -19,24 +19,24 @@ int main()
       exit(-1);
     }
   
-  // Create two tetrahedra.
+  // 2) Create two tetrahedra.
   Dart_handle dh1 = make_combinatorial_tetrahedron(cm);  
   Dart_handle dh2 = make_combinatorial_tetrahedron(cm);
 
-  // 3-sew them.
+  // 3) 3-sew them.
   cm.sew<3>(dh1, dh2);
   
-  // Mark the darts belonging to the first tetrahedron.
+  // 4) Mark the darts belonging to the first tetrahedron.
   for  (CMap_3::Dart_of_cell_range<3>::iterator 
           it(cm.darts_of_cell<3>(dh1).begin()),
           itend(cm.darts_of_cell<3>(dh1).end()); it!=itend; ++it)
     cm.mark(it, mark);
 
-  // Remove the common 2-cell between the two cubes:
+  // 4) Remove the common 2-cell between the two cubes:
   // the two tetrahedra are merged.
   CGAL::remove_cell<CMap_3, 2>(cm, dh1);
 
-  // Thanks to the mark, we know which darts come from the first tetrahedron.
+  // 5) Thanks to the mark, we know which darts come from the first tetrahedron.
   unsigned int res=0;
   for (CMap_3::Dart_range::iterator it(cm.darts().begin()),
 	 itend(cm.darts().end()); it!=itend; ++it)

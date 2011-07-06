@@ -243,7 +243,7 @@ public:
     
     //!check if the number is an extension (test the values) and update the internal flag
     inline bool check_if_is_extended() {
-      if(CGAL_NTS is_zero(a1_) || CGAL_NTS is_zero(root)) 
+      if(CGAL_NTS is_zero(a1_) || CGAL_NTS is_zero(root_)) 
         is_extended_ = false;
       return is_extended_;
     }

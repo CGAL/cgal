@@ -11,7 +11,7 @@
 % +------------------------------------------------------------------------+
 
 
-\begin{ccRefClass}{Kd_tree_rectangle<Traits>}  %% add template arg's if necessary
+\begin{ccRefClass}{Kd_tree_rectangle<FT>}  %% add template arg's if necessary
 
 \begin{ccAdvanced}
 
@@ -29,7 +29,7 @@ e.g., methods to compute bounding boxes of point sets.
 
 \ccTypes
 
-\ccTypedef{Traits::FT FT;}{Number type.}
+\ccTypedef{FT FT;}{Number type.}
 
 \ccCreation
 \ccCreationVariable{r}  %% choose variable name
@@ -39,10 +39,11 @@ e.g., methods to compute bounding boxes of point sets.
 in each dimension.}
  
 \ccConstructor{
-template <class PointIter>
-Kd_tree_rectangle(int d, PointIter begin, PointIter end);}
+template <class Construct_cartesian_const_iterator_d,class PointIter>
+Kd_tree_rectangle(int d, PointIter begin, PointIter end,const Construct_cartesian_const_iterator_d& construct_it);}
 {Constructs the bounding box of the points in the range [\ccc{begin,end}), where the value
-type of \ccc{PointIter} must be \ccc{Traits::Point_d}.}
+type of \ccc{PointIter} can be used by operators of functors \ccc{Construct_cartesian_const_iterator_d}
+to define iterators with value type \ccc{FT}.}
 
 \ccOperations
 
@@ -70,14 +71,14 @@ type of \ccc{PointIter} must be \ccc{Traits::Point_d}.}
 \ccMethod{int dimension();}
 {Returns the dimension of the rectangle.}
 
-\ccMethod{void split(Kd_tree_rectangle<Traits>& r, int d, FT value);}
+\ccMethod{void split(Kd_tree_rectangle<FT>& r, int d, FT value);}
 {Splits rectangle in dimension \ccc{d} at coordinate-value \ccc{value} 
  by modifying itself to lower half and by modifying \ccc{r} to upper half.} 
 
 \ccHeading{Output Routines}
 
 \ccFunction{ template<class FT>
-std::ostream& operator<<(std::ostream& s, Kd_tree_rectangle<Traits>& r);} 
+std::ostream& operator<<(std::ostream& s, Kd_tree_rectangle<FT>& r);} 
 {Inserts rectangle \ccc{r} in the output stream \ccc{s} and returns~\ccc{s}.}
 
 

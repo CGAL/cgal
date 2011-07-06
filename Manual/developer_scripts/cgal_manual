@@ -247,8 +247,8 @@ Sum=0
 
 # Read the resource file
 ReturnStatus=0
-if [ -r $ResourceFile ] ; then
-  source $ResourceFile
+if [ -r "$ResourceFile" ] ; then
+  source "$ResourceFile"
 fi
 if [ $ReturnStatus -ne 0 ] ; then
   exit $ReturnStatus
