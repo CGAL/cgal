@@ -159,6 +159,40 @@ CGAL 3.9 offers the following improvements and new functionality :  </p>
           to additionally provide two new functors Less_coordinate_d and Point_dimension_d.</li>
 </ul>
 
+<h3>2D Arrangements</h3>
+<ul>
+      <li>A new geometry-traits class that handles rational arcs, namely
+	<code>Arr_rational_function_traits_2</code>, has been introduced.
+	It replaced an old traits class, which handled the same family of
+	curves, but it was less efficient. The new traits exploits CGAL
+	algebraic kernels and polynomials, which were not available at
+	the time the old traits class was developed.</li>
+      <li>A new geometry traits concept called
+	<code>ArrangementOpenBoundaryTraits_2</code> has been introduced.
+	A model of this concept suports curves that approach the open
+	boundary of an iso-rectangular area called parameter space, which can
+	be unbounded or bounded. The general code of the package, however,
+	supports only the unbounded parameter space. We intend to enhance the
+	general code to support also bounded parameter spaces in a future
+	release.</li>
+      <li>The deprecated member function is_at_infinity() of
+        Arrangement_2::Vertex has been removed. It has been previously
+        replaced new function is_at_open_boundary().
+  
+      <li> The tags in the geometry traits that indicate the type of boundary of 
+       the embedding surface were replaced by the following new tags:
+<pre>
+         Left_side_category
+         Bottom_side_category
+         Top_side_category
+         Right_side_category
+</pre>
+       It is still possible not to indicate the tags at all. Default values are assumed. This however will
+       produce warning messages, and should be avoided.</li>
+</ul>
+
+
+
 <h2 id="release3.8">Release 3.8 </h2>
 <DIV>
 <p> Release date: April 2011</p>

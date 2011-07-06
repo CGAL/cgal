@@ -452,6 +452,7 @@ Arrangement_on_surface_2/doc_tex/Arrangement_on_surface_2/fig/unb_dcel.gif -text
 Arrangement_on_surface_2/doc_tex/Arrangement_on_surface_2/fig/unb_dcel.pdf -text svneol=unset#application/pdf
 Arrangement_on_surface_2/doc_tex/Arrangement_on_surface_2_ref/Arr_algebraic_segment_traits.tex -text
 Arrangement_on_surface_2/doc_tex/Arrangement_on_surface_2_ref/Arr_halfedge_direction.tex -text
+Arrangement_on_surface_2/doc_tex/Arrangement_on_surface_2_ref/Arr_rational_function_traits.tex -text
 Arrangement_on_surface_2/doc_tex/Arrangement_on_surface_2_ref/arr_do_intersect.tex -text
 Arrangement_on_surface_2/doc_tex/Arrangement_on_surface_2_ref/arr_zone.tex -text
 Arrangement_on_surface_2/doc_tex/Sweep_line_2/fig/Curve_intersections_2.png -text
@@ -652,10 +653,11 @@ Arrangement_on_surface_2/test/Arrangement_on_surface_2/data/conics/vertex.pt -te
 Arrangement_on_surface_2/test/Arrangement_on_surface_2/data/conics/vertex.xcv -text
 Arrangement_on_surface_2/test/Arrangement_on_surface_2/data/conics/xcurves -text
 Arrangement_on_surface_2/test/Arrangement_on_surface_2/data/empty.zero -text
-Arrangement_on_surface_2/test/Arrangement_on_surface_2/data/linear/lines/boundary_near_x -text
-Arrangement_on_surface_2/test/Arrangement_on_surface_2/data/linear/lines/boundary_near_y -text
+Arrangement_on_surface_2/test/Arrangement_on_surface_2/data/linear/lines/compare_x_at_limit -text
+Arrangement_on_surface_2/test/Arrangement_on_surface_2/data/linear/lines/compare_x_near_limit -text
 Arrangement_on_surface_2/test/Arrangement_on_surface_2/data/linear/lines/compare_y_at_x -text
 Arrangement_on_surface_2/test/Arrangement_on_surface_2/data/linear/lines/compare_y_at_x_left -text
+Arrangement_on_surface_2/test/Arrangement_on_surface_2/data/linear/lines/compare_y_near_boundary -text
 Arrangement_on_surface_2/test/Arrangement_on_surface_2/data/linear/lines/curves -text
 Arrangement_on_surface_2/test/Arrangement_on_surface_2/data/linear/lines/intersect -text
 Arrangement_on_surface_2/test/Arrangement_on_surface_2/data/linear/lines/is_vertical -text
@@ -733,8 +735,11 @@ Arrangement_on_surface_2/test/Arrangement_on_surface_2/data/polylines/split.xcv 
 Arrangement_on_surface_2/test/Arrangement_on_surface_2/data/polylines/vertex -text
 Arrangement_on_surface_2/test/Arrangement_on_surface_2/data/polylines/vertex.pt -text
 Arrangement_on_surface_2/test/Arrangement_on_surface_2/data/polylines/vertex.xcv -text
+Arrangement_on_surface_2/test/Arrangement_on_surface_2/data/rational_arcs/compare_x_at_limit -text
+Arrangement_on_surface_2/test/Arrangement_on_surface_2/data/rational_arcs/compare_x_near_limit -text
 Arrangement_on_surface_2/test/Arrangement_on_surface_2/data/rational_arcs/compare_y_at_x -text
 Arrangement_on_surface_2/test/Arrangement_on_surface_2/data/rational_arcs/compare_y_at_x_left -text
+Arrangement_on_surface_2/test/Arrangement_on_surface_2/data/rational_arcs/compare_y_near_boundary -text
 Arrangement_on_surface_2/test/Arrangement_on_surface_2/data/rational_arcs/curves -text
 Arrangement_on_surface_2/test/Arrangement_on_surface_2/data/rational_arcs/intersect -text
 Arrangement_on_surface_2/test/Arrangement_on_surface_2/data/rational_arcs/is_vertical -text
@@ -766,14 +771,15 @@ Arrangement_on_surface_2/test/Arrangement_on_surface_2/data/segments/split.xcv -
 Arrangement_on_surface_2/test/Arrangement_on_surface_2/data/segments/vertex -text
 Arrangement_on_surface_2/test/Arrangement_on_surface_2/data/segments/vertex.pt -text
 Arrangement_on_surface_2/test/Arrangement_on_surface_2/data/segments/xcurves -text
-Arrangement_on_surface_2/test/Arrangement_on_surface_2/data/spherical_arcs/boundary_near_x -text
-Arrangement_on_surface_2/test/Arrangement_on_surface_2/data/spherical_arcs/boundary_near_y -text
 Arrangement_on_surface_2/test/Arrangement_on_surface_2/data/spherical_arcs/compare -text
 Arrangement_on_surface_2/test/Arrangement_on_surface_2/data/spherical_arcs/compare.pt -text
 Arrangement_on_surface_2/test/Arrangement_on_surface_2/data/spherical_arcs/compare.xcv -text
+Arrangement_on_surface_2/test/Arrangement_on_surface_2/data/spherical_arcs/compare_x_near_boundary -text
+Arrangement_on_surface_2/test/Arrangement_on_surface_2/data/spherical_arcs/compare_x_on_boundary -text
 Arrangement_on_surface_2/test/Arrangement_on_surface_2/data/spherical_arcs/compare_y_at_x -text
 Arrangement_on_surface_2/test/Arrangement_on_surface_2/data/spherical_arcs/compare_y_at_x.pt -text
 Arrangement_on_surface_2/test/Arrangement_on_surface_2/data/spherical_arcs/compare_y_at_x.xcv -text
+Arrangement_on_surface_2/test/Arrangement_on_surface_2/data/spherical_arcs/compare_y_near_boundary -text
 Arrangement_on_surface_2/test/Arrangement_on_surface_2/data/spherical_arcs/curves -text
 Arrangement_on_surface_2/test/Arrangement_on_surface_2/data/spherical_arcs/intersect -text
 Arrangement_on_surface_2/test/Arrangement_on_surface_2/data/spherical_arcs/is_vertical -text
@@ -818,6 +824,7 @@ Arrangement_on_surface_2/test/Arrangement_on_surface_2/test_do_equal.cpp -text
 Arrangement_on_surface_2/test/Arrangement_on_surface_2/test_do_intersect.cpp -text
 Arrangement_on_surface_2/test/Arrangement_on_surface_2/test_observer.cmd -text
 Arrangement_on_surface_2/test/Arrangement_on_surface_2/test_observer.cpp -text
+Arrangement_on_surface_2/test/Arrangement_on_surface_2/test_rational_function_traits_2.cpp -text
 Arrangement_on_surface_2/test/Arrangement_on_surface_2/test_traits_adaptor.cpp -text
 Arrangement_on_surface_2/test/Arrangement_on_surface_2/test_traits_adaptor.h -text
 Arrangement_on_surface_2/test/Arrangement_on_surface_2/test_zone.cpp -text
