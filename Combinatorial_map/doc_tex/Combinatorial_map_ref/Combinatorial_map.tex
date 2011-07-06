@@ -26,7 +26,8 @@ Darts and non void attributes are stored in memory using
 \ccParameters
 \ccc{d} an integer for the dimension of the map.\\
 \ccc{Items} must be a model of the \ccc{CombinatorialMapItems} concept. \\
-\ccc{Alloc} has to match the standard allocator requirements. The  \ccc{rebind} mechanism from \ccc{Alloc} will be used to create appropriate allocators internally with value type \ccc{Dart}.
+\ccc{Alloc} has to match the standard allocator requirements. The  \ccc{rebind} mechanism from 
+\ccc{Alloc} will be used to create appropriate allocators internally with value type \ccc{Dart}.
 
 There are two default template arguments:
 \ccc{Combinatorial_map_min_items<d>} for \ccc{Items} and
@@ -40,9 +41,9 @@ There are two default template arguments:
 
 \ccHeading{Complexity}
 
-The complexity of \ccc{sew} and \ccc{unsew} is in \emph{O}($|$\emph{S}$|\times|$\emph{c}$|$), \emph{S}
+The complexity of \ccc{sew} and \ccc{unsew} is in \emph{O}($|$\emph{S}$|$\mytimes{}$|$\emph{c}$|$), \emph{S}
 being the set of darts of the orbit
-\orbit{\betaun{},\ldots,\betaimdeux{},\betaipdeux{},\ldots,\betad{}} for the
+\orbit{\betaun{},\myldots{},\betaimdeux{},\betaipdeux{},\myldots{},\betad{}} for the
 considered dart, and \emph{c} the biggest \emph{j}-cell merged or
 split during the sew such that \emph{j}-attributes are non void.
 

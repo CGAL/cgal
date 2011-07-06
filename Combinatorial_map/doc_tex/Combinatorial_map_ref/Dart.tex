@@ -13,8 +13,8 @@
 \ccDefinition
   
 The concept \ccRefName\ defines a \emph{d}-dimensional dart.  A dart mainly
-stores handles to the darts linked with itself by \betai{}, $\forall$
-\emph{i}, 0 $\leq$ \emph{i} $\leq$ \emph{d}. Moreover, it stores also handles to each
+stores handles to the darts linked with itself by \betai{}, \myforall{}\emph{i}, 
+0\myleq{}\emph{i}\myleq{}\emph{d}. Moreover, it stores also handles to each
 non void attribute associated with itself.
 
 % \ccParameters
@@ -26,8 +26,8 @@ non void attribute associated with itself.
 A dart \ccc{d0} is never constructed directly, but always created
 within a combinatorial map \ccc{cm} by using the method
 \ccc{cm.create_dart();} A new dart is initialized to be \emph{i}-free,
-$\forall$ \emph{i}: 0 $\leq$ \emph{i} $\leq$ \emph{dimension}, and having all its attribute
-handles initialized to NULL, for each non void attribute.
+\myforall{}\emph{i}: 0\myleq{}\emph{i}\myleq{}\emph{dimension}, and having all 
+its attribute handles initialized to NULL, for each non void attribute.
 
 \ccConstants
 \ccVariable{static unsigned int dimension;}{The dimension of \ccc{d0}.}
@@ -40,33 +40,33 @@ handles initialized to NULL, for each non void attribute.
 \ccNestedType{Dart_const_handle}{Dart const handle type.}
 
 \ccNestedType{template<unsigned int i> Attribute_handle<i>::type}
-    {Handle to \emph{i}-attributes, with 0 $\leq$ \emph{i} $\leq$ \emph{dimension}.}
+    {Handle to \emph{i}-attributes, with 0\myleq{}\emph{i}\myleq{}\emph{dimension}.}
 \ccGlue
 \ccNestedType{template<unsigned int i> Attribute_const_handle<i>::type}
-    {Const handle to \emph{i}-attributes, with 0 $\leq$ \emph{i} $\leq$ \emph{dimension}.}
+    {Const handle to \emph{i}-attributes, with 0\myleq{}\emph{i}\myleq{}\emph{dimension}.}
 
 \ccHeading{Access Member Functions}
 \ccThree{Dart_const_handle}{beta(unsigned int i) const}{}
 %
 \ccMethod{Dart_handle beta(unsigned int i);}
          {Returns \betai{}(\ccc{d0}).
-          \ccPrecond{0 $\leq$ \emph{i} $\leq$ \emph{dimension}.}}
+          \ccPrecond{0\myleq{}\emph{i}\myleq{}\emph{dimension}.}}
 \ccGlue
 \ccMethod{Dart_const_handle beta(unsigned int i) const;}
          {Returns \betai{}(\ccc{d0}) when \ccc{d0} is const.
-          \ccPrecond{0 $\leq$ \emph{i} $\leq$ \emph{dimension}.}}
+          \ccPrecond{0\myleq{}\emph{i}\myleq{}\emph{dimension}.}}
 
 \ccMethod{Dart_handle beta_inv(unsigned int i);}
          {Returns \betaiinv{}(\ccc{d0}).
-          \ccPrecond{0 $\leq$ \emph{i} $\leq$ \emph{dimension}.}}
+          \ccPrecond{0\myleq{}\emph{i}\myleq{}\emph{dimension}.}}
 \ccGlue
 \ccMethod{Dart_const_handle beta_inv(unsigned int i) const;}
          {Returns \betaiinv{}(\ccc{d0}) when \ccc{d0} is const.
-          \ccPrecond{0 $\leq$ \emph{i} $\leq$ \emph{dimension}.}}
+          \ccPrecond{0\myleq{}\emph{i}\myleq{}\emph{dimension}.}}
 
 \ccMethod{bool is_free(unsigned int i) const;} 
          {Returns true iff \ccc{d0} is \emph{i}-free.
-          \ccPrecond{0 $\leq$ \emph{i} $\leq$ \emph{dimension}.}}
+          \ccPrecond{0\myleq{}\emph{i}\myleq{}\emph{dimension}.}}
 
 \ccMethod{int highest_nonfree_dimension() const;} 
          {Returns the highest dimension \emph{i} such that \ccc{d0} is not \emph{i}-free.
@@ -93,48 +93,15 @@ handles initialized to NULL, for each non void attribute.
           \ccc{opposite()} not necessarily to the same edge). 
           NULL if such a dart does not exist.}
 
-% \ccMethod{template <unsigned int i> static bool are_attributes_enabled();}
-%    {Returns true iff $i$-attributes are enabled. 
-%      \ccPrecond{$0 \leq i \leq dimension$.}}
-
 \ccMethod{template <unsigned int i> Attribute_handle<i>::type attribute();}
          {Returns the \emph{i}-attribute associated to \ccc{d0}.
-           \ccPrecond{0 $\leq$ \emph{i} $\leq$ \emph{dimension}, and \emph{i}-attributes are non void.}}
+           \ccPrecond{0\myleq{}\emph{i}\myleq{}\emph{dimension}, and \emph{i}-attributes are non void.}}
 \ccGlue
 \ccMethod{template <unsigned int i> 
           Attribute_const_handle<i>::type attribute() const;}
          {Returns the \emph{i}-attribute associated to \ccc{d0},
            when  \ccc{d0} is const.
-           \ccPrecond{0 $\leq$ \emph{i} $\leq$ \emph{dimension}, and \emph{i}-attributes are non void.}}
-
-% \ccMethod{Dart_handle beta(unsigned int ai, unsigned int aj);}
-%          {return the neighbor of this dart for $\mb{ai}$ then $\mb{aj}$.}
-% \ccMethod{Dart_consthandle beta(unsigned int ai, unsigned int aj) const;}
-%          {return the neighbor of this dart for $\mb{ai}$ then $\mb{aj}$.}
-
-% \ccMethod{Dart_handle beta(unsigned int ai, unsigned int aj, unsigned int ak);}
-%          {return the neighbor of this dart for $\mb{ai}$ then $\mb{aj}$ 
-%           then $\mb{ak}$.}
-% \ccMethod{Dart_const_handle beta(unsigned int ai, unsigned int aj, unsigned int ak) const;}
-%          {return the neighbor of this dart for $\mb{ai}$ then $\mb{aj}$ 
-%           then $\mb{ak}$.}
-
-% \ccMethod{Dart_handle beta(unsigned int ai, unsigned int aj, unsigned int ak, unsigned int al);}
-%          {return the neighbor of this dart for $\mb{ai}$ then $\mb{aj}$ 
-%           then $\mb{ak}$ then $\mb{al}$.}
-% \ccMethod{Dart_const_handle beta(unsigned int ai, unsigned int aj, unsigned int ak, unsigned int al) const;}
-%          {return the neighbor of this dart for $\mb{ai}$ then $\mb{aj}$ 
-%           then $\mb{ak}$ then $\mb{al}$.}
-
-% +-----------------------------------+
-% \ccOperations
-
-% \ccMethod{void link_beta(Dart_handle dh, unsigned int adimension);}
-%          {link this dart to dh for the given dimension (only in one direction).}
-
-% \ccMethod{void unlink_beta(unsigned int adimension);}
-%          {remove the relation between this dart and its neighbor for 
-%           the given dimension (only in one direction).}
+           \ccPrecond{0\myleq{}\emph{i}\myleq{}\emph{dimension}, and \emph{i}-attributes are non void.}}
 
 \ccHasModels
 \ccRefIdfierPage{CGAL::Dart<d,CMap>}
