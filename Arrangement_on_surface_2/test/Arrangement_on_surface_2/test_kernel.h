@@ -12,9 +12,6 @@
 #elif TEST_KERNEL == CARTESIAN_KERNEL
 #include <CGAL/Cartesian.h>
 
-#elif TEST_KERNEL == UNIVARIATE_ALGEBRAIC_KERNEL
-#include <CGAL/Algebraic_kernel_d_1.h>
-
 #else
 #error No kernel (KERNEL) specified!
 #endif
@@ -29,10 +26,6 @@ typedef CGAL::Simple_cartesian<Number_type>             Kernel;
 #elif TEST_KERNEL == CARTESIAN_KERNEL
 typedef CGAL::Cartesian<Number_type>                    Kernel;
 #define KERNEL_TYPE "Cartesian"
-
-#elif TEST_KERNEL == UNIVARIATE_ALGEBRAIC_KERNEL
-typedef CGAL::Algebraic_kernel_d_1<Number_type>         Kernel;
-#define KERNEL_TYPE "Univariate Algebraic"
 
 #else
 #error No kernel (KERNEL) specified!

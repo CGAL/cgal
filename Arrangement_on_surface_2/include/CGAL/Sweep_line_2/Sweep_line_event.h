@@ -1,4 +1,4 @@
-// Copyright (c) 2006,2007,2009,2010,2011 Tel-Aviv University (Israel).
+// Copyright (c) 2005  Tel-Aviv University (Israel).
 // All rights reserved.
 //
 // This file is part of CGAL (www.cgal.org); you may redistribute it under
@@ -58,14 +58,14 @@ public:
   typedef typename Traits_2::Point_2                    Point_2;
 
   // should be ok, as Traits_ has already extended by Basic_sweep_line
-  typedef typename internal::Arr_complete_left_side_category< Traits_2 >::Category
-                                                        Left_side_category;
-  typedef typename internal::Arr_complete_bottom_side_category< Traits_2 >::Category
-                                                        Bottom_side_category;
-  typedef typename internal::Arr_complete_top_side_category< Traits_2 >::Category
-                                                        Top_side_category;
-  typedef typename internal::Arr_complete_right_side_category< Traits_2 >::Category
-                                                        Right_side_category;
+  typedef typename internal::Arr_complete_left_side_tag< Traits_2 >::Tag
+                                                        Arr_left_side_category;
+  typedef typename internal::Arr_complete_bottom_side_tag< Traits_2 >::Tag
+                                                        Arr_bottom_side_category;
+  typedef typename internal::Arr_complete_top_side_tag< Traits_2 >::Tag
+                                                        Arr_top_side_category;
+  typedef typename internal::Arr_complete_right_side_tag< Traits_2 >::Tag
+                                                        Arr_right_side_category;
 
   typedef Subcurve_                                     Subcurve;
   //template<typename SC>

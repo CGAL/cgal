@@ -1,4 +1,4 @@
-// Copyright (c) 2006,2007,2008,2009,2010,2011 Tel-Aviv University (Israel).
+// Copyright (c) 2006, Tel-Aviv University (Israel).
 // All rights reserved.
 //
 // This file is part of CGAL (www.cgal.org); you may redistribute it under
@@ -85,42 +85,43 @@ public:
   typedef typename Dcel::Isolated_vertex                  Isolated_vertex;
   //@}
 
-  //! \name Arrangement types
-  //!@{
-  typedef Arr_spherical_topology_traits_2<Geometry_traits_2, Dcel> Self;
+  // TODO remove adaptor as top-traits might be instantiated by Aos_2 itself
   typedef Arr_traits_basic_adaptor_2<Geometry_traits_2>   Traits_adaptor_2;
-  //!@}
+
+  typedef Arr_spherical_topology_traits_2<Geometry_traits_2, Dcel>
+                                                          Self;
   
   ///! \name The side tags
   //@{
-  typedef typename Traits_adaptor_2::Left_side_category   Left_side_category;
-  typedef typename Traits_adaptor_2::Bottom_side_category Bottom_side_category;
-  typedef typename Traits_adaptor_2::Top_side_category    Top_side_category;
-  typedef typename Traits_adaptor_2::Right_side_category  Right_side_category;
+  // are inherited from the geometry traits
+  typedef typename Traits_adaptor_2::Arr_left_side_category   Arr_left_side_category;
+  typedef typename Traits_adaptor_2::Arr_bottom_side_category Arr_bottom_side_category;
+  typedef typename Traits_adaptor_2::Arr_top_side_category    Arr_top_side_category;
+  typedef typename Traits_adaptor_2::Arr_right_side_category  Arr_right_side_category;
   
   BOOST_MPL_ASSERT
   (
    (boost::mpl::or_< 
-    boost::is_same< Left_side_category, Arr_oblivious_side_tag >,
-    boost::is_same< Left_side_category, Arr_identified_side_tag > >)
+    boost::is_same< Arr_left_side_category, Arr_oblivious_side_tag >,
+    boost::is_same< Arr_left_side_category, Arr_identified_side_tag > >)
   );
   BOOST_MPL_ASSERT
   (
    (boost::mpl::or_< 
-    boost::is_same< Bottom_side_category, Arr_oblivious_side_tag >,
-    boost::is_same< Bottom_side_category, Arr_contracted_side_tag > >)
+    boost::is_same< Arr_bottom_side_category, Arr_oblivious_side_tag >,
+    boost::is_same< Arr_bottom_side_category, Arr_contracted_side_tag > >)
   );
   BOOST_MPL_ASSERT
   (
    (boost::mpl::or_< 
-    boost::is_same< Top_side_category, Arr_oblivious_side_tag >,
-    boost::is_same< Top_side_category, Arr_contracted_side_tag > >)
+    boost::is_same< Arr_top_side_category, Arr_oblivious_side_tag >,
+    boost::is_same< Arr_top_side_category, Arr_contracted_side_tag > >)
   );
   BOOST_MPL_ASSERT
   (
    (boost::mpl::or_< 
-    boost::is_same< Right_side_category, Arr_oblivious_side_tag >,
-    boost::is_same< Right_side_category, Arr_identified_side_tag > >)
+    boost::is_same< Arr_right_side_category, Arr_oblivious_side_tag >,
+    boost::is_same< Arr_right_side_category, Arr_identified_side_tag > >)
   );
   //@}
   
@@ -358,7 +359,7 @@ public:
 private:
   /// \name Auxiliary type definitions.
   //@{
-  typedef Arrangement_on_surface_2<Geometry_traits_2, Self>        Arr;
+  typedef Arrangement_on_surface_2<Geometry_traits_2, Self>     Arr;
 
   // Type definition for the constuction sweep-line visitor.
   typedef Arr_construction_subcurve<Geometry_traits_2>          CSubcurve; 

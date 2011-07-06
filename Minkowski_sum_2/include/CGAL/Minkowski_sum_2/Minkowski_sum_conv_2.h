@@ -197,7 +197,7 @@ public:
     std::vector<Direction_2>  dirs2 (n2);
     Vertex_circulator         prev2, curr2, next2;
     Vertex_ref                bottom_left;
-    // bool                      is_convex2 = true;
+    bool                      is_convex2 = true;
     std::list<Vertex_ref>     reflex_vertices;
     unsigned int              k2;
     
@@ -223,7 +223,7 @@ public:
       if (f_orientation (*prev2, *curr2, *next2) == RIGHT_TURN)
       {
         // We found a reflex vertex.
-        // is_convex2 = false;
+        is_convex2 = false;
         reflex_vertices.push_back (Vertex_ref (curr2, k2));
       }
 

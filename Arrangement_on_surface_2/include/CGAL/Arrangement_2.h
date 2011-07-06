@@ -1,4 +1,4 @@
-// Copyright (c) 2006,2007,2009,2010,2011 Tel-Aviv University (Israel).
+// Copyright (c) 2006 Tel-Aviv University (Israel).
 // All rights reserved.
 //
 // This file is part of CGAL (www.cgal.org); you may redistribute it under
@@ -164,13 +164,18 @@ public:
   ///! \name Specialized access methods.
   //@{
 
-  /*! Obtain the geometry-traits class. */
+  /*! Get the geometry-traits class (for backward compatibility). */
   const Traits_2* traits () const
   {
     return (this->geometry_traits());
   }
 
-  /*! Obtain the number of vertices at infinity. */
+  Traits_2* traits ()
+  {
+    return (this->geometry_traits());
+  }
+
+  /*! Get the number of vertices at infinity. */
   Size number_of_vertices_at_infinity () const
   {
     // The vertices at infinity are valid, but not concrete:
@@ -178,7 +183,7 @@ public:
             this->topology_traits()->number_of_concrete_vertices());
   }
 
-  /*! Obtain the unbounded face (non-const version). */
+  /*! Get the unbounded face (non-const version). */
   Face_handle unbounded_face ()
   {
     // The fictitious un_face contains all other valid faces in a single

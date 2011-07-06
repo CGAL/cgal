@@ -1,4 +1,4 @@
-// Copyright (c) 2007,2009,2011 Max-Planck-Institute for Computer Science (Germany).
+// Copyright (c) 2007 Max-Planck-Institute for Computer Science (Germany).
 // All rights reserved.
 //
 // This file is part of CGAL (www.cgal.org); you may redistribute it under

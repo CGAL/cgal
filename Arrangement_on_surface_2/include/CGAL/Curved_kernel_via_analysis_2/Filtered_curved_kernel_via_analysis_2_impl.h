@@ -1,4 +1,4 @@
-// Copyright (c) 2008,2009,2010,2011 Max-Planck-Institute Saarbruecken (Germany), 
+// Copyright (c) 2007-2008 Max-Planck-Institute Saarbruecken (Germany), 
 // and Tel-Aviv University (Israel).  All rights reserved.
 //
 // This file is part of CGAL (www.cgal.org); you can redistribute it and/or
@@ -106,10 +106,6 @@ public:
         return Base::operator()(p1, p2, equal_x);
     }
 };
-
-
-// TODO implement Compare_y_limit_on_boundary_2
-
 
 template < class CurvedKernelViaAnalysis_2, class FunctorBase >
 class Compare_y_near_boundary_2 : 

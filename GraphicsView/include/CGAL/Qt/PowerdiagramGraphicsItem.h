@@ -99,7 +99,7 @@ PowerdiagramGraphicsItem<RT>::boundingRect() const
 
 template <typename RT>
 void 
-PowerdiagramGraphicsItem<RT>::paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget */*w*/)
+PowerdiagramGraphicsItem<RT>::paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget * /*w*/)
 {
   QRectF rect = option->exposedRect;
   PainterOstream<K> pos(painter, rect);

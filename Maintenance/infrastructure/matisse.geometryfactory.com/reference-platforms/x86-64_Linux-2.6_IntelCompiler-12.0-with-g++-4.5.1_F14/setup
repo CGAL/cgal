@@ -1,0 +1,7 @@
+source /opt/intel/composerxe-2011.4.191/bin/compilervars.sh intel64
+CXX=icpc
+CC=icc
+export CXX CC
+export QTDIR=/usr/lib64/qt-3.3
+source /home/lrineau/CGAL/MPFI-RS/setup-rs
+source /home/lrineau/CGAL/CGAL-I-REF/cmake/platforms/setup-common

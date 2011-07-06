@@ -1,4 +1,4 @@
-// Copyright (c) 2006,2007,2009,2010,2011 Tel-Aviv University (Israel).
+// Copyright (c) 2005, 2009  Tel-Aviv University (Israel).
 // All rights reserved.
 //
 // This file is part of CGAL (www.cgal.org); you may redistribute it under
@@ -82,14 +82,14 @@ public:
 
   // Base_traits_2 is Arr_curve_data_traits that already completes
   // incomplete tags
-  typedef typename Base_traits_2::Left_side_category
-                                                      Left_side_category;
-  typedef typename Base_traits_2::Bottom_side_category
-                                                      Bottom_side_category;
-  typedef typename Base_traits_2::Top_side_category
-                                                      Top_side_category;
-  typedef typename Base_traits_2::Right_side_category
-                                                      Right_side_category;
+  typedef typename Base_traits_2::Arr_left_side_category
+                                                      Arr_left_side_category;
+  typedef typename Base_traits_2::Arr_bottom_side_category
+                                                      Arr_bottom_side_category;
+  typedef typename Base_traits_2::Arr_top_side_category
+                                                      Arr_top_side_category;
+  typedef typename Base_traits_2::Arr_right_side_category
+                                                      Arr_right_side_category;
 };
 
 } //namespace CGAL

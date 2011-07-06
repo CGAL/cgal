@@ -1,7 +1,0 @@
-compare_y_near_boundary 17 19 MIN_END SMALLER
-compare_y_near_boundary 17 15 MIN_END SMALLER
-compare_y_near_boundary 19 15 MIN_END LARGER
-#
-compare_y_near_boundary 16 18 MAX_END LARGER
-compare_y_near_boundary 16 15 MAX_END LARGER
-compare_y_near_boundary 18 15 MAX_END SMALLER

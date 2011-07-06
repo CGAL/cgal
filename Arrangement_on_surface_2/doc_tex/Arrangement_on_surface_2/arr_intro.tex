@@ -87,7 +87,7 @@ on the \dcel\ data structure see~\cite[Chapter~2]{bkos-cgaa-00}.
 \end{ccTexOnly}
 \begin{ccHtmlOnly}
   <p><center>
-  <img src="./fig/arr_segs.gif" border=0 alt="Arrangement of segments">
+  <img src="./fig/arr_segs.gif" border=0 alt="Arrangement of sgements">
   </center>
 \end{ccHtmlOnly}
 \caption{An arrangement of interior-disjoint line segments with some
@@ -105,22 +105,6 @@ consists of two adjacent faces $f_3$ and $f_4$, while the other
 hole is comprised of two edges. $f_1$ also contains two isolated
 vertices $u_1$ and $u_2$ in its interior.\label{arr_fig:seg_dcel}}
 \end{figure}
-
-The $x$-monotone curves of an arrangement are embedded in an
-rectangular two-dimensional area called the parameter
-space.\footnote{The term parameter space stems from a major
-  extension the arrangement package is going through to support
-  arrangements embedded on certain two-dimensional parametric
-  surfaces in three-dimensions (or higher).} The parameter space is
-defined as $X \times Y$, where $X$ and $Y$ are open, half-open, or
-closed intervals with endpoints in the compactified real line
-$\mathbb{R} \cup \{-\infty,+\infty\}$. Let $b_l$, $b_r$, $b_b$, and
-$b_t$ denote the endpoints of $X$ and $Y$, respectively. We
-typically refer to these values as the left, right, bottom, and top
-sides of the boundary of the parameter space. If the parameter space
-is, for example, the entire compactified plane, which is currently
-the only option supported by the package, $b_l = b_b = -\infty$ and
-$b_r = b_t = +\infty$. 
 
 The rest of this chapter is organized as follows: In
 Section~\ref{arr_sec:arr_class} we review in detail the interface

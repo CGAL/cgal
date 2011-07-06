@@ -9,7 +9,11 @@
 #include <list>
 #include <fstream>
 
-typedef CGAL::Exact_predicates_exact_constructions_kernel  Kernel;
+// instead of
+//typedef CGAL::Exact_predicates_exact_constructions_kernel  Kernel;
+// workaround for VC++
+struct Kernel : public CGAL::Exact_predicates_exact_constructions_kernel  {};
+
 typedef Kernel::FT                                         Number_type;
 typedef CGAL::Arr_segment_traits_2<Kernel>                 Traits_2;
 typedef Traits_2::Point_2                                  Point_2;

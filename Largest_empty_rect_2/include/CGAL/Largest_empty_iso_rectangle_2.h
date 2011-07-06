@@ -548,21 +548,21 @@ private:
       --iter;
   }
 
-  void determine_first_two_iters(typename Point_data_set_of_y::iterator& iter1,
-				 typename Point_data_set_of_y::iterator& iter2,
-				 typename Point_data_set_of_y::iterator& iter3,
-				 bool& first_iter_is_right,
-				 bool& second_iter_is_right,
-				 bool& third_iter_is_right)
+  void determine_first_two_iters(typename Point_data_set_of_y::iterator &iter1,
+				 typename Point_data_set_of_y::iterator &iter2,
+				 typename Point_data_set_of_y::iterator &iter3,
+				 bool &first_iter_is_right,
+				 bool &second_iter_is_right,
+				 bool &third_iter_is_right)
   {
-    if (first_iter_is_right) {
-      if (second_iter_is_right) {
+    if(first_iter_is_right) {
+      if(second_iter_is_right) {
         iter1 = iter2;
         iter2 = iter3;
         first_iter_is_right = second_iter_is_right;
         second_iter_is_right = third_iter_is_right;
       } else {
-        if (third_iter_is_right) {
+        if(third_iter_is_right) {
           iter1 = iter2;
           iter2 = iter3;
           first_iter_is_right = second_iter_is_right;
@@ -573,8 +573,8 @@ private:
         }
       }
     } else {
-      if (second_iter_is_right) {
-        if (third_iter_is_right) {
+      if(second_iter_is_right) {
+        if(third_iter_is_right) {
           iter2 = iter3;
           second_iter_is_right = third_iter_is_right;  
         } else {
@@ -1180,14 +1180,8 @@ template<class T>
 void 
 Largest_empty_iso_rectangle_2<T>::phase_3()
 {
-  // init for compiler warning
-  bool first_iter_is_right(true);
-  bool second_iter_is_right(true);
-  bool third_iter_is_right(true);
-  bool first_exist(true);
-  bool second_exist(true);
-  bool third_exist(true);
-  
+  bool first_iter_is_right = true, second_iter_is_right = true; // init for compiler warning
+  bool third_iter_is_right, first_exist,second_exist,third_exist;
   typename Point_data_set_of_y::iterator iter, last_iter = y_sorted.end();
   typename Point_data_set_of_y::iterator iter1, iter2, iter3, 
                                 right_iter, left_iter, last = last_iter;

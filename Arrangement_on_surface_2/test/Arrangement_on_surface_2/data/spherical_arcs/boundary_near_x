@@ -1,0 +1,373 @@
+boundary_near_x 8 MIN_END 8 MIN_END EQUAL
+boundary_near_x 9 MIN_END 9 MIN_END EQUAL
+boundary_near_x 32 MIN_END 32 MIN_END EQUAL
+boundary_near_x 33 MIN_END 33 MIN_END EQUAL
+boundary_near_x 64 MIN_END 64 MIN_END EQUAL
+boundary_near_x 65 MIN_END 65 MIN_END EQUAL
+boundary_near_x 92 MIN_END 92 MIN_END EQUAL
+boundary_near_x 93 MIN_END 93 MIN_END EQUAL
+#
+boundary_near_x 0 8 MIN_END LARGER
+boundary_near_x 0 9 MIN_END LARGER
+boundary_near_x 0 32 MIN_END SMALLER
+boundary_near_x 0 33 MIN_END SMALLER
+boundary_near_x 0 64 MIN_END SMALLER
+boundary_near_x 0 65 MIN_END SMALLER
+boundary_near_x 0 92 MIN_END LARGER
+boundary_near_x 0 93 MIN_END LARGER#
+boundary_near_x 1 8 MIN_END LARGER
+boundary_near_x 1 9 MIN_END LARGER
+boundary_near_x 1 32 MIN_END SMALLER
+boundary_near_x 1 33 MIN_END SMALLER
+boundary_near_x 1 64 MIN_END SMALLER
+boundary_near_x 1 65 MIN_END SMALLER
+boundary_near_x 1 92 MIN_END SMALLER
+boundary_near_x 1 93 MIN_END SMALLER#
+boundary_near_x 2 8 MIN_END LARGER
+boundary_near_x 2 9 MIN_END LARGER
+boundary_near_x 2 32 MIN_END SMALLER
+boundary_near_x 2 33 MIN_END SMALLER
+boundary_near_x 2 64 MIN_END SMALLER
+boundary_near_x 2 65 MIN_END SMALLER
+boundary_near_x 2 92 MIN_END SMALLER
+boundary_near_x 2 93 MIN_END SMALLER
+#
+boundary_near_x 3 8 MIN_END LARGER
+boundary_near_x 3 9 MIN_END LARGER
+boundary_near_x 3 32 MIN_END LARGER
+boundary_near_x 3 33 MIN_END LARGER
+boundary_near_x 3 64 MIN_END LARGER
+boundary_near_x 3 65 MIN_END LARGER
+boundary_near_x 3 92 MIN_END LARGER
+boundary_near_x 3 93 MIN_END LARGER
+#
+boundary_near_x 4 8 MIN_END LARGER
+boundary_near_x 4 9 MIN_END LARGER
+boundary_near_x 4 32 MIN_END LARGER
+boundary_near_x 4 33 MIN_END LARGER
+boundary_near_x 4 64 MIN_END SMALLER
+boundary_near_x 4 65 MIN_END SMALLER
+boundary_near_x 4 92 MIN_END LARGER
+boundary_near_x 4 93 MIN_END LARGER
+#
+boundary_near_x 5 8 MIN_END LARGER
+boundary_near_x 5 9 MIN_END LARGER
+boundary_near_x 5 32 MIN_END LARGER
+boundary_near_x 5 33 MIN_END LARGER
+boundary_near_x 5 64 MIN_END LARGER
+boundary_near_x 5 65 MIN_END LARGER
+boundary_near_x 5 92 MIN_END LARGER
+boundary_near_x 5 93 MIN_END LARGER
+#
+boundary_near_x 6 8 MIN_END LARGER
+boundary_near_x 6 9 MIN_END LARGER
+boundary_near_x 6 32 MIN_END SMALLER
+boundary_near_x 6 33 MIN_END SMALLER
+boundary_near_x 6 64 MIN_END SMALLER
+boundary_near_x 6 65 MIN_END SMALLER
+boundary_near_x 6 92 MIN_END LARGER
+boundary_near_x 6 93 MIN_END LARGER
+#
+boundary_near_x 7 8 MIN_END LARGER
+boundary_near_x 7 9 MIN_END LARGER
+boundary_near_x 7 32 MIN_END LARGER
+boundary_near_x 7 33 MIN_END LARGER
+boundary_near_x 7 64 MIN_END SMALLER
+boundary_near_x 7 65 MIN_END SMALLER
+boundary_near_x 7 92 MIN_END LARGER
+boundary_near_x 7 93 MIN_END LARGER
+#
+boundary_near_x 8 8 MIN_END LARGER
+boundary_near_x 8 9 MIN_END LARGER
+boundary_near_x 8 32 MIN_END EQUAL
+boundary_near_x 8 33 MIN_END EQUAL
+boundary_near_x 8 64 MIN_END SMALLER
+boundary_near_x 8 65 MIN_END SMALLER
+boundary_near_x 8 92 MIN_END LARGER
+boundary_near_x 8 93 MIN_END LARGER
+#
+boundary_near_x 9 8 MIN_END LARGER
+boundary_near_x 9 9 MIN_END LARGER
+boundary_near_x 9 32 MIN_END EQUAL
+boundary_near_x 9 33 MIN_END EQUAL
+boundary_near_x 9 64 MIN_END SMALLER
+boundary_near_x 9 65 MIN_END SMALLER
+boundary_near_x 9 92 MIN_END LARGER
+boundary_near_x 9 93 MIN_END LARGER
+#
+boundary_near_x 10 8 MIN_END LARGER
+boundary_near_x 10 9 MIN_END LARGER
+boundary_near_x 10 32 MIN_END EQUAL
+boundary_near_x 10 33 MIN_END EQUAL
+boundary_near_x 10 64 MIN_END SMALLER
+boundary_near_x 10 65 MIN_END SMALLER
+boundary_near_x 10 92 MIN_END LARGER
+boundary_near_x 10 93 MIN_END LARGER
+#
+boundary_near_x 11 8 MIN_END LARGER
+boundary_near_x 11 9 MIN_END LARGER
+boundary_near_x 11 32 MIN_END EQUAL
+boundary_near_x 11 33 MIN_END EQUAL
+boundary_near_x 11 64 MIN_END SMALLER
+boundary_near_x 11 65 MIN_END SMALLER
+boundary_near_x 11 92 MIN_END LARGER
+boundary_near_x 11 93 MIN_END LARGER
+#
+boundary_near_x 16 8 MIN_END LARGER
+boundary_near_x 16 9 MIN_END LARGER
+boundary_near_x 16 32 MIN_END LARGER
+boundary_near_x 16 33 MIN_END LARGER
+boundary_near_x 16 64 MIN_END EQUAL
+boundary_near_x 16 65 MIN_END EQUAL
+boundary_near_x 16 92 MIN_END LARGER
+boundary_near_x 16 93 MIN_END LARGER
+#
+boundary_near_x 17 8 MIN_END LARGER
+boundary_near_x 17 9 MIN_END LARGER
+boundary_near_x 17 32 MIN_END LARGER
+boundary_near_x 17 33 MIN_END LARGER
+boundary_near_x 17 64 MIN_END EQUAL
+boundary_near_x 17 65 MIN_END EQUAL
+boundary_near_x 17 92 MIN_END LARGER
+boundary_near_x 17 93 MIN_END LARGER
+#
+boundary_near_x 18 8 MIN_END LARGER
+boundary_near_x 18 9 MIN_END LARGER
+boundary_near_x 18 32 MIN_END LARGER
+boundary_near_x 18 33 MIN_END LARGER
+boundary_near_x 18 64 MIN_END EQUAL
+boundary_near_x 18 65 MIN_END EQUAL
+boundary_near_x 18 92 MIN_END LARGER
+boundary_near_x 18 93 MIN_END LARGER
+#
+boundary_near_x 19 8 MIN_END LARGER
+boundary_near_x 19 9 MIN_END LARGER
+boundary_near_x 19 32 MIN_END LARGER
+boundary_near_x 19 33 MIN_END LARGER
+boundary_near_x 19 64 MIN_END EQUAL
+boundary_near_x 19 65 MIN_END EQUAL
+boundary_near_x 19 92 MIN_END LARGER
+boundary_near_x 19 93 MIN_END LARGER#
+boundary_near_x 20 8 MIN_END LARGER
+boundary_near_x 20 9 MIN_END LARGER
+boundary_near_x 20 32 MIN_END SMALLER
+boundary_near_x 20 33 MIN_END SMALLER
+boundary_near_x 20 64 MIN_END SMALLER
+boundary_near_x 20 65 MIN_END SMALLER
+boundary_near_x 20 92 MIN_END EQUAL
+boundary_near_x 20 93 MIN_END EQUAL
+#
+boundary_near_x 21 8 MIN_END LARGER
+boundary_near_x 21 9 MIN_END LARGER
+boundary_near_x 21 32 MIN_END SMALLER
+boundary_near_x 21 33 MIN_END SMALLER
+boundary_near_x 21 64 MIN_END SMALLER
+boundary_near_x 21 65 MIN_END SMALLER
+boundary_near_x 21 92 MIN_END EQUAL
+boundary_near_x 21 93 MIN_END EQUAL
+#
+boundary_near_x 22 8 MIN_END LARGER
+boundary_near_x 22 9 MIN_END LARGER
+boundary_near_x 22 32 MIN_END SMALLER
+boundary_near_x 22 33 MIN_END SMALLER
+boundary_near_x 22 64 MIN_END SMALLER
+boundary_near_x 22 65 MIN_END SMALLER
+boundary_near_x 22 92 MIN_END EQUAL
+boundary_near_x 22 93 MIN_END EQUAL
+#
+boundary_near_x 23 8 MIN_END LARGER
+boundary_near_x 23 9 MIN_END LARGER
+boundary_near_x 23 32 MIN_END SMALLER
+boundary_near_x 23 33 MIN_END SMALLER
+boundary_near_x 23 64 MIN_END SMALLER
+boundary_near_x 23 65 MIN_END SMALLER
+boundary_near_x 23 92 MIN_END EQUAL
+boundary_near_x 23 93 MIN_END EQUAL
+#
+boundary_near_x 12 MAX_END 12 MAX_END EQUAL
+boundary_near_x 13 MAX_END 13 MAX_END EQUAL
+boundary_near_x 44 MAX_END 44 MAX_END EQUAL
+boundary_near_x 45 MAX_END 45 MAX_END EQUAL
+boundary_near_x 76 MAX_END 76 MAX_END EQUAL
+boundary_near_x 77 MAX_END 77 MAX_END EQUAL
+boundary_near_x 80 MAX_END 80 MAX_END EQUAL
+boundary_near_x 81 MAX_END 81 MAX_END EQUAL
+#
+boundary_near_x 0 12 MAX_END SMALLER
+boundary_near_x 0 13 MAX_END SMALLER
+boundary_near_x 0 44 MAX_END SMALLER
+boundary_near_x 0 45 MAX_END SMALLER
+boundary_near_x 0 76 MAX_END SMALLER
+boundary_near_x 0 77 MAX_END SMALLER
+boundary_near_x 0 80 MAX_END LARGER
+boundary_near_x 0 81 MAX_END LARGER
+#
+boundary_near_x 1 12 MAX_END SMALLER
+boundary_near_x 1 13 MAX_END SMALLER
+boundary_near_x 1 44 MAX_END SMALLER
+boundary_near_x 1 45 MAX_END SMALLER
+boundary_near_x 1 76 MAX_END SMALLER
+boundary_near_x 1 77 MAX_END SMALLER
+boundary_near_x 1 80 MAX_END SMALLER
+boundary_near_x 1 81 MAX_END SMALLER
+#
+boundary_near_x 2 12 MAX_END SMALLER
+boundary_near_x 2 13 MAX_END SMALLER
+boundary_near_x 2 44 MAX_END SMALLER
+boundary_near_x 2 45 MAX_END SMALLER
+boundary_near_x 2 76 MAX_END SMALLER
+boundary_near_x 2 77 MAX_END SMALLER
+boundary_near_x 2 80 MAX_END SMALLER
+boundary_near_x 2 81 MAX_END SMALLER
+#
+boundary_near_x 3 12 MAX_END SMALLER
+boundary_near_x 3 13 MAX_END SMALLER
+boundary_near_x 3 44 MAX_END LARGER
+boundary_near_x 3 45 MAX_END LARGER
+boundary_near_x 3 76 MAX_END LARGER
+boundary_near_x 3 77 MAX_END LARGER
+boundary_near_x 3 80 MAX_END LARGER
+boundary_near_x 3 81 MAX_END LARGER
+#
+boundary_near_x 4 12 MAX_END SMALLER
+boundary_near_x 4 13 MAX_END SMALLER
+boundary_near_x 4 44 MAX_END LARGER
+boundary_near_x 4 45 MAX_END LARGER
+boundary_near_x 4 76 MAX_END SMALLER
+boundary_near_x 4 77 MAX_END SMALLER
+boundary_near_x 4 80 MAX_END LARGER
+boundary_near_x 4 81 MAX_END LARGER
+#
+boundary_near_x 5 12 MAX_END SMALLER
+boundary_near_x 5 13 MAX_END SMALLER
+boundary_near_x 5 44 MAX_END LARGER
+boundary_near_x 5 45 MAX_END LARGER
+boundary_near_x 5 76 MAX_END LARGER
+boundary_near_x 5 77 MAX_END LARGER
+boundary_near_x 5 80 MAX_END LARGER
+boundary_near_x 5 81 MAX_END LARGER
+#
+boundary_near_x 6 12 MAX_END SMALLER
+boundary_near_x 6 13 MAX_END SMALLER
+boundary_near_x 6 44 MAX_END SMALLER
+boundary_near_x 6 45 MAX_END SMALLER
+boundary_near_x 6 76 MAX_END SMALLER
+boundary_near_x 6 77 MAX_END SMALLER
+boundary_near_x 6 80 MAX_END LARGER
+boundary_near_x 6 81 MAX_END LARGER
+#
+boundary_near_x 7 12 MAX_END SMALLER
+boundary_near_x 7 13 MAX_END SMALLER
+boundary_near_x 7 44 MAX_END LARGER
+boundary_near_x 7 45 MAX_END LARGER
+boundary_near_x 7 76 MAX_END SMALLER
+boundary_near_x 7 77 MAX_END SMALLER
+boundary_near_x 7 80 MAX_END LARGER
+boundary_near_x 7 81 MAX_END LARGER
+#
+boundary_near_x 8 12 MAX_END SMALLER
+boundary_near_x 8 13 MAX_END SMALLER
+boundary_near_x 8 44 MAX_END EQUAL
+boundary_near_x 8 45 MAX_END EQUAL
+boundary_near_x 8 76 MAX_END SMALLER
+boundary_near_x 8 77 MAX_END SMALLER
+boundary_near_x 8 80 MAX_END LARGER
+boundary_near_x 8 81 MAX_END LARGER
+#
+boundary_near_x 9 12 MAX_END SMALLER
+boundary_near_x 9 13 MAX_END SMALLER
+boundary_near_x 9 44 MAX_END EQUAL
+boundary_near_x 9 45 MAX_END EQUAL
+boundary_near_x 9 76 MAX_END SMALLER
+boundary_near_x 9 77 MAX_END SMALLER
+boundary_near_x 9 80 MAX_END LARGER
+boundary_near_x 9 81 MAX_END LARGER
+#
+boundary_near_x 10 12 MAX_END SMALLER
+boundary_near_x 10 13 MAX_END SMALLER
+boundary_near_x 10 44 MAX_END EQUAL
+boundary_near_x 10 45 MAX_END EQUAL
+boundary_near_x 10 76 MAX_END SMALLER
+boundary_near_x 10 77 MAX_END SMALLER
+boundary_near_x 10 80 MAX_END LARGER
+boundary_near_x 10 81 MAX_END LARGER
+#
+boundary_near_x 11 12 MAX_END SMALLER
+boundary_near_x 11 13 MAX_END SMALLER
+boundary_near_x 11 44 MAX_END EQUAL
+boundary_near_x 11 45 MAX_END EQUAL
+boundary_near_x 11 76 MAX_END SMALLER
+boundary_near_x 11 77 MAX_END SMALLER
+boundary_near_x 11 80 MAX_END LARGER
+boundary_near_x 11 81 MAX_END LARGER#
+boundary_near_x 16 12 MAX_END SMALLER
+boundary_near_x 16 13 MAX_END SMALLER
+boundary_near_x 16 44 MAX_END LARGER
+boundary_near_x 16 45 MAX_END LARGER
+boundary_near_x 16 76 MAX_END EQUAL
+boundary_near_x 16 77 MAX_END EQUAL
+boundary_near_x 16 80 MAX_END LARGER
+boundary_near_x 16 81 MAX_END LARGER
+#
+boundary_near_x 17 12 MAX_END SMALLER
+boundary_near_x 17 13 MAX_END SMALLER
+boundary_near_x 17 44 MAX_END LARGER
+boundary_near_x 17 45 MAX_END LARGER
+boundary_near_x 17 76 MAX_END EQUAL
+boundary_near_x 17 77 MAX_END EQUAL
+boundary_near_x 17 80 MAX_END LARGER
+boundary_near_x 17 81 MAX_END LARGER
+#
+boundary_near_x 18 12 MAX_END SMALLER
+boundary_near_x 18 13 MAX_END SMALLER
+boundary_near_x 18 44 MAX_END LARGER
+boundary_near_x 18 45 MAX_END LARGER
+boundary_near_x 18 76 MAX_END EQUAL
+boundary_near_x 18 77 MAX_END EQUAL
+boundary_near_x 18 80 MAX_END LARGER
+boundary_near_x 18 81 MAX_END LARGER
+#
+boundary_near_x 19 12 MAX_END SMALLER
+boundary_near_x 19 13 MAX_END SMALLER
+boundary_near_x 19 44 MAX_END LARGER
+boundary_near_x 19 45 MAX_END LARGER
+boundary_near_x 19 76 MAX_END EQUAL
+boundary_near_x 19 77 MAX_END EQUAL
+boundary_near_x 19 80 MAX_END LARGER
+boundary_near_x 19 81 MAX_END LARGER
+#
+boundary_near_x 20 12 MAX_END SMALLER
+boundary_near_x 20 13 MAX_END SMALLER
+boundary_near_x 20 44 MAX_END SMALLER
+boundary_near_x 20 45 MAX_END SMALLER
+boundary_near_x 20 76 MAX_END SMALLER
+boundary_near_x 20 77 MAX_END SMALLER
+boundary_near_x 20 80 MAX_END EQUAL
+boundary_near_x 20 81 MAX_END EQUAL
+#
+boundary_near_x 21 12 MAX_END SMALLER
+boundary_near_x 21 13 MAX_END SMALLER
+boundary_near_x 21 44 MAX_END SMALLER
+boundary_near_x 21 45 MAX_END SMALLER
+boundary_near_x 21 76 MAX_END SMALLER
+boundary_near_x 21 77 MAX_END SMALLER
+boundary_near_x 21 80 MAX_END EQUAL
+boundary_near_x 21 81 MAX_END EQUAL
+#
+boundary_near_x 22 12 MAX_END SMALLER
+boundary_near_x 22 13 MAX_END SMALLER
+boundary_near_x 22 44 MAX_END SMALLER
+boundary_near_x 22 45 MAX_END SMALLER
+boundary_near_x 22 76 MAX_END SMALLER
+boundary_near_x 22 77 MAX_END SMALLER
+boundary_near_x 22 80 MAX_END EQUAL
+boundary_near_x 22 81 MAX_END EQUAL
+#
+boundary_near_x 23 12 MAX_END SMALLER
+boundary_near_x 23 13 MAX_END SMALLER
+boundary_near_x 23 44 MAX_END SMALLER
+boundary_near_x 23 45 MAX_END SMALLER
+boundary_near_x 23 76 MAX_END SMALLER
+boundary_near_x 23 77 MAX_END SMALLER
+boundary_near_x 23 80 MAX_END EQUAL
+boundary_near_x 23 81 MAX_END EQUAL

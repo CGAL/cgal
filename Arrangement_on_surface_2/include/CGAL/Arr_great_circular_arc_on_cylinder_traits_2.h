@@ -1,4 +1,4 @@
-// Copyright (c) 2009,2010,2011 Tel-Aviv University (Israel).
+// Copyright (c) 2006 Tel-Aviv University (Israel).
 // All rights reserved.
 //
 // This file is part of CGAL (www.cgal.org); you may redistribute it under
@@ -861,10 +861,10 @@ public:
   Parameter_space_in_y_2 parameter_space_in_y_2_object() const
   { return Parameter_space_in_y_2(); }
 
-  /*! A functor that compares the x-limits of arc ends on the
+  /*! A functor that compares the x-coordinates of arc ends near the
    * boundary of the parameter space.
    */
-  class Compare_x_limit_on_boundary_2 {
+  class Compare_x_near_boundary_2 {
   protected:
     typedef Arr_great_circular_arc_on_cylinder_traits_2<Kernel> Traits;
 
@@ -874,13 +874,13 @@ public:
     /*! Constructor
      * \param traits the traits (in case it has state)
      */
-    Compare_x_limit_on_boundary_2(const Traits * traits) : m_traits(traits) {}
+    Compare_x_near_boundary_2(const Traits * traits) : m_traits(traits) {}
 
     friend class Arr_great_circular_arc_on_cylinder_traits_2<Kernel>;
     
   public:
-    /*! Compare the x-coordinate of a direction with the x-limit of an
-     * arc end on the boundary.
+    /*! Compare the x-coordinate of a direction with the x-coordinate of an
+     * arc end near the boundary.
      * \param p the point direction.
      * \param xcv the arc, the endpoint of which is compared.
      * \param ce the arc-end indicator -
@@ -898,8 +898,6 @@ public:
                                  const X_monotone_curve_2 & xcv,
                                  Arr_curve_end ce) const
     {
-      // TODO implement (simplify)
-
       CGAL_precondition(point.is_no_boundary());
       CGAL_precondition_code
         (const Point_2 & p2 = (ce == ARR_MIN_END) ? xcv.left() : xcv.right(););
@@ -933,7 +931,7 @@ public:
       return (ce == ARR_MIN_END) ? LARGER : SMALLER;
     }
 
-    /*! Compare the x-limits of 2 arc ends on the boundary of the
+    /*! Compare the x-coordinates of 2 arc ends near the boundary of the
      * parameter space.
      * \param xcv1 the first arc.
      * \param ce1 the first arc end indicator -
@@ -957,115 +955,6 @@ public:
                                  const X_monotone_curve_2 & xcv2,
                                  Arr_curve_end ce2) const
     {
-      // TODO implement (simplify)
-
-      CGAL_precondition_code
-        (const Point_2 & p1 = (ce1 == ARR_MIN_END) ? xcv1.left() : xcv1.right(););
-      CGAL_precondition(!p1.is_no_boundary());
-      CGAL_precondition_code
-        (const Point_2 & p2 = (ce2 == ARR_MIN_END) ? xcv2.left() : xcv2.right(););
-      CGAL_precondition(!p2.is_no_boundary());
-
-      if (xcv1.is_vertical() && xcv2.is_vertical()) {
-        CGAL_precondition(!xcv1.is_on_boundary());
-        CGAL_precondition(!xcv2.is_on_boundary());
-
-        /* The following is replaced by the code above
-         * if (xcv1.is_on_boundary() && xcv2.is_on_boundary()) return EQUAL;
-         * if (xcv1.is_on_boundary()) return SMALLER;
-         * if (xcv2.is_on_boundary()) return LARGER;
-         */
-        
-        // Non of the arcs coincide with the discontinuity arc:
-        // Obtain the directions contained in the underlying planes, which are
-        // also on the xy-plane:
-        Direction_3 normal1 = xcv1.plane().orthogonal_direction();
-        Direction_2 p = (xcv1.is_directed_right()) ?
-          Direction_2(-(normal1.dy()), normal1.dx()) :
-          Direction_2(normal1.dy(), -(normal1.dx()));
-        Direction_3 normal2 = xcv2.plane().orthogonal_direction();
-        Direction_2 q = (xcv2.is_directed_right()) ?
-          Direction_2(-(normal2.dy()), normal2.dx()) :
-          Direction_2(normal2.dy(), -(normal2.dx()));
-
-        const Kernel * kernel = m_traits;
-        if (kernel->equal_2_object()(p, q)) return EQUAL;
-        const Direction_2 & nx = Traits::neg_x_2();
-        return (kernel->counterclockwise_in_between_2_object()(nx, p, q)) ?
-          LARGER : SMALLER;
-      }
-      if (xcv1.is_vertical()) {
-        CGAL_precondition(!xcv1.is_on_boundary());
-        /* The following is replaced by the code above
-         * if (xcv1.is_on_boundary()) return SMALLER;
-         */
-        return (ce2 == ARR_MAX_END) ? SMALLER : LARGER;
-      }
-      if (xcv2.is_vertical()) {
-        CGAL_precondition(!xcv2.is_on_boundary());
-        /* The following is replaced by the code above
-         * if (xcv2.is_on_boundary()) return LARGER;
-         */
-        return (ce1 == ARR_MAX_END) ? LARGER : SMALLER;
-      }
-      // Non of the arcs are vertical:
-      if (ce1 == ce2) return EQUAL;
-      if (ce1 == ARR_MIN_END) return SMALLER;
-      return LARGER;
-    }
-  };
-
-  /*! Obtain a Compare_x_limit_on_boundary_2 function object */
-  Compare_x_limit_on_boundary_2 compare_x_limit_on_boundary_2_object() const
-  { return Compare_x_limit_on_boundary_2(this); }
-
-
-  /*! A functor that compares the x-coordinates of arc ends near the
-   * boundary of the parameter space.
-   */
-  class Compare_x_near_boundary_2 {
-  protected:
-    typedef Arr_great_circular_arc_on_cylinder_traits_2<Kernel> Traits;
-
-    /*! The traits (in case it has state) */
-    const Traits * m_traits;
-    
-    /*! Constructor
-     * \param traits the traits (in case it has state)
-     */
-    Compare_x_near_boundary_2(const Traits * traits) : m_traits(traits) {}
-
-    friend class Arr_great_circular_arc_on_cylinder_traits_2<Kernel>;
-    
-  public:
-
-    /*! Compare the x-coordinates of 2 arc ends near the boundary of the
-     * parameter space.
-     * \param xcv1 the first arc.
-     * \param ce1 the first arc end indicator -
-     *            ARR_MIN_END - the minimal end of xcv1 or
-     *            ARR_MAX_END - the maximal end of xcv1.
-     * \param xcv2 the second arc.
-     * \param ce2 the second arc end indicator -
-     *            ARR_MIN_END - the minimal end of xcv2 or
-     *            ARR_MAX_END - the maximal end of xcv2.
-     * \return the second comparison result:
-     *         SMALLER - x(xcv1, ce1) < x(xcv2, ce2);
-     *         EQUAL   - x(xcv1, ce1) = x(xcv2, ce2);
-     *         LARGER  - x(xcv1, ce1) > x(xcv2, ce2).
-     * \pre the ce1 end of the arc xcv1 lies on a boundary.
-     * \pre the ce2 end of the arc xcv2 lies on a boundary.
-     * \pre xcv1 does not coincide with the vertical identification curve.
-     * \pre xcv2 does not coincide with the vertical identification curve.
-     */
-    Comparison_result operator()(const X_monotone_curve_2 & xcv1,
-                                 const X_monotone_curve_2 & xcv2,
-                                 Arr_curve_end ce) const
-    {
-      // TODO implement (simplify)
-
-      Arr_curve_end ce1 = ce2 = ce;
-
       CGAL_precondition_code
         (const Point_2 & p1 = (ce1 == ARR_MIN_END) ? xcv1.left() : xcv1.right(););
       CGAL_precondition(!p1.is_no_boundary());
@@ -1126,143 +1015,7 @@ public:
   Compare_x_near_boundary_2 compare_x_near_boundary_2_object() const
   { return Compare_x_near_boundary_2(this); }
     
-  /*! A functor that compares the y-limits of arc ends on the
-   * boundary of the parameter space.
-   */
-  class Compare_y_limit_on_boundary_2 {
-  protected:
-    typedef Arr_great_circular_arc_on_cylinder_traits_2<Kernel> Traits;
 
-    /*! The traits (in case it has state) */
-    const Traits * m_traits;
-    
-    /*! Constructor
-     * \param traits the traits (in case it has state)
-     */
-    Compare_y_limit_on_boundary_2(const Traits * traits) : m_traits(traits) {}
-
-    friend class Arr_great_circular_arc_on_cylinder_traits_2<Kernel>;
-    
-  public:
-    /*! Compare the y-limits of 2 curves at their ends on the boundary
-     * of the parameter space.
-     * \param xcv1 the first arc.
-     * \param xcv2 the second arc.
-     * \param ce the arc end indicator.
-     * \return the second comparison result.
-     * \pre the ce ends of the arcs xcv1 and xcv2 lie either on the left
-     * boundary or on the right boundary of the parameter space.
-     * There is no horizontal identification curve!
-     */
-    Comparison_result operator()(const X_monotone_curve_2 & xcv1,
-                                 const X_monotone_curve_2 & xcv2,
-                                 Arr_curve_end ce) const
-    {
-      CGAL_precondition(!xcv1.is_degenerate());
-      CGAL_precondition(!xcv2.is_degenerate());
-
-      const Point_2 & l1 = xcv1.left();
-      const Point_2 & r1 = xcv1.right();
-      const Point_2 & l2 = xcv2.left();
-      const Point_2 & r2 = xcv2.right();
-
-      // If xcv1 is vertical, xcv1 coincides with the discontinuity arc:
-      if (xcv1.is_vertical()) {
-        CGAL_precondition(!l1.is_no_boundary());
-        CGAL_precondition(!r1.is_no_boundary());
-      }
-
-      // If xcv2 is vertical, xcv2 coincides with the discontinuity arc:
-      if (xcv2.is_vertical()) {
-        CGAL_precondition(!l2.is_no_boundary());
-        CGAL_precondition(!r2.is_no_boundary());
-      }
-
-      if (ce == ARR_MIN_END) {
-        // Handle the south pole. It has the smallest y coords:
-        if (l1.is_min_boundary())
-          return (l2.is_min_boundary()) ? EQUAL : SMALLER;
-        if (l2.is_min_boundary()) return LARGER;
-
-        // None of xcv1 and xcv2 endpoints coincide with a pole:
-        Comparison_result cr = m_traits->compare_y(l1, l2);
-        if (cr != EQUAL) return cr;
-
-        // If Both arcs are vertical, they overlap:
-        if (xcv1.is_vertical() && xcv2.is_vertical()) return EQUAL;
-        if (xcv1.is_vertical()) return LARGER;
-        if (xcv2.is_vertical()) return SMALLER;
-
-        // Non of the arcs is verticel. Thus, non of the endpoints coincide
-        // with a pole.
-        // Compare the y-coord. at the x-coord of the most left right-endpoint.
-        CGAL_assertion(r1.is_no_boundary());
-        CGAL_assertion(r2.is_no_boundary());
-        
-        if (m_traits->compare_xy(r1, r2) == LARGER) {
-          // use r2 and xcv1:
-          Oriented_side os = m_traits->oriented_side(xcv1.plane(), r2);
-          return (os == ON_ORIENTED_BOUNDARY) ? EQUAL :
-            (xcv1.is_directed_right()) ?
-            ((os == ON_NEGATIVE_SIDE) ? LARGER : SMALLER) : 
-            ((os == ON_NEGATIVE_SIDE) ? SMALLER : LARGER);
-        }
-        // use r1 and xcv2: 
-        Oriented_side os = m_traits->oriented_side(xcv2.plane(), r1);
-        return (os == ON_ORIENTED_BOUNDARY) ? EQUAL :
-          (xcv2.is_directed_right()) ?
-          ((os == ON_NEGATIVE_SIDE) ? SMALLER : LARGER) : 
-          ((os == ON_NEGATIVE_SIDE) ? LARGER : SMALLER);
-      }
-
-      // ce == ARR_MAX_END
-      
-      // Handle the north pole. It has the largest y coords:
-      if (r1.is_max_boundary()) return (r2.is_max_boundary()) ? EQUAL : LARGER;
-      if (r2.is_max_boundary()) return SMALLER;
-
-      // None of xcv1 and xcv2 endpoints coincide with a pole:
-      Direction_2 r1_xy = Traits::project_xy(r1);
-      Comparison_result cr = m_traits->compare_y(r1, r2);
-      if (cr != EQUAL) return cr;
-
-      // If Both arcs are vertical, they overlap:
-      if (xcv1.is_vertical() && xcv2.is_vertical()) return EQUAL;
-      if (xcv1.is_vertical()) return LARGER;
-      if (xcv2.is_vertical()) return SMALLER;
-        
-      // Compare to the left:
-      Direction_2 p_r1 = Traits::project_xy(r1);
-      cr = m_traits->compare_y(r1, r2);
-      if (cr != EQUAL) return cr;
-
-      // Non of the arcs is verticel. Thus, non of the endpoints coincide with
-      // a pole.
-      // Compare the y-coord. at the x-coord of the most right left-endpoint.
-      CGAL_assertion(l1.is_no_boundary());
-      CGAL_assertion(l2.is_no_boundary());
-
-      if (m_traits->compare_xy(l1, l2) == SMALLER) {
-        // use l2 and xcv1:
-        Oriented_side os = m_traits->oriented_side(xcv1.plane(), l2);
-        return (os == ON_ORIENTED_BOUNDARY) ? EQUAL :
-          (xcv1.is_directed_right()) ?
-          ((os == ON_NEGATIVE_SIDE) ? LARGER : SMALLER) : 
-          ((os == ON_NEGATIVE_SIDE) ? SMALLER : LARGER);
-      }
-      // use l1 and xcv2: 
-      Oriented_side os = m_traits->oriented_side(xcv2.plane(), l1);
-      return (os == ON_ORIENTED_BOUNDARY) ? EQUAL :
-        (xcv2.is_directed_right()) ?
-        ((os == ON_NEGATIVE_SIDE) ? SMALLER : LARGER) : 
-        ((os == ON_NEGATIVE_SIDE) ? LARGER : SMALLER);
-    }
-  };
-
-  /*! Obtain a Compare_y_limit_on_boundary_2 function object */
-  Compare_y_limit_on_boundary_2 compare_y_limit_on_boundary_2_object() const
-  { return Compare_y_limit_on_boundary_2(this); }
-  
   /*! A functor that compares the y-coordinates of arc ends near the
    * boundary of the parameter space.
    */
@@ -1399,7 +1152,7 @@ public:
   /*! Obtain a Compare_y_near_boundary_2 function object */
   Compare_y_near_boundary_2 compare_y_near_boundary_2_object() const
   { return Compare_y_near_boundary_2(this); }
-
+  
   /*! A functor that indicates whether a geometric object lies on the
    * horizontal identification arc. Since there is no such thing in the
    * parameter space, the operators immediately return false. 

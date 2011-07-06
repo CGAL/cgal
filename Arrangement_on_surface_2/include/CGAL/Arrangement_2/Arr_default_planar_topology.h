@@ -1,4 +1,4 @@
-// Copyright (c) 2006,2007,2009,2010,2011 Tel-Aviv University (Israel).
+// Copyright (c) 2006, 2009 Tel-Aviv University (Israel).
 // All rights reserved.
 //
 // This file is part of CGAL (www.cgal.org); you may redistribute it under
@@ -64,10 +64,10 @@ struct Default_planar_topology :
   public internal::Default_planar_topology_impl < 
     GeomTraits, Dcel, 
     typename Arr_are_all_sides_oblivious_tag< 
-      typename internal::Arr_complete_left_side_category< GeomTraits >::Category,
-      typename internal::Arr_complete_bottom_side_category< GeomTraits> ::Category,
-      typename internal::Arr_complete_top_side_category< GeomTraits >::Category,
-      typename internal::Arr_complete_right_side_category< GeomTraits >::Category >::result 
+      typename internal::Arr_complete_left_side_tag< GeomTraits >::Tag,
+      typename internal::Arr_complete_bottom_side_tag< GeomTraits> ::Tag,
+      typename internal::Arr_complete_top_side_tag< GeomTraits >::Tag,
+      typename internal::Arr_complete_right_side_tag< GeomTraits >::Tag >::result 
 >
 {};
 

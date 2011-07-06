@@ -452,7 +452,6 @@ Arrangement_on_surface_2/doc_tex/Arrangement_on_surface_2/fig/unb_dcel.gif -text
 Arrangement_on_surface_2/doc_tex/Arrangement_on_surface_2/fig/unb_dcel.pdf -text svneol=unset#application/pdf
 Arrangement_on_surface_2/doc_tex/Arrangement_on_surface_2_ref/Arr_algebraic_segment_traits.tex -text
 Arrangement_on_surface_2/doc_tex/Arrangement_on_surface_2_ref/Arr_halfedge_direction.tex -text
-Arrangement_on_surface_2/doc_tex/Arrangement_on_surface_2_ref/Arr_rational_function_traits.tex -text
 Arrangement_on_surface_2/doc_tex/Arrangement_on_surface_2_ref/arr_do_intersect.tex -text
 Arrangement_on_surface_2/doc_tex/Arrangement_on_surface_2_ref/arr_zone.tex -text
 Arrangement_on_surface_2/doc_tex/Sweep_line_2/fig/Curve_intersections_2.png -text
@@ -653,11 +652,10 @@ Arrangement_on_surface_2/test/Arrangement_on_surface_2/data/conics/vertex.pt -te
 Arrangement_on_surface_2/test/Arrangement_on_surface_2/data/conics/vertex.xcv -text
 Arrangement_on_surface_2/test/Arrangement_on_surface_2/data/conics/xcurves -text
 Arrangement_on_surface_2/test/Arrangement_on_surface_2/data/empty.zero -text
-Arrangement_on_surface_2/test/Arrangement_on_surface_2/data/linear/lines/compare_x_at_limit -text
-Arrangement_on_surface_2/test/Arrangement_on_surface_2/data/linear/lines/compare_x_near_limit -text
+Arrangement_on_surface_2/test/Arrangement_on_surface_2/data/linear/lines/boundary_near_x -text
+Arrangement_on_surface_2/test/Arrangement_on_surface_2/data/linear/lines/boundary_near_y -text
 Arrangement_on_surface_2/test/Arrangement_on_surface_2/data/linear/lines/compare_y_at_x -text
 Arrangement_on_surface_2/test/Arrangement_on_surface_2/data/linear/lines/compare_y_at_x_left -text
-Arrangement_on_surface_2/test/Arrangement_on_surface_2/data/linear/lines/compare_y_near_boundary -text
 Arrangement_on_surface_2/test/Arrangement_on_surface_2/data/linear/lines/curves -text
 Arrangement_on_surface_2/test/Arrangement_on_surface_2/data/linear/lines/intersect -text
 Arrangement_on_surface_2/test/Arrangement_on_surface_2/data/linear/lines/is_vertical -text
@@ -735,11 +733,8 @@ Arrangement_on_surface_2/test/Arrangement_on_surface_2/data/polylines/split.xcv 
 Arrangement_on_surface_2/test/Arrangement_on_surface_2/data/polylines/vertex -text
 Arrangement_on_surface_2/test/Arrangement_on_surface_2/data/polylines/vertex.pt -text
 Arrangement_on_surface_2/test/Arrangement_on_surface_2/data/polylines/vertex.xcv -text
-Arrangement_on_surface_2/test/Arrangement_on_surface_2/data/rational_arcs/compare_x_at_limit -text
-Arrangement_on_surface_2/test/Arrangement_on_surface_2/data/rational_arcs/compare_x_near_limit -text
 Arrangement_on_surface_2/test/Arrangement_on_surface_2/data/rational_arcs/compare_y_at_x -text
 Arrangement_on_surface_2/test/Arrangement_on_surface_2/data/rational_arcs/compare_y_at_x_left -text
-Arrangement_on_surface_2/test/Arrangement_on_surface_2/data/rational_arcs/compare_y_near_boundary -text
 Arrangement_on_surface_2/test/Arrangement_on_surface_2/data/rational_arcs/curves -text
 Arrangement_on_surface_2/test/Arrangement_on_surface_2/data/rational_arcs/intersect -text
 Arrangement_on_surface_2/test/Arrangement_on_surface_2/data/rational_arcs/is_vertical -text
@@ -771,15 +766,14 @@ Arrangement_on_surface_2/test/Arrangement_on_surface_2/data/segments/split.xcv -
 Arrangement_on_surface_2/test/Arrangement_on_surface_2/data/segments/vertex -text
 Arrangement_on_surface_2/test/Arrangement_on_surface_2/data/segments/vertex.pt -text
 Arrangement_on_surface_2/test/Arrangement_on_surface_2/data/segments/xcurves -text
+Arrangement_on_surface_2/test/Arrangement_on_surface_2/data/spherical_arcs/boundary_near_x -text
+Arrangement_on_surface_2/test/Arrangement_on_surface_2/data/spherical_arcs/boundary_near_y -text
 Arrangement_on_surface_2/test/Arrangement_on_surface_2/data/spherical_arcs/compare -text
 Arrangement_on_surface_2/test/Arrangement_on_surface_2/data/spherical_arcs/compare.pt -text
 Arrangement_on_surface_2/test/Arrangement_on_surface_2/data/spherical_arcs/compare.xcv -text
-Arrangement_on_surface_2/test/Arrangement_on_surface_2/data/spherical_arcs/compare_x_near_boundary -text
-Arrangement_on_surface_2/test/Arrangement_on_surface_2/data/spherical_arcs/compare_x_on_boundary -text
 Arrangement_on_surface_2/test/Arrangement_on_surface_2/data/spherical_arcs/compare_y_at_x -text
 Arrangement_on_surface_2/test/Arrangement_on_surface_2/data/spherical_arcs/compare_y_at_x.pt -text
 Arrangement_on_surface_2/test/Arrangement_on_surface_2/data/spherical_arcs/compare_y_at_x.xcv -text
-Arrangement_on_surface_2/test/Arrangement_on_surface_2/data/spherical_arcs/compare_y_near_boundary -text
 Arrangement_on_surface_2/test/Arrangement_on_surface_2/data/spherical_arcs/curves -text
 Arrangement_on_surface_2/test/Arrangement_on_surface_2/data/spherical_arcs/intersect -text
 Arrangement_on_surface_2/test/Arrangement_on_surface_2/data/spherical_arcs/is_vertical -text
@@ -824,7 +818,6 @@ Arrangement_on_surface_2/test/Arrangement_on_surface_2/test_do_equal.cpp -text
 Arrangement_on_surface_2/test/Arrangement_on_surface_2/test_do_intersect.cpp -text
 Arrangement_on_surface_2/test/Arrangement_on_surface_2/test_observer.cmd -text
 Arrangement_on_surface_2/test/Arrangement_on_surface_2/test_observer.cpp -text
-Arrangement_on_surface_2/test/Arrangement_on_surface_2/test_rational_function_traits_2.cpp -text
 Arrangement_on_surface_2/test/Arrangement_on_surface_2/test_traits_adaptor.cpp -text
 Arrangement_on_surface_2/test/Arrangement_on_surface_2/test_traits_adaptor.h -text
 Arrangement_on_surface_2/test/Arrangement_on_surface_2/test_zone.cpp -text
@@ -1241,12 +1234,6 @@ Circular_kernel_2/benchmark/readme.doc -text svneol=unset#application/msword
 Circular_kernel_2/benchmark/readme.pdf -text svneol=unset#application/pdf
 Circular_kernel_2/benchmark/readme.sxw -text
 Circular_kernel_2/changes -text
-Circular_kernel_2/demo/Circular_kernel_2/Qt3/README -text
-Circular_kernel_2/demo/Circular_kernel_2/Qt3/help/get_arc.jpeg -text svneol=unset#image/jpeg
-Circular_kernel_2/demo/Circular_kernel_2/Qt3/help/index.html svneol=native#text/html
-Circular_kernel_2/demo/Circular_kernel_2/Qt3/help/planar_map_icon.jpeg -text svneol=unset#image/jpeg
-Circular_kernel_2/demo/Circular_kernel_2/Qt3/help/sweeper.jpeg -text svneol=unset#image/jpeg
-Circular_kernel_2/demo/Circular_kernel_2/Qt3/help/trash.jpeg -text svneol=unset#image/jpeg
 Circular_kernel_2/doc_tex/Circular_kernel_2/fig/Boolean_operation.png -text
 Circular_kernel_2/doc_tex/Circular_kernel_2/fig/Boolean_operation_detail.png -text
 Circular_kernel_2/doc_tex/Circular_kernel_2_ref/GeomFunctorsCompute.tex -text
@@ -1425,9 +1412,16 @@ Convex_decomposition_3/test/Convex_decomposition_3/star.nef3 -text
 Convex_hull_2/demo/Convex_hull_2/help/index.html svneol=native#text/html
 Convex_hull_2/doc_tex/Convex_hull_2/convex_hull.png -text
 Convex_hull_2/doc_tex/Convex_hull_2/saarhull.png -text svneol=unset#image/png
+Convex_hull_3/benchmark/Convex_hull_3/compare_different_approach.cpp -text
+Convex_hull_3/benchmark/Convex_hull_3/is_on_positive_side.cpp -text
 Convex_hull_3/demo/Convex_hull_3/CMakeLists.txt -text
 Convex_hull_3/doc_tex/Convex_hull_3/bunny.png -text
 Convex_hull_3/doc_tex/Convex_hull_3/bunny.wrl.gz -text
+Convex_hull_3/doc_tex/Convex_hull_3/chull_bimba.png -text
+Convex_hull_3/doc_tex/Convex_hull_3_ref/convex_hull_3_to_polyhedron_3.tex -text
+Convex_hull_3/examples/Convex_hull_3/incremental_hull_class_3.cpp -text
+Convex_hull_3/include/CGAL/convex_hull_3_to_polyhedron_3.h -text
+Convex_hull_3/test/Convex_hull_3/quick_hull_default_traits.cpp -text
 Developers_manual/doc_tex/Developers_manual/fig/Cartesian_ipoint.gif -text svneol=unset#image/gif
 Developers_manual/doc_tex/Developers_manual/fig/Cartesian_orientation.png -text svneol=unset#image/png
 Developers_manual/doc_tex/Developers_manual/fig/Object.gif -text svneol=unset#image/gif
@@ -2016,6 +2010,7 @@ Maintenance/infrastructure/matisse.geometryfactory.com/reference-platforms/setup
 Maintenance/infrastructure/matisse.geometryfactory.com/reference-platforms/x86-64_Linux-2.6_IntelCompiler-11.0-with-g++-4.5.1_F14/setup -text
 Maintenance/infrastructure/matisse.geometryfactory.com/reference-platforms/x86-64_Linux-2.6_IntelCompiler-11.1-with-g++-4.5.1_F14-strict-ansi/setup -text
 Maintenance/infrastructure/matisse.geometryfactory.com/reference-platforms/x86-64_Linux-2.6_IntelCompiler-11.1-with-g++-4.5.1_F14/setup -text
+Maintenance/infrastructure/matisse.geometryfactory.com/reference-platforms/x86-64_Linux-2.6_IntelCompiler-12.0-with-g++-4.5.1_F14/setup -text
 Maintenance/infrastructure/matisse.geometryfactory.com/reference-platforms/x86-64_Linux-2.6_g++-4.5-branch_CXX0X-F14/setup -text
 Maintenance/infrastructure/matisse.geometryfactory.com/reference-platforms/x86-64_Linux-2.6_g++-4.5-branch_Release-F14/setup -text
 Maintenance/infrastructure/matisse.geometryfactory.com/reference-platforms/x86-64_Linux-2.6_g++-4.5.1_F14-MATCHING-BUG-6/setup -text
@@ -2042,6 +2037,8 @@ Maintenance/public_release/announcement/CGAL-3.7 -text
 Maintenance/public_release/announcement/CGAL-3.7-beta1 -text
 Maintenance/public_release/announcement/CGAL-3.8 -text
 Maintenance/public_release/announcement/CGAL-3.8-beta -text
+Maintenance/public_release/announcement/CGAL-3.8.1 -text
+Maintenance/public_release/announcement/CGAL-3.9 -text
 Maintenance/public_release/scripts/precompiled_demos_zips -text
 Maintenance/public_release/scripts/prepare_release -text
 Maintenance/release_building/BUGFIX_NUMBER -text
@@ -3443,13 +3440,22 @@ Snap_rounding_2/doc_tex/Snap_rounding_2/sr1.pdf -text svneol=unset#application/p
 Snap_rounding_2/test/Snap_rounding_2/cgal_test eol=lf
 Snap_rounding_2/test/Snap_rounding_2/cgal_test_base -text
 Snap_rounding_2/test/Snap_rounding_2/cgal_test_with_cmake eol=lf
+Spatial_searching/TODO.txt -text
 Spatial_searching/benchmark/Spatial_searching/Compare_ANN_STANN_CGAL.cpp -text
 Spatial_searching/demo/Spatial_searching/Qt3/help/index.html svneol=native#text/html
 Spatial_searching/doc_tex/Spatial_searching/Fig1.gif -text svneol=unset#image/gif
 Spatial_searching/doc_tex/Spatial_searching/windowQuery.png -text
+Spatial_searching/doc_tex/Spatial_searching_ref/Distance_adapter.tex -text
+Spatial_searching/doc_tex/Spatial_searching_ref/RangeSearchTraits.tex -text
+Spatial_searching/doc_tex/Spatial_searching_ref/Search_traits_adapter.tex -text
+Spatial_searching/examples/Spatial_searching/searching_with_point_with_info.cpp -text
+Spatial_searching/examples/Spatial_searching/searching_with_point_with_info_inplace.cpp -text
+Spatial_searching/examples/Spatial_searching/searching_with_point_with_info_pmap.cpp -text
+Spatial_searching/include/CGAL/Search_traits_adapter.h -text
 Spatial_searching/include/CGAL/internal/K_neighbor_search.h -text
 Spatial_searching/include/CGAL/internal/bounded_priority_queue.h -text
 Spatial_searching/test/Spatial_searching/Compare_methods.cpp -text
+Spatial_searching/test/Spatial_searching/Point_with_info.h -text
 Spatial_sorting/doc_tex/Spatial_sorting/fig/Hilbert-median.gif -text
 Spatial_sorting/doc_tex/Spatial_sorting/fig/Hilbert-median.pdf -text
 Spatial_sorting/doc_tex/Spatial_sorting/fig/Hilbert-middle.gif -text

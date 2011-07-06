@@ -24,11 +24,9 @@
 #define LEDA_INT_NT                     13
 #define CGAL_GMPZ_NT                    14
 #define CORE_INT_NT                     15
-#define CORE_RAT_NT                     16
 
 #define CARTESIAN_KERNEL                0
 #define SIMPLE_CARTESIAN_KERNEL         1
-#define UNIVARIATE_ALGEBRAIC_KERNEL     2
 
 #define SEGMENT_TRAITS                  0
 #define NON_CACHING_SEGMENT_TRAITS      1

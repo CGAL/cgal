@@ -112,7 +112,7 @@ SegmentsGraphicsItem<P>::boundingRect() const
 template <typename P>
 void 
 SegmentsGraphicsItem<P>::paint(QPainter *painter, 
-                                    const QStyleOptionGraphicsItem */*option*/,
+                                    const QStyleOptionGraphicsItem * /*option*/,
                                     QWidget * /*widget*/)
 {
 

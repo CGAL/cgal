@@ -1,4 +1,4 @@
-// Copyright (c) 2009,2010,2011 Tel-Aviv University (Israel).
+// Copyright (c) 2006 Tel-Aviv University (Israel).
 // All rights reserved.
 //
 // This file is part of CGAL (www.cgal.org); you may redistribute it under
@@ -312,7 +312,7 @@ public:
 #endif  // CGAL_ARR_GEODESIC_ARC_ON_SPHERE_PARTITION_TRAITS_2_H
 
 
-// Copyright (c) 2009,2010,2011 Tel-Aviv University (Israel).
+// Copyright (c) 2006 Tel-Aviv University (Israel).
 // All rights reserved.
 //
 // This file is part of CGAL (www.cgal.org); you may redistribute it under

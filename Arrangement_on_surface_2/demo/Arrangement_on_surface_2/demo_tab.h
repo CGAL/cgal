@@ -1335,13 +1335,13 @@ public:
       x_real(first_x, xfirst2);
       y_real(first_y, yfirst2);
 
-      // double    xmin, xmax, ymin, ymax;
-      // if (x < xfirst2) { xmin = x; xmax = xfirst2; }
-      // else { xmin = xfirst2; xmax = x; }
-      // if (y < yfirst2) { ymin = y; ymax = yfirst2; }
-      // else { ymin = yfirst2; ymax = y; }
-      double distx = xfirst2 - x;
-      double disty = yfirst2 - y;
+      double    xmin, xmax, ymin, ymax, distx, disty;
+      if (x < xfirst2) { xmin = x; xmax = xfirst2; }
+      else { xmin = xfirst2; xmax = x; }
+      if (y < yfirst2) { ymin = y; ymax = yfirst2; }
+      else { ymin = yfirst2; ymax = y; }
+      distx = xfirst2 - x;
+      disty = yfirst2 - y;
       move_center(distx, disty);
       on_first = FALSE;
     }

@@ -1,4 +1,4 @@
-// Copyright (c) 2006,2007,2009,2010,2011 Tel-Aviv University (Israel).
+// Copyright (c) 2005  Tel-Aviv University (Israel).
 // All rights reserved.
 //
 // This file is part of CGAL (www.cgal.org); you may redistribute it under
@@ -62,14 +62,14 @@ public:
   typedef typename Base_traits_2::Has_do_intersect_category
                                                     Has_do_intersect_category;
 
-  typedef typename internal::Arr_complete_left_side_category< Base_traits_2 >::Category 
-                                                    Left_side_category;
-  typedef typename internal::Arr_complete_bottom_side_category< Base_traits_2 >::Category
-                                                    Bottom_side_category;
-  typedef typename internal::Arr_complete_top_side_category< Base_traits_2 >::Category
-                                                   Top_side_category;
-  typedef typename internal::Arr_complete_right_side_category< Base_traits_2 >::Category
-                                                    Right_side_category;
+  typedef typename internal::Arr_complete_left_side_tag< Base_traits_2 >::Tag 
+                                                    Arr_left_side_category;
+  typedef typename internal::Arr_complete_bottom_side_tag< Base_traits_2 >::Tag
+                                                    Arr_bottom_side_category;
+  typedef typename internal::Arr_complete_top_side_tag< Base_traits_2 >::Tag
+                                                   Arr_top_side_category;
+  typedef typename internal::Arr_complete_right_side_tag< Base_traits_2 >::Tag
+                                                    Arr_right_side_category;
   
   /* Overlay is implemented as sweep-line visitor. The sweep-line algorithm
    * never uses Compare_y_at_x_left_2, and it never performs merging of curves.
@@ -577,86 +577,6 @@ public:
     return Parameter_space_in_x_2 (m_base_traits);
   }
 
-
-  /*! A function object that determines whether an x-monotone curve or a
-   * point coincide with the vertical identification curve.
-   */
-  class Is_on_x_identification_2 {
-  protected:
-    //! The base traits.
-    const Base_traits_2      *m_base;
-
-    /*! Constructor.
-     * The constructor is declared private to allow only the functor
-     * obtaining function, which is a member of the nesting class,
-     * constructing it.
-     */
-    Is_on_x_identification_2 (const Base_traits_2* tr) : m_base (tr) {}
-
-    //! Allow its functor obtaining function calling the private constructor.
-    friend class Arr_batched_point_location_traits_2<Arrangement_2>;
-    
-  public:
-    bool operator() (const Point_2 & p) const
-    {
-      return m_base->is_on_x_identification_2_object() (p.base());
-    }
-
-    bool operator() (const X_monotone_curve_2 & xcv) const
-    {
-      return m_base->is_on_x_identification_2_object() (xcv.base());
-    }
-  };
-
-  /*! Obtain a Is_on_x_identification_2 function object */
-  Is_on_x_identification_2 is_on_x_identification_2_object () const
-  {
-    return Is_on_x_identification_2 (m_base_traits);
-  }
-
-  /*! A functor that compares the y-coordinate of two given points
-   * that lie on the vertical identification curve.
-   */
-  class Compare_y_on_boundary_2 {
-  protected:
-    //! The base traits.
-    const Base_traits_2 * m_base;
-
-    /*! Constructor.
-     * \param tr The base traits class. It must be passed, to handle
-     *           non stateless traits (e.g., it stores data).
-     * The constructor is declared private to allow only the functor
-     * obtaining function, which is a member of the nesting class,
-     * constructing it.
-     */
-    Compare_y_on_boundary_2(const Base_traits_2 * tr) : m_base(tr) {}
-
-    //! Allow its functor obtaining function calling the private constructor.
-    friend class Arr_batched_point_location_traits_2<Arrangement_2>;
-
-  public:
-    Comparison_result operator()(const Point_2 & p1, const Point_2 & p2) const
-    {
-      return m_base->compare_x_on_boundary_2_object()(p1.base(), p2.base());
-    }
-    Comparison_result operator() (const Point_2 & pt,
-                                  const X_monotone_curve_2& xcv, Arr_curve_end ce) const
-    {
-      return m_base->compare_x_on_boundary_2_object()(pt.base(), xcv.base(), ce);
-    }
-    Comparison_result operator() (const X_monotone_curve_2& xcv1, Arr_curve_end ce1,
-                                  const X_monotone_curve_2& xcv2, Arr_curve_end ce2) const
-    {
-      return m_base->compare_x_on_boundary_2_object()(xcv1.base(), ce1, xcv2.base(), ce2);
-    }
-  };
-
-  /*! Obtain a Compare_y_on_boundary_2 functor object. */
-  Compare_y_on_boundary_2 compare_y_on_boundary_2_object () const
-  {
-    return Compare_y_on_boundary_2(m_base_traits);
-  }
-
   /*! A function object that compares the y-coordinates of curve ends near the
    * boundary of the parameter space
    */
@@ -694,6 +614,41 @@ public:
   {
     return Compare_y_near_boundary_2(m_base_traits);
   }
+
+  /*! A functor that compares the y-coordinate of two given points
+   * that lie on the vertical identification curve.
+   */
+  class Compare_y_on_boundary_2 {
+  protected:
+    //! The base traits.
+    const Base_traits_2 * m_base;
+
+    /*! Constructor.
+     * \param tr The base traits class. It must be passed, to handle
+     *           non stateless traits (e.g., it stores data).
+     * The constructor is declared private to allow only the functor
+     * obtaining function, which is a member of the nesting class,
+     * constructing it.
+     */
+    Compare_y_on_boundary_2(const Base_traits_2 * tr) : m_base(tr) {}
+
+    //! Allow its functor obtaining function calling the private constructor.
+    friend class Arr_batched_point_location_traits_2<Arrangement_2>;
+
+  public:
+    Comparison_result operator()(const Point_2 & p1, const Point_2 & p2) const
+    {
+      return m_base->compare_x_on_boundary_2_object()(p1.base(), p2.base());
+    }
+  };
+
+  /*! Obtain a Compare_y_on_boundary_2 functor object. */
+  Compare_y_on_boundary_2 compare_y_on_boundary_2_object () const
+  {
+    return Compare_y_on_boundary_2(m_base_traits);
+  }
+
+  // TODO Is_on_x_identification_2
 
   // bottom-top
 
@@ -740,46 +695,10 @@ public:
     return Parameter_space_in_y_2 (m_base_traits);
   }
 
-  /*! A function object that determines whether an x-monotone curve or a
-   * point coincide with the horizontal identification curve.
-   */
-  class Is_on_y_identification_2 {
-  protected:
-    //! The base traits.
-    const Base_traits_2      *m_base;
-
-    /*! Constructor.
-     * The constructor is declared private to allow only the functor
-     * obtaining function, which is a member of the nesting class,
-     * constructing it.
-     */
-    Is_on_y_identification_2 (const Base_traits_2* tr) : m_base (tr) {}
-
-    //! Allow its functor obtaining function calling the private constructor.
-    friend class Arr_batched_point_location_traits_2<Arrangement_2>;
-    
-  public:
-    bool operator() (const Point_2 & p) const
-    {
-      return m_base->is_on_y_identification_2_object() (p.base());
-    }
-
-    bool operator() (const X_monotone_curve_2 & xcv) const
-    {
-      return m_base->is_on_y_identification_2_object() (xcv.base());
-    }
-  };
-
-  /*! Obtain a Is_on_y_identification_2 function object */
-  Is_on_y_identification_2 is_on_y_identification_2_object () const
-  {
-    return Is_on_y_identification_2 (m_base_traits);
-  }
-
-  /*! A functor that compares the x-limits of curve ends on the
+  /*! A functor that compares the x-coordinates of curve ends near the
    * boundary of the parameter space.
    */
-  class Compare_x_at_limit_2 {
+  class Compare_x_near_boundary_2 {
   protected:
     //! The base traits.
     const Base_traits_2 * m_base;
@@ -791,7 +710,7 @@ public:
      * obtaining function, which is a member of the nesting class,
      * constructing it.
      */
-    Compare_x_at_limit_2(const Base_traits_2 * tr) : m_base(tr) {}
+    Compare_x_near_boundary_2(const Base_traits_2 * tr) : m_base(tr) {}
     
     //! Allow its functor obtaining function calling the private constructor.
     friend class Arr_batched_point_location_traits_2<Arrangement_2>;
@@ -801,8 +720,8 @@ public:
                                   const X_monotone_curve_2 & xcv,
                                   Arr_curve_end ce) const
     {
-      return m_base->compare_x_at_limit_2_object()(p.base(),
-                                                   xcv.base(), ce);
+      return m_base->compare_x_near_boundary_2_object()(p.base(),
+                                                        xcv.base(), ce);
     }
 
     Comparison_result operator()(const X_monotone_curve_2 & xcv1,
@@ -810,52 +729,15 @@ public:
                                  const X_monotone_curve_2 & xcv2,
                                  Arr_curve_end ce2) const
     {
-      return m_base->compare_x_at_limit_2_object()(xcv1.base(), ce1,
-                                                   xcv2.base(), ce2);
+      return m_base->compare_x_near_boundary_2_object()(xcv1.base(), ce1,
+                                                        xcv2.base(), ce2);
     }
   };
 
-  /*! Obtain a Compare_x_at_limit_2 function object. */
-  Compare_x_at_limit_2 compare_x_at_limit_2_object () const
+  /*! Obtain a Compare_x_near_boundary_2 function object. */
+  Compare_x_near_boundary_2 compare_x_near_boundary_2_object () const
   {
-    return Compare_x_at_limit_2(m_base_traits);
-  }
-
-  /*! A functor that compares the x-coordinates of curve ends near the
-   * boundary of the parameter space.
-   */
-  class Compare_x_near_limit_2 {
-  protected:
-    //! The base traits.
-    const Base_traits_2 * m_base;
-
-    /*! Constructor.
-     * \param tr The base traits class. It must be passed, to handle
-     *           non stateless traits (e.g., it stores data).
-     * The constructor is declared private to allow only the functor
-     * obtaining function, which is a member of the nesting class,
-     * constructing it.
-     */
-    Compare_x_near_limit_2(const Base_traits_2 * tr) : m_base(tr) {}
-    
-    //! Allow its functor obtaining function calling the private constructor.
-    friend class Arr_batched_point_location_traits_2<Arrangement_2>;
-    
-  public:
-    Comparison_result operator()(const X_monotone_curve_2 & xcv1,
-                                 const X_monotone_curve_2 & xcv2,
-                                 Arr_curve_end ce) const
-    {
-      return m_base->compare_x_near_limit_2_object()(xcv1.base(),
-                                                     xcv2.base(), 
-                                                     ce);
-    }
-  };
-
-  /*! Obtain a Compare_x_near_limit_2 function object. */
-  Compare_x_near_limit_2 compare_x_near_limit_2_object () const
-  {
-    return Compare_x_near_limit_2(m_base_traits);
+    return Compare_x_near_boundary_2(m_base_traits);
   }
 
   /*! A functor that compares the x-coordinate of two given points
@@ -891,42 +773,7 @@ public:
     return Compare_x_on_boundary_2(m_base_traits);
   }
   
-  /*! A functor that compares the x-coordinates of curve ends near the
-   * boundary of the parameter space.
-   */
-  class Compare_x_near_boundary_2 {
-  protected:
-    //! The base traits.
-    const Base_traits_2 * m_base;
-
-    /*! Constructor.
-     * \param tr The base traits class. It must be passed, to handle
-     *           non stateless traits (e.g., it stores data).
-     * The constructor is declared private to allow only the functor
-     * obtaining function, which is a member of the nesting class,
-     * constructing it.
-     */
-    Compare_x_near_boundary_2(const Base_traits_2 * tr) : m_base(tr) {}
-    
-    //! Allow its functor obtaining function calling the private constructor.
-    friend class Arr_batched_point_location_traits_2<Arrangement_2>;
-    
-  public:
-    Comparison_result operator()(const X_monotone_curve_2 & xcv1,
-                                 const X_monotone_curve_2 & xcv2,
-                                 Arr_curve_end ce) const
-    {
-      return m_base->compare_x_near_boundary_2_object()(xcv1.base(),
-                                                        xcv2.base(), 
-							ce);
-    }
-  };
-
-  /*! Obtain a Compare_x_near_boundary_2 function object. */
-  Compare_x_near_boundary_2 compare_x_near_boundary_2_object () const
-  {
-    return Compare_x_near_boundary_2(m_base_traits);
-  }
+  // TODO Is_on_y_identification_2
 
 };
 

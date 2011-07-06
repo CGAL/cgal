@@ -1,19 +1,13 @@
 \begin{ccRefEnum}{Arr_halfedge_direction}
-  \ccDefinition
-  The enumeration \ccRefName{} is defined by
-  \ccc{CGAL::Arrangement_2<Traits,Dcel>::Halfedge} to specify
-  the direction of the halfedge.
+\ccInclude{CGAL/Arr_enums.h}
 
-  \ccInclude{CGAL/Arr_enums.h}
+\ccGlobalEnum{
+enum Arr_halfedge_direction { ARR_LEFT_TO_RIGHT = -1,
+  ARR_RIGHT_TO_LEFT = 1 }; }
 
-  \ccGlobalEnum{
-    enum Arr_halfedge_direction { ARR_LEFT_TO_RIGHT, ARR_RIGHT_TO_LEFT }; }
+\ccRefLabel{ARR_LEFT_TO_RIGHT}
+\ccRefLabel{ARR_RIGHT_TO_LEFT}
+\ccHtmlCrossLink{ARR_LEFT_TO_RIGHT}
+\ccHtmlCrossLink{ARR_RIGHT_TO_LEFT}
 
-  \ccRefLabel{ARR_LEFT_TO_RIGHT}
-  \ccRefLabel{ARR_RIGHT_TO_LEFT}
-  \ccHtmlCrossLink{ARR_LEFT_TO_RIGHT}
-  \ccHtmlCrossLink{ARR_RIGHT_TO_LEFT}
-
-  \ccSeeAlso
-  \ccc{CGAL::Arrangement_2<Traits,Dcel>::Halfedge}
 \end{ccRefEnum}

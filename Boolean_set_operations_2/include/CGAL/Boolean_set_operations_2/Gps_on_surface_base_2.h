@@ -545,6 +545,7 @@ protected:
 
     Compare_endpoints_xy_2 cmp_endpoints =
       m_traits->compare_endpoints_xy_2_object();
+    Construct_opposite_2 ctr_opp = m_traits->construct_opposite_2_object();
 
     for (Edge_const_iterator eci = arr.edges_begin();
          eci != arr.edges_end();
