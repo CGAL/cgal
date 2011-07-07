@@ -20,9 +20,14 @@
 
 typedef CGAL::Deform_mesh_BGL<Polyhedron, CGAL::Taucs_solver_traits<double> > Deform_mesh;
 
+typedef Kernel::Point_3 Point;
+typedef Kernel::Vector_3 Vector;
+typedef Polyhedron::Vertex_handle Vertex_handle;
+
 struct Polyhedron_deformation_data {
   Deform_mesh* deform_mesh;
   Polyhedron* polyhedron_copy; // For a possible undo operation. To be written.
+  std::map<Vertex_handle, Vertex_handle> t2s;   // access from original mesh vertices to copied ones
 };
 
 class Polyhedron_demo_edit_polyhedron_plugin : 
@@ -142,8 +147,8 @@ void Polyhedron_demo_edit_polyhedron_plugin::init(QMainWindow* mainWindow,
   connect(deform_mesh_widget.interestRegionSize, SIGNAL(valueChanged(int)),
           this, SLOT(update_handlesRegionSize(int)));
 
-  /*connect(deform_mesh_widget.preProcessPb, SIGNAL(clicked(bool)),
-          this, SLOT(preprocess()));*/
+  connect(deform_mesh_widget.preProcessPb, SIGNAL(clicked(bool)),
+          this, SLOT(preprocess()));
 
   Polyhedron_demo_plugin_helper::init(mainWindow, scene_interface);
 }
@@ -177,8 +182,6 @@ convert_to_edit_polyhedron(Item_id i,
   edit_poly->setVisible(poly_item->visible());
   edit_poly->setHandlesRegionSize(deform_mesh_widget.handlesRegionSize->value());
   edit_poly->setInterestRegionSize(deform_mesh_widget.interestRegionSize->value());
-  connect(deform_mesh_widget.preProcessPb, SIGNAL(clicked(bool)),
-          this, SLOT(preprocess()));
   connect(edit_poly, SIGNAL(modified()),
           this, SLOT(edition()));
   connect(edit_poly, SIGNAL(destroyed()),
@@ -234,64 +237,64 @@ void Polyhedron_demo_edit_polyhedron_plugin::item_destroyed() {
 // Pre-process the modeling system
 void Polyhedron_demo_edit_polyhedron_plugin::preprocess() {
 
-  QObject* obj = sender();
-  Scene_edit_polyhedron_item* edit_item = 
-    qobject_cast<Scene_edit_polyhedron_item*>(obj);
-  if(!edit_item) {
-    std::cerr << "ERROR" << __FILE__ << ":" << __LINE__ 
-      << " : " << "unknown object type" << std::endl;
-    return;
-  }
+  int item_id = scene->mainSelectionIndex();
+  Scene_edit_polyhedron_item* edit_item =
+    qobject_cast<Scene_edit_polyhedron_item*>(scene->item(item_id));
+  if(!edit_item) return;                             // the selected item is not of the right type
 
-  typedef Kernel::Point_3 Point;
-  typedef Kernel::Vector_3 Vector;
-  typedef Polyhedron::Vertex_handle Vertex_handle;
+  // preprocess only when handles are selected
+  if (edit_item->selected_vertices().isEmpty()) return;
 
   Polyhedron* polyhedron = edit_item->polyhedron();
-
-  Deform_mesh* deform = 0;  // Will be initialized below...
-  Polyhedron_deformation_data& data = deform_map[edit_item]; 
 
   Deform_map::iterator deform_it = deform_map.find(edit_item);
   if(deform_it == deform_map.end()) {
     // First time. Need to create the Deform_mesh object.
 
-    data.polyhedron_copy = new Polyhedron(*polyhedron); // copy and source mesh
-    deform = new Deform_mesh(data.polyhedron_copy);
-    data.deform_mesh = deform;
+    // AF: We should not really copy the polyhedron.  This is expensive for big real world data sets
+    //     Instead we could store the position of the vertices of the ROI before the deformation in order to undo
+    //     Think about how this can be done in the Deform class
+    // YX: Yes I will consider it later.
+    Polyhedron_deformation_data& new_data = deform_map[edit_item];
+    new_data.polyhedron_copy = new Polyhedron(*polyhedron); // copy and source mesh
+    Deform_mesh* new_deform = new Deform_mesh(new_data.polyhedron_copy);
+    new_data.deform_mesh = new_deform;
+
+    // AF: Is this map still needed for something?
+    // YX: I have integrated this map into data so that we only need to initialize it at the beginning
+
+    // build connection between vertices of original mesh and copied one
+    Vertex_handle vd_s = new_data.polyhedron_copy->vertices_begin();
+    for ( Vertex_handle vd_t = polyhedron->vertices_begin(); vd_t != polyhedron->vertices_end(); vd_t++ )
+    {
+      new_data.t2s[vd_t] = vd_s;
+      vd_s++;
+    }
 
   }
 
-  std::map<Vertex_handle, Vertex_handle> t2s;       // map vertices from target mesh to source mesh
-  Vertex_handle vd_s = data.polyhedron_copy->vertices_begin();
-  for ( Vertex_handle vd_t = polyhedron->vertices_begin(); vd_t != polyhedron->vertices_end(); vd_t++ )
-  {
-    t2s[vd_t] = vd_s;
-    vd_s++;
-  }
+  Polyhedron_deformation_data& data = deform_map[edit_item];
+  Deform_mesh* deform = data.deform_mesh;
+
+
 
   // assign handles to source mesh
   deform->handle_clear();
   Q_FOREACH(Vertex_handle vh, edit_item->selected_vertices())
   {
-    deform->handle_push(t2s[vh]);
+    deform->handle_push(data.t2s[vh]);
   }
 
   // assign roi to source mesh
   deform->roi_clear();
   Q_FOREACH(Vertex_handle vh, edit_item->vertices_in_region_of_interest())
   {
-    deform->roi_push(t2s[vh]);
+    deform->roi_push(data.t2s[vh]);
   }
 
   // precomputation of Laplacian matrix
   deform->preprocess();
 
-  // signal to the item that it needs to recompute its internal structures
-  edit_item->changed(); // that reset the last_position()
-
-  // signal to the scene that the item needs to be redrawn.
-  scene->itemChanged(edit_item);
 
 }
 
@@ -305,61 +308,11 @@ void Polyhedron_demo_edit_polyhedron_plugin::edition() {
     return;
   }
 
-  typedef Kernel::Point_3 Point;
-  typedef Kernel::Vector_3 Vector;
-  typedef Polyhedron::Vertex_handle Vertex_handle;
-
-  Polyhedron* polyhedron = edit_item->polyhedron();
-
-  Deform_mesh* deform = 0;  // Will be initialized below...
-
+  // deformation only when deform_map[edit_item] created, namely already preprocessed.
   Deform_map::iterator deform_it = deform_map.find(edit_item);
-  if(deform_it == deform_map.end()) {
-    // First time. Need to create the Deform_mesh object.
+  if(deform_it == deform_map.end()) return;
 
-    // create a new entry in the map
-    Polyhedron_deformation_data& data = deform_map[edit_item]; 
-
-    // AF: We should not really copy the polyhedron.  This is expensive for big real world data sets
-    //     Instead we could store the position of the vertices of the ROI before the deformation in order to undo
-    //     Think about how this can be done in the Deform class
-    //
-    data.polyhedron_copy = new Polyhedron(*polyhedron); // copy and source mesh
-    deform = new Deform_mesh(data.polyhedron_copy);
-    data.deform_mesh = deform;
-
-    // AF: Is this map still needed for something?
-    std::map<Vertex_handle, Vertex_handle> t2s;       // map vertices from target mesh to source mesh
-    Vertex_handle vd_s = data.polyhedron_copy->vertices_begin();
-    for ( Vertex_handle vd_t = polyhedron->vertices_begin(); vd_t != polyhedron->vertices_end(); vd_t++ )
-    {
-      t2s[vd_t] = vd_s;
-      vd_s++;
-    }
-
-    // assign handles to source mesh
-    deform->handle_clear();
-    Q_FOREACH(Vertex_handle vh, edit_item->selected_vertices())
-    {
-      deform->handle_push(t2s[vh]);
-    }
-
-    // assign roi to source mesh
-    deform->roi_clear();
-    Q_FOREACH(Vertex_handle vh, edit_item->vertices_in_region_of_interest())
-    {
-      deform->roi_push(t2s[vh]);
-    }
-
-    // precomputation of Laplacian matrix
-    deform->preprocess();
-
-  } else {
-    // In that case deform_it->second is the data associated to 'polyhedron'.
-    deform = deform_it->second.deform_mesh;
-
-  }
-
+  Deform_mesh* deform = deform_it->second.deform_mesh;
 
   const Point& last_position = edit_item->last_position();
 
@@ -372,17 +325,9 @@ void Polyhedron_demo_edit_polyhedron_plugin::edition() {
 
   // -- ACTUAL DEFORMATION --
 
+  Polyhedron* polyhedron = edit_item->polyhedron();
   (*deform)(translation);
   deform->deform(polyhedron);
-  
-
-  // This should be modified to use Deform_mesh instead.
-  /*Q_FOREACH(Vertex_handle vh, edit_item->selected_vertices())
-  {
-    vh->point() = vh->point() + translation;
-  }*/
-  // could also use the list 'edit_item->vertices_in_region_of_interest()'
-
   
 
   // -- END OF ACTUAL DEFORMATION --
