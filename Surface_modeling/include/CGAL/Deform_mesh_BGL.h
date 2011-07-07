@@ -83,6 +83,7 @@ public:
       idx++;
     }
 
+
     edge_iterator eb, ee;
     idx = 0;
     for(boost::tie(eb,ee) = boost::edges(*polyhedron); eb != ee; ++eb )
@@ -126,7 +127,6 @@ public:
     //     Actually This API seems not very reasonable to me. Maybe we can delete it directly,
     //     since we already have the API that allows us select k-ring neighboring vertices.
     //     How do you think?
-    roi.push_back(*end);
   
     int idx_lv = 0;    // pointing the neighboring vertices on current level
     int idx_lv_end;
