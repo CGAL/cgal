@@ -145,7 +145,7 @@ public:
         for (boost::tie(e,e_end) = boost::in_edges(vd, *polyhedron); e != e_end; e++)
         {
           vertex_descriptor vt = boost::source(*e, *polyhedron);
-          std::vector<vertex_descriptor> ::iterator result = find(roi.begin(), roi.end(), vt);
+          typename std::vector<vertex_descriptor> ::iterator result = find(roi.begin(), roi.end(), vt);
           if (result == roi.end())
           {
             roi.push_back(vt);
@@ -234,8 +234,8 @@ public:
       for (boost::tie(e,e_end) = boost::in_edges(vd, *polyhedron); e != e_end; e++)
       {
         vertex_descriptor vt = boost::source(*e, *polyhedron);
-        std::vector<vertex_descriptor> ::iterator result_roi = find(roi.begin(), roi.end(), vt);
-        std::vector<vertex_descriptor> ::iterator result = find(hard_constraints.begin(), hard_constraints.end(), vt);
+        typename std::vector<vertex_descriptor> ::iterator result_roi = find(roi.begin(), roi.end(), vt);
+        typename std::vector<vertex_descriptor> ::iterator result = find(hard_constraints.begin(), hard_constraints.end(), vt);
         if ( result == hard_constraints.end() && result_roi == roi.end() )    // neighboring vertices outside roi 
         {
           hard_constraints.push_back(vt);
