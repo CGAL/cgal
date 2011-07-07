@@ -47,6 +47,7 @@ public:
 
 public slots:
   void on_actionToggleEdit_triggered(bool);
+  void preprocess();
   void edition();
 
   void item_destroyed();
@@ -141,6 +142,9 @@ void Polyhedron_demo_edit_polyhedron_plugin::init(QMainWindow* mainWindow,
   connect(deform_mesh_widget.interestRegionSize, SIGNAL(valueChanged(int)),
           this, SLOT(update_handlesRegionSize(int)));
 
+  /*connect(deform_mesh_widget.preProcessPb, SIGNAL(clicked(bool)),
+          this, SLOT(preprocess()));*/
+
   Polyhedron_demo_plugin_helper::init(mainWindow, scene_interface);
 }
 
@@ -173,6 +177,8 @@ convert_to_edit_polyhedron(Item_id i,
   edit_poly->setVisible(poly_item->visible());
   edit_poly->setHandlesRegionSize(deform_mesh_widget.handlesRegionSize->value());
   edit_poly->setInterestRegionSize(deform_mesh_widget.interestRegionSize->value());
+  connect(deform_mesh_widget.preProcessPb, SIGNAL(clicked(bool)),
+          this, SLOT(preprocess()));
   connect(edit_poly, SIGNAL(modified()),
           this, SLOT(edition()));
   connect(edit_poly, SIGNAL(destroyed()),
@@ -220,9 +226,73 @@ void Polyhedron_demo_edit_polyhedron_plugin::item_destroyed() {
   Deform_map::iterator it = deform_map.find(obj);
   if(it != deform_map.end()) {
     delete it->second.polyhedron_copy;
-    //    delete it->second.deform_mesh;  // TODO: uncomment that!
+    delete it->second.deform_mesh;  // TODO: uncomment that!
     deform_map.erase(it);
   }
+}
+
+// Pre-process the modeling system
+void Polyhedron_demo_edit_polyhedron_plugin::preprocess() {
+
+  QObject* obj = sender();
+  Scene_edit_polyhedron_item* edit_item = 
+    qobject_cast<Scene_edit_polyhedron_item*>(obj);
+  if(!edit_item) {
+    std::cerr << "ERROR" << __FILE__ << ":" << __LINE__ 
+      << " : " << "unknown object type" << std::endl;
+    return;
+  }
+
+  typedef Kernel::Point_3 Point;
+  typedef Kernel::Vector_3 Vector;
+  typedef Polyhedron::Vertex_handle Vertex_handle;
+
+  Polyhedron* polyhedron = edit_item->polyhedron();
+
+  Deform_mesh* deform = 0;  // Will be initialized below...
+  Polyhedron_deformation_data& data = deform_map[edit_item]; 
+
+  Deform_map::iterator deform_it = deform_map.find(edit_item);
+  if(deform_it == deform_map.end()) {
+    // First time. Need to create the Deform_mesh object.
+
+    data.polyhedron_copy = new Polyhedron(*polyhedron); // copy and source mesh
+    deform = new Deform_mesh(data.polyhedron_copy);
+    data.deform_mesh = deform;
+
+  }
+
+  std::map<Vertex_handle, Vertex_handle> t2s;       // map vertices from target mesh to source mesh
+  Vertex_handle vd_s = data.polyhedron_copy->vertices_begin();
+  for ( Vertex_handle vd_t = polyhedron->vertices_begin(); vd_t != polyhedron->vertices_end(); vd_t++ )
+  {
+    t2s[vd_t] = vd_s;
+    vd_s++;
+  }
+
+  // assign handles to source mesh
+  deform->handle_clear();
+  Q_FOREACH(Vertex_handle vh, edit_item->selected_vertices())
+  {
+    deform->handle_push(t2s[vh]);
+  }
+
+  // assign roi to source mesh
+  deform->roi_clear();
+  Q_FOREACH(Vertex_handle vh, edit_item->vertices_in_region_of_interest())
+  {
+    deform->roi_push(t2s[vh]);
+  }
+
+  // precomputation of Laplacian matrix
+  deform->preprocess();
+
+  // signal to the item that it needs to recompute its internal structures
+  edit_item->changed(); // that reset the last_position()
+
+  // signal to the scene that the item needs to be redrawn.
+  scene->itemChanged(edit_item);
+
 }
 
 void Polyhedron_demo_edit_polyhedron_plugin::edition() {
