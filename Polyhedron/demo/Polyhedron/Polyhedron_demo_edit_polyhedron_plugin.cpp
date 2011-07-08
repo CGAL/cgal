@@ -247,6 +247,15 @@ void Polyhedron_demo_edit_polyhedron_plugin::preprocess() {
 
   Polyhedron* polyhedron = edit_item->polyhedron();
 
+  Polyhedron_vertex_deformation_index_map<Polyhedron> pmap(*polyhedron);
+  typedef boost::graph_traits<Polyhedron>::vertex_iterator		  vertex_iterator;
+  vertex_iterator vb, ve;
+  int idx = 0;
+  for(boost::tie(vb,ve) = boost::vertices(*polyhedron); vb != ve; ++vb )
+    {
+      boost::put(pmap,*vb,idx++);
+    }
+
   Deform_map::iterator deform_it = deform_map.find(edit_item);
   if(deform_it == deform_map.end()) {
     // First time. Need to create the Deform_mesh object.

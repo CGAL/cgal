@@ -8,7 +8,8 @@
 // surface mesh
 #include <CGAL/Polyhedron_3.h>
 #include <CGAL/Polyhedron_items_3.h>
-
+#include <CGAL/boost/graph/properties.h>
+#include <CGAL/boost/graph/graph_traits_Polyhedron_3.h>
 #include <set>
 
 template <typename Refs, typename Tag, typename Point, typename Patch_id>
@@ -17,6 +18,8 @@ class Polyhedron_demo_vertex :
 {
 public:
   typedef std::set<Patch_id> Set_of_indices;
+
+  int dID;
 
 private:
   typedef CGAL::HalfedgeDS_vertex_base<Refs, Tag, Point> Pdv_base;
@@ -125,5 +128,44 @@ public:
 
 // surface mesh
 typedef CGAL::Polyhedron_3<Kernel, Polyhedron_demo_items<int> > Polyhedron;
+
+
+
+template<class P>
+class Polyhedron_vertex_deformation_index_map
+{
+private:
+
+  typedef P Polyhedron ;
+
+
+public:
+
+  typedef boost::read_write_property_map_tag                                  category;
+  typedef std::size_t                                                       value_type;
+  typedef std::size_t                                                       reference;
+  typedef typename boost::graph_traits<Polyhedron>::vertex_descriptor key_type;
+
+  Polyhedron_vertex_deformation_index_map(const P&)
+  {}
+
+};
+
+namespace boost {
+
+template<class P>
+std::size_t
+get(  Polyhedron_vertex_deformation_index_map<P>& pmap, typename P::Vertex_handle vh)
+{
+  return vh->dID;
+}
+
+template<class P>
+void
+put(  Polyhedron_vertex_deformation_index_map<P>& pmap, typename P::Vertex_handle vh, std::size_t s)
+{
+  vh->dID = s;
+}
+}
 
 #endif // POLYHEDRON_TYPE_H
