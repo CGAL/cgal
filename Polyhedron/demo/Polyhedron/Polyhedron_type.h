@@ -53,6 +53,10 @@ template <class Refs, class Tprev, class Tvertex, class Tface>
 class Polyhedron_demo_halfedge : 
   public CGAL::HalfedgeDS_halfedge_base<Refs,Tprev,Tvertex,Tface>
 {
+
+public:
+  int dID;
+
 private:
   bool feature_edge;
 public:
@@ -166,6 +170,44 @@ put(  Polyhedron_vertex_deformation_index_map<P>& pmap, typename P::Vertex_handl
 {
   vh->dID = s;
 }
+}
+
+
+template<class P>
+class Polyhedron_edge_deformation_index_map
+{
+private:
+
+  typedef P Polyhedron ;
+
+
+public:
+
+  typedef boost::read_write_property_map_tag                                  category;
+  typedef std::size_t                                                       value_type;
+  typedef std::size_t                                                       reference;
+  typedef typename boost::graph_traits<Polyhedron>::edge_descriptor key_type;
+
+  Polyhedron_edge_deformation_index_map(const P&)
+  {}
+
+};
+
+namespace boost {
+
+  template<class P>
+  std::size_t
+    get(  Polyhedron_edge_deformation_index_map<P>& pmap, typename P::Halfedge_handle eh)
+  {
+    return eh->dID;
+  }
+
+  template<class P>
+  void
+    put(  Polyhedron_edge_deformation_index_map<P>& pmap, typename P::Halfedge_handle eh, std::size_t s)
+  {
+    eh->dID = s;
+  }
 }
 
 #endif // POLYHEDRON_TYPE_H

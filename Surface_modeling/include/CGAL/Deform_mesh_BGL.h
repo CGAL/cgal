@@ -25,7 +25,8 @@ namespace CGAL {
 
 enum LapType { uni, cot };
 
-template <class Polyhedron, class SparseLinearAlgebraTraits_d>
+template <class Polyhedron, class SparseLinearAlgebraTraits_d, 
+          class Polyhedron_vertex_deformation_index_map, class Polyhedron_edge_deformation_index_map>
 class Deform_mesh_BGL
 {
 // Public types
@@ -44,8 +45,6 @@ public:
   typedef typename boost::graph_traits<Polyhedron>::in_edge_iterator		in_edge_iterator;
 
   // property map types
-  typedef std::map<vertex_descriptor,int> VertexIndexMap;
-  typedef boost::associative_property_map<VertexIndexMap> VertexIdPropertyMap;
   typedef std::map<edge_descriptor, int> EdgeIndexMap;
   typedef boost::associative_property_map<EdgeIndexMap> EdgeIdPropertyMap;
 
@@ -57,22 +56,17 @@ public:
   std::vector<vertex_descriptor> roi;
   std::vector<vertex_descriptor> hdl;         // user specified handles, storing the target positions
   std::vector<vertex_descriptor> ros;         // region of solution, including roi and hard constraints outside roi
-  VertexIndexMap vertex_id_map;
-  VertexIdPropertyMap vertex_id_pmap;              // storing indices of all vertices 
-  VertexIndexMap ros_id_map;
-  VertexIdPropertyMap ros_id_pmap;                 // index of ros vertices
-  EdgeIndexMap edge_id_map;
-  EdgeIdPropertyMap edge_id_pmap;                  // storing indices of all edges
-  std::vector<int> is_roi;                   // flag that indicates vertex inside roi or not 
-  std::vector<int> is_hdl;
-  std::vector<int> is_ros;
-  
-
+  Polyhedron_vertex_deformation_index_map vertex_id_pmap;              // storing indices of all vertices 
+  Polyhedron_edge_deformation_index_map edge_id_pmap;                  // storing indices of all edges
+  std::vector<int> ros_id;                    // index of ros vertices
+  std::vector<int> is_roi;                    // flag indicating vertex inside roi or not 
+  std::vector<int> is_hdl;               
+ 
   int iterations;                                     // number of iterations
   std::vector< std::vector<double> >  rot_mtr;                       // rotation matrices of ros vertices
   std::vector<double> edge_weight;                    // weight of edges
   SparseLinearAlgebraTraits_d m_solver;               // linear sparse solver
-  std::vector<Point>  solution;                       // sotring position of all vertices during iterations
+  std::vector<Point>  solution;                       // storing position of all vertices during iterations
   
 
 
@@ -81,7 +75,7 @@ public:
 
   // The constructor gets the polyhedron that we will model
   Deform_mesh_BGL(Polyhedron* P)
-    :polyhedron(P)
+    :polyhedron(P), vertex_id_pmap(*P), edge_id_pmap(*P)
   {
 
     // initialize index maps
@@ -89,21 +83,15 @@ public:
     int idx = 0;
     for(boost::tie(vb,ve) = boost::vertices(*polyhedron); vb != ve; ++vb )
     {
-      vertex_id_map[*vb] = idx;
-      idx++;
+      boost::put(vertex_id_pmap, *vb, idx++);
     }
-    VertexIdPropertyMap new_vertex_id_pmap(vertex_id_map);
-    vertex_id_pmap = new_vertex_id_pmap;
 
     edge_iterator eb, ee;
     idx = 0;
     for(boost::tie(eb,ee) = boost::edges(*polyhedron); eb != ee; ++eb )
     {
-      edge_id_map[*eb] = idx;
-      idx++;
+      boost::put(edge_id_pmap, *eb, idx++);
     }
-    EdgeIdPropertyMap new_edge_id_pmap(edge_id_map);
-    edge_id_pmap = new_edge_id_pmap;
 
     solution.clear();
     for(boost::tie(vb,ve) = boost::vertices(*polyhedron); vb != ve; ++vb )
@@ -261,13 +249,13 @@ public:
     }
 
     // initialize the indices of ros vertices and rotation matrices
-    ros_id_map.clear();
+    ros_id.clear();
+    ros_id.resize(boost::num_vertices(*polyhedron));
     for (int i = 0; i < ros.size(); i++)
     {
-      ros_id_map[ros[i]] = i; 
+      int idx = boost::get(vertex_id_pmap, ros[i]);
+      ros_id[idx] = i; 
     }
-    VertexIdPropertyMap new_ros_id_pmap(ros_id_map);
-    ros_id_pmap = new_ros_id_pmap;
     
     rot_mtr.resize(ros.size());
     for ( int i = 0; i < ros.size(); i++)
@@ -292,13 +280,6 @@ public:
       is_hdl[idx] = 1;
     }
 
-    is_ros.clear(); 
-    is_ros.resize( boost::num_vertices(*polyhedron) );
-    for ( int i = 0; i < ros.size(); i++ )
-    {
-      int idx = boost::get(vertex_id_pmap, ros[i]);
-      is_ros[idx] = 1;
-    }
     
   }
 
@@ -323,7 +304,7 @@ public:
     enum LapType type = cot;
     assemble_laplacian(A, type);
 
-    CGAL_TRACE_STREAM << "  Creates matrix: done (" << task_timer.time() << " s)\n";
+    CGAL_TRACE_STREAM << "  Creates " << ros.size() << "*" << ros.size() << " matrix: done (" << task_timer.time() << " s)\n";
 
     CGAL_TRACE_STREAM << "  Pre-factorizing linear system...\n";
 
@@ -374,7 +355,7 @@ public:
           {
             wij = edge_weight[boost::get(edge_id_pmap, *e)];
           }
-          int ros_idx_j = boost::get(ros_id_pmap, vj);
+          int ros_idx_j = ros_id[ boost::get(vertex_id_pmap, vj) ];
           A.set_coef(i, ros_idx_j, -wij, true);	// off-diagonal coefficient
           diagonal += wij;  
         }
@@ -556,7 +537,7 @@ public:
         for (boost::tie(e,e_end) = boost::in_edges(vi, *polyhedron); e != e_end; e++)
         {
           vertex_descriptor vj = boost::source(*e, *polyhedron);
-          int ros_idx_j = boost::get(ros_id_pmap, vj); 
+          int ros_idx_j = ros_id[ boost::get(vertex_id_pmap, vj) ]; 
           Vector pij = vi->point() - vj->point();
           double wij = edge_weight[boost::get(edge_id_pmap, *e)];
           Vector rot_p(0, 0, 0);                  // vector ( r_i + r_j )*p_ij

@@ -17,8 +17,10 @@
 #include <CGAL/Deform_mesh_BGL.h> 
 #include <CGAL/Taucs_solver_traits.h>       
 
+typedef Polyhedron_vertex_deformation_index_map<Polyhedron> vertex_map;
+typedef Polyhedron_edge_deformation_index_map<Polyhedron> edge_map;
 
-typedef CGAL::Deform_mesh_BGL<Polyhedron, CGAL::Taucs_solver_traits<double> > Deform_mesh;
+typedef CGAL::Deform_mesh_BGL<Polyhedron, CGAL::Taucs_solver_traits<double>, vertex_map, edge_map> Deform_mesh;
 
 typedef Kernel::Point_3 Point;
 typedef Kernel::Vector_3 Vector;
@@ -322,8 +324,6 @@ void Polyhedron_demo_edit_polyhedron_plugin::edition() {
   if(deform_it == deform_map.end()) return;
 
   Deform_mesh* deform = deform_it->second.deform_mesh;
-
-  const Point& last_position = edit_item->last_position();
 
   // 'orig' could be used instead of 'last_position', to get the
   // translation vector from the first position.
