@@ -18,7 +18,11 @@ foreach( entry ${list} )
 
       message( STATUS "Configuring examples in ${entry}" )
 
-      string( REGEX REPLACE "${CMAKE_SOURCE_DIR}/*/examples/" "" DEMO_DIR "${entry}" )
+      if ( CGAL_BRANCH_BUILD )
+        string( REGEX REPLACE "${CMAKE_SOURCE_DIR}/.*/examples/" "" DEMO_DIR "${entry}" )
+      else()
+        string( REGEX REPLACE "${CMAKE_SOURCE_DIR}/examples/" "" DEMO_DIR "${entry}" )
+      endif()
 
       if( NOT "${CMAKE_SOURCE_DIR}" STREQUAL "${CMAKE_BINARY_DIR}") # out-of-source
        make_directory(${CMAKE_BINARY_DIR}/demo/${DEMO_DIR})
