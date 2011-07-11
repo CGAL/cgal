@@ -23,8 +23,15 @@
 
 namespace CGAL {
 
+  // AF: Do we really need this enum? 
+  //     Check the CGAL naming conventions. It should be
+  //     enum Lap_type {UNI, COT};
+  //     but even then the names are strange.
+  //     Don't put the enum as global. Isn't it an implementation detail and not part of the API?
 enum LapType { uni, cot };
 
+  // AF:  Polyhedron_vertex_deformation_index_map --> PolyhedronVertexDeformationIndexMap
+  //      because it is a concept, and not a type.
 template <class Polyhedron, class SparseLinearAlgebraTraits_d, 
           class Polyhedron_vertex_deformation_index_map, class Polyhedron_edge_deformation_index_map>
 class Deform_mesh_BGL
@@ -44,6 +51,7 @@ public:
   typedef typename boost::graph_traits<Polyhedron>::edge_iterator		    edge_iterator;
   typedef typename boost::graph_traits<Polyhedron>::in_edge_iterator		in_edge_iterator;
 
+  // AF: no longer needed
   // property map types
   typedef std::map<edge_descriptor, int> EdgeIndexMap;
   typedef boost::associative_property_map<EdgeIndexMap> EdgeIdPropertyMap;
@@ -99,6 +107,8 @@ public:
       solution.push_back( (*vb)->point() );
     }
 
+
+    // AF: What is a good number of iterations
     iterations = 10;
 
   }
@@ -135,6 +145,7 @@ public:
     // YX: I am not quite convinced about the efficiency of this loop. Is there any better 
     //     implementation that I can learn? It seems that Laurent also use the similar 
     //     algorithm to achieve this. 
+    // AF: Use a std::map to mark vertices to keep track of visited vertices
     for (size_t lv = 0; lv < k; lv++)
     {
       idx_lv_end = roi.size(); 
@@ -173,11 +184,14 @@ public:
   void handles(vertex_iterator begin, vertex_iterator end)
   {
     hdl.clear();
+    hdl.insert(hdl.end(), begin, end);
+    /* // AF: no need for a loop
     for (vertex_iterator vit = begin; vit != end; vit ++)
     {
       hdl.push_back(*vit);
     }
-    hdl.push_back(*end);
+    hdl.push_back(*end); // AF: end is past-the-end
+    */
   }
 
   void handle_clear()
@@ -197,7 +211,8 @@ public:
     std::vector<int> edge_weight_computed(boost::num_edges(*polyhedron));  
 
     edge_weight.clear();
-    edge_weight.resize(boost::num_edges(*polyhedron));
+    edge_weight.resize(boost::num_edges(*polyhedron)); 
+    // AF: Are you sure that the vector<int> gets initialized with zeros?
     edge_iterator eb, ee;
     for(boost::tie(eb,ee) = boost::edges(*polyhedron); eb != ee; ++eb )
     {
@@ -218,14 +233,18 @@ public:
   }
 
   // find region of solution, including roi and hard constraints, which is the 1-ring vertices out roi
+  // AF: Again use a std::map or std::set instead of std::find
   void region_of_solution()
   {
     ros.clear();
+    ros.reserve(roi.size());
+    ros.insert(ros.end(),roi.begin(), roi.end());
+    /*
     for (int i = 0; i < roi.size(); i++)
     {
       ros.push_back(roi[i]);
     }
-
+    */
     std::vector<vertex_descriptor> hard_constraints;
     for (int i = 0;i < roi.size(); i++)
     {
@@ -339,9 +358,9 @@ public:
     }
 
     /// assign cotangent Laplacian to ros vertices
-		for(int i = 0; i < ros.size(); i++)
-		{
-			vertex_descriptor vi = ros[i];
+    for(int i = 0; i < ros.size(); i++)
+    {
+      vertex_descriptor vi = ros[i];
       int vertex_idx_i = boost::get(vertex_id_pmap, vi);
       if ( is_roi[vertex_idx_i] && !is_hdl[vertex_idx_i] )          // vertices of ( roi - hdl )
       {
@@ -613,6 +632,7 @@ public:
 
     // AF: The deform step should definitely NOT operate on ALL vertices, but only on the ROI
     // YX: Solved.
+    // AF: Why is that solved: You still have a loop for all boost::vertices(*polyhedron);
 
     // copy solution to target mesh P
     vertex_iterator vb_t, ve_t;
