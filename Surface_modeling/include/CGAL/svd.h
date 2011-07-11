@@ -3,14 +3,14 @@
 #include <math.h>
 #include "nrutil.h"
 
-float pythag(float a, float b);
+double pythag(double a, double b);
 
-inline void svdcmp(float **a, int m, int n, float w[], float **v)
+inline void svdcmp(double **a, int m, int n, double w[], double **v)
 {
-	float pythag(float a, float b);
+	double pythag(double a, double b);
 	int flag,i,its,j,jj,k,l,nm;
-	float anorm,c,f,g,h,s,scale,x,y,z,*rv1;
-	rv1=vec(1,n);
+	double anorm,c,f,g,h,s,scale,x,y,z,*rv1;
+	rv1=dvector(1,n);
 	g=scale=anorm=0.0;									//Householder reduction to bidiagonal form.
 		for (i=1;i<=n;i++) {
 			l=i+1;
@@ -56,7 +56,7 @@ inline void svdcmp(float **a, int m, int n, float w[], float **v)
 					for (k=l;k<=n;k++) a[i][k] *= scale;
 				}
 			}
-			anorm=FMAX(anorm,(fabs(w[i])+fabs(rv1[i])));
+			anorm=DMAX(anorm,(fabs(w[i])+fabs(rv1[i])));
 		}
 		for (i=n;i>=1;i--) {                                             //Accumulation of right-hand transformations.
 			if (i < n) {
@@ -97,12 +97,12 @@ inline void svdcmp(float **a, int m, int n, float w[], float **v)
 				for (l=k;l>=1;l--)
 				{										//Test for splitting.
 					nm=l-1;													//Note that rv1[1] is always zero.
-					if ((float)(fabs(rv1[l])+anorm) == anorm)
+					if ((double)(fabs(rv1[l])+anorm) == anorm)
 					{
 						flag=0;
 						break;
 					}
-					if ((float)(fabs(w[nm])+anorm) == anorm) break;
+					if ((double)(fabs(w[nm])+anorm) == anorm) break;
 				}
 				if (flag)
 				{
@@ -112,7 +112,7 @@ inline void svdcmp(float **a, int m, int n, float w[], float **v)
 					{
 						f=s*rv1[i];
 						rv1[i]=c*rv1[i];
-						if ((float)(fabs(f)+anorm) == anorm) 
+						if ((double)(fabs(f)+anorm) == anorm) 
 							break;
 						g=w[i];
 						h=pythag(f,g);
@@ -196,7 +196,7 @@ inline void svdcmp(float **a, int m, int n, float w[], float **v)
 				w[k]=x;
 			}
 		}
-		free_vector(rv1,1,n);
+		free_dvector(rv1,1,n);
 }
 
 inline float pythag(float a, float b)
@@ -206,4 +206,13 @@ inline float pythag(float a, float b)
 	absb=fabs(b);
 	if (absa > absb) return absa*sqrt(1.0+SQR(absb/absa));
 	else return (absb == 0.0 ? 0.0 : absb*sqrt(1.0+SQR(absa/absb)));
+}
+
+inline double pythag(double a, double b)
+{
+  double absa,absb;
+  absa=fabs(a);
+  absb=fabs(b);
+  if (absa > absb) return absa*sqrt(1.0+DSQR(absb/absa));
+  else return (absb == 0.0 ? 0.0 : absb*sqrt(1.0+DSQR(absa/absb)));
 }

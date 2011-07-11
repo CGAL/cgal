@@ -3002,6 +3002,7 @@ Polyhedron/demo/Polyhedron/data/knot2.off -text svneol=unset#application/octet-s
 Polyhedron/demo/Polyhedron/data/lion-head.off -text svneol=unset#application/octet-stream
 Polyhedron/demo/Polyhedron/data/man.off -text svneol=unset#application/octet-stream
 Polyhedron/demo/Polyhedron/data/mushroom.off -text svneol=unset#application/octet-stream
+Polyhedron/demo/Polyhedron/data/negative.off -text
 Polyhedron/demo/Polyhedron/data/oblong.off -text svneol=unset#application/octet-stream
 Polyhedron/demo/Polyhedron/data/pinion.off -text svneol=unset#application/octet-stream
 Polyhedron/demo/Polyhedron/data/pipe.off -text svneol=unset#application/octet-stream

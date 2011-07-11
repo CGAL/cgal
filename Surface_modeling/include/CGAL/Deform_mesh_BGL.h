@@ -28,12 +28,13 @@ namespace CGAL {
   //     enum Lap_type {UNI, COT};
   //     but even then the names are strange.
   //     Don't put the enum as global. Isn't it an implementation detail and not part of the API?
-enum LapType { uni, cot };
+  // YX: Maybe just remove it and we will always use cotangent Laplacian.
 
   // AF:  Polyhedron_vertex_deformation_index_map --> PolyhedronVertexDeformationIndexMap
   //      because it is a concept, and not a type.
+  // YX: Solved. 
 template <class Polyhedron, class SparseLinearAlgebraTraits_d, 
-          class Polyhedron_vertex_deformation_index_map, class Polyhedron_edge_deformation_index_map>
+          class PolyhedronVertexDeformationIndexMap, class PolyhedronEdgeDeformationIndexMap>
 class Deform_mesh_BGL
 {
 // Public types
@@ -52,9 +53,7 @@ public:
   typedef typename boost::graph_traits<Polyhedron>::in_edge_iterator		in_edge_iterator;
 
   // AF: no longer needed
-  // property map types
-  typedef std::map<edge_descriptor, int> EdgeIndexMap;
-  typedef boost::associative_property_map<EdgeIndexMap> EdgeIdPropertyMap;
+  // YX: Removed.
 
 
   // Data members.
@@ -64,13 +63,15 @@ public:
   std::vector<vertex_descriptor> roi;
   std::vector<vertex_descriptor> hdl;         // user specified handles, storing the target positions
   std::vector<vertex_descriptor> ros;         // region of solution, including roi and hard constraints outside roi
-  Polyhedron_vertex_deformation_index_map vertex_id_pmap;              // storing indices of all vertices 
-  Polyhedron_edge_deformation_index_map edge_id_pmap;                  // storing indices of all edges
+  PolyhedronVertexDeformationIndexMap vertex_id_pmap;              // storing indices of all vertices 
+  PolyhedronEdgeDeformationIndexMap edge_id_pmap;                  // storing indices of all edges
   std::vector<int> ros_id;                    // index of ros vertices
   std::vector<int> is_roi;                    // flag indicating vertex inside roi or not 
   std::vector<int> is_hdl;               
  
-  int iterations;                                     // number of iterations
+  int iterations;                                     // number of maximal iterations
+  double tolerance;                                   // tolerance of convergence 
+
   std::vector< std::vector<double> >  rot_mtr;                       // rotation matrices of ros vertices
   std::vector<double> edge_weight;                    // weight of edges
   SparseLinearAlgebraTraits_d m_solver;               // linear sparse solver
@@ -101,15 +102,22 @@ public:
       boost::put(edge_id_pmap, *eb, idx++);
     }
 
-    solution.clear();
+    // initialize solution
     for(boost::tie(vb,ve) = boost::vertices(*polyhedron); vb != ve; ++vb )
     {
       solution.push_back( (*vb)->point() );
     }
 
+    // initialize flag vectors of roi, handle, ros 
+    ros_id.resize(boost::num_vertices(*polyhedron), 0);
+    is_roi.resize(boost::num_vertices(*polyhedron), 0);
+    is_hdl.resize(boost::num_vertices(*polyhedron), 0);
+
 
     // AF: What is a good number of iterations
+    // YX: I will add another new threshold according to energy value.
     iterations = 10;
+    tolerance = 1e-4;       
 
   }
 
@@ -125,10 +133,15 @@ public:
   void region_of_interest(vertex_iterator begin, vertex_iterator end, size_t k)
   {
     roi.clear();
-    for (vertex_iterator vit = begin; vit != end; vit ++)
+    roi.insert(roi.end(), begin, end);
+
+    is_roi.clear();  
+    is_roi.resize( boost::num_vertices(*polyhedron), 0 );    // mark all the vertices as ROI or not
+    for (int i = 0; i < roi.size(); i++)
     {
-      roi.push_back(*vit);
+      is_roi[ boost::get(vertex_id_pmap, roi[i]) ] = 1;
     }
+
     // AF: Why do you insert end?	 
     // Iterator ranges are usually half open
 
@@ -141,11 +154,12 @@ public:
     int idx_lv = 0;    // pointing the neighboring vertices on current level
     int idx_lv_end;
     
-    // AF:: This loop has a running time quadratic in the size of the region of interst
+    // AF:: This loop has a running time quadratic in the size of the region of interest
     // YX: I am not quite convinced about the efficiency of this loop. Is there any better 
     //     implementation that I can learn? It seems that Laurent also use the similar 
     //     algorithm to achieve this. 
     // AF: Use a std::map to mark vertices to keep track of visited vertices
+    // YX: Solved.
     for (size_t lv = 0; lv < k; lv++)
     {
       idx_lv_end = roi.size(); 
@@ -156,16 +170,16 @@ public:
         for (boost::tie(e,e_end) = boost::in_edges(vd, *polyhedron); e != e_end; e++)
         {
           vertex_descriptor vt = boost::source(*e, *polyhedron);
-          typename std::vector<vertex_descriptor> ::iterator result = find(roi.begin(), roi.end(), vt);
-          if (result == roi.end())
+          int idx = boost::get(vertex_id_pmap, vt);
+          if ( !is_roi[idx] )       // not visited yet
           {
             roi.push_back(vt);
+            is_roi[idx] = 1;
           }
         }
       }
     }
     
-   
 
   }
 
@@ -173,11 +187,14 @@ public:
   void roi_clear()
   {
     roi.clear();
+    is_roi.clear();
+    is_roi.resize( boost::num_vertices(*polyhedron), 0 );
   }
 
   void roi_push(vertex_descriptor vd)   
   {
     roi.push_back(vd);
+    is_roi[ boost::get(vertex_id_pmap, vd) ] = 1;
   }
 
 
@@ -185,23 +202,26 @@ public:
   {
     hdl.clear();
     hdl.insert(hdl.end(), begin, end);
-    /* // AF: no need for a loop
-    for (vertex_iterator vit = begin; vit != end; vit ++)
+
+    is_hdl.clear();  
+    is_hdl.resize( boost::num_vertices(*polyhedron), 0 );    // mark all the vertices as handle or not
+    for (int i = 0; i < hdl.size(); i++)
     {
-      hdl.push_back(*vit);
+      is_hdl[ boost::get(vertex_id_pmap, hdl[i]) ] = 1;
     }
-    hdl.push_back(*end); // AF: end is past-the-end
-    */
   }
 
   void handle_clear()
   {
     hdl.clear();
+    is_hdl.clear(); 
+    is_hdl.resize( boost::num_vertices(*polyhedron), 0 );
   }
 
   void handle_push(vertex_descriptor vd)  
   {
     hdl.push_back(vd);
+    is_hdl[ boost::get(vertex_id_pmap, vd) ] = 1;
   }
 
   // compute cotangent weights of all edges 
@@ -211,8 +231,10 @@ public:
     std::vector<int> edge_weight_computed(boost::num_edges(*polyhedron));  
 
     edge_weight.clear();
-    edge_weight.resize(boost::num_edges(*polyhedron)); 
+    edge_weight.resize( boost::num_edges(*polyhedron), 0 ); 
     // AF: Are you sure that the vector<int> gets initialized with zeros?
+    // YX: I can only asure in Windoes VC compiler, so I added the specific values in resize()
+    //     in order to avoid some bugs happending on other compilers.
     edge_iterator eb, ee;
     for(boost::tie(eb,ee) = boost::edges(*polyhedron); eb != ee; ++eb )
     {
@@ -234,18 +256,21 @@ public:
 
   // find region of solution, including roi and hard constraints, which is the 1-ring vertices out roi
   // AF: Again use a std::map or std::set instead of std::find
+  // YX: Solved.
   void region_of_solution()
   {
     ros.clear();
-    ros.reserve(roi.size());
     ros.insert(ros.end(),roi.begin(), roi.end());
-    /*
-    for (int i = 0; i < roi.size(); i++)
+
+    // initialize the indices of ros vertices 
+    ros_id.clear();
+    ros_id.resize(boost::num_vertices(*polyhedron), -1);
+    int ros_idx;
+    for ( ros_idx = 0; ros_idx < ros.size(); ros_idx++)
     {
-      ros.push_back(roi[i]);
+      ros_id[ boost::get(vertex_id_pmap, ros[ros_idx]) ] = ros_idx; 
     }
-    */
-    std::vector<vertex_descriptor> hard_constraints;
+
     for (int i = 0;i < roi.size(); i++)
     {
       vertex_descriptor vd = roi[i];
@@ -253,50 +278,21 @@ public:
       for (boost::tie(e,e_end) = boost::in_edges(vd, *polyhedron); e != e_end; e++)
       {
         vertex_descriptor vt = boost::source(*e, *polyhedron);
-        typename std::vector<vertex_descriptor> ::iterator result_roi = find(roi.begin(), roi.end(), vt);
-        typename std::vector<vertex_descriptor> ::iterator result = find(hard_constraints.begin(), hard_constraints.end(), vt);
-        if ( result == hard_constraints.end() && result_roi == roi.end() )    // neighboring vertices outside roi 
+        int idx = boost::get(vertex_id_pmap, vt);
+        if ( !is_roi[idx] && ros_id[idx] == -1 )    // neighboring vertices outside roi && not visited 
         {
-          hard_constraints.push_back(vt);
+          ros.push_back(vt);
+          ros_id[idx] = ros_idx++;
         }
       }
     }
 
-    for (int i = 0; i < hard_constraints.size(); i++)
-    {
-      ros.push_back(hard_constraints[i]);
-    }
-
-    // initialize the indices of ros vertices and rotation matrices
-    ros_id.clear();
-    ros_id.resize(boost::num_vertices(*polyhedron));
-    for (int i = 0; i < ros.size(); i++)
-    {
-      int idx = boost::get(vertex_id_pmap, ros[i]);
-      ros_id[idx] = i; 
-    }
-    
+    // initialize the rotation matrices with the same size of ROS
+    rot_mtr.clear();
     rot_mtr.resize(ros.size());
     for ( int i = 0; i < ros.size(); i++)
     {
-      rot_mtr[i].resize(9);
-    }
-
-    // initialize the flag vectors that indicate vertex inside roi/handle/ros or not
-    is_roi.clear(); 
-    is_roi.resize( boost::num_vertices(*polyhedron) );
-    for ( int i = 0; i < roi.size(); i++ )
-    {
-      int idx = boost::get(vertex_id_pmap, roi[i]);
-      is_roi[idx] = 1;
-    }
-
-    is_hdl.clear(); 
-    is_hdl.resize( boost::num_vertices(*polyhedron) );
-    for ( int i = 0; i < hdl.size(); i++ )
-    {
-      int idx = boost::get(vertex_id_pmap, hdl[i]);
-      is_hdl[idx] = 1;
+      rot_mtr[i].resize( 9, 0 );
     }
 
     
@@ -320,8 +316,7 @@ public:
 
     // Assemble linear system A*X=B
     typename SparseLinearAlgebraTraits_d::Matrix A(ros.size()); // matrix is symmetric definite positive
-    enum LapType type = cot;
-    assemble_laplacian(A, type);
+    assemble_laplacian(A);
 
     CGAL_TRACE_STREAM << "  Creates " << ros.size() << "*" << ros.size() << " matrix: done (" << task_timer.time() << " s)\n";
 
@@ -349,7 +344,7 @@ public:
   ///
   /// @commentheading Template parameters:
   /// @param SparseLinearAlgebraTraits_d definite positive sparse linear solver.
-  void assemble_laplacian(typename SparseLinearAlgebraTraits_d::Matrix& A, enum LapType type)
+  void assemble_laplacian(typename SparseLinearAlgebraTraits_d::Matrix& A)
 	{
     // initialize the Laplacian matrix
     for (int i = 0; i < ros.size(); i++)
@@ -369,11 +364,7 @@ public:
         for (boost::tie(e,e_end) = boost::in_edges(vi, *polyhedron); e != e_end; e++)
         {
           vertex_descriptor vj = boost::source(*e, *polyhedron);
-          double wij = 1;
-          if (type == cot)                    // cotangent Laplacian weights
-          {
-            wij = edge_weight[boost::get(edge_id_pmap, *e)];
-          }
+          double wij = edge_weight[ boost::get(edge_id_pmap, *e) ];  // cotangent Laplacian weights
           int ros_idx_j = ros_id[ boost::get(vertex_id_pmap, vj) ];
           A.set_coef(i, ros_idx_j, -wij, true);	// off-diagonal coefficient
           diagonal += wij;  
@@ -408,7 +399,7 @@ public:
      else
      {
         edge_descriptor e_cw = CGAL::next_edge_cw(e, *polyhedron);
-        vertex_descriptor v2 = boost::source(e_cw, *polyhedron);
+        vertex_descriptor v2 = boost::source(e_cw, *polyhedron);     
         edge_descriptor e_ccw = CGAL::next_edge_ccw(e, *polyhedron);
         vertex_descriptor v3 = boost::source(e_ccw, *polyhedron);
 
@@ -444,6 +435,12 @@ public:
   {
     iterations = ite;
   }
+
+  // Set the tolerance of convergence made in operator()
+  void set_iterations(double tole)
+  {
+    tolerance = tole;
+  }
   
 	// The operator will be called in a real time loop from the GUI.
   // assign translation vector to handles
@@ -460,17 +457,23 @@ public:
   void optimal_rotations()
   {
     // malloc memory for svd decomposition
-    float** u = new float*[4];    // covariance matrix
+    double** u = new double*[4];    // covariance matrix
     for (int i = 0; i < 4; i++)
     {
-      u[i] = new float[4];
+      u[i] = new double[4];
     }
-    float** v = new float*[4];
+    double** v = new double*[4];
     for (int i = 0; i < 4; i++)
     {
-      v[i] = new float[4];
+      v[i] = new double[4];
     }
-    float* w = new float[4];
+    double* w = new double[4];
+    std::vector< std::vector<double> > r(3);
+    for (int i = 0; i < 3; i++)
+    {
+      r[i].resize(3, 0);
+    }
+    int num_neg = 0;
 
     // only accumulate ros vertices
     for ( int i = 0; i < ros.size(); i++ )
@@ -506,18 +509,63 @@ public:
       svdcmp(u, 3, 3, w, v);
 
       // extract rotation matrix
-      for (int j = 0; j < 9; j++)
-      {
-        rot_mtr[i][j] = 0;
-      }
       for (int j = 0; j < 3; j++)      // row index
       {
         for (int k = 0; k < 3; k++)   // column index
         {
+          r[j][k] = 0;
           for (int l = 0; l < 3; l++)
           {
-            rot_mtr[i][j*3+k] += v[j+1][l+1] * u[k+1][l+1];
+            r[j][k] += v[j+1][l+1] * u[k+1][l+1];
           }  
+        }
+      }
+
+      // checking negative determinant of r
+      double det_r = r[0][0]*( r[1][1]*r[2][2] - r[1][2]*r[2][1] )
+                  - r[0][1]*( r[1][0]*r[2][2] - r[2][0]*r[1][2] )
+                  + r[0][2]*( r[1][0]*r[2][1] - r[2][0]*r[1][1] );
+      if ( det_r < 0 )    // changing the sign of column corresponding to smallest singular value
+      {
+        num_neg++;
+        for (int j = 0; j < 3; j++)
+        {
+          int j0 = j;
+          int j1 = (j+1)%3;
+          int j2 = (j1+1)%3;
+          if ( w[j0+1] <= w[j1+1] && w[j0+1] <= w[j2+1] )    // smallest singular value as j0
+          {
+            u[1][j0+1] = -1.0*u[1][j0+1];
+            u[2][j0+1] = -1.0*u[2][j0+1];
+            u[3][j0+1] = -1.0*u[3][j0+1];
+            break;
+          }
+        }
+
+        // re-extract rotation matrix
+        for (int j = 0; j < 3; j++)      // row index
+        {
+          for (int k = 0; k < 3; k++)   // column index
+          {
+            r[j][k] = 0;
+            for (int l = 0; l < 3; l++)
+            {
+              r[j][k] += v[j+1][l+1] * u[k+1][l+1];
+            }  
+          }
+        }
+
+        det_r = r[0][0]*( r[1][1]*r[2][2] - r[1][2]*r[2][1] )
+          - r[0][1]*( r[1][0]*r[2][2] - r[2][0]*r[1][2] )
+          + r[0][2]*( r[1][0]*r[2][1] - r[2][0]*r[1][1] );
+      }
+
+      
+      for (int j = 0; j < 3; j++)      // row index
+      {
+        for (int k = 0; k < 3; k++)   // column index
+        {
+          rot_mtr[i][j*3+k] = r[j][k]; 
         }
       }
     }
@@ -530,6 +578,8 @@ public:
     delete [] u;
     delete [] v;
     delete [] w;
+
+    CGAL_TRACE_STREAM << num_neg << " negative rotations\n";
 
   }
 
@@ -549,7 +599,7 @@ public:
       {
         Bx[i] = solution[vertex_idx_i].x(); By[i] = solution[vertex_idx_i].y(); Bz[i] = solution[vertex_idx_i].z();
       }
-      else  // roi vertices
+      else  // ( roi - handle ) vertices
       {
         Bx[i] = 0; By[i] = 0; Bz[i] = 0;
         in_edge_iterator e, e_end;
@@ -619,6 +669,8 @@ public:
   // Deformation on roi vertices
   void deform(Polyhedron* P)
   {
+    double energy_this = 0;
+    double energy_last;
     // iterations
     CGAL_TRACE_STREAM << "iteration started...\n";
     optimal_rotations();
@@ -626,23 +678,31 @@ public:
     {
       update_solution();
       optimal_rotations();
-      CGAL_TRACE_STREAM << ite << " iterations: energy = " << energy() << "\n";
+      energy_last = energy_this;
+      energy_this = energy();
+      CGAL_TRACE_STREAM << ite << " iterations: energy = " << energy_this << "\n";
+      if ( abs((energy_last-energy_this)/energy_this) < tolerance )
+      {
+        break;
+      }
     }
     CGAL_TRACE_STREAM << "iteration end!\n";
 
     // AF: The deform step should definitely NOT operate on ALL vertices, but only on the ROI
     // YX: Solved.
     // AF: Why is that solved: You still have a loop for all boost::vertices(*polyhedron);
+    // YX: Now only copy ROI vertices.
 
     // copy solution to target mesh P
-    vertex_iterator vb_t, ve_t;
-    boost::tie(vb_t,ve_t) = boost::vertices(*P);
-
     vertex_iterator vb, ve;
-    for(boost::tie(vb,ve) = boost::vertices(*polyhedron); vb != ve; ++vb )
+    boost::tie(vb,ve) = boost::vertices(*P);
+    for ( int i = 0; i < boost::num_vertices(*P); i++ )
     {
-      (*vb_t)->point() = solution[boost::get(vertex_id_pmap, *vb)];
-      vb_t++;
+      if (is_roi[i])     // only copy ROI vertices
+      {
+        (*vb)->point() = solution[i];
+      }
+      vb++;
     }
   }
 };
