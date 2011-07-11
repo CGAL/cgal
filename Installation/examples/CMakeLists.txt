@@ -18,9 +18,10 @@ foreach( entry ${list} )
 
       message( STATUS "Configuring examples in ${entry}" )
 
+      string( REGEX REPLACE "${CMAKE_SOURCE_DIR}/*/examples/" "" DEMO_DIR "${entry}" )
+
       if( NOT "${CMAKE_SOURCE_DIR}" STREQUAL "${CMAKE_BINARY_DIR}") # out-of-source
-        string( REGEX REPLACE "${CMAKE_SOURCE_DIR}/*/examples/" "" DEMO_DIR "${entry}" )
-        make_directory(${CMAKE_BINARY_DIR}/demo/${DEMO_DIR})
+       make_directory(${CMAKE_BINARY_DIR}/demo/${DEMO_DIR})
       endif()
  
       set(ADD_SUBDIR TRUE)
