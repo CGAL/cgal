@@ -27,8 +27,7 @@ foreach( entry ${list} )
       message( STATUS "Configuring demo in ${entry}" )
 
       if ( CGAL_BRANCH_BUILD )
-        string( REGEX REPLACE "${CMAKE
-_SOURCE_DIR}/.*/demo/" "" DEMO_DIR "${entry}" )
+        string( REGEX REPLACE "${CMAKE_SOURCE_DIR}/.*/demo/" "" DEMO_DIR "${entry}" )
       else()
         string( REGEX REPLACE "${CMAKE_CURRENT_SOURCE_DIR}/" "" DEMO_DIR "${entry}" )
       endif()
