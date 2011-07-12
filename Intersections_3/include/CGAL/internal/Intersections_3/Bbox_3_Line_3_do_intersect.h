@@ -57,10 +57,9 @@ namespace internal {
       dmin = px - qx;
     }
 
-    if ( dmin == FT(0) && (tmin > FT(0) || tmax < FT(0)) )
-    {
-      return false;
-    }
+    //if px is not in the x-slab
+    if ( dmin == FT(0) && (tmin > FT(0) || tmax < FT(0)) ) return false;
+
     FT dmax = dmin;
 
     // -----------------------------------
@@ -79,6 +78,9 @@ namespace internal {
       tmax_ = py - bymin;
       d_ = py - qy;
     }
+    
+    //if py is not in the y-slab
+    if ( d_ == FT(0) && (tmin_ > FT(0) || tmax_ < FT(0)) ) return false;
 
     if ( (dmin*tmax_) < (d_*tmin) || (dmax*tmin_) > (d_*tmax) )
       return false;
@@ -110,6 +112,9 @@ namespace internal {
       tmax_ = pz - bzmin;
       d_ = pz - qz;
     }
+    
+    //if pz is not in the z-slab
+    if ( d_ == FT(0) && (tmin_ > FT(0) || tmax_ < FT(0)) ) return false;
 
     return ( (dmin*tmax_) >= (d_*tmin) && (dmax*tmin_) <= (d_*tmax) );
   }
