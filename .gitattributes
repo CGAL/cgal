@@ -2804,6 +2804,7 @@ Number_types/doc_tex/NumberTypeSupport_ref/Gmpfr.tex -text
 Number_types/doc_tex/NumberTypeSupport_ref/fundamental_types.tex -text
 Number_types/doc_tex/NumberTypeSupport_ref/make_sqrt.tex -text
 Number_types/doc_tex/NumberTypeSupport_ref/open.tex -text
+Number_types/doc_tex/NumberTypeSupport_ref/solve_1.tex -text
 Number_types/include/CGAL/GMP/Gmpfi_type.h -text
 Number_types/include/CGAL/GMP/Gmpfi_type_static.h -text
 Number_types/include/CGAL/GMP/Gmpfr_type.h -text

@@ -1,0 +1,29 @@
+\begin{ccRefFunction}{solve_1<RT,OutputIterator>}
+
+\ccDefinition
+
+The function \ccRefName\ solves a univariate polynomial as it is defined by the 
+coefficients given to the function. The solutions are written into the given
+\ccc{OutputIterator}. 
+
+\ccInclude{CGAL/Root_of_traits.h}
+
+\ccFunction{template <typename RT, typename OutputIterator>
+            OutputIterator 
+            solve_1(const RT& a, const RT& b, const RT& c, OutputIterator oit);}
+{
+Writes the real roots of the polynomial $aX^2+bX+c$ into $oit$ in ascending order. \\
+\ccc{OutputIterator} is required to accept \ccc{Root_of_traits<RT>::Root_of_2}. \\
+Multiplicities are not reported. \\
+It is not required that $a$ is zero. \\
+\ccPrecond{\ccc{RT} is an \ccc{IntegralDomainWithoutDivision}.}
+} 
+
+\ccSeeAlso
+\ccRefIdfierPage{RootOf_2}\\
+\ccRefIdfierPage{CGAL::Root_of_traits<RT>}\\
+\ccRefIdfierPage{CGAL::make_root_of_2<RT>}\\
+\ccRefIdfierPage{CGAL::make_sqrt<RT>}\\
+%\ccRefIdfierPage{CGAL::solve_1<RT,OutputIterator>}\\
+\ccRefIdfierPage{CGAL::Sqrt_extension<NT,ROOT>}\\
+\end{ccRefFunction}

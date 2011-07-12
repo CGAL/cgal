@@ -41,7 +41,6 @@ make_root_of_2(const NT &a, const NT &b, const NT &c)
     return make_root_of_2(a,b,c);
 }
 
-
 template < class NT >
 inline
 typename Root_of_traits< NT >::Root_of_2
@@ -59,6 +58,17 @@ make_sqrt(const NT &a)
   typename Root_of_traits<NT>::Make_sqrt make_sqrt;
   return make_sqrt(a);
 }
+
+template < class NT , class OutputIterator>
+inline 
+OutputIterator
+solve_1(const NT &a, const NT &b, const NT &c, OutputIterator oit)
+{
+  typedef typename Root_of_traits<NT>::Solve_1 Solve_1; 
+  const Solve_1& solve_1 = Solve_1();
+  return solve_1(a,b,c,oit);
+}
+
 
 namespace internal {
 
@@ -104,6 +114,30 @@ struct Root_of_traits_helper{
             return Root_of_2(a,b,c,s);
         }
     };
+
+  struct Solve_1{
+    template <class OutputIterator> 
+    OutputIterator operator()(const NT& a, const NT& b, const NT& c, OutputIterator oit) const{
+      typename Fraction_traits<Root_of_1>::Compose compose;
+      if ( a != 0 ) {
+        Root_of_1 a0_,root_; 
+        a0_ = compose(-b,2*a);
+        root_ = CGAL_NTS square(a0_) - compose(c,a);
+        switch(CGAL::sign(root_)){
+        case CGAL::NEGATIVE: return oit;
+        case CGAL::ZERO: return *oit++ = Root_of_2(a0_); 
+        default:
+          // two roots 
+          *oit++ = Root_of_2(a0_,Root_of_1(-1),root_);
+          *oit++ = Root_of_2(a0_,Root_of_1( 1),root_);
+          return oit; 
+        }
+      }
+      else { 
+        return *oit++ = Root_of_2(compose(-c,b));    
+      }
+    }
+  };
   
   
 private:
@@ -159,8 +193,31 @@ public:
             RT c_ = c_num * a_den * b_den;
 
             return make_root_of_2(a_,b_,c_,smaller);
-        }
+        } 
     };
+
+  struct Solve_1{
+    template <class OutputIterator>
+    OutputIterator operator()(const FT& a, const FT& b, const FT& c, OutputIterator oit) const {
+      if ( a != 0 ) {
+        FT a0_,root_; 
+        a0_ = -b/2*a;
+        root_ = CGAL_NTS square(a0_) - c/a;
+        switch(CGAL::sign(root_)){
+        case CGAL::NEGATIVE: return oit; 
+        case CGAL::ZERO: return *oit++ = Root_of_2(a0_); 
+        default:
+          // two roots 
+          *oit++ = Root_of_2(a0_,FT(-1),root_);
+          *oit++ = Root_of_2(a0_,FT( 1),root_);
+          return oit; 
+        }
+      }
+      else { 
+        return *oit++ = Root_of_2(-c/b);    
+      }
+    }
+  };
 
 private:
   typedef CGAL::Algebraic_structure_traits<Root_of_2> AST;
@@ -200,6 +257,30 @@ struct Root_of_traits_helper < NT, Field_with_sqrt_tag >
             return a + b * CGAL_NTS sqrt(c) ;
         }
     };
+
+  struct Solve_1{
+    template <class OutputIterator>
+    OutputIterator operator()(const NT& a, const NT& b, const NT& c, OutputIterator oit) const {
+      if ( a != 0 ) {
+        NT a0_,root_; 
+        a0_ = -b/2*a;
+        root_ = CGAL::square(a0_) - c/a;
+        switch(CGAL::sign(root_)){
+        case CGAL::NEGATIVE: return oit;
+        case CGAL::ZERO: return *oit++ = a0_; 
+        default: 
+          // two roots 
+          root_ = CGAL::sqrt(root_);
+          *oit++ = a0_-root_;
+          *oit++ = a0_+root_;
+          return oit; 
+        }
+      }
+      else { 
+        return *oit++ = -c/b;    
+      }
+    }
+  };
 
 private:
   typedef CGAL::Algebraic_structure_traits<Root_of_2> AST;
@@ -264,6 +345,38 @@ struct Root_of_traits<Interval_nt<B> >{
         return a + b * CGAL_NTS sqrt(c) ;
     }
   };
+  
+  struct Solve_1{
+    template <class OutputIterator>
+    OutputIterator operator()(const Interval_nt<B>& a, const Interval_nt<B>& b, const Interval_nt<B>& c, OutputIterator oit) const {
+      if (!CGAL::is_zero(a)) {
+        Interval_nt<B> a0_,root_; 
+        a0_ = -b/2*a;
+        root_ = CGAL::square(a0_) - c/a;
+        switch(CGAL::sign(root_)){
+        case CGAL::NEGATIVE: return oit;
+        case CGAL::ZERO: return *oit++ = a0_; 
+        default: 
+          // two roots 
+          root_ = CGAL::sqrt(root_);
+          *oit++ = a0_-root_;
+          *oit++ = a0_+root_;
+          return oit; 
+        }
+      }
+      else { 
+        return *oit++ = -c/b;    
+      }
+    }    
+  };  
+
+private:
+  typedef CGAL::Algebraic_structure_traits<Interval_nt<B> > AST;
+public:
+  typedef typename AST::Square  Square; 
+  typedef typename AST::Inverse Inverse;
+  typedef typename AST::Sqrt    Make_sqrt;
+  
 };
 
 
