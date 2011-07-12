@@ -241,15 +241,27 @@ public:
       int e_idx = boost::get(edge_id_pmap, *eb);
       if ( !edge_weight_computed[e_idx] )
       {
-        double weight = cot_value(*eb) / 2.0;
-        edge_weight[e_idx] = weight;
-        edge_weight_computed[e_idx] = 1;
-        // assign the weights to opposite edges
-        edge_descriptor e_oppo = CGAL::opposite_edge(*eb, *polyhedron);   
-        int e_oppo_idx = boost::get(edge_id_pmap, e_oppo);
-        edge_weight[e_oppo_idx] = weight;
-        edge_weight_computed[e_oppo_idx] = 1;
+        double weight = cot_weight(*eb);
+        // replace cotangent weight by mean-value coordinate
+        if ( weight < 0 )
+        {
+          weight = mean_value(*eb);
+          edge_weight[e_idx] = weight;
+          edge_weight_computed[e_idx] = 1;
+        }
+        else
+        {
+          edge_weight[e_idx] = weight;
+          edge_weight_computed[e_idx] = 1;
+          // assign the weights to opposite edges
+          edge_descriptor e_oppo = CGAL::opposite_edge(*eb, *polyhedron);   
+          int e_oppo_idx = boost::get(edge_id_pmap, e_oppo);
+          edge_weight[e_oppo_idx] = weight;
+          edge_weight_computed[e_oppo_idx] = 1;
+        }
+        
       }
+
 
     }
   }
@@ -377,8 +389,8 @@ public:
 	}
 
   
-  // Returns the cotanget value of specified edge_descriptor
-  double cot_value(edge_descriptor e)
+  // Returns the cotangent weight of specified edge_descriptor
+  double cot_weight(edge_descriptor e)
   {
      vertex_descriptor v0 = boost::target(e, *polyhedron);
      vertex_descriptor v1 = boost::source(e, *polyhedron);
@@ -394,7 +406,7 @@ public:
           v2 = boost::source(e_ccw, *polyhedron);
        }
       
-       return ( cot_value(v0, v2, v1) );
+       return ( cot_value(v0, v2, v1)/2.0 );
      }
      else
      {
@@ -403,14 +415,14 @@ public:
         edge_descriptor e_ccw = CGAL::next_edge_ccw(e, *polyhedron);
         vertex_descriptor v3 = boost::source(e_ccw, *polyhedron);
 
-        return ( cot_value(v0, v2, v1) + cot_value(v0, v3, v1) );
+        return ( cot_value(v0, v2, v1)/2.0 + cot_value(v0, v3, v1)/2.0 );
      }
   }
 
   // AF: Have a function for the non-border case that does less computation as there is a shared edge
   // YX: Solved. See the function compute_edge_weight().
 
-  // Returns the cotanget value of angle v0_v1_v2
+  // Returns the cotangent value of angle v0_v1_v2
   double cot_value(vertex_descriptor v0, vertex_descriptor v1, vertex_descriptor v2)
   {
     
@@ -429,6 +441,57 @@ public:
 
   }
 
+  // Returns the tangent value of half angle v0_v1_v2/2
+  double half_tan_value(vertex_descriptor v0, vertex_descriptor v1, vertex_descriptor v2)
+  {
+
+    Vector vec0 = v1->point() - v2->point();
+    Vector vec1 = v2->point() - v0->point();
+    Vector vec2 = v0->point() - v1->point();
+    double e0_square = vec0.squared_length();
+    double e1_square = vec1.squared_length();
+    double e2_square = vec2.squared_length();
+    double e0 = std::sqrt(e0_square); 
+    double e2 = std::sqrt(e2_square);
+    double cos_angle = ( e0_square + e2_square - e1_square ) / 2.0 / e0 / e2;
+    double angle = acos(cos_angle);
+
+    return ( tan(angle/2.0) );
+
+  }
+
+  // Returns the mean-value coordinate of specified edge_descriptor
+  double mean_value(edge_descriptor e)
+  {
+    vertex_descriptor v0 = boost::target(e, *polyhedron);
+    vertex_descriptor v1 = boost::source(e, *polyhedron);
+    Vector vec = v0->point() - v1->point();
+    double norm = std::sqrt( vec.squared_length() );
+
+    // Only one triangle for border edges
+    if (boost::get(CGAL::edge_is_border, *polyhedron, e)||boost::get(CGAL::edge_is_border, *polyhedron, CGAL::opposite_edge(e, *polyhedron)))
+    {
+
+      edge_descriptor e_cw = CGAL::next_edge_cw(e, *polyhedron);
+      vertex_descriptor v2 = boost::source(e_cw, *polyhedron);
+      if (boost::get(CGAL::edge_is_border, *polyhedron, e_cw) || boost::get(CGAL::edge_is_border, *polyhedron, CGAL::opposite_edge(e_cw, *polyhedron)) )
+      {
+        edge_descriptor e_ccw = CGAL::next_edge_ccw(e, *polyhedron);
+        v2 = boost::source(e_ccw, *polyhedron);
+      }
+
+      return ( half_tan_value(v1, v0, v2)/norm );
+    }
+    else
+    {
+      edge_descriptor e_cw = CGAL::next_edge_cw(e, *polyhedron);
+      vertex_descriptor v2 = boost::source(e_cw, *polyhedron);     
+      edge_descriptor e_ccw = CGAL::next_edge_ccw(e, *polyhedron);
+      vertex_descriptor v3 = boost::source(e_ccw, *polyhedron);
+
+      return ( half_tan_value(v1, v0, v2)/norm + half_tan_value(v1, v0, v3)/norm );
+    }
+  }
 
   // Set the number of iterations made in operator()
   void set_iterations(unsigned int ite)
@@ -500,7 +563,7 @@ public:
         {
           for (int k = 0; k < 3; k++)
           {
-            u[j+1][k+1] += wij*pij[j]*qij[k]; 
+            u[j+1][k+1] += /*wij**/pij[j]*qij[k]; 
           }
         }
       }
