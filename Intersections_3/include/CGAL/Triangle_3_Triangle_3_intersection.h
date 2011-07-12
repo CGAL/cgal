@@ -172,14 +172,6 @@ intersection(
 
 }//namespace internal
 
-template <class K>
-inline
-Object
-intersection(const Triangle_3<K> &t1, const Triangle_3<K> &t2)
-{
-  return typename K::Intersect_3()(t1, t2);
-}
-
 } // namespace CGAL
 
 

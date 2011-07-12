@@ -1786,8 +1786,12 @@ Interpolation/doc_tex/Interpolation/nn_coords.xml svneol=native#text/xml
 Intersections_2/benchmark/Intersections_2/variant_any_object.cpp -text
 Intersections_2/include/CGAL/Circle_2_Line_2_intersection.h -text
 Intersections_2/include/CGAL/Intersection_traits_2.h -text
+Intersections_2/include/CGAL/intersection_2_0.h -text
+Intersections_3/include/CGAL/Intersection_traits_3.h -text
 Intersections_3/include/CGAL/Triangle_3_Triangle_3_intersection.h -text
 Intersections_3/include/CGAL/internal/Intersections_3/Triangle_3_Line_3_intersection.h -text
+Intersections_3/include/CGAL/intersection_3_0.h -text
+Intersections_3/test/Intersections_3/call_test.cpp -text
 Intersections_3/test/Intersections_3/segment_segment.cpp -text
 Intersections_3/test/Intersections_3/triangle_3_triangle_3_intersection.cpp -text
 Interval_skip_list/doc_tex/Interval_skip_list/query.png -text

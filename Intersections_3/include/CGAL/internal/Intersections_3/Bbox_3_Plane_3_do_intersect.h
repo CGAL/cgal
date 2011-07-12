@@ -118,23 +118,15 @@ namespace internal {
     if(s != side) return true;
     return false;
   }
+  
+  template <class K>
+  bool do_intersect(const CGAL::Bbox_3& bbox, const typename K::Plane_3& plane,
+                    const K&) {
+    return do_intersect(plane, bbox, K());
+  }
+
 
 } // namespace internal
-
-template <class K>
-bool do_intersect(const CGAL::Plane_3<K>& plane,
-		  const CGAL::Bbox_3& bbox)
-{
-  return typename K::Do_intersect_3()(plane, bbox);
-}
-
-template <class K>
-bool do_intersect(const CGAL::Bbox_3& bbox,
-		  const CGAL::Plane_3<K>& plane)
-{
-  return typename K::Do_intersect_3()(plane, bbox);
-}
-
 } //namespace CGAL
 
 #endif  // CGAL_INTERNAL_INTERSECTIONS_3_BBOX_3_PLANE_3_DO_INTERSECT_H

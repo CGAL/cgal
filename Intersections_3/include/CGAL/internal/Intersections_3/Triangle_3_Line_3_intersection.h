@@ -416,22 +416,6 @@ intersection(const typename K::Line_3 &l,
 
 } // end namespace internal
 
-template <class K>
-inline
-Object
-intersection(const Triangle_3<K> &t, const Line_3<K> &l)
-{
-  return typename K::Intersect_3()(t,l);
-}
-
-template <class K>
-inline
-Object
-intersection(const Line_3<K> &l, const Triangle_3<K> &t)
-{
-  return typename K::Intersect_3()(t,l);
-}
-
 } // end namespace CGAL
 
 #endif // CGAL_INTERNAL_INTERSECTIONS_3_TRIANGLE_3_LINE_3_INTERSECTION_H

@@ -2042,6 +2042,11 @@ namespace CommonKernelFunctors {
     result_type
     operator()(const T1& t1, const T2& t2) const
     { return internal::do_intersect(t1, t2, K()); }
+
+    result_type
+    operator()(const typename K::Plane_3& pl1, const typename K::Plane_3& pl2, const typename K::Plane_3& pl3) const
+    { return internal::do_intersect(pl1, pl2, pl3, K() ); }
+
   };
 
   template <typename K>
@@ -2535,7 +2540,7 @@ namespace CommonKernelFunctors {
     { return internal::intersection(t1, t2, K() ); }
 
     Object_3
-    operator()(const Plane_3& pl1, const Plane_3& pl2, const Plane_3& pl3)const
+    operator()(const Plane_3& pl1, const Plane_3& pl2, const Plane_3& pl3) const
     { return internal::intersection(pl1, pl2, pl3, K() ); }
   };
 

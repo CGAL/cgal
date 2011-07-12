@@ -133,22 +133,14 @@ namespace internal {
                          FT(bbox.xmax()), FT(bbox.ymax()), FT(bbox.zmax()) );
   }
 
+  template <class K>
+  bool do_intersect(const CGAL::Bbox_3& bbox,
+                    const typename K::Line_3& line,
+                    const K&)
+  { return do_intersect(line, bbox, K()); }
+
+
 } // namespace internal
-
-template <class K>
-bool do_intersect(const CGAL::Line_3<K>& line,
-		  const CGAL::Bbox_3& bbox)
-{
-  return typename K::Do_intersect_3()(line, bbox);
-}
-
-template <class K>
-bool do_intersect(const CGAL::Bbox_3& bbox,
-		  const CGAL::Line_3<K>& line)
-{
-  return typename K::Do_intersect_3()(line, bbox);
-}
-
 } //namespace CGAL
 
 #endif  // CGAL_INTERNAL_INTERSECTIONS_3_BBOX_3_LINE_3_DO_INTERSECT_H

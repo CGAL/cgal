@@ -571,23 +571,15 @@ intersection(const typename K::Triangle_3  &t,
   return Object();
 }
 
+template <class K>
+Object
+intersection(const typename K::Ray_3  &r,
+             const typename K::Triangle_3 &t,
+             const K& k) {
+  return CGAL::internal::intersection(t, r, k);
+}
+
 } // end namespace internal
-
-template <class K>
-inline
-Object
-intersection(const Triangle_3<K> &t, const Ray_3<K> &r)
-{
-  return typename K::Intersect_3()(t, r);
-}
-
-template <class K>
-inline
-Object
-intersection(const Ray_3<K> &r, const Triangle_3<K> &t)
-{
-  return typename K::Intersect_3()(t, r);
-}
 
 } // end namespace CGAL
 

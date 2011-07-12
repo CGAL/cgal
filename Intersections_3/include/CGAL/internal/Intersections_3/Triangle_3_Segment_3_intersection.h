@@ -550,22 +550,6 @@ intersection(const typename K::Segment_3  &s,
 
 } // end namespace internal
 
-template <class K>
-inline
-Object
-intersection(const Triangle_3<K> &t, const Segment_3<K> &s)
-{
-  return typename K::Intersect_3()(t, s);
-}
-
-template <class K>
-inline
-Object
-intersection(const Segment_3<K> &s, const Triangle_3<K> &t)
-{
-  return typename K::Intersect_3()(t, s);
-}
-
 } // end namespace CGAL
 
 #endif // CGAL_INTERNAL_INTERSECTIONS_3_TRIANGLE_3_SEGMENT_3_INTERSECTION_H

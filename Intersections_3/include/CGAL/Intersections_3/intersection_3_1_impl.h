@@ -1376,282 +1376,72 @@ intersection(
     return result;
 }
 
+template <class R>
+inline bool
+do_intersect(const Plane_3<R>& plane1, const Plane_3<R>& plane2, const R&)
+{
+    return ! intersection(plane1, plane2).empty();
+}
+
+
+template <class R>
+inline bool
+do_intersect(const Plane_3<R> &plane1, const Plane_3<R> &plane2,
+             const Plane_3<R> &plane3, const R&)
+{
+    return ! intersection(plane1, plane2, plane3).empty();
+}
+
+
+template <class R>
+inline bool
+do_intersect(const Iso_cuboid_3<R> &i, const Iso_cuboid_3<R> &j, const R&)
+{
+	return ! CGAL::intersection(i, j).empty();
+}
+
+template <class R>
+inline bool
+do_intersect(const Line_3<R> &l, const Iso_cuboid_3<R> &j, const R&)
+{
+	return ! CGAL::intersection(l, j).empty();
+}
+
+template <class R>
+inline bool
+do_intersect(const Iso_cuboid_3<R> &j, const Line_3<R> &l, const R&)
+{
+	return ! CGAL::intersection(l, j).empty();
+}
+
+template <class R>
+inline bool
+do_intersect(const Ray_3<R> &r, const Iso_cuboid_3<R> &j, const R&)
+{
+	return ! CGAL::intersection(r, j).empty();
+}
+
+template <class R>
+inline bool
+do_intersect(const Iso_cuboid_3<R> &j, const Ray_3<R> &r, const R&)
+{
+	return ! CGAL::intersection(r, j).empty();
+}
+
+template <class R>
+inline bool
+do_intersect(const Segment_3<R> &s, const Iso_cuboid_3<R> &j, const R&)
+{
+	return ! CGAL::intersection(s, j).empty();
+}
+
+template <class R>
+inline bool
+do_intersect(const Iso_cuboid_3<R> &j, const Segment_3<R> &s, const R&)
+{
+	return ! CGAL::intersection(s, j).empty();
+}
 
 } // namespace internal
-
-
-
-
-
-
-template <class K>
-inline
-Object 
-intersection(const Plane_3<K> &plane1, const Plane_3<K> &plane2)
-{
-  return typename K::Intersect_3()(plane1, plane2);
-}
-
-template <class K>
-inline
-Object 
-intersection(const Plane_3<K> &plane1, const Plane_3<K> &plane2,
-             const Plane_3<K> &plane3)
-{
-  return typename K::Intersect_3()(plane1, plane2, plane3);
-}
-
-
-template <class K>
-inline
-Object
-intersection(const Plane_3<K>  &plane, const Line_3<K> &line)
-{
-  return typename K::Intersect_3()(plane, line);
-}
-
-template <class K>
-inline
-bool
-do_intersect(const Plane_3<K> &plane, const Line_3<K> &line)
-{
-  return typename K::Do_intersect_3()(plane, line);
-}
-
-template <class K>
-inline
-Object
-intersection(const Plane_3<K> &plane, const Ray_3<K> &ray)
-{
-  return typename K::Intersect_3()(plane, ray);
-}
-
-template <class K>
-inline
-bool
-do_intersect(const Plane_3<K> &plane, const Ray_3<K> &ray)
-{
-  return typename K::Do_intersect_3()(plane, ray);
-}
-
-template <class K>
-inline
-Object
-intersection(const Plane_3<K> &plane, const Segment_3<K> &seg)
-{
-  return typename K::Intersect_3()(plane, seg);
-}
-
-
-template <class K>
-inline
-bool
-do_intersect(const Plane_3<K>  &plane, const Segment_3<K> &seg)
-{
-  return typename K::Do_intersect_3()(plane, seg);
-}
-
-template <class K>
-inline
-Object
-intersection(const Plane_3<K> &plane, const Triangle_3<K> &tri)
-{
-  return typename K::Intersect_3()(plane, tri);
-}
-
-template <class K>
-inline
-Object
-intersection(const Line_3<K> &line,
-	     const Bbox_3 &box)
-{
-  return typename K::Intersect_3()(line, box);
-}
-
-template <class K>
-inline
-Object
-intersection(const Ray_3<K> &ray,
-	     const Bbox_3 &box)
-{
-  return typename K::Intersect_3()(ray, box);
-}
-
-template <class K>
-inline
-Object
-intersection(const Segment_3<K> &seg,
-	     const Bbox_3 &box)
-{
-  return typename K::Intersect_3()(seg, box);
-}
-
-template <class K>
-inline
-Object
-intersection(const Line_3<K> &line,
-	     const Iso_cuboid_3<K> &box)
-{
-  return typename K::Intersect_3()(line, box);
-}
-
-template <class K>
-inline
-Object
-intersection(const Ray_3<K> &ray,
-	     const Iso_cuboid_3<K> &box)
-{
-  return typename K::Intersect_3()(ray, box);
-}
-
-template <class K>
-inline
-Object
-intersection(const Segment_3<K> &seg,
-	     const Iso_cuboid_3<K> &box)
-{
-  return typename K::Intersect_3()(seg, box);
-}
-
-
-template <class K>
-inline
-Object
-intersection(const Iso_cuboid_3<K> &icub1,
-	     const Iso_cuboid_3<K> &icub2)
-{
-  return typename K::Intersect_3()(icub1, icub2);
-}
-
-template <class K>
-inline
-Object
-intersection(const Line_3<K> &l1,
-             const Line_3<K> &l2) {
-  return typename K::Intersect_3()(l1, l2);
-}
-
-template <class K>
-inline
-bool
-do_intersect(const Line_3<K> &l1,
-             const Line_3<K> &l2)
-{
-  return typename K::Do_intersect_3()(l1, l2);
-}
-
-template <class K>
-inline
-Object
-intersection(const Segment_3<K> &s1,
-             const Segment_3<K> &s2) {
-  return typename K::Intersect_3()(s1, s2);
-}
-
-template <class K>
-inline
-bool
-do_intersect(const Segment_3<K> &s1, const Segment_3<K> &s2)
-{
-  return typename K::Do_intersect_3()(s1, s2);
-}
-
-template <class K>
-inline
-Object
-intersection(const Line_3<K> &l,
-             const Segment_3<K> &s) {
-  return typename K::Intersect_3()(l, s);
-}
-
-template <class K>
-inline
-Object
-intersection(const Line_3<K> &l,
-             const Ray_3<K> &r) {
-  return typename K::Intersect_3()(l, r);
-}
-
-template <class K>
-inline
-Object
-intersection(const Ray_3<K> &r,
-             const Segment_3<K> &s) {
-  return typename K::Intersect_3()(r, s);
-}
-
-template <class K>
-inline
-Object
-intersection(const Ray_3<K> &r1,
-             const Ray_3<K> &r2) {
-  return typename K::Intersect_3()(r1, r2);
-}
-
-template <class K>
-inline
-bool
-do_intersect(const Line_3<K> &l, const Segment_3<K> &s)
-{
-  return typename K::Do_intersect_3()(l, s);
-}
-
-template <class K>
-inline
-bool
-do_intersect(const Line_3<K> &l, const Ray_3<K> &r)
-{
-  return typename K::Do_intersect_3()(l, r);
-}
-
-template <class K>
-inline
-bool
-do_intersect(const Ray_3<K> &r, const Segment_3<K> &s)
-{
-  return typename K::Do_intersect_3()(r, s);
-}
-
-template <class K>
-inline
-bool
-do_intersect(const Ray_3<K> &r1, const Ray_3<K> &r2)
-{
-  return typename K::Do_intersect_3()(r1, r2);
-}
-
-template <class K>
-inline
-Object
-intersection(const Sphere_3<K> &s1,
-             const Sphere_3<K> &s2) {
-  return typename K::Intersect_3()(s1, s2);
-}
-
-template <class K>
-inline
-bool
-do_intersect(const Sphere_3<K> &s1,
-             const Sphere_3<K> &s2)
-{
-  return typename K::Do_intersect_3()(s1, s2);
-}
-
-template <class K>
-inline
-Object
-intersection(const Plane_3<K> &p,
-             const Sphere_3<K> &s) {
-  return typename K::Intersect_3()(p, s);
-}
-
-template <class K>
-inline
-bool
-do_intersect(const Plane_3<K> &p,
-             const Sphere_3<K> &s)
-{
-  return typename K::Do_intersect_3()(p, s);
-}
 
 } //namespace CGAL

@@ -31,15 +31,13 @@
 #include <CGAL/Bbox_3.h>
 
 namespace CGAL {
-
-bool
-inline
-do_intersect(const CGAL::Bbox_3& c,
-             const CGAL::Bbox_3& bbox)
-{
-  return CGAL::do_overlap(c, bbox);
-}
-
+  bool
+  inline
+  do_intersect(const CGAL::Bbox_3& c,
+               const CGAL::Bbox_3& bbox)
+  {
+    return CGAL::do_overlap(c, bbox);
+  }
 } //namespace CGAL
 
 #endif  // CGAL_INTERNAL_INTERSECTIONS_3_BBOX_3_BBOX_3_DO_INTERSECT_H
