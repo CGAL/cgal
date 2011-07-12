@@ -297,33 +297,6 @@ bool do_intersect_coplanar(const typename K::Triangle_3 &t,
 
 
 } // namespace internal
-
-
-template <class K>
-inline bool do_intersect(const Ray_3<K> &r, 
-			 const Triangle_3<K> &t)
-{
-  return typename K::Do_intersect_3()(t,r);
-}
-
-template <class K>
-inline bool do_intersect(const Triangle_3<K> &t, 
-			 const Ray_3<K> &r)
-{
-  return typename K::Do_intersect_3()(t,r);
-}
-
-
-/*
-template <class K>
-inline bool do_intersect(const Ray_3<K> &r, 
-			 const Triangle_3<K> &t,
-			 const K & k )
-{
-  return internal::do_intersect(t,r,k);
-}
-*/
-
 } //namespace CGAL
 
 #endif // CGAL_TRIANGLE_3_RAY_3_DO_INTERSECT_H

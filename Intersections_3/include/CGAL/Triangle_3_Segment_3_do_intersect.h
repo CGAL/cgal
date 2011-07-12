@@ -318,32 +318,6 @@ bool do_intersect(const typename K::Segment_3  &s,
 }
 
 } // namespace internal
-
-
-template <class K>
-inline bool do_intersect(const Segment_3<K>  &s, 
-			 const Triangle_3<K> &t)
-{
-  return typename K::Do_intersect_3()(t,s);
-}
-
-template <class K>
-inline bool do_intersect(const Triangle_3<K> &t,
-			 const Segment_3<K>  &s)
-{
-  return typename K::Do_intersect_3()(t,s);
-}
-
-/*
-template <class K>
-inline bool do_intersect(const Segment_3<K>  &s, 
-			 const Triangle_3<K> &t,
-			 const K & k)
-{
-  return internal::do_intersect(t,s,k);
-}
-*/
-
 } //namespace CGAL
 
 #endif //CGAL_TRIANGLE_3_SEGMENT_3_DO_INTERSECT_H

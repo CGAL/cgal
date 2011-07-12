@@ -209,6 +209,7 @@ int main()
     call_do_intersect_global(Bbox_3(), R());
     call_do_intersect_global(Bbox_3(), S());
     call_do_intersect_global(Bbox_3(), Tr());
+    call_do_intersect_global(Bbox_3(), Sph());
     call_do_intersect_global(Bbox_3(), Bbox_3());
     
     // with_kernel
@@ -258,7 +259,9 @@ int main()
     call_do_intersect_with_kernel(Bbox_3(), L(), K());
     call_do_intersect_with_kernel(Bbox_3(), R(), K());
     call_do_intersect_with_kernel(Bbox_3(), S(), K());
+    call_do_intersect_with_kernel(Bbox_3(), Sph(), K());
     call_do_intersect_with_kernel(Bbox_3(), Tr(), K());
+    // There is no kernel to call
     // call_do_intersect_with_kernel(Bbox_3(), Bbox_3(), K());
   } catch(...) {
     // as long as this test compiles, it is fine
