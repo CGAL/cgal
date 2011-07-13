@@ -70,11 +70,11 @@ solve_1(const NT &a_, const NT &b_, const NT &c_, OutputIterator oit)
   Root_of_1 a(cast(a_)), b(cast(b_)), c(cast(c_));
     
   if ( a != 0 ) {
-    Root_of_1 a0_  (-b/2*a);
+    Root_of_1 a0_  (-b/(2*a));
     Root_of_1 root_(CGAL_NTS square(a0_) - c/a);
     switch(CGAL::sign(root_)){
     case CGAL::NEGATIVE: return oit; 
-    case CGAL::ZERO: return *oit++ = Root_of_2(a0_); 
+    case CGAL::ZERO: *oit++ = Root_of_2(a0_);  return oit;
     default:
       // two roots 
       *oit++ = make_root_of_2(a0_,Root_of_1(-1),root_);
@@ -83,7 +83,7 @@ solve_1(const NT &a_, const NT &b_, const NT &c_, OutputIterator oit)
     }
   }
   else { 
-    return *oit++ = -c/b;    
+    *oit++ = -c/b; return oit;   
   }
 }
 

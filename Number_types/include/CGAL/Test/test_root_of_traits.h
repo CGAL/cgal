@@ -87,6 +87,12 @@ void test_root_of_traits(){
       assert(roots.size()==2);  
       assert(roots[0]==-CGAL::make_sqrt(T(2)) || is_not_exact );
       assert(roots[1]== CGAL::make_sqrt(T(2)) || is_not_exact );
+    }  
+    {
+      Root_of_2 roots[2]= {Root_of_2(1),Root_of_2(1)};
+      CGAL::solve_1(T(13),T(4),T(-23),roots); 
+      assert(roots[0]==CGAL::make_root_of_2(T(13),T(4),T(-23),true)  || is_not_exact );
+      assert(roots[1]==CGAL::make_root_of_2(T(13),T(4),T(-23),false) || is_not_exact );
     }   
     {
       std::vector<Root_of_2> roots;
