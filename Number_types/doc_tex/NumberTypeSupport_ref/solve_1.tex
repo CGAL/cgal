@@ -15,8 +15,8 @@ coefficients given to the function. The solutions are written into the given
 Writes the real roots of the polynomial $aX^2+bX+c$ into $oit$ in ascending order. \\
 \ccc{OutputIterator} is required to accept \ccc{Root_of_traits<RT>::Root_of_2}. \\
 Multiplicities are not reported. \\
-It is not required that $a$ is zero. \\
 \ccPrecond{\ccc{RT} is an \ccc{IntegralDomainWithoutDivision}.}
+\ccPrecond{$a\neq 0$ or $b\neq 0$.}
 } 
 
 \ccSeeAlso
