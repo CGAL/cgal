@@ -1,5 +1,5 @@
 // Copyright (c) 2008 ETH Zurich (Switzerland)
-// Copyright (c) 2008-2009 INRIA Sophia-Antipolis (France)
+// Copyright (c) 2008-2011 INRIA Sophia-Antipolis (France)
 // All rights reserved.
 //
 // This file is part of CGAL (www.cgal.org); you can redistribute it and/or
@@ -79,11 +79,16 @@ namespace internal {
       d_ = py - qy;
     }
     
-    //if py is not in the y-slab
-    if ( d_ == FT(0) && (tmin_ > FT(0) || tmax_ < FT(0)) ) return false;
-
-    if ( (dmin*tmax_) < (d_*tmin) || (dmax*tmin_) > (d_*tmax) )
-      return false;
+    
+    
+    
+    if ( d_ == FT(0) ){
+      //if py is not in the y-slab
+      if( (tmin_ > FT(0) || tmax_ < FT(0)) ) return false;
+    }
+    else
+      if ( (dmin*tmax_) < (d_*tmin) || (dmax*tmin_) > (d_*tmax) )
+        return false;
 
     if( (dmin*tmin_) > (d_*tmin) )
     {
@@ -114,7 +119,10 @@ namespace internal {
     }
     
     //if pz is not in the z-slab
-    if ( d_ == FT(0) && (tmin_ > FT(0) || tmax_ < FT(0)) ) return false;
+    //if ( d_ == FT(0) && (tmin_ > FT(0) || tmax_ < FT(0)) ) return false;
+    //The previous line is not needed as either dmin or d_ are not 0 
+    //(otherwise the direction of the line would be null). 
+    // The following is equivalent to the in z-slab test if d_=0.
 
     return ( (dmin*tmax_) >= (d_*tmin) && (dmax*tmin_) <= (d_*tmax) );
   }
