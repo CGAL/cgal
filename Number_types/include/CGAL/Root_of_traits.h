@@ -83,7 +83,7 @@ solve_1(const NT &a_, const NT &b_, const NT &c_, OutputIterator oit)
     }
   }
   else { 
-    return *oit++ = Root_of_2(-c/b);    
+    return *oit++ = -c/b;    
   }
 }
 
