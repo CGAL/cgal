@@ -98,7 +98,13 @@ void test_root_of_traits(){
       std::vector<Root_of_2> roots;
       CGAL::solve_1(T(1),T(0),T(2),std::back_inserter(roots));
       assert(roots.size()==0);
-    }  
+    } 
+    {
+      std::vector<Root_of_2> roots;
+      CGAL::solve_1(T(0),T(3),T(2),std::back_inserter(roots));
+      assert(roots.size()==1);
+      assert(roots[0]==-Root_of_2(2)/Root_of_2(3));
+    } 
     
 }
 
