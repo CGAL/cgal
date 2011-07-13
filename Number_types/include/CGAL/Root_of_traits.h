@@ -128,8 +128,8 @@ struct Root_of_traits_helper{
         case CGAL::ZERO: return *oit++ = Root_of_2(a0_); 
         default:
           // two roots 
-          *oit++ = Root_of_2(a0_,Root_of_1(-1),root_);
-          *oit++ = Root_of_2(a0_,Root_of_1( 1),root_);
+          *oit++ = make_root_of_2(a0_,Root_of_1(-1),root_);
+          *oit++ = make_root_of_2(a0_,Root_of_1( 1),root_);
           return oit; 
         }
       }
@@ -208,8 +208,8 @@ public:
         case CGAL::ZERO: return *oit++ = Root_of_2(a0_); 
         default:
           // two roots 
-          *oit++ = Root_of_2(a0_,FT(-1),root_);
-          *oit++ = Root_of_2(a0_,FT( 1),root_);
+          *oit++ = make_root_of_2(a0_,FT(-1),root_);
+          *oit++ = make_root_of_2(a0_,FT( 1),root_);
           return oit; 
         }
       }
